@@ -26,7 +26,7 @@
  * Authors:
  *      Tomas Heinrich <theinric@redhat.com>
  *      Peter Vrabec   <pvrabec@redhat.com>
- *      Brandon Dixon from g2-inc
+ *      Brandon Dixon  <Brandon.Dixon@g2-inc.com>
  */
 
 #include "config.h"

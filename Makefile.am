@@ -1,3 +1,8 @@
 
-SUBDIRS = lib swig examples docs
+SUBDIRS = lib swig examples
+
+EXTRA_DIST = dist/fedora/openscap.spec docs/Doxyfile
+
+dist-hook:
+	cd $(distdir)/docs && doxygen Doxyfile
 

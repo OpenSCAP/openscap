@@ -1,3 +1,11 @@
-0.1.1
-- CVSS calculator
+Thu Jan 15 2009 Tomas Heinrich	<theinric@redhat.com>
+		Peter Vrabec	<pvrabec@redhat.com>
+
+	* create fedora specfile
+	* adjust autotools configuration
+	* include correct copy of LGPLv2+
+
+Mon Jan 12 2009	Peter Vrabec	<pvrabec@redhat.com>
+
+	* CVSS calculator
 

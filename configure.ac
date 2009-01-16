@@ -48,7 +48,7 @@ echo Checking for header files
 
 AC_HEADER_STDC
 
-AC_CONFIG_FILES([Makefile lib/Makefile swig/Makefile examples/Makefile docs/Makefile])
+AC_CONFIG_FILES([Makefile lib/Makefile swig/Makefile examples/Makefile])
 AC_OUTPUT
 
 echo .

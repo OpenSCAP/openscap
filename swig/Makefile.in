@@ -47,7 +47,7 @@ am__vpath_adj = case $$p in \
     *) f=$$p;; \
   esac;
 am__strip_dir = `echo $$p | sed -e 's|^.*/||'`;
-am__installdirs = "$(DESTDIR)$(pyexecdir)" "$(DESTDIR)$(pythondir)"
+am__installdirs = "$(DESTDIR)$(pyexecdir)" "$(DESTDIR)$(pyexecdir)"
 pyexecLTLIBRARIES_INSTALL = $(INSTALL)
 LTLIBRARIES = $(pyexec_LTLIBRARIES)
 _cvsscalc_la_LIBADD =
@@ -70,7 +70,7 @@ LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	$(LDFLAGS) -o $@
 SOURCES = $(nodist__cvsscalc_la_SOURCES)
 DIST_SOURCES =
-nodist_pythonPYTHON_INSTALL = $(INSTALL_DATA)
+nodist_pyexecPYTHON_INSTALL = $(INSTALL_DATA)
 py_compile = $(top_srcdir)/py-compile
 ETAGS = etags
 CTAGS = ctags
@@ -192,7 +192,7 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 AM_CFLAGS = -fPIC
 AM_CPPFLAGS = -I$(top_builddir)/lib -I$(top_srcdir)/lib -I/usr/include/$(PYLIBVER)
-nodist_python_PYTHON = cvsscalc.py
+nodist_pyexec_PYTHON = cvsscalc.py
 pyexec_LTLIBRARIES = _cvsscalc.la
 _cvsscalc_la_LDFLAGS = -module -avoid-version
 nodist__cvsscalc_la_SOURCES = cvsscalc_wrap.c ${top_srcdir}/lib/libcvsscalc.c
@@ -303,33 +303,33 @@ mostlyclean-libtool:
 
 clean-libtool:
 	-rm -rf .libs _libs
-install-nodist_pythonPYTHON: $(nodist_python_PYTHON)
+install-nodist_pyexecPYTHON: $(nodist_pyexec_PYTHON)
 	@$(NORMAL_INSTALL)
-	test -z "$(pythondir)" || $(MKDIR_P) "$(DESTDIR)$(pythondir)"
-	@list='$(nodist_python_PYTHON)'; dlist=''; for p in $$list; do\
+	test -z "$(pyexecdir)" || $(MKDIR_P) "$(DESTDIR)$(pyexecdir)"
+	@list='$(nodist_pyexec_PYTHON)'; dlist=''; for p in $$list; do\
 	  if test -f "$$p"; then b=; else b="$(srcdir)/"; fi; \
 	  if test -f $$b$$p; then \
 	    f=$(am__strip_dir) \
 	    dlist="$$dlist $$f"; \
-	    echo " $(nodist_pythonPYTHON_INSTALL) '$$b$$p' '$(DESTDIR)$(pythondir)/$$f'"; \
-	    $(nodist_pythonPYTHON_INSTALL) "$$b$$p" "$(DESTDIR)$(pythondir)/$$f"; \
+	    echo " $(nodist_pyexecPYTHON_INSTALL) '$$b$$p' '$(DESTDIR)$(pyexecdir)/$$f'"; \
+	    $(nodist_pyexecPYTHON_INSTALL) "$$b$$p" "$(DESTDIR)$(pyexecdir)/$$f"; \
 	  else :; fi; \
 	done; \
 	if test -n "$$dlist"; then \
 	  if test -z "$(DESTDIR)"; then \
-	    PYTHON=$(PYTHON) $(py_compile) --basedir "$(pythondir)" $$dlist; \
+	    PYTHON=$(PYTHON) $(py_compile) --basedir "$(pyexecdir)" $$dlist; \
 	  else \
-	    PYTHON=$(PYTHON) $(py_compile) --destdir "$(DESTDIR)" --basedir "$(pythondir)" $$dlist; \
+	    PYTHON=$(PYTHON) $(py_compile) --destdir "$(DESTDIR)" --basedir "$(pyexecdir)" $$dlist; \
 	  fi; \
 	else :; fi
 
-uninstall-nodist_pythonPYTHON:
+uninstall-nodist_pyexecPYTHON:
 	@$(NORMAL_UNINSTALL)
-	@list='$(nodist_python_PYTHON)'; dlist=''; for p in $$list; do\
+	@list='$(nodist_pyexec_PYTHON)'; dlist=''; for p in $$list; do\
 	  f=$(am__strip_dir) \
-	  rm -f "$(DESTDIR)$(pythondir)/$$f"; \
-	  rm -f "$(DESTDIR)$(pythondir)/$${f}c"; \
-	  rm -f "$(DESTDIR)$(pythondir)/$${f}o"; \
+	  rm -f "$(DESTDIR)$(pyexecdir)/$$f"; \
+	  rm -f "$(DESTDIR)$(pyexecdir)/$${f}c"; \
+	  rm -f "$(DESTDIR)$(pyexecdir)/$${f}o"; \
 	done
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
@@ -409,7 +409,7 @@ check-am: all-am
 check: check-am
 all-am: Makefile $(LTLIBRARIES)
 installdirs:
-	for dir in "$(DESTDIR)$(pyexecdir)" "$(DESTDIR)$(pythondir)"; do \
+	for dir in "$(DESTDIR)$(pyexecdir)" "$(DESTDIR)$(pyexecdir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-am
@@ -458,11 +458,11 @@ info: info-am
 
 info-am:
 
-install-data-am: install-nodist_pythonPYTHON
+install-data-am:
 
 install-dvi: install-dvi-am
 
-install-exec-am: install-pyexecLTLIBRARIES
+install-exec-am: install-nodist_pyexecPYTHON install-pyexecLTLIBRARIES
 
 install-html: install-html-am
 
@@ -494,7 +494,7 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-nodist_pythonPYTHON \
+uninstall-am: uninstall-nodist_pyexecPYTHON \
 	uninstall-pyexecLTLIBRARIES
 
 .MAKE: install-am install-strip
@@ -506,13 +506,13 @@ uninstall-am: uninstall-nodist_pythonPYTHON \
 	install install-am install-data install-data-am install-dvi \
 	install-dvi-am install-exec install-exec-am install-html \
 	install-html-am install-info install-info-am install-man \
-	install-nodist_pythonPYTHON install-pdf install-pdf-am \
+	install-nodist_pyexecPYTHON install-pdf install-pdf-am \
 	install-ps install-ps-am install-pyexecLTLIBRARIES \
 	install-strip installcheck installcheck-am installdirs \
 	maintainer-clean maintainer-clean-generic mostlyclean \
 	mostlyclean-compile mostlyclean-generic mostlyclean-libtool \
 	pdf pdf-am ps ps-am tags uninstall uninstall-am \
-	uninstall-nodist_pythonPYTHON uninstall-pyexecLTLIBRARIES
+	uninstall-nodist_pyexecPYTHON uninstall-pyexecLTLIBRARIES
 
 PYLIBVER ?= python$(PYTHON_VERSION)
 cvsscalc.py cvsscalc_wrap.c: ${srcdir}/cvsscalc.i

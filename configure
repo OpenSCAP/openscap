@@ -20563,7 +20563,7 @@ _ACEOF
 fi
 
 
-ac_config_files="$ac_config_files Makefile lib/Makefile swig/Makefile examples/Makefile docs/Makefile"
+ac_config_files="$ac_config_files Makefile lib/Makefile swig/Makefile examples/Makefile"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -21162,7 +21162,6 @@ do
     "lib/Makefile") CONFIG_FILES="$CONFIG_FILES lib/Makefile" ;;
     "swig/Makefile") CONFIG_FILES="$CONFIG_FILES swig/Makefile" ;;
     "examples/Makefile") CONFIG_FILES="$CONFIG_FILES examples/Makefile" ;;
-    "docs/Makefile") CONFIG_FILES="$CONFIG_FILES docs/Makefile" ;;
 
   *) { { echo "$as_me:$LINENO: error: invalid argument: $ac_config_target" >&5
 echo "$as_me: error: invalid argument: $ac_config_target" >&2;}

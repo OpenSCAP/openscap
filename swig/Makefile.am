@@ -4,7 +4,7 @@ AM_CFLAGS = -fPIC
 PYLIBVER ?= python$(PYTHON_VERSION)
 AM_CPPFLAGS = -I$(top_builddir)/lib -I$(top_srcdir)/lib -I/usr/include/$(PYLIBVER)
 
-nodist_python_PYTHON = cvsscalc.py
+nodist_pyexec_PYTHON = cvsscalc.py
 pyexec_LTLIBRARIES = _cvsscalc.la
 _cvsscalc_la_LDFLAGS = -module -avoid-version
 nodist__cvsscalc_la_SOURCES = cvsscalc_wrap.c ${top_srcdir}/lib/libcvsscalc.c
