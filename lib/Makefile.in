@@ -52,7 +52,11 @@ am__strip_dir = `echo $$p | sed -e 's|^.*/||'`;
 am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(includedir)"
 libLTLIBRARIES_INSTALL = $(INSTALL)
 LTLIBRARIES = $(lib_LTLIBRARIES)
-libcvsscalc_la_LIBADD =
+am__DEPENDENCIES_1 =
+libcve_la_DEPENDENCIES = $(am__DEPENDENCIES_1)
+am_libcve_la_OBJECTS = libcve_la-libcve.lo
+libcve_la_OBJECTS = $(am_libcve_la_OBJECTS)
+libcvsscalc_la_DEPENDENCIES =
 am_libcvsscalc_la_OBJECTS = libcvsscalc.lo
 libcvsscalc_la_OBJECTS = $(am_libcvsscalc_la_OBJECTS)
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
@@ -67,8 +71,8 @@ CCLD = $(CC)
 LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
-SOURCES = $(libcvsscalc_la_SOURCES)
-DIST_SOURCES = $(libcvsscalc_la_SOURCES)
+SOURCES = $(libcve_la_SOURCES) $(libcvsscalc_la_SOURCES)
+DIST_SOURCES = $(libcve_la_SOURCES) $(libcvsscalc_la_SOURCES)
 includeHEADERS_INSTALL = $(INSTALL_HEADER)
 HEADERS = $(include_HEADERS)
 ETAGS = etags
@@ -102,6 +106,7 @@ EXEEXT = @EXEEXT@
 F77 = @F77@
 FFLAGS = @FFLAGS@
 GREP = @GREP@
+HAVE_LIBXML_CONFIG = @HAVE_LIBXML_CONFIG@
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
@@ -169,6 +174,8 @@ infodir = @infodir@
 install_sh = @install_sh@
 libdir = @libdir@
 libexecdir = @libexecdir@
+libxml_cflags = @libxml_cflags@
+libxml_libs = @libxml_libs@
 localedir = @localedir@
 localstatedir = @localstatedir@
 mandir = @mandir@
@@ -190,9 +197,13 @@ target_alias = @target_alias@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 AM_CFLAGS = -fPIC
-lib_LTLIBRARIES = libcvsscalc.la
-include_HEADERS = libcvsscalc.h
+lib_LTLIBRARIES = libcvsscalc.la libcve.la
+include_HEADERS = libcvsscalc.h libcve.h
 libcvsscalc_la_SOURCES = libcvsscalc.c
+libcvsscalc_la_LIBADD = -lm
+libcve_la_SOURCES = libcve.c
+libcve_la_CPPFLAGS = -I$(top_srcdir) $(libxml_cflags)
+libcve_la_LIBADD = $(libxml_libs)
 all: all-am
 
 .SUFFIXES:
@@ -253,6 +264,8 @@ clean-libLTLIBRARIES:
 	  echo "rm -f \"$${dir}/so_locations\""; \
 	  rm -f "$${dir}/so_locations"; \
 	done
+libcve.la: $(libcve_la_OBJECTS) $(libcve_la_DEPENDENCIES) 
+	$(LINK) -rpath $(libdir) $(libcve_la_OBJECTS) $(libcve_la_LIBADD) $(LIBS)
 libcvsscalc.la: $(libcvsscalc_la_OBJECTS) $(libcvsscalc_la_DEPENDENCIES) 
 	$(LINK) -rpath $(libdir) $(libcvsscalc_la_OBJECTS) $(libcvsscalc_la_LIBADD) $(LIBS)
 
@@ -262,6 +275,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libcve_la-libcve.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libcvsscalc.Plo@am__quote@
 
 .c.o:
@@ -284,6 +298,13 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
+
+libcve_la-libcve.lo: libcve.c
+@am__fastdepCC_TRUE@	$(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libcve_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libcve_la-libcve.lo -MD -MP -MF $(DEPDIR)/libcve_la-libcve.Tpo -c -o libcve_la-libcve.lo `test -f 'libcve.c' || echo '$(srcdir)/'`libcve.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libcve_la-libcve.Tpo $(DEPDIR)/libcve_la-libcve.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libcve.c' object='libcve_la-libcve.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libcve_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libcve_la-libcve.lo `test -f 'libcve.c' || echo '$(srcdir)/'`libcve.c
 
 mostlyclean-libtool:
 	-rm -f *.lo

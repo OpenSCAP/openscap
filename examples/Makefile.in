@@ -31,7 +31,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-check_PROGRAMS = test_cvsscalc$(EXEEXT)
+check_PROGRAMS = test_cvsscalc$(EXEEXT) test_libcve$(EXEEXT)
 subdir = examples
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -44,6 +44,9 @@ CONFIG_CLEAN_FILES =
 am_test_cvsscalc_OBJECTS = test_cvsscalc.$(OBJEXT)
 test_cvsscalc_OBJECTS = $(am_test_cvsscalc_OBJECTS)
 test_cvsscalc_DEPENDENCIES = ../lib/libcvsscalc.la
+am_test_libcve_OBJECTS = test_libcve.$(OBJEXT)
+test_libcve_OBJECTS = $(am_test_libcve_OBJECTS)
+test_libcve_DEPENDENCIES = ../lib/libcve.la
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -56,8 +59,8 @@ CCLD = $(CC)
 LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
-SOURCES = $(test_cvsscalc_SOURCES)
-DIST_SOURCES = $(test_cvsscalc_SOURCES)
+SOURCES = $(test_cvsscalc_SOURCES) $(test_libcve_SOURCES)
+DIST_SOURCES = $(test_cvsscalc_SOURCES) $(test_libcve_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -89,6 +92,7 @@ EXEEXT = @EXEEXT@
 F77 = @F77@
 FFLAGS = @FFLAGS@
 GREP = @GREP@
+HAVE_LIBXML_CONFIG = @HAVE_LIBXML_CONFIG@
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
@@ -156,6 +160,8 @@ infodir = @infodir@
 install_sh = @install_sh@
 libdir = @libdir@
 libexecdir = @libexecdir@
+libxml_cflags = @libxml_cflags@
+libxml_libs = @libxml_libs@
 localedir = @localedir@
 localstatedir = @localstatedir@
 mandir = @mandir@
@@ -177,7 +183,9 @@ target_alias = @target_alias@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 test_cvsscalc_SOURCES = test_cvsscalc.c
-test_cvsscalc_LDADD = ../lib/libcvsscalc.la -lm
+test_cvsscalc_LDADD = ../lib/libcvsscalc.la
+test_libcve_SOURCES = test_libcve.c
+test_libcve_LDADD = ../lib/libcve.la
 EXTRA_DIST = test_cvsscalc.py
 all: all-am
 
@@ -222,6 +230,9 @@ clean-checkPROGRAMS:
 test_cvsscalc$(EXEEXT): $(test_cvsscalc_OBJECTS) $(test_cvsscalc_DEPENDENCIES) 
 	@rm -f test_cvsscalc$(EXEEXT)
 	$(LINK) $(test_cvsscalc_OBJECTS) $(test_cvsscalc_LDADD) $(LIBS)
+test_libcve$(EXEEXT): $(test_libcve_OBJECTS) $(test_libcve_DEPENDENCIES) 
+	@rm -f test_libcve$(EXEEXT)
+	$(LINK) $(test_libcve_OBJECTS) $(test_libcve_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -230,6 +241,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_cvsscalc.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_libcve.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<

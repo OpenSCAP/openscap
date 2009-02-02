@@ -48,6 +48,37 @@ echo Checking for header files
 
 AC_HEADER_STDC
 
+echo .
+echo Custom checks
+
+AC_CHECK_PROG(
+  [HAVE_LIBXML_CONFIG],
+  [xml2-config],
+  [yes],,,
+)
+if test "x${HAVE_LIBXML_CONFIG}" != "xyes"; then
+  AC_MSG_FAILURE([xml2-config not found in PATH])
+fi
+AC_CHECK_LIB(
+  [xml2],
+  [xmlSaveToBuffer],
+  [libxml_cflags=`xml2-config --cflags`
+   libxml_libs=`xml2-config --libs`
+  ],
+  [AC_MSG_FAILURE([libxml2 library is missing])],
+  [`xml2-config --libs`]
+)
+CPPFLAGS_SAVE="$CPPFLAGS"
+CPPFLAGS="$libxml_cflags $CPPFLAGS"
+AC_CHECK_HEADERS(
+  [libxml2/libxml/xmlreader.h],,
+  [AC_MSG_FAILURE([libxml2 header files are missing])]
+)
+CPPFLAGS="$CPPFLAGS_SAVE"
+AC_SUBST(libxml_cflags)
+AC_SUBST(libxml_libs)
+
+
 AC_CONFIG_FILES([Makefile lib/Makefile swig/Makefile examples/Makefile])
 AC_OUTPUT
 
