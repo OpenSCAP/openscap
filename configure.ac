@@ -27,7 +27,7 @@ define([AC_INIT_NOTICE],
 ### A log of configuration tests is in `config.log'.
 ])
 
-AC_INIT([openscap], [0.1.1], [open-scap-list@redhat.com])
+AC_INIT([openscap], [0.1.2], [open-scap-list@redhat.com])
 AC_CONFIG_HEADERS([config.h])
 
 echo Configuring openscap $VERSION
