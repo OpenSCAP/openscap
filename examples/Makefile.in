@@ -31,7 +31,9 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-check_PROGRAMS = test_cvsscalc$(EXEEXT) test_libcve$(EXEEXT)
+check_PROGRAMS = test_cvsscalc$(EXEEXT) test_libcve$(EXEEXT) \
+	test_cpelang$(EXEEXT) test_cpedict$(EXEEXT) \
+	test_cpeuri$(EXEEXT)
 subdir = examples
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -41,6 +43,15 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
+am_test_cpedict_OBJECTS = test_cpedict.$(OBJEXT)
+test_cpedict_OBJECTS = $(am_test_cpedict_OBJECTS)
+test_cpedict_DEPENDENCIES = ../lib/libcpe.la
+am_test_cpelang_OBJECTS = test_cpelang.$(OBJEXT)
+test_cpelang_OBJECTS = $(am_test_cpelang_OBJECTS)
+test_cpelang_DEPENDENCIES = ../lib/libcpe.la
+am_test_cpeuri_OBJECTS = test_cpeuri.$(OBJEXT)
+test_cpeuri_OBJECTS = $(am_test_cpeuri_OBJECTS)
+test_cpeuri_DEPENDENCIES = ../lib/libcpe.la
 am_test_cvsscalc_OBJECTS = test_cvsscalc.$(OBJEXT)
 test_cvsscalc_OBJECTS = $(am_test_cvsscalc_OBJECTS)
 test_cvsscalc_DEPENDENCIES = ../lib/libcvsscalc.la
@@ -59,8 +70,12 @@ CCLD = $(CC)
 LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
-SOURCES = $(test_cvsscalc_SOURCES) $(test_libcve_SOURCES)
-DIST_SOURCES = $(test_cvsscalc_SOURCES) $(test_libcve_SOURCES)
+SOURCES = $(test_cpedict_SOURCES) $(test_cpelang_SOURCES) \
+	$(test_cpeuri_SOURCES) $(test_cvsscalc_SOURCES) \
+	$(test_libcve_SOURCES)
+DIST_SOURCES = $(test_cpedict_SOURCES) $(test_cpelang_SOURCES) \
+	$(test_cpeuri_SOURCES) $(test_cvsscalc_SOURCES) \
+	$(test_libcve_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -93,6 +108,7 @@ F77 = @F77@
 FFLAGS = @FFLAGS@
 GREP = @GREP@
 HAVE_LIBXML_CONFIG = @HAVE_LIBXML_CONFIG@
+HAVE_PCRE_CONFIG = @HAVE_PCRE_CONFIG@
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
@@ -167,6 +183,8 @@ localstatedir = @localstatedir@
 mandir = @mandir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
+pcre_cflags = @pcre_cflags@
+pcre_libs = @pcre_libs@
 pdfdir = @pdfdir@
 pkgpyexecdir = @pkgpyexecdir@
 pkgpythondir = @pkgpythondir@
@@ -186,6 +204,12 @@ test_cvsscalc_SOURCES = test_cvsscalc.c
 test_cvsscalc_LDADD = ../lib/libcvsscalc.la
 test_libcve_SOURCES = test_libcve.c
 test_libcve_LDADD = ../lib/libcve.la
+test_cpelang_SOURCES = test_cpelang.c
+test_cpelang_LDADD = ../lib/libcpe.la
+test_cpedict_SOURCES = test_cpedict.c
+test_cpedict_LDADD = ../lib/libcpe.la
+test_cpeuri_SOURCES = test_cpeuri.c
+test_cpeuri_LDADD = ../lib/libcpe.la
 EXTRA_DIST = test_cvsscalc.py
 all: all-am
 
@@ -227,6 +251,15 @@ clean-checkPROGRAMS:
 	  echo " rm -f $$p $$f"; \
 	  rm -f $$p $$f ; \
 	done
+test_cpedict$(EXEEXT): $(test_cpedict_OBJECTS) $(test_cpedict_DEPENDENCIES) 
+	@rm -f test_cpedict$(EXEEXT)
+	$(LINK) $(test_cpedict_OBJECTS) $(test_cpedict_LDADD) $(LIBS)
+test_cpelang$(EXEEXT): $(test_cpelang_OBJECTS) $(test_cpelang_DEPENDENCIES) 
+	@rm -f test_cpelang$(EXEEXT)
+	$(LINK) $(test_cpelang_OBJECTS) $(test_cpelang_LDADD) $(LIBS)
+test_cpeuri$(EXEEXT): $(test_cpeuri_OBJECTS) $(test_cpeuri_DEPENDENCIES) 
+	@rm -f test_cpeuri$(EXEEXT)
+	$(LINK) $(test_cpeuri_OBJECTS) $(test_cpeuri_LDADD) $(LIBS)
 test_cvsscalc$(EXEEXT): $(test_cvsscalc_OBJECTS) $(test_cvsscalc_DEPENDENCIES) 
 	@rm -f test_cvsscalc$(EXEEXT)
 	$(LINK) $(test_cvsscalc_OBJECTS) $(test_cvsscalc_LDADD) $(LIBS)
@@ -240,6 +273,9 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_cpedict.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_cpelang.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_cpeuri.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_cvsscalc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_libcve.Po@am__quote@
 

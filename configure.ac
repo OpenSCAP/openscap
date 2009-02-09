@@ -51,6 +51,9 @@ AC_HEADER_STDC
 echo .
 echo Custom checks
 
+#
+# libxml2
+#
 AC_CHECK_PROG(
   [HAVE_LIBXML_CONFIG],
   [xml2-config],
@@ -77,6 +80,33 @@ AC_CHECK_HEADERS(
 CPPFLAGS="$CPPFLAGS_SAVE"
 AC_SUBST(libxml_cflags)
 AC_SUBST(libxml_libs)
+
+#
+# libpcre
+#
+AC_CHECK_HEADERS(
+  [pcre.h],,
+  [AC_MSG_FAILURE([pcre header file is missing])]
+)
+AC_CHECK_PROG(
+  [HAVE_PCRE_CONFIG],
+  [pcre-config],
+  [yes],,,
+)
+if test "x${HAVE_PCRE_CONFIG}" != "xyes"; then
+  AC_MSG_FAILURE([pcre_config not found in PATH])
+fi
+AC_CHECK_LIB(
+  [pcre],
+  [pcre_compile],
+  [pcre_cflags=`pcre-config --cflags`
+   pcre_libs=`pcre-config --libs`
+  ],
+  [AC_MSG_FAILURE([pcre library is missing])],
+  [`pcre-config --libs`]
+)
+AC_SUBST(pcre_cflags)
+AC_SUBST(pcre_libs)
 
 
 AC_CONFIG_FILES([Makefile lib/Makefile swig/Makefile examples/Makefile])

@@ -1,7 +1,13 @@
-Mon Feb 02 2009 Tomas Heinrich	<theinric@redhat.com>
+Mon Feb 09 2009 Lukas Kuklinek	<lkuklinek@redhat.com>
 		Peter Vrabec	<pvrabec@redhat.com>
 
 	* CPE support
+	* autotools and specfile adjust
+
+Mon Feb 02 2009 Tomas Heinrich	<theinric@redhat.com>
+		Peter Vrabec	<pvrabec@redhat.com>
+
+	* CVE support
 	* autotools and specfile adjust
 
 Thu Jan 15 2009 Tomas Heinrich	<theinric@redhat.com>

@@ -53,6 +53,10 @@ am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(includedir)"
 libLTLIBRARIES_INSTALL = $(INSTALL)
 LTLIBRARIES = $(lib_LTLIBRARIES)
 am__DEPENDENCIES_1 =
+libcpe_la_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
+am_libcpe_la_OBJECTS = libcpe_la-cpeuri.lo libcpe_la-cpematch.lo \
+	libcpe_la-cpedict.lo libcpe_la-cpelang.lo
+libcpe_la_OBJECTS = $(am_libcpe_la_OBJECTS)
 libcve_la_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_libcve_la_OBJECTS = libcve_la-libcve.lo
 libcve_la_OBJECTS = $(am_libcve_la_OBJECTS)
@@ -71,8 +75,10 @@ CCLD = $(CC)
 LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
-SOURCES = $(libcve_la_SOURCES) $(libcvsscalc_la_SOURCES)
-DIST_SOURCES = $(libcve_la_SOURCES) $(libcvsscalc_la_SOURCES)
+SOURCES = $(libcpe_la_SOURCES) $(libcve_la_SOURCES) \
+	$(libcvsscalc_la_SOURCES)
+DIST_SOURCES = $(libcpe_la_SOURCES) $(libcve_la_SOURCES) \
+	$(libcvsscalc_la_SOURCES)
 includeHEADERS_INSTALL = $(INSTALL_HEADER)
 HEADERS = $(include_HEADERS)
 ETAGS = etags
@@ -107,6 +113,7 @@ F77 = @F77@
 FFLAGS = @FFLAGS@
 GREP = @GREP@
 HAVE_LIBXML_CONFIG = @HAVE_LIBXML_CONFIG@
+HAVE_PCRE_CONFIG = @HAVE_PCRE_CONFIG@
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
@@ -181,6 +188,8 @@ localstatedir = @localstatedir@
 mandir = @mandir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
+pcre_cflags = @pcre_cflags@
+pcre_libs = @pcre_libs@
 pdfdir = @pdfdir@
 pkgpyexecdir = @pkgpyexecdir@
 pkgpythondir = @pkgpythondir@
@@ -197,13 +206,25 @@ target_alias = @target_alias@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 AM_CFLAGS = -fPIC
-lib_LTLIBRARIES = libcvsscalc.la libcve.la
-include_HEADERS = libcvsscalc.h libcve.h
+lib_LTLIBRARIES = libcvsscalc.la \
+                  libcve.la \
+                  libcpe.la
+
+include_HEADERS = libcvsscalc.h \
+                  libcve.h \
+                  libcpeuri.h \
+                  libcpematch.h \
+                  libcpedict.h \
+                  libcpelang.h 
+
 libcvsscalc_la_SOURCES = libcvsscalc.c
 libcvsscalc_la_LIBADD = -lm
 libcve_la_SOURCES = libcve.c
 libcve_la_CPPFLAGS = -I$(top_srcdir) $(libxml_cflags)
 libcve_la_LIBADD = $(libxml_libs)
+libcpe_la_SOURCES = cpeuri.c cpematch.c cpedict.c cpelang.c
+libcpe_la_CPPFLAGS = -I$(top_srcdir) $(libxml_cflags)  $(pcre_cflags)
+libcpe_la_LIBADD = $(libxml_libs) $(pcre_libs)
 all: all-am
 
 .SUFFIXES:
@@ -264,6 +285,8 @@ clean-libLTLIBRARIES:
 	  echo "rm -f \"$${dir}/so_locations\""; \
 	  rm -f "$${dir}/so_locations"; \
 	done
+libcpe.la: $(libcpe_la_OBJECTS) $(libcpe_la_DEPENDENCIES) 
+	$(LINK) -rpath $(libdir) $(libcpe_la_OBJECTS) $(libcpe_la_LIBADD) $(LIBS)
 libcve.la: $(libcve_la_OBJECTS) $(libcve_la_DEPENDENCIES) 
 	$(LINK) -rpath $(libdir) $(libcve_la_OBJECTS) $(libcve_la_LIBADD) $(LIBS)
 libcvsscalc.la: $(libcvsscalc_la_OBJECTS) $(libcvsscalc_la_DEPENDENCIES) 
@@ -275,6 +298,10 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libcpe_la-cpedict.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libcpe_la-cpelang.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libcpe_la-cpematch.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libcpe_la-cpeuri.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libcve_la-libcve.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libcvsscalc.Plo@am__quote@
 
@@ -298,6 +325,34 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
+
+libcpe_la-cpeuri.lo: cpeuri.c
+@am__fastdepCC_TRUE@	$(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libcpe_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libcpe_la-cpeuri.lo -MD -MP -MF $(DEPDIR)/libcpe_la-cpeuri.Tpo -c -o libcpe_la-cpeuri.lo `test -f 'cpeuri.c' || echo '$(srcdir)/'`cpeuri.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libcpe_la-cpeuri.Tpo $(DEPDIR)/libcpe_la-cpeuri.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='cpeuri.c' object='libcpe_la-cpeuri.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libcpe_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libcpe_la-cpeuri.lo `test -f 'cpeuri.c' || echo '$(srcdir)/'`cpeuri.c
+
+libcpe_la-cpematch.lo: cpematch.c
+@am__fastdepCC_TRUE@	$(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libcpe_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libcpe_la-cpematch.lo -MD -MP -MF $(DEPDIR)/libcpe_la-cpematch.Tpo -c -o libcpe_la-cpematch.lo `test -f 'cpematch.c' || echo '$(srcdir)/'`cpematch.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libcpe_la-cpematch.Tpo $(DEPDIR)/libcpe_la-cpematch.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='cpematch.c' object='libcpe_la-cpematch.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libcpe_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libcpe_la-cpematch.lo `test -f 'cpematch.c' || echo '$(srcdir)/'`cpematch.c
+
+libcpe_la-cpedict.lo: cpedict.c
+@am__fastdepCC_TRUE@	$(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libcpe_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libcpe_la-cpedict.lo -MD -MP -MF $(DEPDIR)/libcpe_la-cpedict.Tpo -c -o libcpe_la-cpedict.lo `test -f 'cpedict.c' || echo '$(srcdir)/'`cpedict.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libcpe_la-cpedict.Tpo $(DEPDIR)/libcpe_la-cpedict.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='cpedict.c' object='libcpe_la-cpedict.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libcpe_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libcpe_la-cpedict.lo `test -f 'cpedict.c' || echo '$(srcdir)/'`cpedict.c
+
+libcpe_la-cpelang.lo: cpelang.c
+@am__fastdepCC_TRUE@	$(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libcpe_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libcpe_la-cpelang.lo -MD -MP -MF $(DEPDIR)/libcpe_la-cpelang.Tpo -c -o libcpe_la-cpelang.lo `test -f 'cpelang.c' || echo '$(srcdir)/'`cpelang.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libcpe_la-cpelang.Tpo $(DEPDIR)/libcpe_la-cpelang.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='cpelang.c' object='libcpe_la-cpelang.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libcpe_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libcpe_la-cpelang.lo `test -f 'cpelang.c' || echo '$(srcdir)/'`cpelang.c
 
 libcve_la-libcve.lo: libcve.c
 @am__fastdepCC_TRUE@	$(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libcve_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libcve_la-libcve.lo -MD -MP -MF $(DEPDIR)/libcve_la-libcve.Tpo -c -o libcve_la-libcve.lo `test -f 'libcve.c' || echo '$(srcdir)/'`libcve.c
