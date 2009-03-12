@@ -6,7 +6,7 @@
  */
 #include <stdlib.h>
 #include <stdio.h>
-#include <liboval/oval_definitions.h>
+#include <includes/oval_definitions.h>
 #include "includes/oval_collection_impl.h"
 
 	typedef struct Oval_state_s{
