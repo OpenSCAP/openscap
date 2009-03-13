@@ -109,51 +109,51 @@ AC_FUNC_MALLOC
 AC_FUNC_REALLOC
 AC_CHECK_FUNCS([memset strcasecmp strdup])
 
-AC_ARG_ENABLE([with_oval],
+AC_ARG_ENABLE([oval],
      [  --enable-oval           include support for OVAL],
      [case "${enableval}" in
-       yes) with_oval=yes ;;
-       no)  with_oval=no  ;;
-       *) AC_MSG_ERROR([bad value ${enableval} for --with-oval]) ;;
-     esac],[with_oval=yes])
+       yes) oval=yes ;;
+       no)  oval=no  ;;
+       *) AC_MSG_ERROR([bad value ${enableval} for --enable-oval]) ;;
+     esac],[oval=yes])
 
-AC_ARG_ENABLE([with_cvss],
+AC_ARG_ENABLE([cvss],
      [  --enable-cvss           include support for CVSS],
      [case "${enableval}" in
-       yes) with_cvss=yes ;;
-       no)  with_cvss=no  ;;
-       *) AC_MSG_ERROR([bad value ${enableval} for --with-cvss]) ;;
-     esac],[with_cvss=no])
+       yes) cvss=yes ;;
+       no)  cvss=no  ;;
+       *) AC_MSG_ERROR([bad value ${enableval} for --enable-cvss]) ;;
+     esac],[cvss=yes])
 
-AC_ARG_ENABLE([with_cve],
+AC_ARG_ENABLE([cve],
      [  --enable-cve            include support for CVE],
      [case "${enableval}" in
-       yes) with_cve=yes ;;
-       no)  with_cve=no  ;;
-       *) AC_MSG_ERROR([bad value ${enableval} for --with-cve]) ;;
-     esac],[with_cve=no])
+       yes) cve=yes ;;
+       no)  cve=no  ;;
+       *) AC_MSG_ERROR([bad value ${enableval} for --enable-cve]) ;;
+     esac],[cve=yes])
 
-AC_ARG_ENABLE([with_cpe],
+AC_ARG_ENABLE([cpe],
      [  --enable-cpe            include support for CPE],
      [case "${enableval}" in
-       yes) with_cpe=yes ;;
-       no)  with_cpe=no  ;;
-       *) AC_MSG_ERROR([bad value ${enableval} for --with-cpe]) ;;
-     esac],[with_cpe=no])
+       yes) cpe=yes ;;
+       no)  cpe=no  ;;
+       *) AC_MSG_ERROR([bad value ${enableval} for --enable-cpe]) ;;
+     esac],[cpe=yes])
 
-AC_ARG_ENABLE([with_cce],
+AC_ARG_ENABLE([cce],
      [  --enable-cce            include support for CCE],
      [case "${enableval}" in
-       yes) with_cce=yes ;;
-       no)  with_cce=no  ;;
-       *) AC_MSG_ERROR([bad value ${enableval} for --with-cce]) ;;
-     esac],[with_cce=no])
+       yes) cce=yes ;;
+       no)  cce=no  ;;
+       *) AC_MSG_ERROR([bad value ${enableval} for --enable-cce]) ;;
+     esac],[cce=yes])
 
-AM_CONDITIONAL([WANT_OVAL], test "$with_oval" = yes)
-AM_CONDITIONAL([WANT_CVSS], test "$with_cvss" = yes)
-AM_CONDITIONAL([WANT_CVE],  test "$with_cve"  = yes)
-AM_CONDITIONAL([WANT_CPE],  test "$with_cpe"  = yes)
-AM_CONDITIONAL([WANT_CCE],  test "$with_cce"  = yes)
+AM_CONDITIONAL([WANT_OVAL], test "$oval" = yes)
+AM_CONDITIONAL([WANT_CVSS], test "$cvss" = yes)
+AM_CONDITIONAL([WANT_CVE],  test "$cve"  = yes)
+AM_CONDITIONAL([WANT_CPE],  test "$cpe"  = yes)
+AM_CONDITIONAL([WANT_CCE],  test "$cce"  = yes)
 
 # Requires automake >= 1.10.2
 #
