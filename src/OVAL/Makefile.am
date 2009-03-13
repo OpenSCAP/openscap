@@ -13,3 +13,5 @@ liboval_la_SOURCES += includes/oval_results_impl.h includes/oval_system_characte
 
 include_HEADERS  = includes/oval_agent_api.h includes/oval_definitions.h 
 include_HEADERS += includes/oval_results.h includes/oval_system_characteristics.h
+
+includedir = $(prefix)/include/lib@PACKAGE@

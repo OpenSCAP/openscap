@@ -5,3 +5,4 @@ libcpe_la_CFLAGS  = @libxml_cflags@
 libcpe_la_LDFLAGS = @libxml_libs@
 
 include_HEADERS = cpe.h cpedict.h  cpelang.h  cpematch.h cpeuri.h
+includedir = $(prefix)/include/lib@PACKAGE@
