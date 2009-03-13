@@ -29,12 +29,11 @@
 
 %module cvsscalc
 %{
- #include "../lib/libcvsscalc.h"
+ #include "../src/CVSS/cvsscalc.h"
 %}
 
-%include "../lib/libcvsscalc.h"
+%include "../src/CVSS/cvsscalc.h"
 
 %include cpointer.i
 %pointer_functions(int, intp);
 %pointer_functions(double, doublep);
-

@@ -16,6 +16,9 @@ AC_PROG_LN_S
 AC_PROG_MAKE_SET
 AC_PROG_LIBTOOL
 
+# swig
+AC_PROG_SWIG([1.3.30])
+
 #
 # xml2-config
 #
@@ -71,6 +74,7 @@ AC_CHECK_LIB(
 # Checks for header files.
 
 AC_HEADER_STDC
+AM_CHECK_PYTHON_HEADERS
 
 #
 # xml
