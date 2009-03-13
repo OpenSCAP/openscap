@@ -1,4 +1,2 @@
-#! /bin/sh
-
+#!/bin/sh
 autoreconf -i
-
