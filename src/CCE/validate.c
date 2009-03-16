@@ -17,33 +17,27 @@
 #include "cce.h"
 
 
-void validateFile(const char *filename) {
-    //Pulled almost verbatim from the libxml website examples.
+bool validateFile(const char *filename) {
     xmlParserCtxtPtr ctxt; /* the parser context */
     xmlDocPtr doc; /* the resulting document tree */
-    printf("Validating File\n");
+	bool ret = false;
     /* create a parser context */
     ctxt = xmlNewParserCtxt();
-    if (ctxt == NULL) {
-        fprintf(stderr, "Failed to allocate parser context.  Now quitting...\n");
-        exit(0);
-	return;
-    }
+    if (ctxt == NULL)
+		return false;
     /* parse the file, activating the DTD validation option */
     doc = xmlCtxtReadFile(ctxt, filename, NULL, XML_PARSE_DTDATTR);
     /* check if parsing suceeded */
     if (doc == NULL) {
-        fprintf(stderr, "Failed to parse %s quitting...\n", filename);
-        exit(0);
-    } else {
-	/* check if validation suceeded */
-        if (ctxt->valid == 0)
-	    fprintf(stderr, "Failed to validate %s quitting...\n", filename);
-            //exit(0);
-	/* free up the resulting document */
-	xmlFreeDoc(doc);
+		xmlFreeParserCtxt(ctxt);
+        return false;
     }
+	/* check if validation suceeded */
+	if (ctxt->valid)
+		ret = true;
+	xmlFreeDoc(doc);
     /* free up the parser context */
     xmlFreeParserCtxt(ctxt);
+	return ret;
 
 }

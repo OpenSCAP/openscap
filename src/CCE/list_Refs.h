@@ -8,11 +8,11 @@
 struct list_Refs
 {
 	struct list_Refs* next;
-	xmlChar* source;
-	xmlChar* value;
+	char* source;
+	char* value;
 };
 
-void list_Refs_add(struct list_Refs* list, xmlChar* source, xmlChar* value);
+void list_Refs_add(struct list_Refs* list, char* source, char* value);
 void list_Refs_clear(struct list_Refs* list);
 
 #endif

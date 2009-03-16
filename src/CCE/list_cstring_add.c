@@ -14,18 +14,18 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "list_xmlChar.h"
+#include "list_cstring.h"
 
-void list_XMLCHAR_add(struct list_XMLCHAR* list, xmlChar* value)
+void list_cstring_add(struct list_cstring* list, char* value)
 {
 	if (!list->value)
 	{
 		list->value = value;
 		return;
 	}
-	struct list_XMLCHAR* current = list;
+	struct list_cstring* current = list;
 	while (current->next) current = current->next;
-        struct list_XMLCHAR* newitem = (struct list_XMLCHAR*)malloc(sizeof(struct list_XMLCHAR));
+        struct list_cstring* newitem = (struct list_cstring*)malloc(sizeof(struct list_cstring));
 	newitem->next = NULL;
 	newitem->value = value;
 	current->next = newitem;

@@ -19,8 +19,8 @@ void initCCE(struct CCE* cce)
 {
 	cce->id = NULL;
 	cce->description = NULL;
-	cce->parameters = (struct list_XMLCHAR*)malloc(sizeof(struct list_XMLCHAR));
-	cce->technicalmechanisms = (struct list_XMLCHAR*)malloc(sizeof(struct list_XMLCHAR));
+	cce->parameters = (struct list_cstring*)malloc(sizeof(struct list_cstring));
+	cce->technicalmechanisms = (struct list_cstring*)malloc(sizeof(struct list_cstring));
 	cce->parameters->next = NULL;
 	cce->parameters->value = NULL;
 	cce->technicalmechanisms->next = NULL;

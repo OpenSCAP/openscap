@@ -26,9 +26,7 @@ void processNode(xmlTextReaderPtr reader, struct CCE* cce, char* id )
 		if (!xmlStrcmp(xmlTextReaderGetAttribute(reader, (const xmlChar*)"id"), (const xmlChar*) id)) // if id matches CCE id
 		{
 
-                        printf("Found the CCE ID:%s... \n", id);
-                        printf("Processing ID...\n");
-			cce->id = xmlTextReaderGetAttribute(reader, (const xmlChar*)"id");
+			cce->id = (char*) xmlTextReaderGetAttribute(reader, (const xmlChar*)"id");
 			xmlTextReaderRead(reader);
 			xmlChar* name = xmlTextReaderName(reader);
 			int type = xmlTextReaderNodeType(reader);

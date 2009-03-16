@@ -16,7 +16,7 @@
 
 #include "list_Refs.h"
 
-void list_Refs_add(struct list_Refs* list, xmlChar* source, xmlChar* value)
+void list_Refs_add(struct list_Refs* list, char* source, char* value)
 {
 	if (!list->value)
 	{

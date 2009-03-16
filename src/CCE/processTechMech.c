@@ -29,7 +29,7 @@ void processTechMech(xmlTextReaderPtr reader, struct CCE* cce)
 		switch(xmlTextReaderNodeType(reader))
 		{
 			case 3:
-				list_XMLCHAR_add(cce->technicalmechanisms, xmlTextReaderValue(reader));
+				list_cstring_add(cce->technicalmechanisms, xmlTextReaderValue(reader));
 				break;
 		}
 	}

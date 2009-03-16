@@ -17,12 +17,12 @@
 #include <libxml/xmlmemory.h>
 #include <libxml/parser.h>
 #include <libxml/xmlreader.h>
-#include "list_xmlChar.h"
+#include "list_cstring.h"
 
-void list_XMLCHAR_clear(struct list_XMLCHAR* list)
+void list_cstring_clear(struct list_cstring* list)
 {
-	struct list_XMLCHAR* current = list;
-	struct list_XMLCHAR* next = current;
+	struct list_cstring* current = list;
+	struct list_cstring* next = current;
 	do
 	{
 		current = next;

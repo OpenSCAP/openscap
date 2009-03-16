@@ -20,7 +20,7 @@ void clearCCE(struct CCE* cce)
 {
 	if (cce->id) xmlFree(cce->id);
 	if (cce->description) xmlFree(cce->description);
-	list_XMLCHAR_clear(cce->parameters);
-	list_XMLCHAR_clear(cce->technicalmechanisms);
+	list_cstring_clear(cce->parameters);
+	list_cstring_clear(cce->technicalmechanisms);
 	list_Refs_clear(cce->references);
 }

@@ -30,7 +30,7 @@ void processParameter(xmlTextReaderPtr reader, struct CCE* cce)
 		switch(xmlTextReaderNodeType(reader))
 		{
 			case 3:
-				list_XMLCHAR_add(cce->parameters, xmlTextReaderValue(reader));
+				list_cstring_add(cce->parameters, xmlTextReaderValue(reader));
 				break;
 		}
 	}

@@ -21,7 +21,7 @@ void processDescription(xmlTextReaderPtr reader, struct CCE* cce)
 	while(xmlTextReaderRead(reader))
 	{
 		if (xmlTextReaderNodeType(reader) == 15 &&
-			!xmlStrcmp(xmlTextReaderName(reader), (const xmlChar*)"description"))
+			!xmlStrcmp(xmlTextReaderName(reader), BAD_CAST "description"))
 		{
 			return;
 		}
