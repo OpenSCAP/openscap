@@ -114,7 +114,7 @@ AC_FUNC_REALLOC
 AC_CHECK_FUNCS([memset strcasecmp strdup])
 
 AC_ARG_ENABLE([oval],
-     [  --enable-oval           include support for OVAL],
+     [  --enable-oval           include support for OVAL [[default=yes]]],
      [case "${enableval}" in
        yes) oval=yes ;;
        no)  oval=no  ;;
@@ -122,7 +122,7 @@ AC_ARG_ENABLE([oval],
      esac],[oval=yes])
 
 AC_ARG_ENABLE([cvss],
-     [  --enable-cvss           include support for CVSS],
+     [  --enable-cvss           include support for CVSS [[default=yes]]],
      [case "${enableval}" in
        yes) cvss=yes ;;
        no)  cvss=no  ;;
@@ -130,7 +130,7 @@ AC_ARG_ENABLE([cvss],
      esac],[cvss=yes])
 
 AC_ARG_ENABLE([cve],
-     [  --enable-cve            include support for CVE],
+     [  --enable-cve            include support for CVE [[default=yes]]],
      [case "${enableval}" in
        yes) cve=yes ;;
        no)  cve=no  ;;
@@ -138,7 +138,7 @@ AC_ARG_ENABLE([cve],
      esac],[cve=yes])
 
 AC_ARG_ENABLE([cpe],
-     [  --enable-cpe            include support for CPE],
+     [  --enable-cpe            include support for CPE [[default=yes]]],
      [case "${enableval}" in
        yes) cpe=yes ;;
        no)  cpe=no  ;;
@@ -146,7 +146,7 @@ AC_ARG_ENABLE([cpe],
      esac],[cpe=yes])
 
 AC_ARG_ENABLE([cce],
-     [  --enable-cce            include support for CCE],
+     [  --enable-cce            include support for CCE [[default=yes]]],
      [case "${enableval}" in
        yes) cce=yes ;;
        no)  cce=no  ;;
