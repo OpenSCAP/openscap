@@ -1,6 +1,6 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
-AC_PREREQ(2.62)
+AC_PREREQ(2.61)
 AC_INIT([openscap], [0.1.2], [open-scap-list@redhat.com])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_AUX_DIR([config])
@@ -18,6 +18,9 @@ AC_PROG_LIBTOOL
 
 # swig
 AC_PROG_SWIG([1.3.30])
+
+# Compiler flags
+CFLAGS="$CFLAGS -W -Wall -Wshadow -Wformat -Wundef"
 
 #
 # xml2-config
