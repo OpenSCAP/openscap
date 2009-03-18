@@ -1,6 +1,5 @@
-
-#include "../lib/libcpelang.h"
 #include <stdio.h>
+#include <cpelang.h>
 
 void test_platform_dump(CpePlatform_t* plat);
 void test_langexpr_dump(CpeLangExpr_t* expr, int depth);

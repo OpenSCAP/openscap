@@ -1,5 +1,4 @@
-
-#include "../lib/libcpedict.h"
+#include <cpedict.h>
 
 // dump contents of an CPE dictionary item
 void cpe_dictitem_dump(CpeDictItem_t* item)

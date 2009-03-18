@@ -11,6 +11,7 @@ AM_PATH_PYTHON
 
 # Checks for programs.
 AC_PROG_CC
+AM_PROG_CC_C_O
 AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_PROG_MAKE_SET
@@ -187,7 +188,8 @@ AC_CONFIG_FILES([Makefile
                  src/CVSS/Makefile
                  src/CVE/Makefile
                  src/CPE/Makefile
-                 src/CCE/Makefile])
+                 src/CCE/Makefile
+                 examples/Makefile])
 
 #AC_CONFIG_FILES([Makefile
 #                 src/Makefile

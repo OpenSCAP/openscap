@@ -1,3 +1,4 @@
+if WANT_CVSS
 AM_CFLAGS = -fPIC
 PYLIBVER ?= python$(PYTHON_VERSION)
 AM_CPPFLAGS = -I$(top_builddir)/src/CVSS -I$(top_srcdir)/src/CVSS $(PYTHON_INCLUDES)
@@ -12,3 +13,4 @@ cvsscalc.py cvsscalc_wrap.c: ${srcdir}/cvsscalc.i
 
 CLEANFILES = cvsscalc.py cvsscalc_wrap.c cvsscalc.pyc
 EXTRA_DIST = cvsscalc.i
+endif

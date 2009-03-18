@@ -1,9 +1,8 @@
-
 #include "config.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "../lib/libcpeuri.h"
+#include <cpeuri.h>
 
 void print_help(const char* progname)
 {
