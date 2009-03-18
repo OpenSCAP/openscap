@@ -163,24 +163,6 @@ AM_CONDITIONAL([WANT_CVE],  test "$cve"  = yes)
 AM_CONDITIONAL([WANT_CPE],  test "$cpe"  = yes)
 AM_CONDITIONAL([WANT_CCE],  test "$cce"  = yes)
 
-# Requires automake >= 1.10.2
-#
-#AM_COND_IF([WANT_OVAL],
-#           [AC_CONFIG_FILES([src/OVAL/Makefile
-#                             examples/OVAL/Makefile])])
-#AM_COND_IF([WANT_CVSS],
-#           [AC_CONFIG_FILES([src/CVSS/Makefile
-#                             examples/CVSS/Makefile])])
-#AM_COND_IF([WANT_CVE],
-#           [AC_CONFIG_FILES([src/CVE/Makefile
-#                             examples/CVE/Makefile])])
-#AM_COND_IF([WANT_CPE],
-#           [AC_CONFIG_FILES([src/CPE/Makefile
-#                             examples/CPE/Makefile])])
-#AM_COND_IF([WANT_CCE],
-#           [AC_CONFIG_FILES([src/CCE/Makefile
-#                             examples/CCE/Makefile])])
-
 AC_CONFIG_FILES([Makefile
                  src/Makefile
                  swig/Makefile
@@ -190,21 +172,5 @@ AC_CONFIG_FILES([Makefile
                  src/CPE/Makefile
                  src/CCE/Makefile
                  examples/Makefile])
-
-#AC_CONFIG_FILES([Makefile
-#                 src/Makefile
-#                 examples/Makefile
-#                 swig/Makefile
-#                 src/OVAL/Makefile
-#                 examples/OVAL/Makefile
-#                 src/CVSS/Makefile
-#                 examples/CVSS/Makefile
-#                 src/CVE/Makefile
-#                 examples/CVE/Makefile
-#                 src/CPE/Makefile
-#                 examples/CPE/Makefile
-#                 src/CCE/Makefile
-#                 examples/CCE/Makefile])
-
 
 AC_OUTPUT
