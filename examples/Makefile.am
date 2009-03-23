@@ -2,6 +2,7 @@
 check_PROGRAMS =
 TESTS =
 TESTS_ENVIRONMENT = $(SHELL) -x
+EXTRA_DIST =
 
 if WANT_OVAL
 #check_PROGRAMS += test_oval
@@ -12,6 +13,7 @@ endif
 if WANT_CPE
 check_PROGRAMS += test_cpelang test_cpedict test_cpeuri
 TESTS += CPE/test_cpe.sh
+EXTRA_DIST += CPE/test_cpe.sh CPE/dict.xml
 
 test_cpelang_SOURCES = CPE/test_cpelang.c
 test_cpelang_LDADD = $(top_srcdir)/src/libopenscap.la
@@ -32,6 +34,8 @@ endif
 if WANT_CVE
 check_PROGRAMS += test_cve
 TESTS += CVE/test_cve.sh
+EXTRA_DIST += CVE/test_cve.sh CVE/nvdcve-2.0-recent.xml
+
 test_cve_SOURCES = CVE/test_cve.c
 test_cve_CFLAGS = -I$(top_srcdir)/src/CVE @pcre_cflags@
 test_cve_LDFLAGS = @pcre_libs@
@@ -41,6 +45,8 @@ endif
 if WANT_CCE
 check_PROGRAMS += test_cce
 TESTS += CCE/test_cce.sh
+EXTRA_DIST += CCE/test_cce.sh CCE/CCE_Sample.xml
+
 test_cce_SOURCES = CCE/test_cce.c
 test_cce_CFLAGS = -I$(top_srcdir)/src/CCE @libxml_cflags@ @pcre_cflags@
 test_cce_LDFLAGS = @libxml_libs@ @pcre_libs@
@@ -54,5 +60,5 @@ test_cvsscalc_SOURCES = CVSS/test_cvsscalc.c
 test_cvsscalc_CFLAGS  = -I$(top_srcdir)/src/CVSS @pcre_cflags@
 test_cvsscalc_LDFLAGS = @pcre_libs@
 test_cvsscalc_LDADD = $(top_srcdir)/src/libopenscap.la
-EXTRA_DIST = CVSS/test_cvsscalc.py
+EXTRA_DIST += CVSS/test_cvsscalc.py
 endif
