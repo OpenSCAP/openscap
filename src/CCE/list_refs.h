@@ -1,5 +1,5 @@
 /**
- * @file list_cstring.h
+ * @file list_refs.h
  * \brief Interface to Common Configuration Enumeration (CCE)
  *
  * See more details at http://cce.mitre.org/
@@ -32,15 +32,16 @@
 #include <libxml/parser.h>
 #include <libxml/xmlreader.h>
 
-#ifndef _LIST_CSTRING_H
-#define _LIST_CSTRING_H
+#ifndef _LIST_REFS_H
+#define _LIST_REFS_H
 
-struct list_cstring {
-	struct list_cstring *next;
+struct list_refs {
+	struct list_refs *next;
+	char *source;
 	char *value;
 };
 
-void list_cstring_add(struct list_cstring *list, char *);
-void list_cstring_clear(struct list_cstring *list);
+void list_refs_add(struct list_refs *list, char *source, char *value);
+void list_refs_clear(struct list_refs *list);
 
 #endif

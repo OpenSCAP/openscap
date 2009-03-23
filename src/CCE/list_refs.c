@@ -1,5 +1,5 @@
 /**
- * @file list_cstring.h
+ * @file list_refs.c
  * \brief Interface to Common Configuration Enumeration (CCE)
  *
  * See more details at http://cce.mitre.org/
@@ -28,19 +28,39 @@
  *      Riley C. Porter <Riley.Porter@g2-inc.com>
  */
 
-#include <libxml/xmlmemory.h>
-#include <libxml/parser.h>
-#include <libxml/xmlreader.h>
+#include "list_refs.h"
 
-#ifndef _LIST_CSTRING_H
-#define _LIST_CSTRING_H
+void list_refs_add(struct list_refs *list, char *source, char *value)
+{
+	if (!list->value) {
+		list->value = value;
+		list->source = source;
+		return;
+	}
+	struct list_refs *current = list;
+	while (current->next)
+		current = current->next;
+	struct list_refs *newitem =
+	    (struct list_refs *)malloc(sizeof(struct list_refs));
+	newitem->value = value;
+	newitem->source = source;
+	newitem->next = NULL;
+	current->next = newitem;
+	return;
+}
 
-struct list_cstring {
-	struct list_cstring *next;
-	char *value;
-};
-
-void list_cstring_add(struct list_cstring *list, char *);
-void list_cstring_clear(struct list_cstring *list);
-
-#endif
+void list_refs_clear(struct list_refs *list)
+{
+	struct list_refs *current = list;
+	struct list_refs *next = current;
+	do {
+		current = next;
+		if (current->source)
+			xmlFree(current->source);
+		if (current->value)
+			xmlFree(current->value);
+		next = current->next;
+		free(current);
+	} while (NULL != next);
+	return;
+}
