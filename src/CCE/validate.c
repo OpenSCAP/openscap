@@ -14,10 +14,10 @@
 */
 
 
-#include "cce.h"
+#include "cce_priv.h"
 
 
-bool validateFile(const char *filename) {
+bool cce_validate(const char *filename) {
     xmlParserCtxtPtr ctxt; /* the parser context */
     xmlDocPtr doc; /* the resulting document tree */
 	bool ret = false;

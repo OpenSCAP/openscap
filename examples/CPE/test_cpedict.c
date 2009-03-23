@@ -1,4 +1,6 @@
 #include <cpedict.h>
+#include <cpematch.h>
+#include <libxml/tree.h>
 
 // dump contents of an CPE dictionary item
 void cpe_dictitem_dump(CpeDictItem_t* item)
@@ -12,7 +14,7 @@ void cpe_dictitem_dump(CpeDictItem_t* item)
 	// print notes
 	if (item->notes_n) {
 		printf("  Notes:\n");
-		for (i = 0; i < item->notes_n; ++i)
+		for (i = 0; i < (int)item->notes_n; ++i)
 			printf("    %s\n", item->notes[i]);
 	}
 	
@@ -26,14 +28,14 @@ void cpe_dictitem_dump(CpeDictItem_t* item)
 	// print references
 	if (item->references_n) {
 		printf("  References:\n");
-		for (i = 0; i < item->references_n; ++i)
+		for (i = 0; i < (int)item->references_n; ++i)
 			printf("    %s (%s)\n", item->references[i].content, item->references[i].href);
 	}
 
 	// print checks
 	if (item->check_n) {
 		printf("  Checks:\n");
-		for (i = 0; i < item->check_n; ++i)
+		for (i = 0; i < (int)item->check_n; ++i)
 			printf("    id: %s, system: %s, href: %s\n", item->check[i]->identifier, item->check[i]->system, item->check[i]->href);
 	}
 	

@@ -14,14 +14,12 @@
 */
 
 
-#include "cce.h"
+#include "cce_priv.h"
 
-void parseDoc(char *docname,  struct CCE* cce, char* id)
+void cce_parse(char *docname,  struct CCE* cce, char* id)
 {
     xmlTextReaderPtr reader;
     xmlDocPtr doc;
-    xmlNodePtr cur;
-    xmlNode *node;
     int ret;
     doc = xmlParseFile(docname);
     reader = xmlNewTextReaderFilename(docname);

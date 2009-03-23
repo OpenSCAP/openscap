@@ -16,7 +16,7 @@
 
 #include "cce.h"
 
-void clearCCE(struct CCE* cce)
+void cce_clear(struct CCE* cce)
 {
 	if (cce->id) xmlFree(cce->id);
 	if (cce->description) xmlFree(cce->description);

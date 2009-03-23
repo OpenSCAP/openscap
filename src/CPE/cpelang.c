@@ -104,7 +104,6 @@ CpePlatformSpec_t* cpe_platformspec_new_xml(xmlNodePtr root)
 	xmlNodePtr cur;
 	CpePlatformSpec_t* res;
 	CpePlatform_t* plat;
-	int idx;
 
 	if (xmlStrcmp(root->name, BAD_CAST "platform-specification") != 0)
 		return NULL;
@@ -150,7 +149,7 @@ void cpe_platformspec_delete(CpePlatformSpec_t* platformspec)
 {
 	int i;
 	if (platformspec != NULL) {
-		for (i = 0; i < platformspec->platforms_n; ++i)
+		for (i = 0; i < (int)platformspec->platforms_n; ++i)
 			cpe_platform_delete(platformspec->platforms[i]);
 		free(platformspec->platforms);
 	}
@@ -161,7 +160,6 @@ void cpe_platformspec_delete(CpePlatformSpec_t* platformspec)
 CpePlatform_t* cpe_platform_new_xml(xmlNodePtr node)
 {
 	CpePlatform_t* ret;
-	char* data;
 
 	if (xmlStrcmp(node->name, BAD_CAST "platform") != 0)
 		return NULL;
@@ -170,16 +168,16 @@ CpePlatform_t* cpe_platform_new_xml(xmlNodePtr node)
 	if (ret == NULL) return NULL;
 	memset(ret, 0, sizeof(CpePlatform_t));
 	
-	if ((ret->id = xmlGetProp(node, BAD_CAST "id")) == NULL) {
+	if ((ret->id = (char*) xmlGetProp(node, BAD_CAST "id")) == NULL) {
 		cpe_platform_delete(ret);
 		return NULL;
 	}
 
 	for (node = node->xmlChildrenNode; node != NULL; node = node->next) {
 		if (ret->title == NULL && xmlStrcmp(node->name, BAD_CAST "title") == 0)
-			ret->title = xmlNodeGetContent(node);
+			ret->title = (char*) xmlNodeGetContent(node);
 		else if (ret->remark == NULL && xmlStrcmp(node->name, BAD_CAST "remark") == 0)
-			ret->remark = xmlNodeGetContent(node);
+			ret->remark = (char*) xmlNodeGetContent(node);
 		else if (!ret->expr.oper && xmlStrcmp(node->name, BAD_CAST "logical-test") == 0)
 			cpe_langexpr_new(&(ret->expr), node);
 	}
@@ -260,7 +258,7 @@ bool cpe_langexpr_new(CpeLangExpr_t* ret, xmlNodePtr node)
 	if (xmlStrcmp(node->name, BAD_CAST "fact-ref") == 0) {
 		ret->oper = CPE_LANG_OPER_MATCH;
 		temp = xmlGetProp(node, BAD_CAST "name");
-		ret->meta.cpe = cpe_new(temp);
+		ret->meta.cpe = cpe_new((char*)temp);
 		xmlFree(temp);
 		return (ret->meta.cpe ? true : false);
 	}

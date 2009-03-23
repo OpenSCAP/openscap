@@ -14,7 +14,7 @@
 */
 
 
-#include "cce.h"
+#include "cce_priv.h"
 
 void processDescription(xmlTextReaderPtr reader, struct CCE* cce)
 {
@@ -29,7 +29,7 @@ void processDescription(xmlTextReaderPtr reader, struct CCE* cce)
 		switch(xmlTextReaderNodeType(reader))
 		{
 			case 3:
-				cce->description = xmlTextReaderValue(reader);
+				cce->description = (char*) xmlTextReaderValue(reader);
 				break;
 		}
 	}

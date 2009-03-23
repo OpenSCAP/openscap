@@ -14,8 +14,9 @@
 */
 
 
-#include "cce.h"
+#include "cce_priv.h"
 #include "list_Refs.h"
+
 void processRefs(xmlTextReaderPtr reader, struct CCE* cce)
 {
 	xmlChar* source = NULL;
@@ -27,7 +28,7 @@ void processRefs(xmlTextReaderPtr reader, struct CCE* cce)
 		if (xmlTextReaderNodeType(reader) == 15 &&
 			!xmlStrcmp(xmlTextReaderName(reader), (const xmlChar*)"ref"))
 		{
-			list_Refs_add(cce->references, source, value);
+			list_Refs_add(cce->references, (char*) source, (char*) value);
 			return;
 		}
 

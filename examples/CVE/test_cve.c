@@ -1,9 +1,9 @@
 
-#include "config.h"
+//#include "config.h"
 
 #include <stdio.h>
 
-#include "../lib/libcve.h"
+#include <cve.h>
 
 int main(int argc, char **argv)
 {

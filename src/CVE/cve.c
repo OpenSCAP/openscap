@@ -271,8 +271,8 @@ int cveParse(char *xmlfile, cveInfo_t **outCveList)
 	xmlTextReaderPtr reader;
 	int ret, cve_cnt = 0;
 	tagStack_t tagStack;
-	cveInfo_t *cveList = NULL, *cve;
-	cveReference_t *reference;
+	cveInfo_t *cveList = NULL, *cve = NULL;
+	cveReference_t *reference = NULL;
 
 	/*
 	 * this initialize the library and check potential ABI mismatches

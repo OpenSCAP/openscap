@@ -15,7 +15,7 @@
 
 #include "cce.h"
 
-void initCCE(struct CCE* cce)
+void cce_init(struct CCE* cce)
 {
 	cce->id = NULL;
 	cce->description = NULL;

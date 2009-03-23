@@ -84,7 +84,7 @@ char* str_trim(char* str)
 	if (str == NULL) return NULL;
 	for (i = 0; isspace(str[i]); ++i);
 	off = i;
-	while (str[i]) str[i - off] = str[i++];
+	while (str[i]) { str[i - off] = str[i]; ++i; }
 	for (i -= off; isspace(str[--i]) && i >= 0;);
 	str[++i] = '\0';
 	return str;
@@ -133,13 +133,13 @@ CpeDict_t* cpe_dict_new_xml(xmlNodePtr node)
 		else if (xmlStrcmp(node->name, BAD_CAST "generator") == 0) {
 			for (cur = node->xmlChildrenNode; cur != NULL; cur = cur->next) {
 				if (xmlStrcmp(cur->name, BAD_CAST "product_name") == 0)
-					ret->generator.product_name = xmlNodeGetContent(cur);
+					ret->generator.product_name = (char*) xmlNodeGetContent(cur);
 				if (xmlStrcmp(cur->name, BAD_CAST "product_version") == 0)
-					ret->generator.product_version = xmlNodeGetContent(cur);
+					ret->generator.product_version = (char*) xmlNodeGetContent(cur);
 				if (xmlStrcmp(cur->name, BAD_CAST "schema_version") == 0)
-					ret->generator.schema_version = xmlNodeGetContent(cur);
+					ret->generator.schema_version = (char*) xmlNodeGetContent(cur);
 				if (xmlStrcmp(cur->name, BAD_CAST "timestamp") == 0)
-					ret->generator.timestamp = xmlNodeGetContent(cur);
+					ret->generator.timestamp = (char*) xmlNodeGetContent(cur);
 			}
 		}
 	}
@@ -242,7 +242,7 @@ CpeDictItem_t* cpe_dictitem_new_xml(xmlNodePtr node)
 	if (item == NULL) return NULL;
 
 	data = xmlGetProp(node, BAD_CAST "name");
-	if (data == NULL || (item->name = cpe_new(data)) == NULL) {
+	if (data == NULL || (item->name = cpe_new((char*)data)) == NULL) {
 		free(item);
 		free(data);
 		return NULL;
@@ -251,12 +251,12 @@ CpeDictItem_t* cpe_dictitem_new_xml(xmlNodePtr node)
 	
 	for (node = node->xmlChildrenNode; node != NULL; node = node->next) {
 		if (item->title == NULL && xmlStrcmp(node->name, BAD_CAST "title") == 0)
-			item->title = str_trim(xmlNodeGetContent(node));
+			item->title = str_trim((char*)xmlNodeGetContent(node));
 		else if (xmlStrcmp(node->name, BAD_CAST "notes") == 0) {
 			for (cur = node->xmlChildrenNode; cur != NULL; cur = cur->next) {
 				if (xmlStrcmp(cur->name, BAD_CAST "note") != 0) continue;
-				data = str_trim(xmlNodeGetContent(cur));
-				if (data) APPEND_ITEM(char*, data, item->notes, item->notes_n, item->notes_alloc_, 4);
+				data = BAD_CAST str_trim((char*)xmlNodeGetContent(cur));
+				if (data) APPEND_ITEM(char*, (char*) data, item->notes, item->notes_n, item->notes_alloc_, 4);
 			}
 		}
 		else if (xmlStrcmp(node->name, BAD_CAST "check") == 0) {
@@ -268,8 +268,8 @@ CpeDictItem_t* cpe_dictitem_new_xml(xmlNodePtr node)
 				if (xmlStrcmp(cur->name, BAD_CAST "reference") != 0) continue;
 				if (data) APPEND_ITEM(CpeDictReference_t, ref, item->references, item->references_n, item->references_alloc_, 4);
 				pref = item->references + item->references_n - 1;
-				pref->content = str_trim(xmlNodeGetContent(cur));
-				pref->href    = xmlGetProp(cur, BAD_CAST "href");
+				pref->content = str_trim((char*)xmlNodeGetContent(cur));
+				pref->href    = (char*) xmlGetProp(cur, BAD_CAST "href");
 			}
 		}
 	}
@@ -287,20 +287,20 @@ void cpe_dictitem_delete(CpeDictItem_t* item)
 	
 	free(item->title);
 
-	for (i = 0; i < item->notes_n; ++i)
+	for (i = 0; i < (int)item->notes_n; ++i)
 		free(item->notes[i]);
 	free(item->notes);
 
 	cpe_delete(item->depracated);
 	free(item->depracation_date);
 	
-	for (i = 0; i < item->references_n; ++i) {
+	for (i = 0; i < (int)item->references_n; ++i) {
 		free(item->references[i].href);
 		free(item->references[i].content);
 	}
 	free(item->references);
 	
-	for (i = 0; i < item->check_n; ++i)
+	for (i = 0; i < (int)item->check_n; ++i)
 		cpe_dictcheck_delete(item->check[i]);
 	free(item->check);
 
@@ -320,12 +320,12 @@ CpeDictCheck_t* cpe_dictcheck_new_xml(xmlNode* node)
 	memset(check, 0, sizeof(CpeDictCheck_t));
 
 	data = xmlGetProp(node, BAD_CAST "system");
-	if (data) check->system = data;
+	if (data) check->system = (char*) data;
 
 	data = xmlGetProp(node, BAD_CAST "href");
-	if (data) check->href  = data;
+	if (data) check->href  = (char*) data;
 
-	check->identifier = str_trim(xmlNodeGetContent(node));
+	check->identifier = str_trim((char*)xmlNodeGetContent(node));
 
 	return check;
 }

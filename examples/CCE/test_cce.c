@@ -30,7 +30,7 @@ int main( int argc, char* argv[] )
 {
 	printf("CCE XML Parsing Program:\n");
 	struct CCE cce;
-	initCCE(&cce);
+	cce_init(&cce);
 
          if (argc != 3)
 
@@ -45,8 +45,11 @@ int main( int argc, char* argv[] )
 
         printf("Searching for %s\n\n",id);
         
-        validateFile(docname);
-        parseDoc (docname, &cce, id);
+        if (!cce_validate(docname)) {
+			printf("File '%s' does not seem to be a valid CCE\n", docname);
+			return 1;
+		}
+        cce_parse(docname, &cce, id);
 
         //Example of struct data returned.
         printf("\nID: %s\n",cce.id);
@@ -79,7 +82,7 @@ int main( int argc, char* argv[] )
             }
 	}
 
-	clearCCE(&cce); //cce is a struct that contains all the data that the ID string contained.
+	cce_clear(&cce); //cce is a struct that contains all the data that the ID string contained.
 
 	return 0;
 }

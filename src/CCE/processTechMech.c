@@ -14,7 +14,7 @@
 */
 
 
-#include "cce.h"
+#include "cce_priv.h"
 
 void processTechMech(xmlTextReaderPtr reader, struct CCE* cce)
 {
@@ -29,7 +29,7 @@ void processTechMech(xmlTextReaderPtr reader, struct CCE* cce)
 		switch(xmlTextReaderNodeType(reader))
 		{
 			case 3:
-				list_cstring_add(cce->technicalmechanisms, xmlTextReaderValue(reader));
+				list_cstring_add(cce->technicalmechanisms, (char*) xmlTextReaderValue(reader));
 				break;
 		}
 	}

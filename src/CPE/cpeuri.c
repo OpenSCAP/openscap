@@ -145,7 +145,7 @@ bool cpe_name_match_cpes(const Cpe_t* name, size_t n, Cpe_t** namelist)
 
 	if (name == NULL || namelist == NULL) return false;
 
-	for (i = 0; i < n; ++i)
+	for (i = 0; i < (int)n; ++i)
 		if (cpe_name_match_one(name, namelist[i]))
 			return true;
 	return false;
@@ -160,7 +160,7 @@ int cpe_name_match_strs(const char* candidate, size_t n, char** targets)
 	if (ccpe == NULL)
 		return -2;
 
-	for (i = 0; i < n; ++i) {
+	for (i = 0; i < (int)n; ++i) {
 		tcpe = cpe_new(targets[i]); // target cpe
 
 		if (cpe_name_match_one(ccpe, tcpe)) {
@@ -220,8 +220,6 @@ char* cpe_get_uri(const Cpe_t* cpe)
 	int len = 16;
 	int i;
 	char* result;
-	char* tptr;
-	char* sptr;
 
 	if (cpe == NULL || cpe->fields_ == NULL)
 		return NULL;

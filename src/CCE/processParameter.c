@@ -15,7 +15,7 @@ along with this program. If not, see < http : //www.gnu.org/licenses/>.
 */
 
 
-#include "cce.h"
+#include "cce_priv.h"
 
 void processParameter(xmlTextReaderPtr reader, struct CCE* cce)
 {
@@ -30,7 +30,7 @@ void processParameter(xmlTextReaderPtr reader, struct CCE* cce)
 		switch(xmlTextReaderNodeType(reader))
 		{
 			case 3:
-				list_cstring_add(cce->parameters, xmlTextReaderValue(reader));
+				list_cstring_add(cce->parameters, (char*) xmlTextReaderValue(reader));
 				break;
 		}
 	}
