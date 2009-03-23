@@ -45,8 +45,11 @@ test_cce_LDADD = $(top_srcdir)/src/libopenscap.la
 endif
 
 if WANT_CVSS
-#check_PROGRAMS += test_cvsscalc
-#test_cvsscalc_SOURCES = CVSS/test_cvsscalc.c
-#test_cvsscalc_LDADD = $(top_srcdir)/src/libopenscap.la
-#EXTRA_DIST = test_cvsscalc.py
+check_PROGRAMS += test_cvsscalc
+TESTS += test_cvsscalc
+test_cvsscalc_SOURCES = CVSS/test_cvsscalc.c
+test_cvsscalc_CFLAGS  = -I$(top_srcdir)/src/CVSS @pcre_cflags@
+test_cvsscalc_LDFLAGS = @pcre_libs@
+test_cvsscalc_LDADD = $(top_srcdir)/src/libopenscap.la
+EXTRA_DIST = test_cvsscalc.py
 endif

@@ -2,8 +2,7 @@
 #include "config.h"
 
 #include <stdio.h>
-#include "../lib/libcvsscalc.h"
-
+#include <cvsscalc.h>
 
 int main()
 {
@@ -22,4 +21,3 @@ int main()
 
 	return 0;
 }
-
