@@ -29,19 +29,20 @@
 
 #include "cpematch.h"
 
-bool cpe_name_match_dict(Cpe_t* cpe, CpeDict_t* dict)
+bool cpe_name_match_dict(cpe_t * cpe, cpe_dict_t * dict)
 {
-	if (cpe == NULL || dict == NULL) return false;
+	if (cpe == NULL || dict == NULL)
+		return false;
 	return cpe_name_match_cpes(cpe, dict->item_n, dict->cpes);
 }
 
-bool cpe_name_match_dict_str(const char* cpestr, CpeDict_t* dict)
+bool cpe_name_match_dict_str(const char *cpestr, cpe_dict_t * dict)
 {
 	bool ret;
-	if (cpestr == NULL) return false;
-	Cpe_t* cpe = cpe_new(cpestr);
+	if (cpestr == NULL)
+		return false;
+	cpe_t *cpe = cpe_new(cpestr);
 	ret = cpe_name_match_dict(cpe, dict);
 	cpe_delete(cpe);
 	return ret;
 }
-

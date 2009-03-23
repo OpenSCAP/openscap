@@ -35,24 +35,24 @@
 #include <stdio.h>
 
 /// enumeration of possible CPE parts
-enum CpePart_t {
-	CPE_PART_NONE,  ///< no part specified -- error condition
-	CPE_PART_HW,    ///< hardware
-	CPE_PART_OS,    ///< operating system
-	CPE_PART_APP    ///< application
+enum cpe_part_t {
+	CPE_PART_NONE,		///< no part specified -- error condition
+	CPE_PART_HW,		///< hardware
+	CPE_PART_OS,		///< operating system
+	CPE_PART_APP		///< application
 };
 
 /// string representation of CPE parts, order corresponds with values in enum above
-const char*  CPE_PART_CHAR[4];
+const char *CPE_PART_CHAR[4];
 /// CPE URI schema string
-const char*  CPE_SCHEMA;
+const char *CPE_SCHEMA;
 /// CPE URI component separator character
-const char   CPE_SEP_CHAR;
+const char CPE_SEP_CHAR;
 /// CPE URI component separator character as string
-const char*  CPE_SEP_STR;
+const char *CPE_SEP_STR;
 
 /// enumeration of CPE URI fields (useful for indexing arrays)
-enum CpeField_t {
+enum cpe_field_t {
 	CPE_FIELD_TYPE,
 	CPE_FIELD_VENDOR,
 	CPE_FIELD_PRODUCT,
@@ -69,16 +69,16 @@ enum CpeField_t {
  * Empty components are set to NULL.
  */
 typedef struct {
-	char* data_;            ///< parsed string, internal use only
-	char** fields_;         ///< NULL-terminated array of pointers to individual components of CPE URI, internal
-	enum CpePart_t part;    ///< part
-	const char* vendor;     ///< vendor
-	const char* product;    ///< product
-	const char* version;    ///< version
-	const char* update;     ///< update
-	const char* edition;    ///< edition
-	const char* language;   ///< language
-} Cpe_t;
+	char *data_;		///< parsed string, internal use only
+	char **fields_;		///< NULL-terminated array of pointers to individual components of CPE URI, internal
+	enum cpe_part_t part;	///< part
+	const char *vendor;	///< vendor
+	const char *product;	///< product
+	const char *version;	///< version
+	const char *update;	///< update
+	const char *edition;	///< edition
+	const char *language;	///< language
+} cpe_t;
 
 /**
  * Create new CPE structure from string @a cpe.
@@ -88,7 +88,7 @@ typedef struct {
  * @return new structure holding parsed data
  * @retval NULL on failure
  */
-Cpe_t* cpe_new(const char* cpe);
+cpe_t *cpe_new(const char *cpe);
 
 /**
  * Split CPE string into individual fields separated by @a delim.
@@ -101,20 +101,20 @@ Cpe_t* cpe_new(const char* cpe);
  * @return newly allocated NULL-terminated array of ponters to strings representing individual parts
  * @retval NULL on failure
  */
-char** cpe_split(char* str, const char* delim);
+char **cpe_split(char *str, const char *delim);
 
 /**
  * In-place decodes a %-encoded string.
  * @param str string to be decoded (will be modified)
  * @return true on success
  */
-bool cpe_urldecode(char* str);
+bool cpe_urldecode(char *str);
 
 /**
  * Check if candidate CPE @a cpe matches CPE @a against
  * according to CPE specification v 2.1.
  */
-bool cpe_name_match_one(const Cpe_t* cpe, const Cpe_t* against);
+bool cpe_name_match_one(const cpe_t * cpe, const cpe_t * against);
 
 /**
  * Check if CPE @a name matches any CPE in @a namelist.
@@ -123,7 +123,7 @@ bool cpe_name_match_one(const Cpe_t* cpe, const Cpe_t* against);
  * @param namelist list of names to search in
  * @return true if @a name was found within @a namelist
  */
-bool cpe_name_match_cpes(const Cpe_t* name, size_t n, Cpe_t** namelist);
+bool cpe_name_match_cpes(const cpe_t * name, size_t n, cpe_t ** namelist);
 
 /**
  * Match CPE URI @a candidate against list of @a n CPE URIs given by @a targets.
@@ -135,13 +135,13 @@ bool cpe_name_match_cpes(const Cpe_t* name, size_t n, Cpe_t** namelist);
  * @retval -1 on mismatch
  * @retval -2 invalid CPE URI was given as parameter
  */
-int cpe_name_match_strs(const char* candidate, size_t n, char** targets);
+int cpe_name_match_strs(const char *candidate, size_t n, char **targets);
 
 /**
  * Ensures @a str is in proper CPE format.
  * @param str string to be validated
  */
-bool cpe_check(const char* str);
+bool cpe_check(const char *str);
 
 /**
  * Return CPE URI as a new string.
@@ -150,7 +150,7 @@ bool cpe_check(const char* str);
  * @return CPE URI as string
  * @retval NULL on failure
  */
-char* cpe_get_uri(const Cpe_t* cpe);
+char *cpe_get_uri(const cpe_t * cpe);
 
 /**
  * Write CPE URI @a cpe to file a descriptor @a f
@@ -159,7 +159,7 @@ char* cpe_get_uri(const Cpe_t* cpe);
  * @return number of written characters
  * @retval <0 on failure
  */
-int cpe_write(const Cpe_t* cpe, FILE* f);
+int cpe_write(const cpe_t * cpe, FILE * f);
 
 /**
  * Fill @a cpe structure with parsed @a fields.
@@ -173,20 +173,19 @@ int cpe_write(const Cpe_t* cpe, FILE* f);
  * @param fields NULL-terminated array of strings representing individual fields
  * @return true on success
  */
-bool cpe_assign_values(Cpe_t* cpe, char** fields);
+bool cpe_assign_values(cpe_t * cpe, char **fields);
 
 /**
  * Destructor. Frees any used resources and safely destroys @a cpe.
  * @param cpe CPE to be deleted
  */
-void cpe_delete(Cpe_t* cpe);
+void cpe_delete(cpe_t * cpe);
 
 /**
  * Return number of elements in NULL-terminated array of pointers.
  * @param array of pointers
  * @return number of members
  */
-size_t ptrarray_length(void** arr);
+size_t ptrarray_length(void **arr);
 
-
-#endif /* _CPEURI_H_ */
+#endif				/* _CPEURI_H_ */
