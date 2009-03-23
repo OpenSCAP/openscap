@@ -30,9 +30,12 @@ test_cpeuri_LDADD = $(top_srcdir)/src/libopenscap.la
 endif
 
 if WANT_CVE
-#check_PROGRAMS += test_cve
-#test_cve_SOURCES = CVE/test_cve.c
-#test_cve_LDADD = $(top_srcdir)/src/libopenscap.la
+check_PROGRAMS += test_cve
+TESTS += CVE/test_cve.sh
+test_cve_SOURCES = CVE/test_cve.c
+test_cve_CFLAGS = -I$(top_srcdir)/src/CVE @pcre_cflags@
+test_cve_LDFLAGS = @pcre_libs@
+test_cve_LDADD = $(top_srcdir)/src/libopenscap.la
 endif
 
 if WANT_CCE
