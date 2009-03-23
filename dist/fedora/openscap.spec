@@ -46,7 +46,7 @@ libraries can be used by python.
 %setup -q
 
 %build
-%configure --disable-static
+%configure --disable-static --disable-oval
 make %{?_smp_mflags}
 
 %install
