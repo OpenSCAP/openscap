@@ -11,7 +11,7 @@ endif
 
 if WANT_CPE
 check_PROGRAMS += test_cpelang test_cpedict test_cpeuri
-#TESTS += CPE/test_cpe.sh
+TESTS += CPE/test_cpe.sh
 
 test_cpelang_SOURCES = CPE/test_cpelang.c
 test_cpelang_LDADD = $(top_srcdir)/src/libopenscap.la
