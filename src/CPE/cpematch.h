@@ -27,7 +27,6 @@
  *      Lukas Kuklinek <lkuklinek@redhat.com>
  */
 
-
 #ifndef _CPEMATCH_H_
 #define _CPEMATCH_H_
 
@@ -37,14 +36,13 @@
 #include "cpedict.h"
 #include "cpelang.h"
 
-
 /**
  * Verify wether given CPE is known according to specified dictionary
  * @param cpe CPE to verify
  * @param dict used CPE dictionary
  * @return true if dictionary contains given CPE
  */
-bool cpe_name_match_dict(Cpe_t* cpe, CpeDict_t* dict);
+bool cpe_name_match_dict(cpe_t * cpe, cpe_dict_t * dict);
 
 /**
  * Verify if CPE given by string is known according to specified dictionary
@@ -52,6 +50,6 @@ bool cpe_name_match_dict(Cpe_t* cpe, CpeDict_t* dict);
  * @param dict used CPE dictionary
  * @return true if dictionary contains given CPE
  */
-bool cpe_name_match_dict_str(const char* cpe, CpeDict_t* dict);
+bool cpe_name_match_dict_str(const char *cpe, cpe_dict_t * dict);
 
-#endif /* _CPEMATCH_H_ */
+#endif				/* _CPEMATCH_H_ */

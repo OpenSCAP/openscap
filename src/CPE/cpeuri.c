@@ -38,28 +38,27 @@
 
 #include "cpeuri.h"
 
+const char *CPE_PART_CHAR[] = { NULL, "h", "o", "a" };
 
-const char* CPE_PART_CHAR[] = { NULL, "h", "o", "a" };
-const char* CPE_SCHEMA   = "cpe:/";
-const char  CPE_SEP_CHAR = ':';
-const char* CPE_SEP_STR  = ":";
+const char *CPE_SCHEMA = "cpe:/";
+const char CPE_SEP_CHAR = ':';
+const char *CPE_SEP_STR = ":";
 
-
-Cpe_t* cpe_new(const char* cpestr)
+cpe_t *cpe_new(const char *cpestr)
 {
 	int i;
-	Cpe_t* cpe;
+	cpe_t *cpe;
 
 	if (cpestr && !cpe_check(cpestr))
 		return NULL;
 
-	cpe = malloc(sizeof(Cpe_t));
+	cpe = malloc(sizeof(cpe_t));
 	if (cpe == NULL)
 		return NULL;
-	memset(cpe, 0, sizeof(Cpe_t)); // zero memory
-	
+	memset(cpe, 0, sizeof(cpe_t));	// zero memory
+
 	if (cpestr) {
-		cpe->data_ = strdup(cpestr + 5); // without 'cpe:/'
+		cpe->data_ = strdup(cpestr + 5);	// without 'cpe:/'
 		cpe->fields_ = cpe_split(cpe->data_, ":");
 		for (i = 0; cpe->fields_[i]; ++i)
 			cpe_urldecode(cpe->fields_[i]);
@@ -70,21 +69,22 @@ Cpe_t* cpe_new(const char* cpestr)
 
 const size_t CPE_SPLIT_INIT_ALLOC = 8;
 
-char** cpe_split(char* str, const char* delim)
+char **cpe_split(char *str, const char *delim)
 {
 	assert(str != NULL);
 
-	char** stringp = &str;
+	char **stringp = &str;
 	int alloc = CPE_SPLIT_INIT_ALLOC;
-	char** fields = malloc(alloc * sizeof(char*));
-	if (!fields) return NULL;
+	char **fields = malloc(alloc * sizeof(char *));
+	if (!fields)
+		return NULL;
 
 	int i = 0;
 	while (*stringp) {
 		if (i + 2 > alloc) {
-			void* old = fields;
+			void *old = fields;
 			alloc *= 2;
-			fields = realloc(fields, alloc * sizeof(char*));
+			fields = realloc(fields, alloc * sizeof(char *));
 			if (fields == NULL) {
 				free(old);
 				return NULL;
@@ -97,7 +97,7 @@ char** cpe_split(char* str, const char* delim)
 	return fields;
 }
 
-bool cpe_urldecode(char* str)
+bool cpe_urldecode(char *str)
 {
 	assert(str != NULL);
 	char *inptr, *outptr;
@@ -111,39 +111,41 @@ bool cpe_urldecode(char* str)
 				// if (out == 0) return false; // this is strange
 				*outptr++ = out;
 				inptr += 2;
-			}
-			else {
+			} else {
 				*outptr = '\0';
 				return false;
 			}
-		}
-		else *outptr++ = *inptr;
+		} else
+			*outptr++ = *inptr;
 	}
 	*outptr = '\0';
 	return true;
 }
 
-bool cpe_name_match_one(const Cpe_t* cpe, const Cpe_t* against)
+bool cpe_name_match_one(const cpe_t * cpe, const cpe_t * against)
 {
 	int i;
 
-	if (cpe == NULL || against == NULL) return false;
+	if (cpe == NULL || against == NULL)
+		return false;
 
-	if (ptrarray_length((void**)against->fields_) < ptrarray_length((void**)cpe->fields_))
+	if (ptrarray_length((void **)against->fields_) <
+	    ptrarray_length((void **)cpe->fields_))
 		return false;
 
 	for (i = 0; cpe->fields_[i]; ++i)
 		if (strcmp(cpe->fields_[i], "") != 0 &&
-			strcasecmp(cpe->fields_[i], against->fields_[i]) != 0)
-				return false;
+		    strcasecmp(cpe->fields_[i], against->fields_[i]) != 0)
+			return false;
 	return true;
 }
 
-bool cpe_name_match_cpes(const Cpe_t* name, size_t n, Cpe_t** namelist)
+bool cpe_name_match_cpes(const cpe_t * name, size_t n, cpe_t ** namelist)
 {
 	int i;
 
-	if (name == NULL || namelist == NULL) return false;
+	if (name == NULL || namelist == NULL)
+		return false;
 
 	for (i = 0; i < (int)n; ++i)
 		if (cpe_name_match_one(name, namelist[i]))
@@ -151,17 +153,17 @@ bool cpe_name_match_cpes(const Cpe_t* name, size_t n, Cpe_t** namelist)
 	return false;
 }
 
-int cpe_name_match_strs(const char* candidate, size_t n, char** targets)
+int cpe_name_match_strs(const char *candidate, size_t n, char **targets)
 {
 	int i;
-	Cpe_t *ccpe, *tcpe;
-	
-	ccpe = cpe_new(candidate); // candidate cpe
+	cpe_t *ccpe, *tcpe;
+
+	ccpe = cpe_new(candidate);	// candidate cpe
 	if (ccpe == NULL)
 		return -2;
 
 	for (i = 0; i < (int)n; ++i) {
-		tcpe = cpe_new(targets[i]); // target cpe
+		tcpe = cpe_new(targets[i]);	// target cpe
 
 		if (cpe_name_match_one(ccpe, tcpe)) {
 			// CPE matched
@@ -172,54 +174,53 @@ int cpe_name_match_strs(const char* candidate, size_t n, char** targets)
 
 		cpe_delete(tcpe);
 	}
-	
+
 	cpe_delete(ccpe);
 	return -1;
 }
 
-bool cpe_check(const char* str)
+bool cpe_check(const char *str)
 {
-	int length = strlen(str); /* Get the length for PCRE */
+	int length = strlen(str);	/* Get the length for PCRE */
 
 	pcre *re;
 	const char *error;
 	int erroffset;
 	re = pcre_compile(
-		//"^[Cc][Pp][Ee]:/(?P<part>[oahOAH])(?::(?P<vendor>[-%.~_a-zA-Z0-9]*))?(?::(?P<product>[-%.~_a-zA-Z0-9]*))?(?::(?P<version>[-%.~_a-zA-Z0-9]*))?(?::(?P<update>[-%.~_a-zA-Z0-9]*))?(?::(?P<edition>[-%.~_a-zA-Z0-9]*))?(?::(?P<language>[-%.~_a-zA-Z0-9]*))?$", /* the pattern */
-		"^cpe:/[aho]?(:[a-z0-9._~%-]*){0,6}$",
-		PCRE_CASELESS,    /* case insensitive */
-		&error,           /* for error message */
-		&erroffset,       /* for error offset */
-		NULL);            /* use default character tables */
+				 //"^[Cc][Pp][Ee]:/(?P<part>[oahOAH])(?::(?P<vendor>[-%.~_a-zA-Z0-9]*))?(?::(?P<product>[-%.~_a-zA-Z0-9]*))?(?::(?P<version>[-%.~_a-zA-Z0-9]*))?(?::(?P<update>[-%.~_a-zA-Z0-9]*))?(?::(?P<edition>[-%.~_a-zA-Z0-9]*))?(?::(?P<language>[-%.~_a-zA-Z0-9]*))?$", /* the pattern */
+				 "^cpe:/[aho]?(:[a-z0-9._~%-]*){0,6}$", PCRE_CASELESS,	/* case insensitive */
+				 &error,	/* for error message */
+				 &erroffset,	/* for error offset */
+				 NULL);	/* use default character tables */
 
 	int rc;
 	int ovector[30];
-	rc = pcre_exec(
-		re,      /* result of pcre_compile() */
-		NULL,    /* we didn't study the pattern */
-		str,     /* the subject string */
-		length,  /* the length of the subject string */
-		0,       /* start at offset 0 in the subject */
-		0,       /* default options */
-		ovector, /* vector of integers for substring information */
-		30);     /* number of elements (NOT size in bytes) */
+	rc = pcre_exec(re,	/* result of pcre_compile() */
+		       NULL,	/* we didn't study the pattern */
+		       str,	/* the subject string */
+		       length,	/* the length of the subject string */
+		       0,	/* start at offset 0 in the subject */
+		       0,	/* default options */
+		       ovector,	/* vector of integers for substring information */
+		       30);	/* number of elements (NOT size in bytes) */
 
 	pcre_free(re);
 
 	return rc >= 0;
 }
 
-const char* as_str(const char* str)
+const char *as_str(const char *str)
 {
-	if (str == NULL) return "";
+	if (str == NULL)
+		return "";
 	return str;
 }
 
-char* cpe_get_uri(const Cpe_t* cpe)
+char *cpe_get_uri(const cpe_t * cpe)
 {
 	int len = 16;
 	int i;
-	char* result;
+	char *result;
 
 	if (cpe == NULL || cpe->fields_ == NULL)
 		return NULL;
@@ -232,26 +233,26 @@ char* cpe_get_uri(const Cpe_t* cpe)
 		return NULL;
 
 	i = sprintf(result, "cpe:/%s:%s:%s:%s:%s:%s:%s",
-		as_str(CPE_PART_CHAR[cpe->part]),
-		as_str(cpe->vendor),
-		as_str(cpe->product),
-		as_str(cpe->version),
-		as_str(cpe->update),
-		as_str(cpe->edition),
-		as_str(cpe->language)
-	);
+		    as_str(CPE_PART_CHAR[cpe->part]),
+		    as_str(cpe->vendor),
+		    as_str(cpe->product),
+		    as_str(cpe->version),
+		    as_str(cpe->update),
+		    as_str(cpe->edition), as_str(cpe->language)
+	    );
 
 	// trim trailing colons
-	while (result[--i] == ':') result[i] = '\0';
+	while (result[--i] == ':')
+		result[i] = '\0';
 
 	return result;
 }
 
-int cpe_write(const Cpe_t* cpe, FILE* f)
+int cpe_write(const cpe_t * cpe, FILE * f)
 {
 	int ret;
-	char* uri;
-	
+	char *uri;
+
 	uri = cpe_get_uri(cpe);
 	if (uri == NULL)
 		return EOF;
@@ -262,40 +263,57 @@ int cpe_write(const Cpe_t* cpe, FILE* f)
 	return ret;
 }
 
-bool cpe_assign_values(Cpe_t* cpe, char** fields)
+bool cpe_assign_values(cpe_t * cpe, char **fields)
 {
 	int i;
 
-	if (cpe == NULL || fields == NULL) return false;
-	
+	if (cpe == NULL || fields == NULL)
+		return false;
+
 	for (i = 0; fields[i]; ++i) {
-		const char* out = (fields[i] && strcmp(fields[i], "") != 0 ? fields[i] : NULL);
+		const char *out = (fields[i]
+				   && strcmp(fields[i],
+					     "") != 0 ? fields[i] : NULL);
 		switch (i) {
-			case CPE_FIELD_TYPE:
-				if (out) {
-					if (strcasecmp(out, "h") == 0)
-						cpe->part = CPE_PART_HW;
-					else if (strcasecmp(out, "o") == 0)
-						cpe->part = CPE_PART_OS;
-					else if (strcasecmp(out, "a") == 0)
-						cpe->part = CPE_PART_APP;
-					else return false;
-				}
-				else return false;
-				break;
-			case CPE_FIELD_VENDOR:   cpe->vendor   = out; break;
-			case CPE_FIELD_PRODUCT:  cpe->product  = out; break;
-			case CPE_FIELD_VERSION:  cpe->version  = out; break;
-			case CPE_FIELD_UPDATE:   cpe->update   = out; break;
-			case CPE_FIELD_EDITION:  cpe->edition  = out; break;
-			case CPE_FIELD_LANGUAGE: cpe->language = out; break;
-			case CPE_FIELDNUM: return false;
+		case CPE_FIELD_TYPE:
+			if (out) {
+				if (strcasecmp(out, "h") == 0)
+					cpe->part = CPE_PART_HW;
+				else if (strcasecmp(out, "o") == 0)
+					cpe->part = CPE_PART_OS;
+				else if (strcasecmp(out, "a") == 0)
+					cpe->part = CPE_PART_APP;
+				else
+					return false;
+			} else
+				return false;
+			break;
+		case CPE_FIELD_VENDOR:
+			cpe->vendor = out;
+			break;
+		case CPE_FIELD_PRODUCT:
+			cpe->product = out;
+			break;
+		case CPE_FIELD_VERSION:
+			cpe->version = out;
+			break;
+		case CPE_FIELD_UPDATE:
+			cpe->update = out;
+			break;
+		case CPE_FIELD_EDITION:
+			cpe->edition = out;
+			break;
+		case CPE_FIELD_LANGUAGE:
+			cpe->language = out;
+			break;
+		case CPE_FIELDNUM:
+			return false;
 		}
 	}
 	return true;
 }
 
-void cpe_delete(Cpe_t* cpe)
+void cpe_delete(cpe_t * cpe)
 {
 	if (cpe != NULL) {
 		free(cpe->data_);
@@ -304,13 +322,13 @@ void cpe_delete(Cpe_t* cpe)
 	free(cpe);
 }
 
-size_t ptrarray_length(void** arr)
+size_t ptrarray_length(void **arr)
 {
-	if (arr == NULL) return 0;
+	if (arr == NULL)
+		return 0;
 
 	size_t s = 0;
-	while (arr[s]) ++s;
+	while (arr[s])
+		++s;
 	return s;
 }
-
-

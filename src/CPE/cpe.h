@@ -27,8 +27,6 @@
  *      Lukas Kuklinek <lkuklinek@redhat.com>
  */
 
-
-
 #ifndef CPE_H_INCLUDED
 #define CPE_H_INCLUDED
 
@@ -37,5 +35,4 @@
 #include "cpelang.h"
 #include "cpematch.h"
 
-#endif // CPE_H_INCLUDED
-
+#endif				// CPE_H_INCLUDED
