@@ -8,12 +8,13 @@
 int main(int argc, char **argv)
 {
 	int i;
-	cveInfo_t *cveList, *cve;
-	cveReference_t *ref;
+	cve_info_t *cveList, *cve;
+	cve_reference_t *ref;
 
 	if (argc != 2) {
 		fprintf(stderr, "usage: %s <xmlfile>\n", argv[0]);
-		fprintf(stderr, "You can get one at: http://nvd.nist.gov/download.cfm\n");
+		fprintf(stderr,
+			"You can get one at: http://nvd.nist.gov/download.cfm\n");
 		return -1;
 	}
 
@@ -30,8 +31,14 @@ int main(int argc, char **argv)
 
 	cve = cveList;
 	while (cve != NULL) {
-		fprintf(stdout, "[cveInfo: %s, %s, %s, %s, %s]\n", cve->id, cve->pub, cve->mod, cve->cwe ? cve->cwe : "", cve->summary);
-		fprintf(stdout, "[cvss: %s, %s, %s, %s, %s, %s, %s, %s, %s]\n", cve->score, cve->vector, cve->complexity, cve->authentication, cve->confidentiality, cve->integrity, cve->availability, cve->source, cve->generated);
+		fprintf(stdout, "[cveInfo: %s, %s, %s, %s, %s]\n", cve->id,
+			cve->pub, cve->mod, cve->cwe ? cve->cwe : "",
+			cve->summary);
+		fprintf(stdout, "[cvss: %s, %s, %s, %s, %s, %s, %s, %s, %s]\n",
+			cve->score, cve->vector, cve->complexity,
+			cve->authentication, cve->confidentiality,
+			cve->integrity, cve->availability, cve->source,
+			cve->generated);
 
 		i = 0;
 		ref = cve->refs;
@@ -43,7 +50,9 @@ int main(int argc, char **argv)
 
 		ref = cve->refs;
 		while (ref != NULL) {
-			fprintf(stdout, "\t[cveReference: %s, %s, %s, %s]\n", ref->summary, ref->href, ref->refType, ref->source);
+			fprintf(stdout, "\t[cveReference: %s, %s, %s, %s]\n",
+				ref->summary, ref->href, ref->refType,
+				ref->source);
 			ref = ref->next;
 		}
 		fprintf(stdout, "\n");

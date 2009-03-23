@@ -35,19 +35,19 @@
 /**
  * Structure holding CVE Reference data
  */
-typedef struct cveReference_s {
-	char *summary;	///< summary
-	char *href;	///< href
-	char *refType;	///< reference type
-	char *source;	///< source
+typedef struct cve_reference {
+	char *summary;		///< summary
+	char *href;		///< href
+	char *refType;		///< reference type
+	char *source;		///< source
 
-	struct cveReference_s *next;
-} cveReference_t;
+	struct cve_reference *next;
+} cve_reference_t;
 
 /**
  * Structure holding Common Vulnerabilities and Exposures data
  */
-typedef struct cveInfo_s {
+typedef struct cve_info {
 	char *id;		///< id 
 	char *pub;		///< published datetime
 	char *mod;		///< last modified datetime
@@ -64,10 +64,10 @@ typedef struct cveInfo_s {
 	char *source;		///< source
 	char *generated;	///< generated on datetime
 
-	cveReference_t *refs;	///< cve references
+	cve_reference_t *refs;	///< cve references
 
-	struct cveInfo_s *next;	///< next cve info
-} cveInfo_t;
+	struct cve_info *next;	///< next cve info
+} cve_info_t;
 
 /**
  * Create new CVE Reference structure.
@@ -76,21 +76,21 @@ typedef struct cveInfo_s {
  * @return new zeroed CVE Reference structure
  * @retval NULL on failure
  */
-cveReference_t *cveReferenceNew();
+cve_reference_t *cveReferenceNew();
 
 /**
  * Free the CVE Reference structure and its data.
  *
  * @param reference CVE Reference to be freed
  */
-void cveReferenceDel(cveReference_t *reference);
+void cveReferenceDel(cve_reference_t * reference);
 
 /**
  * Free the whole CVE Reference list.
  *
  * @param ref root of the CVE Reference list to be freed
  */
-void cveReferenceDelAll(cveReference_t *ref);
+void cveReferenceDelAll(cve_reference_t * ref);
 
 /**
  * Create new CVE structure.
@@ -99,21 +99,21 @@ void cveReferenceDelAll(cveReference_t *ref);
  * @return new zeroed CVE structure
  * @retval NULL on failure
  */
-cveInfo_t *cveNew();
+cve_info_t *cveNew();
 
 /**
  * Free the CVE structure and its data.
  *
  * @param cve CVE to be freed
  */
-void cveDel(cveInfo_t *cve);
+void cveDel(cve_info_t * cve);
 
 /**
  * Free the whole CVE list.
  *
  * @param cve root of the CVE list to be freed
  */
-void cveDelAll(cveInfo_t *cve);
+void cveDelAll(cve_info_t * cve);
 
 /**
  * Parses the specified XML file and creates a list of CVE data structures.
@@ -123,6 +123,6 @@ void cveDelAll(cveInfo_t *cve);
  * @param outCveList address of the pointer to which the root element of the list is to be stored
  * @return non-negative value indicates the number of CVEs in the list, negative value indicates an error
  */
-int cveParse(char *xmlfile, cveInfo_t **outCveList);
+int cveParse(char *xmlfile, cve_info_t ** outCveList);
 
-#endif /* _CVE_H_ */
+#endif				/* _CVE_H_ */

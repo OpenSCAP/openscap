@@ -95,14 +95,14 @@ typedef struct {
 	int *stack;
 } tagStack_t;
 
-static void tagStackInit(tagStack_t *stack)
+static void tagStackInit(tagStack_t * stack)
 {
 	stack->depth = 16;
 	stack->top = -1;
-	stack->stack = malloc(stack->depth * sizeof (*stack->stack));
+	stack->stack = malloc(stack->depth * sizeof(*stack->stack));
 }
 
-static void tagStackDeinit(tagStack_t *stack)
+static void tagStackDeinit(tagStack_t * stack)
 {
 	if (stack->stack != NULL) {
 		free(stack->stack);
@@ -112,7 +112,7 @@ static void tagStackDeinit(tagStack_t *stack)
 	}
 }
 
-static void tagStackPush(tagStack_t *stack, int v)
+static void tagStackPush(tagStack_t * stack, int v)
 {
 	if (stack->depth == stack->top + 1) {
 		stack->depth *= 2;
@@ -123,20 +123,21 @@ static void tagStackPush(tagStack_t *stack, int v)
 	stack->stack[stack->top] = v;
 }
 
-static void tagStackPop(tagStack_t *stack)
+static void tagStackPop(tagStack_t * stack)
 {
 	if (stack->top >= 0)
 		stack->top--;
 }
 
-static int tagStackTop(tagStack_t *stack)
+static int tagStackTop(tagStack_t * stack)
 {
 	if (stack->top >= 0)
 		return stack->stack[stack->top];
 	return -1;
 }
 
-static void pushTag(tagStack_t *stack, const xmlChar *uri, const xmlChar *localName)
+static void pushTag(tagStack_t * stack, const xmlChar * uri,
+		    const xmlChar * localName)
 {
 	if (xmlStrcmp(localName, TAG_ENTRY_STR) == 0) {
 		tagStackPush(stack, TAG_ENTRY);
@@ -185,12 +186,12 @@ static void pushTag(tagStack_t *stack, const xmlChar *uri, const xmlChar *localN
 	}
 }
 
-cveReference_t *cveReferenceNew()
+cve_reference_t *cveReferenceNew()
 {
-	return calloc(1, sizeof (cveReference_t));
+	return calloc(1, sizeof(cve_reference_t));
 }
 
-void cveReferenceDel(cveReference_t *reference)
+void cveReferenceDel(cve_reference_t * reference)
 {
 	if (reference->summary != NULL)
 		free(reference->summary);
@@ -204,9 +205,9 @@ void cveReferenceDel(cveReference_t *reference)
 	free(reference);
 }
 
-void cveReferenceDelAll(cveReference_t *ref)
+void cveReferenceDelAll(cve_reference_t * ref)
 {
-	cveReference_t *t;
+	cve_reference_t *t;
 
 	while (ref != NULL) {
 		t = ref;
@@ -215,12 +216,12 @@ void cveReferenceDelAll(cveReference_t *ref)
 	}
 }
 
-cveInfo_t *cveNew()
+cve_info_t *cveNew()
 {
-	return calloc(1, sizeof (cveInfo_t));
+	return calloc(1, sizeof(cve_info_t));
 }
 
-void cveDel(cveInfo_t *cve)
+void cveDel(cve_info_t * cve)
 {
 	if (cve->id != NULL)
 		free(cve->id);
@@ -232,8 +233,8 @@ void cveDel(cveInfo_t *cve)
 		free(cve->mod);
 	if (cve->summary != NULL)
 		free(cve->summary);
-	if (cve->score  != NULL)
-		free(cve->score );
+	if (cve->score != NULL)
+		free(cve->score);
 	if (cve->vector != NULL)
 		free(cve->vector);
 	if (cve->complexity != NULL)
@@ -255,9 +256,9 @@ void cveDel(cveInfo_t *cve)
 	free(cve);
 }
 
-void cveDelAll(cveInfo_t *cve)
+void cveDelAll(cve_info_t * cve)
 {
-	cveInfo_t *t;
+	cve_info_t *t;
 
 	while (cve != NULL) {
 		t = cve;
@@ -266,13 +267,13 @@ void cveDelAll(cveInfo_t *cve)
 	}
 }
 
-int cveParse(char *xmlfile, cveInfo_t **outCveList)
+int cveParse(char *xmlfile, cve_info_t ** outCveList)
 {
 	xmlTextReaderPtr reader;
 	int ret, cve_cnt = 0;
 	tagStack_t tagStack;
-	cveInfo_t *cveList = NULL, *cve = NULL;
-	cveReference_t *reference = NULL;
+	cve_info_t *cveList = NULL, *cve = NULL;
+	cve_reference_t *reference = NULL;
 
 	/*
 	 * this initialize the library and check potential ABI mismatches
@@ -298,7 +299,7 @@ int cveParse(char *xmlfile, cveInfo_t **outCveList)
 			localName = xmlTextReaderConstLocalName(reader);
 			uri = xmlTextReaderNamespaceUri(reader);
 			pushTag(&tagStack, uri, localName);
-			xmlFree((void *) uri);
+			xmlFree((void *)uri);
 
 			switch (tagStackTop(&tagStack)) {
 			case TAG_ENTRY:
@@ -309,27 +310,36 @@ int cveParse(char *xmlfile, cveInfo_t **outCveList)
 					cve->next = cveNew();
 					cve = cve->next;
 				}
-				cve->id = (char *) xmlTextReaderGetAttribute(reader, ATTR_ID_STR);
+				cve->id =
+				    (char *)xmlTextReaderGetAttribute(reader,
+								      ATTR_ID_STR);
 				break;
 			case TAG_CWE:
 				/* can there be more than one? */
 				if (cve->cwe != NULL)
 					xmlFree(cve->cwe);
-				cve->cwe = (char *) xmlTextReaderGetAttribute(reader, ATTR_CWEID_STR);
+				cve->cwe =
+				    (char *)xmlTextReaderGetAttribute(reader,
+								      ATTR_CWEID_STR);
 				break;
 			case TAG_REFS:
 				if (cve->refs == NULL) {
-					cve->refs = reference = cveReferenceNew();
+					cve->refs = reference =
+					    cveReferenceNew();
 				} else {
 					reference->next = cveReferenceNew();
 					reference = reference->next;
 				}
-				reference->refType = (char *) xmlTextReaderGetAttribute(reader, ATTR_REFTYPE_STR);
+				reference->refType =
+				    (char *)xmlTextReaderGetAttribute(reader,
+								      ATTR_REFTYPE_STR);
 				break;
 			case TAG_REF:
 				if (reference->href != NULL)
 					xmlFree(reference->href);
-				reference->href = (char *) xmlTextReaderGetAttribute(reader, ATTR_HREF_STR);
+				reference->href =
+				    (char *)xmlTextReaderGetAttribute(reader,
+								      ATTR_HREF_STR);
 				break;
 			}
 
@@ -345,46 +355,46 @@ int cveParse(char *xmlfile, cveInfo_t **outCveList)
 			text = xmlTextReaderConstValue(reader);
 			switch (tagStackTop(&tagStack)) {
 			case TAG_PUBLISHED:
-				cve->pub = (char *) xmlStrdup(text);
+				cve->pub = (char *)xmlStrdup(text);
 				break;
 			case TAG_MODIFIED:
-				cve->mod = (char *) xmlStrdup(text);
+				cve->mod = (char *)xmlStrdup(text);
 				break;
 			case TAG_SCORE:
-				cve->score = (char *) xmlStrdup(text);
+				cve->score = (char *)xmlStrdup(text);
 				break;
 			case TAG_VECTOR:
-				cve->vector = (char *) xmlStrdup(text);
+				cve->vector = (char *)xmlStrdup(text);
 				break;
 			case TAG_COMPLEXITY:
-				cve->complexity = (char *) xmlStrdup(text);
+				cve->complexity = (char *)xmlStrdup(text);
 				break;
 			case TAG_AUTHENTICATION:
-				cve->authentication = (char *) xmlStrdup(text);
+				cve->authentication = (char *)xmlStrdup(text);
 				break;
 			case TAG_CONFIDENTIALITY:
-				cve->confidentiality = (char *) xmlStrdup(text);
+				cve->confidentiality = (char *)xmlStrdup(text);
 				break;
 			case TAG_INTEGRITY:
-				cve->integrity = (char *) xmlStrdup(text);
+				cve->integrity = (char *)xmlStrdup(text);
 				break;
 			case TAG_AVAILABILITY:
-				cve->availability = (char *) xmlStrdup(text);
+				cve->availability = (char *)xmlStrdup(text);
 				break;
 			case TAG_CVSSSOURCE:
-				cve->source = (char *) xmlStrdup(text);
+				cve->source = (char *)xmlStrdup(text);
 				break;
 			case TAG_GENERATED:
-				cve->generated = (char *) xmlStrdup(text);
+				cve->generated = (char *)xmlStrdup(text);
 				break;
 			case TAG_SUMMARY:
-				cve->summary = (char *) xmlStrdup(text);
+				cve->summary = (char *)xmlStrdup(text);
 				break;
 			case TAG_REF:
-				reference->summary = (char *) xmlStrdup(text);
-				break ;
+				reference->summary = (char *)xmlStrdup(text);
+				break;
 			case TAG_SOURCE:
-				reference->source = (char *) xmlStrdup(text);
+				reference->source = (char *)xmlStrdup(text);
 				break;
 			}
 
