@@ -1,7 +1,7 @@
 %{!?python_sitearch: %define python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
 
 Name:           openscap
-Version:        0.1.2
+Version:        0.1.3
 Release:        1%{?dist}
 Summary:        Set of open source libraries enabling integration of the SCAP line of standards
 Group:          System Environment/Libraries
@@ -54,15 +54,12 @@ rm -rf $RPM_BUILD_ROOT
 make install DESTDIR=$RPM_BUILD_ROOT
 find $RPM_BUILD_ROOT -name '*.la' -exec rm -f {} ';'
 
-
 %clean
 rm -rf $RPM_BUILD_ROOT
-
 
 %post -p /sbin/ldconfig
 
 %postun -p /sbin/ldconfig
-
 
 %files
 %defattr(-,root,root,-)
@@ -81,5 +78,8 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Tue Mar 24 2009 Peter Vrabec <pvrabec@redhat.com> 0.1.3-1
+- upgrade
+
 * Thu Jan 15 2009 Tomas Heinrich <theinric@redhat.com> 0.1.1-1
 - Initial rpm
