@@ -9,39 +9,53 @@
 #include "includes/oval_definitions_impl.h"
 #include "includes/oval_collection_impl.h"
 
-typedef struct Oval_value_s{
-	Oval_datatype_enum datatype;
+typedef struct oval_value_s{
+	oval_datatype_enum datatype;
 	char* text                 ;
-} Oval_value_t;
+} oval_value_t;
 
-typedef Oval_value_t* Oval_value_ptr;
-
-
-OvalCollection_value newOvalCollection_value(Oval_value* value_array){
-	return (OvalCollection_value)newOvalCollection((OvalCollection_target*)value_array);
+int   oval_iterator_value_has_more      (struct oval_iterator_value_s *oc_value){
+	return oval_collection_iterator_has_more((struct oval_iterator_s*)oc_value);
 }
-int   OvalCollection_value_hasMore      (OvalCollection_value oc_value){
-	return OvalCollection_hasMore((OvalCollection_ptr)oc_value);
-}
-Oval_value OvalCollection_value_next         (OvalCollection_value oc_value){
-	return (Oval_value)OvalCollection_next((OvalCollection_ptr)oc_value);
+struct oval_value_s *oval_iterator_value_next         (struct oval_iterator_value_s *oc_value){
+	return (struct oval_value_s*)oval_collection_iterator_next((struct oval_iterator_s*)oc_value);
 }
 
-Oval_datatype_enum Oval_value_datatype(Oval_value value){
-	return ((Oval_value_ptr)value)->datatype;
+oval_datatype_enum oval_value_datatype(struct oval_value_s *value){
+	return (value)->datatype;
 }
-char* Oval_value_text                 (Oval_value value){
-	return ((Oval_value_ptr)value)->text;
+char* oval_value_text                 (struct oval_value_s *value){
+	return ((struct oval_value_s*)value)->text;
 }
-unsigned char* Oval_value_binary      (Oval_value value){
+unsigned char* oval_value_binary      (struct oval_value_s *value){
 	return NULL;//TODO
 }
-char Oval_value_boolean               (Oval_value value){
+char oval_value_boolean               (struct oval_value_s *value){
 	return 0;//TODO
 }//datatype==OVAL_DATATYPE_BOOLEAN
-float Oval_value_float                (Oval_value value){
+float oval_value_float                (struct oval_value_s *value){
 	return 0;//TODO
 }//datatype==OVAL_DATATYPE_FLOAT
-long Oval_value_integer               (Oval_value value){
+long oval_value_integer               (struct oval_value_s *value){
 	return 0;//TODO
 }//datatype==OVAL_DATATYPE_INTEGER
+
+
+struct oval_value_s *oval_value_new(){
+	oval_value_t *value = (oval_value_t*)malloc(sizeof(oval_value_t));
+	value->datatype = OVAL_DATATYPE_UNKNOWN;
+	value->text     = NULL;
+	return value;
+}
+void oval_value_free(struct oval_value_s *value){
+	if(value->text!=NULL)free(value->text);
+	free(value);
+}
+
+void set_oval_value_datatype(struct oval_value_s*, oval_datatype_enum);
+void set_oval_value_text    (struct oval_value_s*, char*);
+void set_oval_value_binary  (struct oval_value_s*, unsigned char*);//datatype==OVAL_DATATYPE_BINARY
+void set_oval_value_boolean (struct oval_value_s*, int);           //datatype==OVAL_DATATYPE_BOOLEAN
+void set_oval_value_float   (struct oval_value_s*, float);         //datatype==OVAL_DATATYPE_FLOAT
+void set_oval_value_integer (struct oval_value_s*, long);          //datatype==OVAL_DATATYPE_INTEGER
+

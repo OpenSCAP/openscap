@@ -1,5 +1,5 @@
 /*
- * oval_sysInterface.c
+ * oval_sysint.c
  *
  *  Created on: Mar 3, 2009
  *      Author: david.niemoller
@@ -9,30 +9,24 @@
 #include "includes/oval_system_characteristics_impl.h"
 #include "includes/oval_collection_impl.h"
 
-typedef struct Oval_sysInterface_s{
+typedef struct oval_sysint_s{
 	char* name      ;
 	char* ipAddress ;
 	char* macAddress;
-} Oval_sysInterface_t;
-
-typedef Oval_sysInterface_t* Oval_sysInterface_ptr;
-
-OvalCollection_sysInterface newOvalCollection_sysInterface(Oval_sysInterface* sysInterface_array){
-	return (OvalCollection_sysInterface)newOvalCollection((OvalCollection_target*)sysInterface_array);
+} oval_sysint_t;
+int   oval_iterator_sysint_has_more      (struct oval_iterator_sysint_s *oc_sysint){
+	return oval_collection_iterator_has_more((struct oval_iterator_s*)oc_sysint);
 }
-int   OvalCollection_sysInterface_hasMore      (OvalCollection_sysInterface oc_sysInterface){
-	return OvalCollection_hasMore((OvalCollection_ptr)oc_sysInterface);
-}
-Oval_sysInterface OvalCollection_sysInterface_next         (OvalCollection_sysInterface oc_sysInterface){
-	return (Oval_sysInterface)OvalCollection_next((OvalCollection_ptr)oc_sysInterface);
+struct oval_sysint_s *oval_iterator_sysint_next         (struct oval_iterator_sysint_s *oc_sysint){
+	return (struct oval_sysint_s*)oval_collection_iterator_next((struct oval_iterator_s*)oc_sysint);
 }
 
-char* Oval_sysInterface_name      (Oval_sysInterface sysInterface){
-	return ((Oval_sysInterface_ptr)sysInterface)->name;
+char* oval_sysint_name      (struct oval_sysint_s *sysint){
+	return ((struct oval_sysint_s*)sysint)->name;
 }
-char* Oval_sysInterface_ipAddress (Oval_sysInterface sysInterface){
-	return ((Oval_sysInterface_ptr)sysInterface)->ipAddress;
+char* oval_sysint_ipAddress (struct oval_sysint_s *sysint){
+	return ((struct oval_sysint_s*)sysint)->ipAddress;
 }
-char* Oval_sysInterface_macAddress(Oval_sysInterface sysInterface){
-	return ((Oval_sysInterface_ptr)sysInterface)->macAddress;
+char* oval_sysint_macAddress(struct oval_sysint_s *sysint){
+	return ((struct oval_sysint_s*)sysint)->macAddress;
 }

@@ -6,54 +6,79 @@
  */
 #include <stdlib.h>
 #include <stdio.h>
-#include <includes/oval_definitions.h>
+#include <liboval/oval_definitions.h>
+#include "includes/oval_definitions_impl.h"
 #include "includes/oval_collection_impl.h"
 
-	typedef struct Oval_state_s{
-		Oval_family_enum family    ;
-		Oval_subtype_enum subtype  ;
+	typedef struct oval_state_s{
+		oval_family_enum family    ;
+		oval_subtype_enum subtype  ;
 		char* name                 ;
-		char** notes               ;
+		struct oval_collection_s *notes  ;
 		char* comment              ;
 		char* id                   ;
 		int deprecated             ;
 		int version                ;
-	} Oval_state_t;
+	} oval_state_t;
 
-	typedef Oval_state_t* Oval_state_ptr;
-
-	OvalCollection_state newOvalCollection_state(Oval_state* state_array){
-		return (OvalCollection_state)newOvalCollection((OvalCollection_target*)state_array);
+	int   oval_iterator_state_has_more(struct oval_iterator_state_s *oc_state){
+		return oval_collection_iterator_has_more((struct oval_iterator_s*)oc_state);
 	}
-	int   OvalCollection_state_hasMore      (OvalCollection_state oc_state){
-		return OvalCollection_hasMore((OvalCollection_ptr)oc_state);
-	}
-	Oval_state OvalCollection_state_next         (OvalCollection_state oc_state){
-		return (Oval_state)OvalCollection_next((OvalCollection_ptr)oc_state);
+	struct oval_state_s *oval_iterator_state_next(struct oval_iterator_state_s *oc_state){
+		return (struct oval_state_s*)oval_collection_iterator_next((struct oval_iterator_s*)oc_state);
 	}
 
-	Oval_family_enum Oval_state_family    (Oval_state state){
-		return ((Oval_state_ptr)state)->family;
+	oval_family_enum oval_state_family    (struct oval_state_s *state){
+		return (state)->family;
 	}
-	Oval_subtype_enum Oval_state_subtype  (Oval_state state){
-		return ((Oval_state_ptr)state)->subtype;
+	oval_subtype_enum oval_state_subtype  (struct oval_state_s *state){
+		return ((struct oval_state_s*)state)->subtype;
 	}
-	char* Oval_state_name                 (Oval_state state){
-		return ((Oval_state_ptr)state)->name;
+	char* oval_state_name                 (struct oval_state_s *state){
+		return ((struct oval_state_s*)state)->name;
 	}
-	OvalCollection_string Oval_state_notes(Oval_state state){
-		char** notes = ((Oval_state_ptr)state)->notes;
-		return newOvalCollection_string(notes);
+	struct oval_iterator_string_s *oval_state_notes(struct oval_state_s *state){
+		return (struct oval_iterator_string_s*)oval_collection_iterator(state->notes);
 	}
-	char* Oval_state_comment              (Oval_state state){
-		return ((Oval_state_ptr)state)->comment;
+	char* oval_state_comment(struct oval_state_s *state){
+		return ((struct oval_state_s*)state)->comment;
 	}
-	char* Oval_state_id                   (Oval_state state){
-		return ((Oval_state_ptr)state)->id;
+	char* oval_state_id                   (struct oval_state_s *state){
+		return ((struct oval_state_s*)state)->id;
 	}
-	int Oval_state_deprecated             (Oval_state state){
-		return ((Oval_state_ptr)state)->deprecated;
+	int oval_state_deprecated             (struct oval_state_s *state){
+		return ((struct oval_state_s*)state)->deprecated;
 	}
-	int Oval_state_version                (Oval_state state){
-		return ((Oval_state_ptr)state)->version;
+	int oval_state_version                (struct oval_state_s *state){
+		return state->version;
 	}
+
+	struct oval_state_s *oval_state_new(){
+		oval_state_t *state = (oval_state_t*)malloc(sizeof(oval_state_t));
+		state->deprecated = 0;
+		state->version    = 0;
+		state->family     = FAMILY_UNKNOWN;
+		state->subtype    = OVAL_SUBTYPE_UNKNOWN;
+		state->comment    = NULL;
+		state->id         = NULL;
+		state->name       = NULL;
+		state->notes      = oval_collection_new();
+		return state;
+	}
+	void oval_state_free(struct oval_state_s *state){
+		if(state->comment != NULL)free(state->comment);
+		if(state->id      != NULL)free(state->id     );
+		if(state->name    != NULL)free(state->name   );
+		void free_notes(struct oval_collection_item_s *note){free(note);}
+		oval_collection_free_items(state->notes,&free_notes);
+		free(state);
+	}
+	void set_oval_state_id(struct oval_state_s *state, char* id){state->id = id;}
+
+	void set_oval_state_family    (struct oval_state_s*, oval_family_enum);//TODO
+	void set_oval_state_subtype   (struct oval_state_s*, oval_subtype_enum);//TODO
+	void set_oval_state_name      (struct oval_state_s*, char*);//TODO
+	void add_oval_state_notes     (struct oval_state_s*, char*);//TODO
+	void set_oval_state_comment   (struct oval_state_s*, char*);//TODO
+	void set_oval_state_deprecated(struct oval_state_s*, int);//TODO
+	void set_oval_state_version   (struct oval_state_s*, int);//TODO

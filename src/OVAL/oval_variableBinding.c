@@ -1,5 +1,5 @@
 /*
- * oval_variableBinding.c
+ * oval_variable_binding.c
  *
  *  Created on: Mar 3, 2009
  *      Author: david.niemoller
@@ -9,26 +9,22 @@
 #include "includes/oval_definitions_impl.h"
 #include "includes/oval_collection_impl.h"
 
-typedef struct Oval_variableBinding_s{
-	Oval_variable variable ;
+typedef struct oval_variable_binding_s{
+	struct oval_variable_s *variable ;
 	char* value            ;
-} Oval_variableBinding_t;
+} oval_variable_binding_t;
 
-typedef Oval_variableBinding_t* Oval_variableBinding_ptr;
 
-OvalCollection_variableBinding newOvalCollection_variableBinding(Oval_variableBinding* variableBinding_array){
-	return (OvalCollection_variableBinding)newOvalCollection((OvalCollection_target*)variableBinding_array);
+int   oval_iterator_variable_binding_has_more      (struct oval_iterator_variable_binding_s *oc_variable_binding){
+	return oval_collection_iterator_has_more((struct oval_iterator_s*)oc_variable_binding);
 }
-int   OvalCollection_variableBinding_hasMore      (OvalCollection_variableBinding oc_variableBinding){
-	return OvalCollection_hasMore((OvalCollection_ptr)oc_variableBinding);
-}
-Oval_variableBinding OvalCollection_variableBinding_next         (OvalCollection_variableBinding oc_variableBinding){
-	return (Oval_variableBinding)OvalCollection_next((OvalCollection_ptr)oc_variableBinding);
+struct oval_variable_binding_s *oval_iterator_variable_binding_next         (struct oval_iterator_variable_binding_s *oc_variable_binding){
+	return (struct oval_variable_binding_s*)oval_collection_iterator_next((struct oval_iterator_s*)oc_variable_binding);
 }
 
-Oval_variable Oval_variableBinding_variable (Oval_variableBinding binding){
-	return ((Oval_variableBinding_ptr)binding)->variable;
+struct oval_variable_s *oval_variable_binding_variable (struct oval_variable_binding_s *binding){
+	return ((struct oval_variable_binding_s*)binding)->variable;
 }
-char* Oval_variableBinding_value            (Oval_variableBinding binding){
-	return ((Oval_variableBinding_ptr)binding)->value;
+char* oval_variable_binding_value(struct oval_variable_binding_s *binding){
+	return ((struct oval_variable_binding_s*)binding)->value;
 }

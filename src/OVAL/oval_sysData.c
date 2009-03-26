@@ -1,5 +1,5 @@
 /*
- * oval_sysData.c
+ * oval_sysdata.c
  *
  *  Created on: Mar 3, 2009
  *      Author: david.niemoller
@@ -10,26 +10,21 @@
 #include "includes/oval_system_characteristics_impl.h"
 #include "includes/oval_collection_impl.h"
 
-typedef struct Oval_sysData_s{
-	Oval_family_enum family  ;
-	Oval_subtype_enum subtype;
-} Oval_sysData_t;
+typedef struct oval_sysdata_s{
+	oval_family_enum family  ;
+	oval_subtype_enum subtype;
+} oval_sysdata_t;
 
-typedef Oval_sysData_t* Oval_sysData_ptr;
-
-OvalCollection_sysData newOvalCollection_sysData(Oval_sysData* sysData_array){
-	return (OvalCollection_sysData)newOvalCollection((OvalCollection_target*)sysData_array);
+int   oval_iterator_sysdata_has_more       (struct oval_iterator_sysdata_s *oc_sysdata){
+	return oval_collection_iterator_has_more((struct oval_iterator_s*)oc_sysdata);
 }
-int   OvalCollection_sysData_hasMore      (OvalCollection_sysData oc_sysData){
-	return OvalCollection_hasMore((OvalCollection_ptr)oc_sysData);
-}
-Oval_sysData OvalCollection_sysData_next         (OvalCollection_sysData oc_sysData){
-	return (Oval_sysData)OvalCollection_next((OvalCollection_ptr)oc_sysData);
+struct oval_sysdata_s *oval_iterator_sysdata_next(struct oval_iterator_sysdata_s *oc_sysdata){
+	return (struct oval_sysdata_s*)oval_collection_iterator_next((struct oval_iterator_s*)oc_sysdata);
 }
 
-Oval_family_enum Oval_sysData_family  (Oval_sysData sysData){
-	return ((Oval_sysData_ptr)sysData)->family;
+oval_family_enum oval_sysdata_family  (struct oval_sysdata_s *sysdata){
+	return ((struct oval_sysdata_s*)sysdata)->family;
 }
-Oval_subtype_enum Oval_sysData_subtype(Oval_sysData sysData){
-	return ((Oval_sysData_ptr)sysData)->subtype;
+oval_subtype_enum oval_sysdata_subtype(struct oval_sysdata_s *sysdata){
+	return ((struct oval_sysdata_s*)sysdata)->subtype;
 }

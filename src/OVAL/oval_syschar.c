@@ -10,46 +10,39 @@
 #include "includes/oval_system_characteristics_impl.h"
 #include "includes/oval_collection_impl.h"
 
-typedef struct Oval_syschar_s{
-	Oval_syscharCollectionFlag_enum flag  ;
-	char** messages                       ;
-	Oval_sysInfo sysInfo                  ;
-	Oval_object object                    ;
-	Oval_variableBinding* variableBindings;
-	Oval_sysData* sysData                 ;
-} Oval_syschar_t;
+typedef struct oval_syschar_s{
+	oval_syschar_collection_flag_enum flag      ;
+	struct oval_collection_s *messages                ;
+	struct oval_sysinfo_s *sysinfo                    ;
+	struct oval_object_s *object                      ;
+	struct oval_collection_s *variable_bindings       ;
+	struct oval_collection_s *sysdata                 ;
+} oval_syschar_t;
 
-typedef Oval_syschar_t* Oval_syschar_ptr;
-
-OvalCollection_syschar newOvalCollection_syschar(Oval_syschar* syschar_array){
-	return (OvalCollection_syschar)newOvalCollection((OvalCollection_target*)syschar_array);
+int   oval_iterator_syschar_has_more      (struct oval_iterator_syschar_s *oc_syschar){
+	return oval_collection_iterator_has_more((struct oval_iterator_s*)oc_syschar);
 }
-int   OvalCollection_syschar_hasMore      (OvalCollection_syschar oc_syschar){
-	return OvalCollection_hasMore((OvalCollection_ptr)oc_syschar);
-}
-Oval_syschar OvalCollection_syschar_next         (OvalCollection_syschar oc_syschar){
-	return (Oval_syschar)OvalCollection_next((OvalCollection_ptr)oc_syschar);
+struct oval_syschar_s *oval_iterator_syschar_next         (struct oval_iterator_syschar_s *oc_syschar){
+	return (struct oval_syschar_s*)oval_collection_iterator_next((struct oval_iterator_s*)oc_syschar);
 }
 
-Oval_syscharCollectionFlag_enum Oval_syschar_flag           (Oval_syschar syschar){
-	return ((Oval_syschar_ptr)syschar)->flag;
-}
-OvalCollection_string Oval_syschar_messages                 (Oval_syschar syschar){
-	char** messages = ((Oval_syschar_ptr)syschar)->messages;
-	return newOvalCollection_string(messages);
+oval_syschar_collection_flag_enum oval_syschar_flag           (struct oval_syschar_s *syschar){
+	return ((struct oval_syschar_s*)syschar)->flag;
 }
 
-Oval_sysInfo Oval_syschar_sysInfo                           (Oval_syschar syschar){
-	return ((Oval_syschar_ptr)syschar)->sysInfo;
+struct oval_iterator_string_s *oval_syschar_messages(struct oval_syschar_s *syschar){
+	return (struct oval_iterator_string_s*)oval_collection_iterator(syschar->messages);
 }
-Oval_object Oval_syschar_object                             (Oval_syschar syschar){
-	return ((Oval_syschar_ptr)syschar)->object;
+
+struct oval_sysinfo_s *oval_syschar_sysinfo(struct oval_syschar_s *syschar){
+	return ((struct oval_syschar_s*)syschar)->sysinfo;
 }
-OvalCollection_variableBinding Oval_syschar_variableBindings(Oval_syschar syschar){
-	Oval_variableBinding* bindings = ((Oval_syschar_ptr)syschar)->variableBindings;
-	return newOvalCollection_variableBinding(bindings);
+struct oval_object_s *oval_syschar_object                             (struct oval_syschar_s *syschar){
+	return ((struct oval_syschar_s*)syschar)->object;
 }
-OvalCollection_sysData Oval_syschar_sysData                 (Oval_syschar syschar){
-	Oval_sysData* data = ((Oval_syschar_ptr)syschar)->sysData;
-	return newOvalCollection_sysData(data);
+struct oval_iterator_variable_binding_s *oval_syschar_variable_bindings(struct oval_syschar_s *syschar){
+	return (struct oval_iterator_variable_binding_s*)oval_collection_iterator(syschar->variable_bindings);
+}
+struct oval_iterator_sysdata_s *oval_syschar_sysdata(struct oval_syschar_s *syschar){
+	return (struct oval_iterator_sysdata_s*)oval_collection_iterator(syschar->sysdata);
 }

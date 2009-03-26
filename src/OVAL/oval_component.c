@@ -8,117 +8,164 @@
 #include <stdio.h>
 #include "includes/oval_definitions_impl.h"
 #include "includes/oval_collection_impl.h"
+#include "includes/oval_string_map_impl.h"
 
-typedef struct Oval_component_s{
-	Oval_component_type_enum type               ;
-} Oval_component_t;
+typedef struct oval_component_s{
+	oval_component_type_enum type               ;
+} oval_component_t;
 
-typedef struct Oval_component_LITERAL_s{
-	Oval_component_type_enum type               ;
-	Oval_value literalValue                     ;//type==OVAL_COMPONENT_LITERAL
-} Oval_component_LITERAL_t;
+typedef struct oval_component_LITERAL_s{
+	oval_component_type_enum type               ;
+	struct oval_value_s *literalValue                 ;//type==OVAL_COMPONENT_LITERAL
+} oval_component_LITERAL_t;
 
-typedef struct Oval_component_OBJECTREF_s{
-	Oval_component_type_enum type               ;
-	Oval_object object                          ;//type==OVAL_COMPONENT_OBJECTREF
+typedef struct oval_component_OBJECTREF_s{
+	oval_component_type_enum type               ;
+	struct oval_object_s *object                      ;//type==OVAL_COMPONENT_OBJECTREF
 	char* object_field                          ;//type==OVAL_COMPONENT_OBJECTREF
-} Oval_component_OBJECTREF_t;
+} oval_component_OBJECTREF_t;
 
-typedef struct Oval_component_VARREF_s{
-	Oval_component_type_enum type               ;
-	Oval_variable variable                      ;//type==OVAL_COMPONENT_VARREF
-} Oval_component_VARREF_t;
+typedef struct oval_component_VARREF_s{
+	oval_component_type_enum type               ;
+	struct oval_variable_s *variable                      ;//type==OVAL_COMPONENT_VARREF
+} oval_component_VARREF_t;
 
-typedef struct Oval_component_FUNCTION_s{
-	Oval_component_type_enum type               ;
-	Oval_function_type_enum function_type       ;//type==OVAL_COMPONENT_FUNCTION
-	Oval_component* function_components         ;//type==OVAL_COMPONENT_FUNCTION
-	char** function_keys                        ;//type==OVAL_COMPONENT_FUNCTION
-	Oval_value function_value                   ;//type==OVAL_COMPONENT_FUNCTION
-} Oval_component_FUNCTION_t;
+typedef struct oval_component_FUNCTION_s{
+	oval_component_type_enum type               ;
+	oval_function_type_enum function_type       ;//type==OVAL_COMPONENT_FUNCTION
+	struct oval_string_map_s *function_components     ;//type==OVAL_COMPONENT_FUNCTION
+	struct oval_value_s *function_value               ;//type==OVAL_COMPONENT_FUNCTION
+} oval_component_FUNCTION_t;
 
-typedef Oval_component_t* Oval_component_ptr;
-typedef Oval_component_LITERAL_t* Oval_component_LITERAL_ptr;
-typedef Oval_component_OBJECTREF_t* Oval_component_OBJECTREF_ptr;
-typedef Oval_component_VARREF_t* Oval_component_VARREF_ptr;
-typedef Oval_component_FUNCTION_t* Oval_component_FUNCTION_ptr;
-
-OvalCollection_component newOvalCollection_component(Oval_component* component_array){
-	return (OvalCollection_component)newOvalCollection((OvalCollection_target*)component_array);
+int   oval_iterator_component_has_more      (struct oval_iterator_component_s *oc_component){
+	return oval_collection_iterator_has_more((struct oval_iterator_s*)oc_component);
 }
-int   OvalCollection_component_hasMore      (OvalCollection_component oc_component){
-	return OvalCollection_hasMore((OvalCollection_ptr)oc_component);
-}
-Oval_component OvalCollection_component_next         (OvalCollection_component oc_component){
-	return (Oval_component)OvalCollection_next((OvalCollection_ptr)oc_component);
+struct oval_component_s *oval_iterator_component_next         (struct oval_iterator_component_s *oc_component){
+	return (struct oval_component_s*)oval_collection_iterator_next((struct oval_iterator_s*)oc_component);
 }
 
-Oval_component_type_enum Oval_component_type               (Oval_component component){
-	return ((Oval_component_ptr)component)->type;
+oval_component_type_enum oval_component_type               (struct oval_component_s *component){
+	return ((struct oval_component_s*)component)->type;
 }
-Oval_value Oval_component_literalValue                     (Oval_component component){
+struct oval_value_s *oval_component_literalValue                     (struct oval_component_s *component){
 	//type==OVAL_COMPONENT_LITERAL
-	Oval_value literalValue = NULL;
-	if(Oval_component_type(component)==OVAL_COMPONENT_LITERAL){
-		literalValue = ((Oval_component_LITERAL_ptr)component)->literalValue;
+	struct oval_value_s *literalValue = NULL;
+	if(oval_component_type(component)==OVAL_COMPONENT_LITERAL){
+		literalValue = ((struct oval_component_LITERAL_s*)component)->literalValue;
 	}
 	return literalValue;
 }
-Oval_object Oval_component_object                          (Oval_component component){
+struct oval_object_s *oval_component_object                          (struct oval_component_s *component){
 	//type==OVAL_COMPONENT_OBJECTREF
-	Oval_object object = NULL;
-	if(Oval_component_type(component)==OVAL_COMPONENT_OBJECTREF){
-		object = ((Oval_component_OBJECTREF_ptr)component)->object;
+	struct oval_object_s *object = NULL;
+	if(oval_component_type(component)==OVAL_COMPONENT_OBJECTREF){
+		object = ((struct oval_component_OBJECTREF_s*)component)->object;
 	}
 	return object;
 }
-char* Oval_component_object_field                          (Oval_component component){
+char* oval_component_object_field                          (struct oval_component_s *component){
 	//type==OVAL_COMPONENT_OBJECTREF
 	char* field = NULL;
-	if(Oval_component_type(component)==OVAL_COMPONENT_OBJECTREF){
-		field = ((Oval_component_OBJECTREF_ptr)component)->object_field;
+	if(oval_component_type(component)==OVAL_COMPONENT_OBJECTREF){
+		field = ((struct oval_component_OBJECTREF_s*)component)->object_field;
 	}
 	return field;
 }
-Oval_variable Oval_component_variable                      (Oval_component component){
+struct oval_variable_s *oval_component_variable                      (struct oval_component_s *component){
 	//type==OVAL_COMPONENT_VARREF
-	Oval_variable variable = NULL;
-	if(Oval_component_type(component)==OVAL_COMPONENT_VARREF){
-		variable = ((Oval_component_VARREF_ptr)component)->variable;
+	struct oval_variable_s *variable = NULL;
+	if(oval_component_type(component)==OVAL_COMPONENT_VARREF){
+		variable = ((struct oval_component_VARREF_s*)component)->variable;
 	}
 	return variable;
 }
-Oval_function_type_enum Oval_component_function_type       (Oval_component component){
+oval_function_type_enum oval_component_function_type       (struct oval_component_s *component){
 	//type==OVAL_COMPONENT_FUNCTION
-	Oval_function_type_enum function_type = OVAL_FUNCTION_UNKNOWN;
-	if(Oval_component_type(component)==OVAL_COMPONENT_FUNCTION){
-		function_type = ((Oval_component_FUNCTION_ptr)component)->function_type;
+	oval_function_type_enum function_type = OVAL_FUNCTION_UNKNOWN;
+	if(oval_component_type(component)==OVAL_COMPONENT_FUNCTION){
+		function_type = ((struct oval_component_FUNCTION_s*)component)->function_type;
 	}
 	return function_type;
 }
-OvalCollection_component Oval_component_function_components(Oval_component component){
+
+struct oval_iterator_component_s *oval_component_function_components(struct oval_component_s *component){
 	//type==OVAL_COMPONENT_FUNCTION
-	OvalCollection_component oc_component = NULL;
-	if(Oval_component_type(component)==OVAL_COMPONENT_FUNCTION){
-		Oval_component* components = ((Oval_component_FUNCTION_ptr)component)->function_components;
-		oc_component = newOvalCollection_component(components);
-	}
-	return oc_component;
+	struct oval_component_FUNCTION_s *function = (struct oval_component_FUNCTION_s*)component;
+	return (struct oval_iterator_component_s*)oval_string_map_values(function->function_components);
 }
-OvalCollection_string Oval_component_function_keys         (Oval_component component){
+struct oval_iterator_string_s *oval_component_function_keys         (struct oval_component_s *component){
 	//type==OVAL_COMPONENT_FUNCTION
-	OvalCollection_string oc_key = NULL;
-	if(Oval_component_type(component)==OVAL_COMPONENT_FUNCTION){
-		char** keys = ((Oval_component_FUNCTION_ptr)component)->function_keys;
-		oc_key = newOvalCollection_string(keys);
-	}
-	return oc_key;
+	struct oval_component_FUNCTION_s *function = (struct oval_component_FUNCTION_s*)component;
+	return (struct oval_iterator_string_s*)oval_string_map_keys(function->function_components);
 }
-Oval_value Oval_component_function_value                   (Oval_component component, char* key){
+struct oval_value_s *oval_component_function_value                   (struct oval_component_s *component, char* key){
 	//type==OVAL_COMPONENT_FUNCTION
-	Oval_value value = NULL;
-	if(Oval_component_type(component)==OVAL_COMPONENT_FUNCTION){
+	struct oval_value_s *value = NULL;
+	if(oval_component_type(component)==OVAL_COMPONENT_FUNCTION){
 		//TODO
 	}
 	return value;
 }
+
+struct oval_component_s *oval_component_new(oval_component_type_enum type){
+	oval_component_t *component;
+	switch(type){
+		case OVAL_COMPONENT_FUNCTION:{
+			oval_component_FUNCTION_t *function
+			= (oval_component_FUNCTION_t*)malloc(sizeof(oval_component_FUNCTION_t));
+			component = (oval_component_t*)function;
+			function->function_value      = NULL;
+			function->function_components = oval_string_map_new();
+			function->function_type       = OVAL_FUNCTION_UNKNOWN;
+		}break;
+		case OVAL_COMPONENT_LITERAL:{
+			oval_component_LITERAL_t *literal
+			= (oval_component_LITERAL_t*)malloc(sizeof(oval_component_LITERAL_t));
+			component = (oval_component_t*)literal;
+			literal->literalValue = NULL;
+		}break;
+		case OVAL_COMPONENT_OBJECTREF:{
+			oval_component_OBJECTREF_t *objectref
+			= (oval_component_OBJECTREF_t*)malloc(sizeof(oval_component_OBJECTREF_t));
+			component = (oval_component_t*)objectref;
+			objectref->object       = NULL;
+			objectref->object_field = NULL;
+		}break;
+		case OVAL_COMPONENT_VARREF:{
+			oval_component_VARREF_t *varref
+			= (oval_component_VARREF_t*)malloc(sizeof(oval_component_VARREF_t));
+			component = (oval_component_t*)varref;
+			varref->variable = NULL;
+		}break;
+	}
+	component->type = type;
+	return component;
+}
+void oval_component_free(struct oval_component_s *component){
+	switch(component->type){
+		case OVAL_COMPONENT_FUNCTION:{
+			oval_component_FUNCTION_t *function = (oval_component_FUNCTION_t*)component;
+			if(function->function_value != NULL)oval_value_free(function->function_value);
+			void free_subcomp(struct oval_collection_item_s *subcomp){oval_component_free(subcomp);}
+			oval_string_map_free(function->function_components,&free_subcomp);
+		}break;
+		case OVAL_COMPONENT_LITERAL:{
+			oval_component_LITERAL_t *literal = (oval_component_LITERAL_t*)component;
+			if(literal->literalValue != NULL)oval_value_free(literal->literalValue);
+		}break;
+		case OVAL_COMPONENT_OBJECTREF:{
+			oval_component_OBJECTREF_t *objectref = (oval_component_OBJECTREF_t*)component;
+			if(objectref->object_field != NULL)free(objectref->object_field);
+		}break;
+	}
+	free(component);
+}
+
+void set_oval_component_type               (struct oval_component_s*, oval_component_type_enum);//TODO
+void set_oval_component_literal_value      (struct oval_component_s*, struct oval_value_s*);//TODO         //type==OVAL_COMPONENT_LITERAL
+void set_oval_component_object             (struct oval_component_s*, struct oval_object_s*);//TODO        //type==OVAL_COMPONENT_OBJECTREF
+void set_oval_component_object_field       (struct oval_component_s*, char*);//TODO                  //type==OVAL_COMPONENT_OBJECTREF
+void set_oval_component_variable           (struct oval_component_s*, struct oval_variable_s*);//TODO      //type==OVAL_COMPONENT_VARREF
+void set_oval_component_function_type      (struct oval_component_s*, oval_function_type_enum);//TODO//type==OVAL_COMPONENT_FUNCTION
+void add_oval_component_function_components(struct oval_component_s*, struct oval_component_s*);//TODO     //type==OVAL_COMPONENT_FUNCTION
+void set_oval_component_function_keys      (struct oval_component_s*, char*);//TODO                  //type==OVAL_COMPONENT_FUNCTION

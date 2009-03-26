@@ -9,63 +9,86 @@
 #include "includes/oval_definitions_impl.h"
 #include "includes/oval_collection_impl.h"
 
-typedef struct Oval_variable_s{
+typedef struct oval_variable_s{
 	char* id                               ;
-	Oval_variable_type_enum type           ;
-	Oval_datatype_enum datatype            ;
-} Oval_variable_t;
+	oval_variable_type_enum type           ;
+	oval_datatype_enum datatype            ;
+	void* extension                        ;
+} oval_variable_t;
 
-typedef struct Oval_variable_CONSTANT_s{
+typedef struct oval_variable_CONSTANT_s{
 	char* Id                               ;
-	Oval_variable_type_enum type           ;
-	Oval_datatype_enum datatype            ;
-	Oval_value*  values                    ;//type==OVAL_VARIABLE_CONSTANT
-} Oval_variable_CONSTANT_t;
+	oval_variable_type_enum type           ;
+	oval_datatype_enum datatype            ;
+	struct oval_collection_s *values       ;//type==OVAL_VARIABLE_CONSTANT
+} oval_variable_CONSTANT_t;
 
-typedef struct Oval_variable_LOCAL_s{
+typedef struct oval_variable_LOCAL_s{
 	char* Id                               ;
-	Oval_variable_type_enum type           ;
-	Oval_datatype_enum datatype            ;
-	Oval_component component               ;//type==OVAL_VARIABLE_LOCAL
-} Oval_variable_LOCAL_t;
+	oval_variable_type_enum type           ;
+	oval_datatype_enum datatype            ;
+	struct oval_component_s *component     ;//type==OVAL_VARIABLE_LOCAL
+} oval_variable_LOCAL_t;
 
-typedef Oval_variable_t* Oval_variable_ptr;
-typedef Oval_variable_CONSTANT_t* Oval_variable_CONSTANT_ptr;
-typedef Oval_variable_LOCAL_t* Oval_variable_LOCAL_ptr;
-
-OvalCollection_variable newOvalCollection_variable(Oval_variable* variable_array){
-	return (OvalCollection_variable)newOvalCollection((OvalCollection_target*)variable_array);
+int   oval_collection_variable_has_more(struct oval_iterator_variable_s *oc_variable){
+	return oval_collection_iterator_has_more((struct oval_iterator_s*)oc_variable);
 }
-int   OvalCollection_variable_hasMore      (OvalCollection_variable oc_variable){
-	return OvalCollection_hasMore((OvalCollection_ptr)oc_variable);
-}
-Oval_variable OvalCollection_variable_next         (OvalCollection_variable oc_variable){
-	return (Oval_variable)OvalCollection_next((OvalCollection_ptr)oc_variable);
+struct oval_variable_s *oval_collection_variable_next(struct oval_iterator_variable_s *oc_variable){
+	return (struct oval_variable_s*)oval_collection_iterator_next((struct oval_iterator_s*)oc_variable);
 }
 
-char* Oval_variable_Id                               (Oval_variable variable){
-	return ((Oval_variable_ptr)variable)->id;
+char* oval_variable_id                               (struct oval_variable_s *variable){
+	return ((struct oval_variable_s*)variable)->id;
 }
-Oval_variable_type_enum Oval_variable_type           (Oval_variable variable){
-	return ((Oval_variable_ptr)variable)->type;
+oval_variable_type_enum oval_variable_type           (struct oval_variable_s *variable){
+	return ((struct oval_variable_s*)variable)->type;
 }
-Oval_datatype_enum Oval_variable_datatype            (Oval_variable variable){
-	return ((Oval_variable_ptr)variable)->datatype;
+oval_datatype_enum oval_variable_datatype            (struct oval_variable_s *variable){
+	return ((struct oval_variable_s*)variable)->datatype;
 }
-OvalCollection_value Oval_variable_values            (Oval_variable variable){
+struct oval_iterator_value_s *oval_variable_values            (struct oval_variable_s *variable){
 	//type==OVAL_VARIABLE_CONSTANT
-	OvalCollection_value oc_value = NULL;
-	if(Oval_variable_type(variable)==OVAL_VARIABLE_CONSTANT){
-		Oval_value* values = ((Oval_variable_CONSTANT_ptr)variable)->values;
-		oc_value = newOvalCollection_value(values);
-	}
-	return oc_value;
+	struct oval_variable_CONSTANT_s *constant = (struct oval_variable_CONSTANT_s*)variable;
+	return (struct oval_iterator_value_s*)oval_collection_iterator(constant->values);
 }
-Oval_component Oval_variable_component               (Oval_variable variable){
+struct oval_component_s *oval_variable_component               (struct oval_variable_s *variable){
 	//type==OVAL_VARIABLE_LOCAL
-	Oval_component component = NULL;
-	if(Oval_variable_type(variable)==OVAL_VARIABLE_LOCAL){
-		component = ((Oval_variable_LOCAL_ptr)variable)->component;
+	struct oval_component_s *component = NULL;
+	if(oval_variable_type(variable)==OVAL_VARIABLE_LOCAL){
+		component = ((struct oval_variable_LOCAL_s*)variable)->component;
 	}
 	return component;
 }
+
+struct oval_variable_s *oval_variable_new(){
+	oval_variable_t *variable = (oval_variable_t*)malloc(sizeof(oval_variable_t));
+	variable->id        = NULL;
+	variable->type      = OVAL_VARIABLE_UNKNOWN;
+	variable->datatype  = OVAL_DATATYPE_UNKNOWN;
+	variable->extension = NULL;
+	return variable;
+};
+void  oval_variable_free(struct oval_variable_s *variable){
+	if(variable->id != NULL)free(variable->id);
+	if(variable->extension!=NULL){
+		switch(variable->type){
+			case OVAL_VARIABLE_LOCAL:{
+				oval_component_free(variable->extension);
+			}break;
+			case OVAL_VARIABLE_CONSTANT:{
+				void free_value(struct oval_collection_item_s *value){oval_value_free(value);}
+				oval_collection_free_items((struct oval_collection_s*)variable->extension,&free_value);
+			}break;
+		}
+	}
+	free(variable);
+}
+void set_oval_variable_id       (struct oval_variable_s *variable, char* id){variable->id = id;}
+void set_oval_variable_type     (struct oval_variable_s *variable, oval_variable_type_enum type){
+	variable->type = type;
+	if(type==OVAL_VARIABLE_CONSTANT)variable->extension = oval_collection_new();
+}
+
+void set_oval_variable_datatype (struct oval_variable_s*, oval_datatype_enum);//TODO
+void add_oval_variable_values   (struct oval_variable_s*, struct oval_value_s*);//TODO//type==OVAL_VARIABLE_CONSTANT
+void set_oval_variable_component(struct oval_variable_s*, struct oval_component_s*);//TODO//type==OVAL_VARIABLE_LOCAL

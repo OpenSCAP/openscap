@@ -1,5 +1,5 @@
 /*
- * oval_resultDirectives.c
+ * oval_result_directives.c
  *
  *  Created on: Mar 3, 2009
  *      Author: david.niemoller
@@ -10,32 +10,30 @@
 #include "includes/oval_results_impl.h"
 #include "includes/oval_collection_impl.h"
 
-typedef struct Oval_resultDirectives_s{
+typedef struct oval_result_directives_s{
 	int definitionTrue         ;
 	int definitionFalse        ;
 	int definitionUnknown      ;
 	int definitionError        ;
 	int definitionNotEvaluated ;
 	int definitionNotApplicable;
-} Oval_resultDirectives_t;
+} oval_result_directives_t;
 
-typedef Oval_resultDirectives_t* Oval_resultDirectives_ptr;
-
-int Oval_resultDirectives_definitionTrue         (Oval_resultDirectives directives){
-	return ((Oval_resultDirectives_ptr)directives)->definitionTrue;
+int oval_result_directives_definition_true         (struct oval_result_directives_s *directives){
+	return ((struct oval_result_directives_s*)directives)->definitionTrue;
 }
-int Oval_resultDirectives_definitionFalse        (Oval_resultDirectives directives){
-	return ((Oval_resultDirectives_ptr)directives)->definitionFalse;
+int oval_result_directives_definition_false        (struct oval_result_directives_s *directives){
+	return ((struct oval_result_directives_s*)directives)->definitionFalse;
 }
-int Oval_resultDirectives_definitionUnknown      (Oval_resultDirectives directives){
-	return ((Oval_resultDirectives_ptr)directives)->definitionUnknown;
+int oval_result_directives_definition_unknown      (struct oval_result_directives_s *directives){
+	return ((struct oval_result_directives_s*)directives)->definitionUnknown;
 }
-int Oval_resultDirectives_definitionError        (Oval_resultDirectives directives){
-	return ((Oval_resultDirectives_ptr)directives)->definitionError;
+int oval_result_directives_definition_error        (struct oval_result_directives_s *directives){
+	return ((struct oval_result_directives_s*)directives)->definitionError;
 }
-int Oval_resultDirectives_definitionNotEvaluated (Oval_resultDirectives directives){
-	return ((Oval_resultDirectives_ptr)directives)->definitionNotEvaluated;
+int oval_result_directives_definition_not_evaluated (struct oval_result_directives_s *directives){
+	return ((struct oval_result_directives_s*)directives)->definitionNotEvaluated;
 }
-int Oval_resultDirectives_definitionNotApplicable(Oval_resultDirectives directives){
-	return ((Oval_resultDirectives_ptr)directives)->definitionNotApplicable;
+int oval_result_directives_definition_not_applicable(struct oval_result_directives_s *directives){
+	return ((struct oval_result_directives_s*)directives)->definitionNotApplicable;
 }

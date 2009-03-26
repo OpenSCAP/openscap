@@ -2,6 +2,7 @@
 #define OVAL_DEFINITIONS
 
 	typedef enum{
+		FAMILY_UNKNOWN     = 0,
 		FAMILY_AIX         = 1000,
 		FAMILY_APACHE      = 2000,
 		FAMILY_CATOS       = 3000,
@@ -154,6 +155,7 @@
 	}oval_windows_subtype_enum;
 
 	typedef enum {
+		AFCFML_UNKNOWN,
 		AFCFML_CATOS,
 		AFCFML_IOS,
 		AFCFML_MACOS,
@@ -164,9 +166,10 @@
 	} oval_affected_family_enum;
 
 	typedef enum {
-		NODETYPE_CRITERIA,
-		NODETYPE_CRITERION,
-		NODETYPE_EXTENDDEF
+		NODETYPE_UNKNOWN   = 0,
+		NODETYPE_CRITERIA  = 1,
+		NODETYPE_CRITERION = 2,
+		NODETYPE_EXTENDDEF = 3
 	} oval_criteria_node_type_enum;
 
 	typedef enum {
@@ -178,6 +181,7 @@
 	} oval_operator_enum;
 
 	typedef enum {
+		CLASS_UNKNOWN,
 		CLASS_COMPLIANCE,
 		CLASS_INVENTORY,
 		CLASS_MISCELLANEOUS,
@@ -186,6 +190,7 @@
 	} oval_definition_class_enum;
 
 	typedef enum {
+		EXISTENCE_UNKNOWN,
 		ALL_EXIST,
 		ANY_EXIST,
 		AT_LEAST_ONE_EXISTS,
@@ -207,6 +212,7 @@
 	} oval_object_content_type_enum;
 
 	typedef enum{
+		OVAL_ENTITY_TYPE_UNKNOWN,
 		OVAL_ENTITY_TYPE_ANY,
 		OVAL_ENTITY_TYPE_BINARY,
 		OVAL_ENTITY_TYPE_BOOLEAN,
@@ -216,6 +222,7 @@
 	}oval_entity_type_enum;
 
 	typedef enum{
+		OVAL_DATATYPE_UNKNOWN,
 		OVAL_DATATYPE_BINARY,
 		OVAL_DATATYPE_BOOLEAN,
 		OVAL_DATATYPE_EVR_STRING,
@@ -228,6 +235,7 @@
 	}oval_datatype_enum;;
 
 	typedef enum{
+		OVAL_ENTITY_VARREF_UNKNOWN,
 		OVAL_ENTITY_VARREF_NONE,
 		OVAL_ENTITY_VARREF_ATTRIBUTE,
 		OVAL_ENTITY_VARREF_ELEMENT
@@ -239,12 +247,14 @@
 	}oval_set_type_enum;
 
 	typedef enum{
+		OVAL_SET_OPERATION_UNKNOWN,
 		OVAL_SET_OPERATION_COMPLEMENT,
 		OVAL_SET_OPERATION_INTERSECTION,
 		OVAL_SET_OPERATION_UNION
 	}oval_set_operation_enum;
 
 	typedef enum{
+		OVAL_VARIABLE_UNKNOWN,
 		OVAL_VARIABLE_EXTERNAL,
 		OVAL_VARIABLE_CONSTANT,
 		OVAL_VARIABLE_LOCAL
@@ -270,136 +280,134 @@
 		OVAL_FUNCTION_ARITHMATIC
 	}oval_function_type_enum;
 
-	struct oval_collection_string_s;
+	struct oval_iterator_string_s;
 
 	struct oval_affected_s;
-	struct oval_collection_affected_s;
+	struct oval_iterator_affected_s;
 
 	struct oval_test_s;
-	struct oval_collection_test_s;
+	struct oval_iterator_test_s;
 
 	struct oval_criteria_node_s;
-	struct oval_collection_criteria_node_s;
+	struct oval_iterator_criteria_node_s;
 
 	struct oval_reference_s;
-	struct oval_collection_reference_s;
+	struct oval_iterator_reference_s;
 
 	struct oval_definition_s;
-	struct oval_collection_definition_s;
+	struct oval_iterator_definition_s;
 
 	struct oval_object_s;
-	struct oval_collection_object_s;
+	struct oval_iterator_object_s;
 
 	struct oval_state_s;
-	struct oval_collection_state_s;
+	struct oval_iterator_state_s;
 
 	struct oval_variable_s;
-	struct oval_collection_variable_s;
+	struct oval_iterator_variable_s;
 
 	struct oval_variable_binding_s;
-	struct oval_collection_variable_binding_s;
+	struct oval_iterator_variable_binding_s;
 
 	struct oval_object_content_s;
-	struct oval_collection_object_content_s;
+	struct oval_iterator_object_content_s;
 
 	struct oval_behavior_s;
-	struct oval_collection_behavior_s;
+	struct oval_iterator_behavior_s;
 
 	struct oval_entity_s;
-	struct oval_collection_entity_s;
+	struct oval_iterator_entity_s;
 
-	struct oval_collection_set_s;
+	struct oval_iterator_set_s;
 	struct oval_set_s;
 
 	struct oval_value_s;
-	struct oval_collection_value_s;
+	struct oval_iterator_value_s;
 
 	struct oval_component_s;
-	struct oval_collection_component_s;
+	struct oval_iterator_component_s;
 
-	int   oval_collection_string_has_more(struct oval_collection_string_s*);
-	char *oval_collection_string_next   (struct oval_collection_string_s*);
+	int   oval_iterator_string_has_more(struct oval_iterator_string_s*);
+	char *oval_iterator_string_next    (struct oval_iterator_string_s*);
 
-	int  oval_collection_affected_has_more                (struct oval_collection_affected_s*);
-	struct oval_affected_s *oval_collection_affected_next(struct oval_collection_affected_s*);
+	int  oval_iterator_affected_has_more               (struct oval_iterator_affected_s*);
+	struct oval_affected_s *oval_iterator_affected_next(struct oval_iterator_affected_s*);
 
-	int  oval_collection_test_has_more            (struct oval_collection_test_s*);
-	struct oval_test_s *oval_collection_test_next(struct oval_collection_test_s*);
+	int  oval_iterator_test_has_more           (struct oval_iterator_test_s*);
+	struct oval_test_s *oval_iterator_test_next(struct oval_iterator_test_s*);
 
-	oval_affected_family_enum oval_affected_family         (struct oval_affected_s*);
-	struct oval_collection_string_s *oval_affected_platform(struct oval_affected_s*);
-	struct oval_collection_string_s *oval_affected_product (struct oval_affected_s*);
+	oval_affected_family_enum oval_affected_family       (struct oval_affected_s*);
+	struct oval_iterator_string_s *oval_affected_platform(struct oval_affected_s*);
+	struct oval_iterator_string_s *oval_affected_product (struct oval_affected_s*);
 
-	int  oval_collection_criteria_node_has_more                    (struct oval_collection_criteria_node_s*);
-	struct oval_criteria_node_s *oval_collection_criteria_node_next(struct oval_collection_criteria_node_s*);
+	int  oval_iterator_criteria_node_has_more                    (struct oval_iterator_criteria_node_s*);
+	struct oval_criteria_node_s *oval_iterator_criteria_node_next(struct oval_iterator_criteria_node_s*);
 
-	oval_criteria_node_type_enum oval_criteria_node_type                (struct oval_criteria_node_s*);
-	int oval_criteria_node_negate                                      (struct oval_criteria_node_s*);
-	char *oval_criteria_node_comment                                   (struct oval_criteria_node_s*);
-	oval_operator_enum oval_criteria_node_operator                     (struct oval_criteria_node_s*);//type==NODETYPE_CRITERIA
-	struct oval_collection_criteria_node_s *oval_criteria_node_subnodes (struct oval_criteria_node_s*);//type==NODETYPE_CRITERIA
-	struct oval_test_s *oval_criteria_node_test                        (struct oval_criteria_node_s*);//type==NODETYPE_CRITERION
-	struct oval_definition_s *oval_criteria_node_definition            (struct oval_criteria_node_s*);//type==NODETYPE_EXTENDDEF
+	oval_criteria_node_type_enum oval_criteria_node_type              (struct oval_criteria_node_s*);
+	int oval_criteria_node_negate                                     (struct oval_criteria_node_s*);
+	char *oval_criteria_node_comment                                  (struct oval_criteria_node_s*);
+	oval_operator_enum oval_criteria_node_operator                    (struct oval_criteria_node_s*);//type==NODETYPE_CRITERIA
+	struct oval_iterator_criteria_node_s *oval_criteria_node_subnodes (struct oval_criteria_node_s*);//type==NODETYPE_CRITERIA
+	struct oval_test_s *oval_criteria_node_test                       (struct oval_criteria_node_s*);//type==NODETYPE_CRITERION
+	struct oval_definition_s *oval_criteria_node_definition           (struct oval_criteria_node_s*);//type==NODETYPE_EXTENDDEF
 
-	int  oval_collection_reference_has_more                 (struct oval_collection_reference_s*);
-	struct oval_reference_s *oval_collection_reference_next(struct oval_collection_reference_s*);
+	int  oval_iterator_reference_has_more                (struct oval_iterator_reference_s*);
+	struct oval_reference_s *oval_iterator_reference_next(struct oval_iterator_reference_s*);
 
 	char *oval_reference_source(struct oval_reference_s*);
 	char *oval_reference_id    (struct oval_reference_s*);
 	char *oval_reference_url   (struct oval_reference_s*);
 
-	int  oval_collection_definition_has_more                  (struct oval_collection_definition_s*);
-	struct oval_definition_s *oval_collection_definition_next(struct oval_collection_definition_s*);
+	int  oval_iterator_definition_has_more                 (struct oval_iterator_definition_s*);
+	struct oval_definition_s *oval_iterator_definition_next(struct oval_iterator_definition_s*);
 
-	char *oval_definition_id                                      (struct oval_definition_s*);
-	int oval_definition_version                                   (struct oval_definition_s*);
-	oval_definition_class_enum oval_definition_class              (struct oval_definition_s*);
-	int oval_definition_deprecated                                (struct oval_definition_s*);
-	char *oval_definition_title                                   (struct oval_definition_s*);
-	char *oval_definition_description                             (struct oval_definition_s*);
-	struct oval_collection_affected_s *oval_definition_affected   (struct oval_definition_s*);
-	struct oval_collection_reference_s *oval_definition_reference (struct oval_definition_s*);
-	struct oval_criteria_node_s *oval_definition_criteria         (struct oval_definition_s*);
+	char *oval_definition_id                                    (struct oval_definition_s*);
+	int oval_definition_version                                 (struct oval_definition_s*);
+	oval_definition_class_enum oval_definition_class            (struct oval_definition_s*);
+	int oval_definition_deprecated                              (struct oval_definition_s*);
+	char *oval_definition_title                                 (struct oval_definition_s*);
+	char *oval_definition_description                           (struct oval_definition_s*);
+	struct oval_iterator_affected_s *oval_definition_affected   (struct oval_definition_s*);
+	struct oval_iterator_reference_s *oval_definition_reference (struct oval_definition_s*);
+	struct oval_criteria_node_s *oval_definition_criteria       (struct oval_definition_s*);
 
-	int  oval_collection_object_has_more              (struct oval_collection_object_s*);
-	struct oval_object_s *oval_collection_object_next(struct oval_collection_object_s*);
+	int  oval_iterator_object_has_more              (struct oval_iterator_object_s*);
+	struct oval_object_s *oval_iterator_object_next(struct oval_iterator_object_s*);
 
-	oval_family_enum oval_object_family                                (struct oval_object_s*);
-	oval_subtype_enum oval_object_subtype                              (struct oval_object_s*);
-	char *oval_object_name                                             (struct oval_object_s*);
-	struct oval_collection_string_s *oval_object_notes                 (struct oval_object_s*);
-	char *oval_object_comment                                          (struct oval_object_s*);
-	char *oval_object_id                                               (struct oval_object_s*);
-	int oval_object_deprecated                                         (struct oval_object_s*);
-	int oval_object_version                                            (struct oval_object_s*);
-	struct oval_collection_object_content_s *oval_object_object_content(struct oval_object_s*);
-	struct oval_collection_behavior_s *oval_object_behaviors           (struct oval_object_s*);
+	oval_family_enum oval_object_family                              (struct oval_object_s*);
+	oval_subtype_enum oval_object_subtype                            (struct oval_object_s*);
+	char *oval_object_name                                           (struct oval_object_s*);
+	struct oval_iterator_string_s *oval_object_notes                 (struct oval_object_s*);
+	char *oval_object_comment                                        (struct oval_object_s*);
+	char *oval_object_id                                             (struct oval_object_s*);
+	int oval_object_deprecated                                       (struct oval_object_s*);
+	int oval_object_version                                          (struct oval_object_s*);
+	struct oval_iterator_object_content_s *oval_object_object_content(struct oval_object_s*);
+	struct oval_iterator_behavior_s *oval_object_behaviors           (struct oval_object_s*);
 
-	int  oval_collection_test_has_more            (struct oval_collection_test_s*);
-	struct oval_test_s *oval_collection_test_next(struct oval_collection_test_s*);
+	int  oval_iterator_test_has_more            (struct oval_iterator_test_s*);
+	struct oval_test_s *oval_iterator_test_next(struct oval_iterator_test_s*);
 
 	oval_family_enum oval_test_family               (struct oval_test_s*);
 	oval_subtype_enum oval_test_subtype             (struct oval_test_s*);
-	char *oval_test_name                            (struct oval_test_s*);
-	struct oval_collection_string_s *oval_test_notes(struct oval_test_s*);
+	struct oval_iterator_string_s *oval_test_notes  (struct oval_test_s*);
 	char *oval_test_comment                         (struct oval_test_s*);
 	char *oval_test_id                              (struct oval_test_s*);
 	int oval_test_deprecated                        (struct oval_test_s*);
 	int oval_test_version                           (struct oval_test_s*);
-	oval_operator_enum oval_test_operator           (struct oval_test_s*);
 	oval_existence_enum oval_test_existence         (struct oval_test_s*);
 	oval_check_enum oval_test_check                 (struct oval_test_s*);
 	struct oval_object_s *oval_test_object          (struct oval_test_s*);
 	struct oval_state_s *oval_test_state            (struct oval_test_s*);
 
-	int  oval_collection_variable_binding_has_more                         (struct oval_collection_variable_binding_s*);
-	struct oval_variable_binding_s *oval_collection_variable_binding_next (struct oval_collection_variable_binding_s*);
+	int  oval_iterator_variable_binding_has_more                        (struct oval_iterator_variable_binding_s*);
+	struct oval_variable_binding_s *oval_iterator_variable_binding_next (struct oval_iterator_variable_binding_s*);
 
 	struct oval_variable_s *oval_variable_binding_variable(struct oval_variable_binding_s*);
 	char *oval_variable_binding_value                     (struct oval_variable_binding_s*);
 
-	int  oval_collection_object_content_has_more                     (struct oval_collection_object_content_s*);
-	struct oval_object_content_s *oval_collection_object_content_next(struct oval_collection_object_content_s*);
+	int  oval_iterator_object_content_has_more                     (struct oval_iterator_object_content_s*);
+	struct oval_object_content_s *oval_iterator_object_content_next(struct oval_iterator_object_content_s*);
 
 	char *oval_object_content_field_name                   (struct oval_object_content_s*);
 	oval_object_content_type_enum oval_object_content_type(struct oval_object_content_s*);
@@ -407,8 +415,8 @@
 	oval_check_enum oval_object_content_varCheck          (struct oval_object_content_s*);//type == OVAL_OBJECTCONTENT_ENTITY
 	struct oval_set_s *oval_object_content_set            (struct oval_object_content_s*);//type == OVAL_OBJECTCONTENT_SET
 
-	int  oval_collection_entity_has_more              (struct oval_collection_entity_s*);
-	struct oval_entity_s *oval_collection_entity_next(struct oval_collection_entity_s*);
+	int  oval_iterator_entity_has_more             (struct oval_iterator_entity_s*);
+	struct oval_entity_s *oval_iterator_entity_next(struct oval_iterator_entity_s*);
 
 	oval_entity_type_enum oval_entity_type              (struct oval_entity_s*);
 	oval_datatype_enum oval_entity_datatype             (struct oval_entity_s*);
@@ -418,24 +426,24 @@
 	struct oval_variable_s *oval_entity_variable        (struct oval_entity_s*);
 	struct oval_value_s *oval_entity_value              (struct oval_entity_s*);
 
-	int  oval_collection_set_has_more           (struct oval_collection_set_s*);
-	struct oval_set_s *oval_collection_set_next(struct oval_collection_set_s*);
+	int  oval_iterator_set_has_more          (struct oval_iterator_set_s*);
+	struct oval_set_s *oval_iterator_set_next(struct oval_iterator_set_s*);
 
 	oval_set_type_enum oval_set_type                 (struct oval_set_s*);
 	oval_set_operation_enum oval_set_operation       (struct oval_set_s*);
-	struct oval_collection_set_s *oval_set_subsets   (struct oval_set_s*);//type==OVAL_SET_AGGREGATE;
-	struct oval_collection_object_s *oval_set_objects(struct oval_set_s*);//type==OVAL_SET_COLLECTIVE;
-	struct oval_collection_state_s *oval_set_filters (struct oval_set_s*);//type==OVAL_SET_COLLECTIVE;
+	struct oval_iterator_set_s *oval_set_subsets   (struct oval_set_s*);//type==OVAL_SET_AGGREGATE;
+	struct oval_iterator_object_s *oval_set_objects(struct oval_set_s*);//type==OVAL_SET_COLLECTIVE;
+	struct oval_iterator_state_s *oval_set_filters (struct oval_set_s*);//type==OVAL_SET_COLLECTIVE;
 
-	int  oval_collection_behavior_has_more                (struct oval_collection_behavior_s*);
-	struct oval_behavior_s *oval_collection_behavior_next(struct oval_collection_behavior_s*);
+	int  oval_iterator_behavior_has_more               (struct oval_iterator_behavior_s*);
+	struct oval_behavior_s *oval_iterator_behavior_next(struct oval_iterator_behavior_s*);
 
 	struct oval_value_s *oval_behavior_value                    (struct oval_behavior_s*);
-	struct oval_collection_string_s *oval_behavior_attribute_keys(struct oval_behavior_s*);
+	struct oval_iterator_string_s *oval_behavior_attribute_keys(struct oval_behavior_s*);
 	struct oval_value_s *oval_behavior_value_for_key             (struct oval_behavior_s*, char *attribute_key);
 
-	int  oval_collection_value_has_more             (struct oval_collection_value_s*);
-	struct oval_value_s *oval_collection_value_next(struct oval_collection_value_s*);
+	int  oval_iterator_value_has_more            (struct oval_iterator_value_s*);
+	struct oval_value_s *oval_iterator_value_next(struct oval_iterator_value_s*);
 
 	oval_datatype_enum oval_value_datatype(struct oval_value_s*);
 	char *oval_value_text                 (struct oval_value_s*);
@@ -445,38 +453,38 @@
 	long oval_value_integer               (struct oval_value_s*);//datatype==OVAL_DATATYPE_INTEGER
 
 
-	int  oval_collection_state_has_more             (struct oval_collection_state_s*);
-	struct oval_state_s *oval_collection_state_next(struct oval_collection_state_s*);
+	int  oval_iterator_state_has_more            (struct oval_iterator_state_s*);
+	struct oval_state_s *oval_iterator_state_next(struct oval_iterator_state_s*);
 
-	oval_family_enum oval_state_family               (struct oval_state_s*);
-	oval_subtype_enum oval_state_subtype             (struct oval_state_s*);
-	char *oval_state_name                            (struct oval_state_s*);
-	struct oval_collection_string_s *oval_state_notes(struct oval_state_s*);
-	char *oval_state_comment                         (struct oval_state_s*);
-	char *oval_state_id                              (struct oval_state_s*);
-	int oval_state_deprecated                        (struct oval_state_s*);
-	int oval_state_version                           (struct oval_state_s*);
+	oval_family_enum oval_state_family             (struct oval_state_s*);
+	oval_subtype_enum oval_state_subtype           (struct oval_state_s*);
+	char *oval_state_name                          (struct oval_state_s*);
+	struct oval_iterator_string_s *oval_state_notes(struct oval_state_s*);
+	char *oval_state_comment                       (struct oval_state_s*);
+	char *oval_state_id                            (struct oval_state_s*);
+	int oval_state_deprecated                      (struct oval_state_s*);
+	int oval_state_version                         (struct oval_state_s*);
 
-	int  oval_collection_variable_has_more                (struct oval_collection_variable_s*);
-	struct oval_variable_s *oval_collection_variable_next(struct oval_collection_variable_s*);
+	int  oval_iterator_variable_has_more               (struct oval_iterator_variable_s*);
+	struct oval_variable_s *oval_iterator_variable_next(struct oval_iterator_variable_s*);
 
-	char *oval_variable_id                               (struct oval_variable_s*);
-	oval_variable_type_enum oval_variable_type           (struct oval_variable_s*);
-	oval_datatype_enum oval_variable_datatype            (struct oval_variable_s*);
-	struct oval_collection_value_s *oval_variable_values (struct oval_variable_s*);//type==OVAL_VARIABLE_CONSTANT
-	struct oval_component_s *oval_variable_component     (struct oval_variable_s*);//type==OVAL_VARIABLE_LOCAL
+	char *oval_variable_id                             (struct oval_variable_s*);
+	oval_variable_type_enum oval_variable_type         (struct oval_variable_s*);
+	oval_datatype_enum oval_variable_datatype          (struct oval_variable_s*);
+	struct oval_iterator_value_s *oval_variable_values (struct oval_variable_s*);//type==OVAL_VARIABLE_CONSTANT
+	struct oval_component_s *oval_variable_component   (struct oval_variable_s*);//type==OVAL_VARIABLE_LOCAL
 
-	int  oval_collection_component_has_more                 (struct oval_collection_component_s*);
-	struct oval_component_s *oval_collection_component_next(struct oval_collection_component_s*);
+	int  oval_iterator_component_has_more                (struct oval_iterator_component_s*);
+	struct oval_component_s *oval_iterator_component_next(struct oval_iterator_component_s*);
 
-	oval_component_type_enum oval_component_type                          (struct oval_component_s*);
-	struct oval_value_s *oval_component_literal_value                      (struct oval_component_s*);              //type==OVAL_COMPONENT_LITERAL
-	struct oval_object_s *oval_component_object                           (struct oval_component_s*);              //type==OVAL_COMPONENT_OBJECTREF
-	char *oval_component_object_field                                     (struct oval_component_s*);              //type==OVAL_COMPONENT_OBJECTREF
-	struct oval_variable_s *oval_component_variable                       (struct oval_component_s*);              //type==OVAL_COMPONENT_VARREF
-	oval_function_type_enum oval_component_function_type                  (struct oval_component_s*);              //type==OVAL_COMPONENT_FUNCTION
-	struct oval_collection_component_s *oval_component_function_components(struct oval_component_s*);              //type==OVAL_COMPONENT_FUNCTION
-	struct oval_collection_string_s *oval_component_function_keys         (struct oval_component_s*);              //type==OVAL_COMPONENT_FUNCTION
-	struct oval_value_s *oval_component_function_value                    (struct oval_component_s*, char *key_s); //type==OVAL_COMPONENT_FUNCTION
+	oval_component_type_enum oval_component_type                        (struct oval_component_s*);
+	struct oval_value_s *oval_component_literal_value                   (struct oval_component_s*);              //type==OVAL_COMPONENT_LITERAL
+	struct oval_object_s *oval_component_object                         (struct oval_component_s*);              //type==OVAL_COMPONENT_OBJECTREF
+	char *oval_component_object_field                                   (struct oval_component_s*);              //type==OVAL_COMPONENT_OBJECTREF
+	struct oval_variable_s *oval_component_variable                     (struct oval_component_s*);              //type==OVAL_COMPONENT_VARREF
+	oval_function_type_enum oval_component_function_type                (struct oval_component_s*);              //type==OVAL_COMPONENT_FUNCTION
+	struct oval_iterator_component_s *oval_component_function_components(struct oval_component_s*);              //type==OVAL_COMPONENT_FUNCTION
+	struct oval_iterator_string_s *oval_component_function_keys         (struct oval_component_s*);              //type==OVAL_COMPONENT_FUNCTION
+	struct oval_value_s *oval_component_function_value                  (struct oval_component_s*, char *key_s); //type==OVAL_COMPONENT_FUNCTION
 
 #endif

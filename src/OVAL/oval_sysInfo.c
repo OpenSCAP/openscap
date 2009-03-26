@@ -1,5 +1,5 @@
 /*
- * oval_sysInfo.c
+ * oval_sysinfo.c
  *
  *  Created on: Mar 3, 2009
  *      Author: david.niemoller
@@ -10,39 +10,33 @@
 #include "includes/oval_system_characteristics_impl.h"
 #include "includes/oval_collection_impl.h"
 
-typedef struct Oval_sysInfo_s{
+typedef struct oval_sysinfo_s{
 	char* osName                          ;
 	char* osVersion                       ;
 	char* osArchitecture                  ;
 	char* primaryHostName                 ;
-	Oval_sysInterface* interfaces         ;
-} Oval_sysInfo_t;
+	struct oval_collection_s *interfaces  ;
+} oval_sysinfo_t;
 
-typedef Oval_sysInfo_t* Oval_sysInfo_ptr;
-
-OvalCollection_sysInfo newOvalCollection_sysInfo(Oval_sysInfo* sysInfo_array){
-	return (OvalCollection_sysInfo)newOvalCollection((OvalCollection_target*)sysInfo_array);
+int   oval_iterator_sysinfo_has_more(struct oval_iterator_sysinfo_s *oc_sysinfo){
+	return oval_collection_iterator_has_more((struct oval_iterator_s*)oc_sysinfo);
 }
-int   OvalCollection_sysInfo_hasMore      (OvalCollection_sysInfo oc_sysInfo){
-	return OvalCollection_hasMore((OvalCollection_ptr)oc_sysInfo);
-}
-Oval_sysInfo OvalCollection_sysInfo_next         (OvalCollection_sysInfo oc_sysInfo){
-	return (Oval_sysInfo)OvalCollection_next((OvalCollection_ptr)oc_sysInfo);
+struct oval_sysinfo_s *oval_iterator_sysinfo_next(struct oval_iterator_sysinfo_s *oc_sysinfo){
+	return (struct oval_sysinfo_s*)oval_collection_iterator_next((struct oval_iterator_s*)oc_sysinfo);
 }
 
-char* Oval_sysInfo_osName                          (Oval_sysInfo sysInfo){
-	return ((Oval_sysInfo_ptr)sysInfo)->osName;
+char* oval_sysinfo_osName                          (struct oval_sysinfo_s *sysinfo){
+	return ((struct oval_sysinfo_s*)sysinfo)->osName;
 }
-char* Oval_sysInfo_osVersion                       (Oval_sysInfo sysInfo){
-	return ((Oval_sysInfo_ptr)sysInfo)->osVersion;
+char* oval_sysinfo_osVersion                       (struct oval_sysinfo_s *sysinfo){
+	return ((struct oval_sysinfo_s*)sysinfo)->osVersion;
 }
-char* Oval_sysInfo_osArchitecture                  (Oval_sysInfo sysInfo){
-	return ((Oval_sysInfo_ptr)sysInfo)->osArchitecture;
+char* oval_sysinfo_osArchitecture                  (struct oval_sysinfo_s *sysinfo){
+	return ((struct oval_sysinfo_s*)sysinfo)->osArchitecture;
 }
-char* Oval_sysInfo_primaryHostName                 (Oval_sysInfo sysInfo){
-	return ((Oval_sysInfo_ptr)sysInfo)->primaryHostName;
+char* oval_sysinfo_primaryHostName                 (struct oval_sysinfo_s *sysinfo){
+	return ((struct oval_sysinfo_s*)sysinfo)->primaryHostName;
 }
-OvalCollection_sysInterface Oval_sysInfo_interfaces(Oval_sysInfo sysInfo){
-	Oval_sysInterface* interfaces = ((Oval_sysInfo_ptr)sysInfo)->interfaces;
-	return newOvalCollection_sysInterface(interfaces);
+struct oval_iterator_sysint_s *oval_sysinfo_interfaces(struct oval_sysinfo_s *sysinfo){
+	return (struct oval_iterator_sysint_s*)oval_collection_iterator(sysinfo->interfaces);
 }

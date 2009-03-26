@@ -9,38 +9,33 @@
 #include "includes/oval_results_impl.h"
 #include "includes/oval_collection_impl.h"
 
-typedef struct Oval_result_s{
-	Oval_definition definition      ;
-	Oval_result_enum result         ;
+typedef struct oval_result_s{
+	struct oval_definition_s *definition      ;
+	oval_result_enum result         ;
 	char* message                   ;
-	Oval_resultDirectives directives;
-	Oval_resultCriteriaNode criteria;
-} Oval_result_t;
+	struct oval_result_directives_s *directives;
+	struct oval_result_criteria_node_s *criteria;
+} oval_result_t;
 
-typedef Oval_result_t* Oval_result_ptr;
-
-OvalCollection_result newOvalCollection_result(Oval_result* result_array){
-	return (OvalCollection_result)newOvalCollection((OvalCollection_target*)result_array);
+int   oval_iterator_result_has_more      (struct oval_iterator_result_s *oc_result){
+	return oval_collection_iterator_has_more((struct oval_iterator_s*)oc_result);
 }
-int   OvalCollection_result_hasMore      (OvalCollection_result oc_result){
-	return OvalCollection_hasMore((OvalCollection_ptr)oc_result);
-}
-Oval_result OvalCollection_result_next         (OvalCollection_result oc_result){
-	return (Oval_result)OvalCollection_next((OvalCollection_ptr)oc_result);
+struct oval_result_s *oval_iterator_result_next(struct oval_iterator_result_s *oc_result){
+	return (struct oval_result_s*)oval_collection_iterator_next((struct oval_iterator_s*)oc_result);
 }
 
-Oval_definition Oval_result_definition      (Oval_result result){
-	return ((Oval_result_ptr)result)->definition;
+struct oval_definition_s *oval_result_definition      (struct oval_result_s *result){
+	return ((struct oval_result_s*)result)->definition;
 }
-Oval_result_enum Oval_result_result         (Oval_result result){
-	return ((Oval_result_ptr)result)->result;
+oval_result_enum oval_result_result         (struct oval_result_s *result){
+	return ((struct oval_result_s*)result)->result;
 }
-char* Oval_result_message                   (Oval_result result){
-	return ((Oval_result_ptr)result)->message;
+char* oval_result_message                   (struct oval_result_s *result){
+	return ((struct oval_result_s*)result)->message;
 }
-Oval_resultDirectives Oval_result_directives(Oval_result result){
-	return ((Oval_result_ptr)result)->directives;
+struct oval_result_directives_s *oval_directives(struct oval_result_s *result){
+	return ((struct oval_result_s*)result)->directives;
 }
-Oval_resultCriteriaNode Oval_result_criteria(Oval_result result){
-	return ((Oval_result_ptr)result)->criteria;
+struct oval_result_criteria_node_s *oval_result_criteria(struct oval_result_s *result){
+	return ((struct oval_result_s*)result)->criteria;
 }

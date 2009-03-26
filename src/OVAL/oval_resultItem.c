@@ -1,5 +1,5 @@
 /*
- * oval_resultItem.c
+ * oval_result_item.c
  *
  *  Created on: Mar 3, 2009
  *      Author: david.niemoller
@@ -9,31 +9,27 @@
 #include <stdio.h>
 #include "includes/oval_results_impl.h"
 #include "includes/oval_collection_impl.h"
+#include "includes/oval_system_characteristics_impl.h"
 
-typedef struct Oval_resultItem_s{
-	Oval_sysData sysData   ;
-	Oval_result_enum result;
+typedef struct oval_result_item_s{
+	struct oval_sysdata_s *sysdata   ;
+	oval_result_enum result;
 	char* message          ;
-} Oval_resultItem_t;
+} oval_result_item_t;
 
-typedef Oval_resultItem_t* Oval_resultItem_ptr;
-
-OvalCollection_resultItem newOvalCollection_resultItem(Oval_resultItem* resultItem_array){
-	return (OvalCollection_resultItem)newOvalCollection((OvalCollection_target*)resultItem_array);
+int   oval_iterator_result_item_has_more(struct oval_iterator_result_item_s *oc_result_item){
+	return oval_collection_iterator_has_more((struct oval_iterator_s*)oc_result_item);
 }
-int   OvalCollection_resultItem_hasMore      (OvalCollection_resultItem oc_resultItem){
-	return OvalCollection_hasMore((OvalCollection_ptr)oc_resultItem);
-}
-Oval_resultItem OvalCollection_resultItem_next         (OvalCollection_resultItem oc_resultItem){
-	return (Oval_resultItem)OvalCollection_next((OvalCollection_ptr)oc_resultItem);
+struct oval_result_item_s *oval_iterator_result_item_next         (struct oval_iterator_result_item_s *oc_result_item){
+	return (struct oval_result_item_s*)oval_collection_iterator_next((struct oval_iterator_s*)oc_result_item);
 }
 
-Oval_sysData Oval_resultItem_sysData   (Oval_resultItem item){
-	return ((Oval_resultItem_ptr)item)->sysData;
+struct oval_sysdata_s *oval_result_item_sysdata(struct oval_result_item_s *item){
+	return ((struct oval_result_item_s*)item)->sysdata;
 }
-Oval_result_enum Oval_resultItem_result(Oval_resultItem item){
-	return ((Oval_resultItem_ptr)item)->result;
+oval_result_enum oval_result_item_result (struct oval_result_item_s *item){
+	return ((struct oval_result_item_s*)item)->result;
 }
-char* Oval_resultItem_message          (Oval_resultItem item){
-	return ((Oval_resultItem_ptr)item)->message;
+char* oval_result_item_message           (struct oval_result_item_s *item){
+	return ((struct oval_result_item_s*)item)->message;
 }

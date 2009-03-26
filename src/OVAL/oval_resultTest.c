@@ -1,5 +1,5 @@
 /*
- * oval_resultTest.c
+ * oval_result_test.c
  *
  *  Created on: Mar 3, 2009
  *      Author: david.niemoller
@@ -9,39 +9,33 @@
 #include "includes/oval_results_impl.h"
 #include "includes/oval_collection_impl.h"
 
-typedef struct Oval_resultTest_s{
-	Oval_test test                 ;
-	Oval_check_enum check          ;
-	Oval_result_enum result        ;
+typedef struct oval_result_test_s{
+	struct oval_test_s *test             ;
+	oval_check_enum check          ;
+	oval_result_enum result        ;
 	char* message                  ;
-	Oval_resultItem* items         ;
-} Oval_resultTest_t;
+	struct oval_collection_s *items      ;
+} oval_result_test_t;
 
-typedef Oval_resultTest_t* Oval_resultTest_ptr;
-
-OvalCollection_resultTest newOvalCollection_resultTest(Oval_resultTest* resultTest_array){
-	return (OvalCollection_resultTest)newOvalCollection((OvalCollection_target*)resultTest_array);
+int   oval_iterator_result_test_has_more      (struct oval_iterator_result_test_s *oc_result_test){
+	return oval_collection_iterator_has_more((struct oval_iterator_s*)oc_result_test);
 }
-int   OvalCollection_resultTest_hasMore      (OvalCollection_resultTest oc_resultTest){
-	return OvalCollection_hasMore((OvalCollection_ptr)oc_resultTest);
-}
-Oval_resultTest OvalCollection_resultTest_next         (OvalCollection_resultTest oc_resultTest){
-	return (Oval_resultTest)OvalCollection_next((OvalCollection_ptr)oc_resultTest);
+struct oval_result_test_s *oval_iterator_result_test_next(struct oval_iterator_result_test_s *oc_result_test){
+	return (struct oval_result_test_s*)oval_collection_iterator_next((struct oval_iterator_s*)oc_result_test);
 }
 
-Oval_test Oval_resultTest_test                 (Oval_resultTest rtest){
-	return ((Oval_resultTest_ptr)rtest)->test;
+struct oval_test_s *oval_result_test_test(struct oval_result_test_s *rtest){
+	return ((struct oval_result_test_s*)rtest)->test;
 }
-Oval_check_enum Oval_resultTest_check          (Oval_resultTest rtest){
-	return ((Oval_resultTest_ptr)rtest)->check;
+oval_check_enum oval_result_test_check          (struct oval_result_test_s *rtest){
+	return ((struct oval_result_test_s*)rtest)->check;
 }
-Oval_result_enum Oval_resultTest_result        (Oval_resultTest rtest){
-	return ((Oval_resultTest_ptr)rtest)->result;
+oval_result_enum oval_result_test_result        (struct oval_result_test_s *rtest){
+	return ((struct oval_result_test_s*)rtest)->result;
 }
-char* Oval_resultTest_message                  (Oval_resultTest rtest){
-	return ((Oval_resultTest_ptr)rtest)->message;
+char* oval_result_test_message                  (struct oval_result_test_s *rtest){
+	return ((struct oval_result_test_s*)rtest)->message;
 }
-OvalCollection_resultItem Oval_resultTest_items(Oval_resultTest rtest){
-	Oval_resultItem* items = ((Oval_resultTest_ptr)rtest)->items;
-	return newOvalCollection_resultItem(items);
+struct oval_iterator_result_item_s *oval_result_test_items(struct oval_result_test_s *rtest){
+	return (struct oval_iterator_result_item_s*)oval_collection_iterator(rtest->items);
 }

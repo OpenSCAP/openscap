@@ -9,69 +9,95 @@
 #include "includes/oval_definitions_impl.h"
 #include "includes/oval_collection_impl.h"
 
-typedef struct Oval_set_s{
-	Oval_set_type_enum type          ;
-	Oval_set_operation_enum operation;
-} Oval_set_t;
+typedef struct oval_set_s{
+	oval_set_type_enum type          ;
+	oval_set_operation_enum operation;
+} oval_set_t;
 
-typedef struct Oval_set_AGGREGATE_s{
-	Oval_set_type_enum type          ;
-	Oval_set_operation_enum operation;
-	Oval_set* subsets                ;//type==OVAL_SET_AGGREGATE;
-} Oval_set_AGGREGATE_t;
+typedef struct oval_set_AGGREGATE_s{
+	oval_set_type_enum type          ;
+	oval_set_operation_enum operation;
+	struct oval_collection_s *subsets      ;//type==OVAL_SET_AGGREGATE;
+} oval_set_AGGREGATE_t;
 
-typedef struct Oval_set_COLLECTIVE_s{
-	Oval_set_type_enum type          ;
-	Oval_set_operation_enum operation;
-	Oval_object* objects             ;//type==OVAL_SET_COLLECTIVE;
-	Oval_state*  filters             ;//type==OVAL_SET_COLLECTIVE;
-} Oval_set_COLLECTIVE_t;
+typedef struct oval_set_COLLECTIVE_s{
+	oval_set_type_enum type          ;
+	oval_set_operation_enum operation;
+	struct oval_collection_s *objects      ;//type==OVAL_SET_COLLECTIVE;
+	struct oval_collection_s *filters      ;//type==OVAL_SET_COLLECTIVE;
+} oval_set_COLLECTIVE_t;
 
-typedef Oval_set_t* Oval_set_ptr;
-typedef Oval_set_AGGREGATE_t* Oval_set_AGGREGATE_ptr;
-typedef Oval_set_COLLECTIVE_t* Oval_set_COLLECTIVE_ptr;
-
-
-OvalCollection_set newOvalCollection_set(Oval_set* set_array){
-	return (OvalCollection_set)newOvalCollection((OvalCollection_target*)set_array);
+int   oval_iterator_set_has_more      (struct oval_iterator_set_s *oc_set){
+	return oval_collection_iterator_has_more((struct oval_iterator_s*)oc_set);
 }
-int   OvalCollection_set_hasMore      (OvalCollection_set oc_set){
-	return OvalCollection_hasMore((OvalCollection_ptr)oc_set);
-}
-Oval_set OvalCollection_set_next         (OvalCollection_set oc_set){
-	return (Oval_set)OvalCollection_next((OvalCollection_ptr)oc_set);
+struct oval_set_s *oval_iterator_set_next         (struct oval_iterator_set_s *oc_set){
+	return (struct oval_set_s*)oval_collection_iterator_next((struct oval_iterator_s*)oc_set);
 }
 
-Oval_set_type_enum Oval_set_type          (Oval_set set){
-	return ((Oval_set_ptr)set)->type;
+oval_set_type_enum oval_set_type          (struct oval_set_s *set){
+	return (set)->type;
 }
-Oval_set_operation_enum Oval_set_operation(Oval_set set){
-	return ((Oval_set_ptr)set)->operation;
+oval_set_operation_enum oval_set_operation(struct oval_set_s *set){
+	return ((struct oval_set_s*)set)->operation;
 }
-OvalCollection_set Oval_set_subsets       (Oval_set set){
+struct oval_iterator_set_s *oval_set_subsets       (struct oval_set_s *set){
 	//type==OVAL_SET_AGGREGATE;
-	OvalCollection_set subsets = NULL;
-	if(Oval_set_type(set)==OVAL_SET_AGGREGATE){
-		Oval_set* sets = ((Oval_set_AGGREGATE_ptr)set)->subsets;
-		subsets = newOvalCollection_set(sets);
-	}
-	return subsets;
+	struct oval_set_AGGREGATE_s *aggregate = (struct oval_set_AGGREGATE_s*)set;
+	return (struct oval_iterator_set_s*)oval_collection_iterator(aggregate->subsets);
 }
-OvalCollection_object Oval_set_objects    (Oval_set set){
+struct oval_iterator_object_s *oval_set_objects    (struct oval_set_s *set){
 	//type==OVAL_SET_COLLECTIVE;
-	OvalCollection_object oc_object = NULL;
-	if(Oval_set_type(set)==OVAL_SET_COLLECTIVE){
-		Oval_object* objects = ((Oval_set_COLLECTIVE_ptr)set)->objects;
-		oc_object = newOvalCollection_object(objects);
-	}
-	return oc_object;
+	struct oval_set_COLLECTIVE_s *collective = (struct oval_set_COLLECTIVE_s*)set;
+	return (struct oval_iterator_object_s*)oval_collection_iterator(collective->objects);
 }
-OvalCollection_state Oval_set_filters     (Oval_set set){
+struct oval_iterator_state_s *oval_set_filters     (struct oval_set_s *set){
 	//type==OVAL_SET_COLLECTIVE;
-	OvalCollection_state oc_state = NULL;
-	if(Oval_set_type(set)==OVAL_SET_COLLECTIVE){
-		Oval_state* states = ((Oval_set_COLLECTIVE_ptr)set)->filters;
-		oc_state = newOvalCollection_state(states);
-	}
-	return oc_state;
+	struct oval_set_COLLECTIVE_s *collective = (struct oval_set_COLLECTIVE_s*)set;
+	return (struct oval_iterator_state_s*)oval_collection_iterator(collective->filters);
 }
+
+struct oval_set_s *oval_set_new(oval_set_type_enum type){
+	oval_set_t *set;
+	switch(type){
+		case OVAL_SET_AGGREGATE:{
+			oval_set_AGGREGATE_t *aggregate
+			= (oval_set_AGGREGATE_t*)malloc(sizeof(oval_set_AGGREGATE_t));
+			set = (oval_set_t*)aggregate;
+			aggregate->subsets = oval_collection_new();
+		}break;
+		case OVAL_SET_COLLECTIVE:{
+			oval_set_COLLECTIVE_t *collective
+			= (oval_set_COLLECTIVE_t*)malloc(sizeof(oval_set_COLLECTIVE_t));
+			set = (oval_set_t*)collective;
+			collective->filters = oval_collection_new();
+			collective->objects = oval_collection_new();
+		}break;
+	}
+	set->operation = OVAL_SET_OPERATION_UNKNOWN;
+	set->type      = type;
+	return set;
+}
+void oval_set_free(struct oval_set_s *set){
+	switch(set->type){
+		case OVAL_SET_AGGREGATE:{
+			oval_set_AGGREGATE_t *aggregate = (oval_set_AGGREGATE_t*)set;
+			void free_set(struct oval_collection_item_s *subset){oval_set_free(subset);}
+			oval_collection_free_items(aggregate->subsets,&free_set);
+		}break;
+		case OVAL_SET_COLLECTIVE:{
+			oval_set_COLLECTIVE_t *collective = (oval_set_COLLECTIVE_t*)set;
+			void free_state(struct oval_collection_item_s *state){oval_state_free(state);}
+			oval_collection_free_items(collective->filters, &free_state);
+			void free_object(struct oval_collection_item_s *object){oval_object_free(object);}
+			oval_collection_free_items(collective->objects, &free_object);
+		}break;
+	}
+	free(set);
+}
+
+void set_oval_set_type     (struct oval_set_s*, oval_set_type_enum);//TODO
+void set_oval_set_operation(struct oval_set_s*, oval_set_operation_enum);//TODO
+void add_oval_set_subsets  (struct oval_set_s*, struct oval_set_s*);//TODO   //type==OVAL_SET_AGGREGATE;//TODO
+void add_oval_set_objects  (struct oval_set_s*, struct oval_object_s*);//TODO//type==OVAL_SET_COLLECTIVE;//TODO
+void add_oval_set_filters  (struct oval_set_s*, struct oval_state_s*);//TODO //type==OVAL_SET_COLLECTIVE;//TODO
+
