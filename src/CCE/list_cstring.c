@@ -28,6 +28,10 @@
  *      Riley C. Porter <Riley.Porter@g2-inc.com>
  */
 
+#include <libxml/xmlmemory.h>
+#include <libxml/xmlreader.h>
+#include <libxml/parser.h>
+
 #include "list_cstring.h"
 
 void list_cstring_add(struct list_cstring *list, char *value)

@@ -28,6 +28,10 @@
  *      Riley C. Porter <Riley.Porter@g2-inc.com>
  */
 
+#include <libxml/xmlmemory.h>
+#include <libxml/parser.h>
+#include <libxml/xmlreader.h>
+
 #include "list_refs.h"
 
 void list_refs_add(struct list_refs *list, char *source, char *value)

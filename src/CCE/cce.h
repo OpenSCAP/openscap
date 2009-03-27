@@ -29,7 +29,6 @@
  */
 
 #include <stdbool.h>
-
 #include "list_cstring.h"
 #include "list_refs.h"
 

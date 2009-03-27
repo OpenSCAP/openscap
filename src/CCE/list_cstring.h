@@ -28,9 +28,6 @@
  *      Riley C. Porter <Riley.Porter@g2-inc.com>
  */
 
-#include <libxml/xmlmemory.h>
-#include <libxml/parser.h>
-#include <libxml/xmlreader.h>
 
 #ifndef _LIST_CSTRING_H
 #define _LIST_CSTRING_H

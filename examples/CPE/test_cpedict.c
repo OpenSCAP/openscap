@@ -1,6 +1,5 @@
 #include <cpedict.h>
 #include <cpematch.h>
-#include <libxml/tree.h>
 
 // dump contents of an CPE dictionary item
 void cpe_dictitem_dump(cpe_dict_item_t * item)
@@ -84,9 +83,6 @@ int main(int argc, char **argv)
 		printf("Error while loading CPE dictionary.\n");
 		return 1;
 	}
-
-	// free parser data
-	xmlCleanupParser();
 
 	return 0;
 }

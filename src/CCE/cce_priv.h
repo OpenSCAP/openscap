@@ -28,6 +28,8 @@
  *      Riley C. Porter <Riley.Porter@g2-inc.com>
  */
 
+#include <libxml/xmlreader.h>
+
 #include "cce.h"
 
 #ifndef _CCE_PRIV_H
