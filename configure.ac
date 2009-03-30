@@ -5,7 +5,7 @@ AC_INIT([openscap], [0.1.4], [open-scap-list@redhat.com])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_AUX_DIR([config])
 
-AM_INIT_AUTOMAKE
+AM_INIT_AUTOMAKE([foreign])
 AM_PROG_LIBTOOL
 AM_PATH_PYTHON
 
