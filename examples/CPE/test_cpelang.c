@@ -6,7 +6,7 @@ void test_langexpr_dump(cpe_lang_expr_t * expr, int depth);
 
 void test_platformspec_dump(cpe_platform_spec_t * plat)
 {
-	int i;
+	unsigned int i;
 	// dump all platforms belonging to a platform specification
 	for (i = 0; i < plat->platforms_n; ++i)
 		test_platform_dump(plat->platforms[i]);
@@ -64,7 +64,7 @@ void test_langexpr_dump(cpe_lang_expr_t * expr, int depth)
 int main(int argc, char **argv)
 {
 	cpe_platform_spec_t *plat;	// pointer to our platform specification
-	int i;
+	unsigned int i;
 	cpe_t **cpes;		// list of CPEs
 	size_t cpes_n;		// number of CPEs
 

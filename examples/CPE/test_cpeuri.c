@@ -55,8 +55,6 @@ bool cpe_example_parse(const char *cpeuri)
 
 int main(int argc, char **argv)
 {
-	int retval = EXIT_SUCCESS;
-
 	if (argc < 2) {
 		// not enough arguments
 		print_help(argv[0]);

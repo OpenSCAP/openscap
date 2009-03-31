@@ -191,18 +191,18 @@ cve_reference_t *cveReferenceNew()
 	return calloc(1, sizeof(cve_reference_t));
 }
 
-void cveReferenceDel(cve_reference_t * reference)
+void cveReferenceDel(cve_reference_t * ref)
 {
-	if (reference->summary != NULL)
-		free(reference->summary);
-	if (reference->href != NULL)
-		free(reference->href);
-	if (reference->refType != NULL)
-		free(reference->refType);
-	if (reference->source != NULL)
-		free(reference->source);
+	if (ref->summary != NULL)
+		free(ref->summary);
+	if (ref->href != NULL)
+		free(ref->href);
+	if (ref->refType != NULL)
+		free(ref->refType);
+	if (ref->source != NULL)
+		free(ref->source);
 
-	free(reference);
+	free(ref);
 }
 
 void cveReferenceDelAll(cve_reference_t * ref)
@@ -273,7 +273,7 @@ int cveParse(char *xmlfile, cve_info_t ** outCveList)
 	int ret, cve_cnt = 0;
 	tagStack_t tagStack;
 	cve_info_t *cveList = NULL, *cve = NULL;
-	cve_reference_t *reference = NULL;
+	cve_reference_t *ref = NULL;
 
 	/*
 	 * this initialize the library and check potential ABI mismatches
@@ -324,20 +324,20 @@ int cveParse(char *xmlfile, cve_info_t ** outCveList)
 				break;
 			case TAG_REFS:
 				if (cve->refs == NULL) {
-					cve->refs = reference =
+					cve->refs = ref =
 					    cveReferenceNew();
 				} else {
-					reference->next = cveReferenceNew();
-					reference = reference->next;
+					ref->next = cveReferenceNew();
+					ref = ref->next;
 				}
-				reference->refType =
+				ref->refType =
 				    (char *)xmlTextReaderGetAttribute(reader,
 								      ATTR_REFTYPE_STR);
 				break;
 			case TAG_REF:
-				if (reference->href != NULL)
-					xmlFree(reference->href);
-				reference->href =
+				if (ref->href != NULL)
+					xmlFree(ref->href);
+				ref->href =
 				    (char *)xmlTextReaderGetAttribute(reader,
 								      ATTR_HREF_STR);
 				break;
@@ -391,10 +391,10 @@ int cveParse(char *xmlfile, cve_info_t ** outCveList)
 				cve->summary = (char *)xmlStrdup(text);
 				break;
 			case TAG_REF:
-				reference->summary = (char *)xmlStrdup(text);
+				ref->summary = (char *)xmlStrdup(text);
 				break;
 			case TAG_SOURCE:
-				reference->source = (char *)xmlStrdup(text);
+				ref->source = (char *)xmlStrdup(text);
 				break;
 			}
 

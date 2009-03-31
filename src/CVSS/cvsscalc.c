@@ -45,9 +45,9 @@ static double _round(double d, double fact)
 	return round(d / fact) * fact;
 }
 
-#define GETMAPVAL(var, arr, enm)				\
-	if (enm < 0 || enm >= (sizeof (arr) / sizeof (arr[0])))	\
-		return 1;					\
+#define GETMAPVAL(var, arr, enm)			\
+	if (enm >= (sizeof (arr) / sizeof (arr[0])))	\
+		return 1;				\
 	var = arr[enm]
 
 /* Access Vector */
@@ -219,7 +219,7 @@ int envScore(CollateralDamagePotential_t cde, TargetDistribution_t   tde,
 	     Exploitability_t            exe, RemediationLevel_t     rle, 
              ReportConfidence_t          rce)
 {
-	double cd, td, cr, ir, ar, ais, aes, abs, ats, envs;
+	double cd, td, cr, ir, ar, ais, aes, abss, ats, envs;
 	double av, ac, au, ci, ii, ai, ex, rl, rc;
 
 	GETMAPVAL(cd, cda, cde);
@@ -242,9 +242,9 @@ int envScore(CollateralDamagePotential_t cde, TargetDistribution_t   tde,
 	ais = _round(ais, 0.1);
 	aes = 20 * av * ac * au;
 	aes = _round(aes, 0.1);
-	abs = (0.6 * ais + 0.4 * aes - 1.5) * (ais ? 1.176 : 0.0);
-	abs = _round(abs, 0.1);
-	ats = abs * ex * rl * rc;
+	abss = (0.6 * ais + 0.4 * aes - 1.5) * (ais ? 1.176 : 0.0);
+	abss = _round(abss, 0.1);
+	ats = abss * ex * rl * rc;
 	ats = _round(ats, 0.1);
 	envs = (ats + (10 - ats) * cd) * td;
 	envs = _round(envs, 0.1);
