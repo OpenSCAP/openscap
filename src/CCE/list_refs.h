@@ -1,6 +1,9 @@
 /**
+ * @addtogroup CCE
+ * @{
+ *
  * @file list_refs.h
- * \brief Interface to Common Configuration Enumeration (CCE)
+ * \brief Interface to Common Configuration Enumeration (CCE) - list of references
  *
  * See more details at http://cce.mitre.org/
  */

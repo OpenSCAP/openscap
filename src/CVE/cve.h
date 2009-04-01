@@ -1,4 +1,8 @@
-/*! \file cve.h
+/*! 
+ *  \addtogroup CVE
+ *  \{
+ *
+ *  \file cve.h
  *  \brief Interface to Common Vulnerability and Exposure dictionary
  *   
  *   See details at:

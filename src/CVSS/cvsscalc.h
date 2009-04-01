@@ -1,4 +1,8 @@
-/*! \file cvsscalc.h
+/*! 
+ *  \addtogroup CVSS
+ *  \{
+ *
+ *  \file cvsscalc.h
  *  \brief Interface to Common Vulnerability Scoring System Version 2
  *  
  *  See details at http://nvd.nist.gov/cvss.cfm

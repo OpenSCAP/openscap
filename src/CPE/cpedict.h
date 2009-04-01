@@ -1,4 +1,10 @@
 /**
+ * @addtogroup CPE
+ * @{
+ * @addtogroup cpedict CPE Dictionary
+ * @{
+ *
+ *
  * @file cpedict.h
  * \brief Interface to Common Product Enumeration (CPE) Dictionary.
  *
@@ -138,3 +144,5 @@ void cpe_dictitem_delete(cpe_dict_item_t * item);
 void cpe_dictcheck_delete(cpe_dict_check_t * check);
 
 #endif				/* _CPEDICT_H_ */
+
+/** @} */

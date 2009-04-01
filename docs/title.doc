@@ -1,0 +1,65 @@
+/**
+
+@mainpage
+
+@section Overview
+
+@par
+OpenSCAP is a set of open source libraries providing an easier path
+for integration of the SCAP line of standards.
+
+@par
+SCAP is a line of standards managed by NIST with the goal of providing
+a standard language for the expression of Computer Network Defense
+related information. 
+
+@if false
+@par
+To get started, see list of <a href="modules.html">available libraries</a>.
+@endif
+
+@section Libraries
+
+- @ref CCE - Common Configuration Enumeration
+- @ref CPE - Common Platform Enumeration
+- @ref CVE - Common Vulnerabilities and Exposures
+- @ref CVSS - Common Vulnerability Scoring System
+
+@section Links
+
+- OpenSCAP homepage: http://www.open-scap.org/
+- Information on SCAP at NIST: http://nvd.nist.gov/scap.cfm
+
+*/
+
+/**
+
+@defgroup CCE
+
+Common Configuration Enumeration.
+
+More info at http://cce.mitre.org/ web page.
+
+
+@defgroup CPE
+
+Common Platform Enumeration.
+
+More info at http://cpe.mitre.org/ web page.
+
+
+@defgroup CVE
+
+Common Vulnerabilities and Exposures.
+
+More info at http://cve.mitre.org/ web page.
+
+
+@defgroup CVSS
+
+Common Vulnerability Scoring System.
+
+More info at http://nvd.nist.gov/cvss.cfm web page.
+
+*/
+

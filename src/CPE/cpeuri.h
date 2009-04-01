@@ -1,5 +1,12 @@
-/*! \file cpeuri.h
- *  \brief Interface to Common Product Enumeration (CPE) URI
+/**
+ * @addtogroup CPE
+ * @{
+ * @addtogroup cpeuri CPE URIs
+ * @{
+ *
+ *
+ * @file cpeuri.h
+ * \brief Interface to Common Product Enumeration (CPE) URI
  *  
  *   See more details at http://nvd.nist.gov/cpe.cfm
  *  
@@ -64,7 +71,7 @@ enum cpe_field_t {
 };
 
 /**
- * Structure holding Common Platform Enumeration data.
+ * Structure holding Common Platform Enumeration URI data.
  *
  * Empty components are set to NULL.
  */
@@ -130,7 +137,6 @@ bool cpe_name_match_cpes(const cpe_t * name, size_t n, cpe_t ** namelist);
  * @param candidate candidarte CPE URI as string
  * @param n number of items in targets
  * @param targets list of CPE URIs to be candidate matched against
- * @todo maybe it should go into libcpe library itself
  * @return index of first URI in targets, that matched
  * @retval -1 on mismatch
  * @retval -2 invalid CPE URI was given as parameter

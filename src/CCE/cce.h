@@ -1,6 +1,9 @@
 /**
+ * @addtogroup CCE
+ * @{
+ *
  * @file cce.h
- * \brief Interface to Common Configuration Enumeration (CCE)
+ * \brief Interface to Common Configuration Enumeration (CCE).
  *
  * See more details at http://cce.mitre.org/
  */
@@ -44,23 +47,39 @@ struct cce {
 };
 
 /**
- * Initialize cce structure
+ * Initialize cce structure.
+ *
+ * Creates valid empty CCE structure.
+ *
+ * @param cce pointer to a structure to be initialized
  */
 void cce_init(struct cce *cce);
 
 /**
- * Clear cce structure
+ * Clear cce structure.
+ *
+ * Deinitializes CCE structure and releases used resources.
+ *
+ * @param cce pointer to target structure
  */
 void cce_clear(struct cce *cce);
 
 /**
- * Vlaidate CCE XML file
- * @return result of validation
+ * Vlaidate CCE XML file.
+ *
+ * @param filename file to be validated
+ * @return result of validation (true / false)
  */
 bool cce_validate(const char *filename);
 
 /**
- * Parse CCE XML file and store constents of entry with given ID into cce structure.
+ * Parse CCE XML file.
+ *
+ * Parse CCE XML and store constents of entry with given ID into cce structure.
+ *
+ * @param docname name of the XML file to be processed
+ * @param cce CCE struct where a result will be stored
+ * @param id CCE ID of entry which should be extracted
  */
 void cce_parse(char *docname, struct cce *cce, char *id);
 

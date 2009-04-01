@@ -99,6 +99,7 @@ int main(int argc, char **argv)
 	}
 	// free resources allocated for platform specification
 	cpe_platformspec_delete(plat);
+	if (plat == NULL) return EXIT_FAILURE;
 
 	// free list of CPEs
 	for (i = 0; i < cpes_n; ++i)

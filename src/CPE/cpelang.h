@@ -1,4 +1,9 @@
 /**
+ * @addtogroup CPE
+ * @{
+ * @addtogroup cpelang CPE Language
+ * @{
+ *
  * @file cpelang.h
  * \brief Interface to Common Product Enumeration (CPE) Language
  *

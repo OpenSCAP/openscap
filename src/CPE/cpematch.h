@@ -1,4 +1,10 @@
 /**
+ * @addtogroup CPE
+ * @{
+ * @addtogroup cpematch CPE Matching
+ * @{
+ *
+ *
  * @file cpematch.h
  * \brief Interface to Common Product Enumeration (CPE) matching facilities.
  *

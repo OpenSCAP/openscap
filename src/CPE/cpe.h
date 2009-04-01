@@ -1,6 +1,9 @@
 /**
+ * @addtogroup CPE
+ * @{
+ * 
  * @file cpe.h
- * \brief Interface to Common Product Enumeration (CPE) Dictionary.
+ * \brief Interface to Common Product Enumeration (CPE).
  *
  * See more details at http://nvd.nist.gov/cpe.cfm
  */

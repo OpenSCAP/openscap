@@ -1,0 +1,33 @@
+<?xml version="1.0"  encoding="UTF-8"?>
+<cpe:platform-specification xmlns:cpe="http://cpe.mitre.org/language/2.0">
+
+	<cpe:platform id="123">
+		<cpe:title>Microsoft Windows XP with Adobe Reader</cpe:title>
+		<cpe:logical-test operator="AND" negate="FALSE">
+			<cpe:fact-ref name="cpe:/o:microsoft:windows_xp" />
+			<cpe:fact-ref name="cpe:/a:adobe:reader" />
+		</cpe:logical-test>
+	</cpe:platform>
+
+	<cpe:platform id="456">
+		<cpe:title>Sun Solaris 5.8 or 5.9 or 5.10</cpe:title>
+		<cpe:logical-test operator="OR" negate="FALSE">
+			<cpe:fact-ref name="cpe:/o:sun:solaris:5.8" />
+			<cpe:fact-ref name="cpe:/o:sun:solaris:5.9" />
+			<cpe:fact-ref name="cpe:/o:sun:solaris:5.10" />
+		</cpe:logical-test>
+	</cpe:platform>
+
+	<cpe:platform id="789">
+		<cpe:title>Microsoft Windows XP with Office 2003 or 2007</cpe:title>
+		<cpe:logical-test operator="AND" negate="FALSE">
+			<cpe:fact-ref name="cpe:/o:microsoft:windows_xp" />
+			<cpe:logical-test operator="OR" negate="FALSE">
+				<cpe:fact-ref name="cpe:/a:microsoft:office:2003" />
+				<cpe:fact-ref name="cpe:/a:microsoft:office:2007" />
+			</cpe:logical-test>
+		</cpe:logical-test>
+	</cpe:platform>
+
+</cpe:platform-specification>
+
