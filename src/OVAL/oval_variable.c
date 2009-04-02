@@ -6,6 +6,7 @@
  */
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include "oval_definitions_impl.h"
 #include "oval_collection_impl.h"
 #include "oval_agent_api_impl.h"
@@ -321,22 +322,15 @@ void oval_variable_to_print(struct oval_variable *variable, char *indent,
 			    int index)
 {
 	char nxtindent[100];
-	*nxtindent = 0;
-	if (strlen(indent) > 80) {
-		strcat(nxtindent, "....");
-		strcat(nxtindent, indent + 70);
-	} else
-		strcat(nxtindent, indent);
+
+	if (strlen(indent) > 80)
+		indent = "....";
+
 	if (index == 0)
-		strcat(nxtindent, "VARIABLE.");
-	else {
-		strcat(nxtindent, "VARIABLE[");
-		char itoad[10];
-		*itoad = 0;
-		itoa(index, itoad, 10);
-		strcat(nxtindent, itoad);
-		strcat(nxtindent, "].");
-	}
+		snprintf(nxtindent, sizeof(nxtindent), "%sVARIABLE.", indent);
+	else
+		snprintf(nxtindent, sizeof(nxtindent), "%sVARIABLE[%d].", indent, index);
+
 	printf("%sID         = %s\n", nxtindent, oval_variable_id(variable));
 	printf("%sVERSION    = %d\n", nxtindent,
 	       oval_variable_version(variable));

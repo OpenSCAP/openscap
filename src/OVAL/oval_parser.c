@@ -4,6 +4,7 @@
  *  Created on: Feb 25, 2009
  *      Author: david.niemoller
  */
+#include <string.h>
 #include <libxml/xmlreader.h>
 #include<stddef.h>
 #include "api/oval_agent_api.h"

@@ -6,6 +6,7 @@
  */
 #include "oval_string_map_impl.h"
 #include <string.h>
+#include <stdlib.h>
 
 struct _oval_string_map_entry_s;
 
@@ -125,6 +126,7 @@ void oval_string_map_free(struct oval_string_map *map,
 	free(map);
 }
 
+#include <stdio.h>
 	//TEST FREEFUNC
 void oval_string_map_main_freefunc(void *item)
 {

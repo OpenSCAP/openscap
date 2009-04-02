@@ -7,6 +7,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include "oval_definitions_impl.h"
 #include "oval_collection_impl.h"
 
@@ -204,22 +205,15 @@ void oval_object_content_to_print(struct oval_object_content *content,
 				  char *indent, int index)
 {
 	char nxtindent[100];
-	*nxtindent = 0;
-	if (strlen(indent) > 80) {
-		strcat(nxtindent, "....");
-		strcat(nxtindent, indent + 70);
-	} else
-		strcat(nxtindent, indent);
+
+	if (strlen(indent) > 80)
+		indent = "....";
+
 	if (index == 0)
-		strcat(nxtindent, "CONTENT.");
-	else {
-		strcat(nxtindent, "CONTENT[");
-		char itoad[10];
-		*itoad = 0;
-		itoa(index, itoad, 10);
-		strcat(nxtindent, itoad);
-		strcat(nxtindent, "].");
-	}
+		snprintf(nxtindent, sizeof(nxtindent), "%sCONTENT.", indent);
+	else
+		snprintf(nxtindent, sizeof(nxtindent), "%sCONTENT[%d].", indent, index);
+
 	printf("%sFIELD     = %s\n", nxtindent,
 	       oval_object_content_field_name(content));
 	printf("%sTYPE      = %d\n", nxtindent,

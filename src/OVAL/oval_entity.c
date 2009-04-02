@@ -7,6 +7,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include "oval_definitions_impl.h"
 #include "oval_collection_impl.h"
 #include "oval_agent_api_impl.h"
@@ -220,22 +221,14 @@ int oval_entity_parse_tag(xmlTextReaderPtr reader,
 void oval_entity_to_print(struct oval_entity *entity, char *indent, int index)
 {
 	char nxtindent[100];
-	*nxtindent = 0;
-	if (strlen(indent) > 80) {
-		strcat(nxtindent, "....");
-		strcat(nxtindent, indent + 70);
-	} else
-		strcat(nxtindent, indent);
+
+	if (strlen(indent) > 80)
+		indent = "....";
+
 	if (index == 0)
-		strcat(nxtindent, "ENTITY.");
-	else {
-		strcat(nxtindent, "ENTITY[");
-		char itoad[10];
-		*itoad = 0;
-		itoa(index, itoad, 10);
-		strcat(nxtindent, itoad);
-		strcat(nxtindent, "].");
-	}
+		snprintf(nxtindent, sizeof(nxtindent), "%sENTITY.", indent);
+	else
+		snprintf(nxtindent, sizeof(nxtindent), "%sENTITY[%d].", indent, index);
 
 	printf("%sNAME        = %s\n", nxtindent, oval_entity_name(entity));
 	printf("%sTYPE        = %d\n", nxtindent, oval_entity_type(entity));

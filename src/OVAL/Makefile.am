@@ -8,10 +8,12 @@ liboval_la_SOURCES += oval_resultDirectives.c oval_resultItem.c oval_resultTest.
 liboval_la_SOURCES += oval_set.c oval_state.c oval_sysData.c oval_sysInfo.c
 liboval_la_SOURCES += oval_sysInterface.c oval_syschar.c oval_test.c
 liboval_la_SOURCES += oval_value.c oval_variable.c oval_variableBinding.c
-liboval_la_SOURCES += includes/oval_collection_impl.h includes/oval_definitions_impl.h
-liboval_la_SOURCES += includes/oval_results_impl.h includes/oval_system_characteristics_impl.h
+liboval_la_SOURCES += oval_collection_impl.h oval_definitions_impl.h
+liboval_la_SOURCES += oval_results_impl.h oval_system_characteristics_impl.h
+liboval_la_CFLAGS  = @libxml_cflags@
+liboval_la_LDFLAGS = @libxml_libs@
 
-include_HEADERS  = includes/oval_agent_api.h includes/oval_definitions.h 
-include_HEADERS += includes/oval_results.h includes/oval_system_characteristics.h
+include_HEADERS  = api/oval_agent_api.h api/oval_definitions.h 
+include_HEADERS += api/oval_results.h api/oval_system_characteristics.h
 
 includedir = $(prefix)/include/lib@PACKAGE@

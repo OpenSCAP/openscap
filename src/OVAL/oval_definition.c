@@ -7,6 +7,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include "oval_definitions_impl.h"
 #include "oval_collection_impl.h"
 #include "oval_string_map_impl.h"
@@ -348,21 +349,16 @@ int oval_definition_parse_tag(xmlTextReaderPtr reader,
 void oval_definition_to_print(struct oval_definition *definition, char *indent,
 			      int index)
 {
+	char nxtindent[100];
+
 	if (strlen(indent) > 80)
 		indent = "....";
-	char nxtindent[100];
-	*nxtindent = 0;
-	strcat(nxtindent, indent);
+
 	if (index == 0)
-		strcat(nxtindent, "DEFINITION.");
-	else {
-		strcat(nxtindent, "DEFINITION[");
-		char itoad[10];
-		*itoad = 0;
-		itoa(index, itoad, 10);
-		strcat(nxtindent, itoad);
-		strcat(nxtindent, "].");
-	}
+		snprintf(nxtindent, sizeof(nxtindent), "%sDEFINITION.", indent);
+	else
+		snprintf(nxtindent, sizeof(nxtindent), "%sDEFINITION[%d].", indent, index);
+
 	printf("%sID          = %s\n", nxtindent, definition->id);
 	printf("%sVERSION     = %d\n", nxtindent, definition->version);
 	printf("%sCLASS       = %d\n", nxtindent, definition->class);

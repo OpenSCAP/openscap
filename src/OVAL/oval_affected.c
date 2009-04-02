@@ -6,6 +6,7 @@
  */
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include "oval_definitions_impl.h"
 #include "oval_collection_impl.h"
 #include "oval_parser_impl.h"
@@ -192,20 +193,16 @@ int oval_affected_parse_tag(xmlTextReaderPtr reader,
 void oval_affected_to_print(struct oval_affected *affected, char *indent,
 			    int index)
 {
+	char nxtindent[100];
+
 	if (strlen(indent) > 80)
 		indent = "....";
-	char nxtindent[100];
-	*nxtindent = 0;
-	strcat(nxtindent, indent);
+
 	if (index == 0)
-		strcat(nxtindent, "AFFECTED.");
-	else {
-		strcat(nxtindent, "AFFECTED[");
-		char itoad[10];
-		itoa(index, itoad, 10);
-		strcat(nxtindent, itoad);
-		strcat(nxtindent, "].");
-	}
+		snprintf(nxtindent, sizeof(nxtindent), "%sAFFECTED.", indent);
+	else
+		snprintf(nxtindent, sizeof(nxtindent), "%sAFFECTED[%d].", indent, index);
+
 	printf("%sFAMILY = %d\n", nxtindent, affected->family);
 	struct oval_iterator *platforms =
 	    oval_collection_iterator(affected->platforms);

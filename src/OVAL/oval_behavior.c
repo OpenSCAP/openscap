@@ -6,6 +6,7 @@
  */
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include "oval_definitions_impl.h"
 #include "oval_collection_impl.h"
 #include "oval_string_map_impl.h"
@@ -119,21 +120,15 @@ int oval_behavior_parse_tag(xmlTextReaderPtr reader,
 void oval_behavior_to_print(struct oval_behavior *behavior, char *indent,
 			    int index)
 {
+	char nxtindent[100];
+
 	if (strlen(indent) > 80)
 		indent = "....";
-	char nxtindent[200];
-	*nxtindent = 0;
-	strcat(nxtindent, indent);
+
 	if (index == 0)
-		strcat(nxtindent, "BEHAVIOR.");
-	else {
-		strcat(nxtindent, "BEHAVIOR[");
-		char itoad[10];
-		*itoad = 0;
-		itoa(index, itoad, 10);
-		strcat(nxtindent, itoad);
-		strcat(nxtindent, "].");
-	}
+		snprintf(nxtindent, sizeof(nxtindent), "%sBEHAVIOR.", indent);
+	else
+		snprintf(nxtindent, sizeof(nxtindent), "%sBEHAVIOR[%d].", indent, index);
 
 	struct oval_iterator_string *keys =
 	    oval_behavior_attribute_keys(behavior);

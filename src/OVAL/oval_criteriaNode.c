@@ -6,6 +6,7 @@
  */
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include "oval_definitions_impl.h"
 #include "oval_collection_impl.h"
 #include "oval_agent_api_impl.h"
@@ -312,6 +313,8 @@ void oval_criteria_node_to_print(struct oval_criteria_node *node, char *indent,
 				 int index)
 {
 	char *nodetype;
+	char nxtindent[100];
+
 	switch (node->type) {
 	case NODETYPE_CRITERIA:
 		nodetype = "CRITERIA";
@@ -326,23 +329,15 @@ void oval_criteria_node_to_print(struct oval_criteria_node *node, char *indent,
 		nodetype = "UNKNOWN_CRITNODE";
 		break;
 	}
+
 	if (strlen(indent) > 80)
 		indent = "....";
-	char nxtindent[100];
-	*nxtindent = 0;
-	strcat(nxtindent, indent);
-	if (index == 0) {
-		strcat(nxtindent, nodetype);
-		strcat(nxtindent, ".");
-	} else {
-		strcat(nxtindent, nodetype);
-		strcat(nxtindent, "[");
-		char itoad[10];
-		*itoad = 0;
-		itoa(index, itoad, 10);
-		strcat(nxtindent, itoad);
-		strcat(nxtindent, "].");
-	}
+
+	if (index == 0)
+		snprintf(nxtindent, sizeof(nxtindent), "%s%s.", indent, nodetype);
+	else
+		snprintf(nxtindent, sizeof(nxtindent), "%s%s[%d].", indent, nodetype, index);
+
 	printf("%sCOMMENT = %s\n", nxtindent, node->comment);
 	printf("%sNEGATE  = %d\n", nxtindent, node->negate);
 	switch (node->type) {

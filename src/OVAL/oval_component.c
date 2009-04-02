@@ -6,6 +6,7 @@
  */
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include "oval_definitions_impl.h"
 #include "oval_collection_impl.h"
 #include "oval_string_map_impl.h"
@@ -673,21 +674,16 @@ int oval_component_parse_tag(xmlTextReaderPtr reader,
 void oval_component_to_print(struct oval_component *component, char *indent,
 			     int index)
 {
+	char nxtindent[100];
+
 	if (strlen(indent) > 80)
 		indent = "....";
-	char nxtindent[100];
-	*nxtindent = 0;
-	strcat(nxtindent, indent);
+
 	if (index == 0)
-		strcat(nxtindent, "COMPONENT.");
-	else {
-		strcat(nxtindent, "COMPONENT[");
-		char itoad[10];
-		*itoad = 0;
-		itoa(index, itoad, 10);
-		strcat(nxtindent, itoad);
-		strcat(nxtindent, "].");
-	}
+		snprintf(nxtindent, sizeof(nxtindent), "%sCOMPONENT.", indent);
+	else
+		snprintf(nxtindent, sizeof(nxtindent), "%sCOMPONENT[%d].", indent, index);
+
 	printf("%sTYPE(%d) = %d\n", nxtindent, component,
 	       oval_component_type(component));
 	if (oval_component_type(component) > OVAL_COMPONENT_FUNCTION) {

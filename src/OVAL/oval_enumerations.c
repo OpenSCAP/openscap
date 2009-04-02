@@ -4,6 +4,7 @@
  *  Created on: Mar 14, 2009
  *      Author: Compaq_Administrator
  */
+#include <string.h>
 #include "oval_definitions_impl.h"
 #include "oval_string_map_impl.h"
 

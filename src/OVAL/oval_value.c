@@ -6,6 +6,7 @@
  */
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include "oval_definitions_impl.h"
 #include "oval_collection_impl.h"
 
@@ -113,22 +114,15 @@ int oval_value_parse_tag(xmlTextReaderPtr reader,
 void oval_value_to_print(struct oval_value *value, char *indent, int index)
 {
 	char nxtindent[100];
-	*nxtindent = 0;
-	if (strlen(indent) > 80) {
-		strcat(nxtindent, "....");
-		strcat(nxtindent, indent + 70);
-	} else
-		strcat(nxtindent, indent);
+
+	if (strlen(indent) > 80)
+		indent = "....";
+
 	if (index == 0)
-		strcat(nxtindent, "VALUE.");
-	else {
-		strcat(nxtindent, "VALUE[");
-		char itoad[10];
-		*itoad = 0;
-		itoa(index, itoad, 10);
-		strcat(nxtindent, itoad);
-		strcat(nxtindent, "].");
-	}
+		snprintf(nxtindent, sizeof(nxtindent), "%sVALUE.", indent);
+	else
+		snprintf(nxtindent, sizeof(nxtindent), "%sVALUE[%d].", indent, index);
+
 
 	printf("%sDATATYPE = %d\n", nxtindent, oval_value_datatype(value));
 	printf("%sTEXT     = %s\n", nxtindent, oval_value_text(value));

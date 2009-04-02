@@ -6,6 +6,7 @@
  */
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include "oval_definitions_impl.h"
 #include "oval_collection_impl.h"
 #include "oval_agent_api_impl.h"
@@ -218,22 +219,15 @@ int oval_state_parse_tag(xmlTextReaderPtr reader,
 void oval_state_to_print(struct oval_state *state, char *indent, int index)
 {
 	char nxtindent[100];
-	*nxtindent = 0;
-	if (strlen(indent) > 80) {
-		strcat(nxtindent, "....");
-		strcat(nxtindent, indent + 70);
-	} else
-		strcat(nxtindent, indent);
+
+	if (strlen(indent) > 80)
+		indent = "....";
+
 	if (index == 0)
-		strcat(nxtindent, "STATE.");
-	else {
-		strcat(nxtindent, "STATE[");
-		char itoad[10];
-		*itoad = 0;
-		itoa(index, itoad, 10);
-		strcat(nxtindent, itoad);
-		strcat(nxtindent, "].");
-	}
+		snprintf(nxtindent, sizeof(nxtindent), "%sSTATE.", indent);
+	else
+		snprintf(nxtindent, sizeof(nxtindent), "%sSTATE[%d].", indent, index);
+
 	printf("%sID         = %s\n", nxtindent, oval_state_id(state));
 	printf("%sFAMILY     = %d\n", nxtindent, oval_state_family(state));
 	printf("%sSUBTYPE    = %d\n", nxtindent, oval_state_subtype(state));
