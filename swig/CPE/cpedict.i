@@ -1,7 +1,6 @@
-
 /*
- * Common Vulnerability Scoring System Version 2 Calculator
- * (http://nvd.nist.gov/cvss.cfm)
+ * Common Product Enumeration
+ * (http://nvd.nist.gov/cpe.cfm)
  */
 
 /*
@@ -23,17 +22,19 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * Authors:
- *      Peter Vrabec   <pvrabec@redhat.com>
+ *      Maros Barabas   <mbarabas@redhat.com>
  *
  */
 
-%module cvsscalc
+%module cpedict
 %{
- #include "../src/CVSS/cvsscalc.h"
+ #include "../../src/CPE/cpedict.h"
 %}
 
-%include "../src/CVSS/cvsscalc.h"
-
-%include cpointer.i
-%pointer_functions(int, intp);
-%pointer_functions(double, doublep);
+cpe_dict_t *cpe_dict_new(const char *fname);
+cpe_dict_t *cpe_dict_new_empty();
+bool cpe_dict_add_item(cpe_dict_t * dict, cpe_dict_item_t * item);
+void cpe_dict_delete(cpe_dict_t * dict);
+cpe_dict_item_t *cpe_dictitem_new_empty();
+void cpe_dictitem_delete(cpe_dict_item_t * item);
+void cpe_dictcheck_delete(cpe_dict_check_t * check);
