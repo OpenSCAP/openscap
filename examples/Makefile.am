@@ -5,15 +5,18 @@ TESTS_ENVIRONMENT = $(SHELL) -x
 EXTRA_DIST =
 
 if WANT_OVAL
-#check_PROGRAMS += test_oval
-#test_oval_SOURCES = OVAL/test_oval.c
-#test_oval_LDADD = $(top_srcdir)/libopenscap.la
+check_PROGRAMS += test_oval
+TESTS += OVAL/test_oval.sh
+EXTRA_DIST += OVAL/test_oval.sh OVAL/test.xml
+
+test_oval_SOURCES = OVAL/test_oval.c
+test_oval_LDADD = $(top_srcdir)/src/libopenscap.la
 endif
 
 if WANT_CPE
 check_PROGRAMS += test_cpelang test_cpedict test_cpeuri
 TESTS += CPE/test_cpe.sh
-EXTRA_DIST += CPE/test_cpe.sh CPE/dict.xml
+EXTRA_DIST += CPE/test_cpe.sh CPE/dict.xml CPE/lang.xml
 
 test_cpelang_SOURCES = CPE/test_cpelang.c
 test_cpelang_LDADD = $(top_srcdir)/src/libopenscap.la
