@@ -4,7 +4,8 @@ SUBDIRS = src swig examples
 
 EXTRA_DIST = dist/fedora/openscap.spec docs/Doxyfile
 
-dist-hook:
+dist-hook: ChangeLog
 	cd $(distdir)/docs && doxygen Doxyfile
+
+ChangeLog:	
 	git-log | sed '/^commit/d; /^Merge/d' > ChangeLog
-	
