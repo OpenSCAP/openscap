@@ -3,15 +3,15 @@ AM_CPPFLAGS = -I$(top_builddir)/src/CPE -I$(top_srcdir)/src/CPE $(PYTHON_INCLUDE
 nodist_pyexec_PYTHON = cpeuri.py cpelang.py cpematch.py cpedict.py
 pyexec_LTLIBRARIES   = _cpeuri.la _cpelang.la _cpematch.la _cpedict.la
 
-_cpeuri_la_LDFLAGS   = -module -avoid-version
-_cpelang_la_LDFLAGS  = -module -avoid-version
-_cpematch_la_LDFLAGS = -module -avoid-version
-_cpedict_la_LDFLAGS  = -module -avoid-version
+_cpeuri_la_LDFLAGS   = -module -avoid-version -lxml2 -lpcre
+_cpelang_la_LDFLAGS  = -module -avoid-version -lxml2 -lpcre
+_cpematch_la_LDFLAGS = -module -avoid-version -lxml2 -lpcre
+_cpedict_la_LDFLAGS  = -module -avoid-version -lxml2 -lpcre
 
 nodist__cpeuri_la_SOURCES   = cpeuri_wrap.c ${top_srcdir}/src/CPE/cpeuri.c
-nodist__cpelang_la_SOURCES  = cpelang_wrap.c ${top_srcdir}/src/CPE/cpelang.c
-nodist__cpematch_la_SOURCES = cpematch_wrap.c ${top_srcdir}/src/CPE/cpematch.c
-nodist__cpedict_la_SOURCES  = cpedict_wrap.c ${top_srcdir}/src/CPE/cpedict.c
+nodist__cpelang_la_SOURCES  = cpelang_wrap.c ${top_srcdir}/src/CPE/cpelang.c ${top_srcdir}/src/CPE/cpeuri.c
+nodist__cpematch_la_SOURCES = cpematch_wrap.c ${top_srcdir}/src/CPE/cpematch.c ${top_srcdir}/src/CPE/cpeuri.c ${top_srcdir}/src/CPE/cpelang.c ${top_srcdir}/src/CPE/cpedict.c
+nodist__cpedict_la_SOURCES  = cpedict_wrap.c ${top_srcdir}/src/CPE/cpedict.c ${top_srcdir}/src/CPE/cpeuri.c 
 
 ##beware: multiple output
 cpeuri.py cpeuri_wrap.c: ${srcdir}/cpeuri.i
