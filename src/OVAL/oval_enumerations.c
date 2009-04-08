@@ -281,16 +281,16 @@ oval_datatype_enum oval_datatype_parse(xmlTextReaderPtr reader, char *attname,
 		oval_string_map_put(_oval_datatype_map, "boolean",
 				    _oval_enumeration_object
 				    (OVAL_DATATYPE_BOOLEAN));
-		oval_string_map_put(_oval_datatype_map, "evr string",
+		oval_string_map_put(_oval_datatype_map, "evr_string",
 				    _oval_enumeration_object
 				    (OVAL_DATATYPE_EVR_STRING));
-		oval_string_map_put(_oval_datatype_map, "fileset revision",
+		oval_string_map_put(_oval_datatype_map, "fileset_revision",
 				    _oval_enumeration_object
 				    (OVAL_DATATYPE_FILESET_REVISTION));
 		oval_string_map_put(_oval_datatype_map, "float",
 				    _oval_enumeration_object
 				    (OVAL_DATATYPE_FLOAT));
-		oval_string_map_put(_oval_datatype_map, "ios version",
+		oval_string_map_put(_oval_datatype_map, "ios_version",
 				    _oval_enumeration_object
 				    (OVAL_DATATYPE_IOS_VERSION));
 		oval_string_map_put(_oval_datatype_map, "version",

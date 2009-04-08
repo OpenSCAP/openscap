@@ -8,4 +8,4 @@ dist-hook: ChangeLog
 	cd $(distdir)/docs && doxygen Doxyfile
 
 ChangeLog:	
-	git-log | sed '/^commit/d; /^Merge/d' > ChangeLog
+	git log | sed '/^commit/d; /^Merge/d' > ChangeLog

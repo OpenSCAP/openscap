@@ -35,10 +35,28 @@
 struct export_target {
 	char *export_target_filename;
 };
-struct import_source {
+typedef struct import_source {
 	char *import_source_filename;
-};
+} import_source_t;
 
+struct import_source *import_source_file(char *filename)
+{
+	import_source_t *source =
+	    (import_source_t *) malloc(sizeof(import_source_t));
+	int namesize = strlen(filename) + 1;
+	char *alloc_filename = (char *)malloc(namesize * sizeof(char));
+	*alloc_filename = 0;
+	strcpy(alloc_filename, filename);
+	source->import_source_filename = alloc_filename;
+	return source;
+}
+
+void import_source_free(struct import_source *source)
+{
+	free(source->import_source_filename);
+	free(source);
+}
+ 
 typedef struct oval_object_model {
 	struct oval_string_map *definition_map;
 	struct oval_string_map *test_map;

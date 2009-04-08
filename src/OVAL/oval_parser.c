@@ -45,43 +45,6 @@ struct oval_object_model *oval_parser_context_model(struct oval_parser_context
 	return context->model;
 }
 
-int _oval_parser_main_error_handler(struct oval_xml_error *error,
-				    void *user_arg)
-{
-	return 0;
-}
-
-int oval_parser_main(int argc, char **argv)
-{
-	printf("Testing\n");
-
-	char *docname;
-
-	if (argc <= 1) {
-		printf("Usage: %s docname\n", argv[0]);
-		return (0);
-	}
-
-	struct oval_object_model *model = oval_object_model_new();
-	oval_xml_error_handler eh = &_oval_parser_main_error_handler;
-
-	docname = argv[1];
-	oval_parser_parse(model, docname, eh, NULL);
-
-	struct oval_iterator_definition *definitions =
-	    get_oval_definitions(model);
-	if (!oval_iterator_definition_has_more(definitions))
-		printf("NO DEFINITIONS FOUND\n");
-	int index;
-	for (index = 1; oval_iterator_definition_has_more(definitions); index++) {
-		struct oval_definition *definition =
-		    oval_iterator_definition_next(definitions);
-		oval_definition_to_print(definition, "", index);
-	}
-
-	return (1);
-}
-
 struct _libxml_user {
 	oval_xml_error_handler error_handler;
 	void *user_arg;

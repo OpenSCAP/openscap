@@ -10,6 +10,7 @@ TESTS += OVAL/test_oval.sh
 EXTRA_DIST += OVAL/test_oval.sh OVAL/test.xml
 
 test_oval_SOURCES = OVAL/test_oval.c
+test_oval_CFLAGS = -I$(top_srcdir)/src/OVAL
 test_oval_LDADD = $(top_builddir)/src/libopenscap.la
 endif
 

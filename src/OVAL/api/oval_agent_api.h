@@ -38,6 +38,9 @@
 struct export_target;
 struct import_source;
 
+struct import_source *import_source_file(char *filename);
+void import_source_free(struct import_source *);
+
 struct oval_object_model;
 
 struct oval_object_model *oval_object_model_new();
