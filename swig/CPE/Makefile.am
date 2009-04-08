@@ -1,32 +1,16 @@
 AM_CPPFLAGS = -I$(top_builddir)/src/CPE -I$(top_srcdir)/src/CPE $(PYTHON_INCLUDES)
 
-nodist_pyexec_PYTHON = cpeuri.py cpelang.py cpematch.py cpedict.py
-pyexec_LTLIBRARIES   = _cpeuri.la _cpelang.la _cpematch.la _cpedict.la
+nodist_pyexec_PYTHON = cpe.py
+pyexec_LTLIBRARIES   = _cpe.la
 
-_cpeuri_la_LDFLAGS   = -module -avoid-version -lxml2 -lpcre
-_cpelang_la_LDFLAGS  = -module -avoid-version -lxml2 -lpcre
-_cpematch_la_LDFLAGS = -module -avoid-version -lxml2 -lpcre
-_cpedict_la_LDFLAGS  = -module -avoid-version -lxml2 -lpcre
-
-nodist__cpeuri_la_SOURCES   = cpeuri_wrap.c ${top_srcdir}/src/CPE/cpeuri.c
-nodist__cpelang_la_SOURCES  = cpelang_wrap.c ${top_srcdir}/src/CPE/cpelang.c ${top_srcdir}/src/CPE/cpeuri.c
-nodist__cpematch_la_SOURCES = cpematch_wrap.c ${top_srcdir}/src/CPE/cpematch.c ${top_srcdir}/src/CPE/cpeuri.c ${top_srcdir}/src/CPE/cpelang.c ${top_srcdir}/src/CPE/cpedict.c
-nodist__cpedict_la_SOURCES  = cpedict_wrap.c ${top_srcdir}/src/CPE/cpedict.c ${top_srcdir}/src/CPE/cpeuri.c 
+_cpe_la_LDFLAGS   = -module -avoid-version
+_cpe_la_LIBADD   = ${top_builddir}/src/CPE/libcpe.la
+nodist__cpe_la_SOURCES   = cpe_wrap.c
 
 ##beware: multiple output
-cpeuri.py cpeuri_wrap.c: ${srcdir}/cpeuri.i
-	$(SWIG) -o cpeuri_wrap.c -python ${INCLUDES} ${srcdir}/cpeuri.i
+cpe.py cpe_wrap.c: ${srcdir}/cpe.i
+	$(SWIG) -o cpe_wrap.c -python ${INCLUDES} ${srcdir}/cpe.i
 
-cpelang.py cpelang_wrap.c: ${srcdir}/cpelang.i
-	$(SWIG) -o cpelang_wrap.c -python ${INCLUDES} ${srcdir}/cpelang.i
+CLEANFILES = cpe.py cpe_wrap.c cpe.pyc
+EXTRA_DIST = cpe.i
 
-cpematch.py cpematch_wrap.c: ${srcdir}/cpematch.i
-	$(SWIG) -o cpematch_wrap.c -python ${INCLUDES} ${srcdir}/cpematch.i
-
-cpedict.py cpedict_wrap.c: ${srcdir}/cpedict.i
-	$(SWIG) -o cpedict_wrap.c -python ${INCLUDES} ${srcdir}/cpedict.i
-
-CLEANFILES = cpeuri.py cpelang.py cpedict.py cpematch.py
-CLEANFILES += cpeuri_wrap.c cpelang_wrap.c cpedict_wrap.c cpematch_wrap.c 
-CLEANFILES += cpeuri.pyc cpelang.pyc cpedict.pyc cpematch.pyc
-EXTRA_DIST = cpeuri.i cpelang.i cpedict.i cpematch.i
