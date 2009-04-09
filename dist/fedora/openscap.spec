@@ -68,7 +68,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files devel
 %defattr(-,root,root,-)
-%doc docs
+%doc docs/{html,latex}
 %{_includedir}/*
 %{_libdir}/*.so
 

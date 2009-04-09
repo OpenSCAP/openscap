@@ -1,0 +1,10 @@
+
+openscap-0.3.1							09-04-2009
+- python bindings for CPE, CCE, CVE and CVSS
+- OVAL can load definitions
+
+
+openscap-0.1.4							29-03-2009
+- first official release
+- CPE, CCE, CVE and CVSS are implmented
+
