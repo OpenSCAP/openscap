@@ -171,6 +171,7 @@ AC_CONFIG_FILES([Makefile
                  src/CVE/Makefile
                  src/CPE/Makefile
                  src/CCE/Makefile
+                 swig/OVAL/Makefile
                  swig/CVSS/Makefile
                  swig/CVE/Makefile
                  swig/CPE/Makefile

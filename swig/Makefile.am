@@ -18,3 +18,6 @@ if WANT_CVSS
 SUBDIRS += CVSS
 endif
 
+if WANT_OVAL
+SUBDIRS += OVAL
+endif
