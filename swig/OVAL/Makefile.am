@@ -1,14 +1,26 @@
-AM_CPPFLAGS = -I$(top_builddir)/src/OVAL -I$(top_srcdir)/src/OVAL $(PYTHON_INCLUDES)
+AM_CPPFLAGS = -I$(top_builddir)/src/CVE -I$(top_srcdir)/src/CVE $(PYTHON_INCLUDES) -I$(PERL_INCLUDES) -D_LARGEFILE64_SOURCE -D_LARGEFILE_SOURCE=1 -iquote -I/usr/include -include "sys/types.h"
+
+perldir = $(PERL_INCLUDES)
+
+nobase_perl_DATA = oval.pm
+perl_LTLIBRARIES = _oval_pm.la
+_oval_pm_la_LDFLAGS = -module -avoid-version
+_oval_pm_la_LIBADD  = ${top_builddir}/src/OVAL/liboval.la
+nodist__oval_pm_la_SOURCES = oval_pm_wrap.c
 
 nodist_pyexec_PYTHON = oval.py
-pyexec_LTLIBRARIES = _oval.la
-_oval_la_LDFLAGS = -module -avoid-version
-_oval_la_LIBADD  = ${top_builddir}/src/OVAL/liboval.la
-nodist__oval_la_SOURCES = oval_wrap.c
+pyexec_LTLIBRARIES = _oval_py.la
+_oval_py_la_LDFLAGS = -module -avoid-version
+_oval_py_la_LIBADD  = ${top_builddir}/src/OVAL/liboval.la
+nodist__oval_py_la_SOURCES = oval_py_wrap.c
 
 ##beware: multiple output
-oval.py oval_wrap.c: ${srcdir}/oval.i
-	$(SWIG) -o oval_wrap.c -python ${INCLUDES} ${srcdir}/oval.i
+oval.py oval_py_wrap.c: ${srcdir}/oval.i
+	$(SWIG) -o oval_py_wrap.c -python ${INCLUDES} ${srcdir}/oval.i
 
-CLEANFILES = oval.py oval_wrap.c oval.pyc
+oval.pm oval_pm_wrap.c: ${srcdir}/oval.i
+	$(SWIG) -o oval_pm_wrap.c -perl5 ${INCLUDES} ${srcdir}/oval.i
+
+CLEANFILES = oval.py oval_py_wrap.c oval.pyc oval_pm_wrap.c oval.pm
 EXTRA_DIST = oval.i
+

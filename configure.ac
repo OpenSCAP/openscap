@@ -1,6 +1,6 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
-AC_PREREQ(2.61)
+AC_PREREQ(2.59)
 AC_INIT([openscap], [0.3.1], [open-scap-list@redhat.com])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_AUX_DIR([config])
@@ -18,10 +18,10 @@ AC_PROG_MAKE_SET
 AC_PROG_LIBTOOL
 
 # swig
-AC_PROG_SWIG([1.3.30])
+AC_PROG_SWIG([1.3.29])
 
 # Compiler flags
-CFLAGS="$CFLAGS -W -Wall -Wshadow -Wformat -Wundef"
+CFLAGS="$CFLAGS -W -Wall -Wshadow -Wformat -Wundef -D_GNU_SOURCE"
 
 #
 # xml2-config
@@ -101,6 +101,10 @@ AC_CHECK_HEADERS(
   [AC_MSG_FAILURE([pcre header file is missing])]
 )
 CPPFLAGS="$CPPFLAGS_SAVE"
+
+PERL_INCLUDES="`perl -V:ccdlflags | cut -d\' -f2 | cut -d\, -f4`"
+
+AC_SUBST(PERL_INCLUDES)
 
 AC_SUBST(libxml_cflags)
 AC_SUBST(libxml_libs)
