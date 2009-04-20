@@ -26,12 +26,12 @@ echo '***************** CHECK: malloc *******************'
 
 export CFLAGS="-g -O1"
 ./configure && gmake -s || exit 1
-case $(uname -s) in;
+case "$(uname -s)" in
 	[Ll][Ii][Nn][Uu][Xx])
 		export MALLOC_CHECK_=3
 		;;
 	[Ff][Rr][Ee][Ee][Bb][Ss][Dd])
-		export MALLOC_OPTIONS=A
+		export MALLOC_OPTIONS=AJ
 		;;
 	*)
 		echo "Sorry, don't know how to enable malloc debuging"
