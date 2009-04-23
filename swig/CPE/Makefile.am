@@ -17,11 +17,13 @@ nodist__cpe_py_la_SOURCES   = cpe_py_wrap.c
 
 ##beware: multiple output
 cpe.py cpe_py_wrap.c: ${srcdir}/cpe.i
-	$(SWIG) -o cpe_py_wrap.c -python ${INCLUDES} ${srcdir}/cpe.i
+	$(SWIG) -o cpe_py_wrap.c -python -module cpe_py ${INCLUDES} ${srcdir}/cpe.i
+	mv cpe_py.py cpe.py
 
 cpe.pm cpe_pm_wrap.c: ${srcdir}/cpe.i
-	$(SWIG) -o cpe_pm_wrap.c -perl5 ${INCLUDES} ${srcdir}/cpe.i
+	$(SWIG) -o cpe_pm_wrap.c -perl5 -module cpe_pm ${INCLUDES} ${srcdir}/cpe.i
+	mv cpe_pm.pm cpe.pm
 
-CLEANFILES = cpe.py cpe_py_wrap.c cpe.pyc cpe_pm_wrap.c cpe.m
+CLEANFILES = cpe.py cpe_py_wrap.c cpe.pyc cpe_pm_wrap.c cpe.pm
 EXTRA_DIST = cpe.i
 

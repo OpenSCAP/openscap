@@ -16,10 +16,12 @@ _cvsscalc_py_la_LIBADD = ${top_builddir}/src/CVSS/libcvss.la
 
 ##beware: multiple output
 cvsscalc.py cvsscalc_py_wrap.c: ${srcdir}/cvsscalc.i
-	$(SWIG) -o cvsscalc_py_wrap.c -python ${INCLUDES} ${srcdir}/cvsscalc.i
+	$(SWIG) -o cvsscalc_py_wrap.c -python -module cvsscalc_py ${INCLUDES} ${srcdir}/cvsscalc.i
+	mv cvsscalc_py.py cvsscalc.py
 
 cvsscalc.pm cvsscalc_pm_wrap.c: ${srcdir}/cvsscalc.i
-	$(SWIG) -o cvsscalc_pm_wrap.c -perl5 ${INCLUDES} ${srcdir}/cvsscalc.i
+	$(SWIG) -o cvsscalc_pm_wrap.c -perl5 -module cvsscalc_pm ${INCLUDES} ${srcdir}/cvsscalc.i
+	mv cvsscalc_pm.pm cvsscalc.pm
 
 CLEANFILES = cvsscalc.py cvsscalc_py_wrap.c cvsscalc.pyc cvsscalc_pm_wrap.c cvsscalc.pm
 EXTRA_DIST = cvsscalc.i

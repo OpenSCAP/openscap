@@ -16,10 +16,12 @@ nodist__cce_py_la_SOURCES = cce_py_wrap.c
 
 ##beware: multiple output
 cce.py cce_py_wrap.c: ${srcdir}/cce.i
-	$(SWIG) -o cce_py_wrap.c -python ${INCLUDES} ${srcdir}/cce.i
+	$(SWIG) -o cce_py_wrap.c -python -module cce_py ${INCLUDES} ${srcdir}/cce.i
+	mv cce_py.py cce.py
 
 cce.pm cce_pm_wrap.c: ${srcdir}/cce.i
-	$(SWIG) -o cce_pm_wrap.c -perl5 ${INCLUDES} ${srcdir}/cce.i
+	$(SWIG) -o cce_pm_wrap.c -perl5 -module cce_pm ${INCLUDES} ${srcdir}/cce.i
+	mv cce_pm.pm cce.pm
 
 CLEANFILES = cce.py cce_py_wrap.c cce.pyc cce_pm_wrap.c cce.pm
 EXTRA_DIST = cce.i
