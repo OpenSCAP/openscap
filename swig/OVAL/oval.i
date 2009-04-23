@@ -26,7 +26,7 @@
  *
  */
 
-%module cpe
+%module oval
 %{
  #include "../../src/OVAL/api/oval_agent_api.h"
  #include "../../src/OVAL/api/oval_definitions.h"
