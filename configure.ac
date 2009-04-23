@@ -1,11 +1,12 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 AC_PREREQ(2.59)
-AC_INIT([openscap], [0.3.1], [open-scap-list@redhat.com])
+AC_INIT([openscap], [0.3.2], [open-scap-list@redhat.com])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_AUX_DIR([config])
 
 AM_INIT_AUTOMAKE([foreign])
+AC_DISABLE_STATIC
 AM_PROG_LIBTOOL
 AM_PATH_PYTHON
 
@@ -102,9 +103,11 @@ AC_CHECK_HEADERS(
 )
 CPPFLAGS="$CPPFLAGS_SAVE"
 
-PERL_INCLUDES="`perl -V:ccdlflags | cut -d\' -f2 | cut -d\, -f4`"
+AC_SUBST([PERL_INCLUDES], ["`perl -V:ccdlflags | cut -d\' -f2 | cut -d\, -f4`"])
 
-AC_SUBST(PERL_INCLUDES)
+eval `perl -V:vendorlib -V:vendorarch`
+AC_SUBST([perl_vendorlibdir], [$vendorlib])
+AC_SUBST([perl_vendorarchdir], [$vendorarch])
 
 AC_SUBST(libxml_cflags)
 AC_SUBST(libxml_libs)

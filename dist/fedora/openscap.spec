@@ -1,7 +1,8 @@
-%{!?python_sitearch: %define python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
+%{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
+%{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
 
 Name:           openscap
-Version:        0.1.4
+Version:        0.3.2
 Release:        1%{?dist}
 Summary:        Set of open source libraries enabling integration of the SCAP line of standards
 Group:          System Environment/Libraries
@@ -38,11 +39,20 @@ Requires:       %{name} = %{version}-%{release}
 The %{name}-python package contains the bindings so that %{name}
 libraries can be used by python.
 
+%package        perl
+Summary:        Perl bindings for %{name}
+Group:          Development/Libraries
+Requires:       %{name} = %{version}-%{release}
+
+%description    perl
+The %{name}-perl package contains the bindings so that %{name}
+libraries can be used by perl.
+
 %prep
 %setup -q
 
 %build
-%configure --disable-static --disable-oval
+%configure
 make %{?_smp_mflags}
 
 %install
@@ -66,6 +76,11 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root,-)
 %{python_sitearch}/*
 
+%files perl
+%defattr(-,root,root,-)
+%{perl_vendorarch}/*
+%{perl_vendorlib}/*
+
 %files devel
 %defattr(-,root,root,-)
 %doc docs/{html,latex}
@@ -74,6 +89,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Thu Apr 23 2009 Peter Vrabec <pvrabec@redhat.com> 0.3.2-1
+- upgrade
+
 * Sun Mar 29 2009 Peter Vrabec <pvrabec@redhat.com> 0.1.4-1
 - upgrade
 

@@ -1,9 +1,7 @@
 AM_CPPFLAGS = -I$(top_builddir)/src/CVE -I$(top_srcdir)/src/CVE $(PYTHON_INCLUDES) -I$(PERL_INCLUDES) -D_LARGEFILE64_SOURCE -D_LARGEFILE_SOURCE=1 -iquote -I/usr/include -include "sys/types.h"
 
-perldir = $(PERL_INCLUDES)
-
-nobase_perl_DATA = cvsscalc.pm
-perl_LTLIBRARIES = _cvsscalc_pm.la
+perl_vendorlib_DATA = cvsscalc.pm
+perl_vendorarch_LTLIBRARIES = _cvsscalc_pm.la
 _cvsscalc_pm_la_LDFLAGS = -module -avoid-version
 nodist__cvsscalc_pm_la_SOURCES = cvsscalc_pm_wrap.c 
 _cvsscalc_pm_la_LIBADD = ${top_builddir}/src/CVSS/libcvss.la
