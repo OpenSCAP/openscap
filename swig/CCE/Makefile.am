@@ -12,14 +12,27 @@ _cce_py_la_LDFLAGS = -module -avoid-version
 _cce_py_la_LIBADD  = ${top_builddir}/src/CCE/libcce.la
 nodist__cce_py_la_SOURCES = cce_py_wrap.c
 
-##beware: multiple output
-cce.py cce_py_wrap.c: ${srcdir}/cce.i
+##beware of: http://www.gnu.org/software/automake/manual/html_node/Multiple-Outputs.html
+
+cce_py_wrap.c: ${srcdir}/cce.i
 	$(SWIG) -o cce_py_wrap.c -python -module cce_py ${INCLUDES} ${srcdir}/cce.i
 	mv cce_py.py cce.py
 
-cce.pm cce_pm_wrap.c: ${srcdir}/cce.i
+cce.py: cce_py_wrap.c
+	@if test -f $@; then :; else \
+		rm -f cce_py_wrap.c; \
+		$(MAKE) $(AM_MAKEFLAGS) cce_py_wrap.c; \
+	fi
+
+cce_pm_wrap.c: ${srcdir}/cce.i
 	$(SWIG) -o cce_pm_wrap.c -perl5 -module cce_pm ${INCLUDES} ${srcdir}/cce.i
 	mv cce_pm.pm cce.pm
+
+cce.pm: cce_pm_wrap.c
+	@if test -f $@; then :; else \
+		rm -f cce_pm_wrap.c; \
+		$(MAKE) $(AM_MAKEFLAGS) cce_pm_wrap.c; \
+	fi
 
 CLEANFILES = cce.py cce_py_wrap.c cce.pyc cce_pm_wrap.c cce.pm
 EXTRA_DIST = cce.i

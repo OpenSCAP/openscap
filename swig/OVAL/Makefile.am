@@ -12,14 +12,27 @@ _oval_py_la_LDFLAGS = -module -avoid-version
 _oval_py_la_LIBADD  = ${top_builddir}/src/OVAL/liboval.la
 nodist__oval_py_la_SOURCES = oval_py_wrap.c
 
-##beware: multiple output
-oval.py oval_py_wrap.c: ${srcdir}/oval.i
+##beware of: http://www.gnu.org/software/automake/manual/html_node/Multiple-Outputs.html
+
+oval_py_wrap.c: ${srcdir}/oval.i
 	$(SWIG) -o oval_py_wrap.c -python -module oval_py ${INCLUDES} ${srcdir}/oval.i
 	mv oval_py.py oval.py
 
-oval.pm oval_pm_wrap.c: ${srcdir}/oval.i
+oval.py: oval_py_wrap.c
+	@if test -f $@; then :; else \
+		rm -f oval_py_wrap.c; \
+		$(MAKE) $(AM_MAKEFLAGS) oval_py_wrap.c; \
+	fi
+
+oval_pm_wrap.c: ${srcdir}/oval.i
 	$(SWIG) -o oval_pm_wrap.c -perl5 -module oval_pm ${INCLUDES} ${srcdir}/oval.i
 	mv oval_pm.pm oval.pm
+
+oval.pm: oval_pm_wrap.c
+	@if test -f $@; then :; else \
+		rm -f oval_pm_wrap.c; \
+		$(MAKE) $(AM_MAKEFLAGS) oval_pm_wrap.c; \
+	fi
 
 CLEANFILES = oval.py oval_py_wrap.c oval.pyc oval_pm_wrap.c oval.pm
 EXTRA_DIST = oval.i
