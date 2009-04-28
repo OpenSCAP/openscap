@@ -19,9 +19,14 @@ libseap_la_SOURCES= bitmap.c \
 		    sch_generic.c \
 		    sch_generic.h \
 		    sexp-printf.c \
-		    sexp-printf.h
+		    sexp-printf.h \
+		    sexp-output.c \
+		    sexp-output.h \
+		    sexp-handler.c \
+		    sexp-handler.h \
+		    redblack.h
 
-libseap_la_CFLAGS= -DUSE_XMALLOC -DWANT_BASE64
+libseap_la_CFLAGS= -DUSE_XMALLOC -DXMALLOC_EXIT -DWANT_BASE64
 libseap_la_LDFLAGS=
 
 include_HEADERS= seap.h

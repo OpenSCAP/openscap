@@ -12,6 +12,7 @@ int sch_generic_openfd (SEAP_desc_t *desc, int fd, uint32_t flags);
 int sch_generic_openfd2 (SEAP_desc_t *desc, int ifd, int ofd, uint32_t flags);
 ssize_t sch_generic_recv (SEAP_desc_t *desc, void *buf, size_t len, uint32_t flags);
 ssize_t sch_generic_send (SEAP_desc_t *desc, void *buf, size_t len, uint32_t flags);
+ssize_t sch_generic_sendsexp (SEAP_desc_t *desc, SEXP_t *sexp, uint32_t flags);
 int sch_generic_close (SEAP_desc_t *desc, uint32_t flags);
 
 #endif /* SCH_GENERIC_H */

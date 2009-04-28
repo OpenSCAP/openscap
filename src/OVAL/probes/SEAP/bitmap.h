@@ -2,15 +2,6 @@
 #ifndef BITMAP_H
 #define BITMAP_H
 
-#if !defined(_A)
-# if !defined(NDEBUG)
-#  include <assert.h>
-#  define _A(x) assert(x)
-# else
-#  define _A(x)
-# endif
-#endif
-
 #include <stdint.h>
 
 typedef uint32_t bitmap_cell_t;

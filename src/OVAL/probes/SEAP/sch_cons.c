@@ -2,6 +2,7 @@
 #include <sys/types.h>
 #include <sys/uio.h>
 #include <unistd.h>
+#include <errno.h>
 #include <config.h>
 #include "seap.h"
 #include "sch_cons.h"
@@ -50,6 +51,12 @@ ssize_t sch_cons_recv (SEAP_desc_t *desc, void *buf, size_t len, uint32_t flags)
 ssize_t sch_cons_send (SEAP_desc_t *desc, void *buf, size_t len, uint32_t flags)
 {
         return write (DATA(desc)->ofd, buf, len);
+}
+
+ssize_t sch_cons_sendsexp (SEAP_desc_t *desc, SEXP_t *sexp, uint32_t flags)
+{
+        errno = EOPNOTSUPP;
+        return (-1);
 }
 
 int sch_cons_close (SEAP_desc_t *desc, uint32_t flags)

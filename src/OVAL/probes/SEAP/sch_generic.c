@@ -1,6 +1,7 @@
 #include <sys/types.h>
 #include <sys/uio.h>
 #include <unistd.h>
+#include <errno.h>
 #include <config.h>
 #include "seap.h"
 #include "sch_generic.h"
@@ -43,6 +44,12 @@ ssize_t sch_generic_recv (SEAP_desc_t *desc, void *buf, size_t len, uint32_t fla
 ssize_t sch_generic_send (SEAP_desc_t *desc, void *buf, size_t len, uint32_t flags)
 {
         return write (DATA(desc->scheme_data)->ofd, buf, len);
+}
+
+ssize_t sch_generic_sendsexp (SEAP_desc_t *desc, SEXP_t *sexp, uint32_t flags)
+{
+        errno = EOPNOTSUPP;
+        return (-1);
 }
 
 int sch_generic_close (SEAP_desc_t *desc, uint32_t flags)

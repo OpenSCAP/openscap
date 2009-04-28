@@ -6,6 +6,7 @@
 #include <config.h>
 #include "xmalloc.h"
 #include "common.h"
+#include "sexp-handler.h"
 #include "seap.h"
 #include "xbase64.h"
 #include "bitmap.h"
@@ -58,7 +59,9 @@ SEXP_t *SEAP_sexp_new  (void)
         SEXP_t *sexp;
 
         sexp = xmalloc (sizeof (SEXP_t));
-        sexp->type = ATOM_EMPTY;
+        sexp->flags = 0;
+        SEXP_SETTYPE(sexp, ATOM_EMPTY);
+        SEXP_SETFLAG(sexp, SEXP_FLAGFREE);
         sexp->handler = NULL;
         
         return (sexp);
@@ -67,7 +70,10 @@ SEXP_t *SEAP_sexp_new  (void)
 void SEAP_sexp_init (SEXP_t  *sexp)
 {
         _A(sexp != NULL);
-        sexp->type = ATOM_UNFIN;
+        
+        sexp->flags = 0;
+        SEXP_SETTYPE(sexp, ATOM_EMPTY);
+        sexp->handler = NULL;
         return;
 }
 
@@ -83,7 +89,7 @@ void SEAP_sexp_free (SEXP_t **sexpp)
                 return;
         }
         
-        switch ((*sexpp)->type) {
+        switch (SEXP_TYPE(*sexpp)) {
         case ATOM_LIST:
         case ATOM_NUMBER:
         case ATOM_SYMBOL:
@@ -96,7 +102,7 @@ void SEAP_sexp_free (SEXP_t **sexpp)
                 abort ();
         }
 
-        if ((*sexpp)->freeobj)
+        if (SEXP_FREE(*sexpp))
                 xfree ((void **)(sexpp));
         
         return;
@@ -114,7 +120,8 @@ const char *__sexp_strtype[] = {
 
 const char *SEAP_sexp_strtype (const SEXP_t *sexp)
 {
-        return (sexp->type < 0x06 ? __sexp_strtype[sexp->type] : "unknown");
+        _A(SEXP_TYPE(sexp) >= 0);
+        return (SEXP_TYPE(sexp) < 0x06 ? __sexp_strtype[SEXP_TYPE(sexp)] : "unknown");
 }
 
 SEXP_t *SEAP_parse_fd (SEAP_CTX_t *ctx, int fd, size_t max, SEXP_pstate_t **state)
@@ -145,10 +152,8 @@ SEXP_pstate_t *SEAP_pstate_new (void)
           new->buffer_size = 0;
           new->buffer_free = 0;
         */
-        new->LIST_stack  = xmalloc (sizeof (LIST_t *) * (LIST_STACK_INIT_SIZE));
-        new->LIST_stack[0] = LIST_new ();
-        new->LIST_stack_size = LIST_STACK_INIT_SIZE;
-        new->LIST_stack_cnt  = 1;
+        LIST_stack_init (&(new->lstack));
+        LIST_stack_push (&(new->lstack), LIST_new ());
         
         return (new);
 }
@@ -163,11 +168,9 @@ SEXP_pstate_t *SEAP_pstate_init (SEXP_pstate_t *state)
           state->buffer_size = 0;
           state->buffer_free = 0;
         */
-        state->LIST_stack  = xmalloc (sizeof (LIST_t *) * (LIST_STACK_INIT_SIZE));
-        state->LIST_stack[0] = LIST_new ();
-        state->LIST_stack_size = LIST_STACK_INIT_SIZE;
-        state->LIST_stack_cnt  = 1;
-        
+        LIST_stack_init (&(state->lstack));
+        LIST_stack_push (&(state->lstack), LIST_new ());
+
         return (state);
 }
 
@@ -176,7 +179,8 @@ static SEXP_t *SEXP_list_new (void)
         SEXP_t *sexp;
 
         sexp = xmalloc (sizeof (SEXP_t));
-        sexp->type = ATOM_LIST;
+        SEXP_SETTYPE(sexp, ATOM_LIST);
+        SEXP_SETFLAG(sexp, SEXP_FLAGFREE);
         sexp->atom.list.memb  = xmalloc (sizeof (SEXP_t) * LIST_INIT_SIZE);
         sexp->atom.list.count = 0;
         sexp->atom.list.size  = LIST_INIT_SIZE;
@@ -188,7 +192,7 @@ static SEXP_t *SEXP_list_init (SEXP_t *sexp)
 {
         _A(sexp != NULL);
 
-        sexp->type = ATOM_LIST;
+        SEXP_SETTYPE(sexp, ATOM_LIST);
         LIST_init (&(sexp->atom.list));
         
         return (sexp);
@@ -200,12 +204,12 @@ SEXP_t *SEXP_list_first (SEXP_t *sexp)
         SEXP_t *empty;
 
         _A(sexp != NULL);
-        if (sexp->type == ATOM_LIST) {
+        if (SEXP_TYPE(sexp) == ATOM_LIST) {
                 if (sexp->atom.list.count > 0) {
                         return (&(SEXP(sexp->atom.list.memb)[0]));
                 } else {
                         empty = SEAP_sexp_new ();
-                        empty->type = ATOM_EMPTY;
+                        SEXP_SETTYPE(sexp, ATOM_EMPTY);
                         return (empty);
                 }
         } else {
@@ -218,13 +222,13 @@ SEXP_t *SEXP_list_last (SEXP_t *sexp)
         SEXP_t *empty;
         
         _A(sexp != NULL);
-        if (sexp->type == ATOM_LIST) {
+        if (SEXP_TYPE(sexp) == ATOM_LIST) {
                 if (sexp->atom.list.count > 0) {
                         return (&(SEXP(sexp->atom.list.memb)[sexp->atom.list.count - 1]));
                 } else {
                         empty = SEAP_sexp_new ();
-                        empty->type = ATOM_EMPTY;
-                        return (sexp);
+                        SEXP_SETTYPE(empty, ATOM_EMPTY); /* FIXME: this is redundant */
+                        return (empty);
                 }
         } else {
                 return (NULL);
@@ -236,10 +240,10 @@ SEXP_t *SEXP_copy (SEXP_t *sexp)
         SEXP_t *copy;
         
         copy = SEAP_sexp_new ();
-        copy->type = sexp->type;
+        copy->flags = sexp->flags;
         copy->handler = sexp->handler;
         
-        switch (sexp->type) {
+        switch (SEXP_TYPE(sexp)) {
         case ATOM_UNFIN:
         case ATOM_EMPTY:
                 break;
@@ -264,7 +268,7 @@ SEXP_t *SEXP_copyobj (SEXP_t *sexp)
         SEXP_t *copy;
         
         copy = SEAP_sexp_new ();
-        copy->type    = sexp->type;
+        copy->flags   = sexp->flags;
         copy->handler = sexp->handler;
         memcpy (&(copy->atom), &(sexp->atom), sizeof sexp->atom);
         
@@ -273,7 +277,7 @@ SEXP_t *SEXP_copyobj (SEXP_t *sexp)
 
 int SEXP_listp (SEXP_t *sexp)
 {
-        return (sexp != NULL ? (sexp->type == ATOM_LIST) : 0);
+        return (sexp != NULL ? (SEXP_TYPE(sexp) == ATOM_LIST) : 0);
 }
 
 SEXP_t *SEXP_list_pop (SEXP_t **sexp)
@@ -283,7 +287,7 @@ SEXP_t *SEXP_list_pop (SEXP_t **sexp)
         _A(sexp != NULL);
         _A(*sexp != NULL);
         
-        if ((*sexp)->type == ATOM_LIST) {
+        if (SEXP_TYPE(*sexp) == ATOM_LIST) {
                 if ((*sexp)->atom.list.count > 0) {
                         sexp_ret = SEXP_copyobj(&(SEXP((*sexp)->atom.list.memb)[0]));
                         
@@ -299,16 +303,16 @@ SEXP_t *SEXP_list_pop (SEXP_t **sexp)
                         } else {
                                 xfree (&((*sexp)->atom.list.memb));
                                 
-                                if ((*sexp)->freeobj)
+                                if (SEXP_FREE(*sexp))
                                         xfree ((void **)sexp);
                                 
                                 *sexp = NULL;
                         }
                         return (sexp_ret);
                 } else {
-                        if ((*sexp)->freeobj)
+                        if (SEXP_FREE(*sexp))
                                 xfree ((void **)sexp);
-
+                        
                         *sexp = NULL;
 
                         return (NULL);
@@ -331,7 +335,7 @@ int SEXP_strncmp (SEXP_t *sexp, const char *str, size_t n)
         _A(sexp != NULL);
         _A(str != NULL);
         _A(n > 0);
-        _A(sexp->type == ATOM_STRING);
+        _A(SEXP_TYPE(sexp) == ATOM_STRING);
         
         return (n < sexp->atom.string.len ?
                 strncmp (sexp->atom.string.str, str, n):
@@ -358,63 +362,6 @@ static SEXP_t *LIST_add (LIST_t *list, SEXP_t *sexp, int freemem)
         }
         
         return (SEXP(list->memb) + list->count - 1);
-}
-
-static LIST_t *LIST_stack_push (SEXP_pstate_t *pstate, LIST_t *list)
-{
-        _A(pstate != NULL);
-        _A(list   != NULL);
-        _A(pstate->LIST_stack_size >= pstate->LIST_stack_cnt);
-        
-        if (pstate->LIST_stack_size == pstate->LIST_stack_cnt) {
-                /* Resize the stack */
-
-                _D("LIST_stack_push(%p,%p): Resizing stack from %u (%zu bytes) to %u (%zu bytes).\n",
-                   pstate, list,
-                   pstate->LIST_stack_size,
-                   sizeof (LIST_t *) * pstate->LIST_stack_size,
-                   (size_t)(pstate->LIST_stack_size * (LIST_STACK_GROW)),
-                   (size_t)(sizeof (LIST_t *) * (pstate->LIST_stack_size * (LIST_STACK_GROW))));
-                
-                pstate->LIST_stack_size *= LIST_STACK_GROW;
-                pstate->LIST_stack = xrealloc (pstate->LIST_stack,
-                                               sizeof (LIST_t *) * pstate->LIST_stack_size);
-        }
-
-        pstate->LIST_stack[pstate->LIST_stack_cnt++] = list;
-        _D("LIST_stack_push(%p,%p): stack_size=%zu.\n", pstate, list, pstate->LIST_stack_cnt);
-        
-        return (list);
-}
-
-static inline LIST_t *LIST_stack_top (SEXP_pstate_t *pstate)
-{
-        _A(pstate != NULL);
-        _A(pstate->LIST_stack_cnt > 0);
-        return (pstate->LIST_stack[pstate->LIST_stack_cnt - 1]);
-}
-
-static inline LIST_t *LIST_stack_bottom (SEXP_pstate_t *pstate)
-{
-        _A(pstate != NULL);
-        _A(pstate->LIST_stack_cnt > 0);
-        return (pstate->LIST_stack[0]);
-}
-
-static inline void LIST_stack_dec (SEXP_pstate_t *pstate)
-{
-        _A(pstate != NULL);
-        _A(pstate->LIST_stack_cnt > 0);
-        --(pstate->LIST_stack_cnt);
-        return;
-}
-
-static inline void LIST_stack_ins (SEXP_pstate_t *pstate, LIST_t *sexp)
-{
-        _A(pstate != NULL);
-        _A(pstate->LIST_stack_cnt > 0);
-        pstate->LIST_stack[pstate->LIST_stack_cnt - 1] = sexp;
-        return;
 }
 
 /*
@@ -617,9 +564,9 @@ DEFPARSER(label)
         if (PSTATE(pstatep) != NULL) {
                 _D("Found pstate, merging buffers...\n");
                 
-                _D("old: \"%*s\"\n",
+                _D("old: \"%.*s\"\n",
                    PSTATE(pstatep)->buffer_data_len, PSTATE(pstatep)->buffer);
-                _D("new: \"%*s\"\n", buflen, buf);
+                _D("new: \"%.*s\"\n", buflen, buf);
                 
                 pbuf = PSTATE(pstatep)->buffer;
                 pbuf = xrealloc (pbuf, sizeof (char) * (PSTATE(pstatep)->buffer_data_len + buflen));
@@ -636,19 +583,19 @@ DEFPARSER(label)
         }
         
         /* Initialize parse flags */
-        exflags = PSTATE(pstatep)->LIST_stack_cnt > 1 ? PSTATE(pstatep)->pflags : ctx->pflags;
+        exflags = PSTATE(pstatep)->lstack.LIST_stack_cnt > 1 ? PSTATE(pstatep)->pflags : ctx->pflags;
         
         /* Main parser loop */
         for (;;) {
-                _A((PSTATE(pstatep)->LIST_stack_cnt  > 1 && !(exflags & EXF_EOFOK)) ||
-                   (PSTATE(pstatep)->LIST_stack_cnt == 1 &&  (exflags & EXF_EOFOK)));
+                _A((PSTATE(pstatep)->lstack.LIST_stack_cnt  > 1 && !(exflags & EXF_EOFOK)) ||
+                   (PSTATE(pstatep)->lstack.LIST_stack_cnt == 1 &&  (exflags & EXF_EOFOK)));
 
                 sexp = SEAP_sexp_new ();
                 
         L_NO_SEXP_ALLOC:
                 if (i >= buflen) {
                         _D("EOF, i=%u, buflen=%u, LIST_stack_cnt=%u\n",
-                           i, buflen, PSTATE(pstatep)->LIST_stack_cnt);
+                           i, buflen, PSTATE(pstatep)->lstack.LIST_stack_cnt);
                         break;
                 }
 
@@ -661,7 +608,7 @@ DEFPARSER(label)
         L_CHAR:
                 i += EXTRACTOR(si_string)(sexp, pbuf + i, buflen - i, exflags);
                 
-                if (sexp->type == ATOM_UNFIN) {
+                if (SEXP_TYPE(sexp) == ATOM_UNFIN) {
                         _D("Invalid si string\n");
                         break;
                 }
@@ -670,7 +617,7 @@ DEFPARSER(label)
         L_CHAR_FIXEDLEN:
                 EXTRACTOR_F(string)(sexp, pbuf + i, buflen - i, toklen, exflags);
 
-                if (sexp->type == ATOM_UNFIN) {
+                if (SEXP_TYPE(sexp) == ATOM_UNFIN) {
                         _D("Invalid si string\n");
                         break;
                 }
@@ -680,7 +627,7 @@ DEFPARSER(label)
         L_DQUOTE:
                 i += EXTRACTOR(dq_string)(sexp, pbuf + i, buflen - i, exflags);
 
-                if (sexp->type == ATOM_UNFIN) {
+                if (SEXP_TYPE(sexp) == ATOM_UNFIN) {
                         _D("Invalid dq string\n");
                         break;
                 }
@@ -689,7 +636,7 @@ DEFPARSER(label)
         L_SQUOTE:
                 i += EXTRACTOR(sq_string)(sexp, pbuf + i, buflen - i, exflags);
 
-                if (sexp->type == ATOM_UNFIN) {
+                if (SEXP_TYPE(sexp) == ATOM_UNFIN) {
                         _D("Invalid sq string\n");
                         break;
                 }
@@ -742,7 +689,7 @@ DEFPARSER(label)
                                                 case 'E':
                                                         goto finalize_exponent;
                                                 default:
-                                                        sexp->type = ATOM_UNFIN;
+                                                        SEXP_SETTYPE(sexp, ATOM_UNFIN);
                                                         goto invalid_number;
                                                 }
                                         }
@@ -755,7 +702,7 @@ DEFPARSER(label)
                         if (exflags & EXF_EOFOK) {
                                 goto finalize_all;
                         } else {
-                                sexp->type = ATOM_UNFIN;
+                                SEXP_SETTYPE(sexp, ATOM_UNFIN);
                                 goto invalid_number;
                         }
                         /* NOTREACHED */
@@ -777,7 +724,7 @@ DEFPARSER(label)
                                         goto L_NUMBER_stage3;
                         }
                         
-                        sexp->type = ATOM_UNFIN;
+                        SEXP_SETTYPE(sexp, ATOM_UNFIN);
                         goto invalid_number;
                 }
                 
@@ -853,8 +800,6 @@ DEFPARSER(label)
                         if (!isnexttok (pbuf[i+d]))
                                 goto invalid_number;
                 }
-                        
-#warning "FIXME: number extractor creates string objects."
                 
         finalize_all:
                 if (d > 0) {
@@ -862,11 +807,89 @@ DEFPARSER(label)
                          * Ok, it's a number, let's convert it from string
                          * to a real number taking into account the datatype.
                          */
-                        sexp->type = ATOM_STRING;
-                        sexp->atom.string.len = d;
-                        sexp->atom.string.str = xmemdup (pbuf + i, d);
                         
-                        _D("Number string: \"%*s\", type=%u\n", d, sexp->atom.string.str, num_type);
+                        /* STR -> SEXP */
+                        switch (num_type) {
+                        case NUMTYPE_INT:
+                                switch (*(pbuf + i)) {
+                                case '-': /* signed */
+                                {
+                                        int64_t number;
+                                        
+                                        number = (int64_t) strtoll (pbuf + i, NULL, 10);
+                                        
+                                        if (number < INT16_MIN) {
+                                                if (number < INT32_MIN) {
+                                                        /* 64 */
+                                                        NUM_STORE(int64_t, number, sexp->atom.number.nptr);
+                                                        sexp->atom.number.type = NUM_INT64;
+                                                } else {
+                                                        /* 32 */
+                                                        NUM_STORE(int32_t, number, sexp->atom.number.nptr);
+                                                        sexp->atom.number.type = NUM_INT32;
+                                                }
+                                        } else {
+                                                if (number < INT8_MIN) {
+                                                        /* 16 */
+                                                        NUM_STORE(int16_t, number, sexp->atom.number.nptr);
+                                                        sexp->atom.number.type = NUM_INT16;
+                                                } else {
+                                                        /* 8 */
+                                                        NUM_STORE(int8_t, number, sexp->atom.number.nptr);
+                                                        sexp->atom.number.type = NUM_INT8;
+                                                }
+                                        }
+                                } break;
+                                default: /* unsigned */
+                                {
+                                        uint64_t number;
+                                        
+                                        number = (uint64_t) strtoull (pbuf + i, NULL, 10);
+                                        
+                                        if (number > UINT16_MAX) {
+                                                if (number > UINT32_MAX) {
+                                                        /* 64 */
+                                                        NUM_STORE(uint64_t, number, sexp->atom.number.nptr);
+                                                        sexp->atom.number.type = NUM_UINT64;
+                                                } else {
+                                                        /* 32 */
+                                                        NUM_STORE(uint32_t, number, sexp->atom.number.nptr);
+                                                        sexp->atom.number.type = NUM_UINT32;
+                                                }
+                                        } else {
+                                                if (number > UINT8_MAX) {
+                                                        /* 16 */
+                                                        NUM_STORE(uint16_t, number, sexp->atom.number.nptr);
+                                                        sexp->atom.number.type = NUM_UINT16;
+                                                } else {
+                                                        /* 8 */
+                                                        NUM_STORE(uint8_t, number, sexp->atom.number.nptr);
+                                                        sexp->atom.number.type = NUM_UINT8;
+                                                }
+                                        }
+                                }}
+                                break;
+                        case NUMTYPE_FLT:
+                        case NUMTYPE_EXP: /* TODO: store double/long double */
+                        {
+                                double number;
+                                
+                                number = strtod (pbuf + i, NULL);
+                                NUM_STORE(double, number, sexp->atom.number.nptr);
+                                sexp->atom.number.type = NUM_DOUBLE;
+                        }
+                        break;
+                        case NUMTYPE_FRA:
+                                _D("Fractions not supported yet\n");
+                                abort ();
+                                break;
+                        default:
+                                _D("Unknown number type\n");
+                                abort ();
+                        }
+                        
+                        SEXP_SETTYPE(sexp, ATOM_NUMBER);
+                        /* STR -> SEXP END */
                         
                         i += d;
                         
@@ -875,7 +898,7 @@ DEFPARSER(label)
                         d = 0;
                 } else {
                 invalid_number:
-                        sexp->type = ATOM_UNFIN;
+                        SEXP_SETTYPE(sexp, ATOM_UNFIN);
                         num_type = 0;
                         valid = 0;
                         d = 0;
@@ -897,24 +920,24 @@ DEFPARSER(label)
                         //subl = &(sexp->atom.list);
                         
                         /* NUL is not a valid token end inside a list */
-                        if (PSTATE(pstatep)->LIST_stack_cnt == 1) {
+                        if (PSTATE(pstatep)->lstack.LIST_stack_cnt == 1) {
                                 exflags_tmp = exflags;
                                 exflags &= ~(EXF_EOFOK);
                         }
                         
                         _A(!(exflags & EXF_EOFOK));
                         
-                        sexp = LIST_add (LIST_stack_top(PSTATE(pstatep)), sexp, 1);
-                        LIST_stack_push (PSTATE(pstatep), &(sexp->atom.list));
+                        sexp = LIST_add (LIST_stack_top(&(PSTATE(pstatep)->lstack)), sexp, 1);
+                        LIST_stack_push (&(PSTATE(pstatep)->lstack), &(sexp->atom.list));
                 }
                 ++i;
                 continue;
         L_PARCLOSE:
                 ++i;
-                if (PSTATE(pstatep)->LIST_stack_cnt > 1) {
-                        LIST_stack_dec (PSTATE(pstatep));
+                if (PSTATE(pstatep)->lstack.LIST_stack_cnt > 1) {
+                        LIST_stack_dec (&(PSTATE(pstatep)->lstack));
 
-                        if (PSTATE(pstatep)->LIST_stack_cnt == 1) {
+                        if (PSTATE(pstatep)->lstack.LIST_stack_cnt == 1) {
                                 /*
                                  * We are outside a list, restore
                                  * original exflags
@@ -933,6 +956,7 @@ DEFPARSER(label)
                 
                 if (sexp->handler == NULL) {
                         _D("Invalid datatype\n");
+                        SEXP_SETTYPE(sexp, ATOM_UNFIN);
                         break;
                 }
                 
@@ -942,6 +966,7 @@ DEFPARSER(label)
 
                 if (sexp->handler == NULL) {
                         _D("Invalid datatype\n");
+                        SEXP_SETTYPE(sexp, ATOM_UNFIN);
                         break;
                 }
                 
@@ -957,7 +982,7 @@ DEFPARSER(label)
         L_VERTBAR:
                 i += EXTRACTOR(b64_string)(sexp, pbuf + i, buflen - i, exflags);
                 
-                if (sexp->type == ATOM_UNFIN) {
+                if (SEXP_TYPE(sexp) == ATOM_UNFIN) {
                         _D("Invalid b64 string\n");
                         break;
                 }
@@ -966,7 +991,7 @@ DEFPARSER(label)
         L_VERTBAR_FIXEDLEN:
                 EXTRACTOR_F(b64_string)(sexp, pbuf + i, buflen - i, toklen, exflags);
 
-                if (sexp->type == ATOM_UNFIN) {
+                if (SEXP_TYPE(sexp) == ATOM_UNFIN) {
                         _D("Invalid b64 string\n");
                         break;
                 }
@@ -977,7 +1002,7 @@ DEFPARSER(label)
         L_HASH:
                 i += EXTRACTOR(hexstring)(sexp, pbuf + i, buflen - i, exflags);
                 
-                if (sexp->type == ATOM_UNFIN) {
+                if (SEXP_TYPE(sexp) == ATOM_UNFIN) {
                         _D("Invalid hex string\n");
                         break;
                 }
@@ -986,7 +1011,7 @@ DEFPARSER(label)
         L_HASH_FIXEDLEN:
                 EXTRACTOR_F(hexstring)(sexp, pbuf + i, buflen - i, toklen, exflags);
                 
-                if (sexp->type == ATOM_UNFIN) {
+                if (SEXP_TYPE(sexp) == ATOM_UNFIN) {
                         _D("Invalid hex string\n");
                         break;
                 }
@@ -1001,20 +1026,20 @@ DEFPARSER(label)
                 return (NULL);
         L_SEXP_ADD:
                 /* Add new expression to list */
-                LIST_add (LIST_stack_top(PSTATE(pstatep)), sexp, 1);
+                LIST_add (LIST_stack_top(&(PSTATE(pstatep)->lstack)), sexp, 1);
 #ifndef NDEBUG
                 sexp = NULL;
 #endif
         }
         
-        if (PSTATE(pstatep)->LIST_stack_cnt == 1 && sexp->type != ATOM_UNFIN) {
+        if (PSTATE(pstatep)->lstack.LIST_stack_cnt == 1 && SEXP_TYPE(sexp) != ATOM_UNFIN) {
                 _A(sexp != NULL);
-                _A(sexp->type != ATOM_UNFIN);
-                _A(sexp->type == ATOM_EMPTY);
+                _A(SEXP_TYPE(sexp) != ATOM_UNFIN);
+                _A(SEXP_TYPE(sexp) == ATOM_EMPTY);
 
-                sexp->type = ATOM_LIST;
+                SEXP_SETTYPE (sexp, ATOM_LIST);
                 memcpy (&(sexp->atom.list),
-                        LIST_stack_bottom (PSTATE(pstatep)), sizeof (LIST_t));
+                        LIST_stack_bottom (&(PSTATE(pstatep)->lstack)), sizeof (LIST_t));
                 
                 //LIST_stack_top (PSTATE(pstatep)), sizeof (LIST_t));
 
@@ -1029,7 +1054,7 @@ DEFPARSER(label)
                 _D("ret: sexp@%p\n", sexp);
                 return (sexp);
         } else {
-                _A(sexp->type == ATOM_UNFIN || sexp->type == ATOM_EMPTY);
+                _A(SEXP_TYPE(sexp) == ATOM_UNFIN || SEXP_TYPE(sexp) == ATOM_EMPTY);
                 /* save the unparsed part of buf */
                 
                 PSTATE(pstatep)->buffer_data_len = buflen - i;
@@ -1037,7 +1062,7 @@ DEFPARSER(label)
                                                    PSTATE(pstatep)->buffer_data_len);
                 PSTATE(pstatep)->pflags = exflags;
                 
-                _D("pstate buf: \"%*s\"\n",
+                _D("pstate buf: \"%.*s\"\n",
                    PSTATE(pstatep)->buffer_data_len, PSTATE(pstatep)->buffer);
                 
                 SEAP_sexp_free (&sexp);
@@ -1063,7 +1088,7 @@ DEFEXTRACTOR(si_string)
                         if (flags & EXF_EOFOK)
                                 break;
                         else {
-                                SEXP(out)->type = ATOM_UNFIN;
+                                SEXP_SETTYPE(SEXP(out), ATOM_UNFIN);
                                 return (0);
                         }
                 }
@@ -1076,7 +1101,7 @@ DEFEXTRACTOR(si_string)
                 _D("next tok char: \"%c\"\n", str[l]);
 #endif
 
-        SEXP(out)->type = ATOM_STRING;
+        SEXP_SETTYPE(SEXP(out), ATOM_STRING);
         SEXP(out)->atom.string.len = l;
         SEXP(out)->atom.string.str = xmemdup (str, l);
         
@@ -1113,12 +1138,12 @@ DEFEXTRACTOR(dq_string)
         
         ++l;
         
-        SEXP(out)->type = ATOM_STRING;
+        SEXP_SETTYPE(SEXP(out), ATOM_STRING);
         SEXP(out)->atom.string.len = l - 2; /* Don't count in beg/end quote */
         SEXP(out)->atom.string.str = xmemdup (str + 1, SEXP(out)->atom.string.len);
         return (l);
 exit_unfin:
-        SEXP(out)->type = ATOM_UNFIN;
+        SEXP_SETTYPE(SEXP(out), ATOM_UNFIN);
         return (0);
 }
 
@@ -1133,7 +1158,7 @@ DEFEXTRACTOR(sq_string)
         
         while (str[l] != '\'') {
                 if (l >= len) {
-                        SEXP(out)->type = ATOM_UNFIN;
+                        SEXP_SETTYPE(SEXP(out), ATOM_UNFIN);
                         return (0);
                 }
                 
@@ -1142,7 +1167,7 @@ DEFEXTRACTOR(sq_string)
         
         ++l;
         
-        SEXP(out)->type = ATOM_STRING;
+        SEXP_SETTYPE(SEXP(out), ATOM_STRING);
         SEXP(out)->atom.string.len = l - 2; /* Don't count in beg/end quote */
         SEXP(out)->atom.string.str = xmemdup (str + 1, SEXP(out)->atom.string.len);
         return (l);
@@ -1153,12 +1178,12 @@ DEFEXTRACTOR_F(string)
         _D("Parsing fixed length string\n");
 
         if (toklen <= len) {
-                SEXP(out)->type = ATOM_STRING;
+                SEXP_SETTYPE(SEXP(out), ATOM_STRING);
                 SEXP(out)->atom.string.len = toklen;
                 SEXP(out)->atom.string.str = xmemdup (str, toklen);
         } else {
                 _D("toklen > len\n");
-                SEXP(out)->type = ATOM_UNFIN;
+                SEXP_SETTYPE(SEXP(out), ATOM_UNFIN);
         }
         /* Hmm, that was simple... */
         return;
@@ -1178,7 +1203,7 @@ DEFEXTRACTOR(b64_string)
 
         while (str[l] != '|') {
                 if (isnexttok (str[l]) || l >= len) {
-                        SEXP(out)->type = ATOM_UNFIN;
+                        SEXP_SETTYPE(SEXP(out), ATOM_UNFIN);
                         return 0;
                 }
                 ++l;
@@ -1186,12 +1211,12 @@ DEFEXTRACTOR(b64_string)
         
         if ((slen = base64_decode (str + 1, (size_t)l - 1, (uint8_t **)&string)) == 0) {
                 _D("base64_decode failed\n");
-                SEXP(out)->type = ATOM_UNFIN;
+                SEXP_SETTYPE(SEXP(out), ATOM_UNFIN);
                 return 0;
         } else {
-                _D("string = \"%*s\"\n", slen, string);
-                
-                SEXP(out)->type = ATOM_STRING;
+                _D("string = \"%.*s\"\n", slen, string);
+
+                SEXP_SETTYPE(SEXP(out), ATOM_STRING);
                 SEXP(out)->atom.string.len = slen;
                 SEXP(out)->atom.string.str = string;
                 return (l + 1);
@@ -1206,17 +1231,17 @@ DEFEXTRACTOR_F(b64_string)
         _D("Parsing fixed length b64 string, toklen=%u, len=%u\n", toklen, len);
         
         if (toklen <= len - 2) {
-                _D("b64: len=%u, \"%*s\"\n", toklen, toklen, str + 1);
+                _D("b64: len=%u, \"%.*s\"\n", toklen, toklen, str + 1);
                 if ((slen = base64_decode (str + 1, toklen, (uint8_t **)&string)) == 0) {
                         _D("base64_decode failed\n");
-                        SEXP(out)->type = ATOM_UNFIN;
+                        SEXP_SETTYPE(SEXP(out), ATOM_UNFIN);
                 } else {
-                        SEXP(out)->type = ATOM_STRING;
+                        SEXP_SETTYPE(SEXP(out), ATOM_STRING);
                         SEXP(out)->atom.string.len = slen;
                         SEXP(out)->atom.string.str = string;
                 }
         } else {
-                SEXP(out)->type = ATOM_UNFIN;
+                SEXP_SETTYPE(SEXP(out), ATOM_UNFIN);
         }
         
         return;
@@ -1250,17 +1275,28 @@ DEFEXTRACTOR(datatype)
         
         ++l;
 
-        /* TODO: Try to find handler */
-        SEXP(out)->handler = (void *)1;
+        /* Try to find handler */
+        SEXP(out)->handler = SEXP_gethandler_g(str + 1, l - 2);
         
-        #if 0
-        SEXP(out)->type = ATOM_STRING;
-        SEXP(out)->atom.string.len = l - 2; /* Don't count in beg/end quote */
-        SEXP(out)->atom.string.str = xmemdup (str + 1, SEXP(out)->atom.string.len);
-        #endif
+        if (SEXP(out)->handler == NULL) {
+                /* create a empty handler */
+                SEXP_handler_t new;
+                
+                new.typestr = xmemdup (str + 1, l - 2);
+                new.typelen = l - 2;
+                new.fprint   = NULL;
+                new.dprint   = NULL;
+                new.dread    = NULL;
+                new.fread    = NULL;
+                new.mem2sexp = NULL;
+                new.sexp2mem = NULL;
+                
+                SEXP(out)->handler = SEXP_reghandler_g(&new);
+        }
+        
         return (l);
 exit_unfin:
-        SEXP(out)->type = ATOM_UNFIN;
+        SEXP_SETTYPE(SEXP(out), ATOM_UNFIN);
         return (0);
 }
 
@@ -1271,9 +1307,26 @@ DEFEXTRACTOR_F(datatype)
         _D("Parsing fixed length datatype\n");
 
         if (toklen <= len - 2) {
-                SEXP(out)->handler = (void *)1;
+                /* Try to find handler */
+                SEXP(out)->handler = SEXP_gethandler_g(str + 1, len - 2);
+                
+                if (SEXP(out)->handler == NULL) {
+                        /* create a empty handler */
+                        SEXP_handler_t new;
+                        
+                        new.typestr = xmemdup (str + 1, len - 2);
+                        new.typelen = len - 2;
+                        new.fprint   = NULL;
+                        new.dprint   = NULL;
+                        new.dread    = NULL;
+                        new.fread    = NULL;
+                        new.mem2sexp = NULL;
+                        new.sexp2mem = NULL;
+                        
+                        SEXP(out)->handler = SEXP_reghandler_g(&new);
+                }                
         } else {
-                SEXP(out)->type = ATOM_UNFIN;
+                SEXP_SETTYPE(SEXP(out), ATOM_UNFIN);
         }
 
         return;
@@ -1366,19 +1419,19 @@ DEFEXTRACTOR(hexstring)
                                         ++l;
                                 else {
                                         /* Not a valid hex string character */
-                                        SEXP(out)->type = ATOM_UNFIN;
+                                        SEXP_SETTYPE(SEXP(out), ATOM_UNFIN);
                                         return (0);
                                 }
                         }
                 } else {
                         /* EOF not allowed here */
-                        SEXP(out)->type = ATOM_UNFIN;
+                        SEXP_SETTYPE(SEXP(out), ATOM_UNFIN);
                         return (0);
                 }
         }
         
         if (l > 1) {
-                SEXP(out)->type = ATOM_STRING;
+                SEXP_SETTYPE(SEXP(out), ATOM_STRING);
                 SEXP(out)->atom.string.len = ((l - 1) >> 1) + ((l - 1) & 1);
                 SEXP(out)->atom.string.str = xmalloc (sizeof (char) * SEXP(out)->atom.string.len);
         
@@ -1391,12 +1444,12 @@ DEFEXTRACTOR(hexstring)
                 if ((l - 1) & 1)
                         SEXP(out)->atom.string.str[i] = hex2bin[B(*str)] << 4;
                 
-                _D("string = \"%*s\"\n", SEXP(out)->atom.string.len, SEXP(out)->atom.string.str);
+                _D("string = \"%.*s\"\n", SEXP(out)->atom.string.len, SEXP(out)->atom.string.str);
                 
                 return (l + 1);
         } else {
                 /* Hexstring "##" is not allowed */
-                SEXP(out)->type = ATOM_UNFIN;
+                SEXP_SETTYPE(SEXP(out), ATOM_UNFIN);
                 return (0);
         }
 }
@@ -1409,7 +1462,7 @@ DEFEXTRACTOR_F(hexstring)
 
         if (toklen <= len - 2) {
                 if (toklen > 0) {
-                        SEXP(out)->type = ATOM_STRING;
+                        SEXP_SETTYPE(SEXP(out), ATOM_STRING);
                         SEXP(out)->atom.string.len = (toklen >> 1) + (toklen & 1);
                         SEXP(out)->atom.string.str = xmalloc (sizeof (char) * SEXP(out)->atom.string.len);
 
@@ -1424,10 +1477,10 @@ DEFEXTRACTOR_F(hexstring)
 
                         _D("slen=%u\n", SEXP(out)->atom.string.len);
                 } else {
-                        SEXP(out)->type = ATOM_UNFIN;
+                        SEXP_SETTYPE(SEXP(out), ATOM_UNFIN);
                 }
         } else {
-                SEXP(out)->type = ATOM_UNFIN;
+                SEXP_SETTYPE(SEXP(out), ATOM_UNFIN);
         }
         
         return;
@@ -1476,7 +1529,8 @@ int SEAP_desc_add (SEAP_desctable_t *sd_table, SEXP_pstate_t *pstate,
                 sd_table->sd[sd].pstate  = pstate;
                 sd_table->sd[sd].scheme  = scheme;
                 sd_table->sd[sd].scheme_data = scheme_data;
-                
+                sd_table->sd[sd].ostate  = NULL;
+
                 return ((int)sd);
         }
 
@@ -1502,25 +1556,25 @@ const SEAP_schemefn_t __schtbl[] = {
         { "cons",
           sch_cons_connect, sch_cons_openfd,
           sch_cons_openfd2, sch_cons_recv,
-          sch_cons_send, sch_cons_close },
+          sch_cons_send, sch_cons_close, sch_cons_sendsexp },
 
 #define SCH_DUMMY 1
         { "dummy",
           sch_dummy_connect, sch_dummy_openfd,
           sch_dummy_openfd2, sch_dummy_recv,
-          sch_dummy_send, sch_dummy_close },
+          sch_dummy_send, sch_dummy_close, sch_dummy_sendsexp },
 
 #define SCH_GENERIC 2
         { "generic",
           sch_generic_connect, sch_generic_openfd,
           sch_generic_openfd2, sch_generic_recv,
-          sch_generic_send, sch_generic_close },
+          sch_generic_send, sch_generic_close, sch_generic_sendsexp },
 
 #define SCH_PIPE 3
         { "pipe",
           sch_pipe_connect, sch_pipe_openfd,
           sch_pipe_openfd2, sch_pipe_recv,
-          sch_pipe_send, sch_pipe_close }
+          sch_pipe_send, sch_pipe_close, sch_pipe_sendsexp }
 
 #define SCH_NONE 255
         
@@ -1558,6 +1612,7 @@ SEAP_scheme_t SEAP_scheme_search (SEAP_schemefn_t fntable[SCHTBLSIZE], const cha
 #define SCH_RECV(idx, ...) __schtbl[idx].sch_recv (__VA_ARGS__)
 #define SCH_SEND(idx, ...) __schtbl[idx].sch_send (__VA_ARGS__)
 #define SCH_CLOSE(idx, ...) __schtbl[idx].sch_close (__VA_ARGS__)
+#define SCH_SENDSEXP(idx, ...) __schtbl[idx].sch_sendsexp (__VA_ARGS__)
 
 int SEAP_connect (SEAP_CTX_t *ctx, const char *uri, uint32_t flags)
 {
@@ -1612,11 +1667,13 @@ int SEAP_connect (SEAP_CTX_t *ctx, const char *uri, uint32_t flags)
 
 int SEAP_open (SEAP_CTX_t *ctx, const char *path, uint32_t flags)
 {
+        errno = EOPNOTSUPP;
         return (-1);
 }
 
 int SEAP_openfd (SEAP_CTX_t *ctx, int fd, uint32_t flags)
 {
+        errno = EOPNOTSUPP;
         return (-1);
 }
 
@@ -1643,7 +1700,8 @@ int SEAP_openfd2 (SEAP_CTX_t *ctx, int ifd, int ofd, uint32_t flags)
 #if 0
 int SEAP_openfp (SEAP_CTX_t *ctx, FILE *fp, uint32_t flags)
 {
-        return (0);
+        errno = EOPNOTSUPP;
+        return (-1);
 }
 #endif /* 0 */
 
@@ -1681,7 +1739,7 @@ int SEAP_recvmsg (SEAP_CTX_t *ctx, int sd, SEAP_msg_t **seap_msg)
         SEXP_t *sexp_msg;
         SEAP_msg_t *msg;
         
-        if (sd < ctx->sd_table.sdsize) {
+        if (sd >= 0 && sd < ctx->sd_table.sdsize) {
                 desc = &(ctx->sd_table.sd[sd]);
                 
                 _A(desc->scheme < (sizeof __schtbl / sizeof (SEAP_schemefn_t)));
@@ -1692,7 +1750,7 @@ int SEAP_recvmsg (SEAP_CTX_t *ctx, int sd, SEAP_msg_t **seap_msg)
                                 /* receive & parse loop */
                                 for (;;) {
                                         buffer = xmalloc (sizeof (char) * SEAP_BUFFER_SIZE); /* TODO: make buffer size configurable */
-                                        buflen = 4096;
+                                        buflen = SEAP_BUFFER_SIZE;
                                         
                                         /* Receive raw data */
                                         if ((recvlen = SCH_RECV(desc->scheme, desc, buffer, buflen, 0)) <= 0) {
@@ -1739,30 +1797,48 @@ int SEAP_recvmsg (SEAP_CTX_t *ctx, int sd, SEAP_msg_t **seap_msg)
                         }
                 }
         } else {
+                errno = EBADF;
                 return (-1);
         }
 }
 
 int SEAP_sendsexp (SEAP_CTX_t *ctx, int sd, SEXP_t *sexp)
 {
+        /* construct message & send */
         return (0);
 }
 
 int SEAP_sendmsg (SEAP_CTX_t *ctx, int sd, SEAP_msg_t *seap_msg)
 {
-        return (0);
+        SEAP_desc_t *desc;
+
+        _A(ctx =! NULL);
+        _A(seap_msg != NULL);
+
+        if (sd >= 0 && sd < ctx->sd_table.sdsize) {
+                desc = &(ctx->sd_table.sd[sd]);
+
+                _A(desc->scheme < (sizeof __schtbl / sizeof (SEAP_schemefn_t)));
+                
+                
+                
+                return (0);
+        } else {
+                errno = EBADF;
+                return (-1);
+        }
 }
 
 SEXP_t *SEAP_read (SEAP_CTX_t *ctx, int sd)
 {
-
+        errno = EOPNOTSUPP;
         return (NULL);
 }
 
 int SEAP_write (SEAP_CTX_t *ctx, int sd, SEXP_t *sexp)
 {
-
-        return (0);
+        errno = EOPNOTSUPP;
+        return (-1);
 }
 
 int SEAP_close (SEAP_CTX_t *ctx, int sd)

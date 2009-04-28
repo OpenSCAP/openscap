@@ -3,7 +3,6 @@
 #define SEAP_H
 
 #include <string.h>
-#include <sys/types.h>
 #include <stdint.h>
 
 #define _STR(x) #x
@@ -11,49 +10,53 @@
 
 #ifndef _D
 # ifndef NDEBUG
+#  include <stdio.h>
 #  define _D(...) do {                                          \
                 fprintf (stderr, "%s: ", __PRETTY_FUNCTION__);  \
                 fprintf (stderr, __VA_ARGS__);                  \
         } while(0)
 # else
-#  define _D(...)
+#  define _D(...) while(0)
 # endif /* NDEBUG */
 #endif /* _D */
 
+#include <assert.h>
 #ifndef _A
-# ifndef NDEBUG
-#  include <assert.h>
-#  define _A(x) assert(x)
-# else
-#  define _A(x)
-# endif /* NDEBUG */
-#endif /* _A */
+#define _A(x) assert(x)
+#endif
 
 /* Atom types */
-typedef uint8_t ATOM_type_t;
+typedef uint8_t  ATOM_type_t;
+typedef uint8_t ATOM_flags_t;
 
-#define ATOM_UNFIN   0x00
-#define ATOM_LIST    0x01
-#define ATOM_NUMBER  0x02
-#define ATOM_SYMBOL  0x03
-#define ATOM_STRING  0x04
-#define ATOM_BINARY  0x05
-#define ATOM_EMPTY   0xff
+#define SEXP_TYPEMASK 0x7f
+#define SEXP_FLAGMASK 0x80
+
+#define ATOM_UNFIN    0x00
+#define ATOM_LIST     0x01
+#define ATOM_NUMBER   0x02
+#define ATOM_SYMBOL   0x03
+#define ATOM_STRING   0x04
+#define ATOM_BINARY   0x05
+#define ATOM_EMPTY    0x0f
+
+#define SEXP_FLAGFREE 0x80
 
 /* Number types */
 typedef uint8_t NUM_type_t;
 
-#define S_INT8   0x00
-#define U_INT8   0x01
-#define S_INT16  0x02
-#define U_INT16  0x03
-#define S_INT32  0x04
-#define U_INT32  0x05
-#define S_INT64  0x06
-#define U_INT64  0x07
-#define DOUBLE   0x08
-#define FRACT    0x09
-#define BIGNUM   0x0a
+#define NUM_NONE   0x00
+#define NUM_INT8   0x01
+#define NUM_UINT8  0x02
+#define NUM_INT16  0x03
+#define NUM_UINT16 0x04
+#define NUM_INT32  0x05
+#define NUM_UINT32 0x06
+#define NUM_INT64  0x07
+#define NUM_UINT64 0x08
+#define NUM_DOUBLE 0x09
+#define NUM_FRACT  0x0a
+#define NUM_BIGNUM 0x0b
 
 #define NUMTYPE_INV 0
 #define NUMTYPE_INT 1
@@ -63,41 +66,26 @@ typedef uint8_t NUM_type_t;
 
 typedef struct {
         NUM_type_t type;
-        //NUM_data_t num;
+        void      *nptr;
 } NUM_t;
 
-#define DEFNUMTYPE(type, st_type)               \
-        typedef struct {                        \
-                NUM_type_t type;                \
-                st_type    number;              \
-        } NUM_##type
+#define VOIDPTR_SIZE (sizeof (void *))
 
-DEFNUMTYPE(S_INT8_t,    int8_t);
-DEFNUMTYPE(U_INT8_t,   uint8_t);
-DEFNUMTYPE(S_INT16_t,  int16_t);
-DEFNUMTYPE(U_INT16_t, uint16_t);
-DEFNUMTYPE(S_INT32_t,  int32_t);
-DEFNUMTYPE(U_INT32_t, uint32_t);
-DEFNUMTYPE(S_INT64_t,  int64_t);
-DEFNUMTYPE(U_INT64_t, uint64_t);
-DEFNUMTYPE(DOUBLE_t,    double);
-DEFNUMTYPE(FRACT_t,      NUM_t);
-DEFNUMTYPE(BIGNUM_t,  intmax_t);
+#define NUM_STORE(type, nsrc, voidp) do {                        \
+                if (sizeof (type) <= VOIDPTR_SIZE) {             \
+                        *((type *)(&(voidp))) = (type)(nsrc);    \
+                } else {                                         \
+                        (voidp) = xmalloc (sizeof (type));       \
+                        *((type *)(voidp)) = (type)(nsrc);       \
+                }                                                \
+        } while (0)
 
-/*
-typedef struct {
-        char *str;
-} SYM_t;
-*/
+#define NUM(type, voidp) (sizeof (type) <= VOIDPTR_SIZE ? *((type *)(&(voidp))) : *((type *)(voidp)))
+
 typedef struct {
         size_t len;
         char  *str;
 } STR_t;
-
-typedef struct {
-        size_t  len;
-        void  *data;
-} BIN_t;
 
 typedef struct {
         void    *memb;
@@ -105,26 +93,153 @@ typedef struct {
         uint32_t size;
 } LIST_t;
 
-typedef struct {
-        char *strid;
-        /* TODO */
-} SEXP_handler_t;
-
 typedef struct __SEXP_t {
-        ATOM_type_t    type;
-        SEXP_handler_t *handler;
-        int freeobj;
+        ATOM_flags_t    flags;
+        void           *handler;
         union {
                 LIST_t list;
                 STR_t  string;
                 NUM_t  number;
-                BIN_t  binary;
         } atom;
 } SEXP_t;
 
 const char *SEAP_sexp_strtype (const SEXP_t *sexp);
 
 #define SEXP(ptr) ((SEXP_t *)(ptr))
+#define SEXP_TYPE(ptr) (((ptr)->flags) & SEXP_TYPEMASK)
+
+static inline void SEXP_SETTYPE(SEXP_t *sexp, ATOM_type_t type)
+{
+        sexp->flags = (sexp->flags & SEXP_FLAGMASK) | (type & SEXP_TYPEMASK);
+        return;
+}
+
+static inline void SEXP_SETFLAG(SEXP_t *sexp, ATOM_flags_t flag)
+{
+        sexp->flags |= flag & SEXP_FLAGMASK;
+        return;
+}
+
+#define SEXP_FREE(ptr) (((ptr)->flags) & SEXP_FLAGFREE)
+
+/* DON'T TOUCH THIS */
+#define LIST_GROW_LOW_TRESH 5
+#define LIST_GROW_LOW 3
+#define LIST_GROW 1.2
+#define LIST_GROW_ADD 16
+#define LIST_INIT_SIZE 1
+
+#define LIST_STACK_GROW 1.2
+#define LIST_STACK_INIT_SIZE 64
+
+#include "xmalloc.h"
+
+typedef struct {
+        LIST_t **LIST_stack;
+        uint16_t LIST_stack_cnt;
+        uint16_t LIST_stack_size;
+} LIST_stack_t;
+
+static inline LIST_t *LIST_init (LIST_t *list)
+{
+        _A(list != NULL);
+
+        list->memb  = xmalloc (sizeof (SEXP_t) * LIST_INIT_SIZE);
+        list->count = 0;
+        list->size  = LIST_INIT_SIZE;
+        
+        return (list);
+}
+
+static inline LIST_t *LIST_new (void)
+{
+        LIST_t *list;
+
+        list = xmalloc (sizeof (LIST_t));
+        LIST_init (list);
+        
+        return (list);
+}
+
+static inline void LIST_stack_init (LIST_stack_t *stack)
+{
+        stack->LIST_stack  = xmalloc (sizeof (LIST_t *) * (LIST_STACK_INIT_SIZE));
+        stack->LIST_stack_size = LIST_STACK_INIT_SIZE;
+        stack->LIST_stack_cnt = 0;
+}
+
+static inline LIST_stack_t *LIST_stack_new (void)
+{
+        LIST_stack_t *new;
+
+        new = xmalloc (sizeof (LIST_stack_t));
+        LIST_stack_init (new);
+        return (new);
+}
+
+
+static inline LIST_t *LIST_stack_push (LIST_stack_t *stack, LIST_t *list)
+{
+        _A(stack != NULL);
+        _A(list   != NULL);
+        _A(stack->LIST_stack_size >= stack->LIST_stack_cnt);
+        
+        if (stack->LIST_stack_size == stack->LIST_stack_cnt) {
+                /* Resize the stack */
+
+                _D("LIST_stack_push(%p,%p): Resizing stack from %u (%zu bytes) to %u (%zu bytes).\n",
+                   stack, list,
+                   stack->LIST_stack_size,
+                   sizeof (LIST_t *) * stack->LIST_stack_size,
+                   (size_t)(stack->LIST_stack_size * (LIST_STACK_GROW)),
+                   (size_t)(sizeof (LIST_t *) * (stack->LIST_stack_size * (LIST_STACK_GROW))));
+                
+                stack->LIST_stack_size *= LIST_STACK_GROW;
+                stack->LIST_stack = xrealloc (stack->LIST_stack,
+                                               sizeof (LIST_t *) * stack->LIST_stack_size);
+        }
+
+        stack->LIST_stack[stack->LIST_stack_cnt++] = list;
+        _D("LIST_stack_push(%p,%p): stack_size=%zu.\n", stack, list, stack->LIST_stack_cnt);
+        
+        return (list);
+}
+
+static inline LIST_t *LIST_stack_top (LIST_stack_t *stack)
+{
+        _A(stack != NULL);
+        _A(stack->LIST_stack_cnt > 0);
+        return (stack->LIST_stack[stack->LIST_stack_cnt - 1]);
+}
+
+static inline LIST_t *LIST_stack_bottom (LIST_stack_t *stack)
+{
+        _A(stack != NULL);
+        _A(stack->LIST_stack_cnt > 0);
+        return (stack->LIST_stack[0]);
+}
+
+static inline void LIST_stack_dec (LIST_stack_t *stack)
+{
+        _A(stack != NULL);
+        _A(stack->LIST_stack_cnt > 0);
+        --(stack->LIST_stack_cnt);
+        return;
+}
+
+static inline void LIST_stack_ins (LIST_stack_t *stack, LIST_t *sexp)
+{
+        _A(stack != NULL);
+        _A(stack->LIST_stack_cnt > 0);
+        stack->LIST_stack[stack->LIST_stack_cnt - 1] = sexp;
+        return;
+}
+
+static inline uint16_t LIST_stack_cnt (LIST_stack_t *stack)
+{
+        _A(stack != NULL);
+        return (stack->LIST_stack_cnt);
+}
 
 typedef uint8_t bool_t;
 typedef uint8_t SEXP_pflags_t;
@@ -141,22 +256,34 @@ typedef struct {
           size_t   buffer_size;
           bool_t   buffer_free;
         */
-        LIST_t **LIST_stack;
-        uint16_t LIST_stack_cnt;
-        uint16_t LIST_stack_size;
-
+        LIST_stack_t  lstack;
         SEXP_pflags_t pflags;
 } SEXP_pstate_t;
 
 /* S-expression parse function pointer */
 //typedef SEXP_t * (*SEXP_parser_t) (SEAP_CTX_t *, const char *, size_t, SEXP_pstate_t **);
 
+/* S-expression format */
+typedef uint8_t SEXP_format_t;
+
+#define FMT_TRANSPORT  1
+#define FMT_CANONICAL  2
+#define FMT_ADVANCED   3
+#define FMT_AUTODETECT 4
+
+typedef struct {
+        SEXP_t *sexp;
+        LIST_stack_t lstack;      
+        uint32_t    *list_pos; /* stack of lpositions */
+        uint8_t  sexp_part; /* 0 - type, 1 - data */
+        size_t   sexp_pos;
+} SEXP_ostate_t;
+
 typedef uint8_t SEAP_scheme_t;
 
 typedef struct {
         SEXP_t       *sexpbuf; /* S-exp buffer */
-        /*uint16_t      sexpcnt; Number of S-exps in buffer */
-
+        SEXP_ostate_t *ostate;
         SEXP_pstate_t *pstate;  /* Parser state */
         SEAP_scheme_t  scheme;  /* Scheme used for this descriptor */
         void          *scheme_data; /* Scheme related data */
@@ -173,6 +300,7 @@ typedef struct {
         ssize_t (*sch_recv) (SEAP_desc_t *, void *, size_t, uint32_t);
         ssize_t (*sch_send) (SEAP_desc_t *, void *, size_t, uint32_t);
         int (*sch_close)    (SEAP_desc_t *, uint32_t);
+        ssize_t (*sch_sendsexp) (SEAP_desc_t *, SEXP_t *, uint32_t);
 } SEAP_schemefn_t;
 
 #include "bitmap.h"
@@ -190,14 +318,6 @@ typedef struct {
 int SEAP_desc_add (SEAP_desctable_t *sd_table, SEXP_pstate_t *pstate, SEAP_scheme_t scheme, void *scheme_data);
 int SEAP_desc_del (SEAP_desctable_t *sd_table, int sd);
 SEAP_desc_t *SEAP_desc_get (SEAP_desctable_t *sd_table, int sd);
-
-/* S-expression format */
-typedef uint8_t SEXP_format_t;
-
-#define FMT_TRANSPORT  1
-#define FMT_CANONICAL  2
-#define FMT_ADVANCED   3
-#define FMT_AUTODETECT 4
 
 /* SEAP context */
 typedef struct __SEAP_CTX_t {
@@ -230,39 +350,6 @@ SEXP_t *SEAP_SEXP_parse (SEAP_CTX_t *ctx, const char *buf, size_t buflen, SEXP_p
 #define DEFPARSER(name) SEXP_t * PARSER(name) (SEAP_CTX_t *ctx, const char *buf, size_t buflen, SEXP_pstate_t **pstatep)
 
 DEFPARSER(label);
-
-/* DON'T TOUCH THIS */
-#define LIST_GROW_LOW_TRESH 5
-#define LIST_GROW_LOW 3
-#define LIST_GROW 1.2
-#define LIST_GROW_ADD 16
-#define LIST_INIT_SIZE 1
-
-#define LIST_STACK_GROW 1.2
-#define LIST_STACK_INIT_SIZE 64
-
-#include "xmalloc.h"
-
-static inline LIST_t *LIST_init (LIST_t *list)
-{
-        _A(list != NULL);
-
-        list->memb  = xmalloc (sizeof (SEXP_t) * LIST_INIT_SIZE);
-        list->count = 0;
-        list->size  = LIST_INIT_SIZE;
-        
-        return (list);
-}
-
-static inline LIST_t *LIST_new (void)
-{
-        LIST_t *list;
-
-        list = xmalloc (sizeof (LIST_t));
-        LIST_init (list);
-        
-        return (list);
-}
 
 SEXP_t *SEXP_READV_int  (SEXP_t *sexp, int   *ptr);
 SEXP_t *SEXP_READP_int  (SEXP_t *sexp, int  **ptr);

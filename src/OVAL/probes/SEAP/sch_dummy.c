@@ -1,3 +1,4 @@
+#include <errno.h>
 #include <config.h>
 #include "seap.h"
 #include "sch_dummy.h"
@@ -24,6 +25,12 @@ ssize_t sch_dummy_recv (SEAP_desc_t *desc, void *buf, size_t len, uint32_t flags
 
 ssize_t sch_dummy_send (SEAP_desc_t *desc, void *buf, size_t len, uint32_t flags)
 {
+        return (-1);
+}
+
+ssize_t sch_dummy_sendsexp (SEAP_desc_t *desc, SEXP_t *sexp, uint32_t flags)
+{
+        errno = EOPNOTSUPP;
         return (-1);
 }
 
