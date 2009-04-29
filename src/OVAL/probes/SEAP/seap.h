@@ -282,6 +282,7 @@ typedef struct {
 typedef uint8_t SEAP_scheme_t;
 
 typedef struct {
+        uint32_t      next_id;
         SEXP_t       *sexpbuf; /* S-exp buffer */
         SEXP_ostate_t *ostate;
         SEXP_pstate_t *pstate;  /* Parser state */
@@ -336,7 +337,15 @@ SEXP_t     *SEAP_sexp_new  (void);
 void        SEAP_sexp_init (SEXP_t  *sexp);
 void        SEAP_sexp_free (SEXP_t **sexpp);
 
+SEXP_t *SEXP_string_new (const void *, size_t);
+SEXP_t *SEXP_number_new (const void *, NUM_type_t);
+
 SEXP_t *SEXP_copy (SEXP_t *sexp);
+
+SEXP_t *SEXP_list_new (void);
+SEXP_t *SEXP_list_init (SEXP_t *);
+SEXP_t *SEXP_list_add (SEXP_t *, SEXP_t *);
+
 SEXP_t *SEXP_list_first (SEXP_t *sexp);
 SEXP_t *SEXP_list_last (SEXP_t *sexp);
 int SEXP_listp (SEXP_t *sexp);
@@ -391,6 +400,7 @@ typedef struct {
 typedef struct {
         uint64_t     id;
         SEAP_attr_t *attrs;
+        uint16_t     attrs_cnt;
         SEXP_t      *sexp;
 } SEAP_msg_t;
 
@@ -410,9 +420,15 @@ int SEAP_openfp (SEAP_CTX_t *ctx, FILE *fp, uint32_t flags);
 #endif /* 0 */
 
 SEAP_msg_t *SEAP_msg_new (void);
+
+int     SEAP_msgattr_set (SEAP_msg_t *msg, const char *attr, SEXP_t *value);
+SEXP_t *SEAP_msgattr_get (SEAP_msg_t *msg, const char *name);
+
 int SEAP_recvsexp (SEAP_CTX_t *ctx, int sd, SEXP_t **sexp);
 int SEAP_recvmsg (SEAP_CTX_t *ctx, int sd, SEAP_msg_t **seap_msg);
+
 int SEAP_sendsexp (SEAP_CTX_t *ctx, int sd, SEXP_t *sexp);
 int SEAP_sendmsg (SEAP_CTX_t *ctx, int sd, SEAP_msg_t *seap_msg);
+int SEAP_reply (SEAP_CTX_t *ctx, int sd, SEAP_msg_t *rep_msg, SEAP_msg_t *req_msg);
 
 #endif /* SEAP_H */

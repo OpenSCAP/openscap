@@ -174,7 +174,7 @@ SEXP_pstate_t *SEAP_pstate_init (SEXP_pstate_t *state)
         return (state);
 }
 
-static SEXP_t *SEXP_list_new (void)
+SEXP_t *SEXP_list_new (void)
 {
         SEXP_t *sexp;
 
@@ -188,7 +188,7 @@ static SEXP_t *SEXP_list_new (void)
         return (sexp);
 }
 
-static SEXP_t *SEXP_list_init (SEXP_t *sexp)
+SEXP_t *SEXP_list_init (SEXP_t *sexp)
 {
         _A(sexp != NULL);
 
@@ -233,6 +233,63 @@ SEXP_t *SEXP_list_last (SEXP_t *sexp)
         } else {
                 return (NULL);
         }       
+}
+
+SEXP_t *SEXP_string_new (const void *str, size_t len)
+{
+        SEXP_t *sexp;
+        
+        sexp = SEAP_sexp_new ();
+        SEXP_SETTYPE(sexp, ATOM_STRING);
+        sexp->atom.string.str = xmemdup (str, len);
+        sexp->atom.string.len = len;
+        
+        return (sexp);
+}
+
+SEXP_t *SEXP_number_new (const void *num, NUM_type_t type)
+{
+        SEXP_t *sexp;
+
+        _A(num != NULL);
+
+        sexp = SEAP_sexp_new ();
+        SEXP_SETTYPE(sexp, ATOM_NUMBER);
+        
+        switch (type) {
+        case NUM_INT8:
+                NUM_STORE(int8_t, (*(int8_t *)(num)), sexp->atom.number.nptr);
+                break;
+        case NUM_UINT8:
+                NUM_STORE(uint8_t, (*(uint8_t *)(num)), sexp->atom.number.nptr);
+                break;
+        case NUM_INT16:
+                NUM_STORE(int16_t, (*(int16_t *)(num)), sexp->atom.number.nptr);
+                break;
+        case NUM_UINT16:
+                NUM_STORE(uint16_t, (*(uint16_t *)(num)), sexp->atom.number.nptr);
+                break;
+        case NUM_INT32:
+                NUM_STORE(int32_t, (*(int32_t *)(num)), sexp->atom.number.nptr);
+                break;
+        case NUM_UINT32:
+                NUM_STORE(uint32_t, (*(uint32_t *)(num)), sexp->atom.number.nptr);
+                break;
+        case NUM_INT64:
+                NUM_STORE(int64_t, (*(int64_t *)(num)), sexp->atom.number.nptr);
+                break;
+        case NUM_UINT64:
+                NUM_STORE(uint64_t, (*(uint64_t *)(num)), sexp->atom.number.nptr);
+                break;
+        case NUM_DOUBLE:
+                NUM_STORE(double, (*(double *)(num)), sexp->atom.number.nptr);
+                break;
+        default:
+                _D("Unsupported number type: %d\n", type);
+                abort ();                
+        }
+        
+        return (sexp);
 }
 
 SEXP_t *SEXP_copy (SEXP_t *sexp)
@@ -342,7 +399,7 @@ int SEXP_strncmp (SEXP_t *sexp, const char *str, size_t n)
                 strncmp (sexp->atom.string.str, str, sexp->atom.string.len));
 }
 
-static SEXP_t *LIST_add (LIST_t *list, SEXP_t *sexp, int freemem)
+static SEXP_t *LIST_add (LIST_t *list, SEXP_t *sexp)
 {
         _A(list != NULL);
         _A(list->count <= list->size);
@@ -357,11 +414,20 @@ static SEXP_t *LIST_add (LIST_t *list, SEXP_t *sexp, int freemem)
 
         ++(list->count);
         
-        if (freemem != 0) {
+        if (SEXP_FREE(sexp)) {
                 xfree ((void **)(&sexp));
         }
         
         return (SEXP(list->memb) + list->count - 1);
+}
+
+SEXP_t *SEXP_list_add (SEXP_t *list, SEXP_t *sexp)
+{
+        if (SEXP_listp (list)) {
+                return LIST_add (&(list->atom.list), sexp);
+        } else {
+                return (NULL);
+        }
 }
 
 /*
@@ -927,7 +993,7 @@ DEFPARSER(label)
                         
                         _A(!(exflags & EXF_EOFOK));
                         
-                        sexp = LIST_add (LIST_stack_top(&(PSTATE(pstatep)->lstack)), sexp, 1);
+                        sexp = LIST_add (LIST_stack_top(&(PSTATE(pstatep)->lstack)), sexp);
                         LIST_stack_push (&(PSTATE(pstatep)->lstack), &(sexp->atom.list));
                 }
                 ++i;
@@ -1026,7 +1092,7 @@ DEFPARSER(label)
                 return (NULL);
         L_SEXP_ADD:
                 /* Add new expression to list */
-                LIST_add (LIST_stack_top(&(PSTATE(pstatep)->lstack)), sexp, 1);
+                LIST_add (LIST_stack_top(&(PSTATE(pstatep)->lstack)), sexp);
 #ifndef NDEBUG
                 sexp = NULL;
 #endif
@@ -1523,7 +1589,8 @@ int SEAP_desc_add (SEAP_desctable_t *sd_table, SEXP_pstate_t *pstate,
                         sd_table->sdsize = sd + SDTABLE_REALLOC_ADD;
                         sd_table->sd = xrealloc (sd_table->sd, sizeof (SEAP_desc_t) * sd_table->sdsize);
                 }
-                
+
+                sd_table->sd[sd].next_id = 0;
                 sd_table->sd[sd].sexpbuf = NULL;
                 /* sd_table->sd[sd].sexpcnt = 0; */
                 sd_table->sd[sd].pstate  = pstate;
@@ -1726,9 +1793,22 @@ SEAP_msg_t *SEAP_msg_new (void)
         new = xmalloc (sizeof (SEAP_msg_t));
         new->id = 0;
         new->attrs = NULL;
+        new->attrs_cnt = 0;
         new->sexp = NULL;
         
         return (new);
+}
+
+SEAP_msg_t *SEAP_msg_free (SEAP_msg_t *msg)
+{
+        _A(msg != NULL);
+
+        if (msg->attrs != NULL)
+                xfree ((void **)&(msg->attrs));
+        
+        xfree ((void **)&msg);
+        
+        return (NULL);
 }
 
 int SEAP_recvmsg (SEAP_CTX_t *ctx, int sd, SEAP_msg_t **seap_msg)
@@ -1804,29 +1884,129 @@ int SEAP_recvmsg (SEAP_CTX_t *ctx, int sd, SEAP_msg_t **seap_msg)
 
 int SEAP_sendsexp (SEAP_CTX_t *ctx, int sd, SEXP_t *sexp)
 {
-        /* construct message & send */
+        SEAP_msg_t *msg;
+        int ret;
+
+        msg = SEAP_msg_new ();
+        msg->sexp = sexp;
+        ret = SEAP_sendmsg (ctx, sd, msg);
+        SEAP_msg_free (msg);
+        
+        return (ret);
+}
+
+SEXP_t *__SEAP_msg2sexp (SEAP_msg_t *msg)
+{
+        SEXP_t *sexp;
+        char  *attr_name;
+        size_t attr_namelen;
+        uint16_t i;
+        
+        _A(msg != NULL);
+        
+        sexp = SEXP_list_new ();
+        SEXP_list_add (sexp, SEXP_string_new ("seap.msg", 8));
+        
+        /* add message attributes */
+        for (i = 0; i < msg->attrs_cnt; ++i) {
+                if (msg->attrs[i].value != NULL) {
+                        attr_namelen = strlen (msg->attrs[i].name) + 2;
+                        attr_name    = xmalloc (sizeof (char) * attr_namelen);
+                        
+                        snprintf (attr_name, attr_namelen, ":%s", msg->attrs[i].name);
+                        
+                        SEXP_list_add (sexp, SEXP_string_new (attr_name, attr_namelen - 1));
+                        SEXP_list_add (sexp, msg->attrs[i].value);
+                        
+                        xfree ((void **)&attr_name);
+                } else {
+                        SEXP_list_add (sexp, SEXP_string_new (msg->attrs[i].name,
+                                                              strlen (msg->attrs[i].name)));
+                }
+        }
+        
+        /* add data */
+        SEXP_list_add (sexp, msg->sexp);
+        
+        return (sexp);
+}
+
+int SEAP_msgattr_set (SEAP_msg_t *msg, const char *attr, SEXP_t *value)
+{
+        _A(msg != NULL);
+        _A(attr != NULL);
+
+        msg->attrs = xrealloc (msg->attrs, sizeof (SEAP_attr_t) * (++msg->attrs_cnt));
+        msg->attrs[msg->attrs_cnt - 1].name  = strdup (attr);
+        msg->attrs[msg->attrs_cnt - 1].value = value;
+        
         return (0);
+}
+
+SEXP_t *SEAP_msgattr_get (SEAP_msg_t *msg, const char *name)
+{
+        SEXP_t *value = NULL;
+
+        _A(msg  != NULL);
+        _A(name != NULL);
+
+        return (value);
 }
 
 int SEAP_sendmsg (SEAP_CTX_t *ctx, int sd, SEAP_msg_t *seap_msg)
 {
         SEAP_desc_t *desc;
+        SEXP_t *sexp_msg;
+        uint32_t msg_id;
 
-        _A(ctx =! NULL);
+        _A(ctx != NULL);
         _A(seap_msg != NULL);
 
         if (sd >= 0 && sd < ctx->sd_table.sdsize) {
                 desc = &(ctx->sd_table.sd[sd]);
 
                 _A(desc->scheme < (sizeof __schtbl / sizeof (SEAP_schemefn_t)));
+        
+                /* add id */
+                msg_id = __sync_fetch_and_add (&(desc->next_id), 1);
+
+                /* FIXME!!! */
+                SEAP_msgattr_set (seap_msg, "id", SEXP_number_new (&(msg_id), NUM_UINT64));
                 
+                /* msg -> sexp */
+                sexp_msg = __SEAP_msg2sexp (seap_msg);
                 
+                /* send */
+                if (SCH_SENDSEXP(desc->scheme, desc, sexp_msg, 0) < 0) {
+                        /* error */
+                        errno = EIO;
+                        return (-1);
+                }
+                
+                /* check if everything was sent */
+                if (desc->ostate != NULL) {
+                        errno = EINPROGRESS;
+                        return (-1);
+                }
                 
                 return (0);
         } else {
                 errno = EBADF;
                 return (-1);
         }
+}
+
+int SEAP_reply (SEAP_CTX_t *ctx, int sd, SEAP_msg_t *rep_msg, SEAP_msg_t *req_msg)
+{
+        uint64_t req_id;
+
+        _A(ctx != NULL);
+        _A(rep_msg != NULL);
+        _A(req_msg != NULL);
+        
+        SEAP_msgattr_set (rep_msg, "reply-id", SEXP_number_new (&(req_msg->id), NUM_UINT64));
+        
+        return SEAP_sendmsg (ctx, sd, rep_msg);
 }
 
 SEXP_t *SEAP_read (SEAP_CTX_t *ctx, int sd)
