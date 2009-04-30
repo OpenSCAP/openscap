@@ -132,7 +132,7 @@ AC_ARG_ENABLE([oval],
        *) AC_MSG_ERROR([bad value ${enableval} for --enable-oval]) ;;
      esac],[oval=yes])
 
-AC_ARG_ENABLE([probes]l,
+AC_ARG_ENABLE([probes],
      [  --enable-probes         enable compilation of probes [[default=no]]],
      [case "${enableval}" in
        yes) probes=yes ;;
