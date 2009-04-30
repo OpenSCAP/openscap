@@ -2,7 +2,7 @@
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
 
 Name:           openscap
-Version:        0.3.2
+Version:        0.3.3
 Release:        1%{?dist}
 Summary:        Set of open source libraries enabling integration of the SCAP line of standards
 Group:          System Environment/Libraries
@@ -10,8 +10,7 @@ License:        LGPLv2+
 URL:            http://www.open-scap.org/
 Source0:        http://open-scap.org/download/%{name}-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
-BuildRequires:  swig python-devel 
-BuildRequires:  pcre-devel libxml2-devel
+BuildRequires:  swig pcre-devel libxml2-devel
 Requires(post):   /sbin/ldconfig
 Requires(postun): /sbin/ldconfig
 
@@ -34,6 +33,7 @@ developing applications that use %{name}.
 Summary:        Python bindings for %{name}
 Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
+BuildRequires:  python-devel 
 
 %description    python
 The %{name}-python package contains the bindings so that %{name}
@@ -43,6 +43,7 @@ libraries can be used by python.
 Summary:        Perl bindings for %{name}
 Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
+BuildRequires:  perl-devel
 
 %description    perl
 The %{name}-perl package contains the bindings so that %{name}

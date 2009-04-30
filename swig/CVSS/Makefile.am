@@ -18,20 +18,20 @@ cvsscalc_py_wrap.c: ${srcdir}/cvsscalc.i
 	$(SWIG) -o cvsscalc_py_wrap.c -python -module cvsscalc_py ${INCLUDES} ${srcdir}/cvsscalc.i
 	mv cvsscalc_py.py cvsscalc.py
 
-cvss.py: cvss_py_wrap.c
+cvsscalc.py: cvsscalc_py_wrap.c
 	@if test -f $@; then :; else \
-		rm -f cvss_py_wrap.c; \
-		$(MAKE) $(AM_MAKEFLAGS) cvss_py_wrap.c; \
+		rm -f cvsscalc_py_wrap.c; \
+		$(MAKE) $(AM_MAKEFLAGS) cvsscalc_py_wrap.c; \
 	fi
 
 cvsscalc_pm_wrap.c: ${srcdir}/cvsscalc.i
 	$(SWIG) -o cvsscalc_pm_wrap.c -perl5 -module cvsscalc_pm ${INCLUDES} ${srcdir}/cvsscalc.i
 	mv cvsscalc_pm.pm cvsscalc.pm
 
-cvss.pm: cvss_pm_wrap.c
+cvsscalc.pm: cvsscalc_pm_wrap.c
 	@if test -f $@; then :; else \
-		rm -f cvss_pm_wrap.c; \
-		$(MAKE) $(AM_MAKEFLAGS) cvss_pm_wrap.c; \
+		rm -f cvsscalc_pm_wrap.c; \
+		$(MAKE) $(AM_MAKEFLAGS) cvsscalc_pm_wrap.c; \
 	fi
 
 CLEANFILES = cvsscalc.py cvsscalc_py_wrap.c cvsscalc.pyc cvsscalc_pm_wrap.c cvsscalc.pm
