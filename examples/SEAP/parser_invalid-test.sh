@@ -1,13 +1,10 @@
 #!/bin/sh
 PROG="./sexp_test"
 
-RETN=1
+trap 'exit 1' segv abrt ill fpe bus pipe sys
 
 while read args; do
-    echo "\"$args\""
-    ${PROG} "$args"    && exit $RETN
-
-    #RETN=$(($RETN + 1))
+    ${PROG} "$args" > /dev/null 2>&1
 done <<EOF
 1e
 11e

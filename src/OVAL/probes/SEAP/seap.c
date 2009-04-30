@@ -232,7 +232,7 @@ int SEAP_recvmsg (SEAP_CTX_t *ctx, int sd, SEAP_msg_t **seap_msg)
         if (sd >= 0 && sd < ctx->sd_table.sdsize) {
                 desc = &(ctx->sd_table.sd[sd]);
                 
-                _A(desc->scheme < (sizeof __schtbl / sizeof (SEAP_schemefn_t)));
+                /* _A(desc->scheme < (sizeof __schtbl / sizeof (SEAP_schemefn_t))); */
                 
                 SEXP_psetup_init (&psetup);
                 
@@ -377,7 +377,7 @@ int SEAP_sendmsg (SEAP_CTX_t *ctx, int sd, SEAP_msg_t *seap_msg)
         if (sd >= 0 && sd < ctx->sd_table.sdsize) {
                 desc = &(ctx->sd_table.sd[sd]);
 
-                _A(desc->scheme < (sizeof __schtbl / sizeof (SEAP_schemefn_t)));
+                /* _A(desc->scheme < (sizeof __schtbl / sizeof (SEAP_schemefn_t))); */
         
                 /* add id */
                 msg_id = desc->next_id++;
@@ -444,7 +444,7 @@ int SEAP_close (SEAP_CTX_t *ctx, int sd)
         
         if (sd > 0) {
                 desc = &(ctx->sd_table.sd[sd]);
-                _A(desc->scheme < (sizeof __schtbl / sizeof (SEAP_schemefn_t)));
+                /* _A(desc->scheme < (sizeof __schtbl / sizeof (SEAP_schemefn_t))); */
                 
                 ret = SCH_CLOSE(desc->scheme, desc, 0); /* TODO: Are flags usable here? */
                 

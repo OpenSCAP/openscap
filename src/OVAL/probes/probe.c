@@ -1,8 +1,10 @@
 #include <seap.h>
-#include <sexp-printf.h>
 #include <assert.h>
 #include <string.h>
 #include <xmalloc.h>
+#include "oval_definitions_impl.h"
+#include "oval_collection_impl.h"
+#include "oval_agent_api_impl.h"
 #include "probe.h"
 
 #ifndef _A
@@ -92,7 +94,7 @@ SEXP_t *oval_object_to_sexp (const char *typestr, struct oval_object *object)
                         /* ENTITY BEG */
                         entity = oval_object_content_entity (content);
                         
-                        switch (oval_entit_datatype (entity)) {
+                        switch (oval_entity_datatype (entity)) {
                         case OVAL_DATATYPE_VERSION:
                         case OVAL_DATATYPE_STRING:
                         case OVAL_DATATYPE_EVR_STRING:

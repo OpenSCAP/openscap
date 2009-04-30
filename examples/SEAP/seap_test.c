@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <seap.h>
-#include <sexp-printf.h>
 #include <errno.h>
 
 #define ERR(...) fprintf (stderr, __VA_ARGS__)
@@ -27,7 +26,7 @@ int main (int argc, char *argv[])
         /* Receive S-exps until EOF, error, etc. */
         while (SEAP_recvsexp (ctx, sd, &sexp) != -1) {
                 INF("S-exp received: sexp=%p, type=%u (%s)\n",
-                    sexp, sexp->type, SEAP_sexp_strtype (sexp));
+                    sexp, SEXP_TYPE(sexp), SEAP_sexp_strtype (sexp));
                 
                 INF("----------------\n");
                 SEXP_printfa (sexp);
