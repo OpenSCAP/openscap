@@ -1,6 +1,4 @@
-SUBDIRS = src examples
-#examples
-#swig
+SUBDIRS = src examples swig
 
 EXTRA_DIST = dist/fedora/openscap.spec docs/Doxyfile
 
