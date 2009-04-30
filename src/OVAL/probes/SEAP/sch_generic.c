@@ -1,9 +1,12 @@
+#include <stdint.h>
+#include <stddef.h>
 #include <sys/types.h>
 #include <sys/uio.h>
 #include <unistd.h>
 #include <errno.h>
 #include <config.h>
-#include "seap.h"
+#include "sexp-types.h"
+#include "seap-types.h"
 #include "sch_generic.h"
 
 #define DATA(ptr) ((sch_genericdata_t *)(ptr))

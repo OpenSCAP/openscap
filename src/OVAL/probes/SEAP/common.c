@@ -1,13 +1,20 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <assert.h>
 #include <config.h>
 #include "xmalloc.h"
 #include "common.h"
 
+#ifndef _A
+#define _A(x) assert(x)
+#endif
+
 void *xmemdup (const void *src, size_t len)
 {
         void *new;
+        
+        _A(src != NULL);
 
         new = xmalloc (len);
         memcpy (new, src, len);
@@ -31,6 +38,9 @@ int xstrncoll (const char *a, size_t alen,
                const char *b, size_t blen)
 {
         int cmp;
+
+        _A(a != NULL);
+        _A(b != NULL);
         
         if (alen > blen) {
                 cmp = strncmp (a, b, blen);
