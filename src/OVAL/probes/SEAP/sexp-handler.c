@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
+#include <pthread.h>
 #include <config.h>
 #include <errno.h>
 #include <assert.h>
@@ -41,9 +42,8 @@ void SEXP_handlertbl_init (SEXP_handlertbl_t *htbl)
 {
         _A(htbl != NULL);
 #if defined(THREAD_SAFE)
-        htbl->rwlock = PTHREAD_RWLOCK_INITIALIZER;
+        pthread_rwlock_init (&(htbl->rwlock), NULL);
 #endif
-        
         htbl->tree.root = NULL;
         htbl->tree.size = 0;
         htbl->init = 1;
@@ -111,7 +111,7 @@ SEXP_handler_t *SEXP_reghandler (SEXP_handlertbl_t *htbl, SEXP_handler_t *handle
 
 int SEXP_delhandler (SEXP_handlertbl_t *htbl, const char *typestr, size_t typelen)
 {
-        int ret;
+        int ret = 0;
 
         _A(htbl != NULL);
         _A(typestr != NULL);
