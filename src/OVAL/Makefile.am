@@ -35,9 +35,14 @@ liboval_la_SOURCES = \
 	oval_test.c \
 	oval_value.c \
 	oval_variable.c \
-	oval_variableBinding.c
-liboval_la_CFLAGS  = @libxml_cflags@
+	oval_variableBinding.c \
+	probes/probe.c \
+	probes/probe.h
+
+liboval_la_CFLAGS  = @libxml_cflags@ -Iprobes/ -Iprobes/SEAP
 liboval_la_LDFLAGS = @libxml_libs@
+liboval_la_LIBADD  = probes/SEAP/libseap.la
+SUBDIRS = probes/SEAP probes/
 
 include_HEADERS  = api/oval_agent_api.h api/oval_definitions.h 
 include_HEADERS += api/oval_results.h api/oval_system_characteristics.h

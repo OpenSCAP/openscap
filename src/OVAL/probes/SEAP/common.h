@@ -4,6 +4,7 @@
 
 void  *xmemdup (const void *src, size_t len);
 
+#include <stdint.h>
 #include <sys/types.h>
 uint32_t xnumdigits (size_t size);
 

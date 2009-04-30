@@ -132,6 +132,14 @@ AC_ARG_ENABLE([oval],
        *) AC_MSG_ERROR([bad value ${enableval} for --enable-oval]) ;;
      esac],[oval=yes])
 
+AC_ARG_ENABLE([probes]l,
+     [  --enable-probes         enable compilation of probes [[default=no]]],
+     [case "${enableval}" in
+       yes) probes=yes ;;
+       no)  probes=no  ;;
+       *) AC_MSG_ERROR([bad value ${enableval} for --enable-probes]) ;;
+     esac],[probes=no])
+
 AC_ARG_ENABLE([cvss],
      [  --enable-cvss           include support for CVSS [[default=yes]]],
      [case "${enableval}" in
@@ -169,11 +177,14 @@ AM_CONDITIONAL([WANT_CVSS], test "$cvss" = yes)
 AM_CONDITIONAL([WANT_CVE],  test "$cve"  = yes)
 AM_CONDITIONAL([WANT_CPE],  test "$cpe"  = yes)
 AM_CONDITIONAL([WANT_CCE],  test "$cce"  = yes)
+AM_CONDITIONAL([WANT_PROBES], test "$probes" = yes)
 
 AC_CONFIG_FILES([Makefile
                  src/Makefile
                  swig/Makefile
                  src/OVAL/Makefile
+                 src/OVAL/probes/Makefile
+                 src/OVAL/probes/SEAP/Makefile
                  src/CVSS/Makefile
                  src/CVE/Makefile
                  src/CPE/Makefile
