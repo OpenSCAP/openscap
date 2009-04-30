@@ -4,22 +4,11 @@ PROG="./sexp_test"
 RETN=1
 
 while read args; do
-    echo "\"$args\""
-    ${PROG} "$args"     || exit $RETN
-
-    echo "\"($args)\""
-    ${PROG} "($args)"   || exit $RETN
-
-    echo "\"( $args)\""
-    ${PROG} "( $args)"  || exit $RETN
-
-    echo "\"( $args )\""
-    ${PROG} "( $args )" || exit $RETN
-
-    echo "\"($args )\""
-    ${PROG} "($args )"  || exit $RETN
-
-    #RETN=$(($RETN + 1))
+    ${PROG} "$args"     > /dev/null 2>&1 || exit $RETN
+    ${PROG} "($args)"   > /dev/null 2>&1 || exit $RETN
+    ${PROG} "( $args)"  > /dev/null 2>&1 || exit $RETN
+    ${PROG} "( $args )" > /dev/null 2>&1 || exit $RETN
+    ${PROG} "($args )"  > /dev/null 2>&1 || exit $RETN
 done <<EOF
 1
 11

@@ -12,6 +12,24 @@ EXTRA_DIST += OVAL/test_oval.sh OVAL/test.xml
 test_oval_SOURCES = OVAL/test_oval.c
 test_oval_CFLAGS = -I$(top_srcdir)/src/OVAL
 test_oval_LDADD = $(top_builddir)/src/libopenscap.la
+
+if WANT_PROBES
+check_PROGRAMS += sexp_test seap_conn_test seap_test
+TESTS += SEAP/parser_valid-test.sh SEAP/parser_invalid-test.sh
+EXTRA_DIST += SEAP/parser_valid-test.sh SEAP/parser_invalid-test.sh
+
+sexp_test_SOURCES = SEAP/sexp_test.c
+sexp_test_CFLAGS = -I$(top_srcdir)/src/OVAL/probes/SEAP
+sexp_test_LDADD = $(top_builddir)/src/libopenscap.la
+
+seap_test_SOURCES = SEAP/seap_test.c
+seap_test_CFLAGS = -I$(top_srcdir)/src/OVAL/probes/SEAP
+seap_test_LDADD = $(top_builddir)/src/libopenscap.la
+
+seap_conn_test_SOURCES = SEAP/seap_conn_test.c
+seap_conn_test_CFLAGS = -I$(top_srcdir)/src/OVAL/probes/SEAP
+seap_conn_test_LDADD = $(top_builddir)/src/libopenscap.la
+endif
 endif
 
 if WANT_CPE

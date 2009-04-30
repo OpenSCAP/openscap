@@ -1,4 +1,4 @@
-SUBDIRS = src swig examples
+SUBDIRS = src examples
 #examples
 #swig
 

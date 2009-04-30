@@ -17,7 +17,6 @@
 
 SEXP_t *SEXP_parse_fd (SEXP_format_t fmt, int fd, size_t max, SEXP_pstate_t **state)
 {
-        _A(ctx != NULL);
         _A(fd >= 0);
         
         return (NULL);
@@ -25,7 +24,6 @@ SEXP_t *SEXP_parse_fd (SEXP_format_t fmt, int fd, size_t max, SEXP_pstate_t **st
 
 SEXP_t *SEXP_parse_buf (SEXP_format_t fmt, void *buf, size_t len, SEXP_pstate_t **state)
 {
-        _A(ctx != NULL);
         _A(buf != NULL);
         _A(len  > 0);
         
