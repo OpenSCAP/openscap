@@ -1,10 +1,15 @@
 #include <stdio.h>
+#include <stdint.h>
+#include <stddef.h>
 #include <sys/types.h>
 #include <sys/uio.h>
 #include <unistd.h>
 #include <errno.h>
 #include <config.h>
-#include "seap.h"
+#include "common.h"
+#include "xmalloc.h"
+#include "seap-types.h"
+#include "sexp-types.h"
 #include "sch_cons.h"
 
 #define DATA(ptr) ((sch_consdata_t *)((ptr)->scheme_data))

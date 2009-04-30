@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include <string.h>
 #include <limits.h>
 #include <sys/stat.h>
@@ -12,7 +13,8 @@
 #include <config.h>
 #include "common.h"
 #include "xmalloc.h"
-#include "seap.h"
+#include "sexp-types.h"
+#include "seap-types.h"
 #include "sexp-output.h"
 #include "sch_pipe.h"
 
@@ -197,7 +199,7 @@ int sch_pipe_close (SEAP_desc_t *desc, uint32_t flags)
 {
         int ret, err = 0;
         /* close the pipe */
-        /* kill the process */
+        /* FIXME: kill the process */
         
         close (DATA(desc)->pfd);
         

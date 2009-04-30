@@ -1,6 +1,10 @@
+#include <stdint.h>
+#include <stddef.h>
+#include <unistd.h>
 #include <errno.h>
 #include <config.h>
-#include "seap.h"
+#include "sexp-types.h"
+#include "seap-types.h"
 #include "sch_dummy.h"
 
 int sch_dummy_connect (SEAP_desc_t *desc, const char *uri, uint32_t flags)
