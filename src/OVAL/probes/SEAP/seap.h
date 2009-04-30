@@ -4,6 +4,7 @@
 
 #include <string.h>
 #include <stdint.h>
+#include <unistd.h> /* ssize_t */
 
 #define _STR(x) #x
 #define  STR(x) _STR(x)

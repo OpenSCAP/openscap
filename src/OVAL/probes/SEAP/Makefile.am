@@ -1,4 +1,4 @@
-lib_LTLIBRARIES= libseap.la
+noinst_LTLIBRARIES= libseap.la
 
 libseap_la_SOURCES= bitmap.c \
 		    bitmap.h \

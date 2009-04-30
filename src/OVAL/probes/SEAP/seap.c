@@ -1968,7 +1968,9 @@ int SEAP_sendmsg (SEAP_CTX_t *ctx, int sd, SEAP_msg_t *seap_msg)
                 _A(desc->scheme < (sizeof __schtbl / sizeof (SEAP_schemefn_t)));
         
                 /* add id */
-                msg_id = __sync_fetch_and_add (&(desc->next_id), 1);
+                msg_id = desc->next_id++;
+                
+                /* msg_id = __sync_fetch_and_add (&(desc->next_id), 1); */
 
                 /* FIXME!!! */
                 SEAP_msgattr_set (seap_msg, "id", SEXP_number_new (&(msg_id), NUM_UINT64));
