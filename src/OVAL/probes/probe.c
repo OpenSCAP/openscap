@@ -62,6 +62,14 @@ SEXP_t *SEXP_OVALobj_create (const char *obj_name, OVALobj_attr_t obj_attrs[], .
         return (sexp);
 }
 
+const char *SEXP_OVALobj_getelm_val (SEXP_t *obj, const char *name)
+{
+        _A(obj != NULL);
+        _A(name != NULL);
+
+        return (NULL);
+}
+
 SEXP_t *oval_object_to_sexp (const char *typestr, struct oval_object *object)
 {
         SEXP_t *sexp, *elm, *elm_value;

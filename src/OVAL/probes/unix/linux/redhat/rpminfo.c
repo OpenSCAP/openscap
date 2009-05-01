@@ -15,12 +15,12 @@
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
+#include <assert.h>
 /* RPM headers */
 #include <rpmlib.h>
 /* SEAP */
 #include <seap.h>
-#include <assert.h>
-#include "probe.h"
+#include <probe.h>
 #include "xmalloc.h"
 
 #ifndef _A
