@@ -53,5 +53,5 @@ liboval_la_SOURCES += probes/probe.c \
 include_HEADERS += probes/probe.h
 
 liboval_la_LIBADD  = probes/SEAP/libseap.la
-SUBDIRS = probes/SEAP probes/
+SUBDIRS = probes/SEAP
 endif
