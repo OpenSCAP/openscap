@@ -198,6 +198,14 @@ AC_ARG_ENABLE([cce],
        *) AC_MSG_ERROR([bad value ${enableval} for --enable-cce]) ;;
      esac],[cce=yes])
 
+AC_ARG_ENABLE([bindings],
+     [  --enable-bindings       enable compilation of bindings [[default=yes]]],
+     [case "${enableval}" in
+       yes) bindings=yes ;;
+       no)  bindings=no  ;;
+       *) AC_MSG_ERROR([bad value ${enableval} for --enable-bindings]) ;;
+     esac],[bindings=yes])
+
 AM_CONDITIONAL([WANT_OVAL], test "$oval" = yes)
 AM_CONDITIONAL([WANT_CVSS], test "$cvss" = yes)
 AM_CONDITIONAL([WANT_CVE],  test "$cve"  = yes)
@@ -205,6 +213,7 @@ AM_CONDITIONAL([WANT_CPE],  test "$cpe"  = yes)
 AM_CONDITIONAL([WANT_CCE],  test "$cce"  = yes)
 AM_CONDITIONAL([WANT_PROBES], test "$probes" = yes)
 AM_CONDITIONAL([WANT_PROBES_REDHAT], test "$probes_rh" = yes)
+AM_CONDITIONAL([WANT_BINDINGS], test "$bindings" = yes)
 
 AC_CONFIG_FILES([Makefile
                  src/Makefile
