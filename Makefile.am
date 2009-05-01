@@ -4,7 +4,11 @@ if WANT_PROBES
 SUBDIRS += src/OVAL/probes
 endif
 
-SUBDIRS += examples swig
+SUBDIRS += examples
+
+if WANT_BINDINGS
+SUBDIRS += swig
+endif
 
 EXTRA_DIST = dist/fedora/openscap.spec docs/Doxyfile
 

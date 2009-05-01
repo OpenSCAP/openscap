@@ -73,22 +73,85 @@ SEXP_t *SEXP_string_new (const void *str, size_t len)
 
 int SEXP_strcmp (SEXP_t *sexp, const char *str)
 {
-        _A(sexp != NULL);
         _A(str != NULL);
-
-        return (-1);
+        
+        if (sexp != NULL) {
+                if (SEXP_TYPE(sexp) == ATOM_STRING) {
+                        return strncmp (sexp->atom.string.str, str, sexp->atom.string.len);
+                } else {
+                        return (1);
+                }
+        } else {
+                return (-1);
+        }
 }
 
 int SEXP_strncmp (SEXP_t *sexp, const char *str, size_t n)
 {
-        _A(sexp != NULL);
         _A(str != NULL);
         _A(n > 0);
-        _A(SEXP_TYPE(sexp) == ATOM_STRING);
         
-        return (n < sexp->atom.string.len ?
-                strncmp (sexp->atom.string.str, str, n):
-                strncmp (sexp->atom.string.str, str, sexp->atom.string.len));
+        if (sexp != NULL) {
+                if (SEXP_TYPE(sexp) == ATOM_STRING) {
+                        return (n < sexp->atom.string.len ?
+                                strncmp (sexp->atom.string.str, str, n):
+                                strncmp (sexp->atom.string.str, str, sexp->atom.string.len));
+                } else {
+                        return (1);
+                }
+        } else {
+                return (-1);
+        }
+}
+
+int SEXP_strncoll (SEXP_t *sexp, const char *str, size_t n)
+{
+        _A(str != NULL);
+        _A(n > 0);
+        
+        if (sexp != NULL) {
+                if (SEXP_TYPE(sexp) == ATOM_STRING) {
+                        return xstrncoll (sexp->atom.string.str,
+                                          sexp->atom.string.len,
+                                          str, n);
+                } else {
+                        return (1);
+                }
+        } else {
+                /* NULL < str */
+                return (-1);
+        }
+}
+
+int SEXP_stringp (SEXP_t *sexp)
+{
+        return (SEXP_TYPE(sexp) == ATOM_STRING);
+}
+
+char *SEXP_string_cstr (SEXP_t *sexp)
+{
+        _A(sexp != NULL);
+        char *str;
+        size_t  i;
+
+        if (SEXP_TYPE(sexp) == ATOM_STRING) {
+                str = xmalloc (sizeof (char) * (sexp->atom.string.len + 1));
+                
+                for (i = 0; (i < sexp->atom.string.len &&
+                             isprint(sexp->atom.string.str[i])); ++i)
+                {
+                        str[i] = sexp->atom.string.str[i];
+                }
+                
+                str[i] = '\0';
+
+                if (i < sexp->atom.string.len)
+                        return xrealloc (str, sizeof (char) * (i + 1));
+                else
+                        return (str);
+        } else {
+                return (NULL);
+        }
 }
 
 SEXP_t *SEXP_list_new (void)
@@ -233,6 +296,32 @@ SEXP_t *SEXP_list_pop (SEXP_t **sexp)
         } else {
                 return (NULL);
         }
+}
+
+SEXP_t *SEXP_list_nth (SEXP_t *sexp, uint32_t n)
+{
+        _A(sexp != NULL);
+        _A(n > 0);
+        
+        if (SEXP_listp (sexp) && n > 0) {
+                if (sexp->atom.list.count <= n)
+                        return &(SEXP(sexp->atom.list.memb)[n - 1]);
+        }
+        
+        return (NULL);
+}
+
+SEXP_t *SEXP_list_nth_copy (SEXP_t *sexp, uint32_t n)
+{
+        _A(sexp != NULL);
+        _A(n > 0);
+        
+        if (SEXP_listp (sexp) && n > 0) {
+                if (sexp->atom.list.count <= n)
+                        return SEXP_copy(&(SEXP(sexp->atom.list.memb)[n - 1]));
+        }
+        
+        return (NULL);
 }
 
 SEXP_t *SEXP_new  (void)

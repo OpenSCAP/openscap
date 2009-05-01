@@ -64,6 +64,9 @@ SEXP_t *SEXP_number_new (const void *, NUM_type_t);
 SEXP_t *SEXP_string_new (const void *, size_t);
 int     SEXP_strcmp (SEXP_t *sexp, const char *str);
 int     SEXP_strncmp (SEXP_t *sexp, const char *str, size_t n);
+int     SEXP_strncoll (SEXP_t *sexp, const char *str, size_t n);
+int     SEXP_stringp (SEXP_t *sexp);
+char   *SEXP_string_cstr (SEXP_t *sexp);
 
 /* Functions for manipulating with lists */
 SEXP_t *SEXP_list_new (void);
@@ -74,6 +77,8 @@ SEXP_t *SEXP_list_first (SEXP_t *);
 SEXP_t *SEXP_list_last (SEXP_t *);
 int     SEXP_listp (SEXP_t *);
 SEXP_t *SEXP_list_pop (SEXP_t **);
+SEXP_t *SEXP_list_nth (SEXP_t *, uint32_t);
+SEXP_t *SEXP_list_nth_copy (SEXP_t *sexp, uint32_t n);
 
 /* Internal functions, don't use! */
 SEXP_t *LIST_add (LIST_t *list, SEXP_t *sexp);

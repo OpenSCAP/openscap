@@ -1,6 +1,7 @@
 #include <seap.h>
 #include <assert.h>
 #include <string.h>
+#include <stdarg.h>
 #include <xmalloc.h>
 #include "oval_definitions_impl.h"
 #include "oval_collection_impl.h"
@@ -25,6 +26,11 @@ SEXP_t *SEXP_OVALobj_create (const char *obj_name, OVALobj_attr_t obj_attrs[], .
 {
         SEXP_t *sexp = NULL, *sexp_tmp;
         uint16_t i;
+        va_list ap;
+        
+        char *arg_name;
+        char *arg_value;
+        OVALobj_attr_t *arg_attrs;
         
         _A(obj_name != NULL);
         
@@ -57,16 +63,63 @@ SEXP_t *SEXP_OVALobj_create (const char *obj_name, OVALobj_attr_t obj_attrs[], .
         }
         
         /* Add object elements */
+        va_start (ap, obj_attrs);
         
-
+        while ((arg_name  = va_arg (ap, char *)) != NULL) {
+                arg_attrs = va_arg (ap, OVALobj_attr_t *);
+                arg_value = va_arg (ap, char *);
+                
+                sexp_tmp = SEXP_list_new ();
+                
+                if (arg_attrs == NULL) {
+                        SEXP_list_add (sexp_tmp, SEXP_string_new (arg_name, strlen (arg_name)));
+                } else {
+                        /* add attrs */
+                        SEXP_t *elm_list = NULL;
+                }
+                
+                /* add value to the element list */
+                SEXP_list_add (sexp_tmp, SEXP_string_new (arg_value, strlen (arg_value)));
+                
+                /* add the element to the object */
+                SEXP_list_add (sexp, sexp_tmp);
+        }
+        
+        va_end (ap);
+        
         return (sexp);
 }
 
 char *SEXP_OVALobj_getelm_val (SEXP_t *obj, const char *name)
 {
+        uint32_t i;
+        SEXP_t  *elm, *val, *elm_name;
+
         _A(obj != NULL);
         _A(name != NULL);
 
+        i = 2;
+        while ((elm = SEXP_list_nth (obj, i)) != NULL) {
+                elm_name = SEXP_list_first (elm);
+                
+                if (!SEXP_stringp (elm_name)) {
+                        if (SEXP_listp (elm_name)) {
+                                elm_name = SEXP_list_first (elm_name);
+                        } else {
+                                continue;
+                        }
+                }
+                
+                if (SEXP_strcmp (elm_name, name) == 0) {
+                        val = SEXP_list_nth (elm, 2);
+                        
+                        if (SEXP_stringp (val))
+                                return SEXP_string_cstr (val);
+                        else 
+                                return (NULL);
+                }
+        }
+        
         return (NULL);
 }
 
@@ -119,8 +172,10 @@ SEXP_t *oval_object_to_sexp (const char *typestr, struct oval_object *object)
                         case OVAL_DATATYPE_BOOLEAN:
                                 /* TODO */
                                 continue;
+                        default:
+                                continue;
                         }
-
+                        
                         elm = SEXP_list_new ();
                         elm_name = oval_entity_name (entity);
                         
@@ -144,5 +199,6 @@ SEXP_t *oval_object_to_sexp (const char *typestr, struct oval_object *object)
 
 struct oval *sexp_to_oval_state (SEXP_t *sexp)
 {
-
+        /* TODO */
+        return (NULL);
 }

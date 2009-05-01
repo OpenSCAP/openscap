@@ -171,7 +171,8 @@ int main (void)
                                                                   "release", NULL, reply_st[i].release,
                                                                   "version", NULL, reply_st[i].version,
                                                                   "evr",     NULL, reply_st[i].evr,
-                                                                  "signature_keyid", NULL, reply_st[i].signature_keyid);
+                                                                  "signature_keyid", NULL, reply_st[i].signature_keyid,
+                                                                  NULL);
                                 
                                 SEXP_list_add (seap_reply->sexp, state_sexp);
                         }
