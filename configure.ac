@@ -76,6 +76,17 @@ AC_CHECK_LIB(
   [`pcre-config --libs`]
 )
 
+#
+# rpmlib
+#
+AC_SEARCH_LIBS(
+	[rpmtsCreate],
+	[rpm],
+	[rpm_cflags=`pkg-config rpm --cflags`
+	 rpm_libs=`pkg-config rpm --libs`
+	]
+)
+
 # Checks for header files.
 
 AC_HEADER_STDC
@@ -118,6 +129,9 @@ AC_SUBST(libxml_libs)
 
 AC_SUBST(pcre_cflags)
 AC_SUBST(pcre_libs)
+
+AC_SUBST(rpm_cflags)
+AC_SUBST(rpm_libs)
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_HEADER_STDBOOL

@@ -17,7 +17,7 @@
 #include <errno.h>
 #include <assert.h>
 /* RPM headers */
-#include <rpmlib.h>
+#include <rpm/rpmlib.h>
 /* SEAP */
 #include <seap.h>
 #include <probe.h>
