@@ -18,6 +18,7 @@
 #include <assert.h>
 /* RPM headers */
 #include <rpm/rpmlib.h>
+
 /* SEAP */
 #include <seap.h>
 #include <probe.h>
@@ -102,18 +103,18 @@ static int get_rpminfo (struct rpminfo_req *req, struct rpminfo_rep **rep)
 	return (ret);
 }
 
-int main (int argc, char *argv[])
+int main (void)
 {
-        SEAP_CTX_t *sctx;
+        SEAP_CTX_t *ctx;
         SEXP_t *state_sexp;
         int sd, rpmret, i, ret = 0;
-        SEAP_msg_t *request, *reply;
+        SEAP_msg_t *seap_request, *seap_reply;
         struct rpminfo_req request_st;
         struct rpminfo_rep *reply_st = NULL;
         
         /* Initialize SEAP */
-        sctx = SEAP_CTX_new ();
-        sd   = SEAP_openfd2 (SCH_GENERIC, STDIN_FILENO, STDOUT_FILENO, 0);
+        ctx = SEAP_CTX_new ();
+        sd  = SEAP_openfd2 (ctx, STDIN_FILENO, STDOUT_FILENO, 0);
         
         /* Initialize RPM db */
         if (rpmReadConfigFiles ((const char *)NULL, (const char *)NULL) != 0)
@@ -128,7 +129,7 @@ int main (int argc, char *argv[])
         /* Main loop */
         for (;;) {
                 /* receive S-exp */
-                if (SEAP_recvmsg (ctx, sd, &request) == -1) {
+                if (SEAP_recvmsg (ctx, sd, &seap_request) == -1) {
                         /* handle the error */
                         _D("An error ocured while receiving SEAP message. errno=%u, %s.\n",
                            errno, strerror (errno));
@@ -136,8 +137,8 @@ int main (int argc, char *argv[])
                 }
                 
                 /* get the desired values from an OVAL object */
-                req_st.name = SEXP_OVALobj_getelement_value (request->sexp, "name");
-                if (req_st.name == NULL) {
+                request_st.name = SEXP_OVALobj_getelement_value (seap_request->sexp, "name");
+                if (request_st.name == NULL) {
                         /* Element not found */
                         _D("Can't extract package name from the received message.\n");
                         /* FIXME: free the message */
@@ -147,10 +148,10 @@ int main (int argc, char *argv[])
                 /* get info from RPM db */
                 switch (rpmret = get_rpminfo (&request_st, &reply_st)) {
                 case 0: /* Not found */
-                        _D("Package \"%s\" not found.\n");
+                        _D("Package \"%s\" not found.\n", request_st.name);
 
                         seap_reply = SEAP_msg_new ();
-                        seap_reply.sexp = SEXP_string_new ("nil", 3); 
+                        seap_reply->sexp = SEXP_string_new ("nil", 3); 
                         break;
                 case -1: /* Error */
                         _D("get_rpminfo failed\n");
@@ -160,23 +161,23 @@ int main (int argc, char *argv[])
                         _A(rpmret >= 0);
                         
                         seap_reply = SEAP_msg_new ();
-                        seap_reply.sexp = SEXP_list_new ();
+                        seap_reply->sexp = SEXP_list_new ();
                         
                         for (i = 0; i < rpmret; ++i) {
                                 state_sexp = SEXP_OVALobj_create ("rpminfo_state", NULL,
-                                                                  "name",    NULL, reply_st.name,
-                                                                  "arch",    NULL, reply_st.arch,
-                                                                  "epoch",   NULL, reply_st.epoch,
-                                                                  "release", NULL, reply_st.release,
-                                                                  "version", NULL, reply_st.version,
-                                                                  "evr",     NULL, reply_st.evr,
-                                                                  "signature_keyid", NULL, reply_st.signature_keyid);
+                                                                  "name",    NULL, reply_st[i].name,
+                                                                  "arch",    NULL, reply_st[i].arch,
+                                                                  "epoch",   NULL, reply_st[i].epoch,
+                                                                  "release", NULL, reply_st[i].release,
+                                                                  "version", NULL, reply_st[i].version,
+                                                                  "evr",     NULL, reply_st[i].evr,
+                                                                  "signature_keyid", NULL, reply_st[i].signature_keyid);
                                 
-                                SEXP_list_add (seap_reply.sexp, state_sexp);
+                                SEXP_list_add (seap_reply->sexp, state_sexp);
                         }
                 }
                 
-                if (SEAP_reply (ctx, sd, reply, request) == -1) {
+                if (SEAP_reply (ctx, sd, seap_reply, seap_request) == -1) {
                         /* Handle the error */
                         _D("An error ocured while sending SEAP message. errno=%u, %s.\n",
                            errno, strerror (errno));

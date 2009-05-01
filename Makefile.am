@@ -1,4 +1,10 @@
-SUBDIRS = src examples swig
+SUBDIRS = src
+
+if WANT_PROBES
+SUBDIRS += src/OVAL/probes
+endif
+
+SUBDIRS += examples swig
 
 EXTRA_DIST = dist/fedora/openscap.spec docs/Doxyfile
 
