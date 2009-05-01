@@ -8,6 +8,7 @@ typedef struct {
 } OVALobj_attr_t;
 
 #include <stdarg.h>
+#include "oval_definitions_impl.h"
 
 SEXP_t *SEXP_OVALobj_create (const char *obj_name, OVALobj_attr_t obj_attrs[], ...);
 
