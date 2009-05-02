@@ -59,6 +59,9 @@ static inline void SEXP_SETFLAG(SEXP_t *sexp, ATOM_flags_t flag)
 
 /* Functions for manipulating with numbers */
 SEXP_t *SEXP_number_new (const void *, NUM_type_t);
+int     SEXP_numberp (SEXP_t *sexp);
+size_t  SEXP_number_size (SEXP_t *sexp);
+void    SEXP_number_get (SEXP_t *sexp, void *ptr, NUM_type_t type);
 
 /* Functions for manipulating with strings */
 SEXP_t *SEXP_string_new (const void *, size_t);
@@ -119,6 +122,7 @@ void    SEXP_init (SEXP_t *sexp);
 void    SEXP_free (SEXP_t **sexpp);
 SEXP_t *SEXP_copy (SEXP_t *sexp);
 SEXP_t *SEXP_copyobj (SEXP_t *sexp);
+size_t  SEXP_length (SEXP_t *sexp);
 
 /*
  *  Returns atomic type of the given S-exp as a string.

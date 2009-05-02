@@ -17,6 +17,7 @@
 #include <errno.h>
 #include <assert.h>
 /* RPM headers */
+#include <rpm/rpmdb.h>
 #include <rpm/rpmlib.h>
 
 /* SEAP */
@@ -57,47 +58,51 @@ static int get_rpminfo (struct rpminfo_req *req, struct rpminfo_rep **rep)
 {	
 	rpmdbMatchIterator match;
 	Header pkgh;
-	int ret = 0;
+	int ret = 0, i;
 	char *str, *sid;
 	size_t len;
 	errmsg_t rpmerr;
 	
-	match = rpmtsInitIterator (RPMts, RPMTAG_NAME, (const void *)req->name, 0);
+	match = rpmdbInitIterator (RPMts, RPMTAG_NAME, (const void *)req->name, 0);
 	if (NULL == match)
-		return (-1);
+		return (0);
 	
-	while ((pkgh = rpmdbNextIterator (match)) != NULL) {
-		(*rep) = xrealloc(*rep, sizeof (struct rpminfo_rep) * (++ret));
+        ret = rpmdbGetIteratorCount (match);
+        
+        if (ret > 0) {
+                (*rep) = xrealloc (*rep, sizeof (struct rpminfo_rep) * ret);
                 
-		(*rep)[ret - 1].name    = headerFormat (pkgh, "%{NAME}", &rpmerr);
-		(*rep)[ret - 1].arch    = headerFormat (pkgh, "%{ARCH}", &rpmerr);
-		str = headerFormat (pkgh, "%{EPOCH}", &rpmerr);
-		if (strcmp (str, "(none)") == 0) {
-			str    = xrealloc (str, sizeof (char) * 2);
-			str[0] = '0';
-			str[1] = '\0';
-		}
-		(*rep)[ret - 1].epoch   = str;
-		(*rep)[ret - 1].release = headerFormat (pkgh, "%{RELEASE}", &rpmerr);
-		(*rep)[ret - 1].version = headerFormat (pkgh, "%{VERSION}", &rpmerr);
-		
-		len = (strlen ((*rep)[ret - 1].epoch)   +
-		       strlen ((*rep)[ret - 1].release) +
-		       strlen ((*rep)[ret - 1].version) + 2);
-		
-		str = xmalloc (sizeof (char) * (len + 1));
-		snprintf (str, len + 1, "%s:%s-%s",
-			  (*rep)[ret - 1].epoch,
-			  (*rep)[ret - 1].version,
-			  (*rep)[ret - 1].release);
-		
-		(*rep)[ret - 1].evr = str;
-		
-		str = headerFormat (pkgh, "%{SIGGPG:pgpsig}", &rpmerr);
-		sid = strrchr (str, ' ');
-		(*rep)[ret - 1].signature_keyid = (sid != NULL ? strdup (sid+1) : strdup ("0"));
-		xfree ((void **)&str);
-	}
+                for (i = 0; ((pkgh = rpmdbNextIterator (match)) != NULL) && i < ret; ++i) {
+                        (*rep)[i].name    = headerFormat (pkgh, "%{NAME}", &rpmerr);
+                        (*rep)[i].arch    = headerFormat (pkgh, "%{ARCH}", &rpmerr);
+                        str = headerFormat (pkgh, "%{EPOCH}", &rpmerr);
+                        if (strcmp (str, "(none)") == 0) {
+                                str    = xrealloc (str, sizeof (char) * 2);
+                                str[0] = '0';
+                                str[1] = '\0';
+                        }
+                        (*rep)[i].epoch   = str;
+                        (*rep)[i].release = headerFormat (pkgh, "%{RELEASE}", &rpmerr);
+                        (*rep)[i].version = headerFormat (pkgh, "%{VERSION}", &rpmerr);
+                        
+                        len = (strlen ((*rep)[i].epoch)   +
+                               strlen ((*rep)[i].release) +
+                               strlen ((*rep)[i].version) + 2);
+                        
+                        str = xmalloc (sizeof (char) * (len + 1));
+                        snprintf (str, len + 1, "%s:%s-%s",
+                                  (*rep)[i].epoch,
+                                  (*rep)[i].version,
+                                  (*rep)[i].release);
+                        
+                        (*rep)[i].evr = str;
+                        
+                        str = headerFormat (pkgh, "%{SIGGPG:pgpsig}", &rpmerr);
+                        sid = strrchr (str, ' ');
+                        (*rep)[i].signature_keyid = (sid != NULL ? strdup (sid+1) : strdup ("0"));
+                        xfree ((void **)&str);
+                }
+        }
 	
 	match = rpmdbFreeIterator (match);
 	return (ret);
@@ -115,6 +120,12 @@ int main (void)
         /* Initialize SEAP */
         ctx = SEAP_CTX_new ();
         sd  = SEAP_openfd2 (ctx, STDIN_FILENO, STDOUT_FILENO, 0);
+
+        if (sd < 0) {
+                _D("Can't create SEAP descriptor: errno=%u, %s.\n",
+                   errno, strerror (errno));
+                exit (1);
+        }
         
         /* Initialize RPM db */
         if (rpmReadConfigFiles ((const char *)NULL, (const char *)NULL) != 0)

@@ -277,8 +277,67 @@ int SEAP_recvmsg (SEAP_CTX_t *ctx, int sd, SEAP_msg_t **seap_msg)
                         }
                         
                         if (SEXP_listp (SEXP_list_last (sexp_msg))) {
+                                uint32_t i;
+
                                 msg = SEAP_msg_new ();
                                 msg->sexp = SEXP_list_last (sexp_msg);
+
+                                /* parse attributes */
+                                _A(SEXP_length (sexp_msg) > 0);
+                                
+                                for (i = 2; i < (SEXP_length (sexp_msg) - 1); ++i) {
+                                        SEXP_t *attr;
+
+                                        attr = SEXP_list_nth (sexp_msg, i);
+                                        if (SEXP_stringp (attr)) {
+                                                char *attrname;
+
+                                                attrname = SEXP_string_cstr (attr);
+                                                if (attrname != NULL) {
+                                                        SEXP_t *attrval = NULL;
+                                                        
+                                                        if (*attrname == ':') {
+                                                                if (strcmp (attrname, ":id") == 0) {
+                                                                        attrval = SEXP_list_nth (sexp_msg, i + 1);
+                                                                        
+                                                                        if (SEXP_numberp (attrval)) {
+                                                                                SEXP_number_get (attrval, &(msg->id), NUM_UINT64);
+                                                                                ++i;
+                                                                                _D("Msg id=%llu\n", msg->id);
+                                                                                continue;
+                                                                        } else {
+                                                                                _D("Non-numeric id!\n");
+                                                                                errno = EINVAL;
+                                                                                return (-1);
+                                                                        }
+                                                                } else {
+                                                                        if ((i + 1) <= (SEXP_length (sexp_msg) - 1)) {
+                                                                                attrval = SEXP_list_nth (sexp_msg, i + 1);
+                                                                                memmove (attrname, attrname + 1,
+                                                                                         sizeof (char) * (strlen (attrname)));
+                                                                        } else {
+                                                                                _D("Expected attribute value at position %u.\n", i + 1);
+                                                                                continue;
+                                                                        }
+                                                                }
+                                                                ++i;
+                                                        }
+                                                        
+                                                        _D("New attribute: n=%s, vt=%s\n",
+                                                           attrname, SEXP_strtype (attrval));
+                                                        
+                                                        SEAP_msgattr_set (msg, attrname, attrval);
+                                                } else {
+                                                        _D("Got NULL from SEXP_string_cstr.\n");
+                                                        continue;
+                                                }
+                                        } else {
+                                                _D("Expected attribute name at position %u but got something else of type: %s.\n",
+                                                   i, SEXP_strtype (attr));
+                                                continue;
+                                        }
+                                }
+
                                 *seap_msg = msg;
                                 
                                 return (0);
@@ -393,7 +452,6 @@ int SEAP_sendmsg (SEAP_CTX_t *ctx, int sd, SEAP_msg_t *seap_msg)
                 /* send */
                 if (SCH_SENDSEXP(desc->scheme, desc, sexp_msg, 0) < 0) {
                         /* error */
-                        errno = EIO;
                         return (-1);
                 }
                 
