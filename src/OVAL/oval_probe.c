@@ -8,6 +8,7 @@
 #define _A(x) assert(x)
 #endif
 
+/* KEEP THIS LIST SORTED! (by subtype) */
 const oval_probe_t __probetbl[] = {
         /* 9001 */ { LINUX_DPKG_INFO, "dpkginfo", "probe.dpkginfo" },
         /* 9003 */ { LINUX_RPM_INFO,  "rpminfo",  "probe.rpminfo"  },
@@ -39,11 +40,18 @@ const oval_probe_t *search_probe (oval_subtype_enum typenum)
         return (NULL);
 }
 
+struct oval_iterator_syschar *sexp_to_oval_state (SEXP_t *sexp)
+{
+        /* TODO */
+        return (NULL);
+}
+
 struct oval_iterator_syschar *probe_simple_object (struct oval_object *object,
                                                    struct oval_iterator_variable_binding *binding)
 {
         SEXP_t       *sexp;
         const oval_probe_t *probe;
+        struct oval_iterator_syschar *sysch;
         
         _A(object != NULL);
 
@@ -54,9 +62,14 @@ struct oval_iterator_syschar *probe_simple_object (struct oval_object *object,
         }
         
         /* create s-exp */
-        sexp = oval_object_to_sexp (probe->typestr, object);
+        sexp  = oval_object_to_sexp (probe->typestr, object);
         
+        
+
         /* translate the result to oval state */
+        sysch = sexp_to_oval_state (sexp);
+        
+        /* cleanup */
 
         return (NULL);
 }

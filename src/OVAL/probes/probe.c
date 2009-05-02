@@ -196,9 +196,3 @@ SEXP_t *oval_object_to_sexp (const char *typestr, struct oval_object *object)
         
         return (sexp);
 }
-
-struct oval *sexp_to_oval_state (SEXP_t *sexp)
-{
-        /* TODO */
-        return (NULL);
-}
