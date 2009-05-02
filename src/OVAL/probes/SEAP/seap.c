@@ -287,11 +287,11 @@ int SEAP_recvmsg (SEAP_CTX_t *ctx, int sd, SEAP_msg_t **seap_msg)
                                 
                                 for (i = 2; i < (SEXP_length (sexp_msg) - 1); ++i) {
                                         SEXP_t *attr;
-
+                                        
                                         attr = SEXP_list_nth (sexp_msg, i);
                                         if (SEXP_stringp (attr)) {
                                                 char *attrname;
-
+                                                
                                                 attrname = SEXP_string_cstr (attr);
                                                 if (attrname != NULL) {
                                                         SEXP_t *attrval = NULL;
@@ -303,7 +303,8 @@ int SEAP_recvmsg (SEAP_CTX_t *ctx, int sd, SEAP_msg_t **seap_msg)
                                                                         if (SEXP_numberp (attrval)) {
                                                                                 SEXP_number_get (attrval, &(msg->id), NUM_UINT64);
                                                                                 ++i;
-                                                                                _D("Msg id=%llu\n", msg->id);
+                                                                                _D("Msg id=%llu, %u, %hu, %hhu\n",
+                                                                                   msg->id, (uint32_t)msg->id, (uint16_t)msg->id, (uint8_t)msg->id);
                                                                                 continue;
                                                                         } else {
                                                                                 _D("Non-numeric id!\n");
