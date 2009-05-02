@@ -22,7 +22,7 @@ AC_PROG_LIBTOOL
 AC_PROG_SWIG([1.3.29])
 
 # Compiler flags
-CFLAGS="$CFLAGS -W -Wall -Wshadow -Wformat -Wundef -D_GNU_SOURCE"
+CFLAGS="$CFLAGS -W -Wall -Wshadow -Wformat -Wundef -D_GNU_SOURCE -fno-inline-functions -O0 -g"
 
 #
 # xml2-config

@@ -105,134 +105,183 @@ void SEXP_number_get (SEXP_t *sexp, void *ptr, NUM_type_t type)
                                 switch (type) {
                                 case NUM_INT8:
                                         *((int8_t *)ptr)   = (int8_t)NUM(int8_t, sexp->atom.number.nptr);
+                                        break;
                                 case NUM_UINT8:
                                         *((uint8_t *)ptr)  = (uint8_t)NUM(int8_t, sexp->atom.number.nptr);
+                                        break;
                                 case NUM_INT16:
                                         *((int16_t *)ptr)  = (int16_t)NUM(int8_t, sexp->atom.number.nptr);
+                                        break;
                                 case NUM_UINT16:
                                         *((uint16_t *)ptr) = (uint16_t)NUM(int8_t, sexp->atom.number.nptr);                                        
+                                        break;
                                 case NUM_INT32:
                                         *((int32_t *)ptr)  = (int32_t)NUM(int8_t, sexp->atom.number.nptr);
+                                        break;
                                 case NUM_UINT32:
                                         *((uint32_t *)ptr) = (uint32_t)NUM(int8_t, sexp->atom.number.nptr);
+                                        break;
                                 case NUM_INT64:
                                         *((int64_t *)ptr)  = (int64_t)NUM(int8_t, sexp->atom.number.nptr);
+                                        break;
                                 case NUM_UINT64:
                                         *((uint64_t *)ptr) = (uint64_t)NUM(int8_t, sexp->atom.number.nptr);
+                                        break;
                                 case NUM_DOUBLE:
                                         *((double *)ptr)   = (double)NUM(int8_t, sexp->atom.number.nptr);
+                                        break;
                                 }
                                 return;
                         case NUM_UINT8:
                                 switch (type) {
                                 case NUM_INT8:
                                         *((int8_t *)ptr)   = (int8_t)NUM(uint8_t, sexp->atom.number.nptr);
+                                        break;
                                 case NUM_UINT8:
                                         *((uint8_t *)ptr)  = (uint8_t)NUM(uint8_t, sexp->atom.number.nptr);
+                                        break;
                                 case NUM_INT16:
                                         *((int16_t *)ptr)  = (int16_t)NUM(uint8_t, sexp->atom.number.nptr);
+                                        break;
                                 case NUM_UINT16:
                                         *((uint16_t *)ptr) = (uint16_t)NUM(uint8_t, sexp->atom.number.nptr);                                        
+                                        break;
                                 case NUM_INT32:
                                         *((int32_t *)ptr)  = (int32_t)NUM(uint8_t, sexp->atom.number.nptr);
+                                        break;
                                 case NUM_UINT32:
                                         *((uint32_t *)ptr) = (uint32_t)NUM(uint8_t, sexp->atom.number.nptr);
+                                        break;
                                 case NUM_INT64:
                                         *((int64_t *)ptr)  = (int64_t)NUM(uint8_t, sexp->atom.number.nptr);
+                                        break;
                                 case NUM_UINT64:
                                         *((uint64_t *)ptr) = (uint64_t)NUM(uint8_t, sexp->atom.number.nptr);
+                                        break;
                                 case NUM_DOUBLE:
                                         *((double *)ptr)   = (double)NUM(uint8_t, sexp->atom.number.nptr);
+                                        break;
                                 }
                                 return;
                         case NUM_INT16:
                                 switch (type) {
                                 case NUM_INT16:
                                         *((int16_t *)ptr)  = (int16_t)NUM(int16_t, sexp->atom.number.nptr);
+                                        break;
                                 case NUM_UINT16:
                                         *((uint16_t *)ptr) = (uint16_t)NUM(int16_t, sexp->atom.number.nptr);                                        
+                                        break;
                                 case NUM_INT32:
                                         *((int32_t *)ptr)  = (int32_t)NUM(int16_t, sexp->atom.number.nptr);
+                                        break;
                                 case NUM_UINT32:
                                         *((uint32_t *)ptr) = (uint32_t)NUM(int16_t, sexp->atom.number.nptr);
+                                        break;
                                 case NUM_INT64:
                                         *((int64_t *)ptr)  = (int64_t)NUM(int16_t, sexp->atom.number.nptr);
+                                        break;
                                 case NUM_UINT64:
                                         *((uint64_t *)ptr) = (uint64_t)NUM(int16_t, sexp->atom.number.nptr);
+                                        break;
                                 case NUM_DOUBLE:
                                         *((double *)ptr)   = (double)NUM(int16_t, sexp->atom.number.nptr);
+                                        break;
                                 }
                                 return;
                         case NUM_UINT16:
                                 switch (type) {
                                 case NUM_INT16:
                                         *((int16_t *)ptr)  = (int16_t)NUM(uint16_t, sexp->atom.number.nptr);
+                                        break;
                                 case NUM_UINT16:
                                         *((uint16_t *)ptr) = (uint16_t)NUM(uint16_t, sexp->atom.number.nptr);                                        
+                                        break;
                                 case NUM_INT32:
                                         *((int32_t *)ptr)  = (int32_t)NUM(uint16_t, sexp->atom.number.nptr);
+                                        break;
                                 case NUM_UINT32:
                                         *((uint32_t *)ptr) = (uint32_t)NUM(uint16_t, sexp->atom.number.nptr);
+                                        break;
                                 case NUM_INT64:
                                         *((int64_t *)ptr)  = (int64_t)NUM(uint16_t, sexp->atom.number.nptr);
+                                        break;
                                 case NUM_UINT64:
                                         *((uint64_t *)ptr) = (uint64_t)NUM(uint16_t, sexp->atom.number.nptr);
+                                        break;
                                 case NUM_DOUBLE:
                                         *((double *)ptr)   = (double)NUM(uint16_t, sexp->atom.number.nptr);
+                                        break;
                                 }
                                 return;
                         case NUM_INT32:
                                 switch (type) {
                                 case NUM_INT32:
                                         *((int32_t *)ptr)  = (int32_t)NUM(int32_t, sexp->atom.number.nptr);
+                                        break;
                                 case NUM_UINT32:
                                         *((uint32_t *)ptr) = (uint32_t)NUM(int32_t, sexp->atom.number.nptr);
+                                        break;
                                 case NUM_INT64:
                                         *((int64_t *)ptr)  = (int64_t)NUM(int32_t, sexp->atom.number.nptr);
+                                        break;
                                 case NUM_UINT64:
                                         *((uint64_t *)ptr) = (uint64_t)NUM(int32_t, sexp->atom.number.nptr);
+                                        break;
                                 case NUM_DOUBLE:
                                         *((double *)ptr)   = (double)NUM(int32_t, sexp->atom.number.nptr);
+                                        break;
                                 }
                                 return;
                         case NUM_UINT32:
                                 switch (type) {
                                 case NUM_INT32:
                                         *((int32_t *)ptr)  = (int32_t)NUM(uint32_t, sexp->atom.number.nptr);
+                                        break;
                                 case NUM_UINT32:
                                         *((uint32_t *)ptr) = (uint32_t)NUM(uint32_t, sexp->atom.number.nptr);
+                                        break;
                                 case NUM_INT64:
                                         *((int64_t *)ptr)  = (int64_t)NUM(uint32_t, sexp->atom.number.nptr);
+                                        break;
                                 case NUM_UINT64:
                                         *((uint64_t *)ptr) = (uint64_t)NUM(uint32_t, sexp->atom.number.nptr);
+                                        break;
                                 case NUM_DOUBLE:
                                         *((double *)ptr)   = (double)NUM(uint32_t, sexp->atom.number.nptr);
+                                        break;
                                 }
                                 return;
                         case NUM_INT64:
                                 switch (type) {
                                 case NUM_INT64:
                                         *((int64_t *)ptr)  = (int64_t)NUM(int64_t, sexp->atom.number.nptr);
+                                        break;
                                 case NUM_UINT64:
                                         *((uint64_t *)ptr) = (uint64_t)NUM(int64_t, sexp->atom.number.nptr);
+                                        break;
                                 case NUM_DOUBLE:
                                         *((double *)ptr)   = (double)NUM(int64_t, sexp->atom.number.nptr);
+                                        break;
                                 }
                                 return;
                         case NUM_UINT64:
                                 switch (type) {
                                 case NUM_INT64:
                                         *((int64_t *)ptr)  = (int64_t)NUM(uint64_t, sexp->atom.number.nptr);
+                                        break;
                                 case NUM_UINT64:
                                         *((uint64_t *)ptr) = (uint64_t)NUM(uint64_t, sexp->atom.number.nptr);
+                                        break;
                                 case NUM_DOUBLE:
                                         *((double *)ptr)   = (double)NUM(uint64_t, sexp->atom.number.nptr);
+                                        break;
                                 }
                                 return;
                         case NUM_DOUBLE:
                                 switch (type) {
                                 case NUM_DOUBLE:
                                         *((double *)ptr)   = (double)NUM(uint64_t, sexp->atom.number.nptr);
+                                        break;
                                 }
                                 return;
                         }
@@ -311,7 +360,10 @@ int SEXP_strncoll (SEXP_t *sexp, const char *str, size_t n)
 
 int SEXP_stringp (SEXP_t *sexp)
 {
-        return (SEXP_TYPE(sexp) == ATOM_STRING);
+        if (sexp != NULL)
+                return (SEXP_TYPE(sexp) == ATOM_STRING);
+        else
+                return (0);
 }
 
 char *SEXP_string_cstr (SEXP_t *sexp)
@@ -489,9 +541,16 @@ SEXP_t *SEXP_list_nth (SEXP_t *sexp, uint32_t n)
         _A(sexp != NULL);
         _A(n > 0);
         
-        if (SEXP_listp (sexp) && n > 0) {
-                if (sexp->atom.list.count <= n)
+        if (SEXP_TYPE(sexp) == ATOM_LIST && n > 0) {
+                _D("nth: %u, %p\n", n, sexp);
+                
+                if (n <= sexp->atom.list.count) {
+                        _D("nth: %u, %p, %s\n",
+                           n, &(SEXP(sexp->atom.list.memb)[n - 1]),
+                           SEXP_strtype (&(SEXP(sexp->atom.list.memb)[n - 1])));
+                        
                         return &(SEXP(sexp->atom.list.memb)[n - 1]);
+                }
         }
         
         return (NULL);
@@ -625,8 +684,12 @@ const char *__sexp_strtype[] = {
         "empty"
 };
 
-const char *SEAP_sexp_strtype (const SEXP_t *sexp)
+const char *SEXP_strtype (const SEXP_t *sexp)
 {
-        _A(SEXP_TYPE(sexp) >= 0);
-        return (SEXP_TYPE(sexp) < 0x06 ? __sexp_strtype[SEXP_TYPE(sexp)] : "unknown");
+        if (sexp != NULL) {
+                _A(SEXP_TYPE(sexp) >= 0);
+                return (SEXP_TYPE(sexp) < 0x06 ? __sexp_strtype[SEXP_TYPE(sexp)] : "unknown");
+        } else {
+                return ("(null)");
+        }
 }

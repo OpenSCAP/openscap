@@ -8,7 +8,7 @@
 typedef uint8_t SEAP_scheme_t;
 
 typedef struct {
-        uint32_t      next_id;
+        uint64_t      next_id;
         SEXP_t       *sexpbuf; /* S-exp buffer */
         SEXP_ostate_t *ostate;
         SEXP_pstate_t *pstate;  /* Parser state */

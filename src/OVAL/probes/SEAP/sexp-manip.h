@@ -41,13 +41,13 @@ static inline void SEXP_SETFLAG(SEXP_t *sexp, ATOM_flags_t flag)
  *  stored there. The pointer to this memory
  *  block is stored in voidp.
  */
-#define NUM_STORE(type, nsrc, voidp) do {                        \
-                if (sizeof (type) <= VOIDPTR_SIZE) {             \
-                        *((type *)(&(voidp))) = (type)(nsrc);    \
-                } else {                                         \
-                        (voidp) = xmalloc (sizeof (type));       \
-                        *((type *)(voidp)) = (type)(nsrc);       \
-                }                                                \
+#define NUM_STORE(type, nsrc, voidp) do {                            \
+                if (sizeof (type) <= VOIDPTR_SIZE) {                 \
+                        *((type *)(&(voidp))) = (type)(nsrc);        \
+                } else {                                             \
+                        (voidp) = xmalloc (sizeof (type));           \
+                        *((type *)(voidp)) = (type)(nsrc);           \
+                }                                                    \
         } while (0)
 
 /*
@@ -55,7 +55,7 @@ static inline void SEXP_SETFLAG(SEXP_t *sexp, ATOM_flags_t flag)
  *  returns the number of type type stored
  *  at or in voidp.
  */
-#define NUM(type, voidp) (sizeof (type) <= VOIDPTR_SIZE ? *((type *)(&(voidp))) : *((type *)(voidp)))
+#define NUM(type, voidp) (sizeof (type) <= VOIDPTR_SIZE ? (*((type *)(&(voidp)))) : *((type *)(voidp)))
 
 /* Functions for manipulating with numbers */
 SEXP_t *SEXP_number_new (const void *, NUM_type_t);

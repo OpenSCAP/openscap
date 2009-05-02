@@ -565,20 +565,24 @@ DEFPARSER(label)
                                         if (number > UINT16_MAX) {
                                                 if (number > UINT32_MAX) {
                                                         /* 64 */
+                                                        _D("NUM_STORE64: %llu\n", number);
                                                         NUM_STORE(uint64_t, number, sexp->atom.number.nptr);
                                                         sexp->atom.number.type = NUM_UINT64;
                                                 } else {
                                                         /* 32 */
+                                                        _D("NUM_STORE32: %llu\n", number);
                                                         NUM_STORE(uint32_t, number, sexp->atom.number.nptr);
                                                         sexp->atom.number.type = NUM_UINT32;
                                                 }
                                         } else {
                                                 if (number > UINT8_MAX) {
                                                         /* 16 */
+                                                        _D("NUM_STORE16: %llu\n", number);
                                                         NUM_STORE(uint16_t, number, sexp->atom.number.nptr);
                                                         sexp->atom.number.type = NUM_UINT16;
                                                 } else {
                                                         /* 8 */
+                                                        _D("NUM_STORE8: %llu\n", number);
                                                         NUM_STORE(uint8_t, number, sexp->atom.number.nptr);
                                                         sexp->atom.number.type = NUM_UINT8;
                                                 }
