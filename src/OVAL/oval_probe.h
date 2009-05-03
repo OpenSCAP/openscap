@@ -2,19 +2,34 @@
 #ifndef OVAL_PROBE_H
 #define OVAL_PROBE_H
 
+#include "probes/SEAP/seap-types.h"
 #include "oval_definitions_impl.h"
 #include "oval_agent_api_impl.h"
 #include "oval_parser_impl.h"
 #include "oval_string_map_impl.h"
 #include "api/oval_system_characteristics.h"
 
-#define OVAL_PROBE_DIR "/usr/libexec/openscap/oval"
+#define OVAL_PROBE_SCHEME "pipe://"
+#define OVAL_PROBE_DIR    "/usr/libexec/openscap/oval"
 
 typedef struct {
         oval_subtype_enum typenum;
         char             *typestr;
-        char             *path;
+        char             *filename;
 } oval_probe_t;
+
+typedef struct {
+        oval_subtype_enum typenum;
+        int sd;
+} probe_sd_t;
+
+typedef struct {
+        probe_sd_t *memb;
+        size_t      count;
+        SEAP_CTX_t  ctx;
+} probe_sdtbl_t;
+
+#define PROBE_SDTBL_INITIALIZER { NULL, 0, 0, SEAP_CTX_INITIALIZER }
 
 struct oval_iterator_syschar *sexp_to_oval_state (SEXP_t *sexp);
 

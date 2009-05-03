@@ -27,6 +27,8 @@ typedef struct {
         bitmap_t     bitmap;
 } SEAP_desctable_t;
 
+#define SEAP_DESCTBL_INITIALIZER { NULL, 0, BITMAP_INITIALIZER }
+
 #define SEAP_BUFFER_SIZE 4096
 #define SEAP_MAX_OPENDESC 128
 #define SDTABLE_REALLOC_ADD 4
@@ -40,6 +42,8 @@ typedef struct __SEAP_CTX_t {
         SEAP_desctable_t sd_table;
 } SEAP_CTX_t;
 
+#define SEAP_CTX_INITIALIZER { NULL, 0, 0, 0, SEAP_DESCTBL_INITIALIZER }
+
 typedef struct {
         char   *name;
         SEXP_t *value;
@@ -51,5 +55,12 @@ typedef struct {
         uint16_t     attrs_cnt;
         SEXP_t      *sexp;
 } SEAP_msg_t;
+
+/* SEAP errors */
+#define SERR_REM_UNFIN 1 /* peer received an incomplete expression */
+#define SERR_LOC_UNFIN 2 /* peer sent an incomplete expression */
+#define SERR_REM_PARSE 3 /* peer received an invalid expression */
+#define SERR_LOC_PARSE 4 /* peer sent an invalid expression */
+#define SERR_REM_CLOSE 5 /* peer closed the connection */
 
 #endif /* SEAP_TYPES_H */
