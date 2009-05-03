@@ -9,13 +9,19 @@ typedef uint16_t bitmap_size_t;
 typedef int32_t  bitmap_bitn_t;
 
 typedef struct {
-#if defined(THREADS)
+#if defined(THREAD_SAFE)
         uint8_t   locked;
 #endif
         bitmap_size_t  size;  /* bit capacity = size * BITMAP_CELLSIZE */
         bitmap_size_t  realsize;
         bitmap_cell_t *cells;
 } bitmap_t;
+
+#if defined(THREAD_SAFE)
+# define BITMAP_INITIALIZER { 0, 0, 0, NULL }
+#else
+# define BITMAP_INITIALIZER { 0, 0, NULL }
+#endif
 
 #define BITMAP_CELLSIZE (sizeof (bitmap_cell_t) * 8)
 
