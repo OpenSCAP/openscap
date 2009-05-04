@@ -45,6 +45,17 @@ struct rpminfo_rep {
         char *signature_keyid;
 };
 
+void __rpminfo_rep_free (struct rpminfo_rep *ptr)
+{
+        xfree ((void **)&(ptr->name));
+        xfree ((void **)&(ptr->arch));
+        xfree ((void **)&(ptr->epoch));
+        xfree ((void **)&(ptr->release));
+        xfree ((void **)&(ptr->version));
+        xfree ((void **)&(ptr->evr));
+        xfree ((void **)&(ptr->signature_keyid));
+}
+
 /*
  * req - Structure containing the name of the package.
  * rep - Pointer to rpminfo_rep structure pointer. An
@@ -101,6 +112,16 @@ static int get_rpminfo (struct rpminfo_req *req, struct rpminfo_rep **rep)
                         sid = strrchr (str, ' ');
                         (*rep)[i].signature_keyid = (sid != NULL ? strdup (sid+1) : strdup ("0"));
                         xfree ((void **)&str);
+                }
+
+                if (ret != i) {
+                        _D("Something bad happened...\n");
+                        
+                        while (i > 0)
+                                __rpminfo_rep_free (&((*rep)[--i]));
+                        
+                        xfree ((void **)&(*rep));
+                        ret = -1;
                 }
         }
 	
