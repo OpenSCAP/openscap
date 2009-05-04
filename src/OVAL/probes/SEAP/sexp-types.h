@@ -24,6 +24,7 @@ typedef uint8_t  ATOM_type_t;
 #define ATOM_LIST     0x01
 #define ATOM_NUMBER   0x02
 #define ATOM_STRING   0x04
+#define ATOM_INVAL    0x0e
 #define ATOM_EMPTY    0x0f
 
 /*

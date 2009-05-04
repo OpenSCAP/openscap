@@ -136,7 +136,7 @@ struct oval_iterator_syschar *probe_simple_object (struct oval_object *object,
         SEAP_msg_t *msg;
                 
         const oval_probe_t *probe;
-        struct oval_iterator_syschar *sysch;
+        struct oval_iterator_syschar *sysch = NULL;
         
         _A(object != NULL);
 
@@ -159,7 +159,7 @@ struct oval_iterator_syschar *probe_simple_object (struct oval_object *object,
         
         psd = probe_sd_get (ptbl, oval_object_subtype (object));
         if (psd == -1) {
-                char  *uri;
+                char  *uri, *dir;
                 size_t len;
                 
                 len = (strlen (OVAL_PROBE_SCHEME) +
@@ -172,8 +172,15 @@ struct oval_iterator_syschar *probe_simple_object (struct oval_object *object,
                         return (NULL);
                 }
                 
-                snprintf (uri, len + 1, "%s%s/%s", OVAL_PROBE_SCHEME,
-                          OVAL_PROBE_DIR, probe->filename);
+#if defined(PROBEPATH_ENV)
+                dir = getenv ("PROBEPATH");
+                if (dir == NULL)
+                        dir = OVAL_PROBE_DIR;
+#else
+                dir = OVAL_PROBE_DIR;
+#endif
+                snprintf (uri, len + 1, "%s%s/%s",
+                          OVAL_PROBE_SCHEME, dir, probe->filename);
                 
                 psd = SEAP_connect (&(ptbl->ctx), uri, 0);
                 if (psd < 0) {

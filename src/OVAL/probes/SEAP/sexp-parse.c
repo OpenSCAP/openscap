@@ -2,6 +2,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <assert.h>
+#include <errno.h>
 #include <config.h>
 #include "common.h"
 #include "xmalloc.h"
@@ -260,7 +261,8 @@ DEFPARSER(label)
                 /* 127 DEL (delete)                   */ &&L_INVALID,
                 /* 128 -------- reserved ------------ */ &&L_INVALID
         };
-        
+
+        int errnum = 0;
         size_t  i = 0, toklen = 0;
         SEXP_pflags_t exflags, exflags_tmp = 0;
         char    c;
@@ -323,41 +325,61 @@ DEFPARSER(label)
                 goto *((c >= 0) ? labels[(uint8_t)c] : labels[128]);
         L_CHAR:
                 i += EXTRACTOR(si_string)(sexp, pbuf + i, buflen - i, exflags);
-                
-                if (SEXP_TYPE(sexp) == ATOM_UNFIN) {
-                        _D("Invalid si string\n");
-                        break;
-                }
 
-                goto L_SEXP_ADD;
+                switch (SEXP_TYPE(sexp)) {
+                case ATOM_UNFIN:
+                        errnum = EAGAIN;
+                        break;
+                case ATOM_INVAL:
+                        errnum = EILSEQ;
+                        break;
+                default:
+                        goto L_SEXP_ADD;
+                }
+                break;
         L_CHAR_FIXEDLEN:
                 EXTRACTOR_F(string)(sexp, pbuf + i, buflen - i, toklen, exflags);
 
-                if (SEXP_TYPE(sexp) == ATOM_UNFIN) {
-                        _D("Invalid si string\n");
+                switch (SEXP_TYPE(sexp)) {
+                case ATOM_UNFIN:
+                        errnum = EAGAIN;
                         break;
+                case ATOM_INVAL:
+                        errnum = EILSEQ;
+                        break;
+                default:
+                        i += toklen;
+                        goto L_SEXP_ADD;
                 }
-
-                i += toklen;
-                goto L_SEXP_ADD;
+                break;
         L_DQUOTE:
                 i += EXTRACTOR(dq_string)(sexp, pbuf + i, buflen - i, exflags);
-
-                if (SEXP_TYPE(sexp) == ATOM_UNFIN) {
-                        _D("Invalid dq string\n");
+                
+                switch (SEXP_TYPE(sexp)) {
+                case ATOM_UNFIN:
+                        errnum = EAGAIN;
                         break;
+                case ATOM_INVAL:
+                        errnum = EILSEQ;
+                        break;
+                default:
+                        goto L_SEXP_ADD;
                 }
-
-                goto L_SEXP_ADD;
+                break;
         L_SQUOTE:
                 i += EXTRACTOR(sq_string)(sexp, pbuf + i, buflen - i, exflags);
 
-                if (SEXP_TYPE(sexp) == ATOM_UNFIN) {
-                        _D("Invalid sq string\n");
+                switch (SEXP_TYPE(sexp)) {
+                case ATOM_UNFIN:
+                        errnum = EAGAIN;
                         break;
+                case ATOM_INVAL:
+                        errnum = EILSEQ;
+                        break;
+                default:
+                        goto L_SEXP_ADD;
                 }
-
-                goto L_SEXP_ADD;
+                break;
         L_DOT:
                 if (!isdigit (pbuf[i+1]))
                         goto L_CHAR;
@@ -629,6 +651,7 @@ DEFPARSER(label)
                 goto L_SEXP_ADD;
         L_NUL:
                 _D("WTF? NUL found.\n");
+                errnum = EILSEQ;
                 break;
         L_WHITESPACE:
                 while (isspace(pbuf[++i]));
@@ -668,7 +691,9 @@ DEFPARSER(label)
                         goto L_NO_SEXP_ALLOC;
                 } else {
                         _D("Syntax error: Unexpected close parenthesis\n");
-                        return (NULL);
+                        SEXP_SETTYPE(sexp, ATOM_INVAL);
+                        errnum = EILSEQ;
+                        break;
                 }
                 continue;
         L_BRACKETOPEN:
@@ -695,55 +720,77 @@ DEFPARSER(label)
                 goto L_NO_SEXP_ALLOC;
         L_BRACEOPEN:
                 //i += EXTRACTOR(b64_decode)(sexp, pbuf + i, buflen, exflags);
-                continue;
+                errnum = EILSEQ;
+                break;
         L_BRACEOPEN_FIXEDLEN:
                 // EXTRACTOR_F(b64_decode)(sexp, pbuf + i, buflen, toklen, exflags);
-                continue;
+                errnum = EILSEQ;
+                break;
         L_VERTBAR:
                 i += EXTRACTOR(b64_string)(sexp, pbuf + i, buflen - i, exflags);
-                
-                if (SEXP_TYPE(sexp) == ATOM_UNFIN) {
-                        _D("Invalid b64 string\n");
+
+                switch (SEXP_TYPE(sexp)) {
+                case ATOM_UNFIN:
+                        errnum = EAGAIN;
                         break;
+                case ATOM_INVAL:
+                        errnum = EILSEQ;
+                        break;
+                default:
+                        goto L_SEXP_ADD;
                 }
-                
-                goto L_SEXP_ADD;
+                break;
         L_VERTBAR_FIXEDLEN:
                 EXTRACTOR_F(b64_string)(sexp, pbuf + i, buflen - i, toklen, exflags);
 
-                if (SEXP_TYPE(sexp) == ATOM_UNFIN) {
-                        _D("Invalid b64 string\n");
+                switch (SEXP_TYPE(sexp)) {
+                case ATOM_UNFIN:
+                        errnum = EAGAIN;
                         break;
+                case ATOM_INVAL:
+                        errnum = EILSEQ;
+                        break;
+                default:
+                        i += toklen + 2; /* +2 => || */
+                        goto L_SEXP_ADD;
                 }
-                
-                i += toklen + 2; /* +2 => || */
-                
-                goto L_SEXP_ADD;
+                break;
         L_HASH:
                 i += EXTRACTOR(hexstring)(sexp, pbuf + i, buflen - i, exflags);
                 
-                if (SEXP_TYPE(sexp) == ATOM_UNFIN) {
-                        _D("Invalid hex string\n");
+                switch (SEXP_TYPE(sexp)) {
+                case ATOM_UNFIN:
+                        errnum = EAGAIN;
                         break;
+                case ATOM_INVAL:
+                        errnum = EILSEQ;
+                        break;
+                default:
+                        goto L_SEXP_ADD;
                 }
-                
-                goto L_SEXP_ADD;
+                break;
         L_HASH_FIXEDLEN:
                 EXTRACTOR_F(hexstring)(sexp, pbuf + i, buflen - i, toklen, exflags);
-                
-                if (SEXP_TYPE(sexp) == ATOM_UNFIN) {
-                        _D("Invalid hex string\n");
+        
+                switch (SEXP_TYPE(sexp)) {
+                case ATOM_UNFIN:
+                        errnum = EAGAIN;
                         break;
+                case ATOM_INVAL:
+                        errnum = EILSEQ;
+                        break;
+                default:
+                        i += toklen + 2; /* +2 => ## */
+                        goto L_SEXP_ADD;
                 }
-                
-                i += toklen + 2; /* +2 => ## */
-                
-                goto L_SEXP_ADD;
+                break;
         L_BRACECLOSE:
         L_BRACKETCLOSE:
         L_INVALID:
                 _D("Syntax error: Invalid character: %02x\n", c);
-                return (NULL);
+                SEXP_SETTYPE(sexp, ATOM_INVAL);
+                errnum = EILSEQ;
+                break;
         L_SEXP_ADD:
                 /* Add new expression to list */
                 LIST_add (LIST_stack_top(&(PSTATE(pstatep)->lstack)), sexp);
@@ -752,7 +799,8 @@ DEFPARSER(label)
 #endif
         }
         
-        if (PSTATE(pstatep)->lstack.LIST_stack_cnt == 1 && SEXP_TYPE(sexp) != ATOM_UNFIN) {
+        if (PSTATE(pstatep)->lstack.LIST_stack_cnt == 1 &&
+            SEXP_TYPE(sexp) != ATOM_UNFIN && SEXP_TYPE(sexp) != ATOM_INVAL) {
                 _A(sexp != NULL);
                 _A(SEXP_TYPE(sexp) != ATOM_UNFIN);
                 _A(SEXP_TYPE(sexp) == ATOM_EMPTY);
@@ -770,11 +818,15 @@ DEFPARSER(label)
                 */
                 
                 PSTATE(pstatep) = NULL;
-                
+
                 _D("ret: sexp@%p\n", sexp);
+                
+                errno = 0;
                 return (sexp);
         } else {
-                _A(SEXP_TYPE(sexp) == ATOM_UNFIN || SEXP_TYPE(sexp) == ATOM_EMPTY);
+                _A(SEXP_TYPE(sexp) == ATOM_UNFIN ||
+                   SEXP_TYPE(sexp) == ATOM_EMPTY ||
+                   SEXP_TYPE(sexp) == ATOM_INVAL);
                 /* save the unparsed part of buf */
                 
                 PSTATE(pstatep)->buffer_data_len = buflen - i;
@@ -788,6 +840,8 @@ DEFPARSER(label)
                 SEXP_free (&sexp);
 
                 _D("ret: NULL\n");
+
+                errno = errnum;
                 return (NULL);
         }
 }
@@ -924,15 +978,15 @@ DEFEXTRACTOR(b64_string)
         while (str[l] != '|') {
                 if (isnexttok (str[l]) || l >= len) {
                         SEXP_SETTYPE(SEXP(out), ATOM_UNFIN);
-                        return 0;
+                        return (0);
                 }
                 ++l;
         }
         
         if ((slen = base64_decode (str + 1, (size_t)l - 1, (uint8_t **)&string)) == 0) {
                 _D("base64_decode failed\n");
-                SEXP_SETTYPE(SEXP(out), ATOM_UNFIN);
-                return 0;
+                SEXP_SETTYPE(SEXP(out), ATOM_INVAL);
+                return (0);
         } else {
                 _D("string = \"%.*s\"\n", slen, string);
 
@@ -954,7 +1008,7 @@ DEFEXTRACTOR_F(b64_string)
                 _D("b64: len=%u, \"%.*s\"\n", toklen, toklen, str + 1);
                 if ((slen = base64_decode (str + 1, toklen, (uint8_t **)&string)) == 0) {
                         _D("base64_decode failed\n");
-                        SEXP_SETTYPE(SEXP(out), ATOM_UNFIN);
+                        SEXP_SETTYPE(SEXP(out), ATOM_INVAL);
                 } else {
                         SEXP_SETTYPE(SEXP(out), ATOM_STRING);
                         SEXP(out)->atom.string.len = slen;
@@ -1139,7 +1193,7 @@ DEFEXTRACTOR(hexstring)
                                         ++l;
                                 else {
                                         /* Not a valid hex string character */
-                                        SEXP_SETTYPE(SEXP(out), ATOM_UNFIN);
+                                        SEXP_SETTYPE(SEXP(out), ATOM_INVAL);
                                         return (0);
                                 }
                         }
@@ -1169,7 +1223,7 @@ DEFEXTRACTOR(hexstring)
                 return (l + 1);
         } else {
                 /* Hexstring "##" is not allowed */
-                SEXP_SETTYPE(SEXP(out), ATOM_UNFIN);
+                SEXP_SETTYPE(SEXP(out), ATOM_INVAL);
                 return (0);
         }
 }
@@ -1197,7 +1251,7 @@ DEFEXTRACTOR_F(hexstring)
 
                         _D("slen=%u\n", SEXP(out)->atom.string.len);
                 } else {
-                        SEXP_SETTYPE(SEXP(out), ATOM_UNFIN);
+                        SEXP_SETTYPE(SEXP(out), ATOM_INVAL);
                 }
         } else {
                 SEXP_SETTYPE(SEXP(out), ATOM_UNFIN);

@@ -1,10 +1,12 @@
 #!/bin/sh
 PROG="./sexp_test"
 
-trap 'exit 1' segv abrt ill fpe bus pipe sys
 
 while read args; do
     ${PROG} "$args" > /dev/null 2>&1
+    if [ $? -ne 1 ]; then
+    	exit 1
+    fi
 done <<EOF
 1e
 11e
