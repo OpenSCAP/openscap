@@ -610,6 +610,7 @@ void SEXP_free (SEXP_t **sexpp)
         case ATOM_STRING:
         case ATOM_UNFIN:
         case ATOM_EMPTY:
+        case ATOM_INVAL:
                 break;
         default:
                 abort ();

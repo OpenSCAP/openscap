@@ -29,7 +29,7 @@ typedef struct {
         SEAP_CTX_t  ctx;
 } probe_sdtbl_t;
 
-#define PROBE_SDTBL_INITIALIZER { NULL, 0, 0, SEAP_CTX_INITIALIZER }
+#define PROBE_SDTBL_INITIALIZER { NULL, 0, SEAP_CTX_INITIALIZER }
 
 struct oval_iterator_syschar *sexp_to_oval_state (SEXP_t *sexp);
 
