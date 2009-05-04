@@ -105,9 +105,10 @@ CPPFLAGS="$CPPFLAGS_SAVE"
 
 AC_SUBST([PERL_INCLUDES], ["`perl -V:ccdlflags | cut -d\' -f2 | cut -d\, -f4`"])
 
-eval `perl -V:vendorlib -V:vendorarch`
-AC_SUBST([perl_vendorlibdir], [$vendorlib])
-AC_SUBST([perl_vendorarchdir], [$vendorarch])
+eval $(perl -V:vendorlib | sed "s|'$(perl -V:prefix | sed -n 's|^prefix=.\(.*\).;|\1|p')|'|")
+eval $(perl -V:vendorarch | sed "s|'$(perl -V:prefix | sed -n 's|^prefix=.\(.*\).;|\1|p')|'|")
+AC_SUBST([perl_vendorlibdir], [$prefix/$vendorlib])
+AC_SUBST([perl_vendorarchdir], [$prefix/$vendorarch])
 
 AC_SUBST(libxml_cflags)
 AC_SUBST(libxml_libs)
