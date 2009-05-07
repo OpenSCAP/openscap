@@ -169,7 +169,7 @@ char *oval_iterator_string_next(struct oval_iterator_string *iterator)
 //TEST FREEFUNC
 void oval_collection_main_freefunc(void *item)
 {
-	printf("FREEFUNC: item = %s\n", item);
+	printf("FREEFUNC: item = %s\n", (char *) item);
 }
 
 //TEST MAIN
@@ -192,7 +192,7 @@ int oval_collection_main(int argc, char **argv)
 		    oval_collection_iterator(collection);
 		while (oval_collection_iterator_has_more(iterator))
 			printf("[%d] string = %s\n", i,
-			       oval_collection_iterator_next(iterator));
+			       (char *) oval_collection_iterator_next(iterator));
 	}
 
 	oval_collection_free_items(collection, &oval_collection_main_freefunc);

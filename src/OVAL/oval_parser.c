@@ -54,8 +54,9 @@ void _libxml_error_handler(void *user, const char *message,
 			   xmlParserSeverities severity,
 			   xmlTextReaderLocatorPtr locator)
 {
-	char msgfield[strlen(message) + 1];
-	strcat(msgfield, message);
+	int msglen = strlen(message) + 1;
+	char msgfield[msglen];
+	strncpy(msgfield, message, msglen);
 	struct oval_xml_error xml_error;
 	xml_error.message = msgfield;
 	xml_error.severity = severity;
