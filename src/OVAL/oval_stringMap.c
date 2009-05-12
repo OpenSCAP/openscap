@@ -153,7 +153,7 @@ void oval_string_map_free(struct oval_string_map *map,
 	//TEST FREEFUNC
 void oval_string_map_main_freefunc(void *item)
 {
-	printf("FREEFUNC: item = %s\n", (char *) item);
+	printf("FREEFUNC: item = %s\n", item);
 }
 
 	//TEST MAIN
@@ -177,7 +177,7 @@ int oval_string_map_main(int argc, char **argv)
 	for (index = 0; keys[index] != NULL; index++) {
 		char *key = keys[index];
 		printf("TEST::getting key %s -> %s\n", key,
-		       (char *) oval_string_map_get_value(map, key));
+		       oval_string_map_get_value(map, key));
 	}
 
 	oval_string_map_free(map, &oval_string_map_main_freefunc);

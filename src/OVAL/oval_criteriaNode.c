@@ -151,9 +151,7 @@ struct oval_criteria_node *oval_criteria_node_new(oval_criteria_node_type_enum
 			    malloc(sizeof(oval_criteria_node_EXTENDDEF_t));
 			((struct oval_criteria_node_EXTENDDEF *)node)->
 			    definition = NULL;
-		} break;
-	default:
-		return NULL;
+		}
 	}
 	node->type = type;
 	node->negate = 0;
@@ -164,6 +162,8 @@ struct oval_criteria_node *oval_criteria_node_new(oval_criteria_node_type_enum
 void oval_criteria_node_free(struct oval_criteria_node *node)
 {
 	oval_criteria_node_type_enum type = node->type;
+	if (node->comment != NULL)
+		free(node->comment);
 	switch (type) {
 	case NODETYPE_CRITERIA:{
 			struct oval_collection *subnodes =
@@ -335,7 +335,7 @@ int oval_criteria_parse_tag(xmlTextReaderPtr reader,
 void oval_criteria_node_to_print(struct oval_criteria_node *node, char *indent,
 				 int index)
 {
-	char *nodetype = NULL;
+	char *nodetype;
 	char nxtindent[100];
 
 	switch (node->type) {

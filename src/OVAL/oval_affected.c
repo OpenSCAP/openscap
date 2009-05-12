@@ -231,12 +231,12 @@ void oval_affected_to_print(struct oval_affected *affected, char *indent,
 	    oval_collection_iterator(affected->platforms);
 	for (index = 1; oval_collection_iterator_has_more(platforms); index++) {
 		void *platform = oval_collection_iterator_next(platforms);
-		printf("%sPLATFORM[%d] = %s\n", nxtindent, index, (char *) platform);
+		printf("%sPLATFORM[%d] = %s\n", nxtindent, index, platform);
 	}
 	struct oval_iterator *products =
 	    oval_collection_iterator(affected->products);
 	for (index = 1; oval_collection_iterator_has_more(products); index++) {
 		void *product = oval_collection_iterator_next(products);
-		printf("%sPRODUCT[%d] = %s\n", nxtindent, index, (char *) product);
+		printf("%sPRODUCT[%d] = %s\n", nxtindent, index, product);
 	}
 }

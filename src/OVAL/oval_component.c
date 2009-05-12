@@ -616,7 +616,7 @@ int oval_component_parse_tag(xmlTextReaderPtr reader,
 	char *tagname = xmlTextReaderName(reader);
 	oval_component_type_enum type;
 	int return_code;
-	struct oval_component *component = NULL;
+	struct oval_component *component;;
 	if (strcmp(tagname, "literal_component") == 0) {
 		component = oval_component_new(OVAL_COMPONENT_LITERAL);
 		return_code =
@@ -683,8 +683,7 @@ int oval_component_parse_tag(xmlTextReaderPtr reader,
 		     tagname, line);
 		return_code = oval_parser_skip_tag(reader, context);
 	}
-	if (component != NULL)
-		(*consumer) (component, user);
+	(*consumer) (component, user);
 	if (return_code != 1) {
 		int line = xmlTextReaderGetParserLineNumber(reader);
 		printf
