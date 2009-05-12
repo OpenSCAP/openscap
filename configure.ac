@@ -22,7 +22,10 @@ AC_PROG_LIBTOOL
 AC_PROG_SWIG([1.3.29])
 
 # Compiler flags
-CFLAGS="$CFLAGS -W -Wall -Wshadow -Wformat -Wundef -D_GNU_SOURCE -fno-inline-functions -O0 -g -DNDEBUG"
+CFLAGS="$CFLAGS -W -Wall -Wshadow -Wformat -Wundef -D_GNU_SOURCE"
+
+CFLAGS_OPTIMIZED="-O2 -finline-functions"
+CFLAGS_DEBUGGING="-fno-inline-functions -O0 -g"
 
 #
 # xml2-config
@@ -201,6 +204,14 @@ AC_ARG_ENABLE([bindings],
        no)  bindings=no  ;;
        *) AC_MSG_ERROR([bad value ${enableval} for --enable-bindings]) ;;
      esac],[bindings=yes])
+     
+AC_ARG_ENABLE([debug],
+     [  --enable-debug          enable debugging flags [[default=no]]],
+     [case "${enableval}" in
+       yes) CFLAGS="$CFLAGS $CFLAGS_DEBUGGING" ;;
+       no) : ;;
+       *) AC_MSG_ERROR([bad value ${enableval} for --enable-debug]) ;;
+     esac], [debug=no])
 
 AM_CONDITIONAL([WANT_OVAL], test "$oval" = yes)
 AM_CONDITIONAL([WANT_CVSS], test "$cvss" = yes)
