@@ -103,12 +103,15 @@ AC_CHECK_HEADERS(
 )
 CPPFLAGS="$CPPFLAGS_SAVE"
 
-AC_SUBST([PERL_INCLUDES], ["`perl -V:ccdlflags | cut -d\' -f2 | cut -d\, -f4`"])
 
-eval $(perl -V:vendorlib | sed "s|'$(perl -V:prefix | sed -n 's|^prefix=.\(.*\).;|\1|p')|'|")
-eval $(perl -V:vendorarch | sed "s|'$(perl -V:prefix | sed -n 's|^prefix=.\(.*\).;|\1|p')|'|")
-AC_SUBST([perl_vendorlibdir], [$prefix/$vendorlib])
-AC_SUBST([perl_vendorarchdir], [$prefix/$vendorarch])
+AC_PATH_PROG(PERL, perl)
+PERL_INCLUDES="`$PERL -e 'use Config; print $Config{archlib}'`/CORE"
+vendorlib="$(  $PERL -e 'use Config; print $Config{vendorlib}'  | sed "s|$($PERL -e 'use Config; print $Config{prefix}')||" )"
+vendorarch="$( $PERL -e 'use Config; print $Config{vendorarch}' | sed "s|$($PERL -e 'use Config; print $Config{prefix}')||" )"
+AC_SUBST([PERL_INCLUDES], ["$PERL_INCLUDES"])
+AC_SUBST([perl_vendorlibdir], ['${prefix}'$vendorlib])
+AC_SUBST([perl_vendorarchdir], ['${prefix}'$vendorarch])
+
 
 AC_SUBST(libxml_cflags)
 AC_SUBST(libxml_libs)
