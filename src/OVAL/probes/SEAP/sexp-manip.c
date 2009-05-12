@@ -59,12 +59,17 @@ SEXP_t *SEXP_number_new (const void *num, NUM_type_t type)
 
 int SEXP_numberp (SEXP_t *sexp)
 {
-        return (SEXP_TYPE(sexp) == ATOM_NUMBER);
+        if (sexp != NULL) {
+                SEXP_VALIDATE(sexp);
+                return (SEXP_TYPE(sexp) == ATOM_NUMBER);
+        }
+        return (0);
 }
 
 size_t SEXP_number_size (SEXP_t *sexp)
 {
-        _A(sexp != NULL);
+        SEXP_VALIDATE(sexp);
+        
         if (SEXP_TYPE(sexp) == ATOM_NUMBER) {
                 switch (sexp->atom.number.type) {
                 case NUM_INT8:
@@ -95,8 +100,9 @@ size_t SEXP_number_size (SEXP_t *sexp)
 
 void SEXP_number_get (SEXP_t *sexp, void *ptr, NUM_type_t type)
 {
-        _A(sexp != NULL);
         _A(ptr != NULL);
+
+        SEXP_VALIDATE(sexp);
 
         if (SEXP_TYPE(sexp) == ATOM_NUMBER) {
                 if (type >= sexp->atom.number.type) {
@@ -311,6 +317,8 @@ int SEXP_strcmp (SEXP_t *sexp, const char *str)
         _A(str != NULL);
         
         if (sexp != NULL) {
+                SEXP_VALIDATE(sexp);
+
                 if (SEXP_TYPE(sexp) == ATOM_STRING) {
                         return strncmp (sexp->atom.string.str, str, sexp->atom.string.len);
                 } else {
@@ -327,6 +335,8 @@ int SEXP_strncmp (SEXP_t *sexp, const char *str, size_t n)
         _A(n > 0);
         
         if (sexp != NULL) {
+                SEXP_VALIDATE(sexp);
+                
                 if (SEXP_TYPE(sexp) == ATOM_STRING) {
                         return (n < sexp->atom.string.len ?
                                 strncmp (sexp->atom.string.str, str, n):
@@ -345,6 +355,8 @@ int SEXP_strncoll (SEXP_t *sexp, const char *str, size_t n)
         _A(n > 0);
         
         if (sexp != NULL) {
+                SEXP_VALIDATE(sexp);
+                
                 if (SEXP_TYPE(sexp) == ATOM_STRING) {
                         return xstrncoll (sexp->atom.string.str,
                                           sexp->atom.string.len,
@@ -360,17 +372,19 @@ int SEXP_strncoll (SEXP_t *sexp, const char *str, size_t n)
 
 int SEXP_stringp (SEXP_t *sexp)
 {
-        if (sexp != NULL)
+        if (sexp != NULL) {
+                SEXP_VALIDATE(sexp);
                 return (SEXP_TYPE(sexp) == ATOM_STRING);
-        else
-                return (0);
+        }
+        return (0);
 }
 
 char *SEXP_string_cstr (SEXP_t *sexp)
 {
-        _A(sexp != NULL);
         char *str;
         size_t  i;
+
+        SEXP_VALIDATE(sexp);
 
         if (SEXP_TYPE(sexp) == ATOM_STRING) {
                 str = xmalloc (sizeof (char) * (sexp->atom.string.len + 1));
@@ -410,6 +424,7 @@ SEXP_t *SEXP_list_init (SEXP_t *sexp)
 {
         _A(sexp != NULL);
 
+        SEXP_VALIDATE(sexp);
         SEXP_SETTYPE(sexp, ATOM_LIST);
         LIST_init (&(sexp->atom.list));
         
@@ -418,7 +433,7 @@ SEXP_t *SEXP_list_init (SEXP_t *sexp)
 
 SEXP_t *SEXP_list_free (SEXP_t *sexp)
 {
-        /* FIXME */
+        SEXP_free (&sexp);
         return (NULL);
 }
 
@@ -427,6 +442,8 @@ SEXP_t *LIST_add (LIST_t *list, SEXP_t *sexp)
         _A(list != NULL);
         _A(list->count <= list->size);
         _A(list->size > 0);
+
+        SEXP_VALIDATE(sexp);
         
         if (list->count >= list->size) {
                 list->size += LIST_GROW_ADD;
@@ -446,6 +463,8 @@ SEXP_t *LIST_add (LIST_t *list, SEXP_t *sexp)
 
 SEXP_t *SEXP_list_add (SEXP_t *list, SEXP_t *sexp)
 {
+        SEXP_VALIDATE(sexp);
+        
         if (SEXP_listp (list)) {
                 return LIST_add (&(list->atom.list), sexp);
         } else {
@@ -455,16 +474,13 @@ SEXP_t *SEXP_list_add (SEXP_t *list, SEXP_t *sexp)
 
 SEXP_t *SEXP_list_first (SEXP_t *sexp)
 {
-        SEXP_t *empty;
-
-        _A(sexp != NULL);
+        SEXP_VALIDATE(sexp);
+        
         if (SEXP_TYPE(sexp) == ATOM_LIST) {
                 if (sexp->atom.list.count > 0) {
                         return (&(SEXP(sexp->atom.list.memb)[0]));
                 } else {
-                        empty = SEXP_new ();
-                        SEXP_SETTYPE(sexp, ATOM_EMPTY);
-                        return (empty);
+                        return SEXP_new ();
                 }
         } else {
                 return (NULL);
@@ -473,16 +489,13 @@ SEXP_t *SEXP_list_first (SEXP_t *sexp)
 
 SEXP_t *SEXP_list_last (SEXP_t *sexp)
 {
-        SEXP_t *empty;
+        SEXP_VALIDATE(sexp);
         
-        _A(sexp != NULL);
         if (SEXP_TYPE(sexp) == ATOM_LIST) {
                 if (sexp->atom.list.count > 0) {
                         return (&(SEXP(sexp->atom.list.memb)[sexp->atom.list.count - 1]));
                 } else {
-                        empty = SEXP_new ();
-                        SEXP_SETTYPE(empty, ATOM_EMPTY); /* FIXME: this is redundant */
-                        return (empty);
+                        return SEXP_new ();
                 }
         } else {
                 return (NULL);
@@ -491,7 +504,11 @@ SEXP_t *SEXP_list_last (SEXP_t *sexp)
 
 int SEXP_listp (SEXP_t *sexp)
 {
-        return (sexp != NULL ? (SEXP_TYPE(sexp) == ATOM_LIST) : 0);
+        if (sexp != NULL) {
+                SEXP_VALIDATE(sexp);
+                return (SEXP_TYPE(sexp) == ATOM_LIST);
+        }
+        return (0);
 }
 
 SEXP_t *SEXP_list_pop (SEXP_t **sexp)
@@ -578,7 +595,10 @@ SEXP_t *SEXP_new  (void)
         SEXP_SETTYPE(sexp, ATOM_EMPTY);
         SEXP_SETFLAG(sexp, SEXP_FLAGFREE);
         sexp->handler = NULL;
-        
+#if !defined(NDEBUG)
+        sexp->__magic0 = SEXP_MAGIC0;
+        sexp->__magic1 = SEXP_MAGIC1;
+#endif
         return (sexp);
 }
 
@@ -589,25 +609,74 @@ void SEXP_init (SEXP_t  *sexp)
         sexp->flags = 0;
         SEXP_SETTYPE(sexp, ATOM_EMPTY);
         sexp->handler = NULL;
+#if !defined(NDEBUG)
+        sexp->__magic0 = SEXP_MAGIC0;
+        sexp->__magic1 = SEXP_MAGIC1;
+#endif
         return;
 }
 
 void SEXP_free (SEXP_t **sexpp)
 {
-        _A(sexpp  != NULL);
+        _A(sexpp != NULL);
         /* _A(*sexpp != NULL); */
         
-#warning "FIXME: SEXP_free not implemented" /* FIXME */
-        
-        if (*sexpp == NULL) {
-                _D("WARNING: NULL free\n");
-                return;
-        }
+        SEXP_VALIDATE(*sexpp);
         
         switch (SEXP_TYPE(*sexpp)) {
         case ATOM_LIST:
+        {
+                uint32_t i;
+                
+                for (i = 0; i < ((*sexpp)->atom.list.size); ++i)
+                        SEXP_free ((void **)&SEXP((*sexpp)->atom.list.memb)[i]);
+                
+                if ((*sexpp)->atom.list.size > 0)
+                        xfree ((void **)&((*sexpp)->atom.list.memb));
+                
+        } break;
         case ATOM_NUMBER:
+        {
+                uint16_t sz;
+                
+                switch ((*sexpp)->atom.number.type) {
+                case NUM_INT8:   sz = sizeof (int8_t);
+                        break;
+                case NUM_UINT8:  sz = sizeof (uint8_t);
+                        break;
+                case NUM_INT16:  sz = sizeof (int16_t);
+                        break;
+                case NUM_UINT16: sz = sizeof (uint16_t);
+                        break;
+                case NUM_INT32:  sz = sizeof (int32_t);
+                        break;
+                case NUM_UINT32: sz = sizeof (uint32_t);
+                        break;
+                case NUM_INT64:  sz = sizeof (int64_t);
+                        break;
+                case NUM_UINT64: sz = sizeof (uint64_t);
+                        break;
+                case NUM_DOUBLE: sz = sizeof (double);
+                        break;
+                case NUM_NONE:
+                case NUM_FRACT: /* Not implemented */
+                case NUM_BIGNUM: /* Not implemented */
+                        sz = 0;
+                        break;
+                default:
+                        abort ();
+                }
+
+                if (sz > VOIDPTR_SIZE)
+                        xfree ((void **)&((*sexpp)->atom.number.nptr));
+                
+        } break;
         case ATOM_STRING:
+ 
+                if ((*sexpp)->atom.string.len > 0)
+                        xfree ((void **)&((*sexpp)->atom.string.str));
+ 
+                break;
         case ATOM_UNFIN:
         case ATOM_EMPTY:
         case ATOM_INVAL:

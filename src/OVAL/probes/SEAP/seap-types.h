@@ -56,11 +56,45 @@ typedef struct {
         SEXP_t      *sexp;
 } SEAP_msg_t;
 
+typedef struct {
+        uint64_t id;
+        uint32_t code;
+        SEXP_t  *data;
+} SEAP_err_t;
+
+typedef struct {
+        /* TODO */
+} SEAP_cmd_t;
+
+#define SEAP_SYM_PREFIX "seap."
+#define SEAP_SYM_MSG    SEAP_SYM_PREFIX"msg"
+#define SEAP_SYM_CMD    SEAP_SYM_PREFIX"cmd"
+#define SEAP_SYM_ERR    SEAP_SYM_PREFIX"err"
+
+typedef struct {
+        uint8_t type;
+        union {
+                SEAP_msg_t msg;
+                SEAP_err_t err;
+                SEAP_cmd_t cmd;
+        } data;
+} SEAP_packet_t;
+
+#define SEAP_PACKET_INV 0x00
+#define SEAP_PACKET_MSG 0x01
+#define SEAP_PACKET_ERR 0x02
+#define SEAP_PACKET_CMD 0x03
+#define SEAP_PACKET_RAW 0x04
+
 /* SEAP errors */
 #define SERR_REM_UNFIN 1 /* peer received an incomplete expression */
 #define SERR_LOC_UNFIN 2 /* peer sent an incomplete expression */
 #define SERR_REM_PARSE 3 /* peer received an invalid expression */
 #define SERR_LOC_PARSE 4 /* peer sent an invalid expression */
 #define SERR_REM_CLOSE 5 /* peer closed the connection */
+
+/* SEAP I/O flags */
+#define SFLG_RECONN   0x00000001
+#define SFLG_NONBLOCK 0x00000002
 
 #endif /* SEAP_TYPES_H */

@@ -83,6 +83,12 @@ typedef struct {
  */ 
 
 typedef struct __SEXP_t {
+
+#if !defined(NDEBUG) || defined(VALIDATE_SEXP)
+#define SEXP_MAGIC0 0xf3f3
+        volatile uint16_t __magic0;
+#endif
+
         ATOM_flags_t    flags;
         void           *handler;
         union {
@@ -90,7 +96,111 @@ typedef struct __SEXP_t {
                 STR_t  string;
                 NUM_t  number;
         } atom;
+
+#if !defined(NDEBUG) || defined(VALIDATE_SEXP)
+#define SEXP_MAGIC1 0x6767
+        volatile uint16_t __magic1;
+#endif
+
 } SEXP_t;
+
+#define SEXP(ptr)      ((SEXP_t *)(ptr))
+#define SEXP_TYPE(ptr) ((SEXP(ptr)->flags) & SEXP_TYPEMASK)
+
+/*
+ *  SEXP_FREE returns the value of SEXP_FLAGFREE bit.
+ */
+#define SEXP_FREE(ptr) (((SEXP(ptr)->flags) & SEXP_FLAGFREE) == SEXP_FLAGFREE)
+
+static inline void SEXP_SETTYPE(SEXP_t *sexp, ATOM_type_t type)
+{
+        sexp->flags = (sexp->flags & SEXP_FLAGMASK) | (type & SEXP_TYPEMASK);
+        return;
+}
+
+static inline void SEXP_SETFLAG(SEXP_t *sexp, ATOM_flags_t flag)
+{
+        sexp->flags |= flag & SEXP_FLAGMASK;
+        return;
+}
+
+#define VOIDPTR_SIZE (sizeof (void *))
+
+#if !defined(NDEBUG) || defined(VALIDADE_SEXP)
+# include <stdio.h>
+# include <stdlib.h>
+
+#if !defined(__VALIDATE_TRESH_LIST_SIZE)
+# define __VALIDATE_TRESH_LIST_SIZE  65535
+#endif
+
+#if !defined(__VALIDATE_TRESH_LIST_COUNT)
+# define __VALIDATE_TRESH_LIST_COUNT 65535
+#endif
+
+#if !defined(__VALIDATE_TRESH_STRING_LEN)
+# define __VALIDATE_TRESH_STRING_LEN 65535
+#endif
+
+static inline void __SEXP_VALIDATE(SEXP_t *ptr, const char *loc) {
+        if (ptr == NULL) {
+                fprintf (stderr, "%s: !!! NULL S-EXP OBJECT !!!\n", loc);
+        } else {
+                if ((ptr->__magic0 == SEXP_MAGIC0) &&
+                    (ptr->__magic1 == SEXP_MAGIC1)) {
+                        switch (SEXP_TYPE(ptr))
+                        {
+                        case ATOM_UNFIN:
+                        case ATOM_INVAL:
+                        case ATOM_EMPTY:
+                                return;
+                        case ATOM_LIST:
+                                if (ptr->atom.list.size > __VALIDATE_TRESH_LIST_SIZE) {
+                                        fprintf (stderr, "%s !!! LIST SIZE TRESHOLD EXCEEDED !!!\n", loc);
+                                        break;
+                                }
+                                if (ptr->atom.list.count > __VALIDATE_TRESH_LIST_COUNT) {
+                                        fprintf (stderr, "%s !!! LIST COUNT TRESHOLD EXCEEDED !!!\n", loc);
+                                        break;
+                                }
+                                return;
+                        case ATOM_NUMBER:
+                                switch (ptr->atom.number.type)
+                                {
+                                case NUM_NONE:
+                                case NUM_INT8:
+                                case NUM_UINT8:
+                                case NUM_INT16:
+                                case NUM_UINT16:
+                                case NUM_INT32:
+                                case NUM_UINT32:
+                                case NUM_INT64:
+                                case NUM_UINT64:
+                                case NUM_DOUBLE:
+                                case NUM_FRACT:
+                                case NUM_BIGNUM:
+                                        return;
+                                }
+                                fprintf (stderr, "%s !!! INVALID NUMBER TYPE !!!\n", loc);
+                                break;
+                        case ATOM_STRING:
+                                if (ptr->atom.string.len <= __VALIDATE_TRESH_STRING_LEN)
+                                        return;
+                                fprintf (stderr, "%s !!! STRING LENGTH TRESHOLD EXCEEDED !!!\n", loc);
+                                break;
+                        default:
+                                fprintf (stderr, "%s !!! INVALID S-EXP OBJECT TYPE !!!\n", loc);
+                        }
+                }
+                fprintf (stderr, "%s: !!! CORRUPTED S-EXP OBJECT !!!\n", loc);
+        }
+        abort ();
+}
+
+# define SEXP_VALIDATE(ptr) __SEXP_VALIDATE(ptr, __PRETTY_FUNCTION__)
+#else
+# define SEXP_VALIDATE(ptr) while(0)
+#endif
 
 /* S-expression format */
 typedef uint8_t SEXP_format_t;

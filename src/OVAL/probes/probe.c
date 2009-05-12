@@ -118,6 +118,8 @@ char *SEXP_OVALobj_getelm_val (SEXP_t *obj, const char *name)
                         else 
                                 return (NULL);
                 }
+
+                ++i;
         }
         
         return (NULL);

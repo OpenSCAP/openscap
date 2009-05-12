@@ -271,7 +271,7 @@ int SEAP_recvmsg (SEAP_CTX_t *ctx, int sd, SEAP_msg_t **seap_msg)
                                 continue;
                         }
                         
-                        if (SEXP_strncmp (SEXP_list_first (sexp_msg), "seap.msg", 8) != 0) {
+                        if (SEXP_strncmp (SEXP_list_first (sexp_msg), SEAP_SYM_MSG, strlen(SEAP_SYM_MSG)) != 0) {
                                 _D("invalid msg received - first s-exp != \"msg\"\n");
                                 continue;
                         }
@@ -377,7 +377,10 @@ SEXP_t *__SEAP_msg2sexp (SEAP_msg_t *msg)
         _A(msg != NULL);
         
         sexp = SEXP_list_new ();
-        SEXP_list_add (sexp, SEXP_string_new ("seap.msg", 8));
+        SEXP_list_add (sexp, SEXP_string_new (SEAP_SYM_MSG, strlen (SEAP_SYM_MSG)));
+        
+        /* add id */
+        SEXP_list_add (sexp, SEXP_number_new (&(msg->id), NUM_UINT64));
         
         /* add message attributes */
         for (i = 0; i < msg->attrs_cnt; ++i) {
@@ -418,11 +421,18 @@ int SEAP_msgattr_set (SEAP_msg_t *msg, const char *attr, SEXP_t *value)
 SEXP_t *SEAP_msgattr_get (SEAP_msg_t *msg, const char *name)
 {
         SEXP_t *value = NULL;
+        uint16_t i;
 
         _A(msg  != NULL);
         _A(name != NULL);
 
-        return (value);
+        /* FIXME: this is stupid */
+        for (i = 0; i < msg->attrs_cnt; ++i) {
+                if (strcmp (name, msg->attrs[i].name) == 0)
+                        return (msg->attrs[i].value);
+        }
+        
+        return (NULL);
 }
 
 int SEAP_sendmsg (SEAP_CTX_t *ctx, int sd, SEAP_msg_t *seap_msg)
@@ -440,12 +450,9 @@ int SEAP_sendmsg (SEAP_CTX_t *ctx, int sd, SEAP_msg_t *seap_msg)
                 /* _A(desc->scheme < (sizeof __schtbl / sizeof (SEAP_schemefn_t))); */
         
                 /* add id */
-                msg_id = desc->next_id++;
+                seap_msg->id = desc->next_id++;
                 
                 /* msg_id = __sync_fetch_and_add (&(desc->next_id), 1); */
-
-                /* FIXME!!! */
-                SEAP_msgattr_set (seap_msg, "id", SEXP_number_new (&(msg_id), NUM_UINT64));
                 
                 /* msg -> sexp */
                 sexp_msg = __SEAP_msg2sexp (seap_msg);
@@ -517,6 +524,7 @@ int SEAP_close (SEAP_CTX_t *ctx, int sd)
                 return (ret);
         } else {
                 _D("Negative SEAP descriptor\n");
+                errno = EBADF;
                 return (-1);
         }
 }

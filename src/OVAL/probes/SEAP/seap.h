@@ -16,7 +16,6 @@ int SEAP_desc_add (SEAP_desctable_t *sd_table, SEXP_pstate_t *pstate, SEAP_schem
 int SEAP_desc_del (SEAP_desctable_t *sd_table, int sd);
 SEAP_desc_t *SEAP_desc_get (SEAP_desctable_t *sd_table, int sd);
 
-
 SEAP_CTX_t *SEAP_CTX_new  (void);
 void        SEAP_CTX_init (SEAP_CTX_t *ctx);
 void        SEAP_CTX_free (SEAP_CTX_t *ctx);

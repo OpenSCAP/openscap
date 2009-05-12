@@ -631,8 +631,7 @@ DEFPARSER(label)
                         }
                         
                         SEXP_SETTYPE(sexp, ATOM_NUMBER);
-                        /* STR -> SEXP END */
-                        
+                        /* STR -> SEXP END */                        
                         i += d;
                         
                         num_type = 0;

@@ -10,28 +10,6 @@
 #include <stdint.h>
 #include "sexp.h"
 
-#define SEXP(ptr)      ((SEXP_t *)(ptr))
-#define SEXP_TYPE(ptr) ((SEXP(ptr)->flags) & SEXP_TYPEMASK)
-
-/*
- *  SEXP_FREE returns the value of SEXP_FLAGFREE bit.
- */
-#define SEXP_FREE(ptr) (((SEXP(ptr)->flags) & SEXP_FLAGFREE) == SEXP_FLAGFREE)
-
-static inline void SEXP_SETTYPE(SEXP_t *sexp, ATOM_type_t type)
-{
-        sexp->flags = (sexp->flags & SEXP_FLAGMASK) | (type & SEXP_TYPEMASK);
-        return;
-}
-
-static inline void SEXP_SETFLAG(SEXP_t *sexp, ATOM_flags_t flag)
-{
-        sexp->flags |= flag & SEXP_FLAGMASK;
-        return;
-}
-
-#define VOIDPTR_SIZE (sizeof (void *))
-
 /* 
  * NUM_STORE(type, nsrc, voidp)
  *  stores the number at nsrc to voidp directly
