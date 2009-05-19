@@ -59,10 +59,10 @@ static int get_runlevel_redhat (struct runlevel_req *req, struct runlevel_rep *r
         _A(req != NULL);
         _A(rep != NULL);
         
-        rep.service_name = req.service_name;
-        rep.runlevel     = req.runlevel;
-        rep.start        = "0";
-        rep.kill         = "0";
+        rep->service_name = req->service_name;
+        rep->runlevel     = req->runlevel;
+        rep->start        = "0";
+        rep->kill         = "0";
         
         snprintf (pathbuf, PATH_MAX, "/etc/init.d/%s", req->service_name);
         
@@ -80,7 +80,7 @@ static int get_runlevel_redhat (struct runlevel_req *req, struct runlevel_rep *r
                 return (-1);
         }
         
-        snprintf (pathbuf, PATH_MAX, "/etc/rc%u.d", runlevel);
+        snprintf (pathbuf, PATH_MAX, "/etc/rc%lu.d", runlevel);
         
         rcdir = opendir (pathbuf);
         while ((dp = readdir (rcdir)) != NULL) {
@@ -146,7 +146,7 @@ static int get_runlevel_common (struct runlevel_req *req, struct runlevel_rep *r
 }
 
 #if !defined(LINUX_DISTRO)
-# define LINUX_DISTRO "generic"
+# define LINUX_DISTRO generic
 static int is_redhat (void)
 {
         return (eaccess ("/etc/redhat-release", F_OK) == 0);
@@ -206,7 +206,7 @@ const distro_tbl_t distro_tbl[] = {
         { &is_common,   &get_runlevel_common   },
 };
 
-#define DISTRO_TBL_SIZE ((sizeof distro_tbl)/sizeof (distro_tbl_t));
+#define DISTRO_TBL_SIZE ((sizeof distro_tbl)/sizeof (distro_tbl_t))
 
 static int get_runlevel_generic (struct runlevel_req *req, struct runlevel_rep *rep)
 {
