@@ -15,9 +15,10 @@
 
 /* KEEP THIS LIST SORTED! (by subtype) */
 const oval_probe_t __probe_tbl[] = {
-        /* 9001 */ { LINUX_DPKG_INFO, "dpkginfo", "probe_dpkginfo" },
-        /* 9003 */ { LINUX_RPM_INFO,  "rpminfo",  "probe_rpminfo"  },
-        /* 9004 */ { LINUX_SLACKWARE_PKG_INFO_TEST, "slackwarepkginfo", "probe_slackwarepkginfo" }
+        /*  9001 */ { LINUX_DPKG_INFO, "dpkginfo", "probe_dpkginfo" },
+        /*  9003 */ { LINUX_RPM_INFO,  "rpminfo",  "probe_rpminfo"  },
+        /*  9004 */ { LINUX_SLACKWARE_PKG_INFO_TEST, "slackwarepkginfo", "probe_slackwarepkginfo" },
+        /* 13006 */ { UNIX_RUNLEVEL, "runlevel", "probe_runlevel" }
 };
 
 #define PROBETBLSIZE (sizeof __probe_tbl / sizeof (oval_probe_t))

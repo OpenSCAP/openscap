@@ -161,6 +161,14 @@ AC_ARG_ENABLE([probes],
        *) AC_MSG_ERROR([bad value ${enableval} for --enable-probes]) ;;
      esac],[probes=no])
 
+AC_ARG_ENABLE([probes-unix],
+     [  --enable-probes-unix    enable compilation of probes for UNIX based systems [[default=no]]],
+     [case "${enableval}" in
+       yes) probes_unix=yes ;;
+       no)  probes_unix=no  ;;
+       *) AC_MSG_ERROR([bad value ${enableval} for --enable-probes-unix]) ;;
+     esac],[probes_unix=no])
+
 AC_ARG_ENABLE([probes-redhat],
      [  --enable-probes-redhat  enable compilation of probes for Fedora/RHEL OS [[default=no]]],
      [case "${enableval}" in
@@ -223,6 +231,7 @@ AM_CONDITIONAL([WANT_CVE],  test "$cve"  = yes)
 AM_CONDITIONAL([WANT_CPE],  test "$cpe"  = yes)
 AM_CONDITIONAL([WANT_CCE],  test "$cce"  = yes)
 AM_CONDITIONAL([WANT_PROBES], test "$probes" = yes)
+AM_CONDITIONAL([WANT_PROBES_UNIX], test "$probes_unix" = yes)
 AM_CONDITIONAL([WANT_PROBES_REDHAT], test "$probes_rh" = yes)
 AM_CONDITIONAL([WANT_BINDINGS], test "$bindings" = yes)
 
