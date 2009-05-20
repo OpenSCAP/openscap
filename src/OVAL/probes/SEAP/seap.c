@@ -411,6 +411,8 @@ int SEAP_msgattr_set (SEAP_msg_t *msg, const char *attr, SEXP_t *value)
         _A(msg != NULL);
         _A(attr != NULL);
 
+        SEXP_VALIDATE(value);
+
         msg->attrs = xrealloc (msg->attrs, sizeof (SEAP_attr_t) * (++msg->attrs_cnt));
         msg->attrs[msg->attrs_cnt - 1].name  = strdup (attr);
         msg->attrs[msg->attrs_cnt - 1].value = value;

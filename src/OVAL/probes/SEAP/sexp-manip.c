@@ -20,7 +20,7 @@ SEXP_t *SEXP_number_new (const void *num, NUM_type_t type)
 
         sexp = SEXP_new ();
         SEXP_SETTYPE(sexp, ATOM_NUMBER);
-        
+   
         switch (type) {
         case NUM_INT8:
                 NUM_STORE(int8_t, (*(int8_t *)(num)), sexp->atom.number.nptr);
@@ -53,7 +53,9 @@ SEXP_t *SEXP_number_new (const void *num, NUM_type_t type)
                 _D("Unsupported number type: %d\n", type);
                 abort ();                
         }
-        
+   
+        sexp->atom.number.type = type;
+     
         return (sexp);
 }
 
@@ -410,9 +412,8 @@ SEXP_t *SEXP_list_new (void)
 {
         SEXP_t *sexp;
 
-        sexp = xmalloc (sizeof (SEXP_t));
+        sexp = SEXP_new ();
         SEXP_SETTYPE(sexp, ATOM_LIST);
-        SEXP_SETFLAG(sexp, SEXP_FLAGFREE);
         sexp->atom.list.memb  = xmalloc (sizeof (SEXP_t) * LIST_INIT_SIZE);
         sexp->atom.list.count = 0;
         sexp->atom.list.size  = LIST_INIT_SIZE;

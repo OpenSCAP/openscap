@@ -14,6 +14,8 @@
 #include <string.h>
 #include <errno.h>
 #include <assert.h>
+#define _BSD_SOURCE
+#include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <dirent.h>
@@ -83,9 +85,22 @@ static int get_runlevel_redhat (struct runlevel_req *req, struct runlevel_rep *r
         snprintf (pathbuf, PATH_MAX, "/etc/rc%lu.d", runlevel);
         
         rcdir = opendir (pathbuf);
+        if (rcdir == NULL) {
+                _D("Can't open directory \"%s\": errno=%d, %s.\n",
+                   pathbuf, errno, strerror (errno));
+                return (-1);
+        }
+        
+        if (fchdir (dirfd (rcdir)) != 0) {
+                _D("Can't chdir to \"%s\": errno=%d, %s.\n",
+                   pathbuf, errno, strerror (errno));
+                closedir (rcdir);
+                return (-1);
+        }
+        
         while ((dp = readdir (rcdir)) != NULL) {
                 if (stat (dp->d_name, &rc_st) != 0) {
-                        _D("Can't stat file %s/%s: errno=%d, %s.",
+                        _D("Can't stat file %s/%s: errno=%d, %s.\n",
                            pathbuf, dp->d_name, errno, strerror (errno));
                         continue;
                 }
@@ -226,11 +241,14 @@ static int get_runlevel_generic (struct runlevel_req *req, struct runlevel_rep *
 }
 #endif
 
+#define CONCAT(a, b) a ## b
+#define GET_RUNLEVEL(d, q, p) CONCAT(get_runlevel_, d) (q, p)
+
 static int get_runlevel (struct runlevel_req *req, struct runlevel_rep *rep)
 {
         _A(req != NULL);
         _A(rep != NULL);
-        return get_runlevel_##LINUX_DISTRO (req, rep);
+        return GET_RUNLEVEL(LINUX_DISTRO, req, rep);
 }
 #elif defined(__FreeBSD__)
 static int get_runlevel (struct runlevel_req *req, struct runlevel_rep *rep)
@@ -249,6 +267,7 @@ int main (void)
 
         SEAP_CTX_t *ctx;
         SEAP_msg_t *seap_request, *seap_reply;
+        SEXP_t *state_sexp;
         int sd;
 
         struct runlevel_req request_st;
@@ -282,12 +301,20 @@ int main (void)
                         break;
                 }
                 
+                _D("get_runlevel: [0]=\"%s\", [1]=\"%s\", [2]=\"%s\", [3]=\"%s\"\n",
+                   reply_st.service_name, reply_st.runlevel, reply_st.start, reply_st.kill);
+                
                 seap_reply = SEAP_msg_new ();
-                seap_reply->sexp = SEXP_OVALobj_create ("runlevel_state", NULL,
-                                                        "service_name", NULL, reply_st.service_name,
-                                                        "runlevel",     NULL, reply_st.runlevel,
-                                                        "start",        NULL, reply_st.start,
-                                                        "kill",         NULL, reply_st.kill);
+                seap_reply->sexp = SEXP_list_new ();
+                
+                state_sexp = SEXP_OVALobj_create ("runlevel_state", NULL,
+                                                  "service_name", NULL, reply_st.service_name,
+                                                  "runlevel",     NULL, reply_st.runlevel,
+                                                  "start",        NULL, reply_st.start,
+                                                  "kill",         NULL, reply_st.kill,
+                                                  NULL);
+                
+                SEXP_list_add (seap_reply->sexp, state_sexp);
                 
                 if (SEAP_reply (ctx, sd, seap_reply, seap_request) == -1) {
                         _D("An error ocured while sending SEAP message. errno=%u, %s.\n",
