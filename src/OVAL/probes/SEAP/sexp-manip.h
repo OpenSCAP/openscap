@@ -43,6 +43,7 @@ void    SEXP_number_get (SEXP_t *sexp, void *ptr, NUM_type_t type);
 
 /* Functions for manipulating with strings */
 SEXP_t *SEXP_string_new (const void *, size_t);
+SEXP_t *SEXP_string_newf (const char *fmt, ...);
 int     SEXP_strcmp (SEXP_t *sexp, const char *str);
 int     SEXP_strncmp (SEXP_t *sexp, const char *str, size_t n);
 int     SEXP_strncoll (SEXP_t *sexp, const char *str, size_t n);
@@ -60,6 +61,7 @@ int     SEXP_listp (SEXP_t *);
 SEXP_t *SEXP_list_pop (SEXP_t **);
 SEXP_t *SEXP_list_nth (SEXP_t *, uint32_t);
 SEXP_t *SEXP_list_nth_copy (SEXP_t *sexp, uint32_t n);
+SEXP_t *SEXP_list_join (SEXP_t *, SEXP_t *);
 
 /* Internal functions, don't use! */
 SEXP_t *LIST_add (LIST_t *list, SEXP_t *sexp);
@@ -98,9 +100,22 @@ static inline LIST_t *LIST_new (void)
 SEXP_t *SEXP_new  (void);
 void    SEXP_init (SEXP_t *sexp);
 void    SEXP_free (SEXP_t **sexpp);
-SEXP_t *SEXP_copy (SEXP_t *sexp);
-SEXP_t *SEXP_copyobj (SEXP_t *sexp);
+
+/* shallow copy */
+SEXP_t *SEXP_dup (SEXP_t *sexp);
+
+/* deep copy */
+SEXP_t *SEXP_deepdup (SEXP_t *sexp);
+
+/* shallow copy */
+SEXP_t *SEXP_copy (SEXP_t *dst, SEXP_t *src);
+
+/* deep copy */
+SEXP_t *SEXP_deepcopy (SEXP_t *dst, SEXP_t *src);
+
 size_t  SEXP_length (SEXP_t *sexp);
+int     SEXP_cmp (SEXP_t *a, SEXP_t *b);
+int     SEXP_cmpobj (SEXP_t *a, SEXP_t *b);
 
 /*
  *  Returns atomic type of the given S-exp as a string.

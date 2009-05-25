@@ -10,7 +10,9 @@
 #include "api/oval_system_characteristics.h"
 
 #define OVAL_PROBE_SCHEME "pipe://"
-#define OVAL_PROBE_DIR    "/usr/libexec/openscap/oval"
+#ifndef OVAL_PROBE_DIR
+# define OVAL_PROBE_DIR    "/usr/libexec/openscap/oval"
+#endif
 
 typedef struct {
         oval_subtype_enum typenum;

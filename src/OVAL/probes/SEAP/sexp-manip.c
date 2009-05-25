@@ -521,7 +521,7 @@ SEXP_t *SEXP_list_pop (SEXP_t **sexp)
         
         if (SEXP_TYPE(*sexp) == ATOM_LIST) {
                 if ((*sexp)->atom.list.count > 0) {
-                        sexp_ret = SEXP_copyobj(&(SEXP((*sexp)->atom.list.memb)[0]));
+                        sexp_ret = SEXP_dup(&(SEXP((*sexp)->atom.list.memb)[0]));
                         
                         if ((*sexp)->atom.list.count > 1) {
                                 --(*sexp)->atom.list.count;
@@ -581,10 +581,34 @@ SEXP_t *SEXP_list_nth_copy (SEXP_t *sexp, uint32_t n)
         
         if (SEXP_listp (sexp) && n > 0) {
                 if (sexp->atom.list.count <= n)
-                        return SEXP_copy(&(SEXP(sexp->atom.list.memb)[n - 1]));
+                        return SEXP_deepdup(&(SEXP(sexp->atom.list.memb)[n - 1]));
         }
         
         return (NULL);
+}
+
+SEXP_t *SEXP_list_join (SEXP_t *a, SEXP_t *b)
+{
+        SEXP_VALIDATE(a);
+        SEXP_VALIDATE(b);
+        
+        if (SEXP_listp (a) && SEXP_listp (b)) {
+                if (a->atom.list.size < b->atom.list.count) {
+                        a->atom.list.size = a->atom.list.count + b->atom.list.count;
+                        a->atom.list.memb = xrealloc (a->atom.list.memb,
+                                                      sizeof (SEXP_t) * (a->atom.list.count + b->atom.list.count));
+                        
+                }
+                
+                memcpy (SEXP(a->atom.list.memb) + a->atom.list.count,
+                        b->atom.list.memb, sizeof (SEXP_t) * b->atom.list.count);
+                
+                a->atom.list.count += b->atom.list.count;
+                
+                return (a);
+        } else {
+                return (NULL);
+        }
 }
 
 SEXP_t *SEXP_new  (void)
@@ -603,7 +627,7 @@ SEXP_t *SEXP_new  (void)
         return (sexp);
 }
 
-void SEXP_init (SEXP_t  *sexp)
+void SEXP_init (SEXP_t *sexp)
 {
         _A(sexp != NULL);
         
@@ -630,7 +654,7 @@ void SEXP_free (SEXP_t **sexpp)
                 uint32_t i;
                 
                 for (i = 0; i < ((*sexpp)->atom.list.size); ++i)
-                        SEXP_free ((void **)&SEXP((*sexpp)->atom.list.memb)[i]);
+                        SEXP_free (&SEXP((*sexpp)->atom.list.memb)[i]);
                 
                 if ((*sexpp)->atom.list.size > 0)
                         xfree ((void **)&((*sexpp)->atom.list.memb));
@@ -692,10 +716,12 @@ void SEXP_free (SEXP_t **sexpp)
         return;
 }
 
-SEXP_t *SEXP_copy (SEXP_t *sexp)
+SEXP_t *SEXP_deepdup (SEXP_t *sexp)
 {
         SEXP_t *copy;
         
+        SEXP_VALIDATE(sexp);
+
         copy = SEXP_new ();
         copy->flags = sexp->flags;
         copy->handler = sexp->handler;
@@ -720,16 +746,30 @@ SEXP_t *SEXP_copy (SEXP_t *sexp)
         return (copy);
 }
 
-SEXP_t *SEXP_copyobj (SEXP_t *sexp)
+SEXP_t *SEXP_dup (SEXP_t *sexp)
 {
         SEXP_t *copy;
         
+        SEXP_VALIDATE(sexp);
+
         copy = SEXP_new ();
         copy->flags   = sexp->flags;
         copy->handler = sexp->handler;
         memcpy (&(copy->atom), &(sexp->atom), sizeof sexp->atom);
         
         return (copy);
+}
+
+SEXP_t *SEXP_copy (SEXP_t *dst, SEXP_t *src)
+{
+        SEXP_VALIDATE(src);
+        return memcpy (dst, src, sizeof (SEXP_t));
+}
+
+SEXP_t *SEXP_deepcopy (SEXP_t *dst, SEXP_t *src)
+{
+        SEXP_VALIDATE(src);
+        return (NULL);
 }
 
 size_t SEXP_length (SEXP_t *sexp)

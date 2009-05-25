@@ -2,6 +2,7 @@
 #ifndef SEXP_TYPES_H
 #define SEXP_TYPES_H
 
+#include <stddef.h>
 #include <stdint.h>
 
 /*

@@ -5,6 +5,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include "common.h"
+#include "xmalloc.h"
 #include "sexp-types.h"
 #include "sexp-manip.h"
 
