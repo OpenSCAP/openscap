@@ -7,6 +7,7 @@
 #define _A(x) assert(x)
 #endif
 
+#include <stdarg.h>
 #include <stdint.h>
 #include "sexp.h"
 
@@ -39,7 +40,7 @@
 SEXP_t *SEXP_number_new (const void *, NUM_type_t);
 int     SEXP_numberp (SEXP_t *sexp);
 size_t  SEXP_number_size (SEXP_t *sexp);
-void    SEXP_number_get (SEXP_t *sexp, void *ptr, NUM_type_t type);
+int     SEXP_number_get (SEXP_t *sexp, void *ptr, NUM_type_t type);
 
 /* Functions for manipulating with strings */
 SEXP_t *SEXP_string_new (const void *, size_t);
@@ -99,7 +100,7 @@ static inline LIST_t *LIST_new (void)
 /* Functions for manipulating with S-exp objects */
 SEXP_t *SEXP_new  (void);
 void    SEXP_init (SEXP_t *sexp);
-void    SEXP_free (SEXP_t **sexpp);
+void    SEXP_free (SEXP_t *sexp);
 
 /* shallow copy */
 SEXP_t *SEXP_dup (SEXP_t *sexp);

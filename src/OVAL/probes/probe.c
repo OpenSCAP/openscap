@@ -23,24 +23,25 @@ SEXP_t *SEXP_OVALattr_create (const char *name, ...)
         
         while (name != NULL) {
                 val = va_arg (ap, SEXP_t *);
-                SEXP_VALIDATE(val);
-                
-                if (SEXP_listp (val)) {
-                        _D("Invalid type of attribute value: list\n");
-                        SEXP_free (&list);
-                        return (NULL);
-                }
-                
+                                
                 if (val == NULL) {
                         SEXP_list_add (list, SEXP_string_new (name, strlen (name)));
                 } else {
                         char  *attr_name;
                         size_t attr_namelen = strlen (name) + 1;
                         
+                        SEXP_VALIDATE(val);
+
+                        if (SEXP_listp (val)) {
+                                _D("Invalid type of attribute value: list\n");
+                                SEXP_free (list);
+                                return (NULL);
+                        }
+                        
                         attr_name = xmalloc (sizeof (char) * (attr_namelen + 1));
                         snprintf (attr_name, attr_namelen + 1, ":%s", name);
                         
-                        SEXP_list_add (list, SEXP_string_new (name, attr_namelen));
+                        SEXP_list_add (list, SEXP_string_new (attr_name, attr_namelen));
                         SEXP_list_add (list, val);
                         
                         xfree ((void **)&attr_name);
@@ -76,7 +77,7 @@ SEXP_t *SEXP_OVALelm_create (const char *name, ...)
                         elm_list = SEXP_list_new ();
                         SEXP_list_add (elm_list, SEXP_string_new (name, strlen (name)));
                         SEXP_list_join (elm_list, attrs);
-                        
+                        SEXP_list_add (elm, elm_list);
                 } else {
                         SEXP_list_add (elm, SEXP_string_new (name, strlen (name)));
                 }

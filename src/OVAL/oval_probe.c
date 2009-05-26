@@ -173,7 +173,7 @@ struct oval_iterator_syschar *probe_simple_object (struct oval_object *object,
                         return (NULL);
                 }
                 
-#if defined(PROBEPATH_ENV)
+#if defined(PROBEPATH_ENV) /* insecure? */
                 dir = getenv ("PROBEPATH");
                 if (dir == NULL)
                         dir = OVAL_PROBE_DIR;

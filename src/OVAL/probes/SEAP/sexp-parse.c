@@ -836,7 +836,7 @@ DEFPARSER(label)
                 _D("pstate buf: \"%.*s\"\n",
                    PSTATE(pstatep)->buffer_data_len, PSTATE(pstatep)->buffer);
                 
-                SEXP_free (&sexp);
+                SEXP_free (sexp);
 
                 _D("ret: NULL\n");
 

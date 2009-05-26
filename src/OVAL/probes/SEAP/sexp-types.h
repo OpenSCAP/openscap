@@ -86,7 +86,8 @@ typedef struct {
 typedef struct __SEXP_t {
 
 #if !defined(NDEBUG) || defined(VALIDATE_SEXP)
-#define SEXP_MAGIC0 0xf3f3
+#define SEXP_MAGIC0     0xf3f3
+#define SEXP_MAGIC0_INV 0xffff
         volatile uint16_t __magic0;
 #endif
 
@@ -99,7 +100,8 @@ typedef struct __SEXP_t {
         } atom;
 
 #if !defined(NDEBUG) || defined(VALIDATE_SEXP)
-#define SEXP_MAGIC1 0x6767
+#define SEXP_MAGIC1     0x6767
+#define SEXP_MAGIC1_INV 0x0000
         volatile uint16_t __magic1;
 #endif
 
