@@ -5,13 +5,17 @@ TESTS_ENVIRONMENT = $(SHELL) -x
 EXTRA_DIST =
 
 if WANT_OVAL
-check_PROGRAMS += test_oval
-TESTS += OVAL/test_oval.sh
+check_PROGRAMS += test_oval test_sexpoval
+TESTS += OVAL/test_oval.sh test_sexpoval
 EXTRA_DIST += OVAL/test_oval.sh OVAL/test.xml
 
 test_oval_SOURCES = OVAL/test_oval.c
 test_oval_CFLAGS = -I$(top_srcdir)/src/OVAL
 test_oval_LDADD = $(top_builddir)/src/libopenscap.la
+
+test_sexpoval_SOURCES = OVAL/test_sexpoval.c
+test_sexpoval_CFLAGS = -I$(top_srcdir)/src/OVAL -I$(top_srcdir)/src/OVAL/probes -I$(top_srcdir)/src/OVAL/probes/SEAP
+test_sexpoval_LDADD = $(top_builddir)/src/libopenscap.la
 
 if WANT_PROBES
 check_PROGRAMS += sexp_test seap_conn_test seap_test
