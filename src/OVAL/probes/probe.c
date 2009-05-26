@@ -82,14 +82,16 @@ SEXP_t *SEXP_OVALelm_create (const char *name, ...)
                         SEXP_list_add (elm, SEXP_string_new (name, strlen (name)));
                 }
                 
-                SEXP_VALIDATE(value);
-
-                SEXP_list_add (elm, value);
+                if (value != NULL) {
+                        SEXP_VALIDATE(value);
+                        SEXP_list_add (elm, value);
+                }
+                
                 SEXP_list_add (list, elm);
                 
                 name = va_arg (ap, const char *);
         }
-
+        
         return (list);
 }
 
