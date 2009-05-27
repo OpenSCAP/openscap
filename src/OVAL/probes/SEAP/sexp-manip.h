@@ -42,6 +42,11 @@ int     SEXP_numberp (SEXP_t *sexp);
 size_t  SEXP_number_size (SEXP_t *sexp);
 int     SEXP_number_get (SEXP_t *sexp, void *ptr, NUM_type_t type);
 
+/*
+#define SEXP_number_new(num)
+#define SEXP_number_get(sexp)
+*/
+
 /* Functions for manipulating with strings */
 SEXP_t *SEXP_string_new (const void *, size_t);
 SEXP_t *SEXP_string_newf (const char *fmt, ...);

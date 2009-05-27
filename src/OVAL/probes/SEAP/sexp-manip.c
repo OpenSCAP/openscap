@@ -360,7 +360,27 @@ int SEXP_strcmp (SEXP_t *sexp, const char *str)
                 SEXP_VALIDATE(sexp);
 
                 if (SEXP_TYPE(sexp) == ATOM_STRING) {
-                        return strncmp (sexp->atom.string.str, str, sexp->atom.string.len);
+                        register char  *str_a, *str_b;
+                        register size_t len_a;
+                        
+                        len_a = sexp->atom.string.len;
+                        str_a = sexp->atom.string.str;
+                        str_b = str;
+                        
+                        while (len_a > 0 && *str_b != '\0') {
+                                if (*str_a != *str_b)
+                                        return (int)(*str_a - *str_b);
+                                --len_a;
+                                ++str_a;
+                                ++str_b;
+                        }
+                        
+                        if (len_a > 0)
+                                return (1);
+                        else if (*str_b != '\0')
+                                return (-1);
+                        else
+                                return (0);
                 } else {
                         return (1);
                 }
