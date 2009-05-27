@@ -299,6 +299,76 @@ int main (void)
 
         tst = 50;
 
+        { /* OVAL element:
+           *  ((test :arg1 3 :arg2 2 :arg 1) 2^24)
+           */
+                SEXP_t *elm_list, *elm, *val;
+                int a, b, c, d, test;
+
+                a = 3;
+                b = 2;
+                c = 1;
+                d = 1<<24;
+                
+                elm_list = SEXP_OVALelm_create ("test",
+                                                SEXP_OVALattr_create ("arg1", SEXP_number_new (&a, NUM_INT32),
+                                                                      "arg2", SEXP_number_new (&b, NUM_INT32),
+                                                                      "arg" , SEXP_number_new (&c, NUM_INT32),
+                                                                      NULL),
+                                                SEXP_number_new (&d, NUM_INT32),
+                                                NULL);
+                
+                elm = SEXP_list_first (elm_list);
+
+                SEXP_VALIDATE(elm);
+                
+                puts("-----");
+                SEXP_printfa (elm);
+                puts("\n-----");
+
+                val = SEXP_OVALelm_getattrval (elm, "arg1");
+
+                SEXP_number_get (val, &test, NUM_INT32);
+                if (test != a) {
+                        _E("attrval(arg1=%d) != %d\n", test, a);
+                        return (EXIT_FAILURE);
+                }
+
+                ++tst;
+
+                val = SEXP_OVALelm_getattrval (elm, "arg2");
+                
+                SEXP_number_get (val, &test, NUM_INT32);
+                if (test != b) {
+                        _E("attrval(arg1) != %d\n", b);
+                        return (EXIT_FAILURE);
+                }
+
+                ++tst;
+
+                val = SEXP_OVALelm_getattrval (elm, "arg");
+                
+                SEXP_number_get (val, &test, NUM_INT32);
+                if (test != c) {
+                        _E("attrval(arg1) != %d\n", c);
+                        return (EXIT_FAILURE);
+                }
+
+                ++tst;
+                
+                val = SEXP_OVALelm_getval (elm);
+                
+                SEXP_number_get (val, &test, NUM_INT32);
+                if (test != d) {
+                        _E("attrval(arg1) != %d\n", d);
+                        return (EXIT_FAILURE);
+                }
+
+                SEXP_free (elm_list);
+        }
+        
+        tst = 60;
+
         { /* OVAL object:
            *  (rpminfo_object (name "sshd") (epoch "(none)") (version "5.0"))
            */
@@ -312,7 +382,7 @@ int main (void)
                 /* free */
         }
 
-        tst = 60;
+        tst = 70;
 
         { /* OVAL object:
            *  ((rpminfo_object :id 1 :scheme "url://foo.bar") (name "sshd") (epoch "(none)") (version "5.0"))
@@ -327,7 +397,7 @@ int main (void)
                 /* free */
         }
         
-        tst = 70;
+        tst = 80;
 
         { /* OVAL object:
            *  ((rpminfo_object :id 1 :scheme "url://foo.bar") (name "sshd") ((epoch :attr1 "123") "(none)") (version "5.0"))
@@ -343,7 +413,7 @@ int main (void)
                 
         }
         
-        tst = 80;
+        tst = 90;
 
         { /* OVAL object:
            *  ((rpminfo_object :id 1 noarg :scheme "url://foo.bar") (name "sshd") (epoch "(none)") (version "5.0"))

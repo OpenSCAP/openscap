@@ -42,6 +42,48 @@ int     SEXP_numberp (SEXP_t *sexp);
 size_t  SEXP_number_size (SEXP_t *sexp);
 int     SEXP_number_get (SEXP_t *sexp, void *ptr, NUM_type_t type);
 
+
+/*
+ *   d - signed
+ *   u - unsigned
+ *   h - short
+ *   l - long
+ *   f - float
+ *
+ *  int32 ->  d
+ * uint32 ->  u
+ *  int16 -> hd
+ * uint16 -> hu
+ *  int64 -> ld
+ * uint64 -> lu
+ */
+
+SEXP_t *SEXP_number_newd (int n);
+SEXP_t *SEXP_number_newhd (short int n);
+SEXP_t *SEXP_number_newld (long int n);
+SEXP_t *SEXP_number_newlld (long long int n);
+
+SEXP_t *SEXP_number_newu (unsigned int n);
+SEXP_t *SEXP_number_newhu (unsigned short int n);
+SEXP_t *SEXP_number_newlu (unsigned long int n);
+SEXP_t *SEXP_number_newllu (unsigned long long int n);
+
+SEXP_t *SEXP_number_newf (double n);
+SEXP_t *SEXP_number_newlf (long double n);
+
+int           SEXP_number_getd (SEXP_t *sexp);
+short int     SEXP_number_gethd (SEXP_t *sexp);
+long int      SEXP_number_getld (SEXP_t *sexp);
+long long int SEXP_number_getlld (SEXP_t *sexp);
+
+unsigned int       SEXP_number_getu (SEXP_t *sexp);
+unsigned short int SEXP_number_gethu (SEXP_t *sexp);
+unsigned long int  SEXP_number_getlu (SEXP_t *sexp);
+unsigned long long SEXP_number_getllu (SEXP_t *sexp);
+
+double      SEXP_number_getf (SEXP_t *sexp);
+long double SEXP_number_getlf (SEXP_t *sexp);
+
 /*
 #define SEXP_number_new(num)
 #define SEXP_number_get(sexp)
