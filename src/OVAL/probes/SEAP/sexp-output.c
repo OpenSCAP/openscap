@@ -373,27 +373,27 @@ static int __SEXP_fprintfa (FILE *fp, SEXP_t *sexp, uint32_t indent)
 {
         switch (SEXP_TYPE(sexp)) {
         case ATOM_STRING:
-                return fprintf (fp, "\"%.*s\" ", sexp->atom.string.len, sexp->atom.string.str);
+                return fprintf (fp, "\"%.*s\"", sexp->atom.string.len, sexp->atom.string.str);
         case ATOM_NUMBER:
                 switch (sexp->atom.number.type) {
                 case NUM_INT8:
-                        return fprintf (fp, "%hhd ", NUM(int8_t, sexp->atom.number.nptr));
+                        return fprintf (fp, "%hhd", NUM(int8_t, sexp->atom.number.nptr));
                 case NUM_UINT8:
-                        return fprintf (fp, "%hhu ", NUM(uint8_t, sexp->atom.number.nptr));
+                        return fprintf (fp, "%hhu", NUM(uint8_t, sexp->atom.number.nptr));
                 case NUM_INT16:
-                        return fprintf (fp, "%hd ", NUM(int16_t, sexp->atom.number.nptr));
+                        return fprintf (fp, "%hd", NUM(int16_t, sexp->atom.number.nptr));
                 case NUM_UINT16:
-                        return fprintf (fp, "%hu ", NUM(uint16_t, sexp->atom.number.nptr));
+                        return fprintf (fp, "%hu", NUM(uint16_t, sexp->atom.number.nptr));
                 case NUM_INT32:
-                        return fprintf (fp, "%d ", NUM(int32_t, sexp->atom.number.nptr));
+                        return fprintf (fp, "%d", NUM(int32_t, sexp->atom.number.nptr));
                 case NUM_UINT32:
-                        return fprintf (fp, "%u ", NUM(uint32_t, sexp->atom.number.nptr));
+                        return fprintf (fp, "%u", NUM(uint32_t, sexp->atom.number.nptr));
                 case NUM_INT64:
-                        return fprintf (fp, "%lld ", NUM(int64_t, sexp->atom.number.nptr));
+                        return fprintf (fp, "%lld", NUM(int64_t, sexp->atom.number.nptr));
                 case NUM_UINT64:
-                        return fprintf (fp, "%llu ", NUM(uint64_t, sexp->atom.number.nptr));
+                        return fprintf (fp, "%llu", NUM(uint64_t, sexp->atom.number.nptr));
                 case NUM_DOUBLE:
-                        return fprintf (fp, "%f ", NUM(double, sexp->atom.number.nptr));
+                        return fprintf (fp, "%f", NUM(double, sexp->atom.number.nptr));
                 default:
                         _D("Unsupported number type: %d\n", sexp->atom.number.type);
                         abort ();
@@ -408,13 +408,22 @@ static int __SEXP_fprintfa (FILE *fp, SEXP_t *sexp, uint32_t indent)
                         putc (' ', fp);
                 putc ('(', fp);
 
-                for (i = 0; i < sexp->atom.list.count; ++i) {
-                        if (__SEXP_fprintfa (fp, SEXP(sexp->atom.list.memb) + i, indent + 1) < 0)
-                                return (-1);
+                i = 0;
+                if (i < sexp->atom.list.count) {
+                        for (;;) {
+                                if (__SEXP_fprintfa (fp, SEXP(sexp->atom.list.memb) + i, indent + 1) < 0)
+                                        return (-1);
+                                ++i;
+
+                                if (i < sexp->atom.list.count) {
+                                        putc (' ', fp);
+                                } else {
+                                        break;
+                                }
+                        }
                 }
-                putc ('\b', fp);
+                
                 putc (')', fp);
-                putc (' ', fp);
                 return (0);
         }
         case ATOM_EMPTY:
