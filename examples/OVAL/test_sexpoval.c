@@ -44,7 +44,12 @@ int main (void)
                 num = SEXP_number_new (&integer, NUM_INT32);
                 flt = SEXP_number_new (&floating, NUM_DOUBLE);
                 str = SEXP_string_newf ("Hello, %s!", "world");
-                
+
+                list = SEXP_list_new ();
+                puts("-----");
+                SEXP_printfa (list);
+                puts("\n-----");
+
                 /* one attribute */
                 attr_list = SEXP_OVALattr_create ("attr1", num, NULL);
                 if (attr_list == NULL) {

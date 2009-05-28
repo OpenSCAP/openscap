@@ -97,6 +97,7 @@ int     SEXP_strncmp (SEXP_t *sexp, const char *str, size_t n);
 int     SEXP_strncoll (SEXP_t *sexp, const char *str, size_t n);
 int     SEXP_stringp (SEXP_t *sexp);
 char   *SEXP_string_cstr (SEXP_t *sexp);
+size_t  SEXP_string_length (SEXP_t *sexp);
 
 /* Functions for manipulating with lists */
 SEXP_t *SEXP_list_new (void);
@@ -110,6 +111,20 @@ SEXP_t *SEXP_list_pop (SEXP_t **);
 SEXP_t *SEXP_list_nth (SEXP_t *, uint32_t);
 SEXP_t *SEXP_list_nth_copy (SEXP_t *sexp, uint32_t n);
 SEXP_t *SEXP_list_join (SEXP_t *, SEXP_t *);
+size_t  SEXP_list_length (SEXP_t *sexp);
+SEXP_t *SEXP_list_map (SEXP_t *list, int (*fn) (SEXP_t *, SEXP_t *));
+SEXP_t *SEXP_list_map2 (SEXP_t *list, int (*fn) (SEXP_t *, SEXP_t *, void *), void *ptr);
+SEXP_t *SEXP_list_reduce (SEXP_t *list, SEXP_t *(*fn) (SEXP_t *, SEXP_t *), int strategy);
+SEXP_t *SEXP_list_reduce2 (SEXP_t *list, SEXP_t *(*fn) (SEXP_t *, SEXP_t *, void *), int strategy, void *ptr);
+
+#define SEXP_list_foreach(var, list)             \
+        for (register uint32_t ___i_ = 0,        \
+             register SEXP_t * ___l_ = (list),   \
+             (var) = SEXP_list_nth (___l_, i);   \
+             (var) != NULL;                      \
+             (var) = SEXP_list_nth (___l_, ++i))
+
+void SEXP_list_cb (SEXP_t *list, void (*fn) (SEXP_t *, void *), void *ptr);
 
 /* Internal functions, don't use! */
 SEXP_t *LIST_add (LIST_t *list, SEXP_t *sexp);

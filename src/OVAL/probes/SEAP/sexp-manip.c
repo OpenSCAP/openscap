@@ -314,6 +314,9 @@ int SEXP_number_get (SEXP_t *sexp, void *ptr, NUM_type_t type)
                                         return (0);
                                 }
                                 return (0);
+                        } else {
+                                errno = EOVERFLOW;
+                                return (1);
                         }
                 } else {
                         /* not a number */
@@ -493,7 +496,30 @@ short int SEXP_number_gethd (SEXP_t *sexp)
 {
         if (sexp != NULL) {
                 SEXP_VALIDATE(sexp);
-                
+
+                if (SEXP_TYPE(sexp) == ATOM_NUMBER) {
+                        switch (sexp->atom.number.type) {
+                        case NUM_INT8: {
+                                int8_t n = NUM(int8_t, sexp->atom.number.nptr);
+                                return (short int)(n);
+                        }
+                        case NUM_UINT8: {
+                                uint8_t n = NUM(uint8_t, sexp->atom.number.nptr);
+                                return (short int)(n);
+                        }
+                        case NUM_INT16:
+                        case NUM_UINT16:
+                                return NUM(short int, sexp->atom.number.nptr);
+                        case NUM_NONE:
+                                return (0);
+                        default:
+                                errno = EOVERFLOW;
+                                return (0);
+                        }
+                } else {
+                        errno = EINVAL;
+                        return (0);
+                }
         } else {
                 errno = EFAULT;
                 return (0);
@@ -504,7 +530,38 @@ long int SEXP_number_getld (SEXP_t *sexp)
 {
         if (sexp != NULL) {
                 SEXP_VALIDATE(sexp);
-                
+
+                if (SEXP_TYPE(sexp) == ATOM_NUMBER) {
+                        switch (sexp->atom.number.type) {
+                        case NUM_LONGINT:
+                        case NUM_ULONGINT:
+                                return NUM(long int, sexp->atom.number.nptr);
+                        case NUM_INT8: {
+                                int8_t n = NUM(int8_t, sexp->atom.number.nptr);
+                                return (long int)(n);
+                        }
+                        case NUM_UINT8: {
+                                uint8_t n = NUM(uint8_t, sexp->atom.number.nptr);
+                                return (long int)(n);
+                        }
+                        case NUM_INT16: {
+                                int16_t n = NUM(int16_t, sexp->atom.number.nptr);
+                                return (long int)(n);
+                        }
+                        case NUM_UINT16: {
+                                uint16_t n = NUM(uint16_t, sexp->atom.number.nptr);
+                                return (long int)(n);
+                        }
+                        case NUM_NONE:
+                                return (0);
+                        default:
+                                errno = EOVERFLOW;
+                                return (0);
+                        }
+                } else {
+                        errno = EINVAL;
+                        return (0);
+                }
         } else {
                 errno = EFAULT;
                 return (0);
@@ -515,7 +572,49 @@ long long int SEXP_number_getlld (SEXP_t *sexp)
 {
         if (sexp != NULL) {
                 SEXP_VALIDATE(sexp);
-                
+
+                if (SEXP_TYPE(sexp) == ATOM_NUMBER) {
+                        switch (sexp->atom.number.type) {
+                        case NUM_LONGLONGINT:
+                        case NUM_ULONGLONGINT:
+                                return NUM(long long int, sexp->atom.number.nptr);
+                        case NUM_INT8: {
+                                int8_t n = NUM(int8_t, sexp->atom.number.nptr);
+                                return (long long int)(n);
+                        }
+                        case NUM_UINT8: {
+                                uint8_t n = NUM(uint8_t, sexp->atom.number.nptr);
+                                return (long long int)(n);
+                        }
+                        case NUM_INT16: {
+                                int16_t n = NUM(int16_t, sexp->atom.number.nptr);
+                                return (long long int)(n);
+                        }
+                        case NUM_UINT16: {
+                                uint16_t n = NUM(uint16_t, sexp->atom.number.nptr);
+                                return (long long int)(n);
+                        }
+                        case NUM_INT32: {
+                                int32_t n = NUM(int32_t, sexp->atom.number.nptr);
+                                return (long long int)(n);
+                        }
+                        case NUM_UINT32: {
+                                uint32_t n = NUM(uint32_t, sexp->atom.number.nptr);
+                                return (long long int)(n);
+                        }
+                        case NUM_DOUBLE:
+                                errno = EDOM;
+                                return (0);
+                        case NUM_NONE:
+                                return (0);
+                        default:
+                                errno = EOVERFLOW;
+                                return (0);
+                        }
+                } else {
+                        errno = EINVAL;
+                        return (0);
+                }
         } else {
                 errno = EFAULT;
                 return (0);
@@ -526,7 +625,38 @@ unsigned int SEXP_number_getu (SEXP_t *sexp)
 {
         if (sexp != NULL) {
                 SEXP_VALIDATE(sexp);
-                
+
+                if (SEXP_TYPE(sexp) == ATOM_NUMBER) {
+                        switch (sexp->atom.number.type) {
+                        case NUM_INT:
+                        case NUM_UINT:
+                                return NUM(unsigned int, sexp->atom.number.nptr);
+                        case NUM_INT8: {
+                                int8_t n = NUM(int8_t, sexp->atom.number.nptr);
+                                return (unsigned int)(n);
+                        }
+                        case NUM_UINT8: {
+                                uint8_t n = NUM(uint8_t, sexp->atom.number.nptr);
+                                return (unsigned int)(n);
+                        }
+                        case NUM_INT16: {
+                                int16_t n = NUM(int16_t, sexp->atom.number.nptr);
+                                return (unsigned int)(n);
+                        }
+                        case NUM_UINT16: {
+                                uint16_t n = NUM(uint16_t, sexp->atom.number.nptr);
+                                return (unsigned int)(n);
+                        }
+                        case NUM_NONE:
+                                return (0);
+                        default:
+                                errno = EOVERFLOW;
+                                return (0);
+                        }
+                } else {
+                        errno = EINVAL;
+                        return (0);
+                }
         } else {
                 errno = EFAULT;
                 return (0);
@@ -538,6 +668,29 @@ unsigned short int SEXP_number_gethu (SEXP_t *sexp)
         if (sexp != NULL) {
                 SEXP_VALIDATE(sexp);
                 
+                if (SEXP_TYPE(sexp) == ATOM_NUMBER) {
+                        switch (sexp->atom.number.type) {
+                        case NUM_INT16:
+                        case NUM_UINT16:
+                                return NUM(unsigned short int, sexp->atom.number.nptr);
+                        case NUM_INT8: {
+                                int8_t n = NUM(int8_t, sexp->atom.number.nptr);
+                                return (unsigned short int)(n);
+                        }
+                        case NUM_UINT8: {
+                                uint8_t n = NUM(uint8_t, sexp->atom.number.nptr);
+                                return (unsigned short int)(n);
+                        }
+                        case NUM_NONE:
+                                return (0);
+                        default:
+                                errno = EOVERFLOW;
+                                return (0);
+                        }
+                } else {
+                        errno = EINVAL;
+                        return (0);
+                }
         } else {
                 errno = EFAULT;
                 return (0);
@@ -548,18 +701,91 @@ unsigned long int SEXP_number_getlu (SEXP_t *sexp)
 {
         if (sexp != NULL) {
                 SEXP_VALIDATE(sexp);
-                
+
+                if (SEXP_TYPE(sexp) == ATOM_NUMBER) {
+                        switch (sexp->atom.number.type) {
+                        case NUM_LONGINT:
+                        case NUM_ULONGINT:
+                                return NUM(unsigned long int, sexp->atom.number.nptr);
+                        case NUM_INT8: {
+                                int8_t n = NUM(int8_t, sexp->atom.number.nptr);
+                                return (unsigned long int)(n);
+                        }
+                        case NUM_UINT8: {
+                                uint8_t n = NUM(uint8_t, sexp->atom.number.nptr);
+                                return (unsigned long int)(n);
+                        }
+                        case NUM_INT16: {
+                                int16_t n = NUM(int16_t, sexp->atom.number.nptr);
+                                return (unsigned long int)(n);
+                        }
+                        case NUM_UINT16: {
+                                uint16_t n = NUM(uint16_t, sexp->atom.number.nptr);
+                                return (unsigned long int)(n);
+                        }
+                        case NUM_NONE:
+                                return (0);
+                        default:
+                                errno = EOVERFLOW;
+                                return (0);
+                        }
+                } else {
+                        errno = EINVAL;
+                        return (0);
+                }
         } else {
                 errno = EFAULT;
                 return (0);
         }
 }
 
-unsigned long long SEXP_number_getllu (SEXP_t *sexp)
+unsigned long long int SEXP_number_getllu (SEXP_t *sexp)
 {
         if (sexp != NULL) {
                 SEXP_VALIDATE(sexp);
                 
+                if (SEXP_TYPE(sexp) == ATOM_NUMBER) {
+                        switch (sexp->atom.number.type) {
+                        case NUM_LONGLONGINT:
+                        case NUM_ULONGLONGINT:
+                                return NUM(unsigned long long int, sexp->atom.number.nptr);
+                        case NUM_INT8: {
+                                int8_t n = NUM(int8_t, sexp->atom.number.nptr);
+                                return (unsigned long long int)(n);
+                        }
+                        case NUM_UINT8: {
+                                uint8_t n = NUM(uint8_t, sexp->atom.number.nptr);
+                                return (unsigned long long int)(n);
+                        }
+                        case NUM_INT16: {
+                                int16_t n = NUM(int16_t, sexp->atom.number.nptr);
+                                return (unsigned long long int)(n);
+                        }
+                        case NUM_UINT16: {
+                                uint16_t n = NUM(uint16_t, sexp->atom.number.nptr);
+                                return (unsigned long long int)(n);
+                        }
+                        case NUM_INT32: {
+                                int32_t n = NUM(int32_t, sexp->atom.number.nptr);
+                                return (unsigned long long int)(n);
+                        }
+                        case NUM_UINT32: {
+                                uint32_t n = NUM(uint32_t, sexp->atom.number.nptr);
+                                return (unsigned long long int)(n);
+                        }
+                        case NUM_DOUBLE:
+                                errno = EDOM;
+                                return (0);
+                        case NUM_NONE:
+                                return (0);
+                        default:
+                                errno = EOVERFLOW;
+                                return (0);
+                        }
+                } else {
+                        errno = EINVAL;
+                        return (0);
+                }
         } else {
                 errno = EFAULT;
                 return (0);
@@ -570,13 +796,26 @@ double SEXP_number_getf (SEXP_t *sexp)
 {
         if (sexp != NULL) {
                 SEXP_VALIDATE(sexp);
-                
+ 
+                if (SEXP_TYPE(sexp) == ATOM_NUMBER) {
+                        switch (sexp->atom.number.type) {
+                        case NUM_DOUBLE:
+                                return NUM(double, sexp->atom.number.nptr);
+                        default:
+                                errno = EDOM;
+                                return (0.0);
+                        }
+                } else {
+                        errno = EINVAL;
+                        return (0.0);
+                }
         } else {
                 errno = EFAULT;
-                return (0);
+                return (0.0);
         }
 }
 
+#if 0
 long double SEXP_number_getlf (SEXP_t *sexp)
 {
         if (sexp != NULL) {
@@ -587,6 +826,7 @@ long double SEXP_number_getlf (SEXP_t *sexp)
                 return (0);
         }
 }
+#endif
 
 SEXP_t *SEXP_string_new (const void *str, size_t len)
 {
@@ -633,7 +873,7 @@ int SEXP_strcmp (SEXP_t *sexp, const char *str)
                         
                         len_a = sexp->atom.string.len;
                         str_a = sexp->atom.string.str;
-                        str_b = str;
+                        str_b = (char *)str;
                         
                         while (len_a > 0 && *str_b != '\0') {
                                 if (*str_a != *str_b)
@@ -746,6 +986,23 @@ char *SEXP_string_cstr (SEXP_t *sexp)
                 errno = EFAULT;
                 return (NULL);
         }
+}
+
+size_t SEXP_string_length (SEXP_t *sexp)
+{
+        if (sexp != NULL) {
+                SEXP_VALIDATE(sexp);
+
+                if (SEXP_TYPE(sexp) == ATOM_STRING) {
+                        return ((size_t)(sexp->atom.string.len));
+                } else {
+                        errno = EINVAL;
+                }
+        } else {
+                errno = EFAULT;
+        }
+        
+        return (0);
 }
 
 SEXP_t *SEXP_list_new (void)
@@ -993,6 +1250,125 @@ SEXP_t *SEXP_list_join (SEXP_t *a, SEXP_t *b)
                 errno = EFAULT;
                 return (NULL);
         }
+}
+
+size_t SEXP_list_length (SEXP_t *sexp)
+{
+        if (sexp != NULL) {
+                SEXP_VALIDATE(sexp);
+                
+                if (SEXP_TYPE(sexp) == ATOM_LIST) {
+                        return ((size_t)(sexp->atom.list.count));
+                } else {
+                        errno = EINVAL;
+                }
+        } else {
+                errno = EFAULT;
+        }
+        
+        return (0);
+}
+
+SEXP_t *SEXP_list_map (SEXP_t *list, int (*fn) (SEXP_t *, SEXP_t *))
+{
+        int e;
+        SEXP_t *res_list, *member = NULL;
+        uint32_t i;
+        
+        if (list != NULL) {
+                SEXP_VALIDATE(list);
+                
+                if (SEXP_TYPE(list) == ATOM_LIST) {
+                        res_list = SEXP_new ();
+                        SEXP_SETTYPE(res_list, ATOM_LIST);
+                        res_list->atom.list.size  = list->atom.list.size;
+                        res_list->atom.list.count = list->atom.list.count;
+                        res_list->atom.list.memb  = xmalloc (sizeof (SEXP_t) * res_list->atom.list.size);
+                        
+                        for (i = 0; i < list->atom.list.count; ++i) {
+                                if (fn (&(SEXP(res_list->atom.list.memb)[i]),
+                                        &(SEXP(list->atom.list.memb)[i])) != 0)
+                                {
+                                        e = errno;
+                                        goto err;
+                                }
+                        }
+                        
+                        return (res_list);
+                } else {
+                        errno = EINVAL;
+                }
+        } else {
+                errno = EFAULT;
+        }
+        
+        return (NULL);
+err:
+        SEXP_free (res_list);
+        errno = e;
+        return (NULL);
+}
+
+SEXP_t *SEXP_list_map2 (SEXP_t *list, int (*fn) (SEXP_t *, SEXP_t *, void *), void *ptr)
+{
+        int e;
+        SEXP_t *res_list, *member = NULL;
+        uint32_t i;
+        
+        if (list != NULL) {
+                SEXP_VALIDATE(list);
+                
+                if (SEXP_TYPE(list) == ATOM_LIST) {
+                        res_list = SEXP_new ();
+                        SEXP_SETTYPE(res_list, ATOM_LIST);
+                        res_list->atom.list.size  = list->atom.list.size;
+                        res_list->atom.list.count = list->atom.list.count;
+                        res_list->atom.list.memb  = xmalloc (sizeof (SEXP_t) * res_list->atom.list.size);
+                        
+                        for (i = 0; i < list->atom.list.count; ++i) {
+                                if (fn (&(SEXP(res_list->atom.list.memb)[i]),
+                                        &(SEXP(list->atom.list.memb)[i]),
+                                        ptr) != 0)
+                                {
+                                        e = errno;
+                                        goto err;
+                                }
+                        }
+                        
+                        return (res_list);
+                } else {
+                        errno = EINVAL;
+                }
+        } else {
+                errno = EFAULT;
+        }
+        
+        return (NULL);
+err:
+        SEXP_free (res_list);
+        errno = e;
+        return (NULL);
+}
+
+SEXP_t *SEXP_list_reduce (SEXP_t *list, SEXP_t *(*fn) (SEXP_t *, SEXP_t *), int strategy)
+{
+        SEXP_VALIDATE(list);
+
+        return (NULL);
+}
+
+SEXP_t *SEXP_list_reduce2 (SEXP_t *list, SEXP_t *(*fn) (SEXP_t *, SEXP_t *, void *), int strategy, void *ptr)
+{
+        SEXP_VALIDATE(list);
+
+        return (NULL);
+}
+
+void SEXP_list_cb (SEXP_t *list, void (*fn) (SEXP_t *, void *), void *ptr)
+{
+        SEXP_VALIDATE(list);
+
+        return (NULL);
 }
 
 SEXP_t *SEXP_new  (void)
