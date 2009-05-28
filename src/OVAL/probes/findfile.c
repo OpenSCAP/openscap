@@ -34,11 +34,11 @@ static int recurse_follow(struct stat *st, char *follow);
 SEXP_t * find_files(SEXP_t * spath, SEXP_t *sfilename, SEXP_t *behaviors) {
 	char * local_fs[5] = LOCAL_FILESYSTEMS;
 	char *name = NULL, *path = NULL;
-	int i, rc;
+	int i, rc, finds;
 	int max_depth;
 	glob_t globbuf;
-	setting_t * setting;	
-	SEXP_t * files;
+	setting_t *setting;	
+	SEXP_t *files, *f;
 
 	files = SEXP_list_new();
 	name = SEXP_string_cstr(SEXP_OVALelm_getval(sfilename));
@@ -67,8 +67,17 @@ SEXP_t * find_files(SEXP_t * spath, SEXP_t *sfilename, SEXP_t *behaviors) {
 	/* pattern match on path */
 	rc = glob(path,  0 , NULL, &globbuf);
 	if(!rc && globbuf.gl_pathc > 0) {
-		for(i=0; i < globbuf.gl_pathc; i++)
+		finds = 0;
+		for(i=0; i < globbuf.gl_pathc; i++) {
 			find_files_recursion(globbuf.gl_pathv[i], setting, files, max_depth);
+			if( finds == SEXP_length(files) ) { /* add path */
+				finds++;
+		                f = SEXP_list_new();
+                                SEXP_list_add(f,SEXP_string_newf(globbuf.gl_pathv[i]));
+                                SEXP_list_add(files, f);
+			}
+			finds = SEXP_length(files);
+		}
 		globfree(&globbuf);
 	}
 
@@ -99,6 +108,7 @@ static void find_files_recursion(const char* path, setting_t * setting, SEXP_t *
 	struct dirent * pDirent;
 	DIR * pDir;
 	char * path_new;
+	SEXP_t * f;
 
 	pDir = opendir(path);
 	if( pDir == NULL) 
@@ -111,16 +121,18 @@ static void find_files_recursion(const char* path, setting_t * setting, SEXP_t *
 		if( lstat(path_new, &st) == -1)
 			continue;
 
-		if( recurse_follow(&st,setting->follow) &&                                        /* follow symlinks? */
+		if( recurse_follow(&st,setting->follow) &&                                   /* follow symlinks? */
 		    recurse_direction(pDirent->d_name, setting->direction) &&                /* up or down direction? */
-		    depth &&					        	                /* how deep rabbit hole is? */
-		    recurse_filesystem(&st, setting->dev_id_list, setting->dev_id_count) ) {                /* local filesystem? */
+		    depth &&					        	             /* how deep rabbit hole is? */
+		    recurse_filesystem(&st, setting->dev_id_list, setting->dev_id_count) ) { /* local filesystem? */
 			find_files_recursion(path_new, setting, files, depth == - 1 ? -1 : depth - 1);
 		}
 		else if( S_ISREG(st.st_mode) ) {
 			/* pattern match on filename*/
 			if( regexec(&(setting->re), pDirent->d_name, 0, NULL, 0) == 0 ) {
-				SEXP_list_add(files, SEXP_string_newf(path_new));
+				f = SEXP_list_new();
+				SEXP_list_add(f,SEXP_string_newf(path)); SEXP_list_add(f,SEXP_string_newf(pDirent->d_name));
+				SEXP_list_add(files, f);
 			}
 		}
 
