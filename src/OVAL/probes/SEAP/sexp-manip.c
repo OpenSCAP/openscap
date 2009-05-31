@@ -101,12 +101,12 @@ size_t SEXP_number_size (SEXP_t *sexp)
                         }
                 } else {
                         errno = EINVAL;
-                        return (0);
                 }
         } else {
                 errno = EFAULT;
-                return (0);
         }
+
+        return ((size_t)-1);
 }
 
 int SEXP_number_get (SEXP_t *sexp, void *ptr, NUM_type_t type)
@@ -1002,7 +1002,7 @@ size_t SEXP_string_length (SEXP_t *sexp)
                 errno = EFAULT;
         }
         
-        return (0);
+        return ((size_t)-1);
 }
 
 SEXP_t *SEXP_list_new (void)
@@ -1266,7 +1266,7 @@ size_t SEXP_list_length (SEXP_t *sexp)
                 errno = EFAULT;
         }
         
-        return (0);
+        return ((size_t)-1);
 }
 
 SEXP_t *SEXP_list_map (SEXP_t *list, int (*fn) (SEXP_t *, SEXP_t *))
@@ -1352,8 +1352,34 @@ err:
 
 SEXP_t *SEXP_list_reduce (SEXP_t *list, SEXP_t *(*fn) (SEXP_t *, SEXP_t *), int strategy)
 {
-        SEXP_VALIDATE(list);
-
+        SEXP_t *res;
+        
+        if (list != NULL) {
+                SEXP_VALIDATE(list);
+                
+                if (SEXP_TYPE(list) == ATOM_LIST) {
+                        switch (strategy) {
+                        case SEXP_REDUCE_LNEIGHBOR:
+                                
+                                break;
+                        case SEXP_REDUCE_RNEIGHBOR:
+                                
+                                break;
+                        case SEXP_REDUCE_RANDOM: {
+                                
+                        } break;
+                        default:
+                                _D("Unkwnown reduce strategy: %d\n", strategy);
+                                errno = EINVAL;
+                                return (NULL);
+                        }
+                } else {
+                        errno = EINVAL;
+                }
+        } else {
+                errno = EFAULT;
+        }
+        
         return (NULL);
 }
 
@@ -1368,7 +1394,7 @@ void SEXP_list_cb (SEXP_t *list, void (*fn) (SEXP_t *, void *), void *ptr)
 {
         SEXP_VALIDATE(list);
 
-        return (NULL);
+        return;
 }
 
 SEXP_t *SEXP_new  (void)
@@ -1570,12 +1596,12 @@ size_t SEXP_length (SEXP_t *sexp)
                 case ATOM_NUMBER:
                 default:
                         errno = EINVAL;
-                        return (0);
                 }
         } else {
                 errno = EFAULT;
-                return (0);
         }
+
+        return ((size_t)-1);
 }
 
 const char *__sexp_strtype[] = {

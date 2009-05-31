@@ -121,6 +121,80 @@ int probe_sd_del (probe_sdtbl_t *tbl, oval_subtype_enum type)
         return (0);
 }
 
+SEXP_t *oval_object_to_sexp (const char *typestr, struct oval_object *object)
+{
+        SEXP_t *sexp, *elm, *elm_value;
+        struct oval_iterator_object_content *cit;
+        struct oval_object_content *content;
+        struct oval_entity *entity;
+        char *obj_name;
+        uint16_t obj_namelen;
+
+        /* (typestr_object (ent1 val1) (ent2 val2) ...) */
+        sexp = SEXP_list_new ();
+        cit  = oval_object_object_content (object);
+        
+        /* give the object a name */
+        obj_namelen = strlen (typestr) + strlen ("_object");
+        obj_name    = xmalloc (sizeof (char) * (obj_namelen + 1));
+        
+        snprintf (obj_name, obj_namelen + 1, "%s_object", typestr);
+        SEXP_list_add (sexp, SEXP_string_new (obj_name, obj_namelen));
+        
+        while (oval_iterator_object_content_has_more (cit)) {
+                content   = oval_iterator_object_content_next (cit);
+                elm_value = NULL;
+                
+                switch (oval_object_content_type (content)) {
+                case OVAL_OBJECTCONTENT_ENTITY:
+                {
+                        char *elm_name;
+                        
+                        /* ENTITY BEG */
+                        entity = oval_object_content_entity (content);
+                        
+                        switch (oval_entity_datatype (entity)) {
+                        case OVAL_DATATYPE_VERSION:
+                        case OVAL_DATATYPE_STRING:
+                        case OVAL_DATATYPE_EVR_STRING:
+                        {
+                                char *strval = oval_value_text (oval_entity_value (entity));
+                                elm_value    = SEXP_string_new (strval, strlen (strval));
+                        } break;
+                        case OVAL_DATATYPE_FLOAT:
+                                /* TODO */
+                                continue;
+                        case OVAL_DATATYPE_INTEGER:
+                                /* TODO */
+                                continue;
+                        case OVAL_DATATYPE_BOOLEAN:
+                                /* TODO */
+                                continue;
+                        default:
+                                continue;
+                        }
+                        
+                        elm = SEXP_list_new ();
+                        elm_name = oval_entity_name (entity);
+                        
+                        /* TODO: handle element attributes */
+                        SEXP_list_add (elm, SEXP_string_new (elm_name, strlen (elm_name)));
+                        if (elm_value != NULL)
+                                SEXP_list_add (elm, elm_value);
+                        
+                        /* ENTITY END */
+                } break;
+                default:
+                        continue;
+                }
+                
+                /* add the prepared element */
+                SEXP_list_add (sexp, elm);
+        }
+        
+        return (sexp);
+}
+
 struct oval_iterator_syschar *sexp_to_oval_state (SEXP_t *sexp)
 {
         _A(sexp != NULL);

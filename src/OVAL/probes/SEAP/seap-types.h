@@ -34,8 +34,8 @@ typedef struct {
 #define SDTABLE_REALLOC_ADD 4
 
 /* SEAP context */
-typedef struct __SEAP_CTX_t {
-        SEXP_t * (*parser) (struct __SEAP_CTX_t *, const char *, size_t, SEXP_pstate_t **);
+typedef struct {
+        SEXP_t * (*parser) (SEXP_psetup_t *, const char *, size_t, SEXP_pstate_t **);
         SEXP_pflags_t pflags;
         SEXP_format_t fmt_in;
         SEXP_format_t fmt_out;

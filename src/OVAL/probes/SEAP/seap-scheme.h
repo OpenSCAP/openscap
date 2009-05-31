@@ -29,7 +29,7 @@ extern const SEAP_schemefn_t __schtbl[];
 #define SCH_CLOSE(idx, ...) __schtbl[idx].sch_close (__VA_ARGS__)
 #define SCH_SENDSEXP(idx, ...) __schtbl[idx].sch_sendsexp (__VA_ARGS__)
 
-SEAP_scheme_t SEAP_scheme_search (SEAP_schemefn_t fntable[], const char *sch, size_t schlen);
+SEAP_scheme_t SEAP_scheme_search (const SEAP_schemefn_t fntable[], const char *sch, size_t schlen);
 
 /* console */
 #include "sch_cons.h"

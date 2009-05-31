@@ -26,5 +26,7 @@
 void    *xmemdup (const void *src, size_t len);
 uint32_t xnumdigits (size_t size);
 int      xstrncoll (const char *a, size_t alen, const char *b, size_t blen);
+void     xsrandom (unsigned long seed);
+long     xrandom (void);
 
 #endif /* COMMON_H */

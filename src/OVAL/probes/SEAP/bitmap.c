@@ -2,7 +2,11 @@
 #include <string.h>
 #include <config.h>
 #include <assert.h>
+#include <time.h>
+#include <sys/types.h>
+#include <unistd.h>
 #include "xmalloc.h"
+#include "common.h"
 #include "bitmap.h"
 
 #ifndef _A
@@ -19,6 +23,10 @@ bitmap_t *bitmap_new (bitmap_size_t size)
         bitmap->size = (size / BITMAP_CELLSIZE) + 1;
         bitmap->realsize = 0;
         bitmap->cells = NULL;
+        bitmap->count = 0;
+
+        xsrandom ((unsigned long)clock () ^
+                  (unsigned long)getpid ());
         
         return (bitmap);
 }
@@ -31,7 +39,11 @@ int *bitmap_init (bitmap_t *bitmap, bitmap_size_t size)
         bitmap->cells = NULL;
         bitmap->size = (size / BITMAP_CELLSIZE) + 1;
         bitmap->realsize = 0;
+        bitmap->count = 0;
 
+        xsrandom ((unsigned long)clock () ^
+                  (unsigned long)getpid ());
+        
         return (0);
 }
 
@@ -45,6 +57,7 @@ int *bitmap_reinit (bitmap_t *bitmap, bitmap_size_t size)
         bitmap->cells = NULL;
         bitmap->size = (size / BITMAP_CELLSIZE) + 1;
         bitmap->realsize = 0;
+        bitmap->count = 0;
         
         return (0);
 }
@@ -73,6 +86,7 @@ int bitmap_set (bitmap_t *bitmap, bitmap_bitn_t bitn)
         }
         
         bitmap->cells[i - 1] |= 1 << (bitn % BITMAP_CELLSIZE);
+        ++bitmap->count;
         
         return (0);
 }
@@ -99,6 +113,7 @@ int bitmap_unset (bitmap_t *bitmap, bitmap_bitn_t bitn)
         
         if (i <= bitmap->realsize) {
                 bitmap->cells[i - 1] &= ~(1 << (bitn % BITMAP_CELLSIZE));
+                --bitmap->count;
                 
                 if (bitmap->realsize - i == 0) {
                         while (bitmap->cells[bitmap->realsize - 1] == 0)
@@ -121,6 +136,7 @@ int bitmap_clear (bitmap_t *bitmap)
                 xfree ((void **)&(bitmap->cells));
                 bitmap->cells = NULL;
                 bitmap->realsize = 0;
+                bitmap->count = 0;
         }
         
         return (0);
@@ -151,6 +167,31 @@ bitmap_bitn_t bitmap_setfree (bitmap_t *bitmap)
                                     BITMAP_CELLSIZE * bitmap->realsize) ? -1 : (bitmap_bitn_t)(bitmap->realsize * BITMAP_CELLSIZE));
         else
                 return (-1);
+}
+
+bitmap_bitn_t bitmap_setrand (bitmap_t *bitmap)
+{
+        bitmap_bitn_t n;
+        
+#define CELLI(num) (num/BITMAP_CELLSIZE)
+
+        n = xrandom () % (bitmap->size * BITMAP_CELLSIZE);
+        
+        if ((size_t)bitmap->count < (bitmap->size*BITMAP_CELLSIZE)/2) {
+                while (CELLI(n) < bitmap->realsize) {
+                        
+                }
+        } else {
+                if (xrandom () % 2) {
+                        
+                } else {
+                        
+                }
+        }
+        
+#undef CELLI
+        /* NOTREACHED */
+        return (-1);
 }
 
 bitmap_bitn_t bitmap_getfree (bitmap_t *bitmap)

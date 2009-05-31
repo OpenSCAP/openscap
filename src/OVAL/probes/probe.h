@@ -21,8 +21,9 @@ SEXP_t *SEXP_OVALobj_elmattr_del (SEXP_t *obj, const char *elm_name, const char 
 SEXP_t *SEXP_OVALelm_attr_add (SEXP_t *elm, const char *name, SEXP_t *value);
 SEXP_t *SEXP_OVALelm_attr_del (SEXP_t *elm, const char *name);
 
-#define SEXP_OVALobj_getelement_value SEXP_OVALobj_getelm_val
-char *SEXP_OVALobj_getelm_val (SEXP_t *obj, const char *name);
+int SEXP_OVALobj_setstatus (SEXP_t *obj, int status);
+int SEXP_OVALobj_setelmstatus (SEXP_t *obj, const char *name, int status);
+int SEXP_OVALelm_setstatus (SEXP_t *obj, int status);
 
 int     SEXP_OVALobj_validate (SEXP_t *obj);
 SEXP_t *SEXP_OVALobj_getelm (SEXP_t *obj, const char *name);
@@ -31,6 +32,7 @@ SEXP_t *SEXP_OVALelm_getval (SEXP_t *elm);
 SEXP_t *SEXP_OVALelm_getattrval (SEXP_t *elm, const char *name);
 int     SEXP_OVALelm_hasattr (SEXP_t *elm, const char *name);
 
-SEXP_t *oval_object_to_sexp (const char *typestr, struct oval_object *object);
+#define PROBE_ERR_INVALIDOBJ 1
+#define PROBE_ERR_MISSINGVAL 2
 
 #endif /* PROBE_H */

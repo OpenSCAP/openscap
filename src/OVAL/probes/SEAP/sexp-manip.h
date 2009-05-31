@@ -114,6 +114,11 @@ SEXP_t *SEXP_list_join (SEXP_t *, SEXP_t *);
 size_t  SEXP_list_length (SEXP_t *sexp);
 SEXP_t *SEXP_list_map (SEXP_t *list, int (*fn) (SEXP_t *, SEXP_t *));
 SEXP_t *SEXP_list_map2 (SEXP_t *list, int (*fn) (SEXP_t *, SEXP_t *, void *), void *ptr);
+
+#define SEXP_REDUCE_LNEIGHBOR 1
+#define SEXP_REDUCE_RNEIGHBOR 2
+#define SEXP_REDUCE_RANDOM    3
+
 SEXP_t *SEXP_list_reduce (SEXP_t *list, SEXP_t *(*fn) (SEXP_t *, SEXP_t *), int strategy);
 SEXP_t *SEXP_list_reduce2 (SEXP_t *list, SEXP_t *(*fn) (SEXP_t *, SEXP_t *, void *), int strategy, void *ptr);
 

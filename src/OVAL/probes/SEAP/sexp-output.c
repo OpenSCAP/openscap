@@ -314,7 +314,7 @@ print_loop:
 
 ssize_t SEXP_st_dnprintc (int fd, size_t maxsz, SEXP_t *sexp, SEXP_ostate_t **ost)
 {
-        
+        return (-1);
 }
 
 int SEXP_printfc (SEXP_t *sexp)
@@ -356,12 +356,12 @@ int SEXP_asnprintfc (char **ret, size_t maxsz, SEXP_t *sexp)
 /* advanced */
 ssize_t SEXP_st_dprinta (int fd, SEXP_t *sexp, SEXP_ostate_t **ost)
 {
-
+        return (-1);
 }
 
 ssize_t SEXP_st_dnprinta (int fd, size_t maxsz, SEXP_t *sexp, SEXP_ostate_t **ost)
 {
-
+        return (-1);
 }
 
 int SEXP_printfa (SEXP_t *sexp)
@@ -424,6 +424,7 @@ static int __SEXP_fprintfa (FILE *fp, SEXP_t *sexp, uint32_t indent)
                 }
                 
                 putc (')', fp);
+                putc (' ', fp);
                 return (0);
         }
         case ATOM_EMPTY:

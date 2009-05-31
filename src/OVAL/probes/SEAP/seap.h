@@ -39,6 +39,8 @@ int SEAP_openfp (SEAP_CTX_t *ctx, FILE *fp, uint32_t flags);
 #endif /* 0 */
 
 SEAP_msg_t *SEAP_msg_new (void);
+void        SEAP_msg_free (SEAP_msg_t *msg);
+int         SEAP_msg_set (SEAP_msg_t *msg, SEXP_t *sexp);
 
 int     SEAP_msgattr_set (SEAP_msg_t *msg, const char *attr, SEXP_t *value);
 SEXP_t *SEAP_msgattr_get (SEAP_msg_t *msg, const char *name);
@@ -49,5 +51,6 @@ int SEAP_recvmsg (SEAP_CTX_t *ctx, int sd, SEAP_msg_t **seap_msg);
 int SEAP_sendsexp (SEAP_CTX_t *ctx, int sd, SEXP_t *sexp);
 int SEAP_sendmsg (SEAP_CTX_t *ctx, int sd, SEAP_msg_t *seap_msg);
 int SEAP_reply (SEAP_CTX_t *ctx, int sd, SEAP_msg_t *rep_msg, SEAP_msg_t *req_msg);
+int SEAP_senderr (SEAP_CTX_t *ctx, int sd, int e, SEAP_msg_t *msg);
 
 #endif /* SEAP_H */

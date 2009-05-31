@@ -36,8 +36,8 @@ struct runlevel_req {
 struct runlevel_rep {
         char *service_name;
         char *runlevel;
-        char *start;
-        char *kill;
+        int   start;
+        int   kill;
 };
 
 static int get_runlevel (struct runlevel_req *req, struct runlevel_rep *rep);
@@ -63,8 +63,8 @@ static int get_runlevel_redhat (struct runlevel_req *req, struct runlevel_rep *r
         
         rep->service_name = req->service_name;
         rep->runlevel     = req->runlevel;
-        rep->start        = "0";
-        rep->kill         = "0";
+        rep->start        = 0;
+        rep->kill         = 0;
         
         snprintf (pathbuf, PATH_MAX, "/etc/init.d/%s", req->service_name);
         
@@ -108,10 +108,10 @@ static int get_runlevel_redhat (struct runlevel_req *req, struct runlevel_rep *r
                 if (rc_st.st_ino == st.st_ino) {
                         switch(dp->d_name[0]) {
                         case 'S':
-                                rep->start = "1";
+                                rep->start = 1;
                                 goto out;
                         case 'K':
-                                rep->kill  = "1";
+                                rep->kill  = 1;
                                 goto out;
                         default:
                                 _D("Unexpected character in filename: %c, %s/%s.\n",
@@ -267,13 +267,12 @@ int main (void)
 
         SEAP_CTX_t *ctx;
         SEAP_msg_t *seap_request, *seap_reply;
-        SEXP_t *state_sexp;
+        SEXP_t *state_sexp, *val;
         int sd;
 
         struct runlevel_req request_st;
         struct runlevel_rep reply_st;
         
-
         /* Initialize SEAP */
         ctx = SEAP_CTX_new ();
         sd  = SEAP_openfd2 (ctx, STDIN_FILENO, STDOUT_FILENO, 0);
@@ -287,40 +286,127 @@ int main (void)
         /* Main loop */
         for (;;) {
                 if (SEAP_recvmsg (ctx, sd, &seap_request) == -1) {
+                        ret = errno;
+                        
                         _D("An error ocured while receiving SEAP message. errno=%u, %s.\n",
                            errno, strerror (errno));
+                        
                         break;
                 }
-
-                request_st.service_name = SEXP_OVALobj_getelm_val (seap_request->sexp, "service_name");
-                request_st.runlevel     = SEXP_OVALobj_getelm_val (seap_request->sexp, "runlevel");
+                
+                val = SEXP_OVALobj_getelmval (seap_request->sexp, "service_name");
+                request_st.service_name = SEXP_string_cstr (val);
+                
+                if (request_st.service_name == NULL) {
+                        int err;
+                        
+                        switch (errno) {
+                        case EINVAL:
+                                _D("%s: invalid value type\n", "service_name");
+                                err = PROBE_ERR_INVALIDOBJ;
+                                break;
+                        case EFAULT:
+                                _D("%s: element not found\n", "service_name");
+                                err = PROBE_ERR_MISSINGVAL;
+                                break;
+                        }
+                        
+                        if (SEAP_senderr (ctx, sd, err, seap_request) == -1) {
+                                _D("An error ocured while sending error status. errno=%u, %s.\n",
+                                   errno, strerror (errno));
+                                
+                                SEAP_msg_free (seap_request);
+                                break;
+                        }
+                        
+                        SEAP_msg_free (seap_request);
+                        continue;
+                }
+                
+                val = SEXP_OVALobj_getelmval (seap_request->sexp, "runlevel");
+                request_st.runlevel = SEXP_string_cstr (val);
+                
+                if (request_st.runlevel == NULL) {
+                        int err;
+                        
+                        switch (errno) {
+                        case EINVAL:
+                                _D("%s: invalid value type\n", "runlevel");
+                                err = PROBE_ERR_INVALIDOBJ;
+                                break;
+                        case EFAULT:
+                                _D("%s: element not found\n", "service_name");
+                                err = PROBE_ERR_MISSINGVAL;
+                                break;
+                        }
+                        
+                        if (SEAP_senderr (ctx, sd, err, seap_request) == -1) {
+                                _D("An error ocured while sending error status. errno=%u, %s.\n",
+                                   errno, strerror (errno));
+                                
+                                xfree ((void **)&request_st.service_name);
+                                SEAP_msg_free (seap_request);
+                                break;
+                        }
+                        
+                        xfree ((void **)&request_st.service_name);
+                        SEAP_msg_free (seap_request);
+                        
+                        continue;
+                }
                 
                 if (get_runlevel (&request_st, &reply_st) == -1) {
+                        ret = errno;
+                        
                         _D("get_runlevel failed\n");
-                        ret = 1;
+                        
+                        xfree ((void **)&request_st.service_name);
+                        xfree ((void **)&request_st.runlevel);
+                        SEAP_msg_free (seap_request);
+                        
                         break;
                 }
                 
-                _D("get_runlevel: [0]=\"%s\", [1]=\"%s\", [2]=\"%s\", [3]=\"%s\"\n",
+                _D("get_runlevel: [0]=\"%s\", [1]=\"%s\", [2]=\"%d\", [3]=\"%d\"\n",
                    reply_st.service_name, reply_st.runlevel, reply_st.start, reply_st.kill);
                 
                 seap_reply = SEAP_msg_new ();
-                seap_reply->sexp = SEXP_list_new ();
                 
-                state_sexp = SEXP_OVALobj_create ("runlevel_state", NULL,
-                                                  "service_name", NULL, reply_st.service_name,
-                                                  "runlevel",     NULL, reply_st.runlevel,
-                                                  "start",        NULL, reply_st.start,
-                                                  "kill",         NULL, reply_st.kill,
-                                                  NULL);
-                
-                SEXP_list_add (seap_reply->sexp, state_sexp);
+                SEAP_msg_set(seap_reply,
+                             SEXP_OVALobj_create ("runlevel_item", NULL,
+                                                  
+                                                  "service_name", NULL,
+                                                  SEXP_string_newf(reply_st.service_name),
+                                                  
+                                                  "runlevel", NULL,
+                                                  SEXP_string_newf(reply_st.runlevel),
+                                                  
+                                                  "start", NULL,
+                                                  SEXP_number_newu(reply_st.start),
+                                                  
+                                                  "kill", NULL,
+                                                  SEXP_number_newu(reply_st.kill),
+                                                  
+                                                  NULL));
                 
                 if (SEAP_reply (ctx, sd, seap_reply, seap_request) == -1) {
+                        ret = errno;
+                        
                         _D("An error ocured while sending SEAP message. errno=%u, %s.\n",
                            errno, strerror (errno));
+                        
+                        xfree ((void **)&request_st.service_name);
+                        xfree ((void **)&request_st.runlevel);
+                        SEAP_msg_free (seap_reply);
+                        SEAP_msg_free (seap_request);
+                        
                         break;
                 }
+        
+                xfree ((void **)&request_st.service_name);
+                xfree ((void **)&request_st.runlevel);
+                SEAP_msg_free (seap_reply);
+                SEAP_msg_free (seap_request);
         }
         
         /* Close SEAP descriptor */

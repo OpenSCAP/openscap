@@ -208,7 +208,7 @@ SEAP_msg_t *SEAP_msg_new (void)
         return (new);
 }
 
-SEAP_msg_t *SEAP_msg_free (SEAP_msg_t *msg)
+void SEAP_msg_free (SEAP_msg_t *msg)
 {
         _A(msg != NULL);
 
@@ -217,7 +217,13 @@ SEAP_msg_t *SEAP_msg_free (SEAP_msg_t *msg)
         
         xfree ((void **)&msg);
         
-        return (NULL);
+        return;
+}
+
+int SEAP_msg_set (SEAP_msg_t *msg, SEXP_t *sexp)
+{
+        msg->sexp = sexp;
+        return (0);
 }
 
 int SEAP_recvmsg (SEAP_CTX_t *ctx, int sd, SEAP_msg_t **seap_msg)
@@ -489,6 +495,11 @@ int SEAP_reply (SEAP_CTX_t *ctx, int sd, SEAP_msg_t *rep_msg, SEAP_msg_t *req_ms
         SEAP_msgattr_set (rep_msg, "reply-id", SEXP_number_new (&(req_msg->id), NUM_UINT64));
         
         return SEAP_sendmsg (ctx, sd, rep_msg);
+}
+
+int SEAP_senderr (SEAP_CTX_t *ctx, int sd, int e, SEAP_msg_t *msg)
+{
+        return (-1);
 }
 
 SEXP_t *SEAP_read (SEAP_CTX_t *ctx, int sd)

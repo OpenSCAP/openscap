@@ -15,12 +15,13 @@ typedef struct {
         bitmap_size_t  size;  /* bit capacity = size * BITMAP_CELLSIZE */
         bitmap_size_t  realsize;
         bitmap_cell_t *cells;
+        bitmap_bitn_t  count;
 } bitmap_t;
 
 #if defined(THREAD_SAFE)
-# define BITMAP_INITIALIZER { 0, 0, 0, NULL }
+# define BITMAP_INITIALIZER { 0, 0, 0, NULL, 0 }
 #else
-# define BITMAP_INITIALIZER { 0, 0, NULL }
+# define BITMAP_INITIALIZER { 0, 0, NULL, 0 }
 #endif
 
 #define BITMAP_CELLSIZE (sizeof (bitmap_cell_t) * 8)

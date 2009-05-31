@@ -52,3 +52,13 @@ int xstrncoll (const char *a, size_t alen,
                 return strncmp (a, b, alen);
         }
 }
+
+void xsrandom (unsigned long seed)
+{
+        srandom (seed);
+}
+
+long xrandom (void)
+{
+        return random ();
+}

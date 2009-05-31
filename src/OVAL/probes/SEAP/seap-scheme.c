@@ -24,7 +24,7 @@ const SEAP_schemefn_t __schtbl[] = {
 
 #define SCHTBLSIZE ((sizeof __schtbl)/sizeof (SEAP_schemefn_t))
 
-SEAP_scheme_t SEAP_scheme_search (SEAP_schemefn_t fntable[SCHTBLSIZE], const char *sch, size_t schlen)
+SEAP_scheme_t SEAP_scheme_search (const SEAP_schemefn_t fntable[SCHTBLSIZE], const char *sch, size_t schlen)
 {
         SEAP_scheme_t w, s;
         int cmp;

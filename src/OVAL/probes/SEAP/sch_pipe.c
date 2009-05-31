@@ -207,7 +207,7 @@ int sch_pipe_close (SEAP_desc_t *desc, uint32_t flags)
                 err = WEXITSTATUS(ret);
                 _D("child err: %u, %s.\n", err, strerror (err));
         }
-        xfree (&DATA(desc)->execpath);
-        xfree (&(desc->scheme_data));
+        xfree ((void **)&DATA(desc)->execpath);
+        xfree ((void **)&(desc->scheme_data));
         return (err);
 }
