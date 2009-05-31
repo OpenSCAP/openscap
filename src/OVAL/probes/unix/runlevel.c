@@ -267,7 +267,7 @@ int main (void)
 
         SEAP_CTX_t *ctx;
         SEAP_msg_t *seap_request, *seap_reply;
-        SEXP_t *state_sexp, *val;
+        SEXP_t *state_sexp, *val, *obj;
         int sd;
 
         struct runlevel_req request_st;
@@ -294,7 +294,9 @@ int main (void)
                         break;
                 }
                 
-                val = SEXP_OVALobj_getelmval (seap_request->sexp, "service_name", 1);
+                obj = SEAP_msg_get (seap_request);
+                
+                val = SEXP_OVALobj_getelmval (obj, "service_name", 1);
                 request_st.service_name = SEXP_string_cstr (val);
                 
                 if (request_st.service_name == NULL) {

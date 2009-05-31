@@ -132,9 +132,12 @@ static int get_rpminfo (struct rpminfo_req *req, struct rpminfo_rep **rep)
 int main (void)
 {
         SEAP_CTX_t *ctx;
-        SEXP_t *state_sexp;
-        int sd, rpmret, i, ret = 0;
         SEAP_msg_t *seap_request, *seap_reply;
+        
+        SEXP_t *state_sexp, *val, *obj;
+        int sd;
+        
+        int rpmret, i, ret = 0;
         struct rpminfo_req request_st;
         struct rpminfo_rep *reply_st = NULL;
         
@@ -162,60 +165,147 @@ int main (void)
         for (;;) {
                 /* receive S-exp */
                 if (SEAP_recvmsg (ctx, sd, &seap_request) == -1) {
-                        /* handle the error */
+                        ret = errno;
+                        
                         _D("An error ocured while receiving SEAP message. errno=%u, %s.\n",
                            errno, strerror (errno));
+                        
                         break;
                 }
                 
+                obj = SEAP_msg_get (seap_request);
+                
                 /* get the desired values from an OVAL object */
-                request_st.name = SEXP_OVALobj_getelement_value (seap_request->sexp, "name");
+                val = SEXP_OVALobj_getelmval (obj, "name", 1);
+                request_st.name = SEXP_string_cstr (val);
+                
                 if (request_st.name == NULL) {
-                        /* Element not found */
-                        _D("Can't extract package name from the received message.\n");
-                        /* FIXME: free the message */
+                        int err;
+                        
+                        switch (errno) {
+                        case EINVAL:
+                                _D("%s: invalid value type\n", "name");
+                                err = PROBE_ERR_INVALIDOBJ;
+                                break;
+                        case EFAULT:
+                                _D("%s: element not found\n", "name");
+                                err = PROBE_ERR_MISSINGVAL;
+                                break;
+                        }
+                        
+                        if (SEAP_senderr (ctx, sd, err, seap_request) == -1) {
+                                _D("An error ocured while sending error status. errno=%u, %s.\n",
+                                   errno, strerror (errno));
+                                
+                                SEAP_msg_free (seap_request);
+                                break;
+                        }
+                        
+                        SEAP_msg_free (seap_request);
                         continue;
                 }
-
+                
+                seap_reply = SEAP_msg_new ();
+                
                 /* get info from RPM db */
                 switch (rpmret = get_rpminfo (&request_st, &reply_st)) {
                 case 0: /* Not found */
                         _D("Package \"%s\" not found.\n", request_st.name);
-
-                        seap_reply = SEAP_msg_new ();
-                        seap_reply->sexp = SEXP_string_new ("nil", 3); 
+                        
+                        item_sexp = SEXP_OVALobj_create ("rpminfo_item", NULL,
+                                                         
+                                                         "name", NULL,
+                                                         SEXP_string_newf(request_st.name),
+                                                         
+                                                         "arch",    NULL, NULL,
+                                                         "epoch",   NULL, NULL,
+                                                         "release", NULL, NULL,
+                                                         "version", NULL, NULL,
+                                                         "evr",     NULL, NULL,
+                                                         "signature_keyid", NULL, NULL,
+                                                         NULL);
+                        
+                        SEXP_OVALobj_setstatus (item_sexp, OVAL_STATUS_DOESNOTEXIST);
+                        SEAP_msg_set (seap_reply, item_sexp);
+                        
                         break;
+
                 case -1: /* Error */
                         _D("get_rpminfo failed\n");
-                        ret = 1;
-                        goto out;
+                        
+                        item_sexp = SEXP_OVALobj_create ("rpminfo_item", NULL,
+                                                         
+                                                         "name", NULL,
+                                                         SEXP_string_newf(request_st.name),
+                                                         
+                                                         "arch",    NULL, NULL,
+                                                         "epoch",   NULL, NULL,
+                                                         "release", NULL, NULL,
+                                                         "version", NULL, NULL,
+                                                         "evr",     NULL, NULL,
+                                                         "signature_keyid", NULL, NULL,
+                                                         NULL);
+                        
+                        SEXP_OVALobj_setstatus (item_sexp, OVAL_STATUS_ERROR);
+                        SEAP_msg_set (seap_reply, item_sexp);
+                        
+                        break;
+
                 default: /* Ok */
                         _A(rpmret >= 0);
                         
-                        seap_reply = SEAP_msg_new ();
-                        seap_reply->sexp = SEXP_list_new ();
-                        
-                        for (i = 0; i < rpmret; ++i) {
-                                state_sexp = SEXP_OVALobj_create ("rpminfo_state", NULL,
-                                                                  "name",    NULL, reply_st[i].name,
-                                                                  "arch",    NULL, reply_st[i].arch,
-                                                                  "epoch",   NULL, reply_st[i].epoch,
-                                                                  "release", NULL, reply_st[i].release,
-                                                                  "version", NULL, reply_st[i].version,
-                                                                  "evr",     NULL, reply_st[i].evr,
-                                                                  "signature_keyid", NULL, reply_st[i].signature_keyid,
-                                                                  NULL);
+                        if (rpmret == 1) {
+                                item_sexp = SEXP_OVALobj_create ("rpminfo_item", NULL,
+                                                                 
+                                                                 "name", NULL,
+                                                                 SEXP_string_newf (reply_st[0].name),
+
+                                                                 "arch", NULL,
+                                                                 SEXP_string_newf (reply_st[0].arch),
+
+                                                                 "epoch", NULL,
+                                                                 SEXP_string_newf (reply_st[0].epoch),
+
+                                                                 "release", NULL,
+                                                                 SEXP_string_newf (reply_st[0].release),
+
+                                                                 "version", NULL,
+                                                                 SEXP_string_newf (reply_st[0].version),
+
+                                                                 "evr", NULL,
+                                                                 SEXP_string_newf (reply_st[0].evr),
+                                                                 
+                                                                 "signature_keyid", NULL,
+                                                                 SEXP_string_newf (reply_st[0].signature_keyid),
+
+                                                                 NULL);
                                 
-                                SEXP_list_add (seap_reply->sexp, state_sexp);
+                                __rpminfo_rep_free (&reply_st[0]);
+                                xfree ((void **)&reply_st);
+                                
+                                SEAP_msg_set (seap_reply, item_sexp);
+                        } else {
+                                /* TODO */
+                                for (i = 0; i < rpmret; ++i)
+                                        __rpminfo_rep_free (&reply_st[i]);
+                                xfree ((void **)&reply_st);
                         }
                 }
                 
                 if (SEAP_reply (ctx, sd, seap_reply, seap_request) == -1) {
-                        /* Handle the error */
+                        ret = errno;
+                        
                         _D("An error ocured while sending SEAP message. errno=%u, %s.\n",
                            errno, strerror (errno));
+                        
+                        SEAP_msg_free (seap_reply);
+                        SEAP_msg_free (seap_request);
+                        
                         break;
                 }
+
+                SEAP_msg_free (seap_reply);
+                SEAP_msg_free (seap_request);
         }
 out:
         /* Close SEAP descriptor */

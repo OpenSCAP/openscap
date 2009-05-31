@@ -226,6 +226,11 @@ int SEAP_msg_set (SEAP_msg_t *msg, SEXP_t *sexp)
         return (0);
 }
 
+SEXP_t *SEAP_msg_get (SEAP_msg_t *msg)
+{
+        return (msg->sexp);
+}
+
 int SEAP_recvmsg (SEAP_CTX_t *ctx, int sd, SEAP_msg_t **seap_msg)
 {
         SEAP_desc_t *desc;

@@ -37,4 +37,9 @@ int     SEXP_OVALelm_hasattr (SEXP_t *elm, const char *name);
 #define PROBE_ERR_INVALIDOBJ 1
 #define PROBE_ERR_MISSINGVAL 2
 
+#define OVAL_STATUS_ERROR        1
+#define OVAL_STATUS_EXISTS       2
+#define OVAL_STATUS_DOESNOTEXIST 3
+#define OVAL_STATUS_NOTCOLLECTED 4
+
 #endif /* PROBE_H */
