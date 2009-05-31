@@ -220,21 +220,22 @@ SEXP_t *SEXP_OVALobj_elm_add (SEXP_t *obj, const char *name, SEXP_t *attrs, SEXP
         return (obj);
 }
 
-SEXP_t *SEXP_OVALobj_elm_del (SEXP_t *obj, const char *name)
+SEXP_t *SEXP_OVALobj_elm_del (SEXP_t *obj, const char *name, uint32_t nth)
 {
         /* TODO */
         return (NULL);
 }
 
-SEXP_t *SEXP_OVALobj_elmattr_add (SEXP_t *obj, const char *elm_name, const char *attr_name, SEXP_t *value)
+SEXP_t *SEXP_OVALobj_elmattr_add (SEXP_t *obj, const char *elm_name, uint32_t nth, const char *attr_name, SEXP_t *value)
 {
         SEXP_t *elm;
         
         _A(obj != NULL);
         _A(elm_name != NULL);
         _A(attr_name != NULL);
-        
-        elm = SEXP_OVALobj_getelm (obj, elm_name);
+        _A(nth > 0);
+
+        elm = SEXP_OVALobj_getelm (obj, elm_name, nth);
         if (elm == NULL) {
                 /* element not found */
                 return (NULL);
@@ -243,7 +244,7 @@ SEXP_t *SEXP_OVALobj_elmattr_add (SEXP_t *obj, const char *elm_name, const char 
         return SEXP_OVALelm_attr_add (elm, attr_name, value);
 }
 
-SEXP_t *SEXP_OVALobj_elmattr_del (SEXP_t *obj, const char *elm_name, const char *attr_name)
+SEXP_t *SEXP_OVALobj_elmattr_del (SEXP_t *obj, const char *elm_name, uint32_t nth, const char *attr_name)
 {
         /* TODO */
         return (NULL);
@@ -274,12 +275,12 @@ int SEXP_OVALobj_setstatus (SEXP_t *obj, int status)
         return (-1);
 }
 
-int SEXP_OVALobj_setelmstatus (SEXP_t *obj, const char *name, int status)
+int SEXP_OVALobj_setelmstatus (SEXP_t *obj, const char *name, uint32_t nth, int status)
 {
         return (-1);
 }
 
-int SEXP_OVALelm_setstatus (SEXP_t *obj, int status)
+int SEXP_OVALelm_setstatus (SEXP_t *elm, int status)
 {
         return (-1);
 }
@@ -290,15 +291,16 @@ int SEXP_OVALobj_validate (SEXP_t *obj)
         return (1);
 }
 
-SEXP_t *SEXP_OVALobj_getelm (SEXP_t *obj, const char *name)
+SEXP_t *SEXP_OVALobj_getelm (SEXP_t *obj, const char *name, uint32_t nth)
 {
-        uint32_t i;
+        uint32_t i, k;
         SEXP_t  *elm, *val, *elm_name;
         
         _A(name != NULL);
         SEXP_VALIDATE(obj);
         
         i = 2;
+        k = 0;
         while ((elm = SEXP_list_nth (obj, i)) != NULL) {
                 elm_name = SEXP_list_first (elm);
                 
@@ -311,7 +313,8 @@ SEXP_t *SEXP_OVALobj_getelm (SEXP_t *obj, const char *name)
                 }
                 
                 if (SEXP_strcmp (elm_name, name) == 0) {
-                        return (elm);
+                        if (++k == nth)
+                                return (elm);
                 }
                 
                 ++i;
@@ -320,15 +323,20 @@ SEXP_t *SEXP_OVALobj_getelm (SEXP_t *obj, const char *name)
         return (NULL);
 }
 
-SEXP_t *SEXP_OVALobj_getelmval (SEXP_t *obj, const char *name)
+SEXP_t *SEXP_OVALobj_getelmval (SEXP_t *obj, const char *name, uint32_t nth)
 {
         SEXP_t *elm;
         
         _A(name != NULL);
         SEXP_VALIDATE(obj);
-        elm = SEXP_OVALobj_getelm (obj, name);
+        elm = SEXP_OVALobj_getelm (obj, name, nth);
         
         return (elm != NULL ? SEXP_OVALelm_getval (elm) : NULL);
+}
+
+int SEXP_OVALobj_hasattr (SEXP_t *obj, const char *name)
+{
+        return (0);
 }
 
 SEXP_t *SEXP_OVALelm_getval (SEXP_t *elm)

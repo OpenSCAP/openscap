@@ -294,7 +294,7 @@ int main (void)
                         break;
                 }
                 
-                val = SEXP_OVALobj_getelmval (seap_request->sexp, "service_name");
+                val = SEXP_OVALobj_getelmval (seap_request->sexp, "service_name", 1);
                 request_st.service_name = SEXP_string_cstr (val);
                 
                 if (request_st.service_name == NULL) {
@@ -323,7 +323,7 @@ int main (void)
                         continue;
                 }
                 
-                val = SEXP_OVALobj_getelmval (seap_request->sexp, "runlevel");
+                val = SEXP_OVALobj_getelmval (seap_request->sexp, "runlevel", 1);
                 request_st.runlevel = SEXP_string_cstr (val);
                 
                 if (request_st.runlevel == NULL) {
