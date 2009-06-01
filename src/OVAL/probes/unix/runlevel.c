@@ -356,40 +356,43 @@ int main (void)
                         
                         continue;
                 }
+
+                seap_reply = SEAP_msg_new ();
                 
                 if (get_runlevel (&request_st, &reply_st) == -1) {
                         ret = errno;
-                        
                         _D("get_runlevel failed\n");
                         
-                        xfree ((void **)&request_st.service_name);
-                        xfree ((void **)&request_st.runlevel);
-                        SEAP_msg_free (seap_request);
+                        obj = SEXP_OVALobj_create ("runlevel_item", NULL,
+                                                   "service_name", NULL, NULL,
+                                                   "runlevel", NULL, NULL,
+                                                   "start", NULL, NULL,
+                                                   "kill", NULL, NULL,
+                                                   NULL);
                         
-                        break;
+                        SEXP_OVALobj_setstatus (obj, OVAL_STATUS_ERROR);
+                        SEAP_msg_set(seap_reply, obj);
+                } else {
+                        _D("get_runlevel: [0]=\"%s\", [1]=\"%s\", [2]=\"%d\", [3]=\"%d\"\n",
+                           reply_st.service_name, reply_st.runlevel, reply_st.start, reply_st.kill);
+                        
+                        SEAP_msg_set(seap_reply,
+                                     SEXP_OVALobj_create ("runlevel_item", NULL,
+                                                          
+                                                          "service_name", NULL,
+                                                          SEXP_string_newf(reply_st.service_name),
+                                                          
+                                                          "runlevel", NULL,
+                                                          SEXP_string_newf(reply_st.runlevel),
+                                                          
+                                                          "start", NULL,
+                                                          SEXP_number_newu(reply_st.start),
+                                                          
+                                                          "kill", NULL,
+                                                          SEXP_number_newu(reply_st.kill),
+                                                          
+                                                          NULL));
                 }
-                
-                _D("get_runlevel: [0]=\"%s\", [1]=\"%s\", [2]=\"%d\", [3]=\"%d\"\n",
-                   reply_st.service_name, reply_st.runlevel, reply_st.start, reply_st.kill);
-                
-                seap_reply = SEAP_msg_new ();
-                
-                SEAP_msg_set(seap_reply,
-                             SEXP_OVALobj_create ("runlevel_item", NULL,
-                                                  
-                                                  "service_name", NULL,
-                                                  SEXP_string_newf(reply_st.service_name),
-                                                  
-                                                  "runlevel", NULL,
-                                                  SEXP_string_newf(reply_st.runlevel),
-                                                  
-                                                  "start", NULL,
-                                                  SEXP_number_newu(reply_st.start),
-                                                  
-                                                  "kill", NULL,
-                                                  SEXP_number_newu(reply_st.kill),
-                                                  
-                                                  NULL));
                 
                 if (SEAP_reply (ctx, sd, seap_reply, seap_request) == -1) {
                         ret = errno;

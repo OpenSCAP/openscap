@@ -150,7 +150,11 @@ SEXP_t *SEXP_OVALobj_create (const char *obj_name, SEXP_t *obj_attrs, ...)
                 }
                 
                 /* add value to the element list */
-                SEXP_list_add (sexp_tmp, arg_value);
+                if (arg_value != NULL)
+                        SEXP_list_add (sexp_tmp, arg_value);
+                /* else
+                   set element status?
+                */
                 
                 /* add the element to the object */
                 SEXP_list_add (sexp, sexp_tmp);
