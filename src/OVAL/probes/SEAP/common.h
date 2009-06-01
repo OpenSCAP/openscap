@@ -9,11 +9,14 @@
 # ifndef NDEBUG
 #  include <stdio.h>
 #  include <errno.h>
-#  define _D(...) do {                                          \
-                int e = errno;                                  \
-                fprintf (stderr, "%s: ", __PRETTY_FUNCTION__);  \
-                errno = e;                                      \
-                fprintf (stderr, __VA_ARGS__);                  \
+#  include <stdlib.h>
+#  define _D(...) do {                                                  \
+                if (getenv("SEAP_NDEBUG") == NULL) {                    \
+                        int ___e = errno;                               \
+                        fprintf (stderr, "%s: ", __PRETTY_FUNCTION__);  \
+                        errno = ___e;                                   \
+                        fprintf (stderr, __VA_ARGS__);                  \
+                }                                                       \
         } while(0)
 # else
 #  define _D(...) while(0)
