@@ -1,7 +1,6 @@
 
 
 #include <stdio.h>
-#include <glob.h>
 #include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -22,21 +21,35 @@ typedef struct {
 	int dev_id_count;
 } setting_t;
 
-static void find_files_recursion(const char* path, setting_t * setting, SEXP_t* files, int depth);
+typedef struct {
+	int pathc;
+	char **pathv;
+	int offs;
+} rglob_t;
+
+static int find_files_recursion(const char* path, setting_t * setting, SEXP_t* files, int depth);
 static int init_devs (const char *mtab, char **local, setting_t *setting);
 static int match_fs (const char *fs, char **local);
 static int recurse_direction(const char *file, char *direction);
 static int recurse_filesystem(struct stat *st, dev_t * dev_id_list, int dev_id_count);
 static int recurse_follow(struct stat *st, char *follow);
+static int noRegex(char * token);
+static int rglob(const char *pattern, rglob_t *result);
+static void find_paths_recursion(const char *path, regex_t *re, rglob_t *result );
+static void rglobfree(rglob_t * result);
 
 
-/* **** PUBLIC **** */
+/* 
+ *
+ * ************* PUBLIC *************  
+ *
+ */
 SEXP_t * find_files(SEXP_t * spath, SEXP_t *sfilename, SEXP_t *behaviors) {
 	char * local_fs[5] = LOCAL_FILESYSTEMS;
 	char *name = NULL, *path = NULL;
 	int i, rc, finds;
 	int max_depth;
-	glob_t globbuf;
+	rglob_t rglobbuf;
 	setting_t *setting;	
 	SEXP_t *files, *f;
 
@@ -65,21 +78,32 @@ SEXP_t * find_files(SEXP_t * spath, SEXP_t *sfilename, SEXP_t *behaviors) {
 	}
 
 	/* pattern match on path */
-	rc = glob(path,  0 , NULL, &globbuf);
-	if(!rc && globbuf.gl_pathc > 0) {
-		finds = 0;
-		for(i=0; i < globbuf.gl_pathc; i++) {
-			find_files_recursion(globbuf.gl_pathv[i], setting, files, max_depth);
-			if( finds == SEXP_length(files) ) { /* add path */
-				finds++;
-		                f = SEXP_list_new();
-                                SEXP_list_add(f,SEXP_string_newf(globbuf.gl_pathv[i]));
-                                SEXP_list_add(files, f);
+	if( !SEXP_strncmp(SEXP_OVALelm_getattrval(spath,"operation"), "pattern match", 14) ) {
+		rglobbuf.offs=10;
+		rc = rglob(path, &rglobbuf);
+		if(!rc && rglobbuf.pathc > 0) {
+			finds = 0;
+			for(i=0; i < rglobbuf.pathc; i++) {
+				rc = find_files_recursion(rglobbuf.pathv[i], setting, files, max_depth);
+				if( !rc && finds == SEXP_length(files) ) { /* add path */
+					f = SEXP_list_new();
+	                                SEXP_list_add(f,SEXP_string_newf(rglobbuf.pathv[i]));
+					SEXP_list_add(files, f);
+				}
+				finds = SEXP_length(files);
 			}
-			finds = SEXP_length(files);
+			rglobfree(&rglobbuf);
 		}
-		globfree(&globbuf);
 	}
+	else {
+		rc = find_files_recursion(path, setting, files, max_depth);
+		if( !rc && SEXP_length(files) == 0 ) { /* add path */
+			f = SEXP_list_new();
+	       		SEXP_list_add(f,SEXP_string_newf(path));
+			SEXP_list_add(files, f);
+		}	
+	}
+
 
 error:
 	if (name) free(name);
@@ -95,7 +119,12 @@ error:
 }
 
 
-/* **** LOCAL **** */
+/* 
+ *
+ * ************* LOCAL *************  
+ *
+ */
+
 
 /*
  *  depth defines how many directories to recurse when a recurse direction is specified
@@ -103,7 +132,7 @@ error:
  *  '0' is equivalent to no recursion
  *  '1' means to step only one directory level up/down
  */
-static void find_files_recursion(const char* path, setting_t * setting, SEXP_t *files, int depth) {
+static int find_files_recursion(const char* path, setting_t * setting, SEXP_t *files, int depth) {
 	struct stat st;
 	struct dirent * pDirent;
 	DIR * pDir;
@@ -112,10 +141,12 @@ static void find_files_recursion(const char* path, setting_t * setting, SEXP_t *
 
 	pDir = opendir(path);
 	if( pDir == NULL) 
-		return;
+		return 1;
 
+	f = SEXP_list_new();
+	SEXP_list_add(f,SEXP_string_newf(path));
 	while ( (pDirent = readdir(pDir)) ) {
-		path_new = malloc( (strlen(path)+'/'+strlen(pDirent->d_name)+1)*sizeof(char) );
+		path_new = malloc( (strlen(path)+1+strlen(pDirent->d_name)+1)*sizeof(char) );
 		sprintf(path_new,"%s/%s",path,pDirent->d_name);
 
 		if( lstat(path_new, &st) == -1)
@@ -127,19 +158,22 @@ static void find_files_recursion(const char* path, setting_t * setting, SEXP_t *
 		    recurse_filesystem(&st, setting->dev_id_list, setting->dev_id_count) ) { /* local filesystem? */
 			find_files_recursion(path_new, setting, files, depth == - 1 ? -1 : depth - 1);
 		}
-		else if( S_ISREG(st.st_mode) ) {
+		else if( !S_ISDIR(st.st_mode) ) {
 			/* pattern match on filename*/
 			if( regexec(&(setting->re), pDirent->d_name, 0, NULL, 0) == 0 ) {
-				f = SEXP_list_new();
-				SEXP_list_add(f,SEXP_string_newf(path)); SEXP_list_add(f,SEXP_string_newf(pDirent->d_name));
-				SEXP_list_add(files, f);
+				SEXP_list_add(f,SEXP_string_newf(pDirent->d_name));
 			}
 		}
 
 		free(path_new);
 	}
+	if( SEXP_length(f) > 1 )
+		SEXP_list_add(files, f);
+	else
+		SEXP_free(f);
 
 	closedir(pDir);
+	return 0;
 }
 
 /*
@@ -257,5 +291,125 @@ static int match_fs (const char *fs, char **local) {
 	}
 
 	return 0;
+}
+
+/*
+ * Similar to glob function, but instead off shell wildcard 
+ * use regexps 
+ */
+static int rglob(const char *pattern, rglob_t *result) {
+	char * pattern_save,*pattern_tmp;
+	char * token;
+	char * saveptr;
+	char * path;
+	regex_t re;
+
+	/* init result */
+	if ( result->offs < 1 || result->offs > 1000 )
+		result->offs=10;
+	result->pathv = malloc( sizeof (char**) * result->offs);
+	result->pathc=0;
+
+	/* get no regexp portion */
+	path = malloc( sizeof(char *) * ((strlen(pattern))+1) );
+	path[0] = '\0';
+	pattern_save = strdup(pattern);
+	pattern_tmp = pattern_save;
+	saveptr=NULL;
+	for (; ;pattern_save=NULL) {
+		token = strtok_r(pattern_save, "/", &saveptr);
+		if( token==NULL)
+			break;
+		if( noRegex(token) )
+			sprintf(path+strlen(path),"/%s",token);
+		else
+			break;
+	}
+	free(pattern_tmp);
+
+	/* is there a $ at the end of the pattern? Add it if not!!!  */
+	pattern_save = malloc(sizeof(char*)*strlen(pattern) + 2);
+	if( pattern[strlen(pattern)-1] != '$')
+		sprintf(pattern_save,"%s$",pattern);
+	else
+		sprintf(pattern_save,"%s",pattern);
+
+	/* init regex machine */
+	 if( regcomp(&re, pattern_save, REG_EXTENDED) != 0 ) {
+                printf("Can't init pattern buffer storage area\n");
+                return 1;
+        }
+
+	/* find paths */
+	find_paths_recursion(path, &re, result );
+
+	free(pattern_save);
+	regfree(&re);
+	free(path);	
+	return 0;
+	
+}
+
+static void find_paths_recursion(const char *path, regex_t *re, rglob_t *result ) {
+        struct dirent * pDirent;
+	struct stat st;
+        DIR * pDir;
+	char * path_new;
+
+        pDir = opendir(path);
+        if( pDir == NULL)
+                return;
+
+	if( regexec(re, path, 0, NULL, 0) == 0 ) { /* catch? */
+		result->pathv[result->pathc] = strdup(path);
+		result->pathc++;
+		if( result->pathc == result->offs) {
+			result->offs = result->offs * 2; /* magic constant */
+			result->pathv = realloc(result->pathv, sizeof (char**) * result->offs);
+		}
+	}
+
+	while ( (pDirent = readdir (pDir)) ) {
+                path_new = malloc( (strlen(path)+1+strlen(pDirent->d_name)+1)*sizeof(char) );
+                sprintf(path_new,"%s/%s",path,pDirent->d_name);
+
+                if( lstat(path_new, &st) == -1)
+                        continue;
+
+		if( S_ISDIR(st.st_mode) && strncmp(pDirent->d_name,"..",3) && strncmp(pDirent->d_name,".",2) ) {
+			find_paths_recursion(path_new, re, result ); /* recursion */
+		}
+		free(path_new);
+	}
+	closedir(pDir);
+}
+
+static int noRegex(char * token) {
+	char regexChars[] = "^$\\.[](){}*+?";
+	size_t i,j;
+	int rc;
+	
+	rc = 1;
+	for(i=0; rc && i<strlen(token); i++) {
+		for(j=0; rc && j<strlen(regexChars); j++) {
+			if( token[i] == regexChars[j] ) {
+					rc=0;
+			}
+		}
+	}
+
+	return rc;
+}
+
+static void rglobfree(rglob_t * result) {
+	int i;
+
+	for(i=0; i<result->pathc; i++) {
+		/*printf("result->pathv[%d]: %s\n", i, result->pathv[i]);*/
+		free(result->pathv[i]);
+	}
+	free(result->pathv);
+
+	result->pathc=0;
 }
 
