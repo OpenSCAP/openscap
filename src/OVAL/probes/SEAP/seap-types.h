@@ -6,9 +6,10 @@
 #include "sexp.h"
 
 typedef uint8_t SEAP_scheme_t;
+typedef uint64_t msg_id_t;
 
 typedef struct {
-        uint64_t      next_id;
+        msg_id_t      next_id;
         SEXP_t       *sexpbuf; /* S-exp buffer */
         SEXP_ostate_t *ostate;
         SEXP_pstate_t *pstate;  /* Parser state */
@@ -50,14 +51,14 @@ typedef struct {
 } SEAP_attr_t;
 
 typedef struct {
-        uint64_t     id;
+        msg_id_t     id;
         SEAP_attr_t *attrs;
         uint16_t     attrs_cnt;
         SEXP_t      *sexp;
 } SEAP_msg_t;
 
 typedef struct {
-        uint64_t id;
+        msg_id_t id;
         uint32_t code;
         SEXP_t  *data;
 } SEAP_err_t;
@@ -87,14 +88,12 @@ typedef struct {
 #define SEAP_PACKET_RAW 0x04
 
 /* SEAP errors */
-#define SERR_REM_UNFIN 1 /* peer received an incomplete expression */
-#define SERR_LOC_UNFIN 2 /* peer sent an incomplete expression */
-#define SERR_REM_PARSE 3 /* peer received an invalid expression */
-#define SERR_LOC_PARSE 4 /* peer sent an invalid expression */
-#define SERR_REM_CLOSE 5 /* peer closed the connection */
+#define SEAP_ERR_UNFIN 1
+#define SEAP_ERR_PARSE 2
+#define SEAP_ERR_CLOSE 3
 
 /* SEAP I/O flags */
-#define SFLG_RECONN   0x00000001
-#define SFLG_NONBLOCK 0x00000002
+#define SEAP_IOFLG_RECONN   0x00000001
+#define SEAP_IOFLG_NONBLOCK 0x00000002
 
 #endif /* SEAP_TYPES_H */

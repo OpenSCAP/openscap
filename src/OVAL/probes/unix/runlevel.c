@@ -313,7 +313,7 @@ int main (void)
                                 break;
                         }
                         
-                        if (SEAP_senderr (ctx, sd, err, seap_request) == -1) {
+                        if (SEAP_replyerr (ctx, sd, seap_request, err) == -1) {
                                 _D("An error ocured while sending error status. errno=%u, %s.\n",
                                    errno, strerror (errno));
                                 
@@ -342,7 +342,7 @@ int main (void)
                                 break;
                         }
                         
-                        if (SEAP_senderr (ctx, sd, err, seap_request) == -1) {
+                        if (SEAP_replyerr (ctx, sd, seap_request, err) == -1) {
                                 _D("An error ocured while sending error status. errno=%u, %s.\n",
                                    errno, strerror (errno));
                                 

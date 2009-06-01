@@ -491,8 +491,6 @@ int SEAP_sendmsg (SEAP_CTX_t *ctx, int sd, SEAP_msg_t *seap_msg)
 
 int SEAP_reply (SEAP_CTX_t *ctx, int sd, SEAP_msg_t *rep_msg, SEAP_msg_t *req_msg)
 {
-        uint64_t req_id;
-
         _A(ctx != NULL);
         _A(rep_msg != NULL);
         _A(req_msg != NULL);
@@ -502,7 +500,22 @@ int SEAP_reply (SEAP_CTX_t *ctx, int sd, SEAP_msg_t *rep_msg, SEAP_msg_t *req_ms
         return SEAP_sendmsg (ctx, sd, rep_msg);
 }
 
-int SEAP_senderr (SEAP_CTX_t *ctx, int sd, int e, SEAP_msg_t *msg)
+int SEAP_senderr (SEAP_CTX_t *ctx, int sd, SEAP_err_t *err)
+{
+        return (-1);
+}
+
+int SEAP_replyerr (SEAP_CTX_t *ctx, int sd, SEAP_msg_t *rep_msg, uint32_t e)
+{
+        return (-1);
+}
+
+int SEAP_recverr (SEAP_CTX_t *ctx, int sd, SEAP_err_t **err)
+{
+        return (-1);
+}
+
+int SEAP_recverr_byid (SEAP_CTX_t *ctx, int sd, SEAP_err_t **err, msg_id_t id)
 {
         return (-1);
 }
