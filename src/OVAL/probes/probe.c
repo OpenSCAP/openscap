@@ -178,7 +178,7 @@ SEXP_t *SEXP_OVALobj_attr_add (SEXP_t *obj, const char *name, SEXP_t *value)
                 SEXP_VALIDATE(value);
         }
         
-        attr = SEXP_OVALattr_create (name, value);
+        attr = SEXP_OVALattr_create (name, value, NULL);
         
         if (SEXP_listp (SEXP_list_first (obj))) {
                 SEXP_list_join (SEXP_list_first (obj), attr);
@@ -218,10 +218,8 @@ SEXP_t *SEXP_OVALobj_elm_add (SEXP_t *obj, const char *name, SEXP_t *attrs, SEXP
                 SEXP_VALIDATE(value);
         }
         
-        elm = SEXP_OVALelm_create (name, attrs, value);
-        SEXP_list_add (obj, elm);
-        
-        return (obj);
+        elm = SEXP_OVALelm_create (name, attrs, value, NULL);
+        return SEXP_list_join (obj, elm);
 }
 
 SEXP_t *SEXP_OVALobj_elm_del (SEXP_t *obj, const char *name, uint32_t nth)

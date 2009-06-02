@@ -424,7 +424,6 @@ static int __SEXP_fprintfa (FILE *fp, SEXP_t *sexp, uint32_t indent)
                 }
                 
                 putc (')', fp);
-                putc (' ', fp);
                 return (0);
         }
         case ATOM_EMPTY:
