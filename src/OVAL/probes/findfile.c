@@ -27,7 +27,8 @@ typedef struct {
 	int offs;
 } rglob_t;
 
-static int find_files_recursion(const char* path, setting_t * setting, SEXP_t* files, int depth);
+static int find_files_recursion(const char* path, setting_t * setting, int depth,
+			        int (*cb) (const char * pathname, const char *filename, void *arg), void *arg );
 static int init_devs (const char *mtab, char **local, setting_t *setting);
 static int match_fs (const char *fs, char **local);
 static int recurse_direction(const char *file, char *direction);
@@ -44,16 +45,16 @@ static void rglobfree(rglob_t * result);
  * ************* PUBLIC *************  
  *
  */
-SEXP_t * find_files(SEXP_t * spath, SEXP_t *sfilename, SEXP_t *behaviors) {
+int find_files(SEXP_t * spath, SEXP_t *sfilename, SEXP_t *behaviors,
+               int (*cb) (const char *pathname, const char *filename, void *arg), void *arg) {
 	char * local_fs[5] = LOCAL_FILESYSTEMS;
 	char *name = NULL, *path = NULL;
-	int i, rc, finds;
+	int i, rc;
 	int max_depth;
 	rglob_t rglobbuf;
 	setting_t *setting;	
-	SEXP_t *files, *f;
+	int finds = 0;
 
-	files = SEXP_list_new();
 	name = SEXP_string_cstr(SEXP_OVALelm_getval(sfilename));
 	path = SEXP_string_cstr(SEXP_OVALelm_getval(spath));
 	SEXP_number_get(SEXP_OVALelm_getattrval(behaviors,"max_depth"),&max_depth, NUM_INT32);
@@ -84,24 +85,25 @@ SEXP_t * find_files(SEXP_t * spath, SEXP_t *sfilename, SEXP_t *behaviors) {
 		if(!rc && rglobbuf.pathc > 0) {
 			finds = 0;
 			for(i=0; i < rglobbuf.pathc; i++) {
-				rc = find_files_recursion(rglobbuf.pathv[i], setting, files, max_depth);
-				if( !rc && finds == SEXP_length(files) ) { /* add path */
-					f = SEXP_list_new();
-	                                SEXP_list_add(f,SEXP_string_newf(rglobbuf.pathv[i]));
-					SEXP_list_add(files, f);
+				rc = find_files_recursion(rglobbuf.pathv[i], setting, max_depth, cb, arg);
+				if( rc == 0 ) {/* add path, no files found*/
+					(*cb)(rglobbuf.pathv[i], NULL, arg);
+					rc++;
 				}
-				finds = SEXP_length(files);
+				if( rc >= 0 )
+					finds += rc;
 			}
 			rglobfree(&rglobbuf);
 		}
 	}
 	else {
-		rc = find_files_recursion(path, setting, files, max_depth);
-		if( !rc && SEXP_length(files) == 0 ) { /* add path */
-			f = SEXP_list_new();
-	       		SEXP_list_add(f,SEXP_string_newf(path));
-			SEXP_list_add(files, f);
-		}	
+		rc = find_files_recursion(path, setting, max_depth, cb, arg);
+		if( rc == 0 ) {/* add path, no files found*/
+			(*cb)(path, NULL, arg);
+			rc++;
+		}
+		if( rc >= 0 )
+			finds += rc;
 	}
 
 
@@ -115,7 +117,7 @@ error:
 	if (setting->dev_id_list) free(setting->dev_id_list);
 	free(setting);
 	
-	return files;
+	return finds;
 }
 
 
@@ -132,19 +134,19 @@ error:
  *  '0' is equivalent to no recursion
  *  '1' means to step only one directory level up/down
  */
-static int find_files_recursion(const char* path, setting_t * setting, SEXP_t *files, int depth) {
+static int find_files_recursion(const char* path, setting_t * setting, int depth,
+			        int (*cb) (const char *pathname, const char *filename, void *arg), void *arg ) {
 	struct stat st;
 	struct dirent * pDirent;
 	DIR * pDir;
 	char * path_new;
-	SEXP_t * f;
+	int rc, tmp;
 
 	pDir = opendir(path);
 	if( pDir == NULL) 
-		return 1;
+		return -1;
 
-	f = SEXP_list_new();
-	SEXP_list_add(f,SEXP_string_newf(path));
+	rc = 0;
 	while ( (pDirent = readdir(pDir)) ) {
 		path_new = malloc( (strlen(path)+1+strlen(pDirent->d_name)+1)*sizeof(char) );
 		sprintf(path_new,"%s/%s",path,pDirent->d_name);
@@ -156,24 +158,23 @@ static int find_files_recursion(const char* path, setting_t * setting, SEXP_t *f
 		    recurse_direction(pDirent->d_name, setting->direction) &&                /* up or down direction? */
 		    depth &&					        	             /* how deep rabbit hole is? */
 		    recurse_filesystem(&st, setting->dev_id_list, setting->dev_id_count) ) { /* local filesystem? */
-			find_files_recursion(path_new, setting, files, depth == - 1 ? -1 : depth - 1);
+			tmp = find_files_recursion(path_new, setting, depth == - 1 ? -1 : depth - 1, cb, arg);
+			if( tmp >=0 )
+				rc += tmp;
 		}
-		else if( !S_ISDIR(st.st_mode) ) {
+		if( !S_ISDIR(st.st_mode) ) {
 			/* pattern match on filename*/
 			if( regexec(&(setting->re), pDirent->d_name, 0, NULL, 0) == 0 ) {
-				SEXP_list_add(f,SEXP_string_newf(pDirent->d_name));
+				rc++;
+				(*cb)(path, pDirent->d_name, arg);
 			}
 		}
 
 		free(path_new);
 	}
-	if( SEXP_length(f) > 1 )
-		SEXP_list_add(files, f);
-	else
-		SEXP_free(f);
 
 	closedir(pDir);
-	return 0;
+	return rc;
 }
 
 /*
