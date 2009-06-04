@@ -209,6 +209,14 @@ AC_ARG_ENABLE([cce],
        *) AC_MSG_ERROR([bad value ${enableval} for --enable-cce]) ;;
      esac],[cce=yes])
 
+AC_ARG_ENABLE([xccdf],
+     [  --enable-xccdf            include support for XCCDF [[default=yes]]],
+     [case "${enableval}" in
+       yes) cce=yes ;;
+       no)  cce=no  ;;
+       *) AC_MSG_ERROR([bad value ${enableval} for --enable-xccdf]) ;;
+     esac],[xccdf=yes])
+
 AC_ARG_ENABLE([bindings],
      [  --enable-bindings       enable compilation of bindings [[default=yes]]],
      [case "${enableval}" in
@@ -230,6 +238,7 @@ AM_CONDITIONAL([WANT_CVSS], test "$cvss" = yes)
 AM_CONDITIONAL([WANT_CVE],  test "$cve"  = yes)
 AM_CONDITIONAL([WANT_CPE],  test "$cpe"  = yes)
 AM_CONDITIONAL([WANT_CCE],  test "$cce"  = yes)
+AM_CONDITIONAL([WANT_XCCDF],  test "$xccdf"  = yes)
 AM_CONDITIONAL([WANT_PROBES], test "$probes" = yes)
 AM_CONDITIONAL([WANT_PROBES_UNIX], test "$probes_unix" = yes)
 AM_CONDITIONAL([WANT_PROBES_REDHAT], test "$probes_rh" = yes)
@@ -245,6 +254,7 @@ AC_CONFIG_FILES([Makefile
                  src/CVE/Makefile
                  src/CPE/Makefile
                  src/CCE/Makefile
+                 src/XCCDF/Makefile
                  swig/OVAL/Makefile
                  swig/CVSS/Makefile
                  swig/CVE/Makefile

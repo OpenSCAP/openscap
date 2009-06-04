@@ -1,0 +1,196 @@
+/*
+ * Copyright 2009 Red Hat Inc., Durham, North Carolina.
+ * All Rights Reserved.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful, 
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software 
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ * Authors:
+ *      Lukas Kuklinek <lkuklinek@redhat.com>
+ */
+
+
+#ifndef XCCDF_ELEMENTS_H_
+#define XCCDF_ELEMENTS_H_
+#include <libxml/xmlreader.h>
+#include <stdbool.h>
+
+enum xccdf_element {
+	XCCDFE_ERROR = -1,
+	XCCDFE_UNMATCHED = 0,
+	XCCDFE_BENCHMARK,
+	XCCDFE_GROUP,
+	XCCDFE_RULE,
+	XCCDFE_VALUE,
+	XCCDFE_PROFILE,
+	XCCDFE_TESTRESULT,
+	XCCDFE_RESULT_BENCHMARK,
+	XCCDFE_CHECK,
+	XCCDFE_CHECK_IMPORT,
+	XCCDFE_CHECK_EXPORT,
+	XCCDFE_CHECK_CONTENT,
+	XCCDFE_CHECK_CONTENT_REF,
+	XCCDFE_CHOICES,
+	XCCDFE_CHOICE,
+	XCCDFE_COMPLEX_CHECK,
+	XCCDFE_CONFLICTS,
+	XCCDFE_CPE_LIST,
+	XCCDFE_DEFAULT,
+	XCCDFE_DESCRIPTION,
+	XCCDFE_FACT,
+	XCCDFE_FIX,
+	XCCDFE_FIXTEXT,
+	XCCDFE_FRONT_MATTER,
+	XCCDFE_IDENT,
+	XCCDFE_IDENTITY,
+	XCCDFE_IMPACT_METRIC,
+	XCCDFE_INSTANCE,
+	XCCDFE_LOWER_BOUND,
+	XCCDFE_MATCH,
+	XCCDFE_MESSAGE,
+	XCCDFE_METADATA,
+	XCCDFE_MODEL,
+	XCCDFE_NEW_RESULT,
+	XCCDFE_NOTICE,
+	XCCDFE_OLD_RESULT,
+	XCCDFE_ORGANIZATION,
+	XCCDFE_OVERRIDE,
+	XCCDFE_PARAM,
+	XCCDFE_PLAIN_TEXT,
+	XCCDFE_PLATFORM,
+	XCCDFE_CPE2_PLATFORMSPEC,
+	XCCDFE_RESULT_PROFILE,
+	XCCDFE_PROFILE_NOTE,
+	XCCDFE_QUESTION,
+	XCCDFE_RATIONALE,
+	XCCDFE_REAR_MATTER,
+	XCCDFE_REFERENCE,
+	XCCDFE_REFINE_RULE,
+	XCCDFE_REFINE_VALUE,
+	XCCDFE_REMARK,
+	XCCDFE_REQUIRES,
+	XCCDFE_RESULT,
+	XCCDFE_RULE_RESULT,
+	XCCDFE_SCORE,
+	XCCDFE_SELECT,
+	XCCDFE_SET_VALUE,
+	XCCDFE_SIGNATURE,
+	XCCDFE_SOURCE,
+	XCCDFE_STATUS,
+	XCCDFE_SUB,
+	XCCDFE_TARGET,
+	XCCDFE_TARGET_ADDRESS,
+	XCCDFE_TARGET_FACTS,
+	XCCDFE_TITLE,
+	XCCDFE_UPPER_BOUND,
+	XCCDFE_VALUE_VAL,
+	XCCDFE_VERSION,
+	XCCDFE_WARNING,
+	XCCDFE_END_
+};
+
+#define XCCDF_XMLNS "http://checklists.nist.gov/xccdf/1.1"
+
+enum xccdf_element xccdf_element_get(xmlTextReaderPtr reader);
+
+#define XCCDF_ASSERT_ELEMENT(reader, element) do { if (xccdf_element_get(reader) != element) return false; } while(false)
+
+
+enum xccdf_attribute {
+	XCCDFA_NONE,
+	XCCDFA_ABSTRACT,
+	XCCDFA_AUTHENTICATED,
+	XCCDFA_AUTHORITY,
+	XCCDFA_CATEGORY,
+	XCCDFA_CLUSTER_ID,
+	XCCDFA_COMPLEXITY,
+	XCCDFA_CONTEXT,
+	XCCDFA_DATE,
+	XCCDFA_DISRUPTION,
+	XCCDFA_END_TIME,
+	XCCDFA_EXPORT_NAME,
+	XCCDFA_EXTENDS,
+	XCCDFA_FIXREF,
+	XCCDFA_HIDDEN,
+	XCCDFA_HREF,
+	XCCDFA_ID,
+	XCCDFA_IDREF,
+	XCCDFA_IID,
+	XCCDFA_IMPORT_NAME,
+	XCCDFA_INTERACTIVE,
+	XCCDFA_INTERFACEHINT,
+	XCCDFA_MULTIPLE,
+	XCCDFA_MUSTMATCH,
+	XCCDFA_NAME,
+	XCCDFA_NEGATE,
+	XCCDFA_NOTE_TAG,
+	XCCDFA_OPERATOR,
+	XCCDFA_OVERRIDE,
+	XCCDFA_PARENTCONTEXT,
+	XCCDFA_PLATFORM,
+	XCCDFA_PRIVILEDGED,
+	XCCDFA_PROHIBITCHANGES,
+	XCCDFA_REBOOT,
+	XCCDFA_RESOLVED,
+	XCCDFA_ROLE,
+	XCCDFA_SELECTED,
+	XCCDFA_SELECTOR,
+	XCCDFA_SEVERITY,
+	XCCDFA_START_TIME,
+	XCCDFA_STRATEGY,
+	XCCDFA_STYLE,
+	XCCDFA_STYLE_HREF,
+	XCCDFA_SYSTEM,
+	XCCDFA_TAG,
+	XCCDFA_TEST_SYSTEM,
+	XCCDFA_TIME,
+	XCCDFA_TYPE,
+	XCCDFA_UPDATE,
+	XCCDFA_URI,
+	XCCDFA_VALUE_ID,
+	XCCDFA_WEIGHT,
+	XCCDFA_END_
+};
+
+bool xccdf_attribute_has(xmlTextReaderPtr reader, enum xccdf_attribute attr);
+const char* xccdf_attribute_get(xmlTextReaderPtr reader, enum xccdf_attribute attr);
+char* xccdf_attribute_copy(xmlTextReaderPtr reader, enum xccdf_attribute attr);
+bool xccdf_attribute_get_bool(xmlTextReaderPtr reader, enum xccdf_attribute attr);
+int xccdf_attribute_get_int(xmlTextReaderPtr reader, enum xccdf_attribute attr);
+float xccdf_attribute_get_float(xmlTextReaderPtr reader, enum xccdf_attribute attr);
+//void xccdf_read_flag(xmlTextReaderPtr reader, enum xccdf_attribute attr, xccdf_flags* flags, enum xccdf_flag flag);
+
+struct xccdf_string_map {
+	int value;
+	const char* string;
+};
+
+int string_to_enum(const struct xccdf_string_map* map, const char* str);
+const char* enum_to_string(const struct xccdf_string_map* map, int val);
+
+bool xccdf_to_start_element(xmlTextReaderPtr reader, int depth);
+char* xccdf_element_string_copy(xmlTextReaderPtr reader);
+const char* xccdf_element_string_get(xmlTextReaderPtr reader);
+int xccdf_element_depth(xmlTextReaderPtr reader);
+
+void xccdf_print_depth(int depth);
+void xccdf_print_max(const char* str, int max, const char* ellipsis);
+char* xccdf_get_xml(xmlTextReaderPtr reader);
+
+time_t xccdf_get_date(const char* date);
+time_t xccdf_get_datetime(const char* date);
+
+#endif
+
+

@@ -86,3 +86,14 @@ test_cvsscalc_CFLAGS  = -I$(top_srcdir)/src/CVSS
 test_cvsscalc_LDADD = $(top_builddir)/src/libopenscap.la
 EXTRA_DIST += CVSS/test_cvsscalc.py
 endif
+
+if WANT_XCCDF
+check_PROGRAMS += xccdf_dump
+TESTS += XCCDF/test_xccdf.sh
+EXTRA_DIST += XCCDF/test_xccdf.sh XCCDF/scap-rhel5-xccdf.xml
+
+xccdf_dump_SOURCES = XCCDF/xccdf_dump.c
+xccdf_dump_CFLAGS = -I$(top_srcdir)/src/XCCDF
+xccdf_dump_LDADD = $(top_builddir)/src/libopenscap.la
+endif
+

@@ -27,3 +27,8 @@ if WANT_CVSS
 SUBDIRS += CVSS
 libopenscap_la_LIBADD += CVSS/libcvss.la
 endif
+
+if WANT_XCCDF
+SUBDIRS += XCCDF
+libopenscap_la_LIBADD += XCCDF/libxccdf.la
+endif
