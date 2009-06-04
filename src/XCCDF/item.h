@@ -86,7 +86,7 @@ struct xccdf_group_item {
 	struct xccdf_list* content;
 };
 
-/// @todo review
+// @todo review
 struct xccdf_value_item {
 	enum xccdf_interface_hint interface_hint;
 

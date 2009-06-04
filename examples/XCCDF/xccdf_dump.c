@@ -21,7 +21,7 @@
  */
 
 
-#include "xccdf.h"
+#include "../../src/XCCDF/xccdf.h"
 #include <stdio.h>
 #include <stlib.h>
 #include <libxml/xmlreader.h>

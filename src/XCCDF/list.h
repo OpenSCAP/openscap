@@ -21,7 +21,7 @@
  */
 
 
-/**
+/*
  * @file
  * @internal
  * @{
@@ -80,28 +80,28 @@ bool xccdf_iterator_has_more(struct xccdf_iterator* it);
 #define XCCDF_ITERATOR_GEN_T(t,n) XCCDF_ITERATOR_FWD(n) XCCDF_ITERATOR_HAS_MORE(n) XCCDF_ITERATOR_NEXT(t,n)
 #define XCCDF_ITERATOR_GEN_S(n) XCCDF_ITERATOR_GEN_T(struct xccdf_##n*,n)
 
-/**
+/*
  * Hash table
  */
 
-/// Comparison function.
+// Comparison function.
 typedef int (*xccdf_compare_func)(const char*, const char*);
-/// Hash table item.
+// Hash table item.
 struct xccdf_htable_item {
-	struct xccdf_htable_item* next; ///< Next item.
-	char* key;                      ///< Item key.
-	void* value;                    ///< Item value.
+	struct xccdf_htable_item* next; // Next item.
+	char* key;                      // Item key.
+	void* value;                    // Item value.
 };
 
-/// Hash table.
+// Hash table.
 struct xccdf_htable {
-	size_t hsize;                      ///< Size of the hash table.
-	size_t itemcount;                  ///< Number of elements in the hash table.
-	struct xccdf_htable_item** table;  ///< The table itself.
-	xccdf_compare_func cmp;            ///< Funcion used to compare keys (e.g. strcmp).
+	size_t hsize;                      // Size of the hash table.
+	size_t itemcount;                  // Number of elements in the hash table.
+	struct xccdf_htable_item** table;  // The table itself.
+	xccdf_compare_func cmp;            // Funcion used to compare keys (e.g. strcmp).
 };
 
-/**
+/*
  * Create a new hash table.
  * @param cmp Pointer to a function used as the key comparator.
  * @hsize Size of the hash table.
@@ -110,7 +110,7 @@ struct xccdf_htable {
  */
 struct xccdf_htable* xccdf_htable_new1(xccdf_compare_func cmp, size_t hsize);
 
-/**
+/*
  * Create a new hash table.
  *
  * The table will use strcmp() as the comparison function and will have default table size.
@@ -119,13 +119,13 @@ struct xccdf_htable* xccdf_htable_new1(xccdf_compare_func cmp, size_t hsize);
  */
 struct xccdf_htable* xccdf_htable_new(void);
 
-/**
+/*
  * Add an item to the hash table.
  * @return True on success, false if the key already exists.
  */
 bool xccdf_htable_add(struct xccdf_htable* htable, const char* key, void* item);
 
-/**
+/*
  * Get a hash table item.
  * @return An item, NULL if item with specified key is not present in the hash table.
  */
@@ -133,7 +133,7 @@ void* xccdf_htable_get(struct xccdf_htable* htable, const char* key);
 
 void xccdf_htable_dump(struct xccdf_htable* htable, xccdf_dump_func dumper, int depth);
 
-/**
+/*
  * Delete the hash table.
  * @param htable Hash table to be deleted.
  * @param destructor Function used to delete individual items.

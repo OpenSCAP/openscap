@@ -23,7 +23,7 @@
 
 
 /**
- * @addtogroup xccdf XCCDF
+ * @addtogroup XCCDF
  * @{
  * @file xccdf.h
  * Open-scap XCCDF library interface.
