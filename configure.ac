@@ -212,8 +212,8 @@ AC_ARG_ENABLE([cce],
 AC_ARG_ENABLE([xccdf],
      [  --enable-xccdf            include support for XCCDF [[default=yes]]],
      [case "${enableval}" in
-       yes) cce=yes ;;
-       no)  cce=no  ;;
+       yes) xccdf=yes ;;
+       no)  xccdf=no  ;;
        *) AC_MSG_ERROR([bad value ${enableval} for --enable-xccdf]) ;;
      esac],[xccdf=yes])
 

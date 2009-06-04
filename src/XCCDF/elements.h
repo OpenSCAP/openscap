@@ -25,6 +25,7 @@
 #define XCCDF_ELEMENTS_H_
 #include <libxml/xmlreader.h>
 #include <stdbool.h>
+#include <time.h>
 
 enum xccdf_element {
 	XCCDFE_ERROR = -1,
