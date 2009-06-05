@@ -36,7 +36,7 @@ int main(int argc, char *argv[]) {
         elm3 = SEXP_list_nth(elm_list,3);
 
 	rc = find_files(elm1, elm2, elm3, &cb, NULL);
-	printf("finds: %d", rc);
+	printf("finds: %d\n", rc);
 
 
         return 0;
