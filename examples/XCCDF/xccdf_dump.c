@@ -21,10 +21,9 @@
  */
 
 
-#include "../../src/XCCDF/xccdf.h"
+#include "xccdf.h"
 #include <stdio.h>
-#include <stlib.h>
-#include <libxml/xmlreader.h>
+#include <stdlib.h>
 
 
 void xccdf_benchmark_dump(struct xccdf_benchmark*);
@@ -47,7 +46,7 @@ int main(int argc, char** argv)
 		return 1;
 	}
 	bool ret = dump_benchmark(argv[1]);
-	xmlCleanupParser();
+
 	return (ret ? EXIT_SUCCESS : EXIT_FAILURE);
 }
 
