@@ -15,6 +15,7 @@
 
 typedef struct {
 	regex_t re;
+	char *file;
 	char *direction;
 	char *follow;
 	dev_t *dev_id_list;
@@ -74,18 +75,26 @@ int find_files(SEXP_t * spath, SEXP_t *sfilename, SEXP_t *behaviors,
 		}
 	}
 
-	/* Init pattern match on filename */
-	if( regcomp(&(setting->re), name, REG_EXTENDED) != 0 ) {
-		printf("Can't init pattern buffer storage area\n");
-                goto error;
+	/* Filename */
+	if( !SEXP_strncmp(SEXP_OVALelm_getattrval(sfilename,"operation"), "pattern match", 14) ) {
+		if( regcomp(&(setting->re), name, REG_EXTENDED) != 0 ) {
+			printf("Can't init pattern buffer storage area\n");
+	       	        goto error;
+		}
+		setting->file = NULL;
+	}
+	else {
+		setting->file = strdup(name);
 	}
 
-	/* pattern match on path */
+
+	/* Is there a '/' at the end of the path? */
+	if( path[strlen(path)-1] == '/' )
+		path[strlen(path)-1] = '\0';
+
+	/* Evaluate path(s) */
 	if( !SEXP_strncmp(SEXP_OVALelm_getattrval(spath,"operation"), "pattern match", 14) ) {
 		rglobbuf.offs=10;
-		/* is there a '/' at the end of the path? */
-		if( path[strlen(path)-1] == '/' )
-			path[strlen(path)-1] = '\0';
 		rc = rglob(path, &rglobbuf);
 		if(!rc && rglobbuf.pathc > 0) {
 			finds = 0;
@@ -103,7 +112,7 @@ int find_files(SEXP_t * spath, SEXP_t *sfilename, SEXP_t *behaviors,
 	}
 	else {
 		rc = find_files_recursion(path, setting, max_depth, arg);
-		if( rc == 0 ) {/* add path, no files found*/
+		if( rc == 0 ) { /* add path, no files found */
 			(*cb)(path, NULL, arg);
 			rc++;
 		}
@@ -113,13 +122,14 @@ int find_files(SEXP_t * spath, SEXP_t *sfilename, SEXP_t *behaviors,
 
 
 error:
-	if (name) free(name);
-	if (path) free(path);
+	free(name);
+	free(path);
 
-	if (setting->follow) free(setting->follow);
-	if (setting->direction) free(setting->direction);
+	free(setting->follow);
+	free(setting->direction);
+	free(setting->file);
+	free(setting->dev_id_list);
 	regfree(&(setting->re));
-	if (setting->dev_id_list) free(setting->dev_id_list);
 	free(setting);
 	
 	return finds;
@@ -167,10 +177,18 @@ static int find_files_recursion(const char* path, setting_t * setting, int depth
 				rc += tmp;
 		}
 		if( !S_ISDIR(st.st_mode) ) {
-			/* pattern match on filename*/
-			if( regexec(&(setting->re), pDirent->d_name, 0, NULL, 0) == 0 ) {
-				rc++;
-				(setting->cb)(path, pDirent->d_name, arg);
+			/* match filename*/
+			if( setting->file ) {
+				if(!strncmp(setting->file, pDirent->d_name, strlen(pDirent->d_name))) {
+					rc++;
+					(setting->cb)(path, pDirent->d_name, arg);
+				}
+			}
+			else {
+				if( regexec(&(setting->re), pDirent->d_name, 0, NULL, 0) == 0 ) {
+					rc++;
+					(setting->cb)(path, pDirent->d_name, arg);
+				}
 			}
 		}
 
