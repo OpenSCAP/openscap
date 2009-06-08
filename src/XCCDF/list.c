@@ -66,6 +66,11 @@ void xccdf_list_delete(struct xccdf_list* list, xccdf_destruct_func destructor)
 	}
 }
 
+void xccdf_list_delete0(struct xccdf_list* list)
+{
+	xccdf_list_delete(list, NULL);
+}
+
 void xccdf_list_dump(struct xccdf_list* list, xccdf_dump_func dumper, int depth)
 {
     if (list == NULL) {

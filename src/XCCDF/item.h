@@ -68,6 +68,7 @@ struct xccdf_rule_item {
 	char* impact_metric;
 	enum xccdf_role role;
 	enum xccdf_level severity;
+
 	struct xccdf_list* requires;
 	struct xccdf_list* conflicts;
 

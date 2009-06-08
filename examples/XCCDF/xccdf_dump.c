@@ -21,10 +21,11 @@
  */
 
 
-#include "xccdf.h"
+#include <xccdf.h>
 #include <stdio.h>
 #include <stdlib.h>
 
+void xmlCleanupParser(void);
 
 void xccdf_benchmark_dump(struct xccdf_benchmark*);
 

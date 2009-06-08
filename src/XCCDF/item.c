@@ -94,7 +94,8 @@ void xccdf_item_dump(struct xccdf_item* item, int depth)
 void xccdf_item_print(struct xccdf_item* item, int depth)
 {
 	if (item) {
-		if (item->item.parent) { xccdf_print_depth(depth); printf("parent  : %s\n", item->item.parent->item.id); }
+		if (item->item.parent)  { xccdf_print_depth(depth); printf("parent  : %s\n", item->item.parent->item.id); }
+		if (item->item.extends) { xccdf_print_depth(depth); printf("extends : %s\n", item->item.extends->item.id); }
 		if (item->type == XCCDF_BENCHMARK) { xccdf_print_depth(depth); printf("resolved: %d\n", item->item.flags.resolved); }
 		if (item->type & XCCDF_CONTENT)    { xccdf_print_depth(depth); printf("selected: %d\n", item->item.flags.selected); }
 		if (item->item.version) { xccdf_print_depth(depth); printf("version : %s\n", item->item.version); }

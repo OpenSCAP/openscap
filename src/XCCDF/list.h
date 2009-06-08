@@ -53,6 +53,7 @@ struct xccdf_list {
 struct xccdf_list* xccdf_list_new(void);
 bool xccdf_list_add(struct xccdf_list* list, void* value);
 void xccdf_list_delete(struct xccdf_list* list, xccdf_destruct_func destructor);
+void xccdf_list_delete0(struct xccdf_list* list);
 void xccdf_list_dump(struct xccdf_list* list, xccdf_dump_func dumper, int depth);
 
 /* Linked List iterator. */
