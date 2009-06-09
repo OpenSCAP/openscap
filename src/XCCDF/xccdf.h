@@ -102,6 +102,16 @@ enum xccdf_operator {
 	XCCDF_OPERATOR_PATTERN_MATCH   ///< Match a regular expression.
 };
 
+/// Boolean operators for logical expressions
+enum xccdf_bool_operator {
+	XCCDF_OPERATOR_AND  = 0x0002,                                   ///< Logical and.
+	XCCDF_OPERATOR_OR   = 0x0003,                                   ///< Logical or.
+	XCCDF_OPERATOR_NOT  = 0x0100,                                   ///< Logical negation.
+	XCCDF_OPERATOR_NAND = XCCDF_OPERATOR_AND | XCCDF_OPERATOR_NOT,  ///< Logical nand.
+	XCCDF_OPERATOR_NOR  = XCCDF_OPERATOR_OR  | XCCDF_OPERATOR_NOT,  ///< Logical nor.
+	XCCDF_OPERATOR_MASK = 0x00ff                                    ///< Mask to strip the negation away (using bitwise and).
+};
+
 /// XCCDF error, complexity, disruption, or severity level
 enum xccdf_level {
 	XCCDF_UNKNOWN = 1, ///< Unknown.
@@ -260,7 +270,7 @@ struct xccdf_refine_rule;
 struct xccdf_ident;
 
 /** @struct xccdf_check
- * XCCDF check.
+ * XCCDF simple or complex check.
  * @see xccdf_rule
  */
 struct xccdf_check;
@@ -270,6 +280,36 @@ struct xccdf_check;
  * @see xccdf_rule
  */
 struct xccdf_check_content_ref;
+
+/** @struct xccdf_profile_note
+ * XCCDF note for given rule in context of given profile.
+ * @see xccdf_rule
+ */
+struct xccdf_profile_note;
+
+/** @struct xccdf_check_import
+ * XCCDF check import.
+ * @see xccdf_check
+ */
+struct xccdf_check_import;
+
+/** @struct xccdf_check_export
+ * XCCDF check export.
+ * @see xccdf_check
+ */
+struct xccdf_check_export;
+
+/** @struct xccdf_fix
+ * XCCDF automatic fix.
+ * @see xccdf_rule
+ */
+struct xccdf_fix;
+
+/** @struct xccdf_fixtext
+ * XCCDF textual fix instructions.
+ * @see xccdf_rule
+ */
+struct xccdf_fixtext;
 
 
 
@@ -424,6 +464,56 @@ struct xccdf_check_content_ref_iterator;
 struct xccdf_check_content_ref* xccdf_check_content_ref_iterator_next(struct xccdf_check_content_ref_iterator* it);
 /// @relates xccdf_check_content_ref_iterator
 bool xccdf_check_content_ref_iterator_has_more(struct xccdf_check_content_ref_iterator* it);
+
+/** @struct xccdf_profile_note_iterator
+ * Profile note iterator.
+ * @see xccdf_iterator
+ */
+struct xccdf_profile_note_iterator;
+/// @relates xccdf_profile_note_iterator
+struct xccdf_profile_note* xccdf_profile_note_iterator_next(struct xccdf_profile_note_iterator* it);
+/// @relates xccdf_profile_note_iterator
+bool xccdf_profile_note_iterator_has_more(struct xccdf_profile_note_iterator* it);
+
+/** @struct xccdf_check_import_iterator
+ * Check import iterator.
+ * @see xccdf_iterator
+ */
+struct xccdf_check_import_iterator;
+/// @relates xccdf_check_import_iterator
+struct xccdf_check_import* xccdf_check_import_iterator_next(struct xccdf_check_import_iterator* it);
+/// @relates xccdf_check_import_iterator
+bool xccdf_check_import_iterator_has_more(struct xccdf_check_import_iterator* it);
+
+/** @struct xccdf_check_export_iterator
+ * Check export iterator.
+ * @see xccdf_iterator
+ */
+struct xccdf_check_export_iterator;
+/// @relates xccdf_check_export_iterator
+struct xccdf_check_export* xccdf_check_export_iterator_next(struct xccdf_check_export_iterator* it);
+/// @relates xccdf_check_export_iterator
+bool xccdf_check_export_iterator_has_more(struct xccdf_check_export_iterator* it);
+
+/** @struct xccdf_fix_iterator
+ * Fix iterator.
+ * @see xccdf_iterator
+ */
+struct xccdf_fix_iterator;
+/// @relates xccdf_fix_iterator
+struct xccdf_fix* xccdf_fix_iterator_next(struct xccdf_fix_iterator* it);
+/// @relates xccdf_fix_iterator
+bool xccdf_fix_iterator_has_more(struct xccdf_fix_iterator* it);
+
+/** @struct xccdf_fixtext_iterator
+ * Textual fix iterator.
+ * @see xccdf_iterator
+ */
+struct xccdf_fixtext_iterator;
+/// @relates xccdf_fixtext_iterator
+struct xccdf_fixtext* xccdf_fixtext_iterator_next(struct xccdf_fixtext_iterator* it);
+/// @relates xccdf_fixtext_iterator
+bool xccdf_fixtext_iterator_has_more(struct xccdf_fixtext_iterator* it);
 
 
 /*--------------------*\
@@ -848,6 +938,12 @@ const char* xccdf_rule_rationale(const struct xccdf_rule* rule);
 const char* xccdf_rule_cluster_id(const struct xccdf_rule* rule);
 
 /**
+ * Get rule's currently selected check.
+ * @relates xccdf_rule
+ */
+struct xccdf_check* xccdf_rule_check(const struct xccdf_rule* rule);
+
+/**
  * Get rule scoring weight.
  * @relates xccdf_rule
  */
@@ -949,6 +1045,24 @@ struct xccdf_ident_iterator* xccdf_rule_idents(const struct xccdf_rule* rule);
  * @relates xccdf_rule
  */
 struct xccdf_check_iterator* xccdf_rule_checks(const struct xccdf_rule* rule);
+
+/**
+ * Get an iterator to the profile notes of the rule.
+ * @relates xccdf_rule
+ */
+struct xccdf_profile_note_iterator* xccdf_rule_profile_notes(const struct xccdf_rule* rule);
+
+/**
+ * Get an iterator to fixes for the rule.
+ * @relates xccdf_rule
+ */
+struct xccdf_fix_iterator* xccdf_rule_fixes(const struct xccdf_rule* rule);
+
+/**
+ * Get an iterator to fix descriptions the rule.
+ * @relates xccdf_rule
+ */
+struct xccdf_fixtext_iterator* xccdf_rule_fixtexts(const struct xccdf_rule* rule);
 
 
 
@@ -1140,6 +1254,20 @@ const char* xccdf_ident_system(const struct xccdf_ident* ident);
 const char* xccdf_check_id(const struct xccdf_check* check);
 
 /**
+ * True if the check is a complex check.
+ * @relates xccdf_check
+ * @see xccdf_check_children
+ */
+bool xccdf_check_complex(const struct xccdf_check* check);
+
+/**
+ * Get an operator to be applied no children of the complex check.
+ * @relates xccdf_check
+ * @see xccdf_check_children
+ */
+enum xccdf_bool_operator xccdf_check_oper(const struct xccdf_check* check);
+
+/**
  * Get check system URI.
  * @relates xccdf_check
  */
@@ -1171,16 +1299,158 @@ struct xccdf_rule* xccdf_check_parent(const struct xccdf_check* check);
 struct xccdf_check_content_ref_iterator* xccdf_check_content_refs(const struct xccdf_check* check);
 
 /**
+ * Get an iterator to the check imports.
+ * @relates xccdf_check
+ * @see xccdf_check_import
+ */
+struct xccdf_check_import_iterator* xccdf_check_imports(const struct xccdf_check* check);
+
+/**
+ * Get an iterator to the check exports.
+ * @relates xccdf_check
+ * @see xccdf_check_export
+ */
+struct xccdf_check_export_iterator* xccdf_check_exports(const struct xccdf_check* check);
+
+/**
+ * Get an iterator to nested checks of the complex check.
+ * @relates xccdf_check
+ * @see xccdf_check_export
+ */
+struct xccdf_check_iterator* xccdf_check_children(const struct xccdf_check* check);
+
+/**
  * Get URI of the check content reference.
  * @relates xccdf_check_content_ref
  */
-const char* xccdf_check_content_ref_href(const struct xccdf_check_content_ref* check_content_ref);
+const char* xccdf_check_content_ref_href(const struct xccdf_check_content_ref* ref);
 
 /**
  * Get name of a part of the check content document this reference is pointing to.
  * @relates xccdf_check_content_ref
  */
-const char* xccdf_check_content_ref_name(const struct xccdf_check_content_ref* check_content_ref);
+const char* xccdf_check_content_ref_name(const struct xccdf_check_content_ref* ref);
+
+/**
+ * Get profile note tag.
+ * @relates xccdf_profile_note
+ */
+const char* xccdf_profile_note_reftag(const struct xccdf_profile_note* note);
+
+/**
+ * Get profile note text as a piece of XML.
+ * @relates xccdf_profile_note
+ */
+const char* xccdf_profile_note_text(const struct xccdf_profile_note* note);
+
+/**
+ * Get check import target system variable name.
+ * @relates xccdf_check_import
+ */
+const char* xccdf_check_import_name(const struct xccdf_check_import* item);
+
+/**
+ * Get content of the imported variable.
+ * @relates xccdf_check_import
+ */
+const char* xccdf_check_import_content(const struct xccdf_check_import* item);
+
+/**
+ * Get check export target system variable name.
+ * @relates xccdf_check_export
+ */
+const char* xccdf_check_export_name(const struct xccdf_check_export* item);
+
+/**
+ * Get an XCCDF value bound to the check export item.
+ * @relates xccdf_check_export
+ */
+struct xccdf_value* xccdf_check_export_value(const struct xccdf_check_export* item);
+
+
+/**
+ * Get fix content (e.g. a script).
+ * @relates xccdf_fix
+ */
+const char* xccdf_fix_content(const struct xccdf_fix* fix);
+
+/**
+ * True if the fix needs rebooting a system.
+ * @relates xccdf_fix
+ */
+bool xccdf_fix_reboot(const struct xccdf_fix* fix);
+
+/**
+ * Get fix strategy.
+ * @relates xccdf_fix
+ */
+enum xccdf_strategy xccdf_fix_strategy(const struct xccdf_fix* fix);
+
+/**
+ * Get fix complexity.
+ * @relates xccdf_fix
+ */
+enum xccdf_level xccdf_fix_complexity(const struct xccdf_fix* fix);
+
+/**
+ * Get fix disruption.
+ * @relates xccdf_fix
+ */
+enum xccdf_level xccdf_fix_disruption(const struct xccdf_fix* fix);
+
+/**
+ * Get fix ID,
+ * @relates xccdf_fix
+ */
+const char* xccdf_fix_id(const struct xccdf_fix* fix);
+
+/**
+ * Get fix fixing system URI,
+ * @relates xccdf_fix
+ */
+const char* xccdf_fix_system(const struct xccdf_fix* fix);
+
+/**
+ * Get URI of a platform the fix applies to.
+ * @relates xccdf_fix
+ */
+const char* xccdf_fix_platform(const struct xccdf_fix* fix);
+
+
+/**
+ * True if the fixtext needs rebooting a system.
+ * @relates xccdf_fixtext
+ */
+bool xccdf_fixtext_reboot(const struct xccdf_fixtext* fixtext);
+
+/**
+ * Get fixtext strategy.
+ * @relates xccdf_fixtext
+ */
+enum xccdf_strategy xccdf_fixtext_strategy(const struct xccdf_fixtext* fixtext);
+
+/**
+ * Get fixtext complexity.
+ * @relates xccdf_fixtext
+ */
+enum xccdf_level xccdf_fixtext_complexity(const struct xccdf_fixtext* fixtext);
+
+/**
+ * Get fixtext disruption.
+ * @relates xccdf_fixtext
+ */
+enum xccdf_level xccdf_fixtext_disruption(const struct xccdf_fixtext* fixtext);
+
+
+
+
+/**
+ * Release library internal caches.
+ *
+ * This function should be called once you finish working with the library
+ * to free internaly allocated memory, e.g. cache of the XML parser.
+ */
+void xccdf_cleanup(void);
 
 #endif
 

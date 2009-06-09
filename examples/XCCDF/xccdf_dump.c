@@ -25,8 +25,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void xmlCleanupParser(void);
-
 void xccdf_benchmark_dump(struct xccdf_benchmark*);
 
 bool dump_benchmark(const char* fname)
@@ -47,7 +45,7 @@ int main(int argc, char** argv)
 		return 1;
 	}
 	bool ret = dump_benchmark(argv[1]);
-
+	xccdf_cleanup();
 	return (ret ? EXIT_SUCCESS : EXIT_FAILURE);
 }
 

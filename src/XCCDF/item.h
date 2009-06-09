@@ -41,6 +41,7 @@ struct xccdf_flags {
 };
 
 struct xccdf_item;
+struct xccdf_check;
 
 struct xccdf_item_base {
 	char* id;
@@ -68,6 +69,7 @@ struct xccdf_rule_item {
 	char* impact_metric;
 	enum xccdf_role role;
 	enum xccdf_level severity;
+	struct xccdf_check* check;
 
 	struct xccdf_list* requires;
 	struct xccdf_list* conflicts;
@@ -89,15 +91,18 @@ struct xccdf_group_item {
 
 // @todo review
 struct xccdf_value_item {
+	enum xccdf_value_type type;
 	enum xccdf_interface_hint interface_hint;
+	enum xccdf_operator oper;
+	char* selector;
 
 	struct xccdf_list* values;
-	struct xccdf_list* default_val;
-	struct xccdf_list* match;
-	struct xccdf_list* lower_bound;
-	struct xccdf_list* upper_bound;
+	struct xccdf_list* default_vals;
+	struct xccdf_list* matches;
+	struct xccdf_list* lower_bounds;
+	struct xccdf_list* upper_bounds;
 	struct xccdf_list* choices;
-	struct xccdf_list* source;
+	struct xccdf_list* sources;
 };
 
 // @todo complete
@@ -117,6 +122,7 @@ struct xccdf_profile_item {
 struct xccdf_benchmark_item {
 	
 	struct xccdf_htable* dict;
+	struct xccdf_htable* auxdict;
 	struct xccdf_list* idrefs;
 	struct xccdf_list* notices;
     struct xccdf_htable* plain_texts;
@@ -195,6 +201,8 @@ struct xccdf_ident {
 };
 
 struct xccdf_check {
+	enum xccdf_bool_operator oper;
+	struct xccdf_list* children;
 	struct xccdf_item* parent;
 	char* id;
 	char* system;
@@ -210,9 +218,45 @@ struct xccdf_check_content_ref {
 	char* name;
 };
 
+struct xccdf_check_import {
+	char* name;
+	char* content;
+};
+
+struct xccdf_check_export {
+	char* name;
+	struct xccdf_item* value;
+};
+
+struct xccdf_profile_note {
+	char* reftag;
+	char* text;
+};
+
+struct xccdf_fix {
+	bool reboot;
+	enum xccdf_strategy strategy;
+	enum xccdf_level disruption;
+	enum xccdf_level complexity;
+	char* id;
+	char* content;
+	char* system;
+	char* platform;
+};
+
+struct xccdf_fixtext {
+	bool reboot;
+	enum xccdf_strategy strategy;
+	enum xccdf_level disruption;
+	enum xccdf_level complexity;
+	struct xccdf_fix* fixref;
+	char* content;
+};
+
 extern const struct xccdf_string_map XCCDF_LEVEL_MAP[];
 extern const struct xccdf_string_map XCCDF_ROLE_MAP[];
 extern const struct xccdf_string_map XCCDF_OPERATOR_MAP[];
+extern const struct xccdf_string_map XCCDF_STRATEGY_MAP[];
 
 struct xccdf_item* xccdf_item_new(enum xccdf_type type, struct xccdf_item* bench, struct xccdf_item* parent);
 void xccdf_item_release(struct xccdf_item* item);
@@ -269,6 +313,11 @@ struct xccdf_ident* xccdf_ident_new(const char* id, const char* system);
 struct xccdf_ident* xccdf_ident_new_parse(xmlTextReaderPtr reader);
 void xccdf_ident_dump(struct xccdf_ident* ident, int depth);
 void xccdf_ident_delete(struct xccdf_ident* ident);
+void xccdf_profile_note_delete(struct xccdf_profile_note* note);
+void xccdf_check_import_delete(struct xccdf_check_import* item);
+void xccdf_check_export_delete(struct xccdf_check_export* item);
+void xccdf_fixtext_delete(struct xccdf_fixtext* item);
+void xccdf_fix_delete(struct xccdf_fix* item);
 
 
 

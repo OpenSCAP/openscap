@@ -50,7 +50,11 @@ bool xccdf_benchmark_resolve_refs(struct xccdf_item* bench)
     struct xccdf_list_item* refitem = bench->sub.bench.idrefs->first;
     for (refitem = bench->sub.bench.idrefs->first; refitem != NULL; refitem = refitem->next) {
         struct xccdf_backref* ref = refitem->data;
-        struct xccdf_item* item = xccdf_htable_get(bench->sub.bench.dict, ref->id);
+        struct xccdf_item* item;
+		
+		if (ref->type) item = xccdf_htable_get(bench->sub.bench.dict, ref->id);
+		else item = xccdf_htable_get(bench->sub.bench.auxdict, ref->id);
+
         if (item == NULL || (ref->type != 0 && (item->type & ref->type) == 0)) {
             ret = false;
             continue;
@@ -235,4 +239,8 @@ void xccdf_notice_delete(struct xccdf_notice* notice)
 XCCDF_GENERIC_GETTER(const char*, notice, id)
 XCCDF_GENERIC_GETTER(const char*, notice, text)
 
+void xccdf_cleanup(void)
+{
+	xmlCleanupParser();
+}
 
