@@ -223,6 +223,8 @@ struct xccdf_item* xccdf_rule_new_empty(struct xccdf_item* parent)
 	rule->sub.rule.requires = xccdf_list_new();
 	rule->sub.rule.conflicts = xccdf_list_new();
 	rule->sub.rule.profile_notes = xccdf_list_new();
+	rule->sub.rule.fixes = xccdf_list_new();
+	rule->sub.rule.fixtexts = xccdf_list_new();
 	return rule;
 }
 
@@ -265,6 +267,12 @@ struct xccdf_item* xccdf_rule_new_parse(xmlTextReaderPtr reader, struct xccdf_it
 				xccdf_list_add(rule->sub.rule.checks, check);
 				break;
 			}
+			case XCCDFE_FIX:
+				xccdf_list_add(rule->sub.rule.fixes, xccdf_fix_new_parse(reader, rule));
+				break;
+			case XCCDFE_FIXTEXT:
+				xccdf_list_add(rule->sub.rule.fixtexts, xccdf_fixtext_new_parse(reader, rule));
+				break;
 			case XCCDFE_IDENT:
 				xccdf_list_add(rule->sub.rule.idents, xccdf_ident_new_parse(reader));
 				break;
@@ -504,20 +512,23 @@ const struct xccdf_string_map XCCDF_STRATEGY_MAP[] = {
 	} while (false)
 
 
-struct xccdf_fix* xccdf_fix_new_parse(xmlTextReaderPtr reader)
+struct xccdf_fix* xccdf_fix_new_parse(xmlTextReaderPtr reader, struct xccdf_item* parent)
 {
 	struct xccdf_fix* fix = calloc(1, sizeof(struct xccdf_fix));
 	fix->id = xccdf_attribute_copy(reader, XCCDFA_ID);
+	if (fix->id != NULL && strcmp(fix->id, "") != 0)
+		xccdf_htable_add(parent->item.benchmark->sub.bench.auxdict, fix->id, (void*)fix);
 	fix->system = xccdf_attribute_copy(reader, XCCDFA_SYSTEM);
 	fix->platform = xccdf_attribute_copy(reader, XCCDFA_PLATFORM);
 	XCCDF_FIXCOMMON_PARSE(reader, fix);
 	return fix;
 }
 
-struct xccdf_fixtext* xccdf_fixtext_new_parse(xmlTextReaderPtr reader)
+struct xccdf_fixtext* xccdf_fixtext_new_parse(xmlTextReaderPtr reader, struct xccdf_item* parent)
 {
 	struct xccdf_fixtext* fix = calloc(1, sizeof(struct xccdf_fixtext));
 	// TODO resolve fixref
+	xccdf_benchmark_add_ref(parent->item.benchmark, (void*)&fix->fixref, xccdf_attribute_get(reader, XCCDFA_FIXREF), 0);
 	XCCDF_FIXCOMMON_PARSE(reader, fix);
 	return fix;
 }
@@ -586,6 +597,7 @@ XCCDF_GENERIC_GETTER(enum xccdf_level,    fixtext, disruption)
 XCCDF_GENERIC_GETTER(enum xccdf_level,    fixtext, complexity)
 XCCDF_GENERIC_GETTER(bool,                fixtext, reboot)
 XCCDF_GENERIC_GETTER(const char*,         fixtext, content)
+XCCDF_GENERIC_GETTER(struct xccdf_fix*,   fixtext, fixref)
 
 XCCDF_GENERIC_GETTER(enum xccdf_strategy, fix, strategy)
 XCCDF_GENERIC_GETTER(enum xccdf_level,    fix, disruption)

@@ -316,6 +316,8 @@ void xccdf_ident_delete(struct xccdf_ident* ident);
 void xccdf_profile_note_delete(struct xccdf_profile_note* note);
 void xccdf_check_import_delete(struct xccdf_check_import* item);
 void xccdf_check_export_delete(struct xccdf_check_export* item);
+struct xccdf_fix* xccdf_fix_new_parse(xmlTextReaderPtr reader, struct xccdf_item* parent);
+struct xccdf_fixtext* xccdf_fixtext_new_parse(xmlTextReaderPtr reader, struct xccdf_item* parent);
 void xccdf_fixtext_delete(struct xccdf_fixtext* item);
 void xccdf_fix_delete(struct xccdf_fix* item);
 

@@ -1441,6 +1441,12 @@ enum xccdf_level xccdf_fixtext_complexity(const struct xccdf_fixtext* fixtext);
  */
 enum xccdf_level xccdf_fixtext_disruption(const struct xccdf_fixtext* fixtext);
 
+/**
+ * Get a fix this text references to.
+ * @relates xccdf_fixtext
+ */
+struct xccdf_fix* xccdf_fixtext_fixref(const struct xccdf_fixtext* fixtext);
+
 
 
 

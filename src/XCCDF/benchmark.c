@@ -86,6 +86,7 @@ struct xccdf_item* xccdf_benchmark_new_empty(void)
     bench->sub.bench.plain_texts = xccdf_htable_new();
 	bench->sub.bench.profiles = xccdf_list_new();
     bench->sub.bench.dict = xccdf_htable_new();
+    bench->sub.bench.auxdict = xccdf_htable_new();
 	return bench;
 }
 
