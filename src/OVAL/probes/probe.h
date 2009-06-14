@@ -34,8 +34,18 @@ SEXP_t *SEXP_OVALelm_getval (SEXP_t *elm);
 SEXP_t *SEXP_OVALelm_getattrval (SEXP_t *elm, const char *name);
 int     SEXP_OVALelm_hasattr (SEXP_t *elm, const char *name);
 
-#define PROBE_ERR_INVALIDOBJ 1
-#define PROBE_ERR_MISSINGVAL 2
+#define PROBE_EINVAL  1
+#define PROBE_ENOELM  2
+#define PROBE_ENOVAL  3
+#define PROBE_ENOATTR 4
+#define PROBE_EINIT   5
+#define PROBE_ENOMEM  6
+#define PROBE_EOPNOTSUPP 7
+#define PROBE_ERANGE 8
+#define PROBE_EDOM   9
+#define PROBE_EFAULT 10
+#define PROBE_EACCES 11
+#define PROBE_EUNKNOWN 255
 
 #define OVAL_STATUS_ERROR        1
 #define OVAL_STATUS_EXISTS       2
