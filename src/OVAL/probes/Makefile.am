@@ -3,6 +3,15 @@ pkglibexec_PROGRAMS=
 
 CFLAGS += -I$(top_srcdir)/src/OVAL -I$(top_srcdir)/src/OVAL/probes -I$(top_srcdir)/src/OVAL/probes/SEAP
 
+if WANT_PROBES_INDEPENDENT
+pkglibexec_PROGRAMS += probe_textfilecontent54
+
+probe_textfilecontent54_SOURCES= probe-main.c independent/textfilecontent54.c
+probe_textfilecontent54_CFLAGS= @pcre_cflags@
+probe_textfilecontent54_LDFLAGS= @pcre_libs@
+probe_textfilecontent54_LDADD= $(top_builddir)/src/libopenscap.la
+endif
+
 if WANT_PROBES_UNIX
 pkglibexec_PROGRAMS += probe_runlevel
 

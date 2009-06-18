@@ -161,6 +161,14 @@ AC_ARG_ENABLE([probes],
        *) AC_MSG_ERROR([bad value ${enableval} for --enable-probes]) ;;
      esac],[probes=no])
 
+AC_ARG_ENABLE([probes-independent],
+     [  --enable-probes-independent    enable compilation of probes independent of the base system [[default=no]]],
+     [case "${enableval}" in
+       yes) probes_independent=yes ;;
+       no)  probes_independent=no  ;;
+       *) AC_MSG_ERROR([bad value ${enableval} for --enable-probes-independent]) ;;
+     esac],[probes_independent=no])
+
 AC_ARG_ENABLE([probes-unix],
      [  --enable-probes-unix    enable compilation of probes for UNIX based systems [[default=no]]],
      [case "${enableval}" in
@@ -240,6 +248,7 @@ AM_CONDITIONAL([WANT_CPE],  test "$cpe"  = yes)
 AM_CONDITIONAL([WANT_CCE],  test "$cce"  = yes)
 AM_CONDITIONAL([WANT_XCCDF],  test "$xccdf"  = yes)
 AM_CONDITIONAL([WANT_PROBES], test "$probes" = yes)
+AM_CONDITIONAL([WANT_PROBES_INDEPENDENT], test "$probes_independent" = yes)
 AM_CONDITIONAL([WANT_PROBES_UNIX], test "$probes_unix" = yes)
 AM_CONDITIONAL([WANT_PROBES_REDHAT], test "$probes_rh" = yes)
 AM_CONDITIONAL([WANT_BINDINGS], test "$bindings" = yes)
