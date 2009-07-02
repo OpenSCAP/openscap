@@ -48,10 +48,11 @@ includedir = $(prefix)/include/lib@PACKAGE@
 if WANT_PROBES
 liboval_la_CFLAGS  += -Iprobes/ -Iprobes/SEAP
 liboval_la_SOURCES += probes/probe.c \
+		      probes/fsdev.c \
 		      probes/findfile.c \
 		      oval_probe.c \
 		      oval_probe.h
-include_HEADERS += probes/probe.h probes/findfile.h
+include_HEADERS += probes/probe.h probes/findfile.h probes/fsdev.h
 
 liboval_la_LIBADD  = probes/SEAP/libseap.la
 SUBDIRS = probes/SEAP

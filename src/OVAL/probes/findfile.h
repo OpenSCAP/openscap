@@ -4,6 +4,7 @@
 
 #include "seap.h"
 #include "probe.h"
+#include "fsdev.h"
 
 #define MTAB_PATH "/etc/mtab"
 #define LOCAL_FILESYSTEMS {"ext2", "ext3", "reiserfs", "xfs", NULL}

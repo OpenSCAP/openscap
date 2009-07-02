@@ -1,12 +1,9 @@
-
-
 #include <stdio.h>
 #include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <dirent.h>
 #include <stdlib.h>
-#include <mntent.h>
 #include <errno.h>
 #include <unistd.h>
 #include <regex.h>
@@ -18,8 +15,7 @@ typedef struct {
 	char *file;
 	char *direction;
 	char *follow;
-	dev_t *dev_id_list;
-	int dev_id_count;
+        fsdev_t *dev_list;
 	int (*cb) (const char * pathname, const char *filename, void *arg);
 } setting_t;
 
@@ -30,16 +26,12 @@ typedef struct {
 } rglob_t;
 
 static int find_files_recursion(const char* path, setting_t * setting, int depth, void *arg );
-static int init_devs (const char *mtab, char **local, setting_t *setting);
-static int match_fs (const char *fs, char **local);
 static int recurse_direction(const char *file, char *direction);
-static int recurse_filesystem(struct stat *st, dev_t * dev_id_list, int dev_id_count);
 static int recurse_follow(struct stat *st, char *follow);
 static int noRegex(char * token);
 static int rglob(const char *pattern, rglob_t *result);
 static void find_paths_recursion(const char *path, regex_t *re, rglob_t *result );
 static void rglobfree(rglob_t * result);
-
 
 /* 
  *
@@ -48,7 +40,6 @@ static void rglobfree(rglob_t * result);
  */
 int find_files(SEXP_t * spath, SEXP_t *sfilename, SEXP_t *behaviors,
                int (*cb) (const char *pathname, const char *filename, void *arg), void *arg) {
-	char * local_fs[5] = LOCAL_FILESYSTEMS;
 	char *name = NULL, *path = NULL;
 	int i, rc;
 	int max_depth;
@@ -67,14 +58,15 @@ int find_files(SEXP_t * spath, SEXP_t *sfilename, SEXP_t *behaviors,
 
 
 	/* Init list of local devices */
-	setting->dev_id_list=NULL;
 	if( !SEXP_strncmp(SEXP_OVALelm_getattrval(behaviors,"recurse_file_system"), "local",6) ) {
-		if( !init_devs(MTAB_PATH, local_fs, setting) ) {
+		/* if( !init_devs(MTAB_PATH, local_fs, setting) ) { */
+                
+                if ((setting->dev_list = fsdev_init (NULL, 0)) == NULL) {
 			printf("Can't init list of local devices\n");
 			goto error;
 		}
 	}
-
+        
 	/* Filename */
 	if( !SEXP_strncmp(SEXP_OVALelm_getattrval(sfilename,"operation"), "pattern match", 14) ) {
 		if( regcomp(&(setting->re), name, REG_EXTENDED) != 0 ) {
@@ -86,7 +78,6 @@ int find_files(SEXP_t * spath, SEXP_t *sfilename, SEXP_t *behaviors,
 	else {
 		setting->file = strdup(name);
 	}
-
 
 	/* Is there a '/' at the end of the path? */
 	if( path[strlen(path)-1] == '/' )
@@ -128,7 +119,7 @@ error:
 	free(setting->follow);
 	free(setting->direction);
 	free(setting->file);
-	free(setting->dev_id_list);
+	fsdev_free (setting->dev_list);
 	regfree(&(setting->re));
 	free(setting);
 	
@@ -168,14 +159,15 @@ static int find_files_recursion(const char* path, setting_t * setting, int depth
 		if( lstat(path_new, &st) == -1)
 			continue;
 
-		if( recurse_follow(&st,setting->follow) &&                                   /* follow symlinks? */
-		    recurse_direction(pDirent->d_name, setting->direction) &&                /* up or down direction? */
-		    depth &&					        	             /* how deep rabbit hole is? */
-		    recurse_filesystem(&st, setting->dev_id_list, setting->dev_id_count) ) { /* local filesystem? */
+		if( recurse_follow(&st,setting->follow) &&                     /* follow symlinks? */
+		    recurse_direction(pDirent->d_name, setting->direction) &&  /* up or down direction? */
+		    depth &&                                                   /* how deep rabbit hole is? */
+		    fsdev_search (setting->dev_list, &st.st_dev)) {            /* local filesystem? */
 			tmp = find_files_recursion(path_new, setting, depth == - 1 ? -1 : depth - 1, arg);
 			if( tmp >=0 )
 				rc += tmp;
 		}
+
 		if( !S_ISDIR(st.st_mode) ) {
 			/* match filename*/
 			if( setting->file ) {
@@ -241,76 +233,6 @@ static int recurse_direction(const char *file, char *direction) {
 	else if (!strncmp(direction,"up",3)) {
 		if( !strncmp(file,"..",3) )
 			return 1;
-	}
-
-	return 0;
-}
-
-/*
- * Defines the file system limitation 
- * 'local' limiting data collection to local file systems
- * 'defined' to keep any recursion within the file system that the file_object (path+filename) has specified
- */
-static int recurse_filesystem(struct stat *st, dev_t * dev_id_list, int dev_id_count) {
-	register int i;
-
-	if( dev_id_list == NULL )
-		return 1;
-
-	for (i = 0; i < dev_id_count; ++i)
-		if( (dev_id_list)[i] == st->st_dev )
-			return 1;
-
-	return 0;
-}
-
-
-#define INIT_DEVID_SIZE 64
-#define DEVID_GROW_COEF 1.2
-static int init_devs (const char *mtab, char **local, setting_t * setting) {
-	struct mntent *mnt;
-	FILE *fp;
-	struct stat st;
-	int  DEVid_size;
-
-	fp = setmntent (mtab, "r");
-	if (fp == NULL) {
-		fprintf (stderr, "setmntent: %s: %s\n", mtab, strerror (errno));
-		return 0;
-	}
-
-	DEVid_size = INIT_DEVID_SIZE;
-	setting->dev_id_list = malloc(sizeof (dev_t) * INIT_DEVID_SIZE);
-	setting->dev_id_count = 0;
-
-	while ((mnt = getmntent (fp)) != NULL) {
-		if (match_fs (mnt->mnt_type, local)) {
-			if (lstat (mnt->mnt_dir, &st) != 0) {
-        			fprintf (stderr, "lstat: %s: %s\n", mnt->mnt_dir, strerror (errno));
-				return 0;
-			}
-
-			setting->dev_id_list[setting->dev_id_count] = st.st_dev;
-			(setting->dev_id_count)++;
-
-		        if ( setting->dev_id_count == DEVid_size) {
-			        DEVid_size *= DEVID_GROW_COEF;
-				setting->dev_id_list =  realloc (setting->dev_id_list, sizeof (dev_t) * DEVid_size );
-			}
-		}
-	}
-
-	fclose (fp);
-	return 1;
-}
-
-static int match_fs (const char *fs, char **local) {
-	register int i = 0;
-
-	while( local[i] ) {
-		if (!strcmp (fs, local[i]))
-			return 1;
-		i++;
 	}
 
 	return 0;
