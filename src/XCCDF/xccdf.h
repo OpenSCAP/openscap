@@ -174,6 +174,14 @@ enum xccdf_test_result_type {
 	XCCDF_RESULT_FIXED            ///< Rule failed, but was later fixed
 };
 
+/*--------------------*\
+|       Typedefs       |
+\*--------------------*/
+
+/**
+ * Type of a numerical content for a XCCDF value.
+ */
+typedef float xccdf_numeric;
 
 /*--------------------*\
 |   Core structures    |
@@ -194,11 +202,6 @@ struct xccdf_benchmark;
  */
 struct xccdf_profile;
 
-/** @struct xccdf_result
- * XCCDF Test Result.
- */
-struct xccdf_result;
-
 /** @struct xccdf_rule
  * XCCDF Rule.
  */
@@ -213,6 +216,11 @@ struct xccdf_group;
  * XCDF Value
  */
 struct xccdf_value;
+
+/** @struct xccdf_result
+ * XCCDF Test Result.
+ */
+struct xccdf_result;
 
 
 /*--------------------*\
@@ -1187,6 +1195,202 @@ struct xccdf_item_iterator* xccdf_group_content(const struct xccdf_group* benchm
  * @relates xccdf_group
  */
 enum xccdf_status_type xccdf_group_status_current(const struct xccdf_group* group);
+
+
+/*--------------------*\
+|     Value methods    |
+\*--------------------*/
+
+/**
+ * Get value ID.
+ * @relates xccdf_value
+ */
+const char* xccdf_value_id(const struct xccdf_value* value);
+
+/**
+ * Get value title.
+ * @relates xccdf_value
+ */
+const char* xccdf_value_title(const struct xccdf_value* value);
+
+/**
+ * Get value description.
+ * @relates xccdf_value
+ */
+const char* xccdf_value_description(const struct xccdf_value* value);
+
+/**
+ * Return value's parent in the inheritance hierarchy.
+ * @relates xccdf_value
+ */
+struct xccdf_value* xccdf_value_extends(const struct xccdf_value* value);
+
+/**
+ * Return value's parent in the grouping hierarchy.
+ * Returned item will be either a value or a benchmark.
+ * @relates xccdf_value
+ */
+struct xccdf_item* xccdf_value_parent(const struct xccdf_value* value);
+
+/**
+ * Return whether the value is abstract.
+ * @relates xccdf_value
+ */
+bool xccdf_value_abstract(const struct xccdf_value* value);
+
+/**
+ * Return whether the value has the prohibit changes flag set to true.
+ * @relates xccdf_value
+ */
+bool xccdf_value_prohibit_changes(const struct xccdf_value* value);
+
+/**
+ * Return whether the value has the hidden flag set to true.
+ * @relates xccdf_value
+ */
+bool xccdf_value_hidden(const struct xccdf_value* value);
+
+/**
+ * Get an iterator to value statuses.
+ * @relates xccdf_value
+ */
+struct xccdf_status_iterator* xccdf_value_statuses(const struct xccdf_value* value);
+
+/**
+ * Get an iterator to the XCCDF references of the value.
+ * @relates xccdf_value
+ */
+struct xccdf_reference_iterator* xccdf_value_references(const struct xccdf_value* value);
+
+/**
+ * Get value current status.
+ * @relates xccdf_value
+ */
+enum xccdf_status_type xccdf_value_status_current(const struct xccdf_value* value);
+
+/**
+ * Return type of the value.
+ * @relates xccdf_value
+ */
+enum xccdf_value_type xccdf_value_type(const struct xccdf_value* value);
+
+/**
+ * Return an interface hint for the value.
+ * @relates xccdf_value
+ */
+enum xccdf_interface_hint xccdf_value_interface_hint(const struct xccdf_value* value);
+
+/**
+ * Return an operator to be applied on the value.
+ * @relates xccdf_value
+ */
+enum xccdf_operator xccdf_value_oper(const struct xccdf_value* value);
+
+/**
+ * Return currently active selector of the value.
+ * @relates xccdf_value
+ */
+const char* xccdf_value_selector(const struct xccdf_value* value);
+
+/**
+ * Apply a selector on the value.
+ * @param The selector character string.
+ * @return whether setting the new selector was successful
+ */
+bool xccdf_value_set_selector(struct xccdf_item* value, const char* selector);
+
+/**
+ * Return the item's value as a string.
+ * @relates xccdf_value
+ * @return string value
+ * @retval NULL if value is not a string or is not set
+ */
+const char* xccdf_value_value_string(const struct xccdf_value* value);
+
+/**
+ * Return the item's value as a number.
+ * @relates xccdf_value
+ * @return numeric value
+ * @retval NAN if value is not a number or is not set.
+ */
+xccdf_numeric xccdf_value_value_number(const struct xccdf_value* value);
+
+/**
+ * Return the item's value as a boolean value.
+ * Implicit conversion is performed on non-boolean types:
+ * value is true for nonempty strings and nonzero numbers.
+ * @relates xccdf_value
+ * @return boolean value
+ */
+bool xccdf_value_value_boolean(const struct xccdf_value* value);
+
+/**
+ * Return the item's default value as a string.
+ * @relates xccdf_value
+ * @return string value
+ * @retval NULL if value is not a string or is not set
+ */
+const char* xccdf_value_defval_string(const struct xccdf_value* value);
+
+/**
+ * Return the item's default value as a number.
+ * @relates xccdf_value
+ * @return numeric value
+ * @retval NAN if value is not a number or is not set.
+ */
+xccdf_numeric xccdf_value_defval_number(const struct xccdf_value* value);
+
+/**
+ * Return the item's default value as a boolean value.
+ * Implicit conversion is performed on non-boolean types:
+ * value is true for nonempty strings and nonzero numbers.
+ * @relates xccdf_value
+ * @return boolean value
+ */
+bool xccdf_value_defval_boolean(const struct xccdf_value* value);
+
+/**
+ * Return upper limit for the numeric value.
+ * @relates xccdf_value
+ * @retval NAN if value is not a number or lower limit is not set.
+ */
+xccdf_numeric xccdf_value_lower_bound(const struct xccdf_value* value);
+
+/**
+ * Return lower limit for the numeric value.
+ * @relates xccdf_value
+ * @retval NAN if value is not a number or upper limit is not set.
+ */
+xccdf_numeric xccdf_value_upper_bound(const struct xccdf_value* value);
+
+/**
+ * Regex the values should match.
+ * @relates xccdf_value
+ * @retval NULL if regex was not set or the value is not a string.
+ */
+const char* xccdf_value_match(const struct xccdf_value* value);
+
+/**
+ * Return mustMatch property.
+ * Returns whether value must match conditions given by choices,
+ * or these are just hints.
+ * @relates xccdf_value
+ */
+bool xccdf_value_must_match(const struct xccdf_value* value);
+
+/*
+ * Get an iterator to the list of XCCDF value's possible (or suggested) values.
+ * @ralates xccdf_value
+ * @retval NULL on failure (e.g. the value is not a string)
+ */
+// struct xccdf_string_iterator* xccdf_value_choices_string(const struct xccdf_value* value);
+
+/**
+ * Get an iterator to the XCCDF value's source URIs.
+ * @ralates xccdf_value
+ */
+struct xccdf_string_iterator* xccdf_value_sources(const struct xccdf_value* value);
+
 
 
 

@@ -76,6 +76,7 @@ void xccdf_item_delete(struct xccdf_item* item)
         case XCCDF_BENCHMARK: xccdf_benchmark_delete(XBENCHMARK(item)); break;
         case XCCDF_GROUP:     xccdf_group_delete(item);                 break;
         case XCCDF_RULE:      xccdf_rule_delete(item);                  break;
+        case XCCDF_VALUE:     xccdf_value_delete(item);                 break;
         default: assert((fprintf(stderr, "Deletion of item of type no. %u is not yet supported.", item->type), false));
     }
 }

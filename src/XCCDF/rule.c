@@ -160,6 +160,7 @@ struct xccdf_item* xccdf_group_new_empty(struct xccdf_item* parent)
 	group->sub.group.content = xccdf_list_new();
 	group->sub.group.requires = xccdf_list_new();
 	group->sub.group.conflicts = xccdf_list_new();
+	group->sub.group.values = xccdf_list_new();
 	return group;
 }
 
@@ -184,6 +185,9 @@ struct xccdf_item* xccdf_group_new_parse(xmlTextReaderPtr reader, struct xccdf_i
 			case XCCDFE_GROUP: case XCCDFE_RULE:
 				xccdf_content_parse(reader, group);
 				break;
+			case XCCDFE_VALUE:
+				xccdf_list_add(group->sub.group.values, xccdf_value_new_parse(reader, group));
+				break;
 			default: xccdf_item_process_element(group, reader);
 		}
 		xmlTextReaderRead(reader);
@@ -199,6 +203,8 @@ void xccdf_group_dump(struct xccdf_item* group, int depth)
 	if (group) {
         xccdf_item_print(group, depth + 1);
 		xccdf_print_depth(depth + 1);
+		printf("values"); xccdf_list_dump(group->sub.group.values, (xccdf_dump_func)xccdf_value_dump, depth + 2);
+		xccdf_print_depth(depth + 1);
 		printf("content"); xccdf_list_dump(group->sub.group.content, (xccdf_dump_func)xccdf_item_dump, depth + 2);
 	}
 }
@@ -208,6 +214,7 @@ void xccdf_group_delete(struct xccdf_item* group)
 	if (group) {
 		xccdf_list_delete(group->sub.group.content, (xccdf_destruct_func)xccdf_item_delete);
 		xccdf_list_delete(group->sub.group.requires, (xccdf_destruct_func)xccdf_list_delete0);
+		xccdf_list_delete(group->sub.group.values, (xccdf_destruct_func)xccdf_value_delete);
 		xccdf_list_delete(group->sub.group.conflicts, NULL);
 		xccdf_item_release(group);
 	}

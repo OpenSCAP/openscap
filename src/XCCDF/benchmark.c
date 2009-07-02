@@ -25,9 +25,9 @@
 #include "item.h"
 
 struct xccdf_backref {
-	struct xccdf_item** ptr; ///< pointer to a pointer that is supposed to be pointing to an item with id 'id'
-    enum xccdf_type type;
-	char* id;                ///< id
+	struct xccdf_item** ptr; // pointer to a pointer that is supposed to be pointing to an item with id 'id'
+    enum xccdf_type type;    // expected item type
+	char* id;                // id
 };
 
 bool xccdf_benchmark_add_ref(struct xccdf_item* benchmark, struct xccdf_item** ptr, const char* id, enum xccdf_type type)
@@ -83,6 +83,7 @@ struct xccdf_item* xccdf_benchmark_new_empty(void)
 	bench->sub.bench.models = xccdf_list_new();
 	bench->sub.bench.idrefs = xccdf_list_new();
 	bench->sub.bench.content = xccdf_list_new();
+	bench->sub.bench.values = xccdf_list_new();
     bench->sub.bench.plain_texts = xccdf_htable_new();
 	bench->sub.bench.profiles = xccdf_list_new();
     bench->sub.bench.dict = xccdf_htable_new();
@@ -147,6 +148,9 @@ bool xccdf_benchmark_parse(struct xccdf_item* benchmark, xmlTextReaderPtr reader
 			case XCCDFE_GROUP: case XCCDFE_RULE:
 				xccdf_content_parse(reader, benchmark);
 				break;
+			case XCCDFE_VALUE:
+				xccdf_list_add(benchmark->sub.bench.values, xccdf_value_new_parse(reader, benchmark));
+				break;
 			default: xccdf_item_process_element(benchmark, reader);
 		}
 		xmlTextReaderRead(reader);
@@ -174,6 +178,7 @@ void xccdf_benchmark_dump(struct xccdf_benchmark* benchmark)
         printf("  front m.: "); xccdf_print_max(xccdf_benchmark_front_matter(benchmark), 64, "..."); printf("\n");
         printf("  rear m. : "); xccdf_print_max(xccdf_benchmark_rear_matter(benchmark), 64, "..."); printf("\n");
         printf("  profiles "); xccdf_list_dump(bench->sub.bench.profiles, (xccdf_dump_func)xccdf_profile_dump, 2);
+		printf("  values"); xccdf_list_dump(bench->sub.bench.values, (xccdf_dump_func)xccdf_value_dump, 2);
 		printf("  content"); xccdf_list_dump(bench->sub.bench.content, (xccdf_dump_func)xccdf_item_dump, 2);
 	}
 }
@@ -191,8 +196,10 @@ void xccdf_benchmark_delete(struct xccdf_benchmark* benchmark)
 		xccdf_list_delete(bench->sub.bench.models, (xccdf_destruct_func)xccdf_model_delete);
 		xccdf_list_delete(bench->sub.bench.idrefs, (xccdf_destruct_func)xccdf_backref_delete);
 		xccdf_list_delete(bench->sub.bench.content, (xccdf_destruct_func)xccdf_item_delete);
+		xccdf_list_delete(bench->sub.bench.values, (xccdf_destruct_func)xccdf_value_delete);
         xccdf_htable_delete(bench->sub.bench.plain_texts, free);
         xccdf_htable_delete(bench->sub.bench.dict, NULL);
+		xccdf_htable_delete(bench->sub.bench.auxdict, NULL);
 		xccdf_list_delete(bench->sub.bench.profiles, (xccdf_destruct_func)xccdf_profile_delete);
 		xccdf_item_release(bench);
 	}

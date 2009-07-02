@@ -180,6 +180,8 @@ struct xccdf_string_map {
 int string_to_enum(const struct xccdf_string_map* map, const char* str);
 const char* enum_to_string(const struct xccdf_string_map* map, int val);
 
+extern const struct xccdf_string_map XCCDF_BOOL_MAP[];
+
 bool xccdf_to_start_element(xmlTextReaderPtr reader, int depth);
 char* xccdf_element_string_copy(xmlTextReaderPtr reader);
 const char* xccdf_element_string_get(xmlTextReaderPtr reader);

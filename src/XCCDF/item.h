@@ -89,26 +89,60 @@ struct xccdf_group_item {
 	struct xccdf_list* content;
 };
 
-// @todo review
+union xccdf_value_unit {
+	xccdf_numeric n;
+	char* s;
+	bool  b;
+};
+
+struct xccdf_value_val {
+	union xccdf_value_unit value;
+	union xccdf_value_unit defval;
+	struct xccdf_list* choices;
+	bool must_match;
+	union {
+		struct {
+			xccdf_numeric lower_bound;
+			xccdf_numeric upper_bound;
+		} n;
+		struct {
+			char* match;
+		} s;
+	} limits;
+};
+
 struct xccdf_value_item {
 	enum xccdf_value_type type;
 	enum xccdf_interface_hint interface_hint;
 	enum xccdf_operator oper;
 	char* selector;
 
-	struct xccdf_list* values;
-	struct xccdf_list* default_vals;
-	struct xccdf_list* matches;
-	struct xccdf_list* lower_bounds;
-	struct xccdf_list* upper_bounds;
-	struct xccdf_list* choices;
+	struct xccdf_value_val* value;
+	struct xccdf_htable* values;
+
 	struct xccdf_list* sources;
 };
 
+
+
 // @todo complete
 struct xccdf_result_item {
-	char* note_tag;
 	struct xccdf_list* status;
+	time_t start_time;
+	time_t end_time;
+	char* test_system;
+	char* remark;
+	char* organization;
+	char* benchmark;
+
+	struct xccdf_item* profile;
+	struct xccdf_list* identities;
+	struct xccdf_list* targets;
+	struct xccdf_list* target_addresses;
+	struct xccdf_list* target_facts;
+	struct xccdf_list* set_values;
+	struct xccdf_list* rule_results;
+	struct xccdf_list* scores;
 };
 
 struct xccdf_profile_item {
@@ -287,6 +321,10 @@ struct xccdf_item* xccdf_rule_new_parse(xmlTextReaderPtr reader, struct xccdf_it
 void xccdf_rule_dump(struct xccdf_item* rule, int depth);
 void xccdf_rule_delete(struct xccdf_item* rule);
 
+struct xccdf_item* xccdf_value_new_parse(xmlTextReaderPtr reader, struct xccdf_item* parent);
+void xccdf_value_dump(struct xccdf_item* value, int depth);
+void xccdf_value_delete(struct xccdf_item* val);
+
 struct xccdf_notice* xccdf_notice_new(const char* id, char* text);
 void xccdf_notice_dump(struct xccdf_notice* notice, int depth);
 void xccdf_notice_delete(struct xccdf_notice* notice);
@@ -374,22 +412,31 @@ void xccdf_fix_delete(struct xccdf_fix* item);
 #define XCCDF_GROUP_GETTER(RTYPE,MNAME) XCCDF_GROUP_GETTER_A(RTYPE,MNAME,sub.group.MNAME)
 #define XCCDF_GROUP_IGETTER(ITYPE,MNAME) XCCDF_ITERATOR_GETTER(ITYPE,group,MNAME,sub.group.MNAME)
 
+#define XCCDF_VALUE_GETTER_A(RTYPE,MNAME,MEMBER) XCCDF_ABSTRACT_GETTER(RTYPE,value,MNAME,MEMBER)
+#define XCCDF_VALUE_GETTER_I(RTYPE,MNAME) XCCDF_VALUE_GETTER_A(RTYPE,MNAME,item.MNAME)
+#define XCCDF_VALUE_IGETTER_I(ITYPE,MNAME) XCCDF_ITERATOR_GETTER(ITYPE,value,MNAME,item.MNAME)
+#define XCCDF_VALUE_GETTER(RTYPE,MNAME) XCCDF_VALUE_GETTER_A(RTYPE,MNAME,sub.value.MNAME)
+#define XCCDF_VALUE_IGETTER(ITYPE,MNAME) XCCDF_ITERATOR_GETTER(ITYPE,value,MNAME,sub.value.MNAME)
+
 #define XCCDF_ITEM_GETTER(RTYPE,MNAME) \
 		XCCDF_ABSTRACT_GETTER(RTYPE,item,MNAME,item.MNAME) \
         XCCDF_BENCHMARK_GETTER_A(RTYPE,MNAME,item.MNAME) \
         XCCDF_PROFILE_GETTER_A(RTYPE,MNAME,item.MNAME) \
         XCCDF_RULE_GETTER_A(RTYPE,MNAME,item.MNAME) \
+        XCCDF_VALUE_GETTER_A(RTYPE,MNAME,item.MNAME) \
         XCCDF_GROUP_GETTER_A(RTYPE,MNAME,item.MNAME)
 #define XCCDF_ITEM_IGETTER(RTYPE,MNAME) \
         XCCDF_ITERATOR_GETTER(RTYPE,item,MNAME,item.MNAME) \
         XCCDF_ITERATOR_GETTER(RTYPE,benchmark,MNAME,item.MNAME) \
         XCCDF_ITERATOR_GETTER(RTYPE,profile,MNAME,item.MNAME) \
         XCCDF_ITERATOR_GETTER(RTYPE,rule,MNAME,item.MNAME) \
+        XCCDF_ITERATOR_GETTER(RTYPE,value,MNAME,item.MNAME) \
         XCCDF_ITERATOR_GETTER(RTYPE,group,MNAME,item.MNAME)
 #define XCCDF_FLAG_GETTER(MNAME) \
         XCCDF_BENCHMARK_GETTER_A(bool,MNAME,item.flags.MNAME) \
         XCCDF_PROFILE_GETTER_A(bool,MNAME,item.flags.MNAME) \
         XCCDF_RULE_GETTER_A(bool,MNAME,item.flags.MNAME) \
+        XCCDF_VALUE_GETTER_A(bool,MNAME,item.flags.MNAME) \
         XCCDF_GROUP_GETTER_A(bool,MNAME,item.flags.MNAME)
 
 

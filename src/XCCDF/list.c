@@ -204,6 +204,27 @@ void* xccdf_htable_get(struct xccdf_htable* htable, const char* key)
 	return NULL;
 }	
 
+void xccdf_print_depth(int);
+
+void xccdf_htable_dump(struct xccdf_htable* htable, xccdf_dump_func dumper, int depth)
+{
+    if (htable == NULL) {
+        printf(" (NULL hash table)\n");
+        return;
+    }
+    printf(" (hash table, %u item%s)\n", (unsigned)htable->itemcount, (htable->itemcount == 1 ? "" : "s"));
+	int i;
+	for (i = 0; i < (int)htable->hsize; ++i) {
+		struct xccdf_htable_item *item = htable->table[i];
+		while (item) {
+			xccdf_print_depth(depth);
+			printf("'%s':\n", item->key);
+			dumper(item->value, depth + 1);
+			item = item->next;
+		}
+	}
+}
+
 void xccdf_htable_delete(struct xccdf_htable* htable, xccdf_destruct_func destructor)
 {
     if (htable) {

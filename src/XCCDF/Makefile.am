@@ -5,6 +5,7 @@ libxccdf_la_SOURCES = \
 	item.c \
 	list.c \
 	profile.c \
+	value.c \
 	rule.c
 
 libxccdf_la_CFLAGS  = @libxml_cflags@
