@@ -133,7 +133,7 @@ struct xccdf_result_item {
 	char* test_system;
 	char* remark;
 	char* organization;
-	char* benchmark;
+	char* benchmark_uri;
 
 	struct xccdf_item* profile;
 	struct xccdf_list* identities;
@@ -358,6 +358,7 @@ struct xccdf_fix* xccdf_fix_new_parse(xmlTextReaderPtr reader, struct xccdf_item
 struct xccdf_fixtext* xccdf_fixtext_new_parse(xmlTextReaderPtr reader, struct xccdf_item* parent);
 void xccdf_fixtext_delete(struct xccdf_fixtext* item);
 void xccdf_fix_delete(struct xccdf_fix* item);
+void xccdf_set_value_delete(struct xccdf_set_value* sv);
 
 
 
