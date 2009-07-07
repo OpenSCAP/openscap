@@ -461,6 +461,6 @@ typedef uint8_t color_t;
         RBN_SEARCH_CODE(__t_name)                               \
         RBN_INSERT_CODE(__t_name)                               \
         RBN_WALK_CODE(__t_name)					\
-        static const char __version__[] = "RedBlack 0.1"
+        static const char CONCAT2(__t_name, dummy) = 0
 
 #endif /* REDBLACK_H */

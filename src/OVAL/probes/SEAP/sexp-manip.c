@@ -59,7 +59,7 @@ SEXP_t *SEXP_number_new (const void *num, NUM_type_t type)
         return (sexp);
 }
 
-int SEXP_numberp (SEXP_t *sexp)
+int SEXP_numberp (const SEXP_t *sexp)
 {
         if (sexp != NULL) {
                 SEXP_VALIDATE(sexp);
@@ -70,7 +70,7 @@ int SEXP_numberp (SEXP_t *sexp)
         }
 }
 
-size_t SEXP_number_size (SEXP_t *sexp)
+size_t SEXP_number_size (const SEXP_t *sexp)
 {
         if (sexp != NULL) {
                 SEXP_VALIDATE(sexp);
@@ -109,7 +109,7 @@ size_t SEXP_number_size (SEXP_t *sexp)
         return ((size_t)-1);
 }
 
-int SEXP_number_get (SEXP_t *sexp, void *ptr, NUM_type_t type)
+int SEXP_number_get (const SEXP_t *sexp, void *ptr, NUM_type_t type)
 {
         _A(ptr != NULL);
         
@@ -330,6 +330,11 @@ int SEXP_number_get (SEXP_t *sexp, void *ptr, NUM_type_t type)
         }
 }
 
+int SEXP_number_cmp (const SEXP_t *a, const SEXP_t *b)
+{
+        return (-1);
+}
+
 SEXP_t *SEXP_number_newd (int n)
 {
         SEXP_t *sexp;
@@ -450,7 +455,7 @@ SEXP_t *SEXP_number_newlf (long double n)
 }
 #endif /* 0 */
 
-int SEXP_number_getd (SEXP_t *sexp)
+int SEXP_number_getd (const SEXP_t *sexp)
 {
         if (sexp != NULL) {
                 SEXP_VALIDATE(sexp);
@@ -492,7 +497,7 @@ int SEXP_number_getd (SEXP_t *sexp)
         }
 }
 
-short int SEXP_number_gethd (SEXP_t *sexp)
+short int SEXP_number_gethd (const SEXP_t *sexp)
 {
         if (sexp != NULL) {
                 SEXP_VALIDATE(sexp);
@@ -526,7 +531,7 @@ short int SEXP_number_gethd (SEXP_t *sexp)
         }
 }
 
-long int SEXP_number_getld (SEXP_t *sexp)
+long int SEXP_number_getld (const SEXP_t *sexp)
 {
         if (sexp != NULL) {
                 SEXP_VALIDATE(sexp);
@@ -568,7 +573,7 @@ long int SEXP_number_getld (SEXP_t *sexp)
         }
 }
 
-long long int SEXP_number_getlld (SEXP_t *sexp)
+long long int SEXP_number_getlld (const SEXP_t *sexp)
 {
         if (sexp != NULL) {
                 SEXP_VALIDATE(sexp);
@@ -621,7 +626,7 @@ long long int SEXP_number_getlld (SEXP_t *sexp)
         }
 }
 
-unsigned int SEXP_number_getu (SEXP_t *sexp)
+unsigned int SEXP_number_getu (const SEXP_t *sexp)
 {
         if (sexp != NULL) {
                 SEXP_VALIDATE(sexp);
@@ -663,7 +668,7 @@ unsigned int SEXP_number_getu (SEXP_t *sexp)
         }
 }
 
-unsigned short int SEXP_number_gethu (SEXP_t *sexp)
+unsigned short int SEXP_number_gethu (const SEXP_t *sexp)
 {
         if (sexp != NULL) {
                 SEXP_VALIDATE(sexp);
@@ -697,7 +702,7 @@ unsigned short int SEXP_number_gethu (SEXP_t *sexp)
         }
 }
 
-unsigned long int SEXP_number_getlu (SEXP_t *sexp)
+unsigned long int SEXP_number_getlu (const SEXP_t *sexp)
 {
         if (sexp != NULL) {
                 SEXP_VALIDATE(sexp);
@@ -739,7 +744,7 @@ unsigned long int SEXP_number_getlu (SEXP_t *sexp)
         }
 }
 
-unsigned long long int SEXP_number_getllu (SEXP_t *sexp)
+unsigned long long int SEXP_number_getllu (const SEXP_t *sexp)
 {
         if (sexp != NULL) {
                 SEXP_VALIDATE(sexp);
@@ -792,7 +797,7 @@ unsigned long long int SEXP_number_getllu (SEXP_t *sexp)
         }
 }
 
-double SEXP_number_getf (SEXP_t *sexp)
+double SEXP_number_getf (const SEXP_t *sexp)
 {
         if (sexp != NULL) {
                 SEXP_VALIDATE(sexp);
@@ -816,7 +821,7 @@ double SEXP_number_getf (SEXP_t *sexp)
 }
 
 #if 0
-long double SEXP_number_getlf (SEXP_t *sexp)
+long double SEXP_number_getlf (const SEXP_t *sexp)
 {
         if (sexp != NULL) {
                 SEXP_VALIDATE(sexp);
@@ -860,7 +865,65 @@ SEXP_t *SEXP_string_newf (const char *fmt, ...) {
         return (sexp);
 }
 
-int SEXP_strcmp (SEXP_t *sexp, const char *str)
+int SEXP_string_cmp (const SEXP_t *a, const SEXP_t *b)
+{
+        if (a == NULL || b == NULL) {
+                errno = EFAULT;
+                return (-1);
+        }
+        
+        SEXP_VALIDATE(a);
+        SEXP_VALIDATE(b);
+
+        if (SEXP_TYPE(a) == ATOM_STRING &&
+            SEXP_TYPE(b) == ATOM_STRING)
+        {
+                register char *str_a, *str_b;
+                register size_t len_min;
+
+                len_min = (a->atom.string.len < b->atom.string.len ?
+                           a->atom.string.len : b->atom.string.len);
+                
+                str_a = a->atom.string.str;
+                str_b = b->atom.string.str;
+                
+                if (a->atom.string.len < b->atom.string.len) {
+                        len_min = a->atom.string.len;
+                        
+                        while (len_min > 0) {
+                                if (*str_a != *str_b)
+                                        return (*str_a - *str_b);
+                                
+                                --len_min;
+                                ++str_a;
+                                ++str_b;
+                        }
+
+                        return ('\0' - *str_b);
+                } else {
+                        len_min = b->atom.string.len;
+                        
+                        while (len_min > 0) {
+                                if (*str_a != *str_b)
+                                        return (*str_a - *str_b);
+                                
+                                --len_min;
+                                ++str_a;
+                                ++str_b;
+                        }
+
+                        return (*str_a - '\0');
+                }
+        } else  {
+                errno = EINVAL;
+                return (-1);
+        } 
+        
+        /* NOTREACHED */
+        return (-1);
+}
+
+int SEXP_strcmp (const SEXP_t *sexp, const char *str)
 {
         _A(str != NULL);
         
@@ -899,7 +962,7 @@ int SEXP_strcmp (SEXP_t *sexp, const char *str)
         }
 }
 
-int SEXP_strncmp (SEXP_t *sexp, const char *str, size_t n)
+int SEXP_strncmp (const SEXP_t *sexp, const char *str, size_t n)
 {
         _A(str != NULL);
         _A(n > 0);
@@ -921,7 +984,7 @@ int SEXP_strncmp (SEXP_t *sexp, const char *str, size_t n)
         }
 }
 
-int SEXP_strncoll (SEXP_t *sexp, const char *str, size_t n)
+int SEXP_strncoll (const SEXP_t *sexp, const char *str, size_t n)
 {
         _A(str != NULL);
         _A(n > 0);
@@ -944,7 +1007,7 @@ int SEXP_strncoll (SEXP_t *sexp, const char *str, size_t n)
         }
 }
 
-int SEXP_stringp (SEXP_t *sexp)
+int SEXP_stringp (const SEXP_t *sexp)
 {
         if (sexp != NULL) {
                 SEXP_VALIDATE(sexp);
@@ -955,7 +1018,7 @@ int SEXP_stringp (SEXP_t *sexp)
         }
 }
 
-char *SEXP_string_cstr (SEXP_t *sexp)
+char *SEXP_string_cstr (const SEXP_t *sexp)
 {
         char *str;
         size_t  i;
@@ -988,7 +1051,72 @@ char *SEXP_string_cstr (SEXP_t *sexp)
         }
 }
 
-size_t SEXP_string_length (SEXP_t *sexp)
+const char *SEXP_string_cstrp (const SEXP_t *sexp)
+{
+        if (sexp == NULL) {
+                errno = EFAULT;
+                return (NULL);
+        }
+        
+        if (SEXP_TYPE(sexp) != ATOM_STRING) {
+                errno = EINVAL;
+                return (NULL);
+        }
+        
+        return (const char *)(sexp->atom.string.str);
+}
+
+SEXP_t *SEXP_string_substr (const SEXP_t *sexp, size_t off, size_t len)
+{
+        if (sexp == NULL) {
+                errno = EFAULT;
+                return (NULL);
+        }
+        
+        SEXP_VALIDATE(sexp);
+        
+        if (SEXP_TYPE(sexp) != ATOM_STRING) {
+                errno = EINVAL;
+                return (NULL);
+        }
+        
+        if ((off + len) > sexp->atom.string.len) {
+                errno = EINVAL;
+                return (NULL);
+        }
+        
+        return (SEXP_string_new (sexp->atom.string.str + off, len));
+}
+
+char *SEXP_string_subcstr (const SEXP_t *sexp, size_t off, size_t len)
+{
+        char *substr;
+
+        if (sexp == NULL) {
+                errno = EFAULT;
+                return (NULL);
+        }
+        
+        SEXP_VALIDATE(sexp);
+        
+        if (SEXP_TYPE(sexp) != ATOM_STRING) {
+                errno = EINVAL;
+                return (NULL);
+        }
+
+        if ((off + len) > sexp->atom.string.len) {
+                errno = EINVAL;
+                return (NULL);
+        }
+        
+        substr = xmalloc (sizeof (char) * (len + 1));
+        memcpy (substr, sexp->atom.string.str + off, sizeof (char) * len);
+        substr[len] = '\0';
+        
+        return (substr);
+}
+
+size_t SEXP_string_length (const SEXP_t *sexp)
 {
         if (sexp != NULL) {
                 SEXP_VALIDATE(sexp);
@@ -1035,6 +1163,20 @@ SEXP_t *SEXP_list_free (SEXP_t *sexp)
         return (NULL);
 }
 
+SEXP_t *SEXP_list_free_nr (SEXP_t *sexp)
+{
+        _A(sexp != NULL);
+        SEXP_VALIDATE(sexp);
+
+        if (SEXP_TYPE(sexp) != ATOM_LIST) {
+                errno = EINVAL;
+                return (sexp);
+        }
+        
+        sexp->atom.list.count = 0;
+        return SEXP_list_free (sexp);
+}
+
 SEXP_t *LIST_add (LIST_t *list, SEXP_t *sexp)
 {
         _A(list != NULL);
@@ -1076,7 +1218,7 @@ SEXP_t *SEXP_list_add (SEXP_t *list, SEXP_t *sexp)
         }
 }
 
-SEXP_t *SEXP_list_first (SEXP_t *sexp)
+SEXP_t *SEXP_list_first (const SEXP_t *sexp)
 {
         if (sexp != NULL) {
                 SEXP_VALIDATE(sexp);
@@ -1097,7 +1239,7 @@ SEXP_t *SEXP_list_first (SEXP_t *sexp)
         }
 }
 
-SEXP_t *SEXP_list_last (SEXP_t *sexp)
+SEXP_t *SEXP_list_last (const SEXP_t *sexp)
 {
         if (sexp != NULL) {
                 SEXP_VALIDATE(sexp);
@@ -1118,7 +1260,7 @@ SEXP_t *SEXP_list_last (SEXP_t *sexp)
         }
 }
 
-int SEXP_listp (SEXP_t *sexp)
+int SEXP_listp (const SEXP_t *sexp)
 {
         if (sexp != NULL) {
                 SEXP_VALIDATE(sexp);
@@ -1175,7 +1317,7 @@ SEXP_t *SEXP_list_pop (SEXP_t **sexp)
         }
 }
 
-SEXP_t *SEXP_list_nth (SEXP_t *sexp, uint32_t n)
+SEXP_t *SEXP_list_nth (const SEXP_t *sexp, uint32_t n)
 {
         _A(n > 0);
         
@@ -1202,7 +1344,27 @@ SEXP_t *SEXP_list_nth (SEXP_t *sexp, uint32_t n)
         }
 }
 
-SEXP_t *SEXP_list_nth_copy (SEXP_t *sexp, uint32_t n)
+SEXP_t *SEXP_list_nth_dup (const SEXP_t *sexp, uint32_t n)
+{
+        _A(n > 0);
+        
+        if (sexp != NULL) {
+                if (SEXP_listp (sexp) && n > 0) {
+                        if (sexp->atom.list.count <= n)
+                                return SEXP_dup(&(SEXP(sexp->atom.list.memb)[n - 1]));
+                        else
+                                return (NULL);
+                } else {
+                        errno = EINVAL;
+                        return (NULL);
+                }
+        } else {
+                errno = EFAULT;
+                return (NULL);
+        }
+}
+
+SEXP_t *SEXP_list_nth_deepdup (const SEXP_t *sexp, uint32_t n)
 {
         _A(n > 0);
         
@@ -1252,7 +1414,7 @@ SEXP_t *SEXP_list_join (SEXP_t *a, SEXP_t *b)
         }
 }
 
-size_t SEXP_list_length (SEXP_t *sexp)
+size_t SEXP_list_length (const SEXP_t *sexp)
 {
         if (sexp != NULL) {
                 SEXP_VALIDATE(sexp);
@@ -1272,7 +1434,7 @@ size_t SEXP_list_length (SEXP_t *sexp)
 SEXP_t *SEXP_list_map (SEXP_t *list, int (*fn) (SEXP_t *, SEXP_t *))
 {
         int e;
-        SEXP_t *res_list, *member = NULL;
+        SEXP_t *res_list;
         uint32_t i;
         
         if (list != NULL) {
@@ -1312,7 +1474,7 @@ err:
 SEXP_t *SEXP_list_map2 (SEXP_t *list, int (*fn) (SEXP_t *, SEXP_t *, void *), void *ptr)
 {
         int e;
-        SEXP_t *res_list, *member = NULL;
+        SEXP_t *res_list;
         uint32_t i;
         
         if (list != NULL) {
@@ -1350,40 +1512,66 @@ err:
         return (NULL);
 }
 
-SEXP_t *SEXP_list_reduce (SEXP_t *list, SEXP_t *(*fn) (SEXP_t *, SEXP_t *), int strategy)
+SEXP_t *SEXP_list_reduce (SEXP_t *list, SEXP_t *(*fn) (const SEXP_t *, const SEXP_t *), int strategy)
 {
         SEXP_t *res;
-        
-        if (list != NULL) {
-                SEXP_VALIDATE(list);
-                
-                if (SEXP_TYPE(list) == ATOM_LIST) {
-                        switch (strategy) {
-                        case SEXP_REDUCE_LNEIGHBOR:
-                                
-                                break;
-                        case SEXP_REDUCE_RNEIGHBOR:
-                                
-                                break;
-                        case SEXP_REDUCE_RANDOM: {
-                                
-                        } break;
-                        default:
-                                _D("Unkwnown reduce strategy: %d\n", strategy);
-                                errno = EINVAL;
-                                return (NULL);
-                        }
-                } else {
-                        errno = EINVAL;
-                }
-        } else {
+        size_t  i;
+
+        if (list == NULL) {
                 errno = EFAULT;
+                return (NULL);
+        }
+
+        SEXP_VALIDATE(list);
+
+        if (SEXP_TYPE(list) != ATOM_LIST) {
+                errno = EINVAL;
+                return (NULL);
+        }
+
+        switch (list->atom.list.count) {
+        case 0:
+                res = SEXP_new ();
+                SEXP_SETTYPE(res, ATOM_EMPTY);
+                
+                return (res);
+        case 1:
+                return SEXP_list_nth_deepdup (list, 1);
+        default:
+                switch (strategy) {
+                case SEXP_REDUCE_LNEIGHBOR:
+                        
+                        break;
+                case SEXP_REDUCE_RNEIGHBOR:
+                        
+                        break;
+                case SEXP_REDUCE_RANDOM: {
+                        
+                }
+                        break;
+                case SEXP_REDUCE_PARALLEL:
+#if defined(_OPENMP)
+                        return (NULL);
+#else
+                        _D("Invalid reduce strategy: %d: available only if compiled with OpenMP.\n",
+                           strategy);
+                        errno = EOPNOTSUPP;
+                        return (NULL);
+#endif
+                        break;
+                default:
+                        _D("Unkwnown reduce strategy: %d\n", strategy);
+                        errno = EINVAL;
+                        return (NULL);
+                }
         }
         
+        /* NOTREACHED */
+        abort ();
         return (NULL);
 }
 
-SEXP_t *SEXP_list_reduce2 (SEXP_t *list, SEXP_t *(*fn) (SEXP_t *, SEXP_t *, void *), int strategy, void *ptr)
+SEXP_t *SEXP_list_reduce2 (SEXP_t *list, SEXP_t *(*fn) (const SEXP_t *, const SEXP_t *, void *), int strategy, void *ptr)
 {
         SEXP_VALIDATE(list);
 
@@ -1395,6 +1583,32 @@ void SEXP_list_cb (SEXP_t *list, void (*fn) (SEXP_t *, void *), void *ptr)
         SEXP_VALIDATE(list);
 
         return;
+}
+
+SEXP_t *SEXP_list_sort (SEXP_t *list, int (*cmp) (const SEXP_t *, const SEXP_t *))
+{
+        if (list != NULL) {
+                if (SEXP_TYPE(list) == ATOM_LIST) {
+                        
+                        qsort (list->atom.list.memb,
+                               list->atom.list.count,
+                               sizeof (SEXP_t),
+                               (int (*)(const void *, const void *))(cmp == NULL ? &SEXP_cmp : cmp));
+                        
+                        return (list);
+                } else {
+                        errno = EINVAL;
+                }
+        } else {
+                errno = EFAULT;
+        }
+        
+        return (NULL);
+}
+
+int SEXP_list_cmp (const SEXP_t *a, const SEXP_t *b)
+{
+        return (-1);
 }
 
 SEXP_t *SEXP_new  (void)
@@ -1509,7 +1723,7 @@ void SEXP_free (SEXP_t *sexp)
         return;
 }
 
-SEXP_t *SEXP_deepdup (SEXP_t *sexp)
+SEXP_t *SEXP_deepdup (const SEXP_t *sexp)
 {
         SEXP_t *copy;
 
@@ -1544,7 +1758,7 @@ SEXP_t *SEXP_deepdup (SEXP_t *sexp)
         }
 }
 
-SEXP_t *SEXP_dup (SEXP_t *sexp)
+SEXP_t *SEXP_dup (const SEXP_t *sexp)
 {
         SEXP_t *copy;
         
@@ -1563,7 +1777,7 @@ SEXP_t *SEXP_dup (SEXP_t *sexp)
         }
 }
 
-SEXP_t *SEXP_copy (SEXP_t *dst, SEXP_t *src)
+SEXP_t *SEXP_copy (SEXP_t *dst, const SEXP_t *src)
 {
         if (dst != NULL && src != NULL) {
                 SEXP_VALIDATE(src);
@@ -1574,7 +1788,7 @@ SEXP_t *SEXP_copy (SEXP_t *dst, SEXP_t *src)
         }
 }
 
-SEXP_t *SEXP_deepcopy (SEXP_t *dst, SEXP_t *src)
+SEXP_t *SEXP_deepcopy (SEXP_t *dst, const SEXP_t *src)
 {
         if (dst != NULL && src != NULL) {
                 SEXP_VALIDATE(src);
@@ -1585,7 +1799,7 @@ SEXP_t *SEXP_deepcopy (SEXP_t *dst, SEXP_t *src)
         }
 }
 
-size_t SEXP_length (SEXP_t *sexp)
+size_t SEXP_length (const SEXP_t *sexp)
 {
         if (sexp != NULL) {
                 switch (SEXP_TYPE(sexp)) {
@@ -1604,7 +1818,63 @@ size_t SEXP_length (SEXP_t *sexp)
         return ((size_t)-1);
 }
 
-const char *__sexp_strtype[] = {
+int SEXP_cmp (const SEXP_t *a, const SEXP_t *b)
+{   
+        if ((a == NULL) ^ (b == NULL)) {
+                errno = EFAULT;
+                return (-1);
+        }
+        
+        if (a == NULL) {
+                errno = EFAULT;
+                return (0);
+        }
+        
+        SEXP_VALIDATE(a);
+        SEXP_VALIDATE(b);
+        
+        if (SEXP_TYPE(a) != SEXP_TYPE(b)) {
+                errno = EINVAL;
+                return (-1);
+        }
+        
+        switch (SEXP_TYPE(a)) {
+        case ATOM_STRING:
+                return SEXP_string_cmp (a, b);
+        case ATOM_NUMBER:
+                return SEXP_number_cmp (a, b);
+        case ATOM_LIST:
+                return SEXP_list_cmp (a, b);
+        case ATOM_EMPTY:
+                return (0);
+        default:
+                return (1);
+        }
+        
+        /* NOTREACHED */
+        abort ();
+        return (-1);
+}
+
+int SEXP_cmpobj (const SEXP_t *a, const SEXP_t *b)
+{
+        if ((a == NULL) ^ (b == NULL)) {
+                errno = EFAULT;
+                return (-1);
+        }
+
+        if (a == NULL) {
+                errno = EFAULT;
+                return (0);
+        }
+
+        SEXP_VALIDATE(a);
+        SEXP_VALIDATE(b);
+        
+        return memcmp (a, b, sizeof (SEXP_t));
+}
+
+static const char *__sexp_strtype[] = {
         "unfinished",
         "list",
         "number",

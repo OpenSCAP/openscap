@@ -269,7 +269,7 @@ SEXP_t *probe_main (SEXP_t *object, int *err)
         struct runlevel_rep reply_st;
         
         
-        val = SEXP_OVALobj_getelmval (object, "service_name", 1);
+        val = SEXP_OVALobj_getelmval (object, "service_name", 1, 1);
         request_st.service_name = SEXP_string_cstr (val);
         
         if (request_st.service_name == NULL) {
@@ -287,7 +287,7 @@ SEXP_t *probe_main (SEXP_t *object, int *err)
                 return (NULL);
         }
                 
-        val = SEXP_OVALobj_getelmval (object, "runlevel", 1);
+        val = SEXP_OVALobj_getelmval (object, "runlevel", 1, 1);
         request_st.runlevel = SEXP_string_cstr (val);
                 
         if (request_st.runlevel == NULL) {

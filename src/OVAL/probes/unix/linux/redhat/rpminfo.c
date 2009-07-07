@@ -152,7 +152,7 @@ SEXP_t *probe_main (SEXP_t *object, int *err)
                 do_init = 0;
         }
         
-        val = SEXP_OVALobj_getelmval (object, "name", 1);
+        val = SEXP_OVALobj_getelmval (object, "name", 1, 1);
         request_st.name = SEXP_string_cstr (val);
         
         if (request_st.name == NULL) {

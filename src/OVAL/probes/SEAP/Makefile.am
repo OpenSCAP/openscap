@@ -20,6 +20,7 @@ libseap_la_SOURCES= bitmap.c \
                     sexp-manip.c \
                     sexp-output.c \
                     sexp-parse.c \
+		    sexp-command.c \
                     xbase64.c \
                     xbase64.h \
                     xmalloc.c
@@ -35,6 +36,7 @@ include_HEADERS= seap.h \
                  sexp-handler.h \
                  sexp-parse.h \
                  sexp-manip.h \
+		 sexp-command.h \
                  xmalloc.h
 
 includedir= $(prefix)/include

@@ -161,7 +161,7 @@ static inline void SEXP_SETFLAG(SEXP_t *sexp, ATOM_flags_t flag)
 # define __VALIDATE_TRESH_STRING_LEN 65535
 #endif
 
-static inline void __SEXP_VALIDATE(SEXP_t *ptr, const char *loc) {
+static inline void __SEXP_VALIDATE(const SEXP_t *ptr, const char *loc) {
         if (ptr == NULL) {
                 fprintf (stderr, "%s: !!! NULL S-EXP OBJECT !!!\n", loc);
         } else {
@@ -212,6 +212,7 @@ static inline void __SEXP_VALIDATE(SEXP_t *ptr, const char *loc) {
                         }
                 }
                 fprintf (stderr, "%s: !!! CORRUPTED S-EXP OBJECT !!!\n", loc);
+                fprintf (stderr, "%s: ptr=%p, type=%u\n", loc, ptr, SEXP_TYPE(ptr));
         }
         abort ();
 }

@@ -47,8 +47,8 @@ int find_files(SEXP_t * spath, SEXP_t *sfilename, SEXP_t *behaviors,
 	setting_t *setting;	
 	int finds = 0;
 
-	name = SEXP_string_cstr(SEXP_OVALelm_getval(sfilename));
-	path = SEXP_string_cstr(SEXP_OVALelm_getval(spath));
+	name = SEXP_string_cstr(SEXP_OVALelm_getval(sfilename, 1));
+	path = SEXP_string_cstr(SEXP_OVALelm_getval(spath, 1));
 	SEXP_number_get(SEXP_OVALelm_getattrval(behaviors,"max_depth"),&max_depth, NUM_INT32);
 
 	setting = malloc(sizeof(setting_t));

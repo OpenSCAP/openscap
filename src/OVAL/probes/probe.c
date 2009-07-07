@@ -108,7 +108,6 @@ SEXP_t *SEXP_OVALelm_create (const char *name, ...)
 SEXP_t *SEXP_OVALobj_create (const char *obj_name, SEXP_t *obj_attrs, ...)
 {
         SEXP_t *sexp = NULL, *sexp_tmp;
-        uint16_t i;
         va_list ap;
         char *arg_name;
         SEXP_t *arg_value, *arg_attrs;
@@ -296,7 +295,7 @@ int SEXP_OVALobj_validate (SEXP_t *obj)
 SEXP_t *SEXP_OVALobj_getelm (SEXP_t *obj, const char *name, uint32_t nth)
 {
         uint32_t i, k;
-        SEXP_t  *elm, *val, *elm_name;
+        SEXP_t  *elm, *elm_name;
         
         _A(name != NULL);
         SEXP_VALIDATE(obj);
@@ -325,29 +324,38 @@ SEXP_t *SEXP_OVALobj_getelm (SEXP_t *obj, const char *name, uint32_t nth)
         return (NULL);
 }
 
-SEXP_t *SEXP_OVALobj_getelmval (SEXP_t *obj, const char *name, uint32_t nth)
+SEXP_t *SEXP_OVALobj_getelmval (SEXP_t *obj, const char *name, uint32_t nth_e, uint32_t nth_v)
 {
         SEXP_t *elm;
         
         _A(name != NULL);
         SEXP_VALIDATE(obj);
-        elm = SEXP_OVALobj_getelm (obj, name, nth);
+        elm = SEXP_OVALobj_getelm (obj, name, nth_e);
         
-        return (elm != NULL ? SEXP_OVALelm_getval (elm) : NULL);
+        return (elm != NULL ? SEXP_OVALelm_getval (elm, nth_v) : NULL);
+}
+
+SEXP_t *SEXP_OVALobj_getattrval (SEXP_t *obj, const char *name)
+{
+        _A(name != NULL);
+        SEXP_VALIDATE(obj);
+        
+        return SEXP_OVALelm_getattrval (obj, name);
 }
 
 int SEXP_OVALobj_hasattr (SEXP_t *obj, const char *name)
 {
-        return (0);
+        _A(name != NULL);
+        SEXP_VALIDATE(obj);        
+
+        return (SEXP_OVALelm_hasattr (obj, name));
 }
 
-SEXP_t *SEXP_OVALelm_getval (SEXP_t *elm)
+SEXP_t *SEXP_OVALelm_getval (SEXP_t *elm, uint32_t nth)
 {
-        SEXP_t *val;
-
         SEXP_VALIDATE(elm);
- 
-        return (SEXP_list_nth (elm, 2));
+        
+        return (SEXP_list_nth (elm, 1 + nth));
 }
 
 SEXP_t *SEXP_OVALelm_getattrval (SEXP_t *elm, const char *name)
@@ -426,4 +434,89 @@ int SEXP_OVALelm_hasattr (SEXP_t *elm, const char *name)
         }
         
         return (ret);
+}
+
+#define MAX_EVAL_DEPTH 8
+
+SEXP_t *SEXP_OVALset_eval (SEXP_t *set, size_t depth)
+{
+        const char *str;
+
+        SEXP_t *filters, *items, *item, *res_items;
+                
+        if (depth > MAX_EVAL_DEPTH) {
+                _D("Too many levels: max=%zu\n", MAX_EVAL_DEPTH);
+                return (NULL);
+        }
+        
+        items = SEXP_list_new ();
+        filters = SEXP_list_new ();
+        
+        /* Get items */
+        SEXP_sublist_foreach (item, set, 2, -1) {
+                str = SEXP_string_cstrp (item);
+                
+                if (str != NULL) {
+                        switch (*str) {
+                        case 's':
+                                if (SEXP_strcmp (item, "set") == 0) {
+                                        SEXP_t *subset;
+                                        
+                                        subset = SEXP_OVALset_eval (item, depth + 1);
+                                        
+                                        if (subset != NULL) {
+                                                SEXP_list_join (items, subset);
+                                        }
+                                }
+                                break;
+                        case 'o':
+                                if (SEXP_strcmp (item, "obj_ref") == 0) {
+                                        SEXP_t *resobj, *id;
+
+                                        id = SEXP_OVALelm_getattrval (item, "id");
+                                        
+                                        if (id == NULL) {
+                                                _D("Missing object id!\n");
+                                                break;
+                                        }
+                                        
+                                        resobj = pcache_sexp_get (global.pcache, id);
+                                        
+                                        if (resobj == NULL) {
+                                                /* Request object */
+                                        }
+                                        
+                                        SEXP_list_join (items, resobj);
+                                }
+                                break;
+                        case 'f':
+                                if (SEXP_strcmp (item, "filter") == 0) {
+                                        SEXP_t *resfilter, *id;
+                                        
+                                        id = SEXP_OVALelm_getattrval (item, "id");
+
+                                        if (id == NULL) {
+                                                _D("Missing object id!\n");
+                                                break;
+                                        }
+
+                                        resfilter = pcache_sexp_get (global.pcache, id);
+
+                                        if (resfilter == NULL) {
+                                                /* Request filter */
+                                        }
+
+                                        SEXP_list_add (filters, resfilter);
+                                }
+                                break;
+                        default:
+                                _D("Unexpected set element: %.*s\n",
+                                   SEXP_string_length (item), str);
+                        }
+                }
+        }
+        
+        /* Apply filters to items */
+        
+        return (res_items);
 }

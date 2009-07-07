@@ -23,9 +23,9 @@ int sch_generic_openfd (SEAP_desc_t *desc, int fd, uint32_t flags)
 {
         desc->scheme_data = xmalloc (sizeof (sch_genericdata_t));
 
-        if (flags & DESC_FDIN)
+        if (flags & SEAP_DESC_FDIN)
                 DATA(desc->scheme_data)->ifd = fd;
-        if (flags & DESC_FDOUT)
+        if (flags & SEAP_DESC_FDOUT)
                 DATA(desc->scheme_data)->ofd = fd;
         
         return (0);

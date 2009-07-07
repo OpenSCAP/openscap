@@ -2,6 +2,7 @@
 #ifndef PROBE_H
 #define PROBE_H
 
+#include <seap.h>
 #include <stdarg.h>
 #include "api/oval_definitions.h"
 
@@ -27,29 +28,58 @@ int SEXP_OVALelm_setstatus (SEXP_t *elm, int status);
 
 int     SEXP_OVALobj_validate (SEXP_t *obj);
 SEXP_t *SEXP_OVALobj_getelm (SEXP_t *obj, const char *name, uint32_t nth);
-SEXP_t *SEXP_OVALobj_getelmval (SEXP_t *obj, const char *name, uint32_t nth);
+SEXP_t *SEXP_OVALobj_getelmval (SEXP_t *obj, const char *name, uint32_t nth_e, uint32_t nth_v);
+SEXP_t *SEXP_OVALobj_getattrval (SEXP_t *obj, const char *name);
 int     SEXP_OVALobj_hasattr (SEXP_t *obj, const char *name);
 
-SEXP_t *SEXP_OVALelm_getval (SEXP_t *elm);
+SEXP_t *SEXP_OVALelm_getval (SEXP_t *elm, uint32_t nth);
 SEXP_t *SEXP_OVALelm_getattrval (SEXP_t *elm, const char *name);
 int     SEXP_OVALelm_hasattr (SEXP_t *elm, const char *name);
 
-#define PROBE_EINVAL  1
-#define PROBE_ENOELM  2
-#define PROBE_ENOVAL  3
-#define PROBE_ENOATTR 4
-#define PROBE_EINIT   5
-#define PROBE_ENOMEM  6
-#define PROBE_EOPNOTSUPP 7
-#define PROBE_ERANGE 8
-#define PROBE_EDOM   9
-#define PROBE_EFAULT 10
-#define PROBE_EACCES 11
-#define PROBE_EUNKNOWN 255
+SEXP_t *SEXP_OVALset_eval (SEXP_t *set, size_t depth);
+
+#define PROBE_EINVAL     1 /* Invalid type/value/format */
+#define PROBE_ENOELM     2 /* Missing element */
+#define PROBE_ENOVAL     3 /* Missing value */
+#define PROBE_ENOATTR    4 /* Missing attribute */
+#define PROBE_EINIT      5 /* Initialization failed */
+#define PROBE_ENOMEM     6 /* No memory */
+#define PROBE_EOPNOTSUPP 7 /* Not supported */
+#define PROBE_ERANGE     8 /* Out of range */
+#define PROBE_EDOM       9 /* Out of domain */
+#define PROBE_EFAULT    10 /* Memory fault/NULL value */
+#define PROBE_EACCES    11 /* Operation not perimitted */
+#define PROBE_EUNKNOWN 255 /* Unknown/Unexpected error */
 
 #define OVAL_STATUS_ERROR        1
 #define OVAL_STATUS_EXISTS       2
 #define OVAL_STATUS_DOESNOTEXIST 3
 #define OVAL_STATUS_NOTCOLLECTED 4
+
+#include <pthread.h>
+#include <probe-cache.h>
+
+typedef struct {
+        /* Protocol stuff */
+        SEAP_CTX_t *ctx;
+        int         sd;
+        pthread_mutex_t seap_lock;
+
+        /* Object cache */
+        pcache_t   *pcache;
+        pthread_rwlock_t pcache_lock;
+} globals_t;
+
+#define GLOBALS_INITIALIZER { NULL, -1, PTHREAD_MUTEX_INITIALIZER, NULL, PTHREAD_MUTEX_INITIALIZER }
+
+extern globals_t global;
+
+#define READER_LOCK_CACHE pthread_rwlock_rdlock (&globals.pcache_lock)
+#define WRITER_LOCK_CACHE pthread_rwlock_wrlock (&globals.pcache_lock)
+#define READER_UNLOCK_CACHE pthread_rwlock_unlock (&globals.pcache_lock)
+#define WRITER_UNLOCK_CACHE pthread_rwlock_unlock (&globals.pcache_lock)
+
+#define SEAP_LOCK pthread_mutex_lock (&globals.seap_lock)
+#define SEAP_UNLOCK pthread_mutex_unlock (&globals.seap_lock)
 
 #endif /* PROBE_H */

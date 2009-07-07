@@ -38,10 +38,10 @@
 
 /* Functions for manipulating with numbers */
 SEXP_t *SEXP_number_new (const void *, NUM_type_t);
-int     SEXP_numberp (SEXP_t *sexp);
-size_t  SEXP_number_size (SEXP_t *sexp);
-int     SEXP_number_get (SEXP_t *sexp, void *ptr, NUM_type_t type);
-
+int     SEXP_numberp (const SEXP_t *sexp);
+size_t  SEXP_number_size (const SEXP_t *sexp);
+int     SEXP_number_get (const SEXP_t *sexp, void *ptr, NUM_type_t type);
+int     SEXP_number_cmp (const SEXP_t *a, const SEXP_t *b);
 
 /*
  *   d - signed
@@ -54,8 +54,8 @@ int     SEXP_number_get (SEXP_t *sexp, void *ptr, NUM_type_t type);
  * uint32 ->  u
  *  int16 -> hd
  * uint16 -> hu
- *  int64 -> ld
- * uint64 -> lu
+ *  int64 -> lld
+ * uint64 -> llu
  */
 
 SEXP_t *SEXP_number_newd (int n);
@@ -71,18 +71,18 @@ SEXP_t *SEXP_number_newllu (unsigned long long int n);
 SEXP_t *SEXP_number_newf (double n);
 SEXP_t *SEXP_number_newlf (long double n);
 
-int           SEXP_number_getd (SEXP_t *sexp);
-short int     SEXP_number_gethd (SEXP_t *sexp);
-long int      SEXP_number_getld (SEXP_t *sexp);
-long long int SEXP_number_getlld (SEXP_t *sexp);
+int           SEXP_number_getd (const SEXP_t *sexp);
+short int     SEXP_number_gethd (const SEXP_t *sexp);
+long int      SEXP_number_getld (const SEXP_t *sexp);
+long long int SEXP_number_getlld (const SEXP_t *sexp);
 
-unsigned int       SEXP_number_getu (SEXP_t *sexp);
-unsigned short int SEXP_number_gethu (SEXP_t *sexp);
-unsigned long int  SEXP_number_getlu (SEXP_t *sexp);
-unsigned long long SEXP_number_getllu (SEXP_t *sexp);
+unsigned int       SEXP_number_getu (const SEXP_t *sexp);
+unsigned short int SEXP_number_gethu (const SEXP_t *sexp);
+unsigned long int  SEXP_number_getlu (const SEXP_t *sexp);
+unsigned long long SEXP_number_getllu (const SEXP_t *sexp);
 
-double      SEXP_number_getf (SEXP_t *sexp);
-long double SEXP_number_getlf (SEXP_t *sexp);
+double      SEXP_number_getf (const SEXP_t *sexp);
+long double SEXP_number_getlf (const SEXP_t *sexp);
 
 /*
 #define SEXP_number_new(num)
@@ -92,42 +92,69 @@ long double SEXP_number_getlf (SEXP_t *sexp);
 /* Functions for manipulating with strings */
 SEXP_t *SEXP_string_new (const void *, size_t);
 SEXP_t *SEXP_string_newf (const char *fmt, ...);
-int     SEXP_strcmp (SEXP_t *sexp, const char *str);
-int     SEXP_strncmp (SEXP_t *sexp, const char *str, size_t n);
-int     SEXP_strncoll (SEXP_t *sexp, const char *str, size_t n);
-int     SEXP_stringp (SEXP_t *sexp);
-char   *SEXP_string_cstr (SEXP_t *sexp);
-size_t  SEXP_string_length (SEXP_t *sexp);
+int     SEXP_string_cmp (const SEXP_t *a, const SEXP_t *b);
+int     SEXP_strcmp (const SEXP_t *sexp, const char *str);
+int     SEXP_strncmp (const SEXP_t *sexp, const char *str, size_t n);
+int     SEXP_strncoll (const SEXP_t *sexp, const char *str, size_t n);
+int     SEXP_stringp (const SEXP_t *sexp);
+char   *SEXP_string_cstr (const SEXP_t *sexp);
+const char *SEXP_string_cstrp (const SEXP_t *sexp);
+SEXP_t *SEXP_string_substr (const SEXP_t *sexp, size_t off, size_t len);
+char   *SEXP_string_subcstr (const SEXP_t *sexp, size_t off, size_t len);
+size_t  SEXP_string_length (const SEXP_t *sexp);
+
+typedef struct {
+
+} SEXP_mp_t;
+
+SEXP_mp_t *SEXP_strmpm_init (const char *str, ...);
+SEXP_mp_t *SEXP_strmpm_inita (const char *str[], size_t n);
+size_t    *SEXP_strmpm (SEXP_mp_t *mp, const SEXP_t *sexp);
+void       SEXP_strmpm_free (SEXP_mp_t *mp);
+
+SEXP_mp_t *SEXP_string_mpminit (SEXP_t *sexp, ...);
+SEXP_mp_t *SEXP_string_mpminita (SEXP_t *sexp[], size_t n);
+SEXP_mp_t *SEXP_string_mpminitl (SEXP_t *list);
+size_t     SEXP_string_mpm (SEXP_mp_t *mp, const SEXP_t *sexp);
+void       SEXP_string_mpmfree (SEXP_mp_t *mp);
 
 /* Functions for manipulating with lists */
 SEXP_t *SEXP_list_new (void);
 SEXP_t *SEXP_list_init (SEXP_t *);
 SEXP_t *SEXP_list_free (SEXP_t *);
+SEXP_t *SEXP_list_free_nr (SEXP_t *);
 SEXP_t *SEXP_list_add (SEXP_t *, SEXP_t *);
-SEXP_t *SEXP_list_first (SEXP_t *);
-SEXP_t *SEXP_list_last (SEXP_t *);
-int     SEXP_listp (SEXP_t *);
+SEXP_t *SEXP_list_first (const SEXP_t *);
+SEXP_t *SEXP_list_last (const SEXP_t *);
+int     SEXP_listp (const SEXP_t *);
 SEXP_t *SEXP_list_pop (SEXP_t **);
-SEXP_t *SEXP_list_nth (SEXP_t *, uint32_t);
-SEXP_t *SEXP_list_nth_copy (SEXP_t *sexp, uint32_t n);
+SEXP_t *SEXP_list_nth (const SEXP_t *, uint32_t);
+SEXP_t *SEXP_list_nth_dup (const SEXP_t *sexp, uint32_t n);
+SEXP_t *SEXP_list_nth_deepdup (const SEXP_t *sexp, uint32_t n);
 SEXP_t *SEXP_list_join (SEXP_t *, SEXP_t *);
-size_t  SEXP_list_length (SEXP_t *sexp);
+size_t  SEXP_list_length (const SEXP_t *sexp);
 SEXP_t *SEXP_list_map (SEXP_t *list, int (*fn) (SEXP_t *, SEXP_t *));
 SEXP_t *SEXP_list_map2 (SEXP_t *list, int (*fn) (SEXP_t *, SEXP_t *, void *), void *ptr);
+SEXP_t *SEXP_list_sort (SEXP_t *list, int (*cmp) (const SEXP_t *, const SEXP_t *));
+int     SEXP_list_cmp (const SEXP_t *a, const SEXP_t *b);
 
 #define SEXP_REDUCE_LNEIGHBOR 1
 #define SEXP_REDUCE_RNEIGHBOR 2
 #define SEXP_REDUCE_RANDOM    3
+#define SEXP_REDUCE_PARALLEL  4
 
-SEXP_t *SEXP_list_reduce (SEXP_t *list, SEXP_t *(*fn) (SEXP_t *, SEXP_t *), int strategy);
-SEXP_t *SEXP_list_reduce2 (SEXP_t *list, SEXP_t *(*fn) (SEXP_t *, SEXP_t *, void *), int strategy, void *ptr);
+SEXP_t *SEXP_list_reduce (SEXP_t *list, SEXP_t *(*fn) (const SEXP_t *, const SEXP_t *), int strategy);
+SEXP_t *SEXP_list_reduce2 (SEXP_t *list, SEXP_t *(*fn) (const SEXP_t *, const SEXP_t *, void *), int strategy, void *ptr);
 
-#define SEXP_list_foreach(var, list)             \
-        for (register uint32_t ___i_ = 0,        \
-             register SEXP_t * ___l_ = (list),   \
-             (var) = SEXP_list_nth (___l_, i);   \
-             (var) != NULL;                      \
-             (var) = SEXP_list_nth (___l_, ++i))
+#define SEXP_list_foreach(var, list)                                    \
+        for (register uint32_t ___i_ = 1;                               \
+             ((var) = SEXP_list_nth ((list), ___i_)) != NULL;           \
+             ++___i_)
+
+#define SEXP_sublist_foreach(var, list, beg, end)                       \
+        for (register uint32_t ___i_ = (beg);                           \
+             ___i_ <= (uint32_t)(end) && ((var) = SEXP_list_nth ((list), ___i_)) != NULL; \
+             ++___i_)
 
 void SEXP_list_cb (SEXP_t *list, void (*fn) (SEXP_t *, void *), void *ptr);
 
@@ -170,20 +197,20 @@ void    SEXP_init (SEXP_t *sexp);
 void    SEXP_free (SEXP_t *sexp);
 
 /* shallow copy */
-SEXP_t *SEXP_dup (SEXP_t *sexp);
+SEXP_t *SEXP_dup (const SEXP_t *sexp);
 
 /* deep copy */
-SEXP_t *SEXP_deepdup (SEXP_t *sexp);
+SEXP_t *SEXP_deepdup (const SEXP_t *sexp);
 
 /* shallow copy */
-SEXP_t *SEXP_copy (SEXP_t *dst, SEXP_t *src);
+SEXP_t *SEXP_copy (SEXP_t *dst, const SEXP_t *src);
 
 /* deep copy */
-SEXP_t *SEXP_deepcopy (SEXP_t *dst, SEXP_t *src);
+SEXP_t *SEXP_deepcopy (SEXP_t *dst, const SEXP_t *src);
 
-size_t  SEXP_length (SEXP_t *sexp);
-int     SEXP_cmp (SEXP_t *a, SEXP_t *b);
-int     SEXP_cmpobj (SEXP_t *a, SEXP_t *b);
+size_t  SEXP_length (const SEXP_t *sexp);
+int     SEXP_cmp (const SEXP_t *a, const SEXP_t *b);
+int     SEXP_cmpobj (const SEXP_t *a, const SEXP_t *b);
 
 /*
  *  Returns atomic type of the given S-exp as a string.

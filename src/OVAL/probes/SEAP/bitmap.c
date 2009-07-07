@@ -175,17 +175,23 @@ bitmap_bitn_t bitmap_setrand (bitmap_t *bitmap)
         
 #define CELLI(num) (num/BITMAP_CELLSIZE)
 
-        n = xrandom () % (bitmap->size * BITMAP_CELLSIZE);
         
         if ((size_t)bitmap->count < (bitmap->size*BITMAP_CELLSIZE)/2) {
                 while (CELLI(n) < bitmap->realsize) {
+                        n = xrandom () % (bitmap->size * BITMAP_CELLSIZE);
                         
                 }
         } else {
-                if (xrandom () % 2) {
-                        
+                n = xrandom () % (bitmap->size * BITMAP_CELLSIZE);
+                
+                if (bitmap_set (bitmap, n) == 0) {
+                        return (n);
                 } else {
-                        
+                        if (xrandom () % 2) {
+                                
+                        } else {
+                                
+                        }
                 }
         }
         

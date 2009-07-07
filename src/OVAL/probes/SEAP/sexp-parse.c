@@ -108,6 +108,14 @@ static inline int isnexttok (int c)
 #define EXF_EOFOK PF_EOFOK
 #define EXF_ALL   0xff
 
+/*
+ * Defines a function for parsing the expected type of object
+ * that the main parser encountered in the buffer. The string
+ * that represents the object (token) in the stream can have
+ * any lenght. It is the responbility of the function to find
+ * out the lenght of the token and this lenght should be the
+ * return value of this function.
+ */ 
 #define EXTRACTOR(name)    SEXP_extract_##name
 #define DEFEXTRACTOR(what) static inline size_t EXTRACTOR(what) (void *out, const char *str, size_t len, uint8_t flags)
 

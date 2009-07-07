@@ -10,6 +10,7 @@
 #  include <stdio.h>
 #  include <errno.h>
 #  include <stdlib.h>
+/*
 #  define _D(...) do {                                                  \
                 if (getenv("SEAP_NDEBUG") == NULL) {                    \
                         int ___e = errno;                               \
@@ -18,6 +19,11 @@
                         fprintf (stderr, __VA_ARGS__);                  \
                 }                                                       \
         } while(0)
+# else
+*/
+#include <stdarg.h>
+void __debuglog (const char *, size_t, const char *, ...);
+#  define _D(...) __debuglog (__PRETTY_FUNCTION__, __LINE__, __VA_ARGS__)
 # else
 #  define _D(...) while(0)
 # endif /* NDEBUG */
