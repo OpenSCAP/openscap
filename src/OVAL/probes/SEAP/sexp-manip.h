@@ -50,6 +50,8 @@ int     SEXP_number_cmp (const SEXP_t *a, const SEXP_t *b);
  *   l - long
  *   f - float
  *
+ *   int8 -> hhd
+ *  uint8 -> hhu
  *  int32 ->  d
  * uint32 ->  u
  *  int16 -> hd
@@ -60,11 +62,13 @@ int     SEXP_number_cmp (const SEXP_t *a, const SEXP_t *b);
 
 SEXP_t *SEXP_number_newd (int n);
 SEXP_t *SEXP_number_newhd (short int n);
+SEXP_t *SEXP_number_newhhd (char n);
 SEXP_t *SEXP_number_newld (long int n);
 SEXP_t *SEXP_number_newlld (long long int n);
 
 SEXP_t *SEXP_number_newu (unsigned int n);
 SEXP_t *SEXP_number_newhu (unsigned short int n);
+SEXP_t *SEXP_number_newhhu (unsigned char n);
 SEXP_t *SEXP_number_newlu (unsigned long int n);
 SEXP_t *SEXP_number_newllu (unsigned long long int n);
 
@@ -73,11 +77,13 @@ SEXP_t *SEXP_number_newlf (long double n);
 
 int           SEXP_number_getd (const SEXP_t *sexp);
 short int     SEXP_number_gethd (const SEXP_t *sexp);
+char          SEXP_number_gethhd (const SEXP_t *sexp);
 long int      SEXP_number_getld (const SEXP_t *sexp);
 long long int SEXP_number_getlld (const SEXP_t *sexp);
 
 unsigned int       SEXP_number_getu (const SEXP_t *sexp);
 unsigned short int SEXP_number_gethu (const SEXP_t *sexp);
+unsigned char      SEXP_number_gethhu (const SEXP_t *sexp);
 unsigned long int  SEXP_number_getlu (const SEXP_t *sexp);
 unsigned long long SEXP_number_getllu (const SEXP_t *sexp);
 

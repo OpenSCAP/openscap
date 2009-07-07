@@ -325,8 +325,8 @@ struct oval_iterator_syschar *sexp_to_oval_state (SEXP_t *sexp)
         return (NULL);
 }
 
-struct oval_iterator_syschar *probe_simple_object (struct oval_object *object,
-                                                   struct oval_iterator_variable_binding *binding)
+struct oval_iterator_syschar *probe_object (struct oval_object *object,
+                                            struct oval_iterator_variable_binding *binding)
 {
         probe_sdtbl_t *ptbl = NULL;
         SEXP_t *sexp;
@@ -346,11 +346,15 @@ struct oval_iterator_syschar *probe_simple_object (struct oval_object *object,
 #endif
         _A(ptbl != NULL);
 
+        _D("search_probe\n");
+
         probe = search_probe (oval_object_subtype(object));
         if (probe == NULL) {
                 errno = EOPNOTSUPP;
                 return (NULL);
         }
+        
+        _D("oval -> sexp\n");
         
         /* create S-exp */
         sexp  = oval_object_to_sexp (probe->typestr, object);
@@ -360,8 +364,17 @@ struct oval_iterator_syschar *probe_simple_object (struct oval_object *object,
                 char  *uri, *dir;
                 size_t len;
                 
+                _D("new sd\n");
+
+#if defined(PROBEPATH_ENV) /* insecure? */
+                dir = getenv ("PROBEPATH");
+                if (dir == NULL)
+                        dir = OVAL_PROBE_DIR;
+#else
+                dir = OVAL_PROBE_DIR;
+#endif
                 len = (strlen (OVAL_PROBE_SCHEME) +
-                       strlen (OVAL_PROBE_DIR) + 1 +
+                       strlen (dir) + 1 +
                        strlen (probe->filename));
                 
                 uri = malloc (sizeof (char) * (len + 1));
@@ -370,15 +383,10 @@ struct oval_iterator_syschar *probe_simple_object (struct oval_object *object,
                         return (NULL);
                 }
                 
-#if defined(PROBEPATH_ENV) /* insecure? */
-                dir = getenv ("PROBEPATH");
-                if (dir == NULL)
-                        dir = OVAL_PROBE_DIR;
-#else
-                dir = OVAL_PROBE_DIR;
-#endif
                 snprintf (uri, len + 1, "%s%s/%s",
                           OVAL_PROBE_SCHEME, dir, probe->filename);
+                
+                _D("uri: %s\n", uri);
                 
                 psd = SEAP_connect (&(ptbl->ctx), uri, 0);
                 if (psd < 0) {
@@ -389,13 +397,20 @@ struct oval_iterator_syschar *probe_simple_object (struct oval_object *object,
                         return (NULL);
                 }
 
+                _D("conn ok\n");
+
                 free (uri);
                 probe_sd_add (ptbl, oval_object_subtype (object), psd);
         }
         
         msg = SEAP_msg_new ();
         msg->sexp = sexp;
-
+        
+        puts ("--- msg ---");
+        SEXP_printft (sexp);
+        puts ("\n----------");
+        _D("send msg\n");
+        
         if (SEAP_sendmsg (&(ptbl->ctx), psd, msg) != 0) {
                 /* error */
                 return (NULL);
@@ -403,10 +418,16 @@ struct oval_iterator_syschar *probe_simple_object (struct oval_object *object,
 
         /* free sexp, msg */
         
+        _D("recv msg\n");
+        
         if (SEAP_recvmsg (&(ptbl->ctx), psd, &msg) != 0) {
                 /* error */
                 return (NULL);
         }
+        
+        puts ("--- msg ---");
+        SEXP_printfa (msg->sexp);
+        puts ("\n----------");
         
         /* translate the result to oval state */
         sysch = sexp_to_oval_state (msg->sexp);

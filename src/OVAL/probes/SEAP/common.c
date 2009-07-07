@@ -75,31 +75,20 @@ static FILE *__debuglog_fp = NULL;
 void __debuglog (const char *fn, size_t line, const char *fmt, ...)
 {
         va_list ap;
-        char *nfmt;
-        char linestr[9];
-        size_t nfmt_len;
 
 #if defined(THREAD_SAFE)        
         pthread_mutex_lock (&__debuglog_mutex);
 #endif
         if (__debuglog_fp == NULL) {
                 __debuglog_fp = fopen ("seap_debug.log", "a");
-                setbuf (__debuglog_fp, NULL);
+                //setbuf (__debuglog_fp, NULL);
         }
         
-        snprintf (linestr, sizeof linestr, "%zu", line);
-        nfmt_len = strlen (fn) + strlen(linestr) + strlen (fmt);
-        nfmt = malloc (sizeof (char) * (nfmt_len + 3 + 1));
-        
-        if (nfmt != NULL) {
-                snprintf (nfmt, nfmt_len, "%s:%s: %s", linestr, fn, fmt);
+        fprintf (__debuglog_fp, "(%u) %zu:%s: ", getpid (), line, fn);
+        va_start (ap, fmt);
+        vfprintf (__debuglog_fp, fmt, ap);
+        va_end (ap);
                 
-                va_start (ap, fmt);
-                vfprintf (__debuglog_fp, fmt, ap);
-                va_end (ap);
-                
-                free (nfmt);
-        }
 #if defined(THREAD_SAFE)  
         pthread_mutex_unlock (&__debuglog_mutex);
 #endif

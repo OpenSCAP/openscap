@@ -37,7 +37,7 @@ liboval_la_SOURCES = \
 	oval_variable.c \
 	oval_variableBinding.c
 
-liboval_la_CFLAGS  = @libxml_cflags@
+liboval_la_CFLAGS  = @libxml_cflags@ -DPROBEPATH_ENV
 liboval_la_LDFLAGS = @libxml_libs@
 
 include_HEADERS  = api/oval_agent_api.h api/oval_definitions.h 

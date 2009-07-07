@@ -38,6 +38,8 @@ typedef uint8_t NUM_type_t;
 #define NUM_NONE   0x00
 #define NUM_INT8   0x01
 #define NUM_UINT8  0x02
+#define NUM_CHAR   NUM_INT8
+#define NUM_UCHAR  NUM_UINT8
 
 #define NUM_INT16  0x03
 #define NUM_UINT16 0x04

@@ -359,6 +359,18 @@ SEXP_t *SEXP_number_newhd (short int n)
         return (sexp);
 }
 
+SEXP_t *SEXP_number_newhhd (char n)
+{
+        SEXP_t *sexp;
+
+        sexp = SEXP_new ();
+        SEXP_SETTYPE(sexp, ATOM_NUMBER);
+        NUM_STORE(char, n, sexp->atom.number.nptr);
+        sexp->atom.number.type = NUM_CHAR;
+        
+        return (sexp);
+}
+
 SEXP_t *SEXP_number_newld (long int n)
 {
         SEXP_t *sexp;
@@ -403,6 +415,18 @@ SEXP_t *SEXP_number_newhu (unsigned short int n)
         SEXP_SETTYPE(sexp, ATOM_NUMBER);
         NUM_STORE(unsigned short int, n, sexp->atom.number.nptr);
         sexp->atom.number.type = NUM_USHORTINT;
+        
+        return (sexp);
+}
+
+SEXP_t *SEXP_number_newhhu (unsigned char n)
+{
+        SEXP_t *sexp;
+
+        sexp = SEXP_new ();
+        SEXP_SETTYPE(sexp, ATOM_NUMBER);
+        NUM_STORE(unsigned char, n, sexp->atom.number.nptr);
+        sexp->atom.number.type = NUM_UCHAR;
         
         return (sexp);
 }
@@ -515,6 +539,33 @@ short int SEXP_number_gethd (const SEXP_t *sexp)
                         case NUM_INT16:
                         case NUM_UINT16:
                                 return NUM(short int, sexp->atom.number.nptr);
+                        case NUM_NONE:
+                                return (0);
+                        default:
+                                errno = EOVERFLOW;
+                                return (0);
+                        }
+                } else {
+                        errno = EINVAL;
+                        return (0);
+                }
+        } else {
+                errno = EFAULT;
+                return (0);
+        }
+}
+
+char SEXP_number_gethhd (const SEXP_t *sexp)
+{
+        if (sexp != NULL) {
+                SEXP_VALIDATE(sexp);
+
+                if (SEXP_TYPE(sexp) == ATOM_NUMBER) {
+                        switch (sexp->atom.number.type) {
+                        case NUM_INT8:
+                                return NUM(char, sexp->atom.number.nptr);
+                        case NUM_UINT8:
+                                return (char)NUM(uint8_t, sexp->atom.number.nptr);
                         case NUM_NONE:
                                 return (0);
                         default:
@@ -686,6 +737,33 @@ unsigned short int SEXP_number_gethu (const SEXP_t *sexp)
                                 uint8_t n = NUM(uint8_t, sexp->atom.number.nptr);
                                 return (unsigned short int)(n);
                         }
+                        case NUM_NONE:
+                                return (0);
+                        default:
+                                errno = EOVERFLOW;
+                                return (0);
+                        }
+                } else {
+                        errno = EINVAL;
+                        return (0);
+                }
+        } else {
+                errno = EFAULT;
+                return (0);
+        }
+}
+
+unsigned char SEXP_number_gethhu (const SEXP_t *sexp)
+{
+        if (sexp != NULL) {
+                SEXP_VALIDATE(sexp);
+
+                if (SEXP_TYPE(sexp) == ATOM_NUMBER) {
+                        switch (sexp->atom.number.type) {
+                        case NUM_INT8:
+                                return (unsigned char)NUM(char, sexp->atom.number.nptr);
+                        case NUM_UINT8:
+                                return NUM(unsigned char, sexp->atom.number.nptr);
                         case NUM_NONE:
                                 return (0);
                         default:

@@ -456,7 +456,8 @@ int SEAP_recvmsg (SEAP_CTX_t *ctx, int sd, SEAP_msg_t **seap_msg)
         int ret = 0;
         SEAP_desc_t *desc;
         char  *buffer;
-        size_t buflen, recvlen;
+        size_t buflen;
+        ssize_t recvlen;
         SEXP_t *sexp_msg;
         SEAP_msg_t *msg;
         SEXP_psetup_t psetup;
@@ -494,7 +495,7 @@ int SEAP_recvmsg (SEAP_CTX_t *ctx, int sd, SEAP_msg_t **seap_msg)
                                         return (-1);
                                 }
                                 
-                                _D("received data -> recvlen=%u\n", recvlen);
+                                _D("received data -> recvlen=%zd\n", recvlen);
                                 
                                 /* Try to parse the buffer */
                                 desc->sexpbuf = SEXP_parse (&psetup, buffer, recvlen, &(desc->pstate));
@@ -511,7 +512,16 @@ int SEAP_recvmsg (SEAP_CTX_t *ctx, int sd, SEAP_msg_t **seap_msg)
                 
                 /* The value of sexp_msg must be a valid S-exp object here */
                 SEXP_VALIDATE(sexp_msg);
-                        
+                
+                { FILE *fp;
+
+                        fp = fopen ("recv.log", "a");
+                        setbuf (fp, NULL);
+                        fprintf (fp, "--- RECV ---\n");
+                        SEXP_fprintfa (fp, sexp_msg);
+                        fprintf (fp, "\n-----------\n");
+                        fclose (fp);
+                }
                 /*
                  * First sanity check:
                  * The received S-exp must be a list
@@ -626,6 +636,16 @@ SEXP_t *__SEAP_msg2sexp (SEAP_msg_t *msg)
         
         /* Add data */
         SEXP_list_add (sexp, msg->sexp);
+
+        { FILE *fp;
+                
+                fp = fopen ("sexp.log", "a");
+                setbuf (fp, NULL);
+                fprintf (fp, "--- SEXP ---\n");
+                SEXP_fprintfa (fp, sexp);
+                fprintf (fp, "\n-----------\n");
+                fclose (fp);
+        }
         
         return (sexp);
 }
@@ -692,6 +712,10 @@ int SEAP_sendmsg (SEAP_CTX_t *ctx, int sd, SEAP_msg_t *seap_msg)
                            errno, strerror (errno));
                         return (-1);
                 }
+                
+                puts ("--- MSG ---");
+                SEXP_printfa (sexp_msg);
+                puts ("\n--- MSG ---");
                 
                 /*
                  * Send the message using handler associated

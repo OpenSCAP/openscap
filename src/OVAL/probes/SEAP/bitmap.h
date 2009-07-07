@@ -19,9 +19,9 @@ typedef struct {
 } bitmap_t;
 
 #if defined(THREAD_SAFE)
-# define BITMAP_INITIALIZER { 0, 0, 0, NULL, 0 }
+# define BITMAP_INITIALIZER { 0, 128, 0, NULL, 0 }
 #else
-# define BITMAP_INITIALIZER { 0, 0, NULL, 0 }
+# define BITMAP_INITIALIZER { 128, 0, NULL, 0 }
 #endif
 
 #define BITMAP_CELLSIZE (sizeof (bitmap_cell_t) * 8)

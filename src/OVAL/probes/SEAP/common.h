@@ -38,4 +38,8 @@ int      xstrncoll (const char *a, size_t alen, const char *b, size_t blen);
 void     xsrandom (unsigned long seed);
 long     xrandom (void);
 
+#ifndef EDOOFUS
+# define EDOOFUS 88
+#endif
+
 #endif /* COMMON_H */

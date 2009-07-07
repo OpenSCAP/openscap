@@ -265,12 +265,88 @@ print_loop:
                 
                 wlen += (size_t)wret;
                 break;
-        case ATOM_NUMBER:
+        case ATOM_NUMBER: {
+                char numstr[64];
+                int  numlen;
                 /* 
                  * Number is converted to string with datatype.
                  * e.g.: 123 -> 4[int8]3:123
                  */
+                switch (psexp->atom.number.type) {
+                case NUM_INT8: {
+                        int8_t num;
+                        
+                        num = SEXP_number_gethhd (psexp);
+                        numlen = snprintf (numstr, sizeof numstr, "%hhd ", num);
+                }
+                        break;
+                case NUM_UINT8: {
+                        uint8_t num;
+                        
+                        num = SEXP_number_gethhu (psexp);
+                        numlen = snprintf (numstr, sizeof numstr, "%hhu ", num);
+                }
+                        break;
+                case NUM_INT16: {
+                        int16_t num;
+                        
+                        num = SEXP_number_gethd (psexp);
+                        numlen = snprintf (numstr, sizeof numstr, "%hd ", num);
+                }
+                        break;
+                case NUM_UINT16: {
+                        uint16_t num;
+                        
+                        num = SEXP_number_gethu (psexp);
+                        numlen = snprintf (numstr, sizeof numstr, "%hu ", num);
+                }
+                        break;
+                case NUM_INT32: {
+                        int32_t num;
+                        
+                        num = SEXP_number_getd (psexp);
+                        numlen = snprintf (numstr, sizeof numstr, "%d ", num);
+                }
+                        break;
+                case NUM_UINT32: {
+                        uint32_t num;
+                        
+                        num = SEXP_number_getu (psexp);
+                        numlen = snprintf (numstr, sizeof numstr, "%u ", num);
+                }
+                        break;
+                case NUM_INT64: {
+                        int64_t num;
+                        
+                        num = SEXP_number_gethhd (psexp);
+                        numlen = snprintf (numstr, sizeof numstr, "%lld ", num);
+                }
+                        break;
+                case NUM_UINT64: {
+                        uint64_t num;
+                        
+                        num = SEXP_number_gethhd (psexp);
+                        numlen = snprintf (numstr, sizeof numstr, "%llu ", num);
+                }
+                        break;
+                case NUM_DOUBLE: {
+                        double num;
+                        
+                        num = SEXP_number_getf (psexp);
+                        numlen = snprintf (numstr, sizeof numstr, "%f ", num);
+                }
+                        break;
+                default:
+                        abort ();
+                }
+
+                if (write (fd, numstr, numlen) != numlen) {
+                        /* write error */
+                        return (-1);
+                }
                 
+                wlen += numlen;
+        }
                 break;  
         default:
                 abort ();

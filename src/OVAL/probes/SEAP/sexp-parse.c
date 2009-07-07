@@ -563,6 +563,7 @@ DEFPARSER(label)
                                         int64_t number;
                                         
                                         number = (int64_t) strtoll (pbuf + i, NULL, 10);
+                                        //sscanf (pbuf + i, "%lld", &number);
                                         
                                         if (number < INT16_MIN) {
                                                 if (number < INT32_MIN) {
@@ -591,6 +592,7 @@ DEFPARSER(label)
                                         uint64_t number;
                                         
                                         number = (uint64_t) strtoull (pbuf + i, NULL, 10);
+                                        //sscanf (pbuf + i, "%llu", &number);
                                         
                                         if (number > UINT16_MAX) {
                                                 if (number > UINT32_MAX) {
@@ -834,6 +836,7 @@ DEFPARSER(label)
                 _A(SEXP_TYPE(sexp) == ATOM_UNFIN ||
                    SEXP_TYPE(sexp) == ATOM_EMPTY ||
                    SEXP_TYPE(sexp) == ATOM_INVAL);
+                
                 /* save the unparsed part of buf */
                 
                 PSTATE(pstatep)->buffer_data_len = buflen - i;

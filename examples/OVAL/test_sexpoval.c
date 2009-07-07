@@ -14,6 +14,9 @@
 #define _A(x) assert(x)
 #endif
 
+#undef _E
+#undef _I
+
 #define _E(...) do {                                \
                 fprintf(stderr, "tst#%u: ", tst);   \
                 fprintf(stderr, __VA_ARGS__);       \
@@ -112,7 +115,7 @@ int main (void)
                 
                 ++tst;
                 
-                val = SEXP_OVALelm_getval (elm);
+                val = SEXP_OVALelm_getval (elm, 1);
                 if (val == NULL) {
                         _E("No value in element\n");
                         return (EXIT_FAILURE);
@@ -161,7 +164,7 @@ int main (void)
                 
                 ++tst;
                 
-                val = SEXP_OVALelm_getval (elm);
+                val = SEXP_OVALelm_getval (elm, 1);
                 if (val == NULL) {
                         _E("No value in element\n");
                         return (EXIT_FAILURE);
@@ -236,7 +239,7 @@ int main (void)
                 
                 ++tst;
                 
-                val = SEXP_OVALelm_getval (elm);
+                val = SEXP_OVALelm_getval (elm, 1);
                 if (val == NULL) {
                         _E("No value in element\n");
                         return (EXIT_FAILURE);
@@ -361,7 +364,7 @@ int main (void)
 
                 ++tst;
                 
-                val = SEXP_OVALelm_getval (elm);
+                val = SEXP_OVALelm_getval (elm, 1);
                 
                 SEXP_number_get (val, &test, NUM_INT32);
                 if (test != d) {

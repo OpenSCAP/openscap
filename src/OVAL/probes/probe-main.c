@@ -14,6 +14,91 @@ globals_t global = GLOBALS_INITIALIZER;
 
 SEXP_t *probe_main (SEXP_t *object, int *err);
 
+#define MAX_EVAL_DEPTH 8
+
+SEXP_t *SEXP_OVALset_eval (SEXP_t *set, size_t depth)
+{
+        const char *str;
+
+        SEXP_t *filters, *items, *item, *res_items;
+                
+        if (depth > MAX_EVAL_DEPTH) {
+                _D("Too many levels: max=%zu\n", MAX_EVAL_DEPTH);
+                return (NULL);
+        }
+        
+        items = SEXP_list_new ();
+        filters = SEXP_list_new ();
+        
+        /* Get items */
+        SEXP_sublist_foreach (item, set, 2, -1) {
+                str = SEXP_string_cstrp (item);
+                
+                if (str != NULL) {
+                        switch (*str) {
+                        case 's':
+                                if (SEXP_strcmp (item, "set") == 0) {
+                                        SEXP_t *subset;
+                                        
+                                        subset = SEXP_OVALset_eval (item, depth + 1);
+                                        
+                                        if (subset != NULL) {
+                                                SEXP_list_join (items, subset);
+                                        }
+                                }
+                                break;
+                        case 'o':
+                                if (SEXP_strcmp (item, "obj_ref") == 0) {
+                                        SEXP_t *resobj, *id;
+
+                                        id = SEXP_OVALelm_getattrval (item, "id");
+                                        
+                                        if (id == NULL) {
+                                                _D("Missing object id!\n");
+                                                break;
+                                        }
+                                        
+                                        resobj = pcache_sexp_get (global.pcache, id);
+                                        
+                                        if (resobj == NULL) {
+                                                /* Request object */
+                                        }
+                                        
+                                        SEXP_list_join (items, resobj);
+                                }
+                                break;
+                        case 'f':
+                                if (SEXP_strcmp (item, "filter") == 0) {
+                                        SEXP_t *resfilter, *id;
+                                        
+                                        id = SEXP_OVALelm_getattrval (item, "id");
+
+                                        if (id == NULL) {
+                                                _D("Missing object id!\n");
+                                                break;
+                                        }
+
+                                        resfilter = pcache_sexp_get (global.pcache, id);
+
+                                        if (resfilter == NULL) {
+                                                /* Request filter */
+                                        }
+
+                                        SEXP_list_add (filters, resfilter);
+                                }
+                                break;
+                        default:
+                                _D("Unexpected set element: %.*s\n",
+                                   SEXP_string_length (item), str);
+                        }
+                }
+        }
+        
+        /* Apply filters to items */
+        
+        return (res_items);
+}
+
 int main (void)
 {
         int ret = EXIT_SUCCESS;
