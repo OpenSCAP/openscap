@@ -21,3 +21,7 @@ endif
 if WANT_OVAL
 SUBDIRS += OVAL
 endif
+
+if WANT_XCCDF
+SUBDIRS += XCCDF
+endif

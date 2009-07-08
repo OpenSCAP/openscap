@@ -269,6 +269,7 @@ AC_CONFIG_FILES([Makefile
                  swig/CVE/Makefile
                  swig/CPE/Makefile
                  swig/CCE/Makefile
+                 swig/XCCDF/Makefile
                  examples/Makefile])
 
 AC_OUTPUT
