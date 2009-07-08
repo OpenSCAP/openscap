@@ -315,6 +315,7 @@ void xccdf_value_dump(struct xccdf_item* value, int depth)
 
 
 XCCDF_STATUS_CURRENT(value)
+XCCDF_VALUE_GETTER_I(struct xccdf_value*, extends)
 XCCDF_VALUE_GETTER(enum xccdf_value_type, type)
 XCCDF_VALUE_GETTER(enum xccdf_interface_hint, interface_hint)
 XCCDF_VALUE_GETTER(enum xccdf_operator, oper)

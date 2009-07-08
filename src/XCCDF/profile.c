@@ -166,6 +166,10 @@ XCCDF_PROFILE_IGETTER(select, selects)
 XCCDF_PROFILE_IGETTER(set_value, set_values)
 XCCDF_PROFILE_IGETTER(refine_value, refine_values)
 XCCDF_PROFILE_IGETTER(refine_rule, refine_rules)
-
+XCCDF_ITERATOR_GEN_S(profile_note)
+XCCDF_ITERATOR_GEN_S(refine_value)
+XCCDF_ITERATOR_GEN_S(refine_rule)
+XCCDF_ITERATOR_GEN_S(set_value)
+XCCDF_ITERATOR_GEN_S(select)
 
 
