@@ -6,7 +6,11 @@ libxccdf_la_SOURCES = \
 	list.c \
 	profile.c \
 	value.c \
-	rule.c
+	rule.c \
+	item.h \
+	list.h \
+	elements.h
+	
 
 libxccdf_la_CFLAGS  = @libxml_cflags@
 libxccdf_la_LDFLAGS = @libxml_libs@

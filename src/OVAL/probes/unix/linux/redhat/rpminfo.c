@@ -19,6 +19,7 @@
 /* RPM headers */
 #include <rpm/rpmdb.h>
 #include <rpm/rpmlib.h>
+#include <rpm/rpmts.h>
 
 /* SEAP */
 #include <seap.h>
@@ -75,7 +76,7 @@ static int get_rpminfo (struct rpminfo_req *req, struct rpminfo_rep **rep)
 	size_t len;
 	errmsg_t rpmerr;
 	
-	match = rpmdbInitIterator (RPMts, RPMTAG_NAME, (const void *)req->name, 0);
+	match = rpmtsInitIterator (RPMts, RPMTAG_NAME, (const void *)req->name, 0);
 	if (NULL == match)
 		return (0);
 	
@@ -134,6 +135,7 @@ SEXP_t *probe_main (SEXP_t *object, int *err)
 {
         int i;
         SEXP_t *probe_out, *val, *item_sexp;
+	int rpmret;
 
         struct rpminfo_req request_st;
         struct rpminfo_rep *reply_st;

@@ -39,4 +39,5 @@ include_HEADERS= seap.h \
 		 sexp-command.h \
                  xmalloc.h
 
-includedir= $(prefix)/include
+includedir = $(prefix)/include/lib@PACKAGE@
+
