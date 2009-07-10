@@ -109,8 +109,8 @@ static SEXP_t *create_item(const char *path, const char *filename, char *pattern
 				   "text", NULL,
 				   SEXP_string_newf(substrs[0]),
 				   NULL);
-	SEXP_OVALobj_setelmstatus(item, path, 1, OVAL_STATUS_EXISTS);
-	SEXP_OVALobj_setelmstatus(item, filename, 1, OVAL_STATUS_EXISTS);
+	SEXP_OVALobj_setelmstatus(item, "path", 1, OVAL_STATUS_EXISTS);
+	SEXP_OVALobj_setelmstatus(item, "filename", 1, OVAL_STATUS_EXISTS);
 
 	for (i = 1; i < substr_cnt; ++i) {
 		SEXP_OVALobj_elm_add(item, "subexpression", NULL, SEXP_string_newf(substrs[i]));
@@ -203,7 +203,7 @@ static int process_file(const char *path, const char *filename, void *arg)
 	int instance, cur_inst = 0;
 	char line[4096];
 
-	instance = SEXP_number_getd(SEXP_OVALelm_getval(pfd->instance_elm));
+	instance = SEXP_number_getd(SEXP_OVALelm_getval(pfd->instance_elm, 1));
 
 	while (fgets(line, sizeof(line), fp) != NULL) {
 		char **substrs;
@@ -257,7 +257,7 @@ SEXP_t *probe_main(SEXP_t *probe_in, int *err)
 	if ( (behaviors_elm = SEXP_OVALobj_getelm(probe_in, "behaviors", 1)) == NULL ||
 	     (path_elm = SEXP_OVALobj_getelm(probe_in, "path", 1)) == NULL ||
 	     (filename_elm = SEXP_OVALobj_getelm(probe_in, "filename", 1)) == NULL ||
-	     (pattern = SEXP_string_cstr(SEXP_OVALobj_getelmval(probe_in, "pattern", 1))) == NULL ||
+	     (pattern = SEXP_string_cstr(SEXP_OVALobj_getelmval(probe_in, "pattern", 1, 1))) == NULL ||
 	     (instance_elm = SEXP_OVALobj_getelm(probe_in, "instance", 1)) == NULL) {
 		*err = PROBE_ENOELM;
 		return NULL;
@@ -282,7 +282,7 @@ SEXP_t *probe_main(SEXP_t *probe_in, int *err)
 			item = SEXP_OVALobj_create("textfilecontent_item",
 						   attrs,
 						   "path", NULL,
-						   SEXP_OVALelm_getval(path_elm),
+						   SEXP_OVALelm_getval(path_elm, 1),
 						   NULL);
 			SEXP_OVALobj_setelmstatus(item, "path", 1, OVAL_STATUS_DOESNOTEXIST);
 			SEXP_list_add(pfd.item_list, item);
@@ -295,7 +295,7 @@ SEXP_t *probe_main(SEXP_t *probe_in, int *err)
 		item = SEXP_OVALobj_create("textfilecontent_item",
 					   attrs,
 					   "path", NULL,
-					   SEXP_OVALelm_getval(path_elm),
+					   SEXP_OVALelm_getval(path_elm, 1),
 					   NULL);
 		SEXP_list_add(pfd.item_list, item);
 	}
