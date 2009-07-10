@@ -90,6 +90,11 @@ AC_SEARCH_LIBS(
 	]
 )
 
+#
+# dlopen & friends
+#
+AC_SEARCH_LIBS([dlopen], [dl])
+
 # Checks for header files.
 
 AC_HEADER_STDC

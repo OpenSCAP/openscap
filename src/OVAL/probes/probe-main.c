@@ -1,6 +1,7 @@
 #include <probe.h>
 #include <stdlib.h>
 #include <string.h>
+#include <dlfcn.h>
 #include <errno.h>
 #include <config.h>
 #include "xmalloc.h"
@@ -12,7 +13,10 @@
 
 globals_t global = GLOBALS_INITIALIZER;
 
-SEXP_t *probe_main (SEXP_t *object, int *err);
+typedef void * (*init_fn_t) (void);
+typedef void   (*fini_fn_t) (void *);
+
+SEXP_t *probe_main (SEXP_t *object, int *err, void *arg);
 
 #define MAX_EVAL_DEPTH 8
 
@@ -108,6 +112,10 @@ int main (void)
         int probe_ret;
         
         SEXP_t *set, *oid;
+
+        void *dlh, *pmain_arg = NULL;
+        init_fn_t   init_func = NULL;
+        fini_fn_t   fini_func = NULL;
         
         /* Initialize SEAP */
         global.ctx = SEAP_CTX_new ();
@@ -125,6 +133,21 @@ int main (void)
                 _D("Can't create cache: %u, %s.\n",
                    errno, strerror (errno));
                 exit (errno);
+        }
+
+        dlh = dlopen (NULL, RTLD_LAZY);
+        if (dlh == NULL) {
+                _D("dlopen failed: errno=%u, %s.\n",
+                   errno, strerror (errno));
+                exit (errno);
+        }
+
+        init_func = (init_fn_t) dlsym (dlh, "probe_init");
+        fini_func = (fini_fn_t) dlsym (dlh, "probe_fini");
+
+        if (init_func != NULL) {
+                _D("probe_init@%p\n", (void *)init_func);
+                pmain_arg = (*init_func)();
         }
 
         /* Main loop */
@@ -166,7 +189,7 @@ int main (void)
                                 } else {
                                         /* simple object */
                                         probe_ret = -1;
-                                        probe_out = probe_main (probe_in, &probe_ret);
+                                        probe_out = probe_main (probe_in, &probe_ret, pmain_arg);
                                         _A(probe_ret != -1);
                                 }
                         } else {
@@ -207,6 +230,12 @@ int main (void)
                 SEAP_msg_free (seap_request);
         }
         
+        if (fini_func != NULL) {
+                _D("probe_fini@%p\n", (void *)fini_func);
+                (*fini_func)(pmain_arg);
+        }
+
+        dlclose (dlh);
         pcache_free (global.pcache);
         SEAP_close (global.ctx, global.sd);
         SEAP_CTX_free (global.ctx);
