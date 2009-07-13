@@ -51,7 +51,7 @@ int find_files(SEXP_t * spath, SEXP_t *sfilename, SEXP_t *behaviors,
 	path = SEXP_string_cstr(SEXP_OVALelm_getval(spath, 1));
 	SEXP_number_get(SEXP_OVALelm_getattrval(behaviors,"max_depth"),&max_depth, NUM_INT32);
 
-	setting = malloc(sizeof(setting_t));
+	setting = calloc(1, sizeof(setting_t));
 	setting->direction = SEXP_string_cstr(SEXP_OVALelm_getattrval(behaviors,"recurse_direction"));
 	setting->follow = SEXP_string_cstr(SEXP_OVALelm_getattrval(behaviors,"recurse"));
 	setting->cb = cb;
@@ -118,9 +118,12 @@ error:
 
 	free(setting->follow);
 	free(setting->direction);
-	free(setting->file);
-	fsdev_free (setting->dev_list);
-	regfree(&(setting->re));
+	if (setting->dev_list != NULL)
+		fsdev_free (setting->dev_list);
+	if (setting->file != NULL)
+		free(setting->file);
+	else
+		regfree(&(setting->re));
 	free(setting);
 	
 	return finds;
