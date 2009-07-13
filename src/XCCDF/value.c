@@ -298,18 +298,19 @@ void xccdf_value_dump(struct xccdf_item* value, int depth)
 	xccdf_print_depth(depth++); printf("Value : %s\n", (value ? value->item.id : "(NULL)"));
 	if (!value) return;
 	xccdf_item_print(value, depth);
-	void(*valdump)(struct xccdf_value_val* val, int depth);
+	void(*valdump)(struct xccdf_value_val* val, int depth) = NULL;
 	xccdf_print_depth(depth); printf("type: ");
 	switch (value->sub.value.type) {
 		case XCCDF_TYPE_NUMBER:  printf("number\n");  valdump = xccdf_value_val_n_dump; break;
 		case XCCDF_TYPE_STRING:  printf("string\n");  valdump = xccdf_value_val_s_dump; break;
 		case XCCDF_TYPE_BOOLEAN: printf("boolean\n"); valdump = xccdf_value_val_b_dump; break;
+		default: assert(false);
 	}
 	xccdf_print_depth(depth); printf("values");
 	xccdf_htable_dump(value->sub.value.values, (xccdf_dump_func)valdump, depth + 1);
 	if (value->sub.value.sources->itemcount != 0) {
 		xccdf_print_depth(depth); printf("sources");
-		xccdf_list_dump(value->sub.value.sources, xccdf_string_dump, depth + 1);
+		xccdf_list_dump(value->sub.value.sources, (xccdf_dump_func)xccdf_string_dump, depth + 1);
 	}
 }
 

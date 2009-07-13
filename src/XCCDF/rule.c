@@ -96,7 +96,7 @@ bool xccdf_parse_deps(xmlTextReaderPtr reader, struct xccdf_item* item)
 			while ((id = xccdf_strsep(&ids, ' ')) != NULL) {
 				if (strcmp(id, "") == 0) continue;
 				xccdf_list_add(reqs, NULL);
-				xccdf_benchmark_add_ref(item->item.benchmark, (struct xccdf_item**)&reqs->last->data, id, XCCDF_CONTENT);
+				xccdf_benchmark_add_ref(item->item.benchmark, (void*)&reqs->last->data, id, XCCDF_CONTENT);
 			}
 			if (reqs->itemcount == 0) {
 				xccdf_list_delete(reqs, NULL);
@@ -109,7 +109,7 @@ bool xccdf_parse_deps(xmlTextReaderPtr reader, struct xccdf_item* item)
 		}
 		case XCCDFE_CONFLICTS:
 			xccdf_list_add(conflicts, NULL);
-			xccdf_benchmark_add_ref(item->item.benchmark, (struct xccdf_item**)&conflicts->last->data,
+			xccdf_benchmark_add_ref(item->item.benchmark, (void*)&conflicts->last->data,
 					xccdf_attribute_get(reader, XCCDFA_IDREF), XCCDF_CONTENT);
 			break;
 		default: assert(false);
