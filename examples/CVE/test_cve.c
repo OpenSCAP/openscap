@@ -5,11 +5,11 @@
 
 #include <cve.h>
 
+void xmlCleanupParser(void);
+
 int main(int argc, char **argv)
 {
-	int i;
-	cve_info_t *cveList, *cve;
-	cve_reference_t *ref;
+	struct cve* cve;
 
 	if (argc != 2) {
 		fprintf(stderr, "usage: %s <xmlfile>\n", argv[0]);
@@ -19,48 +19,39 @@ int main(int argc, char **argv)
 	}
 
 	fprintf(stdout, "[begin: parse]\n");
-	i = cveParse(argv[1], &cveList);
-	if (i < 0) {
-		fprintf(stderr, "cveParse returned error: %d.\n", i);
+	cve = cve_new(argv[1]);
+	if (cve == NULL) {
+		fprintf(stderr, "cveParse returned an error.\n");
 		return -1;
 	}
 	fprintf(stdout, "[end: parse]\n");
 	fprintf(stdout, "[done]\n");
 
-	fprintf(stderr, "Total cves processed: %d\n", i);
-
-	cve = cveList;
-	while (cve != NULL) {
-		fprintf(stdout, "[cveInfo: %s, %s, %s, %s, %s]\n", cve->id,
-			cve->pub, cve->mod, cve->cwe ? cve->cwe : "",
-			cve->summary);
+	struct cve_info_iterator* it = cve_entries(cve);
+	while (cve_info_iterator_has_more(it)) {
+		struct cve_info* info = cve_info_iterator_next(it);
+		fprintf(stdout, "[cveInfo: %s, %s, %s, %s, %s]\n", cve_info_id(info),
+			cve_info_pub(info), cve_info_mod(info),
+			cve_info_cwe(info) ? cve_info_cwe(info) : "",
+			cve_info_summary(info));
 		fprintf(stdout, "[cvss: %s, %s, %s, %s, %s, %s, %s, %s, %s]\n",
-			cve->score, cve->vector, cve->complexity,
-			cve->authentication, cve->confidentiality,
-			cve->integrity, cve->availability, cve->source,
-			cve->generated);
+			cve_info_score(info), cve_info_vector(info), cve_info_complexity(info),
+			cve_info_authentication(info), cve_info_confidentiality(info),
+			cve_info_integrity(info), cve_info_availability(info), cve_info_source(info),
+			cve_info_generated(info));
 
-		i = 0;
-		ref = cve->refs;
-		while (ref != NULL) {
-			i++;
-			ref = ref->next;
-		}
-		fprintf(stdout, "References: %d\n", i);
-
-		ref = cve->refs;
-		while (ref != NULL) {
+		struct cve_reference_iterator* refit = cve_info_references(info);
+		while (cve_reference_iterator_has_more(refit)) {
+			struct cve_reference* ref = cve_reference_iterator_next(refit);
 			fprintf(stdout, "\t[cveReference: %s, %s, %s, %s]\n",
-				ref->summary, ref->href, ref->refType,
-				ref->source);
-			ref = ref->next;
+				cve_reference_summary(ref), cve_reference_href(ref), cve_reference_type(ref),
+				cve_reference_source(ref));
 		}
 		fprintf(stdout, "\n");
-
-		cve = cve->next;
 	}
 
-	cveDelAll(cveList);
+	cve_delete(cve);
+	xmlCleanupParser();
 
 	return 0;
 }

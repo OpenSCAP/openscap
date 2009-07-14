@@ -36,6 +36,71 @@
 #include <libxml/xmlstring.h>
 
 #include "cve.h"
+#include "../common/util.h"
+#include "../common/list.h"
+
+/*
+ * Create new CVE Reference structure.
+ *
+ * @note The returned memory must be freed by the caller.
+ * @return new zeroed CVE Reference structure
+ * @retval NULL on failure
+ */
+struct cve_reference *cve_reference_new();
+
+/*
+ * Free the CVE Reference structure and its data.
+ *
+ * @param reference CVE Reference to be freed
+ */
+void cve_reference_delete(struct cve_reference * reference);
+
+struct cve_info *cve_info_new();
+
+void cve_info_delete(struct cve_info * cve);
+
+/*
+ * Parses the specified XML file and creates a list of CVE data structures.
+ * The returned list can be freed with cveDelAll().
+ *
+ * @param xmlfile path to the file to be parsed
+ * @param outCveList address of the pointer to which the root element of the list is to be stored
+ * @return non-negative value indicates the number of CVEs in the list, negative value indicates an error
+ */
+int cve_parse(const char *xmlfile, struct cve* outCveList);
+
+struct cve_reference {
+	char *summary;		// summary
+	char *href;		// href
+	char *type;		// reference type
+	char *source;		// source
+};
+
+struct cve_info {
+	char *id;		// id 
+	char *pub;		// published datetime
+	char *mod;		// last modified datetime
+	char *cwe;		// cwe
+	char *summary;		// summary
+
+	char *score;		// score
+	char *vector;		// access vector
+	char *complexity;	// access complexity
+	char *authentication;	// authentication
+	char *confidentiality;	// confidentiality impact
+	char *integrity;	// integrity impact
+	char *availability;	// availability impact
+	char *source;		// source
+	char *generated;	// generated on datetime
+
+	struct oscap_list *references;	// cve references
+};
+
+struct cve {
+	struct oscap_list* entries;
+	struct oscap_htable* entry_by_id;
+};
+
 
 enum {
 	TAG_UNKNOWN = 0,
@@ -186,43 +251,73 @@ static void pushTag(tagStack_t * stack, const xmlChar * uri,
 	}
 }
 
-cve_reference_t *cveReferenceNew()
+struct cve_reference *cve_reference_new()
 {
-	return calloc(1, sizeof(cve_reference_t));
+	return calloc(1, sizeof(struct cve_reference));
 }
 
-void cveReferenceDel(cve_reference_t * ref)
+void cve_reference_delete(struct cve_reference * ref)
 {
+	if (ref == NULL)
+		return;
 	if (ref->summary != NULL)
 		free(ref->summary);
 	if (ref->href != NULL)
 		free(ref->href);
-	if (ref->refType != NULL)
-		free(ref->refType);
+	if (ref->type != NULL)
+		free(ref->type);
 	if (ref->source != NULL)
 		free(ref->source);
 
 	free(ref);
 }
 
-void cveReferenceDelAll(cve_reference_t * ref)
+struct cve* cve_new_empty(void)
 {
-	cve_reference_t *t;
+	struct cve* cve = calloc(1, sizeof(struct cve));
+	cve->entries = oscap_list_new();
+	cve->entry_by_id = oscap_htable_new();
+	return cve;
+}
 
-	while (ref != NULL) {
-		t = ref;
-		ref = ref->next;
-		cveReferenceDel(t);
+struct cve* cve_new(const char* fname)
+{
+	struct cve* cve = cve_new_empty();
+	int ret = cve_parse(fname, cve);
+	if (ret < 0) {
+		cve_delete(cve);
+		return NULL;
+	}
+	return cve;
+}
+
+void cve_delete(struct cve* cve)
+{
+	if (cve) {
+		oscap_htable_delete(cve->entry_by_id, NULL);
+		oscap_list_delete(cve->entries, (oscap_destruct_func)cve_info_delete);
+		free(cve);
 	}
 }
 
-cve_info_t *cveNew()
+bool cve_add_info(struct cve* cve, struct cve_info* info)
 {
-	return calloc(1, sizeof(cve_info_t));
+	oscap_list_add(cve->entries, info);
+	oscap_htable_add(cve->entry_by_id, info->id, info);
+	return true;
 }
 
-void cveDel(cve_info_t * cve)
+struct cve_info *cve_info_new()
 {
+	struct cve_info* info = calloc(1, sizeof(struct cve_info));
+	info->references = oscap_list_new();
+	return info;
+}
+
+void cve_info_delete(struct cve_info * cve)
+{
+	if (cve == NULL)
+		return;
 	if (cve->id != NULL)
 		free(cve->id);
 	if (cve->cwe != NULL)
@@ -252,28 +347,17 @@ void cveDel(cve_info_t * cve)
 	if (cve->generated != NULL)
 		free(cve->generated);
 
-	cveReferenceDelAll(cve->refs);
+	oscap_list_delete(cve->references, (oscap_destruct_func)cve_reference_delete);
 	free(cve);
 }
 
-void cveDelAll(cve_info_t * cve)
-{
-	cve_info_t *t;
-
-	while (cve != NULL) {
-		t = cve;
-		cve = cve->next;
-		cveDel(t);
-	}
-}
-
-int cveParse(char *xmlfile, cve_info_t ** outCveList)
+int cve_parse(const char *xmlfile, struct cve* out)
 {
 	xmlTextReaderPtr reader;
 	int ret, cve_cnt = 0;
 	tagStack_t tagStack;
-	cve_info_t *cveList = NULL, *cve = NULL;
-	cve_reference_t *ref = NULL;
+	struct cve_info *cve = NULL;
+	struct cve_reference *ref = NULL;
 
 	/*
 	 * this initialize the library and check potential ABI mismatches
@@ -304,15 +388,11 @@ int cveParse(char *xmlfile, cve_info_t ** outCveList)
 			switch (tagStackTop(&tagStack)) {
 			case TAG_ENTRY:
 				++cve_cnt;
-				if (cveList == NULL) {
-					cveList = cve = cveNew();
-				} else {
-					cve->next = cveNew();
-					cve = cve->next;
-				}
+				cve = cve_info_new();
 				cve->id =
 				    (char *)xmlTextReaderGetAttribute(reader,
 								      ATTR_ID_STR);
+				cve_add_info(out, cve);
 				break;
 			case TAG_CWE:
 				/* can there be more than one? */
@@ -323,16 +403,11 @@ int cveParse(char *xmlfile, cve_info_t ** outCveList)
 								      ATTR_CWEID_STR);
 				break;
 			case TAG_REFS:
-				if (cve->refs == NULL) {
-					cve->refs = ref =
-					    cveReferenceNew();
-				} else {
-					ref->next = cveReferenceNew();
-					ref = ref->next;
-				}
-				ref->refType =
+				ref = cve_reference_new();
+				ref->type =
 				    (char *)xmlTextReaderGetAttribute(reader,
 								      ATTR_REFTYPE_STR);
+				oscap_list_add(cve->references, ref);
 				break;
 			case TAG_REF:
 				if (ref->href != NULL)
@@ -408,7 +483,33 @@ int cveParse(char *xmlfile, cve_info_t ** outCveList)
 	xmlCleanupParser();
 	tagStackDeinit(&tagStack);
 
-	*outCveList = cveList;
+	//*outCveList = cveList;
 
 	return ret ? -1 : cve_cnt;
 }
+
+
+OSCAP_IGETTER_GEN(cve_info, cve, entries)
+OSCAP_HGETTER(struct cve_info*, cve, entry_by_id)
+
+OSCAP_GETTER(const char*, cve_info, id)
+OSCAP_GETTER(const char*, cve_info, pub)
+OSCAP_GETTER(const char*, cve_info, mod)
+OSCAP_GETTER(const char*, cve_info, cwe)
+OSCAP_GETTER(const char*, cve_info, summary)
+OSCAP_GETTER(const char*, cve_info, score)
+OSCAP_GETTER(const char*, cve_info, vector)
+OSCAP_GETTER(const char*, cve_info, complexity)
+OSCAP_GETTER(const char*, cve_info, authentication)
+OSCAP_GETTER(const char*, cve_info, confidentiality)
+OSCAP_GETTER(const char*, cve_info, integrity)
+OSCAP_GETTER(const char*, cve_info, availability)
+OSCAP_GETTER(const char*, cve_info, source)
+OSCAP_GETTER(const char*, cve_info, generated)
+OSCAP_IGETTER_GEN(cve_reference, cve_info, references)
+
+OSCAP_GETTER(const char*, cve_reference, summary)
+OSCAP_GETTER(const char*, cve_reference, href)
+OSCAP_GETTER(const char*, cve_reference, type)
+OSCAP_GETTER(const char*, cve_reference, source)
+

@@ -36,97 +36,187 @@
 #ifndef _CVE_H_
 #define _CVE_H_
 
-/**
- * Structure holding CVE Reference data
+#include <stdbool.h>
+
+/** @struct cve
+ * Structure holding all the cve_info entries.
  */
-typedef struct cve_reference {
-	char *summary;		///< summary
-	char *href;		///< href
-	char *refType;		///< reference type
-	char *source;		///< source
+struct cve;
 
-	struct cve_reference *next;
-} cve_reference_t;
-
-/**
+/** @struct cve_info
  * Structure holding Common Vulnerabilities and Exposures data
  */
-typedef struct cve_info {
-	char *id;		///< id 
-	char *pub;		///< published datetime
-	char *mod;		///< last modified datetime
-	char *cwe;		///< cwe
-	char *summary;		///< summary
+struct cve_info;
 
-	char *score;		///< score
-	char *vector;		///< access vector
-	char *complexity;	///< access complexity
-	char *authentication;	///< authentication
-	char *confidentiality;	///< confidentiality impact
-	char *integrity;	///< integrity impact
-	char *availability;	///< availability impact
-	char *source;		///< source
-	char *generated;	///< generated on datetime
+/** @struct cve_reference
+ * Structure holding CVE Reference data
+ */
+struct cve_reference;
 
-	cve_reference_t *refs;	///< cve references
 
-	struct cve_info *next;	///< next cve info
-} cve_info_t;
+
+/** @struct cve_info_iterator
+ * Iterator over CVE entries.
+ * @see oscap_iterator
+ */
+struct cve_info_iterator;
+/// @relates cve_info_iterator
+struct cve_info* cve_info_iterator_next(struct cve_info_iterator* it);
+/// @relates cve_info_iterator
+bool cve_info_iterator_has_more(struct cve_info_iterator* it);
+
+/** @struct cve_reference_iterator
+ * Iterator over CVE references.
+ * @see oscap_iterator
+ */
+struct cve_reference_iterator;
+/// @relates cve_reference_iterator
+struct cve_reference* cve_reference_iterator_next(struct cve_reference_iterator* it);
+/// @relates cve_reference_iterator
+bool cve_reference_iterator_has_more(struct cve_reference_iterator* it);
+
+
 
 /**
- * Create new CVE Reference structure.
- *
- * @note The returned memory must be freed by the caller.
- * @return new zeroed CVE Reference structure
- * @retval NULL on failure
+ * Create a new CVE catalogue from a XML file.
+ * @relates cve
+ * @param fname XML file name
  */
-cve_reference_t *cveReferenceNew();
+struct cve* cve_new(const char* fname);
 
 /**
- * Free the CVE Reference structure and its data.
- *
- * @param reference CVE Reference to be freed
+ * Delete CVE catalogue.
+ * @relates cve
  */
-void cveReferenceDel(cve_reference_t * reference);
+void cve_delete(struct cve* cve);
 
 /**
- * Free the whole CVE Reference list.
- *
- * @param ref root of the CVE Reference list to be freed
+ * Get en iterator to CVE entries.
+ * @relates cve
  */
-void cveReferenceDelAll(cve_reference_t * ref);
+struct cve_info_iterator* cve_entries(const struct cve* cve);
 
 /**
- * Create new CVE structure.
- *
- * @note The returned memory must be freed by the caller.
- * @return new zeroed CVE structure
- * @retval NULL on failure
+ * Get CVE entry by its ID.
+ * @relates cve
  */
-cve_info_t *cveNew();
+struct cve_info* cve_entry_by_id(const struct cve* cve, const char* id);
+
 
 /**
- * Free the CVE structure and its data.
- *
- * @param cve CVE to be freed
+ * Get CVE entry ID.
+ * @relates cve_info
  */
-void cveDel(cve_info_t * cve);
+const char* cve_info_id(const struct cve_info* info);
 
 /**
- * Free the whole CVE list.
- *
- * @param cve root of the CVE list to be freed
+ * Get CVE entry publication date.
+ * @relates cve_info
  */
-void cveDelAll(cve_info_t * cve);
+const char* cve_info_pub(const struct cve_info* info);
 
 /**
- * Parses the specified XML file and creates a list of CVE data structures.
- * The returned list can be freed with cveDelAll().
- *
- * @param xmlfile path to the file to be parsed
- * @param outCveList address of the pointer to which the root element of the list is to be stored
- * @return non-negative value indicates the number of CVEs in the list, negative value indicates an error
+ * Get CVE entry last modification date.
+ * @relates cve_info
  */
-int cveParse(char *xmlfile, cve_info_t ** outCveList);
+const char* cve_info_mod(const struct cve_info* info);
+
+/**
+ * Get CVE entry CWE.
+ * @relates cve_info
+ */
+const char* cve_info_cwe(const struct cve_info* info);
+
+/**
+ * Get CVE entry summary.
+ * @relates cve_info
+ */
+const char* cve_info_summary(const struct cve_info* info);
+
+/**
+ * Get CVE entry score.
+ * @relates cve_info
+ */
+const char* cve_info_score(const struct cve_info* info);
+
+/**
+ * Get CVE entry access vector.
+ * @relates cve_info
+ */
+const char* cve_info_vector(const struct cve_info* info);
+
+/**
+ * Get CVE entry access complexity.
+ * @relates cve_info
+ */
+const char* cve_info_complexity(const struct cve_info* info);
+
+/**
+ * Get CVE entry authentication.
+ * @relates cve_info
+ */
+const char* cve_info_authentication(const struct cve_info* info);
+
+/**
+ * Get CVE entry confidentiality impact.
+ * @relates cve_info
+ */
+const char* cve_info_confidentiality(const struct cve_info* info);
+
+/**
+ * Get CVE entry integrity impact.
+ * @relates cve_info
+ */
+const char* cve_info_integrity(const struct cve_info* info);
+
+/**
+ * Get CVE entry availibility impact.
+ * @relates cve_info
+ */
+const char* cve_info_availability(const struct cve_info* info);
+
+/**
+ * Get CVE entry source.
+ * @relates cve_info
+ */
+const char* cve_info_source(const struct cve_info* info);
+
+/**
+ * Get CVE entry generation datetime.
+ * @relates cve_info
+ */
+const char* cve_info_generated(const struct cve_info* info);
+
+/**
+ * Get an iterator to CVE entry's references.
+ * @relates cve_info
+ */
+struct cve_reference_iterator* cve_info_references(const struct cve_info* info);
+
+
+/**
+ * Get CVE reference summary.
+ * @relates cve_reference
+ */
+const char* cve_reference_summary(const struct cve_reference* ref);
+
+/**
+ * Get CVE reference summary.
+ * @relates cve_reference
+ */
+const char* cve_reference_href(const struct cve_reference* ref);
+
+/**
+ * Get CVE reference summary.
+ * @relates cve_reference
+ */
+const char* cve_reference_type(const struct cve_reference* ref);
+
+/**
+ * Get CVE reference summary.
+ * @relates cve_reference
+ */
+const char* cve_reference_source(const struct cve_reference* ref);
 
 #endif				/* _CVE_H_ */
+
