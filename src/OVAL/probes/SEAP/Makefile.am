@@ -23,9 +23,10 @@ libseap_la_SOURCES= bitmap.c \
 		    sexp-command.c \
                     xbase64.c \
                     xbase64.h \
-                    xmalloc.c
+                    xmalloc.c \
+		    strto.c
 
-libseap_la_CFLAGS= -DUSE_XMALLOC -DXMALLOC_EXIT -DWANT_BASE64
+libseap_la_CFLAGS= -DUSE_XMALLOC -DXMALLOC_EXIT -DWANT_BASE64 -ftrapv
 libseap_la_LDFLAGS=
 
 include_HEADERS= seap.h \
@@ -37,7 +38,8 @@ include_HEADERS= seap.h \
                  sexp-parse.h \
                  sexp-manip.h \
 		 sexp-command.h \
-                 xmalloc.h
+                 xmalloc.h \
+		 strto.h
 
 includedir = $(prefix)/include/lib@PACKAGE@
 
