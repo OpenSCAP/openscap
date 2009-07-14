@@ -81,10 +81,10 @@ void __debuglog (const char *fn, size_t line, const char *fmt, ...)
 #endif
         if (__debuglog_fp == NULL) {
                 __debuglog_fp = fopen ("seap_debug.log", "a");
-                //setbuf (__debuglog_fp, NULL);
+                setbuf (__debuglog_fp, NULL);
         }
         
-        fprintf (__debuglog_fp, "(%u) %zu:%s: ", getpid (), line, fn);
+        fprintf (__debuglog_fp, "(%u) [%zu: %s] ", getpid (), line, fn);
         va_start (ap, fmt);
         vfprintf (__debuglog_fp, fmt, ap);
         va_end (ap);

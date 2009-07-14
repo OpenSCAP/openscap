@@ -163,9 +163,9 @@ static inline void SEXP_SETFLAG(SEXP_t *sexp, ATOM_flags_t flag)
 # define __VALIDATE_TRESH_STRING_LEN 65535
 #endif
 
-static inline void __SEXP_VALIDATE(const SEXP_t *ptr, const char *loc) {
+static inline void __SEXP_VALIDATE(const SEXP_t *ptr, const char *fn, size_t line) {
         if (ptr == NULL) {
-                fprintf (stderr, "%s: !!! NULL S-EXP OBJECT !!!\n", loc);
+                fprintf (stderr, "[%zu:%s]: !!! NULL S-EXP OBJECT !!!\n", line, fn);
         } else {
                 if ((ptr->__magic0 == SEXP_MAGIC0) &&
                     (ptr->__magic1 == SEXP_MAGIC1)) {
@@ -177,11 +177,11 @@ static inline void __SEXP_VALIDATE(const SEXP_t *ptr, const char *loc) {
                                 return;
                         case ATOM_LIST:
                                 if (ptr->atom.list.size > __VALIDATE_TRESH_LIST_SIZE) {
-                                        fprintf (stderr, "%s !!! LIST SIZE TRESHOLD EXCEEDED !!!\n", loc);
+                                        fprintf (stderr, "[%zu:%s] !!! LIST SIZE TRESHOLD EXCEEDED !!!\n", line, fn);
                                         break;
                                 }
                                 if (ptr->atom.list.count > __VALIDATE_TRESH_LIST_COUNT) {
-                                        fprintf (stderr, "%s !!! LIST COUNT TRESHOLD EXCEEDED !!!\n", loc);
+                                        fprintf (stderr, "[%zu:%s] !!! LIST COUNT TRESHOLD EXCEEDED !!!\n", line, fn);
                                         break;
                                 }
                                 return;
@@ -202,24 +202,23 @@ static inline void __SEXP_VALIDATE(const SEXP_t *ptr, const char *loc) {
                                 case NUM_BIGNUM:
                                         return;
                                 }
-                                fprintf (stderr, "%s !!! INVALID NUMBER TYPE !!!\n", loc);
+                                fprintf (stderr, "[%zu:%s] !!! INVALID NUMBER TYPE !!!\n", line, fn);
                                 break;
                         case ATOM_STRING:
                                 if (ptr->atom.string.len <= __VALIDATE_TRESH_STRING_LEN)
                                         return;
-                                fprintf (stderr, "%s !!! STRING LENGTH TRESHOLD EXCEEDED !!!\n", loc);
+                                fprintf (stderr, "[%zu:%s] !!! STRING LENGTH TRESHOLD EXCEEDED !!!\n", line, fn);
                                 break;
                         default:
-                                fprintf (stderr, "%s !!! INVALID S-EXP OBJECT TYPE !!!\n", loc);
+                                fprintf (stderr, "[%zu:%s] !!! INVALID S-EXP OBJECT TYPE !!!\n", line, fn);
                         }
                 }
-                fprintf (stderr, "%s: !!! CORRUPTED S-EXP OBJECT !!!\n", loc);
-                fprintf (stderr, "%s: ptr=%p, type=%u\n", loc, ptr, SEXP_TYPE(ptr));
+                fprintf (stderr, "[%zu:%s]: !!! CORRUPTED S-EXP OBJECT !!! (p=%p, t=%u)\n", line, fn, ptr, SEXP_TYPE(ptr));
         }
         abort ();
 }
 
-# define SEXP_VALIDATE(ptr) __SEXP_VALIDATE(ptr, __PRETTY_FUNCTION__)
+# define SEXP_VALIDATE(ptr) __SEXP_VALIDATE(ptr, __PRETTY_FUNCTION__, __LINE__)
 #else
 # define SEXP_VALIDATE(ptr) while(0)
 #endif
