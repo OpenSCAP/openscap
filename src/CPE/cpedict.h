@@ -6,7 +6,7 @@
  *
  *
  * @file cpedict.h
- * \brief Interface to Common Product Enumeration (CPE) Dictionary.
+ * \brief Interface to Common Platform Enumeration (CPE) Dictionary.
  *
  * See more details at http://nvd.nist.gov/cpe.cfm
  */
@@ -40,108 +40,226 @@
 
 #include "cpeuri.h"
 
-/// single check struct
-typedef struct cpe_dict_check {
-	char *system;		///< system check URI
-	char *href;		///< external file reference (NULL if not present)
-	char *identifier;	///< test identifier
-} cpe_dict_check_t;
+/**
+ * @struct cpe_dict_check
+ * Structure representing single CPE check.
+ */
+struct cpe_dict_check;
 
-/// dictionary item reference
-typedef struct cpe_dict_reference {
-	char *href;		///< reference URL
-	char *content;		///< reference description
-} cpe_dict_reference_t;
+/**
+ * @struct cpe_dict_reference
+ * CPE dictionary item reference.
+ */
+struct cpe_dict_reference;
 
-/// structure representing single CPE dictionary item
-typedef struct cpe_dict_item {
+/**
+ * @struct cpe_dictitem
+ * Structure representing single CPE dictionary item.
+ */
+struct cpe_dictitem;
 
-	cpe_t *name;		///< CPE name as CPE URI
+/**
+ * @struct cpe_dict
+ * Structure representing a CPE dictionary.
+ */
+struct cpe_dict;
 
-	char *title;		///< human-readable name of this item
 
-	char **notes;		///< notes as array of strings
-	size_t notes_n;		///< number of notes
-	size_t notes_alloc_;	///< allocated space for notes (internal)
+struct oscap_string_iterator;
+const char* oscap_string_iterator_next(struct oscap_string_iterator* it);
+bool oscap_string_iterator_has_more(struct oscap_string_iterator* it);
 
-	cpe_t *depracated;	///< CPE that depracated this one (or NULL)
-	char *depracation_date;	///< date of depracation
 
-	cpe_dict_reference_t *references;	///< array of references
-	size_t references_n;	///< number of references
-	size_t references_alloc_;	///< allocated space for references
+/** @struct cpe_dictitem_iterator
+ * Iterator over CPE dictionary items.
+ * @see oscap_iterator
+ */
+struct cpe_dictitem_iterator;
+/// @relates cpe_dictitem_iterator
+struct cpe_dictitem* cpe_dictitem_iterator_next(struct cpe_dictitem_iterator* it);
+/// @relates cpe_dictitem_iterator
+bool cpe_dictitem_iterator_has_more(struct cpe_dictitem_iterator* it);
 
-	cpe_dict_check_t **check;	///< array of checks to be performed
-	size_t check_n;		///< number of checks
-	size_t check_alloc_;	///< allocated space for checks
+/** @struct cpe_dict_reference_iterator
+ * Iterator over CPE dictionary references.
+ * @see oscap_iterator
+ */
+struct cpe_dict_reference_iterator;
+/// @relates cpe_dict_reference_iterator
+struct cpe_dict_reference* cpe_dict_reference_iterator_next(struct cpe_dict_reference_iterator* it);
+/// @relates cpe_dict_reference_iterator
+bool cpe_dict_reference_iterator_has_more(struct cpe_dict_reference_iterator* it);
 
-	struct cpe_dict_item *next;	///< pointer to next dictionary item
+/** @struct cpe_dict_check_iterator
+ * Iterator over CPE dictionary checks.
+ * @see oscap_iterator
+ */
+struct cpe_dict_check_iterator;
+/// @relates cpe_dict_check_iterator
+struct cpe_dict_check* cpe_dict_check_iterator_next(struct cpe_dict_check_iterator* it);
+/// @relates cpe_dict_check_iterator
+bool cpe_dict_check_iterator_has_more(struct cpe_dict_check_iterator* it);
 
-} cpe_dict_item_t;
-
-/// Structure representing CPE dictionary
-typedef struct cpe_dict {
-
-	struct cpe_dict_item *first;	///< pointer to a first dictionary item
-	struct cpe_dict_item *last;	///< pointer to a last dictionary item
-	size_t item_n;		///< number of items in dictionary
-	cpe_t **cpes;		///< pointers to individual CPEs for easy access
-	size_t cpes_alloc_;	///< space allocated for cpes, internal
-
-	struct {
-		char *product_name;	///< generator software name
-		char *product_version;	///< generator software version
-		char *schema_version;	///< generator schema version
-		char *timestamp;	///< generation date and time
-	} generator;		///< generator software info
-
-} cpe_dict_t;
 
 /**
  * Load new CPE dictionary from file
+ * @relates cpe_dict
  * @param fname file name of dictionary to load
  * @return new dictionary
  * @retval NULL on failure
  */
-cpe_dict_t *cpe_dict_new(const char *fname);
+struct cpe_dict *cpe_dict_new(const char *fname);
 
 /**
  * Create new empty CPE dictionary
+ * @relates cpe_dict
  * @return new dictionary
  * @retval NULL on failure
  */
-cpe_dict_t *cpe_dict_new_empty();
+struct cpe_dict *cpe_dict_new_empty(void);
 
 /**
  * Add @a item to dictionary @a dict
  *
- * @note item will be deleted as soon as you call cpe_dict_delete on dictionary.
+ * @relates cpe_dict
+ * @note The item will be deleted as soon as you call cpe_dict_delete on the dictionary.
  * @param dict dictionary to add new item to
  * @param item pointer to item to add
  * @return true on success
  */
-bool cpe_dict_add_item(cpe_dict_t * dict, cpe_dict_item_t * item);
+bool cpe_dict_add_item(struct cpe_dict * dict, struct cpe_dictitem * item);
 
 /**
  * Frees CPE dictionary and its contents
+ * @relates cpe_dict
  * @param dict dictionary to be deleted
  */
-void cpe_dict_delete(cpe_dict_t * dict);
+void cpe_dict_delete(struct cpe_dict * dict);
 
 /**
- * Create new empty dictionary item
- * @return new dictionary item
- * @retval NULL on failure
+ * Get an iterator to the dictionary contents.
+ * @relates cpe_dict
  */
-cpe_dict_item_t *cpe_dictitem_new_empty();
+struct cpe_dictitem_iterator* cpe_dict_items(const struct cpe_dict* item);
 
 /**
- * Free dictionary item
- * @param item item to be deleted
+ * Get name of a generator of the dictionary.
+ * @relates cpe_dict
  */
-void cpe_dictitem_delete(cpe_dict_item_t * item);
+const char* cpe_dict_generator_product_name(const struct cpe_dict* item);
 
-void cpe_dictcheck_delete(cpe_dict_check_t * check);
+/**
+ * Get version of a generator of the dictionary.
+ * @relates cpe_dict
+ */
+const char* cpe_dict_generator_product_version(const struct cpe_dict* item);
+
+/**
+ * Get CPE dictionary schema version used to create this dictionary.
+ * @relates cpe_dict
+ */
+const char* cpe_dict_generator_schema_version(const struct cpe_dict* item);
+
+/**
+ * Get timestamp of the dictionary creation.
+ * @relates cpe_dict
+ */
+const char* cpe_dict_generator_timestamp(const struct cpe_dict* item);
+
+/**
+ * Get name of a checking system of the CPE check.
+ * @relates cpe_dict_check
+ */
+const char* cpe_dict_check_system(const struct cpe_dict_check* item);
+
+/**
+ * Get URL of the CPE check.
+ * @relates cpe_dict_check
+ */
+const char* cpe_dict_check_href(const struct cpe_dict_check* item);
+
+/**
+ * Get identifier of the CPE check.
+ * @relates cpe_dict_check
+ */
+const char* cpe_dict_check_identifier(const struct cpe_dict_check* item);
+
+
+/**
+ * Get URL of the CPE dictionary reference.
+ * @relates cpe_dict_reference
+ */
+const char* cpe_dict_reference_href(const struct cpe_dict_reference* item);
+
+/**
+ * Get content of the CPE dictionary reference.
+ * @relates cpe_dict_reference
+ */
+const char* cpe_dict_reference_content(const struct cpe_dict_reference* item);
+
+
+/**
+ * Get CPE name of the dictionary entry.
+ * @relates cpe_dictitem
+ */
+struct cpe_name* cpe_dictitem_name(const struct cpe_dictitem* item);
+
+/**
+ * Get title of the dictionary entry.
+ * @relates cpe_dictitem
+ */
+const char* cpe_dictitem_title(const struct cpe_dictitem* item);
+
+/**
+ * Get an iterator to the dictionary entry's references.
+ * @relates cpe_dictitem
+ */
+struct cpe_dict_reference_iterator* cpe_dictitem_references(const struct cpe_dictitem* item);
+
+/**
+ * Get an iterator to the dictionary entry's checks.
+ * @relates cpe_dictitem
+ */
+struct cpe_dict_check_iterator* cpe_dictitem_checks(const struct cpe_dictitem* item);
+
+/**
+ * Get an iterator to the dictionary entry's notes.
+ * @relates cpe_dictitem
+ */
+struct oscap_string_iterator* cpe_dictitem_notes(const struct cpe_dictitem* item);
+
+/**
+ * Get CPE name of item that depracated this one.
+ * @retval NULL if the item has not been depracated
+ * @relates cpe_dictitem
+ */
+struct cpe_name* cpe_dictitem_depracated(const struct cpe_dictitem* item);
+
+/**
+ * Get date this item was depracated.
+ * @relates cpe_dictitem
+ */
+const char* cpe_dictitem_depracation_date(const struct cpe_dictitem* item);
+
+/**
+ * Verify wether given CPE is known according to specified dictionary
+ * @relates cpe_name
+ * @relates cpe_dict
+ * @param cpe CPE to verify
+ * @param dict used CPE dictionary
+ * @return true if dictionary contains given CPE
+ */
+bool cpe_name_match_dict(struct cpe_name * cpe, struct cpe_dict * dict);
+
+/**
+ * Verify if CPE given by string is known according to specified dictionary
+ * @relates cpe_name
+ * @relates cpe_dict
+ * @param cpe CPE to verify
+ * @param dict used CPE dictionary
+ * @return true if dictionary contains given CPE
+ */
+bool cpe_name_match_dict_str(const char *cpe, struct cpe_dict * dict);
 
 #endif				/* _CPEDICT_H_ */
 

@@ -1,6 +1,6 @@
 /**
  * @file cpedict.c
- * \brief Interface to Common Product Enumeration (CPE) Dictionary.
+ * \brief Interface to Common Platform Enumeration (CPE) Dictionary.
  *
  * See more details at http://nvd.nist.gov/cpe.cfm
  */
@@ -33,49 +33,92 @@
 #include <libxml/tree.h>
 
 #include "cpedict.h"
+#include "../common/list.h"
+#include "../common/util.h"
 
-/*** Private ***/
+struct cpe_dict_check {
+	char *system;      // system check URI
+	char *href;        // external file reference (NULL if not present)
+	char *identifier;  // test identifier
+};
 
-/**
+
+struct cpe_dict_reference {
+	char *href;     // reference URL
+	char *content;  // reference description
+};
+
+
+struct cpe_dictitem {
+
+	struct cpe_name *name;		   // CPE name as CPE URI
+	char *title;		           // human-readable name of this item
+
+	struct cpe_name *depracated;   // CPE that depracated this one (or NULL)
+	char *depracation_date;	       // date of depracation
+
+	struct oscap_list* references; // list of references
+	struct oscap_list* checks;     // list of checks
+	struct oscap_list* notes;      // list of notes
+};
+
+
+struct cpe_dict {
+	struct oscap_list* items;        // dictionary items
+
+	char *generator_product_name;    // generator software name
+	char *generator_product_version; // generator software version
+	char *generator_schema_version;	 // generator schema version
+	char *generator_timestamp;       // generation date and time
+};
+
+
+OSCAP_GETTER(const char*, cpe_dict_check, system)
+OSCAP_GETTER(const char*, cpe_dict_check, href)
+OSCAP_GETTER(const char*, cpe_dict_check, identifier)
+
+OSCAP_GETTER(const char*, cpe_dict_reference, href)
+OSCAP_GETTER(const char*, cpe_dict_reference, content)
+
+OSCAP_GETTER(struct cpe_name*, cpe_dictitem, name)
+OSCAP_GETTER(const char*, cpe_dictitem, title)
+OSCAP_GETTER(struct cpe_name*, cpe_dictitem, depracated)
+OSCAP_GETTER(const char*, cpe_dictitem, depracation_date)
+OSCAP_IGETTER(oscap_string, cpe_dictitem, notes)
+OSCAP_IGETTER_GEN(cpe_dict_reference, cpe_dictitem, references)
+OSCAP_IGETTER_GEN(cpe_dict_check, cpe_dictitem, checks)
+
+OSCAP_GETTER(const char*, cpe_dict, generator_product_name)
+OSCAP_GETTER(const char*, cpe_dict, generator_product_version)
+OSCAP_GETTER(const char*, cpe_dict, generator_schema_version)
+OSCAP_GETTER(const char*, cpe_dict, generator_timestamp)
+OSCAP_IGETTER_GEN(cpe_dictitem, cpe_dict, items)
+
+
+/*
  * Load new CPE dictionary from XML node
  * @param node file name of dictionary to load
  * @return new dictionary
  * @retval NULL on failure
  */
-cpe_dict_t *cpe_dict_new_xml(xmlNodePtr node);
+struct cpe_dict *cpe_dict_new_xml(xmlNodePtr node);
 
-/**
+/*
  * New dictionary item from XML
  * @param node cpe-item node
  * @return new dictionary item
  * @retval NULL on failure
  */
-cpe_dict_item_t *cpe_dictitem_new_xml(xmlNodePtr node);
+struct cpe_dictitem *cpe_dictitem_new_xml(xmlNodePtr node);
 
-cpe_dict_check_t *cpe_dictcheck_new_xml(xmlNode * node);
+struct cpe_dict_check *cpe_dictcheck_new_xml(xmlNode * node);
 
-/*** Public ***/
+struct cpe_dictitem *cpe_dictitem_new_empty();
 
-/**
- * Append item to a dynamically allocated list
- * @param type type of item being appended to a list
- * @param item variable holding item itself
- * @param list variable representing list itself
- * @param num variable representing number of items in list
- * @param alloc variable holding info on number of items allocated
- * @param init_alloc desired initial allocation in case of list does not exist yet
- */
-#define APPEND_ITEM(type, item, list, num, alloc, init_alloc) do {    \
-	if ((alloc) < (num) + 1) {                                        \
-		type* old;                                                    \
-		if ((alloc) <= 0) (alloc) = (init_alloc);                     \
-		else (alloc) *= 2;                                            \
-		old = (list);                                                 \
-		(list) = realloc(old, (alloc) * sizeof(type));                \
-		if ((list) == NULL) (list) = old;                             \
-	}                                                                 \
-	(list)[(num)++] = (item);                                         \
-} while (0)
+void cpe_dictitem_delete(struct cpe_dictitem * item);
+
+void cpe_dict_check_delete(struct cpe_dict_check * check);
+
 
 char *str_trim(char *str)
 {
@@ -93,11 +136,11 @@ char *str_trim(char *str)
 	return str;
 }
 
-cpe_dict_t *cpe_dict_new(const char *fname)
+struct cpe_dict *cpe_dict_new(const char *fname)
 {
 	xmlDocPtr doc;
 	xmlNodePtr root;
-	cpe_dict_t *ret;
+	struct cpe_dict *ret;
 
 	if ((doc = xmlParseFile(fname)) == NULL)
 		return NULL;
@@ -112,10 +155,10 @@ cpe_dict_t *cpe_dict_new(const char *fname)
 	return ret;
 }
 
-cpe_dict_t *cpe_dict_new_xml(xmlNodePtr node)
+struct cpe_dict *cpe_dict_new_xml(xmlNodePtr node)
 {
-	cpe_dict_t *ret;
-	cpe_dict_item_t *item;
+	struct cpe_dict *ret;
+	struct cpe_dictitem *item;
 	xmlNodePtr cur;
 
 	if (xmlStrcmp(node->name, BAD_CAST "cpe-list") != 0)
@@ -138,20 +181,20 @@ cpe_dict_t *cpe_dict_new_xml(xmlNodePtr node)
 			     cur = cur->next) {
 				if (xmlStrcmp
 				    (cur->name, BAD_CAST "product_name") == 0)
-					ret->generator.product_name =
+					ret->generator_product_name =
 					    (char *)xmlNodeGetContent(cur);
 				if (xmlStrcmp
 				    (cur->name,
 				     BAD_CAST "product_version") == 0)
-					ret->generator.product_version =
+					ret->generator_product_version =
 					    (char *)xmlNodeGetContent(cur);
 				if (xmlStrcmp
 				    (cur->name, BAD_CAST "schema_version") == 0)
-					ret->generator.schema_version =
+					ret->generator_schema_version =
 					    (char *)xmlNodeGetContent(cur);
 				if (xmlStrcmp(cur->name, BAD_CAST "timestamp")
 				    == 0)
-					ret->generator.timestamp =
+					ret->generator_timestamp =
 					    (char *)xmlNodeGetContent(cur);
 			}
 		}
@@ -162,97 +205,63 @@ cpe_dict_t *cpe_dict_new_xml(xmlNodePtr node)
 
 const size_t CPE_DICT_CPES_INITIAL_ALLOC = 8;
 
-cpe_dict_t *cpe_dict_new_empty()
+struct cpe_dict *cpe_dict_new_empty(void)
 {
-	cpe_dict_t *dict;
+	struct cpe_dict *dict;
 
-	dict = malloc(sizeof(cpe_dict_t));
+	dict = malloc(sizeof(struct cpe_dict));
 	if (dict == NULL)
 		return NULL;
 
-	memset(dict, 0, sizeof(cpe_dict_t));
-
-	dict->cpes_alloc_ = CPE_DICT_CPES_INITIAL_ALLOC;
-	if ((dict->cpes = malloc(dict->cpes_alloc_ * sizeof(cpe_t *))) == NULL) {
-		free(dict);
-		return NULL;
-	}
-
+	memset(dict, 0, sizeof(struct cpe_dict));
+	dict->items = oscap_list_new();
 	return dict;
 }
 
-bool cpe_dict_add_item(cpe_dict_t * dict, cpe_dict_item_t * item)
+bool cpe_dict_add_item(struct cpe_dict * dict, struct cpe_dictitem * item)
 {
-	cpe_t **bak;
-
 	if (dict == NULL || item == NULL)
 		return false;
 
-	if (dict->cpes_alloc_ < dict->item_n + 1) {
-		dict->cpes_alloc_ *= 2;
-		bak = dict->cpes;
-		if ((dict->cpes =
-		     realloc(bak,
-			     dict->cpes_alloc_ * sizeof(cpe_t *))) == NULL) {
-			dict->cpes = bak;
-			return false;
-		}
-	}
-
-	dict->cpes[dict->item_n++] = item->name;
-
-	if (dict->first == NULL)
-		dict->first = dict->last = item;
-	else {
-		dict->last->next = item;
-		dict->last = item;
-	}
-	item->next = NULL;
-
+	oscap_list_add(dict->items, item);
 	return true;
 }
 
-void cpe_dict_delete(cpe_dict_t * dict)
+void cpe_dict_delete(struct cpe_dict * dict)
 {
-	cpe_dict_item_t *item, *next;
+	if (dict == NULL) return;
 
-	if (dict == NULL)
-		return;
-
-	for (item = dict->first; item != NULL; item = next) {
-		next = item->next;
-		cpe_dictitem_delete(item);
-	}
-
-	free(dict->cpes);
-	free(dict->generator.product_name);
-	free(dict->generator.product_version);
-	free(dict->generator.schema_version);
-	free(dict->generator.timestamp);
+	oscap_list_delete(dict->items, (oscap_destruct_func)cpe_dictitem_delete);
+	free(dict->generator_product_name);
+	free(dict->generator_product_version);
+	free(dict->generator_schema_version);
+	free(dict->generator_timestamp);
 	free(dict);
 }
 
-cpe_dict_item_t *cpe_dictitem_new_empty()
+struct cpe_dictitem *cpe_dictitem_new_empty()
 {
-	cpe_dict_item_t *item;
+	struct cpe_dictitem *item;
 
-	item = malloc(sizeof(cpe_dict_item_t));
+	item = malloc(sizeof(struct cpe_dictitem));
 	if (item == NULL)
 		return NULL;
 
-	memset(item, 0, sizeof(cpe_dict_item_t));
+	memset(item, 0, sizeof(struct cpe_dictitem));
+	item->notes      = oscap_list_new();
+	item->references = oscap_list_new();
+	item->checks     = oscap_list_new();
 
 	return item;
 }
 
-cpe_dict_item_t *cpe_dictitem_new_xml(xmlNodePtr node)
+struct cpe_dictitem *cpe_dictitem_new_xml(xmlNodePtr node)
 {
-	cpe_dict_item_t *item;
-	cpe_dict_check_t *check;
+	struct cpe_dictitem *item;
+	struct cpe_dict_check *check;
 	xmlNodePtr cur;
 	xmlChar *data;
-	cpe_dict_reference_t ref = { NULL, NULL }
-	, *pref;
+	struct cpe_dict_reference *pref;
 
 	if (xmlStrcmp(node->name, BAD_CAST "cpe-item") != 0)
 		return NULL;
@@ -262,7 +271,7 @@ cpe_dict_item_t *cpe_dictitem_new_xml(xmlNodePtr node)
 		return NULL;
 
 	data = xmlGetProp(node, BAD_CAST "name");
-	if (data == NULL || (item->name = cpe_new((char *)data)) == NULL) {
+	if (data == NULL || (item->name = cpe_name_new((char *)data)) == NULL) {
 		free(item);
 		free(data);
 		return NULL;
@@ -281,34 +290,19 @@ cpe_dict_item_t *cpe_dictitem_new_xml(xmlNodePtr node)
 				data =
 				    BAD_CAST str_trim((char *)
 						      xmlNodeGetContent(cur));
-				if (data)
-					APPEND_ITEM(char *, (char *)data,
-						    item->notes, item->notes_n,
-						    item->notes_alloc_, 4);
+				if (data) oscap_list_add(item->notes, data);
 			}
 		} else if (xmlStrcmp(node->name, BAD_CAST "check") == 0) {
 			check = cpe_dictcheck_new_xml(node);
-			if (check)
-				APPEND_ITEM(cpe_dict_check_t *, check,
-					    item->check, item->check_n,
-					    item->check_alloc_, 4);
+			if (check) oscap_list_add(item->checks, check);
 		} else if (xmlStrcmp(node->name, BAD_CAST "references") == 0) {
 			for (cur = node->xmlChildrenNode; cur != NULL;
 			     cur = cur->next) {
-				if (xmlStrcmp(cur->name, BAD_CAST "reference")
-				    != 0)
-					continue;
-				if (data)
-					APPEND_ITEM(cpe_dict_reference_t, ref,
-						    item->references,
-						    item->references_n,
-						    item->references_alloc_, 4);
-				pref =
-				    item->references + item->references_n - 1;
-				pref->content =
-				    str_trim((char *)xmlNodeGetContent(cur));
-				pref->href =
-				    (char *)xmlGetProp(cur, BAD_CAST "href");
+				if (xmlStrcmp(cur->name, BAD_CAST "reference") != 0) continue;
+				pref = calloc(1, sizeof(struct cpe_dict_reference));
+				pref->content = str_trim((char *)xmlNodeGetContent(cur));
+				pref->href = (char *)xmlGetProp(cur, BAD_CAST "href");
+				oscap_list_add(item->references, pref);
 			}
 		}
 	}
@@ -316,48 +310,41 @@ cpe_dict_item_t *cpe_dictitem_new_xml(xmlNodePtr node)
 	return item;
 }
 
-void cpe_dictitem_delete(cpe_dict_item_t * item)
+void cpe_dict_reference_delete(struct cpe_dict_reference* ref)
 {
-	int i;
-
-	if (item == NULL)
-		return;
-
-	cpe_delete(item->name);
-
-	free(item->title);
-
-	for (i = 0; i < (int)item->notes_n; ++i)
-		free(item->notes[i]);
-	free(item->notes);
-
-	cpe_delete(item->depracated);
-	free(item->depracation_date);
-
-	for (i = 0; i < (int)item->references_n; ++i) {
-		free(item->references[i].href);
-		free(item->references[i].content);
+	if (ref) {
+		free(ref->href);
+		free(ref->content);
+		free(ref);
 	}
-	free(item->references);
+}
 
-	for (i = 0; i < (int)item->check_n; ++i)
-		cpe_dictcheck_delete(item->check[i]);
-	free(item->check);
+void cpe_dictcheck_delete(struct cpe_dict_check * check);
 
+void cpe_dictitem_delete(struct cpe_dictitem * item)
+{
+	if (item == NULL) return;
+	cpe_name_delete(item->name);
+	free(item->title);
+	cpe_name_delete(item->depracated);
+	free(item->depracation_date);
+	oscap_list_delete(item->references, (oscap_destruct_func)cpe_dict_reference_delete);
+	oscap_list_delete(item->checks, (oscap_destruct_func)cpe_dictcheck_delete);
+	oscap_list_delete(item->notes, free);
 	free(item);
 }
 
-cpe_dict_check_t *cpe_dictcheck_new_xml(xmlNode * node)
+struct cpe_dict_check *cpe_dictcheck_new_xml(xmlNode * node)
 {
 	xmlChar *data;
-	cpe_dict_check_t *check;
+	struct cpe_dict_check *check;
 
 	if (xmlStrcmp(node->name, BAD_CAST "check") != 0)
 		return NULL;
 
-	if ((check = malloc(sizeof(cpe_dict_check_t))) == NULL)
+	if ((check = malloc(sizeof(struct cpe_dict_check))) == NULL)
 		return NULL;
-	memset(check, 0, sizeof(cpe_dict_check_t));
+	memset(check, 0, sizeof(struct cpe_dict_check));
 
 	data = xmlGetProp(node, BAD_CAST "system");
 	if (data)
@@ -372,7 +359,7 @@ cpe_dict_check_t *cpe_dictcheck_new_xml(xmlNode * node)
 	return check;
 }
 
-void cpe_dictcheck_delete(cpe_dict_check_t * check)
+void cpe_dictcheck_delete(struct cpe_dict_check * check)
 {
 	if (check == NULL)
 		return;
@@ -380,4 +367,37 @@ void cpe_dictcheck_delete(cpe_dict_check_t * check)
 	free(check->system);
 	free(check->href);
 	free(check);
+}
+
+bool cpe_name_match_dict(struct cpe_name * cpe, struct cpe_dict * dict)
+{
+	if (cpe == NULL || dict == NULL)
+		return false;
+	
+	size_t n = dict->items->itemcount;
+	struct cpe_name** cpes = malloc(sizeof(struct cpe_name*) * n);
+	struct oscap_list_item* cur = dict->items->first;
+
+	for (int i = 0; cur != NULL; ++i) {
+		cpes[i] = ((struct cpe_dictitem*)cur->data)->name;
+		cur = cur->next;
+	}
+	
+	bool ret = cpe_name_match_cpes(cpe, n, cpes);
+
+	free(cpes);
+
+	return ret;
+}
+
+bool cpe_name_match_dict_str(const char *cpestr, struct cpe_dict * dict)
+{
+	bool ret;
+	if (cpestr == NULL)
+		return false;
+	struct cpe_name *cpe = cpe_name_new(cpestr);
+	if (cpe == NULL) return false;
+	ret = cpe_name_match_dict(cpe, dict);
+	cpe_name_delete(cpe);
+	return ret;
 }

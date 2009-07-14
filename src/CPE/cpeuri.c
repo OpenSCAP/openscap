@@ -1,5 +1,5 @@
 /*! \file cpeuri.c
- *  \brief Interface to Common Product Enumeration (CPE) URI
+ *  \brief Interface to Common Platform Enumeration (CPE) URI
  *  
  *   See more details at http://nvd.nist.gov/cpe.cfm
  *  
@@ -37,6 +37,32 @@
 #include <assert.h>
 
 #include "cpeuri.h"
+#include "../common/util.h"
+
+
+// enumeration of CPE URI fields (useful for indexing arrays)
+enum cpe_field_t {
+	CPE_FIELD_TYPE,
+	CPE_FIELD_VENDOR,
+	CPE_FIELD_PRODUCT,
+	CPE_FIELD_VERSION,
+	CPE_FIELD_UPDATE,
+	CPE_FIELD_EDITION,
+	CPE_FIELD_LANGUAGE,
+	CPE_FIELDNUM,
+};
+
+struct cpe_name {
+	char *data_;           // parsed string, internal use only
+	char **fields_;        // NULL-terminated array of pointers to individual components of CPE URI, internal
+	enum cpe_part part;    // part
+	const char *vendor;    // vendor
+	const char *product;   // product
+	const char *version;   // version
+	const char *update;    // update
+	const char *edition;   // edition
+	const char *language;  // language
+};
 
 const char *CPE_PART_CHAR[] = { NULL, "h", "o", "a" };
 
@@ -44,18 +70,37 @@ const char *CPE_SCHEMA = "cpe:/";
 const char CPE_SEP_CHAR = ':';
 const char *CPE_SEP_STR = ":";
 
-cpe_t *cpe_new(const char *cpestr)
+char **cpe_uri_split(char *str, const char *delim);
+bool cpe_urldecode(char *str);
+size_t ptrarray_length(void **arr);
+bool cpe_name_check(const char *str);
+char **cpe_split(char *str, const char *delim);
+/*
+ * Fill @a cpe structure with parsed @a fields.
+ *
+ * Fields can be obtained via cpe_split().
+ * Pointers in target sructure will point to same strings as pointers in @a fields do.
+ * No string duplication is performed.
+ *
+ * @see cpe_split
+ * @param cpe structure to be filled
+ * @param fields NULL-terminated array of strings representing individual fields
+ * @return true on success
+ */
+bool cpe_assign_values(struct cpe_name * cpe, char **fields);
+
+struct cpe_name *cpe_name_new(const char *cpestr)
 {
 	int i;
-	cpe_t *cpe;
+	struct cpe_name *cpe;
 
-	if (cpestr && !cpe_check(cpestr))
+	if (cpestr && !cpe_name_check(cpestr))
 		return NULL;
 
-	cpe = malloc(sizeof(cpe_t));
+	cpe = malloc(sizeof(struct cpe_name));
 	if (cpe == NULL)
 		return NULL;
-	memset(cpe, 0, sizeof(cpe_t));	// zero memory
+	memset(cpe, 0, sizeof(struct cpe_name));	// zero memory
 
 	if (cpestr) {
 		cpe->data_ = strdup(cpestr + 5);	// without 'cpe:/'
@@ -122,7 +167,7 @@ bool cpe_urldecode(char *str)
 	return true;
 }
 
-bool cpe_name_match_one(const cpe_t * cpe, const cpe_t * against)
+bool cpe_name_match_one(const struct cpe_name * cpe, const struct cpe_name * against)
 {
 	int i;
 
@@ -140,7 +185,7 @@ bool cpe_name_match_one(const cpe_t * cpe, const cpe_t * against)
 	return true;
 }
 
-bool cpe_name_match_cpes(const cpe_t * name, size_t n, cpe_t ** namelist)
+bool cpe_name_match_cpes(const struct cpe_name * name, size_t n, struct cpe_name ** namelist)
 {
 	int i;
 
@@ -156,30 +201,30 @@ bool cpe_name_match_cpes(const cpe_t * name, size_t n, cpe_t ** namelist)
 int cpe_name_match_strs(const char *candidate, size_t n, char **targets)
 {
 	int i;
-	cpe_t *ccpe, *tcpe;
+	struct cpe_name *ccpe, *tcpe;
 
-	ccpe = cpe_new(candidate);	// candidate cpe
+	ccpe = cpe_name_new(candidate);	// candidate cpe
 	if (ccpe == NULL)
 		return -2;
 
 	for (i = 0; i < (int)n; ++i) {
-		tcpe = cpe_new(targets[i]);	// target cpe
+		tcpe = cpe_name_new(targets[i]);	// target cpe
 
 		if (cpe_name_match_one(ccpe, tcpe)) {
 			// CPE matched
-			cpe_delete(ccpe);
-			cpe_delete(tcpe);
+			cpe_name_delete(ccpe);
+			cpe_name_delete(tcpe);
 			return i;
 		}
 
-		cpe_delete(tcpe);
+		cpe_name_delete(tcpe);
 	}
 
-	cpe_delete(ccpe);
+	cpe_name_delete(ccpe);
 	return -1;
 }
 
-bool cpe_check(const char *str)
+bool cpe_name_check(const char *str)
 {
 	int length = strlen(str);	/* Get the length for PCRE */
 
@@ -187,8 +232,8 @@ bool cpe_check(const char *str)
 	const char *error;
 	int erroffset;
 	re = pcre_compile(
-				 //"^[Cc][Pp][Ee]:/(?P<part>[oahOAH])(?::(?P<vendor>[-%.~_a-zA-Z0-9]*))?(?::(?P<product>[-%.~_a-zA-Z0-9]*))?(?::(?P<version>[-%.~_a-zA-Z0-9]*))?(?::(?P<update>[-%.~_a-zA-Z0-9]*))?(?::(?P<edition>[-%.~_a-zA-Z0-9]*))?(?::(?P<language>[-%.~_a-zA-Z0-9]*))?$", /* the pattern */
-				 "^cpe:/[aho]?(:[a-z0-9._~%-]*){0,6}$", PCRE_CASELESS,	/* case insensitive */
+				 "^cpe:/[aho]?(:[a-z0-9._~%-]*){0,6}$", /* regexp */
+				 PCRE_CASELESS,	/* case insensitive */
 				 &error,	/* for error message */
 				 &erroffset,	/* for error offset */
 				 NULL);	/* use default character tables */
@@ -216,7 +261,7 @@ const char *as_str(const char *str)
 	return str;
 }
 
-char *cpe_get_uri(const cpe_t * cpe)
+char *cpe_name_get_uri(const struct cpe_name * cpe)
 {
 	int len = 16;
 	int i;
@@ -238,7 +283,8 @@ char *cpe_get_uri(const cpe_t * cpe)
 		    as_str(cpe->product),
 		    as_str(cpe->version),
 		    as_str(cpe->update),
-		    as_str(cpe->edition), as_str(cpe->language)
+		    as_str(cpe->edition),
+			as_str(cpe->language)
 	    );
 
 	// trim trailing colons
@@ -248,12 +294,12 @@ char *cpe_get_uri(const cpe_t * cpe)
 	return result;
 }
 
-int cpe_write(const cpe_t * cpe, FILE * f)
+int cpe_name_write(const struct cpe_name * cpe, FILE * f)
 {
 	int ret;
 	char *uri;
 
-	uri = cpe_get_uri(cpe);
+	uri = cpe_name_get_uri(cpe);
 	if (uri == NULL)
 		return EOF;
 
@@ -263,7 +309,7 @@ int cpe_write(const cpe_t * cpe, FILE * f)
 	return ret;
 }
 
-bool cpe_assign_values(cpe_t * cpe, char **fields)
+bool cpe_assign_values(struct cpe_name * cpe, char **fields)
 {
 	int i;
 
@@ -271,9 +317,7 @@ bool cpe_assign_values(cpe_t * cpe, char **fields)
 		return false;
 
 	for (i = 0; fields[i]; ++i) {
-		const char *out = (fields[i]
-				   && strcmp(fields[i],
-					     "") != 0 ? fields[i] : NULL);
+		const char *out = (fields[i] && strcmp(fields[i], "") != 0 ? fields[i] : NULL);
 		switch (i) {
 		case CPE_FIELD_TYPE:
 			if (out) {
@@ -313,7 +357,7 @@ bool cpe_assign_values(cpe_t * cpe, char **fields)
 	return true;
 }
 
-void cpe_delete(cpe_t * cpe)
+void cpe_name_delete(struct cpe_name * cpe)
 {
 	if (cpe != NULL) {
 		free(cpe->data_);
@@ -328,7 +372,17 @@ size_t ptrarray_length(void **arr)
 		return 0;
 
 	size_t s = 0;
-	while (arr[s])
-		++s;
+	while (arr[s]) ++s;
 	return s;
 }
+
+#define CPENAME_GETTER(RTYPE,MNAME) OSCAP_GETTER(RTYPE,cpe_name,MNAME)
+
+CPENAME_GETTER(enum cpe_part, part)
+CPENAME_GETTER(const char*, vendor)
+CPENAME_GETTER(const char*, product)
+CPENAME_GETTER(const char*, version)
+CPENAME_GETTER(const char*, update)
+CPENAME_GETTER(const char*, edition)
+CPENAME_GETTER(const char*, language)
+

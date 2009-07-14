@@ -1,6 +1,6 @@
 /**
  * @file cpelang.c
- * \brief Interface to Common Product Enumeration (CPE) Language
+ * \brief Interface to Common Platform Enumeration (CPE) Language
  *
  * See more details at http://nvd.nist.gov/cpe.cfm
  */
@@ -30,40 +30,80 @@
 #include <libxml/tree.h>
 #include <string.h>
 #include "cpelang.h"
+#include "../common/util.h"
+#include "../common/list.h"
 
-/*** Private ***/
+struct cpe_lang_expr {
+	enum cpe_lang_oper_t oper;	// operator
+	union {
+		struct cpe_lang_expr *expr;	// array of subexpressions for operators
+		struct cpe_name *cpe;	// CPE for match operation
+	} meta;			// operation metadata
+};
 
-/**
+struct cpe_platformspec {
+	struct oscap_list* items;   // list of items
+	struct oscap_htable* item;  // item by ID
+};
+
+struct cpe_platform {
+	char *id;                   // platform ID
+	char *title;                // human-readable platform description
+	char *remark;               // remark
+	struct cpe_lang_expr expr;	// expression for match evaluation
+};
+
+/*
  * New platform specification from XML node
  * @param root XML node to be processed
  * @return new platform specification list
  * @retval NULL on failure
  */
-cpe_platform_spec_t *cpe_platformspec_new_xml(xmlNodePtr root);
+struct cpe_platformspec *cpe_platformspec_new_xml(xmlNodePtr root);
 
-/**
+/*
  * New platform form XML node
  * @param node XML node to be processed
  * @return new platform specification
  * @retval NULL on failure
  */
-cpe_platform_t *cpe_platform_new_xml(xmlNodePtr node);
+struct cpe_platform *cpe_platform_new_xml(xmlNodePtr node);
 
-/**
+/*
  * Create new CPE language boolean expression from XML node
  * @param ret pointer to resulting expression
  * @param node XML node to be processed
  * @return true on success
  */
-bool cpe_langexpr_new(cpe_lang_expr_t * ret, xmlNodePtr node);
+bool cpe_langexpr_new(struct cpe_lang_expr * ret, xmlNodePtr node);
 
-/*** Public ***/
+/*
+ * Add new platform entry to @a platformspec
+ * @note @a platformspec will take over memory management of @a platform
+ * @param platformspec list of platforms being extended
+ * @param platform platform to add to the list
+ * @return true on success
+ */
+bool cpe_platformspec_add(struct cpe_platformspec * platformspec,
+			  struct cpe_platform * platform);
 
-cpe_platform_spec_t *cpe_platformspec_new(const char *fname)
+/*
+ * Delete single CPE paltform specification
+ * @param platform platform to be deleted
+ */
+void cpe_platform_delete(struct cpe_platform * platform);
+
+/*
+ * Delete CPE language boolean expression
+ * @param expr expression to be deleted
+ */
+void cpe_langexpr_delete(struct cpe_lang_expr * expr);
+
+struct cpe_platformspec *cpe_platformspec_new(const char *fname)
 {
 	xmlDocPtr doc;
 	xmlNodePtr root;
-	cpe_platform_spec_t *ret;
+	struct cpe_platformspec *ret;
 
 	if ((doc = xmlParseFile(fname)) == NULL)
 		return NULL;
@@ -80,31 +120,25 @@ cpe_platform_spec_t *cpe_platformspec_new(const char *fname)
 
 const size_t CPE_PLATFORMSPEC_EMPTY_INIT_ALLOC = 8;
 
-cpe_platform_spec_t *cpe_platformspec_new_empty()
+struct cpe_platformspec *cpe_platformspec_new_empty()
 {
-	cpe_platform_spec_t *res;
+	struct cpe_platformspec *res;
 
-	res = malloc(sizeof(cpe_platform_spec_t));
+	res = malloc(sizeof(struct cpe_platformspec));
 	if (res == NULL)
 		return NULL;
 
-	res->alloc_ = CPE_PLATFORMSPEC_EMPTY_INIT_ALLOC;
-	res->platforms = malloc(res->alloc_ * sizeof(cpe_platform_t *));
-	res->platforms_n = 0;
-
-	if (res->platforms == NULL) {
-		free(res);
-		return NULL;
-	}
+	res->items = oscap_list_new();
+	res->item = oscap_htable_new();
 
 	return res;
 }
 
-cpe_platform_spec_t *cpe_platformspec_new_xml(xmlNodePtr root)
+struct cpe_platformspec *cpe_platformspec_new_xml(xmlNodePtr root)
 {
 	xmlNodePtr cur;
-	cpe_platform_spec_t *res;
-	cpe_platform_t *plat;
+	struct cpe_platformspec *res;
+	struct cpe_platform *plat;
 
 	if (xmlStrcmp(root->name, BAD_CAST "platform-specification") != 0)
 		return NULL;
@@ -126,58 +160,34 @@ cpe_platform_spec_t *cpe_platformspec_new_xml(xmlNodePtr root)
 	return res;
 }
 
-bool cpe_platformspec_add(cpe_platform_spec_t * platformspec,
-			  cpe_platform_t * platform)
+bool cpe_platformspec_add(struct cpe_platformspec * platformspec,
+			  struct cpe_platform * platform)
 {
-	cpe_platform_t **old;
-
-	if (platformspec == NULL || platform == NULL)
-		return NULL;
-
-	if (platformspec->alloc_ < platformspec->platforms_n + 1) {
-		if (platformspec->alloc_ > 0)
-			platformspec->alloc_ *= 2;
-		else
-			platformspec->alloc_ =
-			    CPE_PLATFORMSPEC_EMPTY_INIT_ALLOC;
-
-		old = platformspec->platforms;
-		if (!
-		    (platformspec->platforms =
-		     realloc(old,
-			     platformspec->alloc_ *
-			     sizeof(cpe_platform_t *)))) {
-			platformspec->platforms = old;
-			return false;
-		}
-	}
-
-	platformspec->platforms[platformspec->platforms_n++] = platform;
-	return true;
+	if (platformspec == NULL || platform == NULL) return false;
+	oscap_htable_add(platformspec->item, platform->id, platform);
+	return oscap_list_add(platformspec->items, platform);
 }
 
-void cpe_platformspec_delete(cpe_platform_spec_t * platformspec)
+void cpe_platformspec_delete(struct cpe_platformspec * platformspec)
 {
-	int i;
-	if (platformspec != NULL) {
-		for (i = 0; i < (int)platformspec->platforms_n; ++i)
-			cpe_platform_delete(platformspec->platforms[i]);
-		free(platformspec->platforms);
+	if (platformspec) {
+		oscap_htable_delete(platformspec->item, NULL);
+		oscap_list_delete(platformspec->items, (oscap_destruct_func)cpe_platform_delete);
+		free(platformspec);
 	}
-	free(platformspec);
 }
 
-cpe_platform_t *cpe_platform_new_xml(xmlNodePtr node)
+struct cpe_platform *cpe_platform_new_xml(xmlNodePtr node)
 {
-	cpe_platform_t *ret;
+	struct cpe_platform *ret;
 
 	if (xmlStrcmp(node->name, BAD_CAST "platform") != 0)
 		return NULL;
 
-	ret = malloc(sizeof(cpe_platform_t));
+	ret = malloc(sizeof(struct cpe_platform));
 	if (ret == NULL)
 		return NULL;
-	memset(ret, 0, sizeof(cpe_platform_t));
+	memset(ret, 0, sizeof(struct cpe_platform));
 
 	if ((ret->id = (char *)xmlGetProp(node, BAD_CAST "id")) == NULL) {
 		cpe_platform_delete(ret);
@@ -199,10 +209,10 @@ cpe_platform_t *cpe_platform_new_xml(xmlNodePtr node)
 	return ret;
 }
 
-bool cpe_language_match_expr(cpe_t ** cpe, size_t n,
-			     const cpe_lang_expr_t * expr)
+bool cpe_language_match_expr(struct cpe_name ** cpe, size_t n,
+			     const struct cpe_lang_expr * expr)
 {
-	cpe_lang_expr_t *cur;
+	struct cpe_lang_expr *cur;
 	bool ret;
 
 	switch (expr->oper & CPE_LANG_OPER_MASK) {
@@ -234,16 +244,16 @@ bool cpe_language_match_expr(cpe_t ** cpe, size_t n,
 	return (expr->oper & CPE_LANG_OPER_NOT ? !ret : ret);
 }
 
-bool cpe_language_match_cpe(cpe_t ** cpe, size_t n,
-			    const cpe_platform_t * platform)
+bool cpe_platform_match_cpe(struct cpe_name ** cpe, size_t n,
+			    const struct cpe_platform * platform)
 {
 	return cpe_language_match_expr(cpe, n, &platform->expr);
 }
 
 /*
-bool cpe_language_match_str(const char* cpe, const cpe_platform_t* platform)
+bool cpe_language_match_str(const char* cpe, const struct cpe_platform* platform)
 {
-	cpe_t* cpe_;
+	struct cpe_name* cpe_;
 	bool ret;
 
 	cpe_ = cpe_new(cpe);
@@ -254,7 +264,7 @@ bool cpe_language_match_str(const char* cpe, const cpe_platform_t* platform)
 }
 */
 
-void cpe_platform_delete(cpe_platform_t * platform)
+void cpe_platform_delete(struct cpe_platform * platform)
 {
 	if (platform) {
 		xmlFree(platform->id);
@@ -265,7 +275,7 @@ void cpe_platform_delete(cpe_platform_t * platform)
 	free(platform);
 }
 
-bool cpe_langexpr_new(cpe_lang_expr_t * ret, xmlNodePtr node)
+bool cpe_langexpr_new(struct cpe_lang_expr * ret, xmlNodePtr node)
 {
 	xmlChar *temp;
 	xmlNodePtr cur;
@@ -275,7 +285,7 @@ bool cpe_langexpr_new(cpe_lang_expr_t * ret, xmlNodePtr node)
 	if (xmlStrcmp(node->name, BAD_CAST "fact-ref") == 0) {
 		ret->oper = CPE_LANG_OPER_MATCH;
 		temp = xmlGetProp(node, BAD_CAST "name");
-		ret->meta.cpe = cpe_new((char *)temp);
+		ret->meta.cpe = cpe_name_new((char *)temp);
 		xmlFree(temp);
 		return (ret->meta.cpe ? true : false);
 	}
@@ -303,7 +313,7 @@ bool cpe_langexpr_new(cpe_lang_expr_t * ret, xmlNodePtr node)
 	for (cur = node->xmlChildrenNode; cur != NULL; cur = cur->next)
 		++elem_cnt;
 
-	ret->meta.expr = malloc((elem_cnt + 1) * sizeof(cpe_lang_expr_t));
+	ret->meta.expr = malloc((elem_cnt + 1) * sizeof(struct cpe_lang_expr));
 	if (ret->meta.expr == NULL)
 		return false;
 
@@ -316,9 +326,9 @@ bool cpe_langexpr_new(cpe_lang_expr_t * ret, xmlNodePtr node)
 	return true;
 }
 
-void cpe_langexpr_delete(cpe_lang_expr_t * expr)
+void cpe_langexpr_delete(struct cpe_lang_expr * expr)
 {
-	cpe_lang_expr_t *cur;
+	struct cpe_lang_expr *cur;
 
 	if (expr == NULL)
 		return;
@@ -331,7 +341,7 @@ void cpe_langexpr_delete(cpe_lang_expr_t * expr)
 		free(expr->meta.expr);
 		break;
 	case CPE_LANG_OPER_MATCH:
-		cpe_delete(expr->meta.cpe);
+		cpe_name_delete(expr->meta.cpe);
 		break;
 	default:
 		break;
@@ -339,3 +349,10 @@ void cpe_langexpr_delete(cpe_lang_expr_t * expr)
 
 	expr->oper = 0;
 }
+
+OSCAP_GETTER(const char*, cpe_platform, id)
+OSCAP_GETTER(const char*, cpe_platform, title)
+OSCAP_GETTER(const char*, cpe_platform, remark)
+OSCAP_IGETTER_GEN(cpe_platform, cpe_platformspec, items)
+OSCAP_HGETTER_STRUCT(cpe_platform, cpe_platformspec, item)
+

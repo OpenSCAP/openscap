@@ -3,7 +3,7 @@
  * @{
  * 
  * @file cpe.h
- * \brief Interface to Common Product Enumeration (CPE).
+ * \brief Interface to Common Platform Enumeration (CPE).
  *
  * See more details at http://nvd.nist.gov/cpe.cfm
  */
@@ -36,6 +36,5 @@
 #include "cpeuri.h"
 #include "cpedict.h"
 #include "cpelang.h"
-#include "cpematch.h"
 
 #endif				// CPE_H_INCLUDED

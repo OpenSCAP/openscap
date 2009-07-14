@@ -5,7 +5,7 @@
  * @{
  *
  * @file cpelang.h
- * \brief Interface to Common Product Enumeration (CPE) Language
+ * \brief Interface to Common Platform Enumeration (CPE) Language
  *
  * See more details at http://nvd.nist.gov/cpe.cfm
  */
@@ -41,89 +41,106 @@
 
 /// CPE language operators
 enum cpe_lang_oper_t {
-	CPE_LANG_OPER_HALT = 0x00,	///< end of instruction list
-	CPE_LANG_OPER_AND = 0x01,	///< logical AND
-	CPE_LANG_OPER_OR = 0x02,	///< logical OR
-	CPE_LANG_OPER_MATCH = 0x03,	///< match against specified CPE
-	CPE_LANG_OPER_MASK = 0xFF,	///< mask to extract operator
-	CPE_LANG_OPER_NOT = 0x100,	///< negate
+	CPE_LANG_OPER_HALT  =  0x00,  ///< end of instruction list
+	CPE_LANG_OPER_AND   =  0x01,  ///< logical AND
+	CPE_LANG_OPER_OR    =  0x02,  ///< logical OR
+	CPE_LANG_OPER_MATCH =  0x03,  ///< match against specified CPE
+
+	CPE_LANG_OPER_MASK  =  0xFF,  ///< mask to extract the operator w/o possible negation
+	CPE_LANG_OPER_NOT   = 0x100,  ///< negate
 
 	CPE_LANG_OPER_NAND = CPE_LANG_OPER_AND | CPE_LANG_OPER_NOT,
 	CPE_LANG_OPER_NOR = CPE_LANG_OPER_OR | CPE_LANG_OPER_NOT,
 };
 
-/// CPE language boolean expression
-typedef struct cpe_lang_expr {
-	enum cpe_lang_oper_t oper;	///< operator
-	union {
-		struct cpe_lang_expr *expr;	///< array of subexpressions for operators
-		cpe_t *cpe;	///< CPE for match operation
-	} meta;			///< operation metadata
-} cpe_lang_expr_t;
+/*
+ * @struct cpe_lang_expr
+ * CPE language boolean expression
+ */
+struct cpe_lang_expr;
 
 /**
+ * @struct cpe_platformspec
  * CPE platform specification
  */
-typedef struct cpe_platform_spec {
-	struct cpe_platform **platforms;	///< array of pointers to individual platforms
-	size_t platforms_n;	///< number of platforms
-	size_t alloc_;		///< allocated memory (internal)
-} cpe_platform_spec_t;
+struct cpe_platformspec;
 
 /**
+ * @struct cpe_platform
  * Single platform representation in CPE language
  */
-typedef struct cpe_platform {
-	char *id;		///< platform ID
-	char *title;		///< human-readable platform description
-	char *remark;		///< remark
-	struct cpe_lang_expr expr;	///< expression for match evaluation
-} cpe_platform_t;
+struct cpe_platform;
+
+/** @struct cpe_platform_iterator
+ * Iterator over CPE dictionary items.
+ * @see oscap_iterator
+ */
+struct cpe_platform_iterator;
+/// @relates cpe_platform_iterator
+struct cpe_platform* cpe_platform_iterator_next(struct cpe_platform_iterator* it);
+/// @relates cpe_platform_iterator
+bool cpe_platform_iterator_has_more(struct cpe_platform_iterator* it);
 
 /**
  * New platform specification from file
+ * @relates cpe_platformspec
  * @param fname file name to load
  * @return new platform specification list
  * @retval NULL on failure
  */
-cpe_platform_spec_t *cpe_platformspec_new(const char *fname);
-
-/**
- * Add new platform entry to @a platformspec
- * @note @a platformspec will take over memory management of @a platform
- * @param platformspec list of platforms being extended
- * @param platform platform to add to the list
- * @return true on success
- */
-bool cpe_platformspec_add(cpe_platform_spec_t * platformspec,
-			  cpe_platform_t * platform);
+struct cpe_platformspec *cpe_platformspec_new(const char *fname);
 
 /**
  * Free specified platform specification list
+ * @relates cpe_platformspec
  * @param platformspec pointer to list to be deleted
  */
-void cpe_platformspec_delete(cpe_platform_spec_t * platformspec);
+void cpe_platformspec_delete(struct cpe_platformspec * platformspec);
+
+/**
+ * Get an iterator to platforms contained in this specification.
+ * @relates cpe_platformspec
+ */
+struct cpe_platform_iterator* cpe_platformspec_items(const struct cpe_platformspec * platformspec);
+
+/**
+ * Get platform with given ID.
+ * @relates cpe_platformspec
+ * @param platformspec Used platform specfication.
+ * @param id Desired platform ID.
+ * @raturn Platform with given ID.
+ * @retval NULL on failure (e.g. no such platform exists)
+ */
+struct cpe_platform* cpe_platformspec_item(const struct cpe_platformspec * platformspec, const char* id);
 
 /**
  * Match list of CPEs against CPE language platform specification
+ * @relates cpe_platform
  * @param cpe List of CPEs describing tested platform as a list of pointers
  * @param n number of CPEs
  * @param platform CPE language platform, that is expected (not) to match given list of CPEs
  * @return result of expression evaluation
  */
-bool cpe_language_match_cpe(cpe_t ** cpe, size_t n,
-			    const cpe_platform_t * platform);
+bool cpe_platform_match_cpe(struct cpe_name ** cpe, size_t n, const struct cpe_platform * platform);
 
 /**
- * Delete single CPE paltform specification
- * @param platform platform to be deleted
+ * Get CPE paltform ID.
+ * @relates cpe_platform
  */
-void cpe_platform_delete(cpe_platform_t * platform);
+const char* cpe_platform_id(const struct cpe_platform* platform);
 
 /**
- * Delete CPE language boolean expression
- * @param expr expression to be deleted
+ * Get CPE paltform title.
+ * @relates cpe_platform
  */
-void cpe_langexpr_delete(cpe_lang_expr_t * expr);
+const char* cpe_platform_title(const struct cpe_platform* platform);
+
+/**
+ * Get CPE paltform remark.
+ * @relates cpe_platform
+ */
+const char* cpe_platform_remark(const struct cpe_platform* platform);
 
 #endif				/* _CPELANG_H_ */
+
+

@@ -24,7 +24,7 @@ const char *CPE_PART_STR[] =
 
 bool cpe_example_parse(const char *cpeuri)
 {
-	cpe_t *cpe = cpe_new(cpeuri);	// create CPE from URI string
+	struct cpe_name *cpe = cpe_name_new(cpeuri);	// create CPE from URI string
 	char *uri;
 
 	if (cpe == NULL) {
@@ -33,22 +33,22 @@ bool cpe_example_parse(const char *cpeuri)
 		return false;
 	}
 	// get CPE URI as a string
-	uri = cpe_get_uri(cpe);
+	uri = cpe_name_get_uri(cpe);
 
 	// print URI components
 	printf("URI      : %s\n", uri);
-	printf("Part     : %s\n", CPE_PART_STR[cpe->part]);
-	printf("Vendor   : %s\n", cpe->vendor);
-	printf("Product  : %s\n", cpe->product);
-	printf("Version  : %s\n", cpe->version);
-	printf("Update   : %s\n", cpe->update);
-	printf("Edition  : %s\n", cpe->edition);
-	printf("Language : %s\n", cpe->language);
+	printf("Part     : %s\n", CPE_PART_STR[cpe_name_part(cpe)]);
+	printf("Vendor   : %s\n", cpe_name_vendor(cpe));
+	printf("Product  : %s\n", cpe_name_product(cpe));
+	printf("Version  : %s\n", cpe_name_version(cpe));
+	printf("Update   : %s\n", cpe_name_update(cpe));
+	printf("Edition  : %s\n", cpe_name_edition(cpe));
+	printf("Language : %s\n", cpe_name_language(cpe));
 
 	// delete CPE URI string
 	free(uri);
 	// delete CPE itself
-	cpe_delete(cpe);
+	cpe_name_delete(cpe);
 
 	return true;
 }

@@ -1,29 +1,30 @@
 #include <stdio.h>
 #include <cpelang.h>
 
-void test_platform_dump(cpe_platform_t * plat);
-void test_langexpr_dump(cpe_lang_expr_t * expr, int depth);
+void test_platform_dump(struct cpe_platform * plat);
+//void test_langexpr_dump(struct cpe_lang_expr * expr, int depth);
 
-void test_platformspec_dump(cpe_platform_spec_t * plat)
+void test_platformspec_dump(struct cpe_platformspec * plat)
 {
-	unsigned int i;
 	// dump all platforms belonging to a platform specification
-	for (i = 0; i < plat->platforms_n; ++i)
-		test_platform_dump(plat->platforms[i]);
+	struct cpe_platform_iterator* it = cpe_platformspec_items(plat);
+	while (cpe_platform_iterator_has_more(it))
+		test_platform_dump(cpe_platform_iterator_next(it));
 }
 
-void test_platform_dump(cpe_platform_t * plat)
+void test_platform_dump(struct cpe_platform * plat)
 {
 	// print id, title, remark
-	printf("ID: %s\n  Title:  %s\n  Remark: %s\n  Expr:\n",
-	       plat->id, plat->title, plat->remark);
+	printf("ID: %s\n  Title:  %s\n  Remark: %s\n",
+	       cpe_platform_id(plat), cpe_platform_title(plat), cpe_platform_remark(plat));
 	// dump expression
-	test_langexpr_dump(&(plat->expr), 4);
+	//test_langexpr_dump(&(plat->expr), 4);
 }
 
 // strings representing operators
 const char *CPE_OPER_STRS[] = { " END", " AND", " OR", "" };
 
+/*
 void test_langexpr_dump(cpe_lang_expr_t * expr, int depth)
 {
 	int i;
@@ -58,14 +59,17 @@ void test_langexpr_dump(cpe_lang_expr_t * expr, int depth)
 		break;
 	}
 }
+*/
 
 #ifndef CPELANG_TEST_NO_MAIN
 
+void xmlCleanupParser(void);
+
 int main(int argc, char **argv)
 {
-	cpe_platform_spec_t *plat;	// pointer to our platform specification
+	struct cpe_platformspec *plat;	// pointer to our platform specification
 	unsigned int i;
-	cpe_t **cpes;		// list of CPEs
+	struct cpe_name **cpes;		// list of CPEs
 	size_t cpes_n;		// number of CPEs
 
 	if (argc < 2) {
@@ -75,26 +79,24 @@ int main(int argc, char **argv)
 	}
 	// allocate space for list of CPEs
 	cpes_n = argc - 2;
-	cpes = malloc(cpes_n * sizeof(cpe_t *));
+	cpes = malloc(cpes_n * sizeof(struct cpe_name *));
 
 	// build list of CPEs from the command line
 	for (i = 0; i < cpes_n; ++i)
-		cpes[i] = cpe_new(argv[i + 2]);
+		cpes[i] = cpe_name_new(argv[i + 2]);
 
 	// load platform specification from file specified on the command line
 	plat = cpe_platformspec_new(argv[1]);
 
 	if (plat != NULL) {
 		// for each platform in platform specification
-		for (i = 0; i < plat->platforms_n; ++i) {
+		struct cpe_platform_iterator* it = cpe_platformspec_items(plat);
+		while (cpe_platform_iterator_has_more(it)) {
+			struct cpe_platform* p = cpe_platform_iterator_next(it);
 			// dump its contents
-			test_platform_dump(plat->platforms[i]);
+			test_platform_dump(p);
 			// print whether list of CPEs matched
-			printf("    = %sMATCH\n\n",
-			       cpe_language_match_cpe(cpes, cpes_n,
-						      plat->
-						      platforms[i]) ? "" :
-			       "MIS");
+			printf("    = %sMATCH\n\n", cpe_platform_match_cpe(cpes, cpes_n, p) ? "" : "MIS");
 		}
 	}
 	// free resources allocated for platform specification
@@ -103,8 +105,10 @@ int main(int argc, char **argv)
 
 	// free list of CPEs
 	for (i = 0; i < cpes_n; ++i)
-		cpe_delete(cpes[i]);
+		cpe_name_delete(cpes[i]);
 	free(cpes);
+
+	xmlCleanupParser();
 
 	return EXIT_SUCCESS;
 }

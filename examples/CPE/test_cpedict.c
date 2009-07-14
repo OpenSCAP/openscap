@@ -1,52 +1,52 @@
 #include <cpedict.h>
-#include <cpematch.h>
 
 // dump contents of an CPE dictionary item
-void cpe_dictitem_dump(cpe_dict_item_t * item)
+void cpe_dictitem_dump(struct cpe_dictitem * item)
 {
-	int i;
-
 	// print name and title
 	printf("  Name:  ");
-	cpe_write(item->name, stdout);
+	cpe_name_write(cpe_dictitem_name(item), stdout);
 	printf("\n");
-	printf("  Title: %s\n", item->title);
+	printf("  Title: %s\n", cpe_dictitem_title(item));
 
 	// print notes
-	if (item->notes_n) {
-		printf("  Notes:\n");
-		for (i = 0; i < (int)item->notes_n; ++i)
-			printf("    %s\n", item->notes[i]);
-	}
+	printf("  Notes:\n");
+	struct oscap_string_iterator* itn = cpe_dictitem_notes(item);
+	while (oscap_string_iterator_has_more(itn))
+		printf("    %s\n", oscap_string_iterator_next(itn));
+
 	// print depracation info
-	if (item->depracated) {
+	if (cpe_dictitem_depracated(item)) {
 		printf("  Depracated by: ");
-		cpe_write(item->depracated, stdout);
-		printf(" on %s\n", item->depracation_date);
+		cpe_name_write(cpe_dictitem_depracated(item), stdout);
+		printf(" on %s\n", cpe_dictitem_depracation_date(item));
 	}
+
 	// print references
-	if (item->references_n) {
-		printf("  References:\n");
-		for (i = 0; i < (int)item->references_n; ++i)
-			printf("    %s (%s)\n", item->references[i].content,
-			       item->references[i].href);
+	printf("  References:\n");
+	struct cpe_dict_reference_iterator* itr = cpe_dictitem_references(item);
+	while (cpe_dict_reference_iterator_has_more(itr)) {
+		struct cpe_dict_reference* ref = cpe_dict_reference_iterator_next(itr);
+		printf("    %s (%s)\n", cpe_dict_reference_content(ref), cpe_dict_reference_href(ref));
 	}
+
 	// print checks
-	if (item->check_n) {
-		printf("  Checks:\n");
-		for (i = 0; i < (int)item->check_n; ++i)
-			printf("    id: %s, system: %s, href: %s\n",
-			       item->check[i]->identifier,
-			       item->check[i]->system, item->check[i]->href);
+	printf("  Checks:\n");
+	struct cpe_dict_check_iterator* itc = cpe_dictitem_checks(item);
+	while (cpe_dict_check_iterator_has_more(itc)) {
+		struct cpe_dict_check* ck = cpe_dict_check_iterator_next(itc);
+		printf("    id: %s, system: %s, href: %s\n",
+			   cpe_dict_check_identifier(ck), cpe_dict_check_system(ck), cpe_dict_check_href(ck));
 	}
 
 	printf("\n");
 }
 
+void xmlCleanupParser(void);
+
 int main(int argc, char **argv)
 {
-	cpe_dict_t *dict;	// pointer to our CPE dictionary
-	cpe_dict_item_t *cur;	// pointer to single dictionary item
+	struct cpe_dict *dict;	// pointer to our CPE dictionary
 	int i;
 
 	if (argc < 2) {
@@ -61,20 +61,17 @@ int main(int argc, char **argv)
 		// print dictionary generator info
 		printf
 		    ("Generated on %s by %s version %s using schema version %s.\n\n",
-		     dict->generator.timestamp, dict->generator.product_name,
-		     dict->generator.product_version,
-		     dict->generator.schema_version);
+		     cpe_dict_generator_timestamp(dict), cpe_dict_generator_product_name(dict),
+		     cpe_dict_generator_product_version(dict), cpe_dict_generator_schema_version(dict));
 
 		// dump each dictionary item
-		for (cur = dict->first; cur != NULL; cur = cur->next)
-			cpe_dictitem_dump(cur);
+		struct cpe_dictitem_iterator* it = cpe_dict_items(dict);
+		while (cpe_dictitem_iterator_has_more(it))
+			cpe_dictitem_dump(cpe_dictitem_iterator_next(it));
 
 		// for each CPE specified on command line, try to match it against the dictionary
 		for (i = 2; i < argc; ++i)
-			printf("%s KNOWN: %s\n",
-			       cpe_name_match_dict_str(argv[i],
-						       dict) ? "   " : "NOT",
-			       argv[i]);
+			printf("%s KNOWN: %s\n", cpe_name_match_dict_str(argv[i], dict) ? "   " : "NOT", argv[i]);
 
 		// free system resources
 		cpe_dict_delete(dict);
@@ -83,6 +80,8 @@ int main(int argc, char **argv)
 		printf("Error while loading CPE dictionary.\n");
 		return 1;
 	}
+
+	xmlCleanupParser();
 
 	return 0;
 }

@@ -6,7 +6,7 @@
  *
  *
  * @file cpeuri.h
- * \brief Interface to Common Product Enumeration (CPE) URI
+ * \brief Interface to Common Platform Enumeration (CPE) URI
  *  
  *   See more details at http://nvd.nist.gov/cpe.cfm
  *  
@@ -42,98 +42,128 @@
 #include <stdio.h>
 
 /// enumeration of possible CPE parts
-enum cpe_part_t {
-	CPE_PART_NONE,		///< no part specified -- error condition
+enum cpe_part {
+	CPE_PART_NONE,		///< no part specified
 	CPE_PART_HW,		///< hardware
 	CPE_PART_OS,		///< operating system
 	CPE_PART_APP		///< application
 };
 
-/// string representation of CPE parts, order corresponds with values in enum above
-const char *CPE_PART_CHAR[4];
-/// CPE URI schema string
-const char *CPE_SCHEMA;
-/// CPE URI component separator character
-const char CPE_SEP_CHAR;
-/// CPE URI component separator character as string
-const char *CPE_SEP_STR;
-
-/// enumeration of CPE URI fields (useful for indexing arrays)
-enum cpe_field_t {
-	CPE_FIELD_TYPE,
-	CPE_FIELD_VENDOR,
-	CPE_FIELD_PRODUCT,
-	CPE_FIELD_VERSION,
-	CPE_FIELD_UPDATE,
-	CPE_FIELD_EDITION,
-	CPE_FIELD_LANGUAGE,
-	CPE_FIELDNUM,
-};
-
 /**
+ * @struct cpe_name
  * Structure holding Common Platform Enumeration URI data.
  *
  * Empty components are set to NULL.
  */
-typedef struct {
-	char *data_;		///< parsed string, internal use only
-	char **fields_;		///< NULL-terminated array of pointers to individual components of CPE URI, internal
-	enum cpe_part_t part;	///< part
-	const char *vendor;	///< vendor
-	const char *product;	///< product
-	const char *version;	///< version
-	const char *update;	///< update
-	const char *edition;	///< edition
-	const char *language;	///< language
-} cpe_t;
+struct cpe_name;
 
 /**
- * Create new CPE structure from string @a cpe.
+ * Create a new CPE structure from string @a cpe.
  *
+ * @relates cpe_name
  * @note If @a cpe is NULL, empty cpe will be created.
  * @param cpe CPE URI string to be parsed
  * @return new structure holding parsed data
  * @retval NULL on failure
  */
-cpe_t *cpe_new(const char *cpe);
+struct cpe_name* cpe_name_new(const char *cpe);
 
 /**
- * Split CPE string into individual fields separated by @a delim.
- *
- * This function returns NULL-terminated array of pointers to strings.
- * @note Return value must be freed explicitly by caller.
- * @note This function modifies its first argument.
- * @param str string to be parsed, will be changed as side-effect of this function
- * @param delim delimiter
- * @return newly allocated NULL-terminated array of ponters to strings representing individual parts
- * @retval NULL on failure
+ * Destructor. Frees any used resources and safely destroys @a cpe.
+ * @relates cpe_name
+ * @param cpe CPE to be deleted
  */
-char **cpe_split(char *str, const char *delim);
+void cpe_name_delete(struct cpe_name * cpe);
 
 /**
- * In-place decodes a %-encoded string.
- * @param str string to be decoded (will be modified)
- * @return true on success
+ * Get CPE name part type field.
+ * @relates cpe_name
  */
-bool cpe_urldecode(char *str);
+enum cpe_part cpe_name_part(const struct cpe_name * cpe);
+
+/**
+ * Get CPE name vendor field.
+ * @relates cpe_name
+ */
+const char* cpe_name_vendor(const struct cpe_name * cpe);
+
+/**
+ * Get CPE name product field.
+ * @relates cpe_name
+ */
+const char* cpe_name_product(const struct cpe_name * cpe);
+
+/**
+ * Get CPE name version field.
+ * @relates cpe_name
+ */
+const char* cpe_name_version(const struct cpe_name * cpe);
+
+/**
+ * Get CPE name update field.
+ * @relates cpe_name
+ */
+const char* cpe_name_update(const struct cpe_name * cpe);
+
+/**
+ * Get CPE name edition field.
+ * @relates cpe_name
+ */
+const char* cpe_name_edition(const struct cpe_name * cpe);
+
+/**
+ * Get CPE name language field.
+ * @relates cpe_name
+ */
+const char* cpe_name_language(const struct cpe_name * cpe);
 
 /**
  * Check if candidate CPE @a cpe matches CPE @a against
  * according to CPE specification v 2.1.
+ * @relates cpe_name
  */
-bool cpe_name_match_one(const cpe_t * cpe, const cpe_t * against);
+bool cpe_name_match_one(const struct cpe_name* cpe, const struct cpe_name* against);
 
 /**
  * Check if CPE @a name matches any CPE in @a namelist.
+ * @relates cpe_name
  * @param name name to be looked-up
  * @param n number of items in namelist
  * @param namelist list of names to search in
  * @return true if @a name was found within @a namelist
  */
-bool cpe_name_match_cpes(const cpe_t * name, size_t n, cpe_t ** namelist);
+bool cpe_name_match_cpes(const struct cpe_name* name, size_t n, struct cpe_name** namelist);
+
+/**
+ * Return CPE URI as a new string.
+ * @relates cpe_name
+ * @note Returned string is newly allocated and is caller's responsibility to free it.
+ * @param cpe CPE to be converted
+ * @return CPE URI as string
+ * @retval NULL on failure
+ */
+char *cpe_name_get_uri(const struct cpe_name * cpe);
+
+/**
+ * Write CPE URI @a cpe to file a descriptor @a f
+ * @relates cpe_name
+ * @param cpe cpe to write
+ * @param f file descriptor to write CPE URI to
+ * @return number of written characters
+ * @retval <0 on failure
+ */
+int cpe_name_write(const struct cpe_name * cpe, FILE * f);
+
+/**
+ * Ensures @a str is in proper CPE format.
+ * @relates cpe_name
+ * @param str string to be validated
+ */
+bool cpe_name_check(const char *str);
 
 /**
  * Match CPE URI @a candidate against list of @a n CPE URIs given by @a targets.
+ * @relates cpe_name
  * @param candidate candidarte CPE URI as string
  * @param n number of items in targets
  * @param targets list of CPE URIs to be candidate matched against
@@ -143,55 +173,6 @@ bool cpe_name_match_cpes(const cpe_t * name, size_t n, cpe_t ** namelist);
  */
 int cpe_name_match_strs(const char *candidate, size_t n, char **targets);
 
-/**
- * Ensures @a str is in proper CPE format.
- * @param str string to be validated
- */
-bool cpe_check(const char *str);
 
-/**
- * Return CPE URI as a new string.
- * @note Returned string is newly allocated and is caller's responsibility to free it.
- * @param cpe CPE to be converted
- * @return CPE URI as string
- * @retval NULL on failure
- */
-char *cpe_get_uri(const cpe_t * cpe);
-
-/**
- * Write CPE URI @a cpe to file a descriptor @a f
- * @param cpe cpe to write
- * @param f file descriptor to write CPE URI to
- * @return number of written characters
- * @retval <0 on failure
- */
-int cpe_write(const cpe_t * cpe, FILE * f);
-
-/**
- * Fill @a cpe structure with parsed @a fields.
- *
- * Fields can be obtained via cpe_split().
- * Pointers in target sructure will point to same strings as pointers in @a fields do.
- * No string duplication is performed.
- *
- * @see cpe_split
- * @param cpe structure to be filled
- * @param fields NULL-terminated array of strings representing individual fields
- * @return true on success
- */
-bool cpe_assign_values(cpe_t * cpe, char **fields);
-
-/**
- * Destructor. Frees any used resources and safely destroys @a cpe.
- * @param cpe CPE to be deleted
- */
-void cpe_delete(cpe_t * cpe);
-
-/**
- * Return number of elements in NULL-terminated array of pointers.
- * @param array of pointers
- * @return number of members
- */
-size_t ptrarray_length(void **arr);
 
 #endif				/* _CPEURI_H_ */
