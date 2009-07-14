@@ -3,6 +3,9 @@ lib_LTLIBRARIES = libopenscap.la
 libopenscap_la_SOURCES = 
 libopenscap_la_LIBADD =
 
+SUBDIRS += common
+libopenscap_la_LIBADD += common/liboscapcommon.la
+
 if WANT_OVAL
 SUBDIRS += OVAL
 libopenscap_la_LIBADD += OVAL/liboval.la

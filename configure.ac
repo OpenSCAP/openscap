@@ -300,6 +300,7 @@ AC_CONFIG_FILES([Makefile
                  src/CPE/Makefile
                  src/CCE/Makefile
                  src/XCCDF/Makefile
+                 src/common/Makefile
                  swig/OVAL/Makefile
                  swig/CVSS/Makefile
                  swig/CVE/Makefile
