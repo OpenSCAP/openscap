@@ -10,11 +10,15 @@ libprobe_a_SOURCES= probe-main.c probe-cache.c probe-init.c probe-fini.c
 LDADD= $(top_builddir)/src/libopenscap.la libprobe.a
 
 if WANT_PROBES_INDEPENDENT
-pkglibexec_PROGRAMS += probe_textfilecontent54
+pkglibexec_PROGRAMS += probe_textfilecontent54 probe_xmlfilecontent
 
 probe_textfilecontent54_SOURCES= independent/textfilecontent54.c
 probe_textfilecontent54_CFLAGS= @pcre_cflags@
 probe_textfilecontent54_LDFLAGS= @pcre_libs@
+
+probe_xmlfilecontent_SOURCES= independent/xmlfilecontent.c
+probe_xmlfilecontent_CFLAGS= @libxml_cflags@
+probe_xmlfilecontent_LDFLAGS= @libxml_libs@
 endif
 
 if WANT_PROBES_UNIX
