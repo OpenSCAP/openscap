@@ -261,7 +261,7 @@ static int get_runlevel (struct runlevel_req *req, struct runlevel_rep *rep)
 # error "Sorry, your OS isn't supported."
 #endif
 
-SEXP_t *probe_main (SEXP_t *object, int *err)
+SEXP_t *probe_main (SEXP_t *object, int *err, void *arg)
 {
         SEXP_t *probe_out, *val, *item_sexp;
         
