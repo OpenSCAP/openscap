@@ -270,12 +270,12 @@ AC_ARG_ENABLE([bindings],
      esac],[bindings=yes])
      
 AC_ARG_ENABLE([debug],
-     [  --enable-debug          enable debugging flags [[default=no]]],
+     [  --enable-debug          enable debugging flags [[default=yes]]],
      [case "${enableval}" in
        yes) CFLAGS="$CFLAGS $CFLAGS_DEBUGGING" ;;
        no) : ;;
        *) AC_MSG_ERROR([bad value ${enableval} for --enable-debug]) ;;
-     esac], [debug=no])
+     esac], [debug=yes])
 
 AM_CONDITIONAL([WANT_OVAL], test "$oval" = yes)
 AM_CONDITIONAL([WANT_CVSS], test "$cvss" = yes)
