@@ -63,14 +63,16 @@ typedef struct {
         /* Protocol stuff */
         SEAP_CTX_t *ctx;
         int         sd;
-        pthread_mutex_t seap_lock;
 
         /* Object cache */
         pcache_t   *pcache;
         pthread_rwlock_t pcache_lock;
+
+        /* probe main */
+        void *probe_arg;
 } globals_t;
 
-#define GLOBALS_INITIALIZER { NULL, -1, PTHREAD_MUTEX_INITIALIZER, NULL, PTHREAD_MUTEX_INITIALIZER }
+#define GLOBALS_INITIALIZER { NULL, -1, PTHREAD_MUTEX_INITIALIZER, NULL, PTHREAD_MUTEX_INITIALIZER, NULL }
 
 extern globals_t global;
 

@@ -91,14 +91,45 @@ AC_SEARCH_LIBS(
 )
 
 #
-# dlopen & friends
+# threads
 #
-AC_SEARCH_LIBS([dlopen], [dl])
+
+pthread_cflags=error
+pthread_ldflags=error
+
+if test "x$pthread_ldflags" = "xerror"; then
+   AC_CHECK_LIB(c_r, pthread_attr_init, [
+                     pthread_cflags="-D_THREAD_SAFE -pthread"
+                     pthread_ldflags="-pthread" ])
+fi
+
+if test "x$pthread_ldflags" = "xerror"; then
+   AC_CHECK_LIB(pthread, pthread_attr_init, [
+                         pthread_cflags="-D_REENTRANT -D_POSIX_PTHREAD_SEMANTICS"
+                         pthread_ldflags="-lpthread" ])
+fi
+
+if test "x$pthread_ldflags" = "xerror"; then
+   AC_CHECK_LIB(pthreads, pthread_attr_init, [
+                          pthread_cflags="-D_THREAD_SAFE"
+                          pthread_ldflags="-lpthreads" ])
+fi
+
+if test "x$pthread_ldflags" = "xerror"; then
+   AC_MSG_FAILURE(pthread library not found)
+fi
+
+AC_SUBST(pthread_cflags)
+AC_SUBST(pthread_ldflags)
 
 # Checks for header files.
 
 AC_HEADER_STDC
 AM_CHECK_PYTHON_HEADERS
+AC_CHECK_HEADERS(
+  [pthread.h],,
+  [AC_MSG_FAILURE([pthread header file is missing])]
+)
 
 #
 # xml

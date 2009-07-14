@@ -1,7 +1,7 @@
 #include <probe.h>
 #include <stdlib.h>
 #include <string.h>
-#include <dlfcn.h>
+#include <pthread.h>
 #include <errno.h>
 #include <config.h>
 #include "xmalloc.h"
@@ -13,10 +13,10 @@
 
 globals_t global = GLOBALS_INITIALIZER;
 
-typedef void * (*init_fn_t) (void);
-typedef void   (*fini_fn_t) (void *);
-
+void   *probe_init (void);
+void    probe_fini (void *arg);
 SEXP_t *probe_main (SEXP_t *object, int *err, void *arg);
+void   *probe_worker (void *arg);
 
 #define MAX_EVAL_DEPTH 8
 
@@ -111,12 +111,11 @@ int main (void)
         SEXP_t *probe_in, *probe_out;
         int probe_ret;
         
-        SEXP_t *set, *oid;
-
-        void *dlh, *pmain_arg = NULL;
-        init_fn_t   init_func = NULL;
-        fini_fn_t   fini_func = NULL;
+        SEXP_t *oid;
         
+        pthread_attr_t thread_attr;
+        pthread_t      thread;
+
         /* Initialize SEAP */
         global.ctx = SEAP_CTX_new ();
         global.sd  = SEAP_openfd2 (global.ctx, STDIN_FILENO, STDOUT_FILENO, 0);
@@ -135,21 +134,14 @@ int main (void)
                 exit (errno);
         }
 
-        dlh = dlopen (NULL, RTLD_LAZY);
-        if (dlh == NULL) {
-                _D("dlopen failed: errno=%u, %s.\n",
+        if (pthread_attr_init (&thread_attr) != 0) {
+                _D("Can't initialize thread attributes: %u, %s.\n",
                    errno, strerror (errno));
                 exit (errno);
         }
-
-        init_func = (init_fn_t) dlsym (dlh, "probe_init");
-        fini_func = (fini_fn_t) dlsym (dlh, "probe_fini");
-
-        if (init_func != NULL) {
-                _D("probe_init@%p\n", (void *)init_func);
-                pmain_arg = (*init_func)();
-        }
-
+        
+        global.probe_arg = probe_init ();
+        
         /* Main loop */
         for (;;) {
                 if (SEAP_recvmsg (global.ctx, global.sd, &seap_request) == -1) {
@@ -180,18 +172,20 @@ int main (void)
                         probe_out = pcache_sexp_get (global.pcache, oid);
                         if (probe_out == NULL) {
                                 /* cache miss */
-                                set = SEXP_OVALobj_getelm (probe_in, "set", 1);
-                                
-                                if (set != NULL) {
-                                        /* complex object */
-                                        probe_ret = 0;
-                                        probe_out = SEXP_OVALset_eval (set, 0);
-                                } else {
-                                        /* simple object */
-                                        probe_ret = -1;
-                                        probe_out = probe_main (probe_in, &probe_ret, pmain_arg);
-                                        _A(probe_ret != -1);
+
+                                if (pthread_create (&thread, &thread_attr,
+                                                    &probe_worker, (void *)probe_in) != 0)
+                                {
+                                        _D("Can't start new probe worker: %u, %s.\n",
+                                           errno, strerror (errno));
+                                        
+                                        /* send error */
+                                        continue;
                                 }
+                                
+                                _D("New worker: id=%u, in=%p\n", thread, probe_in);
+                                
+                                continue;
                         } else {
                                 /* cache hit */
                                 probe_ret = 0;
@@ -230,15 +224,32 @@ int main (void)
                 SEAP_msg_free (seap_request);
         }
         
-        if (fini_func != NULL) {
-                _D("probe_fini@%p\n", (void *)fini_func);
-                (*fini_func)(pmain_arg);
-        }
-
-        dlclose (dlh);
+        probe_fini (global.probe_arg);
         pcache_free (global.pcache);
         SEAP_close (global.ctx, global.sd);
         SEAP_CTX_free (global.ctx);
         
         return (ret);
+}
+
+void *probe_worker (void *arg)
+{
+        int     probe_ret;
+        SEXP_t *probe_in, *set, *probe_out;
+        
+        probe_in = (SEXP_t *)arg;
+        set = SEXP_OVALobj_getelm (probe_in, "set", 1);
+        
+        if (set != NULL) {
+                /* complex object */
+                probe_ret = 0;
+                probe_out = SEXP_OVALset_eval (set, 0);
+        } else {
+                /* simple object */
+                probe_ret = -1;
+                probe_out = probe_main (probe_in, &probe_ret, global.probe_arg);
+                _A(probe_ret != -1);
+        }
+        
+        return (NULL);
 }
