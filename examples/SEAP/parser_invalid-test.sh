@@ -8,6 +8,8 @@ while read args; do
     	exit 1
     fi
 done <<EOF
+18446744073709551616
+111111111111111111111
 1e
 11e
 111e

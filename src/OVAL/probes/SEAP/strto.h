@@ -5,9 +5,6 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#define STRTO_INT(w, b, s, l, e) strto_int ## w ## (s, l, e, b)
-#define STRTO_UINT(w, b, s, l, e) strto_uint ## w ## (s, l, e, b)
-
 int8_t strto_int8 (const char *str, size_t len, char **endptr, int base);
 int8_t strto_int8_bin (const char *str, size_t len, char **endptr);
 int8_t strto_int8_oct (const char *str, size_t len, char **endptr);
@@ -61,5 +58,7 @@ intmax_t strto_intmax_bin (const char *str, size_t len, char **endptr);
 intmax_t strto_intmax_oct (const char *str, size_t len, char **endptr);
 intmax_t strto_intmax_dec (const char *str, size_t len, char **endptr);
 intmax_t strto_intmax_hex (const char *str, size_t len, char **endptr);
+
+double strto_double (const char *str, size_t len, char **endptr);
 
 #endif /* STRTO_H */

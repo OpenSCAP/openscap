@@ -26,7 +26,7 @@ libseap_la_SOURCES= bitmap.c \
                     xmalloc.c \
 		    strto.c
 
-libseap_la_CFLAGS= -DUSE_XMALLOC -DXMALLOC_EXIT -DWANT_BASE64 -ftrapv
+libseap_la_CFLAGS= -DUSE_XMALLOC -DXMALLOC_EXIT -DWANT_BASE64
 libseap_la_LDFLAGS=
 
 include_HEADERS= seap.h \

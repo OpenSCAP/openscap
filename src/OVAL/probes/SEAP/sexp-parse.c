@@ -11,6 +11,7 @@
 #include "sexp-parse.h"
 #include "sexp-handler.h"
 #include "xbase64.h"
+#include "strto.h"
 
 #ifndef _A
 #define _A(x) assert(x)
@@ -562,26 +563,38 @@ DEFPARSER(label)
                                 {
                                         int64_t number;
                                         
-                                        number = (int64_t) strtoll (pbuf + i, NULL, 10);
-                                        //sscanf (pbuf + i, "%lld", &number);
+                                        number = strto_int64_dec (pbuf + i, i + d, NULL);
+                                        
+                                        switch (errno) {
+                                        case ERANGE:
+                                                _D("Number \"%.*s\" out of range.\n", i + d, pbuf + i);
+                                                goto invalid_number;
+                                        case EINVAL:
+                                                _D("Invalid number: \"%.*s\"\n", i + d, pbuf + i);
+                                                abort ();
+                                        }
                                         
                                         if (number < INT16_MIN) {
                                                 if (number < INT32_MIN) {
                                                         /* 64 */
+                                                        _D("NUM_STORE64: %lld\n", number);
                                                         NUM_STORE(int64_t, number, sexp->atom.number.nptr);
                                                         sexp->atom.number.type = NUM_INT64;
                                                 } else {
                                                         /* 32 */
+                                                        _D("NUM_STORE32: %lld\n", number);
                                                         NUM_STORE(int32_t, number, sexp->atom.number.nptr);
                                                         sexp->atom.number.type = NUM_INT32;
                                                 }
                                         } else {
                                                 if (number < INT8_MIN) {
                                                         /* 16 */
+                                                        _D("NUM_STORE16: %lld\n", number);
                                                         NUM_STORE(int16_t, number, sexp->atom.number.nptr);
                                                         sexp->atom.number.type = NUM_INT16;
                                                 } else {
                                                         /* 8 */
+                                                        _D("NUM_STORE8: %lld\n", number);
                                                         NUM_STORE(int8_t, number, sexp->atom.number.nptr);
                                                         sexp->atom.number.type = NUM_INT8;
                                                 }
@@ -591,8 +604,16 @@ DEFPARSER(label)
                                 {
                                         uint64_t number;
                                         
-                                        number = (uint64_t) strtoull (pbuf + i, NULL, 10);
-                                        //sscanf (pbuf + i, "%llu", &number);
+                                        number = strto_uint64_dec (pbuf + i, i + d, NULL);
+                                        
+                                        switch (errno) {
+                                        case ERANGE:
+                                                _D("Number \"%.*s\" out of range.\n", i + d, pbuf + i);
+                                                goto invalid_number;
+                                        case EINVAL:
+                                                _D("Invalid number: \"%.*s\"\n", i + d, pbuf + i);
+                                                abort ();
+                                        }
                                         
                                         if (number > UINT16_MAX) {
                                                 if (number > UINT32_MAX) {
@@ -626,7 +647,17 @@ DEFPARSER(label)
                         {
                                 double number;
                                 
-                                number = strtod (pbuf + i, NULL);
+                                number = strto_double (pbuf + i, i + d, NULL);
+                                
+                                switch (errno) {
+                                case ERANGE:
+                                        _D("Number \"%.*s\" out of range.\n", i + d, pbuf + i);
+                                        goto invalid_number;
+                                case EINVAL:
+                                        _D("Invalid number: \"%.*s\"\n", i + d, pbuf + i);
+                                        abort ();
+                                }
+                                
                                 NUM_STORE(double, number, sexp->atom.number.nptr);
                                 sexp->atom.number.type = NUM_DOUBLE;
                         }
