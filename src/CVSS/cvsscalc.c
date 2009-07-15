@@ -161,11 +161,11 @@ static const double ara[] = {
 	[AR_NOT_DEFINED] = 1.0
 };
 
-int baseScore(AccessVector_t ave, AccessComplexity_t ace, Authentication_t aue, 
-              ConfImpact_t   cie, IntegImpact_t      iie, AvailImpact_t    aie, 
-              double *base_score,
-              double *impact_score, 
-              double *exploitability_score)
+int cvss_base_score(enum cvss_access_vector ave, enum cvss_access_complexity ace, enum cvss_authentication aue, 
+                    enum cvss_conf_impact   cie, enum cvss_integ_impact      iie, enum cvss_avail_impact    aie, 
+                    double *base_score,
+                    double *impact_score, 
+                    double *exploitability_score)
 {
 	double av, ac, au, ci, ii, ai, bs, is, es;
 
@@ -192,9 +192,9 @@ int baseScore(AccessVector_t ave, AccessComplexity_t ace, Authentication_t aue,
 	return 0;
 }
 
-int tempScore(Exploitability_t   exe, RemediationLevel_t rle, 
-              ReportConfidence_t rce, double      base_score, 
-              double *temporal_score)
+int cvss_temp_score(enum cvss_exploitability    exe, enum cvss_remediation_level rle, 
+                    enum cvss_report_confidence rce, double      base_score, 
+                    double *temporal_score)
 {
 	double ex, rl, rc, ts;
 
@@ -210,14 +210,14 @@ int tempScore(Exploitability_t   exe, RemediationLevel_t rle,
 	return 0;
 }
 
-int envScore(CollateralDamagePotential_t cde, TargetDistribution_t   tde, 
-             ConfReq_t                   cre, IntegReq_t             ire, 
-             AvailReq_t                  are, double *enviromental_score,
-	     AccessVector_t              ave, AccessComplexity_t     ace, 
-             Authentication_t            aue, ConfImpact_t           cie, 
-             IntegImpact_t               iie, AvailImpact_t          aie,	     
-	     Exploitability_t            exe, RemediationLevel_t     rle, 
-             ReportConfidence_t          rce)
+int cvss_env_score(enum cvss_collateral_damage_potential cde, enum cvss_target_distribution   tde, 
+                   enum cvss_conf_req                    cre, enum cvss_integ_req             ire, 
+                   enum cvss_avail_req                   are, double *enviromental_score,
+                   enum cvss_access_vector               ave, enum cvss_access_complexity     ace, 
+                   enum cvss_authentication              aue, enum cvss_conf_impact           cie, 
+                   enum cvss_integ_impact                iie, enum cvss_avail_impact          aie,	     
+                   enum cvss_exploitability              exe, enum cvss_remediation_level     rle, 
+                   enum cvss_report_confidence           rce)
 {
 	double cd, td, cr, ir, ar, ais, aes, abss, ats, envs;
 	double av, ac, au, ci, ii, ai, ex, rl, rc;
