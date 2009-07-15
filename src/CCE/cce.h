@@ -32,37 +32,80 @@
  */
 
 #include <stdbool.h>
-#include "list_cstring.h"
-#include "list_refs.h"
 
 #ifndef _CCE_H
 #define _CCE_H
 
-struct cce {
-	char *id;
-	char *description;
-	struct list_cstring *parameters;
-	struct list_cstring *technicalmechanisms;
-	struct list_refs *references;
-};
-
-/**
- * Initialize cce structure.
- *
- * Creates valid empty CCE structure.
- *
- * @param cce pointer to a structure to be initialized
+/** @struct cce
+ * Structure holding CCE entries.
  */
-void cce_init(struct cce *cce);
+struct cce;
+
+/** @struct cce_entry
+ * Structure holding single CCE entry data.
+ */
+struct cce_entry;
+
+/** @struct cce_reference
+ * Structure holding a CCE reference.
+ */
+struct cce_reference;
+
+
+
+struct oscap_string_iterator;
+const char* oscap_string_iterator_next(struct oscap_string_iterator* it);
+bool oscap_string_iterator_has_more(struct oscap_string_iterator* it);
+
+/** @struct cce_reference_iterator
+ * Iterator over CCE references.
+ * @see oscap_iterator
+ */
+struct cce_reference_iterator;
+/// @relates cce_reference_iterator
+struct cce_reference* cce_reference_iterator_next(struct cce_reference_iterator* it);
+/// @relates cce_reference_iterator
+bool cce_reference_iterator_has_more(struct cce_reference_iterator* it);
+
+/** @struct cce_entry_iterator
+ * Iterator over CCE entries.
+ * @see oscap_iterator
+ */
+struct cce_entry_iterator;
+/// @relates cce_entry_iterator
+struct cce_entry* cce_entry_iterator_next(struct cce_entry_iterator* it);
+/// @relates cce_entry_iterator
+bool cce_entry_iterator_has_more(struct cce_entry_iterator* it);
+
 
 /**
- * Clear cce structure.
- *
+ * Create a new CCE structure from XML file.
+ * @relates cce
+ * @param fname XML file name to porcess
+ * @retval NULL on failure
+ */
+struct cce* cce_new(const char* fname);
+
+/**
+ * CCE structure destructor.
  * Deinitializes CCE structure and releases used resources.
- *
+ * @relates cce
  * @param cce pointer to target structure
  */
-void cce_clear(struct cce *cce);
+void cce_delete(struct cce *cce);
+
+/**
+ * Get an iterator to the contents of the CCE.
+ * @relates cce
+ */
+struct cce_entry_iterator* cce_entries(const struct cce* cce);
+
+/**
+ * Get an CCE entry by ID.
+ * @relates cce
+ * @retval NULL if given entry does not exist
+ */
+struct cce_entry* cce_entry_by_id(const struct cce* cce, const char* id);
 
 /**
  * Vlaidate CCE XML file.
@@ -72,15 +115,48 @@ void cce_clear(struct cce *cce);
  */
 bool cce_validate(const char *filename);
 
+
 /**
- * Parse CCE XML file.
- *
- * Parse CCE XML and store constents of entry with given ID into cce structure.
- *
- * @param docname name of the XML file to be processed
- * @param cce CCE struct where a result will be stored
- * @param id CCE ID of entry which should be extracted
+ * Get CCE entry ID.
+ * @relates cce_entry
  */
-void cce_parse(char *docname, struct cce *cce, char *id);
+const char* cce_entry_id(const struct cce_entry* cce);
+
+/**
+ * Get CCE entry desription.
+ * @relates cce_entry
+ */
+const char* cce_entry_description(const struct cce_entry* cce);
+
+/**
+ * Get an iterator to CCE entry's parameters.
+ * @relates cce_entry
+ */
+struct oscap_string_iterator* cce_entry_params(const struct cce_entry* cce);
+
+/**
+ * Get an iterator to CCE entry's technical mechanisms.
+ * @relates cce_entry
+ */
+struct oscap_string_iterator* cce_entry_tech_mechs(const struct cce_entry* cce);
+
+/**
+ * Get an iterator to CCE entry's references.
+ * @relates cce_entry
+ */
+struct cce_reference_iterator* cce_entry_references(const struct cce_entry* cce);
+
+
+/**
+ * Get source of CCE reference.
+ * @relates cce_reference
+ */
+const char* cce_reference_source(const struct cce_reference* ref);
+
+/**
+ * Get contents of CCE reference.
+ * @relates cce_reference
+ */
+const char* cce_reference_value(const struct cce_reference* ref);
 
 #endif

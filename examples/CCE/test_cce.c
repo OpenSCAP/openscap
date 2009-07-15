@@ -4,8 +4,6 @@
 int main(int argc, char *argv[])
 {
 	printf("CCE XML Parsing Program:\n");
-	struct cce cce;
-	cce_init(&cce);
 
 	if (argc != 3) {
 		printf
@@ -22,38 +20,46 @@ int main(int argc, char *argv[])
 		printf("File '%s' does not seem to be a valid CCE\n", docname);
 		return 1;
 	}
-	cce_parse(docname, &cce, id);
+
+	struct cce* cce_list = cce_new(docname);
+
+	if (cce_list == NULL) {
+		printf("CCE document '%s' could not be loaded properly.\n", docname);
+		return 1;
+	}
+
+	struct cce_entry* cce = cce_entry_by_id(cce_list, id);
+
+	if (cce == NULL) {
+		printf("CCE entry '%s' was not found\n", id);
+		cce_delete(cce_list);
+		return 1;
+	}
 
 	/* Example of struct data returned. */
-	printf("\nID: %s\n", cce.id);
-	printf("Description: %s\n", cce.description);
+	printf("\nID: %s\n", cce_entry_id(cce));
+	printf("Description: %s\n", cce_entry_description(cce));
 
 	{
-		struct list_refs *current = cce.references;
-		while (current) {
-			printf("Ref Source: %s\n", cce.references->source);
-			printf("Ref Value: %s\n", cce.references->value);
-			current = current->next;
+		struct cce_reference_iterator* it = cce_entry_references(cce);
+		while (cce_reference_iterator_has_more(it)) {
+			struct cce_reference* ref = cce_reference_iterator_next(it);
+			printf("Ref Source: %s\n", cce_reference_source(ref));
+			printf("Ref Value: %s\n", cce_reference_value(ref));
 		}
 	}
 
 	{
-		struct list_cstring *current = cce.technicalmechanisms;
-		while (current) {
-			printf("Technical Mech: %s\n", current->value);
-			current = current->next;
-		}
+		struct oscap_string_iterator *it = cce_entry_tech_mechs(cce);
+		while (oscap_string_iterator_has_more(it))
+			printf("Technical Mechanism: %s\n", oscap_string_iterator_next(it));
 
-		current = cce.parameters;
-		while (current) {
-			printf("Available Parameter Choices: %s\n",
-			       current->value);
-			current = current->next;
-
-		}
+		it = cce_entry_params(cce);
+		while (oscap_string_iterator_has_more(it))
+			printf("Available Parameter Choices: %s\n", oscap_string_iterator_next(it));
 	}
 
-	cce_clear(&cce);	/* cce is a struct that contains all the data that the ID string contained. */
+	cce_delete(cce_list);
 
 	return 0;
 }

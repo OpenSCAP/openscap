@@ -30,38 +30,48 @@
 
 #include "cce.h"
 #include "cce_priv.h"
+#include "../common/util.h"
 
-void cce_init(struct cce *cce)
+
+struct cce* cce_new_empty(void)
 {
-	cce->id = NULL;
-	cce->description = NULL;
-	cce->parameters =
-	    (struct list_cstring *)malloc(sizeof(struct list_cstring));
-	cce->technicalmechanisms =
-	    (struct list_cstring *)malloc(sizeof(struct list_cstring));
-	cce->parameters->next = NULL;
-	cce->parameters->value = NULL;
-	cce->technicalmechanisms->next = NULL;
-	cce->technicalmechanisms->value = NULL;
-	cce->references = (struct list_refs *)malloc(sizeof(struct list_refs));
-	cce->references->next = NULL;
-	cce->references->value = NULL;
-	cce->references->source = NULL;
-	return;
+	struct cce* cce = calloc(1, sizeof(struct cce));
+	cce->entries = oscap_list_new();
+	cce->entry_by_id = oscap_htable_new();
+	return cce;
 }
 
-void cce_clear(struct cce *cce)
+void cce_delete(struct cce* cce)
 {
-	if (cce->id)
-		xmlFree(cce->id);
-	if (cce->description)
-		xmlFree(cce->description);
-	list_cstring_clear(cce->parameters);
-	list_cstring_clear(cce->technicalmechanisms);
-	list_refs_clear(cce->references);
+	if (cce) {
+		oscap_htable_delete(cce->entry_by_id, NULL);
+		oscap_list_delete(cce->entries, (oscap_destruct_func)cce_entry_delete);
+		free(cce);
+	}
 }
 
-void cce_parse(char *docname, struct cce *cce, char *id)
+void cce_entry_delete(struct cce_entry *cce)
+{
+	if (cce) {
+		free(cce->id);
+		free(cce->description);
+		oscap_list_delete(cce->params, free);
+		oscap_list_delete(cce->tech_mechs, free);
+		oscap_list_delete(cce->references, (oscap_destruct_func)cce_reference_delete);
+		free(cce);
+	}
+}
+
+struct cce_entry* cce_entry_new_empty(void)
+{
+	struct cce_entry* cce = calloc(1, sizeof(struct cce_entry));
+	cce->params     = oscap_list_new();
+	cce->tech_mechs = oscap_list_new();
+	cce->references = oscap_list_new();
+	return cce;
+}
+
+void cce_parse(const char *docname, struct cce *cce)
 {
 	xmlTextReaderPtr reader;
 	xmlDocPtr doc;
@@ -71,11 +81,19 @@ void cce_parse(char *docname, struct cce *cce, char *id)
 	if (reader != NULL) {
 		ret = xmlTextReaderRead(reader);
 		while (ret == 1) {
-			process_node(reader, cce, id);
+			process_node(reader, cce);
 			ret = xmlTextReaderRead(reader);
-
 		}
+		xmlFreeTextReader(reader);
 	}
+	xmlFreeDoc(doc);
+}
+
+struct cce* cce_new(const char* fname)
+{
+	struct cce* cce = cce_new_empty();
+	cce_parse(fname, cce);
+	return cce;
 }
 
 bool cce_validate(const char *filename)
@@ -103,3 +121,16 @@ bool cce_validate(const char *filename)
 	return ret;
 
 }
+
+OSCAP_IGETTER_GEN(cce_entry, cce, entries)
+OSCAP_HGETTER(struct cce_entry*, cce, entry_by_id)
+
+OSCAP_GETTER(const char*, cce_entry, id)
+OSCAP_GETTER(const char*, cce_entry, description)
+OSCAP_IGETTER(oscap_string, cce_entry, params)
+OSCAP_IGETTER(oscap_string, cce_entry, tech_mechs)
+OSCAP_IGETTER_GEN(cce_reference, cce_entry, references)
+
+OSCAP_GETTER(const char*, cce_reference, source)
+OSCAP_GETTER(const char*, cce_reference, value)
+

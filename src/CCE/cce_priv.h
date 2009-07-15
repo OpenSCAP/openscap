@@ -1,4 +1,4 @@
-/**
+/*
  * @addtogroup CCE
  * @{
  *
@@ -34,14 +34,37 @@
 #include <libxml/xmlreader.h>
 
 #include "cce.h"
+#include "../common/list.h"
 
 #ifndef _CCE_PRIV_H
 #define _CCE_PRIV_H
 
-void process_node(xmlTextReaderPtr reader, struct cce *cce, char *id);
-void process_description(xmlTextReaderPtr reader, struct cce *cce);
-void process_parameter(xmlTextReaderPtr reader, struct cce *cce);
-void process_tech_mech(xmlTextReaderPtr reader, struct cce *cce);
-void process_refs(xmlTextReaderPtr reader, struct cce *cce);
+struct cce {
+	struct oscap_list *entries;
+	struct oscap_htable *entry_by_id;
+};
+
+struct cce_entry {
+	char *id;
+	char *description;
+	struct oscap_list *params;     // list of C-strings
+	struct oscap_list *tech_mechs; // list of C-strings
+	struct oscap_list *references; // list of 'struct cce_reference'
+};
+
+struct cce_reference {
+	char *source;
+	char *value;
+};
+
+void process_node(xmlTextReaderPtr reader, struct cce *cce);
+void process_description(xmlTextReaderPtr reader, struct cce_entry *cce);
+void process_parameter(xmlTextReaderPtr reader, struct cce_entry *cce);
+void process_tech_mech(xmlTextReaderPtr reader, struct cce_entry *cce);
+void process_refs(xmlTextReaderPtr reader, struct cce_entry *cce);
+
+struct cce_entry* cce_entry_new_empty(void);
+void cce_reference_delete(struct cce_reference* ref);
+void cce_entry_delete(struct cce_entry* ref);
 
 #endif
