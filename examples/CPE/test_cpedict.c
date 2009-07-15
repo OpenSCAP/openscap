@@ -42,8 +42,6 @@ void cpe_dictitem_dump(struct cpe_dictitem * item)
 	printf("\n");
 }
 
-void xmlCleanupParser(void);
-
 int main(int argc, char **argv)
 {
 	struct cpe_dict *dict;	// pointer to our CPE dictionary
@@ -81,7 +79,7 @@ int main(int argc, char **argv)
 		return 1;
 	}
 
-	xmlCleanupParser();
+	oscap_cleanup(); // clean caches
 
 	return 0;
 }

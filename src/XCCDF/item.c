@@ -215,7 +215,7 @@ XCCDF_FLAG_GETTER(multiple)
 XCCDF_FLAG_GETTER(prohibit_changes)
 XCCDF_FLAG_GETTER(abstract)
 XCCDF_FLAG_GETTER(interactive)
-XCCDF_ITEM_IGETTER(string, platforms)
+XCCDF_ITEM_SIGETTER(platforms)
 XCCDF_ITEM_IGETTER(reference, references)
 XCCDF_ITEM_IGETTER(status, statuses)
 

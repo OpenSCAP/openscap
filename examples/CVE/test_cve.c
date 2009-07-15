@@ -5,7 +5,6 @@
 
 #include <cve.h>
 
-void xmlCleanupParser(void);
 
 int main(int argc, char **argv)
 {
@@ -51,7 +50,7 @@ int main(int argc, char **argv)
 	}
 
 	cve_delete(cve);
-	xmlCleanupParser();
+	oscap_cleanup();  // clean caches
 
 	return 0;
 }

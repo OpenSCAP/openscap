@@ -321,6 +321,6 @@ XCCDF_VALUE_GETTER(enum xccdf_value_type, type)
 XCCDF_VALUE_GETTER(enum xccdf_interface_hint, interface_hint)
 XCCDF_VALUE_GETTER(enum xccdf_operator, oper)
 XCCDF_VALUE_GETTER(const char*, selector)
-XCCDF_VALUE_IGETTER(string, sources)
+XCCDF_SIGETTER(value, sources)
 
 

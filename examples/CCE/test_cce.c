@@ -61,5 +61,7 @@ int main(int argc, char *argv[])
 
 	cce_delete(cce_list);
 
+	oscap_cleanup(); // clean caches
+
 	return 0;
 }

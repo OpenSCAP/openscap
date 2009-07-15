@@ -385,9 +385,15 @@ void xccdf_set_value_delete(struct xccdf_set_value* sv);
 #define XCCDF_ITERATOR_GETTER(ITYPE,TNAME,MNAME,MEMBER) \
         struct xccdf_##ITYPE##_iterator* xccdf_##TNAME##_##MNAME(const struct xccdf_##TNAME* item) \
         { return oscap_iterator_new(XITEM(item)->MEMBER); }
+#define XCCDF_SITERATOR_GETTER(TNAME,MNAME,MEMBER) \
+        struct oscap_string_iterator* xccdf_##TNAME##_##MNAME(const struct xccdf_##TNAME* item) \
+        { return oscap_iterator_new(XITEM(item)->MEMBER); }
 #define XCCDF_HTABLE_GETTER(RTYPE,TNAME,MNAME,MEMBER) \
 		RTYPE xccdf_##TNAME##_##MNAME(const struct xccdf_##TNAME* item, const char* key) \
 		{ return (RTYPE)oscap_htable_get(XITEM(item)->MEMBER, key); }
+#define XCCDF_SIGETTER(TNAME,MNAME) \
+        struct oscap_string_iterator* xccdf_##TNAME##_##MNAME(const struct xccdf_##TNAME* item) \
+        { return oscap_iterator_new(XITEM(item)->sub.TNAME.MNAME); }
 
 #define XCCDF_BENCHMARK_GETTER_A(RTYPE,MNAME,MEMBER) XCCDF_ABSTRACT_GETTER(RTYPE,benchmark,MNAME,MEMBER)
 #define XCCDF_BENCHMARK_GETTER_I(RTYPE,MNAME) XCCDF_BENCHMARK_GETTER_A(RTYPE,MNAME,item.MNAME)
@@ -433,6 +439,13 @@ void xccdf_set_value_delete(struct xccdf_set_value* sv);
         XCCDF_ITERATOR_GETTER(RTYPE,rule,MNAME,item.MNAME) \
         XCCDF_ITERATOR_GETTER(RTYPE,value,MNAME,item.MNAME) \
         XCCDF_ITERATOR_GETTER(RTYPE,group,MNAME,item.MNAME)
+#define XCCDF_ITEM_SIGETTER(MNAME) \
+        XCCDF_SITERATOR_GETTER(item,MNAME,item.MNAME) \
+        XCCDF_SITERATOR_GETTER(benchmark,MNAME,item.MNAME) \
+        XCCDF_SITERATOR_GETTER(profile,MNAME,item.MNAME) \
+        XCCDF_SITERATOR_GETTER(rule,MNAME,item.MNAME) \
+        XCCDF_SITERATOR_GETTER(value,MNAME,item.MNAME) \
+        XCCDF_SITERATOR_GETTER(group,MNAME,item.MNAME)
 #define XCCDF_FLAG_GETTER(MNAME) \
         XCCDF_BENCHMARK_GETTER_A(bool,MNAME,item.flags.MNAME) \
         XCCDF_PROFILE_GETTER_A(bool,MNAME,item.flags.MNAME) \

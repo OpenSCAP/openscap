@@ -63,7 +63,6 @@ void test_langexpr_dump(cpe_lang_expr_t * expr, int depth)
 
 #ifndef CPELANG_TEST_NO_MAIN
 
-void xmlCleanupParser(void);
 
 int main(int argc, char **argv)
 {
@@ -108,7 +107,7 @@ int main(int argc, char **argv)
 		cpe_name_delete(cpes[i]);
 	free(cpes);
 
-	xmlCleanupParser();
+	oscap_cleanup(); // clean caches
 
 	return EXIT_SUCCESS;
 }

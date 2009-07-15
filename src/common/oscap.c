@@ -20,33 +20,11 @@
  *      Lukas Kuklinek <lkuklinek@redhat.com>
  */
 
+#include <libxml/parser.h>
 
-#include <xccdf.h>
-#include <stdio.h>
-#include <stdlib.h>
-
-void xccdf_benchmark_dump(struct xccdf_benchmark*);
-
-bool dump_benchmark(const char* fname)
+void oscap_cleanup(void)
 {
-    struct xccdf_benchmark* benchmark = xccdf_benchmark_new_from_file(fname);
-	if (benchmark == NULL) return false;
-	printf("\n");
-	xccdf_benchmark_dump(benchmark);
-	printf("\n\n");
-	xccdf_benchmark_delete(benchmark);
-	return true;
-}
-
-int main(int argc, char** argv)
-{
-	if (argc != 2) {
-		fprintf(stderr, "Usage: %s xccdf_benchmark.xml\n", argv[0]);
-		return 1;
-	}
-	bool ret = dump_benchmark(argv[1]);
-	oscap_cleanup(); // clean caches
-	return (ret ? EXIT_SUCCESS : EXIT_FAILURE);
+	xmlCleanupParser();
 }
 
 

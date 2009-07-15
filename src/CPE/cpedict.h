@@ -39,6 +39,7 @@
 #include <stdlib.h>
 
 #include "cpeuri.h"
+#include "../common/oscap.h"
 
 /**
  * @struct cpe_dict_check
@@ -64,10 +65,6 @@ struct cpe_dictitem;
  */
 struct cpe_dict;
 
-
-struct oscap_string_iterator;
-const char* oscap_string_iterator_next(struct oscap_string_iterator* it);
-bool oscap_string_iterator_has_more(struct oscap_string_iterator* it);
 
 
 /** @struct cpe_dictitem_iterator

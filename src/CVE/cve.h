@@ -37,6 +37,7 @@
 #define _CVE_H_
 
 #include <stdbool.h>
+#include "../common/oscap.h"
 
 /** @struct cve
  * Structure holding all the cve_info entries.

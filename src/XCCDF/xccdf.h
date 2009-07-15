@@ -35,6 +35,7 @@
 
 #include <stdbool.h>
 #include <time.h>
+#include "../common/oscap.h"
 
 
 /*--------------------*\
@@ -324,16 +325,6 @@ struct xccdf_fixtext;
 /*--------------------*\
 |       Iterators      |
 \*--------------------*/
-
-/** @struct xccdf_string_iterator
- * String iterator.
- * @see oscap_iterator
- */
-struct xccdf_string_iterator;
-/// @relates xccdf_string_iterator
-const char* xccdf_string_iterator_next(struct xccdf_string_iterator* it);
-/// @relates xccdf_string_iterator
-bool xccdf_string_iterator_has_more(struct xccdf_string_iterator* it);
 
 /** @struct xccdf_item_iterator
  * String iterator.
@@ -736,7 +727,7 @@ struct xccdf_reference_iterator* xccdf_benchmark_references(const struct xccdf_b
  * Get an iterator to the benchmark platforms.
  * @relates xccdf_benchmark
  */
-struct xccdf_string_iterator*  xccdf_benchmark_platforms(const struct xccdf_benchmark* benchmark);
+struct oscap_string_iterator*  xccdf_benchmark_platforms(const struct xccdf_benchmark* benchmark);
 
 /**
  * Get an iterator to the benchmark legal notices.
@@ -839,7 +830,7 @@ bool xccdf_profile_prohibit_changes(const struct xccdf_profile* profile);
  * Get an iterator to profile platforms.
  * @relates xccdf_profile
  */
-struct xccdf_string_iterator* xccdf_profile_platforms(const struct xccdf_profile* profile);
+struct oscap_string_iterator* xccdf_profile_platforms(const struct xccdf_profile* profile);
 
 /**
  * Get an iterator to profile statuses.
@@ -996,7 +987,7 @@ bool xccdf_rule_multiple(const struct xccdf_rule* rule);
  * Get an iterator to rule platforms.
  * @relates xccdf_rule
  */
-struct xccdf_string_iterator* xccdf_rule_platforms(const struct xccdf_rule* rule);
+struct oscap_string_iterator* xccdf_rule_platforms(const struct xccdf_rule* rule);
 
 /**
  * Get an iterator to rule statuses.
@@ -1159,7 +1150,7 @@ bool xccdf_group_selected(const struct xccdf_group* group);
  * Get an iterator to group platforms.
  * @relates xccdf_group
  */
-struct xccdf_string_iterator* xccdf_group_platforms(const struct xccdf_group* group);
+struct oscap_string_iterator* xccdf_group_platforms(const struct xccdf_group* group);
 
 /**
  * Get an iterator to group statuses.
@@ -1286,6 +1277,7 @@ const char* xccdf_value_selector(const struct xccdf_value* value);
 
 /**
  * Apply a selector on the value.
+ * @relates xccdf_value
  * @param The selector character string.
  * @return whether setting the new selector was successful
  */
@@ -1375,13 +1367,13 @@ bool xccdf_value_must_match(const struct xccdf_value* value);
  * @ralates xccdf_value
  * @retval NULL on failure (e.g. the value is not a string)
  */
-// struct xccdf_string_iterator* xccdf_value_choices_string(const struct xccdf_value* value);
+// struct oscap_string_iterator* xccdf_value_choices_string(const struct xccdf_value* value);
 
 /**
  * Get an iterator to the XCCDF value's source URIs.
- * @ralates xccdf_value
+ * @relates xccdf_value
  */
-struct xccdf_string_iterator* xccdf_value_sources(const struct xccdf_value* value);
+struct oscap_string_iterator* xccdf_value_sources(const struct xccdf_value* value);
 
 
 
@@ -1645,12 +1637,9 @@ struct xccdf_fix* xccdf_fixtext_fixref(const struct xccdf_fixtext* fixtext);
 
 
 
-
 /**
  * Release library internal caches.
- *
- * This function should be called once you finish working with the library
- * to free internaly allocated memory, e.g. cache of the XML parser.
+ * @deprecated Use oscap_cleanup() instead.
  */
 void xccdf_cleanup(void);
 

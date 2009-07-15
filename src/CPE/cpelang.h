@@ -38,6 +38,7 @@
 #include <stdlib.h>
 
 #include "cpeuri.h"
+#include "../common/oscap.h"
 
 /// CPE language operators
 enum cpe_lang_oper_t {

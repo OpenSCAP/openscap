@@ -32,6 +32,7 @@
  */
 
 #include <stdbool.h>
+#include "../common/oscap.h"
 
 #ifndef _CCE_H
 #define _CCE_H
@@ -51,11 +52,6 @@ struct cce_entry;
  */
 struct cce_reference;
 
-
-
-struct oscap_string_iterator;
-const char* oscap_string_iterator_next(struct oscap_string_iterator* it);
-bool oscap_string_iterator_has_more(struct oscap_string_iterator* it);
 
 /** @struct cce_reference_iterator
  * Iterator over CCE references.
