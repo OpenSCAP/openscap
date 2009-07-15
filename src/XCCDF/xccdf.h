@@ -325,17 +325,9 @@ struct xccdf_fixtext;
 |       Iterators      |
 \*--------------------*/
 
-/**
- * @struct xccdf_iterator
- * XCCDF iterator.
- *
- * Any XCCDF iterator name takes a form of <tt>struct xccdf_OBJECT_iterator</tt>, where @c OBJECT
- * is a name of a concrete datatype the iterator iterates over.
- */
-
 /** @struct xccdf_string_iterator
  * String iterator.
- * @see xccdf_iterator
+ * @see oscap_iterator
  */
 struct xccdf_string_iterator;
 /// @relates xccdf_string_iterator
@@ -345,7 +337,7 @@ bool xccdf_string_iterator_has_more(struct xccdf_string_iterator* it);
 
 /** @struct xccdf_item_iterator
  * String iterator.
- * @see xccdf_iterator
+ * @see oscap_iterator
  */
 struct xccdf_item_iterator;
 /// @relates xccdf_item_iterator
@@ -355,7 +347,7 @@ bool xccdf_item_iterator_has_more(struct xccdf_item_iterator* it);
 
 /** @struct xccdf_notice_iterator
  * Notice iterator.
- * @see xccdf_iterator
+ * @see oscap_iterator
  */
 struct xccdf_notice_iterator;
 /// @relates xccdf_notice_iterator
@@ -365,7 +357,7 @@ bool xccdf_notice_iterator_has_more(struct xccdf_notice_iterator* it);
 
 /** @struct xccdf_status_iterator
  * Status iterator.
- * @see xccdf_iterator
+ * @see oscap_iterator
  */
 struct xccdf_status_iterator;
 /// @relates xccdf_status_iterator
@@ -375,7 +367,7 @@ bool xccdf_status_iterator_has_more(struct xccdf_status_iterator* it);
 
 /** @struct xccdf_reference_iterator
  * Reference iterator.
- * @see xccdf_iterator
+ * @see oscap_iterator
  */
 struct xccdf_reference_iterator;
 /// @relates xccdf_reference_iterator
@@ -385,7 +377,7 @@ bool xccdf_reference_iterator_has_more(struct xccdf_reference_iterator* it);
 
 /** @struct xccdf_model_iterator
  * Model iterator.
- * @see xccdf_iterator
+ * @see oscap_iterator
  */
 struct xccdf_model_iterator;
 /// @relates xccdf_model_iterator
@@ -395,7 +387,7 @@ bool xccdf_model_iterator_has_more(struct xccdf_model_iterator* it);
 
 /** @struct xccdf_profile_iterator
  * Profile iterator.
- * @see xccdf_iterator
+ * @see oscap_iterator
  */
 struct xccdf_profile_iterator;
 /// @relates xccdf_profile_iterator
@@ -405,7 +397,7 @@ bool xccdf_profile_iterator_has_more(struct xccdf_profile_iterator* it);
 
 /** @struct xccdf_select_iterator
  * Select iterator.
- * @see xccdf_iterator
+ * @see oscap_iterator
  */
 struct xccdf_select_iterator;
 /// @relates xccdf_select_iterator
@@ -415,7 +407,7 @@ bool xccdf_select_iterator_has_more(struct xccdf_select_iterator* it);
 
 /** @struct xccdf_set_value_iterator
  * Set value iterator.
- * @see xccdf_iterator
+ * @see oscap_iterator
  */
 struct xccdf_set_value_iterator;
 /// @relates xccdf_set_value_iterator
@@ -425,7 +417,7 @@ bool xccdf_set_value_iterator_has_more(struct xccdf_set_value_iterator* it);
 
 /** @struct xccdf_refine_value_iterator
  * Refine value iterator.
- * @see xccdf_iterator
+ * @see oscap_iterator
  */
 struct xccdf_refine_value_iterator;
 /// @relates xccdf_refine_value_iterator
@@ -435,7 +427,7 @@ bool xccdf_refine_value_iterator_has_more(struct xccdf_refine_value_iterator* it
 
 /** @struct xccdf_refine_rule_iterator
  * Refine rule iterator.
- * @see xccdf_iterator
+ * @see oscap_iterator
  */
 struct xccdf_refine_rule_iterator;
 /// @relates xccdf_refine_rule_iterator
@@ -445,7 +437,7 @@ bool xccdf_refine_rule_iterator_has_more(struct xccdf_refine_rule_iterator* it);
 
 /** @struct xccdf_ident_iterator
  * Ident iterator.
- * @see xccdf_iterator
+ * @see oscap_iterator
  */
 struct xccdf_ident_iterator;
 /// @relates xccdf_ident_iterator
@@ -455,7 +447,7 @@ bool xccdf_ident_iterator_has_more(struct xccdf_ident_iterator* it);
 
 /** @struct xccdf_check_iterator
  * Check iterator.
- * @see xccdf_iterator
+ * @see oscap_iterator
  */
 struct xccdf_check_iterator;
 /// @relates xccdf_check_iterator
@@ -465,7 +457,7 @@ bool xccdf_check_iterator_has_more(struct xccdf_check_iterator* it);
 
 /** @struct xccdf_check_content_ref_iterator
  * Check content references iterator.
- * @see xccdf_iterator
+ * @see oscap_iterator
  */
 struct xccdf_check_content_ref_iterator;
 /// @relates xccdf_check_content_ref_iterator
@@ -475,7 +467,7 @@ bool xccdf_check_content_ref_iterator_has_more(struct xccdf_check_content_ref_it
 
 /** @struct xccdf_profile_note_iterator
  * Profile note iterator.
- * @see xccdf_iterator
+ * @see oscap_iterator
  */
 struct xccdf_profile_note_iterator;
 /// @relates xccdf_profile_note_iterator
@@ -485,7 +477,7 @@ bool xccdf_profile_note_iterator_has_more(struct xccdf_profile_note_iterator* it
 
 /** @struct xccdf_check_import_iterator
  * Check import iterator.
- * @see xccdf_iterator
+ * @see oscap_iterator
  */
 struct xccdf_check_import_iterator;
 /// @relates xccdf_check_import_iterator
@@ -495,7 +487,7 @@ bool xccdf_check_import_iterator_has_more(struct xccdf_check_import_iterator* it
 
 /** @struct xccdf_check_export_iterator
  * Check export iterator.
- * @see xccdf_iterator
+ * @see oscap_iterator
  */
 struct xccdf_check_export_iterator;
 /// @relates xccdf_check_export_iterator
@@ -505,7 +497,7 @@ bool xccdf_check_export_iterator_has_more(struct xccdf_check_export_iterator* it
 
 /** @struct xccdf_fix_iterator
  * Fix iterator.
- * @see xccdf_iterator
+ * @see oscap_iterator
  */
 struct xccdf_fix_iterator;
 /// @relates xccdf_fix_iterator
@@ -515,7 +507,7 @@ bool xccdf_fix_iterator_has_more(struct xccdf_fix_iterator* it);
 
 /** @struct xccdf_fixtext_iterator
  * Textual fix iterator.
- * @see xccdf_iterator
+ * @see oscap_iterator
  */
 struct xccdf_fixtext_iterator;
 /// @relates xccdf_fixtext_iterator

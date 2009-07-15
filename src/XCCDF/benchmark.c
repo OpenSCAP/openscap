@@ -39,7 +39,7 @@ bool xccdf_benchmark_add_ref(struct xccdf_item* benchmark, struct xccdf_item** p
     idref->ptr = ptr;
     idref->id = strdup(id);
     idref->type = type;
-    xccdf_list_add(benchmark->sub.bench.idrefs, idref);
+    oscap_list_add(benchmark->sub.bench.idrefs, idref);
     return true;
 }
 
@@ -47,13 +47,13 @@ bool xccdf_benchmark_resolve_refs(struct xccdf_item* bench)
 {
 	assert(bench->type == XCCDF_BENCHMARK);
     bool ret = true;
-    struct xccdf_list_item* refitem = bench->sub.bench.idrefs->first;
+    struct oscap_list_item* refitem = bench->sub.bench.idrefs->first;
     for (refitem = bench->sub.bench.idrefs->first; refitem != NULL; refitem = refitem->next) {
         struct xccdf_backref* ref = refitem->data;
         struct xccdf_item* item;
 		
-		if (ref->type) item = xccdf_htable_get(bench->sub.bench.dict, ref->id);
-		else item = xccdf_htable_get(bench->sub.bench.auxdict, ref->id);
+		if (ref->type) item = oscap_htable_get(bench->sub.bench.dict, ref->id);
+		else item = oscap_htable_get(bench->sub.bench.auxdict, ref->id);
 
         if (item == NULL || (ref->type != 0 && (item->type & ref->type) == 0)) {
             ret = false;
@@ -79,15 +79,15 @@ struct xccdf_benchmark* xccdf_benchmark_new_from_file(const char* filename)
 struct xccdf_item* xccdf_benchmark_new_empty(void)
 {
 	struct xccdf_item* bench = xccdf_item_new(XCCDF_BENCHMARK, NULL, NULL);
-	bench->sub.bench.notices = xccdf_list_new();
-	bench->sub.bench.models = xccdf_list_new();
-	bench->sub.bench.idrefs = xccdf_list_new();
-	bench->sub.bench.content = xccdf_list_new();
-	bench->sub.bench.values = xccdf_list_new();
-    bench->sub.bench.plain_texts = xccdf_htable_new();
-	bench->sub.bench.profiles = xccdf_list_new();
-    bench->sub.bench.dict = xccdf_htable_new();
-    bench->sub.bench.auxdict = xccdf_htable_new();
+	bench->sub.bench.notices = oscap_list_new();
+	bench->sub.bench.models = oscap_list_new();
+	bench->sub.bench.idrefs = oscap_list_new();
+	bench->sub.bench.content = oscap_list_new();
+	bench->sub.bench.values = oscap_list_new();
+    bench->sub.bench.plain_texts = oscap_htable_new();
+	bench->sub.bench.profiles = oscap_list_new();
+    bench->sub.bench.dict = oscap_htable_new();
+    bench->sub.bench.auxdict = oscap_htable_new();
 	return bench;
 }
 
@@ -115,7 +115,7 @@ bool xccdf_benchmark_parse(struct xccdf_item* benchmark, xmlTextReaderPtr reader
                 const char* id = xccdf_attribute_get(reader, XCCDFA_ID);
 				char* data = xccdf_get_xml(reader);
                 if (data && id)
-                    xccdf_list_add(benchmark->sub.bench.notices, xccdf_notice_new(id, data));
+                    oscap_list_add(benchmark->sub.bench.notices, xccdf_notice_new(id, data));
 				break;
 			}
             case XCCDFE_FRONT_MATTER:
@@ -131,25 +131,25 @@ bool xccdf_benchmark_parse(struct xccdf_item* benchmark, xmlTextReaderPtr reader
                     benchmark->sub.bench.metadata = xccdf_get_xml(reader);
                 break;
             case XCCDFE_PLATFORM:
-                xccdf_list_add(benchmark->item.platforms, xccdf_attribute_copy(reader, XCCDFA_IDREF));
+                oscap_list_add(benchmark->item.platforms, xccdf_attribute_copy(reader, XCCDFA_IDREF));
                 break;
             case XCCDFE_MODEL:
-                xccdf_list_add(benchmark->sub.bench.models, xccdf_model_new_xml(reader));
+                oscap_list_add(benchmark->sub.bench.models, xccdf_model_new_xml(reader));
                 break;
             case XCCDFE_PLAIN_TEXT: {
                 const char* id = xccdf_attribute_get(reader, XCCDFA_ID);
                 char* data = xccdf_element_string_copy(reader);
-                if (!id || !data || !xccdf_htable_add(benchmark->sub.bench.plain_texts, id, data)) free(data);
+                if (!id || !data || !oscap_htable_add(benchmark->sub.bench.plain_texts, id, data)) free(data);
                 break;
             }
             case XCCDFE_PROFILE:
-                xccdf_list_add(benchmark->sub.bench.profiles, xccdf_profile_new_parse(reader, benchmark));
+                oscap_list_add(benchmark->sub.bench.profiles, xccdf_profile_new_parse(reader, benchmark));
                 break;
 			case XCCDFE_GROUP: case XCCDFE_RULE:
 				xccdf_content_parse(reader, benchmark);
 				break;
 			case XCCDFE_VALUE:
-				xccdf_list_add(benchmark->sub.bench.values, xccdf_value_new_parse(reader, benchmark));
+				oscap_list_add(benchmark->sub.bench.values, xccdf_value_new_parse(reader, benchmark));
 				break;
 			default: xccdf_item_process_element(benchmark, reader);
 		}
@@ -177,9 +177,9 @@ void xccdf_benchmark_dump(struct xccdf_benchmark* benchmark)
         xccdf_item_print(bench, 1);
         printf("  front m.: "); xccdf_print_max(xccdf_benchmark_front_matter(benchmark), 64, "..."); printf("\n");
         printf("  rear m. : "); xccdf_print_max(xccdf_benchmark_rear_matter(benchmark), 64, "..."); printf("\n");
-        printf("  profiles "); xccdf_list_dump(bench->sub.bench.profiles, (xccdf_dump_func)xccdf_profile_dump, 2);
-		printf("  values"); xccdf_list_dump(bench->sub.bench.values, (xccdf_dump_func)xccdf_value_dump, 2);
-		printf("  content"); xccdf_list_dump(bench->sub.bench.content, (xccdf_dump_func)xccdf_item_dump, 2);
+        printf("  profiles "); oscap_list_dump(bench->sub.bench.profiles, (oscap_dump_func)xccdf_profile_dump, 2);
+		printf("  values"); oscap_list_dump(bench->sub.bench.values, (oscap_dump_func)xccdf_value_dump, 2);
+		printf("  content"); oscap_list_dump(bench->sub.bench.content, (oscap_dump_func)xccdf_item_dump, 2);
 	}
 }
 
@@ -192,15 +192,15 @@ void xccdf_benchmark_delete(struct xccdf_benchmark* benchmark)
 		free(bench->sub.bench.front_matter);
 		free(bench->sub.bench.rear_matter);
 		free(bench->sub.bench.metadata);
-		xccdf_list_delete(bench->sub.bench.notices, (xccdf_destruct_func)xccdf_notice_delete);
-		xccdf_list_delete(bench->sub.bench.models, (xccdf_destruct_func)xccdf_model_delete);
-		xccdf_list_delete(bench->sub.bench.idrefs, (xccdf_destruct_func)xccdf_backref_delete);
-		xccdf_list_delete(bench->sub.bench.content, (xccdf_destruct_func)xccdf_item_delete);
-		xccdf_list_delete(bench->sub.bench.values, (xccdf_destruct_func)xccdf_value_delete);
-        xccdf_htable_delete(bench->sub.bench.plain_texts, free);
-        xccdf_htable_delete(bench->sub.bench.dict, NULL);
-		xccdf_htable_delete(bench->sub.bench.auxdict, NULL);
-		xccdf_list_delete(bench->sub.bench.profiles, (xccdf_destruct_func)xccdf_profile_delete);
+		oscap_list_delete(bench->sub.bench.notices, (oscap_destruct_func)xccdf_notice_delete);
+		oscap_list_delete(bench->sub.bench.models, (oscap_destruct_func)xccdf_model_delete);
+		oscap_list_delete(bench->sub.bench.idrefs, (oscap_destruct_func)xccdf_backref_delete);
+		oscap_list_delete(bench->sub.bench.content, (oscap_destruct_func)xccdf_item_delete);
+		oscap_list_delete(bench->sub.bench.values, (oscap_destruct_func)xccdf_value_delete);
+        oscap_htable_delete(bench->sub.bench.plain_texts, free);
+        oscap_htable_delete(bench->sub.bench.dict, NULL);
+		oscap_htable_delete(bench->sub.bench.auxdict, NULL);
+		oscap_list_delete(bench->sub.bench.profiles, (oscap_destruct_func)xccdf_profile_delete);
 		xccdf_item_release(bench);
 	}
 }

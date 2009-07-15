@@ -3,12 +3,10 @@ libxccdf_la_SOURCES = \
 	benchmark.c \
 	elements.c \
 	item.c \
-	list.c \
 	profile.c \
 	value.c \
 	rule.c \
 	item.h \
-	list.h \
 	elements.h
 	
 

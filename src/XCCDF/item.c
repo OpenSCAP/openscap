@@ -41,8 +41,8 @@ struct xccdf_item* xccdf_item_new(enum xccdf_type type, struct xccdf_item* bench
 
 	item = calloc(1, size);
 	item->type = type;
-    item->item.statuses = xccdf_list_new();
-	item->item.platforms = xccdf_list_new();
+    item->item.statuses = oscap_list_new();
+	item->item.platforms = oscap_list_new();
 	item->item.weight = 1.0;
 	item->item.flags.selected = true;
 	if (type == XCCDF_BENCHMARK && bench == NULL)
@@ -55,8 +55,8 @@ struct xccdf_item* xccdf_item_new(enum xccdf_type type, struct xccdf_item* bench
 void xccdf_item_release(struct xccdf_item* item)
 {
 	if (item) {
-        xccdf_list_delete(item->item.statuses, (xccdf_destruct_func)xccdf_status_delete);
-		xccdf_list_delete(item->item.platforms, free);
+        oscap_list_delete(item->item.statuses, (oscap_destruct_func)xccdf_status_delete);
+		oscap_list_delete(item->item.platforms, free);
 		free(item->item.id);
 		free(item->item.cluster_id);
 		free(item->item.title);
@@ -102,10 +102,10 @@ void xccdf_item_print(struct xccdf_item* item, int depth)
 		if (item->item.version) { xccdf_print_depth(depth); printf("version : %s\n", item->item.version); }
 		xccdf_print_depth(depth); printf("title   : "); xccdf_print_max(item->item.title, 64, "..."); printf("\n");
 		xccdf_print_depth(depth); printf("desc    : "); xccdf_print_max(item->item.description, 64, "..."); printf("\n");
-        xccdf_print_depth(depth); printf("platforms "); xccdf_list_dump(item->item.platforms, (xccdf_dump_func)xccdf_cstring_dump, depth + 1);
+        xccdf_print_depth(depth); printf("platforms "); oscap_list_dump(item->item.platforms, (oscap_dump_func)xccdf_cstring_dump, depth + 1);
         xccdf_print_depth(depth);
             printf("status (cur = %d)", xccdf_item_status_current(item));
-            xccdf_list_dump(item->item.statuses, (xccdf_dump_func)xccdf_status_dump, depth + 1);
+            oscap_list_dump(item->item.statuses, (oscap_dump_func)xccdf_status_dump, depth + 1);
 	}
 }
 
@@ -132,7 +132,7 @@ bool xccdf_item_process_attributes(struct xccdf_item* item, xmlTextReaderPtr rea
 	item->item.cluster_id = xccdf_attribute_copy(reader, XCCDFA_CLUSTER_ID);
 
     if (item->item.id && item->item.benchmark)
-        xccdf_htable_add(item->item.benchmark->sub.bench.dict, item->item.id, item);
+        oscap_htable_add(item->item.benchmark->sub.bench.dict, item->item.id, item);
 	return item->item.id != NULL;
 }
 
@@ -155,7 +155,7 @@ bool xccdf_item_process_element(struct xccdf_item* item, xmlTextReaderPtr reader
             struct xccdf_status* status = xccdf_status_new(str, date);
             free(str);
             if (status) {
-                xccdf_list_add(item->item.statuses, status);
+                oscap_list_add(item->item.statuses, status);
                 return true;
             }
             break;
@@ -281,7 +281,7 @@ enum xccdf_status_type xccdf_item_status_current(const struct xccdf_item* item)
 {
     time_t maxtime = 0;
     enum xccdf_status_type maxtype = XCCDF_STATUS_NOT_SPECIFIED;
-    const struct xccdf_list_item* li = item->item.statuses->first;
+    const struct oscap_list_item* li = item->item.statuses->first;
     struct xccdf_status* status;
     while (li) {
         status = li->data;
@@ -304,13 +304,13 @@ struct xccdf_model* xccdf_model_new_xml(xmlTextReaderPtr reader)
 
     model = calloc(1, sizeof(struct xccdf_model));
     model->system = xccdf_attribute_copy(reader, XCCDFA_SYSTEM);
-    model->params = xccdf_htable_new();
+    model->params = oscap_htable_new();
 
     while (xccdf_to_start_element(reader, depth)) {
         if (xccdf_element_get(reader) == XCCDFE_PARAM) {
             const char* name = xccdf_attribute_get(reader, XCCDFA_NAME);
             char* value = xccdf_element_string_copy(reader);
-            if (!name || !value || !xccdf_htable_add(model->params, name, value))
+            if (!name || !value || !oscap_htable_add(model->params, name, value))
                 free(value);
         }
     }
@@ -319,13 +319,13 @@ struct xccdf_model* xccdf_model_new_xml(xmlTextReaderPtr reader)
 }
 
 XCCDF_GENERIC_GETTER(const char*, model, system)
-const char* xccdf_model_param(const struct xccdf_model* m, const char* p) { return xccdf_htable_get(m->params, p); }
+const char* xccdf_model_param(const struct xccdf_model* m, const char* p) { return oscap_htable_get(m->params, p); }
 
 void xccdf_model_delete(struct xccdf_model* model)
 {
     if (model) {
         free(model->system);
-        xccdf_htable_delete(model->params, free);
+        oscap_htable_delete(model->params, free);
         free(model);
     }
 }

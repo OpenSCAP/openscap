@@ -25,18 +25,18 @@
 #include <math.h>
 #include <string.h>
 
-xccdf_destruct_func xccdf_value_val_destructor(enum xccdf_value_type type);
+oscap_destruct_func xccdf_value_val_destructor(enum xccdf_value_type type);
 struct xccdf_value_val* xccdf_value_val_new(enum xccdf_value_type type);
 
 struct xccdf_item* xccdf_value_new_empty(struct xccdf_item* parent, enum xccdf_value_type type)
 {
     struct xccdf_item* val = xccdf_item_new(XCCDF_VALUE, parent->item.benchmark, parent);
 	val->sub.value.type = type;
-	val->sub.value.values  = xccdf_htable_new();
-	xccdf_htable_add(val->sub.value.values, "", xccdf_value_val_new(type));
-	val->sub.value.value = xccdf_htable_get(val->sub.value.values, "");
+	val->sub.value.values  = oscap_htable_new();
+	oscap_htable_add(val->sub.value.values, "", xccdf_value_val_new(type));
+	val->sub.value.value = oscap_htable_get(val->sub.value.values, "");
 	val->sub.value.selector = strdup("");
-	val->sub.value.sources = xccdf_list_new();
+	val->sub.value.sources = oscap_list_new();
 	return val;
 }
 
@@ -90,15 +90,15 @@ struct xccdf_item* xccdf_value_new_parse(xmlTextReaderPtr reader, struct xccdf_i
 		enum xccdf_element el = xccdf_element_get(reader);
 		const char* selector = xccdf_attribute_get(reader, XCCDFA_SELECTOR);
 		if (selector == NULL) selector = "";
-		struct xccdf_value_val* val = xccdf_htable_get(value->sub.value.values, selector);
+		struct xccdf_value_val* val = oscap_htable_get(value->sub.value.values, selector);
 		if (val == NULL) {
 			val = xccdf_value_val_new(type);
 			assert(val != NULL);
-			xccdf_htable_add(value->sub.value.values, selector, val);
+			oscap_htable_add(value->sub.value.values, selector, val);
 		}
 
 		switch (el) {
-			case XCCDFE_SOURCE: xccdf_list_add(value->sub.value.sources, xccdf_element_string_copy(reader)); break;
+			case XCCDFE_SOURCE: oscap_list_add(value->sub.value.sources, xccdf_element_string_copy(reader)); break;
 			case XCCDFE_VALUE_VAL: val->value = xccdf_value_get(xccdf_element_string_get(reader), type); break;
 			case XCCDFE_DEFAULT: val->defval = xccdf_value_get(xccdf_element_string_get(reader), type); break;
 			case XCCDFE_MATCH:
@@ -119,7 +119,7 @@ struct xccdf_item* xccdf_value_new_parse(xmlTextReaderPtr reader, struct xccdf_i
 					if (xccdf_element_get(reader) == XCCDFE_CHOICE) {
 						union xccdf_value_unit* unit = calloc(1, sizeof(union xccdf_value_unit));
 						*unit = xccdf_value_get(xccdf_element_string_get(reader), type);
-						xccdf_list_add(val->choices, unit);
+						oscap_list_add(val->choices, unit);
 					}
 					xmlTextReaderRead(reader);
 				}
@@ -133,8 +133,8 @@ struct xccdf_item* xccdf_value_new_parse(xmlTextReaderPtr reader, struct xccdf_i
 
 void xccdf_value_delete(struct xccdf_item* val)
 {
-	xccdf_htable_delete(val->sub.value.values, xccdf_value_val_destructor(val->sub.value.type));
-	xccdf_list_delete(val->sub.value.sources, free);
+	oscap_htable_delete(val->sub.value.values, xccdf_value_val_destructor(val->sub.value.type));
+	oscap_list_delete(val->sub.value.sources, free);
 	xccdf_item_release(val);
 }
 
@@ -156,17 +156,17 @@ struct xccdf_value_val* xccdf_value_val_new(enum xccdf_value_type type)
 			return NULL;
 	}
 
-	v->choices = xccdf_list_new();
+	v->choices = oscap_list_new();
 
 	return v;
 }
 
 void xccdf_value_unit_s_delete(union xccdf_value_unit* u) { free(u->s); free(u); }
 
-xccdf_destruct_func xccdf_value_unit_destructor(enum xccdf_value_type type)
+oscap_destruct_func xccdf_value_unit_destructor(enum xccdf_value_type type)
 {
 	switch (type) {
-		case XCCDF_TYPE_STRING: return (xccdf_destruct_func)xccdf_value_unit_s_delete;
+		case XCCDF_TYPE_STRING: return (oscap_destruct_func)xccdf_value_unit_s_delete;
 		case XCCDF_TYPE_NUMBER: case XCCDF_TYPE_BOOLEAN: return free;
 	}
 	return NULL;
@@ -174,7 +174,7 @@ xccdf_destruct_func xccdf_value_unit_destructor(enum xccdf_value_type type)
 
 void xccdf_value_val_delete_0(struct xccdf_value_val* v, enum xccdf_value_type type)
 {
-	xccdf_list_delete(v->choices, xccdf_value_unit_destructor(type));
+	oscap_list_delete(v->choices, xccdf_value_unit_destructor(type));
 	switch (type) {
 		case XCCDF_TYPE_STRING:
 			free(v->limits.s.match);
@@ -190,12 +190,12 @@ void xccdf_value_val_delete_b(struct xccdf_value_val* v) { xccdf_value_val_delet
 void xccdf_value_val_delete_n(struct xccdf_value_val* v) { xccdf_value_val_delete_0(v, XCCDF_TYPE_NUMBER); }
 void xccdf_value_val_delete_s(struct xccdf_value_val* v) { xccdf_value_val_delete_0(v, XCCDF_TYPE_STRING); }
 
-xccdf_destruct_func xccdf_value_val_destructor(enum xccdf_value_type type)
+oscap_destruct_func xccdf_value_val_destructor(enum xccdf_value_type type)
 {
 	switch (type) {
-		case XCCDF_TYPE_NUMBER:  return (xccdf_destruct_func) xccdf_value_val_delete_n;
-		case XCCDF_TYPE_BOOLEAN: return (xccdf_destruct_func) xccdf_value_val_delete_b;
-		case XCCDF_TYPE_STRING:  return (xccdf_destruct_func) xccdf_value_val_delete_s;
+		case XCCDF_TYPE_NUMBER:  return (oscap_destruct_func) xccdf_value_val_delete_n;
+		case XCCDF_TYPE_BOOLEAN: return (oscap_destruct_func) xccdf_value_val_delete_b;
+		case XCCDF_TYPE_STRING:  return (oscap_destruct_func) xccdf_value_val_delete_s;
 	}
 	return NULL;
 }
@@ -205,7 +205,7 @@ bool xccdf_value_set_selector(struct xccdf_item* value, const char* selector)
 	free(value->sub.value.selector);
 	if (!selector) selector = "";
 	value->sub.value.selector = strdup(selector);
-	value->sub.value.value = xccdf_htable_get(value->sub.value.values, selector);
+	value->sub.value.value = oscap_htable_get(value->sub.value.values, selector);
 	return value->sub.value.value != NULL;
 }
 
@@ -307,10 +307,10 @@ void xccdf_value_dump(struct xccdf_item* value, int depth)
 		default: assert(false);
 	}
 	xccdf_print_depth(depth); printf("values");
-	xccdf_htable_dump(value->sub.value.values, (xccdf_dump_func)valdump, depth + 1);
+	oscap_htable_dump(value->sub.value.values, (oscap_dump_func)valdump, depth + 1);
 	if (value->sub.value.sources->itemcount != 0) {
 		xccdf_print_depth(depth); printf("sources");
-		xccdf_list_dump(value->sub.value.sources, (xccdf_dump_func)xccdf_string_dump, depth + 1);
+		oscap_list_dump(value->sub.value.sources, (oscap_dump_func)xccdf_string_dump, depth + 1);
 	}
 }
 

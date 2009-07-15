@@ -28,7 +28,7 @@
 #include <assert.h>
 #include "xccdf.h"
 #include "elements.h"
-#include "list.h"
+#include "../common/list.h"
 
 struct xccdf_flags {
 	unsigned selected         : 1;
@@ -58,9 +58,9 @@ struct xccdf_item_base {
 
 	struct xccdf_item* extends;
 	struct xccdf_item* parent;
-	struct xccdf_list* statuses;
-	struct xccdf_list* references;
-	struct xccdf_list* platforms;
+	struct oscap_list* statuses;
+	struct oscap_list* references;
+	struct oscap_list* platforms;
 	struct xccdf_flags flags;
 	struct xccdf_item* benchmark;
 };
@@ -71,22 +71,22 @@ struct xccdf_rule_item {
 	enum xccdf_level severity;
 	struct xccdf_check* check;
 
-	struct xccdf_list* requires;
-	struct xccdf_list* conflicts;
+	struct oscap_list* requires;
+	struct oscap_list* conflicts;
 
-	struct xccdf_list* profile_notes;
-	struct xccdf_list* idents;
-	struct xccdf_list* checks;
-	struct xccdf_list* fixes;
-	struct xccdf_list* fixtexts;
+	struct oscap_list* profile_notes;
+	struct oscap_list* idents;
+	struct oscap_list* checks;
+	struct oscap_list* fixes;
+	struct oscap_list* fixtexts;
 };
 
 struct xccdf_group_item {
-	struct xccdf_list* requires;
-	struct xccdf_list* conflicts;
+	struct oscap_list* requires;
+	struct oscap_list* conflicts;
 
-	struct xccdf_list* values;
-	struct xccdf_list* content;
+	struct oscap_list* values;
+	struct oscap_list* content;
 };
 
 union xccdf_value_unit {
@@ -98,7 +98,7 @@ union xccdf_value_unit {
 struct xccdf_value_val {
 	union xccdf_value_unit value;
 	union xccdf_value_unit defval;
-	struct xccdf_list* choices;
+	struct oscap_list* choices;
 	bool must_match;
 	union {
 		struct {
@@ -118,16 +118,16 @@ struct xccdf_value_item {
 	char* selector;
 
 	struct xccdf_value_val* value;
-	struct xccdf_htable* values;
+	struct oscap_htable* values;
 
-	struct xccdf_list* sources;
+	struct oscap_list* sources;
 };
 
 
 
 // @todo complete
 struct xccdf_result_item {
-	struct xccdf_list* status;
+	struct oscap_list* status;
 	time_t start_time;
 	time_t end_time;
 	char* test_system;
@@ -136,30 +136,30 @@ struct xccdf_result_item {
 	char* benchmark_uri;
 
 	struct xccdf_item* profile;
-	struct xccdf_list* identities;
-	struct xccdf_list* targets;
-	struct xccdf_list* target_addresses;
-	struct xccdf_list* target_facts;
-	struct xccdf_list* set_values;
-	struct xccdf_list* rule_results;
-	struct xccdf_list* scores;
+	struct oscap_list* identities;
+	struct oscap_list* targets;
+	struct oscap_list* target_addresses;
+	struct oscap_list* target_facts;
+	struct oscap_list* set_values;
+	struct oscap_list* rule_results;
+	struct oscap_list* scores;
 };
 
 struct xccdf_profile_item {
     char* note_tag;
-    struct xccdf_list* selects;
-    struct xccdf_list* set_values;
-    struct xccdf_list* refine_values;
-    struct xccdf_list* refine_rules;
+    struct oscap_list* selects;
+    struct oscap_list* set_values;
+    struct oscap_list* refine_values;
+    struct oscap_list* refine_rules;
 };
 
 struct xccdf_benchmark_item {
 	
-	struct xccdf_htable* dict;
-	struct xccdf_htable* auxdict;
-	struct xccdf_list* idrefs;
-	struct xccdf_list* notices;
-    struct xccdf_htable* plain_texts;
+	struct oscap_htable* dict;
+	struct oscap_htable* auxdict;
+	struct oscap_list* idrefs;
+	struct oscap_list* notices;
+    struct oscap_htable* plain_texts;
 
 	char* style;
 	char* style_href;
@@ -167,11 +167,11 @@ struct xccdf_benchmark_item {
 	char* rear_matter;
 	char* metadata;
 
-    struct xccdf_list* models;
-	struct xccdf_list* profiles;
-	struct xccdf_list* values;
-	struct xccdf_list* content;
-	struct xccdf_list* results;
+    struct oscap_list* models;
+	struct oscap_list* profiles;
+	struct oscap_list* values;
+	struct oscap_list* content;
+	struct oscap_list* results;
 };
 
 
@@ -200,7 +200,7 @@ struct xccdf_status {
 
 struct xccdf_model {
     char* system;
-    struct xccdf_htable* params;
+    struct oscap_htable* params;
 };
 
 struct xccdf_selected {
@@ -236,15 +236,15 @@ struct xccdf_ident {
 
 struct xccdf_check {
 	enum xccdf_bool_operator oper;
-	struct xccdf_list* children;
+	struct oscap_list* children;
 	struct xccdf_item* parent;
 	char* id;
 	char* system;
 	char* selector;
 	char* content;
-	struct xccdf_list* imports;
-	struct xccdf_list* exports;
-	struct xccdf_list* content_refs;
+	struct oscap_list* imports;
+	struct oscap_list* exports;
+	struct oscap_list* content_refs;
 };
 
 struct xccdf_check_content_ref {
@@ -379,15 +379,15 @@ void xccdf_set_value_delete(struct xccdf_set_value* sv);
         RTYPE xccdf_##TNAME##_##MEMBER(const struct xccdf_##TNAME* item) { return (RTYPE)((item)->MEMBER); }
 #define XCCDF_GENERIC_IGETTER(ITYPE,TNAME,MNAME) \
         struct xccdf_##ITYPE##_iterator* xccdf_##TNAME##_##MNAME(const struct xccdf_##TNAME* item) \
-        { return xccdf_iterator_new(item->MNAME); }
+        { return oscap_iterator_new(item->MNAME); }
 #define XCCDF_ABSTRACT_GETTER(RTYPE,TNAME,MNAME,MEMBER) \
         RTYPE xccdf_##TNAME##_##MNAME(const struct xccdf_##TNAME* item) { return (RTYPE)(XITEM(item)->MEMBER); }
 #define XCCDF_ITERATOR_GETTER(ITYPE,TNAME,MNAME,MEMBER) \
         struct xccdf_##ITYPE##_iterator* xccdf_##TNAME##_##MNAME(const struct xccdf_##TNAME* item) \
-        { return xccdf_iterator_new(XITEM(item)->MEMBER); }
+        { return oscap_iterator_new(XITEM(item)->MEMBER); }
 #define XCCDF_HTABLE_GETTER(RTYPE,TNAME,MNAME,MEMBER) \
 		RTYPE xccdf_##TNAME##_##MNAME(const struct xccdf_##TNAME* item, const char* key) \
-		{ return (RTYPE)xccdf_htable_get(XITEM(item)->MEMBER, key); }
+		{ return (RTYPE)oscap_htable_get(XITEM(item)->MEMBER, key); }
 
 #define XCCDF_BENCHMARK_GETTER_A(RTYPE,MNAME,MEMBER) XCCDF_ABSTRACT_GETTER(RTYPE,benchmark,MNAME,MEMBER)
 #define XCCDF_BENCHMARK_GETTER_I(RTYPE,MNAME) XCCDF_BENCHMARK_GETTER_A(RTYPE,MNAME,item.MNAME)
@@ -440,6 +440,14 @@ void xccdf_set_value_delete(struct xccdf_set_value* sv);
         XCCDF_VALUE_GETTER_A(bool,MNAME,item.flags.MNAME) \
         XCCDF_GROUP_GETTER_A(bool,MNAME,item.flags.MNAME)
 
+
+#define XITERATOR(x) ((struct oscap_iterator*)(x))
+#define XCCDF_ITERATOR(n) struct xccdf_##n##_iterator*
+#define XCCDF_ITERATOR_FWD(n) struct xccdf_##n##_iterator;
+#define XCCDF_ITERATOR_HAS_MORE(n) bool xccdf_##n##_iterator_has_more(XCCDF_ITERATOR(n) it) { return oscap_iterator_has_more(XITERATOR(it)); }
+#define XCCDF_ITERATOR_NEXT(t,n) t xccdf_##n##_iterator_next(XCCDF_ITERATOR(n) it) { return oscap_iterator_next(XITERATOR(it)); }
+#define XCCDF_ITERATOR_GEN_T(t,n) XCCDF_ITERATOR_FWD(n) XCCDF_ITERATOR_HAS_MORE(n) XCCDF_ITERATOR_NEXT(t,n)
+#define XCCDF_ITERATOR_GEN_S(n) XCCDF_ITERATOR_GEN_T(struct xccdf_##n*,n)
 
 #endif
 
