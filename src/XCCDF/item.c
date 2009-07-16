@@ -223,7 +223,7 @@ XCCDF_ITERATOR_GEN_S(item)
 XCCDF_ITERATOR_GEN_S(status)
 XCCDF_ITERATOR_GEN_S(reference)
 
-const struct xccdf_string_map XCCDF_OPERATOR_MAP[] = {
+const struct oscap_string_map XCCDF_OPERATOR_MAP[] = {
 	{ XCCDF_OPERATOR_EQUALS,        "equals" },
 	{ XCCDF_OPERATOR_NOT_EQUAL,     "not equal" },
 	{ XCCDF_OPERATOR_GREATER,       "greater than" },
@@ -234,7 +234,7 @@ const struct xccdf_string_map XCCDF_OPERATOR_MAP[] = {
 	{ 0, NULL }
 };
 
-const struct xccdf_string_map XCCDF_LEVEL_MAP[] = {
+const struct oscap_string_map XCCDF_LEVEL_MAP[] = {
 	{ XCCDF_UNKNOWN, "unknown" },
 	{ XCCDF_INFO,    "info"    },
 	{ XCCDF_LOW,     "low"     },
@@ -243,7 +243,7 @@ const struct xccdf_string_map XCCDF_LEVEL_MAP[] = {
 	{ 0, NULL }
 };
 
-const struct xccdf_string_map XCCDF_STATUS_MAP[] = {
+const struct oscap_string_map XCCDF_STATUS_MAP[] = {
     { XCCDF_STATUS_ACCEPTED,      "accepted"   },
     { XCCDF_STATUS_DEPRECATED,    "deprecated" },
     { XCCDF_STATUS_DRAFT,         "draft"      },
@@ -257,7 +257,7 @@ struct xccdf_status* xccdf_status_new(const char* status, const char* date)
     struct xccdf_status* ret;
     if (!status) return NULL;
     ret = calloc(1, sizeof(struct xccdf_status));
-    if ((ret->status = string_to_enum(XCCDF_STATUS_MAP, status)) == XCCDF_STATUS_NOT_SPECIFIED) {
+    if ((ret->status = oscap_string_to_enum(XCCDF_STATUS_MAP, status)) == XCCDF_STATUS_NOT_SPECIFIED) {
         free(ret);
         return NULL;
     }
@@ -269,7 +269,7 @@ void xccdf_status_dump(struct xccdf_status* status, int depth)
 {
     xccdf_print_depth(depth);
     time_t date = xccdf_status_date(status);
-    printf("%-10s (%24.24s)\n", enum_to_string(XCCDF_STATUS_MAP, xccdf_status_status(status)), (date ? ctime(&date) : "   date not specified   "));
+    printf("%-10s (%24.24s)\n", oscap_enum_to_string(XCCDF_STATUS_MAP, xccdf_status_status(status)), (date ? ctime(&date) : "   date not specified   "));
 }
 
 

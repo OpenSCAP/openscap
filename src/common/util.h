@@ -163,5 +163,35 @@
  */
 #define OSCAP_HGETTER_STRUCT(RTYPE,SNAME,MNAME) OSCAP_HGETTER_EXP(struct RTYPE*,SNAME,MNAME,MNAME)
 
+
+/**
+ * Define mapping between symbolic constant and its string representation.
+ *
+ * It is supposed to define array of these structures, ending with element
+ * with the @a string member set to NULL. Value of such member also defines
+ * the default value for strings not defined elsewhere.
+ */
+struct oscap_string_map {
+	int value;           ///< integer/enum value
+	const char* string;  ///< string representation of the value
+};
+
+/**
+ * Convert a string to an enumeration constant.
+ * @param map An array of oscap_string_map structures that defines mapping between constants and strings.
+ * @param str string to be converted
+ * @relates oscap_string_map
+ */
+int oscap_string_to_enum(const struct oscap_string_map* map, const char* str);
+
+/**
+ * Convert an enumeration constant to its corresponding string representation.
+ * @param map An array of oscap_string_map structures that defines mapping between constants and strings.
+ * @param val value to be converted
+ * @relates oscap_string_map
+ */
+const char* oscap_enum_to_string(const struct oscap_string_map* map, int val);
+
+
 #endif // OSCAP_UTIL_H_
 

@@ -40,14 +40,14 @@ struct xccdf_item* xccdf_value_new_empty(struct xccdf_item* parent, enum xccdf_v
 	return val;
 }
 
-const struct xccdf_string_map XCCDF_VALUE_TYPE_MAP[] = {
+const struct oscap_string_map XCCDF_VALUE_TYPE_MAP[] = {
 	{ XCCDF_TYPE_NUMBER,  "number"  },
 	{ XCCDF_TYPE_STRING,  "string"  },
 	{ XCCDF_TYPE_BOOLEAN, "boolean" },
 	{ XCCDF_TYPE_STRING, NULL }
 };
 
-const struct xccdf_string_map XCCDF_IFACE_HINT_MAP[] = {
+const struct oscap_string_map XCCDF_IFACE_HINT_MAP[] = {
 	{ XCCDF_IFACE_HINT_CHOICE,   "choice" },
 	{ XCCDF_IFACE_HINT_TEXTLINE, "textline" },
 	{ XCCDF_IFACE_HINT_TEXT,     "text" },
@@ -65,7 +65,7 @@ union xccdf_value_unit xccdf_value_get(const char* str, enum xccdf_value_type ty
 	switch (type) {
 		case XCCDF_TYPE_STRING:  if (!val.s) val.s = strdup(str); break;
 		case XCCDF_TYPE_NUMBER:  val.n = strtof(str, NULL); break;
-		case XCCDF_TYPE_BOOLEAN: val.b = string_to_enum(XCCDF_BOOL_MAP, str); break;
+		case XCCDF_TYPE_BOOLEAN: val.b = oscap_string_to_enum(XCCDF_BOOL_MAP, str); break;
 		default: assert(false);
 	}
 	return val;
@@ -74,11 +74,11 @@ union xccdf_value_unit xccdf_value_get(const char* str, enum xccdf_value_type ty
 struct xccdf_item* xccdf_value_new_parse(xmlTextReaderPtr reader, struct xccdf_item* parent)
 {
 	if (xccdf_element_get(reader) != XCCDFE_VALUE) return NULL;
-	enum xccdf_value_type type = string_to_enum(XCCDF_VALUE_TYPE_MAP, xccdf_attribute_get(reader, XCCDFA_TYPE));
+	enum xccdf_value_type type = oscap_string_to_enum(XCCDF_VALUE_TYPE_MAP, xccdf_attribute_get(reader, XCCDFA_TYPE));
 	struct xccdf_item* value = xccdf_value_new_empty(parent, type);
 	
-	value->sub.value.oper = string_to_enum(XCCDF_OPERATOR_MAP, xccdf_attribute_get(reader, XCCDFA_OPERATOR));
-	value->sub.value.interface_hint = string_to_enum(XCCDF_IFACE_HINT_MAP, xccdf_attribute_get(reader, XCCDFA_INTERFACEHINT));
+	value->sub.value.oper = oscap_string_to_enum(XCCDF_OPERATOR_MAP, xccdf_attribute_get(reader, XCCDFA_OPERATOR));
+	value->sub.value.interface_hint = oscap_string_to_enum(XCCDF_IFACE_HINT_MAP, xccdf_attribute_get(reader, XCCDFA_INTERFACEHINT));
 	if (!xccdf_item_process_attributes(value, reader)) {
 		xccdf_value_delete(value);
 		return NULL;

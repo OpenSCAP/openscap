@@ -26,6 +26,7 @@
 #include <libxml/xmlreader.h>
 #include <stdbool.h>
 #include <time.h>
+#include "../common/util.h"
 
 enum xccdf_element {
 	XCCDFE_ERROR = -1,
@@ -172,15 +173,7 @@ int xccdf_attribute_get_int(xmlTextReaderPtr reader, enum xccdf_attribute attr);
 float xccdf_attribute_get_float(xmlTextReaderPtr reader, enum xccdf_attribute attr);
 //void xccdf_read_flag(xmlTextReaderPtr reader, enum xccdf_attribute attr, xccdf_flags* flags, enum xccdf_flag flag);
 
-struct xccdf_string_map {
-	int value;
-	const char* string;
-};
-
-int string_to_enum(const struct xccdf_string_map* map, const char* str);
-const char* enum_to_string(const struct xccdf_string_map* map, int val);
-
-extern const struct xccdf_string_map XCCDF_BOOL_MAP[];
+extern const struct oscap_string_map XCCDF_BOOL_MAP[];
 
 bool xccdf_to_start_element(xmlTextReaderPtr reader, int depth);
 char* xccdf_element_string_copy(xmlTextReaderPtr reader);

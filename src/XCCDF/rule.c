@@ -247,9 +247,9 @@ struct xccdf_item* xccdf_rule_new_parse(xmlTextReaderPtr reader, struct xccdf_it
 		return NULL;
 	}
 	if (xccdf_attribute_has(reader, XCCDFA_ROLE))
-		rule->sub.rule.role = string_to_enum(XCCDF_ROLE_MAP, xccdf_attribute_get(reader, XCCDFA_ROLE));
+		rule->sub.rule.role = oscap_string_to_enum(XCCDF_ROLE_MAP, xccdf_attribute_get(reader, XCCDFA_ROLE));
 	if (xccdf_attribute_has(reader, XCCDFA_SEVERITY))
-		rule->sub.rule.severity = string_to_enum(XCCDF_LEVEL_MAP, xccdf_attribute_get(reader, XCCDFA_SEVERITY));
+		rule->sub.rule.severity = oscap_string_to_enum(XCCDF_LEVEL_MAP, xccdf_attribute_get(reader, XCCDFA_SEVERITY));
 
 	int depth = xccdf_element_depth(reader) + 1;
 
@@ -371,7 +371,7 @@ struct xccdf_check* xccdf_check_new_empty(struct xccdf_item* parent)
 	return check;
 }
 
-const struct xccdf_string_map XCCDF_BOOLOP_MAP[] = {
+const struct oscap_string_map XCCDF_BOOLOP_MAP[] = {
 	{ XCCDF_OPERATOR_AND, "and" }, { XCCDF_OPERATOR_AND, "AND" },
 	{ XCCDF_OPERATOR_OR,  "or"  }, { XCCDF_OPERATOR_OR,  "OR"  },
 	{ 0, NULL }
@@ -386,7 +386,7 @@ struct xccdf_check* xccdf_check_new_parse(xmlTextReaderPtr reader, struct xccdf_
 	check->id = xccdf_attribute_copy(reader, XCCDFA_ID);
 	check->system = xccdf_attribute_copy(reader, XCCDFA_SYSTEM);
 	check->selector = xccdf_attribute_copy(reader, XCCDFA_SELECTOR);
-	check->oper = string_to_enum(XCCDF_BOOLOP_MAP, xccdf_attribute_get(reader, XCCDFA_OPERATOR));
+	check->oper = oscap_string_to_enum(XCCDF_BOOLOP_MAP, xccdf_attribute_get(reader, XCCDFA_OPERATOR));
 	if (xccdf_attribute_get_bool(reader, XCCDFA_NEGATE)) check->oper |= XCCDF_OPERATOR_NOT;
 
 	int depth = xccdf_element_depth(reader) + 1;
@@ -498,7 +498,7 @@ void xccdf_check_export_delete(struct xccdf_check_export* item)
 	}
 }
 
-const struct xccdf_string_map XCCDF_STRATEGY_MAP[] = {
+const struct oscap_string_map XCCDF_STRATEGY_MAP[] = {
 	{ XCCDF_STRATEGY_CONFIGURE,    "configure"   },
 	{ XCCDF_STRATEGY_COMBINATION,  "combination" },
 	{ XCCDF_STRATEGY_DISABLE,      "disable"     },
@@ -512,9 +512,9 @@ const struct xccdf_string_map XCCDF_STRATEGY_MAP[] = {
 
 #define XCCDF_FIXCOMMON_PARSE(reader, fix) do { \
 	fix->reboot     = xccdf_attribute_get_bool(reader, XCCDFA_REBOOT); \
-	fix->strategy   = string_to_enum(XCCDF_STRATEGY_MAP, xccdf_attribute_get(reader, XCCDFA_STRATEGY)); \
-	fix->disruption = string_to_enum(XCCDF_LEVEL_MAP, xccdf_attribute_get(reader, XCCDFA_DISRUPTION)); \
-	fix->complexity = string_to_enum(XCCDF_LEVEL_MAP, xccdf_attribute_get(reader, XCCDFA_COMPLEXITY)); \
+	fix->strategy   = oscap_string_to_enum(XCCDF_STRATEGY_MAP, xccdf_attribute_get(reader, XCCDFA_STRATEGY)); \
+	fix->disruption = oscap_string_to_enum(XCCDF_LEVEL_MAP, xccdf_attribute_get(reader, XCCDFA_DISRUPTION)); \
+	fix->complexity = oscap_string_to_enum(XCCDF_LEVEL_MAP, xccdf_attribute_get(reader, XCCDFA_COMPLEXITY)); \
 	fix->content    = xccdf_element_string_copy(reader); \
 	} while (false)
 

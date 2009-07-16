@@ -287,10 +287,10 @@ struct xccdf_fixtext {
 	char* content;
 };
 
-extern const struct xccdf_string_map XCCDF_LEVEL_MAP[];
-extern const struct xccdf_string_map XCCDF_ROLE_MAP[];
-extern const struct xccdf_string_map XCCDF_OPERATOR_MAP[];
-extern const struct xccdf_string_map XCCDF_STRATEGY_MAP[];
+extern const struct oscap_string_map XCCDF_LEVEL_MAP[];
+extern const struct oscap_string_map XCCDF_ROLE_MAP[];
+extern const struct oscap_string_map XCCDF_OPERATOR_MAP[];
+extern const struct oscap_string_map XCCDF_STRATEGY_MAP[];
 
 struct xccdf_item* xccdf_item_new(enum xccdf_type type, struct xccdf_item* bench, struct xccdf_item* parent);
 void xccdf_item_release(struct xccdf_item* item);

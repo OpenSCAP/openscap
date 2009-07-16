@@ -65,7 +65,7 @@ struct xccdf_item* xccdf_profile_new_empty(struct xccdf_item* bench)
     return prof;
 }
 
-const struct xccdf_string_map XCCDF_ROLE_MAP[] = {
+const struct oscap_string_map XCCDF_ROLE_MAP[] = {
 	{ XCCDF_ROLE_FULL, "full" },
 	{ XCCDF_ROLE_UNSCORED, "unscored" },
 	{ XCCDF_ROLE_UNCHECKED, "unchecked" },
@@ -101,9 +101,9 @@ struct xccdf_item* xccdf_profile_new_parse(xmlTextReaderPtr reader, struct xccdf
 				rr->selector = xccdf_attribute_copy(reader, XCCDFA_SELECTOR);
 				rr->weight = xccdf_attribute_get_float(reader, XCCDFA_WEIGHT);
 				if (xccdf_attribute_has(reader, XCCDFA_ROLE))
-					rr->role = string_to_enum(XCCDF_ROLE_MAP, xccdf_attribute_get(reader, XCCDFA_ROLE));
+					rr->role = oscap_string_to_enum(XCCDF_ROLE_MAP, xccdf_attribute_get(reader, XCCDFA_ROLE));
 				if (xccdf_attribute_has(reader, XCCDFA_SEVERITY))
-					rr->severity = string_to_enum(XCCDF_LEVEL_MAP, xccdf_attribute_get(reader, XCCDFA_SEVERITY));
+					rr->severity = oscap_string_to_enum(XCCDF_LEVEL_MAP, xccdf_attribute_get(reader, XCCDFA_SEVERITY));
 				xccdf_benchmark_add_ref(bench, &rr->item, id, XCCDF_RULE);
 				///@todo parse remark
                 oscap_list_add(prof->sub.profile.refine_rules, rr);
@@ -115,7 +115,7 @@ struct xccdf_item* xccdf_profile_new_parse(xmlTextReaderPtr reader, struct xccdf
 				struct xccdf_refine_value* rv = calloc(1, sizeof(struct xccdf_refine_value));
 				rv->selector = xccdf_attribute_copy(reader, XCCDFA_SELECTOR);
 				if (xccdf_attribute_has(reader, XCCDFA_OPERATOR))
-					rv->oper = string_to_enum(XCCDF_OPERATOR_MAP, xccdf_attribute_get(reader, XCCDFA_OPERATOR));
+					rv->oper = oscap_string_to_enum(XCCDF_OPERATOR_MAP, xccdf_attribute_get(reader, XCCDFA_OPERATOR));
 				xccdf_benchmark_add_ref(bench, &rv->item, id, XCCDF_VALUE);
 				///@todo parse remark
                 oscap_list_add(prof->sub.profile.refine_values, rv);

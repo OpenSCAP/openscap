@@ -226,7 +226,7 @@ char* xccdf_attribute_copy(xmlTextReaderPtr reader, enum xccdf_attribute attr)
 	return NULL;
 }
 
-const struct xccdf_string_map XCCDF_BOOL_MAP[] = {
+const struct oscap_string_map XCCDF_BOOL_MAP[] = {
 	{ true, "true" }, { true, "True" }, { true, "TRUE" },
 	{ true, "yes"  }, { true, "Yes"  }, { true, "YES"  },
 	{ true, "1" }, { false, NULL }
@@ -234,7 +234,7 @@ const struct xccdf_string_map XCCDF_BOOL_MAP[] = {
 
 bool xccdf_attribute_get_bool(xmlTextReaderPtr reader, enum xccdf_attribute attr)
 {
-	return string_to_enum(XCCDF_BOOL_MAP, xccdf_attribute_get(reader, attr));
+	return oscap_string_to_enum(XCCDF_BOOL_MAP, xccdf_attribute_get(reader, attr));
 }
 
 float xccdf_attribute_get_float(xmlTextReaderPtr reader, enum xccdf_attribute attr)
@@ -244,17 +244,6 @@ float xccdf_attribute_get_float(xmlTextReaderPtr reader, enum xccdf_attribute at
 	else return NAN;
 }
 
-int string_to_enum(const struct xccdf_string_map* map, const char* str)
-{
-	while (map->string && (str == NULL || strcmp(map->string, str) != 0)) ++map;
-	return map->value;
-}
-
-const char* enum_to_string(const struct xccdf_string_map* map, int val)
-{
-	while (map->string && map->value != val) ++map;
-	return map->string;
-}
 
 bool xccdf_to_start_element(xmlTextReaderPtr reader, int depth)
 {
