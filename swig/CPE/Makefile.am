@@ -1,15 +1,15 @@
-AM_CPPFLAGS = -I$(top_builddir)/src/CVE -I$(top_srcdir)/src/CVE $(PYTHON_INCLUDES) -I$(PERL_INCLUDES) -D_LARGEFILE64_SOURCE -D_LARGEFILE_SOURCE=1 -iquote -I/usr/include -include "sys/types.h"
+AM_CPPFLAGS = -I$(top_builddir)/src/CPE -I$(top_srcdir)/src/CPE $(PYTHON_INCLUDES) -I$(PERL_INCLUDES) -D_LARGEFILE64_SOURCE -D_LARGEFILE_SOURCE=1 -iquote -I/usr/include -include "sys/types.h"
 
 perl_vendorlib_DATA = cpe.pm
 perl_vendorarch_LTLIBRARIES = _cpe_pm.la
 _cpe_pm_la_LDFLAGS = -module -avoid-version
-_cpe_pm_la_LIBADD = ${top_builddir}/src/CPE/libcpe.la
+_cpe_pm_la_LIBADD = ${top_builddir}/src/CPE/libcpe.la ${top_builddir}/src/common/liboscapcommon.la
 nodist__cpe_pm_la_SOURCES = cpe_pm_wrap.c
 
 nodist_pyexec_PYTHON = cpe.py
 pyexec_LTLIBRARIES   = _cpe_py.la
 _cpe_py_la_LDFLAGS   = -module -avoid-version
-_cpe_py_la_LIBADD   = ${top_builddir}/src/CPE/libcpe.la
+_cpe_py_la_LIBADD   = ${top_builddir}/src/CPE/libcpe.la ${top_builddir}/src/common/liboscapcommon.la
 nodist__cpe_py_la_SOURCES   = cpe_py_wrap.c
 
 ##beware of: http://www.gnu.org/software/automake/manual/html_node/Multiple-Outputs.html

@@ -29,12 +29,32 @@
 %module cce
 %{
  #include "../../src/CCE/cce.h"
- #include "../../src/CCE/list_cstring.h"
- #include "../../src/CCE/list_refs.h"
 %}
 
-void cce_init(struct cce *cce);
-void cce_clear(struct cce *cce);
+/* Included file: ../../src/CCE/cce.h
+ * Read cce.h for more information and 
+ * documentation
+ *
+ */
+struct cce;
+struct cce_entry;
+struct cce_reference;
+struct cce_reference_iterator;
+struct cce_reference* cce_reference_iterator_next(struct cce_reference_iterator* it);
+bool cce_reference_iterator_has_more(struct cce_reference_iterator* it);
+struct cce_entry_iterator;
+struct cce_entry* cce_entry_iterator_next(struct cce_entry_iterator* it);
+bool cce_entry_iterator_has_more(struct cce_entry_iterator* it);
+struct cce* cce_new(const char* fname);
+void cce_delete(struct cce *cce);
+struct cce_entry_iterator* cce_entries(const struct cce* cce);
+struct cce_entry* cce_entry_by_id(const struct cce* cce, const char* id);
 bool cce_validate(const char *filename);
-void cce_parse(char *docname, struct cce *cce, char *id);
-
+const char* cce_entry_id(const struct cce_entry* cce);
+const char* cce_entry_description(const struct cce_entry* cce);
+struct oscap_string_iterator* cce_entry_params(const struct cce_entry* cce);
+struct oscap_string_iterator* cce_entry_tech_mechs(const struct cce_entry* cce);
+struct cce_reference_iterator* cce_entry_references(const struct cce_entry* cce);
+const char* cce_reference_source(const struct cce_reference* ref);
+const char* cce_reference_value(const struct cce_reference* ref);
+ /* End of cce.h */

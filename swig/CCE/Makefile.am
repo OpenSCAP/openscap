@@ -3,13 +3,13 @@ AM_CPPFLAGS = -I$(top_builddir)/src/CVE -I$(top_srcdir)/src/CVE $(PYTHON_INCLUDE
 perl_vendorlib_DATA = cce.pm
 perl_vendorarch_LTLIBRARIES = _cce_pm.la
 _cce_pm_la_LDFLAGS = -module -avoid-version
-_cce_pm_la_LIBADD = ${top_builddir}/src/CCE/libcce.la
+_cce_pm_la_LIBADD = ${top_builddir}/src/CCE/libcce.la ${top_builddir}/src/common/liboscapcommon.la
 nodist__cce_pm_la_SOURCES = cce_pm_wrap.c
 
 nodist_pyexec_PYTHON = cce.py
 pyexec_LTLIBRARIES = _cce_py.la
 _cce_py_la_LDFLAGS = -module -avoid-version
-_cce_py_la_LIBADD  = ${top_builddir}/src/CCE/libcce.la
+_cce_py_la_LIBADD  = ${top_builddir}/src/CCE/libcce.la ${top_builddir}/src/common/liboscapcommon.la
 nodist__cce_py_la_SOURCES = cce_py_wrap.c
 
 ##beware of: http://www.gnu.org/software/automake/manual/html_node/Multiple-Outputs.html

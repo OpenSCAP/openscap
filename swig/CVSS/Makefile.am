@@ -4,13 +4,13 @@ perl_vendorlib_DATA = cvsscalc.pm
 perl_vendorarch_LTLIBRARIES = _cvsscalc_pm.la
 _cvsscalc_pm_la_LDFLAGS = -module -avoid-version
 nodist__cvsscalc_pm_la_SOURCES = cvsscalc_pm_wrap.c 
-_cvsscalc_pm_la_LIBADD = ${top_builddir}/src/CVSS/libcvss.la
+_cvsscalc_pm_la_LIBADD = ${top_builddir}/src/CVSS/libcvss.la ${top_builddir}/src/common/liboscapcommon.la
 
 nodist_pyexec_PYTHON = cvsscalc.py
 pyexec_LTLIBRARIES = _cvsscalc_py.la
 _cvsscalc_py_la_LDFLAGS = -module -avoid-version
 nodist__cvsscalc_py_la_SOURCES = cvsscalc_py_wrap.c 
-_cvsscalc_py_la_LIBADD = ${top_builddir}/src/CVSS/libcvss.la
+_cvsscalc_py_la_LIBADD = ${top_builddir}/src/CVSS/libcvss.la ${top_builddir}/src/common/liboscapcommon.la
 
 ##beware of: http://www.gnu.org/software/automake/manual/html_node/Multiple-Outputs.html
 

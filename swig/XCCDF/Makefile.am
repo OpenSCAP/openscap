@@ -3,13 +3,13 @@ AM_CPPFLAGS = -I$(top_builddir)/src/XCCDF -I$(top_srcdir)/src/XCCDF $(PYTHON_INC
 perl_vendorlib_DATA = xccdf.pm
 perl_vendorarch_LTLIBRARIES = _xccdf_pm.la
 _xccdf_pm_la_LDFLAGS = -module -avoid-version
-_xccdf_pm_la_LIBADD  = ${top_builddir}/src/XCCDF/libxccdf.la
+_xccdf_pm_la_LIBADD  = ${top_builddir}/src/XCCDF/libxccdf.la ${top_builddir}/src/common/liboscapcommon.la
 nodist__xccdf_pm_la_SOURCES = xccdf_pm_wrap.c
 
 nodist_pyexec_PYTHON = xccdf.py
 pyexec_LTLIBRARIES = _xccdf_py.la
 _xccdf_py_la_LDFLAGS = -module -avoid-version
-_xccdf_py_la_LIBADD  = ${top_builddir}/src/XCCDF/libxccdf.la
+_xccdf_py_la_LIBADD  = ${top_builddir}/src/XCCDF/libxccdf.la ${top_builddir}/src/common/liboscapcommon.la
 nodist__xccdf_py_la_SOURCES = xccdf_py_wrap.c
 
 ##beware of: http://www.gnu.org/software/automake/manual/html_node/Multiple-Outputs.html
