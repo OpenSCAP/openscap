@@ -2,11 +2,10 @@
 #ifndef SEXP_HANDLER_H
 #define SEXP_HANDLER_H
 
-#if defined(THREAD_SAFE)
+#if defined(SEAP_THREAD_SAFE)
 # include <pthread.h>
 #endif
 
-#include <seap.h>
 #include <stdio.h>
 
 typedef struct {
@@ -21,11 +20,11 @@ typedef struct {
         int (*sexp2mem) (SEXP_t *, void *, size_t);
 } SEXP_handler_t;
 
-#include "redblack.h"
+#include "generic/redblack.h"
 DEFRBTREE(handlers, SEXP_handler_t handler);
 
 typedef struct {
-#if defined(THREAD_SAFE)
+#if defined(SEAP_THREAD_SAFE)
         pthread_rwlock_t rwlock;
 #endif
         TREETYPE(handlers) tree;

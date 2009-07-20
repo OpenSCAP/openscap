@@ -1,21 +1,22 @@
 #pragma once
-#ifndef SEAP_SCHEME_H
-#define SEAP_SCHEME_H
+#ifndef _SEAP_SCHEME_H
+#define _SEAP_SCHEME_H
 
 #include <stddef.h>
 #include <stdint.h>
 #include <unistd.h>
-#include "sexp-types.h"
-#include "seap-types.h"
+#include "_sexp-types.h"
+#include "_seap-types.h"
+#include "seap-descriptor.h"
 
 typedef struct {
         const char *schstr;
-        int (*sch_connect)  (SEAP_desc_t *, const char *, uint32_t);
-        int (*sch_openfd)   (SEAP_desc_t *, int, uint32_t);
-        int (*sch_openfd2)  (SEAP_desc_t *, int, int, uint32_t);
-        ssize_t (*sch_recv) (SEAP_desc_t *, void *, size_t, uint32_t);
-        ssize_t (*sch_send) (SEAP_desc_t *, void *, size_t, uint32_t);
-        int (*sch_close)    (SEAP_desc_t *, uint32_t);
+        int     (*sch_connect)  (SEAP_desc_t *, const char *, uint32_t);
+        int     (*sch_openfd)   (SEAP_desc_t *, int, uint32_t);
+        int     (*sch_openfd2)  (SEAP_desc_t *, int, int, uint32_t);
+        ssize_t (*sch_recv)     (SEAP_desc_t *, void *, size_t, uint32_t);
+        ssize_t (*sch_send)     (SEAP_desc_t *, void *, size_t, uint32_t);
+        int     (*sch_close)    (SEAP_desc_t *, uint32_t);
         ssize_t (*sch_sendsexp) (SEAP_desc_t *, SEXP_t *, uint32_t);
 } SEAP_schemefn_t;
 
@@ -49,4 +50,4 @@ SEAP_scheme_t SEAP_scheme_search (const SEAP_schemefn_t fntable[], const char *s
 
 #define SCH_NONE    255
 
-#endif /* SEAP_SCHEME_H */
+#endif /* _SEAP_SCHEME_H */

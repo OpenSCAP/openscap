@@ -4,23 +4,29 @@
 #include <ctype.h>
 #include <errno.h>
 #include <config.h>
-#include "xmalloc.h"
-#include "common.h"
-#include "seap.h"
+#include "public/sm_alloc.h"
+#include "generic/common.h"
+#include "_sexp-types.h"
+#include "_sexp-parse.h"
+#include "_seap-types.h"
+#include "_seap-scheme.h"
+#include "public/seap.h"
 
 static void SEAP_CTX_initdefault (SEAP_CTX_t *ctx)
 {
         _A(ctx != NULL);
         
-        ctx->parser  = PARSER(label);
+        ctx->parser  = NULL /* PARSER(label) */;
         ctx->pflags  = PF_EOFOK;
-        ctx->fmt_in  = FMT_CANONICAL;
-        ctx->fmt_out = FMT_CANONICAL;
+        ctx->fmt_in  = SEXP_FMT_CANONICAL;
+        ctx->fmt_out = SEXP_FMT_CANONICAL;
 
         /* Initialize descriptor table */
         ctx->sd_table.sd = NULL;
         ctx->sd_table.sdsize = 0;
         bitmap_init (&(ctx->sd_table.bitmap), SEAP_MAX_OPENDESC);
+        
+        ctx->cmd_c_table = SEAP_cmdtbl_new ();
         return;
 }
 
@@ -28,7 +34,7 @@ SEAP_CTX_t *SEAP_CTX_new (void)
 {
         SEAP_CTX_t *ctx;
         
-        ctx = xmalloc (sizeof (SEAP_CTX_t));
+        ctx = sm_talloc (SEAP_CTX_t);
         SEAP_CTX_initdefault (ctx);
         
         return (ctx);
@@ -47,7 +53,8 @@ void SEAP_CTX_free (SEAP_CTX_t *ctx)
 
         /* TODO: free sd_table */
         bitmap_free (&(ctx->sd_table.bitmap));
-        xfree ((void **)&ctx);
+        SEAP_cmdtbl_free (ctx->cmd_c_table);
+        sm_free (ctx);
         return;
 }
 
@@ -62,7 +69,7 @@ int SEAP_desc_add (SEAP_desctable_t *sd_table, SEXP_pstate_t *pstate,
                 if (sd >= sd_table->sdsize) {
                         /* sd araay is to small -> realloc */
                         sd_table->sdsize = sd + SDTABLE_REALLOC_ADD;
-                        sd_table->sd = xrealloc (sd_table->sd, sizeof (SEAP_desc_t) * sd_table->sdsize);
+                        sd_table->sd = sm_realloc (sd_table->sd, sizeof (SEAP_desc_t) * sd_table->sdsize);
                 }
 
                 sd_table->sd[sd].next_id = 0;
@@ -72,6 +79,8 @@ int SEAP_desc_add (SEAP_desctable_t *sd_table, SEXP_pstate_t *pstate,
                 sd_table->sd[sd].scheme  = scheme;
                 sd_table->sd[sd].scheme_data = scheme_data;
                 sd_table->sd[sd].ostate  = NULL;
+                sd_table->sd[sd].cmd_c_table = SEAP_cmdtbl_new ();
+                sd_table->sd[sd].cmd_w_table = SEAP_cmdtbl_new ();
 
                 return ((int)sd);
         }
@@ -201,7 +210,7 @@ SEAP_msg_t *SEAP_msg_new (void)
 {
         SEAP_msg_t *new;
 
-        new = xmalloc (sizeof (SEAP_msg_t));
+        new = sm_talloc (SEAP_msg_t);
         new->id = 0;
         new->attrs = NULL;
         new->attrs_cnt = 0;
@@ -215,10 +224,9 @@ void SEAP_msg_free (SEAP_msg_t *msg)
         _A(msg != NULL);
 
         if (msg->attrs != NULL)
-                xfree ((void **)&(msg->attrs));
+                sm_free (msg->attrs);
         
-        xfree ((void **)&msg);
-        
+        sm_free (msg);
         return;
 }
 
@@ -251,7 +259,7 @@ static int __SEXP_recvmsg_process_msg (SEXP_t *sexp_msg, SEAP_msg_t **seap_msg)
          * last element of the message is the S-exp to be transfered.
          */
         (*seap_msg)->attrs_cnt = (msg_icnt - 2) - 1;
-        (*seap_msg)->attrs = xmalloc (sizeof (SEAP_attr_t) * ((*seap_msg)->attrs_cnt));
+        (*seap_msg)->attrs = sm_alloc (sizeof (SEAP_attr_t) * ((*seap_msg)->attrs_cnt));
         
         /* BEG: attribute loop */
         for (msg_i = 2, attr_i = 0; msg_i <= (msg_icnt - 1); ++msg_i) {
@@ -261,10 +269,10 @@ static int __SEXP_recvmsg_process_msg (SEXP_t *sexp_msg, SEAP_msg_t **seap_msg)
                         _D("Unexpected error: No S-exp (attr_name) at position %u in the message (%p).\n",
                            msg_i, sexp_msg);
                         
-                        xfree ((void **)&((*seap_msg)->attrs));
-                        xfree ((void **)&(*seap_msg));
+                        sm_free ((*seap_msg)->attrs);
+                        sm_free ((*seap_msg));
                         
-                        return (SEAP_ERR_UNEXP);
+                        return (SEAP_EUNEXP);
                 }
                  
                 if (SEXP_strncmp (attr_name, ":", 1) == 0) {
@@ -277,10 +285,10 @@ static int __SEXP_recvmsg_process_msg (SEXP_t *sexp_msg, SEAP_msg_t **seap_msg)
                                         _D("Unexpected error: \"%s\": No attribute value at position %u in the message (%p).\n",
                                            "id", msg_i + 1, sexp_msg);
                                         
-                                        xfree ((void **)&((*seap_msg)->attrs));
-                                        xfree ((void **)&(*seap_msg));
+                                        sm_free ((*seap_msg)->attrs);
+                                        sm_free ((*seap_msg));
                                         
-                                        return (SEAP_ERR_UNEXP);
+                                        return (SEAP_EUNEXP);
                                 }
 
                                 if (SEXP_number_get (attr_val, &((*seap_msg)->id),
@@ -289,10 +297,10 @@ static int __SEXP_recvmsg_process_msg (SEXP_t *sexp_msg, SEAP_msg_t **seap_msg)
                                         _D("\"id\": Invalid value or type: sexp=%p, type=%s.\n",
                                            attr_val, SEXP_strtype (attr_val));
                                         
-                                        xfree ((void **)&((*seap_msg)->attrs));
-                                        xfree ((void **)&(*seap_msg));
+                                        sm_free ((*seap_msg)->attrs);
+                                        sm_free ((*seap_msg));
                                         
-                                        return (SEAP_ERR_INVAL);
+                                        return (SEAP_EINVAL);
                                 }
 
                                 /* Mark the origial list item as empty */
@@ -306,12 +314,12 @@ static int __SEXP_recvmsg_process_msg (SEXP_t *sexp_msg, SEAP_msg_t **seap_msg)
                                         _D("Unexpected error: \"%s\": No attribute value at position %u in the message (%p).\n",
                                            (*seap_msg)->attrs[attr_i].name, msg_i + 1, sexp_msg);
                                         
-                                        xfree ((void **)&((*seap_msg)->attrs));
-                                        xfree ((void **)&(*seap_msg));
+                                        sm_free ((*seap_msg)->attrs);
+                                        sm_free ((*seap_msg));
                                         
                                         /* FIXME: free already processed attributes */
 
-                                        return (SEAP_ERR_INVAL);
+                                        return (SEAP_EINVAL);
                                 }
                                 
                                 /* Mark the original list item as empty */
@@ -485,13 +493,13 @@ int SEAP_recvmsg (SEAP_CTX_t *ctx, int sd, SEAP_msg_t **seap_msg)
                          * Receive & Parse loop
                          */
                         for (;;) {
-                                buffer = xmalloc (sizeof (char) * SEAP_BUFFER_SIZE); /* TODO: make buffer size configurable */
+                                buffer = sm_alloc (sizeof (char) * SEAP_BUFFER_SIZE); /* TODO: make buffer size configurable */
                                 buflen = SEAP_BUFFER_SIZE;
                                 
                                 /* Receive raw data */
                                 if ((recvlen = SCH_RECV(desc->scheme, desc, buffer, buflen, 0)) <= 0) {
                                         /* check errno here (non-blocking mode?) */
-                                        xfree ((void **)&buffer);
+                                        sm_free (buffer);
                                         return (-1);
                                 }
                                 
@@ -620,14 +628,14 @@ SEXP_t *__SEAP_msg2sexp (SEAP_msg_t *msg)
         for (i = 0; i < msg->attrs_cnt; ++i) {
                 if (msg->attrs[i].value != NULL) {
                         attr_namelen = strlen (msg->attrs[i].name) + 2;
-                        attr_name    = xmalloc (sizeof (char) * attr_namelen);
+                        attr_name    = sm_alloc (sizeof (char) * attr_namelen);
                         
                         snprintf (attr_name, attr_namelen, ":%s", msg->attrs[i].name);
                         
                         SEXP_list_add (sexp, SEXP_string_new (attr_name, attr_namelen - 1));
                         SEXP_list_add (sexp, msg->attrs[i].value);
                         
-                        xfree ((void **)&attr_name);
+                        sm_free (attr_name);
                 } else {
                         SEXP_list_add (sexp, SEXP_string_new (msg->attrs[i].name,
                                                               strlen (msg->attrs[i].name)));
@@ -657,7 +665,7 @@ int SEAP_msgattr_set (SEAP_msg_t *msg, const char *attr, SEXP_t *value)
 
         SEXP_VALIDATE(value);
 
-        msg->attrs = xrealloc (msg->attrs, sizeof (SEAP_attr_t) * (++msg->attrs_cnt));
+        msg->attrs = sm_realloc (msg->attrs, sizeof (SEAP_attr_t) * (++msg->attrs_cnt));
         msg->attrs[msg->attrs_cnt - 1].name  = strdup (attr);
         msg->attrs[msg->attrs_cnt - 1].value = value;
         
@@ -783,7 +791,7 @@ int __SEAP_senderr (SEAP_CTX_t *ctx, int sd, SEAP_err_t *err, unsigned int type)
         _A(ctx != NULL);
         _A(err != NULL);
 
-        _A(type == SEAP_ERRTYPE_USER || type == SEAP_ERRTYPE_INT);
+        _A(type == SEAP_ETYPE_USER || type == SEAP_ETYPE_INT);
         
         if (sd < 0 || sd >= ctx->sd_table.sdsize) {
                 errno = EBADF;
@@ -822,7 +830,7 @@ int __SEAP_senderr (SEAP_CTX_t *ctx, int sd, SEAP_err_t *err, unsigned int type)
 
 int SEAP_senderr (SEAP_CTX_t *ctx, int sd, SEAP_err_t *err)
 {
-        return (__SEAP_senderr (ctx, sd, err, SEAP_ERRTYPE_USER));
+        return (__SEAP_senderr (ctx, sd, err, SEAP_ETYPE_USER));
 }
 
 int SEAP_replyerr (SEAP_CTX_t *ctx, int sd, SEAP_msg_t *rep_msg, uint32_t e)
@@ -836,7 +844,7 @@ int SEAP_replyerr (SEAP_CTX_t *ctx, int sd, SEAP_msg_t *rep_msg, uint32_t e)
         err.id   = rep_msg->id;
         err.data = NULL; /* FIXME: Attach original message */
         
-        return (__SEAP_senderr (ctx, sd, &err, SEAP_ERRTYPE_USER));
+        return (__SEAP_senderr (ctx, sd, &err, SEAP_ETYPE_USER));
 }
 
 int SEAP_recverr (SEAP_CTX_t *ctx, int sd, SEAP_err_t **err)
@@ -844,7 +852,7 @@ int SEAP_recverr (SEAP_CTX_t *ctx, int sd, SEAP_err_t **err)
         return (-1);
 }
 
-int SEAP_recverr_byid (SEAP_CTX_t *ctx, int sd, SEAP_err_t **err, msg_id_t id)
+int SEAP_recverr_byid (SEAP_CTX_t *ctx, int sd, SEAP_err_t **err, SEAP_msgid_t id)
 {
         return (-1);
 }

@@ -4,18 +4,14 @@
 #include <assert.h>
 #include <errno.h>
 #include <config.h>
-#include "common.h"
-#include "xmalloc.h"
-#include "sexp-types.h"
-#include "sexp-manip.h"
-#include "sexp-parse.h"
+#include "generic/common.h"
+#include "public/sm_alloc.h"
+#include "_sexp-types.h"
+#include "_sexp-manip.h"
+#include "_sexp-parse.h"
 #include "sexp-handler.h"
-#include "xbase64.h"
-#include "strto.h"
-
-#ifndef _A
-#define _A(x) assert(x)
-#endif
+#include "generic/xbase64.h"
+#include "generic/strto.h"
 
 SEXP_t *SEXP_parse_fd (SEXP_format_t fmt, int fd, size_t max, SEXP_pstate_t **state)
 {
@@ -36,7 +32,7 @@ SEXP_pstate_t *SEXP_pstate_new (void)
 {
         SEXP_pstate_t *new;
 
-        new = xmalloc (sizeof (SEXP_pstate_t));
+        new = sm_talloc (SEXP_pstate_t);
         new->buffer = NULL;
         new->buffer_data_len = 0;
         /*
@@ -69,8 +65,8 @@ SEXP_psetup_t *SEXP_psetup_new (void)
 {
         SEXP_psetup_t *psetup;
 
-        psetup = xmalloc (sizeof (SEXP_psetup_t));
-        psetup->fmt    = FMT_AUTODETECT;
+        psetup = sm_talloc (SEXP_psetup_t);
+        psetup->fmt    = SEXP_FMT_AUTODETECT;
         psetup->pflags = PF_EOFOK;
         
         return (psetup);
@@ -80,7 +76,7 @@ void SEXP_psetup_init (SEXP_psetup_t *psetup)
 {
         _A(psetup != NULL);
 
-        psetup->fmt = FMT_AUTODETECT;
+        psetup->fmt = SEXP_FMT_AUTODETECT;
         psetup->pflags = PF_EOFOK;
 }
 
@@ -137,7 +133,7 @@ DEFEXTRACTOR_F(datatype);
 DEFEXTRACTOR(hexstring);
 DEFEXTRACTOR_F(hexstring);
 
-DEFPARSER(label)
+SEXP_t *SEXP_parse (SEXP_psetup_t *setup, const char *buf, size_t buflen, SEXP_pstate_t **pstatep)
 {
         static const void *labels[] = {
                 /* 000 NUL (Null char.)               */ &&L_NUL,
@@ -296,7 +292,7 @@ DEFPARSER(label)
                 _D("new: \"%.*s\"\n", buflen, buf);
                 
                 pbuf = PSTATE(pstatep)->buffer;
-                pbuf = xrealloc (pbuf, sizeof (char) * (PSTATE(pstatep)->buffer_data_len + buflen));
+                pbuf = sm_realloc (pbuf, sizeof (char) * (PSTATE(pstatep)->buffer_data_len + buflen));
                 memcpy (pbuf + PSTATE(pstatep)->buffer_data_len, buf, buflen);
 
                 /* Update buflen; buffer_data_len from pstate will be needed for extractors */
@@ -422,7 +418,7 @@ DEFPARSER(label)
                 case '.':
                         valid = 0;
                 finalize_float:
-                        num_type = NUMTYPE_FLT;
+                        num_type = NUMCLASS_FLT;
                         ++d;
                         
                         /* only digits are allowed now */
@@ -457,7 +453,7 @@ DEFPARSER(label)
                         break;
                 default:
                         if (isdigit(pbuf[i+d])) {
-                                num_type = NUMTYPE_INT;
+                                num_type = NUMCLASS_INT;
                                 ++d;
                                 
                                 while (i + d < buflen) {
@@ -484,7 +480,7 @@ DEFPARSER(label)
                 case 'E':
                         valid = 0;
                 finalize_exponent:
-                        num_type = NUMTYPE_EXP;
+                        num_type = NUMCLASS_EXP;
                         ++d;
                         
                         if (i + d < buflen) {
@@ -515,7 +511,7 @@ DEFPARSER(label)
                 
         L_NUMBER_stage3:
                 /* check if the number is a length prefix */
-                if (num_type == NUMTYPE_INT && pbuf[i] != '-') {
+                if (num_type == NUMCLASS_INT && pbuf[i] != '-') {
                         switch (pbuf[i+d]) {
                         case ':': /* string length */
                                 toklen = strtoll (pbuf + i, NULL, 10);
@@ -557,7 +553,7 @@ DEFPARSER(label)
                         
                         /* STR -> SEXP */
                         switch (num_type) {
-                        case NUMTYPE_INT:
+                        case NUMCLASS_INT:
                                 switch (*(pbuf + i)) {
                                 case '-': /* signed */
                                 {
@@ -642,8 +638,8 @@ DEFPARSER(label)
                                         }
                                 }}
                                 break;
-                        case NUMTYPE_FLT:
-                        case NUMTYPE_EXP: /* TODO: store double/long double */
+                        case NUMCLASS_FLT:
+                        case NUMCLASS_EXP: /* TODO: store double/long double */
                         {
                                 double number;
                                 
@@ -662,10 +658,12 @@ DEFPARSER(label)
                                 sexp->atom.number.type = NUM_DOUBLE;
                         }
                         break;
-                        case NUMTYPE_FRA:
+#if 0
+                        case NUMCLASS_FRA:
                                 _D("Fractions not supported yet\n");
                                 abort ();
                                 break;
+#endif
                         default:
                                 _D("Unknown number type\n");
                                 abort ();
@@ -1248,7 +1246,7 @@ DEFEXTRACTOR(hexstring)
         if (l > 1) {
                 SEXP_SETTYPE(SEXP(out), ATOM_STRING);
                 SEXP(out)->atom.string.len = ((l - 1) >> 1) + ((l - 1) & 1);
-                SEXP(out)->atom.string.str = xmalloc (sizeof (char) * SEXP(out)->atom.string.len);
+                SEXP(out)->atom.string.str = sm_alloc (sizeof (char) * SEXP(out)->atom.string.len);
         
                 for (++str, i = 0; i < ((l - 1) >> 1); ++i) {
                         SEXP(out)->atom.string.str[i] = (hex2bin[B(*str)] << 4) | hex2bin[B(*(str + 1))];
@@ -1279,7 +1277,7 @@ DEFEXTRACTOR_F(hexstring)
                 if (toklen > 0) {
                         SEXP_SETTYPE(SEXP(out), ATOM_STRING);
                         SEXP(out)->atom.string.len = (toklen >> 1) + (toklen & 1);
-                        SEXP(out)->atom.string.str = xmalloc (sizeof (char) * SEXP(out)->atom.string.len);
+                        SEXP(out)->atom.string.str = sm_alloc (sizeof (char) * SEXP(out)->atom.string.len);
 
                         for (++str, i = 0; i < (toklen >> 1); ++i) {
                                 SEXP(out)->atom.string.str[i] = (hex2bin[B(*str)] << 4) | hex2bin[B(*(str + 1))];
@@ -1311,6 +1309,7 @@ DEFEXTRACTOR_F(hexstring)
  * End parser: label
  */
 
+#if 0
 SEXP_t *SEXP_parse (SEXP_psetup_t *psetup, const char *buf, size_t buflen, SEXP_pstate_t **pstate)
 {
         _A(buf != NULL);
@@ -1326,3 +1325,4 @@ SEXP_t *SEXP_parse (SEXP_psetup_t *psetup, const char *buf, size_t buflen, SEXP_
         */
         return PARSER(label)(psetup, buf, buflen, pstate);
 }
+#endif

@@ -3,14 +3,12 @@
 #include <string.h>
 #include <ctype.h>
 #include <assert.h>
+#include <errno.h>
 #include <config.h>
-#include "common.h"
-#include "xmalloc.h"
-#include "sexp-manip.h"
-
-#ifndef _A
-#define _A(x) assert(x)
-#endif
+#include "generic/common.h"
+#include "sm_alloc.h"
+#include "_sexp-types.h"
+#include "_sexp-manip.h"
 
 SEXP_t *SEXP_number_new (const void *num, NUM_type_t type)
 {
@@ -1105,7 +1103,7 @@ char *SEXP_string_cstr (const SEXP_t *sexp)
                 SEXP_VALIDATE(sexp);
                 
                 if (SEXP_TYPE(sexp) == ATOM_STRING) {
-                        str = xmalloc (sizeof (char) * (sexp->atom.string.len + 1));
+                        str = sm_alloc (sizeof (char) * (sexp->atom.string.len + 1));
                         
                         for (i = 0; (i < sexp->atom.string.len &&
                                      isprint(sexp->atom.string.str[i])); ++i)
@@ -1116,7 +1114,7 @@ char *SEXP_string_cstr (const SEXP_t *sexp)
                         str[i] = '\0';
                         
                         if (i < sexp->atom.string.len)
-                                return xrealloc (str, sizeof (char) * (i + 1));
+                                return sm_reallocf (str, sizeof (char) * (i + 1));
                         else
                                 return (str);
                 } else {
@@ -1187,7 +1185,7 @@ char *SEXP_string_subcstr (const SEXP_t *sexp, size_t off, size_t len)
                 return (NULL);
         }
         
-        substr = xmalloc (sizeof (char) * (len + 1));
+        substr = sm_alloc (sizeof (char) * (len + 1));
         memcpy (substr, sexp->atom.string.str + off, sizeof (char) * len);
         substr[len] = '\0';
         
@@ -1217,7 +1215,7 @@ SEXP_t *SEXP_list_new (void)
 
         sexp = SEXP_new ();
         SEXP_SETTYPE(sexp, ATOM_LIST);
-        sexp->atom.list.memb  = xmalloc (sizeof (SEXP_t) * LIST_INIT_SIZE);
+        sexp->atom.list.memb  = sm_alloc (sizeof (SEXP_t) * LIST_INIT_SIZE);
         sexp->atom.list.count = 0;
         sexp->atom.list.size  = LIST_INIT_SIZE;
         
@@ -1265,16 +1263,15 @@ SEXP_t *LIST_add (LIST_t *list, SEXP_t *sexp)
         
         if (list->count >= list->size) {
                 list->size += LIST_GROW_ADD;
-                list->memb  = xrealloc (list->memb, sizeof (SEXP_t) * list->size);
+                list->memb  = sm_realloc (list->memb, sizeof (SEXP_t) * list->size);
         }
         
         memcpy (SEXP(list->memb) + list->count, sexp, sizeof (SEXP_t));
         
         ++(list->count);
         
-        if (SEXP_FREE(sexp)) {
-                xfree ((void **)(&sexp));
-        }
+        if (SEXP_FREE(sexp))
+                sm_free (sexp);
         
         return (SEXP(list->memb) + list->count - 1);
 }
@@ -1366,20 +1363,20 @@ SEXP_t *SEXP_list_pop (SEXP_t **sexp)
                                                  SEXP((*sexp)->atom.list.memb) + 1,
                                                  sizeof (SEXP_t) * ((*sexp)->atom.list.count));
                                         
-                                        (*sexp)->atom.list.memb = xrealloc ((*sexp)->atom.list.memb,
-                                                                            sizeof (SEXP_t) * ((*sexp)->atom.list.count));
+                                        (*sexp)->atom.list.memb = sm_realloc ((*sexp)->atom.list.memb,
+                                                                              sizeof (SEXP_t) * ((*sexp)->atom.list.count));
                                 } else {
-                                        xfree (&((*sexp)->atom.list.memb));
+                                        sm_free ((*sexp)->atom.list.memb);
                                         
                                         if (SEXP_FREE(*sexp))
-                                                xfree ((void **)sexp);
+                                                sm_free (*sexp);
                                         
                                         *sexp = NULL;
                                 }
                                 return (sexp_ret);
                         } else {
                                 if (SEXP_FREE(*sexp))
-                                        xfree ((void **)sexp);
+                                        sm_free (*sexp);
                                 
                                 *sexp = NULL;
                                 
@@ -1471,8 +1468,8 @@ SEXP_t *SEXP_list_join (SEXP_t *a, SEXP_t *b)
                 if (SEXP_listp (a) && SEXP_listp (b)) {
                         if (a->atom.list.size < b->atom.list.count) {
                                 a->atom.list.size = a->atom.list.count + b->atom.list.count;
-                                a->atom.list.memb = xrealloc (a->atom.list.memb,
-                                                              sizeof (SEXP_t) * (a->atom.list.count + b->atom.list.count));
+                                a->atom.list.memb = sm_realloc (a->atom.list.memb,
+                                                                sizeof (SEXP_t) * (a->atom.list.count + b->atom.list.count));
                                 
                         }
                         
@@ -1523,7 +1520,7 @@ SEXP_t *SEXP_list_map (SEXP_t *list, int (*fn) (SEXP_t *, SEXP_t *))
                         SEXP_SETTYPE(res_list, ATOM_LIST);
                         res_list->atom.list.size  = list->atom.list.size;
                         res_list->atom.list.count = list->atom.list.count;
-                        res_list->atom.list.memb  = xmalloc (sizeof (SEXP_t) * res_list->atom.list.size);
+                        res_list->atom.list.memb  = sm_alloc (sizeof (SEXP_t) * res_list->atom.list.size);
                         
                         for (i = 0; i < list->atom.list.count; ++i) {
                                 if (fn (&(SEXP(res_list->atom.list.memb)[i]),
@@ -1563,7 +1560,7 @@ SEXP_t *SEXP_list_map2 (SEXP_t *list, int (*fn) (SEXP_t *, SEXP_t *, void *), vo
                         SEXP_SETTYPE(res_list, ATOM_LIST);
                         res_list->atom.list.size  = list->atom.list.size;
                         res_list->atom.list.count = list->atom.list.count;
-                        res_list->atom.list.memb  = xmalloc (sizeof (SEXP_t) * res_list->atom.list.size);
+                        res_list->atom.list.memb  = sm_alloc (sizeof (SEXP_t) * res_list->atom.list.size);
                         
                         for (i = 0; i < list->atom.list.count; ++i) {
                                 if (fn (&(SEXP(res_list->atom.list.memb)[i]),
@@ -1693,7 +1690,7 @@ SEXP_t *SEXP_new  (void)
 {
         SEXP_t *sexp;
 
-        sexp = xmalloc (sizeof (SEXP_t));
+        sexp = sm_talloc (SEXP_t);
         sexp->flags = 0;
         SEXP_SETTYPE(sexp, ATOM_EMPTY);
         SEXP_SETFLAG(sexp, SEXP_FLAGFREE);
@@ -1735,7 +1732,7 @@ void SEXP_free (SEXP_t *sexp)
                 }
                 
                 if (sexp->atom.list.size > 0) {
-                        xfree ((void **)&(sexp->atom.list.memb));
+                        sm_free (sexp->atom.list.memb);
                 }
                 
         } break;
@@ -1763,23 +1760,25 @@ void SEXP_free (SEXP_t *sexp)
                 case NUM_DOUBLE: sz = sizeof (double);
                         break;
                 case NUM_NONE:
+#if 0
                 case NUM_FRACT: /* Not implemented */
                 case NUM_BIGNUM: /* Not implemented */
                         sz = 0;
+#endif
                         break;
                 default:
                         abort ();
                 }
 
                 if (sz > VOIDPTR_SIZE)
-                        xfree ((void **)&(sexp->atom.number.nptr));
+                        sm_free (sexp->atom.number.nptr);
                 
         } break;
         case ATOM_STRING:
  
                 if (sexp->atom.string.len > 0)
-                        xfree ((void **)&(sexp->atom.string.str));
- 
+                        sm_free (sexp->atom.string.str);
+                
                 break;
         case ATOM_UNFIN:
         case ATOM_EMPTY:
@@ -1796,7 +1795,7 @@ void SEXP_free (SEXP_t *sexp)
 #endif
 
         if (SEXP_FREE(sexp))
-                xfree ((void **)(sexp));
+                sm_free (sexp);
         
         return;
 }
@@ -1972,3 +1971,64 @@ const char *SEXP_strtype (const SEXP_t *sexp)
                 return ("(null)");
         }
 }
+
+#if !defined(NDEBUG) || defined(VALIDADE_SEXP)
+#include <stdio.h>
+
+inline void __SEXP_VALIDATE(const SEXP_t *ptr, const char *fn, size_t line) {
+        if (ptr == NULL) {
+                fprintf (stderr, "[%zu:%s]: !!! NULL S-EXP OBJECT !!!\n", line, fn);
+        } else {
+                if ((ptr->__magic0 == SEXP_MAGIC0) &&
+                    (ptr->__magic1 == SEXP_MAGIC1)) {
+                        switch (SEXP_TYPE(ptr))
+                        {
+                        case ATOM_UNFIN:
+                        case ATOM_INVAL:
+                        case ATOM_EMPTY:
+                                return;
+                        case ATOM_LIST:
+                                if (ptr->atom.list.size > __VALIDATE_TRESH_LIST_SIZE) {
+                                        fprintf (stderr, "[%zu:%s] !!! LIST SIZE TRESHOLD EXCEEDED !!!\n", line, fn);
+                                        break;
+                                }
+                                if (ptr->atom.list.count > __VALIDATE_TRESH_LIST_COUNT) {
+                                        fprintf (stderr, "[%zu:%s] !!! LIST COUNT TRESHOLD EXCEEDED !!!\n", line, fn);
+                                        break;
+                                }
+                                return;
+                        case ATOM_NUMBER:
+                                switch (ptr->atom.number.type)
+                                {
+                                case NUM_NONE:
+                                case NUM_INT8:
+                                case NUM_UINT8:
+                                case NUM_INT16:
+                                case NUM_UINT16:
+                                case NUM_INT32:
+                                case NUM_UINT32:
+                                case NUM_INT64:
+                                case NUM_UINT64:
+                                case NUM_DOUBLE:
+#if 0
+                                case NUM_FRACT:
+                                case NUM_BIGNUM:
+#endif
+                                        return;
+                                }
+                                fprintf (stderr, "[%zu:%s] !!! INVALID NUMBER TYPE !!!\n", line, fn);
+                                break;
+                        case ATOM_STRING:
+                                if (ptr->atom.string.len <= __VALIDATE_TRESH_STRING_LEN)
+                                        return;
+                                fprintf (stderr, "[%zu:%s] !!! STRING LENGTH TRESHOLD EXCEEDED !!!\n", line, fn);
+                                break;
+                        default:
+                                fprintf (stderr, "[%zu:%s] !!! INVALID S-EXP OBJECT TYPE !!!\n", line, fn);
+                        }
+                }
+                fprintf (stderr, "[%zu:%s]: !!! CORRUPTED S-EXP OBJECT !!! (p=%p, t=%u)\n", line, fn, ptr, SEXP_TYPE(ptr));
+        }
+        abort ();
+}
+#endif

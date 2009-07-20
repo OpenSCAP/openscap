@@ -2,6 +2,11 @@
 #ifndef SCH_CONS_H
 #define SCH_CONS_H
 
+#include <stddef.h>
+#include <stdint.h>
+#include <unistd.h>
+#include "seap-descriptor.h"
+
 typedef struct {
         int ifd;
         int ofd;

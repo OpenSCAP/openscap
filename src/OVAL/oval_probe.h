@@ -2,7 +2,7 @@
 #ifndef OVAL_PROBE_H
 #define OVAL_PROBE_H
 
-#include "probes/SEAP/seap-types.h"
+#include <seap-types.h>
 #include "oval_definitions_impl.h"
 #include "oval_agent_api_impl.h"
 #include "oval_parser_impl.h"
@@ -28,10 +28,10 @@ typedef struct {
 typedef struct {
         probe_sd_t *memb;
         size_t      count;
-        SEAP_CTX_t  ctx;
+        SEAP_CTX_t *ctx;
 } probe_sdtbl_t;
 
-#define PROBE_SDTBL_INITIALIZER { NULL, 0, SEAP_CTX_INITIALIZER }
+#define PROBE_SDTBL_INITIALIZER { NULL, 0, NULL }
 
 SEXP_t *oval_object_to_sexp (const char *typestr, struct oval_object *object);
 struct oval_iterator_syschar *sexp_to_oval_state (SEXP_t *sexp);

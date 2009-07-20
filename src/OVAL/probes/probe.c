@@ -3,7 +3,6 @@
 #include <assert.h>
 #include <string.h>
 #include <stdarg.h>
-#include <xmalloc.h>
 #include "oval_definitions_impl.h"
 #include "oval_collection_impl.h"
 #include "oval_agent_api_impl.h"
@@ -38,13 +37,20 @@ SEXP_t *SEXP_OVALattr_create (const char *name, ...)
                                 return (NULL);
                         }
                         
-                        attr_name = xmalloc (sizeof (char) * (attr_namelen + 1));
+                        attr_name = malloc (sizeof (char) * (attr_namelen + 1));
+                        
+                        if (attr_name == NULL) {
+                                SEXP_free(list);
+                                errno = ENOMEM;
+                                return (NULL);
+                        }
+
                         snprintf (attr_name, attr_namelen + 1, ":%s", name);
                         
                         SEXP_list_add (list, SEXP_string_new (attr_name, attr_namelen));
                         SEXP_list_add (list, val);
                         
-                        xfree ((void **)&attr_name);
+                        free (attr_name);
                 }
                 
                 name = va_arg (ap, const char *);
@@ -374,18 +380,22 @@ SEXP_t *SEXP_OVALelm_getattrval (SEXP_t *elm, const char *name)
                         if (SEXP_stringp (attr)) {
                                 char *attr_name;
 
-                                attr_name = xmalloc (sizeof (char) * (strlen (name) + 2));
+                                attr_name = malloc (sizeof (char) * (strlen (name) + 2));
+                                
+                                if (attr_name == NULL)
+                                        return (NULL);
+                                
                                 snprintf (attr_name, strlen (name) + 2, ":%s", name);
 
                                 if (SEXP_strcmp (attr, attr_name) == 0) {
                                         attr = SEXP_list_nth (attrs, i + 1);
                                 } else {
-                                        xfree ((void **)&attr_name);
+                                        free (attr_name);
                                         ++i;
                                         continue;
                                 }
                                 
-                                xfree ((void **)&attr_name);
+                                free (attr_name);
                                 return (attr);
                         }
 
@@ -413,19 +423,23 @@ int SEXP_OVALelm_hasattr (SEXP_t *elm, const char *name)
                         if (SEXP_stringp (attr)) {
                                 char *attr_name;
                                 
-                                attr_name = xmalloc (sizeof (char) * (strlen (name) + 2));
+                                attr_name = malloc (sizeof (char) * (strlen (name) + 2));
+
+                                if (attr_name == NULL)
+                                        return (-1);
+
                                 snprintf (attr_name, strlen (name) + 2, ":%s", name);
                                 
                                 if (SEXP_strcmp (attr, attr_name) == 0 ||
                                     SEXP_strcmp (attr, name) == 0) {
                                         ret = 1;
                                 } else {
-                                        xfree ((void **)&attr_name);
+                                        free (attr_name);
                                         ++i;
                                         continue;
                                 }
                                 
-                                xfree ((void **)&attr_name);
+                                free (attr_name);
                                 return (ret);
                         }
                         

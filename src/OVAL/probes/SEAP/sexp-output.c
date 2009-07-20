@@ -8,20 +8,16 @@
 #include <errno.h>
 #include <config.h>
 #include <assert.h>
-#include "common.h"
-#include "xmalloc.h"
-#include "sexp-types.h"
-#include "sexp-output.h"
-
-#ifndef _A
-#define _A(x) assert(x)
-#endif
+#include "generic/common.h"
+#include "public/sm_alloc.h"
+#include "_sexp-types.h"
+#include "_sexp-output.h"
 
 static SEXP_ostate_t *__SEXP_ostate_new (void)
 {
         SEXP_ostate_t *ost;
 
-        ost = xmalloc (sizeof (SEXP_ostate_t));
+        ost = sm_talloc (SEXP_ostate_t);
         ost->sexp = NULL;
         ost->list_pos = 0;
         ost->sexp_pos = 0;
@@ -36,9 +32,10 @@ static void __SEXP_ostate_free (SEXP_ostate_t *ost)
         _A(ost != NULL);
 
         if (ost->lstack.LIST_stack_cnt > 0)
-                xfree ((void **)&(ost->lstack.LIST_stack));
-        
-        xfree ((void **)&ost);
+                sm_free (ost->lstack.LIST_stack);
+
+        sm_free (ost);
+        return;
 }
 
 ssize_t SEXP_st_dprintf (int fd, SEXP_format_t fmt, SEXP_t *sexp, SEXP_ostate_t **ost)
@@ -48,11 +45,11 @@ ssize_t SEXP_st_dprintf (int fd, SEXP_format_t fmt, SEXP_t *sexp, SEXP_ostate_t 
         _A(ost != NULL);
 
         switch (fmt) {
-        case FMT_CANONICAL:
+        case SEXP_FMT_CANONICAL:
                 return SEXP_st_dprintc (fd, sexp, ost);
-        case FMT_ADVANCED:
+        case SEXP_FMT_ADVANCED:
                 return SEXP_st_dprinta (fd, sexp, ost);
-        case FMT_TRANSPORT:
+        case SEXP_FMT_TRANSPORT:
                 return SEXP_st_dprintt (fd, sexp, ost);
         default:
                 abort ();
@@ -69,11 +66,11 @@ ssize_t SEXP_st_dnprintf (int fd, size_t maxsz, SEXP_format_t fmt, SEXP_t *sexp,
         _A(ost != NULL);
 
         switch (fmt) {
-        case FMT_CANONICAL:
+        case SEXP_FMT_CANONICAL:
                 return SEXP_st_dnprintc (fd, maxsz, sexp, ost);
-        case FMT_ADVANCED:
+        case SEXP_FMT_ADVANCED:
                 return SEXP_st_dnprinta (fd, maxsz, sexp, ost);
-        case FMT_TRANSPORT:
+        case SEXP_FMT_TRANSPORT:
                 return SEXP_st_dnprintt (fd, maxsz, sexp, ost);
         default:
                 abort ();
@@ -85,11 +82,11 @@ ssize_t SEXP_st_dnprintf (int fd, size_t maxsz, SEXP_format_t fmt, SEXP_t *sexp,
 int SEXP_printf (SEXP_format_t fmt, SEXP_t *sexp)
 {
         switch (fmt) {
-        case FMT_CANONICAL:
+        case SEXP_FMT_CANONICAL:
                 return SEXP_printfc (sexp);
-        case FMT_ADVANCED:
+        case SEXP_FMT_ADVANCED:
                 return SEXP_printfa (sexp);
-        case FMT_TRANSPORT:
+        case SEXP_FMT_TRANSPORT:
                 return SEXP_printft (sexp);
         default:
                 abort ();
@@ -102,11 +99,11 @@ int SEXP_printf (SEXP_format_t fmt, SEXP_t *sexp)
 int SEXP_fprintf (FILE *fp, SEXP_format_t fmt, SEXP_t *sexp)
 {
         switch (fmt) {
-        case FMT_CANONICAL:
+        case SEXP_FMT_CANONICAL:
                 return SEXP_fprintfc (fp, sexp);
-        case FMT_ADVANCED:
+        case SEXP_FMT_ADVANCED:
                 return SEXP_fprintfa (fp, sexp);
-        case FMT_TRANSPORT:
+        case SEXP_FMT_TRANSPORT:
                 return SEXP_fprintft (fp, sexp);
         default:
                 abort ();
@@ -119,11 +116,11 @@ int SEXP_fprintf (FILE *fp, SEXP_format_t fmt, SEXP_t *sexp)
 int SEXP_sprintf (char *str, SEXP_format_t fmt, SEXP_t *sexp)
 {
         switch (fmt) {
-        case FMT_CANONICAL:
+        case SEXP_FMT_CANONICAL:
                 return SEXP_sprintfc (str, sexp);
-        case FMT_ADVANCED:
+        case SEXP_FMT_ADVANCED:
                 return SEXP_sprintfa (str, sexp);
-        case FMT_TRANSPORT:
+        case SEXP_FMT_TRANSPORT:
                 return SEXP_sprintft (str, sexp);
         default:
                 abort ();
@@ -136,11 +133,11 @@ int SEXP_sprintf (char *str, SEXP_format_t fmt, SEXP_t *sexp)
 int SEXP_snprintf (char *str, size_t size, SEXP_format_t fmt, SEXP_t *sexp)
 {
         switch (fmt) {
-        case FMT_CANONICAL:
+        case SEXP_FMT_CANONICAL:
                 return SEXP_snprintfc (str, size, sexp);
-        case FMT_ADVANCED:
+        case SEXP_FMT_ADVANCED:
                 return SEXP_snprintfa (str, size, sexp);
-        case FMT_TRANSPORT:
+        case SEXP_FMT_TRANSPORT:
                 return SEXP_snprintft (str, size, sexp);
         default:
                 abort ();
@@ -153,11 +150,11 @@ int SEXP_snprintf (char *str, size_t size, SEXP_format_t fmt, SEXP_t *sexp)
 int SEXP_asprintf (char **ret, SEXP_format_t fmt, SEXP_t *sexp)
 {
         switch (fmt) {
-        case FMT_CANONICAL:
+        case SEXP_FMT_CANONICAL:
                 return SEXP_asprintfc (ret, sexp);
-        case FMT_ADVANCED:
+        case SEXP_FMT_ADVANCED:
                 return SEXP_asprintfa (ret, sexp);
-        case FMT_TRANSPORT:
+        case SEXP_FMT_TRANSPORT:
                 return SEXP_asprintft (ret, sexp);
         default:
                 abort ();
@@ -170,11 +167,11 @@ int SEXP_asprintf (char **ret, SEXP_format_t fmt, SEXP_t *sexp)
 int SEXP_asnprintf (char **ret, size_t maxsz, SEXP_format_t fmt, SEXP_t *sexp)
 {
         switch (fmt) {
-        case FMT_CANONICAL:
+        case SEXP_FMT_CANONICAL:
                 return SEXP_asnprintfc (ret, maxsz, sexp);
-        case FMT_ADVANCED:
+        case SEXP_FMT_ADVANCED:
                 return SEXP_asnprintfa (ret, maxsz, sexp);
-        case FMT_TRANSPORT:
+        case SEXP_FMT_TRANSPORT:
                 return SEXP_asnprintft (ret, maxsz, sexp);
         default:
                 abort ();
@@ -228,8 +225,8 @@ print_loop:
                 wlen += sizeof ch;
                 
                 LIST_stack_push (&((*ost)->lstack), &(psexp->atom.list));
-                (*ost)->list_pos = xrealloc ((*ost)->list_pos,
-                                             sizeof (uint32_t) * SCNT);
+                (*ost)->list_pos = sm_realloc ((*ost)->list_pos,
+                                               sizeof (uint32_t) * SCNT);
                 
                 _A(SCNT > 0);
                 
@@ -237,7 +234,7 @@ print_loop:
                 break;
         case ATOM_STRING:
                 digits = xnumdigits (psexp->atom.string.len);
-                buffer = xmalloc (sizeof (char) * (digits + 2));
+                buffer = sm_alloc (sizeof (char) * (digits + 2));
                 snprintf (buffer, sizeof (char) * (digits + 2), "%.*u:",
                           digits, psexp->atom.string.len);
                 
@@ -252,7 +249,7 @@ print_loop:
                         return (-1);
                 }
                 
-                xfree ((void **)&buffer);
+                sm_free (buffer);
                 
                 if ((wret - digits - 1 - psexp->atom.string.len) != 0) {
                         /* not everything was written to fd */
@@ -373,8 +370,8 @@ print_loop:
                         wlen += sizeof ch;
                         
                         LIST_stack_dec (&((*ost)->lstack));
-                        (*ost)->list_pos = xrealloc ((*ost)->list_pos,
-                                                     sizeof (uint32_t) * SCNT);
+                        (*ost)->list_pos = sm_realloc ((*ost)->list_pos,
+                                                       sizeof (uint32_t) * SCNT);
                 }
         }
         

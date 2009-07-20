@@ -11,12 +11,14 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <config.h>
-#include "common.h"
-#include "xmalloc.h"
-#include "sexp-types.h"
-#include "seap-types.h"
-#include "sexp-output.h"
+#include "generic/common.h"
+#include "public/sm_alloc.h"
+#include "_sexp-types.h"
+#include "_seap-types.h"
+#include "_sexp-output.h"
+#include "_seap-scheme.h"
 #include "sch_pipe.h"
+#include "seap-descriptor.h"
 
 extern char **environ;
 
@@ -57,7 +59,7 @@ again:
         default: { /* relative path */
                 char *ptok = NULL, *tokctx = NULL;
                 
-                path = xmalloc (sizeof (char) * PATH_MAX);
+                path = sm_alloc (sizeof (char) * PATH_MAX);
                 
                 for (ptok = strtok_r (getenv ("PATH"), ":", &tokctx);
                      ptok;
@@ -65,12 +67,12 @@ again:
                 {
                         snprintf (path, PATH_MAX, "%s/%s", ptok, uri);
                         if (eaccess (path, X_OK) == 0) {
-                                path = xrealloc (path, sizeof (char) * (strlen (path) + 1));
+                                path = sm_reallocf (path, sizeof (char) * (strlen (path) + 1));
                                 return (path);
                         }
                 }
                 /* not found */
-                xfree ((void **)&path);
+                sm_free (path);
                 return (NULL);
         }}
         
@@ -88,12 +90,12 @@ int sch_pipe_connect (SEAP_desc_t *desc, const char *uri, uint32_t flags)
         int   pfd[2];
         uint8_t i;
                 
-        desc->scheme_data = xmalloc (sizeof (sch_pipedata_t));        
+        desc->scheme_data = sm_talloc (sch_pipedata_t);
         DATA(desc)->execpath = execpath = get_exec_path (uri, flags);
         
         if (DATA(desc)->execpath == NULL) {
                 _D("Invalid URI\n");
-                xfree (&(desc->scheme_data));
+                sm_free (desc->scheme_data);
                 return (-1);
         }
 
@@ -102,8 +104,8 @@ int sch_pipe_connect (SEAP_desc_t *desc, const char *uri, uint32_t flags)
         err = socketpair (AF_UNIX, SOCK_STREAM, 0, pfd);
         if (err < 0) {
                 err = errno;
-                xfree (&(desc->scheme_data));
-                xfree ((void **)&execpath);
+                sm_free (desc->scheme_data);
+                sm_free (execpath);
                 errno = err;
                 return (-1);
         }
@@ -111,8 +113,8 @@ int sch_pipe_connect (SEAP_desc_t *desc, const char *uri, uint32_t flags)
         switch (pid = fork ()) {
         case -1: /* error */
                 err = errno;
-                xfree (&(desc->scheme_data));
-                xfree ((void **)&execpath);
+                sm_free (desc->scheme_data);
+                sm_free (execpath);
                 errno = err;
                 
                 return (-1);
@@ -155,8 +157,8 @@ int sch_pipe_connect (SEAP_desc_t *desc, const char *uri, uint32_t flags)
                 if (WEXITSTATUS(err) != 0) {
                         _D("Child died :[\n");
                         close (DATA(desc)->pfd);
-                        xfree (&(desc->scheme_data));
-                        xfree (&execpath);
+                        xfre e (&(desc->scheme_data));
+                        xfre e (&execpath);
                         return (-1);
                 }
                 */
@@ -207,7 +209,7 @@ int sch_pipe_close (SEAP_desc_t *desc, uint32_t flags)
                 err = WEXITSTATUS(ret);
                 _D("child err: %u, %s.\n", err, strerror (err));
         }
-        xfree ((void **)&DATA(desc)->execpath);
-        xfree ((void **)&(desc->scheme_data));
+        sm_free (DATA(desc)->execpath);
+        sm_free (desc->scheme_data);
         return (err);
 }

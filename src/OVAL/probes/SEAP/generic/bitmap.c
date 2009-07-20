@@ -5,7 +5,7 @@
 #include <time.h>
 #include <sys/types.h>
 #include <unistd.h>
-#include "xmalloc.h"
+#include "public/sm_alloc.h"
 #include "common.h"
 #include "bitmap.h"
 
@@ -19,7 +19,7 @@ bitmap_t *bitmap_new (bitmap_size_t size)
         
         _A(size > 0);
 
-        bitmap = xmalloc (sizeof (bitmap_t));
+        bitmap = sm_talloc (bitmap_t);
         bitmap->size = (size / BITMAP_CELLSIZE) + 1;
         bitmap->realsize = 0;
         bitmap->cells = NULL;
@@ -53,7 +53,8 @@ int *bitmap_reinit (bitmap_t *bitmap, bitmap_size_t size)
         _A(size > 0);
         
         if (bitmap->cells != NULL)
-                xfree ((void **)&(bitmap->cells));
+                sm_free (bitmap->cells);
+
         bitmap->cells = NULL;
         bitmap->size = (size / BITMAP_CELLSIZE) + 1;
         bitmap->realsize = 0;
@@ -73,8 +74,8 @@ int bitmap_set (bitmap_t *bitmap, bitmap_bitn_t bitn)
         
         if (i > bitmap->realsize) {
                 if (i <= bitmap->size) {
-                        bitmap->cells = xrealloc (bitmap->cells,
-                                                  sizeof (uint32_t) * i);
+                        bitmap->cells = sm_realloc (bitmap->cells,
+                                                    sizeof (uint32_t) * i);
                         
                         memset (bitmap->cells + bitmap->realsize, 0,
                                 sizeof (bitmap_cell_t) * (i - bitmap->realsize));
@@ -119,8 +120,8 @@ int bitmap_unset (bitmap_t *bitmap, bitmap_bitn_t bitn)
                         while (bitmap->cells[bitmap->realsize - 1] == 0)
                                 --bitmap->realsize;
                         
-                        bitmap->cells = xrealloc (bitmap->cells,
-                                                  sizeof (uint32_t) * bitmap->realsize);
+                        bitmap->cells = sm_realloc (bitmap->cells,
+                                                    sizeof (uint32_t) * bitmap->realsize);
                 }
         }
         
@@ -133,7 +134,7 @@ int bitmap_clear (bitmap_t *bitmap)
 
         if (bitmap->realsize > 0) {
                 _A(bitmap->cells != NULL);
-                xfree ((void **)&(bitmap->cells));
+                sm_free (bitmap->cells);
                 bitmap->cells = NULL;
                 bitmap->realsize = 0;
                 bitmap->count = 0;
@@ -212,8 +213,9 @@ void bitmap_free (bitmap_t *bitmap)
         _A(bitmap != NULL);
 
         if (bitmap->realsize > 0)
-                xfree ((void **)&(bitmap->cells));
-        /* xfree ((void **)&(bitmap)); */
+                sm_free (bitmap->cells);
+
+        /* FIXME: xfree ((void **)&(bitmap)); */
 }
 
 #if defined(BITMAP_TEST)

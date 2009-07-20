@@ -9,7 +9,7 @@ typedef uint16_t bitmap_size_t;
 typedef int32_t  bitmap_bitn_t;
 
 typedef struct {
-#if defined(THREAD_SAFE)
+#if defined(SEAP_THREAD_SAFE)
         uint8_t   locked;
 #endif
         bitmap_size_t  size;  /* bit capacity = size * BITMAP_CELLSIZE */
@@ -18,7 +18,7 @@ typedef struct {
         bitmap_bitn_t  count;
 } bitmap_t;
 
-#if defined(THREAD_SAFE)
+#if defined(SEAP_THREAD_SAFE)
 # define BITMAP_INITIALIZER { 0, 128, 0, NULL, 0 }
 #else
 # define BITMAP_INITIALIZER { 128, 0, NULL, 0 }

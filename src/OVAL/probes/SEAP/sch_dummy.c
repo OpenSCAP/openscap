@@ -3,9 +3,11 @@
 #include <unistd.h>
 #include <errno.h>
 #include <config.h>
-#include "sexp-types.h"
-#include "seap-types.h"
+#include "_sexp-types.h"
+#include "_seap-types.h"
+#include "_seap-scheme.h"
 #include "sch_dummy.h"
+#include "seap-descriptor.h"
 
 int sch_dummy_connect (SEAP_desc_t *desc, const char *uri, uint32_t flags)
 {

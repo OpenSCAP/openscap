@@ -3,7 +3,7 @@
 #define PROBE_CACHE_H
 
 #include <sexp-types.h>
-#include <redblack.h>
+#include <SEAP/generic/redblack.h>
 
 DEFRBTREE(pcache, SEXP_t *id; SEXP_t *item);
 

@@ -1,6 +1,7 @@
 #include <stddef.h>
 #include <string.h>
-#include "seap-scheme.h"
+#include "generic/common.h"
+#include "_seap-scheme.h"
 
 /* KEEP THIS ARRAY SORTED! */
 const SEAP_schemefn_t __schtbl[] = {

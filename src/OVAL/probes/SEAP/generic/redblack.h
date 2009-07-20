@@ -12,10 +12,9 @@
 #  define _E(exp)
 #endif
 
-#include "xmalloc.h"
-#define XMALLOC  xmalloc
-#define XREALLOC xrealloc
-#define XCALLOC  xcalloc
+#define XMALLOC  malloc
+#define XREALLOC realloc
+#define XCALLOC  calloc
 #define XFREE    free
 
 #define SIDE_LEFT ((side_t)0)

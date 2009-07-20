@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <seap.h>
+#include <sexp-manip.h>
 #include <assert.h>
 #include <errno.h>
 #if defined(THREAD_SAFE)
@@ -41,7 +42,7 @@ static void probe_sdtbl_init (void)
         ptbl = malloc (sizeof (probe_sdtbl_t));
         ptbl->memb = NULL;
         ptbl->count = 0;
-        SEAP_CTX_init (&(ptbl->ctx));
+        ptbl->ctx = SEAP_CTX_new ();
         
         (void) pthread_setspecific (key, (void *)ptbl);
         return;
@@ -404,7 +405,7 @@ struct oval_iterator_syschar *probe_object (struct oval_object *object,
         }
         
         msg = SEAP_msg_new ();
-        msg->sexp = sexp;
+        SEAP_msg_set (msg, sexp);
         
         puts ("--- msg ---");
         SEXP_printft (sexp);
@@ -426,11 +427,11 @@ struct oval_iterator_syschar *probe_object (struct oval_object *object,
         }
         
         puts ("--- msg ---");
-        SEXP_printfa (msg->sexp);
+        SEXP_printfa (SEAP_msg_get(msg));
         puts ("\n----------");
         
         /* translate the result to oval state */
-        sysch = sexp_to_oval_state (msg->sexp);
+        sysch = sexp_to_oval_state (SEAP_msg_get(msg));
         
         /* cleanup */
 

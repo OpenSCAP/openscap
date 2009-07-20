@@ -3,21 +3,12 @@
 #define SEXP_OUTPUT_H
 
 #include <stdio.h>
-#include <stdint.h>
-#include <stddef.h>
-#include <unistd.h>
-#include "sexp-types.h"
-#include "sexp-parse.h"
+#include <seap-debug.h>
+#include <sexp-types.h>
 
-typedef struct {
-        SEXP_t *sexp;
-        LIST_stack_t lstack;      
-        uint32_t    *list_pos; /* stack of lpositions */
-        uint8_t  sexp_part; /* 0 - type, 1 - data */
-        size_t   sexp_pos;
-} SEXP_ostate_t;
+typedef struct SEXP_ostate SEXP_ostate_t;
 
-/* general */
+/* Generic */
 int SEXP_printf (SEXP_format_t fmt, SEXP_t *sexp);
 int SEXP_fprintf (FILE *fp, SEXP_format_t fmt, SEXP_t *sexp);
 int SEXP_dprintf (int fd, SEXP_format_t fmt, SEXP_t *sexp);
@@ -29,7 +20,7 @@ int SEXP_asnprintf (char **ret, size_t maxsz, SEXP_format_t fmt, SEXP_t *sexp);
 ssize_t SEXP_st_dprintf (int fd, SEXP_format_t fmt, SEXP_t *sexp, SEXP_ostate_t **ost);
 ssize_t SEXP_st_dnprintf (int fd, size_t maxsz, SEXP_format_t fmt, SEXP_t *sexp, SEXP_ostate_t **ost);
 
-/* canonical */
+/* Canonical */
 ssize_t SEXP_st_dprintc (int fd, SEXP_t *sexp, SEXP_ostate_t **ost);
 ssize_t SEXP_st_dnprintc (int fd, size_t maxsz, SEXP_t *sexp, SEXP_ostate_t **ost);
 
@@ -49,7 +40,7 @@ int SEXP_snprintfc (char *str, size_t size, SEXP_t *sexp);
 int SEXP_asprintfc (char **ret, SEXP_t *sexp);
 int SEXP_asnprintfc (char **ret, size_t maxsz, SEXP_t *sexp);
 
-/* advanced */
+/* Advanced */
 ssize_t SEXP_st_dprinta (int fd, SEXP_t *sexp, SEXP_ostate_t **ost);
 ssize_t SEXP_st_dnprinta (int fd, size_t maxsz, SEXP_t *sexp, SEXP_ostate_t **ost);
 
@@ -69,7 +60,7 @@ int SEXP_snprintfa (char *str, size_t size, SEXP_t *sexp);
 int SEXP_asprintfa (char **ret, SEXP_t *sexp);
 int SEXP_asnprintfa (char **ret, size_t maxsz, SEXP_t *sexp);
 
-/* transport */
+/* Transport */
 ssize_t SEXP_st_dprintt (int fd, SEXP_t *sexp, SEXP_ostate_t **ost);
 ssize_t SEXP_st_dnprintt (int fd, size_t maxsz, SEXP_t *sexp, SEXP_ostate_t **ost);
 
