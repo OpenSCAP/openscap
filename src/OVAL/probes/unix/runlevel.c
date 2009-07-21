@@ -22,7 +22,7 @@
 
 #include <seap.h>
 #include <probe.h>
-#include "xmalloc.h"
+#include <common/alloc.h>
 
 #ifndef _A
 #define _A(x) assert(x)
@@ -44,8 +44,8 @@ static int get_runlevel (struct runlevel_req *req, struct runlevel_rep *rep);
 
 void __runlevel_rep_free (struct runlevel_rep *ptr)
 {
-        xfree ((void **)&(ptr->service_name));
-        xfree ((void **)&(ptr->runlevel));
+        oscap_free (ptr->service_name);
+        oscap_free (ptr->runlevel);
 }
 
 #if defined(__linux__)
@@ -302,7 +302,7 @@ SEXP_t *probe_main (SEXP_t *object, int *err, void *arg)
                         break;
                 }
                 
-                xfree ((void **)&request_st.service_name);
+                oscap_free (request_st.service_name);
                 return (NULL);
         }
         
@@ -340,8 +340,8 @@ SEXP_t *probe_main (SEXP_t *object, int *err, void *arg)
                                                  NULL);
         }
         
-        xfree ((void **)&request_st.service_name);
-        xfree ((void **)&request_st.runlevel);
+        oscap_free (request_st.service_name);
+        oscap_free (request_st.runlevel);
         
         SEXP_list_add (probe_out, item_sexp);
         

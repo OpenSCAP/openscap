@@ -3,6 +3,7 @@
 #define _SEXP_PARSE_H
 
 #include <stddef.h>
+#include "public/sexp-parse.h"
 #include "_sexp-manip.h"
 
 /* Number classes */
@@ -18,19 +19,19 @@ typedef uint8_t SEXP_pflags_t;
 #define PF_ALL   0xff
 
 /* S-expression parsing state */
-typedef struct {
+struct SEXP_pstate {
         char    *buffer;
         size_t   buffer_data_len;
         size_t   buffer_fail_off;
 
         LIST_stack_t  lstack;
         SEXP_pflags_t pflags;
-} SEXP_pstate_t;
+};
 
-typedef struct {
+struct SEXP_psetup {
         SEXP_format_t fmt;
         SEXP_pflags_t pflags;
-} SEXP_psetup_t;
+};
 
 void SEXP_psetup_init (SEXP_psetup_t *psetup);
 

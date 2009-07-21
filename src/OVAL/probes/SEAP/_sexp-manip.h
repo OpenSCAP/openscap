@@ -150,25 +150,4 @@ static inline uint16_t LIST_stack_cnt (LIST_stack_t *stack)
 
 #define VOIDPTR_SIZE (sizeof (void *))
 
-#if !defined(NDEBUG) || defined(VALIDADE_SEXP)
-
-# if !defined(__VALIDATE_TRESH_LIST_SIZE)
-#  define __VALIDATE_TRESH_LIST_SIZE  65535
-# endif
-
-# if !defined(__VALIDATE_TRESH_LIST_COUNT)
-#  define __VALIDATE_TRESH_LIST_COUNT 65535
-# endif
-
-# if !defined(__VALIDATE_TRESH_STRING_LEN)
-#  define __VALIDATE_TRESH_STRING_LEN 65535
-# endif
-
-# define SEXP_VALIDATE(ptr) __SEXP_VALIDATE(ptr, __PRETTY_FUNCTION__, __LINE__)
-
-inline void __SEXP_VALIDATE(const SEXP_t *ptr, const char *fn, size_t line);
-
-#else
-#  define SEXP_VALIDATE(ptr) while(0)
-#endif /* !defined(NDEBUG) || defined(VALIDATE_SEXP) */
 #endif /* _SEAP_MANIP_H */

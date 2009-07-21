@@ -72,7 +72,7 @@ typedef struct {
         void *probe_arg;
 } globals_t;
 
-#define GLOBALS_INITIALIZER { NULL, -1, PTHREAD_MUTEX_INITIALIZER, NULL, PTHREAD_MUTEX_INITIALIZER, NULL }
+#define GLOBALS_INITIALIZER { NULL, -1, NULL, PTHREAD_MUTEX_INITIALIZER, NULL }
 
 extern globals_t global;
 

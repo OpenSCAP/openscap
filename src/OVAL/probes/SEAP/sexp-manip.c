@@ -1975,7 +1975,7 @@ const char *SEXP_strtype (const SEXP_t *sexp)
 #if !defined(NDEBUG) || defined(VALIDADE_SEXP)
 #include <stdio.h>
 
-inline void __SEXP_VALIDATE(const SEXP_t *ptr, const char *fn, size_t line) {
+void __SEXP_VALIDATE(const SEXP_t *ptr, const char *fn, size_t line) {
         if (ptr == NULL) {
                 fprintf (stderr, "[%zu:%s]: !!! NULL S-EXP OBJECT !!!\n", line, fn);
         } else {

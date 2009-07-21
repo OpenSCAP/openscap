@@ -1,6 +1,7 @@
 #include <seap.h>
 #include <string.h>
 #include <assert.h>
+#include <common/alloc.h>
 #include "probe-cache.h"
 
 #ifndef _A
@@ -24,7 +25,7 @@ pcache_t *pcache_new (void)
 {
         pcache_t *cache;
 
-        cache = xmalloc (sizeof (pcache_t));
+        cache = oscap_talloc (pcache_t);
         cache->tree.root = NULL;
         cache->tree.size = 0;
         
@@ -35,7 +36,7 @@ void pcache_free (pcache_t *cache)
 {
         _A(cache != NULL);
         /* FIXME: free tree */
-        xfree ((void **)&cache);
+        oscap_free (cache);
         return;
 }
 
@@ -56,7 +57,7 @@ int pcache_sexp_add (pcache_t *cache, const SEXP_t *id, SEXP_t *item)
         } else {
                 _D("Can't add item to cache: item=%p, id=%p.\n",
                    item, id);
-                xfree ((void **)&new);
+                oscap_free (new);
                 return (-1);
         }
         

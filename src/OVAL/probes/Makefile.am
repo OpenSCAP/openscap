@@ -1,7 +1,7 @@
 pkglibexecdir= openscap
 pkglibexec_PROGRAMS=
 
-CFLAGS += @pthread_cflags@ -I$(top_srcdir)/src/OVAL -I$(top_srcdir)/src/OVAL/probes -I$(top_srcdir)/src/OVAL/probes/SEAP/public
+CFLAGS += @pthread_cflags@ -I$(top_srcdir)/src -I$(top_srcdir)/src/OVAL -I$(top_srcdir)/src/OVAL/probes -I$(top_srcdir)/src/OVAL/probes/SEAP/public
 LDFLAGS += @pthread_ldflags@
 
 noinst_LIBRARIES= libprobe.a

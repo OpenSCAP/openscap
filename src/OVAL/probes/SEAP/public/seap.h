@@ -4,7 +4,7 @@
 
 #include <stdint.h>
 #include <seap-debug.h>
-#include <sexp-types.h>
+#include <sexp.h>
 #include <seap-types.h>
 
 SEAP_CTX_t *SEAP_CTX_new  (void);

@@ -3,6 +3,7 @@
 #define SEXP_OUTPUT_H
 
 #include <stdio.h>
+#include <unistd.h>
 #include <seap-debug.h>
 #include <sexp-types.h>
 

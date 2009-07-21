@@ -149,4 +149,26 @@ int     SEXP_cmpobj (const SEXP_t *a, const SEXP_t *b);
  */
 const char *SEXP_strtype (const SEXP_t *sexp);
 
+#if !defined(NDEBUG) || defined(VALIDADE_SEXP)
+
+# if !defined(__VALIDATE_TRESH_LIST_SIZE)
+#  define __VALIDATE_TRESH_LIST_SIZE  65535
+# endif
+
+# if !defined(__VALIDATE_TRESH_LIST_COUNT)
+#  define __VALIDATE_TRESH_LIST_COUNT 65535
+# endif
+
+# if !defined(__VALIDATE_TRESH_STRING_LEN)
+#  define __VALIDATE_TRESH_STRING_LEN 65535
+# endif
+
+# define SEXP_VALIDATE(ptr) __SEXP_VALIDATE(ptr, __PRETTY_FUNCTION__, __LINE__)
+
+inline void __SEXP_VALIDATE(const SEXP_t *ptr, const char *fn, size_t line);
+
+#else
+#  define SEXP_VALIDATE(ptr) while(0)
+#endif /* !defined(NDEBUG) || defined(VALIDATE_SEXP) */
+
 #endif /* SEXP_MANIP_H */

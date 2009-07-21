@@ -4,8 +4,7 @@
 #include <pthread.h>
 #include <errno.h>
 #include <config.h>
-#include "xmalloc.h"
-#include "common.h"
+#include <common/alloc.h>
 
 #ifndef _A
 #define _A(x) assert(x)
