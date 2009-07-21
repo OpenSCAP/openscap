@@ -132,13 +132,16 @@ void *__oscap_reallocf_dbg (void *p, size_t s, const char *f, size_t l)
 
 void __oscap_free_dbg (void **p, const char *f, size_t l)
 {
-#if defined(OSCAP_ALLOC_STRICT)
         _A(p != NULL);
+#if defined(OSCAP_ALLOC_STRICT)
+        _A(*p != NULL);
 #endif
-        free (*p);
+        if (*p != NULL) {
+                free (*p);
 #if defined(OSCAP_ALLOC_RESET)
-        *p = NULL;
+                *p = NULL;
 #endif
+        }
         return;
 }
 #endif

@@ -85,9 +85,12 @@ void *__sm_alloc_dbg (size_t s, const char *func, size_t line)
 #endif
         m = malloc (s);
 #if defined(SEAP_MALLOC_EXIT)
-        if (m == NULL)
+        if (m == NULL) {
+                _D("FAIL: size=%zu\n", s);
                 exit (ENOMEM);
+        }
 #endif
+        _D("ptr=%p, size=%zu\n", m, s);
         return (m);
 }
 
@@ -100,9 +103,14 @@ void *__sm_calloc_dbg (size_t n, size_t s, const char *f, size_t l)
 #endif
         m = calloc (n, s);
 #if defined(SEAP_MALLOC_EXIT)
-        if (m == NULL)
+        if (m == NULL) {
+                _D("FAIL: nmemb=%zu, size=%zu, total=%zu\n",
+                   n, s, n * s);
                 exit (ENOMEM);
+        }
 #endif
+        _D("ptr=%p, nmemb=%zu, size=%zu, total=%zu\n",
+           m, n, s, n * s);
         return (m);
 }
 
@@ -111,9 +119,12 @@ void *__sm_realloc_dbg (void *p, size_t s, const char *f, size_t l)
         void *m;
         m = realloc (p, s);
 #if defined(SEAP_MALLOC_EXIT)
-        if (m == NULL && s > 0)
+        if (m == NULL && s > 0) {
+                _D("FAIL: old=%p, size=%zu\n", p, s);
                 exit (ENOMEM);
+        }
 #endif
+        _D("old=%p, new=%p, size=%zu\n", p, m, s);
         return (m);
 }
 
@@ -122,23 +133,30 @@ void *__sm_reallocf_dbg (void *p, size_t s, const char *f, size_t l)
         void *m;
         m = realloc (p, s);
         if (m == NULL && s > 0) {
+                _D("FAIL: old=%p, size=%zu\n", p, s);
                 sm_free (p);
 #if defined(SEAP_MALLOC_EXIT)
                 exit (ENOMEM);
 #endif
+        } else {
+                _D("old=%p, new=%p, size=%zu\n", p, m, s);
         }
         return (m);
 }
 
 void __sm_free_dbg (void **p, const char *f, size_t l)
 {
-#if defined(SEAP_MALLOC_STRICT)
         _A(p != NULL);
+#if defined(SEAP_MALLOC_STRICT)
+        _A(*p != NULL);
 #endif
-        free (*p);
+        _D("ptr=%p\n", *p);
+        if (*p != NULL) {
+                free (*p);
 #if defined(SEAP_MALLOC_RESET)
-        *p = NULL;
+                *p = NULL;
 #endif
+        }
         return;
 }
 #endif
