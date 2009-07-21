@@ -33,10 +33,8 @@ void  __sm_free_dbg     (void **p,           const char *f, size_t l);
 #define  sm_talloc(T) ((T *) sm_alloc(sizeof(T)))
 #define  sm_valloc(v) ((typeof(v) *) sm_alloc(sizeof v))
 
-#if defined(SEAP_MALLOC_STRICT)
-# include <assert.h>
+#include <assert.h>
 #ifndef _A
 # define _A(x) assert(x)
 #endif /* _A */
-#endif /* SEAP_MALLOC_STRICT */
 #endif /* SM_ALLOC_H */

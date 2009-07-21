@@ -33,10 +33,8 @@ void  __oscap_free_dbg     (void **p,           const char *f, size_t l);
 #define  oscap_talloc(T) ((T *) oscap_alloc(sizeof(T)))
 #define  oscap_valloc(v) ((typeof(v) *) oscap_alloc(sizeof v))
 
-#if defined(OSCAP_ALLOC_STRICT)
-# include <assert.h>
+#include <assert.h>
 #ifndef _A
 # define _A(x) assert(x)
 #endif /* _A */
-#endif /* OSCAP_ALLOC_STRICT */
 #endif /* OSCAP_ALLOC_H */
