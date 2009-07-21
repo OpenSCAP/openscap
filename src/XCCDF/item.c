@@ -56,7 +56,7 @@ void xccdf_item_release(struct xccdf_item* item)
 {
 	if (item) {
         oscap_list_delete(item->item.statuses, (oscap_destruct_func)xccdf_status_delete);
-		oscap_list_delete(item->item.platforms, free);
+		oscap_list_delete(item->item.platforms, oscap_free);
 		oscap_free(item->item.id);
 		oscap_free(item->item.cluster_id);
 		oscap_free(item->item.title);
@@ -325,7 +325,7 @@ void xccdf_model_delete(struct xccdf_model* model)
 {
     if (model) {
         oscap_free(model->system);
-        oscap_htable_delete(model->params, free);
+        oscap_htable_delete(model->params, oscap_free);
         oscap_free(model);
     }
 }

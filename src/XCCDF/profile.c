@@ -151,7 +151,7 @@ void xccdf_profile_dump(struct xccdf_item* prof, int depth)
 void xccdf_profile_delete(struct xccdf_item* prof)
 {
     if (prof) {
-        oscap_list_delete(prof->sub.profile.selects, free);
+        oscap_list_delete(prof->sub.profile.selects, oscap_free);
         oscap_list_delete(prof->sub.profile.set_values, (oscap_destruct_func)xccdf_set_value_delete);
         oscap_list_delete(prof->sub.profile.refine_values, (oscap_destruct_func)xccdf_refine_value_delete);
         oscap_list_delete(prof->sub.profile.refine_rules, (oscap_destruct_func)xccdf_refine_rule_delete);

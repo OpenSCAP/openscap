@@ -134,7 +134,7 @@ struct xccdf_item* xccdf_value_new_parse(xmlTextReaderPtr reader, struct xccdf_i
 void xccdf_value_delete(struct xccdf_item* val)
 {
 	oscap_htable_delete(val->sub.value.values, xccdf_value_val_destructor(val->sub.value.type));
-	oscap_list_delete(val->sub.value.sources, free);
+	oscap_list_delete(val->sub.value.sources, oscap_free);
 	xccdf_item_release(val);
 }
 

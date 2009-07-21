@@ -330,7 +330,7 @@ void cpe_dictitem_delete(struct cpe_dictitem * item)
 	oscap_free(item->depracation_date);
 	oscap_list_delete(item->references, (oscap_destruct_func)cpe_dict_reference_delete);
 	oscap_list_delete(item->checks, (oscap_destruct_func)cpe_dictcheck_delete);
-	oscap_list_delete(item->notes, free);
+	oscap_list_delete(item->notes, oscap_free);
 	oscap_free(item);
 }
 

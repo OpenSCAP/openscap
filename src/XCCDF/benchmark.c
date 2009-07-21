@@ -197,7 +197,7 @@ void xccdf_benchmark_delete(struct xccdf_benchmark* benchmark)
 		oscap_list_delete(bench->sub.bench.idrefs, (oscap_destruct_func)xccdf_backref_delete);
 		oscap_list_delete(bench->sub.bench.content, (oscap_destruct_func)xccdf_item_delete);
 		oscap_list_delete(bench->sub.bench.values, (oscap_destruct_func)xccdf_value_delete);
-        oscap_htable_delete(bench->sub.bench.plain_texts, free);
+        oscap_htable_delete(bench->sub.bench.plain_texts, oscap_free);
         oscap_htable_delete(bench->sub.bench.dict, NULL);
 		oscap_htable_delete(bench->sub.bench.auxdict, NULL);
 		oscap_list_delete(bench->sub.bench.profiles, (oscap_destruct_func)xccdf_profile_delete);

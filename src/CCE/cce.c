@@ -55,8 +55,8 @@ void cce_entry_delete(struct cce_entry *cce)
 	if (cce) {
 		oscap_free(cce->id);
 		oscap_free(cce->description);
-		oscap_list_delete(cce->params, free);
-		oscap_list_delete(cce->tech_mechs, free);
+		oscap_list_delete(cce->params, oscap_free);
+		oscap_list_delete(cce->tech_mechs, oscap_free);
 		oscap_list_delete(cce->references, (oscap_destruct_func)cce_reference_delete);
 		oscap_free(cce);
 	}
