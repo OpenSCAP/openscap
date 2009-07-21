@@ -35,7 +35,7 @@
 
 struct cce* cce_new_empty(void)
 {
-	struct cce* cce = calloc(1, sizeof(struct cce));
+	struct cce* cce = oscap_calloc(1, sizeof(struct cce));
 	cce->entries = oscap_list_new();
 	cce->entry_by_id = oscap_htable_new();
 	return cce;
@@ -46,25 +46,25 @@ void cce_delete(struct cce* cce)
 	if (cce) {
 		oscap_htable_delete(cce->entry_by_id, NULL);
 		oscap_list_delete(cce->entries, (oscap_destruct_func)cce_entry_delete);
-		free(cce);
+		oscap_free(cce);
 	}
 }
 
 void cce_entry_delete(struct cce_entry *cce)
 {
 	if (cce) {
-		free(cce->id);
-		free(cce->description);
+		oscap_free(cce->id);
+		oscap_free(cce->description);
 		oscap_list_delete(cce->params, free);
 		oscap_list_delete(cce->tech_mechs, free);
 		oscap_list_delete(cce->references, (oscap_destruct_func)cce_reference_delete);
-		free(cce);
+		oscap_free(cce);
 	}
 }
 
 struct cce_entry* cce_entry_new_empty(void)
 {
-	struct cce_entry* cce = calloc(1, sizeof(struct cce_entry));
+	struct cce_entry* cce = oscap_calloc(1, sizeof(struct cce_entry));
 	cce->params     = oscap_list_new();
 	cce->tech_mechs = oscap_list_new();
 	cce->references = oscap_list_new();

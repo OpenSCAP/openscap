@@ -127,7 +127,7 @@ void process_refs(xmlTextReaderPtr reader, struct cce_entry *cce)
 		if (xmlTextReaderNodeType(reader) == 15 &&
 		    !xmlStrcmp(xmlTextReaderName(reader),
 			       (const xmlChar *)"ref")) {
-			struct cce_reference* ref = calloc(1, sizeof(struct cce_reference));
+			struct cce_reference* ref = oscap_calloc(1, sizeof(struct cce_reference));
 			ref->source = (char*)source;
 			ref->value  = (char*)value;
 			oscap_list_add(cce->references, ref);
@@ -164,9 +164,9 @@ void process_tech_mech(xmlTextReaderPtr reader, struct cce_entry *cce)
 void cce_reference_delete(struct cce_reference* ref)
 {
 	if (ref) {
-		free(ref->source);
-		free(ref->value);
-		free(ref);
+		oscap_free(ref->source);
+		oscap_free(ref->value);
+		oscap_free(ref);
 	}
 }
 

@@ -164,13 +164,13 @@ static void tagStackInit(tagStack_t * stack)
 {
 	stack->depth = 16;
 	stack->top = -1;
-	stack->stack = malloc(stack->depth * sizeof(*stack->stack));
+	stack->stack = oscap_alloc(stack->depth * sizeof(*stack->stack));
 }
 
 static void tagStackDeinit(tagStack_t * stack)
 {
 	if (stack->stack != NULL) {
-		free(stack->stack);
+		oscap_free(stack->stack);
 		stack->stack = NULL;
 		stack->depth = 0;
 		stack->top = -1;
@@ -181,7 +181,7 @@ static void tagStackPush(tagStack_t * stack, int v)
 {
 	if (stack->depth == stack->top + 1) {
 		stack->depth *= 2;
-		stack->stack = realloc(stack->stack, stack->depth);
+		stack->stack = oscap_realloc(stack->stack, stack->depth);
 	}
 
 	stack->top++;
@@ -253,7 +253,7 @@ static void pushTag(tagStack_t * stack, const xmlChar * uri,
 
 struct cve_reference *cve_reference_new()
 {
-	return calloc(1, sizeof(struct cve_reference));
+	return oscap_calloc(1, sizeof(struct cve_reference));
 }
 
 void cve_reference_delete(struct cve_reference * ref)
@@ -261,20 +261,20 @@ void cve_reference_delete(struct cve_reference * ref)
 	if (ref == NULL)
 		return;
 	if (ref->summary != NULL)
-		free(ref->summary);
+		oscap_free(ref->summary);
 	if (ref->href != NULL)
-		free(ref->href);
+		oscap_free(ref->href);
 	if (ref->type != NULL)
-		free(ref->type);
+		oscap_free(ref->type);
 	if (ref->source != NULL)
-		free(ref->source);
+		oscap_free(ref->source);
 
-	free(ref);
+	oscap_free(ref);
 }
 
 struct cve* cve_new_empty(void)
 {
-	struct cve* cve = calloc(1, sizeof(struct cve));
+	struct cve* cve = oscap_calloc(1, sizeof(struct cve));
 	cve->entries = oscap_list_new();
 	cve->entry_by_id = oscap_htable_new();
 	return cve;
@@ -296,7 +296,7 @@ void cve_delete(struct cve* cve)
 	if (cve) {
 		oscap_htable_delete(cve->entry_by_id, NULL);
 		oscap_list_delete(cve->entries, (oscap_destruct_func)cve_info_delete);
-		free(cve);
+		oscap_free(cve);
 	}
 }
 
@@ -309,7 +309,7 @@ bool cve_add_info(struct cve* cve, struct cve_info* info)
 
 struct cve_info *cve_info_new()
 {
-	struct cve_info* info = calloc(1, sizeof(struct cve_info));
+	struct cve_info* info = oscap_calloc(1, sizeof(struct cve_info));
 	info->references = oscap_list_new();
 	return info;
 }
@@ -319,36 +319,36 @@ void cve_info_delete(struct cve_info * cve)
 	if (cve == NULL)
 		return;
 	if (cve->id != NULL)
-		free(cve->id);
+		oscap_free(cve->id);
 	if (cve->cwe != NULL)
-		free(cve->cwe);
+		oscap_free(cve->cwe);
 	if (cve->pub != NULL)
-		free(cve->pub);
+		oscap_free(cve->pub);
 	if (cve->mod != NULL)
-		free(cve->mod);
+		oscap_free(cve->mod);
 	if (cve->summary != NULL)
-		free(cve->summary);
+		oscap_free(cve->summary);
 	if (cve->score != NULL)
-		free(cve->score);
+		oscap_free(cve->score);
 	if (cve->vector != NULL)
-		free(cve->vector);
+		oscap_free(cve->vector);
 	if (cve->complexity != NULL)
-		free(cve->complexity);
+		oscap_free(cve->complexity);
 	if (cve->authentication != NULL)
-		free(cve->authentication);
+		oscap_free(cve->authentication);
 	if (cve->confidentiality != NULL)
-		free(cve->confidentiality);
+		oscap_free(cve->confidentiality);
 	if (cve->integrity != NULL)
-		free(cve->integrity);
+		oscap_free(cve->integrity);
 	if (cve->availability != NULL)
-		free(cve->availability);
+		oscap_free(cve->availability);
 	if (cve->source != NULL)
-		free(cve->source);
+		oscap_free(cve->source);
 	if (cve->generated != NULL)
-		free(cve->generated);
+		oscap_free(cve->generated);
 
 	oscap_list_delete(cve->references, (oscap_destruct_func)cve_reference_delete);
-	free(cve);
+	oscap_free(cve);
 }
 
 int cve_parse(const char *xmlfile, struct cve* out)

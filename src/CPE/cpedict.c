@@ -209,7 +209,7 @@ struct cpe_dict *cpe_dict_new_empty(void)
 {
 	struct cpe_dict *dict;
 
-	dict = malloc(sizeof(struct cpe_dict));
+	dict = oscap_alloc(sizeof(struct cpe_dict));
 	if (dict == NULL)
 		return NULL;
 
@@ -232,18 +232,18 @@ void cpe_dict_delete(struct cpe_dict * dict)
 	if (dict == NULL) return;
 
 	oscap_list_delete(dict->items, (oscap_destruct_func)cpe_dictitem_delete);
-	free(dict->generator_product_name);
-	free(dict->generator_product_version);
-	free(dict->generator_schema_version);
-	free(dict->generator_timestamp);
-	free(dict);
+	oscap_free(dict->generator_product_name);
+	oscap_free(dict->generator_product_version);
+	oscap_free(dict->generator_schema_version);
+	oscap_free(dict->generator_timestamp);
+	oscap_free(dict);
 }
 
 struct cpe_dictitem *cpe_dictitem_new_empty()
 {
 	struct cpe_dictitem *item;
 
-	item = malloc(sizeof(struct cpe_dictitem));
+	item = oscap_alloc(sizeof(struct cpe_dictitem));
 	if (item == NULL)
 		return NULL;
 
@@ -272,11 +272,11 @@ struct cpe_dictitem *cpe_dictitem_new_xml(xmlNodePtr node)
 
 	data = xmlGetProp(node, BAD_CAST "name");
 	if (data == NULL || (item->name = cpe_name_new((char *)data)) == NULL) {
-		free(item);
-		free(data);
+		oscap_free(item);
+		oscap_free(data);
 		return NULL;
 	}
-	free(data);
+	oscap_free(data);
 
 	for (node = node->xmlChildrenNode; node != NULL; node = node->next) {
 		if (item->title == NULL
@@ -299,7 +299,7 @@ struct cpe_dictitem *cpe_dictitem_new_xml(xmlNodePtr node)
 			for (cur = node->xmlChildrenNode; cur != NULL;
 			     cur = cur->next) {
 				if (xmlStrcmp(cur->name, BAD_CAST "reference") != 0) continue;
-				pref = calloc(1, sizeof(struct cpe_dict_reference));
+				pref = oscap_calloc(1, sizeof(struct cpe_dict_reference));
 				pref->content = str_trim((char *)xmlNodeGetContent(cur));
 				pref->href = (char *)xmlGetProp(cur, BAD_CAST "href");
 				oscap_list_add(item->references, pref);
@@ -313,9 +313,9 @@ struct cpe_dictitem *cpe_dictitem_new_xml(xmlNodePtr node)
 void cpe_dict_reference_delete(struct cpe_dict_reference* ref)
 {
 	if (ref) {
-		free(ref->href);
-		free(ref->content);
-		free(ref);
+		oscap_free(ref->href);
+		oscap_free(ref->content);
+		oscap_free(ref);
 	}
 }
 
@@ -325,13 +325,13 @@ void cpe_dictitem_delete(struct cpe_dictitem * item)
 {
 	if (item == NULL) return;
 	cpe_name_delete(item->name);
-	free(item->title);
+	oscap_free(item->title);
 	cpe_name_delete(item->depracated);
-	free(item->depracation_date);
+	oscap_free(item->depracation_date);
 	oscap_list_delete(item->references, (oscap_destruct_func)cpe_dict_reference_delete);
 	oscap_list_delete(item->checks, (oscap_destruct_func)cpe_dictcheck_delete);
 	oscap_list_delete(item->notes, free);
-	free(item);
+	oscap_free(item);
 }
 
 struct cpe_dict_check *cpe_dictcheck_new_xml(xmlNode * node)
@@ -342,7 +342,7 @@ struct cpe_dict_check *cpe_dictcheck_new_xml(xmlNode * node)
 	if (xmlStrcmp(node->name, BAD_CAST "check") != 0)
 		return NULL;
 
-	if ((check = malloc(sizeof(struct cpe_dict_check))) == NULL)
+	if ((check = oscap_alloc(sizeof(struct cpe_dict_check))) == NULL)
 		return NULL;
 	memset(check, 0, sizeof(struct cpe_dict_check));
 
@@ -363,10 +363,10 @@ void cpe_dictcheck_delete(struct cpe_dict_check * check)
 {
 	if (check == NULL)
 		return;
-	free(check->identifier);
-	free(check->system);
-	free(check->href);
-	free(check);
+	oscap_free(check->identifier);
+	oscap_free(check->system);
+	oscap_free(check->href);
+	oscap_free(check);
 }
 
 bool cpe_name_match_dict(struct cpe_name * cpe, struct cpe_dict * dict)
@@ -375,7 +375,7 @@ bool cpe_name_match_dict(struct cpe_name * cpe, struct cpe_dict * dict)
 		return false;
 	
 	size_t n = dict->items->itemcount;
-	struct cpe_name** cpes = malloc(sizeof(struct cpe_name*) * n);
+	struct cpe_name** cpes = oscap_alloc(sizeof(struct cpe_name*) * n);
 	struct oscap_list_item* cur = dict->items->first;
 
 	for (int i = 0; cur != NULL; ++i) {
@@ -385,7 +385,7 @@ bool cpe_name_match_dict(struct cpe_name * cpe, struct cpe_dict * dict)
 	
 	bool ret = cpe_name_match_cpes(cpe, n, cpes);
 
-	free(cpes);
+	oscap_free(cpes);
 
 	return ret;
 }

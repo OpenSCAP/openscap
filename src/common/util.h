@@ -28,6 +28,7 @@
 #ifndef OSCAP_UTIL_H_
 #define OSCAP_UTIL_H_
 
+#include "alloc.h"
 
 /**
  * Generate a getter function with an optional conversion.

@@ -117,7 +117,7 @@ struct xccdf_item* xccdf_value_new_parse(xmlTextReaderPtr reader, struct xccdf_i
 				val->must_match = xccdf_attribute_get_bool(reader, XCCDFA_MUSTMATCH);
 				while (xccdf_to_start_element(reader, depth + 1)) {
 					if (xccdf_element_get(reader) == XCCDFE_CHOICE) {
-						union xccdf_value_unit* unit = calloc(1, sizeof(union xccdf_value_unit));
+						union xccdf_value_unit* unit = oscap_calloc(1, sizeof(union xccdf_value_unit));
 						*unit = xccdf_value_get(xccdf_element_string_get(reader), type);
 						oscap_list_add(val->choices, unit);
 					}
@@ -140,7 +140,7 @@ void xccdf_value_delete(struct xccdf_item* val)
 
 struct xccdf_value_val* xccdf_value_val_new(enum xccdf_value_type type)
 {
-	struct xccdf_value_val* v = calloc(1, sizeof(struct xccdf_value_val));
+	struct xccdf_value_val* v = oscap_calloc(1, sizeof(struct xccdf_value_val));
 
 	switch (type) {
 		case XCCDF_TYPE_NUMBER:
@@ -152,7 +152,7 @@ struct xccdf_value_val* xccdf_value_val_new(enum xccdf_value_type type)
 		case XCCDF_TYPE_BOOLEAN:
 			break;
 		default:
-			free(v);
+			oscap_free(v);
 			return NULL;
 	}
 
@@ -161,7 +161,7 @@ struct xccdf_value_val* xccdf_value_val_new(enum xccdf_value_type type)
 	return v;
 }
 
-void xccdf_value_unit_s_delete(union xccdf_value_unit* u) { free(u->s); free(u); }
+void xccdf_value_unit_s_delete(union xccdf_value_unit* u) { oscap_free(u->s); oscap_free(u); }
 
 oscap_destruct_func xccdf_value_unit_destructor(enum xccdf_value_type type)
 {
@@ -177,13 +177,13 @@ void xccdf_value_val_delete_0(struct xccdf_value_val* v, enum xccdf_value_type t
 	oscap_list_delete(v->choices, xccdf_value_unit_destructor(type));
 	switch (type) {
 		case XCCDF_TYPE_STRING:
-			free(v->limits.s.match);
-			free(v->defval.s);
-			free(v->value.s);
+			oscap_free(v->limits.s.match);
+			oscap_free(v->defval.s);
+			oscap_free(v->value.s);
 			break;
 		default: break;
 	}
-	free(v);
+	oscap_free(v);
 }
 
 void xccdf_value_val_delete_b(struct xccdf_value_val* v) { xccdf_value_val_delete_0(v, XCCDF_TYPE_BOOLEAN); }
@@ -202,7 +202,7 @@ oscap_destruct_func xccdf_value_val_destructor(enum xccdf_value_type type)
 
 bool xccdf_value_set_selector(struct xccdf_item* value, const char* selector)
 {
-	free(value->sub.value.selector);
+	oscap_free(value->sub.value.selector);
 	if (!selector) selector = "";
 	value->sub.value.selector = strdup(selector);
 	value->sub.value.value = oscap_htable_get(value->sub.value.values, selector);

@@ -35,7 +35,7 @@ bool xccdf_benchmark_add_ref(struct xccdf_item* benchmark, struct xccdf_item** p
     assert(benchmark != NULL);
     if (ptr == NULL || id == NULL)
         return false;
-    struct xccdf_backref* idref = calloc(1, sizeof(struct xccdf_backref));
+    struct xccdf_backref* idref = oscap_calloc(1, sizeof(struct xccdf_backref));
     idref->ptr = ptr;
     idref->id = strdup(id);
     idref->type = type;
@@ -139,7 +139,7 @@ bool xccdf_benchmark_parse(struct xccdf_item* benchmark, xmlTextReaderPtr reader
             case XCCDFE_PLAIN_TEXT: {
                 const char* id = xccdf_attribute_get(reader, XCCDFA_ID);
                 char* data = xccdf_element_string_copy(reader);
-                if (!id || !data || !oscap_htable_add(benchmark->sub.bench.plain_texts, id, data)) free(data);
+                if (!id || !data || !oscap_htable_add(benchmark->sub.bench.plain_texts, id, data)) oscap_free(data);
                 break;
             }
             case XCCDFE_PROFILE:
@@ -164,8 +164,8 @@ bool xccdf_benchmark_parse(struct xccdf_item* benchmark, xmlTextReaderPtr reader
 void xccdf_backref_delete(struct xccdf_backref* idref)
 {
     if (idref) {
-        free(idref->id);
-        free(idref);
+        oscap_free(idref->id);
+        oscap_free(idref);
     }
 }
 
@@ -187,11 +187,11 @@ void xccdf_benchmark_delete(struct xccdf_benchmark* benchmark)
 {
 	if (benchmark) {
 		struct xccdf_item* bench = XITEM(benchmark);
-		free(bench->sub.bench.style);
-		free(bench->sub.bench.style_href);
-		free(bench->sub.bench.front_matter);
-		free(bench->sub.bench.rear_matter);
-		free(bench->sub.bench.metadata);
+		oscap_free(bench->sub.bench.style);
+		oscap_free(bench->sub.bench.style_href);
+		oscap_free(bench->sub.bench.front_matter);
+		oscap_free(bench->sub.bench.rear_matter);
+		oscap_free(bench->sub.bench.metadata);
 		oscap_list_delete(bench->sub.bench.notices, (oscap_destruct_func)xccdf_notice_delete);
 		oscap_list_delete(bench->sub.bench.models, (oscap_destruct_func)xccdf_model_delete);
 		oscap_list_delete(bench->sub.bench.idrefs, (oscap_destruct_func)xccdf_backref_delete);
@@ -223,7 +223,7 @@ XCCDF_STATUS_CURRENT(benchmark)
 
 struct xccdf_notice* xccdf_notice_new(const char* id, char* text)
 {
-    struct xccdf_notice* notice = calloc(1, sizeof(struct xccdf_notice));
+    struct xccdf_notice* notice = oscap_calloc(1, sizeof(struct xccdf_notice));
     notice->id = strdup(id);
     notice->text = text;
     return notice;
@@ -240,9 +240,9 @@ void xccdf_notice_dump(struct xccdf_notice* notice, int depth)
 void xccdf_notice_delete(struct xccdf_notice* notice)
 {
     if (notice) {
-        free(notice->id);
-        free(notice->text);
-        free(notice);
+        oscap_free(notice->id);
+        oscap_free(notice->text);
+        oscap_free(notice);
     }
 }
 

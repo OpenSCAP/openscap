@@ -97,7 +97,7 @@ struct cpe_name *cpe_name_new(const char *cpestr)
 	if (cpestr && !cpe_name_check(cpestr))
 		return NULL;
 
-	cpe = malloc(sizeof(struct cpe_name));
+	cpe = oscap_alloc(sizeof(struct cpe_name));
 	if (cpe == NULL)
 		return NULL;
 	memset(cpe, 0, sizeof(struct cpe_name));	// zero memory
@@ -120,7 +120,7 @@ char **cpe_split(char *str, const char *delim)
 
 	char **stringp = &str;
 	int alloc = CPE_SPLIT_INIT_ALLOC;
-	char **fields = malloc(alloc * sizeof(char *));
+	char **fields = oscap_alloc(alloc * sizeof(char *));
 	if (!fields)
 		return NULL;
 
@@ -129,9 +129,9 @@ char **cpe_split(char *str, const char *delim)
 		if (i + 2 > alloc) {
 			void *old = fields;
 			alloc *= 2;
-			fields = realloc(fields, alloc * sizeof(char *));
+			fields = oscap_realloc(fields, alloc * sizeof(char *));
 			if (fields == NULL) {
-				free(old);
+				oscap_free(old);
 				return NULL;
 			}
 		}
@@ -273,7 +273,7 @@ char *cpe_name_get_uri(const struct cpe_name * cpe)
 	for (i = 0; cpe->fields_[i] && i < CPE_FIELDNUM; ++i)
 		len += strlen(cpe->fields_[i]);
 
-	result = malloc(len * sizeof(char));
+	result = oscap_alloc(len * sizeof(char));
 	if (result == NULL)
 		return NULL;
 
@@ -305,7 +305,7 @@ int cpe_name_write(const struct cpe_name * cpe, FILE * f)
 
 	ret = fprintf(f, "%s", uri);
 
-	free(uri);
+	oscap_free(uri);
 	return ret;
 }
 
@@ -360,10 +360,10 @@ bool cpe_assign_values(struct cpe_name * cpe, char **fields)
 void cpe_name_delete(struct cpe_name * cpe)
 {
 	if (cpe != NULL) {
-		free(cpe->data_);
-		free(cpe->fields_);
+		oscap_free(cpe->data_);
+		oscap_free(cpe->fields_);
 	}
-	free(cpe);
+	oscap_free(cpe);
 }
 
 size_t ptrarray_length(void **arr)

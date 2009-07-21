@@ -2,6 +2,8 @@
 #ifndef OSCAP_ALLOC_H
 #define OSCAP_ALLOC_H
 
+#include <stdlib.h>
+
 #if defined(NDEBUG)
 void *__oscap_alloc    (size_t s);
 void *__oscap_calloc   (size_t n, size_t s);

@@ -124,7 +124,7 @@ struct cpe_platformspec *cpe_platformspec_new_empty()
 {
 	struct cpe_platformspec *res;
 
-	res = malloc(sizeof(struct cpe_platformspec));
+	res = oscap_alloc(sizeof(struct cpe_platformspec));
 	if (res == NULL)
 		return NULL;
 
@@ -173,7 +173,7 @@ void cpe_platformspec_delete(struct cpe_platformspec * platformspec)
 	if (platformspec) {
 		oscap_htable_delete(platformspec->item, NULL);
 		oscap_list_delete(platformspec->items, (oscap_destruct_func)cpe_platform_delete);
-		free(platformspec);
+		oscap_free(platformspec);
 	}
 }
 
@@ -184,7 +184,7 @@ struct cpe_platform *cpe_platform_new_xml(xmlNodePtr node)
 	if (xmlStrcmp(node->name, BAD_CAST "platform") != 0)
 		return NULL;
 
-	ret = malloc(sizeof(struct cpe_platform));
+	ret = oscap_alloc(sizeof(struct cpe_platform));
 	if (ret == NULL)
 		return NULL;
 	memset(ret, 0, sizeof(struct cpe_platform));
@@ -272,7 +272,7 @@ void cpe_platform_delete(struct cpe_platform * platform)
 		xmlFree(platform->remark);
 		cpe_langexpr_delete(&platform->expr);
 	}
-	free(platform);
+	oscap_free(platform);
 }
 
 bool cpe_langexpr_new(struct cpe_lang_expr * ret, xmlNodePtr node)
@@ -300,7 +300,7 @@ bool cpe_langexpr_new(struct cpe_lang_expr * ret, xmlNodePtr node)
 		ret->oper = CPE_LANG_OPER_OR;
 	else {
 		xmlFree(temp);
-		free(ret);
+		oscap_free(ret);
 		return false;
 	}
 	xmlFree(temp);
@@ -313,7 +313,7 @@ bool cpe_langexpr_new(struct cpe_lang_expr * ret, xmlNodePtr node)
 	for (cur = node->xmlChildrenNode; cur != NULL; cur = cur->next)
 		++elem_cnt;
 
-	ret->meta.expr = malloc((elem_cnt + 1) * sizeof(struct cpe_lang_expr));
+	ret->meta.expr = oscap_alloc((elem_cnt + 1) * sizeof(struct cpe_lang_expr));
 	if (ret->meta.expr == NULL)
 		return false;
 
@@ -338,7 +338,7 @@ void cpe_langexpr_delete(struct cpe_lang_expr * expr)
 	case CPE_LANG_OPER_OR:
 		for (cur = expr->meta.expr; cur->oper; ++cur)
 			cpe_langexpr_delete(cur);
-		free(expr->meta.expr);
+		oscap_free(expr->meta.expr);
 		break;
 	case CPE_LANG_OPER_MATCH:
 		cpe_name_delete(expr->meta.cpe);
