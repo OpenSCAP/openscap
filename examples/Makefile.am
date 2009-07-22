@@ -14,7 +14,7 @@ test_oval_CFLAGS = -I$(top_srcdir)/src/OVAL
 test_oval_LDADD = $(top_builddir)/src/libopenscap.la
 
 test_sexpoval_SOURCES = OVAL/test_sexpoval.c
-test_sexpoval_CFLAGS = -I$(top_srcdir)/src/OVAL -I$(top_srcdir)/src/OVAL/probes -I$(top_srcdir)/src/OVAL/probes/SEAP
+test_sexpoval_CFLAGS = -I$(top_srcdir)/src/OVAL -I$(top_srcdir)/src/OVAL/probes -I$(top_srcdir)/src/OVAL/probes/SEAP/public
 test_sexpoval_LDADD = $(top_builddir)/src/libopenscap.la
 
 if WANT_PROBES
@@ -23,23 +23,23 @@ TESTS += SEAP/parser_valid-test.sh SEAP/parser_invalid-test.sh
 EXTRA_DIST += SEAP/parser_valid-test.sh SEAP/parser_invalid-test.sh
 
 test_findfile_SOURCES = OVAL/test_findfile.c
-test_findfile_CFLAGS = -I$(top_srcdir)/src/OVAL/probes/SEAP -I$(top_srcdir)/src/OVAL/probes -I$(top_srcdir)/src/OVAL
+test_findfile_CFLAGS = -I$(top_srcdir)/src/OVAL/probes/SEAP/public -I$(top_srcdir)/src/OVAL/probes -I$(top_srcdir)/src/OVAL
 test_findfile_LDADD = $(top_builddir)/src/libopenscap.la
 
 sexp_test_SOURCES = SEAP/sexp_test.c
-sexp_test_CFLAGS = -I$(top_srcdir)/src/OVAL/probes/SEAP
+sexp_test_CFLAGS = -I$(top_srcdir)/src/OVAL/probes/SEAP/public
 sexp_test_LDADD = $(top_builddir)/src/libopenscap.la
 
 seap_test_SOURCES = SEAP/seap_test.c
-seap_test_CFLAGS = -I$(top_srcdir)/src/OVAL/probes/SEAP
+seap_test_CFLAGS = -I$(top_srcdir)/src/OVAL/probes/SEAP/public
 seap_test_LDADD = $(top_builddir)/src/libopenscap.la
 
 seap_conn_test_SOURCES = SEAP/seap_conn_test.c
-seap_conn_test_CFLAGS = -I$(top_srcdir)/src/OVAL/probes/SEAP
+seap_conn_test_CFLAGS = -I$(top_srcdir)/src/OVAL/probes/SEAP/public
 seap_conn_test_LDADD = $(top_builddir)/src/libopenscap.la
 
 test_rpminfo_SOURCES = OVAL/test_rpminfo.c
-test_rpminfo_CFLAGS = -I$(top_srcdir)/src/OVAL/probes/SEAP -I$(top_srcdir)/src/OVAL
+test_rpminfo_CFLAGS = -I$(top_srcdir)/src/OVAL/probes/SEAP/public -I$(top_srcdir)/src/OVAL
 test_rpminfo_LDADD = $(top_builddir)/src/libopenscap.la
 
 endif

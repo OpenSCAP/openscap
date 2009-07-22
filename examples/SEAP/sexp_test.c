@@ -16,19 +16,19 @@ int main (int argc, char *argv[])
         SEXP_t        *sexp;
         ssize_t        pret;
         SEXP_ostate_t *ost = NULL;
-        SEXP_psetup_t psetup;
+        SEXP_psetup_t *psetup;
         
         if (argc < 2) {
                 printf ("Usage: %s <sexp> [<sexp> ...]\n", basename (argv[0]));
                 return (1);
         }
         
-        SEXP_psetup_init (&psetup);
-
+        psetup = SEXP_psetup_new ();
+        
         for (i = 1; i < argc; ++i) {
                 INF("Parsing S-exp #%u.\n", i);
                 /* Try to parse the buffer */
-                sexp = SEXP_parse (&psetup, argv[i], strlen (argv[i]), &pstate); 
+                sexp = SEXP_parse (psetup, argv[i], strlen (argv[i]), &pstate); 
                 
                 if (sexp == NULL) {
                         if (i+1 < argc) {
