@@ -1,5 +1,5 @@
 /**
- * @file oval_stringMap.c 
+ * @file oval_stringMap.c
  * \brief Open Vulnerability and Assessment Language
  *
  * See more details at http://oval.mitre.org/
@@ -67,10 +67,10 @@ struct _oval_string_map_entry *_oval_string_map_entry_new(struct
 	return entry;
 }
 
-void oval_string_map_put(struct oval_string_map *map, char *key, void *item)
+void oval_string_map_put(struct oval_string_map *map, const char *key, void *item)
 {
 	char *temp = (char *)malloc((strlen(key) + 1) * sizeof(char) + 1);
-	key = strcpy(temp, key);
+	char *usekey = strcpy(temp, key);
 	//SEARCH FOR INSERTION POINT
 	struct _oval_string_map_entry *insert_before =
 	    map->entries, *insert_after = NULL, *insertion;
@@ -80,7 +80,7 @@ void oval_string_map_put(struct oval_string_map *map, char *key, void *item)
 	} else {
 		int compare;
 		while (insert_before != NULL
-		       && ((compare = strcmp(key, insert_before->key)) < 0)) {
+		       && ((compare = strcmp(usekey, insert_before->key)) < 0)) {
 			insert_after = insert_before;
 			insert_before = insert_after->next;
 		}
@@ -97,8 +97,15 @@ void oval_string_map_put(struct oval_string_map *map, char *key, void *item)
 				map->entries = insertion;
 		}
 	}
-	insertion->key = key;
+	insertion->key = usekey;
 	insertion->item = item;
+}
+
+void oval_string_map_put_string(struct oval_string_map *map, const char *key, const char *item)
+{
+	char *temp = (char *)malloc((strlen(item) + 1) * sizeof(char) + 1);
+	char *useval = strcpy(temp, item);
+	oval_string_map_put(map, key, useval);
 }
 
 struct oval_iterator *oval_string_map_keys(struct oval_string_map *map)
@@ -149,11 +156,17 @@ void oval_string_map_free(struct oval_string_map *map,
 	free(map);
 }
 
+void oval_string_map_free_string(struct oval_string_map *map)
+{
+	void free_func(void* string){free(string);}
+	oval_string_map_free(map, *free_func);
+}
+
 #include <stdio.h>
 	//TEST FREEFUNC
 void oval_string_map_main_freefunc(void *item)
 {
-	printf("FREEFUNC: item = %s\n", (char *) item);
+	printf("FREEFUNC: item = %s\n", item);
 }
 
 	//TEST MAIN
@@ -177,7 +190,7 @@ int oval_string_map_main(int argc, char **argv)
 	for (index = 0; keys[index] != NULL; index++) {
 		char *key = keys[index];
 		printf("TEST::getting key %s -> %s\n", key,
-		       (char *) oval_string_map_get_value(map, key));
+		       oval_string_map_get_value(map, key));
 	}
 
 	oval_string_map_free(map, &oval_string_map_main_freefunc);

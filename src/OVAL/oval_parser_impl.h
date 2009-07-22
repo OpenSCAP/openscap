@@ -33,13 +33,34 @@
 #include <libxml/xmlreader.h>
 #include "api/oval_agent_api.h"
 
-struct oval_parser_context;
+struct oval_parser_context {
+	struct oval_object_model       *model;
+	struct oval_syschar_model      *syschar_model;
+	struct oval_sysinfo            *syschar_sysinfo;
+	xmlTextReader                  *reader;
+	oval_xml_error_handler         error_handler;
+	void*                          user_data;
+};
 
 struct oval_object_model *oval_parser_context_model(struct oval_parser_context
 						    *context);
 
 void oval_parser_parse(struct oval_object_model *, char *,
-		       oval_xml_error_handler, void *);
+		       oval_xml_error_handler, void*);
+
+void ovalsys_parser_parse(struct oval_syschar_model*, char*,
+		       oval_xml_error_handler, void*);
+
+int oval_parser_report(struct oval_parser_context*, struct oval_xml_error*);
+
+int oval_parser_log_info (struct oval_parser_context *context, char* message);
+int oval_parser_log_debug(struct oval_parser_context *context, char* message);
+int oval_parser_log_warn (struct oval_parser_context *context, char* message);
+
+void libxml_error_handler(void *user, const char *message,
+			   xmlParserSeverities severity,
+			   xmlTextReaderLocatorPtr locator);
+
 
 int oval_parser_boolean(const char *, int);
 

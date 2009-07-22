@@ -354,7 +354,6 @@ int oval_definition_parse_tag(xmlTextReaderPtr reader,
 	char *id = xmlTextReaderGetAttribute(reader, "id");
 	struct oval_object_model *model = oval_parser_context_model(context);
 	struct oval_definition *definition = get_oval_definition_new(model, id);
-	//printf("DEBUG::processing definition %s\n",id);
 	char *version = xmlTextReaderGetAttribute(reader, "version");
 	set_oval_definition_version(definition, atoi(version));
 	free(version);

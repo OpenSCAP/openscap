@@ -33,6 +33,7 @@
 #include "oval_definitions.h"
 
 typedef enum {
+	SYSCHAR_FLAG_UNKNOWN,
 	SYSCHAR_FLAG_ERROR,
 	SYSCHAR_FLAG_COMPLETE,
 	SYSCHAR_FLAG_INCOMPLETE,
@@ -40,6 +41,14 @@ typedef enum {
 	SYSCHAR_FLAG_NOT_COLLECTED,
 	SYSCHAR_FLAG_NOT_APPLICABLE
 } oval_syschar_collection_flag_enum;
+
+typedef enum{
+	SYSCHAR_STATUS_UNKNOWN,
+	SYSCHAR_STATUS_ERROR,
+	SYSCHAR_STATUS_EXISTS,
+	SYSCHAR_STATUS_DOES_NOT_EXIST,
+	SYSCHAR_STATUS_NOT_COLLECTED
+} oval_syschar_status_enum;
 
 struct oval_sysint;
 struct oval_iterator_sysint;
@@ -49,6 +58,9 @@ struct oval_iterator_sysinfo;
 
 struct oval_sysdata;
 struct oval_iterator_sysdata;
+
+struct oval_sysitem;
+struct oval_iterator_sysitem;
 
 struct oval_syschar;
 struct oval_iterator_syschar;
@@ -72,14 +84,28 @@ struct oval_iterator_sysint *oval_sysinfo_interfaces(struct oval_sysinfo *);
 int oval_iterator_sysdata_has_more(struct oval_iterator_sysdata *);
 struct oval_sysdata *oval_iterator_sysdata_next(struct oval_iterator_sysdata *);
 
-oval_family_enum oval_sysdata_family(struct oval_sysdata *);
 oval_subtype_enum oval_sysdata_subtype(struct oval_sysdata *);
+char *oval_sysdata_id(struct oval_sysdata *);
+oval_syschar_status_enum oval_sysdata_status(struct oval_sysdata *);
+struct oval_iterator_sysitem *oval_sysdata_items(struct oval_sysdata *);
+char *oval_sysdata_message(struct oval_sysdata *);
+char *oval_sysdata_subtype_name(struct oval_sysdata *);
+oval_message_level_enum oval_sysdata_message_level(struct oval_sysdata *);
+
+int oval_iterator_sysitem_has_more(struct oval_iterator_sysitem *);
+struct oval_sysitem *oval_iterator_sysitem_next(struct oval_iterator_sysitem *);
+
+char *oval_sysitem_name(struct oval_sysitem *);
+char *oval_sysitem_value(struct oval_sysitem *);
+oval_syschar_status_enum oval_sysitem_status(struct oval_sysitem *);
+oval_datatype_enum oval_sysitem_datatype(struct oval_sysitem *);
+int oval_sysitem_mask(struct oval_sysitem *);
 
 int oval_iterator_syschar_has_more(struct oval_iterator_syschar *);
 struct oval_syschar *oval_iterator_syschar_next(struct oval_iterator_syschar *);
 
 oval_syschar_collection_flag_enum oval_syschar_flag(struct oval_syschar *);
-struct oval_iterator_string *oval_syschar_messages(struct oval_syschar *);
+struct oval_iterator_message *oval_syschar_messages(struct oval_syschar *);
 struct oval_sysinfo *oval_syschar_sysinfo(struct oval_syschar *);
 struct oval_object *oval_syschar_object(struct oval_syschar *);
 struct oval_iterator_variable_binding *oval_syschar_variable_bindings(struct

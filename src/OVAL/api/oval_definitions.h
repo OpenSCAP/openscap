@@ -53,7 +53,7 @@ typedef enum {
 } oval_subtype_enum;
 
 typedef enum {
-	AIX_FILESET = FAMILY_AIX + 1,
+	AIX_FILESET = 1001,
 	AIX_FIX = FAMILY_AIX + 2,
 	AIX_OSLEVEL = FAMILY_AIX + 3
 } oval_aix_subtype_enum;
@@ -343,6 +343,15 @@ typedef enum {
 	OVAL_DATETIME_SECONDS_SINCE_EPOCH
 } oval_datetime_format_enum;
 
+typedef enum {
+	OVAL_MESSAGE_LEVEL_NONE    = 0,
+	OVAL_MESSAGE_LEVEL_DEBUG   = 1,
+	OVAL_MESSAGE_LEVEL_INFO    = 2,
+	OVAL_MESSAGE_LEVEL_WARNING = 3,
+	OVAL_MESSAGE_LEVEL_ERROR   = 4,
+	OVAL_MESSAGE_LEVEL_FATAL   = 5
+} oval_message_level_enum;
+
 struct oval_iterator_string;
 
 struct oval_affected;
@@ -389,6 +398,9 @@ struct oval_iterator_value;
 
 struct oval_component;
 struct oval_iterator_component;
+
+struct oval_message;
+struct oval_iterator_message;
 
 int oval_iterator_string_has_more(struct oval_iterator_string *);
 char *oval_iterator_string_next(struct oval_iterator_string *);
@@ -579,5 +591,11 @@ int oval_component_substring_start(struct oval_component *);	//type==OVAL_COMPON
 int oval_component_substring_length(struct oval_component *);	//type==OVAL_COMPONENT_SUBSTRING
 oval_datetime_format_enum oval_component_timedif_format_1(struct oval_component *);	//type==OVAL_COMPONENT_TIMEDIF
 oval_datetime_format_enum oval_component_timedif_format_2(struct oval_component *);	//type==OVAL_COMPONENT_TIMEDIF
+
+int oval_iterator_message_has_more(struct oval_iterator_message *oc_message);
+struct oval_message *oval_iterator_message_next(struct oval_iterator_message *oc_message);
+
+char *oval_message_text(struct oval_message *message);
+oval_message_level_enum oval_message_level(struct oval_message *message);
 
 #endif

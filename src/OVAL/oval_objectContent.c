@@ -183,7 +183,7 @@ int oval_object_content_parse_tag(xmlTextReaderPtr reader,
 	     0) ? OVAL_OBJECTCONTENT_SET : OVAL_OBJECTCONTENT_ENTITY;
 	struct oval_object_content *content = oval_object_content_new(type);
 	content->fieldName = tagname;
-	int return_code = 0;
+	int return_code;
 	switch (type) {
 	case OVAL_OBJECTCONTENT_ENTITY:{
 			struct oval_object_content_ENTITY *content_entity =

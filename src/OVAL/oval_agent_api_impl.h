@@ -38,6 +38,7 @@ void add_oval_test(struct oval_object_model *, struct oval_test *);
 void add_oval_object(struct oval_object_model *, struct oval_object *);
 void add_oval_state(struct oval_object_model *, struct oval_state *);
 void add_oval_variable(struct oval_object_model *, struct oval_variable *);
+void set_oval_sysinfo(struct oval_object_model *, struct oval_sysinfo *);
 
 struct oval_definition *get_oval_definition_new(struct oval_object_model *,
 						char *);
@@ -45,5 +46,10 @@ struct oval_test *get_oval_test_new(struct oval_object_model *, char *);
 struct oval_object *get_oval_object_new(struct oval_object_model *, char *);
 struct oval_state *get_oval_state_new(struct oval_object_model *, char *);
 struct oval_variable *get_oval_variable_new(struct oval_object_model *, char *);
+struct oval_syschar *get_oval_syschar_new(struct oval_syschar_model *, struct oval_object *);
+
+struct oval_sysdata *get_oval_sysdata_new(struct oval_syschar_model *, char *);
+
+char *malloc_string(const char *);
 
 #endif				/* OVAL_AGENT_API_IMPL_H_ */

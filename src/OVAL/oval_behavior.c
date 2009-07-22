@@ -97,42 +97,24 @@ void set_oval_behavior_value_for_key(struct oval_behavior *behavior,
 	oval_string_map_put(behavior->att_values, key, (void *)value);
 }
 
-char *_oval_behavior_unix_fields[] = {
-	"max_depth",
-	"recurse",
-	"recurse_direction",
-	"recurse_file ystem",
-	NULL
-};
-
 //typedef void (*oval_behavior_consumer)(struct oval_behavior_node *, void*);
 int oval_behavior_parse_tag(xmlTextReaderPtr reader,
 			    struct oval_parser_context *context,
 			    oval_family_enum family,
 			    oval_behavior_consumer consumer, void *user)
 {
-	struct oval_behavior *behavior = oval_behavior_new();
-	char **fields;
-	switch (family) {
-	case FAMILY_UNIX:
-		fields = _oval_behavior_unix_fields;
-		break;
-	default:
-		fields = NULL;
-	}
-
-	if (fields == NULL) {
-		printf
-		    ("NOTICE::oval_behavior_parse_tag:: No behavior fields registered for family %d\n",
-		     family);
-	} else {
-		int i;
-		for (i = 0; fields[i] != NULL; i++) {
-			char *name = fields[i];
-			char *value = xmlTextReaderGetAttribute(reader, name);
+	oval_behavior_t *behavior = oval_behavior_new();
+	xmlNode *node = xmlTextReaderCurrentNode(reader);
+	if(node!=NULL && node->type==XML_ELEMENT_NODE){
+		xmlElement *element = (xmlElement*)node;
+		xmlAttribute *attributes = element->attributes;
+		int index;for(index=0;attributes!=NULL;index++){
+			xmlAttribute *attribute = attributes;
+			attributes = (xmlAttribute*)attributes->next;
+			const char *name  = attribute->name;
+			char *value = xmlTextReaderGetAttribute(reader,name);
 			if (value != NULL) {
-				oval_string_map_put(behavior->att_values, name,
-						    (void *)value);
+				oval_string_map_put(behavior->att_values, name, value);
 			}
 		}
 	}

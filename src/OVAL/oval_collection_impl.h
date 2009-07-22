@@ -30,8 +30,9 @@
 #ifndef OVALCOLLECTION_H_
 #define OVALCOLLECTION_H_
 
-struct oval_collection;
-struct oval_iterator;
+//struct oval_collection;
+//struct oval_iterator;
+
 typedef void (*oval_item_free_func) (void *);
 
 struct oval_collection *oval_collection_new();

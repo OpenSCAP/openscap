@@ -31,10 +31,12 @@
 #include "oval_agent_api_impl.h"
 #include "oval_parser_impl.h"
 #include "oval_string_map_impl.h"
+#include "oval_system_characteristics_impl.h"
 
-struct export_target {
+typedef struct export_target {
 	char *export_target_filename;
-};
+} export_target_t;
+
 typedef struct import_source {
 	char *import_source_filename;
 } import_source_t;
@@ -56,13 +58,14 @@ void import_source_free(struct import_source *source)
 	free(source->import_source_filename);
 	free(source);
 }
- 
+
 typedef struct oval_object_model {
 	struct oval_string_map *definition_map;
 	struct oval_string_map *test_map;
 	struct oval_string_map *object_map;
 	struct oval_string_map *state_map;
 	struct oval_string_map *variable_map;
+	struct oval_sysinfo    *sysinfo;
 } oval_object_model_t;
 
 struct oval_object_model *oval_object_model_new()
@@ -74,7 +77,48 @@ struct oval_object_model *oval_object_model_new()
 	newmodel->state_map = oval_string_map_new();
 	newmodel->test_map = oval_string_map_new();
 	newmodel->variable_map = oval_string_map_new();
+	//newmodel->syschar_map = oval_string_map_new();
+	newmodel->sysinfo = NULL;
 	return newmodel;
+}
+
+typedef struct oval_syschar_model{
+	struct oval_object_model *object_model;
+	struct oval_string_map   *syschar_map;
+	struct oval_string_map   *sysdata_map;
+	struct oval_string_map   *variable_binding_map;
+} oval_syschar_model_t;
+
+struct oval_syschar_model *oval_syschar_model_new(
+		struct oval_object_model *object_model,
+		struct oval_iterator_variable_binding *bindings){
+	oval_syschar_model_t *newmodel =
+	    (oval_syschar_model_t *) malloc(sizeof(oval_syschar_model_t));
+	newmodel->object_model         = object_model;
+	newmodel->object_model         = object_model;
+	newmodel->syschar_map          = oval_string_map_new();
+	newmodel->sysdata_map          = oval_string_map_new();
+	newmodel->variable_binding_map = oval_string_map_new();
+	if(bindings!=NULL){
+		while(oval_iterator_variable_binding_has_more(bindings)){
+			struct oval_variable_binding *binding = oval_iterator_variable_binding_next(bindings);
+			struct oval_variable *variable = oval_variable_binding_variable(binding);
+			char *varid    = oval_variable_id(variable);
+			char *value    = oval_variable_binding_value(binding);
+			oval_string_map_put_string(newmodel->variable_binding_map, varid, value);
+		}
+	}
+	return newmodel;
+}
+
+struct oval_object_model *oval_syschar_model_object_model(
+		struct oval_syschar_model *model){
+	return model->object_model;
+}
+
+struct oval_iterator_syschar *oval_syschar_model_syschars(
+		struct oval_syschar_model *model){
+	return (struct oval_iterator_syschar *)oval_string_map_values(model->syschar_map);
 }
 
 void add_oval_definition(struct oval_object_model *model,
@@ -110,11 +154,43 @@ void add_oval_variable(struct oval_object_model *model,
 	oval_string_map_put(model->variable_map, key, (void *)variable);
 }
 
+void add_oval_syschar(struct oval_syschar_model *model,
+		       struct oval_syschar *syschar)
+{
+	struct oval_object *object = oval_syschar_object(syschar);
+	if(object!=NULL){
+		char *id = oval_object_id(object);
+		oval_string_map_put(model->syschar_map, id, syschar);
+	}
+}
+
+void add_oval_sysdata(struct oval_syschar_model *model,
+		       struct oval_sysdata *sysdata)
+{
+	char *id = oval_sysdata_id(sysdata);
+	if(id!=NULL){
+		oval_string_map_put(model->sysdata_map, id, sysdata);
+	}
+}
+
+void set_oval_sysinfo(struct oval_object_model *model, struct oval_sysinfo *sysinfo)
+{
+	if(model->sysinfo!=NULL)oval_sysinfo_free(model->sysinfo);
+	model->sysinfo = sysinfo;
+}
+
 void load_oval_definitions(struct oval_object_model *model,
 			   struct import_source *source,
 			   oval_xml_error_handler eh, void *user_arg)
 {
 	oval_parser_parse(model, source->import_source_filename, eh, user_arg);
+}
+
+void load_oval_syschar(struct oval_syschar_model *model,
+			struct import_source *source,
+			oval_xml_error_handler eh, void *user_arg )
+{
+	ovalsys_parser_parse(model, source->import_source_filename, eh, user_arg);
 }
 
 struct oval_definition *get_oval_definition(struct oval_object_model *model,
@@ -151,6 +227,20 @@ struct oval_variable *get_oval_variable(struct oval_object_model *model,
 								 key);
 }
 
+struct oval_syschar *get_oval_syschar(struct oval_syschar_model *model,
+					char *object_id)
+{
+	return (struct oval_syschar *)oval_string_map_get_value
+		(model->syschar_map, object_id);
+}
+
+struct oval_sysdata *get_oval_sysdata(struct oval_syschar_model *model,
+					char *id)
+{
+	return (struct oval_sysdata *)oval_string_map_get_value
+		(model->sysdata_map, id);
+}
+
 struct oval_iterator_definition *get_oval_definitions(struct oval_object_model
 						      *model)
 {
@@ -183,6 +273,37 @@ struct oval_iterator_variable *get_oval_variables(struct oval_object_model
 								       variable_map);
 }
 
+struct oval_iterator_syschar *get_oval_syschars(struct oval_syschar_model
+						  *model)
+{
+	return (struct oval_iterator_syschar *)oval_string_map_values(model->
+								       syschar_map);
+}
+
+struct oval_syschar *get_oval_syschar_new(struct oval_syschar_model *model,
+						struct oval_object *object)
+{
+	char *object_id = oval_object_id(object);
+	struct oval_syschar *syschar = get_oval_syschar(model, object_id);
+	if (syschar == NULL) {
+		syschar = oval_syschar_new(object);
+		add_oval_syschar(model, syschar);
+	}
+	return syschar;
+}
+
+struct oval_sysdata *get_oval_sysdata_new(struct oval_syschar_model *model, char *id)
+{
+	struct oval_sysdata *sysdata = get_oval_sysdata(model, id);
+	if (sysdata == NULL) {
+		sysdata = oval_sysdata_new(id);
+		add_oval_sysdata(model, sysdata);
+	}
+	return sysdata;
+}
+
+
+
 struct oval_definition *get_oval_definition_new(struct oval_object_model *model,
 						char *id)
 {
@@ -196,6 +317,7 @@ struct oval_definition *get_oval_definition_new(struct oval_object_model *model,
 	}
 	return definition;
 }
+
 
 struct oval_variable *get_oval_variable_new(struct oval_object_model *model,
 					    char *id)
@@ -267,3 +389,9 @@ struct oval_result_test *resolve_test(struct oval_test *,
 struct oval_result *resolve_definition(struct oval_definition *,
 				       struct oval_iterator_syschar *,
 				       struct oval_iterator_variable_binding *);
+
+char *malloc_string(const char *string){
+	char *temp = (char *)malloc((strlen(string) + 1) * sizeof(char) + 1);
+	return strcpy(temp, string);
+}
+

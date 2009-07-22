@@ -33,12 +33,17 @@
 #include "api/oval_system_characteristics.h"
 #include "oval_definitions_impl.h"
 
+
 struct oval_sysint *oval_sysint_new();
 void oval_sysint_free(struct oval_sysint *);
 
 void set_oval_sysint_name(struct oval_sysint *, char *);
 void set_oval_sysint_ip_address(struct oval_sysint *, char *);
 void set_oval_sysint_mac_address(struct oval_sysint *, char *);
+typedef void (*oval_sysint_consumer)(struct oval_sysint*, void*);
+int oval_sysint_parse_tag
+	(xmlTextReaderPtr, struct oval_parser_context*,
+			oval_sysint_consumer, void*);
 
 struct oval_sysinfo *oval_sysinfo_new();
 void oval_sysinfo_free(struct oval_sysinfo *);
@@ -49,13 +54,12 @@ void set_oval_sysinfo_os_architecture(struct oval_sysinfo *, char *);
 void set_oval_sysinfo_primary_host_name(struct oval_sysinfo *, char *);
 void add_oval_sysinfo_interface(struct oval_sysinfo *, struct oval_sysint *);
 
-struct oval_sysdata *oval_sysdata_new();
+struct oval_sysdata *oval_sysdata_new(char *id);
 void oval_sysdata_free(struct oval_sysdata *);
 
-void set_oval_sysdata_family(struct oval_sysdata *, oval_family_enum);
-void set_oval_sysdata_subtype(struct oval_sysdata *, oval_subtype_enum);
+void set_oval_sysdata_status(struct oval_sysdata *, oval_syschar_status_enum);
 
-struct oval_syschar *oval_syschar_new();
+struct oval_syschar *oval_syschar_new(struct oval_object *);
 void oval_syschar_free(struct oval_syschar *);
 
 void set_oval_syschar_flag(struct oval_syschar *,
@@ -66,5 +70,16 @@ void set_oval_syschar_object(struct oval_syschar *, struct oval_object *);
 void add_oval_syschar_variable_binding(struct oval_syschar *,
 				       struct oval_variable_binding *);
 void add_oval_syschar_sysdata(struct oval_syschar *, struct oval_sysdata *);
+void oval_syschar_to_print(struct oval_syschar *, char *, int);
 
+//typedef void (*oval_affected_consumer) (struct oval_affected *, void *);
+//int oval_affected_parse_tag(xmlTextReaderPtr reader,
+//			    struct oval_parser_context *context,
+//			    oval_affected_consumer, void *);
+
+typedef void (*oval_sysitem_consumer)(struct oval_sysitem *, void* client);
+int oval_sysitem_parse_tag(
+		xmlTextReaderPtr,
+	   struct oval_parser_context *,
+	   oval_sysitem_consumer, void*);
 #endif

@@ -65,3 +65,17 @@ char *oval_variable_binding_value(struct oval_variable_binding *binding)
 {
 	return ((struct oval_variable_binding *)binding)->value;
 }
+
+struct oval_variable_binding *oval_variable_binding_new(struct oval_variable *variable, char *value)
+{
+	oval_variable_binding_t *binding = (oval_variable_binding_t*)malloc(sizeof(oval_variable_binding_t));
+	binding->variable = variable;
+	binding->value    = value;
+	return binding;
+}
+
+void oval_variable_binding_free(struct oval_variable_binding *binding)
+{
+	if(binding->value!=NULL)free(binding->value);
+	free(binding);
+}

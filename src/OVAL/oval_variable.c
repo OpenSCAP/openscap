@@ -34,6 +34,7 @@
 #include "oval_collection_impl.h"
 #include "oval_agent_api_impl.h"
 
+
 typedef struct oval_variable {
 	char *id;
 	char *comment;

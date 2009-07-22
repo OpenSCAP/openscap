@@ -60,6 +60,8 @@ oval_arithmetic_operation_enum oval_arithmetic_operation_parse(xmlTextReaderPtr,
 							       oval_arithmetic_operation_enum);
 oval_datetime_format_enum oval_datetime_format_parse(xmlTextReaderPtr, char *,
 						     oval_arithmetic_operation_enum);
+oval_message_level_enum oval_message_level_parse(xmlTextReaderPtr, char *,
+						     oval_message_level_enum);
 
 struct oval_affected *oval_affected_new();
 void oval_affected_free(struct oval_affected *);
@@ -264,4 +266,16 @@ void add_oval_component_function_components(struct oval_component *, struct oval
 typedef void (*oval_component_consumer) (struct oval_component *, void *);
 int oval_component_parse_tag(xmlTextReaderPtr, struct oval_parser_context *,
 			     oval_component_consumer, void *);
+
+
+struct oval_message *oval_message_new();
+void oval_message_free(struct oval_message *);
+
+void set_oval_message_text(struct oval_message *, char *);
+void set_oval_message_level(struct oval_message *, oval_message_level_enum);
+typedef void (*oval_message_consumer)(struct oval_message *, void *);
+int oval_message_parse_tag(xmlTextReaderPtr,
+			       struct oval_parser_context *, oval_message_consumer, void *);
+void oval_message_to_print(struct oval_message *message, char *indent,
+			      int index);
 #endif

@@ -12,6 +12,7 @@ liboval_la_SOURCES = \
 	oval_definitions_impl.h \
 	oval_entity.c \
 	oval_enumerations.c \
+	oval_message.c \
 	oval_object.c \
 	oval_objectContent.c \
 	oval_parser.c \
@@ -30,12 +31,13 @@ liboval_la_SOURCES = \
 	oval_sysData.c \
 	oval_sysInfo.c \
 	oval_sysInterface.c \
+	oval_sysItem.c \
 	oval_syschar.c \
 	oval_system_characteristics_impl.h \
-	oval_test.c \
 	oval_value.c \
 	oval_variable.c \
-	oval_variableBinding.c
+	oval_variableBinding.c \
+	ovalsys_parser.c
 
 liboval_la_CFLAGS  = @libxml_cflags@ -DPROBEPATH_ENV
 liboval_la_LDFLAGS = @libxml_libs@

@@ -1,5 +1,5 @@
 /**
- * @file oval_string_map_impl.h 
+ * @file oval_string_map_impl.h
  * \brief Open Vulnerability and Assessment Language
  *
  * See more details at http://oval.mitre.org/
@@ -35,10 +35,13 @@
 struct oval_string_map_s;
 
 struct oval_string_map *oval_string_map_new();
-void oval_string_map_put(struct oval_string_map *, char *, void *);
+void oval_string_map_put(struct oval_string_map *, const char *, void *);
+
+void oval_string_map_put_string(struct oval_string_map *, const char *, const char *);
 struct oval_iterator *oval_string_map_keys(struct oval_string_map *);
 struct oval_iterator *oval_string_map_values(struct oval_string_map *);
 void *oval_string_map_get_value(struct oval_string_map *, char *);
 void oval_string_map_free(struct oval_string_map *, oval_item_free_func);
+void oval_string_map_free_string(struct oval_string_map *);
 
 #endif				/* OVAL_STRING_MAP_IMPL_H_ */
