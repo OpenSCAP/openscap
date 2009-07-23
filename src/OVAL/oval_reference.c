@@ -54,55 +54,55 @@ struct oval_reference *oval_iterator_reference_next(struct
 	    oval_collection_iterator_next((struct oval_iterator *)oc_reference);
 }
 
-char *oval_reference_source(struct oval_reference *reference)
+char *oval_reference_source(struct oval_reference *ref)
 {
-	return ((struct oval_reference *)reference)->source;
+	return ((struct oval_reference *)ref)->source;
 }
 
-char *oval_reference_id(struct oval_reference *reference)
+char *oval_reference_id(struct oval_reference *ref)
 {
-	return ((struct oval_reference *)reference)->id;
+	return ((struct oval_reference *)ref)->id;
 }
 
-char *oval_reference_url(struct oval_reference *reference)
+char *oval_reference_url(struct oval_reference *ref)
 {
-	return ((struct oval_reference *)reference)->url;
+	return ((struct oval_reference *)ref)->url;
 }
 
 struct oval_reference *oval_reference_new()
 {
-	struct oval_reference *reference =
+	struct oval_reference *ref =
 	    (struct oval_reference *)malloc(sizeof(oval_reference_t));
-	reference->id = NULL;
-	reference->source = NULL;
-	reference->url = NULL;
-	return reference;
+	ref->id = NULL;
+	ref->source = NULL;
+	ref->url = NULL;
+	return ref;
 }
 
-void oval_reference_free(struct oval_reference *reference)
+void oval_reference_free(struct oval_reference *ref)
 {
-	if (reference->id != NULL)
-		free(reference->id);
-	if (reference->source != NULL)
-		free(reference->source);
-	if (reference->url != NULL)
-		free(reference->url);
-	free(reference);
+	if (ref->id != NULL)
+		free(ref->id);
+	if (ref->source != NULL)
+		free(ref->source);
+	if (ref->url != NULL)
+		free(ref->url);
+	free(ref);
 }
 
-void set_oval_reference_source(struct oval_reference *reference, char *source)
+void set_oval_reference_source(struct oval_reference *ref, char *source)
 {
-	reference->source = source;
+	ref->source = source;
 }
 
-void set_oval_reference_id(struct oval_reference *reference, char *id)
+void set_oval_reference_id(struct oval_reference *ref, char *id)
 {
-	reference->id = id;
+	ref->id = id;
 }
 
-void set_oval_reference_url(struct oval_reference *reference, char *url)
+void set_oval_reference_url(struct oval_reference *ref, char *url)
 {
-	reference->url = url;
+	ref->url = url;
 }
 
 //typedef void (*oval_reference_consumer)(struct oval_reference*, void*);
@@ -110,31 +110,31 @@ int oval_reference_parse_tag(xmlTextReaderPtr reader,
 			     struct oval_parser_context *context,
 			     oval_reference_consumer consumer, void *user)
 {
-	struct oval_reference *reference = oval_reference_new();
-	char *ref_id = xmlTextReaderGetAttribute(reader, "ref_id");
-	char *ref_url = xmlTextReaderGetAttribute(reader, "ref_url");
-	char *source = xmlTextReaderGetAttribute(reader, "source");
-	set_oval_reference_source(reference, source);
-	set_oval_reference_id(reference, ref_id);
-	set_oval_reference_url(reference, ref_url);
-	(*consumer) (reference, user);
+	struct oval_reference *ref = oval_reference_new();
+	char *ref_id = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "ref_id");
+	char *ref_url = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "ref_url");
+	char *source = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "source");
+	set_oval_reference_source(ref, source);
+	set_oval_reference_id(ref, ref_id);
+	set_oval_reference_url(ref, ref_url);
+	(*consumer) (ref, user);
 	return 1;
 }
 
-void oval_reference_to_print(struct oval_reference *reference, char *indent,
-			     int index)
+void oval_reference_to_print(struct oval_reference *ref, char *indent,
+			     int idx)
 {
 	char nxtindent[100];
 
 	if (strlen(indent) > 80)
 		indent = "....";
 
-	if (index == 0)
+	if (idx == 0)
 		snprintf(nxtindent, sizeof(nxtindent), "%sREFERENCE.", indent);
 	else
-		snprintf(nxtindent, sizeof(nxtindent), "%sREFERENCE[%d].", indent, index);
+		snprintf(nxtindent, sizeof(nxtindent), "%sREFERENCE[%d].", indent, idx);
 
-	printf("%sSOURCE = %s\n", nxtindent, reference->source);
-	printf("%sID     = %s\n", nxtindent, reference->id);
-	printf("%sURL    = %s\n", nxtindent, reference->url);
+	printf("%sSOURCE = %s\n", nxtindent, ref->source);
+	printf("%sID     = %s\n", nxtindent, ref->id);
+	printf("%sURL    = %s\n", nxtindent, ref->url);
 }

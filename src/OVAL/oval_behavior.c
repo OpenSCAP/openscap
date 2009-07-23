@@ -108,13 +108,12 @@ int oval_behavior_parse_tag(xmlTextReaderPtr reader,
 	if(node!=NULL && node->type==XML_ELEMENT_NODE){
 		xmlElement *element = (xmlElement*)node;
 		xmlAttribute *attributes = element->attributes;
-		int index;for(index=0;attributes!=NULL;index++){
-			xmlAttribute *attribute = attributes;
+		int idx;for(idx=0;attributes!=NULL;idx++){
+			xmlAttribute *attr = attributes;
 			attributes = (xmlAttribute*)attributes->next;
-			const char *name  = attribute->name;
-			char *value = xmlTextReaderGetAttribute(reader,name);
+			char *value = (char *) xmlTextReaderGetAttribute(reader, attr->name);
 			if (value != NULL) {
-				oval_string_map_put(behavior->att_values, name, value);
+				oval_string_map_put(behavior->att_values, (char*) attr->name, value);
 			}
 		}
 	}
@@ -123,23 +122,23 @@ int oval_behavior_parse_tag(xmlTextReaderPtr reader,
 }
 
 void oval_behavior_to_print(struct oval_behavior *behavior, char *indent,
-			    int index)
+			    int idx)
 {
 	char nxtindent[100];
 
 	if (strlen(indent) > 80)
 		indent = "....";
 
-	if (index == 0)
+	if (idx == 0)
 		snprintf(nxtindent, sizeof(nxtindent), "%sBEHAVIOR.", indent);
 	else
-		snprintf(nxtindent, sizeof(nxtindent), "%sBEHAVIOR[%d].", indent, index);
+		snprintf(nxtindent, sizeof(nxtindent), "%sBEHAVIOR[%d].", indent, idx);
 
 	struct oval_iterator_string *keys =
 	    oval_behavior_attribute_keys(behavior);
 	if (oval_iterator_string_has_more(keys)) {
-		int index;
-		for (index = 1; oval_iterator_string_has_more(keys); index++) {
+		int i;
+		for (i = 1; oval_iterator_string_has_more(keys); i++) {
 			char *key = oval_iterator_string_next(keys);
 			char *val = oval_behavior_value_for_key(behavior, key);
 			printf("%s%s = [%s]\n", nxtindent, key, val);

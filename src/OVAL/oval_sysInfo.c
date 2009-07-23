@@ -29,6 +29,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include "oval_system_characteristics_impl.h"
 #include "oval_collection_impl.h"
 
@@ -128,8 +129,8 @@ int _oval_sysinfo_parse_tag(xmlTextReaderPtr reader,
 			       struct oval_parser_context *context, void *user)
 {
 	struct oval_sysinfo *sysinfo = (struct oval_sysinfo *)user;
-	char *tagname   = xmlTextReaderName(reader);
-	char *namespace = xmlTextReaderNamespaceUri(reader);
+	char *tagname   = (char*) xmlTextReaderName(reader);
+	char *namespace = (char*) xmlTextReaderNamespaceUri(reader);
 	int is_ovalsys = strcmp(namespace,NAMESPACE_OVALSYS)==0;
 	int return_code;
 	if        (is_ovalsys && (strcmp(tagname,"os_name"          )==0)) {
@@ -186,8 +187,8 @@ int oval_sysinfo_parse_tag(xmlTextReaderPtr reader,
 			       struct oval_parser_context *context)
 {
 	oval_sysinfo_t *sysinfo = oval_sysinfo_new();
-	char *tagname   = xmlTextReaderName(reader);
-	char *namespace = xmlTextReaderNamespaceUri(reader);
+	char *tagname   = (char*) xmlTextReaderName(reader);
+	char *namespace = (char*) xmlTextReaderNamespaceUri(reader);
 	int is_ovalsys = strcmp(namespace,NAMESPACE_OVALSYS)==0;
 	int return_code;
 	if(is_ovalsys){
@@ -212,7 +213,7 @@ int oval_sysinfo_parse_tag(xmlTextReaderPtr reader,
 }
 
 void oval_sysinfo_to_print(struct oval_sysinfo *sysinfo, char *indent,
-			      int index)
+			      int idx)
 {
 
 	char nxtindent[100];
@@ -220,10 +221,10 @@ void oval_sysinfo_to_print(struct oval_sysinfo *sysinfo, char *indent,
 	if (strlen(indent) > 80)
 		indent = "....";
 
-	if (index == 0)
+	if (idx == 0)
 		snprintf(nxtindent, sizeof(nxtindent), "%sSYSINFO.", indent);
 	else
-		snprintf(nxtindent, sizeof(nxtindent), "%sSYSINFO[%d].", indent, index);
+		snprintf(nxtindent, sizeof(nxtindent), "%sSYSINFO[%d].", indent, idx);
 
 	/*
 	char *osName;
@@ -246,9 +247,9 @@ void oval_sysinfo_to_print(struct oval_sysinfo *sysinfo, char *indent,
 	}
 	{//interfaces
 		struct oval_iterator_sysint *intrfcs = oval_sysinfo_interfaces(sysinfo);
-		int index;for(index=1;oval_iterator_sysint_has_more(intrfcs);index++){
+		int i;for(i=1;oval_iterator_sysint_has_more(intrfcs);i++){
 			struct oval_sysint *intrfc = oval_iterator_sysint_next(intrfcs);
-			oval_sysint_to_print(intrfc, nxtindent, index);
+			oval_sysint_to_print(intrfc, nxtindent, i);
 		}
 	}
 }

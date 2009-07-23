@@ -29,6 +29,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include "oval_system_characteristics_impl.h"
 #include "oval_collection_impl.h"
 
@@ -102,8 +103,8 @@ extern const char* NAMESPACE_OVALSYS;
 int _oval_sysint_parse_tag(xmlTextReaderPtr reader,
 			       struct oval_parser_context *context , void *user){
 	struct oval_sysint *sysint = (struct oval_sysint *)user;
-	char *tagname   = xmlTextReaderName(reader);
-	char *namespace = xmlTextReaderNamespaceUri(reader);
+	char *tagname   = (char*) xmlTextReaderName(reader);
+	char *namespace = (char*) xmlTextReaderNamespaceUri(reader);
 	int is_ovalsys = strcmp(namespace,NAMESPACE_OVALSYS)==0;
 	int return_code;
 	if        (is_ovalsys && (strcmp(tagname,"interface_name")==0)) {
@@ -140,8 +141,8 @@ int _oval_sysint_parse_tag(xmlTextReaderPtr reader,
 int oval_sysint_parse_tag(xmlTextReaderPtr reader,
 			       struct oval_parser_context *context, oval_sysint_consumer consumer , void *user){
 	struct oval_sysint *sysint = oval_sysint_new();
-	char *tagname   = xmlTextReaderName(reader);
-	char *namespace = xmlTextReaderNamespaceUri(reader);
+	char *tagname   = (char*) xmlTextReaderName(reader);
+	char *namespace = (char*) xmlTextReaderNamespaceUri(reader);
 	int is_ovalsys = strcmp(namespace,NAMESPACE_OVALSYS)==0;
 	int return_code;
 	if        (is_ovalsys && (strcmp(tagname,"interface")==0)) {
@@ -160,17 +161,17 @@ int oval_sysint_parse_tag(xmlTextReaderPtr reader,
 }
 
 void oval_sysint_to_print(struct oval_sysint *sysint, char *indent,
-			      int index)
+			      int idx)
 {
 	char nxtindent[100];
 
 	if (strlen(indent) > 80)
 		indent = "....";
 
-	if (index == 0)
+	if (idx == 0)
 		snprintf(nxtindent, sizeof(nxtindent), "%sINTERFACE.", indent);
 	else
-		snprintf(nxtindent, sizeof(nxtindent), "%sINTERFACE[%d].", indent, index);
+		snprintf(nxtindent, sizeof(nxtindent), "%sINTERFACE[%d].", indent, idx);
 	/*
 	char *name;
 	char *ipAddress;

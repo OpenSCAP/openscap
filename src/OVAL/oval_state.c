@@ -161,9 +161,9 @@ void add_oval_state_notes(struct oval_state *state, char *notes)
 	oval_collection_add(state->notes, (void *)notes);
 }
 
-void set_oval_state_comment(struct oval_state *state, char *comment)
+void set_oval_state_comment(struct oval_state *state, char *comm)
 {
-	state->comment = comment;
+	state->comment = comm;
 }
 
 void set_oval_state_deprecated(struct oval_state *state, int deprecated)
@@ -190,7 +190,7 @@ int _oval_state_parse_tag(xmlTextReaderPtr reader,
 			  struct oval_parser_context *context, void *user)
 {
 	struct oval_state *state = (struct oval_state *)user;
-	xmlChar *tagname = xmlTextReaderName(reader);
+	char *tagname = (char*) xmlTextReaderName(reader);
 	xmlChar *namespace = xmlTextReaderNamespaceUri(reader);
 	int return_code = 1;
 	if ((strcmp(tagname, "notes") == 0)) {
@@ -219,17 +219,17 @@ int _oval_state_parse_tag(xmlTextReaderPtr reader,
 int oval_state_parse_tag(xmlTextReaderPtr reader,
 			 struct oval_parser_context *context)
 {
-	char *id = xmlTextReaderGetAttribute(reader, "id");
+	char *id = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "id");
 	struct oval_object_model *model = oval_parser_context_model(context);
 	//printf("DEBUG::oval_state_parse_tag::id = %s\n", id);
 	struct oval_state *state = get_oval_state_new(model, id);
 	oval_subtype_enum subtype = oval_subtype_parse(reader);
 	set_oval_state_subtype(state, subtype);
-	char *comment = xmlTextReaderGetAttribute(reader, "comment");
-	set_oval_state_comment(state, comment);
+	char *comm = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "comment");
+	set_oval_state_comment(state, comm);
 	int deprecated = oval_parser_boolean_attribute(reader, "deprecated", 0);
 	set_oval_state_deprecated(state, deprecated);
-	char *version = xmlTextReaderGetAttribute(reader, "version");
+	char *version = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "version");
 	set_oval_state_version(state, atoi(version));
 	free(version);
 
@@ -239,17 +239,17 @@ int oval_state_parse_tag(xmlTextReaderPtr reader,
 	return return_code;
 }
 
-void oval_state_to_print(struct oval_state *state, char *indent, int index)
+void oval_state_to_print(struct oval_state *state, char *indent, int idx)
 {
 	char nxtindent[100];
 
 	if (strlen(indent) > 80)
 		indent = "....";
 
-	if (index == 0)
+	if (idx == 0)
 		snprintf(nxtindent, sizeof(nxtindent), "%sSTATE.", indent);
 	else
-		snprintf(nxtindent, sizeof(nxtindent), "%sSTATE[%d].", indent, index);
+		snprintf(nxtindent, sizeof(nxtindent), "%sSTATE[%d].", indent, idx);
 
 	printf("%sID         = %s\n", nxtindent, oval_state_id(state));
 	printf("%sFAMILY     = %d\n", nxtindent, oval_state_family(state));
@@ -258,15 +258,15 @@ void oval_state_to_print(struct oval_state *state, char *indent, int index)
 	printf("%sCOMMENT    = %s\n", nxtindent, oval_state_comment(state));
 	printf("%sDEPRECATED = %d\n", nxtindent, oval_state_deprecated(state));
 	struct oval_iterator_string *notes = oval_state_notes(state);
-	for (index = 1; oval_iterator_string_has_more(notes); index++) {
-		printf("%sNOTE[%d]    = %s\n", nxtindent, index,
+	for (idx = 1; oval_iterator_string_has_more(notes); idx++) {
+		printf("%sNOTE[%d]    = %s\n", nxtindent, idx,
 		       oval_iterator_string_next(notes));
 	}
 
 	struct oval_iterator_entity *contents = oval_state_entities(state);
-	for (index = 1; oval_iterator_entity_has_more(contents); index++) {
+	for (idx = 1; oval_iterator_entity_has_more(contents); idx++) {
 		struct oval_entity *entity =
 		    oval_iterator_entity_next(contents);
-		oval_entity_to_print(entity, nxtindent, index);
+		oval_entity_to_print(entity, nxtindent, idx);
 	}
 }

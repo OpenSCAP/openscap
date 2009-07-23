@@ -166,7 +166,7 @@ void oval_string_map_free_string(struct oval_string_map *map)
 	//TEST FREEFUNC
 void oval_string_map_main_freefunc(void *item)
 {
-	printf("FREEFUNC: item = %s\n", item);
+	printf("FREEFUNC: item = %s\n", (const char *) item);
 }
 
 	//TEST MAIN
@@ -181,17 +181,18 @@ int oval_string_map_main(int argc, char **argv)
 
 	struct oval_string_map *map = oval_string_map_new();
 	printf("TEST::START::has new map\n");
-	int index;
-	for (index = 0; keys[index] != NULL; index++) {
-		char *key = keys[index];
-		printf("TEST::adding key %s -> %s\n", key, entries[index]);
-		oval_string_map_put(map, key, (void *)entries[index]);
+	int idx;
+	for (idx = 0; keys[idx] != NULL; idx++) {
+		char *key = keys[idx];
+		printf("TEST::adding key %s -> %s\n", key, entries[idx]);
+		oval_string_map_put(map, key, (void *)entries[idx]);
 	}
-	for (index = 0; keys[index] != NULL; index++) {
-		char *key = keys[index];
+	for (idx = 0; keys[idx] != NULL; idx++) {
+		char *key = keys[idx];
 		printf("TEST::getting key %s -> %s\n", key,
-		       oval_string_map_get_value(map, key));
+		       (const char *) oval_string_map_get_value(map, key));
 	}
 
 	oval_string_map_free(map, &oval_string_map_main_freefunc);
+	return 0;
 }

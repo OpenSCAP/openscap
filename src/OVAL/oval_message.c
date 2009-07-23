@@ -29,6 +29,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include "oval_agent_api_impl.h"
 #include "oval_system_characteristics_impl.h"
 #include "oval_collection_impl.h"
@@ -111,17 +112,17 @@ int oval_message_parse_tag(xmlTextReaderPtr reader,
 }
 
 void oval_message_to_print(struct oval_message *message, char *indent,
-			      int index)
+			      int idx)
 {
 	char nxtindent[100];
 
 	if (strlen(indent) > 80)
 		indent = "....";
 
-	if (index == 0)
+	if (idx == 0)
 		snprintf(nxtindent, sizeof(nxtindent), "%sMESSAGE.", indent);
 	else
-		snprintf(nxtindent, sizeof(nxtindent), "%sMESSAGE[%d].", indent, index);
+		snprintf(nxtindent, sizeof(nxtindent), "%sMESSAGE[%d].", indent, idx);
 
 	/*
 	char*                   text;

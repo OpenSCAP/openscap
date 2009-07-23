@@ -435,6 +435,18 @@ void oval_component_free(struct oval_component *component)
 					free(split->delimiter);
 				};
 				break;
+			case OVAL_FUNCTION_CONCAT:        /* TODO */ break;
+			case OVAL_FUNCTION_SUBSTRING:     /* TODO */ break;
+			case OVAL_FUNCTION_TIMEDIF:       /* TODO */ break;
+			case OVAL_FUNCTION_ESCAPE_REGEX:  /* TODO */ break;
+			case OVAL_FUNCTION_REGEX_CAPTURE: /* TODO */ break;
+			case OVAL_FUNCTION_ARITHMETIC:    /* TODO */ break;
+			case OVAL_COMPONENT_UNKNOWN:
+			case OVAL_COMPONENT_LITERAL:
+			case OVAL_COMPONENT_OBJECTREF:
+			case OVAL_COMPONENT_VARREF:
+			case OVAL_COMPONENT_FUNCTION:
+				break;
 			}
 		}
 	}
@@ -499,12 +511,12 @@ int _oval_component_parse_LITERAL_tag
 int _oval_component_parse_OBJECTREF_tag
     (xmlTextReaderPtr reader, struct oval_parser_context *context,
      struct oval_component *component) {
-	char *objref = xmlTextReaderGetAttribute(reader, "object_ref");
+	char *objref = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST "object_ref");
 	struct oval_object_model *model = oval_parser_context_model(context);
 	struct oval_object *object = get_oval_object_new(model, objref);
 	set_oval_component_object(component, object);
 
-	char *objfld = xmlTextReaderGetAttribute(reader, "item_field");
+	char *objfld = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST "item_field");
 	set_oval_component_object_field(component, objfld);
 
 	int return_code = 1;
@@ -514,7 +526,7 @@ int _oval_component_parse_OBJECTREF_tag
 int _oval_component_parse_VARREF_tag
     (xmlTextReaderPtr reader, struct oval_parser_context *context,
      struct oval_component *component) {
-	char *varref = xmlTextReaderGetAttribute(reader, "var_ref");
+	char *varref = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST "var_ref");
 	struct oval_object_model *model = oval_parser_context_model(context);
 	struct oval_variable *variable = get_oval_variable_new(model, varref);
 	set_oval_component_variable(component, variable);
@@ -559,7 +571,7 @@ int _oval_component_parse_BEGEND_tag
     (xmlTextReaderPtr reader, struct oval_parser_context *context,
      struct oval_component *component) {
 	oval_component_BEGEND_t *begend = (oval_component_BEGEND_t *) component;
-	char *character = xmlTextReaderGetAttribute(reader, "character");
+	char *character = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST "character");
 	begend->character = character;
 	return _oval_component_parse_FUNCTION_tag(reader, context, component);
 }
@@ -568,7 +580,7 @@ int _oval_component_parse_SPLIT_tag
     (xmlTextReaderPtr reader, struct oval_parser_context *context,
      struct oval_component *component) {
 	oval_component_SPLIT_t *split = (oval_component_SPLIT_t *) component;
-	char *delimiter = xmlTextReaderGetAttribute(reader, "delimiter");
+	char *delimiter = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST "delimiter");
 	split->delimiter = delimiter;
 	return _oval_component_parse_FUNCTION_tag(reader, context, component);
 }
@@ -578,8 +590,8 @@ int _oval_component_parse_SUBSTRING_tag
      struct oval_component *component) {
 	oval_component_SUBSTRING_t *substring =
 	    (oval_component_SUBSTRING_t *) component;
-	char *start_text = xmlTextReaderGetAttribute(reader, "start");
-	char *length_text = xmlTextReaderGetAttribute(reader, "start");
+	char *start_text  = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST "start");
+	char *length_text = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST "length");
 	int start = (start_text == NULL) ? 0 : atoi(start_text);
 	int length = (length_text == NULL) ? 0 : atoi(length_text);
 	if (start_text != NULL)
@@ -614,10 +626,10 @@ int oval_component_parse_tag(xmlTextReaderPtr reader,
 			     struct oval_parser_context *context,
 			     oval_component_consumer consumer, void *user)
 {
-	char *tagname = xmlTextReaderName(reader);
-	oval_component_type_enum type;
-	int return_code;
-	struct oval_component *component;;
+	char *tagname = (char *) xmlTextReaderName(reader);
+	//oval_component_type_enum type;
+	int return_code = 0;
+	struct oval_component *component = NULL;
 	if (strcmp(tagname, "literal_component") == 0) {
 		component = oval_component_new(OVAL_COMPONENT_LITERAL);
 		return_code =
@@ -684,7 +696,8 @@ int oval_component_parse_tag(xmlTextReaderPtr reader,
 		     tagname, line);
 		return_code = oval_parser_skip_tag(reader, context);
 	}
-	(*consumer) (component, user);
+	if (component != NULL)
+		(*consumer) (component, user);
 	if (return_code != 1) {
 		int line = xmlTextReaderGetParserLineNumber(reader);
 		printf
@@ -696,36 +709,34 @@ int oval_component_parse_tag(xmlTextReaderPtr reader,
 }
 
 void oval_component_to_print(struct oval_component *component, char *indent,
-			     int index)
+			     int idx)
 {
 	char nxtindent[100];
 
 	if (strlen(indent) > 80)
 		indent = "....";
 
-	if (index == 0)
+	if (idx == 0)
 		snprintf(nxtindent, sizeof(nxtindent), "%sCOMPONENT.", indent);
 	else
-		snprintf(nxtindent, sizeof(nxtindent), "%sCOMPONENT[%d].", indent, index);
+		snprintf(nxtindent, sizeof(nxtindent), "%sCOMPONENT[%d].", indent, idx);
 
-	printf("%sTYPE(%d) = %d\n", nxtindent, component,
+	printf("%sTYPE(%lx) = %d\n", nxtindent, (unsigned long)component,
 	       oval_component_type(component));
 	if (oval_component_type(component) > OVAL_COMPONENT_FUNCTION) {
-		oval_component_FUNCTION_t *function =
-		    (oval_component_FUNCTION_t *) component;
+		//oval_component_FUNCTION_t *function = (oval_component_FUNCTION_t *) component;
 	}
 	void function_to_print() {
 		struct oval_iterator_component *subcomps =
 		    oval_component_function_components(component);
 		if (oval_iterator_component_has_more(subcomps)) {
-			int idx;
-			for (idx = 1;
+			int i;
+			for (i = 1;
 			     oval_iterator_component_has_more(subcomps);
-			     idx++) {
+			     i++) {
 				struct oval_component *subcomp =
 				    oval_iterator_component_next(subcomps);
-				oval_component_to_print(subcomp, nxtindent,
-							idx);
+				oval_component_to_print(subcomp, nxtindent, i);
 			}
 		} else
 			printf("%sFUNCTION_COMPONENTS <<NONE BOUND>>\n",
@@ -807,5 +818,6 @@ void oval_component_to_print(struct oval_component *component, char *indent,
 			function_to_print();
 		}
 		break;
+	default: break;
 	}
 }

@@ -30,6 +30,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include "oval_system_characteristics_impl.h"
 #include "oval_collection_impl.h"
 #include "oval_agent_api_impl.h"
@@ -166,8 +167,8 @@ int _oval_syschar_parse_subtag(
 		struct oval_parser_context *context,
 		void *client){
 	struct oval_syschar *syschar = client;
-	char *tagname   = xmlTextReaderLocalName(reader);
-	char *namespace = xmlTextReaderNamespaceUri(reader);
+	char *tagname   = (char*) xmlTextReaderLocalName(reader);
+	char *namespace = (char*) xmlTextReaderNamespaceUri(reader);
 	int return_code;
 	if(strcmp("message",tagname)==0){
 		void consume(struct oval_message *message, void* null){
@@ -177,7 +178,7 @@ int _oval_syschar_parse_subtag(
 	}else if(strcmp("variable_value",tagname)==0){//TODO
 		return_code = oval_parser_skip_tag(reader, context);
 	}else if(strcmp("reference",tagname)==0){
-		char* itemid = xmlTextReaderGetAttribute(reader, "item_ref");
+		char* itemid = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "item_ref");
 		struct oval_sysdata *sysdata = get_oval_sysdata_new(context->syschar_model, itemid);
 		add_oval_syschar_sysdata(syschar, sysdata);
 		return_code = 1;
@@ -195,8 +196,8 @@ int _oval_syschar_parse_subtag(
 int oval_syschar_parse_tag(xmlTextReaderPtr reader,
 			       struct oval_parser_context *context)
 {
-	char *tagname   = xmlTextReaderName(reader);
-	char *namespace = xmlTextReaderNamespaceUri(reader);
+	char *tagname   = (char*) xmlTextReaderName(reader);
+	char *namespace = (char*) xmlTextReaderNamespaceUri(reader);
 	if(OVAL_SYSCHAR_DEBUG){//DEBUG
 		char message[200]; *message = 0;
 		sprintf(message,
@@ -207,13 +208,13 @@ int oval_syschar_parse_tag(xmlTextReaderPtr reader,
 	int is_ovalsys = strcmp(namespace,NAMESPACE_OVALSYS)==0;
 	int return_code;
 	if(is_ovalsys && (strcmp(tagname,"object")==0)){
-		char *object_id = xmlTextReaderGetAttribute(reader, "id");
+		char *object_id = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "id");
 		struct oval_object *object = get_oval_object_new
 			(context->model, object_id);
 		oval_syschar_t *syschar = get_oval_syschar_new
 			(context->syschar_model, object);
 		syschar->sysinfo = context->syschar_sysinfo;
-		char *flag = xmlTextReaderGetAttribute(reader, "flag");
+		char *flag = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "flag");
 		oval_syschar_collection_flag_enum flag_enum
 			= oval_syschar_flag_parse(reader, "flag", SYSCHAR_FLAG_UNKNOWN);
 		free(flag);
@@ -241,23 +242,23 @@ int oval_syschar_parse_tag(xmlTextReaderPtr reader,
 		oval_parser_log_warn(context, message);
 	}
 
-	struct oval_object_model *model = context->model;
+	//struct oval_object_model *model = context->model;
 
 	return return_code;
 }
 
 void oval_syschar_to_print(struct oval_syschar *syschar, char *indent,
-			      int index)
+			      int idx)
 {
 	char nxtindent[100];
 
 	if (strlen(indent) > 80)
 		indent = "....";
 
-	if (index == 0)
+	if (idx == 0)
 		snprintf(nxtindent, sizeof(nxtindent), "%sSYSCHAR.", indent);
 	else
-		snprintf(nxtindent, sizeof(nxtindent), "%sSYSCHAR[%d].", indent, index);
+		snprintf(nxtindent, sizeof(nxtindent), "%sSYSCHAR[%d].", indent, idx);
 
 	/*
 	oval_syschar_collection_flag_enum flag;
@@ -269,9 +270,9 @@ void oval_syschar_to_print(struct oval_syschar *syschar, char *indent,
 	printf("%sFLAG    = %d\n", nxtindent, oval_syschar_flag(syschar));
 	{//messages
 		struct oval_iterator_message *messages = oval_syschar_messages(syschar);
-		int index;for(index=1;oval_iterator_message_has_more(messages);index++){
+		int idx;for(idx=1;oval_iterator_message_has_more(messages);idx++){
 			struct oval_message *message = oval_iterator_message_next(messages);
-			oval_message_to_print(message, nxtindent, index);
+			oval_message_to_print(message, nxtindent, idx);
 		}
 	}
 	{//sysinfo
@@ -287,9 +288,9 @@ void oval_syschar_to_print(struct oval_syschar *syschar, char *indent,
 		struct oval_iterator_sysdata *sysdatas = oval_syschar_sysdata(syschar);
 		int hasMore = oval_iterator_sysdata_has_more(sysdatas);
 		if(hasMore){
-			int index;for(index=1;oval_iterator_sysdata_has_more(sysdatas);index++){
+			int i;for(i=1;oval_iterator_sysdata_has_more(sysdatas);i++){
 				struct oval_sysdata *sysdata = oval_iterator_sysdata_next(sysdatas);
-				oval_sysdata_to_print(sysdata, nxtindent, index);
+				oval_sysdata_to_print(sysdata, nxtindent, i);
 			}
 		}
 	}

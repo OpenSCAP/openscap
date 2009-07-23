@@ -29,6 +29,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include "oval_agent_api_impl.h"
 #include "oval_system_characteristics_impl.h"
 #include "oval_collection_impl.h"
@@ -90,7 +91,7 @@ void set_oval_sysitem_datatype(struct oval_sysitem *sysitem, oval_datatype_enum 
 {
 	sysitem->datatype = datatype;
 }
-int set_oval_sysitem_mask(struct oval_sysitem *sysitem, int mask)
+void set_oval_sysitem_mask(struct oval_sysitem *sysitem, int mask)
 {
 	sysitem->mask = mask;
 }
@@ -110,7 +111,7 @@ int oval_sysitem_parse_tag(xmlTextReaderPtr reader,
 	char*              value;
 	 */
 	int return_code = 1;
-	char *tagname   = xmlTextReaderName(reader);
+	char *tagname   = (char*) xmlTextReaderName(reader);
 	if(strcmp("#text", tagname)){
 		struct oval_sysitem *sysitem = oval_sysitem_new();
 		{//sysitem->name
@@ -159,17 +160,17 @@ int oval_sysitem_parse_tag(xmlTextReaderPtr reader,
 }
 
 void oval_sysitem_to_print(struct oval_sysitem *sysitem, char *indent,
-			      int index)
+			      int idx)
 {
 	char nxtindent[100];
 
 	if (strlen(indent) > 80)
 		indent = "....";
 
-	if (index == 0)
+	if (idx == 0)
 		snprintf(nxtindent, sizeof(nxtindent), "%sSYSITEM.", indent);
 	else
-		snprintf(nxtindent, sizeof(nxtindent), "%sSYSITEM[%d].", indent, index);
+		snprintf(nxtindent, sizeof(nxtindent), "%sSYSITEM[%d].", indent, idx);
 
 	/*
 	char*              name;

@@ -32,6 +32,7 @@
 #include "oval_parser_impl.h"
 #include "oval_string_map_impl.h"
 #include "oval_system_characteristics_impl.h"
+#include <string.h>
 
 typedef struct export_target {
 	char *export_target_filename;

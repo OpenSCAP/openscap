@@ -44,6 +44,8 @@ int oval_parser_report(struct oval_parser_context *context, struct oval_xml_erro
 	return (*(context->error_handler))(error,context->user_data);
 }
 
+int oval_parser_log (struct oval_parser_context *, oval_xml_severity_enum severity, char*);
+
 int oval_parser_log_info(struct oval_parser_context *context, char* message){
 	return oval_parser_log(context, OVAL_LOG_INFO, message);
 }
@@ -66,7 +68,7 @@ int oval_parser_log
 	struct oval_xml_error xml_error;
 	xml_error.message     = msgfield;
 	xml_error.severity    = severity;
-	xml_error.system_id   = xmlTextReaderBaseUri(reader);
+	xml_error.system_id   = (char*) xmlTextReaderBaseUri(reader);
 	xml_error.line_number = xmlTextReaderGetParserLineNumber(reader);
 	int returns = oval_parser_report(context, &xml_error);
 	if(xml_error.system_id!=NULL)free(xml_error.system_id);
@@ -85,7 +87,7 @@ void libxml_error_handler(void *user, const char *message,
 	struct oval_xml_error xml_error;
 	xml_error.message     = msgfield;
 	xml_error.severity    = severity;
-	xml_error.system_id   = xmlTextReaderLocatorBaseURI(locator);
+	xml_error.system_id   = (char*) xmlTextReaderLocatorBaseURI(locator);
 	xml_error.line_number = xmlTextReaderGetParserLineNumber(reader);
 
 	oval_parser_report(context, &xml_error);
@@ -103,9 +105,9 @@ int _oval_parser_process_tags(xmlTextReaderPtr reader,
 
 	const int depth = xmlTextReaderDepth(reader);
 	int return_code;
-	char *tagname = xmlTextReaderLocalName(reader);
+	char *tagname = (char*) xmlTextReaderLocalName(reader);
 	while ((return_code = xmlTextReaderRead(reader)) == 1) {
-		char *subname = xmlTextReaderLocalName(reader);
+		//char *subname = (char*) xmlTextReaderLocalName(reader);
 		switch (xmlTextReaderNodeType(reader)) {
 		case XML_READER_TYPE_ELEMENT:{
 				return_code = (*tag_func) (reader, context);
@@ -144,9 +146,8 @@ int _oval_parser_process_node(xmlTextReaderPtr reader,
 	while (return_code == 1) {
 		if (xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
 			if (xmlTextReaderDepth(reader) > 0) {
-				xmlChar *tagname = xmlTextReaderLocalName(reader);
-				xmlChar *namespace =
-				    xmlTextReaderNamespaceUri(reader);
+				char *tagname = (char*) xmlTextReaderLocalName(reader);
+				char *namespace = (char*) xmlTextReaderNamespaceUri(reader);
 				int is_oval = strcmp(namespace, oval_namespace)==0;
 				if (is_oval && (strcmp(tagname, tagname_definitions) == 0)) {
 					return_code =
@@ -211,9 +212,9 @@ void oval_parser_parse
      void *user_arg) {
 	xmlTextReaderPtr reader;
 	xmlDocPtr doc;
-	xmlNodePtr cur;
-	xmlNode *node;
-	int ret;
+	//xmlNodePtr cur;
+	//xmlNode *node;
+	//int ret;
 	doc = xmlParseFile(docname);
 	reader = xmlNewTextReaderFilename(docname);
 	if (reader != NULL) {
@@ -248,7 +249,7 @@ int oval_parser_text_value(xmlTextReaderPtr reader,
 		int nodetype = xmlTextReaderNodeType(reader);
 		if (nodetype == XML_READER_TYPE_CDATA
 		    || nodetype == XML_READER_TYPE_TEXT) {
-			char *value = xmlTextReaderValue(reader);
+			char *value = (char*) xmlTextReaderValue(reader);
 			(*consumer) (value, user);
 		}
 	}
@@ -296,7 +297,7 @@ int oval_parser_parse_tag(xmlTextReaderPtr reader,
 int oval_parser_boolean_attribute(xmlTextReaderPtr reader, char *attname,
 				  int defval)
 {
-	char *string = xmlTextReaderGetAttribute(reader, attname);
+	char *string = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST attname);
 	int booval;
 	if (string == NULL)
 		booval = defval;

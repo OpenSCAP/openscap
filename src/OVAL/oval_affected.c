@@ -57,14 +57,14 @@ struct oval_affected *oval_iterator_affected_next(struct oval_iterator_affected
 oval_affected_family_enum oval_affected_family(struct oval_affected *affected)
 {
 	return ((struct oval_affected *)affected)->family;
-};
+}
 
 struct oval_iterator_string *oval_affected_platform(struct oval_affected
 						    *affected)
 {
 	return (struct oval_iterator_string *)
 	    oval_collection_iterator(affected->platforms);
-};
+}
 
 struct oval_iterator_string *oval_affected_product(struct oval_affected
 						   *affected)
@@ -143,8 +143,8 @@ int _oval_affected_parse_tag(xmlTextReaderPtr reader,
 	struct oval_affected *affected = (struct oval_affected *)user;
 	int return_code;
 	xmlChar *tagname = xmlTextReaderName(reader);
-	xmlChar *namespace = xmlTextReaderNamespaceUri(reader);
-	if (strcmp(tagname, "platform") == 0) {
+	//xmlChar *namespace = xmlTextReaderNamespaceUri(reader);
+	if (strcmp((char *) tagname, "platform") == 0) {
 		char *platform = NULL;
 		void consumer(char *text, void *user) {
 			if (platform == NULL)
@@ -166,7 +166,7 @@ int _oval_affected_parse_tag(xmlTextReaderPtr reader,
 					   affected);
 		if (platform != NULL)
 			add_oval_affected_platform(affected, platform);
-	} else if (strcmp(tagname, "product") == 0) {
+	} else if (strcmp((char *) tagname, "product") == 0) {
 		char *product = NULL;
 		void consumer(char *text, void *user) {
 			if (product == NULL)
@@ -203,9 +203,9 @@ int oval_affected_parse_tag(xmlTextReaderPtr reader,
 			    oval_affected_consumer consumer, void *user)
 {
 	struct oval_affected *affected = oval_affected_new();
-	xmlChar *tagname = xmlTextReaderName(reader);
-	xmlChar *namespace = xmlTextReaderNamespaceUri(reader);
-	char *family = xmlTextReaderGetAttribute(reader, "family");
+	//xmlChar *tagname = xmlTextReaderName(reader);
+	//xmlChar *namespace = xmlTextReaderNamespaceUri(reader);
+	char *family = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "family");
 	set_oval_affected_family(affected, _odafamily(family));
 	free(family);
 	(*consumer) (affected, user);
@@ -214,29 +214,29 @@ int oval_affected_parse_tag(xmlTextReaderPtr reader,
 }
 
 void oval_affected_to_print(struct oval_affected *affected, char *indent,
-			    int index)
+			    int idx)
 {
 	char nxtindent[100];
 
 	if (strlen(indent) > 80)
 		indent = "....";
 
-	if (index == 0)
+	if (idx == 0)
 		snprintf(nxtindent, sizeof(nxtindent), "%sAFFECTED.", indent);
 	else
-		snprintf(nxtindent, sizeof(nxtindent), "%sAFFECTED[%d].", indent, index);
+		snprintf(nxtindent, sizeof(nxtindent), "%sAFFECTED[%d].", indent, idx);
 
 	printf("%sFAMILY = %d\n", nxtindent, affected->family);
 	struct oval_iterator *platforms =
 	    oval_collection_iterator(affected->platforms);
-	for (index = 1; oval_collection_iterator_has_more(platforms); index++) {
+	for (idx = 1; oval_collection_iterator_has_more(platforms); idx++) {
 		void *platform = oval_collection_iterator_next(platforms);
-		printf("%sPLATFORM[%d] = %s\n", nxtindent, index, (char *) platform);
+		printf("%sPLATFORM[%d] = %s\n", nxtindent, idx, (char *) platform);
 	}
 	struct oval_iterator *products =
 	    oval_collection_iterator(affected->products);
-	for (index = 1; oval_collection_iterator_has_more(products); index++) {
+	for (idx = 1; oval_collection_iterator_has_more(products); idx++) {
 		void *product = oval_collection_iterator_next(products);
-		printf("%sPRODUCT[%d] = %s\n", nxtindent, index, (char *) product);
+		printf("%sPRODUCT[%d] = %s\n", nxtindent, idx, (char *) product);
 	}
 }

@@ -180,9 +180,9 @@ void set_oval_test_subtype(struct oval_test *test, oval_subtype_enum subtype)
 	test->subtype = subtype;
 }
 
-void set_oval_test_comment(struct oval_test *test, char *comment)
+void set_oval_test_comment(struct oval_test *test, char *comm)
 {
-	test->comment = comment;
+	test->comment = comm;
 }
 
 void set_oval_test_existence(struct oval_test *test,
@@ -225,8 +225,8 @@ int _oval_test_parse_tag(xmlTextReaderPtr reader,
 			 struct oval_parser_context *context, void *user)
 {
 	struct oval_test *test = (struct oval_test *)user;
-	xmlChar *tagname = xmlTextReaderName(reader);
-	xmlChar *namespace = xmlTextReaderNamespaceUri(reader);
+	char *tagname = (char*) xmlTextReaderName(reader);
+	//xmlChar *namespace = xmlTextReaderNamespaceUri(reader);
 	int return_code = 1;
 	if ((strcmp(tagname, "notes") == 0)) {
 		return_code =
@@ -234,7 +234,7 @@ int _oval_test_parse_tag(xmlTextReaderPtr reader,
 					  &_oval_test_parse_notes, test);
 	} else if ((strcmp(tagname, "object") == 0)) {
 		char *object_ref =
-		    xmlTextReaderGetAttribute(reader, "object_ref");
+		    (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "object_ref");
 		if (object_ref != NULL) {
 			struct oval_object_model *model =
 			    oval_parser_context_model(context);
@@ -244,7 +244,7 @@ int _oval_test_parse_tag(xmlTextReaderPtr reader,
 		}
 	} else if ((strcmp(tagname, "state") == 0)) {
 		char *state_ref =
-		    xmlTextReaderGetAttribute(reader, "state_ref");
+		    (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "state_ref");
 		if (state_ref != NULL) {
 			struct oval_object_model *model =
 			    oval_parser_context_model(context);
@@ -267,7 +267,7 @@ int _oval_test_parse_tag(xmlTextReaderPtr reader,
 int oval_test_parse_tag(xmlTextReaderPtr reader,
 			struct oval_parser_context *context)
 {
-	char *id = xmlTextReaderGetAttribute(reader, "id");
+	char *id = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "id");
 	struct oval_object_model *model = oval_parser_context_model(context);
 	//printf("DEBUG::oval_test_parse_tag::id = %s\n", id);
 	struct oval_test *test = get_oval_test_new(model, id);
@@ -280,11 +280,11 @@ int oval_test_parse_tag(xmlTextReaderPtr reader,
 	oval_check_enum check =
 	    oval_check_parse(reader, "check", OVAL_CHECK_UNKNOWN);
 	set_oval_test_check(test, check);
-	char *comment = xmlTextReaderGetAttribute(reader, "comment");
-	set_oval_test_comment(test, comment);
+	char *comm = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "comment");
+	set_oval_test_comment(test, comm);
 	int deprecated = oval_parser_boolean_attribute(reader, "deprecated", 0);
 	set_oval_test_deprecated(test, deprecated);
-	char *version = xmlTextReaderGetAttribute(reader, "version");
+	char *version = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "version");
 	set_oval_test_version(test, atoi(version));
 	free(version);
 
@@ -293,17 +293,17 @@ int oval_test_parse_tag(xmlTextReaderPtr reader,
 	return return_code;
 }
 
-void oval_test_to_print(struct oval_test *test, char *indent, int index)
+void oval_test_to_print(struct oval_test *test, char *indent, int idx)
 {
 	char nxtindent[100];
 
 	if (strlen(indent) > 80)
 		indent = "....";
 
-	if (index == 0)
+	if (idx == 0)
 		snprintf(nxtindent, sizeof(nxtindent), "%sTEST.", indent);
 	else
-		snprintf(nxtindent, sizeof(nxtindent), "%sTEST[%d].", indent, index);
+		snprintf(nxtindent, sizeof(nxtindent), "%sTEST[%d].", indent, idx);
 
 	printf("%sID         = %s\n", nxtindent, oval_test_id(test));
 	printf("%sFAMILY     = %d\n", nxtindent, oval_test_family(test));
@@ -314,8 +314,8 @@ void oval_test_to_print(struct oval_test *test, char *indent, int index)
 	printf("%sEXISTENCE  = %d\n", nxtindent, oval_test_existence(test));
 	printf("%sCHECK      = %d\n", nxtindent, oval_test_check(test));
 	struct oval_iterator_string *notes = oval_test_notes(test);
-	for (index = 1; oval_iterator_string_has_more(notes); index++) {
-		printf("%sNOTE[%d]    = %s\n", nxtindent, index,
+	for (idx = 1; oval_iterator_string_has_more(notes); idx++) {
+		printf("%sNOTE[%d]    = %s\n", nxtindent, idx,
 		       oval_iterator_string_next(notes));
 	}
 	struct oval_object *object = oval_test_object(test);

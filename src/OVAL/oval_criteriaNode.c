@@ -152,6 +152,8 @@ struct oval_criteria_node *oval_criteria_node_new(oval_criteria_node_type_enum
 			((struct oval_criteria_node_EXTENDDEF *)node)->
 			    definition = NULL;
 		}
+	default:
+		return NULL;
 	}
 	node->type = type;
 	node->negate = 0;
@@ -181,6 +183,9 @@ void oval_criteria_node_free(struct oval_criteria_node *node)
 	case NODETYPE_EXTENDDEF:{
 			//NOOP
 		}
+	case NODETYPE_UNKNOWN:{
+			//NOOP
+		}
 	}
 	if (node->comment != NULL)
 		free(node->comment);
@@ -199,9 +204,9 @@ void set_oval_criteria_node_negate(struct oval_criteria_node *node, int negate)
 }
 
 void set_oval_criteria_node_comment(struct oval_criteria_node *node,
-				    char *comment)
+				    char *comm)
 {
-	node->comment = comment;
+	node->comment = comm;
 }
 
 void set_oval_criteria_node_operator(struct oval_criteria_node *node,
@@ -260,7 +265,7 @@ int oval_criteria_parse_tag(xmlTextReaderPtr reader,
 			    struct oval_parser_context *context,
 			    oval_criteria_consumer consumer, void *user)
 {
-	xmlChar *tagname = xmlTextReaderName(reader);
+	char *tagname = (char*) xmlTextReaderName(reader);
 	xmlChar *namespace = xmlTextReaderNamespaceUri(reader);
 	oval_criteria_node_type_enum type = NODETYPE_UNKNOWN;
 	if (strcmp(tagname, "criteria") == 0)
@@ -273,15 +278,13 @@ int oval_criteria_parse_tag(xmlTextReaderPtr reader,
 	if (type != NODETYPE_UNKNOWN) {
 		struct oval_criteria_node *node = oval_criteria_node_new(type);
 		node->type = type;
-		char *comment = xmlTextReaderGetAttribute(reader, "comment");
-		set_oval_criteria_node_comment(node, comment);
+		char *comm = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST "comment");
+		set_oval_criteria_node_comment(node, comm);
 		set_oval_criteria_node_negate(node,
 					      oval_parser_boolean_attribute
 					      (reader, "negate", 0));
-		oval_criteria_node_type_enum type =
-		    oval_criteria_node_type(node);
 		return_code = 1;
-		switch (type) {
+		switch (oval_criteria_node_type(node)) {
 		case NODETYPE_CRITERIA:{
 				struct oval_criteria_node_CRITERIA *criteria =
 				    (struct oval_criteria_node_CRITERIA *)node;
@@ -299,8 +302,8 @@ int oval_criteria_parse_tag(xmlTextReaderPtr reader,
 			} break;
 		case NODETYPE_CRITERION:{
 				char *test_ref =
-				    xmlTextReaderGetAttribute(reader,
-							      "test_ref");
+				    (char *) xmlTextReaderGetAttribute(reader,
+							      BAD_CAST "test_ref");
 				struct oval_object_model *model =
 				    oval_parser_context_model(context);
 				struct oval_test *test =
@@ -309,8 +312,8 @@ int oval_criteria_parse_tag(xmlTextReaderPtr reader,
 			} break;
 		case NODETYPE_EXTENDDEF:{
 				char *definition_ref =
-				    xmlTextReaderGetAttribute(reader,
-							      "definition_ref");
+				    (char *) xmlTextReaderGetAttribute(reader,
+							      BAD_CAST "definition_ref");
 				struct oval_object_model *model =
 				    oval_parser_context_model(context);
 				struct oval_definition *definition =
@@ -319,6 +322,7 @@ int oval_criteria_parse_tag(xmlTextReaderPtr reader,
 				set_oval_criteria_node_definition(node,
 								  definition);
 			}
+		case NODETYPE_UNKNOWN: break;
 		}
 		//oval_parser_parse_tag(reader, context,&_oval_criteria_parse_tag,node);
 		(*consumer) (node, user);
@@ -333,9 +337,9 @@ int oval_criteria_parse_tag(xmlTextReaderPtr reader,
 }
 
 void oval_criteria_node_to_print(struct oval_criteria_node *node, char *indent,
-				 int index)
+				 int idx)
 {
-	char *nodetype;
+	char *nodetype = NULL;
 	char nxtindent[100];
 
 	switch (node->type) {
@@ -356,10 +360,10 @@ void oval_criteria_node_to_print(struct oval_criteria_node *node, char *indent,
 	if (strlen(indent) > 80)
 		indent = "....";
 
-	if (index == 0)
+	if (idx == 0)
 		snprintf(nxtindent, sizeof(nxtindent), "%s%s.", indent, nodetype);
 	else
-		snprintf(nxtindent, sizeof(nxtindent), "%s%s[%d].", indent, nodetype, index);
+		snprintf(nxtindent, sizeof(nxtindent), "%s%s[%d].", indent, nodetype, idx);
 
 	printf("%sCOMMENT = %s\n", nxtindent, node->comment);
 	printf("%sNEGATE  = %d\n", nxtindent, node->negate);
@@ -371,15 +375,15 @@ void oval_criteria_node_to_print(struct oval_criteria_node *node, char *indent,
 			       criteria->operator);
 			struct oval_iterator *subnodes =
 			    oval_collection_iterator(criteria->subnodes);
-			for (index = 1;
+			for (idx = 1;
 			     oval_collection_iterator_has_more(subnodes);
-			     index++) {
+			     idx++) {
 				void *subnode =
 				    oval_collection_iterator_next(subnodes);
 				oval_criteria_node_to_print((struct
 							     oval_criteria_node
 							     *)subnode,
-							    nxtindent, index);
+							    nxtindent, idx);
 			}
 		} break;
 	case NODETYPE_CRITERION:{
@@ -402,5 +406,6 @@ void oval_criteria_node_to_print(struct oval_criteria_node *node, char *indent,
 				printf("%sDEFINITION = <<NONE>>\n", nxtindent);
 		}
 		break;
+	case NODETYPE_UNKNOWN: break;
 	}
 }

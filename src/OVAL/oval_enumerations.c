@@ -49,7 +49,7 @@ _oval_enumeration_object_t *_oval_enumeration_attval(xmlTextReaderPtr reader,
 						     struct oval_string_map
 						     *map)
 {
-	char *attval = xmlTextReaderGetAttribute(reader, attname);
+	char *attval = (char *) (char *) xmlTextReaderGetAttribute(reader, BAD_CAST BAD_CAST attname);
 	_oval_enumeration_object_t *starval = NULL;
 	if (attval != NULL) {
 		starval =
@@ -98,7 +98,7 @@ oval_syschar_collection_flag_enum oval_syschar_flag_parse(xmlTextReaderPtr
 	    _oval_enumeration_attval(reader, attname,
 				     _oval_syschar_flag_map);
 	if (starval == NULL) {
-		char *attval = xmlTextReaderGetAttribute(reader, attname);
+		char *attval = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST attname);
 		if (attval != NULL) {
 			printf
 			    ("NOTICE:oval_syschar_flag_parse:@%s = %s not resolved\n",
@@ -106,8 +106,7 @@ oval_syschar_collection_flag_enum oval_syschar_flag_parse(xmlTextReaderPtr
 			free(attval);
 		}
 	}
-	int returns = (starval == NULL) ? defval : starval->enumval;
-	return returns;
+	return (starval == NULL) ? defval : (oval_syschar_collection_flag_enum)starval->enumval;
 }
 
 
@@ -137,7 +136,7 @@ oval_syschar_status_enum oval_syschar_status_parse(xmlTextReaderPtr
 	    _oval_enumeration_attval(reader, attname,
 				     _oval_syschar_status_map);
 	if (starval == NULL) {
-		char *attval = xmlTextReaderGetAttribute(reader, attname);
+		char *attval = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST attname);
 		if (attval != NULL) {
 			printf
 			    ("NOTICE:oval_syschar_status_parse:@%s = %s not resolved\n",
@@ -145,8 +144,7 @@ oval_syschar_status_enum oval_syschar_status_parse(xmlTextReaderPtr
 			free(attval);
 		}
 	}
-	int returns = (starval == NULL) ? defval : starval->enumval;
-	return returns;
+	return (starval == NULL) ? defval : (oval_syschar_collection_flag_enum)starval->enumval;
 }
 
 struct oval_string_map *_oval_message_level_map = NULL;
@@ -177,7 +175,7 @@ oval_message_level_enum oval_message_level_parse(
 	    _oval_enumeration_attval(reader, attname,
 				     _oval_message_level_map);
 	if (starval == NULL) {
-		char *attval = xmlTextReaderGetAttribute(reader, attname);
+		char *attval = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST attname);
 		if (attval != NULL) {
 			printf
 			    ("NOTICE:oval_message_level_parse:@%s = %s not resolved\n",
@@ -185,8 +183,7 @@ oval_message_level_enum oval_message_level_parse(
 			free(attval);
 		}
 	}
-	int returns = (starval == NULL) ? defval : starval->enumval;
-	return returns;
+	return (starval == NULL) ? defval : (oval_syschar_collection_flag_enum)starval->enumval;
 }
 
 struct oval_string_map *_oval_arithmetic_operation_map = NULL;
@@ -215,7 +212,7 @@ oval_arithmetic_operation_enum oval_arithmetic_operation_parse(xmlTextReaderPtr
 	    _oval_enumeration_attval(reader, attname,
 				     _oval_arithmetic_operation_map);
 	if (starval == NULL) {
-		char *attval = xmlTextReaderGetAttribute(reader, attname);
+		char *attval = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST attname);
 		if (attval != NULL) {
 			printf
 			    ("NOTICE:oval_arithmetic_operation_parse:@%s = %s not resolved\n",
@@ -223,8 +220,7 @@ oval_arithmetic_operation_enum oval_arithmetic_operation_parse(xmlTextReaderPtr
 			free(attval);
 		}
 	}
-	int returns = (starval == NULL) ? defval : starval->enumval;
-	return returns;
+	return (starval == NULL) ? defval : (oval_syschar_collection_flag_enum)starval->enumval;
 }
 
 struct oval_string_map *_oval_datetime_format_map = NULL;
@@ -256,7 +252,7 @@ oval_datetime_format_enum oval_datetime_format_parse(xmlTextReaderPtr reader,
 	    _oval_enumeration_attval(reader, attname,
 				     _oval_datetime_format_map);
 	if (starval == NULL) {
-		char *attval = xmlTextReaderGetAttribute(reader, attname);
+		char *attval = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST attname);
 		if (attval != NULL) {
 			printf
 			    ("NOTICE:oval_datetime_format_parse:@%s = %s not resolved\n",
@@ -264,8 +260,7 @@ oval_datetime_format_enum oval_datetime_format_parse(xmlTextReaderPtr reader,
 			free(attval);
 		}
 	}
-	int returns = (starval == NULL) ? defval : starval->enumval;
-	return returns;
+	return (starval == NULL) ? defval : (oval_syschar_collection_flag_enum)starval->enumval;
 }
 
 struct oval_string_map *_oval_set_operation_map = NULL;
@@ -288,7 +283,7 @@ oval_set_operation_enum oval_set_operation_parse(xmlTextReaderPtr reader,
 	_oval_enumeration_object_t *starval =
 	    _oval_enumeration_attval(reader, attname, _oval_set_operation_map);
 	if (starval == NULL) {
-		char *attval = xmlTextReaderGetAttribute(reader, attname);
+		char *attval = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST attname);
 		if (attval != NULL) {
 			printf
 			    ("NOTICE:oval_set_operation_parse:@%s = %s not resolved\n",
@@ -296,8 +291,7 @@ oval_set_operation_enum oval_set_operation_parse(xmlTextReaderPtr reader,
 			free(attval);
 		}
 	}
-	int returns = (starval == NULL) ? defval : starval->enumval;
-	return returns;
+	return (starval == NULL) ? defval : (oval_syschar_collection_flag_enum)starval->enumval;
 }
 
 struct oval_string_map *_oval_operation_map = NULL;
@@ -345,7 +339,7 @@ oval_operation_enum oval_operation_parse(xmlTextReaderPtr reader, char *attname,
 	_oval_enumeration_object_t *starval =
 	    _oval_enumeration_attval(reader, attname, _oval_operation_map);
 	if (starval == NULL) {
-		char *attval = xmlTextReaderGetAttribute(reader, attname);
+		char *attval = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST attname);
 		if (attval != NULL) {
 			printf
 			    ("NOTICE:oval_operation_parse:@%s = %s not resolved\n",
@@ -353,8 +347,7 @@ oval_operation_enum oval_operation_parse(xmlTextReaderPtr reader, char *attname,
 			free(attval);
 		}
 	}
-	int returns = (starval == NULL) ? defval : starval->enumval;
-	return returns;
+	return (starval == NULL) ? defval : (oval_syschar_collection_flag_enum)starval->enumval;
 }
 
 struct oval_string_map *_oval_check_map = NULL;
@@ -381,7 +374,7 @@ oval_check_enum oval_check_parse(xmlTextReaderPtr reader, char *attname,
 	_oval_enumeration_object_t *starval =
 	    _oval_enumeration_attval(reader, attname, _oval_check_map);
 	if (starval == NULL) {
-		char *attval = xmlTextReaderGetAttribute(reader, attname);
+		char *attval = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST attname);
 		if (attval != NULL) {
 			printf
 			    ("NOTICE:oval_check_parse:@%s = %s not resolved\n",
@@ -389,8 +382,7 @@ oval_check_enum oval_check_parse(xmlTextReaderPtr reader, char *attname,
 			free(attval);
 		}
 	}
-	int returns = (starval == NULL) ? defval : starval->enumval;
-	return returns;
+	return (starval == NULL) ? defval : (oval_syschar_collection_flag_enum)starval->enumval;
 }
 
 struct oval_string_map *_oval_datatype_map = NULL;
@@ -430,7 +422,7 @@ oval_datatype_enum oval_datatype_parse(xmlTextReaderPtr reader, char *attname,
 	_oval_enumeration_object_t *starval =
 	    _oval_enumeration_attval(reader, attname, _oval_datatype_map);
 	if (starval == NULL) {
-		char *attval = xmlTextReaderGetAttribute(reader, attname);
+		char *attval = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST attname);
 		if (attval != NULL) {
 			printf
 			    ("NOTICE:oval_datatype_parse:@%s = %s not resolved\n",
@@ -438,8 +430,7 @@ oval_datatype_enum oval_datatype_parse(xmlTextReaderPtr reader, char *attname,
 			free(attval);
 		}
 	}
-	int returns = (starval == NULL) ? defval : starval->enumval;
-	return returns;
+	return (starval == NULL) ? defval : (oval_syschar_collection_flag_enum)starval->enumval;
 }
 
 struct oval_string_map *_oval_existence_map = NULL;
@@ -462,10 +453,10 @@ oval_existence_enum oval_existence_parse(xmlTextReaderPtr reader, char *attname,
 	}
 	_oval_enumeration_object_t *starval =
 	    _oval_enumeration_attval(reader, attname, _oval_existence_map);
-	int returns;
+	oval_syschar_collection_flag_enum returns;
 	if (starval == NULL) {
 		char *attval =
-		    xmlTextReaderGetAttribute(reader, "check_existence");
+		    (char *) xmlTextReaderGetAttribute(reader, BAD_CAST "check_existence");
 		if (attval != NULL) {
 			printf
 			    ("NOTICE:oval_existence_parse:@check_existence = %s not resolved\n",
@@ -474,7 +465,7 @@ oval_existence_enum oval_existence_parse(xmlTextReaderPtr reader, char *attname,
 		}
 		returns = defval;
 	} else
-		returns = starval->enumval;
+		returns = (oval_syschar_collection_flag_enum)starval->enumval;
 	return returns;
 }
 
@@ -495,8 +486,7 @@ oval_operator_enum oval_operator_parse(xmlTextReaderPtr reader, char *attname,
 	}
 	_oval_enumeration_object_t *starval =
 	    _oval_enumeration_attval(reader, attname, _oval_operator_map);
-	int returns = (starval == NULL) ? defval : starval->enumval;
-	return returns;
+	return (starval == NULL) ? defval : (oval_syschar_collection_flag_enum)starval->enumval;
 }
 
 struct oval_string_map *_oval_family_map = NULL;
@@ -534,10 +524,10 @@ oval_family_enum oval_family_parse(xmlTextReaderPtr reader)
 		oval_string_map_put(_oval_family_map, "windows",
 				    _oval_enumeration_object(FAMILY_WINDOWS));
 	}
-	char *namespace = xmlTextReaderNamespaceUri(reader);
-	int index;
-	for (index = strlen(namespace); namespace[index] != '#'; index--) ;
-	char *family_text = namespace + index + 1;
+	char *namespace = (char*) xmlTextReaderNamespaceUri(reader);
+	int idx;
+	for (idx = strlen(namespace); namespace[idx] != '#'; idx--) ;
+	char *family_text = namespace + idx + 1;
 	_oval_enumeration_object_t *starval =
 	    (_oval_enumeration_object_t *)
 	    oval_string_map_get_value(_oval_family_map, family_text);
@@ -904,10 +894,10 @@ oval_subtype_enum oval_subtype_parse(xmlTextReaderPtr reader)
 	if (family == FAMILY_UNKNOWN) {
 		subtype = OVAL_SUBTYPE_UNKNOWN;
 	} else {
-		char *tagname = xmlTextReaderLocalName(reader);
-		int index;
-		for (index = strlen(tagname); tagname[index] != '_'; index--) ;
-		tagname[index] = 0;
+		char *tagname = (char*) xmlTextReaderLocalName(reader);
+		int idx;
+		for (idx = strlen(tagname); tagname[idx] != '_'; idx--) ;
+		tagname[idx] = 0;
 		_oval_enumeration_object_t *starval;
 		switch (family) {
 		case FAMILY_AIX:

@@ -134,17 +134,17 @@ int oval_value_parse_tag(xmlTextReaderPtr reader,
 	return return_code;
 }
 
-void oval_value_to_print(struct oval_value *value, char *indent, int index)
+void oval_value_to_print(struct oval_value *value, char *indent, int idx)
 {
 	char nxtindent[100];
 
 	if (strlen(indent) > 80)
 		indent = "....";
 
-	if (index == 0)
+	if (idx == 0)
 		snprintf(nxtindent, sizeof(nxtindent), "%sVALUE.", indent);
 	else
-		snprintf(nxtindent, sizeof(nxtindent), "%sVALUE[%d].", indent, index);
+		snprintf(nxtindent, sizeof(nxtindent), "%sVALUE[%d].", indent, idx);
 
 
 	printf("%sDATATYPE = %d\n", nxtindent, oval_value_datatype(value));

@@ -133,6 +133,7 @@ void oval_set_free(struct oval_set *set)
 			oval_collection_free_items(collective->objects,
 						   &free_object);
 		} break;
+	case OVAL_SET_UNKNOWN: break;
 	}
 	free(set);
 }
@@ -158,6 +159,7 @@ void set_oval_set_type(struct oval_set *set, oval_set_type_enum type)
 			collective->objects = oval_collection_new();
 		}
 		break;
+	case OVAL_SET_UNKNOWN: break;
 	}
 }
 
@@ -193,10 +195,10 @@ int _oval_set_parse_tag(xmlTextReaderPtr reader,
 			struct oval_parser_context *context, void *user)
 {
 	struct oval_set *set = (struct oval_set *)user;
-	xmlChar *tagname = xmlTextReaderName(reader);
+	char *tagname = (char*) xmlTextReaderName(reader);
 	xmlChar *namespace = xmlTextReaderNamespaceUri(reader);
 
-	int return_code;
+	int return_code = 0;
 
 	if (strcmp(tagname, "set") == 0) {
 		if (set->type == OVAL_SET_UNKNOWN) {
@@ -276,17 +278,17 @@ int oval_set_parse_tag(xmlTextReaderPtr reader,
 	return return_code;
 }
 
-void oval_set_to_print(struct oval_set *set, char *indent, int index)
+void oval_set_to_print(struct oval_set *set, char *indent, int idx)
 {
 	char nxtindent[100];
 
 	if (strlen(indent) > 80)
 		indent = "....";
 
-	if (index == 0)
+	if (idx == 0)
 		snprintf(nxtindent, sizeof(nxtindent), "%sSET.", indent);
 	else
-		snprintf(nxtindent, sizeof(nxtindent), "%sSET[%d].", indent, index);
+		snprintf(nxtindent, sizeof(nxtindent), "%sSET[%d].", indent, idx);
 
 
 	printf("%sOPERATOR    = %d\n", nxtindent, oval_set_operation(set));
@@ -320,5 +322,6 @@ void oval_set_to_print(struct oval_set *set, char *indent, int index)
 				oval_state_to_print(state, nxtindent, i);
 			}
 		} break;
+	case OVAL_SET_UNKNOWN: break;
 	}
 }

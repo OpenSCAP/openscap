@@ -29,10 +29,11 @@
 
 #include <string.h>
 #include <libxml/xmlreader.h>
-#include<stddef.h>
+#include <stddef.h>
 #include "api/oval_agent_api.h"
 #include "oval_parser_impl.h"
 #include "oval_definitions_impl.h"
+#include "oval_system_characteristics_impl.h"
 
 const char* NAMESPACE_OVALSYS = "http://oval.mitre.org/XMLSchema/oval-system-characteristics-5";
 
@@ -52,9 +53,9 @@ int _ovalsys_parser_process_node(xmlTextReaderPtr reader,
 				oval_parser_log_debug(context, message);
 			}//DEBUG
 			if (xmlTextReaderDepth(reader) > 0) {
-				xmlChar *tagname = xmlTextReaderName(reader);
-				xmlChar *namespace =
-				    xmlTextReaderNamespaceUri(reader);
+				char *tagname = (char*) xmlTextReaderName(reader);
+				char *namespace =
+				    (char*) xmlTextReaderNamespaceUri(reader);
 				if(DEBUG){//DEBUG
 					char message[200]; *message = 0;
 					sprintf(message,
@@ -62,7 +63,7 @@ int _ovalsys_parser_process_node(xmlTextReaderPtr reader,
 							namespace, tagname);
 					oval_parser_log_debug(context, message);
 				}//DEBUG
-				int is_ovalsys = strcmp(NAMESPACE_OVALSYS, namespace)==0;
+				int is_ovalsys = strcmp((const char *) NAMESPACE_OVALSYS, namespace)==0;
 				if (is_ovalsys && (strcmp(tagname, "generator") == 0)) {
 					//SKIP GENERATOR CODE
 					return_code =
@@ -115,9 +116,9 @@ void ovalsys_parser_parse
      void *user_arg) {
 	xmlTextReaderPtr reader;
 	xmlDocPtr doc;
-	xmlNodePtr cur;
-	xmlNode *node;
-	int ret;
+	//xmlNodePtr cur;
+	//xmlNode *node;
+	//int ret;
 	doc = xmlParseFile(docname);
 	reader = xmlNewTextReaderFilename(docname);
 	if (reader != NULL) {
@@ -129,10 +130,10 @@ void ovalsys_parser_parse
 		context.syschar_sysinfo = NULL;
 		context.user_data       = user_arg;
 		xmlTextReaderSetErrorHandler(reader, &libxml_error_handler, &context);
-		int return_code = xmlTextReaderRead(reader);
-		xmlChar *tagname   = xmlTextReaderName(reader);
-		xmlChar *namespace = xmlTextReaderNamespaceUri(reader);
-		int is_ovalsys = strcmp(NAMESPACE_OVALSYS, namespace)==0;
+		/* int return_code = */ xmlTextReaderRead(reader);
+		char *tagname   = (char*) xmlTextReaderName(reader);
+		char *namespace = (char*) xmlTextReaderNamespaceUri(reader);
+		int is_ovalsys = strcmp((char*)NAMESPACE_OVALSYS, namespace)==0;
 		if(is_ovalsys && (strcmp(tagname,"oval_system_characteristics")==0)){
 			_ovalsys_parser_process_node(reader, &context);
 		}else{

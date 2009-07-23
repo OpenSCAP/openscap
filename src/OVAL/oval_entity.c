@@ -182,10 +182,10 @@ int oval_entity_parse_tag(xmlTextReaderPtr reader,
 	    oval_operation_parse(reader, "operation", OPERATION_EQUALS);
 	int mask = oval_parser_boolean_attribute(reader, "mask", 1);
 	oval_entity_type_enum type = OVAL_ENTITY_TYPE_UNKNOWN;	//TODO
-	char *varref = xmlTextReaderGetAttribute(reader, "var_ref");
+	char *varref = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "var_ref");
 	struct oval_value *value;
 	struct oval_variable *variable;
-	char *name = xmlTextReaderName(reader);
+	char *name = (char*) xmlTextReaderName(reader);
 	oval_entity_varref_type_enum varref_type;
 	if (strcmp(name, "var_ref") == 0) {	//special case for <var_ref>
 		if (varref == NULL) {
@@ -240,17 +240,17 @@ int oval_entity_parse_tag(xmlTextReaderPtr reader,
 	return return_code;
 }
 
-void oval_entity_to_print(struct oval_entity *entity, char *indent, int index)
+void oval_entity_to_print(struct oval_entity *entity, char *indent, int idx)
 {
 	char nxtindent[100];
 
 	if (strlen(indent) > 80)
 		indent = "....";
 
-	if (index == 0)
+	if (idx == 0)
 		snprintf(nxtindent, sizeof(nxtindent), "%sENTITY.", indent);
 	else
-		snprintf(nxtindent, sizeof(nxtindent), "%sENTITY[%d].", indent, index);
+		snprintf(nxtindent, sizeof(nxtindent), "%sENTITY[%d].", indent, idx);
 
 	printf("%sNAME        = %s\n", nxtindent, oval_entity_name(entity));
 	printf("%sTYPE        = %d\n", nxtindent, oval_entity_type(entity));

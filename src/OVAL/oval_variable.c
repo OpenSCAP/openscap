@@ -133,7 +133,7 @@ struct oval_variable *oval_variable_new()
 	variable->datatype = OVAL_DATATYPE_UNKNOWN;
 	variable->extension = NULL;
 	return variable;
-};
+}
 
 void oval_variable_free(struct oval_variable *variable)
 {
@@ -155,6 +155,8 @@ void oval_variable_free(struct oval_variable *variable)
 							   variable->extension,
 							   &free_value);
 			} break;
+		case OVAL_VARIABLE_EXTERNAL: break;
+		case OVAL_VARIABLE_UNKNOWN: break;
 		}
 	}
 	free(variable);
@@ -179,6 +181,8 @@ void set_oval_variable_type(struct oval_variable *variable,
 			    component = NULL;
 		}
 		break;
+		case OVAL_VARIABLE_EXTERNAL: break;
+		case OVAL_VARIABLE_UNKNOWN: break;
 	}
 }
 
@@ -193,9 +197,9 @@ void set_oval_variable_datatype(struct oval_variable *variable,
 	variable->datatype = datatype;
 }
 
-void set_oval_variable_comment(struct oval_variable *variable, char *comment)
+void set_oval_variable_comment(struct oval_variable *variable, char *comm)
 {
-	variable->comment = comment;
+	variable->comment = comm;
 }
 
 void set_oval_variable_deprecated(struct oval_variable *variable,
@@ -282,15 +286,15 @@ int _oval_variable_parse_constant_tag(xmlTextReaderPtr reader,
 }
 
 void oval_variable_to_print(struct oval_variable *variable, char *indent,
-			    int index);
+			    int idx);
 int oval_variable_parse_tag(xmlTextReaderPtr reader,
 			    struct oval_parser_context *context)
 {
-	char *id = xmlTextReaderGetAttribute(reader, "id");
+	char *id = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "id");
 	struct oval_object_model *model = oval_parser_context_model(context);
 	struct oval_variable *variable = get_oval_variable_new(model, id);
 	id = variable->id;
-	char *tagname = xmlTextReaderName(reader);
+	char *tagname = (char*) xmlTextReaderName(reader);
 	oval_variable_type_enum type;
 	if (strcmp(tagname, "constant_variable") == 0)
 		type = OVAL_VARIABLE_CONSTANT;
@@ -308,11 +312,11 @@ int oval_variable_parse_tag(xmlTextReaderPtr reader,
 	set_oval_variable_type(variable, type);
 	//printf("DEBUG::oval_variable_parse_tag::id = %s <%s>\n", id, tagname);
 
-	char *comment = xmlTextReaderGetAttribute(reader, "comment");
-	set_oval_variable_comment(variable, comment);
+	char *comm = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "comment");
+	set_oval_variable_comment(variable, comm);
 	int deprecated = oval_parser_boolean_attribute(reader, "deprecated", 0);
 	set_oval_variable_deprecated(variable, deprecated);
-	char *version = xmlTextReaderGetAttribute(reader, "version");
+	char *version = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "version");
 	set_oval_variable_version(variable, atoi(version));
 
 	oval_datatype_enum datatype =
@@ -343,17 +347,17 @@ int oval_variable_parse_tag(xmlTextReaderPtr reader,
 }
 
 void oval_variable_to_print(struct oval_variable *variable, char *indent,
-			    int index)
+			    int idx)
 {
 	char nxtindent[100];
 
 	if (strlen(indent) > 80)
 		indent = "....";
 
-	if (index == 0)
+	if (idx == 0)
 		snprintf(nxtindent, sizeof(nxtindent), "%sVARIABLE.", indent);
 	else
-		snprintf(nxtindent, sizeof(nxtindent), "%sVARIABLE[%d].", indent, index);
+		snprintf(nxtindent, sizeof(nxtindent), "%sVARIABLE[%d].", indent, idx);
 
 	printf("%sID         = %s\n", nxtindent, oval_variable_id(variable));
 	printf("%sVERSION    = %d\n", nxtindent,
@@ -401,5 +405,6 @@ void oval_variable_to_print(struct oval_variable *variable, char *indent,
 							0);
 		}
 		break;
+	case OVAL_VARIABLE_UNKNOWN: break;
 	}
 }

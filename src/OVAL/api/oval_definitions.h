@@ -279,7 +279,7 @@ typedef enum {
 	OVAL_DATATYPE_VERSION,
 	OVAL_DATATYPE_INTEGER,
 	OVAL_DATATYPE_STRING
-} oval_datatype_enum;;
+} oval_datatype_enum;
 
 typedef enum {
 	OVAL_ENTITY_VARREF_UNKNOWN,

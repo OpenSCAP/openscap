@@ -136,6 +136,7 @@ struct oval_object_content
 			content = (oval_object_content_t *) set;
 		}
 		break;
+	case OVAL_OBJECTCONTENT_UNKNOWN: break;
 	}
 	content->fieldName = NULL;
 	content->type = type;
@@ -159,6 +160,7 @@ void oval_object_content_free(struct oval_object_content *content)
 				oval_set_free(set->set);
 		}
 		break;
+	case OVAL_OBJECTCONTENT_UNKNOWN: break;
 	}
 	free(content);
 }
@@ -175,7 +177,7 @@ int oval_object_content_parse_tag(xmlTextReaderPtr reader,
 				  oval_object_content_consumer consumer,
 				  void *user)
 {
-	xmlChar *tagname = xmlTextReaderName(reader);
+	char *tagname = (char*) xmlTextReaderName(reader);
 	xmlChar *namespace = xmlTextReaderNamespaceUri(reader);
 
 	oval_object_content_type_enum type =
@@ -183,7 +185,7 @@ int oval_object_content_parse_tag(xmlTextReaderPtr reader,
 	     0) ? OVAL_OBJECTCONTENT_SET : OVAL_OBJECTCONTENT_ENTITY;
 	struct oval_object_content *content = oval_object_content_new(type);
 	content->fieldName = tagname;
-	int return_code;
+	int return_code = 0;
 	switch (type) {
 	case OVAL_OBJECTCONTENT_ENTITY:{
 			struct oval_object_content_ENTITY *content_entity =
@@ -211,6 +213,7 @@ int oval_object_content_parse_tag(xmlTextReaderPtr reader,
 					       NULL);
 		};
 		break;
+	case OVAL_OBJECTCONTENT_UNKNOWN: break;
 	}
 	(*consumer) (content, user);
 	if (return_code != 1) {
@@ -224,17 +227,17 @@ int oval_object_content_parse_tag(xmlTextReaderPtr reader,
 }
 
 void oval_object_content_to_print(struct oval_object_content *content,
-				  char *indent, int index)
+				  char *indent, int idx)
 {
 	char nxtindent[100];
 
 	if (strlen(indent) > 80)
 		indent = "....";
 
-	if (index == 0)
+	if (idx == 0)
 		snprintf(nxtindent, sizeof(nxtindent), "%sCONTENT.", indent);
 	else
-		snprintf(nxtindent, sizeof(nxtindent), "%sCONTENT[%d].", indent, index);
+		snprintf(nxtindent, sizeof(nxtindent), "%sCONTENT[%d].", indent, idx);
 
 	printf("%sFIELD     = %s\n", nxtindent,
 	       oval_object_content_field_name(content));
@@ -256,5 +259,6 @@ void oval_object_content_to_print(struct oval_object_content *content,
 			struct oval_set *set = oval_object_content_set(content);
 			oval_set_to_print(set, nxtindent, 0);
 		} break;
+	case OVAL_OBJECTCONTENT_UNKNOWN: break;
 	}
 }

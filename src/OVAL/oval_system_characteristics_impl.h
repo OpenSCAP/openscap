@@ -44,9 +44,12 @@ typedef void (*oval_sysint_consumer)(struct oval_sysint*, void*);
 int oval_sysint_parse_tag
 	(xmlTextReaderPtr, struct oval_parser_context*,
 			oval_sysint_consumer, void*);
+void oval_sysint_to_print(struct oval_sysint *, char *, int);
 
 struct oval_sysinfo *oval_sysinfo_new();
 void oval_sysinfo_free(struct oval_sysinfo *);
+void oval_sysinfo_to_print(struct oval_sysinfo *, char *, int);
+int oval_sysinfo_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *);
 
 void set_oval_sysinfo_os_name(struct oval_sysinfo *, char *);
 void set_oval_sysinfo_os_version(struct oval_sysinfo *, char *);
@@ -56,6 +59,8 @@ void add_oval_sysinfo_interface(struct oval_sysinfo *, struct oval_sysint *);
 
 struct oval_sysdata *oval_sysdata_new(char *id);
 void oval_sysdata_free(struct oval_sysdata *);
+void oval_sysdata_to_print(struct oval_sysdata *, char *, int);
+int oval_sysdata_parse_tag(xmlTextReaderPtr, struct oval_parser_context *);
 
 void set_oval_sysdata_status(struct oval_sysdata *, oval_syschar_status_enum);
 
@@ -71,6 +76,12 @@ void add_oval_syschar_variable_binding(struct oval_syschar *,
 				       struct oval_variable_binding *);
 void add_oval_syschar_sysdata(struct oval_syschar *, struct oval_sysdata *);
 void oval_syschar_to_print(struct oval_syschar *, char *, int);
+int oval_syschar_parse_tag(xmlTextReaderPtr, struct oval_parser_context *context);
+oval_syschar_collection_flag_enum oval_syschar_flag_parse(xmlTextReaderPtr, char *,
+                       oval_syschar_collection_flag_enum);
+oval_syschar_status_enum oval_syschar_status_parse(xmlTextReaderPtr, char *,
+                       oval_syschar_status_enum);
+
 
 //typedef void (*oval_affected_consumer) (struct oval_affected *, void *);
 //int oval_affected_parse_tag(xmlTextReaderPtr reader,
@@ -82,4 +93,6 @@ int oval_sysitem_parse_tag(
 		xmlTextReaderPtr,
 	   struct oval_parser_context *,
 	   oval_sysitem_consumer, void*);
+void oval_sysitem_free(struct oval_sysitem *);
+void oval_sysitem_to_print(struct oval_sysitem *, char *, int);
 #endif

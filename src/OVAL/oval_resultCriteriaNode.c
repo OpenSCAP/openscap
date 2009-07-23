@@ -121,6 +121,7 @@ struct oval_result_test *oval_result_criteria_node_test(struct
 		test =
 		    ((struct oval_result_criteria_node_CRITERION *)node)->test;
 	}
+	return test;
 }
 
 struct oval_result *oval_result_criteria_node_extends(struct

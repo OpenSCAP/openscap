@@ -129,8 +129,8 @@ void oval_definition_free(struct oval_definition *definition)
 		oval_affected_free((struct oval_affected *)affected);
 	}
 	oval_collection_free_items(definition->affected, &free_affected);
-	void free_reference(void *reference) {
-		oval_reference_free((struct oval_reference *)reference);
+	void free_reference(void *ref) {
+		oval_reference_free((struct oval_reference *)ref);
 	}
 	oval_collection_free_items(definition->reference, &free_reference);
 	free(definition);
@@ -155,52 +155,52 @@ struct oval_definition *oval_iterator_definition_next(struct
 void set_oval_definition_id(struct oval_definition *definition, char *id)
 {
 	definition->id = id;
-};
+}
 
 void set_oval_definition_version(struct oval_definition *definition,
 				 int version)
 {
 	definition->version = version;
-};
+}
 
 void set_oval_definition_class(struct oval_definition *definition,
 			       oval_definition_class_enum class)
 {
 	definition->class = class;
-};
+}
 
 void set_oval_definition_deprecated(struct oval_definition *definition,
 				    int deprecated)
 {
 	definition->deprecated = deprecated;
-};
+}
 
 void set_oval_definition_title(struct oval_definition *definition, char *title)
 {
 	definition->title = title;
-};
+}
 
 void set_oval_definition_description(struct oval_definition *definition,
 				     char *description)
 {
 	definition->description = description;
-};
+}
 
 void set_oval_definition_criteria(struct oval_definition *definition,
 				  struct oval_criteria_node *criteria)
 {
 	definition->criteria = criteria;
-};
+}
 
 void add_oval_definition_affected(struct oval_definition *definition,
 				  struct oval_affected *affected)
 {
-};
+}
 
 void add_oval_definition_reference(struct oval_definition *definition,
-				   struct oval_reference *reference)
+				   struct oval_reference *ref)
 {
-};
+}
 
 struct oval_string_map *_odaclassMap = NULL;
 typedef struct _odaclass {
@@ -276,7 +276,7 @@ int _oval_definition_parse_metadata(xmlTextReaderPtr reader,
 				    void *user)
 {
 	struct oval_definition *definition = (struct oval_definition *)user;
-	xmlChar *tagname = xmlTextReaderName(reader);
+	char *tagname = (char *) xmlTextReaderName(reader);
 	int return_code;
 	if ((strcmp(tagname, "title") == 0)) {
 		return_code =
@@ -296,10 +296,10 @@ int _oval_definition_parse_metadata(xmlTextReaderPtr reader,
 	} else if (strcmp(tagname, "oval_repository") == 0) {	//NOOP
 		return_code = oval_parser_skip_tag(reader, context);
 	} else if (strcmp(tagname, "reference") == 0) {
-		void reference_consumer(struct oval_reference *reference,
+		void reference_consumer(struct oval_reference *ref,
 					void *null) {
 			oval_collection_add(definition->reference,
-					    (void *)reference);
+					    (void *)ref);
 		}
 		return_code =
 		    oval_reference_parse_tag(reader, context,
@@ -326,7 +326,7 @@ int _oval_definition_parse_tag(xmlTextReaderPtr reader,
 			       struct oval_parser_context *context, void *user)
 {
 	struct oval_definition *definition = (struct oval_definition *)user;
-	xmlChar *tagname = xmlTextReaderName(reader);
+	char *tagname = (char*) xmlTextReaderName(reader);
 	int return_code;
 	if ((strcmp(tagname, "metadata") == 0)) {
 		return_code =
@@ -351,13 +351,13 @@ int _oval_definition_parse_tag(xmlTextReaderPtr reader,
 int oval_definition_parse_tag(xmlTextReaderPtr reader,
 			      struct oval_parser_context *context)
 {
-	char *id = xmlTextReaderGetAttribute(reader, "id");
+	char *id = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "id");
 	struct oval_object_model *model = oval_parser_context_model(context);
 	struct oval_definition *definition = get_oval_definition_new(model, id);
-	char *version = xmlTextReaderGetAttribute(reader, "version");
+	char *version = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "version");
 	set_oval_definition_version(definition, atoi(version));
 	free(version);
-	char *class = xmlTextReaderGetAttribute(reader, "class");
+	char *class = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "class");
 	set_oval_definition_class(definition, _odaclass(class));
 	free(class);
 	int deprecated = oval_parser_boolean_attribute(reader, "deprecated", 0);
@@ -369,17 +369,17 @@ int oval_definition_parse_tag(xmlTextReaderPtr reader,
 }
 
 void oval_definition_to_print(struct oval_definition *definition, char *indent,
-			      int index)
+			      int idx)
 {
 	char nxtindent[100];
 
 	if (strlen(indent) > 80)
 		indent = "....";
 
-	if (index == 0)
+	if (idx == 0)
 		snprintf(nxtindent, sizeof(nxtindent), "%sDEFINITION.", indent);
 	else
-		snprintf(nxtindent, sizeof(nxtindent), "%sDEFINITION[%d].", indent, index);
+		snprintf(nxtindent, sizeof(nxtindent), "%sDEFINITION[%d].", indent, idx);
 
 	printf("%sID          = %s\n", nxtindent, definition->id);
 	printf("%sVERSION     = %d\n", nxtindent, definition->version);
@@ -389,15 +389,15 @@ void oval_definition_to_print(struct oval_definition *definition, char *indent,
 	printf("%sDESCRIPTION = %s\n", nxtindent, definition->description);
 	struct oval_iterator *affecteds =
 	    oval_collection_iterator(definition->affected);
-	for (index = 1; oval_collection_iterator_has_more(affecteds); index++) {
+	for (idx = 1; oval_collection_iterator_has_more(affecteds); idx++) {
 		void *affected = oval_collection_iterator_next(affecteds);
-		oval_affected_to_print(affected, nxtindent, index);
+		oval_affected_to_print(affected, nxtindent, idx);
 	}
 	struct oval_iterator *references =
 	    oval_collection_iterator(definition->reference);
-	for (index = 1; oval_collection_iterator_has_more(references); index++) {
-		void *reference = oval_collection_iterator_next(references);
-		oval_reference_to_print(reference, nxtindent, index);
+	for (idx = 1; oval_collection_iterator_has_more(references); idx++) {
+		void *ref = oval_collection_iterator_next(references);
+		oval_reference_to_print(ref, nxtindent, idx);
 	}
 	if (definition->criteria != NULL)
 		oval_criteria_node_to_print(definition->criteria, nxtindent, 0);

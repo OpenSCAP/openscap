@@ -29,6 +29,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include "oval_agent_api_impl.h"
 #include "oval_system_characteristics_impl.h"
 #include "oval_collection_impl.h"
@@ -141,8 +142,8 @@ int _oval_sysdata_parse_subtag(
 		struct oval_parser_context *context,
 		void *client){
 	struct oval_sysdata *sysdata = client;
-	char *tagname   = xmlTextReaderLocalName(reader);
-	char *namespace = xmlTextReaderNamespaceUri(reader);
+	char *tagname   = (char*) xmlTextReaderLocalName(reader);
+	char *namespace = (char*) xmlTextReaderNamespaceUri(reader);
 	int return_code;
 	if(strcmp(NAMESPACE_OVALSYS,namespace)==0){
 		//This is a message
@@ -166,14 +167,14 @@ int _oval_sysdata_parse_subtag(
 int oval_sysdata_parse_tag(xmlTextReaderPtr reader,
 			       struct oval_parser_context *context)
 {
-	char *tagname = xmlTextReaderLocalName(reader);
+	char *tagname = (char*) xmlTextReaderLocalName(reader);
 	oval_subtype_enum subtype = oval_subtype_parse(reader);
 	int return_code;
 	if(subtype!=OVAL_SUBTYPE_UNKNOWN){
-		char *item_id = xmlTextReaderGetAttribute(reader, "id");
+		char *item_id = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "id");
 		struct oval_sysdata *sysdata = get_oval_sysdata_new(context->syschar_model, item_id);
-		oval_subtype_enum subtype = oval_subtype_parse(reader);
-		set_oval_sysdata_subtype(sysdata, subtype);
+		oval_subtype_enum sub = oval_subtype_parse(reader);
+		set_oval_sysdata_subtype(sysdata, sub);
 		set_oval_sysdata_subtype_name(sysdata, tagname);
 		oval_syschar_status_enum  status_enum
 			= oval_syschar_status_parse(reader, "status", SYSCHAR_STATUS_UNKNOWN);
@@ -197,13 +198,13 @@ int oval_sysdata_parse_tag(xmlTextReaderPtr reader,
 		}
 	}else{
 		char message[200]; *message = 0;
-		char *tagname   = xmlTextReaderName(reader);
-		char *namespace = xmlTextReaderNamespaceUri(reader);
+		char *tagnm     = (char*) xmlTextReaderName(reader);
+		char *namespace = (char*) xmlTextReaderNamespaceUri(reader);
 		sprintf(message, "oval_sysdata_parse_tag:: expecting <item> got <%s:%s>",
-				namespace, tagname);
+				namespace, tagnm);
 		oval_parser_log_warn(context, message);
 		return_code = oval_parser_skip_tag(reader, context);
-		free(tagname);
+		free(tagnm);
 		free(namespace);
 	}
 	if(return_code!=1){
@@ -217,17 +218,17 @@ int oval_sysdata_parse_tag(xmlTextReaderPtr reader,
 }
 
 void oval_sysdata_to_print(struct oval_sysdata *sysdata, char *indent,
-			      int index)
+			      int idx)
 {
 	char nxtindent[100];
 
 	if (strlen(indent) > 80)
 		indent = "....";
 
-	if (index == 0)
+	if (idx == 0)
 		snprintf(nxtindent, sizeof(nxtindent), "%sSYSDATA.", indent);
 	else
-		snprintf(nxtindent, sizeof(nxtindent), "%sSYSDATA[%d].", indent, index);
+		snprintf(nxtindent, sizeof(nxtindent), "%sSYSDATA[%d].", indent, idx);
 
 	/*
 	char* id;
@@ -258,9 +259,9 @@ void oval_sysdata_to_print(struct oval_sysdata *sysdata, char *indent,
 	}
 	{//items
 		struct oval_iterator_sysitem *items = oval_sysdata_items(sysdata);
-		int index;for(index=1;oval_iterator_sysitem_has_more(items);index++){
+		int idx;for(idx=1;oval_iterator_sysitem_has_more(items);idx++){
 			struct oval_sysitem *item = oval_iterator_sysitem_next(items);
-			oval_sysitem_to_print(item, nxtindent, index);
+			oval_sysitem_to_print(item, nxtindent, idx);
 		}
 	}
 }

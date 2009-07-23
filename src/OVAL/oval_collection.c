@@ -192,8 +192,9 @@ int oval_collection_main(int argc, char **argv)
 		    oval_collection_iterator(collection);
 		while (oval_collection_iterator_has_more(iterator))
 			printf("[%d] string = %s\n", i,
-			       oval_collection_iterator_next(iterator));
+			       (char *) oval_collection_iterator_next(iterator));
 	}
 
 	oval_collection_free_items(collection, &oval_collection_main_freefunc);
+	return 0;
 }

@@ -159,9 +159,9 @@ void add_oval_object_notes(struct oval_object *object, char *note)
 	oval_collection_add(object->notes, (void *)note);
 }
 
-void set_oval_object_comment(struct oval_object *object, char *comment)
+void set_oval_object_comment(struct oval_object *object, char *comm)
 {
-	object->comment = comment;
+	object->comment = comm;
 }
 
 void set_oval_object_deprecated(struct oval_object *object, int deprecated)
@@ -200,7 +200,7 @@ int _oval_object_parse_tag(xmlTextReaderPtr reader,
 			   struct oval_parser_context *context, void *user)
 {
 	struct oval_object *object = (struct oval_object *)user;
-	xmlChar *tagname = xmlTextReaderName(reader);
+	char *tagname = (char*) xmlTextReaderName(reader);
 	xmlChar *namespace = xmlTextReaderNamespaceUri(reader);
 	int return_code = 1;
 	if ((strcmp(tagname, "notes") == 0)) {
@@ -239,17 +239,17 @@ int _oval_object_parse_tag(xmlTextReaderPtr reader,
 int oval_object_parse_tag(xmlTextReaderPtr reader,
 			  struct oval_parser_context *context)
 {
-	char *id = xmlTextReaderGetAttribute(reader, "id");
+	char *id = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "id");
 	struct oval_object_model *model = oval_parser_context_model(context);
 	//printf("DEBUG::oval_object_parse_tag::id = %s\n", id);
 	struct oval_object *object = get_oval_object_new(model, id);
 	oval_subtype_enum subtype = oval_subtype_parse(reader);
 	set_oval_object_subtype(object, subtype);
-	char *comment = xmlTextReaderGetAttribute(reader, "comment");
-	set_oval_object_comment(object, comment);
+	char *comm = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "comment");
+	set_oval_object_comment(object, comm);
 	int deprecated = oval_parser_boolean_attribute(reader, "deprecated", 0);
 	set_oval_object_deprecated(object, deprecated);
-	char *version = xmlTextReaderGetAttribute(reader, "version");
+	char *version = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "version");
 	set_oval_object_version(object, atoi(version));
 	free(version);
 
@@ -259,17 +259,17 @@ int oval_object_parse_tag(xmlTextReaderPtr reader,
 	return return_code;
 }
 
-void oval_object_to_print(struct oval_object *object, char *indent, int index)
+void oval_object_to_print(struct oval_object *object, char *indent, int idx)
 {
 	char nxtindent[100];
 
 	if (strlen(indent) > 80)
 		indent = "....";
 
-	if (index == 0)
+	if (idx == 0)
 		snprintf(nxtindent, sizeof(nxtindent), "%sOBJECT.", indent);
 	else
-		snprintf(nxtindent, sizeof(nxtindent), "%sOBJECT[%d].", indent, index);
+		snprintf(nxtindent, sizeof(nxtindent), "%sOBJECT[%d].", indent, idx);
 
 	printf("%sID         = %s\n", nxtindent, oval_object_id(object));
 	printf("%sFAMILY     = %d\n", nxtindent, oval_object_family(object));
@@ -279,23 +279,23 @@ void oval_object_to_print(struct oval_object *object, char *indent, int index)
 	printf("%sDEPRECATED = %d\n", nxtindent,
 	       oval_object_deprecated(object));
 	struct oval_iterator_string *notes = oval_object_notes(object);
-	for (index = 1; oval_iterator_string_has_more(notes); index++) {
-		printf("%sNOTE[%d]    = %s\n", nxtindent, index,
+	for (idx = 1; oval_iterator_string_has_more(notes); idx++) {
+		printf("%sNOTE[%d]    = %s\n", nxtindent, idx,
 		       oval_iterator_string_next(notes));
 	}
 	struct oval_iterator_behavior *behaviors =
 	    oval_object_behaviors(object);
-	for (index = 1; oval_iterator_behavior_has_more(behaviors); index++) {
+	for (idx = 1; oval_iterator_behavior_has_more(behaviors); idx++) {
 		struct oval_behavior *behavior =
 		    oval_iterator_behavior_next(behaviors);
-		oval_behavior_to_print(behavior, nxtindent, index);
+		oval_behavior_to_print(behavior, nxtindent, idx);
 	}
 	struct oval_iterator_object_content *contents =
 	    oval_object_object_content(object);
-	for (index = 1; oval_iterator_object_content_has_more(contents);
-	     index++) {
+	for (idx = 1; oval_iterator_object_content_has_more(contents);
+	     idx++) {
 		struct oval_object_content *content =
 		    oval_iterator_object_content_next(contents);
-		oval_object_content_to_print(content, nxtindent, index);
+		oval_object_content_to_print(content, nxtindent, idx);
 	}
 }
