@@ -172,6 +172,13 @@ void set_oval_object_content_varCheck(struct oval_object_content *, oval_check_e
 void set_oval_object_content_set(struct oval_object_content *, struct oval_set *);	//TODO   //type == OVAL_OBJECTCONTENT_SET
 
 //typedef void (*oval_object_content_consumer)(struct oval_object_content*,void*);
+void oval_consume_entity(struct oval_entity *entity,
+			void *content_entity) {
+	((struct oval_object_content_ENTITY *)content_entity)->entity = entity;
+}
+void oval_consume_set(struct oval_set *set, void *content_set) {
+	((struct oval_object_content_SET *)content_set)->set = set;
+}
 int oval_object_content_parse_tag(xmlTextReaderPtr reader,
 				  struct oval_parser_context *context,
 				  oval_object_content_consumer consumer,
@@ -190,13 +197,9 @@ int oval_object_content_parse_tag(xmlTextReaderPtr reader,
 	case OVAL_OBJECTCONTENT_ENTITY:{
 			struct oval_object_content_ENTITY *content_entity =
 			    (struct oval_object_content_ENTITY *)content;
-			void consume_entity(struct oval_entity *entity,
-					    void *null) {
-				content_entity->entity = entity;
-			}
 			return_code =
 			    oval_entity_parse_tag(reader, context,
-						  &consume_entity, NULL);
+						  &oval_consume_entity, content_entity);
 			content_entity->varCheck =
 			    oval_check_parse(reader, "var_check",
 					     OVAL_CHECK_ALL);
@@ -205,12 +208,9 @@ int oval_object_content_parse_tag(xmlTextReaderPtr reader,
 	case OVAL_OBJECTCONTENT_SET:{
 			struct oval_object_content_SET *content_set =
 			    (struct oval_object_content_SET *)content;
-			void consume_set(struct oval_set *set, void *null) {
-				content_set->set = set;
-			}
 			return_code =
-			    oval_set_parse_tag(reader, context, &consume_set,
-					       NULL);
+			    oval_set_parse_tag(reader, context, &oval_consume_set,
+					       content_set);
 		};
 		break;
 	case OVAL_OBJECTCONTENT_UNKNOWN: break;

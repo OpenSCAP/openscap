@@ -34,6 +34,7 @@ liboval_la_SOURCES = \
 	oval_sysItem.c \
 	oval_syschar.c \
 	oval_system_characteristics_impl.h \
+	oval_test.c \
 	oval_value.c \
 	oval_variable.c \
 	oval_variableBinding.c \

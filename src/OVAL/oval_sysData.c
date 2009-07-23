@@ -62,13 +62,10 @@ struct oval_sysdata *oval_sysdata_new(char *id){
 }
 
 void oval_sysdata_free(struct oval_sysdata *sysdata){
-	void item_free(void *item){
-		oval_sysitem_free((struct oval_sysitem *)item);
-	}
 	if(sysdata->message!=NULL)free(sysdata->message);
 	if(sysdata->subtype_name!=NULL)free(sysdata->subtype_name);
 
-	oval_collection_free_items(sysdata->items, &item_free);
+	oval_collection_free_items(sysdata->items, (oscap_destruct_func)oval_sysitem_free);
 	free(sysdata->id);
 	free(sysdata);
 }
@@ -137,6 +134,12 @@ void set_oval_sysdata_status(struct oval_sysdata *data, oval_syschar_status_enum
 	data->status = status;
 }
 
+void _oval_sysdata_parse_subtag_consume(char* message, void* sysdata) {
+			set_oval_sysdata_message(sysdata, message);
+}
+void _oval_sysdata_parse_subtag_item_consumer(struct oval_sysitem *item, void* sysdata) {
+	add_oval_sysdata_item(sysdata, item);
+}
 int _oval_sysdata_parse_subtag(
 		xmlTextReaderPtr reader,
 		struct oval_parser_context *context,
@@ -148,16 +151,10 @@ int _oval_sysdata_parse_subtag(
 	if(strcmp(NAMESPACE_OVALSYS,namespace)==0){
 		//This is a message
 		set_oval_sysdata_message_level(sysdata, oval_message_level_parse(reader, "level", OVAL_MESSAGE_LEVEL_INFO));
-		void consume(char* message, void* null){
-			set_oval_sysdata_message(sysdata, message);
-		}
-		return_code = oval_parser_text_value(reader, context, &consume, NULL);
+		return_code = oval_parser_text_value(reader, context, _oval_sysdata_parse_subtag_consume, sysdata);
 	}else{
 		//typedef *(oval_sysitem_consumer)(struct oval_sysitem *, void* client);
-		void item_consumer (struct oval_sysitem *item, void* null){
-			add_oval_sysdata_item(sysdata, item);
-		}
-		return_code = oval_sysitem_parse_tag(reader, context, &item_consumer, NULL);
+		return_code = oval_sysitem_parse_tag(reader, context, _oval_sysdata_parse_subtag_item_consumer, sysdata);
 	}
 	free(tagname);
 	free(namespace);
@@ -259,9 +256,9 @@ void oval_sysdata_to_print(struct oval_sysdata *sysdata, char *indent,
 	}
 	{//items
 		struct oval_iterator_sysitem *items = oval_sysdata_items(sysdata);
-		int idx;for(idx=1;oval_iterator_sysitem_has_more(items);idx++){
+		int i;for(i=1;oval_iterator_sysitem_has_more(items);i++){
 			struct oval_sysitem *item = oval_iterator_sysitem_next(items);
-			oval_sysitem_to_print(item, nxtindent, idx);
+			oval_sysitem_to_print(item, nxtindent, i);
 		}
 	}
 }

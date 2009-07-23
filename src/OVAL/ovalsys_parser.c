@@ -39,6 +39,17 @@ const char* NAMESPACE_OVALSYS = "http://oval.mitre.org/XMLSchema/oval-system-cha
 
 int DEBUG = 0;
 
+int _ovalsys_parser_process_node_consume_collected_objects(xmlTextReaderPtr reader,
+		  struct oval_parser_context *context, void *null)
+{
+	return oval_syschar_parse_tag(reader, context);
+}
+int _ovalsys_parser_process_node_consume_system_data(xmlTextReaderPtr reader,
+		  struct oval_parser_context *context, void *null)
+{
+	return oval_sysdata_parse_tag(reader, context);
+}
+
 int _ovalsys_parser_process_node(xmlTextReaderPtr reader,
 			      struct oval_parser_context *context)
 {
@@ -71,19 +82,9 @@ int _ovalsys_parser_process_node(xmlTextReaderPtr reader,
 				}else if (is_ovalsys && (strcmp(tagname, "system_info") == 0)) {
 					return_code = oval_sysinfo_parse_tag(reader, context);
 				}else if (is_ovalsys && (strcmp(tagname, "collected_objects") == 0)) {
-					int parse_tag(xmlTextReaderPtr reader,
-						      struct oval_parser_context *context, void *null)
-					{
-						return oval_syschar_parse_tag(reader, context);
-					}
-					return_code = oval_parser_parse_tag(reader, context, &parse_tag, NULL);
+					return_code = oval_parser_parse_tag(reader, context, &_ovalsys_parser_process_node_consume_collected_objects, NULL);
 				}else if (is_ovalsys && (strcmp(tagname, "system_data") == 0)) {
-					int parse_tag(xmlTextReaderPtr reader,
-						      struct oval_parser_context *context, void *null)
-					{
-						return oval_sysdata_parse_tag(reader, context);
-					}
-					return_code = oval_parser_parse_tag(reader, context, &parse_tag, NULL);
+					return_code = oval_parser_parse_tag(reader, context, &_ovalsys_parser_process_node_consume_system_data, NULL);
 				} else {
 					char message[200]; *message = 0;
 					sprintf(message,

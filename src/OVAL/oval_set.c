@@ -113,25 +113,16 @@ void oval_set_free(struct oval_set *set)
 	case OVAL_SET_AGGREGATE:{
 			oval_set_AGGREGATE_t *aggregate =
 			    (oval_set_AGGREGATE_t *) set->extension;
-			void free_set(void *subset) {
-				oval_set_free((struct oval_set *)subset);
-			}
 			oval_collection_free_items(aggregate->subsets,
-						   &free_set);
+						   (oscap_destruct_func)oval_set_free);
 		} break;
 	case OVAL_SET_COLLECTIVE:{
 			oval_set_COLLECTIVE_t *collective =
 			    (oval_set_COLLECTIVE_t *) set->extension;
-			void free_state(void *state) {
-				oval_state_free((struct oval_state *)state);
-			}
 			oval_collection_free_items(collective->filters,
-						   &free_state);
-			void free_object(void *object) {
-				oval_object_free((struct oval_object *)object);
-			}
+						   (oscap_destruct_func)oval_state_free);
 			oval_collection_free_items(collective->objects,
-						   &free_object);
+						   (oscap_destruct_func)oval_object_free);
 		} break;
 	case OVAL_SET_UNKNOWN: break;
 	}
@@ -191,12 +182,37 @@ void add_oval_set_filters(struct oval_set *set, struct oval_state *filter)
 }
 
 //typedef int (*oval_xml_tag_parser)(xmlTextReaderPtr, struct oval_parser_context*, void*);
+void oval_set_consume(struct oval_set *subset, void *set) {
+	add_oval_set_subsets(set, subset);
+}
+struct oval_set_context {
+	struct oval_parser_context *context;
+	struct oval_set *set;
+};
+void oval_consume_object_ref(char *objref, void *user) {
+	struct oval_set_context *ctx = user;
+	struct oval_object_model *model =
+		oval_parser_context_model(ctx->context);
+	struct oval_object *object =
+		get_oval_object_new(model, objref);
+	add_oval_set_objects(ctx->set, object);
+}
+void oval_consume_state_ref(char *steref, void *user) {
+	struct oval_set_context *ctx = user;
+	struct oval_object_model *model =
+		oval_parser_context_model(ctx->context);
+	struct oval_state *state =
+		get_oval_state_new(model, steref);
+	add_oval_set_filters(ctx->set, state);
+}
+
 int _oval_set_parse_tag(xmlTextReaderPtr reader,
 			struct oval_parser_context *context, void *user)
 {
 	struct oval_set *set = (struct oval_set *)user;
 	char *tagname = (char*) xmlTextReaderName(reader);
 	xmlChar *namespace = xmlTextReaderNamespaceUri(reader);
+	struct oval_set_context ctx = { .context = context, .set = set };
 
 	int return_code = 0;
 
@@ -204,37 +220,20 @@ int _oval_set_parse_tag(xmlTextReaderPtr reader,
 		if (set->type == OVAL_SET_UNKNOWN) {
 			set_oval_set_type(set, OVAL_SET_AGGREGATE);
 		}
-		void consume_set(struct oval_set *subset, void *null) {
-			add_oval_set_subsets(set, subset);
-		}
 		return_code =
-		    oval_set_parse_tag(reader, context, &consume_set, NULL);
+		    oval_set_parse_tag(reader, context, &oval_set_consume, set);
 	} else {
 		if (set->type == OVAL_SET_UNKNOWN) {
 			set_oval_set_type(set, OVAL_SET_COLLECTIVE);
 		}
 		if (strcmp(tagname, "object_reference") == 0) {
-			void consume_object_ref(char *objref, void *null) {
-				struct oval_object_model *model =
-				    oval_parser_context_model(context);
-				struct oval_object *object =
-				    get_oval_object_new(model, objref);
-				add_oval_set_objects(set, object);
-			}
 			return_code =
 			    oval_parser_text_value(reader, context,
-						   &consume_object_ref, NULL);
+						   &oval_consume_object_ref, &ctx);
 		} else if (strcmp(tagname, "filter") == 0) {
-			void consume_state_ref(char *steref, void *null) {
-				struct oval_object_model *model =
-				    oval_parser_context_model(context);
-				struct oval_state *state =
-				    get_oval_state_new(model, steref);
-				add_oval_set_filters(set, state);
-			}
 			return_code =
 			    oval_parser_text_value(reader, context,
-						   &consume_state_ref, NULL);
+						   &oval_consume_state_ref, &ctx);
 		} else {
 			int line = xmlTextReaderGetParserLineNumber(reader);
 			printf

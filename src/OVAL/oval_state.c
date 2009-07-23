@@ -129,10 +129,7 @@ void oval_state_free(struct oval_state *state)
 		free(state->id);
 	if (state->name != NULL)
 		free(state->name);
-	void free_notes(void *note) {
-		free(note);
-	}
-	oval_collection_free_items(state->notes, &free_notes);
+	oval_collection_free_items(state->notes, &free);
 	free(state);
 }
 
@@ -176,16 +173,19 @@ void set_oval_state_version(struct oval_state *state, int version)
 	state->version = version;
 }
 
+	void oval_note_consume_(char *text, void *state) {
+		add_oval_state_notes(state, text);
+	}
 int _oval_state_parse_notes(xmlTextReaderPtr reader,
 			    struct oval_parser_context *context, void *user)
 {
 	struct oval_state *state = (struct oval_state *)user;
-	void note_consumer(char *text, void *null) {
-		add_oval_state_notes(state, text);
-	}
-	return oval_parser_text_value(reader, context, &note_consumer, NULL);
+	return oval_parser_text_value(reader, context, oval_note_consume_, state);
 }
 
+		void oval_consume_entity_(struct oval_entity *entity, void *state) {
+			oval_collection_add(((struct oval_state *)state)->entities, (void *)entity);
+		}
 int _oval_state_parse_tag(xmlTextReaderPtr reader,
 			  struct oval_parser_context *context, void *user)
 {
@@ -198,11 +198,8 @@ int _oval_state_parse_tag(xmlTextReaderPtr reader,
 		    oval_parser_parse_tag(reader, context,
 					  &_oval_state_parse_notes, state);
 	} else {
-		void consume_entity(struct oval_entity *entity, void *null) {
-			oval_collection_add(state->entities, (void *)entity);
-		}
 		return_code =
-		    oval_entity_parse_tag(reader, context, &consume_entity,
+		    oval_entity_parse_tag(reader, context, oval_consume_entity_,
 					  NULL);
 	}
 	if (return_code != 1) {

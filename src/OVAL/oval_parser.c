@@ -310,3 +310,22 @@ int oval_parser_boolean_attribute(xmlTextReaderPtr reader, char *attname,
 	}
 	return booval;
 }
+
+void oval_text_consumer(char *text, void *user)
+{
+	char *platform = *(char**)user;
+	if (platform == NULL)
+		platform = text;
+	else {
+		int size = strlen(platform) + strlen(text) + 1;
+		char *newtext =
+			(char *)malloc(size * sizeof(char *));
+		*newtext = 0;
+		strcat(newtext, platform);
+		strcat(newtext, text);
+		free(platform);
+		free(text);
+		platform = newtext;
+	}
+	*(char**)user = platform;
+}

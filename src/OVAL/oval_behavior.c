@@ -82,12 +82,9 @@ struct oval_behavior *oval_behavior_new()
 
 void oval_behavior_free(struct oval_behavior *behavior)
 {
-	void free_value(void *value) {
-		oval_value_free(behavior->value);
-	}
 	if (behavior->value != NULL)
-		free_value((void *)behavior->value);
-	oval_string_map_free(behavior->att_values, &free_value);
+		oval_value_free(behavior->value);
+	oval_string_map_free(behavior->att_values, (oscap_destruct_func)oval_value_free);
 	free(behavior);
 }
 

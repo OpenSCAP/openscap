@@ -128,18 +128,9 @@ void oval_object_free(struct oval_object *object)
 		free(object->comment);
 	if (object->id != NULL)
 		free(object->id);
-	void free_behavior(void *behavior) {
-		oval_behavior_free((struct oval_behavior *)behavior);
-	}
-	void free_notes(void *note) {
-		free(note);
-	}
-	void free_content(void *content) {
-		oval_object_content_free((struct oval_object_content *)content);
-	}
-	oval_collection_free_items(object->behaviors, &free_behavior);
-	oval_collection_free_items(object->notes, &free_notes);
-	oval_collection_free_items(object->object_content, &free_content);
+	oval_collection_free_items(object->behaviors, (oscap_destruct_func)oval_behavior_free);
+	oval_collection_free_items(object->notes, free);
+	oval_collection_free_items(object->object_content, (oscap_destruct_func)oval_object_content_free);
 	free(object);
 }
 
@@ -186,16 +177,24 @@ void add_oval_object_behaviors(struct oval_object *object,
 	oval_collection_add(object->behaviors, (void *)behavior);
 }
 
+void oval_note_consume(char *text, void *object) {
+	add_oval_object_notes(object, text);
+}
 int _oval_object_parse_notes(xmlTextReaderPtr reader,
 			     struct oval_parser_context *context, void *user)
 {
 	struct oval_object *object = (struct oval_object *)user;
-	void note_consumer(char *text, void *null) {
-		add_oval_object_notes(object, text);
-	}
-	return oval_parser_text_value(reader, context, &note_consumer, NULL);
+	return oval_parser_text_value(reader, context, &oval_note_consume, object);
 }
 
+void oval_behavior_consume(struct oval_behavior *behavior,
+			   void *object) {
+	add_oval_object_behaviors(object, behavior);
+}
+void oval_content_consume(struct oval_object_content *content,
+			  void *object) {
+	add_oval_object_object_content(object, content);
+}
 int _oval_object_parse_tag(xmlTextReaderPtr reader,
 			   struct oval_parser_context *context, void *user)
 {
@@ -208,22 +207,14 @@ int _oval_object_parse_tag(xmlTextReaderPtr reader,
 		    oval_parser_parse_tag(reader, context,
 					  &_oval_object_parse_notes, object);
 	} else if (strcmp(tagname, "behaviors") == 0) {
-		void behavior_consumer(struct oval_behavior *behavior,
-				       void *null) {
-			add_oval_object_behaviors(object, behavior);
-		}
 		return_code =
 		    oval_behavior_parse_tag(reader, context,
 					    oval_object_family(object),
-					    &behavior_consumer, NULL);
+					    &oval_behavior_consume, object);
 	} else {
-		void content_consumer(struct oval_object_content *content,
-				      void *null) {
-			add_oval_object_object_content(object, content);
-		}
 		return_code =
 		    oval_object_content_parse_tag(reader, context,
-						  &content_consumer, NULL);
+						  &oval_content_consume, object);
 	}
 	if (return_code != 1) {
 		int line = xmlTextReaderGetParserLineNumber(reader);

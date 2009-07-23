@@ -85,11 +85,13 @@ struct oval_affected *oval_affected_new()
 
 void oval_affected_free(struct oval_affected *affected)
 {
+	/*
 	void free_string(void *string) {
 		free(string);
 	}
-	oval_collection_free_items(affected->platforms, &free_string);
-	oval_collection_free_items(affected->products, &free_string);
+	*/
+	oval_collection_free_items(affected->platforms, &free);
+	oval_collection_free_items(affected->products, &free);
 	free(affected);
 }
 
@@ -146,46 +148,16 @@ int _oval_affected_parse_tag(xmlTextReaderPtr reader,
 	//xmlChar *namespace = xmlTextReaderNamespaceUri(reader);
 	if (strcmp((char *) tagname, "platform") == 0) {
 		char *platform = NULL;
-		void consumer(char *text, void *user) {
-			if (platform == NULL)
-				platform = text;
-			else {
-				int size = strlen(platform) + strlen(text) + 1;
-				char *newtext =
-				    (char *)malloc(size * sizeof(char *));
-				*newtext = 0;
-				strcat(newtext, platform);
-				strcat(newtext, text);
-				free(platform);
-				free(text);
-				platform = newtext;
-			}
-		}
 		return_code =
-		    oval_parser_text_value(reader, context, &consumer,
-					   affected);
+		    oval_parser_text_value(reader, context, &oval_text_consumer,
+					   &platform);
 		if (platform != NULL)
 			add_oval_affected_platform(affected, platform);
 	} else if (strcmp((char *) tagname, "product") == 0) {
 		char *product = NULL;
-		void consumer(char *text, void *user) {
-			if (product == NULL)
-				product = text;
-			else {
-				int size = strlen(product) + strlen(text) + 1;
-				char *newtext =
-				    (char *)malloc(size * sizeof(char *));
-				*newtext = 0;
-				strcat(newtext, product);
-				strcat(newtext, text);
-				free(text);
-				free(product);
-				product = newtext;
-			}
-		}
 		return_code =
-		    oval_parser_text_value(reader, context, &consumer,
-					   affected);
+		    oval_parser_text_value(reader, context, &oval_text_consumer,
+					   &product);
 		if (product != NULL)
 			add_oval_affected_product(affected, product);
 	} else {

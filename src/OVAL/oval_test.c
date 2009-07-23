@@ -153,10 +153,7 @@ void oval_test_free(struct oval_test *test)
 		free(test->id);
 	if (test->name != NULL)
 		free(test->name);
-	void free_note(void *note) {
-		free(note);
-	}
-	oval_collection_free_items(test->notes, &free_note);
+	oval_collection_free_items(test->notes, &free);
 	free(test);
 }
 
@@ -211,14 +208,14 @@ void add_oval_test_notes(struct oval_test *test, char *note)
 	oval_collection_add(test->notes, (void *)note);
 }
 
+void _oval_test_parse_notes_consumer(char *text, void *test) {
+	add_oval_test_notes(test, text);
+}
 int _oval_test_parse_notes(xmlTextReaderPtr reader,
 			   struct oval_parser_context *context, void *user)
 {
 	struct oval_test *test = (struct oval_test *)user;
-	void note_consumer(char *text, void *null) {
-		add_oval_test_notes(test, text);
-	}
-	return oval_parser_text_value(reader, context, &note_consumer, NULL);
+	return oval_parser_text_value(reader, context, &_oval_test_parse_notes_consumer, test);
 }
 
 int _oval_test_parse_tag(xmlTextReaderPtr reader,

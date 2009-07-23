@@ -100,6 +100,11 @@ void set_oval_sysitem_value(struct oval_sysitem *sysitem, char *value)
 	sysitem->value = malloc_string(value);
 }
 
+void oval_sysitem_value_consumer_(char* value, void* sysitem){
+	set_oval_sysitem_value(sysitem, value);
+	free(value);
+}
+
 int oval_sysitem_parse_tag(xmlTextReaderPtr reader,
 			       struct oval_parser_context *context, oval_sysitem_consumer consumer, void* client)
 {
@@ -130,11 +135,7 @@ int oval_sysitem_parse_tag(xmlTextReaderPtr reader,
 			set_oval_sysitem_status(sysitem, status);
 		}
 		{//sysitem->value
-			void value_consumer(char* value, void* null){
-				set_oval_sysitem_value(sysitem, value);
-				free(value);
-			}
-			return_code = oval_parser_text_value(reader, context, &value_consumer, NULL);
+			return_code = oval_parser_text_value(reader, context, &oval_sysitem_value_consumer_, sysitem);
 		}
 		if(return_code!=1){
 			char message[200]; *message = 0;

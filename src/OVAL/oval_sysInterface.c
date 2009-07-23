@@ -100,6 +100,19 @@ void oval_sysint_free(struct oval_sysint *sysint)
 }
 extern const char* NAMESPACE_OVALSYS;
 
+void oval_consume_interface_name(char* text, void* sysint)
+{
+	set_oval_sysint_name(sysint, text);
+}
+void oval_consume_ip_address(char* text, void* sysint)
+{
+	set_oval_sysint_ip_address(sysint, text);
+}
+void oval_consume_mac_address(char* text, void* sysint)
+{
+	set_oval_sysint_mac_address(sysint, text);
+}
+
 int _oval_sysint_parse_tag(xmlTextReaderPtr reader,
 			       struct oval_parser_context *context , void *user){
 	struct oval_sysint *sysint = (struct oval_sysint *)user;
@@ -108,23 +121,11 @@ int _oval_sysint_parse_tag(xmlTextReaderPtr reader,
 	int is_ovalsys = strcmp(namespace,NAMESPACE_OVALSYS)==0;
 	int return_code;
 	if        (is_ovalsys && (strcmp(tagname,"interface_name")==0)) {
-		void consume(char* text, void* null)
-		{
-			set_oval_sysint_name(sysint, text);
-		}
-		return_code = oval_parser_text_value(reader, context, &consume, NULL);
+		return_code = oval_parser_text_value(reader, context, &oval_consume_interface_name, sysint);
 	} else if(is_ovalsys && (strcmp(tagname,"ip_address")==0)) {
-		void consume(char* text, void* null)
-		{
-			set_oval_sysint_ip_address(sysint, text);
-		}
-		return_code = oval_parser_text_value(reader, context, &consume, NULL);
+		return_code = oval_parser_text_value(reader, context, &oval_consume_ip_address, sysint);
 	} else if(is_ovalsys && (strcmp(tagname,"mac_address")==0)) {
-		void consume(char* text, void* null)
-		{
-			set_oval_sysint_mac_address(sysint, text);
-		}
-		return_code = oval_parser_text_value(reader, context, &consume, NULL);
+		return_code = oval_parser_text_value(reader, context, &oval_consume_mac_address, sysint);
 	} else {
 		char message[200]; *message = 0;
 		sprintf(message, "_oval_sysint_parse_tag:: skipping <%s:%s>",

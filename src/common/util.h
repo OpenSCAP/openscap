@@ -31,6 +31,11 @@
 #include "alloc.h"
 
 /**
+ * Function pointer to an object destructor.
+ */
+typedef void(*oscap_destruct_func)(void*);
+
+/**
  * Generate a getter function with an optional conversion.
  * Header of the generated function will look like this (substitute the capital letter sequences with the actual parametres):
  * @code RTYPE SNAME_MNAME(const struct SNAME*); @endcode

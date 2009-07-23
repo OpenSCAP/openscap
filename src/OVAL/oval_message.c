@@ -78,6 +78,10 @@ void set_oval_message_level(struct oval_message *message, oval_message_level_enu
 	message->level = level;
 }
 
+void oval_message_parse_tag_consumer(char* text, void* message){
+	set_oval_message_text(message, text);
+	free(text);
+}
 int oval_message_parse_tag(xmlTextReaderPtr reader,
 			       struct oval_parser_context *context, oval_message_consumer consumer, void* client)
 {
@@ -87,11 +91,7 @@ int oval_message_parse_tag(xmlTextReaderPtr reader,
 		set_oval_message_level(message, oval_message_level_parse(reader,"level",OVAL_MESSAGE_LEVEL_INFO));
 	}
 	{//message->text
-		void consumer(char* text, void* null){
-			set_oval_message_text(message, text);
-			free(text);
-		}
-		return_code = oval_parser_text_value(reader, context, &consumer, NULL);
+		return_code = oval_parser_text_value(reader, context, &oval_message_parse_tag_consumer, message);
 	}
 	if(return_code!=1){
 		char warning[200]; *warning = 0;

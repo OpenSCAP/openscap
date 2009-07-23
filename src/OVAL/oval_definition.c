@@ -125,14 +125,8 @@ void oval_definition_free(struct oval_definition *definition)
 		free(definition->description);
 	if (definition->criteria != NULL)
 		oval_criteria_node_free(definition->criteria);
-	void free_affected(void *affected) {
-		oval_affected_free((struct oval_affected *)affected);
-	}
-	oval_collection_free_items(definition->affected, &free_affected);
-	void free_reference(void *ref) {
-		oval_reference_free((struct oval_reference *)ref);
-	}
-	oval_collection_free_items(definition->reference, &free_reference);
+	oval_collection_free_items(definition->affected, (oscap_destruct_func)oval_affected_free);
+	oval_collection_free_items(definition->reference, (oscap_destruct_func)oval_reference_free);
 	free(definition);
 }
 
@@ -271,6 +265,13 @@ void _oval_definition_affected_consumer(struct oval_affected *affected,
 	oval_collection_add(definition->affected, (void *)affected);
 }
 
+void oval_reference_consume(struct oval_reference *ref,
+			void *def) {
+	struct oval_definition *definition = def;
+	oval_collection_add(definition->reference,
+				(void *)ref);
+}
+
 int _oval_definition_parse_metadata(xmlTextReaderPtr reader,
 				    struct oval_parser_context *context,
 				    void *user)
@@ -296,14 +297,9 @@ int _oval_definition_parse_metadata(xmlTextReaderPtr reader,
 	} else if (strcmp(tagname, "oval_repository") == 0) {	//NOOP
 		return_code = oval_parser_skip_tag(reader, context);
 	} else if (strcmp(tagname, "reference") == 0) {
-		void reference_consumer(struct oval_reference *ref,
-					void *null) {
-			oval_collection_add(definition->reference,
-					    (void *)ref);
-		}
 		return_code =
 		    oval_reference_parse_tag(reader, context,
-					     &reference_consumer, NULL);
+					     &oval_reference_consume, NULL);
 	} else {
 		int linno = xmlTextReaderGetParserLineNumber(reader);
 		printf

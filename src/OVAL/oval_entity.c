@@ -169,6 +169,18 @@ void set_oval_entity_name(struct oval_entity *entity, char *name)
 	entity->name = name;
 }
 
+struct oval_consume_varref_context {
+	struct oval_object_model * model;
+	struct oval_variable **variable;
+};
+void oval_consume_varref(char *varref, void *user) {
+	struct oval_consume_varref_context* ctx = user;
+	*(ctx->variable) = get_oval_variable((struct oval_object_model *)ctx->model, varref);
+}
+void oval_consume_value(struct oval_value *use_value, void *value) {
+	*(struct oval_value **)value = use_value;
+}
+
 //typedef void (*oval_entity_consumer)(struct oval_entity_node*, void*);
 int oval_entity_parse_tag(xmlTextReaderPtr reader,
 			  struct oval_parser_context *context,
@@ -191,13 +203,11 @@ int oval_entity_parse_tag(xmlTextReaderPtr reader,
 		if (varref == NULL) {
 			struct oval_object_model *model =
 			    oval_parser_context_model(context);
-			void consume_varref(char *varref, void *null) {
-				variable = get_oval_variable(model, varref);
-			}
 			varref_type = OVAL_ENTITY_VARREF_ELEMENT;
+			struct oval_consume_varref_context ctx = { .model = model, .variable = &variable };
 			return_code =
 			    oval_parser_text_value(reader, context,
-						   &consume_varref, NULL);
+						   &oval_consume_varref, &ctx);
 		} else {
 			struct oval_object_model *model =
 			    oval_parser_context_model(context);
@@ -208,12 +218,9 @@ int oval_entity_parse_tag(xmlTextReaderPtr reader,
 		value = NULL;
 	} else if (varref == NULL) {
 		variable = NULL;
-		void consume_value(struct oval_value *use_value, void *null) {
-			value = use_value;
-		}
 		varref_type = OVAL_ENTITY_VARREF_NONE;
 		return_code =
-		    oval_value_parse_tag(reader, context, &consume_value, NULL);
+		    oval_value_parse_tag(reader, context, &oval_consume_value, &value);
 	} else {
 		struct oval_object_model *model =
 		    oval_parser_context_model(context);

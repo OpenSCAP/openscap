@@ -171,10 +171,7 @@ void oval_criteria_node_free(struct oval_criteria_node *node)
 			struct oval_collection *subnodes =
 			    ((struct oval_criteria_node_CRITERIA *)node)->
 			    subnodes;
-			void free_node(void *null) {
-				oval_criteria_node_free(node);
-			}
-			oval_collection_free_items(subnodes, &free_node);
+			oval_collection_free_items(subnodes, (oscap_destruct_func)oval_criteria_node_free);
 		} break;
 	case NODETYPE_CRITERION:{
 			//NOOP
@@ -245,18 +242,18 @@ void set_oval_criteria_node_definition(struct oval_criteria_node *node,
 	extenddef->definition = definition;
 }
 
+void _oval_criteria_subnode_consume(struct oval_criteria_node *subnode, void *criteria) {
+	add_oval_criteria_node_subnodes((struct oval_criteria_node *)
+					criteria, subnode);
+}
 int _oval_criteria_subnode_consumer(xmlTextReaderPtr reader,
 				    struct oval_parser_context *context,
 				    void *user)
 {
 	struct oval_criteria_node_CRITERIA *criteria =
 	    (struct oval_criteria_node_CRITERIA *)user;
-	void consumer(struct oval_criteria_node *subnode, void *null) {
-		add_oval_criteria_node_subnodes((struct oval_criteria_node *)
-						criteria, subnode);
-	}
 	int return_code =
-	    oval_criteria_parse_tag(reader, context, &consumer, NULL);
+	    oval_criteria_parse_tag(reader, context, &_oval_criteria_subnode_consume, criteria);
 	return return_code;
 }
 

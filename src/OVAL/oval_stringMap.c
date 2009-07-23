@@ -158,8 +158,7 @@ void oval_string_map_free(struct oval_string_map *map,
 
 void oval_string_map_free_string(struct oval_string_map *map)
 {
-	void free_func(void* string){free(string);}
-	oval_string_map_free(map, *free_func);
+	oval_string_map_free(map, free);
 }
 
 #include <stdio.h>

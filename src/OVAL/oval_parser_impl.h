@@ -32,6 +32,7 @@
 
 #include <libxml/xmlreader.h>
 #include "api/oval_agent_api.h"
+#include "../common/util.h"
 
 struct oval_parser_context {
 	struct oval_object_model       *model;
@@ -81,5 +82,7 @@ typedef int (*oval_xml_tag_parser) (xmlTextReaderPtr,
 
 int oval_parser_parse_tag(xmlTextReaderPtr, struct oval_parser_context *,
 			  oval_xml_tag_parser, void *);
+
+void oval_text_consumer(char *text, void *user);
 
 #endif				/* OVAL_PARSER_H_ */

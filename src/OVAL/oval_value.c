@@ -107,6 +107,9 @@ void set_oval_value_text(struct oval_value *value, char *text)
 	value->text = text;
 }
 
+void oval_value_parse_tag_consume_text(char *string, void *text) {
+	*(char**)text = string;
+}
 int oval_value_parse_tag(xmlTextReaderPtr reader,
 			 struct oval_parser_context *context,
 			 oval_value_consumer consumer, void *user)
@@ -121,12 +124,9 @@ int oval_value_parse_tag(xmlTextReaderPtr reader,
 		text = NULL;
 		return_code = 1;
 	} else {
-		void consume_text(char *string, void *null) {
-			text = string;
-		}
 		return_code =
-		    oval_parser_text_value(reader, context, &consume_text,
-					   NULL);
+		    oval_parser_text_value(reader, context, &oval_value_parse_tag_consume_text,
+					   &text);
 	}
 	set_oval_value_datatype(value, datatype);
 	set_oval_value_text(value, text);

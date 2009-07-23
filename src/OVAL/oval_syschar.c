@@ -143,25 +143,16 @@ struct oval_syschar *oval_syschar_new(struct oval_object *object){
 }
 
 void oval_syschar_free(struct oval_syschar *syschar){
-	void free_text(void *text)
-	{
-		free(text);
-	}
-	void free_sysdata(void *sysdata)
-	{
-		oval_sysdata_free((struct oval_sysdata*)sysdata);
-	}
-	void free_binding(void *binding)
-	{
-		oval_variable_binding_free((struct oval_variable_binding*)binding);
-	}
-	oval_collection_free_items(syschar->messages,&free_text);
-	oval_collection_free_items(syschar->sysdata, &free_sysdata);
-	oval_collection_free_items(syschar->variable_bindings,&free_binding);
+	oval_collection_free_items(syschar->messages, free);
+	oval_collection_free_items(syschar->sysdata, (oscap_destruct_func)oval_sysdata_free);
+	oval_collection_free_items(syschar->variable_bindings, (oscap_destruct_func)oval_variable_binding_free);
 	free(syschar);
 }
 
 extern const char* NAMESPACE_OVALSYS;
+void _oval_syschar_parse_subtag_consume(struct oval_message *message, void* syschar){
+	add_oval_syschar_message(syschar, message);
+}
 int _oval_syschar_parse_subtag(
 		xmlTextReaderPtr reader,
 		struct oval_parser_context *context,
@@ -171,10 +162,7 @@ int _oval_syschar_parse_subtag(
 	char *namespace = (char*) xmlTextReaderNamespaceUri(reader);
 	int return_code;
 	if(strcmp("message",tagname)==0){
-		void consume(struct oval_message *message, void* null){
-			add_oval_syschar_message(syschar, message);
-		}
-		return_code = oval_message_parse_tag(reader, context, &consume, NULL);
+		return_code = oval_message_parse_tag(reader, context, &_oval_syschar_parse_subtag_consume, syschar);
 	}else if(strcmp("variable_value",tagname)==0){//TODO
 		return_code = oval_parser_skip_tag(reader, context);
 	}else if(strcmp("reference",tagname)==0){
@@ -270,9 +258,9 @@ void oval_syschar_to_print(struct oval_syschar *syschar, char *indent,
 	printf("%sFLAG    = %d\n", nxtindent, oval_syschar_flag(syschar));
 	{//messages
 		struct oval_iterator_message *messages = oval_syschar_messages(syschar);
-		int idx;for(idx=1;oval_iterator_message_has_more(messages);idx++){
+		int i;for(i=1;oval_iterator_message_has_more(messages);i++){
 			struct oval_message *message = oval_iterator_message_next(messages);
-			oval_message_to_print(message, nxtindent, idx);
+			oval_message_to_print(message, nxtindent, i);
 		}
 	}
 	{//sysinfo

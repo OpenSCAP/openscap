@@ -125,6 +125,32 @@ void add_oval_sysinfo_interfaces(struct oval_sysinfo *sysinfo, struct oval_sysin
 
 extern const char* NAMESPACE_OVALSYS;
 
+		void _oval_sysinfo_parse_tag_consume_os_name(char* text, void* sysinfo)
+		{
+			set_oval_sysinfo_os_name(sysinfo, text);
+		}
+		void _oval_sysinfo_parse_tag_consume_os_version(char* text, void* sysinfo)
+		{
+			set_oval_sysinfo_os_version(sysinfo, text);
+		}
+		void _oval_sysinfo_parse_tag_consume_os_architecture(char* text, void* sysinfo)
+		{
+			set_oval_sysinfo_os_architecture(sysinfo, text);
+		}
+		void _oval_sysinfo_parse_tag_consume_primary_host_name(char* text, void* sysinfo)
+		{
+			set_oval_sysinfo_primary_host_name(sysinfo, text);
+		}
+		void _oval_sysinfo_parse_tag_consume_int(struct oval_sysint *sysint, void *sysinfo)
+		{
+			add_oval_sysinfo_interfaces(sysinfo, sysint);
+		}
+		int _oval_sysinfo_parse_tag_parse_tag(xmlTextReaderPtr reader,
+			       struct oval_parser_context *context, void *sysinfo)
+		{
+			return oval_sysint_parse_tag
+					(reader, context, &_oval_sysinfo_parse_tag_consume_int, sysinfo);
+		}
 int _oval_sysinfo_parse_tag(xmlTextReaderPtr reader,
 			       struct oval_parser_context *context, void *user)
 {
@@ -134,42 +160,16 @@ int _oval_sysinfo_parse_tag(xmlTextReaderPtr reader,
 	int is_ovalsys = strcmp(namespace,NAMESPACE_OVALSYS)==0;
 	int return_code;
 	if        (is_ovalsys && (strcmp(tagname,"os_name"          )==0)) {
-		void consume(char* text, void* null)
-		{
-			set_oval_sysinfo_os_name(sysinfo, text);
-		}
-		return_code = oval_parser_text_value(reader, context, &consume, NULL);
+		return_code = oval_parser_text_value(reader, context, &_oval_sysinfo_parse_tag_consume_os_name, sysinfo);
 	} else if (is_ovalsys && (strcmp(tagname,"os_version"       )==0)) {
-		void consume(char* text, void* null)
-		{
-			set_oval_sysinfo_os_version(sysinfo, text);
-		}
-		return_code = oval_parser_text_value(reader, context, &consume, NULL);
+		return_code = oval_parser_text_value(reader, context, &_oval_sysinfo_parse_tag_consume_os_version, sysinfo);
 	} else if (is_ovalsys && (strcmp(tagname,"architecture"     )==0)) {
-		void consume(char* text, void* null)
-		{
-			set_oval_sysinfo_os_architecture(sysinfo, text);
-		}
-		return_code = oval_parser_text_value(reader, context, &consume, NULL);
+		return_code = oval_parser_text_value(reader, context, &_oval_sysinfo_parse_tag_consume_os_architecture, sysinfo);
 	} else if (is_ovalsys && (strcmp(tagname,"primary_host_name")==0)) {
-		void consume(char* text, void* null)
-		{
-			set_oval_sysinfo_primary_host_name(sysinfo, text);
-		}
-		return_code = oval_parser_text_value(reader, context, &consume, NULL);
+		return_code = oval_parser_text_value(reader, context, &_oval_sysinfo_parse_tag_consume_primary_host_name, sysinfo);
 	} else if (is_ovalsys && (strcmp(tagname,"interfaces")==0)) {
-		void consume_int(struct oval_sysint *sysint, void *null)
-		{
-			add_oval_sysinfo_interfaces(sysinfo, sysint);
-		}
-		int parse_tag(xmlTextReaderPtr reader,
-			       struct oval_parser_context *context, void *null)
-		{
-			return oval_sysint_parse_tag
-					(reader, context, &consume_int, NULL);
-		}
 		return_code = oval_parser_parse_tag
-			(reader, context, &parse_tag, sysinfo);
+			(reader, context, &_oval_sysinfo_parse_tag_parse_tag, sysinfo);
 	} else {
 		char message[200]; *message = 0;
 		sprintf(message, "_oval_sysinfo_parse_tag:: skipping <%s:%s>",

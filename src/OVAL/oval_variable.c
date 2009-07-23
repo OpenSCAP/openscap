@@ -146,14 +146,10 @@ void oval_variable_free(struct oval_variable *variable)
 			}
 			break;
 		case OVAL_VARIABLE_CONSTANT:{
-				void free_value(void *value) {
-					oval_value_free((struct oval_value *)
-							value);
-				}
 				oval_collection_free_items((struct
 							    oval_collection *)
 							   variable->extension,
-							   &free_value);
+							   (oscap_destruct_func)oval_value_free);
 			} break;
 		case OVAL_VARIABLE_EXTERNAL: break;
 		case OVAL_VARIABLE_UNKNOWN: break;
@@ -235,6 +231,9 @@ void set_oval_variable_component(struct oval_variable *variable,
 	}
 }
 
+void _oval_variable_parse_local_tag_component_consumer(struct oval_component *component, void *variable) {
+	set_oval_variable_component(variable, component);
+}
 int _oval_variable_parse_local_tag(xmlTextReaderPtr reader,
 				   struct oval_parser_context *context,
 				   void *user)
@@ -242,12 +241,9 @@ int _oval_variable_parse_local_tag(xmlTextReaderPtr reader,
 	struct oval_variable *variable = (struct oval_variable *)user;
 	xmlChar *tagname = xmlTextReaderName(reader);
 	xmlChar *namespace = xmlTextReaderNamespaceUri(reader);
-	void component_consumer(struct oval_component *component, void *null) {
-		set_oval_variable_component(variable, component);
-	}
 	int return_code =
-	    oval_component_parse_tag(reader, context, &component_consumer,
-				     NULL);
+	    oval_component_parse_tag(reader, context, &_oval_variable_parse_local_tag_component_consumer,
+				     variable);
 	if (return_code != 1) {
 		int line = xmlTextReaderGetParserLineNumber(reader);
 		printf

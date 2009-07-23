@@ -413,13 +413,9 @@ void oval_component_free(struct oval_component *component)
 	default:{
 			oval_component_FUNCTION_t *function =
 			    (oval_component_FUNCTION_t *) component;
-			void free_subcomp(void *subcomp) {
-				oval_component_free((struct oval_component *)
-						    subcomp);
-			}
 			oval_collection_free_items(function->
 						   function_components,
-						   &free_subcomp);
+						   (oscap_destruct_func)oval_component_free);
 			switch (component->type) {
 			case OVAL_FUNCTION_BEGIN:
 			case OVAL_FUNCTION_END:{
@@ -497,14 +493,15 @@ void set_oval_component_variable(struct oval_component *component,
 	}
 }
 
+void oval_value_consume(struct oval_value *value, void *component) {
+	set_oval_component_literal_value(component, value);
+}
+
 int _oval_component_parse_LITERAL_tag
     (xmlTextReaderPtr reader, struct oval_parser_context *context,
      struct oval_component *component) {
-	void value_consumer(struct oval_value *value, void *null) {
-		set_oval_component_literal_value(component, value);
-	}
 	int return_code =
-	    oval_value_parse_tag(reader, context, value_consumer, NULL);
+	    oval_value_parse_tag(reader, context, oval_value_consume, component);
 	return return_code;
 }
 
@@ -535,23 +532,25 @@ int _oval_component_parse_VARREF_tag
 	return return_code;
 }
 
+	void oval_subcomp_consume(struct oval_component *subcomp, void *func) {
+		oval_component_FUNCTION_t *function = func;
+		oval_collection_add(function->function_components,
+				    (void *)subcomp);
+	}
+	int oval_subcomp_tag_consume(xmlTextReaderPtr reader,
+				 struct oval_parser_context *context,
+				 void *func) {
+		return oval_component_parse_tag(reader, context,
+						&oval_subcomp_consume, func);
+	}
+
 int _oval_component_parse_FUNCTION_tag
     (xmlTextReaderPtr reader, struct oval_parser_context *context,
      struct oval_component *component) {
 	oval_component_FUNCTION_t *function =
 	    (oval_component_FUNCTION_t *) component;
-	void subcomp_consumer(struct oval_component *subcomp, void *null) {
-		oval_collection_add(function->function_components,
-				    (void *)subcomp);
-	}
-	int subcomp_tag_consumer(xmlTextReaderPtr reader,
-				 struct oval_parser_context *context,
-				 void *null) {
-		return oval_component_parse_tag(reader, context,
-						&subcomp_consumer, NULL);
-	}
 	int return_code =
-	    oval_parser_parse_tag(reader, context, &subcomp_tag_consumer, NULL);
+	    oval_parser_parse_tag(reader, context, &oval_subcomp_tag_consume, function);
 	return return_code;
 }
 
@@ -708,6 +707,23 @@ int oval_component_parse_tag(xmlTextReaderPtr reader,
 	return return_code;
 }
 
+void function_comp_to_print(struct oval_component *component, char* nxtindent) {
+	struct oval_iterator_component *subcomps =
+		oval_component_function_components(component);
+	if (oval_iterator_component_has_more(subcomps)) {
+		int i;
+		for (i = 1;
+			 oval_iterator_component_has_more(subcomps);
+			 i++) {
+			struct oval_component *subcomp =
+				oval_iterator_component_next(subcomps);
+			oval_component_to_print(subcomp, nxtindent, i);
+		}
+	} else
+		printf("%sFUNCTION_COMPONENTS <<NONE BOUND>>\n",
+			   nxtindent);
+}
+
 void oval_component_to_print(struct oval_component *component, char *indent,
 			     int idx)
 {
@@ -725,22 +741,6 @@ void oval_component_to_print(struct oval_component *component, char *indent,
 	       oval_component_type(component));
 	if (oval_component_type(component) > OVAL_COMPONENT_FUNCTION) {
 		//oval_component_FUNCTION_t *function = (oval_component_FUNCTION_t *) component;
-	}
-	void function_to_print() {
-		struct oval_iterator_component *subcomps =
-		    oval_component_function_components(component);
-		if (oval_iterator_component_has_more(subcomps)) {
-			int i;
-			for (i = 1;
-			     oval_iterator_component_has_more(subcomps);
-			     i++) {
-				struct oval_component *subcomp =
-				    oval_iterator_component_next(subcomps);
-				oval_component_to_print(subcomp, nxtindent, i);
-			}
-		} else
-			printf("%sFUNCTION_COMPONENTS <<NONE BOUND>>\n",
-			       nxtindent);
 	}
 	switch (oval_component_type(component)) {
 	case OVAL_COMPONENT_LITERAL:{
@@ -775,25 +775,25 @@ void oval_component_to_print(struct oval_component *component, char *indent,
 	case OVAL_FUNCTION_ARITHMETIC:{
 			printf("%sARITHMETIC_OPERATION %d\n", nxtindent,
 			       oval_component_arithmetic_operation(component));
-			function_to_print();
+			function_comp_to_print(component, nxtindent);
 		}
 		break;
 	case OVAL_FUNCTION_BEGIN:{
 			printf("%sBEGIN_CHARACTER %s\n", nxtindent,
 			       oval_component_begin_character(component));
-			function_to_print();
+			function_comp_to_print(component, nxtindent);
 		}
 		break;
 	case OVAL_FUNCTION_END:{
 			printf("%sEND_CHARACTER %s\n", nxtindent,
 			       oval_component_end_character(component));
-			function_to_print();
+			function_comp_to_print(component, nxtindent);
 		}
 		break;
 	case OVAL_FUNCTION_SPLIT:{
 			printf("%sSPLIT_DELIMITER %s\n", nxtindent,
 			       oval_component_split_delimiter(component));
-			function_to_print();
+			function_comp_to_print(component, nxtindent);
 		}
 		break;
 	case OVAL_FUNCTION_SUBSTRING:{
@@ -801,7 +801,7 @@ void oval_component_to_print(struct oval_component *component, char *indent,
 			       oval_component_substring_start(component));
 			printf("%sSUBSTRING_LENGTH %d\n", nxtindent,
 			       oval_component_substring_length(component));
-			function_to_print();
+			function_comp_to_print(component, nxtindent);
 		}
 		break;
 	case OVAL_FUNCTION_TIMEDIF:{
@@ -809,13 +809,13 @@ void oval_component_to_print(struct oval_component *component, char *indent,
 			       oval_component_timedif_format_1(component));
 			printf("%sTIMEDIF_FORMAT_2  %d\n", nxtindent,
 			       oval_component_timedif_format_2(component));
-			function_to_print();
+			function_comp_to_print(component, nxtindent);
 		}
 		break;
 	case OVAL_FUNCTION_REGEX_CAPTURE:
 	case OVAL_FUNCTION_ESCAPE_REGEX:
 	case OVAL_FUNCTION_CONCAT:{
-			function_to_print();
+			function_comp_to_print(component, nxtindent);
 		}
 		break;
 	default: break;

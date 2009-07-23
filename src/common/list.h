@@ -33,7 +33,6 @@
 #include <stdbool.h>
 #include "util.h"
 
-typedef void(*oscap_destruct_func)(void*);
 typedef void(*oscap_dump_func)(void*,int);
 
 /*
