@@ -19,11 +19,13 @@ int64_t strto_int64 (const char *str, size_t len, char **endptr, int base)
 
 int64_t strto_int64_bin (const char *str, size_t len, char **endptr)
 {
+        errno = 0;
         return INT64_C(0);
 }
 
 int64_t strto_int64_oct (const char *str, size_t len, char **endptr)
 {
+        errno = 0;
         return INT64_C(0);
 }
 
@@ -33,6 +35,7 @@ int64_t strto_int64_dec (const char *str, size_t len, char **endptr)
         int8_t  p;
         char   *s;
         
+        errno = 0;
         n = 0;
         p = 1;
         s = (char *)str;
@@ -83,6 +86,7 @@ int64_t strto_int64_dec (const char *str, size_t len, char **endptr)
 
 int64_t strto_int64_hex (const char *str, size_t len, char **endptr)
 {
+        errno = 0;
         return INT64_C(0);
 }
 
@@ -107,6 +111,7 @@ uint64_t strto_uint64_bin (const char *str, size_t len, char **endptr)
         char    *s;
         unsigned char c;
 
+        errno = 0;
         n = t = 0;
         s = (char *)str;
 
@@ -156,6 +161,7 @@ uint64_t strto_uint64_oct (const char *str, size_t len, char **endptr)
         char    *s;
         unsigned char c;
 
+        errno = 0;
         n = t = 0;
         s = (char *)str;
 
@@ -204,6 +210,7 @@ uint64_t strto_uint64_dec (const char *str, size_t len, char **endptr)
         char    *s;
         unsigned char c;
 
+        errno = 0;
         n = t = 0;
         s = (char *)str;
 
@@ -252,6 +259,7 @@ uint64_t strto_uint64_hex (const char *str, size_t len, char **endptr)
         char    *s;
         unsigned char c;
 
+        errno = 0;
         n = t = 0;
         s = (char *)str;
         
@@ -306,6 +314,7 @@ double strto_double (const char *str, size_t len, char **endptr)
 {
         char s[256];
         
+        errno = 0;
         /* FIXME: temporary solution */
         if (len < (sizeof s)/(sizeof (char))) {
                 memcpy (s, str, sizeof (char) * len);
