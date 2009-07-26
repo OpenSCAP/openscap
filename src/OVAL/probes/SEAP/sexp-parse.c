@@ -559,14 +559,14 @@ SEXP_t *SEXP_parse (SEXP_psetup_t *setup, const char *buf, size_t buflen, SEXP_p
                                 {
                                         int64_t number;
                                         
-                                        number = strto_int64_dec (pbuf + i, i + d, NULL);
+                                        number = strto_int64_dec (pbuf + i, d, NULL);
                                         
                                         switch (errno) {
                                         case ERANGE:
-                                                _D("Number \"%.*s\" out of range.\n", i + d, pbuf + i);
+                                                _D("Number \"%.*s\" out of range.\n", d, pbuf + i);
                                                 goto invalid_number;
                                         case EINVAL:
-                                                _D("Invalid number: \"%.*s\"\n", i + d, pbuf + i);
+                                                _D("Invalid number: \"%.*s\"\n", d, pbuf + i);
                                                 abort ();
                                         }
                                         
@@ -600,14 +600,14 @@ SEXP_t *SEXP_parse (SEXP_psetup_t *setup, const char *buf, size_t buflen, SEXP_p
                                 {
                                         uint64_t number;
                                         
-                                        number = strto_uint64_dec (pbuf + i, i + d, NULL);
+                                        number = strto_uint64_dec (pbuf + i, d, NULL);
                                         
                                         switch (errno) {
                                         case ERANGE:
-                                                _D("Number \"%.*s\" out of range.\n", i + d, pbuf + i);
+                                                _D("Number \"%.*s\" out of range.\n", d, pbuf + i);
                                                 goto invalid_number;
                                         case EINVAL:
-                                                _D("Invalid number: \"%.*s\"\n", i + d, pbuf + i);
+                                                _D("Invalid number: \"%.*s\"\n", d, pbuf + i);
                                                 abort ();
                                         }
                                         
@@ -643,14 +643,14 @@ SEXP_t *SEXP_parse (SEXP_psetup_t *setup, const char *buf, size_t buflen, SEXP_p
                         {
                                 double number;
                                 
-                                number = strto_double (pbuf + i, i + d, NULL);
+                                number = strto_double (pbuf + i, d, NULL);
                                 
                                 switch (errno) {
                                 case ERANGE:
-                                        _D("Number \"%.*s\" out of range.\n", i + d, pbuf + i);
+                                        _D("Number \"%.*s\" out of range.\n", d, pbuf + i);
                                         goto invalid_number;
                                 case EINVAL:
-                                        _D("Invalid number: \"%.*s\"\n", i + d, pbuf + i);
+                                        _D("Invalid number: \"%.*s\"\n", d, pbuf + i);
                                         abort ();
                                 }
                                 
@@ -695,10 +695,10 @@ SEXP_t *SEXP_parse (SEXP_psetup_t *setup, const char *buf, size_t buflen, SEXP_p
                 while (isspace(pbuf[++i]));
                 goto L_NO_SEXP_ALLOC;
         L_PAROPEN:
-                {       LIST_t *subl;
+                {       /* LIST_t *subl; */
                         
                         SEXP_list_init (sexp);
-                        //subl = &(sexp->atom.list);
+                        /* subl = &(sexp->atom.list); */
                         
                         /* NUL is not a valid token end inside a list */
                         if (PSTATE(pstatep)->lstack.LIST_stack_cnt == 1) {
