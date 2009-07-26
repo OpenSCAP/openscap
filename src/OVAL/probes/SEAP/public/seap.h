@@ -6,6 +6,7 @@
 #include <seap-debug.h>
 #include <sexp.h>
 #include <seap-types.h>
+#include <seap-command.h>
 
 SEAP_CTX_t *SEAP_CTX_new  (void);
 void        SEAP_CTX_init (SEAP_CTX_t *ctx);

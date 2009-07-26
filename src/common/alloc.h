@@ -42,7 +42,7 @@ void *  __oscap_reallocf_dbg (void *p, size_t s, const char *f, size_t l);
 __P void *oscap_reallocf     (void *p, size_t s) { return __oscap_reallocf_dbg (p, s, __FUNCTION__, 0); }
 
 void   __oscap_free_dbg (void **p, const char *f, size_t l);
-__P void oscap_free     (void  *p) { __oscap_free_dbg (p, __FUNCTION__, 0); }
+__P void oscap_free     (void  *p) { __oscap_free_dbg (&p, __FUNCTION__, 0); }
 
 # define oscap_alloc(s)       __oscap_alloc_dbg (s, __PRETTY_FUNCTION__, __LINE__)
 # define oscap_calloc(n, s)   __oscap_calloc_dbg (n, s, __PRETTY_FUNCTION__, __LINE__)

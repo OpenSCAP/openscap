@@ -88,7 +88,7 @@ int sch_pipe_connect (SEAP_desc_t *desc, const char *uri, uint32_t flags)
         pid_t pid;
         int   err;
         int   pfd[2];
-        uint8_t i;
+        /* uint8_t i; */
                 
         desc->scheme_data = sm_talloc (sch_pipedata_t);
         DATA(desc)->execpath = execpath = get_exec_path (uri, flags);

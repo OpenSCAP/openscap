@@ -1,12 +1,14 @@
+#include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdarg.h>
 #include <ctype.h>
 #include <assert.h>
 #include <errno.h>
 #include <config.h>
 #include "generic/common.h"
-#include "sm_alloc.h"
+#include "public/sm_alloc.h"
 #include "_sexp-types.h"
 #include "_sexp-manip.h"
 
@@ -916,6 +918,11 @@ SEXP_t *SEXP_string_new (const void *str, size_t len)
         _A(str != NULL);
         /* _A(len > 0); */
         
+#if !defined(NDEBUG)
+        if (memchr (str, '\0', len) != NULL) {
+                _D("WARN: NUL found before end-of-string.\n");
+        }
+#endif
         sexp = SEXP_new ();
         SEXP_SETTYPE(sexp, ATOM_STRING);
         sexp->atom.string.str = xmemdup (str, len);
@@ -930,6 +937,7 @@ SEXP_t *SEXP_string_newf (const char *fmt, ...) {
         SEXP_t *sexp = NULL;
         
         va_start (ap, fmt);
+        /* FIXME: waste of 1 byte */
         if (vasprintf (&str, fmt, ap) != -1) {
                 sexp = SEXP_new ();
                 SEXP_SETTYPE(sexp, ATOM_STRING);
@@ -1590,7 +1598,7 @@ err:
 SEXP_t *SEXP_list_reduce (SEXP_t *list, SEXP_t *(*fn) (const SEXP_t *, const SEXP_t *), int strategy)
 {
         SEXP_t *res;
-        size_t  i;
+        /* size_t  i; */
 
         if (list == NULL) {
                 errno = EFAULT;
