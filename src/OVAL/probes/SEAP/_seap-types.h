@@ -16,6 +16,7 @@ struct SEAP_CTX {
         SEXP_format_t fmt_out;
         SEAP_desctable_t  sd_table;
         SEAP_cmdtbl_t *cmd_c_table;
+        SEAP_cflags_t  cflags;
 };
 
 typedef struct {

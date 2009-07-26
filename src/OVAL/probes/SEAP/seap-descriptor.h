@@ -21,6 +21,7 @@ typedef struct {
         SEAP_scheme_t  scheme; /* Protocol/Scheme used for this descriptor */
         void          *scheme_data; /* Protocol/Scheme related data */
         
+        SEAP_cmdid_t   next_cid;
         SEAP_cmdtbl_t *cmd_c_table; /* Local SEAP commands */
         SEAP_cmdtbl_t *cmd_w_table; /* Waiting SEAP commands */
 } SEAP_desc_t;

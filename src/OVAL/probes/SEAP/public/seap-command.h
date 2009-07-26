@@ -25,8 +25,9 @@ int SEAP_cmd_register   (SEAP_CTX_t *ctx, SEAP_cmdcode_t code, uint32_t flags, S
 int SEAP_cmd_unregister (SEAP_CTX_t *ctx, SEAP_cmdcode_t code);
 
 SEXP_t *SEAP_cmd_exec (SEAP_CTX_t    *ctx,
-                       int            where,
-                       SEAP_cmdcode_t cmd,
+                       int            sd,
+                       uint32_t       flags,
+                       SEAP_cmdcode_t code,
                        SEXP_t        *args,
                        SEAP_cmdtype_t type,
                        SEAP_cmdfn_t   func,

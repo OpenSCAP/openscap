@@ -45,8 +45,8 @@ libseap_la_SOURCES= generic/bfind.c		\
 		    sm_alloc.c			\
 		    seap-debug.c
 
-libseap_la_CFLAGS= -DUSE_XMALLOC -DXMALLOC_EXIT -DWANT_BASE64 -I$(top_srcdir) -I. -I public/
-libseap_la_LDFLAGS=
+libseap_la_CFLAGS= @pthread_cflags@ -DUSE_XMALLOC -DXMALLOC_EXIT -DWANT_BASE64 -I$(top_srcdir) -I. -I public/ 
+libseap_la_LDFLAGS= @pthread_ldflags@
 
 include_HEADERS= public/seap-command.h	\
 		 public/seap-debug.h	\

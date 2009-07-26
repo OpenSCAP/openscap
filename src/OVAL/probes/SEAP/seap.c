@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <pthread.h>
 #include <errno.h>
 #include <config.h>
 #include "public/sm_alloc.h"
@@ -79,6 +80,7 @@ int SEAP_desc_add (SEAP_desctable_t *sd_table, SEXP_pstate_t *pstate,
                 sd_table->sd[sd].scheme  = scheme;
                 sd_table->sd[sd].scheme_data = scheme_data;
                 sd_table->sd[sd].ostate  = NULL;
+                sd_table->sd[sd].next_cid = 0;
                 sd_table->sd[sd].cmd_c_table = SEAP_cmdtbl_new ();
                 sd_table->sd[sd].cmd_w_table = SEAP_cmdtbl_new ();
 
@@ -352,6 +354,22 @@ static int __SEXP_recvmsg_process_err (void)
         return (-1);
 }
 
+static void *__SEAP_cmdexec_worker (void *arg)
+{
+        SEAP_cmdjob_t *job;
+        SEXP_t        *res;
+
+        job = (SEAP_cmdjob_t *)arg;
+        res = SEAP_cmd_exec (job->ctx, job->sd,
+                             SEAP_EXEC_LOCAL,
+                             job->cmd.code, job->cmd.args,
+                             SEAP_CMDCLASS_USR, NULL, NULL);
+        
+        /* send */
+        
+        return (NULL);
+}
+
 static int __SEXP_recvmsg_process_cmd (SEAP_CTX_t *ctx, int sd, SEXP_t *cmd_sexp)
 {
         SEAP_cmd_t cmd;
@@ -450,13 +468,76 @@ static int __SEXP_recvmsg_process_cmd (SEAP_CTX_t *ctx, int sd, SEXP_t *cmd_sexp
         }
         
         cmd.args = SEXP_list_nth (cmd_sexp, ++i);
-        
-        
 
-        /* lookup */
-        /* exec */
-        /* send reply */
-        return (-1);
+        if (ctx->cflags & SEAP_CFLG_THREAD) {
+                pthread_t      th;
+                pthread_attr_t th_attrs;
+                
+                SEAP_cmdjob_t *job;
+                
+                /* Initialize thread stuff */
+                pthread_attr_init (&th_attrs);
+                pthread_attr_setdetachstate (&th_attrs, PTHREAD_CREATE_DETACHED);
+                
+                /* Prepare the job */
+                job = SEAP_cmdjob_new ();
+                job->ctx = ctx;
+                job->sd  = sd;
+                memcpy (&(job->cmd), &cmd, sizeof (SEAP_cmd_t));
+                
+                /* Create the worker */
+                if (pthread_create (&th, &th_attrs,
+                                    &__SEAP_cmdexec_worker, (void *)job) != 0)
+                {
+                        _D("Can't create worker thread: %u, %s.\n",
+                           errno, strerror (errno));
+                        
+                        SEAP_cmdjob_free (job);
+                        pthread_attr_destroy (&th_attrs);
+
+                        return (-1);
+                }
+                
+                pthread_attr_destroy (&th_attrs);
+        } else {
+                SEXP_t *res, *sexp;
+                SEAP_desc_t  *dsc;
+                
+                if (cmd.flags & SEAP_CMDFLAG_REPLY) {
+                        res = SEAP_cmd_exec (ctx, sd, SEAP_EXEC_WQUEUE,
+                                             cmd.rid, cmd.args,
+                                             SEAP_CMDCLASS_USR, NULL, NULL);
+                } else {
+                        res = SEAP_cmd_exec (ctx, sd, SEAP_EXEC_LOCAL,
+                                             cmd.code, cmd.args,
+                                             SEAP_CMDCLASS_USR, NULL, NULL);
+                        
+                        /* send */
+                        dsc = &(ctx->sd_table.sd[sd]);
+                        
+                        cmd.rid = cmd.id;
+#if defined(HAVE_ATOMIC_FUNCTIONS)
+                        cmd.id = __sync_fetch_and_add (&(dsc->next_cid), 1);
+#else
+                        cmd.id = dsc->next_cid++;
+#endif
+                        cmd.flags |= SEAP_CMDFLAG_REPLY;
+                        cmd.args = res;
+                        
+                        sexp = SEAP_cmd2sexp (&cmd);
+                        
+                        if (SCH_SENDSEXP(dsc->scheme, dsc, sexp, 0) < 0) {
+                                _D("SCH_SENDSEXP: FAIL: %u, %s.\n",
+                                   errno, strerror (errno));
+                                SEXP_free (sexp);
+                                return (-1);
+                        }
+
+                        SEXP_free (sexp);
+                }
+        }
+        
+        return (0);
 }
 
 int SEAP_recvmsg (SEAP_CTX_t *ctx, int sd, SEAP_msg_t **seap_msg)
@@ -578,6 +659,9 @@ int SEAP_recvmsg (SEAP_CTX_t *ctx, int sd, SEAP_msg_t **seap_msg)
                 if (SEXP_strcmp (SEXP_list_first (sexp_msg), SEAP_SYM_CMD) == 0) {
                         /* process cmd */
                         switch (ret = __SEXP_recvmsg_process_cmd (ctx, sd, sexp_msg)) {
+                        case  0:
+                                SEXP_free (sexp_msg);
+                                continue;
                         default:
                                 errno = EDOOFUS;
                                 return (-1);
