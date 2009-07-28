@@ -84,4 +84,7 @@ extern globals_t global;
 #define SEAP_LOCK pthread_mutex_lock (&globals.seap_lock)
 #define SEAP_UNLOCK pthread_mutex_unlock (&globals.seap_lock)
 
+#define PROBECMD_STE_FETCH 1
+#define PROBECMD_OBJ_EVAL  2
+
 #endif /* PROBE_H */

@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <string.h>
 #include <stdarg.h>
+#include <errno.h>
 #include "oval_definitions_impl.h"
 #include "oval_collection_impl.h"
 #include "oval_agent_api_impl.h"
@@ -218,7 +219,7 @@ SEXP_t *SEXP_OVALobj_elm_add (SEXP_t *obj, const char *name, SEXP_t *attrs, SEXP
         if (attrs != NULL) {
                 SEXP_VALIDATE(attrs);
         }
-                
+        
         if (value != NULL) {
                 SEXP_VALIDATE(value);
         }

@@ -19,87 +19,179 @@ void   *probe_worker (void *arg);
 
 #define MAX_EVAL_DEPTH 8
 
+SEXP_t *SEXP_OVALste_fetch (SEXP_t *id_list)
+{
+        SEXP_t *res;
+        
+        res = SEAP_cmd_exec (global.ctx, global.sd, 0, PROBECMD_STE_FETCH,
+                             id_list, SEAP_CMDTYPE_SYNC, NULL, NULL);
+        
+        /* add to cache */
+        
+        return (res);
+}
+
+SEXP_t *SEXP_OVALobj_eval (SEXP_t *id)
+{
+        SEXP_t *res;
+        
+        res = SEAP_cmd_exec (global.ctx, global.sd, 0, PROBECMD_OBJ_EVAL,
+                             id, SEAP_CMDTYPE_SYNC, NULL, NULL);
+        
+        return pcache_sexp_get (global.pcache, id);
+}
+
 SEXP_t *SEXP_OVALset_eval (SEXP_t *set, size_t depth)
 {
         const char *str;
 
-        SEXP_t *filters, *items, *item, *res_items;
-                
+        SEXP_t *filters_u, *filters_a;
+        
+        SEXP_t *s_subset[2];
+        size_t  s_subset_i;
+        SEXP_t *o_subset[2];
+        size_t  o_subset_i;
+        
+        SEXP_t *member;
+        SEXP_t *result;
+        
         if (depth > MAX_EVAL_DEPTH) {
                 _D("Too many levels: max=%zu\n", MAX_EVAL_DEPTH);
                 return (NULL);
         }
+                        
+        filters_u = SEXP_list_new (); /* unavailable filters */
+        filters_a = SEXP_list_new (); /* available filters (cached) */
         
-        items = SEXP_list_new ();
-        filters = SEXP_list_new ();
+        s_subset[0] = NULL;
+        s_subset[1] = NULL;
+        s_subset_i = 0;
+        
+        o_subset[0] = NULL;
+        o_subset[1] = NULL;
+        o_subset_i = 0;
+        
+        result = NULL;
         
         /* Get items */
-        SEXP_sublist_foreach (item, set, 2, -1) {
-                str = SEXP_string_cstrp (item);
+        SEXP_sublist_foreach (member, set, 2, -1) {
+                str = SEXP_string_cstrp (member);
                 
-                if (str != NULL) {
+                if (str != NULL && SEXP_string_length (member) > 0) {
                         switch (*str) {
                         case 's':
-                                if (SEXP_strcmp (item, "set") == 0) {
-                                        SEXP_t *subset;
-                                        
-                                        subset = SEXP_OVALset_eval (item, depth + 1);
-                                        
-                                        if (subset != NULL) {
-                                                SEXP_list_join (items, subset);
+                                if (SEXP_strcmp (member, "set") == 0) {
+                                        if (s_subset_i < 2) {
+                                                s_subset[s_subset_i] = SEXP_OVALset_eval (member, depth + 1);
+                                                ++s_subset_i;
+                                        } else {
+                                                _D("FAIL: more than 2 \"set\"\n");
+                                                goto eval_fail;
                                         }
+                                        
+                                        break;
                                 }
-                                break;
                         case 'o':
-                                if (SEXP_strcmp (item, "obj_ref") == 0) {
-                                        SEXP_t *resobj, *id;
-
-                                        id = SEXP_OVALelm_getattrval (item, "id");
+                                if (SEXP_strcmp (member, "obj_ref") == 0) {
+                                        SEXP_t *id, *res;
+                                        
+                                        id = SEXP_OVALelm_getval (member, 1);
                                         
                                         if (id == NULL) {
-                                                _D("Missing object id!\n");
-                                                break;
+                                                _D("FAIL: set=%p: missing obj_ref value\n", set);
+                                                goto eval_fail;
                                         }
                                         
-                                        resobj = pcache_sexp_get (global.pcache, id);
+                                        res = pcache_sexp_get (global.pcache, id);
                                         
-                                        if (resobj == NULL) {
-                                                /* Request object */
+                                        if (res == NULL) {
+                                                /* cache miss */
+                                                res = SEXP_OVALobj_eval (id);
+                                                
+                                                if (res == NULL) {
+#if !defined(NDEBUG)
+                                                        char *tmp = SEXP_string_cstr (id);
+                                                        _D("FAIL: obj=%s: evaluation failed.\n", tmp);
+                                                        oscap_free (tmp);
+#endif
+                                                        goto eval_fail;
+                                                }
+                                                
+                                                if (o_subset_i < 2) {
+                                                        o_subset[o_subset_i] = res;
+                                                        ++o_subset_i;
+                                                } else {
+                                                        _D("FAIL: more than 2 obj_refs\n");
+                                                        goto eval_fail;
+                                                }
                                         }
                                         
-                                        SEXP_list_join (items, resobj);
+                                        break;
                                 }
-                                break;
                         case 'f':
-                                if (SEXP_strcmp (item, "filter") == 0) {
-                                        SEXP_t *resfilter, *id;
+                                if (SEXP_strcmp (member, "filter") == 0) {
+                                        SEXP_t *id, *res;
                                         
-                                        id = SEXP_OVALelm_getattrval (item, "id");
-
+                                        id = SEXP_OVALelm_getval (member, 1);
+                                        
                                         if (id == NULL) {
-                                                _D("Missing object id!\n");
-                                                break;
+                                                _D("FAIL: set=%p: missing obj_ref value\n", set);
+                                                goto eval_fail;
                                         }
-
-                                        resfilter = pcache_sexp_get (global.pcache, id);
-
-                                        if (resfilter == NULL) {
-                                                /* Request filter */
-                                        }
-
-                                        SEXP_list_add (filters, resfilter);
+                                        
+                                        res = pcache_sexp_get (global.pcache, id);
+                                        
+                                        if (res == NULL)
+                                                SEXP_list_add (filters_u, id);
+                                        else
+                                                SEXP_list_add (filters_a, res);
+                                        
+                                        break;
                                 }
-                                break;
                         default:
                                 _D("Unexpected set element: %.*s\n",
-                                   SEXP_string_length (item), str);
+                                   SEXP_string_length (member), str);
+                                goto eval_fail;
                         }
+                } else {
+                        _D("FAIL: Invalid set element: str=%p, len=%zu\n", str, SEXP_string_length (member));
+                        goto eval_fail;
                 }
         }
+
+        /* request filters */
+        result = SEXP_OVALste_fetch (filters_u);
+        
+        if (result == NULL) {
+#if !defined(NDEBUG)
+                _D("FAIL: can't get unavailable filters:\n");
+                SEXP_list_foreach (result, filters_u) {
+                        SEXP_printfa (result);
+                        printf ("\n");
+                }
+#endif
+                goto eval_fail;
+        }
+        
+        filters_a = SEXP_list_join (filters_a, result);
         
         /* Apply filters to items */
+        /* set operation */
         
-        return (res_items);
+        return (result);
+eval_fail:
+        
+        for (; s_subset_i > 0; --s_subset_i)
+                SEXP_list_free (s_subset[s_subset_i - 1]);
+        
+        for (; o_subset_i > 0; --o_subset_i)
+                SEXP_list_free_nr (o_subset[o_subset_i - 1]);
+        
+        SEXP_list_free (filters_u);
+        SEXP_list_free_nr (filters_a);
+        SEXP_list_free (result);
+        
+        return (NULL);
 }
 
 int main (void)
