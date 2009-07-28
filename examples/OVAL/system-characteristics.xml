@@ -1,0 +1,2071 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<oval_system_characteristics 
+	xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5" 
+	xmlns:ind-sc="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#independent" 
+	xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" 
+	xmlns:oval-sc="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5" 
+	xmlns:win-sc="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5 oval-system-characteristics-schema.xsd http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows windows-system-characteristics-schema.xsd http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#independent independent-system-characteristics-schema.xsd">
+
+  <generator>
+    <oval:product_name>OVAL Definition Interpreter</oval:product_name>
+    <oval:product_version>5.5 Build: 4</oval:product_version>
+    <oval:schema_version>5.5</oval:schema_version>
+    <oval:timestamp>2009-04-10T13:04:10</oval:timestamp>
+    <vendor>The MITRE Corporation</vendor>
+  </generator>
+
+  <system_info>
+    <os_name>unknown Professional Service Pack 1</os_name>
+    <os_version>6.0.6001</os_version>
+    <architecture>INTEL32</architecture>
+    <primary_host_name>tarpit.g2-inc.net</primary_host_name>
+    <interfaces>
+      <interface>
+        <interface_name>Broadcom NetXtreme 57xx Gigabit Controller</interface_name>
+        <ip_address>10.1.5.14</ip_address>
+        <mac_address>00-22-19-21-75-83</mac_address>
+      </interface>
+      <interface>
+        <interface_name>VMware Virtual Ethernet Adapter for VMnet1</interface_name>
+        <ip_address>192.168.29.1</ip_address>
+        <mac_address>00-50-56-C0-00-01</mac_address>
+      </interface>
+      <interface>
+        <interface_name>VMware Virtual Ethernet Adapter for VMnet8</interface_name>
+        <ip_address>192.168.233.1</ip_address>
+        <mac_address>00-50-56-C0-00-08</mac_address>
+      </interface>
+    </interfaces>
+  </system_info>
+
+  <collected_objects>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:1" version="1">
+      <oval-sc:message>ObjectComponent::ComputeValue() - Unable to compute variable value. No items found for the specified object_component id: oval:org.mitre.oval:obj:120</oval-sc:message>
+    </object>
+    <object comment="Registry key that is set when Service Pack 1 for Visual Studio .NET 2002" flag="does not exist" id="oval:org.mitre.oval:obj:10" version="1">
+      <reference item_ref="102"/>
+    </object>
+    <object flag="complete" id="oval:org.mitre.oval:obj:1002" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:200">C:\Windows\System32</variable_value>
+      <reference item_ref="7"/>
+    </object>
+    <object flag="complete" id="oval:org.mitre.oval:obj:1070" version="2">
+      <variable_value variable_id="oval:org.mitre.oval:var:247">C:\Program Files (x86)\Microsoft Office\Office12\</variable_value>
+      <reference item_ref="20"/>
+    </object>
+    <object flag="complete" id="oval:org.mitre.oval:obj:1071" version="1">
+      <reference item_ref="19"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:109" version="1">
+      <reference item_ref="69"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:120" version="1">
+      <reference item_ref="80"/>
+    </object>
+    <object comment="Registry key that hold the current windows os version" flag="complete" id="oval:org.mitre.oval:obj:123" version="1">
+      <reference item_ref="94"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:124" version="1">
+      <reference item_ref="78"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:1339" version="2"/>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:1361" version="1">
+      <reference item_ref="36"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:1377" version="2">
+      <reference item_ref="143"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:1382" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:200">C:\Windows\System32</variable_value>
+    </object>
+    <object flag="complete" id="oval:org.mitre.oval:obj:139" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:200">C:\Windows\System32</variable_value>
+      <reference item_ref="85"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:1415" version="2">
+      <reference item_ref="142"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:144" version="1">
+      <reference item_ref="28"/>
+    </object>
+    <object flag="complete" id="oval:org.mitre.oval:obj:148" version="2">
+      <variable_value variable_id="oval:org.mitre.oval:var:363">C:\Program Files (x86)\Common Files\Microsoft Shared\VBA\VBA6</variable_value>
+      <reference item_ref="27"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:1509" version="1">
+      <reference item_ref="79"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:1510" version="2">
+      <reference item_ref="98"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:1517" version="2">
+      <variable_value variable_id="oval:org.mitre.oval:var:221">C:\Program Files (x86)\Microsoft Office\Office12\</variable_value>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:1518" version="2">
+      <reference item_ref="71"/>
+    </object>
+    <object comment="This registry key identifies the architecture on the system" flag="complete" id="oval:org.mitre.oval:obj:1576" version="1">
+      <reference item_ref="132"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:158" version="1">
+      <reference item_ref="70"/>
+    </object>
+    <object flag="complete" id="oval:org.mitre.oval:obj:160" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:200">C:\Windows\System32</variable_value>
+      <reference item_ref="30"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:1626" version="2">
+      <reference item_ref="99"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:1754" version="1">
+      <reference item_ref="90"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:1808" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:1051">C:\Windows\Microsoft.NET\Framework\v1.1.4322</variable_value>
+    </object>
+    <object flag="complete" id="oval:org.mitre.oval:obj:1809" version="1">
+      <reference item_ref="134"/>
+    </object>
+    <object flag="complete" id="oval:org.mitre.oval:obj:1816" version="0">
+      <variable_value variable_id="oval:org.mitre.oval:var:200">C:\Windows\System32</variable_value>
+      <reference item_ref="125"/>
+    </object>
+    <object flag="complete" id="oval:org.mitre.oval:obj:1826" version="0">
+      <reference item_ref="138"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:1840" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:834">C:\Program Files (x86)\Common Files\Microsoft Shared\web server extensions\12\BIN</variable_value>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:1844" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:96">C:\Program Files (x86)\Microsoft Virtual PC</variable_value>
+      <reference item_ref="115"/>
+    </object>
+    <object flag="complete" id="oval:org.mitre.oval:obj:1854" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:200">C:\Windows\System32</variable_value>
+      <reference item_ref="40"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:1855" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:1051">C:\Windows\Microsoft.NET\Framework\v1.1.4322</variable_value>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:1860" version="1">
+      <reference item_ref="114"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:1889" version="1">
+      <reference item_ref="108"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:189" version="1">
+      <reference item_ref="68"/>
+    </object>
+    <object flag="complete" id="oval:org.mitre.oval:obj:190" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:200">C:\Windows\System32</variable_value>
+      <reference item_ref="34"/>
+    </object>
+    <object flag="complete" id="oval:org.mitre.oval:obj:1909" version="1">
+      <reference item_ref="72"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:191" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:200">C:\Windows\System32</variable_value>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:1982" version="1">
+      <reference item_ref="105"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:2004" version="1">
+      <reference item_ref="113"/>
+    </object>
+    <object flag="complete" id="oval:org.mitre.oval:obj:2009" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:1061">C:\Windows\Microsoft.NET\Framework\v2.0.50727</variable_value>
+      <reference item_ref="96"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:2089" version="1">
+      <oval-sc:message>ObjectComponent::ComputeValue() - Unable to compute variable value. No items found for the specified object_component id: oval:org.mitre.oval:obj:2440</oval-sc:message>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:2104" version="1">
+      <reference item_ref="107"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:2156" version="1">
+      <reference item_ref="144"/>
+    </object>
+    <object flag="complete" id="oval:org.mitre.oval:obj:2163" version="1">
+      <reference item_ref="129"/>
+    </object>
+    <object flag="complete" id="oval:org.mitre.oval:obj:2184" version="0">
+      <variable_value variable_id="oval:org.mitre.oval:var:929">C:\Program Files (x86)\Microsoft Office\Office12</variable_value>
+      <reference item_ref="89"/>
+    </object>
+    <object comment="This registry key identifies the system root." flag="complete" id="oval:org.mitre.oval:obj:219" version="1">
+      <reference item_ref="6"/>
+    </object>
+    <object flag="complete" id="oval:org.mitre.oval:obj:2193" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:297">C:\Program Files (x86)\Microsoft Office\Office12\</variable_value>
+      <reference item_ref="131"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:2202" version="1">
+      <reference item_ref="111"/>
+    </object>
+    <object flag="complete" id="oval:org.mitre.oval:obj:2203" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:200">C:\Windows\System32</variable_value>
+      <reference item_ref="133"/>
+    </object>
+    <object comment="The path to the mshtml.dll file in the system root" flag="complete" id="oval:org.mitre.oval:obj:222" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:200">C:\Windows\System32</variable_value>
+      <reference item_ref="126"/>
+    </object>
+    <object flag="complete" id="oval:org.mitre.oval:obj:2255" version="1">
+      <reference item_ref="127"/>
+    </object>
+    <object flag="complete" id="oval:org.mitre.oval:obj:2308" version="0">
+      <variable_value variable_id="oval:org.mitre.oval:var:553">C:\Program Files (x86)\Common Files\Microsoft Shared\OFFICE12</variable_value>
+      <reference item_ref="139"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:2321" version="1">
+      <reference item_ref="108"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:2423" version="1">
+      <reference item_ref="111"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:2440" version="1">
+      <reference item_ref="84"/>
+    </object>
+    <object comment="This registry key identifies the version of Internet Explorer" flag="complete" id="oval:org.mitre.oval:obj:247" version="1">
+      <reference item_ref="123"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:2500" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:629">C:\Program Files (x86)\Microsoft Virtual Server</variable_value>
+      <reference item_ref="116"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:2501" version="1">
+      <reference item_ref="112"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:2522" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:136">C:\Program Files (x86)\Microsoft Content Management Server\Server\bin</variable_value>
+      <reference item_ref="150"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:2527" version="1">
+      <reference item_ref="106"/>
+    </object>
+    <object flag="complete" id="oval:org.mitre.oval:obj:253" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:200">C:\Windows\System32</variable_value>
+      <reference item_ref="56"/>
+    </object>
+    <object flag="complete" id="oval:org.mitre.oval:obj:2560" version="1">
+      <reference item_ref="128"/>
+    </object>
+    <object flag="complete" id="oval:org.mitre.oval:obj:2575" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:200">C:\Windows\System32</variable_value>
+      <reference item_ref="109"/>
+    </object>
+    <object flag="complete" id="oval:org.mitre.oval:obj:2581" version="1">
+      <reference item_ref="119"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:2591" version="1">
+      <reference item_ref="149"/>
+    </object>
+    <object comment="The rpcrt4.dll located in the system root." flag="complete" id="oval:org.mitre.oval:obj:2619" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:200">C:\Windows\System32</variable_value>
+      <reference item_ref="93"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:2620" version="1">
+      <reference item_ref="110"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:2625" version="1">
+      <reference item_ref="149"/>
+    </object>
+    <object comment="crpe32.dll in the system 32 directory." flag="does not exist" id="oval:org.mitre.oval:obj:2628" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:200">C:\Windows\System32</variable_value>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:263" version="2">
+      <variable_value variable_id="oval:org.mitre.oval:var:1041">C:\Windows\Microsoft.NET\Framework\v1.0.3705</variable_value>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:2686" version="1">
+      <reference item_ref="52"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:2694" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:1041">C:\Windows\Microsoft.NET\Framework\v1.0.3705</variable_value>
+    </object>
+    <object flag="complete" id="oval:org.mitre.oval:obj:2727" version="1">
+      <reference item_ref="145"/>
+    </object>
+    <object flag="complete" id="oval:org.mitre.oval:obj:279" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:200">C:\Windows\System32</variable_value>
+      <reference item_ref="76"/>
+    </object>
+    <object comment="The registry key that identifies the location of the common files directory." flag="complete" id="oval:org.mitre.oval:obj:281" version="1">
+      <reference item_ref="22"/>
+    </object>
+    <object flag="complete" id="oval:org.mitre.oval:obj:3" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:200">C:\Windows\System32</variable_value>
+      <reference item_ref="33"/>
+    </object>
+    <object flag="complete" id="oval:org.mitre.oval:obj:308" version="2">
+      <variable_value variable_id="oval:org.mitre.oval:var:209">C:\Program Files (x86)\Common Files\Microsoft Shared\VGX</variable_value>
+      <reference item_ref="86"/>
+    </object>
+    <object comment="The registry key that holds the location of the program files directory." flag="complete" id="oval:org.mitre.oval:obj:309" version="1">
+      <reference item_ref="1"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:326" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:201">C:\Windows\System32\drivers</variable_value>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:335" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:200">C:\Windows\System32</variable_value>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:384" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:201">C:\Windows\System32\drivers</variable_value>
+    </object>
+    <object flag="complete" id="oval:org.mitre.oval:obj:385" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:200">C:\Windows\System32</variable_value>
+      <reference item_ref="135"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:387" version="1">
+      <reference item_ref="83"/>
+    </object>
+    <object flag="complete" id="oval:org.mitre.oval:obj:390" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:200">C:\Windows\System32</variable_value>
+      <reference item_ref="122"/>
+    </object>
+    <object comment="MSO.DLL for Office 11 in its installation directory" flag="does not exist" id="oval:org.mitre.oval:obj:398" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:214">C:\Program Files (x86)\Common Files\Microsoft Shared\OFFICE11</variable_value>
+    </object>
+    <object flag="complete" id="oval:org.mitre.oval:obj:4" version="2">
+      <variable_value variable_id="oval:org.mitre.oval:var:1061">C:\Windows\Microsoft.NET\Framework\v2.0.50727</variable_value>
+      <reference item_ref="97"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:41" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:201">C:\Windows\System32\drivers</variable_value>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:414" version="1">
+      <reference item_ref="82"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:417" version="1">
+      <reference item_ref="81"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:418" version="1">
+      <reference item_ref="137"/>
+    </object>
+    <object comment="This registry key holds the version of the installed operating system." flag="complete" id="oval:org.mitre.oval:obj:419" version="1">
+      <reference item_ref="94"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:4448" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:201">C:\Windows\System32\drivers</variable_value>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:466" version="1">
+      <reference item_ref="77"/>
+    </object>
+    <object comment="MSO.DLL for Office 10 in its installation directory" flag="does not exist" id="oval:org.mitre.oval:obj:467" version="2">
+      <variable_value variable_id="oval:org.mitre.oval:var:713">C:\Program Files (x86)\Common Files\Microsoft Shared\OFFICE10</variable_value>
+      <reference item_ref="140"/>
+    </object>
+    <object flag="complete" id="oval:org.mitre.oval:obj:4678" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:200">C:\Windows\System32</variable_value>
+      <reference item_ref="91"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:4693" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:200">C:\Windows\System32</variable_value>
+    </object>
+    <object flag="complete" id="oval:org.mitre.oval:obj:47" version="3">
+      <variable_value variable_id="oval:org.mitre.oval:var:743">C:\Program Files (x86)\Common Files\Microsoft Shared\OFFICE11</variable_value>
+      <reference item_ref="35"/>
+    </object>
+    <object flag="complete" id="oval:org.mitre.oval:obj:492" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:221">C:\Program Files (x86)\Microsoft Office\Office12\</variable_value>
+      <reference item_ref="100"/>
+    </object>
+    <object flag="complete" id="oval:org.mitre.oval:obj:493" version="1">
+      <reference item_ref="74"/>
+    </object>
+    <object flag="complete" id="oval:org.mitre.oval:obj:499" version="1">
+      <reference item_ref="58"/>
+    </object>
+    <object comment="HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Internet Explorer\ActiveX Compatibility\{40F23EB7-B397-4285-8F3C-AACE4FA40309}!Compatibility Flags is not equal to 0x00000400" flag="complete" id="oval:org.mitre.oval:obj:5016" version="1">
+      <reference item_ref="59"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:513" version="2">
+      <variable_value variable_id="oval:org.mitre.oval:var:222">C:\Program Files (x86)\Common Files\Microsoft Shared\CDO</variable_value>
+      <reference item_ref="88"/>
+    </object>
+    <object flag="complete" id="oval:org.mitre.oval:obj:5169" version="1">
+      <reference item_ref="21"/>
+    </object>
+    <object flag="complete" id="oval:org.mitre.oval:obj:52" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:200">C:\Windows\System32</variable_value>
+      <reference item_ref="92"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:5272" version="1">
+      <oval-sc:message>ObjectComponent::ComputeValue() - Unable to compute variable value. No items found for the specified object_component id: oval:org.mitre.oval:obj:1509</oval-sc:message>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:5311" version="2"/>
+    <object flag="complete" id="oval:org.mitre.oval:obj:5316" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:929">C:\Program Files (x86)\Microsoft Office\Office12</variable_value>
+      <reference item_ref="89"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:5330" version="1">
+      <oval-sc:message>ObjectComponent::ComputeValue() - Unable to compute variable value. No items found for the specified object_component id: oval:org.mitre.oval:obj:417</oval-sc:message>
+    </object>
+    <object flag="complete" id="oval:org.mitre.oval:obj:5465" version="1">
+      <reference item_ref="75"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:5503" version="1">
+      <oval-sc:message>ObjectComponent::ComputeValue() - Unable to compute variable value. No items found for the specified object_component id: oval:org.mitre.oval:obj:5692</oval-sc:message>
+    </object>
+    <object flag="complete" id="oval:org.mitre.oval:obj:5514" version="1">
+      <reference item_ref="61"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:5518" version="1">
+      <oval-sc:message>ObjectComponent::ComputeValue() - Unable to compute variable value. No items found for the specified object_component id: oval:org.mitre.oval:obj:120</oval-sc:message>
+    </object>
+    <object flag="complete" id="oval:org.mitre.oval:obj:553" version="2">
+      <variable_value variable_id="oval:org.mitre.oval:var:225">C:\Program Files (x86)\Microsoft Office\Office12\</variable_value>
+      <reference item_ref="46"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:5538" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:201">C:\Windows\System32\drivers</variable_value>
+    </object>
+    <object flag="complete" id="oval:org.mitre.oval:obj:554" version="1">
+      <reference item_ref="45"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:555" version="1">
+      <reference item_ref="44"/>
+    </object>
+    <object comment="Registry key specifying where Microsoft Visual Studio 2005 is installed" flag="does not exist" id="oval:org.mitre.oval:obj:5581" version="1">
+      <reference item_ref="103"/>
+    </object>
+    <object comment="This registry key  ProductName" flag="complete" id="oval:org.mitre.oval:obj:5590" version="1">
+      <reference item_ref="152"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:5597" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:200">C:\Windows\System32</variable_value>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:5602" version="1">
+      <oval-sc:message>ObjectComponent::ComputeValue() - Unable to compute variable value. No items found for the specified object_component id: oval:org.mitre.oval:obj:5581</oval-sc:message>
+    </object>
+    <object comment="The registry key that holds the location of the program files directory." flag="does not exist" id="oval:org.mitre.oval:obj:5628" version="1">
+      <reference item_ref="29"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:563" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:201">C:\Windows\System32\drivers</variable_value>
+    </object>
+    <object flag="complete" id="oval:org.mitre.oval:obj:5652" version="1">
+      <reference item_ref="43"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:566" version="1">
+      <reference item_ref="95"/>
+    </object>
+    <object flag="complete" id="oval:org.mitre.oval:obj:5673" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:929">C:\Program Files (x86)\Microsoft Office\Office12</variable_value>
+      <reference item_ref="73"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:5680" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:203">C:\Windows\system32\inetsrv</variable_value>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:5682" version="1">
+      <oval-sc:message>ObjectComponent::ComputeValue() - Unable to compute variable value. No items found for the specified object_component id: oval:org.mitre.oval:obj:5745</oval-sc:message>
+    </object>
+    <object comment="Registry key specifying where Microsoft Visual Studio 2002 is installed" flag="does not exist" id="oval:org.mitre.oval:obj:5692" version="1">
+      <reference item_ref="101"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:570" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:200">C:\Windows\System32</variable_value>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:5731" version="2">
+      <variable_value variable_id="oval:org.mitre.oval:var:929">C:\Program Files (x86)\Microsoft Office\Office12</variable_value>
+    </object>
+    <object comment="Registry key specifying where Microsoft Visual Studio 2003 is installed" flag="does not exist" id="oval:org.mitre.oval:obj:5745" version="1">
+      <reference item_ref="104"/>
+    </object>
+    <object flag="complete" id="oval:org.mitre.oval:obj:5752" version="1">
+      <reference item_ref="60"/>
+      <reference item_ref="61"/>
+      <reference item_ref="62"/>
+      <reference item_ref="63"/>
+      <reference item_ref="64"/>
+      <reference item_ref="65"/>
+      <reference item_ref="66"/>
+      <reference item_ref="67"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:5807" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:201">C:\Windows\System32\drivers</variable_value>
+    </object>
+    <object flag="complete" id="oval:org.mitre.oval:obj:592" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:200">C:\Windows\System32</variable_value>
+      <reference item_ref="121"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:593" version="1">
+      <reference item_ref="118"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:5941" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:107">C:\Program Files (x86)\Microsoft Office\Office11</variable_value>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:5958" version="1">
+      <oval-sc:message>ObjectComponent::ComputeValue() - Unable to compute variable value. No items found for the specified object_component id: oval:org.mitre.oval:obj:6272</oval-sc:message>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:5992" version="1">
+      <reference item_ref="87"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:6032" version="1">
+      <reference item_ref="87"/>
+    </object>
+    <object flag="complete" id="oval:org.mitre.oval:obj:6057" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:200">C:\Windows\System32</variable_value>
+      <reference item_ref="39"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:6089" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:107">C:\Program Files (x86)\Microsoft Office\Office11</variable_value>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:6109" version="2">
+      <variable_value variable_id="oval:org.mitre.oval:var:309">C:\\Windows\\WinSxS\\x86_Microsoft.Windows.GdiPlus_.+</variable_value>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:6119" version="1">
+      <oval-sc:message>ObjectComponent::ComputeValue() - Unable to compute variable value. No items found for the specified object_component id: oval:org.mitre.oval:obj:6808</oval-sc:message>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:6160" version="1">
+      <oval-sc:message>ObjectComponent::ComputeValue() - Unable to compute variable value. No items found for the specified object_component id: oval:org.mitre.oval:obj:6736</oval-sc:message>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:6200" version="1">
+      <reference item_ref="15"/>
+    </object>
+    <object flag="complete" id="oval:org.mitre.oval:obj:622" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:200">C:\Windows\System32</variable_value>
+      <reference item_ref="76"/>
+    </object>
+    <object flag="complete" id="oval:org.mitre.oval:obj:6244" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:200">C:\Windows\System32</variable_value>
+      <reference item_ref="37"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:6255" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:834">C:\Program Files (x86)\Common Files\Microsoft Shared\web server extensions\12\BIN</variable_value>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:6272" version="1">
+      <reference item_ref="14"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:6278" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:70">C:\Program Files (x86)\Windows Media Components\Encoder</variable_value>
+      <reference item_ref="31"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:630" version="1">
+      <reference item_ref="117"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:6307" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:868">C:\Program Files (x86)\Microsoft Office\PowerPoint Viewer</variable_value>
+      <reference item_ref="49"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:6331" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:929">C:\Program Files (x86)\Microsoft Office\Office12</variable_value>
+    </object>
+    <object flag="complete" id="oval:org.mitre.oval:obj:6362" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:929">C:\Program Files (x86)\Microsoft Office\Office12</variable_value>
+      <reference item_ref="54"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:6377" version="1">
+      <reference item_ref="5"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:639" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:200">C:\Windows\System32</variable_value>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:6401" version="1">
+      <oval-sc:message>ObjectComponent::ComputeValue() - Unable to compute variable value. No items found for the specified object_component id: oval:org.mitre.oval:obj:6740</oval-sc:message>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:6420" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:1051">C:\Windows\Microsoft.NET\Framework\v1.1.4322</variable_value>
+    </object>
+    <object flag="complete" id="oval:org.mitre.oval:obj:6428" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:553">C:\Program Files (x86)\Common Files\Microsoft Shared\OFFICE12</variable_value>
+      <reference item_ref="50"/>
+    </object>
+    <object flag="complete" id="oval:org.mitre.oval:obj:6432" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:200">C:\Windows\System32</variable_value>
+      <reference item_ref="17"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:6435" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:107">C:\Program Files (x86)\Microsoft Office\Office11</variable_value>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:6446" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:621">C:\Program Files (x86)\Microsoft Office\Office10</variable_value>
+      <reference item_ref="53"/>
+    </object>
+    <object flag="complete" id="oval:org.mitre.oval:obj:6449" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:773">SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{AC76BA86-1033-F400-BA7E-000000000004}</variable_value>
+      <reference item_ref="16"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:6456" version="1">
+      <reference item_ref="47"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:649" version="2">
+      <reference item_ref="41"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:6492" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:929">C:\Program Files (x86)\Microsoft Office\Office12</variable_value>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:650" version="2">
+      <reference item_ref="136"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:6504" version="1">
+      <oval-sc:message>ObjectComponent::ComputeValue() - Unable to compute variable value. No items found for the specified object_component id: oval:org.mitre.oval:obj:6200</oval-sc:message>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:6509" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:826">C:\Program Files (x86)\Microsoft Office\Office9</variable_value>
+      <reference item_ref="55"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:6532" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:971">C:\Windows\System32\Windows Media\Server</variable_value>
+      <reference item_ref="25"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:6543" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:1041">C:\Windows\Microsoft.NET\Framework\v1.0.3705</variable_value>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:6558" version="1">
+      <oval-sc:message>ObjectComponent::ComputeValue() - Unable to compute variable value. No items found for the specified object_component id: oval:org.mitre.oval:obj:5628</oval-sc:message>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:6563" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:960">C:\Program Files (x86)\iTunes</variable_value>
+      <reference item_ref="32"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:6571" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:896">C:\Program Files (x86)\Microsoft Visual Studio 8\SDK\v2.0\BootStrapper\Packages\ReportViewer</variable_value>
+      <reference item_ref="51"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:6575" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:201">C:\Windows\System32\drivers</variable_value>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:6586" version="1">
+      <reference item_ref="48"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:659" version="1">
+      <oval-sc:message>ObjectComponent::ComputeValue() - Unable to compute variable value. No items found for the specified object_component id: oval:org.mitre.oval:obj:660</oval-sc:message>
+    </object>
+    <object flag="complete" id="oval:org.mitre.oval:obj:6595" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:200">C:\Windows\System32</variable_value>
+      <reference item_ref="38"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:660" version="1">
+      <reference item_ref="148"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:6606" version="1">
+      <oval-sc:message>ObjectComponent::ComputeValue() - Unable to compute variable value. No items found for the specified object_component id: oval:org.mitre.oval:obj:6456</oval-sc:message>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:6616" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:1061">C:\Windows\Microsoft.NET\Framework\v2.0.50727</variable_value>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:6619" version="1">
+      <oval-sc:message>ObjectComponent::ComputeValue() - Unable to compute variable value. No items found for the specified object_component id: oval:org.mitre.oval:obj:6707</oval-sc:message>
+    </object>
+    <object flag="complete" id="oval:org.mitre.oval:obj:662" version="2">
+      <variable_value variable_id="oval:org.mitre.oval:var:231">C:\Program Files (x86)\Microsoft Office\Office12\</variable_value>
+      <reference item_ref="147"/>
+    </object>
+    <object flag="complete" id="oval:org.mitre.oval:obj:663" version="1">
+      <reference item_ref="146"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:6636" version="1">
+      <oval-sc:message>ObjectComponent::ComputeValue() - Unable to compute variable value. No items found for the specified object_component id: oval:org.mitre.oval:obj:6808</oval-sc:message>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:6638" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:938">C:\Program Files (x86)\opera</variable_value>
+      <reference item_ref="2"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:664" version="2">
+      <reference item_ref="141"/>
+    </object>
+    <object comment="HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\NetShow!Version" flag="does not exist" id="oval:org.mitre.oval:obj:6642" version="1">
+      <reference item_ref="24"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:6648" version="1">
+      <oval-sc:message>ObjectComponent::ComputeValue() - Unable to compute variable value. No items found for the specified object_component id: oval:org.mitre.oval:obj:6200</oval-sc:message>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:6668" version="1">
+      <oval-sc:message>ObjectComponent::ComputeValue() - Unable to compute variable value. No items found for the specified object_component id: oval:org.mitre.oval:obj:6703</oval-sc:message>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:6670" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:971">C:\Windows\System32\Windows Media\Server</variable_value>
+      <reference item_ref="25"/>
+    </object>
+    <object comment="HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Media\Server!Version" flag="does not exist" id="oval:org.mitre.oval:obj:6688" version="1">
+      <reference item_ref="23"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:6695" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:200">C:\Windows\System32</variable_value>
+    </object>
+    <object comment="The registry key that holds the location of the program files directory." flag="does not exist" id="oval:org.mitre.oval:obj:6703" version="1">
+      <reference item_ref="8"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:6707" version="1">
+      <reference item_ref="4"/>
+    </object>
+    <object flag="complete" id="oval:org.mitre.oval:obj:6710" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:244">C:\Windows</variable_value>
+      <reference item_ref="18"/>
+    </object>
+    <object flag="complete" id="oval:org.mitre.oval:obj:6711" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:200">C:\Windows\System32</variable_value>
+      <reference item_ref="26"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:6726" version="1">
+      <oval-sc:message>ObjectComponent::ComputeValue() - Unable to compute variable value. No items found for the specified object_component id: oval:org.mitre.oval:obj:6740</oval-sc:message>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:6736" version="1">
+      <reference item_ref="9"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:6740" version="1">
+      <reference item_ref="13"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:6743" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:858">C:\Program Files (x86)\opera</variable_value>
+      <reference item_ref="2"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:6745" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:200">C:\Windows\System32</variable_value>
+    </object>
+    <object flag="complete" id="oval:org.mitre.oval:obj:6751" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:773">SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{AC76BA86-1033-F400-BA7E-000000000004}</variable_value>
+      <reference item_ref="11"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:6761" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:929">C:\Program Files (x86)\Microsoft Office\Office12</variable_value>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:6765" version="1">
+      <oval-sc:message>ObjectComponent::ComputeValue() - Unable to compute variable value. No items found for the specified object_component id: oval:org.mitre.oval:obj:6272</oval-sc:message>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:6808" version="1">
+      <reference item_ref="12"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:6819" version="1">
+      <oval-sc:message>ObjectComponent::ComputeValue() - Unable to compute variable value. No items found for the specified object_component id: oval:org.mitre.oval:obj:6736</oval-sc:message>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:6841" version="1">
+      <oval-sc:message>ObjectComponent::ComputeValue() - Unable to compute variable value. No items found for the specified object_component id: oval:org.mitre.oval:obj:6377</oval-sc:message>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:6857" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:929">C:\Program Files (x86)\Microsoft Office\Office12</variable_value>
+    </object>
+    <object flag="complete" id="oval:org.mitre.oval:obj:6858" version="1">
+      <reference item_ref="10"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:6859" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:200">C:\Windows\System32</variable_value>
+    </object>
+    <object comment="The registry key that holds the version of he wireshark." flag="does not exist" id="oval:org.mitre.oval:obj:6871" version="1">
+      <reference item_ref="3"/>
+    </object>
+    <object flag="complete" id="oval:org.mitre.oval:obj:704" version="1">
+      <variable_value variable_id="oval:org.mitre.oval:var:200">C:\Windows\System32</variable_value>
+      <reference item_ref="57"/>
+    </object>
+    <object comment="This registry key holds the service pack installed on the host if one is present." flag="does not exist" id="oval:org.mitre.oval:obj:717" version="1">
+      <reference item_ref="124"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:732" version="1">
+      <reference item_ref="87"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:780" version="1">
+      <reference item_ref="120"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:850" version="2">
+      <reference item_ref="42"/>
+    </object>
+    <object flag="does not exist" id="oval:org.mitre.oval:obj:938" version="1">
+      <reference item_ref="90"/>
+    </object>
+    <object flag="complete" id="oval:org.mitre.oval:obj:94" version="2">
+      <variable_value variable_id="oval:org.mitre.oval:var:297">C:\Program Files (x86)\Microsoft Office\Office12\</variable_value>
+      <reference item_ref="130"/>
+    </object>
+    <object comment="This is the default family object. Only one family object should exist." flag="complete" id="oval:org.mitre.oval:obj:99" version="1">
+      <reference item_ref="151"/>
+    </object>
+  </collected_objects>
+
+  <system_data>
+    <registry_item id="102" status="does not exist" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key status="does not exist">SOFTWARE\Microsoft\Updates\Visual Studio\7.0\S895309</key>
+    </registry_item>
+    <file_item id="7" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <path>C:\Windows\System32</path>
+      <filename>schannel.dll</filename>
+      <owner>TrustedInstaller</owner>
+      <size datatype="int">268288</size>
+      <a_time datatype="int">11197496829996142</a_time>
+      <c_time datatype="int">11197496829996142</c_time>
+      <m_time datatype="int">294247822429970506</m_time>
+      <ms_checksum>285371</ms_checksum>
+      <version datatype="version">6.0.6001.18175</version>
+      <type>FILE_TYPE_DISK</type>
+      <development_class>vistasp1_gdr</development_class>
+      <company>Microsoft Corporation</company>
+      <internal_name>schannel.dll</internal_name>
+      <language status="not collected"/>
+      <original_filename>schannel.dll</original_filename>
+      <product_name>Microsoft® Windows® Operating System</product_name>
+      <product_version>6.0.6001.18175</product_version>
+    </file_item>
+    <file_item id="20" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <path>C:\Program Files (x86)\Microsoft Office\Office12\</path>
+      <filename>outlook.exe</filename>
+      <owner>SYSTEM</owner>
+      <size datatype="int">12813096</size>
+      <a_time datatype="int">91184332829817357</a_time>
+      <c_time datatype="int">41234341329982215</c_time>
+      <m_time datatype="int">91184332829817357</m_time>
+      <ms_checksum>12818814</ms_checksum>
+      <version datatype="version">12.0.4518.1014</version>
+      <type>FILE_TYPE_DISK</type>
+      <development_class status="does not exist"/>
+      <company>Microsoft Corporation</company>
+      <internal_name>Outlook</internal_name>
+      <language status="not collected"/>
+      <original_filename>Outlook.exe</original_filename>
+      <product_name>Microsoft Office Outlook</product_name>
+      <product_version>12.0.4518.1014</product_version>
+    </file_item>
+    <registry_item id="19" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key>SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\OUTLOOK.EXE</key>
+      <name>Path</name>
+      <type>reg_sz</type>
+      <value>C:\Program Files (x86)\Microsoft Office\Office12\</value>
+    </registry_item>
+    <registry_item id="69" status="does not exist" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key status="does not exist">SOFTWARE\Microsoft\Office\9.0\Publisher\InstallRoot</key>
+    </registry_item>
+    <registry_item id="80" status="does not exist" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key status="does not exist">SOFTWARE\Microsoft\Office\9.0\Common\InstallRoot</key>
+    </registry_item>
+    <registry_item id="94" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key>SOFTWARE\Microsoft\Windows NT\CurrentVersion</key>
+      <name>CurrentVersion</name>
+      <type>reg_sz</type>
+      <value>6.0</value>
+    </registry_item>
+    <registry_item id="78" status="does not exist" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key status="does not exist">SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{2DFE1608-BDCA-11D1-B7AE-00C04FB92F3D}</key>
+    </registry_item>
+    <registry_item id="36" status="does not exist" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key status="does not exist">SOFTWARE\Microsoft\Shared Tools\Web Server Extensions\Setup Packages</key>
+    </registry_item>
+    <registry_item id="143" status="does not exist" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key status="does not exist">SOFTWARE\Microsoft\Office\10.0\Excel\InstallRoot</key>
+    </registry_item>
+    <file_item id="85" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <path>C:\Windows\System32</path>
+      <filename>dnsapi.dll</filename>
+      <owner>TrustedInstaller</owner>
+      <size datatype="int">165888</size>
+      <a_time datatype="int">49286625729907928</a_time>
+      <c_time datatype="int">49286625729907928</c_time>
+      <m_time datatype="int">49286625729907928</m_time>
+      <ms_checksum>168350</ms_checksum>
+      <version datatype="version">6.0.6001.18000</version>
+      <type>FILE_TYPE_DISK</type>
+      <development_class>vista_rtm</development_class>
+      <company>Microsoft Corporation</company>
+      <internal_name>dnsapi</internal_name>
+      <language status="not collected"/>
+      <original_filename>dnsapi</original_filename>
+      <product_name>Microsoft® Windows® Operating System</product_name>
+      <product_version>6.0.6000.16386</product_version>
+    </file_item>
+    <registry_item id="142" status="does not exist" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key status="does not exist">SOFTWARE\Microsoft\Office\9.0\Excel\InstallRoot</key>
+    </registry_item>
+    <registry_item id="28" status="does not exist" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key status="does not exist">SOFTWARE\Microsoft\Updates\Visual Studio\7.1\S918007</key>
+    </registry_item>
+    <file_item id="27" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <oval-sc:message>info - (FileProbe) Unable to get original_filename. No value is available for the specified version-information name, "szSubblock," for file: C:\Program Files (x86)\Common Files\Microsoft Shared\VBA\VBA6\vbe6.dll'
+</oval-sc:message>
+      <path>C:\Program Files (x86)\Common Files\Microsoft Shared\VBA\VBA6</path>
+      <filename>vbe6.dll</filename>
+      <owner>SYSTEM</owner>
+      <size datatype="int">2583344</size>
+      <a_time datatype="int">284020531229811803</a_time>
+      <c_time datatype="int">42950341329982215</c_time>
+      <m_time datatype="int">284020531229811803</m_time>
+      <ms_checksum>2613312</ms_checksum>
+      <version datatype="version">6.5.10.20</version>
+      <type>FILE_TYPE_DISK</type>
+      <development_class status="does not exist"/>
+      <company>Microsoft Corporation</company>
+      <internal_name>VBE6.DLL</internal_name>
+      <language status="not collected"/>
+      <original_filename status="does not exist"/>
+      <product_name>Visual Basic Environment</product_name>
+      <product_version>6.05.1020</product_version>
+    </file_item>
+    <registry_item id="79" status="does not exist" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key status="does not exist">SOFTWARE\Microsoft\Office\10.0\Common\InstallRoot</key>
+    </registry_item>
+    <registry_item id="98" status="does not exist" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key status="does not exist">SOFTWARE\Microsoft\Office\10.0\Word\InstallRoot</key>
+    </registry_item>
+    <registry_item id="71" status="does not exist" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key status="does not exist">SOFTWARE\Microsoft\Office\11.0\Word\InstallRoot</key>
+    </registry_item>
+    <registry_item id="132" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key>SYSTEM\CurrentControlSet\Control\Session Manager\Environment</key>
+      <name>PROCESSOR_ARCHITECTURE</name>
+      <type>reg_sz</type>
+      <value>AMD64</value>
+    </registry_item>
+    <registry_item id="70" status="does not exist" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key status="does not exist">SOFTWARE\Microsoft\Office\11.0\Publisher\InstallRoot</key>
+    </registry_item>
+    <file_item id="30" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <path>C:\Windows\System32</path>
+      <filename>netapi32.dll</filename>
+      <owner>TrustedInstaller</owner>
+      <size datatype="int">466944</size>
+      <a_time datatype="int">125790299429982227</a_time>
+      <c_time datatype="int">125790299429982227</c_time>
+      <m_time datatype="int">125790299429982227</m_time>
+      <ms_checksum>503324</ms_checksum>
+      <version datatype="version">6.0.6001.18157</version>
+      <type>FILE_TYPE_DISK</type>
+      <development_class>vistasp1_gdr</development_class>
+      <company>Microsoft Corporation</company>
+      <internal_name>NetApi32.DLL</internal_name>
+      <language status="not collected"/>
+      <original_filename>NetApi32.DLL</original_filename>
+      <product_name>Microsoft® Windows® Operating System</product_name>
+      <product_version>6.0.6001.18157</product_version>
+    </file_item>
+    <registry_item id="99" status="does not exist" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key status="does not exist">SOFTWARE\Microsoft\Office\9.0\Word\InstallRoot</key>
+    </registry_item>
+    <registry_item id="90" status="does not exist" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key status="does not exist">SOFTWARE\Microsoft\INetStp</key>
+    </registry_item>
+    <registry_item id="134" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key>SOFTWARE\Microsoft\Windows Mail</key>
+      <name>MediaVer</name>
+      <type>reg_sz</type>
+      <value>6.0.6001.18000</value>
+    </registry_item>
+    <file_item id="125" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <path>C:\Windows\System32</path>
+      <filename>ieapfltr.dll</filename>
+      <owner>TrustedInstaller</owner>
+      <size datatype="int">383488</size>
+      <a_time datatype="int">47617425729907928</a_time>
+      <c_time datatype="int">47617425729907928</c_time>
+      <m_time datatype="int">47664225729907928</m_time>
+      <ms_checksum>443600</ms_checksum>
+      <version datatype="version">7.0.6000.16461</version>
+      <type>FILE_TYPE_DISK</type>
+      <development_class status="does not exist"/>
+      <company>Microsoft Corporation</company>
+      <internal_name>IEAPFLTR.DLL</internal_name>
+      <language status="not collected"/>
+      <original_filename>IEAPFLTR.DLL</original_filename>
+      <product_name>Windows® Internet Explorer</product_name>
+      <product_version>7.0.6000.16461</product_version>
+    </file_item>
+    <registry_item id="138" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key>SOFTWARE\Microsoft\Office\12.0\Common\InstallRoot</key>
+      <name>InstallCount</name>
+      <type>reg_dword</type>
+      <value datatype="int">2</value>
+    </registry_item>
+    <file_item id="115" status="does not exist" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <path status="does not exist">C:\Program Files (x86)\Microsoft Virtual PC</path>
+    </file_item>
+    <file_item id="40" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <path>C:\Windows\System32</path>
+      <filename>wmi.dll</filename>
+      <owner>TrustedInstaller</owner>
+      <size datatype="int">5120</size>
+      <a_time datatype="int">79955984429818488</a_time>
+      <c_time datatype="int">226048322829818494</c_time>
+      <m_time datatype="int">197035476829818467</m_time>
+      <ms_checksum>51288</ms_checksum>
+      <version datatype="version">6.0.6000.16386</version>
+      <type>FILE_TYPE_DISK</type>
+      <development_class>vista_rtm</development_class>
+      <company>Microsoft Corporation</company>
+      <internal_name>wmi</internal_name>
+      <language status="not collected"/>
+      <original_filename>wmi.DLL</original_filename>
+      <product_name>Microsoft® Windows® Operating System</product_name>
+      <product_version>6.0.6000.16386</product_version>
+    </file_item>
+    <registry_item id="114" status="does not exist" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key status="does not exist">SOFTWARE\Classes\Installer\Products\B56328045890A99429D04E4D14D45CF8</key>
+    </registry_item>
+    <registry_item id="108" status="does not exist" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key status="does not exist">SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{ABEB838C-A1A7-4C5D-B7E1-8B4314600820}</key>
+    </registry_item>
+    <registry_item id="68" status="does not exist" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key status="does not exist">SOFTWARE\Microsoft\Office\10.0\Publisher\InstallRoot</key>
+    </registry_item>
+    <file_item id="34" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <path>C:\Windows\System32</path>
+      <filename>Msxml6.dll</filename>
+      <owner>TrustedInstaller</owner>
+      <size datatype="int">1334272</size>
+      <a_time datatype="int">81844747029982224</a_time>
+      <c_time datatype="int">81844747029982224</c_time>
+      <m_time datatype="int">81844747029982224</m_time>
+      <ms_checksum>1362315</ms_checksum>
+      <version datatype="version">6.20.1099.0</version>
+      <type>FILE_TYPE_DISK</type>
+      <development_class status="does not exist"/>
+      <company>Microsoft Corporation</company>
+      <internal_name>MSXML6.dll</internal_name>
+      <language status="not collected"/>
+      <original_filename>MSXML6.dll</original_filename>
+      <product_name>Microsoft(R) MSXML 6.0 SP2</product_name>
+      <product_version>6.20.1099.0</product_version>
+    </file_item>
+    <registry_item id="72" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key>SOFTWARE\Microsoft\Office\12.0\Word\InstallRoot</key>
+    </registry_item>
+    <registry_item id="105" status="does not exist" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key status="does not exist">SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{FCE50DB8-C610-4C42-BE5C-193F46C6F812}</key>
+    </registry_item>
+    <registry_item id="113" status="does not exist" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key status="does not exist">SOFTWARE\Classes\Installer\Products\EDDFACCCCECE4EA4DB79400767BB4D9A</key>
+    </registry_item>
+    <file_item id="96" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <path>C:\Windows\Microsoft.NET\Framework\v2.0.50727</path>
+      <filename>Mscorlib.dll</filename>
+      <owner>TrustedInstaller</owner>
+      <size datatype="int">4546560</size>
+      <a_time datatype="int">428492226429996141</a_time>
+      <c_time datatype="int">428492226429996141</c_time>
+      <m_time datatype="int">130153981929961602</m_time>
+      <ms_checksum>4562840</ms_checksum>
+      <version datatype="version">2.0.50727.3074</version>
+      <type>FILE_TYPE_DISK</type>
+      <development_class>QFE</development_class>
+      <company>Microsoft Corporation</company>
+      <internal_name>mscorlib.dll</internal_name>
+      <language status="not collected"/>
+      <original_filename>mscorlib.dll</original_filename>
+      <product_name>Microsoft® .NET Framework</product_name>
+      <product_version>2.0.50727.3074</product_version>
+    </file_item>
+    <registry_item id="107" status="does not exist" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key status="does not exist">SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{CEB3A11A-03EA-11DA-BFBD-00065BBDC0B5}</key>
+    </registry_item>
+    <registry_item id="144" status="does not exist" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key status="does not exist">SOFTWARE\Microsoft\Office\12.0\MOC</key>
+    </registry_item>
+    <registry_item id="129" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key>SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\Mspub.exe</key>
+      <name>Path</name>
+      <type>reg_sz</type>
+      <value>C:\Program Files (x86)\Microsoft Office\Office12\</value>
+    </registry_item>
+    <file_item id="89" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <path>C:\Program Files (x86)\Microsoft Office\Office12</path>
+      <filename>excelcnv.exe</filename>
+      <owner>SYSTEM</owner>
+      <size datatype="int">14674216</size>
+      <a_time datatype="int">354687232029817205</a_time>
+      <c_time datatype="int">46507141329982215</c_time>
+      <m_time datatype="int">354687232029817205</m_time>
+      <ms_checksum>14684051</ms_checksum>
+      <version datatype="version">12.0.4518.1014</version>
+      <type>FILE_TYPE_DISK</type>
+      <development_class status="does not exist"/>
+      <company>Microsoft Corporation</company>
+      <internal_name>Excel</internal_name>
+      <language status="not collected"/>
+      <original_filename>Excel.exe</original_filename>
+      <product_name>2007 Microsoft Office system</product_name>
+      <product_version>12.0.4518.1014</product_version>
+    </file_item>
+    <registry_item id="6" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key>SOFTWARE\Microsoft\Windows NT\CurrentVersion</key>
+      <name>SystemRoot</name>
+      <type>reg_sz</type>
+      <value>C:\Windows</value>
+    </registry_item>
+    <file_item id="131" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <path>C:\Program Files (x86)\Microsoft Office\Office12\</path>
+      <filename>pubconv.dll</filename>
+      <owner>SYSTEM</owner>
+      <size datatype="int">590144</size>
+      <a_time datatype="int">416157798429817196</a_time>
+      <c_time datatype="int">42232741329982215</c_time>
+      <m_time datatype="int">416157798429817196</m_time>
+      <ms_checksum>652414</ms_checksum>
+      <version datatype="version">12.0.4518.1014</version>
+      <type>FILE_TYPE_DISK</type>
+      <development_class status="does not exist"/>
+      <company>Microsoft Corporation</company>
+      <internal_name>PUBCONV</internal_name>
+      <language status="not collected"/>
+      <original_filename>PUBCONV.DLL</original_filename>
+      <product_name>2007 Microsoft Office system</product_name>
+      <product_version>12.0.4518.1014</product_version>
+    </file_item>
+    <registry_item id="111" status="does not exist" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key status="does not exist">SOFTWARE\Classes\Installer\Products\813ACF1D304B0FB43A2E440E1CF2ADD3</key>
+    </registry_item>
+    <file_item id="133" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <path>C:\Windows\System32</path>
+      <filename>firewallapi.dll</filename>
+      <owner>TrustedInstaller</owner>
+      <size datatype="int">403968</size>
+      <a_time datatype="int">98551425729907928</a_time>
+      <c_time datatype="int">98551425729907928</c_time>
+      <m_time datatype="int">98567025729907928</m_time>
+      <ms_checksum>442604</ms_checksum>
+      <version datatype="version">6.0.6001.18000</version>
+      <type>FILE_TYPE_DISK</type>
+      <development_class>longhorn_rtm</development_class>
+      <company>Microsoft Corporation</company>
+      <internal_name>FirewallAPI.DLL</internal_name>
+      <language status="not collected"/>
+      <original_filename>FirewallAPI.DLL.MUI</original_filename>
+      <product_name>Microsoft® Windows® Operating System</product_name>
+      <product_version>6.0.6001.18000</product_version>
+    </file_item>
+    <file_item id="126" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <path>C:\Windows\System32</path>
+      <filename>mshtml.dll</filename>
+      <owner>TrustedInstaller</owner>
+      <size datatype="int">3580416</size>
+      <a_time datatype="int">23030496829996142</a_time>
+      <c_time datatype="int">23030496829996142</c_time>
+      <m_time datatype="int">300350400029980375</m_time>
+      <ms_checksum>3612278</ms_checksum>
+      <version datatype="version">7.0.6001.18203</version>
+      <type>FILE_TYPE_DISK</type>
+      <development_class>vista_rtm</development_class>
+      <company>Microsoft Corporation</company>
+      <internal_name>MSHTML</internal_name>
+      <language status="not collected"/>
+      <original_filename>MSHTML.DLL.MUI</original_filename>
+      <product_name>Windows® Internet Explorer</product_name>
+      <product_version>7.00.6000.16386</product_version>
+    </file_item>
+    <wmi_item id="127" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <namespace>root\cimv2</namespace>
+      <wql>select HotfixID from Win32_QuickFixEngineering where HotFixID='KB938123'</wql>
+      <result status="does not exist"/>
+    </wmi_item>
+    <file_item id="139" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <path>C:\Program Files (x86)\Common Files\Microsoft Shared\OFFICE12</path>
+      <filename>Mso.dll</filename>
+      <owner>SYSTEM</owner>
+      <size datatype="int">16878984</size>
+      <a_time datatype="int">34648396829882017</a_time>
+      <c_time datatype="int">94908344829996137</c_time>
+      <m_time datatype="int">34648396829882017</m_time>
+      <ms_checksum>16907893</ms_checksum>
+      <version datatype="version">12.0.6036.5000</version>
+      <type>FILE_TYPE_DISK</type>
+      <development_class status="does not exist"/>
+      <company>Microsoft Corporation</company>
+      <internal_name>MSO</internal_name>
+      <language status="not collected"/>
+      <original_filename>MSO.DLL</original_filename>
+      <product_name>2007 Microsoft Office system</product_name>
+      <product_version>12.0.6036.5000</product_version>
+    </file_item>
+    <registry_item id="84" status="does not exist" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key status="does not exist">SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\visio.exe</key>
+    </registry_item>
+    <registry_item id="123" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key>SOFTWARE\Microsoft\Internet Explorer</key>
+      <name>Version</name>
+      <type>reg_sz</type>
+      <value>7.0.6001.18000</value>
+    </registry_item>
+    <file_item id="116" status="does not exist" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <path status="does not exist">C:\Program Files (x86)\Microsoft Virtual Server</path>
+    </file_item>
+    <registry_item id="112" status="does not exist" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key status="does not exist">SOFTWARE\Classes\Installer\Products\96CF2B3B315599C4A9E75C85A4295880</key>
+    </registry_item>
+    <file_item id="150" status="does not exist" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <path status="does not exist">C:\Program Files (x86)\Microsoft Content Management Server\Server\bin</path>
+    </file_item>
+    <registry_item id="106" status="does not exist" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key status="does not exist">SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{ABEB838C-A1A7-4C5D-B7E1-8B4314600208}</key>
+    </registry_item>
+    <file_item id="56" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <path>C:\Windows\System32</path>
+      <filename>shell32.dll</filename>
+      <owner>TrustedInstaller</owner>
+      <size datatype="int">11580928</size>
+      <a_time datatype="int">30830568929984330</a_time>
+      <c_time datatype="int">30830568929984330</c_time>
+      <m_time datatype="int">253918851229966353</m_time>
+      <ms_checksum>11590162</ms_checksum>
+      <version datatype="version">6.0.6001.18167</version>
+      <type>FILE_TYPE_DISK</type>
+      <development_class>longhorn_rtm</development_class>
+      <company>Microsoft Corporation</company>
+      <internal_name>SHELL32</internal_name>
+      <language status="not collected"/>
+      <original_filename>SHELL32.DLL.MUI</original_filename>
+      <product_name>Microsoft® Windows® Operating System</product_name>
+      <product_version>6.0.6001.18000</product_version>
+    </file_item>
+    <registry_item id="128" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key>SOFTWARE\Microsoft\Office\12.0\Publisher\InstallRoot</key>
+      <name>Path</name>
+      <type>reg_sz</type>
+      <value>C:\Program Files (x86)\Microsoft Office\Office12\</value>
+    </registry_item>
+    <file_item id="109" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <oval-sc:message>info - (FileProbe) Unable to get original_filename. No value is available for the specified version-information name, "szSubblock," for file: C:\Windows\System32\oleaut32.dll'
+info - (FileProbe) Unable to get product_name. No value is available for the specified version-information name, "szSubblock," for file: C:\Windows\System32\oleaut32.dll'
+</oval-sc:message>
+      <path>C:\Windows\System32</path>
+      <filename>oleaut32.dll</filename>
+      <owner>TrustedInstaller</owner>
+      <size datatype="int">563200</size>
+      <a_time datatype="int">136163025729907928</a_time>
+      <c_time datatype="int">136163025729907928</c_time>
+      <m_time datatype="int">136178625729907928</m_time>
+      <ms_checksum>588387</ms_checksum>
+      <version datatype="version">6.0.6001.18000</version>
+      <type>FILE_TYPE_DISK</type>
+      <development_class status="does not exist"/>
+      <company>Microsoft Corporation</company>
+      <internal_name>OLEAUT32.DLL</internal_name>
+      <language status="not collected"/>
+      <original_filename status="does not exist"/>
+      <product_name status="does not exist"/>
+      <product_version>6.0.6001.18000</product_version>
+    </file_item>
+    <registry_item id="119" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key>SOFTWARE\Microsoft\MediaPlayer\PlayerUpgrade</key>
+      <name>PlayerVersion</name>
+      <type>reg_sz</type>
+      <value>11,0,6001,7000</value>
+    </registry_item>
+    <registry_item id="149" status="does not exist" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key status="does not exist">SOFTWARE\NCompass\Resolution Content Server\VersionInfo</key>
+    </registry_item>
+    <file_item id="93" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <path>C:\Windows\System32</path>
+      <filename>rpcrt4.dll</filename>
+      <owner>TrustedInstaller</owner>
+      <size datatype="int">677376</size>
+      <a_time datatype="int">184977008129982224</a_time>
+      <c_time datatype="int">184977008129982224</c_time>
+      <m_time datatype="int">184977008129982224</m_time>
+      <ms_checksum>711187</ms_checksum>
+      <version datatype="version">6.0.6001.18051</version>
+      <type>FILE_TYPE_DISK</type>
+      <development_class>longhorn_rtm</development_class>
+      <company>Microsoft Corporation</company>
+      <internal_name>rpcrt4.dll</internal_name>
+      <language status="not collected"/>
+      <original_filename>rpcrt4.dll.mui</original_filename>
+      <product_name>Microsoft® Windows® Operating System</product_name>
+      <product_version>6.0.6001.18000</product_version>
+    </file_item>
+    <registry_item id="110" status="does not exist" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key status="does not exist">SOFTWARE\Classes\Installer\Products\2ACE96BF53CE47C46B808783D50059D9</key>
+    </registry_item>
+    <registry_item id="52" status="does not exist" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key status="does not exist">SOFTWARE\Microsoft\Office\12.0\Registration\{90120000-110D-0000-0000-0000000FF1CE}</key>
+    </registry_item>
+    <registry_item id="145" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key>SOFTWARE\Microsoft\Office\12.0\Excel\InstallRoot</key>
+    </registry_item>
+    <file_item id="76" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <path>C:\Windows\System32</path>
+      <filename>gdi32.dll</filename>
+      <owner>TrustedInstaller</owner>
+      <size datatype="int">303104</size>
+      <a_time datatype="int">61238368929984330</a_time>
+      <c_time datatype="int">61238368929984330</c_time>
+      <m_time datatype="int">93857857629963069</m_time>
+      <ms_checksum>312420</ms_checksum>
+      <version datatype="version">6.0.6001.18159</version>
+      <type>FILE_TYPE_DISK</type>
+      <development_class>vistasp1_gdr</development_class>
+      <company>Microsoft Corporation</company>
+      <internal_name>gdi32</internal_name>
+      <language status="not collected"/>
+      <original_filename>gdi32</original_filename>
+      <product_name>Microsoft® Windows® Operating System</product_name>
+      <product_version>6.0.6001.18159</product_version>
+    </file_item>
+    <registry_item id="22" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key>SOFTWARE\Microsoft\Windows\CurrentVersion</key>
+      <name>CommonFilesDir</name>
+      <type>reg_sz</type>
+      <value>C:\Program Files (x86)\Common Files</value>
+    </registry_item>
+    <file_item id="33" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <path>C:\Windows\System32</path>
+      <filename>Msxml3.dll</filename>
+      <owner>TrustedInstaller</owner>
+      <size datatype="int">1191936</size>
+      <a_time datatype="int">99706932229982227</a_time>
+      <c_time datatype="int">99706932229982227</c_time>
+      <m_time datatype="int">99722532329982227</m_time>
+      <ms_checksum>1193623</ms_checksum>
+      <version datatype="version">8.100.1048.0</version>
+      <type>FILE_TYPE_DISK</type>
+      <development_class status="does not exist"/>
+      <company>Microsoft Corporation</company>
+      <internal_name>MSXML3.dll</internal_name>
+      <language status="not collected"/>
+      <original_filename>MSXML3.dll</original_filename>
+      <product_name>Microsoft(R) MSXML 3.0 SP10</product_name>
+      <product_version>8.100.1048.0</product_version>
+    </file_item>
+    <file_item id="86" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <path>C:\Program Files (x86)\Common Files\Microsoft Shared\VGX</path>
+      <filename>vgx.dll</filename>
+      <owner>TrustedInstaller</owner>
+      <size datatype="int">765952</size>
+      <a_time datatype="int">136490625729907928</a_time>
+      <c_time datatype="int">136490625729907928</c_time>
+      <m_time datatype="int">136506225729907928</m_time>
+      <ms_checksum>785488</ms_checksum>
+      <version datatype="version">7.0.6001.18000</version>
+      <type>FILE_TYPE_DISK</type>
+      <development_class>longhorn_rtm</development_class>
+      <company>Microsoft Corporation</company>
+      <internal_name>VGX.DLL</internal_name>
+      <language status="not collected"/>
+      <original_filename>VGX.DLL</original_filename>
+      <product_name>Windows® Internet Explorer</product_name>
+      <product_version>7.00.6001.18000</product_version>
+    </file_item>
+    <registry_item id="1" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key>SOFTWARE\Microsoft\Windows\CurrentVersion</key>
+      <name>ProgramFilesDir</name>
+      <type>reg_sz</type>
+      <value>C:\Program Files (x86)</value>
+    </registry_item>
+    <file_item id="135" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <path>C:\Windows\System32</path>
+      <filename>inetcomm.dll</filename>
+      <owner>TrustedInstaller</owner>
+      <size datatype="int">738304</size>
+      <a_time datatype="int">333266405829982226</a_time>
+      <c_time datatype="int">333266405829982226</c_time>
+      <m_time datatype="int">333266405829982226</m_time>
+      <ms_checksum>757450</ms_checksum>
+      <version datatype="version">6.0.6001.18049</version>
+      <type>FILE_TYPE_DISK</type>
+      <development_class>vistasp1_gdr</development_class>
+      <company>Microsoft Corporation</company>
+      <internal_name>INETRES.DLL</internal_name>
+      <language status="not collected"/>
+      <original_filename>INETRES.DLL</original_filename>
+      <product_name>Microsoft® Windows® Operating System</product_name>
+      <product_version>6.0.6001.18049</product_version>
+    </file_item>
+    <registry_item id="83" status="does not exist" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key status="does not exist">Software\Microsoft\Windows\CurrentVersion\Uninstall\{90510409-6000-11D3-8CFE-0150048383C9}</key>
+    </registry_item>
+    <file_item id="122" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <path>C:\Windows\System32</path>
+      <filename>user32.dll</filename>
+      <owner>TrustedInstaller</owner>
+      <size datatype="int">648192</size>
+      <a_time datatype="int">35418225729907928</a_time>
+      <c_time datatype="int">35418225729907928</c_time>
+      <m_time datatype="int">35496225729907928</m_time>
+      <ms_checksum>698637</ms_checksum>
+      <version datatype="version">6.0.6001.18000</version>
+      <type>FILE_TYPE_DISK</type>
+      <development_class>longhorn_rtm</development_class>
+      <company>Microsoft Corporation</company>
+      <internal_name>user32</internal_name>
+      <language status="not collected"/>
+      <original_filename>user32</original_filename>
+      <product_name>Microsoft® Windows® Operating System</product_name>
+      <product_version>6.0.6001.18000</product_version>
+    </file_item>
+    <file_item id="97" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <path>C:\Windows\Microsoft.NET\Framework\v2.0.50727</path>
+      <filename>System.web.dll</filename>
+      <owner>TrustedInstaller</owner>
+      <size datatype="int">5242880</size>
+      <a_time datatype="int">429033226429996141</a_time>
+      <c_time datatype="int">429033226429996141</c_time>
+      <m_time datatype="int">345766244429961602</m_time>
+      <ms_checksum>5284398</ms_checksum>
+      <version datatype="version">2.0.50727.3074</version>
+      <type>FILE_TYPE_DISK</type>
+      <development_class>QFE</development_class>
+      <company>Microsoft Corporation</company>
+      <internal_name>System.Web.dll</internal_name>
+      <language status="not collected"/>
+      <original_filename>System.Web.dll</original_filename>
+      <product_name>Microsoft® .NET Framework</product_name>
+      <product_version>2.0.50727.3074</product_version>
+    </file_item>
+    <registry_item id="82" status="does not exist" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key status="does not exist">Software\Microsoft\Windows\CurrentVersion\Uninstall\{90510409-6D54-11D4-BEE3-00C04F990354}</key>
+    </registry_item>
+    <registry_item id="81" status="does not exist" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key>SOFTWARE\Microsoft\Office\11.0\Common\InstallRoot</key>
+      <name status="does not exist">Path</name>
+    </registry_item>
+    <registry_item id="137" status="does not exist" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key status="does not exist">SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{90110409-6000-11D3-8CFE-0150048383C9}</key>
+    </registry_item>
+    <registry_item id="77" status="does not exist" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key status="does not exist">SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{903B0409-6000-11D3-8CFE-0050048383C9}</key>
+    </registry_item>
+    <file_item id="140" status="does not exist" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <path status="does not exist">C:\Program Files (x86)\Common Files\Microsoft Shared\OFFICE10</path>
+    </file_item>
+    <file_item id="91" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <path>C:\Windows\System32</path>
+      <filename>wmasf.dll</filename>
+      <owner>TrustedInstaller</owner>
+      <size datatype="int">223232</size>
+      <a_time datatype="int">176645025729907928</a_time>
+      <c_time datatype="int">176645025729907928</c_time>
+      <m_time datatype="int">176645025729907928</m_time>
+      <ms_checksum>250966</ms_checksum>
+      <version datatype="version">11.0.6001.7000</version>
+      <type>FILE_TYPE_DISK</type>
+      <development_class>longhorn_rtm</development_class>
+      <company>Microsoft Corporation</company>
+      <internal_name>wmasf.dll</internal_name>
+      <language status="not collected"/>
+      <original_filename>wmasf.dll</original_filename>
+      <product_name>Microsoft® Windows® Operating System</product_name>
+      <product_version>11.0.6001.7000</product_version>
+    </file_item>
+    <file_item id="35" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <path>C:\Program Files (x86)\Common Files\Microsoft Shared\OFFICE11</path>
+      <filename>Msxml5.dll</filename>
+      <owner>SYSTEM</owner>
+      <size datatype="int">1425744</size>
+      <a_time datatype="int">81655859229871623</a_time>
+      <c_time datatype="int">95583344829996137</c_time>
+      <m_time datatype="int">81655859229871623</m_time>
+      <ms_checksum>1430028</ms_checksum>
+      <version datatype="version">5.20.1081.0</version>
+      <type>FILE_TYPE_DISK</type>
+      <development_class status="does not exist"/>
+      <company>Microsoft Corporation</company>
+      <internal_name>MSXML5.dll</internal_name>
+      <language status="not collected"/>
+      <original_filename>MSXML5.dll</original_filename>
+      <product_name>Microsoft(R) MSXML 5.0</product_name>
+      <product_version>5.20.1081.0</product_version>
+    </file_item>
+    <file_item id="100" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <path>C:\Program Files (x86)\Microsoft Office\Office12\</path>
+      <filename>winword.exe</filename>
+      <owner>SYSTEM</owner>
+      <size datatype="int">347432</size>
+      <a_time datatype="int">37687603229817358</a_time>
+      <c_time datatype="int">42965941329982215</c_time>
+      <m_time datatype="int">37687603229817358</m_time>
+      <ms_checksum>370858</ms_checksum>
+      <version datatype="version">12.0.4518.1014</version>
+      <type>FILE_TYPE_DISK</type>
+      <development_class status="does not exist"/>
+      <company>Microsoft Corporation</company>
+      <internal_name>WinWord</internal_name>
+      <language status="not collected"/>
+      <original_filename>WinWord.exe</original_filename>
+      <product_name>2007 Microsoft Office system</product_name>
+      <product_version>12.0.4518.1014</product_version>
+    </file_item>
+    <registry_item id="74" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key>SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\Winword.exe</key>
+      <name>Path</name>
+      <type>reg_sz</type>
+      <value>C:\Program Files (x86)\Microsoft Office\Office12\</value>
+    </registry_item>
+    <registry_item id="58" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key>SOFTWARE\Microsoft\DirectX</key>
+      <name>Version</name>
+      <type>reg_sz</type>
+      <value>4.09.00.0904</value>
+    </registry_item>
+    <registry_item id="59" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key>SOFTWARE\Microsoft\Internet Explorer\ActiveX Compatibility\{40F23EB7-B397-4285-8F3C-AACE4FA40309}</key>
+      <name>Compatibility Flags</name>
+      <type>reg_dword</type>
+      <value datatype="int">1024</value>
+    </registry_item>
+    <file_item id="88" status="does not exist" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <path status="does not exist">C:\Program Files (x86)\Common Files\Microsoft Shared\CDO</path>
+    </file_item>
+    <registry_item id="21" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key>SOFTWARE\Microsoft\Office\12.0\Outlook\InstallRoot</key>
+      <name>Path</name>
+      <type>reg_sz</type>
+      <value>C:\Program Files (x86)\Microsoft Office\Office12\</value>
+    </registry_item>
+    <file_item id="92" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <path>C:\Windows\System32</path>
+      <filename>Wmvcore.dll</filename>
+      <owner>TrustedInstaller</owner>
+      <size datatype="int">2386944</size>
+      <a_time datatype="int">65216368929984330</a_time>
+      <c_time datatype="int">65216368929984330</c_time>
+      <m_time datatype="int">327964560029938900</m_time>
+      <ms_checksum>2395083</ms_checksum>
+      <version datatype="version">11.0.6001.7001</version>
+      <type>FILE_TYPE_DISK</type>
+      <development_class>vistasp1_gdr</development_class>
+      <company>Microsoft Corporation</company>
+      <internal_name>wmvcore.dll</internal_name>
+      <language status="not collected"/>
+      <original_filename>wmvcore.dll</original_filename>
+      <product_name>Microsoft® Windows® Operating System</product_name>
+      <product_version>11.0.6001.7001</product_version>
+    </file_item>
+    <registry_item id="75" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key>SOFTWARE\Microsoft\Internet Explorer\ActiveX Compatibility\{22FD7C0A-850C-4A53-9821-0B0915C96139}</key>
+    </registry_item>
+    <registry_item id="61" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key>SOFTWARE\Classes\CAPICOM.Certificates.4\CLSID</key>
+    </registry_item>
+    <file_item id="46" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <path>C:\Program Files (x86)\Microsoft Office\Office12\</path>
+      <filename>powerpnt.exe</filename>
+      <owner>SYSTEM</owner>
+      <size datatype="int">465200</size>
+      <a_time datatype="int">188177792029817355</a_time>
+      <c_time datatype="int">41920741329982215</c_time>
+      <m_time datatype="int">188177792029817355</m_time>
+      <ms_checksum>481583</ms_checksum>
+      <version datatype="version">12.0.4518.1014</version>
+      <type>FILE_TYPE_DISK</type>
+      <development_class status="does not exist"/>
+      <company>Microsoft Corporation</company>
+      <internal_name>POWERPNT</internal_name>
+      <language status="not collected"/>
+      <original_filename>POWERPNT.EXE</original_filename>
+      <product_name>2007 Microsoft Office system</product_name>
+      <product_version>12.0.4518.1014</product_version>
+    </file_item>
+    <registry_item id="45" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key>SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\powerpnt.exe</key>
+      <name>Path</name>
+      <type>reg_sz</type>
+      <value>C:\Program Files (x86)\Microsoft Office\Office12\</value>
+    </registry_item>
+    <registry_item id="44" status="does not exist" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key status="does not exist">SOFTWARE\Microsoft\Office\10.0\PowerPoint\InstallRoot</key>
+    </registry_item>
+    <registry_item id="103" status="does not exist" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key>Software\Microsoft\VisualStudio\8.0</key>
+      <name status="does not exist">InstallDir</name>
+    </registry_item>
+    <registry_item id="152" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key>SOFTWARE\Microsoft\Windows NT\CurrentVersion</key>
+      <name>ProductName</name>
+      <type>reg_sz</type>
+      <value>Windows (TM) Vista Ultimate</value>
+    </registry_item>
+    <registry_item id="29" status="does not exist" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key status="does not exist">SOFTWARE\Apple Computer, Inc.\QuickTime</key>
+    </registry_item>
+    <registry_item id="43" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key>SOFTWARE\Microsoft\Office\12.0\PowerPoint\InstallRoot</key>
+      <name>Path</name>
+      <type>reg_sz</type>
+      <value>C:\Program Files (x86)\Microsoft Office\Office12\</value>
+    </registry_item>
+    <registry_item id="95" status="does not exist" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key status="does not exist">SOFTWARE\Microsoft\Outlook Express\Version Info</key>
+    </registry_item>
+    <file_item id="73" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <path>C:\Program Files (x86)\Microsoft Office\Office12</path>
+      <filename>Wordcnv.dll</filename>
+      <owner>SYSTEM</owner>
+      <size datatype="int">4235560</size>
+      <a_time datatype="int">210681062429817356</a_time>
+      <c_time datatype="int">46195141329982215</c_time>
+      <m_time datatype="int">210681062429817356</m_time>
+      <ms_checksum>4279954</ms_checksum>
+      <version datatype="version">12.0.4518.1014</version>
+      <type>FILE_TYPE_DISK</type>
+      <development_class status="does not exist"/>
+      <company>Microsoft Corporation</company>
+      <internal_name>WordCnv</internal_name>
+      <language status="not collected"/>
+      <original_filename>wordcnv.dll</original_filename>
+      <product_name>2007 Microsoft Office system</product_name>
+      <product_version>12.0.4518.1014</product_version>
+    </file_item>
+    <registry_item id="101" status="does not exist" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key status="does not exist">Software\Microsoft\VisualStudio\7.0</key>
+    </registry_item>
+    <registry_item id="104" status="does not exist" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key>Software\Microsoft\VisualStudio\7.1</key>
+      <name status="does not exist">InstallDir</name>
+    </registry_item>
+    <registry_item id="60" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key>SOFTWARE\Classes\CAPICOM.Certificates.4</key>
+    </registry_item>
+    <registry_item id="62" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key>SOFTWARE\Classes\CAPICOM.Certificates.3</key>
+    </registry_item>
+    <registry_item id="63" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key>SOFTWARE\Classes\CAPICOM.Certificates.3\CLSID</key>
+    </registry_item>
+    <registry_item id="64" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key>SOFTWARE\Classes\CAPICOM.Certificates.2</key>
+    </registry_item>
+    <registry_item id="65" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key>SOFTWARE\Classes\CAPICOM.Certificates.2\CLSID</key>
+    </registry_item>
+    <registry_item id="66" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key>SOFTWARE\Classes\CAPICOM.Certificates.1</key>
+    </registry_item>
+    <registry_item id="67" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key>SOFTWARE\Classes\CAPICOM.Certificates.1\CLSID</key>
+    </registry_item>
+    <file_item id="121" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <path>C:\Windows\System32</path>
+      <filename>Wmp.dll</filename>
+      <owner>TrustedInstaller</owner>
+      <size datatype="int">10621440</size>
+      <a_time datatype="int">182027025729907928</a_time>
+      <c_time datatype="int">182027025729907928</c_time>
+      <m_time datatype="int">182151825729907928</m_time>
+      <ms_checksum>10635013</ms_checksum>
+      <version datatype="version">11.0.6001.7000</version>
+      <type>FILE_TYPE_DISK</type>
+      <development_class>longhorn_rtm</development_class>
+      <company>Microsoft Corporation</company>
+      <internal_name>wmp.dll</internal_name>
+      <language status="not collected"/>
+      <original_filename>wmp.dll</original_filename>
+      <product_name>Microsoft® Windows® Operating System</product_name>
+      <product_version>11.0.6001.7000</product_version>
+    </file_item>
+    <registry_item id="118" status="does not exist" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key status="does not exist">SOFTWARE\Microsoft\MediaPlayer\9.0\Registration</key>
+    </registry_item>
+    <registry_item id="87" status="does not exist" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key status="does not exist">SOFTWARE\Microsoft\Exchange\Setup</key>
+    </registry_item>
+    <file_item id="39" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <path>C:\Windows\System32</path>
+      <filename>imagehlp.dll</filename>
+      <owner>TrustedInstaller</owner>
+      <size datatype="int">153088</size>
+      <a_time datatype="int">428395355329907927</a_time>
+      <c_time datatype="int">428395355329907927</c_time>
+      <m_time datatype="int">428473355329907927</m_time>
+      <ms_checksum>178799</ms_checksum>
+      <version datatype="version">6.0.6001.18000</version>
+      <type>FILE_TYPE_DISK</type>
+      <development_class>longhorn_rtm</development_class>
+      <company>Microsoft Corporation</company>
+      <internal_name>IMAGEHLP.DLL</internal_name>
+      <language status="not collected"/>
+      <original_filename>IMAGEHLP.DLL</original_filename>
+      <product_name>Microsoft® Windows® Operating System</product_name>
+      <product_version>6.0.6001.18000</product_version>
+    </file_item>
+    <registry_item id="15" status="does not exist" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key status="does not exist">SOFTWARE\Adobe\Acrobat Reader\7.0\Installer</key>
+    </registry_item>
+    <file_item id="37" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <path>C:\Windows\System32</path>
+      <filename>Wmpeffects.dll</filename>
+      <owner>TrustedInstaller</owner>
+      <size datatype="int">303616</size>
+      <a_time datatype="int">334696391429982225</a_time>
+      <c_time datatype="int">334696391429982225</c_time>
+      <m_time datatype="int">334696391429982225</m_time>
+      <ms_checksum>318017</ms_checksum>
+      <version datatype="version">11.0.6001.7002</version>
+      <type>FILE_TYPE_DISK</type>
+      <development_class>vistasp1_gdr</development_class>
+      <company>Microsoft Corporation</company>
+      <internal_name>wmpeffects.dll</internal_name>
+      <language status="not collected"/>
+      <original_filename>wmpeffects.dll</original_filename>
+      <product_name>Microsoft® Windows® Operating System</product_name>
+      <product_version>11.0.6001.7002</product_version>
+    </file_item>
+    <registry_item id="14" status="does not exist" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key status="does not exist">SOFTWARE\Adobe\Acrobat Reader\8.0\Installer</key>
+    </registry_item>
+    <file_item id="31" status="does not exist" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <path status="does not exist">C:\Program Files (x86)\Windows Media Components\Encoder</path>
+    </file_item>
+    <registry_item id="117" status="does not exist" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key status="does not exist">SOFTWARE\Microsoft\MediaPlayer\10.0\Registration</key>
+    </registry_item>
+    <file_item id="49" status="does not exist" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <path status="does not exist">C:\Program Files (x86)\Microsoft Office\PowerPoint Viewer</path>
+    </file_item>
+    <file_item id="54" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <path>C:\Program Files (x86)\Microsoft Office\Office12</path>
+      <filename>EXCEL.EXE</filename>
+      <owner>SYSTEM</owner>
+      <size datatype="int">17891112</size>
+      <a_time datatype="int">398177792029817355</a_time>
+      <c_time datatype="int">36772741329982215</c_time>
+      <m_time datatype="int">398177792029817355</m_time>
+      <ms_checksum>17901778</ms_checksum>
+      <version datatype="version">12.0.4518.1014</version>
+      <type>FILE_TYPE_DISK</type>
+      <development_class status="does not exist"/>
+      <company>Microsoft Corporation</company>
+      <internal_name>Excel</internal_name>
+      <language status="not collected"/>
+      <original_filename>Excel.exe</original_filename>
+      <product_name>2007 Microsoft Office system</product_name>
+      <product_version>12.0.4518.1014</product_version>
+    </file_item>
+    <registry_item id="5" status="does not exist" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key status="does not exist">SOFTWARE\Wow6432Node\Clients\Mail\ExchangeMAPI</key>
+    </registry_item>
+    <file_item id="50" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <path>C:\Program Files (x86)\Common Files\Microsoft Shared\OFFICE12</path>
+      <filename>Ogl.dll</filename>
+      <owner>SYSTEM</owner>
+      <size datatype="int">1658152</size>
+      <a_time datatype="int">199184332829817357</a_time>
+      <c_time datatype="int">43917541329982215</c_time>
+      <m_time datatype="int">199184332829817357</m_time>
+      <ms_checksum>1704862</ms_checksum>
+      <version datatype="version">12.0.4518.1014</version>
+      <type>FILE_TYPE_DISK</type>
+      <development_class status="does not exist"/>
+      <company>Microsoft Corporation</company>
+      <internal_name>OGL</internal_name>
+      <language status="not collected"/>
+      <original_filename>ogl.dll</original_filename>
+      <product_name>2007 Microsoft Office system</product_name>
+      <product_version>12.0.4518.1014</product_version>
+    </file_item>
+    <file_item id="17" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <path>C:\Windows\System32</path>
+      <filename>es.dll</filename>
+      <owner>TrustedInstaller</owner>
+      <size datatype="int">269312</size>
+      <a_time datatype="int">309632254329982226</a_time>
+      <c_time datatype="int">309632254329982226</c_time>
+      <m_time datatype="int">309632254329982226</m_time>
+      <ms_checksum>272559</ms_checksum>
+      <version datatype="version">2001.12.6931.18057</version>
+      <type>FILE_TYPE_DISK</type>
+      <development_class>vistasp1_gdr</development_class>
+      <company>Microsoft Corporation</company>
+      <internal_name>ES.DLL</internal_name>
+      <language status="not collected"/>
+      <original_filename>ES.DLL</original_filename>
+      <product_name>Microsoft® Windows® Operating System</product_name>
+      <product_version>6.0.6001.18057</product_version>
+    </file_item>
+    <file_item id="53" status="does not exist" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <path status="does not exist">C:\Program Files (x86)\Microsoft Office\Office10</path>
+    </file_item>
+    <registry_item id="16" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key>SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{AC76BA86-1033-F400-BA7E-000000000004}</key>
+      <name>Version</name>
+      <type>reg_dword</type>
+      <value datatype="int">150994944</value>
+    </registry_item>
+    <registry_item id="47" status="does not exist" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key status="does not exist">SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\OneNote.exe</key>
+    </registry_item>
+    <registry_item id="41" status="does not exist" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key status="does not exist">SOFTWARE\Microsoft\Office\9.0\PowerPoint\InstallRoot</key>
+    </registry_item>
+    <registry_item id="136" status="does not exist" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key status="does not exist">Software\Microsoft\Office\9.0\Registration\ProductID</key>
+    </registry_item>
+    <file_item id="55" status="does not exist" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <path status="does not exist">C:\Program Files (x86)\Microsoft Office\Office9</path>
+    </file_item>
+    <file_item id="25" status="does not exist" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <path status="does not exist">C:\Windows\System32\Windows Media\Server</path>
+    </file_item>
+    <file_item id="32" status="does not exist" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <path status="does not exist">C:\Program Files (x86)\iTunes</path>
+    </file_item>
+    <file_item id="51" status="does not exist" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <path status="does not exist">C:\Program Files (x86)\Microsoft Visual Studio 8\SDK\v2.0\BootStrapper\Packages\ReportViewer</path>
+    </file_item>
+    <registry_item id="48" status="does not exist" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key status="does not exist">SOFTWARE\Microsoft\Office\12.0\OneNote\InstallRoot</key>
+    </registry_item>
+    <file_item id="38" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <path>C:\Windows\System32</path>
+      <filename>Win32spl.dll</filename>
+      <owner>TrustedInstaller</owner>
+      <size datatype="int">443392</size>
+      <a_time datatype="int">232120510329982224</a_time>
+      <c_time datatype="int">232120510329982224</c_time>
+      <m_time datatype="int">232120510329982224</m_time>
+      <ms_checksum>479683</ms_checksum>
+      <version datatype="version">6.0.6001.18119</version>
+      <type>FILE_TYPE_DISK</type>
+      <development_class>vista_rtm</development_class>
+      <company>Microsoft Corporation</company>
+      <internal_name>win32spl.dll</internal_name>
+      <language status="not collected"/>
+      <original_filename>win32spl.dll.mui</original_filename>
+      <product_name>Microsoft® Windows® Operating System</product_name>
+      <product_version>6.0.6000.16386</product_version>
+    </file_item>
+    <registry_item id="148" status="does not exist" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key status="does not exist">SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{90840409-6000-11D3-8CFE-0150048383C9}</key>
+    </registry_item>
+    <file_item id="147" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <path>C:\Program Files (x86)\Microsoft Office\Office12\</path>
+      <filename>excel.exe</filename>
+      <owner>SYSTEM</owner>
+      <size datatype="int">17891112</size>
+      <a_time datatype="int">398177792029817355</a_time>
+      <c_time datatype="int">36772741329982215</c_time>
+      <m_time datatype="int">398177792029817355</m_time>
+      <ms_checksum>17901778</ms_checksum>
+      <version datatype="version">12.0.4518.1014</version>
+      <type>FILE_TYPE_DISK</type>
+      <development_class status="does not exist"/>
+      <company>Microsoft Corporation</company>
+      <internal_name>Excel</internal_name>
+      <language status="not collected"/>
+      <original_filename>Excel.exe</original_filename>
+      <product_name>2007 Microsoft Office system</product_name>
+      <product_version>12.0.4518.1014</product_version>
+    </file_item>
+    <registry_item id="146" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key>SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\Excel.exe</key>
+      <name>Path</name>
+      <type>reg_sz</type>
+      <value>C:\Program Files (x86)\Microsoft Office\Office12\</value>
+    </registry_item>
+    <file_item id="2" status="does not exist" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <path status="does not exist">C:\Program Files (x86)\opera</path>
+    </file_item>
+    <registry_item id="141" status="does not exist" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key status="does not exist">SOFTWARE\Microsoft\Office\11.0\Excel\InstallRoot</key>
+    </registry_item>
+    <registry_item id="24" status="does not exist" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key status="does not exist">SOFTWARE\Microsoft\NetShow</key>
+    </registry_item>
+    <registry_item id="23" status="does not exist" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key status="does not exist">SOFTWARE\Microsoft\Windows Media\Server</key>
+    </registry_item>
+    <registry_item id="8" status="does not exist" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key status="does not exist">SOFTWARE\Apple Computer, Inc.\Safari</key>
+    </registry_item>
+    <registry_item id="4" status="does not exist" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key status="does not exist">SOFTWARE\Clients\Mail\ExchangeMAPI</key>
+    </registry_item>
+    <file_item id="18" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <path>C:\Windows</path>
+      <filename>explorer.exe</filename>
+      <owner>TrustedInstaller</owner>
+      <size datatype="int">3080704</size>
+      <a_time datatype="int">59881168929984330</a_time>
+      <c_time datatype="int">59881168929984330</c_time>
+      <m_time datatype="int">203713176029964690</m_time>
+      <ms_checksum>3134063</ms_checksum>
+      <version datatype="version">6.0.6001.18164</version>
+      <type>FILE_TYPE_DISK</type>
+      <development_class>vista_rtm</development_class>
+      <company>Microsoft Corporation</company>
+      <internal_name>explorer</internal_name>
+      <language status="not collected"/>
+      <original_filename>EXPLORER.EXE.MUI</original_filename>
+      <product_name>Microsoft® Windows® Operating System</product_name>
+      <product_version>6.0.6000.16386</product_version>
+    </file_item>
+    <file_item id="26" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <path>C:\Windows\System32</path>
+      <filename>Wmnetmgr.dll</filename>
+      <owner>TrustedInstaller</owner>
+      <size datatype="int">996352</size>
+      <a_time datatype="int">64701568929984330</a_time>
+      <c_time datatype="int">64701568929984330</c_time>
+      <m_time datatype="int">329167560029938900</m_time>
+      <ms_checksum>1009037</ms_checksum>
+      <version datatype="version">11.0.6001.7001</version>
+      <type>FILE_TYPE_DISK</type>
+      <development_class>vistasp1_gdr</development_class>
+      <company>Microsoft Corporation</company>
+      <internal_name>WMNetMgr.dll</internal_name>
+      <language status="not collected"/>
+      <original_filename>WMNetMgr.dll</original_filename>
+      <product_name>Microsoft® Windows® Operating System</product_name>
+      <product_version>11.0.6001.7001</product_version>
+    </file_item>
+    <registry_item id="9" status="does not exist" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key status="does not exist">SOFTWARE\Adobe\Acrobat Reader\9.0\Installer</key>
+    </registry_item>
+    <registry_item id="13" status="does not exist" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key>SOFTWARE\Adobe\Adobe Acrobat\7.0\Installer</key>
+      <name status="does not exist">ENU_GUID</name>
+    </registry_item>
+    <registry_item id="11" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key>SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{AC76BA86-1033-F400-BA7E-000000000004}</key>
+      <name>VersionMajor</name>
+      <type>reg_dword</type>
+      <value datatype="int">9</value>
+    </registry_item>
+    <registry_item id="12" status="does not exist" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key>SOFTWARE\Adobe\Adobe Acrobat\8.0\Installer</key>
+      <name status="does not exist">ENU_GUID</name>
+    </registry_item>
+    <registry_item id="10" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key>SOFTWARE\Adobe\Adobe Acrobat\9.0\Installer</key>
+      <name>ENU_GUID</name>
+      <type>reg_sz</type>
+      <value>{AC76BA86-1033-F400-BA7E-000000000004}</value>
+    </registry_item>
+    <registry_item id="3" status="does not exist" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key status="does not exist">SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Wireshark</key>
+    </registry_item>
+    <file_item id="57" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <path>C:\Windows\System32</path>
+      <filename>Quartz.dll</filename>
+      <owner>TrustedInstaller</owner>
+      <size datatype="int">1314816</size>
+      <a_time datatype="int">179100994029982225</a_time>
+      <c_time datatype="int">179100994029982225</c_time>
+      <m_time datatype="int">179100994029982225</m_time>
+      <ms_checksum>1379404</ms_checksum>
+      <version datatype="version">6.6.6001.18063</version>
+      <type>FILE_TYPE_DISK</type>
+      <development_class>vista_rtm</development_class>
+      <company>Microsoft Corporation</company>
+      <internal_name>Quartz.dll</internal_name>
+      <language status="not collected"/>
+      <original_filename>Quartz.dll.mui</original_filename>
+      <product_name>Microsoft® Windows® Operating System</product_name>
+      <product_version>6.6.6000.16386</product_version>
+    </file_item>
+    <registry_item id="124" status="does not exist" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key>SOFTWARE\Microsoft\Windows NT\CurrentVersion</key>
+      <name status="does not exist">CSDVersion</name>
+    </registry_item>
+    <registry_item id="120" status="does not exist" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key status="does not exist">SOFTWARE\Microsoft\MediaPlayer\7.1\Registration</key>
+    </registry_item>
+    <registry_item id="42" status="does not exist" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <hive>HKEY_LOCAL_MACHINE</hive>
+      <key status="does not exist">SOFTWARE\Microsoft\Office\11.0\PowerPoint\InstallRoot</key>
+    </registry_item>
+    <file_item id="130" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows">
+      <path>C:\Program Files (x86)\Microsoft Office\Office12\</path>
+      <filename>mspub.exe</filename>
+      <owner>SYSTEM</owner>
+      <size datatype="int">9581360</size>
+      <a_time datatype="int">192177792029817355</a_time>
+      <c_time datatype="int">42217141329982215</c_time>
+      <m_time datatype="int">192177792029817355</m_time>
+      <ms_checksum>9602736</ms_checksum>
+      <version datatype="version">12.0.4518.1014</version>
+      <type>FILE_TYPE_DISK</type>
+      <development_class status="does not exist"/>
+      <company>Microsoft Corporation</company>
+      <internal_name>MSPUB</internal_name>
+      <language status="not collected"/>
+      <original_filename>MSPUB.EXE</original_filename>
+      <product_name>2007 Microsoft Office system</product_name>
+      <product_version>12.0.4518.1014</product_version>
+    </file_item>
+    <family_item id="151" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#independent">
+      <family>windows</family>
+    </family_item>
+  </system_data>
+
+</oval_system_characteristics>

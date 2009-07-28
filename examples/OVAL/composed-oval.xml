@@ -1,0 +1,2101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ovaldef:oval_definitions
+	xmlns:ovaldef="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+	<ovaldef:generator>
+		<ovalcom:product_name xmlns:ovalcom="http://oval.mitre.org/XMLSchema/oval-common-5">G2 INC
+		</ovalcom:product_name>
+		<ovalcom:schema_version
+			xmlns:ovalcom="http://oval.mitre.org/XMLSchema/oval-common-5">5.5</ovalcom:schema_version>
+		<ovalcom:timestamp xmlns:ovalcom="http://oval.mitre.org/XMLSchema/oval-common-5">
+			2009-02-25T04:33:35.512-05:00</ovalcom:timestamp>
+	</ovaldef:generator>
+	<ovaldef:objects>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			comment="MSO9.dll in the Office 2000 installation directory" id="oval:org.mitre.oval:obj:1"
+			version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:728" />
+			<filename>Mso9.dll</filename>
+		</file_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:120" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>SOFTWARE\Microsoft\Office\9.0\Common\InstallRoot
+			</key>
+			<name>Path</name>
+		</registry_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			comment="Registry key that is set when Service Pack 1 for Microsoft Visual Studio .NET 2002"
+			id="oval:org.mitre.oval:obj:10" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>SOFTWARE\Microsoft\Updates\Visual
+				Studio\7.0\S895309</key>
+			<name>Installed</name>
+		</registry_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:1002" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:200" />
+			<filename>schannel.dll</filename>
+		</file_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			comment="This registry key identifies the system root." id="oval:org.mitre.oval:obj:219"
+			version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>SOFTWARE\Microsoft\Windows
+				NT\CurrentVersion</key>
+			<name>SystemRoot</name>
+		</registry_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:1070" version="2">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:247" />
+			<filename>outlook.exe</filename>
+		</file_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:1071" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>SOFTWARE\Microsoft\Windows\CurrentVersion\App
+				Paths\OUTLOOK.EXE</key>
+			<name>Path</name>
+		</registry_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:109" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>SOFTWARE\Microsoft\Office\9.0\Publisher\InstallRoot
+			</key>
+			<name xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				xsi:nil="true" />
+		</registry_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			comment="Registry key that hold the current windows os version" id="oval:org.mitre.oval:obj:123"
+			version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>SOFTWARE\Microsoft\Windows
+				NT\CurrentVersion</key>
+			<name>CurrentVersion</name>
+		</registry_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:124" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>
+				SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{2DFE1608-BDCA-11D1-B7AE-00C04FB92F3D}
+			</key>
+			<name>DisplayVersion</name>
+		</registry_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:1339" version="2">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key operation="pattern match">
+				^Software\\Microsoft\\Office\\10\.0\\Registration\\.*</key>
+			<name>ProductID</name>
+		</registry_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:1361" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>SOFTWARE\Microsoft\Shared Tools\Web
+				Server Extensions\Setup Packages</key>
+			<name>SharePoint</name>
+		</registry_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:1377" version="2">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>SOFTWARE\Microsoft\Office\10.0\Excel\InstallRoot
+			</key>
+			<name xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				xsi:nil="true" />
+		</registry_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:1382" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:200" />
+			<filename>winsrv.dll</filename>
+		</file_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:139" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:200" />
+			<filename>dnsapi.dll</filename>
+		</file_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:1415" version="2">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>SOFTWARE\Microsoft\Office\9.0\Excel\InstallRoot
+			</key>
+			<name xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				xsi:nil="true" />
+		</registry_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:144" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>SOFTWARE\Microsoft\Updates\Visual
+				Studio\7.1\S918007</key>
+			<name>Installed</name>
+		</registry_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:148" version="2">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:363" />
+			<filename>vbe6.dll</filename>
+		</file_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			comment="The registry key that identifies the location of the common files directory."
+			id="oval:org.mitre.oval:obj:281" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>SOFTWARE\Microsoft\Windows\CurrentVersion
+			</key>
+			<name>CommonFilesDir</name>
+		</registry_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:1509" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>SOFTWARE\Microsoft\Office\10.0\Common\InstallRoot
+			</key>
+			<name>Path</name>
+		</registry_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:1510" version="2">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>SOFTWARE\Microsoft\Office\10.0\Word\InstallRoot
+			</key>
+			<name xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				xsi:nil="true" />
+		</registry_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:1517" version="2">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:221" />
+			<filename>wordview.exe</filename>
+		</file_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:493" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>SOFTWARE\Microsoft\Windows\CurrentVersion\App
+				Paths\Winword.exe</key>
+			<name>Path</name>
+		</registry_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:1518" version="2">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>SOFTWARE\Microsoft\Office\11.0\Word\InstallRoot
+			</key>
+			<name xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				xsi:nil="true" />
+		</registry_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			comment="This registry key identifies the architecture on the system"
+			id="oval:org.mitre.oval:obj:1576" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>SYSTEM\CurrentControlSet\Control\Session
+				Manager\Environment</key>
+			<name>PROCESSOR_ARCHITECTURE</name>
+		</registry_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:158" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>SOFTWARE\Microsoft\Office\11.0\Publisher\InstallRoot
+			</key>
+			<name>Path</name>
+		</registry_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:160" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:200" />
+			<filename>netapi32.dll</filename>
+		</file_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:1626" version="2">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>SOFTWARE\Microsoft\Office\9.0\Word\InstallRoot
+			</key>
+			<name xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				xsi:nil="true" />
+		</registry_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:1754" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>SOFTWARE\Microsoft\INetStp</key>
+			<name>MajorVersion</name>
+		</registry_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:1808" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:1051" />
+			<filename>System.web.dll</filename>
+		</file_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:1809" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>SOFTWARE\Microsoft\Windows Mail</key>
+			<name>MediaVer</name>
+		</registry_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:1816" version="0">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:200" />
+			<filename>ieapfltr.dll</filename>
+		</file_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:1826" version="0">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>SOFTWARE\Microsoft\Office\12.0\Common\InstallRoot
+			</key>
+			<name>InstallCount</name>
+		</registry_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:1840" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:834" />
+			<filename>Mssdmn.exe</filename>
+		</file_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:1844" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:96" />
+			<filename>Virtual pc.exe</filename>
+		</file_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			comment="The registry key that holds the location of the program files directory."
+			id="oval:org.mitre.oval:obj:309" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>SOFTWARE\Microsoft\Windows\CurrentVersion
+			</key>
+			<name>ProgramFilesDir</name>
+		</registry_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:1854" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:200" />
+			<filename>wmi.dll</filename>
+		</file_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:1855" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:1051" />
+			<filename>Mscorlib.dll</filename>
+		</file_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:1860" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>
+				SOFTWARE\Classes\Installer\Products\B56328045890A99429D04E4D14D45CF8
+			</key>
+			<name>ProductName</name>
+		</registry_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:1889" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>
+				SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{ABEB838C-A1A7-4C5D-B7E1-8B4314600820}
+			</key>
+			<name>DisplayVersion</name>
+		</registry_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:189" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>SOFTWARE\Microsoft\Office\10.0\Publisher\InstallRoot
+			</key>
+			<name xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				xsi:nil="true" />
+		</registry_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:190" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:200" />
+			<filename>Msxml6.dll</filename>
+		</file_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:1909" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>SOFTWARE\Microsoft\Office\12.0\Word\InstallRoot
+			</key>
+			<name xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				xsi:nil="true" />
+		</registry_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:191" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:200" />
+			<filename>Msxml4.dll</filename>
+		</file_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:1982" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>
+				SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{FCE50DB8-C610-4C42-BE5C-193F46C6F812}
+			</key>
+			<name xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				xsi:nil="true" />
+		</registry_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:2004" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>
+				SOFTWARE\Classes\Installer\Products\EDDFACCCCECE4EA4DB79400767BB4D9A
+			</key>
+			<name>ProductName</name>
+		</registry_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:2009" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:1061" />
+			<filename>Mscorlib.dll</filename>
+		</file_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:2089" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:338" />
+			<filename>vislib.dll</filename>
+		</file_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:2440" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>SOFTWARE\Microsoft\Windows\CurrentVersion\App
+				Paths\visio.exe</key>
+			<name>Path</name>
+		</registry_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:2104" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>
+				SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{CEB3A11A-03EA-11DA-BFBD-00065BBDC0B5}
+			</key>
+			<name xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				xsi:nil="true" />
+		</registry_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:2156" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>SOFTWARE\Microsoft\Office\12.0\MOC
+			</key>
+			<name xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				xsi:nil="true" />
+		</registry_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:2163" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>SOFTWARE\Microsoft\Windows\CurrentVersion\App
+				Paths\Mspub.exe</key>
+			<name>Path</name>
+		</registry_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:2184" version="0">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:929" />
+			<filename>excelcnv.exe</filename>
+		</file_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:2193" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:297" />
+			<filename>pubconv.dll</filename>
+		</file_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:2202" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>
+				SOFTWARE\Classes\Installer\Products\813ACF1D304B0FB43A2E440E1CF2ADD3
+			</key>
+			<name>ProductName</name>
+		</registry_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:2203" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:200" />
+			<filename>firewallapi.dll</filename>
+		</file_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			comment="The path to the mshtml.dll file in the system root" id="oval:org.mitre.oval:obj:222"
+			version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:200" />
+			<filename>mshtml.dll</filename>
+		</file_object>
+		<wmi_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:2255" version="1">
+			<namespace>root\cimv2</namespace>
+			<wql>select HotfixID from Win32_QuickFixEngineering where
+				HotFixID='KB938123'</wql>
+		</wmi_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:2308" version="0">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:553" />
+			<filename>Mso.dll</filename>
+		</file_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:2321" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>
+				SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{ABEB838C-A1A7-4C5D-B7E1-8B4314600820}
+			</key>
+			<name xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				xsi:nil="true" />
+		</registry_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:2423" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>
+				SOFTWARE\Classes\Installer\Products\813ACF1D304B0FB43A2E440E1CF2ADD3
+			</key>
+			<name>ProductName</name>
+		</registry_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			comment="This registry key identifies the version of Internet Explorer"
+			id="oval:org.mitre.oval:obj:247" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>SOFTWARE\Microsoft\Internet Explorer
+			</key>
+			<name>Version</name>
+		</registry_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:2500" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:629" />
+			<filename>Vssrvc.exe</filename>
+		</file_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:2501" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>
+				SOFTWARE\Classes\Installer\Products\96CF2B3B315599C4A9E75C85A4295880
+			</key>
+			<name>ProductName</name>
+		</registry_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:2522" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:136" />
+			<filename>Aeserverobject.dll</filename>
+		</file_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:2527" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>
+				SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{ABEB838C-A1A7-4C5D-B7E1-8B4314600208}
+			</key>
+			<name xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				xsi:nil="true" />
+		</registry_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:253" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:200" />
+			<filename>shell32.dll</filename>
+		</file_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:2560" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>SOFTWARE\Microsoft\Office\12.0\Publisher\InstallRoot
+			</key>
+			<name>Path</name>
+		</registry_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:2575" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:200" />
+			<filename>oleaut32.dll</filename>
+		</file_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:2581" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>SOFTWARE\Microsoft\MediaPlayer\PlayerUpgrade
+			</key>
+			<name>PlayerVersion</name>
+		</registry_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:2591" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key operation="equals">SOFTWARE\NCompass\Resolution
+				Content Server\VersionInfo</key>
+			<name>Version</name>
+		</registry_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			comment="The rpcrt4.dll located in the system root." id="oval:org.mitre.oval:obj:2619"
+			version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:200" />
+			<filename>rpcrt4.dll</filename>
+		</file_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:2620" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>
+				SOFTWARE\Classes\Installer\Products\2ACE96BF53CE47C46B808783D50059D9
+			</key>
+			<name>ProductName</name>
+		</registry_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:2625" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key operation="equals">SOFTWARE\NCompass\Resolution
+				Content Server\VersionInfo</key>
+			<name>Patches</name>
+		</registry_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			comment="crpe32.dll in the system 32 directory." id="oval:org.mitre.oval:obj:2628"
+			version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:200" />
+			<filename>crpe32.dll</filename>
+		</file_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:263" version="2">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:1041" />
+			<filename>System.web.dll</filename>
+		</file_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:2686" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>
+				SOFTWARE\Microsoft\Office\12.0\Registration\{90120000-110D-0000-0000-0000000FF1CE}
+			</key>
+			<name>ProductName</name>
+		</registry_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:2694" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:1041" />
+			<filename>Mscorlib.dll</filename>
+		</file_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:2727" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>SOFTWARE\Microsoft\Office\12.0\Excel\InstallRoot
+			</key>
+			<name xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				xsi:nil="true" />
+		</registry_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:279" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:200" />
+			<filename>gdi32.dll</filename>
+		</file_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:3" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:200" />
+			<filename>Msxml3.dll</filename>
+		</file_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:308" version="2">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:209" />
+			<filename>vgx.dll</filename>
+		</file_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:326" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:201" />
+			<filename>mrxsmb.sys</filename>
+		</file_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:335" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:200" />
+			<filename>Ntoskrnl.exe</filename>
+		</file_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:384" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:201" />
+			<filename>srv.sys</filename>
+		</file_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:385" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:200" />
+			<filename>inetcomm.dll</filename>
+		</file_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:387" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>
+				Software\Microsoft\Windows\CurrentVersion\Uninstall\{90510409-6000-11D3-8CFE-0150048383C9}
+			</key>
+			<name xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				xsi:nil="true" />
+		</registry_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:390" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:200" />
+			<filename>user32.dll</filename>
+		</file_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			comment="MSO.DLL for Office 11 in its installation directory" id="oval:org.mitre.oval:obj:398"
+			version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:214" />
+			<filename>MSO.DLL</filename>
+		</file_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:4" version="2">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:1061" />
+			<filename>System.web.dll</filename>
+		</file_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:41" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:201" />
+			<filename>Rmcast.sys</filename>
+		</file_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:414" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>
+				Software\Microsoft\Windows\CurrentVersion\Uninstall\{90510409-6D54-11D4-BEE3-00C04F990354}
+			</key>
+			<name>DisplayVersion</name>
+		</registry_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:417" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>SOFTWARE\Microsoft\Office\11.0\Common\InstallRoot
+			</key>
+			<name>Path</name>
+		</registry_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:418" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>
+				SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{90110409-6000-11D3-8CFE-0150048383C9}
+			</key>
+			<name>DisplayVersion</name>
+		</registry_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			comment="This registry key holds the version of the installed operating system."
+			id="oval:org.mitre.oval:obj:419" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>SOFTWARE\Microsoft\Windows
+				NT\CurrentVersion</key>
+			<name>CurrentVersion</name>
+		</registry_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:4448" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:201" />
+			<filename>srv2.sys</filename>
+		</file_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:466" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>
+				SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{903B0409-6000-11D3-8CFE-0050048383C9}
+			</key>
+			<name>DisplayVersion</name>
+		</registry_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			comment="MSO.DLL for Office 10 in its installation directory" id="oval:org.mitre.oval:obj:467"
+			version="2">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:713" />
+			<filename>MSO.DLL</filename>
+		</file_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:4678" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:200" />
+			<filename>wmasf.dll</filename>
+		</file_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:4693" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:200" />
+			<filename>wmsserver.dll</filename>
+		</file_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:47" version="3">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:743" />
+			<filename>Msxml5.dll</filename>
+		</file_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:492" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:221" />
+			<filename>winword.exe</filename>
+		</file_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:499" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>SOFTWARE\Microsoft\DirectX</key>
+			<name>Version</name>
+		</registry_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			comment="HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Internet Explorer\ActiveX Compatibility\{40F23EB7-B397-4285-8F3C-AACE4FA40309}!Compatibility Flags is not equal to 0x00000400"
+			id="oval:org.mitre.oval:obj:5016" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>SOFTWARE\Microsoft\Internet
+				Explorer\ActiveX
+				Compatibility\{40F23EB7-B397-4285-8F3C-AACE4FA40309}</key>
+			<name>Compatibility Flags</name>
+		</registry_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:513" version="2">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:222" />
+			<filename>cdoex.dll</filename>
+		</file_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:5169" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>SOFTWARE\Microsoft\Office\12.0\Outlook\InstallRoot
+			</key>
+			<name>Path</name>
+		</registry_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:52" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:200" />
+			<filename>Wmvcore.dll</filename>
+		</file_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:5272" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:252" />
+			<filename>Winproj.exe</filename>
+		</file_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:5311" version="2">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key operation="pattern match">
+				^SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\{9[012]120000-005[13]-0000-0000-0000000FF1CE}$
+			</key>
+			<name xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				xsi:nil="true" />
+		</registry_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:5316" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:929" />
+			<filename>excelcnv.exe</filename>
+		</file_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:5330" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:217" />
+			<filename>Winproj.exe</filename>
+		</file_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:5465" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>SOFTWARE\Microsoft\Internet
+				Explorer\ActiveX
+				Compatibility\{22FD7C0A-850C-4A53-9821-0B0915C96139}</key>
+			<name xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				xsi:nil="true" />
+		</registry_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:5503" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:583" />
+			<filename>devenv.exe</filename>
+		</file_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			comment="Registry key specifying where Microsoft Visual Studio 2002 is installed"
+			id="oval:org.mitre.oval:obj:5692" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>Software\Microsoft\VisualStudio\7.0
+			</key>
+			<name>InstallDir</name>
+		</registry_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:5514" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key operation="equals">SOFTWARE\Classes\CAPICOM.Certificates.4\CLSID
+			</key>
+			<name xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				xsi:nil="true" />
+		</registry_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:5518" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:728" />
+			<filename>Winproj.exe</filename>
+		</file_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:553" version="2">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:225" />
+			<filename>powerpnt.exe</filename>
+		</file_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:554" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>SOFTWARE\Microsoft\Windows\CurrentVersion\App
+				Paths\powerpnt.exe</key>
+			<name>Path</name>
+		</registry_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:5538" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:201" />
+			<filename>mrxdav.sys</filename>
+		</file_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:555" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>SOFTWARE\Microsoft\Office\10.0\PowerPoint\InstallRoot
+			</key>
+			<name>Path</name>
+		</registry_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			comment="Registry key specifying where Microsoft Visual Studio 2005 is installed"
+			id="oval:org.mitre.oval:obj:5581" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>Software\Microsoft\VisualStudio\8.0
+			</key>
+			<name>InstallDir</name>
+		</registry_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			comment="This registry key  ProductName" id="oval:org.mitre.oval:obj:5590"
+			version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>SOFTWARE\Microsoft\Windows
+				NT\CurrentVersion</key>
+			<name>ProductName</name>
+		</registry_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:5597" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:200" />
+			<filename>Ipsecsvc.dll</filename>
+		</file_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:5602" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:129" />
+			<filename>devenv.exe</filename>
+		</file_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			comment="The registry key that holds the location of the program files directory."
+			id="oval:org.mitre.oval:obj:5628" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>SOFTWARE\Apple Computer, Inc.\QuickTime</key>
+			<name>InstallDir</name>
+		</registry_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			deprecated="true" id="oval:org.mitre.oval:obj:563" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:201" />
+			<filename>tcpip.sys</filename>
+		</file_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:5652" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>SOFTWARE\Microsoft\Office\12.0\PowerPoint\InstallRoot
+			</key>
+			<name>Path</name>
+		</registry_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:566" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>SOFTWARE\Microsoft\Outlook
+				Express\Version Info</key>
+			<name>Current</name>
+		</registry_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:5673" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:929" />
+			<filename>Wordcnv.dll</filename>
+		</file_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:5680" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:203" />
+			<filename>infocomm.dll</filename>
+		</file_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:5682" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:130" />
+			<filename>devenv.exe</filename>
+		</file_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			comment="Registry key specifying where Microsoft Visual Studio 2003 is installed"
+			id="oval:org.mitre.oval:obj:5745" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>Software\Microsoft\VisualStudio\7.1
+			</key>
+			<name>InstallDir</name>
+		</registry_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:570" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:200" />
+			<filename>win32k.sys</filename>
+		</file_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:5731" version="2">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:929" />
+			<filename>wrdcnv.dll</filename>
+		</file_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:5752" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key operation="pattern match">SOFTWARE\\Classes\\CAPICOM\.Certificates\.[0-9]
+			</key>
+			<name xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				xsi:nil="true" />
+		</registry_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:5807" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:201" />
+			<filename>bthport.sys</filename>
+		</file_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:592" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:200" />
+			<filename>Wmp.dll</filename>
+		</file_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:593" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>SOFTWARE\Microsoft\MediaPlayer\9.0\Registration
+			</key>
+			<name>UDBVersion</name>
+		</registry_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:5941" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:107" />
+			<filename>Gdiplus.dll</filename>
+		</file_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:5958" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key var_check="all" var_ref="oval:org.mitre.oval:var:172" />
+			<name>Version</name>
+		</registry_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:6272" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>SOFTWARE\Adobe\Acrobat
+				Reader\8.0\Installer</key>
+			<name>ENU_GUID</name>
+		</registry_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:5992" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>SOFTWARE\Microsoft\Exchange\Setup
+			</key>
+			<name>MsiProductMajor</name>
+		</registry_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:6032" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>SOFTWARE\Microsoft\Exchange\Setup
+			</key>
+			<name>MsiProductMinor</name>
+		</registry_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:6057" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:200" />
+			<filename>imagehlp.dll</filename>
+		</file_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:6089" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:107" />
+			<filename>XLVIEW.EXE</filename>
+		</file_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:6109" version="2">
+			<path operation="pattern match" var_check="all"
+				var_ref="oval:org.mitre.oval:var:309" />
+			<filename>Gdiplus.dll</filename>
+		</file_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:6119" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key var_check="all" var_ref="oval:org.mitre.oval:var:650" />
+			<name>VersionMajor</name>
+		</registry_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:6808" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>SOFTWARE\Adobe\Adobe Acrobat\8.0\Installer
+			</key>
+			<name>ENU_GUID</name>
+		</registry_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:6160" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key var_check="all" var_ref="oval:org.mitre.oval:var:128" />
+			<name>VersionMajor</name>
+		</registry_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:6736" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>SOFTWARE\Adobe\Acrobat
+				Reader\9.0\Installer</key>
+			<name>ENU_GUID</name>
+		</registry_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:6200" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>SOFTWARE\Adobe\Acrobat
+				Reader\7.0\Installer</key>
+			<name>ENU_GUID</name>
+		</registry_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:622" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:200" />
+			<filename>gdi32.dll</filename>
+		</file_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:6244" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:200" />
+			<filename>Wmpeffects.dll</filename>
+		</file_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:6255" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:834" />
+			<filename>Ecscalcserver.dll</filename>
+		</file_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:6278" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:70" />
+			<filename>Wmex.dll</filename>
+		</file_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:630" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>SOFTWARE\Microsoft\MediaPlayer\10.0\Registration
+			</key>
+			<name>UDBVersion</name>
+		</registry_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:6307" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:868" />
+			<filename>pptview.exe</filename>
+		</file_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:6331" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:929" />
+			<filename>pptcnv.dll</filename>
+		</file_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:6362" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:929" />
+			<filename>EXCEL.EXE</filename>
+		</file_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:6377" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>SOFTWARE\Wow6432Node\Clients\Mail\ExchangeMAPI
+			</key>
+			<name>DLLPathEx</name>
+		</registry_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:639" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:200" />
+			<filename>Wmpui.dll</filename>
+		</file_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:6401" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key var_check="all" var_ref="oval:org.mitre.oval:var:382" />
+			<name>Version</name>
+		</registry_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:6740" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>SOFTWARE\Adobe\Adobe Acrobat\7.0\Installer
+			</key>
+			<name>ENU_GUID</name>
+		</registry_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:6420" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:1051" />
+			<filename>Gdiplus.dll</filename>
+		</file_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:6428" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:553" />
+			<filename>Ogl.dll</filename>
+		</file_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:6432" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:200" />
+			<filename>es.dll</filename>
+		</file_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:6435" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:107" />
+			<filename>EXCEL.EXE</filename>
+		</file_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:6446" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:621" />
+			<filename>EXCEL.EXE</filename>
+		</file_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:6449" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key var_check="all" var_ref="oval:org.mitre.oval:var:773" />
+			<name>Version</name>
+		</registry_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:6858" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>SOFTWARE\Adobe\Adobe Acrobat\9.0\Installer
+			</key>
+			<name>ENU_GUID</name>
+		</registry_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:6456" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>SOFTWARE\Microsoft\Windows\CurrentVersion\App
+				Paths\OneNote.exe</key>
+			<name>Path</name>
+		</registry_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:649" version="2">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>SOFTWARE\Microsoft\Office\9.0\PowerPoint\InstallRoot
+			</key>
+			<name xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				xsi:nil="true" />
+		</registry_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:6492" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:929" />
+			<filename>XLVIEW.EXE</filename>
+		</file_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:650" version="2">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>Software\Microsoft\Office\9.0\Registration\ProductID
+			</key>
+			<name xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				xsi:nil="true" />
+		</registry_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:6504" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key var_check="all" var_ref="oval:org.mitre.oval:var:931" />
+			<name>Version</name>
+		</registry_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:6509" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:826" />
+			<filename>EXCEL.EXE</filename>
+		</file_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:6532" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:971" />
+			<filename>Nscm.exe</filename>
+		</file_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:6543" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:1041" />
+			<filename>Gdiplus.dll</filename>
+		</file_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:6558" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:92" />
+			<filename>QuickTimePlayer.exe</filename>
+		</file_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:6563" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:960" />
+			<filename>iTunes.exe</filename>
+		</file_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:6571" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:896" />
+			<filename>ReportViewerLP.exe</filename>
+		</file_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:6575" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:201" />
+			<filename>mrxsmb10.sys</filename>
+		</file_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:6586" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>SOFTWARE\Microsoft\Office\12.0\OneNote\InstallRoot
+			</key>
+			<name xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				xsi:nil="true" />
+		</registry_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			comment="Path to xlview.exe in Excel Viewer install directory" id="oval:org.mitre.oval:obj:659"
+			version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:230" />
+			<filename>xlview.exe</filename>
+		</file_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:660" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>
+				SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{90840409-6000-11D3-8CFE-0150048383C9}
+			</key>
+			<name>InstallLocation</name>
+		</registry_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:6595" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:200" />
+			<filename>Win32spl.dll</filename>
+		</file_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:6606" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:44" />
+			<filename>OneNote.exe</filename>
+		</file_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:6616" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:1061" />
+			<filename>Gdiplus.dll</filename>
+		</file_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			comment="Full path to exmapi32.dll on 32-Bit version of Windows" id="oval:org.mitre.oval:obj:6619"
+			version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:335" />
+			<filename />
+		</file_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:6707" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>SOFTWARE\Clients\Mail\ExchangeMAPI
+			</key>
+			<name>DLLPathEx</name>
+		</registry_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:662" version="2">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:231" />
+			<filename>excel.exe</filename>
+		</file_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:663" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>SOFTWARE\Microsoft\Windows\CurrentVersion\App
+				Paths\Excel.exe</key>
+			<name>Path</name>
+		</registry_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:6636" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key var_check="all" var_ref="oval:org.mitre.oval:var:650" />
+			<name>Version</name>
+		</registry_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:6638" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:938" />
+			<filename>opera.exe</filename>
+		</file_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:664" version="2">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>SOFTWARE\Microsoft\Office\11.0\Excel\InstallRoot
+			</key>
+			<name>Path</name>
+		</registry_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			comment="HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\NetShow!Version" id="oval:org.mitre.oval:obj:6642"
+			version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>SOFTWARE\Microsoft\NetShow</key>
+			<name>Version</name>
+		</registry_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:6648" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key var_check="all" var_ref="oval:org.mitre.oval:var:931" />
+			<name>VersionMajor</name>
+		</registry_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:6668" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:24" />
+			<filename>Safari.exe</filename>
+		</file_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			comment="The registry key that holds the location of the program files directory."
+			id="oval:org.mitre.oval:obj:6703" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>SOFTWARE\Apple Computer, Inc.\Safari</key>
+			<name>InstallDir</name>
+		</registry_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:6670" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:971" />
+			<filename>Wmsserver.dll</filename>
+		</file_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			comment="HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Media\Server!Version"
+			id="oval:org.mitre.oval:obj:6688" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>SOFTWARE\Microsoft\Windows
+				Media\Server</key>
+			<name>Version</name>
+		</registry_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:6695" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:200" />
+			<filename>Mscomct2.ocx</filename>
+		</file_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:6710" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:244" />
+			<filename>explorer.exe</filename>
+		</file_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:6711" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:200" />
+			<filename>Wmnetmgr.dll</filename>
+		</file_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:6726" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key var_check="all" var_ref="oval:org.mitre.oval:var:382" />
+			<name>VersionMajor</name>
+		</registry_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:6743" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:858" />
+			<filename>opera.exe</filename>
+		</file_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:6745" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:200" />
+			<filename>Mschrt20.ocx</filename>
+		</file_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:6751" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key var_check="all" var_ref="oval:org.mitre.oval:var:773" />
+			<name>VersionMajor</name>
+		</registry_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:6761" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:929" />
+			<filename>Winproj.exe</filename>
+		</file_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:6765" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key var_check="all" var_ref="oval:org.mitre.oval:var:172" />
+			<name>VersionMajor</name>
+		</registry_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:6819" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key var_check="all" var_ref="oval:org.mitre.oval:var:128" />
+			<name>Version</name>
+		</registry_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			comment="Full path to exmapi32.dll on 64-Bit version of Windows" id="oval:org.mitre.oval:obj:6841"
+			version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:524" />
+			<filename />
+		</file_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:6857" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:929" />
+			<filename>Wordcnv.exe</filename>
+		</file_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:6859" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:200" />
+			<filename>Wmstream.dll</filename>
+		</file_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			comment="The registry key that holds the version of he wireshark."
+			id="oval:org.mitre.oval:obj:6871" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Wireshark
+			</key>
+			<name>DisplayVersion</name>
+		</registry_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:704" version="1">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:200" />
+			<filename>Quartz.dll</filename>
+		</file_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			comment="This registry key holds the service pack installed on the host if one is present."
+			id="oval:org.mitre.oval:obj:717" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>SOFTWARE\Microsoft\Windows
+				NT\CurrentVersion</key>
+			<name>CSDVersion</name>
+		</registry_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:732" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>SOFTWARE\Microsoft\Exchange\Setup
+			</key>
+			<name>ServicePackBuild</name>
+		</registry_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:780" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>SOFTWARE\Microsoft\MediaPlayer\7.1\Registration
+			</key>
+			<name>UDBVersion</name>
+		</registry_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:850" version="2">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>SOFTWARE\Microsoft\Office\11.0\PowerPoint\InstallRoot
+			</key>
+			<name>Path</name>
+		</registry_object>
+		<registry_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:938" version="1">
+			<hive>HKEY_LOCAL_MACHINE</hive>
+			<key>SOFTWARE\Microsoft\INetStp</key>
+			<name>MinorVersion</name>
+		</registry_object>
+		<file_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+			id="oval:org.mitre.oval:obj:94" version="2">
+			<path var_check="all" var_ref="oval:org.mitre.oval:var:297" />
+			<filename>mspub.exe</filename>
+		</file_object>
+		<family_object
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent"
+			comment="This is the default family object. Only one family object should exist."
+			id="oval:org.mitre.oval:obj:99" version="1" />
+	</ovaldef:objects>
+	<ovaldef:variables>
+		<local_variable xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+			comment="Office 2000 installation directory" datatype="string"
+			id="oval:org.mitre.oval:var:728" version="1">
+			<object_component item_field="value"
+				object_ref="oval:org.mitre.oval:obj:120" />
+		</local_variable>
+		<local_variable xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+			comment="Windows system 32 directory" datatype="string"
+			id="oval:org.mitre.oval:var:200" version="1">
+			<concat>
+				<object_component item_field="value"
+					object_ref="oval:org.mitre.oval:obj:219" />
+				<literal_component>\System32</literal_component>
+			</concat>
+		</local_variable>
+		<local_variable xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+			comment="Outlook.exe App Path directory" datatype="string"
+			id="oval:org.mitre.oval:var:247" version="1">
+			<object_component item_field="value"
+				object_ref="oval:org.mitre.oval:obj:1071" />
+		</local_variable>
+		<local_variable xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+			comment="Microsft shared Visual Basic directory" datatype="string"
+			id="oval:org.mitre.oval:var:363" version="2">
+			<concat>
+				<object_component item_field="value"
+					object_ref="oval:org.mitre.oval:obj:281" />
+				<literal_component>\Microsoft Shared\VBA\VBA6
+				</literal_component>
+			</concat>
+		</local_variable>
+		<local_variable xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+			comment="Word install directory" datatype="string"
+			id="oval:org.mitre.oval:var:221" version="1">
+			<object_component item_field="value"
+				object_ref="oval:org.mitre.oval:obj:493" />
+		</local_variable>
+		<local_variable xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+			comment=".NET 1.1 Framework directory" datatype="string"
+			id="oval:org.mitre.oval:var:1051" version="1">
+			<concat>
+				<object_component item_field="value"
+					object_ref="oval:org.mitre.oval:obj:219" />
+				<literal_component>\Microsoft.NET\Framework\v1.1.4322
+				</literal_component>
+			</concat>
+		</local_variable>
+		<local_variable xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+			comment="The SharePoint BIN directory" datatype="string"
+			id="oval:org.mitre.oval:var:834" version="1">
+			<concat>
+				<object_component item_field="value"
+					object_ref="oval:org.mitre.oval:obj:281" />
+				<literal_component>\Microsoft Shared\web server
+					extensions\12\BIN</literal_component>
+			</concat>
+		</local_variable>
+		<local_variable xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+			comment="Microsoft Virtual PC folder" datatype="string"
+			id="oval:org.mitre.oval:var:96" version="1">
+			<concat>
+				<object_component item_field="value"
+					object_ref="oval:org.mitre.oval:obj:309" />
+				<literal_component>\Microsoft Virtual PC
+				</literal_component>
+			</concat>
+		</local_variable>
+		<local_variable xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+			comment=".NET 2.0 Framework directory" datatype="string"
+			id="oval:org.mitre.oval:var:1061" version="1">
+			<concat>
+				<object_component item_field="value"
+					object_ref="oval:org.mitre.oval:obj:219" />
+				<literal_component>\Microsoft.NET\Framework\v2.0.50727
+				</literal_component>
+			</concat>
+		</local_variable>
+		<local_variable xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+			comment="Install directory of Visio" datatype="string"
+			id="oval:org.mitre.oval:var:338" version="1">
+			<object_component item_field="value"
+				object_ref="oval:org.mitre.oval:obj:2440" />
+		</local_variable>
+		<local_variable xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+			comment="Office12 subdirectory  of  the ProgramFilesDir" datatype="string"
+			id="oval:org.mitre.oval:var:929" version="0">
+			<concat>
+				<object_component item_field="value"
+					object_ref="oval:org.mitre.oval:obj:309" />
+				<literal_component>\Microsoft Office\Office12
+				</literal_component>
+			</concat>
+		</local_variable>
+		<local_variable xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+			comment="The path to mspub.exe" datatype="string"
+			id="oval:org.mitre.oval:var:297" version="1">
+			<object_component item_field="value"
+				object_ref="oval:org.mitre.oval:obj:2163" />
+		</local_variable>
+		<local_variable xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+			comment="The shared Office 2007 directory" datatype="string"
+			id="oval:org.mitre.oval:var:553" version="0">
+			<concat>
+				<object_component item_field="value"
+					object_ref="oval:org.mitre.oval:obj:281" />
+				<literal_component>\Microsoft Shared\OFFICE12
+				</literal_component>
+			</concat>
+		</local_variable>
+		<local_variable xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+			comment="Microsoft Virtual PC folder" datatype="string"
+			id="oval:org.mitre.oval:var:629" version="1">
+			<concat>
+				<object_component item_field="value"
+					object_ref="oval:org.mitre.oval:obj:309" />
+				<literal_component>\Microsoft Virtual Server
+				</literal_component>
+			</concat>
+		</local_variable>
+		<local_variable xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+			comment="Binary files for the Microsoft Content Manager Server"
+			datatype="string" id="oval:org.mitre.oval:var:136" version="1">
+			<concat>
+				<object_component item_field="value"
+					object_ref="oval:org.mitre.oval:obj:309" />
+				<literal_component>\Microsoft Content Management
+					Server\Server\bin</literal_component>
+			</concat>
+		</local_variable>
+		<local_variable xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+			comment=".NET 1.0 Framework directory" datatype="string"
+			id="oval:org.mitre.oval:var:1041" version="1">
+			<concat>
+				<object_component item_field="value"
+					object_ref="oval:org.mitre.oval:obj:219" />
+				<literal_component>\Microsoft.NET\Framework\v1.0.3705
+				</literal_component>
+			</concat>
+		</local_variable>
+		<local_variable xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+			comment="Base path to vgx.dll, part of Vector Markup Language (VML) implementation."
+			datatype="string" id="oval:org.mitre.oval:var:209" version="2">
+			<concat>
+				<object_component item_field="value"
+					object_ref="oval:org.mitre.oval:obj:281" />
+				<literal_component>\Microsoft Shared\VGX
+				</literal_component>
+			</concat>
+		</local_variable>
+		<local_variable xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+			comment="Windows system 32 drivers directory" datatype="string"
+			id="oval:org.mitre.oval:var:201" version="1">
+			<concat>
+				<object_component item_field="value"
+					object_ref="oval:org.mitre.oval:obj:219" />
+				<literal_component>\System32\drivers
+				</literal_component>
+			</concat>
+		</local_variable>
+		<local_variable xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+			comment="Install directory of MSO.DLL for Office 11" datatype="string"
+			id="oval:org.mitre.oval:var:214" version="1">
+			<concat>
+				<object_component item_field="value"
+					object_ref="oval:org.mitre.oval:obj:281" />
+				<literal_component>\Microsoft Shared\OFFICE11
+				</literal_component>
+			</concat>
+		</local_variable>
+		<local_variable xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+			comment="The shared Office 2002 directory" datatype="string"
+			id="oval:org.mitre.oval:var:713" version="1">
+			<concat>
+				<object_component item_field="value"
+					object_ref="oval:org.mitre.oval:obj:281" />
+				<literal_component>\Microsoft Shared\OFFICE10
+				</literal_component>
+			</concat>
+		</local_variable>
+		<local_variable xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+			comment="Microsft OFFICE11 directory" datatype="string"
+			id="oval:org.mitre.oval:var:743" version="1">
+			<concat>
+				<object_component item_field="value"
+					object_ref="oval:org.mitre.oval:obj:281" />
+				<literal_component>\Microsoft Shared\OFFICE11
+				</literal_component>
+			</concat>
+		</local_variable>
+		<local_variable xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+			comment="..." datatype="string" id="oval:org.mitre.oval:var:222"
+			version="2">
+			<concat>
+				<object_component item_field="value"
+					object_ref="oval:org.mitre.oval:obj:281" />
+				<literal_component>\Microsoft Shared\CDO
+				</literal_component>
+			</concat>
+		</local_variable>
+		<local_variable xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+			comment="Office XP (10.0) install directory" datatype="string"
+			id="oval:org.mitre.oval:var:252" version="1">
+			<object_component item_field="value"
+				object_ref="oval:org.mitre.oval:obj:1509" />
+		</local_variable>
+		<local_variable xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+			comment="..." datatype="string" id="oval:org.mitre.oval:var:217"
+			version="1">
+			<object_component item_field="value"
+				object_ref="oval:org.mitre.oval:obj:417" />
+		</local_variable>
+		<local_variable xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+			comment="The Microsoft Visual Studio 2002 install directory"
+			datatype="string" id="oval:org.mitre.oval:var:583" version="1">
+			<object_component item_field="value"
+				object_ref="oval:org.mitre.oval:obj:5692" />
+		</local_variable>
+		<local_variable xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+			comment="..." datatype="string" id="oval:org.mitre.oval:var:225"
+			version="1">
+			<object_component item_field="value"
+				object_ref="oval:org.mitre.oval:obj:554" />
+		</local_variable>
+		<local_variable xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+			comment="The Microsoft Visual Studio 2005 install directory"
+			datatype="string" id="oval:org.mitre.oval:var:129" version="1">
+			<object_component item_field="value"
+				object_ref="oval:org.mitre.oval:obj:5581" />
+		</local_variable>
+		<local_variable xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+			comment="inetsrv directory in the Windows system 32 directory"
+			datatype="string" id="oval:org.mitre.oval:var:203" version="1">
+			<concat>
+				<object_component item_field="value"
+					object_ref="oval:org.mitre.oval:obj:219" />
+				<literal_component>\system32\inetsrv
+				</literal_component>
+			</concat>
+		</local_variable>
+		<local_variable xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+			comment="The Microsoft Visual Studio 2003 install directory"
+			datatype="string" id="oval:org.mitre.oval:var:130" version="1">
+			<object_component item_field="value"
+				object_ref="oval:org.mitre.oval:obj:5745" />
+		</local_variable>
+		<local_variable xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+			comment="Office11 folder in Program Files" datatype="string"
+			id="oval:org.mitre.oval:var:107" version="1">
+			<concat>
+				<object_component item_field="value"
+					object_ref="oval:org.mitre.oval:obj:309" />
+				<literal_component>\Microsoft Office\Office11
+				</literal_component>
+			</concat>
+		</local_variable>
+		<local_variable xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+			comment="..." datatype="string" id="oval:org.mitre.oval:var:172"
+			version="1">
+			<concat>
+				<literal_component>
+					SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\
+				</literal_component>
+				<object_component item_field="value"
+					object_ref="oval:org.mitre.oval:obj:6272" />
+			</concat>
+		</local_variable>
+		<local_variable xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+			comment="GDI+ directory" datatype="string" id="oval:org.mitre.oval:var:309"
+			version="2">
+			<concat>
+				<escape_regex>
+					<object_component item_field="value"
+						object_ref="oval:org.mitre.oval:obj:219" />
+				</escape_regex>
+				<literal_component>\\WinSxS\\x86_Microsoft.Windows.GdiPlus_.+
+				</literal_component>
+			</concat>
+		</local_variable>
+		<local_variable xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+			comment="..." datatype="string" id="oval:org.mitre.oval:var:650"
+			version="1">
+			<concat>
+				<literal_component>
+					SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\
+				</literal_component>
+				<object_component item_field="value"
+					object_ref="oval:org.mitre.oval:obj:6808" />
+			</concat>
+		</local_variable>
+		<local_variable xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+			comment="..." datatype="string" id="oval:org.mitre.oval:var:128"
+			version="1">
+			<concat>
+				<literal_component>
+					SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\
+				</literal_component>
+				<object_component item_field="value"
+					object_ref="oval:org.mitre.oval:obj:6736" />
+			</concat>
+		</local_variable>
+		<local_variable xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+			comment="Windows system 32 directory" datatype="string"
+			id="oval:org.mitre.oval:var:70" version="1">
+			<concat>
+				<object_component item_field="value"
+					object_ref="oval:org.mitre.oval:obj:309" />
+				<literal_component>\Windows Media Components\Encoder
+				</literal_component>
+			</concat>
+		</local_variable>
+		<local_variable xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+			comment="Microsoft PowerPoint Viewer folder in Program Files"
+			datatype="string" id="oval:org.mitre.oval:var:868" version="1">
+			<concat>
+				<object_component item_field="value"
+					object_ref="oval:org.mitre.oval:obj:309" />
+				<literal_component>\Microsoft Office\PowerPoint Viewer
+				</literal_component>
+			</concat>
+		</local_variable>
+		<local_variable xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+			comment="..." datatype="string" id="oval:org.mitre.oval:var:382"
+			version="1">
+			<concat>
+				<literal_component>
+					SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\
+				</literal_component>
+				<object_component item_field="value"
+					object_ref="oval:org.mitre.oval:obj:6740" />
+			</concat>
+		</local_variable>
+		<local_variable xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+			comment="Office10 folder in Program Files" datatype="string"
+			id="oval:org.mitre.oval:var:621" version="1">
+			<concat>
+				<object_component item_field="value"
+					object_ref="oval:org.mitre.oval:obj:309" />
+				<literal_component>\Microsoft Office\Office10
+				</literal_component>
+			</concat>
+		</local_variable>
+		<local_variable xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+			comment="..." datatype="string" id="oval:org.mitre.oval:var:773"
+			version="1">
+			<concat>
+				<literal_component>
+					SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\
+				</literal_component>
+				<object_component item_field="value"
+					object_ref="oval:org.mitre.oval:obj:6858" />
+			</concat>
+		</local_variable>
+		<local_variable xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+			comment="..." datatype="string" id="oval:org.mitre.oval:var:931"
+			version="1">
+			<concat>
+				<literal_component>
+					SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\
+				</literal_component>
+				<object_component item_field="value"
+					object_ref="oval:org.mitre.oval:obj:6200" />
+			</concat>
+		</local_variable>
+		<local_variable xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+			comment="Office9 folder in Program Files" datatype="string"
+			id="oval:org.mitre.oval:var:826" version="1">
+			<concat>
+				<object_component item_field="value"
+					object_ref="oval:org.mitre.oval:obj:309" />
+				<literal_component>\Microsoft Office\Office9
+				</literal_component>
+			</concat>
+		</local_variable>
+		<local_variable xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+			comment="WINNT\system32\Windows Media\Server directory" datatype="string"
+			id="oval:org.mitre.oval:var:971" version="1">
+			<concat>
+				<object_component item_field="value"
+					object_ref="oval:org.mitre.oval:obj:219" />
+				<literal_component>\System32\Windows Media\Server
+				</literal_component>
+			</concat>
+		</local_variable>
+		<local_variable xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+			comment="QuickTime directory" datatype="string" id="oval:org.mitre.oval:var:92"
+			version="1">
+			<concat>
+				<object_component item_field="value"
+					object_ref="oval:org.mitre.oval:obj:5628" />
+				<literal_component>\</literal_component>
+			</concat>
+		</local_variable>
+		<local_variable xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+			comment="iTunes directory" datatype="string" id="oval:org.mitre.oval:var:960"
+			version="1">
+			<concat>
+				<object_component item_field="value"
+					object_ref="oval:org.mitre.oval:obj:309" />
+				<literal_component>\iTunes</literal_component>
+			</concat>
+		</local_variable>
+		<local_variable xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+			comment="Microsoft PowerPoint Viewer folder in Program Files"
+			datatype="string" id="oval:org.mitre.oval:var:896" version="1">
+			<concat>
+				<object_component item_field="value"
+					object_ref="oval:org.mitre.oval:obj:309" />
+				<literal_component>\Microsoft Visual Studio
+					8\SDK\v2.0\BootStrapper\Packages\ReportViewer</literal_component>
+			</concat>
+		</local_variable>
+		<local_variable xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+			comment="Excel Viewer install location" datatype="string"
+			id="oval:org.mitre.oval:var:230" version="1">
+			<concat>
+				<object_component item_field="value"
+					object_ref="oval:org.mitre.oval:obj:660" />
+				<literal_component>OFFICE11</literal_component>
+			</concat>
+		</local_variable>
+		<local_variable xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+			comment="OneNote Installation directory" datatype="string"
+			id="oval:org.mitre.oval:var:44" version="1">
+			<object_component item_field="value"
+				object_ref="oval:org.mitre.oval:obj:6456" />
+		</local_variable>
+		<local_variable xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+			comment="HKEY_LOCAL_MACHINE\SOFTWARE\Clients\Mail\ExchangeMAPI\\DLLPathEx"
+			datatype="string" id="oval:org.mitre.oval:var:335" version="1">
+			<object_component item_field="value"
+				object_ref="oval:org.mitre.oval:obj:6707" />
+		</local_variable>
+		<local_variable xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+			comment="Excel installation directory" datatype="string"
+			id="oval:org.mitre.oval:var:231" version="1">
+			<object_component item_field="value"
+				object_ref="oval:org.mitre.oval:obj:663" />
+		</local_variable>
+		<local_variable xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+			comment="Opera directory" datatype="string" id="oval:org.mitre.oval:var:938"
+			version="1">
+			<concat>
+				<object_component item_field="value"
+					object_ref="oval:org.mitre.oval:obj:309" />
+				<literal_component>\opera</literal_component>
+			</concat>
+		</local_variable>
+		<local_variable xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+			comment="Safari Directory" datatype="string" id="oval:org.mitre.oval:var:24"
+			version="1">
+			<concat>
+				<object_component item_field="value"
+					object_ref="oval:org.mitre.oval:obj:6703" />
+				<literal_component>\</literal_component>
+			</concat>
+		</local_variable>
+		<local_variable xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+			comment="Windows %SYSTEMROOT% directory" datatype="string"
+			id="oval:org.mitre.oval:var:244" version="1">
+			<object_component item_field="value"
+				object_ref="oval:org.mitre.oval:obj:219" />
+		</local_variable>
+		<local_variable xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+			comment="Opera directory" datatype="string" id="oval:org.mitre.oval:var:858"
+			version="1">
+			<concat>
+				<object_component item_field="value"
+					object_ref="oval:org.mitre.oval:obj:309" />
+				<literal_component>\opera</literal_component>
+			</concat>
+		</local_variable>
+		<local_variable xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+			comment="HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Clients\Mail\ExchangeMAPI\\DLLPathEx"
+			datatype="string" id="oval:org.mitre.oval:var:524" version="1">
+			<object_component item_field="value"
+				object_ref="oval:org.mitre.oval:obj:6377" />
+		</local_variable>
+	</ovaldef:variables>
+</ovaldef:oval_definitions>

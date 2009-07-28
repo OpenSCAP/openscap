@@ -24,8 +24,10 @@ int main(int argc, char **argv)
 
 	struct oval_iterator_definition *definitions =
 	    get_oval_definitions(model);
-	if (!oval_iterator_definition_has_more(definitions))
+	if (!oval_iterator_definition_has_more(definitions)) {
 		printf("NO DEFINITIONS FOUND\n");
+		return 1;
+	}
 	int index;
 	for (index = 1; oval_iterator_definition_has_more(definitions); index++) {
 		struct oval_definition *definition =

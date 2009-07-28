@@ -58,7 +58,7 @@ oval_datatype_enum oval_value_datatype(struct oval_value *value)
 
 char *oval_value_text(struct oval_value *value)
 {
-	return ((struct oval_value *)value)->text;
+	return value->text;
 }
 
 unsigned char *oval_value_binary(struct oval_value *value)
@@ -118,7 +118,7 @@ int oval_value_parse_tag(xmlTextReaderPtr reader,
 	int return_code;
 	oval_datatype_enum datatype =
 	    oval_datatype_parse(reader, "datatype", OVAL_DATATYPE_STRING);
-	char *text;
+	char *text = NULL;
 	int isNil = oval_parser_boolean_attribute(reader, "xsi:nil", 0);
 	if (isNil) {
 		text = NULL;
