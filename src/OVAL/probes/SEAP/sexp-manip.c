@@ -1959,6 +1959,11 @@ int SEXP_cmpobj (const SEXP_t *a, const SEXP_t *b)
         return memcmp (a, b, sizeof (SEXP_t));
 }
 
+char *SEXP_datatype (const SEXP_t *a)
+{
+        return (NULL);
+}
+
 static const char *__sexp_strtype[] = {
         "unfinished",
         "list",

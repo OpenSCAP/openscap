@@ -114,15 +114,17 @@ SEXP_t *SEXP_list_reduce (SEXP_t *list, SEXP_t *(*fn) (const SEXP_t *, const SEX
 SEXP_t *SEXP_list_reduce2 (SEXP_t *list, SEXP_t *(*fn) (const SEXP_t *, const SEXP_t *, void *), int strategy, void *ptr);
 
 #if __STDC_VERSION__ >= 199901L
-#define SEXP_list_foreach(var, list)                                    \
-        for (register uint32_t ___i_ = 1;                               \
-             ((var) = SEXP_list_nth ((list), ___i_)) != NULL;           \
-             ++___i_)
+# include <sys/cdefs.h>
 
-#define SEXP_sublist_foreach(var, list, beg, end)                       \
-        for (register uint32_t ___i_ = (beg);                           \
-             ___i_ <= (uint32_t)(end) && ((var) = SEXP_list_nth ((list), ___i_)) != NULL; \
-             ++___i_)
+# define SEXP_list_foreach(var, list)                                   \
+        for (register uint32_t __CONCAT(___i_, __LINE__) = 1;           \
+             ((var) = SEXP_list_nth ((list), __CONCAT(___i_, __LINE__))) != NULL; \
+             ++__CONCAT(___i_, __LINE__))
+
+# define SEXP_sublist_foreach(var, list, beg, end)                      \
+        for (register uint32_t __CONCAT(___i_, __LINE__) = (beg);       \
+             __CONCAT(___i_, __LINE__) <= (uint32_t)(end) && ((var) = SEXP_list_nth ((list), __CONCAT(___i_, __LINE__))) != NULL; \
+             ++__CONCAT(___i_, __LINE__))
 #endif
 
 void SEXP_list_cb (SEXP_t *list, void (*fn) (SEXP_t *, void *), void *ptr);
@@ -143,6 +145,8 @@ size_t  SEXP_length (const SEXP_t *sexp);
 
 int     SEXP_cmp (const SEXP_t *a, const SEXP_t *b);
 int     SEXP_cmpobj (const SEXP_t *a, const SEXP_t *b);
+
+char   *SEXP_datatype (const SEXP_t *a);
 
 /*
  *  Returns atomic type of the given S-exp as a string.
