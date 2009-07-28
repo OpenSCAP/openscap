@@ -114,7 +114,11 @@ SEXP_t *SEXP_list_reduce (SEXP_t *list, SEXP_t *(*fn) (const SEXP_t *, const SEX
 SEXP_t *SEXP_list_reduce2 (SEXP_t *list, SEXP_t *(*fn) (const SEXP_t *, const SEXP_t *, void *), int strategy, void *ptr);
 
 #if __STDC_VERSION__ >= 199901L
-# include <sys/cdefs.h>
+
+# undef  __CONCAT1
+# undef  __CONCAT
+# define __CONCAT1(a, b) a##b
+# define __CONCAT(a, b) __CONCAT1(a,b)
 
 # define SEXP_list_foreach(var, list)                                   \
         for (register uint32_t __CONCAT(___i_, __LINE__) = 1;           \
