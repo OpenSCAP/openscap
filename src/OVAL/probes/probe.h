@@ -37,6 +37,7 @@ SEXP_t *SEXP_OVALelm_getattrval (SEXP_t *elm, const char *name);
 int     SEXP_OVALelm_hasattr (SEXP_t *elm, const char *name);
 
 SEXP_t *SEXP_OVALset_eval (SEXP_t *set, size_t depth);
+SEXP_t *SEXP_OVALset_combine(SEXP_t *item_lst1, SEXP_t *item_lst2, oval_set_operation_enum op);
 
 #define PROBE_EINVAL     1 /* Invalid type/value/format */
 #define PROBE_ENOELM     2 /* Missing element */
