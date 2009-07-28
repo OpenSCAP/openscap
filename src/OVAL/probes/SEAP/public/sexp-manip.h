@@ -115,20 +115,18 @@ SEXP_t *SEXP_list_reduce2 (SEXP_t *list, SEXP_t *(*fn) (const SEXP_t *, const SE
 
 #if __STDC_VERSION__ >= 199901L
 
-# undef  __CONCAT1
-# undef  __CONCAT
-# define __CONCAT1(a, b) a##b
-# define __CONCAT(a, b) __CONCAT1(a,b)
+# include <sys/cdefs.h>
+# define __XCONCAT(a, b) __CONCAT(a,b)
 
 # define SEXP_list_foreach(var, list)                                   \
-        for (register uint32_t __CONCAT(___i_, __LINE__) = 1;           \
-             ((var) = SEXP_list_nth ((list), __CONCAT(___i_, __LINE__))) != NULL; \
-             ++__CONCAT(___i_, __LINE__))
+        for (register uint32_t __XCONCAT(___i_, __LINE__) = 1;           \
+             ((var) = SEXP_list_nth ((list), __XCONCAT(___i_, __LINE__))) != NULL; \
+             ++__XCONCAT(___i_, __LINE__))
 
 # define SEXP_sublist_foreach(var, list, beg, end)                      \
-        for (register uint32_t __CONCAT(___i_, __LINE__) = (beg);       \
-             __CONCAT(___i_, __LINE__) <= (uint32_t)(end) && ((var) = SEXP_list_nth ((list), __CONCAT(___i_, __LINE__))) != NULL; \
-             ++__CONCAT(___i_, __LINE__))
+        for (register uint32_t __XCONCAT(___i_, __LINE__) = (beg);       \
+             __XCONCAT(___i_, __LINE__) <= (uint32_t)(end) && ((var) = SEXP_list_nth ((list), __XCONCAT(___i_, __LINE__))) != NULL; \
+             ++__XCONCAT(___i_, __LINE__))
 #endif
 
 void SEXP_list_cb (SEXP_t *list, void (*fn) (SEXP_t *, void *), void *ptr);
