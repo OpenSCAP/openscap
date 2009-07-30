@@ -24,7 +24,7 @@
 /* SEAP */
 #include <seap.h>
 #include <probe.h>
-#include "xmalloc.h"
+#include <common/alloc.h>
 
 #ifndef _A
 #define _A(x) assert(x)
@@ -49,13 +49,13 @@ struct rpminfo_rep {
 
 void __rpminfo_rep_free (struct rpminfo_rep *ptr)
 {
-        xfree ((void **)&(ptr->name));
-        xfree ((void **)&(ptr->arch));
-        xfree ((void **)&(ptr->epoch));
-        xfree ((void **)&(ptr->release));
-        xfree ((void **)&(ptr->version));
-        xfree ((void **)&(ptr->evr));
-        xfree ((void **)&(ptr->signature_keyid));
+        oscap_free (ptr->name);
+        oscap_free (ptr->arch);
+        oscap_free (ptr->epoch);
+        oscap_free (ptr->release);
+        oscap_free (ptr->version);
+        oscap_free (ptr->evr);
+        oscap_free (ptr->signature_keyid);
 }
 
 /*
@@ -83,14 +83,14 @@ static int get_rpminfo (struct rpminfo_req *req, struct rpminfo_rep **rep)
         ret = rpmdbGetIteratorCount (match);
         
         if (ret > 0) {
-                (*rep) = xrealloc (*rep, sizeof (struct rpminfo_rep) * ret);
+                (*rep) = oscap_realloc (*rep, sizeof (struct rpminfo_rep) * ret);
                 
                 for (i = 0; ((pkgh = rpmdbNextIterator (match)) != NULL) && i < ret; ++i) {
                         (*rep)[i].name    = headerFormat (pkgh, "%{NAME}", &rpmerr);
                         (*rep)[i].arch    = headerFormat (pkgh, "%{ARCH}", &rpmerr);
                         str = headerFormat (pkgh, "%{EPOCH}", &rpmerr);
                         if (strcmp (str, "(none)") == 0) {
-                                str    = xrealloc (str, sizeof (char) * 2);
+                                str    = oscap_realloc (str, sizeof (char) * 2);
                                 str[0] = '0';
                                 str[1] = '\0';
                         }
@@ -102,7 +102,7 @@ static int get_rpminfo (struct rpminfo_req *req, struct rpminfo_rep **rep)
                                strlen ((*rep)[i].release) +
                                strlen ((*rep)[i].version) + 2);
                         
-                        str = xmalloc (sizeof (char) * (len + 1));
+                        str = oscap_alloc (sizeof (char) * (len + 1));
                         snprintf (str, len + 1, "%s:%s-%s",
                                   (*rep)[i].epoch,
                                   (*rep)[i].version,
@@ -113,7 +113,7 @@ static int get_rpminfo (struct rpminfo_req *req, struct rpminfo_rep **rep)
                         str = headerFormat (pkgh, "%{SIGGPG:pgpsig}", &rpmerr);
                         sid = strrchr (str, ' ');
                         (*rep)[i].signature_keyid = (sid != NULL ? strdup (sid+1) : strdup ("0"));
-                        xfree ((void **)&str);
+                        oscap_free (str);
                 }
 
                 if (ret != i) {
@@ -122,7 +122,7 @@ static int get_rpminfo (struct rpminfo_req *req, struct rpminfo_rep **rep)
                         while (i > 0)
                                 __rpminfo_rep_free (&((*rep)[--i]));
                         
-                        xfree ((void **)&(*rep));
+                        oscap_free (*rep);
                         ret = -1;
                 }
         }
@@ -251,7 +251,7 @@ SEXP_t *probe_main (SEXP_t *object, int *err)
         
         if (reply_st != NULL) {
                 __rpminfo_rep_free (&reply_st[0]);
-                xfree ((void **)&reply_st);
+                oscap_free (reply_st);
         }
         
         *err = 0;
