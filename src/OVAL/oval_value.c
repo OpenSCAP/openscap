@@ -66,20 +66,22 @@ unsigned char *oval_value_binary(struct oval_value *value)
 	return NULL;		//TODO
 }
 
-char oval_value_boolean(struct oval_value *value)
+int oval_value_boolean(struct oval_value *value)
 {
-	return 0;		//TODO
-}				//datatype==OVAL_DATATYPE_BOOLEAN
+	return strncmp("false", (value)->text, 5);
+}
 
 float oval_value_float(struct oval_value *value)
 {
-	return 0;		//TODO
-}				//datatype==OVAL_DATATYPE_FLOAT
+	char *endptr;
+	return strtof( (const char *) value->text, &endptr);
+}
 
 long oval_value_integer(struct oval_value *value)
 {
-	return 0;		//TODO
-}				//datatype==OVAL_DATATYPE_INTEGER
+        char *endptr;
+        return strtol( (const char *) value->text, &endptr, 10);
+}
 
 struct oval_value *oval_value_new()
 {
