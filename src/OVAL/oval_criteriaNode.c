@@ -151,9 +151,9 @@ struct oval_criteria_node *oval_criteria_node_new(oval_criteria_node_type_enum
 			    malloc(sizeof(oval_criteria_node_EXTENDDEF_t));
 			((struct oval_criteria_node_EXTENDDEF *)node)->
 			    definition = NULL;
-		}
-	default:
-		return NULL;
+		}break;
+	case NODETYPE_UNKNOWN:
+	default: return NULL;
 	}
 	node->type = type;
 	node->negate = 0;

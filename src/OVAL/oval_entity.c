@@ -193,7 +193,8 @@ int oval_entity_parse_tag(xmlTextReaderPtr reader,
 	oval_operator_enum operation =
 	    oval_operation_parse(reader, "operation", OPERATION_EQUALS);
 	int mask = oval_parser_boolean_attribute(reader, "mask", 1);
-	oval_entity_type_enum type = OVAL_ENTITY_TYPE_UNKNOWN;	//TODO
+	oval_entity_type_enum type = OVAL_ENTITY_TYPE_UNKNOWN;
+	//The value of the type field vs. the complexity of extracting type is arguable
 	char *varref = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "var_ref");
 	struct oval_value *value = NULL;
 	struct oval_variable *variable;

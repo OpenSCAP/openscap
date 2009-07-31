@@ -32,6 +32,7 @@
 #include <string.h>
 #include "oval_definitions_impl.h"
 #include "oval_collection_impl.h"
+#include "oval_agent_api_impl.h"
 
 typedef struct oval_object_content {
 	char *fieldName;
@@ -164,12 +165,35 @@ void oval_object_content_free(struct oval_object_content *content)
 	}
 	free(content);
 }
-
-void set_oval_object_content_field_name(struct oval_object_content *, char *);	//TODO
-void set_oval_object_content_type(struct oval_object_content *, oval_object_content_type_enum);	//TODO
-void set_oval_object_content_entity(struct oval_object_content *, struct oval_entity *);	//TODO//type == OVAL_OBJECTCONTENT_ENTITY
-void set_oval_object_content_varCheck(struct oval_object_content *, oval_check_enum);	//TODO//type == OVAL_OBJECTCONTENT_ENTITY
-void set_oval_object_content_set(struct oval_object_content *, struct oval_set *);	//TODO   //type == OVAL_OBJECTCONTENT_SET
+void set_oval_object_content_type(struct oval_object_content *content, oval_object_content_type_enum type)
+{
+	content->type = type;
+}
+void set_oval_object_content_field_name(struct oval_object_content *content, char *name)
+{
+	content->fieldName = malloc_string(name);
+}
+void set_oval_object_content_entity(struct oval_object_content *content, struct oval_entity *entity)//type == OVAL_OBJECTCONTENT_ENTITY
+{
+	if(content->type == OVAL_OBJECTCONTENT_ENTITY){
+		oval_object_content_ENTITY_t *content_ENTITY = (oval_object_content_ENTITY_t *)content;
+		content_ENTITY->entity = entity;
+	}
+}
+void set_oval_object_content_varCheck(struct oval_object_content *content, oval_check_enum check)//type == OVAL_OBJECTCONTENT_ENTITY
+{
+	if(content->type == OVAL_OBJECTCONTENT_ENTITY){
+		oval_object_content_ENTITY_t *content_ENTITY = (oval_object_content_ENTITY_t *)content;
+		content_ENTITY->varCheck = check;
+	}
+}
+void set_oval_object_content_set(struct oval_object_content *content, struct oval_set *set)//type == OVAL_OBJECTCONTENT_SET
+{
+	if(content->type == OVAL_OBJECTCONTENT_SET){
+		oval_object_content_SET_t *content_SET = (oval_object_content_SET_t *)content;
+		content_SET->set = set;
+	}
+}
 
 //typedef void (*oval_object_content_consumer)(struct oval_object_content*,void*);
 void oval_consume_entity(struct oval_entity *entity,

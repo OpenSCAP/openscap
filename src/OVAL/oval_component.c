@@ -431,12 +431,12 @@ void oval_component_free(struct oval_component *component)
 					free(split->delimiter);
 				};
 				break;
-			case OVAL_FUNCTION_CONCAT:        /* TODO */ break;
-			case OVAL_FUNCTION_SUBSTRING:     /* TODO */ break;
-			case OVAL_FUNCTION_TIMEDIF:       /* TODO */ break;
-			case OVAL_FUNCTION_ESCAPE_REGEX:  /* TODO */ break;
-			case OVAL_FUNCTION_REGEX_CAPTURE: /* TODO */ break;
-			case OVAL_FUNCTION_ARITHMETIC:    /* TODO */ break;
+			case OVAL_FUNCTION_CONCAT:
+			case OVAL_FUNCTION_SUBSTRING:
+			case OVAL_FUNCTION_TIMEDIF:
+			case OVAL_FUNCTION_ESCAPE_REGEX:
+			case OVAL_FUNCTION_REGEX_CAPTURE:
+			case OVAL_FUNCTION_ARITHMETIC:
 			case OVAL_COMPONENT_UNKNOWN:
 			case OVAL_COMPONENT_LITERAL:
 			case OVAL_COMPONENT_OBJECTREF:

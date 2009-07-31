@@ -34,6 +34,7 @@
 #include <libxml/xmlreader.h>
 #include "api/oval_definitions.h"
 #include "oval_parser_impl.h"
+#include "oval_agent_api_impl.h"
 
 oval_family_enum oval_family_parse(xmlTextReaderPtr);
 oval_subtype_enum oval_subtype_parse(xmlTextReaderPtr);
@@ -189,6 +190,9 @@ int oval_variable_parse_tag(xmlTextReaderPtr reader,
 			    struct oval_parser_context *context);
 void oval_variable_to_print(struct oval_variable *variable, char *indent, int idx);
 
+void set_oval_variable_binding_variable(struct oval_variable_binding *, struct oval_variable *);
+void set_oval_variable_binding_value   (struct oval_variable_binding *, char *);
+
 struct oval_variable_binding *oval_variable_binding_new();
 void oval_variable_binding_free(struct oval_variable_binding *);
 
@@ -199,6 +203,11 @@ void set_oval_variable_binding_value(struct oval_variable_binding *, char *);
 struct oval_object_content
     *oval_object_content_new(oval_object_content_type_enum type);
 void oval_object_content_free(struct oval_object_content *);
+
+typedef void (*oval_variable_binding_consumer) (struct oval_variable_binding *, void *);
+int oval_variable_binding_parse_tag(xmlTextReaderPtr, struct oval_parser_context *,
+				    oval_variable_binding_consumer, void *);
+void set_oval_object_content_type(struct oval_object_content *, oval_object_content_type_enum);
 
 void set_oval_object_content_field_name(struct oval_object_content *, char *);
 void set_oval_object_content_entity(struct oval_object_content *, struct oval_entity *);	//type == OVAL_OBJECTCONTENT_ENTITY

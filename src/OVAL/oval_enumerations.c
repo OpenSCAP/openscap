@@ -49,7 +49,7 @@ _oval_enumeration_object_t *_oval_enumeration_attval(xmlTextReaderPtr reader,
 						     struct oval_string_map
 						     *map)
 {
-	char *attval = (char *) (char *) xmlTextReaderGetAttribute(reader, BAD_CAST BAD_CAST attname);
+	char *attval = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST attname);
 	_oval_enumeration_object_t *starval = NULL;
 	if (attval != NULL) {
 		starval =
@@ -507,8 +507,7 @@ oval_family_enum oval_family_parse(xmlTextReaderPtr reader)
 		oval_string_map_put(_oval_family_map, "hpux",
 				    _oval_enumeration_object(FAMILY_HPUX));
 		oval_string_map_put(_oval_family_map, "independent",
-				    _oval_enumeration_object
-				    (FAMILY_INDEPENDENT));
+				    _oval_enumeration_object(FAMILY_INDEPENDENT));
 		oval_string_map_put(_oval_family_map, "ios",
 				    _oval_enumeration_object(FAMILY_IOS));
 		oval_string_map_put(_oval_family_map, "linux",
@@ -547,7 +546,15 @@ _oval_enumeration_object_t *_oval_subtype_aix(char *type_text)
 {
 	if (_oval_subtype_aix_map == NULL) {
 		_oval_subtype_aix_map = oval_string_map_new();
-		//TODO
+		oval_string_map_put(_oval_subtype_aix_map, "fileset",
+				    _oval_enumeration_object
+				    (AIX_FILESET));
+		oval_string_map_put(_oval_subtype_aix_map, "fix",
+				    _oval_enumeration_object
+				    (AIX_FIX));
+		oval_string_map_put(_oval_subtype_aix_map, "oslevel",
+				    _oval_enumeration_object
+				    (AIX_OSLEVEL));
 	}
 	_oval_enumeration_object_t *vstar =
 	    (_oval_enumeration_object_t *)
@@ -560,7 +567,12 @@ _oval_enumeration_object_t *_oval_subtype_apache(char *type_text)
 {
 	if (_oval_subtype_apache_map == NULL) {
 		_oval_subtype_apache_map = oval_string_map_new();
-		//TODO
+		oval_string_map_put(_oval_subtype_apache_map, "httpd",
+				    _oval_enumeration_object
+				    (APACHE_HTTPD));
+		oval_string_map_put(_oval_subtype_apache_map, "version",
+				    _oval_enumeration_object
+				    (APACHE_VERSION));
 	}
 	_oval_enumeration_object_t *vstar =
 	    (_oval_enumeration_object_t *)
@@ -573,7 +585,18 @@ _oval_enumeration_object_t *_oval_subtype_catos(char *type_text)
 {
 	if (_oval_subtype_catos_map == NULL) {
 		_oval_subtype_catos_map = oval_string_map_new();
-		//TODO
+		oval_string_map_put(_oval_subtype_catos_map, "line",
+				    _oval_enumeration_object
+				    (CATOS_LINE));
+		oval_string_map_put(_oval_subtype_catos_map, "module",
+				    _oval_enumeration_object
+				    (CATOS_MODULE));
+		oval_string_map_put(_oval_subtype_catos_map, "version",
+				    _oval_enumeration_object
+				    (CATOS_VERSION));
+		oval_string_map_put(_oval_subtype_catos_map, "version55",
+				    _oval_enumeration_object
+				    (CATOS_VERSION_55));
 	}
 	_oval_enumeration_object_t *vstar =
 	    (_oval_enumeration_object_t *)
@@ -586,7 +609,12 @@ _oval_enumeration_object_t *_oval_subtype_esx(char *type_text)
 {
 	if (_oval_subtype_esx_map == NULL) {
 		_oval_subtype_esx_map = oval_string_map_new();
-		//TODO
+		oval_string_map_put(_oval_subtype_esx_map, "patch",
+				    _oval_enumeration_object
+				    (ESX_PATCH));
+		oval_string_map_put(_oval_subtype_esx_map, "version",
+				    _oval_enumeration_object
+				    (ESX_VERSION));
 	}
 	_oval_enumeration_object_t *vstar =
 	    (_oval_enumeration_object_t *)
@@ -599,7 +627,9 @@ _oval_enumeration_object_t *_oval_subtype_freebsd(char *type_text)
 {
 	if (_oval_subtype_freebsd_map == NULL) {
 		_oval_subtype_freebsd_map = oval_string_map_new();
-		//TODO
+		oval_string_map_put(_oval_subtype_freebsd_map, "portinfo",
+				    _oval_enumeration_object
+				    (FREEBSD_PORT_INFO));
 	}
 	_oval_enumeration_object_t *vstar =
 	    (_oval_enumeration_object_t *)
@@ -612,7 +642,21 @@ _oval_enumeration_object_t *_oval_subtype_hpux(char *type_text)
 {
 	if (_oval_subtype_hpux_map == NULL) {
 		_oval_subtype_hpux_map = oval_string_map_new();
-		//TODO
+		oval_string_map_put(_oval_subtype_hpux_map, "getconf",
+				    _oval_enumeration_object
+				    (HPUX_GETCONF));
+		oval_string_map_put(_oval_subtype_hpux_map, "patch",
+				    _oval_enumeration_object
+				    (HPUX_PATCH));
+		oval_string_map_put(_oval_subtype_hpux_map, "patch53",
+				    _oval_enumeration_object
+				    (HPUX_PATCH_53));
+		oval_string_map_put(_oval_subtype_hpux_map, "softwarelist",
+				    _oval_enumeration_object
+				    (HPUX_SOFTWARE_LIST));
+		oval_string_map_put(_oval_subtype_hpux_map, "trustedaccounts",
+				    _oval_enumeration_object
+				    (HPUX_TRUSTED_ACCOUNTS));
 	}
 	_oval_enumeration_object_t *vstar =
 	    (_oval_enumeration_object_t *)
@@ -670,7 +714,24 @@ _oval_enumeration_object_t *_oval_subtype_ios(char *type_text)
 {
 	if (_oval_subtype_ios_map == NULL) {
 		_oval_subtype_ios_map = oval_string_map_new();
-		//TODO
+		oval_string_map_put(_oval_subtype_ios_map, "global",
+				    _oval_enumeration_object
+				    (IOS_GLOBAL));
+		oval_string_map_put(_oval_subtype_ios_map, "interface",
+				    _oval_enumeration_object
+				    (IOS_INTERFACE));
+		oval_string_map_put(_oval_subtype_ios_map, "line",
+				    _oval_enumeration_object
+				    (IOS_LINE));
+		oval_string_map_put(_oval_subtype_ios_map, "snmp",
+				    _oval_enumeration_object
+				    (IOS_SNMP));
+		oval_string_map_put(_oval_subtype_ios_map, "tclsh",
+				    _oval_enumeration_object
+				    (IOS_TCLSH));
+		oval_string_map_put(_oval_subtype_ios_map, "version55",
+				    _oval_enumeration_object
+				    (IOS_VERSION_55));
 	}
 	_oval_enumeration_object_t *vstar =
 	    (_oval_enumeration_object_t *)
@@ -706,7 +767,18 @@ _oval_enumeration_object_t *_oval_subtype_macos(char *type_text)
 {
 	if (_oval_subtype_macos_map == NULL) {
 		_oval_subtype_macos_map = oval_string_map_new();
-		//TODO
+		oval_string_map_put(_oval_subtype_macos_map, "accountinfo",
+				    _oval_enumeration_object
+				    (MACOS_ACCOUNT_INFO));
+		oval_string_map_put(_oval_subtype_macos_map, "inetlisteningservers",
+				    _oval_enumeration_object
+				    (MACOS_INET_LISTENING_SERVERS));
+		oval_string_map_put(_oval_subtype_macos_map, "nvraminfo",
+				    _oval_enumeration_object
+				    (MACOS_NVRAM_INFO));
+		oval_string_map_put(_oval_subtype_macos_map, "pwpolicy",
+				    _oval_enumeration_object
+				    (MACOS_PWPOLICY));
 	}
 	_oval_enumeration_object_t *vstar =
 	    (_oval_enumeration_object_t *)
@@ -719,7 +791,12 @@ _oval_enumeration_object_t *_oval_subtype_pixos(char *type_text)
 {
 	if (_oval_subtype_pixos_map == NULL) {
 		_oval_subtype_pixos_map = oval_string_map_new();
-		//TODO
+		oval_string_map_put(_oval_subtype_pixos_map, "line",
+				    _oval_enumeration_object
+				    (PIXOS_LINE));
+		oval_string_map_put(_oval_subtype_pixos_map, "version",
+				    _oval_enumeration_object
+				    (PIXOS_VERSION));
 	}
 	_oval_enumeration_object_t *vstar =
 	    (_oval_enumeration_object_t *)
@@ -732,7 +809,18 @@ _oval_enumeration_object_t *_oval_subtype_solaris(char *type_text)
 {
 	if (_oval_subtype_solaris_map == NULL) {
 		_oval_subtype_solaris_map = oval_string_map_new();
-		//TODO
+		oval_string_map_put(_oval_subtype_solaris_map, "isainfo",
+				    _oval_enumeration_object
+				    (SOLARIS_ISAINFO));
+		oval_string_map_put(_oval_subtype_solaris_map, "package",
+				    _oval_enumeration_object
+				    (SOLARIS_PACKAGE));
+		oval_string_map_put(_oval_subtype_solaris_map, "patch",
+				    _oval_enumeration_object
+				    (SOLARIS_PATCH));
+		oval_string_map_put(_oval_subtype_solaris_map, "smf",
+				    _oval_enumeration_object
+				    (SOLARIS_SMF));
 	}
 	_oval_enumeration_object_t *vstar =
 	    (_oval_enumeration_object_t *)

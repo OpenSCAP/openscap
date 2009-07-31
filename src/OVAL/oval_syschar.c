@@ -131,6 +131,12 @@ void add_oval_syschar_message
 	oval_collection_add(syschar->messages, message);
 }
 
+void add_oval_syschar_variable_binding
+	(struct oval_syschar *syschar, struct oval_variable_binding *binding)
+{
+	oval_collection_add(syschar->variable_bindings, binding);
+}
+
 struct oval_syschar *oval_syschar_new(struct oval_object *object){
 	oval_syschar_t *syschar = (oval_syschar_t*)malloc(sizeof(oval_syschar_t));
 	syschar->flag              = SYSCHAR_FLAG_UNKNOWN;
@@ -150,8 +156,11 @@ void oval_syschar_free(struct oval_syschar *syschar){
 }
 
 extern const char* NAMESPACE_OVALSYS;
-void _oval_syschar_parse_subtag_consume(struct oval_message *message, void* syschar){
-	add_oval_syschar_message(syschar, message);
+void _oval_syschar_parse_subtag_consume_message(struct oval_message *message, void* syschar){
+	add_oval_syschar_message((struct oval_syschar *)syschar, message);
+}
+void _oval_syschar_parse_subtag_consume_variable_binding(struct oval_variable_binding *binding, void* syschar){
+	add_oval_syschar_variable_binding((struct oval_syschar *)syschar, binding);
 }
 int _oval_syschar_parse_subtag(
 		xmlTextReaderPtr reader,
@@ -162,9 +171,10 @@ int _oval_syschar_parse_subtag(
 	char *namespace = (char*) xmlTextReaderNamespaceUri(reader);
 	int return_code;
 	if(strcmp("message",tagname)==0){
-		return_code = oval_message_parse_tag(reader, context, &_oval_syschar_parse_subtag_consume, syschar);
-	}else if(strcmp("variable_value",tagname)==0){//TODO
-		return_code = oval_parser_skip_tag(reader, context);
+		return_code = oval_message_parse_tag(reader, context, &_oval_syschar_parse_subtag_consume_message, syschar);
+	}else if(strcmp("variable_value",tagname)==0){
+		return_code = oval_variable_binding_parse_tag
+		(reader, context, &_oval_syschar_parse_subtag_consume_variable_binding, syschar);
 	}else if(strcmp("reference",tagname)==0){
 		char* itemid = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "item_ref");
 		struct oval_sysdata *sysdata = get_oval_sysdata_new(context->syschar_model, itemid);

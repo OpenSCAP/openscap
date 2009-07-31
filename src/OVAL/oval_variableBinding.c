@@ -32,6 +32,9 @@
 #include "oval_definitions_impl.h"
 #include "oval_collection_impl.h"
 
+int DEBUG_OVAL_VARIABLE_BINDING = 0;
+
+
 typedef struct oval_variable_binding {
 	struct oval_variable *variable;
 	char *value;
@@ -66,6 +69,15 @@ char *oval_variable_binding_value(struct oval_variable_binding *binding)
 	return ((struct oval_variable_binding *)binding)->value;
 }
 
+void set_oval_variable_binding_variable(struct oval_variable_binding *binding, struct oval_variable *variable)
+{
+	binding->variable = variable;
+}
+void set_oval_variable_binding_value   (struct oval_variable_binding *binding, char *value)
+{
+	binding->value = value;
+}
+
 struct oval_variable_binding *oval_variable_binding_new(struct oval_variable *variable, char *value)
 {
 	oval_variable_binding_t *binding = (oval_variable_binding_t*)malloc(sizeof(oval_variable_binding_t));
@@ -74,8 +86,55 @@ struct oval_variable_binding *oval_variable_binding_new(struct oval_variable *va
 	return binding;
 }
 
+struct oval_variable_binding *_oval_variable_binding_new()
+{
+	oval_variable_binding_t *binding = (oval_variable_binding_t*)malloc(sizeof(oval_variable_binding_t));
+	binding->variable = NULL;
+	binding->value    = NULL;
+	return binding;
+}
+
 void oval_variable_binding_free(struct oval_variable_binding *binding)
 {
 	if(binding->value!=NULL)free(binding->value);
 	free(binding);
 }
+
+void _oval_variable_binding_value_consumer(char * value, void * user)
+{
+	set_oval_variable_binding_value((struct oval_variable_binding *)user, value);
+}
+
+int oval_variable_binding_parse_tag(xmlTextReaderPtr reader,
+			       struct oval_parser_context *context, oval_variable_binding_consumer consumer, void* client)
+{
+	int return_code = 1;
+	struct oval_variable_binding *binding = _oval_variable_binding_new();
+	{//variable
+		char* variableId = xmlTextReaderGetAttribute(reader, BAD_CAST "variable_id");
+		struct oval_variable *variable = get_oval_variable_new(context->model, variableId);
+		set_oval_variable_binding_variable(binding, variable);
+		/* free(variableId); */
+	}
+	{//bound value
+		return_code = oval_parser_text_value(reader, context, &_oval_variable_binding_value_consumer, binding);
+	}
+	if(return_code!=1){
+		char warning[200]; *warning = 0;
+		sprintf(warning, "oval_warning_parse_tag:: return code is not 1::(%d)",return_code);
+		oval_parser_log_warn(context, warning);
+	}else{
+		if(DEBUG_OVAL_VARIABLE_BINDING){
+			int numchars = 0;
+			char debug[2000];debug[numchars]='\0';
+			numchars = numchars + sprintf(debug+numchars,"oval_variable_binding_parse_tag::");
+			numchars = numchars + sprintf(debug+numchars,"\n    binding->variable = %s",oval_variable_id(oval_variable_binding_variable(binding)));
+			numchars = numchars + sprintf(debug+numchars,"\n    binding->value    = %s",oval_variable_binding_value(binding));
+			oval_parser_log_debug(context, debug);
+		}
+		(*consumer)(binding, client);
+	}
+	return return_code;
+}
+
+
