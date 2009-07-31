@@ -29,7 +29,7 @@ libseap_la_SOURCES= generic/bfind.c		\
 		    seap-descriptor.c		\
 		    seap-descriptor.h		\
 		    seap-scheme.c		\
-		    seap-scheme.h		\
+		    _seap-scheme.h		\
 		    _seap-types.h		\
 		    seap.c			\
 		    _seap.h			\
@@ -52,6 +52,7 @@ include_HEADERS= public/seap-command.h	\
 		 public/seap-debug.h	\
 		 public/seap-types.h	\
 		 public/seap.h		\
+		 public/seap-scheme.h	\
 		 public/sexp-manip.h	\
 		 public/sexp-output.h	\
 		 public/sexp-parse.h	\
