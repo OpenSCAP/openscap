@@ -5,24 +5,20 @@ TESTS_ENVIRONMENT = $(SHELL) -x
 EXTRA_DIST =
 
 if WANT_OVAL
-check_PROGRAMS += test_oval test_sexpoval test_syschar
-TESTS += OVAL/test_oval.sh OVAL/test_syschar.sh test_sexpoval
-EXTRA_DIST += OVAL/test_oval.sh OVAL/test.xml
+check_PROGRAMS += test_oval test_syschar
+TESTS += OVAL/test_oval.sh OVAL/test_syschar.sh
+EXTRA_DIST += OVAL/test_oval.sh OVAL/test.xml OVAL/test_syschar.sh
 
 test_oval_SOURCES = OVAL/test_oval.c
 test_oval_CFLAGS = -I$(top_srcdir)/src/OVAL
 test_oval_LDADD = $(top_builddir)/src/libopenscap.la
-
-test_sexpoval_SOURCES = OVAL/test_sexpoval.c
-test_sexpoval_CFLAGS = -I$(top_srcdir)/src/OVAL -I$(top_srcdir)/src/OVAL/probes -I$(top_srcdir)/src/OVAL/probes/SEAP/public
-test_sexpoval_LDADD = $(top_builddir)/src/libopenscap.la
 
 test_syschar_SOURCES = OVAL/test_syschar.c
 test_syschar_CFLAGS = -I$(top_srcdir)/src/OVAL
 test_syschar_LDADD = $(top_builddir)/src/libopenscap.la
 
 if WANT_PROBES
-check_PROGRAMS += sexp_test seap_conn_test seap_test test_findfile test_rpminfo
+check_PROGRAMS += sexp_test  test_findfile test_rpminfo
 TESTS += SEAP/parser_valid-test.sh SEAP/parser_invalid-test.sh
 EXTRA_DIST += SEAP/parser_valid-test.sh SEAP/parser_invalid-test.sh
 
@@ -33,14 +29,6 @@ test_findfile_LDADD = $(top_builddir)/src/libopenscap.la
 sexp_test_SOURCES = SEAP/sexp_test.c
 sexp_test_CFLAGS = -I$(top_srcdir)/src/OVAL/probes/SEAP/public
 sexp_test_LDADD = $(top_builddir)/src/libopenscap.la
-
-seap_test_SOURCES = SEAP/seap_test.c
-seap_test_CFLAGS = -I$(top_srcdir)/src/OVAL/probes/SEAP/public
-seap_test_LDADD = $(top_builddir)/src/libopenscap.la
-
-seap_conn_test_SOURCES = SEAP/seap_conn_test.c
-seap_conn_test_CFLAGS = -I$(top_srcdir)/src/OVAL/probes/SEAP/public
-seap_conn_test_LDADD = $(top_builddir)/src/libopenscap.la
 
 test_rpminfo_SOURCES = OVAL/test_rpminfo.c
 test_rpminfo_CFLAGS = -I$(top_srcdir)/src/OVAL/probes/SEAP/public -I$(top_srcdir)/src/OVAL
