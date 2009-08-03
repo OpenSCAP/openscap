@@ -45,7 +45,7 @@ int sch_dummy_close (SEAP_desc_t *desc, uint32_t flags)
         return (-1);
 }
 
-int sch_cons_select (SEAP_desc_t *desc, int ev, uint16_t timeout, uint32_t flags)
+int sch_dummy_select (SEAP_desc_t *desc, int ev, uint16_t timeout, uint32_t flags)
 {
         return (-1);
 }

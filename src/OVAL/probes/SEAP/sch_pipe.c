@@ -213,7 +213,7 @@ int sch_pipe_close (SEAP_desc_t *desc, uint32_t flags)
         return (err);
 }
 
-int sch_cons_select (SEAP_desc_t *desc, int ev, uint16_t timeout, uint32_t flags)
+int sch_pipe_select (SEAP_desc_t *desc, int ev, uint16_t timeout, uint32_t flags)
 {
         return (-1);
 }

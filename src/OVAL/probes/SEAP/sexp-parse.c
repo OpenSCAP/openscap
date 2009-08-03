@@ -61,6 +61,11 @@ SEXP_pstate_t *SEXP_pstate_init (SEXP_pstate_t *state)
         return (state);
 }
 
+void SEXP_pstate_free (SEXP_pstate_t *p)
+{
+        return;
+}
+
 SEXP_psetup_t *SEXP_psetup_new (void)
 {
         SEXP_psetup_t *psetup;
@@ -78,6 +83,11 @@ void SEXP_psetup_init (SEXP_psetup_t *psetup)
 
         psetup->fmt = SEXP_FMT_AUTODETECT;
         psetup->pflags = PF_EOFOK;
+}
+
+void SEXP_psetup_free (SEXP_psetup_t *p)
+{
+        return;
 }
 
 /*

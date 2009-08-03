@@ -192,7 +192,7 @@ static void *__SEAP_cmdexec_worker (void *arg)
         return (NULL);
 }
 
-static int __SEXP_recvmsg_process_cmd (SEAP_CTX_t *ctx, int sd, SEAP_cmd_t *cmd)
+static int __SEAP_recvmsg_process_cmd (SEAP_CTX_t *ctx, int sd, SEAP_cmd_t *cmd)
 {
         SEXP_t *item, *val;
         size_t i, len;
@@ -271,6 +271,11 @@ static int __SEXP_recvmsg_process_cmd (SEAP_CTX_t *ctx, int sd, SEAP_cmd_t *cmd)
         }
         
         return (0);
+}
+
+static int __SEAP_recvmsg_process_err (void)
+{
+        return (-1);
 }
 
 int SEAP_recvmsg (SEAP_CTX_t *ctx, int sd, SEAP_msg_t **seap_msg)
@@ -447,7 +452,7 @@ int __SEAP_senderr (SEAP_CTX_t *ctx, int sd, SEAP_err_t *err, unsigned int type)
         desc = &(ctx->sd_table.sd[sd]);
 
         /* Convert the err structure into its S-exp representation */
-        sexp_err = __SEAP_err2sexp (err, type);
+        //sexp_err = __SEAP_err2sexp (err, type);
         if (sexp_err == NULL) {
                 _D("Can't convert the err structure into S-exp: %u, %s.\n",
                    errno, strerror (errno));
