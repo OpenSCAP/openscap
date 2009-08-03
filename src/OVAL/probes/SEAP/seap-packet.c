@@ -229,7 +229,7 @@ SEXP_t *SEAP_packet_msg2sexp (SEAP_msg_t *msg)
 int SEAP_packet_sexp2cmd (SEXP_t *sexp_cmd, SEAP_cmd_t *seap_cmd)
 {
         SEXP_t *item, *val;
-        size_t i, len;
+        size_t i;
         int mattrs;
 
         memset (seap_cmd, 0, sizeof (SEAP_cmd_t));
@@ -411,7 +411,6 @@ SEXP_t *SEAP_packet_err2sexp (SEAP_err_t *err, unsigned int type)
 
 int SEAP_packet_recv (SEAP_CTX_t *ctx, int sd, SEAP_packet_t **packet)
 {
-        int err;
         SEAP_desc_t *dsc;
         SEXP_t      *sexp_buffer;
         SEXP_t      *sexp_packet;

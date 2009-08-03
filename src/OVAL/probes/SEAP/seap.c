@@ -176,29 +176,78 @@ int SEAP_recvsexp (SEAP_CTX_t *ctx, int sd, SEXP_t **sexp)
         }
 }
 
-static void *__SEAP_cmdexec_worker (void *arg)
+static int __SEAP_cmdexec_reply (SEAP_CTX_t *ctx, int sd, SEAP_cmd_t *cmd)
 {
-        SEAP_cmdjob_t *job;
+        SEAP_desc_t   *dsc;
         SEXP_t        *res;
+        SEAP_packet_t *packet;
+        SEAP_cmd_t    *cmdrep;
 
-        job = (SEAP_cmdjob_t *)arg;
-        res = SEAP_cmd_exec (job->ctx, job->sd,
-                             SEAP_EXEC_LOCAL,
-                             job->cmd->code, job->cmd->args,
+        res = SEAP_cmd_exec (ctx, sd, SEAP_EXEC_LOCAL,
+                             cmd->code, cmd->args,
                              SEAP_CMDCLASS_USR, NULL, NULL);
         
-        /* send */
+        dsc = SEAP_desc_get (&(ctx->sd_table), sd);
+                        
+        if (dsc == NULL) {
+                protect_errno {
+                        SEXP_free (res);
+                }
+                return (-1);
+        }
+                                                
+        cmd->rid    = cmd->id;
+        cmd->id     = SEAP_desc_gencmdid (&(ctx->sd_table), sd);
+        cmd->flags |= SEAP_CMDFLAG_REPLY;
+        cmd->args   = res;
+        
+        packet = SEAP_packet_new ();
+        cmdrep = SEAP_packet_settype (packet, SEAP_PACKET_CMD);
+        
+        cmdrep->id     = SEAP_desc_gencmdid (&(ctx->sd_table), sd);
+        cmdrep->rid    = cmd->id;
+        cmdrep->flags |= SEAP_CMDFLAG_REPLY;
+        cmdrep->args   = res;
+        cmdrep->class  = cmd->class;
+        cmdrep->code   = cmd->code;
+                
+        if (SEAP_packet_send (ctx, sd, packet) != 0) {
+                protect_errno {
+                        _D("FAIL: errno=%u, %s.\n", errno, strerror (errno));
+                        SEAP_packet_free (packet);
+                }
+                return (-1);
+        }
+        
+        SEAP_packet_free (packet);
+        
+        return (0);
+}
+
+static void *__SEAP_cmdexec_worker (void *arg)
+{
+        SEAP_cmdjob_t *job = (SEAP_cmdjob_t *)arg;
+        
+        if (job->cmd->flags & SEAP_CMDFLAG_REPLY) {
+                (void) SEAP_cmd_exec (job->ctx, job->sd, SEAP_EXEC_WQUEUE,
+                                      job->cmd->rid, job->cmd->args,
+                                      SEAP_CMDCLASS_USR, NULL, NULL);
+        } else {
+                (void)__SEAP_cmdexec_reply (job->ctx, job->sd, job->cmd);
+        }
         
         return (NULL);
 }
 
 static int __SEAP_recvmsg_process_cmd (SEAP_CTX_t *ctx, int sd, SEAP_cmd_t *cmd)
 {
-        SEXP_t *item, *val;
-        size_t i, len;
-        int mattrs, err;
-
+        _A(ctx != NULL);
+        _A(cmd != NULL);
+        
         if (ctx->cflags & SEAP_CFLG_THREAD) {
+                /* 
+                 *  Create a new thread for processing this command
+                 */
                 pthread_t      th;
                 pthread_attr_t th_attrs;
                 
@@ -227,46 +276,12 @@ static int __SEAP_recvmsg_process_cmd (SEAP_CTX_t *ctx, int sd, SEAP_cmd_t *cmd)
                 
                 pthread_attr_destroy (&th_attrs);
         } else {
-                SEXP_t *res, *sexp;
-                SEAP_desc_t  *dsc;
-                
                 if (cmd->flags & SEAP_CMDFLAG_REPLY) {
-                        res = SEAP_cmd_exec (ctx, sd, SEAP_EXEC_WQUEUE,
-                                             cmd->rid, cmd->args,
-                                             SEAP_CMDCLASS_USR, NULL, NULL);
+                        (void) SEAP_cmd_exec (ctx, sd, SEAP_EXEC_WQUEUE,
+                                              cmd->rid, cmd->args,
+                                              SEAP_CMDCLASS_USR, NULL, NULL);
                 } else {
-                        res = SEAP_cmd_exec (ctx, sd, SEAP_EXEC_LOCAL,
-                                             cmd->code, cmd->args,
-                                             SEAP_CMDCLASS_USR, NULL, NULL);
-                        
-                        /* send */
-                        dsc = SEAP_desc_get (&(ctx->sd_table), sd);
-                        
-                        if (dsc == NULL) {
-                                protect_errno {
-                                        SEXP_free (res);
-                                }
-                                return (-1);
-                        }
-                        
-                        cmd->rid = cmd->id;
-#if defined(HAVE_ATOMIC_FUNCTIONS)
-                        cmd->id = __sync_fetch_and_add (&(dsc->next_cid), 1);
-#else
-                        cmd->id = dsc->next_cid++;
-#endif
-                        cmd->flags |= SEAP_CMDFLAG_REPLY;
-                        cmd->args = res;
-                        
-                        sexp = SEAP_cmd2sexp (cmd);
-                        
-                        if (SCH_SENDSEXP(dsc->scheme, dsc, sexp, 0) < 0) {
-                                _D("SCH_SENDSEXP: FAIL: %u, %s.\n", errno, strerror (errno));
-                                SEXP_free (sexp);
-                                return (-1);
-                        }
-
-                        SEXP_free (sexp);
+                        return __SEAP_cmdexec_reply (ctx, sd, cmd);
                 }
         }
         
@@ -331,7 +346,7 @@ int SEAP_recvmsg (SEAP_CTX_t *ctx, int sd, SEAP_msg_t **seap_msg)
 
 int SEAP_sendmsg (SEAP_CTX_t *ctx, int sd, SEAP_msg_t *seap_msg)
 {
-        int ret, err;
+        int ret;
         SEAP_packet_t *packet;
         SEAP_msg_t    *msg;
         

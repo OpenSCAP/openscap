@@ -1505,7 +1505,6 @@ size_t SEXP_list_length (const SEXP_t *sexp)
 
 SEXP_t *SEXP_list_map (SEXP_t *list, int (*fn) (SEXP_t *, SEXP_t *))
 {
-        int e;
         SEXP_t *res_list;
         uint32_t i;
         
@@ -1545,7 +1544,6 @@ err:
 
 SEXP_t *SEXP_list_map2 (SEXP_t *list, int (*fn) (SEXP_t *, SEXP_t *, void *), void *ptr)
 {
-        int e;
         SEXP_t *res_list;
         uint32_t i;
         

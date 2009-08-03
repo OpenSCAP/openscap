@@ -1,6 +1,8 @@
+#include <string.h>
 #include "_sexp-types.h"
 #include "_seap-types.h"
 #include "_seap-message.h"
+#include "public/sm_alloc.h"
 
 SEAP_msg_t *SEAP_msg_new (void)
 {
