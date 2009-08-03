@@ -43,7 +43,11 @@ libseap_la_SOURCES= generic/bfind.c		\
 		    _sexp-parse.h		\
 		    _sexp-types.h		\
 		    sm_alloc.c			\
-		    seap-debug.c
+		    seap-debug.c		\
+		    seap-message.c		\
+		    _seap-message.h		\
+		    seap-packet.c		\
+		    _seap-packet.h
 
 libseap_la_CFLAGS= @pthread_cflags@ -DUSE_XMALLOC -DXMALLOC_EXIT -DWANT_BASE64 -I$(top_srcdir) -I. -I public/ 
 libseap_la_LDFLAGS= @pthread_ldflags@
@@ -58,7 +62,9 @@ include_HEADERS= public/seap-command.h	\
 		 public/sexp-parse.h	\
 		 public/sexp-types.h	\
 		 public/sexp.h		\
-		 public/sm_alloc.h
+		 public/sm_alloc.h	\
+		 public/seap-message.h	\
+		 public/seap-packet.h
 
 includedir = $(prefix)/include/lib@PACKAGE@
 

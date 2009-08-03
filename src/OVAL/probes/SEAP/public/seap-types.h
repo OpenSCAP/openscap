@@ -4,17 +4,13 @@
 
 #include <stdint.h>
 #include <seap-debug.h>
+#include <seap-message.h>
 
-typedef uint64_t        SEAP_msgid_t;
 typedef struct SEAP_CTX SEAP_CTX_t;
 
 #define SEAP_CTX_INITIALIZER { NULL, 0, 0, 0, SEAP_DESCTBL_INITIALIZER, SEAP_CMDTABLE_INITIALIZER }
 
-typedef struct SEAP_msg SEAP_msg_t;
-typedef struct SEAP_err SEAP_err_t;
 typedef struct SEAP_cmd SEAP_cmd_t;
-
-typedef struct SEAP_packet SEAP_packet_t;
 
 /* SEAP errors */
 #define SEAP_ETYPE_INT  0 /* Internal error */

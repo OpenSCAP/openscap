@@ -85,7 +85,7 @@ typedef uint8_t SEAP_cflags_t;
 typedef struct {
         SEAP_CTX_t *ctx;
         int         sd;
-        SEAP_cmd_t  cmd;
+        SEAP_cmd_t *cmd;
 } SEAP_cmdjob_t;
 
 SEAP_cmdjob_t *SEAP_cmdjob_new (void);

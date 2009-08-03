@@ -48,7 +48,7 @@ __P void sm_free     (void  *p) { __sm_free_dbg (&p, __FUNCTION__, 0); }
 # define sm_calloc(n, s)   __sm_calloc_dbg (n, s, __PRETTY_FUNCTION__, __LINE__)
 # define sm_realloc(p, s)  __sm_realloc_dbg ((void *)(p), s, __PRETTY_FUNCTION__, __LINE__)
 # define sm_reallocf(p, s) __sm_reallocf_dbg ((void *)(p), s, __PRETTY_FUNCTION__, __LINE__)
-# define sm_free(p)        __sm_free_dbg ((void **)&(p), __PRETTY_FUNCTION__, __LINE__)
+# define sm_free(p)        __sm_free_dbg ((void **)((void *)&(p)), __PRETTY_FUNCTION__, __LINE__)
 #endif
 
 #define  sm_talloc(T) ((T *) sm_alloc(sizeof(T)))

@@ -103,20 +103,19 @@ int sch_pipe_connect (SEAP_desc_t *desc, const char *uri, uint32_t flags)
         
         err = socketpair (AF_UNIX, SOCK_STREAM, 0, pfd);
         if (err < 0) {
-                err = errno;
-                sm_free (desc->scheme_data);
-                sm_free (execpath);
-                errno = err;
+                protect_errno {
+                        sm_free (desc->scheme_data);
+                        sm_free (execpath);
+                }
                 return (-1);
         }
         
         switch (pid = fork ()) {
         case -1: /* error */
-                err = errno;
-                sm_free (desc->scheme_data);
-                sm_free (execpath);
-                errno = err;
-                
+                protect_errno {
+                        sm_free (desc->scheme_data);
+                        sm_free (execpath);
+                }
                 return (-1);
         case  0: /* child */
                 close (pfd[0]);
@@ -212,4 +211,9 @@ int sch_pipe_close (SEAP_desc_t *desc, uint32_t flags)
         sm_free (DATA(desc)->execpath);
         sm_free (desc->scheme_data);
         return (err);
+}
+
+int sch_cons_select (SEAP_desc_t *desc, int ev, uint16_t timeout, uint32_t flags)
+{
+        return (-1);
 }

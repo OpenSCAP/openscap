@@ -33,17 +33,13 @@ int SEAP_cmd_register (SEAP_CTX_t *ctx, SEAP_cmdcode_t code, uint32_t flags, SEA
         va_start (ap, func);
                 
         if (flags & SEAP_CMDREG_LOCAL) {
-                sd = va_arg (ap, int);
-
-                /* FIXME: not thread safe! */
-                if (sd < 0 || sd >= ctx->sd_table.sdsize) {
-                        errno = EBADF;
+                sd  = va_arg (ap, int);
+                dsc = SEAP_desc_get (&(ctx->sd_table), sd);
+                
+                if (dsc == NULL)
                         return (-1);
-                }
-
-                dsc = &(ctx->sd_table.sd[sd]);
+                
                 tbl = dsc->cmd_c_table;
-                                
         } else {
                 tbl = ctx->cmd_c_table;
         }
@@ -210,56 +206,7 @@ int SEAP_cmd_unregister (SEAP_CTX_t *ctx, SEAP_cmdcode_t code)
 
 SEXP_t *SEAP_cmd2sexp (SEAP_cmd_t *cmd)
 {
-        SEXP_t *sexp;
-        
-        _A(cmd != NULL);
-        
-        sexp = SEXP_list_new ();
-        SEXP_list_add (sexp,
-                       SEXP_string_new (SEAP_SYM_CMD, strlen (SEAP_SYM_CMD)));
-        
-        SEXP_list_add (sexp,
-                       SEXP_string_new (":id", 3));
-        SEXP_list_add (sexp,
-                       SEXP_number_newhu (cmd->id));
-        
-        if (cmd->flags & SEAP_CMDFLAG_REPLY) {
-                SEXP_list_add (sexp,
-                               SEXP_string_new (":reply_id", 9));
-                SEXP_list_add (sexp,
-                               SEXP_number_newhu (cmd->rid));
-        }
-        
-        SEXP_list_add (sexp,
-                       SEXP_string_new (":class", 6));
-        switch (cmd->class) {
-        case SEAP_CMDCLASS_USR:
-                SEXP_list_add (sexp,
-                               SEXP_string_new ("usr", 3));
-                break;
-        case SEAP_CMDCLASS_INT:
-                SEXP_list_add (sexp,
-                               SEXP_string_new ("int", 3));
-                break;
-        default:
-                abort ();
-        }
-        
-        SEXP_list_add (sexp,
-                       SEXP_string_new (":type", 5));
-        
-        SEXP_list_add (sexp,
-                       (cmd->flags & SEAP_CMDFLAG_SYNC ?
-                        SEXP_string_new ("sync", 4) : SEXP_string_new ("async", 5)));
-        
-        SEXP_list_add (sexp,
-                       SEXP_number_newhu (cmd->code));
-        
-        if (cmd->args != NULL)
-                SEXP_list_add (sexp, cmd->args);
-        
-        SEXP_VALIDATE(sexp);
-        return (sexp);
+        return (NULL);
 }
 
 SEXP_t *SEAP_cmd_exec (SEAP_CTX_t    *ctx,
@@ -284,15 +231,12 @@ SEXP_t *SEAP_cmd_exec (SEAP_CTX_t    *ctx,
         }
 #endif
 
-        if (sd < 0 || sd >= ctx->sd_table.sdsize) {
-                errno = EBADF;
-                return (NULL);
-        }
-        
         _D("code=%u, args=%p\n", code, args);
 
-        /* FIXME: not thread safe! */
-        dsc = &(ctx->sd_table.sd[sd]);
+        dsc = SEAP_desc_get (&(ctx->sd_table), sd);
+        
+        if (dsc == NULL)
+                return (-1);
         
         if (flags & (SEAP_EXEC_LOCAL | SEAP_EXEC_WQUEUE)) {
                 _D("EXEC_LOCAL\n");
@@ -358,7 +302,7 @@ SEXP_t *SEAP_cmd_exec (SEAP_CTX_t    *ctx,
                 cmd.class = SEAP_CMDCLASS_USR;
                 cmd.code  = code;
                 cmd.args  = args;
-                                
+                
                 switch (type) {
                 case SEAP_CMDTYPE_SYNC:
                         cmd.flags |= SEAP_CMDFLAG_SYNC;

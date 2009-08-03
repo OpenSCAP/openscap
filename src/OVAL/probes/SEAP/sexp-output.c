@@ -191,7 +191,6 @@ ssize_t SEXP_st_dprintc (int fd, SEXP_t *sexp, SEXP_ostate_t **ost)
         uint32_t digits;
         ssize_t wret = -1;
         size_t  wlen =  0;
-        int err;
         
         struct iovec vec[2];
         
@@ -245,7 +244,6 @@ print_loop:
                 
                 if ((wret = writev (fd, vec, 2)) == -1) {
                         /* write error */
-                        err = errno;
                         return (-1);
                 }
                 
@@ -253,7 +251,6 @@ print_loop:
                 
                 if ((wret - digits - 1 - psexp->atom.string.len) != 0) {
                         /* not everything was written to fd */
-                        err = errno;
                         (*ost)->sexp_pos  = wret;
                         (*ost)->sexp_part = 1;
 

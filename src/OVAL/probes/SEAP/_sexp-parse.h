@@ -3,6 +3,7 @@
 #define _SEXP_PARSE_H
 
 #include <stddef.h>
+#include <stdint.h>
 #include "public/sexp-parse.h"
 #include "_sexp-manip.h"
 

@@ -16,13 +16,14 @@
  *  stored there. The pointer to this memory
  *  block is stored in voidp.
  */
-#define NUM_STORE(type, nsrc, voidp) do {                            \
-                if (sizeof (type) <= VOIDPTR_SIZE) {                 \
-                        *((type *)(&(voidp))) = (type)(nsrc);        \
-                } else {                                             \
-                        (voidp) = sm_talloc (type);                  \
-                        *((type *)(voidp)) = (type)(nsrc);           \
-                }                                                    \
+
+#define NUM_STORE(type, nsrc, voidp) do {                       \
+                if (sizeof (type) <= sizeof (void *)) {         \
+                        *((type *)(&(voidp))) = (type)(nsrc);   \
+                } else {                                        \
+                        (voidp) = sm_talloc (type);             \
+                        *((type *)(voidp)) = (type)(nsrc);      \
+                }                                               \
         } while (0)
 
 /*

@@ -12,7 +12,7 @@
  * Functions for manipulating with numbers
  */
 
-SEXP_t *SEXP_number_new  (const void *, NUM_type_t);
+SEXP_t *SEXP_number_new  (void *, NUM_type_t);
 
 SEXP_t *SEXP_number_newd   (int n);
 SEXP_t *SEXP_number_newhd  (short int n);
@@ -81,7 +81,6 @@ size_t     SEXP_string_mpm (SEXP_mp_t *mp, const SEXP_t *sexp);
 void       SEXP_string_mpmfree (SEXP_mp_t *mp);
 #endif
 
-
 /*
  * Functions for manipulating with lists
  */
@@ -119,12 +118,12 @@ SEXP_t *SEXP_list_reduce2 (SEXP_t *list, SEXP_t *(*fn) (const SEXP_t *, const SE
 # define __XCONCAT(a, b) __CONCAT(a,b)
 
 # define SEXP_list_foreach(var, list)                                   \
-        for (register uint32_t __XCONCAT(___i_, __LINE__) = 1;           \
+        for (register uint32_t __XCONCAT(___i_, __LINE__) = 1;          \
              ((var) = SEXP_list_nth ((list), __XCONCAT(___i_, __LINE__))) != NULL; \
              ++__XCONCAT(___i_, __LINE__))
 
 # define SEXP_sublist_foreach(var, list, beg, end)                      \
-        for (register uint32_t __XCONCAT(___i_, __LINE__) = (beg);       \
+        for (register uint32_t __XCONCAT(___i_, __LINE__) = (beg);      \
              __XCONCAT(___i_, __LINE__) <= (uint32_t)(end) && ((var) = SEXP_list_nth ((list), __XCONCAT(___i_, __LINE__))) != NULL; \
              ++__XCONCAT(___i_, __LINE__))
 #endif

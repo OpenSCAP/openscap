@@ -2,7 +2,9 @@
 #ifndef SEXP_PARSE_H
 #define SEXP_PARSE_H
 
+#include <stddef.h>
 #include <seap-debug.h>
+#include <sexp-types.h>
 
 typedef struct SEXP_psetup SEXP_psetup_t;
 

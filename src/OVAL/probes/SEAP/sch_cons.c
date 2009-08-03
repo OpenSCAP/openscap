@@ -69,3 +69,8 @@ int sch_cons_close (SEAP_desc_t *desc, uint32_t flags)
         sm_free (desc->scheme_data);
         return (0);
 }
+
+int sch_cons_select (SEAP_desc_t *desc, int ev, uint16_t timeout, uint32_t flags)
+{
+        return (-1);
+}

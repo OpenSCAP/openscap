@@ -92,7 +92,8 @@ struct SEXP {
 };
 
 #define SEXP(ptr)      ((SEXP_t *)(ptr))
-#define SEXP_TYPE(ptr) ((SEXP(ptr)->flags) & SEXP_TYPEMASK)
+#define SEXP_TYPEOF(ptr) ((SEXP(ptr)->flags) & SEXP_TYPEMASK)
+#define SEXP_TYPE(ptr) SEXP_TYPEOF(ptr)
 
 /*
  *  SEXP_FREE returns the value of SEXP_FLAGFREE bit.

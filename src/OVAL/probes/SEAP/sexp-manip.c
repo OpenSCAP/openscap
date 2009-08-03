@@ -12,50 +12,39 @@
 #include "_sexp-types.h"
 #include "_sexp-manip.h"
 
-SEXP_t *SEXP_number_new (const void *num, NUM_type_t type)
+SEXP_t *SEXP_number_new (void *num, NUM_type_t type)
 {
         SEXP_t *sexp;
-
+        
+#define CASE(__m, __T)                                                  \
+        case (__m): {                                                   \
+                __T __XCONCAT(__tn,__LINE__) = *((__T *)(num));         \
+                NUM_STORE(__T, __XCONCAT(__tn,__LINE__), sexp->atom.number.nptr); \
+        }                                                               \
+                break
+        
         _A(num != NULL);
-
+        
         sexp = SEXP_new ();
         SEXP_SETTYPE(sexp, ATOM_NUMBER);
    
         switch (type) {
-        case NUM_INT8:
-                NUM_STORE(int8_t, (*(int8_t *)(num)), sexp->atom.number.nptr);
-                break;
-        case NUM_UINT8:
-                NUM_STORE(uint8_t, (*(uint8_t *)(num)), sexp->atom.number.nptr);
-                break;
-        case NUM_INT16:
-                NUM_STORE(int16_t, (*(int16_t *)(num)), sexp->atom.number.nptr);
-                break;
-        case NUM_UINT16:
-                NUM_STORE(uint16_t, (*(uint16_t *)(num)), sexp->atom.number.nptr);
-                break;
-        case NUM_INT32:
-                NUM_STORE(int32_t, (*(int32_t *)(num)), sexp->atom.number.nptr);
-                break;
-        case NUM_UINT32:
-                NUM_STORE(uint32_t, (*(uint32_t *)(num)), sexp->atom.number.nptr);
-                break;
-        case NUM_INT64:
-                NUM_STORE(int64_t, (*(int64_t *)(num)), sexp->atom.number.nptr);
-                break;
-        case NUM_UINT64:
-                NUM_STORE(uint64_t, (*(uint64_t *)(num)), sexp->atom.number.nptr);
-                break;
-        case NUM_DOUBLE:
-                NUM_STORE(double, (*(double *)(num)), sexp->atom.number.nptr);
-                break;
+                CASE(NUM_INT8,   int8_t);
+                CASE(NUM_UINT8,  uint8_t);
+                CASE(NUM_INT16,  int16_t);
+                CASE(NUM_UINT16, uint16_t);
+                CASE(NUM_INT32,  int32_t);
+                CASE(NUM_UINT32, uint32_t);
+                CASE(NUM_INT64,  int64_t);
+                CASE(NUM_UINT64, uint64_t);
+                CASE(NUM_DOUBLE, double);
         default:
-                _D("Unsupported number type: %d\n", type);
-                abort ();                
+                abort ();
         }
-   
+
+#undef CASE
+        
         sexp->atom.number.type = type;
-     
         return (sexp);
 }
 
@@ -1520,37 +1509,37 @@ SEXP_t *SEXP_list_map (SEXP_t *list, int (*fn) (SEXP_t *, SEXP_t *))
         SEXP_t *res_list;
         uint32_t i;
         
-        if (list != NULL) {
-                SEXP_VALIDATE(list);
-                
-                if (SEXP_TYPE(list) == ATOM_LIST) {
-                        res_list = SEXP_new ();
-                        SEXP_SETTYPE(res_list, ATOM_LIST);
-                        res_list->atom.list.size  = list->atom.list.size;
-                        res_list->atom.list.count = list->atom.list.count;
-                        res_list->atom.list.memb  = sm_alloc (sizeof (SEXP_t) * res_list->atom.list.size);
-                        
-                        for (i = 0; i < list->atom.list.count; ++i) {
-                                if (fn (&(SEXP(res_list->atom.list.memb)[i]),
-                                        &(SEXP(list->atom.list.memb)[i])) != 0)
-                                {
-                                        e = errno;
-                                        goto err;
-                                }
-                        }
-                        
-                        return (res_list);
-                } else {
-                        errno = EINVAL;
-                }
-        } else {
+        if (list == NULL) {
                 errno = EFAULT;
+                return (NULL);
         }
         
-        return (NULL);
+        SEXP_VALIDATE(list);
+        
+        if (SEXP_TYPEOF(list) != ATOM_LIST) {
+                errno = EINVAL;
+                return (NULL);
+        }
+
+        res_list = SEXP_new ();
+        SEXP_SETTYPE(res_list, ATOM_LIST);
+        res_list->atom.list.size  = list->atom.list.size;
+        res_list->atom.list.count = list->atom.list.count;
+        res_list->atom.list.memb  = sm_alloc (sizeof (SEXP_t) * res_list->atom.list.size);
+        
+        for (i = 0; i < list->atom.list.count; ++i) {
+                if (fn (&(SEXP(res_list->atom.list.memb)[i]),
+                        &(SEXP(list->atom.list.memb)[i])) != 0)
+                {
+                        goto err;
+                }
+        }
+        
+        return (res_list);
 err:
-        SEXP_free (res_list);
-        errno = e;
+        protect_errno {
+                SEXP_free (res_list);
+        }
         return (NULL);
 }
 
@@ -1560,38 +1549,38 @@ SEXP_t *SEXP_list_map2 (SEXP_t *list, int (*fn) (SEXP_t *, SEXP_t *, void *), vo
         SEXP_t *res_list;
         uint32_t i;
         
-        if (list != NULL) {
-                SEXP_VALIDATE(list);
-                
-                if (SEXP_TYPE(list) == ATOM_LIST) {
-                        res_list = SEXP_new ();
-                        SEXP_SETTYPE(res_list, ATOM_LIST);
-                        res_list->atom.list.size  = list->atom.list.size;
-                        res_list->atom.list.count = list->atom.list.count;
-                        res_list->atom.list.memb  = sm_alloc (sizeof (SEXP_t) * res_list->atom.list.size);
-                        
-                        for (i = 0; i < list->atom.list.count; ++i) {
-                                if (fn (&(SEXP(res_list->atom.list.memb)[i]),
-                                        &(SEXP(list->atom.list.memb)[i]),
-                                        ptr) != 0)
-                                {
-                                        e = errno;
-                                        goto err;
-                                }
-                        }
-                        
-                        return (res_list);
-                } else {
-                        errno = EINVAL;
-                }
-        } else {
+        if (list == NULL) {
                 errno = EFAULT;
+                return (NULL);
+        }
+
+        SEXP_VALIDATE(list);
+                
+        if (SEXP_TYPEOF(list) != ATOM_LIST) {
+                errno = EINVAL;
+                return (NULL);
         }
         
-        return (NULL);
+        res_list = SEXP_new ();
+        SEXP_SETTYPE(res_list, ATOM_LIST);
+        res_list->atom.list.size  = list->atom.list.size;
+        res_list->atom.list.count = list->atom.list.count;
+        res_list->atom.list.memb  = sm_alloc (sizeof (SEXP_t) * res_list->atom.list.size);
+        
+        for (i = 0; i < list->atom.list.count; ++i) {
+                if (fn (&(SEXP(res_list->atom.list.memb)[i]),
+                        &(SEXP(list->atom.list.memb)[i]),
+                        ptr) != 0)
+                {
+                        goto err;
+                }
+        }
+        
+        return (res_list);
 err:
-        SEXP_free (res_list);
-        errno = e;
+        protect_errno {
+                SEXP_free (res_list);
+        }
         return (NULL);
 }
 
