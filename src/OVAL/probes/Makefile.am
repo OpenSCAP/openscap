@@ -5,7 +5,7 @@ CFLAGS += @pthread_cflags@ -I$(top_srcdir)/src -I$(top_srcdir)/src/OVAL -I$(top_
 LDFLAGS += @pthread_ldflags@
 
 noinst_LIBRARIES= libprobe.a
-libprobe_a_SOURCES= probe-main.c probe-cache.c probe-init.c probe-fini.c
+libprobe_a_SOURCES= probe-main.c probe-cache.c probe-cache.h probe-init.c probe-fini.c
 
 LDADD= $(top_builddir)/src/libopenscap.la libprobe.a
 
