@@ -169,7 +169,7 @@ int _oval_syschar_parse_subtag(
 	struct oval_syschar *syschar = client;
 	char *tagname   = (char*) xmlTextReaderLocalName(reader);
 	char *namespace = (char*) xmlTextReaderNamespaceUri(reader);
-	int return_code;
+	int return_code = 0;
 	if(strcmp("message",tagname)==0){
 		return_code = oval_message_parse_tag(reader, context, &_oval_syschar_parse_subtag_consume_message, syschar);
 	}else if(strcmp("variable_value",tagname)==0){

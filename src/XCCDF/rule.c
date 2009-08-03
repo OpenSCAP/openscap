@@ -30,7 +30,7 @@ bool xccdf_content_parse(xmlTextReaderPtr reader, struct xccdf_item* parent)
 {
 	assert(parent != NULL);
 
-	struct oscap_list* list;
+	struct oscap_list* list = NULL;
 	struct xccdf_item* item = NULL;
 
 	switch (parent->type) {
@@ -139,7 +139,7 @@ void xccdf_deps_dump(struct xccdf_item* item, int depth)
 		for (it = requires->first; it; it = it->next) {
 			struct oscap_list *nlist = it->data;
 			if (it != requires->first) printf(" & ");
-			if (nlist->itemcount <= 0) continue;
+			if (nlist->itemcount = 0) continue;
 			if (nlist->itemcount > 1) printf("(");
 			xccdf_print_id_list(nlist, " | ");
 			if (nlist->itemcount > 1) printf(")");
