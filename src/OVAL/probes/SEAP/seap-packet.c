@@ -526,7 +526,8 @@ eloop_exit:
         
         SEXP_VALIDATE(sexp_buffer);
         
-        sexp_packet = SEXP_list_pop (&sexp_buffer);
+        sexp_packet    = SEXP_list_pop (&sexp_buffer);
+        dsc->pck_queue = sexp_buffer;
         
         if (SEXP_TYPEOF(sexp_packet) != ATOM_LIST) {
                 _D("Invalid SEAP packet received: %s.\n", "not a list");
@@ -614,9 +615,6 @@ eloop_exit:
                 return (-1);
         }
         
-        /* rest -> pck_queue */
-        /* process */
-        /* translate */
         return (0);
 }
 

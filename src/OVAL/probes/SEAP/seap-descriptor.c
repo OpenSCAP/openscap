@@ -1,3 +1,4 @@
+#include "generic/bitmap.h"
 #include "_sexp-parse.h"
 #include "_seap-scheme.h"
 #include "seap-descriptor.h"
@@ -63,6 +64,25 @@ SEAP_msgid_t SEAP_desc_genmsgid (SEAP_desctable_t *sd_table, int sd)
         id = __sync_fetch_and_add (&(dsc->next_id), 1);
 #else
         id = dsc->next_id++;
+#endif
+        return (id);
+}
+
+SEAP_cmdid_t SEAP_desc_gencmdid (SEAP_desctable_t *sd_table, int sd)
+{
+        SEAP_desc_t *dsc;
+        SEAP_cmdid_t  id;
+
+        dsc = SEAP_desc_get (sd_table, sd);
+        
+        if (dsc == NULL) {
+                errno = EINVAL;
+                return (-1);
+        }
+#if defined(HAVE_ATOMIC_FUNCTIONS)
+        id = __sync_fetch_and_add (&(dsc->next_cid), 1);
+#else
+        id = dsc->next_cid++;
 #endif
         return (id);
 }
