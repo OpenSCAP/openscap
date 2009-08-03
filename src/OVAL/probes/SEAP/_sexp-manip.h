@@ -19,7 +19,7 @@
 
 #define NUM_STORE(type, nsrc, voidp) do {                       \
                 if (sizeof (type) <= sizeof (void *)) {         \
-                        *((type *)(&(voidp))) = (type)(nsrc);   \
+                        *((type *)((void *)&(voidp))) = (type)(nsrc);   \
                 } else {                                        \
                         (voidp) = sm_talloc (type);             \
                         *((type *)(voidp)) = (type)(nsrc);      \
@@ -31,7 +31,7 @@
  *  returns the number of type type stored
  *  at or in voidp.
  */
-#define NUM(type, voidp) (sizeof (type) <= VOIDPTR_SIZE ? (*((type *)(&(voidp)))) : *((type *)(voidp)))
+#define NUM(type, voidp) (sizeof (type) <= VOIDPTR_SIZE ? (*((type *)((void *)&(voidp)))) : *((type *)(voidp)))
 
 SEXP_t *LIST_add (LIST_t *list, SEXP_t *sexp);
 
