@@ -1972,6 +1972,11 @@ const char *SEXP_strtype (const SEXP_t *sexp)
         }
 }
 
+SEXP_type_t SEXP_typeof (const SEXP_t *s)
+{
+        return (SEXP_TYPEOF(s));
+}
+
 #if !defined(NDEBUG) || defined(VALIDADE_SEXP)
 #include <stdio.h>
 

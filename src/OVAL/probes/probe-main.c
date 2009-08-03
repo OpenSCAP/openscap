@@ -265,7 +265,7 @@ int main (void)
                                 /* cache miss */
 
                                 if (pthread_create (&thread, &thread_attr,
-                                                    &probe_worker, (void *)probe_in) != 0)
+                                                    &probe_worker, (void *)seap_request) != 0)
                                 {
                                         _D("Can't start new probe worker: %u, %s.\n",
                                            errno, strerror (errno));
@@ -273,6 +273,8 @@ int main (void)
                                         /* send error */
                                         continue;
                                 }
+                                
+                                seap_request = NULL;
                                 
                                 _D("New worker: id=%u, in=%p\n", thread, probe_in);
                                 
@@ -328,7 +330,11 @@ void *probe_worker (void *arg)
         int     probe_ret;
         SEXP_t *probe_in, *set, *probe_out;
         
-        probe_in = (SEXP_t *)arg;
+        SEAP_msg_t *seap_reply, *seap_request;
+
+        seap_request = (SEAP_msg_t *)arg;
+        probe_in     = SEAP_msg_get (seap_request);
+        
         set = SEXP_OVALobj_getelm (probe_in, "set", 1);
         
         if (set != NULL) {
@@ -342,5 +348,39 @@ void *probe_worker (void *arg)
                 _A(probe_ret != -1);
         }
         
+        if (probe_out == NULL || probe_ret != 0) {
+                if (SEAP_replyerr (global.ctx, global.sd, seap_request, probe_ret) == -1) {
+                        int ret = errno;
+                        
+                        _D("An error ocured while sending error status. errno=%u, %s.\n",
+                           errno, strerror (errno));
+                        
+                        SEAP_msg_free (seap_request);
+                        
+                        /* FIXME */
+                        exit (ret);
+                }
+        } else {
+                SEXP_VALIDATE(probe_out);
+                
+                seap_reply = SEAP_msg_new ();
+                SEAP_msg_set (seap_reply, probe_out);
+                
+                if (SEAP_reply (global.ctx, global.sd, seap_reply, seap_request) == -1) {
+                        int ret = errno;
+
+                        _D("An error ocured while sending SEAP message. errno=%u, %s.\n",
+                           errno, strerror (errno));
+                        
+                        SEAP_msg_free (seap_reply);
+                        SEAP_msg_free (seap_request);
+                        
+                        exit (ret);
+                }
+                
+                SEAP_msg_free (seap_reply);
+        }
+        
+        SEAP_msg_free (seap_request);
         return (NULL);
 }

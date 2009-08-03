@@ -384,7 +384,7 @@ int SEAP_packet_sexp2err (SEXP_t *sexp_err, SEAP_err_t *seap_err)
         return (-1);
 }
 
-SEXP_t *SEAP_packet_err2sexp (SEAP_err_t *err, unsigned int type)
+SEXP_t *SEAP_packet_err2sexp (SEAP_err_t *err)
 {
         SEXP_t *sexp;
 
@@ -397,13 +397,34 @@ SEXP_t *SEAP_packet_err2sexp (SEAP_err_t *err, unsigned int type)
         
         /* Add error code type */
         SEXP_list_add (sexp, SEXP_string_new (":type", 5));
-        SEXP_list_add (sexp, SEXP_number_newu (type));
-
+        SEXP_list_add (sexp, SEXP_number_newu (err->type));
+        
         /* Add error code */
         SEXP_list_add (sexp, SEXP_number_newu (err->code));
         
         if (err->data != NULL) {
                 SEXP_list_add (sexp, err->data);
+        }
+        
+        return (sexp);
+}
+
+SEXP_t *SEAP_packet2sexp (SEAP_packet_t *packet)
+{
+        SEXP_t *sexp = NULL;
+        
+        switch (packet->type) {
+        case SEAP_PACKET_MSG:
+                sexp = SEAP_packet_msg2sexp (SEAP_packet_msg (packet));
+                break;
+        case SEAP_PACKET_CMD:
+                sexp = SEAP_packet_cmd2sexp (SEAP_packet_cmd (packet));
+                break;
+        case SEAP_PACKET_ERR:
+                sexp = SEAP_packet_err2sexp (SEAP_packet_err (packet));
+                break;
+        default:
+                errno = EINVAL;
         }
         
         return (sexp);
@@ -442,6 +463,8 @@ int SEAP_packet_recv (SEAP_CTX_t *ctx, int sd, SEAP_packet_t **packet)
         for (;;) {
                 if (SCH_SELECT(dsc->scheme, dsc, SEAP_IO_EVREAD, 0, 0) != 0)
                         return (-1);
+                
+                _D("aaaaaaaaaaaaaab\n");
                 
                 switch (DESC_TRYRLOCK (dsc)) {
                 case  1:
@@ -555,7 +578,7 @@ eloop_exit:
                 /* SEXP_free (psym_sexp) */
                 errno = EINVAL;
                 return (-1);
-        } else if (SEXP_strcmp (psym_sexp, SEAP_SYM_PREFIX) != 0) {
+        } else if (SEXP_strncmp (psym_sexp, SEAP_SYM_PREFIX, strlen (SEAP_SYM_PREFIX)) != 0) {
                 _D("Invalid SEAP packet received: %s.\n", "invalid prefix");
                 SEXP_free (sexp_packet);
                 /* SEXP_free (psym_sexp) */
@@ -578,6 +601,7 @@ eloop_exit:
                                 _D("Invalid SEAP packet received: %s.\n", "can't translate to msg struct");
                                 return (-1);
                         }
+                        break;
                 }
                 goto invalid;
         case 'c':
@@ -592,6 +616,7 @@ eloop_exit:
                                 _D("Invalid SEAP packet received: %s.\n", "can't translate to cmd struct");
                                 return (-1);
                         }
+                        break;
                 }
                 goto invalid;
         case 'e':
@@ -606,6 +631,7 @@ eloop_exit:
                                 _D("Invalid SEAP packet received: %s.\n", "can't translate to err struct");
                                 return (-1);
                         }
+                        break;
                 }
         default:
         invalid:
@@ -620,5 +646,36 @@ eloop_exit:
 
 int SEAP_packet_send (SEAP_CTX_t *ctx, int sd, SEAP_packet_t *packet)
 {
-        return (-1);
+        SEXP_t *packet_sexp;
+        SEAP_desc_t *dsc;
+        int ret;
+                
+        ret = -1;
+        dsc = SEAP_desc_get (&(ctx->sd_table), sd);
+        
+        if (dsc == NULL)
+                return (-1);
+        
+        packet_sexp = SEAP_packet2sexp (packet);
+        
+        if (packet_sexp == NULL)
+                return (-1);
+        
+        if (DESC_WLOCK (dsc)) {
+                ret = 0;
+                
+                if (SCH_SENDSEXP(dsc->scheme, dsc, packet_sexp, 0) < 0) {
+                        ret = -1;
+                        
+                        protect_errno {
+                                _D("FAIL: errno=%u, %s.\n", errno, strerror (errno));
+                        }
+                }
+                
+                DESC_WUNLOCK(dsc);
+        }
+        
+        SEXP_free (packet_sexp);
+
+        return (ret);
 }

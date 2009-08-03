@@ -56,6 +56,7 @@ typedef uint8_t ATOM_flags_t;
 /* atomic types */
 typedef uint8_t  ATOM_type_t;
 
+/* keep in sync with SEXP_TYPE_* ! */
 #define ATOM_UNFIN    0x00
 #define ATOM_LIST     0x01
 #define ATOM_NUMBER   0x02

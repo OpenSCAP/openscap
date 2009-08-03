@@ -149,6 +149,8 @@ int     SEXP_cmpobj (const SEXP_t *a, const SEXP_t *b);
 
 char   *SEXP_datatype (const SEXP_t *a);
 
+SEXP_type_t SEXP_typeof (const SEXP_t *s);
+
 /*
  *  Returns atomic type of the given S-exp as a string.
  */

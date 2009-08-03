@@ -451,46 +451,28 @@ int SEAP_reply (SEAP_CTX_t *ctx, int sd, SEAP_msg_t *rep_msg, SEAP_msg_t *req_ms
 
 int __SEAP_senderr (SEAP_CTX_t *ctx, int sd, SEAP_err_t *err, unsigned int type)
 {
-        SEAP_desc_t *desc;
-        SEXP_t *sexp_err;
+        SEAP_packet_t *packet;
+        SEAP_err_t    *errptr;
         
         _A(ctx != NULL);
         _A(err != NULL);
-
-        _A(type == SEAP_ETYPE_USER || type == SEAP_ETYPE_INT);
         
-        if (sd < 0 || sd >= ctx->sd_table.sdsize) {
-                errno = EBADF;
-                return (-1);
-        }
-
-        desc = &(ctx->sd_table.sd[sd]);
-
-        /* Convert the err structure into its S-exp representation */
-        //sexp_err = __SEAP_err2sexp (err, type);
-        if (sexp_err == NULL) {
-                _D("Can't convert the err structure into S-exp: %u, %s.\n",
-                   errno, strerror (errno));
-                return (-1);
-        }
+        packet = SEAP_packet_new ();
+        errptr = SEAP_packet_settype (packet, SEAP_PACKET_ERR);
         
-        /*
-         * Send the error using handler associated
-         * with the descriptor.
-         */
-
-        if (SCH_SENDSEXP(desc->scheme, desc, sexp_err, 0) < 0) {
-                /* FIXME: Don't free the attached message */
-                SEXP_free (sexp_err);
-                return (-1);
-        }
-
-        /* Check if everything was sent */
-        if (desc->ostate != NULL) {
-                errno = EINPROGRESS;
-                return (-1);
-        }
+        memcpy (errptr, err, sizeof (SEAP_err_t));
+        errptr->type = type;
         
+        if (SEAP_packet_send (ctx, sd, packet) != 0) {
+                protect_errno {
+                        _D("FAIL: errno=%u, %s.\n", errno, strerror (errno));
+                        SEAP_packet_free (packet);
+                }
+                
+                return (-1);
+        }
+
+        SEAP_packet_free (packet);
         return (0);
 }
 

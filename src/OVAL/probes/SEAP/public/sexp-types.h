@@ -62,4 +62,12 @@ typedef uint8_t SEXP_format_t;
 # define _A(x) assert(x)
 #endif
 
+#define SEXP_TYPE_UNFIN  0x00
+#define SEXP_TYPE_LIST   0x01
+#define SEXP_TYPE_STRING 0x04
+#define SEXP_TYPE_NUMBER 0x02
+#define SEXP_TYPE_EMPTY  0x0f
+
+typedef uint8_t SEXP_type_t;
+
 #endif /* SEXP_TYPES_H */

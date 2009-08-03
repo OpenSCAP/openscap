@@ -1,4 +1,6 @@
 #include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
 #include <stddef.h>
 #include <sys/types.h>
 #include <sys/uio.h>
@@ -65,5 +67,52 @@ int sch_generic_close (SEAP_desc_t *desc, uint32_t flags)
 
 int sch_generic_select (SEAP_desc_t *desc, int ev, uint16_t timeout, uint32_t flags)
 {
+        fd_set *wptr, *rptr;
+        fd_set  fset;
+        int fd;
+        struct timeval *tv_ptr, tv;
+        
+        FD_ZERO(&fset);
+        tv_ptr = NULL;
+        wptr   = NULL;
+        rptr   = NULL;
+        
+        switch (ev) {
+        case SEAP_IO_EVREAD:
+                fd = DATA(desc)->ifd;
+                FD_SET(fd, &fset);
+                rptr = &fset;
+                break;
+        case SEAP_IO_EVWRITE:
+                fd = DATA(desc)->ofd;
+                FD_SET(fd, &fset);
+                wptr = &fset;
+                break;
+        default:
+                abort ();
+        }
+
+        if (timeout > 0) {
+                tv.tv_sec  = (time_t)timeout;
+                tv.tv_usec = 0;
+                tv_ptr = &tv;
+        }
+        
+        _A(!(wptr == NULL && rptr == NULL));
+        _A(!(wptr != NULL && rptr != NULL));
+        
+        switch (select (fd + 1, rptr, wptr, NULL, tv_ptr)) {
+        case -1:
+                protect_errno {
+                        _D("FAIL: errno=%u, %s.\n", errno, strerror (errno));
+                }
+                return (-1);
+        case  0:
+                errno = ETIMEDOUT;
+                return (-1);
+        default:
+                return (FD_ISSET(fd, &fset) ? 0 : -1);
+        }
+        /* NOTREACHED */
         return (-1);
 }

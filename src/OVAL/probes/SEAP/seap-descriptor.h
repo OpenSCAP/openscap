@@ -74,12 +74,22 @@ static inline int SEAP_desc_trylock (pthread_mutex_t *m)
 
 static inline int SEAP_desc_lock (pthread_mutex_t *m)
 {
-        return (0);
+        switch (pthread_mutex_lock (m)) {
+        case 0:
+                return (1);
+        default:
+                return (-1);
+        }
 }
 
 static inline int SEAP_desc_unlock (pthread_mutex_t *m)
 {
-        return (0);
+        switch (pthread_mutex_unlock (m)) {
+        case 0:
+                return (1);
+        default:
+                return (-1);
+        }
 }
 
 #define DESC_TRYRLOCK(d) SEAP_desc_trylock (&((d)->r_lock))

@@ -9,6 +9,7 @@
 struct SEAP_err {
         SEAP_msgid_t id;
         uint32_t     code;
+        uint8_t      type;
         SEXP_t      *data;
 };
 

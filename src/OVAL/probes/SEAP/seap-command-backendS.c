@@ -167,14 +167,16 @@ void SEAP_cmdtbl_backendS_free (SEAP_cmdtbl_t *t)
         
         St = (Stable_t *)(t->table);
         
-        for (i = 0; i < St->t_size; ++i)
-                if (St->t_recs[i].c_size > 0)
-                        sm_free (St->t_recs[i].c_recs);
-        
-        sm_free (St->t_recs);
-        sm_free (St);
-        
-        t->table = NULL;
+        if (St != NULL) {
+                for (i = 0; i < St->t_size; ++i)
+                        if (St->t_recs[i].c_size > 0)
+                                sm_free (St->t_recs[i].c_recs);
+                
+                sm_free (St->t_recs);
+                sm_free (St);
+                
+                t->table = NULL;
+        }
         return;
 }
 
