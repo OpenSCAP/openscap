@@ -48,7 +48,7 @@ __P void oscap_free     (void  *p) { __oscap_free_dbg (&p, __FUNCTION__, 0); }
 # define oscap_calloc(n, s)   __oscap_calloc_dbg (n, s, __PRETTY_FUNCTION__, __LINE__)
 # define oscap_realloc(p, s)  __oscap_realloc_dbg ((void *)(p), s, __PRETTY_FUNCTION__, __LINE__)
 # define oscap_reallocf(p, s) __oscap_reallocf_dbg ((void *)(p), s, __PRETTY_FUNCTION__, __LINE__)
-# define oscap_free(p)        __oscap_free_dbg ((void **)&(p), __PRETTY_FUNCTION__, __LINE__)
+# define oscap_free(p)        __oscap_free_dbg ((void **)((void *)&(p)), __PRETTY_FUNCTION__, __LINE__)
 #endif
 
 #define  oscap_talloc(T) ((T *) oscap_alloc(sizeof(T)))
