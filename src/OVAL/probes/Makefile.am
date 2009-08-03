@@ -1,4 +1,4 @@
-pkglibexecdir= openscap
+pkglibexecdir= $(libexecdir)/openscap
 pkglibexec_PROGRAMS=
 
 CFLAGS += @pthread_cflags@ -I$(top_srcdir)/src -I$(top_srcdir)/src/OVAL -I$(top_srcdir)/src/OVAL/probes -I$(top_srcdir)/src/OVAL/probes/SEAP/public
