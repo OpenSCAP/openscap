@@ -78,13 +78,12 @@ int oval_affected_parse_tag(xmlTextReaderPtr reader,
 			    oval_affected_consumer, void *);
 void oval_affected_to_print(struct oval_affected *affected, char *indent, int idx);
 
-struct oval_test *oval_test_new();
+struct oval_test *oval_test_new(char *);
 void oval_test_free(struct oval_test *);
 
 void set_oval_test_family(struct oval_test *, oval_family_enum);
 void set_oval_test_subtype(struct oval_test *, oval_subtype_enum);
 void set_oval_test_comment(struct oval_test *, char *);
-void set_oval_test_id(struct oval_test *, char *);
 void set_oval_test_deprecated(struct oval_test *, int);
 void set_oval_test_version(struct oval_test *, int);
 void set_oval_test_existence(struct oval_test *, oval_existence_enum);
@@ -125,7 +124,7 @@ int oval_reference_parse_tag(xmlTextReaderPtr, struct oval_parser_context *,
 			     oval_reference_consumer, void *);
 void oval_reference_to_print(struct oval_reference *ref, char *indent, int index);
 
-struct oval_definition *oval_definition_new();
+struct oval_definition *oval_definition_new(char *id);
 void oval_definition_free(struct oval_definition *);
 
 void set_oval_definition_id(struct oval_definition *, char *);
@@ -145,7 +144,7 @@ int oval_definition_parse_tag(xmlTextReaderPtr reader,
 			      struct oval_parser_context *context);
 void oval_definition_to_print(struct oval_definition *definition, char *indent, int idx);
 
-struct oval_object *oval_object_new();
+struct oval_object *oval_object_new(char *id);
 void oval_object_free(struct oval_object *);
 
 void set_oval_object_family(struct oval_object *, oval_family_enum);
@@ -153,7 +152,6 @@ void set_oval_object_subtype(struct oval_object *, oval_subtype_enum);
 void set_oval_object_name(struct oval_object *, char *);
 void add_oval_object_notes(struct oval_object *, char *);
 void set_oval_object_comment(struct oval_object *, char *);
-void set_oval_object_id(struct oval_object *, char *);
 void set_oval_object_deprecated(struct oval_object *, int);
 void set_oval_object_version(struct oval_object *, int);
 void add_oval_object_object_content(struct oval_object *,
@@ -163,7 +161,7 @@ int oval_object_parse_tag(xmlTextReaderPtr reader,
 			  struct oval_parser_context *context);
 void oval_object_to_print(struct oval_object *object, char *indent, int idx);
 
-struct oval_state *oval_state_new();
+struct oval_state *oval_state_new(char *);
 void oval_state_free(struct oval_state *);
 
 void set_oval_state_family(struct oval_state *, oval_family_enum);
@@ -171,17 +169,15 @@ void set_oval_state_subtype(struct oval_state *, oval_subtype_enum);
 void set_oval_state_name(struct oval_state *, char *);
 void add_oval_state_notes(struct oval_state *, char *);
 void set_oval_state_comment(struct oval_state *, char *);
-void set_oval_state_id(struct oval_state *, char *);
 void set_oval_state_deprecated(struct oval_state *, int);
 void set_oval_state_version(struct oval_state *, int);
 int oval_state_parse_tag(xmlTextReaderPtr reader,
 			 struct oval_parser_context *context);
 void oval_state_to_print(struct oval_state *, char *indent, int index);
 
-struct oval_variable *oval_variable_new();
+struct oval_variable *oval_variable_new(char *);
 void oval_variable_free(struct oval_variable *);
 
-void set_oval_variable_id(struct oval_variable *, char *);
 void set_oval_variable_type(struct oval_variable *, oval_variable_type_enum);
 void set_oval_variable_datatype(struct oval_variable *, oval_datatype_enum);
 void add_oval_variable_values(struct oval_variable *, struct oval_value *);	//type==OVAL_VARIABLE_CONSTANT
@@ -203,10 +199,11 @@ void set_oval_variable_binding_value(struct oval_variable_binding *, char *);
 struct oval_object_content
     *oval_object_content_new(oval_object_content_type_enum type);
 void oval_object_content_free(struct oval_object_content *);
+typedef void (*oval_variable_binding_consumer) (struct oval_variable_binding *,
+					      void *);
+int oval_variable_binding_parse_tag(xmlTextReaderPtr,
+			       struct oval_parser_context *, oval_variable_binding_consumer, void *);
 
-typedef void (*oval_variable_binding_consumer) (struct oval_variable_binding *, void *);
-int oval_variable_binding_parse_tag(xmlTextReaderPtr, struct oval_parser_context *,
-				    oval_variable_binding_consumer, void *);
 void set_oval_object_content_type(struct oval_object_content *, oval_object_content_type_enum);
 
 void set_oval_object_content_field_name(struct oval_object_content *, char *);

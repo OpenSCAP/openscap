@@ -281,8 +281,7 @@ struct oval_iterator_syschar *get_oval_syschars(struct oval_syschar_model
 								       syschar_map);
 }
 
-struct oval_syschar *get_oval_syschar_new(struct oval_syschar_model *model,
-						struct oval_object *object)
+struct oval_syschar *get_oval_syschar_new(struct oval_syschar_model *model, struct oval_object *object)
 {
 	char *object_id = oval_object_id(object);
 	struct oval_syschar *syschar = get_oval_syschar(model, object_id);
@@ -305,31 +304,23 @@ struct oval_sysdata *get_oval_sysdata_new(struct oval_syschar_model *model, char
 
 
 
-struct oval_definition *get_oval_definition_new(struct oval_object_model *model,
-						char *id)
+struct oval_definition *get_oval_definition_new(struct oval_object_model *model, char *id)
 {
 	struct oval_definition *definition = get_oval_definition(model, id);
 	if (definition == NULL) {
-		definition = oval_definition_new();
-		set_oval_definition_id(definition, id);
+		definition = oval_definition_new(id);
 		add_oval_definition(model, definition);
-	} else {
-		free(id);
 	}
 	return definition;
 }
 
 
-struct oval_variable *get_oval_variable_new(struct oval_object_model *model,
-					    char *id)
+struct oval_variable *get_oval_variable_new(struct oval_object_model *model, char *id)
 {
 	struct oval_variable *variable = get_oval_variable(model, id);
 	if (variable == NULL) {
-		variable = oval_variable_new();
-		set_oval_variable_id(variable, id);
+		variable = oval_variable_new(id);
 		add_oval_variable(model, variable);
-	} else {
-		free(id);
 	}
 	return variable;
 }
@@ -338,25 +329,18 @@ struct oval_state *get_oval_state_new(struct oval_object_model *model, char *id)
 {
 	struct oval_state *state = get_oval_state(model, id);
 	if (state == NULL) {
-		state = oval_state_new();
-		set_oval_state_id(state, id);
+		state = oval_state_new(id);
 		add_oval_state(model, state);
-	} else {
-		free(id);
 	}
 	return state;
 }
 
-struct oval_object *get_oval_object_new(struct oval_object_model *model,
-					char *id)
+struct oval_object *get_oval_object_new(struct oval_object_model *model, char *id)
 {
 	struct oval_object *object = get_oval_object(model, id);
 	if (object == NULL) {
-		object = oval_object_new();
-		set_oval_object_id(object, id);
+		object = oval_object_new(id);
 		add_oval_object(model, object);
-	} else {
-		free(id);
 	}
 	return object;
 }
@@ -365,11 +349,8 @@ struct oval_test *get_oval_test_new(struct oval_object_model *model, char *id)
 {
 	struct oval_test *test = get_oval_test(model, id);
 	if (test == NULL) {
-		test = oval_test_new();
-		set_oval_test_id(test, id);
+		test = oval_test_new(id);
 		add_oval_test(model, test);
-	} else {
-		free(id);
 	}
 	return test;
 }

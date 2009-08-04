@@ -203,7 +203,8 @@ void set_oval_criteria_node_negate(struct oval_criteria_node *node, int negate)
 void set_oval_criteria_node_comment(struct oval_criteria_node *node,
 				    char *comm)
 {
-	node->comment = comm;
+	if(node->comment!=NULL)free(node->comment);
+	node->comment = comm==NULL?NULL:malloc_string(comm);
 }
 
 void set_oval_criteria_node_operator(struct oval_criteria_node *node,
@@ -276,7 +277,10 @@ int oval_criteria_parse_tag(xmlTextReaderPtr reader,
 		struct oval_criteria_node *node = oval_criteria_node_new(type);
 		node->type = type;
 		char *comm = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST "comment");
-		set_oval_criteria_node_comment(node, comm);
+		if(comm!=NULL){
+			set_oval_criteria_node_comment(node, comm);
+			free(comm);comm=NULL;
+		}
 		set_oval_criteria_node_negate(node,
 					      oval_parser_boolean_attribute
 					      (reader, "negate", 0));
@@ -303,8 +307,8 @@ int oval_criteria_parse_tag(xmlTextReaderPtr reader,
 							      BAD_CAST "test_ref");
 				struct oval_object_model *model =
 				    oval_parser_context_model(context);
-				struct oval_test *test =
-				    get_oval_test_new(model, test_ref);
+				struct oval_test *test = get_oval_test_new(model, test_ref);
+				free(test_ref);test_ref=NULL;
 				set_oval_criteria_node_test(node, test);
 			} break;
 		case NODETYPE_EXTENDDEF:{
@@ -314,10 +318,10 @@ int oval_criteria_parse_tag(xmlTextReaderPtr reader,
 				struct oval_object_model *model =
 				    oval_parser_context_model(context);
 				struct oval_definition *definition =
-				    get_oval_definition_new(model,
-							    definition_ref);
+				    get_oval_definition_new(model, definition_ref);
 				set_oval_criteria_node_definition(node,
 								  definition);
+				free(definition_ref);definition_ref=NULL;
 			}
 		case NODETYPE_UNKNOWN: break;
 		}

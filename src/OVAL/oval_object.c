@@ -108,11 +108,11 @@ struct oval_iterator_behavior *oval_object_behaviors(struct oval_object *object)
 	    oval_collection_iterator(object->behaviors);
 }
 
-struct oval_object *oval_object_new()
+struct oval_object *oval_object_new(char *id)
 {
 	oval_object_t *object = (oval_object_t *) malloc(sizeof(oval_object_t));
 	object->comment = NULL;
-	object->id = NULL;
+	object->id = malloc_string(id);
 	object->subtype = OVAL_SUBTYPE_UNKNOWN;
 	object->deprecated = 0;
 	object->version = 0;
@@ -134,11 +134,6 @@ void oval_object_free(struct oval_object *object)
 	free(object);
 }
 
-void set_oval_object_id(struct oval_object *object, char *id)
-{
-	object->id = id;
-}
-
 void set_oval_object_subtype(struct oval_object *object,
 			     oval_subtype_enum subtype)
 {
@@ -147,12 +142,13 @@ void set_oval_object_subtype(struct oval_object *object,
 
 void add_oval_object_notes(struct oval_object *object, char *note)
 {
-	oval_collection_add(object->notes, (void *)note);
+	oval_collection_add(object->notes, (void *)malloc_string(note));
 }
 
 void set_oval_object_comment(struct oval_object *object, char *comm)
 {
-	object->comment = comm;
+	if(object->comment!=NULL)free(object->comment);
+	object->comment = comm==NULL?NULL:malloc_string(comm);
 }
 
 void set_oval_object_deprecated(struct oval_object *object, int deprecated)
@@ -230,14 +226,18 @@ int _oval_object_parse_tag(xmlTextReaderPtr reader,
 int oval_object_parse_tag(xmlTextReaderPtr reader,
 			  struct oval_parser_context *context)
 {
-	char *id = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "id");
 	struct oval_object_model *model = oval_parser_context_model(context);
 	//printf("DEBUG::oval_object_parse_tag::id = %s\n", id);
+	char *id = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "id");
 	struct oval_object *object = get_oval_object_new(model, id);
+	free(id);id=NULL;
 	oval_subtype_enum subtype = oval_subtype_parse(reader);
 	set_oval_object_subtype(object, subtype);
 	char *comm = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "comment");
-	set_oval_object_comment(object, comm);
+	if(comm!=NULL){
+		set_oval_object_comment(object, comm);
+		free(comm);comm=NULL;
+	}
 	int deprecated = oval_parser_boolean_attribute(reader, "deprecated", 0);
 	set_oval_object_deprecated(object, deprecated);
 	char *version = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "version");

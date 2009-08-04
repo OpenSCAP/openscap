@@ -478,7 +478,8 @@ void set_oval_component_object_field(struct oval_component *component,
 	if (component->type == OVAL_COMPONENT_OBJECTREF) {
 		oval_component_OBJECTREF_t *objref =
 		    (oval_component_OBJECTREF_t *) component;
-		objref->object_field = field;
+		if(objref->object_field!=NULL)free(objref->object_field);
+		objref->object_field = field==NULL?NULL:malloc_string(field);
 	}
 }
 
@@ -508,13 +509,15 @@ int _oval_component_parse_LITERAL_tag
 int _oval_component_parse_OBJECTREF_tag
     (xmlTextReaderPtr reader, struct oval_parser_context *context,
      struct oval_component *component) {
-	char *objref = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST "object_ref");
 	struct oval_object_model *model = oval_parser_context_model(context);
+	char *objref = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST "object_ref");
 	struct oval_object *object = get_oval_object_new(model, objref);
+	free(objref);objref=NULL;
 	set_oval_component_object(component, object);
 
 	char *objfld = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST "item_field");
 	set_oval_component_object_field(component, objfld);
+	if(objfld!=NULL)free(objfld);objfld=NULL;
 
 	int return_code = 1;
 	return return_code;
@@ -523,9 +526,10 @@ int _oval_component_parse_OBJECTREF_tag
 int _oval_component_parse_VARREF_tag
     (xmlTextReaderPtr reader, struct oval_parser_context *context,
      struct oval_component *component) {
-	char *varref = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST "var_ref");
 	struct oval_object_model *model = oval_parser_context_model(context);
+	char *varref = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST "var_ref");
 	struct oval_variable *variable = get_oval_variable_new(model, varref);
+	if(varref!=NULL)free(varref);varref=NULL;
 	set_oval_component_variable(component, variable);
 
 	int return_code = 1;
@@ -571,7 +575,10 @@ int _oval_component_parse_BEGEND_tag
      struct oval_component *component) {
 	oval_component_BEGEND_t *begend = (oval_component_BEGEND_t *) component;
 	char *character = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST "character");
-	begend->character = character;
+	if(character!=NULL){
+		begend->character = malloc_string(character);
+		free(character);character = NULL;
+	}
 	return _oval_component_parse_FUNCTION_tag(reader, context, component);
 }
 
@@ -580,7 +587,10 @@ int _oval_component_parse_SPLIT_tag
      struct oval_component *component) {
 	oval_component_SPLIT_t *split = (oval_component_SPLIT_t *) component;
 	char *delimiter = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST "delimiter");
-	split->delimiter = delimiter;
+	if(delimiter!=NULL){
+		split->delimiter = malloc_string(delimiter);
+		free(delimiter);delimiter=NULL;
+	}
 	return _oval_component_parse_FUNCTION_tag(reader, context, component);
 }
 

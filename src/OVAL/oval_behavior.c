@@ -110,7 +110,8 @@ int oval_behavior_parse_tag(xmlTextReaderPtr reader,
 			attributes = (xmlAttribute*)attributes->next;
 			char *value = (char *) xmlTextReaderGetAttribute(reader, attr->name);
 			if (value != NULL) {
-				oval_string_map_put(behavior->att_values, (char*) attr->name, value);
+				oval_string_map_put(behavior->att_values, (char*) attr->name, malloc_string(value));
+				free(value);
 			}
 		}
 	}

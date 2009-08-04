@@ -103,12 +103,12 @@ void set_oval_affected_family(struct oval_affected *affected,
 
 void add_oval_affected_platform(struct oval_affected *affected, char *platform)
 {
-	oval_collection_add(affected->platforms, (void *)platform);
+	oval_collection_add(affected->platforms, (void *)malloc_string(platform));
 }
 
 void add_oval_affected_product(struct oval_affected *affected, char *product)
 {
-	oval_collection_add(affected->products, (void *)product);
+	oval_collection_add(affected->products, (void *)malloc_string(product));
 }
 
 struct oval_string_map *_odafamilyMap = NULL;
@@ -149,17 +149,19 @@ int _oval_affected_parse_tag(xmlTextReaderPtr reader,
 	if (strcmp((char *) tagname, "platform") == 0) {
 		char *platform = NULL;
 		return_code =
-		    oval_parser_text_value(reader, context, &oval_text_consumer,
-					   &platform);
-		if (platform != NULL)
+		    oval_parser_text_value(reader, context, &oval_text_consumer,&platform);
+		if (platform != NULL){
 			add_oval_affected_platform(affected, platform);
+			free(platform);
+		}
 	} else if (strcmp((char *) tagname, "product") == 0) {
 		char *product = NULL;
 		return_code =
-		    oval_parser_text_value(reader, context, &oval_text_consumer,
-					   &product);
-		if (product != NULL)
+		    oval_parser_text_value(reader, context, &oval_text_consumer,&product);
+		if (product != NULL){
 			add_oval_affected_product(affected, product);
+			free(product);
+		}
 	} else {
 		int linno = xmlTextReaderGetParserLineNumber(reader);
 		printf

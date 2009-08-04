@@ -124,11 +124,11 @@ struct oval_component *oval_variable_component(struct oval_variable *variable)
 	return component;
 }
 
-struct oval_variable *oval_variable_new()
+struct oval_variable *oval_variable_new(char *id)
 {
 	oval_variable_t *variable =
 	    (oval_variable_t *) malloc(sizeof(oval_variable_t));
-	variable->id = NULL;
+	variable->id = malloc_string(id);
 	variable->type = OVAL_VARIABLE_UNKNOWN;
 	variable->datatype = OVAL_DATATYPE_UNKNOWN;
 	variable->extension = NULL;
@@ -182,11 +182,6 @@ void set_oval_variable_type(struct oval_variable *variable,
 	}
 }
 
-void set_oval_variable_id(struct oval_variable *variable, char *id)
-{
-	variable->id = id;
-}
-
 void set_oval_variable_datatype(struct oval_variable *variable,
 				oval_datatype_enum datatype)
 {
@@ -195,7 +190,8 @@ void set_oval_variable_datatype(struct oval_variable *variable,
 
 void set_oval_variable_comment(struct oval_variable *variable, char *comm)
 {
-	variable->comment = comm;
+	if(variable->comment!=NULL)free(variable->comment);
+	variable->comment = comm==NULL?NULL:malloc_string(comm);
 }
 
 void set_oval_variable_deprecated(struct oval_variable *variable,
@@ -286,10 +282,10 @@ void oval_variable_to_print(struct oval_variable *variable, char *indent,
 int oval_variable_parse_tag(xmlTextReaderPtr reader,
 			    struct oval_parser_context *context)
 {
-	char *id = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "id");
 	struct oval_object_model *model = oval_parser_context_model(context);
+	char *id = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "id");
 	struct oval_variable *variable = get_oval_variable_new(model, id);
-	id = variable->id;
+	free(id);id = variable->id;
 	char *tagname = (char*) xmlTextReaderName(reader);
 	oval_variable_type_enum type;
 	if (strcmp(tagname, "constant_variable") == 0)
@@ -309,16 +305,19 @@ int oval_variable_parse_tag(xmlTextReaderPtr reader,
 	//printf("DEBUG::oval_variable_parse_tag::id = %s <%s>\n", id, tagname);
 
 	char *comm = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "comment");
-	set_oval_variable_comment(variable, comm);
+	if(comm!=NULL){
+		set_oval_variable_comment(variable, comm);
+		free(comm);comm=NULL;
+	}
 	int deprecated = oval_parser_boolean_attribute(reader, "deprecated", 0);
 	set_oval_variable_deprecated(variable, deprecated);
 	char *version = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "version");
 	set_oval_variable_version(variable, atoi(version));
+	free(version);version = NULL;
 
 	oval_datatype_enum datatype =
 	    oval_datatype_parse(reader, "datatype", OVAL_DATATYPE_UNKNOWN);
 	set_oval_variable_datatype(variable, datatype);
-	free(version);
 	int return_code;
 	switch (type) {
 	case OVAL_VARIABLE_CONSTANT:{

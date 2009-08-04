@@ -127,7 +127,7 @@ struct oval_state *oval_test_state(struct oval_test *test)
 	return test->state;
 }
 
-struct oval_test *oval_test_new()
+struct oval_test *oval_test_new(char *id)
 {
 	oval_test_t *test = (oval_test_t *) malloc(sizeof(oval_test_t));
 	test->deprecated = 0;
@@ -137,7 +137,7 @@ struct oval_test *oval_test_new()
 	test->operator   = OPERATOR_UNKNOWN;
 	test->subtype = OVAL_SUBTYPE_UNKNOWN;
 	test->comment = NULL;
-	test->id = NULL;
+	test->id = malloc_string(id);
 	test->name = NULL;
 	test->object = NULL;
 	test->state = NULL;
@@ -157,11 +157,6 @@ void oval_test_free(struct oval_test *test)
 	free(test);
 }
 
-void set_oval_test_id(struct oval_test *test, char *id)
-{
-	test->id = id;
-}
-
 void set_oval_test_deprecated(struct oval_test *test, int deprecated)
 {
 	test->deprecated = deprecated;
@@ -179,7 +174,8 @@ void set_oval_test_subtype(struct oval_test *test, oval_subtype_enum subtype)
 
 void set_oval_test_comment(struct oval_test *test, char *comm)
 {
-	test->comment = comm;
+	if(test->comment!=NULL)free(test->comment);
+	test->comment = comm==NULL?NULL:malloc_string(comm);
 }
 
 void set_oval_test_existence(struct oval_test *test,
@@ -205,7 +201,7 @@ void set_oval_test_state(struct oval_test *test, struct oval_state *state)
 
 void add_oval_test_notes(struct oval_test *test, char *note)
 {
-	oval_collection_add(test->notes, (void *)note);
+	oval_collection_add(test->notes, (void *)malloc_string(note));
 }
 
 void _oval_test_parse_notes_consumer(char *text, void *test) {
@@ -237,6 +233,7 @@ int _oval_test_parse_tag(xmlTextReaderPtr reader,
 			    oval_parser_context_model(context);
 			struct oval_object *object =
 			    get_oval_object_new(model, object_ref);
+			free(object_ref);object_ref=NULL;
 			set_oval_test_object(test, object);
 		}
 	} else if ((strcmp(tagname, "state") == 0)) {
@@ -248,6 +245,7 @@ int _oval_test_parse_tag(xmlTextReaderPtr reader,
 			struct oval_state *state =
 			    get_oval_state_new(model, state_ref);
 			set_oval_test_state(test, state);
+			free(state_ref);state_ref=NULL;
 		}
 	} else {
 		int linno = xmlTextReaderGetParserLineNumber(reader);
@@ -264,10 +262,10 @@ int _oval_test_parse_tag(xmlTextReaderPtr reader,
 int oval_test_parse_tag(xmlTextReaderPtr reader,
 			struct oval_parser_context *context)
 {
-	char *id = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "id");
 	struct oval_object_model *model = oval_parser_context_model(context);
-	//printf("DEBUG::oval_test_parse_tag::id = %s\n", id);
+	char *id = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "id");
 	struct oval_test *test = get_oval_test_new(model, id);
+	free(id);id=test->id;
 	oval_subtype_enum subtype = oval_subtype_parse(reader);
 	set_oval_test_subtype(test, subtype);
 	oval_existence_enum existence =
@@ -278,12 +276,15 @@ int oval_test_parse_tag(xmlTextReaderPtr reader,
 	    oval_check_parse(reader, "check", OVAL_CHECK_UNKNOWN);
 	set_oval_test_check(test, check);
 	char *comm = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "comment");
-	set_oval_test_comment(test, comm);
+	if(comm!=NULL){
+		set_oval_test_comment(test, comm);
+		free(comm);comm=NULL;
+	}
 	int deprecated = oval_parser_boolean_attribute(reader, "deprecated", 0);
 	set_oval_test_deprecated(test, deprecated);
 	char *version = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "version");
 	set_oval_test_version(test, atoi(version));
-	free(version);
+	free(version);version=NULL;
 
 	int return_code =
 	    oval_parser_parse_tag(reader, context, &_oval_test_parse_tag, test);

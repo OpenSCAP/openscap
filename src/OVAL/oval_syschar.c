@@ -178,6 +178,7 @@ int _oval_syschar_parse_subtag(
 	}else if(strcmp("reference",tagname)==0){
 		char* itemid = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "item_ref");
 		struct oval_sysdata *sysdata = get_oval_sysdata_new(context->syschar_model, itemid);
+		free(itemid);itemid=NULL;
 		add_oval_syschar_sysdata(syschar, sysdata);
 		return_code = 1;
 	}
@@ -207,15 +208,14 @@ int oval_syschar_parse_tag(xmlTextReaderPtr reader,
 	int return_code;
 	if(is_ovalsys && (strcmp(tagname,"object")==0)){
 		char *object_id = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "id");
-		struct oval_object *object = get_oval_object_new
-			(context->model, object_id);
-		oval_syschar_t *syschar = get_oval_syschar_new
-			(context->syschar_model, object);
+		struct oval_object *object = get_oval_object_new(context->model, object_id);
+		free(object_id);object_id=NULL;
+		oval_syschar_t *syschar = get_oval_syschar_new(context->syschar_model, object);
 		syschar->sysinfo = context->syschar_sysinfo;
 		char *flag = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "flag");
 		oval_syschar_collection_flag_enum flag_enum
 			= oval_syschar_flag_parse(reader, "flag", SYSCHAR_FLAG_UNKNOWN);
-		free(flag);
+		if(flag!=NULL)free(flag);
 		set_oval_syschar_flag(syschar, flag_enum);
 		return_code = oval_parser_parse_tag(reader, context, &_oval_syschar_parse_subtag, syschar);
 	}else{

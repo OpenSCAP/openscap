@@ -71,7 +71,8 @@ oval_message_level_enum oval_message_level(struct oval_message *message){return 
 
 void set_oval_message_text(struct oval_message *message, char *text)
 {
-	message->text = malloc_string(text);
+	if(message->text!=NULL)free(message->text);
+	message->text = (text==NULL)?NULL:malloc_string(text);
 }
 void set_oval_message_level(struct oval_message *message, oval_message_level_enum level)
 {
@@ -80,7 +81,6 @@ void set_oval_message_level(struct oval_message *message, oval_message_level_enu
 
 void oval_message_parse_tag_consumer(char* text, void* message){
 	set_oval_message_text(message, text);
-	free(text);
 }
 int oval_message_parse_tag(xmlTextReaderPtr reader,
 			       struct oval_parser_context *context, oval_message_consumer consumer, void* client)

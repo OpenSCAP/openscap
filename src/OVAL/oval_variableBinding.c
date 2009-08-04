@@ -75,7 +75,8 @@ void set_oval_variable_binding_variable(struct oval_variable_binding *binding, s
 }
 void set_oval_variable_binding_value   (struct oval_variable_binding *binding, char *value)
 {
-	binding->value = value;
+	if(binding->value!=NULL)free(binding->value);
+	binding->value = (value==NULL)?NULL:malloc_string(value);
 }
 
 struct oval_variable_binding *oval_variable_binding_new(struct oval_variable *variable, char *value)
@@ -114,7 +115,7 @@ int oval_variable_binding_parse_tag(xmlTextReaderPtr reader,
 		char* variableId = xmlTextReaderGetAttribute(reader, BAD_CAST "variable_id");
 		struct oval_variable *variable = get_oval_variable_new(context->model, variableId);
 		set_oval_variable_binding_variable(binding, variable);
-		/* free(variableId); */
+		free(variableId);variableId=NULL;
 	}
 	{//bound value
 		return_code = oval_parser_text_value(reader, context, &_oval_variable_binding_value_consumer, binding);

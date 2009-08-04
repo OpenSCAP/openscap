@@ -66,7 +66,7 @@ unsigned char *oval_value_binary(struct oval_value *value)
 	return NULL;		//TODO
 }
 
-int oval_value_boolean(struct oval_value *value)
+char oval_value_boolean(struct oval_value *value)
 {
 	return strncmp("false", (value)->text, 5);
 }
@@ -106,7 +106,8 @@ void set_oval_value_datatype(struct oval_value *value,
 
 void set_oval_value_text(struct oval_value *value, char *text)
 {
-	value->text = text;
+	if(value->text!=NULL)free(value->text);
+	value->text = (text==NULL)?NULL:malloc_string(text);
 }
 
 void oval_value_parse_tag_consume_text(char *string, void *text) {
@@ -127,8 +128,7 @@ int oval_value_parse_tag(xmlTextReaderPtr reader,
 		return_code = 1;
 	} else {
 		return_code =
-		    oval_parser_text_value(reader, context, &oval_value_parse_tag_consume_text,
-					   &text);
+		    oval_parser_text_value(reader, context, &oval_value_parse_tag_consume_text, &text);
 	}
 	set_oval_value_datatype(value, datatype);
 	set_oval_value_text(value, text);

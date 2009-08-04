@@ -99,11 +99,11 @@ struct oval_criteria_node *oval_definition_criteria(struct oval_definition
 	return ((struct oval_definition *)definition)->criteria;
 }
 
-struct oval_definition *oval_definition_new()
+struct oval_definition *oval_definition_new(char *id)
 {
 	struct oval_definition *definition =
 	    (struct oval_definition *)malloc(sizeof(oval_definition_t));
-	definition->id = NULL;
+	definition->id = malloc_string(id);
 	definition->version = 0;
 	definition->class = CLASS_UNKNOWN;
 	definition->deprecated = 0;
@@ -146,11 +146,6 @@ struct oval_definition *oval_iterator_definition_next(struct
 					  oc_definition);
 }
 
-void set_oval_definition_id(struct oval_definition *definition, char *id)
-{
-	definition->id = id;
-}
-
 void set_oval_definition_version(struct oval_definition *definition,
 				 int version)
 {
@@ -171,13 +166,15 @@ void set_oval_definition_deprecated(struct oval_definition *definition,
 
 void set_oval_definition_title(struct oval_definition *definition, char *title)
 {
-	definition->title = title;
+	if(definition->title!=NULL)free(definition->title);
+	definition->title = title==NULL?NULL:malloc_string(title);
 }
 
 void set_oval_definition_description(struct oval_definition *definition,
 				     char *description)
 {
-	definition->description = description;
+	if(definition->description)free(definition->description);
+	definition->description = description==NULL?NULL:description;
 }
 
 void set_oval_definition_criteria(struct oval_definition *definition,
@@ -227,14 +224,13 @@ void _oval_definition_title_consumer(char *string, void *user)
 	struct oval_definition *definition = (struct oval_definition *)user;
 	char *title = definition->title;
 	if (title == NULL)
-		title = string;
+		title = malloc_string(string);
 	else {
 		int newsize = strlen(title) + strlen(string) + 1;
 		char *newtitle = (char *)malloc(newsize * sizeof(char));
 		strcat(newtitle, title);
 		strcat(newtitle, string);
 		free(title);
-		free(string);
 		title = newtitle;
 	}
 	definition->title = title;
@@ -245,14 +241,13 @@ void _oval_definition_description_consumer(char *string, void *user)
 	struct oval_definition *definition = (struct oval_definition *)user;
 	char *description = definition->description;
 	if (description == NULL)
-		description = string;
+		description = malloc_string(string);
 	else {
 		int newsize = strlen(description) + strlen(string) + 1;
 		char *newdescription = (char *)malloc(newsize * sizeof(char));
 		strcat(newdescription, description);
 		strcat(newdescription, string);
 		free(description);
-		free(string);
 		description = newdescription;
 	}
 	definition->description = description;
@@ -347,15 +342,16 @@ int _oval_definition_parse_tag(xmlTextReaderPtr reader,
 int oval_definition_parse_tag(xmlTextReaderPtr reader,
 			      struct oval_parser_context *context)
 {
-	char *id = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "id");
 	struct oval_object_model *model = oval_parser_context_model(context);
+	char *id = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "id");
 	struct oval_definition *definition = get_oval_definition_new(model, id);
+	free(id);id=NULL;
 	char *version = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "version");
 	set_oval_definition_version(definition, atoi(version));
-	free(version);
+	free(version);version=NULL;
 	char *class = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "class");
 	set_oval_definition_class(definition, _odaclass(class));
-	free(class);
+	free(class);class=NULL;
 	int deprecated = oval_parser_boolean_attribute(reader, "deprecated", 0);
 	set_oval_definition_deprecated(definition, deprecated);
 	int return_code =

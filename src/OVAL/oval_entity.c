@@ -166,7 +166,8 @@ void set_oval_entity_value(struct oval_entity *entity, struct oval_value *value)
 
 void set_oval_entity_name(struct oval_entity *entity, char *name)
 {
-	entity->name = name;
+	if(entity->name!=NULL)free(entity->name);
+	entity->name = name==NULL?NULL:malloc_string(name);
 }
 
 struct oval_consume_varref_context {
@@ -198,7 +199,7 @@ int oval_entity_parse_tag(xmlTextReaderPtr reader,
 	char *varref = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "var_ref");
 	struct oval_value *value = NULL;
 	struct oval_variable *variable;
-	char *name = (char*) xmlTextReaderName(reader);
+	char *name = (char*) xmlTextReaderLocalName(reader);
 	oval_entity_varref_type_enum varref_type;
 	if (strcmp(name, "var_ref") == 0) {	//special case for <var_ref>
 		if (varref == NULL) {
@@ -215,6 +216,7 @@ int oval_entity_parse_tag(xmlTextReaderPtr reader,
 			variable = get_oval_variable(model, varref);
 			varref_type = OVAL_ENTITY_VARREF_ATTRIBUTE;
 			return_code = 1;
+			free(varref);varref=NULL;
 		}
 		value = NULL;
 	} else if (varref == NULL) {
@@ -229,6 +231,7 @@ int oval_entity_parse_tag(xmlTextReaderPtr reader,
 		varref_type = OVAL_ENTITY_VARREF_ATTRIBUTE;
 		value = NULL;
 		return_code = 1;
+		free(varref);varref = NULL;
 	}
 	set_oval_entity_name(entity, name);
 	set_oval_entity_type(entity, type);
@@ -245,6 +248,7 @@ int oval_entity_parse_tag(xmlTextReaderPtr reader,
 		    ("NOTICE: oval_entity_parse_tag::parse of <%s> terminated on error line %d\n",
 		     name, line);
 	}
+	free(name);
 	return return_code;
 }
 
