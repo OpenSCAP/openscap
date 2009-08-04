@@ -30,6 +30,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdbool.h>
 #include "oval_definitions_impl.h"
 #include "oval_collection_impl.h"
 
@@ -66,9 +67,11 @@ unsigned char *oval_value_binary(struct oval_value *value)
 	return NULL;		//TODO
 }
 
-char oval_value_boolean(struct oval_value *value)
+bool oval_value_boolean(struct oval_value *value)
 {
-	return strncmp("false", (value)->text, 5);
+	if( strncmp("false", (value)->text, 5) )
+		return true;
+	return false;
 }
 
 float oval_value_float(struct oval_value *value)
@@ -107,12 +110,13 @@ void set_oval_value_datatype(struct oval_value *value,
 void set_oval_value_text(struct oval_value *value, char *text)
 {
 	if(value->text!=NULL)free(value->text);
-	value->text = (text==NULL)?NULL:malloc_string(text);
+	value->text = (text==NULL)?NULL:malloc_string(text); 
 }
 
 void oval_value_parse_tag_consume_text(char *string, void *text) {
 	*(char**)text = string;
 }
+
 int oval_value_parse_tag(xmlTextReaderPtr reader,
 			 struct oval_parser_context *context,
 			 oval_value_consumer consumer, void *user)

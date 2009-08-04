@@ -251,7 +251,7 @@ int oval_parser_text_value(xmlTextReaderPtr reader,
 		    || nodetype == XML_READER_TYPE_TEXT) {
 			char *value = (char*) xmlTextReaderValue(reader);
 			(*consumer) (value, user);
-			free(value);
+/*			free(value); */
 		}
 	}
 	return return_code;

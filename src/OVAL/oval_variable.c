@@ -129,6 +129,7 @@ struct oval_variable *oval_variable_new(char *id)
 	oval_variable_t *variable =
 	    (oval_variable_t *) malloc(sizeof(oval_variable_t));
 	variable->id = malloc_string(id);
+	variable->comment = NULL;
 	variable->type = OVAL_VARIABLE_UNKNOWN;
 	variable->datatype = OVAL_DATATYPE_UNKNOWN;
 	variable->extension = NULL;

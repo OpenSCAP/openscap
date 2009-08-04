@@ -27,8 +27,11 @@
  *      "David Niemoller" <David.Niemoller@g2-inc.com>
  */
 
+
 #ifndef OVAL_DEFINITIONS
 #define OVAL_DEFINITIONS
+
+#include <stdbool.h>
 
 typedef enum {
 	FAMILY_UNKNOWN = 0,
@@ -543,7 +546,7 @@ struct oval_value *oval_iterator_value_next(struct oval_iterator_value *);
 oval_datatype_enum oval_value_datatype(struct oval_value *);
 char *oval_value_text(struct oval_value *);
 unsigned char *oval_value_binary(struct oval_value *);	//datatype==OVAL_DATATYPE_BINARY
-int oval_value_boolean(struct oval_value *);	//datatype==OVAL_DATATYPE_BOOLEAN
+bool oval_value_boolean(struct oval_value *);	//datatype==OVAL_DATATYPE_BOOLEAN
 float oval_value_float(struct oval_value *);	//datatype==OVAL_DATATYPE_FLOAT
 long oval_value_integer(struct oval_value *);	//datatype==OVAL_DATATYPE_INTEGER
 
