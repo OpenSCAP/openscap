@@ -41,6 +41,132 @@ SEXP_t *SEXP_OVALobj_eval (SEXP_t *id)
         return pcache_sexp_get (global.pcache, id);
 }
 
+SEXP_t *SEXP_OVALset_combine(SEXP_t *item_lst1, SEXP_t *item_lst2, oval_set_operation_enum op)
+{
+	char append;
+	SEXP_t *res_items, *item1, *item2, *id1, *id2;
+
+	if (SEXP_list_length(item_lst2) == 0)
+		return item_lst1;
+
+	res_items = SEXP_list_new();
+	switch (op) {
+	case OVAL_SET_OPERATION_INTERSECTION:
+		SEXP_list_foreach(item1, item_lst1) {
+			id1 = SEXP_OVALobj_getelmval(item1, "id", 1, 1);
+			append = 0;
+			SEXP_list_foreach(item2, item_lst2) {
+				id2 = SEXP_OVALobj_getelmval(item2, "id", 1, 1);
+				if (!SEXP_string_cmp(id1, id2)) {
+					append = 1;
+					break;
+				}
+			}
+			if (append) {
+				SEXP_list_add(res_items, item1);
+			}
+		}
+		break;
+	case OVAL_SET_OPERATION_UNION:
+		SEXP_list_join(res_items, item_lst2);
+		/* fall through */
+	case OVAL_SET_OPERATION_COMPLEMENT:
+		SEXP_list_foreach(item1, item_lst1) {
+			id1 = SEXP_OVALobj_getelmval(item1, "id", 1, 1);
+			append = 1;
+			SEXP_list_foreach(item2, item_lst2) {
+				id2 = SEXP_OVALobj_getelmval(item2, "id", 1, 1);
+				if (!SEXP_string_cmp(id1, id2)) {
+					append = 0;
+					break;
+				}
+			}
+			if (append) {
+				SEXP_list_add(res_items, item1);
+			}
+		}
+		break;
+	default:
+		_D("Unexpected set operation: %d\n", op);
+		return NULL;
+	}
+
+	// todo: set result flags
+	// todo: variables
+
+	return res_items;
+}
+
+SEXP_t *SEXP_OVALset_apply_filters(SEXP_t *items, SEXP_t *filters)
+{
+	int filtered, i;
+	SEXP_t *result_items, *item, *filter, *felm, *ielm;
+	SEXP_t *ste_res, *elm_res, *stmp;
+	char *elm_name;
+	oval_syschar_status_enum item_status;
+	oval_result_enum ores;
+	oval_check_enum ochk;
+	oval_operator_enum oopr;
+
+	result_items = SEXP_list_new();
+
+	SEXP_list_foreach (item, items) {
+		item_status = SEXP_OVALelm_getstatus(item);
+		switch(item_status) {
+		case OVAL_STATUS_DOESNOTEXIST:
+			continue;
+		case OVAL_STATUS_ERROR:
+		case OVAL_STATUS_NOTCOLLECTED:
+			_D("Supplied item has an invalid status: %d\n", item_status);
+			SEXP_free(result_items);
+
+			return NULL;
+		default:
+			break;
+		}
+
+		filtered = 0;
+
+		SEXP_list_foreach (filter, filters) {
+			ste_res = SEXP_list_new();
+
+			SEXP_sublist_foreach(felm, filter, 2, -1) {
+				elm_res = SEXP_list_new();
+				stmp = SEXP_OVALelm_getval(felm, 0);
+				elm_name = SEXP_string_cstr(stmp);
+
+				for (i = 1; ; ++i) {
+					ielm = SEXP_OVALobj_getelm(item, elm_name, i);
+					if (ielm == NULL)
+						break;
+					ores = SEXP_OVALentste_cmp(felm, ielm);
+					SEXP_list_add(elm_res, SEXP_number_newd(ores));
+				}
+
+				stmp = SEXP_OVALelm_getattrval(felm, "entity_check");
+				ochk = SEXP_number_getd(stmp);
+				ores = SEXP_OVALent_result_bychk(elm_res, ochk);
+				SEXP_list_add(ste_res, SEXP_number_newd(ores));
+				// todo: var_check
+			}
+
+			stmp = SEXP_OVALelm_getattrval(filter, "operator");
+			oopr = SEXP_number_getd(stmp);
+			ores = SEXP_OVALent_result_byopr(ste_res, oopr);
+			if (ores == OVAL_RESULT_TRUE) {
+				filtered = 1;
+				break;
+			}
+		}
+
+		if (!filtered) {
+			SEXP_list_add(result_items, item);
+		}
+	}
+
+	return result_items;
+}
+
 SEXP_t *SEXP_OVALset_eval (SEXP_t *set, size_t depth)
 {
         const char *str;

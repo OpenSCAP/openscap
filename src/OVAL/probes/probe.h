@@ -4,6 +4,7 @@
 
 #include <seap.h>
 #include <stdarg.h>
+#include <probe-entcmp.h>
 #include "api/oval_definitions.h"
 
 SEXP_t *SEXP_OVALattr_create (const char *name, ...);
@@ -25,6 +26,7 @@ SEXP_t *SEXP_OVALelm_attr_del (SEXP_t *elm, const char *name);
 int SEXP_OVALobj_setstatus (SEXP_t *obj, int status);
 int SEXP_OVALobj_setelmstatus (SEXP_t *obj, const char *name, uint32_t nth, int status);
 int SEXP_OVALelm_setstatus (SEXP_t *elm, int status);
+int SEXP_OVALelm_getstatus (SEXP_t *elm);
 
 int     SEXP_OVALobj_validate (SEXP_t *obj);
 SEXP_t *SEXP_OVALobj_getelm (SEXP_t *obj, const char *name, uint32_t nth);
@@ -35,9 +37,8 @@ int     SEXP_OVALobj_hasattr (SEXP_t *obj, const char *name);
 SEXP_t *SEXP_OVALelm_getval (SEXP_t *elm, uint32_t nth);
 SEXP_t *SEXP_OVALelm_getattrval (SEXP_t *elm, const char *name);
 int     SEXP_OVALelm_hasattr (SEXP_t *elm, const char *name);
-
-SEXP_t *SEXP_OVALset_eval (SEXP_t *set, size_t depth);
-SEXP_t *SEXP_OVALset_combine(SEXP_t *item_lst1, SEXP_t *item_lst2, oval_set_operation_enum op);
+int     SEXP_OVALelm_setdatatype(SEXP_t *elm, int type);
+int     SEXP_OVALelm_getdatatype(SEXP_t *elm);
 
 #define PROBE_EINVAL     1 /* Invalid type/value/format */
 #define PROBE_ENOELM     2 /* Missing element */

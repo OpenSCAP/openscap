@@ -55,7 +55,11 @@ liboval_la_SOURCES += probes/probe.c \
 		      probes/findfile.c \
 		      oval_probe.c \
 		      oval_probe.h
-include_HEADERS += probes/probe.h probes/findfile.h probes/fsdev.h
+include_HEADERS += \
+	probes/findfile.h \
+	probes/fsdev.h \
+	probes/probe-entcmp.h \
+	probes/probe.h
 
 liboval_la_LIBADD  = probes/SEAP/libseap.la
 SUBDIRS = probes/SEAP

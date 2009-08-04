@@ -293,6 +293,11 @@ int SEXP_OVALelm_setstatus (SEXP_t *elm, int status)
         return (-1);
 }
 
+int SEXP_OVALelm_getstatus (SEXP_t *elm)
+{
+        return (-1);
+}
+
 int SEXP_OVALobj_validate (SEXP_t *obj)
 {
         /* TODO */
@@ -451,58 +456,12 @@ int SEXP_OVALelm_hasattr (SEXP_t *elm, const char *name)
         return (ret);
 }
 
-SEXP_t *SEXP_OVALset_combine(SEXP_t *item_lst1, SEXP_t *item_lst2, oval_set_operation_enum op)
+int SEXP_OVALelm_setdatatype (SEXP_t *elm, int type)
 {
-	char append;
-	SEXP_t *res_items, *item1, *item2, *id1, *id2;
+	return (-1);
+}
 
-	if (SEXP_list_length(item_lst2) == 0)
-		return item_lst1;
-
-	res_items = SEXP_list_new();
-	switch (op) {
-	case OVAL_SET_OPERATION_INTERSECTION:
-		SEXP_list_foreach(item1, item_lst1) {
-			id1 = SEXP_OVALobj_getelmval(item1, "id", 1, 1);
-			append = 0;
-			SEXP_list_foreach(item2, item_lst2) {
-				id2 = SEXP_OVALobj_getelmval(item2, "id", 1, 1);
-				if (!SEXP_string_cmp(id1, id2)) {
-					append = 1;
-					break;
-				}
-			}
-			if (append) {
-				SEXP_list_add(res_items, item1);
-			}
-		}
-		break;
-	case OVAL_SET_OPERATION_UNION:
-		SEXP_list_join(res_items, item_lst2);
-		/* fall through */
-	case OVAL_SET_OPERATION_COMPLEMENT:
-		SEXP_list_foreach(item1, item_lst1) {
-			id1 = SEXP_OVALobj_getelmval(item1, "id", 1, 1);
-			append = 1;
-			SEXP_list_foreach(item2, item_lst2) {
-				id2 = SEXP_OVALobj_getelmval(item2, "id", 1, 1);
-				if (!SEXP_string_cmp(id1, id2)) {
-					append = 0;
-					break;
-				}
-			}
-			if (append) {
-				SEXP_list_add(res_items, item1);
-			}
-		}
-		break;
-	default:
-		_D("Unexpected set operation: %d\n", op);
-		return NULL;
-	}
-
-	// todo: set result flags
-	// todo: variables
-
-	return res_items;
+int SEXP_OVALelm_getdatatype (SEXP_t *elm)
+{
+	return (-1);
 }

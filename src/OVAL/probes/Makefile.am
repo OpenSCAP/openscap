@@ -5,9 +5,16 @@ CFLAGS += @pthread_cflags@ -I$(top_srcdir)/src -I$(top_srcdir)/src/OVAL -I$(top_
 LDFLAGS += @pthread_ldflags@
 
 noinst_LIBRARIES= libprobe.a
-libprobe_a_SOURCES= probe-main.c probe-cache.c probe-cache.h probe-init.c probe-fini.c
+libprobe_a_SOURCES= \
+	probe-cache.c \
+	probe-cache.h \
+	probe-entcmp.c \
+	probe-entcmp.h \
+	probe-fini.c \
+	probe-init.c \
+	probe-main.c
 
-LDADD= $(top_builddir)/src/libopenscap.la libprobe.a
+LDADD= $(top_builddir)/src/libopenscap.la libprobe.a @pcre_libs@
 
 if WANT_PROBES_INDEPENDENT
 pkglibexec_PROGRAMS += probe_textfilecontent54 probe_xmlfilecontent
