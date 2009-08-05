@@ -16,6 +16,8 @@
 
 /* KEEP THIS LIST SORTED! (by subtype) */
 const oval_probe_t __probe_tbl[] = {
+        /*  7006 */ { INDEPENDENT_TEXT_FILE_CONTENT_54, "textfilecontent54", "probe_textfilecontent54" },
+        /*  7010 */ { INDEPENDENT_XML_FILE_CONTENT, "xmlfilecontent", "probe_xmlfilecontent" },
         /*  9001 */ { LINUX_DPKG_INFO, "dpkginfo", "probe_dpkginfo" },
         /*  9003 */ { LINUX_RPM_INFO,  "rpminfo",  "probe_rpminfo"  },
         /*  9004 */ { LINUX_SLACKWARE_PKG_INFO_TEST, "slackwarepkginfo", "probe_slackwarepkginfo" },
