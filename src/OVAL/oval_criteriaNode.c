@@ -204,7 +204,7 @@ void set_oval_criteria_node_comment(struct oval_criteria_node *node,
 				    char *comm)
 {
 	if(node->comment!=NULL)free(node->comment);
-	node->comment = comm==NULL?NULL:malloc_string(comm);
+	node->comment = comm==NULL?NULL:strdup(comm);
 }
 
 void set_oval_criteria_node_operator(struct oval_criteria_node *node,

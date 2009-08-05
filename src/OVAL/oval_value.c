@@ -110,11 +110,11 @@ void set_oval_value_datatype(struct oval_value *value,
 void set_oval_value_text(struct oval_value *value, char *text)
 {
 	if(value->text!=NULL)free(value->text);
-	value->text = (text==NULL)?NULL:malloc_string(text); 
+	value->text = (text==NULL)?NULL:strdup(text);
 }
 
 void oval_value_parse_tag_consume_text(char *string, void *text) {
-	*(char**)text = string;
+	*(char**)text = strdup(string);
 }
 
 int oval_value_parse_tag(xmlTextReaderPtr reader,

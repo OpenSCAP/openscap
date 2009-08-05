@@ -479,7 +479,7 @@ void set_oval_component_object_field(struct oval_component *component,
 		oval_component_OBJECTREF_t *objref =
 		    (oval_component_OBJECTREF_t *) component;
 		if(objref->object_field!=NULL)free(objref->object_field);
-		objref->object_field = field==NULL?NULL:malloc_string(field);
+		objref->object_field = field==NULL?NULL:strdup(field);
 	}
 }
 
@@ -576,7 +576,7 @@ int _oval_component_parse_BEGEND_tag
 	oval_component_BEGEND_t *begend = (oval_component_BEGEND_t *) component;
 	char *character = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST "character");
 	if(character!=NULL){
-		begend->character = malloc_string(character);
+		begend->character = strdup(character);
 		free(character);character = NULL;
 	}
 	return _oval_component_parse_FUNCTION_tag(reader, context, component);
@@ -588,7 +588,7 @@ int _oval_component_parse_SPLIT_tag
 	oval_component_SPLIT_t *split = (oval_component_SPLIT_t *) component;
 	char *delimiter = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST "delimiter");
 	if(delimiter!=NULL){
-		split->delimiter = malloc_string(delimiter);
+		split->delimiter = strdup(delimiter);
 		free(delimiter);delimiter=NULL;
 	}
 	return _oval_component_parse_FUNCTION_tag(reader, context, component);

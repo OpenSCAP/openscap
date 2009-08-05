@@ -51,7 +51,7 @@ typedef struct oval_sysdata {
 
 struct oval_sysdata *oval_sysdata_new(char *id){
 	oval_sysdata_t *sysdata = (oval_sysdata_t*)malloc(sizeof(oval_sysdata_t));
-	sysdata->id                = malloc_string(id);
+	sysdata->id                = strdup(id);
 	sysdata->message_level     = OVAL_MESSAGE_LEVEL_NONE;
 	sysdata->subtype           = OVAL_SUBTYPE_UNKNOWN;
 	sysdata->subtype_name      = NULL;
@@ -107,14 +107,14 @@ char *oval_sysdata_subtype_name(struct oval_sysdata *data){
 	return data->subtype_name;
 }
 void set_oval_sysdata_subtype_name(struct oval_sysdata *data, char *name){
-	data->subtype_name = malloc_string(name);
+	data->subtype_name = strdup(name);
 }
 char *oval_sysdata_message(struct oval_sysdata *data){
 	return data->message;
 }
 void set_oval_sysdata_message(struct oval_sysdata *data, char *message){
 	if(data->message!=NULL)free(data->message);
-	data->message = message==NULL?NULL:malloc_string(message);
+	data->message = message==NULL?NULL:strdup(message);
 }
 oval_message_level_enum oval_sysdata_message_level(struct oval_sysdata *data){
 	return data->message_level;

@@ -137,7 +137,7 @@ struct oval_test *oval_test_new(char *id)
 	test->operator   = OPERATOR_UNKNOWN;
 	test->subtype = OVAL_SUBTYPE_UNKNOWN;
 	test->comment = NULL;
-	test->id = malloc_string(id);
+	test->id = strdup(id);
 	test->name = NULL;
 	test->object = NULL;
 	test->state = NULL;
@@ -175,7 +175,7 @@ void set_oval_test_subtype(struct oval_test *test, oval_subtype_enum subtype)
 void set_oval_test_comment(struct oval_test *test, char *comm)
 {
 	if(test->comment!=NULL)free(test->comment);
-	test->comment = comm==NULL?NULL:malloc_string(comm);
+	test->comment = comm==NULL?NULL:strdup(comm);
 }
 
 void set_oval_test_existence(struct oval_test *test,
@@ -201,7 +201,7 @@ void set_oval_test_state(struct oval_test *test, struct oval_state *state)
 
 void add_oval_test_notes(struct oval_test *test, char *note)
 {
-	oval_collection_add(test->notes, (void *)malloc_string(note));
+	oval_collection_add(test->notes, (void *)strdup(note));
 }
 
 void _oval_test_parse_notes_consumer(char *text, void *test) {

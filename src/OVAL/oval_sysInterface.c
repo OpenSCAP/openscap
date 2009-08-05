@@ -60,7 +60,7 @@ char *oval_sysint_name(struct oval_sysint *sysint)
 void set_oval_sysint_name(struct oval_sysint *sysint, char *name)
 {
 	if(sysint->name!=NULL)free(sysint->name);
-	sysint->name = name==NULL?NULL:malloc_string(name);
+	sysint->name = name==NULL?NULL:strdup(name);
 }
 
 char *oval_sysint_ip_address(struct oval_sysint *sysint)
@@ -71,7 +71,7 @@ char *oval_sysint_ip_address(struct oval_sysint *sysint)
 void set_oval_sysint_ip_address(struct oval_sysint *sysint, char *ip_address)
 {
 	if(sysint->ipAddress!=NULL)free(sysint->ipAddress);
-	sysint->ipAddress = (ip_address==NULL)?NULL:malloc_string(ip_address);
+	sysint->ipAddress = (ip_address==NULL)?NULL:strdup(ip_address);
 }
 
 char *oval_sysint_mac_address(struct oval_sysint *sysint)
@@ -82,7 +82,7 @@ char *oval_sysint_mac_address(struct oval_sysint *sysint)
 void set_oval_sysint_mac_address(struct oval_sysint *sysint, char *mac_address)
 {
 	if(sysint->macAddress!=NULL)free(sysint->macAddress);
-	sysint->macAddress = (mac_address==NULL)?NULL:malloc_string(mac_address);
+	sysint->macAddress = (mac_address==NULL)?NULL:strdup(mac_address);
 }
 
 oval_sysint_t *oval_sysint_new()

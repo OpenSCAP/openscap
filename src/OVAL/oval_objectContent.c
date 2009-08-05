@@ -173,7 +173,7 @@ void set_oval_object_content_type(struct oval_object_content *content, oval_obje
 void set_oval_object_content_field_name(struct oval_object_content *content, char *name)
 {
 	if(content->fieldName!=NULL)free(content->fieldName);
-	content->fieldName = name==NULL?NULL:malloc_string(name);
+	content->fieldName = name==NULL?NULL:strdup(name);
 }
 void set_oval_object_content_entity(struct oval_object_content *content, struct oval_entity *entity)//type == OVAL_OBJECTCONTENT_ENTITY
 {

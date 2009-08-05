@@ -103,12 +103,12 @@ void set_oval_affected_family(struct oval_affected *affected,
 
 void add_oval_affected_platform(struct oval_affected *affected, char *platform)
 {
-	oval_collection_add(affected->platforms, (void *)malloc_string(platform));
+	oval_collection_add(affected->platforms, (void *)strdup(platform));
 }
 
 void add_oval_affected_product(struct oval_affected *affected, char *product)
 {
-	oval_collection_add(affected->products, (void *)malloc_string(product));
+	oval_collection_add(affected->products, (void *)strdup(product));
 }
 
 struct oval_string_map *_odafamilyMap = NULL;

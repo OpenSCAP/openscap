@@ -112,7 +112,7 @@ struct oval_object *oval_object_new(char *id)
 {
 	oval_object_t *object = (oval_object_t *) malloc(sizeof(oval_object_t));
 	object->comment = NULL;
-	object->id = malloc_string(id);
+	object->id = strdup(id);
 	object->subtype = OVAL_SUBTYPE_UNKNOWN;
 	object->deprecated = 0;
 	object->version = 0;
@@ -142,13 +142,13 @@ void set_oval_object_subtype(struct oval_object *object,
 
 void add_oval_object_notes(struct oval_object *object, char *note)
 {
-	oval_collection_add(object->notes, (void *)malloc_string(note));
+	oval_collection_add(object->notes, (void *)strdup(note));
 }
 
 void set_oval_object_comment(struct oval_object *object, char *comm)
 {
 	if(object->comment!=NULL)free(object->comment);
-	object->comment = comm==NULL?NULL:malloc_string(comm);
+	object->comment = comm==NULL?NULL:strdup(comm);
 }
 
 void set_oval_object_deprecated(struct oval_object *object, int deprecated)

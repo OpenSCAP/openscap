@@ -79,7 +79,7 @@ char *oval_sysinfo_os_name(struct oval_sysinfo *sysinfo)
 
 void set_oval_sysinfo_os_name(struct oval_sysinfo *sysinfo, char *osName){
 	if(sysinfo->osName!=NULL)free(sysinfo->osName);
-	sysinfo->osName = osName==NULL?NULL:malloc_string(osName);
+	sysinfo->osName = osName==NULL?NULL:strdup(osName);
 }
 
 char *oval_sysinfo_os_version(struct oval_sysinfo *sysinfo)
@@ -90,7 +90,7 @@ char *oval_sysinfo_os_version(struct oval_sysinfo *sysinfo)
 void set_oval_sysinfo_os_version(struct oval_sysinfo *sysinfo, char *osVersion)
 {
 	if(sysinfo->osVersion!=NULL)free(sysinfo->osVersion);
-	sysinfo->osVersion = osVersion==NULL?NULL:malloc_string(osVersion);
+	sysinfo->osVersion = osVersion==NULL?NULL:strdup(osVersion);
 }
 
 char *oval_sysinfo_os_architecture(struct oval_sysinfo *sysinfo)
@@ -101,7 +101,7 @@ char *oval_sysinfo_os_architecture(struct oval_sysinfo *sysinfo)
 void set_oval_sysinfo_os_architecture(struct oval_sysinfo *sysinfo, char *osArchitecture)
 {
 	if(sysinfo->osArchitecture!=NULL)free(sysinfo->osArchitecture);
-	sysinfo->osArchitecture = osArchitecture==NULL?NULL:malloc_string(osArchitecture);
+	sysinfo->osArchitecture = osArchitecture==NULL?NULL:strdup(osArchitecture);
 }
 
 char *oval_sysinfo_primary_host_name(struct oval_sysinfo *sysinfo)
@@ -112,7 +112,7 @@ char *oval_sysinfo_primary_host_name(struct oval_sysinfo *sysinfo)
 void set_oval_sysinfo_primary_host_name(struct oval_sysinfo *sysinfo, char *primaryHostName)
 {
 	if(sysinfo->primaryHostName!=NULL)free(sysinfo->primaryHostName);
-	sysinfo->primaryHostName = primaryHostName==NULL?NULL:malloc_string(primaryHostName);
+	sysinfo->primaryHostName = primaryHostName==NULL?NULL:strdup(primaryHostName);
 }
 
 struct oval_iterator_sysint *oval_sysinfo_interfaces(struct oval_sysinfo

@@ -371,9 +371,3 @@ struct oval_result_test *resolve_test(struct oval_test *,
 struct oval_result *resolve_definition(struct oval_definition *,
 				       struct oval_iterator_syschar *,
 				       struct oval_iterator_variable_binding *);
-
-char *malloc_string(const char *string){
-	char *temp = (char *)malloc((strlen(string) + 1) * sizeof(char) + 1);
-	return strcpy(temp, string);
-}
-

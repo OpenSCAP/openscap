@@ -29,6 +29,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include "oval_definitions_impl.h"
 #include "oval_collection_impl.h"
 
@@ -76,7 +77,7 @@ void set_oval_variable_binding_variable(struct oval_variable_binding *binding, s
 void set_oval_variable_binding_value   (struct oval_variable_binding *binding, char *value)
 {
 	if(binding->value!=NULL)free(binding->value);
-	binding->value = (value==NULL)?NULL:malloc_string(value);
+	binding->value = (value==NULL)?NULL:strdup(value);
 }
 
 struct oval_variable_binding *oval_variable_binding_new(struct oval_variable *variable, char *value)

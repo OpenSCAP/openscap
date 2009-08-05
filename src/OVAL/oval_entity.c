@@ -167,7 +167,7 @@ void set_oval_entity_value(struct oval_entity *entity, struct oval_value *value)
 void set_oval_entity_name(struct oval_entity *entity, char *name)
 {
 	if(entity->name!=NULL)free(entity->name);
-	entity->name = name==NULL?NULL:malloc_string(name);
+	entity->name = name==NULL?NULL:strdup(name);
 }
 
 struct oval_consume_varref_context {

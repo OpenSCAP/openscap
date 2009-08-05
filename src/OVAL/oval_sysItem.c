@@ -82,7 +82,7 @@ int oval_sysitem_mask(struct oval_sysitem *sysitem){return sysitem->mask;}
 void set_oval_sysitem_name(struct oval_sysitem *sysitem, char *name)
 {
 	if(sysitem->name!=NULL)free(sysitem->name);
-	sysitem->name = name==NULL?NULL:malloc_string(name);
+	sysitem->name = name==NULL?NULL:strdup(name);
 }
 void set_oval_sysitem_status(struct oval_sysitem *sysitem, oval_syschar_status_enum status)
 {
@@ -99,7 +99,7 @@ void set_oval_sysitem_mask(struct oval_sysitem *sysitem, int mask)
 void set_oval_sysitem_value(struct oval_sysitem *sysitem, char *value)
 {
 	if(sysitem->value!=NULL)free(sysitem->value);
-	sysitem->value = value==NULL?NULL:malloc_string(value);
+	sysitem->value = value==NULL?NULL:strdup(value);
 }
 
 void oval_sysitem_value_consumer_(char* value, void* sysitem){

@@ -99,13 +99,13 @@ void set_oval_reference_source(struct oval_reference *ref, char *source)
 void set_oval_reference_id(struct oval_reference *ref, char *id)
 {
 	if(ref->id!=NULL)free(ref->id);
-	ref->id = id==NULL?NULL:malloc_string(id);
+	ref->id = id==NULL?NULL:strdup(id);
 }
 
 void set_oval_reference_url(struct oval_reference *ref, char *url)
 {
 	if(ref->url!=NULL)free(ref->url);
-	ref->url = url==NULL?NULL:malloc_string(url);
+	ref->url = url==NULL?NULL:strdup(url);
 }
 
 //typedef void (*oval_reference_consumer)(struct oval_reference*, void*);

@@ -251,7 +251,7 @@ int oval_parser_text_value(xmlTextReaderPtr reader,
 		    || nodetype == XML_READER_TYPE_TEXT) {
 			char *value = (char*) xmlTextReaderValue(reader);
 			(*consumer) (value, user);
-/*			free(value); */
+			free(value);
 		}
 	}
 	return return_code;
@@ -316,7 +316,7 @@ void oval_text_consumer(char *text, void *user)
 {
 	char *platform = *(char**)user;
 	if (platform == NULL)
-		platform = text;
+		platform = strdup(text);
 	else {
 		int size = strlen(platform) + strlen(text) + 1;
 		char *newtext =

@@ -128,7 +128,7 @@ struct oval_variable *oval_variable_new(char *id)
 {
 	oval_variable_t *variable =
 	    (oval_variable_t *) malloc(sizeof(oval_variable_t));
-	variable->id = malloc_string(id);
+	variable->id = strdup(id);
 	variable->comment = NULL;
 	variable->type = OVAL_VARIABLE_UNKNOWN;
 	variable->datatype = OVAL_DATATYPE_UNKNOWN;
@@ -192,7 +192,7 @@ void set_oval_variable_datatype(struct oval_variable *variable,
 void set_oval_variable_comment(struct oval_variable *variable, char *comm)
 {
 	if(variable->comment!=NULL)free(variable->comment);
-	variable->comment = comm==NULL?NULL:malloc_string(comm);
+	variable->comment = comm==NULL?NULL:strdup(comm);
 }
 
 void set_oval_variable_deprecated(struct oval_variable *variable,

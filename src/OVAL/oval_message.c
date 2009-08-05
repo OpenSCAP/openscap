@@ -72,7 +72,7 @@ oval_message_level_enum oval_message_level(struct oval_message *message){return 
 void set_oval_message_text(struct oval_message *message, char *text)
 {
 	if(message->text!=NULL)free(message->text);
-	message->text = (text==NULL)?NULL:malloc_string(text);
+	message->text = (text==NULL)?NULL:strdup(text);
 }
 void set_oval_message_level(struct oval_message *message, oval_message_level_enum level)
 {

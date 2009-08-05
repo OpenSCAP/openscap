@@ -103,7 +103,7 @@ struct oval_definition *oval_definition_new(char *id)
 {
 	struct oval_definition *definition =
 	    (struct oval_definition *)malloc(sizeof(oval_definition_t));
-	definition->id = malloc_string(id);
+	definition->id = strdup(id);
 	definition->version = 0;
 	definition->class = CLASS_UNKNOWN;
 	definition->deprecated = 0;
@@ -167,7 +167,7 @@ void set_oval_definition_deprecated(struct oval_definition *definition,
 void set_oval_definition_title(struct oval_definition *definition, char *title)
 {
 	if(definition->title!=NULL)free(definition->title);
-	definition->title = title==NULL?NULL:malloc_string(title);
+	definition->title = title==NULL?NULL:strdup(title);
 }
 
 void set_oval_definition_description(struct oval_definition *definition,
@@ -224,7 +224,7 @@ void _oval_definition_title_consumer(char *string, void *user)
 	struct oval_definition *definition = (struct oval_definition *)user;
 	char *title = definition->title;
 	if (title == NULL)
-		title = malloc_string(string);
+		title = strdup(string);
 	else {
 		int newsize = strlen(title) + strlen(string) + 1;
 		char *newtitle = (char *)malloc(newsize * sizeof(char));
@@ -241,7 +241,7 @@ void _oval_definition_description_consumer(char *string, void *user)
 	struct oval_definition *definition = (struct oval_definition *)user;
 	char *description = definition->description;
 	if (description == NULL)
-		description = malloc_string(string);
+		description = strdup(string);
 	else {
 		int newsize = strlen(description) + strlen(string) + 1;
 		char *newdescription = (char *)malloc(newsize * sizeof(char));

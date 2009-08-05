@@ -1,5 +1,5 @@
 /**
- * @file oval_state.c 
+ * @file oval_state.c
  * \brief Open Vulnerability and Assessment Language
  *
  * See more details at http://oval.mitre.org/
@@ -114,7 +114,7 @@ struct oval_state *oval_state_new(char* id)
 	state->family = FAMILY_UNKNOWN;
 	state->subtype = OVAL_SUBTYPE_UNKNOWN;
 	state->comment = NULL;
-	state->id = malloc_string(id);
+	state->id = strdup(id);
 	state->name = NULL;
 	state->notes = oval_collection_new();
 	state->entities = oval_collection_new();
@@ -146,18 +146,18 @@ void set_oval_state_subtype(struct oval_state *state, oval_subtype_enum subtype)
 void set_oval_state_name(struct oval_state *state, char *name)
 {
 	if(state->name!=NULL)free(state->name);
-	state->name = name==NULL?NULL:malloc_string(name);
+	state->name = name==NULL?NULL:strdup(name);
 }
 
 void add_oval_state_notes(struct oval_state *state, char *notes)
 {
-	oval_collection_add(state->notes, (void *)malloc_string(notes));
+	oval_collection_add(state->notes, (void *)strdup(notes));
 }
 
 void set_oval_state_comment(struct oval_state *state, char *comm)
 {
 	if(state->comment!=NULL)free(state->comment);
-	state->comment = comm==NULL?NULL:malloc_string(comm);
+	state->comment = comm==NULL?NULL:strdup(comm);
 }
 
 void set_oval_state_deprecated(struct oval_state *state, int deprecated)
