@@ -450,6 +450,8 @@ int SEAP_packet_recv (SEAP_CTX_t *ctx, int sd, SEAP_packet_t **packet)
         if (dsc == NULL)
                 return (-1);
         
+        psetup = SEXP_psetup_new ();
+                
         /*
          * Event loop
          * The read mutex is not locked during the wait for an event.
@@ -460,6 +462,9 @@ int SEAP_packet_recv (SEAP_CTX_t *ctx, int sd, SEAP_packet_t **packet)
          * stopped, the read mutex gets locked and the receiving and
          * parsing of data can begin.
          */
+
+eloop_start:
+                
         for (;;) {
                 if (SCH_SELECT(dsc->scheme, dsc, SEAP_IO_EVREAD, 0, 0) != 0)
                         return (-1);
@@ -494,15 +499,14 @@ int SEAP_packet_recv (SEAP_CTX_t *ctx, int sd, SEAP_packet_t **packet)
         }
 eloop_exit:
         
-        psetup = SEXP_psetup_new ();
-        pstate = NULL;
-
         /*
          * Receive loop
          * The read mutex is locked during execution of this loop and
          * the execution stops if the received data forms a valid
          * S-expression.
          */
+        pstate = NULL;
+        
         for (;;) {
                 data_buffer = sm_alloc (SEAP_RECVBUF_SIZE);
                 data_buflen = SEAP_RECVBUF_SIZE;
@@ -511,8 +515,12 @@ eloop_exit:
                 if (data_length <= 0) {
                         protect_errno {
                                 _D("FAIL: recv failed: dsc=%p, errno=%u, %s.\n", dsc, errno, strerror (errno));
+                                
                                 sm_free (data_buffer);
                                 SEXP_psetup_free (psetup);
+
+                                if (pstate != NULL)
+                                        SEXP_pstate_free (pstate);
                         }
                         return (-1);
                 }
@@ -525,8 +533,16 @@ eloop_exit:
                 sexp_buffer = SEXP_parse (psetup, data_buffer, data_length, &pstate);
                 
                 if (sexp_buffer != NULL) {
+                        _A(pstate == NULL);
+                        
                         DESC_RUNLOCK(dsc);
-                        break;
+                        
+                        if (SEXP_list_length (sexp_buffer) > 0) {
+                                break;
+                        } else {
+                                SEXP_list_free (sexp_buffer);
+                                goto eloop_start;
+                        }
                 }
                 
                 if (SCH_SELECT(dsc->scheme, dsc, SEAP_IO_EVREAD, ctx->recv_timeout, 0) != 0) {
@@ -537,21 +553,25 @@ eloop_exit:
                                            dsc, ctx->recv_timeout, errno, strerror (errno));
                                 }
                         default:
-                                sm_free (data_buffer);
-                                SEXP_psetup_free (psetup);
+                                protect_errno {
+                                        sm_free (data_buffer);
+                                        SEXP_psetup_free (psetup);
+                                        SEXP_pstate_free (pstate);
+                                }
                                 return (-1);
                         }
                 }
         }
         
         SEXP_psetup_free (psetup);
-        SEXP_pstate_free (pstate);
         
         SEXP_VALIDATE(sexp_buffer);
         
         sexp_packet    = SEXP_list_pop (&sexp_buffer);
         dsc->pck_queue = sexp_buffer;
         
+        _A(sexp_packet != NULL);
+
         if (SEXP_TYPEOF(sexp_packet) != ATOM_LIST) {
                 _D("Invalid SEAP packet received: %s.\n", "not a list");
                 SEXP_free (sexp_packet);

@@ -702,7 +702,10 @@ SEXP_t *SEXP_parse (SEXP_psetup_t *setup, const char *buf, size_t buflen, SEXP_p
                 errnum = EILSEQ;
                 break;
         L_WHITESPACE:
-                while (isspace(pbuf[++i]));
+                while (++i < buflen) {
+                        if (!isspace(pbuf[i]))
+                                break;
+                }
                 goto L_NO_SEXP_ALLOC;
         L_PAROPEN:
                 {       /* LIST_t *subl; */
