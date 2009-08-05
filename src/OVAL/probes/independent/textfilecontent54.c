@@ -200,17 +200,18 @@ static int process_file(const char *path, const char *filename, void *arg)
 		goto cleanup;
 	}
 
-	int instance, cur_inst = 0;
+	int cur_inst = 0;
 	char line[4096];
-
-	instance = SEXP_number_getd(SEXP_OVALelm_getval(pfd->instance_elm, 1));
+	SEXP_t *next_inst = NULL;
 
 	while (fgets(line, sizeof(line), fp) != NULL) {
 		char **substrs;
 		int substr_cnt, want_instance;
 
-		// todo: op attr
-		if ((cur_inst + 1) >= instance)
+		if (next_inst != NULL)
+			SEXP_free(next_inst);
+		next_inst = SEXP_number_newd(cur_inst + 1);
+		if (SEXP_OVALentobj_cmp(pfd->instance_elm, next_inst) == OVAL_RESULT_TRUE)
 			want_instance = 1;
 		else
 			want_instance = 0;
