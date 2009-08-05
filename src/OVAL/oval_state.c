@@ -199,7 +199,7 @@ int _oval_state_parse_tag(xmlTextReaderPtr reader,
 	} else {
 		return_code =
 		    oval_entity_parse_tag(reader, context, oval_consume_entity_,
-					  NULL);
+					  state);
 	}
 	if (return_code != 1) {
 		int line = xmlTextReaderGetParserLineNumber(reader);

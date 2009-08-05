@@ -18,9 +18,9 @@ test_syschar_CFLAGS = -I$(top_srcdir)/src/OVAL
 test_syschar_LDADD = $(top_builddir)/src/libopenscap.la
 
 if WANT_PROBES
-check_PROGRAMS += sexp_test  test_findfile test_rpminfo
-TESTS += SEAP/parser_valid-test.sh SEAP/parser_invalid-test.sh
-EXTRA_DIST += SEAP/parser_valid-test.sh SEAP/parser_invalid-test.sh
+check_PROGRAMS += sexp_test  test_findfile test_rpminfo test_probes
+TESTS += SEAP/parser_valid-test.sh SEAP/parser_invalid-test.sh OVAL/test_probes.sh
+EXTRA_DIST += SEAP/parser_valid-test.sh SEAP/parser_invalid-test.sh OVAL/test_probes.c OVAL/scap-rhel5-oval.xml
 
 test_findfile_SOURCES = OVAL/test_findfile.c
 test_findfile_CFLAGS = -I$(top_srcdir)/src/OVAL/probes/SEAP/public -I$(top_srcdir)/src/OVAL/probes -I$(top_srcdir)/src/OVAL
@@ -34,6 +34,9 @@ test_rpminfo_SOURCES = OVAL/test_rpminfo.c
 test_rpminfo_CFLAGS = -I$(top_srcdir)/src/OVAL/probes/SEAP/public -I$(top_srcdir)/src/OVAL
 test_rpminfo_LDADD = $(top_builddir)/src/libopenscap.la
 
+test_probes_SOURCES = OVAL/test_probes.c
+test_probes_CFLAGS = -I$(top_srcdir)/src/OVAL
+test_probes_LDADD = $(top_builddir)/src/libopenscap.la
 endif
 endif
 

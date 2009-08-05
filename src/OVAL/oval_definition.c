@@ -294,7 +294,7 @@ int _oval_definition_parse_metadata(xmlTextReaderPtr reader,
 	} else if (strcmp(tagname, "reference") == 0) {
 		return_code =
 		    oval_reference_parse_tag(reader, context,
-					     &oval_reference_consume, NULL);
+					     &oval_reference_consume, definition);
 	} else {
 		int linno = xmlTextReaderGetParserLineNumber(reader);
 		printf

@@ -1,3 +1,4 @@
 #!/bin/sh
 
-./test_oval "${srcdir}/OVAL/test.xml"
+./test_oval "${srcdir}/OVAL/scap-rhel5-oval.xml"
+
