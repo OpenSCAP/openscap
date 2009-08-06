@@ -33,8 +33,8 @@ libseap_la_SOURCES= generic/bfind.c		\
 		    _seap-types.h		\
 		    seap.c			\
 		    _seap.h			\
-		    sexp-handler.c		\
-		    sexp-handler.h		\
+		    sexp-datatype.c		\
+		    _sexp-datatype.h		\
 		    sexp-manip.c		\
 		    _sexp-manip.h		\
 		    sexp-output.c		\
@@ -66,7 +66,8 @@ include_HEADERS= public/seap-command.h	\
 		 public/sm_alloc.h	\
 		 public/seap-message.h	\
 		 public/seap-packet.h	\
-		 public/seap-error.h
+		 public/seap-error.h	\
+		 public/sexp-datatype.h
 
 includedir = $(prefix)/include/lib@PACKAGE@
 

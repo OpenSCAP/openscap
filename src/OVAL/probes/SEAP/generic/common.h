@@ -26,6 +26,6 @@ long     xrandom (void);
 #endif
 
 #define protect_errno for (int __XCONCAT(__e,__LINE__) = errno, __XCONCAT(__s,__LINE__) = 1; \
-                           __XCONCAT(__s,__LINE__)-- ; errno = __XCONCAT(__e, __LINE__))
+                           __XCONCAT(__s,__LINE__)-- ; errno = __XCONCAT(__e,__LINE__))
 
 #endif /* COMMON_H */

@@ -9,7 +9,7 @@
 #include "_sexp-types.h"
 #include "_sexp-manip.h"
 #include "_sexp-parse.h"
-#include "sexp-handler.h"
+#include "_sexp-datatype.h"
 #include "generic/xbase64.h"
 #include "generic/strto.h"
 
@@ -1075,8 +1075,9 @@ DEFEXTRACTOR_F(b64_string)
 
 DEFEXTRACTOR(datatype)
 {
+        char *name, name_static[128];
         register uint32_t l = 1;
-
+        
         _A(out != NULL);
         _A(str != NULL);
         _A(SEXP(out)->handler == NULL);
@@ -1100,24 +1101,34 @@ DEFEXTRACTOR(datatype)
         }
         
         ++l;
-
-        /* Try to find handler */
-        SEXP(out)->handler = SEXP_gethandler_g(str + 1, l - 2);
+        
+        if ((l - 2) < (sizeof name_static)) {
+                memcpy (name_static,
+                        str + 1, sizeof (char) * (l - 2));
+                name_static[l - 2] = '\0';
+                name = name_static;
+        } else {
+                name = sm_alloc (sizeof (char) * (l - 1));
+                memcpy (name,
+                        str + 1, sizeof (char) * (l - 2));
+                name[l - 2] = '\0';
+        }
+        
+        SEXP(out)->handler = SEXP_datatype_get (&g_datatypes, name);
         
         if (SEXP(out)->handler == NULL) {
-                /* create a empty handler */
-                SEXP_handler_t new;
+                SEXP_datatype_t datatype;
                 
-                new.typestr = xmemdup (str + 1, l - 2);
-                new.typelen = l - 2;
-                new.fprint   = NULL;
-                new.dprint   = NULL;
-                new.dread    = NULL;
-                new.fread    = NULL;
-                new.mem2sexp = NULL;
-                new.sexp2mem = NULL;
+                datatype.name     = (name != name_static ? name : strdup (name));
+                datatype.name_len = l - 2;
                 
-                SEXP(out)->handler = SEXP_reghandler_g(&new);
+                datatype.op     = NULL;
+                datatype.op_cnt = 0;
+                
+                SEXP(out)->handler = SEXP_datatype_add (&g_datatypes, &datatype);
+        } else {
+                if (name != name_static)
+                        sm_free (name);
         }
         
         return (l);
@@ -1133,24 +1144,36 @@ DEFEXTRACTOR_F(datatype)
         _D("Parsing fixed length datatype\n");
 
         if (toklen <= len - 2) {
-                /* Try to find handler */
-                SEXP(out)->handler = SEXP_gethandler_g(str + 1, len - 2);
+                char *name, name_static[128];
                 
+                if (toklen + 1 < (sizeof name_static)) {
+                        memcpy (name_static,
+                                str + 1, sizeof (char) * toklen);
+                        name_static[toklen] = '\0';
+                        name = name_static;
+                } else {
+                        name = sm_alloc (sizeof (char) * (toklen + 1));
+                        memcpy (name,
+                                str + 1, sizeof (char) * toklen);
+                        name[toklen] = '\0';
+                }
+                
+                SEXP(out)->handler = SEXP_datatype_get (&g_datatypes, name);
+        
                 if (SEXP(out)->handler == NULL) {
-                        /* create a empty handler */
-                        SEXP_handler_t new;
+                        SEXP_datatype_t datatype;
                         
-                        new.typestr = xmemdup (str + 1, len - 2);
-                        new.typelen = len - 2;
-                        new.fprint   = NULL;
-                        new.dprint   = NULL;
-                        new.dread    = NULL;
-                        new.fread    = NULL;
-                        new.mem2sexp = NULL;
-                        new.sexp2mem = NULL;
+                        datatype.name     = (name != name_static ? name : strdup (name));
+                        datatype.name_len = toklen;
                         
-                        SEXP(out)->handler = SEXP_reghandler_g(&new);
-                }                
+                        datatype.op     = NULL;
+                        datatype.op_cnt = 0;
+                        
+                        SEXP(out)->handler = SEXP_datatype_add (&g_datatypes, &datatype);
+                } else {
+                        if (name != name_static)
+                                sm_free (name);
+                }
         } else {
                 SEXP_SETTYPE(SEXP(out), ATOM_UNFIN);
         }

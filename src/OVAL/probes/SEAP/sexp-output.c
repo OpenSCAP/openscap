@@ -192,7 +192,7 @@ ssize_t SEXP_st_dprintc (int fd, SEXP_t *sexp, SEXP_ostate_t **ost)
         ssize_t wret = -1;
         size_t  wlen =  0;
         
-        struct iovec vec[2];
+        struct iovec vec[3];
         
         _A(fd >= 0);
         _A(sexp != NULL);
@@ -210,7 +210,32 @@ ssize_t SEXP_st_dprintc (int fd, SEXP_t *sexp, SEXP_ostate_t **ost)
         
 print_loop:
         if (psexp->handler != NULL) {
-                /* print datatype */
+                SEXP_datatype_t *h = psexp->handler;
+                
+                ch = ']';
+                
+                digits = xnumdigits (h->name_len);
+                buffer = sm_alloc (sizeof (char) * (digits + 2));
+                snprintf (buffer, sizeof (char) * (digits + 2), "%.*hu[",
+                          digits, h->name_len);
+                
+                vec[0].iov_base = buffer;
+                vec[0].iov_len  = digits + 1;
+                vec[1].iov_base = h->name;
+                vec[1].iov_len  = h->name_len;
+                vec[2].iov_base = &ch;
+                vec[2].iov_len  = 1;
+
+                wret = writev (fd, vec, 3);
+                
+                if (wret == -1) {
+                        /* write error */
+                        return (-1);
+                }
+                
+                sm_free (buffer);
+                
+                wlen += (size_t)wret;
         }
         
         switch (SEXP_TYPE(psexp)) {
@@ -265,75 +290,32 @@ print_loop:
                 /* 
                  * Number is converted to string with datatype.
                  * e.g.: 123 -> 4[int8]3:123
+                 *
+                 * FIXME: not implemented...
                  */
+#define CASE(__m, __t, __func, __fmt)                                   \
+                case (__m): {                                           \
+                        __t num;                                        \
+                        num = __func (psexp);                           \
+                        numlen = snprintf (numstr, sizeof numstr,       \
+                                           __fmt, num);                 \
+                }                                                       \
+                        break
+                
                 switch (psexp->atom.number.type) {
-                case NUM_INT8: {
-                        int8_t num;
-                        
-                        num = SEXP_number_gethhd (psexp);
-                        numlen = snprintf (numstr, sizeof numstr, "%hhd ", num);
-                }
-                        break;
-                case NUM_UINT8: {
-                        uint8_t num;
-                        
-                        num = SEXP_number_gethhu (psexp);
-                        numlen = snprintf (numstr, sizeof numstr, "%hhu ", num);
-                }
-                        break;
-                case NUM_INT16: {
-                        int16_t num;
-                        
-                        num = SEXP_number_gethd (psexp);
-                        numlen = snprintf (numstr, sizeof numstr, "%hd ", num);
-                }
-                        break;
-                case NUM_UINT16: {
-                        uint16_t num;
-                        
-                        num = SEXP_number_gethu (psexp);
-                        numlen = snprintf (numstr, sizeof numstr, "%hu ", num);
-                }
-                        break;
-                case NUM_INT32: {
-                        int32_t num;
-                        
-                        num = SEXP_number_getd (psexp);
-                        numlen = snprintf (numstr, sizeof numstr, "%d ", num);
-                }
-                        break;
-                case NUM_UINT32: {
-                        uint32_t num;
-                        
-                        num = SEXP_number_getu (psexp);
-                        numlen = snprintf (numstr, sizeof numstr, "%u ", num);
-                }
-                        break;
-                case NUM_INT64: {
-                        int64_t num;
-                        
-                        num = SEXP_number_gethhd (psexp);
-                        numlen = snprintf (numstr, sizeof numstr, "%lld ", num);
-                }
-                        break;
-                case NUM_UINT64: {
-                        uint64_t num;
-                        
-                        num = SEXP_number_gethhd (psexp);
-                        numlen = snprintf (numstr, sizeof numstr, "%llu ", num);
-                }
-                        break;
-                case NUM_DOUBLE: {
-                        double num;
-                        
-                        num = SEXP_number_getf (psexp);
-                        numlen = snprintf (numstr, sizeof numstr, "%f ", num);
-                }
-                        break;
+                        CASE(NUM_INT8,     int8_t, SEXP_number_gethhd, "%hhd ");
+                        CASE(NUM_UINT8,   uint8_t, SEXP_number_gethhu, "%hhu ");
+                        CASE(NUM_INT16,   int16_t, SEXP_number_gethd,  "%hd ");
+                        CASE(NUM_UINT16, uint16_t, SEXP_number_gethu,  "%hu ");
+                        CASE(NUM_INT32,   int32_t, SEXP_number_getd,   "%d ");
+                        CASE(NUM_UINT32, uint32_t, SEXP_number_getu,   "%u ");
+                        CASE(NUM_INT64,   int64_t, SEXP_number_getlld, "%lld ");
+                        CASE(NUM_UINT64, uint64_t, SEXP_number_getllu, "%llu ");
+                        CASE(NUM_DOUBLE,   double, SEXP_number_getf,   "%f ");
                 default:
                         abort ();
                 }
-
+#undef CASE
                 if (write (fd, numstr, numlen) != numlen) {
                         /* write error */
                         return (-1);
@@ -441,6 +423,13 @@ int SEXP_printfa (SEXP_t *sexp)
 
 static int __SEXP_fprintfa (FILE *fp, SEXP_t *sexp, uint32_t indent)
 {
+        const char *datatype;
+        
+        datatype = SEXP_datatype (sexp);
+        
+        if (datatype != NULL)
+                fprintf (fp, "[%s]", datatype);
+        
         switch (SEXP_TYPE(sexp)) {
         case ATOM_STRING:
                 return fprintf (fp, "\"%.*s\"", sexp->atom.string.len, sexp->atom.string.str);

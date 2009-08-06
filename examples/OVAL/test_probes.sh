@@ -1,5 +1,7 @@
 #!/bin/sh
 
+export PROBEPATH="`pwd`/../src/OVAL/probes/"
+
 for i in "test_probe_rpminfo.xml" "test_probe_runlevel.xml"  "test_probe_filecontent.xml"
 do
 	echo "test_probes $i"

@@ -12,6 +12,7 @@
 #include "public/seap-scheme.h"
 #include "public/seap-message.h"
 #include "public/seap-command.h"
+#include "public/seap-error.h"
 
 /*
  * Descriptor table + related stuff
@@ -24,10 +25,15 @@ typedef struct {
         SEAP_scheme_t  scheme; /* Protocol/Scheme used for this descriptor */
         void          *scheme_data; /* Protocol/Scheme related data */
         
+        
         SEXP_t *pck_queue;
         SEXP_t *msg_queue;
         SEXP_t *err_queue;
         SEXP_t *cmd_queue;
+        
+        //queue_t *pck_queue;
+        
+        //SEAP_packet_t *pck_queue;
 
         pthread_mutex_t w_lock;
         pthread_mutex_t r_lock;

@@ -147,7 +147,8 @@ size_t  SEXP_length (const SEXP_t *sexp);
 int     SEXP_cmp (const SEXP_t *a, const SEXP_t *b);
 int     SEXP_cmpobj (const SEXP_t *a, const SEXP_t *b);
 
-char   *SEXP_datatype (const SEXP_t *a);
+const char *SEXP_datatype (const SEXP_t *a);
+int         SEXP_datatype_set (SEXP_t *a, const char *name);
 
 SEXP_type_t SEXP_typeof (const SEXP_t *s);
 

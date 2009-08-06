@@ -41,6 +41,9 @@ typedef uint8_t NUM_type_t;
 
 #define NUM_DOUBLE 0x09
 
+#define NUM_BOOL 0x0a
+#define NUM_BOOLEAN NUM_BOOL
+
 #if 0
 # define NUM_FRACT  0x0a /* Not implemented */
 # define NUM_BIGNUM 0x0b /* Not implemented */

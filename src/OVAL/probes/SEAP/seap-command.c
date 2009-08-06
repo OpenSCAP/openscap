@@ -14,6 +14,22 @@
 #include "generic/redblack.h"
 #include "_seap-command.h"
 
+SEAP_cmd_t *SEAP_cmd_new (void)
+{
+        SEAP_cmd_t *cmd;
+
+        cmd = sm_talloc (SEAP_cmd_t);
+        memset (cmd, 0, sizeof (SEAP_cmd_t));
+        cmd->args = NULL;
+        
+        return (cmd);
+}
+
+void SEAP_cmd_free (SEAP_cmd_t *p)
+{
+        sm_free (p);
+}
+
 int SEAP_cmd_register (SEAP_CTX_t *ctx, SEAP_cmdcode_t code, uint32_t flags, SEAP_cmdfn_t func, ...) /* sd, arg */
 {
         va_list ap;
@@ -285,47 +301,78 @@ SEXP_t *SEAP_cmd_exec (SEAP_CTX_t    *ctx,
                 
                 return (res);
         } else {
-                _D("EXEC_REMOTE\n");
-                
-                /* remote */  
-                SEAP_cmd_t cmd;
+#if 0
+                SEAP_cmd_t    *cmdptr;
+                SEAP_packet_t *packet;
                 SEXP_t    *cmd_sexp;
 
-                /* construct message */
-#if defined(HAVE_ATOMIC_FUNCTIONS)
-                cmd.id = __sync_fetch_and_add (&(dsc->next_cid), 1);
-#else
-                cmd.id = dsc->next_cid++;
-#endif
-                cmd.rid   = 0;
-                cmd.flags = 0;
-                cmd.class = SEAP_CMDCLASS_USR;
-                cmd.code  = code;
-                cmd.args  = args;
+                _D("EXEC_REMOTE\n");
                 
+                packet = SEAP_packet_new ();
+                cmdptr = SEAP_packet_settype (packet, SEAP_PACKET_CMD);
+                
+                cmdptr->id = SEAP_desc_gencmdid (&(ctx->sd_table), sd);
+                cmdptr->rid   = 0;
+                cmdptr->class = SEAP_CMDCLASS_USR;
+                cmdptr->code  = code;
+                cmdptr->args  = args;
+                cmdptr->flags = 0;
+
                 switch (type) {
                 case SEAP_CMDTYPE_SYNC:
-                        cmd.flags |= SEAP_CMDFLAG_SYNC;
+                        cmdptr->flags |= SEAP_CMDFLAG_SYNC;
                         
-                        /* translate to S-exp */
-                        cmd_sexp  = SEAP_cmd2sexp (&cmd);
+                        if (DSC_RLOCK (dsc)) {
+                                SEAP_packet_t *pckrep;
+                                
+                                if (SEAP_packet_send (ctx, sd, packet) != 0) {
+                                        protect_errno {
+                                                _D("FAIL: errno=%u, %s.\n", errno, strerror (errno));
+                                                SEAP_packet_free (packet);
+                                                DSC_RUNLOCK (dsc);
+                                        }
+                                        
+                                        return (NULL);
+                                }
+                                
+                                SEAP_packet_free (packet);
+                                
+                                /* FIXME: timeout */
+                                for (;;) {
+                                        if (SEAP_packet_recv (ctx, sd, &pckrep) != 0) {
+                                                protect_errno {
+                                                        _D("FAIL: errno=%u, %s.\n", errno, strerror (errno));
+                                                        DSC_RUNLOCK (dsc);
+                                                }
+                                                
+                                                return (NULL);
+                                        }
+
+                                        
+                                }
+
+                                
+                        }
+
+                        /* hijack input stream */
+                        /* send packet */
+                        /* recv packet */
+                        /* apply func */
+
                         
                         /* TODO */
                         errno = EOPNOTSUPP;
                         return (NULL);
                         break;
-                case SEAP_CMDTYPE_ASYNC: {
-                        cmd.flags |= SEAP_CMDFLAG_ASYNC;
+                case SEAP_CMDTYPE_ASYNC:
+                        cmdptr->flags |= SEAP_CMDFLAG_ASYNC;
                         
-                        /* translate to S-exp */
-                        cmd_sexp  = SEAP_cmd2sexp (&cmd);
-                                                
-                        /* register func */
+                        /* Register handler */
                         rec = SEAP_cmdrec_new ();
-                        rec->code = cmd.id;
+                        rec->code = cmd->id;
                         rec->func = func;
                         rec->arg  = funcarg;
-
+                        
                         switch (SEAP_cmdtbl_add (dsc->cmd_w_table, rec)) {
                         case 0:
                                 break;
@@ -345,22 +392,26 @@ SEXP_t *SEAP_cmd_exec (SEAP_CTX_t    *ctx,
                                 return (NULL);
                         }
                         
-                        /* send */
-                        res = args;
-                        
-                        if (SCH_SENDSEXP(dsc->scheme, dsc, cmd_sexp, 0) < 0) {
-                                _D("SCH_SENDSEXP: FAIL: %u, %s.\n",
-                                   errno, strerror (errno));
-                                res = NULL;
+                        if (SEAP_packet_send (ctx, sd, packet) != 0) {
+                                protect_errno {
+                                        _D("FAIL: errno=%u, %s.\n", errno, strerror (errno));
+                                        /* TODO: unregister handler */
+                                        SEXP_packet_free (packet);
+                                }
+                                return (NULL);
                         }
-                }
+                        
+                        SEXP_packet_free (packet);
+
                         return (res);
                 default:
                         errno = EINVAL;
                         return (NULL);
                 }
+#endif
         }
-
+        
+        /* NOTREACHED */
         errno = EDOOFUS;
         return (NULL);
 }

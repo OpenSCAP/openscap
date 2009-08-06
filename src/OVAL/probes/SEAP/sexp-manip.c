@@ -50,51 +50,50 @@ SEXP_t *SEXP_number_new (void *num, NUM_type_t type)
 
 int SEXP_numberp (const SEXP_t *sexp)
 {
-        if (sexp != NULL) {
-                SEXP_VALIDATE(sexp);
-                return (SEXP_TYPE(sexp) == ATOM_NUMBER);
-        } else {
+        if (sexp == NULL) {
                 errno = EFAULT;
                 return (0);
         }
+        
+        SEXP_VALIDATE(sexp);
+        
+        return (SEXP_TYPEOF(sexp) == ATOM_NUMBER);
 }
 
 size_t SEXP_number_size (const SEXP_t *sexp)
 {
-        if (sexp != NULL) {
-                SEXP_VALIDATE(sexp);
-        
-                if (SEXP_TYPE(sexp) == ATOM_NUMBER) {
-                        switch (sexp->atom.number.type) {
-                        case NUM_INT8:
-                                return sizeof (int8_t);
-                        case NUM_UINT8:
-                                return sizeof (uint8_t);
-                        case NUM_INT16:
-                                return sizeof (int16_t);
-                        case NUM_UINT16:
-                                return sizeof (uint16_t);
-                        case NUM_INT32:
-                                return sizeof (int32_t);
-                        case NUM_UINT32:
-                                return sizeof (uint32_t);
-                        case NUM_INT64:
-                                return sizeof (int64_t);
-                        case NUM_UINT64:
-                                return sizeof (uint64_t);
-                        case NUM_DOUBLE:
-                                return sizeof (double);
-                        default:
-                                _D("Unsupported number type: %d\n", sexp->atom.number.type);
-                                abort ();
-                        }
-                } else {
-                        errno = EINVAL;
-                }
-        } else {
+        if (sexp == NULL) {
                 errno = EFAULT;
+                return ((size_t)-1);
+        }
+        
+        SEXP_VALIDATE(sexp);
+        
+        if (SEXP_TYPEOF(sexp) != ATOM_NUMBER) {
+                errno = EINVAL;
+                return ((size_t)-1);
+        }
+        
+#define CASE(__m, __T) case (__m): return sizeof (__T)
+        
+        switch (sexp->atom.number.type) {
+                CASE(NUM_INT8,   int8_t);
+                CASE(NUM_UINT8,  uint8_t);
+                CASE(NUM_INT16,  int16_t);
+                CASE(NUM_UINT16, uint16_t);
+                CASE(NUM_INT32,  int32_t);
+                CASE(NUM_UINT32, uint32_t);
+                CASE(NUM_INT64,  int64_t);
+                CASE(NUM_UINT64, uint64_t);
+                CASE(NUM_DOUBLE, double);
+        default:
+                _D("Unsupported number type: %d\n", sexp->atom.number.type);
+                abort ();
         }
 
+#undef CASE
+
+        /* NOTREACHED */
         return ((size_t)-1);
 }
 
@@ -1946,9 +1945,52 @@ int SEXP_cmpobj (const SEXP_t *a, const SEXP_t *b)
         return memcmp (a, b, sizeof (SEXP_t));
 }
 
-char *SEXP_datatype (const SEXP_t *a)
+const char *SEXP_datatype (const SEXP_t *a)
 {
+        if (a == NULL) {
+                errno = EFAULT;
+                return (NULL);
+        }
+
+        SEXP_VALIDATE(a);
+
+        if (a->handler != NULL) {
+                _A(a->handler->name != NULL);
+                return ((const char *)a->handler->name);
+        }
+        
         return (NULL);
+}
+
+int SEXP_datatype_set (SEXP_t *a, const char *name)
+{
+        SEXP_datatype_t *h;
+        
+        _A(a != NULL);
+        _A(name != NULL);
+
+        SEXP_VALIDATE(a);
+
+        h = SEXP_datatype_get (&g_datatypes, name);
+
+        if (h == NULL) {
+                SEXP_datatype_t datatype;
+
+                datatype.name     = strdup (name);
+                datatype.name_len = strlen (name);
+                
+                datatype.op     = NULL;
+                datatype.op_cnt = 0;
+
+                h = SEXP_datatype_add (&g_datatypes, &datatype);
+        }
+        
+        if (h == NULL)
+                return (-1);
+        else        
+                a->handler = h;
+        
+        return (0);
 }
 
 static const char *__sexp_strtype[] = {

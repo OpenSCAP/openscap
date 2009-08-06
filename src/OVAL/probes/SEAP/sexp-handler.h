@@ -6,18 +6,17 @@
 # include <pthread.h>
 #endif
 
-#include <stdio.h>
+#include <stdint.h>
+#include <stddef.h>
+#include "_sexp-datatype.h"
 
 typedef struct {
         char    *typestr;
         uint16_t typelen;
+
+        __SEXP_datatype_op_t *op;
+        size_t op_cnt;
         
-        int (*fprint) (FILE *, SEXP_t *);
-        SEXP_t * (*fread) (FILE *, size_t);
-        int (*dprint) (int, SEXP_t *);
-        SEXP_t * (*dread) (int, size_t);
-        int (*mem2sexp) (void *, size_t *, SEXP_t *);
-        int (*sexp2mem) (SEXP_t *, void *, size_t);
 } SEXP_handler_t;
 
 #include "generic/redblack.h"

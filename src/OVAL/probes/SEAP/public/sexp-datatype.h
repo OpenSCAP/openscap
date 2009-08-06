@@ -3,8 +3,10 @@
 #define SEXP_DATATYPE
 
 #include <stdarg.h>
+#include <stdint.h>
+#include <sexp.h>
 
-typedef void (*SEXP_datatype_opfn_t) (const SEXP_t *, void *, va_list);
+typedef void (*SEXP_datatype_opfn_t) (const SEXP_t *, void *, ...);
 
 typedef struct {
         uint8_t opnum;
@@ -14,9 +16,16 @@ typedef struct {
         SEXP_datatype_opfn_t fn_list;
 } SEXP_datatype_op_t;
 
-const char *SEXP_datatype (const SEXP_t *sexp);
+typedef struct SEXP_datatype    SEXP_datatype_t;
+typedef struct SEXP_datatypetbl SEXP_datatypetbl_t;
 
-int SEXP_datatype_register (const char *datatype, SEXP_datype_op_t op[], uint8_t opnummax);
+extern SEXP_datatypetbl_t g_datatypes;
+
+/* const char *SEXP_datatype (const SEXP_t *sexp); */
+
+int SEXP_datatype_register (SEXP_datatypetbl_t *t, const char *datatype, SEXP_datatype_op_t *op, uint8_t opnummax);
+/* int SEXP_datatype_unregister (void); */
+
 int SEXP_datatype_op (uint8_t op, const SEXP_t *sexp, void *res, ...);
 int SEXP_datatype_op_safe (const char *datatype, uint8_t op, const SEXP_t *sexp, void *res, ...);
 

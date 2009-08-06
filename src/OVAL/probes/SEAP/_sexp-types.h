@@ -72,15 +72,17 @@ typedef uint8_t  ATOM_type_t;
 # define SEXP_MAGIC1_INV 0x0000
 #endif
 
+#include "_sexp-datatype.h"
+
 /* S-exp object */
 struct SEXP {
 #if !defined(NDEBUG) || defined(VALIDATE_SEXP)
         volatile uint16_t __magic0;
 #endif
 
-        ATOM_flags_t flags;
-        void        *handler;
-
+        ATOM_flags_t     flags;
+        SEXP_datatype_t *handler;
+        
         union {
                 struct LIST list;
                 struct STR  string;

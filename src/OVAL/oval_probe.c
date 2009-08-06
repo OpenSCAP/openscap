@@ -346,6 +346,9 @@ struct oval_iterator_syschar *probe_object (struct oval_object *object,
         ptbl = pthread_getspecific (__key);
 #else
         ptbl = &__probe_sdtbl;
+        
+        if (ptbl->ctx == NULL)
+                ptbl->ctx = SEAP_CTX_new ();
 #endif
         _A(ptbl != NULL);
 
@@ -391,7 +394,7 @@ struct oval_iterator_syschar *probe_object (struct oval_object *object,
                 
                 _D("uri: %s\n", uri);
                 
-                psd = SEAP_connect (&(ptbl->ctx), uri, 0);
+                psd = SEAP_connect (ptbl->ctx, uri, 0);
                 if (psd < 0) {
                         /* connect failed */
                         psd = errno;
@@ -410,11 +413,11 @@ struct oval_iterator_syschar *probe_object (struct oval_object *object,
         SEAP_msg_set (msg, sexp);
         
         puts ("--- msg ---");
-        SEXP_printft (sexp);
+        SEXP_printfa (sexp);
         puts ("\n----------");
         _D("send msg\n");
         
-        if (SEAP_sendmsg (&(ptbl->ctx), psd, msg) != 0) {
+        if (SEAP_sendmsg (ptbl->ctx, psd, msg) != 0) {
                 /* error */
                 return (NULL);
         }
@@ -423,7 +426,7 @@ struct oval_iterator_syschar *probe_object (struct oval_object *object,
         
         _D("recv msg\n");
         
-        if (SEAP_recvmsg (&(ptbl->ctx), psd, &msg) != 0) {
+        if (SEAP_recvmsg (ptbl->ctx, psd, &msg) != 0) {
                 /* error */
                 return (NULL);
         }
