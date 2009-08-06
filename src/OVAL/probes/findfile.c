@@ -2,7 +2,7 @@
 #include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <linux/limits.h>
+#include <limits.h>
 #include <dirent.h>
 #include <stdlib.h>
 #include <errno.h>
