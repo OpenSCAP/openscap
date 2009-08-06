@@ -1,11 +1,10 @@
 #include <stdlib.h>
 #include <string.h>
-#include <config.h>
 #include <assert.h>
 #include <time.h>
 #include <sys/types.h>
 #include <unistd.h>
-#include "public/sm_alloc.h"
+#include "../public/sm_alloc.h"
 #include "common.h"
 #include "bitmap.h"
 
