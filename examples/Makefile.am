@@ -20,7 +20,8 @@ test_syschar_LDADD = $(top_builddir)/src/libopenscap.la
 if WANT_PROBES
 check_PROGRAMS += sexp_test  test_findfile test_rpminfo test_probes
 TESTS += SEAP/parser_valid-test.sh SEAP/parser_invalid-test.sh OVAL/test_probes.sh
-EXTRA_DIST += SEAP/parser_valid-test.sh SEAP/parser_invalid-test.sh OVAL/test_probes.c OVAL/scap-rhel5-oval.xml
+EXTRA_DIST += SEAP/parser_valid-test.sh SEAP/parser_invalid-test.sh OVAL/test_probes.sh OVAL/scap-rhel5-oval.xml
+EXTRA_DIST += OVAL/test_probe_rpminfo.xml OVAL/test_probe_runlevel.xml OVAL/test_probe_filecontent.xml
 
 test_findfile_SOURCES = OVAL/test_findfile.c
 test_findfile_CFLAGS = -I$(top_srcdir)/src/OVAL/probes/SEAP/public -I$(top_srcdir)/src/OVAL/probes -I$(top_srcdir)/src/OVAL

@@ -190,36 +190,36 @@ AC_ARG_ENABLE([oval],
      esac],[oval=yes])
 
 AC_ARG_ENABLE([probes],
-     [  --enable-probes         enable compilation of probes [[default=no]]],
+     [  --enable-probes         enable compilation of probes [[default=yes]]],
      [case "${enableval}" in
        yes) probes=yes ;;
        no)  probes=no  ;;
        *) AC_MSG_ERROR([bad value ${enableval} for --enable-probes]) ;;
-     esac],[probes=no])
+     esac],[probes=yes])
 
 AC_ARG_ENABLE([probes-independent],
-     [  --enable-probes-independent    enable compilation of probes independent of the base system [[default=no]]],
+     [  --enable-probes-independent    enable compilation of probes independent of the base system [[default=yes]]],
      [case "${enableval}" in
        yes) probes_independent=yes ;;
        no)  probes_independent=no  ;;
        *) AC_MSG_ERROR([bad value ${enableval} for --enable-probes-independent]) ;;
-     esac],[probes_independent=no])
+     esac],[probes_independent=yes])
 
 AC_ARG_ENABLE([probes-unix],
-     [  --enable-probes-unix    enable compilation of probes for UNIX based systems [[default=no]]],
+     [  --enable-probes-unix    enable compilation of probes for UNIX based systems [[default=yes]]],
      [case "${enableval}" in
        yes) probes_unix=yes ;;
        no)  probes_unix=no  ;;
        *) AC_MSG_ERROR([bad value ${enableval} for --enable-probes-unix]) ;;
-     esac],[probes_unix=no])
+     esac],[probes_unix=yes])
 
 AC_ARG_ENABLE([probes-redhat],
-     [  --enable-probes-redhat  enable compilation of probes for Fedora/RHEL OS [[default=no]]],
+     [  --enable-probes-redhat  enable compilation of probes for Fedora/RHEL OS [[default=yes]]],
      [case "${enableval}" in
        yes) probes_rh=yes ;;
        no)  probes_rh=no  ;;
        *) AC_MSG_ERROR([bad value ${enableval} for --enable-probes-redhat]) ;;
-     esac],[probes_rh=no])
+     esac],[probes_rh=yes])
      
 AC_ARG_ENABLE([cvss],
      [  --enable-cvss           include support for CVSS [[default=yes]]],
