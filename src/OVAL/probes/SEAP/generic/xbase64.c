@@ -1,6 +1,5 @@
 #include <sys/types.h>
-#include <config.h>
-#include "public/sm_alloc.h"
+#include "../public/sm_alloc.h"
 #include "xbase64.h"
 
 #if defined(WANT_XBASE64)

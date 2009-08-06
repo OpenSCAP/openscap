@@ -1,4 +1,4 @@
-AUTOMAKE_OPTIONS= subdir-objects nostdinc
+AUTOMAKE_OPTIONS= subdir-objects
 noinst_LTLIBRARIES= libseap.la
 
 libseap_la_SOURCES= generic/bfind.c		\
@@ -50,7 +50,7 @@ libseap_la_SOURCES= generic/bfind.c		\
 		    _seap-packet.h		\
 		    _seap-error.h
 
-libseap_la_CFLAGS= @pthread_cflags@ -DUSE_XMALLOC -DXMALLOC_EXIT -DWANT_BASE64 -I$(top_srcdir) -I. -I public/ 
+libseap_la_CFLAGS= @pthread_cflags@ -DUSE_XMALLOC -DXMALLOC_EXIT -DWANT_BASE64 -I$(top_srcdir) -I. -I $(top_srcdir)/src/OVAL/probes/SEAP/public/ 
 libseap_la_LDFLAGS= @pthread_ldflags@
 
 include_HEADERS= public/seap-command.h	\

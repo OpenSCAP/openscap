@@ -2,8 +2,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <assert.h>
-#include <config.h>
-#include "public/sm_alloc.h"
+#include "../public/sm_alloc.h"
 #include "common.h"
 
 #ifndef _A
