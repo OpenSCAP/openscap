@@ -1,3 +1,4 @@
+#include <pthread.h>
 #include "generic/bitmap.h"
 #include "_sexp-parse.h"
 #include "_seap-scheme.h"
@@ -7,6 +8,7 @@ int SEAP_desc_add (SEAP_desctable_t *sd_table, SEXP_pstate_t *pstate,
                          SEAP_scheme_t scheme, void *scheme_data)
 {
         bitmap_bitn_t sd;
+        pthread_mutexattr_t mutex_attr;
         
         sd = bitmap_setfree (&(sd_table->bitmap));
         
@@ -28,6 +30,14 @@ int SEAP_desc_add (SEAP_desctable_t *sd_table, SEXP_pstate_t *pstate,
                 sd_table->sd[sd].cmd_c_table = SEAP_cmdtbl_new ();
                 sd_table->sd[sd].cmd_w_table = SEAP_cmdtbl_new ();
 
+                pthread_mutexattr_init (&mutex_attr);
+                pthread_mutexattr_settype (&mutex_attr, PTHREAD_MUTEX_RECURSIVE);
+                
+                pthread_mutex_init (&(sd_table->sd[sd].r_lock), &mutex_attr);
+                pthread_mutex_init (&(sd_table->sd[sd].w_lock), &mutex_attr);
+                
+                pthread_mutexattr_destroy (&mutex_attr);
+                
                 return ((int)sd);
         }
 

@@ -33,7 +33,7 @@ void *SEAP_packet_settype (SEAP_packet_t *packet, uint8_t type)
 {
         _A(packet != NULL);
         _A(type == SEAP_PACKET_MSG ||
-           type == SEAP_PACKET_ERR ||
+           type == SEAP_PACKET_CMD ||
            type == SEAP_PACKET_ERR);
 
         packet->type = type;
@@ -322,7 +322,7 @@ int SEAP_packet_sexp2cmd (SEXP_t *sexp_cmd, SEAP_cmd_t *seap_cmd)
         
         seap_cmd->args = SEXP_list_nth (sexp_cmd, ++i);
         
-        return (-1);
+        return (0);
 }
 
 SEXP_t *SEAP_packet_cmd2sexp (SEAP_cmd_t *cmd)
@@ -664,6 +664,40 @@ eloop_exit:
         return (0);
 }
 
+int SEAP_packet_recv_bytype (SEAP_CTX_t *ctx, int sd, SEAP_packet_t **packet, uint8_t type)
+{
+        int ret;
+        SEAP_packet_t *pck;
+        SEAP_desc_t   *dsc;
+
+        _A(ctx    != NULL);
+        _A(packet != NULL);
+        _A(type == SEAP_PACKET_CMD ||
+           type == SEAP_PACKET_MSG ||
+           type == SEAP_PACKET_ERR);
+        
+        dsc = SEAP_desc_get (&(ctx->sd_table), sd);
+        
+        if (dsc == NULL)
+                return (-1);
+        
+        for (;;) {
+                pck = NULL;
+                ret = SEAP_packet_recv (ctx, sd, &pck);
+        
+                if (ret != 0)
+                        return (ret);
+                else if (pck->type == type)
+                        break;
+                else if (pqueue_add (dsc->pck_queue, pck) != 0)
+                        return (-1);
+        }
+        
+        *packet = pck;
+
+        return (ret);
+}
+
 int SEAP_packet_send (SEAP_CTX_t *ctx, int sd, SEAP_packet_t *packet)
 {
         SEXP_t *packet_sexp;
@@ -698,4 +732,9 @@ int SEAP_packet_send (SEAP_CTX_t *ctx, int sd, SEAP_packet_t *packet)
         SEXP_free (packet_sexp);
 
         return (ret);
+}
+
+int SEAP_packet_enqueue (SEAP_CTX_t *ctx, int sd, SEAP_packet_t *packet)
+{
+        return (-1);
 }

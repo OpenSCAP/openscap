@@ -1123,6 +1123,38 @@ char *SEXP_string_cstr (const SEXP_t *sexp)
         }
 }
 
+char *SEXP_string_cstr_r (const SEXP_t *sexp, char *buf, size_t len)
+{
+        size_t i;
+
+        if (sexp == NULL) {
+                errno = EFAULT;
+                return (NULL);
+        }
+
+        SEXP_VALIDATE(sexp);
+
+        if (SEXP_TYPE(sexp) != ATOM_STRING) {
+                errno = EINVAL;
+                return (NULL);
+        }
+
+        if (sexp->atom.string.len >= len) {
+                errno = ENOBUFS;
+                return (NULL);
+        }
+
+        for (i = 0; (i < sexp->atom.string.len &&
+                     isprint(sexp->atom.string.str[i])); ++i)
+        {
+                buf[i] = sexp->atom.string.str[i];
+        }
+        
+        buf[i] = '\0';
+        
+        return (buf);
+}
+
 const char *SEXP_string_cstrp (const SEXP_t *sexp)
 {
         if (sexp == NULL) {

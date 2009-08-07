@@ -60,6 +60,8 @@ int     SEXP_strncmp (const SEXP_t *sexp, const char *str, size_t n);
 int     SEXP_strncoll (const SEXP_t *sexp, const char *str, size_t n);
 int     SEXP_stringp (const SEXP_t *sexp);
 char   *SEXP_string_cstr (const SEXP_t *sexp);
+char   *SEXP_string_cstr_r (const SEXP_t *sexp, char *buf, size_t len);
+
 const char *SEXP_string_cstrp (const SEXP_t *sexp);
 SEXP_t *SEXP_string_substr (const SEXP_t *sexp, size_t off, size_t len);
 char   *SEXP_string_subcstr (const SEXP_t *sexp, size_t off, size_t len);

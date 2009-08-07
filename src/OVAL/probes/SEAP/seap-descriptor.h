@@ -5,6 +5,7 @@
 #include <pthread.h>
 #include <stdint.h>
 #include "generic/bitmap.h"
+#include "generic/pqueue.h"
 #include "_sexp-types.h"
 #include "_sexp-parse.h"
 #include "_sexp-output.h"
@@ -26,12 +27,11 @@ typedef struct {
         void          *scheme_data; /* Protocol/Scheme related data */
         
         
-        SEXP_t *pck_queue;
         SEXP_t *msg_queue;
         SEXP_t *err_queue;
         SEXP_t *cmd_queue;
         
-        //queue_t *pck_queue;
+        pqueue_t *pck_queue;
         
         //SEAP_packet_t *pck_queue;
 
@@ -73,6 +73,7 @@ static inline int SEAP_desc_trylock (pthread_mutex_t *m)
         case EBUSY:
                 return (0);
         case EINVAL:
+                errno = EINVAL;
         default:
                 return (-1);
         }

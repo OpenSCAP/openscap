@@ -25,6 +25,8 @@ SEAP_cmd_t *SEAP_packet_cmd (SEAP_packet_t *packet);
 SEAP_err_t *SEAP_packet_err (SEAP_packet_t *packet);
 
 int SEAP_packet_recv (SEAP_CTX_t *ctx, int sd, SEAP_packet_t **packet);
-int SEAP_packet_send (SEAP_CTX_t *ctx, int sd, SEAP_packet_t  *packet);
+int SEAP_packet_recv_bytype (SEAP_CTX_t *ctx, int sd, SEAP_packet_t **packet, uint8_t type);
+int SEAP_packet_send (SEAP_CTX_t *ctx, int sd, SEAP_packet_t *packet);
+int SEAP_packet_enqueue (SEAP_CTX_t *ctx, int sd, SEAP_packet_t *packet);
 
 #endif /* SEAP_PACKET_H */

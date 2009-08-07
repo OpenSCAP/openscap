@@ -152,7 +152,7 @@ int  SEAP_cmdtbl_backendS_del (SEAP_cmdtbl_t *t, SEAP_cmdrec_t *r)
 SEAP_cmdrec_t *SEAP_cmdtbl_backendS_get (SEAP_cmdtbl_t *t, SEAP_cmdcode_t c)
 {
         _A(t != NULL);
-        return (Stable_get ((Stable_t *)t->table, c));
+        return (t->table == NULL ? NULL : Stable_get ((Stable_t *)t->table, c));
 }
 
 int  SEAP_cmdtbl_backendS_cmp (SEAP_cmdrec_t *a, SEAP_cmdrec_t *b)
