@@ -34,6 +34,6 @@ typedef struct {
 #define PROBE_SDTBL_INITIALIZER { NULL, 0, NULL }
 
 SEXP_t *oval_object_to_sexp (const char *typestr, struct oval_object *object);
-struct oval_iterator_syschar *sexp_to_oval_state (SEXP_t *sexp);
+struct oval_syschar *sexp_to_oval_state (SEXP_t *sexp);
 
 #endif /* OVAL_PROBE_H */

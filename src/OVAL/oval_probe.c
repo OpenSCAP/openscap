@@ -26,6 +26,32 @@ const oval_probe_t __probe_tbl[] = {
 
 #define PROBETBLSIZE (sizeof __probe_tbl / sizeof (oval_probe_t))
 
+static SEXP_t *probe_cmd_obj_eval  (SEXP_t *sexp, void *arg);
+static SEXP_t *probe_cmd_ste_fetch (SEXP_t *sexp, void *arg);
+
+static int probe_cmd_init (SEAP_CTX_t *ctx, struct oval_object_model *model)
+{
+        _A(ctx != NULL);
+        
+        if (SEAP_cmd_register (ctx, PROBECMD_OBJ_EVAL, SEAP_CMDREG_USEARG,
+                               &probe_cmd_obj_eval, (void *)model) != 0)
+        {
+                _D("FAIL: can't register command: %s: errno=%u, %s.\n",
+                   "obj_eval", errno, strerror (errno));
+                return (-1);
+        }
+        
+        if (SEAP_cmd_register (ctx, PROBECMD_STE_FETCH, SEAP_CMDREG_USEARG,
+                               &probe_cmd_ste_fetch, (void *)model) != 0)
+        {
+                _D("FAIL: can't register command: %s: errno=%u, %s.\n",
+                   "ste_fetch", errno, strerror (errno));
+                return (-1);
+        }
+        
+        return (0);
+}
+
 #if defined(THREAD_SAFE)
 static pthread_once_t __init_once = PTHREAD_ONCE_INIT;
 static pthread_key_t  __key;
@@ -45,6 +71,8 @@ static void probe_sdtbl_init (void)
         ptbl->memb = NULL;
         ptbl->count = 0;
         ptbl->ctx = SEAP_CTX_new ();
+
+        /* TODO */
         
         (void) pthread_setspecific (key, (void *)ptbl);
         return;
@@ -154,6 +182,7 @@ SEXP_t *oval_entity_to_sexp (struct oval_entity *ent)
                 SEXP_list_add (elm, elm_name);
                 
         } else { /* value */
+                SEXP_t *val_sexp;
                 struct oval_value *val;
                 
                 val = oval_entity_value (ent);
@@ -163,11 +192,23 @@ SEXP_t *oval_entity_to_sexp (struct oval_entity *ent)
                 /* CHECK: check in val? */
                 switch (oval_entity_datatype (ent)) {
                 case OVAL_DATATYPE_VERSION:
+
+                        val_sexp = SEXP_string_newf (oval_value_text (val));
+                        SEXP_datatype_set (val_sexp, "version");
+                        
+                        goto add_string_val;
                 case OVAL_DATATYPE_EVR_STRING:
+
+                        val_sexp = SEXP_string_newf (oval_value_text (val));
+                        SEXP_datatype_set (val_sexp, "evr_str");
+                        
+                        goto add_string_val;
                 case OVAL_DATATYPE_STRING:
                         
-                        SEXP_list_add (elm,
-                                       SEXP_string_newf (oval_value_text (val)));
+                        val_sexp = SEXP_string_newf (oval_value_text (val));
+                        
+                add_string_val:
+                        SEXP_list_add (elm, val_sexp);
                         break;
                 case OVAL_DATATYPE_FLOAT:
                         
@@ -180,9 +221,11 @@ SEXP_t *oval_entity_to_sexp (struct oval_entity *ent)
                                        SEXP_number_newd (oval_value_integer (val)));
                         break;
                 case OVAL_DATATYPE_BOOLEAN:
+                        val_sexp = SEXP_number_newhhu (oval_value_boolean (val));
                         
-                        SEXP_list_add (elm,
-                                       SEXP_number_newd (oval_value_boolean (val)));
+                        SEXP_datatype_set (val_sexp, "bool");
+                        SEXP_list_add (elm, val_sexp);
+                        
                         break;
                 default:
                         break;
@@ -321,25 +364,60 @@ SEXP_t *oval_object_to_sexp (const char *typestr, struct oval_object *object)
         return (obj_sexp);
 }
 
-struct oval_iterator_syschar *sexp_to_oval_state (SEXP_t *sexp)
+SEXP_t *oval_state_to_sexp (struct oval_state *state)
+{
+        SEXP_t *ste, *ste_name, *ste_id, *ste_ent;
+        char buffer[128];
+        const oval_probe_t *probe;
+        struct oval_iterator_entity *entities;
+        
+        probe = search_probe (oval_state_subtype (state));
+
+        if (probe == NULL) {
+                _D("FAIL: unknown subtype: %d\n", oval_state_subtype (state));
+                return (NULL);
+        }
+
+        ste      = SEXP_list_new ();
+        ste_name = SEXP_list_new ();
+
+        snprintf (buffer, sizeof buffer, "%s_state", probe->typestr);
+        
+        SEXP_list_add (ste_name, SEXP_string_newf (buffer));
+        SEXP_list_add (ste_name, SEXP_string_newf (":id"));
+        SEXP_list_add (ste_name, SEXP_string_newf (oval_state_id (state)));
+
+        SEXP_list_add (ste, ste_name);
+        
+        entities = oval_state_entities (state);
+        
+        while (oval_iterator_entity_has_more (entities)) {
+                ste_ent = oval_entity_to_sexp (oval_iterator_entity_next (entities));
+                SEXP_list_add (ste, ste_ent);
+        }
+        
+        return (ste);
+}
+
+struct oval_syschar *sexp_to_oval_state (SEXP_t *sexp)
 {
         _A(sexp != NULL);
         /* TODO */
         return (NULL);
 }
 
-struct oval_iterator_syschar *probe_object (struct oval_object *object,
-                                            struct oval_iterator_variable_binding *binding)
+struct oval_syschar *probe_object (struct oval_object *object, struct oval_object_model *model)
 {
         probe_sdtbl_t *ptbl = NULL;
         SEXP_t *sexp;
         int psd;
         SEAP_msg_t *msg;
                 
-        const oval_probe_t *probe;
-        struct oval_iterator_syschar *sysch = NULL;
+        const  oval_probe_t *probe;
+        struct oval_syschar *sysch = NULL;
         
         _A(object != NULL);
+        _A(model  != NULL);
 
 #if defined(THREAD_SAFE)
         pthread_once (&__init_once, probe_sdtbl_init);
@@ -347,8 +425,12 @@ struct oval_iterator_syschar *probe_object (struct oval_object *object,
 #else
         ptbl = &__probe_sdtbl;
         
-        if (ptbl->ctx == NULL)
+        if (ptbl->ctx == NULL) {
                 ptbl->ctx = SEAP_CTX_new ();
+                
+                if (probe_cmd_init (ptbl->ctx, model) != 0)
+                        return (NULL);
+        }
 #endif
         _A(ptbl != NULL);
 
@@ -441,4 +523,65 @@ struct oval_iterator_syschar *probe_object (struct oval_object *object,
         /* cleanup */
 
         return (sysch);
+}
+
+static SEXP_t *probe_cmd_obj_eval (SEXP_t *sexp, void *arg)
+{
+        char   *id_str;
+        struct oval_object *obj;
+        struct oval_object_model *model = (struct oval_object_model *)arg;
+
+        if (SEXP_stringp (sexp)) {
+                id_str = SEXP_string_cstr (sexp);
+                obj    = get_oval_object (model, id_str);
+
+                if (obj == NULL) {
+                        _D("FAIL: can't find obj: id=%s\n", id_str);
+                        oscap_free (id_str);
+                        return (NULL);
+                }
+                
+                if (probe_object (obj, model) == NULL) {
+                        _D("FAIL: obj eval failed: id=%s\n", id_str);
+                        oscap_free (id_str);
+                        return (NULL);
+                }
+                
+                oscap_free (id_str);
+                
+                return (sexp);
+        } else {
+                _D("FAIL: invalid argument: type=%s\n", SEXP_strtype (sexp));
+                return (NULL);
+        }
+}
+
+static SEXP_t *probe_cmd_ste_fetch (SEXP_t *sexp, void *arg)
+{
+        SEXP_t *id, *ste_list, *ste_sexp;
+        char   *id_str;
+        struct oval_state *ste;
+        struct oval_object_model *model = (struct oval_object_model *)arg;
+        
+        ste_list = SEXP_list_new ();
+        
+        SEXP_list_foreach (id, sexp) {
+                if (SEXP_stringp (id)) {
+                        id_str = SEXP_string_cstr (id);
+                        ste    = get_oval_state (model, id_str);
+
+                        if (ste == NULL) {
+                                _D("FAIL: can't find ste: id=%s\n", id_str);
+                                SEXP_list_free (ste_list);
+                                oscap_free (id_str);
+                        }
+                        
+                        ste_sexp = oval_state_to_sexp (ste);
+                        SEXP_list_add (ste_list, ste_sexp);
+                        
+                        oscap_free (id_str);
+                }
+        }
+
+        return (ste_list);
 }

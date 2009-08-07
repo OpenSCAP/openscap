@@ -424,7 +424,7 @@ oval_result_enum SEXP_OVALent_cmp(SEXP_t *ent, SEXP_t *val2)
 	op_sexp = SEXP_OVALelm_getattrval(ent, "operation");
 	op = SEXP_number_getd(op_sexp);
 
-	dtype = SEXP_OVALelm_getdatatype(ent);
+	dtype = SEXP_OVALelm_getdatatype(ent, 1);
 
 	switch (dtype) {
 	case OVAL_DATATYPE_BINARY:
@@ -477,8 +477,8 @@ oval_result_enum SEXP_OVALentste_cmp(SEXP_t *ent_ste, SEXP_t *ent_itm)
 		break;
 	}
 
-	if (SEXP_OVALelm_getdatatype(ent_ste) !=
-	    SEXP_OVALelm_getdatatype(ent_itm)) {
+	if (SEXP_OVALelm_getdatatype(ent_ste, 1) !=
+	    SEXP_OVALelm_getdatatype(ent_itm, 1)) {
 		return OVAL_RESULT_ERROR;
 	}
 
