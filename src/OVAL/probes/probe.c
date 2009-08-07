@@ -456,12 +456,203 @@ int SEXP_OVALelm_hasattr (SEXP_t *elm, const char *name)
         return (ret);
 }
 
-int SEXP_OVALelm_setdatatype (SEXP_t *elm, int type)
+int SEXP_OVALelm_setdatatype (SEXP_t *elm, uint32_t nth, int type)
 {
-	return (-1);
+        SEXP_t *val;
+        
+        _A(elm != NULL);
+        _A(nth > 0);
+
+        val = SEXP_OVALelm_getval (elm, nth);
+        
+        if (val == NULL)
+                return (-1);
+        
+	switch (type) {
+        case OVAL_DATATYPE_BINARY:
+                return SEXP_datatype_set (val, "binary");
+        case OVAL_DATATYPE_BOOLEAN:
+                return SEXP_datatype_set (val, "bool");
+        case OVAL_DATATYPE_EVR_STRING:
+                return SEXP_datatype_set (val, "evr_str");
+        case OVAL_DATATYPE_FILESET_REVISTION:
+                return SEXP_datatype_set (val, "fset_rev");
+        case OVAL_DATATYPE_FLOAT:
+                /* TODO */
+                return (-1);
+        case OVAL_DATATYPE_IOS_VERSION:
+                return SEXP_datatype_set (val, "ios_ver");
+        case OVAL_DATATYPE_VERSION:
+                return SEXP_datatype_set (val, "version");
+        case OVAL_DATATYPE_INTEGER:
+                /* TODO */
+                return (-1);
+        case OVAL_DATATYPE_STRING:
+                return (SEXP_stringp (val) ? 0 : -1);
+        default:
+                return (-1);
+        }
 }
 
-int SEXP_OVALelm_getdatatype (SEXP_t *elm)
+int SEXP_OVALelm_getdatatype (SEXP_t *elm, uint32_t nth)
 {
-	return (-1);
+        SEXP_t *val;
+        const char *str;
+        
+        _A(elm != NULL);
+        _A(nth > 0);
+
+        val = SEXP_OVALelm_getval (elm, nth);
+        
+        if (val == NULL)
+                return (-1);
+
+        str = SEXP_datatype (val);
+        
+        if (str != NULL) {
+                switch (str[0]) {
+                case 'b':
+                        if (strcmp (str, "bool") == 0)
+                                return (OVAL_DATATYPE_BOOLEAN);
+                        if (strcmp (str, "binary") == 0)
+                                return (OVAL_DATATYPE_BINARY);
+                        break;
+                case 'e':
+                        if (strcmp (str, "evr_str") == 0)
+                                return (OVAL_DATATYPE_EVR_STRING);
+                        break;
+                case 'f':
+                        /* FIXME: typo in oval_definitions.h?
+                           if (strcmp (str, "fset_rev") == 0)
+                           return (OVAL_DATYPE_FILESET_REVISION);
+                        */
+                        break;
+                case 'i':
+                        if (strcmp (str, "ios_ver") == 0)
+                                return (OVAL_DATATYPE_IOS_VERSION);
+                        break;
+                case 'v':
+                        if (strcmp (str, "version") == 0)
+                                return (OVAL_DATATYPE_VERSION);
+                        break;
+                }
+        } else {
+                switch (SEXP_typeof (val)) {
+                case SEXP_TYPE_NUMBER:
+                        /* FIXME: float vs. integer */
+                        return (OVAL_DATATYPE_INTEGER);
+                case SEXP_TYPE_STRING:
+                        return (OVAL_DATATYPE_STRING);
+                }
+        }
+        
+        return (OVAL_DATATYPE_UNKNOWN);
+}
+
+char *SEXP_OVALelm_name_cstr  (const SEXP_t *elm)
+{
+        SEXP_t *elm_name;
+                        
+        if (elm == NULL) {
+                errno = EFAULT;
+                return (NULL);
+        }
+
+        elm_name = SEXP_list_first (elm);
+        
+        if (elm_name == NULL) {
+                errno = EINVAL;
+                return (NULL);
+        }
+        
+        switch (SEXP_typeof (elm_name)) {
+        case SEXP_TYPE_LIST:
+                
+                elm_name = SEXP_list_first (elm_name);
+                
+                if (!SEXP_stringp (elm_name)) {
+                        errno = EINVAL;
+                        return (NULL);
+                }
+                
+        case SEXP_TYPE_STRING:
+                if (SEXP_string_length (elm_name) > 0) {
+                        return (SEXP_string_cstr (elm_name));
+                }
+        }
+        
+        errno = EINVAL;
+        return (NULL);
+}
+
+char *SEXP_OVALelm_name_cstr_r  (const SEXP_t *elm, char *buf, size_t len)
+{
+        SEXP_t *elm_name;
+                        
+        if (elm == NULL) {
+                errno = EFAULT;
+                return (NULL);
+        }
+
+        elm_name = SEXP_list_first (elm);
+        
+        if (elm_name == NULL) {
+                errno = EINVAL;
+                return (NULL);
+        }
+        
+        switch (SEXP_typeof (elm_name)) {
+        case SEXP_TYPE_LIST:
+                
+                elm_name = SEXP_list_first (elm_name);
+                
+                if (!SEXP_stringp (elm_name)) {
+                        errno = EINVAL;
+                        return (NULL);
+                }
+                
+        case SEXP_TYPE_STRING:
+                if (SEXP_string_length (elm_name) > 0) {
+                        return (SEXP_string_cstr_r (elm_name, buf, len));
+                }
+        }
+        
+        errno = EINVAL;
+        return (NULL);
+}
+
+const char *SEXP_OVALelm_name_cstrp (const SEXP_t *elm)
+{
+        SEXP_t *elm_name;
+                        
+        if (elm == NULL) {
+                errno = EFAULT;
+                return (NULL);
+        }
+        
+        elm_name = SEXP_list_first (elm);
+        
+        if (elm_name == NULL) {
+                errno = EINVAL;
+                return (NULL);
+        }
+        
+        switch (SEXP_typeof (elm_name)) {
+        case SEXP_TYPE_LIST:
+                
+                elm_name = SEXP_list_first (elm_name);
+                
+                if (!SEXP_stringp (elm_name)) {
+                        errno = EINVAL;
+                        return (NULL);
+                }
+                
+        case SEXP_TYPE_STRING:
+                if (SEXP_string_length (elm_name) > 0) {
+                        return (SEXP_string_cstrp (elm_name));
+                }
+        }
+
+        errno = EINVAL;
+        return (NULL);
 }
