@@ -34,7 +34,7 @@ int main(int argc, char **argv)
 		struct oval_object *object = oval_iterator_object_next(objects);
 		oval_object_to_print(object, "    ", index);
 		printf("Callin probe on object\n");
-		probe_object(object, NULL);
+		probe_object(object, model);
 	}
 
 	return 0;

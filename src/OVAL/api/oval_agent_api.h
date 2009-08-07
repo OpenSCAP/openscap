@@ -260,9 +260,8 @@ int export_results(struct oval_result *, struct export_target *);
 void load_oval_syschar(struct oval_syschar_model*, struct import_source*,
 			oval_xml_error_handler, void*);
 
-struct oval_iterator_syschar *probe_object(struct oval_object *,
-					   struct oval_iterator_variable_binding
-					   *);
+struct oval_syschar *probe_object(struct oval_object *, struct oval_object_model *model);
+
 struct oval_result_test *resolve_test(struct oval_test *,
 				      struct oval_iterator_syschar *,
 				      struct oval_iterator_variable_binding *);
