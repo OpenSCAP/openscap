@@ -255,14 +255,14 @@ SEXP_t *probe_main(SEXP_t *probe_in, int *err)
 	}
 
 	/* parse request */
-	if ( (behaviors_elm = SEXP_OVALobj_getelm(probe_in, "behaviors", 1)) == NULL ||
-	     (path_elm = SEXP_OVALobj_getelm(probe_in, "path", 1)) == NULL ||
+	if ( (path_elm = SEXP_OVALobj_getelm(probe_in, "path", 1)) == NULL ||
 	     (filename_elm = SEXP_OVALobj_getelm(probe_in, "filename", 1)) == NULL ||
 	     (pattern = SEXP_string_cstr(SEXP_OVALobj_getelmval(probe_in, "pattern", 1, 1))) == NULL ||
 	     (instance_elm = SEXP_OVALobj_getelm(probe_in, "instance", 1)) == NULL) {
 		*err = PROBE_ENOELM;
 		return NULL;
 	}
+	behaviors_elm = SEXP_OVALobj_getelm(probe_in, "behaviors", 1);
 
 	int fcnt;
 	struct pfdata pfd;
