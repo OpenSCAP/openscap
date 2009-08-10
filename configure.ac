@@ -87,6 +87,7 @@ AC_SEARCH_LIBS(
 	[rpm],
 	[rpm_cflags=`pkg-config rpm --cflags`
 	 rpm_libs=`pkg-config rpm --libs`
+	 have_librpm=yes
 	]
 )
 
@@ -181,6 +182,20 @@ AC_FUNC_MALLOC
 AC_FUNC_REALLOC
 AC_CHECK_FUNCS([memset strcasecmp strdup])
 
+
+AC_CANONICAL_HOST
+
+# Determine the platform
+# (For now just assume unix)
+probes_unix=yes
+AC_DEFINE([PLATFORM_UNIX], [1], [Indicator for a Unix type OS])
+
+case "${host}" in
+    *-*-linux*)
+        probes_linux=yes
+    ;;
+esac
+
 AC_ARG_ENABLE([oval],
      [  --enable-oval           include support for OVAL [[default=yes]]],
      [case "${enableval}" in
@@ -211,15 +226,15 @@ AC_ARG_ENABLE([probes-unix],
        yes) probes_unix=yes ;;
        no)  probes_unix=no  ;;
        *) AC_MSG_ERROR([bad value ${enableval} for --enable-probes-unix]) ;;
-     esac],[probes_unix=yes])
+     esac],)
 
-AC_ARG_ENABLE([probes-redhat],
-     [  --enable-probes-redhat  enable compilation of probes for Fedora/RHEL OS [[default=yes]]],
+AC_ARG_ENABLE([probes-linux],
+     [  --enable-probes-linux  enable compilation of probes for Linux based systems [[default=yes]]],
      [case "${enableval}" in
-       yes) probes_rh=yes ;;
-       no)  probes_rh=no  ;;
-       *) AC_MSG_ERROR([bad value ${enableval} for --enable-probes-redhat]) ;;
-     esac],[probes_rh=yes])
+       yes) probes_linux=yes ;;
+       no)  probes_linux=no  ;;
+       *) AC_MSG_ERROR([bad value ${enableval} for --enable-probes-linux]) ;;
+     esac],)
      
 AC_ARG_ENABLE([cvss],
      [  --enable-cvss           include support for CVSS [[default=yes]]],
@@ -286,7 +301,8 @@ AM_CONDITIONAL([WANT_XCCDF],  test "$xccdf"  = yes)
 AM_CONDITIONAL([WANT_PROBES], test "$probes" = yes)
 AM_CONDITIONAL([WANT_PROBES_INDEPENDENT], test "$probes_independent" = yes)
 AM_CONDITIONAL([WANT_PROBES_UNIX], test "$probes_unix" = yes)
-AM_CONDITIONAL([WANT_PROBES_REDHAT], test "$probes_rh" = yes)
+AM_CONDITIONAL([WANT_PROBES_LINUX], test "$probes_linux" = yes)
+AM_CONDITIONAL([ENABLE_PROBE_RPMINFO], test "$have_librpm" = yes)
 AM_CONDITIONAL([WANT_BINDINGS], test "$bindings" = yes)
 
 AC_CONFIG_FILES([Makefile

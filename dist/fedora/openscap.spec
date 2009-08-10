@@ -53,7 +53,7 @@ libraries can be used by perl.
 %setup -q
 
 %build
-%configure --enable-probes --enable-probes-independent --enable-probes-unix --enable-probes-redhat
+%configure --enable-probes --enable-probes-independent --enable-probes-unix --enable-probes-linux
 make %{?_smp_mflags}
 
 %install

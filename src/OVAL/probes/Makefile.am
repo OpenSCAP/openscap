@@ -35,11 +35,13 @@ probe_runlevel_SOURCES= unix/runlevel.c
 probe_runlevel_CFLAGS=
 probe_runlevel_LDFLAGS=
 
-if WANT_PROBES_REDHAT
+if WANT_PROBES_LINUX
+if ENABLE_PROBE_RPMINFO
 pkglibexec_PROGRAMS += probe_rpminfo
 
-probe_rpminfo_SOURCES= unix/linux/redhat/rpminfo.c
+probe_rpminfo_SOURCES= unix/linux/rpminfo.c
 probe_rpminfo_CFLAGS= @rpm_cflags@ 
 probe_rpminfo_LDFLAGS= @rpm_libs@
+endif
 endif
 endif
