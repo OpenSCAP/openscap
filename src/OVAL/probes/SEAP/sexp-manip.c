@@ -886,6 +886,13 @@ double SEXP_number_getf (const SEXP_t *sexp)
         }
 }
 
+NUM_type_t SEXP_number_type(const SEXP_t *sexp)
+{
+	if (sexp == NULL || SEXP_TYPE(sexp) != ATOM_NUMBER)
+		return NUM_NONE;
+	return sexp->atom.number.type;
+}
+
 #if 0
 long double SEXP_number_getlf (const SEXP_t *sexp)
 {

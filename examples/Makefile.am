@@ -18,7 +18,7 @@ test_syschar_CFLAGS = -I$(top_srcdir)/src/OVAL
 test_syschar_LDADD = $(top_builddir)/src/libopenscap.la
 
 if WANT_PROBES
-check_PROGRAMS += sexp_test  test_findfile test_rpminfo test_probes
+check_PROGRAMS += sexp_test  test_findfile test_rpminfo test_probes test_sexp_to_syschar
 TESTS += SEAP/parser_valid-test.sh SEAP/parser_invalid-test.sh OVAL/test_probes.sh
 EXTRA_DIST += SEAP/parser_valid-test.sh SEAP/parser_invalid-test.sh OVAL/test_probes.sh OVAL/scap-rhel5-oval.xml
 EXTRA_DIST += OVAL/test_probe_rpminfo.xml OVAL/test_probe_runlevel.xml OVAL/test_probe_filecontent.xml
@@ -38,6 +38,11 @@ test_rpminfo_LDADD = $(top_builddir)/src/libopenscap.la
 test_probes_SOURCES = OVAL/test_probes.c
 test_probes_CFLAGS = -I$(top_srcdir)/src/OVAL
 test_probes_LDADD = $(top_builddir)/src/libopenscap.la
+
+test_sexp_to_syschar_SOURCES = OVAL/test_sexp_to_syschar.c
+test_sexp_to_syschar_CFLAGS = -I$(top_srcdir)/src/OVAL/probes/SEAP/public -I$(top_srcdir)/src/OVAL -I$(top_srcdir)/src/OVAL/probes @libxml_cflags@
+test_sexp_to_syschar_LDADD = $(top_builddir)/src/libopenscap.la
+
 endif
 endif
 

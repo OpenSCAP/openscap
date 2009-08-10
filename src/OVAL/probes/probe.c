@@ -171,6 +171,9 @@ SEXP_t *SEXP_OVALobj_create (const char *obj_name, SEXP_t *obj_attrs, ...)
         return (sexp);
 }
 
+// FIXME
+#include "SEAP/_sexp-types.h"
+
 SEXP_t *SEXP_OVALobj_attr_add (SEXP_t *obj, const char *name, SEXP_t *value)
 {
         SEXP_t *attr;
@@ -192,8 +195,9 @@ SEXP_t *SEXP_OVALobj_attr_add (SEXP_t *obj, const char *name, SEXP_t *value)
                 SEXP_t *list;
                 
                 list = SEXP_list_new();
+				SEXP_list_first(obj)->flags &= ~SEXP_FLAGFREE;  // FIXME: ugly dirty hack ATM
                 SEXP_list_add (list, SEXP_list_first (obj));
-                SEXP_list_add (list, attr);
+                SEXP_list_join (list, attr);
                 
                 SEXP_copy (SEXP_list_first (obj), list);
         }
@@ -278,24 +282,42 @@ SEXP_t *SEXP_OVALelm_attr_del (SEXP_t *elm, const char *name)
         return (NULL);
 }
 
+const char* SEXP_OVAL_STATUS_ATTR_NAME = "status";
+
+
 int SEXP_OVALobj_setstatus (SEXP_t *obj, int status)
 {
-        return (-1);
+	_A(obj != NULL);
+	_A(status >= OVAL_STATUS_ERROR && status <= OVAL_STATUS_NOTCOLLECTED);
+	_A(!SEXP_OVALobj_hasattr(obj, SEXP_OVAL_STATUS_ATTR_NAME)); /* TODO: handle attribute overwrite */
+
+	SEXP_OVALobj_attr_add(obj, SEXP_OVAL_STATUS_ATTR_NAME, SEXP_number_newd(status));
+	return status;
 }
 
 int SEXP_OVALobj_setelmstatus (SEXP_t *obj, const char *name, uint32_t nth, int status)
 {
-        return (-1);
+	_A(obj != NULL);
+	_A(name != NULL);
+
+	SEXP_t* elm = SEXP_OVALobj_getelm(obj, name, nth);
+
+	if (elm == NULL) return (-1);
+
+	return SEXP_OVALelm_setstatus(elm, status);
 }
 
 int SEXP_OVALelm_setstatus (SEXP_t *elm, int status)
 {
-        return (-1);
+        return SEXP_OVALobj_setstatus(elm, status);
 }
 
 int SEXP_OVALelm_getstatus (SEXP_t *elm)
 {
-        return (-1);
+	_A(elm != NULL);
+
+	int ret = SEXP_number_getd(SEXP_OVALelm_getattrval(elm, SEXP_OVAL_STATUS_ATTR_NAME));
+	return (ret ? ret : OVAL_STATUS_EXISTS);
 }
 
 int SEXP_OVALobj_validate (SEXP_t *obj)
@@ -372,7 +394,7 @@ SEXP_t *SEXP_OVALelm_getval (SEXP_t *elm, uint32_t nth)
 
 SEXP_t *SEXP_OVALelm_getattrval (SEXP_t *elm, const char *name)
 {
-        SEXP_t *val, *attrs;
+        SEXP_t *attrs;
 
         SEXP_VALIDATE(elm);
 
@@ -503,7 +525,7 @@ int SEXP_OVALelm_getdatatype (SEXP_t *elm, uint32_t nth)
         _A(nth > 0);
 
         val = SEXP_OVALelm_getval (elm, nth);
-        
+
         if (val == NULL)
                 return (-1);
 

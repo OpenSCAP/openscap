@@ -15,6 +15,8 @@ int _test_error_handler(struct oval_xml_error *error, void *null)
 	return 1;
 }
 
+void oval_syschar_to_print(struct oval_syschar*, const char*, int);
+
 int main(int argc, char **argv)
 {
 	struct oval_object_model *model = oval_object_model_new();
@@ -34,7 +36,12 @@ int main(int argc, char **argv)
 		struct oval_object *object = oval_iterator_object_next(objects);
 		oval_object_to_print(object, "    ", index);
 		printf("Callin probe on object\n");
-		probe_object(object, model);
+		struct oval_syschar* syschar = probe_object(object, model);
+		printf("System characteristics:\n");
+		if (syschar)
+			oval_syschar_to_print(syschar, "    ", index);
+		else
+			printf("(NULL)\n");
 	}
 
 	return 0;

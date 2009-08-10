@@ -63,6 +63,9 @@ void oval_sysdata_to_print(struct oval_sysdata *, char *, int);
 int oval_sysdata_parse_tag(xmlTextReaderPtr, struct oval_parser_context *);
 
 void set_oval_sysdata_status(struct oval_sysdata *, oval_syschar_status_enum);
+void set_oval_sysdata_subtype(struct oval_sysdata *sysdata, oval_subtype_enum subtype);
+void set_oval_sysdata_subtype_name(struct oval_sysdata *data, char *name);
+void add_oval_sysdata_item(struct oval_sysdata *, struct oval_sysitem *);
 
 struct oval_syschar *oval_syschar_new(struct oval_object *);
 void oval_syschar_free(struct oval_syschar *);
@@ -88,6 +91,7 @@ oval_syschar_status_enum oval_syschar_status_parse(xmlTextReaderPtr, char *,
 //			    struct oval_parser_context *context,
 //			    oval_affected_consumer, void *);
 
+struct oval_sysitem *oval_sysitem_new();
 typedef void (*oval_sysitem_consumer)(struct oval_sysitem *, void* client);
 int oval_sysitem_parse_tag(
 		xmlTextReaderPtr,
@@ -95,4 +99,8 @@ int oval_sysitem_parse_tag(
 	   oval_sysitem_consumer, void*);
 void oval_sysitem_free(struct oval_sysitem *);
 void oval_sysitem_to_print(struct oval_sysitem *, char *, int);
+void set_oval_sysitem_name(struct oval_sysitem *sysitem, char *name);
+void set_oval_sysitem_value(struct oval_sysitem *sysitem, char *value);
+void set_oval_sysitem_status(struct oval_sysitem *sysitem, oval_syschar_status_enum status);
+void set_oval_sysitem_datatype(struct oval_sysitem *sysitem, oval_datatype_enum type);
 #endif

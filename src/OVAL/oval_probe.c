@@ -9,6 +9,7 @@
 #endif
 #include "oval_probe.h"
 #include "probes/probe.h"
+#include "oval_system_characteristics_impl.h"
 
 #ifndef _A
 #define _A(x) assert(x)
@@ -399,11 +400,164 @@ SEXP_t *oval_state_to_sexp (struct oval_state *state)
         return (ste);
 }
 
-struct oval_syschar *sexp_to_oval_state (SEXP_t *sexp)
+
+struct oval_sysitem* oval_sysitem_from_sexp(SEXP_t *sexp)
+{
+	_A(sexp);
+	SEXP_t *sval;
+	char *key;
+	char *val;
+
+	key = SEXP_OVALelm_name_cstr(sexp);
+	if (!key)
+		return NULL;
+
+	sval = SEXP_OVALelm_getval(sexp, 1);
+	switch (SEXP_typeof(sval)) {
+		case SEXP_TYPE_STRING: {
+			val = SEXP_string_cstr(sval);
+			break;
+		}
+		case SEXP_TYPE_NUMBER: {
+			size_t allocsize = 64;
+			val = malloc(allocsize * sizeof(char));
+			*val = '\0';
+
+			switch (SEXP_number_type(sval)) {
+				case NUM_DOUBLE:
+					snprintf(val, allocsize, "%f", SEXP_number_getf(sval));
+					break;
+				case NUM_INT8:
+				case NUM_INT16:
+				case NUM_INT32:
+				case NUM_INT64:
+					snprintf(val, allocsize, "%lld", SEXP_number_getlld(sval));
+					break;
+				case NUM_UINT8:
+				case NUM_UINT16:
+				case NUM_UINT32:
+				case NUM_UINT64:
+					snprintf(val, allocsize, "%llu", SEXP_number_getllu(sval));
+					break;
+				case NUM_NONE:
+				default:
+					_A(false);
+					break;
+			}
+
+			val[allocsize - 1] = '\0';
+			val = oscap_realloc(val, strlen(val) + 1);
+			break;
+		}
+		default: {
+			_D("Unsupported type: %u", SEXP_typeof(sval));
+			oscap_free(key);
+			return NULL;
+		}
+	}
+
+	int datatype = SEXP_OVALelm_getdatatype(sexp, 1);
+	if (datatype < 0)
+		datatype = 0;
+
+	int status = SEXP_OVALelm_getstatus(sexp);
+
+	struct oval_sysitem* item = oval_sysitem_new();
+
+	set_oval_sysitem_status(item, status);
+	set_oval_sysitem_name(item, key);
+
+	if (status == OVAL_STATUS_EXISTS)
+		set_oval_sysitem_value(item, val);
+
+	set_oval_sysitem_datatype(item, datatype);
+
+	return item;
+}
+
+struct oval_sysdata *oval_sysdata_from_sexp(SEXP_t *sexp)
+{
+	_A(sexp);
+
+	static int id_counter = 1;  /* TODO better ID generator */
+
+	char *name = SEXP_OVALelm_name_cstr(sexp);
+	struct oval_sysdata* sysdata = NULL;
+
+	if (name == NULL)
+		return NULL;
+	else {
+		char *endptr = strrchr(name, '_');
+
+		if (strcmp(endptr, "_item") != 0)
+			goto cleanup;
+
+		*endptr = '\0'; // cut off the '_item' part
+	}
+
+	int type = 0;
+	for (size_t i = 0; i < PROBETBLSIZE; ++i) {
+		if (strcmp(__probe_tbl[i].typestr, name) == 0) {
+			type = __probe_tbl[i].typenum;
+			break;
+		}
+	}
+
+	_D("Syschar entry type: %d '%s' => %s", type, name, (type ? "OK" : "FAILED to decode"));
+
+	char *id = oscap_alloc(sizeof(char) * 16);
+	SEXP_t *sub;
+	struct oval_sysitem* sysitem;
+
+	int status = SEXP_OVALelm_getstatus(sexp);
+
+	sprintf(id, "%d", id_counter++);
+	sysdata = oval_sysdata_new(id);
+	set_oval_sysdata_status(sysdata, status);
+	set_oval_sysdata_subtype(sysdata, type);
+	set_oval_sysdata_subtype_name(sysdata, name);
+	
+	if (status == OVAL_STATUS_EXISTS) {
+		for (int i = 2; (sub = SEXP_list_nth(sexp, i)) != NULL; ++i)
+			if ((sysitem = oval_sysitem_from_sexp(sub)) != NULL)
+				add_oval_sysdata_item(sysdata, sysitem);
+	}
+
+cleanup:
+	oscap_free(name);
+	return sysdata;
+}
+
+struct oval_syschar *sexp_to_oval_state (SEXP_t *sexp, struct oval_object* object)
 {
         _A(sexp != NULL);
-        /* TODO */
-        return (NULL);
+		struct oval_syschar *syschar = oval_syschar_new(object);
+		oval_syschar_apply_sexp(syschar, sexp, object);
+        return (syschar);
+}
+
+int oval_syschar_apply_sexp(struct oval_syschar *syschar, SEXP_t *sexp, struct oval_object* object)
+{
+	_A(sexp != NULL);
+	_A(syschar != NULL);
+
+	SEXP_t *s;
+	struct oval_sysdata* sysdata;
+
+	if (oval_syschar_object(syschar) == NULL)
+		set_oval_syschar_object(syschar, object);
+	else if (object == NULL)
+		object = oval_syschar_object(syschar);
+
+	_A(object == oval_syschar_object(syschar));
+
+	SEXP_list_foreach (s, sexp) {
+		sysdata = oval_sysdata_from_sexp(s);
+		if (sysdata)
+			add_oval_syschar_sysdata(syschar, sysdata);
+	}
+	
+	return 1;
 }
 
 struct oval_syschar *probe_object (struct oval_object *object, struct oval_object_model *model)
@@ -518,7 +672,7 @@ struct oval_syschar *probe_object (struct oval_object *object, struct oval_objec
         puts ("\n----------");
         
         /* translate the result to oval state */
-        sysch = sexp_to_oval_state (SEAP_msg_get(msg));
+        sysch = sexp_to_oval_state (SEAP_msg_get(msg), object);
         
         /* cleanup */
 

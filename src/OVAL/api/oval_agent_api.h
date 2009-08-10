@@ -58,6 +58,11 @@ struct oval_syschar_model;
  */
 struct oval_object_model *oval_object_model_new();
 
+/**
+ * Free OVAL object model.
+ */
+void oval_object_model_free(struct oval_object_model * model);
+
 typedef enum {
 	XML_VALIDITY_WARNING = 1,
 	XML_VALIDITY_ERROR   = 2,

@@ -510,6 +510,7 @@ eloop_exit:
         for (;;) {
                 data_buffer = sm_alloc (SEAP_RECVBUF_SIZE);
                 data_buflen = SEAP_RECVBUF_SIZE;
+				errno = 0;
                 data_length = SCH_RECV(dsc->scheme, dsc, data_buffer, data_buflen, 0);
                 
                 if (data_length <= 0) {

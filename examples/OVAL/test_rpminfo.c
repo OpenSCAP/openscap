@@ -3,8 +3,6 @@
 #include <errno.h>
 #include "api/oval_agent_api.h"
 
-struct oval_iterator_syschar *probe_object(struct oval_object *,
-					   struct oval_iterator_variable_binding *);
 
 int _test_error_handler(struct oval_xml_error *error, void *null)
 {

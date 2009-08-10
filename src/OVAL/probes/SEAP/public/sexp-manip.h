@@ -29,6 +29,7 @@ SEXP_t *SEXP_number_newf  (double n);
 SEXP_t *SEXP_number_newlf (long double n);
 
 int     SEXP_number_get  (const SEXP_t *sexp, void *ptr, NUM_type_t type);
+NUM_type_t SEXP_number_type(const SEXP_t *sexp);
 
 int           SEXP_number_getd   (const SEXP_t *sexp);
 short int     SEXP_number_gethd  (const SEXP_t *sexp);

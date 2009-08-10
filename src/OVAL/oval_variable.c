@@ -138,10 +138,12 @@ struct oval_variable *oval_variable_new(char *id)
 
 void oval_variable_free(struct oval_variable *variable)
 {
+	if (variable == NULL)
+		return;
 	if (variable->id != NULL)
 		free(variable->id);
 	if (variable->extension != NULL) {
-		switch (variable->type) {
+	switch (variable->type) {
 		case OVAL_VARIABLE_LOCAL:{
 				oval_component_free(variable->extension);
 			}

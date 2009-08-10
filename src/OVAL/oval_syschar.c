@@ -71,6 +71,11 @@ void set_oval_syschar_flag
 	syschar->flag = flag;
 }
 
+void set_oval_syschar_object(struct oval_syschar *syschar, struct oval_object *object)
+{
+	syschar->object = object;
+}
+
 
 struct oval_iterator_message *oval_syschar_messages(struct oval_syschar *syschar)
 {
@@ -275,12 +280,12 @@ void oval_syschar_to_print(struct oval_syschar *syschar, char *indent,
 	}
 	{//sysinfo
 		struct oval_sysinfo *sysinfo = oval_syschar_sysinfo(syschar);
-		oval_sysinfo_to_print(sysinfo, nxtindent, 0);
+		if (sysinfo) oval_sysinfo_to_print(sysinfo, nxtindent, 0);
 	}
 
 	{//object
 		struct oval_object *object = oval_syschar_object(syschar);
-		oval_object_to_print(object, nxtindent, 0);
+		if (object) oval_object_to_print(object, nxtindent, 0);
 	}
 	{//sysdata
 		struct oval_iterator_sysdata *sysdatas = oval_syschar_sysdata(syschar);
