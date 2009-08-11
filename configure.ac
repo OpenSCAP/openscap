@@ -326,3 +326,23 @@ AC_CONFIG_FILES([Makefile
                  examples/Makefile])
 
 AC_OUTPUT
+
+echo "******************************************************"
+echo "OpenSCAP will be compiled with the following settings:"
+echo
+echo "CCE enabled:                   $cce"
+echo "CPE enabled:                   $cpe"
+echo "CVE enabled:                   $cve"
+echo "CVSS enabled:                  $cvss"
+echo "OVAL enabled:                  $oval"
+echo "OVAL probes enabled:           $probes"
+
+if test "x$probes" = "xyes"; then
+echo "  independent probes enabled:  $probes_independent"
+echo "  unix probes enabled:         $probes_unix"
+echo "  linux probes enabled:        $probes_linux"
+fi
+
+echo "XCCDF enabled:                 $xccdf"
+echo "python bindings enabled:       $bindings"
+echo "debugging flags enabled:       $debug"
