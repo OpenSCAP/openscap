@@ -17,7 +17,14 @@ libprobe_a_SOURCES= \
 LDADD= $(top_builddir)/src/libopenscap.la libprobe.a @pcre_libs@
 
 if WANT_PROBES_INDEPENDENT
-pkglibexec_PROGRAMS += probe_textfilecontent54 probe_xmlfilecontent
+pkglibexec_PROGRAMS += \
+	probe_family \
+	probe_textfilecontent54 \
+	probe_xmlfilecontent
+
+probe_family_SOURCES= independent/family.c
+probe_family_CFLAGS=
+probe_family_LDFLAGS=
 
 probe_textfilecontent54_SOURCES= independent/textfilecontent54.c
 probe_textfilecontent54_CFLAGS= @pcre_cflags@

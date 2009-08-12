@@ -190,6 +190,9 @@ AC_CANONICAL_HOST
 probes_unix=yes
 AC_DEFINE([PLATFORM_UNIX], [1], [Indicator for a Unix type OS])
 
+probes_independent=yes
+probes_linux=no
+
 case "${host}" in
     *-*-linux*)
         probes_linux=yes
@@ -218,7 +221,7 @@ AC_ARG_ENABLE([probes-independent],
        yes) probes_independent=yes ;;
        no)  probes_independent=no  ;;
        *) AC_MSG_ERROR([bad value ${enableval} for --enable-probes-independent]) ;;
-     esac],[probes_independent=yes])
+     esac],)
 
 AC_ARG_ENABLE([probes-unix],
      [  --enable-probes-unix    enable compilation of probes for UNIX based systems [[default=yes]]],
