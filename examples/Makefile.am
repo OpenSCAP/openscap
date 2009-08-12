@@ -39,14 +39,6 @@ test_sexp_to_syschar_SOURCES = OVAL/test_sexp_to_syschar.c
 test_sexp_to_syschar_CFLAGS = -I$(top_srcdir)/src/OVAL/probes/SEAP/public -I$(top_srcdir)/src/OVAL -I$(top_srcdir)/src/OVAL/probes @libxml_cflags@
 test_sexp_to_syschar_LDADD = $(top_builddir)/src/libopenscap.la
 
-if ENABLE_PROBE_RPMINFO
-check_PROGRAMS += test_rpminfo
-
-test_rpminfo_SOURCES = OVAL/test_rpminfo.c
-test_rpminfo_CFLAGS = -I$(top_srcdir)/src/OVAL/probes/SEAP/public -I$(top_srcdir)/src/OVAL
-test_rpminfo_LDADD = $(top_builddir)/src/libopenscap.la
-endif
-
 endif
 endif
 
