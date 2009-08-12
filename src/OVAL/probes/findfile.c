@@ -8,6 +8,7 @@
 #include <errno.h>
 #include <unistd.h>
 #include <regex.h>
+#include <assert.h>
 
 #include "findfile.h"
 
@@ -47,6 +48,10 @@ int find_files(SEXP_t * spath, SEXP_t *sfilename, SEXP_t *behaviors,
 	rglob_t rglobbuf;
 	setting_t *setting;	
 	int finds = 0;
+
+	assert(spath);
+	assert(sfilename);
+	assert(behaviors);
 
 	name = SEXP_string_cstr(SEXP_OVALelm_getval(sfilename, 1));
 	path = SEXP_string_cstr(SEXP_OVALelm_getval(spath, 1));
