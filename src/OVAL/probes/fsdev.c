@@ -234,8 +234,11 @@ fsdev_t *fsdev_strinit (const char *fs_names)
 
 void fsdev_free (fsdev_t *lfs)
 {
-        free (lfs->ids);
-        free (lfs);
+	if( lfs != NULL ) {
+	        free (lfs->ids);
+        	free (lfs);
+	}
+	return;
 }
 
 int fsdev_search (fsdev_t *lfs, void *id)

@@ -49,7 +49,7 @@ include_HEADERS += api/oval_results.h api/oval_system_characteristics.h
 includedir = $(prefix)/include/lib@PACKAGE@
 
 if WANT_PROBES
-liboval_la_CFLAGS  += -I$(top_srcdir)/src/OVAL/probes/ -I$(top_srcdir)/src/OVAL/probes/SEAP/public
+liboval_la_CFLAGS  += -I$(top_srcdir)/src -I$(top_srcdir)/src/OVAL/probes/ -I$(top_srcdir)/src/OVAL/probes/SEAP/public
 liboval_la_SOURCES += probes/probe.c \
 		      probes/fsdev.c \
 		      probes/findfile.c \

@@ -1,3 +1,30 @@
+/*! \file findfile.c
+ *  \brief auxiliary find_files() function used in different probes
+ *
+ */
+
+/*
+ * Copyright 2008 Red Hat Inc., Durham, North Carolina.
+ * All Rights Reserved.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ * Authors:
+ *      Peter Vrabec <pvrabec@redhat.com>
+ */
+
 #include <stdio.h>
 #include <string.h>
 #include <sys/types.h>
@@ -9,11 +36,12 @@
 #include <unistd.h>
 #include <regex.h>
 #include <assert.h>
+#include <common/alloc.h>
 
 #include "findfile.h"
 
 typedef struct {
-	regex_t re;
+	regex_t *re;
 	char *file;
 	char *direction;
 	char *follow;
@@ -35,22 +63,28 @@ static int rglob(const char *pattern, rglob_t *result);
 static void find_paths_recursion(const char *path, regex_t *re, rglob_t *result );
 static void rglobfree(rglob_t * result);
 
-/* 
+
+/* ************************************* PUBLIC ***********************************  */
+
+/*  Collect files and paths according to defined behavior. This function can be used in 
+ *  these probes: file_object, textfilecontent54
+ *  
  *
- * ************* PUBLIC *************  
- *
+ *  @spath  The path to a file on the machine, not including the filename
+ *  @sfilename The name of a file
+ *  @behaviors Specify find_files settings
+ *  @cb Callback that is called for each hit
  */
 int find_files(SEXP_t * spath, SEXP_t *sfilename, SEXP_t *behaviors,
                int (*cb) (const char *pathname, const char *filename, void *arg), void *arg) {
 	char *name = NULL, *path = NULL;
-	int i, rc;
-	int max_depth;
+	setting_t *setting = NULL;	
+	int i, rc, max_depth;
 	rglob_t rglobbuf;
-	setting_t *setting;	
 	int finds = 0;
 
-	assert(spath);
 	assert(sfilename);
+	assert(spath);
 	assert(behaviors);
 
 	name = SEXP_string_cstr(SEXP_OVALelm_getval(sfilename, 1));
@@ -62,8 +96,8 @@ int find_files(SEXP_t * spath, SEXP_t *sfilename, SEXP_t *behaviors,
 	setting->follow = SEXP_string_cstr(SEXP_OVALelm_getattrval(behaviors,"recurse"));
 	setting->cb = cb;
 
-
 	/* Init list of local devices */
+	setting->dev_list = NULL;
 	if( !SEXP_strncmp(SEXP_OVALelm_getattrval(behaviors,"recurse_file_system"), "local",6) ) {
                 if ((setting->dev_list = fsdev_init (NULL, 0)) == NULL) {
 			goto error;
@@ -71,14 +105,15 @@ int find_files(SEXP_t * spath, SEXP_t *sfilename, SEXP_t *behaviors,
 	}
         
 	/* Filename */
-	if( !SEXP_strncmp(SEXP_OVALelm_getattrval(sfilename,"operation"), "pattern match", 14) ) {
-		if( regcomp(&(setting->re), name, REG_EXTENDED) != 0 ) {
-	       	        goto error;
+	setting->re = NULL;
+	setting->file = name;
+	if( name ) {
+		if( !SEXP_strncmp(SEXP_OVALelm_getattrval(sfilename,"operation"), "pattern match", 14) ) {
+			setting->re = malloc(sizeof(regex_t));
+			if( regcomp(setting->re, name, REG_EXTENDED) != 0 ) {
+		       	        goto error;
+			}
 		}
-		setting->file = NULL;
-	}
-	else {
-		setting->file = strdup(name);
 	}
 
 	/* Is there a '/' at the end of the path? */
@@ -116,28 +151,21 @@ int find_files(SEXP_t * spath, SEXP_t *sfilename, SEXP_t *behaviors,
 
 
 error:
-	free(name);
-	free(path);
+	oscap_free(name);  /* setting->file is same adress*/
+	oscap_free(path);
 
-	free(setting->follow);
-	free(setting->direction);
-	if (setting->dev_list != NULL)
-		fsdev_free (setting->dev_list);
-	if (setting->file != NULL)
-		free(setting->file);
-	else
-		regfree(&(setting->re));
-	free(setting);
+	oscap_free(setting->follow);
+	oscap_free(setting->direction);
+	fsdev_free (setting->dev_list);
+	if (setting->re != NULL)
+		regfree(setting->re);
+	oscap_free(setting);
 	
 	return finds;
 }
 
 
-/* 
- *
- * ************* LOCAL *************  
- *
- */
+/* ********************************* PRIVATE *******************************  */
 
 
 /*
@@ -176,19 +204,20 @@ static int find_files_recursion(const char* path, setting_t * setting, int depth
 		}
 
 		if( !S_ISDIR(st.st_mode) ) {
-			/* match filename*/
-			if( setting->file ) {
+			if( setting->re ) { /* patter match */
+				if( regexec(setting->re, pDirent->d_name, 0, NULL, 0) == 0 ) {
+					rc++;
+					(setting->cb)(path, pDirent->d_name, arg);
+				}
+			} else if ( setting->file ) { /* filename match */
 				if(!strncmp(setting->file, pDirent->d_name, pDirent->d_reclen)) {
 					rc++;
 					(setting->cb)(path, pDirent->d_name, arg);
 				}
 			}
-			else {
-				if( regexec(&(setting->re), pDirent->d_name, 0, NULL, 0) == 0 ) {
-					rc++;
-					(setting->cb)(path, pDirent->d_name, arg);
-				}
-			}
+		} else if( !setting->re && !setting->file ) { /*  collect directories */
+			rc++;
+			(setting->cb)(path, pDirent->d_name, arg);
 		}
 	}
 
@@ -346,7 +375,6 @@ static void rglobfree(rglob_t * result) {
 	int i;
 
 	for(i=0; i<result->pathc; i++) {
-		/*printf("result->pathv[%d]: %s\n", i, result->pathv[i]);*/
 		free(result->pathv[i]);
 	}
 	free(result->pathv);
