@@ -13,6 +13,28 @@
 #define PATH_MAX 4096
 #endif
 
+#undef OS_FREEBSD
+#undef OS_LINUX
+#undef OS_SOLARIS
+#undef OS_SUNOS
+#undef OS_WINDOWS
+
+#if defined(__FreeBSD__)
+# define OS_FREEBSD
+#elif defined(__linux__)
+# define OS_LINUX
+#elif defined(sun) || defined(__sun)
+# if defined(__SVR4) || defined(__svr4__)
+#  define OS_SOLARIS
+# else
+#  define OS_SUNOS
+# endif
+#elif defined(_WIN32)
+# define OS_WINDOWS
+#else
+# error "Sorry, your OS isn't supported."
+#endif
+
 static const char *strfiletype (mode_t mode)
 {
         switch (mode & S_IFMT) {
@@ -69,14 +91,32 @@ int file_cb (const char *p, const char *f, void *ptr)
                                             SEXP_string_newf ("%hu", st.st_uid),
                                             
                                             "a_time", NULL,
-                                            SEXP_string_newf ("%u", st.st_atimespec.tv_sec),
+                                            SEXP_string_newf ("%u",
+#if defined(OS_FREEBSD)
+                                                              st.st_atimespec.tv_sec
+#elif defined(OS_LINUX) || defined(OS_SOLARIS)
+                                                              st.st_atim.tv_sec
+#endif
+                                                    ),
                                             
                                             "c_time", NULL,
-                                            SEXP_string_newf ("%u", st.st_ctimespec.tv_sec),
-
+                                            SEXP_string_newf ("%u",
+#if defined(OS_FREEBSD)
+                                                              st.st_ctimespec.tv_sec
+#elif defined(OS_LINUX) || defined(OS_SOLARIS)
+                                                              st.st_ctim.tv_sec
+#endif
+                                                    ),
+                                            
                                             "m_time", NULL,
-                                            SEXP_string_newf ("%u", st.st_mtimespec.tv_sec),
-
+                                            SEXP_string_newf ("%u",
+#if defined(OS_FREEBSD)
+                                                              st.st_ctimespec.tv_sec
+#elif defined(OS_LINUX) || defined(OS_SOLARIS)
+                                                              st.st_ctim.tv_sec
+#endif
+                                                    ),
+                                            
                                             "size", NULL,
 #if defined(_FILE_OFFSET_BITS)
 # if   _FILE_OFFSET_BITS == 64
@@ -94,10 +134,10 @@ int file_cb (const char *p, const char *f, void *ptr)
 #endif
                                             "suid", NULL,
                                             SEXP_number_newu (st.st_mode & S_ISUID ? 1 : 0),
-
+                                            
                                             "sticky", NULL,
-                                            SEXP_number_newu (st.st_mode & S_ISTXT ? 1 : 0),
-
+                                            SEXP_number_newu (st.st_mode & S_ISVTX ? 1 : 0),
+                                            
                                             "uread", NULL,
                                             SEXP_number_newu (st.st_mode & S_IRUSR ? 1 : 0),
 
