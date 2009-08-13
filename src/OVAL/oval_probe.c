@@ -17,12 +17,14 @@
 
 /* KEEP THIS LIST SORTED! (by subtype) */
 const oval_probe_t __probe_tbl[] = {
+        /*  7001 */ { INDEPENDENT_FAMILY,               "family",            "probe_family"            },
         /*  7006 */ { INDEPENDENT_TEXT_FILE_CONTENT_54, "textfilecontent54", "probe_textfilecontent54" },
-        /*  7010 */ { INDEPENDENT_XML_FILE_CONTENT, "xmlfilecontent", "probe_xmlfilecontent" },
-        /*  9001 */ { LINUX_DPKG_INFO, "dpkginfo", "probe_dpkginfo" },
-        /*  9003 */ { LINUX_RPM_INFO,  "rpminfo",  "probe_rpminfo"  },
-        /*  9004 */ { LINUX_SLACKWARE_PKG_INFO_TEST, "slackwarepkginfo", "probe_slackwarepkginfo" },
-        /* 13006 */ { UNIX_RUNLEVEL, "runlevel", "probe_runlevel" }
+        /*  7010 */ { INDEPENDENT_XML_FILE_CONTENT,     "xmlfilecontent",    "probe_xmlfilecontent"    },
+        /*  9001 */ { LINUX_DPKG_INFO,                  "dpkginfo",          "probe_dpkginfo"          },
+        /*  9003 */ { LINUX_RPM_INFO,                   "rpminfo",           "probe_rpminfo"           },
+        /*  9004 */ { LINUX_SLACKWARE_PKG_INFO_TEST,    "slackwarepkginfo",  "probe_slackwarepkginfo"  },
+        /* 13001 */ { UNIX_FILE,                        "file",              "probe_file"              },
+        /* 13006 */ { UNIX_RUNLEVEL,                    "runlevel",          "probe_runlevel"          }
 };
 
 #define PROBETBLSIZE (sizeof __probe_tbl / sizeof (oval_probe_t))

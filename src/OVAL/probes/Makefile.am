@@ -36,11 +36,15 @@ probe_xmlfilecontent_LDFLAGS= @libxml_libs@
 endif
 
 if WANT_PROBES_UNIX
-pkglibexec_PROGRAMS += probe_runlevel
+pkglibexec_PROGRAMS += probe_runlevel probe_file
 
 probe_runlevel_SOURCES= unix/runlevel.c
 probe_runlevel_CFLAGS=
 probe_runlevel_LDFLAGS=
+
+probe_file_SOURCES= unix/file.c
+probe_file_CFLAGS=
+probe_file_LDFLAGS=
 
 if WANT_PROBES_LINUX
 if ENABLE_PROBE_RPMINFO
