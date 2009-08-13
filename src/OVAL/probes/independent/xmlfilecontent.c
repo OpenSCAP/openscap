@@ -214,7 +214,25 @@ SEXP_t *probe_main(SEXP_t *probe_in, int *err, void __attribute__((unused)) *arg
 		*err = PROBE_ENOELM;
 		return NULL;
 	}
+
+	/* canonicalize behaviors */
 	behaviors_elm = SEXP_OVALobj_getelm(probe_in, "behaviors", 1);
+	if (behaviors_elm == NULL) {
+		SEXP_t * behaviors_new;
+		behaviors_new = SEXP_OVALelm_create("behaviors",
+						    SEXP_OVALattr_create ("max_depth", SEXP_number_newd (1),
+									  "recurse_direction", SEXP_string_newf ("none"),
+									  NULL),
+						    NULL /* val */,
+						    NULL /* end */);
+		behaviors_elm = SEXP_list_first(behaviors_new);
+	}
+	else {
+		if (!SEXP_OVALelm_hasattr (behaviors_elm, "max_depth"))
+			SEXP_OVALelm_attr_add (behaviors_elm,"max_depth", SEXP_number_newd (1));
+		if (!SEXP_OVALelm_hasattr (behaviors_elm, "recurse_direction"))
+			SEXP_OVALelm_attr_add (behaviors_elm,"recurse_direction", SEXP_string_newf ("none"));
+	}
 
 	int fcnt;
 	struct pfdata pfd;
