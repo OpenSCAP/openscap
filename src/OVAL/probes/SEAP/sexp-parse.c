@@ -413,8 +413,8 @@ SEXP_t *SEXP_parse (SEXP_psetup_t *setup, const char *buf, size_t buflen, SEXP_p
                                 break;
                 }
                 
-                
-                ++d;
+                d = 1;
+                num_type = valid = 0;
                 goto L_NUMBER_stage1;
         L_NUMBER:
                 d = num_type = valid = 0;
