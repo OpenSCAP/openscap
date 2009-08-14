@@ -108,7 +108,7 @@ int find_files(SEXP_t * spath, SEXP_t *sfilename, SEXP_t *behaviors,
 	setting->re = NULL;
 	setting->file = name;
 	if( name ) {
-		if( !SEXP_strncmp(SEXP_OVALelm_getattrval(sfilename,"operation"), "pattern match", 14) ) {
+		if( SEXP_number_getu(SEXP_OVALelm_getattrval(sfilename,"operation")) ==  OPERATION_PATTERN_MATCH ) {
 			setting->re = malloc(sizeof(regex_t));
 			if( regcomp(setting->re, name, REG_EXTENDED) != 0 ) {
 		       	        goto error;
@@ -121,8 +121,9 @@ int find_files(SEXP_t * spath, SEXP_t *sfilename, SEXP_t *behaviors,
 	if( path[i] == '/' )
 		path[i] = '\0';
 
+
 	/* Evaluate path(s) */
-	if( !SEXP_strncmp(SEXP_OVALelm_getattrval(spath,"operation"), "pattern match", 14) ) {
+	if( SEXP_number_getu(SEXP_OVALelm_getattrval(spath,"operation")) ==  OPERATION_PATTERN_MATCH ) {
 		rglobbuf.offs=10;
 		rc = rglob(path, &rglobbuf);
 		if(!rc && rglobbuf.pathc > 0) {

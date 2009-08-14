@@ -1108,18 +1108,24 @@ char *SEXP_string_cstr (const SEXP_t *sexp)
                 if (SEXP_TYPE(sexp) == ATOM_STRING) {
                         str = sm_alloc (sizeof (char) * (sexp->atom.string.len + 1));
                         
+                        /*
                         for (i = 0; (i < sexp->atom.string.len &&
                                      isprint(sexp->atom.string.str[i])); ++i)
                         {
                                 str[i] = sexp->atom.string.str[i];
                         }
+                        */
+
+                        memcpy (str, sexp->atom.string.str, sizeof (char) * (sexp->atom.string.len));
+                        str[sexp->atom.string.len] = '\0';
                         
-                        str[i] = '\0';
-                        
+                        /*
                         if (i < sexp->atom.string.len)
                                 return sm_reallocf (str, sizeof (char) * (i + 1));
                         else
-                                return (str);
+                        */
+                        
+                        return (str);
                 } else {
                         errno = EINVAL;
                         return (NULL);
