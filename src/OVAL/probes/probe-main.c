@@ -164,14 +164,20 @@ SEXP_t *SEXP_OVALset_apply_filters(SEXP_t *items, SEXP_t *filters)
 				}
 
 				stmp = SEXP_OVALelm_getattrval(felm, "entity_check");
-				ochk = SEXP_number_getd(stmp);
+				if (stmp == NULL)
+					ochk = OVAL_CHECK_ALL;
+				else
+					ochk = SEXP_number_getd(stmp);
 				ores = SEXP_OVALent_result_bychk(elm_res, ochk);
 				SEXP_list_add(ste_res, SEXP_number_newd(ores));
 				// todo: var_check
 			}
 
 			stmp = SEXP_OVALelm_getattrval(filter, "operator");
-			oopr = SEXP_number_getd(stmp);
+			if (stmp == NULL)
+				oopr = OPERATOR_AND;
+			else
+				oopr = SEXP_number_getd(stmp);
 			ores = SEXP_OVALent_result_byopr(ste_res, oopr);
 			if (ores == OVAL_RESULT_TRUE) {
 				filtered = 1;

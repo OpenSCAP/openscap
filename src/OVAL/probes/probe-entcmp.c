@@ -422,7 +422,10 @@ oval_result_enum SEXP_OVALent_cmp(SEXP_t *ent, SEXP_t *val2)
 	}
 
 	op_sexp = SEXP_OVALelm_getattrval(ent, "operation");
-	op = SEXP_number_getd(op_sexp);
+	if (op_sexp == NULL)
+		op = OPERATION_EQUALS;
+	else
+		op = SEXP_number_getd(op_sexp);
 
 	dtype = SEXP_OVALelm_getdatatype(ent, 1);
 
