@@ -44,6 +44,13 @@ struct rpminfo_rep {
         char *signature_keyid;
 };
 
+struct rpminfo_global {
+        rpmts           rpmts;
+        pthread_mutex_t mutex;
+};
+
+static struct rpminfo_global g_rpm;
+
 void __rpminfo_rep_free (struct rpminfo_rep *ptr)
 {
         oscap_free (ptr->name);
@@ -75,7 +82,7 @@ static int get_rpminfo (struct rpminfo_req *req, struct rpminfo_rep **rep)
 	
         
         pthread_mutex_lock (&(g_rpm.mutex));
-        match = rpmtsInitIterator (RPMts, RPMTAG_NAME, (const void *)req->name, 0);
+        match = rpmtsInitIterator (g_rpm.rpmts, RPMTAG_NAME, (const void *)req->name, 0);
 	
         if (NULL == match) {
                 ret = 0;
@@ -134,13 +141,6 @@ ret:
         pthread_mutex_unlock (&(g_rpm.mutex));
         return (ret);
 }
-
-struct rpminfo_global {
-        rpmts           rpmts;
-        pthread_mutex_t mutex;
-};
-
-static struct rpminfo_global g_rpm;
 
 void *probe_init (void)
 {
