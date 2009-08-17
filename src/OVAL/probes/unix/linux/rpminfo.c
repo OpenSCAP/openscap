@@ -30,9 +30,6 @@
 #define _A(x) assert(x)
 #endif
 
-static volatile int do_init = 1;
-static rpmts RPMts = NULL;
-
 struct rpminfo_req {
         char *name;
 };
@@ -76,10 +73,15 @@ static int get_rpminfo (struct rpminfo_req *req, struct rpminfo_rep **rep)
 	size_t len;
 	errmsg_t rpmerr;
 	
-	match = rpmtsInitIterator (RPMts, RPMTAG_NAME, (const void *)req->name, 0);
-	if (NULL == match)
-		return (0);
+        
+        pthread_mutex_lock (&(g_rpm.mutex));
+        match = rpmtsInitIterator (RPMts, RPMTAG_NAME, (const void *)req->name, 0);
 	
+        if (NULL == match) {
+                ret = 0;
+                goto ret;
+	}
+        
         ret = rpmdbGetIteratorCount (match);
         
         if (ret > 0) {
@@ -126,12 +128,44 @@ static int get_rpminfo (struct rpminfo_req *req, struct rpminfo_rep **rep)
                         ret = -1;
                 }
         }
-	
+        
 	match = rpmdbFreeIterator (match);
-	return (ret);
+ret:
+        pthread_mutex_unlock (&(g_rpm.mutex));
+        return (ret);
 }
 
-SEXP_t *probe_main (SEXP_t *object, int *err)
+struct rpminfo_global {
+        rpmts           rpmts;
+        pthread_mutex_t mutex;
+};
+
+static struct rpminfo_global g_rpm;
+
+void *probe_init (void)
+{
+        if (rpmReadConfigFiles ((const char *)NULL, (const char *)NULL) != 0) {
+                _D("rpmReadConfigFiles failed: %u, %s.\n", errno, strerror (errno));
+                return (NULL);
+        }
+        
+        g_rpm.rpmts = rpmtsCreate ();
+        g_rpm.mutex = PTHREAD_MUTEX_INITIALIZER;
+        
+        return ((void *)&g_rpm);
+}
+
+void probe_fini (void *ptr)
+{
+        struct rpminfo_global *r = (struct rpminfo_global *)ptr;
+        
+        rpmtsFree (r->rpmts);
+        pthread_mutex_destroy (&(r->mutex));
+        
+        return;
+}
+
+SEXP_t *probe_main (SEXP_t *object, int *err, void *arg)
 {
         int i;
         SEXP_t *probe_out, *val, *item_sexp;
@@ -140,20 +174,6 @@ SEXP_t *probe_main (SEXP_t *object, int *err)
         struct rpminfo_req request_st;
         struct rpminfo_rep *reply_st;
 
-        if (do_init) {
-                /* Initialize RPM db */
-                if (rpmReadConfigFiles ((const char *)NULL, (const char *)NULL) != 0)
-                {
-                        _D("rpmReadConfigFiles failed: %u, %s.\n", errno, strerror (errno));
-                        *err = PROBE_EINIT;
-                        return (NULL);
-                }
-                
-                /* Initialize transaction... stuff. */
-                RPMts = rpmtsCreate ();
-                do_init = 0;
-        }
-        
         val = SEXP_OVALobj_getelmval (object, "name", 1, 1);
         request_st.name = SEXP_string_cstr (val);
         
