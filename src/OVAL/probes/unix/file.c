@@ -79,14 +79,14 @@ int file_cb (const char *p, const char *f, void *ptr)
                                             SEXP_string_newf (p),
                                             
                                             "filename", NULL,
-                                            SEXP_string_newf (f),
-
+                                            (f != NULL ? SEXP_string_newf (f) : NULL),
+                                            
                                             "type", NULL,
                                             SEXP_string_newf (strfiletype (st.st_mode)),
-
+                                            
                                             "group_id", NULL,
                                             SEXP_string_newf ("%hu", st.st_gid),
-
+                                            
                                             "user_id", NULL,
                                             SEXP_string_newf ("%hu", st.st_uid),
                                             
@@ -211,7 +211,7 @@ SEXP_t *probe_main (SEXP_t *probe_in, int *err)
                 if (!SEXP_OVALelm_hasattr (behaviors, "recurse"))
                         SEXP_OVALelm_attr_add (behaviors,
                                                "recurse", SEXP_string_newf ("symlinks and directories"));
-
+                
                 if (!SEXP_OVALelm_hasattr (behaviors, "recurse_direction"))
                         SEXP_OVALelm_attr_add (behaviors,
                                                "recurse_direction", SEXP_string_newf ("none"));
