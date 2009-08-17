@@ -87,7 +87,7 @@ void oscap_list_dump(struct oscap_list* list, oscap_dump_func dumper, int depth)
 
 bool oscap_iterator_no_filter(void* foo, void* bar) { bar = foo; return true; }
 
-inline void oscap_iterator_find_nearest(struct oscap_iterator* it)
+static inline void oscap_iterator_find_nearest(struct oscap_iterator* it)
 {
     while (it->cur && !it->filter(it->cur->data, it->user_data))
         it->cur = it->cur->next;
@@ -136,7 +136,7 @@ OSCAP_ITERATOR_GEN_T(const char*, oscap_string)
 
 #define OSCAP_DEFAULT_HSIZE 256
 
-inline unsigned int oscap_htable_hash(const char *str, size_t htable_size)
+static inline unsigned int oscap_htable_hash(const char *str, size_t htable_size)
 {
 	unsigned h = 0;
 	unsigned char *p;
