@@ -23,11 +23,11 @@ SEXP_t *SEXP_OVALste_fetch (SEXP_t *id_list)
 {
         SEXP_t *res, *ste, *id;
         uint32_t i_len, r_len;
-        
-        res = SEAP_cmd_exec (global.ctx, global.sd, 0, PROBECMD_STE_FETCH,
+                
+        i_len = SEXP_list_length (id_list);
+        res   = SEAP_cmd_exec (global.ctx, global.sd, 0, PROBECMD_STE_FETCH,
                              id_list, SEAP_CMDTYPE_SYNC, NULL, NULL);
         
-        i_len = SEXP_list_length (id_list);
         r_len = SEXP_list_length (res);
         
         if (i_len != r_len) {

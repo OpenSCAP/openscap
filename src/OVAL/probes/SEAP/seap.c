@@ -32,6 +32,10 @@ static void SEAP_CTX_initdefault (SEAP_CTX_t *ctx)
         bitmap_init (&(ctx->sd_table.bitmap), SEAP_MAX_OPENDESC);
         
         ctx->cmd_c_table = SEAP_cmdtbl_new ();
+        
+        ctx->recv_timeout = 0;
+        ctx->send_timeout = 0;
+        
         return;
 }
 

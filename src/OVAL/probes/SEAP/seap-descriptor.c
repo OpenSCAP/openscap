@@ -29,7 +29,8 @@ int SEAP_desc_add (SEAP_desctable_t *sd_table, SEXP_pstate_t *pstate,
                 sd_table->sd[sd].next_cid = 0;
                 sd_table->sd[sd].cmd_c_table = SEAP_cmdtbl_new ();
                 sd_table->sd[sd].cmd_w_table = SEAP_cmdtbl_new ();
-
+                sd_table->sd[sd].pck_queue   = pqueue_new (1024); /* FIXME */
+                
                 pthread_mutexattr_init (&mutex_attr);
                 pthread_mutexattr_settype (&mutex_attr, PTHREAD_MUTEX_RECURSIVE);
                 

@@ -931,6 +931,11 @@ SEXP_t *SEXP_string_newf (const char *fmt, ...) {
         char *str = NULL;
         SEXP_t *sexp = NULL;
         
+        if (fmt == NULL) {
+                errno = EFAULT;
+                return (NULL);
+        }
+        
         va_start (ap, fmt);
         /* FIXME: waste of 1 byte */
         if (vasprintf (&str, fmt, ap) != -1) {
@@ -2061,6 +2066,11 @@ const char *SEXP_strtype (const SEXP_t *sexp)
 
 SEXP_type_t SEXP_typeof (const SEXP_t *s)
 {
+        if (s == NULL) {
+                errno = EFAULT;
+                return (SEXP_TYPE_INVAL);
+        }
+        
         return (SEXP_TYPEOF(s));
 }
 

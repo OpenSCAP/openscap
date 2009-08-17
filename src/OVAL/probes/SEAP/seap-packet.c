@@ -450,6 +450,13 @@ int SEAP_packet_recv (SEAP_CTX_t *ctx, int sd, SEAP_packet_t **packet)
         if (dsc == NULL)
                 return (-1);
         
+        /*
+         * Check packet queue
+         */
+        if (pqueue_notempty (dsc->pck_queue)) {
+                /* TODO */
+        }
+        
         psetup = SEXP_psetup_new ();
                 
         /*
@@ -510,10 +517,9 @@ eloop_exit:
         for (;;) {
                 data_buffer = sm_alloc (SEAP_RECVBUF_SIZE);
                 data_buflen = SEAP_RECVBUF_SIZE;
-				errno = 0;
                 data_length = SCH_RECV(dsc->scheme, dsc, data_buffer, data_buflen, 0);
                 
-                if (data_length <= 0) {
+                if (data_length < 0) {
                         protect_errno {
                                 _D("FAIL: recv failed: dsc=%p, errno=%u, %s.\n", dsc, errno, strerror (errno));
                                 
@@ -524,6 +530,20 @@ eloop_exit:
                                         SEXP_pstate_free (pstate);
                         }
                         return (-1);
+                } else if (data_length == 0) {
+                        _D("zero bytes received -> EOF\n");
+                        sm_free (data_buffer);
+                        SEXP_psetup_free (psetup);
+                        
+                        if (pstate != NULL) {
+                                _D("FAIL: incomplete S-exp received\n");
+                                SEXP_psetup_free (psetup);
+                                errno = ENETRESET;
+                                return (-1);
+                        } else {
+                                errno = ECONNRESET;
+                                return (-1);
+                        }
                 }
                 
                 _A(data_length > 0);
@@ -568,8 +588,8 @@ eloop_exit:
         
         SEXP_VALIDATE(sexp_buffer);
         
-        sexp_packet    = SEXP_list_pop (&sexp_buffer);
-        dsc->pck_queue = sexp_buffer;
+        sexp_packet  = SEXP_list_pop (&sexp_buffer);
+        dsc->sexpbuf = sexp_buffer;
         
         _A(sexp_packet != NULL);
 
