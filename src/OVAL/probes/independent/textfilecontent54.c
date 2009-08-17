@@ -21,12 +21,17 @@
  *    [0..*] anytype subexpression
  */
 
+#include <config.h>
 #include <stdio.h>
 #include <string.h>
-#include <pcre.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <fcntl.h>
+#if defined USE_REGEX_PCRE
+#include <pcre.h>
+#elif defined USE_REGEX_POSIX
+#include <regex.h>
+#endif
 
 #include <seap.h>
 #include <probe.h>
@@ -34,6 +39,7 @@
 
 #define FILE_SEPARATOR '/'
 
+#if defined USE_REGEX_PCRE
 static int get_substrings(char *str, pcre *re, int want_substrs, char ***substrings) {
 	int i, ret, rc;
 	int ovector[60], ovector_len = sizeof (ovector) / sizeof (ovector[0]);
@@ -47,45 +53,87 @@ static int get_substrings(char *str, pcre *re, int want_substrs, char ***substri
 		       ovector, ovector_len);
 
 	if (rc < -1) {
-		ret = -1;
+		return -1;
 	} else if (rc == -1) {
 		/* no match */
-		ret = 0;
+		return 0;
 	} else if(!want_substrs) {
 		/* just report successful match */
-		ret = 1;
-	} else {
-		char **substrs;
-
-		ret = 0;
-		if (rc == 0) {
-			/* vector too small */
-			rc = ovector_len / 3;
-		}
-
-		substrs = malloc(rc * sizeof (char *));
-		for (i = 0; i < rc; ++i) {
-			int len;
-			char *buf;
-
-			if (ovector[2 * i] == -1)
-				continue;
-			len = ovector[2 * i + 1] - ovector[2 * i];
-			buf = malloc(len + 1);
-			memcpy(buf, str + ovector[2 * i], len);
-			buf[len] = '\0';
-			substrs[ret] = buf;
-			++ret;
-		}
-		/*
-		if (ret < rc)
-			substrs = realloc(substrs, ret * sizeof (char *));
-		*/
-		*substrings = substrs;
+		return 1;
 	}
+
+	char **substrs;
+
+	ret = 0;
+	if (rc == 0) {
+		/* vector too small */
+		rc = ovector_len / 3;
+	}
+
+	substrs = malloc(rc * sizeof (char *));
+	for (i = 0; i < rc; ++i) {
+		int len;
+		char *buf;
+
+		if (ovector[2 * i] == -1)
+			continue;
+		len = ovector[2 * i + 1] - ovector[2 * i];
+		buf = malloc(len + 1);
+		memcpy(buf, str + ovector[2 * i], len);
+		buf[len] = '\0';
+		substrs[ret] = buf;
+		++ret;
+	}
+	/*
+	  if (ret < rc)
+	  substrs = realloc(substrs, ret * sizeof (char *));
+	*/
+	*substrings = substrs;
 
 	return ret;
 }
+#elif defined USE_REGEX_POSIX
+static int get_substrings(char *str, regex_t *re, int want_substrs, char ***substrings) {
+	int i, ret, rc;
+	regmatch_t pmatch[40];
+	int pmatch_len = sizeof (pmatch) / sizeof (pmatch[0]);
+
+	rc = regexec(re, str, pmatch_len, pmatch, 0);
+	if (rc == REG_NOMATCH) {
+		/* no match */
+		return 0;
+	} else if (!want_substrs) {
+		/* just report successful match */
+		return 1;
+	}
+
+	char **substrs;
+
+	ret = 0;
+	substrs = malloc(pmatch_len * sizeof (char *));
+	for (i = 0; i < pmatch_len; ++i) {
+		int len;
+		char *buf;
+
+		if (pmatch[i].rm_so == -1)
+			continue;
+		len = pmatch[i].rm_eo - pmatch[i].rm_so;
+		buf = malloc(len + 1);
+		memcpy(buf, str + pmatch[i].rm_so, len);
+		buf[len] = '\0';
+		substrs[ret] = buf;
+		++ret;
+	}
+
+	/*
+	  if (ret < pmatch_len)
+	  substrs = realloc(substrs, ret * sizeof (char *));
+	*/
+	*substrings = substrs;
+
+	return ret;
+}
+#endif
 
 static SEXP_t *create_item(const char *path, const char *filename, char *pattern,
 			   int instance, char **substrs, int substr_cnt)
@@ -141,16 +189,27 @@ struct pfdata {
 static int process_file(const char *path, const char *filename, void *arg)
 {
 	struct pfdata *pfd = (struct pfdata *) arg;
-	int erroffset = -1, ret = 0, path_len, filename_len;
+	int ret = 0, path_len, filename_len;
 	char *whole_path = NULL;
-	const char *error;
-	pcre *re = NULL;
 	FILE *fp = NULL;
+
+// todo: move to probe_main()?
+#if defined USE_REGEX_PCRE
+	int erroffset = -1;
+	pcre *re = NULL;
+	const char *error;
 
 	re = pcre_compile(pfd->pattern, PCRE_UTF8, &error, &erroffset, NULL);
 	if (re == NULL) {
 		return -1;
 	}
+#elif defined USE_REGEX_POSIX
+	regex_t _re, *re = &_re;
+
+	if (regcomp(re, pfd->pattern, REG_EXTENDED) != 0) {
+		return -1;
+	}
+#endif
 
 	if (filename == NULL) {
 		SEXP_t *attrs, *item;
@@ -238,8 +297,12 @@ static int process_file(const char *path, const char *filename, void *arg)
 		fclose(fp);
 	if (whole_path != NULL)
 		free(whole_path);
+#if defined USE_REGEX_PCRE
 	if (re != NULL)
 		pcre_free(re);
+#elif defined USE_REGEX_POSIX
+	regfree(re);
+#endif
 
 	return ret;
 }

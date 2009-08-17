@@ -286,14 +286,32 @@ AC_ARG_ENABLE([bindings],
        no)  bindings=no  ;;
        *) AC_MSG_ERROR([bad value ${enableval} for --enable-bindings]) ;;
      esac],[bindings=yes])
+
+AC_ARG_ENABLE([regex-posix],
+     [  --enable-regex-posix       compile with POSIX instead of PCRE regex [[default=yes]]],
+     [case "${enableval}" in
+       yes) regex_posix=yes ;;
+       no)  regex_posix=no  ;;
+       *) AC_MSG_ERROR([bad value ${enableval} for --enable-regex-posix]) ;;
+     esac],[regex_posix=yes])
      
 AC_ARG_ENABLE([debug],
      [  --enable-debug          enable debugging flags [[default=yes]]],
      [case "${enableval}" in
-       yes) CFLAGS="$CFLAGS $CFLAGS_DEBUGGING" ;;
-       no) : ;;
+       yes) debug=yes ;;
+       no)  debug=no ;;
        *) AC_MSG_ERROR([bad value ${enableval} for --enable-debug]) ;;
      esac], [debug=yes])
+
+if test "$regex_posix" = "yes"; then
+   AC_DEFINE([USE_REGEX_POSIX], [1], [Use POSIX regular expressions])
+else
+   AC_DEFINE([USE_REGEX_PCRE], [1], [Use PCRE])
+fi
+
+if test "$debug" = "yes"; then
+   CFLAGS="$CFLAGS $CFLAGS_DEBUGGING"
+fi
 
 AM_CONDITIONAL([WANT_OVAL], test "$oval" = yes)
 AM_CONDITIONAL([WANT_CVSS], test "$cvss" = yes)
@@ -348,4 +366,5 @@ fi
 
 echo "XCCDF enabled:                 $xccdf"
 echo "python bindings enabled:       $bindings"
+echo "use POSIX regex:               $regex_posix"
 echo "debugging flags enabled:       $debug"

@@ -1,10 +1,16 @@
+#include <config.h>
 #include <sexp-types.h>
 #include <sexp-manip.h>
 #include <assert.h>
 #include <string.h>
 #include <stdarg.h>
 #include <errno.h>
+#if defined USE_REGEX_PCRE
 #include <pcre.h>
+#elif defined USE_REGEX_POSIX
+#include <regex.h>
+#endif
+
 #include <probe.h>
 
 oval_result_enum SEXP_OVALent_cmp_binary(SEXP_t *val1, SEXP_t *val2, oval_operation_enum op)
@@ -379,6 +385,7 @@ oval_result_enum SEXP_OVALent_cmp_string(SEXP_t *val1, SEXP_t *val2, oval_operat
 		break;
 	case OPERATION_PATTERN_MATCH:
 		{
+#if defined USE_REGEX_PCRE
 			int erroffset = -1, rc;
 			const char *error;
 			pcre *re = NULL;
@@ -398,6 +405,21 @@ oval_result_enum SEXP_OVALent_cmp_string(SEXP_t *val1, SEXP_t *val2, oval_operat
 			} else {
 				result = OVAL_RESULT_ERROR;
 			}
+#elif defined USE_REGEX_POSIX
+			regex_t re;
+
+			if (regcomp(&re, s1, REG_EXTENDED) != 0) {
+				return OVAL_RESULT_ERROR;
+			}
+
+			if (regexec(&re, s2, 0, NULL, 0) == REG_NOMATCH) {
+				result = OVAL_RESULT_FALSE;
+			} else {
+				result = OVAL_RESULT_TRUE;
+			}
+
+			regfree(&re);
+#endif
 		}
 		break;
 	default:
