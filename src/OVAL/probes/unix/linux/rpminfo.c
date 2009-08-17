@@ -128,10 +128,14 @@ static int get_rpminfo (struct rpminfo_req *req, struct rpminfo_rep **rep)
                 if (ret != i) {
                         _D("Something bad happened...\n");
                         
-                        while (i > 0)
-                                __rpminfo_rep_free (&((*rep)[--i]));
+                        if (i > 0) {
+                                do {
+                                        __rpminfo_rep_free (&((*rep)[--i]));
+                                } while (i > 0);
+                                
+                                oscap_free (*rep);
+                        }
                         
-                        oscap_free (*rep);
                         ret = -1;
                 }
         }
@@ -150,7 +154,7 @@ void *probe_init (void)
         }
         
         g_rpm.rpmts = rpmtsCreate ();
-        g_rpm.mutex = PTHREAD_MUTEX_INITIALIZER;
+        pthread_mutex_init (&(g_rpm.mutex), NULL);
         
         return ((void *)&g_rpm);
 }
