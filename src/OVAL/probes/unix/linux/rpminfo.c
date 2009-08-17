@@ -241,42 +241,44 @@ SEXP_t *probe_main (SEXP_t *object, int *err, void *arg)
                 
                 break;
         default: /* Ok */
-                _A(rpmret >= 0);
-        
+                _A(rpmret   >= 0);
+                _A(reply_st != NULL);
+                
                 for (i = 0; i < rpmret; ++i) {
                         item_sexp = SEXP_OVALobj_create ("rpminfo_item", NULL,
                                                          
                                                          "name", NULL,
-                                                         SEXP_string_newf (reply_st[0].name),
+                                                         SEXP_string_newf (reply_st[i].name),
                                                          
                                                          "arch", NULL,
-                                                         SEXP_string_newf (reply_st[0].arch),
+                                                         SEXP_string_newf (reply_st[i].arch),
 
                                                          "epoch", NULL,
-                                                         SEXP_string_newf (reply_st[0].epoch),
+                                                         SEXP_string_newf (reply_st[i].epoch),
 
                                                          "release", NULL,
-                                                         SEXP_string_newf (reply_st[0].release),
+                                                         SEXP_string_newf (reply_st[i].release),
 
                                                          "version", NULL,
-                                                         SEXP_string_newf (reply_st[0].version),
+                                                         SEXP_string_newf (reply_st[i].version),
 
                                                          "evr", NULL,
-                                                         SEXP_string_newf (reply_st[0].evr),
+                                                         SEXP_string_newf (reply_st[i].evr),
                                                                  
                                                          "signature_keyid", NULL,
-                                                         SEXP_string_newf (reply_st[0].signature_keyid),
+                                                         SEXP_string_newf (reply_st[i].signature_keyid),
 
                                                          NULL);
                         
                         SEXP_list_add (probe_out, item_sexp);
+                        __rpminfo_rep_free (&(reply_st[i]));
                 }
-        }
-        
-        if (reply_st != NULL) {
-                __rpminfo_rep_free (&reply_st[0]);
+                
                 oscap_free (reply_st);
         }
+        
+        if (reply_st != NULL)
+                oscap_free (reply_st);
         
         *err = 0;
 
