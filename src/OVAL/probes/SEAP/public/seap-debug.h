@@ -13,8 +13,8 @@
 #else
 # include <stddef.h>
 # include <stdarg.h>
-void __seap_debuglog (const char *, size_t , const char *, ...);
-# define _D(...) __seap_debuglog (__PRETTY_FUNCTION__, __LINE__, __VA_ARGS__)
+void __seap_debuglog (const char *, const char *, size_t , const char *, ...);
+# define _D(...) __seap_debuglog (__FILE__, __PRETTY_FUNCTION__, __LINE__, __VA_ARGS__)
 #endif /* NDEBUG */
 #endif /* _D */
 #endif /* SEAP_DEBUG_H */

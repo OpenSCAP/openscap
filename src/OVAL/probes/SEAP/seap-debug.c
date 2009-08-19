@@ -9,7 +9,7 @@ pthread_mutex_t __debuglog_mutex = PTHREAD_MUTEX_INITIALIZER;
 #  endif
 static FILE *__debuglog_fp = NULL;
 
-void __seap_debuglog (const char *fn, size_t line, const char *fmt, ...)
+void __seap_debuglog (const char *file, const char *fn, size_t line, const char *fmt, ...)
 {
         va_list ap;
 
@@ -20,12 +20,16 @@ void __seap_debuglog (const char *fn, size_t line, const char *fmt, ...)
                 __debuglog_fp = fopen ("seap_debug.log", "a");
                 setbuf (__debuglog_fp, NULL);
         }
-        
-        fprintf (__debuglog_fp, "(%u) [%zu: %s] ", getpid (), line, fn);
+
+#if defined(SEAP_THREAD_SAFE)        
+        fprintf (__debuglog_fp, "(%u:%u) [%s: %zu: %s] ", (unsigned int)getpid (), (unsigned int)pthread_self(), file, line, fn);
+#else
+        fprintf (__debuglog_fp, "(%u) [%s: %zu: %s] ", (unsigned int)getpid (), file, line, fn);
+#endif
         va_start (ap, fmt);
         vfprintf (__debuglog_fp, fmt, ap);
         va_end (ap);
-                
+        
 #if defined(SEAP_THREAD_SAFE)  
         pthread_mutex_unlock (&__debuglog_mutex);
 #endif

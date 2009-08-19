@@ -456,6 +456,11 @@ int SEAP_packet_recv (SEAP_CTX_t *ctx, int sd, SEAP_packet_t **packet)
         if (pqueue_notempty (dsc->pck_queue)) {
                 /* TODO */
         }
+
+        if (dsc->sexpbuf != NULL) {
+                if (SEXP_list_length (dsc->sexpbuf) > 0)
+                        goto sexp_buf_recv;
+        }
         
         psetup = SEXP_psetup_new ();
                 
@@ -476,7 +481,7 @@ eloop_start:
                 if (SCH_SELECT(dsc->scheme, dsc, SEAP_IO_EVREAD, 0, 0) != 0)
                         return (-1);
                 
-                _D("aaaaaaaaaaaaaab\n");
+                _D("return from select\n");
                 
                 switch (DESC_TRYRLOCK (dsc)) {
                 case  1:
@@ -562,6 +567,7 @@ eloop_exit:
                                 break;
                         } else {
                                 SEXP_list_free (sexp_buffer);
+                                _D("eloop_restart\n");
                                 goto eloop_start;
                         }
                 }
@@ -575,6 +581,9 @@ eloop_exit:
                                 }
                         default:
                                 protect_errno {
+                                        _D("FAIL: recv failed: dsc=%p, errno=%u, %s.\n",
+                                           dsc, errno, strerror (errno));
+                                        
                                         sm_free (data_buffer);
                                         SEXP_psetup_free (psetup);
                                         SEXP_pstate_free (pstate);
@@ -585,14 +594,24 @@ eloop_exit:
         }
         
         SEXP_psetup_free (psetup);
-        
-        SEXP_VALIDATE(sexp_buffer);
-        
-        sexp_packet  = SEXP_list_pop (&sexp_buffer);
         dsc->sexpbuf = sexp_buffer;
+        
+sexp_buf_recv:
+        SEXP_VALIDATE(dsc->sexpbuf);
+        sexp_packet = SEXP_list_pop (&dsc->sexpbuf);
         
         _A(sexp_packet != NULL);
 
+        { FILE *fp;
+                
+                fp = fopen ("packet-recv.log", "a");
+                setbuf (fp, NULL);
+                fprintf (fp, "--- PACKET ---\n");
+                SEXP_fprintfa (fp, sexp_packet);
+                fprintf (fp, "\n-----------\n");
+                fclose (fp);
+        }
+        
         if (SEXP_TYPEOF(sexp_packet) != ATOM_LIST) {
                 _D("Invalid SEAP packet received: %s.\n", "not a list");
                 SEXP_free (sexp_packet);
@@ -733,9 +752,11 @@ int SEAP_packet_send (SEAP_CTX_t *ctx, int sd, SEAP_packet_t *packet)
         
         packet_sexp = SEAP_packet2sexp (packet);
         
-        if (packet_sexp == NULL)
+        if (packet_sexp == NULL) {
+                _D("Can't convert S-exp to packet\n");
                 return (-1);
-        
+        }
+
         if (DESC_WLOCK (dsc)) {
                 ret = 0;
                 
@@ -750,8 +771,10 @@ int SEAP_packet_send (SEAP_CTX_t *ctx, int sd, SEAP_packet_t *packet)
                 DESC_WUNLOCK(dsc);
         }
         
-        SEXP_free (packet_sexp);
-
+        protect_errno {
+                SEXP_free (packet_sexp);
+        }
+        
         return (ret);
 }
 
