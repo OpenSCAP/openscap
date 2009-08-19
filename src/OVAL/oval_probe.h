@@ -29,9 +29,12 @@ typedef struct {
         probe_sd_t *memb;
         size_t      count;
         SEAP_CTX_t *ctx;
+        uint8_t     flags;
 } probe_sdtbl_t;
 
-#define PROBE_SDTBL_INITIALIZER { NULL, 0, NULL }
+#define PROBE_SDTBL_CMDDONE 0x01
+
+#define PROBE_SDTBL_INITIALIZER { NULL, 0, NULL, 0 }
 
 SEXP_t *oval_object_to_sexp (const char *typestr, struct oval_object *object);
 struct oval_syschar *sexp_to_oval_state (SEXP_t *sexp, struct oval_object *object);

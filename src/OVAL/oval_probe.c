@@ -4,6 +4,7 @@
 #include <sexp-manip.h>
 #include <assert.h>
 #include <errno.h>
+#include <common/bfind.h>
 #if defined(THREAD_SAFE)
 # include <pthread.h>
 #endif
@@ -74,67 +75,50 @@ static void probe_sdtbl_init (void)
         ptbl->memb = NULL;
         ptbl->count = 0;
         ptbl->ctx = SEAP_CTX_new ();
+        ptbl->flags = 0;
 
         /* TODO */
         
-        (void) pthread_setspecific (key, (void *)ptbl);
+        (void) pthread_setspecific (__key, (void *)ptbl);
         return;
 }
 #else
 static probe_sdtbl_t __probe_sdtbl = PROBE_SDTBL_INITIALIZER;
 #endif
 
-const oval_probe_t *search_probe (oval_subtype_enum typenum)
+static int probe_subtype_cmp (void *a, void *b)
 {
-        uint32_t w, s;
-        
-        w = PROBETBLSIZE;
-        s = 0;
-                
-        while (w > 0) {
-                if (typenum > __probe_tbl[s + w/2].typenum) {
-                        s += w/2 + 1;
-                        w  = w - w/2 - 1;
-                } else if (typenum < __probe_tbl[s + w/2].typenum) {
-                        w = w/2;
-                } else {
-                        return &(__probe_tbl[s + w/2]);
-                }
-        }
-#undef cmp
-        return (NULL);
+#define K1(p) (*(oval_subtype_enum *)(p))
+#define K2(p) (((oval_probe_t *)(p))->typenum)
+        return ((int)(K1(a) - K2(b)));
+#undef K1
+#undef K2
 }
 
-int probe_sd_get (probe_sdtbl_t *tbl, oval_subtype_enum ptype)
+const oval_probe_t *search_probe (oval_subtype_enum subtype)
 {
-        size_t w, s;
+        return (oscap_bfind ((void *)__probe_tbl, PROBETBLSIZE, sizeof __probe_tbl[0], &subtype, probe_subtype_cmp));
+}
+
+static int probe_sd_get (probe_sdtbl_t *tbl, oval_subtype_enum subtype)
+{
+        probe_sd_t *psd;
         
         _A(tbl != NULL);
         
-        /* FIXME: duplicated code */
-        w = tbl->count;
-        s = 0;
-
-        while (w > 0) {
-                if (ptype > tbl->memb[s + w/2].typenum) {
-                        s += w/2 + 1;
-                        w  = w - w/2 - 1;
-                } else if (ptype < tbl->memb[s + w/2].typenum) {
-                        w = w/2;
-                } else {
-                        return (tbl->memb[s + w/2].sd);
-                }
-        }
-        /* Not found */
-        return (-1);
+        psd = oscap_bfind ((void *)(tbl->memb), tbl->count, sizeof (probe_sd_t), &subtype, probe_subtype_cmp);
+        
+        _D("tbl=%p, psd=%p\n", tbl, psd);
+        
+        return (psd == NULL ? -1 : psd->sd);
 }
 
-int probe_sd_cmp (const void *a, const void *b)
+static int probe_sd_cmp (const void *a, const void *b)
 {
         return (((probe_sd_t *)a)->typenum - ((probe_sd_t *)b)->typenum);
 }
 
-int probe_sd_add (probe_sdtbl_t *tbl, oval_subtype_enum type, int sd)
+static int probe_sd_add (probe_sdtbl_t *tbl, oval_subtype_enum type, int sd)
 {
         _A(tbl != NULL);
         _A(sd >= 0);
@@ -148,7 +132,7 @@ int probe_sd_add (probe_sdtbl_t *tbl, oval_subtype_enum type, int sd)
         return (0);
 }
 
-int probe_sd_del (probe_sdtbl_t *tbl, oval_subtype_enum type)
+static int probe_sd_del (probe_sdtbl_t *tbl, oval_subtype_enum type)
 {
         _A(tbl != NULL);
         /* TODO */
@@ -581,15 +565,20 @@ struct oval_syschar *probe_object (struct oval_object *object, struct oval_objec
 #else
         ptbl = &__probe_sdtbl;
         
-        if (ptbl->ctx == NULL) {
+        if (ptbl->ctx == NULL)
                 ptbl->ctx = SEAP_CTX_new ();
-                
-                if (probe_cmd_init (ptbl->ctx, model) != 0)
-                        return (NULL);
-        }
 #endif
         _A(ptbl != NULL);
 
+        if (!(ptbl->flags & PROBE_SDTBL_CMDDONE)) {
+                if (probe_cmd_init (ptbl->ctx, model) != 0) {
+                        _D("FAIL: SEAP cmd init failed\n");
+                        return (NULL);
+                }
+                
+                ptbl->flags |= PROBE_SDTBL_CMDDONE;
+        }
+        
         _D("search_probe\n");
 
         probe = search_probe (oval_object_subtype(object));
@@ -602,6 +591,11 @@ struct oval_syschar *probe_object (struct oval_object *object, struct oval_objec
         
         /* create S-exp */
         sexp  = oval_object_to_sexp (probe->typestr, object);
+        
+        if (sexp == NULL) {
+                _D("Can't translate OVAL object to S-exp\n");
+                return (NULL);
+        }
         
         psd = probe_sd_get (ptbl, oval_object_subtype (object));
         if (psd == -1) {
