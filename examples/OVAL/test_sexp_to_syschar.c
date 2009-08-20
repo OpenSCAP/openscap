@@ -46,6 +46,7 @@ int main(int argc, char **argv)
 	SEXP_OVALobj_setstatus(item_sexp, OVAL_STATUS_EXISTS);
 	SEXP_OVALobj_setstatus(SEXP_OVALobj_getelm(item_sexp, "evr", 1), OVAL_STATUS_ERROR);
 	SEXP_OVALelm_setdatatype(SEXP_OVALobj_getelm(item_sexp, "version", 1), 1, OVAL_DATATYPE_VERSION);
+	SEXP_OVALelm_setmask(SEXP_OVALobj_getelm(item_sexp, "version", 1), true);
 	SEXP_list_add(probe_out, item_sexp);
 
 	SEXP_printfa(probe_out);

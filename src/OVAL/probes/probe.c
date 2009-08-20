@@ -571,6 +571,31 @@ int SEXP_OVALelm_getdatatype (SEXP_t *elm, uint32_t nth)
         return (OVAL_DATATYPE_UNKNOWN);
 }
 
+static const char SEXP_OVAL_MASK_ATTRNAME[] = "mask";
+
+int     SEXP_OVALelm_setmask(SEXP_t *elm, bool mask)
+{
+	if (elm == NULL)
+		return -1;
+	
+	if (SEXP_OVALelm_hasattr(elm, SEXP_OVAL_MASK_ATTRNAME))
+		return -1;
+
+	return SEXP_OVALelm_attr_add(elm, SEXP_OVAL_MASK_ATTRNAME, SEXP_number_newd(mask != 0)) == NULL ? -1 : 0;
+}
+
+bool    SEXP_OVALelm_getmask(SEXP_t *elm)
+{
+	if (elm == NULL)
+		return false;
+
+	SEXP_t *mask = SEXP_OVALelm_getattrval(elm, SEXP_OVAL_MASK_ATTRNAME);
+	if (mask == NULL || !SEXP_numberp(mask))
+		return false;
+
+	return SEXP_number_getd(mask) != 0;
+}
+
 char *SEXP_OVALelm_name_cstr  (const SEXP_t *elm)
 {
         SEXP_t *elm_name;

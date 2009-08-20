@@ -39,6 +39,8 @@ SEXP_t *SEXP_OVALelm_getattrval (SEXP_t *elm, const char *name);
 int     SEXP_OVALelm_hasattr (SEXP_t *elm, const char *name);
 int     SEXP_OVALelm_setdatatype(SEXP_t *elm, uint32_t nth, int type);
 int     SEXP_OVALelm_getdatatype(SEXP_t *elm, uint32_t nth);
+int     SEXP_OVALelm_setmask(SEXP_t *elm, bool mask);
+bool    SEXP_OVALelm_getmask(SEXP_t *elm);
 
 char       *SEXP_OVALelm_name_cstr   (const SEXP_t *elm);
 char       *SEXP_OVALelm_name_cstr_r (const SEXP_t *elm, char *buf, size_t len);

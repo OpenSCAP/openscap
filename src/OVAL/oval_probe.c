@@ -452,6 +452,7 @@ struct oval_sysitem* oval_sysitem_from_sexp(SEXP_t *sexp)
 
 	set_oval_sysitem_status(item, status);
 	set_oval_sysitem_name(item, key);
+	set_oval_sysitem_mask(item, SEXP_OVALelm_getmask(sexp));
 
 	if (status == OVAL_STATUS_EXISTS)
 		set_oval_sysitem_value(item, val);
