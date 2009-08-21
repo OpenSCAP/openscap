@@ -132,6 +132,7 @@ struct oval_iterator *oval_string_map_values(struct oval_string_map *map)
 
 void *oval_string_map_get_value(struct oval_string_map *map, char *key)
 {
+	if (key == NULL) return NULL;
 	struct _oval_string_map_entry *entry;
 	for (entry = map->entries;
 	     (entry != NULL) && (strcmp(key, entry->key) != 0);

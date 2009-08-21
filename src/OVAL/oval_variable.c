@@ -332,7 +332,7 @@ int oval_variable_parse_tag(xmlTextReaderPtr reader,
 	oval_datatype_enum datatype =
 	    oval_datatype_parse(reader, "datatype", OVAL_DATATYPE_UNKNOWN);
 	set_oval_variable_datatype(variable, datatype);
-	int return_code;
+	int return_code = 1;
 	switch (type) {
 	case OVAL_VARIABLE_CONSTANT:{
 			return_code =
@@ -348,6 +348,11 @@ int oval_variable_parse_tag(xmlTextReaderPtr reader,
 						  variable);
 		}
 		break;
+	case OVAL_VARIABLE_EXTERNAL: {
+		// TODO
+		oval_parser_skip_tag(reader, context);
+		break;
+	}
 	default:
 		return_code = 1;
 	}
