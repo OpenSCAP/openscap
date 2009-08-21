@@ -154,9 +154,15 @@ struct oval_syschar *oval_syschar_new(struct oval_object *object){
 }
 
 void oval_syschar_free(struct oval_syschar *syschar){
-	oval_collection_free_items(syschar->messages, free);
-	oval_collection_free_items(syschar->sysdata, (oscap_destruct_func)oval_sysdata_free);
-	oval_collection_free_items(syschar->variable_bindings, (oscap_destruct_func)oval_variable_binding_free);
+	oval_collection_free_items(syschar->messages, (oscap_destruct_func)oval_message_free);
+	oval_collection_free_items(syschar->sysdata, NULL);//sysdata items are shared
+	oval_collection_free_items(syschar->variable_bindings, NULL);//variable bindings are shared
+
+	syschar->messages = NULL;
+	syschar->object = NULL;
+	syschar->sysdata = NULL;
+	syschar->sysinfo = NULL;
+	syschar->variable_bindings = NULL;
 	free(syschar);
 }
 
@@ -213,7 +219,7 @@ int oval_syschar_parse_tag(xmlTextReaderPtr reader,
 	int return_code;
 	if(is_ovalsys && (strcmp(tagname,"object")==0)){
 		char *object_id = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "id");
-		struct oval_object *object = get_oval_object_new(context->model, object_id);
+		struct oval_object *object = get_oval_object_new(context->object_model, object_id);
 		free(object_id);object_id=NULL;
 		oval_syschar_t *syschar = get_oval_syschar_new(context->syschar_model, object);
 		syschar->sysinfo = context->syschar_sysinfo;
@@ -299,3 +305,42 @@ void oval_syschar_to_print(struct oval_syschar *syschar, char *indent,
 	}
 }
 
+void oval_syschar_to_dom  (struct oval_syschar *syschar, xmlDoc *doc, xmlNode *tag_parent){
+	if(syschar){
+		xmlNs *ns_syschar = xmlSearchNsByHref(doc, tag_parent, OVAL_SYSCHAR_NAMESPACE);
+	    xmlNode *tag_syschar = xmlNewChild
+			(tag_parent, ns_syschar, BAD_CAST "object", NULL);
+
+	    {//attributes
+	    	struct oval_object *object = oval_syschar_object(syschar);
+	    	xmlNewProp(tag_syschar, BAD_CAST "id", BAD_CAST oval_object_id(object));
+	    	char version[17];
+	    	snprintf(version, sizeof(version), "%d", oval_object_version(object));
+	    	xmlNewProp(tag_syschar, BAD_CAST "version", BAD_CAST version);
+	    }
+		{//messages
+			struct oval_iterator_message *messages = oval_syschar_messages(syschar);
+			while(oval_iterator_message_has_more(messages)){
+				struct oval_message *message = oval_iterator_message_next(messages);
+				oval_message_to_dom(message, doc, tag_syschar);
+			}
+		}
+		{//variable values
+			struct oval_iterator_variable_binding *bindings = oval_syschar_variable_bindings(syschar);
+			while(oval_iterator_variable_binding_has_more(bindings)){
+				struct oval_variable_binding *binding = oval_iterator_variable_binding_next(bindings);
+				oval_variable_binding_to_dom(binding, doc, tag_syschar);
+			}
+		}
+		{//references
+			struct oval_iterator_sysdata *sysdatas = oval_syschar_sysdata(syschar);
+			while(oval_iterator_sysdata_has_more(sysdatas)){
+				struct oval_sysdata *sysdata = oval_iterator_sysdata_next(sysdatas);
+				xmlNode *tag_reference = xmlNewChild
+					(tag_syschar, ns_syschar, BAD_CAST "reference", NULL);
+				xmlNewProp(tag_reference,BAD_CAST "item_ref",
+						BAD_CAST oval_sysdata_id(sysdata));
+			}
+		}
+	}
+}

@@ -115,14 +115,16 @@ void oval_set_free(struct oval_set *set)
 			    (oval_set_AGGREGATE_t *) set->extension;
 			oval_collection_free_items(aggregate->subsets,
 						   (oscap_destruct_func)oval_set_free);
+			aggregate->subsets = NULL;
 		} break;
 	case OVAL_SET_COLLECTIVE:{
 			oval_set_COLLECTIVE_t *collective =
 			    (oval_set_COLLECTIVE_t *) set->extension;
-			oval_collection_free_items(collective->filters,
-						   (oscap_destruct_func)oval_state_free);
-			oval_collection_free_items(collective->objects,
-						   (oscap_destruct_func)oval_object_free);
+			//States and objects are shared and should not be deleted here.
+			oval_collection_free_items(collective->filters,NULL);
+			oval_collection_free_items(collective->objects,NULL);
+			collective->filters = NULL;
+			collective->objects = NULL;
 		} break;
 	case OVAL_SET_UNKNOWN: break;
 	}

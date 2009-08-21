@@ -57,6 +57,10 @@ struct oval_sysitem *oval_sysitem_new(){
 void oval_sysitem_free(struct oval_sysitem *sysitem){
 	if(sysitem->name   !=NULL)free(sysitem->name);
 	if(sysitem->value  !=NULL)free(sysitem->value);
+
+	sysitem->name = NULL;
+	sysitem->value = NULL;
+
 	free(sysitem);
 }
 

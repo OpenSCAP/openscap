@@ -41,7 +41,7 @@ void oval_string_map_put_string(struct oval_string_map *, const char *, const ch
 struct oval_iterator *oval_string_map_keys(struct oval_string_map *);
 struct oval_iterator *oval_string_map_values(struct oval_string_map *);
 void *oval_string_map_get_value(struct oval_string_map *, char *);
-void oval_string_map_free(struct oval_string_map *, oval_item_free_func);
+void oval_string_map_free(struct oval_string_map *, oscap_destruct_func);
 void oval_string_map_free_string(struct oval_string_map *);
 
 #endif				/* OVAL_STRING_MAP_IMPL_H_ */

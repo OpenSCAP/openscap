@@ -99,6 +99,10 @@ struct oval_variable_binding *_oval_variable_binding_new()
 void oval_variable_binding_free(struct oval_variable_binding *binding)
 {
 	if(binding->value!=NULL)free(binding->value);
+
+	binding->value = NULL;
+	binding->variable = NULL;
+
 	free(binding);
 }
 
@@ -114,7 +118,7 @@ int oval_variable_binding_parse_tag(xmlTextReaderPtr reader,
 	struct oval_variable_binding *binding = _oval_variable_binding_new();
 	{//variable
 		char* variableId = xmlTextReaderGetAttribute(reader, BAD_CAST "variable_id");
-		struct oval_variable *variable = get_oval_variable_new(context->model, variableId);
+		struct oval_variable *variable = get_oval_variable_new(context->object_model, variableId, OVAL_VARIABLE_UNKNOWN);
 		set_oval_variable_binding_variable(binding, variable);
 		free(variableId);variableId=NULL;
 	}
@@ -137,6 +141,20 @@ int oval_variable_binding_parse_tag(xmlTextReaderPtr reader,
 		(*consumer)(binding, client);
 	}
 	return return_code;
+}
+
+void oval_variable_binding_to_dom  (struct oval_variable_binding *binding, xmlDoc *doc, xmlNode *tag_parent){
+	if(binding){
+		xmlNs *ns_syschar = xmlSearchNsByHref(doc, tag_parent, OVAL_SYSCHAR_NAMESPACE);
+	    xmlNode *tag_variable_binding = xmlNewChild
+			(tag_parent, ns_syschar, BAD_CAST "variable_value",
+					BAD_CAST oval_variable_binding_value(binding));
+
+	    {//attributes
+	    	struct oval_variable *variable = oval_variable_binding_variable(binding);
+	    	xmlNewProp(tag_variable_binding, BAD_CAST "variable_id", BAD_CAST oval_variable_id(variable));
+	    }
+	}
 }
 
 

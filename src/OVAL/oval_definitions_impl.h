@@ -63,6 +63,7 @@ oval_datetime_format_enum oval_datetime_format_parse(xmlTextReaderPtr, char *,
 						     oval_arithmetic_operation_enum);
 oval_message_level_enum oval_message_level_parse(xmlTextReaderPtr, char *,
 						     oval_message_level_enum);
+char * oval_message_level_text(oval_message_level_enum);
 
 struct oval_affected *oval_affected_new();
 void oval_affected_free(struct oval_affected *);
@@ -175,7 +176,7 @@ int oval_state_parse_tag(xmlTextReaderPtr reader,
 			 struct oval_parser_context *context);
 void oval_state_to_print(struct oval_state *, char *indent, int index);
 
-struct oval_variable *oval_variable_new(char *);
+struct oval_variable *oval_variable_new(char *, oval_variable_type_enum);
 void oval_variable_free(struct oval_variable *);
 
 void set_oval_variable_type(struct oval_variable *, oval_variable_type_enum);
@@ -195,7 +196,7 @@ void oval_variable_binding_free(struct oval_variable_binding *);
 void set_oval_variable_binding_variable(struct oval_variable_binding *,
 					struct oval_variable *);
 void set_oval_variable_binding_value(struct oval_variable_binding *, char *);
-
+void oval_variable_binding_to_dom  (struct oval_variable_binding *, xmlDoc *, xmlNode *);
 struct oval_object_content
     *oval_object_content_new(oval_object_content_type_enum type);
 void oval_object_content_free(struct oval_object_content *);
@@ -298,4 +299,5 @@ int oval_message_parse_tag(xmlTextReaderPtr,
 			       struct oval_parser_context *, oval_message_consumer, void *);
 void oval_message_to_print(struct oval_message *message, char *indent,
 			      int index);
+void oval_message_to_dom  (struct oval_message *, xmlDoc *, xmlNode *);
 #endif

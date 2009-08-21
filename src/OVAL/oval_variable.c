@@ -46,10 +46,22 @@ typedef struct oval_variable {
 } oval_variable_t;
 
 typedef struct oval_variable_CONSTANT {
+	char *id;
+	char *comment;
+	int version;
+	int deprecated;
+	oval_variable_type_enum type;
+	oval_datatype_enum datatype;
 	struct oval_collection *values;	//type==OVAL_VARIABLE_CONSTANT
 } oval_variable_CONSTANT_t;
 
 typedef struct oval_variable_LOCAL {
+	char *id;
+	char *comment;
+	int version;
+	int deprecated;
+	oval_variable_type_enum type;
+	oval_datatype_enum datatype;
 	struct oval_component *component;	//type==OVAL_VARIABLE_LOCAL
 } oval_variable_LOCAL_t;
 
@@ -104,7 +116,7 @@ struct oval_iterator_value *oval_variable_values(struct oval_variable *variable)
 	struct oval_iterator_value *values = NULL;
 	if (oval_variable_type(variable) == OVAL_VARIABLE_CONSTANT) {
 		oval_variable_CONSTANT_t *constant =
-		    (oval_variable_CONSTANT_t *) variable->extension;
+		    (oval_variable_CONSTANT_t *) variable;
 		values =
 		    (struct oval_iterator_value *)
 		    oval_collection_iterator(constant->values);
@@ -118,21 +130,35 @@ struct oval_component *oval_variable_component(struct oval_variable *variable)
 	struct oval_component *component = NULL;
 	if (oval_variable_type(variable) == OVAL_VARIABLE_LOCAL) {
 		oval_variable_LOCAL_t *local =
-		    (oval_variable_LOCAL_t *) variable->extension;
+		    (oval_variable_LOCAL_t *) variable;
 		component = local->component;
 	}
 	return component;
 }
 
-struct oval_variable *oval_variable_new(char *id)
+void _set_oval_variable_type
+	(struct oval_variable *variable, oval_variable_type_enum type)
+{
+	variable->type = type;
+	switch(type)
+	{
+		case OVAL_VARIABLE_CONSTANT:{
+			oval_variable_CONSTANT_t *constant
+			= (oval_variable_CONSTANT_t *)variable;
+			constant->values = oval_collection_new();
+		}break;
+		default: variable->extension = NULL;
+	}
+}
+
+  struct oval_variable *oval_variable_new(char *id, oval_variable_type_enum type)
 {
 	oval_variable_t *variable =
 	    (oval_variable_t *) malloc(sizeof(oval_variable_t));
 	variable->id = strdup(id);
 	variable->comment = NULL;
-	variable->type = OVAL_VARIABLE_UNKNOWN;
 	variable->datatype = OVAL_DATATYPE_UNKNOWN;
-	variable->extension = NULL;
+	_set_oval_variable_type(variable, type);
 	return variable;
 }
 
@@ -140,49 +166,33 @@ void oval_variable_free(struct oval_variable *variable)
 {
 	if (variable == NULL)
 		return;
-	if (variable->id != NULL)
-		free(variable->id);
+	if (variable->id)free(variable->id);
+	if (variable->comment)free(variable->comment);
 	if (variable->extension != NULL) {
-	switch (variable->type) {
+		switch (variable->type) {
 		case OVAL_VARIABLE_LOCAL:{
-				oval_component_free(variable->extension);
+				oval_variable_LOCAL_t *local
+					= (oval_variable_LOCAL_t *)variable;
+				if(local->component)
+					oval_component_free(local->component);
+				local->component = NULL;
 			}
 			break;
 		case OVAL_VARIABLE_CONSTANT:{
-				oval_collection_free_items((struct
-							    oval_collection *)
-							   variable->extension,
-							   (oscap_destruct_func)oval_value_free);
+				oval_variable_CONSTANT_t *constant
+					= (oval_variable_CONSTANT_t *)variable;
+				oval_collection_free_items
+					(constant->values, (oscap_destruct_func)oval_value_free);
+				constant->values = NULL;
 			} break;
 		case OVAL_VARIABLE_EXTERNAL: break;
 		case OVAL_VARIABLE_UNKNOWN: break;
 		}
 	}
-	free(variable);
-}
+	variable->comment = NULL;
+	variable->id = NULL;
 
-void set_oval_variable_type(struct oval_variable *variable,
-			    oval_variable_type_enum type)
-{
-	variable->type = type;
-	switch (type) {
-	case OVAL_VARIABLE_CONSTANT:{
-			variable->extension =
-			    malloc(sizeof(oval_variable_CONSTANT_t));
-			((oval_variable_CONSTANT_t *) variable->extension)->
-			    values = oval_collection_new();
-		}
-		break;
-	case OVAL_VARIABLE_LOCAL:{
-			variable->extension =
-			    malloc(sizeof(oval_variable_LOCAL_t));
-			((oval_variable_LOCAL_t *) variable->extension)->
-			    component = NULL;
-		}
-		break;
-		case OVAL_VARIABLE_EXTERNAL: break;
-		case OVAL_VARIABLE_UNKNOWN: break;
-	}
+	free(variable);
 }
 
 void set_oval_variable_datatype(struct oval_variable *variable,
@@ -213,9 +223,9 @@ void add_oval_variable_values(struct oval_variable *variable,
 {
 	//type==OVAL_VARIABLE_CONSTANT
 	if (variable->type == OVAL_VARIABLE_CONSTANT) {
-		oval_variable_CONSTANT_t *extension =
-		    (oval_variable_CONSTANT_t *) variable->extension;
-		oval_collection_add(extension->values, (void *)value);
+		oval_variable_CONSTANT_t *constant =
+		    (oval_variable_CONSTANT_t *) variable;
+		oval_collection_add(constant->values, (void *)value);
 	}
 }
 
@@ -224,9 +234,9 @@ void set_oval_variable_component(struct oval_variable *variable,
 {
 	//type==OVAL_VARIABLE_LOCAL
 	if (variable->type == OVAL_VARIABLE_LOCAL) {
-		oval_variable_LOCAL_t *extension =
-		    (oval_variable_LOCAL_t *) variable->extension;
-		extension->component = component;
+		oval_variable_LOCAL_t *local =
+		    (oval_variable_LOCAL_t *) variable;
+		local->component = component;
 	}
 }
 
@@ -286,9 +296,6 @@ int oval_variable_parse_tag(xmlTextReaderPtr reader,
 			    struct oval_parser_context *context)
 {
 	struct oval_object_model *model = oval_parser_context_model(context);
-	char *id = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "id");
-	struct oval_variable *variable = get_oval_variable_new(model, id);
-	free(id);id = variable->id;
 	char *tagname = (char*) xmlTextReaderName(reader);
 	oval_variable_type_enum type;
 	if (strcmp(tagname, "constant_variable") == 0)
@@ -304,8 +311,12 @@ int oval_variable_parse_tag(xmlTextReaderPtr reader,
 		    ("NOTICE::oval_variable_parse_tag: <%s> unhandled variable type::line = %d\n",
 		     tagname, line);
 	}
-	set_oval_variable_type(variable, type);
-	//printf("DEBUG::oval_variable_parse_tag::id = %s <%s>\n", id, tagname);
+	char *id = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "id");
+	struct oval_variable *variable = get_oval_variable_new(model, id, type);
+	if(variable->type==OVAL_VARIABLE_UNKNOWN){
+		_set_oval_variable_type(variable, type);
+	}
+	free(id);id = variable->id;
 
 	char *comm = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "comment");
 	if(comm!=NULL){

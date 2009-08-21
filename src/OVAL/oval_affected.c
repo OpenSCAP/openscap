@@ -85,13 +85,10 @@ struct oval_affected *oval_affected_new()
 
 void oval_affected_free(struct oval_affected *affected)
 {
-	/*
-	void free_string(void *string) {
-		free(string);
-	}
-	*/
 	oval_collection_free_items(affected->platforms, &free);
+	affected->platforms = NULL;
 	oval_collection_free_items(affected->products, &free);
+	affected->products = NULL;
 	free(affected);
 }
 

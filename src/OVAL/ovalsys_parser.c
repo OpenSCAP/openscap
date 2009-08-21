@@ -37,7 +37,7 @@
 
 const char* NAMESPACE_OVALSYS = "http://oval.mitre.org/XMLSchema/oval-system-characteristics-5";
 
-int DEBUG = 0;
+#define DEBUG_OVALSYS_PARSER 0
 
 int _ovalsys_parser_process_node_consume_collected_objects(xmlTextReaderPtr reader,
 		  struct oval_parser_context *context, void *null)
@@ -56,7 +56,7 @@ int _ovalsys_parser_process_node(xmlTextReaderPtr reader,
 	int return_code = xmlTextReaderRead(reader);
 	while (return_code == 1) {
 		if (xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
-			if(DEBUG){//DEBUG
+			if(DEBUG_OVALSYS_PARSER){//DEBUG
 				char message[200]; *message = 0;
 				sprintf(message,
 						"ovalsys_parser: at depth %d",
@@ -67,7 +67,7 @@ int _ovalsys_parser_process_node(xmlTextReaderPtr reader,
 				char *tagname = (char*) xmlTextReaderName(reader);
 				char *namespace =
 				    (char*) xmlTextReaderNamespaceUri(reader);
-				if(DEBUG){//DEBUG
+				if(DEBUG_OVALSYS_PARSER){//DEBUG
 					char message[200]; *message = 0;
 					sprintf(message,
 							"ovalsys_parser: processing <%s:%s>",
@@ -126,7 +126,7 @@ void ovalsys_parser_parse
 		struct oval_parser_context context;
 		context.error_handler = eh;
 		context.reader          = reader;
-		context.model           = oval_syschar_model_object_model(model);
+		context.object_model           = oval_syschar_model_object_model(model);
 		context.syschar_model   = model;
 		context.syschar_sysinfo = NULL;
 		context.user_data       = user_arg;

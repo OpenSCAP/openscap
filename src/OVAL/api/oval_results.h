@@ -33,15 +33,32 @@
 
 #include "oval_definitions.h"
 #include "oval_system_characteristics.h"
+#include <stdbool.h>
 
 typedef enum {
-	OVAL_RESULT_TRUE,
-	OVAL_RESULT_FALSE,
-	OVAL_RESULT_UNKNOWN,
-	OVAL_RESULT_ERROR,
-	OVAL_RESULT_NOT_EVALUATED,
-	OVAL_RESULT_NOT_APPLICABLE
+	OVAL_RESULT_TRUE           = 1,
+	OVAL_RESULT_FALSE          = 2,
+	OVAL_RESULT_UNKNOWN        = 3,
+	OVAL_RESULT_ERROR          = 4,
+	OVAL_RESULT_NOT_EVALUATED  = 5,
+	OVAL_RESULT_NOT_APPLICABLE = 6
 } oval_result_enum;
+
+typedef enum {
+	OVAL_DIRECTIVE_UNKNOWN                = 0,
+	OVAL_DIRECTIVE_TRUE                   = 1,
+	OVAL_DIRECTIVE_FALSE                  = 2,
+	OVAL_DIRECTIVE_UNKNOWN_CONTENT        = 3,
+	OVAL_DIRECTIVE_ERROR_CONTENT          = 4,
+	OVAL_DIRECTIVE_NOT_EVALUATED_CONTENT  = 5,
+	OVAL_DIRECTIVE_NOT_APPLICABLE_CONTENT = 6
+} oval_result_directive_enum;
+
+typedef enum {
+	OVAL_DIRECTIVE_CONTENT_UNKNOWN = 0,
+	OVAL_DIRECTIVE_CONTENT_THIN    = 1,
+	OVAL_DIRECTIVE_CONTENT_FULL    = 2
+} oval_result_directive_content_enum;
 
 struct oval_result_item;
 struct oval_iterator_result_item;
@@ -95,14 +112,15 @@ struct oval_iterator_criteria_node *oval_result_criteria_node_subnodes(struct ov
 struct oval_result_test *oval_result_criteria_node_test(struct oval_result_criteria_node *);	//type==NODETYPE_CRITERION
 struct oval_result *oval_result_criteria_node_extends(struct oval_result_criteria_node *);	//type==NODETYPE_EXTENDDEF
 
-int oval_result_directives_definition_true(struct oval_result_directives *);
-int oval_result_directives_definition_false(struct oval_result_directives *);
-int oval_result_directives_definition_unknown(struct oval_result_directives *);
-int oval_result_directives_definition_error(struct oval_result_directives *);
-int oval_result_directives_definition_not_evaluated(struct
-						    oval_result_directives *);
-int oval_result_directives_definition_not_applicable(struct
-						     oval_result_directives *);
+bool oval_result_directive_reported
+	(struct oval_result_directives *, oval_result_directive_enum);
+oval_result_directive_content_enum oval_result_directive_content
+	(struct oval_result_directives *, oval_result_directive_enum);
+
+void set_oval_result_directive_reported
+	(struct oval_result_directives *, oval_result_directive_enum, bool);
+void set_oval_result_directive_content
+	(struct oval_result_directives *, oval_result_directive_enum, oval_result_directive_content_enum);
 
 int oval_iterator_result_has_more(struct oval_iterator_result *);
 struct oval_result *oval_iterator_result_next(struct oval_iterator_result *);

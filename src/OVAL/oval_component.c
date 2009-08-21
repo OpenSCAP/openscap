@@ -399,6 +399,7 @@ void oval_component_free(struct oval_component *component)
 			    (oval_component_LITERAL_t *) component;
 			if (literal->value != NULL)
 				oval_value_free(literal->value);
+			literal->value = NULL;
 		}
 		break;
 	case OVAL_COMPONENT_OBJECTREF:{
@@ -406,6 +407,7 @@ void oval_component_free(struct oval_component *component)
 			    (oval_component_OBJECTREF_t *) component;
 			if (objectref->object_field != NULL)
 				free(objectref->object_field);
+			objectref->object_field = NULL;
 		}
 		break;
 	case OVAL_COMPONENT_UNKNOWN:
@@ -423,12 +425,14 @@ void oval_component_free(struct oval_component *component)
 					    (oval_component_BEGEND_t *)
 					    function;
 					free(begin->character);
+					begin->character = NULL;
 				};
 				break;
 			case OVAL_FUNCTION_SPLIT:{
 					oval_component_SPLIT_t *split =
 					    (oval_component_SPLIT_t *) function;
 					free(split->delimiter);
+					split->delimiter = NULL;
 				};
 				break;
 			case OVAL_FUNCTION_CONCAT:
@@ -444,6 +448,7 @@ void oval_component_free(struct oval_component *component)
 			case OVAL_COMPONENT_FUNCTION:
 				break;
 			}
+			function->function_components = NULL;
 		}
 	}
 	free(component);
@@ -528,7 +533,7 @@ int _oval_component_parse_VARREF_tag
      struct oval_component *component) {
 	struct oval_object_model *model = oval_parser_context_model(context);
 	char *varref = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST "var_ref");
-	struct oval_variable *variable = get_oval_variable_new(model, varref);
+	struct oval_variable *variable = get_oval_variable_new(model, varref, OVAL_VARIABLE_UNKNOWN);
 	if(varref!=NULL)free(varref);varref=NULL;
 	set_oval_component_variable(component, variable);
 

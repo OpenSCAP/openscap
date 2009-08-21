@@ -98,6 +98,9 @@ void oval_value_free(struct oval_value *value)
 {
 	if (value->text != NULL)
 		free(value->text);
+
+	value->text = NULL;
+
 	free(value);
 }
 

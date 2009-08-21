@@ -67,6 +67,11 @@ void oval_sysdata_free(struct oval_sysdata *sysdata){
 
 	oval_collection_free_items(sysdata->items, (oscap_destruct_func)oval_sysitem_free);
 	free(sysdata->id);
+
+	sysdata->id = NULL;
+	sysdata->items = NULL;
+	sysdata->message = NULL;
+	sysdata->subtype_name = NULL;
 	free(sysdata);
 }
 
@@ -176,7 +181,7 @@ int oval_sysdata_parse_tag(xmlTextReaderPtr reader,
 		set_oval_sysdata_subtype(sysdata, sub);
 		set_oval_sysdata_subtype_name(sysdata, tagname);
 		oval_syschar_status_enum  status_enum
-			= oval_syschar_status_parse(reader, "status", SYSCHAR_STATUS_UNKNOWN);
+			= oval_syschar_status_parse(reader, "status", SYSCHAR_STATUS_EXISTS);
 		set_oval_sysdata_status(sysdata, status_enum);
 		return_code = oval_parser_parse_tag(reader, context, &_oval_sysdata_parse_subtag, sysdata);
 		if(DEBUG_OVAL_SYSDATA){
@@ -261,6 +266,30 @@ void oval_sysdata_to_print(struct oval_sysdata *sysdata, char *indent,
 		int i;for(i=1;oval_iterator_sysitem_has_more(items);i++){
 			struct oval_sysitem *item = oval_iterator_sysitem_next(items);
 			oval_sysitem_to_print(item, nxtindent, i);
+		}
+	}
+}
+void oval_sysdata_to_dom  (struct oval_sysdata *sysdata, xmlDoc *doc, xmlNode *tag_parent){
+	if(sysdata){
+		xmlNs *ns_syschar = xmlSearchNsByHref(doc, tag_parent, OVAL_SYSCHAR_NAMESPACE);
+	    xmlNode *tag_sysdata = xmlNewChild
+			(tag_parent, ns_syschar, BAD_CAST "item", NULL);
+
+	    {//attributes
+	    	xmlNewProp(tag_sysdata, BAD_CAST "id", BAD_CAST oval_sysdata_id(sysdata));
+	    	oval_syschar_status_enum status_index = oval_sysdata_status(sysdata);
+	    	char* status = oval_syschar_status_text(status_index);
+	    	xmlNewProp(tag_sysdata, BAD_CAST "status", BAD_CAST status);
+	    }
+		{//message
+			char *message = oval_sysdata_message(sysdata);
+			if(message!=NULL){
+				xmlNode *tag_message = xmlNewChild
+					(tag_sysdata, ns_syschar, BAD_CAST "message", BAD_CAST message);
+				oval_message_level_enum index = oval_sysdata_message_level(sysdata);
+				char* level = oval_message_level_text(index);
+				xmlNewProp(tag_message, BAD_CAST "level", BAD_CAST level);
+			}
 		}
 	}
 }

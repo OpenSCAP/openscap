@@ -111,6 +111,30 @@ oval_syschar_collection_flag_enum oval_syschar_flag_parse(xmlTextReaderPtr
 
 
 struct oval_string_map *_oval_syschar_status_map = NULL;
+char* _oval_syschar_status_texts[] = {"error", "exists", "does not exist", "not collected"};
+void _oval_syschar_status_map_new(){
+	_oval_syschar_status_map = oval_string_map_new();
+	oval_string_map_put(_oval_syschar_status_map,
+				_oval_syschar_status_texts
+				[SYSCHAR_STATUS_ERROR-1],
+				_oval_enumeration_object
+				(SYSCHAR_STATUS_ERROR));
+	oval_string_map_put(_oval_syschar_status_map,
+				_oval_syschar_status_texts
+				[SYSCHAR_STATUS_DOES_NOT_EXIST-1],
+			    _oval_enumeration_object
+			    (SYSCHAR_STATUS_DOES_NOT_EXIST));
+	oval_string_map_put(_oval_syschar_status_map,
+				_oval_syschar_status_texts
+				[SYSCHAR_STATUS_EXISTS-1],
+			    _oval_enumeration_object
+			    (SYSCHAR_STATUS_EXISTS));
+	oval_string_map_put(_oval_syschar_status_map,
+				_oval_syschar_status_texts
+				[SYSCHAR_STATUS_NOT_COLLECTED-1],
+			    _oval_enumeration_object
+			    (SYSCHAR_STATUS_NOT_COLLECTED));
+}
 oval_syschar_status_enum oval_syschar_status_parse(xmlTextReaderPtr
 							       reader,
 							       char *attname,
@@ -118,19 +142,7 @@ oval_syschar_status_enum oval_syschar_status_parse(xmlTextReaderPtr
 {
 
 	if (_oval_syschar_status_map == NULL) {
-		_oval_syschar_status_map = oval_string_map_new();
-		oval_string_map_put(_oval_syschar_status_map, "error",
-				    _oval_enumeration_object
-				    (SYSCHAR_STATUS_ERROR));
-		oval_string_map_put(_oval_syschar_status_map, "does not exist",
-				    _oval_enumeration_object
-				    (SYSCHAR_STATUS_DOES_NOT_EXIST));
-		oval_string_map_put(_oval_syschar_status_map, "exists",
-				    _oval_enumeration_object
-				    (SYSCHAR_STATUS_EXISTS));
-		oval_string_map_put(_oval_syschar_status_map, "not collected",
-				    _oval_enumeration_object
-				    (SYSCHAR_STATUS_NOT_COLLECTED));
+		_oval_syschar_status_map_new();
 	}
 	_oval_enumeration_object_t *starval =
 	    _oval_enumeration_attval(reader, attname,
@@ -147,29 +159,50 @@ oval_syschar_status_enum oval_syschar_status_parse(xmlTextReaderPtr
 	return (starval == NULL) ? defval : (oval_syschar_collection_flag_enum)starval->enumval;
 }
 
+char * oval_syschar_status_text(oval_syschar_status_enum index){
+	if (_oval_syschar_status_map == NULL) {
+		_oval_syschar_status_map_new();
+	}
+	return index==SYSCHAR_STATUS_UNKNOWN?NULL:_oval_syschar_status_texts[index-1];
+}
+
 struct oval_string_map *_oval_message_level_map = NULL;
+char* _oval_message_texts[] = {"debug", "info", "warning", "error", "fatal"};
+void _oval_message_level_map_new(){
+	_oval_message_level_map = oval_string_map_new();
+	oval_string_map_put(_oval_message_level_map,
+		    _oval_message_texts
+		    [OVAL_MESSAGE_LEVEL_DEBUG-1],
+			_oval_enumeration_object
+			(OVAL_MESSAGE_LEVEL_DEBUG));
+	oval_string_map_put(_oval_message_level_map,
+			_oval_message_texts
+			[OVAL_MESSAGE_LEVEL_ERROR-1],
+			_oval_enumeration_object
+			(OVAL_MESSAGE_LEVEL_ERROR));
+	oval_string_map_put(_oval_message_level_map,
+		    _oval_message_texts
+		    [OVAL_MESSAGE_LEVEL_FATAL-1],
+			_oval_enumeration_object
+			(OVAL_MESSAGE_LEVEL_FATAL));
+	oval_string_map_put(_oval_message_level_map,
+		    _oval_message_texts
+		    [OVAL_MESSAGE_LEVEL_INFO-1],
+			_oval_enumeration_object
+			(OVAL_MESSAGE_LEVEL_INFO));
+	oval_string_map_put(_oval_message_level_map,
+		    _oval_message_texts
+		    [OVAL_MESSAGE_LEVEL_WARNING-1],
+			_oval_enumeration_object
+			(OVAL_MESSAGE_LEVEL_WARNING));
+}
 oval_message_level_enum oval_message_level_parse(
 			xmlTextReaderPtr reader,
 			char *attname,
 			oval_message_level_enum defval)
 {
 	if (_oval_message_level_map == NULL) {
-		_oval_message_level_map = oval_string_map_new();
-		oval_string_map_put(_oval_message_level_map, "debug",
-				    _oval_enumeration_object
-				    (OVAL_MESSAGE_LEVEL_DEBUG));
-		oval_string_map_put(_oval_message_level_map, "error",
-				    _oval_enumeration_object
-				    (OVAL_MESSAGE_LEVEL_ERROR));
-		oval_string_map_put(_oval_message_level_map, "fatal",
-				    _oval_enumeration_object
-				    (OVAL_MESSAGE_LEVEL_FATAL));
-		oval_string_map_put(_oval_message_level_map, "info",
-				    _oval_enumeration_object
-				    (OVAL_MESSAGE_LEVEL_INFO));
-		oval_string_map_put(_oval_message_level_map, "warning",
-				    _oval_enumeration_object
-				    (OVAL_MESSAGE_LEVEL_WARNING));
+		_oval_message_level_map_new();
 	}
 	_oval_enumeration_object_t *starval =
 	    _oval_enumeration_attval(reader, attname,
@@ -184,6 +217,12 @@ oval_message_level_enum oval_message_level_parse(
 		}
 	}
 	return (starval == NULL) ? defval : (oval_syschar_collection_flag_enum)starval->enumval;
+}
+char * oval_message_level_text(oval_message_level_enum level){
+	if (_oval_message_level_map == NULL) {
+		_oval_message_level_map_new();
+	}
+	return level==OVAL_MESSAGE_LEVEL_NONE?NULL:_oval_message_texts[level-1];
 }
 
 struct oval_string_map *_oval_arithmetic_operation_map = NULL;

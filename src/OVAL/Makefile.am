@@ -24,6 +24,7 @@ liboval_la_SOURCES = \
 	oval_resultItem.c \
 	oval_resultTest.c \
 	oval_results_impl.h \
+	oval_results_parser.c \
 	oval_set.c \
 	oval_state.c \
 	oval_stringMap.c \

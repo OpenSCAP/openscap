@@ -131,6 +131,12 @@ void oval_object_free(struct oval_object *object)
 	oval_collection_free_items(object->behaviors, (oscap_destruct_func)oval_behavior_free);
 	oval_collection_free_items(object->notes, free);
 	oval_collection_free_items(object->object_content, (oscap_destruct_func)oval_object_content_free);
+
+	object->comment = NULL;
+	object->id = NULL;
+	object->behaviors = NULL;
+	object->notes = NULL;
+	object->object_content = NULL;
 	free(object);
 }
 

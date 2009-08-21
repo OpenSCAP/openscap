@@ -127,6 +127,13 @@ void oval_definition_free(struct oval_definition *definition)
 		oval_criteria_node_free(definition->criteria);
 	oval_collection_free_items(definition->affected, (oscap_destruct_func)oval_affected_free);
 	oval_collection_free_items(definition->reference, (oscap_destruct_func)oval_reference_free);
+
+	definition->affected = NULL;
+	definition->criteria = NULL;
+	definition->description = NULL;
+	definition->id = NULL;
+	definition->reference = NULL;
+	definition->title = NULL;
 	free(definition);
 }
 

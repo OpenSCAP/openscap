@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "api/oval_agent_api.h"
+#include "../../src/common/oscap.h"
 
 int _test_error_handler(struct oval_xml_error *error, void *null)
 {
@@ -34,6 +35,10 @@ int main(int argc, char **argv)
 		    oval_iterator_definition_next(definitions);
 		oval_definition_to_print(definition, "", index);
 	}
+
+	oval_object_model_free(model);
+
+	oscap_cleanup();
 
 	return 0;
 }

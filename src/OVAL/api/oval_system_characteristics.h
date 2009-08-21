@@ -43,11 +43,11 @@ typedef enum {
 } oval_syschar_collection_flag_enum;
 
 typedef enum{
-	SYSCHAR_STATUS_UNKNOWN,
-	SYSCHAR_STATUS_ERROR,
-	SYSCHAR_STATUS_EXISTS,
-	SYSCHAR_STATUS_DOES_NOT_EXIST,
-	SYSCHAR_STATUS_NOT_COLLECTED
+	SYSCHAR_STATUS_UNKNOWN        = 0,
+	SYSCHAR_STATUS_ERROR          = 1,
+	SYSCHAR_STATUS_EXISTS         = 2,
+	SYSCHAR_STATUS_DOES_NOT_EXIST = 3,
+	SYSCHAR_STATUS_NOT_COLLECTED  = 4
 } oval_syschar_status_enum;
 
 struct oval_sysint;

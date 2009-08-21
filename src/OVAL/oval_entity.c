@@ -117,10 +117,12 @@ void oval_entity_free(struct oval_entity *entity)
 {
 	if (entity->value != NULL)
 		oval_value_free(entity->value);
-	if (entity->variable != NULL)
-		oval_variable_free(entity->variable);
 	if (entity->name != NULL)
 		free(entity->name);
+
+	entity->name = NULL;
+	entity->value = NULL;
+	entity->variable = NULL;
 	free(entity);
 }
 
@@ -227,7 +229,7 @@ int oval_entity_parse_tag(xmlTextReaderPtr reader,
 	} else {
 		struct oval_object_model *model =
 		    oval_parser_context_model(context);
-		variable = get_oval_variable_new(model, varref);
+		variable = get_oval_variable_new(model, varref, OVAL_VARIABLE_UNKNOWN);
 		varref_type = OVAL_ENTITY_VARREF_ATTRIBUTE;
 		value = NULL;
 		return_code = 1;

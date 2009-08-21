@@ -35,6 +35,14 @@
 #include "oval_definitions_impl.h"
 #include "oval_system_characteristics_impl.h"
 
+struct oval_result *oval_result_new(struct oval_results_model *model, char *defid);
+
+void oval_result_free(struct oval_result *);
+
+struct oval_result_directives *oval_result_directives_new();
+void oval_result_directives_free(struct oval_result_directives *);
+int oval_result_directives_parse_tag(xmlTextReaderPtr, struct oval_parser_context *, struct oval_result_directives *);
+
 void set_oval_result_directives_definition_true(struct oval_result_directives *,
 						int);
 void set_oval_result_directives_definition_false(struct oval_result_directives

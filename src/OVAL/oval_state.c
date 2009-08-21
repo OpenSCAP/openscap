@@ -130,6 +130,13 @@ void oval_state_free(struct oval_state *state)
 	if (state->name != NULL)
 		free(state->name);
 	oval_collection_free_items(state->notes, &free);
+	oval_collection_free_items(state->entities, (oscap_destruct_func)oval_entity_free);
+
+	state->comment =NULL;
+	state->entities =NULL;
+	state->id =NULL;
+	state->name =NULL;
+	state->notes =NULL;
 	free(state);
 }
 

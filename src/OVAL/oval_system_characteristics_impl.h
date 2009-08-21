@@ -45,10 +45,12 @@ int oval_sysint_parse_tag
 	(xmlTextReaderPtr, struct oval_parser_context*,
 			oval_sysint_consumer, void*);
 void oval_sysint_to_print(struct oval_sysint *, char *, int);
+void oval_sysint_to_dom  (struct oval_sysint *, xmlDoc *, xmlNode *);
 
 struct oval_sysinfo *oval_sysinfo_new();
 void oval_sysinfo_free(struct oval_sysinfo *);
 void oval_sysinfo_to_print(struct oval_sysinfo *, char *, int);
+void oval_sysinfo_to_dom  (struct oval_sysinfo *, xmlDoc *, xmlNode *);
 int oval_sysinfo_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *);
 
 void set_oval_sysinfo_os_name(struct oval_sysinfo *, char *);
@@ -60,6 +62,7 @@ void add_oval_sysinfo_interface(struct oval_sysinfo *, struct oval_sysint *);
 struct oval_sysdata *oval_sysdata_new(char *id);
 void oval_sysdata_free(struct oval_sysdata *);
 void oval_sysdata_to_print(struct oval_sysdata *, char *, int);
+void oval_sysdata_to_dom  (struct oval_sysdata *, xmlDoc *, xmlNode *);
 int oval_sysdata_parse_tag(xmlTextReaderPtr, struct oval_parser_context *);
 
 void set_oval_sysdata_status(struct oval_sysdata *, oval_syschar_status_enum);
@@ -79,12 +82,13 @@ void add_oval_syschar_variable_binding(struct oval_syschar *,
 				       struct oval_variable_binding *);
 void add_oval_syschar_sysdata(struct oval_syschar *, struct oval_sysdata *);
 void oval_syschar_to_print(struct oval_syschar *, char *, int);
+void oval_syschar_to_dom  (struct oval_syschar *, xmlDoc *, xmlNode *);
 int oval_syschar_parse_tag(xmlTextReaderPtr, struct oval_parser_context *context);
 oval_syschar_collection_flag_enum oval_syschar_flag_parse(xmlTextReaderPtr, char *,
                        oval_syschar_collection_flag_enum);
 oval_syschar_status_enum oval_syschar_status_parse(xmlTextReaderPtr, char *,
                        oval_syschar_status_enum);
-
+char* oval_syschar_status_text(oval_syschar_status_enum);
 
 //typedef void (*oval_affected_consumer) (struct oval_affected *, void *);
 //int oval_affected_parse_tag(xmlTextReaderPtr reader,

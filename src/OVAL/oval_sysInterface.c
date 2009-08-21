@@ -99,6 +99,11 @@ void oval_sysint_free(struct oval_sysint *sysint)
 	if(sysint->ipAddress !=NULL)free(sysint->ipAddress);
 	if(sysint->macAddress!=NULL)free(sysint->macAddress);
 	if(sysint->name      !=NULL)free(sysint->name);
+
+	sysint->ipAddress = NULL;
+	sysint->macAddress = NULL;
+	sysint->name = NULL;
+
 	free(sysint);
 }
 extern const char* NAMESPACE_OVALSYS;
@@ -193,3 +198,21 @@ void oval_sysint_to_print(struct oval_sysint *sysint, char *indent,
 		printf("%sMAC_ADDRESS     = %s\n", nxtindent, macadd);
 	}
 }
+
+void oval_sysint_to_dom  (struct oval_sysint *sysint, xmlDoc *doc, xmlNode *tag_parent){
+	if(sysint){
+		xmlNs *ns_syschar = xmlSearchNsByHref(doc, tag_parent, OVAL_SYSCHAR_NAMESPACE);
+	    xmlNode *tag_sysint = xmlNewChild
+			(tag_parent, ns_syschar, BAD_CAST "interface", NULL);
+	    xmlNewChild
+			(tag_sysint, ns_syschar, BAD_CAST "interface_name",
+					BAD_CAST oval_sysint_name(sysint));
+	    xmlNewChild
+			(tag_sysint, ns_syschar, BAD_CAST "ip_address",
+					BAD_CAST oval_sysint_ip_address(sysint));
+	    xmlNewChild
+			(tag_sysint, ns_syschar, BAD_CAST "mac_address",
+					BAD_CAST oval_sysint_mac_address(sysint));
+	}
+}
+

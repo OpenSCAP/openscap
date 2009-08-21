@@ -154,6 +154,14 @@ void oval_test_free(struct oval_test *test)
 	if (test->name != NULL)
 		free(test->name);
 	oval_collection_free_items(test->notes, &free);
+
+	test->comment = NULL;
+	test->id = NULL;
+	test->name = NULL;
+	test->notes = NULL;
+	test->object = NULL;
+	test->state = NULL;
+
 	free(test);
 }
 

@@ -87,6 +87,9 @@ void oval_reference_free(struct oval_reference *ref)
 		free(ref->source);
 	if (ref->url != NULL)
 		free(ref->url);
+	ref->id = NULL;
+	ref->source = NULL;
+	ref->url = NULL;
 	free(ref);
 }
 

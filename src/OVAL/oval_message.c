@@ -50,6 +50,8 @@ struct oval_message *oval_message_new(){
 
 void oval_message_free(struct oval_message *message){
 	if(message->text   !=NULL)free(message->text);
+
+	message->text = NULL;
 	free(message);
 }
 
@@ -130,5 +132,14 @@ void oval_message_to_print(struct oval_message *message, char *indent,
 	 */
 	printf("%sLEVEL = %d\n", nxtindent, oval_message_level(message));
 	printf("%sTEXT  = %s\n", nxtindent, oval_message_text (message));
+}
+
+void oval_message_to_dom  (struct oval_message *message, xmlDoc *doc, xmlNode *tag_parent){
+	if(message){
+		xmlNs *ns_syschar = xmlSearchNsByHref(doc, tag_parent, OVAL_SYSCHAR_NAMESPACE);
+	    xmlNode *tag_message = xmlNewChild
+			(tag_parent, ns_syschar, BAD_CAST "message", oval_message_text(message));
+	    xmlNewProp(tag_message, BAD_CAST "level", BAD_CAST oval_message_level_text(oval_message_level(message)));
+	}
 }
 

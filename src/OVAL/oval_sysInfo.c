@@ -32,6 +32,7 @@
 #include <string.h>
 #include "oval_system_characteristics_impl.h"
 #include "oval_collection_impl.h"
+#include "oval_agent_api_impl.h"
 
 typedef struct oval_sysinfo {
 	char *osName;
@@ -56,6 +57,14 @@ void oval_sysinfo_free(struct oval_sysinfo *sysinfo){
 	if(sysinfo->osName          != NULL) free(sysinfo->osName);
 	if(sysinfo->osVersion       != NULL) free(sysinfo->osVersion);
 	if(sysinfo->primaryHostName != NULL) free(sysinfo->primaryHostName);
+	oval_collection_free_items(sysinfo->interfaces, (oscap_destruct_func)oval_sysint_free);
+
+	sysinfo->interfaces = NULL;
+	sysinfo->osArchitecture = NULL;
+	sysinfo->osName = NULL;
+	sysinfo->osVersion = NULL;
+	sysinfo->primaryHostName = NULL;
+
 	free(sysinfo);
 }
 
@@ -257,3 +266,32 @@ void oval_sysinfo_to_print(struct oval_sysinfo *sysinfo, char *indent,
 		}
 	}
 }
+
+void oval_sysinfo_to_dom  (struct oval_sysinfo *sysinfo, xmlDoc *doc, xmlNode *tag_parent){
+	if(sysinfo){
+		xmlNs *ns_syschar = xmlSearchNsByHref(doc, tag_parent, OVAL_SYSCHAR_NAMESPACE);
+	    xmlNode *tag_sysinfo = xmlNewChild
+			(tag_parent, ns_syschar, BAD_CAST "system_info", NULL);
+	    xmlNewChild
+			(tag_sysinfo, ns_syschar, BAD_CAST "os_name",
+					BAD_CAST oval_sysinfo_os_name(sysinfo));
+	    xmlNewChild
+			(tag_sysinfo, ns_syschar, BAD_CAST "os_version",
+					BAD_CAST oval_sysinfo_os_version(sysinfo));
+	    xmlNewChild
+			(tag_sysinfo, ns_syschar, BAD_CAST "architecture",
+					BAD_CAST oval_sysinfo_os_architecture(sysinfo));
+	    xmlNewChild
+			(tag_sysinfo, ns_syschar, BAD_CAST "primary_host_name",
+					BAD_CAST oval_sysinfo_primary_host_name(sysinfo));
+
+	    xmlNode *tag_interfaces = xmlNewChild
+			(tag_sysinfo, ns_syschar, BAD_CAST "interfaces", NULL);
+		struct oval_iterator_sysint *intrfcs = oval_sysinfo_interfaces(sysinfo);
+		int i;for(i=1;oval_iterator_sysint_has_more(intrfcs);i++){
+			struct oval_sysint *intrfc = oval_iterator_sysint_next(intrfcs);
+			oval_sysint_to_dom(intrfc, doc, tag_interfaces);
+		}
+	}
+}
+

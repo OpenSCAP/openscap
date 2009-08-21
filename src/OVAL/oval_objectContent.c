@@ -147,12 +147,14 @@ struct oval_object_content
 void oval_object_content_free(struct oval_object_content *content)
 {
 	if(content->fieldName!=NULL)free(content->fieldName);
+	content->fieldName = NULL;
 	switch (content->type) {
 	case OVAL_OBJECTCONTENT_ENTITY:{
 			struct oval_object_content_ENTITY *entity =
 			    (oval_object_content_ENTITY_t *) content;
 			if (entity->entity != NULL)
 				oval_entity_free(entity->entity);
+			entity->entity = NULL;
 		}
 		break;
 	case OVAL_OBJECTCONTENT_SET:{
@@ -160,6 +162,7 @@ void oval_object_content_free(struct oval_object_content *content)
 			    (oval_object_content_SET_t *) content;
 			if (set->set != NULL)
 				oval_set_free(set->set);
+			set->set = NULL;
 		}
 		break;
 	case OVAL_OBJECTCONTENT_UNKNOWN: break;

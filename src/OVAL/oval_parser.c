@@ -37,7 +37,7 @@
 struct oval_object_model *oval_parser_context_model(struct oval_parser_context
 						    *context)
 {
-	return context->model;
+	return context->object_model;
 }
 
 int oval_parser_report(struct oval_parser_context *context, struct oval_xml_error *error){
@@ -131,7 +131,9 @@ int _oval_parser_process_tags(xmlTextReaderPtr reader,
 	return return_code;
 }
 
-int _oval_parser_process_node(xmlTextReaderPtr reader,
+#define DEBUG_OVAL_PARSER 0
+
+int oval_parser_parse_node(xmlTextReaderPtr reader,
 			      struct oval_parser_context *context)
 {
 	const char *oval_namespace =
@@ -142,12 +144,30 @@ int _oval_parser_process_node(xmlTextReaderPtr reader,
 	const char *tagname_objects = "objects";
 	const char *tagname_states = "states";
 	const char *tagname_variables = "variables";
+	int depth = xmlTextReaderDepth(reader);//tree_depth
+	if(DEBUG_OVAL_PARSER){
+		char message[200]; *message = 0;
+		sprintf(message,"oval_parser: START PARSE (depth = %d)",depth);
+		oval_parser_log_debug(context, message);
+	}
+	if(DEBUG_OVAL_PARSER){
+		char message[200]; *message = 0;
+		sprintf(message,"oval_parser: ENCLOSING TAG <%s:%s>",
+				xmlTextReaderNamespaceUri(reader), xmlTextReaderLocalName(reader));
+		oval_parser_log_debug(context, message);
+	}
 	int return_code = xmlTextReaderRead(reader);
 	while (return_code == 1) {
 		if (xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
-			if (xmlTextReaderDepth(reader) > 0) {
+			if (xmlTextReaderDepth(reader) > depth) {
 				char *tagname = (char*) xmlTextReaderLocalName(reader);
 				char *namespace = (char*) xmlTextReaderNamespaceUri(reader);
+				if(DEBUG_OVAL_PARSER){
+					char message[200]; *message = 0;
+					sprintf(message,"oval_parser: PROCESSING TAG <%s:%s> depth = %d",
+							namespace, tagname, xmlTextReaderDepth(reader));
+					oval_parser_log_debug(context, message);
+				}
 				int is_oval = strcmp(namespace, oval_namespace)==0;
 				if (is_oval && (strcmp(tagname, tagname_definitions) == 0)) {
 					return_code =
@@ -184,7 +204,7 @@ int _oval_parser_process_node(xmlTextReaderPtr reader,
 								 context);
 				} else {
 					char message[200]; *message = 0;
-					sprintf(message,"ovalsys_parser: UNPROCESSED TAG <%s:%s>",namespace, tagname);
+					sprintf(message,"oval_parser: UNPROCESSED TAG <%s:%s>",namespace, tagname);
 					oval_parser_log_warn(context, message);
 					return_code =
 					    oval_parser_skip_tag(reader,
@@ -199,7 +219,7 @@ int _oval_parser_process_node(xmlTextReaderPtr reader,
 				XML_READER_TYPE_ELEMENT)) {
 				return_code = xmlTextReaderRead(reader);
 			}
-		} else if (xmlTextReaderDepth(reader) > 0) {
+		} else if (xmlTextReaderDepth(reader) > depth) {
 			return_code = xmlTextReaderRead(reader);
 		} else
 			break;
@@ -212,19 +232,16 @@ void oval_parser_parse
      void *user_arg) {
 	xmlTextReaderPtr reader;
 	xmlDocPtr doc;
-	//xmlNodePtr cur;
-	//xmlNode *node;
-	//int ret;
 	doc = xmlParseFile(docname);
 	reader = xmlNewTextReaderFilename(docname);
 	if (reader != NULL) {
 		struct oval_parser_context context;
 		context.reader        = reader;
-		context.model         = model;
+		context.object_model         = model;
 		context.error_handler = eh;
 		context.user_data     = user_arg;
 		xmlTextReaderSetErrorHandler(reader, &libxml_error_handler, &context);
-		_oval_parser_process_node(reader, &context);
+		oval_parser_parse_node(reader, &context);
 	}
 }
 

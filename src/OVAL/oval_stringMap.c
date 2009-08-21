@@ -141,15 +141,18 @@ void *oval_string_map_get_value(struct oval_string_map *map, char *key)
 }
 
 void oval_string_map_free(struct oval_string_map *map,
-			  oval_item_free_func free_func)
+		oscap_destruct_func free_func)
 {
 	struct _oval_string_map_entry *entry = map->entries;
 	struct _oval_string_map_entry *next;
 	while (entry != NULL) {
 		if (free_func != NULL)
-			(*free_func) (entry->item);
+			if(entry->item)(*free_func) (entry->item);
 		next = entry->next;
 		free(entry->key);
+		entry->item = NULL;
+		entry->key  = NULL;
+		entry->next = NULL;
 		free(entry);
 		entry = next;
 	}

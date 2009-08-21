@@ -164,14 +164,11 @@ struct oval_criteria_node *oval_criteria_node_new(oval_criteria_node_type_enum
 void oval_criteria_node_free(struct oval_criteria_node *node)
 {
 	oval_criteria_node_type_enum type = node->type;
-	if (node->comment != NULL)
-		free(node->comment);
 	switch (type) {
 	case NODETYPE_CRITERIA:{
-			struct oval_collection *subnodes =
-			    ((struct oval_criteria_node_CRITERIA *)node)->
-			    subnodes;
-			oval_collection_free_items(subnodes, (oscap_destruct_func)oval_criteria_node_free);
+			struct oval_criteria_node_CRITERIA *criteria = (struct oval_criteria_node_CRITERIA *)node;
+			oval_collection_free_items(criteria->subnodes, (oscap_destruct_func)oval_criteria_node_free);
+			criteria->subnodes = NULL;
 		} break;
 	case NODETYPE_CRITERION:{
 			//NOOP
@@ -184,8 +181,10 @@ void oval_criteria_node_free(struct oval_criteria_node *node)
 			//NOOP
 		}
 	}
-	if (node->comment != NULL)
+	if (node->comment != NULL){
 		free(node->comment);
+	}
+	node->comment = NULL;
 	free(node);
 }
 
