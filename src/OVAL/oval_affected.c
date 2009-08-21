@@ -108,6 +108,7 @@ void add_oval_affected_product(struct oval_affected *affected, char *product)
 	oval_collection_add(affected->products, (void *)strdup(product));
 }
 
+/*
 struct oval_string_map *_odafamilyMap = NULL;
 typedef struct _odafamily {
 	int value;
@@ -118,9 +119,22 @@ void _odafamily_set(char *name, int val)
 	enumval->value = val;
 	oval_string_map_put(_odafamilyMap, name, (void *)enumval);
 }
+*/
+
+const struct oscap_string_map OVAL_ODAFAMILY_MAP[] = {
+	{ AFCFML_CATOS,     "catos"     },
+	{ AFCFML_IOS,       "ios"       },
+	{ AFCFML_MACOS,     "macos"     },
+	{ AFCFML_PIXOS,     "pixos"     },
+	{ AFCFML_UNDEFINED, "undefined" },
+	{ AFCFML_UNIX,      "unix"      },
+	{ AFCFML_WINDOWS,   "windows"   },
+	{ CLASS_UNKNOWN, NULL }
+};
 
 oval_affected_family_enum _odafamily(char *family)
 {
+	/*
 	if (_odafamilyMap == NULL) {
 		_odafamilyMap = oval_string_map_new();
 		_odafamily_set("catos", AFCFML_CATOS);
@@ -134,6 +148,8 @@ oval_affected_family_enum _odafamily(char *family)
 	_odafamily_t *valstar =
 	    (_odafamily_t *) oval_string_map_get_value(_odafamilyMap, family);
 	return (valstar == NULL) ? CLASS_UNKNOWN : valstar->value;
+	*/
+	return oscap_string_to_enum(OVAL_ODAFAMILY_MAP, family);
 }
 
 int _oval_affected_parse_tag(xmlTextReaderPtr reader,
@@ -166,6 +182,7 @@ int _oval_affected_parse_tag(xmlTextReaderPtr reader,
 		     tagname, xmlTextReaderDepth(reader), linno);
 		return_code = oval_parser_skip_tag(reader, context);
 	}
+	free(tagname);
 	return return_code;
 }
 

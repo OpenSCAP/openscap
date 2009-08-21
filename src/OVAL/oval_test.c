@@ -263,6 +263,7 @@ int _oval_test_parse_tag(xmlTextReaderPtr reader,
 		return_code = oval_parser_skip_tag(reader, context);
 	}
 
+	free(tagname);
 	return return_code;
 
 }

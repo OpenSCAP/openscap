@@ -114,8 +114,10 @@ int _oval_parser_process_tags(xmlTextReaderPtr reader,
 			}
 			break;
 		case XML_READER_TYPE_END_ELEMENT:{
-				if (depth == xmlTextReaderDepth(reader))
+				if (depth == xmlTextReaderDepth(reader)) {
+					free(tagname);
 					return return_code;
+				}
 			}
 			break;
 		}
@@ -231,8 +233,8 @@ void oval_parser_parse
     (struct oval_object_model *model, char *docname, oval_xml_error_handler eh,
      void *user_arg) {
 	xmlTextReaderPtr reader;
-	xmlDocPtr doc;
-	doc = xmlParseFile(docname);
+	//xmlDocPtr doc;
+	//doc = xmlParseFile(docname);
 	reader = xmlNewTextReaderFilename(docname);
 	if (reader != NULL) {
 		struct oval_parser_context context;
@@ -242,6 +244,7 @@ void oval_parser_parse
 		context.user_data     = user_arg;
 		xmlTextReaderSetErrorHandler(reader, &libxml_error_handler, &context);
 		oval_parser_parse_node(reader, &context);
+	    xmlFreeTextReader(reader);
 	}
 }
 

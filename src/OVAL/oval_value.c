@@ -96,12 +96,11 @@ struct oval_value *oval_value_new()
 
 void oval_value_free(struct oval_value *value)
 {
-	if (value->text != NULL)
+	if (value) {
 		free(value->text);
-
-	value->text = NULL;
-
-	free(value);
+		value->text = NULL;
+		free(value);
+	}
 }
 
 void set_oval_value_datatype(struct oval_value *value,
@@ -113,7 +112,7 @@ void set_oval_value_datatype(struct oval_value *value,
 void set_oval_value_text(struct oval_value *value, char *text)
 {
 	if(value->text!=NULL)free(value->text);
-	value->text = (text==NULL)?NULL:strdup(text);
+	value->text = ((text==NULL)?NULL:text);
 }
 
 void oval_value_parse_tag_consume_text(char *string, void *text) {

@@ -63,7 +63,7 @@ oval_datetime_format_enum oval_datetime_format_parse(xmlTextReaderPtr, char *,
 						     oval_arithmetic_operation_enum);
 oval_message_level_enum oval_message_level_parse(xmlTextReaderPtr, char *,
 						     oval_message_level_enum);
-char * oval_message_level_text(oval_message_level_enum);
+const char * oval_message_level_text(oval_message_level_enum);
 
 struct oval_affected *oval_affected_new();
 void oval_affected_free(struct oval_affected *);

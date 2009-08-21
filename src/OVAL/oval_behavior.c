@@ -84,7 +84,7 @@ void oval_behavior_free(struct oval_behavior *behavior)
 {
 	if (behavior->value != NULL)
 		oval_value_free(behavior->value);
-	oval_string_map_free(behavior->att_values, (oscap_destruct_func)oval_value_free);
+	oval_string_map_free(behavior->att_values, free);
 	behavior->att_values = NULL;
 	behavior->value      = NULL;
 	free(behavior);
@@ -103,19 +103,11 @@ int oval_behavior_parse_tag(xmlTextReaderPtr reader,
 			    oval_behavior_consumer consumer, void *user)
 {
 	oval_behavior_t *behavior = oval_behavior_new();
-	xmlNode *node = xmlTextReaderCurrentNode(reader);
-	if(node!=NULL && node->type==XML_ELEMENT_NODE){
-		xmlElement *element = (xmlElement*)node;
-		xmlAttribute *attributes = element->attributes;
-		int idx;for(idx=0;attributes!=NULL;idx++){
-			xmlAttribute *attr = attributes;
-			attributes = (xmlAttribute*)attributes->next;
-			char *value = (char *) xmlTextReaderGetAttribute(reader, attr->name);
-			if (value != NULL) {
-				oval_string_map_put(behavior->att_values, (char*) attr->name, strdup(value));
-				free(value);
-			}
-		}
+	while (xmlTextReaderMoveToNextAttribute(reader) == 1) {
+		const char *name  = (const char *) xmlTextReaderConstName(reader);
+		const char *value = (const char *) xmlTextReaderConstValue(reader);
+		if (name && value)
+			oval_string_map_put(behavior->att_values, name, strdup(value));
 	}
 	(*consumer) (behavior, user);
 	return 1;

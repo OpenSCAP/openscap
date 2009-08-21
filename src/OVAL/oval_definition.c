@@ -200,6 +200,7 @@ void add_oval_definition_reference(struct oval_definition *definition,
 {
 }
 
+/*
 struct oval_string_map *_odaclassMap = NULL;
 typedef struct _odaclass {
 	int value;
@@ -210,9 +211,20 @@ void _odaclass_set(char *name, int val)
 	enumval->value = val;
 	oval_string_map_put(_odaclassMap, name, (void *)enumval);
 }
+*/
+
+const struct oscap_string_map OVAL_DEFINITION_CLASS_MAP[] = {
+	{ CLASS_COMPLIANCE,    "compliance"    },
+	{ CLASS_INVENTORY,     "inventory"     },
+	{ CLASS_MISCELLANEOUS, "miscellaneous" },
+	{ CLASS_PATCH,         "patch"         },
+	{ CLASS_VULNERABILITY, "vulnerability" },
+	{ CLASS_UNKNOWN,       NULL            }
+};
 
 oval_definition_class_enum _odaclass(char *class)
 {
+	/*
 	if (_odaclassMap == NULL) {
 		_odaclassMap = oval_string_map_new();
 		_odaclass_set("compliance", CLASS_COMPLIANCE);
@@ -224,6 +236,8 @@ oval_definition_class_enum _odaclass(char *class)
 	_odaclass_t *valstar =
 	    (_odaclass_t *) oval_string_map_get_value(_odaclassMap, class);
 	return (valstar == NULL) ? CLASS_UNKNOWN : valstar->value;
+	*/
+	return oscap_string_to_enum(OVAL_DEFINITION_CLASS_MAP, class);
 }
 
 void _oval_definition_title_consumer(char *string, void *user)
