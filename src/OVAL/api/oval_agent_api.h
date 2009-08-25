@@ -317,6 +317,13 @@ struct oval_syschar_model *oval_results_model_syschar_model(
  */
 struct oval_result_directives *oval_results_model_directives(
 		struct oval_results_model *model);
+
+/*
+ * function: oval_results_model_systems -- Return iterator over reporting systems
+ * param: model -- the specified results model
+ */
+struct oval_iterator_result_system *oval_results_model_systems
+		(struct oval_results_model *);
 /*
  * function: oval_results_model_resultss -- Return an iterator over the oval_sychar objects persisted by this model.
  * param: model -- the specified oval_results_model.

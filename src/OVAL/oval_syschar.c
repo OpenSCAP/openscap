@@ -182,7 +182,9 @@ int _oval_syschar_parse_subtag(
 	char *namespace = (char*) xmlTextReaderNamespaceUri(reader);
 	int return_code = 0;
 	if(strcmp("message",tagname)==0){
-		return_code = oval_message_parse_tag(reader, context, &_oval_syschar_parse_subtag_consume_message, syschar);
+		return_code = oval_message_parse_tag
+			(reader, context,
+				(oscap_consumer_func)_oval_syschar_parse_subtag_consume_message, syschar);
 	}else if(strcmp("variable_value",tagname)==0){
 		return_code = oval_variable_binding_parse_tag
 		(reader, context, &_oval_syschar_parse_subtag_consume_variable_binding, syschar);

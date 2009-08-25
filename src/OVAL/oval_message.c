@@ -85,7 +85,7 @@ void oval_message_parse_tag_consumer(char* text, void* message){
 	set_oval_message_text(message, text);
 }
 int oval_message_parse_tag(xmlTextReaderPtr reader,
-			       struct oval_parser_context *context, oval_message_consumer consumer, void* client)
+			       struct oval_parser_context *context, oscap_consumer_func consumer, void* client)
 {
 	int return_code = 1;
 	struct oval_message *message = oval_message_new();

@@ -296,7 +296,7 @@ void set_oval_message_text(struct oval_message *, char *);
 void set_oval_message_level(struct oval_message *, oval_message_level_enum);
 typedef void (*oval_message_consumer)(struct oval_message *, void *);
 int oval_message_parse_tag(xmlTextReaderPtr,
-			       struct oval_parser_context *, oval_message_consumer, void *);
+			       struct oval_parser_context *, oscap_consumer_func, void *);
 void oval_message_to_print(struct oval_message *message, char *indent,
 			      int index);
 void oval_message_to_dom  (struct oval_message *, xmlDoc *, xmlNode *);

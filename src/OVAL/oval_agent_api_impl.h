@@ -46,16 +46,22 @@ void add_oval_state(struct oval_object_model *, struct oval_state *);
 void add_oval_variable(struct oval_object_model *, struct oval_variable *);
 void set_oval_sysinfo(struct oval_object_model *, struct oval_sysinfo *);
 
-struct oval_definition *get_oval_definition_new(struct oval_object_model *,
-						char *);
+struct oval_definition *get_oval_definition_new
+	(struct oval_object_model *, char *);
 struct oval_test *get_oval_test_new(struct oval_object_model *, char *);
 struct oval_object *get_oval_object_new(struct oval_object_model *, char *);
 struct oval_state *get_oval_state_new(struct oval_object_model *, char *);
 struct oval_variable *get_oval_variable_new(struct oval_object_model *, char *, oval_variable_type_enum type);
 struct oval_syschar *get_oval_syschar_new(struct oval_syschar_model *, struct oval_object *);
+struct oval_syschar_item *get_oval_syschar_item_new(struct oval_syschar_model *, char *);
 
 struct oval_sysdata *get_oval_sysdata_new(struct oval_syschar_model *, char *);
 
-char *malloc_string(const char *);
+void add_oval_results_model_system(struct oval_results_model *, struct oval_result_system *);
+struct oval_result_definition *get_oval_result_definition    (struct oval_result_system *, char *);
+struct oval_result_definition *get_oval_result_definition_new(struct oval_result_system *, char *);
+struct oval_result_test *get_oval_result_test    (struct oval_result_system *, char *);
+struct oval_result_test *get_oval_result_test_new(struct oval_result_system *, char *);
+
 
 #endif				/* OVAL_AGENT_API_IMPL_H_ */

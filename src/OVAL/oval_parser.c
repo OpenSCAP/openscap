@@ -233,8 +233,6 @@ void oval_parser_parse
     (struct oval_object_model *model, char *docname, oval_xml_error_handler eh,
      void *user_arg) {
 	xmlTextReaderPtr reader;
-	//xmlDocPtr doc;
-	//doc = xmlParseFile(docname);
 	reader = xmlNewTextReaderFilename(docname);
 	if (reader != NULL) {
 		struct oval_parser_context context;
@@ -244,7 +242,7 @@ void oval_parser_parse
 		context.user_data     = user_arg;
 		xmlTextReaderSetErrorHandler(reader, &libxml_error_handler, &context);
 		oval_parser_parse_node(reader, &context);
-	    xmlFreeTextReader(reader);
+		xmlFreeTextReader(reader);
 	}
 }
 
@@ -330,6 +328,20 @@ int oval_parser_boolean_attribute(xmlTextReaderPtr reader, char *attname,
 		free(string);
 	}
 	return booval;
+}
+
+int oval_parser_int_attribute(xmlTextReaderPtr reader, char *attname,
+				  int defval)
+{
+	char *string = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST attname);
+	int value;
+	if (string == NULL)
+		value = defval;
+	else {
+		value = atoi(string);
+		free(string);
+	}
+	return value;
 }
 
 void oval_text_consumer(char *text, void *user)

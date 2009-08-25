@@ -45,6 +45,7 @@ int _ovalres_parser_process_node_consume_collected_objects(xmlTextReaderPtr read
 {
 	return oval_syschar_parse_tag(reader, context);
 }
+
 int _ovalres_parser_process_node_consume_system_data(xmlTextReaderPtr reader,
 		  struct oval_parser_context *context, void *null)
 {
@@ -58,21 +59,24 @@ int _oval_results_parser_consume_definitions
 	if(DEBUG_OVALRES_PARSER)oval_parser_log_debug(context,"Calling oval_parser_parse_node");
 	return oval_parser_parse_node(reader, context);
 }
-int _ovalres_parser_parse_system(xmlTextReaderPtr reader, struct oval_parser_context* context, void* null)
-{
-	int return_code;
-	if(DEBUG_OVALRES_PARSER){
-		char message[200];*message = '\0';
-		sprintf(message,"_ovalres_parser_parse_system <%s>", xmlTextReaderLocalName(reader));
-		oval_parser_log_debug(context, message);
-	}
-	return_code =
-	    oval_parser_skip_tag(reader,context);
-	return return_code;
 
+void _oval_results_parser_consume_system
+	(struct oval_result_system *system, struct oval_results_model *model)
+{
+	add_oval_results_model_system(model, system);
 }
-int _ovalres_parser_process_node(xmlTextReaderPtr reader,
-			      struct oval_parser_context *context)
+
+int _ovalres_parser_parse_system
+	(xmlTextReaderPtr reader, struct oval_parser_context *context, void *null)
+{
+	struct oval_results_model *model = context->results_model;
+	return oval_result_system_parse
+		(reader, context,
+			(oscap_consumer_func)_oval_results_parser_consume_system, model);
+}
+
+int _ovalres_parser_process_node
+	(xmlTextReaderPtr reader, struct oval_parser_context *context)
 {
 	int return_code = xmlTextReaderRead(reader);
 	while (return_code == 1) {
@@ -111,16 +115,20 @@ int _ovalres_parser_process_node(xmlTextReaderPtr reader,
 					if(DEBUG_OVALRES_PARSER)oval_parser_log_debug(context,"Calling oval_parser_parse_node");
 					return_code = oval_parser_parse_node(reader, context);
 				}else if (is_ovalres && (strcmp(tagname, "results") == 0)) {
-					return_code = oval_parser_parse_tag(reader, context, &_ovalres_parser_parse_system, NULL );
+					return_code = oval_parser_parse_tag
+						(reader, context,
+							(oval_xml_tag_parser)_ovalres_parser_parse_system, NULL );
 				} else {
 					char message[200]; *message = 0;
 					sprintf(message,
 							"ovalres_parser_process_node: UNPROCESSED TAG <%s:%s>",
 							namespace, tagname);
 					oval_parser_log_warn(context, message);
+					struct oval_results_model *model = context->results_model;
 					return_code =
-					    oval_parser_skip_tag(reader,
-								 context);
+					    oval_result_system_parse
+							(reader, context,
+									(oscap_consumer_func)_oval_results_parser_consume_system, model);
 				}
 				free(tagname);
 				free(namespace);

@@ -21,7 +21,9 @@ liboval_la_SOURCES = \
 	oval_result.c \
 	oval_resultCriteriaNode.c \
 	oval_resultDirectives.c \
+	oval_resultDefinition.c \
 	oval_resultItem.c \
+	oval_resultSystem.c \
 	oval_resultTest.c \
 	oval_results_impl.h \
 	oval_results_parser.c \

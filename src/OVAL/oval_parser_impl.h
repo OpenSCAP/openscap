@@ -73,6 +73,9 @@ int oval_parser_boolean(const char *, int);
 int oval_parser_boolean_attribute(xmlTextReaderPtr reader, char *attname,
 				  int defval);
 
+int oval_parser_int_attribute(xmlTextReaderPtr reader, char *attname,
+				  int defval);
+
 int oval_parser_skip_tag(xmlTextReaderPtr reader,
 			 struct oval_parser_context *context);
 

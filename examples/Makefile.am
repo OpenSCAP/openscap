@@ -4,6 +4,8 @@ TESTS =
 TESTS_ENVIRONMENT = $(SHELL) -x
 EXTRA_DIST =
 
+CFLAGS += @libxml_cflags@
+
 if WANT_OVAL
 check_PROGRAMS += test_oval test_syschar
 TESTS += OVAL/test_oval.sh OVAL/test_syschar.sh
@@ -36,7 +38,7 @@ test_probes_CFLAGS = -I$(top_srcdir)/src/OVAL
 test_probes_LDADD = $(top_builddir)/src/libopenscap.la
 
 test_sexp_to_syschar_SOURCES = OVAL/test_sexp_to_syschar.c
-test_sexp_to_syschar_CFLAGS = -I$(top_srcdir)/src/OVAL/probes/SEAP/public -I$(top_srcdir)/src/OVAL -I$(top_srcdir)/src/OVAL/probes @libxml_cflags@
+test_sexp_to_syschar_CFLAGS = -I$(top_srcdir)/src/OVAL/probes/SEAP/public -I$(top_srcdir)/src/OVAL -I$(top_srcdir)/src/OVAL/probes
 test_sexp_to_syschar_LDADD = $(top_builddir)/src/libopenscap.la
 
 endif

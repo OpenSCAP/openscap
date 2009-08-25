@@ -88,13 +88,6 @@ struct oval_sysdata *oval_iterator_sysdata_next(struct oval_iterator_sysdata
 	    oval_collection_iterator_next((struct oval_iterator *)oc_sysdata);
 }
 
-/*
-oval_family_enum oval_sysdata_family(struct oval_sysdata *sysdata)
-{
-	return ((struct oval_sysdata *)sysdata)->family;
-}
-*/
-
 oval_subtype_enum oval_sysdata_subtype(struct oval_sysdata *sysdata)
 {
 	return sysdata->subtype;
@@ -287,7 +280,7 @@ void oval_sysdata_to_dom  (struct oval_sysdata *sysdata, xmlDoc *doc, xmlNode *t
 				xmlNode *tag_message = xmlNewChild
 					(tag_sysdata, ns_syschar, BAD_CAST "message", BAD_CAST message);
 				oval_message_level_enum index = oval_sysdata_message_level(sysdata);
-				char* level = oval_message_level_text(index);
+				const char* level = oval_message_level_text(index);
 				xmlNewProp(tag_message, BAD_CAST "level", BAD_CAST level);
 			}
 		}

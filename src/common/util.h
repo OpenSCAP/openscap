@@ -35,6 +35,8 @@
  */
 typedef void(*oscap_destruct_func)(void*);
 
+typedef void(*oscap_consumer_func)(void*, void*);
+
 /**
  * Generate a getter function with an optional conversion.
  * Header of the generated function will look like this (substitute the capital letter sequences with the actual parametres):

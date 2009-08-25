@@ -116,7 +116,7 @@ void oval_set_free(struct oval_set *set)
 			oval_collection_free_items(aggregate->subsets,
 						   (oscap_destruct_func)oval_set_free);
 			aggregate->subsets = NULL;
-			free(set->extension);
+ 			free(set->extension);
 			set->extension = NULL;
 		} break;
 	case OVAL_SET_COLLECTIVE:{

@@ -55,14 +55,13 @@ const struct oscap_string_map OVAL_SYSCHAR_FLAG_MAP[] = {
 };
 
 oval_syschar_collection_flag_enum oval_syschar_flag_parse(xmlTextReaderPtr
-							       reader,
-							       char *attname,
-							       oval_syschar_collection_flag_enum
-							       defval)
+  							       reader,
+  							       char *attname,
+  							       oval_syschar_collection_flag_enum
+  							       defval)
 {
 	return oval_enumeration_attr(reader, attname, OVAL_SYSCHAR_FLAG_MAP, defval);
 }
-
 
 const struct oscap_string_map OVAL_SYSCHAR_STATUS_MAP[] = {
 	{ SYSCHAR_STATUS_ERROR,          "error"          },
@@ -73,9 +72,9 @@ const struct oscap_string_map OVAL_SYSCHAR_STATUS_MAP[] = {
 };
 
 oval_syschar_status_enum oval_syschar_status_parse(xmlTextReaderPtr
-							       reader,
-							       char *attname,
-							       oval_syschar_status_enum defval)
+  							       reader,
+  							       char *attname,
+  							       oval_syschar_status_enum defval)
 {
 	return oval_enumeration_attr(reader, attname, OVAL_SYSCHAR_STATUS_MAP, defval);
 }
@@ -94,9 +93,9 @@ const struct oscap_string_map OVAL_MESSAGE_LEVEL_MAP[] = {
 };
 
 oval_message_level_enum oval_message_level_parse(
-			xmlTextReaderPtr reader,
-			char *attname,
-			oval_message_level_enum defval)
+  			xmlTextReaderPtr reader,
+  			char *attname,
+  			oval_message_level_enum defval)
 {
 	return oval_enumeration_attr(reader, attname, OVAL_MESSAGE_LEVEL_MAP, defval);
 }
@@ -113,10 +112,10 @@ const struct oscap_string_map OVAL_ARITHMETIC_OPERATION_MAP[] = {
 };
 
 oval_arithmetic_operation_enum oval_arithmetic_operation_parse(xmlTextReaderPtr
-							       reader,
-							       char *attname,
-							       oval_arithmetic_operation_enum
-							       defval)
+							   reader,
+							   char *attname,
+							   oval_arithmetic_operation_enum
+							   defval)
 {
 	return oval_enumeration_attr(reader, attname, OVAL_ARITHMETIC_OPERATION_MAP, defval);
 }
@@ -131,9 +130,9 @@ const struct oscap_string_map OVAL_DATETIME_FORMAT_MAP[] = {
 };
 
 oval_datetime_format_enum oval_datetime_format_parse(xmlTextReaderPtr reader,
-						     char *attname,
-						     oval_arithmetic_operation_enum
-						     defval)
+  						     char *attname,
+  						     oval_arithmetic_operation_enum
+  						     defval)
 {
 	return oval_enumeration_attr(reader, attname, OVAL_DATETIME_FORMAT_MAP, defval);
 }
@@ -146,8 +145,8 @@ const struct oscap_string_map OVAL_SET_OPERATION_MAP[] = {
 };
 
 oval_set_operation_enum oval_set_operation_parse(xmlTextReaderPtr reader,
-						 char *attname,
-						 oval_set_operation_enum defval)
+  						 char *attname,
+  						 oval_set_operation_enum defval)
 {
 	return oval_enumeration_attr(reader, attname, OVAL_SET_OPERATION_MAP, defval);
 }
@@ -168,7 +167,7 @@ const struct oscap_string_map OVAL_OPERATION_MAP[] = {
 };
 
 oval_operation_enum oval_operation_parse(xmlTextReaderPtr reader, char *attname,
-					 oval_operation_enum defval)
+  					 oval_operation_enum defval)
 {
 	return oval_enumeration_attr(reader, attname, OVAL_OPERATION_MAP, defval);
 };
@@ -183,7 +182,7 @@ const struct oscap_string_map OVAL_CHECK_MAP[] = {
 };
 
 oval_check_enum oval_check_parse(xmlTextReaderPtr reader, char *attname,
-				 oval_check_enum defval)
+  				 oval_check_enum defval)
 {
 	return oval_enumeration_attr(reader, attname, OVAL_CHECK_MAP, defval);
 }
@@ -202,7 +201,7 @@ const struct oscap_string_map OVAL_DATATYPE_MAP[] = {
 };
 
 oval_datatype_enum oval_datatype_parse(xmlTextReaderPtr reader, char *attname,
-				       oval_datatype_enum defval)
+  				       oval_datatype_enum defval)
 {
 	return oval_enumeration_attr(reader, attname, OVAL_CHECK_MAP, defval);
 }
@@ -217,7 +216,7 @@ const struct oscap_string_map OVAL_EXISTENCE_MAP[] = {
 };
 
 oval_existence_enum oval_existence_parse(xmlTextReaderPtr reader, char *attname,
-					 oval_existence_enum defval)
+				 oval_existence_enum defval)
 {
 	return oval_enumeration_attr(reader, attname, OVAL_EXISTENCE_MAP, defval);
 }
@@ -231,7 +230,7 @@ const struct oscap_string_map OVAL_OPERATOR_MAP[] = {
 };
 
 oval_operator_enum oval_operator_parse(xmlTextReaderPtr reader, char *attname,
-				       oval_operator_enum defval)
+  				       oval_operator_enum defval)
 {
 	return oval_enumeration_attr(reader, attname, OVAL_OPERATOR_MAP, defval);
 }
@@ -256,12 +255,12 @@ const struct oscap_string_map OVAL_FAMILY_MAP[] = {
 
 oval_family_enum oval_family_parse(xmlTextReaderPtr reader)
 {
-	char *namespace = (char*) xmlTextReaderNamespaceUri(reader);
+  	char *namespace = (char*) xmlTextReaderNamespaceUri(reader);
 	char *family_text = strrchr(namespace, '#');
 	if (family_text == NULL) {
 		free(namespace);
 		return FAMILY_UNKNOWN;
-	}
+  	}
 	int ret = oscap_string_to_enum(OVAL_FAMILY_MAP, ++family_text);
 	free(namespace);
 	return (ret != OVAL_ENUMERATION_INVALID ? ret : FAMILY_UNKNOWN);
@@ -447,7 +446,23 @@ oval_subtype_enum oval_subtype_parse(xmlTextReaderPtr reader)
 
 	subtype = oscap_string_to_enum(map, tagname);
 
-cleanup:
+	cleanup:
 	free(tagname);
 	return subtype;
+}
+
+const struct oscap_string_map OVAL_RESULT_MAP[] = {
+	{ OVAL_RESULT_TRUE,           "all_exist"           },
+	{ OVAL_RESULT_FALSE,          "any_exist"           },
+	{ OVAL_RESULT_UNKNOWN,        "at_least_one_exists" },
+	{ OVAL_RESULT_ERROR,          "only_one_exists"     },
+	{ OVAL_RESULT_NOT_EVALUATED,  "none_exist"          },
+	{ OVAL_RESULT_NOT_APPLICABLE, "not applicable"},
+	{ OVAL_ENUMERATION_INVALID, NULL }
+};
+
+oval_result_enum oval_result_parse(xmlTextReaderPtr reader, char *attname,
+  				 oval_existence_enum defval)
+{
+	  return oval_enumeration_attr(reader, attname, OVAL_RESULT_MAP, defval);
 }

@@ -338,7 +338,8 @@ struct oval_iterator_syschar *get_oval_syschars(struct oval_syschar_model
 								       syschar_map);
 }
 
-struct oval_syschar *get_oval_syschar_new(struct oval_syschar_model *model, struct oval_object *object)
+struct oval_syschar *get_oval_syschar_new
+	(struct oval_syschar_model *model, struct oval_object *object)
 {
 	char *object_id = oval_object_id(object);
 	struct oval_syschar *syschar = get_oval_syschar(model, object_id);
@@ -358,8 +359,6 @@ struct oval_sysdata *get_oval_sysdata_new(struct oval_syschar_model *model, char
 	}
 	return sysdata;
 }
-
-
 
 struct oval_definition *get_oval_definition_new(struct oval_object_model *model, char *id)
 {
@@ -484,7 +483,9 @@ int export_characteristics(
 struct oval_results_model{
 	struct oval_syschar_model     *syschar_model;
 	struct oval_result_directives *directives;
-	struct oval_string_map        *results_map;
+	struct oval_collection        *systems;
+	struct oval_string_map        *definition_map;
+	struct oval_string_map        *test_map;
 };
 
 typedef struct oval_results_model oval_results_model_t;
@@ -496,16 +497,19 @@ struct oval_results_model *oval_results_model_new(
 		malloc(sizeof(oval_results_model_t));
 	model->syschar_model = syschar_model;
 	model->directives    = oval_result_directives_new();
-	model->results_map   = oval_string_map_new();
+	model->systems       = oval_collection_new();
+	model->definition_map= oval_string_map_new();
+	model->test_map      = oval_string_map_new();
 	return model;
 }
 
 void oval_results_model_free(struct oval_results_model *model)
 {
-	oval_string_map_free       (model->results_map,NULL);
+	oval_collection_free_items
+	(model->systems, (oscap_destruct_func)oval_result_system_free);
 	oval_result_directives_free(model->directives);
 	model->directives    = NULL;
-	model->results_map   = NULL;
+	model->systems       = NULL;
 	model->syschar_model = NULL;
 	free(model);
 }
@@ -522,6 +526,18 @@ struct oval_result_directives *oval_results_model_directives(
 	return model->directives;
 }
 
+struct oval_iterator_result_system *oval_results_model_systems
+	(struct oval_results_model *model){
+	return (struct oval_iterator_result_system *)
+			oval_collection_iterator(model->systems);
+}
+
+void add_oval_results_model_system
+	(struct oval_results_model *model, struct oval_result_system *system)
+{
+	if(system)oval_collection_add(model->systems, system);
+}
+
 struct oval_iterator_results *oval_results_model_results(
 		struct oval_results_model *model);//TODO: implement
 
@@ -529,18 +545,10 @@ struct oval_result *get_oval_result(
 		struct oval_results_model *model,
 		char *object_id);//TODO: implement
 
-
-struct oval_syschar *probe_object(struct oval_object *, struct oval_object_model *model);
-
-struct oval_result_test *resolve_test(struct oval_test *,
-				      struct oval_iterator_syschar *,
-				      struct oval_iterator_variable_binding *);
-struct oval_result *resolve_definition(struct oval_definition *,
-				       struct oval_iterator_syschar *,
-				       struct oval_iterator_variable_binding *);
-
 void load_oval_results(struct oval_results_model *model, struct import_source *source,
 			oval_xml_error_handler handler, void *client_data)
 {
+
 	ovalres_parser_parse(model, source->import_source_filename, handler, client_data);
 }
+
