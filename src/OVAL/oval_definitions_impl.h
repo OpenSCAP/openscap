@@ -222,7 +222,7 @@ void oval_behavior_free(struct oval_behavior *);
 
 void set_oval_behavior_value(struct oval_behavior *, struct oval_value *);
 void set_oval_behavior_value_for_key(struct oval_behavior *,
-				     struct oval_value *, char *attribute_key);
+				     char *, char *attribute_key);
 typedef void (*oval_behavior_consumer) (struct oval_behavior *, void *);
 int oval_behavior_parse_tag(xmlTextReaderPtr, struct oval_parser_context *,
 			    oval_family_enum, oval_behavior_consumer, void *);

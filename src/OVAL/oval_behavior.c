@@ -89,7 +89,7 @@ void oval_behavior_free(struct oval_behavior *behavior)
 }
 
 void set_oval_behavior_value_for_key(struct oval_behavior *behavior,
-				     struct oval_value *value, char *key)
+				     char *value, char *key)
 {
 	oval_string_map_put(behavior->att_values, key, (void *)value);
 }
