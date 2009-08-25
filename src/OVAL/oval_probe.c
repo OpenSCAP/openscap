@@ -139,7 +139,7 @@ static int probe_sd_del (probe_sdtbl_t *tbl, oval_subtype_enum type)
         return (0);
 }
 
-SEXP_t *oval_entity_to_sexp (struct oval_entity *ent)
+static SEXP_t *oval_entity_to_sexp (struct oval_entity *ent)
 {
         SEXP_t *elm, *elm_name;
         
@@ -222,7 +222,7 @@ SEXP_t *oval_entity_to_sexp (struct oval_entity *ent)
         return (elm);
 }
 
-SEXP_t *oval_set_to_sexp (struct oval_set *set)
+static SEXP_t *oval_set_to_sexp (struct oval_set *set)
 {
         SEXP_t *elm, *elm_name;
         
@@ -293,13 +293,43 @@ SEXP_t *oval_set_to_sexp (struct oval_set *set)
         return (elm);
 }
 
+static SEXP_t *oval_behavior_to_sexp (struct oval_behavior *behavior)
+{
+	char *attr_name, *attr_val;
+        SEXP_t *elm, *elm_name;
+	struct oval_iterator_string *sit;
+
+        elm_name = SEXP_list_new ();
+
+        SEXP_list_add (elm_name,
+                       SEXP_string_newf ("bahaviors"));
+
+	sit = oval_behavior_attribute_keys(behavior);
+	while (oval_iterator_string_has_more(sit)) {
+		attr_name = oval_iterator_string_next(sit);
+		attr_val = oval_behavior_value_for_key(behavior, attr_name);
+
+		SEXP_list_add(elm_name, SEXP_string_newf(":%s", attr_name));
+		if (attr_val != NULL) {
+			SEXP_list_add(elm_name, SEXP_string_newf(attr_val));
+		}
+	}
+
+	elm = SEXP_list_new();
+	SEXP_list_add(elm, elm_name);
+
+        return (elm);
+}
+
 SEXP_t *oval_object_to_sexp (const char *typestr, struct oval_object *object)
 {
-        SEXP_t *obj_sexp, *obj_name, *elm, *elm_value;
+        SEXP_t *obj_sexp, *obj_name, *elm;
 
         struct oval_iterator_object_content *cit;
+        struct oval_iterator_behavior *bit;
         struct oval_object_content *content;
         struct oval_entity *entity;
+	struct oval_behavior *behavior;
         
         obj_sexp = SEXP_list_new ();
         obj_name = SEXP_list_new ();
@@ -325,27 +355,39 @@ SEXP_t *oval_object_to_sexp (const char *typestr, struct oval_object *object)
         cit = oval_object_object_content (object);
         while (oval_iterator_object_content_has_more (cit)) {
                 content = oval_iterator_object_content_next (cit);
-                elm_value = NULL;
+                elm = NULL;
                 
                 switch (oval_object_content_type (content)) {
                 case OVAL_OBJECTCONTENT_ENTITY:
                         
-                        elm_value = oval_entity_to_sexp (oval_object_content_entity (content));
+                        elm = oval_entity_to_sexp (oval_object_content_entity (content));
                         break;
                 case OVAL_OBJECTCONTENT_SET:
                         
-                        elm_value = oval_set_to_sexp (oval_object_content_set (content));
+                        elm = oval_set_to_sexp (oval_object_content_set (content));
                         break;
                 case OVAL_OBJECTCONTENT_UNKNOWN:
                         break;
                 }
                 
-                if (elm_value == NULL) {
+                if (elm == NULL) {
                         SEXP_free (obj_sexp);
                         return (NULL);
                 }
 
-                SEXP_list_add (obj_sexp, elm_value);
+                SEXP_list_add (obj_sexp, elm);
+        }
+
+        /*
+         * Object behaviors
+         */
+
+        bit = oval_object_behaviors (object);
+        while (oval_iterator_behavior_has_more (bit)) {
+                behavior = oval_iterator_behavior_next (bit);
+		elm = oval_behavior_to_sexp (behavior);
+
+                SEXP_list_add (obj_sexp, elm);
         }
         
         return (obj_sexp);
