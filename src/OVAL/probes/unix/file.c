@@ -191,7 +191,7 @@ SEXP_t *probe_main (SEXP_t *probe_in, int *err)
                 
                 bh_list = SEXP_OVALelm_create ("behaviors",
                                                SEXP_OVALattr_create ("max_depth",
-                                                                     SEXP_number_newd (-1),
+                                                                     SEXP_string_newf ("-1"),
                                                                      "recurse",
                                                                      SEXP_string_newf ("symlinks and directories"),
                                                                      "recurse_direction",
@@ -206,7 +206,7 @@ SEXP_t *probe_main (SEXP_t *probe_in, int *err)
         } else {
                 if (!SEXP_OVALelm_hasattr (behaviors, "max_depth"))
                         SEXP_OVALelm_attr_add (behaviors,
-                                               "max_depth", SEXP_number_newd (-1));
+                                               "max_depth", SEXP_string_newf ("-1"));
                 
                 if (!SEXP_OVALelm_hasattr (behaviors, "recurse"))
                         SEXP_OVALelm_attr_add (behaviors,

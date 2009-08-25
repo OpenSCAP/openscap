@@ -77,7 +77,7 @@ static void rglobfree(rglob_t * result);
  */
 int find_files(SEXP_t * spath, SEXP_t *sfilename, SEXP_t *behaviors,
                int (*cb) (const char *pathname, const char *filename, void *arg), void *arg) {
-	char *name = NULL, *path = NULL;
+	char *name = NULL, *path = NULL, *tmp = NULL;
 	setting_t *setting = NULL;	
 	int i, rc, max_depth;
 	rglob_t rglobbuf;
@@ -89,7 +89,9 @@ int find_files(SEXP_t * spath, SEXP_t *sfilename, SEXP_t *behaviors,
 
 	name = SEXP_string_cstr(SEXP_OVALelm_getval(sfilename, 1));
 	path = SEXP_string_cstr(SEXP_OVALelm_getval(spath, 1));
-	SEXP_number_get(SEXP_OVALelm_getattrval(behaviors,"max_depth"),&max_depth, NUM_INT32);
+	tmp  = SEXP_string_cstr(SEXP_OVALelm_getattrval(behaviors,"max_depth"));
+	max_depth = atoi(tmp);
+	oscap_free(tmp);
 
 	setting = calloc(1, sizeof(setting_t));
 	setting->direction = SEXP_string_cstr(SEXP_OVALelm_getattrval(behaviors,"recurse_direction"));
