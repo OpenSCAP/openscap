@@ -53,19 +53,21 @@ struct oval_sysinfo *oval_sysinfo_new(){
 }
 
 void oval_sysinfo_free(struct oval_sysinfo *sysinfo){
-	if(sysinfo->osArchitecture  != NULL) free(sysinfo->osArchitecture);
-	if(sysinfo->osName          != NULL) free(sysinfo->osName);
-	if(sysinfo->osVersion       != NULL) free(sysinfo->osVersion);
-	if(sysinfo->primaryHostName != NULL) free(sysinfo->primaryHostName);
-	oval_collection_free_items(sysinfo->interfaces, (oscap_destruct_func)oval_sysint_free);
+	if (sysinfo) {
+		if(sysinfo->osArchitecture  != NULL) free(sysinfo->osArchitecture);
+		if(sysinfo->osName          != NULL) free(sysinfo->osName);
+		if(sysinfo->osVersion       != NULL) free(sysinfo->osVersion);
+		if(sysinfo->primaryHostName != NULL) free(sysinfo->primaryHostName);
+		oval_collection_free_items(sysinfo->interfaces, (oscap_destruct_func)oval_sysint_free);
 
-	sysinfo->interfaces = NULL;
-	sysinfo->osArchitecture = NULL;
-	sysinfo->osName = NULL;
-	sysinfo->osVersion = NULL;
-	sysinfo->primaryHostName = NULL;
+		sysinfo->interfaces = NULL;
+		sysinfo->osArchitecture = NULL;
+		sysinfo->osName = NULL;
+		sysinfo->osVersion = NULL;
+		sysinfo->primaryHostName = NULL;
 
-	free(sysinfo);
+		free(sysinfo);
+	}
 }
 
 int oval_iterator_sysinfo_has_more(struct oval_iterator_sysinfo *oc_sysinfo)

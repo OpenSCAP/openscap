@@ -140,10 +140,13 @@ struct oval_syschar_model *oval_syschar_model_new(
 	if(bindings!=NULL){
 		while(oval_iterator_variable_binding_has_more(bindings)){
 			struct oval_variable_binding *binding = oval_iterator_variable_binding_next(bindings);
+			add_oval_syschar_model_variable_binding(newmodel, binding);
+			/*
 			struct oval_variable *variable = oval_variable_binding_variable(binding);
 			char *varid    = oval_variable_id(variable);
 			char *value    = oval_variable_binding_value(binding);
 			oval_string_map_put_string(newmodel->variable_binding_map, varid, value);
+			*/
 		}
 	}
 	return newmodel;
@@ -176,6 +179,23 @@ struct oval_sysinfo *oval_syschar_model_sysinfo(
 	struct oval_syschar *syschar = oval_iterator_syschar_has_more(syschars)
 		?oval_iterator_syschar_next(syschars):NULL;
 	return syschar==NULL?NULL:oval_syschar_sysinfo(syschar);
+}
+
+bool add_oval_syschar_model_variable_binding(struct oval_syschar_model *model, struct oval_variable_binding *binding)
+{
+	assert(model != NULL);
+	assert(binding != NULL);
+
+	struct oval_variable *variable = oval_variable_binding_variable(binding);
+	if (variable == NULL)
+		return false;
+	
+	char *varid    = oval_variable_id(variable);
+	if (varid == NULL || strcmp(varid, "") == 0 || oval_string_map_get_value(model->variable_binding_map, varid) != NULL)
+		return false;
+	
+	oval_string_map_put(model->variable_binding_map, varid, binding);
+	return true;
 }
 
 void add_oval_definition(

@@ -170,8 +170,16 @@ extern const char* NAMESPACE_OVALSYS;
 void _oval_syschar_parse_subtag_consume_message(struct oval_message *message, void* syschar){
 	add_oval_syschar_message((struct oval_syschar *)syschar, message);
 }
-void _oval_syschar_parse_subtag_consume_variable_binding(struct oval_variable_binding *binding, void* syschar){
-	add_oval_syschar_variable_binding((struct oval_syschar *)syschar, binding);
+
+struct oval_syschar_parse_subtag_varval_context {
+	struct oval_syschar_model* model;
+	struct oval_syschar* syschar;
+};
+void _oval_syschar_parse_subtag_consume_variable_binding(struct oval_variable_binding *binding, void* user){
+	struct oval_syschar_parse_subtag_varval_context *ctx = user;
+	if (add_oval_syschar_model_variable_binding(ctx->model, binding))
+		add_oval_syschar_variable_binding(ctx->syschar, binding);
+	else oval_variable_binding_free(binding);
 }
 int _oval_syschar_parse_subtag(
 		xmlTextReaderPtr reader,
@@ -186,8 +194,9 @@ int _oval_syschar_parse_subtag(
 			(reader, context,
 				(oscap_consumer_func)_oval_syschar_parse_subtag_consume_message, syschar);
 	}else if(strcmp("variable_value",tagname)==0){
+		struct oval_syschar_parse_subtag_varval_context ctx = {context->syschar_model, syschar};
 		return_code = oval_variable_binding_parse_tag
-		(reader, context, &_oval_syschar_parse_subtag_consume_variable_binding, syschar);
+			(reader, context, &_oval_syschar_parse_subtag_consume_variable_binding, &ctx);
 	}else if(strcmp("reference",tagname)==0){
 		char* itemid = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "item_ref");
 		struct oval_sysdata *sysdata = get_oval_sysdata_new(context->syschar_model, itemid);
@@ -252,8 +261,6 @@ int oval_syschar_parse_tag(xmlTextReaderPtr reader,
 		sprintf(message, "oval_syschar_parse_tag:: return code is not 1::(%d)",return_code);
 		oval_parser_log_warn(context, message);
 	}
-
-	//struct oval_object_model *model = context->model;
 
 	return return_code;
 }

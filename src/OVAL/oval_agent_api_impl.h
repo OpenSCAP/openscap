@@ -54,6 +54,7 @@ struct oval_state *get_oval_state_new(struct oval_object_model *, char *);
 struct oval_variable *get_oval_variable_new(struct oval_object_model *, char *, oval_variable_type_enum type);
 struct oval_syschar *get_oval_syschar_new(struct oval_syschar_model *, struct oval_object *);
 struct oval_syschar_item *get_oval_syschar_item_new(struct oval_syschar_model *, char *);
+bool add_oval_syschar_model_variable_binding(struct oval_syschar_model *, struct oval_variable_binding *);
 
 struct oval_sysdata *get_oval_sysdata_new(struct oval_syschar_model *, char *);
 

@@ -117,13 +117,10 @@ void ovalsys_parser_parse
      void *user_arg) {
 	xmlTextReaderPtr reader;
 	xmlDocPtr doc;
-	//xmlNodePtr cur;
-	//xmlNode *node;
-	//int ret;
-	doc = xmlParseFile(docname);
 	reader = xmlNewTextReaderFilename(docname);
 	if (reader != NULL) {
 		struct oval_parser_context context;
+		memset(&context, 0, sizeof(context));
 		context.error_handler = eh;
 		context.reader          = reader;
 		context.object_model           = oval_syschar_model_object_model(model);
@@ -132,8 +129,8 @@ void ovalsys_parser_parse
 		context.user_data       = user_arg;
 		xmlTextReaderSetErrorHandler(reader, &libxml_error_handler, &context);
 		/* int return_code = */ xmlTextReaderRead(reader);
-		char *tagname   = (char*) xmlTextReaderName(reader);
-		char *namespace = (char*) xmlTextReaderNamespaceUri(reader);
+		const char *tagname   = (const char*) xmlTextReaderConstName(reader);
+		const char *namespace = (const char*) xmlTextReaderConstNamespaceUri(reader);
 		int is_ovalsys = strcmp((char*)NAMESPACE_OVALSYS, namespace)==0;
 		if(is_ovalsys && (strcmp(tagname,"oval_system_characteristics")==0)){
 			_ovalsys_parser_process_node(reader, &context);
@@ -145,5 +142,8 @@ void ovalsys_parser_parse
 			oval_parser_log_warn(&context, message);
 			oval_parser_skip_tag(reader,&context);
 		}
+		if (context.object_model && context.syschar_sysinfo)
+			set_oval_sysinfo(context.object_model, context.syschar_sysinfo);
+		xmlFreeTextReader(reader);
 	}
 }

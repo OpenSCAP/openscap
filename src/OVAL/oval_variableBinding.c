@@ -77,7 +77,7 @@ void set_oval_variable_binding_variable(struct oval_variable_binding *binding, s
 void set_oval_variable_binding_value   (struct oval_variable_binding *binding, char *value)
 {
 	if(binding->value!=NULL)free(binding->value);
-	binding->value = (value==NULL)?NULL:strdup(value);
+	binding->value = ((value==NULL)?NULL:strdup(value));
 }
 
 struct oval_variable_binding *oval_variable_binding_new(struct oval_variable *variable, char *value)
@@ -98,12 +98,14 @@ struct oval_variable_binding *_oval_variable_binding_new()
 
 void oval_variable_binding_free(struct oval_variable_binding *binding)
 {
-	if(binding->value!=NULL)free(binding->value);
+	if (binding) {
+		if(binding->value!=NULL)free(binding->value);
 
-	binding->value = NULL;
-	binding->variable = NULL;
+		binding->value = NULL;
+		binding->variable = NULL;
 
-	free(binding);
+		free(binding);
+	}
 }
 
 void _oval_variable_binding_value_consumer(char * value, void * user)

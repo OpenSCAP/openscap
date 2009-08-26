@@ -41,12 +41,14 @@ int main(int argc, char **argv)
 		printf("LOAD OVAL DEFINITIONS\n");
 		struct import_source *source = import_source_file(argv[1]);
 		load_oval_definitions(model, source, &_test_error_handler, NULL);
+		import_source_free(source);
 		printf("OVAL DEFINITIONS LOADED\n");
 		if(argc>2){
 			printf("LOAD OVAL SYSCHAR\n");
 			source = import_source_file(argv[2]);
 			struct oval_syschar_model *syschar_model = oval_syschar_model_new(model,NULL);
 			load_oval_syschar(syschar_model, source, &_test_error_handler, NULL);
+			import_source_free(source);
 			printf("OVAL SYSCHAR LOADED\n");
 			struct oval_iterator_syschar *syschars = oval_syschar_model_syschars(syschar_model);
 			int numSyschars;for(numSyschars=0;oval_iterator_syschar_has_more(syschars);numSyschars++){
@@ -54,7 +56,9 @@ int main(int argc, char **argv)
 				oval_syschar_to_print(syschar, "", numSyschars+1);
 			}
 			printf("THERE ARE %d SYSCHARS\n",numSyschars);
+			oval_syschar_model_free(syschar_model);
 		}
+		oval_object_model_free(model);
 	}else printf("USAGE:Test <oval_definitions.xml> [<system_characteristics.xml>]");
 	oscap_cleanup();
 }
