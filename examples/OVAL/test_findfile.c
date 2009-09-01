@@ -12,7 +12,6 @@ int main(int argc, char *argv[]) {
         SEXP_t *elm_list, *elm1, *elm2, *elm3;
 	int rc;
 
-        int number = -1;
         elm_list = SEXP_OVALelm_create( "path",
                                         SEXP_OVALattr_create("operation",SEXP_string_newf("pattern match"),NULL),
                                         SEXP_string_newf(argv[1]),
@@ -22,8 +21,8 @@ int main(int argc, char *argv[]) {
                                         SEXP_string_newf(argv[2]),
 
 					"behaviors",
-                                        SEXP_OVALattr_create("max_depth",SEXP_number_new(&number, NUM_INT32),
-                                                            "recurse",SEXP_string_newf("both"),
+                                        SEXP_OVALattr_create("max_depth",SEXP_string_newf("-1"),
+                                                            "recurse",SEXP_string_newf("symlinks and directories"),
                                                             "recurse_direction",SEXP_string_newf("down"),
                                                             "recurse_file_system",SEXP_string_newf("all"),
                                                              NULL),

@@ -82,6 +82,7 @@ int find_files(SEXP_t * spath, SEXP_t *sfilename, SEXP_t *behaviors,
 	int i, rc, max_depth;
 	rglob_t rglobbuf;
 	int finds = 0;
+        SEXP_t *stmp;
 
 	assert(sfilename);
 	assert(spath);
@@ -100,7 +101,8 @@ int find_files(SEXP_t * spath, SEXP_t *sfilename, SEXP_t *behaviors,
 
 	/* Init list of local devices */
 	setting->dev_list = NULL;
-	if( !SEXP_strncmp(SEXP_OVALelm_getattrval(behaviors,"recurse_file_system"), "local",6) ) {
+	stmp = SEXP_OVALelm_getattrval(behaviors,"recurse_file_system");
+	if( stmp && !SEXP_strncmp(stmp, "local",6) ) {
                 if ((setting->dev_list = fsdev_init (NULL, 0)) == NULL) {
 			goto error;
 		}

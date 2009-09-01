@@ -245,6 +245,9 @@ int fsdev_search (fsdev_t *lfs, void *id)
 {
         uint16_t w, s;
         int cmp;
+
+        if (!lfs)
+                return 1;
         
         w = lfs->cnt;
         s = 0;

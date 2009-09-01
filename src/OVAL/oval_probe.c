@@ -302,7 +302,7 @@ static SEXP_t *oval_behavior_to_sexp (struct oval_behavior *behavior)
         elm_name = SEXP_list_new ();
 
         SEXP_list_add (elm_name,
-                       SEXP_string_newf ("bahaviors"));
+                       SEXP_string_newf ("behaviors"));
 
 	sit = oval_behavior_attribute_keys(behavior);
 	while (oval_iterator_string_has_more(sit)) {
