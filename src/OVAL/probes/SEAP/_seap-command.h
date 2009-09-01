@@ -30,6 +30,12 @@ struct SEAP_cmd {
         SEXP_t         *args;
 };
 
+struct SEAP_synchelper {
+        SEXP_t         *args;
+        pthread_cond_t  cond;
+        pthread_mutex_t mtx;
+};
+
 #define SEAP_CMDTBL_LARGE 0x01
 #define SEAP_CMDTBL_LARGE_TRESHOLD 32
 

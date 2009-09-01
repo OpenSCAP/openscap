@@ -1105,7 +1105,7 @@ int SEXP_stringp (const SEXP_t *sexp)
 char *SEXP_string_cstr (const SEXP_t *sexp)
 {
         char *str;
-        size_t  i;
+        /* size_t  i; */
         
         if (sexp != NULL) {
                 SEXP_VALIDATE(sexp);
@@ -1316,68 +1316,66 @@ SEXP_t *LIST_add (LIST_t *list, SEXP_t *sexp)
         
         ++(list->count);
         
-        if (SEXP_FREE(sexp))
-                sm_free (sexp);
-        
         return (SEXP(list->memb) + list->count - 1);
 }
 
 SEXP_t *SEXP_list_add (SEXP_t *list, SEXP_t *sexp)
 {
-        if (list != NULL) {
-                SEXP_VALIDATE(sexp);
-                
-                if (SEXP_listp (list)) {
-                        return LIST_add (&(list->atom.list), sexp);
-                } else {
-                        errno = EINVAL;
-                        return (NULL);
-                }
-        } else {
+        if (list == NULL || sexp == NULL) {
                 errno = EFAULT;
                 return (NULL);
         }
+        
+        SEXP_VALIDATE(list);
+        SEXP_VALIDATE(sexp);
+        
+        if (SEXP_TYPE(list) != ATOM_LIST) {
+                errno = EINVAL;
+                return (NULL);
+        }
+        
+        return LIST_add (&(list->atom.list), SEXP_deepdup (sexp));
 }
 
 SEXP_t *SEXP_list_first (const SEXP_t *sexp)
 {
-        if (sexp != NULL) {
-                SEXP_VALIDATE(sexp);
-                
-                if (SEXP_TYPE(sexp) == ATOM_LIST) {
-                        if (sexp->atom.list.count > 0) {
-                                return (&(SEXP(sexp->atom.list.memb)[0]));
-                        } else {
-                                return SEXP_new ();
-                        }
-                } else {
-                        errno = EINVAL;
-                        return (NULL);
-                }
-        } else {
+        if (sexp == NULL) {
                 errno = EFAULT;
                 return (NULL);
+        }
+
+        SEXP_VALIDATE(sexp);
+
+        if (SEXP_TYPE(sexp) != ATOM_LIST) {
+                errno = EINVAL;
+                return (NULL);
+        }
+
+        if (sexp->atom.list.count > 0) {
+                return SEXP_deepdup (&(SEXP(sexp->atom.list.memb)[0]));
+        } else {
+                return SEXP_new ();
         }
 }
 
 SEXP_t *SEXP_list_last (const SEXP_t *sexp)
 {
-        if (sexp != NULL) {
-                SEXP_VALIDATE(sexp);
-                
-                if (SEXP_TYPE(sexp) == ATOM_LIST) {
-                        if (sexp->atom.list.count > 0) {
-                                return (&(SEXP(sexp->atom.list.memb)[sexp->atom.list.count - 1]));
-                        } else {
-                                return SEXP_new ();
-                        }
-                } else {
-                        errno = EINVAL;
-                        return (NULL);
-                }
-        } else {
+        if (sexp == NULL) {
                 errno = EFAULT;
                 return (NULL);
+        }
+
+        SEXP_VALIDATE(sexp);
+
+        if (SEXP_TYPE(sexp) != ATOM_LIST) {
+                errno = EINVAL;
+                return (NULL);
+        }
+
+        if (sexp->atom.list.count > 0) {
+                return SEXP_deepdup (&(SEXP(sexp->atom.list.memb)[sexp->atom.list.count - 1]));
+        } else {
+                return SEXP_new ();
         }
 }
 
@@ -1490,11 +1488,18 @@ SEXP_t *SEXP_list_nth_deepdup (const SEXP_t *sexp, uint32_t n)
         _A(n > 0);
         
         if (sexp != NULL) {
-                if (SEXP_listp (sexp) && n > 0) {
-                        if (sexp->atom.list.count <= n)
-                                return SEXP_deepdup(&(SEXP(sexp->atom.list.memb)[n - 1]));
-                        else
-                                return (NULL);
+                if (SEXP_TYPE(sexp) == ATOM_LIST && n > 0) {
+                        _D("nth: %u, %p\n", n, sexp);
+                        
+                        if (n <= sexp->atom.list.count) {
+                                _D("nth: %u, %p, %s\n",
+                                   n, &(SEXP(sexp->atom.list.memb)[n - 1]),
+                                   SEXP_strtype (&(SEXP(sexp->atom.list.memb)[n - 1])));
+                                
+                                return SEXP_deepdup (&(SEXP(sexp->atom.list.memb)[n - 1]));
+                        }
+
+                        return (NULL);
                 } else {
                         errno = EINVAL;
                         return (NULL);
@@ -1844,39 +1849,108 @@ void SEXP_free (SEXP_t *sexp)
         return;
 }
 
-SEXP_t *SEXP_deepdup (const SEXP_t *sexp)
+SEXP_t *SEXP_deepdup (const SEXP_t *sexp_o)
 {
-        SEXP_t *copy;
+        SEXP_t *sexp_c;
 
-        if (sexp != NULL) {
-                SEXP_VALIDATE(sexp);
-                
-                copy = SEXP_new ();
-                copy->flags = sexp->flags;
-                copy->handler = sexp->handler;
-                
-                switch (SEXP_TYPE(sexp)) {
-                case ATOM_UNFIN:
-                case ATOM_EMPTY:
-                        break;
-                case ATOM_NUMBER:
-                        
-                        break;
-                case ATOM_LIST:
-                        
-                        break;
-                case ATOM_STRING:
-                        
-                        break;
-                default:
-                        abort ();
-                }
-                
-                return (copy);
-        } else {
+        if (sexp_o == NULL) {
                 errno = EFAULT;
                 return (NULL);
         }
+
+        SEXP_VALIDATE(sexp_o);
+        
+        sexp_c          = SEXP_new ();
+        sexp_c->flags   = sexp_o->flags;
+        sexp_c->handler = sexp_o->handler;
+        
+        switch (SEXP_TYPE(sexp_o)) {
+        case ATOM_UNFIN:
+        case ATOM_EMPTY:
+                break;
+        case ATOM_NUMBER:
+                sexp_c->atom.number.type = sexp_o->atom.number.type;
+                
+                switch (sexp_c->atom.number.type) {
+                case NUM_INT8:
+                        NUM_COPY(int8_t,
+                                 sexp_c->atom.number.nptr,
+                                 sexp_o->atom.number.nptr);
+                        break;
+                case NUM_UINT8:
+                        NUM_COPY(uint8_t,
+                                 sexp_c->atom.number.nptr,
+                                 sexp_o->atom.number.nptr);
+                        break;
+                case NUM_INT16:
+                        NUM_COPY(int16_t,
+                                 sexp_c->atom.number.nptr,
+                                 sexp_o->atom.number.nptr);
+                        break;
+                case NUM_UINT16:
+                        NUM_COPY(uint16_t,
+                                 sexp_c->atom.number.nptr,
+                                 sexp_o->atom.number.nptr);
+                        break;
+                case NUM_INT32:
+                        NUM_COPY(int32_t,
+                                 sexp_c->atom.number.nptr,
+                                 sexp_o->atom.number.nptr);
+                        break;
+                case NUM_UINT32:
+                        NUM_COPY(uint32_t,
+                                 sexp_c->atom.number.nptr,
+                                 sexp_o->atom.number.nptr);
+                        break;
+                case NUM_INT64:
+                        NUM_COPY(int64_t,
+                                 sexp_c->atom.number.nptr,
+                                 sexp_o->atom.number.nptr);
+                        break;
+                case NUM_UINT64:
+                        NUM_COPY(uint64_t,
+                                 sexp_c->atom.number.nptr,
+                                 sexp_o->atom.number.nptr);
+                        break;
+                case NUM_DOUBLE:
+                        NUM_COPY(double,
+                                 sexp_c->atom.number.nptr,
+                                 sexp_o->atom.number.nptr);
+                        break;
+                case NUM_BOOL:
+                        NUM_COPY(int,
+                                 sexp_c->atom.number.nptr,
+                                 sexp_o->atom.number.nptr);
+                        break;
+                }
+                
+                break;
+        case ATOM_LIST: {
+                uint32_t i;
+                SEXP_t  *s;
+                
+                sexp_c->atom.list.count = sexp_o->atom.list.count;
+                sexp_c->atom.list.size  = sexp_c->atom.list.count;
+                sexp_c->atom.list.memb  = sm_alloc (sizeof (SEXP_t) * sexp_c->atom.list.size);
+                
+                for (i = 0; i < sexp_c->atom.list.count; ++i) {
+                        s = SEXP_deepdup (sexp_o->atom.list.memb + i);
+                        SEXP_copy (sexp_c->atom.list.memb + i, s);
+                }
+        }
+                break;
+        case ATOM_STRING:
+                sexp_c->atom.string.len = sexp_o->atom.string.len;
+                sexp_c->atom.string.str = sm_alloc (sizeof (char) * sexp_c->atom.string.len);
+                memcpy (sexp_c->atom.string.str, sexp_o->atom.string.str,
+                        sizeof (char) * sexp_c->atom.string.len);
+                
+                break;
+        default:
+                abort ();
+        }
+                
+        return (sexp_c);
 }
 
 SEXP_t *SEXP_dup (const SEXP_t *sexp)

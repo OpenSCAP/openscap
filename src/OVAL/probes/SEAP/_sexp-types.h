@@ -33,9 +33,9 @@ typedef struct STR STR_t;
  */
 
 struct LIST {
-        void    *memb;
-        uint32_t count;
-        uint32_t size;
+        SEXP_t   *memb;
+        uint32_t  count;
+        uint32_t  size;
 };
 
 typedef struct LIST LIST_t;

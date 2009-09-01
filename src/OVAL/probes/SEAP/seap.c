@@ -33,8 +33,9 @@ static void SEAP_CTX_initdefault (SEAP_CTX_t *ctx)
         
         ctx->cmd_c_table = SEAP_cmdtbl_new ();
         
-        ctx->recv_timeout = 0;
-        ctx->send_timeout = 0;
+        ctx->recv_timeout = 5;
+        ctx->send_timeout = 5;
+        ctx->cflags       = 0;
         
         return;
 }
@@ -199,11 +200,6 @@ static int __SEAP_cmdexec_reply (SEAP_CTX_t *ctx, int sd, SEAP_cmd_t *cmd)
                 }
                 return (-1);
         }
-        
-        cmd->rid    = cmd->id;
-        cmd->id     = SEAP_desc_gencmdid (&(ctx->sd_table), sd);
-        cmd->flags |= SEAP_CMDFLAG_REPLY;
-        cmd->args   = res;
         
         packet = SEAP_packet_new ();
         cmdrep = SEAP_packet_settype (packet, SEAP_PACKET_CMD);

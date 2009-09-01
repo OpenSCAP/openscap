@@ -38,6 +38,8 @@ static char *get_exec_path (const char *uri, uint32_t flags)
 {
         char *path = NULL;
         uint32_t i = 0;
+
+        _LOGCALL_;
 again:
         switch (*uri) {
         case '/': /* absolute path */
@@ -90,7 +92,9 @@ int sch_pipe_connect (SEAP_desc_t *desc, const char *uri, uint32_t flags)
         int   err;
         int   pfd[2];
         /* uint8_t i; */
-                
+      
+        _LOGCALL_;
+          
         desc->scheme_data = sm_talloc (sch_pipedata_t);
         DATA(desc)->execpath = execpath = get_exec_path (uri, flags);
         
@@ -172,28 +176,33 @@ int sch_pipe_connect (SEAP_desc_t *desc, const char *uri, uint32_t flags)
 
 int sch_pipe_openfd (SEAP_desc_t *desc, int fd, uint32_t flags)
 {
+        _LOGCALL_;
         errno = EOPNOTSUPP;
         return (-1);
 }
 
 int sch_pipe_openfd2 (SEAP_desc_t *desc, int ifd, int ofd, uint32_t flags)
 {
+        _LOGCALL_;
         errno = EOPNOTSUPP;
         return (-1);
 }
 
 ssize_t sch_pipe_recv (SEAP_desc_t *desc, void *buf, size_t len, uint32_t flags)
 {
+        _LOGCALL_;
         return read (DATA(desc)->pfd, buf, len);
 }
 
 ssize_t sch_pipe_send (SEAP_desc_t *desc, void *buf, size_t len, uint32_t flags)
 {
+        _LOGCALL_;
         return write (DATA(desc)->pfd, buf, len);
 }
 
 ssize_t sch_pipe_sendsexp (SEAP_desc_t *desc, SEXP_t *sexp, uint32_t flags)
 {
+        _LOGCALL_;
         return SEXP_st_dprintc (DATA(desc)->pfd, sexp, &(desc->ostate));
 }
 
@@ -203,6 +212,8 @@ int sch_pipe_close (SEAP_desc_t *desc, uint32_t flags)
         /* close the pipe */
         /* FIXME: kill the process */
         
+        _LOGCALL_;
+
         close (DATA(desc)->pfd);
         
         if (waitpid (DATA(desc)->pid, &ret, WNOHANG) == DATA(desc)->pid) {
@@ -219,6 +230,8 @@ int sch_pipe_select (SEAP_desc_t *desc, int ev, uint16_t timeout, uint32_t flags
         fd_set *wptr, *rptr;
         fd_set  fset;
         struct timeval *tv_ptr, tv;
+
+        _LOGCALL_;
         
         FD_ZERO(&fset);
         tv_ptr = NULL;

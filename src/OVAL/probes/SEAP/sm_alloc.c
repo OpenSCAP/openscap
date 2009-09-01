@@ -105,7 +105,7 @@ void *__sm_alloc_dbg (size_t s, const char *func, size_t line)
                 exit (ENOMEM);
         }
 #endif
-        _D("ptr=%p, size=%zu\n", m, s);
+        _D("%s:%u, ptr=%p, size=%zu\n", func, line, m, s);
         return (m);
 }
 
@@ -139,7 +139,7 @@ void *__sm_realloc_dbg (void *p, size_t s, const char *f, size_t l)
                 exit (ENOMEM);
         }
 #endif
-        _D("old=%p, new=%p, size=%zu\n", p, m, s);
+        _D("%s:%u, old=%p, new=%p, size=%zu\n", f, l, p, m, s);
         return (m);
 }
 

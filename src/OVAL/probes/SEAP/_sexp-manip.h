@@ -26,6 +26,15 @@
                 }                                               \
         } while (0)
 
+#define NUM_COPY(type, dst, src) do {                                   \
+                if (sizeof (type) <= sizeof (void *)) {                 \
+                        *((type *)((void *)&(dst))) = *((type *)((void *)&(src))); \
+                } else {                                                \
+                        (dst) = sm_talloc (type);                       \
+                        *((type *)(dst)) = *((type *)(src));            \
+                }                                                       \
+        } while (0)
+
 /*
  * NUM(type, voidp)
  *  returns the number of type type stored

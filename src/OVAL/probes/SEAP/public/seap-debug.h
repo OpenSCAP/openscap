@@ -15,6 +15,7 @@
 # include <stdarg.h>
 void __seap_debuglog (const char *, const char *, size_t , const char *, ...);
 # define _D(...) __seap_debuglog (__FILE__, __PRETTY_FUNCTION__, __LINE__, __VA_ARGS__)
+# define _LOGCALL_ _D("called\n");
 #endif /* NDEBUG */
 #endif /* _D */
 #endif /* SEAP_DEBUG_H */

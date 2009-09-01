@@ -336,7 +336,7 @@ SEXP_t *SEXP_OVALobj_getelm (SEXP_t *obj, const char *name, uint32_t nth)
         
         i = 2;
         k = 0;
-        while ((elm = SEXP_list_nth (obj, i)) != NULL) {
+        while ((elm = SEXP_list_nth_deepdup (obj, i)) != NULL) {
                 elm_name = SEXP_list_first (elm);
                 
                 if (!SEXP_stringp (elm_name)) {
@@ -389,7 +389,7 @@ SEXP_t *SEXP_OVALelm_getval (SEXP_t *elm, uint32_t nth)
 {
         SEXP_VALIDATE(elm);
         
-        return (SEXP_list_nth (elm, 1 + nth));
+        return (SEXP_list_nth_deepdup (elm, 1 + nth));
 }
 
 SEXP_t *SEXP_OVALelm_getattrval (SEXP_t *elm, const char *name)
@@ -404,7 +404,7 @@ SEXP_t *SEXP_OVALelm_getattrval (SEXP_t *elm, const char *name)
                 SEXP_t *attr;
                 uint16_t i = 2;
 
-                while ((attr = SEXP_list_nth (attrs, i)) != NULL) {
+                while ((attr = SEXP_list_nth_deepdup (attrs, i)) != NULL) {
                         if (SEXP_stringp (attr)) {
                                 char *attr_name;
 
@@ -416,7 +416,7 @@ SEXP_t *SEXP_OVALelm_getattrval (SEXP_t *elm, const char *name)
                                 snprintf (attr_name, strlen (name) + 2, ":%s", name);
 
                                 if (SEXP_strcmp (attr, attr_name) == 0) {
-                                        attr = SEXP_list_nth (attrs, i + 1);
+                                        attr = SEXP_list_nth_deepdup (attrs, i + 1);
                                 } else {
                                         free (attr_name);
                                         ++i;
@@ -447,7 +447,7 @@ int SEXP_OVALelm_hasattr (SEXP_t *elm, const char *name)
                 SEXP_t *attr;
                 uint16_t i = 2;
                 
-                while ((attr = SEXP_list_nth (attrs, i)) != NULL) {
+                while ((attr = SEXP_list_nth_deepdup (attrs, i)) != NULL) {
                         if (SEXP_stringp (attr)) {
                                 char *attr_name;
                                 

@@ -228,8 +228,13 @@ print_loop:
 
                 wret = writev (fd, vec, 3);
                 
+                _D("wrote: %.*s%.*s\n", digits + 1, buffer, h->name_len, h->name);
+                
                 if (wret == -1) {
-                        /* write error */
+                        protect_errno {
+                                _D("errno=%u, %s.\n", errno, strerror (errno));
+                        }
+                        
                         return (-1);
                 }
                 
@@ -243,8 +248,14 @@ print_loop:
                 ch = '(';
                 if (write (fd, &ch, sizeof ch) != sizeof ch) {
                         /* write error */
+                        protect_errno {
+                                _D("errno=%u, %s.\n", errno, strerror (errno));
+                        }
+                
                         return (-1);
                 }
+                
+                _D("wrote: (\n");
                 
                 wlen += sizeof ch;
                 
@@ -267,8 +278,15 @@ print_loop:
                 vec[1].iov_base = psexp->atom.string.str;
                 vec[1].iov_len  = psexp->atom.string.len;
                 
+                _D("wrote: %.*s%.*s\n", digits + 1, buffer,
+                   psexp->atom.string.len, psexp->atom.string.str);
+                
                 if ((wret = writev (fd, vec, 2)) == -1) {
                         /* write error */
+                        protect_errno {
+                                _D("errno=%u, %s.\n", errno, strerror (errno));
+                        }
+                
                         return (-1);
                 }
                 
@@ -279,6 +297,10 @@ print_loop:
                         (*ost)->sexp_pos  = wret;
                         (*ost)->sexp_part = 1;
 
+                        protect_errno {
+                                _D("errno=%u, %s.\n", errno, strerror (errno));
+                        }
+                
                         return (-1);
                 }
                 
@@ -318,9 +340,15 @@ print_loop:
 #undef CASE
                 if (write (fd, numstr, numlen) != numlen) {
                         /* write error */
+                        protect_errno {
+                                _D("errno=%u, %s.\n", errno, strerror (errno));
+                        }
+                        
                         return (-1);
                 }
                 
+                _D("wrote: %.*s\n", numlen, numstr);
+
                 wlen += numlen;
         }
                 break;  
@@ -341,8 +369,15 @@ print_loop:
                 } else {
                         /* end of list */
                         ch = ')';
+
+                        _D("wrote: )\n");
+
                         if (write (fd, &ch, sizeof ch) != sizeof ch) {
                                 /* write error */
+                                protect_errno {
+                                        _D("errno=%u, %s.\n", errno, strerror (errno));
+                                }
+                
                                 return (-1);
                         }
                         

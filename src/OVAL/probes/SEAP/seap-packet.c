@@ -17,6 +17,8 @@ SEAP_packet_t *SEAP_packet_new (void)
 {
         SEAP_packet_t *p;
 
+        _LOGCALL_;
+
         p = sm_talloc (SEAP_packet_t);
         memset (p, 0, sizeof (SEAP_packet_t));
         p->type = SEAP_PACKET_INV;
@@ -26,6 +28,7 @@ SEAP_packet_t *SEAP_packet_new (void)
 
 void SEAP_packet_free (SEAP_packet_t *packet)
 {
+        _LOGCALL_;
         sm_free (packet);
 }
 
@@ -35,6 +38,8 @@ void *SEAP_packet_settype (SEAP_packet_t *packet, uint8_t type)
         _A(type == SEAP_PACKET_MSG ||
            type == SEAP_PACKET_CMD ||
            type == SEAP_PACKET_ERR);
+
+        _LOGCALL_;
 
         packet->type = type;
         
@@ -56,21 +61,25 @@ void *SEAP_packet_settype (SEAP_packet_t *packet, uint8_t type)
 uint8_t SEAP_packet_gettype (SEAP_packet_t *packet)
 {
         _A(packet != NULL);
+        _LOGCALL_;
         return (packet->type);
 }
 
 SEAP_msg_t *SEAP_packet_msg (SEAP_packet_t *packet)
 {
+        _LOGCALL_;
         return (&(packet->data.msg));
 }
 
 SEAP_cmd_t *SEAP_packet_cmd (SEAP_packet_t *packet)
 {
+        _LOGCALL_;
         return (&(packet->data.cmd));
 }
 
 SEAP_err_t *SEAP_packet_err (SEAP_packet_t *packet)
 {
+        _LOGCALL_;
         return (&(packet->data.err));
 }
 
@@ -81,6 +90,7 @@ int SEAP_packet_sexp2msg (SEXP_t *sexp_msg, SEAP_msg_t *seap_msg)
         
         _A(sexp_msg != NULL);
         _A(seap_msg != NULL);
+        _LOGCALL_;
         
         memset (seap_msg, 0, sizeof (SEAP_msg_t));
         msg_icnt = SEXP_list_length (sexp_msg);
@@ -184,7 +194,8 @@ SEXP_t *SEAP_packet_msg2sexp (SEAP_msg_t *msg)
         uint16_t i;
         
         _A(msg != NULL);
-        
+        _LOGCALL_;
+
         sexp = SEXP_list_new ();
         SEXP_list_add (sexp, SEXP_string_new (SEAP_SYM_MSG, strlen (SEAP_SYM_MSG)));
         
@@ -231,6 +242,8 @@ int SEAP_packet_sexp2cmd (SEXP_t *sexp_cmd, SEAP_cmd_t *seap_cmd)
         SEXP_t *item, *val;
         size_t i;
         int mattrs;
+
+        _LOGCALL_;
 
         memset (seap_cmd, 0, sizeof (SEAP_cmd_t));
         seap_cmd->class = SEAP_CMDCLASS_INT;
@@ -330,7 +343,8 @@ SEXP_t *SEAP_packet_cmd2sexp (SEAP_cmd_t *cmd)
         SEXP_t *sexp;
         
         _A(cmd != NULL);
-        
+        _LOGCALL_;
+
         sexp = SEXP_list_new ();
         SEXP_list_add (sexp,
                        SEXP_string_new (SEAP_SYM_CMD, strlen (SEAP_SYM_CMD)));
@@ -381,12 +395,15 @@ SEXP_t *SEAP_packet_cmd2sexp (SEAP_cmd_t *cmd)
 
 int SEAP_packet_sexp2err (SEXP_t *sexp_err, SEAP_err_t *seap_err)
 {
+        _LOGCALL_;
         return (-1);
 }
 
 SEXP_t *SEAP_packet_err2sexp (SEAP_err_t *err)
 {
         SEXP_t *sexp;
+
+        _LOGCALL_;
 
         sexp = SEXP_list_new ();
         SEXP_list_add (sexp, SEXP_string_new (SEAP_SYM_ERR, strlen (SEAP_SYM_ERR)));
@@ -412,6 +429,8 @@ SEXP_t *SEAP_packet_err2sexp (SEAP_err_t *err)
 SEXP_t *SEAP_packet2sexp (SEAP_packet_t *packet)
 {
         SEXP_t *sexp = NULL;
+        
+        _LOGCALL_;
         
         switch (packet->type) {
         case SEAP_PACKET_MSG:
@@ -445,6 +464,8 @@ int SEAP_packet_recv (SEAP_CTX_t *ctx, int sd, SEAP_packet_t **packet)
         SEXP_t     *psym_sexp;
         const char *psym_cstr;
         
+        _LOGCALL_;
+
         dsc = SEAP_desc_get (&(ctx->sd_table), sd);
         
         if (dsc == NULL)
@@ -715,6 +736,8 @@ int SEAP_packet_recv_bytype (SEAP_CTX_t *ctx, int sd, SEAP_packet_t **packet, ui
         _A(type == SEAP_PACKET_CMD ||
            type == SEAP_PACKET_MSG ||
            type == SEAP_PACKET_ERR);
+
+        _LOGCALL_;
         
         dsc = SEAP_desc_get (&(ctx->sd_table), sd);
         
@@ -744,6 +767,8 @@ int SEAP_packet_send (SEAP_CTX_t *ctx, int sd, SEAP_packet_t *packet)
         SEAP_desc_t *dsc;
         int ret;
                 
+        _LOGCALL_;
+
         ret = -1;
         dsc = SEAP_desc_get (&(ctx->sd_table), sd);
         
@@ -780,5 +805,6 @@ int SEAP_packet_send (SEAP_CTX_t *ctx, int sd, SEAP_packet_t *packet)
 
 int SEAP_packet_enqueue (SEAP_CTX_t *ctx, int sd, SEAP_packet_t *packet)
 {
+        _LOGCALL_;
         return (-1);
 }

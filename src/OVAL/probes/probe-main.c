@@ -239,7 +239,7 @@ SEXP_t *SEXP_OVALset_eval (SEXP_t *set, size_t depth)
            op_num == OVAL_SET_OPERATION_COMPLEMENT  ||
            op_num == OVAL_SET_OPERATION_INTERSECTION);
         
-#define SEXP_OVALset_foreach(elm_var, set_list) SEXP_sublist_foreach (elm_var, set_list, 2, -1)
+#define SEXP_OVALset_foreach(elm_var, set_list) SEXP_sublist_foreach (elm_var, set_list, 2, 1000)
         
         SEXP_OVALset_foreach (member, set) {
                 if (SEXP_OVALelm_name_cstr_r (member,
@@ -304,7 +304,7 @@ SEXP_t *SEXP_OVALset_eval (SEXP_t *set, size_t depth)
                                 id = SEXP_OVALelm_getval (member, 1);
                                         
                                 if (id == NULL) {
-                                        _D("FAIL: set=%p: missing obj_ref value\n", set);
+                                        _D("FAIL: set=%p: missing filter value\n", set);
                                         goto eval_fail;
                                 }
                                         
@@ -361,7 +361,7 @@ SEXP_t *SEXP_OVALset_eval (SEXP_t *set, size_t depth)
                                 fprintf (fp, "[1]\n");
                                 SEXP_fprintfa (fp, o_subset[1]);
                         case 1:
-                                fprintf (fp, "[0]\n");
+                                fprintf (fp, "\n[0]\n");
                                 SEXP_fprintfa (fp, o_subset[0]);
                         }
                 } else {
@@ -372,7 +372,7 @@ SEXP_t *SEXP_OVALset_eval (SEXP_t *set, size_t depth)
                                 fprintf (fp, "[1]\n");
                                 SEXP_fprintfa (fp, s_subset[1]);
                         case 1:
-                                fprintf (fp, "[0]\n");
+                                fprintf (fp, "\n[0]\n");
                                 SEXP_fprintfa (fp, s_subset[0]);
                         }
                 }
@@ -572,8 +572,19 @@ void *probe_worker (void *arg)
                         exit (ret);
                 }
         } else {
-                SEXP_VALIDATE(probe_out);
+                SEXP_t *oid;
                 
+                SEXP_VALIDATE(probe_out);
+
+                oid = SEXP_OVALobj_getattrval (probe_in, "id");
+                _A(oid != NULL);
+                
+                if (pcache_sexp_add (global.pcache, oid, probe_out) != 0) {
+                        /* TODO */
+                }
+                
+                SEXP_free (oid);
+
                 seap_reply = SEAP_msg_new ();
                 SEAP_msg_set (seap_reply, probe_out);
                 

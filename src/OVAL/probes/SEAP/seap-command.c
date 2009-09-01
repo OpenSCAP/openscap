@@ -221,6 +221,18 @@ int SEAP_cmd_unregister (SEAP_CTX_t *ctx, SEAP_cmdcode_t code)
         return (-1);
 }
 
+SEXP_t *__SEAP_cmd_sync_handler (SEXP_t *res, void *arg)
+{
+        struct SEAP_synchelper *h = (struct SEAP_synchelper *)arg;
+        
+        _D("res=%p\n", res);
+
+        h->args = res;
+        (void) pthread_cond_signal (&h->cond);
+        
+        return (NULL);
+}
+
 SEXP_t *SEAP_cmd2sexp (SEAP_cmd_t *cmd)
 {
         return (NULL);
@@ -285,11 +297,12 @@ SEXP_t *SEAP_cmd_exec (SEAP_CTX_t    *ctx,
                         if ((rec = SEAP_cmdtbl_get (tbl[i], code)) != NULL)
                                 break;
                 
-                _D("rec=%p\n", rec);
+                _D("rec=%p, w=%u\n", rec, (flags & SEAP_EXEC_WQUEUE) ? 1 : 0);
                 
-                if (rec == NULL)
+                if (rec == NULL) {
+                        
                         return (NULL);
-                
+                }
                 /* execute command */
                 res = rec->func (args, rec->arg);
                 
@@ -311,74 +324,76 @@ SEXP_t *SEAP_cmd_exec (SEAP_CTX_t    *ctx,
                 packet = SEAP_packet_new ();
                 cmdptr = SEAP_packet_settype (packet, SEAP_PACKET_CMD);
                 
-                cmdptr->id = SEAP_desc_gencmdid (&(ctx->sd_table), sd);
+                cmdptr->id    = SEAP_desc_gencmdid (&(ctx->sd_table), sd);
                 cmdptr->rid   = 0;
                 cmdptr->class = SEAP_CMDCLASS_USR;
                 cmdptr->code  = code;
                 cmdptr->args  = args;
                 cmdptr->flags = 0;
-
+                
                 switch (type) {
-                case SEAP_CMDTYPE_SYNC:
-                        cmdptr->flags |= SEAP_CMDFLAG_SYNC;
+                case SEAP_CMDTYPE_SYNC: {
+                        struct SEAP_synchelper h;
                         
-                        if (DESC_RLOCK (dsc)) {
-                                if (SEAP_packet_send (ctx, sd, packet) != 0) {
-                                        protect_errno {
-                                                _D("FAIL: errno=%u, %s.\n", errno, strerror (errno));
-                                                DESC_RUNLOCK (dsc);
-                                                SEAP_packet_free (packet);
-                                        }
-                                        
-                                        return (NULL);
-                                }
-                                
-                                /* FIXME: timeout */
-                                for (;;) {
-                                        if (SEAP_packet_recv_bytype (ctx, sd, &pckrep, SEAP_PACKET_CMD) != 0) {
-                                                protect_errno {
-                                                        _D("FAIL: errno=%u, %s.\n", errno, strerror (errno));
-                                                        DESC_RUNLOCK (dsc);
-                                                        SEAP_packet_free (packet);
-                                                }
-                                                
-                                                return (NULL);
-                                        }
+                        cmdptr->flags |= SEAP_CMDFLAG_SYNC;
+                
+                        pthread_cond_init (&h.cond, NULL);
+                        pthread_mutex_init (&h.mtx, NULL);
+                        h.args = NULL;
+                        
+                        pthread_mutex_lock (&(h.mtx));
+                        
+                        rec = SEAP_cmdrec_new ();
+                        rec->code = cmdptr->id;
+                        rec->func = &__SEAP_cmd_sync_handler;
+                        rec->arg  = &h;
 
-                                        cmdrep = SEAP_packet_cmd (pckrep);
-                                        _A(cmdrep != NULL);
-                                        
-                                        if (!(cmdrep->flags & SEAP_CMDFLAG_REPLY) ||
-                                            !(cmdrep->rid == cmdptr->id))
-                                        {
-                                                if (SEAP_packet_enqueue (ctx, sd, pckrep) != 0) {
-                                                        protect_errno {
-                                                                _D("FAIL: enqueue failed: errno=%u, %s.\n",
-                                                                   errno, strerror (errno));
-                                                                DESC_RUNLOCK (dsc);
-                                                                SEAP_packet_free (packet);
-                                                                SEAP_packet_free (pckrep);
-                                                        }
-                                                        
-                                                        return (NULL);
-                                                }
-                                                continue;
-                                        }
-                                        
-                                        DESC_RUNLOCK (dsc);
-                                        break;
-                                }
+                        switch (SEAP_cmdtbl_add (dsc->cmd_w_table, rec)) {
+                        case 0:
+                                break;
+                        case SEAP_CMDTBL_ECOLL:
+                                _D("Can't register async command handler: id=%u, tbl=%p, sd=%u: already registered.\n",
+                                   rec->code, (void *)dsc->cmd_w_table, sd);
+                                SEAP_cmdrec_free (rec);
+                                return (NULL);
+                        case -1:
+                                _D("Can't register async command handler: id=%u, tbl=%p, sd=%u: errno=%u, %s.\n",
+                                   rec->code, (void *)dsc->cmd_w_table, sd, errno, strerror (errno));
+                                SEAP_cmdrec_free (rec);
+                                return (NULL);
+                        default:
+                                SEAP_cmdrec_free (rec);
+                                errno = EDOOFUS;
+                                return (NULL);
                         }
                         
-                        if (func != NULL)
-                                res = func (cmdrep->args, funcarg);
-                        else
-                                res = cmdrep->args;
+                        if (SEAP_packet_send (ctx, sd, packet) != 0) {
+                                protect_errno {
+                                        _D("FAIL: errno=%u, %s.\n", errno, strerror (errno));
+                                        /* TODO: unregister handler */
+                                        SEAP_packet_free (packet);
+                                }
+                                return (NULL);
+                        }
+                        
+                        if (pthread_cond_wait (&h.cond, &h.mtx) != 0) {
+                                res = NULL;
+                        } else {
+
+                                _D("cond return: h.args=%p\n", h.args);
+                                
+                                if (h.args == NULL)
+                                        res = NULL;
+                                else if (func != NULL)
+                                        res = func (h.args, funcarg);
+                                else
+                                        res = h.args;
+                        }
                         
                         SEAP_packet_free (packet);
-                        SEAP_packet_free (pckrep);
                         
                         return (res);
+                }
                 case SEAP_CMDTYPE_ASYNC:
                         cmdptr->flags |= SEAP_CMDFLAG_ASYNC;
                         
