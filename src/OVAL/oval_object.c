@@ -296,3 +296,65 @@ void oval_object_to_print(struct oval_object *object, char *indent, int idx)
 		oval_object_content_to_print(content, nxtindent, idx);
 	}
 }
+
+xmlNode *oval_object_to_dom
+	(struct oval_object *object, xmlDoc *doc, xmlNode *parent)
+{
+	oval_subtype_enum subtype = oval_object_subtype(object);
+	const char *subtype_text = oval_subtype_text(subtype);
+	char  object_name[strlen(subtype_text)+8]; *object_name = '\0';
+	strcat(strcat(object_name, subtype_text), "_object");
+	xmlNode *object_node = xmlNewChild(parent, NULL, object_name, NULL);
+
+	oval_family_enum family = oval_object_family(object);
+	const char *family_text = oval_family_text(family);
+	char family_uri[strlen(OVAL_DEFINITIONS_NAMESPACE)+strlen(family_text)+2];
+	*family_uri = '\0';
+	strcat(strcat(strcat(family_uri, OVAL_DEFINITIONS_NAMESPACE),"#"),family_text);
+	xmlNs *ns_family = xmlNewNs(object_node, family_uri, NULL);
+
+	xmlSetNs(object_node, ns_family);
+
+	char *id = oval_object_id(object);
+	xmlNewProp(object_node, "id", id);
+
+	char version[10]; *version = '\0';
+	snprintf(version, sizeof(version), "%d", oval_object_version(object));
+	xmlNewProp(object_node, "version", version);
+
+	char *comment = oval_object_comment(object);
+	if(comment)xmlNewProp(object_node, "comment", comment);
+
+	bool deprecated = oval_object_deprecated(object);
+	if(deprecated)
+		xmlNewProp(object_node, "deprecated", "true");
+
+	struct oval_iterator_string *notes = oval_object_notes(object);
+	if(oval_iterator_string_has_more(notes)){
+		xmlNs *ns_definitions = xmlSearchNsByHref(doc, parent, OVAL_DEFINITIONS_NAMESPACE);
+		xmlNode *notes_node = xmlNewChild(object_node, ns_definitions, "notes", NULL);
+		while(oval_iterator_string_has_more(notes)){
+			char *note = oval_iterator_string_next(notes);
+			xmlNewChild(notes_node, ns_definitions, "note", note);
+		}
+	}
+
+	struct oval_iterator_behavior *behaviors = oval_object_behaviors(object);
+	if(oval_iterator_behavior_has_more(behaviors)){
+		xmlNode *behaviors_node = xmlNewChild(object_node, ns_family, "behaviors", NULL);
+		while(oval_iterator_behavior_has_more(behaviors)){
+			struct oval_behavior *behavior = oval_iterator_behavior_next(behaviors);
+			char *key   = oval_behavior_key  (behavior);
+			char *value = oval_behavior_value(behavior);
+			xmlNewProp(behaviors_node, key, value);
+		}
+	}
+
+	struct oval_iterator_object_content *contents = oval_object_object_content(object);
+	int index;for(index=0;oval_iterator_object_content_has_more(contents); index++){
+		struct oval_object_content *content = oval_iterator_object_content_next(contents);
+		oval_object_content_to_dom(content, doc, object_node);
+	}
+
+	return object_node;
+}

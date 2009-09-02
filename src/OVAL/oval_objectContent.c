@@ -228,7 +228,7 @@ int oval_object_content_parse_tag(xmlTextReaderPtr reader,
 			    (struct oval_object_content_ENTITY *)content;
 			return_code =
 			    oval_entity_parse_tag(reader, context,
-						  &oval_consume_entity, content_entity);
+						  (oscap_consumer_func)oval_consume_entity, content_entity);
 			content_entity->varCheck =
 			    oval_check_parse(reader, "var_check",
 					     OVAL_CHECK_ALL);
@@ -291,3 +291,27 @@ void oval_object_content_to_print(struct oval_object_content *content,
 	case OVAL_OBJECTCONTENT_UNKNOWN: break;
 	}
 }
+
+xmlNode *oval_object_content_to_dom
+	(struct oval_object_content *content, xmlDoc *doc, xmlNode *parent)
+{
+	xmlNode *content_node;
+	switch(oval_object_content_type(content))
+	{
+	case OVAL_OBJECTCONTENT_ENTITY:{
+		struct oval_entity *entity = oval_object_content_entity(content);
+		content_node = oval_entity_to_dom(entity, doc, parent);
+		oval_check_enum check = oval_object_content_varCheck(content);
+		if(check!=OVAL_CHECK_ALL)
+			xmlNewProp(content_node, "var_check", oval_check_text(check));
+	}break;
+	case OVAL_OBJECTCONTENT_SET:{
+		struct oval_set *set = oval_object_content_set(content);
+		content_node = oval_set_to_dom(set, doc, parent);
+	}break;
+	default: content_node = NULL;
+	}
+
+	return content_node;
+}
+

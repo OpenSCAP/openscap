@@ -112,38 +112,36 @@ int _ovalsys_parser_process_node(xmlTextReaderPtr reader,
 	return return_code;
 }
 
-void ovalsys_parser_parse
-    (struct oval_syschar_model *model, char *docname, oval_xml_error_handler eh,
-     void *user_arg) {
-	xmlTextReaderPtr reader;
-	xmlDocPtr doc;
-	reader = xmlNewTextReaderFilename(docname);
-	if (reader != NULL) {
-		struct oval_parser_context context;
-		memset(&context, 0, sizeof(context));
-		context.error_handler = eh;
-		context.reader          = reader;
-		context.object_model           = oval_syschar_model_object_model(model);
-		context.syschar_model   = model;
-		context.syschar_sysinfo = NULL;
-		context.user_data       = user_arg;
-		xmlTextReaderSetErrorHandler(reader, &libxml_error_handler, &context);
-		/* int return_code = */ xmlTextReaderRead(reader);
-		const char *tagname   = (const char*) xmlTextReaderConstName(reader);
-		const char *namespace = (const char*) xmlTextReaderConstNamespaceUri(reader);
-		int is_ovalsys = strcmp((char*)NAMESPACE_OVALSYS, namespace)==0;
-		if(is_ovalsys && (strcmp(tagname,"oval_system_characteristics")==0)){
-			_ovalsys_parser_process_node(reader, &context);
-		}else{
-			char message[200]; *message = 0;
-			sprintf(message,
-					"ovalsys_parser: UNPROCESSED TAG <%s:%s>",
-					namespace, tagname);
-			oval_parser_log_warn(&context, message);
-			oval_parser_skip_tag(reader,&context);
-		}
-		if (context.object_model && context.syschar_sysinfo)
-			set_oval_sysinfo(context.object_model, context.syschar_sysinfo);
-		xmlFreeTextReader(reader);
+int ovalsys_parser_parse
+    (struct oval_syschar_model *model, xmlTextReader *reader, oval_xml_error_handler eh,
+     void *user_arg)
+{
+	struct oval_parser_context context;
+	context.error_handler   = eh;
+	context.reader          = reader;
+	context.object_model    = oval_syschar_model_object_model(model);
+	context.syschar_model   = model;
+	context.syschar_sysinfo = NULL;
+	context.user_data       = user_arg;
+	int return_code = 1;
+	xmlTextReaderSetErrorHandler(reader, &libxml_error_handler, &context);
+	char *tagname   = (char*) xmlTextReaderLocalName(reader);
+	char *namespace = (char*) xmlTextReaderNamespaceUri(reader);
+	int is_ovalsys = strcmp((char*)NAMESPACE_OVALSYS, namespace)==0;
+	if(is_ovalsys && (strcmp(tagname,"oval_system_characteristics")==0)){
+		return_code = _ovalsys_parser_process_node(reader, &context);
+	}else{
+		char message[200]; *message = 0;
+		sprintf(message,
+				"ovalsys_parser: UNPROCESSED TAG <%s:%s>",
+				namespace, tagname);
+		oval_parser_log_warn(&context, message);
+		oval_parser_skip_tag(reader,&context);
+		return_code = 0;
 	}
+	if (context.object_model && context.syschar_sysinfo)
+		set_oval_sysinfo(context.object_model, context.syschar_sysinfo);
+	free(tagname);
+	free(namespace);
+	return return_code;
 }

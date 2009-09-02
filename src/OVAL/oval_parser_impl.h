@@ -47,15 +47,14 @@ struct oval_parser_context {
 struct oval_object_model *oval_parser_context_model(struct oval_parser_context
 						    *context);
 
-void oval_parser_parse(struct oval_object_model *, char *,
-		       oval_xml_error_handler, void*);
-int oval_parser_parse_node(xmlTextReaderPtr, struct oval_parser_context *);
+int ovaldef_parser_parse
+    (struct oval_object_model *, xmlTextReader *, oval_xml_error_handler, void *);
+int ovaldef_parse_node(xmlTextReaderPtr, struct oval_parser_context *);
 
-void ovalsys_parser_parse(struct oval_syschar_model*, char*,
-		       oval_xml_error_handler, void*);
-
-void ovalres_parser_parse(struct oval_results_model*, char*,
-		       oval_xml_error_handler, void*);
+int ovalsys_parser_parse
+    (struct oval_syschar_model *, xmlTextReader *, oval_xml_error_handler , void *);
+void ovalres_parser_parse
+    (struct oval_results_model *, xmlTextReader *, oval_xml_error_handler, void *);
 
 int oval_parser_report(struct oval_parser_context*, struct oval_xml_error*);
 

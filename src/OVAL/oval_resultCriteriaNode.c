@@ -178,6 +178,12 @@ oval_result_enum oval_result_criteria_node_result(struct
 	return ((struct oval_result_criteria_node *)node)->result;
 }
 
+bool oval_result_criteria_node_negate
+	(struct oval_result_criteria_node *node)
+{
+	return node->negate;
+}
+
 oval_operator_enum oval_result_criteria_node_operator(struct
 						      oval_result_criteria_node
 						      *node)
@@ -191,16 +197,16 @@ oval_operator_enum oval_result_criteria_node_operator(struct
 	return operator;
 }
 
-struct oval_iterator_criteria_node *oval_result_criteria_node_subnodes(struct
+struct oval_iterator_result_criteria_node *oval_result_criteria_node_subnodes(struct
 								       oval_result_criteria_node
 								       *node)
 {
 	//type==NODETYPE_CRITERIA
-	struct oval_iterator_criteria_node *subnodes = NULL;
+	struct oval_iterator_result_criteria_node *subnodes = NULL;
 	if (oval_result_criteria_node_type(node) == NODETYPE_CRITERIA) {
 		struct oval_result_criteria_node_CRITERIA *criteria =
 		    (struct oval_result_criteria_node_CRITERIA *)node;
-		subnodes = (struct oval_iterator_criteria_node *)
+		subnodes = (struct oval_iterator_result_criteria_node *)
 		    oval_collection_iterator(criteria->subnodes);
 	}
 	return subnodes;
@@ -235,6 +241,12 @@ void set_oval_result_criteria_node_result
 	(struct oval_result_criteria_node *node, oval_result_enum result)
 {
 	node->result = result;
+}
+
+void set_oval_result_criteria_node_negate
+	(struct oval_result_criteria_node *node, bool negate)
+{
+	node->negate = negate;
 }
 
 void set_oval_result_criteria_node_operator
@@ -369,5 +381,84 @@ int oval_result_criteria_node_parse
 	(*consumer)(node, client);
 	free(localName);
 	return return_code;
+}
+
+
+xmlNode *_oval_result_CRITERIA_to_dom
+	(struct oval_result_criteria_node *node, xmlDocPtr doc, xmlNode *parent)
+{
+	xmlNs *ns_results = xmlSearchNsByHref(doc, parent, OVAL_RESULTS_NAMESPACE);
+	xmlNode *node_root = xmlNewChild(parent, ns_results, "criteria", NULL);
+
+	oval_operator_enum operator = oval_result_criteria_node_operator(node);
+	const char* operator_att = oval_operator_text(operator);
+	xmlNewProp(node_root, "operator", operator_att);
+
+	struct oval_iterator_result_criteria_node *subnodes
+		= oval_result_criteria_node_subnodes(node);
+	while(oval_iterator_result_criteria_node_has_more(subnodes)){
+		struct oval_result_criteria_node *subnode
+			= oval_iterator_result_criteria_node_next(subnodes);
+		oval_result_criteria_node_to_dom
+			(subnode,doc, node_root);
+	}
+	return node_root;
+}
+
+xmlNode *_oval_result_CRITERION_to_dom
+	(struct oval_result_criteria_node *node, xmlDocPtr doc, xmlNode *parent)
+{
+	xmlNs *ns_results = xmlSearchNsByHref(doc, parent, OVAL_RESULTS_NAMESPACE);
+	xmlNode *node_root = xmlNewChild(parent, ns_results, "criterion", NULL);
+
+	struct oval_result_test *rslt_test = oval_result_criteria_node_test(node);
+	struct oval_test *oval_test = oval_result_test_test(rslt_test);
+	char *test_ref = oval_test_id(oval_test);
+	xmlNewProp(node_root, "test_ref", test_ref);
+
+	return node_root;
+
+}
+xmlNode *_oval_result_EXTENDDEF_to_dom
+	(struct oval_result_criteria_node *node, xmlDocPtr doc, xmlNode *parent)
+{
+	xmlNs *ns_results = xmlSearchNsByHref(doc, parent, OVAL_RESULTS_NAMESPACE);
+	xmlNode *node_root = xmlNewChild(parent, ns_results, "extend_definition", NULL);
+
+	struct oval_result_definition *rslt_definition = oval_result_criteria_node_extends(node);
+	struct oval_definition *oval_definition = oval_result_definition_definition(rslt_definition);
+	char *definition_ref = oval_definition_id(oval_definition);
+	xmlNewProp(node_root, "definition_ref", definition_ref);
+
+	return node_root;
+
+}
+
+xmlNode *oval_result_criteria_node_to_dom
+	(struct oval_result_criteria_node *node, xmlDocPtr doc, xmlNode *parent)
+{
+	xmlNode *criteria_node = NULL;
+	switch(oval_result_criteria_node_type(node)){
+		case NODETYPE_CRITERIA:
+			criteria_node = _oval_result_CRITERIA_to_dom(node, doc, parent);break;
+		case NODETYPE_CRITERION:
+			criteria_node = _oval_result_CRITERION_to_dom(node, doc, parent);break;
+		case NODETYPE_EXTENDDEF:
+			criteria_node = _oval_result_EXTENDDEF_to_dom(node, doc, parent);break;
+		default: break;
+	}
+
+	if(criteria_node){
+		oval_result_enum result
+			= oval_result_criteria_node_result(node);
+		const char* result_att = oval_result_text(result);
+		xmlNewProp(criteria_node, "result", result_att);
+
+		bool negate = oval_result_criteria_node_negate(node);
+		if(negate!=false){
+			xmlNewProp(criteria_node, "negate", "true");
+		}
+	}
+	return criteria_node;
 }
 

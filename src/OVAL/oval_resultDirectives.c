@@ -31,6 +31,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
+#include <common/util.h>
 #include "oval_results_impl.h"
 #include "oval_collection_impl.h"
 
@@ -149,5 +150,43 @@ int oval_result_directives_parse_tag
 	(xmlTextReaderPtr reader, struct oval_parser_context *context, struct oval_result_directives *directives)
 {
 	return oval_parser_parse_tag(reader, context, &_oval_result_directives_parse_tag, directives);
+}
+
+const struct oscap_string_map _OVAL_DIRECTIVE_MAP[] = {
+		{ OVAL_DIRECTIVE_TRUE          , "definition_true"          },
+		{ OVAL_DIRECTIVE_FALSE         , "definition_false"         },
+		{ OVAL_DIRECTIVE_UNKNOWN       , "definition_unknown"       },
+		{ OVAL_DIRECTIVE_ERROR         , "definition_error"         },
+		{ OVAL_DIRECTIVE_NOT_EVALUATED , "definition_not_evalutated"},
+		{ OVAL_DIRECTIVE_NOT_APPLICABLE, "definition_not_applicable"},
+		{ OVAL_DIRECTIVE_INVALID       , NULL }
+};
+
+int oval_result_directives_to_dom
+	(struct oval_result_directives *directives, xmlDoc *doc, xmlNode *parent)
+{
+	int retcode = 1;
+	xmlNs *ns_results  = xmlSearchNsByHref(doc, parent, OVAL_RESULTS_NAMESPACE);
+	xmlNode *directives_node = xmlNewChild
+		(parent, ns_results, BAD_CAST "directives", NULL);
+
+	const struct oscap_string_map *map;
+	for(map = _OVAL_DIRECTIVE_MAP;map->string; map++)
+	{
+		oval_result_directive_enum directive = (oval_result_directive_enum)
+			map->value;
+		bool reported = oval_result_directive_reported
+			(directives, directive);
+		oval_result_directive_content_enum content = oval_result_directive_content
+			(directives, directive);
+		xmlNode *directive_node = xmlNewChild
+			(directives_node, ns_results, (map->string),NULL);
+		char *val_reported = (reported)?"true":"false";
+		char *val_content  = (content==OVAL_DIRECTIVE_CONTENT_FULL)
+			?"full":"thin";
+		xmlNewProp(directive_node, BAD_CAST "reported", BAD_CAST val_reported);
+		xmlNewProp(directive_node, BAD_CAST "content", BAD_CAST val_content);
+	}
+	return retcode;
 }
 

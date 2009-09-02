@@ -33,7 +33,7 @@
 #include "oval_collection_impl.h"
 #include "oval_system_characteristics_impl.h"
 
-#define OVAL_RESULT_ITEM_DEBUG 1
+#define OVAL_RESULT_ITEM_DEBUG 0
 
 typedef struct oval_result_item {
 	oval_result_enum          result;
@@ -160,4 +160,20 @@ int oval_result_item_parse_tag
 
 	free(item_id);
 	return return_code;
+}
+
+xmlNode *oval_result_item_to_dom
+	(struct oval_result_item *rslt_item, xmlDocPtr doc, xmlNode *parent)
+{
+	xmlNs *ns_results = xmlSearchNsByHref(doc, parent, OVAL_RESULTS_NAMESPACE);
+	xmlNode *item_node = xmlNewChild(parent, ns_results, "tested_item", NULL);
+
+	struct oval_sysdata *oval_sysdata = oval_result_item_sysdata(rslt_item);
+	char *item_id = oval_sysdata_id(oval_sysdata);
+	xmlNewProp(item_node, "item_id", item_id);
+
+	oval_result_enum result = oval_result_item_result(rslt_item);
+	xmlNewProp(item_node, "result", oval_result_text(result));
+
+	return item_node;
 }

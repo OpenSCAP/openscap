@@ -330,3 +330,45 @@ void oval_set_to_print(struct oval_set *set, char *indent, int idx)
 	case OVAL_SET_UNKNOWN: break;
 	}
 }
+xmlNode *oval_set_to_dom
+	(struct oval_set *set , xmlDoc *doc , xmlNode *parent)
+{
+	xmlNs *ns_definitions = xmlSearchNsByHref(doc, parent, OVAL_DEFINITIONS_NAMESPACE);
+	if(ns_definitions==NULL)
+		ns_definitions = xmlNewNs(parent, OVAL_DEFINITIONS_NAMESPACE, NULL);
+	xmlNode *set_node = xmlNewChild(parent, ns_definitions, BAD_CAST "set", NULL);
+
+	oval_set_operation_enum operation = oval_set_operation(set);
+	if(operation!=OVAL_SET_OPERATION_UNION)
+		xmlNewProp(set_node, "set_operator", oval_set_operation_text(operation));
+
+	switch(oval_set_type(set))
+	{
+	case OVAL_SET_AGGREGATE:{
+		struct oval_iterator_set *subsets = oval_set_subsets(set);
+		while(oval_iterator_set_has_more(subsets))
+		{
+			struct oval_set *subset = oval_iterator_set_next(subsets);
+			oval_set_to_dom(subset, doc, set_node);
+		}
+	}break;
+	case OVAL_SET_COLLECTIVE:{
+			struct oval_iterator_object *objects = oval_set_objects(set);
+			while(oval_iterator_object_has_more(objects)){
+				struct oval_object *object = oval_iterator_object_next(objects);
+				char* id = oval_object_id(object);
+				xmlNewChild(set_node,  ns_definitions, BAD_CAST "object_reference", id);
+			}
+			struct oval_iterator_state *filters = oval_set_filters(set);
+			while(oval_iterator_state_has_more(filters))
+			{
+				struct oval_state *filter = oval_iterator_state_next(filters);
+				char *id = oval_state_id(filter);
+				xmlNewChild(set_node, ns_definitions, BAD_CAST "filter",  id);
+			}
+	}break;
+	default: break;
+	}
+
+	return set_node;
+}

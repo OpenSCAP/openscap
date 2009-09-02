@@ -1,3 +1,5 @@
+#ifndef __STUB_PROBE
+
 #include <stdlib.h>
 #include <string.h>
 #include <seap.h>
@@ -297,13 +299,14 @@ static SEXP_t *oval_behavior_to_sexp (struct oval_behavior *behavior)
 {
 	char *attr_name, *attr_val;
         SEXP_t *elm, *elm_name;
-	struct oval_iterator_string *sit;
+	//struct oval_iterator_string *sit;
 
         elm_name = SEXP_list_new ();
 
         SEXP_list_add (elm_name,
                        SEXP_string_newf ("behaviors"));
 
+    /*
 	sit = oval_behavior_attribute_keys(behavior);
 	while (oval_iterator_string_has_more(sit)) {
 		attr_name = oval_iterator_string_next(sit);
@@ -313,6 +316,14 @@ static SEXP_t *oval_behavior_to_sexp (struct oval_behavior *behavior)
 		if (attr_val != NULL) {
 			SEXP_list_add(elm_name, SEXP_string_newf(attr_val));
 		}
+	}
+	*/
+	attr_name = oval_behavior_key(behavior);
+	attr_val = oval_behavior_value(behavior);
+
+	SEXP_list_add(elm_name, SEXP_string_newf(":%s", attr_name));
+	if (attr_val != NULL) {
+		SEXP_list_add(elm_name, SEXP_string_newf(attr_val));
 	}
 
 	elm = SEXP_list_new();
@@ -398,8 +409,9 @@ SEXP_t *oval_state_to_sexp (struct oval_state *state)
         SEXP_t *ste, *ste_name, *ste_id, *ste_ent;
         char buffer[128];
         const oval_probe_t *probe;
-        struct oval_iterator_entity *entities;
-        
+        //struct oval_iterator_entity *entities;
+        struct oval_iterator_state_content *contents;
+
         probe = search_probe (oval_state_subtype (state));
 
         if (probe == NULL) {
@@ -417,14 +429,24 @@ SEXP_t *oval_state_to_sexp (struct oval_state *state)
         SEXP_list_add (ste_name, SEXP_string_newf (oval_state_id (state)));
 
         SEXP_list_add (ste, ste_name);
-        
-        entities = oval_state_entities (state);
-        
+
+        //entities = oval_state_entities (state);
+
+        contents = oval_state_contents(state);
+
+        /*
         while (oval_iterator_entity_has_more (entities)) {
                 ste_ent = oval_entity_to_sexp (oval_iterator_entity_next (entities));
                 SEXP_list_add (ste, ste_ent);
         }
-        
+        */
+        while(oval_iterator_state_content_has_more(contents)){
+        	struct oval_state_content *content = oval_iterator_state_content_next(contents);
+        	//Note that content includes entity and variable check constraints
+            ste_ent = oval_entity_to_sexp (oval_state_content_entity(content));
+            SEXP_list_add (ste, ste_ent);
+        }
+
         return (ste);
 }
 
@@ -525,9 +547,9 @@ struct oval_sysdata *oval_sysdata_from_sexp(SEXP_t *sexp)
 	}
 
 	int type = 0;
-	for (size_t i = 0; i < PROBETBLSIZE; ++i) {
-		if (strcmp(__probe_tbl[i].typestr, name) == 0) {
-			type = __probe_tbl[i].typenum;
+	size_t size;for (size = 0; size < PROBETBLSIZE; ++size) {
+		if (strcmp(__probe_tbl[size].typestr, name) == 0) {
+			type = __probe_tbl[size].typenum;
 			break;
 		}
 	}
@@ -547,7 +569,7 @@ struct oval_sysdata *oval_sysdata_from_sexp(SEXP_t *sexp)
 	set_oval_sysdata_subtype_name(sysdata, name);
 	
 	if (status == OVAL_STATUS_EXISTS) {
-		for (int i = 2; (sub = SEXP_list_nth(sexp, i)) != NULL; ++i)
+		int i;for (i = 2; (sub = SEXP_list_nth(sexp, i)) != NULL; ++i)
 			if ((sysitem = oval_sysitem_from_sexp(sub)) != NULL)
 				add_oval_sysdata_item(sysdata, sysitem);
 	}
@@ -778,3 +800,4 @@ static SEXP_t *probe_cmd_ste_fetch (SEXP_t *sexp, void *arg)
 
         return (ste_list);
 }
+#endif

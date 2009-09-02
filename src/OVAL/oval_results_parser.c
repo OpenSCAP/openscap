@@ -57,7 +57,7 @@ int _oval_results_parser_consume_definitions
 	(xmlTextReaderPtr reader, struct oval_parser_context *context, void *null)
 {
 	if(DEBUG_OVALRES_PARSER)oval_parser_log_debug(context,"Calling oval_parser_parse_node");
-	return oval_parser_parse_node(reader, context);
+	return ovaldef_parse_node(reader, context);
 }
 
 void _oval_results_parser_consume_system
@@ -113,7 +113,7 @@ int _ovalres_parser_process_node
 					return_code = oval_result_directives_parse_tag(reader, context, directives);
 				}else if (is_ovaldef && (strcmp(tagname, "oval_definitions") == 0)) {
 					if(DEBUG_OVALRES_PARSER)oval_parser_log_debug(context,"Calling oval_parser_parse_node");
-					return_code = oval_parser_parse_node(reader, context);
+					return_code = ovaldef_parse_node(reader, context);
 				}else if (is_ovalres && (strcmp(tagname, "results") == 0)) {
 					return_code = oval_parser_parse_tag
 						(reader, context,
@@ -148,35 +148,29 @@ int _ovalres_parser_process_node
 }
 
 void ovalres_parser_parse
-    (struct oval_results_model *model, char *docname, oval_xml_error_handler eh,
-     void *user_arg) {
-	xmlTextReaderPtr reader;
-	xmlDocPtr doc;
-	doc = xmlParseFile(docname);
-	reader = xmlNewTextReaderFilename(docname);
-	if (reader != NULL) {
-		struct oval_parser_context context;
-		context.error_handler = eh;
-		context.reader          = reader;
-		context.results_model   = model;
-		context.syschar_model   = oval_results_model_syschar_model(model);
-		context.object_model    = oval_syschar_model_object_model(context.syschar_model);
-		context.syschar_sysinfo = NULL;
-		context.user_data       = user_arg;
-		xmlTextReaderSetErrorHandler(reader, &libxml_error_handler, &context);
-		xmlTextReaderRead(reader);
-		char *tagname   = (char*) xmlTextReaderLocalName(reader);
-		char *namespace = (char*) xmlTextReaderNamespaceUri(reader);
-		int is_ovalres = strcmp(NAMESPACE_OVALRES, namespace)==0;
-		if(is_ovalres && (strcmp(tagname,"oval_results")==0)){
-			_ovalres_parser_process_node(reader, &context);
-		}else{
-			char message[200]; *message = 0;
-			sprintf(message,
-					"ovalres_parser: UNPROCESSED TAG <%s:%s>",
-					namespace, tagname);
-			oval_parser_log_warn(&context, message);
-			oval_parser_skip_tag(reader,&context);
-		}
+    (struct oval_results_model *model, xmlTextReader *reader, oval_xml_error_handler eh,
+     void *user_arg)
+{
+	struct oval_parser_context context;
+	context.error_handler = eh;
+	context.reader          = reader;
+	context.results_model   = model;
+	context.syschar_model   = oval_results_model_syschar_model(model);
+	context.object_model    = oval_syschar_model_object_model(context.syschar_model);
+	context.syschar_sysinfo = NULL;
+	context.user_data       = user_arg;
+	xmlTextReaderSetErrorHandler(reader, &libxml_error_handler, &context);
+	char *tagname   = (char*) xmlTextReaderLocalName(reader);
+	char *namespace = (char*) xmlTextReaderNamespaceUri(reader);
+	int is_ovalres = strcmp(NAMESPACE_OVALRES, namespace)==0;
+	if(is_ovalres && (strcmp(tagname,"oval_results")==0)){
+		_ovalres_parser_process_node(reader, &context);
+	}else{
+		char message[200]; *message = 0;
+		sprintf(message,
+				"ovalres_parser: UNPROCESSED TAG <%s:%s>",
+				namespace, tagname);
+		oval_parser_log_warn(&context, message);
+		oval_parser_skip_tag(reader,&context);
 	}
 }

@@ -231,6 +231,9 @@ struct oval_iterator_state *get_oval_states(
 struct oval_iterator_variable *get_oval_variables(
 		struct oval_object_model *model);
 
+int export_definitions(
+		struct oval_object_model *, struct export_target *);
+
 /*
  * function: oval_syschar_model_new -- Create new oval_syschar_model.
  * The new model is bound to a specified oval_object_model and variable bindings.
@@ -283,7 +286,6 @@ struct oval_syschar *get_oval_syschar(
  */
 struct oval_iterator_syschar *oval_syschar_dependencies(struct oval_syschar *);
 
-	/* needs oval_characteristics, export_target struct definitions */
 int export_characteristics(
 		struct oval_syschar_model *, struct export_target *);
 

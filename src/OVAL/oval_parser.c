@@ -135,7 +135,7 @@ int _oval_parser_process_tags(xmlTextReaderPtr reader,
 
 #define DEBUG_OVAL_PARSER 0
 
-int oval_parser_parse_node(xmlTextReaderPtr reader,
+int ovaldef_parse_node(xmlTextReaderPtr reader,
 			      struct oval_parser_context *context)
 {
 	const char *oval_namespace =
@@ -229,21 +229,16 @@ int oval_parser_parse_node(xmlTextReaderPtr reader,
 	return return_code;
 }
 
-void oval_parser_parse
-    (struct oval_object_model *model, char *docname, oval_xml_error_handler eh,
+int ovaldef_parser_parse
+    (struct oval_object_model *model, xmlTextReader *reader, oval_xml_error_handler eh,
      void *user_arg) {
-	xmlTextReaderPtr reader;
-	reader = xmlNewTextReaderFilename(docname);
-	if (reader != NULL) {
-		struct oval_parser_context context;
-		context.reader        = reader;
-		context.object_model         = model;
-		context.error_handler = eh;
-		context.user_data     = user_arg;
-		xmlTextReaderSetErrorHandler(reader, &libxml_error_handler, &context);
-		oval_parser_parse_node(reader, &context);
-		xmlFreeTextReader(reader);
-	}
+	struct oval_parser_context context;
+	context.reader        = reader;
+	context.object_model  = model;
+	context.error_handler = eh;
+	context.user_data     = user_arg;
+	xmlTextReaderSetErrorHandler(reader, &libxml_error_handler, &context);
+	return ovaldef_parse_node(reader, &context);
 }
 
 int oval_parser_skip_tag(xmlTextReaderPtr reader,

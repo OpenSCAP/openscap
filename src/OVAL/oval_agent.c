@@ -261,14 +261,34 @@ void load_oval_definitions(struct oval_object_model *model,
 			   struct import_source *source,
 			   oval_xml_error_handler eh, void *user_arg)
 {
-	oval_parser_parse(model, source->import_source_filename, eh, user_arg);
+	xmlDoc *doc = xmlParseFile
+		(source->import_source_filename);
+	xmlTextReader *reader = xmlNewTextReaderFilename
+		(source->import_source_filename);
+
+	xmlTextReaderRead(reader);
+	ovaldef_parser_parse
+		(model, reader, eh, user_arg);
+
+	xmlFreeTextReader(reader);
+	xmlFreeDoc(doc);
 }
 
 void load_oval_syschar(struct oval_syschar_model *model,
 			struct import_source *source,
 			oval_xml_error_handler eh, void *user_arg )
 {
-	ovalsys_parser_parse(model, source->import_source_filename, eh, user_arg);
+	xmlDoc *doc = xmlParseFile
+		(source->import_source_filename);
+	xmlTextReader *reader = xmlNewTextReaderFilename
+		(source->import_source_filename);
+
+	xmlTextReaderRead(reader);
+	ovalsys_parser_parse
+		(model, reader, eh, user_arg);
+
+	xmlFreeTextReader(reader);
+	xmlFreeDoc(doc);
 }
 
 struct oval_definition *get_oval_definition(struct oval_object_model *model,
@@ -431,74 +451,19 @@ struct oval_test *get_oval_test_new(struct oval_object_model *model, char *id)
 	return test;
 }
 
-int export_characteristics(
-		struct oval_syschar_model *model, struct export_target *target){
-
-	LIBXML_TEST_VERSION;
-
-	xmlDocPtr doc = xmlNewDoc(BAD_CAST "1.0");
-	xmlNodePtr root_node = xmlNewNode(NULL, BAD_CAST "oval_system_characteristics");
-	xmlNs *ns_common  = xmlNewNs(root_node, OVAL_COMMON_NAMESPACE,BAD_CAST "oval");
-	xmlNs *ns_syschar = xmlNewNs(root_node, OVAL_SYSCHAR_NAMESPACE, "oval-sc");
-	xmlNs *ns_digsig  = xmlNewNs(root_node, OVAL_DIGSIG_NAMESPACE , "ds");
-
-	xmlSetNs(root_node, ns_common);
-	xmlSetNs(root_node, ns_digsig);
-	xmlSetNs(root_node, ns_syschar);
-
-    xmlDocSetRootElement(doc, root_node);
-
-    xmlNode *tag_generator = xmlNewChild
-		(root_node, ns_syschar, BAD_CAST "generator", NULL);
-
-    xmlNewChild
+int _generator_to_dom(xmlDocPtr doc, xmlNode *tag_generator)
+{
+	xmlNs *ns_common  = xmlSearchNsByHref(doc, tag_generator, OVAL_COMMON_NAMESPACE);
+	xmlNewChild
 		(tag_generator, ns_common, BAD_CAST "product_name", BAD_CAST "OPEN SCAP");
-    xmlNewChild
+	xmlNewChild
 		(tag_generator, ns_common, BAD_CAST "schema_version", BAD_CAST "5.5");
-    xmlNewChild
-		(tag_generator, ns_common, BAD_CAST "timestamp", NULL);//TODO
-
-    oval_sysinfo_to_dom(oval_syschar_model_sysinfo(model), doc, root_node);
-
-    xmlNode *tag_objects = xmlNewChild
-		(root_node, ns_syschar, BAD_CAST "collected_objects",NULL);
-
-    struct oval_string_map *sysdata_map = oval_string_map_new();
-    struct oval_iterator_syschar *syschars = oval_syschar_model_syschars(model);
-    while(oval_iterator_syschar_has_more(syschars)){
-    	struct oval_syschar *syschar =oval_iterator_syschar_next(syschars);
-    	oval_syschar_to_dom(syschar, doc, tag_objects);
-    	struct oval_iterator_sysdata *sysdatas = oval_syschar_sysdata(syschar);
-    	while(oval_iterator_sysdata_has_more(sysdatas)){
-    		struct oval_sysdata *sysdata = oval_iterator_sysdata_next(sysdatas);
-    		oval_string_map_put(sysdata_map, oval_sysdata_id(sysdata), sysdata);
-    	}
-    }
-
-    struct oval_iterator *sysdatas = oval_string_map_values(sysdata_map);
-    if(oval_collection_iterator_has_more(sysdatas)){
-        xmlNode *tag_items = xmlNewChild
-    		(root_node, ns_syschar, BAD_CAST "system_data", NULL);
-        while(oval_collection_iterator_has_more(sysdatas)){
-        	struct oval_sysdata *sysdata = (struct oval_sysdata *)
-        	oval_collection_iterator_next(sysdatas);
-        	oval_sysdata_to_dom(sysdata, doc, tag_items);
-        }
-    }
-    oval_string_map_free(sysdata_map, NULL);
-
-    /*
-     * Dumping document to stdio or file
-     */
-    int retcode = xmlSaveFormatFileEnc(target->filename, doc, target->encoding, 1);
-
-	xmlFreeDoc(doc);
-	xmlFreeNs(ns_common );
-	xmlFreeNs(ns_digsig );
-    xmlFreeNs(ns_syschar);
-
-    return retcode;
+	xmlNewChild
+		(tag_generator, ns_common, BAD_CAST "timestamp", NULL);//TODO: expand xml timestamp
+	return 1;
 }
+
+
 
 struct oval_results_model{
 	struct oval_syschar_model     *syschar_model;
@@ -558,9 +523,6 @@ void add_oval_results_model_system
 	if(system)oval_collection_add(model->systems, system);
 }
 
-struct oval_iterator_results *oval_results_model_results(
-		struct oval_results_model *model);//TODO: implement
-
 struct oval_result *get_oval_result(
 		struct oval_results_model *model,
 		char *object_id);//TODO: implement
@@ -568,7 +530,222 @@ struct oval_result *get_oval_result(
 void load_oval_results(struct oval_results_model *model, struct import_source *source,
 			oval_xml_error_handler handler, void *client_data)
 {
+	xmlDoc *doc = xmlParseFile(source->import_source_filename);
+	xmlTextReader *reader = xmlNewTextReaderFilename(source->import_source_filename);
 
-	ovalres_parser_parse(model, source->import_source_filename, handler, client_data);
+	xmlTextReaderRead(reader);
+	ovalres_parser_parse(model, reader, handler, client_data);
+
+	xmlFreeTextReader(reader);
+	xmlFreeDoc(doc);
 }
 
+xmlNode *oval_definitions_to_dom
+	(struct oval_object_model *object_model, xmlDocPtr doc, xmlNode *parent)
+{
+	xmlNodePtr root_node;
+	if(parent){
+		root_node = xmlNewChild(parent, NULL, BAD_CAST "oval_definitions", NULL);
+	}else{
+		root_node = xmlNewNode(NULL, BAD_CAST "oval_definitions");
+	    xmlDocSetRootElement(doc, root_node);
+	}
+	xmlNs *ns_common  = xmlNewNs(root_node, OVAL_COMMON_NAMESPACE,BAD_CAST "oval");
+	xmlNs *ns_defntns = xmlNewNs(root_node, OVAL_DEFINITIONS_NAMESPACE, NULL);
+
+	xmlSetNs(root_node, ns_common);
+	xmlSetNs(root_node, ns_defntns);
+
+    xmlNode *tag_generator = xmlNewChild
+		(root_node, ns_defntns, BAD_CAST "generator", NULL);
+
+    _generator_to_dom(doc, tag_generator);
+
+    struct oval_iterator_definition *definitions = get_oval_definitions(object_model);
+    if(oval_iterator_definition_has_more(definitions)){
+    	xmlNode *definitions_node = xmlNewChild(root_node, ns_defntns, "definitions", NULL);
+    	while(oval_iterator_definition_has_more(definitions)){
+    		struct oval_definition *definition = oval_iterator_definition_next(definitions);
+    		oval_definition_to_dom(definition, doc, definitions_node);
+    	}
+    }
+    struct oval_iterator_test *tests = get_oval_tests(object_model);
+    if(oval_iterator_test_has_more(tests)){
+    	xmlNode *tests_node = xmlNewChild(root_node, ns_defntns, "tests", NULL);
+    	while(oval_iterator_test_has_more(tests)){
+    		struct oval_test *test = oval_iterator_test_next(tests);
+    		oval_test_to_dom(test, doc, tests_node);
+    	}
+    }
+    struct oval_iterator_object *objects = get_oval_objects(object_model);
+    if(oval_iterator_object_has_more(objects)){
+    	xmlNode *objects_node = xmlNewChild(root_node, ns_defntns, "objects", NULL);
+    	int index;for(index=0;oval_iterator_object_has_more(objects); index++){
+    		struct oval_object *object = oval_iterator_object_next(objects);
+    		oval_object_to_dom(object, doc, objects_node);
+    	}
+    }
+    struct oval_iterator_state *states = get_oval_states(object_model);
+    if(oval_iterator_state_has_more(states)){
+    	xmlNode *states_node = xmlNewChild(root_node, ns_defntns, "states", NULL);
+    	while(oval_iterator_state_has_more(states)){
+    		struct oval_state *state = oval_iterator_state_next(states);
+    		oval_state_to_dom(state, doc, states_node);
+    	}
+    }
+    struct oval_iterator_variable *variables = get_oval_variables(object_model);
+    if(oval_iterator_variable_has_more(variables)){
+    	xmlNode *variables_node = xmlNewChild(root_node, ns_defntns, "variables", NULL);
+    	while(oval_iterator_variable_has_more(variables)){
+    		struct oval_variable *variable = oval_iterator_variable_next(variables);
+    		oval_variable_to_dom(variable, doc, variables_node);
+    	}
+    }
+
+	return root_node;
+}
+
+int export_definitions(
+		struct oval_object_model *model, struct export_target *target){
+
+	LIBXML_TEST_VERSION;
+
+	xmlDocPtr doc = xmlNewDoc(BAD_CAST "1.0");
+	oval_definitions_to_dom(model, doc, NULL);
+	/*
+	 * Dumping document to stdio or file
+	 */
+	int retcode = xmlSaveFormatFileEnc(target->filename, doc, target->encoding, 1);
+
+	xmlFreeDoc(doc);
+    return retcode;
+}
+
+xmlNode *oval_characteristics_to_dom
+	(struct oval_syschar_model *syschar_model, xmlDocPtr doc, xmlNode *parent)
+{
+	xmlNodePtr root_node;
+	if(parent){
+		root_node = xmlNewChild(parent, NULL, BAD_CAST "oval_system_characteristics",NULL);
+	}else{
+		root_node = xmlNewNode(NULL, BAD_CAST "oval_system_characteristics");
+	    xmlDocSetRootElement(doc, root_node);
+	}
+	xmlNs *ns_common  = xmlNewNs(root_node, OVAL_COMMON_NAMESPACE,BAD_CAST "oval");
+	xmlNs *ns_syschar = xmlNewNs(root_node, OVAL_SYSCHAR_NAMESPACE, NULL);
+
+	xmlSetNs(root_node, ns_common);
+	xmlSetNs(root_node, ns_syschar);
+
+
+    xmlNode *tag_generator = xmlNewChild
+		(root_node, ns_syschar, BAD_CAST "generator", NULL);
+
+    _generator_to_dom(doc, tag_generator);
+
+	oval_sysinfo_to_dom(oval_syschar_model_sysinfo(syschar_model), doc, root_node);
+
+	xmlNode *tag_objects = xmlNewChild
+		(root_node, ns_syschar, BAD_CAST "collected_objects",NULL);
+
+	struct oval_string_map *sysdata_map = oval_string_map_new();
+	struct oval_iterator_syschar *syschars = oval_syschar_model_syschars(syschar_model);
+	while(oval_iterator_syschar_has_more(syschars)){
+		struct oval_syschar *syschar =oval_iterator_syschar_next(syschars);
+		oval_syschar_to_dom(syschar, doc, tag_objects);
+		struct oval_iterator_sysdata *sysdatas = oval_syschar_sysdata(syschar);
+		while(oval_iterator_sysdata_has_more(sysdatas)){
+			struct oval_sysdata *sysdata = oval_iterator_sysdata_next(sysdatas);
+			oval_string_map_put(sysdata_map, oval_sysdata_id(sysdata), sysdata);
+		}
+	}
+
+	struct oval_iterator *sysdatas = oval_string_map_values(sysdata_map);
+	if(oval_collection_iterator_has_more(sysdatas)){
+		xmlNode *tag_items = xmlNewChild
+			(root_node, ns_syschar, BAD_CAST "system_data", NULL);
+		while(oval_collection_iterator_has_more(sysdatas)){
+			struct oval_sysdata *sysdata = (struct oval_sysdata *)
+			oval_collection_iterator_next(sysdatas);
+			oval_sysdata_to_dom(sysdata, doc, tag_items);
+		}
+	}
+	oval_string_map_free(sysdata_map, NULL);
+
+	return root_node;
+}
+
+int export_characteristics(
+		struct oval_syschar_model *model, struct export_target *target){
+
+	LIBXML_TEST_VERSION;
+
+	xmlDocPtr doc = xmlNewDoc(BAD_CAST "1.0");
+	oval_characteristics_to_dom(model, doc, NULL);
+	/*
+	 * Dumping document to stdio or file
+	 */
+	int retcode = xmlSaveFormatFileEnc(target->filename, doc, target->encoding, 1);
+
+	xmlFreeDoc(doc);
+    return retcode;
+}
+
+xmlNode *oval_results_to_dom
+	(struct oval_results_model *results_model, xmlDocPtr doc, xmlNode *parent)
+{
+	xmlNode *root_node;
+	if(parent){
+		root_node = xmlNewChild(parent, NULL, "oval_results", NULL);
+	}else{
+		root_node = xmlNewNode(NULL, BAD_CAST "oval_results");
+	    xmlDocSetRootElement(doc, root_node);
+	}
+	xmlNs *ns_common  = xmlNewNs(root_node, OVAL_COMMON_NAMESPACE , BAD_CAST "oval");
+	xmlNs *ns_results = xmlNewNs(root_node, OVAL_RESULTS_NAMESPACE, NULL);
+
+	xmlSetNs(root_node, ns_common);
+	xmlSetNs(root_node, ns_results);
+
+    xmlNode *tag_generator = xmlNewChild
+		(root_node, ns_results, BAD_CAST "generator", NULL);
+
+    _generator_to_dom(doc, tag_generator);
+	oval_result_directives_to_dom
+		(oval_results_model_directives(results_model), doc, root_node);
+	struct oval_syschar_model *syschar_model = oval_results_model_syschar_model
+		(results_model);
+	struct oval_object_model *object_model = oval_syschar_model_object_model
+		(syschar_model);
+	oval_definitions_to_dom
+		(object_model, doc, root_node);
+
+	xmlNode *results_node = xmlNewChild(root_node, ns_results, "results", NULL);
+
+	struct oval_iterator_result_system *systems
+		= oval_results_model_systems(results_model);
+	while(oval_iterator_result_system_has_more(systems)){
+		oval_result_system_to_dom
+			(oval_iterator_result_system_next(systems),
+				doc, results_node);
+	}
+    return root_node;
+}
+
+int export_results
+	(struct oval_results_model *results_model, struct export_target *target)
+{
+	LIBXML_TEST_VERSION;
+
+	xmlDocPtr doc = xmlNewDoc(BAD_CAST "1.0");
+	oval_results_to_dom(results_model, doc, NULL);
+	/*
+	 * Dumping document to stdio or file
+	 */
+	xmlSaveFormatFileEnc
+		(target->filename, doc, target->encoding, 1);
+
+	xmlFreeDoc(doc);
+
+	return 1;
+}

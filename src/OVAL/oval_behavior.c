@@ -35,8 +35,8 @@
 #include "oval_string_map_impl.h"
 
 typedef struct oval_behavior {
-	struct oval_value *value;
-	struct oval_string_map *att_values;
+	char *value;
+	char *key;
 } oval_behavior_t;
 
 int oval_iterator_behavior_has_more(struct oval_iterator_behavior *oc_behavior)
@@ -52,23 +52,15 @@ struct oval_behavior *oval_iterator_behavior_next(struct oval_iterator_behavior
 	    oval_collection_iterator_next((struct oval_iterator *)oc_behavior);
 }
 
-struct oval_value *oval_behavior_value(struct oval_behavior *behavior)
+char *oval_behavior_value(struct oval_behavior *behavior)
 {
-	return (behavior)->value;
+	return behavior->value;
 }
 
-struct oval_iterator_string *oval_behavior_attribute_keys(struct oval_behavior
+char *oval_behavior_key(struct oval_behavior
 							  *behavior)
 {
-	return (struct oval_iterator_string *)oval_string_map_keys(behavior->
-								   att_values);
-}
-
-char *oval_behavior_value_for_key(struct oval_behavior *behavior,
-				  char *attributeKey)
-{
-	return (char *)oval_string_map_get_value(behavior->att_values,
-						 attributeKey);
+	return behavior->key;
 }
 
 struct oval_behavior *oval_behavior_new()
@@ -76,24 +68,23 @@ struct oval_behavior *oval_behavior_new()
 	oval_behavior_t *behavior =
 	    (oval_behavior_t *) malloc(sizeof(oval_behavior_t));
 	behavior->value = NULL;
-	behavior->att_values = oval_string_map_new();
+	behavior->key   = NULL;
 	return behavior;
 }
 
 void oval_behavior_free(struct oval_behavior *behavior)
 {
-	if (behavior->value != NULL)
-		oval_value_free(behavior->value);
-	oval_string_map_free(behavior->att_values, free);
-	behavior->att_values = NULL;
-	behavior->value      = NULL;
+	if (behavior->value)free(behavior->value);
+	if (behavior->key  )free(behavior->key  );
+	behavior->key     = NULL;
+	behavior->value  = NULL;
 	free(behavior);
 }
 
-void set_oval_behavior_value_for_key(struct oval_behavior *behavior,
-				     char *value, char *key)
+void set_behavior_keyval(struct oval_behavior *behavior, const char* key, const char* value)
 {
-	oval_string_map_put(behavior->att_values, key, (void *)value);
+	behavior->key   = strdup(key);
+	behavior->value = strdup(value);
 }
 
 //typedef void (*oval_behavior_consumer)(struct oval_behavior_node *, void*);
@@ -107,7 +98,7 @@ int oval_behavior_parse_tag(xmlTextReaderPtr reader,
 		const char *name  = (const char *) xmlTextReaderConstName(reader);
 		const char *value = (const char *) xmlTextReaderConstValue(reader);
 		if (name && value)
-			oval_string_map_put(behavior->att_values, name, strdup(value));
+			set_behavior_keyval(behavior, name, value);
 	}
 	(*consumer) (behavior, user);
 	return 1;
@@ -126,16 +117,5 @@ void oval_behavior_to_print(struct oval_behavior *behavior, char *indent,
 	else
 		snprintf(nxtindent, sizeof(nxtindent), "%sBEHAVIOR[%d].", indent, idx);
 
-	struct oval_iterator_string *keys =
-	    oval_behavior_attribute_keys(behavior);
-	if (oval_iterator_string_has_more(keys)) {
-		int i;
-		for (i = 1; oval_iterator_string_has_more(keys); i++) {
-			char *key = oval_iterator_string_next(keys);
-			char *val = oval_behavior_value_for_key(behavior, key);
-			printf("%s%s = [%s]\n", nxtindent, key, val);
-		}
-	} else {
-		printf("%s <<NO FIELDS BOUND TO BEHAVIOR>>\n", nxtindent);
-	}
+	printf("%s%s = [%s]\n", nxtindent, oval_behavior_key(behavior), oval_behavior_value(behavior));
 }

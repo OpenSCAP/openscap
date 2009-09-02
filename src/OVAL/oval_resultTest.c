@@ -33,7 +33,7 @@
 #include "oval_results_impl.h"
 #include "oval_collection_impl.h"
 
-#define OVAL_RESULT_TEST_DEBUG 1
+#define OVAL_RESULT_TEST_DEBUG 0
 
 typedef struct oval_result_test {
 	struct oval_test *test;
@@ -41,7 +41,7 @@ typedef struct oval_result_test {
 	struct oval_message    *message;
 	struct oval_collection *items;
 	struct oval_collection *bindings;
-	int variable_instance;
+	int instance;
 } oval_result_test_t;
 
 struct oval_result_test *oval_result_test_new(struct oval_result_system *system, char* tstid)
@@ -57,7 +57,7 @@ struct oval_result_test *oval_result_test_new(struct oval_result_system *system,
 	test->test = get_oval_test_new(object_model, tstid);
 	test->message           = NULL;
 	test->result            = 0;
-	test->variable_instance = 0;
+	test->instance = 0;
 	test->items             = oval_collection_new();
 	test->bindings          = oval_collection_new();
 	return test;
@@ -76,7 +76,7 @@ void oval_result_test_free(struct oval_result_test *test)
 	test->result            = 0;
 	test->items             = NULL;
 	test->bindings          = NULL;
-	test->variable_instance = 0;
+	test->instance = 0;
 	free(test);
 }
 
@@ -106,6 +106,11 @@ oval_result_enum oval_result_test_result(struct oval_result_test *rtest)
 	return ((struct oval_result_test *)rtest)->result;
 }
 
+int oval_result_test_instance(struct oval_result_test *rtest)
+{
+	return rtest->instance;
+}
+
 struct oval_message *oval_result_test_message(struct oval_result_test *rtest)
 {
 	return ((struct oval_result_test *)rtest)->message;
@@ -118,14 +123,21 @@ struct oval_iterator_result_item *oval_result_test_items(struct oval_result_test
 	    oval_collection_iterator(rtest->items);
 }
 
+struct oval_iterator_variable_binding *oval_result_test_bindings(struct oval_result_test
+							 *rtest)
+{
+	return (struct oval_iterator_variable_binding *)
+	    oval_collection_iterator(rtest->bindings);
+}
+
 void set_oval_result_test_result(struct oval_result_test *test, oval_result_enum result)
 {
 	test->result = result;
 }
 
-void set_oval_result_test_variable_instance(struct oval_result_test *test, int instance)
+void set_oval_result_test_instance(struct oval_result_test *test, int instance)
 {
-	test->variable_instance = instance;
+	test->instance = instance;
 }
 
 void set_oval_result_test_message
@@ -235,7 +247,7 @@ int oval_result_test_parse_tag
 	oval_result_enum result = oval_result_parse(reader, "result",0);
 	set_oval_result_test_result(test, result);
 	int veriable_instance = oval_parser_int_attribute(reader, "veriable_instance", 1);
-	set_oval_result_test_variable_instance(test, veriable_instance);
+	set_oval_result_test_instance(test, veriable_instance);
 
 	struct oval_test *ovaltst = oval_result_test_test(test);
 
@@ -300,4 +312,66 @@ int oval_result_test_parse_tag
 	}
 	free(test_id);
 	return return_code;
+}
+
+xmlNode *_oval_result_binding_to_dom
+	(struct oval_variable_binding *binding, xmlDocPtr doc, xmlNode *parent)
+{
+	char *value = oval_variable_binding_value(binding);
+	xmlNs *ns_results = xmlSearchNsByHref(doc, parent, OVAL_RESULTS_NAMESPACE);
+	xmlNode *binding_node = xmlNewChild(parent, ns_results, "tested_variable", value);
+
+	struct oval_variable *oval_variable = oval_variable_binding_variable(binding);
+	char *variable_id = oval_variable_id(oval_variable);
+	xmlNewProp(binding_node, "variable_id", variable_id);
+
+	return binding_node;
+}
+
+
+xmlNode *oval_result_test_to_dom
+	(struct oval_result_test *rslt_test, xmlDocPtr doc, xmlNode *parent)
+{
+	xmlNs *ns_results = xmlSearchNsByHref(doc, parent, OVAL_RESULTS_NAMESPACE);
+	xmlNode *test_node = xmlNewChild(parent, ns_results, "test", NULL);
+
+	struct oval_test *oval_test = oval_result_test_test(rslt_test);
+	char *test_id = oval_test_id(oval_test);
+	xmlNewProp(test_node, "test_id", test_id);
+
+	char version[10]; *version = '\0';
+	snprintf(version, sizeof(version), "%d", oval_test_version(oval_test));
+	xmlNewProp(test_node, "version", version);
+
+	oval_existence_enum existence = oval_test_existence(oval_test);
+	if(existence!=AT_LEAST_ONE_EXISTS){
+		xmlNewProp(test_node, "check_existence", oval_existence_text(existence));
+	}
+
+	oval_check_enum check = oval_test_check(oval_test);
+	xmlNewProp(test_node, "check", oval_check_text(check));
+
+	int instance_val = oval_result_test_instance(rslt_test);
+	if(instance_val>1){
+		char instance[10]; *instance = '\0';
+		snprintf(instance, sizeof(instance), "%d", instance_val);
+		xmlNewProp(test_node, "variable_instance", instance);
+	}
+
+	oval_result_enum result = oval_result_test_result(rslt_test);
+	xmlNewProp(test_node, "result", oval_result_text(result));
+
+	struct oval_iterator_result_item *items = oval_result_test_items(rslt_test);
+	while(oval_iterator_result_item_has_more(items)){
+		struct oval_result_item *item = oval_iterator_result_item_next(items);
+		oval_result_item_to_dom(item, doc, test_node);
+	}
+
+	struct oval_iterator_variable_binding *bindings = oval_result_test_bindings(rslt_test);
+	while(oval_iterator_variable_binding_has_more(bindings)){
+		struct oval_variable_binding *binding = oval_iterator_variable_binding_next(bindings);
+		_oval_result_binding_to_dom(binding, doc, test_node);
+	}
+
+	return test_node;
 }

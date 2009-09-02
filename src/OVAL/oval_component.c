@@ -93,6 +93,12 @@ typedef struct oval_component_TIMEDIF {
 	oval_datetime_format_enum format_2;	//type==OVAL_COMPONENT_TIMEDIF
 } oval_component_TIMEDIF_t;
 
+typedef struct oval_component_REGEX_CAPTURE {
+	oval_component_type_enum type;
+	struct oval_collection *function_components;	//type==OVAL_COMPONENT_FUNCTION
+	char *pattern;	//type==OVAL_COMPONENT_REGEX_CAPTURE
+} oval_component_REGEX_CAPTURE_t;
+
 int oval_iterator_component_has_more(struct oval_iterator_component
 				     *oc_component)
 {
@@ -282,6 +288,19 @@ oval_datetime_format_enum oval_component_timedif_format_2(struct oval_component
 	return format;
 }
 
+char *oval_component_regex_pattern
+	(struct oval_component *component)
+{
+	//type==OVAL_COMPONENT_REGEX_CAPTURE
+	char *pattern = NULL;
+	if (component->type == OVAL_FUNCTION_REGEX_CAPTURE) {
+		oval_component_REGEX_CAPTURE_t *regex =
+		    (oval_component_REGEX_CAPTURE_t *) component;
+		pattern = regex->pattern;
+	}
+	return pattern;
+}
+
 struct oval_component *oval_component_new(oval_component_type_enum type)
 {
 	oval_component_t *component;
@@ -374,6 +393,16 @@ struct oval_component *oval_component_new(oval_component_type_enum type)
 					    OVAL_DATETIME_UNKNOWN;
 				};
 				break;
+			case OVAL_FUNCTION_REGEX_CAPTURE:{
+				oval_component_REGEX_CAPTURE_t *regex =
+				    (oval_component_REGEX_CAPTURE_t *)
+				    (function =
+				     (oval_component_FUNCTION_t *)
+				     malloc(sizeof
+					    (oval_component_REGEX_CAPTURE_t)));
+				regex->pattern = NULL;
+				};
+				break;
 			default:{
 					function =
 					    (oval_component_FUNCTION_t *)
@@ -435,11 +464,17 @@ void oval_component_free(struct oval_component *component)
 					split->delimiter = NULL;
 				};
 				break;
+			case OVAL_FUNCTION_REGEX_CAPTURE:{
+				oval_component_REGEX_CAPTURE_t *regex =
+				    (oval_component_REGEX_CAPTURE_t *) function;
+				free(regex->pattern);
+				regex->pattern = NULL;
+				};
+				break;
 			case OVAL_FUNCTION_CONCAT:
 			case OVAL_FUNCTION_SUBSTRING:
 			case OVAL_FUNCTION_TIMEDIF:
 			case OVAL_FUNCTION_ESCAPE_REGEX:
-			case OVAL_FUNCTION_REGEX_CAPTURE:
 			case OVAL_FUNCTION_ARITHMETIC:
 			case OVAL_COMPONENT_UNKNOWN:
 			case OVAL_COMPONENT_LITERAL:
@@ -633,6 +668,17 @@ int _oval_component_parse_TIMEDIF_tag
 	return _oval_component_parse_FUNCTION_tag(reader, context, component);
 }
 
+int _oval_component_parse_REGEX_CAPTURE_tag
+    (xmlTextReaderPtr reader, struct oval_parser_context *context,
+     struct oval_component *component) {
+	oval_component_REGEX_CAPTURE_t *regex =
+	    (oval_component_REGEX_CAPTURE_t *) component;
+	char *pattern = xmlTextReaderGetAttribute(reader, "pattern");
+	regex->pattern = strdup(pattern);
+	if(pattern)free(pattern);
+	return _oval_component_parse_FUNCTION_tag(reader, context, component);
+}
+
 void oval_component_to_print(struct oval_component *component, char *indent,
 			     int index);
 //typedef void (*oval_component_consumer)(struct oval_component_node *, void*);
@@ -701,7 +747,7 @@ int oval_component_parse_tag(xmlTextReaderPtr reader,
 	} else if (strcmp(tagname, "regex_capture") == 0) {
 		component = oval_component_new(OVAL_FUNCTION_REGEX_CAPTURE);
 		return_code =
-		    _oval_component_parse_FUNCTION_tag(reader, context,
+		    _oval_component_parse_REGEX_CAPTURE_tag(reader, context,
 						       component);
 	} else {
 		int line = xmlTextReaderGetParserLineNumber(reader);
@@ -835,4 +881,162 @@ void oval_component_to_print(struct oval_component *component, char *indent,
 		break;
 	default: break;
 	}
+}
+
+/*
+	OVAL_COMPONENT_UNKNOWN = 0,
+	OVAL_FUNCTION_BEGIN = OVAL_FUNCTION + 1,
+	OVAL_FUNCTION_CONCAT = OVAL_FUNCTION + 2,
+	OVAL_FUNCTION_END = OVAL_FUNCTION + 3,
+	OVAL_FUNCTION_SPLIT = OVAL_FUNCTION + 4,
+	OVAL_FUNCTION_SUBSTRING = OVAL_FUNCTION + 5,
+	OVAL_FUNCTION_TIMEDIF = OVAL_FUNCTION + 6,
+	OVAL_FUNCTION_ESCAPE_REGEX = OVAL_FUNCTION + 7,
+	OVAL_FUNCTION_REGEX_CAPTURE = OVAL_FUNCTION + 8,
+	OVAL_FUNCTION_ARITHMETIC = OVAL_FUNCTION + 9
+ */
+const struct oscap_string_map _OVAL_COMPONENT_MAP[] = {
+		{OVAL_COMPONENT_LITERAL   ,"literal_component"},
+		{OVAL_COMPONENT_OBJECTREF ,"object_component"},
+		{OVAL_COMPONENT_VARREF    ,"variable_component"},
+		{0, NULL}
+};
+
+const struct oscap_string_map _OVAL_FUNCTION_MAP[] = {
+		{OVAL_FUNCTION_BEGIN        , "begin"          },
+		{OVAL_FUNCTION_CONCAT       , "concat"         },
+		{OVAL_FUNCTION_END          , "end"            },
+		{OVAL_FUNCTION_SPLIT        , "split"          },
+		{OVAL_FUNCTION_SUBSTRING    , "substring"      },
+		{OVAL_FUNCTION_TIMEDIF      , "time_difference"},
+		{OVAL_FUNCTION_ESCAPE_REGEX , "escape_regex"   },
+		{OVAL_FUNCTION_REGEX_CAPTURE, "regex_capture"  },
+		{OVAL_FUNCTION_ARITHMETIC   , "arithmetic"     },
+		{0, NULL}
+};
+
+xmlNode *oval_component_to_dom
+	(struct oval_component *component, xmlDoc *doc, xmlNode *parent)
+{
+	oval_component_type_enum type = oval_component_type(component);
+	const char *local_name = type<OVAL_FUNCTION
+		?_OVAL_COMPONENT_MAP[type-1].string
+		:_OVAL_FUNCTION_MAP [type-OVAL_FUNCTION].string;
+
+	char *content;
+	if(type == OVAL_COMPONENT_LITERAL){
+		struct oval_value *value = oval_component_literal_value(component);
+		content = oval_value_text(value);
+	}else{
+		content = NULL;
+	}
+
+	xmlNs *ns_definitions = xmlSearchNsByHref(doc, parent, OVAL_DEFINITIONS_NAMESPACE);
+	xmlNode *component_node = xmlNewChild
+		(parent, ns_definitions,
+				BAD_CAST local_name,
+				BAD_CAST content);
+
+	switch (oval_component_type(component))
+	{
+	case OVAL_COMPONENT_LITERAL:{
+		struct oval_value *value = oval_component_literal_value(component);
+		oval_datatype_enum datatype = oval_value_datatype(value);
+		if(datatype != OVAL_DATATYPE_STRING)
+			xmlNewProp
+				(component_node,
+						BAD_CAST "datatype",
+						BAD_CAST oval_datatype_text(datatype));
+	}break;
+	case OVAL_COMPONENT_OBJECTREF:{
+		struct oval_object *object = oval_component_object(component);
+		char *object_ref = oval_object_id(object);
+		xmlNewProp
+			(component_node,
+					BAD_CAST "object_ref",
+					BAD_CAST  object_ref);
+		char *item_field = oval_component_object_field(component);
+		xmlNewProp
+			(component_node,
+					BAD_CAST "item_field",
+					BAD_CAST  item_field);
+	}break;
+	case OVAL_COMPONENT_VARREF:{
+		struct oval_variable *variable = oval_component_variable(component);
+		char *var_ref = oval_variable_id(variable);
+		xmlNewProp
+			(component_node,
+					BAD_CAST "var_ref",
+					BAD_CAST  var_ref);
+
+	}break;
+	case OVAL_FUNCTION_ARITHMETIC:{
+		oval_arithmetic_operation_enum operation = oval_component_arithmetic_operation(component);
+		xmlNewProp
+			(component_node,
+					BAD_CAST "arithmetic_operation",
+					BAD_CAST oval_arithmetic_operation_text(operation));
+	}break;
+	case OVAL_FUNCTION_BEGIN:{
+		char *character = oval_component_begin_character(component);
+		xmlNewProp
+			(component_node,
+					BAD_CAST "character",
+					BAD_CAST  character);
+	}
+	case OVAL_FUNCTION_SUBSTRING:{
+		int start = oval_component_substring_start(component);
+		char substring_start[10]; *substring_start = '\0';
+		snprintf(substring_start, sizeof(substring_start), "%d", start);
+		xmlNewProp
+			(component_node,
+					BAD_CAST "substring_start",
+					BAD_CAST  substring_start);
+		int length = oval_component_substring_length(component);
+		char substring_length[10]; *substring_length = '\0';
+		snprintf(substring_length, sizeof(substring_length), "%d", length);
+		xmlNewProp
+			(component_node,
+					BAD_CAST "substring_length",
+					BAD_CAST  substring_length);
+	}break;
+	case OVAL_FUNCTION_TIMEDIF:{
+		oval_datetime_format_enum format_1 = oval_component_timedif_format_1(component);
+		if(format_1 != OVAL_DATETIME_YEAR_MONTH_DAY){
+			xmlNewProp
+				(component_node,
+						BAD_CAST "format_1",
+						BAD_CAST oval_datetime_format_text(format_1));
+		}
+		oval_datetime_format_enum format_2 = oval_component_timedif_format_2(component);
+		if(format_2 != OVAL_DATETIME_YEAR_MONTH_DAY){
+			xmlNewProp
+				(component_node,
+						BAD_CAST "format_2",
+						BAD_CAST oval_datetime_format_text(format_2));
+		}
+	}break;
+	case OVAL_FUNCTION_REGEX_CAPTURE:{
+		char *pattern = oval_component_regex_pattern(component);
+		xmlNewProp
+			(component_node,
+					BAD_CAST "pattern",
+					BAD_CAST  pattern);
+	}break;
+	case OVAL_FUNCTION_CONCAT:
+	case OVAL_FUNCTION_END:
+	case OVAL_FUNCTION_ESCAPE_REGEX:
+	case OVAL_FUNCTION_SPLIT:break;
+	default: break;
+	}
+
+	if(type > OVAL_FUNCTION){
+		struct oval_iterator_component *components = oval_component_function_components(component);
+		while(oval_iterator_component_has_more(components)){
+			struct oval_component *sub_component = oval_iterator_component_next(components);
+			oval_component_to_dom(sub_component, doc, component_node);
+		}
+	}
+
+	return component_node;
 }

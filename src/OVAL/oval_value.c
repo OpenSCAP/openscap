@@ -64,7 +64,7 @@ char *oval_value_text(struct oval_value *value)
 
 unsigned char *oval_value_binary(struct oval_value *value)
 {
-	return NULL;		//TODO
+	return NULL;		//TODO: implement oval_value_binary
 }
 
 bool oval_value_boolean(struct oval_value *value)
@@ -158,4 +158,10 @@ void oval_value_to_print(struct oval_value *value, char *indent, int idx)
 
 	printf("%sDATATYPE = %d\n", nxtindent, oval_value_datatype(value));
 	printf("%sTEXT     = %s\n", nxtindent, oval_value_text(value));
+}
+
+xmlNode *oval_value_to_dom
+	(struct oval_value *value, xmlDoc *doc, xmlNode *parent)
+{
+	return NULL;//TODO: implement oval_value_to_dom
 }

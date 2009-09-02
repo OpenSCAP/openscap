@@ -36,7 +36,7 @@
 #include "api/oval_definitions.h"
 #include "api/oval_agent_api.h"
 
-#define OVAL_RESULT_SYSTEM_DEBUG 1
+#define OVAL_RESULT_SYSTEM_DEBUG 0
 
 typedef struct oval_result_system {
 	struct oval_string_map    *definitions;
@@ -219,7 +219,11 @@ int _oval_result_system_parse
 			(reader, context,
 				(oval_xml_tag_parser)_oval_result_system_test_parse, system);
 	}else if(strcmp(localName, "oval_system_characteristics")==0){
-		oval_parser_log_debug(context,"_oval_result_system_parse: skipping oval_system_characteristics");
+		struct oval_syschar_model *syschar_model
+			= oval_results_model_syschar_model(system->results_model);
+		return_code = ovalsys_parser_parse
+			(syschar_model, reader, context->error_handler, context->user_data);
+		//return_code = oval_parser_skip_tag(reader, context);
 	}else{
 		return_code = 0;
 		char message[200];*message='\0';
@@ -236,9 +240,6 @@ int oval_result_system_parse
 	,oscap_consumer_func         consumer
 	,void                       *client)
 {
-	if(OVAL_RESULT_SYSTEM_DEBUG){
-		oval_parser_log_debug(context,"oval_result_system_parse: START");
-	}
 	int return_code = 1;
 	struct oval_result_system *system = oval_result_system_new(context->results_model);
 
@@ -246,9 +247,36 @@ int oval_result_system_parse
 		(reader, context, (oval_xml_tag_parser)_oval_result_system_parse, system);
 
 	(*consumer)(system, client);
-	if(OVAL_RESULT_SYSTEM_DEBUG){
-		oval_parser_log_debug(context,"oval_result_system_parse: END");
-	}
 
 	return return_code;
+}
+
+xmlNode *oval_result_system_to_dom
+	(struct oval_result_system *system, xmlDocPtr doc, xmlNode *parent)
+{
+	xmlNs *ns_results = xmlSearchNsByHref(doc, parent, OVAL_RESULTS_NAMESPACE);
+	xmlNode *system_node = xmlNewChild(parent, ns_results, "system", NULL);
+
+	xmlNode *definitions_node = xmlNewChild(system_node, ns_results, "definitions", NULL);
+	struct oval_iterator_result_definition *definitions =
+		oval_result_system_definitions(system);
+	while(oval_iterator_result_definition_has_more(definitions)){
+		oval_result_definition_to_dom
+			(oval_iterator_result_definition_next(definitions),
+				doc, definitions_node);
+	}
+	xmlNode *tests_node = xmlNewChild(system_node, ns_results, "tests", NULL);
+	struct oval_iterator_result_test *tests
+		= oval_result_system_tests(system);
+	while(oval_iterator_result_test_has_more(tests)){
+		oval_result_test_to_dom
+			(oval_iterator_result_test_next(tests),
+				doc, tests_node);
+	}
+
+	struct oval_results_model *rslt_model = oval_result_system_results_model(system);
+	struct oval_syschar_model *syschar_model = oval_results_model_syschar_model(rslt_model);
+	oval_characteristics_to_dom(syschar_model, doc, system_node);
+
+	return system_node;
 }

@@ -152,50 +152,50 @@ typedef enum {
 } oval_unix_subtype_enum;
 
 typedef enum {
-	WINDOWS_ACCESS_TOKEN = FAMILY_WINDOWS + 1,
-	WINDOWS_ACTIVE_DIRECTORY = FAMILY_WINDOWS + 2,
-	WINDOWS_AUDIT_EVENT_POLICY = FAMILY_WINDOWS + 3,
-	WINDOWS_AUDIT_EVENT_SUBCATEGORIES = FAMILY_WINDOWS + 4,
-	WINDOWS_FILE = FAMILY_WINDOWS + 5,
-	WINDOWS_FILE_AUDITED_PERMISSIONS_53 = FAMILY_WINDOWS + 6,
-	WINDOWS_FILE_AUDITED_PERMISSIONS = FAMILY_WINDOWS + 7,
-	WINDOWS_FILE_EFFECTIVE_RIGHTS_53 = FAMILY_WINDOWS + 8,
-	WINDOWS_FILE_EFFECTIVE_RIGHTS = FAMILY_WINDOWS + 9,
-	WINDOWS_GROUP = FAMILY_WINDOWS + 10,
-	WINDOWS_GROUP_SID = FAMILY_WINDOWS + 11,
-	WINDOWS_INTERFACE = FAMILY_WINDOWS + 12,
-	WINDOWS_LOCKOUT_POLICY = FAMILY_WINDOWS + 13,
-	WINDOWS_METABASE = FAMILY_WINDOWS + 14,
-	WINDOWS_PASSWORD_POLICY = FAMILY_WINDOWS + 15,
-	WINDOWS_PORT = FAMILY_WINDOWS + 16,
-	WINDOWS_PRINTER_EFFECTIVE_RIGHTS = FAMILY_WINDOWS + 17,
-	WINDOWS_PROCESS = FAMILY_WINDOWS + 18,
-	WINDOWS_REGISTRY = FAMILY_WINDOWS + 19,
+	WINDOWS_ACCESS_TOKEN = FAMILY_WINDOWS                  +  1,
+	WINDOWS_ACTIVE_DIRECTORY = FAMILY_WINDOWS              +  2,
+	WINDOWS_AUDIT_EVENT_POLICY = FAMILY_WINDOWS            +  3,
+	WINDOWS_AUDIT_EVENT_SUBCATEGORIES = FAMILY_WINDOWS     +  4,
+	WINDOWS_FILE = FAMILY_WINDOWS                          +  5,
+	WINDOWS_FILE_AUDITED_PERMISSIONS_53 = FAMILY_WINDOWS   +  6,
+	WINDOWS_FILE_AUDITED_PERMISSIONS = FAMILY_WINDOWS      +  7,
+	WINDOWS_FILE_EFFECTIVE_RIGHTS_53 = FAMILY_WINDOWS      +  8,
+	WINDOWS_FILE_EFFECTIVE_RIGHTS = FAMILY_WINDOWS         +  9,
+	WINDOWS_GROUP = FAMILY_WINDOWS                         + 10,
+	WINDOWS_GROUP_SID = FAMILY_WINDOWS                     + 11,
+	WINDOWS_INTERFACE = FAMILY_WINDOWS                     + 12,
+	WINDOWS_LOCKOUT_POLICY = FAMILY_WINDOWS                + 13,
+	WINDOWS_METABASE = FAMILY_WINDOWS                      + 14,
+	WINDOWS_PASSWORD_POLICY = FAMILY_WINDOWS               + 15,
+	WINDOWS_PORT = FAMILY_WINDOWS                          + 16,
+	WINDOWS_PRINTER_EFFECTIVE_RIGHTS = FAMILY_WINDOWS      + 17,
+	WINDOWS_PROCESS = FAMILY_WINDOWS                       + 18,
+	WINDOWS_REGISTRY = FAMILY_WINDOWS                      + 19,
 	WINDOWS_REGKEY_AUDITED_PERMISSIONS_53 = FAMILY_WINDOWS + 20,
-	WINDOWS_REGKEY_AUDITED_PERMISSIONS = FAMILY_WINDOWS + 21,
-	WINDOWS_REGKEY_EFFECTIVE_RIGHTS_53 = FAMILY_WINDOWS + 22,
-	WINDOWS_REGKEY_EFFECTIVE_RIGHTS = FAMILY_WINDOWS + 23,
-	WINDOWS_SHARED_RESOURCE = FAMILY_WINDOWS + 24,
-	WINDOWS_SID = FAMILY_WINDOWS + 25,
-	WINDOWS_SID_SID = FAMILY_WINDOWS + 26,
-	WINDOWS_USER_ACCESS_CONTROL = FAMILY_WINDOWS + 27,
-	WINDOWS_USER = FAMILY_WINDOWS + 28,
-	WINDOWS_USER_SID_55 = FAMILY_WINDOWS + 29,
-	WINDOWS_USER_SID = FAMILY_WINDOWS + 30,
-	WINDOWS_VOLUME = FAMILY_WINDOWS + 31,
-	WINDOWS_WMI = FAMILY_WINDOWS + 32,
-	WINDOWS_WUA_UPDATE_SEARCHER = FAMILY_WINDOWS + 33
+	WINDOWS_REGKEY_AUDITED_PERMISSIONS = FAMILY_WINDOWS    + 21,
+	WINDOWS_REGKEY_EFFECTIVE_RIGHTS_53 = FAMILY_WINDOWS    + 22,
+	WINDOWS_REGKEY_EFFECTIVE_RIGHTS = FAMILY_WINDOWS       + 23,
+	WINDOWS_SHARED_RESOURCE = FAMILY_WINDOWS               + 24,
+	WINDOWS_SID = FAMILY_WINDOWS                           + 25,
+	WINDOWS_SID_SID = FAMILY_WINDOWS                       + 26,
+	WINDOWS_USER_ACCESS_CONTROL = FAMILY_WINDOWS           + 27,
+	WINDOWS_USER = FAMILY_WINDOWS                          + 28,
+	WINDOWS_USER_SID_55 = FAMILY_WINDOWS                   + 29,
+	WINDOWS_USER_SID = FAMILY_WINDOWS                      + 30,
+	WINDOWS_VOLUME = FAMILY_WINDOWS                        + 31,
+	WINDOWS_WMI = FAMILY_WINDOWS                           + 32,
+	WINDOWS_WUA_UPDATE_SEARCHER = FAMILY_WINDOWS           + 33
 } oval_windows_subtype_enum;
 
 typedef enum {
-	AFCFML_UNKNOWN,
-	AFCFML_CATOS,
-	AFCFML_IOS,
-	AFCFML_MACOS,
-	AFCFML_PIXOS,
-	AFCFML_UNDEFINED,
-	AFCFML_UNIX,
-	AFCFML_WINDOWS
+	AFCFML_UNKNOWN  = 0,
+	AFCFML_CATOS    = 1,
+	AFCFML_IOS      = 2,
+	AFCFML_MACOS    = 3,
+	AFCFML_PIXOS    = 4,
+	AFCFML_UNDEFINED= 5,
+	AFCFML_UNIX     = 6,
+	AFCFML_WINDOWS  = 7
 } oval_affected_family_enum;
 
 typedef enum {
@@ -206,59 +206,59 @@ typedef enum {
 } oval_criteria_node_type_enum;
 
 typedef enum {
-	OPERATOR_UNKNOWN,
-	OPERATOR_AND,
-	OPERATOR_ONE,
-	OPERATOR_OR,
-	OPERATOR_XOR
+	OPERATOR_UNKNOWN = 0,
+	OPERATOR_AND     = 1,
+	OPERATOR_ONE     = 2,
+	OPERATOR_OR      = 3,
+	OPERATOR_XOR     = 4
 } oval_operator_enum;
 
 typedef enum {
-	OPERATION_UNKNOWN,
-	OPERATION_EQUALS,
-	OPERATION_NOT_EQUAL,
-	OPERATION_CASE_INSENSITIVE_EQUALS,
-	OPERATION_CASE_INSENSITIVE_NOT_EQUAL,
-	OPERATION_GREATER_THAN,
-	OPERATION_LESS_THAN,
-	OPERATION_GREATER_THAN_OR_EQUAL,
-	OPERATION_LESS_THAN_OR_EQUAL,
-	OPERATION_BITWISE_AND,
-	OPERATION_BITWISE_OR,
-	OPERATION_PATTERN_MATCH
+	OPERATION_UNKNOWN                    =  0,
+	OPERATION_EQUALS                     =  1,
+	OPERATION_NOT_EQUAL                  =  2,
+	OPERATION_CASE_INSENSITIVE_EQUALS    =  3,
+	OPERATION_CASE_INSENSITIVE_NOT_EQUAL =  4,
+	OPERATION_GREATER_THAN               =  5,
+	OPERATION_LESS_THAN                  =  6,
+	OPERATION_GREATER_THAN_OR_EQUAL      =  7,
+	OPERATION_LESS_THAN_OR_EQUAL         =  8,
+	OPERATION_BITWISE_AND                =  9,
+	OPERATION_BITWISE_OR                 = 10,
+	OPERATION_PATTERN_MATCH              = 11
 } oval_operation_enum;
 
 typedef enum {
-	CLASS_UNKNOWN,
-	CLASS_COMPLIANCE,
-	CLASS_INVENTORY,
-	CLASS_MISCELLANEOUS,
-	CLASS_PATCH,
-	CLASS_VULNERABILITY
+	CLASS_UNKNOWN      = 0,
+	CLASS_COMPLIANCE   = 1,
+	CLASS_INVENTORY    = 2,
+	CLASS_MISCELLANEOUS= 3,
+	CLASS_PATCH        = 4,
+	CLASS_VULNERABILITY= 5,
 } oval_definition_class_enum;
 
 typedef enum {
-	EXISTENCE_UNKNOWN,
-	ALL_EXIST,
-	ANY_EXIST,
-	AT_LEAST_ONE_EXISTS,
-	ONLY_ONE_EXISTS,
-	NONE_EXIST
+	EXISTENCE_UNKNOWN  = 0,
+	ALL_EXIST          = 1,
+	ANY_EXIST          = 2,
+	AT_LEAST_ONE_EXISTS= 3,
+	ONLY_ONE_EXISTS    = 4,
+	NONE_EXIST         = 5
 } oval_existence_enum;
 
 typedef enum {
-	OVAL_CHECK_UNKNOWN,
-	OVAL_CHECK_ALL,
-	OVAL_CHECK_AT_LEAST_ONE,
-	OVAL_CHECK_NONE_EXIST,
-	OVAL_CHECK_NONE_SATISFY,
-	OVAL_CHECK_ONLY_ONE
+	OVAL_CHECK_UNKNOWN     = 0,
+	OVAL_CHECK_ALL         = 1,
+	OVAL_CHECK_AT_LEAST_ONE= 2,
+	OVAL_CHECK_NONE_EXIST  = 3,
+	OVAL_CHECK_NONE_SATISFY= 4,
+	OVAL_CHECK_ONLY_ONE    = 5
 } oval_check_enum;
 
 typedef enum {
-	OVAL_OBJECTCONTENT_UNKNOWN,
-	OVAL_OBJECTCONTENT_ENTITY,
-	OVAL_OBJECTCONTENT_SET
+	OVAL_OBJECTCONTENT_UNKNOWN = 0,
+	OVAL_OBJECTCONTENT_ENTITY  = 1,
+	OVAL_OBJECTCONTENT_SET     = 2
 } oval_object_content_type_enum;
 
 typedef enum {
@@ -272,16 +272,16 @@ typedef enum {
 } oval_entity_type_enum;
 
 typedef enum {
-	OVAL_DATATYPE_UNKNOWN,
-	OVAL_DATATYPE_BINARY,
-	OVAL_DATATYPE_BOOLEAN,
-	OVAL_DATATYPE_EVR_STRING,
-	OVAL_DATATYPE_FILESET_REVISTION,
-	OVAL_DATATYPE_FLOAT,
-	OVAL_DATATYPE_IOS_VERSION,
-	OVAL_DATATYPE_VERSION,
-	OVAL_DATATYPE_INTEGER,
-	OVAL_DATATYPE_STRING
+	OVAL_DATATYPE_UNKNOWN           = 0,
+	OVAL_DATATYPE_BINARY            = 1,
+	OVAL_DATATYPE_BOOLEAN           = 2,
+	OVAL_DATATYPE_EVR_STRING        = 3,
+	OVAL_DATATYPE_FILESET_REVISTION = 4,
+	OVAL_DATATYPE_FLOAT             = 5,
+	OVAL_DATATYPE_IOS_VERSION       = 6,
+	OVAL_DATATYPE_VERSION           = 7,
+	OVAL_DATATYPE_INTEGER           = 8,
+	OVAL_DATATYPE_STRING            = 9
 } oval_datatype_enum;
 
 typedef enum {
@@ -299,9 +299,9 @@ typedef enum {
 
 typedef enum {
 	OVAL_SET_OPERATION_UNKNOWN,
-	OVAL_SET_OPERATION_COMPLEMENT,
-	OVAL_SET_OPERATION_INTERSECTION,
-	OVAL_SET_OPERATION_UNION
+	OVAL_SET_OPERATION_COMPLEMENT   = 1,
+	OVAL_SET_OPERATION_INTERSECTION = 2,
+	OVAL_SET_OPERATION_UNION        = 3
 } oval_set_operation_enum;
 
 typedef enum {
@@ -330,20 +330,20 @@ typedef enum {
 } oval_component_type_enum;
 
 typedef enum {
-	OVAL_ARITHMETIC_UNKNOWN,
-	OVAL_ARITHMETIC_ADD,
-	OVAL_ARITHMETIC_MULTIPLY,
-	OVAL_ARITHMETIC_SUBTRACT,	//NOT YET SUPPORTED BY OVAL
-	OVAL_ARITHMETIC_DIVIDE	//NOT YET SUPPORTED BY OVAL
+	OVAL_ARITHMETIC_UNKNOWN = 0,
+	OVAL_ARITHMETIC_ADD     = 1,
+	OVAL_ARITHMETIC_MULTIPLY =2,
+	OVAL_ARITHMETIC_SUBTRACT =3,	//NOT YET SUPPORTED BY OVAL
+	OVAL_ARITHMETIC_DIVIDE   =4	//NOT YET SUPPORTED BY OVAL
 } oval_arithmetic_operation_enum;
 
 typedef enum {
-	OVAL_DATETIME_UNKNOWN,
-	OVAL_DATETIME_YEAR_MONTH_DAY,
-	OVAL_DATETIME_MONTH_DAY_YEAR,
-	OVAL_DATETIME_DAY_MONTH_YEAR,
-	OVAL_DATETIME_WIN_FILETIME,
-	OVAL_DATETIME_SECONDS_SINCE_EPOCH
+	OVAL_DATETIME_UNKNOWN             = 0,
+	OVAL_DATETIME_YEAR_MONTH_DAY      = 1,
+	OVAL_DATETIME_MONTH_DAY_YEAR      = 2,
+	OVAL_DATETIME_DAY_MONTH_YEAR      = 3,
+	OVAL_DATETIME_WIN_FILETIME        = 4,
+	OVAL_DATETIME_SECONDS_SINCE_EPOCH = 5
 } oval_datetime_format_enum;
 
 typedef enum {
@@ -386,6 +386,9 @@ struct oval_iterator_variable_binding;
 
 struct oval_object_content;
 struct oval_iterator_object_content;
+
+struct oval_state_content;
+struct oval_iterator_state_content;
 
 struct oval_behavior;
 struct oval_iterator_behavior;
@@ -454,8 +457,10 @@ char *oval_definition_title(struct oval_definition *);
 char *oval_definition_description(struct oval_definition *);
 struct oval_iterator_affected *oval_definition_affected(struct oval_definition
 							*);
-struct oval_iterator_reference *oval_definition_reference(struct oval_definition
+struct oval_iterator_reference *oval_definition_references(struct oval_definition
 							  *);
+struct oval_iterator_string *oval_definition_notes
+	(struct oval_definition *);
 struct oval_criteria_node *oval_definition_criteria(struct oval_definition *);
 
 int oval_iterator_object_has_more(struct oval_iterator_object *);
@@ -469,6 +474,7 @@ char *oval_object_comment(struct oval_object *);
 char *oval_object_id(struct oval_object *);
 int oval_object_deprecated(struct oval_object *);
 int oval_object_version(struct oval_object *);
+
 struct oval_iterator_object_content *oval_object_object_content(struct
 								oval_object *);
 struct oval_iterator_behavior *oval_object_behaviors(struct oval_object *);
@@ -511,6 +517,15 @@ struct oval_entity *oval_object_content_entity(struct oval_object_content *);	//
 oval_check_enum oval_object_content_varCheck(struct oval_object_content *);	//type == OVAL_OBJECTCONTENT_ENTITY
 struct oval_set *oval_object_content_set(struct oval_object_content *);	//type == OVAL_OBJECTCONTENT_SET
 
+int oval_iterator_state_content_has_more
+	(struct oval_iterator_state_content *);
+struct oval_state_content *oval_iterator_state_content_next
+	(struct oval_iterator_state_content *);
+
+struct oval_entity *oval_state_content_entity(struct oval_state_content *);
+oval_check_enum oval_state_content_var_check(struct oval_state_content *);
+oval_check_enum oval_state_content_ent_check(struct oval_state_content *);
+
 int oval_iterator_entity_has_more(struct oval_iterator_entity *);
 struct oval_entity *oval_iterator_entity_next(struct oval_iterator_entity *);
 
@@ -536,9 +551,8 @@ int oval_iterator_behavior_has_more(struct oval_iterator_behavior *);
 struct oval_behavior *oval_iterator_behavior_next(struct oval_iterator_behavior
 						  *);
 
-struct oval_iterator_string *oval_behavior_attribute_keys(struct oval_behavior
-							  *);
-char *oval_behavior_value_for_key(struct oval_behavior *, char *attribute_key);
+char *oval_behavior_key(struct oval_behavior *);
+char *oval_behavior_value(struct oval_behavior *);
 
 int oval_iterator_value_has_more(struct oval_iterator_value *);
 struct oval_value *oval_iterator_value_next(struct oval_iterator_value *);
@@ -561,7 +575,7 @@ char *oval_state_id(struct oval_state *);
 int oval_state_deprecated(struct oval_state *);
 int oval_state_version(struct oval_state *);
 struct oval_iterator_string *oval_state_notes(struct oval_state *);
-struct oval_iterator_entity *oval_state_entities(struct oval_state *);
+struct oval_iterator_state_content *oval_state_contents(struct oval_state *);
 
 int oval_iterator_variable_has_more(struct oval_iterator_variable *);
 struct oval_variable *oval_iterator_variable_next(struct oval_iterator_variable
@@ -594,6 +608,7 @@ int oval_component_substring_start(struct oval_component *);	//type==OVAL_COMPON
 int oval_component_substring_length(struct oval_component *);	//type==OVAL_COMPONENT_SUBSTRING
 oval_datetime_format_enum oval_component_timedif_format_1(struct oval_component *);	//type==OVAL_COMPONENT_TIMEDIF
 oval_datetime_format_enum oval_component_timedif_format_2(struct oval_component *);	//type==OVAL_COMPONENT_TIMEDIF
+char *oval_component_regex_pattern(struct oval_component *); //type==OVAL_COMPONENT_REGEX_CAPTURE
 
 int oval_iterator_message_has_more(struct oval_iterator_message *oc_message);
 struct oval_message *oval_iterator_message_next(struct oval_iterator_message *oc_message);
@@ -601,4 +616,7 @@ struct oval_message *oval_iterator_message_next(struct oval_iterator_message *oc
 char *oval_message_text(struct oval_message *message);
 oval_message_level_enum oval_message_level(struct oval_message *message);
 
+const char* oval_operator_text(oval_operator_enum);
+const char* oval_subtype_text(oval_subtype_enum);
+const char* oval_family_text(oval_family_enum);
 #endif

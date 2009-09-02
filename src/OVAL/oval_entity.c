@@ -187,7 +187,7 @@ void oval_consume_value(struct oval_value *use_value, void *value) {
 //typedef void (*oval_entity_consumer)(struct oval_entity_node*, void*);
 int oval_entity_parse_tag(xmlTextReaderPtr reader,
 			  struct oval_parser_context *context,
-			  oval_entity_consumer consumer, void *user)
+			  oscap_consumer_func consumer, void *user)
 {
 	struct oval_entity *entity = oval_entity_new();
 	int return_code;
@@ -292,4 +292,37 @@ void oval_entity_to_print(struct oval_entity *entity, char *indent, int idx)
 		else
 			oval_value_to_print(value, nxtindent, 0);
 	}
+}
+
+xmlNode *oval_entity_to_dom
+	(struct oval_entity *entity, xmlDoc *doc, xmlNode *parent)
+{
+	char *tagname = oval_entity_name(entity);
+	xmlNs *ns_family = *xmlGetNsList(doc, parent);
+
+	struct oval_variable *variable = oval_entity_variable(entity);
+	oval_entity_varref_type_enum vtype = oval_entity_varref_type(entity);
+	struct oval_value    *value = oval_entity_value      (entity);
+
+	char *content = NULL;
+	if(variable && vtype==OVAL_ENTITY_VARREF_ELEMENT){
+		content = oval_variable_id(variable);
+	}else if(value){
+		content = oval_value_text(value);
+	}
+
+	xmlNode *entity_node = xmlNewChild(parent, ns_family, tagname, content);
+
+	oval_datatype_enum datatype = oval_entity_datatype(entity);
+	if(datatype!=OVAL_DATATYPE_STRING)
+		xmlNewProp(entity_node, "datatype", oval_datatype_text(datatype));
+	oval_operation_enum operation = oval_entity_operation(entity);
+	if(operation!=OPERATION_EQUALS)
+		xmlNewProp(entity_node, "operation", oval_operation_text(operation));
+	bool mask = oval_entity_mask(entity);
+	if(mask)
+		xmlNewProp(entity_node, "mask", "true");
+	if(vtype==OVAL_ENTITY_VARREF_ATTRIBUTE)
+		xmlNewProp(entity_node, "var_ref", oval_variable_id(variable));
+	return entity_node;
 }

@@ -65,14 +65,14 @@ typedef struct oval_variable_LOCAL {
 	struct oval_component *component;	//type==OVAL_VARIABLE_LOCAL
 } oval_variable_LOCAL_t;
 
-int oval_collection_variable_has_more(struct oval_iterator_variable
+int oval_iterator_variable_has_more(struct oval_iterator_variable
 				      *oc_variable)
 {
 	return oval_collection_iterator_has_more((struct oval_iterator *)
 						 oc_variable);
 }
 
-struct oval_variable *oval_collection_variable_next(struct
+struct oval_variable *oval_iterator_variable_next(struct
 						    oval_iterator_variable
 						    *oc_variable)
 {
@@ -276,7 +276,7 @@ int _oval_variable_parse_constant_tag(xmlTextReaderPtr reader,
 		int line = xmlTextReaderGetParserLineNumber(reader);
 		printf
 		    ("NOTICE: _oval_variable_parse_constant_tag::parse of <%s> TODO at line %d\n",
-		     tagname, line);
+		     tagname, line);//TODO: Implement parse of constant tag
 		return_code = oval_parser_skip_tag(reader, context);
 	}
 	if (return_code != 1) {
@@ -421,4 +421,76 @@ void oval_variable_to_print(struct oval_variable *variable, char *indent,
 		break;
 	case OVAL_VARIABLE_UNKNOWN: break;
 	}
+}
+xmlNode *_oval_VARIABLE_CONSTANT_to_dom
+	(struct oval_variable *variable, xmlDoc *doc, xmlNode *parent)
+{
+	xmlNs *ns_definitions = xmlSearchNsByHref(doc, parent, OVAL_DEFINITIONS_NAMESPACE);
+	xmlNode *variable_node = xmlNewChild(parent, ns_definitions, BAD_CAST "constant_variable", NULL);
+
+	struct oval_iterator_value *values = oval_variable_values(variable);
+	while(oval_iterator_value_has_more(values)){
+		struct oval_value *value = oval_iterator_value_next(values);
+		oval_value_to_dom(value, doc, variable_node);
+	}
+
+	return variable_node;
+}
+xmlNode *_oval_VARIABLE_EXTERNAL_to_dom
+	(struct oval_variable *variable, xmlDoc *doc, xmlNode *parent)
+{
+	xmlNs *ns_definitions = xmlSearchNsByHref(doc, parent, OVAL_DEFINITIONS_NAMESPACE);
+	xmlNode *variable_node = xmlNewChild(parent, ns_definitions, BAD_CAST "external_variable", NULL);
+
+	return variable_node;
+}
+xmlNode *_oval_VARIABLE_LOCAL_to_dom
+	(struct oval_variable *variable, xmlDoc *doc, xmlNode *parent)
+{
+	xmlNs *ns_definitions = xmlSearchNsByHref(doc, parent, OVAL_DEFINITIONS_NAMESPACE);
+	xmlNode *variable_node = xmlNewChild(parent, ns_definitions, BAD_CAST "local_variable", NULL);
+
+	struct oval_component *component = oval_variable_component(variable);
+	oval_component_to_dom(component, doc, variable_node);
+
+	return variable_node;
+}
+
+xmlNode *oval_variable_to_dom (struct oval_variable *variable, xmlDoc *doc, xmlNode *parent)
+{
+
+	xmlNode *variable_node = NULL;
+	switch(oval_variable_type(variable))
+	{
+	case OVAL_VARIABLE_CONSTANT:{
+		variable_node = _oval_VARIABLE_CONSTANT_to_dom(variable, doc, parent);
+	}break;
+	case OVAL_VARIABLE_EXTERNAL:{
+		variable_node = _oval_VARIABLE_EXTERNAL_to_dom(variable, doc, parent);
+	}break;
+	case OVAL_VARIABLE_LOCAL:{
+		variable_node = _oval_VARIABLE_LOCAL_to_dom(variable, doc, parent);
+	}break;
+	default:break;
+	};
+
+	char *id = oval_variable_id(variable);
+	xmlNewProp(variable_node, "id", id);
+
+	char version[10]; *version = '\0';
+	snprintf(version, sizeof(version), "%d", oval_variable_version(variable));
+	xmlNewProp(variable_node, "version", version);
+
+	oval_datatype_enum datatype = oval_variable_datatype(variable);
+	xmlNewProp(variable_node, "datatype", oval_datatype_text(datatype));
+
+	char *comment = oval_variable_comment(variable);
+	xmlNewProp(variable_node, "comment", comment);
+
+	bool deprecated = oval_variable_deprecated(variable);
+	if(deprecated)
+		xmlNewProp(variable_node, "deprecated", "true");
+
+
+	return variable_node;
 }

@@ -134,22 +134,12 @@ const struct oscap_string_map OVAL_ODAFAMILY_MAP[] = {
 
 oval_affected_family_enum _odafamily(char *family)
 {
-	/*
-	if (_odafamilyMap == NULL) {
-		_odafamilyMap = oval_string_map_new();
-		_odafamily_set("catos", AFCFML_CATOS);
-		_odafamily_set("ios", AFCFML_IOS);
-		_odafamily_set("macos", AFCFML_MACOS);
-		_odafamily_set("pixos", AFCFML_PIXOS);
-		_odafamily_set("undefined", AFCFML_UNDEFINED);
-		_odafamily_set("unix", AFCFML_UNIX);
-		_odafamily_set("windows", AFCFML_WINDOWS);
-	}
-	_odafamily_t *valstar =
-	    (_odafamily_t *) oval_string_map_get_value(_odafamilyMap, family);
-	return (valstar == NULL) ? CLASS_UNKNOWN : valstar->value;
-	*/
 	return oscap_string_to_enum(OVAL_ODAFAMILY_MAP, family);
+}
+
+const char* oval_affected_family_text(oval_affected_family_enum family)
+{
+	return OVAL_ODAFAMILY_MAP[family-1].string;
 }
 
 int _oval_affected_parse_tag(xmlTextReaderPtr reader,

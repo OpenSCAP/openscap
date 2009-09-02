@@ -42,6 +42,7 @@ typedef struct oval_result_definition{
 	struct oval_result_system        *system;
 	struct oval_result_criteria_node *criteria;
 	struct oval_collection           *messages;
+	int                               instance;
 } oval_result_definition_t;
 
 int oval_iterator_result_definition_has_more
@@ -71,6 +72,7 @@ struct oval_result_definition *oval_result_definition_new
 	definition->result     = OVAL_RESULT_UNKNOWN;
 	definition->criteria   = NULL;
 	definition->messages   = oval_collection_new();
+	definition->instance   = 0;
 	return definition;
 }
 void oval_result_definition_free(struct oval_result_definition *definition){
@@ -82,6 +84,7 @@ void oval_result_definition_free(struct oval_result_definition *definition){
 	definition->definition = NULL;
 	definition->messages   = NULL;
 	definition->result = 0;
+	definition->instance = 0;
 	free(definition);
 }
 
@@ -96,6 +99,12 @@ struct oval_result_system *oval_result_definition_system
 	(struct oval_result_definition *definition)
 {
 	return definition->system;
+}
+
+int oval_result_definition_instance
+	(struct oval_result_definition *definition)
+{
+	return definition->instance;
 }
 
 oval_result_enum oval_result_definition_result
@@ -121,6 +130,12 @@ void set_oval_result_definition_result
 	(struct oval_result_definition *definition, oval_result_enum result)
 {
 	definition->result = result;
+}
+
+void set_oval_result_definition_instance
+	(struct oval_result_definition *definition, int instance)
+{
+	definition->instance = instance;
 }
 
 void set_oval_result_definition_criteria
@@ -205,6 +220,7 @@ int oval_result_definition_parse
 	xmlChar *definition_version = xmlTextReaderGetAttribute(reader, BAD_CAST "version");
 	int resvsn = atoi(definition_version);
 	xmlChar *definition_result = xmlTextReaderGetAttribute(reader, BAD_CAST "result");
+	int instance = oval_parser_int_attribute(reader, "variable_instance", 1);
 
 	struct oval_result_definition *definition = oval_result_definition_new
 		(system, (char *)definition_id);
@@ -220,6 +236,7 @@ int oval_result_definition_parse
 		oval_parser_log_warn(context, message);
 	}
 	set_oval_definition_version(definition->definition, resvsn);
+	set_oval_result_definition_instance(definition, instance);
 	oval_result_enum result = 0;
 	int i;
 	for(i=1;i<7 && result==0;i++){
@@ -262,5 +279,51 @@ int oval_result_definition_parse
 		oval_parser_log_debug(context, "oval_result_definition_parse: END");
 	}
 	return return_code;
+}
+
+xmlNode *oval_result_definition_to_dom
+	(struct oval_result_definition *definition, xmlDocPtr doc, xmlNode *parent)
+{
+	xmlNs *ns_results = xmlSearchNsByHref(doc, parent, OVAL_RESULTS_NAMESPACE);
+	xmlNode *definition_node = xmlNewChild(parent, ns_results, "definition", NULL);
+
+	struct oval_definition *oval_definition
+		= oval_result_definition_definition(definition);
+	char *definition_id = oval_definition_id(oval_definition);
+	xmlNewProp(definition_node, "definition_id", definition_id);
+
+	oval_result_enum result
+		= oval_result_definition_result(definition);
+	const char* result_att = oval_result_text(result);
+	xmlNewProp(definition_node, "result", result_att);
+
+	int version = oval_definition_version(oval_definition);
+	char version_att[10]; *version_att = '\0';
+	snprintf(version_att, sizeof(version_att), "%d", version);
+	xmlNewProp(definition_node, "version", version_att);
+
+	int instance = oval_result_definition_instance(definition);
+	if(instance!=1){
+		char instance_att[10]; *instance_att = '\0';
+		snprintf(instance_att, sizeof(instance_att), "%d", instance);
+		xmlNewProp(definition_node, "variable_instance", instance_att);
+	}
+
+	struct oval_iterator_message *messages
+		= oval_result_definition_messages(definition);
+	while(oval_iterator_message_has_more(messages)){
+		oval_message_to_dom
+			(oval_iterator_message_next(messages),
+				doc, definition_node);
+	}
+
+	struct oval_result_criteria_node *criteria
+		= oval_result_definition_criteria(definition);
+	if(criteria){
+		oval_result_criteria_node_to_dom
+			(criteria, doc, definition_node);
+	}
+
+	return definition_node;
 }
 
