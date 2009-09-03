@@ -703,3 +703,25 @@ const char *SEXP_OVALelm_name_cstrp (const SEXP_t *elm)
         errno = EINVAL;
         return (NULL);
 }
+
+SEXP_t *SEXP_OVALitem_newid(struct id_desc_t *id_desc)
+{
+        int id_ctr;
+        SEXP_t *sid;
+
+#if defined(HAVE_ATOMIC_FUNCTIONS)
+        id_ctr = __sync_fetch_and_add(&(id_desc->item_id_ctr), 1);
+#else
+        pthread_mutex_lock(&(id_desc->item_id_ctr_lock));
+        id_ctr = id_desc->item_id_ctr++;
+        pthread_mutex_unlock(&(id_desc->item_id_ctr_lock));
+#endif
+        sid = SEXP_string_newf("%d", id_ctr);
+
+        return sid;
+}
+
+void SEXP_OVALitem_resetid(struct id_desc_t *id_desc)
+{
+        id_desc->item_id_ctr = 1;
+}

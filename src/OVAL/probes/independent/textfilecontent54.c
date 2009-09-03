@@ -141,7 +141,7 @@ static SEXP_t *create_item(const char *path, const char *filename, char *pattern
 	int i;
 	SEXP_t *attrs, *item;
 
-	attrs = SEXP_OVALattr_create("id", SEXP_number_newd(-1), // todo: id
+	attrs = SEXP_OVALattr_create("id", SEXP_OVALitem_newid(&global.id_desc),
 				     "status", SEXP_number_newd(OVAL_STATUS_EXISTS),
 				     NULL);
 	item = SEXP_OVALobj_create("textfilecontent_item",

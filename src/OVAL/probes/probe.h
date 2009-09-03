@@ -46,6 +46,18 @@ char       *SEXP_OVALelm_name_cstr   (const SEXP_t *elm);
 char       *SEXP_OVALelm_name_cstr_r (const SEXP_t *elm, char *buf, size_t len);
 const char *SEXP_OVALelm_name_cstrp  (const SEXP_t *elm);
 
+#include <pthread.h>
+
+struct id_desc_t {
+#ifndef HAVE_ATOMIC_FUNCTIONS
+        pthread_mutex_t item_id_ctr_lock;
+#endif
+        int item_id_ctr;
+};
+
+SEXP_t *SEXP_OVALitem_newid(struct id_desc_t *id_desc);
+void SEXP_OVALitem_resetid(struct id_desc_t *id_desc);
+
 #define PROBE_EINVAL     1 /* Invalid type/value/format */
 #define PROBE_ENOELM     2 /* Missing element */
 #define PROBE_ENOVAL     3 /* Missing value */
@@ -64,7 +76,6 @@ const char *SEXP_OVALelm_name_cstrp  (const SEXP_t *elm);
 #define OVAL_STATUS_DOESNOTEXIST 3
 #define OVAL_STATUS_NOTCOLLECTED 4
 
-#include <pthread.h>
 #include <probe-cache.h>
 
 typedef struct {
@@ -76,11 +87,17 @@ typedef struct {
         pcache_t   *pcache;
         pthread_rwlock_t pcache_lock;
 
+        struct id_desc_t id_desc;
+
         /* probe main */
         void *probe_arg;
 } globals_t;
 
-#define GLOBALS_INITIALIZER { NULL, -1, NULL, PTHREAD_MUTEX_INITIALIZER, NULL }
+#if defined(HAVE_ATOMIC_FUNCTIONS)
+#define GLOBALS_INITIALIZER { NULL, -1, NULL, PTHREAD_MUTEX_INITIALIZER, {1}, NULL }
+#else
+#define GLOBALS_INITIALIZER { NULL, -1, NULL, PTHREAD_MUTEX_INITIALIZER, {PTHREAD_MUTEX_INITIALIZER, 1}, NULL }
+#endif
 
 extern globals_t global;
 
