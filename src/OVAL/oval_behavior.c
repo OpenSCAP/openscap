@@ -93,14 +93,15 @@ int oval_behavior_parse_tag(xmlTextReaderPtr reader,
 			    oval_family_enum family,
 			    oval_behavior_consumer consumer, void *user)
 {
-	oval_behavior_t *behavior = oval_behavior_new();
 	while (xmlTextReaderMoveToNextAttribute(reader) == 1) {
 		const char *name  = (const char *) xmlTextReaderConstName(reader);
 		const char *value = (const char *) xmlTextReaderConstValue(reader);
-		if (name && value)
+		if (name && value) {
+                        oval_behavior_t *behavior = oval_behavior_new();
 			set_behavior_keyval(behavior, name, value);
+                        (*consumer) (behavior, user);
+                }
 	}
-	(*consumer) (behavior, user);
 	return 1;
 }
 

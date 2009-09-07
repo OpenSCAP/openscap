@@ -295,36 +295,27 @@ static SEXP_t *oval_set_to_sexp (struct oval_set *set)
         return (elm);
 }
 
-static SEXP_t *oval_behavior_to_sexp (struct oval_behavior *behavior)
+static SEXP_t *oval_behaviors_to_sexp (struct oval_iterator_behavior *bit)
 {
 	char *attr_name, *attr_val;
         SEXP_t *elm, *elm_name;
-	//struct oval_iterator_string *sit;
+        struct oval_behavior *behavior;
 
         elm_name = SEXP_list_new ();
 
         SEXP_list_add (elm_name,
                        SEXP_string_newf ("behaviors"));
 
-    /*
-	sit = oval_behavior_attribute_keys(behavior);
-	while (oval_iterator_string_has_more(sit)) {
-		attr_name = oval_iterator_string_next(sit);
-		attr_val = oval_behavior_value_for_key(behavior, attr_name);
+        while (oval_iterator_behavior_has_more (bit)) {
+                behavior = oval_iterator_behavior_next (bit);
+                attr_name = oval_behavior_key(behavior);
+                attr_val = oval_behavior_value(behavior);
 
-		SEXP_list_add(elm_name, SEXP_string_newf(":%s", attr_name));
-		if (attr_val != NULL) {
-			SEXP_list_add(elm_name, SEXP_string_newf(attr_val));
-		}
-	}
-	*/
-	attr_name = oval_behavior_key(behavior);
-	attr_val = oval_behavior_value(behavior);
-
-	SEXP_list_add(elm_name, SEXP_string_newf(":%s", attr_name));
-	if (attr_val != NULL) {
-		SEXP_list_add(elm_name, SEXP_string_newf(attr_val));
-	}
+                SEXP_list_add(elm_name, SEXP_string_newf(":%s", attr_name));
+                if (attr_val != NULL) {
+                        SEXP_list_add(elm_name, SEXP_string_newf(attr_val));
+                }
+        }
 
 	elm = SEXP_list_new();
 	SEXP_list_add(elm, elm_name);
@@ -340,7 +331,6 @@ SEXP_t *oval_object_to_sexp (const char *typestr, struct oval_object *object)
         struct oval_iterator_behavior *bit;
         struct oval_object_content *content;
         struct oval_entity *entity;
-	struct oval_behavior *behavior;
         
         obj_sexp = SEXP_list_new ();
         obj_name = SEXP_list_new ();
@@ -394,10 +384,8 @@ SEXP_t *oval_object_to_sexp (const char *typestr, struct oval_object *object)
          */
 
         bit = oval_object_behaviors (object);
-        while (oval_iterator_behavior_has_more (bit)) {
-                behavior = oval_iterator_behavior_next (bit);
-		elm = oval_behavior_to_sexp (behavior);
-
+        if (oval_iterator_behavior_has_more (bit)) {
+                elm = oval_behaviors_to_sexp (bit);
                 SEXP_list_add (obj_sexp, elm);
         }
         
