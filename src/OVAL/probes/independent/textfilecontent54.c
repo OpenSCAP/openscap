@@ -206,7 +206,7 @@ static int process_file(const char *path, const char *filename, void *arg)
 #elif defined USE_REGEX_POSIX
 	regex_t _re, *re = &_re;
 
-	if (regcomp(re, pfd->pattern, REG_EXTENDED) != 0) {
+	if (regcomp(re, pfd->pattern, REG_EXTENDED | REG_NEWLINE) != 0) {
 		return -1;
 	}
 #endif
