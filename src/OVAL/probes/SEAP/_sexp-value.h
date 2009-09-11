@@ -1,0 +1,89 @@
+#pragma once
+#ifndef _SEXP_VALUE_H
+#define _SEXP_VALUE_H
+
+#include <stddef.h>
+#include <stdint.h>
+#include <stdbool.h>
+#include "_sexp-types.h"
+
+typedef uint8_t SEXP_valtype_t;
+
+#define SEXP_VALTYPE_EMPTY  0
+#define SEXP_VALTYPE_STRING 1
+#define SEXP_VALTYPE_NUMBER 2
+#define SEXP_VALTYPE_LIST   3
+
+typedef struct {
+        uint32_t refs;
+        size_t   size;
+} SEXP_valhdr_t;
+
+typedef struct {
+        uintptr_t      ptr;
+        SEXP_valhdr_t *hdr;
+        void          *mem;
+        SEXP_valtype_t type;
+} SEXP_val_t;
+
+#define SEXP_VALP_ALIGN sizeof (void *)
+#define SEXP_VALP_MASK  (UINTPTR_MAX << 2)
+#define SEXP_VALT_MASK  3
+#define SEXP_VALP_HDR(p) ((SEXP_valhdr_t *)((uintptr_t)(p) & SEXP_VALP_MASK))
+
+int       SEXP_val_new (SEXP_val_t *dst, size_t vmemsize, SEXP_valtype_t type);
+void      SEXP_val_dsc (SEXP_val_t *dst, uintptr_t ptr);
+uintptr_t SEXP_val_ptr (SEXP_val_t *dsc);
+
+uintptr_t SEXP_rawval_incref (uintptr_t valp);
+int       SEXP_rawval_decref (uintptr_t valp);
+
+#define SEXP_DEFNUM(s,T)   struct SEXP_val_num_##s { T n; SEXP_numtype_t t; } __attribute__ ((packed))
+#define SEXP_NCASTP(s,p) ((struct SEXP_val_num_##s *)(p))
+
+SEXP_DEFNUM(b, bool);
+SEXP_DEFNUM(f, double);
+SEXP_DEFNUM(i8,   int8_t);
+SEXP_DEFNUM(u8,  uint8_t);
+SEXP_DEFNUM(i16,  int16_t);
+SEXP_DEFNUM(u16, uint16_t);
+SEXP_DEFNUM(i32,  int32_t);
+SEXP_DEFNUM(u32, uint32_t);
+SEXP_DEFNUM(i64,  int64_t);
+SEXP_DEFNUM(u64, uint64_t);
+
+/*
+ * List
+ */
+
+struct SEXP_val_list {
+        void    *b_addr;
+        uint16_t offset;
+};
+
+#define SEXP_LCASTP(p) ((struct SEXP_val_list *)(p))
+
+struct SEXP_val_lblk {
+        uintptr_t nxsz;
+        uint16_t  real;
+        uint16_t  refs;
+        SEXP_t    memb[];
+};
+
+size_t SEXP_rawval_list_length (struct SEXP_val_list *list);
+
+uintptr_t SEXP_rawval_lblk_new  (uint8_t sz);
+uintptr_t SEXP_rawval_lblk_fill (uintptr_t lblkp, SEXP_t *s_exp[], uint16_t s_exp_count);
+uintptr_t SEXP_rawval_lblk_add  (uintptr_t lblkp, SEXP_t *s_exp);
+uintptr_t SEXP_rawval_lblk_add1 (uintptr_t lblkp, SEXP_t *s_exp);
+uintptr_t SEXP_rawval_lblk_last (uintptr_t lblkp);
+SEXP_t   *SEXP_rawval_lblk_nth  (uintptr_t lblkp, uint32_t n);
+uintptr_t SEXP_rawval_list_copy (uintptr_t lblkp, uint16_t n_skip);
+
+#define SEXP_LBLK_ALIGN 16
+#define SEXP_LBLKP_MASK (UINTPTR_MAX << 4)
+#define SEXP_LBLKS_MASK 0x0f
+
+#define SEXP_VALP_LBLK(valp) ((struct SEXP_val_lblk *)((uintptr_t)(valp) & SEXP_LBLKP_MASK))
+
+#endif /* _SEXP_VALUE_H */
