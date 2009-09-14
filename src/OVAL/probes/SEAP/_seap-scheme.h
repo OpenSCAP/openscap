@@ -8,6 +8,7 @@
 #include "_sexp-types.h"
 #include "_seap-types.h"
 #include "seap-descriptor.h"
+#include "generic/common.h"
 
 typedef struct {
         const char *schstr;

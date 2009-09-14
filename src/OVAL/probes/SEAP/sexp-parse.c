@@ -10,13 +10,14 @@
 #include "_sexp-manip.h"
 #include "_sexp-parse.h"
 #include "_sexp-datatype.h"
+#include "_sexp-value.h"
 #include "generic/xbase64.h"
 #include "generic/strto.h"
 
 SEXP_t *SEXP_parse_fd (SEXP_format_t fmt, int fd, size_t max, SEXP_pstate_t **state)
 {
         _A(fd >= 0);
-        
+        errno = EOPNOTSUPP;
         return (NULL);
 }
 
@@ -24,26 +25,13 @@ SEXP_t *SEXP_parse_buf (SEXP_format_t fmt, void *buf, size_t len, SEXP_pstate_t 
 {
         _A(buf != NULL);
         _A(len  > 0);
-        
+        errno = EOPNOTSUPP;
         return (NULL);
 }
 
-SEXP_pstate_t *SEXP_pstate_new (void)
-{
-        SEXP_pstate_t *new;
-
-        new = sm_talloc (SEXP_pstate_t);
-        new->buffer = NULL;
-        new->buffer_data_len = 0;
-        /*
-          new->buffer_size = 0;
-          new->buffer_free = 0;
-        */
-        LIST_stack_init (&(new->lstack));
-        LIST_stack_push (&(new->lstack), LIST_new ());
-        
-        return (new);
-}
+#define SEXP_PLSTACK_INIT_SIZE      32
+#define SEXP_PLSTACK_GROWFAST_TRESH 512
+#define SEXP_PLSTACK_GROWSLOW_DIFF  32
 
 SEXP_pstate_t *SEXP_pstate_init (SEXP_pstate_t *state)
 {
@@ -51,14 +39,68 @@ SEXP_pstate_t *SEXP_pstate_init (SEXP_pstate_t *state)
 
         state->buffer = NULL;
         state->buffer_data_len = 0;
-        /*
-          state->buffer_size = 0;
-          state->buffer_free = 0;
-        */
-        LIST_stack_init (&(state->lstack));
-        LIST_stack_push (&(state->lstack), LIST_new ());
+        state->buffer_fail_off = 0;
 
+        state->p_list = SEXP_list_new (NULL);
+        state->l_size = SEXP_PLSTACK_INIT_SIZE;
+        state->l_real = 1;
+        state->l_sref = sm_alloc (sizeof (SEXP_t *) * SEXP_PLSTACK_INIT_SIZE);
+        
+        state->l_sref[0] = SEXP_softref (state->p_list);
+        
         return (state);
+}
+
+SEXP_pstate_t *SEXP_pstate_new (void)
+{
+        return SEXP_pstate_init (sm_talloc (SEXP_pstate_t));
+}
+
+SEXP_t *SEXP_pstate_lstack_push (SEXP_pstate_t *state, SEXP_t *ref)
+{
+        if (state->l_real == state->l_size) {
+                if (state->l_size < SEXP_PLSTACK_GROWFAST_TRESH)
+                        state->l_size <<= 1;
+                else
+                        state->l_size  += SEXP_PLSTACK_GROWSLOW_DIFF;
+                
+                state->l_sref = sm_realloc (state->l_sref, sizeof (SEXP_t *) * state->l_size);
+        }
+        
+        state->l_sref[state->l_real++] = ref;
+        
+        return (ref);
+}
+
+SEXP_t *SEXP_pstate_lstack_pop (SEXP_pstate_t *state)
+{
+        SEXP_t *ref;
+        size_t  diff;
+        
+        ref  = state->l_sref[--state->l_real];
+        diff = state->l_size - state->l_real;
+        
+        if (state->l_size > SEXP_PLSTACK_GROWFAST_TRESH) {
+                if (diff >= SEXP_PLSTACK_GROWSLOW_DIFF) {
+                        state->l_size  -= SEXP_PLSTACK_GROWSLOW_DIFF;
+                        goto resize;
+                }
+        } else {
+                if (diff >= 2 * state->l_real) {
+                        state->l_size >>= 1;
+                        goto resize;
+                }
+        }
+
+        return (ref);
+resize:
+        state->l_sref = sm_realloc (state->l_sref, sizeof (SEXP_t *) * state->l_size);
+        return (ref);
+}
+
+SEXP_t *SEXP_pstate_lstack_top (SEXP_pstate_t *state)
+{
+        return (state->l_sref[state->l_real - 1]);
 }
 
 void SEXP_pstate_free (SEXP_pstate_t *p)
@@ -122,12 +164,12 @@ static inline int isnexttok (int c)
  * any lenght. It is the responbility of the function to find
  * out the lenght of the token and this lenght should be the
  * return value of this function.
- */ 
-#define EXTRACTOR(name)    SEXP_extract_##name
-#define DEFEXTRACTOR(what) static inline size_t EXTRACTOR(what) (void *out, const char *str, size_t len, uint8_t flags)
+ */
+#define EXTRACTOR(name)      SEXP_extract_##name
+#define DEFEXTRACTOR(what)   static inline int EXTRACTOR(what) (struct SEXP_pext_dsc *dsc)
 
 #define EXTRACTOR_F(name)    SEXP_extract_fixedlen_##name
-#define DEFEXTRACTOR_F(what) static inline void EXTRACTOR_F(what) (void *out, const char *str, size_t len, size_t toklen, uint8_t flags)
+#define DEFEXTRACTOR_F(what) static inline int EXTRACTOR_F(what) (struct SEXP_pext_dsc *dsc)
 
 DEFEXTRACTOR(si_string);
 DEFEXTRACTOR(dq_string);
@@ -143,7 +185,7 @@ DEFEXTRACTOR_F(datatype);
 DEFEXTRACTOR(hexstring);
 DEFEXTRACTOR_F(hexstring);
 
-SEXP_t *SEXP_parse (SEXP_psetup_t *setup, const char *buf, size_t buflen, SEXP_pstate_t **pstatep)
+SEXP_t *SEXP_parse (SEXP_psetup_t *setup, const char *buf, size_t buflen, SEXP_pstate_t **statep)
 {
         static const void *labels[] = {
                 /* 000 NUL (Null char.)               */ &&L_NUL,
@@ -277,123 +319,113 @@ SEXP_t *SEXP_parse (SEXP_psetup_t *setup, const char *buf, size_t buflen, SEXP_p
                 /* 128 -------- reserved ------------ */ &&L_INVALID
         };
 
-        int errnum = 0;
-        size_t  i = 0, toklen = 0;
+        int    errnum = 0;
+        size_t toklen = 0, i = 0;
+        char   c;
+        char  *pbuf;
+
         SEXP_pflags_t exflags, exflags_tmp = 0;
-        char    c;
-        char   *pbuf;
-        SEXP_t *sexp = NULL;
         
         /* Variables for L_NUMBER */
         uint8_t num_type = 0;
         uint8_t    valid = 0; /* This variable is probably useless... */
         uint32_t       d = 0;
-        
-#define PSTATE(pptr) (*(pptr))
+                
+        SEXP_t *s_exp = NULL;
+        struct SEXP_pext_dsc e_dsc;
+        int ext_e;
         
         /* Check pstate */
 #warning "Inefficient handling of pstate"
-
-        if (PSTATE(pstatep) != NULL) {
-                _D("Found pstate, merging buffers...\n");
+        
+        if ((*statep) != NULL) {
+                pbuf = (*statep)->buffer;
+                pbuf = sm_realloc (pbuf, sizeof (char) * (buflen + (*statep)->buffer_data_len));
                 
-                _D("old: \"%.*s\"\n",
-                   PSTATE(pstatep)->buffer_data_len, PSTATE(pstatep)->buffer);
-                _D("new: \"%.*s\"\n", buflen, buf);
+                memcpy (pbuf + (*statep)->buffer_data_len, buf, sizeof (char) * buflen);
                 
-                pbuf = PSTATE(pstatep)->buffer;
-                pbuf = sm_realloc (pbuf, sizeof (char) * (PSTATE(pstatep)->buffer_data_len + buflen));
-                memcpy (pbuf + PSTATE(pstatep)->buffer_data_len, buf, buflen);
-
-                /* Update buflen; buffer_data_len from pstate will be needed for extractors */
-                buflen += PSTATE(pstatep)->buffer_data_len;
-
-                PSTATE(pstatep)->buffer_data_len = 0;
-                PSTATE(pstatep)->buffer = NULL;
+                buflen += (*statep)->buffer_data_len;
+                (*statep)->buffer_data_len = 0;
+                (*statep)->buffer          = NULL;
+                
         } else {
-                PSTATE(pstatep) = SEXP_pstate_new ();
-                pbuf = (char *)buf;
+                (*statep) = SEXP_pstate_new ();
+                pbuf      = (char *) buf;
         }
         
         /* Initialize parse flags */
-        exflags = PSTATE(pstatep)->lstack.LIST_stack_cnt > 1 ? PSTATE(pstatep)->pflags : setup->pflags;
+        exflags = (*statep)->l_real > 1 ? (*statep)->pflags : setup->pflags;
         
         /* Main parser loop */
         for (;;) {
-                _A((PSTATE(pstatep)->lstack.LIST_stack_cnt  > 1 && !(exflags & EXF_EOFOK)) ||
-                   (PSTATE(pstatep)->lstack.LIST_stack_cnt == 1 &&  (exflags & EXF_EOFOK)));
-
-                sexp = SEXP_new ();
+                _A(((*statep)->l_real  > 1 && !(exflags & EXF_EOFOK)) ||
+                   ((*statep)->l_real == 1 &&  (exflags & EXF_EOFOK)));
+                
+                s_exp = SEXP_new ();
                 
         L_NO_SEXP_ALLOC:
-                if (i >= buflen) {
-                        _D("EOF, i=%u, buflen=%u, LIST_stack_cnt=%u\n",
-                           i, buflen, PSTATE(pstatep)->lstack.LIST_stack_cnt);
+                s_exp->s_flgs = 0;
+                
+                if (i >= buflen)
                         break;
-                }
-
+                
                 c = pbuf[i];
                 
                 _D("LOOP: i=%zu, c=%c, sexp=%p, buflen=%zu\n",
-                   i, c, sexp, buflen);
+                   i, c, s_exp, buflen);
                 
                 goto *((c >= 0) ? labels[(uint8_t)c] : labels[128]);
         L_CHAR:
-                i += EXTRACTOR(si_string)(sexp, pbuf + i, buflen - i, exflags);
+                e_dsc.s_exp = s_exp;
+                e_dsc.t_beg = pbuf + i;
+                e_dsc.t_len = 0;
+                e_dsc.b_len = buflen - i;
+                e_dsc.flags = exflags;
+                
+                ext_e = EXTRACTOR(si_string)(&e_dsc);
 
-                switch (SEXP_TYPE(sexp)) {
-                case ATOM_UNFIN:
-                        errnum = EAGAIN;
-                        break;
-                case ATOM_INVAL:
-                        errnum = EILSEQ;
-                        break;
-                default:
+                if (ext_e == SEXP_EXT_SUCCESS)
                         goto L_SEXP_ADD;
-                }
+                
                 break;
         L_CHAR_FIXEDLEN:
-                EXTRACTOR_F(string)(sexp, pbuf + i, buflen - i, toklen, exflags);
-
-                switch (SEXP_TYPE(sexp)) {
-                case ATOM_UNFIN:
-                        errnum = EAGAIN;
-                        break;
-                case ATOM_INVAL:
-                        errnum = EILSEQ;
-                        break;
-                default:
-                        i += toklen;
+                e_dsc.s_exp = s_exp;
+                e_dsc.t_beg = pbuf + i;
+                e_dsc.t_len = toklen;
+                e_dsc.b_len = buflen - i;
+                e_dsc.flags = exflags;
+                
+                ext_e = EXTRACTOR_F(string)(&e_dsc);
+                
+                if (ext_e == SEXP_EXT_SUCCESS)
                         goto L_SEXP_ADD;
-                }
+                
                 break;
         L_DQUOTE:
-                i += EXTRACTOR(dq_string)(sexp, pbuf + i, buflen - i, exflags);
+                e_dsc.s_exp = s_exp;
+                e_dsc.t_beg = pbuf + i;
+                e_dsc.t_len = 0;
+                e_dsc.b_len = buflen - i;
+                e_dsc.flags = exflags;
                 
-                switch (SEXP_TYPE(sexp)) {
-                case ATOM_UNFIN:
-                        errnum = EAGAIN;
-                        break;
-                case ATOM_INVAL:
-                        errnum = EILSEQ;
-                        break;
-                default:
+                ext_e = EXTRACTOR(dq_string)(&e_dsc);
+                
+                if (ext_e == SEXP_EXT_SUCCESS)
                         goto L_SEXP_ADD;
-                }
+                
                 break;
         L_SQUOTE:
-                i += EXTRACTOR(sq_string)(sexp, pbuf + i, buflen - i, exflags);
-
-                switch (SEXP_TYPE(sexp)) {
-                case ATOM_UNFIN:
-                        errnum = EAGAIN;
-                        break;
-                case ATOM_INVAL:
-                        errnum = EILSEQ;
-                        break;
-                default:
+                e_dsc.s_exp = s_exp;
+                e_dsc.t_beg = pbuf + i;
+                e_dsc.t_len = 0;
+                e_dsc.b_len = buflen - i;
+                e_dsc.flags = exflags;
+                
+                ext_e = EXTRACTOR(sq_string)(&e_dsc);
+                                
+                if (ext_e == SEXP_EXT_SUCCESS)
                         goto L_SEXP_ADD;
-                }
+                
                 break;
         L_DOT:
                 if (!isdigit (pbuf[i+1]))
@@ -442,7 +474,7 @@ SEXP_t *SEXP_parse (SEXP_psetup_t *setup, const char *buf, size_t buflen, SEXP_p
                                                 case 'E':
                                                         goto finalize_exponent;
                                                 default:
-                                                        SEXP_SETTYPE(sexp, ATOM_UNFIN);
+                                                        SEXP_flag_set (s_exp, SEXP_FLAG_UNFIN);
                                                         goto invalid_number;
                                                 }
                                         }
@@ -455,7 +487,7 @@ SEXP_t *SEXP_parse (SEXP_psetup_t *setup, const char *buf, size_t buflen, SEXP_p
                         if (exflags & EXF_EOFOK) {
                                 goto finalize_all;
                         } else {
-                                SEXP_SETTYPE(sexp, ATOM_UNFIN);
+                                SEXP_flag_set (s_exp, SEXP_FLAG_UNFIN);
                                 goto invalid_number;
                         }
                         /* NOTREACHED */
@@ -477,7 +509,7 @@ SEXP_t *SEXP_parse (SEXP_psetup_t *setup, const char *buf, size_t buflen, SEXP_p
                                         goto L_NUMBER_stage3;
                         }
                         
-                        SEXP_SETTYPE(sexp, ATOM_UNFIN);
+                        SEXP_flag_set (s_exp, SEXP_FLAG_UNFIN);
                         goto invalid_number;
                 }
                 
@@ -567,7 +599,8 @@ SEXP_t *SEXP_parse (SEXP_psetup_t *setup, const char *buf, size_t buflen, SEXP_p
                                 switch (*(pbuf + i)) {
                                 case '-': /* signed */
                                 {
-                                        int64_t number;
+                                        SEXP_val_t v_dsc;
+                                        int64_t    number;
                                         
                                         number = strto_int64_dec (pbuf + i, d, NULL);
                                         
@@ -583,32 +616,59 @@ SEXP_t *SEXP_parse (SEXP_psetup_t *setup, const char *buf, size_t buflen, SEXP_p
                                         if (number < INT16_MIN) {
                                                 if (number < INT32_MIN) {
                                                         /* 64 */
-                                                        _D("NUM_STORE64: %lld\n", number);
-                                                        NUM_STORE(int64_t, number, sexp->atom.number.nptr);
-                                                        sexp->atom.number.type = NUM_INT64;
+                                                        if (SEXP_val_new (&v_dsc, sizeof (struct SEXP_val_num_i64),
+                                                                          SEXP_VALTYPE_NUMBER) != 0)
+                                                        {
+                                                                /* TODO: handle this */
+                                                                abort ();
+                                                        }
+                                                        
+                                                        SEXP_NCASTP(i64,v_dsc.mem)->n = (int64_t)number;
+                                                        SEXP_NCASTP(i64,v_dsc.mem)->t = SEXP_NUM_INT64;
                                                 } else {
                                                         /* 32 */
-                                                        _D("NUM_STORE32: %lld\n", number);
-                                                        NUM_STORE(int32_t, number, sexp->atom.number.nptr);
-                                                        sexp->atom.number.type = NUM_INT32;
+                                                        if (SEXP_val_new (&v_dsc, sizeof (struct SEXP_val_num_i32),
+                                                                          SEXP_VALTYPE_NUMBER) != 0)
+                                                        {
+                                                                /* TODO: handle this */
+                                                                abort ();
+                                                        }
+                                                        
+                                                        SEXP_NCASTP(i32,v_dsc.mem)->n = (int32_t)number;
+                                                        SEXP_NCASTP(i32,v_dsc.mem)->t = SEXP_NUM_INT32;
                                                 }
                                         } else {
                                                 if (number < INT8_MIN) {
                                                         /* 16 */
-                                                        _D("NUM_STORE16: %lld\n", number);
-                                                        NUM_STORE(int16_t, number, sexp->atom.number.nptr);
-                                                        sexp->atom.number.type = NUM_INT16;
+                                                        if (SEXP_val_new (&v_dsc, sizeof (struct SEXP_val_num_i16),
+                                                                          SEXP_VALTYPE_NUMBER) != 0)
+                                                        {
+                                                                /* TODO: handle this */
+                                                                abort ();
+                                                        }
+                                                        
+                                                        SEXP_NCASTP(i16,v_dsc.mem)->n = (int16_t)number;
+                                                        SEXP_NCASTP(i16,v_dsc.mem)->t = SEXP_NUM_INT16;
                                                 } else {
                                                         /* 8 */
-                                                        _D("NUM_STORE8: %lld\n", number);
-                                                        NUM_STORE(int8_t, number, sexp->atom.number.nptr);
-                                                        sexp->atom.number.type = NUM_INT8;
+                                                        if (SEXP_val_new (&v_dsc, sizeof (struct SEXP_val_num_i8),
+                                                                          SEXP_VALTYPE_NUMBER) != 0)
+                                                        {
+                                                                /* TODO: handle this */
+                                                                abort ();
+                                                        }
+                                                        
+                                                        SEXP_NCASTP(i8,v_dsc.mem)->n = (int8_t)number;
+                                                        SEXP_NCASTP(i8,v_dsc.mem)->t = SEXP_NUM_INT8;
                                                 }
                                         }
+                                        
+                                        s_exp->s_valp = SEXP_val_ptr (&v_dsc);
                                 } break;
                                 default: /* unsigned */
                                 {
-                                        uint64_t number;
+                                        SEXP_val_t v_dsc;
+                                        uint64_t   number;
                                         
                                         number = strto_uint64_dec (pbuf + i, d, NULL);
                                         
@@ -624,34 +684,61 @@ SEXP_t *SEXP_parse (SEXP_psetup_t *setup, const char *buf, size_t buflen, SEXP_p
                                         if (number > UINT16_MAX) {
                                                 if (number > UINT32_MAX) {
                                                         /* 64 */
-                                                        _D("NUM_STORE64: %llu\n", number);
-                                                        NUM_STORE(uint64_t, number, sexp->atom.number.nptr);
-                                                        sexp->atom.number.type = NUM_UINT64;
+                                                        if (SEXP_val_new (&v_dsc, sizeof (struct SEXP_val_num_u64),
+                                                                          SEXP_VALTYPE_NUMBER) != 0)
+                                                        {
+                                                                /* TODO: handle this */
+                                                                abort ();
+                                                        }
+                                                        
+                                                        SEXP_NCASTP(u64,v_dsc.mem)->n = (uint64_t)number;
+                                                        SEXP_NCASTP(u64,v_dsc.mem)->t = SEXP_NUM_UINT64;
                                                 } else {
                                                         /* 32 */
-                                                        _D("NUM_STORE32: %llu\n", number);
-                                                        NUM_STORE(uint32_t, number, sexp->atom.number.nptr);
-                                                        sexp->atom.number.type = NUM_UINT32;
+                                                        if (SEXP_val_new (&v_dsc, sizeof (struct SEXP_val_num_u32),
+                                                                          SEXP_VALTYPE_NUMBER) != 0)
+                                                        {
+                                                                /* TODO: handle this */
+                                                                abort ();
+                                                        }
+                                                        
+                                                        SEXP_NCASTP(u32,v_dsc.mem)->n = (uint32_t)number;
+                                                        SEXP_NCASTP(u32,v_dsc.mem)->t = SEXP_NUM_UINT32;
                                                 }
                                         } else {
                                                 if (number > UINT8_MAX) {
                                                         /* 16 */
-                                                        _D("NUM_STORE16: %llu\n", number);
-                                                        NUM_STORE(uint16_t, number, sexp->atom.number.nptr);
-                                                        sexp->atom.number.type = NUM_UINT16;
+                                                        if (SEXP_val_new (&v_dsc, sizeof (struct SEXP_val_num_u16),
+                                                                          SEXP_VALTYPE_NUMBER) != 0)
+                                                        {
+                                                                /* TODO: handle this */
+                                                                abort ();
+                                                        }
+                                                        
+                                                        SEXP_NCASTP(u16,v_dsc.mem)->n = (uint16_t)number;
+                                                        SEXP_NCASTP(u16,v_dsc.mem)->t = SEXP_NUM_UINT16;
                                                 } else {
                                                         /* 8 */
-                                                        _D("NUM_STORE8: %llu\n", number);
-                                                        NUM_STORE(uint8_t, number, sexp->atom.number.nptr);
-                                                        sexp->atom.number.type = NUM_UINT8;
+                                                        if (SEXP_val_new (&v_dsc, sizeof (struct SEXP_val_num_u8),
+                                                                          SEXP_VALTYPE_NUMBER) != 0)
+                                                        {
+                                                                /* TODO: handle this */
+                                                                abort ();
+                                                        }
+                                                        
+                                                        SEXP_NCASTP(u8,v_dsc.mem)->n = (uint8_t)number;
+                                                        SEXP_NCASTP(u8,v_dsc.mem)->t = SEXP_NUM_UINT8;
                                                 }
                                         }
+                                        
+                                        s_exp->s_valp = SEXP_val_ptr (&v_dsc);
                                 }}
                                 break;
                         case NUMCLASS_FLT:
                         case NUMCLASS_EXP: /* TODO: store double/long double */
                         {
-                                double number;
+                                SEXP_val_t v_dsc;
+                                double     number;
                                 
                                 number = strto_double (pbuf + i, d, NULL);
                                 
@@ -664,22 +751,23 @@ SEXP_t *SEXP_parse (SEXP_psetup_t *setup, const char *buf, size_t buflen, SEXP_p
                                         abort ();
                                 }
                                 
-                                NUM_STORE(double, number, sexp->atom.number.nptr);
-                                sexp->atom.number.type = NUM_DOUBLE;
+                                if (SEXP_val_new (&v_dsc, sizeof (struct SEXP_val_num_f),
+                                                  SEXP_VALTYPE_NUMBER) != 0)
+                                {
+                                        /* TODO: handle this */
+                                        abort ();
+                                }
+                                
+                                SEXP_NCASTP(f,v_dsc.mem)->n = (double)number;
+                                SEXP_NCASTP(f,v_dsc.mem)->t = SEXP_NUM_UINT8;
+                                s_exp->s_valp = SEXP_val_ptr (&v_dsc);
                         }
                         break;
-#if 0
-                        case NUMCLASS_FRA:
-                                _D("Fractions not supported yet\n");
-                                abort ();
-                                break;
-#endif
                         default:
                                 _D("Unknown number type\n");
                                 abort ();
                         }
                         
-                        SEXP_SETTYPE(sexp, ATOM_NUMBER);
                         /* STR -> SEXP END */                        
                         i += d;
                         
@@ -688,7 +776,7 @@ SEXP_t *SEXP_parse (SEXP_psetup_t *setup, const char *buf, size_t buflen, SEXP_p
                         d = 0;
                 } else {
                 invalid_number:
-                        SEXP_SETTYPE(sexp, ATOM_UNFIN);
+                        ext_e = SEXP_EXT_EINVAL;
                         num_type = 0;
                         valid = 0;
                         d = 0;
@@ -708,30 +796,33 @@ SEXP_t *SEXP_parse (SEXP_psetup_t *setup, const char *buf, size_t buflen, SEXP_p
                 }
                 goto L_NO_SEXP_ALLOC;
         L_PAROPEN:
-                {       /* LIST_t *subl; */
+                {
+                        SEXP_t *s_list;
                         
-                        SEXP_list_init (sexp);
-                        /* subl = &(sexp->atom.list); */
+                        s_list = SEXP_list_new (NULL);
                         
-                        /* NUL is not a valid token end inside a list */
-                        if (PSTATE(pstatep)->lstack.LIST_stack_cnt == 1) {
+                        SEXP_list_add (SEXP_pstate_lstack_top (*statep), s_list);
+                        SEXP_pstate_lstack_push (*statep, SEXP_softref (s_list));
+                        
+                        SEXP_free (s_list);
+                        
+                        if ((*statep)->l_real == 2) {
                                 exflags_tmp = exflags;
                                 exflags &= ~(EXF_EOFOK);
                         }
-                        
-                        _A(!(exflags & EXF_EOFOK));
-                        
-                        sexp = LIST_add (LIST_stack_top(&(PSTATE(pstatep)->lstack)), sexp);
-                        LIST_stack_push (&(PSTATE(pstatep)->lstack), &(sexp->atom.list));
                 }
                 ++i;
                 continue;
         L_PARCLOSE:
                 ++i;
-                if (PSTATE(pstatep)->lstack.LIST_stack_cnt > 1) {
-                        LIST_stack_dec (&(PSTATE(pstatep)->lstack));
-
-                        if (PSTATE(pstatep)->lstack.LIST_stack_cnt == 1) {
+                
+                if ((*statep)->l_real > 1) {
+                        SEXP_t *s_list;
+                        
+                        s_list = SEXP_pstate_lstack_pop (*statep);
+                        SEXP_free (s_list);
+                        
+                        if ((*statep)->l_real == 1) {
                                 /*
                                  * We are outside a list, restore
                                  * original exflags
@@ -741,34 +832,37 @@ SEXP_t *SEXP_parse (SEXP_psetup_t *setup, const char *buf, size_t buflen, SEXP_p
                         
                         goto L_NO_SEXP_ALLOC;
                 } else {
-                        _D("Syntax error: Unexpected close parenthesis\n");
-                        SEXP_SETTYPE(sexp, ATOM_INVAL);
                         errnum = EILSEQ;
-                        break;
+                        ext_e  = SEXP_EXT_EINVAL;
                 }
-                continue;
+                
+                break;
         L_BRACKETOPEN:
-                i += EXTRACTOR(datatype)(sexp, pbuf + i, buflen - i, exflags);
+                e_dsc.s_exp = s_exp;
+                e_dsc.t_beg = pbuf + i;
+                e_dsc.t_len = 0;
+                e_dsc.b_len = buflen - i;
+                e_dsc.flags = exflags;
                 
-                if (sexp->handler == NULL) {
-                        _D("Invalid datatype\n");
-                        SEXP_SETTYPE(sexp, ATOM_UNFIN);
-                        break;
-                }
+                ext_e = EXTRACTOR(sq_string)(&e_dsc);
                 
-                goto L_NO_SEXP_ALLOC;
+                if (ext_e == SEXP_EXT_SUCCESS)
+                        goto L_SEXP_ADD;
+                
+                break;
         L_BRACKETOPEN_FIXEDLEN:
-                EXTRACTOR_F(datatype)(sexp, pbuf + i, buflen - i, toklen, exflags);
-
-                if (sexp->handler == NULL) {
-                        _D("Invalid datatype\n");
-                        SEXP_SETTYPE(sexp, ATOM_UNFIN);
-                        break;
-                }
+                e_dsc.s_exp = s_exp;
+                e_dsc.t_beg = pbuf + i;
+                e_dsc.t_len = toklen;
+                e_dsc.b_len = buflen - i;
+                e_dsc.flags = exflags;
                 
-                i += toklen + 2; /* +2 => [] */
+                ext_e = EXTRACTOR_F(string)(&e_dsc);
                 
-                goto L_NO_SEXP_ALLOC;
+                if (ext_e == SEXP_EXT_SUCCESS)
+                        goto L_SEXP_ADD;
+                
+                break;
         L_BRACEOPEN:
                 //i += EXTRACTOR(b64_decode)(sexp, pbuf + i, buflen, exflags);
                 errnum = EILSEQ;
@@ -778,299 +872,312 @@ SEXP_t *SEXP_parse (SEXP_psetup_t *setup, const char *buf, size_t buflen, SEXP_p
                 errnum = EILSEQ;
                 break;
         L_VERTBAR:
-                i += EXTRACTOR(b64_string)(sexp, pbuf + i, buflen - i, exflags);
+                e_dsc.s_exp = s_exp;
+                e_dsc.t_beg = pbuf + i;
+                e_dsc.t_len = 0;
+                e_dsc.b_len = buflen - i;
+                e_dsc.flags = exflags;
+                
+                ext_e = EXTRACTOR(b64_string)(&e_dsc);
 
-                switch (SEXP_TYPE(sexp)) {
-                case ATOM_UNFIN:
-                        errnum = EAGAIN;
-                        break;
-                case ATOM_INVAL:
-                        errnum = EILSEQ;
-                        break;
-                default:
+                if (ext_e == SEXP_EXT_SUCCESS)
                         goto L_SEXP_ADD;
-                }
+                
                 break;
         L_VERTBAR_FIXEDLEN:
-                EXTRACTOR_F(b64_string)(sexp, pbuf + i, buflen - i, toklen, exflags);
+                e_dsc.s_exp = s_exp;
+                e_dsc.t_beg = pbuf + i;
+                e_dsc.t_len = toklen;
+                e_dsc.b_len = buflen - i;
+                e_dsc.flags = exflags;
+                
+                ext_e = EXTRACTOR_F(b64_string)(&e_dsc);
 
-                switch (SEXP_TYPE(sexp)) {
-                case ATOM_UNFIN:
-                        errnum = EAGAIN;
-                        break;
-                case ATOM_INVAL:
-                        errnum = EILSEQ;
-                        break;
-                default:
-                        i += toklen + 2; /* +2 => || */
+                if (ext_e == SEXP_EXT_SUCCESS)
                         goto L_SEXP_ADD;
-                }
+                
                 break;
         L_HASH:
-                i += EXTRACTOR(hexstring)(sexp, pbuf + i, buflen - i, exflags);
+                e_dsc.s_exp = s_exp;
+                e_dsc.t_beg = pbuf + i;
+                e_dsc.t_len = 0;
+                e_dsc.b_len = buflen - i;
+                e_dsc.flags = exflags;
                 
-                switch (SEXP_TYPE(sexp)) {
-                case ATOM_UNFIN:
-                        errnum = EAGAIN;
-                        break;
-                case ATOM_INVAL:
-                        errnum = EILSEQ;
-                        break;
-                default:
+                ext_e = EXTRACTOR(hexstring)(&e_dsc);
+
+                if (ext_e == SEXP_EXT_SUCCESS)
                         goto L_SEXP_ADD;
-                }
+                
                 break;
         L_HASH_FIXEDLEN:
-                EXTRACTOR_F(hexstring)(sexp, pbuf + i, buflen - i, toklen, exflags);
-        
-                switch (SEXP_TYPE(sexp)) {
-                case ATOM_UNFIN:
-                        errnum = EAGAIN;
-                        break;
-                case ATOM_INVAL:
-                        errnum = EILSEQ;
-                        break;
-                default:
-                        i += toklen + 2; /* +2 => ## */
+                e_dsc.s_exp = s_exp;
+                e_dsc.t_beg = pbuf + i;
+                e_dsc.t_len = toklen;
+                e_dsc.b_len = buflen - i;
+                e_dsc.flags = exflags;
+                
+                ext_e = EXTRACTOR_F(hexstring)(&e_dsc);
+                
+                if (ext_e == SEXP_EXT_SUCCESS)
                         goto L_SEXP_ADD;
-                }
+                
                 break;
         L_BRACECLOSE:
         L_BRACKETCLOSE:
         L_INVALID:
                 _D("Syntax error: Invalid character: %02x\n", c);
-                SEXP_SETTYPE(sexp, ATOM_INVAL);
+                ext_e  = SEXP_EXT_EINVAL;
                 errnum = EILSEQ;
                 break;
         L_SEXP_ADD:
                 /* Add new expression to list */
-                LIST_add (LIST_stack_top(&(PSTATE(pstatep)->lstack)), sexp);
+                SEXP_list_add (SEXP_pstate_lstack_top (*statep), s_exp);
+                SEXP_free (s_exp);
 #ifndef NDEBUG
-                sexp = NULL;
+                s_exp = NULL;
 #endif
+                i += e_dsc.t_len;
+                
+                continue;
         }
         
-        if (PSTATE(pstatep)->lstack.LIST_stack_cnt == 1 &&
-            SEXP_TYPE(sexp) != ATOM_UNFIN && SEXP_TYPE(sexp) != ATOM_INVAL) {
-                _A(sexp != NULL);
-                _A(SEXP_TYPE(sexp) != ATOM_UNFIN);
-                _A(SEXP_TYPE(sexp) == ATOM_EMPTY);
+        switch (ext_e) {
+        case SEXP_EXT_SUCCESS:
+                if ((*statep)->l_real == 1) {
+                        
+                        s_exp = (*statep)->p_list;
+                        (*statep)->p_list = NULL;
+                        
+                        SEXP_pstate_free (*statep);
+                        (*statep) = NULL;
+                        errno     = 0;
+                        
+                        return (s_exp);
+                }
+        case SEXP_EXT_EUNFIN:
+                (*statep)->buffer_data_len = buflen - i;
+                (*statep)->buffer = xmemdup (pbuf + i, (*statep)->buffer_data_len);
+                (*statep)->pflags = exflags;
 
-                SEXP_SETTYPE (sexp, ATOM_LIST);
-                memcpy (&(sexp->atom.list),
-                        LIST_stack_bottom (&(PSTATE(pstatep)->lstack)), sizeof (LIST_t));
-                
-                //LIST_stack_top (PSTATE(pstatep)), sizeof (LIST_t));
-
-                /*
-                  PSTATE(pstatep)->buffer_data_len = 0;
-                  PSTATE(pstatep)->buffer = NULL;
-                  PSTATE(pstatep)->pflags = 0;
-                */
-                
-                PSTATE(pstatep) = NULL;
-
-                _D("ret: sexp@%p\n", sexp);
-                
-                errno = 0;
-                return (sexp);
-        } else {
-                _A(SEXP_TYPE(sexp) == ATOM_UNFIN ||
-                   SEXP_TYPE(sexp) == ATOM_EMPTY ||
-                   SEXP_TYPE(sexp) == ATOM_INVAL);
-                
-                /* save the unparsed part of buf */
-                
-                PSTATE(pstatep)->buffer_data_len = buflen - i;
-                PSTATE(pstatep)->buffer = xmemdup (pbuf + i,
-                                                   PSTATE(pstatep)->buffer_data_len);
-                PSTATE(pstatep)->pflags = exflags;
-                
-                _D("pstate buf: \"%.*s\"\n",
-                   PSTATE(pstatep)->buffer_data_len, PSTATE(pstatep)->buffer);
-                
-                SEXP_free (sexp);
-
-                _D("ret: NULL\n");
-
-                errno = errnum;
-                return (NULL);
+                break;
+        case SEXP_EXT_EINVAL:
+                break;
+        default:
+                abort ();
         }
+        
+        SEXP_free (s_exp);
+        errno = errnum;
+
+        return (NULL);
 }
 
 DEFEXTRACTOR(si_string)
 {
+        SEXP_val_t v_dsc;
         register size_t l = 1;
         
-        _A(out != NULL);
-        _A(str != NULL);
+        _A(dsc != NULL);
+        _D("Parsing simple string\n");
         
-        _D("Parsing si string\n");
-
-        while (!isnexttok (str[l])) {
-                if (l < len) {
+        while (!isnexttok (dsc->t_beg[l])) {
+                if (l < dsc->b_len)
                         ++l;
-                } else {
-                        if (flags & EXF_EOFOK)
+                else {
+                        if (dsc->flags & EXF_EOFOK)
                                 break;
-                        else {
-                                SEXP_SETTYPE(SEXP(out), ATOM_UNFIN);
-                                return (0);
-                        }
+                        else
+                                return (SEXP_EXT_EUNFIN);
                 }
         }
 
 #if !defined(NDEBUG)
-        if (flags & EXF_EOFOK)
+        if (dsc->flags & EXF_EOFOK)
                 _D("EOF is ok -> si string complete\n");
         else
-                _D("next tok char: \"%c\"\n", str[l]);
+                _D("next tok char: \"%c\"\n", dsc->t_beg[l]);
 #endif
-
-        SEXP_SETTYPE(SEXP(out), ATOM_STRING);
-        SEXP(out)->atom.string.len = l;
-        SEXP(out)->atom.string.str = xmemdup (str, l);
+                
+        if (SEXP_val_new (&v_dsc, sizeof (char) * l,
+                          SEXP_VALTYPE_STRING) != 0)
+        {
+                /* TODO: handle this */
+                return (SEXP_EXT_EINVAL);
+        }
         
-        return (l);
+        memcpy (v_dsc.mem, dsc->t_beg, sizeof (char) * l);
+        dsc->s_exp->s_valp = SEXP_val_ptr (&v_dsc);
+        dsc->t_len = l;
+        
+        return (SEXP_EXT_SUCCESS);
 }
 
 DEFEXTRACTOR(dq_string)
 {
+        SEXP_val_t v_dsc;
         register size_t l = 1;
 
-        _A(out != NULL);
-        _A(str != NULL);
-        _A(len > 0);
-
-        _D("Parsing dq string\n");
-
-        while (str[l] != '"') {
-                if (l < len) {
-                        if (str[l] == '\\') {
-                                if (l+1 < len) {
+        _A(dsc != NULL);
+        _D("Parsing double-quoted string\n");
+        
+        while (dsc->t_beg[l] != '"') {
+                if (l < dsc->b_len) {
+                        if (dsc->t_beg[l] == '\\') {
+                                if (l + 1 < dsc->b_len)
                                         ++l;
-                                } else {
-                                        _D("EOF after slash\n");
-                                        goto exit_unfin;
-                                }
+                                else
+                                        return (SEXP_EXT_EUNFIN);
                         }
-                } else {
-                        _D("EOF before end of string\n");
-                        goto exit_unfin;
-                }
-                
+                } else
+                        return (SEXP_EXT_EUNFIN);
+
                 ++l;
         }
         
-        ++l;
+        dsc->t_len = l + 1;
         
-        SEXP_SETTYPE(SEXP(out), ATOM_STRING);
-        SEXP(out)->atom.string.len = l - 2; /* Don't count in beg/end quote */
-        SEXP(out)->atom.string.str = xmemdup (str + 1, SEXP(out)->atom.string.len);
-        return (l);
-exit_unfin:
-        SEXP_SETTYPE(SEXP(out), ATOM_UNFIN);
-        return (0);
+        if (SEXP_val_new (&v_dsc, sizeof (char) * (l - 1),
+                          SEXP_VALTYPE_STRING) != 0)
+        {
+                /* TODO: handle this */
+                return (SEXP_EXT_EINVAL);
+        }
+        
+        memcpy (v_dsc.mem, dsc->t_beg + 1, sizeof (char) * (l - 1));
+        dsc->s_exp->s_valp = SEXP_val_ptr (&v_dsc);
+        
+        return (SEXP_EXT_SUCCESS);
 }
 
 DEFEXTRACTOR(sq_string)
 {
+        SEXP_val_t v_dsc;
         register size_t l = 1;
         
-        _A(out != NULL);
-        _A(str != NULL);
-
-        _D("Parsing sq string\n");
+        _A(dsc != NULL);
+        _D("Parsing single-quoted string\n");
         
-        while (str[l] != '\'') {
-                if (l >= len) {
-                        SEXP_SETTYPE(SEXP(out), ATOM_UNFIN);
-                        return (0);
-                }
+        while (dsc->t_beg[l] != '\'') {
+                if (l >= dsc->b_len)
+                        return (SEXP_EXT_EUNFIN);
                 
                 ++l;
         }
         
-        ++l;
+        dsc->t_len = l + 1;
         
-        SEXP_SETTYPE(SEXP(out), ATOM_STRING);
-        SEXP(out)->atom.string.len = l - 2; /* Don't count in beg/end quote */
-        SEXP(out)->atom.string.str = xmemdup (str + 1, SEXP(out)->atom.string.len);
-        return (l);
+        if (SEXP_val_new (&v_dsc, sizeof (char) * (l - 1),
+                          SEXP_VALTYPE_STRING) != 0)
+        {
+                /* TODO: handle this */
+                return (SEXP_EXT_EINVAL);
+        }
+        
+        memcpy (v_dsc.mem, dsc->t_beg + 1, sizeof (char) * (l - 1));
+        dsc->s_exp->s_valp = SEXP_val_ptr (&v_dsc);
+        
+        return (SEXP_EXT_SUCCESS);
 }
 
 DEFEXTRACTOR_F(string)
 {
+        SEXP_val_t v_dsc;
+        
         _D("Parsing fixed length string\n");
 
-        if (toklen <= len) {
-                SEXP_SETTYPE(SEXP(out), ATOM_STRING);
-                SEXP(out)->atom.string.len = toklen;
-                SEXP(out)->atom.string.str = xmemdup (str, toklen);
-        } else {
-                _D("toklen > len\n");
-                SEXP_SETTYPE(SEXP(out), ATOM_UNFIN);
+        if (dsc->t_len > dsc->b_len)
+                return (SEXP_EXT_EUNFIN);
+                
+        if (SEXP_val_new (&v_dsc, sizeof (char) * dsc->t_len,
+                          SEXP_VALTYPE_STRING) != 0)
+        {
+                /* TODO: handle this */
+                return (SEXP_EXT_EINVAL);
         }
-        /* Hmm, that was simple... */
-        return;
+        
+        memcpy (v_dsc.mem, dsc->t_beg, sizeof (char) * dsc->t_len);
+        dsc->s_exp->s_valp = SEXP_val_ptr (&v_dsc);
+        
+        return (SEXP_EXT_SUCCESS);
 }
 
 DEFEXTRACTOR(b64_string)
 {
+        SEXP_val_t v_dsc;
         register uint32_t l = 1, slen;
         char *string;
         
-        _A(out != NULL);
-        _A(str != NULL);
-
+        _A(dsc != NULL);
         _D("Extracting b64 string\n");
         
 #warning "Strict character checking not implemented"
-
-        while (str[l] != '|') {
-                if (isnexttok (str[l]) || l >= len) {
-                        SEXP_SETTYPE(SEXP(out), ATOM_UNFIN);
-                        return (0);
-                }
+        
+        while (dsc->t_beg[l] != '|') {
+                if (isnexttok (dsc->t_beg[l]))
+                        return (SEXP_EXT_EINVAL);
+                if (l >= dsc->b_len)
+                        return (SEXP_EXT_EUNFIN);
                 ++l;
         }
         
-        if ((slen = base64_decode (str + 1, (size_t)l - 1, (uint8_t **)&string)) == 0) {
+        dsc->t_len = ++l;
+        slen       = base64_decode (dsc->t_beg + 1, (size_t)(l - 2), (uint8_t **)&string);
+        
+        if (slen == 0) {
                 _D("base64_decode failed\n");
-                SEXP_SETTYPE(SEXP(out), ATOM_INVAL);
-                return (0);
-        } else {
-                _D("string = \"%.*s\"\n", slen, string);
-
-                SEXP_SETTYPE(SEXP(out), ATOM_STRING);
-                SEXP(out)->atom.string.len = slen;
-                SEXP(out)->atom.string.str = string;
-                return (l + 1);
+                return (SEXP_EXT_EINVAL);
         }
+        
+        _D("string = \"%.*s\"\n", slen, string);
+        
+        if (SEXP_val_new (&v_dsc, sizeof (char) * slen,
+                          SEXP_VALTYPE_STRING) != 0)
+        {
+                /* TODO: handle this */
+                return (SEXP_EXT_EINVAL);
+        }
+        
+        memcpy  (v_dsc.mem, string, sizeof (char) * slen);
+        sm_free (string);
+        
+        dsc->s_exp->s_valp = SEXP_val_ptr (&v_dsc);
+        
+        return (SEXP_EXT_SUCCESS);
 }
 
 DEFEXTRACTOR_F(b64_string)
 {
+        SEXP_val_t v_dsc;
         char    *string;
         uint32_t slen;
         
-        _D("Parsing fixed length b64 string, toklen=%u, len=%u\n", toklen, len);
+        _A(dsc != NULL);
+        _D("Parsing fixed length b64 string, toklen=%u, len=%u\n", dsc->t_len, dsc->b_len);
         
-        if (toklen <= len - 2) {
-                _D("b64: len=%u, \"%.*s\"\n", toklen, toklen, str + 1);
-                if ((slen = base64_decode (str + 1, toklen, (uint8_t **)&string)) == 0) {
-                        _D("base64_decode failed\n");
-                        SEXP_SETTYPE(SEXP(out), ATOM_INVAL);
-                } else {
-                        SEXP_SETTYPE(SEXP(out), ATOM_STRING);
-                        SEXP(out)->atom.string.len = slen;
-                        SEXP(out)->atom.string.str = string;
-                }
-        } else {
-                SEXP_SETTYPE(SEXP(out), ATOM_UNFIN);
+        if (dsc->t_len > dsc->b_len - 2)
+                return (SEXP_EXT_EUNFIN);
+
+        slen = base64_decode (dsc->t_beg + 1, dsc->t_len, (uint8_t **)&string);
+        
+        if (slen == 0)
+                return (SEXP_EXT_EINVAL);
+        
+        dsc->t_len += 2;
+        
+        if (SEXP_val_new (&v_dsc, sizeof (char) * slen,
+                          SEXP_VALTYPE_STRING) != 0)
+        {
+                /* TODO: handle this */
+                return (SEXP_EXT_EINVAL);
         }
         
-        return;
+        memcpy  (v_dsc.mem, string, sizeof (char) * slen);
+        sm_free (string);
+        
+        dsc->s_exp->s_valp = SEXP_val_ptr (&v_dsc);
+        
+        return (SEXP_EXT_SUCCESS);
 }
 
 DEFEXTRACTOR(datatype)
@@ -1078,107 +1185,99 @@ DEFEXTRACTOR(datatype)
         char *name, name_static[128];
         register uint32_t l = 1;
         
-        _A(out != NULL);
-        _A(str != NULL);
-        _A(SEXP(out)->handler == NULL);
-        
+        _A(dsc != NULL);
+        _A(dsc->s_exp->s_type == NULL);
         _D("Parsing datatype\n");
-
-        while (str[l] != ']') {
-                if (l < len) {
-                        if (str[l] == '\\') {
-                                if (l+1 < len) {
+        
+        while (dsc->t_beg[l] != ']') {
+                if (l < dsc->b_len) {
+                        if (dsc->t_beg[l] == '\\') {
+                                if (l + 1 < dsc->b_len)
                                         ++l;
-                                } else {
-                                        goto exit_unfin;
-                                }
+                                else
+                                        return (SEXP_EXT_EUNFIN);
                         }
-                } else {
-                        goto exit_unfin;
-                }
-                
+                } else
+                        return (SEXP_EXT_EUNFIN);
+
                 ++l;
         }
-        
-        ++l;
-        
-        if ((l - 2) < (sizeof name_static)) {
+                
+        dsc->t_len = l + 1;
+
+        if ((l - 1) < sizeof name_static) {
                 memcpy (name_static,
-                        str + 1, sizeof (char) * (l - 2));
-                name_static[l - 2] = '\0';
+                        dsc->t_beg + 1, sizeof (char) * (l - 1));
+                name_static[l - 1] = '\0';
                 name = name_static;
         } else {
-                name = sm_alloc (sizeof (char) * (l - 1));
+                name = sm_alloc (sizeof (char) * l);
                 memcpy (name,
-                        str + 1, sizeof (char) * (l - 2));
-                name[l - 2] = '\0';
+                        dsc->t_beg + 1, sizeof (char) * (l - 1));
+                name[l - 1] = '\0';
         }
         
-        SEXP(out)->handler = SEXP_datatype_get (&g_datatypes, name);
+        dsc->s_exp->s_type = SEXP_datatype_get (&g_datatypes, name);
         
-        if (SEXP(out)->handler == NULL) {
+        if (dsc->s_exp->s_type == NULL) {
                 SEXP_datatype_t datatype;
                 
                 datatype.name     = (name != name_static ? name : strdup (name));
-                datatype.name_len = l - 2;
+                datatype.name_len = l - 1;        
+                datatype.op       = NULL;
+                datatype.op_cnt   = 0;
                 
-                datatype.op     = NULL;
-                datatype.op_cnt = 0;
-                
-                SEXP(out)->handler = SEXP_datatype_add (&g_datatypes, &datatype);
+                dsc->s_exp->s_type = SEXP_datatype_add (&g_datatypes, &datatype);
         } else {
                 if (name != name_static)
                         sm_free (name);
         }
         
-        return (l);
-exit_unfin:
-        SEXP_SETTYPE(SEXP(out), ATOM_UNFIN);
-        return (0);
+        return (SEXP_EXT_SUCCESS);
 }
 
 DEFEXTRACTOR_F(datatype)
 {
-        _A(SEXP(out)->handler == NULL);
+        char *name, name_static[128];
         
+        _A(dsc != NULL);
+        _A(dsc->s_exp->s_type == NULL);
         _D("Parsing fixed length datatype\n");
-
-        if (toklen <= len - 2) {
-                char *name, name_static[128];
-                
-                if (toklen + 1 < (sizeof name_static)) {
-                        memcpy (name_static,
-                                str + 1, sizeof (char) * toklen);
-                        name_static[toklen] = '\0';
-                        name = name_static;
-                } else {
-                        name = sm_alloc (sizeof (char) * (toklen + 1));
-                        memcpy (name,
-                                str + 1, sizeof (char) * toklen);
-                        name[toklen] = '\0';
-                }
-                
-                SEXP(out)->handler = SEXP_datatype_get (&g_datatypes, name);
         
-                if (SEXP(out)->handler == NULL) {
-                        SEXP_datatype_t datatype;
-                        
-                        datatype.name     = (name != name_static ? name : strdup (name));
-                        datatype.name_len = toklen;
-                        
-                        datatype.op     = NULL;
-                        datatype.op_cnt = 0;
-                        
-                        SEXP(out)->handler = SEXP_datatype_add (&g_datatypes, &datatype);
-                } else {
-                        if (name != name_static)
-                                sm_free (name);
-                }
+        if (dsc->t_len > dsc->b_len - 2)
+                return (SEXP_EXT_EUNFIN);
+        
+        if (dsc->t_len < sizeof name_static) {
+                memcpy (name_static,
+                        dsc->t_beg + 1, sizeof (char) * dsc->t_len);
+                name_static[dsc->t_len] = '\0';
+                name = name_static;
         } else {
-                SEXP_SETTYPE(SEXP(out), ATOM_UNFIN);
+                name = sm_alloc (sizeof (char) * (dsc->t_len + 1));
+                memcpy (name,
+                        dsc->t_beg + 1, sizeof (char) * dsc->t_len);
+                name[dsc->t_len] = '\0';
         }
 
-        return;
+        dsc->s_exp->s_type = SEXP_datatype_get (&g_datatypes, name);
+        
+        if (dsc->s_exp->s_type == NULL) {
+                SEXP_datatype_t datatype;
+                
+                datatype.name     = (name != name_static ? name : strdup (name));
+                datatype.name_len = dsc->t_len;
+                datatype.op       = NULL;
+                datatype.op_cnt   = 0;
+                
+                dsc->s_exp->s_type = SEXP_datatype_add (&g_datatypes, &datatype);
+        } else {
+                if (name != name_static)
+                        sm_free (name);
+        }
+        
+        dsc->t_len += 2;
+
+        return (SEXP_EXT_SUCCESS);
 }
 
 const char hex2bin[] = {
@@ -1242,13 +1341,14 @@ const char hex2bin[] = {
 
 DEFEXTRACTOR(hexstring)
 {
+        SEXP_val_t v_dsc;
         register uint32_t l = 1, i;
 
         _D("Extracting hex string\n");
         
-        while (str[l] != '#') {
-                if (l < len) {
-                        switch (str[l]) {
+        while (dsc->t_beg[l] != '#') {
+                if (l < dsc->b_len) {
+                        switch (dsc->t_beg[l]) {
                         case 'a':
                         case 'A':
                         case 'b':
@@ -1264,75 +1364,64 @@ DEFEXTRACTOR(hexstring)
                                 ++l;
                                 break;
                         default:
-                                if (isdigit (str[l]))
+                                if (isdigit (dsc->t_beg[l]))
                                         ++l;
-                                else {
-                                        /* Not a valid hex string character */
-                                        SEXP_SETTYPE(SEXP(out), ATOM_INVAL);
-                                        return (0);
-                                }
+                                else
+                                        return (SEXP_EXT_EINVAL);
                         }
-                } else {
-                        /* EOF not allowed here */
-                        SEXP_SETTYPE(SEXP(out), ATOM_UNFIN);
-                        return (0);
-                }
+                } else
+                        return (SEXP_EXT_EUNFIN);
         }
         
-        if (l > 1) {
-                SEXP_SETTYPE(SEXP(out), ATOM_STRING);
-                SEXP(out)->atom.string.len = ((l - 1) >> 1) + ((l - 1) & 1);
-                SEXP(out)->atom.string.str = sm_alloc (sizeof (char) * SEXP(out)->atom.string.len);
+        if (l < 2)
+                return (SEXP_EXT_EINVAL);
         
-                for (++str, i = 0; i < ((l - 1) >> 1); ++i) {
-                        SEXP(out)->atom.string.str[i] = (hex2bin[B(*str)] << 4) | hex2bin[B(*(str + 1))];
-                        ++str;
-                        ++str;
-                }
-                
-                if ((l - 1) & 1)
-                        SEXP(out)->atom.string.str[i] = hex2bin[B(*str)] << 4;
-                
-                _D("string = \"%.*s\"\n", SEXP(out)->atom.string.len, SEXP(out)->atom.string.str);
-                
-                return (l + 1);
-        } else {
-                /* Hexstring "##" is not allowed */
-                SEXP_SETTYPE(SEXP(out), ATOM_INVAL);
-                return (0);
+        if (SEXP_val_new (&v_dsc, sizeof (char) * (((l - 1) >> 1) + ((l - 1) & 1)),
+                          SEXP_VALTYPE_STRING) != 0)
+        {
+                /* TODO: handle this */
+                return (SEXP_EXT_EINVAL);
         }
+        
+        for (i = 0; i < ((l - 1) >> 1); ++i)
+                (((char *)v_dsc.mem)[i]) = (hex2bin[B(dsc->t_beg[2*i + 1])] << 4) | hex2bin[B(dsc->t_beg[2*i + 2])];
+        
+        if ((l - 1) & 1)
+                (((char *)v_dsc.mem)[i]) = hex2bin[B(2*i + 1)] << 4;
+
+        dsc->t_len = l + 1;
+        
+        return (SEXP_EXT_SUCCESS);
 }
 
 DEFEXTRACTOR_F(hexstring)
 {
+        SEXP_val_t v_dsc;
         register uint32_t i;
-
+        
         _D("Parsing fixed length hex string\n");
 
-        if (toklen <= len - 2) {
-                if (toklen > 0) {
-                        SEXP_SETTYPE(SEXP(out), ATOM_STRING);
-                        SEXP(out)->atom.string.len = (toklen >> 1) + (toklen & 1);
-                        SEXP(out)->atom.string.str = sm_alloc (sizeof (char) * SEXP(out)->atom.string.len);
-
-                        for (++str, i = 0; i < (toklen >> 1); ++i) {
-                                SEXP(out)->atom.string.str[i] = (hex2bin[B(*str)] << 4) | hex2bin[B(*(str + 1))];
-                                ++str;
-                                ++str;
-                        }
-
-                        if (toklen & 1)
-                                SEXP(out)->atom.string.str[i] = hex2bin[B(*str)] << 4;
-
-                        _D("slen=%u\n", SEXP(out)->atom.string.len);
-                } else {
-                        SEXP_SETTYPE(SEXP(out), ATOM_INVAL);
-                }
-        } else {
-                SEXP_SETTYPE(SEXP(out), ATOM_UNFIN);
+        if (dsc->t_len == 0)
+                return (SEXP_EXT_EINVAL);
+        if (dsc->t_len > dsc->b_len - 2)
+                return (SEXP_EXT_EUNFIN);
+        
+        if (SEXP_val_new (&v_dsc, sizeof (char) * ((dsc->t_len >> 2) + (dsc->t_len & 1)),
+                          SEXP_VALTYPE_STRING) != 0)
+        {
+                /* TODO: handle this */
+                return (SEXP_EXT_EINVAL);
         }
         
-        return;
+        for (i = 0; i < (dsc->t_len >> 1); ++i)
+                (((char *)v_dsc.mem)[i]) = (hex2bin[B(dsc->t_beg[2*i + 1])] << 4) | hex2bin[B(dsc->t_beg[2*i + 2])];
+        
+        if (dsc->t_len & 1)
+                (((char *)v_dsc.mem)[i]) = hex2bin[B(2*i + 1)] << 4;
+        
+        dsc->t_len += 2;
+        
+        return (SEXP_EXT_SUCCESS);
 }
 #undef B
 

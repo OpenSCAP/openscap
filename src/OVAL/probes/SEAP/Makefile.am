@@ -14,6 +14,8 @@ libseap_la_SOURCES= generic/bfind.c		\
 		    generic/xbase64.h		\
 		    generic/pqueue.c		\
 		    generic/pqueue.h		\
+		    generic/strbuf.c		\
+		    generic/strbuf.h		\
 		    sch_cons.c			\
 		    sch_cons.h			\
 		    sch_dummy.c			\
@@ -74,4 +76,3 @@ include_HEADERS= public/seap-command.h	\
 		 public/sexp-datatype.h
 
 includedir = $(prefix)/include/lib@PACKAGE@
-

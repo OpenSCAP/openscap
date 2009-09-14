@@ -13,6 +13,12 @@
 #include "_sexp-types.h"
 #include "_sexp-output.h"
 
+size_t SEXP_fprintfa (FILE *fp, SEXP_t *s_exp)
+{
+        return (-1);
+}
+
+#if 0
 static SEXP_ostate_t *__SEXP_ostate_new (void)
 {
         SEXP_ostate_t *ost;
@@ -182,6 +188,25 @@ int SEXP_asnprintf (char **ret, size_t maxsz, SEXP_format_t fmt, SEXP_t *sexp)
 }
 
 /* canonical */
+
+size_t SEXP_st_dprintc (int fd, SEXP_t *s_exp, SEXP_ostate_t **ost)
+{
+        SEXP_t *s_cur;
+        
+        /* create output state */
+        
+
+        for (;;) {
+                s_cur = SEXP_ostate_sexp (*ost);
+                
+                if (s_cur->s_type != NULL) {
+                        /* print datatype */
+                }
+                 
+                switch (SEXP_typeof (
+        }
+}
+
 
 ssize_t SEXP_st_dprintc (int fd, SEXP_t *sexp, SEXP_ostate_t **ost)
 {
@@ -595,3 +620,4 @@ int SEXP_asnprintft (char **ret, size_t n, SEXP_t *sexp)
 {
         return (-1);
 }
+#endif

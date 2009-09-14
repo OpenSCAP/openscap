@@ -18,4 +18,5 @@ void __seap_debuglog (const char *, const char *, size_t , const char *, ...);
 # define _LOGCALL_ _D("called\n");
 #endif /* NDEBUG */
 #endif /* _D */
+
 #endif /* SEAP_DEBUG_H */

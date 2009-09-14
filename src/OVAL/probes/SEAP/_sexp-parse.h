@@ -25,8 +25,12 @@ struct SEXP_pstate {
         size_t   buffer_data_len;
         size_t   buffer_fail_off;
 
-        LIST_stack_t  lstack;
         SEXP_pflags_t pflags;
+        
+        SEXP_t   *p_list;
+        size_t    l_size;
+        size_t    l_real;
+        SEXP_t  **l_sref; /* stack of soft refs to lists */
 };
 
 struct SEXP_psetup {
@@ -35,5 +39,17 @@ struct SEXP_psetup {
 };
 
 void SEXP_psetup_init (SEXP_psetup_t *psetup);
+
+struct SEXP_pext_dsc {
+        SEXP_t     *s_exp;
+        const char *t_beg;
+        size_t      t_len;
+        size_t      b_len;
+        uint8_t     flags;
+};
+
+#define SEXP_EXT_SUCCESS 0
+#define SEXP_EXT_EUNFIN  1
+#define SEXP_EXT_EINVAL  2
 
 #endif /* _SEXP_PARSE_H */

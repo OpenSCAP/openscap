@@ -324,3 +324,12 @@ uintptr_t SEXP_rawval_list_copy (uintptr_t lblkp, uint16_t n_skip)
         
         return (lb_head);
 }
+
+void SEXP_rawval_lblk_free (uintptr_t lblk, void (*f_func) (SEXP_t *))
+{
+        /* decref hdr */
+        /* if 0 f_func on items */
+        /* next block */
+
+        return;
+}

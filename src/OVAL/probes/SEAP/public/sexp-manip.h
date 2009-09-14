@@ -3,183 +3,87 @@
 #define SEXP_MANIP_H
 
 #include <stdint.h>
-#include <stddef.h>
-#include <stdarg.h>
-#include <seap-debug.h>
+#include <stdbool.h>
 #include <sexp-types.h>
 
 /*
- * Functions for manipulating with numbers
+ * number
  */
 
-SEXP_t *SEXP_number_new  (void *, NUM_type_t);
+SEXP_t *SEXP_number_new (SEXP_numtype_t t, const void *n);
+SEXP_t *SEXP_number_newb (bool n);
+SEXP_t *SEXP_number_newi_8  (int8_t n);
+SEXP_t *SEXP_number_newu_8  (uint8_t n);
+SEXP_t *SEXP_number_newi_16 (int16_t n);
+SEXP_t *SEXP_number_newu_16 (uint16_t n);
+#define SEXP_number_newi SEXP_number_newi_32
+SEXP_t *SEXP_number_newi_32 (int32_t n);
+#define SEXP_number_newu SEXP_number_newu_32
+SEXP_t *SEXP_number_newu_32 (uint32_t n);
+SEXP_t *SEXP_number_newi_64 (int64_t n);
+SEXP_t *SEXP_number_newu_64 (uint64_t n);
+SEXP_t *SEXP_number_newf (double n);
 
-SEXP_t *SEXP_number_newd   (int n);
-SEXP_t *SEXP_number_newhd  (short int n);
-SEXP_t *SEXP_number_newhhd (char n);
-SEXP_t *SEXP_number_newld  (long int n);
-SEXP_t *SEXP_number_newlld (long long int n);
-SEXP_t *SEXP_number_newu   (unsigned int n);
-SEXP_t *SEXP_number_newhu  (unsigned short int n);
-SEXP_t *SEXP_number_newhhu (unsigned char n);
-SEXP_t *SEXP_number_newlu  (unsigned long int n);
-SEXP_t *SEXP_number_newllu (unsigned long long int n);
+int SEXP_number_get (SEXP_t *s_exp, void *dst, SEXP_numtype_t type);
 
-SEXP_t *SEXP_number_newf  (double n);
-SEXP_t *SEXP_number_newlf (long double n);
+uint16_t SEXP_number_getu_16 (const SEXP_t *s_exp);
 
-int     SEXP_number_get  (const SEXP_t *sexp, void *ptr, NUM_type_t type);
-NUM_type_t SEXP_number_type(const SEXP_t *sexp);
-
-int           SEXP_number_getd   (const SEXP_t *sexp);
-short int     SEXP_number_gethd  (const SEXP_t *sexp);
-char          SEXP_number_gethhd (const SEXP_t *sexp);
-long int      SEXP_number_getld  (const SEXP_t *sexp);
-long long int SEXP_number_getlld (const SEXP_t *sexp);
-unsigned int       SEXP_number_getu   (const SEXP_t *sexp);
-unsigned short int SEXP_number_gethu  (const SEXP_t *sexp);
-unsigned char      SEXP_number_gethhu (const SEXP_t *sexp);
-unsigned long int  SEXP_number_getlu  (const SEXP_t *sexp);
-unsigned long long SEXP_number_getllu (const SEXP_t *sexp);
-
-double      SEXP_number_getf (const SEXP_t *sexp);
-long double SEXP_number_getlf (const SEXP_t *sexp);
-
-int     SEXP_numberp     (const SEXP_t *sexp);
-size_t  SEXP_number_size (const SEXP_t *sexp);
-int     SEXP_number_cmp  (const SEXP_t *a, const SEXP_t *b);
+void    SEXP_number_free (SEXP_t *s_exp);
+bool    SEXP_numberp (const SEXP_t *s_exp);
+SEXP_numtype_t SEXP_number_type (const SEXP_t *sexp);
 
 /*
- * Functions for manipulating with strings
+ * string
  */
 
-SEXP_t *SEXP_string_new (const void *, size_t);
-SEXP_t *SEXP_string_newf (const char *fmt, ...);
-int     SEXP_string_cmp (const SEXP_t *a, const SEXP_t *b);
-int     SEXP_strcmp (const SEXP_t *sexp, const char *str);
-int     SEXP_strncmp (const SEXP_t *sexp, const char *str, size_t n);
-int     SEXP_strncoll (const SEXP_t *sexp, const char *str, size_t n);
-int     SEXP_stringp (const SEXP_t *sexp);
-char   *SEXP_string_cstr (const SEXP_t *sexp);
-char   *SEXP_string_cstr_r (const SEXP_t *sexp, char *buf, size_t len);
+SEXP_t *SEXP_string_new  (const void *string, size_t strlen);
+SEXP_t *SEXP_string_newf (const char *format, ...);
+void SEXP_string_free (SEXP_t *s_exp);
+bool SEXP_stringp (const SEXP_t *s_exp);
+size_t SEXP_string_length (const SEXP_t *s_exp);
 
-const char *SEXP_string_cstrp (const SEXP_t *sexp);
-SEXP_t *SEXP_string_substr (const SEXP_t *sexp, size_t off, size_t len);
-char   *SEXP_string_subcstr (const SEXP_t *sexp, size_t off, size_t len);
-size_t  SEXP_string_length (const SEXP_t *sexp);
+int SEXP_strcmp (SEXP_t *s_exp, const char *str);
+int SEXP_strncmp (SEXP_t *s_exp, const char *str, size_t n);
+char *SEXP_string_cstr (SEXP_t *s_exp);
+char *SEXP_string_cstr_r (SEXP_t *s_exp, char *buf, size_t len);
+char *SEXP_string_cstrp (const SEXP_t *s_exp);
 
-#if 0
-typedef struct {
-} SEXP_mp_t;
-
-SEXP_mp_t *SEXP_strmpm_init (const char *str, ...);
-SEXP_mp_t *SEXP_strmpm_inita (const char *str[], size_t n);
-size_t    *SEXP_strmpm (SEXP_mp_t *mp, const SEXP_t *sexp);
-void       SEXP_strmpm_free (SEXP_mp_t *mp);
-
-SEXP_mp_t *SEXP_string_mpminit (SEXP_t *sexp, ...);
-SEXP_mp_t *SEXP_string_mpminita (SEXP_t *sexp[], size_t n);
-SEXP_mp_t *SEXP_string_mpminitl (SEXP_t *list);
-size_t     SEXP_string_mpm (SEXP_mp_t *mp, const SEXP_t *sexp);
-void       SEXP_string_mpmfree (SEXP_mp_t *mp);
-#endif
+char *SEXP_string_subcstr (SEXP_t *s_exp, size_t beg, size_t len);
 
 /*
- * Functions for manipulating with lists
+ * list
  */
 
-SEXP_t *SEXP_list_new (void);
-SEXP_t *SEXP_list_init (SEXP_t *);
-SEXP_t *SEXP_list_free (SEXP_t *);
-SEXP_t *SEXP_list_free_nr (SEXP_t *);
-SEXP_t *SEXP_list_add (SEXP_t *, SEXP_t *);
-SEXP_t *SEXP_list_first (const SEXP_t *);
-SEXP_t *SEXP_list_last (const SEXP_t *);
-int     SEXP_listp (const SEXP_t *);
-SEXP_t *SEXP_list_pop (SEXP_t **);
-SEXP_t *SEXP_list_nth (const SEXP_t *, uint32_t);
-SEXP_t *SEXP_list_nth_dup (const SEXP_t *sexp, uint32_t n);
-SEXP_t *SEXP_list_nth_deepdup (const SEXP_t *sexp, uint32_t n);
-SEXP_t *SEXP_list_join (SEXP_t *, SEXP_t *);
-size_t  SEXP_list_length (const SEXP_t *sexp);
-SEXP_t *SEXP_list_map (SEXP_t *list, int (*fn) (SEXP_t *, SEXP_t *));
-SEXP_t *SEXP_list_map2 (SEXP_t *list, int (*fn) (SEXP_t *, SEXP_t *, void *), void *ptr);
-SEXP_t *SEXP_list_sort (SEXP_t *list, int (*cmp) (const SEXP_t *, const SEXP_t *));
-int     SEXP_list_cmp (const SEXP_t *a, const SEXP_t *b);
-
-#define SEXP_REDUCE_LNEIGHBOR 1
-#define SEXP_REDUCE_RNEIGHBOR 2
-#define SEXP_REDUCE_RANDOM    3
-#define SEXP_REDUCE_PARALLEL  4
-
-SEXP_t *SEXP_list_reduce (SEXP_t *list, SEXP_t *(*fn) (const SEXP_t *, const SEXP_t *), int strategy);
-SEXP_t *SEXP_list_reduce2 (SEXP_t *list, SEXP_t *(*fn) (const SEXP_t *, const SEXP_t *, void *), int strategy, void *ptr);
-
-#if __STDC_VERSION__ >= 199901L
-
-# include <sys/cdefs.h>
-# define __XCONCAT(a, b) __CONCAT(a,b)
-
-# define SEXP_list_foreach(var, list)                                   \
-        for (register uint32_t __XCONCAT(___i_, __LINE__) = 1;          \
-             ((var) = SEXP_list_nth ((list), __XCONCAT(___i_, __LINE__))) != NULL; \
-             ++__XCONCAT(___i_, __LINE__))
-
-# define SEXP_sublist_foreach(var, list, beg, end)                      \
-        for (register uint32_t __XCONCAT(___i_, __LINE__) = (beg);      \
-             __XCONCAT(___i_, __LINE__) <= (uint32_t)(end) && ((var) = SEXP_list_nth ((list), __XCONCAT(___i_, __LINE__))) != NULL; \
-             ++__XCONCAT(___i_, __LINE__))
-#endif
-
-void SEXP_list_cb (SEXP_t *list, void (*fn) (SEXP_t *, void *), void *ptr);
+SEXP_t *SEXP_list_new (SEXP_t *memb, ...);
+void SEXP_list_free (SEXP_t *s_exp);
+bool SEXP_listp (const SEXP_t *s_exp);
+size_t  SEXP_list_length (const SEXP_t *s_exp);
+SEXP_t *SEXP_list_first (const SEXP_t *list);
+SEXP_t *SEXP_list_rest  (const SEXP_t *list);
+SEXP_t *SEXP_list_last (const SEXP_t *list);
+SEXP_t *SEXP_list_nth (const SEXP_t *list, uint32_t n);
+SEXP_t *SEXP_list_add (SEXP_t *list, SEXP_t *s_exp);
+SEXP_t *SEXP_list_join (const SEXP_t *list_a, const SEXP_t *list_b);
+SEXP_t *SEXP_list_push (SEXP_t *list, SEXP_t *s_exp);
+SEXP_t *SEXP_list_pop (SEXP_t *list);
 
 /*
- * Functions for manipulating with S-exp objects
+ * generic 
  */
 
-SEXP_t *SEXP_new  (void);
-void    SEXP_free (SEXP_t *sexp);
+SEXP_t *SEXP_new (void);
+SEXP_t *SEXP_ref (const SEXP_t *s_exp);
+SEXP_t *SEXP_softref (const SEXP_t *s_exp);
+void    SEXP_free (SEXP_t *s_exp);
 
-SEXP_t *SEXP_dup (const SEXP_t *sexp); /* shallow copy */
-SEXP_t *SEXP_deepdup (const SEXP_t *sexp);
-SEXP_t *SEXP_copy (SEXP_t *dst, const SEXP_t *src); /* shallow copy */
-SEXP_t *SEXP_deepcopy (SEXP_t *dst, const SEXP_t *src);
+const char *SEXP_datatype (const SEXP_t *s_exp);
+int         SEXP_datatype_set (SEXP_t *s_exp, const char *name);
+SEXP_type_t SEXP_typeof (const SEXP_t *s_exp);
+const char *SEXP_strtype (const SEXP_t *s_exp);
 
-size_t  SEXP_length (const SEXP_t *sexp);
-
-int     SEXP_cmp (const SEXP_t *a, const SEXP_t *b);
-int     SEXP_cmpobj (const SEXP_t *a, const SEXP_t *b);
-
-const char *SEXP_datatype (const SEXP_t *a);
-int         SEXP_datatype_set (SEXP_t *a, const char *name);
-
-SEXP_type_t SEXP_typeof (const SEXP_t *s);
-
-/*
- *  Returns atomic type of the given S-exp as a string.
- */
-const char *SEXP_strtype (const SEXP_t *sexp);
-
-#if !defined(NDEBUG) || defined(VALIDADE_SEXP)
-
-# if !defined(__VALIDATE_TRESH_LIST_SIZE)
-#  define __VALIDATE_TRESH_LIST_SIZE  65535
-# endif
-
-# if !defined(__VALIDATE_TRESH_LIST_COUNT)
-#  define __VALIDATE_TRESH_LIST_COUNT 65535
-# endif
-
-# if !defined(__VALIDATE_TRESH_STRING_LEN)
-#  define __VALIDATE_TRESH_STRING_LEN 65535
-# endif
-
-# define SEXP_VALIDATE(ptr) __SEXP_VALIDATE(ptr, __PRETTY_FUNCTION__, __LINE__)
-
-inline void __SEXP_VALIDATE(const SEXP_t *ptr, const char *fn, size_t line);
-
-#else
-#  define SEXP_VALIDATE(ptr) while(0)
-#endif /* !defined(NDEBUG) || defined(VALIDATE_SEXP) */
+static void SEXP_VALIDATE(const SEXP_t *s_exp)
+{
+        return;
+}
 
 #endif /* SEXP_MANIP_H */

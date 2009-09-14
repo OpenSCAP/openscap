@@ -5,44 +5,37 @@
 #include <stdint.h>
 #include <seap-debug.h>
 
-typedef uint8_t NUM_type_t;
+typedef uint8_t SEXP_numtype_t;
 
-#define NUM_NONE   0x00
+/* Number types */
+#define SEXP_NUM_NONE    0x00
+#define SEXP_NUM_BOOL    0x01
+#define SEXP_NUM_INT8    0x07
+#define SEXP_NUM_UINT8   0x08
+#define SEXP_NUM_INT16   0x0f
+#define SEXP_NUM_UINT16  0x10
+#define SEXP_NUM_INT32   0x1f
+#define SEXP_NUM_UINT32  0x20
+#define SEXP_NUM_INT64   0x3f
+#define SEXP_NUM_UINT64  0x40
+#define SEXP_NUM_DOUBLE  0x41
 
-#define NUM_INT8   0x01
-#define NUM_CHAR   NUM_INT8
+/* Aliases */
 
-#define NUM_UINT8  0x02
-#define NUM_UCHAR  NUM_UINT8
-
-#define NUM_INT16    0x03
-#define NUM_SHORTINT NUM_INT16
-
-#define NUM_UINT16    0x04
-#define NUM_USHORTINT NUM_UINT16
-#define NUM_SHORTUINT NUM_UINT16
-
-#define NUM_INT32   0x05
-#define NUM_INT     NUM_INT32
-#define NUM_LONGINT NUM_INT32
-
-#define NUM_UINT32      0x06
-#define NUM_UINT        NUM_UINT32
-#define NUM_ULONGINT    NUM_UINT32
-#define NUM_UNSIGNEDINT NUM_UINT32
-
-#define NUM_INT64       0x07
-#define NUM_LLINT       NUM_INT64
-#define NUM_LONGLONGINT NUM_INT64
-
-#define NUM_UINT64       0x08
-#define NUM_ULONGLONGINT NUM_UINT64
-#define NUM_LONGLONGUINT NUM_UINT64
-
-#define NUM_DOUBLE 0x09
-
-#define NUM_BOOL 0x0a
-#define NUM_BOOLEAN NUM_BOOL
+#define SEXP_NUM_BOOLEAN       SEXP_NUM_BOOL
+#define SEXP_NUM_CHAR          SEXP_NUM_INT8
+#define SEXP_NUM_UCHAR         SEXP_NUM_UINT8
+#define SEXP_NUM_SHORTINT      SEXP_NUM_INT16
+#define SEXP_NUM_USHORTINT     SEXP_NUM_UINT16
+#define SEXP_NUM_SHORTUINT     SEXP_NUM_UINT16
+#define SEXP_NUM_INT           SEXP_NUM_INT32
+#define SEXP_NUM_LONGINT       SEXP_NUM_INT32
+#define SEXP_NUM_UINT          SEXP_NUM_UINT32
+#define SEXP_NUM_ULONGINT      SEXP_NUM_UINT32
+#define SEXP_NUM_LONGUINT      SEXP_NUM_UINT32
+#define SEXP_NUM_LONLONGINT    SEXP_NUM_INT64
+#define SEXP_NUM_ULONGLONGINT  SEXP_NUM_UINT64
+#define SEXP_NUM_LONGLONGUINT  SEXP_NUM_UINT64
 
 #if 0
 # define NUM_FRACT  0x0a /* Not implemented */
@@ -65,12 +58,10 @@ typedef uint8_t SEXP_format_t;
 # define _A(x) assert(x)
 #endif
 
-#define SEXP_TYPE_UNFIN  0x00
-#define SEXP_TYPE_LIST   0x01
-#define SEXP_TYPE_STRING 0x04
-#define SEXP_TYPE_NUMBER 0x02
-#define SEXP_TYPE_INVAL  0x0e
-#define SEXP_TYPE_EMPTY  0x0f
+#define SEXP_TYPE_EMPTY  0
+#define SEXP_TYPE_STRING 1
+#define SEXP_TYPE_NUMBER 2
+#define SEXP_TYPE_LIST   3
 
 typedef uint8_t SEXP_type_t;
 

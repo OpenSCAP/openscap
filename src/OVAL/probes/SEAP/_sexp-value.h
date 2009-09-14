@@ -78,6 +78,7 @@ uintptr_t SEXP_rawval_lblk_add  (uintptr_t lblkp, SEXP_t *s_exp);
 uintptr_t SEXP_rawval_lblk_add1 (uintptr_t lblkp, SEXP_t *s_exp);
 uintptr_t SEXP_rawval_lblk_last (uintptr_t lblkp);
 SEXP_t   *SEXP_rawval_lblk_nth  (uintptr_t lblkp, uint32_t n);
+void      SEXP_rawval_lblk_free (uintptr_t lblkp, void f_func (SEXP_t *));
 uintptr_t SEXP_rawval_list_copy (uintptr_t lblkp, uint16_t n_skip);
 
 #define SEXP_LBLK_ALIGN 16

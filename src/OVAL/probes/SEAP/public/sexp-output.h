@@ -9,6 +9,9 @@
 
 typedef struct SEXP_ostate SEXP_ostate_t;
 
+size_t SEXP_fprintfa (FILE *fp, SEXP_t *s_exp);
+
+#if 0
 /* Generic */
 int SEXP_printf (SEXP_format_t fmt, SEXP_t *sexp);
 int SEXP_fprintf (FILE *fp, SEXP_format_t fmt, SEXP_t *sexp);
@@ -80,5 +83,6 @@ int SEXP_sprintft (char *str, SEXP_t *sexp);
 int SEXP_snprintft (char *str, size_t size, SEXP_t *sexp);
 int SEXP_asprintft (char **ret, SEXP_t *sexp);
 int SEXP_asnprintft (char **ret, size_t maxsz, SEXP_t *sexp);
+#endif /* 0 */
 
 #endif /* SEXP_OUTPUT_H */
