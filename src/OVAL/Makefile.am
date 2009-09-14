@@ -54,7 +54,7 @@ includedir = $(prefix)/include/lib@PACKAGE@
 
 if WANT_PROBES
 liboval_la_CFLAGS  += -I$(top_srcdir)/src -I$(top_srcdir)/src/OVAL/probes/ -I$(top_srcdir)/src/OVAL/probes/SEAP/public
-liboval_la_SOURCES += probes/probe.c \
+liboval_la_SOURCES += probes/probe-api.c \
 		      probes/fsdev.c \
 		      probes/findfile.c \
 		      oval_probe.c \
@@ -63,7 +63,7 @@ include_HEADERS += \
 	probes/findfile.h \
 	probes/fsdev.h \
 	probes/probe-entcmp.h \
-	probes/probe.h
+	probes/probe-api.h
 
 liboval_la_LIBADD  = probes/SEAP/libseap.la
 SUBDIRS = probes/SEAP
