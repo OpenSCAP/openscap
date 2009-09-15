@@ -6,6 +6,10 @@ AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_AUX_DIR([config])
 
 AM_INIT_AUTOMAKE([foreign])
+
+# If automake supports "silent rules", enable them by default
+m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
+
 AC_DISABLE_STATIC
 AM_PROG_LIBTOOL
 AM_PATH_PYTHON
