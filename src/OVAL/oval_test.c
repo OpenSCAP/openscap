@@ -36,7 +36,6 @@
 
 typedef struct oval_test {
 	oval_subtype_enum subtype;
-	char *name;
 	struct oval_collection *notes;
 	char *comment;
 	char *id;
@@ -69,11 +68,6 @@ oval_family_enum oval_test_family(struct oval_test *test)
 oval_subtype_enum oval_test_subtype(struct oval_test * test)
 {
 	return test->subtype;
-}
-
-char *oval_test_name(struct oval_test *test)
-{
-	return test->name;
 }
 
 struct oval_iterator_string *oval_test_notes(struct oval_test *test)
@@ -138,7 +132,6 @@ struct oval_test *oval_test_new(char *id)
 	test->subtype = OVAL_SUBTYPE_UNKNOWN;
 	test->comment = NULL;
 	test->id = strdup(id);
-	test->name = NULL;
 	test->object = NULL;
 	test->state = NULL;
 	test->notes = oval_collection_new();
@@ -151,13 +144,10 @@ void oval_test_free(struct oval_test *test)
 		free(test->comment);
 	if (test->id != NULL)
 		free(test->id);
-	if (test->name != NULL)
-		free(test->name);
 	oval_collection_free_items(test->notes, &free);
 
 	test->comment = NULL;
 	test->id = NULL;
-	test->name = NULL;
 	test->notes = NULL;
 	test->object = NULL;
 	test->state = NULL;

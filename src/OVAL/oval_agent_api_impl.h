@@ -50,6 +50,13 @@ void set_oval_sysinfo(struct oval_object_model *, struct oval_sysinfo *);
 
 struct oval_definition *get_oval_definition_new
 	(struct oval_object_model *, char *);
+
+typedef bool oval_definitions_resolver(struct oval_definition *, void *);
+
+xmlNode *oval_definitions_to_dom
+	(struct oval_object_model *object_model, xmlDocPtr doc, xmlNode *parent,
+	 oval_definitions_resolver resolver, void *user_arg);
+
 struct oval_test *get_oval_test_new(struct oval_object_model *, char *);
 struct oval_object *get_oval_object_new(struct oval_object_model *, char *);
 struct oval_state *get_oval_state_new(struct oval_object_model *, char *);
@@ -64,10 +71,5 @@ xmlNode *oval_characteristics_to_dom
 struct oval_sysdata *get_oval_sysdata_new(struct oval_syschar_model *, char *);
 
 void add_oval_results_model_system(struct oval_results_model *, struct oval_result_system *);
-struct oval_result_definition *get_oval_result_definition    (struct oval_result_system *, char *);
-struct oval_result_definition *get_oval_result_definition_new(struct oval_result_system *, char *);
-struct oval_result_test *get_oval_result_test    (struct oval_result_system *, char *);
-struct oval_result_test *get_oval_result_test_new(struct oval_result_system *, char *);
-
 
 #endif				/* OVAL_AGENT_API_IMPL_H_ */

@@ -247,7 +247,7 @@ void _oval_definition_title_consumer(char *string, void *user)
 	else {
 		int newsize = strlen(title) + strlen(string) + 1;
 		char *newtitle = (char *)malloc(newsize * sizeof(char));
-		strcat(newtitle, title);
+		strcpy(newtitle, title);
 		strcat(newtitle, string);
 		free(title);
 		title = newtitle;
@@ -264,7 +264,8 @@ void _oval_definition_description_consumer(char *string, void *user)
 	else {
 		int newsize = strlen(description) + strlen(string) + 1;
 		char *newdescription = (char *)malloc(newsize * sizeof(char));
-		strcat(newdescription, description);
+		*newdescription = '\0';
+		strcpy(newdescription, description);
 		strcat(newdescription, string);
 		free(description);
 		description = newdescription;

@@ -538,6 +538,6 @@ oval_result_enum oval_result_parse(xmlTextReaderPtr reader, char *attname,
 
 const char* oval_result_text(oval_result_enum result)
 {
-	return OVAL_RESULT_MAP[result-1].string;
+	return (result)?OVAL_RESULT_MAP[result-1].string:"**INVALID**";
 }
 const char *oval_datetime_format_text(oval_datetime_format_enum);

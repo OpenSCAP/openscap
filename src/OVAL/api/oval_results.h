@@ -47,16 +47,6 @@ typedef enum {
 } oval_result_enum;
 
 typedef enum {
-	OVAL_DIRECTIVE_INVALID                = 0,
-	OVAL_DIRECTIVE_TRUE                   = 1,
-	OVAL_DIRECTIVE_FALSE                  = 2,
-	OVAL_DIRECTIVE_UNKNOWN        = 3,
-	OVAL_DIRECTIVE_ERROR          = 4,
-	OVAL_DIRECTIVE_NOT_EVALUATED  = 5,
-	OVAL_DIRECTIVE_NOT_APPLICABLE = 6
-} oval_result_directive_enum;
-
-typedef enum {
 	OVAL_DIRECTIVE_CONTENT_UNKNOWN = 0,
 	OVAL_DIRECTIVE_CONTENT_THIN    = 1,
 	OVAL_DIRECTIVE_CONTENT_FULL    = 2
@@ -80,9 +70,6 @@ struct oval_result_directives;
 struct oval_result_system;
 struct oval_iterator_result_system;
 
-struct oval_result;
-struct oval_iterator_result;
-
 int oval_iterator_result_system_has_more
 	(struct oval_iterator_result_system *);
 struct oval_result_system *oval_iterator_result_system_next
@@ -92,7 +79,7 @@ struct oval_iterator_result_definition *oval_result_system_definitions
 	(struct oval_result_system *);
 struct oval_iterator_result_test *oval_result_system_tests
 	(struct oval_result_system *);
-struct oval_results_model *oval_result_system_results_model
+struct oval_syschar_model *oval_result_system_syschar_model
 	(struct oval_result_system *);
 struct oval_sysinfo *oval_result_system_sysinfo
 	(struct oval_result_system *);
@@ -144,66 +131,6 @@ int oval_iterator_result_test_has_more
 struct oval_result_test *oval_iterator_result_test_next
 	(struct oval_iterator_result_test *);
 
-
-
-int oval_iterator_result_system_has_more
-	(struct oval_iterator_result_system *);
-struct oval_result_system *oval_iterator_result_system_next
-	(struct oval_iterator_result_system *);
-
-struct oval_iterator_result_definition *oval_result_system_definitions
-	(struct oval_result_system *);
-struct oval_iterator_result_test *oval_result_system_tests
-	(struct oval_result_system *);
-struct oval_results_model *oval_result_system_results_model
-	(struct oval_result_system *);
-struct oval_sysinfo *oval_result_system_sysinfo
-	(struct oval_result_system *);
-
-void add_oval_result_system_definition
-	(struct oval_result_system *, struct oval_result_definition *);
-void add_oval_result_system_test
-	(struct oval_result_system *, struct oval_result_test *);
-
-int oval_iterator_result_definition_has_more
-	(struct oval_iterator_result_definition *);
-struct oval_result_definition *oval_iterator_result_definition_next
-	(struct oval_iterator_result_definition *);
-
-struct oval_definition *oval_result_definition_definition
-	(struct oval_result_definition *);
-struct oval_result_system *oval_result_definition_system
-	(struct oval_result_definition *);
-
-oval_result_enum oval_result_definition_result
-	(struct oval_result_definition *);
-
-struct oval_iterator_message *oval_result_definition_messages
-	(struct oval_result_definition *);
-
-struct oval_result_criteria_node *oval_result_definition_criteria
-	(struct oval_result_definition *);
-
-void set_oval_result_definition_result
-	(struct oval_result_definition *,
-			oval_result_enum);
-
-void set_oval_result_definition_criteria
-	(struct oval_result_definition *,
-		struct oval_result_criteria_node *);
-
-void add_oval_result_definition_message
-	(struct oval_result_definition *,
-		struct oval_message *);
-
-
-int oval_iterator_result_test_has_more
-	(struct oval_iterator_result_test *);
-struct oval_result_test *oval_iterator_result_test_next
-	(struct oval_iterator_result_test *);
-
-
-
 int oval_iterator_result_item_has_more(struct oval_iterator_result_item *);
 struct oval_result_item *oval_iterator_result_item_next(struct
 							oval_iterator_result_item
@@ -219,6 +146,7 @@ struct oval_result_test *oval_iterator_result_test_next(struct
 							*);
 
 struct oval_test *oval_result_test_test(struct oval_result_test *);
+struct oval_result_system *oval_result_test_system(struct oval_result_test *);
 oval_result_enum oval_result_test_result(struct oval_result_test *);
 int oval_result_test_instance(struct oval_result_test *);
 struct oval_message *oval_result_test_message(struct oval_result_test *);
@@ -247,22 +175,14 @@ struct oval_result_test *oval_result_criteria_node_test(struct oval_result_crite
 struct oval_result_definition *oval_result_criteria_node_extends(struct oval_result_criteria_node *);	//type==NODETYPE_EXTENDDEF
 
 bool oval_result_directive_reported
-	(struct oval_result_directives *, oval_result_directive_enum);
+	(struct oval_result_directives *, oval_result_enum);
 oval_result_directive_content_enum oval_result_directive_content
-	(struct oval_result_directives *, oval_result_directive_enum);
+	(struct oval_result_directives *, oval_result_enum);
 
 void set_oval_result_directive_reported
-	(struct oval_result_directives *, oval_result_directive_enum, bool);
+	(struct oval_result_directives *, oval_result_enum, bool);
 void set_oval_result_directive_content
-	(struct oval_result_directives *, oval_result_directive_enum, oval_result_directive_content_enum);
+	(struct oval_result_directives *, oval_result_enum, oval_result_directive_content_enum);
 
-int oval_iterator_result_has_more(struct oval_iterator_result *);
-struct oval_result *oval_iterator_result_next(struct oval_iterator_result *);
-
-struct oval_definition *oval_result_definition(struct oval_result *);
-oval_result_enum oval_result_result(struct oval_result *);
-char *oval_result_message(struct oval_result *);
-struct oval_result_directives *oval_result_directives(struct oval_result *);
-struct oval_result_criteria_node *oval_result_criteria(struct oval_result *);
 
 #endif				/* OVAL_RESULTS_H_ */

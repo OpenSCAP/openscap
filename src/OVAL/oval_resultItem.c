@@ -42,11 +42,11 @@ typedef struct oval_result_item {
 } oval_result_item_t;
 
 struct oval_result_item *oval_result_item_new
-	(struct oval_results_model *results_model, char *item_id)
+	(struct oval_result_system *system, char *item_id)
 {
 	oval_result_item_t *item = (oval_result_item_t *)
 		malloc(sizeof(oval_result_item_t));
-	struct oval_syschar_model *syschar_model = oval_results_model_syschar_model(results_model);
+	struct oval_syschar_model *syschar_model = oval_result_system_syschar_model(system);
 	struct oval_sysdata *sysdata = get_oval_sysdata_new(syschar_model, item_id);
 
 	item->sysdata = sysdata;
@@ -127,13 +127,13 @@ int _oval_result_item_message_parse
 
 int oval_result_item_parse_tag
 	(xmlTextReaderPtr reader, struct oval_parser_context *context,
+		struct oval_result_system *system,
 		oscap_consumer_func consumer, void *user)
 {
 	int return_code = 0;
 
 	xmlChar *item_id = xmlTextReaderGetAttribute(reader, "item_id");
-	struct oval_result_item *item = oval_result_item_new
-		(context->results_model, item_id);
+	struct oval_result_item *item = oval_result_item_new(system, item_id);
 
 	oval_result_enum result = oval_result_parse(reader, "result", 0);
 	set_oval_result_item_result(item, result);

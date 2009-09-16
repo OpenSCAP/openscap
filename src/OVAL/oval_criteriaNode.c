@@ -132,7 +132,7 @@ struct oval_criteria_node *oval_criteria_node_new(oval_criteria_node_type_enum
 	case NODETYPE_CRITERIA:{
 			node =
 			    (struct oval_criteria_node *)
-			    malloc(sizeof(oval_criteria_node_CRITERIA_t));
+			    calloc(1, sizeof(oval_criteria_node_CRITERIA_t));
 			((struct oval_criteria_node_CRITERIA *)node)->
 			    operator = OPERATOR_UNKNOWN;
 			((struct oval_criteria_node_CRITERIA *)node)->subnodes =
@@ -141,14 +141,14 @@ struct oval_criteria_node *oval_criteria_node_new(oval_criteria_node_type_enum
 	case NODETYPE_CRITERION:{
 			node =
 			    (struct oval_criteria_node *)
-			    malloc(sizeof(oval_criteria_node_CRITERION_t));
+			    calloc(1, sizeof(oval_criteria_node_CRITERION_t));
 			((struct oval_criteria_node_CRITERION *)node)->test =
 			    NULL;
 		} break;
 	case NODETYPE_EXTENDDEF:{
 			node =
 			    (struct oval_criteria_node *)
-			    malloc(sizeof(oval_criteria_node_EXTENDDEF_t));
+			    calloc(1, sizeof(oval_criteria_node_EXTENDDEF_t));
 			((struct oval_criteria_node_EXTENDDEF *)node)->
 			    definition = NULL;
 		}break;

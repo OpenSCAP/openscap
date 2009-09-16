@@ -31,7 +31,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
-#include <common/util.h>
+#include "../common/util.h"
 #include "oval_results_impl.h"
 #include "oval_collection_impl.h"
 
@@ -41,17 +41,17 @@ struct _oval_result_directive{
 	oval_result_directive_content_enum content;
 };
 
-#define NUMBER_OF_DIRECTIVES 7
+#define NUMBER_OF_RESULTS 7
 
 typedef struct oval_result_directives {
-	struct _oval_result_directive directive[NUMBER_OF_DIRECTIVES];
+	struct _oval_result_directive directive[NUMBER_OF_RESULTS];
 } oval_result_directives_t;
 
 struct oval_result_directives *oval_result_directives_new()
 {
 	oval_result_directives_t *directives = (oval_result_directives_t *)
 		malloc(sizeof(oval_result_directives_t));
-	int i;for(i=0;i<NUMBER_OF_DIRECTIVES;i++){
+	int i;for(i=0;i<NUMBER_OF_RESULTS;i++){
 		directives->directive[i].reported = false;
 		directives->directive[i].content  = OVAL_DIRECTIVE_CONTENT_UNKNOWN;
 	}
@@ -63,22 +63,22 @@ void oval_result_directives_free(struct oval_result_directives *directives)
 }
 
 bool oval_result_directive_reported
-	(struct oval_result_directives *directives, oval_result_directive_enum type)
+	(struct oval_result_directives *directives, oval_result_enum type)
 {
 	return directives->directive[type].reported;
 }
 oval_result_directive_content_enum oval_result_directive_content
-	(struct oval_result_directives *directives, oval_result_directive_enum type)
+	(struct oval_result_directives *directives, oval_result_enum type)
 {
 	return directives->directive[type].content;
 }
 void set_oval_result_directive_reported
-	(struct oval_result_directives *directives, oval_result_directive_enum type, bool reported)
+	(struct oval_result_directives *directives, oval_result_enum type, bool reported)
 {
 	directives->directive[type].reported = reported;
 }
 void set_oval_result_directive_content
-	(struct oval_result_directives *directives, oval_result_directive_enum type, oval_result_directive_content_enum content)
+	(struct oval_result_directives *directives, oval_result_enum type, oval_result_directive_content_enum content)
 {
 	directives->directive[type].content = content;
 }
@@ -88,8 +88,8 @@ int _oval_result_directives_parse_tag
 	(xmlTextReaderPtr reader, struct oval_parser_context *context, void *client)
 {
 	struct oval_result_directives *directives = (struct oval_result_directives *)client;
-	oval_result_directive_content_enum type = OVAL_DIRECTIVE_UNKNOWN;
-	char *tag_names[NUMBER_OF_DIRECTIVES] =
+	oval_result_directive_content_enum type = OVAL_DIRECTIVE_CONTENT_UNKNOWN;
+	char *tag_names[NUMBER_OF_RESULTS] =
 	{
 		NULL
 		,"definition_true"
@@ -101,7 +101,7 @@ int _oval_result_directives_parse_tag
 	};
 	int i, retcode = 1;
 	xmlChar *name = xmlTextReaderLocalName(reader);
-	for(i=1;i<NUMBER_OF_DIRECTIVES && type==OVAL_DIRECTIVE_UNKNOWN;i++){
+	for(i=1;i<NUMBER_OF_RESULTS && type==OVAL_DIRECTIVE_CONTENT_UNKNOWN;i++){
 		if(strcmp(tag_names[i],name)==0){
 			type = i;
 		}
@@ -153,13 +153,13 @@ int oval_result_directives_parse_tag
 }
 
 const struct oscap_string_map _OVAL_DIRECTIVE_MAP[] = {
-		{ OVAL_DIRECTIVE_TRUE          , "definition_true"          },
-		{ OVAL_DIRECTIVE_FALSE         , "definition_false"         },
-		{ OVAL_DIRECTIVE_UNKNOWN       , "definition_unknown"       },
-		{ OVAL_DIRECTIVE_ERROR         , "definition_error"         },
-		{ OVAL_DIRECTIVE_NOT_EVALUATED , "definition_not_evalutated"},
-		{ OVAL_DIRECTIVE_NOT_APPLICABLE, "definition_not_applicable"},
-		{ OVAL_DIRECTIVE_INVALID       , NULL }
+		{ OVAL_RESULT_TRUE          , "definition_true"          },
+		{ OVAL_RESULT_FALSE         , "definition_false"         },
+		{ OVAL_RESULT_UNKNOWN       , "definition_unknown"       },
+		{ OVAL_RESULT_ERROR         , "definition_error"         },
+		{ OVAL_RESULT_NOT_EVALUATED , "definition_not_evaluated" },
+		{ OVAL_RESULT_NOT_APPLICABLE, "definition_not_applicable"},
+		{ OVAL_RESULT_INVALID       , NULL }
 };
 
 int oval_result_directives_to_dom
@@ -173,7 +173,7 @@ int oval_result_directives_to_dom
 	const struct oscap_string_map *map;
 	for(map = _OVAL_DIRECTIVE_MAP;map->string; map++)
 	{
-		oval_result_directive_enum directive = (oval_result_directive_enum)
+		oval_result_enum directive = (oval_result_enum)
 			map->value;
 		bool reported = oval_result_directive_reported
 			(directives, directive);

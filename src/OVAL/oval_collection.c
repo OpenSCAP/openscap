@@ -61,20 +61,22 @@ void oval_collection_free(struct oval_collection *collection)
 void oval_collection_free_items(struct oval_collection *collection,
 		oscap_destruct_func free_func)
 {
-	struct _oval_collection_item_frame *frame =
-	    collection->item_collection_frame;
-	while (frame != NULL) {
-		if (free_func != NULL) {
-			void *item = frame->item;
-			if(item)(*free_func) (item);
-			frame->item = NULL;
+	if (collection) {
+		struct _oval_collection_item_frame *frame =
+			collection->item_collection_frame;
+		while (frame != NULL) {
+			if (free_func != NULL) {
+				void *item = frame->item;
+				if(item)(*free_func) (item);
+				frame->item = NULL;
+			}
+			struct _oval_collection_item_frame *temp = frame;
+			frame = frame->next;
+			temp->next = NULL;
+			free(temp);
 		}
-		struct _oval_collection_item_frame *temp = frame;
-		frame = frame->next;
-		temp->next = NULL;
-		free(temp);
+		free(collection);
 	}
-	free(collection);
 }
 
 void oval_collection_add(struct oval_collection *collection, void *item)

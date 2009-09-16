@@ -337,19 +337,19 @@ int oval_variable_parse_tag(xmlTextReaderPtr reader,
 	case OVAL_VARIABLE_CONSTANT:{
 			return_code =
 			    oval_parser_parse_tag(reader, context,
-						  &_oval_variable_parse_constant_tag,
+						  _oval_variable_parse_constant_tag,
 						  variable);
 		}
 		break;
 	case OVAL_VARIABLE_LOCAL:{
 			return_code =
 			    oval_parser_parse_tag(reader, context,
-						  &_oval_variable_parse_local_tag,
+						  _oval_variable_parse_local_tag,
 						  variable);
 		}
 		break;
 	case OVAL_VARIABLE_EXTERNAL: {
-		// TODO
+		// TODO: implement external variable parse
 		oval_parser_skip_tag(reader, context);
 		break;
 	}

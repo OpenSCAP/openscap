@@ -32,10 +32,12 @@
 #include <string.h>
 #include "oval_results_impl.h"
 #include "oval_collection_impl.h"
+#include "oval_errno.h"
 
 #define OVAL_RESULT_TEST_DEBUG 0
 
 typedef struct oval_result_test {
+	struct oval_result_system *system;
 	struct oval_test *test;
 	oval_result_enum result;
 	struct oval_message    *message;
@@ -48,12 +50,11 @@ struct oval_result_test *oval_result_test_new(struct oval_result_system *system,
 {
 	oval_result_test_t *test = (oval_result_test_t *)
 		malloc(sizeof(oval_result_test_t));
-	struct oval_results_model *results_model
-		= oval_result_system_results_model(system);
 	struct oval_syschar_model *syschar_model
-		= oval_results_model_syschar_model(results_model);
+		= oval_result_system_syschar_model(system);
 	struct oval_object_model *object_model
 		= oval_syschar_model_object_model(syschar_model);
+	test->system            = system;
 	test->test = get_oval_test_new(object_model, tstid);
 	test->message           = NULL;
 	test->result            = 0;
@@ -61,6 +62,13 @@ struct oval_result_test *oval_result_test_new(struct oval_result_system *system,
 	test->items             = oval_collection_new();
 	test->bindings          = oval_collection_new();
 	return test;
+}
+
+struct oval_result_test *make_result_test_from_oval_test
+	(struct oval_result_system *system, struct oval_test *oval_test)
+{
+	char *test_id = oval_test_id(oval_test);
+	return oval_result_test_new(system, test_id);
 }
 
 void oval_result_test_free(struct oval_result_test *test)
@@ -71,12 +79,13 @@ void oval_result_test_free(struct oval_result_test *test)
 	oval_collection_free_items
 		(test->bindings, (oscap_destruct_func)oval_variable_binding_free);
 
+	test->system            = NULL;
 	test->test              = NULL;
 	test->message           = NULL;
 	test->result            = 0;
 	test->items             = NULL;
 	test->bindings          = NULL;
-	test->instance = 0;
+	test->instance = 1;
 	free(test);
 }
 
@@ -96,14 +105,64 @@ struct oval_result_test *oval_iterator_result_test_next(struct
 					  oc_result_test);
 }
 
+struct oval_result_system *oval_result_test_system(struct oval_result_test *rtest)
+{
+	return rtest->system;
+}
+
 struct oval_test *oval_result_test_test(struct oval_result_test *rtest)
 {
 	return ((struct oval_result_test *)rtest)->test;
 }
 
+oval_result_enum _oval_result_test_result(struct oval_result_test *rtest)
+{
+	char *bo;
+	if(OVAL_RESULT_TEST_DEBUG)fprintf(stderr,"%s:%d\n",__FILE__,__LINE__);
+	if (rtest==NULL){
+		oval_errno=OVAL_INVALID_ARGUMENT;
+		return(-1);
+	}
+	if(OVAL_RESULT_TEST_DEBUG)fprintf(stderr,"%s:%d\n",__FILE__,__LINE__);
+	oval_result_enum result = OVAL_RESULT_TRUE;//TODO: INVALIDATE RESULT INITIALIZATION
+	struct oval_test *test2check = oval_result_test_test(rtest);
+	if(OVAL_RESULT_TEST_DEBUG)fprintf(stderr,"%s:%d\n",__FILE__,__LINE__);
+	struct oval_result_system *system = oval_result_test_system(rtest);
+	if(OVAL_RESULT_TEST_DEBUG)fprintf(stderr,"%s:%d\n",__FILE__,__LINE__);
+	struct oval_syschar_model *syschar_model = oval_result_system_syschar_model(system);
+	// let's go looking for the stuff to test
+	if(OVAL_RESULT_TEST_DEBUG)fprintf(stderr,"%s:%d\n",__FILE__,__LINE__);
+	if (test2check==NULL){
+		oval_errno=OVAL_INVALID_ARGUMENT;
+		return(-1);
+	}
+	if(OVAL_RESULT_TEST_DEBUG)fprintf(stderr,"%s:%d survived the if\n",__FILE__,__LINE__);
+	bo=oval_subtype_text(oval_test_subtype(test2check));
+	if(OVAL_RESULT_TEST_DEBUG)fprintf(stderr,"%s:%d\n",__FILE__,__LINE__);
+	if(OVAL_RESULT_TEST_DEBUG)if (bo==NULL)fprintf(stderr,"%s:%d oval test name is null\n",__FILE__,__LINE__);
+	bo=oval_test_id(test2check);
+	if(OVAL_RESULT_TEST_DEBUG){
+		fprintf(stderr,"%s:%d\n",__FILE__,__LINE__);
+		if (bo==NULL)fprintf(stderr,"%s:%d oval test id is null\n",__FILE__,__LINE__);
+		else fprintf(stderr,"%s:%d oval test id:'%s'\n",__FILE__,__LINE__,bo);
+		fprintf(stderr,"%s:%d found test:'%s'",__FILE__,__LINE__,oval_subtype_text(oval_test_subtype(test2check)));
+	}
+	if (oval_test_object(test2check)==NULL){
+		oval_errno=OVAL_INVALID_ARGUMENT;
+		return(-1);
+	}
+	if(OVAL_RESULT_TEST_DEBUG){
+		fprintf(stderr,"%s:%d looking at object:'%s'\n",__FILE__,__LINE__,oval_object_id(oval_test_object(test2check)));
+	}
+	return result;
+}
+
 oval_result_enum oval_result_test_result(struct oval_result_test *rtest)
 {
-	return ((struct oval_result_test *)rtest)->result;
+	if(rtest->result==OVAL_RESULT_INVALID){
+		rtest->result = _oval_result_test_result(rtest);
+	}
+	return rtest->result;
 }
 
 int oval_result_test_instance(struct oval_result_test *rtest)
@@ -172,16 +231,17 @@ void _oval_test_item_consumer
 	add_oval_result_test_item(test, item);
 }
 
+#define TEST   args[1]
+#define SYSTEM args[0]
+
 int _oval_result_test_binding_parse
-	(xmlTextReaderPtr reader, struct oval_parser_context *context,
-		struct oval_result_test *test)
+	(xmlTextReaderPtr reader, struct oval_parser_context *context, void **args)
 {
 	int return_code = 1;
 
 	xmlChar *variable_id = xmlTextReaderGetAttribute(reader, "variable_id");
 
-	struct oval_syschar_model *syschar_model = oval_results_model_syschar_model
-		(context->results_model);
+	struct oval_syschar_model *syschar_model = oval_result_system_syschar_model(SYSTEM);
 	struct oval_object_model *object_model = oval_syschar_model_object_model
 		(syschar_model);
 	struct oval_variable *variable = get_oval_variable_new
@@ -190,7 +250,7 @@ int _oval_result_test_binding_parse
 	xmlChar *value = xmlTextReaderValue(reader);
 
 	struct oval_variable_binding *binding = oval_variable_binding_new(variable, value);
-	add_oval_result_test_binding(test, binding);
+	add_oval_result_test_binding(TEST, binding);
 
 	xmlFree(value);
 	xmlFree(variable_id);
@@ -199,8 +259,7 @@ int _oval_result_test_binding_parse
 }
 
 int _oval_result_test_parse
-	(xmlTextReaderPtr reader, struct oval_parser_context *context,
-			struct oval_result_test *test)
+	(xmlTextReaderPtr reader, struct oval_parser_context *context, void **args)
 {
 	int return_code = 1;
 	xmlChar *localName = xmlTextReaderLocalName(reader);
@@ -211,15 +270,16 @@ int _oval_result_test_parse
 		oval_parser_log_debug(context, message);
 	}
 
+
 	if      (strcmp(localName, "message")==0){
 		return_code  = oval_message_parse_tag
-			(reader, context, (oscap_consumer_func)_oval_test_message_consumer, test);
+			(reader, context, (oscap_consumer_func)_oval_test_message_consumer, TEST);
 	}else if(strcmp(localName, "tested_item")==0){
 		return_code = oval_result_item_parse_tag
-			(reader, context,
-				(oscap_consumer_func)_oval_test_item_consumer, test);
+			(reader, context, SYSTEM,
+				(oscap_consumer_func)_oval_test_item_consumer, TEST);
 	}else if(strcmp(localName, "tested-variable")==0){
-		return_code = _oval_result_test_binding_parse(reader, context, test);
+		return_code = _oval_result_test_binding_parse(reader, context, args);
 	}else{
 		char message[200]; *message = '\0';
 		sprintf(message, "_oval_result_test_parse: TODO: <%s> not handled", localName);
@@ -303,8 +363,9 @@ int oval_result_test_parse_tag
 		oval_parser_log_warn(context, message);
 	}
 
+	void *args[] = {system, test};
 	return_code = oval_parser_parse_tag
-		(reader, context, (oval_xml_tag_parser)_oval_result_test_parse, test);
+		(reader, context, (oval_xml_tag_parser)_oval_result_test_parse, args);
 
 	(*consumer)(test, client);
 	if(OVAL_RESULT_TEST_DEBUG){

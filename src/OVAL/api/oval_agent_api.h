@@ -298,7 +298,7 @@ void load_oval_syschar(struct oval_syschar_model*, struct import_source*,
  * param: syschar_model -- the specified oval_syschar_model.
  */
 struct oval_results_model *oval_results_model_new(
-		struct oval_syschar_model *syschar_model);
+		struct oval_object_model *object_model, struct oval_syschar_model **);
 
 /*
  * function: free memory allocated to a specified oval results model.
@@ -306,19 +306,13 @@ struct oval_results_model *oval_results_model_new(
  */
 void oval_results_model_free(struct oval_results_model *model);
 
-/*
- * function: oval_results_model_object_model -- Return related oval_object_model from an oval_results_model.
- * param: model -- the specified oval_results_model.
- */
-struct oval_syschar_model *oval_results_model_syschar_model(
-		struct oval_results_model *model);
 
 /*
- * function: oval_results_model_directives -- Return bound directives from an oval_results_model.
+ * function: oval_results_model_object_model -- Return bound object model from an oval_results_model.
  * param: model -- the specified oval_results_model.
  */
-struct oval_result_directives *oval_results_model_directives(
-		struct oval_results_model *model);
+struct oval_object_model *oval_results_model_object_model
+	(struct oval_results_model *model);
 
 /*
  * function: oval_results_model_systems -- Return iterator over reporting systems
@@ -340,15 +334,19 @@ struct oval_iterator_results *oval_results_model_results(
  * param: error_handler -- the error handler
  * param: client_data -- client data;
  */
-void load_oval_results(struct oval_results_model *, struct import_source *,
+struct oval_result_directives *load_oval_results
+	(struct oval_results_model *, struct import_source *,
 			oval_xml_error_handler, void*);
+
+struct oval_result_directives *oval_result_directives_new();
+void oval_result_directives_free(struct oval_result_directives *);
 
 /*
  * function: export oval results to XML file.
  * param: model -- the oval_results_model
  * param: target -- the export target stream (XML)
  */
-int export_results(struct oval_results_model *, struct export_target *);
+int export_results(struct oval_results_model *, struct oval_result_directives *, struct export_target *);
 
 /*
  * funcion: oval_results_model_sysinfo -- Return default sysinfo bound to results model.
@@ -356,17 +354,6 @@ int export_results(struct oval_results_model *, struct export_target *);
 struct oval_results_directives *oval_results_model_directives(
 		struct oval_results_model *model);
  */
-
-/*
- * function: get_oval_results -- Return the oval_results bound to a specified object_id.
- * Returns NULL if the object_id does not resolve to an oval_object in the bound oval_object_model.
- * param: model -- the queried oval_results_model.
- * param: object_id -- the specified object_id.
- */
-
-struct oval_result *get_oval_result(
-		struct oval_results_model *model,
-		char *object_id);
 
 
 struct oval_syschar *probe_object(struct oval_object *, struct oval_object_model *model);

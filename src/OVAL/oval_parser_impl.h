@@ -53,7 +53,8 @@ int ovaldef_parse_node(xmlTextReaderPtr, struct oval_parser_context *);
 
 int ovalsys_parser_parse
     (struct oval_syschar_model *, xmlTextReader *, oval_xml_error_handler , void *);
-void ovalres_parser_parse
+
+struct oval_result_directives *ovalres_parser_parse
     (struct oval_results_model *, xmlTextReader *, oval_xml_error_handler, void *);
 
 int oval_parser_report(struct oval_parser_context*, struct oval_xml_error*);

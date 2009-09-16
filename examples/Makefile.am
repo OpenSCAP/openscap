@@ -7,9 +7,9 @@ EXTRA_DIST =
 CFLAGS += @libxml_cflags@
 
 if WANT_OVAL
-check_PROGRAMS += test_oval test_syschar
-TESTS += OVAL/test_oval.sh OVAL/test_syschar.sh
-EXTRA_DIST += OVAL/test_oval.sh OVAL/test.xml OVAL/test_syschar.sh
+check_PROGRAMS += test_oval test_syschar test_results
+TESTS += OVAL/test_oval.sh OVAL/test_syschar.sh OVAL/test_results.sh
+EXTRA_DIST += OVAL/test_oval.sh OVAL/test.xml OVAL/test_syschar.sh OVAL/test_results.sh
 
 test_oval_SOURCES = OVAL/test_oval.c
 test_oval_CFLAGS = -I$(top_srcdir)/src/OVAL
@@ -18,6 +18,10 @@ test_oval_LDADD = $(top_builddir)/src/libopenscap.la
 test_syschar_SOURCES = OVAL/test_syschar.c
 test_syschar_CFLAGS = -I$(top_srcdir)/src/OVAL
 test_syschar_LDADD = $(top_builddir)/src/libopenscap.la
+
+test_results_SOURCES = OVAL/test_results.c
+test_results_CFLAGS = -I$(top_srcdir)/src/OVAL
+test_results_LDADD = $(top_builddir)/src/libopenscap.la
 
 if WANT_PROBES
 check_PROGRAMS += sexp_test test_findfile test_probes test_sexp_to_syschar

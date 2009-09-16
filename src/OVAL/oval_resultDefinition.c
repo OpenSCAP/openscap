@@ -65,14 +65,13 @@ struct oval_result_definition *oval_result_definition_new
 	oval_result_definition_t *definition = (oval_result_definition_t *)
 		malloc(sizeof(oval_result_definition_t));
 	definition->system = system;
-	struct oval_results_model *results_model = oval_result_system_results_model(system);
-	struct oval_syschar_model *syschar_model = oval_results_model_syschar_model(results_model);
+	struct oval_syschar_model *syschar_model = oval_result_system_syschar_model(system);
 	struct oval_object_model  *object_model  = oval_syschar_model_object_model (syschar_model);
 	definition->definition = get_oval_definition_new(object_model, definition_id);
-	definition->result     = OVAL_RESULT_UNKNOWN;
+	definition->result     = OVAL_RESULT_INVALID;
 	definition->criteria   = NULL;
 	definition->messages   = oval_collection_new();
-	definition->instance   = 0;
+	definition->instance   = 1;
 	return definition;
 }
 void oval_result_definition_free(struct oval_result_definition *definition){
@@ -86,6 +85,23 @@ void oval_result_definition_free(struct oval_result_definition *definition){
 	definition->result = 0;
 	definition->instance = 0;
 	free(definition);
+}
+
+struct oval_result_definition *make_result_definition_from_oval_definition
+	(struct oval_result_system *system, struct oval_definition *oval_definition)
+{
+	char *defid = oval_definition_id(oval_definition);
+	struct oval_result_definition *rslt_definition
+		= oval_result_definition_new(system, defid);
+	struct oval_criteria_node *oval_criteria
+		= oval_definition_criteria(oval_definition);
+	struct oval_result_criteria_node *rslt_criteria
+		= make_result_criteria_node_from_oval_criteria_node(system, oval_criteria);
+	if(rslt_criteria)
+		set_oval_result_definition_criteria(rslt_definition, rslt_criteria);
+	else
+		set_oval_result_definition_result(rslt_definition, OVAL_RESULT_NOT_EVALUATED);
+	return rslt_definition;
 }
 
 
@@ -110,6 +126,11 @@ int oval_result_definition_instance
 oval_result_enum oval_result_definition_result
 	(struct oval_result_definition *definition)
 {
+	if(definition->result==OVAL_RESULT_INVALID){
+		struct oval_result_criteria_node *criteria
+			= oval_result_definition_criteria(definition);
+		definition-> result = oval_result_criteria_node_result(criteria);
+	}
 	return definition->result;
 }
 
@@ -193,14 +214,6 @@ int _oval_result_definition_parse
 	return return_code;
 }
 
-/*
-	OVAL_RESULT_TRUE           = 1,
-	OVAL_RESULT_FALSE          = 2,
-	OVAL_RESULT_UNKNOWN        = 3,
-	OVAL_RESULT_ERROR          = 4,
-	OVAL_RESULT_NOT_EVALUATED  = 5,
-	OVAL_RESULT_NOT_APPLICABLE = 6
- */
 char* _oval_result_definition_results[] =
 {
 		NULL, "true", "false", "unknown", "error", "not evaluated", "not applicable"
