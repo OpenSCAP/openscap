@@ -1,10 +1,3 @@
-/**
- * @file oval_definitions.h
- * \brief Open Vulnerability and Assessment Language
- *
- * See more details at http://oval.mitre.org/
- */
-
 /*
  * Copyright 2008 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
@@ -27,45 +20,134 @@
  *      "David Niemoller" <David.Niemoller@g2-inc.com>
  */
 
+/**
+ * @addtogroup OVAL
+ * @{
+ * @addtogroup Definitions
+ * @{
+ * OVAL Definitions interface.
+ *
+ * This interface provides means to load and extract information from an OVAL Definitions file.
+ *
+ * Each oval_definition instance holds information on single OVAL definition
+ * while the whole definitions infrastructure is held by an oval_object_model instance.
+ *
+ * Main components of an OVAL Definitions file and their OpenSCAP API counterparts are as follows:
+ * - oval_object_model - whole definitions document
+ * - oval_definition - definitions
+ * - oval_test       - tests
+ * - oval_object     - objects
+ * - oval_state      - states
+ * - oval_variable   - variables
+ *
+ * @file
+ * @author "David Niemoller" <David.Niemoller@g2-inc.com>
+ */
+
 
 #ifndef OVAL_DEFINITIONS
 #define OVAL_DEFINITIONS
 
 #include <stdbool.h>
 
+/// OVAL family
 typedef enum {
+	/**
+	 * Unknown platform
+	 * @see oval_subtype_enum
+	 */
 	FAMILY_UNKNOWN = 0,
+	/**
+	 * AIX family
+	 * @see oval_aix_subtype_enum
+	 */
 	FAMILY_AIX = 1000,
+	/**
+	 * Apache family
+	 * @see oval_apache_subtype_enum
+	 */
 	FAMILY_APACHE = 2000,
+	/**
+	 * CatOS family
+	 * @see oval_catos_subtype_enum
+	 */
 	FAMILY_CATOS = 3000,
+	/**
+	 * ESX family
+	 * @see oval_esx_subtype_enum
+	 */
 	FAMILY_ESX = 4000,
+	/**
+	 * FreeBSD family
+	 * @see oval_freebsd_subtype_enum
+	 */
 	FAMILY_FREEBSD = 5000,
+	/**
+	 * HPUX family
+	 * @see oval_hpux_subtype_enum
+	 */
 	FAMILY_HPUX = 6000,
+	/**
+	 * Platform independent family
+	 * @see oval_independent_subtype_enum
+	 */
 	FAMILY_INDEPENDENT = 7000,
+	/**
+	 * IOS family
+	 * @see oval_ios_subtype_enum
+	 */
 	FAMILY_IOS = 8000,
+	/**
+	 * Linux family
+	 * @see oval_linux_subtype_enum
+	 */
 	FAMILY_LINUX = 9000,
+	/**
+	 * MacOS family
+	 * @see oval_macos_subtype_enum
+	 */
 	FAMILY_MACOS = 10000,
+	/**
+	 * PIXOS family
+	 * @see oval_pixos_subtype_enum
+	 */
 	FAMILY_PIXOS = 11000,
+	/**
+	 * Solaris family
+	 * @see oval_solaris_subtype_enum
+	 */
 	FAMILY_SOLARIS = 12000,
+	/**
+	 * Unix family
+	 * @see oval_unix_subtype_enum
+	 */
 	FAMILY_UNIX = 13000,
+	/**
+	 * Windows family
+	 * @see oval_windows_subtype_enum
+	 */
 	FAMILY_WINDOWS = 14000
 } oval_family_enum;
 
+/// Unknown subtypes
 typedef enum {
 	OVAL_SUBTYPE_UNKNOWN = 0
 } oval_subtype_enum;
 
+/// AIX subtypes
 typedef enum {
 	AIX_FILESET = 1001,
 	AIX_FIX = FAMILY_AIX + 2,
 	AIX_OSLEVEL = FAMILY_AIX + 3
 } oval_aix_subtype_enum;
 
+/// Apache subtypes
 typedef enum {
 	APACHE_HTTPD = FAMILY_APACHE + 1,
 	APACHE_VERSION = FAMILY_APACHE + 2
 } oval_apache_subtype_enum;
 
+/// CatOS subtypes
 typedef enum {
 	CATOS_LINE = FAMILY_CATOS + 1,
 	CATOS_MODULE = FAMILY_CATOS + 2,
@@ -73,15 +155,18 @@ typedef enum {
 	CATOS_VERSION = FAMILY_CATOS + 4
 } oval_catos_subtype_enum;
 
+/// ESX subtypes
 typedef enum {
 	ESX_PATCH = FAMILY_ESX + 1,
 	ESX_VERSION = FAMILY_ESX + 2
 } oval_esx_subtype_enum;
 
+/// FreeBSD subtypes
 typedef enum {
 	FREEBSD_PORT_INFO = FAMILY_FREEBSD + 1
 } oval_freebsd_subtype_enum;
 
+/// HPUX subtypes
 typedef enum {
 	HPUX_GETCONF = FAMILY_HPUX + 1,
 	HPUX_PATCH_53 = FAMILY_HPUX + 2,
@@ -90,6 +175,7 @@ typedef enum {
 	HPUX_TRUSTED_ACCOUNTS = FAMILY_HPUX + 5
 } oval_hpux_subtype_enum;
 
+/// Platform independent subtypes
 typedef enum {
 	INDEPENDENT_FAMILY = FAMILY_INDEPENDENT + 1,
 	INDEPENDENT_FILE_MD5 = FAMILY_INDEPENDENT + 2,
@@ -103,6 +189,7 @@ typedef enum {
 	INDEPENDENT_XML_FILE_CONTENT = FAMILY_INDEPENDENT + 10
 } oval_independent_subtype_enum;
 
+/// IOS subtypes
 typedef enum {
 	IOS_GLOBAL = FAMILY_IOS + 1,
 	IOS_INTERFACE = FAMILY_IOS + 2,
@@ -112,6 +199,7 @@ typedef enum {
 	IOS_VERSION_55 = FAMILY_IOS + 6
 } oval_ios_subtype_enum;
 
+/// Linux subtypes
 typedef enum {
 	LINUX_DPKG_INFO = FAMILY_LINUX + 1,
 	LINUX_INET_LISTENING_SERVERS = FAMILY_LINUX + 2,
@@ -119,6 +207,7 @@ typedef enum {
 	LINUX_SLACKWARE_PKG_INFO_TEST = FAMILY_LINUX + 4
 } oval_linux_subtype_enum;
 
+/// MacOS subtypes
 typedef enum {
 	MACOS_ACCOUNT_INFO = FAMILY_MACOS + 1,
 	MACOS_INET_LISTENING_SERVERS = FAMILY_MACOS + 2,
@@ -126,11 +215,13 @@ typedef enum {
 	MACOS_PWPOLICY = FAMILY_MACOS + 4
 } oval_macos_subtype_enum;
 
+/// PIXOS subtypes
 typedef enum {
 	PIXOS_LINE = FAMILY_PIXOS + 1,
 	PIXOS_VERSION = FAMILY_PIXOS + 2
 } oval_pixos_subtype_enum;
 
+/// Solaris subtypes
 typedef enum {
 	SOLARIS_ISAINFO = FAMILY_SOLARIS + 1,
 	SOLARIS_PACKAGE = FAMILY_SOLARIS + 2,
@@ -138,6 +229,7 @@ typedef enum {
 	SOLARIS_SMF = FAMILY_SOLARIS + 4
 } oval_solaris_subtype_enum;
 
+/// Unix subtypes
 typedef enum {
 	UNIX_FILE = FAMILY_UNIX + 1,
 	UNIX_INETD = FAMILY_UNIX + 2,
@@ -151,6 +243,7 @@ typedef enum {
 	UNIX_XINETD = FAMILY_UNIX + 10
 } oval_unix_subtype_enum;
 
+/// Windows subtypes
 typedef enum {
 	WINDOWS_ACCESS_TOKEN = FAMILY_WINDOWS                  +  1,
 	WINDOWS_ACTIVE_DIRECTORY = FAMILY_WINDOWS              +  2,
@@ -187,6 +280,7 @@ typedef enum {
 	WINDOWS_WUA_UPDATE_SEARCHER = FAMILY_WINDOWS           + 33
 } oval_windows_subtype_enum;
 
+/// Affected family enumeration
 typedef enum {
 	AFCFML_UNKNOWN  = 0,
 	AFCFML_CATOS    = 1,
@@ -198,6 +292,7 @@ typedef enum {
 	AFCFML_WINDOWS  = 7
 } oval_affected_family_enum;
 
+/// Criteria node type
 typedef enum {
 	NODETYPE_UNKNOWN = 0,
 	NODETYPE_CRITERIA = 1,
@@ -205,6 +300,7 @@ typedef enum {
 	NODETYPE_EXTENDDEF = 3
 } oval_criteria_node_type_enum;
 
+/// Boolean operators
 typedef enum {
 	OPERATOR_UNKNOWN = 0,
 	OPERATOR_AND     = 1,
@@ -213,6 +309,7 @@ typedef enum {
 	OPERATOR_XOR     = 4
 } oval_operator_enum;
 
+/// Operations
 typedef enum {
 	OPERATION_UNKNOWN                    =  0,
 	OPERATION_EQUALS                     =  1,
@@ -228,6 +325,7 @@ typedef enum {
 	OPERATION_PATTERN_MATCH              = 11
 } oval_operation_enum;
 
+/// Definition classes
 typedef enum {
 	CLASS_UNKNOWN      = 0,
 	CLASS_COMPLIANCE   = 1,
@@ -237,6 +335,7 @@ typedef enum {
 	CLASS_VULNERABILITY= 5,
 } oval_definition_class_enum;
 
+/// Existence check enumeration
 typedef enum {
 	EXISTENCE_UNKNOWN  = 0,
 	ALL_EXIST          = 1,
@@ -246,6 +345,7 @@ typedef enum {
 	NONE_EXIST         = 5
 } oval_existence_enum;
 
+/// Check enumeration
 typedef enum {
 	OVAL_CHECK_UNKNOWN     = 0,
 	OVAL_CHECK_ALL         = 1,
@@ -255,12 +355,14 @@ typedef enum {
 	OVAL_CHECK_ONLY_ONE    = 5
 } oval_check_enum;
 
+/// Type of object content
 typedef enum {
 	OVAL_OBJECTCONTENT_UNKNOWN = 0,
 	OVAL_OBJECTCONTENT_ENTITY  = 1,
 	OVAL_OBJECTCONTENT_SET     = 2
 } oval_object_content_type_enum;
 
+/// Type of OVAL entity
 typedef enum {
 	OVAL_ENTITY_TYPE_UNKNOWN,
 	OVAL_ENTITY_TYPE_ANY,
@@ -271,6 +373,7 @@ typedef enum {
 	OVAL_ENTITY_TYPE_STRING,
 } oval_entity_type_enum;
 
+/// Datatypes
 typedef enum {
 	OVAL_DATATYPE_UNKNOWN           = 0,
 	OVAL_DATATYPE_BINARY            = 1,
@@ -284,6 +387,7 @@ typedef enum {
 	OVAL_DATATYPE_STRING            = 9
 } oval_datatype_enum;
 
+/// Varref types
 typedef enum {
 	OVAL_ENTITY_VARREF_UNKNOWN,
 	OVAL_ENTITY_VARREF_NONE,
@@ -291,12 +395,14 @@ typedef enum {
 	OVAL_ENTITY_VARREF_ELEMENT
 } oval_entity_varref_type_enum;
 
+/// OVAL set object types
 typedef enum {
 	OVAL_SET_UNKNOWN,
 	OVAL_SET_AGGREGATE,
 	OVAL_SET_COLLECTIVE
 } oval_set_type_enum;
 
+/// Set operations
 typedef enum {
 	OVAL_SET_OPERATION_UNKNOWN,
 	OVAL_SET_OPERATION_COMPLEMENT   = 1,
@@ -304,6 +410,7 @@ typedef enum {
 	OVAL_SET_OPERATION_UNION        = 3
 } oval_set_operation_enum;
 
+/// OVAL variable types
 typedef enum {
 	OVAL_VARIABLE_UNKNOWN,
 	OVAL_VARIABLE_EXTERNAL,
@@ -312,6 +419,7 @@ typedef enum {
 } oval_variable_type_enum;
 
 #define OVAL_FUNCTION 10
+/// Component types
 typedef enum {
 	OVAL_COMPONENT_UNKNOWN = 0,
 	OVAL_COMPONENT_LITERAL = 1,
@@ -329,6 +437,7 @@ typedef enum {
 	OVAL_FUNCTION_ARITHMETIC = OVAL_FUNCTION + 9
 } oval_component_type_enum;
 
+/// Arithmetic format enumeration
 typedef enum {
 	OVAL_ARITHMETIC_UNKNOWN = 0,
 	OVAL_ARITHMETIC_ADD     = 1,
@@ -337,6 +446,7 @@ typedef enum {
 	OVAL_ARITHMETIC_DIVIDE   =4	//NOT YET SUPPORTED BY OVAL
 } oval_arithmetic_operation_enum;
 
+/// Datetime format enumeration.
 typedef enum {
 	OVAL_DATETIME_UNKNOWN             = 0,
 	OVAL_DATETIME_YEAR_MONTH_DAY      = 1,
@@ -346,6 +456,7 @@ typedef enum {
 	OVAL_DATETIME_SECONDS_SINCE_EPOCH = 5
 } oval_datetime_format_enum;
 
+/// Message level.
 typedef enum {
 	OVAL_MESSAGE_LEVEL_NONE    = 0,
 	OVAL_MESSAGE_LEVEL_DEBUG   = 1,
@@ -357,54 +468,123 @@ typedef enum {
 
 struct oval_iterator_string;
 
+
+/**
+ * @struct oval_affected
+ * OVAL affected description.
+ */
 struct oval_affected;
 struct oval_iterator_affected;
 
+/**
+ * @struct oval_test
+ * OVAL test.
+ */
 struct oval_test;
 struct oval_iterator_test;
 
+/**
+ * @struct oval_criteria_node
+ * OVAL criteria node.
+ */
 struct oval_criteria_node;
 struct oval_iterator_criteria_node;
 
+/**
+ * @struct oval_reference
+ * OVAL reference
+ */
 struct oval_reference;
 struct oval_iterator_reference;
 
+/**
+ * @struct oval_definition
+ * OVAL definition
+ */
 struct oval_definition;
 struct oval_iterator_definition;
 
+/**
+ * @struct oval_object
+ * OVAL object.
+ */
 struct oval_object;
 struct oval_iterator_object;
 
+/**
+ * @struct oval_state
+ * OVAL state.
+ */
 struct oval_state;
 struct oval_iterator_state;
 
+/**
+ * @struct oval_variable
+ * OVAL variable.
+ */
 struct oval_variable;
 struct oval_iterator_variable;
 
+/**
+ * @struct oval_variable_binding
+ * Binding of an value to an OVAL variable.
+ */
 struct oval_variable_binding;
 struct oval_iterator_variable_binding;
 
+/**
+ * @struct oval_object_content
+ * OVAL object content.
+ */
 struct oval_object_content;
 struct oval_iterator_object_content;
 
+/**
+ * @struct oval_state_content
+ * OVAL state content.
+ */
 struct oval_state_content;
 struct oval_iterator_state_content;
 
+/**
+ * @struct oval_behavior
+ * OVAL behavior
+ */
 struct oval_behavior;
 struct oval_iterator_behavior;
 
+/**
+ * @struct oval_entity
+ * OVAL entity
+ */
 struct oval_entity;
 struct oval_iterator_entity;
 
-struct oval_iterator_set;
+/**
+ * @struct oval_set
+ * OVAL set object
+ */
 struct oval_set;
+struct oval_iterator_set;
 
+/**
+ * @struct oval_value
+ * OVAL object or item entity value
+ */
 struct oval_value;
 struct oval_iterator_value;
 
+/**
+ * @struct oval_component
+ * OVAL variable component
+ */
 struct oval_component;
 struct oval_iterator_component;
 
+/**
+ * @struct oval_message
+ * OVAL message
+ */
 struct oval_message;
 struct oval_iterator_message;
 
@@ -418,8 +598,22 @@ struct oval_affected *oval_iterator_affected_next(struct oval_iterator_affected
 int oval_iterator_test_has_more(struct oval_iterator_test *);
 struct oval_test *oval_iterator_test_next(struct oval_iterator_test *);
 
+/**
+ * Get family from an affected platform description.
+ * @relates oval_affected
+ */
 oval_affected_family_enum oval_affected_family(struct oval_affected *);
+
+/**
+ * Get platforms from an affected platform description.
+ * @relates oval_affected
+ */
 struct oval_iterator_string *oval_affected_platform(struct oval_affected *);
+
+/**
+ * Get product names from an affected platform description.
+ * @relates oval_affected
+ */
 struct oval_iterator_string *oval_affected_product(struct oval_affected *);
 
 int oval_iterator_criteria_node_has_more(struct oval_iterator_criteria_node *);
@@ -427,21 +621,69 @@ struct oval_criteria_node *oval_iterator_criteria_node_next(struct
 							    oval_iterator_criteria_node
 							    *);
 
+/**
+ * Get OVAL criteria node type.
+ * @relates oval_criteria_node
+ */
 oval_criteria_node_type_enum oval_criteria_node_type(struct oval_criteria_node
 						     *);
+
+/**
+ * Get OVAL criteria node negation.
+ * @relates oval_criteria_node
+ */
 int oval_criteria_node_negate(struct oval_criteria_node *);
+
+/**
+ * Get OVAL criteria node comment.
+ * @relates oval_criteria_node
+ */
 char *oval_criteria_node_comment(struct oval_criteria_node *);
+
+/**
+ * Get OVAL criteria node operator.
+ * @relates oval_criteria_node
+ */
 oval_operator_enum oval_criteria_node_operator(struct oval_criteria_node *);	//type==NODETYPE_CRITERIA
+
+/**
+ * Get OVAL criteria node subnodes.
+ * @relates oval_criteria_node
+ */
 struct oval_iterator_criteria_node *oval_criteria_node_subnodes(struct oval_criteria_node *);	//type==NODETYPE_CRITERIA
+
+/**
+ * Get OVAL criteria node test.
+ * @relates oval_criteria_node
+ */
 struct oval_test *oval_criteria_node_test(struct oval_criteria_node *);	//type==NODETYPE_CRITERION
+
+/**
+ * Get OVAL criteria node definition.
+ * @relates oval_criteria_node
+ */
 struct oval_definition *oval_criteria_node_definition(struct oval_criteria_node *);	//type==NODETYPE_EXTENDDEF
 
 int oval_iterator_reference_has_more(struct oval_iterator_reference *);
 struct oval_reference *oval_iterator_reference_next(struct
 						    oval_iterator_reference *);
 
+/**
+ * Get OVAL reference source.
+ * @relates oval_reference
+ */
 char *oval_reference_source(struct oval_reference *);
+
+/**
+ * Get OVAL reference ID.
+ * @relates oval_reference
+ */
 char *oval_reference_id(struct oval_reference *);
+
+/**
+ * Get OVAL reference URL.
+ * @relates oval_reference
+ */
 char *oval_reference_url(struct oval_reference *);
 
 int oval_iterator_definition_has_more(struct oval_iterator_definition *);
@@ -449,30 +691,118 @@ struct oval_definition *oval_iterator_definition_next(struct
 						      oval_iterator_definition
 						      *);
 
+/**
+ * Get OVAL definition ID.
+ * @relates oval_definition
+ */
 char *oval_definition_id(struct oval_definition *);
+
+/**
+ * Get OVAL definition version.
+ * @relates oval_definition
+ */
 int oval_definition_version(struct oval_definition *);
+
+/**
+ * Get OVAL definition class.
+ * @relates oval_definition
+ */
 oval_definition_class_enum oval_definition_class(struct oval_definition *);
+
+/**
+ * Get OVAL definition deprecation status.
+ * @relates oval_definition
+ */
 int oval_definition_deprecated(struct oval_definition *);
+
+/**
+ * Get OVAL definition title.
+ * @relates oval_definition
+ */
 char *oval_definition_title(struct oval_definition *);
+
+/**
+ * Get OVAL definition description.
+ * @relates oval_definition
+ */
 char *oval_definition_description(struct oval_definition *);
+
+/**
+ * Get iterator to list of affected platforms.
+ * @relates oval_definition
+ */
 struct oval_iterator_affected *oval_definition_affected(struct oval_definition
 							*);
+
+/**
+ * Get iterator to list of definition references.
+ * @relates oval_definition
+ */
 struct oval_iterator_reference *oval_definition_references(struct oval_definition
 							  *);
+
+/**
+ * Get iterator to list of notes.
+ * @relates oval_definition
+ */
 struct oval_iterator_string *oval_definition_notes
 	(struct oval_definition *);
+
+/**
+ * Get iterator to list of OVAL definition criteria.
+ * @relates oval_definition
+ */
 struct oval_criteria_node *oval_definition_criteria(struct oval_definition *);
 
 int oval_iterator_object_has_more(struct oval_iterator_object *);
 struct oval_object *oval_iterator_object_next(struct oval_iterator_object *);
 
+/**
+ * Get OVAL object family.
+ * @relates oval_object
+ */
 oval_family_enum oval_object_family(struct oval_object *);
+
+/**
+ * Get OVAL object subtype.
+ * @relates oval_object
+ */
 oval_subtype_enum oval_object_subtype(struct oval_object *);
+
+/**
+ * Get OVAL object name.
+ * @relates oval_object
+ */
 char *oval_object_name(struct oval_object *);
+
+/**
+ * Get iterator to OVAL object notes.
+ * @relates oval_object
+ */
 struct oval_iterator_string *oval_object_notes(struct oval_object *);
+
+/**
+ * Get OVAL object comment.
+ * @relates oval_object
+ */
 char *oval_object_comment(struct oval_object *);
+
+/**
+ * Get OVAL object ID.
+ * @relates oval_object
+ */
 char *oval_object_id(struct oval_object *);
+
+/**
+ * Get OVAL object depracation status.
+ * @relates oval_object
+ */
 int oval_object_deprecated(struct oval_object *);
+
+/**
+ * Get OVAL object version.
+ * @relates oval_object
+ */
 int oval_object_version(struct oval_object *);
 
 struct oval_iterator_object_content *oval_object_object_content(struct
@@ -482,16 +812,70 @@ struct oval_iterator_behavior *oval_object_behaviors(struct oval_object *);
 int oval_iterator_test_has_more(struct oval_iterator_test *);
 struct oval_test *oval_iterator_test_next(struct oval_iterator_test *);
 
+/**
+ * Get OVAL test family.
+ * @relates oval_test
+ */
 oval_family_enum oval_test_family(struct oval_test *);
+
+/**
+ * Get OVAL test subtype.
+ * @relates oval_test
+ */
 oval_subtype_enum oval_test_subtype(struct oval_test *);
+
+/**
+ * Get OVAL test notes.
+ * @relates oval_test
+ */
 struct oval_iterator_string *oval_test_notes(struct oval_test *);
+
+/**
+ * Get OVAL test comment.
+ * @relates oval_test
+ */
 char *oval_test_comment(struct oval_test *);
+
+/**
+ * Get OVAL test ID.
+ * @relates oval_test
+ */
 char *oval_test_id(struct oval_test *);
+
+/**
+ * Get OVAL test deprecation status.
+ * @relates oval_test
+ */
 int oval_test_deprecated(struct oval_test *);
+
+/**
+ * Get OVAL test version.
+ * @relates oval_test
+ */
 int oval_test_version(struct oval_test *);
+
+/**
+ * Get OVAL test existence check type.
+ * @relates oval_test
+ */
 oval_existence_enum oval_test_existence(struct oval_test *);
+
+/**
+ * Get OVAL test check type.
+ * @relates oval_test
+ */
 oval_check_enum oval_test_check(struct oval_test *);
+
+/**
+ * Get OVAL test tested object.
+ * @relates oval_test
+ */
 struct oval_object *oval_test_object(struct oval_test *);
+
+/**
+ * Get OVAL test state.
+ * @relates oval_test
+ */
 struct oval_state *oval_test_state(struct oval_test *);
 
 int oval_iterator_variable_binding_has_more(struct
@@ -500,8 +884,16 @@ struct oval_variable_binding *oval_iterator_variable_binding_next(struct
 								  oval_iterator_variable_binding
 								  *);
 
+/**
+ * Get variable for this binding.
+ * @relates oval_variable_binding
+ */
 struct oval_variable *oval_variable_binding_variable(struct
 						     oval_variable_binding *);
+/**
+ * Get value of this binding.
+ * @relates oval_variable_binding
+ */
 char *oval_variable_binding_value(struct oval_variable_binding *);
 
 int oval_iterator_object_content_has_more(struct oval_iterator_object_content
@@ -510,11 +902,35 @@ struct oval_object_content *oval_iterator_object_content_next(struct
 							      oval_iterator_object_content
 							      *);
 
+/**
+ * Get field name of a object content.
+ * @relates oval_object_content
+ */
 char *oval_object_content_field_name(struct oval_object_content *);
+
+/**
+ * Get type of a object content (entity or set).
+ * @relates oval_object_content
+ */
 oval_object_content_type_enum oval_object_content_type(struct
 						       oval_object_content *);
+
+/**
+ * Get entity of a simple object content.
+ * @relates oval_object_content
+ */
 struct oval_entity *oval_object_content_entity(struct oval_object_content *);	//type == OVAL_OBJECTCONTENT_ENTITY
+
+/**
+ * Get varCheck of a simple object content.
+ * @relates oval_object_content
+ */
 oval_check_enum oval_object_content_varCheck(struct oval_object_content *);	//type == OVAL_OBJECTCONTENT_ENTITY
+
+/**
+ * Get varCheck of a set object content.
+ * @relates oval_object_content
+ */
 struct oval_set *oval_object_content_set(struct oval_object_content *);	//type == OVAL_OBJECTCONTENT_SET
 
 int oval_iterator_state_content_has_more
@@ -522,101 +938,415 @@ int oval_iterator_state_content_has_more
 struct oval_state_content *oval_iterator_state_content_next
 	(struct oval_iterator_state_content *);
 
+/**
+ * Get entity of a state content.
+ * @relates oval_object_content
+ */
 struct oval_entity *oval_state_content_entity(struct oval_state_content *);
+
+/**
+ * Get multipe variable values processing of a state content.
+ * @relates oval_object_content
+ */
 oval_check_enum oval_state_content_var_check(struct oval_state_content *);
+
+/**
+ * Get multipe entities processing of a state content.
+ * @relates oval_object_content
+ */
 oval_check_enum oval_state_content_ent_check(struct oval_state_content *);
 
 int oval_iterator_entity_has_more(struct oval_iterator_entity *);
 struct oval_entity *oval_iterator_entity_next(struct oval_iterator_entity *);
 
+
+/**
+ * Get OVAL entity name.
+ * @relates oval_entity
+ */
 char *oval_entity_name(struct oval_entity *);
+
+/**
+ * Get OVAL entity type.
+ * @relates oval_entity
+ */
 oval_entity_type_enum oval_entity_type(struct oval_entity *);
+
+/**
+ * Get OVAL entity datatype.
+ * @relates oval_entity
+ */
 oval_datatype_enum oval_entity_datatype(struct oval_entity *);
+
+/**
+ * Get OVAL entity operation type.
+ * @relates oval_entity
+ */
 oval_operation_enum oval_entity_operation(struct oval_entity *);
+
+/**
+ * Get OVAL entity mask.
+ * @relates oval_entity
+ */
 int oval_entity_mask(struct oval_entity *);
+
+/**
+ * Get OVAL entity varref type.
+ * @relates oval_entity
+ */
 oval_entity_varref_type_enum oval_entity_varref_type(struct oval_entity *);
+
+/**
+ * Get OVAL entity varref variable.
+ * @relates oval_entity
+ */
 struct oval_variable *oval_entity_variable(struct oval_entity *);
+
+/**
+ * Get OVAL entity value.
+ * @relates oval_entity
+ */
 struct oval_value *oval_entity_value(struct oval_entity *);
 
 int oval_iterator_set_has_more(struct oval_iterator_set *);
 struct oval_set *oval_iterator_set_next(struct oval_iterator_set *);
 
+
+/**
+ * Get OVAL set object type.
+ * @relates oval_set
+ */
 oval_set_type_enum oval_set_type(struct oval_set *);
+
+/**
+ * Get OVAL set object operation type.
+ * @relates oval_set
+ */
 oval_set_operation_enum oval_set_operation(struct oval_set *);
+
+/**
+ * Get OVAL set object subsets.
+ * This works only with sets of OVAL_SET_AGGREGATE type.
+ * @relates oval_set
+ */
 struct oval_iterator_set *oval_set_subsets(struct oval_set *);	//type==OVAL_SET_AGGREGATE;
+
+/**
+ * Get OVAL set object referenced objects.
+ * This works only with sets of OVAL_SET_COLLECTIVE type.
+ * @relates oval_set
+ */
 struct oval_iterator_object *oval_set_objects(struct oval_set *);	//type==OVAL_SET_COLLECTIVE;
+
+/**
+ * Get OVAL set object filters.
+ * This works only with sets of OVAL_SET_COLLECTIVE type.
+ * @relates oval_set
+ */
 struct oval_iterator_state *oval_set_filters(struct oval_set *);	//type==OVAL_SET_COLLECTIVE;
 
 int oval_iterator_behavior_has_more(struct oval_iterator_behavior *);
 struct oval_behavior *oval_iterator_behavior_next(struct oval_iterator_behavior
 						  *);
 
+/**
+ * Get OVAL behavior name.
+ * @relates oval_behavior
+ */
 char *oval_behavior_key(struct oval_behavior *);
+
+/**
+ * Get OVAL behavior value.
+ * @relates oval_behavior
+ */
 char *oval_behavior_value(struct oval_behavior *);
 
 int oval_iterator_value_has_more(struct oval_iterator_value *);
 struct oval_value *oval_iterator_value_next(struct oval_iterator_value *);
 
+
+/**
+ * Get OVAL value datatype.
+ * @relates oval_value
+ */
 oval_datatype_enum oval_value_datatype(struct oval_value *);
+
+/**
+ * Get OVAL value as a text.
+ * @relates oval_value
+ */
 char *oval_value_text(struct oval_value *);
+
+/**
+ * Get OVAL value as a piece of raw binary data.
+ * @relates oval_value
+ */
 unsigned char *oval_value_binary(struct oval_value *);	//datatype==OVAL_DATATYPE_BINARY
+
+/**
+ * Get OVAL value as a boolean.
+ * @relates oval_value
+ */
 bool oval_value_boolean(struct oval_value *);	//datatype==OVAL_DATATYPE_BOOLEAN
+
+/**
+ * Get OVAL value as a floating point number.
+ * @relates oval_value
+ */
 float oval_value_float(struct oval_value *);	//datatype==OVAL_DATATYPE_FLOAT
+
+/**
+ * Get OVAL value as an integer.
+ * @relates oval_value
+ */
 long oval_value_integer(struct oval_value *);	//datatype==OVAL_DATATYPE_INTEGER
 
 int oval_iterator_state_has_more(struct oval_iterator_state *);
 struct oval_state *oval_iterator_state_next(struct oval_iterator_state *);
 
+/**
+ * Get OVAL state family.
+ * @relates oval_state
+ */
 oval_family_enum oval_state_family(struct oval_state *);
+
+/**
+ * Get OVAL state subtype.
+ * @relates oval_state
+ */
 oval_subtype_enum oval_state_subtype(struct oval_state *);
+
+/**
+ * Get OVAL state name.
+ * @relates oval_state
+ */
 char *oval_state_name(struct oval_state *);
+
+/**
+ * Get OVAL state comment.
+ * @relates oval_state
+ */
 char *oval_state_comment(struct oval_state *);
+
+/**
+ * Get OVAL state ID.
+ * @relates oval_state
+ */
 char *oval_state_id(struct oval_state *);
+
+/**
+ * Get OVAL state deprecation status.
+ * @relates oval_state
+ */
 int oval_state_deprecated(struct oval_state *);
+
+/**
+ * Get OVAL state version.
+ * @relates oval_state
+ */
 int oval_state_version(struct oval_state *);
+
+/**
+ * Get OVAL state notes.
+ * @relates oval_state
+ */
 struct oval_iterator_string *oval_state_notes(struct oval_state *);
+
+/**
+ * Get OVAL state contents.
+ * @relates oval_state
+ */
 struct oval_iterator_state_content *oval_state_contents(struct oval_state *);
 
 int oval_iterator_variable_has_more(struct oval_iterator_variable *);
 struct oval_variable *oval_iterator_variable_next(struct oval_iterator_variable
 						  *);
 
+/**
+ * Get OVAL variable ID.
+ * @relates oval_variable
+ */
 char *oval_variable_id(struct oval_variable *);
+
+/**
+ * Get OVAL variable comment.
+ * @relates oval_variable
+ */
 char *oval_variable_comment(struct oval_variable *);
+
+/**
+ * Get OVAL variable version.
+ * @relates oval_variable
+ */
 int oval_variable_version(struct oval_variable *);
+
+/**
+ * Get OVAL variable deprecation status.
+ * @relates oval_variable
+ */
 int oval_variable_deprecated(struct oval_variable *);
+
+/**
+ * Get OVAL variable type.
+ * @relates oval_variable
+ */
 oval_variable_type_enum oval_variable_type(struct oval_variable *);
+
+/**
+ * Get OVAL variable datatype.
+ * @relates oval_variable
+ */
 oval_datatype_enum oval_variable_datatype(struct oval_variable *);
+
+/**
+ * Get OVAL constant variable values.
+ * @relates oval_variable
+ */
 struct oval_iterator_value *oval_variable_values(struct oval_variable *);	//type==OVAL_VARIABLE_CONSTANT
+
+/**
+ * Get OVAL local variable main component.
+ * @relates oval_variable
+ */
 struct oval_component *oval_variable_component(struct oval_variable *);	//type==OVAL_VARIABLE_LOCAL
 
 int oval_iterator_component_has_more(struct oval_iterator_component *);
 struct oval_component *oval_iterator_component_next(struct
 						    oval_iterator_component *);
 
+/**
+ * Get OVAL component type.
+ * @relates oval_component
+ */
 oval_component_type_enum oval_component_type(struct oval_component *);
+
+/**
+ * Get OVAL component literal value.
+ * @see OVAL_COMPONENT_LITERAL
+ * @relates oval_component
+ */
 struct oval_value *oval_component_literal_value(struct oval_component *);	//type==OVAL_COMPONENT_LITERAL
+
+/**
+ * Get OVAL component object.
+ * @see OVAL_COMPONENT_OBJECTREF
+ * @relates oval_component
+ */
 struct oval_object *oval_component_object(struct oval_component *);	//type==OVAL_COMPONENT_OBJECTREF
+
+/**
+ * Get OVAL component object field.
+ * @see OVAL_COMPONENT_OBJECTREF
+ * @relates oval_component
+ */
 char *oval_component_object_field(struct oval_component *);	//type==OVAL_COMPONENT_OBJECTREF
+
+/**
+ * Get OVAL component variable.
+ * @see OVAL_COMPONENT_VARREF
+ * @relates oval_component
+ */
 struct oval_variable *oval_component_variable(struct oval_component *);	//type==OVAL_COMPONENT_VARREF
+
+/**
+ * Get OVAL component function components.
+ * @see OVAL_COMPONENT_FUNCTION
+ * @relates oval_component
+ */
 struct oval_iterator_component *oval_component_function_components(struct oval_component *);	//type==OVAL_COMPONENT_FUNCTION
+
+/**
+ * Get OVAL component arithmetic operation.
+ * @see OVAL_COMPONENT_ARITHMETIC
+ * @relates oval_component
+ */
 oval_arithmetic_operation_enum oval_component_arithmetic_operation(struct oval_component *);	//type==OVAL_COMPONENT_ARITHMETIC
+
+/**
+ * Get OVAL component begin character.
+ * @see OVAL_COMPONENT_BEGIN
+ * @relates oval_component
+ */
 char *oval_component_begin_character(struct oval_component *);	//type==OVAL_COMPONENT_BEGIN
+
+/**
+ * Get OVAL component end character.
+ * @see OVAL_COMPONENT_END
+ * @relates oval_component
+ */
 char *oval_component_end_character(struct oval_component *);	//type==OVAL_COMPONENT_END
+
+/**
+ * Get OVAL component split delimiter.
+ * @see OVAL_COMPONENT_SPLIT
+ * @relates oval_component
+ */
 char *oval_component_split_delimiter(struct oval_component *);	//type==OVAL_COMPONENT_SPLIT
+
+/**
+ * Get OVAL component start of a substring.
+ * @see OVAL_COMPONENT_SUBSTRING
+ * @relates oval_component
+ */
 int oval_component_substring_start(struct oval_component *);	//type==OVAL_COMPONENT_SUBSTRING
+
+/**
+ * Get OVAL component substring length.
+ * @see OVAL_COMPONENT_SUBSTRING
+ * @relates oval_component
+ */
 int oval_component_substring_length(struct oval_component *);	//type==OVAL_COMPONENT_SUBSTRING
+
+/**
+ * Get OVAL component timedif format 1.
+ * @see OVAL_COMPONENT_TIMEDIF
+ * @relates oval_component
+ */
 oval_datetime_format_enum oval_component_timedif_format_1(struct oval_component *);	//type==OVAL_COMPONENT_TIMEDIF
+
+/**
+ * Get OVAL component timedif format 2.
+ * @see OVAL_COMPONENT_TIMEDIF
+ * @relates oval_component
+ */
 oval_datetime_format_enum oval_component_timedif_format_2(struct oval_component *);	//type==OVAL_COMPONENT_TIMEDIF
+
+/**
+ * Get OVAL component regex pattern.
+ * @see OVAL_COMPONENT_REGEX_CAPTURE
+ * @relates oval_component
+ */
 char *oval_component_regex_pattern(struct oval_component *); //type==OVAL_COMPONENT_REGEX_CAPTURE
 
 int oval_iterator_message_has_more(struct oval_iterator_message *oc_message);
 struct oval_message *oval_iterator_message_next(struct oval_iterator_message *oc_message);
 
+/**
+ * Get OVAL message text.
+ * @relates oval_message
+ */
 char *oval_message_text(struct oval_message *message);
+
+/**
+ * Get OVAL message level.
+ * @relates oval_message
+ */
 oval_message_level_enum oval_message_level(struct oval_message *message);
 
+/**
+ * Convert an operator to its text representation.
+ */
 const char* oval_operator_text(oval_operator_enum);
+
+/**
+ * Convert OVAL subtype to its text representation.
+ */
 const char* oval_subtype_text(oval_subtype_enum);
+
+/**
+ * Convert OVAL family to its text representation.
+ */
 const char* oval_family_text(oval_family_enum);
+
 #endif
+
