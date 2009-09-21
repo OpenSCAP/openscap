@@ -9,13 +9,112 @@
 #include <config.h>
 #include <assert.h>
 #include "generic/common.h"
+#include "generic/strbuf.h"
 #include "public/sm_alloc.h"
 #include "_sexp-types.h"
 #include "_sexp-output.h"
+#include "_sexp-value.h"
+
+size_t SEXP_sbprintf (strbuf_t *sb, SEXP_t *s_exp)
+{
+        SEXP_val_t v_dsc;
+        
+        SEXP_val_dsc (&v_dsc, s_exp->s_valp);
+        
+        switch (v_dsc.type) {
+        case SEXP_VALTYPE_NUMBER:
+                
+                break;
+        case SEXP_VALTYPE_STRING:
+                
+                break;
+        case SEXP_VALTYPE_LIST:
+                
+                break;
+        default:
+                abort ();
+        }
+}
+
+typedef struct {
+        size_t sz;
+        FILE  *fp;
+} __fprintfa_t;
+
+#define AS(t,p) ((t)(p))
+
+static int __SEXP_fprintfa_lmemb (SEXP_t *s_exp, void *arg)
+{
+        AS(__fprintfa_t *, arg)->sz += SEXP_fprintfa (AS(__fprintfa_t *, arg)->fp, s_exp);
+        fputc (' ', AS(__fprintfa_t *, arg)->fp);
+        return (0);
+}
 
 size_t SEXP_fprintfa (FILE *fp, SEXP_t *s_exp)
 {
-        return (-1);
+        SEXP_val_t v_dsc;
+                
+        SEXP_val_dsc (&v_dsc, s_exp->s_valp);
+        
+        switch (v_dsc.type) {
+        case SEXP_VALTYPE_NUMBER:
+        {
+                SEXP_numtype_t t;
+                
+                t = SEXP_NTYPEP(v_dsc.hdr->size, v_dsc.mem);
+                
+                if (t <= SEXP_NUM_UINT16) {
+                        if (t <= SEXP_NUM_UINT8) {
+                                switch (t) {
+                                case SEXP_NUM_BOOL:  return fprintf (fp, "%hhu", SEXP_NCASTP(b ,v_dsc.mem)->n);
+                                case SEXP_NUM_INT8:  return fprintf (fp, "%hhd", SEXP_NCASTP(i8,v_dsc.mem)->n);
+                                case SEXP_NUM_UINT8: return fprintf (fp, "%hhu", SEXP_NCASTP(u8,v_dsc.mem)->n);
+                                }
+                        } else {
+                                switch (t) {
+                                case SEXP_NUM_INT16:  return fprintf (fp, "%hd", SEXP_NCASTP(i16,v_dsc.mem)->n);
+                                case SEXP_NUM_UINT16: return fprintf (fp, "%hu", SEXP_NCASTP(u16,v_dsc.mem)->n);
+                                }
+                        }
+                } else {
+                        if (t <= SEXP_NUM_INT64) {
+                                switch (t) {
+                                case SEXP_NUM_INT32:  return fprintf (fp,   "%d", SEXP_NCASTP(i32,v_dsc.mem)->n);
+                                case SEXP_NUM_UINT32: return fprintf (fp,   "%u", SEXP_NCASTP(u32,v_dsc.mem)->n);
+                                case SEXP_NUM_INT64:  return fprintf (fp, "%lld", SEXP_NCASTP(i64,v_dsc.mem)->n);
+                                }
+                        } else {
+                                switch (t) {
+                                case SEXP_NUM_UINT64: return fprintf (fp, "%llu", SEXP_NCASTP(u64,v_dsc.mem)->n);
+                                case SEXP_NUM_DOUBLE: return fprintf (fp,   "%f", SEXP_NCASTP(f  ,v_dsc.mem)->n);
+                                }
+                        }
+                }
+                
+                abort ();
+        }       break;
+        case SEXP_VALTYPE_STRING:
+                return fprintf (fp, "%.*s", v_dsc.hdr->size / sizeof (char), (char *)v_dsc.mem);
+        case SEXP_VALTYPE_LIST:
+        {
+                __fprintfa_t fpa;
+                
+                fpa.sz = 2;
+                fpa.fp = fp;
+                fputc ('(', fp);
+                
+                SEXP_rawval_lblk_cb ((uintptr_t)SEXP_LCASTP(v_dsc.mem)->b_addr, __SEXP_fprintfa_lmemb, &fpa,
+                                     SEXP_LCASTP(v_dsc.mem)->offset + 1);
+                
+                fputc (')', fp);
+         
+                return (fpa.sz);
+        }
+        default:
+                abort ();
+        }
+        
+        return (0);
 }
 
 #if 0

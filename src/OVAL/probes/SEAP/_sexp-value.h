@@ -29,7 +29,7 @@ typedef struct {
 #define SEXP_VALP_ALIGN sizeof (void *)
 #define SEXP_VALP_MASK  (UINTPTR_MAX << 2)
 #define SEXP_VALT_MASK  3
-#define SEXP_VALP_HDR(p) ((SEXP_valhdr_t *)((uintptr_t)(p) & SEXP_VALP_MASK))
+#define SEXP_VALP_HDR(p) ((SEXP_valhdr_t *)(((uintptr_t)(p)) & SEXP_VALP_MASK))
 
 int       SEXP_val_new (SEXP_val_t *dst, size_t vmemsize, SEXP_valtype_t type);
 void      SEXP_val_dsc (SEXP_val_t *dst, uintptr_t ptr);
@@ -40,6 +40,7 @@ int       SEXP_rawval_decref (uintptr_t valp);
 
 #define SEXP_DEFNUM(s,T)   struct SEXP_val_num_##s { T n; SEXP_numtype_t t; } __attribute__ ((packed))
 #define SEXP_NCASTP(s,p) ((struct SEXP_val_num_##s *)(p))
+#define SEXP_NTYPEP(s,p) *((SEXP_numtype_t *)(((uint8_t *)(p)) + (s) - sizeof (SEXP_numtype_t)))
 
 SEXP_DEFNUM(b, bool);
 SEXP_DEFNUM(f, double);
@@ -78,7 +79,8 @@ uintptr_t SEXP_rawval_lblk_add  (uintptr_t lblkp, SEXP_t *s_exp);
 uintptr_t SEXP_rawval_lblk_add1 (uintptr_t lblkp, SEXP_t *s_exp);
 uintptr_t SEXP_rawval_lblk_last (uintptr_t lblkp);
 SEXP_t   *SEXP_rawval_lblk_nth  (uintptr_t lblkp, uint32_t n);
-void      SEXP_rawval_lblk_free (uintptr_t lblkp, void f_func (SEXP_t *));
+int       SEXP_rawval_lblk_cb   (uintptr_t lblkp, int  (*func) (SEXP_t *, void *), void *arg, uint32_t n);
+void      SEXP_rawval_lblk_free (uintptr_t lblkp, void (*func) (SEXP_t *));
 uintptr_t SEXP_rawval_list_copy (uintptr_t lblkp, uint16_t n_skip);
 
 #define SEXP_LBLK_ALIGN 16

@@ -14,7 +14,7 @@ typedef struct {
         char    *typestr;
         uint16_t typelen;
 
-        __SEXP_datatype_op_t *op;
+        SEXP_dtype_op_t *op;
         size_t op_cnt;
         
 } SEXP_handler_t;

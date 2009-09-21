@@ -79,8 +79,8 @@ SEXP_t *SEXP_number_newi_8  (int8_t n)
                 return (NULL);
         }
         
-        SEXP_NCASTP(b,v_dsc.mem)->t = SEXP_NUM_INT8;
-        SEXP_NCASTP(b,v_dsc.mem)->n = n;
+        SEXP_NCASTP(i8,v_dsc.mem)->t = SEXP_NUM_INT8;
+        SEXP_NCASTP(i8,v_dsc.mem)->n = n;
         
         s_exp = SEXP_new ();
         s_exp->s_type = NULL;
@@ -101,8 +101,8 @@ SEXP_t *SEXP_number_newu_8  (uint8_t n)
                 return (NULL);
         }
         
-        SEXP_NCASTP(b,v_dsc.mem)->t = SEXP_NUM_UINT8;
-        SEXP_NCASTP(b,v_dsc.mem)->n = n;
+        SEXP_NCASTP(u8,v_dsc.mem)->t = SEXP_NUM_UINT8;
+        SEXP_NCASTP(u8,v_dsc.mem)->n = n;
         
         s_exp = SEXP_new ();
         s_exp->s_type = NULL;
@@ -123,8 +123,8 @@ SEXP_t *SEXP_number_newi_16 (int16_t n)
                 return (NULL);
         }
         
-        SEXP_NCASTP(b,v_dsc.mem)->t = SEXP_NUM_INT16;
-        SEXP_NCASTP(b,v_dsc.mem)->n = n;
+        SEXP_NCASTP(i16,v_dsc.mem)->t = SEXP_NUM_INT16;
+        SEXP_NCASTP(i16,v_dsc.mem)->n = n;
         
         s_exp = SEXP_new ();
         s_exp->s_type = NULL;
@@ -145,14 +145,19 @@ SEXP_t *SEXP_number_newu_16 (uint16_t n)
                 return (NULL);
         }
         
-        SEXP_NCASTP(b,v_dsc.mem)->t = SEXP_NUM_UINT16;
-        SEXP_NCASTP(b,v_dsc.mem)->n = n;
+        SEXP_NCASTP(u16,v_dsc.mem)->t = SEXP_NUM_UINT16;
+        SEXP_NCASTP(u16,v_dsc.mem)->n = n;
         
         s_exp = SEXP_new ();
         s_exp->s_type = NULL;
         s_exp->s_valp = v_dsc.ptr;
         
         return (s_exp);
+}
+
+uint16_t SEXP_number_getu_16 (const SEXP_t *s_exp)
+{
+        return (0);
 }
 
 SEXP_t *SEXP_number_newi_32 (int32_t n)
@@ -167,8 +172,8 @@ SEXP_t *SEXP_number_newi_32 (int32_t n)
                 return (NULL);
         }
         
-        SEXP_NCASTP(b,v_dsc.mem)->t = SEXP_NUM_INT32;
-        SEXP_NCASTP(b,v_dsc.mem)->n = n;
+        SEXP_NCASTP(i32,v_dsc.mem)->t = SEXP_NUM_INT32;
+        SEXP_NCASTP(i32,v_dsc.mem)->n = n;
         
         s_exp = SEXP_new ();
         s_exp->s_type = NULL;
@@ -189,8 +194,8 @@ SEXP_t *SEXP_number_newu_32 (uint32_t n)
                 return (NULL);
         }
         
-        SEXP_NCASTP(b,v_dsc.mem)->t = SEXP_NUM_UINT32;
-        SEXP_NCASTP(b,v_dsc.mem)->n = n;
+        SEXP_NCASTP(u32,v_dsc.mem)->t = SEXP_NUM_UINT32;
+        SEXP_NCASTP(u32,v_dsc.mem)->n = n;
         
         s_exp = SEXP_new ();
         s_exp->s_type = NULL;
@@ -211,8 +216,8 @@ SEXP_t *SEXP_number_newi_64 (int64_t n)
                 return (NULL);
         }
         
-        SEXP_NCASTP(b,v_dsc.mem)->t = SEXP_NUM_INT64;
-        SEXP_NCASTP(b,v_dsc.mem)->n = n;
+        SEXP_NCASTP(i64,v_dsc.mem)->t = SEXP_NUM_INT64;
+        SEXP_NCASTP(i64,v_dsc.mem)->n = n;
         
         s_exp = SEXP_new ();
         s_exp->s_type = NULL;
@@ -233,8 +238,8 @@ SEXP_t *SEXP_number_newu_64 (uint64_t n)
                 return (NULL);
         }
         
-        SEXP_NCASTP(b,v_dsc.mem)->t = SEXP_NUM_UINT64;
-        SEXP_NCASTP(b,v_dsc.mem)->n = n;
+        SEXP_NCASTP(u64,v_dsc.mem)->t = SEXP_NUM_UINT64;
+        SEXP_NCASTP(u64,v_dsc.mem)->n = n;
         
         s_exp = SEXP_new ();
         s_exp->s_type = NULL;
@@ -255,8 +260,8 @@ SEXP_t *SEXP_number_newf (double n)
                 return (NULL);
         }
         
-        SEXP_NCASTP(b,v_dsc.mem)->t = SEXP_NUM_DOUBLE;
-        SEXP_NCASTP(b,v_dsc.mem)->n = n;
+        SEXP_NCASTP(f,v_dsc.mem)->t = SEXP_NUM_DOUBLE;
+        SEXP_NCASTP(f,v_dsc.mem)->n = n;
         
         s_exp = SEXP_new ();
         s_exp->s_type = NULL;
@@ -361,7 +366,7 @@ SEXP_t *SEXP_string_newf (const char *format, ...)
         s_exp->s_type = NULL;
         s_exp->s_valp = v_dsc.ptr;
         
-        return (NULL);
+        return (s_exp);
 }
 
 void SEXP_string_free (SEXP_t *s_exp)
@@ -459,7 +464,7 @@ SEXP_t *SEXP_list_new (SEXP_t *memb, ...)
         }
 
         if (s_cur > 0) {
-                for (b_exp = 0; (size_t)(2 << b_exp) < s_cur; ++b_exp);
+                for (b_exp = 0; (size_t)(1 << b_exp) < s_cur; ++b_exp);
                 
                 SEXP_LCASTP(v_dsc.mem)->offset = 0;
                 SEXP_LCASTP(v_dsc.mem)->b_addr = (void *)SEXP_rawval_lblk_new (b_exp);
@@ -539,7 +544,7 @@ SEXP_t *SEXP_list_first (const SEXP_t *list)
         return (s_exp == NULL ? NULL : SEXP_ref (s_exp));
 }
 
-SEXP_t *SEXP_listref_first (SEXP_t *list)
+SEXP_t *SEXP_listref_first (const SEXP_t *list)
 {
         return (NULL);
 }
@@ -550,7 +555,7 @@ SEXP_t *SEXP_list_rest  (const SEXP_t *list)
         return (NULL);
 }
 
-SEXP_t *SEXP_listref_rest (SEXP_t *list)
+SEXP_t *SEXP_listref_rest (const SEXP_t *list)
 {
         return (NULL);
 }
@@ -581,7 +586,7 @@ SEXP_t *SEXP_list_last (const SEXP_t *list)
         return (SEXP_ref (l_blk->memb + (l_blk->real - 1)));
 }
 
-SEXP_t *SEXP_listref_last (SEXP_t *list)
+SEXP_t *SEXP_listref_last (const SEXP_t *list)
 {
         return (NULL);
 }
@@ -610,7 +615,7 @@ SEXP_t *SEXP_list_nth (const SEXP_t *list, uint32_t n)
         return (s_exp == NULL ? NULL : SEXP_ref (s_exp));
 }
 
-SEXP_t *SEXP_listref_nth (SEXP_t *list, uint32_t n)
+SEXP_t *SEXP_listref_nth (const SEXP_t *list, uint32_t n)
 {
         return (NULL);
 }
@@ -625,6 +630,8 @@ SEXP_t *SEXP_list_add (SEXP_t *list, SEXP_t *s_exp)
                 return (NULL);
         }
 
+        _A(list->s_valp != 0);
+        
         SEXP_val_dsc (&v_dsc, list->s_valp);
         
         if (v_dsc.type != SEXP_VALTYPE_LIST) {
@@ -776,10 +783,47 @@ SEXP_t *SEXP_softref (const SEXP_t *s_exp_o)
         s_exp_r = SEXP_new ();
         s_exp_r->s_type = s_exp_o->s_type;
         s_exp_r->s_valp = s_exp_o->s_valp;
+
+        /* copy */
         
         SEXP_flag_set (s_exp_r, SEXP_FLAG_SREF);
         
         return (s_exp_r);
+}
+
+static void SEXP_free_lmemb (SEXP_t *s_exp)
+{
+        if (((s_exp->s_flgs &
+              (SEXP_FLAG_SREF|SEXP_FLAG_INVAL|SEXP_FLAG_UNFIN)) == 0) &&
+            SEXP_typeof (s_exp) != SEXP_TYPE_EMPTY)
+        {
+                SEXP_val_t v_dsc;
+                uint32_t   refs;
+
+                SEXP_val_dsc (&v_dsc, s_exp->s_valp);
+                
+                if (SEXP_rawval_decref (s_exp->s_valp)) {
+                        switch (v_dsc.type) {
+                        case SEXP_VALTYPE_STRING:
+                                sm_free (v_dsc.hdr);
+                                break;
+                        case SEXP_VALTYPE_NUMBER:
+                                sm_free (v_dsc.hdr);
+                                break;
+                        case SEXP_VALTYPE_LIST:
+                                SEXP_rawval_lblk_free ((uintptr_t)SEXP_LCASTP(v_dsc.mem)->b_addr, SEXP_free_lmemb);
+                                sm_free (v_dsc.hdr);
+                        default:
+                                abort ();
+                        }
+                }
+        }
+        
+        s_exp->s_valp = 0;
+        s_exp->s_type = NULL;
+        s_exp->s_flgs = 0;
+        
+        return;
 }
 
 void SEXP_free (SEXP_t *s_exp)
@@ -793,7 +837,7 @@ void SEXP_free (SEXP_t *s_exp)
                 uint32_t   refs;
 
                 SEXP_val_dsc (&v_dsc, s_exp->s_valp);
-
+                
                 if (SEXP_rawval_decref (s_exp->s_valp)) {
                         switch (v_dsc.type) {
                         case SEXP_VALTYPE_STRING:
@@ -803,8 +847,9 @@ void SEXP_free (SEXP_t *s_exp)
                                 sm_free (v_dsc.hdr);
                                 break;
                         case SEXP_VALTYPE_LIST:
-                                SEXP_rawval_lblk_free ((uintptr_t)SEXP_LCASTP(v_dsc.mem)->b_addr, SEXP_free);
+                                SEXP_rawval_lblk_free ((uintptr_t)SEXP_LCASTP(v_dsc.mem)->b_addr, SEXP_free_lmemb);
                                 sm_free (v_dsc.hdr);
+                                break;
                         default:
                                 abort ();
                         }
@@ -813,6 +858,7 @@ void SEXP_free (SEXP_t *s_exp)
         
         s_exp->s_valp = 0;
         s_exp->s_type = NULL;
+        s_exp->s_flgs = 0;
         
         sm_free (s_exp);
         

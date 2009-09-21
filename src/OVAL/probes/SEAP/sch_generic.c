@@ -57,7 +57,8 @@ ssize_t sch_generic_send (SEAP_desc_t *desc, void *buf, size_t len, uint32_t fla
 
 ssize_t sch_generic_sendsexp (SEAP_desc_t *desc, SEXP_t *sexp, uint32_t flags)
 {
-        return SEXP_st_dprintc (DATA(desc->scheme_data)->ofd, sexp, &(desc->ostate));
+        return 0;
+        //return SEXP_st_dprintc (DATA(desc->scheme_data)->ofd, sexp, &(desc->ostate));
 }
 
 int sch_generic_close (SEAP_desc_t *desc, uint32_t flags)

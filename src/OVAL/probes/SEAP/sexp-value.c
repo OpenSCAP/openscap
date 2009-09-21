@@ -4,18 +4,17 @@
 
 int SEXP_val_new (SEXP_val_t *dst, size_t vmemsize, SEXP_type_t type)
 {
-        SEXP_val_t v_dsc;
-        void      *s_val;
+        void *s_val;
 
         sm_memalign (&s_val, SEXP_VALP_ALIGN,
                      sizeof (SEXP_valhdr_t) + vmemsize);
         
-        SEXP_val_dsc (&v_dsc, (uintptr_t) s_val);
+        SEXP_val_dsc (dst, (uintptr_t) s_val);
         
-        v_dsc.hdr->refs = 1;
-        v_dsc.hdr->size = vmemsize;
-        v_dsc.type      = type;
-        v_dsc.ptr       = SEXP_val_ptr (&v_dsc);
+        dst->hdr->refs = 1;
+        dst->hdr->size = vmemsize;
+        dst->type      = type;
+        dst->ptr       = SEXP_val_ptr (dst);
         
         return (0);
 }
@@ -24,7 +23,7 @@ void SEXP_val_dsc (SEXP_val_t *dst, uintptr_t ptr)
 {
         dst->ptr  = ptr;
         dst->hdr  = (SEXP_valhdr_t *)(ptr & SEXP_VALP_MASK);
-        dst->mem  = (void *)((uint8_t *)(dst->hdr) + sizeof (SEXP_valhdr_t));
+        dst->mem  = (void *)(((uint8_t *)(dst->hdr)) + sizeof (SEXP_valhdr_t));
         dst->type = ptr & SEXP_VALT_MASK;
 }
 
@@ -90,8 +89,10 @@ uintptr_t SEXP_rawval_lblk_new (uint8_t sz)
                 
         _A(sz < 16);
         
-        if (sm_memalign ((void **)(void *)&lblk, SEXP_LBLK_ALIGN, 2 << sz) != 0) {
+        if (sm_memalign ((void **)(void *)&lblk, SEXP_LBLK_ALIGN,
+                         sizeof (uintptr_t) + (2 * sizeof (uint16_t)) + (sizeof (SEXP_t) * (1 << sz))) != 0) {
                 /* TODO: handle this */
+                abort ();
                 return ((uintptr_t) NULL);
         }
 
@@ -149,7 +150,7 @@ uintptr_t SEXP_rawval_lblk_fill (uintptr_t lblkp, SEXP_t *s_exp[], uint16_t s_ex
 
         lblk = SEXP_VALP_LBLK(lblkp);
         
-        if (s_exp_count > (2 << (lblk->nxsz & 0xf)) - lblk->real)
+        if (s_exp_count > (1 << (lblk->nxsz & 0xf)) - lblk->real)
                 return ((uintptr_t) NULL);
         
         lblk->real = s_exp_count;
@@ -157,6 +158,7 @@ uintptr_t SEXP_rawval_lblk_fill (uintptr_t lblkp, SEXP_t *s_exp[], uint16_t s_ex
         for (; s_exp_count > 0; --s_exp_count) {
                 lblk->memb[s_exp_count - 1].s_valp = SEXP_rawval_incref (s_exp[s_exp_count - 1]->s_valp);
                 lblk->memb[s_exp_count - 1].s_type = s_exp[s_exp_count - 1]->s_type;
+                lblk->memb[s_exp_count - 1].s_flgs = 0;
         }
         
         return (lblkp);
@@ -168,48 +170,55 @@ uintptr_t SEXP_rawval_lblk_add (uintptr_t lblkp, SEXP_t *s_exp)
         uintptr_t lb_head;
         struct SEXP_val_lblk *lblk;
 
-        lb_head = lblkp;
-        lblk    = SEXP_VALP_LBLK(lb_head);
-        lb_prev = 0;
-        
-        while (lblk != NULL) {
-                if (lblk->refs < 2) {
-                        lb_prev = lblkp;
-                        lblk    = SEXP_VALP_LBLK(lblk->nxsz);
-                } else {
-                        uintptr_t lb_ptr;
-                        
-                        /*
-                         * We've encountered a block which belongs to more
-                         * than one list so we have to create a copy of the
-                         * rest of the list.
-                         */
-                        lb_ptr = SEXP_rawval_list_copy (lblkp, 0);
-                        
-                        if (lb_prev == 0)
-                                lb_head = lb_ptr;
-                        
-                        /*
-                         * Update pointer in the previous block (if there is one)
-                         * to point at the copy. Also decrement the reference
-                         * counter in current block.
-                         */
-                        if (lb_prev != 0)
-                                SEXP_VALP_LBLK(lb_prev)->nxsz = (lb_ptr & SEXP_LBLKP_MASK) | (SEXP_VALP_LBLK(lb_prev)->nxsz & SEXP_LBLKS_MASK);
-                        
-                        SEXP_rawval_lblk_decref (lblkp);
-                        
-                        /*
-                         * Get the last block without checking refs
-                         * (we don't need to because it's our copy)
-                         */
-                        lb_prev = SEXP_rawval_lblk_last (lb_ptr);
-                        break;
-                }
-        }
-        
-        _A(lb_prev != 0);
+        lblk = SEXP_VALP_LBLK(lblkp);
 
+        if (lblk == NULL) {
+                lb_head = SEXP_rawval_lblk_new (2);
+                lb_prev = lb_head;
+        } else {
+                lb_head = lblkp;
+                lb_prev = 0;
+
+                do {
+                        if (lblk->refs < 2) {
+                                lb_prev = (uintptr_t)lblk;
+                                lblk    = SEXP_VALP_LBLK(lblk->nxsz);
+                        } else {
+                                uintptr_t lb_ptr;
+                                
+                                /*
+                                 * We've encountered a block which belongs to more
+                                 * than one list so we have to create a copy of the
+                                 * rest of the list.
+                                 */
+                                lb_ptr = SEXP_rawval_list_copy (lblkp, 0);
+                                
+                                if (lb_prev == 0)
+                                        lb_head = lb_ptr;
+                                
+                                /*
+                                 * Update pointer in the previous block (if there is one)
+                                 * to point at the copy. Also decrement the reference
+                                 * counter in current block.
+                                 */
+                                if (lb_prev != 0)
+                                        SEXP_VALP_LBLK(lb_prev)->nxsz = (lb_ptr & SEXP_LBLKP_MASK) | (SEXP_VALP_LBLK(lb_prev)->nxsz & SEXP_LBLKS_MASK);
+                                
+                                SEXP_rawval_lblk_decref (lblkp);
+                                
+                                /*
+                                 * Get the last block without checking refs
+                                 * (we don't need to because it's our copy)
+                                 */
+                                lb_prev = SEXP_rawval_lblk_last (lb_ptr);
+                                break;
+                        }
+                } while (lblk != NULL);
+        }
+
+        _A(lb_prev != 0);
+        _A(lb_head != 0);
+        
         (void)SEXP_rawval_lblk_add1 (lb_prev, s_exp);
         
         return (lb_head);
@@ -218,19 +227,32 @@ uintptr_t SEXP_rawval_lblk_add (uintptr_t lblkp, SEXP_t *s_exp)
 uintptr_t SEXP_rawval_lblk_add1 (uintptr_t lblkp, SEXP_t *s_exp)
 {
         struct SEXP_val_lblk *lblk = SEXP_VALP_LBLK(lblkp);
-       
-        if (lblk->real < (2 << (lblk->nxsz & 0xf))) {
+        
+        if (lblk->real < (1 << (lblk->nxsz & 0xf))) {
+                printf ("add@%u\n", lblk->real);
+
                 lblk->memb[lblk->real].s_valp = SEXP_rawval_incref (s_exp->s_valp);
                 lblk->memb[lblk->real].s_type = s_exp->s_type;
+                lblk->memb[lblk->real].s_flgs = 0;
+                ++lblk->real;
                 
                 return (lblkp);
         } else {
-                uint8_t new_sz = ((lblk->nxsz & 0xf) + 1) % 16;
+                uint8_t   new_sz = ((lblk->nxsz & SEXP_LBLKS_MASK) + 1) % 16;
+                uintptr_t new_lb;
+
+                new_lb     = SEXP_rawval_lblk_new (new_sz);
+                lblk->nxsz = (new_lb & SEXP_LBLKP_MASK) | (lblk->nxsz & SEXP_LBLKS_MASK);
                 
-                lblkp = SEXP_rawval_lblk_new (new_sz);
-                lblk->nxsz = (lblkp & SEXP_LBLKP_MASK) | (lblk->nxsz & 0xf);
+                /*
+                 * We don't need to check the return value
+                 * here because we are adding the S-exp to
+                 * a new allocated block and there is at
+                 * least one free slot.
+                 */
+                SEXP_rawval_lblk_add1 (new_lb, s_exp);
                 
-                return (SEXP_rawval_lblk_add (lblkp, s_exp));
+                return (lblkp);
         }
         
         /* NOTREACHED */
@@ -260,7 +282,7 @@ SEXP_t *SEXP_rawval_lblk_nth (uintptr_t lblkp, uint32_t n)
         lblk = SEXP_VALP_LBLK(lblkp);
 
         while (lblk != NULL) {
-                if (lblk->real <= n) {
+                if (lblk->real >= n) {
                         return (lblk->memb + (n - 1));
                 } else {
                         n   -= lblk->real; 
@@ -269,6 +291,44 @@ SEXP_t *SEXP_rawval_lblk_nth (uintptr_t lblkp, uint32_t n)
         }
         
         return (NULL);
+}
+
+int SEXP_rawval_lblk_cb (uintptr_t lblkp, int (*func) (SEXP_t *, void *), void *arg, uint32_t n)
+{
+        struct SEXP_val_lblk *lblk;
+        uint16_t bi;
+        uint32_t gi;
+        
+        lblk = SEXP_VALP_LBLK(lblkp);
+        
+        while (lblk != NULL) {
+                if (lblk->real >= n) {
+                        int ret;
+
+                        bi = (uint16_t)n - 1;
+                        
+                        do {
+                                while (bi < lblk->real) {
+                                        ret = func (lblk->memb + bi, arg);
+                                        
+                                        if (ret != 0)
+                                                return (ret);
+                                        else
+                                                ++bi;
+                                }
+                                
+                                lblk = SEXP_VALP_LBLK(lblk->nxsz);
+                                bi   = 0;
+                        } while (lblk != NULL);
+                        
+                        break;
+                } else {
+                        n   -= lblk->real;
+                        lblk = SEXP_VALP_LBLK(lblk->nxsz);
+                }
+        }
+        
+        return (0);
 }
 
 uintptr_t SEXP_rawval_list_copy (uintptr_t lblkp, uint16_t n_skip)
@@ -302,7 +362,7 @@ uintptr_t SEXP_rawval_list_copy (uintptr_t lblkp, uint16_t n_skip)
                 /*
                  * allocate new block
                  */
-                if (lb_new->real >= (2 << (cur_sz))) {
+                if (lb_new->real >= (1 << (cur_sz))) {
                         lb_next = SEXP_rawval_lblk_new (++cur_sz);
                         lb_new->nxsz = (lb_next & SEXP_LBLKP_MASK) | (lb_new->nxsz & SEXP_LBLKS_MASK);
                         lb_new  = SEXP_VALP_LBLK(lb_next);
@@ -312,7 +372,7 @@ uintptr_t SEXP_rawval_list_copy (uintptr_t lblkp, uint16_t n_skip)
                 /*
                  * copy list items
                  */
-                while (off_n < (2 << cur_sz) && off_o < (2 << old_sz)) {
+                while (off_n < (1 << cur_sz) && off_o < (1 << old_sz)) {
                         lb_new->memb[off_n].s_valp = SEXP_rawval_incref (lb_old->memb[off_o].s_valp);
                         lb_new->memb[off_n].s_type = lb_old->memb[off_o].s_type;
                         
@@ -325,11 +385,24 @@ uintptr_t SEXP_rawval_list_copy (uintptr_t lblkp, uint16_t n_skip)
         return (lb_head);
 }
 
-void SEXP_rawval_lblk_free (uintptr_t lblk, void (*f_func) (SEXP_t *))
+void SEXP_rawval_lblk_free (uintptr_t lblkp, void (*func) (SEXP_t *))
 {
-        /* decref hdr */
-        /* if 0 f_func on items */
-        /* next block */
+        if (SEXP_rawval_lblk_decref (lblkp)) {
+                struct SEXP_val_lblk *lblk, *next;
+                
+                lblk = SEXP_VALP_LBLK(lblkp);
+                next = SEXP_VALP_LBLK(lblk->nxsz);
+                
+                while (lblk->real > 0) {
+                        --lblk->real;
+                        func (lblk->memb + lblk->real);
+                }
+                
+                sm_free (lblk);
+                
+                if (next != NULL)
+                        SEXP_rawval_lblk_free ((uintptr_t)next, func);
+        }
 
         return;
 }

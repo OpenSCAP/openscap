@@ -19,4 +19,9 @@ SEXP_t *SEXP_lstack_push (SEXP_lstack_t *stack, SEXP_t *ref);
 SEXP_t *SEXP_lstack_pop (SEXP_lstack_t *stack);
 SEXP_t *SEXP_lstack_top (SEXP_lstack_t *stack);
 
+struct SEXP_it {
+        SEXP_t *s_ref;
+        
+};
+
 #endif /* _SEXP_MANIP_H */

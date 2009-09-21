@@ -1,4 +1,5 @@
 #include <pthread.h>
+#include "public/sm_alloc.h"
 #include "generic/bitmap.h"
 #include "_sexp-parse.h"
 #include "_seap-scheme.h"

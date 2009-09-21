@@ -392,7 +392,7 @@ int SEAP_reply (SEAP_CTX_t *ctx, int sd, SEAP_msg_t *rep_msg, SEAP_msg_t *req_ms
         _A(req_msg != NULL);
         
         if (SEAP_msgattr_set (rep_msg, "reply-id",
-                              SEXP_number_newllu (req_msg->id)) == 0)
+                              SEXP_number_newu_64 (req_msg->id)) == 0)
                 return SEAP_sendmsg (ctx, sd, rep_msg);
         else
                 return (-1);

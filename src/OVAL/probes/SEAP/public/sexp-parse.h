@@ -16,6 +16,6 @@ typedef struct SEXP_pstate SEXP_pstate_t;
 SEXP_pstate_t *SEXP_pstate_new (void);
 void           SEXP_pstate_free (SEXP_pstate_t *);
 
-SEXP_t *SEXP_parse (SEXP_psetup_t *setup, const char *buf, size_t buflen, SEXP_pstate_t **pstate);
+SEXP_t *SEXP_parse (const SEXP_psetup_t *setup, const char *buf, size_t buflen, SEXP_pstate_t **pstate);
 
 #endif /* SEXP_PARSE_H */

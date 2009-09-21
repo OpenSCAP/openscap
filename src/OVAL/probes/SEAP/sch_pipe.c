@@ -203,7 +203,8 @@ ssize_t sch_pipe_send (SEAP_desc_t *desc, void *buf, size_t len, uint32_t flags)
 ssize_t sch_pipe_sendsexp (SEAP_desc_t *desc, SEXP_t *sexp, uint32_t flags)
 {
         _LOGCALL_;
-        return SEXP_st_dprintc (DATA(desc)->pfd, sexp, &(desc->ostate));
+        return 0;
+        //return SEXP_st_dprintc (DATA(desc)->pfd, sexp, &(desc->ostate));
 }
 
 int sch_pipe_close (SEAP_desc_t *desc, uint32_t flags)

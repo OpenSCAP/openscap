@@ -185,7 +185,7 @@ DEFEXTRACTOR_F(datatype);
 DEFEXTRACTOR(hexstring);
 DEFEXTRACTOR_F(hexstring);
 
-SEXP_t *SEXP_parse (SEXP_psetup_t *setup, const char *buf, size_t buflen, SEXP_pstate_t **statep)
+SEXP_t *SEXP_parse (const SEXP_psetup_t *setup, const char *buf, size_t buflen, SEXP_pstate_t **statep)
 {
         static const void *labels[] = {
                 /* 000 NUL (Null char.)               */ &&L_NUL,
@@ -769,7 +769,8 @@ SEXP_t *SEXP_parse (SEXP_psetup_t *setup, const char *buf, size_t buflen, SEXP_p
                         }
                         
                         /* STR -> SEXP END */                        
-                        i += d;
+                        //i += d;
+                        e_dsc.t_len = d;
                         
                         num_type = 0;
                         valid = 0;
@@ -784,6 +785,7 @@ SEXP_t *SEXP_parse (SEXP_psetup_t *setup, const char *buf, size_t buflen, SEXP_p
                         break;
                 }
                 /* If we got here, it's definitely just a number */
+                ext_e = SEXP_EXT_SUCCESS;
                 goto L_SEXP_ADD;
         L_NUL:
                 _D("WTF? NUL found.\n");
@@ -797,15 +799,16 @@ SEXP_t *SEXP_parse (SEXP_psetup_t *setup, const char *buf, size_t buflen, SEXP_p
                 goto L_NO_SEXP_ALLOC;
         L_PAROPEN:
                 {
-                        SEXP_t *s_list;
+                        SEXP_t *s_list, *s_ref;
                         
                         s_list = SEXP_list_new (NULL);
+                        s_ref  = SEXP_softref (s_list);
                         
                         SEXP_list_add (SEXP_pstate_lstack_top (*statep), s_list);
-                        SEXP_pstate_lstack_push (*statep, SEXP_softref (s_list));
-                        
                         SEXP_free (s_list);
                         
+                        SEXP_pstate_lstack_push (*statep, s_ref);
+                                                
                         if ((*statep)->l_real == 2) {
                                 exflags_tmp = exflags;
                                 exflags &= ~(EXF_EOFOK);
@@ -830,6 +833,7 @@ SEXP_t *SEXP_parse (SEXP_psetup_t *setup, const char *buf, size_t buflen, SEXP_p
                                 exflags = exflags_tmp;
                         }
                         
+                        ext_e = SEXP_EXT_SUCCESS;
                         goto L_NO_SEXP_ALLOC;
                 } else {
                         errnum = EILSEQ;
@@ -959,7 +963,7 @@ SEXP_t *SEXP_parse (SEXP_psetup_t *setup, const char *buf, size_t buflen, SEXP_p
                 (*statep)->buffer_data_len = buflen - i;
                 (*statep)->buffer = xmemdup (pbuf + i, (*statep)->buffer_data_len);
                 (*statep)->pflags = exflags;
-
+                
                 break;
         case SEXP_EXT_EINVAL:
                 break;

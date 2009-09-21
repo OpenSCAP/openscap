@@ -55,8 +55,8 @@ char *SEXP_string_subcstr (SEXP_t *s_exp, size_t beg, size_t len);
  */
 
 SEXP_t *SEXP_list_new (SEXP_t *memb, ...);
-void SEXP_list_free (SEXP_t *s_exp);
-bool SEXP_listp (const SEXP_t *s_exp);
+void    SEXP_list_free (SEXP_t *s_exp);
+bool    SEXP_listp (const SEXP_t *s_exp);
 size_t  SEXP_list_length (const SEXP_t *s_exp);
 SEXP_t *SEXP_list_first (const SEXP_t *list);
 SEXP_t *SEXP_list_rest  (const SEXP_t *list);
@@ -66,6 +66,37 @@ SEXP_t *SEXP_list_add (SEXP_t *list, SEXP_t *s_exp);
 SEXP_t *SEXP_list_join (const SEXP_t *list_a, const SEXP_t *list_b);
 SEXP_t *SEXP_list_push (SEXP_t *list, SEXP_t *s_exp);
 SEXP_t *SEXP_list_pop (SEXP_t *list);
+
+SEXP_t *SEXP_listref_first (const SEXP_t *list);
+SEXP_t *SEXP_listref_rest (const SEXP_t *list);
+SEXP_t *SEXP_listref_last (const SEXP_t *list);
+SEXP_t *SEXP_listref_nth (const SEXP_t *list, uint32_t n);
+
+typedef struct SEXP_it SEXP_it_t;
+
+#define SEXP_IT_RECURSIVE 0x01
+#define SEXP_IT_HARDREF   0x02
+
+SEXP_it_t *SEXP_listit_new (const SEXP_t *list, int flags);
+SEXP_t    *SEXP_listit_next(SEXP_it_t *it);
+SEXP_t    *SEXP_listit_prev (SEXP_it_t *it);
+SEXP_t    *SEXP_listit_length (SEXP_it_t *it);
+SEXP_t    *SEXP_listit_seek (SEXP_it_t *it, uint32_t n);
+void       SEXP_listit_free (SEXP_it_t *it);
+
+#if __STDC_VERSION__ >= 199901L
+# include <sys/cdefs.h>
+# define __XC(a,b) __CONCAT(a,b)
+
+/* TODO: use alloca & softref_r here */
+#define SEXP_list_foreach (var, list)                                 \
+        for (SEXP_t *__XC(l,__LINE__) = SEXP_softref (list),          \
+                     (var) = SEXP_listref_first (__XC(l,__LINE__));   \
+             (var) != NULL;                                           \
+             SEXP_free (var),                                         \
+             __XC(var) = SEXP_listref_next (__XC(l,__LINE__)));
+
+#endif /* __STDC_VERSION__ >= 199901L */
 
 /*
  * generic 
@@ -81,7 +112,9 @@ int         SEXP_datatype_set (SEXP_t *s_exp, const char *name);
 SEXP_type_t SEXP_typeof (const SEXP_t *s_exp);
 const char *SEXP_strtype (const SEXP_t *s_exp);
 
-static void SEXP_VALIDATE(const SEXP_t *s_exp)
+#define SEXP_VALIDATE(s) __SEXP_VALIDATE(s, __FILE__, __LINE__, __PRETTY_FUNCTION__)
+
+static void __SEXP_VALIDATE(const SEXP_t *s_exp, const char *file, uint32_t line, const char *func)
 {
         return;
 }
