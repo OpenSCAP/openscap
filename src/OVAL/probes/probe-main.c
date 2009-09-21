@@ -286,16 +286,16 @@ SEXP_t *SEXP_OVALset_eval (SEXP_t *set, size_t depth)
 #endif
                                                 goto eval_fail;
                                         }
-                                        
-                                        if (o_subset_i < 2) {
-                                                o_subset[o_subset_i] = res;
-                                                ++o_subset_i;
-                                        } else {
-                                                _D("FAIL: more than 2 obj_refs\n");
-                                                goto eval_fail;
-                                        }
+                                }       
+                                 
+                                if (o_subset_i < 2) {
+                                        o_subset[o_subset_i] = res;
+                                        ++o_subset_i;
+                                } else {
+                                        _D("FAIL: more than 2 obj_refs\n");
+                                        goto eval_fail;
                                 }
-                                
+                                                                
                         } break;
                         
                         CASE ('f', "ilter") {
