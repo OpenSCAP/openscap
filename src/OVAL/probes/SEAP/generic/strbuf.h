@@ -4,6 +4,7 @@
 
 #include <stddef.h>
 #include <unistd.h>
+#include <stdio.h>
 
 struct strblk {
         struct strblk *next;
@@ -32,5 +33,8 @@ size_t strbuf_length (strbuf_t *buf);
 
 char *strbuf_cstr   (strbuf_t *buf);
 char *strbuf_cstr_r (strbuf_t *buf, char *str, size_t len);
+
+size_t strbuf_fwrite (FILE *fp, strbuf_t *buf);
+size_t strbuf_write  (strbuf_t *buf, int fd);
 
 #endif /* STRBUF_H */

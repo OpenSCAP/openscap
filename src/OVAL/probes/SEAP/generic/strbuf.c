@@ -180,3 +180,20 @@ char *strbuf_cstr_r (strbuf_t *buf, char *str, size_t len)
         
         return (str);
 }
+
+size_t strbuf_fwrite (FILE *fp, strbuf_t *buf)
+{
+        struct strblk *cur;
+        size_t size;
+        
+        cur   = buf->beg;
+        size  = 0;
+        
+        while (cur != NULL) {
+                size += fwrite (cur->data, sizeof (char),
+                                cur->next == NULL ? buf->blkoff : cur->size, fp);
+                cur   = cur->next;
+        }
+        
+        return (size);
+}
