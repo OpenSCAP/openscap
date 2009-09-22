@@ -25,6 +25,18 @@ AC_PROG_LIBTOOL
 # swig
 AC_PROG_SWIG([1.3.29])
 
+#check for atomic functions
+AC_CACHE_CHECK([for atomic builtins], [ac_cv_atomic_builtins],
+[AC_LINK_IFELSE([AC_LANG_PROGRAM([int foovar=0;],
+                                [return __sync_fetch_and_add(&foovar, 1);])],
+                [ac_cv_atomic_builtins=yes],
+                [ac_cv_atomic_builtins=no])])
+if test $ac_cv_atomic_builtins = yes; then
+  AC_DEFINE([HAVE_ATOMIC_BUILTINS], 1, [Define to 1 if the compiler supports atomic builtins.])
+else
+  AC_MSG_FAILURE([Compiler doesn't support atomic builtins])
+fi
+
 # Compiler flags
 CFLAGS="$CFLAGS -std=c99 -W -Wall -Wshadow -Wformat -Wundef -Wno-unused-parameter -D_GNU_SOURCE -march=native"
 
