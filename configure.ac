@@ -25,6 +25,12 @@ AC_PROG_LIBTOOL
 # swig
 AC_PROG_SWIG([1.3.29])
 
+# Compiler flags
+CFLAGS="$CFLAGS -std=c99 -W -Wall -Wshadow -Wformat -Wundef -Wno-unused-parameter -D_GNU_SOURCE -march=native"
+
+CFLAGS_OPTIMIZED="-O2 -finline-functions"
+CFLAGS_DEBUGGING="-fno-inline-functions -O0 -g"
+
 #check for atomic functions
 AC_CACHE_CHECK([for atomic builtins], [ac_cv_atomic_builtins],
 [AC_LINK_IFELSE([AC_LANG_PROGRAM([int foovar=0;],
@@ -36,12 +42,6 @@ if test $ac_cv_atomic_builtins = yes; then
 else
   AC_MSG_FAILURE([Compiler doesn't support atomic builtins])
 fi
-
-# Compiler flags
-CFLAGS="$CFLAGS -std=c99 -W -Wall -Wshadow -Wformat -Wundef -Wno-unused-parameter -D_GNU_SOURCE -march=native"
-
-CFLAGS_OPTIMIZED="-O2 -finline-functions"
-CFLAGS_DEBUGGING="-fno-inline-functions -O0 -g"
 
 #
 # xml2-config
