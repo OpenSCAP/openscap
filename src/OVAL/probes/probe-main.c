@@ -69,7 +69,8 @@ SEXP_t *SEXP_OVALset_combine(SEXP_t *item_lst1, SEXP_t *item_lst2, oval_set_oper
 	if (SEXP_list_length(item_lst2) == 0)
 		return item_lst1;
 
-	res_items = SEXP_list_new();
+	res_items = SEXP_list_new(NULL);
+        
 	switch (op) {
 	case OVAL_SET_OPERATION_INTERSECTION:
 		SEXP_list_foreach(item1, item_lst1) {
@@ -128,7 +129,7 @@ SEXP_t *SEXP_OVALset_apply_filters(SEXP_t *items, SEXP_t *filters)
 	oval_check_enum ochk;
 	oval_operator_enum oopr;
 
-	result_items = SEXP_list_new();
+	result_items = SEXP_list_new(NULL);
 
 	SEXP_list_foreach (item, items) {
 		item_status = SEXP_OVALelm_getstatus(item);
@@ -148,10 +149,10 @@ SEXP_t *SEXP_OVALset_apply_filters(SEXP_t *items, SEXP_t *filters)
 		filtered = 0;
 
 		SEXP_list_foreach (filter, filters) {
-			ste_res = SEXP_list_new();
+			ste_res = SEXP_list_new(NULL);
 
 			SEXP_sublist_foreach(felm, filter, 2, -1) {
-				elm_res = SEXP_list_new();
+				elm_res = SEXP_list_new(NULL);
 				stmp = SEXP_OVALelm_getval(felm, 0);
 				elm_name = SEXP_string_cstr(stmp);
 
@@ -160,16 +161,16 @@ SEXP_t *SEXP_OVALset_apply_filters(SEXP_t *items, SEXP_t *filters)
 					if (ielm == NULL)
 						break;
 					ores = SEXP_OVALentste_cmp(felm, ielm);
-					SEXP_list_add(elm_res, SEXP_number_newd(ores));
+					SEXP_list_add(elm_res, SEXP_number_newi_32 (ores));
 				}
 
 				stmp = SEXP_OVALelm_getattrval(felm, "entity_check");
 				if (stmp == NULL)
 					ochk = OVAL_CHECK_ALL;
 				else
-					ochk = SEXP_number_getd(stmp);
+					ochk = SEXP_number_geti_32 (stmp);
 				ores = SEXP_OVALent_result_bychk(elm_res, ochk);
-				SEXP_list_add(ste_res, SEXP_number_newd(ores));
+				SEXP_list_add(ste_res, SEXP_number_newi_32 (ores));
 				// todo: var_check
 			}
 
@@ -177,7 +178,7 @@ SEXP_t *SEXP_OVALset_apply_filters(SEXP_t *items, SEXP_t *filters)
 			if (stmp == NULL)
 				oopr = OPERATOR_AND;
 			else
-				oopr = SEXP_number_getd(stmp);
+				oopr = SEXP_number_geti_32 (stmp);
 			ores = SEXP_OVALent_result_byopr(ste_res, oopr);
 			if (ores == OVAL_RESULT_TRUE) {
 				filtered = 1;
@@ -215,8 +216,8 @@ SEXP_t *SEXP_OVALset_eval (SEXP_t *set, size_t depth)
                 return (NULL);
         }
                         
-        filters_u = SEXP_list_new (); /* unavailable filters */
-        filters_a = SEXP_list_new (); /* available filters (cached) */
+        filters_u = SEXP_list_new (NULL); /* unavailable filters */
+        filters_a = SEXP_list_new (NULL); /* available filters (cached) */
         
         s_subset[0] = NULL;
         s_subset[1] = NULL;
@@ -231,7 +232,7 @@ SEXP_t *SEXP_OVALset_eval (SEXP_t *set, size_t depth)
         op_val = SEXP_OVALelm_getattrval (set, "operation");
         
         if (op_val != NULL)
-                op_num = SEXP_number_getd (op_val);
+                op_num = SEXP_number_geti_32 (op_val);
         else 
                 op_num = OVAL_SET_OPERATION_UNION;
         
@@ -331,7 +332,7 @@ SEXP_t *SEXP_OVALset_eval (SEXP_t *set, size_t depth)
 #if !defined(NDEBUG)
                 _D("FAIL: can't get unavailable filters:\n");
                 SEXP_list_foreach (result, filters_u) {
-                        SEXP_printfa (result);
+                        SEXP_fprintfa (stdout, result);
                         printf ("\n");
                 }
 #endif

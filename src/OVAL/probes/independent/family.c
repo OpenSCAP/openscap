@@ -35,9 +35,10 @@ SEXP_t *probe_main(SEXP_t *probe_in, int *err)
 		return NULL;
 	}
 
-	lst = SEXP_list_new();
+	lst = SEXP_list_new(NULL);
+
 	attrs = SEXP_OVALattr_create("id", SEXP_string_newf("-1"), // todo: id
-				     "status", SEXP_number_newd(OVAL_STATUS_EXISTS),
+				     "status", SEXP_number_newi_32 (OVAL_STATUS_EXISTS),
 				     NULL);
 	item = SEXP_OVALobj_create("family_item",
 				   attrs,

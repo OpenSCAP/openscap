@@ -18,11 +18,16 @@ SEXP_t *SEXP_number_newi_16 (int16_t n);
 SEXP_t *SEXP_number_newu_16 (uint16_t n);
 #define SEXP_number_newi SEXP_number_newi_32
 SEXP_t *SEXP_number_newi_32 (int32_t n);
+int32_t SEXP_number_geti_32 (const SEXP_t *s_exp);
 #define SEXP_number_newu SEXP_number_newu_32
 SEXP_t *SEXP_number_newu_32 (uint32_t n);
+uint32_t SEXP_number_getu_32 (const SEXP_t *s_exp);
 SEXP_t *SEXP_number_newi_64 (int64_t n);
+int64_t SEXP_number_geti_64 (const SEXP_t *s_exp);
 SEXP_t *SEXP_number_newu_64 (uint64_t n);
+uint64_t SEXP_number_getu_64 (const SEXP_t *s_exp);
 SEXP_t *SEXP_number_newf (double n);
+double  SEXP_number_getf (const SEXP_t *s_exp);
 
 int SEXP_number_get (SEXP_t *s_exp, void *dst, SEXP_numtype_t type);
 
@@ -49,6 +54,7 @@ char *SEXP_string_cstr_r (SEXP_t *s_exp, char *buf, size_t len);
 char *SEXP_string_cstrp (const SEXP_t *s_exp);
 
 char *SEXP_string_subcstr (SEXP_t *s_exp, size_t beg, size_t len);
+int SEXP_string_cmp (const SEXP_t *str_a, const SEXP_t *str_b);
 
 /*
  * list
@@ -89,12 +95,8 @@ void       SEXP_listit_free (SEXP_it_t *it);
 # define __XC(a,b) __CONCAT(a,b)
 
 /* TODO: use alloca & softref_r here */
-#define SEXP_list_foreach (var, list)                                 \
-        for (SEXP_t *__XC(l,__LINE__) = SEXP_softref (list),          \
-                     (var) = SEXP_listref_first (__XC(l,__LINE__));   \
-             (var) != NULL;                                           \
-             SEXP_free (var),                                         \
-             __XC(var) = SEXP_listref_next (__XC(l,__LINE__)));
+#define SEXP_list_foreach(var, list) for (;0;)
+#define SEXP_sublist_foreach(var, list, beg, end) for (;0;)
 
 #endif /* __STDC_VERSION__ >= 199901L */
 

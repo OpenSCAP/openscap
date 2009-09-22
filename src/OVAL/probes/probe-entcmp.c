@@ -46,9 +46,9 @@ oval_result_enum SEXP_OVALent_cmp_bool(SEXP_t *val1, SEXP_t *val2, oval_operatio
 	oval_result_enum result = OVAL_RESULT_ERROR;
 	int v1, v2;
 
-	v1 = SEXP_number_getd(val1);
-	v2 = SEXP_number_getd(val2);
-
+	v1 = SEXP_number_geti_32 (val1);
+	v2 = SEXP_number_geti_32 (val2);
+        
 	switch (op) {
 	case OPERATION_EQUALS:
 		if (v1 == v2)
@@ -144,8 +144,8 @@ oval_result_enum SEXP_OVALent_cmp_int(SEXP_t *val1, SEXP_t *val2, oval_operation
 	oval_result_enum result = OVAL_RESULT_ERROR;
 	int v1, v2;
 
-	v1 = SEXP_number_getd(val1);
-	v2 = SEXP_number_getd(val2);
+	v1 = SEXP_number_geti_32 (val1);
+	v2 = SEXP_number_geti_32 (val2);
 
 	switch (op) {
 	case OPERATION_EQUALS:
@@ -229,7 +229,7 @@ static SEXP_t *version_parser(char *version) {
 		goto fail;
 
 	s = v_dup = strdup(version);
-	version_tokens = SEXP_list_new();
+	version_tokens = SEXP_list_new(NULL);
 
 	while (len > 0) {
 		nbr_len = strspn(s, ac);
@@ -238,7 +238,7 @@ static SEXP_t *version_parser(char *version) {
 			goto fail;
 		s[nbr_len] = '\0';
 		token = atoll(s);
-		SEXP_list_add(version_tokens, SEXP_number_newlld(token));
+		SEXP_list_add(version_tokens, SEXP_number_newi_64 (token));
 		s += nbr_len + 1;
 		len -= nbr_len + 1;
 	}
@@ -305,13 +305,13 @@ oval_result_enum SEXP_OVALent_cmp_version(SEXP_t *val1, SEXP_t *val2, oval_opera
 		stmp = v2_tkns;
 	}
 	for (; lendif > 0; --lendif) {
-		SEXP_list_add(stmp, SEXP_number_newlld(0));
+		SEXP_list_add(stmp, SEXP_number_newi_64 (0));
 	}
 
 	len = SEXP_list_length(v1_tkns);
 	for (i = 1; i <= len; ++i) {
-		v1 = SEXP_number_getlld(SEXP_list_nth(v1_tkns, i));
-		v2 = SEXP_number_getlld(SEXP_list_nth(v2_tkns, i));
+		v1 = SEXP_number_geti_64 (SEXP_list_nth(v1_tkns, i));
+		v2 = SEXP_number_geti_64 (SEXP_list_nth(v2_tkns, i));
 
 		if (op == OPERATION_EQUALS) {
 			if (v1 != v2) {
@@ -447,7 +447,7 @@ oval_result_enum SEXP_OVALent_cmp(SEXP_t *ent, SEXP_t *val2)
 	if (op_sexp == NULL)
 		op = OPERATION_EQUALS;
 	else
-		op = SEXP_number_getd(op_sexp);
+		op = SEXP_number_geti_32 (op_sexp);
 
 	dtype = SEXP_OVALelm_getdatatype(ent, 1);
 
@@ -534,7 +534,7 @@ static int results_parser(SEXP_t *res_lst, struct _oresults *ores)
 	memset(ores, 0, sizeof (struct _oresults));
 
 	SEXP_list_foreach (res, res_lst) {
-		r = SEXP_number_getd(res);
+		r = SEXP_number_geti_32 (res);
 		switch (r) {
 		case OVAL_RESULT_TRUE:
 			++(ores->true_cnt);

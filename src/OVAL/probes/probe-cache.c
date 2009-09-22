@@ -49,7 +49,7 @@ int pcache_sexp_add (pcache_t *cache, const SEXP_t *id, SEXP_t *item)
         _A(item != NULL);
 
         new = RB_NEWNODE(pcache)();
-        new->id   = (SEXP_t *)SEXP_deepdup (id);
+        new->id   = SEXP_ref (id);
         new->item = item;
         
         if (RB_INSERT(pcache)(&(cache->tree), new) == E_OK) {

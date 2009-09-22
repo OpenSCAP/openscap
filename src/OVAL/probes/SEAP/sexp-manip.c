@@ -182,6 +182,11 @@ SEXP_t *SEXP_number_newi_32 (int32_t n)
         return (s_exp);
 }
 
+int32_t SEXP_number_geti_32 (const SEXP_t *s_exp)
+{
+        return (0);
+}
+
 SEXP_t *SEXP_number_newu_32 (uint32_t n)
 {
         SEXP_t    *s_exp;
@@ -202,6 +207,11 @@ SEXP_t *SEXP_number_newu_32 (uint32_t n)
         s_exp->s_valp = v_dsc.ptr;
         
         return (s_exp);
+}
+
+uint32_t SEXP_number_getu_32 (const SEXP_t *s_exp)
+{
+        return (0);
 }
 
 SEXP_t *SEXP_number_newi_64 (int64_t n)
@@ -226,6 +236,11 @@ SEXP_t *SEXP_number_newi_64 (int64_t n)
         return (s_exp);
 }
 
+int64_t SEXP_number_geti_64 (const SEXP_t *s_exp)
+{
+        return (0);
+}
+
 SEXP_t *SEXP_number_newu_64 (uint64_t n)
 {
         SEXP_t    *s_exp;
@@ -248,6 +263,11 @@ SEXP_t *SEXP_number_newu_64 (uint64_t n)
         return (s_exp);
 }
 
+uint64_t SEXP_number_getu_64 (const SEXP_t *s_exp)
+{
+        return (0);
+}
+
 SEXP_t *SEXP_number_newf (double n)
 {
         SEXP_t    *s_exp;
@@ -268,6 +288,11 @@ SEXP_t *SEXP_number_newf (double n)
         s_exp->s_valp = v_dsc.ptr;
         
         return (s_exp);
+}
+
+double SEXP_number_getf (const SEXP_t *s_exp)
+{
+        return (0);
 }
 
 int SEXP_number_get (SEXP_t *s_exp, void *dst, SEXP_numtype_t type)
@@ -431,6 +456,11 @@ char *SEXP_string_subcstr (SEXP_t *s_exp, size_t beg, size_t len)
 char *SEXP_string_cstrp (const SEXP_t *s_exp)
 {
         return (NULL);
+}
+
+int SEXP_string_cmp (const SEXP_t *str_a, const SEXP_t *str_b)
+{
+        return (-1);
 }
 
 /*
