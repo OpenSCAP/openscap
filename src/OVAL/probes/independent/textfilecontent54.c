@@ -34,7 +34,7 @@
 #endif
 
 #include <seap.h>
-#include <probe.h>
+#include <probe-api.h>
 #include <findfile.h>
 
 #define FILE_SEPARATOR '/'
@@ -141,28 +141,30 @@ static SEXP_t *create_item(const char *path, const char *filename, char *pattern
 	int i;
 	SEXP_t *attrs, *item;
 
-	attrs = SEXP_OVALattr_create("id", SEXP_OVALitem_newid(&global.id_desc),
-				     "status", SEXP_number_newd(OVAL_STATUS_EXISTS),
-				     NULL);
-	item = SEXP_OVALobj_create("textfilecontent_item",
-				   attrs,
-				   "path", NULL,
-				   SEXP_string_newf(path),
-				   "filename", NULL,
-				   SEXP_string_newf(filename),
-				   "pattern", NULL,
-				   SEXP_string_newf(pattern),
-				   "instance", NULL,
-				   SEXP_number_newd(instance),
-				   "text", NULL,
-				   SEXP_string_newf(substrs[0]),
-				   NULL);
-	SEXP_OVALobj_setelmstatus(item, "path", 1, OVAL_STATUS_EXISTS);
-	SEXP_OVALobj_setelmstatus(item, "filename", 1, OVAL_STATUS_EXISTS);
+	attrs = probe_attr_creat ("id", SEXP_OVALitem_newid(&global.id_desc),
+                                  "status", SEXP_number_newd(OVAL_STATUS_EXISTS),
+                                  NULL);
+        
+	item = probe_item_creat ("textfilecontent_item", attrs,
+                                 /* entities */
+                                 "path", NULL,
+                                 SEXP_string_newf(path),
+                                 "filename", NULL,
+                                 SEXP_string_newf(filename),
+                                 "pattern", NULL,
+                                 SEXP_string_newf(pattern),
+                                 "instance", NULL,
+                                 SEXP_number_newd(instance),
+                                 "text", NULL,
+                                 SEXP_string_newf(substrs[0]),
+                                 NULL);
 
+	probe_itement_setstatus(item, "path",     1, OVAL_STATUS_EXISTS);
+	probe_itement_setstatus(item, "filename", 1, OVAL_STATUS_EXISTS);
+        
 	for (i = 1; i < substr_cnt; ++i) {
-		SEXP_OVALobj_elm_add(item, "subexpression", NULL, SEXP_string_newf(substrs[i]));
-		SEXP_OVALobj_setelmstatus(item, "subexpression", i, OVAL_STATUS_EXISTS);
+                probe_item_ent_add (item, "subexpression", NULL, SEXP_string_newf(substrs[i]));
+                // FIXME: SEXP_OVALobj_setelmstatus(item, "subexpression", i, OVAL_STATUS_EXISTS);
 	}
 
 	return item;
@@ -172,8 +174,9 @@ static int report_missing(SEXP_t *elm)
 {
 	oval_operation_enum op;
 
-	op = SEXP_number_getd(SEXP_OVALelm_getattrval(elm, "operation"));
-	if (op == OPERATION_EQUALS)
+	op = SEXP_number_geti_32 (probe_ent_getattrval(elm, "operation"));
+	
+        if (op == OPERATION_EQUALS)
 		return 1;
 	else
 		return 0;
@@ -215,29 +218,33 @@ static int process_file(const char *path, const char *filename, void *arg)
 		SEXP_t *attrs, *item;
 
 		if (report_missing(pfd->filename_elm)) {
-			attrs = SEXP_OVALattr_create("id", SEXP_number_newd(-1), // todo: id
+			attrs = probe_attr_creat ("id", SEXP_number_newd(-1), // todo: id
 						     "status", SEXP_number_newd(OVAL_STATUS_DOESNOTEXIST),
 						     NULL);
-			item = SEXP_OVALobj_create("textfilecontent_item",
+			item = probe_item_creat ("textfilecontent_item",
 						   attrs,
 						   "path", NULL,
 						   SEXP_string_newf(path),
 						   "filename", NULL,
 						   SEXP_string_newf(filename),
 						   NULL);
-			SEXP_OVALobj_setelmstatus(item, "path", 1, OVAL_STATUS_EXISTS);
-			SEXP_OVALobj_setelmstatus(item, "filename", 1, OVAL_STATUS_DOESNOTEXIST);
+                        
+			probe_itement_setstatus (item, "path",     1, OVAL_STATUS_EXISTS);
+		        probe_itement_setstatus (item, "filename", 1, OVAL_STATUS_DOESNOTEXIST);
 		} else {
-			attrs = SEXP_OVALattr_create("id", SEXP_number_newd(-1), // todo: id
-						     "status", SEXP_number_newd(OVAL_STATUS_EXISTS),
-						     NULL);
-			item = SEXP_OVALobj_create("textfilecontent_item",
-						   attrs,
-						   "path", NULL,
-						   SEXP_string_newf(path),
-						   NULL);
-			SEXP_OVALobj_setelmstatus(item, "path", 1, OVAL_STATUS_EXISTS);
+			attrs = probe_attr_creat ("id", SEXP_number_newd(-1), // todo: id
+                                                  "status", SEXP_number_newd(OVAL_STATUS_EXISTS),
+                                                  NULL);
+                        
+			item = probe_item_creat ("textfilecontent_item", attrs,
+                                                 /* entities */
+                                                 "path", NULL,
+                                                 SEXP_string_newf(path),
+                                                 NULL);
+                        
+			probe_itement_setstatus(item, "path", 1, OVAL_STATUS_EXISTS);
 		}
+                
 		SEXP_list_add(pfd->item_list, item);
 
 		goto cleanup;

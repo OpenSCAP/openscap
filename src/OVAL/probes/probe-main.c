@@ -1,10 +1,10 @@
-#include <probe.h>
 #include <stdlib.h>
 #include <string.h>
 #include <pthread.h>
 #include <errno.h>
 #include <config.h>
 #include <common/alloc.h>
+#include <probe-api.h>
 
 #ifndef _A
 #define _A(x) assert(x)
@@ -74,10 +74,10 @@ SEXP_t *SEXP_OVALset_combine(SEXP_t *item_lst1, SEXP_t *item_lst2, oval_set_oper
 	switch (op) {
 	case OVAL_SET_OPERATION_INTERSECTION:
 		SEXP_list_foreach(item1, item_lst1) {
-			id1 = SEXP_OVALobj_getelmval(item1, "id", 1, 1);
+			id1 = probe_obj_getentval(item1, "id", 1, 1);
 			append = 0;
 			SEXP_list_foreach(item2, item_lst2) {
-				id2 = SEXP_OVALobj_getelmval(item2, "id", 1, 1);
+				id2 = probe_obj_getentval(item2, "id", 1, 1);
 				if (!SEXP_string_cmp(id1, id2)) {
 					append = 1;
 					break;
@@ -93,10 +93,10 @@ SEXP_t *SEXP_OVALset_combine(SEXP_t *item_lst1, SEXP_t *item_lst2, oval_set_oper
 		/* fall through */
 	case OVAL_SET_OPERATION_COMPLEMENT:
 		SEXP_list_foreach(item1, item_lst1) {
-			id1 = SEXP_OVALobj_getelmval(item1, "id", 1, 1);
+			id1 = probe_obj_getentval(item1, "id", 1, 1);
 			append = 1;
 			SEXP_list_foreach(item2, item_lst2) {
-				id2 = SEXP_OVALobj_getelmval(item2, "id", 1, 1);
+				id2 = probe_obj_getentval(item2, "id", 1, 1);
 				if (!SEXP_string_cmp(id1, id2)) {
 					append = 0;
 					break;
@@ -132,7 +132,7 @@ SEXP_t *SEXP_OVALset_apply_filters(SEXP_t *items, SEXP_t *filters)
 	result_items = SEXP_list_new(NULL);
 
 	SEXP_list_foreach (item, items) {
-		item_status = SEXP_OVALelm_getstatus(item);
+		item_status = probe_ent_getstatus(item);
 		switch(item_status) {
 		case OVAL_STATUS_DOESNOTEXIST:
 			continue;
@@ -153,18 +153,18 @@ SEXP_t *SEXP_OVALset_apply_filters(SEXP_t *items, SEXP_t *filters)
 
 			SEXP_sublist_foreach(felm, filter, 2, -1) {
 				elm_res = SEXP_list_new(NULL);
-				stmp = SEXP_OVALelm_getval(felm, 0);
+				stmp = probe_ent_getval(felm, 0);
 				elm_name = SEXP_string_cstr(stmp);
 
 				for (i = 1; ; ++i) {
-					ielm = SEXP_OVALobj_getelm(item, elm_name, i);
+					ielm = probe_obj_getent(item, elm_name, i);
 					if (ielm == NULL)
 						break;
 					ores = SEXP_OVALentste_cmp(felm, ielm);
 					SEXP_list_add(elm_res, SEXP_number_newi_32 (ores));
 				}
 
-				stmp = SEXP_OVALelm_getattrval(felm, "entity_check");
+				stmp = probe_ent_getattrval(felm, "entity_check");
 				if (stmp == NULL)
 					ochk = OVAL_CHECK_ALL;
 				else
@@ -174,7 +174,7 @@ SEXP_t *SEXP_OVALset_apply_filters(SEXP_t *items, SEXP_t *filters)
 				// todo: var_check
 			}
 
-			stmp = SEXP_OVALelm_getattrval(filter, "operator");
+			stmp = probe_ent_getattrval(filter, "operator");
 			if (stmp == NULL)
 				oopr = OPERATOR_AND;
 			else
@@ -229,7 +229,7 @@ SEXP_t *SEXP_OVALset_eval (SEXP_t *set, size_t depth)
         
         result = NULL;
         
-        op_val = SEXP_OVALelm_getattrval (set, "operation");
+        op_val = probe_ent_getattrval (set, "operation");
         
         if (op_val != NULL)
                 op_num = SEXP_number_geti_32 (op_val);
@@ -243,8 +243,8 @@ SEXP_t *SEXP_OVALset_eval (SEXP_t *set, size_t depth)
 #define SEXP_OVALset_foreach(elm_var, set_list) SEXP_sublist_foreach (elm_var, set_list, 2, 1000)
         
         SEXP_OVALset_foreach (member, set) {
-                if (SEXP_OVALelm_name_cstr_r (member,
-                                              member_name, sizeof member_name) == NULL)
+                if (probe_ent_getname_r (member,
+                                         member_name, sizeof member_name) == NULL)
                 {
                         _D("FAIL: Invalid set element: ptr=%p, type=%s\n", member, SEXP_strtype (member));
                         goto eval_fail;
@@ -266,7 +266,7 @@ SEXP_t *SEXP_OVALset_eval (SEXP_t *set, size_t depth)
                         CASE ('o', "bj_ref") {
                                 SEXP_t *id, *res;
                                 
-                                id = SEXP_OVALelm_getval (member, 1);
+                                id = probe_ent_getval (member, 1);
                                 
                                 if (id == NULL) {
                                         _D("FAIL: set=%p: missing obj_ref value\n", set);
@@ -302,7 +302,7 @@ SEXP_t *SEXP_OVALset_eval (SEXP_t *set, size_t depth)
                         CASE ('f', "ilter") {
                                 SEXP_t *id, *res;
                                         
-                                id = SEXP_OVALelm_getval (member, 1);
+                                id = probe_ent_getval (member, 1);
                                         
                                 if (id == NULL) {
                                         _D("FAIL: set=%p: missing filter value\n", set);
@@ -464,7 +464,7 @@ int main (void)
                 
                 SEXP_VALIDATE(probe_in);
                 
-                oid = SEXP_OVALobj_getattrval (probe_in, "id");
+                oid = probe_obj_getattrval (probe_in, "id");
                 
                 if (oid == NULL) {
                         _D("Invalid object: %s\n", "attribute \"id\" not set\n");
@@ -547,7 +547,7 @@ void *probe_worker (void *arg)
         seap_request = (SEAP_msg_t *)arg;
         probe_in     = SEAP_msg_get (seap_request);
         
-        set = SEXP_OVALobj_getelm (probe_in, "set", 1);
+        set = probe_obj_getent (probe_in, "set", 1);
         
         if (set != NULL) {
                 /* complex object */
@@ -577,7 +577,7 @@ void *probe_worker (void *arg)
                 
                 SEXP_VALIDATE(probe_out);
 
-                oid = SEXP_OVALobj_getattrval (probe_in, "id");
+                oid = probe_obj_getattrval (probe_in, "id");
                 _A(oid != NULL);
                 
                 if (pcache_sexp_add (global.pcache, oid, probe_out) != 0) {

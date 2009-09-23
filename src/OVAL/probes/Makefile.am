@@ -17,42 +17,40 @@ libprobe_a_SOURCES= \
 LDADD= $(top_builddir)/src/libopenscap.la libprobe.a @pcre_libs@
 
 if WANT_PROBES_INDEPENDENT
-pkglibexec_PROGRAMS += \
-	probe_family \
-	probe_textfilecontent54 \
-	probe_xmlfilecontent
-
+pkglibexec_PROGRAMS += probe_family
 probe_family_SOURCES= independent/family.c
 probe_family_CFLAGS=
 probe_family_LDFLAGS=
 
-probe_textfilecontent54_SOURCES= independent/textfilecontent54.c
-probe_textfilecontent54_CFLAGS= @pcre_cflags@
-probe_textfilecontent54_LDFLAGS= @pcre_libs@
+#pkglibexec_PROGRAMS += probe_textfilecontent54
+#probe_textfilecontent54_SOURCES= independent/textfilecontent54.c
+#probe_textfilecontent54_CFLAGS= @pcre_cflags@
+#probe_textfilecontent54_LDFLAGS= @pcre_libs@
 
-probe_xmlfilecontent_SOURCES= independent/xmlfilecontent.c
-probe_xmlfilecontent_CFLAGS= @libxml_cflags@
-probe_xmlfilecontent_LDFLAGS= @libxml_libs@
+#pkglibexec_PROGRAMS += probe_xmlfilecontent
+#probe_xmlfilecontent_SOURCES= independent/xmlfilecontent.c
+#probe_xmlfilecontent_CFLAGS= @libxml_cflags@
+#probe_xmlfilecontent_LDFLAGS= @libxml_libs@
 endif
 
 if WANT_PROBES_UNIX
-pkglibexec_PROGRAMS += probe_runlevel probe_file
+#pkglibexec_PROGRAMS += probe_runlevel
+#probe_runlevel_SOURCES= unix/runlevel.c
+#probe_runlevel_CFLAGS=
+#probe_runlevel_LDFLAGS=
 
-probe_runlevel_SOURCES= unix/runlevel.c
-probe_runlevel_CFLAGS=
-probe_runlevel_LDFLAGS=
-
-probe_file_SOURCES= unix/file.c
-probe_file_CFLAGS=
-probe_file_LDFLAGS=
+#pkglibexec_PROGRAMS += probe_file
+#probe_file_SOURCES= unix/file.c
+#probe_file_CFLAGS=
+#probe_file_LDFLAGS=
 
 if WANT_PROBES_LINUX
 if ENABLE_PROBE_RPMINFO
-pkglibexec_PROGRAMS += probe_rpminfo
+#pkglibexec_PROGRAMS += probe_rpminfo
+#probe_rpminfo_SOURCES= unix/linux/rpminfo.c
+#probe_rpminfo_CFLAGS= @rpm_cflags@ 
+#probe_rpminfo_LDFLAGS= @rpm_libs@
 
-probe_rpminfo_SOURCES= unix/linux/rpminfo.c
-probe_rpminfo_CFLAGS= @rpm_cflags@ 
-probe_rpminfo_LDFLAGS= @rpm_libs@
 endif
 endif
 endif

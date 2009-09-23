@@ -12,7 +12,7 @@
 
 #include <config.h>
 #include <seap.h>
-#include <probe.h>
+#include <probe-api.h>
 
 SEXP_t *probe_main(SEXP_t *probe_in, int *err)
 {
@@ -36,18 +36,29 @@ SEXP_t *probe_main(SEXP_t *probe_in, int *err)
 	}
 
 	lst = SEXP_list_new(NULL);
+                
+        attrs = probe_attr_creat ("id",     SEXP_string_newf ("-1"),
+                                  "status", SEXP_number_newi_32 (OVAL_STATUS_EXISTS),
+                                  NULL);        
+        item  = probe_item_creat ("family_item", attrs,
+                                  /* value */
+                                  "family", SEXP_string_newf (family),
+                                  NULL);
+        probe_itement_setstatus (item, "family", 1, OVAL_STATUS_EXISTS); /* TODO: status = exists -> default ? */
 
-	attrs = SEXP_OVALattr_create("id", SEXP_string_newf("-1"), // todo: id
-				     "status", SEXP_number_newi_32 (OVAL_STATUS_EXISTS),
-				     NULL);
-	item = SEXP_OVALobj_create("family_item",
-				   attrs,
-				   "family", NULL,
-				   SEXP_string_newf(family),
-				   NULL);
-	SEXP_OVALobj_setelmstatus(item, "family", 1, OVAL_STATUS_EXISTS);
+        /*
+        item = probe_item_build ("(family_item :id %s :status %s) ((family :status %s) %s)",
+                                 SEXP_string_newf ("-1"),
+                                 SEXP_number_newi_32 (OVAL_STATUS_EXISTS),
+                                 SEXP_number_newi_32 (OVAL_STATUS_EXISTS),
+                                 SEXP_string_newf (family));
+        */
+
 	SEXP_list_add(lst, item);
-
+        
+        SEXP_free (attrs);
+        SEXP_free (item);
+        
 	*err = 0;
 	return lst;
 }

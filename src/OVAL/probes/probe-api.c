@@ -29,6 +29,26 @@ SEXP_t *probe_item_ent_add ()
 
 }
 
+int probe_item_setstatus (SEXP_t *obj, int status)
+{
+        return (-1);
+}
+
+int probe_itement_setstatus (SEXP_t *obj, const char *name, uint32_t n, int status)
+{
+        return (-1);
+}
+
+
+/*
+ * attributes
+ */
+
+SEXP_t *probe_attr_creat (const char *name, SEXP_t *val, ...)
+{
+        return (NULL);
+}
+
 /*
  * objects
  */

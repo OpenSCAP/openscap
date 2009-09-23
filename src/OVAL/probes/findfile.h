@@ -3,7 +3,7 @@
 #define FINDFILE_H
 
 #include "seap.h"
-#include "probe.h"
+#include "probe-api.h"
 #include "fsdev.h"
 
 #define MTAB_PATH "/etc/mtab"

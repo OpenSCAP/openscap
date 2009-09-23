@@ -420,11 +420,12 @@ struct oval_sysitem* oval_sysitem_from_sexp(SEXP_t *sexp)
 	char *key;
 	char *val;
 
-	key = SEXP_OVALelm_name_cstr(sexp);
+        key = probe_ent_getname (sexp);
+
 	if (!key)
 		return NULL;
-
-	sval = SEXP_OVALelm_getval(sexp, 1);
+        
+	sval = probe_ent_getval (sexp, 1);
 	switch (SEXP_typeof(sval)) {
 		case SEXP_TYPE_STRING: {
 			val = SEXP_string_cstr(sval);
@@ -468,17 +469,17 @@ struct oval_sysitem* oval_sysitem_from_sexp(SEXP_t *sexp)
 		}
 	}
 
-	int datatype = SEXP_OVALelm_getdatatype(sexp, 1);
+	int datatype = probe_ent_getdatatype(sexp, 1);
 	if (datatype < 0)
 		datatype = 0;
 
-	int status = SEXP_OVALelm_getstatus(sexp);
+	int status = probe_ent_getstatus(sexp);
 
 	struct oval_sysitem* item = oval_sysitem_new();
 
 	set_oval_sysitem_status(item, status);
 	set_oval_sysitem_name(item, key);
-	set_oval_sysitem_mask(item, SEXP_OVALelm_getmask(sexp));
+	set_oval_sysitem_mask(item, probe_ent_getmask(sexp));
 
 	if (status == OVAL_STATUS_EXISTS)
 		set_oval_sysitem_value(item, val);
@@ -494,9 +495,11 @@ struct oval_sysdata *oval_sysdata_from_sexp(SEXP_t *sexp)
 
 	static int id_counter = 1;  /* TODO better ID generator */
 
-	char *name = SEXP_OVALelm_name_cstr(sexp);
+	char *name;
 	struct oval_sysdata* sysdata = NULL;
-
+        
+        name = probe_ent_getname (sexp);
+        
 	if (name == NULL)
 		return NULL;
 	else {
@@ -522,7 +525,7 @@ struct oval_sysdata *oval_sysdata_from_sexp(SEXP_t *sexp)
 	SEXP_t *sub;
 	struct oval_sysitem* sysitem;
 
-	int status = SEXP_OVALelm_getstatus(sexp);
+	int status = probe_ent_getstatus(sexp);
 
 	sprintf(id, "%d", id_counter++);
 	sysdata = oval_sysdata_new(id);

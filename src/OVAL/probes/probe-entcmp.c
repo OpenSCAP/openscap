@@ -436,20 +436,20 @@ oval_result_enum SEXP_OVALent_cmp(SEXP_t *ent, SEXP_t *val2)
 	oval_datatype_enum dtype;
 	SEXP_t *op_sexp, *val1;
 
-	val1 = SEXP_OVALelm_getval(ent, 1);
+	val1 = probe_ent_getval (ent, 1);
 	if (SEXP_typeof(val1) != SEXP_typeof(val2)) {
 		_D("Types of values to compare don't match: val1: %d, val2: %d\n",
 		   SEXP_typeof(val1), SEXP_typeof(val2));
 		return OVAL_RESULT_ERROR;
 	}
 
-	op_sexp = SEXP_OVALelm_getattrval(ent, "operation");
+	op_sexp = probe_ent_getattrval (ent, "operation");
 	if (op_sexp == NULL)
 		op = OPERATION_EQUALS;
 	else
 		op = SEXP_number_geti_32 (op_sexp);
 
-	dtype = SEXP_OVALelm_getdatatype(ent, 1);
+	dtype = probe_ent_getdatatype(ent, 1);
 
 	switch (dtype) {
 	case OVAL_DATATYPE_BINARY:
@@ -491,7 +491,7 @@ oval_result_enum SEXP_OVALentste_cmp(SEXP_t *ent_ste, SEXP_t *ent_itm)
 	oval_syschar_status_enum item_status;
 	SEXP_t *val2;
 
-	item_status = SEXP_OVALelm_getstatus(ent_itm);
+	item_status = probe_ent_getstatus(ent_itm);
 	switch(item_status) {
 	case OVAL_STATUS_DOESNOTEXIST:
 		return OVAL_RESULT_FALSE;
@@ -502,12 +502,12 @@ oval_result_enum SEXP_OVALentste_cmp(SEXP_t *ent_ste, SEXP_t *ent_itm)
 		break;
 	}
 
-	if (SEXP_OVALelm_getdatatype(ent_ste, 1) !=
-	    SEXP_OVALelm_getdatatype(ent_itm, 1)) {
+	if (probe_ent_getdatatype(ent_ste, 1) !=
+	    probe_ent_getdatatype(ent_itm, 1)) {
 		return OVAL_RESULT_ERROR;
 	}
 
-	val2 = SEXP_OVALelm_getval(ent_itm, 1);
+	val2 = probe_ent_getval(ent_itm, 1);
 
 	return SEXP_OVALent_cmp(ent_ste, val2);
 }

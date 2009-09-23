@@ -88,20 +88,20 @@ int find_files(SEXP_t * spath, SEXP_t *sfilename, SEXP_t *behaviors,
 	assert(spath);
 	assert(behaviors);
 
-	name = SEXP_string_cstr(SEXP_OVALelm_getval(sfilename, 1));
-	path = SEXP_string_cstr(SEXP_OVALelm_getval(spath, 1));
-	tmp  = SEXP_string_cstr(SEXP_OVALelm_getattrval(behaviors,"max_depth"));
+	name = SEXP_string_cstr(probe_ent_getval(sfilename, 1));
+	path = SEXP_string_cstr(probe_ent_getval(spath, 1));
+	tmp  = SEXP_string_cstr(probe_ent_getattrval(behaviors,"max_depth"));
 	max_depth = atoi(tmp);
 	oscap_free(tmp);
 
 	setting = calloc(1, sizeof(setting_t));
-	setting->direction = SEXP_string_cstr(SEXP_OVALelm_getattrval(behaviors,"recurse_direction"));
-	setting->follow = SEXP_string_cstr(SEXP_OVALelm_getattrval(behaviors,"recurse"));
+	setting->direction = SEXP_string_cstr(probe_ent_getattrval(behaviors,"recurse_direction"));
+	setting->follow = SEXP_string_cstr(probe_ent_getattrval(behaviors,"recurse"));
 	setting->cb = cb;
 
 	/* Init list of local devices */
 	setting->dev_list = NULL;
-	stmp = SEXP_OVALelm_getattrval(behaviors,"recurse_file_system");
+	stmp = probe_ent_getattrval(behaviors,"recurse_file_system");
 	if( stmp && !SEXP_strncmp(stmp, "local",6) ) {
                 if ((setting->dev_list = fsdev_init (NULL, 0)) == NULL) {
 			goto error;
@@ -112,7 +112,7 @@ int find_files(SEXP_t * spath, SEXP_t *sfilename, SEXP_t *behaviors,
 	setting->re = NULL;
 	setting->file = name;
 	if( name ) {
-		if( SEXP_number_getu(SEXP_OVALelm_getattrval(sfilename,"operation")) ==  OPERATION_PATTERN_MATCH ) {
+		if( SEXP_number_getu_32 (probe_ent_getattrval(sfilename,"operation")) ==  OPERATION_PATTERN_MATCH ) {
 			setting->re = malloc(sizeof(regex_t));
 			if( regcomp(setting->re, name, REG_EXTENDED) != 0 ) {
 		       	        goto error;
@@ -127,7 +127,7 @@ int find_files(SEXP_t * spath, SEXP_t *sfilename, SEXP_t *behaviors,
 
 
 	/* Evaluate path(s) */
-	if( SEXP_number_getu(SEXP_OVALelm_getattrval(spath,"operation")) ==  OPERATION_PATTERN_MATCH ) {
+	if( SEXP_number_getu_32 (probe_ent_getattrval(spath,"operation")) ==  OPERATION_PATTERN_MATCH ) {
 		rglobbuf.offs=10;
 		rc = rglob(path, &rglobbuf);
 		if(!rc && rglobbuf.pathc > 0) {
