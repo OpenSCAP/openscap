@@ -1,3 +1,4 @@
+#ifndef __STUB_PROBE
 #pragma once
 #ifndef SEXP_MANIP_H
 #define SEXP_MANIP_H
@@ -122,3 +123,4 @@ static void __SEXP_VALIDATE(const SEXP_t *s_exp, const char *file, uint32_t line
 }
 
 #endif /* SEXP_MANIP_H */
+#endif

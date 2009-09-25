@@ -15,13 +15,13 @@
 #endif
 
 typedef struct {
-        oval_subtype_enum typenum;
+        oval_subtype_t typenum;
         char             *typestr;
         char             *filename;
 } oval_probe_t;
 
 typedef struct {
-        oval_subtype_enum typenum;
+        oval_subtype_t typenum;
         int sd;
 } probe_sd_t;
 

@@ -8,6 +8,10 @@
 #ifndef OVAL_ERRNO_H_
 #define OVAL_ERRNO_H_
 extern int oval_errno;
-#define OVAL_INVALID_ARGUMENT 1
+#define OVAL_INVALID_ARGUMENT     1
+#define OVAL_INTERNAL_ERROR       2
+#define OVAL_UNSUPPORTED_DATATYPE 3
+#define OVAL_INVALID_COMPARISON   4
+#define OVAL_NO_RESULT_CALCULATED 5
 
 #endif /* OVAL_ERRNO_H_ */

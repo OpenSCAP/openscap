@@ -54,13 +54,18 @@ const struct oscap_string_map OVAL_SYSCHAR_FLAG_MAP[] = {
 	{ OVAL_ENUMERATION_INVALID,    NULL }
 };
 
-oval_syschar_collection_flag_enum oval_syschar_flag_parse(xmlTextReaderPtr
+oval_syschar_collection_flag_t oval_syschar_flag_parse(xmlTextReaderPtr
   							       reader,
   							       char *attname,
-  							       oval_syschar_collection_flag_enum
+  							       oval_syschar_collection_flag_t
   							       defval)
 {
 	return oval_enumeration_attr(reader, attname, OVAL_SYSCHAR_FLAG_MAP, defval);
+}
+
+const char *oval_syschar_collection_flag_get_text(oval_syschar_collection_flag_t flag)
+{
+	return (flag)?OVAL_SYSCHAR_FLAG_MAP[flag-1].string:"**INVALID**";
 }
 
 const struct oscap_string_map OVAL_SYSCHAR_STATUS_MAP[] = {
@@ -71,15 +76,15 @@ const struct oscap_string_map OVAL_SYSCHAR_STATUS_MAP[] = {
 	{ OVAL_ENUMERATION_INVALID, NULL }
 };
 
-oval_syschar_status_enum oval_syschar_status_parse(xmlTextReaderPtr
+oval_syschar_status_t oval_syschar_status_parse(xmlTextReaderPtr
   							       reader,
   							       char *attname,
-  							       oval_syschar_status_enum defval)
+  							       oval_syschar_status_t defval)
 {
 	return oval_enumeration_attr(reader, attname, OVAL_SYSCHAR_STATUS_MAP, defval);
 }
 
-const char * oval_syschar_status_text(oval_syschar_status_enum idx){
+const char * oval_syschar_status_text(oval_syschar_status_t idx){
 	return oscap_enum_to_string(OVAL_SYSCHAR_STATUS_MAP, idx);
 }
 
@@ -92,14 +97,14 @@ const struct oscap_string_map OVAL_MESSAGE_LEVEL_MAP[] = {
 	{ OVAL_ENUMERATION_INVALID, NULL }
 };
 
-oval_message_level_enum oval_message_level_parse(
+oval_message_level_t oval_message_level_parse(
   			xmlTextReaderPtr reader,
   			char *attname,
-  			oval_message_level_enum defval)
+  			oval_message_level_t defval)
 {
 	return oval_enumeration_attr(reader, attname, OVAL_MESSAGE_LEVEL_MAP, defval);
 }
-const char * oval_message_level_text(oval_message_level_enum level){
+const char * oval_message_level_text(oval_message_level_t level){
 	return oscap_enum_to_string(OVAL_MESSAGE_LEVEL_MAP, level);
 }
 
@@ -111,15 +116,15 @@ const struct oscap_string_map OVAL_ARITHMETIC_OPERATION_MAP[] = {
 	{ OVAL_ENUMERATION_INVALID, NULL }
 };
 
-oval_arithmetic_operation_enum oval_arithmetic_operation_parse(xmlTextReaderPtr
+oval_arithmetic_operation_t oval_arithmetic_operation_parse(xmlTextReaderPtr
 							   reader,
 							   char *attname,
-							   oval_arithmetic_operation_enum
+							   oval_arithmetic_operation_t
 							   defval)
 {
 	return oval_enumeration_attr(reader, attname, OVAL_ARITHMETIC_OPERATION_MAP, defval);
 }
-const char *oval_arithmetic_operation_text(oval_arithmetic_operation_enum operation)
+const char *oval_arithmetic_operation_get_text(oval_arithmetic_operation_t operation)
 {
 	return OVAL_ARITHMETIC_OPERATION_MAP[operation-1].string;
 }
@@ -133,14 +138,14 @@ const struct oscap_string_map OVAL_DATETIME_FORMAT_MAP[] = {
 	{ OVAL_ENUMERATION_INVALID, NULL }
 };
 
-oval_datetime_format_enum oval_datetime_format_parse(xmlTextReaderPtr reader,
+oval_datetime_format_t oval_datetime_format_parse(xmlTextReaderPtr reader,
   						     char *attname,
-  						     oval_arithmetic_operation_enum
+  						     oval_arithmetic_operation_t
   						     defval)
 {
 	return oval_enumeration_attr(reader, attname, OVAL_DATETIME_FORMAT_MAP, defval);
 }
-const char *oval_datetime_format_text(oval_datetime_format_enum format)
+const char *oval_datetime_format_get_text(oval_datetime_format_t format)
 {
 	return OVAL_DATETIME_FORMAT_MAP[format-1].string;
 }
@@ -152,38 +157,38 @@ const struct oscap_string_map OVAL_SET_OPERATION_MAP[] = {
 	{ OVAL_ENUMERATION_INVALID, NULL }
 };
 
-oval_set_operation_enum oval_set_operation_parse(xmlTextReaderPtr reader,
+oval_setobject_operation_t oval_set_operation_parse(xmlTextReaderPtr reader,
   						 char *attname,
-  						 oval_set_operation_enum defval)
+  						 oval_setobject_operation_t defval)
 {
 	return oval_enumeration_attr(reader, attname, OVAL_SET_OPERATION_MAP, defval);
 }
-const char *oval_set_operation_text(oval_set_operation_enum operation)
+const char *oval_set_operation_get_text(oval_setobject_operation_t operation)
 {
 	return OVAL_SET_OPERATION_MAP[operation-1].string;
 }
 
 const struct oscap_string_map OVAL_OPERATION_MAP[] = {
-	{ OPERATION_EQUALS,                     "equals"                     },
-	{ OPERATION_NOT_EQUAL,                  "not equal"                  },
-	{ OPERATION_CASE_INSENSITIVE_EQUALS,    "case insensitive equals"    },
-	{ OPERATION_CASE_INSENSITIVE_NOT_EQUAL, "case insensitive not equal" },
-	{ OPERATION_GREATER_THAN,               "greater than"               },
-	{ OPERATION_LESS_THAN,                  "less than"                  },
-	{ OPERATION_GREATER_THAN_OR_EQUAL,      "greater than or equal"      },
-	{ OPERATION_LESS_THAN_OR_EQUAL,         "less than or equal"         },
-	{ OPERATION_BITWISE_AND,                "bitwise and"                },
-	{ OPERATION_BITWISE_OR,                 "bitwise or"                 },
-	{ OPERATION_PATTERN_MATCH,              "pattern match"              },
+	{ OVAL_OPERATION_EQUALS,                     "equals"                     },
+	{ OVAL_OPERATION_NOT_EQUAL,                  "not equal"                  },
+	{ OVAL_OPERATION_CASE_INSENSITIVE_EQUALS,    "case insensitive equals"    },
+	{ OVAL_OPERATION_CASE_INSENSITIVE_NOT_EQUAL, "case insensitive not equal" },
+	{ OVAL_OPERATION_GREATER_THAN,               "greater than"               },
+	{ OVAL_OPERATION_LESS_THAN,                  "less than"                  },
+	{ OVAL_OPERATION_GREATER_THAN_OR_EQUAL,      "greater than or equal"      },
+	{ OVAL_OPERATION_LESS_THAN_OR_EQUAL,         "less than or equal"         },
+	{ OVAL_OPERATION_BITWISE_AND,                "bitwise and"                },
+	{ OVAL_OPERATION_BITWISE_OR,                 "bitwise or"                 },
+	{ OVAL_OPERATION_PATTERN_MATCH,              "pattern match"              },
 	{ OVAL_ENUMERATION_INVALID, NULL }
 };
 
-oval_operation_enum oval_operation_parse(xmlTextReaderPtr reader, char *attname,
-  					 oval_operation_enum defval)
+oval_operation_t oval_operation_parse(xmlTextReaderPtr reader, char *attname,
+  					 oval_operation_t defval)
 {
 	return oval_enumeration_attr(reader, attname, OVAL_OPERATION_MAP, defval);
 };
-const char *oval_operation_text(oval_operation_enum operation)
+const char *oval_operation_get_text(oval_operation_t operation)
 {
 	return OVAL_OPERATION_MAP[operation-1].string;
 }
@@ -197,12 +202,12 @@ const struct oscap_string_map OVAL_CHECK_MAP[] = {
 	{ OVAL_ENUMERATION_INVALID, NULL }
 };
 
-oval_check_enum oval_check_parse(xmlTextReaderPtr reader, char *attname,
-  				 oval_check_enum defval)
+oval_check_t oval_check_parse(xmlTextReaderPtr reader, char *attname,
+  				 oval_check_t defval)
 {
 	return oval_enumeration_attr(reader, attname, OVAL_CHECK_MAP, defval);
 }
-const char * oval_check_text(oval_check_enum check)
+const char * oval_check_get_text(oval_check_t check)
 {
 	return OVAL_CHECK_MAP[check-1].string;
 }
@@ -221,86 +226,86 @@ const struct oscap_string_map OVAL_DATATYPE_MAP[] = {
 	{ OVAL_ENUMERATION_INVALID, NULL }
 };
 
-oval_datatype_enum oval_datatype_parse(xmlTextReaderPtr reader, char *attname,
-  				       oval_datatype_enum defval)
+oval_datatype_t oval_datatype_parse(xmlTextReaderPtr reader, char *attname,
+  				       oval_datatype_t defval)
 {
 	return oval_enumeration_attr(reader, attname, OVAL_DATATYPE_MAP, defval);
 }
-const char *oval_datatype_text(oval_datatype_enum datatype)
+const char *oval_datatype_get_text(oval_datatype_t datatype)
 {
 	return OVAL_DATATYPE_MAP[datatype-1].string;
 }
 
 const struct oscap_string_map OVAL_EXISTENCE_MAP[] = {
-	{ ALL_EXIST,           "all_exist"           },
-	{ ANY_EXIST,           "any_exist"           },
-	{ AT_LEAST_ONE_EXISTS, "at_least_one_exists" },
-	{ ONLY_ONE_EXISTS,     "only_one_exists"     },
-	{ NONE_EXIST,          "none_exist"          },
+	{ OVAL_ALL_EXIST,           "all_exist"           },
+	{ OVAL_ANY_EXIST,           "any_exist"           },
+	{ OVAL_AT_LEAST_ONE_EXISTS, "at_least_one_exists" },
+	{ OVAL_ONLY_ONE_EXISTS,     "only_one_exists"     },
+	{ OVAL_NONE_EXIST,          "none_exist"          },
 	{ OVAL_ENUMERATION_INVALID, NULL }
 };
 
-oval_existence_enum oval_existence_parse(xmlTextReaderPtr reader, char *attname,
-				 oval_existence_enum defval)
+oval_existence_t oval_existence_parse(xmlTextReaderPtr reader, char *attname,
+				 oval_existence_t defval)
 {
 	return oval_enumeration_attr(reader, attname, OVAL_EXISTENCE_MAP, defval);
 }
-const char * oval_existence_text(oval_existence_enum existence)
+const char * oval_existence_get_text(oval_existence_t existence)
 {
 	return OVAL_EXISTENCE_MAP[existence-1].string;
 }
 
 const struct oscap_string_map OVAL_OPERATOR_MAP[] = {
-	{ OPERATOR_AND, "AND" },
-	{ OPERATOR_ONE, "ONE" },
-	{ OPERATOR_OR,  "OR"  },
-	{ OPERATOR_XOR, "XOR" },
+	{ OVAL_OPERATOR_AND, "AND" },
+	{ OVAL_OPERATOR_ONE, "ONE" },
+	{ OVAL_OPERATOR_OR,  "OR"  },
+	{ OVAL_OPERATOR_XOR, "XOR" },
 	{ -1, NULL }
 };
 
-oval_operator_enum oval_operator_parse(xmlTextReaderPtr reader, char *attname,
-  				       oval_operator_enum defval)
+oval_operator_t oval_operator_parse(xmlTextReaderPtr reader, char *attname,
+  				       oval_operator_t defval)
 {
 	return oval_enumeration_attr(reader, attname, OVAL_OPERATOR_MAP, defval);
 }
 
-const char* oval_operator_text(oval_operator_enum operator)
+const char* oval_operator_get_text(oval_operator_t operator)
 {
 	return OVAL_OPERATOR_MAP[operator-1].string;
 }
 
 const struct oscap_string_map OVAL_FAMILY_MAP[] = {
-	{ FAMILY_AIX,         "aix"         },
-	{ FAMILY_APACHE,      "apache"      },
-	{ FAMILY_CATOS,       "catos"       },
-	{ FAMILY_ESX,         "esx"         },
-	{ FAMILY_FREEBSD,     "freebsd"     },
-	{ FAMILY_HPUX,        "hpux"        },
-	{ FAMILY_INDEPENDENT, "independent" },
-	{ FAMILY_IOS,         "ios"         },
-	{ FAMILY_LINUX,       "linux"       },
-	{ FAMILY_MACOS,       "macos"       },
-	{ FAMILY_PIXOS,       "pixos"       },
-	{ FAMILY_SOLARIS,     "solaris"     },
-	{ FAMILY_UNIX,        "unix"        },
-	{ FAMILY_WINDOWS,     "windows"     },
+	{ OVAL_FAMILY_AIX,         "aix"         },
+	{ OVAL_FAMILY_APACHE,      "apache"      },
+	{ OVAL_FAMILY_CATOS,       "catos"       },
+	{ OVAL_FAMILY_ESX,         "esx"         },
+	{ OVAL_FAMILY_FREEBSD,     "freebsd"     },
+	{ OVAL_FAMILY_HPUX,        "hpux"        },
+	{ OVAL_FAMILY_INDEPENDENT, "independent" },
+	{ OVAL_FAMILY_IOS,         "ios"         },
+	{ OVAL_FAMILY_LINUX,       "linux"       },
+	{ OVAL_FAMILY_MACOS,       "macos"       },
+	{ OVAL_FAMILY_PIXOS,       "pixos"       },
+	{ OVAL_FAMILY_SOLARIS,     "solaris"     },
+	{ OVAL_FAMILY_UNIX,        "unix"        },
+	{ OVAL_FAMILY_WINDOWS,     "windows"     },
 	{ OVAL_ENUMERATION_INVALID, NULL }
 };
 
-oval_family_enum oval_family_parse(xmlTextReaderPtr reader)
+oval_family_t oval_family_parse(xmlTextReaderPtr reader)
 {
   	char *namespace = (char*) xmlTextReaderNamespaceUri(reader);
 	char *family_text = strrchr(namespace, '#');
 	if (family_text == NULL) {
 		free(namespace);
-		return FAMILY_UNKNOWN;
+		return OVAL_FAMILY_UNKNOWN;
   	}
 	int ret = oscap_string_to_enum(OVAL_FAMILY_MAP, ++family_text);
 	free(namespace);
-	return (ret != OVAL_ENUMERATION_INVALID ? ret : FAMILY_UNKNOWN);
+	return (ret != OVAL_ENUMERATION_INVALID ? ret : OVAL_FAMILY_UNKNOWN);
 }
 
-const char *oval_family_text(oval_family_enum family)
+const char *oval_family_get_text(oval_family_t family)
 {
 	int family_idx = family/1000;
 	return OVAL_FAMILY_MAP[family_idx-1].string;
@@ -308,159 +313,159 @@ const char *oval_family_text(oval_family_enum family)
 
 
 const struct oscap_string_map OVAL_SUBTYPE_AIX_MAP[] = {
-	{ AIX_FILESET, "fileset" },
-	{ AIX_FIX,     "fix"     },
-	{ AIX_OSLEVEL, "oslevel" },
+	{ OVAL_AIX_FILESET, "fileset" },
+	{ OVAL_AIX_FIX,     "fix"     },
+	{ OVAL_AIX_OSLEVEL, "oslevel" },
 	{ OVAL_SUBTYPE_UNKNOWN, NULL }
 };
 
 const struct oscap_string_map OVAL_SUBTYPE_APACHE_MAP[] = {
-	{ APACHE_HTTPD,   "httpd"   },
-	{ APACHE_VERSION, "version" },
+	{ OVAL_APACHE_HTTPD,   "httpd"   },
+	{ OVAL_APACHE_VERSION, "version" },
 	{ OVAL_SUBTYPE_UNKNOWN, NULL }
 };
 
 const struct oscap_string_map OVAL_SUBTYPE_CATOS_MAP[] = {
-	{ CATOS_LINE,       "line"      },
-	{ CATOS_MODULE,     "module"    },
-	{ CATOS_VERSION,    "version"   },
-	{ CATOS_VERSION_55, "version55" },
+	{ OVAL_CATOS_LINE,       "line"      },
+	{ OVAL_CATOS_MODULE,     "module"    },
+	{ OVAL_CATOS_VERSION_55, "version55" },
+	{ OVAL_CATOS_VERSION,    "version"   },
 	{ OVAL_SUBTYPE_UNKNOWN, NULL }
 };
 
 const struct oscap_string_map OVAL_SUBTYPE_ESX_MAP[] = {
-	{ ESX_PATCH,   "patch"   },
-	{ ESX_VERSION, "version" },
+	{ OVAL_ESX_PATCH,   "patch"   },
+	{ OVAL_ESX_VERSION, "version" },
 	{ OVAL_SUBTYPE_UNKNOWN, NULL }
 };
 
 const struct oscap_string_map OVAL_SUBTYPE_FREEBSD_MAP[] = {
-	{ FREEBSD_PORT_INFO, "portinfo" },
+	{ OVAL_FREEBSD_PORT_INFO, "portinfo" },
 	{ OVAL_SUBTYPE_UNKNOWN, NULL }
 };
 
 const struct oscap_string_map OVAL_SUBTYPE_HPUX_MAP[] = {
-	{ HPUX_GETCONF,          "getconf"         },
-	{ HPUX_PATCH,            "patch"           },
-	{ HPUX_PATCH_53,         "patch53"         },
-	{ HPUX_SOFTWARE_LIST,    "softwarelist"    },
-	{ HPUX_TRUSTED_ACCOUNTS, "trustedaccounts" },
+	{ OVAL_HPUX_GETCONF,          "getconf"         },
+	{ OVAL_HPUX_PATCH_53,         "patch53"         },
+	{ OVAL_HPUX_PATCH,            "patch"           },
+	{ OVAL_HPUX_SOFTWARE_LIST,    "softwarelist"    },
+	{ OVAL_HPUX_TRUSTED_ACCOUNTS, "trustedaccounts" },
 	{ OVAL_SUBTYPE_UNKNOWN, NULL }
 };
 
 const struct oscap_string_map OVAL_SUBTYPE_INDEPENDENT_MAP[] = {
-	{ INDEPENDENT_ENVIRONMENT_VARIABLE, "environmentvariable" },
-	{ INDEPENDENT_FAMILY,               "family"              },
-	{ INDEPENDENT_FILE_HASH,            "filehash"            },
-	{ INDEPENDENT_FILE_MD5,             "filemd5"             },
-	{ INDEPENDENT_SQL,                  "sql"                 },
-	{ INDEPENDENT_TEXT_FILE_CONTENT_54, "textfilecontent54"   },
-	{ INDEPENDENT_TEXT_FILE_CONTENT,    "textfilecontent"     },
-	{ INDEPENDENT_VARIABLE,             "variable"            },
-	{ INDEPENDENT_UNKNOWN,              "unknown"             },
-	{ INDEPENDENT_XML_FILE_CONTENT,     "xmlfilecontent"      },
+	{ OVAL_INDEPENDENT_FAMILY,               "family"              },
+	{ OVAL_INDEPENDENT_FILE_MD5,             "filemd5"             },
+	{ OVAL_INDEPENDENT_FILE_HASH,            "filehash"            },
+	{ OVAL_INDEPENDENT_ENVIRONMENT_VARIABLE, "environmentvariable" },
+	{ OVAL_INDEPENDENT_SQL,                  "sql"                 },
+	{ OVAL_INDEPENDENT_TEXT_FILE_CONTENT_54, "textfilecontent54"   },
+	{ OVAL_INDEPENDENT_TEXT_FILE_CONTENT,    "textfilecontent"     },
+	{ OVAL_INDEPENDENT_UNKNOWN,              "unknown"             },
+	{ OVAL_INDEPENDENT_VARIABLE,             "variable"            },
+	{ OVAL_INDEPENDENT_XML_FILE_CONTENT,     "xmlfilecontent"      },
 	{ OVAL_SUBTYPE_UNKNOWN, NULL }
 };
 
 const struct oscap_string_map OVAL_SUBTYPE_IOS_MAP[] = {
-	{ IOS_GLOBAL,     "global"    },
-	{ IOS_INTERFACE,  "interface" },
-	{ IOS_LINE,       "line"      },
-	{ IOS_SNMP,       "snmp"      },
-	{ IOS_TCLSH,      "tclsh"     },
-	{ IOS_VERSION_55, "version55" },
+	{ OVAL_IOS_GLOBAL,     "global"    },
+	{ OVAL_IOS_INTERFACE,  "interface" },
+	{ OVAL_IOS_LINE,       "line"      },
+	{ OVAL_IOS_SNMP,       "snmp"      },
+	{ OVAL_IOS_TCLSH,      "tclsh"     },
+	{ OVAL_IOS_VERSION_55, "version55" },
 	{ OVAL_SUBTYPE_UNKNOWN, NULL }
 };
 
 const struct oscap_string_map OVAL_SUBTYPE_LINUX_MAP[] = {
-	{ LINUX_DPKG_INFO,               "dpkginfo"             },
-	{ LINUX_INET_LISTENING_SERVERS,  "inetlisteningservers" },
-	{ LINUX_RPM_INFO,                "rpminfo"              },
-	{ LINUX_SLACKWARE_PKG_INFO_TEST, "slackwarepkginfo"     },
+	{ OVAL_LINUX_DPKG_INFO,               "dpkginfo"             },
+	{ OVAL_LINUX_INET_LISTENING_SERVERS,  "inetlisteningservers" },
+	{ OVAL_LINUX_RPM_INFO,                "rpminfo"              },
+	{ OVAL_LINUX_SLACKWARE_PKG_INFO_TEST, "slackwarepkginfo"     },
 	{ OVAL_SUBTYPE_UNKNOWN, NULL }
 };
 
 const struct oscap_string_map OVAL_SUBTYPE_MACOS_MAP[] = {
-	{ MACOS_ACCOUNT_INFO,           "accountinfo"          },
-	{ MACOS_INET_LISTENING_SERVERS, "inetlisteningservers" },
-	{ MACOS_NVRAM_INFO,             "nvraminfo"            },
-	{ MACOS_PWPOLICY,               "pwpolicy"             },
+	{ OVAL_MACOS_ACCOUNT_INFO,           "accountinfo"          },
+	{ OVAL_MACOS_INET_LISTENING_SERVERS, "inetlisteningservers" },
+	{ OVAL_MACOS_NVRAM_INFO,             "nvraminfo"            },
+	{ OVAL_MACOS_PWPOLICY,               "pwpolicy"             },
 	{ OVAL_SUBTYPE_UNKNOWN, NULL }
 };
 
 const struct oscap_string_map OVAL_SUBTYPE_PIXOS_MAP[] = {
-	{ PIXOS_LINE,    "line"    },
-	{ PIXOS_VERSION, "version" },
+	{ OVAL_PIXOS_LINE,    "line"    },
+	{ OVAL_PIXOS_VERSION, "version" },
 	{ OVAL_SUBTYPE_UNKNOWN, NULL }
 };
 
 const struct oscap_string_map OVAL_SUBTYPE_SOLARIS_MAP[] = {
-	{ SOLARIS_ISAINFO, "isainfo" },
-	{ SOLARIS_PACKAGE, "package" },
-	{ SOLARIS_PATCH,   "patch"   },
-	{ SOLARIS_SMF,     "smf"     },
+	{ OVAL_SOLARIS_ISAINFO, "isainfo" },
+	{ OVAL_SOLARIS_PACKAGE, "package" },
+	{ OVAL_SOLARIS_PATCH,   "patch"   },
+	{ OVAL_SOLARIS_SMF,     "smf"     },
 	{ OVAL_SUBTYPE_UNKNOWN, NULL }
 };
 
 const struct oscap_string_map OVAL_SUBTYPE_UNIX_MAP[] = {
-	{ UNIX_FILE,      "file"      },
-	{ UNIX_INETD,     "inetd"     },
-	{ UNIX_INTERFACE, "interface" },
-	{ UNIX_PASSWORD,  "password"  },
-	{ UNIX_PROCESS,   "process"   },
-	{ UNIX_RUNLEVEL,  "runlevel"  },
-	{ UNIX_SCCS,      "sccs"      },
-	{ UNIX_SHADOW,    "shadow"    },
-	{ UNIX_UNAME,     "uname"     },
-	{ UNIX_XINETD,    "xinetd"    },
+	{ OVAL_UNIX_FILE,      "file"      },
+	{ OVAL_UNIX_INETD,     "inetd"     },
+	{ OVAL_UNIX_INTERFACE, "interface" },
+	{ OVAL_UNIX_PASSWORD,  "password"  },
+	{ OVAL_UNIX_PROCESS,   "process"   },
+	{ OVAL_UNIX_RUNLEVEL,  "runlevel"  },
+	{ OVAL_UNIX_SCCS,      "sccs"      },
+	{ OVAL_UNIX_SHADOW,    "shadow"    },
+	{ OVAL_UNIX_UNAME,     "uname"     },
+	{ OVAL_UNIX_XINETD,    "xinetd"    },
 	{ OVAL_SUBTYPE_UNKNOWN, NULL }
 };
 
 const struct oscap_string_map OVAL_SUBTYPE_WINDOWS_MAP[] = {
-	{ WINDOWS_ACCESS_TOKEN,                  "access_token"                  },
-	{ WINDOWS_ACTIVE_DIRECTORY,              "active_directory"              },
-	{ WINDOWS_AUDIT_EVENT_POLICY,            "audit_event_policy"            },
-	{ WINDOWS_AUDIT_EVENT_SUBCATEGORIES,     "audit_event_subcatagories"     },
-	{ WINDOWS_FILE,                          "file"                          },
-	{ WINDOWS_FILE_AUDITED_PERMISSIONS_53,   "file_audited_permissions_53"   },
-	{ WINDOWS_FILE_AUDITED_PERMISSIONS,      "file_audited_permissions"      },
-	{ WINDOWS_FILE_EFFECTIVE_RIGHTS_53,      "file_effective_rights_53"      },
-	{ WINDOWS_FILE_EFFECTIVE_RIGHTS,         "file_effective_rights"         },
-	{ WINDOWS_GROUP,                         "group"                         },
-	{ WINDOWS_GROUP_SID,                     "group_sid"                     },
-	{ WINDOWS_INTERFACE,                     "interface"                     },
-	{ WINDOWS_LOCKOUT_POLICY,                "lockout_policy"                },
-	{ WINDOWS_METABASE,                      "metabase"                      },
-	{ WINDOWS_PASSWORD_POLICY,               "password_policy"               },
-	{ WINDOWS_PORT,                          "port"                          },
-	{ WINDOWS_PRINTER_EFFECTIVE_RIGHTS,      "printer_effective_rights"      },
-	{ WINDOWS_PROCESS,                       "process"                       },
-	{ WINDOWS_REGISTRY,                      "registry"                      },
-	{ WINDOWS_REGKEY_AUDITED_PERMISSIONS_53, "regkey_audited_permissions_53" },
-	{ WINDOWS_REGKEY_AUDITED_PERMISSIONS,    "regkey_audited_permissions"    },
-	{ WINDOWS_REGKEY_EFFECTIVE_RIGHTS_53,    "regkey_effective_rights_53"    },
-	{ WINDOWS_REGKEY_EFFECTIVE_RIGHTS,       "regkey_effective_rights"       },
-	{ WINDOWS_SHARED_RESOURCE,               "shared_resource"               },
-	{ WINDOWS_SID,                           "sid"                           },
-	{ WINDOWS_SID_SID,                       "sid_sid"                       },
-	{ WINDOWS_USER_ACCESS_CONTROL,           "user_access_control"           },
-	{ WINDOWS_USER,                          "user"                          },
-	{ WINDOWS_USER_SID_55,                   "user_sid_55"                   },
-	{ WINDOWS_USER_SID,                      "user_sid"                      },
-	{ WINDOWS_VOLUME,                        "volume"                        },
-	{ WINDOWS_WMI,                           "wmi"                           },
-	{ WINDOWS_WUA_UPDATE_SEARCHER,           "wua_update_searcher"           },
+	{ OVAL_WINDOWS_ACCESS_TOKEN,                  "access_token"                  },
+	{ OVAL_WINDOWS_ACTIVE_DIRECTORY,              "active_directory"              },
+	{ OVAL_WINDOWS_AUDIT_EVENT_POLICY,            "audit_event_policy"            },
+	{ OVAL_WINDOWS_AUDIT_EVENT_SUBCATEGORIES,     "audit_event_subcatagories"     },
+	{ OVAL_WINDOWS_FILE,                          "file"                          },
+	{ OVAL_WINDOWS_FILE_AUDITED_PERMISSIONS_53,   "file_audited_permissions_53"   },
+	{ OVAL_WINDOWS_FILE_AUDITED_PERMISSIONS,      "file_audited_permissions"      },
+	{ OVAL_WINDOWS_FILE_EFFECTIVE_RIGHTS_53,      "file_effective_rights_53"      },
+	{ OVAL_WINDOWS_FILE_EFFECTIVE_RIGHTS,         "file_effective_rights"         },
+	{ OVAL_WINDOWS_GROUP,                         "group"                         },
+	{ OVAL_WINDOWS_GROUP_SID,                     "group_sid"                     },
+	{ OVAL_WINDOWS_INTERFACE,                     "interface"                     },
+	{ OVAL_WINDOWS_LOCKOUT_POLICY,                "lockout_policy"                },
+	{ OVAL_WINDOWS_METABASE,                      "metabase"                      },
+	{ OVAL_WINDOWS_PASSWORD_POLICY,               "password_policy"               },
+	{ OVAL_WINDOWS_PORT,                          "port"                          },
+	{ OVAL_WINDOWS_PRINTER_EFFECTIVE_RIGHTS,      "printer_effective_rights"      },
+	{ OVAL_WINDOWS_PROCESS,                       "process"                       },
+	{ OVAL_WINDOWS_REGISTRY,                      "registry"                      },
+	{ OVAL_WINDOWS_REGKEY_AUDITED_PERMISSIONS_53, "regkey_audited_permissions_53" },
+	{ OVAL_WINDOWS_REGKEY_AUDITED_PERMISSIONS,    "regkey_audited_permissions"    },
+	{ OVAL_WINDOWS_REGKEY_EFFECTIVE_RIGHTS_53,    "regkey_effective_rights_53"    },
+	{ OVAL_WINDOWS_REGKEY_EFFECTIVE_RIGHTS,       "regkey_effective_rights"       },
+	{ OVAL_WINDOWS_SHARED_RESOURCE,               "shared_resource"               },
+	{ OVAL_WINDOWS_SID,                           "sid"                           },
+	{ OVAL_WINDOWS_SID_SID,                       "sid_sid"                       },
+	{ OVAL_WINDOWS_USER_ACCESS_CONTROL,           "user_access_control"           },
+	{ OVAL_WINDOWS_USER,                          "user"                          },
+	{ OVAL_WINDOWS_USER_SID_55,                   "user_sid_55"                   },
+	{ OVAL_WINDOWS_USER_SID,                      "user_sid"                      },
+	{ OVAL_WINDOWS_VOLUME,                        "volume"                        },
+	{ OVAL_WINDOWS_WMI,                           "wmi"                           },
+	{ OVAL_WINDOWS_WUA_UPDATE_SEARCHER,           "wua_update_searcher"           },
 	{ OVAL_SUBTYPE_UNKNOWN, NULL }
 };
 
 
-oval_subtype_enum oval_subtype_parse(xmlTextReaderPtr reader)
+oval_subtype_t oval_subtype_parse(xmlTextReaderPtr reader)
 {
-	oval_family_enum family = oval_family_parse(reader);
-	if (family == FAMILY_UNKNOWN)
+	oval_family_t family = oval_family_parse(reader);
+	if (family == OVAL_FAMILY_UNKNOWN)
 		return OVAL_SUBTYPE_UNKNOWN;
 
-	oval_subtype_enum subtype = OVAL_SUBTYPE_UNKNOWN;
+	oval_subtype_t subtype = OVAL_SUBTYPE_UNKNOWN;
 	char *tagname = (char*) xmlTextReaderLocalName(reader);
 	char *endptr = strrchr(tagname, '_');
 	if (endptr == NULL)
@@ -469,20 +474,20 @@ oval_subtype_enum oval_subtype_parse(xmlTextReaderPtr reader)
 
 	const struct oscap_string_map *map = NULL;
 	switch (family) {
-	case FAMILY_AIX:         map = OVAL_SUBTYPE_AIX_MAP;         break;
-	case FAMILY_APACHE:      map = OVAL_SUBTYPE_APACHE_MAP;      break;
-	case FAMILY_CATOS:       map = OVAL_SUBTYPE_CATOS_MAP;       break;
-	case FAMILY_ESX:         map = OVAL_SUBTYPE_ESX_MAP;         break;
-	case FAMILY_FREEBSD:     map = OVAL_SUBTYPE_FREEBSD_MAP;     break;
-	case FAMILY_HPUX:        map = OVAL_SUBTYPE_HPUX_MAP;        break;
-	case FAMILY_INDEPENDENT: map = OVAL_SUBTYPE_INDEPENDENT_MAP; break;
-	case FAMILY_IOS:         map = OVAL_SUBTYPE_IOS_MAP;         break;
-	case FAMILY_LINUX:       map = OVAL_SUBTYPE_LINUX_MAP;       break;
-	case FAMILY_MACOS:       map = OVAL_SUBTYPE_MACOS_MAP;       break;
-	case FAMILY_PIXOS:       map = OVAL_SUBTYPE_PIXOS_MAP;       break;
-	case FAMILY_SOLARIS:     map = OVAL_SUBTYPE_SOLARIS_MAP;     break;
-	case FAMILY_UNIX:        map = OVAL_SUBTYPE_UNIX_MAP;        break;
-	case FAMILY_WINDOWS:     map = OVAL_SUBTYPE_WINDOWS_MAP;     break;
+	case OVAL_FAMILY_AIX:         map = OVAL_SUBTYPE_AIX_MAP;         break;
+	case OVAL_FAMILY_APACHE:      map = OVAL_SUBTYPE_APACHE_MAP;      break;
+	case OVAL_FAMILY_CATOS:       map = OVAL_SUBTYPE_CATOS_MAP;       break;
+	case OVAL_FAMILY_ESX:         map = OVAL_SUBTYPE_ESX_MAP;         break;
+	case OVAL_FAMILY_FREEBSD:     map = OVAL_SUBTYPE_FREEBSD_MAP;     break;
+	case OVAL_FAMILY_HPUX:        map = OVAL_SUBTYPE_HPUX_MAP;        break;
+	case OVAL_FAMILY_INDEPENDENT: map = OVAL_SUBTYPE_INDEPENDENT_MAP; break;
+	case OVAL_FAMILY_IOS:         map = OVAL_SUBTYPE_IOS_MAP;         break;
+	case OVAL_FAMILY_LINUX:       map = OVAL_SUBTYPE_LINUX_MAP;       break;
+	case OVAL_FAMILY_MACOS:       map = OVAL_SUBTYPE_MACOS_MAP;       break;
+	case OVAL_FAMILY_PIXOS:       map = OVAL_SUBTYPE_PIXOS_MAP;       break;
+	case OVAL_FAMILY_SOLARIS:     map = OVAL_SUBTYPE_SOLARIS_MAP;     break;
+	case OVAL_FAMILY_UNIX:        map = OVAL_SUBTYPE_UNIX_MAP;        break;
+	case OVAL_FAMILY_WINDOWS:     map = OVAL_SUBTYPE_WINDOWS_MAP;     break;
 	default: map = NULL;
 	}
 
@@ -493,31 +498,61 @@ oval_subtype_enum oval_subtype_parse(xmlTextReaderPtr reader)
 	return subtype;
 }
 
-const char *oval_subtype_text(oval_subtype_enum subtype)
+oval_family_t oval_subtype_get_family(oval_subtype_t subtype)
 {
-	oval_family_enum family = (subtype/1000)*1000;
+	return (subtype/1000)*1000;
+}
+
+const char *oval_subtype_get_text(oval_subtype_t subtype)
+{
 	const struct oscap_string_map *map = NULL;
-	switch (family) {
-	case FAMILY_AIX:         map = OVAL_SUBTYPE_AIX_MAP;         break;
-	case FAMILY_APACHE:      map = OVAL_SUBTYPE_APACHE_MAP;      break;
-	case FAMILY_CATOS:       map = OVAL_SUBTYPE_CATOS_MAP;       break;
-	case FAMILY_ESX:         map = OVAL_SUBTYPE_ESX_MAP;         break;
-	case FAMILY_FREEBSD:     map = OVAL_SUBTYPE_FREEBSD_MAP;     break;
-	case FAMILY_HPUX:        map = OVAL_SUBTYPE_HPUX_MAP;        break;
-	case FAMILY_INDEPENDENT: map = OVAL_SUBTYPE_INDEPENDENT_MAP; break;
-	case FAMILY_IOS:         map = OVAL_SUBTYPE_IOS_MAP;         break;
-	case FAMILY_LINUX:       map = OVAL_SUBTYPE_LINUX_MAP;       break;
-	case FAMILY_MACOS:       map = OVAL_SUBTYPE_MACOS_MAP;       break;
-	case FAMILY_PIXOS:       map = OVAL_SUBTYPE_PIXOS_MAP;       break;
-	case FAMILY_SOLARIS:     map = OVAL_SUBTYPE_SOLARIS_MAP;     break;
-	case FAMILY_UNIX:        map = OVAL_SUBTYPE_UNIX_MAP;        break;
-	case FAMILY_WINDOWS:     map = OVAL_SUBTYPE_WINDOWS_MAP;     break;
+	switch (oval_subtype_get_family(subtype)) {
+	case OVAL_FAMILY_AIX:         map = OVAL_SUBTYPE_AIX_MAP;         break;
+	case OVAL_FAMILY_APACHE:      map = OVAL_SUBTYPE_APACHE_MAP;      break;
+	case OVAL_FAMILY_CATOS:       map = OVAL_SUBTYPE_CATOS_MAP;       break;
+	case OVAL_FAMILY_ESX:         map = OVAL_SUBTYPE_ESX_MAP;         break;
+	case OVAL_FAMILY_FREEBSD:     map = OVAL_SUBTYPE_FREEBSD_MAP;     break;
+	case OVAL_FAMILY_HPUX:        map = OVAL_SUBTYPE_HPUX_MAP;        break;
+	case OVAL_FAMILY_INDEPENDENT: map = OVAL_SUBTYPE_INDEPENDENT_MAP; break;
+	case OVAL_FAMILY_IOS:         map = OVAL_SUBTYPE_IOS_MAP;         break;
+	case OVAL_FAMILY_LINUX:       map = OVAL_SUBTYPE_LINUX_MAP;       break;
+	case OVAL_FAMILY_MACOS:       map = OVAL_SUBTYPE_MACOS_MAP;       break;
+	case OVAL_FAMILY_PIXOS:       map = OVAL_SUBTYPE_PIXOS_MAP;       break;
+	case OVAL_FAMILY_SOLARIS:     map = OVAL_SUBTYPE_SOLARIS_MAP;     break;
+	case OVAL_FAMILY_UNIX:        map = OVAL_SUBTYPE_UNIX_MAP;        break;
+	case OVAL_FAMILY_WINDOWS:     map = OVAL_SUBTYPE_WINDOWS_MAP;     break;
 	default: map = NULL;
 	}
 
 	int subidx = subtype%1000;
 
 	return map[subidx-1].string;
+}
+
+void _test_oval_subtype_mapping(const struct oscap_string_map *map)
+{
+	printf("\n");
+	int i;for(i=0;map[i].string;i++){
+		printf("[%05d] %s\n", map[i].value, map[i].string);
+	}
+}
+
+void _test_oval_subtypes_mapping()
+{
+	_test_oval_subtype_mapping(OVAL_SUBTYPE_AIX_MAP        );// 1000
+	_test_oval_subtype_mapping(OVAL_SUBTYPE_APACHE_MAP     );// 2000
+	_test_oval_subtype_mapping(OVAL_SUBTYPE_CATOS_MAP      );// 3000
+	_test_oval_subtype_mapping(OVAL_SUBTYPE_ESX_MAP        );// 4000
+	_test_oval_subtype_mapping(OVAL_SUBTYPE_FREEBSD_MAP    );// 5000
+	_test_oval_subtype_mapping(OVAL_SUBTYPE_HPUX_MAP       );// 6000
+	_test_oval_subtype_mapping(OVAL_SUBTYPE_INDEPENDENT_MAP);// 7000
+	_test_oval_subtype_mapping(OVAL_SUBTYPE_IOS_MAP        );// 8000
+	_test_oval_subtype_mapping(OVAL_SUBTYPE_LINUX_MAP      );// 9000
+	_test_oval_subtype_mapping(OVAL_SUBTYPE_MACOS_MAP      );//10000
+	_test_oval_subtype_mapping(OVAL_SUBTYPE_PIXOS_MAP      );//11000
+	_test_oval_subtype_mapping(OVAL_SUBTYPE_SOLARIS_MAP    );//12000
+	_test_oval_subtype_mapping(OVAL_SUBTYPE_UNIX_MAP       );//13000
+	_test_oval_subtype_mapping(OVAL_SUBTYPE_WINDOWS_MAP    );//14000
 }
 
 const struct oscap_string_map OVAL_RESULT_MAP[] = {
@@ -530,14 +565,14 @@ const struct oscap_string_map OVAL_RESULT_MAP[] = {
 	{ OVAL_ENUMERATION_INVALID, NULL }
 };
 
-oval_result_enum oval_result_parse(xmlTextReaderPtr reader, char *attname,
-  				 oval_existence_enum defval)
+oval_result_t oval_result_parse(xmlTextReaderPtr reader, char *attname,
+  				 oval_existence_t defval)
 {
 	  return oval_enumeration_attr(reader, attname, OVAL_RESULT_MAP, defval);
 }
 
-const char* oval_result_text(oval_result_enum result)
+const char* oval_result_get_text(oval_result_t result)
 {
 	return (result)?OVAL_RESULT_MAP[result-1].string:"**INVALID**";
 }
-const char *oval_datetime_format_text(oval_datetime_format_enum);
+const char *oval_datetime_format_get_text(oval_datetime_format_t);

@@ -1,3 +1,4 @@
+#ifndef __STUB_PROBE
 #include <stddef.h>
 #include <stdint.h>
 #include <string.h>
@@ -268,3 +269,4 @@ int pqueue_notempty (pqueue_t *q)
         
         return (b);
 }
+#endif

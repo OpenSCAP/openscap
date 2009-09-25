@@ -1,3 +1,4 @@
+#ifndef __STUB_PROBE
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -719,4 +720,5 @@ int SEXP_asnprintft (char **ret, size_t n, SEXP_t *sexp)
 {
         return (-1);
 }
+#endif
 #endif

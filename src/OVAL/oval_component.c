@@ -37,114 +37,121 @@
 #include "oval_parser_impl.h"
 
 typedef struct oval_component {
-	oval_component_type_enum type;
+	oval_component_type_t type;
 } oval_component_t;
 
 typedef struct oval_component_LITERAL {
-	oval_component_type_enum type;
+	oval_component_type_t type;
 	struct oval_value *value;	//type==OVAL_COMPONENT_LITERAL
 } oval_component_LITERAL_t;
 
 typedef struct oval_component_OBJECTREF {
-	oval_component_type_enum type;
+	oval_component_type_t type;
 	struct oval_object *object;	//type==OVAL_COMPONENT_OBJECTREF
 	char *object_field;	//type==OVAL_COMPONENT_OBJECTREF
 } oval_component_OBJECTREF_t;
 
 typedef struct oval_component_VARREF {
-	oval_component_type_enum type;
+	oval_component_type_t type;
 	struct oval_variable *variable;	//type==OVAL_COMPONENT_VARREF
 } oval_component_VARREF_t;
 
 typedef struct oval_component_FUNCTION {
-	oval_component_type_enum type;
+	oval_component_type_t type;
 	struct oval_collection *function_components;	//type==OVAL_COMPONENT_FUNCTION
 } oval_component_FUNCTION_t;
 
 typedef struct oval_component_ARITHMETIC {
-	oval_component_type_enum type;
+	oval_component_type_t type;
 	struct oval_collection *function_components;	//type==OVAL_COMPONENT_FUNCTION
-	oval_arithmetic_operation_enum operation;	//type==OVAL_COMPONENT_ARITHMETIC
+	oval_arithmetic_operation_t operation;	//type==OVAL_COMPONENT_ARITHMETIC
 } oval_component_ARITHMETIC_t;
 
 typedef struct oval_component_BEGEND {
-	oval_component_type_enum type;
+	oval_component_type_t type;
 	struct oval_collection *function_components;	//type==OVAL_COMPONENT_FUNCTION
-	char *character;	//type==OVAL_COMPONENT_BEGIN
+	char *character;	                            //type==OVAL_COMPONENT_BEGIN/END
 } oval_component_BEGEND_t;
 
 typedef struct oval_component_SPLIT {
-	oval_component_type_enum type;
+	oval_component_type_t type;
 	struct oval_collection *function_components;	//type==OVAL_COMPONENT_FUNCTION
 	char *delimiter;	//type==OVAL_COMPONENT_SPLIT
 } oval_component_SPLIT_t;
 
 typedef struct oval_component_SUBSTRING {
-	oval_component_type_enum type;
+	oval_component_type_t type;
 	struct oval_collection *function_components;	//type==OVAL_COMPONENT_FUNCTION
 	int start;		//type==OVAL_COMPONENT_SUBSTRING
 	int length;		//type==OVAL_COMPONENT_SUBSTRING
 } oval_component_SUBSTRING_t;
 
 typedef struct oval_component_TIMEDIF {
-	oval_component_type_enum type;
+	oval_component_type_t type;
 	struct oval_collection *function_components;	//type==OVAL_COMPONENT_FUNCTION
-	oval_datetime_format_enum format_1;	//type==OVAL_COMPONENT_TIMEDIF
-	oval_datetime_format_enum format_2;	//type==OVAL_COMPONENT_TIMEDIF
+	oval_datetime_format_t format_1;	//type==OVAL_COMPONENT_TIMEDIF
+	oval_datetime_format_t format_2;	//type==OVAL_COMPONENT_TIMEDIF
 } oval_component_TIMEDIF_t;
 
 typedef struct oval_component_REGEX_CAPTURE {
-	oval_component_type_enum type;
+	oval_component_type_t type;
 	struct oval_collection *function_components;	//type==OVAL_COMPONENT_FUNCTION
 	char *pattern;	//type==OVAL_COMPONENT_REGEX_CAPTURE
 } oval_component_REGEX_CAPTURE_t;
 
-int oval_iterator_component_has_more(struct oval_iterator_component
+int oval_component_iterator_has_more(struct oval_component_iterator
 				     *oc_component)
 {
 	return oval_collection_iterator_has_more((struct oval_iterator *)
 						 oc_component);
 }
 
-struct oval_component *oval_iterator_component_next(struct
-						    oval_iterator_component
+struct oval_component *oval_component_iterator_next(struct
+						    oval_component_iterator
 						    *oc_component)
 {
 	return (struct oval_component *)
 	    oval_collection_iterator_next((struct oval_iterator *)oc_component);
 }
 
-oval_component_type_enum oval_component_type(struct oval_component *component)
+void oval_component_iterator_free(struct
+						    oval_component_iterator
+						    *oc_component)
+{
+    oval_collection_iterator_free((struct oval_iterator *)oc_component);
+}
+
+oval_component_type_t oval_component_get_type(struct oval_component *component)
 {
 	return component->type;
 }
 
-struct oval_value *oval_component_literal_value(struct oval_component
+struct oval_value *oval_component_get_literal_value(struct oval_component
 						*component)
 {
 	//type==OVAL_COMPONENT_LITERAL
 	struct oval_value *value = NULL;
-	if (oval_component_type(component) == OVAL_COMPONENT_LITERAL) {
+	if (oval_component_get_type(component) == OVAL_COMPONENT_LITERAL) {
 		value = ((struct oval_component_LITERAL *)component)->value;
 	}
 	return value;
 }
 
-struct oval_object *oval_component_object(struct oval_component *component)
+struct oval_object *oval_component_get_object(struct oval_component *component)
 {
 	//type==OVAL_COMPONENT_OBJECTREF
 	struct oval_object *object = NULL;
-	if (oval_component_type(component) == OVAL_COMPONENT_OBJECTREF) {
+	if (oval_component_get_type(component) == OVAL_COMPONENT_OBJECTREF) {
 		object = ((struct oval_component_OBJECTREF *)component)->object;
 	}
 	return object;
 }
 
-char *oval_component_object_field(struct oval_component *component)
+char *oval_component_get_object_field(struct oval_component *component)
 {
 	//type==OVAL_COMPONENT_OBJECTREF
 	char *field = NULL;
-	if (oval_component_type(component) == OVAL_COMPONENT_OBJECTREF) {
+	if (oval_component_get_type(component) == OVAL_COMPONENT_OBJECTREF) {
 		field =
 		    ((struct oval_component_OBJECTREF *)component)->
 		    object_field;
@@ -152,40 +159,40 @@ char *oval_component_object_field(struct oval_component *component)
 	return field;
 }
 
-struct oval_variable *oval_component_variable(struct oval_component *component)
+struct oval_variable *oval_component_get_variable(struct oval_component *component)
 {
 	//type==OVAL_COMPONENT_VARREF
 	struct oval_variable *variable = NULL;
-	if (oval_component_type(component) == OVAL_COMPONENT_VARREF) {
+	if (oval_component_get_type(component) == OVAL_COMPONENT_VARREF) {
 		variable =
 		    ((struct oval_component_VARREF *)component)->variable;
 	}
 	return variable;
 }
 
-struct oval_iterator_component *oval_component_function_components(struct
+struct oval_component_iterator *oval_component_get_function_components(struct
 								   oval_component
 								   *component)
 {
 	//type==OVAL_COMPONENT_FUNCTION
-	struct oval_iterator_component *iterator;
+	struct oval_component_iterator *iterator;
 	if (component->type > OVAL_COMPONENT_FUNCTION) {
 		oval_component_FUNCTION_t *function =
 		    (oval_component_FUNCTION_t *) component;
 		iterator =
-		    (struct oval_iterator_component *)
+		    (struct oval_component_iterator *)
 		    oval_collection_iterator(function->function_components);
 	} else
 		iterator = NULL;
 	return iterator;
 }
 
-oval_arithmetic_operation_enum oval_component_arithmetic_operation(struct
+oval_arithmetic_operation_t oval_component_get_arithmetic_operation(struct
 								   oval_component
 								   * component)
 {
 	//type==OVAL_COMPONENT_ARITHMETIC
-	oval_arithmetic_operation_enum operation;
+	oval_arithmetic_operation_t operation;
 	if (component->type == OVAL_FUNCTION_ARITHMETIC) {
 		oval_component_ARITHMETIC_t *arithmetic =
 		    (oval_component_ARITHMETIC_t *) component;
@@ -195,9 +202,9 @@ oval_arithmetic_operation_enum oval_component_arithmetic_operation(struct
 	return operation;
 }
 
-char *oval_component_begin_character(struct oval_component *component)
+char *oval_component_get_begin_character(struct oval_component *component)
 {
-	//type==OVAL_COMPONENT_BEGIN
+	//type==OVAL_COMPONENT_BEGIN/END
 	char *character;
 	if (component->type == OVAL_FUNCTION_BEGIN) {
 		oval_component_BEGEND_t *begin =
@@ -208,7 +215,7 @@ char *oval_component_begin_character(struct oval_component *component)
 	return character;
 }
 
-char *oval_component_end_character(struct oval_component *component)
+char *oval_component_get_end_character(struct oval_component *component)
 {
 	//type==OVAL_COMPONENT_END
 	char *character;
@@ -221,7 +228,7 @@ char *oval_component_end_character(struct oval_component *component)
 	return character;
 }
 
-char *oval_component_split_delimiter(struct oval_component *component)
+char *oval_component_get_split_delimiter(struct oval_component *component)
 {
 	//type==OVAL_COMPONENT_SPLIT
 	char *delimiter;
@@ -234,7 +241,7 @@ char *oval_component_split_delimiter(struct oval_component *component)
 	return delimiter;
 }
 
-int oval_component_substring_start(struct oval_component *component)
+int oval_component_get_substring_start(struct oval_component *component)
 {
 	//type==OVAL_COMPONENT_SUBSTRING
 	int start;
@@ -247,7 +254,7 @@ int oval_component_substring_start(struct oval_component *component)
 	return start;
 }
 
-int oval_component_substring_length(struct oval_component *component)
+int oval_component_get_substring_length(struct oval_component *component)
 {
 	//type==OVAL_COMPONENT_SUBSTRING
 	int length;
@@ -260,11 +267,11 @@ int oval_component_substring_length(struct oval_component *component)
 	return length;
 }
 
-oval_datetime_format_enum oval_component_timedif_format_1(struct oval_component
+oval_datetime_format_t oval_component_get_timedif_format_1(struct oval_component
 							  * component)
 {
 	//type==OVAL_COMPONENT_TIMEDIF
-	oval_datetime_format_enum format;
+	oval_datetime_format_t format;
 	if (component->type == OVAL_FUNCTION_TIMEDIF) {
 		oval_component_TIMEDIF_t *timedif =
 		    (oval_component_TIMEDIF_t *) component;
@@ -274,11 +281,11 @@ oval_datetime_format_enum oval_component_timedif_format_1(struct oval_component
 	return format;
 }
 
-oval_datetime_format_enum oval_component_timedif_format_2(struct oval_component
+oval_datetime_format_t oval_component_get_timedif_format_2(struct oval_component
 							  * component)
 {
 	//type==OVAL_COMPONENT_TIMEDIF
-	oval_datetime_format_enum format;
+	oval_datetime_format_t format;
 	if (component->type == OVAL_FUNCTION_TIMEDIF) {
 		oval_component_TIMEDIF_t *timedif =
 		    (oval_component_TIMEDIF_t *) component;
@@ -288,7 +295,7 @@ oval_datetime_format_enum oval_component_timedif_format_2(struct oval_component
 	return format;
 }
 
-char *oval_component_regex_pattern
+char *oval_component_get_regex_pattern
 	(struct oval_component *component)
 {
 	//type==OVAL_COMPONENT_REGEX_CAPTURE
@@ -301,7 +308,7 @@ char *oval_component_regex_pattern
 	return pattern;
 }
 
-struct oval_component *oval_component_new(oval_component_type_enum type)
+struct oval_component *oval_component_new(oval_component_type_t type)
 {
 	oval_component_t *component;
 	switch (type) {
@@ -489,7 +496,7 @@ void oval_component_free(struct oval_component *component)
 	free(component);
 }
 
-void set_oval_component_literal_value(struct oval_component *component,
+void oval_component_set_literal_value(struct oval_component *component,
 				      struct oval_value *value)
 {
 	//type==OVAL_COMPONENT_LITERAL
@@ -500,7 +507,7 @@ void set_oval_component_literal_value(struct oval_component *component,
 	}
 }
 
-void set_oval_component_object(struct oval_component *component,
+void oval_component_set_object(struct oval_component *component,
 			       struct oval_object *object)
 {
 	//type==OVAL_COMPONENT_OBJECTREF
@@ -511,7 +518,7 @@ void set_oval_component_object(struct oval_component *component,
 	}
 }
 
-void set_oval_component_object_field(struct oval_component *component,
+void oval_component_set_object_field(struct oval_component *component,
 				     char *field)
 {
 	//type==OVAL_COMPONENT_OBJECTREF
@@ -523,7 +530,7 @@ void set_oval_component_object_field(struct oval_component *component,
 	}
 }
 
-void set_oval_component_variable(struct oval_component *component,
+void oval_component_set_variable(struct oval_component *component,
 				 struct oval_variable *variable)
 {
 	//type==OVAL_COMPONENT_VARREF
@@ -535,7 +542,7 @@ void set_oval_component_variable(struct oval_component *component,
 }
 
 void oval_value_consume(struct oval_value *value, void *component) {
-	set_oval_component_literal_value(component, value);
+	oval_component_set_literal_value(component, value);
 }
 
 int _oval_component_parse_LITERAL_tag
@@ -553,10 +560,10 @@ int _oval_component_parse_OBJECTREF_tag
 	char *objref = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST "object_ref");
 	struct oval_object *object = get_oval_object_new(model, objref);
 	free(objref);objref=NULL;
-	set_oval_component_object(component, object);
+	oval_component_set_object(component, object);
 
 	char *objfld = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST "item_field");
-	set_oval_component_object_field(component, objfld);
+	oval_component_set_object_field(component, objfld);
 	if(objfld!=NULL)free(objfld);objfld=NULL;
 
 	int return_code = 1;
@@ -570,7 +577,7 @@ int _oval_component_parse_VARREF_tag
 	char *varref = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST "var_ref");
 	struct oval_variable *variable = get_oval_variable_new(model, varref, OVAL_VARIABLE_UNKNOWN);
 	if(varref!=NULL)free(varref);varref=NULL;
-	set_oval_component_variable(component, variable);
+	oval_component_set_variable(component, variable);
 
 	int return_code = 1;
 	return return_code;
@@ -603,7 +610,7 @@ int _oval_component_parse_ARITHMETIC_tag
      struct oval_component *component) {
 	oval_component_ARITHMETIC_t *arithmetic =
 	    (oval_component_ARITHMETIC_t *) component;
-	oval_arithmetic_operation_enum operation =
+	oval_arithmetic_operation_t operation =
 	    oval_arithmetic_operation_parse(reader, "arithmetic_operation",
 					    OVAL_ARITHMETIC_UNKNOWN);
 	arithmetic->operation = operation;
@@ -657,10 +664,10 @@ int _oval_component_parse_TIMEDIF_tag
      struct oval_component *component) {
 	oval_component_TIMEDIF_t *timedif =
 	    (oval_component_TIMEDIF_t *) component;
-	oval_datetime_format_enum format_1 =
+	oval_datetime_format_t format_1 =
 	    oval_datetime_format_parse(reader, "format_1",
 				       OVAL_DATETIME_YEAR_MONTH_DAY);
-	oval_datetime_format_enum format_2 =
+	oval_datetime_format_t format_2 =
 	    oval_datetime_format_parse(reader, "format_2",
 				       OVAL_DATETIME_YEAR_MONTH_DAY);
 	timedif->format_1 = format_1;
@@ -751,8 +758,8 @@ int oval_component_parse_tag(xmlTextReaderPtr reader,
 						       component);
 	} else {
 		int line = xmlTextReaderGetParserLineNumber(reader);
-		printf
-		    ("NOTICE::oval_component_parse_tag::<%s> not handled (line = %d)\n",
+		fprintf
+		    (stderr, "NOTICE::oval_component_parse_tag::<%s> not handled (line = %d)\n",
 		     tagname, line);
 		return_code = oval_parser_skip_tag(reader, context);
 	}
@@ -769,20 +776,21 @@ int oval_component_parse_tag(xmlTextReaderPtr reader,
 }
 
 void function_comp_to_print(struct oval_component *component, char* nxtindent) {
-	struct oval_iterator_component *subcomps =
-		oval_component_function_components(component);
-	if (oval_iterator_component_has_more(subcomps)) {
+	struct oval_component_iterator *subcomps =
+		oval_component_get_function_components(component);
+	if (oval_component_iterator_has_more(subcomps)) {
 		int i;
 		for (i = 1;
-			 oval_iterator_component_has_more(subcomps);
+			 oval_component_iterator_has_more(subcomps);
 			 i++) {
 			struct oval_component *subcomp =
-				oval_iterator_component_next(subcomps);
+				oval_component_iterator_next(subcomps);
 			oval_component_to_print(subcomp, nxtindent, i);
 		}
 	} else
 		printf("%sFUNCTION_COMPONENTS <<NONE BOUND>>\n",
 			   nxtindent);
+	oval_component_iterator_free(subcomps);
 }
 
 void oval_component_to_print(struct oval_component *component, char *indent,
@@ -799,14 +807,14 @@ void oval_component_to_print(struct oval_component *component, char *indent,
 		snprintf(nxtindent, sizeof(nxtindent), "%sCOMPONENT[%d].", indent, idx);
 
 	printf("%sTYPE(%lx) = %d\n", nxtindent, (unsigned long)component,
-	       oval_component_type(component));
-	if (oval_component_type(component) > OVAL_COMPONENT_FUNCTION) {
+	       oval_component_get_type(component));
+	if (oval_component_get_type(component) > OVAL_COMPONENT_FUNCTION) {
 		//oval_component_FUNCTION_t *function = (oval_component_FUNCTION_t *) component;
 	}
-	switch (oval_component_type(component)) {
+	switch (oval_component_get_type(component)) {
 	case OVAL_COMPONENT_LITERAL:{
 			struct oval_value *value =
-			    oval_component_literal_value(component);
+			    oval_component_get_literal_value(component);
 			if (value == NULL)
 				printf("%sVALUE <<NOT BOUND>>\n", nxtindent);
 			else
@@ -815,9 +823,9 @@ void oval_component_to_print(struct oval_component *component, char *indent,
 		break;
 	case OVAL_COMPONENT_OBJECTREF:{
 			printf("%sOBJECT_FIELD %s\n", nxtindent,
-			       oval_component_object_field(component));
+			       oval_component_get_object_field(component));
 			struct oval_object *object =
-			    oval_component_object(component);
+			    oval_component_get_object(component);
 			if (object == NULL)
 				printf("%sOBJECT <<NOT BOUND>>\n", nxtindent);
 			else
@@ -826,7 +834,7 @@ void oval_component_to_print(struct oval_component *component, char *indent,
 		break;
 	case OVAL_COMPONENT_VARREF:{
 			struct oval_variable *variable =
-			    oval_component_variable(component);
+			    oval_component_get_variable(component);
 			if (variable == NULL)
 				printf("%sVARIABLE <<NOT BOUND>>\n", nxtindent);
 			else
@@ -835,41 +843,41 @@ void oval_component_to_print(struct oval_component *component, char *indent,
 		break;
 	case OVAL_FUNCTION_ARITHMETIC:{
 			printf("%sARITHMETIC_OPERATION %d\n", nxtindent,
-			       oval_component_arithmetic_operation(component));
+			       oval_component_get_arithmetic_operation(component));
 			function_comp_to_print(component, nxtindent);
 		}
 		break;
 	case OVAL_FUNCTION_BEGIN:{
 			printf("%sBEGIN_CHARACTER %s\n", nxtindent,
-			       oval_component_begin_character(component));
+			       oval_component_get_begin_character(component));
 			function_comp_to_print(component, nxtindent);
 		}
 		break;
 	case OVAL_FUNCTION_END:{
 			printf("%sEND_CHARACTER %s\n", nxtindent,
-			       oval_component_end_character(component));
+			       oval_component_get_end_character(component));
 			function_comp_to_print(component, nxtindent);
 		}
 		break;
 	case OVAL_FUNCTION_SPLIT:{
 			printf("%sSPLIT_DELIMITER %s\n", nxtindent,
-			       oval_component_split_delimiter(component));
+			       oval_component_get_split_delimiter(component));
 			function_comp_to_print(component, nxtindent);
 		}
 		break;
 	case OVAL_FUNCTION_SUBSTRING:{
 			printf("%sSUBSTRING_START  %d\n", nxtindent,
-			       oval_component_substring_start(component));
+			       oval_component_get_substring_start(component));
 			printf("%sSUBSTRING_LENGTH %d\n", nxtindent,
-			       oval_component_substring_length(component));
+			       oval_component_get_substring_length(component));
 			function_comp_to_print(component, nxtindent);
 		}
 		break;
 	case OVAL_FUNCTION_TIMEDIF:{
 			printf("%sTIMEDIF_FORMAT_1  %d\n", nxtindent,
-			       oval_component_timedif_format_1(component));
+			       oval_component_get_timedif_format_1(component));
 			printf("%sTIMEDIF_FORMAT_2  %d\n", nxtindent,
-			       oval_component_timedif_format_2(component));
+			       oval_component_get_timedif_format_2(component));
 			function_comp_to_print(component, nxtindent);
 		}
 		break;
@@ -918,15 +926,15 @@ const struct oscap_string_map _OVAL_FUNCTION_MAP[] = {
 xmlNode *oval_component_to_dom
 	(struct oval_component *component, xmlDoc *doc, xmlNode *parent)
 {
-	oval_component_type_enum type = oval_component_type(component);
+	oval_component_type_t type = oval_component_get_type(component);
 	const char *local_name = type<OVAL_FUNCTION
 		?_OVAL_COMPONENT_MAP[type-1].string
-		:_OVAL_FUNCTION_MAP [type-OVAL_FUNCTION].string;
+		:_OVAL_FUNCTION_MAP [type-OVAL_FUNCTION-1].string;
 
 	char *content;
 	if(type == OVAL_COMPONENT_LITERAL){
-		struct oval_value *value = oval_component_literal_value(component);
-		content = oval_value_text(value);
+		struct oval_value *value = oval_component_get_literal_value(component);
+		content = oval_value_get_text(value);
 	}else{
 		content = NULL;
 	}
@@ -937,33 +945,33 @@ xmlNode *oval_component_to_dom
 				BAD_CAST local_name,
 				BAD_CAST content);
 
-	switch (oval_component_type(component))
+	switch (oval_component_get_type(component))
 	{
 	case OVAL_COMPONENT_LITERAL:{
-		struct oval_value *value = oval_component_literal_value(component);
-		oval_datatype_enum datatype = oval_value_datatype(value);
+		struct oval_value *value = oval_component_get_literal_value(component);
+		oval_datatype_t datatype = oval_value_get_datatype(value);
 		if(datatype != OVAL_DATATYPE_STRING)
 			xmlNewProp
 				(component_node,
 						BAD_CAST "datatype",
-						BAD_CAST oval_datatype_text(datatype));
+						BAD_CAST oval_datatype_get_text(datatype));
 	}break;
 	case OVAL_COMPONENT_OBJECTREF:{
-		struct oval_object *object = oval_component_object(component);
-		char *object_ref = oval_object_id(object);
+		struct oval_object *object = oval_component_get_object(component);
+		char *object_ref = oval_object_get_id(object);
 		xmlNewProp
 			(component_node,
 					BAD_CAST "object_ref",
 					BAD_CAST  object_ref);
-		char *item_field = oval_component_object_field(component);
+		char *item_field = oval_component_get_object_field(component);
 		xmlNewProp
 			(component_node,
 					BAD_CAST "item_field",
 					BAD_CAST  item_field);
 	}break;
 	case OVAL_COMPONENT_VARREF:{
-		struct oval_variable *variable = oval_component_variable(component);
-		char *var_ref = oval_variable_id(variable);
+		struct oval_variable *variable = oval_component_get_variable(component);
+		char *var_ref = oval_variable_get_id(variable);
 		xmlNewProp
 			(component_node,
 					BAD_CAST "var_ref",
@@ -971,28 +979,35 @@ xmlNode *oval_component_to_dom
 
 	}break;
 	case OVAL_FUNCTION_ARITHMETIC:{
-		oval_arithmetic_operation_enum operation = oval_component_arithmetic_operation(component);
+		oval_arithmetic_operation_t operation = oval_component_get_arithmetic_operation(component);
 		xmlNewProp
 			(component_node,
 					BAD_CAST "arithmetic_operation",
-					BAD_CAST oval_arithmetic_operation_text(operation));
+					BAD_CAST oval_arithmetic_operation_get_text(operation));
 	}break;
 	case OVAL_FUNCTION_BEGIN:{
-		char *character = oval_component_begin_character(component);
+		char *character = oval_component_get_begin_character(component);
 		xmlNewProp
 			(component_node,
 					BAD_CAST "character",
 					BAD_CAST  character);
-	}
+	}break;
+	case OVAL_FUNCTION_END:{
+		char *character = oval_component_get_end_character(component);
+		xmlNewProp
+			(component_node,
+					BAD_CAST "character",
+					BAD_CAST  character);
+	}break;
 	case OVAL_FUNCTION_SUBSTRING:{
-		int start = oval_component_substring_start(component);
+		int start = oval_component_get_substring_start(component);
 		char substring_start[10]; *substring_start = '\0';
 		snprintf(substring_start, sizeof(substring_start), "%d", start);
 		xmlNewProp
 			(component_node,
 					BAD_CAST "substring_start",
 					BAD_CAST  substring_start);
-		int length = oval_component_substring_length(component);
+		int length = oval_component_get_substring_length(component);
 		char substring_length[10]; *substring_length = '\0';
 		snprintf(substring_length, sizeof(substring_length), "%d", length);
 		xmlNewProp
@@ -1001,41 +1016,41 @@ xmlNode *oval_component_to_dom
 					BAD_CAST  substring_length);
 	}break;
 	case OVAL_FUNCTION_TIMEDIF:{
-		oval_datetime_format_enum format_1 = oval_component_timedif_format_1(component);
+		oval_datetime_format_t format_1 = oval_component_get_timedif_format_1(component);
 		if(format_1 != OVAL_DATETIME_YEAR_MONTH_DAY){
 			xmlNewProp
 				(component_node,
 						BAD_CAST "format_1",
-						BAD_CAST oval_datetime_format_text(format_1));
+						BAD_CAST oval_datetime_format_get_text(format_1));
 		}
-		oval_datetime_format_enum format_2 = oval_component_timedif_format_2(component);
+		oval_datetime_format_t format_2 = oval_component_get_timedif_format_2(component);
 		if(format_2 != OVAL_DATETIME_YEAR_MONTH_DAY){
 			xmlNewProp
 				(component_node,
 						BAD_CAST "format_2",
-						BAD_CAST oval_datetime_format_text(format_2));
+						BAD_CAST oval_datetime_format_get_text(format_2));
 		}
 	}break;
 	case OVAL_FUNCTION_REGEX_CAPTURE:{
-		char *pattern = oval_component_regex_pattern(component);
+		char *pattern = oval_component_get_regex_pattern(component);
 		xmlNewProp
 			(component_node,
 					BAD_CAST "pattern",
 					BAD_CAST  pattern);
 	}break;
 	case OVAL_FUNCTION_CONCAT:
-	case OVAL_FUNCTION_END:
 	case OVAL_FUNCTION_ESCAPE_REGEX:
 	case OVAL_FUNCTION_SPLIT:break;
 	default: break;
 	}
 
 	if(type > OVAL_FUNCTION){
-		struct oval_iterator_component *components = oval_component_function_components(component);
-		while(oval_iterator_component_has_more(components)){
-			struct oval_component *sub_component = oval_iterator_component_next(components);
+		struct oval_component_iterator *components = oval_component_get_function_components(component);
+		while(oval_component_iterator_has_more(components)){
+			struct oval_component *sub_component = oval_component_iterator_next(components);
 			oval_component_to_dom(sub_component, doc, component_node);
 		}
+		oval_component_iterator_free(components);
 	}
 
 	return component_node;

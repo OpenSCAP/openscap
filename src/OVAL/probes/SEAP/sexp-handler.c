@@ -1,3 +1,5 @@
+#ifndef __STUB_PROBE
+
 #include <stdlib.h>
 #include <string.h>
 #include <pthread.h>
@@ -126,3 +128,4 @@ int SEXP_delhandler (SEXP_handlertbl_t *htbl, const char *typestr, size_t typele
 #endif
         return (ret);
 }
+#endif

@@ -42,7 +42,8 @@ struct oval_iterator *oval_collection_iterator_new();
 void oval_collection_iterator_add(struct oval_iterator *, void *);
 int oval_collection_iterator_has_more(struct oval_iterator *);
 void *oval_collection_iterator_next(struct oval_iterator *);
+void  oval_collection_iterator_free(struct oval_iterator *);
 
-struct oval_iterator_string;
+struct oval_string_iterator;
 
 #endif				/* OVALCOLLECTION_H_ */

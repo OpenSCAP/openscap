@@ -41,40 +41,47 @@ typedef struct oval_variable_binding {
 	char *value;
 } oval_variable_binding_t;
 
-int oval_iterator_variable_binding_has_more(struct
-					    oval_iterator_variable_binding
+int oval_variable_binding_iterator_has_more(struct
+					    oval_variable_binding_iterator
 					    *oc_variable_binding)
 {
 	return oval_collection_iterator_has_more((struct oval_iterator *)
 						 oc_variable_binding);
 }
 
-struct oval_variable_binding *oval_iterator_variable_binding_next(struct
-								  oval_iterator_variable_binding
+struct oval_variable_binding *oval_variable_binding_iterator_next(struct
+								  oval_variable_binding_iterator
 								  *oc_variable_binding)
 {
 	return (struct oval_variable_binding *)
 	    oval_collection_iterator_next((struct oval_iterator *)
 					  oc_variable_binding);
 }
+void oval_variable_binding_iterator_free(struct
+								  oval_variable_binding_iterator
+								  *oc_variable_binding)
+{
+    oval_collection_iterator_free((struct oval_iterator *)
+					  oc_variable_binding);
+}
 
-struct oval_variable *oval_variable_binding_variable(struct
+struct oval_variable *oval_variable_binding_get_variable(struct
 						     oval_variable_binding
 						     *binding)
 {
 	return ((struct oval_variable_binding *)binding)->variable;
 }
 
-char *oval_variable_binding_value(struct oval_variable_binding *binding)
+char *oval_variable_binding_get_value(struct oval_variable_binding *binding)
 {
 	return ((struct oval_variable_binding *)binding)->value;
 }
 
-void set_oval_variable_binding_variable(struct oval_variable_binding *binding, struct oval_variable *variable)
+void oval_variable_binding_set_variable(struct oval_variable_binding *binding, struct oval_variable *variable)
 {
 	binding->variable = variable;
 }
-void set_oval_variable_binding_value   (struct oval_variable_binding *binding, char *value)
+void oval_variable_binding_set_value   (struct oval_variable_binding *binding, char *value)
 {
 	if(binding->value!=NULL)free(binding->value);
 	binding->value = ((value==NULL)?NULL:strdup(value));
@@ -110,7 +117,7 @@ void oval_variable_binding_free(struct oval_variable_binding *binding)
 
 void _oval_variable_binding_value_consumer(char * value, void * user)
 {
-	set_oval_variable_binding_value((struct oval_variable_binding *)user, value);
+	oval_variable_binding_set_value((struct oval_variable_binding *)user, value);
 }
 
 int oval_variable_binding_parse_tag(xmlTextReaderPtr reader,
@@ -121,7 +128,7 @@ int oval_variable_binding_parse_tag(xmlTextReaderPtr reader,
 	{//variable
 		char* variableId = xmlTextReaderGetAttribute(reader, BAD_CAST "variable_id");
 		struct oval_variable *variable = get_oval_variable_new(context->object_model, variableId, OVAL_VARIABLE_UNKNOWN);
-		set_oval_variable_binding_variable(binding, variable);
+		oval_variable_binding_set_variable(binding, variable);
 		free(variableId);variableId=NULL;
 	}
 	{//bound value
@@ -136,8 +143,8 @@ int oval_variable_binding_parse_tag(xmlTextReaderPtr reader,
 			int numchars = 0;
 			char debug[2000];debug[numchars]='\0';
 			numchars = numchars + sprintf(debug+numchars,"oval_variable_binding_parse_tag::");
-			numchars = numchars + sprintf(debug+numchars,"\n    binding->variable = %s",oval_variable_id(oval_variable_binding_variable(binding)));
-			numchars = numchars + sprintf(debug+numchars,"\n    binding->value    = %s",oval_variable_binding_value(binding));
+			numchars = numchars + sprintf(debug+numchars,"\n    binding->variable = %s",oval_variable_get_id(oval_variable_binding_get_variable(binding)));
+			numchars = numchars + sprintf(debug+numchars,"\n    binding->value    = %s",oval_variable_binding_get_value(binding));
 			oval_parser_log_debug(context, debug);
 		}
 		(*consumer)(binding, client);
@@ -150,11 +157,11 @@ void oval_variable_binding_to_dom  (struct oval_variable_binding *binding, xmlDo
 		xmlNs *ns_syschar = xmlSearchNsByHref(doc, tag_parent, OVAL_SYSCHAR_NAMESPACE);
 	    xmlNode *tag_variable_binding = xmlNewChild
 			(tag_parent, ns_syschar, BAD_CAST "variable_value",
-					BAD_CAST oval_variable_binding_value(binding));
+					BAD_CAST oval_variable_binding_get_value(binding));
 
 	    {//attributes
-	    	struct oval_variable *variable = oval_variable_binding_variable(binding);
-	    	xmlNewProp(tag_variable_binding, BAD_CAST "variable_id", BAD_CAST oval_variable_id(variable));
+	    	struct oval_variable *variable = oval_variable_binding_get_variable(binding);
+	    	xmlNewProp(tag_variable_binding, BAD_CAST "variable_id", BAD_CAST oval_variable_get_id(variable));
 	    }
 	}
 }

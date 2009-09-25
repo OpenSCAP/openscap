@@ -1,3 +1,4 @@
+#ifndef __STUB_PROBE
 #pragma once
 #ifndef PROBE_H
 #define PROBE_H
@@ -113,3 +114,4 @@ extern globals_t global;
 #define PROBECMD_OBJ_EVAL  2
 
 #endif /* PROBE_H */
+#endif

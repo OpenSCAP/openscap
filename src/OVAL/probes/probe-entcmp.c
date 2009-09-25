@@ -1,3 +1,4 @@
+#ifndef __STUB_PROBE
 #include <config.h>
 #include <sexp-types.h>
 #include <sexp-manip.h>
@@ -13,22 +14,22 @@
 
 #include <probe.h>
 
-oval_result_enum SEXP_OVALent_cmp_binary(SEXP_t *val1, SEXP_t *val2, oval_operation_enum op)
+oval_result_t SEXP_OVALent_cmp_binary(SEXP_t *val1, SEXP_t *val2, oval_operation_t op)
 {
-	oval_result_enum result = OVAL_RESULT_ERROR;
+	oval_result_t result = OVAL_RESULT_ERROR;
 	char *s1, *s2;
 
 	s1 = SEXP_string_cstr(val1);
 	s2 = SEXP_string_cstr(val2);
 
 	switch (op) {
-	case OPERATION_EQUALS:
+	case OVAL_OPERATION_EQUALS:
 		if (!strcasecmp(s1, s2))
 			result = OVAL_RESULT_TRUE;
 		else
 			result = OVAL_RESULT_FALSE;
 		break;
-	case OPERATION_NOT_EQUAL:
+	case OVAL_OPERATION_NOT_EQUAL:
 		if (strcasecmp(s1, s2))
 			result = OVAL_RESULT_TRUE;
 		else
@@ -41,22 +42,22 @@ oval_result_enum SEXP_OVALent_cmp_binary(SEXP_t *val1, SEXP_t *val2, oval_operat
 	return result;
 }
 
-oval_result_enum SEXP_OVALent_cmp_bool(SEXP_t *val1, SEXP_t *val2, oval_operation_enum op)
+oval_result_t SEXP_OVALent_cmp_bool(SEXP_t *val1, SEXP_t *val2, oval_operation_t op)
 {
-	oval_result_enum result = OVAL_RESULT_ERROR;
+	oval_result_t result = OVAL_RESULT_ERROR;
 	int v1, v2;
 
 	v1 = SEXP_number_geti_32 (val1);
 	v2 = SEXP_number_geti_32 (val2);
-        
+
 	switch (op) {
-	case OPERATION_EQUALS:
+	case OVAL_OPERATION_EQUALS:
 		if (v1 == v2)
 			result = OVAL_RESULT_TRUE;
 		else
 			result = OVAL_RESULT_FALSE;
 		break;
-	case OPERATION_NOT_EQUAL:
+	case OVAL_OPERATION_NOT_EQUAL:
 		if (v1 != v2)
 			result = OVAL_RESULT_TRUE;
 		else
@@ -69,64 +70,64 @@ oval_result_enum SEXP_OVALent_cmp_bool(SEXP_t *val1, SEXP_t *val2, oval_operatio
 	return result;
 }
 
-oval_result_enum SEXP_OVALent_cmp_evr(SEXP_t *val1, SEXP_t *val2, oval_operation_enum op)
+oval_result_t SEXP_OVALent_cmp_evr(SEXP_t *val1, SEXP_t *val2, oval_operation_t op)
 {
-	oval_result_enum result = OVAL_RESULT_ERROR;
+	oval_result_t result = OVAL_RESULT_ERROR;
 
 	// todo:
 
 	return result;
 }
 
-oval_result_enum SEXP_OVALent_cmp_filesetrev(SEXP_t *val1, SEXP_t *val2, oval_operation_enum op)
+oval_result_t SEXP_OVALent_cmp_filesetrev(SEXP_t *val1, SEXP_t *val2, oval_operation_t op)
 {
-	oval_result_enum result = OVAL_RESULT_ERROR;
+	oval_result_t result = OVAL_RESULT_ERROR;
 
 	// todo:
 
 	return result;
 }
 
-oval_result_enum SEXP_OVALent_cmp_float(SEXP_t *val1, SEXP_t *val2, oval_operation_enum op)
+oval_result_t SEXP_OVALent_cmp_float(SEXP_t *val1, SEXP_t *val2, oval_operation_t op)
 {
-	oval_result_enum result = OVAL_RESULT_ERROR;
+	oval_result_t result = OVAL_RESULT_ERROR;
 	double v1, v2;
 
 	v1 = SEXP_number_getf(val1);
 	v2 = SEXP_number_getf(val2);
 
 	switch (op) {
-	case OPERATION_EQUALS:
+	case OVAL_OPERATION_EQUALS:
 		if (v1 == v2)
 			result = OVAL_RESULT_TRUE;
 		else
 			result = OVAL_RESULT_FALSE;
 		break;
-	case OPERATION_NOT_EQUAL:
+	case OVAL_OPERATION_NOT_EQUAL:
 		if (v1 != v2)
 			result = OVAL_RESULT_TRUE;
 		else
 			result = OVAL_RESULT_FALSE;
 		break;
-	case OPERATION_GREATER_THAN:
+	case OVAL_OPERATION_GREATER_THAN:
 		if (v1 < v2)
 			result = OVAL_RESULT_TRUE;
 		else
 			result = OVAL_RESULT_FALSE;
 		break;
-	case OPERATION_LESS_THAN:
+	case OVAL_OPERATION_LESS_THAN:
 		if (v1 > v2)
 			result = OVAL_RESULT_TRUE;
 		else
 			result = OVAL_RESULT_FALSE;
 		break;
-	case OPERATION_GREATER_THAN_OR_EQUAL:
+	case OVAL_OPERATION_GREATER_THAN_OR_EQUAL:
 		if (v1 <= v2)
 			result = OVAL_RESULT_TRUE;
 		else
 			result = OVAL_RESULT_FALSE;
 		break;
-	case OPERATION_LESS_THAN_OR_EQUAL:
+	case OVAL_OPERATION_LESS_THAN_OR_EQUAL:
 		if (v1 >= v2)
 			result = OVAL_RESULT_TRUE;
 		else
@@ -139,58 +140,58 @@ oval_result_enum SEXP_OVALent_cmp_float(SEXP_t *val1, SEXP_t *val2, oval_operati
 	return result;
 }
 
-oval_result_enum SEXP_OVALent_cmp_int(SEXP_t *val1, SEXP_t *val2, oval_operation_enum op)
+oval_result_t SEXP_OVALent_cmp_int(SEXP_t *val1, SEXP_t *val2, oval_operation_t op)
 {
-	oval_result_enum result = OVAL_RESULT_ERROR;
+	oval_result_t result = OVAL_RESULT_ERROR;
 	int v1, v2;
 
 	v1 = SEXP_number_geti_32 (val1);
 	v2 = SEXP_number_geti_32 (val2);
 
 	switch (op) {
-	case OPERATION_EQUALS:
+	case OVAL_OPERATION_EQUALS:
 		if (v1 == v2)
 			result = OVAL_RESULT_TRUE;
 		else
 			result = OVAL_RESULT_FALSE;
 		break;
-	case OPERATION_NOT_EQUAL:
+	case OVAL_OPERATION_NOT_EQUAL:
 		if (v1 != v2)
 			result = OVAL_RESULT_TRUE;
 		else
 			result = OVAL_RESULT_FALSE;
 		break;
-	case OPERATION_GREATER_THAN:
+	case OVAL_OPERATION_GREATER_THAN:
 		if (v1 < v2)
 			result = OVAL_RESULT_TRUE;
 		else
 			result = OVAL_RESULT_FALSE;
 		break;
-	case OPERATION_LESS_THAN:
+	case OVAL_OPERATION_LESS_THAN:
 		if (v1 > v2)
 			result = OVAL_RESULT_TRUE;
 		else
 			result = OVAL_RESULT_FALSE;
 		break;
-	case OPERATION_GREATER_THAN_OR_EQUAL:
+	case OVAL_OPERATION_GREATER_THAN_OR_EQUAL:
 		if (v1 <= v2)
 			result = OVAL_RESULT_TRUE;
 		else
 			result = OVAL_RESULT_FALSE;
 		break;
-	case OPERATION_LESS_THAN_OR_EQUAL:
+	case OVAL_OPERATION_LESS_THAN_OR_EQUAL:
 		if (v1 >= v2)
 			result = OVAL_RESULT_TRUE;
 		else
 			result = OVAL_RESULT_FALSE;
 		break;
-	case OPERATION_BITWISE_AND:
+	case OVAL_OPERATION_BITWISE_AND:
 		if ((v1 && v2) == v1)
 			result = OVAL_RESULT_TRUE;
 		else
 			result = OVAL_RESULT_FALSE;
 		break;
-	case OPERATION_BITWISE_OR:
+	case OVAL_OPERATION_BITWISE_OR:
 		if ((v1 || v2) == v1)
 			result = OVAL_RESULT_TRUE;
 		else
@@ -203,9 +204,9 @@ oval_result_enum SEXP_OVALent_cmp_int(SEXP_t *val1, SEXP_t *val2, oval_operation
 	return result;
 }
 
-oval_result_enum SEXP_OVALent_cmp_ios(SEXP_t *val1, SEXP_t *val2, oval_operation_enum op)
+oval_result_t SEXP_OVALent_cmp_ios(SEXP_t *val1, SEXP_t *val2, oval_operation_t op)
 {
-	oval_result_enum result = OVAL_RESULT_ERROR;
+	oval_result_t result = OVAL_RESULT_ERROR;
 
 	// todo:
 
@@ -259,9 +260,9 @@ static SEXP_t *version_parser(char *version) {
 	return NULL;
 }
 
-oval_result_enum SEXP_OVALent_cmp_version(SEXP_t *val1, SEXP_t *val2, oval_operation_enum op)
+oval_result_t SEXP_OVALent_cmp_version(SEXP_t *val1, SEXP_t *val2, oval_operation_t op)
 {
-	oval_result_enum result = OVAL_RESULT_ERROR;
+	oval_result_t result = OVAL_RESULT_ERROR;
 	SEXP_t *v1_tkns = NULL, *v2_tkns = NULL, *stmp;
 	char *vtmp;
 	size_t len, i;
@@ -269,14 +270,14 @@ oval_result_enum SEXP_OVALent_cmp_version(SEXP_t *val1, SEXP_t *val2, oval_opera
 	long long int v1, v2;
 
 	switch (op) {
-	case OPERATION_EQUALS:
-	case OPERATION_GREATER_THAN_OR_EQUAL:
-	case OPERATION_LESS_THAN_OR_EQUAL:
+	case OVAL_OPERATION_EQUALS:
+	case OVAL_OPERATION_GREATER_THAN_OR_EQUAL:
+	case OVAL_OPERATION_LESS_THAN_OR_EQUAL:
 		result = OVAL_RESULT_TRUE;
 		break;
-	case OPERATION_NOT_EQUAL:
-	case OPERATION_GREATER_THAN:
-	case OPERATION_LESS_THAN:
+	case OVAL_OPERATION_NOT_EQUAL:
+	case OVAL_OPERATION_GREATER_THAN:
+	case OVAL_OPERATION_LESS_THAN:
 		result = OVAL_RESULT_FALSE;
 		break;
 	default:
@@ -313,18 +314,18 @@ oval_result_enum SEXP_OVALent_cmp_version(SEXP_t *val1, SEXP_t *val2, oval_opera
 		v1 = SEXP_number_geti_64 (SEXP_list_nth(v1_tkns, i));
 		v2 = SEXP_number_geti_64 (SEXP_list_nth(v2_tkns, i));
 
-		if (op == OPERATION_EQUALS) {
+		if (op == OVAL_OPERATION_EQUALS) {
 			if (v1 != v2) {
 				result = OVAL_RESULT_FALSE;
 				break;
 			}
-		} else if (op == OPERATION_NOT_EQUAL) {
+		} else if (op == OVAL_OPERATION_NOT_EQUAL) {
 			if (v1 != v2) {
 				result = OVAL_RESULT_TRUE;
 				break;
 			}
-		} else if ((op == OPERATION_GREATER_THAN) ||
-			   (op == OPERATION_GREATER_THAN_OR_EQUAL)) {
+		} else if ((op == OVAL_OPERATION_GREATER_THAN) ||
+			   (op == OVAL_OPERATION_GREATER_THAN_OR_EQUAL)) {
 			if (v1 < v2) {
 				result = OVAL_RESULT_TRUE;
 				break;
@@ -332,8 +333,8 @@ oval_result_enum SEXP_OVALent_cmp_version(SEXP_t *val1, SEXP_t *val2, oval_opera
 				result = OVAL_RESULT_FALSE;
 				break;
 			}
-		} else if ((op == OPERATION_LESS_THAN) ||
-			   (op == OPERATION_LESS_THAN_OR_EQUAL)) {
+		} else if ((op == OVAL_OPERATION_LESS_THAN) ||
+			   (op == OVAL_OPERATION_LESS_THAN_OR_EQUAL)) {
 			if (v1 > v2) {
 				result = OVAL_RESULT_TRUE;
 				break;
@@ -350,40 +351,40 @@ oval_result_enum SEXP_OVALent_cmp_version(SEXP_t *val1, SEXP_t *val2, oval_opera
 	return result;
 }
 
-oval_result_enum SEXP_OVALent_cmp_string(SEXP_t *val1, SEXP_t *val2, oval_operation_enum op)
+oval_result_t SEXP_OVALent_cmp_string(SEXP_t *val1, SEXP_t *val2, oval_operation_t op)
 {
-	oval_result_enum result = OVAL_RESULT_ERROR;
+	oval_result_t result = OVAL_RESULT_ERROR;
 	char *s1, *s2;
 
 	s1 = SEXP_string_cstr(val1);
 	s2 = SEXP_string_cstr(val2);
 
 	switch (op) {
-	case OPERATION_EQUALS:
+	case OVAL_OPERATION_EQUALS:
 		if (!strcmp(s1, s2))
 			result = OVAL_RESULT_TRUE;
 		else
 			result = OVAL_RESULT_FALSE;
 		break;
-	case OPERATION_NOT_EQUAL:
+	case OVAL_OPERATION_NOT_EQUAL:
 		if (strcmp(s1, s2))
 			result = OVAL_RESULT_TRUE;
 		else
 			result = OVAL_RESULT_FALSE;
 		break;
-	case OPERATION_CASE_INSENSITIVE_EQUALS:
+	case OVAL_OPERATION_CASE_INSENSITIVE_EQUALS:
 		if (!strcasecmp(s1, s2))
 			result = OVAL_RESULT_TRUE;
 		else
 			result = OVAL_RESULT_FALSE;
 		break;
-	case OPERATION_CASE_INSENSITIVE_NOT_EQUAL:
+	case OVAL_OPERATION_CASE_INSENSITIVE_NOT_EQUAL:
 		if (!strcasecmp(s1, s2))
 			result = OVAL_RESULT_TRUE;
 		else
 			result = OVAL_RESULT_FALSE;
 		break;
-	case OPERATION_PATTERN_MATCH:
+	case OVAL_OPERATION_PATTERN_MATCH:
 		{
 #if defined USE_REGEX_PCRE
 			int erroffset = -1, rc;
@@ -429,11 +430,11 @@ oval_result_enum SEXP_OVALent_cmp_string(SEXP_t *val1, SEXP_t *val2, oval_operat
 	return result;
 }
 
-oval_result_enum SEXP_OVALent_cmp(SEXP_t *ent, SEXP_t *val2)
+oval_result_t SEXP_OVALent_cmp(SEXP_t *ent, SEXP_t *val2)
 {
-	oval_result_enum result = OVAL_RESULT_ERROR;
-	oval_operation_enum op;
-	oval_datatype_enum dtype;
+	oval_result_t result = OVAL_RESULT_ERROR;
+	oval_operation_t op;
+	oval_datatype_t dtype;
 	SEXP_t *op_sexp, *val1;
 
 	val1 = probe_ent_getval (ent, 1);
@@ -445,7 +446,7 @@ oval_result_enum SEXP_OVALent_cmp(SEXP_t *ent, SEXP_t *val2)
 
 	op_sexp = probe_ent_getattrval (ent, "operation");
 	if (op_sexp == NULL)
-		op = OPERATION_EQUALS;
+		op = OVAL_OPERATION_EQUALS;
 	else
 		op = SEXP_number_geti_32 (op_sexp);
 
@@ -486,9 +487,9 @@ oval_result_enum SEXP_OVALent_cmp(SEXP_t *ent, SEXP_t *val2)
 	return result;
 }
 
-oval_result_enum SEXP_OVALentste_cmp(SEXP_t *ent_ste, SEXP_t *ent_itm)
+oval_result_t SEXP_OVALentste_cmp(SEXP_t *ent_ste, SEXP_t *ent_itm)
 {
-	oval_syschar_status_enum item_status;
+	oval_syschar_status_t item_status;
 	SEXP_t *val2;
 
 	item_status = probe_ent_getstatus(ent_itm);
@@ -512,7 +513,7 @@ oval_result_enum SEXP_OVALentste_cmp(SEXP_t *ent_ste, SEXP_t *ent_itm)
 	return SEXP_OVALent_cmp(ent_ste, val2);
 }
 
-oval_result_enum SEXP_OVALentobj_cmp(SEXP_t *ent_obj, SEXP_t *val)
+oval_result_t SEXP_OVALentobj_cmp(SEXP_t *ent_obj, SEXP_t *val)
 {
 	return SEXP_OVALent_cmp(ent_obj, val);
 }
@@ -528,7 +529,7 @@ struct _oresults {
 
 static int results_parser(SEXP_t *res_lst, struct _oresults *ores)
 {
-	oval_result_enum r;
+	oval_result_t r;
 	SEXP_t *res;
 
 	memset(ores, 0, sizeof (struct _oresults));
@@ -560,9 +561,9 @@ static int results_parser(SEXP_t *res_lst, struct _oresults *ores)
 	return 0;
 }
 
-oval_result_enum SEXP_OVALent_result_bychk(SEXP_t *res_lst, oval_check_enum check)
+oval_result_t SEXP_OVALent_result_bychk(SEXP_t *res_lst, oval_check_t check)
 {
-	oval_result_enum result = OVAL_RESULT_UNKNOWN;
+	oval_result_t result = OVAL_RESULT_UNKNOWN;
 	struct _oresults ores;
 
 	if (SEXP_list_length(res_lst) == 0)
@@ -682,9 +683,9 @@ oval_result_enum SEXP_OVALent_result_bychk(SEXP_t *res_lst, oval_check_enum chec
 	return result;
 }
 
-oval_result_enum SEXP_OVALent_result_byopr(SEXP_t *res_lst, oval_operator_enum operator)
+oval_result_t SEXP_OVALent_result_byopr(SEXP_t *res_lst, oval_operator_t operator)
 {
-	oval_result_enum result = OVAL_RESULT_UNKNOWN;
+	oval_result_t result = OVAL_RESULT_UNKNOWN;
 	struct _oresults ores;
 
 	if (SEXP_list_length(res_lst) == 0)
@@ -822,3 +823,4 @@ oval_result_enum SEXP_OVALent_result_byopr(SEXP_t *res_lst, oval_operator_enum o
 
 	return result;
 }
+#endif

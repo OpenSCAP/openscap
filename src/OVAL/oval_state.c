@@ -35,7 +35,7 @@
 #include "oval_agent_api_impl.h"
 
 typedef struct oval_state {
-	oval_subtype_enum subtype;
+	oval_subtype_t subtype;
 	char *name;
 	char *comment;
 	char *id;
@@ -45,62 +45,68 @@ typedef struct oval_state {
 	struct oval_collection *contents;
 } oval_state_t;
 
-int oval_iterator_state_has_more(struct oval_iterator_state *oc_state)
+int oval_state_iterator_has_more(struct oval_state_iterator *oc_state)
 {
 	return oval_collection_iterator_has_more((struct oval_iterator *)
 						 oc_state);
 }
 
-struct oval_state *oval_iterator_state_next(struct oval_iterator_state
+struct oval_state *oval_state_iterator_next(struct oval_state_iterator
 					    *oc_state)
 {
 	return (struct oval_state *)
 	    oval_collection_iterator_next((struct oval_iterator *)oc_state);
 }
 
-oval_family_enum oval_state_family(struct oval_state *state)
+void oval_state_iterator_free(struct oval_state_iterator
+					    *oc_state)
 {
-	return (oval_state_subtype(state)/1000)*1000;
+    oval_collection_iterator_free((struct oval_iterator *)oc_state);
 }
 
-oval_subtype_enum oval_state_subtype(struct oval_state * state)
+oval_family_t oval_state_get_family(struct oval_state *state)
+{
+	return (oval_state_get_subtype(state)/1000)*1000;
+}
+
+oval_subtype_t oval_state_get_subtype(struct oval_state * state)
 {
 	return ((struct oval_state *)state)->subtype;
 }
 
-char *oval_state_name(struct oval_state *state)
+char *oval_state_get_name(struct oval_state *state)
 {
 	return ((struct oval_state *)state)->name;
 }
 
-struct oval_iterator_string *oval_state_notes(struct oval_state *state)
+struct oval_string_iterator *oval_state_get_notes(struct oval_state *state)
 {
-	return (struct oval_iterator_string *)oval_collection_iterator(state->
+	return (struct oval_string_iterator *)oval_collection_iterator(state->
 								       notes);
 }
 
-struct oval_iterator_state_content *oval_state_contents(struct oval_state *state)
+struct oval_state_content_iterator *oval_state_get_contents(struct oval_state *state)
 {
-	return (struct oval_iterator_state_content *)
+	return (struct oval_state_content_iterator *)
 		oval_collection_iterator(state->contents);
 }
 
-char *oval_state_comment(struct oval_state *state)
+char *oval_state_get_comment(struct oval_state *state)
 {
 	return ((struct oval_state *)state)->comment;
 }
 
-char *oval_state_id(struct oval_state *state)
+char *oval_state_get_id(struct oval_state *state)
 {
 	return ((struct oval_state *)state)->id;
 }
 
-int oval_state_deprecated(struct oval_state *state)
+int oval_state_get_deprecated(struct oval_state *state)
 {
 	return ((struct oval_state *)state)->deprecated;
 }
 
-int oval_state_version(struct oval_state *state)
+int oval_state_get_version(struct oval_state *state)
 {
 	return state->version;
 }
@@ -138,46 +144,46 @@ void oval_state_free(struct oval_state *state)
 	free(state);
 }
 
-void set_oval_state_subtype(struct oval_state *state, oval_subtype_enum subtype)
+void oval_state_set_subtype(struct oval_state *state, oval_subtype_t subtype)
 {
 	state->subtype = subtype;
 }
 
-void set_oval_state_name(struct oval_state *state, char *name)
+void oval_state_set_name(struct oval_state *state, char *name)
 {
 	if(state->name!=NULL)free(state->name);
 	state->name = name==NULL?NULL:strdup(name);
 }
 
-void add_oval_state_notes(struct oval_state *state, char *notes)
+void oval_state_add_note(struct oval_state *state, char *notes)
 {
 	oval_collection_add(state->notes, (void *)strdup(notes));
 }
 
-void set_oval_state_comment(struct oval_state *state, char *comm)
+void oval_state_set_comment(struct oval_state *state, char *comm)
 {
 	if(state->comment!=NULL)free(state->comment);
 	state->comment = comm==NULL?NULL:strdup(comm);
 }
 
-void set_oval_state_deprecated(struct oval_state *state, int deprecated)
+void oval_state_set_deprecated(struct oval_state *state, int deprecated)
 {
 	state->deprecated = deprecated;
 }
 
-void set_oval_state_version(struct oval_state *state, int version)
+void oval_state_set_version(struct oval_state *state, int version)
 {
 	state->version = version;
 }
 
-void add_oval_state_content
+void oval_state_add_content
 	(struct oval_state *state, struct oval_state_content *content)
 {
 	oval_collection_add(state->contents, content);
 }
 
 void _oval_note_consumer(char *text, void *state) {
-	add_oval_state_notes(state, text);
+	oval_state_add_note(state, text);
 }
 
 int _oval_state_parse_notes(xmlTextReaderPtr reader,
@@ -189,7 +195,7 @@ int _oval_state_parse_notes(xmlTextReaderPtr reader,
 
 void _oval_state_content_consumer
 	(struct oval_state_content *content, struct oval_state *state) {
-	add_oval_state_content(state, content);
+	oval_state_add_content(state, content);
 }
 
 int _oval_state_parse_tag(xmlTextReaderPtr reader,
@@ -226,17 +232,17 @@ int oval_state_parse_tag(xmlTextReaderPtr reader,
 	char *id = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "id");
 	struct oval_state *state = get_oval_state_new(model, id);
 	free(id);
-	oval_subtype_enum subtype = oval_subtype_parse(reader);
-	set_oval_state_subtype(state, subtype);
+	oval_subtype_t subtype = oval_subtype_parse(reader);
+	oval_state_set_subtype(state, subtype);
 	char *comm = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "comment");
 	if(comm!=NULL){
-		set_oval_state_comment(state, comm);
+		oval_state_set_comment(state, comm);
 		free(comm);comm=NULL;
 	}
 	int deprecated = oval_parser_boolean_attribute(reader, "deprecated", 0);
-	set_oval_state_deprecated(state, deprecated);
+	oval_state_set_deprecated(state, deprecated);
 	char *version = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "version");
-	set_oval_state_version(state, atoi(version));
+	oval_state_set_version(state, atoi(version));
 	free(version);
 
 	int return_code =
@@ -257,29 +263,30 @@ void oval_state_to_print(struct oval_state *state, char *indent, int idx)
 	else
 		snprintf(nxtindent, sizeof(nxtindent), "%sSTATE[%d].", indent, idx);
 
-	printf("%sID         = %s\n", nxtindent, oval_state_id(state));
-	printf("%sFAMILY     = %d\n", nxtindent, oval_state_family(state));
-	printf("%sSUBTYPE    = %d\n", nxtindent, oval_state_subtype(state));
-	printf("%sVERSION    = %d\n", nxtindent, oval_state_version(state));
-	printf("%sCOMMENT    = %s\n", nxtindent, oval_state_comment(state));
-	printf("%sDEPRECATED = %d\n", nxtindent, oval_state_deprecated(state));
-	struct oval_iterator_string *notes = oval_state_notes(state);
-	for (idx = 1; oval_iterator_string_has_more(notes); idx++) {
+	printf("%sID         = %s\n", nxtindent, oval_state_get_id(state));
+	printf("%sFAMILY     = %d\n", nxtindent, oval_state_get_family(state));
+	printf("%sSUBTYPE    = %d\n", nxtindent, oval_state_get_subtype(state));
+	printf("%sVERSION    = %d\n", nxtindent, oval_state_get_version(state));
+	printf("%sCOMMENT    = %s\n", nxtindent, oval_state_get_comment(state));
+	printf("%sDEPRECATED = %d\n", nxtindent, oval_state_get_deprecated(state));
+	struct oval_string_iterator *notes = oval_state_get_notes(state);
+	for (idx = 1; oval_string_iterator_has_more(notes); idx++) {
 		printf("%sNOTE[%d]    = %s\n", nxtindent, idx,
-		       oval_iterator_string_next(notes));
+		       oval_string_iterator_next(notes));
 	}
+	oval_string_iterator_free(notes);
 }
 
 xmlNode *oval_state_to_dom (struct oval_state *state, xmlDoc *doc, xmlNode *parent)
 {
-	oval_subtype_enum subtype = oval_state_subtype(state);
-	const char *subtype_text = oval_subtype_text(subtype);
+	oval_subtype_t subtype = oval_state_get_subtype(state);
+	const char *subtype_text = oval_subtype_get_text(subtype);
 	char  state_name[strlen(subtype_text)+7]; *state_name = '\0';
 	strcat(strcat(state_name, subtype_text), "_state");
 	xmlNode *state_node = xmlNewChild(parent, NULL, state_name, NULL);
 
-	oval_family_enum family = oval_state_family(state);
-	const char *family_text = oval_family_text(family);
+	oval_family_t family = oval_state_get_family(state);
+	const char *family_text = oval_family_get_text(family);
 	char family_uri[strlen(OVAL_DEFINITIONS_NAMESPACE)+strlen(family_text)+2];
 	*family_uri = '\0';
 	strcat(strcat(strcat(family_uri, OVAL_DEFINITIONS_NAMESPACE),"#"),family_text);
@@ -287,35 +294,37 @@ xmlNode *oval_state_to_dom (struct oval_state *state, xmlDoc *doc, xmlNode *pare
 
 	xmlSetNs(state_node, ns_family);
 
-	char *id = oval_state_id(state);
+	char *id = oval_state_get_id(state);
 	xmlNewProp(state_node, "id", id);
 
 	char version[10]; *version = '\0';
-	snprintf(version, sizeof(version), "%d", oval_state_version(state));
+	snprintf(version, sizeof(version), "%d", oval_state_get_version(state));
 	xmlNewProp(state_node, "version", version);
 
-	char *comment = oval_state_comment(state);
+	char *comment = oval_state_get_comment(state);
 	if(comment)xmlNewProp(state_node, "comment", comment);
 
-	bool deprecated = oval_state_deprecated(state);
+	bool deprecated = oval_state_get_deprecated(state);
 	if(deprecated)
 		xmlNewProp(state_node, "deprecated", "true");
 
-	struct oval_iterator_string *notes = oval_state_notes(state);
-	if(oval_iterator_string_has_more(notes)){
+	struct oval_string_iterator *notes = oval_state_get_notes(state);
+	if(oval_string_iterator_has_more(notes)){
 		xmlNs *ns_definitions = xmlSearchNsByHref(doc, parent, OVAL_DEFINITIONS_NAMESPACE);
 		xmlNode *notes_node = xmlNewChild(state_node, ns_definitions, "notes", NULL);
-		while(oval_iterator_string_has_more(notes)){
-			char *note = oval_iterator_string_next(notes);
+		while(oval_string_iterator_has_more(notes)){
+			char *note = oval_string_iterator_next(notes);
 			xmlNewChild(notes_node, ns_definitions, "note", note);
 		}
 	}
+	oval_string_iterator_free(notes);
 
-	struct oval_iterator_state_content *contents = oval_state_contents(state);
-	while(oval_iterator_state_content_has_more(contents))
+	struct oval_state_content_iterator *contents = oval_state_get_contents(state);
+	while(oval_state_content_iterator_has_more(contents))
 	{
-		struct oval_state_content *content = oval_iterator_state_content_next(contents);
+		struct oval_state_content *content = oval_state_content_iterator_next(contents);
 		oval_state_content_to_dom(content, doc, state_node);
 	}
+	oval_state_content_iterator_free(contents);
 	return state_node;
 }

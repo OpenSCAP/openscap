@@ -1,3 +1,4 @@
+#ifndef __STUB_PROBE
 #include <string.h>
 #include <stdint.h>
 #include <stdbool.h>
@@ -934,3 +935,4 @@ const char *SEXP_strtype (const SEXP_t *s_exp)
         
         return (__sexp_strtype[v_dsc.type]);
 }
+#endif

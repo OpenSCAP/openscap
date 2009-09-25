@@ -29,6 +29,7 @@
 
 #include <string.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include "oval_string_map_impl.h"
 
 struct _oval_string_map_entry_s;

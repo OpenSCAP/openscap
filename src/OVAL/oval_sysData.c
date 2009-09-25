@@ -40,13 +40,12 @@ extern const char* NAMESPACE_OVALSYS;
 
 typedef struct oval_sysdata {
 	//oval_family_enum family;
-	oval_subtype_enum subtype;
-	oval_message_level_enum message_level;
-	char* subtype_name;
+	oval_subtype_t subtype;
+	oval_message_level_t message_level;
 	char* id;
 	char* message;
 	struct oval_collection *items;
-	oval_syschar_status_enum status;
+	oval_syschar_status_t status;
 } oval_sysdata_t;
 
 struct oval_sysdata *oval_sysdata_new(char *id){
@@ -54,7 +53,6 @@ struct oval_sysdata *oval_sysdata_new(char *id){
 	sysdata->id                = strdup(id);
 	sysdata->message_level     = OVAL_MESSAGE_LEVEL_NONE;
 	sysdata->subtype           = OVAL_SUBTYPE_UNKNOWN;
-	sysdata->subtype_name      = NULL;
 	sysdata->status            = SYSCHAR_STATUS_UNKNOWN;
 	sysdata->message           = NULL;
 	sysdata->items             = oval_collection_new();
@@ -63,7 +61,6 @@ struct oval_sysdata *oval_sysdata_new(char *id){
 
 void oval_sysdata_free(struct oval_sysdata *sysdata){
 	if(sysdata->message!=NULL)free(sysdata->message);
-	if(sysdata->subtype_name!=NULL)free(sysdata->subtype_name);
 
 	oval_collection_free_items(sysdata->items, (oscap_destruct_func)oval_sysitem_free);
 	free(sysdata->id);
@@ -71,65 +68,65 @@ void oval_sysdata_free(struct oval_sysdata *sysdata){
 	sysdata->id = NULL;
 	sysdata->items = NULL;
 	sysdata->message = NULL;
-	sysdata->subtype_name = NULL;
 	free(sysdata);
 }
 
-int oval_iterator_sysdata_has_more(struct oval_iterator_sysdata *oc_sysdata)
+int oval_sysdata_iterator_has_more(struct oval_sysdata_iterator *oc_sysdata)
 {
 	return oval_collection_iterator_has_more((struct oval_iterator *)
 						 oc_sysdata);
 }
 
-struct oval_sysdata *oval_iterator_sysdata_next(struct oval_iterator_sysdata
+struct oval_sysdata *oval_sysdata_iterator_next(struct oval_sysdata_iterator
 						*oc_sysdata)
 {
 	return (struct oval_sysdata *)
 	    oval_collection_iterator_next((struct oval_iterator *)oc_sysdata);
 }
 
-oval_subtype_enum oval_sysdata_subtype(struct oval_sysdata *sysdata)
+void oval_sysdata_iterator_free(struct oval_sysdata_iterator
+						*oc_sysdata)
+{
+    oval_collection_iterator_free((struct oval_iterator *)oc_sysdata);
+}
+
+oval_subtype_t oval_sysdata_get_subtype(struct oval_sysdata *sysdata)
 {
 	return sysdata->subtype;
 }
 
-void set_oval_sysdata_subtype(struct oval_sysdata *sysdata, oval_subtype_enum subtype)
+void oval_sysdata_set_subtype(struct oval_sysdata *sysdata, oval_subtype_t subtype)
 {
 	sysdata->subtype = subtype;
 }
 
-char *oval_sysdata_id(struct oval_sysdata *data){
+char *oval_sysdata_get_id(struct oval_sysdata *data){
 	return data->id;
 }
-char *oval_sysdata_subtype_name(struct oval_sysdata *data){
-	return data->subtype_name;
-}
-void set_oval_sysdata_subtype_name(struct oval_sysdata *data, char *name){
-	data->subtype_name = strdup(name);
-}
-char *oval_sysdata_message(struct oval_sysdata *data){
+
+char *oval_sysdata_get_message(struct oval_sysdata *data){
 	return data->message;
 }
 void set_oval_sysdata_message(struct oval_sysdata *data, char *message){
 	if(data->message!=NULL)free(data->message);
 	data->message = message==NULL?NULL:strdup(message);
 }
-oval_message_level_enum oval_sysdata_message_level(struct oval_sysdata *data){
+oval_message_level_t oval_sysdata_get_message_level(struct oval_sysdata *data){
 	return data->message_level;
 }
-void set_oval_sysdata_message_level(struct oval_sysdata *data, oval_message_level_enum level){
+void set_oval_sysdata_message_level(struct oval_sysdata *data, oval_message_level_t level){
 	data->message_level = level;
 }
-struct oval_iterator_sysitem *oval_sysdata_items(struct oval_sysdata *data){
-	return (struct oval_iterator_sysitem *)oval_collection_iterator(data->items);
+struct oval_sysitem_iterator *oval_sysdata_get_items(struct oval_sysdata *data){
+	return (struct oval_sysitem_iterator *)oval_collection_iterator(data->items);
 }
-void add_oval_sysdata_item(struct oval_sysdata *data, struct oval_sysitem* item){
+void oval_sysdata_add_item(struct oval_sysdata *data, struct oval_sysitem* item){
 	oval_collection_add(data->items, item);
 }
-oval_syschar_status_enum oval_sysdata_status(struct oval_sysdata *data){
+oval_syschar_status_t oval_sysdata_get_status(struct oval_sysdata *data){
 	return data->status;
 }
-void set_oval_sysdata_status(struct oval_sysdata *data, oval_syschar_status_enum status){
+void oval_sysdata_set_status(struct oval_sysdata *data, oval_syschar_status_t status){
 	data->status = status;
 }
 
@@ -137,7 +134,7 @@ void _oval_sysdata_parse_subtag_consume(char* message, void* sysdata) {
 			set_oval_sysdata_message(sysdata, message);
 }
 void _oval_sysdata_parse_subtag_item_consumer(struct oval_sysitem *item, void* sysdata) {
-	add_oval_sysdata_item(sysdata, item);
+	oval_sysdata_add_item(sysdata, item);
 }
 int _oval_sysdata_parse_subtag(
 		xmlTextReaderPtr reader,
@@ -164,32 +161,32 @@ int oval_sysdata_parse_tag(xmlTextReaderPtr reader,
 			       struct oval_parser_context *context)
 {
 	char *tagname = (char*) xmlTextReaderLocalName(reader);
-	oval_subtype_enum subtype = oval_subtype_parse(reader);
+	oval_subtype_t subtype = oval_subtype_parse(reader);
 	int return_code;
 	if(subtype!=OVAL_SUBTYPE_UNKNOWN){
 		char *item_id = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "id");
 		struct oval_sysdata *sysdata = get_oval_sysdata_new(context->syschar_model, item_id);
 		free(item_id);item_id=NULL;
-		oval_subtype_enum sub = oval_subtype_parse(reader);
-		set_oval_sysdata_subtype(sysdata, sub);
-		set_oval_sysdata_subtype_name(sysdata, tagname);
-		oval_syschar_status_enum  status_enum
+		oval_subtype_t sub = oval_subtype_parse(reader);
+		oval_sysdata_set_subtype(sysdata, sub);
+		oval_syschar_status_t  status_enum
 			= oval_syschar_status_parse(reader, "status", SYSCHAR_STATUS_EXISTS);
-		set_oval_sysdata_status(sysdata, status_enum);
+		oval_sysdata_set_status(sysdata, status_enum);
 		return_code = oval_parser_parse_tag(reader, context, &_oval_sysdata_parse_subtag, sysdata);
 		if(DEBUG_OVAL_SYSDATA){
 			int numchars = 0;
 			char message[2000];message[numchars]='\0';
 			numchars = numchars + sprintf(message+numchars,"oval_sysdata_parse_tag::");
-			numchars = numchars + sprintf(message+numchars,"\n    sysdata->id            = %s",oval_sysdata_id    (sysdata));
-			numchars = numchars + sprintf(message+numchars,"\n    sysdata->status        = %d",oval_sysdata_status(sysdata));
-			oval_message_level_enum level = oval_sysdata_message_level(sysdata);
+			numchars = numchars + sprintf(message+numchars,"\n    sysdata->id            = %s",oval_sysdata_get_id    (sysdata));
+			numchars = numchars + sprintf(message+numchars,"\n    sysdata->status        = %d",oval_sysdata_get_status(sysdata));
+			oval_message_level_t level = oval_sysdata_get_message_level(sysdata);
 			if(level>OVAL_MESSAGE_LEVEL_NONE){
 				numchars = numchars + sprintf(message+numchars,"\n    sysdata->message_level = %d",level);
-				numchars = numchars + sprintf(message+numchars,"\n    sysdata->message       = %s",oval_sysdata_message(sysdata));
+				numchars = numchars + sprintf(message+numchars,"\n    sysdata->message       = %s",oval_sysdata_get_message(sysdata));
 			}
-			struct oval_iterator_sysitem *items = oval_sysdata_items(sysdata);
-			int numItems;for(numItems=0;oval_iterator_sysitem_has_more(items);numItems++)oval_iterator_sysitem_next(items);
+			struct oval_sysitem_iterator *items = oval_sysdata_get_items(sysdata);
+			int numItems;for(numItems=0;oval_sysitem_iterator_has_more(items);numItems++)oval_sysitem_iterator_next(items);
+			oval_sysitem_iterator_free(items);
 			numchars = numchars + sprintf(message+numchars,"\n    sysdata->items.length  = %d",numItems);
 			oval_parser_log_debug(context, message);
 		}
@@ -236,53 +233,74 @@ void oval_sysdata_to_print(struct oval_sysdata *sysdata, char *indent,
 	struct oval_collection *items;
 	 */
 	{//id
-		printf("%sID            = %s\n", nxtindent, oval_sysdata_id(sysdata));
-	}
-	{//subtype name
-		printf("%sSUBTYPE_NAME  = %s\n", nxtindent, oval_sysdata_subtype_name(sysdata));
+		printf("%sID            = %s\n", nxtindent, oval_sysdata_get_id(sysdata));
 	}
 	{//subtype
-		printf("%sSUBTYPE       = %d\n", nxtindent, oval_sysdata_subtype(sysdata));
+		printf("%sSUBTYPE       = %d\n", nxtindent, oval_sysdata_get_subtype(sysdata));
 	}
 	{//status
-		printf("%sSTATUS        = %d\n", nxtindent, oval_sysdata_status(sysdata));
+		printf("%sSTATUS        = %d\n", nxtindent, oval_sysdata_get_status(sysdata));
 	}
-	oval_message_level_enum level = oval_sysdata_message_level(sysdata);
+	oval_message_level_t level = oval_sysdata_get_message_level(sysdata);
 	{//level
 		printf("%sMESSAGE_LEVEL = %d\n", nxtindent, level);
 	}
 	if(level!=OVAL_MESSAGE_LEVEL_NONE){//message
-		printf("%sMESSAGE       = %s\n", nxtindent, oval_sysdata_message(sysdata));
+		printf("%sMESSAGE       = %s\n", nxtindent, oval_sysdata_get_message(sysdata));
 	}
 	{//items
-		struct oval_iterator_sysitem *items = oval_sysdata_items(sysdata);
-		int i;for(i=1;oval_iterator_sysitem_has_more(items);i++){
-			struct oval_sysitem *item = oval_iterator_sysitem_next(items);
+		struct oval_sysitem_iterator *items = oval_sysdata_get_items(sysdata);
+		int i;for(i=1;oval_sysitem_iterator_has_more(items);i++){
+			struct oval_sysitem *item = oval_sysitem_iterator_next(items);
 			oval_sysitem_to_print(item, nxtindent, i);
 		}
+		oval_sysitem_iterator_free(items);
 	}
 }
+
 void oval_sysdata_to_dom  (struct oval_sysdata *sysdata, xmlDoc *doc, xmlNode *tag_parent){
 	if(sysdata){
 		xmlNs *ns_syschar = xmlSearchNsByHref(doc, tag_parent, OVAL_SYSCHAR_NAMESPACE);
+
+		char syschar_namespace[] = "http://oval.mitre.org/XMLSchema/oval-system-characteristics-5";
+		oval_subtype_t subtype = oval_sysdata_get_subtype(sysdata);
+		const char* family = oval_family_get_text(oval_subtype_get_family(subtype));
+		char  family_namespace[sizeof(syschar_namespace)+sizeof(family)+2];*family_namespace = '\0';
+		char *cat = strcpy(family_namespace, syschar_namespace)+sizeof(OVAL_SYSCHAR_NAMESPACE);
+		cat = strcat(cat, "#")+1;strcat(cat, family);
+		const char* subtype_text = oval_subtype_get_text(subtype);
+		char tagname[sizeof(subtype_text)+6];*tagname = '\0';
+		cat = strcpy(tagname, subtype_text)+sizeof(subtype_text);
+		strcat(cat, "_item");
 	    xmlNode *tag_sysdata = xmlNewChild
-			(tag_parent, ns_syschar, BAD_CAST "item", NULL);
+			(tag_parent, NULL, BAD_CAST tagname, NULL);
+	    xmlNs *ns_family = xmlNewNs(tag_sysdata, BAD_CAST family_namespace, NULL);
+	    xmlSetNs(tag_sysdata, ns_family);
 
 	    {//attributes
-	    	xmlNewProp(tag_sysdata, BAD_CAST "id", BAD_CAST oval_sysdata_id(sysdata));
-	    	oval_syschar_status_enum status_index = oval_sysdata_status(sysdata);
+	    	xmlNewProp(tag_sysdata, BAD_CAST "id", BAD_CAST oval_sysdata_get_id(sysdata));
+	    	oval_syschar_status_t status_index = oval_sysdata_get_status(sysdata);
 	    	char* status = oval_syschar_status_text(status_index);
 	    	xmlNewProp(tag_sysdata, BAD_CAST "status", BAD_CAST status);
 	    }
 		{//message
-			char *message = oval_sysdata_message(sysdata);
+			char *message = oval_sysdata_get_message(sysdata);
 			if(message!=NULL){
 				xmlNode *tag_message = xmlNewChild
 					(tag_sysdata, ns_syschar, BAD_CAST "message", BAD_CAST message);
-				oval_message_level_enum index = oval_sysdata_message_level(sysdata);
+				oval_message_level_t index = oval_sysdata_get_message_level(sysdata);
 				const char* level = oval_message_level_text(index);
 				xmlNewProp(tag_message, BAD_CAST "level", BAD_CAST level);
 			}
+		}
+
+		{//items
+			struct oval_sysitem_iterator *items = oval_sysdata_get_items(sysdata);
+			while(oval_sysitem_iterator_has_more(items)){
+				struct oval_sysitem *item = oval_sysitem_iterator_next(items);
+				oval_sysitem_to_dom(item, doc, tag_sysdata);
+			}
+			oval_sysitem_iterator_free(items);
 		}
 	}
 }

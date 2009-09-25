@@ -35,66 +35,72 @@
 #include "oval_agent_api_impl.h"
 
 struct oval_entity {
-	oval_entity_type_enum type;
-	oval_datatype_enum datatype;
-	oval_operation_enum operation;
+	oval_entity_type_t type;
+	oval_datatype_t datatype;
+	oval_operation_t operation;
 	int mask;
-	oval_entity_varref_type_enum varref_type;
+	oval_entity_varref_type_t varref_type;
 	char *name;
 	struct oval_variable *variable;
 	struct oval_value *value;
 };
 
-int oval_iterator_entity_has_more(struct oval_iterator_entity *oc_entity)
+int oval_entity_iterator_has_more(struct oval_entity_iterator *oc_entity)
 {
 	return oval_collection_iterator_has_more((struct oval_iterator *)
 						 oc_entity);
 }
 
-struct oval_entity *oval_iterator_entity_next(struct oval_iterator_entity
+struct oval_entity *oval_entity_iterator_next(struct oval_entity_iterator
 					      *oc_entity)
 {
 	return (struct oval_entity *)
 	    oval_collection_iterator_next((struct oval_iterator *)oc_entity);
 }
 
-char *oval_entity_name(struct oval_entity *entity)
+void oval_entity_iterator_free(struct oval_entity_iterator
+					      *oc_entity)
+{
+	oval_collection_iterator_free((struct oval_iterator *)oc_entity);
+}
+
+char *oval_entity_get_name(struct oval_entity *entity)
 {
 	return entity->name;
 }
 
-oval_entity_type_enum oval_entity_type(struct oval_entity * entity)
+oval_entity_type_t oval_entity_get_type(struct oval_entity * entity)
 {
 	return entity->type;
 }
 
-oval_datatype_enum oval_entity_datatype(struct oval_entity * entity)
+oval_datatype_t oval_entity_get_datatype(struct oval_entity * entity)
 {
 	return entity->datatype;
 }
 
-oval_operation_enum oval_entity_operation(struct oval_entity * entity)
+oval_operation_t oval_entity_get_operation(struct oval_entity * entity)
 {
 	return entity->operation;
 }
 
-int oval_entity_mask(struct oval_entity *entity)
+int oval_entity_get_mask(struct oval_entity *entity)
 {
 	return entity->mask;
 }
 
-oval_entity_varref_type_enum oval_entity_varref_type(struct oval_entity *
+oval_entity_varref_type_t oval_entity_get_varref_type(struct oval_entity *
 						     entity)
 {
 	return entity->varref_type;
 }
 
-struct oval_variable *oval_entity_variable(struct oval_entity *entity)
+struct oval_variable *oval_entity_get_variable(struct oval_entity *entity)
 {
 	return entity->variable;
 }
 
-struct oval_value *oval_entity_value(struct oval_entity *entity)
+struct oval_value *oval_entity_get_value(struct oval_entity *entity)
 {
 	return entity->value;
 }
@@ -105,7 +111,7 @@ struct oval_entity *oval_entity_new()
 	    (struct oval_entity *)malloc(sizeof(struct oval_entity));
 	entity->datatype = OVAL_DATATYPE_UNKNOWN;
 	entity->mask = 0;
-	entity->operation = OPERATOR_UNKNOWN;
+	entity->operation = OVAL_OPERATOR_UNKNOWN;
 	entity->type = OVAL_ENTITY_TYPE_UNKNOWN;
 	entity->name = NULL;
 	entity->value = NULL;
@@ -126,42 +132,42 @@ void oval_entity_free(struct oval_entity *entity)
 	free(entity);
 }
 
-void set_oval_entity_type(struct oval_entity *entity,
-			  oval_entity_type_enum type)
+void oval_entity_set_type(struct oval_entity *entity,
+			  oval_entity_type_t type)
 {
 	entity->type = type;
 }
 
-void set_oval_entity_datatype(struct oval_entity *entity,
-			      oval_datatype_enum datatype)
+void oval_entity_set_datatype(struct oval_entity *entity,
+			      oval_datatype_t datatype)
 {
 	entity->datatype = datatype;
 }
 
 void set_oval_entity_operation(struct oval_entity *entity,
-			       oval_operation_enum operation)
+			       oval_operation_t operation)
 {
 	entity->operation = operation;
 }
 
-void set_oval_entity_mask(struct oval_entity *entity, int mask)
+void oval_entity_set_mask(struct oval_entity *entity, int mask)
 {
 	entity->mask = mask;
 }
 
-void set_oval_entity_varref_type(struct oval_entity *entity,
-				 oval_entity_varref_type_enum type)
+void oval_entity_set_varref_type(struct oval_entity *entity,
+				 oval_entity_varref_type_t type)
 {
 	entity->varref_type = type;
 }
 
-void set_oval_entity_variable(struct oval_entity *entity,
+void oval_entity_set_variable(struct oval_entity *entity,
 			      struct oval_variable *variable)
 {
 	entity->variable = variable;
 }
 
-void set_oval_entity_value(struct oval_entity *entity, struct oval_value *value)
+void oval_entity_set_value(struct oval_entity *entity, struct oval_value *value)
 {
 	entity->value = value;
 }
@@ -178,7 +184,7 @@ struct oval_consume_varref_context {
 };
 void oval_consume_varref(char *varref, void *user) {
 	struct oval_consume_varref_context* ctx = user;
-	*(ctx->variable) = get_oval_variable((struct oval_object_model *)ctx->model, varref);
+	*(ctx->variable) = oval_object_model_get_variable((struct oval_object_model *)ctx->model, varref);
 }
 void oval_consume_value(struct oval_value *use_value, void *value) {
 	*(struct oval_value **)value = use_value;
@@ -191,18 +197,18 @@ int oval_entity_parse_tag(xmlTextReaderPtr reader,
 {
 	struct oval_entity *entity = oval_entity_new();
 	int return_code;
-	oval_datatype_enum datatype =
+	oval_datatype_t datatype =
 	    oval_datatype_parse(reader, "datatype", OVAL_DATATYPE_STRING);
-	oval_operator_enum operation =
-	    oval_operation_parse(reader, "operation", OPERATION_EQUALS);
+	oval_operator_t operation =
+	    oval_operation_parse(reader, "operation", OVAL_OPERATION_EQUALS);
 	int mask = oval_parser_boolean_attribute(reader, "mask", 1);
-	oval_entity_type_enum type = OVAL_ENTITY_TYPE_UNKNOWN;
+	oval_entity_type_t type = OVAL_ENTITY_TYPE_UNKNOWN;
 	//The value of the type field vs. the complexity of extracting type is arguable
 	char *varref = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "var_ref");
 	struct oval_value *value = NULL;
 	struct oval_variable *variable;
 	char *name = (char*) xmlTextReaderLocalName(reader);
-	oval_entity_varref_type_enum varref_type;
+	oval_entity_varref_type_t varref_type;
 	if (strcmp(name, "var_ref") == 0) {	//special case for <var_ref>
 		if (varref == NULL) {
 			struct oval_object_model *model =
@@ -215,7 +221,7 @@ int oval_entity_parse_tag(xmlTextReaderPtr reader,
 		} else {
 			struct oval_object_model *model =
 			    oval_parser_context_model(context);
-			variable = get_oval_variable(model, varref);
+			variable = oval_object_model_get_variable(model, varref);
 			varref_type = OVAL_ENTITY_VARREF_ATTRIBUTE;
 			return_code = 1;
 			free(varref);varref=NULL;
@@ -236,13 +242,13 @@ int oval_entity_parse_tag(xmlTextReaderPtr reader,
 		free(varref);varref = NULL;
 	}
 	set_oval_entity_name(entity, name);
-	set_oval_entity_type(entity, type);
-	set_oval_entity_datatype(entity, datatype);
+	oval_entity_set_type(entity, type);
+	oval_entity_set_datatype(entity, datatype);
 	set_oval_entity_operation(entity, operation);
-	set_oval_entity_mask(entity, mask);
-	set_oval_entity_varref_type(entity, varref_type);
-	set_oval_entity_variable(entity, variable);
-	set_oval_entity_value(entity, value);
+	oval_entity_set_mask(entity, mask);
+	oval_entity_set_varref_type(entity, varref_type);
+	oval_entity_set_variable(entity, variable);
+	oval_entity_set_value(entity, value);
 	(*consumer) (entity, user);
 	if (return_code != 1) {
 		int line = xmlTextReaderGetParserLineNumber(reader);
@@ -266,27 +272,27 @@ void oval_entity_to_print(struct oval_entity *entity, char *indent, int idx)
 	else
 		snprintf(nxtindent, sizeof(nxtindent), "%sENTITY[%d].", indent, idx);
 
-	printf("%sNAME        = %s\n", nxtindent, oval_entity_name(entity));
-	printf("%sTYPE        = %d\n", nxtindent, oval_entity_type(entity));
-	if (oval_entity_type(entity) > 10) {
+	printf("%sNAME        = %s\n", nxtindent, oval_entity_get_name(entity));
+	printf("%sTYPE        = %d\n", nxtindent, oval_entity_get_type(entity));
+	if (oval_entity_get_type(entity) > 10) {
 		printf("%s<<WARNING::TYPE OUT OF RANGE>>", nxtindent);
 	} else {
 		printf("%sDATATYPE    = %d\n", nxtindent,
-		       oval_entity_datatype(entity));
+		       oval_entity_get_datatype(entity));
 		printf("%sOPERATION   = %d\n", nxtindent,
-		       oval_entity_operation(entity));
+		       oval_entity_get_operation(entity));
 		printf("%sMASK        = %d\n", nxtindent,
-		       oval_entity_mask(entity));
+		       oval_entity_get_mask(entity));
 		printf("%sVARREF_TYPE = %d\n", nxtindent,
-		       oval_entity_varref_type(entity));
+		       oval_entity_get_varref_type(entity));
 
-		struct oval_variable *variable = oval_entity_variable(entity);
+		struct oval_variable *variable = oval_entity_get_variable(entity);
 		if (variable == NULL)
 			printf("%sVARIABLE    = <<NOT SET>>\n", nxtindent);
 		else
 			oval_variable_to_print(variable, nxtindent, 0);
 
-		struct oval_value *value = oval_entity_value(entity);
+		struct oval_value *value = oval_entity_get_value(entity);
 		if (value == NULL)
 			printf("%sVALUE       = <<NOT SET>>\n", nxtindent);
 		else
@@ -297,32 +303,32 @@ void oval_entity_to_print(struct oval_entity *entity, char *indent, int idx)
 xmlNode *oval_entity_to_dom
 	(struct oval_entity *entity, xmlDoc *doc, xmlNode *parent)
 {
-	char *tagname = oval_entity_name(entity);
+	char *tagname = oval_entity_get_name(entity);
 	xmlNs *ns_family = *xmlGetNsList(doc, parent);
 
-	struct oval_variable *variable = oval_entity_variable(entity);
-	oval_entity_varref_type_enum vtype = oval_entity_varref_type(entity);
-	struct oval_value    *value = oval_entity_value      (entity);
+	struct oval_variable *variable = oval_entity_get_variable(entity);
+	oval_entity_varref_type_t vtype = oval_entity_get_varref_type(entity);
+	struct oval_value    *value = oval_entity_get_value      (entity);
 
 	char *content = NULL;
 	if(variable && vtype==OVAL_ENTITY_VARREF_ELEMENT){
-		content = oval_variable_id(variable);
+		content = oval_variable_get_id(variable);
 	}else if(value){
-		content = oval_value_text(value);
+		content = oval_value_get_text(value);
 	}
 
 	xmlNode *entity_node = xmlNewChild(parent, ns_family, tagname, content);
 
-	oval_datatype_enum datatype = oval_entity_datatype(entity);
+	oval_datatype_t datatype = oval_entity_get_datatype(entity);
 	if(datatype!=OVAL_DATATYPE_STRING)
-		xmlNewProp(entity_node, "datatype", oval_datatype_text(datatype));
-	oval_operation_enum operation = oval_entity_operation(entity);
-	if(operation!=OPERATION_EQUALS)
-		xmlNewProp(entity_node, "operation", oval_operation_text(operation));
-	bool mask = oval_entity_mask(entity);
+		xmlNewProp(entity_node, "datatype", oval_datatype_get_text(datatype));
+	oval_operation_t operation = oval_entity_get_operation(entity);
+	if(operation!=OVAL_OPERATION_EQUALS)
+		xmlNewProp(entity_node, "operation", oval_operation_get_text(operation));
+	bool mask = oval_entity_get_mask(entity);
 	if(mask)
 		xmlNewProp(entity_node, "mask", "true");
 	if(vtype==OVAL_ENTITY_VARREF_ATTRIBUTE)
-		xmlNewProp(entity_node, "var_ref", oval_variable_id(variable));
+		xmlNewProp(entity_node, "var_ref", oval_variable_get_id(variable));
 	return entity_node;
 }

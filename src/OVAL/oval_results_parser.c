@@ -63,7 +63,7 @@ int _oval_results_parser_consume_definitions
 void _oval_results_parser_consume_system
 	(struct oval_result_system *system, struct oval_results_model *model)
 {
-	add_oval_results_model_system(model, system);
+	oval_results_model_add_system(model, system);
 }
 
 int _ovalres_parser_parse_system
@@ -153,7 +153,7 @@ struct oval_result_directives *ovalres_parser_parse
 	context.error_handler = eh;
 	context.reader          = reader;
 	context.results_model   = model;
-	context.object_model    = oval_results_model_object_model(model);
+	context.object_model    = oval_results_model_get_object_model(model);
 	context.syschar_sysinfo = NULL;
 	context.user_data       = user_arg;
 	xmlTextReaderSetErrorHandler(reader, &libxml_error_handler, &context);
@@ -171,7 +171,5 @@ struct oval_result_directives *ovalres_parser_parse
 		oval_parser_log_warn(&context, message);
 		oval_parser_skip_tag(reader,&context);
 	}
-	free(tagname);
-	free(namespace);
 	return *directives;
 }

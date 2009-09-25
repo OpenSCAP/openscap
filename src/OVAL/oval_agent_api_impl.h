@@ -40,14 +40,6 @@
 #define OVAL_DEFINITIONS_NAMESPACE BAD_CAST "http://oval.mitre.org/XMLSchema/oval-definitions-5"
 #define OVAL_DIGSIG_NAMESPACE      BAD_CAST "http://www.w3.org/2000/09/xmldsig#"
 
-
-void add_oval_definition(struct oval_object_model *, struct oval_definition *);
-void add_oval_test(struct oval_object_model *, struct oval_test *);
-void add_oval_object(struct oval_object_model *, struct oval_object *);
-void add_oval_state(struct oval_object_model *, struct oval_state *);
-void add_oval_variable(struct oval_object_model *, struct oval_variable *);
-void set_oval_sysinfo(struct oval_object_model *, struct oval_sysinfo *);
-
 struct oval_definition *get_oval_definition_new
 	(struct oval_object_model *, char *);
 
@@ -60,16 +52,17 @@ xmlNode *oval_definitions_to_dom
 struct oval_test *get_oval_test_new(struct oval_object_model *, char *);
 struct oval_object *get_oval_object_new(struct oval_object_model *, char *);
 struct oval_state *get_oval_state_new(struct oval_object_model *, char *);
-struct oval_variable *get_oval_variable_new(struct oval_object_model *, char *, oval_variable_type_enum type);
-bool add_oval_syschar_model_variable_binding(struct oval_syschar_model *, struct oval_variable_binding *);
+struct oval_variable *get_oval_variable_new(struct oval_object_model *, char *, oval_variable_type_t type);
 
 struct oval_syschar *get_oval_syschar_new(struct oval_syschar_model *, struct oval_object *);
 struct oval_syschar_item *get_oval_syschar_item_new(struct oval_syschar_model *, char *);
+
+typedef bool oval_syschar_resolver(struct oval_syschar *, void *);
+
 xmlNode *oval_characteristics_to_dom
-	(struct oval_syschar_model *, xmlDocPtr, xmlNode *);
+	(struct oval_syschar_model *, xmlDocPtr, xmlNode *,
+			oval_syschar_resolver, void *);
 
 struct oval_sysdata *get_oval_sysdata_new(struct oval_syschar_model *, char *);
-
-void add_oval_results_model_system(struct oval_results_model *, struct oval_result_system *);
 
 #endif				/* OVAL_AGENT_API_IMPL_H_ */

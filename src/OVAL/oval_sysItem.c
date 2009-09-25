@@ -40,8 +40,8 @@ typedef struct oval_sysitem {
 	char*              name;
 	char*              value;
 	int                mask;
-	oval_datatype_enum datatype;
-	oval_syschar_status_enum status;
+	oval_datatype_t datatype;
+	oval_syschar_status_t status;
 } oval_sysitem_t;
 
 struct oval_sysitem *oval_sysitem_new(){
@@ -64,50 +64,54 @@ void oval_sysitem_free(struct oval_sysitem *sysitem){
 	free(sysitem);
 }
 
-int oval_iterator_sysitem_has_more(struct oval_iterator_sysitem *oc_sysitem)
+int oval_sysitem_iterator_has_more(struct oval_sysitem_iterator *oc_sysitem)
 {
 	return oval_collection_iterator_has_more((struct oval_iterator *)
 						 oc_sysitem);
 }
 
-struct oval_sysitem *oval_iterator_sysitem_next(struct oval_iterator_sysitem
-						*oc_sysitem)
+struct oval_sysitem *oval_sysitem_iterator_next(struct oval_sysitem_iterator *oc_sysitem)
 {
 	return (struct oval_sysitem *)
 	    oval_collection_iterator_next((struct oval_iterator *)oc_sysitem);
 }
 
-char *oval_sysitem_name(struct oval_sysitem *sysitem){return sysitem->name;}
-oval_syschar_status_enum oval_sysitem_status(struct oval_sysitem *sysitem){return sysitem->status;}
-char *oval_sysitem_value(struct oval_sysitem *sysitem){return sysitem->value;}
-oval_datatype_enum oval_sysitem_datatype(struct oval_sysitem *sysitem){return sysitem->datatype;}
-int oval_sysitem_mask(struct oval_sysitem *sysitem){return sysitem->mask;}
+void oval_sysitem_iterator_free(struct oval_sysitem_iterator *oc_sysitem)
+{
+    oval_collection_iterator_free((struct oval_iterator *)oc_sysitem);
+}
 
-void set_oval_sysitem_name(struct oval_sysitem *sysitem, char *name)
+char *oval_sysitem_get_name(struct oval_sysitem *sysitem){return sysitem->name;}
+oval_syschar_status_t oval_sysitem_get_status(struct oval_sysitem *sysitem){return sysitem->status;}
+char *oval_sysitem_get_value(struct oval_sysitem *sysitem){return sysitem->value;}
+oval_datatype_t oval_sysitem_get_datatype(struct oval_sysitem *sysitem){return sysitem->datatype;}
+int oval_sysitem_get_mask(struct oval_sysitem *sysitem){return sysitem->mask;}
+
+void oval_sysitem_set_name(struct oval_sysitem *sysitem, char *name)
 {
 	if(sysitem->name!=NULL)free(sysitem->name);
 	sysitem->name = name==NULL?NULL:strdup(name);
 }
-void set_oval_sysitem_status(struct oval_sysitem *sysitem, oval_syschar_status_enum status)
+void oval_sysitem_set_status(struct oval_sysitem *sysitem, oval_syschar_status_t status)
 {
 	sysitem->status = status;
 }
-void set_oval_sysitem_datatype(struct oval_sysitem *sysitem, oval_datatype_enum datatype)
+void oval_sysitem_set_datatype(struct oval_sysitem *sysitem, oval_datatype_t datatype)
 {
 	sysitem->datatype = datatype;
 }
-void set_oval_sysitem_mask(struct oval_sysitem *sysitem, int mask)
+void oval_sysitem_set_mask(struct oval_sysitem *sysitem, int mask)
 {
 	sysitem->mask = mask;
 }
-void set_oval_sysitem_value(struct oval_sysitem *sysitem, char *value)
+void oval_sysitem_set_value(struct oval_sysitem *sysitem, char *value)
 {
 	if(sysitem->value!=NULL)free(sysitem->value);
 	sysitem->value = value==NULL?NULL:strdup(value);
 }
 
 void oval_sysitem_value_consumer_(char* value, void* sysitem){
-	set_oval_sysitem_value(sysitem, value);
+	oval_sysitem_set_value(sysitem, value);
 }
 
 int oval_sysitem_parse_tag(xmlTextReaderPtr reader,
@@ -125,19 +129,19 @@ int oval_sysitem_parse_tag(xmlTextReaderPtr reader,
 	if(strcmp("#text", tagname)){
 		struct oval_sysitem *sysitem = oval_sysitem_new();
 		{//sysitem->name
-			set_oval_sysitem_name(sysitem, tagname);
+			oval_sysitem_set_name(sysitem, tagname);
 		}
 		{//sysitem->mask
 			int mask = oval_parser_boolean_attribute(reader, "mask", 0);
-			set_oval_sysitem_mask(sysitem, mask);
+			oval_sysitem_set_mask(sysitem, mask);
 		}
 		{//sysitem->datatype
-			oval_datatype_enum datatype = oval_datatype_parse(reader, "datatype", OVAL_DATATYPE_STRING);
-			set_oval_sysitem_datatype(sysitem, datatype);
+			oval_datatype_t datatype = oval_datatype_parse(reader, "datatype", OVAL_DATATYPE_STRING);
+			oval_sysitem_set_datatype(sysitem, datatype);
 		}
 		{//sysitem->status
-			oval_syschar_status_enum status = oval_syschar_status_parse(reader, "status", SYSCHAR_STATUS_EXISTS);
-			set_oval_sysitem_status(sysitem, status);
+			oval_syschar_status_t status = oval_syschar_status_parse(reader, "status", SYSCHAR_STATUS_EXISTS);
+			oval_sysitem_set_status(sysitem, status);
 		}
 		{//sysitem->value
 			return_code = oval_parser_text_value(reader, context, &oval_sysitem_value_consumer_, sysitem);
@@ -151,11 +155,11 @@ int oval_sysitem_parse_tag(xmlTextReaderPtr reader,
 				int numchars = 0;
 				char message[2000];message[numchars]='\0';
 				numchars = numchars + sprintf(message+numchars,"oval_sysitem_parse_tag::");
-				numchars = numchars + sprintf(message+numchars,"\n    sysitem->name     = %s",oval_sysitem_name    (sysitem));
-				numchars = numchars + sprintf(message+numchars,"\n    sysitem->mask     = %d",oval_sysitem_mask    (sysitem));
-				numchars = numchars + sprintf(message+numchars,"\n    sysitem->datatype = %d",oval_sysitem_datatype(sysitem));
-				numchars = numchars + sprintf(message+numchars,"\n    sysitem->status   = %d",oval_sysitem_status  (sysitem));
-				numchars = numchars + sprintf(message+numchars,"\n    sysitem->value    = %s",oval_sysitem_value   (sysitem));
+				numchars = numchars + sprintf(message+numchars,"\n    sysitem->name     = %s",oval_sysitem_get_name    (sysitem));
+				numchars = numchars + sprintf(message+numchars,"\n    sysitem->mask     = %d",oval_sysitem_get_mask    (sysitem));
+				numchars = numchars + sprintf(message+numchars,"\n    sysitem->datatype = %d",oval_sysitem_get_datatype(sysitem));
+				numchars = numchars + sprintf(message+numchars,"\n    sysitem->status   = %d",oval_sysitem_get_status  (sysitem));
+				numchars = numchars + sprintf(message+numchars,"\n    sysitem->value    = %s",oval_sysitem_get_value   (sysitem));
 				oval_parser_log_debug(context, message);
 			}
 			(*consumer)(sysitem, client);
@@ -186,18 +190,40 @@ void oval_sysitem_to_print(struct oval_sysitem *sysitem, char *indent,
 	oval_syschar_status_enum status;
 	 */
 	{//id
-		printf("%sNAME          = %s\n", nxtindent, oval_sysitem_name(sysitem));
+		printf("%sNAME          = %s\n", nxtindent, oval_sysitem_get_name(sysitem));
 	}
 	{//id
-		printf("%sVALUE         = %s\n", nxtindent, oval_sysitem_value(sysitem));
+		printf("%sVALUE         = %s\n", nxtindent, oval_sysitem_get_value(sysitem));
 	}
 	{//mask
-		printf("%sMASK          = %d\n", nxtindent, oval_sysitem_mask(sysitem));
+		printf("%sMASK          = %d\n", nxtindent, oval_sysitem_get_mask(sysitem));
 	}
 	{//datatype
-		printf("%sDATATYPE      = %d\n", nxtindent, oval_sysitem_datatype(sysitem));
+		printf("%sDATATYPE      = %d\n", nxtindent, oval_sysitem_get_datatype(sysitem));
 	}
 	{//status
-		printf("%sSTATUS        = %d\n", nxtindent, oval_sysitem_status(sysitem));
+		printf("%sSTATUS        = %d\n", nxtindent, oval_sysitem_get_status(sysitem));
 	}
 }
+
+void oval_sysitem_to_dom  (struct oval_sysitem *sysitem, xmlDoc *doc, xmlNode *parent)
+{
+	xmlNs *ns_parent = xmlGetNsList(doc, parent)[0];
+	xmlNode *sysitem_tag = xmlNewChild(parent, ns_parent, oval_sysitem_get_name(sysitem), oval_sysitem_get_value(sysitem));
+
+	bool mask_value = oval_sysitem_get_mask(sysitem);
+	if(mask_value){
+		xmlNewProp(sysitem_tag, BAD_CAST "mask", BAD_CAST "true");
+	}
+
+	oval_datatype_t datatype_index = oval_sysitem_get_datatype(sysitem);
+	if(datatype_index != OVAL_DATATYPE_STRING){
+		xmlNewProp(sysitem_tag, BAD_CAST "datatype", BAD_CAST oval_datatype_get_text(datatype_index));
+	}
+
+	oval_syschar_status_t status_index = oval_sysitem_get_status(sysitem);
+	if(status_index!=SYSCHAR_STATUS_EXISTS){
+		xmlNewProp(sysitem_tag, BAD_CAST "status", BAD_CAST oval_syschar_status_text(status_index));
+	}
+}
+

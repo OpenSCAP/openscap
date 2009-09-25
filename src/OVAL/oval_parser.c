@@ -44,7 +44,7 @@ int oval_parser_report(struct oval_parser_context *context, struct oval_xml_erro
 	return (*(context->error_handler))(error,context->user_data);
 }
 
-int oval_parser_log (struct oval_parser_context *, oval_xml_severity_enum severity, char*);
+int oval_parser_log (struct oval_parser_context *, oval_xml_severity_t severity, char*);
 
 int oval_parser_log_info(struct oval_parser_context *context, char* message){
 	return oval_parser_log(context, OVAL_LOG_INFO, message);
@@ -60,7 +60,7 @@ int oval_parser_log_warn(struct oval_parser_context *context, char* message){
 
 int oval_parser_log
 		(struct oval_parser_context *context,
-				oval_xml_severity_enum severity, char* message){
+				oval_xml_severity_t severity, char* message){
 	xmlTextReader *reader = context->reader;
 	char msgfield[strlen(message) + 1];
 	*msgfield = 0;
@@ -134,6 +134,7 @@ int _oval_parser_process_tags(xmlTextReaderPtr reader,
 }
 
 #define DEBUG_OVAL_PARSER 0
+#define  STUB_OVAL_PARSER 0
 
 int ovaldef_parse_node(xmlTextReaderPtr reader,
 			      struct oval_parser_context *context)
@@ -172,30 +173,35 @@ int ovaldef_parse_node(xmlTextReaderPtr reader,
 				}
 				int is_oval = strcmp(namespace, oval_namespace)==0;
 				if (is_oval && (strcmp(tagname, tagname_definitions) == 0)) {
-					return_code =
-					    _oval_parser_process_tags(reader,
+					return_code = (STUB_OVAL_PARSER)
+						?oval_parser_skip_tag(reader, context)
+					    :_oval_parser_process_tags(reader,
 								      context,
 								      &oval_definition_parse_tag);
 				} else if (is_oval && strcmp(tagname, tagname_tests) == 0) {
-					return_code =
-					    _oval_parser_process_tags(reader,
+					return_code = (STUB_OVAL_PARSER)
+						?oval_parser_skip_tag(reader, context)
+						:_oval_parser_process_tags(reader,
 								      context,
 								      &oval_test_parse_tag);
 				} else if (is_oval && strcmp(tagname, tagname_objects) ==
 					   0) {
-					return_code =
-					    _oval_parser_process_tags(reader,
+					return_code = (STUB_OVAL_PARSER)
+						?oval_parser_skip_tag(reader, context)
+					    :_oval_parser_process_tags(reader,
 								      context,
 								      &oval_object_parse_tag);
 				} else if (is_oval && strcmp(tagname, tagname_states) == 0) {
-					return_code =
-					    _oval_parser_process_tags(reader,
+					return_code = (STUB_OVAL_PARSER)
+						?oval_parser_skip_tag(reader, context)
+					    :_oval_parser_process_tags(reader,
 								      context,
 								      &oval_state_parse_tag);
 				} else if (is_oval && strcmp(tagname, tagname_variables) ==
 					   0) {
-					return_code =
-					    _oval_parser_process_tags(reader,
+					return_code = (STUB_OVAL_PARSER)
+						?oval_parser_skip_tag(reader, context)
+					    :_oval_parser_process_tags(reader,
 								      context,
 								      &oval_variable_parse_tag);
 				} else if (is_oval && strcmp(tagname, tagname_generator) ==

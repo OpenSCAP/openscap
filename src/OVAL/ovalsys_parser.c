@@ -119,7 +119,7 @@ int ovalsys_parser_parse
 	struct oval_parser_context context;
 	context.error_handler   = eh;
 	context.reader          = reader;
-	context.object_model    = oval_syschar_model_object_model(model);
+	context.object_model    = oval_syschar_model_get_object_model(model);
 	context.syschar_model   = model;
 	context.syschar_sysinfo = NULL;
 	context.user_data       = user_arg;
@@ -140,7 +140,7 @@ int ovalsys_parser_parse
 		return_code = 0;
 	}
 	if (context.object_model && context.syschar_sysinfo)
-		set_oval_sysinfo(context.object_model, context.syschar_sysinfo);
+		oval_object_model_add_sysinfo(context.object_model, context.syschar_sysinfo);
 	free(tagname);
 	free(namespace);
 	return return_code;

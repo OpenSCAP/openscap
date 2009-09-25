@@ -39,47 +39,51 @@ typedef struct oval_sysint {
 	char *macAddress;
 } oval_sysint_t;
 
-int oval_iterator_sysint_has_more(struct oval_iterator_sysint *oc_sysint)
+int oval_sysint_iterator_has_more(struct oval_sysint_iterator *oc_sysint)
 {
 	return oval_collection_iterator_has_more((struct oval_iterator *)
 						 oc_sysint);
 }
 
-struct oval_sysint *oval_iterator_sysint_next(struct oval_iterator_sysint
-					      *oc_sysint)
+struct oval_sysint *oval_sysint_iterator_next(struct oval_sysint_iterator *oc_sysint)
 {
 	return (struct oval_sysint *)
 	    oval_collection_iterator_next((struct oval_iterator *)oc_sysint);
 }
 
-char *oval_sysint_name(struct oval_sysint *sysint)
+void oval_sysint_iterator_free(struct oval_sysint_iterator *oc_sysint)
+{
+	    oval_collection_iterator_free((struct oval_iterator *)oc_sysint);
+}
+
+char *oval_sysint_get_name(struct oval_sysint *sysint)
 {
 	return sysint->name;
 }
 
-void set_oval_sysint_name(struct oval_sysint *sysint, char *name)
+void oval_sysint_set_name(struct oval_sysint *sysint, char *name)
 {
 	if(sysint->name!=NULL)free(sysint->name);
 	sysint->name = name==NULL?NULL:strdup(name);
 }
 
-char *oval_sysint_ip_address(struct oval_sysint *sysint)
+char *oval_sysint_get_ip_address(struct oval_sysint *sysint)
 {
 	return ((struct oval_sysint *)sysint)->ipAddress;
 }
 
-void set_oval_sysint_ip_address(struct oval_sysint *sysint, char *ip_address)
+void oval_sysint_set_ip_address(struct oval_sysint *sysint, char *ip_address)
 {
 	if(sysint->ipAddress!=NULL)free(sysint->ipAddress);
 	sysint->ipAddress = (ip_address==NULL)?NULL:strdup(ip_address);
 }
 
-char *oval_sysint_mac_address(struct oval_sysint *sysint)
+char *oval_sysint_get_mac_address(struct oval_sysint *sysint)
 {
 	return ((struct oval_sysint *)sysint)->macAddress;
 }
 
-void set_oval_sysint_mac_address(struct oval_sysint *sysint, char *mac_address)
+void oval_sysint_set_mac_address(struct oval_sysint *sysint, char *mac_address)
 {
 	if(sysint->macAddress!=NULL)free(sysint->macAddress);
 	sysint->macAddress = (mac_address==NULL)?NULL:strdup(mac_address);
@@ -110,15 +114,15 @@ extern const char* NAMESPACE_OVALSYS;
 
 void oval_consume_interface_name(char* text, void* sysint)
 {
-	set_oval_sysint_name(sysint, text);
+	oval_sysint_set_name(sysint, text);
 }
 void oval_consume_ip_address(char* text, void* sysint)
 {
-	set_oval_sysint_ip_address(sysint, text);
+	oval_sysint_set_ip_address(sysint, text);
 }
 void oval_consume_mac_address(char* text, void* sysint)
 {
-	set_oval_sysint_mac_address(sysint, text);
+	oval_sysint_set_mac_address(sysint, text);
 }
 
 int _oval_sysint_parse_tag(xmlTextReaderPtr reader,
@@ -187,13 +191,13 @@ void oval_sysint_to_print(struct oval_sysint *sysint, char *indent,
 	char *macAddress;
 	 */
 	{//name
-		printf("%sNAME           = %s\n", nxtindent, oval_sysint_name(sysint));
+		printf("%sNAME           = %s\n", nxtindent, oval_sysint_get_name(sysint));
 	}
-	char* ipadd = oval_sysint_ip_address(sysint);
+	char* ipadd = oval_sysint_get_ip_address(sysint);
 	if(ipadd!=NULL){//ipaddress
 		printf("%sIP_ADDRESS      = %s\n", nxtindent, ipadd);
 	}
-	char* macadd = oval_sysint_mac_address(sysint);
+	char* macadd = oval_sysint_get_mac_address(sysint);
 	if(macadd!=NULL){//mac address
 		printf("%sMAC_ADDRESS     = %s\n", nxtindent, macadd);
 	}
@@ -206,13 +210,13 @@ void oval_sysint_to_dom  (struct oval_sysint *sysint, xmlDoc *doc, xmlNode *tag_
 			(tag_parent, ns_syschar, BAD_CAST "interface", NULL);
 	    xmlNewChild
 			(tag_sysint, ns_syschar, BAD_CAST "interface_name",
-					BAD_CAST oval_sysint_name(sysint));
+					BAD_CAST oval_sysint_get_name(sysint));
 	    xmlNewChild
 			(tag_sysint, ns_syschar, BAD_CAST "ip_address",
-					BAD_CAST oval_sysint_ip_address(sysint));
+					BAD_CAST oval_sysint_get_ip_address(sysint));
 	    xmlNewChild
 			(tag_sysint, ns_syschar, BAD_CAST "mac_address",
-					BAD_CAST oval_sysint_mac_address(sysint));
+					BAD_CAST oval_sysint_get_mac_address(sysint));
 	}
 }
 

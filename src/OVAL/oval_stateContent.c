@@ -36,19 +36,19 @@
 
 typedef struct oval_state_content {
 	struct oval_entity *entity;
-	oval_check_enum     ent_check;
-	oval_check_enum     var_check;
+	oval_check_t     ent_check;
+	oval_check_t     var_check;
 } oval_state_content_t;
 
-int oval_iterator_state_content_has_more(struct oval_iterator_state_content
+int oval_state_content_iterator_has_more(struct oval_state_content_iterator
 					  *oc_state_content)
 {
 	return oval_collection_iterator_has_more((struct oval_iterator *)
 						 oc_state_content);
 }
 
-struct oval_state_content *oval_iterator_state_content_next(struct
-							      oval_iterator_state_content
+struct oval_state_content *oval_state_content_iterator_next(struct
+							      oval_state_content_iterator
 							      *oc_state_content)
 {
 	return (struct oval_state_content *)
@@ -56,19 +56,27 @@ struct oval_state_content *oval_iterator_state_content_next(struct
 					  oc_state_content);
 }
 
-struct oval_entity *oval_state_content_entity(struct oval_state_content
+void oval_state_content_iterator_free(struct
+							      oval_state_content_iterator
+							      *oc_state_content)
+{
+    oval_collection_iterator_free((struct oval_iterator *)
+					  oc_state_content);
+}
+
+struct oval_entity *oval_state_content_get_entity(struct oval_state_content
 					       *content)
 {
 	return content->entity;
 }
 
-oval_check_enum oval_state_content_var_check(struct oval_state_content *
+oval_check_t oval_state_content_get_var_check(struct oval_state_content *
 					     content)
 {
 	return content->var_check;
 }
 
-oval_check_enum oval_state_content_ent_check(struct oval_state_content *
+oval_check_t oval_state_content_get_ent_check(struct oval_state_content *
 					     content)
 {
 	return content->ent_check;
@@ -90,25 +98,25 @@ void oval_state_content_free(struct oval_state_content *content)
 	free(content);
 }
 
-void set_oval_state_content_entity(struct oval_state_content *content, struct oval_entity *entity)
+void oval_state_content_set_entity(struct oval_state_content *content, struct oval_entity *entity)
 {
 	if(content->entity)oval_entity_free(content->entity);
 	content->entity = entity;
 }
 
-void set_oval_state_content_var_check(struct oval_state_content *content, oval_check_enum check)
+void oval_state_content_set_varcheck(struct oval_state_content *content, oval_check_t check)
 {
 	content->var_check = check;
 }
 
-void set_oval_state_content_ent_check(struct oval_state_content *content, oval_check_enum check)
+void oval_state_content_set_entcheck(struct oval_state_content *content, oval_check_t check)
 {
 	content->ent_check = check;
 }
 
 void _oval_state_content_entity_consumer
 	(struct oval_entity *entity, struct oval_state_content *content) {
-	set_oval_state_content_entity(content, entity);
+	oval_state_content_set_entity(content, entity);
 }
 int oval_state_content_parse_tag(xmlTextReaderPtr reader,
 				  struct oval_parser_context *context,
@@ -120,11 +128,11 @@ int oval_state_content_parse_tag(xmlTextReaderPtr reader,
 	int retcode = oval_entity_parse_tag
 		(reader, context, (oscap_consumer_func)_oval_state_content_entity_consumer, content);
 
-	oval_check_enum var_check = oval_check_parse(reader, "var_check"   , OVAL_CHECK_ALL);
-	oval_check_enum ent_check = oval_check_parse(reader, "entity_check", OVAL_CHECK_ALL);
+	oval_check_t var_check = oval_check_parse(reader, "var_check"   , OVAL_CHECK_ALL);
+	oval_check_t ent_check = oval_check_parse(reader, "entity_check", OVAL_CHECK_ALL);
 
-	set_oval_state_content_var_check(content, var_check);
-	set_oval_state_content_ent_check(content, ent_check);
+	oval_state_content_set_varcheck(content, var_check);
+	oval_state_content_set_entcheck(content, ent_check);
 
 	(*consumer)(content, user);
 	return retcode;
@@ -136,13 +144,13 @@ xmlNode *oval_state_content_to_dom
 {
 	xmlNode *content_node = oval_entity_to_dom(content->entity, doc, parent);
 
-	oval_check_enum var_check = oval_state_content_var_check(content);
+	oval_check_t var_check = oval_state_content_get_var_check(content);
 	if(var_check!=OVAL_CHECK_ALL)
-		xmlNewProp(content_node, "var_check", oval_check_text(var_check));
+		xmlNewProp(content_node, "var_check", oval_check_get_text(var_check));
 
-	oval_check_enum ent_check = oval_state_content_ent_check(content);
+	oval_check_t ent_check = oval_state_content_get_ent_check(content);
 	if(ent_check!=OVAL_CHECK_ALL)
-		xmlNewProp(content_node, "entity_check", oval_check_text(ent_check));
+		xmlNewProp(content_node, "entity_check", oval_check_get_text(ent_check));
 
 	return content_node;
 }

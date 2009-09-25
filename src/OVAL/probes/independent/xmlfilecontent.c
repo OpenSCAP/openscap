@@ -1,3 +1,4 @@
+#ifndef __STUB_PROBE
 /*
  * xmlfilecontent probe:
  *
@@ -59,10 +60,10 @@ void probe_fini(void __attribute__((unused)) *arg)
 
 static int report_missing(SEXP_t *elm)
 {
-	oval_operation_enum op;
+	oval_operation_t op;
 
 	op = SEXP_number_getd(SEXP_OVALelm_getattrval(elm, "operation"));
-	if (op == OPERATION_EQUALS)
+	if (op == OVAL_OPERATION_EQUALS)
 		return 1;
 	else
 		return 0;
@@ -273,3 +274,4 @@ SEXP_t *probe_main(SEXP_t *probe_in, int *err, void __attribute__((unused)) *arg
 	*err = 0;
 	return pfd.item_list;
 }
+#endif

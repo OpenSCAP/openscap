@@ -1,4 +1,5 @@
-/* 
+#ifndef __STUB_PROBE
+/*
  * rpminfo probe:
  *
  *  rpminfo_object(string name)
@@ -284,3 +285,4 @@ SEXP_t *probe_main (SEXP_t *object, int *err, void *arg)
 
         return (probe_out);
 }
+#endif

@@ -38,7 +38,7 @@
 int OVAL_SYSCHAR_DEBUG = 0;
 
 typedef struct oval_syschar {
-	oval_syschar_collection_flag_enum flag;
+	oval_syschar_collection_flag_t flag;
 	struct oval_collection *messages;
 	struct oval_sysinfo *sysinfo;
 	struct oval_object *object;
@@ -46,69 +46,75 @@ typedef struct oval_syschar {
 	struct oval_collection *sysdata;
 } oval_syschar_t;
 
-int oval_iterator_syschar_has_more(struct oval_iterator_syschar *oc_syschar)
+int oval_syschar_iterator_has_more(struct oval_syschar_iterator *oc_syschar)
 {
 	return oval_collection_iterator_has_more((struct oval_iterator *)
 						 oc_syschar);
 }
 
-struct oval_syschar *oval_iterator_syschar_next(struct oval_iterator_syschar
+struct oval_syschar *oval_syschar_iterator_next(struct oval_syschar_iterator
 						*oc_syschar)
 {
 	return (struct oval_syschar *)
 	    oval_collection_iterator_next((struct oval_iterator *)oc_syschar);
 }
 
-oval_syschar_collection_flag_enum oval_syschar_flag(struct oval_syschar
+void oval_syschar_iterator_free(struct oval_syschar_iterator
+						*oc_syschar)
+{
+    oval_collection_iterator_free((struct oval_iterator *)oc_syschar);
+}
+
+oval_syschar_collection_flag_t oval_syschar_get_flag(struct oval_syschar
 						    *syschar)
 {
 	return ((struct oval_syschar *)syschar)->flag;
 }
 
 void set_oval_syschar_flag
-	(struct oval_syschar *syschar, oval_syschar_collection_flag_enum flag)
+	(struct oval_syschar *syschar, oval_syschar_collection_flag_t flag)
 {
 	syschar->flag = flag;
 }
 
-void set_oval_syschar_object(struct oval_syschar *syschar, struct oval_object *object)
+void oval_syschar_set_object(struct oval_syschar *syschar, struct oval_object *object)
 {
 	syschar->object = object;
 }
 
 
-struct oval_iterator_message *oval_syschar_messages(struct oval_syschar *syschar)
+struct oval_message_iterator *oval_syschar_get_messages(struct oval_syschar *syschar)
 {
-	return (struct oval_iterator_message *)oval_collection_iterator(syschar->
+	return (struct oval_message_iterator *)oval_collection_iterator(syschar->
 								       messages);
 }
 
-void add_oval_syschar_messages(struct oval_syschar *syschar, char *message)
+void oval_syschar_add_messages(struct oval_syschar *syschar, char *message)
 {
 	oval_collection_add(syschar->messages, message);
 }
 
-struct oval_sysinfo *oval_syschar_sysinfo(struct oval_syschar *syschar)
+struct oval_sysinfo *oval_syschar_get_sysinfo(struct oval_syschar *syschar)
 {
 	return ((struct oval_syschar *)syschar)->sysinfo;
 }
 
-void set_oval_syschar_sysinfo
+void oval_syschar_set_sysinfo
 	(struct oval_syschar *syschar, struct oval_sysinfo *sysinfo)
 {
 	syschar->sysinfo = sysinfo;
 }
 
-struct oval_object *oval_syschar_object(struct oval_syschar *syschar)
+struct oval_object *oval_syschar_get_object(struct oval_syschar *syschar)
 {
 	return ((struct oval_syschar *)syschar)->object;
 }
 
-struct oval_iterator_variable_binding *oval_syschar_variable_bindings(struct
+struct oval_variable_binding_iterator *oval_syschar_get_variable_bindings(struct
 								      oval_syschar
 								      *syschar)
 {
-	return (struct oval_iterator_variable_binding *)
+	return (struct oval_variable_binding_iterator *)
 	    oval_collection_iterator(syschar->variable_bindings);
 }
 
@@ -118,13 +124,13 @@ void add_oval_syschar_variable_bindings
 	oval_collection_add(syschar->variable_bindings, binding);
 }
 
-struct oval_iterator_sysdata *oval_syschar_sysdata(struct oval_syschar *syschar)
+struct oval_sysdata_iterator *oval_syschar_sysdata(struct oval_syschar *syschar)
 {
-	return (struct oval_iterator_sysdata *)
+	return (struct oval_sysdata_iterator *)
 	    oval_collection_iterator(syschar->sysdata);
 }
 
-void add_oval_syschar_sysdata
+void oval_syschar_add_sysdata
 	(struct oval_syschar *syschar, struct oval_sysdata *sysdata)
 {
 	oval_collection_add(syschar->sysdata, sysdata);
@@ -136,7 +142,7 @@ void add_oval_syschar_message
 	oval_collection_add(syschar->messages, message);
 }
 
-void add_oval_syschar_variable_binding
+void oval_syschar_add_variable_binding
 	(struct oval_syschar *syschar, struct oval_variable_binding *binding)
 {
 	oval_collection_add(syschar->variable_bindings, binding);
@@ -177,8 +183,8 @@ struct oval_syschar_parse_subtag_varval_context {
 };
 void _oval_syschar_parse_subtag_consume_variable_binding(struct oval_variable_binding *binding, void* user){
 	struct oval_syschar_parse_subtag_varval_context *ctx = user;
-	if (add_oval_syschar_model_variable_binding(ctx->model, binding))
-		add_oval_syschar_variable_binding(ctx->syschar, binding);
+	if (oval_syschar_model_add_variable_binding(ctx->model, binding))
+		oval_syschar_add_variable_binding(ctx->syschar, binding);
 	else oval_variable_binding_free(binding);
 }
 int _oval_syschar_parse_subtag(
@@ -201,7 +207,7 @@ int _oval_syschar_parse_subtag(
 		char* itemid = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "item_ref");
 		struct oval_sysdata *sysdata = get_oval_sysdata_new(context->syschar_model, itemid);
 		free(itemid);itemid=NULL;
-		add_oval_syschar_sysdata(syschar, sysdata);
+		oval_syschar_add_sysdata(syschar, sysdata);
 		return_code = 1;
 	}
 	free(tagname);
@@ -235,7 +241,7 @@ int oval_syschar_parse_tag(xmlTextReaderPtr reader,
 		oval_syschar_t *syschar = get_oval_syschar_new(context->syschar_model, object);
 		syschar->sysinfo = context->syschar_sysinfo;
 		char *flag = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "flag");
-		oval_syschar_collection_flag_enum flag_enum
+		oval_syschar_collection_flag_t flag_enum
 			= oval_syschar_flag_parse(reader, "flag", SYSCHAR_FLAG_UNKNOWN);
 		if(flag!=NULL)free(flag);
 		set_oval_syschar_flag(syschar, flag_enum);
@@ -285,32 +291,34 @@ void oval_syschar_to_print(struct oval_syschar *syschar, char *indent,
 	struct oval_object *object;
 	struct oval_collection *sysdata;
 	 */
-	printf("%sFLAG    = %d\n", nxtindent, oval_syschar_flag(syschar));
+	printf("%sFLAG    = %d\n", nxtindent, oval_syschar_get_flag(syschar));
 	{//messages
-		struct oval_iterator_message *messages = oval_syschar_messages(syschar);
-		int i;for(i=1;oval_iterator_message_has_more(messages);i++){
-			struct oval_message *message = oval_iterator_message_next(messages);
+		struct oval_message_iterator *messages = oval_syschar_get_messages(syschar);
+		int i;for(i=1;oval_message_iterator_has_more(messages);i++){
+			struct oval_message *message = oval_message_iterator_next(messages);
 			oval_message_to_print(message, nxtindent, i);
 		}
+		oval_message_iterator_free(messages);
 	}
 	{//sysinfo
-		struct oval_sysinfo *sysinfo = oval_syschar_sysinfo(syschar);
+		struct oval_sysinfo *sysinfo = oval_syschar_get_sysinfo(syschar);
 		if (sysinfo) oval_sysinfo_to_print(sysinfo, nxtindent, 0);
 	}
 
 	{//object
-		struct oval_object *object = oval_syschar_object(syschar);
+		struct oval_object *object = oval_syschar_get_object(syschar);
 		if (object) oval_object_to_print(object, nxtindent, 0);
 	}
 	{//sysdata
-		struct oval_iterator_sysdata *sysdatas = oval_syschar_sysdata(syschar);
-		int hasMore = oval_iterator_sysdata_has_more(sysdatas);
+		struct oval_sysdata_iterator *sysdatas = oval_syschar_sysdata(syschar);
+		int hasMore = oval_sysdata_iterator_has_more(sysdatas);
 		if(hasMore){
-			int i;for(i=1;oval_iterator_sysdata_has_more(sysdatas);i++){
-				struct oval_sysdata *sysdata = oval_iterator_sysdata_next(sysdatas);
+			int i;for(i=1;oval_sysdata_iterator_has_more(sysdatas);i++){
+				struct oval_sysdata *sysdata = oval_sysdata_iterator_next(sysdatas);
 				oval_sysdata_to_print(sysdata, nxtindent, i);
 			}
 		}
+		oval_sysdata_iterator_free(sysdatas);
 	}
 }
 
@@ -321,35 +329,40 @@ void oval_syschar_to_dom  (struct oval_syschar *syschar, xmlDoc *doc, xmlNode *t
 			(tag_parent, ns_syschar, BAD_CAST "object", NULL);
 
 	    {//attributes
-	    	struct oval_object *object = oval_syschar_object(syschar);
-	    	xmlNewProp(tag_syschar, BAD_CAST "id", BAD_CAST oval_object_id(object));
+	    	struct oval_object *object = oval_syschar_get_object(syschar);
+	    	xmlNewProp(tag_syschar, BAD_CAST "id", BAD_CAST oval_object_get_id(object));
 	    	char version[17];
-	    	snprintf(version, sizeof(version), "%d", oval_object_version(object));
+	    	snprintf(version, sizeof(version), "%d", oval_object_get_version(object));
 	    	xmlNewProp(tag_syschar, BAD_CAST "version", BAD_CAST version);
+	    	oval_syschar_collection_flag_t flag = oval_syschar_get_flag(syschar);
+	    	xmlNewProp(tag_syschar, BAD_CAST "flag", BAD_CAST oval_syschar_collection_flag_get_text(flag));
 	    }
 		{//messages
-			struct oval_iterator_message *messages = oval_syschar_messages(syschar);
-			while(oval_iterator_message_has_more(messages)){
-				struct oval_message *message = oval_iterator_message_next(messages);
+			struct oval_message_iterator *messages = oval_syschar_get_messages(syschar);
+			while(oval_message_iterator_has_more(messages)){
+				struct oval_message *message = oval_message_iterator_next(messages);
 				oval_message_to_dom(message, doc, tag_syschar);
 			}
+			oval_message_iterator_free(messages);
 		}
 		{//variable values
-			struct oval_iterator_variable_binding *bindings = oval_syschar_variable_bindings(syschar);
-			while(oval_iterator_variable_binding_has_more(bindings)){
-				struct oval_variable_binding *binding = oval_iterator_variable_binding_next(bindings);
+			struct oval_variable_binding_iterator *bindings = oval_syschar_get_variable_bindings(syschar);
+			while(oval_variable_binding_iterator_has_more(bindings)){
+				struct oval_variable_binding *binding = oval_variable_binding_iterator_next(bindings);
 				oval_variable_binding_to_dom(binding, doc, tag_syschar);
 			}
+			oval_variable_binding_iterator_free(bindings);
 		}
 		{//references
-			struct oval_iterator_sysdata *sysdatas = oval_syschar_sysdata(syschar);
-			while(oval_iterator_sysdata_has_more(sysdatas)){
-				struct oval_sysdata *sysdata = oval_iterator_sysdata_next(sysdatas);
+			struct oval_sysdata_iterator *sysdatas = oval_syschar_sysdata(syschar);
+			while(oval_sysdata_iterator_has_more(sysdatas)){
+				struct oval_sysdata *sysdata = oval_sysdata_iterator_next(sysdatas);
 				xmlNode *tag_reference = xmlNewChild
 					(tag_syschar, ns_syschar, BAD_CAST "reference", NULL);
 				xmlNewProp(tag_reference,BAD_CAST "item_ref",
-						BAD_CAST oval_sysdata_id(sysdata));
+						BAD_CAST oval_sysdata_get_id(sysdata));
 			}
+			oval_sysdata_iterator_free(sysdatas);
 		}
 	}
 }

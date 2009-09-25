@@ -35,52 +35,58 @@
 #include "oval_collection_impl.h"
 
 typedef struct oval_value {
-	oval_datatype_enum datatype;
+	oval_datatype_t datatype;
 	char *text;
 } oval_value_t;
 
-int oval_iterator_value_has_more(struct oval_iterator_value *oc_value)
+int oval_value_iterator_has_more(struct oval_value_iterator *oc_value)
 {
 	return oval_collection_iterator_has_more((struct oval_iterator *)
 						 oc_value);
 }
 
-struct oval_value *oval_iterator_value_next(struct oval_iterator_value
+struct oval_value *oval_value_iterator_next(struct oval_value_iterator
 					    *oc_value)
 {
 	return (struct oval_value *)
 	    oval_collection_iterator_next((struct oval_iterator *)oc_value);
 }
 
-oval_datatype_enum oval_value_datatype(struct oval_value *value)
+void oval_value_iterator_free(struct oval_value_iterator
+					    *oc_value)
+{
+    oval_collection_iterator_free((struct oval_iterator *)oc_value);
+}
+
+oval_datatype_t oval_value_get_datatype(struct oval_value *value)
 {
 	return (value)->datatype;
 }
 
-char *oval_value_text(struct oval_value *value)
+char *oval_value_get_text(struct oval_value *value)
 {
 	return value->text;
 }
 
-unsigned char *oval_value_binary(struct oval_value *value)
+unsigned char *oval_value_get_binary(struct oval_value *value)
 {
 	return NULL;		//TODO: implement oval_value_binary
 }
 
-bool oval_value_boolean(struct oval_value *value)
+bool oval_value_get_boolean(struct oval_value *value)
 {
 	if( strncmp("false", (value)->text, 5) )
 		return true;
 	return false;
 }
 
-float oval_value_float(struct oval_value *value)
+float oval_value_get_float(struct oval_value *value)
 {
 	char *endptr;
 	return strtof( (const char *) value->text, &endptr);
 }
 
-long oval_value_integer(struct oval_value *value)
+long oval_value_get_integer(struct oval_value *value)
 {
         char *endptr;
         return strtol( (const char *) value->text, &endptr, 10);
@@ -103,13 +109,13 @@ void oval_value_free(struct oval_value *value)
 	}
 }
 
-void set_oval_value_datatype(struct oval_value *value,
-			     oval_datatype_enum datatype)
+void oval_value_set_datatype(struct oval_value *value,
+			     oval_datatype_t datatype)
 {
 	value->datatype = datatype;
 }
 
-void set_oval_value_text(struct oval_value *value, char *text)
+void oval_value_set_text(struct oval_value *value, char *text)
 {
 	if(value->text!=NULL)free(value->text);
 	value->text = ((text==NULL)?NULL:strdup(text));
@@ -125,7 +131,7 @@ int oval_value_parse_tag(xmlTextReaderPtr reader,
 {
 	struct oval_value *value = oval_value_new();
 	int return_code;
-	oval_datatype_enum datatype =
+	oval_datatype_t datatype =
 	    oval_datatype_parse(reader, "datatype", OVAL_DATATYPE_STRING);
 	char *text = NULL;
 	int isNil = oval_parser_boolean_attribute(reader, "xsi:nil", 0);
@@ -136,8 +142,8 @@ int oval_value_parse_tag(xmlTextReaderPtr reader,
 		return_code =
 		    oval_parser_text_value(reader, context, &oval_value_parse_tag_consume_text, &text);
 	}
-	set_oval_value_datatype(value, datatype);
-	set_oval_value_text(value, text);
+	oval_value_set_datatype(value, datatype);
+	oval_value_set_text(value, text);
 	free(text);
 	(*consumer) (value, user);
 	return return_code;
@@ -156,8 +162,8 @@ void oval_value_to_print(struct oval_value *value, char *indent, int idx)
 		snprintf(nxtindent, sizeof(nxtindent), "%sVALUE[%d].", indent, idx);
 
 
-	printf("%sDATATYPE = %d\n", nxtindent, oval_value_datatype(value));
-	printf("%sTEXT     = %s\n", nxtindent, oval_value_text(value));
+	printf("%sDATATYPE = %d\n", nxtindent, oval_value_get_datatype(value));
+	printf("%sTEXT     = %s\n", nxtindent, oval_value_get_text(value));
 }
 
 xmlNode *oval_value_to_dom

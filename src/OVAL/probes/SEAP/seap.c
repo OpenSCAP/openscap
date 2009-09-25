@@ -1,3 +1,5 @@
+#ifndef __STUB_PROBE
+
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
@@ -492,3 +494,4 @@ int SEAP_close (SEAP_CTX_t *ctx, int sd)
         
         return (ret);
 }
+#endif

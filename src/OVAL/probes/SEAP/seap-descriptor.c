@@ -1,3 +1,4 @@
+#ifndef __STUB_PROBE
 #include <pthread.h>
 #include "public/sm_alloc.h"
 #include "generic/bitmap.h"
@@ -98,3 +99,4 @@ SEAP_cmdid_t SEAP_desc_gencmdid (SEAP_desctable_t *sd_table, int sd)
 #endif
         return (id);
 }
+#endif

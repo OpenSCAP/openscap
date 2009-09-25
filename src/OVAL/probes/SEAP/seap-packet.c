@@ -1,3 +1,4 @@
+#ifndef __STUB_PROBE
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
@@ -789,3 +790,4 @@ int SEAP_packet_enqueue (SEAP_CTX_t *ctx, int sd, SEAP_packet_t *packet)
         _LOGCALL_;
         return (-1);
 }
+#endif

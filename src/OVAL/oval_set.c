@@ -34,9 +34,9 @@
 #include "oval_collection_impl.h"
 #include "oval_agent_api_impl.h"
 
-typedef struct oval_set {
-	oval_set_type_enum type;
-	oval_set_operation_enum operation;
+typedef struct oval_setobject {
+	oval_setobject_type_t type;
+	oval_setobject_operation_t operation;
 	void *extension;
 } oval_set_t;
 
@@ -49,56 +49,61 @@ typedef struct oval_set_COLLECTIVE {
 	struct oval_collection *filters;	//type==OVAL_SET_COLLECTIVE;
 } oval_set_COLLECTIVE_t;
 
-int oval_iterator_set_has_more(struct oval_iterator_set *oc_set)
+int oval_setobject_iterator_has_more(struct oval_setobject_iterator *oc_set)
 {
 	return oval_collection_iterator_has_more((struct oval_iterator *)
 						 oc_set);
 }
 
-struct oval_set *oval_iterator_set_next(struct oval_iterator_set *oc_set)
+struct oval_setobject *oval_setobject_iterator_next(struct oval_setobject_iterator *oc_set)
 {
-	return (struct oval_set *)
+	return (struct oval_setobject *)
 	    oval_collection_iterator_next((struct oval_iterator *)oc_set);
 }
 
-oval_set_type_enum oval_set_type(struct oval_set *set)
+void oval_setobject_iterator_free(struct oval_setobject_iterator *oc_set)
+{
+    oval_collection_iterator_free((struct oval_iterator *)oc_set);
+}
+
+oval_setobject_type_t oval_setobject_get_type(struct oval_setobject *set)
 {
 	return (set)->type;
 }
 
-oval_set_operation_enum oval_set_operation(struct oval_set * set)
+oval_setobject_operation_t oval_setobject_get_operation(struct oval_setobject * set)
 {
-	return ((struct oval_set *)set)->operation;
+	return ((struct oval_setobject *)set)->operation;
 }
 
-struct oval_iterator_set *oval_set_subsets(struct oval_set *set)
+struct oval_setobject_iterator *oval_setobject_get_subsets(struct oval_setobject *set)
 {
 	//type==OVAL_SET_AGGREGATE;
 	struct oval_set_AGGREGATE *aggregate =
 	    (struct oval_set_AGGREGATE *)set->extension;
-	return (struct oval_iterator_set *)oval_collection_iterator(aggregate->
+	return (struct oval_setobject_iterator *)oval_collection_iterator(aggregate->
 								    subsets);
 }
 
-struct oval_iterator_object *oval_set_objects(struct oval_set *set)
+struct oval_object_iterator *oval_setobject_get_objects(struct oval_setobject *set)
 {
 	//type==OVAL_SET_COLLECTIVE;
 	struct oval_set_COLLECTIVE *collective =
 	    (struct oval_set_COLLECTIVE *)set->extension;
-	return (struct oval_iterator_object *)
+	return (struct oval_object_iterator *)
 	    oval_collection_iterator(collective->objects);
 }
 
-struct oval_iterator_state *oval_set_filters(struct oval_set *set)
+struct oval_state_iterator *oval_setobject_get_filters(struct oval_setobject *set)
 {
 	//type==OVAL_SET_COLLECTIVE;
 	struct oval_set_COLLECTIVE *collective =
 	    (struct oval_set_COLLECTIVE *)set->extension;
-	return (struct oval_iterator_state *)
+	return (struct oval_state_iterator *)
 	    oval_collection_iterator(collective->filters);
 }
 
-struct oval_set *oval_set_new()
+struct oval_setobject *oval_setobject_new()
 {
 	oval_set_t *set = (oval_set_t *) malloc(sizeof(oval_set_t));
 	set->operation = OVAL_SET_OPERATION_UNKNOWN;
@@ -107,7 +112,7 @@ struct oval_set *oval_set_new()
 	return set;
 }
 
-void oval_set_free(struct oval_set *set)
+void oval_set_free(struct oval_setobject *set)
 {
 	switch (set->type) {
 	case OVAL_SET_AGGREGATE:{
@@ -135,7 +140,7 @@ void oval_set_free(struct oval_set *set)
 	free(set);
 }
 
-void set_oval_set_type(struct oval_set *set, oval_set_type_enum type)
+void oval_setobject_set_type(struct oval_setobject *set, oval_setobject_type_t type)
 {
 	set->type = type;
 	switch (type) {
@@ -160,27 +165,27 @@ void set_oval_set_type(struct oval_set *set, oval_set_type_enum type)
 	}
 }
 
-void set_oval_set_operation(struct oval_set *set,
-			    oval_set_operation_enum operation)
+void oval_setobject_set_operation(struct oval_setobject *set,
+			    oval_setobject_operation_t operation)
 {
 	set->operation = operation;
 }
 
-void add_oval_set_subsets(struct oval_set *set, struct oval_set *subset)
+void oval_setobject_add_subset(struct oval_setobject *set, struct oval_setobject *subset)
 {
 	oval_set_AGGREGATE_t *aggregate =
 	    (oval_set_AGGREGATE_t *) set->extension;
 	oval_collection_add(aggregate->subsets, (void *)subset);
 }
 
-void add_oval_set_objects(struct oval_set *set, struct oval_object *object)
+void oval_setobject_add_object(struct oval_setobject *set, struct oval_object *object)
 {
 	oval_set_COLLECTIVE_t *collective =
 	    (oval_set_COLLECTIVE_t *) set->extension;
 	oval_collection_add(collective->objects, (void *)object);
 }
 
-void add_oval_set_filters(struct oval_set *set, struct oval_state *filter)
+void oval_setobject_add_filter(struct oval_setobject *set, struct oval_state *filter)
 {
 	oval_set_COLLECTIVE_t *collective =
 	    (oval_set_COLLECTIVE_t *) set->extension;
@@ -188,12 +193,12 @@ void add_oval_set_filters(struct oval_set *set, struct oval_state *filter)
 }
 
 //typedef int (*oval_xml_tag_parser)(xmlTextReaderPtr, struct oval_parser_context*, void*);
-void oval_set_consume(struct oval_set *subset, void *set) {
-	add_oval_set_subsets(set, subset);
+void oval_set_consume(struct oval_setobject *subset, void *set) {
+	oval_setobject_add_subset(set, subset);
 }
 struct oval_set_context {
 	struct oval_parser_context *context;
-	struct oval_set *set;
+	struct oval_setobject *set;
 };
 void oval_consume_object_ref(char *objref, void *user) {
 	struct oval_set_context *ctx = user;
@@ -201,7 +206,7 @@ void oval_consume_object_ref(char *objref, void *user) {
 		oval_parser_context_model(ctx->context);
 	struct oval_object *object =
 		get_oval_object_new(model, objref);
-	add_oval_set_objects(ctx->set, object);
+	oval_setobject_add_object(ctx->set, object);
 }
 void oval_consume_state_ref(char *steref, void *user) {
 	struct oval_set_context *ctx = user;
@@ -209,13 +214,13 @@ void oval_consume_state_ref(char *steref, void *user) {
 		oval_parser_context_model(ctx->context);
 	struct oval_state *state =
 		get_oval_state_new(model, steref);
-	add_oval_set_filters(ctx->set, state);
+	oval_setobject_add_filter(ctx->set, state);
 }
 
 int _oval_set_parse_tag(xmlTextReaderPtr reader,
 			struct oval_parser_context *context, void *user)
 {
-	struct oval_set *set = (struct oval_set *)user;
+	struct oval_setobject *set = (struct oval_setobject *)user;
 	char *tagname = (char*) xmlTextReaderName(reader);
 	xmlChar *namespace = xmlTextReaderNamespaceUri(reader);
 	struct oval_set_context ctx = { .context = context, .set = set };
@@ -224,13 +229,13 @@ int _oval_set_parse_tag(xmlTextReaderPtr reader,
 
 	if (strcmp(tagname, "set") == 0) {
 		if (set->type == OVAL_SET_UNKNOWN) {
-			set_oval_set_type(set, OVAL_SET_AGGREGATE);
+			oval_setobject_set_type(set, OVAL_SET_AGGREGATE);
 		}
 		return_code =
 		    oval_set_parse_tag(reader, context, &oval_set_consume, set);
 	} else {
 		if (set->type == OVAL_SET_UNKNOWN) {
-			set_oval_set_type(set, OVAL_SET_COLLECTIVE);
+			oval_setobject_set_type(set, OVAL_SET_COLLECTIVE);
 		}
 		if (strcmp(tagname, "object_reference") == 0) {
 			return_code =
@@ -266,12 +271,12 @@ int oval_set_parse_tag(xmlTextReaderPtr reader,
 {
 	xmlChar *tagname = xmlTextReaderName(reader);
 	xmlChar *namespace = xmlTextReaderNamespaceUri(reader);
-	struct oval_set *set = oval_set_new();
+	struct oval_setobject *set = oval_setobject_new();
 
-	oval_set_operation_enum operation =
+	oval_setobject_operation_t operation =
 	    oval_set_operation_parse(reader, "set_operator",
 				     OVAL_SET_OPERATION_UNION);
-	set_oval_set_operation(set, operation);
+	oval_setobject_set_operation(set, operation);
 
 	(*consumer) (set, user);
 
@@ -283,7 +288,7 @@ int oval_set_parse_tag(xmlTextReaderPtr reader,
 	return return_code;
 }
 
-void oval_set_to_print(struct oval_set *set, char *indent, int idx)
+void oval_set_to_print(struct oval_setobject *set, char *indent, int idx)
 {
 	char nxtindent[100];
 
@@ -296,76 +301,82 @@ void oval_set_to_print(struct oval_set *set, char *indent, int idx)
 		snprintf(nxtindent, sizeof(nxtindent), "%sSET[%d].", indent, idx);
 
 
-	printf("%sOPERATOR    = %d\n", nxtindent, oval_set_operation(set));
-	printf("%sTYPE        = %d\n", nxtindent, oval_set_type(set));
+	printf("%sOPERATOR    = %d\n", nxtindent, oval_setobject_get_operation(set));
+	printf("%sTYPE        = %d\n", nxtindent, oval_setobject_get_type(set));
 
-	switch (oval_set_type(set)) {
+	switch (oval_setobject_get_type(set)) {
 	case OVAL_SET_AGGREGATE:{
-			struct oval_iterator_set *subsets =
-			    oval_set_subsets(set);
+			struct oval_setobject_iterator *subsets =
+			    oval_setobject_get_subsets(set);
 			int i;
-			for (i = 1; oval_iterator_set_has_more(subsets); i++) {
-				struct oval_set *subset =
-				    oval_iterator_set_next(subsets);
+			for (i = 1; oval_setobject_iterator_has_more(subsets); i++) {
+				struct oval_setobject *subset =
+				    oval_setobject_iterator_next(subsets);
 				oval_set_to_print(subset, nxtindent, i);
 			}
+			oval_setobject_iterator_free(subsets);
 		} break;
 	case OVAL_SET_COLLECTIVE:{
-			struct oval_iterator_object *objects =
-			    oval_set_objects(set);
+			struct oval_object_iterator *objects =
+			    oval_setobject_get_objects(set);
 			int i;
-			for (i = 1; oval_iterator_object_has_more(objects); i++) {
+			for (i = 1; oval_object_iterator_has_more(objects); i++) {
 				struct oval_object *object =
-				    oval_iterator_object_next(objects);
+				    oval_object_iterator_next(objects);
 				oval_object_to_print(object, nxtindent, i);
 			}
-			struct oval_iterator_state *states =
-			    oval_set_filters(set);
-			for (i = 1; oval_iterator_state_has_more(states); i++) {
+			oval_object_iterator_free(objects);
+			struct oval_state_iterator *states =
+			    oval_setobject_get_filters(set);
+			for (i = 1; oval_state_iterator_has_more(states); i++) {
 				struct oval_state *state =
-				    oval_iterator_state_next(states);
+				    oval_state_iterator_next(states);
 				oval_state_to_print(state, nxtindent, i);
 			}
+			oval_state_iterator_free(states);
 		} break;
 	case OVAL_SET_UNKNOWN: break;
 	}
 }
 xmlNode *oval_set_to_dom
-	(struct oval_set *set , xmlDoc *doc , xmlNode *parent)
+	(struct oval_setobject *set , xmlDoc *doc , xmlNode *parent)
 {
 	xmlNs *ns_definitions = xmlSearchNsByHref(doc, parent, OVAL_DEFINITIONS_NAMESPACE);
 	if(ns_definitions==NULL)
 		ns_definitions = xmlNewNs(parent, OVAL_DEFINITIONS_NAMESPACE, NULL);
 	xmlNode *set_node = xmlNewChild(parent, ns_definitions, BAD_CAST "set", NULL);
 
-	oval_set_operation_enum operation = oval_set_operation(set);
+	oval_setobject_operation_t operation = oval_setobject_get_operation(set);
 	if(operation!=OVAL_SET_OPERATION_UNION)
-		xmlNewProp(set_node, "set_operator", oval_set_operation_text(operation));
+		xmlNewProp(set_node, "set_operator", oval_set_operation_get_text(operation));
 
-	switch(oval_set_type(set))
+	switch(oval_setobject_get_type(set))
 	{
 	case OVAL_SET_AGGREGATE:{
-		struct oval_iterator_set *subsets = oval_set_subsets(set);
-		while(oval_iterator_set_has_more(subsets))
+		struct oval_setobject_iterator *subsets = oval_setobject_get_subsets(set);
+		while(oval_setobject_iterator_has_more(subsets))
 		{
-			struct oval_set *subset = oval_iterator_set_next(subsets);
+			struct oval_setobject *subset = oval_setobject_iterator_next(subsets);
 			oval_set_to_dom(subset, doc, set_node);
 		}
+		oval_setobject_iterator_free(subsets);
 	}break;
 	case OVAL_SET_COLLECTIVE:{
-			struct oval_iterator_object *objects = oval_set_objects(set);
-			while(oval_iterator_object_has_more(objects)){
-				struct oval_object *object = oval_iterator_object_next(objects);
-				char* id = oval_object_id(object);
+			struct oval_object_iterator *objects = oval_setobject_get_objects(set);
+			while(oval_object_iterator_has_more(objects)){
+				struct oval_object *object = oval_object_iterator_next(objects);
+				char* id = oval_object_get_id(object);
 				xmlNewChild(set_node,  ns_definitions, BAD_CAST "object_reference", id);
 			}
-			struct oval_iterator_state *filters = oval_set_filters(set);
-			while(oval_iterator_state_has_more(filters))
+			oval_object_iterator_free(objects);
+			struct oval_state_iterator *filters = oval_setobject_get_filters(set);
+			while(oval_state_iterator_has_more(filters))
 			{
-				struct oval_state *filter = oval_iterator_state_next(filters);
-				char *id = oval_state_id(filter);
+				struct oval_state *filter = oval_state_iterator_next(filters);
+				char *id = oval_state_get_id(filter);
 				xmlNewChild(set_node, ns_definitions, BAD_CAST "filter",  id);
 			}
+			oval_state_iterator_free(filters);
 	}break;
 	default: break;
 	}

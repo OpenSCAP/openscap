@@ -1,3 +1,4 @@
+#ifndef __STUB_PROBE
 #include <string.h>
 #include "_sexp-types.h"
 #include "_seap-types.h"
@@ -69,3 +70,4 @@ SEXP_t *SEAP_msgattr_get (SEAP_msg_t *msg, const char *name)
         
         return (NULL);
 }
+#endif

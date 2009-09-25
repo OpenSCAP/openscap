@@ -39,32 +39,39 @@ typedef struct oval_reference {
 	char *url;
 } oval_reference_t;
 
-int oval_iterator_reference_has_more(struct oval_iterator_reference
+int oval_reference_iterator_has_more(struct oval_reference_iterator
 				     *oc_reference)
 {
 	return oval_collection_iterator_has_more((struct oval_iterator *)
 						 oc_reference);
 }
 
-struct oval_reference *oval_iterator_reference_next(struct
-						    oval_iterator_reference
+struct oval_reference *oval_reference_iterator_next(struct
+						    oval_reference_iterator
 						    *oc_reference)
 {
 	return (struct oval_reference *)
 	    oval_collection_iterator_next((struct oval_iterator *)oc_reference);
 }
 
-char *oval_reference_source(struct oval_reference *ref)
+void oval_reference_iterator_free(struct
+						    oval_reference_iterator
+						    *oc_reference)
+{
+    oval_collection_iterator_free((struct oval_iterator *)oc_reference);
+}
+
+char *oval_reference_get_source(struct oval_reference *ref)
 {
 	return ((struct oval_reference *)ref)->source;
 }
 
-char *oval_reference_id(struct oval_reference *ref)
+char *oval_reference_get_id(struct oval_reference *ref)
 {
 	return ((struct oval_reference *)ref)->id;
 }
 
-char *oval_reference_url(struct oval_reference *ref)
+char *oval_reference_get_url(struct oval_reference *ref)
 {
 	return ((struct oval_reference *)ref)->url;
 }
@@ -93,19 +100,19 @@ void oval_reference_free(struct oval_reference *ref)
 	free(ref);
 }
 
-void set_oval_reference_source(struct oval_reference *ref, char *source)
+void oval_reference_set_source(struct oval_reference *ref, char *source)
 {
 	if(ref->source!=NULL)free(ref->source);
 	ref->source = ref->source==NULL?NULL:source;
 }
 
-void set_oval_reference_id(struct oval_reference *ref, char *id)
+void oval_reference_set_id(struct oval_reference *ref, char *id)
 {
 	if(ref->id!=NULL)free(ref->id);
 	ref->id = id==NULL?NULL:strdup(id);
 }
 
-void set_oval_reference_url(struct oval_reference *ref, char *url)
+void oval_reference_set_url(struct oval_reference *ref, char *url)
 {
 	if(ref->url!=NULL)free(ref->url);
 	ref->url = url==NULL?NULL:strdup(url);
@@ -119,17 +126,17 @@ int oval_reference_parse_tag(xmlTextReaderPtr reader,
 	struct oval_reference *ref = oval_reference_new();
 	char *ref_id = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "ref_id");
 	if(ref_id!=NULL){
-		set_oval_reference_id(ref, ref_id);
+		oval_reference_set_id(ref, ref_id);
 		free(ref_id);ref_id=NULL;
 	}
 	char *ref_url = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "ref_url");
 	if(ref_url!=NULL){
-		set_oval_reference_url(ref, ref_url);
+		oval_reference_set_url(ref, ref_url);
 		free(ref_url);ref_url=NULL;
 	}
 	char *source = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "source");
 	if(source!=NULL){
-		set_oval_reference_source(ref, source);
+		oval_reference_set_source(ref, source);
 		free(source);source=NULL;
 	}
 	(*consumer) (ref, user);

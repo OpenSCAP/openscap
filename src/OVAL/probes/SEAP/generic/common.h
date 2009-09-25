@@ -1,3 +1,4 @@
+#ifndef __STUB_PROBE
 #pragma once
 #ifndef COMMON_H
 #define COMMON_H
@@ -29,3 +30,4 @@ long     xrandom (void);
                            __XCONCAT(__s,__LINE__)-- ; errno = __XCONCAT(__e,__LINE__))
 
 #endif /* COMMON_H */
+#endif

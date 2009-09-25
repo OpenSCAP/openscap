@@ -32,6 +32,8 @@
 #include "oval_definitions_impl.h"
 #include "oval_collection_impl.h"
 
+#define _DEBUG_OVAL_COLLECTION_ 0
+
 typedef struct _oval_collection_item_frame {
 	struct _oval_collection_item_frame *next;
 	void *item;
@@ -88,11 +90,19 @@ void oval_collection_add(struct oval_collection *collection, void *item)
 	next->item = item;
 }
 
+bool debug = true;
+struct oval_iterator *_debugStack[_DEBUG_OVAL_COLLECTION_];
+int iterator_count;
+
 struct oval_iterator *oval_collection_iterator(struct oval_collection
 					       *collection)
 {
 	struct oval_iterator *iterator =
 	    (struct oval_iterator *)malloc(sizeof(oval_iterator_t));
+	if((iterator_count++)<_DEBUG_OVAL_COLLECTION_){
+		_debugStack[iterator_count-1] = iterator;
+		fprintf(stderr, "DEBUG::ITERATOR START1 AT %d  %d\n",iterator_count-1, (int)iterator);
+	}
 	iterator->item_iterator_frame = NULL;
 	struct _oval_collection_item_frame *collection_frame =
 	    collection->item_collection_frame;
@@ -110,10 +120,7 @@ struct oval_iterator *oval_collection_iterator(struct oval_collection
 
 int oval_collection_iterator_has_more(struct oval_iterator *iterator)
 {
-	int has_more = iterator->item_iterator_frame != NULL;
-	if (!has_more)
-		free(iterator);
-	return has_more;
+	return iterator->item_iterator_frame != NULL;
 }
 
 void *oval_collection_iterator_next(struct oval_iterator *iterator)
@@ -122,21 +129,45 @@ void *oval_collection_iterator_next(struct oval_iterator *iterator)
 	    iterator->item_iterator_frame;
 	void *next;
 	if (oc_next == NULL) {
-		free(iterator);
 		next = NULL;
 	} else {
 		next = oc_next->item;
 		iterator->item_iterator_frame = oc_next->next;
+		oc_next->item = NULL;
+		oc_next->next = NULL;
 		free(oc_next);
 	}
 	return next;
 }
 
-struct oval_iterator_string *oval_collection_string_iterator(struct
+void oval_collection_iterator_free(struct oval_iterator *iterator)
+{
+	if(iterator){//NOOP if iterator is NULL
+		if((--iterator_count)<_DEBUG_OVAL_COLLECTION_){
+			fprintf(stderr, "DEBUG::ITERATOR STOP   AT %d  %d\n", iterator_count, (int)iterator);
+			if(iterator!=_debugStack[iterator_count]){
+				fprintf(stderr, "WHOOPS: stack mismatch at %d %d:%d\n", iterator_count, (int)iterator, (int)_debugStack[iterator_count]);
+				debug = false;
+			}
+		}
+		while(iterator->item_iterator_frame){
+			struct _oval_collection_item_frame *oc_this;
+			oc_this = iterator->item_iterator_frame;
+			iterator->item_iterator_frame = oc_this->next;
+			oc_this->item = NULL;
+			oc_this->next = NULL;
+			free(oc_this);
+		}
+		iterator->item_iterator_frame = NULL;
+		free(iterator);
+	}
+}
+
+struct oval_string_iterator *oval_collection_string_iterator(struct
 							     oval_collection
 							     *os_string)
 {
-	return (struct oval_iterator_string *)
+	return (struct oval_string_iterator *)
 	    oval_collection_iterator(os_string);
 }
 
@@ -144,6 +175,10 @@ struct oval_iterator *oval_collection_iterator_new()
 {
 	struct oval_iterator *iterator =
 	    (struct oval_iterator *)malloc(sizeof(oval_iterator_t));
+	if((iterator_count++)<_DEBUG_OVAL_COLLECTION_){
+		_debugStack[iterator_count-1] = iterator;
+		fprintf(stderr, "DEBUG::ITERATOR START2 AT %d  %d\n",iterator_count-1, (int)iterator);
+	}
 	iterator->item_iterator_frame = NULL;
 	return iterator;
 }
@@ -158,15 +193,21 @@ void oval_collection_iterator_add(struct oval_iterator *iterator, void *item)
 	iterator->item_iterator_frame = newframe;
 }
 
-int oval_iterator_string_has_more(struct oval_iterator_string *iterator)
+int oval_string_iterator_has_more(struct oval_string_iterator *iterator)
 {
 	return oval_collection_iterator_has_more((struct oval_iterator *)
 						 iterator);
 }
 
-char *oval_iterator_string_next(struct oval_iterator_string *iterator)
+char *oval_string_iterator_next(struct oval_string_iterator *iterator)
 {
 	return (char *)oval_collection_iterator_next((struct oval_iterator *)
+						     iterator);
+}
+
+void oval_string_iterator_free(struct oval_string_iterator *iterator)
+{
+	oval_collection_iterator_free((struct oval_iterator *)
 						     iterator);
 }
 

@@ -1,3 +1,4 @@
+#ifndef __STUB_PROBE
 #include <string.h>
 #include <errno.h>
 #include "public/sm_alloc.h"
@@ -82,3 +83,4 @@ int SEXP_datatype_del (SEXP_datatypetbl_t *t, const char *name)
         errno = EOPNOTSUPP;
         return (-1);
 }
+#endif

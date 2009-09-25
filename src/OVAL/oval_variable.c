@@ -40,8 +40,8 @@ typedef struct oval_variable {
 	char *comment;
 	int version;
 	int deprecated;
-	oval_variable_type_enum type;
-	oval_datatype_enum datatype;
+	oval_variable_type_t type;
+	oval_datatype_t datatype;
 	void *extension;
 } oval_variable_t;
 
@@ -50,8 +50,8 @@ typedef struct oval_variable_CONSTANT {
 	char *comment;
 	int version;
 	int deprecated;
-	oval_variable_type_enum type;
-	oval_datatype_enum datatype;
+	oval_variable_type_t type;
+	oval_datatype_t datatype;
 	struct oval_collection *values;	//type==OVAL_VARIABLE_CONSTANT
 } oval_variable_CONSTANT_t;
 
@@ -60,75 +60,82 @@ typedef struct oval_variable_LOCAL {
 	char *comment;
 	int version;
 	int deprecated;
-	oval_variable_type_enum type;
-	oval_datatype_enum datatype;
+	oval_variable_type_t type;
+	oval_datatype_t datatype;
 	struct oval_component *component;	//type==OVAL_VARIABLE_LOCAL
 } oval_variable_LOCAL_t;
 
-int oval_iterator_variable_has_more(struct oval_iterator_variable
+int oval_variable_iterator_has_more(struct oval_variable_iterator
 				      *oc_variable)
 {
 	return oval_collection_iterator_has_more((struct oval_iterator *)
 						 oc_variable);
 }
 
-struct oval_variable *oval_iterator_variable_next(struct
-						    oval_iterator_variable
+struct oval_variable *oval_variable_iterator_next(struct
+						    oval_variable_iterator
 						    *oc_variable)
 {
 	return (struct oval_variable *)
 	    oval_collection_iterator_next((struct oval_iterator *)oc_variable);
 }
 
-char *oval_variable_id(struct oval_variable *variable)
+void oval_variable_iterator_free(struct
+						    oval_variable_iterator
+						    *oc_variable)
+{
+    oval_collection_iterator_free((struct oval_iterator *)oc_variable);
+}
+
+char *oval_variable_get_id(struct oval_variable *variable)
 {
 	return variable->id;
 }
 
-char *oval_variable_comment(struct oval_variable *variable)
+char *oval_variable_get_comment(struct oval_variable *variable)
 {
 	return variable->comment;
 }
 
-int oval_variable_version(struct oval_variable *variable)
+int oval_variable_get_version(struct oval_variable *variable)
 {
 	return variable->version;
 }
 
-int oval_variable_deprecated(struct oval_variable *variable)
+int oval_variable_get_deprecated(struct oval_variable *variable)
 {
 	return variable->deprecated;
 }
 
-oval_variable_type_enum oval_variable_type(struct oval_variable * variable)
+oval_variable_type_t oval_variable_get_type(struct oval_variable * variable)
 {
 	return variable->type;
 }
 
-oval_datatype_enum oval_variable_datatype(struct oval_variable * variable)
+oval_datatype_t oval_variable_get_datatype(struct oval_variable * variable)
 {
 	return variable->datatype;
 }
 
-struct oval_iterator_value *oval_variable_values(struct oval_variable *variable)
+struct oval_value_iterator *oval_variable_get_values(struct oval_variable *variable)
 {
 	//type==OVAL_VARIABLE_CONSTANT
-	struct oval_iterator_value *values = NULL;
-	if (oval_variable_type(variable) == OVAL_VARIABLE_CONSTANT) {
+	struct oval_value_iterator *values = NULL;
+	if (oval_variable_get_type(variable) == OVAL_VARIABLE_CONSTANT) {
 		oval_variable_CONSTANT_t *constant =
 		    (oval_variable_CONSTANT_t *) variable;
 		values =
-		    (struct oval_iterator_value *)
+		    (struct oval_value_iterator *)
 		    oval_collection_iterator(constant->values);
 	}
 	return values;
 }
 
-struct oval_component *oval_variable_component(struct oval_variable *variable)
+struct oval_component *oval_variable_get_component(struct oval_variable *variable)
 {
 	//type==OVAL_VARIABLE_LOCAL
 	struct oval_component *component = NULL;
-	if (oval_variable_type(variable) == OVAL_VARIABLE_LOCAL) {
+	if (oval_variable_get_type(variable) == OVAL_VARIABLE_LOCAL) {
 		oval_variable_LOCAL_t *local =
 		    (oval_variable_LOCAL_t *) variable;
 		component = local->component;
@@ -137,7 +144,7 @@ struct oval_component *oval_variable_component(struct oval_variable *variable)
 }
 
 void _set_oval_variable_type
-	(struct oval_variable *variable, oval_variable_type_enum type)
+	(struct oval_variable *variable, oval_variable_type_t type)
 {
 	variable->type = type;
 	switch(type)
@@ -151,7 +158,7 @@ void _set_oval_variable_type
 	}
 }
 
-  struct oval_variable *oval_variable_new(char *id, oval_variable_type_enum type)
+  struct oval_variable *oval_variable_new(char *id, oval_variable_type_t type)
 {
 	oval_variable_t *variable =
 	    (oval_variable_t *) malloc(sizeof(oval_variable_t));
@@ -195,8 +202,8 @@ void oval_variable_free(struct oval_variable *variable)
 	free(variable);
 }
 
-void set_oval_variable_datatype(struct oval_variable *variable,
-				oval_datatype_enum datatype)
+void oval_variable_set_datatype(struct oval_variable *variable,
+				oval_datatype_t datatype)
 {
 	variable->datatype = datatype;
 }
@@ -218,7 +225,7 @@ void set_oval_variable_version(struct oval_variable *variable, int version)
 	variable->version = version;
 }
 
-void add_oval_variable_values(struct oval_variable *variable,
+void oval_variable_add_value(struct oval_variable *variable,
 			      struct oval_value *value)
 {
 	//type==OVAL_VARIABLE_CONSTANT
@@ -229,7 +236,7 @@ void add_oval_variable_values(struct oval_variable *variable,
 	}
 }
 
-void set_oval_variable_component(struct oval_variable *variable,
+void oval_variable_set_component(struct oval_variable *variable,
 				 struct oval_component *component)
 {
 	//type==OVAL_VARIABLE_LOCAL
@@ -241,7 +248,7 @@ void set_oval_variable_component(struct oval_variable *variable,
 }
 
 void _oval_variable_parse_local_tag_component_consumer(struct oval_component *component, void *variable) {
-	set_oval_variable_component(variable, component);
+	oval_variable_set_component(variable, component);
 }
 int _oval_variable_parse_local_tag(xmlTextReaderPtr reader,
 				   struct oval_parser_context *context,
@@ -297,7 +304,7 @@ int oval_variable_parse_tag(xmlTextReaderPtr reader,
 {
 	struct oval_object_model *model = oval_parser_context_model(context);
 	char *tagname = (char*) xmlTextReaderName(reader);
-	oval_variable_type_enum type;
+	oval_variable_type_t type;
 	if (strcmp(tagname, "constant_variable") == 0)
 		type = OVAL_VARIABLE_CONSTANT;
 	else if (strcmp(tagname, "external_variable") == 0)
@@ -307,8 +314,8 @@ int oval_variable_parse_tag(xmlTextReaderPtr reader,
 	else {
 		type = OVAL_VARIABLE_UNKNOWN;
 		int line = xmlTextReaderGetParserLineNumber(reader);
-		printf
-		    ("NOTICE::oval_variable_parse_tag: <%s> unhandled variable type::line = %d\n",
+		fprintf
+		    (stderr, "NOTICE::oval_variable_parse_tag: <%s> unhandled variable type::line = %d\n",
 		     tagname, line);
 	}
 	char *id = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "id");
@@ -329,9 +336,9 @@ int oval_variable_parse_tag(xmlTextReaderPtr reader,
 	set_oval_variable_version(variable, atoi(version));
 	free(version);version = NULL;
 
-	oval_datatype_enum datatype =
+	oval_datatype_t datatype =
 	    oval_datatype_parse(reader, "datatype", OVAL_DATATYPE_UNKNOWN);
-	set_oval_variable_datatype(variable, datatype);
+	oval_variable_set_datatype(variable, datatype);
 	int return_code = 1;
 	switch (type) {
 	case OVAL_VARIABLE_CONSTANT:{
@@ -373,27 +380,27 @@ void oval_variable_to_print(struct oval_variable *variable, char *indent,
 	else
 		snprintf(nxtindent, sizeof(nxtindent), "%sVARIABLE[%d].", indent, idx);
 
-	printf("%sID         = %s\n", nxtindent, oval_variable_id(variable));
+	printf("%sID         = %s\n", nxtindent, oval_variable_get_id(variable));
 	printf("%sVERSION    = %d\n", nxtindent,
-	       oval_variable_version(variable));
+	       oval_variable_get_version(variable));
 	printf("%sCOMMENT    = %s\n", nxtindent,
-	       oval_variable_comment(variable));
+	       oval_variable_get_comment(variable));
 	printf("%sDEPRECATED = %d\n", nxtindent,
-	       oval_variable_deprecated(variable));
-	printf("%sTYPE       = %d\n", nxtindent, oval_variable_type(variable));
+	       oval_variable_get_deprecated(variable));
+	printf("%sTYPE       = %d\n", nxtindent, oval_variable_get_type(variable));
 	printf("%sDATATYPE   = %d\n", nxtindent,
-	       oval_variable_datatype(variable));
-	switch (oval_variable_type(variable)) {
+	       oval_variable_get_datatype(variable));
+	switch (oval_variable_get_type(variable)) {
 	case OVAL_VARIABLE_CONSTANT:{
-			struct oval_iterator_value *values =
-			    oval_variable_values(variable);
-			if (oval_iterator_value_has_more(values)) {
+			struct oval_value_iterator *values =
+			    oval_variable_get_values(variable);
+			if (oval_value_iterator_has_more(values)) {
 				int i;
 				for (i = 0;
-				     oval_iterator_value_has_more(values);
+				     oval_value_iterator_has_more(values);
 				     i++) {
 					struct oval_value *value =
-					    oval_iterator_value_next(values);
+					    oval_value_iterator_next(values);
 					oval_value_to_print(value, nxtindent,
 							    i);
 				}
@@ -409,7 +416,7 @@ void oval_variable_to_print(struct oval_variable *variable, char *indent,
 		break;
 	case OVAL_VARIABLE_LOCAL:{
 			struct oval_component *component =
-			    oval_variable_component(variable);
+			    oval_variable_get_component(variable);
 			if (component == NULL)
 				printf
 				    ("%sCOMPONENT  = <<NO COMPONENT BOUND>>\n",
@@ -428,11 +435,12 @@ xmlNode *_oval_VARIABLE_CONSTANT_to_dom
 	xmlNs *ns_definitions = xmlSearchNsByHref(doc, parent, OVAL_DEFINITIONS_NAMESPACE);
 	xmlNode *variable_node = xmlNewChild(parent, ns_definitions, BAD_CAST "constant_variable", NULL);
 
-	struct oval_iterator_value *values = oval_variable_values(variable);
-	while(oval_iterator_value_has_more(values)){
-		struct oval_value *value = oval_iterator_value_next(values);
+	struct oval_value_iterator *values = oval_variable_get_values(variable);
+	while(oval_value_iterator_has_more(values)){
+		struct oval_value *value = oval_value_iterator_next(values);
 		oval_value_to_dom(value, doc, variable_node);
 	}
+	oval_value_iterator_free(values);
 
 	return variable_node;
 }
@@ -450,7 +458,7 @@ xmlNode *_oval_VARIABLE_LOCAL_to_dom
 	xmlNs *ns_definitions = xmlSearchNsByHref(doc, parent, OVAL_DEFINITIONS_NAMESPACE);
 	xmlNode *variable_node = xmlNewChild(parent, ns_definitions, BAD_CAST "local_variable", NULL);
 
-	struct oval_component *component = oval_variable_component(variable);
+	struct oval_component *component = oval_variable_get_component(variable);
 	oval_component_to_dom(component, doc, variable_node);
 
 	return variable_node;
@@ -460,7 +468,7 @@ xmlNode *oval_variable_to_dom (struct oval_variable *variable, xmlDoc *doc, xmlN
 {
 
 	xmlNode *variable_node = NULL;
-	switch(oval_variable_type(variable))
+	switch(oval_variable_get_type(variable))
 	{
 	case OVAL_VARIABLE_CONSTANT:{
 		variable_node = _oval_VARIABLE_CONSTANT_to_dom(variable, doc, parent);
@@ -474,20 +482,20 @@ xmlNode *oval_variable_to_dom (struct oval_variable *variable, xmlDoc *doc, xmlN
 	default:break;
 	};
 
-	char *id = oval_variable_id(variable);
+	char *id = oval_variable_get_id(variable);
 	xmlNewProp(variable_node, "id", id);
 
 	char version[10]; *version = '\0';
-	snprintf(version, sizeof(version), "%d", oval_variable_version(variable));
+	snprintf(version, sizeof(version), "%d", oval_variable_get_version(variable));
 	xmlNewProp(variable_node, "version", version);
 
-	oval_datatype_enum datatype = oval_variable_datatype(variable);
-	xmlNewProp(variable_node, "datatype", oval_datatype_text(datatype));
+	oval_datatype_t datatype = oval_variable_get_datatype(variable);
+	xmlNewProp(variable_node, "datatype", oval_datatype_get_text(datatype));
 
-	char *comment = oval_variable_comment(variable);
+	char *comment = oval_variable_get_comment(variable);
 	xmlNewProp(variable_node, "comment", comment);
 
-	bool deprecated = oval_variable_deprecated(variable);
+	bool deprecated = oval_variable_get_deprecated(variable);
 	if(deprecated)
 		xmlNewProp(variable_node, "deprecated", "true");
 

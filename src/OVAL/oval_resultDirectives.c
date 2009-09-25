@@ -31,14 +31,14 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
-#include "../common/util.h"
+#include <common/util.h>
 #include "oval_results_impl.h"
 #include "oval_collection_impl.h"
 
 
 struct _oval_result_directive{
 	bool                               reported;
-	oval_result_directive_content_enum content;
+	oval_result_directive_content_t content;
 };
 
 #define NUMBER_OF_RESULTS 7
@@ -62,23 +62,23 @@ void oval_result_directives_free(struct oval_result_directives *directives)
 	free(directives);
 }
 
-bool oval_result_directive_reported
-	(struct oval_result_directives *directives, oval_result_enum type)
+bool oval_result_directive_get_reported
+	(struct oval_result_directives *directives, oval_result_t type)
 {
 	return directives->directive[type].reported;
 }
-oval_result_directive_content_enum oval_result_directive_content
-	(struct oval_result_directives *directives, oval_result_enum type)
+oval_result_directive_content_t oval_result_directive_get_content
+	(struct oval_result_directives *directives, oval_result_t type)
 {
 	return directives->directive[type].content;
 }
-void set_oval_result_directive_reported
-	(struct oval_result_directives *directives, oval_result_enum type, bool reported)
+void oval_result_directive_set_reported
+	(struct oval_result_directives *directives, oval_result_t type, bool reported)
 {
 	directives->directive[type].reported = reported;
 }
-void set_oval_result_directive_content
-	(struct oval_result_directives *directives, oval_result_enum type, oval_result_directive_content_enum content)
+void oval_result_directive_set_content
+	(struct oval_result_directives *directives, oval_result_t type, oval_result_directive_content_t content)
 {
 	directives->directive[type].content = content;
 }
@@ -88,7 +88,7 @@ int _oval_result_directives_parse_tag
 	(xmlTextReaderPtr reader, struct oval_parser_context *context, void *client)
 {
 	struct oval_result_directives *directives = (struct oval_result_directives *)client;
-	oval_result_directive_content_enum type = OVAL_DIRECTIVE_CONTENT_UNKNOWN;
+	oval_result_directive_content_t type = OVAL_DIRECTIVE_CONTENT_UNKNOWN;
 	char *tag_names[NUMBER_OF_RESULTS] =
 	{
 		NULL
@@ -111,11 +111,11 @@ int _oval_result_directives_parse_tag
 			char* boolstr = xmlTextReaderGetAttribute(reader, "reported");
 			bool reported = strcmp(boolstr,"1")==0 || strcmp(boolstr,"true")==0;
 			free(boolstr);
-			set_oval_result_directive_reported(directives, type, reported);
+			oval_result_directive_set_reported(directives, type, reported);
 		}
 		{//content
 			xmlChar *contentstr =  xmlTextReaderGetAttribute(reader, "content");
-			oval_result_directive_content_enum content = OVAL_DIRECTIVE_CONTENT_UNKNOWN;
+			oval_result_directive_content_t content = OVAL_DIRECTIVE_CONTENT_UNKNOWN;
 			if(contentstr){
 				char *content_names[3] = {NULL,"thin", "full"};
 				for(i=1;i<3 && content==OVAL_DIRECTIVE_CONTENT_UNKNOWN;i++){
@@ -124,7 +124,7 @@ int _oval_result_directives_parse_tag
 					}
 				}
 				if(content){
-					set_oval_result_directive_content(directives, type, content);
+					oval_result_directive_set_content(directives, type, content);
 				}else{
 					char message[200];
 					sprintf(message, "_oval_result_directives_parse_tag: cannot resolve @content=\"%s\"",contentstr);
@@ -173,11 +173,11 @@ int oval_result_directives_to_dom
 	const struct oscap_string_map *map;
 	for(map = _OVAL_DIRECTIVE_MAP;map->string; map++)
 	{
-		oval_result_enum directive = (oval_result_enum)
+		oval_result_t directive = (oval_result_t)
 			map->value;
-		bool reported = oval_result_directive_reported
+		bool reported = oval_result_directive_get_reported
 			(directives, directive);
-		oval_result_directive_content_enum content = oval_result_directive_content
+		oval_result_directive_content_t content = oval_result_directive_get_content
 			(directives, directive);
 		xmlNode *directive_node = xmlNewChild
 			(directives_node, ns_results, (map->string),NULL);

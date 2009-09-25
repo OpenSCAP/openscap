@@ -1,3 +1,4 @@
+#ifndef __STUB_PROBE
 #pragma once
 #ifndef SM_ALLOC_H
 #define SM_ALLOC_H
@@ -67,3 +68,4 @@ __P void sm_free     (void  *p) { __sm_free_dbg (&p, __FUNCTION__, 0); }
 # define _A(x) assert(x)
 #endif /* _A */
 #endif /* SM_ALLOC_H */
+#endif

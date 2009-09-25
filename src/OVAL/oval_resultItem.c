@@ -36,7 +36,7 @@
 #define OVAL_RESULT_ITEM_DEBUG 0
 
 typedef struct oval_result_item {
-	oval_result_enum          result;
+	oval_result_t          result;
 	struct oval_collection   *messages;
 	struct oval_sysdata      *sysdata;
 } oval_result_item_t;
@@ -46,7 +46,7 @@ struct oval_result_item *oval_result_item_new
 {
 	oval_result_item_t *item = (oval_result_item_t *)
 		malloc(sizeof(oval_result_item_t));
-	struct oval_syschar_model *syschar_model = oval_result_system_syschar_model(system);
+	struct oval_syschar_model *syschar_model = oval_result_system_get_syschar_model(system);
 	struct oval_sysdata *sysdata = get_oval_sysdata_new(syschar_model, item_id);
 
 	item->sysdata = sysdata;
@@ -65,15 +65,15 @@ void oval_result_item_free(struct oval_result_item *item){
 	item->sysdata      = NULL;
 }
 
-int oval_iterator_result_item_has_more(struct oval_iterator_result_item
+int oval_result_item_iterator_has_more(struct oval_result_item_iterator
 				       *oc_result_item)
 {
 	return oval_collection_iterator_has_more((struct oval_iterator *)
 						 oc_result_item);
 }
 
-struct oval_result_item *oval_iterator_result_item_next(struct
-							oval_iterator_result_item
+struct oval_result_item *oval_result_item_iterator_next(struct
+							oval_result_item_iterator
 							*oc_result_item)
 {
 	return (struct oval_result_item *)
@@ -81,30 +81,38 @@ struct oval_result_item *oval_iterator_result_item_next(struct
 					  oc_result_item);
 }
 
-struct oval_sysdata *oval_result_item_sysdata(struct oval_result_item *item)
+void oval_result_item_iterator_free(struct
+							oval_result_item_iterator
+							*oc_result_item)
+{
+    oval_collection_iterator_free((struct oval_iterator *)
+					  oc_result_item);
+}
+
+struct oval_sysdata *oval_result_item_get_sysdata(struct oval_result_item *item)
 {
 	return item->sysdata;
 }
 
 
-oval_result_enum oval_result_item_result(struct oval_result_item *item)
+oval_result_t oval_result_item_get_result(struct oval_result_item *item)
 {
 	return ((struct oval_result_item *)item)->result;
 }
 
-struct oval_iterator_message *oval_result_item_messages
+struct oval_message_iterator *oval_result_item_get_messages
 	(struct oval_result_item *item)
 {
-	return (struct oval_iterator_message *)
+	return (struct oval_message_iterator *)
 		oval_collection_iterator(item->messages);
 }
 
-void set_oval_result_item_result(struct oval_result_item *item, oval_result_enum result)
+void oval_result_item_set_result(struct oval_result_item *item, oval_result_t result)
 {
 	item->result = result;
 }
 
-void add_oval_result_item_message
+void oval_result_item_add_message
 	(struct oval_result_item *item, struct oval_message *message)
 {
 	oval_collection_add(item->messages, message);
@@ -113,7 +121,7 @@ void add_oval_result_item_message
 void _oval_result_item_message_consumer
 	(struct oval_message *message, struct oval_result_item *item)
 {
-	add_oval_result_item_message(item, message);
+	oval_result_item_add_message(item, message);
 }
 
 int _oval_result_item_message_parse
@@ -133,10 +141,10 @@ int oval_result_item_parse_tag
 	int return_code = 0;
 
 	xmlChar *item_id = xmlTextReaderGetAttribute(reader, "item_id");
-	struct oval_result_item *item = oval_result_item_new(system, item_id);
+	struct oval_result_item *item = get_oval_result_item_new(system, item_id);
 
-	oval_result_enum result = oval_result_parse(reader, "result", 0);
-	set_oval_result_item_result(item, result);
+	oval_result_t result = oval_result_parse(reader, "result", 0);
+	oval_result_item_set_result(item, result);
 
 	if(OVAL_RESULT_ITEM_DEBUG){
 		char message[200]; *message = '\0';
@@ -146,8 +154,8 @@ int oval_result_item_parse_tag
 				"oval_result_item_parse_tag:\n"
 				"    item_id = %s\n"
 				"    result  = %d",
-				oval_sysdata_id(oval_result_item_sysdata(item)),
-				oval_result_item_result(item)
+				oval_sysdata_get_id(oval_result_item_get_sysdata(item)),
+				oval_result_item_get_result(item)
 		);
 		oval_parser_log_debug(context, message);
 	}
@@ -168,12 +176,12 @@ xmlNode *oval_result_item_to_dom
 	xmlNs *ns_results = xmlSearchNsByHref(doc, parent, OVAL_RESULTS_NAMESPACE);
 	xmlNode *item_node = xmlNewChild(parent, ns_results, "tested_item", NULL);
 
-	struct oval_sysdata *oval_sysdata = oval_result_item_sysdata(rslt_item);
-	char *item_id = oval_sysdata_id(oval_sysdata);
+	struct oval_sysdata *oval_sysdata = oval_result_item_get_sysdata(rslt_item);
+	char *item_id = oval_sysdata_get_id(oval_sysdata);
 	xmlNewProp(item_node, "item_id", item_id);
 
-	oval_result_enum result = oval_result_item_result(rslt_item);
-	xmlNewProp(item_node, "result", oval_result_text(result));
+	oval_result_t result = oval_result_item_get_result(rslt_item);
+	xmlNewProp(item_node, "result", oval_result_get_text(result));
 
 	return item_node;
 }

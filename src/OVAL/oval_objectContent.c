@@ -36,31 +36,31 @@
 
 typedef struct oval_object_content {
 	char *fieldName;
-	oval_object_content_type_enum type;
+	oval_object_content_type_t type;
 } oval_object_content_t;
 
 typedef struct oval_object_content_ENTITY {
 	char *fieldName;
-	oval_object_content_type_enum type;
+	oval_object_content_type_t type;
 	struct oval_entity *entity;	//type == OVAL_OBJECTCONTENT_ENTITY
-	oval_check_enum varCheck;	//type == OVAL_OBJECTCONTENT_ENTITY
+	oval_check_t varCheck;	//type == OVAL_OBJECTCONTENT_ENTITY
 } oval_object_content_ENTITY_t;
 
 typedef struct oval_object_content_SET {
 	char *fieldName;
-	oval_object_content_type_enum type;
-	struct oval_set *set;	//type == OVAL_OBJECTCONTENT_SET
+	oval_object_content_type_t type;
+	struct oval_setobject *set;	//type == OVAL_OBJECTCONTENT_SET
 } oval_object_content_SET_t;
 
-int oval_iterator_object_content_has_more(struct oval_iterator_object_content
+int oval_object_content_iterator_has_more(struct oval_object_content_iterator
 					  *oc_object_content)
 {
 	return oval_collection_iterator_has_more((struct oval_iterator *)
 						 oc_object_content);
 }
 
-struct oval_object_content *oval_iterator_object_content_next(struct
-							      oval_iterator_object_content
+struct oval_object_content *oval_object_content_iterator_next(struct
+							      oval_object_content_iterator
 							      *oc_object_content)
 {
 	return (struct oval_object_content *)
@@ -68,53 +68,61 @@ struct oval_object_content *oval_iterator_object_content_next(struct
 					  oc_object_content);
 }
 
-char *oval_object_content_field_name(struct oval_object_content *content)
+void oval_object_content_iterator_free(struct
+							      oval_object_content_iterator
+							      *oc_object_content)
+{
+    oval_collection_iterator_free((struct oval_iterator *)
+					  oc_object_content);
+}
+
+char *oval_object_content_get_field_name(struct oval_object_content *content)
 {
 	return ((struct oval_object_content *)content)->fieldName;
 }
 
-oval_object_content_type_enum oval_object_content_type(struct
+oval_object_content_type_t oval_object_content_get_type(struct
 						       oval_object_content
 						       *content)
 {
 	return ((struct oval_object_content *)content)->type;
 }
 
-struct oval_entity *oval_object_content_entity(struct oval_object_content
+struct oval_entity *oval_object_content_get_entity(struct oval_object_content
 					       *content)
 {
 	//type == OVAL_OBJECTCONTENT_ENTITY
 	struct oval_entity *entity = NULL;
-	if (oval_object_content_type(content) == OVAL_OBJECTCONTENT_ENTITY) {
+	if (oval_object_content_get_type(content) == OVAL_OBJECTCONTENT_ENTITY) {
 		entity = ((struct oval_object_content_ENTITY *)content)->entity;
 	}
 	return entity;
 }
 
-oval_check_enum oval_object_content_varCheck(struct oval_object_content *
+oval_check_t oval_object_content_get_varCheck(struct oval_object_content *
 					     content)
 {
 	//type == OVAL_OBJECTCONTENT_ENTITY
-	oval_check_enum varCheck = OVAL_CHECK_UNKNOWN;
-	if (oval_object_content_type(content) == OVAL_OBJECTCONTENT_ENTITY) {
+	oval_check_t varCheck = OVAL_CHECK_UNKNOWN;
+	if (oval_object_content_get_type(content) == OVAL_OBJECTCONTENT_ENTITY) {
 		varCheck =
 		    ((struct oval_object_content_ENTITY *)content)->varCheck;
 	}
 	return varCheck;
 }
 
-struct oval_set *oval_object_content_set(struct oval_object_content *content)
+struct oval_setobject *oval_object_content_get_setobject(struct oval_object_content *content)
 {
 	//type == OVAL_OBJECTCONTENT_SET
-	struct oval_set *set = NULL;
-	if (oval_object_content_type(content) == OVAL_OBJECTCONTENT_SET) {
+	struct oval_setobject *set = NULL;
+	if (oval_object_content_get_type(content) == OVAL_OBJECTCONTENT_SET) {
 		set = ((struct oval_object_content_SET *)content)->set;
 	}
 	return set;
 }
 
 struct oval_object_content
-    *oval_object_content_new(oval_object_content_type_enum type)
+    *oval_object_content_new(oval_object_content_type_t type)
 {
 	struct oval_object_content *content = NULL;
 	switch (type) {
@@ -169,30 +177,30 @@ void oval_object_content_free(struct oval_object_content *content)
 	}
 	free(content);
 }
-void set_oval_object_content_type(struct oval_object_content *content, oval_object_content_type_enum type)
+void oval_object_content_set_type(struct oval_object_content *content, oval_object_content_type_t type)
 {
 	content->type = type;
 }
-void set_oval_object_content_field_name(struct oval_object_content *content, char *name)
+void oval_object_content_set_field_name(struct oval_object_content *content, char *name)
 {
 	if(content->fieldName!=NULL)free(content->fieldName);
 	content->fieldName = name==NULL?NULL:strdup(name);
 }
-void set_oval_object_content_entity(struct oval_object_content *content, struct oval_entity *entity)//type == OVAL_OBJECTCONTENT_ENTITY
+void oval_object_content_set_entity(struct oval_object_content *content, struct oval_entity *entity)//type == OVAL_OBJECTCONTENT_ENTITY
 {
 	if(content->type == OVAL_OBJECTCONTENT_ENTITY){
 		oval_object_content_ENTITY_t *content_ENTITY = (oval_object_content_ENTITY_t *)content;
 		content_ENTITY->entity = entity;
 	}
 }
-void set_oval_object_content_varCheck(struct oval_object_content *content, oval_check_enum check)//type == OVAL_OBJECTCONTENT_ENTITY
+void oval_object_content_set_varCheck(struct oval_object_content *content, oval_check_t check)//type == OVAL_OBJECTCONTENT_ENTITY
 {
 	if(content->type == OVAL_OBJECTCONTENT_ENTITY){
 		oval_object_content_ENTITY_t *content_ENTITY = (oval_object_content_ENTITY_t *)content;
 		content_ENTITY->varCheck = check;
 	}
 }
-void set_oval_object_content_set(struct oval_object_content *content, struct oval_set *set)//type == OVAL_OBJECTCONTENT_SET
+void oval_object_content_set_setobject(struct oval_object_content *content, struct oval_setobject *set)//type == OVAL_OBJECTCONTENT_SET
 {
 	if(content->type == OVAL_OBJECTCONTENT_SET){
 		oval_object_content_SET_t *content_SET = (oval_object_content_SET_t *)content;
@@ -205,7 +213,7 @@ void oval_consume_entity(struct oval_entity *entity,
 			void *content_entity) {
 	((struct oval_object_content_ENTITY *)content_entity)->entity = entity;
 }
-void oval_consume_set(struct oval_set *set, void *content_set) {
+void oval_consume_set(struct oval_setobject *set, void *content_set) {
 	((struct oval_object_content_SET *)content_set)->set = set;
 }
 int oval_object_content_parse_tag(xmlTextReaderPtr reader,
@@ -216,7 +224,7 @@ int oval_object_content_parse_tag(xmlTextReaderPtr reader,
 	char *tagname = (char*) xmlTextReaderName(reader);
 	xmlChar *namespace = xmlTextReaderNamespaceUri(reader);
 
-	oval_object_content_type_enum type =
+	oval_object_content_type_t type =
 	    (strcmp(tagname, "set") ==
 	     0) ? OVAL_OBJECTCONTENT_SET : OVAL_OBJECTCONTENT_ENTITY;
 	struct oval_object_content *content = oval_object_content_new(type);
@@ -269,15 +277,15 @@ void oval_object_content_to_print(struct oval_object_content *content,
 		snprintf(nxtindent, sizeof(nxtindent), "%sCONTENT[%d].", indent, idx);
 
 	printf("%sFIELD     = %s\n", nxtindent,
-	       oval_object_content_field_name(content));
+	       oval_object_content_get_field_name(content));
 	printf("%sTYPE      = %d\n", nxtindent,
-	       oval_object_content_type(content));
-	switch (oval_object_content_type(content)) {
+	       oval_object_content_get_type(content));
+	switch (oval_object_content_get_type(content)) {
 	case OVAL_OBJECTCONTENT_ENTITY:{
 			printf("%sVAR_CHECK = %d\n", nxtindent,
-			       oval_object_content_varCheck(content));
+			       oval_object_content_get_varCheck(content));
 			struct oval_entity *entity =
-			    oval_object_content_entity(content);
+			    oval_object_content_get_entity(content);
 			if (entity == NULL)
 				printf("%sENTITY    <<NOT SET>>\n", nxtindent);
 			else
@@ -285,7 +293,7 @@ void oval_object_content_to_print(struct oval_object_content *content,
 		}
 		break;
 	case OVAL_OBJECTCONTENT_SET:{
-			struct oval_set *set = oval_object_content_set(content);
+			struct oval_setobject *set = oval_object_content_get_setobject(content);
 			oval_set_to_print(set, nxtindent, 0);
 		} break;
 	case OVAL_OBJECTCONTENT_UNKNOWN: break;
@@ -296,17 +304,17 @@ xmlNode *oval_object_content_to_dom
 	(struct oval_object_content *content, xmlDoc *doc, xmlNode *parent)
 {
 	xmlNode *content_node;
-	switch(oval_object_content_type(content))
+	switch(oval_object_content_get_type(content))
 	{
 	case OVAL_OBJECTCONTENT_ENTITY:{
-		struct oval_entity *entity = oval_object_content_entity(content);
+		struct oval_entity *entity = oval_object_content_get_entity(content);
 		content_node = oval_entity_to_dom(entity, doc, parent);
-		oval_check_enum check = oval_object_content_varCheck(content);
+		oval_check_t check = oval_object_content_get_varCheck(content);
 		if(check!=OVAL_CHECK_ALL)
-			xmlNewProp(content_node, "var_check", oval_check_text(check));
+			xmlNewProp(content_node, "var_check", oval_check_get_text(check));
 	}break;
 	case OVAL_OBJECTCONTENT_SET:{
-		struct oval_set *set = oval_object_content_set(content);
+		struct oval_setobject *set = oval_object_content_get_setobject(content);
 		content_node = oval_set_to_dom(set, doc, parent);
 	}break;
 	default: content_node = NULL;

@@ -1,3 +1,4 @@
+#ifndef __STUB_PROBE
 #include <seap.h>
 #include <string.h>
 #include <assert.h>
@@ -116,3 +117,4 @@ SEXP_t *pcache_cstr_get (pcache_t *cache, const char *id)
         
         return (node == NULL ? NULL : node->item);
 }
+#endif

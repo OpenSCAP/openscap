@@ -1,3 +1,4 @@
+#ifndef __STUB_PROBE
 /*
  * family probe:
  *
@@ -62,3 +63,4 @@ SEXP_t *probe_main(SEXP_t *probe_in, int *err)
 	*err = 0;
 	return lst;
 }
+#endif

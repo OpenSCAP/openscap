@@ -1,3 +1,4 @@
+#ifndef __STUB_PROBE
 #include <sexp-types.h>
 #include <sexp-manip.h>
 #include <assert.h>
@@ -725,3 +726,4 @@ void SEXP_OVALitem_resetid(struct id_desc_t *id_desc)
 {
         id_desc->item_id_ctr = 1;
 }
+#endif

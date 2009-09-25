@@ -1,3 +1,4 @@
+#ifndef __STUB_PROBE
 #pragma once
 #ifndef _SEAP_COMMAND_H
 #define _SEAP_COMMAND_H
@@ -100,3 +101,4 @@ void SEAP_cmdjob_free (SEAP_cmdjob_t *j);
 SEXP_t *SEAP_cmd2sexp (SEAP_cmd_t *cmd);
 
 #endif /* _SEAP_COMMAND_H */
+#endif

@@ -1,3 +1,4 @@
+#ifndef __STUB_PROBE
 #include <stdio.h>
 #include <stddef.h>
 #include <string.h>
@@ -286,3 +287,4 @@ int fsdev_fd (fsdev_t *lfs, int fd)
 
         return fsdev_search (lfs, &st.st_dev);
 }
+#endif

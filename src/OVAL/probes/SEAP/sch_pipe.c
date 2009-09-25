@@ -1,3 +1,4 @@
+#ifndef __STUB_PROBE
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -276,3 +277,4 @@ int sch_pipe_select (SEAP_desc_t *desc, int ev, uint16_t timeout, uint32_t flags
         /* NOTREACHED */
         return (-1);
 }
+#endif

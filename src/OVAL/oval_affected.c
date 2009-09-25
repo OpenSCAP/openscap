@@ -36,40 +36,46 @@
 #include "oval_string_map_impl.h"
 
 typedef struct oval_affected {
-	oval_affected_family_enum family;
+	oval_affected_family_t family;
 	struct oval_collection *platforms;
 	struct oval_collection *products;
 } oval_affected_t;
 
-int oval_iterator_affected_has_more(struct oval_iterator_affected *oc_affected)
+int oval_affected_iterator_has_more(struct oval_affected_iterator *oc_affected)
 {
 	return oval_collection_iterator_has_more((struct oval_iterator *)
 						 oc_affected);
 }
 
-struct oval_affected *oval_iterator_affected_next(struct oval_iterator_affected
+struct oval_affected *oval_affected_iterator_next(struct oval_affected_iterator
 						  *oc_affected)
 {
 	return (struct oval_affected *)
 	    oval_collection_iterator_next((struct oval_iterator *)oc_affected);
 }
 
-oval_affected_family_enum oval_affected_family(struct oval_affected *affected)
+void oval_affected_iterator_free(struct oval_affected_iterator
+						  *oc_affected)
+{
+    oval_collection_iterator_free((struct oval_iterator *)oc_affected);
+}
+
+oval_affected_family_t oval_affected_get_family(struct oval_affected *affected)
 {
 	return ((struct oval_affected *)affected)->family;
 }
 
-struct oval_iterator_string *oval_affected_platform(struct oval_affected
+struct oval_string_iterator *oval_affected_get_platform(struct oval_affected
 						    *affected)
 {
-	return (struct oval_iterator_string *)
+	return (struct oval_string_iterator *)
 	    oval_collection_iterator(affected->platforms);
 }
 
-struct oval_iterator_string *oval_affected_product(struct oval_affected
+struct oval_string_iterator *oval_affected_get_product(struct oval_affected
 						   *affected)
 {
-	return (struct oval_iterator_string *)
+	return (struct oval_string_iterator *)
 	    oval_collection_iterator(affected->products);
 }
 
@@ -77,7 +83,7 @@ struct oval_affected *oval_affected_new()
 {
 	struct oval_affected *affected =
 	    (struct oval_affected *)malloc(sizeof(oval_affected_t));
-	affected->family = AFCFML_UNKNOWN;
+	affected->family = OVAL_AFCFML_UNKNOWN;
 	affected->platforms = oval_collection_new();
 	affected->products = oval_collection_new();
 	return affected;
@@ -92,18 +98,18 @@ void oval_affected_free(struct oval_affected *affected)
 	free(affected);
 }
 
-void set_oval_affected_family(struct oval_affected *affected,
-			      oval_affected_family_enum family)
+void oval_affected_set_family(struct oval_affected *affected,
+			      oval_affected_family_t family)
 {
 	affected->family = family;
 }
 
-void add_oval_affected_platform(struct oval_affected *affected, char *platform)
+void oval_affected_add_platform(struct oval_affected *affected, char *platform)
 {
 	oval_collection_add(affected->platforms, (void *)strdup(platform));
 }
 
-void add_oval_affected_product(struct oval_affected *affected, char *product)
+void oval_affected_add_product(struct oval_affected *affected, char *product)
 {
 	oval_collection_add(affected->products, (void *)strdup(product));
 }
@@ -122,22 +128,22 @@ void _odafamily_set(char *name, int val)
 */
 
 const struct oscap_string_map OVAL_ODAFAMILY_MAP[] = {
-	{ AFCFML_CATOS,     "catos"     },
-	{ AFCFML_IOS,       "ios"       },
-	{ AFCFML_MACOS,     "macos"     },
-	{ AFCFML_PIXOS,     "pixos"     },
-	{ AFCFML_UNDEFINED, "undefined" },
-	{ AFCFML_UNIX,      "unix"      },
-	{ AFCFML_WINDOWS,   "windows"   },
-	{ CLASS_UNKNOWN, NULL }
+	{ OVAL_AFCFML_CATOS,     "catos"     },
+	{ OVAL_AFCFML_IOS,       "ios"       },
+	{ OVAL_AFCFML_MACOS,     "macos"     },
+	{ OVAL_AFCFML_PIXOS,     "pixos"     },
+	{ OVAL_AFCFML_UNDEFINED, "undefined" },
+	{ OVAL_AFCFML_UNIX,      "unix"      },
+	{ OVAL_AFCFML_WINDOWS,   "windows"   },
+	{ OVAL_CLASS_UNKNOWN, NULL }
 };
 
-oval_affected_family_enum _odafamily(char *family)
+oval_affected_family_t _odafamily(char *family)
 {
 	return oscap_string_to_enum(OVAL_ODAFAMILY_MAP, family);
 }
 
-const char* oval_affected_family_text(oval_affected_family_enum family)
+const char* oval_affected_family_get_text(oval_affected_family_t family)
 {
 	return OVAL_ODAFAMILY_MAP[family-1].string;
 }
@@ -154,7 +160,7 @@ int _oval_affected_parse_tag(xmlTextReaderPtr reader,
 		return_code =
 		    oval_parser_text_value(reader, context, &oval_text_consumer,&platform);
 		if (platform != NULL){
-			add_oval_affected_platform(affected, platform);
+			oval_affected_add_platform(affected, platform);
 			free(platform);
 		}
 	} else if (strcmp((char *) tagname, "product") == 0) {
@@ -162,13 +168,13 @@ int _oval_affected_parse_tag(xmlTextReaderPtr reader,
 		return_code =
 		    oval_parser_text_value(reader, context, &oval_text_consumer,&product);
 		if (product != NULL){
-			add_oval_affected_product(affected, product);
+			oval_affected_add_product(affected, product);
 			free(product);
 		}
 	} else {
 		int linno = xmlTextReaderGetParserLineNumber(reader);
-		printf
-		    ("NOTICE::(oval_affected)skipping <%s> depth = %d line = %d\n",
+		fprintf
+		    (stderr, "NOTICE::(oval_affected)skipping <%s> depth = %d line = %d\n",
 		     tagname, xmlTextReaderDepth(reader), linno);
 		return_code = oval_parser_skip_tag(reader, context);
 	}
@@ -184,7 +190,7 @@ int oval_affected_parse_tag(xmlTextReaderPtr reader,
 	//xmlChar *tagname = xmlTextReaderName(reader);
 	//xmlChar *namespace = xmlTextReaderNamespaceUri(reader);
 	char *family = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "family");
-	set_oval_affected_family(affected, _odafamily(family));
+	oval_affected_set_family(affected, _odafamily(family));
 	free(family);
 	(*consumer) (affected, user);
 	return oval_parser_parse_tag(reader, context, &_oval_affected_parse_tag,
@@ -211,10 +217,13 @@ void oval_affected_to_print(struct oval_affected *affected, char *indent,
 		void *platform = oval_collection_iterator_next(platforms);
 		printf("%sPLATFORM[%d] = %s\n", nxtindent, idx, (char *) platform);
 	}
+	oval_collection_iterator_free(platforms);
+
 	struct oval_iterator *products =
 	    oval_collection_iterator(affected->products);
 	for (idx = 1; oval_collection_iterator_has_more(products); idx++) {
 		void *product = oval_collection_iterator_next(products);
 		printf("%sPRODUCT[%d] = %s\n", nxtindent, idx, (char *) product);
 	}
+	oval_collection_iterator_free(products);
 }

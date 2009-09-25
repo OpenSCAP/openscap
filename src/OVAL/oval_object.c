@@ -35,7 +35,7 @@
 #include "oval_agent_api_impl.h"
 
 typedef struct oval_object {
-	oval_subtype_enum subtype;
+	oval_subtype_t subtype;
 	struct oval_collection *notes;
 	char *comment;
 	char *id;
@@ -45,66 +45,72 @@ typedef struct oval_object {
 	struct oval_collection *behaviors;
 } oval_object_t;
 
-int oval_iterator_object_has_more(struct oval_iterator_object *oc_object)
+int oval_object_iterator_has_more(struct oval_object_iterator *oc_object)
 {
 	return oval_collection_iterator_has_more((struct oval_iterator *)
 						 oc_object);
 }
 
-struct oval_object *oval_iterator_object_next(struct oval_iterator_object
+struct oval_object *oval_object_iterator_next(struct oval_object_iterator
 					      *oc_object)
 {
 	return (struct oval_object *)
 	    oval_collection_iterator_next((struct oval_iterator *)oc_object);
 }
 
-oval_family_enum oval_object_family(struct oval_object *object)
+void oval_object_iterator_free(struct oval_object_iterator
+					      *oc_object)
+{
+    oval_collection_iterator_free((struct oval_iterator *)oc_object);
+}
+
+oval_family_t oval_object_get_family(struct oval_object *object)
 {
 	return ((object->subtype) / 1000) * 1000;
 }
 
-oval_subtype_enum oval_object_subtype(struct oval_object * object)
+oval_subtype_t oval_object_get_subtype(struct oval_object * object)
 {
 	return ((struct oval_object *)object)->subtype;
 }
 
-struct oval_iterator_string *oval_object_notes(struct oval_object *object)
+struct oval_string_iterator *oval_object_get_notes(struct oval_object *object)
 {
-	return (struct oval_iterator_string *)oval_collection_iterator(object->
+	return (struct oval_string_iterator *)oval_collection_iterator(object->
 								       notes);
 }
 
-char *oval_object_comment(struct oval_object *object)
+char *oval_object_get_comment(struct oval_object *object)
 {
 	return ((struct oval_object *)object)->comment;
 }
 
-char *oval_object_id(struct oval_object *object)
+char *oval_object_get_id(struct oval_object *object)
 {
 	return ((struct oval_object *)object)->id;
 }
 
-int oval_object_deprecated(struct oval_object *object)
+int oval_object_get_deprecated(struct oval_object *object)
 {
 	return ((struct oval_object *)object)->deprecated;
 }
 
-int oval_object_version(struct oval_object *object)
+int oval_object_get_version(struct oval_object *object)
 {
 	return ((struct oval_object *)object)->version;
 }
 
-struct oval_iterator_object_content *oval_object_object_content(struct
+struct oval_object_content_iterator *oval_object_get_object_content(struct
 								oval_object
 								*object)
 {
-	return (struct oval_iterator_object_content *)
+	return (struct oval_object_content_iterator *)
 	    oval_collection_iterator(object->object_content);
 }
 
-struct oval_iterator_behavior *oval_object_behaviors(struct oval_object *object)
+struct oval_behavior_iterator *oval_object_get_behaviors(struct oval_object *object)
 {
-	return (struct oval_iterator_behavior *)
+	return (struct oval_behavior_iterator *)
 	    oval_collection_iterator(object->behaviors);
 }
 
@@ -140,47 +146,47 @@ void oval_object_free(struct oval_object *object)
 	free(object);
 }
 
-void set_oval_object_subtype(struct oval_object *object,
-			     oval_subtype_enum subtype)
+void oval_object_set_subtype(struct oval_object *object,
+			     oval_subtype_t subtype)
 {
 	object->subtype = subtype;
 }
 
-void add_oval_object_notes(struct oval_object *object, char *note)
+void oval_object_add_note(struct oval_object *object, char *note)
 {
 	oval_collection_add(object->notes, (void *)strdup(note));
 }
 
-void set_oval_object_comment(struct oval_object *object, char *comm)
+void oval_object_set_comment(struct oval_object *object, char *comm)
 {
 	if(object->comment!=NULL)free(object->comment);
 	object->comment = comm==NULL?NULL:strdup(comm);
 }
 
-void set_oval_object_deprecated(struct oval_object *object, int deprecated)
+void oval_object_set_deprecated(struct oval_object *object, int deprecated)
 {
 	object->deprecated = deprecated;
 }
 
-void set_oval_object_version(struct oval_object *object, int version)
+void oval_object_set_version(struct oval_object *object, int version)
 {
 	object->version = version;
 }
 
-void add_oval_object_object_content(struct oval_object *object,
+void oval_object_add_object_content(struct oval_object *object,
 				    struct oval_object_content *content)
 {
 	oval_collection_add(object->object_content, (void *)content);
 }
 
-void add_oval_object_behaviors(struct oval_object *object,
+void oval_object_add_behaviors(struct oval_object *object,
 			       struct oval_behavior *behavior)
 {
 	oval_collection_add(object->behaviors, (void *)behavior);
 }
 
 void oval_note_consume(char *text, void *object) {
-	add_oval_object_notes(object, text);
+	oval_object_add_note(object, text);
 }
 int _oval_object_parse_notes(xmlTextReaderPtr reader,
 			     struct oval_parser_context *context, void *user)
@@ -191,11 +197,11 @@ int _oval_object_parse_notes(xmlTextReaderPtr reader,
 
 void oval_behavior_consume(struct oval_behavior *behavior,
 			   void *object) {
-	add_oval_object_behaviors(object, behavior);
+	oval_object_add_behaviors(object, behavior);
 }
 void oval_content_consume(struct oval_object_content *content,
 			  void *object) {
-	add_oval_object_object_content(object, content);
+	oval_object_add_object_content(object, content);
 }
 int _oval_object_parse_tag(xmlTextReaderPtr reader,
 			   struct oval_parser_context *context, void *user)
@@ -211,7 +217,7 @@ int _oval_object_parse_tag(xmlTextReaderPtr reader,
 	} else if (strcmp(tagname, "behaviors") == 0) {
 		return_code =
 		    oval_behavior_parse_tag(reader, context,
-					    oval_object_family(object),
+					    oval_object_get_family(object),
 					    &oval_behavior_consume, object);
 	} else {
 		return_code =
@@ -229,29 +235,33 @@ int _oval_object_parse_tag(xmlTextReaderPtr reader,
 	return return_code;
 }
 
+#define DEBUG_OVAL_OBJECT 0
+#define  STUB_OVAL_OBJECT 0
+
 int oval_object_parse_tag(xmlTextReaderPtr reader,
 			  struct oval_parser_context *context)
 {
 	struct oval_object_model *model = oval_parser_context_model(context);
-	//printf("DEBUG::oval_object_parse_tag::id = %s\n", id);
 	char *id = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "id");
+	if(DEBUG_OVAL_OBJECT)printf("DEBUG::oval_object_parse_tag::id = %s\n", id);
 	struct oval_object *object = get_oval_object_new(model, id);
 	free(id);id=NULL;
-	oval_subtype_enum subtype = oval_subtype_parse(reader);
-	set_oval_object_subtype(object, subtype);
+	oval_subtype_t subtype = oval_subtype_parse(reader);
+	oval_object_set_subtype(object, subtype);
 	char *comm = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "comment");
 	if(comm!=NULL){
-		set_oval_object_comment(object, comm);
+		oval_object_set_comment(object, comm);
 		free(comm);comm=NULL;
 	}
 	int deprecated = oval_parser_boolean_attribute(reader, "deprecated", 0);
-	set_oval_object_deprecated(object, deprecated);
+	oval_object_set_deprecated(object, deprecated);
 	char *version = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "version");
-	set_oval_object_version(object, atoi(version));
+	oval_object_set_version(object, atoi(version));
 	free(version);
 
-	int return_code =
-	    oval_parser_parse_tag(reader, context, &_oval_object_parse_tag,
+	int return_code = (STUB_OVAL_OBJECT)
+		?oval_parser_skip_tag(reader, context)
+	    :oval_parser_parse_tag(reader, context, &_oval_object_parse_tag,
 				  object);
 	return return_code;
 }
@@ -268,46 +278,49 @@ void oval_object_to_print(struct oval_object *object, char *indent, int idx)
 	else
 		snprintf(nxtindent, sizeof(nxtindent), "%sOBJECT[%d].", indent, idx);
 
-	printf("%sID         = %s\n", nxtindent, oval_object_id(object));
-	printf("%sFAMILY     = %d\n", nxtindent, oval_object_family(object));
-	printf("%sSUBTYPE    = %d\n", nxtindent, oval_object_subtype(object));
-	printf("%sVERSION    = %d\n", nxtindent, oval_object_version(object));
-	printf("%sCOMMENT    = %s\n", nxtindent, oval_object_comment(object));
+	printf("%sID         = %s\n", nxtindent, oval_object_get_id(object));
+	printf("%sFAMILY     = %d\n", nxtindent, oval_object_get_family(object));
+	printf("%sSUBTYPE    = %d\n", nxtindent, oval_object_get_subtype(object));
+	printf("%sVERSION    = %d\n", nxtindent, oval_object_get_version(object));
+	printf("%sCOMMENT    = %s\n", nxtindent, oval_object_get_comment(object));
 	printf("%sDEPRECATED = %d\n", nxtindent,
-	       oval_object_deprecated(object));
-	struct oval_iterator_string *notes = oval_object_notes(object);
-	for (idx = 1; oval_iterator_string_has_more(notes); idx++) {
+	       oval_object_get_deprecated(object));
+	struct oval_string_iterator *notes = oval_object_get_notes(object);
+	for (idx = 1; oval_string_iterator_has_more(notes); idx++) {
 		printf("%sNOTE[%d]    = %s\n", nxtindent, idx,
-		       oval_iterator_string_next(notes));
+		       oval_string_iterator_next(notes));
 	}
-	struct oval_iterator_behavior *behaviors =
-	    oval_object_behaviors(object);
-	for (idx = 1; oval_iterator_behavior_has_more(behaviors); idx++) {
+	oval_string_iterator_free(notes);
+	struct oval_behavior_iterator *behaviors =
+	    oval_object_get_behaviors(object);
+	for (idx = 1; oval_behavior_iterator_has_more(behaviors); idx++) {
 		struct oval_behavior *behavior =
-		    oval_iterator_behavior_next(behaviors);
+		    oval_behavior_iterator_next(behaviors);
 		oval_behavior_to_print(behavior, nxtindent, idx);
 	}
-	struct oval_iterator_object_content *contents =
-	    oval_object_object_content(object);
-	for (idx = 1; oval_iterator_object_content_has_more(contents);
+	oval_behavior_iterator_free(behaviors);
+	struct oval_object_content_iterator *contents =
+	    oval_object_get_object_content(object);
+	for (idx = 1; oval_object_content_iterator_has_more(contents);
 	     idx++) {
 		struct oval_object_content *content =
-		    oval_iterator_object_content_next(contents);
+		    oval_object_content_iterator_next(contents);
 		oval_object_content_to_print(content, nxtindent, idx);
 	}
+	oval_object_content_iterator_free(contents);
 }
 
 xmlNode *oval_object_to_dom
 	(struct oval_object *object, xmlDoc *doc, xmlNode *parent)
 {
-	oval_subtype_enum subtype = oval_object_subtype(object);
-	const char *subtype_text = oval_subtype_text(subtype);
+	oval_subtype_t subtype = oval_object_get_subtype(object);
+	const char *subtype_text = oval_subtype_get_text(subtype);
 	char  object_name[strlen(subtype_text)+8]; *object_name = '\0';
 	strcat(strcat(object_name, subtype_text), "_object");
 	xmlNode *object_node = xmlNewChild(parent, NULL, object_name, NULL);
 
-	oval_family_enum family = oval_object_family(object);
-	const char *family_text = oval_family_text(family);
+	oval_family_t family = oval_object_get_family(object);
+	const char *family_text = oval_family_get_text(family);
 	char family_uri[strlen(OVAL_DEFINITIONS_NAMESPACE)+strlen(family_text)+2];
 	*family_uri = '\0';
 	strcat(strcat(strcat(family_uri, OVAL_DEFINITIONS_NAMESPACE),"#"),family_text);
@@ -315,46 +328,49 @@ xmlNode *oval_object_to_dom
 
 	xmlSetNs(object_node, ns_family);
 
-	char *id = oval_object_id(object);
+	char *id = oval_object_get_id(object);
 	xmlNewProp(object_node, "id", id);
 
 	char version[10]; *version = '\0';
-	snprintf(version, sizeof(version), "%d", oval_object_version(object));
+	snprintf(version, sizeof(version), "%d", oval_object_get_version(object));
 	xmlNewProp(object_node, "version", version);
 
-	char *comment = oval_object_comment(object);
+	char *comment = oval_object_get_comment(object);
 	if(comment)xmlNewProp(object_node, "comment", comment);
 
-	bool deprecated = oval_object_deprecated(object);
+	bool deprecated = oval_object_get_deprecated(object);
 	if(deprecated)
 		xmlNewProp(object_node, "deprecated", "true");
 
-	struct oval_iterator_string *notes = oval_object_notes(object);
-	if(oval_iterator_string_has_more(notes)){
+	struct oval_string_iterator *notes = oval_object_get_notes(object);
+	if(oval_string_iterator_has_more(notes)){
 		xmlNs *ns_definitions = xmlSearchNsByHref(doc, parent, OVAL_DEFINITIONS_NAMESPACE);
 		xmlNode *notes_node = xmlNewChild(object_node, ns_definitions, "notes", NULL);
-		while(oval_iterator_string_has_more(notes)){
-			char *note = oval_iterator_string_next(notes);
+		while(oval_string_iterator_has_more(notes)){
+			char *note = oval_string_iterator_next(notes);
 			xmlNewChild(notes_node, ns_definitions, "note", note);
 		}
 	}
+	oval_string_iterator_free(notes);
 
-	struct oval_iterator_behavior *behaviors = oval_object_behaviors(object);
-	if(oval_iterator_behavior_has_more(behaviors)){
+	struct oval_behavior_iterator *behaviors = oval_object_get_behaviors(object);
+	if(oval_behavior_iterator_has_more(behaviors)){
 		xmlNode *behaviors_node = xmlNewChild(object_node, ns_family, "behaviors", NULL);
-		while(oval_iterator_behavior_has_more(behaviors)){
-			struct oval_behavior *behavior = oval_iterator_behavior_next(behaviors);
-			char *key   = oval_behavior_key  (behavior);
-			char *value = oval_behavior_value(behavior);
+		while(oval_behavior_iterator_has_more(behaviors)){
+			struct oval_behavior *behavior = oval_behavior_iterator_next(behaviors);
+			char *key   = oval_behavior_get_key  (behavior);
+			char *value = oval_behavior_get_value(behavior);
 			xmlNewProp(behaviors_node, key, value);
 		}
 	}
+	oval_behavior_iterator_free(behaviors);
 
-	struct oval_iterator_object_content *contents = oval_object_object_content(object);
-	int index;for(index=0;oval_iterator_object_content_has_more(contents); index++){
-		struct oval_object_content *content = oval_iterator_object_content_next(contents);
+	struct oval_object_content_iterator *contents = oval_object_get_object_content(object);
+	int index;for(index=0;oval_object_content_iterator_has_more(contents); index++){
+		struct oval_object_content *content = oval_object_content_iterator_next(contents);
 		oval_object_content_to_dom(content, doc, object_node);
 	}
+	oval_object_content_iterator_free(contents);
 
 	return object_node;
 }

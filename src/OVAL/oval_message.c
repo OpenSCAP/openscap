@@ -38,7 +38,7 @@ int DEBUG_OVAL_MESSAGE = 0;
 
 typedef struct oval_message {
 	char*                   text;
-	oval_message_level_enum level;
+	oval_message_level_t level;
 } oval_message_t;
 
 struct oval_message *oval_message_new(){
@@ -55,34 +55,40 @@ void oval_message_free(struct oval_message *message){
 	free(message);
 }
 
-int oval_iterator_message_has_more(struct oval_iterator_message *oc_message)
+int oval_message_iterator_has_more(struct oval_message_iterator *oc_message)
 {
 	return oval_collection_iterator_has_more((struct oval_iterator *)
 						 oc_message);
 }
 
-struct oval_message *oval_iterator_message_next(struct oval_iterator_message
+struct oval_message *oval_message_iterator_next(struct oval_message_iterator
 						*oc_message)
 {
 	return (struct oval_message *)
 	    oval_collection_iterator_next((struct oval_iterator *)oc_message);
 }
 
-char *oval_message_text(struct oval_message *message){return message->text;}
-oval_message_level_enum oval_message_level(struct oval_message *message){return message->level;}
+void oval_message_iterator_free(struct oval_message_iterator
+						*oc_message)
+{
+    oval_collection_iterator_free((struct oval_iterator *)oc_message);
+}
 
-void set_oval_message_text(struct oval_message *message, char *text)
+char *oval_message_get_text(struct oval_message *message){return message->text;}
+oval_message_level_t oval_message_get_level(struct oval_message *message){return message->level;}
+
+void oval_message_set_text(struct oval_message *message, char *text)
 {
 	if(message->text!=NULL)free(message->text);
 	message->text = (text==NULL)?NULL:strdup(text);
 }
-void set_oval_message_level(struct oval_message *message, oval_message_level_enum level)
+void oval_message_set_level(struct oval_message *message, oval_message_level_t level)
 {
 	message->level = level;
 }
 
 void oval_message_parse_tag_consumer(char* text, void* message){
-	set_oval_message_text(message, text);
+	oval_message_set_text(message, text);
 }
 int oval_message_parse_tag(xmlTextReaderPtr reader,
 			       struct oval_parser_context *context, oscap_consumer_func consumer, void* client)
@@ -90,7 +96,7 @@ int oval_message_parse_tag(xmlTextReaderPtr reader,
 	int return_code = 1;
 	struct oval_message *message = oval_message_new();
 	{//message->lever
-		set_oval_message_level(message, oval_message_level_parse(reader,"level",OVAL_MESSAGE_LEVEL_INFO));
+		oval_message_set_level(message, oval_message_level_parse(reader,"level",OVAL_MESSAGE_LEVEL_INFO));
 	}
 	{//message->text
 		return_code = oval_parser_text_value(reader, context, &oval_message_parse_tag_consumer, message);
@@ -104,8 +110,8 @@ int oval_message_parse_tag(xmlTextReaderPtr reader,
 			int numchars = 0;
 			char debug[2000];debug[numchars]='\0';
 			numchars = numchars + sprintf(debug+numchars,"oval_message_parse_tag::");
-			numchars = numchars + sprintf(debug+numchars,"\n    message->level    = %d",oval_message_level   (message));
-			numchars = numchars + sprintf(debug+numchars,"\n    message->text     = %s",oval_message_text    (message));
+			numchars = numchars + sprintf(debug+numchars,"\n    message->level    = %d",oval_message_get_level   (message));
+			numchars = numchars + sprintf(debug+numchars,"\n    message->text     = %s",oval_message_get_text    (message));
 			oval_parser_log_debug(context, debug);
 		}
 		(*consumer)(message, client);
@@ -130,16 +136,16 @@ void oval_message_to_print(struct oval_message *message, char *indent,
 	char*                   text;
 	oval_message_level_enum level;
 	 */
-	printf("%sLEVEL = %d\n", nxtindent, oval_message_level(message));
-	printf("%sTEXT  = %s\n", nxtindent, oval_message_text (message));
+	printf("%sLEVEL = %d\n", nxtindent, oval_message_get_level(message));
+	printf("%sTEXT  = %s\n", nxtindent, oval_message_get_text (message));
 }
 
 void oval_message_to_dom  (struct oval_message *message, xmlDoc *doc, xmlNode *tag_parent){
 	if(message){
 		xmlNs *ns_syschar = xmlSearchNsByHref(doc, tag_parent, OVAL_SYSCHAR_NAMESPACE);
 	    xmlNode *tag_message = xmlNewChild
-			(tag_parent, ns_syschar, BAD_CAST "message", oval_message_text(message));
-	    xmlNewProp(tag_message, BAD_CAST "level", BAD_CAST oval_message_level_text(oval_message_level(message)));
+			(tag_parent, ns_syschar, BAD_CAST "message", oval_message_get_text(message));
+	    xmlNewProp(tag_message, BAD_CAST "level", BAD_CAST oval_message_level_text(oval_message_get_level(message)));
 	}
 }
 

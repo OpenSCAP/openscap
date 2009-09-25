@@ -1,3 +1,4 @@
+#ifndef __STUB_PROBE
 #include <stdint.h>
 #include "_sexp-value.h"
 #include "public/sm_alloc.h"
@@ -406,3 +407,4 @@ void SEXP_rawval_lblk_free (uintptr_t lblkp, void (*func) (SEXP_t *))
 
         return;
 }
+#endif
