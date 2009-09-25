@@ -62,7 +62,7 @@ SEXP_t *SEXP_OVALobj_eval (SEXP_t *id)
         return pcache_sexp_get (global.pcache, id);
 }
 
-SEXP_t *SEXP_OVALset_combine(SEXP_t *item_lst1, SEXP_t *item_lst2, oval_set_operation_enum op)
+SEXP_t *SEXP_OVALset_combine(SEXP_t *item_lst1, SEXP_t *item_lst2, oval_setobject_operation_t op)
 {
 	char append;
 	SEXP_t *res_items, *item1, *item2, *id1, *id2;
@@ -125,10 +125,10 @@ SEXP_t *SEXP_OVALset_apply_filters(SEXP_t *items, SEXP_t *filters)
 	SEXP_t *result_items, *item, *filter, *felm, *ielm;
 	SEXP_t *ste_res, *elm_res, *stmp;
 	char *elm_name;
-	oval_syschar_status_enum item_status;
-	oval_result_enum ores;
-	oval_check_enum ochk;
-	oval_operator_enum oopr;
+	oval_syschar_status_t item_status;
+	oval_result_t ores;
+	oval_check_t ochk;
+	oval_operator_t oopr;
 
 	result_items = SEXP_list_new(NULL);
 
@@ -177,7 +177,7 @@ SEXP_t *SEXP_OVALset_apply_filters(SEXP_t *items, SEXP_t *filters)
 
 			stmp = probe_ent_getattrval(filter, "operator");
 			if (stmp == NULL)
-				oopr = OPERATOR_AND;
+				oopr = OVAL_OPERATOR_AND;
 			else
 				oopr = SEXP_number_geti_32 (stmp);
 			ores = SEXP_OVALent_result_byopr(ste_res, oopr);

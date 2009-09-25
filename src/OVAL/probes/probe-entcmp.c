@@ -704,7 +704,7 @@ oval_result_t SEXP_OVALent_result_byopr(SEXP_t *res_lst, oval_operator_t operato
 		return OVAL_RESULT_NOT_APPLICABLE;
 
 	switch(operator) {
-	case OPERATOR_AND:
+	case OVAL_OPERATOR_AND:
 		if (ores.true_cnt > 0 &&
 		    ores.false_cnt == 0 &&
 		    ores.error_cnt == 0 &&
@@ -727,7 +727,7 @@ oval_result_t SEXP_OVALent_result_byopr(SEXP_t *res_lst, oval_operator_t operato
 			result = OVAL_RESULT_NOT_EVALUATED;
 		}
 		break;
-	case OPERATOR_ONE:
+	case OVAL_OPERATOR_ONE:
 		if (ores.true_cnt == 1 &&
 		    ores.false_cnt >= 0 &&
 		    ores.error_cnt == 0 &&
@@ -772,7 +772,7 @@ oval_result_t SEXP_OVALent_result_byopr(SEXP_t *res_lst, oval_operator_t operato
 			result = OVAL_RESULT_NOT_EVALUATED;
 		}
 		break;
-	case OPERATOR_OR:
+	case OVAL_OPERATOR_OR:
 		if (ores.true_cnt > 0) {
 			result = OVAL_RESULT_TRUE;
 		} else if (ores.true_cnt == 0 &&
@@ -795,7 +795,7 @@ oval_result_t SEXP_OVALent_result_byopr(SEXP_t *res_lst, oval_operator_t operato
 			result = OVAL_RESULT_NOT_EVALUATED;
 		}
 		break;
-	case OPERATOR_XOR:
+	case OVAL_OPERATOR_XOR:
 		if ((ores.true_cnt % 2) == 1 &&
 		    ores.error_cnt == 0 &&
 		    ores.unknown_cnt == 0 &&

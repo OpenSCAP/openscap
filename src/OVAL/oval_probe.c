@@ -20,14 +20,14 @@
 
 /* KEEP THIS LIST SORTED! (by subtype) */
 const oval_probe_t __probe_tbl[] = {
-        /*  7001 */ { INDEPENDENT_FAMILY,               "family",            "probe_family"            },
-        /*  7006 */ { INDEPENDENT_TEXT_FILE_CONTENT_54, "textfilecontent54", "probe_textfilecontent54" },
-        /*  7010 */ { INDEPENDENT_XML_FILE_CONTENT,     "xmlfilecontent",    "probe_xmlfilecontent"    },
-        /*  9001 */ { LINUX_DPKG_INFO,                  "dpkginfo",          "probe_dpkginfo"          },
-        /*  9003 */ { LINUX_RPM_INFO,                   "rpminfo",           "probe_rpminfo"           },
-        /*  9004 */ { LINUX_SLACKWARE_PKG_INFO_TEST,    "slackwarepkginfo",  "probe_slackwarepkginfo"  },
-        /* 13001 */ { UNIX_FILE,                        "file",              "probe_file"              },
-        /* 13006 */ { UNIX_RUNLEVEL,                    "runlevel",          "probe_runlevel"          }
+        /*  7001 */ { OVAL_INDEPENDENT_FAMILY,               "family",            "probe_family"            },
+        /*  7006 */ { OVAL_INDEPENDENT_TEXT_FILE_CONTENT_54, "textfilecontent54", "probe_textfilecontent54" },
+        /*  7010 */ { OVAL_INDEPENDENT_XML_FILE_CONTENT,     "xmlfilecontent",    "probe_xmlfilecontent"    },
+        /*  9001 */ { OVAL_LINUX_DPKG_INFO,                  "dpkginfo",          "probe_dpkginfo"          },
+        /*  9003 */ { OVAL_LINUX_RPM_INFO,                   "rpminfo",           "probe_rpminfo"           },
+        /*  9004 */ { OVAL_LINUX_SLACKWARE_PKG_INFO_TEST,    "slackwarepkginfo",  "probe_slackwarepkginfo"  },
+        /* 13001 */ { OVAL_UNIX_FILE,                        "file",              "probe_file"              },
+        /* 13006 */ { OVAL_UNIX_RUNLEVEL,                    "runlevel",          "probe_runlevel"          }
 };
 
 #define PROBETBLSIZE (sizeof __probe_tbl / sizeof (oval_probe_t))
@@ -90,7 +90,7 @@ static probe_sdtbl_t __probe_sdtbl = PROBE_SDTBL_INITIALIZER;
 
 static int probe_subtype_cmp (void *a, void *b)
 {
-#define K1(p) (*(oval_subtype_enum *)(p))
+#define K1(p) (*(oval_subtype_t *)(p))
 #define K2(p) (((oval_probe_t *)(p))->typenum)
         return ((int)(K1(a) - K2(b)));
 #undef K1
@@ -146,10 +146,10 @@ static SEXP_t *oval_entity_to_sexp (struct oval_entity *ent)
         SEXP_t *elm, *elm_name;
         
 
-        elm_name = SEXP_list_new (SEXP_string_newf (oval_entity_name (ent)),
+        elm_name = SEXP_list_new (SEXP_string_newf (oval_entity_get_name (ent)),
                                   /* operation */
                                   SEXP_string_new (":operation", 10),
-                                  SEXP_number_newu_32 (oval_entity_operation (ent)),
+                                  SEXP_number_newu_32 (oval_entity_get_operation (ent)),
                                   NULL);
 
         elm = SEXP_list_new (NULL);
@@ -226,7 +226,7 @@ static SEXP_t *oval_set_to_sexp (struct oval_set *set)
         elm_name = SEXP_list_new (SEXP_string_new ("set", 3),
                                   /* operation */
                                   SEXP_string_new (":operation", 10),
-                                  SEXP_number_newu_32 (oval_set_operation (set)),
+                                  SEXP_number_newu_32 (oval_setobject_get_operation (set)),
                                   NULL);
         
         elm = SEXP_list_new (elm_name, NULL);
@@ -259,7 +259,7 @@ static SEXP_t *oval_set_to_sexp (struct oval_set *set)
                         obj    = oval_object_iterator_next (oit);
 
                         subelm = SEXP_list_new (SEXP_string_new ("obj_ref", 7),
-                                                SEXP_string_newf (oval_object_id (obj)),
+                                                SEXP_string_newf (oval_object_get_id (obj)),
                                                 NULL);
                         
                         SEXP_list_add (elm, subelm);
@@ -537,7 +537,7 @@ struct oval_sysdata *oval_sysdata_from_sexp(SEXP_t *sexp)
 	sysdata = oval_sysdata_new(id);
 	oval_sysdata_set_status(sysdata, status);
 	oval_sysdata_set_subtype(sysdata, type);
-	oval_sysdata_set_subtype_name(sysdata, name);
+	//oval_sysdata_set_subtype_name(sysdata, name);
 	
 	if (status == OVAL_STATUS_EXISTS) {
 		int i;for (i = 2; (sub = SEXP_list_nth(sexp, i)) != NULL; ++i)
