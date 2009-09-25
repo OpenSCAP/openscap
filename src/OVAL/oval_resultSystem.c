@@ -42,7 +42,6 @@
 typedef struct oval_result_system {
 	struct oval_string_map    *definitions;
 	struct oval_string_map    *tests;
-	struct oval_string_map    *tested_items;
 	struct oval_syschar_model *syschar_model;
 	bool                       definitions_initialized;
 } oval_result_system_t;
@@ -52,7 +51,6 @@ struct oval_result_system *oval_result_system_new(struct oval_syschar_model *sys
 	oval_result_system_t *system = (oval_result_system_t *)malloc(sizeof(oval_result_system_t));
 	system->definitions   = oval_string_map_new();
 	system->tests         = oval_string_map_new();
-	system->tested_items  = oval_string_map_new();
 	system->syschar_model = syschar_model;
 	system->definitions_initialized = false;
 	return system;
@@ -66,9 +64,6 @@ void oval_result_system_free(struct oval_result_system *system)
 	oval_string_map_free
 		(system->tests,
 				(oscap_destruct_func)oval_result_test_free);
-	oval_string_map_free
-		(system->tested_items,
-				(oscap_destruct_func)oval_result_item_free);
 
 	system->definitions   = NULL;
 	system->syschar_model = NULL;
@@ -174,18 +169,6 @@ struct oval_result_definition *get_oval_result_definition_new
 		}
 	}
 	return rslt_definition;
-}
-
-struct oval_result_item * get_oval_result_item_new(struct oval_result_system *system, char *item_id){
-	struct oval_result_item *item = NULL;
-	if(item_id){
-		item = oval_string_map_get_value(system->tested_items, item_id);
-		if(item == NULL){
-			item = oval_result_item_new(system, item_id);
-			oval_string_map_put(system->tested_items, item_id, item);
-		}
-	}
-	return item;
 }
 
 struct oval_result_test *get_oval_result_test_new

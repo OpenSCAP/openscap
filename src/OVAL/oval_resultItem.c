@@ -141,7 +141,7 @@ int oval_result_item_parse_tag
 	int return_code = 0;
 
 	xmlChar *item_id = xmlTextReaderGetAttribute(reader, "item_id");
-	struct oval_result_item *item = get_oval_result_item_new(system, item_id);
+	struct oval_result_item *item = oval_result_item_new(system, item_id);
 
 	oval_result_t result = oval_result_parse(reader, "result", 0);
 	oval_result_item_set_result(item, result);

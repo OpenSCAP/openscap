@@ -84,6 +84,8 @@ void oval_result_test_free(struct oval_result_test *test)
 	if(test->message)free(test->message);
 	if(test->bindings_clearable)oval_collection_free_items
 		(test->bindings, (oscap_destruct_func)oval_variable_binding_free);
+	oval_collection_free_items
+		(test->items, (oscap_destruct_func)oval_result_item_free);
 
 	test->system            = NULL;
 	test->test              = NULL;
@@ -460,7 +462,7 @@ if(OVAL_RESULT_TEST_DEBUG)fprintf(stderr,"%s:%d collected items iterator is null
 
 		cur_sysdata=oval_sysdata_iterator_next(collected_items_iterator);
 		char *cur_sysdata_id = oval_sysdata_get_id(cur_sysdata);
-		struct oval_result_item *cur_item = get_oval_result_item_new(SYSTEM, cur_sysdata_id);
+		struct oval_result_item *cur_item = oval_result_item_new(SYSTEM, cur_sysdata_id);
 		if (cur_sysdata==NULL){
 if(OVAL_RESULT_TEST_DEBUG)fprintf(stderr,"%s:%d iterator returned null\n",__FILE__,__LINE__);
 			oval_errno=OVAL_INTERNAL_ERROR;
