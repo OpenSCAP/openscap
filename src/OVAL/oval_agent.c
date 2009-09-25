@@ -74,7 +74,7 @@ struct oval_import_source *oval_import_source_new_file(char *filename)
 	return source;
 }
 
-void import_source_free(struct oval_import_source *source)
+void oval_import_source_free(struct oval_import_source *source)
 {
 	free(source->import_source_filename);
 	source->import_source_filename = NULL;

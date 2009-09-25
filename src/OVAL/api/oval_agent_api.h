@@ -70,7 +70,7 @@ struct oval_export_target *oval_export_target_new_file(char *filename, char* enc
 /** free an export_target object.
  * @param target the target to be freed.
  */
-void export_target_free(struct oval_export_target *target);
+void oval_export_target_free(struct oval_export_target *target);
 
 
 /**

@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "api/oval_agent_api.h"
+#include "../common/oscap.h"
 
 
 
@@ -39,20 +40,20 @@ int main(int argc, char **argv)
 	if(argc>1){
 		struct oval_object_model *model = oval_object_model_new();
 		printf("LOAD OVAL DEFINITIONS\n");
-		struct import_source *source = import_source_file(argv[1]);
-		load_oval_definitions(model, source, &_test_error_handler, NULL);
-		import_source_free(source);
+		struct oval_import_source *source = oval_import_source_new_file(argv[1]);
+		oval_object_model_load(model, source, &_test_error_handler, NULL);
+		oval_import_source_free(source);
 		printf("OVAL DEFINITIONS LOADED\n");
 		if(argc>2){
 			printf("LOAD OVAL SYSCHAR\n");
-			source = import_source_file(argv[2]);
+			source = oval_import_source_new_file(argv[2]);
 			struct oval_syschar_model *syschar_model = oval_syschar_model_new(model,NULL);
-			load_oval_syschar(syschar_model, source, &_test_error_handler, NULL);
-			import_source_free(source);
+			oval_syschar_model_load(syschar_model, source, &_test_error_handler, NULL);
+			oval_import_source_free(source);
 			printf("OVAL SYSCHAR LOADED\n");
-			struct oval_iterator_syschar *syschars = oval_syschar_model_syschars(syschar_model);
-			int numSyschars;for(numSyschars=0;oval_iterator_syschar_has_more(syschars);numSyschars++){
-				struct oval_syschar *syschar = oval_iterator_syschar_next(syschars);
+			struct oval_syschar_iterator *syschars = oval_syschar_model_get_syschars(syschar_model);
+			int numSyschars;for(numSyschars=0;oval_syschar_iterator_has_more(syschars);numSyschars++){
+				struct oval_syschar *syschar = oval_syschar_iterator_next(syschars);
 				oval_syschar_to_print(syschar, "", numSyschars+1);
 			}
 			printf("THERE ARE %d SYSCHARS\n",numSyschars);

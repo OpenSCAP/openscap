@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "api/oval_agent_api.h"
+#include "api/oval_results.h"
 #include "../common/oscap.h"
 
 
@@ -39,32 +40,23 @@ int main(int argc, char **argv)
 	if(argc>1){
 		struct oval_object_model *model = oval_object_model_new();
 		printf("LOAD OVAL DEFINITIONS\n");
-		struct import_source *source = import_source_file(argv[1]);
-		load_oval_definitions(model, source, &_test_error_handler, NULL);
-		import_source_free(source);
+		struct oval_import_source *source = oval_import_source_new_file(argv[1]);
+		oval_object_model_load(model, source, &_test_error_handler, NULL);
+		oval_import_source_free(source);
 		printf("OVAL DEFINITIONS LOADED\n");
 		if(argc>2){
 			printf("LOAD OVAL RESULTS\n");
-			source = import_source_file(argv[2]);
+			source = oval_import_source_new_file(argv[2]);
 			struct oval_results_model *results_model = oval_results_model_new(model,NULL);
-			load_oval_results(results_model, source, &_test_error_handler, NULL);
-			import_source_free(source);
+			oval_results_model_load(results_model, source, &_test_error_handler, NULL);
+			oval_import_source_free(source);
 			printf("OVAL RESULTS LOADED\n");
-			/*
-			struct oval_iterator_results *results = oval_results_model_results(results_model);
-			int numResults;for(numResults=0;oval_iterator_results_has_more(results);numResults++){
-				struct oval_results *result = oval_iterator_results_next(results);
-				oval_result_to_print(result, "", numResults+1);
-			}
-			printf("THERE ARE %d RESULTS\n",numResults);
-			*/
-			//oval_syschar_model_free(oval_results_model_syschar_model(results_model)); // Is this OK??
 			if (argc>3) {
 				printf("WRITE OVAL RESULTS\n");
 				struct oval_result_directives *directives = oval_result_directives_new();
-				struct export_target* target = export_target_new(argv[3], "UTF-8");
-				export_results(results_model, directives, target);
-				export_target_free(target);
+				struct oval_export_target* target = oval_export_target_new_file(argv[3], "UTF-8");
+				oval_results_model_export(results_model, directives, target);
+				oval_export_target_free(target);
 				oval_result_directives_free(directives);
 				printf("OVAL RESULTS WRITTEN\n");
 			}
