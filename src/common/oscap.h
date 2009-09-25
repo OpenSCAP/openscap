@@ -38,6 +38,22 @@
  * is a name of a concrete datatype the iterator iterates over.
  */
 
+/**
+ * Iterate over an array, givea an iterator.
+ */
+#define OSCAP_FOREACH(type, val, init_val, code) \
+	{ \
+		struct type##_iterator *it_ = (init_val); \
+		struct type *val = NULL; \
+		while (type##_iterator_has_more(it_)) { \
+			val = type##_iterator_next(it_); \
+			code \
+		} \
+		type##_iterator_free(it_); \
+	}
+
+
+
 /** @struct oscap_string_iterator
  * String iterator.
  * @see oscap_iterator
