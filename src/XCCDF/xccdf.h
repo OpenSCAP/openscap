@@ -515,62 +515,62 @@ bool xccdf_fixtext_iterator_has_more(struct xccdf_fixtext_iterator* it);
  * Get item type.
  * @relates xccdf_item
  */
-enum xccdf_type xccdf_item_type(const struct xccdf_item* item);
+enum xccdf_type xccdf_item_get_type(const struct xccdf_item* item);
 
 /**
  * Get item ID.
  * @relates xccdf_item
  */
-const char* xccdf_item_id(const struct xccdf_item* item);
+const char* xccdf_item_get_id(const struct xccdf_item* item);
 
 /**
  * Get item title.
  * @relates xccdf_item
  */
-const char* xccdf_item_title(const struct xccdf_item* item);
+const char* xccdf_item_get_title(const struct xccdf_item* item);
 
 /**
  * Get item description.
  * @relates xccdf_item
  */
-const char* xccdf_item_description(const struct xccdf_item* item);
+const char* xccdf_item_get_description(const struct xccdf_item* item);
 
 /**
  * Get item version.
  * @relates xccdf_item
  */
-const char* xccdf_item_version(const struct xccdf_item* item);
+const char* xccdf_item_get_version(const struct xccdf_item* item);
 
 /**
  * Return item's parent in the inheritance hierarchy.
  * @relates xccdf_item
  */
-struct xccdf_item* xccdf_item_extends(const struct xccdf_item* item);
+struct xccdf_item* xccdf_item_get_extends(const struct xccdf_item* item);
 
 /**
  * Return item's parent in the grouping hierarchy.
  * Returned item will be either a group or a benchmark.
  * @relates xccdf_item
  */
-struct xccdf_item* xccdf_item_parent(const struct xccdf_item* item);
+struct xccdf_item* xccdf_item_get_parent(const struct xccdf_item* item);
 
 /**
  * Get an iterator to item statuses.
  * @relates xccdf_item
  */
-struct xccdf_status_iterator* xccdf_item_statuses(const struct xccdf_item* item);
+struct xccdf_status_iterator* xccdf_item_get_statuses(const struct xccdf_item* item);
 
 /**
  * Get an iterator to the XCCDF references of the item.
  * @relates xccdf_item
  */
-struct xccdf_reference_iterator* xccdf_item_references(const struct xccdf_item* item);
+struct xccdf_reference_iterator* xccdf_item_get_references(const struct xccdf_item* item);
 
 /**
  * Get item current status.
  * @relates xccdf_item
  */
-enum xccdf_status_type xccdf_item_status_current(const struct xccdf_item* item);
+enum xccdf_status_type xccdf_item_get_status_current(const struct xccdf_item* item);
 
 /**
  * Convert the item to a benchmark.
@@ -578,7 +578,7 @@ enum xccdf_status_type xccdf_item_status_current(const struct xccdf_item* item);
  * @return Pointer to this item as the benchmark.
  * @retval NULL on faliure (e.g. item is not a benchmark)
  */
-struct xccdf_benchmark* xccdf_item_to_benchmark(struct xccdf_item* item);
+struct xccdf_benchmark* xccdf_item_cast_benchmark(struct xccdf_item* item);
 
 /**
  * Convert the item to a profile.
@@ -586,7 +586,7 @@ struct xccdf_benchmark* xccdf_item_to_benchmark(struct xccdf_item* item);
  * @return Pointer to this item as the profile.
  * @retval NULL on faliure (e.g. item is not a profile)
  */
-struct xccdf_profile* xccdf_item_to_profile(struct xccdf_item* item);
+struct xccdf_profile* xccdf_item_cast_profile(struct xccdf_item* item);
 
 /**
  * Convert the item to a rule.
@@ -594,7 +594,7 @@ struct xccdf_profile* xccdf_item_to_profile(struct xccdf_item* item);
  * @return Pointer to this item as the rule.
  * @retval NULL on faliure (e.g. item is not a rule)
  */
-struct xccdf_rule* xccdf_item_to_rule(struct xccdf_item* item);
+struct xccdf_rule* xccdf_item_cast_rule(struct xccdf_item* item);
 
 /**
  * Convert the item to a group.
@@ -602,7 +602,7 @@ struct xccdf_rule* xccdf_item_to_rule(struct xccdf_item* item);
  * @return Pointer to this item as the group.
  * @retval NULL on faliure (e.g. item is not a group)
  */
-struct xccdf_group* xccdf_item_to_group(struct xccdf_item* item);
+struct xccdf_group* xccdf_item_cast_group(struct xccdf_item* item);
 
 /**
  * Convert the item to a value.
@@ -610,7 +610,7 @@ struct xccdf_group* xccdf_item_to_group(struct xccdf_item* item);
  * @return Pointer to this item as the value.
  * @retval NULL on faliure (e.g. item is not a value)
  */
-struct xccdf_value* xccdf_item_to_value(struct xccdf_item* item);
+struct xccdf_value* xccdf_item_cast_value(struct xccdf_item* item);
 
 /**
  * Convert the item to a test result.
@@ -618,7 +618,7 @@ struct xccdf_value* xccdf_item_to_value(struct xccdf_item* item);
  * @return Pointer to this item as the test result.
  * @retval NULL on faliure (e.g. item is not a test result)
  */
-struct xccdf_result* xccdf_item_to_result(struct xccdf_item* item);
+struct xccdf_result* xccdf_item_cast_result(struct xccdf_item* item);
 
 /*--------------------*\
 |   Benchmark methods  |
@@ -637,61 +637,61 @@ struct xccdf_benchmark* xccdf_benchmark_new_from_file(const char* filename);
  * Get benchmark ID.
  * @relates xccdf_benchmark
  */
-const char* xccdf_benchmark_id(const struct xccdf_benchmark* benchmark);
+const char* xccdf_benchmark_get_id(const struct xccdf_benchmark* benchmark);
 
 /**
  * Check benchmark resolved property.
  * @relates xccdf_benchmark
  */
-bool xccdf_benchmark_resolved(const struct xccdf_benchmark* benchmark);
+bool xccdf_benchmark_get_resolved(const struct xccdf_benchmark* benchmark);
 
 /**
  * Get benchmark title.
  * @relates xccdf_benchmark
  */
-const char* xccdf_benchmark_title(const struct xccdf_benchmark* benchmark);
+const char* xccdf_benchmark_get_title(const struct xccdf_benchmark* benchmark);
 
 /**
  * Get benchmark description.
  * @relates xccdf_benchmark
  */
-const char* xccdf_benchmark_description(const struct xccdf_benchmark* benchmark);
+const char* xccdf_benchmark_get_description(const struct xccdf_benchmark* benchmark);
 
 /**
  * Get benchmark version.
  * @relates xccdf_benchmark
  */
-const char* xccdf_benchmark_version(const struct xccdf_benchmark* benchmark);
+const char* xccdf_benchmark_get_version(const struct xccdf_benchmark* benchmark);
 
 /**
  * Get benchmark inline stylesheet.
  * @relates xccdf_benchmark
  */
-const char* xccdf_benchmark_style(const struct xccdf_benchmark* benchmark);
+const char* xccdf_benchmark_get_style(const struct xccdf_benchmark* benchmark);
 
 /**
  * Get benchmark stylesheet URL.
  * @relates xccdf_benchmark
  */
-const char* xccdf_benchmark_style_href(const struct xccdf_benchmark* benchmark);
+const char* xccdf_benchmark_get_style_href(const struct xccdf_benchmark* benchmark);
 
 /**
  * Get benchmark front matter.
  * @relates xccdf_benchmark
  */
-const char* xccdf_benchmark_front_matter(const struct xccdf_benchmark* benchmark);
+const char* xccdf_benchmark_get_front_matter(const struct xccdf_benchmark* benchmark);
 
 /**
  * Get benchmark rear matter.
  * @relates xccdf_benchmark
  */
-const char* xccdf_benchmark_rear_matter(const struct xccdf_benchmark* benchmark);
+const char* xccdf_benchmark_get_rear_matter(const struct xccdf_benchmark* benchmark);
 
 /**
  * Get benchmark metadata.
  * @relates xccdf_benchmark
  */
-const char* xccdf_benchmark_metadata(const struct xccdf_benchmark* benchmark);
+const char* xccdf_benchmark_get_metadata(const struct xccdf_benchmark* benchmark);
 
 /**
  * Get a plain text by ID.
@@ -700,7 +700,7 @@ const char* xccdf_benchmark_metadata(const struct xccdf_benchmark* benchmark);
  * @return Plain text content.
  * @retval NULL if given plain text does not exist
  */
-const char* xccdf_benchmark_plain_text(const struct xccdf_benchmark* benchmark, const char* id);
+const char* xccdf_benchmark_get_plain_text(const struct xccdf_benchmark* benchmark, const char* id);
 
 /**
  * Get benchmark item by ID.
@@ -709,46 +709,46 @@ const char* xccdf_benchmark_plain_text(const struct xccdf_benchmark* benchmark, 
  * @return Item with given ID
  * @retval NULL if no such item exists
  */
-struct xccdf_item* xccdf_benchmark_item(const struct xccdf_benchmark* benchmark, const char* id);
+struct xccdf_item* xccdf_benchmark_get_item(const struct xccdf_benchmark* benchmark, const char* id);
 
 /**
  * Get an iterator to benchmark statuses.
  * @relates xccdf_benchmark
  */
-struct xccdf_status_iterator* xccdf_benchmark_statuses(const struct xccdf_benchmark* benchmark);
+struct xccdf_status_iterator* xccdf_benchmark_get_statuses(const struct xccdf_benchmark* benchmark);
 
 /**
  * Get an iterator to the XCCDF references of the benchmark.
  * @relates xccdf_benchmark
  */
-struct xccdf_reference_iterator* xccdf_benchmark_references(const struct xccdf_benchmark* benchmark);
+struct xccdf_reference_iterator* xccdf_benchmark_get_references(const struct xccdf_benchmark* benchmark);
 
 /**
  * Get an iterator to the benchmark platforms.
  * @relates xccdf_benchmark
  */
-struct oscap_string_iterator*  xccdf_benchmark_platforms(const struct xccdf_benchmark* benchmark);
+struct oscap_string_iterator*  xccdf_benchmark_get_platforms(const struct xccdf_benchmark* benchmark);
 
 /**
  * Get an iterator to the benchmark legal notices.
  * @relates xccdf_benchmark
  * @see xccdf_notice
  */
-struct xccdf_notice_iterator*  xccdf_benchmark_notices(const struct xccdf_benchmark* benchmark);
+struct xccdf_notice_iterator*  xccdf_benchmark_get_notices(const struct xccdf_benchmark* benchmark);
 
 /**
  * Get an iterator to the benchmark scoring models.
  * @relates xccdf_benchmark
  * @see xccdf_model
  */
-struct xccdf_model_iterator*   xccdf_benchmark_models(const struct xccdf_benchmark* benchmark);
+struct xccdf_model_iterator*   xccdf_benchmark_get_models(const struct xccdf_benchmark* benchmark);
 
 /**
  * Get an iterator to the benchmark XCCDF profiles.
  * @relates xccdf_benchmark
  * @see xccdf_profile
  */
-struct xccdf_profile_iterator* xccdf_benchmark_profiles(const struct xccdf_benchmark* benchmark);
+struct xccdf_profile_iterator* xccdf_benchmark_get_profiles(const struct xccdf_benchmark* benchmark);
 
 /**
  * Get an iterator to the bencmark content. The items are either groups or rules.
@@ -757,20 +757,20 @@ struct xccdf_profile_iterator* xccdf_benchmark_profiles(const struct xccdf_bench
  * @see xccdf_group
  * @see xccdf_item
  */
-struct xccdf_item_iterator* xccdf_benchmark_content(const struct xccdf_benchmark* benchmark);
+struct xccdf_item_iterator* xccdf_benchmark_get_content(const struct xccdf_benchmark* benchmark);
 
 /**
  * Get benchmark current status.
  * @relates xccdf_benchmark
  */
-enum xccdf_status_type xccdf_benchmark_status_current(const struct xccdf_benchmark* benchmark);
+enum xccdf_status_type xccdf_benchmark_get_status_current(const struct xccdf_benchmark* benchmark);
 
 /**
  * Delete the benchmark.
  * @relates xccdf_benchmark
  * @param benchmark Benchmark to be deleted.
  */
-void xccdf_benchmark_delete(struct xccdf_benchmark* benchmark);
+void xccdf_benchmark_free(struct xccdf_benchmark* benchmark);
 
 
 
@@ -782,103 +782,103 @@ void xccdf_benchmark_delete(struct xccdf_benchmark* benchmark);
  * Get profile ID.
  * @relates xccdf_profile
  */
-const char* xccdf_profile_id(const struct xccdf_profile* profile);
+const char* xccdf_profile_get_id(const struct xccdf_profile* profile);
 
 /**
  * Get profile title.
  * @relates xccdf_profile
  */
-const char* xccdf_profile_title(const struct xccdf_profile* profile);
+const char* xccdf_profile_get_title(const struct xccdf_profile* profile);
 
 /**
  * Get profile description.
  * @relates xccdf_profile
  */
-const char* xccdf_profile_description(const struct xccdf_profile* profile);
+const char* xccdf_profile_get_description(const struct xccdf_profile* profile);
 
 /**
  * Get profile version.
  * @relates xccdf_profile
  */
-const char* xccdf_profile_version(const struct xccdf_profile* profile);
+const char* xccdf_profile_get_version(const struct xccdf_profile* profile);
 
 /**
  * Return profile's parent in the inheritance hierarchy.
  * @relates xccdf_profile
  */
-struct xccdf_profile* xccdf_profile_extends(const struct xccdf_profile* profile);
+struct xccdf_profile* xccdf_profile_get_extends(const struct xccdf_profile* profile);
 
 /**
  * Return a benchmark containing this profile.
  * @relates xccdf_profile
  */
-struct xccdf_benchmark* xccdf_profile_benchmark(const struct xccdf_profile* profile);
+struct xccdf_benchmark* xccdf_profile_get_benchmark(const struct xccdf_profile* profile);
 
 /**
  * Return whether the profile is abstract.
  * @relates xccdf_profile
  */
-bool xccdf_profile_abstract(const struct xccdf_profile* profile);
+bool xccdf_profile_get_abstract(const struct xccdf_profile* profile);
 
 /**
  * Return whether the profile has the prohibit changes flag set to true.
  * @relates xccdf_profile
  */
-bool xccdf_profile_prohibit_changes(const struct xccdf_profile* profile);
+bool xccdf_profile_get_prohibit_changes(const struct xccdf_profile* profile);
 
 /**
  * Get an iterator to profile platforms.
  * @relates xccdf_profile
  */
-struct oscap_string_iterator* xccdf_profile_platforms(const struct xccdf_profile* profile);
+struct oscap_string_iterator* xccdf_profile_get_platforms(const struct xccdf_profile* profile);
 
 /**
  * Get an iterator to profile statuses.
  * @relates xccdf_profile
  */
-struct xccdf_status_iterator* xccdf_profile_statuses(const struct xccdf_profile* profile);
+struct xccdf_status_iterator* xccdf_profile_get_statuses(const struct xccdf_profile* profile);
 
 /**
  * Get an iterator to the XCCDF references of the profile.
  * @relates xccdf_profile
  */
-struct xccdf_reference_iterator* xccdf_profile_references(const struct xccdf_profile* profile);
+struct xccdf_reference_iterator* xccdf_profile_get_references(const struct xccdf_profile* profile);
 
 /**
  * Get profile current status.
  * @relates xccdf_profile
  */
-enum xccdf_status_type xccdf_profile_status_current(const struct xccdf_profile* profile);
+enum xccdf_status_type xccdf_profile_get_status_current(const struct xccdf_profile* profile);
 
 /**
  * Get profile note tag.
  * @relates xccdf_profile
  */
-const char* xccdf_profile_note_tag(const struct xccdf_profile* profile);
+const char* xccdf_profile_note_get_tag(const struct xccdf_profile* profile);
 
 /**
  * Get an iterator to the select options of the profile.
  * @relates xccdf_profile
  */
-struct xccdf_select_iterator* xccdf_profile_selects(const struct xccdf_profile* profile);
+struct xccdf_select_iterator* xccdf_profile_get_selects(const struct xccdf_profile* profile);
 
 /**
  * Get an iterator to the set value options of the profile.
  * @relates xccdf_profile
  */
-struct xccdf_set_value_iterator* xccdf_profile_set_values(const struct xccdf_profile* profile);
+struct xccdf_set_value_iterator* xccdf_profile_get_set_values(const struct xccdf_profile* profile);
 
 /**
  * Get an iterator to the refine value options of the profile.
  * @relates xccdf_profile
  */
-struct xccdf_refine_value_iterator* xccdf_profile_refine_values(const struct xccdf_profile* profile);
+struct xccdf_refine_value_iterator* xccdf_profile_get_refine_values(const struct xccdf_profile* profile);
 
 /**
  * Get an iterator to the refine rule options of the profile.
  * @relates xccdf_profile
  */
-struct xccdf_refine_rule_iterator* xccdf_profile_refine_rules(const struct xccdf_profile* profile);
+struct xccdf_refine_rule_iterator* xccdf_profile_get_refine_rules(const struct xccdf_profile* profile);
 
 
 
@@ -890,170 +890,170 @@ struct xccdf_refine_rule_iterator* xccdf_profile_refine_rules(const struct xccdf
  * Get rule ID.
  * @relates xccdf_rule
  */
-const char* xccdf_rule_id(const struct xccdf_rule* rule);
+const char* xccdf_rule_get_id(const struct xccdf_rule* rule);
 
 /**
  * Get rule title.
  * @relates xccdf_rule
  */
-const char* xccdf_rule_title(const struct xccdf_rule* rule);
+const char* xccdf_rule_get_title(const struct xccdf_rule* rule);
 
 /**
  * Get rule description.
  * @relates xccdf_rule
  */
-const char* xccdf_rule_description(const struct xccdf_rule* rule);
+const char* xccdf_rule_get_description(const struct xccdf_rule* rule);
 
 /**
  * Get rule version.
  * @relates xccdf_rule
  */
-const char* xccdf_rule_version(const struct xccdf_rule* rule);
+const char* xccdf_rule_get_version(const struct xccdf_rule* rule);
 
 /**
  * Get rule question.
  * @relates xccdf_rule
  */
-const char* xccdf_rule_question(const struct xccdf_rule* rule);
+const char* xccdf_rule_get_question(const struct xccdf_rule* rule);
 
 /**
  * Get rule rationale.
  * @relates xccdf_rule
  */
-const char* xccdf_rule_rationale(const struct xccdf_rule* rule);
+const char* xccdf_rule_get_rationale(const struct xccdf_rule* rule);
 
 /**
  * Get rule cluster ID.
  * @relates xccdf_rule
  */
-const char* xccdf_rule_cluster_id(const struct xccdf_rule* rule);
+const char* xccdf_rule_get_cluster_id(const struct xccdf_rule* rule);
 
 /**
  * Get rule's currently selected check.
  * @relates xccdf_rule
  */
-struct xccdf_check* xccdf_rule_check(const struct xccdf_rule* rule);
+struct xccdf_check* xccdf_rule_get_check(const struct xccdf_rule* rule);
 
 /**
  * Get rule scoring weight.
  * @relates xccdf_rule
  */
-float xccdf_rule_weight(const struct xccdf_rule* rule);
+float xccdf_rule_get_weight(const struct xccdf_rule* rule);
 
 /**
  * Return rule's parent in the inheritance hierarchy.
  * @relates xccdf_rule
  */
-struct xccdf_rule* xccdf_rule_extends(const struct xccdf_rule* rule);
+struct xccdf_rule* xccdf_rule_get_extends(const struct xccdf_rule* rule);
 
 /**
  * Return rule's parent in the grouping hierarchy.
  * Returned item will be either a group or a benchmark.
  * @relates xccdf_rule
  */
-struct xccdf_item* xccdf_rule_parent(const struct xccdf_rule* rule);
+struct xccdf_item* xccdf_rule_get_parent(const struct xccdf_rule* rule);
 
 /**
  * Return whether the rule is abstract.
  * @relates xccdf_rule
  */
-bool xccdf_rule_abstract(const struct xccdf_rule* rule);
+bool xccdf_rule_get_abstract(const struct xccdf_rule* rule);
 
 /**
  * Return whether the rule has the prohibit changes flag set to true.
  * @relates xccdf_rule
  */
-bool xccdf_rule_prohibit_changes(const struct xccdf_rule* rule);
+bool xccdf_rule_get_prohibit_changes(const struct xccdf_rule* rule);
 
 /**
  * Return whether the rule has the hidden flag set to true.
  * @relates xccdf_rule
  */
-bool xccdf_rule_hidden(const struct xccdf_rule* rule);
+bool xccdf_rule_get_hidden(const struct xccdf_rule* rule);
 
 /**
  * Return whether the rule is selected.
  * @relates xccdf_rule
  */
-bool xccdf_rule_selected(const struct xccdf_rule* rule);
+bool xccdf_rule_get_selected(const struct xccdf_rule* rule);
 
 /**
  * Return whether the rule has the multiple flag set to true.
  * @relates xccdf_rule
  */
-bool xccdf_rule_multiple(const struct xccdf_rule* rule);
+bool xccdf_rule_get_multiple(const struct xccdf_rule* rule);
 
 /**
  * Get an iterator to rule platforms.
  * @relates xccdf_rule
  */
-struct oscap_string_iterator* xccdf_rule_platforms(const struct xccdf_rule* rule);
+struct oscap_string_iterator* xccdf_rule_get_platforms(const struct xccdf_rule* rule);
 
 /**
  * Get an iterator to rule statuses.
  * @relates xccdf_rule
  */
-struct xccdf_status_iterator* xccdf_rule_statuses(const struct xccdf_rule* rule);
+struct xccdf_status_iterator* xccdf_rule_get_statuses(const struct xccdf_rule* rule);
 
 /**
  * Get an iterator to the XCCDF references of the rule.
  * @relates xccdf_rule
  */
-struct xccdf_reference_iterator* xccdf_rule_references(const struct xccdf_rule* rule);
+struct xccdf_reference_iterator* xccdf_rule_get_references(const struct xccdf_rule* rule);
 
 /**
  * Get rule current status.
  * @relates xccdf_rule
  */
-enum xccdf_status_type xccdf_rule_status_current(const struct xccdf_rule* rule);
+enum xccdf_status_type xccdf_rule_get_status_current(const struct xccdf_rule* rule);
 
 /**
  * Get rule impact metric.
  * @relates xccdf_rule
  */
-const char* xccdf_rule_impact_metric(const struct xccdf_rule* rule);
+const char* xccdf_rule_get_impact_metric(const struct xccdf_rule* rule);
 
 /**
  * Get rule role.
  * @relates xccdf_rule
  */
-enum xccdf_role xccdf_rule_role(const struct xccdf_rule* rule);
+enum xccdf_role xccdf_rule_get_role(const struct xccdf_rule* rule);
 
 /**
  * Get rule severity level.
  * @relates xccdf_rule
  */
-enum xccdf_level xccdf_rule_severity(const struct xccdf_rule* rule);
+enum xccdf_level xccdf_rule_get_severity(const struct xccdf_rule* rule);
 
 /**
  * Get an iterator to the idents of the rule.
  * @relates xccdf_rule
  */
-struct xccdf_ident_iterator* xccdf_rule_idents(const struct xccdf_rule* rule);
+struct xccdf_ident_iterator* xccdf_rule_get_idents(const struct xccdf_rule* rule);
 
 /**
  * Get an iterator to the checks of the rule.
  * @relates xccdf_rule
  */
-struct xccdf_check_iterator* xccdf_rule_checks(const struct xccdf_rule* rule);
+struct xccdf_check_iterator* xccdf_rule_get_checks(const struct xccdf_rule* rule);
 
 /**
  * Get an iterator to the profile notes of the rule.
  * @relates xccdf_rule
  */
-struct xccdf_profile_note_iterator* xccdf_rule_profile_notes(const struct xccdf_rule* rule);
+struct xccdf_profile_note_iterator* xccdf_rule_get_profile_notes(const struct xccdf_rule* rule);
 
 /**
  * Get an iterator to fixes for the rule.
  * @relates xccdf_rule
  */
-struct xccdf_fix_iterator* xccdf_rule_fixes(const struct xccdf_rule* rule);
+struct xccdf_fix_iterator* xccdf_rule_get_fixes(const struct xccdf_rule* rule);
 
 /**
  * Get an iterator to fix descriptions the rule.
  * @relates xccdf_rule
  */
-struct xccdf_fixtext_iterator* xccdf_rule_fixtexts(const struct xccdf_rule* rule);
+struct xccdf_fixtext_iterator* xccdf_rule_get_fixtexts(const struct xccdf_rule* rule);
 
 
 
@@ -1065,104 +1065,104 @@ struct xccdf_fixtext_iterator* xccdf_rule_fixtexts(const struct xccdf_rule* rule
  * Get group ID.
  * @relates xccdf_group
  */
-const char* xccdf_group_id(const struct xccdf_group* group);
+const char* xccdf_group_get_id(const struct xccdf_group* group);
 
 /**
  * Get group title.
  * @relates xccdf_group
  */
-const char* xccdf_group_title(const struct xccdf_group* group);
+const char* xccdf_group_get_title(const struct xccdf_group* group);
 
 /**
  * Get group description.
  * @relates xccdf_group
  */
-const char* xccdf_group_description(const struct xccdf_group* group);
+const char* xccdf_group_get_description(const struct xccdf_group* group);
 
 /**
  * Get group version.
  * @relates xccdf_group
  */
-const char* xccdf_group_version(const struct xccdf_group* group);
+const char* xccdf_group_get_version(const struct xccdf_group* group);
 
 /**
  * Get group question.
  * @relates xccdf_group
  */
-const char* xccdf_group_question(const struct xccdf_group* group);
+const char* xccdf_group_get_question(const struct xccdf_group* group);
 
 /**
  * Get group rationale.
  * @relates xccdf_group
  */
-const char* xccdf_group_rationale(const struct xccdf_group* group);
+const char* xccdf_group_get_rationale(const struct xccdf_group* group);
 
 /**
  * Get group cluster ID.
  * @relates xccdf_group
  */
-const char* xccdf_group_cluster_id(const struct xccdf_group* group);
+const char* xccdf_group_get_cluster_id(const struct xccdf_group* group);
 
 /**
  * Get group scoring weight.
  * @relates xccdf_group
  */
-float xccdf_group_weight(const struct xccdf_group* group);
+float xccdf_group_get_weight(const struct xccdf_group* group);
 
 /**
  * Return group's parent in the inheritance hierarchy.
  * @relates xccdf_group
  */
-struct xccdf_group* xccdf_group_extends(const struct xccdf_group* group);
+struct xccdf_group* xccdf_group_get_extends(const struct xccdf_group* group);
 
 /**
  * Return group's parent in the grouping hierarchy.
  * Returned item will be either a group or a benchmark.
  * @relates xccdf_group
  */
-struct xccdf_item* xccdf_group_parent(const struct xccdf_group* group);
+struct xccdf_item* xccdf_group_get_parent(const struct xccdf_group* group);
 
 /**
  * Return whether the group is abstract.
  * @relates xccdf_group
  */
-bool xccdf_group_abstract(const struct xccdf_group* group);
+bool xccdf_group_get_abstract(const struct xccdf_group* group);
 
 /**
  * Return whether the group has the prohibit changes flag set to true.
  * @relates xccdf_group
  */
-bool xccdf_group_prohibit_changes(const struct xccdf_group* group);
+bool xccdf_group_get_prohibit_changes(const struct xccdf_group* group);
 
 /**
  * Return whether the group has the hidden flag set to true.
  * @relates xccdf_group
  */
-bool xccdf_group_hidden(const struct xccdf_group* group);
+bool xccdf_group_get_hidden(const struct xccdf_group* group);
 
 /**
  * Return whether the group is selected.
  * @relates xccdf_group
  */
-bool xccdf_group_selected(const struct xccdf_group* group);
+bool xccdf_group_get_selected(const struct xccdf_group* group);
 
 /**
  * Get an iterator to group platforms.
  * @relates xccdf_group
  */
-struct oscap_string_iterator* xccdf_group_platforms(const struct xccdf_group* group);
+struct oscap_string_iterator* xccdf_group_get_platforms(const struct xccdf_group* group);
 
 /**
  * Get an iterator to group statuses.
  * @relates xccdf_group
  */
-struct xccdf_status_iterator* xccdf_group_statuses(const struct xccdf_group* group);
+struct xccdf_status_iterator* xccdf_group_get_statuses(const struct xccdf_group* group);
 
 /**
  * Get an iterator to the XCCDF references of the group.
  * @relates xccdf_group
  */
-struct xccdf_reference_iterator* xccdf_group_references(const struct xccdf_group* group);
+struct xccdf_reference_iterator* xccdf_group_get_references(const struct xccdf_group* group);
 
 /**
  * Get an iterator to the group content. The items are either groups or rules.
@@ -1171,13 +1171,13 @@ struct xccdf_reference_iterator* xccdf_group_references(const struct xccdf_group
  * @see xccdf_group
  * @see xccdf_item
  */
-struct xccdf_item_iterator* xccdf_group_content(const struct xccdf_group* benchmark);
+struct xccdf_item_iterator* xccdf_group_get_content(const struct xccdf_group* benchmark);
 
 /**
  * Get group current status.
  * @relates xccdf_group
  */
-enum xccdf_status_type xccdf_group_status_current(const struct xccdf_group* group);
+enum xccdf_status_type xccdf_group_get_status_current(const struct xccdf_group* group);
 
 
 /*--------------------*\
@@ -1188,92 +1188,92 @@ enum xccdf_status_type xccdf_group_status_current(const struct xccdf_group* grou
  * Get value ID.
  * @relates xccdf_value
  */
-const char* xccdf_value_id(const struct xccdf_value* value);
+const char* xccdf_value_get_id(const struct xccdf_value* value);
 
 /**
  * Get value title.
  * @relates xccdf_value
  */
-const char* xccdf_value_title(const struct xccdf_value* value);
+const char* xccdf_value_get_title(const struct xccdf_value* value);
 
 /**
  * Get value description.
  * @relates xccdf_value
  */
-const char* xccdf_value_description(const struct xccdf_value* value);
+const char* xccdf_value_get_description(const struct xccdf_value* value);
 
 /**
  * Return value's parent in the inheritance hierarchy.
  * @relates xccdf_value
  */
-struct xccdf_value* xccdf_value_extends(const struct xccdf_value* value);
+struct xccdf_value* xccdf_value_get_extends(const struct xccdf_value* value);
 
 /**
  * Return value's parent in the grouping hierarchy.
  * Returned item will be either a value or a benchmark.
  * @relates xccdf_value
  */
-struct xccdf_item* xccdf_value_parent(const struct xccdf_value* value);
+struct xccdf_item* xccdf_value_get_parent(const struct xccdf_value* value);
 
 /**
  * Return whether the value is abstract.
  * @relates xccdf_value
  */
-bool xccdf_value_abstract(const struct xccdf_value* value);
+bool xccdf_value_get_abstract(const struct xccdf_value* value);
 
 /**
  * Return whether the value has the prohibit changes flag set to true.
  * @relates xccdf_value
  */
-bool xccdf_value_prohibit_changes(const struct xccdf_value* value);
+bool xccdf_value_get_prohibit_changes(const struct xccdf_value* value);
 
 /**
  * Return whether the value has the hidden flag set to true.
  * @relates xccdf_value
  */
-bool xccdf_value_hidden(const struct xccdf_value* value);
+bool xccdf_value_get_hidden(const struct xccdf_value* value);
 
 /**
  * Get an iterator to value statuses.
  * @relates xccdf_value
  */
-struct xccdf_status_iterator* xccdf_value_statuses(const struct xccdf_value* value);
+struct xccdf_status_iterator* xccdf_value_get_statuses(const struct xccdf_value* value);
 
 /**
  * Get an iterator to the XCCDF references of the value.
  * @relates xccdf_value
  */
-struct xccdf_reference_iterator* xccdf_value_references(const struct xccdf_value* value);
+struct xccdf_reference_iterator* xccdf_value_get_references(const struct xccdf_value* value);
 
 /**
  * Get value current status.
  * @relates xccdf_value
  */
-enum xccdf_status_type xccdf_value_status_current(const struct xccdf_value* value);
+enum xccdf_status_type xccdf_value_get_status_current(const struct xccdf_value* value);
 
 /**
  * Return type of the value.
  * @relates xccdf_value
  */
-enum xccdf_value_type xccdf_value_type(const struct xccdf_value* value);
+enum xccdf_value_type xccdf_value_get_type(const struct xccdf_value* value);
 
 /**
  * Return an interface hint for the value.
  * @relates xccdf_value
  */
-enum xccdf_interface_hint xccdf_value_interface_hint(const struct xccdf_value* value);
+enum xccdf_interface_hint xccdf_value_get_interface_hint(const struct xccdf_value* value);
 
 /**
  * Return an operator to be applied on the value.
  * @relates xccdf_value
  */
-enum xccdf_operator xccdf_value_oper(const struct xccdf_value* value);
+enum xccdf_operator xccdf_value_get_oper(const struct xccdf_value* value);
 
 /**
  * Return currently active selector of the value.
  * @relates xccdf_value
  */
-const char* xccdf_value_selector(const struct xccdf_value* value);
+const char* xccdf_value_get_selector(const struct xccdf_value* value);
 
 /**
  * Apply a selector on the value.
@@ -1281,7 +1281,7 @@ const char* xccdf_value_selector(const struct xccdf_value* value);
  * @param The selector character string.
  * @return whether setting the new selector was successful
  */
-bool xccdf_value_set_selector(struct xccdf_item* value, const char* selector);
+bool xccdf_value_get_set_selector(struct xccdf_item* value, const char* selector);
 
 /**
  * Return the item's value as a string.
@@ -1289,7 +1289,7 @@ bool xccdf_value_set_selector(struct xccdf_item* value, const char* selector);
  * @return string value
  * @retval NULL if value is not a string or is not set
  */
-const char* xccdf_value_value_string(const struct xccdf_value* value);
+const char* xccdf_value_get_value_string(const struct xccdf_value* value);
 
 /**
  * Return the item's value as a number.
@@ -1297,7 +1297,7 @@ const char* xccdf_value_value_string(const struct xccdf_value* value);
  * @return numeric value
  * @retval NAN if value is not a number or is not set.
  */
-xccdf_numeric xccdf_value_value_number(const struct xccdf_value* value);
+xccdf_numeric xccdf_value_get_value_number(const struct xccdf_value* value);
 
 /**
  * Return the item's value as a boolean value.
@@ -1306,7 +1306,7 @@ xccdf_numeric xccdf_value_value_number(const struct xccdf_value* value);
  * @relates xccdf_value
  * @return boolean value
  */
-bool xccdf_value_value_boolean(const struct xccdf_value* value);
+bool xccdf_value_get_value_boolean(const struct xccdf_value* value);
 
 /**
  * Return the item's default value as a string.
@@ -1314,7 +1314,7 @@ bool xccdf_value_value_boolean(const struct xccdf_value* value);
  * @return string value
  * @retval NULL if value is not a string or is not set
  */
-const char* xccdf_value_defval_string(const struct xccdf_value* value);
+const char* xccdf_value_get_defval_string(const struct xccdf_value* value);
 
 /**
  * Return the item's default value as a number.
@@ -1322,7 +1322,7 @@ const char* xccdf_value_defval_string(const struct xccdf_value* value);
  * @return numeric value
  * @retval NAN if value is not a number or is not set.
  */
-xccdf_numeric xccdf_value_defval_number(const struct xccdf_value* value);
+xccdf_numeric xccdf_value_get_defval_number(const struct xccdf_value* value);
 
 /**
  * Return the item's default value as a boolean value.
@@ -1331,28 +1331,28 @@ xccdf_numeric xccdf_value_defval_number(const struct xccdf_value* value);
  * @relates xccdf_value
  * @return boolean value
  */
-bool xccdf_value_defval_boolean(const struct xccdf_value* value);
+bool xccdf_value_get_defval_boolean(const struct xccdf_value* value);
 
 /**
  * Return upper limit for the numeric value.
  * @relates xccdf_value
  * @retval NAN if value is not a number or lower limit is not set.
  */
-xccdf_numeric xccdf_value_lower_bound(const struct xccdf_value* value);
+xccdf_numeric xccdf_value_get_lower_bound(const struct xccdf_value* value);
 
 /**
  * Return lower limit for the numeric value.
  * @relates xccdf_value
  * @retval NAN if value is not a number or upper limit is not set.
  */
-xccdf_numeric xccdf_value_upper_bound(const struct xccdf_value* value);
+xccdf_numeric xccdf_value_get_upper_bound(const struct xccdf_value* value);
 
 /**
  * Regex the values should match.
  * @relates xccdf_value
  * @retval NULL if regex was not set or the value is not a string.
  */
-const char* xccdf_value_match(const struct xccdf_value* value);
+const char* xccdf_value_get_match(const struct xccdf_value* value);
 
 /**
  * Return mustMatch property.
@@ -1360,7 +1360,7 @@ const char* xccdf_value_match(const struct xccdf_value* value);
  * or these are just hints.
  * @relates xccdf_value
  */
-bool xccdf_value_must_match(const struct xccdf_value* value);
+bool xccdf_value_get_must_match(const struct xccdf_value* value);
 
 /*
  * Get an iterator to the list of XCCDF value's possible (or suggested) values.
@@ -1386,52 +1386,52 @@ struct oscap_string_iterator* xccdf_value_sources(const struct xccdf_value* valu
  * Get status date.
  * @relates xccdf_status
  */
-time_t xccdf_status_date(const struct xccdf_status* status);
+time_t xccdf_status_get_date(const struct xccdf_status* status);
 
 /**
  * Get status type.
  * @relates xccdf_status
  */
-enum xccdf_status_type xccdf_status_status(const struct xccdf_status* status);
+enum xccdf_status_type xccdf_status_get_status(const struct xccdf_status* status);
 
 
 /**
  * Get copyright notice ID.
  * @relates xccdf_notice
  */
-const char* xccdf_notice_id(const struct xccdf_notice* notice);
+const char* xccdf_notice_get_id(const struct xccdf_notice* notice);
 
 /**
  * Get copyright notice text.
  * @relates xccdf_notice
  */
-const char* xccdf_notice_text(const struct xccdf_notice* notice);
+const char* xccdf_notice_get_text(const struct xccdf_notice* notice);
 
 
 /**
  * Get scoring model system URI.
  * @relates xccdf_model
  */
-const char* xccdf_model_system(const struct xccdf_model* model);
+const char* xccdf_model_get_system(const struct xccdf_model* model);
 
 /**
  * Get scoring model parameter.
  * @relates xccdf_model
  */
-const char* xccdf_model_param(const struct xccdf_model* model, const char* param_name);
+const char* xccdf_model_get_param(const struct xccdf_model* model, const char* param_name);
 
 
 /**
  * Get ident ID.
  * @relates xccdf_ident
  */
-const char* xccdf_ident_id(const struct xccdf_ident* ident);
+const char* xccdf_ident_get_id(const struct xccdf_ident* ident);
 
 /**
  * Get ident system URI.
  * @relates xccdf_ident
  */
-const char* xccdf_ident_system(const struct xccdf_ident* ident);
+const char* xccdf_ident_get_system(const struct xccdf_ident* ident);
 
 
 
@@ -1439,201 +1439,201 @@ const char* xccdf_ident_system(const struct xccdf_ident* ident);
  * Get check ID.
  * @relates xccdf_check
  */
-const char* xccdf_check_id(const struct xccdf_check* check);
+const char* xccdf_check_get_id(const struct xccdf_check* check);
 
 /**
  * True if the check is a complex check.
  * @relates xccdf_check
- * @see xccdf_check_children
+ * @see xccdf_check_get_children
  */
-bool xccdf_check_complex(const struct xccdf_check* check);
+bool xccdf_check_get_complex(const struct xccdf_check* check);
 
 /**
  * Get an operator to be applied no children of the complex check.
  * @relates xccdf_check
- * @see xccdf_check_children
+ * @see xccdf_check_get_children
  */
-enum xccdf_bool_operator xccdf_check_oper(const struct xccdf_check* check);
+enum xccdf_bool_operator xccdf_check_get_oper(const struct xccdf_check* check);
 
 /**
  * Get check system URI.
  * @relates xccdf_check
  */
-const char* xccdf_check_system(const struct xccdf_check* check);
+const char* xccdf_check_get_system(const struct xccdf_check* check);
 
 /**
  * Get check selector.
  * @relates xccdf_check
  */
-const char* xccdf_check_selector(const struct xccdf_check* check);
+const char* xccdf_check_get_selector(const struct xccdf_check* check);
 
 /**
  * Get check content.
  * @relates xccdf_check
  */
-const char* xccdf_check_content(const struct xccdf_check* check);
+const char* xccdf_check_get_content(const struct xccdf_check* check);
 
 /**
  * Get rule containing this check.
  * @relates xccdf_check
  */
-struct xccdf_rule* xccdf_check_parent(const struct xccdf_check* check);
+struct xccdf_rule* xccdf_check_get_parent(const struct xccdf_check* check);
 
 /**
  * Get an iterator to the check content references.
  * @relates xccdf_check
- * @see xccdf_check_content_ref
+ * @see xccdf_check_get_content_ref
  */
 struct xccdf_check_content_ref_iterator* xccdf_check_content_refs(const struct xccdf_check* check);
 
 /**
  * Get an iterator to the check imports.
  * @relates xccdf_check
- * @see xccdf_check_import
+ * @see xccdf_check_get_import
  */
 struct xccdf_check_import_iterator* xccdf_check_imports(const struct xccdf_check* check);
 
 /**
  * Get an iterator to the check exports.
  * @relates xccdf_check
- * @see xccdf_check_export
+ * @see xccdf_check_get_export
  */
 struct xccdf_check_export_iterator* xccdf_check_exports(const struct xccdf_check* check);
 
 /**
  * Get an iterator to nested checks of the complex check.
  * @relates xccdf_check
- * @see xccdf_check_export
+ * @see xccdf_check_get_export
  */
-struct xccdf_check_iterator* xccdf_check_children(const struct xccdf_check* check);
+struct xccdf_check_iterator* xccdf_check_get_children(const struct xccdf_check* check);
 
 /**
  * Get URI of the check content reference.
  * @relates xccdf_check_content_ref
  */
-const char* xccdf_check_content_ref_href(const struct xccdf_check_content_ref* ref);
+const char* xccdf_check_content_ref_get_href(const struct xccdf_check_content_ref* ref);
 
 /**
  * Get name of a part of the check content document this reference is pointing to.
  * @relates xccdf_check_content_ref
  */
-const char* xccdf_check_content_ref_name(const struct xccdf_check_content_ref* ref);
+const char* xccdf_check_content_ref_get_name(const struct xccdf_check_content_ref* ref);
 
 /**
  * Get profile note tag.
  * @relates xccdf_profile_note
  */
-const char* xccdf_profile_note_reftag(const struct xccdf_profile_note* note);
+const char* xccdf_profile_note_get_reftag(const struct xccdf_profile_note* note);
 
 /**
  * Get profile note text as a piece of XML.
  * @relates xccdf_profile_note
  */
-const char* xccdf_profile_note_text(const struct xccdf_profile_note* note);
+const char* xccdf_profile_note_get_text(const struct xccdf_profile_note* note);
 
 /**
  * Get check import target system variable name.
  * @relates xccdf_check_import
  */
-const char* xccdf_check_import_name(const struct xccdf_check_import* item);
+const char* xccdf_check_import_get_name(const struct xccdf_check_import* item);
 
 /**
  * Get content of the imported variable.
  * @relates xccdf_check_import
  */
-const char* xccdf_check_import_content(const struct xccdf_check_import* item);
+const char* xccdf_check_import_get_content(const struct xccdf_check_import* item);
 
 /**
  * Get check export target system variable name.
  * @relates xccdf_check_export
  */
-const char* xccdf_check_export_name(const struct xccdf_check_export* item);
+const char* xccdf_check_export_get_name(const struct xccdf_check_export* item);
 
 /**
  * Get an XCCDF value bound to the check export item.
  * @relates xccdf_check_export
  */
-struct xccdf_value* xccdf_check_export_value(const struct xccdf_check_export* item);
+struct xccdf_value* xccdf_check_export_get_value(const struct xccdf_check_export* item);
 
 
 /**
  * Get fix content (e.g. a script).
  * @relates xccdf_fix
  */
-const char* xccdf_fix_content(const struct xccdf_fix* fix);
+const char* xccdf_fix_get_content(const struct xccdf_fix* fix);
 
 /**
  * True if the fix needs rebooting a system.
  * @relates xccdf_fix
  */
-bool xccdf_fix_reboot(const struct xccdf_fix* fix);
+bool xccdf_fix_get_reboot(const struct xccdf_fix* fix);
 
 /**
  * Get fix strategy.
  * @relates xccdf_fix
  */
-enum xccdf_strategy xccdf_fix_strategy(const struct xccdf_fix* fix);
+enum xccdf_strategy xccdf_fix_get_strategy(const struct xccdf_fix* fix);
 
 /**
  * Get fix complexity.
  * @relates xccdf_fix
  */
-enum xccdf_level xccdf_fix_complexity(const struct xccdf_fix* fix);
+enum xccdf_level xccdf_fix_get_complexity(const struct xccdf_fix* fix);
 
 /**
  * Get fix disruption.
  * @relates xccdf_fix
  */
-enum xccdf_level xccdf_fix_disruption(const struct xccdf_fix* fix);
+enum xccdf_level xccdf_fix_get_disruption(const struct xccdf_fix* fix);
 
 /**
  * Get fix ID,
  * @relates xccdf_fix
  */
-const char* xccdf_fix_id(const struct xccdf_fix* fix);
+const char* xccdf_fix_get_id(const struct xccdf_fix* fix);
 
 /**
  * Get fix fixing system URI,
  * @relates xccdf_fix
  */
-const char* xccdf_fix_system(const struct xccdf_fix* fix);
+const char* xccdf_fix_get_system(const struct xccdf_fix* fix);
 
 /**
  * Get URI of a platform the fix applies to.
  * @relates xccdf_fix
  */
-const char* xccdf_fix_platform(const struct xccdf_fix* fix);
+const char* xccdf_fix_get_platform(const struct xccdf_fix* fix);
 
 
 /**
  * True if the fixtext needs rebooting a system.
  * @relates xccdf_fixtext
  */
-bool xccdf_fixtext_reboot(const struct xccdf_fixtext* fixtext);
+bool xccdf_fixtext_get_reboot(const struct xccdf_fixtext* fixtext);
 
 /**
  * Get fixtext strategy.
  * @relates xccdf_fixtext
  */
-enum xccdf_strategy xccdf_fixtext_strategy(const struct xccdf_fixtext* fixtext);
+enum xccdf_strategy xccdf_fixtext_get_strategy(const struct xccdf_fixtext* fixtext);
 
 /**
  * Get fixtext complexity.
  * @relates xccdf_fixtext
  */
-enum xccdf_level xccdf_fixtext_complexity(const struct xccdf_fixtext* fixtext);
+enum xccdf_level xccdf_fixtext_get_complexity(const struct xccdf_fixtext* fixtext);
 
 /**
  * Get fixtext disruption.
  * @relates xccdf_fixtext
  */
-enum xccdf_level xccdf_fixtext_disruption(const struct xccdf_fixtext* fixtext);
+enum xccdf_level xccdf_fixtext_get_disruption(const struct xccdf_fixtext* fixtext);
 
 /**
  * Get a fix this text references to.
  * @relates xccdf_fixtext
  */
-struct xccdf_fix* xccdf_fixtext_fixref(const struct xccdf_fixtext* fixtext);
+struct xccdf_fix* xccdf_fixtext_get_fixref(const struct xccdf_fixtext* fixtext);
 
 
 

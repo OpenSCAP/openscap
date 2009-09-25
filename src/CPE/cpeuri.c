@@ -212,15 +212,15 @@ int cpe_name_match_strs(const char *candidate, size_t n, char **targets)
 
 		if (cpe_name_match_one(ccpe, tcpe)) {
 			// CPE matched
-			cpe_name_delete(ccpe);
-			cpe_name_delete(tcpe);
+			cpe_name_free(ccpe);
+			cpe_name_free(tcpe);
 			return i;
 		}
 
-		cpe_name_delete(tcpe);
+		cpe_name_free(tcpe);
 	}
 
-	cpe_name_delete(ccpe);
+	cpe_name_free(ccpe);
 	return -1;
 }
 
@@ -357,7 +357,7 @@ bool cpe_assign_values(struct cpe_name * cpe, char **fields)
 	return true;
 }
 
-void cpe_name_delete(struct cpe_name * cpe)
+void cpe_name_free(struct cpe_name * cpe)
 {
 	if (cpe != NULL) {
 		oscap_free(cpe->data_);

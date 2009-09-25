@@ -55,8 +55,8 @@ struct xccdf_item* xccdf_item_new(enum xccdf_type type, struct xccdf_item* bench
 void xccdf_item_release(struct xccdf_item* item)
 {
 	if (item) {
-        oscap_list_delete(item->item.statuses, (oscap_destruct_func)xccdf_status_delete);
-		oscap_list_delete(item->item.platforms, oscap_free);
+        oscap_list_free(item->item.statuses, (oscap_destruct_func)xccdf_status_free);
+		oscap_list_free(item->item.platforms, oscap_free);
 		oscap_free(item->item.id);
 		oscap_free(item->item.cluster_id);
 		oscap_free(item->item.title);
@@ -69,14 +69,14 @@ void xccdf_item_release(struct xccdf_item* item)
 	}
 }
 
-void xccdf_item_delete(struct xccdf_item* item)
+void xccdf_item_free(struct xccdf_item* item)
 {
     if (item == NULL) return;
     switch (item->type) {
-        case XCCDF_BENCHMARK: xccdf_benchmark_delete(XBENCHMARK(item)); break;
-        case XCCDF_GROUP:     xccdf_group_delete(item);                 break;
-        case XCCDF_RULE:      xccdf_rule_delete(item);                  break;
-        case XCCDF_VALUE:     xccdf_value_delete(item);                 break;
+        case XCCDF_BENCHMARK: xccdf_benchmark_free(XBENCHMARK(item)); break;
+        case XCCDF_GROUP:     xccdf_group_free(item);                 break;
+        case XCCDF_RULE:      xccdf_rule_free(item);                  break;
+        case XCCDF_VALUE:     xccdf_value_free(item);                 break;
         default: assert((fprintf(stderr, "Deletion of item of type no. %u is not yet supported.", item->type), false));
     }
 }
@@ -92,7 +92,7 @@ void xccdf_item_dump(struct xccdf_item* item, int depth)
     }
 }
 
-void xccdf_item_print(struct xccdf_item* item, int depth)
+void xccdf_item_get_print(struct xccdf_item* item, int depth)
 {
 	if (item) {
 		if (item->item.parent)  { xccdf_print_depth(depth); printf("parent  : %s\n", item->item.parent->item.id); }
@@ -104,7 +104,7 @@ void xccdf_item_print(struct xccdf_item* item, int depth)
 		xccdf_print_depth(depth); printf("desc    : "); xccdf_print_max(item->item.description, 64, "..."); printf("\n");
         xccdf_print_depth(depth); printf("platforms "); oscap_list_dump(item->item.platforms, (oscap_dump_func)xccdf_cstring_dump, depth + 1);
         xccdf_print_depth(depth);
-            printf("status (cur = %d)", xccdf_item_status_current(item));
+            printf("status (cur = %d)", xccdf_item_get_status_current(item));
             oscap_list_dump(item->item.statuses, (oscap_dump_func)xccdf_status_dump, depth + 1);
 	}
 }
@@ -113,7 +113,7 @@ void xccdf_item_print(struct xccdf_item* item, int depth)
 	if (xccdf_attribute_has((reader), (attr))) \
 		item->item.flags.flag = xccdf_attribute_get_bool((reader), (attr));
 
-bool xccdf_item_process_attributes(struct xccdf_item* item, xmlTextReaderPtr reader)
+bool xccdf_item_get_process_attributes(struct xccdf_item* item, xmlTextReaderPtr reader)
 {
 	item->item.id = xccdf_attribute_copy(reader, XCCDFA_ID);
 
@@ -136,7 +136,7 @@ bool xccdf_item_process_attributes(struct xccdf_item* item, xmlTextReaderPtr rea
 	return item->item.id != NULL;
 }
 
-bool xccdf_item_process_element(struct xccdf_item* item, xmlTextReaderPtr reader)
+bool xccdf_item_get_process_element(struct xccdf_item* item, xmlTextReaderPtr reader)
 {
 	enum xccdf_element el = xccdf_element_get(reader);
 
@@ -268,16 +268,16 @@ struct xccdf_status* xccdf_status_new(const char* status, const char* date)
 void xccdf_status_dump(struct xccdf_status* status, int depth)
 {
     xccdf_print_depth(depth);
-    time_t date = xccdf_status_date(status);
-    printf("%-10s (%24.24s)\n", oscap_enum_to_string(XCCDF_STATUS_MAP, xccdf_status_status(status)), (date ? ctime(&date) : "   date not specified   "));
+    time_t date = xccdf_status_get_date(status);
+    printf("%-10s (%24.24s)\n", oscap_enum_to_string(XCCDF_STATUS_MAP, xccdf_status_get_status(status)), (date ? ctime(&date) : "   date not specified   "));
 }
 
 
-void xccdf_status_delete(struct xccdf_status* status) { oscap_free(status); }
+void xccdf_status_free(struct xccdf_status* status) { oscap_free(status); }
 XCCDF_GENERIC_GETTER(time_t, status, date)
 XCCDF_GENERIC_GETTER(enum xccdf_status_type, status, status)
 
-enum xccdf_status_type xccdf_item_status_current(const struct xccdf_item* item)
+enum xccdf_status_type xccdf_item_get_status_current(const struct xccdf_item* item)
 {
     time_t maxtime = 0;
     enum xccdf_status_type maxtype = XCCDF_STATUS_NOT_SPECIFIED;
@@ -321,11 +321,11 @@ struct xccdf_model* xccdf_model_new_xml(xmlTextReaderPtr reader)
 XCCDF_GENERIC_GETTER(const char*, model, system)
 const char* xccdf_model_param(const struct xccdf_model* m, const char* p) { return oscap_htable_get(m->params, p); }
 
-void xccdf_model_delete(struct xccdf_model* model)
+void xccdf_model_free(struct xccdf_model* model)
 {
     if (model) {
         oscap_free(model->system);
-        oscap_htable_delete(model->params, oscap_free);
+        oscap_htable_free(model->params, oscap_free);
         oscap_free(model);
     }
 }

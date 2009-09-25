@@ -34,7 +34,7 @@ bool dump_benchmark(const char* fname)
 	printf("\n");
 	xccdf_benchmark_dump(benchmark);
 	printf("\n\n");
-	xccdf_benchmark_delete(benchmark);
+	xccdf_benchmark_free(benchmark);
 	return true;
 }
 

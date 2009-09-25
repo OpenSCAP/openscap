@@ -51,7 +51,7 @@ typedef void(*oscap_consumer_func)(void*, void*);
  * @param MEXP expression to get the member
  */
 #define OSCAP_GENERIC_GETTER_CONV(RTYPE,CONV,SNAME,MNAME,MEXP) \
-	RTYPE SNAME##_##MNAME(const struct SNAME* item) { return (CONV(item->MEXP)); }
+	RTYPE SNAME##_get_##MNAME(const struct SNAME* item) { return (CONV(item->MEXP)); }
 
 /**
  * Generate a getter function.
@@ -119,7 +119,7 @@ typedef void(*oscap_consumer_func)(void*, void*);
  * @param CONV convert expression
  */
 #define OSCAP_IGETTER_CONV(ITYPE,SNAME,MNAME,CONV) \
-        struct ITYPE##_iterator* SNAME##_##MNAME(const struct SNAME* item) \
+        struct ITYPE##_iterator* SNAME##_get_##MNAME(const struct SNAME* item) \
         { return oscap_iterator_new((CONV(item))->MNAME); }
 
 
@@ -150,7 +150,7 @@ typedef void(*oscap_consumer_func)(void*, void*);
  * @param MEXP expression to get the member variable (i.e. the hash table)
  */
 #define OSCAP_HGETTER_EXP(RTYPE,SNAME,MNAME,MEXP) \
-	RTYPE SNAME##_##MNAME(const struct SNAME* item, const char* key) \
+	RTYPE SNAME##_get_##MNAME(const struct SNAME* item, const char* key) \
 	{ return oscap_htable_get(item->MEXP, key); }
 
 /**

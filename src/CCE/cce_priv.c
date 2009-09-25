@@ -58,11 +58,11 @@ void process_node(xmlTextReaderPtr reader, struct cce *cce_list)
 		struct cce_entry* cce = cce_entry_new_empty();
 		cce->id = (char *)xmlTextReaderGetAttribute(reader, (const xmlChar *) "id");
 		if (!cce->id) {
-			cce_entry_delete(cce);
+			cce_entry_free(cce);
 			return;
 		}
 		oscap_list_add(cce_list->entries, cce);
-		oscap_htable_add(cce_list->entry_by_id, cce->id, cce);
+		oscap_htable_add(cce_list->entry, cce->id, cce);
 
 		xmlTextReaderRead(reader);
 		xmlChar *name = xmlTextReaderName(reader);
@@ -161,7 +161,7 @@ void process_tech_mech(xmlTextReaderPtr reader, struct cce_entry *cce)
 	return;
 }
 
-void cce_reference_delete(struct cce_reference* ref)
+void cce_reference_free(struct cce_reference* ref)
 {
 	if (ref) {
 		oscap_free(ref->source);

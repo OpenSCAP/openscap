@@ -294,71 +294,71 @@ extern const struct oscap_string_map XCCDF_STRATEGY_MAP[];
 
 struct xccdf_item* xccdf_item_new(enum xccdf_type type, struct xccdf_item* bench, struct xccdf_item* parent);
 void xccdf_item_release(struct xccdf_item* item);
-enum xccdf_status_type xccdf_item_status_current(const struct xccdf_item* item);
-void xccdf_item_print(struct xccdf_item* item, int depth);
+enum xccdf_status_type xccdf_item_get_status_current(const struct xccdf_item* item);
+void xccdf_item_get_print(struct xccdf_item* item, int depth);
 void xccdf_item_dump(struct xccdf_item* item, int depth);
-void xccdf_item_delete(struct xccdf_item* item);
+void xccdf_item_free(struct xccdf_item* item);
 
 struct xccdf_item* xccdf_benchmark_new_empty(void);
-bool xccdf_benchmark_parse(struct xccdf_item* benchmark, xmlTextReaderPtr reader);
+bool xccdf_benchmark_get_parse(struct xccdf_item* benchmark, xmlTextReaderPtr reader);
 bool xccdf_benchmark_add_ref(struct xccdf_item* benchmark, struct xccdf_item** ptr, const char* id, enum xccdf_type type);
 void xccdf_benchmark_dump(struct xccdf_benchmark* benchmark);
 
 struct xccdf_item* xccdf_profile_new_empty(struct xccdf_item* bench);
 struct xccdf_item* xccdf_profile_new_parse(xmlTextReaderPtr reader, struct xccdf_item* bench);
 void xccdf_profile_dump(struct xccdf_item* prof, int depth);
-void xccdf_profile_delete(struct xccdf_item* prof);
+void xccdf_profile_free(struct xccdf_item* prof);
 
-bool xccdf_item_process_attributes(struct xccdf_item* item, xmlTextReaderPtr reader);
-bool xccdf_item_process_element(struct xccdf_item* item, xmlTextReaderPtr reader);
+bool xccdf_item_get_process_attributes(struct xccdf_item* item, xmlTextReaderPtr reader);
+bool xccdf_item_get_process_element(struct xccdf_item* item, xmlTextReaderPtr reader);
 
 bool xccdf_content_parse(xmlTextReaderPtr reader, struct xccdf_item* parent);
 struct xccdf_item* xccdf_group_new_parse(xmlTextReaderPtr reader, struct xccdf_item* parent);
 void xccdf_group_dump(struct xccdf_item* group, int depth);
-void xccdf_group_delete(struct xccdf_item* group);
+void xccdf_group_free(struct xccdf_item* group);
 
 struct xccdf_item* xccdf_rule_new_parse(xmlTextReaderPtr reader, struct xccdf_item* parent);
 void xccdf_rule_dump(struct xccdf_item* rule, int depth);
-void xccdf_rule_delete(struct xccdf_item* rule);
+void xccdf_rule_free(struct xccdf_item* rule);
 
 struct xccdf_item* xccdf_value_new_parse(xmlTextReaderPtr reader, struct xccdf_item* parent);
 void xccdf_value_dump(struct xccdf_item* value, int depth);
-void xccdf_value_delete(struct xccdf_item* val);
+void xccdf_value_free(struct xccdf_item* val);
 
 struct xccdf_notice* xccdf_notice_new(const char* id, char* text);
 void xccdf_notice_dump(struct xccdf_notice* notice, int depth);
-void xccdf_notice_delete(struct xccdf_notice* notice);
+void xccdf_notice_free(struct xccdf_notice* notice);
 
 struct xccdf_status* xccdf_status_new(const char* status, const char* date);
 void xccdf_status_dump(struct xccdf_status* status, int depth);
-void xccdf_status_delete(struct xccdf_status* status);
+void xccdf_status_free(struct xccdf_status* status);
 
 struct xccdf_model* xccdf_model_new_xml(xmlTextReaderPtr reader);
-void xccdf_model_delete(struct xccdf_model* model);
+void xccdf_model_free(struct xccdf_model* model);
 
 void xccdf_cstring_dump(const char* data, int depth);
 
 struct xccdf_ident* xccdf_ident_new(const char* id, const char* system);
-void xccdf_ident_delete(struct xccdf_ident* ident);
+void xccdf_ident_free(struct xccdf_ident* ident);
 
 struct xccdf_check* xccdf_check_new_empty(struct xccdf_item* parent);
 struct xccdf_check* xccdf_check_new_parse(xmlTextReaderPtr reader, struct xccdf_item* parent);
 void xccdf_check_dump(struct xccdf_check* check, int depth);
-void xccdf_check_delete(struct xccdf_check* check);
-void xccdf_check_content_ref_delete(struct xccdf_check_content_ref* ref);
+void xccdf_check_free(struct xccdf_check* check);
+void xccdf_check_content_ref_free(struct xccdf_check_content_ref* ref);
 void xccdf_check_content_ref_dump(struct xccdf_check_content_ref* ref, int depth);
 struct xccdf_ident* xccdf_ident_new(const char* id, const char* system);
 struct xccdf_ident* xccdf_ident_new_parse(xmlTextReaderPtr reader);
 void xccdf_ident_dump(struct xccdf_ident* ident, int depth);
-void xccdf_ident_delete(struct xccdf_ident* ident);
-void xccdf_profile_note_delete(struct xccdf_profile_note* note);
-void xccdf_check_import_delete(struct xccdf_check_import* item);
-void xccdf_check_export_delete(struct xccdf_check_export* item);
+void xccdf_ident_free(struct xccdf_ident* ident);
+void xccdf_profile_note_free(struct xccdf_profile_note* note);
+void xccdf_check_import_free(struct xccdf_check_import* item);
+void xccdf_check_export_free(struct xccdf_check_export* item);
 struct xccdf_fix* xccdf_fix_new_parse(xmlTextReaderPtr reader, struct xccdf_item* parent);
 struct xccdf_fixtext* xccdf_fixtext_new_parse(xmlTextReaderPtr reader, struct xccdf_item* parent);
-void xccdf_fixtext_delete(struct xccdf_fixtext* item);
-void xccdf_fix_delete(struct xccdf_fix* item);
-void xccdf_set_value_delete(struct xccdf_set_value* sv);
+void xccdf_fixtext_free(struct xccdf_fixtext* item);
+void xccdf_fix_free(struct xccdf_fix* item);
+void xccdf_set_value_free(struct xccdf_set_value* sv);
 
 
 
@@ -372,27 +372,27 @@ void xccdf_set_value_delete(struct xccdf_set_value* sv);
 #define XITEM(item) ((struct xccdf_item*)item)
 
 #define XCCDF_STATUS_CURRENT(TYPE) \
-		enum xccdf_status_type xccdf_##TYPE##_status_current(const struct xccdf_##TYPE* item) {\
-			return xccdf_item_status_current(XITEM(item)); }
+		enum xccdf_status_type xccdf_##TYPE##_get_status_current(const struct xccdf_##TYPE* item) {\
+			return xccdf_item_get_status_current(XITEM(item)); }
 
 #define XCCDF_GENERIC_GETTER(RTYPE,TNAME,MEMBER) \
-        RTYPE xccdf_##TNAME##_##MEMBER(const struct xccdf_##TNAME* item) { return (RTYPE)((item)->MEMBER); }
+        RTYPE xccdf_##TNAME##_get_##MEMBER(const struct xccdf_##TNAME* item) { return (RTYPE)((item)->MEMBER); }
 #define XCCDF_GENERIC_IGETTER(ITYPE,TNAME,MNAME) \
-        struct xccdf_##ITYPE##_iterator* xccdf_##TNAME##_##MNAME(const struct xccdf_##TNAME* item) \
+        struct xccdf_##ITYPE##_iterator* xccdf_##TNAME##_get_##MNAME(const struct xccdf_##TNAME* item) \
         { return oscap_iterator_new(item->MNAME); }
 #define XCCDF_ABSTRACT_GETTER(RTYPE,TNAME,MNAME,MEMBER) \
-        RTYPE xccdf_##TNAME##_##MNAME(const struct xccdf_##TNAME* item) { return (RTYPE)(XITEM(item)->MEMBER); }
+        RTYPE xccdf_##TNAME##_get_##MNAME(const struct xccdf_##TNAME* item) { return (RTYPE)(XITEM(item)->MEMBER); }
 #define XCCDF_ITERATOR_GETTER(ITYPE,TNAME,MNAME,MEMBER) \
-        struct xccdf_##ITYPE##_iterator* xccdf_##TNAME##_##MNAME(const struct xccdf_##TNAME* item) \
+        struct xccdf_##ITYPE##_iterator* xccdf_##TNAME##_get_##MNAME(const struct xccdf_##TNAME* item) \
         { return oscap_iterator_new(XITEM(item)->MEMBER); }
 #define XCCDF_SITERATOR_GETTER(TNAME,MNAME,MEMBER) \
-        struct oscap_string_iterator* xccdf_##TNAME##_##MNAME(const struct xccdf_##TNAME* item) \
+        struct oscap_string_iterator* xccdf_##TNAME##_get_##MNAME(const struct xccdf_##TNAME* item) \
         { return oscap_iterator_new(XITEM(item)->MEMBER); }
 #define XCCDF_HTABLE_GETTER(RTYPE,TNAME,MNAME,MEMBER) \
-		RTYPE xccdf_##TNAME##_##MNAME(const struct xccdf_##TNAME* item, const char* key) \
+		RTYPE xccdf_##TNAME##_get_##MNAME(const struct xccdf_##TNAME* item, const char* key) \
 		{ return (RTYPE)oscap_htable_get(XITEM(item)->MEMBER, key); }
 #define XCCDF_SIGETTER(TNAME,MNAME) \
-        struct oscap_string_iterator* xccdf_##TNAME##_##MNAME(const struct xccdf_##TNAME* item) \
+        struct oscap_string_iterator* xccdf_##TNAME##_get_##MNAME(const struct xccdf_##TNAME* item) \
         { return oscap_iterator_new(XITEM(item)->sub.TNAME.MNAME); }
 
 #define XCCDF_BENCHMARK_GETTER_A(RTYPE,MNAME,MEMBER) XCCDF_ABSTRACT_GETTER(RTYPE,benchmark,MNAME,MEMBER)

@@ -41,7 +41,7 @@
 
 struct cce {
 	struct oscap_list *entries;
-	struct oscap_htable *entry_by_id;
+	struct oscap_htable *entry;
 };
 
 struct cce_entry {
@@ -64,7 +64,7 @@ void process_tech_mech(xmlTextReaderPtr reader, struct cce_entry *cce);
 void process_refs(xmlTextReaderPtr reader, struct cce_entry *cce);
 
 struct cce_entry* cce_entry_new_empty(void);
-void cce_reference_delete(struct cce_reference* ref);
-void cce_entry_delete(struct cce_entry* ref);
+void cce_reference_free(struct cce_reference* ref);
+void cce_entry_free(struct cce_entry* ref);
 
 #endif

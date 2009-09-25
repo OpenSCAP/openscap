@@ -52,8 +52,8 @@ struct oscap_list {
 
 struct oscap_list* oscap_list_new(void);
 bool oscap_list_add(struct oscap_list* list, void* value);
-void oscap_list_delete(struct oscap_list* list, oscap_destruct_func destructor);
-void oscap_list_delete0(struct oscap_list* list);
+void oscap_list_free(struct oscap_list* list, oscap_destruct_func destructor);
+void oscap_list_free0(struct oscap_list* list);
 void oscap_list_dump(struct oscap_list* list, oscap_dump_func dumper, int depth);
 
 /* Linked List iterator. */
@@ -139,7 +139,7 @@ void oscap_htable_dump(struct oscap_htable* htable, oscap_dump_func dumper, int 
  * @param htable Hash table to be deleted.
  * @param destructor Function used to delete individual items.
  */
-void oscap_htable_delete(struct oscap_htable* htable, oscap_destruct_func destructor);
+void oscap_htable_free(struct oscap_htable* htable, oscap_destruct_func destructor);
 
 void oscap_print_depth(int depth);
 

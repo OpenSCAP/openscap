@@ -99,7 +99,7 @@ bool xccdf_parse_deps(xmlTextReaderPtr reader, struct xccdf_item* item)
 				xccdf_benchmark_add_ref(item->item.benchmark, (void*)&reqs->last->data, id, XCCDF_CONTENT);
 			}
 			if (reqs->itemcount == 0) {
-				oscap_list_delete(reqs, NULL);
+				oscap_list_free(reqs, NULL);
 				return false;
 			}
 
@@ -139,7 +139,7 @@ void xccdf_deps_dump(struct xccdf_item* item, int depth)
 		for (it = requires->first; it; it = it->next) {
 			struct oscap_list *nlist = it->data;
 			if (it != requires->first) printf(" & ");
-			if (nlist->itemcount = 0) continue;
+			if (nlist->itemcount == 0) continue;
 			if (nlist->itemcount > 1) printf("(");
 			xccdf_print_id_list(nlist, " | ");
 			if (nlist->itemcount > 1) printf(")");
@@ -170,8 +170,8 @@ struct xccdf_item* xccdf_group_new_parse(xmlTextReaderPtr reader, struct xccdf_i
 
 	struct xccdf_item* group = xccdf_group_new_empty(parent);
 	
-	if (!xccdf_item_process_attributes(group, reader)) {
-		xccdf_group_delete(group);
+	if (!xccdf_item_get_process_attributes(group, reader)) {
+		xccdf_group_free(group);
 		return NULL;
 	}
 
@@ -188,7 +188,7 @@ struct xccdf_item* xccdf_group_new_parse(xmlTextReaderPtr reader, struct xccdf_i
 			case XCCDFE_VALUE:
 				oscap_list_add(group->sub.group.values, xccdf_value_new_parse(reader, group));
 				break;
-			default: xccdf_item_process_element(group, reader);
+			default: xccdf_item_get_process_element(group, reader);
 		}
 		xmlTextReaderRead(reader);
 	}
@@ -201,7 +201,7 @@ void xccdf_group_dump(struct xccdf_item* group, int depth)
 	xccdf_print_depth(depth);
 	printf("Group : %s\n", (group ? group->item.id : "(NULL)"));
 	if (group) {
-        xccdf_item_print(group, depth + 1);
+        xccdf_item_get_print(group, depth + 1);
 		xccdf_print_depth(depth + 1);
 		printf("values"); oscap_list_dump(group->sub.group.values, (oscap_dump_func)xccdf_value_dump, depth + 2);
 		xccdf_print_depth(depth + 1);
@@ -209,13 +209,13 @@ void xccdf_group_dump(struct xccdf_item* group, int depth)
 	}
 }
 
-void xccdf_group_delete(struct xccdf_item* group)
+void xccdf_group_free(struct xccdf_item* group)
 {
 	if (group) {
-		oscap_list_delete(group->sub.group.content, (oscap_destruct_func)xccdf_item_delete);
-		oscap_list_delete(group->sub.group.requires, (oscap_destruct_func)oscap_list_delete0);
-		oscap_list_delete(group->sub.group.values, (oscap_destruct_func)xccdf_value_delete);
-		oscap_list_delete(group->sub.group.conflicts, NULL);
+		oscap_list_free(group->sub.group.content, (oscap_destruct_func)xccdf_item_free);
+		oscap_list_free(group->sub.group.requires, (oscap_destruct_func)oscap_list_free0);
+		oscap_list_free(group->sub.group.values, (oscap_destruct_func)xccdf_value_free);
+		oscap_list_free(group->sub.group.conflicts, NULL);
 		xccdf_item_release(group);
 	}
 }
@@ -242,8 +242,8 @@ struct xccdf_item* xccdf_rule_new_parse(xmlTextReaderPtr reader, struct xccdf_it
 
 	struct xccdf_item* rule = xccdf_rule_new_empty(parent);
 	
-	if (!xccdf_item_process_attributes(rule, reader)) {
-		xccdf_rule_delete(rule);
+	if (!xccdf_item_get_process_attributes(rule, reader)) {
+		xccdf_rule_free(rule);
 		return NULL;
 	}
 	if (xccdf_attribute_has(reader, XCCDFA_ROLE))
@@ -283,7 +283,7 @@ struct xccdf_item* xccdf_rule_new_parse(xmlTextReaderPtr reader, struct xccdf_it
 			case XCCDFE_IDENT:
 				oscap_list_add(rule->sub.rule.idents, xccdf_ident_new_parse(reader));
 				break;
-			default: xccdf_item_process_element(rule, reader);
+			default: xccdf_item_get_process_element(rule, reader);
 		}
 		xmlTextReaderRead(reader);
 	}
@@ -296,23 +296,23 @@ void xccdf_rule_dump(struct xccdf_item* rule, int depth)
 	xccdf_print_depth(depth);
 	printf("Rule : %s\n", (rule ? rule->item.id : "(NULL)"));
 	if (rule) {
-        xccdf_item_print(rule, depth + 1);
+        xccdf_item_get_print(rule, depth + 1);
 		xccdf_deps_dump(rule, depth + 1);
 		xccdf_print_depth(depth+1); printf("idents"); oscap_list_dump(rule->sub.rule.idents, (oscap_dump_func)xccdf_ident_dump, depth+2);
 		xccdf_print_depth(depth+1); printf("checks"); oscap_list_dump(rule->sub.rule.checks, (oscap_dump_func)xccdf_check_dump, depth+2);
 	}
 }
 
-void xccdf_rule_delete(struct xccdf_item* rule)
+void xccdf_rule_free(struct xccdf_item* rule)
 {
 	if (rule) {
-		oscap_list_delete(rule->sub.rule.idents, (oscap_destruct_func)xccdf_ident_delete);
-		oscap_list_delete(rule->sub.rule.checks, (oscap_destruct_func)xccdf_check_delete);
-		oscap_list_delete(rule->sub.rule.requires, (oscap_destruct_func)oscap_list_delete0);
-		oscap_list_delete(rule->sub.rule.conflicts, NULL);
-		oscap_list_delete(rule->sub.rule.profile_notes, (oscap_destruct_func)xccdf_profile_note_delete);
-		oscap_list_delete(rule->sub.rule.fixes, (oscap_destruct_func)xccdf_fix_delete);
-		oscap_list_delete(rule->sub.rule.fixtexts, (oscap_destruct_func)xccdf_fixtext_delete);
+		oscap_list_free(rule->sub.rule.idents, (oscap_destruct_func)xccdf_ident_free);
+		oscap_list_free(rule->sub.rule.checks, (oscap_destruct_func)xccdf_check_free);
+		oscap_list_free(rule->sub.rule.requires, (oscap_destruct_func)oscap_list_free0);
+		oscap_list_free(rule->sub.rule.conflicts, NULL);
+		oscap_list_free(rule->sub.rule.profile_notes, (oscap_destruct_func)xccdf_profile_note_free);
+		oscap_list_free(rule->sub.rule.fixes, (oscap_destruct_func)xccdf_fix_free);
+		oscap_list_free(rule->sub.rule.fixtexts, (oscap_destruct_func)xccdf_fixtext_free);
 		xccdf_item_release(rule);
 	}
 }
@@ -339,7 +339,7 @@ void xccdf_ident_dump(struct xccdf_ident* ident, int depth)
 	xccdf_print_depth(depth); printf("ident : %s => %s\n", ident->system, ident->id);
 }
 
-void xccdf_ident_delete(struct xccdf_ident* ident)
+void xccdf_ident_free(struct xccdf_ident* ident)
 {
 	if (ident) {
 		oscap_free(ident->id);
@@ -348,7 +348,7 @@ void xccdf_ident_delete(struct xccdf_ident* ident)
 	}
 }
 
-void xccdf_profile_note_delete(struct xccdf_profile_note* note)
+void xccdf_profile_note_free(struct xccdf_profile_note* note)
 {
 	if (note) {
 		oscap_free(note->reftag);
@@ -447,18 +447,18 @@ void xccdf_check_dump(struct xccdf_check* check, int depth)
 	oscap_list_dump(check->content_refs, (oscap_dump_func)xccdf_check_content_ref_dump, depth+1);
 }
 
-bool xccdf_check_complex(const struct xccdf_check* check)
+bool xccdf_check_get_complex(const struct xccdf_check* check)
 {
 	return check->oper ? true : false;
 }
 
-void xccdf_check_delete(struct xccdf_check* check)
+void xccdf_check_free(struct xccdf_check* check)
 {
 	if (check) {
-		oscap_list_delete(check->content_refs, (oscap_destruct_func)xccdf_check_content_ref_delete);
-		oscap_list_delete(check->imports, (oscap_destruct_func)xccdf_check_import_delete);
-		oscap_list_delete(check->exports, (oscap_destruct_func)xccdf_check_export_delete);
-		oscap_list_delete(check->children, (oscap_destruct_func)xccdf_check_delete);
+		oscap_list_free(check->content_refs, (oscap_destruct_func)xccdf_check_content_ref_free);
+		oscap_list_free(check->imports, (oscap_destruct_func)xccdf_check_import_free);
+		oscap_list_free(check->exports, (oscap_destruct_func)xccdf_check_export_free);
+		oscap_list_free(check->children, (oscap_destruct_func)xccdf_check_free);
 		oscap_free(check->id);
 		oscap_free(check->system);
 		oscap_free(check->selector);
@@ -472,7 +472,7 @@ void xccdf_check_content_ref_dump(struct xccdf_check_content_ref* ref, int depth
 	xccdf_print_depth(depth); printf("%s (%s)\n", ref->href, ref->name);
 }
 
-void xccdf_check_content_ref_delete(struct xccdf_check_content_ref* ref)
+void xccdf_check_content_ref_free(struct xccdf_check_content_ref* ref)
 {
 	if (ref) {
 		oscap_free(ref->name);
@@ -481,7 +481,7 @@ void xccdf_check_content_ref_delete(struct xccdf_check_content_ref* ref)
 	}
 }
 
-void xccdf_check_import_delete(struct xccdf_check_import* item)
+void xccdf_check_import_free(struct xccdf_check_import* item)
 {
 	if (item) {
 		oscap_free(item->name);
@@ -490,7 +490,7 @@ void xccdf_check_import_delete(struct xccdf_check_import* item)
 	}
 }
 
-void xccdf_check_export_delete(struct xccdf_check_export* item)
+void xccdf_check_export_free(struct xccdf_check_export* item)
 {
 	if (item) {
 		oscap_free(item->name);
@@ -540,7 +540,7 @@ struct xccdf_fixtext* xccdf_fixtext_new_parse(xmlTextReaderPtr reader, struct xc
 	return fix;
 }
 
-void xccdf_fixtext_delete(struct xccdf_fixtext* item)
+void xccdf_fixtext_free(struct xccdf_fixtext* item)
 {
 	if (item) {
 		oscap_free(item->content);
@@ -548,7 +548,7 @@ void xccdf_fixtext_delete(struct xccdf_fixtext* item)
 	}
 }
 
-void xccdf_fix_delete(struct xccdf_fix* item)
+void xccdf_fix_free(struct xccdf_fix* item)
 {
 	if (item) {
 		oscap_free(item->id);

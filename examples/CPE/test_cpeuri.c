@@ -37,18 +37,18 @@ bool cpe_example_parse(const char *cpeuri)
 
 	// print URI components
 	printf("URI      : %s\n", uri);
-	printf("Part     : %s\n", CPE_PART_STR[cpe_name_part(cpe)]);
-	printf("Vendor   : %s\n", cpe_name_vendor(cpe));
-	printf("Product  : %s\n", cpe_name_product(cpe));
-	printf("Version  : %s\n", cpe_name_version(cpe));
-	printf("Update   : %s\n", cpe_name_update(cpe));
-	printf("Edition  : %s\n", cpe_name_edition(cpe));
-	printf("Language : %s\n", cpe_name_language(cpe));
+	printf("Part     : %s\n", CPE_PART_STR[cpe_name_get_part(cpe)]);
+	printf("Vendor   : %s\n", cpe_name_get_vendor(cpe));
+	printf("Product  : %s\n", cpe_name_get_product(cpe));
+	printf("Version  : %s\n", cpe_name_get_version(cpe));
+	printf("Update   : %s\n", cpe_name_get_update(cpe));
+	printf("Edition  : %s\n", cpe_name_get_edition(cpe));
+	printf("Language : %s\n", cpe_name_get_language(cpe));
 
 	// delete CPE URI string
 	free(uri);
 	// delete CPE itself
-	cpe_name_delete(cpe);
+	cpe_name_free(cpe);
 
 	return true;
 }

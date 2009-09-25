@@ -25,7 +25,7 @@
 #include <math.h>
 #include <string.h>
 
-oscap_destruct_func xccdf_value_val_destructor(enum xccdf_value_type type);
+oscap_destruct_func xccdf_value_val_get_destructor(enum xccdf_value_type type);
 struct xccdf_value_val* xccdf_value_val_new(enum xccdf_value_type type);
 
 struct xccdf_item* xccdf_value_new_empty(struct xccdf_item* parent, enum xccdf_value_type type)
@@ -79,8 +79,8 @@ struct xccdf_item* xccdf_value_new_parse(xmlTextReaderPtr reader, struct xccdf_i
 	
 	value->sub.value.oper = oscap_string_to_enum(XCCDF_OPERATOR_MAP, xccdf_attribute_get(reader, XCCDFA_OPERATOR));
 	value->sub.value.interface_hint = oscap_string_to_enum(XCCDF_IFACE_HINT_MAP, xccdf_attribute_get(reader, XCCDFA_INTERFACEHINT));
-	if (!xccdf_item_process_attributes(value, reader)) {
-		xccdf_value_delete(value);
+	if (!xccdf_item_get_process_attributes(value, reader)) {
+		xccdf_value_free(value);
 		return NULL;
 	}
 
@@ -123,7 +123,7 @@ struct xccdf_item* xccdf_value_new_parse(xmlTextReaderPtr reader, struct xccdf_i
 					}
 					xmlTextReaderRead(reader);
 				}
-			default: xccdf_item_process_element(value, reader);
+			default: xccdf_item_get_process_element(value, reader);
 		}
 		xmlTextReaderRead(reader);
 	}
@@ -131,10 +131,10 @@ struct xccdf_item* xccdf_value_new_parse(xmlTextReaderPtr reader, struct xccdf_i
 	return value;
 }
 
-void xccdf_value_delete(struct xccdf_item* val)
+void xccdf_value_free(struct xccdf_item* val)
 {
-	oscap_htable_delete(val->sub.value.values, xccdf_value_val_destructor(val->sub.value.type));
-	oscap_list_delete(val->sub.value.sources, oscap_free);
+	oscap_htable_free(val->sub.value.values, xccdf_value_val_get_destructor(val->sub.value.type));
+	oscap_list_free(val->sub.value.sources, oscap_free);
 	xccdf_item_release(val);
 }
 
@@ -161,20 +161,20 @@ struct xccdf_value_val* xccdf_value_val_new(enum xccdf_value_type type)
 	return v;
 }
 
-void xccdf_value_unit_s_delete(union xccdf_value_unit* u) { oscap_free(u->s); oscap_free(u); }
+void xccdf_value_unit_s_free(union xccdf_value_unit* u) { oscap_free(u->s); oscap_free(u); }
 
 oscap_destruct_func xccdf_value_unit_destructor(enum xccdf_value_type type)
 {
 	switch (type) {
-		case XCCDF_TYPE_STRING: return (oscap_destruct_func)xccdf_value_unit_s_delete;
+		case XCCDF_TYPE_STRING: return (oscap_destruct_func)xccdf_value_unit_s_free;
 		case XCCDF_TYPE_NUMBER: case XCCDF_TYPE_BOOLEAN: return free;
 	}
 	return NULL;
 }
 
-void xccdf_value_val_delete_0(struct xccdf_value_val* v, enum xccdf_value_type type)
+void xccdf_value_val_free_0(struct xccdf_value_val* v, enum xccdf_value_type type)
 {
-	oscap_list_delete(v->choices, xccdf_value_unit_destructor(type));
+	oscap_list_free(v->choices, xccdf_value_unit_destructor(type));
 	switch (type) {
 		case XCCDF_TYPE_STRING:
 			oscap_free(v->limits.s.match);
@@ -186,21 +186,21 @@ void xccdf_value_val_delete_0(struct xccdf_value_val* v, enum xccdf_value_type t
 	oscap_free(v);
 }
 
-void xccdf_value_val_delete_b(struct xccdf_value_val* v) { xccdf_value_val_delete_0(v, XCCDF_TYPE_BOOLEAN); }
-void xccdf_value_val_delete_n(struct xccdf_value_val* v) { xccdf_value_val_delete_0(v, XCCDF_TYPE_NUMBER); }
-void xccdf_value_val_delete_s(struct xccdf_value_val* v) { xccdf_value_val_delete_0(v, XCCDF_TYPE_STRING); }
+void xccdf_value_val_free_b(struct xccdf_value_val* v) { xccdf_value_val_free_0(v, XCCDF_TYPE_BOOLEAN); }
+void xccdf_value_val_free_n(struct xccdf_value_val* v) { xccdf_value_val_free_0(v, XCCDF_TYPE_NUMBER); }
+void xccdf_value_val_free_s(struct xccdf_value_val* v) { xccdf_value_val_free_0(v, XCCDF_TYPE_STRING); }
 
-oscap_destruct_func xccdf_value_val_destructor(enum xccdf_value_type type)
+oscap_destruct_func xccdf_value_val_get_destructor(enum xccdf_value_type type)
 {
 	switch (type) {
-		case XCCDF_TYPE_NUMBER:  return (oscap_destruct_func) xccdf_value_val_delete_n;
-		case XCCDF_TYPE_BOOLEAN: return (oscap_destruct_func) xccdf_value_val_delete_b;
-		case XCCDF_TYPE_STRING:  return (oscap_destruct_func) xccdf_value_val_delete_s;
+		case XCCDF_TYPE_NUMBER:  return (oscap_destruct_func) xccdf_value_val_free_n;
+		case XCCDF_TYPE_BOOLEAN: return (oscap_destruct_func) xccdf_value_val_free_b;
+		case XCCDF_TYPE_STRING:  return (oscap_destruct_func) xccdf_value_val_free_s;
 	}
 	return NULL;
 }
 
-bool xccdf_value_set_selector(struct xccdf_item* value, const char* selector)
+bool xccdf_value_get_set_selector(struct xccdf_item* value, const char* selector)
 {
 	oscap_free(value->sub.value.selector);
 	if (!selector) selector = "";
@@ -209,19 +209,19 @@ bool xccdf_value_set_selector(struct xccdf_item* value, const char* selector)
 	return value->sub.value.value != NULL;
 }
 
-const char* xccdf_value_defval_string(const struct xccdf_value* value) {
+const char* xccdf_value_get_defval_string(const struct xccdf_value* value) {
 	if (XITEM(value)->sub.value.type != XCCDF_TYPE_STRING || XITEM(value)->sub.value.value == NULL)
 		return NULL;
 	return XITEM(value)->sub.value.value->defval.s;
 }
 
-xccdf_numeric xccdf_value_defval_number(const struct xccdf_value* value) {
+xccdf_numeric xccdf_value_get_defval_number(const struct xccdf_value* value) {
 	if (XITEM(value)->sub.value.type != XCCDF_TYPE_NUMBER || XITEM(value)->sub.value.value == NULL)
 		return NAN;
 	return XITEM(value)->sub.value.value->defval.n;
 }
 
-bool xccdf_value_defval_boolean(const struct xccdf_value* value) {
+bool xccdf_value_get_defval_boolean(const struct xccdf_value* value) {
 	if (XITEM(value)->sub.value.value == NULL) return false;
 	switch (XITEM(value)->sub.value.type) {
 		case XCCDF_TYPE_BOOLEAN: return XITEM(value)->sub.value.value->defval.b;
@@ -231,19 +231,19 @@ bool xccdf_value_defval_boolean(const struct xccdf_value* value) {
 	return false;
 }
 
-const char* xccdf_value_value_string(const struct xccdf_value* value) {
+const char* xccdf_value_get_value_string(const struct xccdf_value* value) {
 	if (XITEM(value)->sub.value.type != XCCDF_TYPE_STRING || XITEM(value)->sub.value.value == NULL)
 		return NULL;
 	return XITEM(value)->sub.value.value->value.s;
 }
 
-xccdf_numeric xccdf_value_value_number(const struct xccdf_value* value) {
+xccdf_numeric xccdf_value_get_value_number(const struct xccdf_value* value) {
 	if (XITEM(value)->sub.value.type != XCCDF_TYPE_NUMBER || XITEM(value)->sub.value.value == NULL)
 		return NAN;
 	return XITEM(value)->sub.value.value->value.n;
 }
 
-bool xccdf_value_value_boolean(const struct xccdf_value* value) {
+bool xccdf_value_get_value_boolean(const struct xccdf_value* value) {
 	if (XITEM(value)->sub.value.value == NULL) return false;
 	switch (XITEM(value)->sub.value.type) {
 		case XCCDF_TYPE_BOOLEAN: return XITEM(value)->sub.value.value->value.b;
@@ -253,25 +253,25 @@ bool xccdf_value_value_boolean(const struct xccdf_value* value) {
 	return false;
 }
 
-xccdf_numeric xccdf_value_lower_bound(const struct xccdf_value* value) {
+xccdf_numeric xccdf_value_get_lower_bound(const struct xccdf_value* value) {
 	if (XITEM(value)->sub.value.type != XCCDF_TYPE_NUMBER || XITEM(value)->sub.value.value == NULL)
 		return NAN;
 	return XITEM(value)->sub.value.value->limits.n.lower_bound;
 }
 
-xccdf_numeric xccdf_value_upper_bound(const struct xccdf_value* value) {
+xccdf_numeric xccdf_value_get_upper_bound(const struct xccdf_value* value) {
 	if (XITEM(value)->sub.value.type != XCCDF_TYPE_NUMBER || XITEM(value)->sub.value.value == NULL)
 		return NAN;
 	return XITEM(value)->sub.value.value->limits.n.upper_bound;
 }
 
-const char* xccdf_value_match(const struct xccdf_value* value) {
+const char* xccdf_value_get_match(const struct xccdf_value* value) {
 	if (XITEM(value)->sub.value.type != XCCDF_TYPE_STRING || XITEM(value)->sub.value.value == NULL)
 		return NULL;
 	return XITEM(value)->sub.value.value->limits.s.match;
 }
 
-bool xccdf_value_must_match(const struct xccdf_value* value) {
+bool xccdf_value_get_must_match(const struct xccdf_value* value) {
 	if (XITEM(value)->sub.value.value == NULL)
 		return false;
 	return XITEM(value)->sub.value.value->must_match;
@@ -297,7 +297,7 @@ void xccdf_value_dump(struct xccdf_item* value, int depth)
 {
 	xccdf_print_depth(depth++); printf("Value : %s\n", (value ? value->item.id : "(NULL)"));
 	if (!value) return;
-	xccdf_item_print(value, depth);
+	xccdf_item_get_print(value, depth);
 	void(*valdump)(struct xccdf_value_val* val, int depth) = NULL;
 	xccdf_print_depth(depth); printf("type: ");
 	switch (value->sub.value.type) {

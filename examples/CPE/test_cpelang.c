@@ -7,7 +7,7 @@ void test_platform_dump(struct cpe_platform * plat);
 void test_platformspec_dump(struct cpe_platformspec * plat)
 {
 	// dump all platforms belonging to a platform specification
-	struct cpe_platform_iterator* it = cpe_platformspec_items(plat);
+	struct cpe_platform_iterator* it = cpe_platformspec_get_items(plat);
 	while (cpe_platform_iterator_has_more(it))
 		test_platform_dump(cpe_platform_iterator_next(it));
 }
@@ -16,7 +16,7 @@ void test_platform_dump(struct cpe_platform * plat)
 {
 	// print id, title, remark
 	printf("ID: %s\n  Title:  %s\n  Remark: %s\n",
-	       cpe_platform_id(plat), cpe_platform_title(plat), cpe_platform_remark(plat));
+	       cpe_platform_get_id(plat), cpe_platform_get_title(plat), cpe_platform_get_remark(plat));
 	// dump expression
 	//test_langexpr_dump(&(plat->expr), 4);
 }
@@ -102,7 +102,7 @@ int main(int argc, char **argv)
 		}
 		cpe_platform_iterator_free(it);
 		*/
-		OSCAP_FOREACH (cpe_platform, p, cpe_platformspec_items(plat),
+		OSCAP_FOREACH (cpe_platform, p, cpe_platformspec_get_items(plat),
 			// dump its contents
 			test_platform_dump(p);
 			// print whether list of CPEs matched
@@ -110,12 +110,12 @@ int main(int argc, char **argv)
 		)
 	}
 	// free resources allocated for platform specification
-	cpe_platformspec_delete(plat);
+	cpe_platformspec_free(plat);
 	if (plat == NULL) return EXIT_FAILURE;
 
 	// free list of CPEs
 	for (i = 0; i < cpes_n; ++i)
-		cpe_name_delete(cpes[i]);
+		cpe_name_free(cpes[i]);
 	free(cpes);
 
 	oscap_cleanup(); // clean caches

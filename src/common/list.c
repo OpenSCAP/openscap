@@ -51,7 +51,7 @@ bool oscap_list_add(struct oscap_list* list, void* value)
 	return true;
 }
 
-void oscap_list_delete(struct oscap_list* list, oscap_destruct_func destructor)
+void oscap_list_free(struct oscap_list* list, oscap_destruct_func destructor)
 {
 	struct oscap_list_item *item, *to_del;
 	if (list) {
@@ -66,9 +66,9 @@ void oscap_list_delete(struct oscap_list* list, oscap_destruct_func destructor)
 	}
 }
 
-void oscap_list_delete0(struct oscap_list* list)
+void oscap_list_free0(struct oscap_list* list)
 {
-	oscap_list_delete(list, NULL);
+	oscap_list_free(list, NULL);
 }
 
 void oscap_list_dump(struct oscap_list* list, oscap_dump_func dumper, int depth)
@@ -110,7 +110,7 @@ void* oscap_iterator_new_filter(struct oscap_list* list, oscap_filter_func filte
     return it;
 }
 
-void oscap_iterator_delete(struct oscap_iterator* it)
+void oscap_iterator_free(struct oscap_iterator* it)
 {
     free(it);
 }
@@ -127,7 +127,7 @@ void* oscap_iterator_next(struct oscap_iterator* it)
 bool oscap_iterator_has_more(struct oscap_iterator* it)
 {
     if (it->cur) return true;
-    oscap_iterator_delete(it);
+    oscap_iterator_free(it);
     return false;
 }
 
@@ -225,7 +225,7 @@ void oscap_htable_dump(struct oscap_htable* htable, oscap_dump_func dumper, int 
 	}
 }
 
-void oscap_htable_delete(struct oscap_htable* htable, oscap_destruct_func destructor)
+void oscap_htable_free(struct oscap_htable* htable, oscap_destruct_func destructor)
 {
     if (htable) {
         size_t ht;

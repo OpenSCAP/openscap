@@ -88,20 +88,20 @@ struct cce* cce_new(const char* fname);
  * @relates cce
  * @param cce pointer to target structure
  */
-void cce_delete(struct cce *cce);
+void cce_free(struct cce *cce);
 
 /**
  * Get an iterator to the contents of the CCE.
  * @relates cce
  */
-struct cce_entry_iterator* cce_entries(const struct cce* cce);
+struct cce_entry_iterator* cce_get_entries(const struct cce* cce);
 
 /**
  * Get an CCE entry by ID.
  * @relates cce
  * @retval NULL if given entry does not exist
  */
-struct cce_entry* cce_entry_by_id(const struct cce* cce, const char* id);
+struct cce_entry* cce_get_entry(const struct cce* cce, const char* id);
 
 /**
  * Vlaidate CCE XML file.
@@ -116,43 +116,43 @@ bool cce_validate(const char *filename);
  * Get CCE entry ID.
  * @relates cce_entry
  */
-const char* cce_entry_id(const struct cce_entry* cce);
+const char* cce_entry_get_id(const struct cce_entry* cce);
 
 /**
  * Get CCE entry desription.
  * @relates cce_entry
  */
-const char* cce_entry_description(const struct cce_entry* cce);
+const char* cce_entry_get_description(const struct cce_entry* cce);
 
 /**
  * Get an iterator to CCE entry's parameters.
  * @relates cce_entry
  */
-struct oscap_string_iterator* cce_entry_params(const struct cce_entry* cce);
+struct oscap_string_iterator* cce_entry_get_params(const struct cce_entry* cce);
 
 /**
  * Get an iterator to CCE entry's technical mechanisms.
  * @relates cce_entry
  */
-struct oscap_string_iterator* cce_entry_tech_mechs(const struct cce_entry* cce);
+struct oscap_string_iterator* cce_entry_get_tech_mechs(const struct cce_entry* cce);
 
 /**
  * Get an iterator to CCE entry's references.
  * @relates cce_entry
  */
-struct cce_reference_iterator* cce_entry_references(const struct cce_entry* cce);
+struct cce_reference_iterator* cce_entry_get_references(const struct cce_entry* cce);
 
 
 /**
  * Get source of CCE reference.
  * @relates cce_reference
  */
-const char* cce_reference_source(const struct cce_reference* ref);
+const char* cce_reference_get_source(const struct cce_reference* ref);
 
 /**
  * Get contents of CCE reference.
  * @relates cce_reference
  */
-const char* cce_reference_value(const struct cce_reference* ref);
+const char* cce_reference_get_value(const struct cce_reference* ref);
 
 #endif

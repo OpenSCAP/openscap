@@ -28,38 +28,38 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
-	struct cce_entry* cce = cce_entry_by_id(cce_list, id);
+	struct cce_entry* cce = cce_get_entry(cce_list, id);
 
 	if (cce == NULL) {
 		printf("CCE entry '%s' was not found\n", id);
-		cce_delete(cce_list);
+		cce_free(cce_list);
 		return 1;
 	}
 
 	/* Example of struct data returned. */
-	printf("\nID: %s\n", cce_entry_id(cce));
-	printf("Description: %s\n", cce_entry_description(cce));
+	printf("\nID: %s\n", cce_entry_get_id(cce));
+	printf("Description: %s\n", cce_entry_get_description(cce));
 
 	{
-		struct cce_reference_iterator* it = cce_entry_references(cce);
+		struct cce_reference_iterator* it = cce_entry_get_references(cce);
 		while (cce_reference_iterator_has_more(it)) {
 			struct cce_reference* ref = cce_reference_iterator_next(it);
-			printf("Ref Source: %s\n", cce_reference_source(ref));
-			printf("Ref Value: %s\n", cce_reference_value(ref));
+			printf("Ref Source: %s\n", cce_reference_get_source(ref));
+			printf("Ref Value: %s\n", cce_reference_get_value(ref));
 		}
 	}
 
 	{
-		struct oscap_string_iterator *it = cce_entry_tech_mechs(cce);
+		struct oscap_string_iterator *it = cce_entry_get_tech_mechs(cce);
 		while (oscap_string_iterator_has_more(it))
 			printf("Technical Mechanism: %s\n", oscap_string_iterator_next(it));
 
-		it = cce_entry_params(cce);
+		it = cce_entry_get_params(cce);
 		while (oscap_string_iterator_has_more(it))
 			printf("Available Parameter Choices: %s\n", oscap_string_iterator_next(it));
 	}
 
-	cce_delete(cce_list);
+	cce_free(cce_list);
 
 	oscap_cleanup(); // clean caches
 

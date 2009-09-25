@@ -37,27 +37,27 @@ struct cce* cce_new_empty(void)
 {
 	struct cce* cce = oscap_calloc(1, sizeof(struct cce));
 	cce->entries = oscap_list_new();
-	cce->entry_by_id = oscap_htable_new();
+	cce->entry = oscap_htable_new();
 	return cce;
 }
 
-void cce_delete(struct cce* cce)
+void cce_free(struct cce* cce)
 {
 	if (cce) {
-		oscap_htable_delete(cce->entry_by_id, NULL);
-		oscap_list_delete(cce->entries, (oscap_destruct_func)cce_entry_delete);
+		oscap_htable_free(cce->entry, NULL);
+		oscap_list_free(cce->entries, (oscap_destruct_func)cce_entry_free);
 		oscap_free(cce);
 	}
 }
 
-void cce_entry_delete(struct cce_entry *cce)
+void cce_entry_free(struct cce_entry *cce)
 {
 	if (cce) {
 		oscap_free(cce->id);
 		oscap_free(cce->description);
-		oscap_list_delete(cce->params, oscap_free);
-		oscap_list_delete(cce->tech_mechs, oscap_free);
-		oscap_list_delete(cce->references, (oscap_destruct_func)cce_reference_delete);
+		oscap_list_free(cce->params, oscap_free);
+		oscap_list_free(cce->tech_mechs, oscap_free);
+		oscap_list_free(cce->references, (oscap_destruct_func)cce_reference_free);
 		oscap_free(cce);
 	}
 }
@@ -123,7 +123,7 @@ bool cce_validate(const char *filename)
 }
 
 OSCAP_IGETTER_GEN(cce_entry, cce, entries)
-OSCAP_HGETTER(struct cce_entry*, cce, entry_by_id)
+OSCAP_HGETTER(struct cce_entry*, cce, entry)
 
 OSCAP_GETTER(const char*, cce_entry, id)
 OSCAP_GETTER(const char*, cce_entry, description)

@@ -53,11 +53,11 @@ struct cve_reference *cve_reference_new();
  *
  * @param reference CVE Reference to be freed
  */
-void cve_reference_delete(struct cve_reference * reference);
+void cve_reference_free(struct cve_reference * reference);
 
 struct cve_info *cve_info_new();
 
-void cve_info_delete(struct cve_info * cve);
+void cve_info_free(struct cve_info * cve);
 
 /*
  * Parses the specified XML file and creates a list of CVE data structures.
@@ -98,7 +98,7 @@ struct cve_info {
 
 struct cve {
 	struct oscap_list* entries;
-	struct oscap_htable* entry_by_id;
+	struct oscap_htable* entry;
 };
 
 
@@ -256,7 +256,7 @@ struct cve_reference *cve_reference_new()
 	return oscap_calloc(1, sizeof(struct cve_reference));
 }
 
-void cve_reference_delete(struct cve_reference * ref)
+void cve_reference_free(struct cve_reference * ref)
 {
 	if (ref == NULL)
 		return;
@@ -276,7 +276,7 @@ struct cve* cve_new_empty(void)
 {
 	struct cve* cve = oscap_calloc(1, sizeof(struct cve));
 	cve->entries = oscap_list_new();
-	cve->entry_by_id = oscap_htable_new();
+	cve->entry = oscap_htable_new();
 	return cve;
 }
 
@@ -285,17 +285,17 @@ struct cve* cve_new(const char* fname)
 	struct cve* cve = cve_new_empty();
 	int ret = cve_parse(fname, cve);
 	if (ret < 0) {
-		cve_delete(cve);
+		cve_free(cve);
 		return NULL;
 	}
 	return cve;
 }
 
-void cve_delete(struct cve* cve)
+void cve_free(struct cve* cve)
 {
 	if (cve) {
-		oscap_htable_delete(cve->entry_by_id, NULL);
-		oscap_list_delete(cve->entries, (oscap_destruct_func)cve_info_delete);
+		oscap_htable_free(cve->entry, NULL);
+		oscap_list_free(cve->entries, (oscap_destruct_func)cve_info_free);
 		oscap_free(cve);
 	}
 }
@@ -303,7 +303,7 @@ void cve_delete(struct cve* cve)
 bool cve_add_info(struct cve* cve, struct cve_info* info)
 {
 	oscap_list_add(cve->entries, info);
-	oscap_htable_add(cve->entry_by_id, info->id, info);
+	oscap_htable_add(cve->entry, info->id, info);
 	return true;
 }
 
@@ -314,7 +314,7 @@ struct cve_info *cve_info_new()
 	return info;
 }
 
-void cve_info_delete(struct cve_info * cve)
+void cve_info_free(struct cve_info * cve)
 {
 	if (cve == NULL)
 		return;
@@ -347,7 +347,7 @@ void cve_info_delete(struct cve_info * cve)
 	if (cve->generated != NULL)
 		oscap_free(cve->generated);
 
-	oscap_list_delete(cve->references, (oscap_destruct_func)cve_reference_delete);
+	oscap_list_free(cve->references, (oscap_destruct_func)cve_reference_free);
 	oscap_free(cve);
 }
 
@@ -490,7 +490,7 @@ int cve_parse(const char *xmlfile, struct cve* out)
 
 
 OSCAP_IGETTER_GEN(cve_info, cve, entries)
-OSCAP_HGETTER(struct cve_info*, cve, entry_by_id)
+OSCAP_HGETTER(struct cve_info*, cve, entry)
 
 OSCAP_GETTER(const char*, cve_info, id)
 OSCAP_GETTER(const char*, cve_info, pub)

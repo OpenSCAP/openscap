@@ -54,8 +54,8 @@ struct cpe_dictitem {
 	struct cpe_name *name;		   // CPE name as CPE URI
 	char *title;		           // human-readable name of this item
 
-	struct cpe_name *depracated;   // CPE that depracated this one (or NULL)
-	char *depracation_date;	       // date of depracation
+	struct cpe_name *deprecated;   // CPE that deprecated this one (or NULL)
+	char *deprecation_date;	       // date of deprecation
 
 	struct oscap_list* references; // list of references
 	struct oscap_list* checks;     // list of checks
@@ -82,8 +82,8 @@ OSCAP_GETTER(const char*, cpe_dict_reference, content)
 
 OSCAP_GETTER(struct cpe_name*, cpe_dictitem, name)
 OSCAP_GETTER(const char*, cpe_dictitem, title)
-OSCAP_GETTER(struct cpe_name*, cpe_dictitem, depracated)
-OSCAP_GETTER(const char*, cpe_dictitem, depracation_date)
+OSCAP_GETTER(struct cpe_name*, cpe_dictitem, deprecated)
+OSCAP_GETTER(const char*, cpe_dictitem, deprecation_date)
 OSCAP_IGETTER(oscap_string, cpe_dictitem, notes)
 OSCAP_IGETTER_GEN(cpe_dict_reference, cpe_dictitem, references)
 OSCAP_IGETTER_GEN(cpe_dict_check, cpe_dictitem, checks)
@@ -115,9 +115,9 @@ struct cpe_dict_check *cpe_dictcheck_new_xml(xmlNode * node);
 
 struct cpe_dictitem *cpe_dictitem_new_empty();
 
-void cpe_dictitem_delete(struct cpe_dictitem * item);
+void cpe_dictitem_free(struct cpe_dictitem * item);
 
-void cpe_dict_check_delete(struct cpe_dict_check * check);
+void cpe_dict_check_free(struct cpe_dict_check * check);
 
 
 char *str_trim(char *str)
@@ -172,8 +172,8 @@ struct cpe_dict *cpe_dict_new_xml(xmlNodePtr node)
 			if ((item = cpe_dictitem_new_xml(node)) == NULL)
 				continue;
 			if (!cpe_dict_add_item(ret, item)) {
-				cpe_dictitem_delete(item);
-				cpe_dict_delete(ret);
+				cpe_dictitem_free(item);
+				cpe_dict_free(ret);
 				return NULL;
 			}
 		} else if (xmlStrcmp(node->name, BAD_CAST "generator") == 0) {
@@ -227,11 +227,11 @@ bool cpe_dict_add_item(struct cpe_dict * dict, struct cpe_dictitem * item)
 	return true;
 }
 
-void cpe_dict_delete(struct cpe_dict * dict)
+void cpe_dict_free(struct cpe_dict * dict)
 {
 	if (dict == NULL) return;
 
-	oscap_list_delete(dict->items, (oscap_destruct_func)cpe_dictitem_delete);
+	oscap_list_free(dict->items, (oscap_destruct_func)cpe_dictitem_free);
 	oscap_free(dict->generator_product_name);
 	oscap_free(dict->generator_product_version);
 	oscap_free(dict->generator_schema_version);
@@ -310,7 +310,7 @@ struct cpe_dictitem *cpe_dictitem_new_xml(xmlNodePtr node)
 	return item;
 }
 
-void cpe_dict_reference_delete(struct cpe_dict_reference* ref)
+void cpe_dict_reference_free(struct cpe_dict_reference* ref)
 {
 	if (ref) {
 		oscap_free(ref->href);
@@ -319,18 +319,18 @@ void cpe_dict_reference_delete(struct cpe_dict_reference* ref)
 	}
 }
 
-void cpe_dictcheck_delete(struct cpe_dict_check * check);
+void cpe_dictcheck_free(struct cpe_dict_check * check);
 
-void cpe_dictitem_delete(struct cpe_dictitem * item)
+void cpe_dictitem_free(struct cpe_dictitem * item)
 {
 	if (item == NULL) return;
-	cpe_name_delete(item->name);
+	cpe_name_free(item->name);
 	oscap_free(item->title);
-	cpe_name_delete(item->depracated);
-	oscap_free(item->depracation_date);
-	oscap_list_delete(item->references, (oscap_destruct_func)cpe_dict_reference_delete);
-	oscap_list_delete(item->checks, (oscap_destruct_func)cpe_dictcheck_delete);
-	oscap_list_delete(item->notes, oscap_free);
+	cpe_name_free(item->deprecated);
+	oscap_free(item->deprecation_date);
+	oscap_list_free(item->references, (oscap_destruct_func)cpe_dict_reference_free);
+	oscap_list_free(item->checks, (oscap_destruct_func)cpe_dictcheck_free);
+	oscap_list_free(item->notes, oscap_free);
 	oscap_free(item);
 }
 
@@ -359,7 +359,7 @@ struct cpe_dict_check *cpe_dictcheck_new_xml(xmlNode * node)
 	return check;
 }
 
-void cpe_dictcheck_delete(struct cpe_dict_check * check)
+void cpe_dictcheck_free(struct cpe_dict_check * check)
 {
 	if (check == NULL)
 		return;
@@ -398,6 +398,6 @@ bool cpe_name_match_dict_str(const char *cpestr, struct cpe_dict * dict)
 	struct cpe_name *cpe = cpe_name_new(cpestr);
 	if (cpe == NULL) return false;
 	ret = cpe_name_match_dict(cpe, dict);
-	cpe_name_delete(cpe);
+	cpe_name_free(cpe);
 	return ret;
 }

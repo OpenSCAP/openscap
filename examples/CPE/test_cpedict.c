@@ -5,38 +5,38 @@ void cpe_dictitem_dump(struct cpe_dictitem * item)
 {
 	// print name and title
 	printf("  Name:  ");
-	cpe_name_write(cpe_dictitem_name(item), stdout);
+	cpe_name_write(cpe_dictitem_get_name(item), stdout);
 	printf("\n");
-	printf("  Title: %s\n", cpe_dictitem_title(item));
+	printf("  Title: %s\n", cpe_dictitem_get_title(item));
 
 	// print notes
 	printf("  Notes:\n");
-	struct oscap_string_iterator* itn = cpe_dictitem_notes(item);
+	struct oscap_string_iterator* itn = cpe_dictitem_get_notes(item);
 	while (oscap_string_iterator_has_more(itn))
 		printf("    %s\n", oscap_string_iterator_next(itn));
 
-	// print depracation info
-	if (cpe_dictitem_depracated(item)) {
+	// print deprecation info
+	if (cpe_dictitem_get_deprecated(item)) {
 		printf("  Depracated by: ");
-		cpe_name_write(cpe_dictitem_depracated(item), stdout);
-		printf(" on %s\n", cpe_dictitem_depracation_date(item));
+		cpe_name_write(cpe_dictitem_get_deprecated(item), stdout);
+		printf(" on %s\n", cpe_dictitem_get_deprecation_date(item));
 	}
 
 	// print references
 	printf("  References:\n");
-	struct cpe_dict_reference_iterator* itr = cpe_dictitem_references(item);
+	struct cpe_dict_reference_iterator* itr = cpe_dictitem_get_references(item);
 	while (cpe_dict_reference_iterator_has_more(itr)) {
 		struct cpe_dict_reference* ref = cpe_dict_reference_iterator_next(itr);
-		printf("    %s (%s)\n", cpe_dict_reference_content(ref), cpe_dict_reference_href(ref));
+		printf("    %s (%s)\n", cpe_dict_reference_get_content(ref), cpe_dict_reference_get_href(ref));
 	}
 
 	// print checks
 	printf("  Checks:\n");
-	struct cpe_dict_check_iterator* itc = cpe_dictitem_checks(item);
+	struct cpe_dict_check_iterator* itc = cpe_dictitem_get_checks(item);
 	while (cpe_dict_check_iterator_has_more(itc)) {
 		struct cpe_dict_check* ck = cpe_dict_check_iterator_next(itc);
 		printf("    id: %s, system: %s, href: %s\n",
-			   cpe_dict_check_identifier(ck), cpe_dict_check_system(ck), cpe_dict_check_href(ck));
+			   cpe_dict_check_get_identifier(ck), cpe_dict_check_get_system(ck), cpe_dict_check_get_href(ck));
 	}
 
 	printf("\n");
@@ -59,11 +59,11 @@ int main(int argc, char **argv)
 		// print dictionary generator info
 		printf
 		    ("Generated on %s by %s version %s using schema version %s.\n\n",
-		     cpe_dict_generator_timestamp(dict), cpe_dict_generator_product_name(dict),
-		     cpe_dict_generator_product_version(dict), cpe_dict_generator_schema_version(dict));
+		     cpe_dict_get_generator_timestamp(dict), cpe_dict_get_generator_product_name(dict),
+		     cpe_dict_get_generator_product_version(dict), cpe_dict_get_generator_schema_version(dict));
 
 		// dump each dictionary item
-		struct cpe_dictitem_iterator* it = cpe_dict_items(dict);
+		struct cpe_dictitem_iterator* it = cpe_dict_get_items(dict);
 		while (cpe_dictitem_iterator_has_more(it))
 			cpe_dictitem_dump(cpe_dictitem_iterator_next(it));
 
@@ -72,7 +72,7 @@ int main(int argc, char **argv)
 			printf("%s KNOWN: %s\n", cpe_name_match_dict_str(argv[i], dict) ? "   " : "NOT", argv[i]);
 
 		// free system resources
-		cpe_dict_delete(dict);
+		cpe_dict_free(dict);
 	} else {
 		// dictionary failed to load (dict == NULL)
 		printf("Error while loading CPE dictionary.\n");

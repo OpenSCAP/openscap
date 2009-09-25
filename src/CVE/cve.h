@@ -89,135 +89,135 @@ struct cve* cve_new(const char* fname);
  * Delete CVE catalogue.
  * @relates cve
  */
-void cve_delete(struct cve* cve);
+void cve_free(struct cve* cve);
 
 /**
  * Get en iterator to CVE entries.
  * @relates cve
  */
-struct cve_info_iterator* cve_entries(const struct cve* cve);
+struct cve_info_iterator* cve_get_entries(const struct cve* cve);
 
 /**
  * Get CVE entry by its ID.
  * @relates cve
  */
-struct cve_info* cve_entry_by_id(const struct cve* cve, const char* id);
+struct cve_info* cve_get_entry(const struct cve* cve, const char* id);
 
 
 /**
  * Get CVE entry ID.
  * @relates cve_info
  */
-const char* cve_info_id(const struct cve_info* info);
+const char* cve_info_get_id(const struct cve_info* info);
 
 /**
  * Get CVE entry publication date.
  * @relates cve_info
  */
-const char* cve_info_pub(const struct cve_info* info);
+const char* cve_info_get_pub(const struct cve_info* info);
 
 /**
  * Get CVE entry last modification date.
  * @relates cve_info
  */
-const char* cve_info_mod(const struct cve_info* info);
+const char* cve_info_get_mod(const struct cve_info* info);
 
 /**
  * Get CVE entry CWE.
  * @relates cve_info
  */
-const char* cve_info_cwe(const struct cve_info* info);
+const char* cve_info_get_cwe(const struct cve_info* info);
 
 /**
  * Get CVE entry summary.
  * @relates cve_info
  */
-const char* cve_info_summary(const struct cve_info* info);
+const char* cve_info_get_summary(const struct cve_info* info);
 
 /**
  * Get CVE entry score.
  * @relates cve_info
  */
-const char* cve_info_score(const struct cve_info* info);
+const char* cve_info_get_score(const struct cve_info* info);
 
 /**
  * Get CVE entry access vector.
  * @relates cve_info
  */
-const char* cve_info_vector(const struct cve_info* info);
+const char* cve_info_get_vector(const struct cve_info* info);
 
 /**
  * Get CVE entry access complexity.
  * @relates cve_info
  */
-const char* cve_info_complexity(const struct cve_info* info);
+const char* cve_info_get_complexity(const struct cve_info* info);
 
 /**
  * Get CVE entry authentication.
  * @relates cve_info
  */
-const char* cve_info_authentication(const struct cve_info* info);
+const char* cve_info_get_authentication(const struct cve_info* info);
 
 /**
  * Get CVE entry confidentiality impact.
  * @relates cve_info
  */
-const char* cve_info_confidentiality(const struct cve_info* info);
+const char* cve_info_get_confidentiality(const struct cve_info* info);
 
 /**
  * Get CVE entry integrity impact.
  * @relates cve_info
  */
-const char* cve_info_integrity(const struct cve_info* info);
+const char* cve_info_get_integrity(const struct cve_info* info);
 
 /**
  * Get CVE entry availibility impact.
  * @relates cve_info
  */
-const char* cve_info_availability(const struct cve_info* info);
+const char* cve_info_get_availability(const struct cve_info* info);
 
 /**
  * Get CVE entry source.
  * @relates cve_info
  */
-const char* cve_info_source(const struct cve_info* info);
+const char* cve_info_get_source(const struct cve_info* info);
 
 /**
  * Get CVE entry generation datetime.
  * @relates cve_info
  */
-const char* cve_info_generated(const struct cve_info* info);
+const char* cve_info_get_generated(const struct cve_info* info);
 
 /**
  * Get an iterator to CVE entry's references.
  * @relates cve_info
  */
-struct cve_reference_iterator* cve_info_references(const struct cve_info* info);
+struct cve_reference_iterator* cve_info_get_references(const struct cve_info* info);
 
 
 /**
  * Get CVE reference summary.
  * @relates cve_reference
  */
-const char* cve_reference_summary(const struct cve_reference* ref);
+const char* cve_reference_get_summary(const struct cve_reference* ref);
 
 /**
  * Get CVE reference summary.
  * @relates cve_reference
  */
-const char* cve_reference_href(const struct cve_reference* ref);
+const char* cve_reference_get_href(const struct cve_reference* ref);
 
 /**
  * Get CVE reference summary.
  * @relates cve_reference
  */
-const char* cve_reference_type(const struct cve_reference* ref);
+const char* cve_reference_get_type(const struct cve_reference* ref);
 
 /**
  * Get CVE reference summary.
  * @relates cve_reference
  */
-const char* cve_reference_source(const struct cve_reference* ref);
+const char* cve_reference_get_source(const struct cve_reference* ref);
 
 #endif				/* _CVE_H_ */
 

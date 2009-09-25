@@ -91,13 +91,13 @@ bool cpe_platformspec_add(struct cpe_platformspec * platformspec,
  * Delete single CPE paltform specification
  * @param platform platform to be deleted
  */
-void cpe_platform_delete(struct cpe_platform * platform);
+void cpe_platform_free(struct cpe_platform * platform);
 
 /*
  * Delete CPE language boolean expression
  * @param expr expression to be deleted
  */
-void cpe_langexpr_delete(struct cpe_lang_expr * expr);
+void cpe_langexpr_free(struct cpe_lang_expr * expr);
 
 struct cpe_platformspec *cpe_platformspec_new(const char *fname)
 {
@@ -151,8 +151,8 @@ struct cpe_platformspec *cpe_platformspec_new_xml(xmlNodePtr root)
 		if (!(plat = cpe_platform_new_xml(cur)))
 			continue;
 		if (!(cpe_platformspec_add(res, plat))) {
-			cpe_platform_delete(plat);
-			cpe_platformspec_delete(res);
+			cpe_platform_free(plat);
+			cpe_platformspec_free(res);
 			return NULL;
 		}
 	}
@@ -168,11 +168,11 @@ bool cpe_platformspec_add(struct cpe_platformspec * platformspec,
 	return oscap_list_add(platformspec->items, platform);
 }
 
-void cpe_platformspec_delete(struct cpe_platformspec * platformspec)
+void cpe_platformspec_free(struct cpe_platformspec * platformspec)
 {
 	if (platformspec) {
-		oscap_htable_delete(platformspec->item, NULL);
-		oscap_list_delete(platformspec->items, (oscap_destruct_func)cpe_platform_delete);
+		oscap_htable_free(platformspec->item, NULL);
+		oscap_list_free(platformspec->items, (oscap_destruct_func)cpe_platform_free);
 		oscap_free(platformspec);
 	}
 }
@@ -190,7 +190,7 @@ struct cpe_platform *cpe_platform_new_xml(xmlNodePtr node)
 	memset(ret, 0, sizeof(struct cpe_platform));
 
 	if ((ret->id = (char *)xmlGetProp(node, BAD_CAST "id")) == NULL) {
-		cpe_platform_delete(ret);
+		cpe_platform_free(ret);
 		return NULL;
 	}
 
@@ -259,18 +259,18 @@ bool cpe_language_match_str(const char* cpe, const struct cpe_platform* platform
 	cpe_ = cpe_new(cpe);
 	if (cpe_ == NULL) return false;
 	ret = cpe_language_match_cpe(cpe_, platform);
-	cpe_delete(cpe_);
+	cpe_free(cpe_);
 	return ret;
 }
 */
 
-void cpe_platform_delete(struct cpe_platform * platform)
+void cpe_platform_free(struct cpe_platform * platform)
 {
 	if (platform) {
 		xmlFree(platform->id);
 		xmlFree(platform->title);
 		xmlFree(platform->remark);
-		cpe_langexpr_delete(&platform->expr);
+		cpe_langexpr_free(&platform->expr);
 	}
 	oscap_free(platform);
 }
@@ -326,7 +326,7 @@ bool cpe_langexpr_new(struct cpe_lang_expr * ret, xmlNodePtr node)
 	return true;
 }
 
-void cpe_langexpr_delete(struct cpe_lang_expr * expr)
+void cpe_langexpr_free(struct cpe_lang_expr * expr)
 {
 	struct cpe_lang_expr *cur;
 
@@ -337,11 +337,11 @@ void cpe_langexpr_delete(struct cpe_lang_expr * expr)
 	case CPE_LANG_OPER_AND:
 	case CPE_LANG_OPER_OR:
 		for (cur = expr->meta.expr; cur->oper; ++cur)
-			cpe_langexpr_delete(cur);
+			cpe_langexpr_free(cur);
 		oscap_free(expr->meta.expr);
 		break;
 	case CPE_LANG_OPER_MATCH:
-		cpe_name_delete(expr->meta.cpe);
+		cpe_name_free(expr->meta.cpe);
 		break;
 	default:
 		break;

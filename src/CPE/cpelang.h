@@ -96,13 +96,13 @@ struct cpe_platformspec *cpe_platformspec_new(const char *fname);
  * @relates cpe_platformspec
  * @param platformspec pointer to list to be deleted
  */
-void cpe_platformspec_delete(struct cpe_platformspec * platformspec);
+void cpe_platformspec_free(struct cpe_platformspec * platformspec);
 
 /**
  * Get an iterator to platforms contained in this specification.
  * @relates cpe_platformspec
  */
-struct cpe_platform_iterator* cpe_platformspec_items(const struct cpe_platformspec * platformspec);
+struct cpe_platform_iterator* cpe_platformspec_get_items(const struct cpe_platformspec * platformspec);
 
 /**
  * Get platform with given ID.
@@ -112,7 +112,7 @@ struct cpe_platform_iterator* cpe_platformspec_items(const struct cpe_platformsp
  * @raturn Platform with given ID.
  * @retval NULL on failure (e.g. no such platform exists)
  */
-struct cpe_platform* cpe_platformspec_item(const struct cpe_platformspec * platformspec, const char* id);
+struct cpe_platform* cpe_platformspec_get_item(const struct cpe_platformspec * platformspec, const char* id);
 
 /**
  * Match list of CPEs against CPE language platform specification
@@ -128,19 +128,19 @@ bool cpe_platform_match_cpe(struct cpe_name ** cpe, size_t n, const struct cpe_p
  * Get CPE paltform ID.
  * @relates cpe_platform
  */
-const char* cpe_platform_id(const struct cpe_platform* platform);
+const char* cpe_platform_get_id(const struct cpe_platform* platform);
 
 /**
  * Get CPE paltform title.
  * @relates cpe_platform
  */
-const char* cpe_platform_title(const struct cpe_platform* platform);
+const char* cpe_platform_get_title(const struct cpe_platform* platform);
 
 /**
  * Get CPE paltform remark.
  * @relates cpe_platform
  */
-const char* cpe_platform_remark(const struct cpe_platform* platform);
+const char* cpe_platform_get_remark(const struct cpe_platform* platform);
 
 #endif				/* _CPELANG_H_ */
 

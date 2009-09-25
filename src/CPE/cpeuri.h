@@ -73,49 +73,49 @@ struct cpe_name* cpe_name_new(const char *cpe);
  * @relates cpe_name
  * @param cpe CPE to be deleted
  */
-void cpe_name_delete(struct cpe_name * cpe);
+void cpe_name_free(struct cpe_name * cpe);
 
 /**
  * Get CPE name part type field.
  * @relates cpe_name
  */
-enum cpe_part cpe_name_part(const struct cpe_name * cpe);
+enum cpe_part cpe_name_get_part(const struct cpe_name * cpe);
 
 /**
  * Get CPE name vendor field.
  * @relates cpe_name
  */
-const char* cpe_name_vendor(const struct cpe_name * cpe);
+const char* cpe_name_get_vendor(const struct cpe_name * cpe);
 
 /**
  * Get CPE name product field.
  * @relates cpe_name
  */
-const char* cpe_name_product(const struct cpe_name * cpe);
+const char* cpe_name_get_product(const struct cpe_name * cpe);
 
 /**
  * Get CPE name version field.
  * @relates cpe_name
  */
-const char* cpe_name_version(const struct cpe_name * cpe);
+const char* cpe_name_get_version(const struct cpe_name * cpe);
 
 /**
  * Get CPE name update field.
  * @relates cpe_name
  */
-const char* cpe_name_update(const struct cpe_name * cpe);
+const char* cpe_name_get_update(const struct cpe_name * cpe);
 
 /**
  * Get CPE name edition field.
  * @relates cpe_name
  */
-const char* cpe_name_edition(const struct cpe_name * cpe);
+const char* cpe_name_get_edition(const struct cpe_name * cpe);
 
 /**
  * Get CPE name language field.
  * @relates cpe_name
  */
-const char* cpe_name_language(const struct cpe_name * cpe);
+const char* cpe_name_get_language(const struct cpe_name * cpe);
 
 /**
  * Check if candidate CPE @a cpe matches CPE @a against
