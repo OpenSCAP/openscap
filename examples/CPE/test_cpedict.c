@@ -11,9 +11,9 @@ void cpe_dictitem_dump(struct cpe_dictitem * item)
 
 	// print notes
 	printf("  Notes:\n");
-	struct oscap_string_iterator* itn = cpe_dictitem_get_notes(item);
-	while (oscap_string_iterator_has_more(itn))
+	OSCAP_FOREACH_STR (itn, cpe_dictitem_get_notes(item),
 		printf("    %s\n", oscap_string_iterator_next(itn));
+	)
 
 	// print deprecation info
 	if (cpe_dictitem_get_deprecated(item)) {
@@ -24,20 +24,16 @@ void cpe_dictitem_dump(struct cpe_dictitem * item)
 
 	// print references
 	printf("  References:\n");
-	struct cpe_dict_reference_iterator* itr = cpe_dictitem_get_references(item);
-	while (cpe_dict_reference_iterator_has_more(itr)) {
-		struct cpe_dict_reference* ref = cpe_dict_reference_iterator_next(itr);
+	OSCAP_FOREACH (cpe_dict_reference, ref, cpe_dictitem_get_references(item),
 		printf("    %s (%s)\n", cpe_dict_reference_get_content(ref), cpe_dict_reference_get_href(ref));
-	}
+	)
 
 	// print checks
 	printf("  Checks:\n");
-	struct cpe_dict_check_iterator* itc = cpe_dictitem_get_checks(item);
-	while (cpe_dict_check_iterator_has_more(itc)) {
-		struct cpe_dict_check* ck = cpe_dict_check_iterator_next(itc);
+	OSCAP_FOREACH (cpe_dict_check, ck, cpe_dictitem_get_checks(item),
 		printf("    id: %s, system: %s, href: %s\n",
-			   cpe_dict_check_get_identifier(ck), cpe_dict_check_get_system(ck), cpe_dict_check_get_href(ck));
-	}
+			cpe_dict_check_get_identifier(ck), cpe_dict_check_get_system(ck), cpe_dict_check_get_href(ck));
+	)
 
 	printf("\n");
 }
@@ -63,9 +59,9 @@ int main(int argc, char **argv)
 		     cpe_dict_get_generator_product_version(dict), cpe_dict_get_generator_schema_version(dict));
 
 		// dump each dictionary item
-		struct cpe_dictitem_iterator* it = cpe_dict_get_items(dict);
-		while (cpe_dictitem_iterator_has_more(it))
-			cpe_dictitem_dump(cpe_dictitem_iterator_next(it));
+		OSCAP_FOREACH (cpe_dictitem, item, cpe_dict_get_items(dict),
+			cpe_dictitem_dump(item);
+		)
 
 		// for each CPE specified on command line, try to match it against the dictionary
 		for (i = 2; i < argc; ++i)

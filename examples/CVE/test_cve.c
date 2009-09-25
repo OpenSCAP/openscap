@@ -26,9 +26,7 @@ int main(int argc, char **argv)
 	fprintf(stdout, "[end: parse]\n");
 	fprintf(stdout, "[done]\n");
 
-	struct cve_info_iterator* it = cve_get_entries(cve);
-	while (cve_info_iterator_has_more(it)) {
-		struct cve_info* info = cve_info_iterator_next(it);
+	OSCAP_FOREACH (cve_info, info, cve_get_entries(cve),
 		fprintf(stdout, "[cveInfo: %s, %s, %s, %s, %s]\n", cve_info_get_id(info),
 			cve_info_get_pub(info), cve_info_get_mod(info),
 			cve_info_get_cwe(info) ? cve_info_get_cwe(info) : "",
@@ -39,15 +37,13 @@ int main(int argc, char **argv)
 			cve_info_get_integrity(info), cve_info_get_availability(info), cve_info_get_source(info),
 			cve_info_get_generated(info));
 
-		struct cve_reference_iterator* refit = cve_info_get_references(info);
-		while (cve_reference_iterator_has_more(refit)) {
-			struct cve_reference* ref = cve_reference_iterator_next(refit);
+		OSCAP_FOREACH (cve_reference, ref, cve_info_get_references(info),
 			fprintf(stdout, "\t[cveReference: %s, %s, %s, %s]\n",
 				cve_reference_get_summary(ref), cve_reference_get_href(ref),
 				cve_reference_get_type(ref), cve_reference_get_source(ref));
-		}
+		)
 		fprintf(stdout, "\n");
-	}
+	)
 
 	cve_free(cve);
 	oscap_cleanup();  // clean caches

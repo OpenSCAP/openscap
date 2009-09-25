@@ -127,7 +127,7 @@ void* oscap_iterator_next(struct oscap_iterator* it)
 bool oscap_iterator_has_more(struct oscap_iterator* it)
 {
     if (it->cur) return true;
-    oscap_iterator_free(it);
+    // oscap_iterator_free(it);
     return false;
 }
 

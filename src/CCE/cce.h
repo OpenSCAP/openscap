@@ -62,6 +62,8 @@ struct cce_reference_iterator;
 struct cce_reference* cce_reference_iterator_next(struct cce_reference_iterator* it);
 /// @relates cce_reference_iterator
 bool cce_reference_iterator_has_more(struct cce_reference_iterator* it);
+/// @relates cce_reference_iterator
+void cce_reference_iterator_free(struct cce_reference_iterator* it);
 
 /** @struct cce_entry_iterator
  * Iterator over CCE entries.
@@ -72,6 +74,8 @@ struct cce_entry_iterator;
 struct cce_entry* cce_entry_iterator_next(struct cce_entry_iterator* it);
 /// @relates cce_entry_iterator
 bool cce_entry_iterator_has_more(struct cce_entry_iterator* it);
+/// @relates cce_entry_iterator
+void cce_entry_iterator_free(struct cce_entry_iterator* it);
 
 
 /**

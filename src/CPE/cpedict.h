@@ -76,6 +76,8 @@ struct cpe_dictitem_iterator;
 struct cpe_dictitem* cpe_dictitem_iterator_next(struct cpe_dictitem_iterator* it);
 /// @relates cpe_dictitem_iterator
 bool cpe_dictitem_iterator_has_more(struct cpe_dictitem_iterator* it);
+/// @relates cpe_dictitem_iterator
+void cpe_dictitem_iterator_free(struct cpe_dictitem_iterator* it);
 
 /** @struct cpe_dict_reference_iterator
  * Iterator over CPE dictionary references.
@@ -86,6 +88,8 @@ struct cpe_dict_reference_iterator;
 struct cpe_dict_reference* cpe_dict_reference_iterator_next(struct cpe_dict_reference_iterator* it);
 /// @relates cpe_dict_reference_iterator
 bool cpe_dict_reference_iterator_has_more(struct cpe_dict_reference_iterator* it);
+/// @relates cpe_dict_reference_iterator
+void cpe_dict_reference_iterator_free(struct cpe_dict_reference_iterator* it);
 
 /** @struct cpe_dict_check_iterator
  * Iterator over CPE dictionary checks.
@@ -96,6 +100,8 @@ struct cpe_dict_check_iterator;
 struct cpe_dict_check* cpe_dict_check_iterator_next(struct cpe_dict_check_iterator* it);
 /// @relates cpe_dict_check_iterator
 bool cpe_dict_check_iterator_has_more(struct cpe_dict_check_iterator* it);
+/// @relates cpe_dict_check_iterator
+void cpe_dict_check_iterator_free(struct cpe_dict_check_iterator* it);
 
 
 /**

@@ -10,6 +10,7 @@ void test_platformspec_dump(struct cpe_platformspec * plat)
 	struct cpe_platform_iterator* it = cpe_platformspec_get_items(plat);
 	while (cpe_platform_iterator_has_more(it))
 		test_platform_dump(cpe_platform_iterator_next(it));
+	cpe_platform_iterator_free(it);
 }
 
 void test_platform_dump(struct cpe_platform * plat)
@@ -64,8 +65,6 @@ void test_langexpr_dump(cpe_lang_expr_t * expr, int depth)
 #ifndef CPELANG_TEST_NO_MAIN
 
 
-void cpe_platform_iterator_free(struct cpe_platform_iterator* it){}
-
 int main(int argc, char **argv)
 {
 	struct cpe_platformspec *plat;	// pointer to our platform specification
@@ -90,18 +89,6 @@ int main(int argc, char **argv)
 	plat = cpe_platformspec_new(argv[1]);
 
 	if (plat != NULL) {
-		// for each platform in platform specification
-		/*
-		struct cpe_platform_iterator* it = cpe_platformspec_items(plat);
-		while (cpe_platform_iterator_has_more(it)) {
-			struct cpe_platform* p = cpe_platform_iterator_next(it);
-			// dump its contents
-			test_platform_dump(p);
-			// print whether list of CPEs matched
-			printf("    = %sMATCH\n\n", cpe_platform_match_cpe(cpes, cpes_n, p) ? "" : "MIS");
-		}
-		cpe_platform_iterator_free(it);
-		*/
 		OSCAP_FOREACH (cpe_platform, p, cpe_platformspec_get_items(plat),
 			// dump its contents
 			test_platform_dump(p);

@@ -65,6 +65,8 @@ struct cve_info_iterator;
 struct cve_info* cve_info_iterator_next(struct cve_info_iterator* it);
 /// @relates cve_info_iterator
 bool cve_info_iterator_has_more(struct cve_info_iterator* it);
+/// @relates cve_info_iterator
+void cve_info_iterator_free(struct cve_info_iterator* it);
 
 /** @struct cve_reference_iterator
  * Iterator over CVE references.
@@ -75,6 +77,8 @@ struct cve_reference_iterator;
 struct cve_reference* cve_reference_iterator_next(struct cve_reference_iterator* it);
 /// @relates cve_reference_iterator
 bool cve_reference_iterator_has_more(struct cve_reference_iterator* it);
+/// @relates cve_reference_iterator
+void cve_reference_iterator_free(struct cve_reference_iterator* it);
 
 
 

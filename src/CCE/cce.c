@@ -74,9 +74,7 @@ struct cce_entry* cce_entry_new_empty(void)
 void cce_parse(const char *docname, struct cce *cce)
 {
 	xmlTextReaderPtr reader;
-	xmlDocPtr doc;
 	int ret;
-	doc = xmlParseFile(docname);
 	reader = xmlNewTextReaderFilename(docname);
 	if (reader != NULL) {
 		ret = xmlTextReaderRead(reader);
@@ -86,7 +84,6 @@ void cce_parse(const char *docname, struct cce *cce)
 		}
 		xmlFreeTextReader(reader);
 	}
-	xmlFreeDoc(doc);
 }
 
 struct cce* cce_new(const char* fname)

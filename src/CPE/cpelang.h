@@ -81,6 +81,8 @@ struct cpe_platform_iterator;
 struct cpe_platform* cpe_platform_iterator_next(struct cpe_platform_iterator* it);
 /// @relates cpe_platform_iterator
 bool cpe_platform_iterator_has_more(struct cpe_platform_iterator* it);
+/// @relates cpe_platform_iterator
+void cpe_platform_iterator_free(struct cpe_platform_iterator* it);
 
 /**
  * New platform specification from file

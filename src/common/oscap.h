@@ -39,19 +39,40 @@
  */
 
 /**
- * Iterate over an array, givea an iterator.
+ * Iterate over an array, given an iterator.
+ * Execute @a code for each array member stored in @a val.
  */
-#define OSCAP_FOREACH(type, val, init_val, code) \
+#define OSCAP_FOREACH_GENERIC(itype, vtype, val, init_val, code) \
 	{ \
-		struct type##_iterator *it_ = (init_val); \
-		struct type *val = NULL; \
-		while (type##_iterator_has_more(it_)) { \
-			val = type##_iterator_next(it_); \
+		struct itype##_iterator *it_ = (init_val); \
+		vtype val; \
+		while (itype##_iterator_has_more(it_)) { \
+			val = itype##_iterator_next(it_); \
 			code \
 		} \
-		type##_iterator_free(it_); \
+		itype##_iterator_free(it_); \
 	}
 
+/**
+ * Iterate over an array, given an iterator.
+ * @param type type of array elements (w/o the struct keyword)
+ * @param val name of an variable the member will be sequentially stored in
+ * @param init_val initial member value (i.e. an iterator pointing to the start element)
+ * @param code code to be executed for each element the iterator hits
+ * @see OSCAP_FOREACH_GENERIC
+ */
+#define OSCAP_FOREACH(type, val, init_val, code) \
+        OSCAP_FOREACH_GENERIC(type, struct type *, val, init_val, code)
+
+/**
+ * Iterate over an array of strings, given an iterator.
+ * @param val name of an variable the string will be sequentially stored in
+ * @param init_val initial member value (i.e. an iterator pointing to the start element)
+ * @param code code to be executed for each string the iterator hits
+ * @see OSCAP_FOREACH_GENERIC
+ */
+#define OSCAP_FOREACH_STR(val, init_val, code) \
+        OSCAP_FOREACH_GENERIC(oscap_string, const char *, val, init_val, code)
 
 
 /** @struct oscap_string_iterator
@@ -63,6 +84,8 @@ struct oscap_string_iterator;
 const char* oscap_string_iterator_next(struct oscap_string_iterator* it);
 /// @relates oscap_string_iterator
 bool oscap_string_iterator_has_more(struct oscap_string_iterator* it);
+/// @relates oscap_string_iterator
+void oscap_string_iterator_free(struct oscap_string_iterator* it);
 
 
 /**

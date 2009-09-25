@@ -453,13 +453,22 @@ void xccdf_set_value_free(struct xccdf_set_value* sv);
         XCCDF_VALUE_GETTER_A(bool,MNAME,item.flags.MNAME) \
         XCCDF_GROUP_GETTER_A(bool,MNAME,item.flags.MNAME)
 
-
+/*
 #define XITERATOR(x) ((struct oscap_iterator*)(x))
 #define XCCDF_ITERATOR(n) struct xccdf_##n##_iterator*
 #define XCCDF_ITERATOR_FWD(n) struct xccdf_##n##_iterator;
 #define XCCDF_ITERATOR_HAS_MORE(n) bool xccdf_##n##_iterator_has_more(XCCDF_ITERATOR(n) it) { return oscap_iterator_has_more(XITERATOR(it)); }
 #define XCCDF_ITERATOR_NEXT(t,n) t xccdf_##n##_iterator_next(XCCDF_ITERATOR(n) it) { return oscap_iterator_next(XITERATOR(it)); }
 #define XCCDF_ITERATOR_GEN_T(t,n) XCCDF_ITERATOR_FWD(n) XCCDF_ITERATOR_HAS_MORE(n) XCCDF_ITERATOR_NEXT(t,n)
+#define XCCDF_ITERATOR_GEN_S(n) XCCDF_ITERATOR_GEN_T(struct xccdf_##n*,n)
+*/
+#define XITERATOR(x) ((struct oscap_iterator*)(x))
+#define XCCDF_ITERATOR(n) struct xccdf_##n##_iterator*
+#define XCCDF_ITERATOR_FWD(n) struct xccdf_##n##_iterator;
+#define XCCDF_ITERATOR_HAS_MORE(n) bool xccdf_##n##_iterator_has_more(XCCDF_ITERATOR(n) it) { return oscap_iterator_has_more(XITERATOR(it)); }
+#define XCCDF_ITERATOR_NEXT(t,n) t xccdf_##n##_iterator_next(XCCDF_ITERATOR(n) it) { return oscap_iterator_next(XITERATOR(it)); }
+#define XCCDF_ITERATOR_FREE(n) void xccdf_##n##_iterator_free(XCCDF_ITERATOR(n) it) { oscap_iterator_free(XITERATOR(it)); }
+#define XCCDF_ITERATOR_GEN_T(t,n) XCCDF_ITERATOR_FWD(n) XCCDF_ITERATOR_HAS_MORE(n) XCCDF_ITERATOR_NEXT(t,n) XCCDF_ITERATOR_FREE(n)
 #define XCCDF_ITERATOR_GEN_S(n) XCCDF_ITERATOR_GEN_T(struct xccdf_##n*,n)
 
 #endif

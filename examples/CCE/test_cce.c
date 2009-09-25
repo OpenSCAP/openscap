@@ -40,23 +40,31 @@ int main(int argc, char *argv[])
 	printf("\nID: %s\n", cce_entry_get_id(cce));
 	printf("Description: %s\n", cce_entry_get_description(cce));
 
-	{
-		struct cce_reference_iterator* it = cce_entry_get_references(cce);
-		while (cce_reference_iterator_has_more(it)) {
-			struct cce_reference* ref = cce_reference_iterator_next(it);
-			printf("Ref Source: %s\n", cce_reference_get_source(ref));
-			printf("Ref Value: %s\n", cce_reference_get_value(ref));
-		}
+	/*
+	struct cce_reference_iterator* it = cce_entry_get_references(cce);
+	while (cce_reference_iterator_has_more(it)) {
+		struct cce_reference* ref = cce_reference_iterator_next(it);
+		printf("Ref Source: %s\n", cce_reference_get_source(ref));
+		printf("Ref Value: %s\n", cce_reference_get_value(ref));
 	}
+	*/
+	OSCAP_FOREACH (cce_reference, ref, cce_entry_get_references(cce),
+		printf("Ref Source: %s\n", cce_reference_get_source(ref));
+		printf("Ref Value: %s\n", cce_reference_get_value(ref));
+	)
 
 	{
-		struct oscap_string_iterator *it = cce_entry_get_tech_mechs(cce);
-		while (oscap_string_iterator_has_more(it))
-			printf("Technical Mechanism: %s\n", oscap_string_iterator_next(it));
+		//struct oscap_string_iterator *it = cce_entry_get_tech_mechs(cce);
+		//while (oscap_string_iterator_has_more(it))
+		OSCAP_FOREACH_STR (str, cce_entry_get_tech_mechs(cce),
+			printf("Technical Mechanism: %s\n", str);
+		)
 
-		it = cce_entry_get_params(cce);
-		while (oscap_string_iterator_has_more(it))
-			printf("Available Parameter Choices: %s\n", oscap_string_iterator_next(it));
+		//it = cce_entry_get_params(cce);
+		//while (oscap_string_iterator_has_more(it))
+		OSCAP_FOREACH_STR (str, cce_entry_get_params(cce),
+			printf("Available Parameter Choices: %s\n", str);
+		)
 	}
 
 	cce_free(cce_list);

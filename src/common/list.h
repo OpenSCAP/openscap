@@ -70,6 +70,7 @@ void* oscap_iterator_new(struct oscap_list* list);
 void* oscap_iterator_new_filter(struct oscap_list* list, oscap_filter_func filter, void* user_data);
 void* oscap_iterator_next(struct oscap_iterator* it);
 bool oscap_iterator_has_more(struct oscap_iterator* it);
+void oscap_iterator_free(struct oscap_iterator* it);
 
 /** @struct oscap_string_iterator
  * Iterator over C-style strings.
