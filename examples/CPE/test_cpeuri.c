@@ -18,7 +18,7 @@ void print_help(const char *progname)
 		progname, progname, progname);
 }
 
-// string representation of entries in enum cpe_part_t
+// string representation of entries in cpe_part_t
 const char *CPE_PART_STR[] =
     { "??? ERROR - run away!", "hardware", "operating system", "application" };
 

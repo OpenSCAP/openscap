@@ -25,10 +25,10 @@
 #include <math.h>
 #include <string.h>
 
-oscap_destruct_func xccdf_value_val_get_destructor(enum xccdf_value_type type);
-struct xccdf_value_val* xccdf_value_val_new(enum xccdf_value_type type);
+oscap_destruct_func xccdf_value_val_get_destructor(xccdf_value_type_t type);
+struct xccdf_value_val* xccdf_value_val_new(xccdf_value_type_t type);
 
-struct xccdf_item* xccdf_value_new_empty(struct xccdf_item* parent, enum xccdf_value_type type)
+struct xccdf_item* xccdf_value_new_empty(struct xccdf_item* parent, xccdf_value_type_t type)
 {
     struct xccdf_item* val = xccdf_item_new(XCCDF_VALUE, parent->item.benchmark, parent);
 	val->sub.value.type = type;
@@ -56,7 +56,7 @@ const struct oscap_string_map XCCDF_IFACE_HINT_MAP[] = {
 	{ XCCDF_IFACE_HINT_NONE,     NULL }
 };
 
-union xccdf_value_unit xccdf_value_get(const char* str, enum xccdf_value_type type)
+union xccdf_value_unit xccdf_value_get(const char* str, xccdf_value_type_t type)
 {
 	union xccdf_value_unit val;
 	memset(&val, 0, sizeof(val));
@@ -74,7 +74,7 @@ union xccdf_value_unit xccdf_value_get(const char* str, enum xccdf_value_type ty
 struct xccdf_item* xccdf_value_new_parse(xmlTextReaderPtr reader, struct xccdf_item* parent)
 {
 	if (xccdf_element_get(reader) != XCCDFE_VALUE) return NULL;
-	enum xccdf_value_type type = oscap_string_to_enum(XCCDF_VALUE_TYPE_MAP, xccdf_attribute_get(reader, XCCDFA_TYPE));
+	xccdf_value_type_t type = oscap_string_to_enum(XCCDF_VALUE_TYPE_MAP, xccdf_attribute_get(reader, XCCDFA_TYPE));
 	struct xccdf_item* value = xccdf_value_new_empty(parent, type);
 	
 	value->sub.value.oper = oscap_string_to_enum(XCCDF_OPERATOR_MAP, xccdf_attribute_get(reader, XCCDFA_OPERATOR));
@@ -87,7 +87,7 @@ struct xccdf_item* xccdf_value_new_parse(xmlTextReaderPtr reader, struct xccdf_i
 	int depth = xccdf_element_depth(reader) + 1;
 
 	while (xccdf_to_start_element(reader, depth)) {
-		enum xccdf_element el = xccdf_element_get(reader);
+		xccdf_element_t el = xccdf_element_get(reader);
 		const char* selector = xccdf_attribute_get(reader, XCCDFA_SELECTOR);
 		if (selector == NULL) selector = "";
 		struct xccdf_value_val* val = oscap_htable_get(value->sub.value.values, selector);
@@ -138,7 +138,7 @@ void xccdf_value_free(struct xccdf_item* val)
 	xccdf_item_release(val);
 }
 
-struct xccdf_value_val* xccdf_value_val_new(enum xccdf_value_type type)
+struct xccdf_value_val* xccdf_value_val_new(xccdf_value_type_t type)
 {
 	struct xccdf_value_val* v = oscap_calloc(1, sizeof(struct xccdf_value_val));
 
@@ -163,7 +163,7 @@ struct xccdf_value_val* xccdf_value_val_new(enum xccdf_value_type type)
 
 void xccdf_value_unit_s_free(union xccdf_value_unit* u) { oscap_free(u->s); oscap_free(u); }
 
-oscap_destruct_func xccdf_value_unit_destructor(enum xccdf_value_type type)
+oscap_destruct_func xccdf_value_unit_destructor(xccdf_value_type_t type)
 {
 	switch (type) {
 		case XCCDF_TYPE_STRING: return (oscap_destruct_func)xccdf_value_unit_s_free;
@@ -172,7 +172,7 @@ oscap_destruct_func xccdf_value_unit_destructor(enum xccdf_value_type type)
 	return NULL;
 }
 
-void xccdf_value_val_free_0(struct xccdf_value_val* v, enum xccdf_value_type type)
+void xccdf_value_val_free_0(struct xccdf_value_val* v, xccdf_value_type_t type)
 {
 	oscap_list_free(v->choices, xccdf_value_unit_destructor(type));
 	switch (type) {
@@ -190,7 +190,7 @@ void xccdf_value_val_free_b(struct xccdf_value_val* v) { xccdf_value_val_free_0(
 void xccdf_value_val_free_n(struct xccdf_value_val* v) { xccdf_value_val_free_0(v, XCCDF_TYPE_NUMBER); }
 void xccdf_value_val_free_s(struct xccdf_value_val* v) { xccdf_value_val_free_0(v, XCCDF_TYPE_STRING); }
 
-oscap_destruct_func xccdf_value_val_get_destructor(enum xccdf_value_type type)
+oscap_destruct_func xccdf_value_val_get_destructor(xccdf_value_type_t type)
 {
 	switch (type) {
 		case XCCDF_TYPE_NUMBER:  return (oscap_destruct_func) xccdf_value_val_free_n;
@@ -317,9 +317,9 @@ void xccdf_value_dump(struct xccdf_item* value, int depth)
 
 XCCDF_STATUS_CURRENT(value)
 XCCDF_VALUE_GETTER_I(struct xccdf_value*, extends)
-XCCDF_VALUE_GETTER(enum xccdf_value_type, type)
-XCCDF_VALUE_GETTER(enum xccdf_interface_hint, interface_hint)
-XCCDF_VALUE_GETTER(enum xccdf_operator, oper)
+XCCDF_VALUE_GETTER(xccdf_value_type_t, type)
+XCCDF_VALUE_GETTER(xccdf_interface_hint_t, interface_hint)
+XCCDF_VALUE_GETTER(xccdf_operator_t, oper)
 XCCDF_VALUE_GETTER(const char*, selector)
 XCCDF_SIGETTER(value, sources)
 

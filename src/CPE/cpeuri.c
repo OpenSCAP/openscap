@@ -55,7 +55,7 @@ enum cpe_field_t {
 struct cpe_name {
 	char *data_;           // parsed string, internal use only
 	char **fields_;        // NULL-terminated array of pointers to individual components of CPE URI, internal
-	enum cpe_part part;    // part
+	cpe_part_t part;    // part
 	const char *vendor;    // vendor
 	const char *product;   // product
 	const char *version;   // version
@@ -378,7 +378,7 @@ size_t ptrarray_length(void **arr)
 
 #define CPENAME_GETTER(RTYPE,MNAME) OSCAP_GETTER(RTYPE,cpe_name,MNAME)
 
-CPENAME_GETTER(enum cpe_part, part)
+CPENAME_GETTER(cpe_part_t, part)
 CPENAME_GETTER(const char*, vendor)
 CPENAME_GETTER(const char*, product)
 CPENAME_GETTER(const char*, version)

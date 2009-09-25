@@ -25,7 +25,7 @@
 #include <string.h>
 #include <math.h>
 
-struct xccdf_item* xccdf_item_new(enum xccdf_type type, struct xccdf_item* bench, struct xccdf_item* parent)
+struct xccdf_item* xccdf_item_new(xccdf_type_t type, struct xccdf_item* bench, struct xccdf_item* parent)
 {
     struct xccdf_item* item;
     size_t size = sizeof(*item) - sizeof(item->sub);
@@ -138,7 +138,7 @@ bool xccdf_item_get_process_attributes(struct xccdf_item* item, xmlTextReaderPtr
 
 bool xccdf_item_get_process_element(struct xccdf_item* item, xmlTextReaderPtr reader)
 {
-	enum xccdf_element el = xccdf_element_get(reader);
+	xccdf_element_t el = xccdf_element_get(reader);
 
 	switch (el) {
 		case XCCDFE_TITLE:
@@ -179,7 +179,7 @@ bool xccdf_item_get_process_element(struct xccdf_item* item, xmlTextReaderPtr re
     return false;
 }
 
-void* xccdf_item_convert(struct xccdf_item* item, enum xccdf_type type)
+void* xccdf_item_convert(struct xccdf_item* item, xccdf_type_t type)
 {
 	return (item != NULL && (item->type & type) ? item : NULL);
 }
@@ -192,7 +192,7 @@ XCCDF_ITEM_CONVERT(group,GROUP)
 XCCDF_ITEM_CONVERT(value,VALUE)
 XCCDF_ITEM_CONVERT(result,RESULT)
 
-XCCDF_ABSTRACT_GETTER(enum xccdf_type,item,type,type)
+XCCDF_ABSTRACT_GETTER(xccdf_type_t,item,type,type)
 XCCDF_ITEM_GETTER(const char*, id)
 XCCDF_ITEM_GETTER(const char*, title)
 XCCDF_ITEM_GETTER(const char*, version)
@@ -275,12 +275,12 @@ void xccdf_status_dump(struct xccdf_status* status, int depth)
 
 void xccdf_status_free(struct xccdf_status* status) { oscap_free(status); }
 XCCDF_GENERIC_GETTER(time_t, status, date)
-XCCDF_GENERIC_GETTER(enum xccdf_status_type, status, status)
+XCCDF_GENERIC_GETTER(xccdf_status_type_t, status, status)
 
-enum xccdf_status_type xccdf_item_get_status_current(const struct xccdf_item* item)
+xccdf_status_type_t xccdf_item_get_status_current(const struct xccdf_item* item)
 {
     time_t maxtime = 0;
-    enum xccdf_status_type maxtype = XCCDF_STATUS_NOT_SPECIFIED;
+    xccdf_status_type_t maxtype = XCCDF_STATUS_NOT_SPECIFIED;
     const struct oscap_list_item* li = item->item.statuses->first;
     struct xccdf_status* status;
     while (li) {
@@ -296,7 +296,7 @@ enum xccdf_status_type xccdf_item_get_status_current(const struct xccdf_item* it
 
 struct xccdf_model* xccdf_model_new_xml(xmlTextReaderPtr reader)
 {
-    enum xccdf_element el = xccdf_element_get(reader);
+    xccdf_element_t el = xccdf_element_get(reader);
     int depth = xccdf_element_depth(reader) + 1;
     struct xccdf_model* model;
 

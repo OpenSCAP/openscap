@@ -67,8 +67,8 @@ struct xccdf_item_base {
 
 struct xccdf_rule_item {
 	char* impact_metric;
-	enum xccdf_role role;
-	enum xccdf_level severity;
+	xccdf_role_t role;
+	xccdf_level_t severity;
 	struct xccdf_check* check;
 
 	struct oscap_list* requires;
@@ -112,9 +112,9 @@ struct xccdf_value_val {
 };
 
 struct xccdf_value_item {
-	enum xccdf_value_type type;
-	enum xccdf_interface_hint interface_hint;
-	enum xccdf_operator oper;
+	xccdf_value_type_t type;
+	xccdf_interface_hint_t interface_hint;
+	xccdf_operator_t oper;
 	char* selector;
 
 	struct xccdf_value_val* value;
@@ -176,7 +176,7 @@ struct xccdf_benchmark_item {
 
 
 struct xccdf_item {
-	enum xccdf_type type;
+	xccdf_type_t type;
 	struct xccdf_item_base item;
 	union {
         struct xccdf_profile_item   profile;
@@ -194,7 +194,7 @@ struct xccdf_notice {
 };
 
 struct xccdf_status {
-    enum xccdf_status_type status;
+    xccdf_status_type_t status;
     time_t date;
 };
 
@@ -212,8 +212,8 @@ struct xccdf_refine_rule {
 	struct xccdf_item* item;
 	char* remark;
 	char* selector;
-	enum xccdf_role role;
-	enum xccdf_level severity;
+	xccdf_role_t role;
+	xccdf_level_t severity;
 	float weight;
 };
 
@@ -221,7 +221,7 @@ struct xccdf_refine_value {
 	struct xccdf_item* item;
 	char* remark;
 	char* selector;
-	enum xccdf_operator oper;
+	xccdf_operator_t oper;
 };
 
 struct xccdf_set_value {
@@ -235,7 +235,7 @@ struct xccdf_ident {
 };
 
 struct xccdf_check {
-	enum xccdf_bool_operator oper;
+	xccdf_bool_operator_t oper;
 	struct oscap_list* children;
 	struct xccdf_item* parent;
 	char* id;
@@ -269,9 +269,9 @@ struct xccdf_profile_note {
 
 struct xccdf_fix {
 	bool reboot;
-	enum xccdf_strategy strategy;
-	enum xccdf_level disruption;
-	enum xccdf_level complexity;
+	xccdf_strategy_t strategy;
+	xccdf_level_t disruption;
+	xccdf_level_t complexity;
 	char* id;
 	char* content;
 	char* system;
@@ -280,9 +280,9 @@ struct xccdf_fix {
 
 struct xccdf_fixtext {
 	bool reboot;
-	enum xccdf_strategy strategy;
-	enum xccdf_level disruption;
-	enum xccdf_level complexity;
+	xccdf_strategy_t strategy;
+	xccdf_level_t disruption;
+	xccdf_level_t complexity;
 	struct xccdf_fix* fixref;
 	char* content;
 };
@@ -292,16 +292,16 @@ extern const struct oscap_string_map XCCDF_ROLE_MAP[];
 extern const struct oscap_string_map XCCDF_OPERATOR_MAP[];
 extern const struct oscap_string_map XCCDF_STRATEGY_MAP[];
 
-struct xccdf_item* xccdf_item_new(enum xccdf_type type, struct xccdf_item* bench, struct xccdf_item* parent);
+struct xccdf_item* xccdf_item_new(xccdf_type_t type, struct xccdf_item* bench, struct xccdf_item* parent);
 void xccdf_item_release(struct xccdf_item* item);
-enum xccdf_status_type xccdf_item_get_status_current(const struct xccdf_item* item);
+xccdf_status_type_t xccdf_item_get_status_current(const struct xccdf_item* item);
 void xccdf_item_get_print(struct xccdf_item* item, int depth);
 void xccdf_item_dump(struct xccdf_item* item, int depth);
 void xccdf_item_free(struct xccdf_item* item);
 
 struct xccdf_item* xccdf_benchmark_new_empty(void);
 bool xccdf_benchmark_get_parse(struct xccdf_item* benchmark, xmlTextReaderPtr reader);
-bool xccdf_benchmark_add_ref(struct xccdf_item* benchmark, struct xccdf_item** ptr, const char* id, enum xccdf_type type);
+bool xccdf_benchmark_add_ref(struct xccdf_item* benchmark, struct xccdf_item** ptr, const char* id, xccdf_type_t type);
 void xccdf_benchmark_dump(struct xccdf_benchmark* benchmark);
 
 struct xccdf_item* xccdf_profile_new_empty(struct xccdf_item* bench);
@@ -372,7 +372,7 @@ void xccdf_set_value_free(struct xccdf_set_value* sv);
 #define XITEM(item) ((struct xccdf_item*)item)
 
 #define XCCDF_STATUS_CURRENT(TYPE) \
-		enum xccdf_status_type xccdf_##TYPE##_get_status_current(const struct xccdf_##TYPE* item) {\
+		xccdf_status_type_t xccdf_##TYPE##_get_status_current(const struct xccdf_##TYPE* item) {\
 			return xccdf_item_get_status_current(XITEM(item)); }
 
 #define XCCDF_GENERIC_GETTER(RTYPE,TNAME,MEMBER) \

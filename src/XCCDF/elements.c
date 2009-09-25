@@ -30,7 +30,7 @@
 #include <math.h>
 
 struct xccdf_element_spec {
-	enum xccdf_element id;  ///< element ID
+	xccdf_element_t id;  ///< element ID
 	const char* ns;   ///< namespace URI
 	const char* name; ///< element name
 };
@@ -113,7 +113,7 @@ const struct xccdf_element_spec XCCDF_ELEMENT_MAP[] = {
 	{ 0, NULL, NULL }
 };
 
-enum xccdf_element xccdf_element_get(xmlTextReaderPtr reader)
+xccdf_element_t xccdf_element_get(xmlTextReaderPtr reader)
 {
 	if (xmlTextReaderNodeType(reader) != 1)
 		return XCCDFE_ERROR;
@@ -132,7 +132,7 @@ enum xccdf_element xccdf_element_get(xmlTextReaderPtr reader)
 }
 
 struct xccdf_attribute_spec {
-	enum xccdf_attribute id;  ///< element ID
+	xccdf_attribute_t id;  ///< element ID
 	const char* ns;   ///< namespace URI
 	const char* name; ///< element name
 };
@@ -192,12 +192,12 @@ const struct xccdf_attribute_spec XCCDF_ATTRIBUTE_MAP[] = {
 	{ 0, NULL, NULL }
 };
 
-bool xccdf_attribute_has(xmlTextReaderPtr reader, enum xccdf_attribute attr)
+bool xccdf_attribute_has(xmlTextReaderPtr reader, xccdf_attribute_t attr)
 {
 	return xccdf_attribute_get(reader, attr) != NULL;
 }
 
-const char* xccdf_attribute_get(xmlTextReaderPtr reader, enum xccdf_attribute attr)
+const char* xccdf_attribute_get(xmlTextReaderPtr reader, xccdf_attribute_t attr)
 {
 	bool found = false;
 	const struct xccdf_attribute_spec* mapptr = XCCDF_ATTRIBUTE_MAP;
@@ -219,7 +219,7 @@ const char* xccdf_attribute_get(xmlTextReaderPtr reader, enum xccdf_attribute at
 	return (const char*) xmlTextReaderConstValue(reader);
 }
 
-char* xccdf_attribute_copy(xmlTextReaderPtr reader, enum xccdf_attribute attr)
+char* xccdf_attribute_copy(xmlTextReaderPtr reader, xccdf_attribute_t attr)
 {
 	const char* ret = xccdf_attribute_get(reader, attr);
 	if (ret) return strdup(ret);
@@ -232,12 +232,12 @@ const struct oscap_string_map XCCDF_BOOL_MAP[] = {
 	{ true, "1" }, { false, NULL }
 };
 
-bool xccdf_attribute_get_bool(xmlTextReaderPtr reader, enum xccdf_attribute attr)
+bool xccdf_attribute_get_bool(xmlTextReaderPtr reader, xccdf_attribute_t attr)
 {
 	return oscap_string_to_enum(XCCDF_BOOL_MAP, xccdf_attribute_get(reader, attr));
 }
 
-float xccdf_attribute_get_float(xmlTextReaderPtr reader, enum xccdf_attribute attr)
+float xccdf_attribute_get_float(xmlTextReaderPtr reader, xccdf_attribute_t attr)
 {
 	float res;
 	if (xccdf_attribute_has(reader, attr) && sscanf(xccdf_attribute_get(reader, attr), "%f", &res) == 1) return res;

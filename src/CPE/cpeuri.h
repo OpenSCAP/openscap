@@ -42,12 +42,12 @@
 #include <stdio.h>
 
 /// enumeration of possible CPE parts
-enum cpe_part {
+typedef enum {
 	CPE_PART_NONE,		///< no part specified
 	CPE_PART_HW,		///< hardware
 	CPE_PART_OS,		///< operating system
 	CPE_PART_APP		///< application
-};
+} cpe_part_t;
 
 /**
  * @struct cpe_name
@@ -79,7 +79,7 @@ void cpe_name_free(struct cpe_name * cpe);
  * Get CPE name part type field.
  * @relates cpe_name
  */
-enum cpe_part cpe_name_get_part(const struct cpe_name * cpe);
+cpe_part_t cpe_name_get_part(const struct cpe_name * cpe);
 
 /**
  * Get CPE name vendor field.

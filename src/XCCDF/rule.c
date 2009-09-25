@@ -379,7 +379,7 @@ const struct oscap_string_map XCCDF_BOOLOP_MAP[] = {
 
 struct xccdf_check* xccdf_check_new_parse(xmlTextReaderPtr reader, struct xccdf_item* parent)
 {
-	enum xccdf_element el = xccdf_element_get(reader);
+	xccdf_element_t el = xccdf_element_get(reader);
 	if (el != XCCDFE_CHECK && el != XCCDFE_COMPLEX_CHECK) return NULL;
 	struct xccdf_check* check = xccdf_check_new_empty(parent);
 
@@ -566,8 +566,8 @@ XCCDF_GROUP_IGETTER(item, content)
 XCCDF_GROUP_GETTER_I(struct xccdf_group*, extends)
 
 XCCDF_RULE_GETTER(const char*, impact_metric)
-XCCDF_RULE_GETTER(enum xccdf_role, role)
-XCCDF_RULE_GETTER(enum xccdf_level, severity)
+XCCDF_RULE_GETTER(xccdf_role_t, role)
+XCCDF_RULE_GETTER(xccdf_level_t, severity)
 XCCDF_RULE_GETTER(struct xccdf_check*, check)
 XCCDF_RULE_IGETTER(ident, idents)
 XCCDF_RULE_IGETTER(check, checks)
@@ -582,7 +582,7 @@ XCCDF_GENERIC_GETTER(const char*,              check, system)
 XCCDF_GENERIC_GETTER(const char*,              check, selector)
 XCCDF_GENERIC_GETTER(const char*,              check, content)
 XCCDF_GENERIC_GETTER(struct xccdf_rule*,       check, parent)
-XCCDF_GENERIC_GETTER(enum xccdf_bool_operator, check, oper)
+XCCDF_GENERIC_GETTER(xccdf_bool_operator_t, check, oper)
 XCCDF_GENERIC_IGETTER(check_import,            check, imports)
 XCCDF_GENERIC_IGETTER(check_export,            check, exports)
 XCCDF_GENERIC_IGETTER(check_content_ref,       check, content_refs)
@@ -605,17 +605,17 @@ XCCDF_GENERIC_GETTER(struct xccdf_value*, check_export, value)
 XCCDF_GENERIC_GETTER(const char*, check_content_ref, name)
 XCCDF_GENERIC_GETTER(const char*, check_content_ref, href)
 
-XCCDF_GENERIC_GETTER(enum xccdf_strategy, fixtext, strategy)
-XCCDF_GENERIC_GETTER(enum xccdf_level,    fixtext, disruption)
-XCCDF_GENERIC_GETTER(enum xccdf_level,    fixtext, complexity)
+XCCDF_GENERIC_GETTER(xccdf_strategy_t, fixtext, strategy)
+XCCDF_GENERIC_GETTER(xccdf_level_t,    fixtext, disruption)
+XCCDF_GENERIC_GETTER(xccdf_level_t,    fixtext, complexity)
 XCCDF_GENERIC_GETTER(bool,                fixtext, reboot)
 XCCDF_GENERIC_GETTER(const char*,         fixtext, content)
 XCCDF_GENERIC_GETTER(struct xccdf_fix*,   fixtext, fixref)
 XCCDF_ITERATOR_GEN_S(fixtext)
 
-XCCDF_GENERIC_GETTER(enum xccdf_strategy, fix, strategy)
-XCCDF_GENERIC_GETTER(enum xccdf_level,    fix, disruption)
-XCCDF_GENERIC_GETTER(enum xccdf_level,    fix, complexity)
+XCCDF_GENERIC_GETTER(xccdf_strategy_t, fix, strategy)
+XCCDF_GENERIC_GETTER(xccdf_level_t,    fix, disruption)
+XCCDF_GENERIC_GETTER(xccdf_level_t,    fix, complexity)
 XCCDF_GENERIC_GETTER(bool,                fix, reboot)
 XCCDF_GENERIC_GETTER(const char*,         fix, content)
 XCCDF_GENERIC_GETTER(const char*,         fix, system)

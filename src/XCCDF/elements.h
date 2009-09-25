@@ -28,7 +28,7 @@
 #include <time.h>
 #include "../common/util.h"
 
-enum xccdf_element {
+typedef enum {
 	XCCDFE_ERROR = -1,
 	XCCDFE_UNMATCHED = 0,
 	XCCDFE_BENCHMARK,
@@ -100,16 +100,16 @@ enum xccdf_element {
 	XCCDFE_VERSION,
 	XCCDFE_WARNING,
 	XCCDFE_END_
-};
+} xccdf_element_t;
 
 #define XCCDF_XMLNS "http://checklists.nist.gov/xccdf/1.1"
 
-enum xccdf_element xccdf_element_get(xmlTextReaderPtr reader);
+xccdf_element_t xccdf_element_get(xmlTextReaderPtr reader);
 
 #define XCCDF_ASSERT_ELEMENT(reader, element) do { if (xccdf_element_get(reader) != element) return false; } while(false)
 
 
-enum xccdf_attribute {
+typedef enum {
 	XCCDFA_NONE,
 	XCCDFA_ABSTRACT,
 	XCCDFA_AUTHENTICATED,
@@ -163,15 +163,15 @@ enum xccdf_attribute {
 	XCCDFA_VALUE_ID,
 	XCCDFA_WEIGHT,
 	XCCDFA_END_
-};
+} xccdf_attribute_t;
 
-bool xccdf_attribute_has(xmlTextReaderPtr reader, enum xccdf_attribute attr);
-const char* xccdf_attribute_get(xmlTextReaderPtr reader, enum xccdf_attribute attr);
-char* xccdf_attribute_copy(xmlTextReaderPtr reader, enum xccdf_attribute attr);
-bool xccdf_attribute_get_bool(xmlTextReaderPtr reader, enum xccdf_attribute attr);
-int xccdf_attribute_get_int(xmlTextReaderPtr reader, enum xccdf_attribute attr);
-float xccdf_attribute_get_float(xmlTextReaderPtr reader, enum xccdf_attribute attr);
-//void xccdf_read_flag(xmlTextReaderPtr reader, enum xccdf_attribute attr, xccdf_flags* flags, enum xccdf_flag flag);
+bool xccdf_attribute_has(xmlTextReaderPtr reader, xccdf_attribute_t attr);
+const char* xccdf_attribute_get(xmlTextReaderPtr reader, xccdf_attribute_t attr);
+char* xccdf_attribute_copy(xmlTextReaderPtr reader, xccdf_attribute_t attr);
+bool xccdf_attribute_get_bool(xmlTextReaderPtr reader, xccdf_attribute_t attr);
+int xccdf_attribute_get_int(xmlTextReaderPtr reader, xccdf_attribute_t attr);
+float xccdf_attribute_get_float(xmlTextReaderPtr reader, xccdf_attribute_t attr);
+//void xccdf_read_flag(xmlTextReaderPtr reader, xccdf_attribute_t attr, xccdf_flags* flags, xccdf_flag_t flag);
 
 extern const struct oscap_string_map XCCDF_BOOL_MAP[];
 

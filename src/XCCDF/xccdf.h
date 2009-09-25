@@ -50,7 +50,7 @@
  * For example, XCCDF_ITEM & XCCDF_RULE evaluates to true,
  * as the rule type is a subclass of the xccdf item type.
  */
-enum xccdf_type {
+typedef enum {
 	XCCDF_BENCHMARK = 0x0100, ///< Type constant for xccdf_benchmark
 	XCCDF_PROFILE   = 0x0200, ///< Type constant for xccdf_profile
 	XCCDF_RESULT    = 0x0400, ///< Type constant for xccdf_result
@@ -63,37 +63,37 @@ enum xccdf_type {
 	XCCDF_ITEM      = XCCDF_RULE | XCCDF_GROUP | XCCDF_VALUE,
 	/// Represents an object, profile, result or whole benchmark (see xccdf_item)
 	XCCDF_OBJECT    = XCCDF_ITEM | XCCDF_PROFILE | XCCDF_BENCHMARK | XCCDF_RESULT,
-};
+} xccdf_type_t;
 
 /// Interface hint.
-enum xccdf_interface_hint {
+typedef enum {
 	XCCDF_IFACE_HINT_NONE,     ///< No interface hint
 	XCCDF_IFACE_HINT_CHOICE,   ///< Choice from multiple values.
 	XCCDF_IFACE_HINT_TEXTLINE, ///< Text line input widget.
 	XCCDF_IFACE_HINT_TEXT,     ///< Textarea.
 	XCCDF_IFACE_HINT_DATE,     ///< Date selection widget.
 	XCCDF_IFACE_HINT_DATETIME, ///< Date and time selection widget.
-};
+} xccdf_interface_hint_t;
 
 /// Status of an XCCDF item.
-enum xccdf_status_type {
+typedef enum {
     XCCDF_STATUS_NOT_SPECIFIED, ///< Status was not specified by benchmark.
     XCCDF_STATUS_ACCEPTED,      ///< Accepted.
     XCCDF_STATUS_DEPRECATED,    ///< Deprecated.
     XCCDF_STATUS_DRAFT,         ///< Draft item.
     XCCDF_STATUS_INCOMPLETE,    ///< The item is not complete.
     XCCDF_STATUS_INTERIM        ///< Interim.
-};
+} xccdf_status_type_t;
 
 /// Type of an xccdf_value.
-enum xccdf_value_type {
+typedef enum {
 	XCCDF_TYPE_NUMBER  = 1, ///< Integer.
 	XCCDF_TYPE_STRING,      ///< String.
 	XCCDF_TYPE_BOOLEAN,     ///< Boolean.
-};
+} xccdf_value_type_t;
 
 /// Operator to be applied on an xccdf_value.
-enum xccdf_operator {
+typedef enum {
 	XCCDF_OPERATOR_EQUALS = 1,     ///< Equality.
 	XCCDF_OPERATOR_NOT_EQUAL,      ///< Inequality.
 	XCCDF_OPERATOR_GREATER,        ///< Greater than.
@@ -101,43 +101,43 @@ enum xccdf_operator {
 	XCCDF_OPERATOR_LESS,           ///< Less than.
 	XCCDF_OPERATOR_LESS_EQUAL,     ///< Less than or equal.
 	XCCDF_OPERATOR_PATTERN_MATCH   ///< Match a regular expression.
-};
+} xccdf_operator_t;
 
 /// Boolean operators for logical expressions
-enum xccdf_bool_operator {
+typedef enum {
 	XCCDF_OPERATOR_AND  = 0x0002,                                   ///< Logical and.
 	XCCDF_OPERATOR_OR   = 0x0003,                                   ///< Logical or.
 	XCCDF_OPERATOR_NOT  = 0x0100,                                   ///< Logical negation.
 	XCCDF_OPERATOR_NAND = XCCDF_OPERATOR_AND | XCCDF_OPERATOR_NOT,  ///< Logical nand.
 	XCCDF_OPERATOR_NOR  = XCCDF_OPERATOR_OR  | XCCDF_OPERATOR_NOT,  ///< Logical nor.
 	XCCDF_OPERATOR_MASK = 0x00ff                                    ///< Mask to strip the negation away (using bitwise and).
-};
+} xccdf_bool_operator_t;
 
 /// XCCDF error, complexity, disruption, or severity level
-enum xccdf_level {
+typedef enum {
 	XCCDF_UNKNOWN = 1, ///< Unknown.
 	XCCDF_INFO,        ///< Info.
 	XCCDF_LOW,         ///< Low.
 	XCCDF_MEDIUM,      ///< Medium.
 	XCCDF_HIGH         ///< High.
-};
+} xccdf_level_t;
 
 /// Severity of an xccdf_message.
-enum xccdf_message_severity {
+typedef enum {
 	XCCDF_MSG_INFO    = XCCDF_INFO,  ///< Info.
 	XCCDF_MSG_WARNING = XCCDF_LOW,   ///< Warning.
 	XCCDF_MSG_ERROR   = XCCDF_HIGH,  ///< Error
-};
+} xccdf_message_severity_t;
 
 /// XCCDF role.
-enum xccdf_role {
+typedef enum {
 	XCCDF_ROLE_FULL = 1,  ///< Check the rule and let the result contriburte to the score and appear in reports
 	XCCDF_ROLE_UNSCORED,  ///< Check the rule and include the result in reports, but do not include it into score computations
 	XCCDF_ROLE_UNCHECKED  ///< Don't check the rule, result will be XCCDF_RESULT_UNKNOWN
-};
+} xccdf_role_t;
 
 /// Category of xccdf_warning.
-enum xccdf_warning_category {
+typedef enum {
 	XCCDF_WARNING_GENERAL = 1,    ///< General-purpose warning
 	XCCDF_WARNING_FUNCTIONALITY,  ///< Warning about possible impacts to functionality
 	XCCDF_WARNING_PERFORMANCE,    ///< Warning about changes to target system performance
@@ -147,10 +147,10 @@ enum xccdf_warning_category {
 	XCCDF_WARNING_MANAGEMENT,     ///< Warning about impacts to the mgmt or administration of the target system
 	XCCDF_WARNING_AUDIT,          ///< Warning about impacts to audit or logging
 	XCCDF_WARNING_DEPENDENCY      ///< Warning about dependencies between this Rule and other parts of the target system
-};
+} xccdf_warning_category_t;
 
 /// Fix strategy type
-enum xccdf_strategy {
+typedef enum {
 	XCCDF_STRATEGY_UNKNOWN,      ///< Strategy not defined
 	XCCDF_STRATEGY_CONFIGURE,    ///< Adjust target config or settings
 	XCCDF_STRATEGY_DISABLE,      ///< Turn off or deinstall something
@@ -160,10 +160,10 @@ enum xccdf_strategy {
 	XCCDF_STRATEGY_RESTRICT,     ///< Adjust permissions or ACLs
 	XCCDF_STRATEGY_UPDATE,       ///< Install upgrade or update the system
 	XCCDF_STRATEGY_COMBINATION   ///< Combo of two or more of the above
-};
+} xccdf_strategy_t;
 
 /// Test result
-enum xccdf_test_result_type {
+typedef enum {
 	XCCDF_RESULT_PASS = 1,        ///< The test passed
 	XCCDF_RESULT_FAIL,            ///< The test failed
 	XCCDF_RESULT_ERROR,           ///< An error occurred and test could not complete
@@ -173,7 +173,7 @@ enum xccdf_test_result_type {
 	XCCDF_RESULT_NOT_SELECTED,    ///< Rule was not selected in the @link xccdf_benchmark Benchmark@endlink
 	XCCDF_RESULT_INFORMATIONAL,   ///< Rule was evaluated by the checking engine, but isn't to be scored
 	XCCDF_RESULT_FIXED            ///< Rule failed, but was later fixed
-};
+} xccdf_test_result_type_t;
 
 /*--------------------*\
 |       Typedefs       |
@@ -515,7 +515,7 @@ bool xccdf_fixtext_iterator_has_more(struct xccdf_fixtext_iterator* it);
  * Get item type.
  * @relates xccdf_item
  */
-enum xccdf_type xccdf_item_get_type(const struct xccdf_item* item);
+xccdf_type_t xccdf_item_get_type(const struct xccdf_item* item);
 
 /**
  * Get item ID.
@@ -570,7 +570,7 @@ struct xccdf_reference_iterator* xccdf_item_get_references(const struct xccdf_it
  * Get item current status.
  * @relates xccdf_item
  */
-enum xccdf_status_type xccdf_item_get_status_current(const struct xccdf_item* item);
+xccdf_status_type_t xccdf_item_get_status_current(const struct xccdf_item* item);
 
 /**
  * Convert the item to a benchmark.
@@ -763,7 +763,7 @@ struct xccdf_item_iterator* xccdf_benchmark_get_content(const struct xccdf_bench
  * Get benchmark current status.
  * @relates xccdf_benchmark
  */
-enum xccdf_status_type xccdf_benchmark_get_status_current(const struct xccdf_benchmark* benchmark);
+xccdf_status_type_t xccdf_benchmark_get_status_current(const struct xccdf_benchmark* benchmark);
 
 /**
  * Delete the benchmark.
@@ -848,7 +848,7 @@ struct xccdf_reference_iterator* xccdf_profile_get_references(const struct xccdf
  * Get profile current status.
  * @relates xccdf_profile
  */
-enum xccdf_status_type xccdf_profile_get_status_current(const struct xccdf_profile* profile);
+xccdf_status_type_t xccdf_profile_get_status_current(const struct xccdf_profile* profile);
 
 /**
  * Get profile note tag.
@@ -1005,7 +1005,7 @@ struct xccdf_reference_iterator* xccdf_rule_get_references(const struct xccdf_ru
  * Get rule current status.
  * @relates xccdf_rule
  */
-enum xccdf_status_type xccdf_rule_get_status_current(const struct xccdf_rule* rule);
+xccdf_status_type_t xccdf_rule_get_status_current(const struct xccdf_rule* rule);
 
 /**
  * Get rule impact metric.
@@ -1017,13 +1017,13 @@ const char* xccdf_rule_get_impact_metric(const struct xccdf_rule* rule);
  * Get rule role.
  * @relates xccdf_rule
  */
-enum xccdf_role xccdf_rule_get_role(const struct xccdf_rule* rule);
+xccdf_role_t xccdf_rule_get_role(const struct xccdf_rule* rule);
 
 /**
  * Get rule severity level.
  * @relates xccdf_rule
  */
-enum xccdf_level xccdf_rule_get_severity(const struct xccdf_rule* rule);
+xccdf_level_t xccdf_rule_get_severity(const struct xccdf_rule* rule);
 
 /**
  * Get an iterator to the idents of the rule.
@@ -1177,7 +1177,7 @@ struct xccdf_item_iterator* xccdf_group_get_content(const struct xccdf_group* be
  * Get group current status.
  * @relates xccdf_group
  */
-enum xccdf_status_type xccdf_group_get_status_current(const struct xccdf_group* group);
+xccdf_status_type_t xccdf_group_get_status_current(const struct xccdf_group* group);
 
 
 /*--------------------*\
@@ -1249,25 +1249,25 @@ struct xccdf_reference_iterator* xccdf_value_get_references(const struct xccdf_v
  * Get value current status.
  * @relates xccdf_value
  */
-enum xccdf_status_type xccdf_value_get_status_current(const struct xccdf_value* value);
+xccdf_status_type_t xccdf_value_get_status_current(const struct xccdf_value* value);
 
 /**
  * Return type of the value.
  * @relates xccdf_value
  */
-enum xccdf_value_type xccdf_value_get_type(const struct xccdf_value* value);
+xccdf_value_type_t xccdf_value_get_type(const struct xccdf_value* value);
 
 /**
  * Return an interface hint for the value.
  * @relates xccdf_value
  */
-enum xccdf_interface_hint xccdf_value_get_interface_hint(const struct xccdf_value* value);
+xccdf_interface_hint_t xccdf_value_get_interface_hint(const struct xccdf_value* value);
 
 /**
  * Return an operator to be applied on the value.
  * @relates xccdf_value
  */
-enum xccdf_operator xccdf_value_get_oper(const struct xccdf_value* value);
+xccdf_operator_t xccdf_value_get_oper(const struct xccdf_value* value);
 
 /**
  * Return currently active selector of the value.
@@ -1392,7 +1392,7 @@ time_t xccdf_status_get_date(const struct xccdf_status* status);
  * Get status type.
  * @relates xccdf_status
  */
-enum xccdf_status_type xccdf_status_get_status(const struct xccdf_status* status);
+xccdf_status_type_t xccdf_status_get_status(const struct xccdf_status* status);
 
 
 /**
@@ -1453,7 +1453,7 @@ bool xccdf_check_get_complex(const struct xccdf_check* check);
  * @relates xccdf_check
  * @see xccdf_check_get_children
  */
-enum xccdf_bool_operator xccdf_check_get_oper(const struct xccdf_check* check);
+xccdf_bool_operator_t xccdf_check_get_oper(const struct xccdf_check* check);
 
 /**
  * Get check system URI.
@@ -1572,19 +1572,19 @@ bool xccdf_fix_get_reboot(const struct xccdf_fix* fix);
  * Get fix strategy.
  * @relates xccdf_fix
  */
-enum xccdf_strategy xccdf_fix_get_strategy(const struct xccdf_fix* fix);
+xccdf_strategy_t xccdf_fix_get_strategy(const struct xccdf_fix* fix);
 
 /**
  * Get fix complexity.
  * @relates xccdf_fix
  */
-enum xccdf_level xccdf_fix_get_complexity(const struct xccdf_fix* fix);
+xccdf_level_t xccdf_fix_get_complexity(const struct xccdf_fix* fix);
 
 /**
  * Get fix disruption.
  * @relates xccdf_fix
  */
-enum xccdf_level xccdf_fix_get_disruption(const struct xccdf_fix* fix);
+xccdf_level_t xccdf_fix_get_disruption(const struct xccdf_fix* fix);
 
 /**
  * Get fix ID,
@@ -1615,19 +1615,19 @@ bool xccdf_fixtext_get_reboot(const struct xccdf_fixtext* fixtext);
  * Get fixtext strategy.
  * @relates xccdf_fixtext
  */
-enum xccdf_strategy xccdf_fixtext_get_strategy(const struct xccdf_fixtext* fixtext);
+xccdf_strategy_t xccdf_fixtext_get_strategy(const struct xccdf_fixtext* fixtext);
 
 /**
  * Get fixtext complexity.
  * @relates xccdf_fixtext
  */
-enum xccdf_level xccdf_fixtext_get_complexity(const struct xccdf_fixtext* fixtext);
+xccdf_level_t xccdf_fixtext_get_complexity(const struct xccdf_fixtext* fixtext);
 
 /**
  * Get fixtext disruption.
  * @relates xccdf_fixtext
  */
-enum xccdf_level xccdf_fixtext_get_disruption(const struct xccdf_fixtext* fixtext);
+xccdf_level_t xccdf_fixtext_get_disruption(const struct xccdf_fixtext* fixtext);
 
 /**
  * Get a fix this text references to.

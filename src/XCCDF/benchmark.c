@@ -26,11 +26,11 @@
 
 struct xccdf_backref {
 	struct xccdf_item** ptr; // pointer to a pointer that is supposed to be pointing to an item with id 'id'
-    enum xccdf_type type;    // expected item type
+    xccdf_type_t type;    // expected item type
 	char* id;                // id
 };
 
-bool xccdf_benchmark_add_ref(struct xccdf_item* benchmark, struct xccdf_item** ptr, const char* id, enum xccdf_type type)
+bool xccdf_benchmark_add_ref(struct xccdf_item* benchmark, struct xccdf_item** ptr, const char* id, xccdf_type_t type)
 {
     assert(benchmark != NULL);
     if (ptr == NULL || id == NULL)

@@ -34,7 +34,7 @@
 #include "../common/list.h"
 
 struct cpe_lang_expr {
-	enum cpe_lang_oper_t oper;	// operator
+	cpe_lang_oper_t oper;	// operator
 	union {
 		struct cpe_lang_expr *expr;	// array of subexpressions for operators
 		struct cpe_name *cpe;	// CPE for match operation

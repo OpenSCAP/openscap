@@ -41,7 +41,7 @@
 #include "../common/oscap.h"
 
 /// CPE language operators
-enum cpe_lang_oper_t {
+typedef enum {
 	CPE_LANG_OPER_HALT  =  0x00,  ///< end of instruction list
 	CPE_LANG_OPER_AND   =  0x01,  ///< logical AND
 	CPE_LANG_OPER_OR    =  0x02,  ///< logical OR
@@ -52,7 +52,7 @@ enum cpe_lang_oper_t {
 
 	CPE_LANG_OPER_NAND = CPE_LANG_OPER_AND | CPE_LANG_OPER_NOT,
 	CPE_LANG_OPER_NOR = CPE_LANG_OPER_OR | CPE_LANG_OPER_NOT,
-};
+} cpe_lang_oper_t;
 
 /*
  * @struct cpe_lang_expr
