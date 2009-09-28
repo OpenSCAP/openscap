@@ -1,5 +1,21 @@
-noinst_LTLIBRARIES = liboval.la
-liboval_la_SOURCES = \
+# the result should be two libraries
+# liboval.la is the regular one for make install
+# liboval_testing.la is for purpose of make check
+# why?
+# because _testing looks for probes in different path!!!
+#
+
+# lib_ right now, but will get a better prefix according to where it shoud go to
+lib_LTLIBRARIES = liboval.la
+# this is not built during "make all" nor "make install," only during "make check"
+check_LTLIBRARIES = liboval_testing.la
+
+# the common sources are not going to be built twice because we do not use
+# per-target flag variables (liboval_la_*FLAGS etc.)
+liboval_la_SOURCES = $(common_oval_sources)
+liboval_testing_la_SOURCES = $(common_oval_sources)
+
+common_oval_sources = \
 	oval_affected.c \
 	oval_agent.c \
 	oval_agent_api_impl.h \
@@ -45,27 +61,42 @@ liboval_la_SOURCES = \
 	oval_variableBinding.c \
 	ovalsys_parser.c
 
-liboval_la_CFLAGS  = @libxml_cflags@ -DPROBEPATH_ENV -I..
-liboval_la_LDFLAGS = @libxml_libs@
+# -I options go to CPPFLAGS, not CFLAGS
+# lets build one common for both normal and probe sources (does it mind?)
+AM_CPPFLAGS = $(libxml_cflags) -I..
+if WANT_PROBES
+AM_CPPFLAGS += -I$(top_srcdir)/src -I$(srcdir)/probes -I$(srcdir)/probes/SEAP/public
+endif
 
-include_HEADERS  = api/oval_agent_api.h api/oval_definitions.h 
-include_HEADERS += api/oval_results.h api/oval_system_characteristics.h
+# -l or -L options go to LIBADD (or LDADD), not to LDFLAGS
+liboval_la_LIBADD = $(libxml_libs)
+liboval_testing_la_LIBADD = $(liboval_la_LIBADD)
 
-includedir = $(prefix)/include/lib@PACKAGE@
+pkginclude_HEADERS  =	api/oval_agent_api.h api/oval_definitions.h \
+			api/oval_results.h api/oval_system_characteristics.h
+
 
 if WANT_PROBES
-liboval_la_CFLAGS  += -I$(top_srcdir)/src -I$(top_srcdir)/src/OVAL/probes/ -I$(top_srcdir)/src/OVAL/probes/SEAP/public
-liboval_la_SOURCES += probes/probe-api.c \
+common_oval_sources += probes/probe-api.c \
 		      probes/fsdev.c \
 		      probes/findfile.c \
-		      oval_probe.c \
 		      oval_probe.h
-include_HEADERS += \
+liboval_la_SOURCES += oval_probe.c
+nodist_liboval_testing_la_SOURCES = oval_testing_probe.c
+
+SUBDIRS = probes/SEAP
+liboval_la_LIBADD  += probes/SEAP/libseap.la
+
+pkginclude_HEADERS += \
 	probes/findfile.h \
 	probes/fsdev.h \
 	probes/probe-entcmp.h \
 	probes/probe-api.h
-
-liboval_la_LIBADD  = probes/SEAP/libseap.la
-SUBDIRS = probes/SEAP
 endif
+
+CLEANFILES = $(nodist_liboval_testing_la_SOURCES)
+
+oval_testing_probe.c: Makefile
+	(echo '#define OVAL_PROBE_DIR "$(abs_builddir)/probes"'; \
+	 echo '#include <oval_probe.c>' ) >$@
+
