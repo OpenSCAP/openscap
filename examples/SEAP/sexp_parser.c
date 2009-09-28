@@ -1,0 +1,73 @@
+#include <stdio.h>
+#include <strbuf.h>
+#include <sexp.h>
+
+int print_sexp (SEXP_t *s_exp)
+{
+        strbuf_t *sb;
+
+        /*
+         * print the S-exp in advanced format
+         */
+        printf ("a> ");
+        SEXP_fprintfa (stdout, s_exp);
+        printf ("\n");
+        
+        /*
+         * print the S-exp in transport format
+         */
+        printf ("t> ");
+        sb = strbuf_new (8);
+        SEXP_sbprintf_t (s_exp, sb);
+        strbuf_fwrite (stdout, sb);
+        strbuf_free (sb);
+        printf ("\n");
+
+        return (0);
+}
+
+int main (int argc, char *argv[])
+{
+        char  *input;
+        size_t inlen;
+        
+        SEXP_psetup_t *psetup;
+        SEXP_pstate_t *pstate;
+        SEXP_t *s_exp;
+
+        setbuf (stdout, NULL);
+        setbuf (stdin,  NULL);
+        
+        psetup = SEXP_psetup_new ();
+        pstate = NULL;
+
+        if (argc == 1) {
+                while (!feof (stdin)) {
+                        input = fgetln (stdin, &inlen);
+                        s_exp = SEXP_parse (psetup, input, inlen, &pstate);
+                        
+                        if (s_exp != NULL) {
+                                _A(pstate == NULL);
+                                print_sexp (s_exp);
+                                SEXP_free (s_exp);
+                        }
+                }
+        } else {
+                int i;
+                
+                for (i = 0; i < (argc - 1); ++i) {
+                        s_exp = SEXP_parse (psetup, argv[i + 1], strlen (argv[i + 1]), &pstate);
+                        
+                        if (s_exp != NULL) {
+                                _A(pstate == NULL);
+                                print_sexp (s_exp);
+                                SEXP_free (s_exp);
+                        }
+                }
+                
+                if (pstate != NULL)
+                        return (1);
+        }
+        
+        return (0);
+}

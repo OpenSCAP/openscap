@@ -1,6 +1,5 @@
 #!/bin/sh
-PROG="./sexp_test"
-
+PROG="./sexp_parser"
 
 while read args; do
     ${PROG} "$args" > /dev/null 2>&1

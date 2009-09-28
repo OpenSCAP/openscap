@@ -1,5 +1,5 @@
 #!/bin/sh
-PROG="./sexp_test"
+PROG="./sexp_parser"
 
 RETN=1
 
