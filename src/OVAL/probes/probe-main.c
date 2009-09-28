@@ -1,4 +1,3 @@
-#ifndef __STUB_PROBE
 #include <stdlib.h>
 #include <string.h>
 #include <pthread.h>
@@ -6,6 +5,7 @@
 #include <config.h>
 #include <common/alloc.h>
 #include <probe-api.h>
+#include <probe-entcmp.h>
 
 #ifndef _A
 #define _A(x) assert(x)
@@ -75,10 +75,10 @@ SEXP_t *SEXP_OVALset_combine(SEXP_t *item_lst1, SEXP_t *item_lst2, oval_setobjec
 	switch (op) {
 	case OVAL_SET_OPERATION_INTERSECTION:
 		SEXP_list_foreach(item1, item_lst1) {
-			id1 = probe_obj_getentval(item1, "id", 1, 1);
+			id1 = probe_obj_getentval(item1, "id", 1);
 			append = 0;
 			SEXP_list_foreach(item2, item_lst2) {
-				id2 = probe_obj_getentval(item2, "id", 1, 1);
+				id2 = probe_obj_getentval(item2, "id", 1);
 				if (!SEXP_string_cmp(id1, id2)) {
 					append = 1;
 					break;
@@ -94,10 +94,10 @@ SEXP_t *SEXP_OVALset_combine(SEXP_t *item_lst1, SEXP_t *item_lst2, oval_setobjec
 		/* fall through */
 	case OVAL_SET_OPERATION_COMPLEMENT:
 		SEXP_list_foreach(item1, item_lst1) {
-			id1 = probe_obj_getentval(item1, "id", 1, 1);
+			id1 = probe_obj_getentval(item1, "id", 1);
 			append = 1;
 			SEXP_list_foreach(item2, item_lst2) {
-				id2 = probe_obj_getentval(item2, "id", 1, 1);
+				id2 = probe_obj_getentval(item2, "id", 1);
 				if (!SEXP_string_cmp(id1, id2)) {
 					append = 0;
 					break;
@@ -154,7 +154,7 @@ SEXP_t *SEXP_OVALset_apply_filters(SEXP_t *items, SEXP_t *filters)
 
 			SEXP_sublist_foreach(felm, filter, 2, -1) {
 				elm_res = SEXP_list_new(NULL);
-				stmp = probe_ent_getval(felm, 0);
+				stmp = probe_ent_getval(felm);
 				elm_name = SEXP_string_cstr(stmp);
 
 				for (i = 1; ; ++i) {
@@ -267,7 +267,7 @@ SEXP_t *SEXP_OVALset_eval (SEXP_t *set, size_t depth)
                         CASE ('o', "bj_ref") {
                                 SEXP_t *id, *res;
                                 
-                                id = probe_ent_getval (member, 1);
+                                id = probe_ent_getval (member);
                                 
                                 if (id == NULL) {
                                         _D("FAIL: set=%p: missing obj_ref value\n", set);
@@ -303,7 +303,7 @@ SEXP_t *SEXP_OVALset_eval (SEXP_t *set, size_t depth)
                         CASE ('f', "ilter") {
                                 SEXP_t *id, *res;
                                         
-                                id = probe_ent_getval (member, 1);
+                                id = probe_ent_getval (member);
                                         
                                 if (id == NULL) {
                                         _D("FAIL: set=%p: missing filter value\n", set);
@@ -608,4 +608,3 @@ void *probe_worker (void *arg)
         SEAP_msg_free (seap_request);
         return (NULL);
 }
-#endif

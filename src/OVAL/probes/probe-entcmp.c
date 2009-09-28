@@ -1,4 +1,3 @@
-#ifndef __STUB_PROBE
 #include <config.h>
 #include <sexp-types.h>
 #include <sexp-manip.h>
@@ -12,7 +11,7 @@
 #include <regex.h>
 #endif
 
-#include <probe.h>
+#include <probe-api.h>
 
 oval_result_t SEXP_OVALent_cmp_binary(SEXP_t *val1, SEXP_t *val2, oval_operation_t op)
 {
@@ -49,7 +48,7 @@ oval_result_t SEXP_OVALent_cmp_bool(SEXP_t *val1, SEXP_t *val2, oval_operation_t
 
 	v1 = SEXP_number_geti_32 (val1);
 	v2 = SEXP_number_geti_32 (val2);
-
+        
 	switch (op) {
 	case OVAL_OPERATION_EQUALS:
 		if (v1 == v2)
@@ -437,7 +436,7 @@ oval_result_t SEXP_OVALent_cmp(SEXP_t *ent, SEXP_t *val2)
 	oval_datatype_t dtype;
 	SEXP_t *op_sexp, *val1;
 
-	val1 = probe_ent_getval (ent, 1);
+	val1 = probe_ent_getval (ent);
 	if (SEXP_typeof(val1) != SEXP_typeof(val2)) {
 		_D("Types of values to compare don't match: val1: %d, val2: %d\n",
 		   SEXP_typeof(val1), SEXP_typeof(val2));
@@ -450,7 +449,7 @@ oval_result_t SEXP_OVALent_cmp(SEXP_t *ent, SEXP_t *val2)
 	else
 		op = SEXP_number_geti_32 (op_sexp);
 
-	dtype = probe_ent_getdatatype(ent, 1);
+	dtype = probe_ent_getdatatype(ent);
 
 	switch (dtype) {
 	case OVAL_DATATYPE_BINARY:
@@ -503,12 +502,12 @@ oval_result_t SEXP_OVALentste_cmp(SEXP_t *ent_ste, SEXP_t *ent_itm)
 		break;
 	}
 
-	if (probe_ent_getdatatype(ent_ste, 1) !=
-	    probe_ent_getdatatype(ent_itm, 1)) {
+	if (probe_ent_getdatatype(ent_ste) !=
+	    probe_ent_getdatatype(ent_itm)) {
 		return OVAL_RESULT_ERROR;
 	}
 
-	val2 = probe_ent_getval(ent_itm, 1);
+	val2 = probe_ent_getval(ent_itm);
 
 	return SEXP_OVALent_cmp(ent_ste, val2);
 }
@@ -823,4 +822,3 @@ oval_result_t SEXP_OVALent_result_byopr(SEXP_t *res_lst, oval_operator_t operato
 
 	return result;
 }
-#endif

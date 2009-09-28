@@ -1,4 +1,3 @@
-#ifndef __STUB_PROBE
 /*! \file findfile.c
  *  \brief auxiliary find_files() function used in different probes
  *
@@ -89,8 +88,8 @@ int find_files(SEXP_t * spath, SEXP_t *sfilename, SEXP_t *behaviors,
 	assert(spath);
 	assert(behaviors);
 
-	name = SEXP_string_cstr(probe_ent_getval(sfilename, 1));
-	path = SEXP_string_cstr(probe_ent_getval(spath, 1));
+	name = SEXP_string_cstr(probe_ent_getval(sfilename));
+	path = SEXP_string_cstr(probe_ent_getval(spath));
 	tmp  = SEXP_string_cstr(probe_ent_getattrval(behaviors,"max_depth"));
 	max_depth = atoi(tmp);
 	oscap_free(tmp);
@@ -388,4 +387,3 @@ static void rglobfree(rglob_t * result) {
 	result->pathc=0;
 }
 
-#endif
