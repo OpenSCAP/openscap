@@ -1,4 +1,3 @@
-#ifndef __STUB_PROBE
 #include <string.h>
 #include <stdint.h>
 #include <stdbool.h>
@@ -7,6 +6,8 @@
 #include "_sexp-value.h"
 #include "_sexp-manip.h"
 #include "public/sm_alloc.h"
+
+static void SEXP_free_lmemb (SEXP_t *s_exp);
 
 /*
  * Numbers
@@ -431,31 +432,172 @@ size_t SEXP_string_length (const SEXP_t *s_exp)
 
 int SEXP_strcmp (SEXP_t *s_exp, const char *str)
 {
-        return (-1);
+        SEXP_val_t v_dsc;
+        size_t     i;
+        int        c;
+
+        _LOGCALL_;
+
+        if (s_exp == NULL) {
+                errno = EFAULT;
+                return (-1);
+        }
+        
+        SEXP_val_dsc (&v_dsc, s_exp->s_valp);
+        
+        if (v_dsc.type != SEXP_VALTYPE_STRING) {
+                errno = EINVAL;
+                return (-1);
+        }
+        
+        for (i = 0; i < (v_dsc.hdr->size / sizeof (char)); ++i) {
+                if (str[i] == '\0')
+                        return (((unsigned char *)v_dsc.mem)[i] - '\0');
+                
+                c = ((unsigned char *)v_dsc.mem)[i] - ((unsigned char *)str)[i];
+
+                if (c != 0)
+                        return (c);
+        }
+        
+        return ('\0' - str[i]);
 }
 
 int SEXP_strncmp (SEXP_t *s_exp, const char *str, size_t n)
 {
-        return (-1);
+        SEXP_val_t v_dsc;
+        size_t     i;
+        int        c;
+        
+        _LOGCALL_;
+
+        if (s_exp == NULL) {
+                errno = EFAULT;
+                return (-1);
+        }
+        
+        SEXP_val_dsc (&v_dsc, s_exp->s_valp);
+        
+        if (v_dsc.type != SEXP_VALTYPE_STRING) {
+                errno = EINVAL;
+                return (-1);
+        }
+        
+        for (i = 0; i < (v_dsc.hdr->size / sizeof (char)); ++i) {
+                if (str[i] == '\0')
+                        return (((unsigned char *)v_dsc.mem)[i] - '\0');
+                
+                _D("%c ?= %c\n",  ((unsigned char *)v_dsc.mem)[i], ((unsigned char *)str)[i]);
+                
+                c = ((unsigned char *)v_dsc.mem)[i] - ((unsigned char *)str)[i];
+
+                if (c != 0 || (i + 1) >= n) {
+                        _D("=> %d\n", c);
+                        return (c);
+                }
+        }
+        
+        return ('\0' - str[i]);
 }
 
 char *SEXP_string_cstr (SEXP_t *s_exp)
 {
-        return (NULL);
+        SEXP_val_t v_dsc;
+        char      *str;
+        size_t     len;
+
+        if (s_exp == NULL) {
+                errno = EFAULT;
+                return (NULL);
+        }
+        
+        SEXP_val_dsc (&v_dsc, s_exp->s_valp);
+
+        if (v_dsc.type != SEXP_VALTYPE_STRING) {
+                errno = EINVAL;
+                return (NULL);
+        }
+
+        len = v_dsc.hdr->size / sizeof (char);
+        str = sm_alloc (sizeof (char) * (len + 1));
+        
+        memcpy (str, v_dsc.mem, sizeof (char) * len);
+        
+        str[len] = '\0';
+        
+        return (str);
 }
 
-char *SEXP_string_cstr_r (SEXP_t *s_exp, char *buf, size_t len)
+size_t SEXP_string_cstr_r (SEXP_t *s_exp, char *buf, size_t len)
 {
-        return (NULL);
+        SEXP_val_t v_dsc;
+
+        if (s_exp == NULL) {
+                errno = EFAULT;
+                return (NULL);
+        }
+        
+        SEXP_val_dsc (&v_dsc, s_exp->s_valp);
+
+        if (v_dsc.type != SEXP_VALTYPE_STRING) {
+                errno = EINVAL;
+                return (NULL);
+        }
+
+        if (v_dsc.hdr->size / sizeof (char) <= len - 1) {
+                memcpy (buf, v_dsc.mem, v_dsc.hdr->size);
+                buf[v_dsc.hdr->size / sizeof (char)] = '\0';
+
+                return (v_dsc.hdr->size / sizeof (char));
+        }
+        
+        errno = ERANGE;
+        return (0);
 }
 
 char *SEXP_string_subcstr (SEXP_t *s_exp, size_t beg, size_t len)
 {
-        return (NULL);
+        SEXP_val_t v_dsc;
+        char      *s_str;
+        size_t     s_len;
+        
+        if (s_exp == NULL) {
+                errno = EFAULT;
+                return (NULL);
+        }
+        
+        SEXP_val_dsc (&v_dsc, s_exp->s_valp);
+
+        if (v_dsc.type != SEXP_VALTYPE_STRING) {
+                errno = EINVAL;
+                return (NULL);
+        }
+        
+        s_len = v_dsc.hdr->size / sizeof (char);
+        
+        if (beg > s_len) {
+                errno = EINVAL;
+                return (NULL);
+        }
+        
+        s_len -= beg;
+        
+        if (s_len > len)
+                s_len = len;
+        
+        s_len = v_dsc.hdr->size / sizeof (char);
+        s_str = sm_alloc (sizeof (char) * (s_len + 1));
+        
+        memcpy (s_str, ((char *) v_dsc.mem) + beg, sizeof (char) * s_len);
+        
+        s_str[s_len] = '\0';
+        
+        return (s_str);
 }
 
 char *SEXP_string_cstrp (const SEXP_t *s_exp)
 {
+        abort (); /* obsolete */
         return (NULL);
 }
 
@@ -617,6 +759,13 @@ SEXP_t *SEXP_list_last (const SEXP_t *list)
         return (SEXP_ref (l_blk->memb + (l_blk->real - 1)));
 }
 
+SEXP_t *SEXP_list_replace (SEXP_t *list, uint32_t n, SEXP_t *newval)
+{
+        SEXP_t *oldval;
+        
+        return (oldval);
+}
+
 SEXP_t *SEXP_listref_last (const SEXP_t *list)
 {
         return (NULL);
@@ -651,7 +800,7 @@ SEXP_t *SEXP_listref_nth (const SEXP_t *list, uint32_t n)
         return (NULL);
 }
 
-SEXP_t *SEXP_list_add (SEXP_t *list, SEXP_t *s_exp)
+SEXP_t *SEXP_list_add (SEXP_t *list, const SEXP_t *s_exp)
 {
         SEXP_val_t v_dsc;
         uint32_t   l_len;
@@ -718,8 +867,40 @@ SEXP_t *SEXP_list_push (SEXP_t *list, SEXP_t *s_exp)
 
 SEXP_t *SEXP_list_pop (SEXP_t *list)
 {
-        errno = EOPNOTSUPP;
-        return (NULL);
+        SEXP_t    *s_ref;
+        SEXP_val_t v_dsc;
+        struct SEXP_val_lblk *lblk;
+        
+        if (list == NULL) {
+                errno = EINVAL;
+                return (NULL);
+        }
+        
+        SEXP_val_dsc (&v_dsc, list->s_valp);
+        
+        if (v_dsc.type != SEXP_VALTYPE_LIST) {
+                errno = EINVAL;
+                return (NULL);
+        }
+        
+        s_ref = SEXP_list_first (list);
+
+        if (v_dsc.hdr->refs > 1) {
+                abort ();
+        }
+        
+        lblk = SEXP_VALP_LBLK(SEXP_LCASTP(v_dsc.mem)->b_addr);
+        
+        if (lblk != NULL) {
+                if (++SEXP_LCASTP(v_dsc.mem)->offset == lblk->real) {
+                        SEXP_LCASTP(v_dsc.mem)->offset = 0;
+                        SEXP_LCASTP(v_dsc.mem)->b_addr = SEXP_VALP_LBLK(lblk->nxsz);
+                }
+                
+                SEXP_rawval_lblk_free1 ((uintptr_t)lblk, SEXP_free_lmemb);
+        }
+        
+        return (s_ref);
 }
 
 SEXP_lstack_t *SEXP_lstack_new (void)
@@ -810,18 +991,31 @@ SEXP_t *SEXP_ref (const SEXP_t *s_exp_o)
 SEXP_t *SEXP_softref (const SEXP_t *s_exp_o)
 {
         SEXP_t *s_exp_r;
-        
+        SEXP_val_t v_dsc;
+
         s_exp_r = SEXP_new ();
         s_exp_r->s_type = s_exp_o->s_type;
         s_exp_r->s_valp = s_exp_o->s_valp;
 
-        /* copy */
+        SEXP_val_dsc (&v_dsc, s_exp_r->s_valp);
         
+        if (v_dsc.hdr->refs > 1) {
+                abort ();
+                /* copy */
+        }
+
         SEXP_flag_set (s_exp_r, SEXP_FLAG_SREF);
         
         return (s_exp_r);
 }
 
+/*
+ * SEXP_free for list members. The difference between
+ * this function and SEXP_free is that SEXP_free frees
+ * the memory used by SEXP_t structure. We can't do
+ * this with a list member because the memory is part of
+ * a list block.
+ */
 static void SEXP_free_lmemb (SEXP_t *s_exp)
 {
         if (((s_exp->s_flgs &
@@ -842,8 +1036,11 @@ static void SEXP_free_lmemb (SEXP_t *s_exp)
                                 sm_free (v_dsc.hdr);
                                 break;
                         case SEXP_VALTYPE_LIST:
-                                SEXP_rawval_lblk_free ((uintptr_t)SEXP_LCASTP(v_dsc.mem)->b_addr, SEXP_free_lmemb);
+                                if (SEXP_LCASTP(v_dsc.mem)->b_addr != NULL)
+                                        SEXP_rawval_lblk_free ((uintptr_t)SEXP_LCASTP(v_dsc.mem)->b_addr, SEXP_free_lmemb);
+                                
                                 sm_free (v_dsc.hdr);
+                                break;
                         default:
                                 abort ();
                         }
@@ -878,7 +1075,9 @@ void SEXP_free (SEXP_t *s_exp)
                                 sm_free (v_dsc.hdr);
                                 break;
                         case SEXP_VALTYPE_LIST:
-                                SEXP_rawval_lblk_free ((uintptr_t)SEXP_LCASTP(v_dsc.mem)->b_addr, SEXP_free_lmemb);
+                                if (SEXP_LCASTP(v_dsc.mem)->b_addr != NULL)
+                                        SEXP_rawval_lblk_free ((uintptr_t)SEXP_LCASTP(v_dsc.mem)->b_addr, SEXP_free_lmemb);
+                                
                                 sm_free (v_dsc.hdr);
                                 break;
                         default:
@@ -935,4 +1134,10 @@ const char *SEXP_strtype (const SEXP_t *s_exp)
         
         return (__sexp_strtype[v_dsc.type]);
 }
-#endif
+
+SEXP_t *SEXP_build (const char *s_str, ...)
+{
+        /* TBI */
+        return (NULL);
+}
+

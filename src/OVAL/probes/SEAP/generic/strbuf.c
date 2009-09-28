@@ -1,7 +1,10 @@
-#ifndef __STUB_PROBE
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
+#include <assert.h>
+#include <sys/types.h>
+#include <sys/uio.h>
+#include <unistd.h>
 #include "strbuf.h"
 
 strbuf_t *strbuf_new  (size_t max)
@@ -57,11 +60,13 @@ static int __strbuf_add (strbuf_t *buf, char *str, size_t len)
         size_t cpylen;
         
         if (buf->beg != NULL)
-                cur = buf->beg;
+                if (buf->lbo != NULL)
+                        cur = buf->lbo->next;
+                else
+                        cur = buf->beg;
         else {
-                cur = buf->beg = malloc (sizeof (struct strblk *) +
-                                         sizeof (size_t) +
-                                         (sizeof (char) * buf->blkmax));
+                cur = buf->beg = __strblk_new (buf->blkmax);
+
                 if (cur == NULL)
                         return (-1);
         }
@@ -69,21 +74,32 @@ static int __strbuf_add (strbuf_t *buf, char *str, size_t len)
         prev = buf->lbo;
         
         for (;;) {
-                cpylen = len % (buf->blkoff + 1);
-                memcpy (cur->data + buf->blkoff, str, sizeof (char) * cpylen);
-                buf->size += cpylen;
+                cpylen = buf->blkmax - buf->blkoff;
                 
+                if (cpylen >= len)
+                        cpylen = len;
+
+                memcpy (cur->data + buf->blkoff, str, sizeof (char) * cpylen);
+
+                buf->size += cpylen;
+                cur->size += cpylen;
+
                 len -= cpylen;
                 str += cpylen;
-
-                if (len == 0)
-                        break;
-                else {
+                
+                buf->blkoff += cpylen;
+                
+                assert (buf->blkoff <= buf->blkmax);
+                
+                if (buf->blkoff == buf->blkmax) {
                         cur->next = __strblk_new (buf->blkmax);
                         prev = cur;
                         cur  = cur->next;
                         buf->blkoff = 0;
                 }
+                
+                if (len == 0)
+                        break;
         }
         
         buf->lbo = prev;
@@ -128,9 +144,48 @@ int strbuf_add0f (strbuf_t *buf, char *str)
         return (ret);
 }
 
-int strbuf_trunc (strbuf_t *buf, ssize_t len)
+int strbuf_trunc (strbuf_t *buf, size_t len)
 {
-        return (-1);
+        return (0);
+        /* TBI */
+#if 0
+        if (buf->size < len) {
+                errno = ERANGE;
+                return (-1);
+        }
+        
+        if (buf->blkoff >= len) {
+                buf->blkoff -= len;
+                buf->size   -= len;
+        } else {
+                struct strblk *cur, *par;
+                size_t esz;
+                
+                cur = buf->beg;
+                par = NULL;
+                esz = buf->size - len;
+                
+                while (esz > cur->size) {
+                        par  = cur;
+                        esz -= cur->size;
+                        cur  = cur->next;
+                }
+                
+                buf->lbo    = par;
+                //buf->beg    = cur;
+                buf->blkoff = esz;
+                buf->size  -= len;
+                cur         = cur->next;
+                
+                while (cur != NULL) {
+                        par = cur->next;
+                        free (cur);
+                        cur = par;
+                }
+        }
+        
+        return (0);
+#endif
 }
 
 size_t strbuf_length (strbuf_t *buf)
@@ -198,4 +253,29 @@ size_t strbuf_fwrite (FILE *fp, strbuf_t *buf)
         
         return (size);
 }
-#endif
+
+ssize_t strbuf_write (strbuf_t *buf, int fd)
+{
+        struct strblk *cur;
+        ssize_t size;
+        
+        struct iovec  *iov;
+        int            ioc;
+
+        iov  = malloc (sizeof (struct iovec) * ((buf->size / buf->blkmax) + 1));
+        ioc  = 0;
+        cur  = buf->beg;
+        size = 0;
+
+        while (cur != NULL) {
+                iov[ioc].iov_base = cur->data;
+                iov[ioc].iov_len  = cur->size;
+                ++ioc;
+                cur = cur->next;
+        }
+        
+        size = writev (fd, iov, ioc);
+        free (iov);
+        
+        return (size);
+}

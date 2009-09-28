@@ -1,4 +1,3 @@
-#ifndef __STUB_PROBE
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
@@ -849,10 +848,12 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *setup, const char *buf, size_t buflen, 
                 e_dsc.b_len = buflen - i;
                 e_dsc.flags = exflags;
                 
-                ext_e = EXTRACTOR(sq_string)(&e_dsc);
+                ext_e = EXTRACTOR(datatype)(&e_dsc);
                 
-                if (ext_e == SEXP_EXT_SUCCESS)
-                        goto L_SEXP_ADD;
+                if (ext_e == SEXP_EXT_SUCCESS) {
+                        i += e_dsc.t_len;
+                        goto L_NO_SEXP_ALLOC;
+                }
                 
                 break;
         L_BRACKETOPEN_FIXEDLEN:
@@ -862,11 +863,13 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *setup, const char *buf, size_t buflen, 
                 e_dsc.b_len = buflen - i;
                 e_dsc.flags = exflags;
                 
-                ext_e = EXTRACTOR_F(string)(&e_dsc);
+                ext_e = EXTRACTOR_F(datatype)(&e_dsc);
                 
-                if (ext_e == SEXP_EXT_SUCCESS)
-                        goto L_SEXP_ADD;
-                
+                if (ext_e == SEXP_EXT_SUCCESS) {
+                        i += e_dsc.t_len;
+                        goto L_NO_SEXP_ALLOC;
+                }
+
                 break;
         L_BRACEOPEN:
                 //i += EXTRACTOR(b64_decode)(sexp, pbuf + i, buflen, exflags);
@@ -1042,14 +1045,16 @@ DEFEXTRACTOR(dq_string)
         
         dsc->t_len = l + 1;
         
-        if (SEXP_val_new (&v_dsc, sizeof (char) * (l - 1),
+        if (SEXP_val_new (&v_dsc, /* FIXME */ 1 + sizeof (char) * (l - 1),
                           SEXP_VALTYPE_STRING) != 0)
         {
                 /* TODO: handle this */
                 return (SEXP_EXT_EINVAL);
         }
         
-        memcpy (v_dsc.mem, dsc->t_beg + 1, sizeof (char) * (l - 1));
+        if (l - 1 > 0)
+                memcpy (v_dsc.mem, dsc->t_beg + 1, sizeof (char) * (l - 1));
+        
         dsc->s_exp->s_valp = SEXP_val_ptr (&v_dsc);
         
         return (SEXP_EXT_SUCCESS);
@@ -1079,7 +1084,9 @@ DEFEXTRACTOR(sq_string)
                 return (SEXP_EXT_EINVAL);
         }
         
-        memcpy (v_dsc.mem, dsc->t_beg + 1, sizeof (char) * (l - 1));
+        if (l - 1 > 0)
+                memcpy (v_dsc.mem, dsc->t_beg + 1, sizeof (char) * (l - 1));
+        
         dsc->s_exp->s_valp = SEXP_val_ptr (&v_dsc);
         
         return (SEXP_EXT_SUCCESS);
@@ -1395,6 +1402,7 @@ DEFEXTRACTOR(hexstring)
                 (((char *)v_dsc.mem)[i]) = hex2bin[B(2*i + 1)] << 4;
 
         dsc->t_len = l + 1;
+        dsc->s_exp->s_valp = SEXP_val_ptr (&v_dsc);
         
         return (SEXP_EXT_SUCCESS);
 }
@@ -1425,6 +1433,7 @@ DEFEXTRACTOR_F(hexstring)
                 (((char *)v_dsc.mem)[i]) = hex2bin[B(2*i + 1)] << 4;
         
         dsc->t_len += 2;
+        dsc->s_exp->s_valp = SEXP_val_ptr (&v_dsc);
         
         return (SEXP_EXT_SUCCESS);
 }
@@ -1455,5 +1464,4 @@ SEXP_t *SEXP_parse (SEXP_psetup_t *psetup, const char *buf, size_t buflen, SEXP_
         */
         return PARSER(label)(psetup, buf, buflen, pstate);
 }
-#endif
 #endif

@@ -28,13 +28,13 @@ int strbuf_addf  (strbuf_t *buf, char *str, size_t len);
 int strbuf_add0  (strbuf_t *buf, const char *str);
 int strbuf_add0f (strbuf_t *buf, char *str);
 
-int strbuf_trunc  (strbuf_t *buf, ssize_t len);
+int    strbuf_trunc  (strbuf_t *buf, size_t len);
 size_t strbuf_length (strbuf_t *buf);
 
 char *strbuf_cstr   (strbuf_t *buf);
 char *strbuf_cstr_r (strbuf_t *buf, char *str, size_t len);
 
 size_t strbuf_fwrite (FILE *fp, strbuf_t *buf);
-size_t strbuf_write  (strbuf_t *buf, int fd);
+ssize_t strbuf_write  (strbuf_t *buf, int fd);
 
 #endif /* STRBUF_H */

@@ -1,4 +1,3 @@
-#ifndef __STUB_PROBE
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
@@ -9,6 +8,7 @@
 #include <errno.h>
 #include <config.h>
 #include "public/sm_alloc.h"
+#include "public/strbuf.h"
 #include "_sexp-types.h"
 #include "_sexp-output.h"
 #include "_seap-types.h"
@@ -58,8 +58,22 @@ ssize_t sch_generic_send (SEAP_desc_t *desc, void *buf, size_t len, uint32_t fla
 
 ssize_t sch_generic_sendsexp (SEAP_desc_t *desc, SEXP_t *sexp, uint32_t flags)
 {
-        return 0;
-        //return SEXP_st_dprintc (DATA(desc->scheme_data)->ofd, sexp, &(desc->ostate));
+        ssize_t   ret;
+        strbuf_t *sb;
+        
+        _LOGCALL_;
+        
+        ret = 0;
+        sb  = strbuf_new (1024);
+        
+        if (SEXP_sbprintf_t (sexp, sb) != 0)
+                ret = -1;
+        else
+                ret = strbuf_write (sb, DATA(desc)->ofd);
+        
+        strbuf_free (sb);
+                
+        return (ret);
 }
 
 int sch_generic_close (SEAP_desc_t *desc, uint32_t flags)
@@ -118,4 +132,3 @@ int sch_generic_select (SEAP_desc_t *desc, int ev, uint16_t timeout, uint32_t fl
         /* NOTREACHED */
         return (-1);
 }
-#endif

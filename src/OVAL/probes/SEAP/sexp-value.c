@@ -1,4 +1,3 @@
-#ifndef __STUB_PROBE
 #include <stdint.h>
 #include "_sexp-value.h"
 #include "public/sm_alloc.h"
@@ -7,8 +6,11 @@ int SEXP_val_new (SEXP_val_t *dst, size_t vmemsize, SEXP_type_t type)
 {
         void *s_val;
 
-        sm_memalign (&s_val, SEXP_VALP_ALIGN,
-                     sizeof (SEXP_valhdr_t) + vmemsize);
+        if (sm_memalign (&s_val, SEXP_VALP_ALIGN,
+                         sizeof (SEXP_valhdr_t) + vmemsize) != 0)
+        {
+                return (-1);
+        }
         
         SEXP_val_dsc (dst, (uintptr_t) s_val);
         
@@ -230,7 +232,6 @@ uintptr_t SEXP_rawval_lblk_add1 (uintptr_t lblkp, SEXP_t *s_exp)
         struct SEXP_val_lblk *lblk = SEXP_VALP_LBLK(lblkp);
         
         if (lblk->real < (1 << (lblk->nxsz & 0xf))) {
-                printf ("add@%u\n", lblk->real);
 
                 lblk->memb[lblk->real].s_valp = SEXP_rawval_incref (s_exp->s_valp);
                 lblk->memb[lblk->real].s_type = s_exp->s_type;
@@ -280,8 +281,11 @@ SEXP_t *SEXP_rawval_lblk_nth (uintptr_t lblkp, uint32_t n)
 {
         struct SEXP_val_lblk *lblk;
         
+        _LOGCALL_;
+        _D("n = %u\n", n);
+        
         lblk = SEXP_VALP_LBLK(lblkp);
-
+        
         while (lblk != NULL) {
                 if (lblk->real >= n) {
                         return (lblk->memb + (n - 1));
@@ -407,4 +411,21 @@ void SEXP_rawval_lblk_free (uintptr_t lblkp, void (*func) (SEXP_t *))
 
         return;
 }
-#endif
+
+void SEXP_rawval_lblk_free1 (uintptr_t lblkp, void (*func) (SEXP_t *))
+{
+        if (SEXP_rawval_lblk_decref (lblkp)) {
+                struct SEXP_val_lblk *lblk;
+                
+                lblk = SEXP_VALP_LBLK(lblkp);
+                
+                while (lblk->real > 0) {
+                        --lblk->real;
+                        func (lblk->memb + lblk->real);
+                }
+                
+                sm_free (lblk);
+        }
+        
+        return;
+}

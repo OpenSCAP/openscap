@@ -1,4 +1,3 @@
-#ifndef __STUB_PROBE
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
@@ -133,6 +132,7 @@ int SEAP_packet_sexp2msg (SEXP_t *sexp_msg, SEAP_msg_t *seap_msg)
                                         return (SEAP_EUNEXP);
                                 }
 
+                                /* FIXME:
                                 if (SEXP_number_get (attr_val, &(seap_msg->id),
                                                      SEXP_NUM_UINT64) != 0)
                                 {
@@ -143,6 +143,9 @@ int SEAP_packet_sexp2msg (SEXP_t *sexp_msg, SEAP_msg_t *seap_msg)
                                         
                                         return (SEAP_EINVAL);
                                 }
+                                */
+                                
+                                seap_msg->id = SEXP_number_getu_64 (attr_val);
                         } else {
                                 
                                 seap_msg->attrs[attr_i].name  = SEXP_string_subcstr (attr_name, 1, 0);
@@ -444,7 +447,8 @@ int SEAP_packet_recv (SEAP_CTX_t *ctx, int sd, SEAP_packet_t **packet)
         SEXP_pstate_t *pstate;
 
         SEXP_t     *psym_sexp;
-        const char *psym_cstr;
+        char        psym_cstr_b[16+1];
+        char       *psym_cstr;
         
         _LOGCALL_;
 
@@ -649,7 +653,8 @@ sexp_buf_recv:
                 return (-1);
         }
         
-        psym_cstr = SEXP_string_cstrp (psym_sexp) + strlen (SEAP_SYM_PREFIX);
+        SEXP_string_cstr_r (psym_sexp, psym_cstr_b, sizeof psym_cstr_b);
+        psym_cstr = psym_cstr_b + strlen (SEAP_SYM_PREFIX);
         
         switch (psym_cstr[0]) {
         case 'm':
@@ -790,4 +795,3 @@ int SEAP_packet_enqueue (SEAP_CTX_t *ctx, int sd, SEAP_packet_t *packet)
         _LOGCALL_;
         return (-1);
 }
-#endif
