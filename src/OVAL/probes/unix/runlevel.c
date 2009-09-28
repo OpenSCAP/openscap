@@ -1,4 +1,3 @@
-#ifndef __STUB_PROBE
 /*
  * runlevel probe:
  *
@@ -22,7 +21,7 @@
 #include <dirent.h>
 
 #include <seap.h>
-#include <probe.h>
+#include <probe-api.h>
 #include <common/alloc.h>
 
 #ifndef _A
@@ -269,8 +268,14 @@ SEXP_t *probe_main (SEXP_t *object, int *err, void *arg)
         struct runlevel_req request_st;
         struct runlevel_rep reply_st;
         
+        val = probe_obj_getent (object, "service_name", 1);
         
-        val = SEXP_OVALobj_getelmval (object, "service_name", 1, 1);
+        if (val == NULL) {
+                _D("%s: no value\n", "service_name");
+                *err = PROBE_ENOVAL;
+                return (NULL);
+        }
+
         request_st.service_name = SEXP_string_cstr (val);
         
         if (request_st.service_name == NULL) {
@@ -288,9 +293,9 @@ SEXP_t *probe_main (SEXP_t *object, int *err, void *arg)
                 return (NULL);
         }
                 
-        val = SEXP_OVALobj_getelmval (object, "runlevel", 1, 1);
+        val = probe_obj_getentval (object, "runlevel", 1);
         request_st.runlevel = SEXP_string_cstr (val);
-                
+        
         if (request_st.runlevel == NULL) {
                 switch (errno) {
                 case EINVAL:
@@ -307,38 +312,35 @@ SEXP_t *probe_main (SEXP_t *object, int *err, void *arg)
                 return (NULL);
         }
         
-        probe_out = SEXP_list_new ();
+        probe_out = SEXP_list_new (NULL);
         
         if (get_runlevel (&request_st, &reply_st) == -1) {
                 _D("get_runlevel failed\n");
-                        
-                item_sexp = SEXP_OVALobj_create ("runlevel_item", NULL,
-                                                 "service_name", NULL, NULL,
-                                                 "runlevel", NULL, NULL,
-                                                 "start", NULL, NULL,
-                                                 "kill", NULL, NULL,
-                                                 NULL);
+        
+                item_sexp = probe_item_creat ("runlevel_item", NULL,
+                                              /* entities */
+                                              "service_name", NULL, NULL,
+                                              "runlevel",     NULL, NULL,
+                                              "start",        NULL, NULL,
+                                              "kill",         NULL, NULL,
+                                              NULL);
                 
-                SEXP_OVALobj_setstatus (item_sexp, OVAL_STATUS_ERROR);
+                probe_obj_setstatus (item_sexp, OVAL_STATUS_ERROR);
         } else {
                 _D("get_runlevel: [0]=\"%s\", [1]=\"%s\", [2]=\"%d\", [3]=\"%d\"\n",
                    reply_st.service_name, reply_st.runlevel, reply_st.start, reply_st.kill);
                 
-                item_sexp = SEXP_OVALobj_create ("runlevel_item", NULL,
-                                                 
-                                                 "service_name", NULL,
-                                                 SEXP_string_newf(reply_st.service_name),
-                                                 
-                                                 "runlevel", NULL,
-                                                 SEXP_string_newf(reply_st.runlevel),
-                                                 
-                                                 "start", NULL,
-                                                 SEXP_number_newu(reply_st.start),
-                                                          
-                                                 "kill", NULL,
-                                                 SEXP_number_newu(reply_st.kill),
-                                                 
-                                                 NULL);
+                item_sexp = probe_obj_creat ("runlevel_item", NULL,
+                                             /* entities */
+                                             "service_name", NULL,
+                                             SEXP_string_newf(reply_st.service_name),
+                                             "runlevel", NULL,
+                                             SEXP_string_newf(reply_st.runlevel),
+                                             "start", NULL,
+                                             SEXP_number_newu(reply_st.start),
+                                             "kill", NULL,
+                                             SEXP_number_newu(reply_st.kill),
+                                             NULL);
         }
         
         oscap_free (request_st.service_name);
@@ -350,4 +352,3 @@ SEXP_t *probe_main (SEXP_t *object, int *err, void *arg)
         
         return (probe_out);
 }
-#endif
