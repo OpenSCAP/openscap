@@ -36,25 +36,28 @@
  * documentation
  *
  */
+
 struct cce;
 struct cce_entry;
 struct cce_reference;
 struct cce_reference_iterator;
 struct cce_reference* cce_reference_iterator_next(struct cce_reference_iterator* it);
 bool cce_reference_iterator_has_more(struct cce_reference_iterator* it);
+void cce_reference_iterator_free(struct cce_reference_iterator* it);
 struct cce_entry_iterator;
 struct cce_entry* cce_entry_iterator_next(struct cce_entry_iterator* it);
 bool cce_entry_iterator_has_more(struct cce_entry_iterator* it);
+void cce_entry_iterator_free(struct cce_entry_iterator* it);
 struct cce* cce_new(const char* fname);
-void cce_delete(struct cce *cce);
-struct cce_entry_iterator* cce_entries(const struct cce* cce);
-struct cce_entry* cce_entry_by_id(const struct cce* cce, const char* id);
+void cce_free(struct cce *cce);
+struct cce_entry_iterator* cce_get_entries(const struct cce* cce);
+struct cce_entry* cce_get_entry(const struct cce* cce, const char* id);
 bool cce_validate(const char *filename);
-const char* cce_entry_id(const struct cce_entry* cce);
-const char* cce_entry_description(const struct cce_entry* cce);
-struct oscap_string_iterator* cce_entry_params(const struct cce_entry* cce);
-struct oscap_string_iterator* cce_entry_tech_mechs(const struct cce_entry* cce);
-struct cce_reference_iterator* cce_entry_references(const struct cce_entry* cce);
-const char* cce_reference_source(const struct cce_reference* ref);
-const char* cce_reference_value(const struct cce_reference* ref);
+const char* cce_entry_get_id(const struct cce_entry* cce);
+const char* cce_entry_get_description(const struct cce_entry* cce);
+struct oscap_string_iterator* cce_entry_get_params(const struct cce_entry* cce);
+struct oscap_string_iterator* cce_entry_get_tech_mechs(const struct cce_entry* cce);
+struct cce_reference_iterator* cce_entry_get_references(const struct cce_entry* cce);
+const char* cce_reference_get_source(const struct cce_reference* ref);
+const char* cce_reference_get_value(const struct cce_reference* ref);
  /* End of cce.h */
