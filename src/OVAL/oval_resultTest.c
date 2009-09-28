@@ -40,6 +40,12 @@
 #define OVAL_RESULT_TEST_DEBUG 0
 int rpmvercmp(const char * a, const char * b); // don't really feel like creating a new header file just for this
 
+int rpmvercmp(const char *a, const char *b)
+{
+	/* FIXME: ??? */
+	return (-1);
+}
+
 typedef struct oval_result_test {
 	struct oval_result_system *system;
 	struct oval_test *test;
