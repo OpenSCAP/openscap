@@ -97,6 +97,6 @@ endif
 CLEANFILES = $(nodist_liboval_testing_la_SOURCES)
 
 oval_testing_probe.c: Makefile
-	(echo '#define OVAL_PROBE_DIR "$(abs_builddir)/probes"'; \
+	(echo '#define PROBEPATH_ENV 1'; \
 	 echo '#include <oval_probe.c>' ) >$@
 
