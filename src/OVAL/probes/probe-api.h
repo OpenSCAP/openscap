@@ -7,6 +7,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <pthread.h>
+#include <probe-entcmp.h>
 #include "api/oval_definitions.h"
 #include "api/oval_system_characteristics.h"
 #include "api/oval_results.h"
@@ -21,11 +22,15 @@ SEXP_t *probe_item_build (const char *fmt, ...);
 
 SEXP_t *probe_item_new   (const char *name, SEXP_t *attrs);
 
-SEXP_t *probe_item_attr_add ();
-SEXP_t *probe_item_ent_add ();
+SEXP_t *probe_item_attr_add (SEXP_t *item, const char *name, SEXP_t *val);
+SEXP_t *probe_item_ent_add (SEXP_t *item, const char *name, SEXP_t *attrs, SEXP_t *val);
 
 int probe_item_setstatus (SEXP_t *obj, oval_syschar_status_t status);
 int probe_itement_setstatus (SEXP_t *obj, const char *name, uint32_t n, oval_syschar_status_t status);
+
+struct id_desc_t;
+SEXP_t *probe_item_newid(struct id_desc_t *id_desc);
+void probe_item_resetid(struct id_desc_t *id_desc);
 
 /*
  * attributes
@@ -108,9 +113,6 @@ struct id_desc_t {
 #endif
         int item_id_ctr;
 };
-
-SEXP_t *SEXP_OVALitem_newid(struct id_desc_t *id_desc);
-void SEXP_OVALitem_resetid(struct id_desc_t *id_desc);
 
 typedef struct {
         /* Protocol stuff */

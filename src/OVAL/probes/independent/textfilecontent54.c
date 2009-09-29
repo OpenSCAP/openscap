@@ -140,13 +140,9 @@ static SEXP_t *create_item(const char *path, const char *filename, char *pattern
 			   int instance, char **substrs, int substr_cnt)
 {
 	int i;
-	SEXP_t *attrs, *item;
+	SEXP_t *item;
 
-	attrs = probe_attr_creat ("id", SEXP_OVALitem_newid(&global.id_desc),
-                                  "status", SEXP_number_newd(OVAL_STATUS_EXISTS),
-                                  NULL);
-
-	item = probe_item_creat ("textfilecontent_item", attrs,
+	item = probe_item_creat ("textfilecontent_item", NULL,
                                  /* entities */
                                  "path", NULL,
                                  SEXP_string_newf(path),
@@ -155,7 +151,7 @@ static SEXP_t *create_item(const char *path, const char *filename, char *pattern
                                  "pattern", NULL,
                                  SEXP_string_newf(pattern),
                                  "instance", NULL,
-                                 SEXP_number_newd(instance),
+                                 SEXP_number_newi_32(instance),
                                  "text", NULL,
                                  SEXP_string_newf(substrs[0]),
                                  NULL);
@@ -165,17 +161,16 @@ static SEXP_t *create_item(const char *path, const char *filename, char *pattern
 
 	for (i = 1; i < substr_cnt; ++i) {
                 probe_item_ent_add (item, "subexpression", NULL, SEXP_string_newf(substrs[i]));
-                // FIXME: SEXP_OVALobj_setelmstatus(item, "subexpression", i, OVAL_STATUS_EXISTS);
 	}
 
 	return item;
 }
 
-static int report_missing(SEXP_t *elm)
+static int report_missing(SEXP_t *ent)
 {
 	oval_operation_t op;
 
-	op = SEXP_number_geti_32 (probe_ent_getattrval(elm, "operation"));
+	op = SEXP_number_geti_32 (probe_ent_getattrval(ent, "operation"));
 
         if (op == OVAL_OPERATION_EQUALS)
 		return 1;
@@ -185,8 +180,8 @@ static int report_missing(SEXP_t *elm)
 
 struct pfdata {
 	char *pattern;
-	SEXP_t *filename_elm;
-	SEXP_t *instance_elm;
+	SEXP_t *filename_ent;
+	SEXP_t *instance_ent;
 	SEXP_t *item_list;
 };
 
@@ -216,34 +211,24 @@ static int process_file(const char *path, const char *filename, void *arg)
 #endif
 
 	if (filename == NULL) {
-		SEXP_t *attrs, *item;
+		SEXP_t *item;
 
-		if (report_missing(pfd->filename_elm)) {
-			attrs = probe_attr_creat ("id", SEXP_number_newd(-1), // todo: id
-						     "status", SEXP_number_newd(OVAL_STATUS_DOESNOTEXIST),
-						     NULL);
-			item = probe_item_creat ("textfilecontent_item",
-						   attrs,
-						   "path", NULL,
-						   SEXP_string_newf(path),
-						   "filename", NULL,
-						   SEXP_string_newf(filename),
-						   NULL);
-
-			probe_itement_setstatus (item, "path",     1, OVAL_STATUS_EXISTS);
+		if (report_missing(pfd->filename_ent)) {
+			item = probe_item_creat ("textfilecontent_item", NULL,
+                                                 /* entities */
+                                                 "path", NULL,
+                                                 SEXP_string_newf(path),
+                                                 "filename", NULL,
+                                                 SEXP_string_newf(filename),
+                                                 NULL);
+                        probe_item_setstatus (item, OVAL_STATUS_DOESNOTEXIST);
 		        probe_itement_setstatus (item, "filename", 1, OVAL_STATUS_DOESNOTEXIST);
 		} else {
-			attrs = probe_attr_creat ("id", SEXP_number_newd(-1), // todo: id
-                                                  "status", SEXP_number_newd(OVAL_STATUS_EXISTS),
-                                                  NULL);
-
-			item = probe_item_creat ("textfilecontent_item", attrs,
+			item = probe_item_creat ("textfilecontent_item", NULL,
                                                  /* entities */
                                                  "path", NULL,
                                                  SEXP_string_newf(path),
                                                  NULL);
-
-			probe_itement_setstatus(item, "path", 1, OVAL_STATUS_EXISTS);
 		}
 
 		SEXP_list_add(pfd->item_list, item);
@@ -277,8 +262,8 @@ static int process_file(const char *path, const char *filename, void *arg)
 
 		if (next_inst != NULL)
 			SEXP_free(next_inst);
-		next_inst = SEXP_number_newd(cur_inst + 1);
-		if (SEXP_OVALentobj_cmp(pfd->instance_elm, next_inst) == OVAL_RESULT_TRUE)
+		next_inst = SEXP_number_newi_32(cur_inst + 1);
+		if (SEXP_OVALentobj_cmp(pfd->instance_ent, next_inst) == OVAL_RESULT_TRUE)
 			want_instance = 1;
 		else
 			want_instance = 0;
@@ -317,7 +302,7 @@ static int process_file(const char *path, const char *filename, void *arg)
 
 SEXP_t *probe_main(SEXP_t *probe_in, int *err)
 {
-	SEXP_t *path_elm, *filename_elm, *instance_elm, *behaviors_elm;
+	SEXP_t *path_ent, *filename_ent, *instance_ent, *behaviors_ent;
 	char *pattern;
 
 	if (probe_in == NULL) {
@@ -326,67 +311,63 @@ SEXP_t *probe_main(SEXP_t *probe_in, int *err)
 	}
 
 	/* parse request */
-	if ( (path_elm = SEXP_OVALobj_getelm(probe_in, "path", 1)) == NULL ||
-	     (filename_elm = SEXP_OVALobj_getelm(probe_in, "filename", 1)) == NULL ||
-	     (pattern = SEXP_string_cstr(SEXP_OVALobj_getelmval(probe_in, "pattern", 1, 1))) == NULL ||
-	     (instance_elm = SEXP_OVALobj_getelm(probe_in, "instance", 1)) == NULL) {
+	if ( (path_ent = probe_obj_getent(probe_in, "path", 1)) == NULL ||
+	     (filename_ent = probe_obj_getent(probe_in, "filename", 1)) == NULL ||
+	     (pattern = SEXP_string_cstr(probe_obj_getentval(probe_in, "pattern", 1))) == NULL ||
+	     (instance_ent = probe_obj_getent(probe_in, "instance", 1)) == NULL) {
 		*err = PROBE_ENOELM;
 		return NULL;
 	}
 
 	/* canonicalize behaviors */
-	behaviors_elm = SEXP_OVALobj_getelm(probe_in, "behaviors", 1);
-	if (behaviors_elm == NULL) {
+	behaviors_ent = probe_obj_getent(probe_in, "behaviors", 1);
+	if (behaviors_ent == NULL) {
 		SEXP_t * behaviors_new;
-		behaviors_new = SEXP_OVALelm_create("behaviors",
-						    SEXP_OVALattr_create ("max_depth", SEXP_string_newf ("1"),
-									  "recurse_direction", SEXP_string_newf ("none"),
-									  NULL),
-						    NULL /* val */,
-						    NULL /* end */);
-		behaviors_elm = SEXP_list_first(behaviors_new);
+		behaviors_new = probe_ent_creat("behaviors",
+                                                probe_attr_creat("max_depth", SEXP_string_newf ("1"),
+                                                                 "recurse_direction", SEXP_string_newf ("none"),
+                                                                 NULL),
+                                                NULL /* val */,
+                                                NULL /* end */);
+		behaviors_ent = SEXP_list_first(behaviors_new);
 	}
 	else {
-		if (!SEXP_OVALelm_hasattr (behaviors_elm, "max_depth"))
-			SEXP_OVALelm_attr_add (behaviors_elm,"max_depth", SEXP_string_newf ("1"));
-		if (!SEXP_OVALelm_hasattr (behaviors_elm, "recurse_direction"))
-			SEXP_OVALelm_attr_add (behaviors_elm,"recurse_direction", SEXP_string_newf ("none"));
+		if (!probe_ent_attrexists (behaviors_ent, "max_depth"))
+			probe_ent_attr_add (behaviors_ent,"max_depth", SEXP_string_newf ("1"));
+		if (!probe_ent_attrexists (behaviors_ent, "recurse_direction"))
+			probe_ent_attr_add (behaviors_ent,"recurse_direction", SEXP_string_newf ("none"));
 	}
 
 	int fcnt;
 	struct pfdata pfd;
 
 	pfd.pattern = pattern;
-	pfd.filename_elm = filename_elm;
-	pfd.instance_elm = instance_elm;
-	pfd.item_list = SEXP_list_new();
+	pfd.filename_ent = filename_ent;
+	pfd.instance_ent = instance_ent;
+	pfd.item_list = SEXP_list_new(NULL);
 
-	fcnt = find_files(path_elm, filename_elm, behaviors_elm,
+	fcnt = find_files(path_ent, filename_ent, behaviors_ent,
 			  process_file, (void *) &pfd);
 	if (fcnt == 0) {
-		if (report_missing(pfd.filename_elm)) {
-			SEXP_t *item, *attrs;
-			attrs = SEXP_OVALattr_create("id", SEXP_number_newd(-1), // todo: id
-						     "status", SEXP_number_newd(OVAL_STATUS_DOESNOTEXIST),
-						     NULL);
-			item = SEXP_OVALobj_create("textfilecontent_item",
-						   attrs,
-						   "path", NULL,
-						   SEXP_OVALelm_getval(path_elm, 1),
-						   NULL);
-			SEXP_OVALobj_setelmstatus(item, "path", 1, OVAL_STATUS_DOESNOTEXIST);
+		if (report_missing(pfd.filename_ent)) {
+			SEXP_t *item;
+
+			item = probe_item_creat("textfilecontent_item", NULL,
+                                                /* entities */
+                                                "path", NULL,
+                                                probe_ent_getval(path_ent),
+                                                NULL);
+                        probe_item_setstatus(item, OVAL_STATUS_DOESNOTEXIST);
+			probe_itement_setstatus(item, "path", 1, OVAL_STATUS_DOESNOTEXIST);
 			SEXP_list_add(pfd.item_list, item);
 		}
 	} else if (fcnt < 0) {
-		SEXP_t *item, *attrs;
-		attrs = SEXP_OVALattr_create("id", SEXP_number_newd(-1), // todo: id
-					     "status", SEXP_number_newd(OVAL_STATUS_ERROR),
-					     NULL);
-		item = SEXP_OVALobj_create("textfilecontent_item",
-					   attrs,
+		SEXP_t *item;
+		item = probe_item_creat("textfilecontent_item", NULL,
 					   "path", NULL,
-					   SEXP_OVALelm_getval(path_elm, 1),
+					   probe_ent_getval(path_ent),
 					   NULL);
+                probe_item_setstatus(item, OVAL_STATUS_ERROR);
 		SEXP_list_add(pfd.item_list, item);
 	}
 
