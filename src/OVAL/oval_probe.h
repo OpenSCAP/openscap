@@ -8,6 +8,7 @@
 #include "oval_parser_impl.h"
 #include "oval_string_map_impl.h"
 #include "api/oval_system_characteristics.h"
+#include "config.h"
 
 #define OVAL_PROBE_SCHEME "pipe://"
 #ifndef OVAL_PROBE_DIR

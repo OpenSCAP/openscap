@@ -26,12 +26,18 @@ AC_PROG_LIBTOOL
 AC_PROG_SWIG([1.3.29])
 
 # Compiler flags
-CFLAGS="$CFLAGS -std=c99 -W -Wall -Wshadow -Wformat -Wundef -Wno-unused-parameter -D_GNU_SOURCE -march=native"
+CFLAGS="$CFLAGS -std=c99 -W -Wall -Wshadow -Wformat -Wundef -Wno-unused-parameter -D_GNU_SOURCE"
 
 CFLAGS_OPTIMIZED="-O2 -finline-functions"
 CFLAGS_DEBUGGING="-fno-inline-functions -O0 -g"
 
 #check for atomic functions
+case $host_cpu in
+	i386 | i486 | i586 | i686)
+		CFLAGS="$CFLAGS  -march=i686"
+		;;
+esac
+
 AC_CACHE_CHECK([for atomic builtins], [ac_cv_atomic_builtins],
 [AC_LINK_IFELSE([AC_LANG_PROGRAM([int foovar=0;],
                                 [return __sync_fetch_and_add(&foovar, 1);])],
@@ -230,6 +236,12 @@ AC_ARG_ENABLE([probes],
        no)  probes=no  ;;
        *) AC_MSG_ERROR([bad value ${enableval} for --enable-probes]) ;;
      esac],[probes=yes])
+
+if test "x${prefix}" = xNONE; then
+	AC_DEFINE_UNQUOTED([OVAL_PROBE_DIR], ["/usr/libexec/openscap/oval"], [Path to probes])
+else
+	AC_DEFINE_UNQUOTED([OVAL_PROBE_DIR], ["${prefix}/libexec/openscap/oval"], [Path to probes])
+fi
 
 AC_ARG_ENABLE([probes-independent],
      [  --enable-probes-independent    enable compilation of probes independent of the base system [[default=yes]]],
