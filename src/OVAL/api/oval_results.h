@@ -34,7 +34,6 @@
 #include "oval_definitions.h"
 #include "oval_system_characteristics.h"
 #include <stdbool.h>
-#include <libxml/xmlreader.h>
 
 typedef enum {
 	OVAL_RESULT_INVALID        = 0,
