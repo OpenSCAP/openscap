@@ -107,12 +107,10 @@ SEXP_t *probe_item_ent_add ()
 
 int probe_item_setstatus (SEXP_t *obj, oval_syschar_status_t status)
 {
-        /* TBI */
         _A(obj != NULL);
         
-        
-        
-        return (-1);
+        probe_item_attr_add (obj, "status", SEXP_number_newi_32 (status));
+        return (0);
 }
 
 int probe_itement_setstatus (SEXP_t *obj, const char *name, uint32_t n, oval_syschar_status_t status)
@@ -255,14 +253,27 @@ SEXP_t *probe_obj_getent (const SEXP_t *obj, const char *name, uint32_t n)
 
 SEXP_t *probe_obj_getentval  (const SEXP_t *obj, const char *name, uint32_t n)
 {
-        /* TBI */
-        return (NULL);
+        SEXP_t *ent, *val;
+        
+        ent = probe_obj_getent (obj, name, n);
+        val = probe_ent_getval (ent);
+        
+        SEXP_free (ent);
+        
+        return (val);
 }
 
 int probe_obj_getentvals (const SEXP_t *obj, const char *name, uint32_t n, SEXP_t **res)
 {
-        /* TBI */
-        return (-1);
+        SEXP_t *ent;
+        int     ret;
+
+        ent = probe_obj_getent (obj, name, n);
+        ret = probe_ent_getvals (ent, res);
+        
+        SEXP_free (ent);
+
+        return (ret);
 }
 
 SEXP_t *probe_obj_getattrval (const SEXP_t *obj, const char *name)
