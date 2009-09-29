@@ -15,7 +15,6 @@ libseap_la_SOURCES= generic/bfind.c		\
 		    generic/pqueue.c		\
 		    generic/pqueue.h		\
 		    generic/strbuf.c		\
-		    generic/strbuf.h		\
 		    sch_cons.c			\
 		    sch_cons.h			\
 		    sch_dummy.c			\
@@ -73,6 +72,7 @@ include_HEADERS= public/seap-command.h	\
 		 public/seap-message.h	\
 		 public/seap-packet.h	\
 		 public/seap-error.h	\
-		 public/sexp-datatype.h
+		 public/sexp-datatype.h \
+		 public/strbuf.h
 
 includedir = $(prefix)/include/lib@PACKAGE@

@@ -27,7 +27,7 @@ if WANT_PROBES
 check_PROGRAMS += sexp_parser test_probes
 #test_findfile test_probes test_sexp_to_syschar
 TESTS += SEAP/test_sexp-valid.sh SEAP/test_sexp-inval.sh OVAL/test_probes.sh
-EXTRA_DIST += SEAP/parser_valid-test.sh SEAP/parser_invalid-test.sh OVAL/test_probes.sh OVAL/scap-rhel5-oval.xml
+EXTRA_DIST += SEAP/test_sexp-valid.sh SEAP/test_sexp-inval.sh OVAL/test_probes.sh OVAL/scap-rhel5-oval.xml
 EXTRA_DIST += OVAL/test_probe_rpminfo.xml OVAL/test_probe_runlevel.xml OVAL/test_probe_filecontent.xml
 
 test_findfile_SOURCES = OVAL/test_findfile.c
@@ -94,6 +94,7 @@ endif
 if WANT_CVSS
 check_PROGRAMS += test_cvsscalc
 TESTS += CVSS/test_cvsscalc.sh
+EXTRA_DIST += CVSS/test_cvsscalc.sh
 test_cvsscalc_SOURCES = CVSS/test_cvsscalc.c
 test_cvsscalc_CFLAGS  = -I$(top_srcdir)/src/CVSS
 test_cvsscalc_LDADD = $(top_builddir)/src/libopenscap_testing.la
