@@ -11,7 +11,7 @@
 # include <pthread.h>
 #endif
 #include "oval_probe.h"
-#include "probes/probe.h"
+#include "probes/probe-api.h"
 #include "oval_system_characteristics_impl.h"
 
 #ifndef _A
@@ -431,7 +431,7 @@ struct oval_sysitem* oval_sysitem_from_sexp(SEXP_t *sexp)
 	if (!key)
 		return NULL;
         
-	sval = probe_ent_getval (sexp, 1);
+	sval = probe_ent_getval (sexp);
 	switch (SEXP_typeof(sval)) {
 		case SEXP_TYPE_STRING: {
 			val = SEXP_string_cstr(sval);
@@ -475,7 +475,7 @@ struct oval_sysitem* oval_sysitem_from_sexp(SEXP_t *sexp)
 		}
 	}
 
-	int datatype = probe_ent_getdatatype(sexp, 1);
+	int datatype = probe_ent_getdatatype(sexp);
 	if (datatype < 0)
 		datatype = 0;
 

@@ -24,8 +24,8 @@ SEXP_t *probe_item_new   (const char *name, SEXP_t *attrs);
 SEXP_t *probe_item_attr_add ();
 SEXP_t *probe_item_ent_add ();
 
-int probe_item_setstatus (SEXP_t *obj, int status);
-int probe_itement_setstatus (SEXP_t *obj, const char *name, uint32_t n, int status);
+int probe_item_setstatus (SEXP_t *obj, oval_syschar_status_t status);
+int probe_itement_setstatus (SEXP_t *obj, const char *name, uint32_t n, oval_syschar_status_t status);
 
 /*
  * attributes
@@ -49,8 +49,8 @@ int     probe_obj_getentvals (const SEXP_t *obj, const char *name, uint32_t n, S
 SEXP_t *probe_obj_getattrval (const SEXP_t *obj, const char *name);
 bool    probe_obj_attrexists (const SEXP_t *obj, const char *name);
 
-int probe_obj_setstatus (SEXP_t *obj, int status);
-int probe_objent_setstatus (SEXP_t *obj, const char *name, uint32_t n, int status);
+int probe_obj_setstatus (SEXP_t *obj, oval_syschar_status_t status);
+int probe_objent_setstatus (SEXP_t *obj, const char *name, uint32_t n, oval_syschar_status_t status);
 
 /*
  * entities
@@ -66,14 +66,14 @@ int     probe_ent_getvals (const SEXP_t *ent, SEXP_t **res);
 SEXP_t *probe_ent_getattrval (const SEXP_t *ent, const char *name);
 bool    probe_ent_attrexists (const SEXP_t *ent, const char *name);
 
-oval_datatype_t probe_ent_setdatatype (SEXP_t *ent);
+int probe_ent_setdatatype (SEXP_t *ent, oval_datatype_t type);
 oval_datatype_t probe_ent_getdatatype (const SEXP_t *ent);
 
 int  probe_ent_setmask (SEXP_t *ent, bool mask);
 bool probe_ent_getmask (const SEXP_t *ent);
 
-int probe_ent_setstatus (SEXP_t *ent, int status);
-int probe_ent_getstatus (const SEXP_t *ent);
+int probe_ent_setstatus (SEXP_t *ent, oval_syschar_status_t status);
+oval_syschar_status_t probe_ent_getstatus (const SEXP_t *ent);
 
 char *probe_ent_getname   (const SEXP_t *ent);
 char *probe_ent_getname_r (const SEXP_t *ent, char *buffer, size_t buflen);
@@ -91,6 +91,7 @@ char *probe_ent_getname_r (const SEXP_t *ent, char *buffer, size_t buflen);
 #define PROBE_EACCES    11 /* Operation not perimitted */
 #define PROBE_EUNKNOWN 255 /* Unknown/Unexpected error */
 
+/* FIXME */
 #define OVAL_STATUS_ERROR        1
 #define OVAL_STATUS_EXISTS       2
 #define OVAL_STATUS_DOESNOTEXIST 3

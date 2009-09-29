@@ -1,5 +1,6 @@
 #include <stdarg.h>
 #include <string.h>
+#include <errno.h>
 #include "probe-api.h"
 
 /*
@@ -104,13 +105,17 @@ SEXP_t *probe_item_ent_add ()
         return (NULL);
 }
 
-int probe_item_setstatus (SEXP_t *obj, int status)
+int probe_item_setstatus (SEXP_t *obj, oval_syschar_status_t status)
 {
         /* TBI */
+        _A(obj != NULL);
+        
+        
+        
         return (-1);
 }
 
-int probe_itement_setstatus (SEXP_t *obj, const char *name, uint32_t n, int status)
+int probe_itement_setstatus (SEXP_t *obj, const char *name, uint32_t n, oval_syschar_status_t status)
 {
         /* TBI */
         return (-1);
@@ -272,13 +277,13 @@ bool probe_obj_attrexists (const SEXP_t *obj, const char *name)
         return (false);
 }
 
-int probe_obj_setstatus (SEXP_t *obj, int status)
+int probe_obj_setstatus (SEXP_t *obj, oval_syschar_status_t status)
 {
         /* TBI */
         return (-1);
 }
 
-int probe_obj_setentstatus (SEXP_t *obj, const char *name, uint32_t n, int status)
+int probe_obj_setentstatus (SEXP_t *obj, const char *name, uint32_t n, oval_syschar_status_t status)
 {
         /* TBI */
         return (-1);
@@ -306,15 +311,51 @@ int probe_ent_getvals (const SEXP_t *ent, SEXP_t **res)
         return (SEXP_list_length (*res));
 }
 
-SEXP_t *probe_ent_getval  (const SEXP_t *ent)
+SEXP_t *probe_ent_getval (const SEXP_t *ent)
 {
-        /* TBI */
-        return (NULL);
+        return (SEXP_list_nth (ent, 2));
 }
 
 SEXP_t *probe_ent_getattrval (const SEXP_t *ent, const char *name)
 {
-        /* TBI */
+        SEXP_t *attrs;
+
+        if (ent == NULL) {
+                errno = EFAULT;
+                return (NULL);
+        }
+
+        attrs = SEXP_list_first (ent);
+
+        if (SEXP_listp (attrs)) {
+                SEXP_t  *attr;
+                uint32_t i;
+
+                i = 2;
+
+                while ((attr = SEXP_list_nth (attrs, i)) != NULL) {
+                        if (SEXP_stringp (attr)) {
+                                char   attr_name[32+1];
+                                size_t attr_nlen;
+
+                                attr_nlen = SEXP_string_cstr_r (attr, attr_name, sizeof attr_name);
+                                
+                                if (attr_nlen > 2) {
+                                        if (attr_name[0] == ':') {
+                                                if (strcmp (attr_name + 1, name) == 0) {
+                                                        SEXP_free (attr);
+                                                        return SEXP_list_nth (attrs, i + 1);
+                                                }
+                                        }
+                                }
+                                
+                                SEXP_free (attr);
+                        }
+                        
+                        ++i;
+                }
+        }
+        
         return (NULL);
 }
 
@@ -324,16 +365,97 @@ bool probe_ent_attrexists (const SEXP_t *ent, const char *name)
         return (false);
 }
 
-oval_datatype_t probe_ent_setdatatype (SEXP_t *ent)
+int probe_ent_setdatatype (SEXP_t *ent, oval_datatype_t type)
 {
-        /* TBI */
+        SEXP_t *val;
+        
+        _A(ent != NULL);
+
+        val = probe_ent_getval (ent);
+        
+        if (val == NULL)
+                return (-1);
+        
+	switch (type) {
+        case OVAL_DATATYPE_BINARY:
+                return SEXP_datatype_set (val, "binary");
+        case OVAL_DATATYPE_BOOLEAN:
+                return SEXP_datatype_set (val, "bool");
+        case OVAL_DATATYPE_EVR_STRING:
+                return SEXP_datatype_set (val, "evr_str");
+        case OVAL_DATATYPE_FILESET_REVISTION:
+                return SEXP_datatype_set (val, "fset_rev");
+        case OVAL_DATATYPE_FLOAT:
+                /* TODO */
+                return (-1);
+        case OVAL_DATATYPE_IOS_VERSION:
+                return SEXP_datatype_set (val, "ios_ver");
+        case OVAL_DATATYPE_VERSION:
+                return SEXP_datatype_set (val, "version");
+        case OVAL_DATATYPE_INTEGER:
+                /* TODO */
+                return (-1);
+        case OVAL_DATATYPE_STRING:
+                return (SEXP_stringp (val) ? 0 : -1);
+        default:
+                return (-1);
+        }
+
         return (0);
 }
 
 oval_datatype_t probe_ent_getdatatype (const SEXP_t *ent)
 {
-        /* TBI */
-        return (0);
+        SEXP_t     *val;
+        const char *str;
+        
+        _A(ent != NULL);
+
+        val = probe_ent_getval (ent);
+
+        if (val == NULL)
+                return (-1);
+
+        str = SEXP_datatype (val);
+        
+        if (str != NULL) {
+                switch (str[0]) {
+                case 'b':
+                        if (strcmp (str, "bool") == 0)
+                                return (OVAL_DATATYPE_BOOLEAN);
+                        if (strcmp (str, "binary") == 0)
+                                return (OVAL_DATATYPE_BINARY);
+                        break;
+                case 'e':
+                        if (strcmp (str, "evr_str") == 0)
+                                return (OVAL_DATATYPE_EVR_STRING);
+                        break;
+                case 'f':
+                        /* FIXME: typo in oval_definitions.h?
+                           if (strcmp (str, "fset_rev") == 0)
+                           return (OVAL_DATYPE_FILESET_REVISION);
+                        */
+                        break;
+                case 'i':
+                        if (strcmp (str, "ios_ver") == 0)
+                                return (OVAL_DATATYPE_IOS_VERSION);
+                        break;
+                case 'v':
+                        if (strcmp (str, "version") == 0)
+                                return (OVAL_DATATYPE_VERSION);
+                        break;
+                }
+        } else {
+                switch (SEXP_typeof (val)) {
+                case SEXP_TYPE_NUMBER:
+                        /* FIXME: float vs. integer */
+                        return (OVAL_DATATYPE_INTEGER);
+                case SEXP_TYPE_STRING:
+                        return (OVAL_DATATYPE_STRING);
+                }
+        }
+        
+        return (OVAL_DATATYPE_UNKNOWN);
 }
 
 int probe_ent_setmask (SEXP_t *ent, bool mask)
@@ -348,13 +470,13 @@ bool probe_ent_getmask (const SEXP_t *ent)
         return (false);
 }
 
-int probe_ent_setstatus (SEXP_t *ent, int status)
+int probe_ent_setstatus (SEXP_t *ent, oval_syschar_status_t status)
 {
         /* TBI */
         return (-1);
 }
 
-int probe_ent_getstatus (const SEXP_t *ent)
+oval_syschar_status_t probe_ent_getstatus (const SEXP_t *ent)
 {
         /* TBI */
         return (-1);
@@ -362,12 +484,51 @@ int probe_ent_getstatus (const SEXP_t *ent)
 
 char *probe_ent_getname (const SEXP_t *ent)
 {
-        /* TBI */
-        return (NULL);
+        SEXP_t *ent_name;
+        char   *name_str;
+        
+        if (ent == NULL) {
+                errno = EFAULT;
+                return (NULL);
+        }
+
+        name_str = NULL;        
+        ent_name = SEXP_list_first (ent);
+
+        if (ent_name == NULL) {
+                errno = EINVAL;
+                return (NULL);
+        }
+
+        switch (SEXP_typeof (ent_name)) {
+        case SEXP_TYPE_LIST:
+        {
+                SEXP_t *tmp;
+                
+                tmp = SEXP_list_first (ent_name);
+                SEXP_free (ent_name);
+                ent_name = tmp;
+                
+                if (!SEXP_stringp (ent_name)) {
+                        errno = EINVAL;
+                        break;
+                }
+        }
+        case SEXP_TYPE_STRING:
+                if (SEXP_string_length (ent_name) > 0)
+                        name_str = SEXP_string_cstr (ent_name);
+                else
+                        errno = EINVAL;
+        }
+        
+        SEXP_free (ent_name);
+
+        return (name_str);
 }
 
 char *probe_ent_getname_r (const SEXP_t *ent, char *buffer, size_t buflen)
 {
         /* TBI */
+        abort ();
         return (NULL);
 }
