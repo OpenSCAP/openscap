@@ -43,7 +43,13 @@ int main (int argc, char *argv[])
 
         if (argc == 1) {
                 while (!feof (stdin)) {
+#if defined(__FreeBSD__)
                         input = fgetln (stdin, &inlen);
+#elif defined(__linux__)
+                        getline (&input, &inlen, stdin);
+#else
+# error "FIXME"
+#endif
                         s_exp = SEXP_parse (psetup, input, inlen, &pstate);
                         
                         if (s_exp != NULL) {
