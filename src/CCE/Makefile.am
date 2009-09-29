@@ -7,5 +7,4 @@ libcce_la_SOURCES += cce_priv.h
 libcce_la_CFLAGS   = @libxml_cflags@
 libcce_la_LDFLAGS  = @libxml_libs@
 
-include_HEADERS = cce.h
-includedir = $(prefix)/include/lib@PACKAGE@
+pkginclude_HEADERS = cce.h

@@ -6,7 +6,7 @@
 #
 
 # lib_ right now, but will get a better prefix according to where it shoud go to
-lib_LTLIBRARIES = liboval.la
+noinst_LTLIBRARIES = liboval.la
 # this is not built during "make all" nor "make install," only during "make check"
 check_LTLIBRARIES = liboval_testing.la
 

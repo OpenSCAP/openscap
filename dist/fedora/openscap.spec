@@ -2,7 +2,7 @@
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
 
 Name:           openscap
-Version:        0.5.2
+Version:        0.5.3
 Release:        1%{?dist}
 Summary:        Set of open source libraries enabling integration of the SCAP line of standards
 Group:          System Environment/Libraries
@@ -54,7 +54,7 @@ libraries can be used by perl.
 %setup -q
 
 %build
-%configure --enable-probes --enable-probes-independent --enable-probes-unix --enable-probes-redhat
+%configure
 make %{?_smp_mflags}
 
 %install
@@ -92,7 +92,10 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
-* Wed Jul 19 2009 Peter Vrabec <pvrabec@redhat.com> 0.5.2-1
+* Tue Sep 29 2009 Peter Vrabec <pvrabec@redhat.com> 0.5.3-1
+- upgrade
+
+* Wed Aug 19 2009 Peter Vrabec <pvrabec@redhat.com> 0.5.2-1
 - upgrade
 
 * Mon Aug 03 2009 Peter Vrabec <pvrabec@redhat.com> 0.5.1-2

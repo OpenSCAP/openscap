@@ -13,7 +13,5 @@ libxccdf_la_SOURCES = \
 libxccdf_la_CFLAGS  = @libxml_cflags@
 libxccdf_la_LDFLAGS = @libxml_libs@
 
-include_HEADERS  = xccdf.h
-
-includedir = $(prefix)/include/lib@PACKAGE@
+pkginclude_HEADERS  = xccdf.h
 

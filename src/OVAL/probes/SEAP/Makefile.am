@@ -58,7 +58,7 @@ libseap_la_SOURCES= generic/bfind.c		\
 libseap_la_CFLAGS= @pthread_cflags@ -DUSE_XMALLOC -DXMALLOC_EXIT -DWANT_BASE64 -I$(top_srcdir) -I. -I $(top_srcdir)/src/OVAL/probes/SEAP/public/ -DSEAP_THREAD_SAFE -DHAVE_ATOMIC_FUNCTIONS
 libseap_la_LDFLAGS= @pthread_ldflags@
 
-include_HEADERS= public/seap-command.h	\
+pkginclude_HEADERS= public/seap-command.h	\
 		 public/seap-debug.h	\
 		 public/seap-types.h	\
 		 public/seap.h		\
@@ -75,4 +75,3 @@ include_HEADERS= public/seap-command.h	\
 		 public/sexp-datatype.h \
 		 public/strbuf.h
 
-includedir = $(prefix)/include/lib@PACKAGE@
