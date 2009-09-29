@@ -759,11 +759,35 @@ SEXP_t *SEXP_list_last (const SEXP_t *list)
         return (SEXP_ref (l_blk->memb + (l_blk->real - 1)));
 }
 
-SEXP_t *SEXP_list_replace (SEXP_t *list, uint32_t n, SEXP_t *newval)
+SEXP_t *SEXP_list_replace (SEXP_t *list, uint32_t n, SEXP_t *n_val)
 {
-        SEXP_t *oldval;
+        SEXP_val_t v_dsc;
+        SEXP_t    *o_val;
+
+        if (list == NULL || n_val == NULL || n < 1) {
+                errno = EFAULT;
+                return (NULL);
+        }
         
-        return (oldval);
+        SEXP_val_dsc (&v_dsc, list->s_valp);
+
+        if (v_dsc.type != SEXP_VALTYPE_LIST) {
+                errno = EINVAL;
+                return (NULL);
+        }
+
+        if (v_dsc.hdr->refs > 1) {
+                /* copy */
+                abort ();
+        }
+
+        _A(n > 0);
+        
+        SEXP_LCASTP(v_dsc.mem)->b_addr = (void *) SEXP_rawval_lblk_replace (SEXP_LCASTP(v_dsc.mem)->b_addr,
+                                                                            SEXP_LCASTP(v_dsc.mem)->offset + n,
+                                                                            n_val, &o_val);
+        
+        return (o_val);
 }
 
 SEXP_t *SEXP_listref_last (const SEXP_t *list)
@@ -1097,14 +1121,50 @@ void SEXP_free (SEXP_t *s_exp)
 
 const char *SEXP_datatype (const SEXP_t *s_exp)
 {
-        errno = EOPNOTSUPP;
+        if (s_exp == NULL) {
+                errno = EFAULT;
+                return (NULL);
+        }
+
+        SEXP_VALIDATE(s_exp);
+
+        if (s_exp->s_type != NULL) {
+                _A(s_exp->s_type->name != NULL);
+                return ((const char *)s_exp->s_type->name);
+        }
+
         return (NULL);
 }
 
 int SEXP_datatype_set (SEXP_t *s_exp, const char *name)
 {
-        errno = EOPNOTSUPP;
-        return (-1);
+        SEXP_datatype_t *t;
+
+        _A(s_exp != NULL);
+        _A(name  != NULL);
+
+        SEXP_VALIDATE(s_exp);
+
+        t = SEXP_datatype_get (&g_datatypes, name);
+        
+        if (t == NULL) {
+                SEXP_datatype_t dt;
+
+                dt.name     = strdup (name);
+                dt.name_len = strlen (name);
+
+                dt.op     = NULL;
+                dt.op_cnt = 0;
+
+                t = SEXP_datatype_add (&g_datatypes, &dt);
+        }
+
+        if (t == NULL)
+                return (-1);
+        else
+                s_exp->s_type = t;
+        
+        return (0);
 }
 
 SEXP_type_t SEXP_typeof (const SEXP_t *s_exp)

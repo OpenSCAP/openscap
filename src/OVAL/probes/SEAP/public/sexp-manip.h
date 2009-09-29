@@ -97,8 +97,12 @@ void       SEXP_listit_free (SEXP_it_t *it);
 # define __XC(a,b) __CONCAT(a,b)
 
 /* TODO: use alloca & softref_r here */
-#define SEXP_list_foreach(var, list) for (;0;)
-#define SEXP_sublist_foreach(var, list, beg, end) for (;0;)
+
+#define SEXP_list_foreach(var, list)                                    \
+        for (uint32_t __XC(i,__LINE__) = 0; ((var) = SEXP_list_nth (list, __XC(i,__LINE__))) != NULL; ++__XC(i,__LINE__), SEXP_free (var))
+
+#define SEXP_sublist_foreach(var, list, beg, end)                       \
+        for (uint32_t __XC(i,__LINE__) = (beg); ((var) = SEXP_list_nth (list, __XC(i,__LINE__))) != NULL && __XC(i,__LINE__) <= (end); ++__XC(i,__LINE__), SEXP_free (var))
 
 #endif /* __STDC_VERSION__ >= 199901L */
 
@@ -116,11 +120,20 @@ int         SEXP_datatype_set (SEXP_t *s_exp, const char *name);
 SEXP_type_t SEXP_typeof (const SEXP_t *s_exp);
 const char *SEXP_strtype (const SEXP_t *s_exp);
 
-#define SEXP_VALIDATE(s) __SEXP_VALIDATE(s, __FILE__, __LINE__, __PRETTY_FUNCTION__)
+#if !defined(NDEBUG)
+# define SEXP_VALIDATE(s) __SEXP_VALIDATE(s, __FILE__, __LINE__, __PRETTY_FUNCTION__)
+# include <stdlib.h>
 
 static void __SEXP_VALIDATE(const SEXP_t *s_exp, const char *file, uint32_t line, const char *func)
 {
+        if (s_exp == NULL)
+                abort ();
+        
         return;
 }
+
+#else
+# define SEXP_VALIDATE(s)
+#endif
 
 #endif /* SEXP_MANIP_H */

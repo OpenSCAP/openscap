@@ -298,6 +298,74 @@ SEXP_t *SEXP_rawval_lblk_nth (uintptr_t lblkp, uint32_t n)
         return (NULL);
 }
 
+uintptr_t SEXP_rawval_lblk_replace (uintptr_t lblkp, uint32_t n, SEXP_t *n_val, SEXP_t **o_val)
+{
+        uintptr_t lb_prev;
+        uintptr_t lb_head;
+        struct SEXP_val_lblk *lblk;
+        SEXP_t   *memb;
+        
+        lblk = SEXP_VALP_LBLK(lblkp);
+
+        _A(lblk != NULL);
+
+        lb_head = lblkp;
+        lb_prev = 0;
+        
+        do {
+                if (lblk->refs < 2) {
+                        n      -= lblk->real;
+                        lb_prev = (uintptr_t)lblk;
+                        lblk    = SEXP_VALP_LBLK(lblk->nxsz);
+                } else {
+                        uintptr_t lb_ptr;
+                        
+                        /*
+                         * We've encountered a block which belongs to more
+                         * than one list so we have to create a copy of the
+                         * rest of the list.
+                         */
+                        lb_ptr = SEXP_rawval_list_copy (lblkp, 0);
+                        
+                        if (lb_prev == 0)
+                                lb_head = lb_ptr;
+                        
+                        /*
+                         * Update pointer in the previous block (if there is one)
+                         * to point at the copy. Also decrement the reference
+                         * counter in current block.
+                         */
+                        if (lb_prev != 0)
+                                SEXP_VALP_LBLK(lb_prev)->nxsz = (lb_ptr & SEXP_LBLKP_MASK) | (SEXP_VALP_LBLK(lb_prev)->nxsz & SEXP_LBLKS_MASK);
+                        
+                        SEXP_rawval_lblk_decref (lblkp);
+                        memb = SEXP_rawval_lblk_nth (lb_ptr, n);
+                        
+                        goto replace;
+                }
+        } while (n > lblk->real);
+        
+        _A(n > 0);
+        
+        memb = lblk->memb + (n - 1);
+replace:
+        
+        _A(lb_prev != 0);
+        _A(lb_head != 0);
+        _A(memb != NULL);
+        
+        (*o_val) = SEXP_new ();
+        (*o_val)->s_valp = memb->s_valp;
+        (*o_val)->s_type = memb->s_type;
+        (*o_val)->s_flgs = memb->s_flgs;
+
+        memb->s_valp = SEXP_rawval_incref (n_val->s_valp);
+        memb->s_type = n_val->s_type;
+        memb->s_flgs = n_val->s_flgs;
+        
+        return (lb_head);
+}
+
 int SEXP_rawval_lblk_cb (uintptr_t lblkp, int (*func) (SEXP_t *, void *), void *arg, uint32_t n)
 {
         struct SEXP_val_lblk *lblk;

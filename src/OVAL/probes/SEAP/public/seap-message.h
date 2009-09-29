@@ -5,7 +5,7 @@
 #include <stdint.h>
 #include <sexp-types.h>
 
-typedef uint64_t SEAP_msgid_t;
+typedef uint32_t SEAP_msgid_t;
 typedef struct SEAP_msg  SEAP_msg_t;
 typedef struct SEAP_attr SEAP_attr_t;
 
