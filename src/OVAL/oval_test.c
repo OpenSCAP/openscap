@@ -225,7 +225,7 @@ int _oval_test_parse_tag(xmlTextReaderPtr reader,
 		char *object_ref =
 		    (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "object_ref");
 		if (object_ref != NULL) {
-			struct oval_object_model *model =
+			struct oval_definition_model *model =
 			    oval_parser_context_model(context);
 			struct oval_object *object =
 			    get_oval_object_new(model, object_ref);
@@ -236,7 +236,7 @@ int _oval_test_parse_tag(xmlTextReaderPtr reader,
 		char *state_ref =
 		    (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "state_ref");
 		if (state_ref != NULL) {
-			struct oval_object_model *model =
+			struct oval_definition_model *model =
 			    oval_parser_context_model(context);
 			struct oval_state *state =
 			    get_oval_state_new(model, state_ref);
@@ -262,7 +262,7 @@ int _oval_test_parse_tag(xmlTextReaderPtr reader,
 int oval_test_parse_tag(xmlTextReaderPtr reader,
 			struct oval_parser_context *context)
 {
-	struct oval_object_model *model = oval_parser_context_model(context);
+	struct oval_definition_model *model = oval_parser_context_model(context);
 	char *id = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "id");
 	if(DEBUG_OVAL_TEST){
 		printf("DEBUG::oval_test.c::oval_test_parse_tag %s STUBBED = %d\n", id, STUB_OVAL_TEST);

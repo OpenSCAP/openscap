@@ -96,16 +96,16 @@ void _oval_result_system_initialize
 	(struct oval_result_system *system)
 {
 	system->definitions_initialized = true;
-	struct oval_object_model *object_model = oval_syschar_model_get_object_model(system->syschar_model);
+	struct oval_definition_model *definition_model = oval_syschar_model_get_definition_model(system->syschar_model);
 
-	struct oval_definition_iterator *oval_definitions = oval_object_model_get_definitions(object_model);
+	struct oval_definition_iterator *oval_definitions = oval_definition_model_get_definitions(definition_model);
 	int i;for(i=0;oval_definition_iterator_has_more(oval_definitions);i++){
 		struct oval_definition *oval_definition = oval_definition_iterator_next(oval_definitions);
 		get_oval_result_definition_new(system, oval_definition);
 	}
 	oval_definition_iterator_free(oval_definitions);
 
-	struct oval_test_iterator *oval_tests = oval_object_model_get_tests(object_model);
+	struct oval_test_iterator *oval_tests = oval_definition_model_get_tests(definition_model);
 	while(oval_test_iterator_has_more(oval_tests)){
 		struct oval_test *oval_test = oval_test_iterator_next(oval_tests);
 		get_oval_result_test_new(system, oval_test);
@@ -491,8 +491,8 @@ xmlNode *oval_result_system_to_dom
 	struct oval_string_map *tstmap = oval_string_map_new();
 
 	xmlNode *definitions_node = xmlNewChild(system_node, ns_results, "definitions", NULL);
-	struct oval_object_model *object_model = oval_results_model_get_object_model(results_model);
-	struct oval_definition_iterator *oval_definitions = oval_object_model_get_definitions(object_model);
+	struct oval_definition_model *definition_model = oval_results_model_get_definition_model(results_model);
+	struct oval_definition_iterator *oval_definitions = oval_definition_model_get_definitions(definition_model);
 	int i;for(i=0;oval_definition_iterator_has_more(oval_definitions);i++){
 		struct oval_definition *oval_definition = oval_definition_iterator_next(oval_definitions);
 		struct oval_result_definition *rslt_definition
@@ -545,7 +545,7 @@ xmlNode *oval_result_system_to_dom
 	}
 	oval_result_test_iterator_free(result_tests);
 
-	oval_characteristics_to_dom
+	oval_syschar_model_to_dom
 		(syschar_model, doc, system_node,
 				(oval_syschar_resolver *)_oval_result_system_resolve_syschar, sysmap);
 

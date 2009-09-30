@@ -556,7 +556,7 @@ int _oval_component_parse_LITERAL_tag
 int _oval_component_parse_OBJECTREF_tag
     (xmlTextReaderPtr reader, struct oval_parser_context *context,
      struct oval_component *component) {
-	struct oval_object_model *model = oval_parser_context_model(context);
+	struct oval_definition_model *model = oval_parser_context_model(context);
 	char *objref = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST "object_ref");
 	struct oval_object *object = get_oval_object_new(model, objref);
 	free(objref);objref=NULL;
@@ -573,7 +573,7 @@ int _oval_component_parse_OBJECTREF_tag
 int _oval_component_parse_VARREF_tag
     (xmlTextReaderPtr reader, struct oval_parser_context *context,
      struct oval_component *component) {
-	struct oval_object_model *model = oval_parser_context_model(context);
+	struct oval_definition_model *model = oval_parser_context_model(context);
 	char *varref = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST "var_ref");
 	struct oval_variable *variable = get_oval_variable_new(model, varref, OVAL_VARIABLE_UNKNOWN);
 	if(varref!=NULL)free(varref);varref=NULL;

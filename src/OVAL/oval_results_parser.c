@@ -71,8 +71,8 @@ int _ovalres_parser_parse_system
 			struct oval_parser_context *context, void *null)
 {
 	struct oval_results_model *model = context->results_model;
-	struct oval_object_model  *object_model = context->object_model;
-	struct oval_syschar_model *syschar_model = oval_syschar_model_new(object_model, NULL);
+	struct oval_definition_model  *definition_model = context->definition_model;
+	struct oval_syschar_model *syschar_model = oval_syschar_model_new(definition_model, NULL);
 	return oval_result_system_parse
 		(reader, context, syschar_model,
 			(oscap_consumer_func)_oval_results_parser_consume_system, model);
@@ -153,7 +153,7 @@ struct oval_result_directives *ovalres_parser_parse
 	context.error_handler = eh;
 	context.reader          = reader;
 	context.results_model   = model;
-	context.object_model    = oval_results_model_get_object_model(model);
+	context.definition_model    = oval_results_model_get_definition_model(model);
 	context.syschar_sysinfo = NULL;
 	context.user_data       = user_arg;
 	xmlTextReaderSetErrorHandler(reader, &libxml_error_handler, &context);

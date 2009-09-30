@@ -228,7 +228,7 @@ int _oval_state_parse_tag(xmlTextReaderPtr reader,
 int oval_state_parse_tag(xmlTextReaderPtr reader,
 			 struct oval_parser_context *context)
 {
-	struct oval_object_model *model = oval_parser_context_model(context);
+	struct oval_definition_model *model = oval_parser_context_model(context);
 	char *id = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "id");
 	struct oval_state *state = get_oval_state_new(model, id);
 	free(id);

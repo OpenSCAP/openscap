@@ -38,10 +38,10 @@ int main(int argc, char **argv)
 {
 	printf("START\n");
 	if(argc>1){
-		struct oval_object_model *model = oval_object_model_new();
+		struct oval_definition_model *model = oval_definition_model_new();
 		printf("LOAD OVAL DEFINITIONS\n");
 		struct oval_import_source *source = oval_import_source_new_file(argv[1]);
-		oval_object_model_load(model, source, &_test_error_handler, NULL);
+		oval_definition_model_load(model, source, &_test_error_handler, NULL);
 		oval_import_source_free(source);
 		printf("OVAL DEFINITIONS LOADED\n");
 		if(argc>2){
@@ -59,7 +59,7 @@ int main(int argc, char **argv)
 			printf("THERE ARE %d SYSCHARS\n",numSyschars);
 			oval_syschar_model_free(syschar_model);
 		}
-		oval_object_model_free(model);
+		oval_definition_model_free(model);
 	}else printf("USAGE:Test <oval_definitions.xml> [<system_characteristics.xml>]");
 	oscap_cleanup();
 }

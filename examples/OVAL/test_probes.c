@@ -19,13 +19,13 @@ void oval_syschar_to_print(struct oval_syschar*, const char*, int);
 
 int main(int argc, char **argv)
 {
-	struct oval_object_model *model = oval_object_model_new();
+	struct oval_definition_model *model = oval_definition_model_new();
 
 	struct import_source *is = oval_import_source_new_file(argv[1]);
-	oval_object_model_load(model, is, &_test_error_handler, NULL);
+	oval_definition_model_load(model, is, &_test_error_handler, NULL);
 	oval_import_source_free(is);
 
-	struct oval_iterator_object *objects = oval_object_model_get_objects(model);
+	struct oval_iterator_object *objects = oval_definition_model_get_objects(model);
 	if (!oval_object_iterator_has_more(objects)) {
 		printf("NO DEFINITIONS FOUND\n");
 		return 1;

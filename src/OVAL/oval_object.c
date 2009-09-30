@@ -241,7 +241,7 @@ int _oval_object_parse_tag(xmlTextReaderPtr reader,
 int oval_object_parse_tag(xmlTextReaderPtr reader,
 			  struct oval_parser_context *context)
 {
-	struct oval_object_model *model = oval_parser_context_model(context);
+	struct oval_definition_model *model = oval_parser_context_model(context);
 	char *id = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "id");
 	if(DEBUG_OVAL_OBJECT)printf("DEBUG::oval_object_parse_tag::id = %s\n", id);
 	struct oval_object *object = get_oval_object_new(model, id);

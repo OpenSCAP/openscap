@@ -55,6 +55,7 @@ struct oval_result_test *get_oval_result_test_new
 	(struct oval_result_system *, struct oval_test *);
 
 
+//MOVE
 struct oval_result_definition *oval_result_definition_new(struct oval_result_system *, char *);
 void oval_result_definition_free(struct oval_result_definition *);
 

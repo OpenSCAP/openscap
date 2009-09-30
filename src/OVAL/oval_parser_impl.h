@@ -35,7 +35,7 @@
 #include "../common/util.h"
 
 struct oval_parser_context {
-	struct oval_object_model       *object_model;
+	struct oval_definition_model   *definition_model;
 	struct oval_syschar_model      *syschar_model;
 	struct oval_results_model      *results_model;
 	struct oval_sysinfo            *syschar_sysinfo;
@@ -44,11 +44,11 @@ struct oval_parser_context {
 	void*                          user_data;
 };
 
-struct oval_object_model *oval_parser_context_model(struct oval_parser_context
+struct oval_definition_model *oval_parser_context_model(struct oval_parser_context
 						    *context);
 
 int ovaldef_parser_parse
-    (struct oval_object_model *, xmlTextReader *, oval_xml_error_handler, void *);
+    (struct oval_definition_model *, xmlTextReader *, oval_xml_error_handler, void *);
 int ovaldef_parse_node(xmlTextReaderPtr, struct oval_parser_context *);
 
 int ovalsys_parser_parse

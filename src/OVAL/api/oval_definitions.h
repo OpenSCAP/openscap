@@ -30,10 +30,10 @@
  * This interface provides means to load and extract information from an OVAL Definitions file.
  *
  * Each oval_definition instance holds information on single OVAL definition
- * while the whole definitions infrastructure is held by an oval_object_model instance.
+ * while the whole definitions infrastructure is held by an oval_definition_model instance.
  *
  * Main components of an OVAL Definitions file and their OpenSCAP API counterparts are as follows:
- * - oval_object_model - whole definitions document
+ * - oval_definition_model - whole definitions document
  * - oval_definition - definitions
  * - oval_test       - tests
  * - oval_object     - objects

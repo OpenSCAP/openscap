@@ -236,7 +236,7 @@ int oval_syschar_parse_tag(xmlTextReaderPtr reader,
 	int return_code;
 	if(is_ovalsys && (strcmp(tagname,"object")==0)){
 		char *object_id = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "id");
-		struct oval_object *object = get_oval_object_new(context->object_model, object_id);
+		struct oval_object *object = get_oval_object_new(context->definition_model, object_id);
 		free(object_id);object_id=NULL;
 		oval_syschar_t *syschar = get_oval_syschar_new(context->syschar_model, object);
 		syschar->sysinfo = context->syschar_sysinfo;

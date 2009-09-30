@@ -81,62 +81,58 @@ void oval_import_source_free(struct oval_import_source *source)
 	free(source);
 }
 
-typedef struct oval_object_model {
+typedef struct oval_definition_model {
 	struct oval_string_map *definition_map;
 	struct oval_string_map *test_map;
 	struct oval_string_map *object_map;
 	struct oval_string_map *state_map;
 	struct oval_string_map *variable_map;
-	struct oval_sysinfo    *sysinfo;
-} oval_object_model_t;
+	struct oval_sysinfo    *sysinfoX;
+} oval_definition_model_t;
 
-struct oval_object_model *oval_object_model_new()
+struct oval_definition_model *oval_definition_model_new()
 {
-	oval_object_model_t *newmodel =
-	    (oval_object_model_t *) malloc(sizeof(oval_object_model_t));
+	oval_definition_model_t *newmodel =
+	    (oval_definition_model_t *) malloc(sizeof(oval_definition_model_t));
 	newmodel->definition_map = oval_string_map_new();
 	newmodel->object_map = oval_string_map_new();
 	newmodel->state_map = oval_string_map_new();
 	newmodel->test_map = oval_string_map_new();
 	newmodel->variable_map = oval_string_map_new();
-	//newmodel->syschar_map = oval_string_map_new();
-	newmodel->sysinfo = NULL;
 	return newmodel;
 }
 
-void oval_object_model_free(struct oval_object_model * model)
+void oval_definition_model_free(struct oval_definition_model * model)
 {
 	oval_string_map_free(model->definition_map, (oscap_destruct_func)oval_definition_free);
 	oval_string_map_free(model->object_map,     (oscap_destruct_func)oval_object_free);
 	oval_string_map_free(model->state_map,      (oscap_destruct_func)oval_state_free);
 	oval_string_map_free(model->test_map,       (oscap_destruct_func)oval_test_free);
 	oval_string_map_free(model->variable_map,   (oscap_destruct_func)oval_variable_free);
-	if(model->sysinfo)oval_sysinfo_free(model->sysinfo);
 
 	model->definition_map = NULL;
 	model->object_map     = NULL;
 	model->state_map      = NULL;
 	model->test_map       = NULL;
 	model->variable_map   = NULL;
-	model->sysinfo        = NULL;
 
 	free(model);
 }
 
 
 typedef struct oval_syschar_model{
-	struct oval_object_model *object_model;
-	struct oval_string_map   *syschar_map;
-	struct oval_string_map   *sysdata_map;
-	struct oval_string_map   *variable_binding_map;
+	struct oval_definition_model *definition_model;
+	struct oval_string_map       *syschar_map;
+	struct oval_string_map       *sysdata_map;
+	struct oval_string_map       *variable_binding_map;
 } oval_syschar_model_t;
 
 struct oval_syschar_model *oval_syschar_model_new(
-		struct oval_object_model *object_model,
+		struct oval_definition_model *definition_model,
 		struct oval_variable_binding_iterator *bindings){
 	oval_syschar_model_t *newmodel =
 	    (oval_syschar_model_t *) malloc(sizeof(oval_syschar_model_t));
-	newmodel->object_model         = object_model;
+	newmodel->definition_model         = definition_model;
 	newmodel->syschar_map          = oval_string_map_new();
 	newmodel->sysdata_map          = oval_string_map_new();
 	newmodel->variable_binding_map = oval_string_map_new();
@@ -160,16 +156,16 @@ void oval_syschar_model_free(struct oval_syschar_model *model){
 	oval_string_map_free(model->sysdata_map, (oscap_destruct_func)oval_sysdata_free);
 	oval_string_map_free(model->variable_binding_map, (oscap_destruct_func)oval_variable_binding_free);
 
-	model->object_model         = NULL;
+	model->definition_model         = NULL;
 	model->syschar_map          = NULL;
 	model->sysdata_map          = NULL;
 	model->variable_binding_map = NULL;
 	free(model);
 }
 
-struct oval_object_model *oval_syschar_model_get_object_model(
+struct oval_definition_model *oval_syschar_model_get_definition_model(
 		struct oval_syschar_model *model){
-	return model->object_model;
+	return model->definition_model;
 }
 
 struct oval_syschar_iterator *oval_syschar_model_get_syschars(
@@ -204,41 +200,41 @@ bool oval_syschar_model_add_variable_binding(struct oval_syschar_model *model, s
 	return true;
 }
 
-void oval_object_model_add_definition(
-			struct oval_object_model *model,
+void oval_definition_model_add_definition(
+			struct oval_definition_model *model,
 			struct oval_definition *definition)
 {
 	char *key = oval_definition_get_id(definition);
 	oval_string_map_put(model->definition_map, key, (void *)definition);
 }
 
-void oval_object_model_add_test(struct oval_object_model *model, struct oval_test *test)
+void oval_definition_model_add_test(struct oval_definition_model *model, struct oval_test *test)
 {
 	char *key = oval_test_get_id(test);
 	oval_string_map_put(model->test_map, key, (void *)test);
 }
 
-void oval_object_model_add_object(struct oval_object_model *model,
+void oval_definition_model_add_object(struct oval_definition_model *model,
 		     struct oval_object *object)
 {
 	char *key = oval_object_get_id(object);
 	oval_string_map_put(model->object_map, key, (void *)object);
 }
 
-void oval_object_model_add_state(struct oval_object_model *model, struct oval_state *state)
+void oval_definition_model_add_state(struct oval_definition_model *model, struct oval_state *state)
 {
 	char *key = oval_state_get_id(state);
 	oval_string_map_put(model->state_map, key, (void *)state);
 }
 
-void oval_object_model_add_variable(struct oval_object_model *model,
+void oval_definition_model_add_variable(struct oval_definition_model *model,
 		       struct oval_variable *variable)
 {
 	char *key = oval_variable_get_id(variable);
 	oval_string_map_put(model->variable_map, key, (void *)variable);
 }
 
-void add_oval_syschar(struct oval_syschar_model *model,
+void oval_syschar_model_add_syschar(struct oval_syschar_model *model,
 		       struct oval_syschar *syschar)
 {
 	struct oval_object *object = oval_syschar_get_object(syschar);
@@ -248,7 +244,7 @@ void add_oval_syschar(struct oval_syschar_model *model,
 	}
 }
 
-void add_oval_sysdata(struct oval_syschar_model *model,
+void oval_syschar_model_add_sysdata(struct oval_syschar_model *model,
 		       struct oval_sysdata *sysdata)
 {
 	char *id = oval_sysdata_get_id(sysdata);
@@ -257,13 +253,7 @@ void add_oval_sysdata(struct oval_syschar_model *model,
 	}
 }
 
-void oval_object_model_add_sysinfo(struct oval_object_model *model, struct oval_sysinfo *sysinfo)
-{
-	if(model->sysinfo!=NULL)oval_sysinfo_free(model->sysinfo);
-	model->sysinfo = sysinfo;
-}
-
-void oval_object_model_load(struct oval_object_model *model,
+void oval_definition_model_load(struct oval_definition_model *model,
 			   struct oval_import_source *source,
 			   oval_xml_error_handler eh, void *user_arg)
 {
@@ -296,7 +286,7 @@ void oval_syschar_model_load(struct oval_syschar_model *model,
 	xmlFreeDoc(doc);
 }
 
-struct oval_definition *oval_object_model_get_definition(struct oval_object_model *model,
+struct oval_definition *oval_definition_model_get_definition(struct oval_definition_model *model,
 					    char *key)
 {
 	return (struct oval_definition *)oval_string_map_get_value(model->
@@ -304,25 +294,25 @@ struct oval_definition *oval_object_model_get_definition(struct oval_object_mode
 								   key);
 }
 
-struct oval_test *oval_object_model_get_test(struct oval_object_model *model, char *key)
+struct oval_test *oval_definition_model_get_test(struct oval_definition_model *model, char *key)
 {
 	return (struct oval_test *)oval_string_map_get_value(model->test_map,
 							     key);
 }
 
-struct oval_object *oval_object_model_get_object(struct oval_object_model *model, char *key)
+struct oval_object *oval_definition_model_get_object(struct oval_definition_model *model, char *key)
 {
 	return (struct oval_object *)oval_string_map_get_value(model->
 							       object_map, key);
 }
 
-struct oval_state *oval_object_model_get_state(struct oval_object_model *model, char *key)
+struct oval_state *oval_definition_model_get_state(struct oval_definition_model *model, char *key)
 {
 	return (struct oval_state *)oval_string_map_get_value(model->state_map,
 							      key);
 }
 
-struct oval_variable *oval_object_model_get_variable(struct oval_object_model *model,
+struct oval_variable *oval_definition_model_get_variable(struct oval_definition_model *model,
 					char *key)
 {
 	return (struct oval_variable *)oval_string_map_get_value(model->
@@ -344,7 +334,7 @@ struct oval_sysdata *get_oval_sysdata(struct oval_syschar_model *model,
 		(model->sysdata_map, id);
 }
 
-struct oval_definition_iterator *oval_object_model_get_definitions(struct oval_object_model
+struct oval_definition_iterator *oval_definition_model_get_definitions(struct oval_definition_model
 						      *model)
 {
 	struct oval_definition_iterator *iterator = (struct oval_definition_iterator *)oval_string_map_values(model->
@@ -352,28 +342,28 @@ struct oval_definition_iterator *oval_object_model_get_definitions(struct oval_o
 	return iterator;
 }
 
-struct oval_test_iterator *oval_object_model_get_tests(struct oval_object_model *model)
+struct oval_test_iterator *oval_definition_model_get_tests(struct oval_definition_model *model)
 {
 	struct oval_test_iterator *iterator = (struct oval_test_iterator *)oval_string_map_values(model->
 								   test_map);
 	return iterator;
 }
 
-struct oval_object_iterator *oval_object_model_get_objects(struct oval_object_model *model)
+struct oval_object_iterator *oval_definition_model_get_objects(struct oval_definition_model *model)
 {
 	struct oval_object_iterator *iterator = (struct oval_object_iterator *)oval_string_map_values(model->
 								     object_map);
 	return iterator;
 }
 
-struct oval_state_iterator *oval_object_model_get_states(struct oval_object_model *model)
+struct oval_state_iterator *oval_definition_model_get_states(struct oval_definition_model *model)
 {
 	struct oval_state_iterator *iterator = (struct oval_state_iterator *)oval_string_map_values(model->
 								    state_map);
 	return iterator;
 }
 
-struct oval_variable_iterator *oval_object_model_get_variables(struct oval_object_model
+struct oval_variable_iterator *oval_definition_model_get_variables(struct oval_definition_model
 						  *model)
 {
 	struct oval_variable_iterator *iterator = (struct oval_variable_iterator *)oval_string_map_values(model->
@@ -396,7 +386,7 @@ struct oval_syschar *get_oval_syschar_new
 	struct oval_syschar *syschar = oval_syschar_model_get_syschar(model, object_id);
 	if (syschar == NULL) {
 		syschar = oval_syschar_new(object);
-		add_oval_syschar(model, syschar);
+		oval_syschar_model_add_syschar(model, syschar);
 	}
 	return syschar;
 }
@@ -406,58 +396,58 @@ struct oval_sysdata *get_oval_sysdata_new(struct oval_syschar_model *model, char
 	struct oval_sysdata *sysdata = get_oval_sysdata(model, id);
 	if (sysdata == NULL) {
 		sysdata = oval_sysdata_new(id);
-		add_oval_sysdata(model, sysdata);
+		oval_syschar_model_add_sysdata(model, sysdata);
 	}
 	return sysdata;
 }
 
-struct oval_definition *get_oval_definition_new(struct oval_object_model *model, char *id)
+struct oval_definition *get_oval_definition_new(struct oval_definition_model *model, char *id)
 {
-	struct oval_definition *definition = oval_object_model_get_definition(model, id);
+	struct oval_definition *definition = oval_definition_model_get_definition(model, id);
 	if (definition == NULL) {
 		definition = oval_definition_new(id);
-		oval_object_model_add_definition(model, definition);
+		oval_definition_model_add_definition(model, definition);
 	}
 	return definition;
 }
 
 
-struct oval_variable *get_oval_variable_new(struct oval_object_model *model, char *id, oval_variable_type_t type)
+struct oval_variable *get_oval_variable_new(struct oval_definition_model *model, char *id, oval_variable_type_t type)
 {
-	struct oval_variable *variable = oval_object_model_get_variable(model, id);
+	struct oval_variable *variable = oval_definition_model_get_variable(model, id);
 	if (variable == NULL) {
 		variable = oval_variable_new(id, type);
-		oval_object_model_add_variable(model, variable);
+		oval_definition_model_add_variable(model, variable);
 	}
 	return variable;
 }
 
-struct oval_state *get_oval_state_new(struct oval_object_model *model, char *id)
+struct oval_state *get_oval_state_new(struct oval_definition_model *model, char *id)
 {
-	struct oval_state *state = oval_object_model_get_state(model, id);
+	struct oval_state *state = oval_definition_model_get_state(model, id);
 	if (state == NULL) {
 		state = oval_state_new(id);
-		oval_object_model_add_state(model, state);
+		oval_definition_model_add_state(model, state);
 	}
 	return state;
 }
 
-struct oval_object *get_oval_object_new(struct oval_object_model *model, char *id)
+struct oval_object *get_oval_object_new(struct oval_definition_model *model, char *id)
 {
-	struct oval_object *object = oval_object_model_get_object(model, id);
+	struct oval_object *object = oval_definition_model_get_object(model, id);
 	if (object == NULL) {
 		object = oval_object_new(id);
-		oval_object_model_add_object(model, object);
+		oval_definition_model_add_object(model, object);
 	}
 	return object;
 }
 
-struct oval_test *get_oval_test_new(struct oval_object_model *model, char *id)
+struct oval_test *get_oval_test_new(struct oval_definition_model *model, char *id)
 {
-	struct oval_test *test = oval_object_model_get_test(model, id);
+	struct oval_test *test = oval_definition_model_get_test(model, id);
 	if (test == NULL) {
 		test = oval_test_new(id);
-		oval_object_model_add_test(model, test);
+		oval_definition_model_add_test(model, test);
 	}
 	return test;
 }
@@ -482,20 +472,20 @@ int _generator_to_dom(xmlDocPtr doc, xmlNode *tag_generator)
 
 
 struct oval_results_model{
-	struct oval_object_model      *object_model;
+	struct oval_definition_model  *definition_model;
 	struct oval_collection        *systems;
 };
 
 typedef struct oval_results_model oval_results_model_t;
 
 struct oval_results_model *oval_results_model_new
-	(struct oval_object_model *object_model,
+	(struct oval_definition_model *definition_model,
 			struct oval_syschar_model **syschar_models)
 {
 	oval_results_model_t *model = (oval_results_model_t *)
 		malloc(sizeof(oval_results_model_t));
 	model->systems       = oval_collection_new();
-	model->object_model  = object_model;
+	model->definition_model  = definition_model;
 	if(syschar_models){
 		struct oval_syschar_model *syschar_model;
 		for(syschar_model = *syschar_models;syschar_model;
@@ -511,15 +501,15 @@ void oval_results_model_free(struct oval_results_model *model)
 {
 	oval_collection_free_items
 	(model->systems, (oscap_destruct_func)oval_result_system_free);
-	model->object_model  = NULL;
+	model->definition_model  = NULL;
 	model->systems       = NULL;
 	free(model);
 }
 
-struct oval_object_model *oval_results_model_get_object_model
+struct oval_definition_model *oval_results_model_get_definition_model
 	(struct oval_results_model *model)
 {
-	return model->object_model;
+	return model->definition_model;
 }
 
 struct oval_result_system_iterator *oval_results_model_get_systems
@@ -726,7 +716,7 @@ void _oval_agent_scan_set_for_references
 }
 
 xmlNode *oval_definitions_to_dom
-	(struct oval_object_model *object_model, xmlDocPtr doc, xmlNode *parent,
+	(struct oval_definition_model *definition_model, xmlDocPtr doc, xmlNode *parent,
 	 oval_definitions_resolver resolver, void *user_arg)
 {
 	xmlNodePtr root_node;
@@ -748,7 +738,7 @@ xmlNode *oval_definitions_to_dom
     _generator_to_dom(doc, tag_generator);
 
     struct oval_string_map *tstmap = oval_string_map_new();
-    struct oval_definition_iterator *definitions = oval_object_model_get_definitions(object_model);
+    struct oval_definition_iterator *definitions = oval_definition_model_get_definitions(definition_model);
     if(oval_definition_iterator_has_more(definitions)){
         struct oval_string_map *extmap = oval_string_map_new();
     	xmlNode *definitions_node = NULL;
@@ -842,8 +832,8 @@ xmlNode *oval_definitions_to_dom
     return root_node;
 }
 
-int oval_object_model_export(
-		struct oval_object_model *model, struct oval_export_target *target){
+int oval_definition_model_export(
+		struct oval_definition_model *model, struct oval_export_target *target){
 
 	LIBXML_TEST_VERSION;
 
@@ -858,7 +848,7 @@ int oval_object_model_export(
     return retcode;
 }
 
-xmlNode *oval_characteristics_to_dom
+xmlNode *oval_syschar_model_to_dom
 	(struct oval_syschar_model *syschar_model, xmlDocPtr doc, xmlNode *parent,
 			oval_syschar_resolver resolver, void *user_arg)
 {
@@ -936,7 +926,7 @@ int oval_syschar_model_export(
 	LIBXML_TEST_VERSION;
 
 	xmlDocPtr doc = xmlNewDoc(BAD_CAST "1.0");
-	oval_characteristics_to_dom(model, doc, NULL, NULL, NULL);
+	oval_syschar_model_to_dom(model, doc, NULL, NULL, NULL);
 	/*
 	 * Dumping document to stdio or file
 	 */
@@ -1003,9 +993,9 @@ xmlNode *oval_results_to_dom
 	struct oval_string_map *defids = oval_string_map_new();
 	_scan_for_viewable_definitions(results_model, directives, defids);
 
-	struct oval_object_model *object_model = oval_results_model_get_object_model(results_model);
+	struct oval_definition_model *definition_model = oval_results_model_get_definition_model(results_model);
 	oval_definitions_to_dom
-		(object_model, doc, root_node,
+		(definition_model, doc, root_node,
 				(oval_definitions_resolver *)_resolve_oval_definition_from_map, defids);
 
 	xmlNode *results_node = xmlNewChild(root_node, ns_results, "results", NULL);

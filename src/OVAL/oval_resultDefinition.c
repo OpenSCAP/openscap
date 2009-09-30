@@ -72,8 +72,8 @@ struct oval_result_definition *oval_result_definition_new
 		malloc(sizeof(oval_result_definition_t));
 	definition->system = system;
 	struct oval_syschar_model *syschar_model = oval_result_system_get_syschar_model(system);
-	struct oval_object_model  *object_model  = oval_syschar_model_get_object_model (syschar_model);
-	definition->definition = get_oval_definition_new(object_model, definition_id);
+	struct oval_definition_model  *definition_model  = oval_syschar_model_get_definition_model (syschar_model);
+	definition->definition = get_oval_definition_new(definition_model, definition_id);
 	definition->result     = OVAL_RESULT_INVALID;
 	definition->criteria   = NULL;
 	definition->messages   = oval_collection_new();

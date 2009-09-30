@@ -302,7 +302,7 @@ void oval_variable_to_print(struct oval_variable *variable, char *indent,
 int oval_variable_parse_tag(xmlTextReaderPtr reader,
 			    struct oval_parser_context *context)
 {
-	struct oval_object_model *model = oval_parser_context_model(context);
+	struct oval_definition_model *model = oval_parser_context_model(context);
 	char *tagname = (char*) xmlTextReaderName(reader);
 	oval_variable_type_t type;
 	if (strcmp(tagname, "constant_variable") == 0)

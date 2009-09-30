@@ -202,7 +202,7 @@ struct oval_set_context {
 };
 void oval_consume_object_ref(char *objref, void *user) {
 	struct oval_set_context *ctx = user;
-	struct oval_object_model *model =
+	struct oval_definition_model *model =
 		oval_parser_context_model(ctx->context);
 	struct oval_object *object =
 		get_oval_object_new(model, objref);
@@ -210,7 +210,7 @@ void oval_consume_object_ref(char *objref, void *user) {
 }
 void oval_consume_state_ref(char *steref, void *user) {
 	struct oval_set_context *ctx = user;
-	struct oval_object_model *model =
+	struct oval_definition_model *model =
 		oval_parser_context_model(ctx->context);
 	struct oval_state *state =
 		get_oval_state_new(model, steref);

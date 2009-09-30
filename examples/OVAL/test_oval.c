@@ -17,14 +17,14 @@ int _test_error_handler(struct oval_xml_error *error, void *null)
 
 int main(int argc, char **argv)
 {
-	struct oval_object_model *model = oval_object_model_new();
+	struct oval_definition_model *model = oval_definition_model_new();
 
 	struct oval_import_source *is = oval_import_source_new_file(argv[1]);
-	oval_object_model_load(model, is, &_test_error_handler, NULL);
+	oval_definition_model_load(model, is, &_test_error_handler, NULL);
 	oval_import_source_free(is);
 
 	struct oval_definition_iterator *definitions =
-	    oval_object_model_get_definitions(model);
+	    oval_definition_model_get_definitions(model);
 	if (!oval_definition_iterator_has_more(definitions)) {
 		printf("NO DEFINITIONS FOUND\n");
 		return 1;
@@ -37,7 +37,7 @@ int main(int argc, char **argv)
 	}
 	oval_definition_iterator_free(definitions);
 
-	oval_object_model_free(model);
+	oval_definition_model_free(model);
 
 	oscap_cleanup();
 

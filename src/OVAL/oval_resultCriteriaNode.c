@@ -502,10 +502,10 @@ int oval_result_criteria_node_parse
 		int negate = oval_parser_boolean_attribute(reader, "negate", false);
 		struct oval_syschar_model *syschar_model
 			= oval_result_system_get_syschar_model(system);
-		struct oval_object_model *object_model
-			= oval_syschar_model_get_object_model(syschar_model);
+		struct oval_definition_model *definition_model
+			= oval_syschar_model_get_definition_model(syschar_model);
 		struct oval_test *oval_test
-			= oval_object_model_get_test(object_model, test_ref);
+			= oval_definition_model_get_test(definition_model, test_ref);
 		struct oval_result_test *rslt_test = (oval_test)
 			?get_oval_result_test_new(system, oval_test):NULL;
 		int test_vsn = oval_test_get_version(oval_test);
@@ -531,10 +531,10 @@ int oval_result_criteria_node_parse
 		int negate = oval_parser_boolean_attribute(reader, "negate", false);
 		struct oval_syschar_model *syschar_model
 			= oval_result_system_get_syschar_model(system);
-		struct oval_object_model *object_model
-			= oval_syschar_model_get_object_model(syschar_model);
+		struct oval_definition_model *definition_model
+			= oval_syschar_model_get_definition_model(syschar_model);
 		struct oval_definition *oval_definition
-			= oval_object_model_get_definition(object_model,definition_ref);
+			= oval_definition_model_get_definition(definition_model,definition_ref);
 		struct oval_result_definition *rslt_definition = (oval_definition)
 			?get_oval_result_definition_new(system, oval_definition):NULL;
 		node = (rslt_definition)

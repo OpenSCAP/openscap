@@ -312,7 +312,7 @@ int oval_criteria_parse_tag(xmlTextReaderPtr reader,
 				char *test_ref =
 				    (char *) xmlTextReaderGetAttribute(reader,
 							      BAD_CAST "test_ref");
-				struct oval_object_model *model =
+				struct oval_definition_model *model =
 				    oval_parser_context_model(context);
 				struct oval_test *test = get_oval_test_new(model, test_ref);
 				free(test_ref);test_ref=NULL;
@@ -322,7 +322,7 @@ int oval_criteria_parse_tag(xmlTextReaderPtr reader,
 				char *definition_ref =
 				    (char *) xmlTextReaderGetAttribute(reader,
 							      BAD_CAST "definition_ref");
-				struct oval_object_model *model =
+				struct oval_definition_model *model =
 				    oval_parser_context_model(context);
 				struct oval_definition *definition =
 				    get_oval_definition_new(model, definition_ref);

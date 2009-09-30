@@ -163,10 +163,10 @@ struct oval_result_test *oval_result_test_new(struct oval_result_system *system,
 		malloc(sizeof(oval_result_test_t));
 	struct oval_syschar_model *syschar_model
 		= oval_result_system_get_syschar_model(system);
-	struct oval_object_model *object_model
-		= oval_syschar_model_get_object_model(syschar_model);
+ 	struct oval_definition_model *definition_model
+ 		= oval_syschar_model_get_definition_model(syschar_model);
 	test->system            = system;
-	test->test = get_oval_test_new(object_model, tstid);
+ 	test->test = get_oval_test_new(definition_model, tstid);
 	test->message              = NULL;
 	test->result               = 0;
 	test->instance = 0;
@@ -801,10 +801,10 @@ int _oval_result_test_binding_parse
 	xmlChar *variable_id = xmlTextReaderGetAttribute(reader, "variable_id");
 
 	struct oval_syschar_model *syschar_model = oval_result_system_get_syschar_model(SYSTEM);
-	struct oval_object_model *object_model = oval_syschar_model_get_object_model
-		(syschar_model);
+        struct oval_definition_model *definition_model = oval_syschar_model_get_definition_model(syschar_model);
+
 	struct oval_variable *variable = get_oval_variable_new
-		(object_model, variable_id, OVAL_VARIABLE_UNKNOWN);
+ 		(definition_model, variable_id, OVAL_VARIABLE_UNKNOWN);
 
 	xmlChar *value = xmlTextReaderValue(reader);
 

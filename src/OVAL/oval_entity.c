@@ -179,12 +179,12 @@ void set_oval_entity_name(struct oval_entity *entity, char *name)
 }
 
 struct oval_consume_varref_context {
-	struct oval_object_model * model;
+	struct oval_definition_model * model;
 	struct oval_variable **variable;
 };
 void oval_consume_varref(char *varref, void *user) {
 	struct oval_consume_varref_context* ctx = user;
-	*(ctx->variable) = oval_object_model_get_variable((struct oval_object_model *)ctx->model, varref);
+	*(ctx->variable) = oval_definition_model_get_variable((struct oval_definition_model *)ctx->model, varref);
 }
 void oval_consume_value(struct oval_value *use_value, void *value) {
 	*(struct oval_value **)value = use_value;
@@ -211,7 +211,7 @@ int oval_entity_parse_tag(xmlTextReaderPtr reader,
 	oval_entity_varref_type_t varref_type;
 	if (strcmp(name, "var_ref") == 0) {	//special case for <var_ref>
 		if (varref == NULL) {
-			struct oval_object_model *model =
+			struct oval_definition_model *model =
 			    oval_parser_context_model(context);
 			varref_type = OVAL_ENTITY_VARREF_ELEMENT;
 			struct oval_consume_varref_context ctx = { .model = model, .variable = &variable };
@@ -219,9 +219,9 @@ int oval_entity_parse_tag(xmlTextReaderPtr reader,
 			    oval_parser_text_value(reader, context,
 						   &oval_consume_varref, &ctx);
 		} else {
-			struct oval_object_model *model =
+			struct oval_definition_model *model =
 			    oval_parser_context_model(context);
-			variable = oval_object_model_get_variable(model, varref);
+			variable = oval_definition_model_get_variable(model, varref);
 			varref_type = OVAL_ENTITY_VARREF_ATTRIBUTE;
 			return_code = 1;
 			free(varref);varref=NULL;
@@ -233,7 +233,7 @@ int oval_entity_parse_tag(xmlTextReaderPtr reader,
 		return_code =
 		    oval_value_parse_tag(reader, context, &oval_consume_value, &value);
 	} else {
-		struct oval_object_model *model =
+		struct oval_definition_model *model =
 		    oval_parser_context_model(context);
 		variable = get_oval_variable_new(model, varref, OVAL_VARIABLE_UNKNOWN);
 		varref_type = OVAL_ENTITY_VARREF_ATTRIBUTE;

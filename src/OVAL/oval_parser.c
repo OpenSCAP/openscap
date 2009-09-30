@@ -34,10 +34,10 @@
 #include "oval_parser_impl.h"
 #include "oval_definitions_impl.h"
 
-struct oval_object_model *oval_parser_context_model(struct oval_parser_context
+struct oval_definition_model *oval_parser_context_model(struct oval_parser_context
 						    *context)
 {
-	return context->object_model;
+	return context->definition_model;
 }
 
 int oval_parser_report(struct oval_parser_context *context, struct oval_xml_error *error){
@@ -236,11 +236,11 @@ int ovaldef_parse_node(xmlTextReaderPtr reader,
 }
 
 int ovaldef_parser_parse
-    (struct oval_object_model *model, xmlTextReader *reader, oval_xml_error_handler eh,
+    (struct oval_definition_model *model, xmlTextReader *reader, oval_xml_error_handler eh,
      void *user_arg) {
 	struct oval_parser_context context;
 	context.reader        = reader;
-	context.object_model  = model;
+	context.definition_model  = model;
 	context.error_handler = eh;
 	context.user_data     = user_arg;
 	xmlTextReaderSetErrorHandler(reader, &libxml_error_handler, &context);

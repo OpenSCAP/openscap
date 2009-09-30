@@ -370,7 +370,7 @@ int _oval_definition_parse_tag(xmlTextReaderPtr reader,
 int oval_definition_parse_tag(xmlTextReaderPtr reader,
 			      struct oval_parser_context *context)
 {
-	struct oval_object_model *model = oval_parser_context_model(context);
+	struct oval_definition_model *model = oval_parser_context_model(context);
 	char *id = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "id");
 	struct oval_definition *definition = get_oval_definition_new(model, id);
 	free(id);id=NULL;
