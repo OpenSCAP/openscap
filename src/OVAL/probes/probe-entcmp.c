@@ -431,57 +431,92 @@ oval_result_t probe_ent_cmp_string(SEXP_t *val1, SEXP_t *val2, oval_operation_t 
 
 oval_result_t probe_ent_cmp(SEXP_t *ent, SEXP_t *val2)
 {
-	oval_result_t result = OVAL_RESULT_ERROR;
 	oval_operation_t op;
 	oval_datatype_t dtype;
-	SEXP_t *op_sexp, *val1;
+	SEXP_t *stmp, *val1, *vals, *res_lst;
+        int val_cnt, is_var;
+        oval_check_t ochk;
+	oval_result_t ores, result = OVAL_RESULT_ERROR;
 
-	val1 = probe_ent_getval (ent);
-	if (SEXP_typeof(val1) != SEXP_typeof(val2)) {
-		_D("Types of values to compare don't match: val1: %d, val2: %d\n",
-		   SEXP_typeof(val1), SEXP_typeof(val2));
-		return OVAL_RESULT_ERROR;
-	}
+        val_cnt = probe_ent_getvals(ent, &vals);
 
-	op_sexp = probe_ent_getattrval (ent, "operation");
-	if (op_sexp == NULL)
+        if (probe_ent_attrexists(ent, "var_ref")) {
+                if (val_cnt == 0)
+                        return OVAL_RESULT_NOT_EVALUATED;
+                is_var = 1;
+        } else {
+                if (val_cnt != 1)
+                        return OVAL_RESULT_ERROR;
+                is_var = 0;
+        }
+
+	stmp = probe_ent_getattrval (ent, "operation");
+	if (stmp == NULL)
 		op = OVAL_OPERATION_EQUALS;
 	else
-		op = SEXP_number_geti_32 (op_sexp);
+		op = SEXP_number_geti_32 (stmp);
 
-	dtype = probe_ent_getdatatype(ent);
+        res_lst = SEXP_list_new(NULL);
 
-	switch (dtype) {
-	case OVAL_DATATYPE_BINARY:
-		result = probe_ent_cmp_binary(val1, val2, op);
-		break;
-	case OVAL_DATATYPE_BOOLEAN:
-		result = probe_ent_cmp_bool(val1, val2, op);
-		break;
-	case OVAL_DATATYPE_EVR_STRING:
-		result = probe_ent_cmp_evr(val1, val2, op);
-		break;
-	case OVAL_DATATYPE_FILESET_REVISTION:
-		result = probe_ent_cmp_filesetrev(val1, val2, op);
-		break;
-	case OVAL_DATATYPE_FLOAT:
-		result = probe_ent_cmp_float(val1, val2, op);
-		break;
-	case OVAL_DATATYPE_IOS_VERSION:
-		result = probe_ent_cmp_ios(val1, val2, op);
-		break;
-	case OVAL_DATATYPE_VERSION:
-		result = probe_ent_cmp_version(val1, val2, op);
-		break;
-	case OVAL_DATATYPE_INTEGER:
-		result = probe_ent_cmp_int(val1, val2, op);
-		break;
-	case OVAL_DATATYPE_STRING:
-		result = probe_ent_cmp_string(val1, val2, op);
-		break;
-	default:
-		_D("Unexpected data type: %d\n", dtype);
-	}
+        SEXP_list_foreach (val1, vals) {
+                if (SEXP_typeof(val1) != SEXP_typeof(val2)) {
+                        _D("Types of values to compare don't match: val1: %d, val2: %d\n",
+                           SEXP_typeof(val1), SEXP_typeof(val2));
+                        return OVAL_RESULT_ERROR;
+                }
+
+                dtype = probe_ent_getdatatype(ent);
+
+                switch (dtype) {
+                case OVAL_DATATYPE_BINARY:
+                        ores = probe_ent_cmp_binary(val1, val2, op);
+                        break;
+                case OVAL_DATATYPE_BOOLEAN:
+                        ores = probe_ent_cmp_bool(val1, val2, op);
+                        break;
+                case OVAL_DATATYPE_EVR_STRING:
+                        ores = probe_ent_cmp_evr(val1, val2, op);
+                        break;
+                case OVAL_DATATYPE_FILESET_REVISTION:
+                        ores = probe_ent_cmp_filesetrev(val1, val2, op);
+                        break;
+                case OVAL_DATATYPE_FLOAT:
+                        ores = probe_ent_cmp_float(val1, val2, op);
+                        break;
+                case OVAL_DATATYPE_IOS_VERSION:
+                        ores = probe_ent_cmp_ios(val1, val2, op);
+                        break;
+                case OVAL_DATATYPE_VERSION:
+                        ores = probe_ent_cmp_version(val1, val2, op);
+                        break;
+                case OVAL_DATATYPE_INTEGER:
+                        ores = probe_ent_cmp_int(val1, val2, op);
+                        break;
+                case OVAL_DATATYPE_STRING:
+                        ores = probe_ent_cmp_string(val1, val2, op);
+                        break;
+                default:
+                        ores = OVAL_RESULT_ERROR;
+                        _D("Unexpected data type: %d\n", dtype);
+                }
+
+                SEXP_list_add(res_lst, SEXP_number_newi_32(ores));
+        }
+
+        if (is_var) {
+                stmp = probe_ent_getattrval(ent, "var_check");
+                if (stmp == NULL) {
+                        ochk = OVAL_CHECK_ALL;
+                } else {
+                        ochk = SEXP_number_geti_32(stmp);
+                }
+
+                result = probe_ent_result_bychk(res_lst, ochk);
+        } else {
+                result = ores;
+        }
+
+        SEXP_free(res_lst);
 
 	return result;
 }
@@ -489,6 +524,7 @@ oval_result_t probe_ent_cmp(SEXP_t *ent, SEXP_t *val2)
 oval_result_t probe_entste_cmp(SEXP_t *ent_ste, SEXP_t *ent_itm)
 {
 	oval_syschar_status_t item_status;
+        oval_result_t ores;
 	SEXP_t *val2;
 
 	item_status = probe_ent_getstatus(ent_itm);
@@ -509,12 +545,20 @@ oval_result_t probe_entste_cmp(SEXP_t *ent_ste, SEXP_t *ent_itm)
 
 	val2 = probe_ent_getval(ent_itm);
 
-	return probe_ent_cmp(ent_ste, val2);
+	ores = probe_ent_cmp(ent_ste, val2);
+        if (ores == OVAL_RESULT_NOT_EVALUATED)
+                return OVAL_RESULT_ERROR;
+        return ores;
 }
 
 oval_result_t probe_entobj_cmp(SEXP_t *ent_obj, SEXP_t *val)
 {
-	return probe_ent_cmp(ent_obj, val);
+        oval_result_t ores;
+
+	ores =  probe_ent_cmp(ent_obj, val);
+        if (ores == OVAL_RESULT_NOT_EVALUATED)
+                return OVAL_RESULT_FALSE;
+        return ores;
 }
 
 struct _oresults {
