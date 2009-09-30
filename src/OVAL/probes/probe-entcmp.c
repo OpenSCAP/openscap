@@ -13,7 +13,7 @@
 
 #include <probe-api.h>
 
-oval_result_t SEXP_OVALent_cmp_binary(SEXP_t *val1, SEXP_t *val2, oval_operation_t op)
+oval_result_t probe_ent_cmp_binary(SEXP_t *val1, SEXP_t *val2, oval_operation_t op)
 {
 	oval_result_t result = OVAL_RESULT_ERROR;
 	char *s1, *s2;
@@ -41,7 +41,7 @@ oval_result_t SEXP_OVALent_cmp_binary(SEXP_t *val1, SEXP_t *val2, oval_operation
 	return result;
 }
 
-oval_result_t SEXP_OVALent_cmp_bool(SEXP_t *val1, SEXP_t *val2, oval_operation_t op)
+oval_result_t probe_ent_cmp_bool(SEXP_t *val1, SEXP_t *val2, oval_operation_t op)
 {
 	oval_result_t result = OVAL_RESULT_ERROR;
 	int v1, v2;
@@ -69,7 +69,7 @@ oval_result_t SEXP_OVALent_cmp_bool(SEXP_t *val1, SEXP_t *val2, oval_operation_t
 	return result;
 }
 
-oval_result_t SEXP_OVALent_cmp_evr(SEXP_t *val1, SEXP_t *val2, oval_operation_t op)
+oval_result_t probe_ent_cmp_evr(SEXP_t *val1, SEXP_t *val2, oval_operation_t op)
 {
 	oval_result_t result = OVAL_RESULT_ERROR;
 
@@ -78,7 +78,7 @@ oval_result_t SEXP_OVALent_cmp_evr(SEXP_t *val1, SEXP_t *val2, oval_operation_t 
 	return result;
 }
 
-oval_result_t SEXP_OVALent_cmp_filesetrev(SEXP_t *val1, SEXP_t *val2, oval_operation_t op)
+oval_result_t probe_ent_cmp_filesetrev(SEXP_t *val1, SEXP_t *val2, oval_operation_t op)
 {
 	oval_result_t result = OVAL_RESULT_ERROR;
 
@@ -87,7 +87,7 @@ oval_result_t SEXP_OVALent_cmp_filesetrev(SEXP_t *val1, SEXP_t *val2, oval_opera
 	return result;
 }
 
-oval_result_t SEXP_OVALent_cmp_float(SEXP_t *val1, SEXP_t *val2, oval_operation_t op)
+oval_result_t probe_ent_cmp_float(SEXP_t *val1, SEXP_t *val2, oval_operation_t op)
 {
 	oval_result_t result = OVAL_RESULT_ERROR;
 	double v1, v2;
@@ -139,7 +139,7 @@ oval_result_t SEXP_OVALent_cmp_float(SEXP_t *val1, SEXP_t *val2, oval_operation_
 	return result;
 }
 
-oval_result_t SEXP_OVALent_cmp_int(SEXP_t *val1, SEXP_t *val2, oval_operation_t op)
+oval_result_t probe_ent_cmp_int(SEXP_t *val1, SEXP_t *val2, oval_operation_t op)
 {
 	oval_result_t result = OVAL_RESULT_ERROR;
 	int v1, v2;
@@ -203,7 +203,7 @@ oval_result_t SEXP_OVALent_cmp_int(SEXP_t *val1, SEXP_t *val2, oval_operation_t 
 	return result;
 }
 
-oval_result_t SEXP_OVALent_cmp_ios(SEXP_t *val1, SEXP_t *val2, oval_operation_t op)
+oval_result_t probe_ent_cmp_ios(SEXP_t *val1, SEXP_t *val2, oval_operation_t op)
 {
 	oval_result_t result = OVAL_RESULT_ERROR;
 
@@ -259,7 +259,7 @@ static SEXP_t *version_parser(char *version) {
 	return NULL;
 }
 
-oval_result_t SEXP_OVALent_cmp_version(SEXP_t *val1, SEXP_t *val2, oval_operation_t op)
+oval_result_t probe_ent_cmp_version(SEXP_t *val1, SEXP_t *val2, oval_operation_t op)
 {
 	oval_result_t result = OVAL_RESULT_ERROR;
 	SEXP_t *v1_tkns = NULL, *v2_tkns = NULL, *stmp;
@@ -350,7 +350,7 @@ oval_result_t SEXP_OVALent_cmp_version(SEXP_t *val1, SEXP_t *val2, oval_operatio
 	return result;
 }
 
-oval_result_t SEXP_OVALent_cmp_string(SEXP_t *val1, SEXP_t *val2, oval_operation_t op)
+oval_result_t probe_ent_cmp_string(SEXP_t *val1, SEXP_t *val2, oval_operation_t op)
 {
 	oval_result_t result = OVAL_RESULT_ERROR;
 	char *s1, *s2;
@@ -429,7 +429,7 @@ oval_result_t SEXP_OVALent_cmp_string(SEXP_t *val1, SEXP_t *val2, oval_operation
 	return result;
 }
 
-oval_result_t SEXP_OVALent_cmp(SEXP_t *ent, SEXP_t *val2)
+oval_result_t probe_ent_cmp(SEXP_t *ent, SEXP_t *val2)
 {
 	oval_result_t result = OVAL_RESULT_ERROR;
 	oval_operation_t op;
@@ -453,31 +453,31 @@ oval_result_t SEXP_OVALent_cmp(SEXP_t *ent, SEXP_t *val2)
 
 	switch (dtype) {
 	case OVAL_DATATYPE_BINARY:
-		result = SEXP_OVALent_cmp_binary(val1, val2, op);
+		result = probe_ent_cmp_binary(val1, val2, op);
 		break;
 	case OVAL_DATATYPE_BOOLEAN:
-		result = SEXP_OVALent_cmp_bool(val1, val2, op);
+		result = probe_ent_cmp_bool(val1, val2, op);
 		break;
 	case OVAL_DATATYPE_EVR_STRING:
-		result = SEXP_OVALent_cmp_evr(val1, val2, op);
+		result = probe_ent_cmp_evr(val1, val2, op);
 		break;
 	case OVAL_DATATYPE_FILESET_REVISTION:
-		result = SEXP_OVALent_cmp_filesetrev(val1, val2, op);
+		result = probe_ent_cmp_filesetrev(val1, val2, op);
 		break;
 	case OVAL_DATATYPE_FLOAT:
-		result = SEXP_OVALent_cmp_float(val1, val2, op);
+		result = probe_ent_cmp_float(val1, val2, op);
 		break;
 	case OVAL_DATATYPE_IOS_VERSION:
-		result = SEXP_OVALent_cmp_ios(val1, val2, op);
+		result = probe_ent_cmp_ios(val1, val2, op);
 		break;
 	case OVAL_DATATYPE_VERSION:
-		result = SEXP_OVALent_cmp_version(val1, val2, op);
+		result = probe_ent_cmp_version(val1, val2, op);
 		break;
 	case OVAL_DATATYPE_INTEGER:
-		result = SEXP_OVALent_cmp_int(val1, val2, op);
+		result = probe_ent_cmp_int(val1, val2, op);
 		break;
 	case OVAL_DATATYPE_STRING:
-		result = SEXP_OVALent_cmp_string(val1, val2, op);
+		result = probe_ent_cmp_string(val1, val2, op);
 		break;
 	default:
 		_D("Unexpected data type: %d\n", dtype);
@@ -486,7 +486,7 @@ oval_result_t SEXP_OVALent_cmp(SEXP_t *ent, SEXP_t *val2)
 	return result;
 }
 
-oval_result_t SEXP_OVALentste_cmp(SEXP_t *ent_ste, SEXP_t *ent_itm)
+oval_result_t probe_entste_cmp(SEXP_t *ent_ste, SEXP_t *ent_itm)
 {
 	oval_syschar_status_t item_status;
 	SEXP_t *val2;
@@ -509,12 +509,12 @@ oval_result_t SEXP_OVALentste_cmp(SEXP_t *ent_ste, SEXP_t *ent_itm)
 
 	val2 = probe_ent_getval(ent_itm);
 
-	return SEXP_OVALent_cmp(ent_ste, val2);
+	return probe_ent_cmp(ent_ste, val2);
 }
 
-oval_result_t SEXP_OVALentobj_cmp(SEXP_t *ent_obj, SEXP_t *val)
+oval_result_t probe_entobj_cmp(SEXP_t *ent_obj, SEXP_t *val)
 {
-	return SEXP_OVALent_cmp(ent_obj, val);
+	return probe_ent_cmp(ent_obj, val);
 }
 
 struct _oresults {
@@ -554,13 +554,15 @@ static int results_parser(SEXP_t *res_lst, struct _oresults *ores)
 		case OVAL_RESULT_NOT_APPLICABLE:
 			++(ores->notappl_cnt);
 			break;
+                default:
+                        return -1;
 		}
 	}
 
 	return 0;
 }
 
-oval_result_t SEXP_OVALent_result_bychk(SEXP_t *res_lst, oval_check_t check)
+oval_result_t probe_ent_result_bychk(SEXP_t *res_lst, oval_check_t check)
 {
 	oval_result_t result = OVAL_RESULT_UNKNOWN;
 	struct _oresults ores;
@@ -682,7 +684,7 @@ oval_result_t SEXP_OVALent_result_bychk(SEXP_t *res_lst, oval_check_t check)
 	return result;
 }
 
-oval_result_t SEXP_OVALent_result_byopr(SEXP_t *res_lst, oval_operator_t operator)
+oval_result_t probe_ent_result_byopr(SEXP_t *res_lst, oval_operator_t operator)
 {
 	oval_result_t result = OVAL_RESULT_UNKNOWN;
 	struct _oresults ores;

@@ -263,7 +263,7 @@ static int process_file(const char *path, const char *filename, void *arg)
 		if (next_inst != NULL)
 			SEXP_free(next_inst);
 		next_inst = SEXP_number_newi_32(cur_inst + 1);
-		if (SEXP_OVALentobj_cmp(pfd->instance_ent, next_inst) == OVAL_RESULT_TRUE)
+		if (probe_entobj_cmp(pfd->instance_ent, next_inst) == OVAL_RESULT_TRUE)
 			want_instance = 1;
 		else
 			want_instance = 0;

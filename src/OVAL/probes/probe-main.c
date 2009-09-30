@@ -161,7 +161,7 @@ SEXP_t *SEXP_OVALset_apply_filters(SEXP_t *items, SEXP_t *filters)
 					ielm = probe_obj_getent(item, elm_name, i);
 					if (ielm == NULL)
 						break;
-					ores = SEXP_OVALentste_cmp(felm, ielm);
+					ores = probe_entste_cmp(felm, ielm);
 					SEXP_list_add(elm_res, SEXP_number_newi_32 (ores));
 				}
 
@@ -170,9 +170,8 @@ SEXP_t *SEXP_OVALset_apply_filters(SEXP_t *items, SEXP_t *filters)
 					ochk = OVAL_CHECK_ALL;
 				else
 					ochk = SEXP_number_geti_32 (stmp);
-				ores = SEXP_OVALent_result_bychk(elm_res, ochk);
+				ores = probe_ent_result_bychk(elm_res, ochk);
 				SEXP_list_add(ste_res, SEXP_number_newi_32 (ores));
-				// todo: var_check
 			}
 
 			stmp = probe_ent_getattrval(filter, "operator");
@@ -180,7 +179,7 @@ SEXP_t *SEXP_OVALset_apply_filters(SEXP_t *items, SEXP_t *filters)
 				oopr = OVAL_OPERATOR_AND;
 			else
 				oopr = SEXP_number_geti_32 (stmp);
-			ores = SEXP_OVALent_result_byopr(ste_res, oopr);
+			ores = probe_ent_result_byopr(ste_res, oopr);
 			if (ores == OVAL_RESULT_TRUE) {
 				filtered = 1;
 				break;
