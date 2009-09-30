@@ -17,7 +17,8 @@
  */
 
 SEXP_t *probe_item_build (const char *fmt, ...);
-//SEXP_t *probe_item_creat (const char *name, SEXP_t *attrs, ...);
+
+/* SEXP_t *probe_item_creat (const char *name, SEXP_t *attrs, ...); */
 #define probe_item_creat(name, attrs, ...) probe_obj_creat (name, attrs, __VA_ARGS__)
 
 SEXP_t *probe_item_new   (const char *name, SEXP_t *attrs);

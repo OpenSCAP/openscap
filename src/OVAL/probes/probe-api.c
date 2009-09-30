@@ -101,8 +101,13 @@ SEXP_t *probe_item_attr_add (SEXP_t *item, const char *name, SEXP_t *val)
 
 SEXP_t *probe_item_ent_add (SEXP_t *item, const char *name, SEXP_t *attrs, SEXP_t *val)
 {
-        /* TBI */
-        return (NULL);
+        SEXP_t *ent;
+        
+        ent = probe_ent_creat (name, attrs, val, NULL);
+        SEXP_list_add (item, ent);
+        SEXP_free (ent);
+        
+        return (item);
 }
 
 int probe_item_setstatus (SEXP_t *obj, oval_syschar_status_t status)
@@ -300,13 +305,84 @@ int probe_obj_getentvals (const SEXP_t *obj, const char *name, uint32_t n, SEXP_
 
 SEXP_t *probe_obj_getattrval (const SEXP_t *obj, const char *name)
 {
-        /* TBI */
+        SEXP_t *obj_name;
+        char    name_buf[64+1];
+        size_t  name_len;
+
+        obj_name = SEXP_listref_first (obj);
+        name_len = snprintf (name_buf, sizeof name_buf, ":%s", name);
+
+        _D("an=%s\n", name_buf);
+        
+        _A(name_len < sizeof name_len);
+        
+        if (SEXP_listp (obj_name)) {
+                uint32_t i;
+                SEXP_t  *attr;
+                
+                i = 2;
+                
+                while ((attr = SEXP_listref_nth (obj_name, i)) != NULL) {
+                        if (SEXP_stringp (attr)) {
+                                if (SEXP_string_nth (attr, 1) == ':') {
+                                        if (SEXP_strcmp (attr, name_buf) == 0) {
+                                                SEXP_t *val;
+                                                
+                                                val = SEXP_list_nth (obj_name, i + 1);
+                                                SEXP_free (attr);
+                                                SEXP_free (obj_name);
+                                                
+                                                return (val);
+                                        }
+                                        
+                                        ++i;
+                                }
+                                
+                                ++i;
+                        }
+                        
+                        SEXP_free (attr);
+                }
+        }
+        
         return (NULL);
 }
 
 bool probe_obj_attrexists (const SEXP_t *obj, const char *name)
 {
-        /* TBI */
+        SEXP_t *obj_name;
+        char    name_buf[64+1];
+        size_t  name_len;
+
+        obj_name = SEXP_listref_first (obj);
+        name_len = snprintf (name_buf, sizeof name_buf, ":%s", name);
+
+        _A(name_len < sizeof name_len);
+        
+        if (SEXP_listp (obj_name)) {
+                uint32_t i;
+                SEXP_t  *attr;
+                
+                i = 2;
+                
+                while ((attr = SEXP_listref_nth (obj_name, i)) != NULL) {
+                        if (SEXP_stringp (attr)) {
+                                if (SEXP_string_nth (attr, 1) == ':') {
+                                        if (SEXP_strcmp (attr, name_buf) == 0) {
+                                                SEXP_free (attr);
+                                                SEXP_free (obj_name);
+                                                
+                                                return (true);
+                                        }
+                                        ++i;
+                                }
+                                ++i;
+                        }
+                        
+                        SEXP_free (attr);
+                }
+        }
+        
         return (false);
 }
 
@@ -394,8 +470,7 @@ SEXP_t *probe_ent_getattrval (const SEXP_t *ent, const char *name)
 
 bool probe_ent_attrexists (const SEXP_t *ent, const char *name)
 {
-        /* TBI */
-        return (false);
+        return probe_obj_attrexists (ent, name);
 }
 
 int probe_ent_setdatatype (SEXP_t *ent, oval_datatype_t type)

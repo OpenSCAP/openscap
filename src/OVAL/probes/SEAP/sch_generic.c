@@ -69,7 +69,7 @@ ssize_t sch_generic_sendsexp (SEAP_desc_t *desc, SEXP_t *sexp, uint32_t flags)
         if (SEXP_sbprintf_t (sexp, sb) != 0)
                 ret = -1;
         else
-                ret = strbuf_write (sb, DATA(desc)->ofd);
+                ret = strbuf_write (sb, DATA(desc->scheme_data)->ofd);
         
         strbuf_free (sb);
                 
