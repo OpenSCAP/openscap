@@ -62,6 +62,12 @@ void test_langexpr_dump(cpe_lang_expr_t * expr, int depth)
 }
 */
 
+void test_platformspec_export(struct cpe_platformspec * res){
+
+    (void) cpe_platformspec_export( res, "test_cpelang.out");
+    fprintf(stdout, "Result saved in test_cpelang.out file");
+}
+
 #ifndef CPELANG_TEST_NO_MAIN
 
 
@@ -96,6 +102,8 @@ int main(int argc, char **argv)
 			printf("    = %sMATCH\n\n", cpe_platform_match_cpe(cpes, cpes_n, p) ? "" : "MIS");
 		)
 	}
+        //printf("RES_PREFIX:%s", plat->ns_prefix);
+        test_platformspec_export( plat );
 	// free resources allocated for platform specification
 	cpe_platformspec_free(plat);
 	if (plat == NULL) return EXIT_FAILURE;

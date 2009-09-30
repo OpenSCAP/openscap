@@ -42,6 +42,8 @@ struct cpe_lang_expr {
 };
 
 struct cpe_platformspec {
+        char *ns_href;
+        char *ns_prefix;
 	struct oscap_list* items;   // list of items
 	struct oscap_htable* item;  // item by ID
 };
@@ -59,7 +61,7 @@ struct cpe_platform {
  * @return new platform specification list
  * @retval NULL on failure
  */
-struct cpe_platformspec *cpe_platformspec_new_xml(xmlNodePtr root);
+struct cpe_platformspec *cpe_platformspec_new_xml(xmlDocPtr doc, xmlNodePtr root);
 
 /*
  * New platform form XML node
@@ -111,7 +113,7 @@ struct cpe_platformspec *cpe_platformspec_new(const char *fname)
 	if ((root = xmlDocGetRootElement(doc)) == NULL)
 		return NULL;
 
-	ret = cpe_platformspec_new_xml(root);
+	ret = cpe_platformspec_new_xml(doc, root);
 
 	xmlFreeDoc(doc);
 
@@ -134,19 +136,36 @@ struct cpe_platformspec *cpe_platformspec_new_empty()
 	return res;
 }
 
-struct cpe_platformspec *cpe_platformspec_new_xml(xmlNodePtr root)
+struct cpe_platformspec *cpe_platformspec_new_xml(xmlDocPtr doc, xmlNodePtr root)
 {
 	xmlNodePtr cur;
+        xmlNsPtr xmlns;
 	struct cpe_platformspec *res;
 	struct cpe_platform *plat;
 
 	if (xmlStrcmp(root->name, BAD_CAST "platform-specification") != 0)
 		return NULL;
 
+        xmlns = xmlSearchNs(doc, root, BAD_CAST "cpe");
+        if (xmlns == NULL)
+                return NULL;
+
 	res = cpe_platformspec_new_empty();
 	if (res == NULL)
 		return NULL;
 
+        // fill namespace href
+	res->ns_href = malloc(strlen((xmlns->href)+1));
+        if (res->ns_href == NULL)
+                return NULL;
+        strcpy(res->ns_href, (char *) xmlns->href);
+
+        // fill namespace prefix
+	res->ns_prefix = malloc(strlen(xmlns->prefix)+1);
+        if (res->ns_prefix == NULL)
+                return NULL;
+        strcpy(res->ns_prefix, (char *) xmlns->prefix);
+        
 	for (cur = root->xmlChildrenNode; cur != NULL; cur = cur->next) {
 		if (!(plat = cpe_platform_new_xml(cur)))
 			continue;
@@ -348,6 +367,111 @@ void cpe_langexpr_free(struct cpe_lang_expr * expr)
 	}
 
 	expr->oper = 0;
+}
+
+/**
+ * Private function which is called in dumping model function "cpe_platform_export" to recursively
+ * export lang expressions.
+ * @relates cpe_platform
+ * @param expr lang expression structure
+ * @param root_node node in xml model that will be lang expr dumped in
+ * @param xmlns xml name space of root node
+ */
+void cpe_langexpr_export( struct cpe_lang_expr expr, xmlNodePtr root_node, xmlNsPtr xmlns) {
+
+        if (expr.oper == CPE_LANG_OPER_HALT)
+            return;
+
+        xmlNodePtr node = NULL;
+        if (expr.oper == CPE_LANG_OPER_MATCH) {
+                node = xmlNewChild(root_node, xmlns, BAD_CAST "fact-ref", NULL);
+                xmlNewProp(node, BAD_CAST "name", BAD_CAST cpe_name_get_uri(expr.meta.cpe));
+                return;
+        } else {
+                node = xmlNewChild(root_node, xmlns, BAD_CAST "logical-test", NULL);
+        }
+        if (expr.oper == CPE_LANG_OPER_AND) {
+                xmlNewProp(node, BAD_CAST "operator", BAD_CAST "AND");
+                xmlNewProp(node, BAD_CAST "negate", BAD_CAST "FALSE");
+        } else if (expr.oper == CPE_LANG_OPER_OR) {
+                xmlNewProp(node, BAD_CAST "operator", BAD_CAST "OR");
+                xmlNewProp(node, BAD_CAST "negate", BAD_CAST "FALSE");
+        } else if (expr.oper == CPE_LANG_OPER_NOR) {
+                xmlNewProp(node, BAD_CAST "operator", BAD_CAST "OR");
+                xmlNewProp(node, BAD_CAST "negate", BAD_CAST "TRUE");
+        } else if (expr.oper == CPE_LANG_OPER_NAND) {
+                xmlNewProp(node, BAD_CAST "operator", BAD_CAST "AND");
+                xmlNewProp(node, BAD_CAST "negate", BAD_CAST "TRUE");
+        } else {
+            // CPE_LANG_OPER_MATCH or raise exception ! We are dumped !
+        }
+
+        int i = 0;
+        while (expr.meta.expr[i].oper != CPE_LANG_OPER_HALT){
+            //printf("%s\n", expr.meta.expr[i].oper);
+            cpe_langexpr_export(expr.meta.expr[i], node, xmlns);
+            ++i;
+        }
+    
+}
+
+
+/**
+ * Private function which is called in dumping model function "cpe_platformspec_export" to recursively
+ * export platforms.
+ * @relates cpe_platform
+ * @param p pointer to cpe_platform structure for dumping to XML
+ * @param root_node node in xml model that will be platform dumped in
+ * @param xmlns xml name space of root node
+ */
+void cpe_platform_export( struct cpe_platform * p, xmlNodePtr root_node, xmlNsPtr xmlns) {
+
+        xmlNodePtr node = NULL;
+        xmlNodePtr title_node = NULL;
+        node = xmlNewChild(root_node, xmlns, BAD_CAST "platform", NULL); 
+        if (cpe_platform_get_id(p) != NULL) 
+                xmlNewProp(node, BAD_CAST "id", BAD_CAST cpe_platform_get_id(p));
+        if (cpe_platform_get_title(p) != NULL)
+                title_node = xmlNewChild(node, xmlns, BAD_CAST "title", BAD_CAST cpe_platform_get_title(p) ); 
+        
+        cpe_langexpr_export(p->expr, node, xmlns);
+}
+
+
+bool cpe_platformspec_export(const struct cpe_platformspec * res, const char * fname) {
+
+
+        if (res == NULL)
+                return false;
+
+        xmlDocPtr   doc         = NULL;             // document pointer
+        xmlNodePtr  root_node   = NULL;             // root node pointer
+        xmlNsPtr    xmlns       = NULL;             // xml namespace nodea
+
+        doc = xmlNewDoc(BAD_CAST "1.0");
+        root_node = xmlNewNode(NULL, BAD_CAST "platform-specification");
+        xmlns = xmlNewNs(root_node, BAD_CAST res->ns_href, BAD_CAST res->ns_prefix);
+        root_node->ns = xmlns;
+        xmlDocSetRootElement(doc, root_node);
+
+        if (res->items == NULL) {
+            xmlFreeDoc(doc);
+            return NULL;
+        }
+
+	if (res != NULL) {
+		OSCAP_FOREACH (cpe_platform, p, cpe_platformspec_get_items(res),
+			// dump its contents to XML tree
+                        cpe_platform_export( p, root_node, xmlns );
+		)
+	}
+
+        fflush(stdout);
+        xmlSaveFormatFileEnc(fname, doc, "UTF-8", 1);
+
+        xmlFreeDoc(doc);
+
+        return true;
 }
 
 OSCAP_GETTER(const char*, cpe_platform, id)

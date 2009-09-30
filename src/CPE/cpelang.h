@@ -144,6 +144,14 @@ const char* cpe_platform_get_title(const struct cpe_platform* platform);
  */
 const char* cpe_platform_get_remark(const struct cpe_platform* platform);
 
+/**
+ * Push cpe model to file.
+ * @relates cpe_platform
+ * @param res platformspec representing model of xml file
+ * @param fname name of file for writing the model in
+ */
+bool cpe_platformspec_export(const struct cpe_platformspec * res, const char * fname);
+
 #endif				/* _CPELANG_H_ */
 
 
