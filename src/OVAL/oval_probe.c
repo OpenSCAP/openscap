@@ -335,6 +335,8 @@ SEXP_t *oval_object_to_sexp (const char *typestr, struct oval_object *object)
 
         cit = oval_object_get_object_content (object);
         while (oval_object_content_iterator_has_more (cit)) {
+                oval_check_t ochk;
+
                 content = oval_object_content_iterator_next (cit);
                 elm = NULL;
 
@@ -342,6 +344,12 @@ SEXP_t *oval_object_to_sexp (const char *typestr, struct oval_object *object)
                 case OVAL_OBJECTCONTENT_ENTITY:
 
                         elm = oval_entity_to_sexp (oval_object_content_get_entity (content));
+
+                        ochk = oval_object_content_get_varCheck(content);
+                        if (ochk != OVAL_CHECK_UNKNOWN) {
+                                probe_ent_attr_add(elm, "var_check",
+                                                   SEXP_string_newf(oval_check_get_text(ochk)));
+                        }
                         break;
                 case OVAL_OBJECTCONTENT_SET:
 
@@ -408,10 +416,24 @@ SEXP_t *oval_state_to_sexp (struct oval_state *state)
         }
         */
         while(oval_state_content_iterator_has_more(contents)){
+                oval_check_t ochk;
         	struct oval_state_content *content = oval_state_content_iterator_next(contents);
-        	//Note that content includes entity and variable check constraints
-            ste_ent = oval_entity_to_sexp (oval_state_content_get_entity(content));
-            SEXP_list_add (ste, ste_ent);
+
+                ste_ent = oval_entity_to_sexp (oval_state_content_get_entity(content));
+
+                ochk = oval_state_content_get_var_check(content);
+                if (ochk != OVAL_CHECK_UNKNOWN) {
+                        probe_ent_attr_add(ste_ent, "var_check",
+                                           SEXP_string_newf(oval_check_get_text(ochk)));
+                }
+
+                ochk = oval_state_content_get_ent_check(content);
+                if (ochk != OVAL_CHECK_UNKNOWN) {
+                        probe_ent_attr_add(ste_ent, "entity_check",
+                                           SEXP_string_newf(oval_check_get_text(ochk)));
+                }
+
+                SEXP_list_add (ste, ste_ent);
         }
         oval_state_content_iterator_free(contents);
 
