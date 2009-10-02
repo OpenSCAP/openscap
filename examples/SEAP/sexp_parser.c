@@ -43,6 +43,9 @@ int main (int argc, char *argv[])
 
         if (argc == 1) {
                 while (!feof (stdin)) {
+                        input = NULL;
+                        inlen = 0;
+
 #if defined(__FreeBSD__)
                         input = fgetln (stdin, &inlen);
 #elif defined(__linux__)
@@ -57,6 +60,8 @@ int main (int argc, char *argv[])
                                 print_sexp (s_exp);
                                 SEXP_free (s_exp);
                         }
+                        
+                        /* FIXME: getline/fgetln leak */
                 }
         } else {
                 int i;
