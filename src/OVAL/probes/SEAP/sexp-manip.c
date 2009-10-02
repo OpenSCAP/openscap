@@ -770,12 +770,54 @@ SEXP_t *SEXP_listref_first (const SEXP_t *list)
 
 SEXP_t *SEXP_list_rest  (const SEXP_t *list)
 {
-        errno = EOPNOTSUPP;
-        return (NULL);
+        SEXP_t    *rest;
+        SEXP_val_t v_dsc_o, v_dsc_r;
+        struct SEXP_val_lblk *lblk;
+        
+        _LOGCALL_;
+
+        if (list == NULL) {
+                errno = EINVAL;
+                return (NULL);
+        }
+        
+        SEXP_val_dsc (&v_dsc_o, list->s_valp);
+        
+        if (v_dsc_o.type != SEXP_VALTYPE_LIST) {
+                errno = EINVAL;
+                return (NULL);
+        }
+        
+        if (SEXP_val_new (&v_dsc_r, sizeof (void *) + sizeof (uint16_t),
+                          SEXP_VALTYPE_LIST) != 0)
+        {
+                /* TODO: handle this */
+                return (NULL);
+        }
+
+        SEXP_LCASTP(v_dsc_r.mem)->offset = SEXP_LCASTP(v_dsc_o.mem)->offset + 1;
+        SEXP_LCASTP(v_dsc_r.mem)->b_addr = SEXP_LCASTP(v_dsc_o.mem)->b_addr;
+        
+        lblk = SEXP_VALP_LBLK(SEXP_LCASTP(v_dsc_r.mem)->b_addr);
+        
+        if (lblk != NULL) {
+                if (SEXP_LCASTP(v_dsc_r.mem)->offset == lblk->real) {
+                        SEXP_LCASTP(v_dsc_r.mem)->offset = 0;
+                        SEXP_LCASTP(v_dsc_r.mem)->b_addr = SEXP_VALP_LBLK(lblk->nxsz);
+                }
+                
+                SEXP_rawval_lblk_incref ((uintptr_t) SEXP_LCASTP(v_dsc_r.mem)->b_addr);
+        }
+        
+        rest = SEXP_new ();
+        rest->s_valp = SEXP_val_ptr (&v_dsc_r);
+        
+        return (rest);
 }
 
 SEXP_t *SEXP_listref_rest (const SEXP_t *list)
 {
+        _LOGCALL_;
         return (NULL);
 }
 
@@ -785,6 +827,8 @@ SEXP_t *SEXP_list_last (const SEXP_t *list)
         uint32_t   l_len;
         struct SEXP_val_lblk *l_blk;
         
+        _LOGCALL_;
+
         if (list == NULL) {
                 errno = EFAULT;
                 return (NULL);
@@ -809,6 +853,8 @@ SEXP_t *SEXP_list_replace (SEXP_t *list, uint32_t n, SEXP_t *n_val)
 {
         SEXP_val_t v_dsc;
         SEXP_t    *o_val;
+
+        _LOGCALL_;
 
         if (list == NULL || n_val == NULL || n < 1) {
                 errno = EFAULT;
@@ -838,6 +884,7 @@ SEXP_t *SEXP_list_replace (SEXP_t *list, uint32_t n, SEXP_t *n_val)
 
 SEXP_t *SEXP_listref_last (const SEXP_t *list)
 {
+        _LOGCALL_;
         return (NULL);
 }
 
@@ -846,6 +893,8 @@ SEXP_t *SEXP_list_nth (const SEXP_t *list, uint32_t n)
         SEXP_val_t v_dsc;
         uint32_t   l_len;
         SEXP_t    *s_exp;
+
+        _LOGCALL_;
 
         if (list == NULL) {
                 errno = EFAULT;
