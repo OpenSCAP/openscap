@@ -118,6 +118,28 @@ int main (void)
         printf ("l=%u\n", SEXP_list_length (list));
         
         SEXP_free (list);
+
+        i1   = SEXP_string_newf ("abc");
+        i2   = SEXP_string_newf ("def");
+        list = SEXP_list_new (i1, i2, NULL);
+        
+        SEXP_fprintfa (stdout, list);
+        fputc ('\n', stdout);
+        
+        {
+                SEXP_t *r;
+
+                r = SEXP_list_rest (list);
+                
+                SEXP_fprintfa (stdout, r);
+                fputc ('\n', stdout);
+                
+                SEXP_free (r);
+        }
+        
+        SEXP_free (i1);
+        SEXP_free (i2);
+        SEXP_free (list);
         
         return (0);
 }
