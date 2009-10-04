@@ -58,6 +58,9 @@ bool    probe_obj_attrexists (const SEXP_t *obj, const char *name);
 int probe_obj_setstatus (SEXP_t *obj, oval_syschar_status_t status);
 int probe_objent_setstatus (SEXP_t *obj, const char *name, uint32_t n, oval_syschar_status_t status);
 
+char  *probe_obj_getname   (const SEXP_t *obj);
+size_t probe_obj_getname_r (const SEXP_t *obj, char *buffer, size_t buflen);
+
 /*
  * entities
  */
@@ -81,8 +84,10 @@ bool probe_ent_getmask (const SEXP_t *ent);
 int probe_ent_setstatus (SEXP_t *ent, oval_syschar_status_t status);
 oval_syschar_status_t probe_ent_getstatus (const SEXP_t *ent);
 
-char *probe_ent_getname   (const SEXP_t *ent);
-char *probe_ent_getname_r (const SEXP_t *ent, char *buffer, size_t buflen);
+char  *probe_ent_getname   (const SEXP_t *ent);
+size_t probe_ent_getname_r (const SEXP_t *ent, char *buffer, size_t buflen);
+
+void probe_free (SEXP_t *obj);
 
 #define PROBE_EINVAL     1 /* Invalid type/value/format */
 #define PROBE_ENOELM     2 /* Missing element */

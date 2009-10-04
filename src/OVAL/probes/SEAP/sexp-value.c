@@ -70,6 +70,11 @@ int SEXP_rawval_decref (uintptr_t valp)
 #endif
 }
 
+SEXP_numtype_t SEXP_rawval_number_type (SEXP_val_t *dsc)
+{
+        return SEXP_NTYPEP(dsc->hdr->size, dsc->mem);
+}
+
 size_t SEXP_rawval_list_length (struct SEXP_val_list *list)
 {
         size_t length;
@@ -429,6 +434,10 @@ uintptr_t SEXP_rawval_list_copy (uintptr_t lblkp, uint16_t n_skip)
                          * move to the next old block
                          */
                         lb_old = SEXP_VALP_LBLK(lb_old->nxsz);
+                        
+                        if (lb_old == NULL)
+                                break;
+                        
                         off_o  = 0;
                 }
                 

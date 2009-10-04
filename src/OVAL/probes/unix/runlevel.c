@@ -268,7 +268,7 @@ SEXP_t *probe_main (SEXP_t *object, int *err, void *arg)
         struct runlevel_req request_st;
         struct runlevel_rep reply_st;
         
-        val = probe_obj_getent (object, "service_name", 1);
+        val = probe_obj_getentval (object, "service_name", 1);
         
         if (val == NULL) {
                 _D("%s: no value\n", "service_name");

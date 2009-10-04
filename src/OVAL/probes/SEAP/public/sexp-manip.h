@@ -13,8 +13,9 @@
 
 SEXP_t *SEXP_number_new (SEXP_numtype_t t, const void *n);
 SEXP_t *SEXP_number_newb (bool n);
-SEXP_t *SEXP_number_newi_8  (int8_t n);
-SEXP_t *SEXP_number_newu_8  (uint8_t n);
+SEXP_t *SEXP_number_newi_8 (int8_t n);
+SEXP_t *SEXP_number_newu_8 (uint8_t n);
+uint8_t SEXP_number_getu_8 (const SEXP_t *s_exp);
 SEXP_t *SEXP_number_newi_16 (int16_t n);
 SEXP_t *SEXP_number_newu_16 (uint16_t n);
 #define SEXP_number_newi SEXP_number_newi_32
@@ -101,7 +102,7 @@ void       SEXP_listit_free (SEXP_it_t *it);
 /* TODO: use alloca & softref_r here */
 
 #define SEXP_list_foreach(var, list)                                    \
-        for (uint32_t __XC(i,__LINE__) = 0; ((var) = SEXP_list_nth (list, __XC(i,__LINE__))) != NULL; ++__XC(i,__LINE__), SEXP_free (var))
+        for (uint32_t __XC(i,__LINE__) = 1; ((var) = SEXP_list_nth (list, __XC(i,__LINE__))) != NULL; ++__XC(i,__LINE__), SEXP_free (var))
 
 #define SEXP_sublist_foreach(var, list, beg, end)                       \
         for (uint32_t __XC(i,__LINE__) = (beg); ((var) = SEXP_list_nth (list, __XC(i,__LINE__))) != NULL && __XC(i,__LINE__) <= (end); ++__XC(i,__LINE__), SEXP_free (var))

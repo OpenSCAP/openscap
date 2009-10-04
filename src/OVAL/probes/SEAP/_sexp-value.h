@@ -40,7 +40,9 @@ int       SEXP_rawval_decref (uintptr_t valp);
 
 #define SEXP_DEFNUM(s,T)   struct SEXP_val_num_##s { T n; SEXP_numtype_t t; } __attribute__ ((packed))
 #define SEXP_NCASTP(s,p) ((struct SEXP_val_num_##s *)(p))
-#define SEXP_NTYPEP(s,p) *((SEXP_numtype_t *)(((uint8_t *)(p)) + (s) - sizeof (SEXP_numtype_t)))
+#define SEXP_NTYPEP(sz,p) *((SEXP_numtype_t *)(((uint8_t *)(p)) + (sz) - sizeof (SEXP_numtype_t)))
+
+SEXP_numtype_t SEXP_rawval_number_type (SEXP_val_t *dsc);
 
 SEXP_DEFNUM(b, bool);
 SEXP_DEFNUM(f, double);

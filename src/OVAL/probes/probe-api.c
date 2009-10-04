@@ -33,6 +33,7 @@ attribute name signals that this attribute has a value.
 
 SEXP_t *probe_item_build (const char *fmt, ...)
 {
+        _LOGCALL_;
         /* TBI */
         return (NULL);
 }
@@ -46,6 +47,7 @@ SEXP_t *probe_item_build (const char *fmt, ...)
 
 SEXP_t *probe_item_new (const char *name, SEXP_t *attrs)
 {
+        _LOGCALL_;
         /*
          * Objects have the same structure as items.
          */
@@ -56,6 +58,8 @@ SEXP_t *probe_item_attr_add (SEXP_t *item, const char *name, SEXP_t *val)
 {
         SEXP_t *n_ref, *ns;
         
+        _LOGCALL_;
+
         n_ref = SEXP_listref_first (item);
         
         if (SEXP_listp (n_ref)) {
@@ -102,6 +106,8 @@ SEXP_t *probe_item_attr_add (SEXP_t *item, const char *name, SEXP_t *val)
 SEXP_t *probe_item_ent_add (SEXP_t *item, const char *name, SEXP_t *attrs, SEXP_t *val)
 {
         SEXP_t *ent;
+
+        _LOGCALL_;
         
         ent = probe_ent_creat (name, attrs, val, NULL);
         SEXP_list_add (item, ent);
@@ -113,13 +119,15 @@ SEXP_t *probe_item_ent_add (SEXP_t *item, const char *name, SEXP_t *attrs, SEXP_
 int probe_item_setstatus (SEXP_t *obj, oval_syschar_status_t status)
 {
         _A(obj != NULL);
-        
+        _LOGCALL_;
+
         probe_item_attr_add (obj, "status", SEXP_number_newi_32 (status));
         return (0);
 }
 
 int probe_itement_setstatus (SEXP_t *obj, const char *name, uint32_t n, oval_syschar_status_t status)
 {
+        _LOGCALL_;
         /* TBI */
         return (-1);
 }
@@ -155,6 +163,8 @@ SEXP_t *probe_attr_creat (const char *name, const SEXP_t *val, ...)
         va_list ap;
         SEXP_t *list, *ns;
         
+        _LOGCALL_;
+
         va_start (ap, val);
         list = SEXP_list_new (NULL);
         
@@ -185,6 +195,7 @@ SEXP_t *probe_attr_creat (const char *name, const SEXP_t *val, ...)
 
 SEXP_t *probe_obj_build (const char *fmt, ...)
 {
+        _LOGCALL_;
         /* TBI */
         return (NULL);
 }
@@ -194,6 +205,10 @@ SEXP_t *probe_obj_creat (const char *name, SEXP_t *attrs, ...)
         va_list ap;
         SEXP_t *obj, *ns, *val, *ent;
 
+        _LOGCALL_;
+
+        va_start (ap, attrs);
+        
         obj  = probe_obj_new (name, attrs);
         name = va_arg (ap, const char *);
         
@@ -207,7 +222,7 @@ SEXP_t *probe_obj_creat (const char *name, SEXP_t *attrs, ...)
                 if (attrs != NULL) {
                         SEXP_t *nl;
 
-                        nl = SEXP_list_new (ns);
+                        nl = SEXP_list_new (ns, NULL);
                         nl = SEXP_list_join (nl, attrs);
                         
                         SEXP_list_add (ent, nl);
@@ -216,24 +231,29 @@ SEXP_t *probe_obj_creat (const char *name, SEXP_t *attrs, ...)
                         SEXP_list_add (ent, ns);
 
                 SEXP_free (ns);
+                
                 SEXP_list_add (ent, val);
                 SEXP_list_add (obj, ent);
-        }
 
+                name = va_arg (ap, const char *);
+        }
+        
         return (obj);
 }
 
 SEXP_t *probe_obj_new (const char *name, SEXP_t *attrs)
 {
         SEXP_t *obj, *ns;
-        
+
+        _LOGCALL_;
+
         obj = SEXP_list_new (NULL);
         ns  = SEXP_string_new (name, strlen (name));
         
         if (attrs != NULL) {
                 SEXP_t *nl;
                 
-                nl = SEXP_list_new (ns);
+                nl = SEXP_list_new (ns, NULL);
                 nl = SEXP_list_join (nl, attrs);
                 
                 SEXP_list_add (obj, nl);
@@ -253,7 +273,9 @@ SEXP_t *probe_obj_getent (const SEXP_t *obj, const char *name, uint32_t n)
         _A(obj  != NULL);
         _A(name != NULL);
         _A(n > 0);
+        _LOGCALL_;
         
+        ent     = NULL;
         objents = SEXP_list_rest (obj);
         
         SEXP_list_foreach (ent, objents) {
@@ -282,6 +304,8 @@ SEXP_t *probe_obj_getentval  (const SEXP_t *obj, const char *name, uint32_t n)
 {
         SEXP_t *ent, *val;
         
+        _LOGCALL_;
+
         ent = probe_obj_getent (obj, name, n);
         val = probe_ent_getval (ent);
         
@@ -294,6 +318,8 @@ int probe_obj_getentvals (const SEXP_t *obj, const char *name, uint32_t n, SEXP_
 {
         SEXP_t *ent;
         int     ret;
+
+        _LOGCALL_;
 
         ent = probe_obj_getent (obj, name, n);
         ret = probe_ent_getvals (ent, res);
@@ -309,12 +335,14 @@ SEXP_t *probe_obj_getattrval (const SEXP_t *obj, const char *name)
         char    name_buf[64+1];
         size_t  name_len;
 
+        _LOGCALL_;
+
         obj_name = SEXP_listref_first (obj);
         name_len = snprintf (name_buf, sizeof name_buf, ":%s", name);
 
         _D("an=%s\n", name_buf);
         
-        _A(name_len < sizeof name_len);
+        _A(name_len < sizeof name_buf);
         
         if (SEXP_listp (obj_name)) {
                 uint32_t i;
@@ -357,7 +385,7 @@ bool probe_obj_attrexists (const SEXP_t *obj, const char *name)
         obj_name = SEXP_listref_first (obj);
         name_len = snprintf (name_buf, sizeof name_buf, ":%s", name);
 
-        _A(name_len < sizeof name_len);
+        _A(name_len < sizeof name_buf);
         
         if (SEXP_listp (obj_name)) {
                 uint32_t i;
@@ -388,14 +416,26 @@ bool probe_obj_attrexists (const SEXP_t *obj, const char *name)
 
 int probe_obj_setstatus (SEXP_t *obj, oval_syschar_status_t status)
 {
+        _LOGCALL_;
         /* TBI */
         return (-1);
 }
 
 int probe_obj_setentstatus (SEXP_t *obj, const char *name, uint32_t n, oval_syschar_status_t status)
 {
+        _LOGCALL_;
         /* TBI */
         return (-1);
+}
+
+char *probe_obj_getname (const SEXP_t *obj)
+{
+        return probe_ent_getname (obj);
+}
+
+size_t probe_obj_getname_r (const SEXP_t *obj, char *buffer, size_t buflen)
+{
+        return probe_ent_getname_r (obj, buffer, buflen);
 }
 
 /*
@@ -404,30 +444,36 @@ int probe_obj_setentstatus (SEXP_t *obj, const char *name, uint32_t n, oval_sysc
 
 SEXP_t *probe_ent_creat (const char *name, SEXP_t *attrs, ...)
 {
+        _LOGCALL_;
         /* TBI */
         return (NULL);
 }
 
 SEXP_t *probe_ent_attr_add (SEXP_t *ent, const char *name, SEXP_t *val)
 {
+        _LOGCALL_;
         /* TBI */
         return (NULL);
 }
 
 int probe_ent_getvals (const SEXP_t *ent, SEXP_t **res)
 {
+        _LOGCALL_;
         (*res) = SEXP_list_rest (ent);
         return (SEXP_list_length (*res));
 }
 
 SEXP_t *probe_ent_getval (const SEXP_t *ent)
 {
+        _LOGCALL_;
         return (SEXP_list_nth (ent, 2));
 }
 
 SEXP_t *probe_ent_getattrval (const SEXP_t *ent, const char *name)
 {
         SEXP_t *attrs;
+
+        _LOGCALL_;
 
         if (ent == NULL) {
                 errno = EFAULT;
@@ -470,6 +516,7 @@ SEXP_t *probe_ent_getattrval (const SEXP_t *ent, const char *name)
 
 bool probe_ent_attrexists (const SEXP_t *ent, const char *name)
 {
+        _LOGCALL_;
         return probe_obj_attrexists (ent, name);
 }
 
@@ -478,6 +525,7 @@ int probe_ent_setdatatype (SEXP_t *ent, oval_datatype_t type)
         SEXP_t *val;
         
         _A(ent != NULL);
+        _LOGCALL_;
 
         val = probe_ent_getval (ent);
         
@@ -518,6 +566,7 @@ oval_datatype_t probe_ent_getdatatype (const SEXP_t *ent)
         const char *str;
         
         _A(ent != NULL);
+        _LOGCALL_;
 
         val = probe_ent_getval (ent);
 
@@ -568,24 +617,28 @@ oval_datatype_t probe_ent_getdatatype (const SEXP_t *ent)
 
 int probe_ent_setmask (SEXP_t *ent, bool mask)
 {
+        _LOGCALL_;
         /* TBI */
         return (-1);
 }
 
 bool probe_ent_getmask (const SEXP_t *ent)
 {
+        _LOGCALL_;
         /* TBI */
         return (false);
 }
 
 int probe_ent_setstatus (SEXP_t *ent, oval_syschar_status_t status)
 {
+        _LOGCALL_;
         /* TBI */
         return (-1);
 }
 
 oval_syschar_status_t probe_ent_getstatus (const SEXP_t *ent)
 {
+        _LOGCALL_;
         /* TBI */
         return (-1);
 }
@@ -595,6 +648,8 @@ char *probe_ent_getname (const SEXP_t *ent)
         SEXP_t *ent_name;
         char   *name_str;
         
+        _LOGCALL_;
+
         if (ent == NULL) {
                 errno = EFAULT;
                 return (NULL);
@@ -634,9 +689,53 @@ char *probe_ent_getname (const SEXP_t *ent)
         return (name_str);
 }
 
-char *probe_ent_getname_r (const SEXP_t *ent, char *buffer, size_t buflen)
+size_t probe_ent_getname_r (const SEXP_t *ent, char *buffer, size_t buflen)
 {
-        /* TBI */
-        abort ();
-        return (NULL);
+        SEXP_t *ent_name;
+        size_t  name_len;
+        
+        _LOGCALL_;
+
+        if (ent == NULL) {
+                errno = EFAULT;
+                return (NULL);
+        }
+
+        name_len = 0;        
+        ent_name = SEXP_list_first (ent);
+
+        if (ent_name == NULL) {
+                errno = EINVAL;
+                return (NULL);
+        }
+
+        switch (SEXP_typeof (ent_name)) {
+        case SEXP_TYPE_LIST:
+        {
+                SEXP_t *tmp;
+                
+                tmp = SEXP_list_first (ent_name);
+                SEXP_free (ent_name);
+                ent_name = tmp;
+                
+                if (!SEXP_stringp (ent_name)) {
+                        errno = EINVAL;
+                        break;
+                }
+        }
+        case SEXP_TYPE_STRING:
+                if (SEXP_string_length (ent_name) > 0)
+                        name_len = SEXP_string_cstr_r (ent_name, buffer, buflen);
+                else
+                        errno = EINVAL;
+        }
+        
+        SEXP_free (ent_name);
+
+        return (name_len);
+}
+
+void probe_free (SEXP_t *obj)
+{
+        SEXP_free (obj);
 }
