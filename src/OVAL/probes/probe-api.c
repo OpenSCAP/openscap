@@ -220,13 +220,14 @@ SEXP_t *probe_obj_creat (const char *name, SEXP_t *attrs, ...)
                 ent = SEXP_list_new (NULL);
                 
                 if (attrs != NULL) {
-                        SEXP_t *nl;
+                        SEXP_t *nl, *nj;
 
                         nl = SEXP_list_new (ns, NULL);
-                        nl = SEXP_list_join (nl, attrs);
-                        
-                        SEXP_list_add (ent, nl);
+                        nj = SEXP_list_join (nl, attrs);
+                                        
+                        SEXP_list_add (ent, nj);
                         SEXP_free (nl);
+                        SEXP_free (nj);
                 } else
                         SEXP_list_add (ent, ns);
 
@@ -698,7 +699,7 @@ size_t probe_ent_getname_r (const SEXP_t *ent, char *buffer, size_t buflen)
 
         if (ent == NULL) {
                 errno = EFAULT;
-                return (NULL);
+                return (0);
         }
 
         name_len = 0;        
@@ -706,7 +707,7 @@ size_t probe_ent_getname_r (const SEXP_t *ent, char *buffer, size_t buflen)
 
         if (ent_name == NULL) {
                 errno = EINVAL;
-                return (NULL);
+                return (0);
         }
 
         switch (SEXP_typeof (ent_name)) {

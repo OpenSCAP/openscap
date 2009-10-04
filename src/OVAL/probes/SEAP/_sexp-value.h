@@ -77,9 +77,12 @@ size_t    SEXP_rawval_list_length (struct SEXP_val_list *list);
 uintptr_t SEXP_rawval_list_copy (uintptr_t lblkp, uint16_t n_skip);
 
 uintptr_t SEXP_rawval_lblk_new  (uint8_t sz);
+uintptr_t SEXP_rawval_lblk_incref (uintptr_t lblkp);
+int       SEXP_rawval_lblk_decref (uintptr_t lblkp);
+
 uintptr_t SEXP_rawval_lblk_fill (uintptr_t lblkp, SEXP_t *s_exp[], uint16_t s_exp_count);
-uintptr_t SEXP_rawval_lblk_add  (uintptr_t lblkp, SEXP_t *s_exp);
-uintptr_t SEXP_rawval_lblk_add1 (uintptr_t lblkp, SEXP_t *s_exp);
+uintptr_t SEXP_rawval_lblk_add  (uintptr_t lblkp, const SEXP_t *s_exp);
+uintptr_t SEXP_rawval_lblk_add1 (uintptr_t lblkp, const SEXP_t *s_exp);
 uintptr_t SEXP_rawval_lblk_last (uintptr_t lblkp);
 SEXP_t   *SEXP_rawval_lblk_nth  (uintptr_t lblkp, uint32_t n);
 uintptr_t SEXP_rawval_lblk_replace (uintptr_t lblkp, uint32_t n, SEXP_t *n_val, SEXP_t **o_val);

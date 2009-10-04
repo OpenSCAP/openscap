@@ -317,8 +317,8 @@ SEXP_t *SEAP_cmd_exec (SEAP_CTX_t    *ctx,
                 
                 return (res);
         } else {
-                SEAP_cmd_t    *cmdptr, *cmdrep;
-                SEAP_packet_t *packet, *pckrep;
+                SEAP_cmd_t    *cmdptr;
+                SEAP_packet_t *packet;
 
                 _D("EXEC_REMOTE\n");
                 

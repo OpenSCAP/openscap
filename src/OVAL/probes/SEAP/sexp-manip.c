@@ -201,8 +201,35 @@ SEXP_t *SEXP_number_newu_16 (uint16_t n)
 
 uint16_t SEXP_number_getu_16 (const SEXP_t *s_exp)
 {
-        _LOGCALL_;
-        return (0);
+        SEXP_val_t v_dsc;
+        SEXP_numtype_t t;
+        
+        if (s_exp == NULL) {
+                errno = EFAULT;
+                return (UINT16_MAX);
+        }
+        
+        SEXP_val_dsc (&v_dsc, s_exp->s_valp);
+        t = SEXP_rawval_number_type (&v_dsc);
+        
+        if (t > SEXP_NUM_UINT16) {
+                errno = EDOM;
+                return (UINT16_MAX);
+        }
+        
+        switch (t) {
+        case SEXP_NUM_UINT16:
+        case SEXP_NUM_INT16:
+                return (SEXP_NCASTP(u16,v_dsc.mem)->n);
+        case SEXP_NUM_UINT8:
+        case SEXP_NUM_INT8:
+        case SEXP_NUM_BOOL:
+                return ((uint16_t)SEXP_NCASTP(u8,v_dsc.mem)->n);
+        default:
+                abort ();
+        }
+        
+        return (UINT16_MAX);
 }
 
 SEXP_t *SEXP_number_newi_32 (int32_t n)
@@ -917,7 +944,6 @@ SEXP_t *SEXP_listref_rest (const SEXP_t *list)
 SEXP_t *SEXP_list_last (const SEXP_t *list)
 {
         SEXP_val_t v_dsc;
-        uint32_t   l_len;
         struct SEXP_val_lblk *l_blk;
         
         _LOGCALL_;
@@ -968,7 +994,7 @@ SEXP_t *SEXP_list_replace (SEXP_t *list, uint32_t n, SEXP_t *n_val)
 
         _A(n > 0);
         
-        SEXP_LCASTP(v_dsc.mem)->b_addr = (void *) SEXP_rawval_lblk_replace (SEXP_LCASTP(v_dsc.mem)->b_addr,
+        SEXP_LCASTP(v_dsc.mem)->b_addr = (void *) SEXP_rawval_lblk_replace ((uintptr_t)SEXP_LCASTP(v_dsc.mem)->b_addr,
                                                                             SEXP_LCASTP(v_dsc.mem)->offset + n,
                                                                             n_val, &o_val);
         
@@ -984,7 +1010,6 @@ SEXP_t *SEXP_listref_last (const SEXP_t *list)
 SEXP_t *SEXP_list_nth (const SEXP_t *list, uint32_t n)
 {
         SEXP_val_t v_dsc;
-        uint32_t   l_len;
         SEXP_t    *s_exp;
 
         _LOGCALL_;
@@ -1010,7 +1035,6 @@ SEXP_t *SEXP_list_nth (const SEXP_t *list, uint32_t n)
 SEXP_t *SEXP_listref_nth (const SEXP_t *list, uint32_t n)
 {
         SEXP_val_t v_dsc;
-        uint32_t   l_len;
         SEXP_t    *s_exp;
 
         _LOGCALL_;
@@ -1038,7 +1062,6 @@ SEXP_t *SEXP_listref_nth (const SEXP_t *list, uint32_t n)
 SEXP_t *SEXP_list_add (SEXP_t *list, const SEXP_t *s_exp)
 {
         SEXP_val_t v_dsc;
-        uint32_t   l_len;
                         
         _LOGCALL_;
 
@@ -1311,7 +1334,6 @@ static void SEXP_free_lmemb (SEXP_t *s_exp)
             SEXP_typeof (s_exp) != SEXP_TYPE_EMPTY)
         {
                 SEXP_val_t v_dsc;
-                uint32_t   refs;
 
                 SEXP_val_dsc (&v_dsc, s_exp->s_valp);
                 
@@ -1356,7 +1378,6 @@ void SEXP_free (SEXP_t *s_exp)
             SEXP_typeof (s_exp) != SEXP_TYPE_EMPTY)
         {
                 SEXP_val_t v_dsc;
-                uint32_t   refs;
 
                 SEXP_val_dsc (&v_dsc, s_exp->s_valp);
                 

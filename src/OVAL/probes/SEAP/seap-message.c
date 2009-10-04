@@ -56,7 +56,6 @@ int SEAP_msgattr_set (SEAP_msg_t *msg, const char *attr, SEXP_t *value)
 
 SEXP_t *SEAP_msgattr_get (SEAP_msg_t *msg, const char *name)
 {
-        SEXP_t *value = NULL;
         uint16_t i;
 
         _A(msg  != NULL);

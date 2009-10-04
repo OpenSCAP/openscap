@@ -24,6 +24,8 @@ SEXP_t *SEXP_OVALste_fetch (SEXP_t *id_list)
 {
         SEXP_t *res, *ste, *id;
         uint32_t i_len, r_len;
+
+        _LOGCALL_;
                 
         i_len = SEXP_list_length (id_list);
         res   = SEAP_cmd_exec (global.ctx, global.sd, 0, PROBECMD_STE_FETCH,
@@ -56,6 +58,8 @@ SEXP_t *SEXP_OVALobj_eval (SEXP_t *id)
 {
         SEXP_t *res;
 
+        _LOGCALL_;
+
         res = SEAP_cmd_exec (global.ctx, global.sd, 0, PROBECMD_OBJ_EVAL,
                              id, SEAP_CMDTYPE_SYNC, NULL, NULL);
         
@@ -66,6 +70,8 @@ SEXP_t *SEXP_OVALset_combine(SEXP_t *item_lst1, SEXP_t *item_lst2, oval_setobjec
 {
 	char append;
 	SEXP_t *res_items, *item1, *item2, *id1, *id2;
+
+        _LOGCALL_;
 
 	if (SEXP_list_length(item_lst2) == 0)
 		return item_lst1;
@@ -129,6 +135,8 @@ SEXP_t *SEXP_OVALset_apply_filters(SEXP_t *items, SEXP_t *filters)
 	oval_result_t ores;
 	oval_check_t ochk;
 	oval_operator_t oopr;
+
+        _LOGCALL_;
 
 	result_items = SEXP_list_new(NULL);
 
@@ -210,6 +218,8 @@ SEXP_t *SEXP_OVALset_eval (SEXP_t *set, size_t depth)
         int     op_num;
         
         SEXP_t *result;
+
+        _LOGCALL_;
         
         if (depth > MAX_EVAL_DEPTH) {
                 _D("Too many levels: max=%zu\n", MAX_EVAL_DEPTH);
@@ -244,7 +254,7 @@ SEXP_t *SEXP_OVALset_eval (SEXP_t *set, size_t depth)
         
         SEXP_OVALset_foreach (member, set) {
                 if (probe_ent_getname_r (member,
-                                         member_name, sizeof member_name) == NULL)
+                                         member_name, sizeof member_name) == 0)
                 {
                         _D("FAIL: Invalid set element: ptr=%p, type=%s\n", member, SEXP_strtype (member));
                         goto eval_fail;
@@ -543,6 +553,8 @@ void *probe_worker (void *arg)
         SEXP_t *probe_in, *set, *probe_out;
         
         SEAP_msg_t *seap_reply, *seap_request;
+
+        _LOGCALL_;
 
         seap_request = (SEAP_msg_t *)arg;
         probe_in     = SEAP_msg_get (seap_request);

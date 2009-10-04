@@ -172,7 +172,7 @@ uintptr_t SEXP_rawval_lblk_fill (uintptr_t lblkp, SEXP_t *s_exp[], uint16_t s_ex
         return (lblkp);
 }
 
-uintptr_t SEXP_rawval_lblk_add (uintptr_t lblkp, SEXP_t *s_exp)
+uintptr_t SEXP_rawval_lblk_add (uintptr_t lblkp, const SEXP_t *s_exp)
 {
         uintptr_t lb_prev;
         uintptr_t lb_head;
@@ -232,7 +232,7 @@ uintptr_t SEXP_rawval_lblk_add (uintptr_t lblkp, SEXP_t *s_exp)
         return (lb_head);
 }
 
-uintptr_t SEXP_rawval_lblk_add1 (uintptr_t lblkp, SEXP_t *s_exp)
+uintptr_t SEXP_rawval_lblk_add1 (uintptr_t lblkp, const SEXP_t *s_exp)
 {
         struct SEXP_val_lblk *lblk = SEXP_VALP_LBLK(lblkp);
         
@@ -375,7 +375,6 @@ int SEXP_rawval_lblk_cb (uintptr_t lblkp, int (*func) (SEXP_t *, void *), void *
 {
         struct SEXP_val_lblk *lblk;
         uint16_t bi;
-        uint32_t gi;
         
         lblk = SEXP_VALP_LBLK(lblkp);
         
