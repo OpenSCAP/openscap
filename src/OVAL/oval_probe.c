@@ -219,7 +219,7 @@ static SEXP_t *oval_entity_to_sexp (struct oval_entity *ent)
         return (elm);
 }
 
-static SEXP_t *oval_set_to_sexp (struct oval_set *set)
+static SEXP_t *oval_set_to_sexp (struct oval_setobject *set)
 {
         SEXP_t *elm, *elm_name;
 
@@ -234,7 +234,7 @@ static SEXP_t *oval_set_to_sexp (struct oval_set *set)
         switch (oval_setobject_get_type (set)) {
         case OVAL_SET_AGGREGATE: {
                 struct oval_setobject_iterator *sit;
-                struct oval_set *subset;
+                struct oval_setobject *subset;
 
                 sit = oval_setobject_get_subsets (set);
 
@@ -317,7 +317,6 @@ SEXP_t *oval_object_to_sexp (const char *typestr, struct oval_object *object)
         struct oval_object_content_iterator *cit;
         struct oval_behavior_iterator *bit;
         struct oval_object_content *content;
-        struct oval_entity *entity;
 
         /*
          * Object name & attributes (id)
@@ -383,10 +382,9 @@ SEXP_t *oval_object_to_sexp (const char *typestr, struct oval_object *object)
 
 SEXP_t *oval_state_to_sexp (struct oval_state *state)
 {
-        SEXP_t *ste, *ste_name, *ste_id, *ste_ent;
+        SEXP_t *ste, *ste_name, *ste_ent;
         char buffer[128];
         const oval_probe_t *probe;
-        //struct oval_entity_iterator *entities;
         struct oval_state_content_iterator *contents;
 
         probe = search_probe (oval_state_get_subtype (state));
