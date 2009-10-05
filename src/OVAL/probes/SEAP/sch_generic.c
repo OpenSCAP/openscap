@@ -95,12 +95,12 @@ int sch_generic_select (SEAP_desc_t *desc, int ev, uint16_t timeout, uint32_t fl
         
         switch (ev) {
         case SEAP_IO_EVREAD:
-                fd = DATA(desc)->ifd;
+                fd = DATA(desc->scheme_data)->ifd;
                 FD_SET(fd, &fset);
                 rptr = &fset;
                 break;
         case SEAP_IO_EVWRITE:
-                fd = DATA(desc)->ofd;
+                fd = DATA(desc->scheme_data)->ofd;
                 FD_SET(fd, &fset);
                 wptr = &fset;
                 break;
