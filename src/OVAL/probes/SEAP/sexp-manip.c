@@ -1092,6 +1092,7 @@ SEXP_t *SEXP_list_add (SEXP_t *list, const SEXP_t *s_exp)
                 
                 if (SEXP_rawval_decref (list->s_valp)) {
                         /* TODO: handle this */
+                        abort ();
                 }
                 
                 list->s_valp = uptr;
