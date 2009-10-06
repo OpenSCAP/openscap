@@ -59,7 +59,6 @@ int file_cb (const char *p, const char *f, void *ptr)
         const char *st_path;
         struct stat st;
         
-        
         if (f != NULL) {
                 snprintf (path_buffer, sizeof path_buffer, "%s/%s", p, f);
                 st_path = path_buffer;
@@ -71,103 +70,117 @@ int file_cb (const char *p, const char *f, void *ptr)
                 _D("FAIL: errno=%u, %s.\n", errno, strerror (errno));
                 return (-1);
         } else {
-                item = probe_obj_creat ("file_item",
-                                        probe_attr_creat ("id",     SEXP_string_newf ("FIXME"),
-                                                          "status", SEXP_number_newu_32 (OVAL_STATUS_EXISTS),
-                                                          NULL),
+                SEXP_t *r0, *r1, *r2, *r3, *r4;
+                SEXP_t *r5, *r6, *r7, *r8, *r9;
+                SEXP_t *r_t, *r_f;
+                
+                r_t = SEXP_number_newb (true);
+                r_f = SEXP_number_newb (false);
+                
+                item = probe_obj_creat ("file_item", NULL,
+                                        /* entities */                                        
                                         "path", NULL,
-                                        SEXP_string_newf (p),
+                                        r0 = SEXP_string_newf (p),
                                         
                                         "filename", NULL,
-                                        (f != NULL ? SEXP_string_newf (f) : NULL),
+                                        r1 = (f != NULL ? SEXP_string_newf (f) : NULL),
                                         
                                         "type", NULL,
-                                        SEXP_string_newf (strfiletype (st.st_mode)),
+                                        r2 = SEXP_string_newf (strfiletype (st.st_mode)),
                                         
                                         "group_id", NULL,
-                                        SEXP_string_newf ("%hu", st.st_gid),
+                                        r3 = SEXP_string_newf ("%hu", st.st_gid),
                                         
                                         "user_id", NULL,
-                                        SEXP_string_newf ("%hu", st.st_uid),
+                                        r4 = SEXP_string_newf ("%hu", st.st_uid),
                                         
                                         "a_time", NULL,
-                                        SEXP_string_newf ("%u",
+                                        r5 = SEXP_string_newf ("%u",
 #if defined(OS_FREEBSD)
-                                                          st.st_atimespec.tv_sec
+                                                               st.st_atimespec.tv_sec
 #elif defined(OS_LINUX) || defined(OS_SOLARIS)
-                                                          st.st_atim.tv_sec
+                                                               st.st_atim.tv_sec
 #endif
                                                 ),
                                         
                                         "c_time", NULL,
-                                        SEXP_string_newf ("%u",
+                                        r6 = SEXP_string_newf ("%u",
 #if defined(OS_FREEBSD)
-                                                          st.st_ctimespec.tv_sec
+                                                               st.st_ctimespec.tv_sec
 #elif defined(OS_LINUX) || defined(OS_SOLARIS)
-                                                          st.st_ctim.tv_sec
+                                                               st.st_ctim.tv_sec
 #endif
                                                 ),
                                         
                                         "m_time", NULL,
-                                        SEXP_string_newf ("%u",
+                                        r7 = SEXP_string_newf ("%u",
 #if defined(OS_FREEBSD)
-                                                          st.st_ctimespec.tv_sec
+                                                               st.st_ctimespec.tv_sec
 #elif defined(OS_LINUX) || defined(OS_SOLARIS)
-                                                          st.st_ctim.tv_sec
+                                                               st.st_ctim.tv_sec
 #endif
                                                 ),
                                         
                                         "size", NULL,
 #if defined(_FILE_OFFSET_BITS)
 # if   _FILE_OFFSET_BITS == 64
-                                        SEXP_number_newu_64 (st.st_size),
+                                        r8 = SEXP_number_newu_64 (st.st_size),
 # elif _FILE_OFFSET_BITS == 32
-                                        SEXP_number_newu_32 (st.st_size),
+                                        r8 = SEXP_number_newu_32 (st.st_size),
 # else
 #  error "Invalid _FILE_OFFSET_BITS value"
                                         NULL,
 # endif
 #elif defined(LARGE_FILE_SOURCE)
-                                        SEXP_number_newu_64 (st.st_size),
+                                        r9 = SEXP_number_newu_64 (st.st_size),
 #else
-                                        SEXP_number_newu_32 (st.st_size),
+                                        r9 = SEXP_number_newu_32 (st.st_size),
 #endif
                                         "suid", NULL,
-                                        SEXP_number_newu_8 (st.st_mode & S_ISUID ? 1 : 0),
+                                        (st.st_mode & S_ISUID ? r_t : r_f),
                                         
                                         "sticky", NULL,
-                                        SEXP_number_newu_8 (st.st_mode & S_ISVTX ? 1 : 0),
+                                        (st.st_mode & S_ISVTX ? r_t : r_f),
                                         
                                         "uread", NULL,
-                                        SEXP_number_newu_8 (st.st_mode & S_IRUSR ? 1 : 0),
+                                        (st.st_mode & S_IRUSR ? r_t : r_f),
                                         
                                         "uwrite", NULL,
-                                        SEXP_number_newu_8 (st.st_mode & S_IWUSR ? 1 : 0),
+                                        (st.st_mode & S_IWUSR ? r_t : r_f),
                                         
                                         "uexec", NULL,
-                                        SEXP_number_newu_8 (st.st_mode & S_IXUSR ? 1 : 0),
+                                        (st.st_mode & S_IXUSR ? r_t : r_f),
                                         
                                         "gread", NULL,
-                                        SEXP_number_newu_8 (st.st_mode & S_IRGRP ? 1 : 0),
+                                        (st.st_mode & S_IRGRP ? r_t : r_f),
                                         
                                         "gwrite", NULL,
-                                        SEXP_number_newu_8 (st.st_mode & S_IWGRP ? 1 : 0),
+                                        (st.st_mode & S_IWGRP ? r_t : r_f),
                                         
                                         "gexec", NULL,
-                                        SEXP_number_newu_8 (st.st_mode & S_IXGRP ? 1 : 0),
+                                        (st.st_mode & S_IXGRP ? r_t : r_f),
                                         
                                         "oread", NULL,
-                                        SEXP_number_newu_8 (st.st_mode & S_IROTH ? 1 : 0),
+                                        (st.st_mode & S_IROTH ? r_t : r_f),
                                         
                                         "owrite", NULL,
-                                        SEXP_number_newu_8 (st.st_mode & S_IWOTH ? 1 : 0),
+                                        (st.st_mode & S_IWOTH ? r_t : r_f),
 
                                         "oexec", NULL,
-                                        SEXP_number_newu_8 (st.st_mode & S_IXOTH ? 1 : 0),
+                                        (st.st_mode & S_IXOTH ? r_t : r_f),
                                         
                                         NULL);
                 
                 SEXP_list_add (res, item);
+        
+                SEXP_free (item);
+                SEXP_free (r0); SEXP_free (r1);
+                SEXP_free (r2); SEXP_free (r3);
+                SEXP_free (r4); SEXP_free (r5);
+                SEXP_free (r6); SEXP_free (r7);
+                SEXP_free (r8); SEXP_free (r9);
+                SEXP_free (r_t); SEXP_free (r_f);
+                
         }
         
         return (0);
@@ -176,13 +189,19 @@ int file_cb (const char *p, const char *f, void *ptr)
 SEXP_t *probe_main (SEXP_t *probe_in, int *err)
 {
         SEXP_t *path, *filename, *behaviors, *items;
-
+        SEXP_t *r0, *r1, *r2, *r3, *r4;
+        
         path      = probe_obj_getent (probe_in, "path",      1);
         filename  = probe_obj_getent (probe_in, "filename",  1);
         behaviors = probe_obj_getent (probe_in, "behaviors", 1);
         
         if (path == NULL || filename == NULL) {
                 *err = PROBE_ENOELM;
+                
+                SEXP_free (behaviors);
+                SEXP_free (path);
+                SEXP_free (filename);
+                
                 return (NULL);
         }
         
@@ -190,47 +209,71 @@ SEXP_t *probe_main (SEXP_t *probe_in, int *err)
                 SEXP_t *bh_list;
                 
                 bh_list = probe_ent_creat ("behaviors",
-                                           probe_attr_creat ("max_depth",
-                                                             SEXP_string_newf ("-1"),
-                                                             "recurse",
-                                                             SEXP_string_newf ("symlinks and directories"),
-                                                             "recurse_direction",
-                                                             SEXP_string_newf ("none"),
-                                                             "recurse_file_system",
-                                                             SEXP_string_newf ("all"),
-                                                             NULL),
+                                           r0 = probe_attr_creat ("max_depth",
+                                                                  r1 = SEXP_string_newf ("-1"),
+                                                                  "recurse",
+                                                                  r2 = SEXP_string_newf ("symlinks and directories"),
+                                                                  "recurse_direction",
+                                                                  r3 = SEXP_string_newf ("none"),
+                                                                  "recurse_file_system",
+                                                                  r4 = SEXP_string_newf ("all"),
+                                                                  NULL),
                                            NULL /* val */,
                                            NULL /* end */);
                 
                 behaviors = SEXP_list_first (bh_list);
+                
+                SEXP_free (bh_list);
+                SEXP_free (r0);
+                SEXP_free (r1);
+                SEXP_free (r2);
+                SEXP_free (r3);
+                SEXP_free (r4);
         } else {
-                if (!probe_ent_attrexists (behaviors, "max_depth"))
+                if (!probe_ent_attrexists (behaviors, "max_depth")) {
                         probe_ent_attr_add (behaviors,
-                                            "max_depth", SEXP_string_newf ("-1"));
+                                            "max_depth", r0 = SEXP_string_newf ("-1"));
+                        SEXP_free (r0);
+                }
                 
-                if (!probe_ent_attrexists (behaviors, "recurse"))
+                if (!probe_ent_attrexists (behaviors, "recurse")) {
                         probe_ent_attr_add (behaviors,
-                                            "recurse", SEXP_string_newf ("symlinks and directories"));
+                                            "recurse", r0 = SEXP_string_newf ("symlinks and directories"));
+                        SEXP_free (r0);
+                }
                 
-                if (!probe_ent_attrexists (behaviors, "recurse_direction"))
+                if (!probe_ent_attrexists (behaviors, "recurse_direction")) {
                         probe_ent_attr_add (behaviors,
-                                            "recurse_direction", SEXP_string_newf ("none"));
+                                            "recurse_direction", r0 = SEXP_string_newf ("none"));
+                        SEXP_free (r0);
+                }
                 
-                if (!probe_ent_attrexists (behaviors, "recurse_file_system"))
+                if (!probe_ent_attrexists (behaviors, "recurse_file_system")) {
                         probe_ent_attr_add (behaviors,
-                                            "recurse_file_system", SEXP_string_newf ("all"));
+                                            "recurse_file_system", r0 = SEXP_string_newf ("all"));
+                        SEXP_free (r0);
+                }
         }
         
         _A(behaviors != NULL);
-
+        
         items = SEXP_list_new (NULL);
         
         /* FIXME: == 0 */
         if (find_files (path, filename, behaviors, &file_cb, items) < 0) {
+                SEXP_free (items);
+                SEXP_free (behaviors);
+                SEXP_free (path);
+                SEXP_free (filename);
+
                 *err = PROBE_EUNKNOWN;
                 return (NULL);
         }
         
+        SEXP_free (behaviors);
+        SEXP_free (filename);
+        SEXP_free (path);
+
         *err = 0;
         return (items);
 }
