@@ -102,24 +102,24 @@ static int _oval_result_directives_parse_tag
 	int i, retcode = 1;
 	xmlChar *name = xmlTextReaderLocalName(reader);
 	for(i=1;i<NUMBER_OF_RESULTS && type==OVAL_DIRECTIVE_CONTENT_UNKNOWN;i++){
-		if(strcmp(tag_names[i],name)==0){
+		if(strcmp(tag_names[i],(const char *)name)==0){
 			type = i;
 		}
 	}
 	if(type){
 		{//reported
-			char* boolstr = xmlTextReaderGetAttribute(reader, "reported");
-			bool reported = strcmp(boolstr,"1")==0 || strcmp(boolstr,"true")==0;
+			xmlChar* boolstr = xmlTextReaderGetAttribute(reader, BAD_CAST "reported");
+			bool reported = strcmp((const char *)boolstr,"1")==0 || strcmp((const char *)boolstr,"true")==0;
 			free(boolstr);
 			oval_result_directive_set_reported(directives, type, reported);
 		}
 		{//content
-			xmlChar *contentstr =  xmlTextReaderGetAttribute(reader, "content");
+			xmlChar *contentstr =  xmlTextReaderGetAttribute(reader, BAD_CAST "content");
 			oval_result_directive_content_t content = OVAL_DIRECTIVE_CONTENT_UNKNOWN;
 			if(contentstr){
 				char *content_names[3] = {NULL,"thin", "full"};
 				for(i=1;i<3 && content==OVAL_DIRECTIVE_CONTENT_UNKNOWN;i++){
-					if(strcmp(content_names[i],contentstr)==0){
+					if(strcmp(content_names[i],(const char *)contentstr)==0){
 						content = i;
 					}
 				}

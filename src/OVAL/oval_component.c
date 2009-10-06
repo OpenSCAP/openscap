@@ -680,7 +680,7 @@ static int _oval_component_parse_REGEX_CAPTURE_tag
      struct oval_component *component) {
 	oval_component_REGEX_CAPTURE_t *regex =
 	    (oval_component_REGEX_CAPTURE_t *) component;
-	char *pattern = xmlTextReaderGetAttribute(reader, "pattern");
+	char *pattern = xmlTextReaderGetAttribute(reader, BAD_CAST "pattern");
 	regex->pattern = strdup(pattern);
 	if(pattern)free(pattern);
 	return _oval_component_parse_FUNCTION_tag(reader, context, component);

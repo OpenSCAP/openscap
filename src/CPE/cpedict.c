@@ -667,11 +667,11 @@ static struct cpe_dict_product *cpe_dictproduct_new_xml(xmlNodePtr node) {
 
 	data = xmlGetProp(node, BAD_CAST "part");
 	if (data) {
-	    if (strcasecmp(data, "h") == 0)
+	    if (strcasecmp((const char *)data, "h") == 0)
 		item->part = CPE_PART_HW;
-	    else if (strcasecmp(data, "o") == 0)
+	    else if (strcasecmp((const char *)data, "o") == 0)
 		item->part = CPE_PART_OS;
-	    else if (strcasecmp(data, "a") == 0)
+	    else if (strcasecmp((const char *)data, "a") == 0)
 		item->part = CPE_PART_APP;
 	    else {
 		oscap_free(item);
@@ -788,7 +788,7 @@ static struct cpe_dict_update *cpe_dictupdate_new_xml(xmlNodePtr node) {
 	if (xmlStrcmp(node->name, BAD_CAST "update") != 0)
 		return NULL;
 
-	item = cpe_dictversion_new_empty();
+	item = cpe_dictupdate_new_empty();
 	if (item == NULL)
 		return NULL;
 
@@ -996,7 +996,6 @@ static void cpe_dict_note_export(const char * note, xmlNodePtr root_node, const 
 static void cpe_dictitem_export(const struct cpe_dictitem * item, xmlNodePtr root_node, const xmlNsPtr xmlns) {
 
         xmlNodePtr node = NULL;
-        xmlNodePtr notes_node = NULL;
         node = xmlNewChild(root_node, xmlns, BAD_CAST "cpe-item", NULL);
         if (cpe_dictitem_get_name(item) != NULL) {
                 xmlNewProp(node, BAD_CAST "name", BAD_CAST cpe_name_get_uri(cpe_dictitem_get_name(item)));
@@ -1024,7 +1023,7 @@ static void cpe_dictitem_export(const struct cpe_dictitem * item, xmlNodePtr roo
 
         if (cpe_dictitem_get_metadata(item) != NULL) {
                 xmlNodePtr metadata_node = xmlNewChild(node, xmlns, BAD_CAST "item-metadata", NULL);
-                metadata_node->ns = xmlNewNs(NULL, NULL, "meta");
+                metadata_node->ns = xmlNewNs(NULL, NULL, BAD_CAST "meta");
                 if (cpe_item_metadata_get_deprecated_by_nvd_id(item->metadata) != NULL)
                     xmlNewProp(metadata_node, BAD_CAST "deprecated-by-nvd-id", BAD_CAST cpe_item_metadata_get_deprecated_by_nvd_id(item->metadata));
                 if (cpe_item_metadata_get_modification_date(item->metadata) != NULL)

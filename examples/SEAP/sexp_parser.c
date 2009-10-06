@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <strbuf.h>
+#include <string.h>
 #include <sexp.h>
 
 int print_sexp (SEXP_t *s_exp)

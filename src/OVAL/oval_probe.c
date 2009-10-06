@@ -1,5 +1,6 @@
 #ifndef __STUB_PROBE
 
+#include <inttypes.h>
 #include <stdlib.h>
 #include <string.h>
 #include <seap.h>
@@ -627,13 +628,13 @@ static struct oval_sysitem* oval_sysitem_from_sexp(SEXP_t *sexp)
                         case SEXP_NUM_INT16:
                         case SEXP_NUM_INT32:
                         case SEXP_NUM_INT64:
-                                snprintf(val, allocsize, "%lld", SEXP_number_geti_64 (sval));
+                                snprintf(val, allocsize, "%" PRId64, SEXP_number_geti_64 (sval));
                                 break;
                         case SEXP_NUM_UINT8:
                         case SEXP_NUM_UINT16:
                         case SEXP_NUM_UINT32:
                         case SEXP_NUM_UINT64:
-                                snprintf(val, allocsize, "%llu", SEXP_number_getu_64 (sval));
+                                snprintf(val, allocsize, "%" PRIu64, SEXP_number_getu_64 (sval));
                                 break;
                         case SEXP_NUM_NONE:
                         default:

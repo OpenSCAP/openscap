@@ -366,7 +366,7 @@ static void find_paths_recursion(const char *path, regex_t *re, rglob_t *result 
 
 static int noRegex(char * token) {
 	const char regexChars[] = "^$\\.[](){}*+?";
-	size_t i,j,token_len;
+	size_t i,token_len;
 	
 	token_len = strlen(token);
 	for(i=0; i<token_len; i++) {

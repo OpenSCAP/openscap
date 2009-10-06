@@ -101,7 +101,7 @@ struct oval_iterator *oval_collection_iterator(struct oval_collection
 	    (struct oval_iterator *)malloc(sizeof(oval_iterator_t));
 	if((iterator_count++)<_DEBUG_OVAL_COLLECTION_){
 		_debugStack[iterator_count-1] = iterator;
-		fprintf(stderr, "DEBUG::ITERATOR START1 AT %d  %d\n",iterator_count-1, (int)iterator);
+		fprintf(stderr, "DEBUG::ITERATOR START1 AT %d  %p\n",iterator_count-1, iterator);
 	}
 	iterator->item_iterator_frame = NULL;
 	struct _oval_collection_item_frame *collection_frame =
@@ -144,9 +144,9 @@ void oval_collection_iterator_free(struct oval_iterator *iterator)
 {
 	if(iterator){//NOOP if iterator is NULL
 		if((--iterator_count)<_DEBUG_OVAL_COLLECTION_){
-			fprintf(stderr, "DEBUG::ITERATOR STOP   AT %d  %d\n", iterator_count, (int)iterator);
+			fprintf(stderr, "DEBUG::ITERATOR STOP   AT %d  %p\n", iterator_count, iterator);
 			if(iterator!=_debugStack[iterator_count]){
-				fprintf(stderr, "WHOOPS: stack mismatch at %d %d:%d\n", iterator_count, (int)iterator, (int)_debugStack[iterator_count]);
+				fprintf(stderr, "WHOOPS: stack mismatch at %d %p:%p\n", iterator_count, iterator, _debugStack[iterator_count]);
 				debug = false;
 			}
 		}
@@ -177,7 +177,7 @@ struct oval_iterator *oval_collection_iterator_new()
 	    (struct oval_iterator *)malloc(sizeof(oval_iterator_t));
 	if((iterator_count++)<_DEBUG_OVAL_COLLECTION_){
 		_debugStack[iterator_count-1] = iterator;
-		fprintf(stderr, "DEBUG::ITERATOR START2 AT %d  %d\n",iterator_count-1, (int)iterator);
+		fprintf(stderr, "DEBUG::ITERATOR START2 AT %d  %p\n",iterator_count-1, iterator);
 	}
 	iterator->item_iterator_frame = NULL;
 	return iterator;

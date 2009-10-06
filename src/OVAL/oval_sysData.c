@@ -286,8 +286,8 @@ void oval_sysdata_to_dom  (struct oval_sysdata *sysdata, xmlDoc *doc, xmlNode *t
 			if(message!=NULL){
 				xmlNode *tag_message = xmlNewChild
 					(tag_sysdata, ns_syschar, BAD_CAST "message", BAD_CAST message);
-				oval_message_level_t index = oval_sysdata_get_message_level(sysdata);
-				const char* level = oval_message_level_text(index);
+				oval_message_level_t idx = oval_sysdata_get_message_level(sysdata);
+				const char* level = oval_message_level_text(idx);
 				xmlNewProp(tag_message, BAD_CAST "level", BAD_CAST level);
 			}
 		}

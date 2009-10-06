@@ -454,14 +454,14 @@ int main (void)
         SEXP_free (val);
         
         {
-                SEXP_t *ent;
+                SEXP_t *ent2;
 
-                ent = probe_obj_getent (obj, "ent1", 1);
+                ent2 = probe_obj_getent (obj, "ent1", 1);
 
-                if (ent == NULL)
+                if (ent2 == NULL)
                         FAIL(1, "obj_getent(%s): == NULL\n", "ent1");
                 
-                val = probe_ent_getattrval (ent, "entattr1");
+                val = probe_ent_getattrval (ent2, "entattr1");
                 
                 if (val == NULL)
                         FAIL(1, "ent_getattrval(%s): == NULL\n", "entattr1");
@@ -474,7 +474,7 @@ int main (void)
                                 FAIL(1, "ent_getattrval(%s): val != 456 (= %hu)\n", "entattr1", nval);
                 }
                 
-                SEXP_free (ent);
+                SEXP_free (ent2);
                 SEXP_free (val);
         }
 

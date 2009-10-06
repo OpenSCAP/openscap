@@ -70,9 +70,7 @@ struct cpe_name {
  */
 static const char *CPE_PART_CHAR[] = { NULL, "h", "o", "a" };
 
-static const char *CPE_SCHEMA = "cpe:/";
 static const char CPE_SEP_CHAR = ':';
-static const char *CPE_SEP_STR = ":";
 
 char **cpe_uri_split(char *str, const char *delim);
 static bool cpe_urldecode(char *str);

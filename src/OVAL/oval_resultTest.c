@@ -157,15 +157,15 @@ typedef struct oval_result_test {
 	bool bindings_clearable;
 } oval_result_test_t;
 
-struct oval_result_test *oval_result_test_new(struct oval_result_system *system, char* tstid)
+struct oval_result_test *oval_result_test_new(struct oval_result_system *sys, char* tstid)
 {
 	oval_result_test_t *test = (oval_result_test_t *)
 		malloc(sizeof(oval_result_test_t));
 	struct oval_syschar_model *syschar_model
-		= oval_result_system_get_syschar_model(system);
+		= oval_result_system_get_syschar_model(sys);
  	struct oval_definition_model *definition_model
  		= oval_syschar_model_get_definition_model(syschar_model);
-	test->system            = system;
+	test->system            = sys;
  	test->test = get_oval_test_new(definition_model, tstid);
 	test->message              = NULL;
 	test->result               = 0;
@@ -178,10 +178,10 @@ struct oval_result_test *oval_result_test_new(struct oval_result_system *system,
 }
 
 struct oval_result_test *make_result_test_from_oval_test
-	(struct oval_result_system *system, struct oval_test *oval_test)
+	(struct oval_result_system *sys, struct oval_test *oval_test)
 {
 	char *test_id = oval_test_get_id(oval_test);
-	return oval_result_test_new(system, test_id);
+	return oval_result_test_new(sys, test_id);
 }
 
 void oval_result_test_free(struct oval_result_test *test)
@@ -662,14 +662,14 @@ static oval_result_t _oval_result_test_result(struct oval_result_test *rtest, vo
 	struct oval_state *tmp_state;
 	char *test_id_string;
 	struct oval_test *test2check;
-	struct oval_result_system *system;
+	struct oval_result_system *sys;
 	struct oval_syschar_model *syschar_model;
 
 	oval_check_t test_check;
 	oval_existence_t test_check_existence;
 	test2check = oval_result_test_get_test(rtest);
-	system = oval_result_test_get_system(rtest);
-	syschar_model = oval_result_system_get_syschar_model(system);
+	sys = oval_result_test_get_system(rtest);
+	syschar_model = oval_result_system_get_syschar_model(sys);
 	if (rtest==NULL){
 		oval_errno=OVAL_INVALID_ARGUMENT;
 		return(-1);
@@ -798,7 +798,7 @@ static int _oval_result_test_binding_parse
 {
 	int return_code = 1;
 
-	xmlChar *variable_id = xmlTextReaderGetAttribute(reader, "variable_id");
+	xmlChar *variable_id = xmlTextReaderGetAttribute(reader, BAD_CAST "variable_id");
 
 	struct oval_syschar_model *syschar_model = oval_result_system_get_syschar_model(SYSTEM);
         struct oval_definition_model *definition_model = oval_syschar_model_get_definition_model(syschar_model);
@@ -830,14 +830,14 @@ static int _oval_result_test_parse
 	}
 
 
-	if      (strcmp(localName, "message")==0){
+	if      (strcmp((const char *)localName, "message")==0){
 		return_code  = oval_message_parse_tag
 			(reader, context, (oscap_consumer_func)_oval_test_message_consumer, TEST);
-	}else if(strcmp(localName, "tested_item")==0){
+	}else if(strcmp((const char *)localName, "tested_item")==0){
 		return_code = oval_result_item_parse_tag
 			(reader, context, SYSTEM,
 				(oscap_consumer_func)_oval_test_item_consumer, args);
-	}else if(strcmp(localName, "tested-variable")==0){
+	}else if(strcmp((const char *)localName, "tested-variable")==0){
 		return_code = _oval_result_test_binding_parse(reader, context, args);
 	}else{
 		char message[200]; *message = '\0';
@@ -853,7 +853,7 @@ static int _oval_result_test_parse
 
 int oval_result_test_parse_tag
 	(xmlTextReaderPtr reader, struct oval_parser_context *context,
-			struct oval_result_system *system,
+			struct oval_result_system *sys,
 			oscap_consumer_func consumer, void *client)
 {
 	int return_code = 1;
@@ -861,8 +861,8 @@ int oval_result_test_parse_tag
 		oval_parser_log_debug(context, "oval_result_test_parse: BEGIN");
 	}
 
-	xmlChar *test_id = xmlTextReaderGetAttribute(reader, "test_id");
-	struct oval_result_test *test = oval_result_test_new(system, test_id);
+	xmlChar *test_id = xmlTextReaderGetAttribute(reader, BAD_CAST "test_id");
+	struct oval_result_test *test = oval_result_test_new(sys, test_id);
 	oval_result_t result = oval_result_parse(reader, "result",0);
 	oval_result_test_set_result(test, result);
 	int veriable_instance = oval_parser_int_attribute(reader, "veriable_instance", 1);
@@ -923,7 +923,7 @@ int oval_result_test_parse_tag
 	}
 
 	struct oval_string_map *itemmap = oval_string_map_new();
-	void *args[] = {system, test, itemmap};
+	void *args[] = {sys, test, itemmap};
 	return_code = oval_parser_parse_tag
 		(reader, context, (oval_xml_tag_parser)_oval_result_test_parse, args);
 	test->bindings_initialized = true;
@@ -942,11 +942,11 @@ static xmlNode *_oval_result_binding_to_dom
 {
 	char *value = oval_variable_binding_get_value(binding);
 	xmlNs *ns_results = xmlSearchNsByHref(doc, parent, OVAL_RESULTS_NAMESPACE);
-	xmlNode *binding_node = xmlNewChild(parent, ns_results, "tested_variable", value);
+	xmlNode *binding_node = xmlNewChild(parent, ns_results, BAD_CAST "tested_variable", value);
 
 	struct oval_variable *oval_variable = oval_variable_binding_get_variable(binding);
 	char *variable_id = oval_variable_get_id(oval_variable);
-	xmlNewProp(binding_node, "variable_id", variable_id);
+	xmlNewProp(binding_node, BAD_CAST "variable_id", variable_id);
 
 	return binding_node;
 }
@@ -958,8 +958,8 @@ static void _oval_result_test_initialize_bindings(struct oval_result_test *rslt_
 	struct oval_object *oval_object = oval_test_get_object(oval_test);
 	if(oval_object){
 		char* object_id = oval_object_get_id(oval_object);
-		struct oval_result_system *system = oval_result_test_get_system(rslt_test);
-		struct oval_syschar_model *syschar_model = oval_result_system_get_syschar_model(system);
+		struct oval_result_system *sys = oval_result_test_get_system(rslt_test);
+		struct oval_syschar_model *syschar_model = oval_result_system_get_syschar_model(sys);
 		struct oval_syschar *syschar = oval_syschar_model_get_syschar(syschar_model, object_id);
 		struct oval_variable_binding_iterator *bindings = oval_syschar_get_variable_bindings(syschar);
 		while(oval_variable_binding_iterator_has_more(bindings)){
@@ -976,33 +976,33 @@ xmlNode *oval_result_test_to_dom
 	(struct oval_result_test *rslt_test, xmlDocPtr doc, xmlNode *parent)
 {
 	xmlNs *ns_results = xmlSearchNsByHref(doc, parent, OVAL_RESULTS_NAMESPACE);
-	xmlNode *test_node = xmlNewChild(parent, ns_results, "test", NULL);
+	xmlNode *test_node = xmlNewChild(parent, ns_results, BAD_CAST "test", NULL);
 
 	struct oval_test *oval_test = oval_result_test_get_test(rslt_test);
 	char *test_id = oval_test_get_id(oval_test);
-	xmlNewProp(test_node, "test_id", test_id);
+	xmlNewProp(test_node, BAD_CAST "test_id", test_id);
 
 	char version[10]; *version = '\0';
 	snprintf(version, sizeof(version), "%d", oval_test_get_version(oval_test));
-	xmlNewProp(test_node, "version", version);
+	xmlNewProp(test_node, BAD_CAST "version", BAD_CAST version);
 
 	oval_existence_t existence = oval_test_get_existence(oval_test);
 	if(existence!=OVAL_AT_LEAST_ONE_EXISTS){
-		xmlNewProp(test_node, "check_existence", oval_existence_get_text(existence));
+		xmlNewProp(test_node, BAD_CAST "check_existence", oval_existence_get_text(existence));
 	}
 
 	oval_check_t check = oval_test_get_check(oval_test);
-	xmlNewProp(test_node, "check", oval_check_get_text(check));
+	xmlNewProp(test_node, BAD_CAST "check", oval_check_get_text(check));
 
 	int instance_val = oval_result_test_get_instance(rslt_test);
 	if(instance_val>1){
 		char instance[10]; *instance = '\0';
 		snprintf(instance, sizeof(instance), "%d", instance_val);
-		xmlNewProp(test_node, "variable_instance", instance);
+		xmlNewProp(test_node, BAD_CAST "variable_instance", BAD_CAST instance);
 	}
 
 	oval_result_t result = oval_result_test_get_result(rslt_test);
-	xmlNewProp(test_node, "result", oval_result_get_text(result));
+	xmlNewProp(test_node, BAD_CAST "result", oval_result_get_text(result));
 
 	struct oval_result_item_iterator *items = oval_result_test_get_items(rslt_test);
 	while(oval_result_item_iterator_has_more(items)){

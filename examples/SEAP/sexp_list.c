@@ -115,7 +115,7 @@ int main (void)
         SEXP_free (i1);
         SEXP_free (i2);
 
-        printf ("l=%u\n", SEXP_list_length (list));
+        printf ("l=%zu\n", SEXP_list_length (list));
         
         SEXP_free (list);
 

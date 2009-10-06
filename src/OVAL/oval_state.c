@@ -287,34 +287,34 @@ xmlNode *oval_state_to_dom (struct oval_state *state, xmlDoc *doc, xmlNode *pare
 
 	oval_family_t family = oval_state_get_family(state);
 	const char *family_text = oval_family_get_text(family);
-	char family_uri[strlen(OVAL_DEFINITIONS_NAMESPACE)+strlen(family_text)+2];
+	char family_uri[strlen((const char *)OVAL_DEFINITIONS_NAMESPACE)+strlen(family_text)+2];
 	*family_uri = '\0';
-	strcat(strcat(strcat(family_uri, OVAL_DEFINITIONS_NAMESPACE),"#"),family_text);
+	strcat(strcat(strcat(family_uri, (const char *)OVAL_DEFINITIONS_NAMESPACE),"#"),family_text);
 	xmlNs *ns_family = xmlNewNs(state_node, family_uri, NULL);
 
 	xmlSetNs(state_node, ns_family);
 
 	char *id = oval_state_get_id(state);
-	xmlNewProp(state_node, "id", id);
+	xmlNewProp(state_node, BAD_CAST "id", id);
 
 	char version[10]; *version = '\0';
 	snprintf(version, sizeof(version), "%d", oval_state_get_version(state));
-	xmlNewProp(state_node, "version", version);
+	xmlNewProp(state_node, BAD_CAST "version", BAD_CAST version);
 
-	char *comment = oval_state_get_comment(state);
-	if(comment)xmlNewProp(state_node, "comment", comment);
+	char *comm = oval_state_get_comment(state);
+	if(comm)xmlNewProp(state_node, BAD_CAST "comment", comm);
 
 	bool deprecated = oval_state_get_deprecated(state);
 	if(deprecated)
-		xmlNewProp(state_node, "deprecated", "true");
+		xmlNewProp(state_node, BAD_CAST "deprecated", BAD_CAST "true");
 
 	struct oval_string_iterator *notes = oval_state_get_notes(state);
 	if(oval_string_iterator_has_more(notes)){
 		xmlNs *ns_definitions = xmlSearchNsByHref(doc, parent, OVAL_DEFINITIONS_NAMESPACE);
-		xmlNode *notes_node = xmlNewChild(state_node, ns_definitions, "notes", NULL);
+		xmlNode *notes_node = xmlNewChild(state_node, ns_definitions, BAD_CAST "notes", NULL);
 		while(oval_string_iterator_has_more(notes)){
 			char *note = oval_string_iterator_next(notes);
-			xmlNewChild(notes_node, ns_definitions, "note", note);
+			xmlNewChild(notes_node, ns_definitions, BAD_CAST "note", note);
 		}
 	}
 	oval_string_iterator_free(notes);

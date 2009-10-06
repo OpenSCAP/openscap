@@ -66,12 +66,12 @@ void oval_result_definition_iterator_free
 }
 
 struct oval_result_definition *oval_result_definition_new
-	(struct oval_result_system *system, char *definition_id)
+	(struct oval_result_system *sys, char *definition_id)
 {
 	oval_result_definition_t *definition = (oval_result_definition_t *)
 		malloc(sizeof(oval_result_definition_t));
-	definition->system = system;
-	struct oval_syschar_model *syschar_model = oval_result_system_get_syschar_model(system);
+	definition->system = sys;
+	struct oval_syschar_model *syschar_model = oval_result_system_get_syschar_model(sys);
 	struct oval_definition_model  *definition_model  = oval_syschar_model_get_definition_model (syschar_model);
 	definition->definition = get_oval_definition_new(definition_model, definition_id);
 	definition->result     = OVAL_RESULT_INVALID;
@@ -94,15 +94,15 @@ void oval_result_definition_free(struct oval_result_definition *definition){
 }
 
 struct oval_result_definition *make_result_definition_from_oval_definition
-	(struct oval_result_system *system, struct oval_definition *oval_definition)
+	(struct oval_result_system *sys, struct oval_definition *oval_definition)
 {
 	char *defid = oval_definition_get_id(oval_definition);
 	struct oval_result_definition *rslt_definition
-		= oval_result_definition_new(system, defid);
+		= oval_result_definition_new(sys, defid);
 	struct oval_criteria_node *oval_criteria
 		= oval_definition_get_criteria(oval_definition);
 	struct oval_result_criteria_node *rslt_criteria
-		= make_result_criteria_node_from_oval_criteria_node(system, oval_criteria);
+		= make_result_criteria_node_from_oval_criteria_node(sys, oval_criteria);
 	if(rslt_criteria)
 		oval_result_definition_set_criteria(rslt_definition, rslt_criteria);
 	else
@@ -209,11 +209,11 @@ static int _oval_result_definition_parse
 	if(OVAL_RESULT_DEFINITION_DEBUG){
 
 	}
-	if       (strcmp(localName, "criteria")==0){
+	if       (strcmp((const char *)localName, "criteria")==0){
 		return_code = oval_result_criteria_node_parse
 			(reader, context,oval_result_definition_get_system(definition),
 				(oscap_consumer_func)_oval_result_definition_consume_criteria, definition);
-	}else if (strcmp(localName, "message")==0){
+	}else if (strcmp((const char *)localName, "message")==0){
 		return_code = oval_message_parse_tag
 			(reader, context,
 				(oscap_consumer_func)_oval_result_definition_consume_message, definition);
@@ -229,7 +229,7 @@ static char* _oval_result_definition_results[] =
 
 int oval_result_definition_parse
 	(xmlTextReaderPtr reader, struct oval_parser_context *context,
-			struct oval_result_system *system,
+			struct oval_result_system *sys,
 			oscap_consumer_func consumer, void *client)
 {
 	int return_code = 1;
@@ -244,7 +244,7 @@ int oval_result_definition_parse
 	int instance = oval_parser_int_attribute(reader, "variable_instance", 1);
 
 	struct oval_result_definition *definition = oval_result_definition_new
-		(system, (char *)definition_id);
+		(sys, (char *)definition_id);
 
 	int defvsn = oval_definition_get_version(definition->definition);
 	if(defvsn && resvsn!=defvsn){
@@ -262,7 +262,7 @@ int oval_result_definition_parse
 	int i;
 	for(i=1;i<7 && result==0;i++){
 		result = strcmp
-			(_oval_result_definition_results[i],definition_result)==0
+		  (_oval_result_definition_results[i],(const char *)definition_result)==0
 			?i:0;
 	}
 	if(result){
@@ -307,28 +307,28 @@ xmlNode *oval_result_definition_to_dom
 			xmlDocPtr doc, xmlNode *parent)
 {
 	xmlNs *ns_results = xmlSearchNsByHref(doc, parent, OVAL_RESULTS_NAMESPACE);
-	xmlNode *definition_node = xmlNewChild(parent, ns_results, "definition", NULL);
+	xmlNode *definition_node = xmlNewChild(parent, ns_results, BAD_CAST "definition", NULL);
 
 	struct oval_definition *oval_definition
 		= oval_result_definition_get_definition(definition);
 	char *definition_id = oval_definition_get_id(oval_definition);
-	xmlNewProp(definition_node, "definition_id", definition_id);
+	xmlNewProp(definition_node, BAD_CAST "definition_id", definition_id);
 
 	oval_result_t result
 		= oval_result_definition_get_result(definition);
 	const char* result_att = oval_result_get_text(result);
-	xmlNewProp(definition_node, "result", result_att);
+	xmlNewProp(definition_node, BAD_CAST "result", result_att);
 
 	int version = oval_definition_get_version(oval_definition);
 	char version_att[10]; *version_att = '\0';
 	snprintf(version_att, sizeof(version_att), "%d", version);
-	xmlNewProp(definition_node, "version", version_att);
+	xmlNewProp(definition_node, BAD_CAST "version", BAD_CAST version_att);
 
 	int instance = oval_result_definition_get_instance(definition);
 	if(instance!=1){
 		char instance_att[10]; *instance_att = '\0';
 		snprintf(instance_att, sizeof(instance_att), "%d", instance);
-		xmlNewProp(definition_node, "variable_instance", instance_att);
+		xmlNewProp(definition_node, BAD_CAST "variable_instance", BAD_CAST instance_att);
 	}
 
 	struct oval_message_iterator *messages

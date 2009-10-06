@@ -465,7 +465,7 @@ static int _generator_to_dom(xmlDocPtr doc, xmlNode *tag_generator)
 	snprintf(timestamp, sizeof(timestamp),"%4d-%02d-%02dT%02d:%02d:%02d",
 	1900+lt->tm_year, 1+lt->tm_mon, lt->tm_mday, lt->tm_hour, lt->tm_min, lt->tm_sec);
 	xmlNewChild
-		(tag_generator, ns_common, BAD_CAST "timestamp", timestamp);
+		(tag_generator, ns_common, BAD_CAST "timestamp", BAD_CAST timestamp);
 	return 1;
 }
 
@@ -490,8 +490,8 @@ struct oval_results_model *oval_results_model_new
 		struct oval_syschar_model *syschar_model;
 		for(syschar_model = *syschar_models;syschar_model;
 		    syschar_model = *(++syschar_models)){
-			struct oval_result_system *system = oval_result_system_new(syschar_model);
-			oval_results_model_add_system(model, system);
+			struct oval_result_system *sys = oval_result_system_new(syschar_model);
+			oval_results_model_add_system(model, sys);
 		}
 	}
 	return model;
@@ -519,9 +519,9 @@ struct oval_result_system_iterator *oval_results_model_get_systems
 }
 
 void oval_results_model_add_system
-	(struct oval_results_model *model, struct oval_result_system *system)
+	(struct oval_results_model *model, struct oval_result_system *sys)
 {
-	if(system)oval_collection_add(model->systems, system);
+	if(sys)oval_collection_add(model->systems, sys);
 }
 
 struct oval_result_directives *oval_results_model_load
@@ -634,9 +634,9 @@ static void _oval_agent_scan_component_for_references
 		void *value = oval_string_map_get_value(varmap, varid);
 		if(value==NULL){
 			oval_string_map_put(varmap, varid, variable);
-			struct oval_component *component = oval_variable_get_component(variable);
-			if(component){
-				_oval_agent_scan_component_for_references(component, objmap, sttmap, varmap);
+			struct oval_component *component2 = oval_variable_get_component(variable);
+			if(component2){
+				_oval_agent_scan_component_for_references(component2, objmap, sttmap, varmap);
 			}
 		}
 	}else{
@@ -746,7 +746,7 @@ xmlNode *oval_definitions_to_dom
     		struct oval_definition *definition = oval_definition_iterator_next(definitions);
 			if(resolver==NULL || (*resolver)(definition, user_arg)){
 				if(definitions_node==NULL)definitions_node
-					= xmlNewChild(root_node, ns_defntns, "definitions", NULL);
+					= xmlNewChild(root_node, ns_defntns, BAD_CAST "definitions", NULL);
 				oval_definition_to_dom
 					(definition, doc, definitions_node);
 				struct oval_criteria_node *criteria = oval_definition_get_criteria(definition);
@@ -770,7 +770,7 @@ xmlNode *oval_definitions_to_dom
 
     struct oval_test_iterator *tests = (struct oval_test_iterator *)oval_string_map_values(tstmap);
     if(oval_test_iterator_has_more(tests)){
-    	xmlNode *tests_node = xmlNewChild(root_node, ns_defntns, "tests", NULL);
+    	xmlNode *tests_node = xmlNewChild(root_node, ns_defntns, BAD_CAST "tests", NULL);
     	while(oval_test_iterator_has_more(tests)){
     		struct oval_test *test = oval_test_iterator_next(tests);
     		oval_test_to_dom(test, doc, tests_node);
@@ -798,8 +798,8 @@ xmlNode *oval_definitions_to_dom
 
     struct oval_object_iterator *objects = (struct oval_object_iterator *)oval_string_map_values(objmap);
     if(oval_object_iterator_has_more(objects)){
-    	xmlNode *objects_node = xmlNewChild(root_node, ns_defntns, "objects", NULL);
-    	int index;for(index=0;oval_object_iterator_has_more(objects); index++){
+    	xmlNode *objects_node = xmlNewChild(root_node, ns_defntns, BAD_CAST "objects", NULL);
+    	int i;for(i=0;oval_object_iterator_has_more(objects); i++){
     		struct oval_object *object = oval_object_iterator_next(objects);
     		oval_object_to_dom(object, doc, objects_node);
     	}
@@ -807,7 +807,7 @@ xmlNode *oval_definitions_to_dom
     oval_object_iterator_free(objects);
     struct oval_state_iterator *states = (struct oval_state_iterator *)oval_string_map_values(sttmap);
     if(oval_state_iterator_has_more(states)){
-    	xmlNode *states_node = xmlNewChild(root_node, ns_defntns, "states", NULL);
+    	xmlNode *states_node = xmlNewChild(root_node, ns_defntns, BAD_CAST "states", NULL);
     	while(oval_state_iterator_has_more(states)){
     		struct oval_state *state = oval_state_iterator_next(states);
     		oval_state_to_dom(state, doc, states_node);
@@ -816,7 +816,7 @@ xmlNode *oval_definitions_to_dom
     oval_state_iterator_free(states);
     struct oval_variable_iterator *variables = (struct oval_variable_iterator *)oval_string_map_values(varmap);
     if(oval_variable_iterator_has_more(variables)){
-    	xmlNode *variables_node = xmlNewChild(root_node, ns_defntns, "variables", NULL);
+    	xmlNode *variables_node = xmlNewChild(root_node, ns_defntns, BAD_CAST "variables", NULL);
     	while(oval_variable_iterator_has_more(variables)){
     		struct oval_variable *variable = oval_variable_iterator_next(variables);
     		oval_variable_to_dom(variable, doc, variables_node);
@@ -941,8 +941,8 @@ static void _scan_for_viewable_definitions
 {
 	struct oval_result_system_iterator *systems = oval_results_model_get_systems(results_model);
 	while(oval_result_system_iterator_has_more(systems)){
-		struct oval_result_system *system = oval_result_system_iterator_next(systems);
-		struct oval_result_definition_iterator *rslt_definitions = oval_result_system_get_definitions(system);
+		struct oval_result_system *sys = oval_result_system_iterator_next(systems);
+		struct oval_result_definition_iterator *rslt_definitions = oval_result_system_get_definitions(sys);
 		int i;for(i=0;oval_result_definition_iterator_has_more(rslt_definitions); i++){
 			struct oval_result_definition *rslt_definition = oval_result_definition_iterator_next(rslt_definitions);
 			oval_result_t result = oval_result_definition_get_result(rslt_definition);
@@ -972,7 +972,7 @@ static xmlNode *oval_results_to_dom
 {
 	xmlNode *root_node;
 	if(parent){
-		root_node = xmlNewChild(parent, NULL, "oval_results", NULL);
+		root_node = xmlNewChild(parent, NULL, BAD_CAST "oval_results", NULL);
 	}else{
 		root_node = xmlNewNode(NULL, BAD_CAST "oval_results");
 	    xmlDocSetRootElement(doc, root_node);
@@ -998,14 +998,14 @@ static xmlNode *oval_results_to_dom
 		(definition_model, doc, root_node,
 				(oval_definitions_resolver *)_resolve_oval_definition_from_map, defids);
 
-	xmlNode *results_node = xmlNewChild(root_node, ns_results, "results", NULL);
+	xmlNode *results_node = xmlNewChild(root_node, ns_results, BAD_CAST "results", NULL);
 
 	struct oval_result_system_iterator *systems = oval_results_model_get_systems(results_model);
 	while(oval_result_system_iterator_has_more(systems)){
-		struct oval_result_system *system
+		struct oval_result_system *sys
 			= oval_result_system_iterator_next(systems);
 		oval_result_system_to_dom
-			(system, results_model, directives,
+			(sys, results_model, directives,
 				doc, results_node);
 	}
 	oval_result_system_iterator_free(systems);

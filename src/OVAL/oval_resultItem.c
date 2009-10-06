@@ -42,11 +42,11 @@ typedef struct oval_result_item {
 } oval_result_item_t;
 
 struct oval_result_item *oval_result_item_new
-	(struct oval_result_system *system, char *item_id)
+	(struct oval_result_system *sys, char *item_id)
 {
 	oval_result_item_t *item = (oval_result_item_t *)
 		malloc(sizeof(oval_result_item_t));
-	struct oval_syschar_model *syschar_model = oval_result_system_get_syschar_model(system);
+	struct oval_syschar_model *syschar_model = oval_result_system_get_syschar_model(sys);
 	struct oval_sysdata *sysdata = get_oval_sysdata_new(syschar_model, item_id);
 
 	item->sysdata = sysdata;
@@ -135,13 +135,13 @@ static int _oval_result_item_message_parse
 
 int oval_result_item_parse_tag
 	(xmlTextReaderPtr reader, struct oval_parser_context *context,
-		struct oval_result_system *system,
+		struct oval_result_system *sys,
 		oscap_consumer_func consumer, void *user)
 {
 	int return_code = 0;
 
-	xmlChar *item_id = xmlTextReaderGetAttribute(reader, "item_id");
-	struct oval_result_item *item = oval_result_item_new(system, item_id);
+	xmlChar *item_id = xmlTextReaderGetAttribute(reader, BAD_CAST "item_id");
+	struct oval_result_item *item = oval_result_item_new(sys, item_id);
 
 	oval_result_t result = oval_result_parse(reader, "result", 0);
 	oval_result_item_set_result(item, result);
@@ -174,14 +174,14 @@ xmlNode *oval_result_item_to_dom
 	(struct oval_result_item *rslt_item, xmlDocPtr doc, xmlNode *parent)
 {
 	xmlNs *ns_results = xmlSearchNsByHref(doc, parent, OVAL_RESULTS_NAMESPACE);
-	xmlNode *item_node = xmlNewChild(parent, ns_results, "tested_item", NULL);
+	xmlNode *item_node = xmlNewChild(parent, ns_results, BAD_CAST "tested_item", NULL);
 
 	struct oval_sysdata *oval_sysdata = oval_result_item_get_sysdata(rslt_item);
 	char *item_id = oval_sysdata_get_id(oval_sysdata);
-	xmlNewProp(item_node, "item_id", item_id);
+	xmlNewProp(item_node, BAD_CAST "item_id", item_id);
 
 	oval_result_t result = oval_result_item_get_result(rslt_item);
-	xmlNewProp(item_node, "result", oval_result_get_text(result));
+	xmlNewProp(item_node, BAD_CAST "result", oval_result_get_text(result));
 
 	return item_node;
 }

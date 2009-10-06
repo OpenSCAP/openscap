@@ -321,41 +321,41 @@ xmlNode *oval_object_to_dom
 
 	oval_family_t family = oval_object_get_family(object);
 	const char *family_text = oval_family_get_text(family);
-	char family_uri[strlen(OVAL_DEFINITIONS_NAMESPACE)+strlen(family_text)+2];
+	char family_uri[strlen((const char *)OVAL_DEFINITIONS_NAMESPACE)+strlen(family_text)+2];
 	*family_uri = '\0';
-	strcat(strcat(strcat(family_uri, OVAL_DEFINITIONS_NAMESPACE),"#"),family_text);
+	strcat(strcat(strcat(family_uri, (const char *)OVAL_DEFINITIONS_NAMESPACE),"#"),family_text);
 	xmlNs *ns_family = xmlNewNs(object_node, family_uri, NULL);
 
 	xmlSetNs(object_node, ns_family);
 
 	char *id = oval_object_get_id(object);
-	xmlNewProp(object_node, "id", id);
+	xmlNewProp(object_node, BAD_CAST "id", id);
 
 	char version[10]; *version = '\0';
 	snprintf(version, sizeof(version), "%d", oval_object_get_version(object));
-	xmlNewProp(object_node, "version", version);
+	xmlNewProp(object_node, BAD_CAST "version", BAD_CAST version);
 
-	char *comment = oval_object_get_comment(object);
-	if(comment)xmlNewProp(object_node, "comment", comment);
+	char *comm = oval_object_get_comment(object);
+	if(comm)xmlNewProp(object_node, BAD_CAST "comment", comm);
 
 	bool deprecated = oval_object_get_deprecated(object);
 	if(deprecated)
-		xmlNewProp(object_node, "deprecated", "true");
+		xmlNewProp(object_node, BAD_CAST "deprecated", BAD_CAST "true");
 
 	struct oval_string_iterator *notes = oval_object_get_notes(object);
 	if(oval_string_iterator_has_more(notes)){
 		xmlNs *ns_definitions = xmlSearchNsByHref(doc, parent, OVAL_DEFINITIONS_NAMESPACE);
-		xmlNode *notes_node = xmlNewChild(object_node, ns_definitions, "notes", NULL);
+		xmlNode *notes_node = xmlNewChild(object_node, ns_definitions, BAD_CAST "notes", NULL);
 		while(oval_string_iterator_has_more(notes)){
 			char *note = oval_string_iterator_next(notes);
-			xmlNewChild(notes_node, ns_definitions, "note", note);
+			xmlNewChild(notes_node, ns_definitions, BAD_CAST "note", note);
 		}
 	}
 	oval_string_iterator_free(notes);
 
 	struct oval_behavior_iterator *behaviors = oval_object_get_behaviors(object);
 	if(oval_behavior_iterator_has_more(behaviors)){
-		xmlNode *behaviors_node = xmlNewChild(object_node, ns_family, "behaviors", NULL);
+		xmlNode *behaviors_node = xmlNewChild(object_node, ns_family, BAD_CAST "behaviors", NULL);
 		while(oval_behavior_iterator_has_more(behaviors)){
 			struct oval_behavior *behavior = oval_behavior_iterator_next(behaviors);
 			char *key   = oval_behavior_get_key  (behavior);
@@ -366,7 +366,7 @@ xmlNode *oval_object_to_dom
 	oval_behavior_iterator_free(behaviors);
 
 	struct oval_object_content_iterator *contents = oval_object_get_object_content(object);
-	int index;for(index=0;oval_object_content_iterator_has_more(contents); index++){
+	int i;for(i=0;oval_object_content_iterator_has_more(contents); i++){
 		struct oval_object_content *content = oval_object_content_iterator_next(contents);
 		oval_object_content_to_dom(content, doc, object_node);
 	}

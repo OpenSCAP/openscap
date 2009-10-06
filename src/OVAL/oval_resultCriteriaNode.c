@@ -148,7 +148,7 @@ void oval_result_criteria_node_free(struct oval_result_criteria_node *node)
 }
 
 struct oval_result_criteria_node *make_result_criteria_node_from_oval_criteria_node
-	(struct oval_result_system *system, struct oval_criteria_node *oval_node)
+	(struct oval_result_system *sys, struct oval_criteria_node *oval_node)
 {
 	struct oval_result_criteria_node *rslt_node = NULL;
 	if(oval_node){
@@ -168,7 +168,7 @@ struct oval_result_criteria_node *make_result_criteria_node_from_oval_criteria_n
 					= oval_criteria_node_iterator_next(oval_subnodes);
 				struct oval_result_criteria_node *rslt_subnode
 					= make_result_criteria_node_from_oval_criteria_node
-						(system, oval_subnode);
+						(sys, oval_subnode);
 				oval_result_criteria_node_add_subnode(rslt_node, rslt_subnode);
 			}
 			oval_criteria_node_iterator_free(oval_subnodes);
@@ -177,7 +177,7 @@ struct oval_result_criteria_node *make_result_criteria_node_from_oval_criteria_n
 			struct oval_test *oval_test
 				= oval_criteria_node_get_test(oval_node);
 			struct oval_result_test *rslt_test
-				= get_oval_result_test_new(system, oval_test);
+				= get_oval_result_test_new(sys, oval_test);
 			rslt_node
 				= oval_result_criteria_node_new(type, negate, rslt_test, 0);
 		}break;
@@ -185,7 +185,7 @@ struct oval_result_criteria_node *make_result_criteria_node_from_oval_criteria_n
 			struct oval_definition *oval_definition
 				= oval_criteria_node_get_definition(oval_node);
 			struct oval_result_definition *rslt_definition
-				= get_oval_result_definition_new(system, oval_definition);
+				= get_oval_result_definition_new(sys, oval_definition);
 			rslt_node
 				= oval_result_criteria_node_new(type, negate, rslt_definition, 0);
 		}break;
@@ -463,16 +463,16 @@ static int _oval_result_criteria_parse
 	(xmlTextReaderPtr reader , struct oval_parser_context *context,
 		void **args)
 {
-	struct oval_result_system *system = (struct oval_result_system *)args[0];
+	struct oval_result_system *sys = (struct oval_result_system *)args[0];
 	struct oval_result_criteria_node *node = (struct oval_result_criteria_node *)args[1];
 	return oval_result_criteria_node_parse
-		(reader, context, system,
+		(reader, context, sys,
 			(oscap_consumer_func)_oval_result_criteria_consume_subnode, node);
 }
 
 int oval_result_criteria_node_parse
 	(xmlTextReaderPtr reader, struct oval_parser_context *context,
-		struct oval_result_system *system,
+		struct oval_result_system *sys,
 		oscap_consumer_func consumer, void *client)
 {
 	int return_code = 1;
@@ -486,28 +486,28 @@ int oval_result_criteria_node_parse
 	}
 
 	struct oval_result_criteria_node *node = NULL;
-	if(strcmp(localName, "criteria")==0){
+	if(strcmp((const char *)localName, "criteria")==0){
 		oval_operator_t operator = oval_operator_parse
 			(reader, "operator",OVAL_OPERATOR_UNKNOWN);
 		int negate = oval_parser_boolean_attribute(reader, "negate", false);
 		node = oval_result_criteria_node_new(OVAL_NODETYPE_CRITERIA, negate, operator);
-		void *args[] = {system, node};
+		void *args[] = {sys, node};
 		return_code = oval_parser_parse_tag
 			(reader, context,
 				(oval_xml_tag_parser)_oval_result_criteria_parse, args);
-	}else if(strcmp(localName, "criterion")==0){
-		xmlChar *test_ref = xmlTextReaderGetAttribute(reader, "test_ref");
+	}else if(strcmp((const char *)localName, "criterion")==0){
+		xmlChar *test_ref = xmlTextReaderGetAttribute(reader, BAD_CAST "test_ref");
 		int version  = oval_parser_int_attribute(reader, "version",0);
 		int variable_instance = oval_parser_int_attribute(reader, "variable_instance",1);
 		int negate = oval_parser_boolean_attribute(reader, "negate", false);
 		struct oval_syschar_model *syschar_model
-			= oval_result_system_get_syschar_model(system);
+			= oval_result_system_get_syschar_model(sys);
 		struct oval_definition_model *definition_model
 			= oval_syschar_model_get_definition_model(syschar_model);
 		struct oval_test *oval_test
 			= oval_definition_model_get_test(definition_model, test_ref);
 		struct oval_result_test *rslt_test = (oval_test)
-			?get_oval_result_test_new(system, oval_test):NULL;
+			?get_oval_result_test_new(sys, oval_test):NULL;
 		int test_vsn = oval_test_get_version(oval_test);
 		if(test_vsn!=version){
 			char message[200]; *message = '\0';
@@ -525,18 +525,18 @@ int oval_result_criteria_node_parse
 			(OVAL_NODETYPE_CRITERION, negate, rslt_test, variable_instance);
 		return_code = 1;
 		free(test_ref);
-	}else if(strcmp(localName, "extend_definition")==0){
-		xmlChar *definition_ref = xmlTextReaderGetAttribute(reader, "definition_ref");
+	}else if(strcmp((const char *)localName, "extend_definition")==0){
+		xmlChar *definition_ref = xmlTextReaderGetAttribute(reader, BAD_CAST "definition_ref");
 		int variable_instance = oval_parser_int_attribute(reader, "variable_instance",1);
 		int negate = oval_parser_boolean_attribute(reader, "negate", false);
 		struct oval_syschar_model *syschar_model
-			= oval_result_system_get_syschar_model(system);
+			= oval_result_system_get_syschar_model(sys);
 		struct oval_definition_model *definition_model
 			= oval_syschar_model_get_definition_model(syschar_model);
 		struct oval_definition *oval_definition
 			= oval_definition_model_get_definition(definition_model,definition_ref);
 		struct oval_result_definition *rslt_definition = (oval_definition)
-			?get_oval_result_definition_new(system, oval_definition):NULL;
+			?get_oval_result_definition_new(sys, oval_definition):NULL;
 		node = (rslt_definition)
 		?oval_result_criteria_node_new
 			(OVAL_NODETYPE_EXTENDDEF, negate, rslt_definition, variable_instance):NULL;
@@ -562,11 +562,11 @@ static xmlNode *_oval_result_CRITERIA_to_dom
 	(struct oval_result_criteria_node *node, xmlDocPtr doc, xmlNode *parent)
 {
 	xmlNs *ns_results = xmlSearchNsByHref(doc, parent, OVAL_RESULTS_NAMESPACE);
-	xmlNode *node_root = xmlNewChild(parent, ns_results, "criteria", NULL);
+	xmlNode *node_root = xmlNewChild(parent, ns_results, BAD_CAST "criteria", NULL);
 
 	oval_operator_t operator = oval_result_criteria_node_get_operator(node);
 	const char* operator_att = oval_operator_get_text(operator);
-	xmlNewProp(node_root, "operator", operator_att);
+	xmlNewProp(node_root, BAD_CAST "operator", operator_att);
 
 	struct oval_result_criteria_node_iterator *subnodes
 		= oval_result_criteria_node_get_subnodes(node);
@@ -584,16 +584,16 @@ static xmlNode *_oval_result_CRITERION_to_dom
 	(struct oval_result_criteria_node *node, xmlDocPtr doc, xmlNode *parent)
 {
 	xmlNs *ns_results = xmlSearchNsByHref(doc, parent, OVAL_RESULTS_NAMESPACE);
-	xmlNode *node_root = xmlNewChild(parent, ns_results, "criterion", NULL);
+	xmlNode *node_root = xmlNewChild(parent, ns_results, BAD_CAST "criterion", NULL);
 
 	struct oval_result_test *rslt_test = oval_result_criteria_node_get_test(node);
 	struct oval_test *oval_test = oval_result_test_get_test(rslt_test);
 	char *test_ref = oval_test_get_id(oval_test);
-	xmlNewProp(node_root, "test_ref", test_ref);
+	xmlNewProp(node_root, BAD_CAST "test_ref", test_ref);
 
 	char version[10]; *version = '\0';
 	snprintf(version, sizeof(version), "%d", oval_test_get_version(oval_test));
-	xmlNewProp(node_root, "version", version);
+	xmlNewProp(node_root, BAD_CAST "version", BAD_CAST version);
 
 	return node_root;
 
@@ -602,12 +602,12 @@ static xmlNode *_oval_result_EXTENDDEF_to_dom
 	(struct oval_result_criteria_node *node, xmlDocPtr doc, xmlNode *parent)
 {
 	xmlNs *ns_results = xmlSearchNsByHref(doc, parent, OVAL_RESULTS_NAMESPACE);
-	xmlNode *node_root = xmlNewChild(parent, ns_results, "extend_definition", NULL);
+	xmlNode *node_root = xmlNewChild(parent, ns_results, BAD_CAST "extend_definition", NULL);
 
 	struct oval_result_definition *rslt_definition = oval_result_criteria_node_get_extends(node);
 	struct oval_definition *oval_definition = oval_result_definition_get_definition(rslt_definition);
 	char *definition_ref = oval_definition_get_id(oval_definition);
-	xmlNewProp(node_root, "definition_ref", definition_ref);
+	xmlNewProp(node_root, BAD_CAST "definition_ref", definition_ref);
 
 	return node_root;
 
@@ -631,11 +631,11 @@ xmlNode *oval_result_criteria_node_to_dom
 		oval_result_t result
 			= oval_result_criteria_node_get_result(node);
 		const char* result_att = oval_result_get_text(result);
-		xmlNewProp(criteria_node, "result", result_att);
+		xmlNewProp(criteria_node, BAD_CAST "result", result_att);
 
 		bool negate = oval_result_criteria_node_get_negate(node);
 		if(negate!=false){
-			xmlNewProp(criteria_node, "negate", "true");
+			xmlNewProp(criteria_node, BAD_CAST "negate", BAD_CAST "true");
 		}
 	}
 	return criteria_node;

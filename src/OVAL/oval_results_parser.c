@@ -61,9 +61,9 @@ static int _oval_results_parser_consume_definitions
 }
 
 static void _oval_results_parser_consume_system
-	(struct oval_result_system *system, struct oval_results_model *model)
+	(struct oval_result_system *sys, struct oval_results_model *model)
 {
-	oval_results_model_add_system(model, system);
+	oval_results_model_add_system(model, sys);
 }
 
 static int _ovalres_parser_parse_system

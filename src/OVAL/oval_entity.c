@@ -321,14 +321,14 @@ xmlNode *oval_entity_to_dom
 
 	oval_datatype_t datatype = oval_entity_get_datatype(entity);
 	if(datatype!=OVAL_DATATYPE_STRING)
-		xmlNewProp(entity_node, "datatype", oval_datatype_get_text(datatype));
+		xmlNewProp(entity_node, BAD_CAST "datatype", oval_datatype_get_text(datatype));
 	oval_operation_t operation = oval_entity_get_operation(entity);
 	if(operation!=OVAL_OPERATION_EQUALS)
-		xmlNewProp(entity_node, "operation", oval_operation_get_text(operation));
+		xmlNewProp(entity_node, BAD_CAST "operation", oval_operation_get_text(operation));
 	bool mask = oval_entity_get_mask(entity);
 	if(mask)
-		xmlNewProp(entity_node, "mask", "true");
+		xmlNewProp(entity_node, BAD_CAST "mask", BAD_CAST "true");
 	if(vtype==OVAL_ENTITY_VARREF_ATTRIBUTE)
-		xmlNewProp(entity_node, "var_ref", oval_variable_get_id(variable));
+		xmlNewProp(entity_node, BAD_CAST "var_ref", oval_variable_get_id(variable));
 	return entity_node;
 }

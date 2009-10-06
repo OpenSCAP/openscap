@@ -10,13 +10,11 @@
  *                bool   kill)
  */
 
+#define _BSD_SOURCE
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
 #include <assert.h>
-#ifndef _BSD_SOURCE
-# define _BSD_SOURCE
-#endif
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>

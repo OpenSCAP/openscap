@@ -483,21 +483,21 @@ xmlNode *oval_variable_to_dom (struct oval_variable *variable, xmlDoc *doc, xmlN
 	};
 
 	char *id = oval_variable_get_id(variable);
-	xmlNewProp(variable_node, "id", id);
+	xmlNewProp(variable_node, BAD_CAST "id", id);
 
 	char version[10]; *version = '\0';
 	snprintf(version, sizeof(version), "%d", oval_variable_get_version(variable));
-	xmlNewProp(variable_node, "version", version);
+	xmlNewProp(variable_node, BAD_CAST "version", BAD_CAST version);
 
 	oval_datatype_t datatype = oval_variable_get_datatype(variable);
-	xmlNewProp(variable_node, "datatype", oval_datatype_get_text(datatype));
+	xmlNewProp(variable_node, BAD_CAST "datatype", oval_datatype_get_text(datatype));
 
-	char *comment = oval_variable_get_comment(variable);
-	xmlNewProp(variable_node, "comment", comment);
+	char *comm = oval_variable_get_comment(variable);
+	xmlNewProp(variable_node, BAD_CAST "comment", comm);
 
 	bool deprecated = oval_variable_get_deprecated(variable);
 	if(deprecated)
-		xmlNewProp(variable_node, "deprecated", "true");
+		xmlNewProp(variable_node, BAD_CAST "deprecated", BAD_CAST "true");
 
 
 	return variable_node;

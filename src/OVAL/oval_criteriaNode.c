@@ -423,11 +423,11 @@ static xmlNode *_oval_CRITERIA_to_dom
 	(struct oval_criteria_node *cnode, xmlDoc *doc, xmlNode *parent)
 {
 	xmlNs *ns_definitions = xmlSearchNsByHref(doc, parent, OVAL_DEFINITIONS_NAMESPACE);
-	xmlNode *criteria_node = xmlNewChild(parent, ns_definitions, "criteria", NULL);
+	xmlNode *criteria_node = xmlNewChild(parent, ns_definitions, BAD_CAST "criteria", NULL);
 
 	oval_operator_t operator = oval_criteria_node_get_operator(cnode);
 	if(operator!=OVAL_OPERATOR_AND)
-		xmlNewProp(criteria_node, "operator", oval_operator_get_text(operator));
+		xmlNewProp(criteria_node, BAD_CAST "operator", oval_operator_get_text(operator));
 
 	struct oval_criteria_node_iterator *subnodes
 		= oval_criteria_node_get_subnodes(cnode);
@@ -445,11 +445,11 @@ static xmlNode *_oval_CRITERION_to_dom
 	(struct oval_criteria_node *cnode, xmlDoc *doc, xmlNode *parent)
 {
 	xmlNs *ns_definitions = xmlSearchNsByHref(doc, parent, OVAL_DEFINITIONS_NAMESPACE);
-	xmlNode *criterion_node = xmlNewChild(parent, ns_definitions, "criterion", NULL);
+	xmlNode *criterion_node = xmlNewChild(parent, ns_definitions, BAD_CAST "criterion", NULL);
 
 	struct oval_test *test = oval_criteria_node_get_test(cnode);
 	char *test_ref = oval_test_get_id(test);
-	xmlNewProp(criterion_node, "test_ref", test_ref);
+	xmlNewProp(criterion_node, BAD_CAST "test_ref", test_ref);
 
 	return criterion_node;
 }
@@ -458,11 +458,11 @@ static xmlNode *_oval_EXTENDDEF_to_dom
 	(struct oval_criteria_node *cnode, xmlDoc *doc, xmlNode *parent)
 {
 	xmlNs *ns_definitions = xmlSearchNsByHref(doc, parent, OVAL_DEFINITIONS_NAMESPACE);
-	xmlNode *extenddef_node = xmlNewChild(parent, ns_definitions, "extend_definition", NULL);
+	xmlNode *extenddef_node = xmlNewChild(parent, ns_definitions, BAD_CAST "extend_definition", NULL);
 
 	struct oval_definition *definition = oval_criteria_node_get_definition(cnode);
 	char *definition_ref = oval_definition_get_id(definition);
-	xmlNewProp(extenddef_node, "definition_ref", definition_ref);
+	xmlNewProp(extenddef_node, BAD_CAST "definition_ref", definition_ref);
 
 	return extenddef_node;
 }
@@ -484,10 +484,10 @@ xmlNode *oval_criteria_node_to_dom
 	}
 
 	bool negate = oval_criteria_node_get_negate(cnode);
-	if(negate)xmlNewProp(criteria_node, "negate", "true");
+	if(negate)xmlNewProp(criteria_node, BAD_CAST "negate", BAD_CAST "true");
 
-	char *comment  = oval_criteria_node_get_comment(cnode);
-	if(comment)xmlNewProp(criteria_node, "comment", comment);
+	char *comm  = oval_criteria_node_get_comment(cnode);
+	if(comm)xmlNewProp(criteria_node, BAD_CAST "comment", comm);
 
 	return criteria_node;
 }

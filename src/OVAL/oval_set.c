@@ -348,7 +348,7 @@ xmlNode *oval_set_to_dom
 
 	oval_setobject_operation_t operation = oval_setobject_get_operation(set);
 	if(operation!=OVAL_SET_OPERATION_UNION)
-		xmlNewProp(set_node, "set_operator", oval_set_operation_get_text(operation));
+		xmlNewProp(set_node, BAD_CAST "set_operator", oval_set_operation_get_text(operation));
 
 	switch(oval_setobject_get_type(set))
 	{
