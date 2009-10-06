@@ -144,14 +144,18 @@ static int probe_sd_del (probe_sdtbl_t *tbl, oval_subtype_t type)
 static SEXP_t *oval_entity_to_sexp (struct oval_entity *ent)
 {
         SEXP_t *elm, *elm_name;
-
-
-        elm_name = SEXP_list_new (SEXP_string_newf (oval_entity_get_name (ent)),
+        SEXP_t *r0, *r1, *r2;
+        
+        elm_name = SEXP_list_new (r0 = SEXP_string_newf ("%s", oval_entity_get_name (ent)),
                                   /* operation */
-                                  SEXP_string_new (":operation", 10),
-                                  SEXP_number_newu_32 (oval_entity_get_operation (ent)),
+                                  r1 = SEXP_string_new (":operation", 10),
+                                  r2 = SEXP_number_newu_32 (oval_entity_get_operation (ent)),
                                   NULL);
-
+        
+        SEXP_free (r0);
+        SEXP_free (r1);
+        SEXP_free (r2);
+        
         elm = SEXP_list_new (NULL);
 
         /* var_ref */
@@ -161,35 +165,42 @@ static SEXP_t *oval_entity_to_sexp (struct oval_entity *ent)
                 var = oval_entity_get_variable (ent);
 
                 SEXP_list_add (elm_name,
-                               SEXP_string_new (":var_ref", 8));
-                SEXP_list_add (elm_name,
-                               SEXP_string_newf (oval_variable_get_id (var)));
-                SEXP_list_add (elm, elm_name);
+                               r0 = SEXP_string_new (":var_ref", 8));
+                SEXP_free (r0);
 
+                SEXP_list_add (elm_name,
+                               r0 = SEXP_string_newf ("%s", oval_variable_get_id (var)));
+                SEXP_free (r0);
+                
+                SEXP_list_add (elm, elm_name);
+                SEXP_free (elm_name);
+                
         } else { /* value */
                 SEXP_t *val_sexp;
                 struct oval_value *val;
 
                 val = oval_entity_get_value (ent);
+                
                 SEXP_list_add (elm, elm_name);
+                SEXP_free (elm_name);
 
                 /* CHECK: check in val? */
                 switch (oval_entity_get_datatype (ent)) {
                 case OVAL_DATATYPE_VERSION:
 
-                        val_sexp = SEXP_string_newf (oval_value_get_text (val));
+                        val_sexp = SEXP_string_newf ("%s", oval_value_get_text (val));
                         SEXP_datatype_set (val_sexp, "version");
 
                         goto add_string_val;
                 case OVAL_DATATYPE_EVR_STRING:
 
-                        val_sexp = SEXP_string_newf (oval_value_get_text (val));
+                        val_sexp = SEXP_string_newf ("%s", oval_value_get_text (val));
                         SEXP_datatype_set (val_sexp, "evr_str");
 
                         goto add_string_val;
                 case OVAL_DATATYPE_STRING:
 
-                        val_sexp = SEXP_string_newf (oval_value_get_text (val));
+                        val_sexp = SEXP_string_newf ("%s", oval_value_get_text (val));
 
                 add_string_val:
                         SEXP_list_add (elm, val_sexp);
@@ -197,12 +208,12 @@ static SEXP_t *oval_entity_to_sexp (struct oval_entity *ent)
                 case OVAL_DATATYPE_FLOAT:
 
                         SEXP_list_add (elm,
-                                       SEXP_number_newf (oval_value_get_float (val)));
+                                       val_sexp = SEXP_number_newf (oval_value_get_float (val)));
                         break;
                 case OVAL_DATATYPE_INTEGER:
 
                         SEXP_list_add (elm,
-                                       SEXP_number_newi_32 (oval_value_get_integer (val)));
+                                       val_sexp = SEXP_number_newi_32 (oval_value_get_integer (val)));
                         break;
                 case OVAL_DATATYPE_BOOLEAN:
                         val_sexp = SEXP_number_newb (oval_value_get_boolean (val));
@@ -214,6 +225,8 @@ static SEXP_t *oval_entity_to_sexp (struct oval_entity *ent)
                 default:
                         break;
                 }
+
+                SEXP_free (val_sexp);
         }
 
         return (elm);
@@ -222,15 +235,21 @@ static SEXP_t *oval_entity_to_sexp (struct oval_entity *ent)
 static SEXP_t *oval_set_to_sexp (struct oval_setobject *set)
 {
         SEXP_t *elm, *elm_name;
+        SEXP_t *r0, *r1, *r2;
 
-        elm_name = SEXP_list_new (SEXP_string_new ("set", 3),
+        elm_name = SEXP_list_new (r0 = SEXP_string_new ("set", 3),
                                   /* operation */
-                                  SEXP_string_new (":operation", 10),
-                                  SEXP_number_newu_32 (oval_setobject_get_operation (set)),
+                                  r1 = SEXP_string_new (":operation", 10),
+                                  r2 = SEXP_number_newu_32 (oval_setobject_get_operation (set)),
                                   NULL);
 
-        elm = SEXP_list_new (elm_name, NULL);
+        SEXP_free (r0);
+        SEXP_free (r1);
+        SEXP_free (r2);
 
+        elm = SEXP_list_new (elm_name, NULL);
+        SEXP_free (elm_name);
+        
         switch (oval_setobject_get_type (set)) {
         case OVAL_SET_AGGREGATE: {
                 struct oval_setobject_iterator *sit;
@@ -240,8 +259,10 @@ static SEXP_t *oval_set_to_sexp (struct oval_setobject *set)
 
                 while (oval_setobject_iterator_has_more (sit)) {
                         subset = oval_setobject_iterator_next (sit);
-                        SEXP_list_add (elm, oval_set_to_sexp (subset));
+                        SEXP_list_add (elm, r0 = oval_set_to_sexp (subset));
+                        SEXP_free (r0);
                 }
+                
                 oval_setobject_iterator_free (sit);
         }
                 break;
@@ -258,30 +279,40 @@ static SEXP_t *oval_set_to_sexp (struct oval_setobject *set)
                 while (oval_object_iterator_has_more (oit)) {
                         obj    = oval_object_iterator_next (oit);
 
-                        subelm = SEXP_list_new (SEXP_string_new ("obj_ref", 7),
-                                                SEXP_string_newf (oval_object_get_id (obj)),
+                        subelm = SEXP_list_new (r0 = SEXP_string_new ("obj_ref", 7),
+                                                r1 = SEXP_string_newf ("%s", oval_object_get_id (obj)),
                                                 NULL);
-
+                        SEXP_free (r0);
+                        SEXP_free (r1);
+                        
                         SEXP_list_add (elm, subelm);
+                        
+                        SEXP_free (subelm);
                 }
+                
                 oval_object_iterator_free (oit);
 
                 while (oval_state_iterator_has_more (sit)) {
                         ste    = oval_state_iterator_next (sit);
 
-                        subelm = SEXP_list_new (SEXP_string_new ("filter", 6),
-                                                SEXP_string_newf (oval_state_get_id (ste)),
+                        subelm = SEXP_list_new (r0 = SEXP_string_new ("filter", 6),
+                                                r1 = SEXP_string_newf ("%s", oval_state_get_id (ste)),
                                                 NULL);
-
+                        SEXP_free (r0);
+                        SEXP_free (r1);
+                        
                         SEXP_list_add (elm, subelm);
+
+                        SEXP_free (subelm);
                 }
+
                 oval_state_iterator_free (sit);
         }
                 break;
         default:
                 abort ();
         }
-
+        
         return (elm);
 }
 
@@ -289,30 +320,40 @@ static SEXP_t *oval_behaviors_to_sexp (struct oval_behavior_iterator *bit)
 {
 	char *attr_name, *attr_val;
         SEXP_t *elm_name;
+        SEXP_t *r0;
+        
         struct oval_behavior *behavior;
-
-        elm_name = SEXP_list_new (SEXP_string_newf ("behaviors"),
+        
+        elm_name = SEXP_list_new (r0 = SEXP_string_newf ("behaviors"),
                                   NULL);
+        SEXP_free (r0);
 
         while (oval_behavior_iterator_has_more (bit)) {
-                behavior = oval_behavior_iterator_next (bit);
+                behavior  = oval_behavior_iterator_next (bit);
                 attr_name = oval_behavior_get_key(behavior);
-                attr_val = oval_behavior_get_value(behavior);
+                attr_val  = oval_behavior_get_value(behavior);
 
-                SEXP_list_add(elm_name, SEXP_string_newf(":%s", attr_name));
-
+                SEXP_list_add(elm_name, r0 = SEXP_string_newf(":%s", attr_name));
+                SEXP_free (r0);
+                
                 if (attr_val != NULL) {
-                        SEXP_list_add(elm_name, SEXP_string_newf(attr_val));
+                        SEXP_list_add(elm_name, r0 = SEXP_string_new(attr_val, strlen (attr_val)));
+                        SEXP_free (r0);
                 }
         }
+        
         oval_behavior_iterator_free (bit);
-
-        return (SEXP_list_new (elm_name, NULL));
+        
+        r0 = SEXP_list_new (elm_name, NULL);
+        SEXP_free (elm_name);
+        
+        return (r0);
 }
 
 SEXP_t *oval_object_to_sexp (const char *typestr, struct oval_object *object)
 {
         SEXP_t *obj_sexp, *obj_name, *elm;
+        SEXP_t *r0, *r1, *r2;
 
         struct oval_object_content_iterator *cit;
         struct oval_behavior_iterator *bit;
@@ -321,13 +362,18 @@ SEXP_t *oval_object_to_sexp (const char *typestr, struct oval_object *object)
         /*
          * Object name & attributes (id)
          */
-        obj_name = SEXP_list_new (SEXP_string_newf ("%s_object", typestr),
-                                  SEXP_string_new (":id", 3),
-                                  SEXP_string_newf (oval_object_get_id (object)),
+        obj_name = SEXP_list_new (r0 = SEXP_string_newf ("%s_object", typestr),
+                                  r1 = SEXP_string_new (":id", 3),
+                                  r2 = SEXP_string_newf ("%s", oval_object_get_id (object)),
                                   NULL);
-
+        SEXP_free (r0);
+        SEXP_free (r1);
+        SEXP_free (r2);
+        
         obj_sexp = SEXP_list_new (obj_name, NULL);
 
+        SEXP_free (obj_name);
+        
         /*
          * Object content
          */
@@ -338,17 +384,19 @@ SEXP_t *oval_object_to_sexp (const char *typestr, struct oval_object *object)
 
                 content = oval_object_content_iterator_next (cit);
                 elm = NULL;
-
+                
                 switch (oval_object_content_get_type (content)) {
                 case OVAL_OBJECTCONTENT_ENTITY:
-
-                        elm = oval_entity_to_sexp (oval_object_content_get_entity (content));
-
+                        
+                        elm  = oval_entity_to_sexp (oval_object_content_get_entity (content));
                         ochk = oval_object_content_get_varCheck(content);
+                        
                         if (ochk != OVAL_CHECK_UNKNOWN) {
                                 probe_ent_attr_add(elm, "var_check",
-                                                   SEXP_string_newf(oval_check_get_text(ochk)));
+                                                   r0 = SEXP_string_newf("%s", oval_check_get_text(ochk)));
+                                SEXP_free (r0);
                         }
+                        
                         break;
                 case OVAL_OBJECTCONTENT_SET:
 
@@ -364,7 +412,9 @@ SEXP_t *oval_object_to_sexp (const char *typestr, struct oval_object *object)
                 }
 
                 SEXP_list_add (obj_sexp, elm);
+                SEXP_free (elm);
         }
+        
         oval_object_content_iterator_free (cit);
 
         /*
@@ -375,6 +425,7 @@ SEXP_t *oval_object_to_sexp (const char *typestr, struct oval_object *object)
         if (oval_behavior_iterator_has_more (bit)) {
                 elm = oval_behaviors_to_sexp (bit);
                 SEXP_list_add (obj_sexp, elm);
+                SEXP_free (elm);
         }
 
         return (obj_sexp);
@@ -383,10 +434,12 @@ SEXP_t *oval_object_to_sexp (const char *typestr, struct oval_object *object)
 SEXP_t *oval_state_to_sexp (struct oval_state *state)
 {
         SEXP_t *ste, *ste_name, *ste_ent;
-        char buffer[128];
+        SEXP_t *r0, *r1, *r2;
+        char   buffer[128];
+        size_t buflen;
         const oval_probe_t *probe;
         struct oval_state_content_iterator *contents;
-
+        
         probe = search_probe (oval_state_get_subtype (state));
 
         if (probe == NULL) {
@@ -394,19 +447,26 @@ SEXP_t *oval_state_to_sexp (struct oval_state *state)
                 return (NULL);
         }
 
-        snprintf (buffer, sizeof buffer, "%s_state", probe->typestr);
-
-        ste_name = SEXP_list_new (SEXP_string_newf (buffer),
-                                  SEXP_string_new  (":id", 3),
-                                  SEXP_string_newf (oval_state_get_id (state)),
+        buflen = snprintf (buffer, sizeof buffer, "%s_state", probe->typestr);
+        _A(buflen < sizeof buffer);
+        
+        ste_name = SEXP_list_new (r0 = SEXP_string_new (buffer, buflen),
+                                  r1 = SEXP_string_new  (":id", 3),
+                                  r2 = SEXP_string_newf ("%s", oval_state_get_id (state)),
                                   NULL);
 
+        SEXP_free (r0);
+        SEXP_free (r1);
+        SEXP_free (r2);
+
         ste = SEXP_list_new (ste_name, NULL);
+        
+        SEXP_free (ste_name);
 
         //entities = oval_state_entities (state);
 
         contents = oval_state_get_contents(state);
-
+        
         /*
         while (oval_entity_iterator_has_more (entities)) {
                 ste_ent = oval_entity_to_sexp (oval_entity_iterator_next (entities));
@@ -416,28 +476,32 @@ SEXP_t *oval_state_to_sexp (struct oval_state *state)
         while(oval_state_content_iterator_has_more(contents)){
                 oval_check_t ochk;
         	struct oval_state_content *content = oval_state_content_iterator_next(contents);
-
+                
                 ste_ent = oval_entity_to_sexp (oval_state_content_get_entity(content));
-
-                ochk = oval_state_content_get_var_check(content);
+                ochk    = oval_state_content_get_var_check(content);
+                
                 if (ochk != OVAL_CHECK_UNKNOWN) {
                         probe_ent_attr_add(ste_ent, "var_check",
-                                           SEXP_string_newf(oval_check_get_text(ochk)));
+                                           r0 = SEXP_string_newf("%s", oval_check_get_text(ochk)));
+                        SEXP_free (r0);
                 }
-
+                
                 ochk = oval_state_content_get_ent_check(content);
+                
                 if (ochk != OVAL_CHECK_UNKNOWN) {
                         probe_ent_attr_add(ste_ent, "entity_check",
-                                           SEXP_string_newf(oval_check_get_text(ochk)));
+                                           r0 = SEXP_string_newf("%s", oval_check_get_text(ochk)));
+                        SEXP_free (r0);
                 }
 
                 SEXP_list_add (ste, ste_ent);
+                SEXP_free (ste_ent);
         }
+        
         oval_state_content_iterator_free(contents);
 
         return (ste);
 }
-
 
 struct oval_sysitem* oval_sysitem_from_sexp(SEXP_t *sexp)
 {
@@ -646,13 +710,17 @@ struct oval_syschar *oval_object_probe (struct oval_object *object, struct oval_
         _D("oval -> sexp\n");
 
         /* create S-exp */
-        sexp  = oval_object_to_sexp (probe->typestr, object);
-
+        sexp = oval_object_to_sexp (probe->typestr, object);
+        
         if (sexp == NULL) {
                 _D("Can't translate OVAL object to S-exp\n");
                 return (NULL);
         }
 
+        puts ("--- msg ---");
+        SEXP_fprintfa (stdout, sexp);
+        puts ("\n----------");
+        
         psd = probe_sd_get (ptbl, oval_object_get_subtype (object));
         if (psd == -1) {
                 char  *uri, *dir;
@@ -700,9 +768,6 @@ struct oval_syschar *oval_object_probe (struct oval_object *object, struct oval_
         msg = SEAP_msg_new ();
         SEAP_msg_set (msg, sexp);
 
-        puts ("--- msg ---");
-        SEXP_fprintfa (stdout, sexp);
-        puts ("\n----------");
         _D("send msg\n");
 
         if (SEAP_sendmsg (ptbl->ctx, psd, msg) != 0) {
