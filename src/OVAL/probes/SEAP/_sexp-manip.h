@@ -3,6 +3,9 @@
 #define _SEXP_MANIP_H
 
 #include "public/sexp-manip.h"
+#include "../../../common/util.h"
+
+OSCAP_HIDDEN_START;
 
 #define SEXP_LSTACK_INIT_SIZE      32
 #define SEXP_LSTACK_GROWFAST_TRESH 512
@@ -23,5 +26,7 @@ struct SEXP_it {
         SEXP_t *s_ref;
         
 };
+
+OSCAP_HIDDEN_END;
 
 #endif /* _SEXP_MANIP_H */

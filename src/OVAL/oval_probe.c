@@ -19,7 +19,7 @@
 #endif
 
 /* KEEP THIS LIST SORTED! (by subtype) */
-const oval_probe_t __probe_tbl[] = {
+static const oval_probe_t __probe_tbl[] = {
         /*  7001 */ { OVAL_INDEPENDENT_FAMILY,               "family",            "probe_family"            },
         /*  7006 */ { OVAL_INDEPENDENT_TEXT_FILE_CONTENT_54, "textfilecontent54", "probe_textfilecontent54" },
         /*  7010 */ { OVAL_INDEPENDENT_XML_FILE_CONTENT,     "xmlfilecontent",    "probe_xmlfilecontent"    },
@@ -97,7 +97,7 @@ static int probe_subtype_cmp (void *a, void *b)
 #undef K2
 }
 
-const oval_probe_t *search_probe (oval_subtype_t subtype)
+static const oval_probe_t *search_probe (oval_subtype_t subtype)
 {
         return (oscap_bfind ((void *)__probe_tbl, PROBETBLSIZE, sizeof __probe_tbl[0], &subtype, probe_subtype_cmp));
 }
@@ -518,7 +518,7 @@ SEXP_t *oval_object_to_sexp (const char *typestr, struct oval_object *object)
         return (obj_sexp);
 }
 
-SEXP_t *oval_state_to_sexp (struct oval_state *state)
+static SEXP_t *oval_state_to_sexp (struct oval_state *state)
 {
         SEXP_t *ste, *ste_name, *ste_ent;
         SEXP_t *r0, *r1, *r2;
@@ -595,7 +595,8 @@ SEXP_t *oval_state_to_sexp (struct oval_state *state)
         return (ste);
 }
 
-struct oval_sysitem* oval_sysitem_from_sexp(SEXP_t *sexp)
+
+static struct oval_sysitem* oval_sysitem_from_sexp(SEXP_t *sexp)
 {
 	_A(sexp);
 	SEXP_t *sval;
@@ -671,7 +672,7 @@ struct oval_sysitem* oval_sysitem_from_sexp(SEXP_t *sexp)
 	return item;
 }
 
-struct oval_sysdata *oval_sysdata_from_sexp(SEXP_t *sexp)
+static struct oval_sysdata *oval_sysdata_from_sexp(SEXP_t *sexp)
 {
 	_A(sexp);
 

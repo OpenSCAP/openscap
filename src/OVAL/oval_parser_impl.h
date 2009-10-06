@@ -34,6 +34,8 @@
 #include "api/oval_agent_api.h"
 #include "../common/util.h"
 
+OSCAP_HIDDEN_START;
+
 struct oval_parser_context {
 	struct oval_definition_model   *definition_model;
 	struct oval_syschar_model      *syschar_model;
@@ -92,5 +94,7 @@ int oval_parser_parse_tag(xmlTextReaderPtr, struct oval_parser_context *,
 			  oval_xml_tag_parser, void *);
 
 void oval_text_consumer(char *text, void *user);
+
+OSCAP_HIDDEN_END;
 
 #endif				/* OVAL_PARSER_H_ */

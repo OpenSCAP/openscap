@@ -170,7 +170,7 @@ bitmap_bitn_t bitmap_setfree (bitmap_t *bitmap)
                 return (-1);
 }
 
-bitmap_bitn_t bitmap_setrand (bitmap_t *bitmap)
+static bitmap_bitn_t bitmap_setrand (bitmap_t *bitmap)
 {
         bitmap_bitn_t n;
         

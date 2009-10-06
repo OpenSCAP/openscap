@@ -61,7 +61,7 @@ struct cpe_platform {
  * @return new platform specification list
  * @retval NULL on failure
  */
-struct cpe_platformspec *cpe_platformspec_new_xml(xmlDocPtr doc, xmlNodePtr root);
+static struct cpe_platformspec *cpe_platformspec_new_xml(xmlDocPtr doc, xmlNodePtr root);
 
 /*
  * New platform form XML node
@@ -69,7 +69,7 @@ struct cpe_platformspec *cpe_platformspec_new_xml(xmlDocPtr doc, xmlNodePtr root
  * @return new platform specification
  * @retval NULL on failure
  */
-struct cpe_platform *cpe_platform_new_xml(xmlNodePtr node);
+static struct cpe_platform *cpe_platform_new_xml(xmlNodePtr node);
 
 /*
  * Create new CPE language boolean expression from XML node
@@ -77,7 +77,7 @@ struct cpe_platform *cpe_platform_new_xml(xmlNodePtr node);
  * @param node XML node to be processed
  * @return true on success
  */
-bool cpe_langexpr_new(struct cpe_lang_expr * ret, xmlNodePtr node);
+static bool cpe_langexpr_new(struct cpe_lang_expr * ret, xmlNodePtr node);
 
 /*
  * Add new platform entry to @a platformspec
@@ -86,20 +86,20 @@ bool cpe_langexpr_new(struct cpe_lang_expr * ret, xmlNodePtr node);
  * @param platform platform to add to the list
  * @return true on success
  */
-bool cpe_platformspec_add(struct cpe_platformspec * platformspec,
-			  struct cpe_platform * platform);
+static bool cpe_platformspec_add(struct cpe_platformspec * platformspec,
+				 struct cpe_platform * platform);
 
 /*
  * Delete single CPE paltform specification
  * @param platform platform to be deleted
  */
-void cpe_platform_free(struct cpe_platform * platform);
+static void cpe_platform_free(struct cpe_platform * platform);
 
 /*
  * Delete CPE language boolean expression
  * @param expr expression to be deleted
  */
-void cpe_langexpr_free(struct cpe_lang_expr * expr);
+static void cpe_langexpr_free(struct cpe_lang_expr * expr);
 
 struct cpe_platformspec *cpe_platformspec_new(const char *fname)
 {
@@ -120,9 +120,9 @@ struct cpe_platformspec *cpe_platformspec_new(const char *fname)
 	return ret;
 }
 
-const size_t CPE_PLATFORMSPEC_EMPTY_INIT_ALLOC = 8;
+static const size_t CPE_PLATFORMSPEC_EMPTY_INIT_ALLOC = 8;
 
-struct cpe_platformspec *cpe_platformspec_new_empty()
+static struct cpe_platformspec *cpe_platformspec_new_empty()
 {
 	struct cpe_platformspec *res;
 
@@ -138,7 +138,7 @@ struct cpe_platformspec *cpe_platformspec_new_empty()
 	return res;
 }
 
-struct cpe_platformspec *cpe_platformspec_new_xml(xmlDocPtr doc, xmlNodePtr root)
+static struct cpe_platformspec *cpe_platformspec_new_xml(xmlDocPtr doc, xmlNodePtr root)
 {
 	xmlNodePtr cur;
         xmlNsPtr xmlns;
@@ -185,8 +185,8 @@ struct cpe_platformspec *cpe_platformspec_new_xml(xmlDocPtr doc, xmlNodePtr root
 	return res;
 }
 
-bool cpe_platformspec_add(struct cpe_platformspec * platformspec,
-			  struct cpe_platform * platform)
+static bool cpe_platformspec_add(struct cpe_platformspec * platformspec,
+				 struct cpe_platform * platform)
 {
 	if (platformspec == NULL || platform == NULL) return false;
 	oscap_htable_add(platformspec->item, platform->id, platform);
@@ -202,7 +202,7 @@ void cpe_platformspec_free(struct cpe_platformspec * platformspec)
 	}
 }
 
-struct cpe_platform *cpe_platform_new_xml(xmlNodePtr node)
+static struct cpe_platform *cpe_platform_new_xml(xmlNodePtr node)
 {
 	struct cpe_platform *ret;
 
@@ -234,8 +234,8 @@ struct cpe_platform *cpe_platform_new_xml(xmlNodePtr node)
 	return ret;
 }
 
-bool cpe_language_match_expr(struct cpe_name ** cpe, size_t n,
-			     const struct cpe_lang_expr * expr)
+static bool cpe_language_match_expr(struct cpe_name ** cpe, size_t n,
+				    const struct cpe_lang_expr * expr)
 {
 	struct cpe_lang_expr *cur;
 	bool ret;
@@ -289,7 +289,7 @@ bool cpe_language_match_str(const char* cpe, const struct cpe_platform* platform
 }
 */
 
-void cpe_platform_free(struct cpe_platform * platform)
+static void cpe_platform_free(struct cpe_platform * platform)
 {
 	if (platform) {
 		xmlFree(platform->id);
@@ -300,7 +300,7 @@ void cpe_platform_free(struct cpe_platform * platform)
 	oscap_free(platform);
 }
 
-bool cpe_langexpr_new(struct cpe_lang_expr * ret, xmlNodePtr node)
+static bool cpe_langexpr_new(struct cpe_lang_expr * ret, xmlNodePtr node)
 {
 	xmlChar *temp;
 	xmlNodePtr cur;
@@ -351,7 +351,7 @@ bool cpe_langexpr_new(struct cpe_lang_expr * ret, xmlNodePtr node)
 	return true;
 }
 
-void cpe_langexpr_free(struct cpe_lang_expr * expr)
+static void cpe_langexpr_free(struct cpe_lang_expr * expr)
 {
 	struct cpe_lang_expr *cur;
 
@@ -383,7 +383,7 @@ void cpe_langexpr_free(struct cpe_lang_expr * expr)
  * @param root_node node in xml model that will be lang expr dumped in
  * @param xmlns xml name space of root node
  */
-void cpe_langexpr_export( struct cpe_lang_expr expr, xmlNodePtr root_node, xmlNsPtr xmlns) {
+static void cpe_langexpr_export( struct cpe_lang_expr expr, xmlNodePtr root_node, xmlNsPtr xmlns) {
 
         if (expr.oper == CPE_LANG_OPER_HALT)
             return;
@@ -429,7 +429,7 @@ void cpe_langexpr_export( struct cpe_lang_expr expr, xmlNodePtr root_node, xmlNs
  * @param root_node node in xml model that will be platform dumped in
  * @param xmlns xml name space of root node
  */
-void cpe_platform_export( struct cpe_platform * p, xmlNodePtr root_node, xmlNsPtr xmlns) {
+static void cpe_platform_export( struct cpe_platform * p, xmlNodePtr root_node, xmlNsPtr xmlns) {
 
         xmlNodePtr node = NULL;
         xmlNodePtr title_node = NULL;

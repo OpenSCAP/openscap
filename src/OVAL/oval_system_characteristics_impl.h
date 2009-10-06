@@ -32,7 +32,11 @@
 
 #include "api/oval_system_characteristics.h"
 #include "oval_definitions_impl.h"
+#include "../common/util.h"
 
+OSCAP_HIDDEN_START;
+
+extern const char NAMESPACE_OVALSYS[];
 
 struct oval_sysint *oval_sysint_new();
 void oval_sysint_free(struct oval_sysint *);
@@ -106,4 +110,7 @@ void oval_sysitem_set_mask(struct oval_sysitem *sysitem, int mask);
 void oval_sysitem_to_dom  (struct oval_sysitem *sysitem, xmlDoc *doc, xmlNode *tag_parent);
 
 const char *oval_syschar_collection_flag_get_text(oval_syschar_collection_flag_t);
+
+OSCAP_HIDDEN_END;
+
 #endif

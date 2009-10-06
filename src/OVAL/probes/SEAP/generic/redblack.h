@@ -5,6 +5,9 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <assert.h>
+#include "../../../../common/util.h"
+
+OSCAP_HIDDEN_START;
 
 #ifndef NDEBUG
 #  define _E(exp) exp
@@ -461,5 +464,7 @@ typedef uint8_t color_t;
         RBN_INSERT_CODE(__t_name)                               \
         RBN_WALK_CODE(__t_name)					\
         static const char CONCAT2(__t_name, dummy) = 0
+
+OSCAP_HIDDEN_END;
 
 #endif /* REDBLACK_H */

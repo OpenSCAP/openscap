@@ -541,11 +541,11 @@ void oval_component_set_variable(struct oval_component *component,
 	}
 }
 
-void oval_value_consume(struct oval_value *value, void *component) {
+static void oval_value_consume(struct oval_value *value, void *component) {
 	oval_component_set_literal_value(component, value);
 }
 
-int _oval_component_parse_LITERAL_tag
+static int _oval_component_parse_LITERAL_tag
     (xmlTextReaderPtr reader, struct oval_parser_context *context,
      struct oval_component *component) {
 	int return_code =
@@ -553,7 +553,7 @@ int _oval_component_parse_LITERAL_tag
 	return return_code;
 }
 
-int _oval_component_parse_OBJECTREF_tag
+static int _oval_component_parse_OBJECTREF_tag
     (xmlTextReaderPtr reader, struct oval_parser_context *context,
      struct oval_component *component) {
 	struct oval_definition_model *model = oval_parser_context_model(context);
@@ -570,7 +570,7 @@ int _oval_component_parse_OBJECTREF_tag
 	return return_code;
 }
 
-int _oval_component_parse_VARREF_tag
+static int _oval_component_parse_VARREF_tag
     (xmlTextReaderPtr reader, struct oval_parser_context *context,
      struct oval_component *component) {
 	struct oval_definition_model *model = oval_parser_context_model(context);
@@ -583,19 +583,19 @@ int _oval_component_parse_VARREF_tag
 	return return_code;
 }
 
-	void oval_subcomp_consume(struct oval_component *subcomp, void *func) {
+	static void oval_subcomp_consume(struct oval_component *subcomp, void *func) {
 		oval_component_FUNCTION_t *function = func;
 		oval_collection_add(function->function_components,
 				    (void *)subcomp);
 	}
-	int oval_subcomp_tag_consume(xmlTextReaderPtr reader,
+	static int oval_subcomp_tag_consume(xmlTextReaderPtr reader,
 				 struct oval_parser_context *context,
 				 void *func) {
 		return oval_component_parse_tag(reader, context,
 						&oval_subcomp_consume, func);
 	}
 
-int _oval_component_parse_FUNCTION_tag
+static int _oval_component_parse_FUNCTION_tag
     (xmlTextReaderPtr reader, struct oval_parser_context *context,
      struct oval_component *component) {
 	oval_component_FUNCTION_t *function =
@@ -605,7 +605,7 @@ int _oval_component_parse_FUNCTION_tag
 	return return_code;
 }
 
-int _oval_component_parse_ARITHMETIC_tag
+static int _oval_component_parse_ARITHMETIC_tag
     (xmlTextReaderPtr reader, struct oval_parser_context *context,
      struct oval_component *component) {
 	oval_component_ARITHMETIC_t *arithmetic =
@@ -617,7 +617,7 @@ int _oval_component_parse_ARITHMETIC_tag
 	return _oval_component_parse_FUNCTION_tag(reader, context, component);
 }
 
-int _oval_component_parse_BEGEND_tag
+static int _oval_component_parse_BEGEND_tag
     (xmlTextReaderPtr reader, struct oval_parser_context *context,
      struct oval_component *component) {
 	oval_component_BEGEND_t *begend = (oval_component_BEGEND_t *) component;
@@ -629,7 +629,7 @@ int _oval_component_parse_BEGEND_tag
 	return _oval_component_parse_FUNCTION_tag(reader, context, component);
 }
 
-int _oval_component_parse_SPLIT_tag
+static int _oval_component_parse_SPLIT_tag
     (xmlTextReaderPtr reader, struct oval_parser_context *context,
      struct oval_component *component) {
 	oval_component_SPLIT_t *split = (oval_component_SPLIT_t *) component;
@@ -641,7 +641,7 @@ int _oval_component_parse_SPLIT_tag
 	return _oval_component_parse_FUNCTION_tag(reader, context, component);
 }
 
-int _oval_component_parse_SUBSTRING_tag
+static int _oval_component_parse_SUBSTRING_tag
     (xmlTextReaderPtr reader, struct oval_parser_context *context,
      struct oval_component *component) {
 	oval_component_SUBSTRING_t *substring =
@@ -659,7 +659,7 @@ int _oval_component_parse_SUBSTRING_tag
 	return _oval_component_parse_FUNCTION_tag(reader, context, component);
 }
 
-int _oval_component_parse_TIMEDIF_tag
+static int _oval_component_parse_TIMEDIF_tag
     (xmlTextReaderPtr reader, struct oval_parser_context *context,
      struct oval_component *component) {
 	oval_component_TIMEDIF_t *timedif =
@@ -675,7 +675,7 @@ int _oval_component_parse_TIMEDIF_tag
 	return _oval_component_parse_FUNCTION_tag(reader, context, component);
 }
 
-int _oval_component_parse_REGEX_CAPTURE_tag
+static int _oval_component_parse_REGEX_CAPTURE_tag
     (xmlTextReaderPtr reader, struct oval_parser_context *context,
      struct oval_component *component) {
 	oval_component_REGEX_CAPTURE_t *regex =
@@ -775,7 +775,7 @@ int oval_component_parse_tag(xmlTextReaderPtr reader,
 	return return_code;
 }
 
-void function_comp_to_print(struct oval_component *component, char* nxtindent) {
+static void function_comp_to_print(struct oval_component *component, char* nxtindent) {
 	struct oval_component_iterator *subcomps =
 		oval_component_get_function_components(component);
 	if (oval_component_iterator_has_more(subcomps)) {
@@ -903,14 +903,14 @@ void oval_component_to_print(struct oval_component *component, char *indent,
 	OVAL_FUNCTION_REGEX_CAPTURE = OVAL_FUNCTION + 8,
 	OVAL_FUNCTION_ARITHMETIC = OVAL_FUNCTION + 9
  */
-const struct oscap_string_map _OVAL_COMPONENT_MAP[] = {
+static const struct oscap_string_map _OVAL_COMPONENT_MAP[] = {
 		{OVAL_COMPONENT_LITERAL   ,"literal_component"},
 		{OVAL_COMPONENT_OBJECTREF ,"object_component"},
 		{OVAL_COMPONENT_VARREF    ,"variable_component"},
 		{0, NULL}
 };
 
-const struct oscap_string_map _OVAL_FUNCTION_MAP[] = {
+static const struct oscap_string_map _OVAL_FUNCTION_MAP[] = {
 		{OVAL_FUNCTION_BEGIN        , "begin"          },
 		{OVAL_FUNCTION_CONCAT       , "concat"         },
 		{OVAL_FUNCTION_END          , "end"            },

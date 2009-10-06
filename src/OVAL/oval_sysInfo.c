@@ -138,40 +138,38 @@ struct oval_sysint_iterator *oval_sysinfo_get_interfaces(struct oval_sysinfo
 								       interfaces);
 }
 
-void add_oval_sysinfo_interfaces(struct oval_sysinfo *sysinfo, struct oval_sysint *interface)
+static void add_oval_sysinfo_interfaces(struct oval_sysinfo *sysinfo, struct oval_sysint *interface)
 {
 	oval_collection_add(sysinfo->interfaces, interface);
 }
 
-extern const char* NAMESPACE_OVALSYS;
-
-		void _oval_sysinfo_parse_tag_consume_os_name(char* text, void* sysinfo)
+		static void _oval_sysinfo_parse_tag_consume_os_name(char* text, void* sysinfo)
 		{
 			oval_sysinfo_set_os_name(sysinfo, text);
 		}
-		void _oval_sysinfo_parse_tag_consume_os_version(char* text, void* sysinfo)
+		static void _oval_sysinfo_parse_tag_consume_os_version(char* text, void* sysinfo)
 		{
 			oval_sysinfo_set_os_version(sysinfo, text);
 		}
-		void _oval_sysinfo_parse_tag_consume_os_architecture(char* text, void* sysinfo)
+		static void _oval_sysinfo_parse_tag_consume_os_architecture(char* text, void* sysinfo)
 		{
 			oval_sysinfo_set_os_architecture(sysinfo, text);
 		}
-		void _oval_sysinfo_parse_tag_consume_primary_host_name(char* text, void* sysinfo)
+		static void _oval_sysinfo_parse_tag_consume_primary_host_name(char* text, void* sysinfo)
 		{
 			oval_sysinfo_set_primary_host_name(sysinfo, text);
 		}
-		void _oval_sysinfo_parse_tag_consume_int(struct oval_sysint *sysint, void *sysinfo)
+		static void _oval_sysinfo_parse_tag_consume_int(struct oval_sysint *sysint, void *sysinfo)
 		{
 			add_oval_sysinfo_interfaces(sysinfo, sysint);
 		}
-		int _oval_sysinfo_parse_tag_parse_tag(xmlTextReaderPtr reader,
+		static int _oval_sysinfo_parse_tag_parse_tag(xmlTextReaderPtr reader,
 			       struct oval_parser_context *context, void *sysinfo)
 		{
 			return oval_sysint_parse_tag
 					(reader, context, &_oval_sysinfo_parse_tag_consume_int, sysinfo);
 		}
-int _oval_sysinfo_parse_tag(xmlTextReaderPtr reader,
+static int _oval_sysinfo_parse_tag(xmlTextReaderPtr reader,
 			       struct oval_parser_context *context, void *user)
 {
 	struct oval_sysinfo *sysinfo = (struct oval_sysinfo *)user;

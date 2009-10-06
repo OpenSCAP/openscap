@@ -85,7 +85,7 @@ void oscap_list_dump(struct oscap_list* list, oscap_dump_func dumper, int depth)
     }
 }
 
-bool oscap_iterator_no_filter(void* foo, void* bar) { bar = foo; return true; }
+static bool oscap_iterator_no_filter(void* foo, void* bar) { bar = foo; return true; }
 
 static inline void oscap_iterator_find_nearest(struct oscap_iterator* it)
 {

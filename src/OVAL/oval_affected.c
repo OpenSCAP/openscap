@@ -127,7 +127,7 @@ void _odafamily_set(char *name, int val)
 }
 */
 
-const struct oscap_string_map OVAL_ODAFAMILY_MAP[] = {
+static const struct oscap_string_map OVAL_ODAFAMILY_MAP[] = {
 	{ OVAL_AFCFML_CATOS,     "catos"     },
 	{ OVAL_AFCFML_IOS,       "ios"       },
 	{ OVAL_AFCFML_MACOS,     "macos"     },
@@ -138,7 +138,7 @@ const struct oscap_string_map OVAL_ODAFAMILY_MAP[] = {
 	{ OVAL_CLASS_UNKNOWN, NULL }
 };
 
-oval_affected_family_t _odafamily(char *family)
+static oval_affected_family_t _odafamily(char *family)
 {
 	return oscap_string_to_enum(OVAL_ODAFAMILY_MAP, family);
 }
@@ -148,7 +148,7 @@ const char* oval_affected_family_get_text(oval_affected_family_t family)
 	return OVAL_ODAFAMILY_MAP[family-1].string;
 }
 
-int _oval_affected_parse_tag(xmlTextReaderPtr reader,
+static int _oval_affected_parse_tag(xmlTextReaderPtr reader,
 			     struct oval_parser_context *context, void *user)
 {
 	struct oval_affected *affected = (struct oval_affected *)user;

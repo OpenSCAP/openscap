@@ -1,6 +1,9 @@
 #pragma once
 #ifndef PQUEUE_H
 #define PQUEUE_H
+#include "../../../../common/util.h"
+
+OSCAP_HIDDEN_START;
 
 typedef struct pqueue pqueue_t;
 
@@ -25,5 +28,7 @@ void *pqueue_pick_last  (pqueue_t *q, int (*pickp) (void *ptr));
 
 size_t pqueue_count (pqueue_t *q);
 int    pqueue_notempty (pqueue_t *q);
+
+OSCAP_HIDDEN_END;
 
 #endif /* PQUEUE_H */

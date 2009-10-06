@@ -32,6 +32,9 @@
 
 #include "api/oval_agent_api.h"
 #include "oval_definitions_impl.h"
+#include "../common/util.h"
+
+OSCAP_HIDDEN_START;
 
 
 #define OVAL_COMMON_NAMESPACE      BAD_CAST "http://oval.mitre.org/XMLSchema/oval-common-5"
@@ -64,5 +67,7 @@ xmlNode *oval_syschar_model_to_dom
 			oval_syschar_resolver, void *);
 
 struct oval_sysdata *get_oval_sysdata_new(struct oval_syschar_model *, char *);
+
+OSCAP_HIDDEN_END;
 
 #endif				/* OVAL_AGENT_API_IMPL_H_ */

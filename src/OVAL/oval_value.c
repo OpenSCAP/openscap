@@ -121,7 +121,7 @@ void oval_value_set_text(struct oval_value *value, char *text)
 	value->text = ((text==NULL)?NULL:strdup(text));
 }
 
-void oval_value_parse_tag_consume_text(char *string, void *text) {
+static void oval_value_parse_tag_consume_text(char *string, void *text) {
 	*(char**)text = strdup(string);
 }
 

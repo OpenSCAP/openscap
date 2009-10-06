@@ -7,6 +7,9 @@
 #include "_seap-command.h"
 #include "_seap-error.h"
 #include "public/seap-packet.h"
+#include "../../../common/util.h"
+
+OSCAP_HIDDEN_START;
 
 #define SEAP_SYM_PREFIX "seap."
 #define SEAP_SYM_MSG    SEAP_SYM_PREFIX"msg"
@@ -21,5 +24,7 @@ struct SEAP_packet {
                 SEAP_cmd_t cmd;
         } data;
 };
+
+OSCAP_HIDDEN_END;
 
 #endif /* _SEAP_PACKET_H */

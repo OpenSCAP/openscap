@@ -9,6 +9,9 @@
 #include <stdint.h>
 #include <stddef.h>
 #include "_sexp-datatype.h"
+#include "../../../common/util.h"
+
+OSCAP_HIDDEN_START;
 
 typedef struct {
         char    *typestr;
@@ -40,5 +43,7 @@ int SEXP_delhandler (SEXP_handlertbl_t *htbl, const char *typestr, size_t typele
 #define SEXP_gethandler_g(s, l) SEXP_gethandler (&gSEXP_handlers, s, l)
 #define SEXP_reghandler_g(h)    SEXP_reghandler (&gSEXP_handlers, h)
 #define SEXP_delhandler_g(s, l) SEXP_delhandler (&gSEXP_handlers, s, l)
+
+OSCAP_HIDDEN_END;
 
 #endif /* SEXP_HANDLER_H */

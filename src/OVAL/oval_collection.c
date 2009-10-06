@@ -90,9 +90,9 @@ void oval_collection_add(struct oval_collection *collection, void *item)
 	next->item = item;
 }
 
-bool debug = true;
-struct oval_iterator *_debugStack[_DEBUG_OVAL_COLLECTION_];
-int iterator_count;
+static bool debug = true;
+static struct oval_iterator *_debugStack[_DEBUG_OVAL_COLLECTION_];
+static int iterator_count;
 
 struct oval_iterator *oval_collection_iterator(struct oval_collection
 					       *collection)
@@ -163,9 +163,9 @@ void oval_collection_iterator_free(struct oval_iterator *iterator)
 	}
 }
 
-struct oval_string_iterator *oval_collection_string_iterator(struct
-							     oval_collection
-							     *os_string)
+static struct oval_string_iterator *oval_collection_string_iterator(struct
+								    oval_collection
+								    *os_string)
 {
 	return (struct oval_string_iterator *)
 	    oval_collection_iterator(os_string);
@@ -212,13 +212,13 @@ void oval_string_iterator_free(struct oval_string_iterator *iterator)
 }
 
 //TEST FREEFUNC
-void oval_collection_main_freefunc(void *item)
+static void oval_collection_main_freefunc(void *item)
 {
 	printf("FREEFUNC: item = %s\n", (char *) item);
 }
 
 //TEST MAIN
-int oval_collection_main(int argc, char **argv)
+static int oval_collection_main(int argc, char **argv)
 {
 
 	char *array[] =

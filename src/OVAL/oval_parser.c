@@ -44,7 +44,7 @@ int oval_parser_report(struct oval_parser_context *context, struct oval_xml_erro
 	return (*(context->error_handler))(error,context->user_data);
 }
 
-int oval_parser_log (struct oval_parser_context *, oval_xml_severity_t severity, char*);
+static int oval_parser_log (struct oval_parser_context *, oval_xml_severity_t severity, char*);
 
 int oval_parser_log_info(struct oval_parser_context *context, char* message){
 	return oval_parser_log(context, OVAL_LOG_INFO, message);
@@ -58,7 +58,7 @@ int oval_parser_log_warn(struct oval_parser_context *context, char* message){
 	return oval_parser_log(context, OVAL_LOG_WARN, message);
 }
 
-int oval_parser_log
+static int oval_parser_log
 		(struct oval_parser_context *context,
 				oval_xml_severity_t severity, char* message){
 	xmlTextReader *reader = context->reader;
@@ -98,7 +98,7 @@ typedef int (*_oval_parser_process_tag_func) (xmlTextReaderPtr reader,
 					      struct oval_parser_context *
 					      context);
 
-int _oval_parser_process_tags(xmlTextReaderPtr reader,
+static int _oval_parser_process_tags(xmlTextReaderPtr reader,
 			      struct oval_parser_context *context,
 			      _oval_parser_process_tag_func tag_func)
 {

@@ -110,22 +110,21 @@ void oval_sysint_free(struct oval_sysint *sysint)
 
 	free(sysint);
 }
-extern const char* NAMESPACE_OVALSYS;
 
-void oval_consume_interface_name(char* text, void* sysint)
+static void oval_consume_interface_name(char* text, void* sysint)
 {
 	oval_sysint_set_name(sysint, text);
 }
-void oval_consume_ip_address(char* text, void* sysint)
+static void oval_consume_ip_address(char* text, void* sysint)
 {
 	oval_sysint_set_ip_address(sysint, text);
 }
-void oval_consume_mac_address(char* text, void* sysint)
+static void oval_consume_mac_address(char* text, void* sysint)
 {
 	oval_sysint_set_mac_address(sysint, text);
 }
 
-int _oval_sysint_parse_tag(xmlTextReaderPtr reader,
+static int _oval_sysint_parse_tag(xmlTextReaderPtr reader,
 			       struct oval_parser_context *context , void *user){
 	struct oval_sysint *sysint = (struct oval_sysint *)user;
 	char *tagname   = (char*) xmlTextReaderName(reader);

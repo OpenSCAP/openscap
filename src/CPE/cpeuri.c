@@ -68,17 +68,17 @@ struct cpe_name {
  * o - OS
  * a - application
  */
-const char *CPE_PART_CHAR[] = { NULL, "h", "o", "a" };
+static const char *CPE_PART_CHAR[] = { NULL, "h", "o", "a" };
 
-const char *CPE_SCHEMA = "cpe:/";
-const char CPE_SEP_CHAR = ':';
-const char *CPE_SEP_STR = ":";
+static const char *CPE_SCHEMA = "cpe:/";
+static const char CPE_SEP_CHAR = ':';
+static const char *CPE_SEP_STR = ":";
 
 char **cpe_uri_split(char *str, const char *delim);
-bool cpe_urldecode(char *str);
-size_t ptrarray_length(void **arr);
+static bool cpe_urldecode(char *str);
+static size_t ptrarray_length(void **arr);
 bool cpe_name_check(const char *str);
-char **cpe_split(char *str, const char *delim);
+static char **cpe_split(char *str, const char *delim);
 /*
  * Fill @a cpe structure with parsed @a fields.
  *
@@ -91,7 +91,7 @@ char **cpe_split(char *str, const char *delim);
  * @param fields NULL-terminated array of strings representing individual fields
  * @return true on success
  */
-bool cpe_assign_values(struct cpe_name * cpe, char **fields);
+static bool cpe_assign_values(struct cpe_name * cpe, char **fields);
 
 struct cpe_name *cpe_name_new(const char *cpestr)
 {
@@ -116,9 +116,9 @@ struct cpe_name *cpe_name_new(const char *cpestr)
 	return cpe;
 }
 
-const size_t CPE_SPLIT_INIT_ALLOC = 8;
+static const size_t CPE_SPLIT_INIT_ALLOC = 8;
 
-char **cpe_split(char *str, const char *delim)
+static char **cpe_split(char *str, const char *delim)
 {
 	assert(str != NULL);
 
@@ -146,7 +146,7 @@ char **cpe_split(char *str, const char *delim)
 	return fields;
 }
 
-bool cpe_urldecode(char *str)
+static bool cpe_urldecode(char *str)
 {
 	assert(str != NULL);
 	char *inptr, *outptr;
@@ -258,7 +258,7 @@ bool cpe_name_check(const char *str)
 	return rc >= 0;
 }
 
-const char *as_str(const char *str)
+static const char *as_str(const char *str)
 {
 	if (str == NULL)
 		return "";
@@ -313,7 +313,7 @@ int cpe_name_write(const struct cpe_name * cpe, FILE * f)
 	return ret;
 }
 
-bool cpe_assign_values(struct cpe_name * cpe, char **fields)
+static bool cpe_assign_values(struct cpe_name * cpe, char **fields)
 {
 	int i;
 
@@ -370,7 +370,7 @@ void cpe_name_free(struct cpe_name * cpe)
 	oscap_free(cpe);
 }
 
-size_t ptrarray_length(void **arr)
+static size_t ptrarray_length(void **arr)
 {
 	if (arr == NULL)
 		return 0;

@@ -33,6 +33,8 @@
 #include <stdbool.h>
 #include "util.h"
 
+OSCAP_HIDDEN_START;
+
 typedef void(*oscap_dump_func)(void*,int);
 
 /*
@@ -143,6 +145,8 @@ void oscap_htable_dump(struct oscap_htable* htable, oscap_dump_func dumper, int 
 void oscap_htable_free(struct oscap_htable* htable, oscap_destruct_func destructor);
 
 void oscap_print_depth(int depth);
+
+OSCAP_HIDDEN_END;
 
 #endif
 

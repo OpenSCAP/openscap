@@ -200,18 +200,18 @@ void oval_test_add_note(struct oval_test *test, char *note)
 	oval_collection_add(test->notes, (void *)strdup(note));
 }
 
-void _oval_test_parse_notes_consumer(char *text, void *test) {
+static void _oval_test_parse_notes_consumer(char *text, void *test) {
 	oval_test_add_note(test, text);
 }
-int _oval_test_parse_notes(xmlTextReaderPtr reader,
-			   struct oval_parser_context *context, void *user)
+static int _oval_test_parse_notes(xmlTextReaderPtr reader,
+				  struct oval_parser_context *context, void *user)
 {
 	struct oval_test *test = (struct oval_test *)user;
 	return oval_parser_text_value(reader, context, &_oval_test_parse_notes_consumer, test);
 }
 
-int _oval_test_parse_tag(xmlTextReaderPtr reader,
-			 struct oval_parser_context *context, void *user)
+static int _oval_test_parse_tag(xmlTextReaderPtr reader,
+				struct oval_parser_context *context, void *user)
 {
 	struct oval_test *test = (struct oval_test *)user;
 	char *tagname = (char*) xmlTextReaderName(reader);

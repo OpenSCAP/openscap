@@ -151,7 +151,7 @@ SEXP_t *probe_item_newid(struct id_desc_t *id_desc)
         return sid;
 }
 
-void probe_item_resetidctr(struct id_desc_t *id_desc)
+static void probe_item_resetidctr(struct id_desc_t *id_desc)
 {
         id_desc->item_id_ctr = 1;
 }
@@ -424,7 +424,7 @@ int probe_obj_setstatus (SEXP_t *obj, oval_syschar_status_t status)
         return (-1);
 }
 
-int probe_obj_setentstatus (SEXP_t *obj, const char *name, uint32_t n, oval_syschar_status_t status)
+static int probe_obj_setentstatus (SEXP_t *obj, const char *name, uint32_t n, oval_syschar_status_t status)
 {
         _LOGCALL_;
         /* TBI */

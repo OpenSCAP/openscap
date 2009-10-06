@@ -34,7 +34,7 @@
 #define OVAL_ENUMERATION_INVALID (-1)
 
 
-int oval_enumeration_attr(xmlTextReaderPtr reader, char *attname, const struct oscap_string_map* map, int defval)
+static int oval_enumeration_attr(xmlTextReaderPtr reader, char *attname, const struct oscap_string_map* map, int defval)
 {
 	char *attrstr = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST attname);
 	if (attrstr == NULL)
@@ -44,7 +44,7 @@ int oval_enumeration_attr(xmlTextReaderPtr reader, char *attname, const struct o
 	return ret == OVAL_ENUMERATION_INVALID ? defval : ret;
 }
 
-const struct oscap_string_map OVAL_SYSCHAR_FLAG_MAP[] = {
+static const struct oscap_string_map OVAL_SYSCHAR_FLAG_MAP[] = {
 	{ SYSCHAR_FLAG_ERROR,          "error" },
 	{ SYSCHAR_FLAG_COMPLETE,       "complete" },
 	{ SYSCHAR_FLAG_INCOMPLETE,     "incomplete" },
@@ -68,7 +68,7 @@ const char *oval_syschar_collection_flag_get_text(oval_syschar_collection_flag_t
 	return (flag)?OVAL_SYSCHAR_FLAG_MAP[flag-1].string:"**INVALID**";
 }
 
-const struct oscap_string_map OVAL_SYSCHAR_STATUS_MAP[] = {
+static const struct oscap_string_map OVAL_SYSCHAR_STATUS_MAP[] = {
 	{ SYSCHAR_STATUS_ERROR,          "error"          },
 	{ SYSCHAR_STATUS_DOES_NOT_EXIST, "does not exist" },
 	{ SYSCHAR_STATUS_EXISTS,         "exists"         },
@@ -88,7 +88,7 @@ const char * oval_syschar_status_text(oval_syschar_status_t idx){
 	return oscap_enum_to_string(OVAL_SYSCHAR_STATUS_MAP, idx);
 }
 
-const struct oscap_string_map OVAL_MESSAGE_LEVEL_MAP[] = {
+static const struct oscap_string_map OVAL_MESSAGE_LEVEL_MAP[] = {
 	{ OVAL_MESSAGE_LEVEL_DEBUG,   "debug"   },
 	{ OVAL_MESSAGE_LEVEL_ERROR,   "error"   },
 	{ OVAL_MESSAGE_LEVEL_FATAL,   "fatal"   },
@@ -108,7 +108,7 @@ const char * oval_message_level_text(oval_message_level_t level){
 	return oscap_enum_to_string(OVAL_MESSAGE_LEVEL_MAP, level);
 }
 
-const struct oscap_string_map OVAL_ARITHMETIC_OPERATION_MAP[] = {
+static const struct oscap_string_map OVAL_ARITHMETIC_OPERATION_MAP[] = {
 	{ OVAL_ARITHMETIC_ADD,      "add"      },
 	{ OVAL_ARITHMETIC_MULTIPLY, "multiply" },
 	{ OVAL_ARITHMETIC_SUBTRACT, "subtract" },
@@ -129,7 +129,7 @@ const char *oval_arithmetic_operation_get_text(oval_arithmetic_operation_t opera
 	return OVAL_ARITHMETIC_OPERATION_MAP[operation-1].string;
 }
 
-const struct oscap_string_map OVAL_DATETIME_FORMAT_MAP[] = {
+static const struct oscap_string_map OVAL_DATETIME_FORMAT_MAP[] = {
 	{ OVAL_DATETIME_YEAR_MONTH_DAY,      "year_month_day"      },
 	{ OVAL_DATETIME_MONTH_DAY_YEAR,      "month_day_year"      },
 	{ OVAL_DATETIME_DAY_MONTH_YEAR,      "day_month_year"      },
@@ -150,7 +150,7 @@ const char *oval_datetime_format_get_text(oval_datetime_format_t format)
 	return OVAL_DATETIME_FORMAT_MAP[format-1].string;
 }
 
-const struct oscap_string_map OVAL_SET_OPERATION_MAP[] = {
+static const struct oscap_string_map OVAL_SET_OPERATION_MAP[] = {
 	{ OVAL_SET_OPERATION_COMPLEMENT,   "COMPLEMENT"   },
 	{ OVAL_SET_OPERATION_INTERSECTION, "INTERSECTION" },
 	{ OVAL_SET_OPERATION_UNION,        "UNION"        },
@@ -168,7 +168,7 @@ const char *oval_set_operation_get_text(oval_setobject_operation_t operation)
 	return OVAL_SET_OPERATION_MAP[operation-1].string;
 }
 
-const struct oscap_string_map OVAL_OPERATION_MAP[] = {
+static const struct oscap_string_map OVAL_OPERATION_MAP[] = {
 	{ OVAL_OPERATION_EQUALS,                     "equals"                     },
 	{ OVAL_OPERATION_NOT_EQUAL,                  "not equal"                  },
 	{ OVAL_OPERATION_CASE_INSENSITIVE_EQUALS,    "case insensitive equals"    },
@@ -193,7 +193,7 @@ const char *oval_operation_get_text(oval_operation_t operation)
 	return OVAL_OPERATION_MAP[operation-1].string;
 }
 
-const struct oscap_string_map OVAL_CHECK_MAP[] = {
+static const struct oscap_string_map OVAL_CHECK_MAP[] = {
 	{ OVAL_CHECK_ALL,          "all"          },
 	{ OVAL_CHECK_AT_LEAST_ONE, "at least one" },
 	{ OVAL_CHECK_NONE_EXIST,   "none exist"   },
@@ -213,7 +213,7 @@ const char * oval_check_get_text(oval_check_t check)
 }
 
 
-const struct oscap_string_map OVAL_DATATYPE_MAP[] = {
+static const struct oscap_string_map OVAL_DATATYPE_MAP[] = {
 	{ OVAL_DATATYPE_BINARY,            "binary"           },
 	{ OVAL_DATATYPE_BOOLEAN,           "boolean"          },
 	{ OVAL_DATATYPE_EVR_STRING,        "evr_string"       },
@@ -236,7 +236,7 @@ const char *oval_datatype_get_text(oval_datatype_t datatype)
 	return OVAL_DATATYPE_MAP[datatype-1].string;
 }
 
-const struct oscap_string_map OVAL_EXISTENCE_MAP[] = {
+static const struct oscap_string_map OVAL_EXISTENCE_MAP[] = {
 	{ OVAL_ALL_EXIST,           "all_exist"           },
 	{ OVAL_ANY_EXIST,           "any_exist"           },
 	{ OVAL_AT_LEAST_ONE_EXISTS, "at_least_one_exists" },
@@ -255,7 +255,7 @@ const char * oval_existence_get_text(oval_existence_t existence)
 	return OVAL_EXISTENCE_MAP[existence-1].string;
 }
 
-const struct oscap_string_map OVAL_OPERATOR_MAP[] = {
+static const struct oscap_string_map OVAL_OPERATOR_MAP[] = {
 	{ OVAL_OPERATOR_AND, "AND" },
 	{ OVAL_OPERATOR_ONE, "ONE" },
 	{ OVAL_OPERATOR_OR,  "OR"  },
@@ -274,7 +274,7 @@ const char* oval_operator_get_text(oval_operator_t operator)
 	return OVAL_OPERATOR_MAP[operator-1].string;
 }
 
-const struct oscap_string_map OVAL_FAMILY_MAP[] = {
+static const struct oscap_string_map OVAL_FAMILY_MAP[] = {
 	{ OVAL_FAMILY_AIX,         "aix"         },
 	{ OVAL_FAMILY_APACHE,      "apache"      },
 	{ OVAL_FAMILY_CATOS,       "catos"       },
@@ -312,20 +312,20 @@ const char *oval_family_get_text(oval_family_t family)
 }
 
 
-const struct oscap_string_map OVAL_SUBTYPE_AIX_MAP[] = {
+static const struct oscap_string_map OVAL_SUBTYPE_AIX_MAP[] = {
 	{ OVAL_AIX_FILESET, "fileset" },
 	{ OVAL_AIX_FIX,     "fix"     },
 	{ OVAL_AIX_OSLEVEL, "oslevel" },
 	{ OVAL_SUBTYPE_UNKNOWN, NULL }
 };
 
-const struct oscap_string_map OVAL_SUBTYPE_APACHE_MAP[] = {
+static const struct oscap_string_map OVAL_SUBTYPE_APACHE_MAP[] = {
 	{ OVAL_APACHE_HTTPD,   "httpd"   },
 	{ OVAL_APACHE_VERSION, "version" },
 	{ OVAL_SUBTYPE_UNKNOWN, NULL }
 };
 
-const struct oscap_string_map OVAL_SUBTYPE_CATOS_MAP[] = {
+static const struct oscap_string_map OVAL_SUBTYPE_CATOS_MAP[] = {
 	{ OVAL_CATOS_LINE,       "line"      },
 	{ OVAL_CATOS_MODULE,     "module"    },
 	{ OVAL_CATOS_VERSION_55, "version55" },
@@ -333,18 +333,18 @@ const struct oscap_string_map OVAL_SUBTYPE_CATOS_MAP[] = {
 	{ OVAL_SUBTYPE_UNKNOWN, NULL }
 };
 
-const struct oscap_string_map OVAL_SUBTYPE_ESX_MAP[] = {
+static const struct oscap_string_map OVAL_SUBTYPE_ESX_MAP[] = {
 	{ OVAL_ESX_PATCH,   "patch"   },
 	{ OVAL_ESX_VERSION, "version" },
 	{ OVAL_SUBTYPE_UNKNOWN, NULL }
 };
 
-const struct oscap_string_map OVAL_SUBTYPE_FREEBSD_MAP[] = {
+static const struct oscap_string_map OVAL_SUBTYPE_FREEBSD_MAP[] = {
 	{ OVAL_FREEBSD_PORT_INFO, "portinfo" },
 	{ OVAL_SUBTYPE_UNKNOWN, NULL }
 };
 
-const struct oscap_string_map OVAL_SUBTYPE_HPUX_MAP[] = {
+static const struct oscap_string_map OVAL_SUBTYPE_HPUX_MAP[] = {
 	{ OVAL_HPUX_GETCONF,          "getconf"         },
 	{ OVAL_HPUX_PATCH_53,         "patch53"         },
 	{ OVAL_HPUX_PATCH,            "patch"           },
@@ -353,7 +353,7 @@ const struct oscap_string_map OVAL_SUBTYPE_HPUX_MAP[] = {
 	{ OVAL_SUBTYPE_UNKNOWN, NULL }
 };
 
-const struct oscap_string_map OVAL_SUBTYPE_INDEPENDENT_MAP[] = {
+static const struct oscap_string_map OVAL_SUBTYPE_INDEPENDENT_MAP[] = {
 	{ OVAL_INDEPENDENT_FAMILY,               "family"              },
 	{ OVAL_INDEPENDENT_FILE_MD5,             "filemd5"             },
 	{ OVAL_INDEPENDENT_FILE_HASH,            "filehash"            },
@@ -367,7 +367,7 @@ const struct oscap_string_map OVAL_SUBTYPE_INDEPENDENT_MAP[] = {
 	{ OVAL_SUBTYPE_UNKNOWN, NULL }
 };
 
-const struct oscap_string_map OVAL_SUBTYPE_IOS_MAP[] = {
+static const struct oscap_string_map OVAL_SUBTYPE_IOS_MAP[] = {
 	{ OVAL_IOS_GLOBAL,     "global"    },
 	{ OVAL_IOS_INTERFACE,  "interface" },
 	{ OVAL_IOS_LINE,       "line"      },
@@ -377,7 +377,7 @@ const struct oscap_string_map OVAL_SUBTYPE_IOS_MAP[] = {
 	{ OVAL_SUBTYPE_UNKNOWN, NULL }
 };
 
-const struct oscap_string_map OVAL_SUBTYPE_LINUX_MAP[] = {
+static const struct oscap_string_map OVAL_SUBTYPE_LINUX_MAP[] = {
 	{ OVAL_LINUX_DPKG_INFO,               "dpkginfo"             },
 	{ OVAL_LINUX_INET_LISTENING_SERVERS,  "inetlisteningservers" },
 	{ OVAL_LINUX_RPM_INFO,                "rpminfo"              },
@@ -385,7 +385,7 @@ const struct oscap_string_map OVAL_SUBTYPE_LINUX_MAP[] = {
 	{ OVAL_SUBTYPE_UNKNOWN, NULL }
 };
 
-const struct oscap_string_map OVAL_SUBTYPE_MACOS_MAP[] = {
+static const struct oscap_string_map OVAL_SUBTYPE_MACOS_MAP[] = {
 	{ OVAL_MACOS_ACCOUNT_INFO,           "accountinfo"          },
 	{ OVAL_MACOS_INET_LISTENING_SERVERS, "inetlisteningservers" },
 	{ OVAL_MACOS_NVRAM_INFO,             "nvraminfo"            },
@@ -393,13 +393,13 @@ const struct oscap_string_map OVAL_SUBTYPE_MACOS_MAP[] = {
 	{ OVAL_SUBTYPE_UNKNOWN, NULL }
 };
 
-const struct oscap_string_map OVAL_SUBTYPE_PIXOS_MAP[] = {
+static const struct oscap_string_map OVAL_SUBTYPE_PIXOS_MAP[] = {
 	{ OVAL_PIXOS_LINE,    "line"    },
 	{ OVAL_PIXOS_VERSION, "version" },
 	{ OVAL_SUBTYPE_UNKNOWN, NULL }
 };
 
-const struct oscap_string_map OVAL_SUBTYPE_SOLARIS_MAP[] = {
+static const struct oscap_string_map OVAL_SUBTYPE_SOLARIS_MAP[] = {
 	{ OVAL_SOLARIS_ISAINFO, "isainfo" },
 	{ OVAL_SOLARIS_PACKAGE, "package" },
 	{ OVAL_SOLARIS_PATCH,   "patch"   },
@@ -407,7 +407,7 @@ const struct oscap_string_map OVAL_SUBTYPE_SOLARIS_MAP[] = {
 	{ OVAL_SUBTYPE_UNKNOWN, NULL }
 };
 
-const struct oscap_string_map OVAL_SUBTYPE_UNIX_MAP[] = {
+static const struct oscap_string_map OVAL_SUBTYPE_UNIX_MAP[] = {
 	{ OVAL_UNIX_FILE,      "file"      },
 	{ OVAL_UNIX_INETD,     "inetd"     },
 	{ OVAL_UNIX_INTERFACE, "interface" },
@@ -421,7 +421,7 @@ const struct oscap_string_map OVAL_SUBTYPE_UNIX_MAP[] = {
 	{ OVAL_SUBTYPE_UNKNOWN, NULL }
 };
 
-const struct oscap_string_map OVAL_SUBTYPE_WINDOWS_MAP[] = {
+static const struct oscap_string_map OVAL_SUBTYPE_WINDOWS_MAP[] = {
 	{ OVAL_WINDOWS_ACCESS_TOKEN,                  "access_token"                  },
 	{ OVAL_WINDOWS_ACTIVE_DIRECTORY,              "active_directory"              },
 	{ OVAL_WINDOWS_AUDIT_EVENT_POLICY,            "audit_event_policy"            },
@@ -529,7 +529,7 @@ const char *oval_subtype_get_text(oval_subtype_t subtype)
 	return map[subidx-1].string;
 }
 
-void _test_oval_subtype_mapping(const struct oscap_string_map *map)
+static void _test_oval_subtype_mapping(const struct oscap_string_map *map)
 {
 	printf("\n");
 	int i;for(i=0;map[i].string;i++){
@@ -537,7 +537,7 @@ void _test_oval_subtype_mapping(const struct oscap_string_map *map)
 	}
 }
 
-void _test_oval_subtypes_mapping()
+static void _test_oval_subtypes_mapping()
 {
 	_test_oval_subtype_mapping(OVAL_SUBTYPE_AIX_MAP        );// 1000
 	_test_oval_subtype_mapping(OVAL_SUBTYPE_APACHE_MAP     );// 2000
@@ -555,7 +555,7 @@ void _test_oval_subtypes_mapping()
 	_test_oval_subtype_mapping(OVAL_SUBTYPE_WINDOWS_MAP    );//14000
 }
 
-const struct oscap_string_map OVAL_RESULT_MAP[] = {
+static const struct oscap_string_map OVAL_RESULT_MAP[] = {
 	{ OVAL_RESULT_TRUE,           "true"          },
 	{ OVAL_RESULT_FALSE,          "false"         },
 	{ OVAL_RESULT_UNKNOWN,        "unknown"       },

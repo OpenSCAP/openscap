@@ -31,7 +31,7 @@ void xccdf_set_value_free(struct xccdf_set_value* sv)
 	}
 }
 
-void xccdf_refine_value_free(struct xccdf_refine_value* rv)
+static void xccdf_refine_value_free(struct xccdf_refine_value* rv)
 {
 	if (rv) {
 		oscap_free(rv->remark);
@@ -40,7 +40,7 @@ void xccdf_refine_value_free(struct xccdf_refine_value* rv)
 	}
 }
 
-void xccdf_refine_rule_free(struct xccdf_refine_rule* rr)
+static void xccdf_refine_rule_free(struct xccdf_refine_rule* rr)
 {
 	if (rr) {
 		oscap_free(rr->remark);
@@ -49,7 +49,7 @@ void xccdf_refine_rule_free(struct xccdf_refine_rule* rr)
 	}
 }
 
-void xccdf_selected_dump(struct xccdf_selected* sel, int depth)
+static void xccdf_selected_dump(struct xccdf_selected* sel, int depth)
 {
     xccdf_print_depth(depth); printf("sel %c= %s\n", (sel->selected ? '+' : '-' ), (sel->item ? sel->item->item.id : "(unknown)"));
 }

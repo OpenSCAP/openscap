@@ -84,7 +84,7 @@ void oval_result_directive_set_content
 }
 
 //typedef int (*oval_xml_tag_parser) (xmlTextReaderPtr, struct oval_parser_context *, void *);
-int _oval_result_directives_parse_tag
+static int _oval_result_directives_parse_tag
 	(xmlTextReaderPtr reader, struct oval_parser_context *context, void *client)
 {
 	struct oval_result_directives *directives = (struct oval_result_directives *)client;
@@ -152,7 +152,7 @@ int oval_result_directives_parse_tag
 	return oval_parser_parse_tag(reader, context, &_oval_result_directives_parse_tag, directives);
 }
 
-const struct oscap_string_map _OVAL_DIRECTIVE_MAP[] = {
+static const struct oscap_string_map _OVAL_DIRECTIVE_MAP[] = {
 		{ OVAL_RESULT_TRUE          , "definition_true"          },
 		{ OVAL_RESULT_FALSE         , "definition_false"         },
 		{ OVAL_RESULT_UNKNOWN       , "definition_unknown"       },

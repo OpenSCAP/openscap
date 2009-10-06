@@ -33,7 +33,7 @@
 #include "oval_definitions_impl.h"
 #include "oval_collection_impl.h"
 
-int DEBUG_OVAL_VARIABLE_BINDING = 0;
+static int DEBUG_OVAL_VARIABLE_BINDING = 0;
 
 
 typedef struct oval_variable_binding {
@@ -95,7 +95,7 @@ struct oval_variable_binding *oval_variable_binding_new(struct oval_variable *va
 	return binding;
 }
 
-struct oval_variable_binding *_oval_variable_binding_new()
+static struct oval_variable_binding *_oval_variable_binding_new()
 {
 	oval_variable_binding_t *binding = (oval_variable_binding_t*)malloc(sizeof(oval_variable_binding_t));
 	binding->variable = NULL;
@@ -115,7 +115,7 @@ void oval_variable_binding_free(struct oval_variable_binding *binding)
 	}
 }
 
-void _oval_variable_binding_value_consumer(char * value, void * user)
+static void _oval_variable_binding_value_consumer(char * value, void * user)
 {
 	oval_variable_binding_set_value((struct oval_variable_binding *)user, value);
 }

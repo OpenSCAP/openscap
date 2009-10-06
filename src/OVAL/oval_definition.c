@@ -227,7 +227,7 @@ void oval_definition_add_note
 	oval_collection_add(definition->notes, note);
 }
 
-const struct oscap_string_map OVAL_DEFINITION_CLASS_MAP[] = {
+static const struct oscap_string_map OVAL_DEFINITION_CLASS_MAP[] = {
 	{ OVAL_CLASS_COMPLIANCE,    "compliance"    },
 	{ OVAL_CLASS_INVENTORY,     "inventory"     },
 	{ OVAL_CLASS_MISCELLANEOUS, "miscellaneous" },
@@ -236,17 +236,17 @@ const struct oscap_string_map OVAL_DEFINITION_CLASS_MAP[] = {
 	{ OVAL_CLASS_UNKNOWN,       NULL            }
 };
 
-oval_definition_class_t _odaclass(char *class)
+static oval_definition_class_t _odaclass(char *class)
 {
 	return oscap_string_to_enum(OVAL_DEFINITION_CLASS_MAP, class);
 }
 
-const char *oval_definition_class_text(oval_definition_class_t class)
+static const char *oval_definition_class_text(oval_definition_class_t class)
 {
 	return OVAL_DEFINITION_CLASS_MAP[class-1].string;
 }
 
-void _oval_definition_title_consumer(char *string, void *user)
+static void _oval_definition_title_consumer(char *string, void *user)
 {
 	struct oval_definition *definition = (struct oval_definition *)user;
 	char *title = definition->title;
@@ -263,7 +263,7 @@ void _oval_definition_title_consumer(char *string, void *user)
 	definition->title = title;
 }
 
-void _oval_definition_description_consumer(char *string, void *user)
+static void _oval_definition_description_consumer(char *string, void *user)
 {
 	struct oval_definition *definition = (struct oval_definition *)user;
 	char *description = definition->description;
@@ -281,21 +281,21 @@ void _oval_definition_description_consumer(char *string, void *user)
 	definition->description = description;
 }
 
-void _oval_definition_affected_consumer(struct oval_affected *affected,
+static void _oval_definition_affected_consumer(struct oval_affected *affected,
 					void *user)
 {
 	struct oval_definition *definition = (struct oval_definition *)user;
 	oval_collection_add(definition->affected, (void *)affected);
 }
 
-void oval_reference_consume(struct oval_reference *ref,
+static void oval_reference_consume(struct oval_reference *ref,
 			void *def) {
 	struct oval_definition *definition = def;
 	oval_collection_add(definition->reference,
 				(void *)ref);
 }
 
-int _oval_definition_parse_metadata(xmlTextReaderPtr reader,
+static int _oval_definition_parse_metadata(xmlTextReaderPtr reader,
 				    struct oval_parser_context *context,
 				    void *user)
 {
@@ -334,14 +334,14 @@ int _oval_definition_parse_metadata(xmlTextReaderPtr reader,
 	return return_code;
 }
 
-void _oval_definition_criteria_consumer(struct oval_criteria_node *criteria,
+static void _oval_definition_criteria_consumer(struct oval_criteria_node *criteria,
 					void *user)
 {
 	struct oval_definition *definition = (struct oval_definition *)user;
 	definition->criteria = criteria;
 }
 
-int _oval_definition_parse_tag(xmlTextReaderPtr reader,
+static int _oval_definition_parse_tag(xmlTextReaderPtr reader,
 			       struct oval_parser_context *context, void *user)
 {
 	struct oval_definition *definition = (struct oval_definition *)user;

@@ -92,7 +92,7 @@ void oval_result_system_iterator_free
 			((struct oval_iterator *)system);
 }
 
-void _oval_result_system_initialize
+static void _oval_result_system_initialize
 	(struct oval_result_system *system)
 {
 	system->definitions_initialized = true;
@@ -220,13 +220,13 @@ void oval_result_system_add_test
 	}
 }
 
-void _oval_result_system_test_consume
+static void _oval_result_system_test_consume
 	(struct oval_result_test *test, struct oval_result_system *system)
 {
 	oval_result_system_add_test(system, test);
 }
 
-int _oval_result_system_test_parse
+static int _oval_result_system_test_parse
 	(xmlTextReaderPtr reader, struct oval_parser_context *context,
 			struct oval_result_system *system)
 {
@@ -236,13 +236,13 @@ int _oval_result_system_test_parse
 
 }
 
-void _oval_result_system_definition_consume
+static void _oval_result_system_definition_consume
 	(struct oval_result_definition *definition, struct oval_result_system *system)
 {
 	oval_result_system_add_definition_(system, definition);
 }
 
-int _oval_result_system_definition_parse
+static int _oval_result_system_definition_parse
 	(xmlTextReaderPtr reader, struct oval_parser_context *context,
 			struct oval_result_system *system)
 {
@@ -251,7 +251,7 @@ int _oval_result_system_definition_parse
 				(oscap_consumer_func)_oval_result_system_definition_consume, system);
 }
 
-int _oval_result_system_parse
+static int _oval_result_system_parse
 	(xmlTextReaderPtr reader, struct oval_parser_context *context,
 			struct oval_result_system *system)
 {
@@ -303,7 +303,7 @@ int oval_result_system_parse
 	return return_code;
 }
 
-void _oval_result_system_scan_criteria_for_references
+static void _oval_result_system_scan_criteria_for_references
 	(struct oval_result_criteria_node *node, struct oval_string_map *testmap)
 {
 	struct oval_result_criteria_node_iterator *subnodes
@@ -325,21 +325,21 @@ void _oval_result_system_scan_criteria_for_references
 	}
 }
 
-void _oval_result_system_scan_entity_for_references
+static void _oval_result_system_scan_entity_for_references
 	(struct oval_syschar_model *syschar_model, struct oval_entity *entity,
 	 struct oval_string_map *objmap,
 	 struct oval_string_map *sttmap,
 	 struct oval_string_map *varmap,
 	 struct oval_string_map *sysmap);
 
-void _oval_result_system_scan_set_for_references
+static void _oval_result_system_scan_set_for_references
 	(struct oval_syschar_model *syschar_model, struct oval_setobject *set,
 	 struct oval_string_map *objmap,
 	 struct oval_string_map *sttmap,
 	 struct oval_string_map *varmap,
 	 struct oval_string_map *sysmap);
 
-void _oval_result_system_scan_object_for_references
+static void _oval_result_system_scan_object_for_references
 	(struct oval_syschar_model *syschar_model, struct oval_object *object,
 	 struct oval_string_map *objmap,
 	 struct oval_string_map *sttmap,
@@ -359,7 +359,7 @@ void _oval_result_system_scan_object_for_references
 	}
 	oval_object_content_iterator_free(contents);
 }
-void _oval_result_system_scan_state_for_references
+static void _oval_result_system_scan_state_for_references
 	(struct oval_syschar_model *syschar_model, struct oval_state *state,
 	 struct oval_string_map *objmap,
 	 struct oval_string_map *sttmap,
@@ -375,7 +375,7 @@ void _oval_result_system_scan_state_for_references
 	oval_state_content_iterator_free(contents);
 }
 
-void _oval_result_system_scan_component_for_references
+static void _oval_result_system_scan_component_for_references
 	(struct oval_syschar_model *syschar_model, struct oval_component *component,
 	 struct oval_string_map *objmap,
 	 struct oval_string_map *sttmap,
@@ -413,7 +413,7 @@ void _oval_result_system_scan_component_for_references
 	}
 }
 
-void _oval_result_system_scan_entity_for_references
+static void _oval_result_system_scan_entity_for_references
 	(struct oval_syschar_model *syschar_model, struct oval_entity *entity,
 	 struct oval_string_map *objmap,
 	 struct oval_string_map *sttmap,
@@ -434,7 +434,7 @@ void _oval_result_system_scan_entity_for_references
 	}
 }
 
-void _oval_result_system_scan_set_for_references
+static void _oval_result_system_scan_set_for_references
 	(struct oval_syschar_model *syschar_model, struct oval_setobject *set,
 	 struct oval_string_map *objmap,
 	 struct oval_string_map *sttmap,
@@ -471,7 +471,7 @@ void _oval_result_system_scan_set_for_references
 	oval_setobject_iterator_free(subsets);
 }
 
-bool _oval_result_system_resolve_syschar
+static bool _oval_result_system_resolve_syschar
 	(struct oval_syschar *syschar, struct oval_string_map *sysmap)
 {
 	struct oval_object *object = oval_syschar_get_object(syschar);

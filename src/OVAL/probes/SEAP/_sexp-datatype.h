@@ -4,6 +4,9 @@
 
 #include "public/sexp-datatype.h"
 #include "generic/redblack.h"
+#include "../../../common/util.h"
+
+OSCAP_HIDDEN_START;
 
 typedef struct {
         uint8_t              arity;
@@ -29,5 +32,7 @@ int SEXP_datatypetbl_init (SEXP_datatypetbl_t *t);
 SEXP_datatype_t *SEXP_datatype_get (SEXP_datatypetbl_t *t, const char *name);
 SEXP_datatype_t *SEXP_datatype_add (SEXP_datatypetbl_t *t, SEXP_datatype_t *datatype);
 int              SEXP_datatype_del (SEXP_datatypetbl_t *t, const char *name);
+
+OSCAP_HIDDEN_END;
 
 #endif /* _SEXP_DATATYPE */

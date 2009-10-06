@@ -83,7 +83,7 @@ SEAP_err_t *SEAP_packet_err (SEAP_packet_t *packet)
         return (&(packet->data.err));
 }
 
-int SEAP_packet_sexp2msg (SEXP_t *sexp_msg, SEAP_msg_t *seap_msg)
+static int SEAP_packet_sexp2msg (SEXP_t *sexp_msg, SEAP_msg_t *seap_msg)
 {
         size_t msg_icnt, msg_i, attr_i;
         SEXP_t *attr_name, *attr_val;
@@ -183,7 +183,7 @@ int SEAP_packet_sexp2msg (SEXP_t *sexp_msg, SEAP_msg_t *seap_msg)
         return (0);
 }
 
-SEXP_t *SEAP_packet_msg2sexp (SEAP_msg_t *msg)
+static SEXP_t *SEAP_packet_msg2sexp (SEAP_msg_t *msg)
 {
         SEXP_t *sexp;
         char   *attr_name;
@@ -233,7 +233,7 @@ SEXP_t *SEAP_packet_msg2sexp (SEAP_msg_t *msg)
         return (sexp);        
 }
 
-int SEAP_packet_sexp2cmd (SEXP_t *sexp_cmd, SEAP_cmd_t *seap_cmd)
+static int SEAP_packet_sexp2cmd (SEXP_t *sexp_cmd, SEAP_cmd_t *seap_cmd)
 {
         SEXP_t *item, *val;
         size_t i;
@@ -334,7 +334,7 @@ int SEAP_packet_sexp2cmd (SEXP_t *sexp_cmd, SEAP_cmd_t *seap_cmd)
         return (0);
 }
 
-SEXP_t *SEAP_packet_cmd2sexp (SEAP_cmd_t *cmd)
+static SEXP_t *SEAP_packet_cmd2sexp (SEAP_cmd_t *cmd)
 {
         SEXP_t *sexp;
         
@@ -385,13 +385,13 @@ SEXP_t *SEAP_packet_cmd2sexp (SEAP_cmd_t *cmd)
         return (sexp);
 }
 
-int SEAP_packet_sexp2err (SEXP_t *sexp_err, SEAP_err_t *seap_err)
+static int SEAP_packet_sexp2err (SEXP_t *sexp_err, SEAP_err_t *seap_err)
 {
         _LOGCALL_;
         return (-1);
 }
 
-SEXP_t *SEAP_packet_err2sexp (SEAP_err_t *err)
+static SEXP_t *SEAP_packet_err2sexp (SEAP_err_t *err)
 {
         SEXP_t *sexp;
 
@@ -411,7 +411,7 @@ SEXP_t *SEAP_packet_err2sexp (SEAP_err_t *err)
         return (sexp);
 }
 
-SEXP_t *SEAP_packet2sexp (SEAP_packet_t *packet)
+static SEXP_t *SEAP_packet2sexp (SEAP_packet_t *packet)
 {
         SEXP_t *sexp = NULL;
         

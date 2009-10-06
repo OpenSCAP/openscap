@@ -35,7 +35,7 @@
 #include "oval_collection_impl.h"
 #include "oval_agent_api_impl.h"
 
-int OVAL_SYSCHAR_DEBUG = 0;
+static int OVAL_SYSCHAR_DEBUG = 0;
 
 typedef struct oval_syschar {
 	oval_syschar_collection_flag_t flag;
@@ -118,7 +118,7 @@ struct oval_variable_binding_iterator *oval_syschar_get_variable_bindings(struct
 	    oval_collection_iterator(syschar->variable_bindings);
 }
 
-void add_oval_syschar_variable_bindings
+static void add_oval_syschar_variable_bindings
 	(struct oval_syschar *syschar, struct oval_variable_binding *binding)
 {
 	oval_collection_add(syschar->variable_bindings, binding);
@@ -136,7 +136,7 @@ void oval_syschar_add_sysdata
 	oval_collection_add(syschar->sysdata, sysdata);
 }
 
-void add_oval_syschar_message
+static void add_oval_syschar_message
 	(struct oval_syschar *syschar, struct oval_message *message)
 {
 	oval_collection_add(syschar->messages, message);
@@ -172,8 +172,7 @@ void oval_syschar_free(struct oval_syschar *syschar){
 	free(syschar);
 }
 
-extern const char* NAMESPACE_OVALSYS;
-void _oval_syschar_parse_subtag_consume_message(struct oval_message *message, void* syschar){
+static void _oval_syschar_parse_subtag_consume_message(struct oval_message *message, void* syschar){
 	add_oval_syschar_message((struct oval_syschar *)syschar, message);
 }
 
@@ -181,13 +180,13 @@ struct oval_syschar_parse_subtag_varval_context {
 	struct oval_syschar_model* model;
 	struct oval_syschar* syschar;
 };
-void _oval_syschar_parse_subtag_consume_variable_binding(struct oval_variable_binding *binding, void* user){
+static void _oval_syschar_parse_subtag_consume_variable_binding(struct oval_variable_binding *binding, void* user){
 	struct oval_syschar_parse_subtag_varval_context *ctx = user;
 	if (oval_syschar_model_add_variable_binding(ctx->model, binding))
 		oval_syschar_add_variable_binding(ctx->syschar, binding);
 	else oval_variable_binding_free(binding);
 }
-int _oval_syschar_parse_subtag(
+static int _oval_syschar_parse_subtag(
 		xmlTextReaderPtr reader,
 		struct oval_parser_context *context,
 		void *client){

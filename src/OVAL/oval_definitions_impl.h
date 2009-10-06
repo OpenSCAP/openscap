@@ -35,6 +35,9 @@
 #include "api/oval_definitions.h"
 #include "oval_parser_impl.h"
 #include "oval_agent_api_impl.h"
+#include "../common/util.h"
+
+OSCAP_HIDDEN_START;
 
 oval_family_t oval_family_parse(xmlTextReaderPtr);
 oval_subtype_t oval_subtype_parse(xmlTextReaderPtr);
@@ -169,5 +172,7 @@ int oval_message_parse_tag(xmlTextReaderPtr,
 void oval_message_to_print(struct oval_message *message, char *indent,
 			      int index);
 void oval_message_to_dom  (struct oval_message *, xmlDoc *, xmlNode *);
+
+OSCAP_HIDDEN_END
 
 #endif

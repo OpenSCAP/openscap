@@ -114,7 +114,7 @@ void oval_state_content_set_entcheck(struct oval_state_content *content, oval_ch
 	content->ent_check = check;
 }
 
-void _oval_state_content_entity_consumer
+static void _oval_state_content_entity_consumer
 	(struct oval_entity *entity, struct oval_state_content *content) {
 	oval_state_content_set_entity(content, entity);
 }

@@ -34,7 +34,7 @@
 #include "oval_system_characteristics_impl.h"
 #include "oval_collection_impl.h"
 
-int DEBUG_OVAL_SYSITEM = 0;
+static int DEBUG_OVAL_SYSITEM = 0;
 
 typedef struct oval_sysitem {
 	char*              name;
@@ -110,7 +110,7 @@ void oval_sysitem_set_value(struct oval_sysitem *sysitem, char *value)
 	sysitem->value = value==NULL?NULL:strdup(value);
 }
 
-void oval_sysitem_value_consumer_(char* value, void* sysitem){
+static void oval_sysitem_value_consumer_(char* value, void* sysitem){
 	oval_sysitem_set_value(sysitem, value);
 }
 

@@ -41,7 +41,7 @@ struct xccdf_element_spec {
 #define CPE1D_XMLNS "http://cpe.mitre.org/XMLSchema/cpe/1.0"
 
 /// Mapping of the element names to the symbolic constants
-const struct xccdf_element_spec XCCDF_ELEMENT_MAP[] = {
+static const struct xccdf_element_spec XCCDF_ELEMENT_MAP[] = {
 	{ XCCDFE_BENCHMARK,         XCCDF_XMLNS, "Benchmark"              },
 	{ XCCDFE_GROUP,             XCCDF_XMLNS, "Group"                  },
 	{ XCCDFE_RULE,              XCCDF_XMLNS, "Rule"                   },
@@ -137,7 +137,7 @@ struct xccdf_attribute_spec {
 	const char* name; ///< element name
 };
 
-const struct xccdf_attribute_spec XCCDF_ATTRIBUTE_MAP[] = {
+static const struct xccdf_attribute_spec XCCDF_ATTRIBUTE_MAP[] = {
 	{ XCCDFA_ABSTRACT,        XCCDF_XMLNS, "abstract"        },
 	{ XCCDFA_AUTHENTICATED,   XCCDF_XMLNS, "authenticated"   },
 	{ XCCDFA_AUTHORITY,       XCCDF_XMLNS, "authority"       },

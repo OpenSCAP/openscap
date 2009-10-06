@@ -182,23 +182,23 @@ void oval_state_add_content
 	oval_collection_add(state->contents, content);
 }
 
-void _oval_note_consumer(char *text, void *state) {
+static void _oval_note_consumer(char *text, void *state) {
 	oval_state_add_note(state, text);
 }
 
-int _oval_state_parse_notes(xmlTextReaderPtr reader,
+static int _oval_state_parse_notes(xmlTextReaderPtr reader,
 			    struct oval_parser_context *context, void *user)
 {
 	struct oval_state *state = (struct oval_state *)user;
 	return oval_parser_text_value(reader, context, _oval_note_consumer, state);
 }
 
-void _oval_state_content_consumer
+static void _oval_state_content_consumer
 	(struct oval_state_content *content, struct oval_state *state) {
 	oval_state_add_content(state, content);
 }
 
-int _oval_state_parse_tag(xmlTextReaderPtr reader,
+static int _oval_state_parse_tag(xmlTextReaderPtr reader,
 			  struct oval_parser_context *context, void *user)
 {
 	struct oval_state *state = (struct oval_state *)user;

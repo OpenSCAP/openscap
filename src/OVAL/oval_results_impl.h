@@ -34,6 +34,9 @@
 #include "api/oval_results.h"
 #include "oval_definitions_impl.h"
 #include "oval_system_characteristics_impl.h"
+#include "../common/util.h"
+
+OSCAP_HIDDEN_START;
 
 struct oval_result_system *oval_result_system_new
 	(struct oval_syschar_model *);
@@ -127,5 +130,7 @@ void oval_result_criteria_node_set_extends(struct oval_result_criteria_node *, s
 
 oval_result_t oval_result_parse
 	(xmlTextReaderPtr, char *, oval_result_t);
+
+OSCAP_HIDDEN_END;
 
 #endif				/* OVAL_RESULTS_IMPL_H_ */

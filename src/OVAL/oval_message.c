@@ -34,7 +34,7 @@
 #include "oval_system_characteristics_impl.h"
 #include "oval_collection_impl.h"
 
-int DEBUG_OVAL_MESSAGE = 0;
+static int DEBUG_OVAL_MESSAGE = 0;
 
 typedef struct oval_message {
 	char*                   text;
@@ -87,7 +87,7 @@ void oval_message_set_level(struct oval_message *message, oval_message_level_t l
 	message->level = level;
 }
 
-void oval_message_parse_tag_consumer(char* text, void* message){
+static void oval_message_parse_tag_consumer(char* text, void* message){
 	oval_message_set_text(message, text);
 }
 int oval_message_parse_tag(xmlTextReaderPtr reader,

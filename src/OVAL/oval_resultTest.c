@@ -38,7 +38,7 @@
 #include "oval_errno.h"
 
 #define OVAL_RESULT_TEST_DEBUG 0
-int rpmvercmp(const char * a, const char * b); // don't really feel like creating a new header file just for this
+static int rpmvercmp(const char * a, const char * b); // don't really feel like creating a new header file just for this
 
 /* 
  * code from http://rpm.org/api/4.4.2.2/rpmvercmp_8c-source.html 
@@ -48,7 +48,7 @@ int rpmvercmp(const char * a, const char * b); // don't really feel like creatin
 /* return 1: a is newer than b */
 /*        0: a and b are the same version */
 /*       -1: b is newer than a */
-int rpmvercmp(const char * a, const char * b)
+static int rpmvercmp(const char * a, const char * b)
 {
     char oldch1, oldch2;
     char * str1, * str2;
@@ -235,7 +235,7 @@ struct oval_test *oval_result_test_get_test(struct oval_result_test *rtest)
 {
 	return ((struct oval_result_test *)rtest)->test;
 }
-int istrcmp(char *st1,char *st2)
+static int istrcmp(char *st1,char *st2)
 {
 	int comp_idx,ret_val;
 
@@ -245,7 +245,7 @@ int istrcmp(char *st1,char *st2)
 	}
 	return(ret_val);
 }
-int strregcomp(char *pattern,char *test_str)
+static int strregcomp(char *pattern,char *test_str)
 {
 	regex_t re;
 	int status;
@@ -268,7 +268,7 @@ if (OVAL_RESULT_TEST_DEBUG)fprintf(stderr,"%s:%d unable to match regex pattern:%
 	return(0);
 }
 // finally, we have gotten to the point of comparing system data with a state
-oval_result_t evaluate(char *sys_data,char *state_data,oval_datatype_t sys_data_type,oval_datatype_t state_data_type,oval_operation_t operation)
+static oval_result_t evaluate(char *sys_data,char *state_data,oval_datatype_t sys_data_type,oval_datatype_t state_data_type,oval_operation_t operation)
 {
 	if (state_data_type==OVAL_DATATYPE_STRING){
 		if (operation==OVAL_OPERATION_EQUALS){
@@ -395,7 +395,7 @@ if (OVAL_RESULT_TEST_DEBUG)fprintf(stderr,"%s:%d invalid version comparison:%d\n
 }
 
 // here we compare the data within an item with the conditions in a state
-oval_result_t eval_item(struct oval_sysdata *cur_sysdata, struct oval_state *state)
+static oval_result_t eval_item(struct oval_sysdata *cur_sysdata, struct oval_state *state)
 {
 	struct oval_state_content_iterator *state_contents;
 
@@ -505,7 +505,7 @@ if(OVAL_RESULT_TEST_DEBUG)fprintf(stderr,"%s:%d found NULL entity value\n",__FIL
 #define TEST    (struct oval_result_test   *)args[1]
 #define SYSTEM  (struct oval_result_system *)args[0]
 
-void _oval_test_item_consumer
+static void _oval_test_item_consumer
 	(struct oval_result_item *item, void **args)
 {
 	struct oval_sysdata *oval_sysdata = oval_result_item_get_sysdata(item);
@@ -518,7 +518,7 @@ void _oval_test_item_consumer
 }
 
 //int debug_flag=0;
-oval_result_t _oval_result_test_evaluate_items
+static oval_result_t _oval_result_test_evaluate_items
 	(struct oval_syschar *syschar_object, struct oval_state *state,oval_check_t test_check,oval_existence_t test_existence_check, void **args)
 {
 	int matches_found;
@@ -654,7 +654,7 @@ if(OVAL_RESULT_TEST_DEBUG)fprintf(stderr,"%s:%d invalid sysdata status:%d\n",__F
 }
 
 // this function will gather all the necessary ingredients and call 'evaluate_items' when it finds them
-oval_result_t _oval_result_test_result(struct oval_result_test *rtest, void **args)
+static oval_result_t _oval_result_test_result(struct oval_result_test *rtest, void **args)
 {
 	// NOTE:  I'm defining all my variables at the beginning of a block because some compilers (cl) have trouble
 	// with variables defined anywhere else.  If that's not a concern, refactor at will.
@@ -762,7 +762,7 @@ void oval_result_test_set_result(struct oval_result_test *test, oval_result_t re
 	test->result = result;
 }
 
-void set_oval_result_test_instance(struct oval_result_test *test, int instance)
+static void set_oval_result_test_instance(struct oval_result_test *test, int instance)
 {
 	test->instance = instance;
 }
@@ -787,13 +787,13 @@ void oval_result_test_add_binding
 }
 
 //void(*oscap_consumer_func)(void*, void*);
-void _oval_test_message_consumer
+static void _oval_test_message_consumer
 	(struct oval_message *message, struct oval_result_test *test)
 {
 	oval_result_test_set_message(test, message);
 }
 
-int _oval_result_test_binding_parse
+static int _oval_result_test_binding_parse
 	(xmlTextReaderPtr reader, struct oval_parser_context *context, void **args)
 {
 	int return_code = 1;
@@ -817,7 +817,7 @@ int _oval_result_test_binding_parse
 	return return_code;
 }
 
-int _oval_result_test_parse
+static int _oval_result_test_parse
 	(xmlTextReaderPtr reader, struct oval_parser_context *context, void **args)
 {
 	int return_code = 1;
@@ -937,7 +937,7 @@ int oval_result_test_parse_tag
 	return return_code;
 }
 
-xmlNode *_oval_result_binding_to_dom
+static xmlNode *_oval_result_binding_to_dom
 	(struct oval_variable_binding *binding, xmlDocPtr doc, xmlNode *parent)
 {
 	char *value = oval_variable_binding_get_value(binding);
@@ -951,7 +951,7 @@ xmlNode *_oval_result_binding_to_dom
 	return binding_node;
 }
 
-void _oval_result_test_initialize_bindings(struct oval_result_test *rslt_test)
+static void _oval_result_test_initialize_bindings(struct oval_result_test *rslt_test)
 {
 	struct oval_test *oval_test = oval_result_test_get_test(rslt_test);
 

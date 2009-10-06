@@ -193,14 +193,14 @@ void oval_setobject_add_filter(struct oval_setobject *set, struct oval_state *fi
 }
 
 //typedef int (*oval_xml_tag_parser)(xmlTextReaderPtr, struct oval_parser_context*, void*);
-void oval_set_consume(struct oval_setobject *subset, void *set) {
+static void oval_set_consume(struct oval_setobject *subset, void *set) {
 	oval_setobject_add_subset(set, subset);
 }
 struct oval_set_context {
 	struct oval_parser_context *context;
 	struct oval_setobject *set;
 };
-void oval_consume_object_ref(char *objref, void *user) {
+static void oval_consume_object_ref(char *objref, void *user) {
 	struct oval_set_context *ctx = user;
 	struct oval_definition_model *model =
 		oval_parser_context_model(ctx->context);
@@ -208,7 +208,7 @@ void oval_consume_object_ref(char *objref, void *user) {
 		get_oval_object_new(model, objref);
 	oval_setobject_add_object(ctx->set, object);
 }
-void oval_consume_state_ref(char *steref, void *user) {
+static void oval_consume_state_ref(char *steref, void *user) {
 	struct oval_set_context *ctx = user;
 	struct oval_definition_model *model =
 		oval_parser_context_model(ctx->context);
@@ -217,7 +217,7 @@ void oval_consume_state_ref(char *steref, void *user) {
 	oval_setobject_add_filter(ctx->set, state);
 }
 
-int _oval_set_parse_tag(xmlTextReaderPtr reader,
+static int _oval_set_parse_tag(xmlTextReaderPtr reader,
 			struct oval_parser_context *context, void *user)
 {
 	struct oval_setobject *set = (struct oval_setobject *)user;

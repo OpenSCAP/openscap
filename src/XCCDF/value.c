@@ -25,10 +25,10 @@
 #include <math.h>
 #include <string.h>
 
-oscap_destruct_func xccdf_value_val_get_destructor(xccdf_value_type_t type);
-struct xccdf_value_val* xccdf_value_val_new(xccdf_value_type_t type);
+static oscap_destruct_func xccdf_value_val_get_destructor(xccdf_value_type_t type);
+static struct xccdf_value_val* xccdf_value_val_new(xccdf_value_type_t type);
 
-struct xccdf_item* xccdf_value_new_empty(struct xccdf_item* parent, xccdf_value_type_t type)
+static struct xccdf_item* xccdf_value_new_empty(struct xccdf_item* parent, xccdf_value_type_t type)
 {
     struct xccdf_item* val = xccdf_item_new(XCCDF_VALUE, parent->item.benchmark, parent);
 	val->sub.value.type = type;
@@ -40,14 +40,14 @@ struct xccdf_item* xccdf_value_new_empty(struct xccdf_item* parent, xccdf_value_
 	return val;
 }
 
-const struct oscap_string_map XCCDF_VALUE_TYPE_MAP[] = {
+static const struct oscap_string_map XCCDF_VALUE_TYPE_MAP[] = {
 	{ XCCDF_TYPE_NUMBER,  "number"  },
 	{ XCCDF_TYPE_STRING,  "string"  },
 	{ XCCDF_TYPE_BOOLEAN, "boolean" },
 	{ XCCDF_TYPE_STRING, NULL }
 };
 
-const struct oscap_string_map XCCDF_IFACE_HINT_MAP[] = {
+static const struct oscap_string_map XCCDF_IFACE_HINT_MAP[] = {
 	{ XCCDF_IFACE_HINT_CHOICE,   "choice" },
 	{ XCCDF_IFACE_HINT_TEXTLINE, "textline" },
 	{ XCCDF_IFACE_HINT_TEXT,     "text" },
@@ -56,7 +56,7 @@ const struct oscap_string_map XCCDF_IFACE_HINT_MAP[] = {
 	{ XCCDF_IFACE_HINT_NONE,     NULL }
 };
 
-union xccdf_value_unit xccdf_value_get(const char* str, xccdf_value_type_t type)
+static union xccdf_value_unit xccdf_value_get(const char* str, xccdf_value_type_t type)
 {
 	union xccdf_value_unit val;
 	memset(&val, 0, sizeof(val));
@@ -138,7 +138,7 @@ void xccdf_value_free(struct xccdf_item* val)
 	xccdf_item_release(val);
 }
 
-struct xccdf_value_val* xccdf_value_val_new(xccdf_value_type_t type)
+static struct xccdf_value_val* xccdf_value_val_new(xccdf_value_type_t type)
 {
 	struct xccdf_value_val* v = oscap_calloc(1, sizeof(struct xccdf_value_val));
 
@@ -161,9 +161,9 @@ struct xccdf_value_val* xccdf_value_val_new(xccdf_value_type_t type)
 	return v;
 }
 
-void xccdf_value_unit_s_free(union xccdf_value_unit* u) { oscap_free(u->s); oscap_free(u); }
+static void xccdf_value_unit_s_free(union xccdf_value_unit* u) { oscap_free(u->s); oscap_free(u); }
 
-oscap_destruct_func xccdf_value_unit_destructor(xccdf_value_type_t type)
+static oscap_destruct_func xccdf_value_unit_destructor(xccdf_value_type_t type)
 {
 	switch (type) {
 		case XCCDF_TYPE_STRING: return (oscap_destruct_func)xccdf_value_unit_s_free;
@@ -172,7 +172,7 @@ oscap_destruct_func xccdf_value_unit_destructor(xccdf_value_type_t type)
 	return NULL;
 }
 
-void xccdf_value_val_free_0(struct xccdf_value_val* v, xccdf_value_type_t type)
+static void xccdf_value_val_free_0(struct xccdf_value_val* v, xccdf_value_type_t type)
 {
 	oscap_list_free(v->choices, xccdf_value_unit_destructor(type));
 	switch (type) {
@@ -186,11 +186,11 @@ void xccdf_value_val_free_0(struct xccdf_value_val* v, xccdf_value_type_t type)
 	oscap_free(v);
 }
 
-void xccdf_value_val_free_b(struct xccdf_value_val* v) { xccdf_value_val_free_0(v, XCCDF_TYPE_BOOLEAN); }
-void xccdf_value_val_free_n(struct xccdf_value_val* v) { xccdf_value_val_free_0(v, XCCDF_TYPE_NUMBER); }
-void xccdf_value_val_free_s(struct xccdf_value_val* v) { xccdf_value_val_free_0(v, XCCDF_TYPE_STRING); }
+static void xccdf_value_val_free_b(struct xccdf_value_val* v) { xccdf_value_val_free_0(v, XCCDF_TYPE_BOOLEAN); }
+static void xccdf_value_val_free_n(struct xccdf_value_val* v) { xccdf_value_val_free_0(v, XCCDF_TYPE_NUMBER); }
+static void xccdf_value_val_free_s(struct xccdf_value_val* v) { xccdf_value_val_free_0(v, XCCDF_TYPE_STRING); }
 
-oscap_destruct_func xccdf_value_val_get_destructor(xccdf_value_type_t type)
+static oscap_destruct_func xccdf_value_val_get_destructor(xccdf_value_type_t type)
 {
 	switch (type) {
 		case XCCDF_TYPE_NUMBER:  return (oscap_destruct_func) xccdf_value_val_free_n;
@@ -277,19 +277,19 @@ bool xccdf_value_get_must_match(const struct xccdf_value* value) {
 	return XITEM(value)->sub.value.value->must_match;
 }
 
-void xccdf_value_val_n_dump(struct xccdf_value_val* val, int depth) {
+static void xccdf_value_val_n_dump(struct xccdf_value_val* val, int depth) {
 	xccdf_print_depth(depth);
 	printf("%f (default %f, from %f to %f)\n", val->value.n, val->defval.n, val->limits.n.lower_bound, val->limits.n.upper_bound);
 }
-void xccdf_value_val_s_dump(struct xccdf_value_val* val, int depth) {
+static void xccdf_value_val_s_dump(struct xccdf_value_val* val, int depth) {
 	xccdf_print_depth(depth);
 	printf("'%s' (default '%s', match '%s')\n", val->value.s, val->defval.s, val->limits.s.match);
 }
-void xccdf_value_val_b_dump(struct xccdf_value_val* val, int depth) {
+static void xccdf_value_val_b_dump(struct xccdf_value_val* val, int depth) {
 	xccdf_print_depth(depth);
 	printf("%d (default %d)\n", val->value.b, val->defval.b);
 }
-void xccdf_string_dump(const char* s, int depth) {
+static void xccdf_string_dump(const char* s, int depth) {
 	xccdf_print_depth(depth); printf("%s\n", s);
 }
 

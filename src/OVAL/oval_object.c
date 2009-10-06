@@ -185,26 +185,26 @@ void oval_object_add_behaviors(struct oval_object *object,
 	oval_collection_add(object->behaviors, (void *)behavior);
 }
 
-void oval_note_consume(char *text, void *object) {
+static void oval_note_consume(char *text, void *object) {
 	oval_object_add_note(object, text);
 }
-int _oval_object_parse_notes(xmlTextReaderPtr reader,
+static int _oval_object_parse_notes(xmlTextReaderPtr reader,
 			     struct oval_parser_context *context, void *user)
 {
 	struct oval_object *object = (struct oval_object *)user;
 	return oval_parser_text_value(reader, context, &oval_note_consume, object);
 }
 
-void oval_behavior_consume(struct oval_behavior *behavior,
-			   void *object) {
+static void oval_behavior_consume(struct oval_behavior *behavior,
+				  void *object) {
 	oval_object_add_behaviors(object, behavior);
 }
-void oval_content_consume(struct oval_object_content *content,
-			  void *object) {
+static void oval_content_consume(struct oval_object_content *content,
+				 void *object) {
 	oval_object_add_object_content(object, content);
 }
-int _oval_object_parse_tag(xmlTextReaderPtr reader,
-			   struct oval_parser_context *context, void *user)
+static int _oval_object_parse_tag(xmlTextReaderPtr reader,
+				  struct oval_parser_context *context, void *user)
 {
 	struct oval_object *object = (struct oval_object *)user;
 	char *tagname = (char*) xmlTextReaderName(reader);

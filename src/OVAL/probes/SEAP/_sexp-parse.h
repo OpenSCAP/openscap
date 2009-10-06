@@ -6,6 +6,9 @@
 #include <stdint.h>
 #include "public/sexp-parse.h"
 #include "_sexp-manip.h"
+#include "../../../common/util.h"
+
+OSCAP_HIDDEN_START;
 
 /* Number classes */
 #define NUMCLASS_INV 0
@@ -51,5 +54,7 @@ struct SEXP_pext_dsc {
 #define SEXP_EXT_SUCCESS 0
 #define SEXP_EXT_EUNFIN  1
 #define SEXP_EXT_EINVAL  2
+
+OSCAP_HIDDEN_END;
 
 #endif /* _SEXP_PARSE_H */

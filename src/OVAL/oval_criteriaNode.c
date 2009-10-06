@@ -250,11 +250,11 @@ void oval_criteria_node_set_definition(struct oval_criteria_node *node,
 	extenddef->definition = definition;
 }
 
-void _oval_criteria_subnode_consume(struct oval_criteria_node *subnode, void *criteria) {
+static void _oval_criteria_subnode_consume(struct oval_criteria_node *subnode, void *criteria) {
 	oval_criteria_node_add_subnode((struct oval_criteria_node *)
 					criteria, subnode);
 }
-int _oval_criteria_subnode_consumer(xmlTextReaderPtr reader,
+static int _oval_criteria_subnode_consumer(xmlTextReaderPtr reader,
 				    struct oval_parser_context *context,
 				    void *user)
 {
@@ -419,7 +419,7 @@ void oval_criteria_node_to_print(struct oval_criteria_node *node, char *indent,
 	}
 }
 
-xmlNode *_oval_CRITERIA_to_dom
+static xmlNode *_oval_CRITERIA_to_dom
 	(struct oval_criteria_node *cnode, xmlDoc *doc, xmlNode *parent)
 {
 	xmlNs *ns_definitions = xmlSearchNsByHref(doc, parent, OVAL_DEFINITIONS_NAMESPACE);
@@ -441,7 +441,7 @@ xmlNode *_oval_CRITERIA_to_dom
 	return criteria_node;
 }
 
-xmlNode *_oval_CRITERION_to_dom
+static xmlNode *_oval_CRITERION_to_dom
 	(struct oval_criteria_node *cnode, xmlDoc *doc, xmlNode *parent)
 {
 	xmlNs *ns_definitions = xmlSearchNsByHref(doc, parent, OVAL_DEFINITIONS_NAMESPACE);
@@ -454,7 +454,7 @@ xmlNode *_oval_CRITERION_to_dom
 	return criterion_node;
 }
 
-xmlNode *_oval_EXTENDDEF_to_dom
+static xmlNode *_oval_EXTENDDEF_to_dom
 	(struct oval_criteria_node *cnode, xmlDoc *doc, xmlNode *parent)
 {
 	xmlNs *ns_definitions = xmlSearchNsByHref(doc, parent, OVAL_DEFINITIONS_NAMESPACE);

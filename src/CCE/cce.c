@@ -33,7 +33,7 @@
 #include "../common/util.h"
 
 
-struct cce* cce_new_empty(void)
+static struct cce* cce_new_empty(void)
 {
 	struct cce* cce = oscap_calloc(1, sizeof(struct cce));
 	cce->entries = oscap_list_new();
@@ -71,7 +71,7 @@ struct cce_entry* cce_entry_new_empty(void)
 	return cce;
 }
 
-void cce_parse(const char *docname, struct cce *cce)
+static void cce_parse(const char *docname, struct cce *cce)
 {
 	xmlTextReaderPtr reader;
 	int ret;

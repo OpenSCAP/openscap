@@ -7,6 +7,9 @@
 #include <stdbool.h>
 #include "public/sexp-types.h"
 #include "_sexp-datatype.h"
+#include "../../../common/util.h"
+
+OSCAP_HIDDEN_START;
 
 /* Magic numbers */
 #if !defined(NDEBUG) || defined(VALIDATE_SEXP)
@@ -48,5 +51,7 @@ static inline bool SEXP_flag_isset (SEXP_t *s_exp, uint8_t flag)
 {
         return ((s_exp->s_flgs & flag) == flag);
 }
+
+OSCAP_HIDDEN_END;
 
 #endif /* _SEXP_TYPES_H */

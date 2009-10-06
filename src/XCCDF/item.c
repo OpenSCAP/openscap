@@ -179,12 +179,12 @@ bool xccdf_item_get_process_element(struct xccdf_item* item, xmlTextReaderPtr re
     return false;
 }
 
-void* xccdf_item_convert(struct xccdf_item* item, xccdf_type_t type)
+static void* xccdf_item_convert(struct xccdf_item* item, xccdf_type_t type)
 {
 	return (item != NULL && (item->type & type) ? item : NULL);
 }
 
-#define XCCDF_ITEM_CONVERT(T1,T2) struct xccdf_##T1* xccdf_item_to_##T1(struct xccdf_item* item) { return xccdf_item_convert(item, XCCDF_##T2); }
+#define XCCDF_ITEM_CONVERT(T1,T2) static struct xccdf_##T1* xccdf_item_to_##T1(struct xccdf_item* item) { return xccdf_item_convert(item, XCCDF_##T2); }
 XCCDF_ITEM_CONVERT(benchmark,BENCHMARK)
 XCCDF_ITEM_CONVERT(profile,PROFILE)
 XCCDF_ITEM_CONVERT(rule,RULE)
@@ -243,7 +243,7 @@ const struct oscap_string_map XCCDF_LEVEL_MAP[] = {
 	{ 0, NULL }
 };
 
-const struct oscap_string_map XCCDF_STATUS_MAP[] = {
+static const struct oscap_string_map XCCDF_STATUS_MAP[] = {
     { XCCDF_STATUS_ACCEPTED,      "accepted"   },
     { XCCDF_STATUS_DEPRECATED,    "deprecated" },
     { XCCDF_STATUS_DRAFT,         "draft"      },
@@ -319,7 +319,7 @@ struct xccdf_model* xccdf_model_new_xml(xmlTextReaderPtr reader)
 }
 
 XCCDF_GENERIC_GETTER(const char*, model, system)
-const char* xccdf_model_param(const struct xccdf_model* m, const char* p) { return oscap_htable_get(m->params, p); }
+static const char* xccdf_model_param(const struct xccdf_model* m, const char* p) { return oscap_htable_get(m->params, p); }
 
 void xccdf_model_free(struct xccdf_model* model)
 {

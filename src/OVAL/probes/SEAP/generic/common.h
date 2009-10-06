@@ -13,6 +13,9 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include "../../../../common/util.h"
+
+OSCAP_HIDDEN_START;
 
 void    *xmemdup (const void *src, size_t len);
 uint32_t xnumdigits (size_t size);
@@ -28,6 +31,8 @@ long     xrandom (void);
 
 #define protect_errno for (int __XCONCAT(__e,__LINE__) = errno, __XCONCAT(__s,__LINE__) = 1; \
                            __XCONCAT(__s,__LINE__)-- ; errno = __XCONCAT(__e,__LINE__))
+
+OSCAP_HIDDEN_END;
 
 #endif /* COMMON_H */
 #endif

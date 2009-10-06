@@ -130,7 +130,7 @@ struct cpe_dict_vendor {
 };
 /****************************/
 
-const char *PART_TO_CHAR[] = { NULL, "h", "o", "a" };
+static const char *PART_TO_CHAR[] = { NULL, "h", "o", "a" };
 
 /*
  * OSCAP_GETTER(      <return value>, <structure name>, <value of structure>)
@@ -189,7 +189,7 @@ OSCAP_IGETTER_GEN(cpe_dict_vendor, cpe_dict, vendors)
  * @return new dictionary
  * @retval NULL on failure
  */
-struct cpe_dict *cpe_dict_new_xml(xmlNodePtr node);
+static struct cpe_dict *cpe_dict_new_xml(xmlNodePtr node);
 
 /*
  * New dictionary item from XML
@@ -197,35 +197,35 @@ struct cpe_dict *cpe_dict_new_xml(xmlNodePtr node);
  * @return new dictionary item
  * @retval NULL on failure
  */
-struct cpe_dictitem *cpe_dictitem_new_xml(xmlNodePtr node);
+static struct cpe_dictitem *cpe_dictitem_new_xml(xmlNodePtr node);
 
-struct cpe_dict_check *cpe_dictcheck_new_xml(xmlNode * node);
+static struct cpe_dict_check *cpe_dictcheck_new_xml(xmlNode * node);
 
-struct cpe_dictitem_title *cpe_dictitemtitle_new_xml(xmlNode * node);
+static struct cpe_dictitem_title *cpe_dictitemtitle_new_xml(xmlNode * node);
 
-struct cpe_dict_vendor *cpe_dictvendor_new_xml(xmlNodePtr node);
-struct cpe_dict_product *cpe_dictproduct_new_xml(xmlNodePtr node);
-struct cpe_dict_version *cpe_dictversion_new_xml(xmlNodePtr node);
-struct cpe_dict_update *cpe_dictupdate_new_xml(xmlNodePtr node);
-struct cpe_dict_edition *cpe_dictedition_new_xml(xmlNodePtr node);
-struct cpe_dict_language *cpe_dictlanguage_new_xml(xmlNodePtr node);
+static struct cpe_dict_vendor *cpe_dictvendor_new_xml(xmlNodePtr node);
+static struct cpe_dict_product *cpe_dictproduct_new_xml(xmlNodePtr node);
+static struct cpe_dict_version *cpe_dictversion_new_xml(xmlNodePtr node);
+static struct cpe_dict_update *cpe_dictupdate_new_xml(xmlNodePtr node);
+static struct cpe_dict_edition *cpe_dictedition_new_xml(xmlNodePtr node);
+static struct cpe_dict_language *cpe_dictlanguage_new_xml(xmlNodePtr node);
 
-struct cpe_dictitem *cpe_dictitem_new_empty();
+static struct cpe_dictitem *cpe_dictitem_new_empty();
 
-void cpe_dictitem_free(struct cpe_dictitem * item);
+static void cpe_dictitem_free(struct cpe_dictitem * item);
 
 void cpe_dict_check_free(struct cpe_dict_check * check);
 
 /* Declarations for private header
  */
-void cpe_dictvendor_free(struct cpe_dict_vendor * vendor);
-void cpe_dictproduct_free(struct cpe_dict_product * product);
-void cpe_dictversion_free(struct cpe_dict_version * version);
-void cpe_dictupdate_free(struct cpe_dict_update * update);
-void cpe_dictedition_free(struct cpe_dict_edition * edition);
-void cpe_dictlanguage_free(struct cpe_dict_language * language);
+static void cpe_dictvendor_free(struct cpe_dict_vendor * vendor);
+static void cpe_dictproduct_free(struct cpe_dict_product * product);
+static void cpe_dictversion_free(struct cpe_dict_version * version);
+static void cpe_dictupdate_free(struct cpe_dict_update * update);
+static void cpe_dictedition_free(struct cpe_dict_edition * edition);
+static void cpe_dictlanguage_free(struct cpe_dict_language * language);
 
-char *str_trim(char *str)
+static char *str_trim(char *str)
 {
 	int off, i;
 	if (str == NULL)
@@ -260,7 +260,7 @@ struct cpe_dict *cpe_dict_new(const char *fname)
 	return ret;
 }
 
-struct cpe_dict *cpe_dict_new_xml(xmlNodePtr node)
+static struct cpe_dict *cpe_dict_new_xml(xmlNodePtr node)
 {
 	struct cpe_dict *ret;
 	struct cpe_dictitem *item;
@@ -316,7 +316,7 @@ struct cpe_dict *cpe_dict_new_xml(xmlNodePtr node)
 	return ret;
 }
 
-const size_t CPE_DICT_CPES_INITIAL_ALLOC = 8;
+static const size_t CPE_DICT_CPES_INITIAL_ALLOC = 8;
 
 struct cpe_dict *cpe_dict_new_empty(void)
 {
@@ -354,7 +354,7 @@ void cpe_dict_free(struct cpe_dict * dict)
 	oscap_free(dict);
 }
 
-struct cpe_dictitem *cpe_dictitem_new_empty()
+static struct cpe_dictitem *cpe_dictitem_new_empty()
 {
 	struct cpe_dictitem *item;
 
@@ -371,7 +371,7 @@ struct cpe_dictitem *cpe_dictitem_new_empty()
 	return item;
 }
 
-struct cpe_dictitem *cpe_dictitem_new_xml(xmlNodePtr node)
+static struct cpe_dictitem *cpe_dictitem_new_xml(xmlNodePtr node)
 {
 	struct cpe_dictitem *item;
 	struct cpe_dict_check *check;
@@ -465,7 +465,7 @@ struct cpe_dictitem *cpe_dictitem_new_xml(xmlNodePtr node)
 	return item;
 }
 
-void cpe_dict_reference_free(struct cpe_dict_reference* ref)
+static void cpe_dict_reference_free(struct cpe_dict_reference* ref)
 {
 	if (ref) {
 		oscap_free(ref->href);
@@ -474,10 +474,10 @@ void cpe_dict_reference_free(struct cpe_dict_reference* ref)
 	}
 }
 
-void cpe_dictcheck_free(struct cpe_dict_check * check);
-void cpe_dictitemtitle_free(struct cpe_dictitem_title * title);
+static void cpe_dictcheck_free(struct cpe_dict_check * check);
+static void cpe_dictitemtitle_free(struct cpe_dictitem_title * title);
 
-void cpe_dictitem_free(struct cpe_dictitem * item)
+static void cpe_dictitem_free(struct cpe_dictitem * item)
 {
 	if (item == NULL) return;
 	cpe_name_free(item->name);
@@ -490,7 +490,7 @@ void cpe_dictitem_free(struct cpe_dictitem * item)
 	oscap_free(item);
 }
 
-struct cpe_dict_check *cpe_dictcheck_new_xml(xmlNode * node)
+static struct cpe_dict_check *cpe_dictcheck_new_xml(xmlNode * node)
 {
 	xmlChar *data;
 	struct cpe_dict_check *check;
@@ -515,7 +515,7 @@ struct cpe_dict_check *cpe_dictcheck_new_xml(xmlNode * node)
 	return check;
 }
 
-void cpe_dictcheck_free(struct cpe_dict_check * check)
+static void cpe_dictcheck_free(struct cpe_dict_check * check)
 {
 	if (check == NULL)
 		return;
@@ -525,7 +525,7 @@ void cpe_dictcheck_free(struct cpe_dict_check * check)
 	oscap_free(check);
 }
 
-struct cpe_dictitem_title *cpe_dictitemtitle_new_xml(xmlNode * node)
+static struct cpe_dictitem_title *cpe_dictitemtitle_new_xml(xmlNode * node)
 {
 	xmlChar *data;
 	struct cpe_dictitem_title *title;
@@ -546,7 +546,7 @@ struct cpe_dictitem_title *cpe_dictitemtitle_new_xml(xmlNode * node)
 	return title;
 }
 
-void cpe_dictitemtitle_free(struct cpe_dictitem_title * title)
+static void cpe_dictitemtitle_free(struct cpe_dictitem_title * title)
 {
 	if (title == NULL)
 		return;
@@ -557,7 +557,7 @@ void cpe_dictitemtitle_free(struct cpe_dictitem_title * title)
 
 /* CPE -> Vendor
  */
-struct cpe_dict_vendor *cpe_dictvendor_new_empty()
+static struct cpe_dict_vendor *cpe_dictvendor_new_empty()
 {
 	struct cpe_dict_vendor *item;
 
@@ -573,7 +573,7 @@ struct cpe_dict_vendor *cpe_dictvendor_new_empty()
 	return item;
 }
 
-struct cpe_dict_vendor *cpe_dictvendor_new_xml(xmlNodePtr node) {
+static struct cpe_dict_vendor *cpe_dictvendor_new_xml(xmlNodePtr node) {
 
 	struct cpe_dict_vendor *item;
 	struct cpe_dict_product *product;
@@ -614,7 +614,7 @@ struct cpe_dict_vendor *cpe_dictvendor_new_xml(xmlNodePtr node) {
         return item;
 }
 
-void cpe_dictvendor_free(struct cpe_dict_vendor * vendor) {
+static void cpe_dictvendor_free(struct cpe_dict_vendor * vendor) {
 
 	if (vendor == NULL) return;
 
@@ -626,7 +626,7 @@ void cpe_dictvendor_free(struct cpe_dict_vendor * vendor) {
 
 /* CPE -> Vendor -> Product
  */
-struct cpe_dict_product *cpe_dictproduct_new_empty() {
+static struct cpe_dict_product *cpe_dictproduct_new_empty() {
 
 	struct cpe_dict_product *item;
 
@@ -641,7 +641,7 @@ struct cpe_dict_product *cpe_dictproduct_new_empty() {
 	return item;
 }
 
-struct cpe_dict_product *cpe_dictproduct_new_xml(xmlNodePtr node) {
+static struct cpe_dict_product *cpe_dictproduct_new_xml(xmlNodePtr node) {
 
 	struct cpe_dict_product *item;
 	struct cpe_dict_version *version;
@@ -693,7 +693,7 @@ struct cpe_dict_product *cpe_dictproduct_new_xml(xmlNodePtr node) {
         return item;
 }
 
-void cpe_dictproduct_free(struct cpe_dict_product * product) {
+static void cpe_dictproduct_free(struct cpe_dict_product * product) {
 	if (product == NULL)
 		return;
 	oscap_free(product->value);
@@ -703,7 +703,7 @@ void cpe_dictproduct_free(struct cpe_dict_product * product) {
 
 /* CPE -> Vendor -> Product -> Version
  */
-struct cpe_dict_version *cpe_dictversion_new_empty() {
+static struct cpe_dict_version *cpe_dictversion_new_empty() {
 
 	struct cpe_dict_version *item;
 
@@ -718,7 +718,7 @@ struct cpe_dict_version *cpe_dictversion_new_empty() {
 	return item;
 }
 
-struct cpe_dict_version *cpe_dictversion_new_xml(xmlNodePtr node) {
+static struct cpe_dict_version *cpe_dictversion_new_xml(xmlNodePtr node) {
 
 	struct cpe_dict_version *item;
 	struct cpe_dict_update *update;
@@ -752,7 +752,7 @@ struct cpe_dict_version *cpe_dictversion_new_xml(xmlNodePtr node) {
         return item;
 }
 
-void cpe_dictversion_free(struct cpe_dict_version * version) {
+static void cpe_dictversion_free(struct cpe_dict_version * version) {
 
 	if (version == NULL)
 		return;
@@ -763,7 +763,7 @@ void cpe_dictversion_free(struct cpe_dict_version * version) {
 
 /* CPE -> Vendor -> Product -> Version -> Update
  */
-struct cpe_dict_update *cpe_dictupdate_new_empty() {
+static struct cpe_dict_update *cpe_dictupdate_new_empty() {
 
 	struct cpe_dict_update *item;
 
@@ -778,7 +778,7 @@ struct cpe_dict_update *cpe_dictupdate_new_empty() {
 	return item;
 }
 
-struct cpe_dict_update *cpe_dictupdate_new_xml(xmlNodePtr node) {
+static struct cpe_dict_update *cpe_dictupdate_new_xml(xmlNodePtr node) {
 
 	struct cpe_dict_update *item;
 	struct cpe_dict_edition *edition;
@@ -812,7 +812,7 @@ struct cpe_dict_update *cpe_dictupdate_new_xml(xmlNodePtr node) {
         return item;
 }
 
-void cpe_dictupdate_free(struct cpe_dict_update * update) {
+static void cpe_dictupdate_free(struct cpe_dict_update * update) {
 	if (update == NULL)
 		return;
 	oscap_free(update->value);
@@ -822,7 +822,7 @@ void cpe_dictupdate_free(struct cpe_dict_update * update) {
 
 /* CPE -> Vendor -> Product -> Version -> Update -> Edition
  */
-struct cpe_dict_edition *cpe_dictedition_new_empty() {
+static struct cpe_dict_edition *cpe_dictedition_new_empty() {
 
 	struct cpe_dict_edition *item;
 
@@ -837,7 +837,7 @@ struct cpe_dict_edition *cpe_dictedition_new_empty() {
 	return item;
 }
 
-struct cpe_dict_edition *cpe_dictedition_new_xml(xmlNodePtr node) {
+static struct cpe_dict_edition *cpe_dictedition_new_xml(xmlNodePtr node) {
 
 	struct cpe_dict_edition *item;
 	struct cpe_dict_language *language;
@@ -871,7 +871,7 @@ struct cpe_dict_edition *cpe_dictedition_new_xml(xmlNodePtr node) {
         return item;
 }
 
-void cpe_dictedition_free(struct cpe_dict_edition * edition) {
+static void cpe_dictedition_free(struct cpe_dict_edition * edition) {
 	if (edition == NULL)
 		return;
 	oscap_free(edition->value);
@@ -881,7 +881,7 @@ void cpe_dictedition_free(struct cpe_dict_edition * edition) {
 
 /* CPE -> Vendor -> Product -> Version -> Update -> Edition -> Language
  */
-struct cpe_dict_language *cpe_dictlanguage_new_empty() {
+static struct cpe_dict_language *cpe_dictlanguage_new_empty() {
 
 	struct cpe_dict_language *item;
 
@@ -895,7 +895,7 @@ struct cpe_dict_language *cpe_dictlanguage_new_empty() {
 	return item;
 }
 
-struct cpe_dict_language *cpe_dictlanguage_new_xml(xmlNodePtr node) {
+static struct cpe_dict_language *cpe_dictlanguage_new_xml(xmlNodePtr node) {
 
 	struct cpe_dict_language *item;
 	xmlChar *data;
@@ -920,7 +920,7 @@ struct cpe_dict_language *cpe_dictlanguage_new_xml(xmlNodePtr node) {
         return item;
 }
 
-void cpe_dictlanguage_free(struct cpe_dict_language * language) {
+static void cpe_dictlanguage_free(struct cpe_dict_language * language) {
 	if (language == NULL)
 		return;
 	oscap_free(language->value);
@@ -960,7 +960,7 @@ bool cpe_name_match_dict_str(const char *cpestr, struct cpe_dict * dict)
 	return ret;
 }
 
-void cpe_dictitem_title_export(const struct cpe_dictitem_title * item, xmlNodePtr root_node, const xmlNsPtr xmlns) {
+static void cpe_dictitem_title_export(const struct cpe_dictitem_title * item, xmlNodePtr root_node, const xmlNsPtr xmlns) {
 
         xmlNodePtr title_node = NULL;
         title_node = xmlNewChild(root_node, xmlns, BAD_CAST "title", BAD_CAST cpe_dictitem_title_get_content(item) );
@@ -969,7 +969,7 @@ void cpe_dictitem_title_export(const struct cpe_dictitem_title * item, xmlNodePt
         }
 }
 
-void cpe_dict_check_export(const struct cpe_dict_check * check, xmlNodePtr root_node, const xmlNsPtr xmlns) {
+static void cpe_dict_check_export(const struct cpe_dict_check * check, xmlNodePtr root_node, const xmlNsPtr xmlns) {
 
         xmlNodePtr node = NULL;
         node = xmlNewChild(root_node, xmlns, BAD_CAST "check", BAD_CAST cpe_dict_check_get_identifier(check) );
@@ -979,7 +979,7 @@ void cpe_dict_check_export(const struct cpe_dict_check * check, xmlNodePtr root_
                 xmlNewProp(node, BAD_CAST "href", BAD_CAST cpe_dict_check_get_href(check));
 }
 
-void cpe_dict_references_export(const struct cpe_dict_reference * ref, xmlNodePtr root_node, const xmlNsPtr xmlns) {
+static void cpe_dict_references_export(const struct cpe_dict_reference * ref, xmlNodePtr root_node, const xmlNsPtr xmlns) {
 
         xmlNodePtr node = NULL;
         node = xmlNewChild(root_node, xmlns, BAD_CAST "reference", BAD_CAST cpe_dict_reference_get_content(ref) );
@@ -987,13 +987,13 @@ void cpe_dict_references_export(const struct cpe_dict_reference * ref, xmlNodePt
                 xmlNewProp(node, BAD_CAST "href", BAD_CAST cpe_dict_reference_get_href(ref));
 }
 
-void cpe_dict_note_export(const char * note, xmlNodePtr root_node, const xmlNsPtr xmlns) {
+static void cpe_dict_note_export(const char * note, xmlNodePtr root_node, const xmlNsPtr xmlns) {
 
         xmlNodePtr node = NULL;
         node = xmlNewChild(root_node, xmlns, BAD_CAST "note", BAD_CAST note );
 }
 
-void cpe_dictitem_export(const struct cpe_dictitem * item, xmlNodePtr root_node, const xmlNsPtr xmlns) {
+static void cpe_dictitem_export(const struct cpe_dictitem * item, xmlNodePtr root_node, const xmlNsPtr xmlns) {
 
         xmlNodePtr node = NULL;
         xmlNodePtr notes_node = NULL;
@@ -1037,7 +1037,7 @@ void cpe_dictitem_export(const struct cpe_dictitem * item, xmlNodePtr root_node,
 
 }
 
-void cpe_dict_languages_export(const struct cpe_dict_language * language, xmlNodePtr root_node, xmlNsPtr xmlns) {
+static void cpe_dict_languages_export(const struct cpe_dict_language * language, xmlNodePtr root_node, xmlNsPtr xmlns) {
 
         xmlNodePtr node  = NULL;
 
@@ -1046,7 +1046,7 @@ void cpe_dict_languages_export(const struct cpe_dict_language * language, xmlNod
             xmlNewProp(node, BAD_CAST "value", BAD_CAST cpe_dict_language_get_value(language));
 }
 
-void cpe_dict_editions_export(const struct cpe_dict_edition * edition, xmlNodePtr root_node, xmlNsPtr xmlns) {
+static void cpe_dict_editions_export(const struct cpe_dict_edition * edition, xmlNodePtr root_node, xmlNsPtr xmlns) {
 
         xmlNodePtr node  = NULL;
 
@@ -1059,7 +1059,7 @@ void cpe_dict_editions_export(const struct cpe_dict_edition * edition, xmlNodePt
         )
 }
 
-void cpe_dict_updates_export(const struct cpe_dict_update * update, xmlNodePtr root_node, xmlNsPtr xmlns) {
+static void cpe_dict_updates_export(const struct cpe_dict_update * update, xmlNodePtr root_node, xmlNsPtr xmlns) {
 
         xmlNodePtr node  = NULL;
 
@@ -1073,7 +1073,7 @@ void cpe_dict_updates_export(const struct cpe_dict_update * update, xmlNodePtr r
         )
 }
 
-void cpe_dict_version_export(const struct cpe_dict_version * version, xmlNodePtr root_node, xmlNsPtr xmlns) {
+static void cpe_dict_version_export(const struct cpe_dict_version * version, xmlNodePtr root_node, xmlNsPtr xmlns) {
 
         xmlNodePtr node = NULL;
 
@@ -1088,7 +1088,7 @@ void cpe_dict_version_export(const struct cpe_dict_version * version, xmlNodePtr
 
 }
 
-void cpe_dict_products_export(const struct cpe_dict_product * product, xmlNodePtr root_node, xmlNsPtr xmlns) {
+static void cpe_dict_products_export(const struct cpe_dict_product * product, xmlNodePtr root_node, xmlNsPtr xmlns) {
 
         xmlNodePtr product_node = NULL;
 
@@ -1104,7 +1104,7 @@ void cpe_dict_products_export(const struct cpe_dict_product * product, xmlNodePt
 }
 
 
-void cpe_dict_vendors_export(const struct cpe_dict_vendor * vendor, xmlNodePtr root_node, xmlNsPtr xmlns){
+static void cpe_dict_vendors_export(const struct cpe_dict_vendor * vendor, xmlNodePtr root_node, xmlNsPtr xmlns){
 
         xmlNodePtr node = NULL;
         node = xmlNewChild(root_node, xmlns, BAD_CAST "vendor", NULL);

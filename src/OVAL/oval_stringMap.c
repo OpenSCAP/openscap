@@ -52,12 +52,12 @@ struct oval_string_map *oval_string_map_new()
 	return map;
 }
 
-struct _oval_string_map_entry *_oval_string_map_entry_new(struct
-							  _oval_string_map_entry
-							  *after,
-							  struct
-							  _oval_string_map_entry
-							  *before)
+static struct _oval_string_map_entry *_oval_string_map_entry_new(struct
+								 _oval_string_map_entry
+								 *after,
+								 struct
+								 _oval_string_map_entry
+								 *before)
 {
 	struct _oval_string_map_entry *entry =
 	    (struct _oval_string_map_entry *)
@@ -168,13 +168,13 @@ void oval_string_map_free_string(struct oval_string_map *map)
 
 #include <stdio.h>
 	//TEST FREEFUNC
-void oval_string_map_main_freefunc(void *item)
+static void oval_string_map_main_freefunc(void *item)
 {
 	printf("FREEFUNC: item = %s\n", (const char *) item);
 }
 
 	//TEST MAIN
-int oval_string_map_main(int argc, char **argv)
+static int oval_string_map_main(int argc, char **argv)
 {
 
 	printf("TEST::START\n");

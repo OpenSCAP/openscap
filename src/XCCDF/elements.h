@@ -28,6 +28,8 @@
 #include <time.h>
 #include "../common/util.h"
 
+OSCAP_HIDDEN_START;
+
 typedef enum {
 	XCCDFE_ERROR = -1,
 	XCCDFE_UNMATCHED = 0,
@@ -186,6 +188,8 @@ char* xccdf_get_xml(xmlTextReaderPtr reader);
 
 time_t xccdf_get_date(const char* date);
 time_t xccdf_get_datetime(const char* date);
+
+OSCAP_HIDDEN_END;
 
 #endif
 

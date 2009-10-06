@@ -118,13 +118,13 @@ void oval_result_item_add_message
 	oval_collection_add(item->messages, message);
 }
 
-void _oval_result_item_message_consumer
+static void _oval_result_item_message_consumer
 	(struct oval_message *message, struct oval_result_item *item)
 {
 	oval_result_item_add_message(item, message);
 }
 
-int _oval_result_item_message_parse
+static int _oval_result_item_message_parse
 	(xmlTextReaderPtr reader, struct oval_parser_context* context,
 			struct oval_result_item *item)
 {

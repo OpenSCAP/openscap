@@ -16,7 +16,7 @@
 #include "_seap-command.h"
 #include "_seap-packet.h"
 
-SEAP_cmd_t *SEAP_cmd_new (void)
+static SEAP_cmd_t *SEAP_cmd_new (void)
 {
         SEAP_cmd_t *cmd;
 
@@ -27,7 +27,7 @@ SEAP_cmd_t *SEAP_cmd_new (void)
         return (cmd);
 }
 
-void SEAP_cmd_free (SEAP_cmd_t *p)
+static void SEAP_cmd_free (SEAP_cmd_t *p)
 {
         sm_free (p);
 }
@@ -222,7 +222,7 @@ int SEAP_cmd_unregister (SEAP_CTX_t *ctx, SEAP_cmdcode_t code)
         return (-1);
 }
 
-SEXP_t *__SEAP_cmd_sync_handler (SEXP_t *res, void *arg)
+static SEXP_t *__SEAP_cmd_sync_handler (SEXP_t *res, void *arg)
 {
         struct SEAP_synchelper *h = (struct SEAP_synchelper *)arg;
         

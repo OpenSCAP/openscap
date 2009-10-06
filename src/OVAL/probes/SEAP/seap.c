@@ -426,7 +426,7 @@ int SEAP_reply (SEAP_CTX_t *ctx, int sd, SEAP_msg_t *rep_msg, SEAP_msg_t *req_ms
                 return (-1);
 }
 
-int __SEAP_senderr (SEAP_CTX_t *ctx, int sd, SEAP_err_t *err, unsigned int type)
+static int __SEAP_senderr (SEAP_CTX_t *ctx, int sd, SEAP_err_t *err, unsigned int type)
 {
         SEAP_packet_t *packet;
         SEAP_err_t    *errptr;

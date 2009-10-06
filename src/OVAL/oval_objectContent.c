@@ -209,11 +209,11 @@ void oval_object_content_set_setobject(struct oval_object_content *content, stru
 }
 
 //typedef void (*oval_object_content_consumer)(struct oval_object_content*,void*);
-void oval_consume_entity(struct oval_entity *entity,
+static void oval_consume_entity(struct oval_entity *entity,
 			void *content_entity) {
 	((struct oval_object_content_ENTITY *)content_entity)->entity = entity;
 }
-void oval_consume_set(struct oval_setobject *set, void *content_set) {
+static void oval_consume_set(struct oval_setobject *set, void *content_set) {
 	((struct oval_object_content_SET *)content_set)->set = set;
 }
 int oval_object_content_parse_tag(xmlTextReaderPtr reader,

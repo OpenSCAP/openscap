@@ -143,7 +143,7 @@ struct oval_component *oval_variable_get_component(struct oval_variable *variabl
 	return component;
 }
 
-void _set_oval_variable_type
+static void _set_oval_variable_type
 	(struct oval_variable *variable, oval_variable_type_t type)
 {
 	variable->type = type;
@@ -208,19 +208,19 @@ void oval_variable_set_datatype(struct oval_variable *variable,
 	variable->datatype = datatype;
 }
 
-void set_oval_variable_comment(struct oval_variable *variable, char *comm)
+static void set_oval_variable_comment(struct oval_variable *variable, char *comm)
 {
 	if(variable->comment!=NULL)free(variable->comment);
 	variable->comment = comm==NULL?NULL:strdup(comm);
 }
 
-void set_oval_variable_deprecated(struct oval_variable *variable,
-				  int deprecated)
+static void set_oval_variable_deprecated(struct oval_variable *variable,
+					 int deprecated)
 {
 	variable->deprecated = deprecated;
 }
 
-void set_oval_variable_version(struct oval_variable *variable, int version)
+static void set_oval_variable_version(struct oval_variable *variable, int version)
 {
 	variable->version = version;
 }
@@ -247,12 +247,12 @@ void oval_variable_set_component(struct oval_variable *variable,
 	}
 }
 
-void _oval_variable_parse_local_tag_component_consumer(struct oval_component *component, void *variable) {
+static void _oval_variable_parse_local_tag_component_consumer(struct oval_component *component, void *variable) {
 	oval_variable_set_component(variable, component);
 }
-int _oval_variable_parse_local_tag(xmlTextReaderPtr reader,
-				   struct oval_parser_context *context,
-				   void *user)
+static int _oval_variable_parse_local_tag(xmlTextReaderPtr reader,
+					  struct oval_parser_context *context,
+					  void *user)
 {
 	struct oval_variable *variable = (struct oval_variable *)user;
 	xmlChar *tagname = xmlTextReaderName(reader);
@@ -271,9 +271,9 @@ int _oval_variable_parse_local_tag(xmlTextReaderPtr reader,
 	return return_code;
 }
 
-int _oval_variable_parse_constant_tag(xmlTextReaderPtr reader,
-				      struct oval_parser_context *context,
-				      void *user)
+static int _oval_variable_parse_constant_tag(xmlTextReaderPtr reader,
+					     struct oval_parser_context *context,
+					     void *user)
 {
 	struct oval_variable *variable = (struct oval_variable *)user;
 	xmlChar *tagname = xmlTextReaderName(reader);
@@ -429,7 +429,7 @@ void oval_variable_to_print(struct oval_variable *variable, char *indent,
 	case OVAL_VARIABLE_UNKNOWN: break;
 	}
 }
-xmlNode *_oval_VARIABLE_CONSTANT_to_dom
+static xmlNode *_oval_VARIABLE_CONSTANT_to_dom
 	(struct oval_variable *variable, xmlDoc *doc, xmlNode *parent)
 {
 	xmlNs *ns_definitions = xmlSearchNsByHref(doc, parent, OVAL_DEFINITIONS_NAMESPACE);
@@ -444,7 +444,7 @@ xmlNode *_oval_VARIABLE_CONSTANT_to_dom
 
 	return variable_node;
 }
-xmlNode *_oval_VARIABLE_EXTERNAL_to_dom
+static xmlNode *_oval_VARIABLE_EXTERNAL_to_dom
 	(struct oval_variable *variable, xmlDoc *doc, xmlNode *parent)
 {
 	xmlNs *ns_definitions = xmlSearchNsByHref(doc, parent, OVAL_DEFINITIONS_NAMESPACE);
@@ -452,7 +452,7 @@ xmlNode *_oval_VARIABLE_EXTERNAL_to_dom
 
 	return variable_node;
 }
-xmlNode *_oval_VARIABLE_LOCAL_to_dom
+static xmlNode *_oval_VARIABLE_LOCAL_to_dom
 	(struct oval_variable *variable, xmlDoc *doc, xmlNode *parent)
 {
 	xmlNs *ns_definitions = xmlSearchNsByHref(doc, parent, OVAL_DEFINITIONS_NAMESPACE);

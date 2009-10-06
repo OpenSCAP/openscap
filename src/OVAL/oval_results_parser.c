@@ -40,33 +40,33 @@
 
 #define DEBUG_OVALRES_PARSER 1
 
-int _ovalres_parser_process_node_consume_collected_objects(xmlTextReaderPtr reader,
+static int _ovalres_parser_process_node_consume_collected_objects(xmlTextReaderPtr reader,
 		  struct oval_parser_context *context, void *null)
 {
 	return oval_syschar_parse_tag(reader, context);
 }
 
-int _ovalres_parser_process_node_consume_system_data(xmlTextReaderPtr reader,
+static int _ovalres_parser_process_node_consume_system_data(xmlTextReaderPtr reader,
 		  struct oval_parser_context *context, void *null)
 {
 	return oval_sysdata_parse_tag(reader, context);
 }
 
 //typedef int (*oval_xml_tag_parser)    (xmlTextReaderPtr, struct oval_parser_context*, void*);
-int _oval_results_parser_consume_definitions
+static int _oval_results_parser_consume_definitions
 	(xmlTextReaderPtr reader, struct oval_parser_context *context, void *null)
 {
 	if(DEBUG_OVALRES_PARSER)oval_parser_log_debug(context,"Calling oval_parser_parse_node");
 	return ovaldef_parse_node(reader, context);
 }
 
-void _oval_results_parser_consume_system
+static void _oval_results_parser_consume_system
 	(struct oval_result_system *system, struct oval_results_model *model)
 {
 	oval_results_model_add_system(model, system);
 }
 
-int _ovalres_parser_parse_system
+static int _ovalres_parser_parse_system
 	(xmlTextReaderPtr reader,
 			struct oval_parser_context *context, void *null)
 {
@@ -78,7 +78,7 @@ int _ovalres_parser_parse_system
 			(oscap_consumer_func)_oval_results_parser_consume_system, model);
 }
 
-int _ovalres_parser_process_node
+static int _ovalres_parser_process_node
 	(xmlTextReaderPtr reader, struct oval_parser_context *context, struct oval_result_directives **directives)
 {
 	int return_code = xmlTextReaderRead(reader);

@@ -34,9 +34,7 @@
 #include "oval_system_characteristics_impl.h"
 #include "oval_collection_impl.h"
 
-int DEBUG_OVAL_SYSDATA = 0;
-
-extern const char* NAMESPACE_OVALSYS;
+static int DEBUG_OVAL_SYSDATA = 0;
 
 typedef struct oval_sysdata {
 	//oval_family_enum family;
@@ -107,14 +105,14 @@ char *oval_sysdata_get_id(struct oval_sysdata *data){
 char *oval_sysdata_get_message(struct oval_sysdata *data){
 	return data->message;
 }
-void set_oval_sysdata_message(struct oval_sysdata *data, char *message){
+static void set_oval_sysdata_message(struct oval_sysdata *data, char *message){
 	if(data->message!=NULL)free(data->message);
 	data->message = message==NULL?NULL:strdup(message);
 }
 oval_message_level_t oval_sysdata_get_message_level(struct oval_sysdata *data){
 	return data->message_level;
 }
-void set_oval_sysdata_message_level(struct oval_sysdata *data, oval_message_level_t level){
+static void set_oval_sysdata_message_level(struct oval_sysdata *data, oval_message_level_t level){
 	data->message_level = level;
 }
 struct oval_sysitem_iterator *oval_sysdata_get_items(struct oval_sysdata *data){
@@ -130,13 +128,13 @@ void oval_sysdata_set_status(struct oval_sysdata *data, oval_syschar_status_t st
 	data->status = status;
 }
 
-void _oval_sysdata_parse_subtag_consume(char* message, void* sysdata) {
+static void _oval_sysdata_parse_subtag_consume(char* message, void* sysdata) {
 			set_oval_sysdata_message(sysdata, message);
 }
-void _oval_sysdata_parse_subtag_item_consumer(struct oval_sysitem *item, void* sysdata) {
+static void _oval_sysdata_parse_subtag_item_consumer(struct oval_sysitem *item, void* sysdata) {
 	oval_sysdata_add_item(sysdata, item);
 }
-int _oval_sysdata_parse_subtag(
+static int _oval_sysdata_parse_subtag(
 		xmlTextReaderPtr reader,
 		struct oval_parser_context *context,
 		void *client){

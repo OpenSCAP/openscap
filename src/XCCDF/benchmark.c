@@ -43,7 +43,7 @@ bool xccdf_benchmark_add_ref(struct xccdf_item* benchmark, struct xccdf_item** p
     return true;
 }
 
-bool xccdf_benchmark_resolve_refs(struct xccdf_item* bench)
+static bool xccdf_benchmark_resolve_refs(struct xccdf_item* bench)
 {
 	assert(bench->type == XCCDF_BENCHMARK);
     bool ret = true;
@@ -161,7 +161,7 @@ bool xccdf_benchmark_get_parse(struct xccdf_item* benchmark, xmlTextReaderPtr re
 	return true;
 }
 
-void xccdf_backref_free(struct xccdf_backref* idref)
+static void xccdf_backref_free(struct xccdf_backref* idref)
 {
     if (idref) {
         oscap_free(idref->id);

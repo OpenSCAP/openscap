@@ -9,6 +9,9 @@
 #include "oval_string_map_impl.h"
 #include "api/oval_system_characteristics.h"
 #include "config.h"
+#include "../common/util.h"
+
+OSCAP_HIDDEN_START;
 
 #define OVAL_PROBE_SCHEME "pipe://"
 #ifndef OVAL_PROBE_DIR
@@ -41,5 +44,7 @@ SEXP_t *oval_object_to_sexp (const char *typestr, struct oval_object *object);
 struct oval_syschar *sexp_to_oval_state (SEXP_t *sexp, struct oval_object *object);
 
 int oval_syschar_apply_sexp(struct oval_syschar *syschar, SEXP_t *sexp, struct oval_object *object);
+
+OSCAP_HIDDEN_END;
 
 #endif /* OVAL_PROBE_H */

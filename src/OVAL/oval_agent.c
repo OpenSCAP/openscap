@@ -234,7 +234,7 @@ void oval_definition_model_add_variable(struct oval_definition_model *model,
 	oval_string_map_put(model->variable_map, key, (void *)variable);
 }
 
-void oval_syschar_model_add_syschar(struct oval_syschar_model *model,
+static void oval_syschar_model_add_syschar(struct oval_syschar_model *model,
 		       struct oval_syschar *syschar)
 {
 	struct oval_object *object = oval_syschar_get_object(syschar);
@@ -244,7 +244,7 @@ void oval_syschar_model_add_syschar(struct oval_syschar_model *model,
 	}
 }
 
-void oval_syschar_model_add_sysdata(struct oval_syschar_model *model,
+static void oval_syschar_model_add_sysdata(struct oval_syschar_model *model,
 		       struct oval_sysdata *sysdata)
 {
 	char *id = oval_sysdata_get_id(sysdata);
@@ -327,7 +327,7 @@ struct oval_syschar *oval_syschar_model_get_syschar(struct oval_syschar_model *m
 		(model->syschar_map, object_id);
 }
 
-struct oval_sysdata *get_oval_sysdata(struct oval_syschar_model *model,
+static struct oval_sysdata *get_oval_sysdata(struct oval_syschar_model *model,
 					char *id)
 {
 	return (struct oval_sysdata *)oval_string_map_get_value
@@ -371,7 +371,7 @@ struct oval_variable_iterator *oval_definition_model_get_variables(struct oval_d
 	return iterator;
 }
 
-struct oval_syschar_iterator *get_oval_syschars(struct oval_syschar_model
+static struct oval_syschar_iterator *get_oval_syschars(struct oval_syschar_model
 						  *model)
 {
 	struct oval_syschar_iterator *iterator = (struct oval_syschar_iterator *)oval_string_map_values(model->
@@ -452,7 +452,7 @@ struct oval_test *get_oval_test_new(struct oval_definition_model *model, char *i
 	return test;
 }
 
-int _generator_to_dom(xmlDocPtr doc, xmlNode *tag_generator)
+static int _generator_to_dom(xmlDocPtr doc, xmlNode *tag_generator)
 {
 	xmlNs *ns_common  = xmlSearchNsByHref(doc, tag_generator, OVAL_COMMON_NAMESPACE);
 	xmlNewChild
@@ -540,7 +540,7 @@ struct oval_result_directives *oval_results_model_load
 	return directives;
 }
 
-void _oval_agent_scan_for_extensions_tests
+static void _oval_agent_scan_for_extensions_tests
 	(struct oval_criteria_node *node,
 	 struct oval_string_map *extmap,
 	 struct oval_string_map *tstmap,
@@ -579,19 +579,19 @@ void _oval_agent_scan_for_extensions_tests
 	}
 }
 
-void _oval_agent_scan_entity_for_references
+static void _oval_agent_scan_entity_for_references
 	(struct oval_entity *entity,
 	 struct oval_string_map *objmap,
 	 struct oval_string_map *sttmap,
 	 struct oval_string_map *varmap);
 
-void _oval_agent_scan_set_for_references
+static void _oval_agent_scan_set_for_references
 	(struct oval_setobject *set,
 	 struct oval_string_map *objmap,
 	 struct oval_string_map *sttmap,
 	 struct oval_string_map *varmap);
 
-void _oval_agent_scan_object_for_references
+static void _oval_agent_scan_object_for_references
 	(struct oval_object *object,
 	 struct oval_string_map *objmap,
 	 struct oval_string_map *sttmap,
@@ -607,7 +607,7 @@ void _oval_agent_scan_object_for_references
 	}
 	oval_object_content_iterator_free(contents);
 }
-void _oval_agent_scan_state_for_references
+static void _oval_agent_scan_state_for_references
 	(struct oval_state *state,
 	 struct oval_string_map *objmap,
 	 struct oval_string_map *sttmap,
@@ -622,7 +622,7 @@ void _oval_agent_scan_state_for_references
 	oval_state_content_iterator_free(contents);
 }
 
-void _oval_agent_scan_component_for_references
+static void _oval_agent_scan_component_for_references
 	(struct oval_component *component,
 	 struct oval_string_map *objmap,
 	 struct oval_string_map *sttmap,
@@ -659,7 +659,7 @@ void _oval_agent_scan_component_for_references
 	}
 }
 
-void _oval_agent_scan_entity_for_references
+static void _oval_agent_scan_entity_for_references
 	(struct oval_entity *entity,
 	 struct oval_string_map *objmap,
 	 struct oval_string_map *sttmap,
@@ -679,7 +679,7 @@ void _oval_agent_scan_entity_for_references
 	}
 }
 
-void _oval_agent_scan_set_for_references
+static void _oval_agent_scan_set_for_references
 	(struct oval_setobject *set,
 	 struct oval_string_map *objmap,
 	 struct oval_string_map *sttmap,
@@ -936,7 +936,7 @@ int oval_syschar_model_export(
     return retcode;
 }
 
-void _scan_for_viewable_definitions
+static void _scan_for_viewable_definitions
 	(struct oval_results_model *results_model, struct oval_result_directives *directives, struct oval_string_map *defids)
 {
 	struct oval_result_system_iterator *systems = oval_results_model_get_systems(results_model);
@@ -959,14 +959,14 @@ void _scan_for_viewable_definitions
 	oval_result_system_iterator_free(systems);
 }
 
-bool _resolve_oval_definition_from_map
+static bool _resolve_oval_definition_from_map
 	(struct oval_definition *oval_definition, struct oval_string_map *defids)
 {
 	char *defid = oval_definition_get_id(oval_definition);
 	return oval_string_map_get_value(defids, defid)!=NULL;
 }
 
-xmlNode *oval_results_to_dom
+static xmlNode *oval_results_to_dom
 	(struct oval_results_model *results_model, struct oval_result_directives *directives,
 			xmlDocPtr doc, xmlNode *parent)
 {

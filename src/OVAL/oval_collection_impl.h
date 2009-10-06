@@ -30,6 +30,9 @@
 #ifndef OVALCOLLECTION_H_
 #define OVALCOLLECTION_H_
 #include "../common/util.h"
+
+OSCAP_HIDDEN_START;
+
 //struct oval_collection;
 //struct oval_iterator;
 
@@ -45,5 +48,7 @@ void *oval_collection_iterator_next(struct oval_iterator *);
 void  oval_collection_iterator_free(struct oval_iterator *);
 
 struct oval_string_iterator;
+
+OSCAP_HIDDEN_END;
 
 #endif				/* OVALCOLLECTION_H_ */

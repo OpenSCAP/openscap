@@ -29,6 +29,9 @@
 #include "xccdf.h"
 #include "elements.h"
 #include "../common/list.h"
+#include "../common/util.h"
+
+OSCAP_HIDDEN_START;
 
 struct xccdf_flags {
 	unsigned selected         : 1;
@@ -470,6 +473,8 @@ void xccdf_set_value_free(struct xccdf_set_value* sv);
 #define XCCDF_ITERATOR_FREE(n) void xccdf_##n##_iterator_free(XCCDF_ITERATOR(n) it) { oscap_iterator_free(XITERATOR(it)); }
 #define XCCDF_ITERATOR_GEN_T(t,n) XCCDF_ITERATOR_FWD(n) XCCDF_ITERATOR_HAS_MORE(n) XCCDF_ITERATOR_NEXT(t,n) XCCDF_ITERATOR_FREE(n)
 #define XCCDF_ITERATOR_GEN_S(n) XCCDF_ITERATOR_GEN_T(struct xccdf_##n*,n)
+
+OSCAP_HIDDEN_END;
 
 #endif
 

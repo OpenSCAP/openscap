@@ -14,14 +14,14 @@
 #include "generic/xbase64.h"
 #include "generic/strto.h"
 
-SEXP_t *SEXP_parse_fd (SEXP_format_t fmt, int fd, size_t max, SEXP_pstate_t **state)
+static SEXP_t *SEXP_parse_fd (SEXP_format_t fmt, int fd, size_t max, SEXP_pstate_t **state)
 {
         _A(fd >= 0);
         errno = EOPNOTSUPP;
         return (NULL);
 }
 
-SEXP_t *SEXP_parse_buf (SEXP_format_t fmt, void *buf, size_t len, SEXP_pstate_t **state)
+static SEXP_t *SEXP_parse_buf (SEXP_format_t fmt, void *buf, size_t len, SEXP_pstate_t **state)
 {
         _A(buf != NULL);
         _A(len  > 0);
@@ -56,7 +56,7 @@ SEXP_pstate_t *SEXP_pstate_new (void)
         return SEXP_pstate_init (sm_talloc (SEXP_pstate_t));
 }
 
-SEXP_t *SEXP_pstate_lstack_push (SEXP_pstate_t *state, SEXP_t *ref)
+static SEXP_t *SEXP_pstate_lstack_push (SEXP_pstate_t *state, SEXP_t *ref)
 {
         if (state->l_real == state->l_size) {
                 if (state->l_size < SEXP_PLSTACK_GROWFAST_TRESH)
@@ -72,7 +72,7 @@ SEXP_t *SEXP_pstate_lstack_push (SEXP_pstate_t *state, SEXP_t *ref)
         return (ref);
 }
 
-SEXP_t *SEXP_pstate_lstack_pop (SEXP_pstate_t *state)
+static SEXP_t *SEXP_pstate_lstack_pop (SEXP_pstate_t *state)
 {
         SEXP_t *ref;
         size_t  diff;
@@ -98,7 +98,7 @@ resize:
         return (ref);
 }
 
-SEXP_t *SEXP_pstate_lstack_top (SEXP_pstate_t *state)
+static SEXP_t *SEXP_pstate_lstack_top (SEXP_pstate_t *state)
 {
         return (state->l_sref[state->l_real - 1]);
 }
@@ -1292,7 +1292,7 @@ DEFEXTRACTOR_F(datatype)
         return (SEXP_EXT_SUCCESS);
 }
 
-const char hex2bin[] = {
+static const char hex2bin[] = {
         /* 0 */ 0x00,
         /* 1 */ 0x01,
         /* 2 */ 0x02,

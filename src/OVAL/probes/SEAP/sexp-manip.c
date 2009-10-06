@@ -1474,7 +1474,7 @@ SEXP_type_t SEXP_typeof (const SEXP_t *s_exp)
         return ((SEXP_type_t) v_dsc.type);
 }
 
-const char *__sexp_strtype[] = {
+static const char *__sexp_strtype[] = {
         "empty",
         "string",
         "number",
@@ -1495,7 +1495,7 @@ const char *SEXP_strtype (const SEXP_t *s_exp)
         return (__sexp_strtype[v_dsc.type]);
 }
 
-SEXP_t *SEXP_build (const char *s_str, ...)
+static SEXP_t *SEXP_build (const char *s_str, ...)
 {
         _LOGCALL_;
         /* (1 2 3 "asdf" %s %s) */

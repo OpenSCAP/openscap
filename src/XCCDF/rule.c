@@ -56,7 +56,7 @@ bool xccdf_content_parse(xmlTextReaderPtr reader, struct xccdf_item* parent)
 	return false;
 }
 
-char* xccdf_strsep(char** str, char delim)
+static char* xccdf_strsep(char** str, char delim)
 {
 	if (str == NULL || *str == NULL) return NULL;
 	char* ret = *str;
@@ -68,7 +68,7 @@ char* xccdf_strsep(char** str, char delim)
 	return ret;
 }
 
-void xccdf_deps_get(struct xccdf_item* item, struct oscap_list** conflicts, struct oscap_list** requires)
+static void xccdf_deps_get(struct xccdf_item* item, struct oscap_list** conflicts, struct oscap_list** requires)
 {
 	switch (item->type) {
 		case XCCDF_RULE:
@@ -83,7 +83,7 @@ void xccdf_deps_get(struct xccdf_item* item, struct oscap_list** conflicts, stru
 	}
 }
 
-bool xccdf_parse_deps(xmlTextReaderPtr reader, struct xccdf_item* item)
+static bool xccdf_parse_deps(xmlTextReaderPtr reader, struct xccdf_item* item)
 {
 	struct oscap_list *conflicts, *requires;
 	xccdf_deps_get(item, &conflicts, &requires);
@@ -118,7 +118,7 @@ bool xccdf_parse_deps(xmlTextReaderPtr reader, struct xccdf_item* item)
 	return true;
 }
 
-void xccdf_print_id_list(struct oscap_list* items, const char* sep)
+static void xccdf_print_id_list(struct oscap_list* items, const char* sep)
 {
 	struct oscap_list_item* it;
 	if (sep == NULL) sep = ", ";
@@ -128,7 +128,7 @@ void xccdf_print_id_list(struct oscap_list* items, const char* sep)
 	}
 }
 
-void xccdf_deps_dump(struct xccdf_item* item, int depth)
+static void xccdf_deps_dump(struct xccdf_item* item, int depth)
 {
 	struct oscap_list *conflicts, *requires;
 	xccdf_deps_get(item, &conflicts, &requires);
@@ -154,7 +154,7 @@ void xccdf_deps_dump(struct xccdf_item* item, int depth)
 	}
 }
 
-struct xccdf_item* xccdf_group_new_empty(struct xccdf_item* parent)
+static struct xccdf_item* xccdf_group_new_empty(struct xccdf_item* parent)
 {
 	struct xccdf_item* group = xccdf_item_new(XCCDF_GROUP, parent->item.benchmark, parent);
 	group->sub.group.content = oscap_list_new();
@@ -220,7 +220,7 @@ void xccdf_group_free(struct xccdf_item* group)
 	}
 }
 
-struct xccdf_item* xccdf_rule_new_empty(struct xccdf_item* parent)
+static struct xccdf_item* xccdf_rule_new_empty(struct xccdf_item* parent)
 {
 	struct xccdf_item* rule = xccdf_item_new(XCCDF_RULE, parent->item.benchmark, parent);
 	rule->sub.rule.role = XCCDF_ROLE_FULL;
@@ -371,7 +371,7 @@ struct xccdf_check* xccdf_check_new_empty(struct xccdf_item* parent)
 	return check;
 }
 
-const struct oscap_string_map XCCDF_BOOLOP_MAP[] = {
+static const struct oscap_string_map XCCDF_BOOLOP_MAP[] = {
 	{ XCCDF_OPERATOR_AND, "and" }, { XCCDF_OPERATOR_AND, "AND" },
 	{ XCCDF_OPERATOR_OR,  "or"  }, { XCCDF_OPERATOR_OR,  "OR"  },
 	{ 0, NULL }

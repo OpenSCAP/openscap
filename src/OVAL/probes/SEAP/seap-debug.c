@@ -5,7 +5,7 @@
 # include <unistd.h>
 #  if defined(SEAP_THREAD_SAFE)
 #   include <pthread.h>
-pthread_mutex_t __debuglog_mutex = PTHREAD_MUTEX_INITIALIZER;
+static pthread_mutex_t __debuglog_mutex = PTHREAD_MUTEX_INITIALIZER;
 #  endif
 static FILE *__debuglog_fp = NULL;
 

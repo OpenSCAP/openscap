@@ -35,22 +35,22 @@
 #include "oval_definitions_impl.h"
 #include "oval_system_characteristics_impl.h"
 
-const char* NAMESPACE_OVALSYS = "http://oval.mitre.org/XMLSchema/oval-system-characteristics-5";
+const char NAMESPACE_OVALSYS[] = "http://oval.mitre.org/XMLSchema/oval-system-characteristics-5";
 
 #define DEBUG_OVALSYS_PARSER 0
 
-int _ovalsys_parser_process_node_consume_collected_objects(xmlTextReaderPtr reader,
+static int _ovalsys_parser_process_node_consume_collected_objects(xmlTextReaderPtr reader,
 		  struct oval_parser_context *context, void *null)
 {
 	return oval_syschar_parse_tag(reader, context);
 }
-int _ovalsys_parser_process_node_consume_system_data(xmlTextReaderPtr reader,
+static int _ovalsys_parser_process_node_consume_system_data(xmlTextReaderPtr reader,
 		  struct oval_parser_context *context, void *null)
 {
 	return oval_sysdata_parse_tag(reader, context);
 }
 
-int _ovalsys_parser_process_node(xmlTextReaderPtr reader,
+static int _ovalsys_parser_process_node(xmlTextReaderPtr reader,
 			      struct oval_parser_context *context)
 {
 	int return_code = xmlTextReaderRead(reader);

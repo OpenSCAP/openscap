@@ -186,20 +186,20 @@ void oval_result_definition_add_message
 	if(message)oval_collection_add(definition->messages, message);
 }
 
-void _oval_result_definition_consume_criteria
+static void _oval_result_definition_consume_criteria
 	(struct oval_result_criteria_node *node,
 		struct oval_result_definition *definition)
 {
 	oval_result_definition_set_criteria(definition, node);
 }
-void _oval_result_definition_consume_message
+static void _oval_result_definition_consume_message
 	(struct oval_message *message,
 		struct oval_result_definition *definition)
 {
 	oval_result_definition_add_message(definition, message);
 }
 
-int _oval_result_definition_parse
+static int _oval_result_definition_parse
 	(xmlTextReaderPtr reader, struct oval_parser_context *context,
 		struct oval_result_definition *definition)
 {
@@ -222,7 +222,7 @@ int _oval_result_definition_parse
 	return return_code;
 }
 
-char* _oval_result_definition_results[] =
+static char* _oval_result_definition_results[] =
 {
 		NULL, "true", "false", "unknown", "error", "not evaluated", "not applicable"
 };

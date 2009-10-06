@@ -3,6 +3,7 @@
 #ifndef _SEAP_DESCRIPTOR_H
 #define _SEAP_DESCRIPTOR_H
 
+#include <errno.h>
 #include <pthread.h>
 #include <stdint.h>
 #include "generic/bitmap.h"
@@ -15,6 +16,9 @@
 #include "public/seap-message.h"
 #include "public/seap-command.h"
 #include "public/seap-error.h"
+#include "../../../common/util.h"
+
+OSCAP_HIDDEN_START;
 
 /*
  * Descriptor table + related stuff
@@ -64,8 +68,6 @@ int          SEAP_desc_add (SEAP_desctable_t *sd_table, SEXP_pstate_t *pstate, S
 int          SEAP_desc_del (SEAP_desctable_t *sd_table, int sd);
 SEAP_desc_t *SEAP_desc_get (SEAP_desctable_t *sd_table, int sd);
 
-#include <errno.h>
-
 static inline int SEAP_desc_trylock (pthread_mutex_t *m)
 {
         switch (pthread_mutex_trylock (m)) {
@@ -110,6 +112,8 @@ static inline int SEAP_desc_unlock (pthread_mutex_t *m)
 
 SEAP_msgid_t SEAP_desc_genmsgid (SEAP_desctable_t *sd_table, int sd);
 SEAP_cmdid_t SEAP_desc_gencmdid (SEAP_desctable_t *sd_table, int sd);
+
+OSCAP_HIDDEN_END;
 
 #endif /* _SEAP_DESCRIPTOR_H */
 #endif

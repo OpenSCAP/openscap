@@ -144,7 +144,7 @@ void oval_entity_set_datatype(struct oval_entity *entity,
 	entity->datatype = datatype;
 }
 
-void set_oval_entity_operation(struct oval_entity *entity,
+static void set_oval_entity_operation(struct oval_entity *entity,
 			       oval_operation_t operation)
 {
 	entity->operation = operation;
@@ -172,7 +172,7 @@ void oval_entity_set_value(struct oval_entity *entity, struct oval_value *value)
 	entity->value = value;
 }
 
-void set_oval_entity_name(struct oval_entity *entity, char *name)
+static void set_oval_entity_name(struct oval_entity *entity, char *name)
 {
 	if(entity->name!=NULL)free(entity->name);
 	entity->name = name==NULL?NULL:strdup(name);
@@ -182,11 +182,11 @@ struct oval_consume_varref_context {
 	struct oval_definition_model * model;
 	struct oval_variable **variable;
 };
-void oval_consume_varref(char *varref, void *user) {
+static void oval_consume_varref(char *varref, void *user) {
 	struct oval_consume_varref_context* ctx = user;
 	*(ctx->variable) = oval_definition_model_get_variable((struct oval_definition_model *)ctx->model, varref);
 }
-void oval_consume_value(struct oval_value *use_value, void *value) {
+static void oval_consume_value(struct oval_value *use_value, void *value) {
 	*(struct oval_value **)value = use_value;
 }
 

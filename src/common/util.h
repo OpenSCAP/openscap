@@ -30,6 +30,18 @@
 
 #include "alloc.h"
 
+/*
+ * Start a list of declarations that should not be available from outside the
+ * library.  Must be matched with OSCAP_HIDDEN_END.
+ */
+#define OSCAP_HIDDEN_START _Pragma("GCC visibility push(hidden)")
+
+/*
+ * Start a list of declarations that should not be available from outside the
+ * library started by OSCAP_HIDDEN_END.
+ */
+#define OSCAP_HIDDEN_END _Pragma("GCC visibility pop")
+
 /**
  * Function pointer to an object destructor.
  */

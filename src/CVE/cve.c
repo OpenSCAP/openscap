@@ -46,18 +46,18 @@
  * @return new zeroed CVE Reference structure
  * @retval NULL on failure
  */
-struct cve_reference *cve_reference_new();
+static struct cve_reference *cve_reference_new();
 
 /*
  * Free the CVE Reference structure and its data.
  *
  * @param reference CVE Reference to be freed
  */
-void cve_reference_free(struct cve_reference * reference);
+static void cve_reference_free(struct cve_reference * reference);
 
-struct cve_info *cve_info_new();
+static struct cve_info *cve_info_new();
 
-void cve_info_free(struct cve_info * cve);
+static void cve_info_free(struct cve_info * cve);
 
 /*
  * Parses the specified XML file and creates a list of CVE data structures.
@@ -67,7 +67,7 @@ void cve_info_free(struct cve_info * cve);
  * @param outCveList address of the pointer to which the root element of the list is to be stored
  * @return non-negative value indicates the number of CVEs in the list, negative value indicates an error
  */
-int cve_parse(const char *xmlfile, struct cve* outCveList);
+static int cve_parse(const char *xmlfile, struct cve* outCveList);
 
 struct cve_reference {
 	char *summary;		// summary
@@ -251,12 +251,12 @@ static void pushTag(tagStack_t * stack, const xmlChar * uri,
 	}
 }
 
-struct cve_reference *cve_reference_new()
+static struct cve_reference *cve_reference_new()
 {
 	return oscap_calloc(1, sizeof(struct cve_reference));
 }
 
-void cve_reference_free(struct cve_reference * ref)
+static void cve_reference_free(struct cve_reference * ref)
 {
 	if (ref == NULL)
 		return;
@@ -272,7 +272,7 @@ void cve_reference_free(struct cve_reference * ref)
 	oscap_free(ref);
 }
 
-struct cve* cve_new_empty(void)
+static struct cve* cve_new_empty(void)
 {
 	struct cve* cve = oscap_calloc(1, sizeof(struct cve));
 	cve->entries = oscap_list_new();
@@ -300,21 +300,21 @@ void cve_free(struct cve* cve)
 	}
 }
 
-bool cve_add_info(struct cve* cve, struct cve_info* info)
+static bool cve_add_info(struct cve* cve, struct cve_info* info)
 {
 	oscap_list_add(cve->entries, info);
 	oscap_htable_add(cve->entry, info->id, info);
 	return true;
 }
 
-struct cve_info *cve_info_new()
+static struct cve_info *cve_info_new()
 {
 	struct cve_info* info = oscap_calloc(1, sizeof(struct cve_info));
 	info->references = oscap_list_new();
 	return info;
 }
 
-void cve_info_free(struct cve_info * cve)
+static void cve_info_free(struct cve_info * cve)
 {
 	if (cve == NULL)
 		return;
@@ -351,7 +351,7 @@ void cve_info_free(struct cve_info * cve)
 	oscap_free(cve);
 }
 
-int cve_parse(const char *xmlfile, struct cve* out)
+static int cve_parse(const char *xmlfile, struct cve* out)
 {
 	xmlTextReaderPtr reader;
 	int ret, cve_cnt = 0;

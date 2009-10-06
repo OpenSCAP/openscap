@@ -3,8 +3,8 @@
 #include "xbase64.h"
 
 #if defined(WANT_XBASE64)
-const char xb64_enc_alphabet[64] = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ:_";
-const char xb64_dec_alphabet[75] = {
+static const char xb64_enc_alphabet[64] = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ:_";
+static const char xb64_dec_alphabet[75] = {
         0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 62,  0,  0,  0,  0,  0, 0, 36, 37, 38,
         39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58,
         59, 60, 61,  0,  0,  0,  0, 63,  0, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
@@ -127,8 +127,8 @@ size_t xbase64_decode (const char *data, size_t size, uint8_t **buffer) {
 #endif /* WANT_XBASE64 */
 
 #if defined(WANT_BASE64)
-const char b64_enc_alphabet[64] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-const char b64_dec_alphabet[75] = {
+static const char b64_enc_alphabet[64] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+static const char b64_dec_alphabet[75] = {
         /* 0 */ 52,
         /* 1 */ 53,
         /* 2 */ 54,
