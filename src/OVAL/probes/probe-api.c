@@ -70,9 +70,10 @@ SEXP_t *probe_item_attr_add (SEXP_t *item, const char *name, SEXP_t *val)
                 if (val == NULL)
                         ns = SEXP_string_new (name, strlen (name));
                 else
-                        ns = SEXP_string_newf ("%:s", name);
+                        ns = SEXP_string_newf (":%s", name);
                 
                 SEXP_list_add (n_ref, ns);
+                SEXP_free (ns);
                 
                 if (val != NULL)
                         SEXP_list_add (n_ref, val);
@@ -96,6 +97,7 @@ SEXP_t *probe_item_attr_add (SEXP_t *item, const char *name, SEXP_t *val)
                 SEXP_free (ns);
                 
                 n_ref = SEXP_list_replace (item, 1, nl);
+                SEXP_free (nl);
         }
         
         SEXP_free (n_ref);
