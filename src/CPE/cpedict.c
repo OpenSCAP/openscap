@@ -48,6 +48,7 @@ struct cpe_item_metadata {
         char *modification_date;
         char *status;
         char *nvd_id;
+        char *deprecated_by_nvd_id;
 };
 
 struct cpe_dict_check {
@@ -96,8 +97,13 @@ struct cpe_dict {                        // the main node
 /* **************************
  * Component-tree structures
  * **************************/
+struct cpe_dict_language {
+        char *value;
+};
+
 struct cpe_dict_edition {
         char *value;
+        struct oscap_list* languages;
 };
 
 struct cpe_dict_update {
@@ -144,6 +150,7 @@ OSCAP_GETTER(const char*, cpe_dictitem_title, xmllang)
 OSCAP_GETTER(const char*, cpe_item_metadata, modification_date)
 OSCAP_GETTER(const char*, cpe_item_metadata, status)
 OSCAP_GETTER(const char*, cpe_item_metadata, nvd_id)
+OSCAP_GETTER(const char*, cpe_item_metadata, deprecated_by_nvd_id)
 
 OSCAP_GETTER(struct cpe_name*, cpe_dictitem, name)
 OSCAP_GETTER(struct cpe_name*, cpe_dictitem, deprecated)
@@ -161,11 +168,13 @@ OSCAP_GETTER(int, cpe_dict_product, part)
 OSCAP_GETTER(const char*, cpe_dict_version, value)
 OSCAP_GETTER(const char*, cpe_dict_update, value)
 OSCAP_GETTER(const char*, cpe_dict_edition, value)
+OSCAP_GETTER(const char*, cpe_dict_language, value)
 OSCAP_IGETTER(cpe_dictitem_title, cpe_dict_vendor, titles)
 OSCAP_IGETTER_GEN(cpe_dict_product, cpe_dict_vendor, products)
 OSCAP_IGETTER_GEN(cpe_dict_version, cpe_dict_product, versions)
 OSCAP_IGETTER_GEN(cpe_dict_update, cpe_dict_version, updates)
 OSCAP_IGETTER_GEN(cpe_dict_edition, cpe_dict_update, editions)
+OSCAP_IGETTER_GEN(cpe_dict_language, cpe_dict_edition, languages)
 
 OSCAP_GETTER(const char*, cpe_dict, generator_product_name)
 OSCAP_GETTER(const char*, cpe_dict, generator_product_version)
@@ -199,6 +208,7 @@ struct cpe_dict_product *cpe_dictproduct_new_xml(xmlNodePtr node);
 struct cpe_dict_version *cpe_dictversion_new_xml(xmlNodePtr node);
 struct cpe_dict_update *cpe_dictupdate_new_xml(xmlNodePtr node);
 struct cpe_dict_edition *cpe_dictedition_new_xml(xmlNodePtr node);
+struct cpe_dict_language *cpe_dictlanguage_new_xml(xmlNodePtr node);
 
 struct cpe_dictitem *cpe_dictitem_new_empty();
 
@@ -213,6 +223,7 @@ void cpe_dictproduct_free(struct cpe_dict_product * product);
 void cpe_dictversion_free(struct cpe_dict_version * version);
 void cpe_dictupdate_free(struct cpe_dict_update * update);
 void cpe_dictedition_free(struct cpe_dict_edition * edition);
+void cpe_dictlanguage_free(struct cpe_dict_language * language);
 
 char *str_trim(char *str)
 {
@@ -433,16 +444,20 @@ struct cpe_dictitem *cpe_dictitem_new_xml(xmlNodePtr node)
 			}
 		} else if (xmlStrcmp(node->name, BAD_CAST "item-metadata") == 0) {
                         data = xmlGetProp(node, BAD_CAST "modification-date");
-                        if (((item->metadata = oscap_alloc(sizeof(struct cpe_item_metadata))) == NULL) || (data == NULL)){
+                        if ((data == NULL) || ((item->metadata = oscap_alloc(sizeof(struct cpe_item_metadata))) == NULL)){
                             oscap_free(item);
                             oscap_free(data);
                             return NULL;
                         }
                         if (data) item->metadata->modification_date = (char *)data;
+
                         data = xmlGetProp(node, BAD_CAST "status");
 	                if (data) item->metadata->status = (char *)data;
                         data = xmlGetProp(node, BAD_CAST "nvd-id");
 	                if (data) item->metadata->nvd_id = (char *)data;
+                        data = xmlGetProp(node, BAD_CAST "deprecated-by-nvd-id");
+	                if (data) item->metadata->deprecated_by_nvd_id = (char *)data;
+                        else item->metadata->deprecated_by_nvd_id = NULL;
                         data = NULL;
                 }
 	}
@@ -816,16 +831,18 @@ struct cpe_dict_edition *cpe_dictedition_new_empty() {
 		return NULL;
 
 	memset(item, 0, sizeof(struct cpe_dict_edition));
-	item->value      = NULL;
+	item->value     = NULL;
+	item->languages = oscap_list_new();
 
 	return item;
 }
 
 struct cpe_dict_edition *cpe_dictedition_new_xml(xmlNodePtr node) {
 
-	struct cpe_dict_update *item;
-	struct cpe_dict_edition *edition;
+	struct cpe_dict_edition *item;
+	struct cpe_dict_language *language;
 	xmlChar *data;
+	xmlNodePtr cur;
 
 	if (xmlStrcmp(node->name, BAD_CAST "edition") != 0)
 		return NULL;
@@ -843,6 +860,13 @@ struct cpe_dict_edition *cpe_dictedition_new_xml(xmlNodePtr node) {
 	}
         strcpy(item->value, (char *)data);
 	oscap_free(data);
+        for (cur = node->xmlChildrenNode; cur != NULL; cur = cur->next) {
+                if (xmlStrcmp(cur->name, BAD_CAST "language") == 0) {
+                    // vendor -> product -> version -> update -> edition -> language
+                    language = cpe_dictlanguage_new_xml(cur);
+                    if (language) oscap_list_add(item->languages, language);
+                }
+        }
 
         return item;
 }
@@ -851,8 +875,58 @@ void cpe_dictedition_free(struct cpe_dict_edition * edition) {
 	if (edition == NULL)
 		return;
 	oscap_free(edition->value);
+	oscap_list_free(edition->languages, (oscap_destruct_func)cpe_dictlanguage_free);
 	oscap_free(edition);
 }
+
+/* CPE -> Vendor -> Product -> Version -> Update -> Edition -> Language
+ */
+struct cpe_dict_language *cpe_dictlanguage_new_empty() {
+
+	struct cpe_dict_language *item;
+
+	item = oscap_alloc(sizeof(struct cpe_dict_language));
+	if (item == NULL)
+		return NULL;
+
+	memset(item, 0, sizeof(struct cpe_dict_language));
+	item->value      = NULL;
+
+	return item;
+}
+
+struct cpe_dict_language *cpe_dictlanguage_new_xml(xmlNodePtr node) {
+
+	struct cpe_dict_language *item;
+	xmlChar *data;
+
+	if (xmlStrcmp(node->name, BAD_CAST "language") != 0)
+		return NULL;
+
+	item = cpe_dictlanguage_new_empty();
+	if (item == NULL)
+		return NULL;
+
+	data = xmlGetProp(node, BAD_CAST "value");
+        // TODO: Are we really going to return NULL if there is no "value" parameter ??
+	if (data == NULL || (item->value = malloc(strlen((char *)data)+1)) == NULL) {
+		oscap_free(item);
+		oscap_free(data);
+		return NULL;
+	}
+        strcpy(item->value, (char *)data);
+	oscap_free(data);
+
+        return item;
+}
+
+void cpe_dictlanguage_free(struct cpe_dict_language * language) {
+	if (language == NULL)
+		return;
+	oscap_free(language->value);
+	oscap_free(language);
+}
+
 
 bool cpe_name_match_dict(struct cpe_name * cpe, struct cpe_dict * dict) {
 	if (cpe == NULL || dict == NULL)
@@ -951,6 +1025,8 @@ void cpe_dictitem_export(const struct cpe_dictitem * item, xmlNodePtr root_node,
         if (cpe_dictitem_get_metadata(item) != NULL) {
                 xmlNodePtr metadata_node = xmlNewChild(node, xmlns, BAD_CAST "item-metadata", NULL);
                 metadata_node->ns = xmlNewNs(NULL, NULL, "meta");
+                if (cpe_item_metadata_get_deprecated_by_nvd_id(item->metadata) != NULL)
+                    xmlNewProp(metadata_node, BAD_CAST "deprecated-by-nvd-id", BAD_CAST cpe_item_metadata_get_deprecated_by_nvd_id(item->metadata));
                 if (cpe_item_metadata_get_modification_date(item->metadata) != NULL)
                     xmlNewProp(metadata_node, BAD_CAST "modification-date", BAD_CAST cpe_item_metadata_get_modification_date(item->metadata));
                 if (cpe_item_metadata_get_status(item->metadata) != NULL)
@@ -961,6 +1037,15 @@ void cpe_dictitem_export(const struct cpe_dictitem * item, xmlNodePtr root_node,
 
 }
 
+void cpe_dict_languages_export(const struct cpe_dict_language * language, xmlNodePtr root_node, xmlNsPtr xmlns) {
+
+        xmlNodePtr node  = NULL;
+
+        node = xmlNewChild(root_node, xmlns, BAD_CAST "language", NULL);
+        if (cpe_dict_language_get_value(language) != NULL)
+            xmlNewProp(node, BAD_CAST "value", BAD_CAST cpe_dict_language_get_value(language));
+}
+
 void cpe_dict_editions_export(const struct cpe_dict_edition * edition, xmlNodePtr root_node, xmlNsPtr xmlns) {
 
         xmlNodePtr node  = NULL;
@@ -968,6 +1053,10 @@ void cpe_dict_editions_export(const struct cpe_dict_edition * edition, xmlNodePt
         node = xmlNewChild(root_node, xmlns, BAD_CAST "edition", NULL);
         if (cpe_dict_edition_get_value(edition) != NULL)
             xmlNewProp(node, BAD_CAST "value", BAD_CAST cpe_dict_edition_get_value(edition));
+
+        OSCAP_FOREACH (cpe_dict_language, language, cpe_dict_edition_get_languages(edition),
+                cpe_dict_languages_export(language, node, xmlns);
+        )
 }
 
 void cpe_dict_updates_export(const struct cpe_dict_update * update, xmlNodePtr root_node, xmlNsPtr xmlns) {
