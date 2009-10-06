@@ -65,7 +65,8 @@ size_t probe_obj_getname_r (const SEXP_t *obj, char *buffer, size_t buflen);
  * entities
  */
 
-SEXP_t *probe_ent_creat (const char *name, SEXP_t *attrs, ...);
+SEXP_t *probe_ent_creat (const char *name, SEXP_t *attrs, SEXP_t *val, ...);
+SEXP_t *probe_ent_creat1 (const char *name, SEXP_t *attrs, SEXP_t *val);
 
 SEXP_t *probe_ent_attr_add (SEXP_t *ent, const char *name, SEXP_t *val);
 

@@ -443,18 +443,64 @@ size_t probe_obj_getname_r (const SEXP_t *obj, char *buffer, size_t buflen)
  * entities
  */
 
-SEXP_t *probe_ent_creat (const char *name, SEXP_t *attrs, ...)
+SEXP_t *probe_ent_creat (const char *name, SEXP_t *attrs, SEXP_t *val, ...)
 {
+        va_list ap;
+        SEXP_t *ent_list, *ent;
+
         _LOGCALL_;
-        /* TBI */
-        return (NULL);
+        
+        va_start (ap, val);
+        ent_list = SEXP_list_new (NULL);
+        
+        while (name != NULL) {                
+                ent = probe_ent_creat1 (name, attrs, val);
+                
+                SEXP_list_add (ent_list, ent);
+                SEXP_free (ent);
+                
+                name  = va_arg (ap, const char *);
+                attrs = va_arg (ap, SEXP_t *);
+                val   = va_arg (ap, SEXP_t *);
+        }
+
+        return (ent_list);
+}
+
+SEXP_t *probe_ent_creat1 (const char *name, SEXP_t *attrs, SEXP_t *val)
+{
+        SEXP_t *ent, *ns;
+
+        _LOGCALL_;
+
+        ent = SEXP_list_new (NULL);
+        ns  = SEXP_string_newf (name);
+        
+        if (attrs != NULL) {
+                SEXP_t *nl, *nj;
+
+                nl = SEXP_list_new (ns, NULL);
+                nj = SEXP_list_join (nl, attrs);
+                
+                SEXP_list_add (ent, nj);
+
+                SEXP_free (nl);
+                SEXP_free (nj);
+        } else
+                SEXP_list_add (ent, ns);
+        
+        SEXP_free (ns);
+
+        if (val != NULL)
+                SEXP_list_add (ent, val);
+        
+        return (ent);
 }
 
 SEXP_t *probe_ent_attr_add (SEXP_t *ent, const char *name, SEXP_t *val)
 {
         _LOGCALL_;
-        /* TBI */
-        return (NULL);
+        return (probe_item_attr_add (ent, name, val));
 }
 
 int probe_ent_getvals (const SEXP_t *ent, SEXP_t **res)
