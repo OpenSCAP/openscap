@@ -178,7 +178,7 @@ int file_cb (const char *p, const char *f, void *ptr)
                 SEXP_free (r2); SEXP_free (r3);
                 SEXP_free (r4); SEXP_free (r5);
                 SEXP_free (r6); SEXP_free (r7);
-                SEXP_free (r8); SEXP_free (r9);
+                SEXP_free (r8);
                 SEXP_free (r_t); SEXP_free (r_f);
                 
         }

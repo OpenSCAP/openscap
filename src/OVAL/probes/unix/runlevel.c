@@ -14,7 +14,9 @@
 #include <string.h>
 #include <errno.h>
 #include <assert.h>
-#define _BSD_SOURCE
+#ifndef _BSD_SOURCE
+# define _BSD_SOURCE
+#endif
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
