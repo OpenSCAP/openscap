@@ -71,7 +71,7 @@ int file_cb (const char *p, const char *f, void *ptr)
                 return (-1);
         } else {
                 SEXP_t *r0, *r1, *r2, *r3, *r4;
-                SEXP_t *r5, *r6, *r7, *r8, *r9;
+                SEXP_t *r5, *r6, *r7, *r8;
                 SEXP_t *r_t, *r_f;
                 
                 r_t = SEXP_number_newb (true);
@@ -129,12 +129,12 @@ int file_cb (const char *p, const char *f, void *ptr)
                                         r8 = SEXP_number_newu_32 (st.st_size),
 # else
 #  error "Invalid _FILE_OFFSET_BITS value"
-                                        NULL,
+                                        r8 = NULL,
 # endif
 #elif defined(LARGE_FILE_SOURCE)
-                                        r9 = SEXP_number_newu_64 (st.st_size),
+                                        r8 = SEXP_number_newu_64 (st.st_size),
 #else
-                                        r9 = SEXP_number_newu_32 (st.st_size),
+                                        r8 = SEXP_number_newu_32 (st.st_size),
 #endif
                                         "suid", NULL,
                                         (st.st_mode & S_ISUID ? r_t : r_f),
