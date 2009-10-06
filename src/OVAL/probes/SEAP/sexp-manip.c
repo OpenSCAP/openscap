@@ -1202,9 +1202,10 @@ SEXP_t *SEXP_list_pop (SEXP_t *list)
 SEXP_lstack_t *SEXP_lstack_new (void)
 {
         SEXP_lstack_t *stack;
-
+        
         _LOGCALL_;
         
+        stack = sm_talloc (SEXP_lstack_t);
         stack->l_size = SEXP_LSTACK_INIT_SIZE;
         stack->l_real = 0;
         stack->l_sref = sm_alloc (sizeof (SEXP_t *) * SEXP_LSTACK_INIT_SIZE);
