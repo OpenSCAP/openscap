@@ -64,6 +64,10 @@ struct cpe_name {
 	const char *language;  // language
 };
 
+/* h - hardware
+ * o - OS
+ * a - application
+ */
 const char *CPE_PART_CHAR[] = { NULL, "h", "o", "a" };
 
 const char *CPE_SCHEMA = "cpe:/";

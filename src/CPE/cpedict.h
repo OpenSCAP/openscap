@@ -200,7 +200,23 @@ const char* cpe_dict_reference_get_href(const struct cpe_dict_reference* item);
  */
 const char* cpe_dict_reference_get_content(const struct cpe_dict_reference* item);
 
+/**
+ * Get modification date of the CPE dictionary metadata.
+ * @relates cpe_item_metadata
+ */
+//const char* cpe_item_metadata_get_modification_date(const struct cpe_item_metadata* item);
 
+/**
+ * Get status of the CPE dictionary metadata.
+ * @relates cpe_item_metadata
+ */
+//const char* cpe_item_metadata_get_status(const struct cpe_item_metadata* item);
+
+/**
+ * Get nvd id of the CPE dictionary metadata.
+ * @relates cpe_item_metadata
+ */
+//const char* cpe_item_metadata_get_nvd_id(const struct cpe_item_metadata* item);
 /**
  * Get CPE name of the dictionary entry.
  * @relates cpe_dictitem
@@ -212,6 +228,12 @@ struct cpe_name* cpe_dictitem_get_name(const struct cpe_dictitem* item);
  * @relates cpe_dictitem
  */
 const char* cpe_dictitem_get_title(const struct cpe_dictitem* item);
+
+/**
+ * Get title of the dictionary entry.
+ * @relates cpe_dictitem
+ */
+const char* cpe_dictitem_get_title_xmllang(const struct cpe_dictitem* item);
 
 /**
  * Get an iterator to the dictionary entry's references.
@@ -231,6 +253,8 @@ struct cpe_dict_check_iterator* cpe_dictitem_get_checks(const struct cpe_dictite
  */
 struct oscap_string_iterator* cpe_dictitem_get_notes(const struct cpe_dictitem* item);
 
+
+
 /**
  * Get CPE name of item that deprecated this one.
  * @retval NULL if the item has not been deprecated
@@ -243,6 +267,12 @@ struct cpe_name* cpe_dictitem_get_deprecated(const struct cpe_dictitem* item);
  * @relates cpe_dictitem
  */
 const char* cpe_dictitem_get_deprecation_date(const struct cpe_dictitem* item);
+
+/**
+ * Get CPE metadata of the dictionary entry.
+ * @relates cpe_dictitem
+ */
+struct cpe_item_metadata* cpe_dictitem_get_metadata(const struct cpe_dictitem* item);
 
 /**
  * Verify wether given CPE is known according to specified dictionary
@@ -263,6 +293,9 @@ bool cpe_name_match_dict(struct cpe_name * cpe, struct cpe_dict * dict);
  * @return true if dictionary contains given CPE
  */
 bool cpe_name_match_dict_str(const char *cpe, struct cpe_dict * dict);
+
+bool cpe_dict_export(const struct cpe_dict * dict, const char * fname);
+
 
 #endif				/* _CPEDICT_H_ */
 

@@ -50,8 +50,8 @@ struct cpe_platformspec {
 
 struct cpe_platform {
 	char *id;                   // platform ID
-	char *title;                // human-readable platform description
-	char *remark;               // remark
+	char *title;                // human-readable platform description TODO: 0-n !!
+	char *remark;               // remark TODO: 0-n !!
 	struct cpe_lang_expr expr;	// expression for match evaluation
 };
 
@@ -132,6 +132,8 @@ struct cpe_platformspec *cpe_platformspec_new_empty()
 
 	res->items = oscap_list_new();
 	res->item = oscap_htable_new();
+        res->ns_href = NULL;
+        res->ns_prefix = NULL;
 
 	return res;
 }
@@ -145,26 +147,30 @@ struct cpe_platformspec *cpe_platformspec_new_xml(xmlDocPtr doc, xmlNodePtr root
 
 	if (xmlStrcmp(root->name, BAD_CAST "platform-specification") != 0)
 		return NULL;
+	        
+        res = cpe_platformspec_new_empty();
+        if (res == NULL)
+        	return NULL;
 
         xmlns = xmlSearchNs(doc, root, BAD_CAST "cpe");
-        if (xmlns == NULL)
-                return NULL;
+        if (xmlns != NULL) {
 
-	res = cpe_platformspec_new_empty();
-	if (res == NULL)
-		return NULL;
+                // fill namespace href
+        	res->ns_href = malloc(strlen((xmlns->href)+1));
+                if (res->ns_href == NULL)
+                        return NULL;
+                strcpy(res->ns_href, (char *) xmlns->href);
+        
+                // fill namespace prefix
+        	res->ns_prefix = malloc(strlen(xmlns->prefix)+1);
+                if (res->ns_prefix == NULL)
+                        return NULL;
+                strcpy(res->ns_prefix, (char *) xmlns->prefix);
+        } else {
+                res->ns_href = NULL;
+                res->ns_prefix = NULL;
+        }
 
-        // fill namespace href
-	res->ns_href = malloc(strlen((xmlns->href)+1));
-        if (res->ns_href == NULL)
-                return NULL;
-        strcpy(res->ns_href, (char *) xmlns->href);
-
-        // fill namespace prefix
-	res->ns_prefix = malloc(strlen(xmlns->prefix)+1);
-        if (res->ns_prefix == NULL)
-                return NULL;
-        strcpy(res->ns_prefix, (char *) xmlns->prefix);
         
 	for (cur = root->xmlChildrenNode; cur != NULL; cur = cur->next) {
 		if (!(plat = cpe_platform_new_xml(cur)))
@@ -215,10 +221,10 @@ struct cpe_platform *cpe_platform_new_xml(xmlNodePtr node)
 
 	for (node = node->xmlChildrenNode; node != NULL; node = node->next) {
 		if (ret->title == NULL
-		    && xmlStrcmp(node->name, BAD_CAST "title") == 0)
+		    && xmlStrcmp(node->name, BAD_CAST "title") == 0) // TODO: 0-n
 			ret->title = (char *)xmlNodeGetContent(node);
 		else if (ret->remark == NULL
-			 && xmlStrcmp(node->name, BAD_CAST "remark") == 0)
+			 && xmlStrcmp(node->name, BAD_CAST "remark") == 0)// TODO: 0-n
 			ret->remark = (char *)xmlNodeGetContent(node);
 		else if (!ret->expr.oper
 			 && xmlStrcmp(node->name, BAD_CAST "logical-test") == 0)
@@ -408,7 +414,6 @@ void cpe_langexpr_export( struct cpe_lang_expr expr, xmlNodePtr root_node, xmlNs
 
         int i = 0;
         while (expr.meta.expr[i].oper != CPE_LANG_OPER_HALT){
-            //printf("%s\n", expr.meta.expr[i].oper);
             cpe_langexpr_export(expr.meta.expr[i], node, xmlns);
             ++i;
         }
@@ -450,8 +455,10 @@ bool cpe_platformspec_export(const struct cpe_platformspec * res, const char * f
 
         doc = xmlNewDoc(BAD_CAST "1.0");
         root_node = xmlNewNode(NULL, BAD_CAST "platform-specification");
-        xmlns = xmlNewNs(root_node, BAD_CAST res->ns_href, BAD_CAST res->ns_prefix);
-        root_node->ns = xmlns;
+        if ((res->ns_href != NULL) && (res->ns_prefix != NULL) ){
+            xmlns = xmlNewNs(root_node, BAD_CAST res->ns_href, BAD_CAST res->ns_prefix);
+            root_node->ns = xmlns;
+        }
         xmlDocSetRootElement(doc, root_node);
 
         if (res->items == NULL) {
@@ -466,7 +473,6 @@ bool cpe_platformspec_export(const struct cpe_platformspec * res, const char * f
 		)
 	}
 
-        fflush(stdout);
         xmlSaveFormatFileEnc(fname, doc, "UTF-8", 1);
 
         xmlFreeDoc(doc);

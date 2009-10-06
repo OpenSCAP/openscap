@@ -65,7 +65,7 @@ void test_langexpr_dump(cpe_lang_expr_t * expr, int depth)
 void test_platformspec_export(struct cpe_platformspec * res){
 
     (void) cpe_platformspec_export( res, "test_cpelang.out");
-    fprintf(stdout, "Result saved in test_cpelang.out file");
+    fprintf(stdout, "Result saved in test_cpelang.out file\n");
 }
 
 #ifndef CPELANG_TEST_NO_MAIN

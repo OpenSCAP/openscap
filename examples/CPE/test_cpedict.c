@@ -7,7 +7,9 @@ void cpe_dictitem_dump(struct cpe_dictitem * item)
 	printf("  Name:  ");
 	cpe_name_write(cpe_dictitem_get_name(item), stdout);
 	printf("\n");
-	printf("  Title: %s\n", cpe_dictitem_get_title(item));
+	OSCAP_FOREACH (cpe_dictitem_title, title, cpe_dictitem_get_titles(item),
+		printf("  Title  %s (%s)\n", cpe_dictitem_title_get_content(title), cpe_dictitem_title_get_xmllang(title));
+	)
 
 	// print notes
 	printf("  Notes:\n");
@@ -38,6 +40,12 @@ void cpe_dictitem_dump(struct cpe_dictitem * item)
 	printf("\n");
 }
 
+void test_dict_export(struct cpe_dict * dict){
+
+    (void) cpe_dict_export( dict, "test_cpedict.out");
+    fprintf(stdout, "Result saved in test_cpedict.out file\n");
+}
+
 int main(int argc, char **argv)
 {
 	struct cpe_dict *dict;	// pointer to our CPE dictionary
@@ -60,12 +68,14 @@ int main(int argc, char **argv)
 
 		// dump each dictionary item
 		OSCAP_FOREACH (cpe_dictitem, item, cpe_dict_get_items(dict),
-			cpe_dictitem_dump(item);
+			//cpe_dictitem_dump(item);
 		)
 
 		// for each CPE specified on command line, try to match it against the dictionary
 		for (i = 2; i < argc; ++i)
 			printf("%s KNOWN: %s\n", cpe_name_match_dict_str(argv[i], dict) ? "   " : "NOT", argv[i]);
+
+                test_dict_export(dict);
 
 		// free system resources
 		cpe_dict_free(dict);
