@@ -430,6 +430,10 @@ uintptr_t SEXP_rawval_list_copy (uintptr_t lblkp, uint16_t n_skip)
         off_n   = 0;
         off_o   = n_skip;
         lb_old  = SEXP_VALP_LBLK(lblkp);
+
+        if (lb_old == NULL)
+                return ((uintptr_t) NULL);
+        
         old_sz  = lb_old->nxsz & SEXP_LBLKS_MASK;
         cur_sz  = 0;
         lb_new  = (struct SEXP_val_lblk *)SEXP_rawval_lblk_new (cur_sz);
