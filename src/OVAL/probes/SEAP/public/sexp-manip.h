@@ -3,6 +3,7 @@
 #define SEXP_MANIP_H
 
 #include <stdarg.h>
+#include <stddef.h>
 #include <stdint.h>
 #include <stdbool.h>
 #include <sexp-types.h>

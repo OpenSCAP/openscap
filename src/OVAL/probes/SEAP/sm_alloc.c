@@ -8,7 +8,7 @@
  * Normal
  */
 
-void *__sm_alloc (size_t s)
+void *sm_alloc (size_t s)
 {
         void *m;
 #if defined(SEAP_MALLOC_STRICT)
@@ -22,7 +22,7 @@ void *__sm_alloc (size_t s)
         return (m);
 }
 
-void *__sm_calloc (size_t n, size_t s)
+void *sm_calloc (size_t n, size_t s)
 {
         void *m;
 #if defined(SEAP_MALLOC_STRICT)
@@ -37,7 +37,7 @@ void *__sm_calloc (size_t n, size_t s)
         return (m);
 }
 
-void *__sm_realloc (void *p, size_t s)
+void *sm_realloc (void *p, size_t s)
 {
         void *m;
 
@@ -49,7 +49,7 @@ void *__sm_realloc (void *p, size_t s)
         return (m);
 }
 
-void *__sm_reallocf (void *p, size_t s)
+void *sm_reallocf (void *p, size_t s)
 {
         void *m;
 
@@ -63,7 +63,7 @@ void *__sm_reallocf (void *p, size_t s)
         return (m);
 }
 
-int __sm_memalign (void **p, size_t a, size_t s)
+int sm_memalign (void **p, size_t a, size_t s)
 {
         int ret;
         
@@ -78,7 +78,7 @@ int __sm_memalign (void **p, size_t a, size_t s)
         return (ret);
 }
 
-void __sm_free (void *p)
+void sm_free (void *p)
 {
 #if defined(SEAP_MALLOC_STRICT)
         _A(p != NULL);
@@ -177,19 +177,15 @@ int __sm_memalign_dbg (void **p, size_t a, size_t s, const char *f, size_t l)
         return (ret);
 }
 
-void __sm_free_dbg (void **p, const char *f, size_t l)
+void __sm_free_dbg (void *p, const char *f, size_t l)
 {
-        _A(p != NULL);
 #if defined(SEAP_MALLOC_STRICT)
-        _A(*p != NULL);
+        _A(p != NULL);
 #endif
-        _D("ptr=%p\n", *p);
-        if (*p != NULL) {
-                free (*p);
-#if defined(SEAP_MALLOC_RESET)
-                *p = NULL;
-#endif
-        }
+        _D("ptr=%p\n", p);
+        
+        if (p != NULL)
+                free (p);
         return;
 }
 #endif

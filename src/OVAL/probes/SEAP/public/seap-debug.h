@@ -10,6 +10,7 @@
 #ifndef _D
 #if defined(NDEBUG)
 # define _D(...) while(0)
+# define _LOGCALL_ while(0)
 #else
 # include <stddef.h>
 # include <stdarg.h>
