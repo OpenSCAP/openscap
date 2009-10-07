@@ -141,6 +141,47 @@ static int probe_sd_del (probe_sdtbl_t *tbl, oval_subtype_t type)
         return (0);
 }
 
+static SEXP_t *oval_value_to_sexp (struct oval_value *val, oval_datatype_t dtype)
+{
+                SEXP_t *val_sexp;
+
+                /* CHECK: check in val? */
+                switch (dtype) {
+                case OVAL_DATATYPE_VERSION:
+                        val_sexp = SEXP_string_newf ("%s", oval_value_get_text (val));
+                        SEXP_datatype_set (val_sexp, "version");
+                        break;
+
+                case OVAL_DATATYPE_EVR_STRING:
+                        val_sexp = SEXP_string_newf ("%s", oval_value_get_text (val));
+                        SEXP_datatype_set (val_sexp, "evr_str");
+                        break;
+
+                case OVAL_DATATYPE_STRING:
+                        val_sexp = SEXP_string_newf ("%s", oval_value_get_text (val));
+                        break;
+
+                case OVAL_DATATYPE_FLOAT:
+                        val_sexp = SEXP_number_newf (oval_value_get_float (val));
+                        break;
+
+                case OVAL_DATATYPE_INTEGER:
+                        val_sexp = SEXP_number_newi_32 (oval_value_get_integer (val));
+                        break;
+
+                case OVAL_DATATYPE_BOOLEAN:
+                        val_sexp = SEXP_number_newb (oval_value_get_boolean (val));
+                        SEXP_datatype_set (val_sexp, "bool");
+                        break;
+
+                default:
+                        val_sexp = NULL;
+                        break;
+                }
+
+                return val_sexp;
+}
+
 static SEXP_t *oval_entity_to_sexp (struct oval_entity *ent)
 {
         SEXP_t *elm, *elm_name;
@@ -177,59 +218,65 @@ static SEXP_t *oval_entity_to_sexp (struct oval_entity *ent)
                 
         } else { /* value */
                 SEXP_t *val_sexp;
-                struct oval_value *val;
 
-                val = oval_entity_get_value (ent);
-                
                 SEXP_list_add (elm, elm_name);
                 SEXP_free (elm_name);
 
-                /* CHECK: check in val? */
-                switch (oval_entity_get_datatype (ent)) {
-                case OVAL_DATATYPE_VERSION:
+                val_sexp = oval_value_to_sexp (oval_entity_get_value (ent),
+                                               oval_entity_get_datatype (ent));
 
-                        val_sexp = SEXP_string_newf ("%s", oval_value_get_text (val));
-                        SEXP_datatype_set (val_sexp, "version");
-
-                        goto add_string_val;
-                case OVAL_DATATYPE_EVR_STRING:
-
-                        val_sexp = SEXP_string_newf ("%s", oval_value_get_text (val));
-                        SEXP_datatype_set (val_sexp, "evr_str");
-
-                        goto add_string_val;
-                case OVAL_DATATYPE_STRING:
-
-                        val_sexp = SEXP_string_newf ("%s", oval_value_get_text (val));
-
-                add_string_val:
+                if (val_sexp == NULL) {
+                        SEXP_free (elm);
+                        elm = NULL;
+                } else {
                         SEXP_list_add (elm, val_sexp);
-                        break;
-                case OVAL_DATATYPE_FLOAT:
-
-                        SEXP_list_add (elm,
-                                       val_sexp = SEXP_number_newf (oval_value_get_float (val)));
-                        break;
-                case OVAL_DATATYPE_INTEGER:
-
-                        SEXP_list_add (elm,
-                                       val_sexp = SEXP_number_newi_32 (oval_value_get_integer (val)));
-                        break;
-                case OVAL_DATATYPE_BOOLEAN:
-                        val_sexp = SEXP_number_newb (oval_value_get_boolean (val));
-
-                        SEXP_datatype_set (val_sexp, "bool");
-                        SEXP_list_add (elm, val_sexp);
-
-                        break;
-                default:
-                        break;
+                        SEXP_free (val_sexp);
                 }
-
-                SEXP_free (val_sexp);
         }
 
         return (elm);
+}
+
+static SEXP_t *oval_varref_to_sexp (struct oval_entity *entity)
+{
+        unsigned int val_cnt = 0;
+        SEXP_t *val_lst, *val_sexp, *varref, *id_sexp, *val_cnt_sexp;
+        oval_datatype_t dt;
+        struct oval_variable *var;
+        struct oval_value_iterator *vit;
+        struct oval_value *val;
+
+        val_lst = SEXP_list_new (NULL);
+        dt = oval_entity_get_datatype (entity);
+
+        var = oval_entity_get_variable (entity);
+        vit = oval_variable_get_values (var);
+        while (oval_value_iterator_has_more (vit)) {
+                val = oval_value_iterator_next (vit);
+
+                val_sexp = oval_value_to_sexp (val, dt);
+                if (val_sexp == NULL) {
+                        SEXP_free(val_lst);
+                        oval_value_iterator_free (vit);
+                        return NULL;
+                }
+
+                SEXP_list_add (val_lst, val_sexp);
+                SEXP_free (val_sexp);
+                ++val_cnt;
+        }
+        oval_value_iterator_free (vit);
+
+        id_sexp = SEXP_string_newf ("%s", oval_variable_get_id (var));
+        val_cnt_sexp = SEXP_number_newu (val_cnt);
+
+        varref = SEXP_list_new (id_sexp, val_cnt_sexp, val_lst);
+
+        SEXP_free (id_sexp);
+        SEXP_free (val_cnt_sexp);
+        SEXP_free (val_lst);
+
+        return varref;
 }
 
 static SEXP_t *oval_set_to_sexp (struct oval_setobject *set)
@@ -352,12 +399,13 @@ static SEXP_t *oval_behaviors_to_sexp (struct oval_behavior_iterator *bit)
 
 SEXP_t *oval_object_to_sexp (const char *typestr, struct oval_object *object)
 {
-        SEXP_t *obj_sexp, *obj_name, *elm;
+        SEXP_t *obj_sexp, *obj_name, *elm, *varrefs, *ent_lst, *lst, *stmp;
         SEXP_t *r0, *r1, *r2;
 
         struct oval_object_content_iterator *cit;
         struct oval_behavior_iterator *bit;
         struct oval_object_content *content;
+        struct oval_entity *entity;
 
         /*
          * Object name & attributes (id)
@@ -378,43 +426,82 @@ SEXP_t *oval_object_to_sexp (const char *typestr, struct oval_object *object)
          * Object content
          */
 
+        ent_lst = SEXP_list_new (NULL);
+        varrefs = NULL;
+
         cit = oval_object_get_object_content (object);
         while (oval_object_content_iterator_has_more (cit)) {
                 oval_check_t ochk;
 
                 content = oval_object_content_iterator_next (cit);
                 elm = NULL;
+                lst = ent_lst;
                 
                 switch (oval_object_content_get_type (content)) {
                 case OVAL_OBJECTCONTENT_ENTITY:
-                        
-                        elm  = oval_entity_to_sexp (oval_object_content_get_entity (content));
+                        entity = oval_object_content_get_entity (content);
+                        elm = oval_entity_to_sexp (entity);
+
+                        if (elm == NULL)
+                                break;
+
                         ochk = oval_object_content_get_varCheck(content);
-                        
                         if (ochk != OVAL_CHECK_UNKNOWN) {
                                 probe_ent_attr_add(elm, "var_check",
                                                    r0 = SEXP_string_newf("%s", oval_check_get_text(ochk)));
                                 SEXP_free (r0);
                         }
-                        
-                        break;
-                case OVAL_OBJECTCONTENT_SET:
 
+                        if (oval_entity_get_varref_type (entity) == OVAL_ENTITY_VARREF_ATTRIBUTE) {
+                                stmp = oval_varref_to_sexp (entity);
+
+                                if (stmp == NULL) {
+                                        SEXP_free (elm);
+                                        elm = NULL;
+                                        break;
+                                }
+
+                                if (varrefs == NULL) {
+                                        varrefs = SEXP_list_new (r0 = SEXP_string_new ("varrefs", 7));
+                                        SEXP_free (r0);
+                                }
+                                SEXP_list_add (varrefs, stmp);
+
+                                lst = obj_sexp;
+                        }
+                        break;
+
+                case OVAL_OBJECTCONTENT_SET:
                         elm = oval_set_to_sexp (oval_object_content_get_setobject (content));
                         break;
+
                 case OVAL_OBJECTCONTENT_UNKNOWN:
                         break;
                 }
 
                 if (elm == NULL) {
                         SEXP_free (obj_sexp);
+                        SEXP_free (ent_lst);
+                        if (varrefs != NULL)
+                                SEXP_free (varrefs);
+                        oval_object_content_iterator_free (cit);
+
                         return (NULL);
                 }
 
-                SEXP_list_add (obj_sexp, elm);
+                SEXP_list_add (lst, elm);
                 SEXP_free (elm);
         }
-        
+
+        if (varrefs != NULL) {
+                SEXP_list_add (obj_sexp, varrefs);
+                SEXP_free (varrefs);
+        }
+        stmp = SEXP_list_join (obj_sexp, ent_lst);
+        SEXP_free (obj_sexp);
+        SEXP_free (ent_lst);
+        obj_sexp = stmp;
+
         oval_object_content_iterator_free (cit);
 
         /*
@@ -478,8 +565,14 @@ SEXP_t *oval_state_to_sexp (struct oval_state *state)
         	struct oval_state_content *content = oval_state_content_iterator_next(contents);
                 
                 ste_ent = oval_entity_to_sexp (oval_state_content_get_entity(content));
-                ochk    = oval_state_content_get_var_check(content);
-                
+
+                if (ste_ent == NULL) {
+                        SEXP_free (ste);
+                        ste = NULL;
+                        break;
+                }
+
+                ochk = oval_state_content_get_var_check(content);
                 if (ochk != OVAL_CHECK_UNKNOWN) {
                         probe_ent_attr_add(ste_ent, "var_check",
                                            r0 = SEXP_string_newf("%s", oval_check_get_text(ochk)));
@@ -487,7 +580,6 @@ SEXP_t *oval_state_to_sexp (struct oval_state *state)
                 }
                 
                 ochk = oval_state_content_get_ent_check(content);
-                
                 if (ochk != OVAL_CHECK_UNKNOWN) {
                         probe_ent_attr_add(ste_ent, "entity_check",
                                            r0 = SEXP_string_newf("%s", oval_check_get_text(ochk)));
