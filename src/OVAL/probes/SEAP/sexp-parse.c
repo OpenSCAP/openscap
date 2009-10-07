@@ -1045,7 +1045,7 @@ DEFEXTRACTOR(dq_string)
         
         dsc->t_len = l + 1;
         
-        if (SEXP_val_new (&v_dsc, /* FIXME */ 1 + sizeof (char) * (l - 1),
+        if (SEXP_val_new (&v_dsc, sizeof (char) * (l - 1),
                           SEXP_VALTYPE_STRING) != 0)
         {
                 /* TODO: handle this */

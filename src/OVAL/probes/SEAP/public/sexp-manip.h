@@ -105,7 +105,7 @@ void       SEXP_listit_free (SEXP_it_t *it);
         for (uint32_t __XC(i,__LINE__) = 1; ((var) = SEXP_list_nth (list, __XC(i,__LINE__))) != NULL; ++__XC(i,__LINE__), SEXP_free (var))
 
 #define SEXP_sublist_foreach(var, list, beg, end)                       \
-        for (uint32_t __XC(i,__LINE__) = (beg); ((var) = SEXP_list_nth (list, __XC(i,__LINE__))) != NULL && __XC(i,__LINE__) <= ((size_t)(end)); ++__XC(i,__LINE__), SEXP_free (var))
+        for (uint32_t __XC(i,__LINE__) = (beg); __XC(i,__LINE__) <= ((size_t)(end)) && ((var) = SEXP_list_nth (list, __XC(i,__LINE__))) != NULL; ++__XC(i,__LINE__), SEXP_free (var))
 
 #endif /* __STDC_VERSION__ >= 199901L */
 

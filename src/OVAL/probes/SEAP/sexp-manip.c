@@ -1215,6 +1215,7 @@ SEXP_lstack_t *SEXP_lstack_new (void)
 
 SEXP_t *SEXP_lstack_push (SEXP_lstack_t *stack, SEXP_t *ref)
 {
+        _A(stack != NULL);
         _LOGCALL_;
 
         if (stack->l_real == stack->l_size) {

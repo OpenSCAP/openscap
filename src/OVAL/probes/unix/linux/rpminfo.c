@@ -204,6 +204,7 @@ SEXP_t *probe_main (SEXP_t *object, int *err, void *arg)
         }
                 
         probe_out = SEXP_list_new (NULL);
+        reply_st  = NULL;
         
         /* get info from RPM db */
         switch (rpmret = get_rpminfo (&request_st, &reply_st)) {
@@ -285,28 +286,25 @@ SEXP_t *probe_main (SEXP_t *object, int *err, void *arg)
                                                               r6 = SEXP_string_newf (reply_st[i].signature_keyid),
                                                               
                                                               NULL);
+
+                                SEXP_list_add (probe_out, item_sexp);
+                                SEXP_free (item_sexp);
+                                /* FIXME: this is... stupid */
+                                SEXP_free (r0);
+                                SEXP_free (r1);
+                                SEXP_free (r2);
+                                SEXP_free (r3);
+                                SEXP_free (r4);
+                                SEXP_free (r5);
+                                SEXP_free (r6);
+                                
+                                __rpminfo_rep_free (&(reply_st[i]));        
                         }
                         
-                        SEXP_list_add (probe_out, item_sexp);
-                        SEXP_free (item_sexp);
-                        /* FIXME: this is... stupid */
-                        SEXP_free (r0);
-                        SEXP_free (r1);
-                        SEXP_free (r2);
-                        SEXP_free (r3);
-                        SEXP_free (r4);
-                        SEXP_free (r5);
-                        SEXP_free (r6);
-                        
-                        __rpminfo_rep_free (&(reply_st[i]));
+                        oscap_free (reply_st);
                 }
-                
-                oscap_free (reply_st);
         }
-        
-        if (reply_st != NULL)
-                oscap_free (reply_st);
-        
+                
         *err = 0;
 
         return (probe_out);

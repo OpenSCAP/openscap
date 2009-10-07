@@ -454,9 +454,11 @@ int SEAP_packet_recv (SEAP_CTX_t *ctx, int sd, SEAP_packet_t **packet)
 
         dsc = SEAP_desc_get (&(ctx->sd_table), sd);
         
-        if (dsc == NULL)
+        if (dsc == NULL) {
+                errno = EFAULT;
                 return (-1);
-        
+        }
+
         /*
          * Check packet queue
          */
