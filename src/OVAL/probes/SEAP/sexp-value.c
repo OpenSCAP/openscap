@@ -175,6 +175,10 @@ uintptr_t SEXP_rawval_lblk_fill (uintptr_t lblkp, SEXP_t *s_exp[], uint16_t s_ex
                 lblk->memb[s_exp_count - 1].s_valp = SEXP_rawval_incref (s_exp[s_exp_count - 1]->s_valp);
                 lblk->memb[s_exp_count - 1].s_type = s_exp[s_exp_count - 1]->s_type;
                 lblk->memb[s_exp_count - 1].s_flgs = 0;
+#if !defined(NDEBUG) || defined(VALIDATE_SEXP)
+                lblk->memb[s_exp_count - 1].__magic0 = s_exp[s_exp_count - 1]->__magic0;
+                lblk->memb[s_exp_count - 1].__magic1 = s_exp[s_exp_count - 1]->__magic1;
+#endif
         }
         
         return (lblkp);
@@ -249,6 +253,10 @@ uintptr_t SEXP_rawval_lblk_add1 (uintptr_t lblkp, const SEXP_t *s_exp)
                 lblk->memb[lblk->real].s_valp = SEXP_rawval_incref (s_exp->s_valp);
                 lblk->memb[lblk->real].s_type = s_exp->s_type;
                 lblk->memb[lblk->real].s_flgs = 0;
+#if !defined(NDEBUG) || defined(VALIDATE_SEXP)
+                lblk->memb[lblk->real].__magic0 = s_exp->__magic0;
+                lblk->memb[lblk->real].__magic1 = s_exp->__magic1;
+#endif
                 ++lblk->real;
                 
                 return (lblkp);
@@ -371,11 +379,18 @@ replace:
         (*o_val)->s_valp = memb->s_valp;
         (*o_val)->s_type = memb->s_type;
         (*o_val)->s_flgs = memb->s_flgs;
+#if !defined(NDEBUG) || defined(VALIDATE_SEXP)
+        (*o_val)->__magic0 = memb->__magic0;
+        (*o_val)->__magic1 = memb->__magic1;
+#endif
 
         memb->s_valp = SEXP_rawval_incref (n_val->s_valp);
         memb->s_type = n_val->s_type;
         memb->s_flgs = n_val->s_flgs;
-        
+#if !defined(NDEBUG) || defined(VALIDATE_SEXP)
+        memb->__magic0 = n_val->__magic0;
+        memb->__magic1 = n_val->__magic1;
+#endif
         return (lb_head);
 }
 
@@ -468,6 +483,11 @@ uintptr_t SEXP_rawval_list_copy (uintptr_t lblkp, uint16_t n_skip)
                 while (off_n < (1 << cur_sz) && off_o < (1 << old_sz)) {
                         lb_new->memb[off_n].s_valp = SEXP_rawval_incref (lb_old->memb[off_o].s_valp);
                         lb_new->memb[off_n].s_type = lb_old->memb[off_o].s_type;
+                        lb_new->memb[off_n].s_flgs = lb_old->memb[off_o].s_flgs;
+#if !defined(NDEBUG) || defined(VALIDATE_SEXP)
+                        lb_new->memb[off_n].__magic0 = lb_old->memb[off_o].__magic0;
+                        lb_new->memb[off_n].__magic1 = lb_old->memb[off_o].__magic1;
+#endif
                         
                         ++off_n;
                         ++off_o;

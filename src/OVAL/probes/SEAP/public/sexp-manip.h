@@ -129,13 +129,7 @@ const char *SEXP_strtype (const SEXP_t *s_exp);
 # define SEXP_VALIDATE(s) __SEXP_VALIDATE(s, __FILE__, __LINE__, __PRETTY_FUNCTION__)
 # include <stdlib.h>
 
-__attribute__ ((unused)) static void __SEXP_VALIDATE(const SEXP_t *s_exp, const char *file, uint32_t line, const char *func)
-{
-        if (s_exp == NULL)
-                abort ();
-        
-        return;
-}
+void __SEXP_VALIDATE(const SEXP_t *s_exp, const char *file, uint32_t line, const char *func);
 
 #else
 # define SEXP_VALIDATE(s)
