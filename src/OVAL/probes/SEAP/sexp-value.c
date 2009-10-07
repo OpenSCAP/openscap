@@ -1,3 +1,4 @@
+#include <config.h>
 #include <stdint.h>
 #include "_sexp-value.h"
 #include "public/sm_alloc.h"
@@ -18,6 +19,13 @@ int SEXP_val_new (SEXP_val_t *dst, size_t vmemsize, SEXP_type_t type)
         dst->hdr->size = vmemsize;
         dst->type      = type;
         dst->ptr       = SEXP_val_ptr (dst);
+
+        _D("\n"
+           "new value: hdr->refs = %u\n"
+           "           hdr->size = %zu\n"
+           "                type = %hhu\n"
+           "                 ptr = %p\n",
+           dst->hdr->refs, dst->hdr->size, dst->type, (void *)dst->ptr);
         
         return (0);
 }
@@ -45,11 +53,11 @@ uintptr_t SEXP_rawval_incref (uintptr_t valp)
         uint32_t refs;
         size_t   size;
 
-#if defined(HAVE_ATOMIC_FUNCTIONS)        
+#if defined(HAVE_ATOMIC_FUNCTIONS) || defined(HAVE_ATOMIC_BUILTINS)
         refs = __sync_fetch_and_add (&(SEXP_VALP_HDR(valp)->refs), 1);
         size = __sync_fetch_and_add (&(SEXP_VALP_HDR(valp)->size), 0);
 #else
-        # warning "Atomic functions not available. " # __FUNCTION__ # " will return copies of values."
+        # warning "Atomic functions not available. SEXP_rawval_incref will return copies of values."
         /* TODO: copy the value here */
 #endif
         return (refs > 0 && size > 0 ? valp : (uintptr_t) NULL);
@@ -62,10 +70,10 @@ uintptr_t SEXP_rawval_incref (uintptr_t valp)
  */
 int SEXP_rawval_decref (uintptr_t valp)
 {
-#if defined(HAVE_ATOMIC_FUNCTIONS)
+#if defined(HAVE_ATOMIC_FUNCTIONS) || defined(HAVE_ATOMIC_BUILTINS)
         return (__sync_sub_and_fetch (&(SEXP_VALP_HDR(valp)->refs), 1) == 0);
 #else
-        # warning "Atomic function not available. " # __FUNCTION__ # " will always signal zero refs."
+        # warning "Atomic functions not available. SEXP_rawval_decref will always signal zero refs."
         return (1);
 #endif
 }
@@ -118,7 +126,7 @@ uintptr_t SEXP_rawval_lblk_incref (uintptr_t lblkp)
         
         lblk = SEXP_VALP_LBLK(lblkp);
         
-#if defined(HAVE_ATOMIC_FUNCTIONS)
+#if defined(HAVE_ATOMIC_FUNCTIONS) || defined(HAVE_ATOMIC_BUILTINS)
         /*
          * Atomicaly update the reference counter.
          * If the reference counter can't be updated
@@ -137,17 +145,17 @@ uintptr_t SEXP_rawval_lblk_incref (uintptr_t lblkp)
         
         return (lblkp);
 #else
-        # warning "Atomic functions not available. " # __FUNCTION__ # " will return copies of values."
+        # warning "Atomic functions not available. SEXP_rawval_lblk_incref will return copies of values."
         return SEXP_rawval_list_copy (lblkp, 0);
 #endif
 }
 
 int SEXP_rawval_lblk_decref (uintptr_t lblkp)
 {
-#if defined(HAVE_ATOMIC_FUNCTIONS)
+#if defined(HAVE_ATOMIC_FUNCTIONS) || defined(HAVE_ATOMIC_BUILTINS)
         return (__sync_sub_and_fetch (&SEXP_VALP_LBLK(lblkp)->refs, 1) == 0);
 #else
-# warning "Atomic function not available. " # __FUNCTION__ # " will always signal zero refs."
+# warning "Atomic functions not available. SEXP_rawval_lblk_decref will always signal zero refs."
         return (1);
 #endif
 }
