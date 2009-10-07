@@ -1413,6 +1413,18 @@ void SEXP_free (SEXP_t *s_exp)
         return;
 }
 
+void SEXP_vfree (SEXP_t *s_exp, ...)
+{
+        va_list ap;
+
+        va_start (ap, s_exp);
+        
+        for (; s_exp != NULL; s_exp = va_arg (ap, SEXP_t *))
+                SEXP_free (s_exp);
+        
+        va_end (ap);
+}
+
 const char *SEXP_datatype (const SEXP_t *s_exp)
 {
         _LOGCALL_;

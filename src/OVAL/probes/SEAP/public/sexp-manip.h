@@ -118,6 +118,7 @@ SEXP_t *SEXP_new (void);
 SEXP_t *SEXP_ref (const SEXP_t *s_exp);
 SEXP_t *SEXP_softref (const SEXP_t *s_exp);
 void    SEXP_free (SEXP_t *s_exp);
+void    SEXP_vfree (SEXP_t *s_exp, ...);
 
 const char *SEXP_datatype (const SEXP_t *s_exp);
 int         SEXP_datatype_set (SEXP_t *s_exp, const char *name);
