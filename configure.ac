@@ -30,6 +30,7 @@ CFLAGS="$CFLAGS -std=c99 -W -Wall -Wshadow -Wformat -Wundef -Wno-unused-paramete
 
 CFLAGS_OPTIMIZED="-O2 -finline-functions"
 CFLAGS_DEBUGGING="-fno-inline-functions -O0 -g"
+CFLAGS_NODEBUG="-DNDEBUG"
 
 #check for atomic functions
 case $host_cpu in
@@ -339,6 +340,8 @@ fi
 
 if test "$debug" = "yes"; then
    CFLAGS="$CFLAGS $CFLAGS_DEBUGGING"
+else
+   CFLAGS="$CFLAGS $CFLAGS_NODEBUG"
 fi
 
 AM_CONDITIONAL([WANT_OVAL], test "$oval" = yes)
