@@ -1214,6 +1214,7 @@ SEXP_t *SEXP_list_join (const SEXP_t *list_a, const SEXP_t *list_b)
         SEXP_val_dsc (&v_dsc_a, list_a->s_valp);
         SEXP_LCASTP(v_dsc_j.mem)->b_addr = (void *) SEXP_rawval_list_copy ((uintptr_t)SEXP_LCASTP(v_dsc_a.mem)->b_addr,
                                                                            SEXP_LCASTP(v_dsc_a.mem)->offset);
+        SEXP_LCASTP(v_dsc_j.mem)->offset = 0;
         
         list_j->s_valp = SEXP_val_ptr (&v_dsc_j);
         
