@@ -277,7 +277,8 @@ SEXP_t *probe_main (SEXP_t *object, int *err, void *arg)
         }
 
         request_st.service_name = SEXP_string_cstr (val);
-        
+        SEXP_free (val);
+
         if (request_st.service_name == NULL) {
                 switch (errno) {
                 case EINVAL:
@@ -295,6 +296,7 @@ SEXP_t *probe_main (SEXP_t *object, int *err, void *arg)
                 
         val = probe_obj_getentval (object, "runlevel", 1);
         request_st.runlevel = SEXP_string_cstr (val);
+        SEXP_free (val);        
         
         if (request_st.runlevel == NULL) {
                 switch (errno) {
@@ -327,27 +329,32 @@ SEXP_t *probe_main (SEXP_t *object, int *err, void *arg)
                 
                 probe_obj_setstatus (item_sexp, OVAL_STATUS_ERROR);
         } else {
+                SEXP_t *r0, *r1, *r2, *r3;
+
                 _D("get_runlevel: [0]=\"%s\", [1]=\"%s\", [2]=\"%d\", [3]=\"%d\"\n",
                    reply_st.service_name, reply_st.runlevel, reply_st.start, reply_st.kill);
                 
                 item_sexp = probe_obj_creat ("runlevel_item", NULL,
                                              /* entities */
                                              "service_name", NULL,
-                                             SEXP_string_newf(reply_st.service_name),
+                                             r0 = SEXP_string_newf(reply_st.service_name),
                                              "runlevel", NULL,
-                                             SEXP_string_newf(reply_st.runlevel),
+                                             r1 = SEXP_string_newf(reply_st.runlevel),
                                              "start", NULL,
-                                             SEXP_number_newu(reply_st.start),
+                                             r2 = SEXP_number_newu(reply_st.start),
                                              "kill", NULL,
-                                             SEXP_number_newu(reply_st.kill),
+                                             r3 = SEXP_number_newu(reply_st.kill),
                                              NULL);
+
+                SEXP_vfree (r0, r1, r2, r3, NULL);
         }
         
         oscap_free (request_st.service_name);
         oscap_free (request_st.runlevel);
         
         SEXP_list_add (probe_out, item_sexp);
-        
+        SEXP_free (item_sexp);        
+
         *err = 0;
         
         return (probe_out);
