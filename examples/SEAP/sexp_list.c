@@ -141,5 +141,58 @@ int main (void)
         SEXP_free (i2);
         SEXP_free (list);
         
+        i1   = SEXP_list_new (NULL);
+        i2   = SEXP_list_new (NULL);
+        list = SEXP_list_join (i1, i2);
+        
+        SEXP_free (i1);
+        SEXP_free (i2);
+        
+        SEXP_fprintfa (stdout, list);
+        fputc ('\n', stdout);
+
+        SEXP_free (list);
+
+        {
+                SEXP_t *r0, *r1, *r2, *r3, *r4, *j1, *j2;
+
+                list = SEXP_list_new (r0 = SEXP_string_newf ("asdf"),
+                                      NULL);
+
+                r1 = SEXP_list_new (NULL);
+                j1 = SEXP_list_join (list, r1);
+                
+                SEXP_fprintfa (stdout, j1);
+                fputc ('\n', stdout);
+        
+                j2 = SEXP_list_join (r1, list);
+
+                SEXP_fprintfa (stdout, j2);
+                fputc ('\n', stdout);
+                
+                SEXP_vfree (r0, r1, list, j1, j2, NULL);
+                
+                r0 = SEXP_list_new (r1 = SEXP_string_newf ("a"),
+                                    r2 = SEXP_string_newf ("b"),
+                                    NULL);
+                
+                r3 = SEXP_list_new (r4 = SEXP_string_newf ("c"),
+                                    NULL);
+                
+                SEXP_vfree (r1, r2, r4, NULL);
+
+                j1 = SEXP_list_join (r0, r3);
+
+                SEXP_fprintfa (stdout, j1);
+                fputc ('\n', stdout);
+                
+                j2 = SEXP_list_join (r3, r0);
+
+                SEXP_fprintfa (stdout, j2);
+                fputc ('\n', stdout);
+                
+                SEXP_vfree (j1, j2, r3, r0, NULL);
+        }
+
         return (0);
 }
