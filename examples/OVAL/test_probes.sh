@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export PROBEPATH="`pwd`/../src/OVAL/probes/"
+export OVAL_PROBE_DIR="`pwd`/../src/OVAL/probes/"
 
 for i in "test_probe_rpminfo.xml" "test_probe_runlevel.xml"  "test_probe_filecontent.xml"
 do

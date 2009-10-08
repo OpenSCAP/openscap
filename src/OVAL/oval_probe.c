@@ -136,7 +136,7 @@ static int ovalp_sd_cmp (const ovalp_sd_t *a, const ovalp_sd_t *b)
 static int ovalp_sd_add (ovalp_sdtbl_t *tbl, oval_subtype_t type, int sd, const char *uri)
 {
         _A(tbl != NULL);
-        _A(sd >= 0);
+        _A(uri != NULL);
         
         tbl->memb = realloc (tbl->memb, sizeof (ovalp_sd_t) * (++tbl->count));
         tbl->memb[tbl->count - 1].typenum = type;
@@ -228,7 +228,7 @@ struct oval_syschar *oval_object_probe (struct oval_object *object, struct oval_
                 size_t probe_urilen;
                 char  *probe_dir;
                 
-#if defined(OVAL_PROBEPATH_ENV)
+#if defined(OVAL_PROBEDIR_ENV)
                 probe_dir = getenv ("OVAL_PROBE_DIR");
                 
                 if (probe_dir == NULL)
@@ -239,8 +239,10 @@ struct oval_syschar *oval_object_probe (struct oval_object *object, struct oval_
                 _A(probe_dir != NULL);
                 
                 probe_urilen = snprintf (probe_uri, sizeof probe_uri,
-                                         "%s:/%s/%s",
+                                         "%s://%s/%s",
                                          OVAL_PROBE_SCHEME, probe_dir, probe->filename);
+                
+                _D("URI: %s\n", probe_uri);
                 
                 if (ovalp_sd_add (p_tbl, oval_object_get_subtype (object), -1, probe_uri) != 0) {
                         return (NULL);
