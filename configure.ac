@@ -123,19 +123,19 @@ pthread_ldflags=error
 
 if test "x$pthread_ldflags" = "xerror"; then
    AC_CHECK_LIB(c_r, pthread_attr_init, [
-                     pthread_cflags="-D_THREAD_SAFE -pthread"
+                     pthread_cflags="-DOSCAP_THREAD_SAFE -D_THREAD_SAFE -pthread"
                      pthread_ldflags="-pthread" ])
 fi
 
 if test "x$pthread_ldflags" = "xerror"; then
    AC_CHECK_LIB(pthread, pthread_attr_init, [
-                         pthread_cflags="-D_REENTRANT -D_POSIX_PTHREAD_SEMANTICS"
+                         pthread_cflags="-DOSCAP_THREAD_SAFE -D_REENTRANT -D_POSIX_PTHREAD_SEMANTICS"
                          pthread_ldflags="-lpthread" ])
 fi
 
 if test "x$pthread_ldflags" = "xerror"; then
    AC_CHECK_LIB(pthreads, pthread_attr_init, [
-                          pthread_cflags="-D_THREAD_SAFE"
+                          pthread_cflags="-DOSCAP_THREAD_SAFE -D_THREAD_SAFE"
                           pthread_ldflags="-lpthreads" ])
 fi
 
