@@ -547,6 +547,98 @@ int main (void)
         return (ret);
 }
 
+struct probe_varref_ctx {
+        SEXP_t *pi2;
+        int ent_cnt;
+        int next_ent_idx;
+        struct probe_varref_ctx_ent *ent_lst;
+};
+
+struct probe_varref_ctx_ent {
+        SEXP_t *ent_name_sref;
+        int val_cnt;
+        int next_val_idx;
+};
+
+static int probe_varref_create_ctx (SEXP_t *probe_in, SEXP_t *varrefs, SEXP_t **opi2, struct probe_varref_ctx **octx)
+{
+        unsigned int i, ent_cnt, val_cnt, varref_cnt;
+        SEXP_t *ent_name, *ent, *varref, *val_lst;
+        SEXP_t *r0, *r1, *r2, *r3;
+        SEXP_t *vid, *vidx_name, *vidx_val;
+        struct probe_varref_ctx *ctx;
+
+        varref_cnt = SEXP_number_getu_32(r0 = SEXP_list_nth(varrefs, 2));
+        ent_cnt = SEXP_number_getu_32(r1 = SEXP_list_nth(varrefs, 3));
+        SEXP_vfree(r0, r1, NULL);
+
+        ctx = malloc(sizeof (struct probe_varref_ctx));
+        ctx->pi2 = SEXP_ref(probe_in);
+        ctx->ent_cnt = ent_cnt;
+        ctx->next_ent_idx = 0;
+        ctx->ent_lst = malloc(ent_cnt * sizeof (struct probe_varref_ctx_ent));
+
+        vidx_name = SEXP_string_new(":val_idx", 8);
+        vidx_val = SEXP_number_newu(0);
+
+        for (i = 0; i < ent_cnt; ++i) {
+                r0 = SEXP_listref_nth(ctx->pi2, i + 2);
+                vid = probe_ent_getattrval(r0, "var_ref");
+                r1 = SEXP_listref_first(r0);
+                r2 = SEXP_listref_first(r1);
+
+                r3 = SEXP_list_new(r2, vidx_name, vidx_val, NULL);
+                SEXP_free(r0);
+                r0 = SEXP_listref_rest(r1);
+                ent_name = SEXP_list_join(r3, r0);
+                SEXP_vfree(r0, r1, r2, r3, NULL);
+
+                SEXP_sublist_foreach (varref, varrefs, 4, -1) {
+                        r0 = SEXP_list_first(varref);
+                        if (!SEXP_string_cmp(vid, r0)) {
+                                break;
+                        }
+                        SEXP_free(r0);
+                }
+                if (varref == NULL) {
+                        _D("Unexpected error: variable id \"%s\" not found in varrefs.",
+                           SEXP_string_cstr(vid));
+                        abort();
+                }
+                SEXP_free(r0);
+                SEXP_free(vid);
+
+                r0 = SEXP_list_nth(varref, 2);
+                val_cnt = SEXP_number_getu_32(r0);
+                val_lst = SEXP_list_nth(varref, 3);
+                SEXP_vfree(varref, r0, NULL);
+
+                ent = SEXP_list_new(ent_name, val_lst);
+                SEXP_vfree(ent_name, val_lst, NULL);
+
+                r0 = SEXP_list_replace(ctx->pi2, i + 2, ent);
+                SEXP_vfree(r0, ent, NULL);
+
+                r0 = SEXP_listref_nth(ctx->pi2, i + 2);
+                ctx->ent_lst[i].ent_name_sref = SEXP_listref_first(r0);
+                SEXP_free(r0);
+                ctx->ent_lst[i].val_cnt = val_cnt;
+                ctx->ent_lst[i].next_val_idx = 0;
+        }
+
+        SEXP_vfree(vidx_name, vidx_val, NULL);
+
+        *opi2 = ctx->pi2;
+        *octx = ctx;
+
+        return 0;
+}
+
+static void probe_varref_destroy_ctx (struct probe_varref_ctx **octx)
+{
+        // todo:
+}
+
 void *probe_worker (void *arg)
 {
         int     probe_ret;

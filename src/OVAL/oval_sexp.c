@@ -142,7 +142,7 @@ static SEXP_t *oval_varref_to_sexp (struct oval_entity *entity)
         id_sexp = SEXP_string_newf ("%s", oval_variable_get_id (var));
         val_cnt_sexp = SEXP_number_newu (val_cnt);
 
-        varref = SEXP_list_new (id_sexp, val_cnt_sexp, val_lst);
+        varref = SEXP_list_new (id_sexp, val_cnt_sexp, val_lst, NULL);
 
         SEXP_free (id_sexp);
         SEXP_free (val_cnt_sexp);
@@ -271,6 +271,7 @@ static SEXP_t *oval_behaviors_to_sexp (struct oval_behavior_iterator *bit)
 
 SEXP_t *oval_object_to_sexp (const char *typestr, struct oval_object *object)
 {
+        unsigned int ent_cnt, varref_cnt;
         SEXP_t *obj_sexp, *obj_name, *elm, *varrefs, *ent_lst, *lst, *stmp;
         SEXP_t *r0, *r1, *r2;
 
@@ -300,6 +301,7 @@ SEXP_t *oval_object_to_sexp (const char *typestr, struct oval_object *object)
 
         ent_lst = SEXP_list_new (NULL);
         varrefs = NULL;
+        ent_cnt = varref_cnt = 0;
 
         cit = oval_object_get_object_content (object);
         while (oval_object_content_iterator_has_more (cit)) {
@@ -334,12 +336,14 @@ SEXP_t *oval_object_to_sexp (const char *typestr, struct oval_object *object)
                                 }
 
                                 if (varrefs == NULL) {
-                                        varrefs = SEXP_list_new (r0 = SEXP_string_new ("varrefs", 7));
-                                        SEXP_free (r0);
+                                        varrefs = SEXP_list_new (NULL);
                                 }
                                 SEXP_list_add (varrefs, stmp);
+                                // todo: don't add duplicates
+                                ++varref_cnt;
 
                                 lst = obj_sexp;
+                                ++ent_cnt;
                         }
                         break;
 
@@ -366,8 +370,16 @@ SEXP_t *oval_object_to_sexp (const char *typestr, struct oval_object *object)
         }
 
         if (varrefs != NULL) {
-                SEXP_list_add (obj_sexp, varrefs);
-                SEXP_free (varrefs);
+                // todo: SEXP_list_push()
+                stmp = SEXP_list_new (r0 = SEXP_string_new ("varrefs", 7),
+                                      r1 = SEXP_number_newu (varref_cnt),
+                                      r2 = SEXP_number_newu (ent_cnt),
+                                      NULL);
+                SEXP_vfree (r0, r1, r2, NULL);
+
+                r0 = SEXP_list_join (stmp, varrefs);
+                SEXP_list_add (obj_sexp, r0);
+                SEXP_vfree (stmp, varrefs, r0, NULL);
         }
         stmp = SEXP_list_join (obj_sexp, ent_lst);
         SEXP_free (obj_sexp);
