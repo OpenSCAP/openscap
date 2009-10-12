@@ -51,16 +51,14 @@ uintptr_t SEXP_val_ptr (SEXP_val_t *dsc)
 uintptr_t SEXP_rawval_incref (uintptr_t valp)
 {
         uint32_t refs;
-        size_t   size;
 
 #if defined(HAVE_ATOMIC_FUNCTIONS) || defined(HAVE_ATOMIC_BUILTINS)
         refs = __sync_fetch_and_add (&(SEXP_VALP_HDR(valp)->refs), 1);
-        size = __sync_fetch_and_add (&(SEXP_VALP_HDR(valp)->size), 0);
 #else
         # warning "Atomic functions not available. SEXP_rawval_incref will return copies of values."
         /* TODO: copy the value here */
 #endif
-        return (refs > 0 && size > 0 ? valp : (uintptr_t) NULL);
+        return (refs > 0 ? valp : (uintptr_t) NULL);
 }
 
 /*
