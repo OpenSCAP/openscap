@@ -549,18 +549,17 @@ int main (void)
 
 struct probe_varref_ctx {
         SEXP_t *pi2;
-        int ent_cnt;
-        int next_ent_idx;
+        unsigned int ent_cnt;
         struct probe_varref_ctx_ent *ent_lst;
 };
 
 struct probe_varref_ctx_ent {
         SEXP_t *ent_name_sref;
-        int val_cnt;
-        int next_val_idx;
+        unsigned int val_cnt;
+        unsigned int next_val_idx;
 };
 
-static int probe_varref_create_ctx (SEXP_t *probe_in, SEXP_t *varrefs, SEXP_t **opi2, struct probe_varref_ctx **octx)
+static int probe_varref_create_ctx (const SEXP_t *probe_in, SEXP_t *varrefs, struct probe_varref_ctx **octx)
 {
         unsigned int i, ent_cnt, val_cnt, varref_cnt;
         SEXP_t *ent_name, *ent, *varref, *val_lst;
@@ -575,12 +574,12 @@ static int probe_varref_create_ctx (SEXP_t *probe_in, SEXP_t *varrefs, SEXP_t **
         ctx = malloc(sizeof (struct probe_varref_ctx));
         ctx->pi2 = SEXP_ref(probe_in);
         ctx->ent_cnt = ent_cnt;
-        ctx->next_ent_idx = 0;
         ctx->ent_lst = malloc(ent_cnt * sizeof (struct probe_varref_ctx_ent));
 
         vidx_name = SEXP_string_new(":val_idx", 8);
         vidx_val = SEXP_number_newu(0);
 
+        /* entities that use var_refs are stored at the begining of an object */
         for (i = 0; i < ent_cnt; ++i) {
                 r0 = SEXP_listref_nth(ctx->pi2, i + 2);
                 vid = probe_ent_getattrval(r0, "var_ref");
@@ -628,21 +627,69 @@ static int probe_varref_create_ctx (SEXP_t *probe_in, SEXP_t *varrefs, SEXP_t **
 
         SEXP_vfree(vidx_name, vidx_val, NULL);
 
-        *opi2 = ctx->pi2;
         *octx = ctx;
 
         return 0;
 }
 
-static void probe_varref_destroy_ctx (struct probe_varref_ctx **octx)
+static void probe_varref_destroy_ctx (struct probe_varref_ctx *ctx)
 {
-        // todo:
+        struct probe_varref_ctx_ent *ent, *ent_end;
+
+        SEXP_free(ctx->pi2);
+
+        ent = ctx->ent_lst;
+        ent_end = ent + ctx->ent_cnt;
+
+        while (ent != ent_end) {
+                SEXP_free(ent->ent_name_sref);
+                ++ent;
+        }
+
+        free(ctx->ent_lst);
+        free(ctx);
+}
+
+static int probe_varref_iterate_ctx (struct probe_varref_ctx *ctx)
+{
+        unsigned int val_cnt, *next_val_idx;
+        SEXP_t *ent_name_sref;
+        SEXP_t *r0, *r1, *r2;
+        struct probe_varref_ctx_ent *ent, *ent_end;
+
+        ent = ctx->ent_lst;
+        ent_end = ent + ctx->ent_cnt;
+        val_cnt = ent->val_cnt;
+        next_val_idx = &ent->next_val_idx;
+        ent_name_sref = ent->ent_name_sref;
+        r0 = SEXP_number_newu(0);
+
+        while (++(*next_val_idx) >= val_cnt) {
+                *next_val_idx = 0;
+                r1 = SEXP_list_replace(ent_name_sref, 3, r0);
+                SEXP_free(r1);
+
+                if (ent == ent_end) {
+                        SEXP_free(r0);
+                        return 0;
+                }
+
+                ++ent;
+                val_cnt = ent->val_cnt;
+                next_val_idx = &ent->next_val_idx;
+                ent_name_sref = ent->ent_name_sref;
+        }
+        r1 = SEXP_list_replace(ent_name_sref, 3, r2 = SEXP_number_newu(*next_val_idx));
+        SEXP_vfree(r0, r1, r2, NULL);
+
+        return 1;
 }
 
 void *probe_worker (void *arg)
 {
         int     probe_ret;
         SEXP_t *probe_in, *set, *probe_out;
+        SEXP_t *varrefs;
         
         SEAP_msg_t *seap_reply, *seap_request;
 
@@ -659,9 +706,44 @@ void *probe_worker (void *arg)
                 probe_out = SEXP_OVALset_eval (set, 0);
         } else {
                 /* simple object */
-                probe_ret = -1;
-                probe_out = probe_main (probe_in, &probe_ret, global.probe_arg);
-                _A(probe_ret != -1);
+                varrefs = probe_obj_getent (probe_in, "varrefs", 1);
+
+                if (varrefs == NULL) {
+                        probe_ret = -1;
+                        probe_out = probe_main (probe_in, &probe_ret, global.probe_arg);
+                        _A(probe_ret != -1);
+                } else {
+                        /*
+                         * there are variable references in the object.
+                         * create ctx, iterate through all variable combinations
+                         */
+                        SEXP_t *item_lst;
+                        SEXP_t *r0;
+                        struct probe_varref_ctx *ctx;
+
+                        probe_varref_create_ctx (probe_in, varrefs, &ctx);
+                        SEXP_free (varrefs);
+                        item_lst = SEXP_list_new(NULL);
+
+                        do {
+                                probe_ret = -1;
+                                probe_out = probe_main (ctx->pi2, &probe_ret, global.probe_arg);
+                                _A(probe_ret != -1);
+
+                                if (probe_out == NULL || probe_ret != 0) {
+                                        SEXP_free (item_lst);
+                                        item_lst = NULL;
+                                        break;
+                                }
+
+                                r0 = item_lst;
+                                item_lst = SEXP_OVALset_combine (probe_out, r0, OVAL_SET_OPERATION_UNION);
+                                SEXP_free (r0);
+                        } while (probe_varref_iterate_ctx (ctx));
+                        probe_out = item_lst;
+
+                        probe_varref_destroy_ctx (ctx);
+                }
         }
         
         if (probe_out == NULL || probe_ret != 0) {
