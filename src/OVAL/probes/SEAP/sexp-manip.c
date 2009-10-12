@@ -262,9 +262,43 @@ SEXP_t *SEXP_number_newi_32 (int32_t n)
 
 int32_t SEXP_number_geti_32 (const SEXP_t *s_exp)
 {
+        SEXP_val_t v_dsc;
+        SEXP_numtype_t t;
+        
         _LOGCALL_;
+        
+        if (s_exp == NULL) {
+                errno = EFAULT;
+                return (INT32_MAX);
+        }
+        
         SEXP_VALIDATE(s_exp);
-        return (0);
+        
+        SEXP_val_dsc (&v_dsc, s_exp->s_valp);
+        t = SEXP_rawval_number_type (&v_dsc);
+        
+        if (t > SEXP_NUM_UINT32) {
+                errno = EDOM;
+                return (INT32_MAX);
+        }
+        
+        switch (t) {
+        case SEXP_NUM_INT32:
+                return (SEXP_NCASTP(i32,v_dsc.mem)->n);
+        case SEXP_NUM_UINT32:
+                return ((int32_t)SEXP_NCASTP(u32,v_dsc.mem)->n);
+        case SEXP_NUM_UINT16:
+        case SEXP_NUM_INT16:
+                return ((int32_t)SEXP_NCASTP(u16,v_dsc.mem)->n);
+        case SEXP_NUM_UINT8:
+        case SEXP_NUM_INT8:
+        case SEXP_NUM_BOOL:
+                return ((int32_t)SEXP_NCASTP(u8,v_dsc.mem)->n);
+        default:
+                abort ();
+        }
+        
+        return (INT32_MAX);
 }
 
 SEXP_t *SEXP_number_newu_32 (uint32_t n)
@@ -293,9 +327,43 @@ SEXP_t *SEXP_number_newu_32 (uint32_t n)
 
 uint32_t SEXP_number_getu_32 (const SEXP_t *s_exp)
 {
+        SEXP_val_t v_dsc;
+        SEXP_numtype_t t;
+        
         _LOGCALL_;
+        
+        if (s_exp == NULL) {
+                errno = EFAULT;
+                return (UINT32_MAX);
+        }
+        
         SEXP_VALIDATE(s_exp);
-        return (0);
+        
+        SEXP_val_dsc (&v_dsc, s_exp->s_valp);
+        t = SEXP_rawval_number_type (&v_dsc);
+        
+        if (t > SEXP_NUM_UINT32) {
+                errno = EDOM;
+                return (UINT32_MAX);
+        }
+        
+        switch (t) {
+        case SEXP_NUM_UINT32:
+                return (SEXP_NCASTP(u32,v_dsc.mem)->n);
+        case SEXP_NUM_INT32:
+                return ((uint32_t)SEXP_NCASTP(i32,v_dsc.mem)->n);
+        case SEXP_NUM_UINT16:
+        case SEXP_NUM_INT16:
+                return ((uint32_t)SEXP_NCASTP(u16,v_dsc.mem)->n);
+        case SEXP_NUM_UINT8:
+        case SEXP_NUM_INT8:
+        case SEXP_NUM_BOOL:
+                return ((uint32_t)SEXP_NCASTP(u8,v_dsc.mem)->n);
+        default:
+                abort ();
+        }
+        
+        return (UINT32_MAX);
 }
 
 SEXP_t *SEXP_number_newi_64 (int64_t n)
@@ -324,9 +392,47 @@ SEXP_t *SEXP_number_newi_64 (int64_t n)
 
 int64_t SEXP_number_geti_64 (const SEXP_t *s_exp)
 {
+        SEXP_val_t v_dsc;
+        SEXP_numtype_t t;
+        
         _LOGCALL_;
+        
+        if (s_exp == NULL) {
+                errno = EFAULT;
+                return (INT64_MAX);
+        }
+        
         SEXP_VALIDATE(s_exp);
-        return (0);
+        
+        SEXP_val_dsc (&v_dsc, s_exp->s_valp);
+        t = SEXP_rawval_number_type (&v_dsc);
+        
+        if (t > SEXP_NUM_UINT64) {
+                errno = EDOM;
+                return (INT64_MAX);
+        }
+        
+        switch (t) {
+        case SEXP_NUM_INT64:
+                return (SEXP_NCASTP(i64,v_dsc.mem)->n);
+        case SEXP_NUM_UINT64:
+                return ((int64_t)SEXP_NCASTP(u64,v_dsc.mem)->n);
+        case SEXP_NUM_UINT32:
+                return ((int64_t)SEXP_NCASTP(u32,v_dsc.mem)->n);
+        case SEXP_NUM_INT32:
+                return ((int64_t)SEXP_NCASTP(i32,v_dsc.mem)->n);
+        case SEXP_NUM_UINT16:
+        case SEXP_NUM_INT16:
+                return ((int64_t)SEXP_NCASTP(u16,v_dsc.mem)->n);
+        case SEXP_NUM_UINT8:
+        case SEXP_NUM_INT8:
+        case SEXP_NUM_BOOL:
+                return ((int64_t)SEXP_NCASTP(u8,v_dsc.mem)->n);
+        default:
+                abort ();
+        }
+        
+        return (INT64_MAX);
 }
 
 SEXP_t *SEXP_number_newu_64 (uint64_t n)
@@ -355,8 +461,47 @@ SEXP_t *SEXP_number_newu_64 (uint64_t n)
 
 uint64_t SEXP_number_getu_64 (const SEXP_t *s_exp)
 {
+        SEXP_val_t v_dsc;
+        SEXP_numtype_t t;
+        
         _LOGCALL_;
-        return (0);
+        
+        if (s_exp == NULL) {
+                errno = EFAULT;
+                return (UINT64_MAX);
+        }
+        
+        SEXP_VALIDATE(s_exp);
+        
+        SEXP_val_dsc (&v_dsc, s_exp->s_valp);
+        t = SEXP_rawval_number_type (&v_dsc);
+        
+        if (t > SEXP_NUM_UINT64) {
+                errno = EDOM;
+                return (UINT64_MAX);
+        }
+        
+        switch (t) {
+        case SEXP_NUM_UINT64:
+                return (SEXP_NCASTP(u64,v_dsc.mem)->n);
+        case SEXP_NUM_INT64:
+                return ((uint64_t)SEXP_NCASTP(i64,v_dsc.mem)->n);
+        case SEXP_NUM_UINT32:
+                return ((uint64_t)SEXP_NCASTP(u32,v_dsc.mem)->n);
+        case SEXP_NUM_INT32:
+                return ((uint64_t)SEXP_NCASTP(i32,v_dsc.mem)->n);
+        case SEXP_NUM_UINT16:
+        case SEXP_NUM_INT16:
+                return ((uint64_t)SEXP_NCASTP(u16,v_dsc.mem)->n);
+        case SEXP_NUM_UINT8:
+        case SEXP_NUM_INT8:
+        case SEXP_NUM_BOOL:
+                return ((uint64_t)SEXP_NCASTP(u8,v_dsc.mem)->n);
+        default:
+                abort ();
+        }
+        
+        return (UINT64_MAX);
 }
 
 SEXP_t *SEXP_number_newf (double n)
@@ -393,6 +538,7 @@ double SEXP_number_getf (const SEXP_t *s_exp)
 int SEXP_number_get (SEXP_t *s_exp, void *dst, SEXP_numtype_t type)
 {
         _LOGCALL_;
+        abort ();
         SEXP_VALIDATE(s_exp);
         return (-1);
 }
