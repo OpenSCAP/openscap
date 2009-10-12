@@ -16,7 +16,7 @@ OSCAP_HIDDEN_START;
 
 #define OVAL_PROBE_SCHEME "pipe"
 #ifndef OVAL_PROBE_DIR
-# define OVAL_PROBE_DIR    "/usr/libexec/openscap/oval"
+# define OVAL_PROBE_DIR    "/usr/libexec/openscap"
 #endif
 
 typedef struct {

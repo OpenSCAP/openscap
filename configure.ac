@@ -239,9 +239,9 @@ AC_ARG_ENABLE([probes],
      esac],[probes=yes])
 
 if test "x${prefix}" = xNONE; then
-	AC_DEFINE_UNQUOTED([OVAL_PROBE_DIR], ["/usr/libexec/openscap/oval"], [Path to probes])
+	AC_DEFINE_UNQUOTED([OVAL_PROBE_DIR], ["/usr/libexec/openscap"], [Path to probes])
 else
-	AC_DEFINE_UNQUOTED([OVAL_PROBE_DIR], ["${prefix}/libexec/openscap/oval"], [Path to probes])
+	AC_DEFINE_UNQUOTED([OVAL_PROBE_DIR], ["${prefix}/libexec/openscap"], [Path to probes])
 fi
 
 AC_ARG_ENABLE([probes-independent],
