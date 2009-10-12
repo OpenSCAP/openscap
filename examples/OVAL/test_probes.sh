@@ -2,7 +2,7 @@
 
 export OVAL_PROBE_DIR="`pwd`/../src/OVAL/probes/"
 
-for i in "test_probe_rpminfo.xml" "test_probe_runlevel.xml"  "test_probe_filecontent.xml"
+for i in "test_probe_rpminfo.xml" "test_probe_runlevel.xml" "test_probe_filecontent.xml" "probes/file.xml" "probes/file-set.xml"
 do
 	echo "test_probes $i"
 	./test_probes "${srcdir}/OVAL/$i"

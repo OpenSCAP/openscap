@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<oval_definitions xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ind-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:unix-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" xmlns:lin-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd">
+  <objects>
+    
+    <file_object comment="/etc/shadow" version="1" id="oval:gov.irs.rhel5:obj:41" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <path>/etc</path>
+      <filename>shadow</filename>
+    </file_object>
+    
+    <file_object comment="/etc/group" version="1" id="oval:gov.irs.rhel5:obj:42" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <path>/etc</path>
+      <filename>group</filename>
+    </file_object>
+    
+    <file_object comment="set" version="1" id="oval:gov.irs.rhel5:obj:43" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <set set_operator="UNION" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+        <object_reference>oval:gov.irs.rhel5:obj:41</object_reference>
+        <object_reference>oval:gov.irs.rhel5:obj:42</object_reference>
+      </set>
+    </file_object>
+  
+  </objects>
+</oval_definitions>
