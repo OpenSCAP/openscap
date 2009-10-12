@@ -20,8 +20,9 @@ SEAP_msg_t *SEAP_msg_new (void)
 
 void SEAP_msg_free (SEAP_msg_t *msg)
 {
-        _A(msg != NULL);
-
+        if (msg == NULL)
+                return;
+        
         if (msg->attrs != NULL)
                 sm_free (msg->attrs);
         

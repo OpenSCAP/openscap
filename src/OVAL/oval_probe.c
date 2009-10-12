@@ -216,9 +216,9 @@ struct oval_syschar *oval_object_probe (struct oval_object *object, struct oval_
         }
 
 #if !defined(NDEBUG)
-        fprintf (stderr,   "--- msg ---\n");
+        fprintf (stderr,   "--- msg out ---\n");
         SEXP_fprintfa (stderr, s_exp);
-        fprintf (stderr, "\n-----------\n");
+        fprintf (stderr, "\n---------------\n");
 #endif
         
         psd = ovalp_sd_get (p_tbl, oval_object_get_subtype (object));
@@ -258,11 +258,16 @@ struct oval_syschar *oval_object_probe (struct oval_object *object, struct oval_
                         psd->sd = SEAP_connect (p_tbl->ctx, psd->uri, 0);
                         
                         if (psd->sd < 0) {
+                                _D("Can't connect: %u, %s.\n", errno, strerror (errno));
+                                
                                 if (++retry <= OVAL_PROBE_MAXRETRY)
                                         continue;
-                                else
+                                else {
+                                        _D("connect: retry limit (%u) reached.\n", OVAL_PROBE_MAXRETRY);
+                                        
+                                        SEXP_free (s_exp);
                                         return (NULL);
-                                
+                                }
                         }
                 }
                 
@@ -272,24 +277,42 @@ struct oval_syschar *oval_object_probe (struct oval_object *object, struct oval_
                 _D("Sending message...\n");
                 
                 if (SEAP_sendmsg (p_tbl->ctx, psd->sd, s_omsg) != 0) {
+                        _D("Can't send message: %u, %s\n", errno, strerror (errno));
                         
                         if (SEAP_close (p_tbl->ctx, psd->sd) != 0) {
+                                _D("Can't close sd: %u, %s\n", errno, strerror (errno));
+                                
+                                SEAP_msg_free (s_omsg);
+                                SEXP_free (s_exp);
+                                
                                 return (NULL);
                         }
-                        
+                                        
                         psd->sd = -1;
                         
                         if (++retry <= OVAL_PROBE_MAXRETRY)
                                 continue;
-                        else
+                        else {
+                                _D("send: retry limit (%u) reached.\n", OVAL_PROBE_MAXRETRY);
+                                SEAP_msg_free (s_omsg);
+                                SEXP_free (s_exp);
+                                                                
                                 return (NULL);
+                        }
                 }
                 
                 _D("Waiting for reply...\n");
                 
                 if (SEAP_recvmsg (p_tbl->ctx, psd->sd, &s_imsg) != 0) {
+                        _D("Can't receive message: %u, %s\n", errno, strerror (errno));
                         
                         if (SEAP_close (p_tbl->ctx, psd->sd) != 0) {
+                                _D("Can't close sd: %u, %s\n", errno, strerror (errno));
+                                
+                                SEAP_msg_free (s_imsg);
+                                SEAP_msg_free (s_omsg);
+                                SEXP_free (s_exp);
+                                
                                 return (NULL);
                         }
                         
@@ -297,15 +320,29 @@ struct oval_syschar *oval_object_probe (struct oval_object *object, struct oval_
 
                         if (++retry <= OVAL_PROBE_MAXRETRY)
                                 continue;
-                        else
+                        else {
+                                _D("recv: retry limit (%u) reached.\n", OVAL_PROBE_MAXRETRY);
+                                
+                                SEAP_msg_free (s_imsg);
+                                SEAP_msg_free (s_omsg);
+                                SEXP_free (s_exp);
+                                
                                 return (NULL);
+                        }
                 }
                 
+#if !defined(NDEBUG)
+                fprintf (stderr,   "--- msg in ---\n");
+                SEXP_fprintfa (stderr, SEAP_msg_get (s_imsg));
+                fprintf (stderr, "\n--------------\n");
+#endif
+                
+                _D("Message received.\n");
                 break;
         }
         
         sysch = sexp_to_oval_state (SEAP_msg_get(s_imsg), object);
-        
+                
         SEAP_msg_free (s_omsg);
         SEAP_msg_free (s_imsg);
         SEXP_free (s_exp);
@@ -322,7 +359,7 @@ static SEXP_t *ovalp_cmd_obj_eval (SEXP_t *sexp, void *arg)
         if (SEXP_stringp (sexp)) {
                 id_str = SEXP_string_cstr (sexp);
                 obj    = oval_definition_model_get_object (model, id_str);
-
+                
                 if (obj == NULL) {
                         _D("FAIL: can't find obj: id=%s\n", id_str);
                         oscap_free (id_str);
