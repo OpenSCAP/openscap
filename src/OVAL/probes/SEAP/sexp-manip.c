@@ -907,6 +907,12 @@ char *SEXP_string_subcstr (SEXP_t *s_exp, size_t beg, size_t len)
 char *SEXP_string_cstrp (const SEXP_t *s_exp)
 {
         _LOGCALL_;
+
+        if (s_exp == NULL) {
+                errno = EFAULT;
+                return (NULL);
+        }
+
         SEXP_VALIDATE(s_exp);
         abort (); /* obsolete */
         return (NULL);
@@ -914,10 +920,28 @@ char *SEXP_string_cstrp (const SEXP_t *s_exp)
 
 int SEXP_string_cmp (const SEXP_t *str_a, const SEXP_t *str_b)
 {
+        char *a, *b;
+        int   c;
+        
         _LOGCALL_;
+
+        if (str_a == NULL || str_b == NULL) {
+                errno = EFAULT;
+                return (-1);
+        }
+
         SEXP_VALIDATE(str_a);
         SEXP_VALIDATE(str_b);
-        return (-1);
+
+        a = SEXP_string_cstr (str_a);
+        b = SEXP_string_cstr (str_b);
+
+        c = strcmp (a, b);
+
+        sm_free (a);
+        sm_free (b);
+
+        return (c);
 }
 
 /*
