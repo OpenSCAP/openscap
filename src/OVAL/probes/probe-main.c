@@ -116,8 +116,14 @@ SEXP_t *probe_set_combine(SEXP_t *item_lst1, SEXP_t *item_lst2, oval_setobject_o
 		}
 		break;
 	case OVAL_SET_OPERATION_UNION:
-		SEXP_list_join(res_items, item_lst2);
+        {
+                SEXP_t *lj;
+                
+		lj = SEXP_list_join(res_items, item_lst2);
+                SEXP_free (res_items);
+                res_items = lj;
 		/* fall through */
+        }
 	case OVAL_SET_OPERATION_COMPLEMENT:
 		SEXP_list_foreach(item1, item_lst1) {
 			id1 = probe_obj_getentval(item1, "id", 1);
@@ -758,7 +764,7 @@ static int probe_varref_iterate_ctx (struct probe_varref_ctx *ctx)
         }
         r1 = SEXP_list_replace(ent_name_sref, 3, r2 = SEXP_number_newu(*next_val_idx));
         SEXP_vfree(r0, r1, r2, NULL);
-
+        
         return 1;
 }
 
@@ -781,6 +787,7 @@ void *probe_worker (void *arg)
                 /* complex object */
                 probe_ret = 0;
                 probe_out = probe_set_eval (set, 0);
+                SEXP_free (set);
         } else {
                 /* simple object */
                 varrefs = probe_obj_getent (probe_in, "varrefs", 1);
@@ -801,7 +808,7 @@ void *probe_worker (void *arg)
                         probe_varref_create_ctx (probe_in, varrefs, &ctx);
                         SEXP_free (varrefs);
                         item_lst = SEXP_list_new(NULL);
-
+                        
                         do {
                                 probe_ret = -1;
                                 probe_out = probe_main (ctx->pi2, &probe_ret, global.probe_arg);
@@ -812,7 +819,7 @@ void *probe_worker (void *arg)
                                         item_lst = NULL;
                                         break;
                                 }
-
+                                
                                 r0 = item_lst;
                                 item_lst = probe_set_combine (probe_out, r0, OVAL_SET_OPERATION_UNION);
                                 
@@ -842,12 +849,13 @@ void *probe_worker (void *arg)
                 SEXP_t *oid;
                 
                 SEXP_VALIDATE(probe_out);
-
+                
                 oid = probe_obj_getattrval (probe_in, "id");
                 _A(oid != NULL);
                 
                 if (pcache_sexp_add (global.pcache, oid, probe_out) != 0) {
                         /* TODO */
+                        abort ();
                 }
                 
                 SEXP_free (oid);
