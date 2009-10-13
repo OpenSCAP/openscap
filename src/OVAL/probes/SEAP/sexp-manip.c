@@ -1639,10 +1639,18 @@ static void SEXP_free_lmemb (SEXP_t *s_exp)
         return;
 }
 
+#if defined(NDEBUG)
 void SEXP_free (SEXP_t *s_exp)
+#else
+void __SEXP_free (SEXP_t *s_exp, const char *file, uint32_t line, const char *func)
+#endif
 {
         _LOGCALL_;
-
+        
+#if !defined(NDEBUG)
+        _D("s_exp=%p (%s:%u:%s)\n", s_exp, file, line, func);
+#endif
+        
         if (s_exp == NULL) {
                 _D("WARN: s_exp = NULL\n");
                 return;
@@ -1691,9 +1699,17 @@ void SEXP_free (SEXP_t *s_exp)
         return;
 }
 
+#if defined(NDEBUG)
 void SEXP_vfree (SEXP_t *s_exp, ...)
+#else
+void __SEXP_vfree (const char *file, uint32_t line, const char *func, SEXP_t *s_exp, ...)
+#endif
 {
         va_list ap;
+
+#if !defined(NDEBUG)
+        _D("s_exp=%p (%s:%u:%s)\n", s_exp, file, line, func);
+#endif
 
         va_start (ap, s_exp);
         
@@ -1814,6 +1830,8 @@ void __SEXP_VALIDATE(const SEXP_t *s_exp, const char *file, uint32_t line, const
 {
         SEXP_val_t v_dsc;
 
+        _D("VALIDATE: s_exp=%p (%s:%u:%s)\n", s_exp, file, line, func);
+        
         if (s_exp == NULL) abort ();
         if (s_exp->__magic0 != SEXP_MAGIC0) abort ();
         if (s_exp->__magic1 != SEXP_MAGIC1) abort ();

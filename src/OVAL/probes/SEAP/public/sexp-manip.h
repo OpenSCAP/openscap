@@ -117,8 +117,15 @@ void       SEXP_listit_free (SEXP_it_t *it);
 SEXP_t *SEXP_new (void);
 SEXP_t *SEXP_ref (const SEXP_t *s_exp);
 SEXP_t *SEXP_softref (const SEXP_t *s_exp);
-void    SEXP_free (SEXP_t *s_exp);
-void    SEXP_vfree (SEXP_t *s_exp, ...);
+#if defined(NDEBUG)
+void     SEXP_free (SEXP_t *s_exp);
+void     SEXP_vfree (SEXP_t *s_exp, ...);
+#else
+# define SEXP_free(ptr) __SEXP_free (ptr, __FILE__, __LINE__, __PRETTY_FUNCTION__)
+void     __SEXP_free (SEXP_t *s_exp, const char *file, uint32_t line, const char *func);
+# define SEXP_vfree(...) __SEXP_vfree (__FILE__, __LINE__, __PRETTY_FUNCTION__, __VA_ARGS__)
+void     __SEXP_vfree (const char *file, uint32_t line, const char *func, SEXP_t *s_exp, ...);
+#endif
 
 const char *SEXP_datatype (const SEXP_t *s_exp);
 int         SEXP_datatype_set (SEXP_t *s_exp, const char *name);
