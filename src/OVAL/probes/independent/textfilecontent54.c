@@ -216,10 +216,8 @@ static int process_file(const char *path, const char *filename, void *arg)
 		if (report_missing(pfd->filename_ent)) {
 			item = probe_item_creat ("textfilecontent_item", NULL,
                                                  /* entities */
-                                                 "path", NULL,
-                                                 SEXP_string_newf(path),
-                                                 "filename", NULL,
-                                                 SEXP_string_newf(filename),
+                                                 "path", NULL, SEXP_string_newf(path),
+                                                 "filename", NULL, NULL,
                                                  NULL);
                         probe_item_setstatus (item, OVAL_STATUS_DOESNOTEXIST);
 		        probe_itement_setstatus (item, "filename", 1, OVAL_STATUS_DOESNOTEXIST);

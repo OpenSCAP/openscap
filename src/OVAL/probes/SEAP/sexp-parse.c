@@ -794,18 +794,27 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *setup, const char *buf, size_t buflen, 
         L_NUL:
                 _D("WTF? NUL found.\n");
                 errnum = EILSEQ;
+                ext_e  = SEXP_EXT_EINVAL;
                 break;
         L_WHITESPACE:
                 while (++i < buflen) {
                         if (!isspace(pbuf[i]))
                                 break;
                 }
+                
+                ext_e = SEXP_EXT_SUCCESS;
                 goto L_NO_SEXP_ALLOC;
         L_PAROPEN:
                 {
                         SEXP_t *s_list, *s_ref;
                         
                         s_list = SEXP_list_new (NULL);
+
+                        s_list->s_type = s_exp->s_type;
+                        s_list->s_flgs = s_exp->s_flgs;
+                        s_exp->s_type  = NULL;
+                        s_exp->s_flgs  = 0;
+                        
                         s_ref  = SEXP_softref (s_list);
                         
                         SEXP_list_add (SEXP_pstate_lstack_top (*statep), s_list);
@@ -978,6 +987,7 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *setup, const char *buf, size_t buflen, 
                 break;
         case SEXP_EXT_EINVAL:
                 break;
+        case SEXP_EXT_EUNDEF:
         default:
                 abort ();
         }

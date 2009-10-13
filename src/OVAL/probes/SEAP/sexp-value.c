@@ -332,11 +332,16 @@ uintptr_t SEXP_rawval_lblk_replace (uintptr_t lblkp, uint32_t n, const SEXP_t *n
         lb_head = lblkp;
         lb_prev = 0;
         
-        do {
+        while (n > lblk->real) {
                 if (lblk->refs < 2) {
                         n      -= lblk->real;
                         lb_prev = (uintptr_t)lblk;
                         lblk    = SEXP_VALP_LBLK(lblk->nxsz);
+
+                        if (lblk == NULL) {
+                                (*o_val) = NULL;
+                                return (lb_head);
+                        }
                 } else {
                         uintptr_t lb_ptr;
                         
@@ -345,7 +350,7 @@ uintptr_t SEXP_rawval_lblk_replace (uintptr_t lblkp, uint32_t n, const SEXP_t *n
                          * than one list so we have to create a copy of the
                          * rest of the list.
                          */
-                        lb_ptr = SEXP_rawval_list_copy (lblkp, 0);
+                        lb_ptr = SEXP_rawval_list_copy ((uintptr_t)lblk, 0);
                         
                         if (lb_prev == 0)
                                 lb_head = lb_ptr;
@@ -358,19 +363,18 @@ uintptr_t SEXP_rawval_lblk_replace (uintptr_t lblkp, uint32_t n, const SEXP_t *n
                         if (lb_prev != 0)
                                 SEXP_VALP_LBLK(lb_prev)->nxsz = (lb_ptr & SEXP_LBLKP_MASK) | (SEXP_VALP_LBLK(lb_prev)->nxsz & SEXP_LBLKS_MASK);
                         
-                        SEXP_rawval_lblk_decref (lblkp);
+                        SEXP_rawval_lblk_decref ((uintptr_t)lblk);
                         memb = SEXP_rawval_lblk_nth (lb_ptr, n);
                         
                         goto replace;
                 }
-        } while (n > lblk->real);
+        }
         
         _A(n > 0);
         
         memb = lblk->memb + (n - 1);
 replace:
         
-        _A(lb_prev != 0);
         _A(lb_head != 0);
         _A(memb != NULL);
         
