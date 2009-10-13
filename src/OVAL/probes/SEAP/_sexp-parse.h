@@ -54,6 +54,7 @@ struct SEXP_pext_dsc {
 #define SEXP_EXT_SUCCESS 0
 #define SEXP_EXT_EUNFIN  1
 #define SEXP_EXT_EINVAL  2
+#define SEXP_EXT_EUNDEF  255
 
 OSCAP_HIDDEN_END;
 

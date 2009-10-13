@@ -88,7 +88,7 @@ uintptr_t SEXP_rawval_lblk_add  (uintptr_t lblkp, const SEXP_t *s_exp);
 uintptr_t SEXP_rawval_lblk_add1 (uintptr_t lblkp, const SEXP_t *s_exp);
 uintptr_t SEXP_rawval_lblk_last (uintptr_t lblkp);
 SEXP_t   *SEXP_rawval_lblk_nth  (uintptr_t lblkp, uint32_t n);
-uintptr_t SEXP_rawval_lblk_replace (uintptr_t lblkp, uint32_t n, SEXP_t *n_val, SEXP_t **o_val);
+uintptr_t SEXP_rawval_lblk_replace (uintptr_t lblkp, uint32_t n, const SEXP_t *n_val, SEXP_t **o_val);
 int       SEXP_rawval_lblk_cb   (uintptr_t lblkp, int  (*func) (SEXP_t *, void *), void *arg, uint32_t n);
 void      SEXP_rawval_lblk_free (uintptr_t lblkp, void (*func) (SEXP_t *));
 void      SEXP_rawval_lblk_free1 (uintptr_t lblkp, void (*func) (SEXP_t *));

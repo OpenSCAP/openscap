@@ -354,8 +354,10 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *setup, const char *buf, size_t buflen, 
                 pbuf      = (char *) buf;
         }
         
-        /* Initialize parse flags */
+        /* Initialize */
         exflags = (*statep)->l_real > 1 ? (*statep)->pflags : setup->pflags;
+        s_exp   = NULL;
+        ext_e   = SEXP_EXT_EUNDEF;
         
         /* Main parser loop */
         for (;;) {
@@ -370,7 +372,8 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *setup, const char *buf, size_t buflen, 
                 if (i >= buflen)
                         break;
                 
-                c = pbuf[i];
+                ext_e = SEXP_EXT_EUNDEF;
+                c     = pbuf[i];
                 
                 _D("LOOP: i=%zu, c=%c, sexp=%p, buflen=%zu\n",
                    i, c, s_exp, buflen);
@@ -815,8 +818,11 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *setup, const char *buf, size_t buflen, 
                                 exflags &= ~(EXF_EOFOK);
                         }
                 }
+
                 ++i;
-                continue;
+                ext_e = SEXP_EXT_EUNFIN;
+                
+                goto L_NO_SEXP_ALLOC;
         L_PARCLOSE:
                 ++i;
                 
@@ -1135,7 +1141,7 @@ DEFEXTRACTOR(b64_string)
         }
         
         dsc->t_len = ++l;
-        slen       = base64_decode (dsc->t_beg + 1, (size_t)(l - 2), (uint8_t **)&string);
+        slen       = base64_decode (dsc->t_beg + 1, (size_t)(l - 2), (uint8_t **)(uint8_t *)&string);
         
         if (slen == 0) {
                 _D("base64_decode failed\n");
@@ -1171,7 +1177,7 @@ DEFEXTRACTOR_F(b64_string)
         if (dsc->t_len > dsc->b_len - 2)
                 return (SEXP_EXT_EUNFIN);
 
-        slen = base64_decode (dsc->t_beg + 1, dsc->t_len, (uint8_t **)&string);
+        slen = base64_decode (dsc->t_beg + 1, dsc->t_len, (uint8_t **)(uint8_t *)&string);
         
         if (slen == 0)
                 return (SEXP_EXT_EINVAL);

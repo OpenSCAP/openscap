@@ -318,7 +318,7 @@ SEXP_t *SEXP_rawval_lblk_nth (uintptr_t lblkp, uint32_t n)
         return (NULL);
 }
 
-uintptr_t SEXP_rawval_lblk_replace (uintptr_t lblkp, uint32_t n, SEXP_t *n_val, SEXP_t **o_val)
+uintptr_t SEXP_rawval_lblk_replace (uintptr_t lblkp, uint32_t n, const SEXP_t *n_val, SEXP_t **o_val)
 {
         uintptr_t lb_prev;
         uintptr_t lb_head;

@@ -437,8 +437,10 @@ oval_result_t probe_ent_cmp(SEXP_t *ent, SEXP_t *val2)
 	SEXP_t *stmp, *val1, *vals, *res_lst;
         int val_cnt, is_var;
         oval_check_t ochk;
-	oval_result_t ores, result = OVAL_RESULT_ERROR;
-
+	oval_result_t ores, result;
+        
+        ores    = OVAL_RESULT_ERROR;
+        result  = OVAL_RESULT_ERROR;
         val_cnt = probe_ent_getvals(ent, &vals);
 
         if (probe_ent_attrexists(ent, "var_ref")) {
