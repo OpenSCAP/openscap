@@ -29,8 +29,12 @@ SEXP_t *probe_ste_fetch (SEXP_t *id_list)
         _LOGCALL_;
                 
         i_len = SEXP_list_length (id_list);
+        
+        if (i_len == 0)
+                return SEXP_list_new (NULL);
+        
         res   = SEAP_cmd_exec (global.ctx, global.sd, 0, PROBECMD_STE_FETCH,
-                             id_list, SEAP_CMDTYPE_SYNC, NULL, NULL);
+                               id_list, SEAP_CMDTYPE_SYNC, NULL, NULL);
         
         r_len = SEXP_list_length (res);
         
@@ -402,6 +406,7 @@ SEXP_t *probe_set_eval (SEXP_t *set, size_t depth)
         }
         
         member = NULL;
+
         /* request filters */
         result = probe_ste_fetch (filters_u);
         
