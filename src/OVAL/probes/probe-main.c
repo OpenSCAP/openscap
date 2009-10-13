@@ -83,7 +83,7 @@ SEXP_t *probe_set_combine(SEXP_t *item_lst1, SEXP_t *item_lst2, oval_setobject_o
         _LOGCALL_;
 
 	if (SEXP_list_length(item_lst2) == 0)
-		return item_lst1;
+		return SEXP_ref (item_lst1);
         
 	res_items = SEXP_list_new(NULL);
         
@@ -793,6 +793,7 @@ void *probe_worker (void *arg)
                 varrefs = probe_obj_getent (probe_in, "varrefs", 1);
 
                 if (varrefs == NULL) {
+                        _D("probe_main1\n");
                         probe_ret = -1;
                         probe_out = probe_main (probe_in, &probe_ret, global.probe_arg);
                         _A(probe_ret != -1);
@@ -805,6 +806,8 @@ void *probe_worker (void *arg)
                         SEXP_t *r0;
                         struct probe_varref_ctx *ctx;
 
+                        _D("probe_main2\n");
+                        
                         probe_varref_create_ctx (probe_in, varrefs, &ctx);
                         SEXP_free (varrefs);
                         item_lst = SEXP_list_new(NULL);
