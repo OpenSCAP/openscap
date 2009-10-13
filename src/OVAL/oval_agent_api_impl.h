@@ -57,6 +57,12 @@ struct oval_object *get_oval_object_new(struct oval_definition_model *, char *);
 struct oval_state *get_oval_state_new(struct oval_definition_model *, char *);
 struct oval_variable *get_oval_variable_new(struct oval_definition_model *, char *, oval_variable_type_t type);
 
+struct oval_definition *oval_definition_clone(struct oval_definition *, struct oval_definition_model *);
+struct oval_test       *oval_test_clone      (struct oval_test       *, struct oval_definition_model *);
+struct oval_object     *oval_object_clone    (struct oval_object     *, struct oval_definition_model *);
+struct oval_state      *oval_state_clone     (struct oval_state      *, struct oval_definition_model *);
+struct oval_variable   *oval_variable_clone  (struct oval_variable   *, struct oval_definition_model *);
+
 struct oval_syschar *get_oval_syschar_new(struct oval_syschar_model *, struct oval_object *);
 struct oval_syschar_item *get_oval_syschar_item_new(struct oval_syschar_model *, char *);
 
@@ -67,6 +73,18 @@ xmlNode *oval_syschar_model_to_dom
 			oval_syschar_resolver, void *);
 
 struct oval_sysdata *get_oval_sysdata_new(struct oval_syschar_model *, char *);
+void oval_syschar_model_add_syschar(struct oval_syschar_model *model, struct oval_syschar *syschar);
+void oval_syschar_model_set_sysinfo(struct oval_syschar_model *model, struct oval_sysinfo *sysinfo);
+
+typedef struct oval_export_target {
+	char *filename;
+	char *encoding;
+} oval_export_target_t;
+
+
+typedef struct oval_import_source {
+	char *import_source_filename;
+} oval_import_source_t;
 
 OSCAP_HIDDEN_END;
 

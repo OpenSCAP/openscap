@@ -233,12 +233,6 @@ oval_syschar_collection_flag_t         oval_syschar_get_flag             (struct
 struct oval_message_iterator          *oval_syschar_get_messages         (struct oval_syschar *);
 
 /**
- * Get characteristic system information.
- * @relates oval_syschar
- */
-struct oval_sysinfo                   *oval_syschar_get_sysinfo          (struct oval_syschar *);
-
-/**
  * Get object associated with this system characteristic.
  * @relates oval_syschar
  */

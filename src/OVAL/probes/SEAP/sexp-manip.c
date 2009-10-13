@@ -1,3 +1,4 @@
+#ifndef __STUB_PROBE
 #include <string.h>
 #include <stdint.h>
 #include <stdbool.h>
@@ -1889,3 +1890,4 @@ void __SEXP_VALIDATE(const SEXP_t *s_exp, const char *file, uint32_t line, const
         return;
 }
 #endif /* !NDEBUG || VALIDATE_SEXP */
+#endif

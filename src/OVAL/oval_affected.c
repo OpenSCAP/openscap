@@ -65,14 +65,14 @@ oval_affected_family_t oval_affected_get_family(struct oval_affected *affected)
 	return ((struct oval_affected *)affected)->family;
 }
 
-struct oval_string_iterator *oval_affected_get_platform(struct oval_affected
+struct oval_string_iterator *oval_affected_get_platforms(struct oval_affected
 						    *affected)
 {
 	return (struct oval_string_iterator *)
 	    oval_collection_iterator(affected->platforms);
 }
 
-struct oval_string_iterator *oval_affected_get_product(struct oval_affected
+struct oval_string_iterator *oval_affected_get_products(struct oval_affected
 						   *affected)
 {
 	return (struct oval_string_iterator *)
@@ -87,6 +87,28 @@ struct oval_affected *oval_affected_new()
 	affected->platforms = oval_collection_new();
 	affected->products = oval_collection_new();
 	return affected;
+}
+
+struct oval_affected *oval_affected_clone(struct oval_affected *old_affected)
+{
+	struct oval_affected *new_affected = oval_affected_new();
+
+	oval_affected_set_family(new_affected, old_affected->family);
+
+	struct oval_string_iterator *platforms = oval_affected_get_platforms(old_affected);
+	while(oval_string_iterator_has_more(platforms)){
+		char *platform = oval_string_iterator_next(platforms);
+		oval_affected_add_platform(new_affected, platform);
+	}
+	oval_string_iterator_free(platforms);
+	struct oval_string_iterator *products = oval_affected_get_products(old_affected);
+	while(oval_string_iterator_has_more(products)){
+		char *product = oval_string_iterator_next(products);
+		oval_affected_add_product(new_affected, product);
+	}
+	oval_string_iterator_free(products);
+
+	return new_affected;
 }
 
 void oval_affected_free(struct oval_affected *affected)

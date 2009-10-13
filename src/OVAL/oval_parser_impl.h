@@ -40,7 +40,7 @@ struct oval_parser_context {
 	struct oval_definition_model   *definition_model;
 	struct oval_syschar_model      *syschar_model;
 	struct oval_results_model      *results_model;
-	struct oval_sysinfo            *syschar_sysinfo;
+	//struct oval_sysinfo            *syschar_sysinfo;
 	xmlTextReader                  *reader;
 	oval_xml_error_handler         error_handler;
 	void*                          user_data;

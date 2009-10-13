@@ -122,8 +122,7 @@ void oval_object_model_add_variable(struct oval_object_model *, struct oval_vari
 void oval_object_model_add_sysinfo(struct oval_object_model *, struct oval_sysinfo *);
 
 struct oval_syschar_model *oval_syschar_model_new(
-                struct oval_object_model *object_model,
-                struct oval_variable_binding_iterator *bindings);
+                struct oval_definition_model *definition_model);
 
 void oval_syschar_model_free(struct oval_syschar_model *model);
 struct oval_object_model *oval_syschar_model_get_object_model(
@@ -143,7 +142,7 @@ int oval_syschar_model_export(
 void oval_syschar_model_load(struct oval_syschar_model*, struct oval_import_source*,
                         oval_xml_error_handler, void*);
 struct oval_results_model *oval_results_model_new(
-                struct oval_object_model *object_model, struct oval_syschar_model **);
+                struct oval_definition_model *object_model, struct oval_syschar_model **);
 void oval_results_model_free(struct oval_results_model *model);
 struct oval_object_model *oval_results_model_get_object_model
         (struct oval_results_model *model);
@@ -158,7 +157,7 @@ struct oval_result_directives *oval_result_directives_new();
 void oval_result_directives_free(struct oval_result_directives *);
 
 int oval_results_model_export(struct oval_results_model *, struct oval_result_directives *, struct oval_export_target *);
-struct oval_syschar *oval_object_probe(struct oval_object *, struct oval_object_model *model);
+struct oval_syschar *oval_object_probe(struct oval_object *, struct oval_definition_model *model);
 
 /* oval_definitions.h */
 

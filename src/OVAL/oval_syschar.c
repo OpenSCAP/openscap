@@ -40,7 +40,6 @@ static int OVAL_SYSCHAR_DEBUG = 0;
 typedef struct oval_syschar {
 	oval_syschar_collection_flag_t flag;
 	struct oval_collection *messages;
-	struct oval_sysinfo *sysinfo;
 	struct oval_object *object;
 	struct oval_collection *variable_bindings;
 	struct oval_collection *sysdata;
@@ -71,7 +70,7 @@ oval_syschar_collection_flag_t oval_syschar_get_flag(struct oval_syschar
 	return ((struct oval_syschar *)syschar)->flag;
 }
 
-void set_oval_syschar_flag
+void oval_syschar_set_flag
 	(struct oval_syschar *syschar, oval_syschar_collection_flag_t flag)
 {
 	syschar->flag = flag;
@@ -94,17 +93,6 @@ void oval_syschar_add_messages(struct oval_syschar *syschar, char *message)
 	oval_collection_add(syschar->messages, message);
 }
 
-struct oval_sysinfo *oval_syschar_get_sysinfo(struct oval_syschar *syschar)
-{
-	return ((struct oval_syschar *)syschar)->sysinfo;
-}
-
-void oval_syschar_set_sysinfo
-	(struct oval_syschar *syschar, struct oval_sysinfo *sysinfo)
-{
-	syschar->sysinfo = sysinfo;
-}
-
 struct oval_object *oval_syschar_get_object(struct oval_syschar *syschar)
 {
 	return ((struct oval_syschar *)syschar)->object;
@@ -116,12 +104,6 @@ struct oval_variable_binding_iterator *oval_syschar_get_variable_bindings(struct
 {
 	return (struct oval_variable_binding_iterator *)
 	    oval_collection_iterator(syschar->variable_bindings);
-}
-
-static void add_oval_syschar_variable_bindings
-	(struct oval_syschar *syschar, struct oval_variable_binding *binding)
-{
-	oval_collection_add(syschar->variable_bindings, binding);
 }
 
 struct oval_sysdata_iterator *oval_syschar_sysdata(struct oval_syschar *syschar)
@@ -152,7 +134,6 @@ struct oval_syschar *oval_syschar_new(struct oval_object *object){
 	oval_syschar_t *syschar = (oval_syschar_t*)malloc(sizeof(oval_syschar_t));
 	syschar->flag              = SYSCHAR_FLAG_UNKNOWN;
 	syschar->object            = object;
-	syschar->sysinfo           = NULL;
 	syschar->messages          = oval_collection_new();
 	syschar->sysdata           = oval_collection_new();
 	syschar->variable_bindings = oval_collection_new();
@@ -167,7 +148,6 @@ void oval_syschar_free(struct oval_syschar *syschar){
 	syschar->messages = NULL;
 	syschar->object = NULL;
 	syschar->sysdata = NULL;
-	syschar->sysinfo = NULL;
 	syschar->variable_bindings = NULL;
 	free(syschar);
 }
@@ -182,9 +162,7 @@ struct oval_syschar_parse_subtag_varval_context {
 };
 static void _oval_syschar_parse_subtag_consume_variable_binding(struct oval_variable_binding *binding, void* user){
 	struct oval_syschar_parse_subtag_varval_context *ctx = user;
-	if (oval_syschar_model_add_variable_binding(ctx->model, binding))
-		oval_syschar_add_variable_binding(ctx->syschar, binding);
-	else oval_variable_binding_free(binding);
+	oval_syschar_add_variable_binding(ctx->syschar, binding);
 }
 static int _oval_syschar_parse_subtag(
 		xmlTextReaderPtr reader,
@@ -238,12 +216,11 @@ int oval_syschar_parse_tag(xmlTextReaderPtr reader,
 		struct oval_object *object = get_oval_object_new(context->definition_model, object_id);
 		free(object_id);object_id=NULL;
 		oval_syschar_t *syschar = get_oval_syschar_new(context->syschar_model, object);
-		syschar->sysinfo = context->syschar_sysinfo;
 		char *flag = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "flag");
 		oval_syschar_collection_flag_t flag_enum
 			= oval_syschar_flag_parse(reader, "flag", SYSCHAR_FLAG_UNKNOWN);
 		if(flag!=NULL)free(flag);
-		set_oval_syschar_flag(syschar, flag_enum);
+		oval_syschar_set_flag(syschar, flag_enum);
 		return_code = oval_parser_parse_tag(reader, context, &_oval_syschar_parse_subtag, syschar);
 	}else{
 		char message[200]; *message = 0;
@@ -270,56 +247,6 @@ int oval_syschar_parse_tag(xmlTextReaderPtr reader,
 	return return_code;
 }
 
-void oval_syschar_to_print(struct oval_syschar *syschar, char *indent,
-			      int idx)
-{
-	char nxtindent[100];
-
-	if (strlen(indent) > 80)
-		indent = "....";
-
-	if (idx == 0)
-		snprintf(nxtindent, sizeof(nxtindent), "%sSYSCHAR.", indent);
-	else
-		snprintf(nxtindent, sizeof(nxtindent), "%sSYSCHAR[%d].", indent, idx);
-
-	/*
-	oval_syschar_collection_flag_enum flag;
-	struct oval_collection *messages;
-	struct oval_sysinfo *sysinfo;
-	struct oval_object *object;
-	struct oval_collection *sysdata;
-	 */
-	printf("%sFLAG    = %d\n", nxtindent, oval_syschar_get_flag(syschar));
-	{//messages
-		struct oval_message_iterator *messages = oval_syschar_get_messages(syschar);
-		int i;for(i=1;oval_message_iterator_has_more(messages);i++){
-			struct oval_message *message = oval_message_iterator_next(messages);
-			oval_message_to_print(message, nxtindent, i);
-		}
-		oval_message_iterator_free(messages);
-	}
-	{//sysinfo
-		struct oval_sysinfo *sysinfo = oval_syschar_get_sysinfo(syschar);
-		if (sysinfo) oval_sysinfo_to_print(sysinfo, nxtindent, 0);
-	}
-
-	{//object
-		struct oval_object *object = oval_syschar_get_object(syschar);
-		if (object) oval_object_to_print(object, nxtindent, 0);
-	}
-	{//sysdata
-		struct oval_sysdata_iterator *sysdatas = oval_syschar_sysdata(syschar);
-		int hasMore = oval_sysdata_iterator_has_more(sysdatas);
-		if(hasMore){
-			int i;for(i=1;oval_sysdata_iterator_has_more(sysdatas);i++){
-				struct oval_sysdata *sysdata = oval_sysdata_iterator_next(sysdatas);
-				oval_sysdata_to_print(sysdata, nxtindent, i);
-			}
-		}
-		oval_sysdata_iterator_free(sysdatas);
-	}
-}
 
 void oval_syschar_to_dom  (struct oval_syschar *syschar, xmlDoc *doc, xmlNode *tag_parent){
 	if(syschar){

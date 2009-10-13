@@ -98,6 +98,24 @@ oval_sysint_t *oval_sysint_new()
 	return sysint;
 }
 
+struct oval_sysint *oval_sysint_clone(struct oval_sysint *old_sysint)
+{
+	struct oval_sysint *new_sysint = oval_sysint_new();
+	char *ip_address = oval_sysint_get_ip_address(old_sysint);
+	if(ip_address){
+		oval_sysint_set_ip_address(new_sysint, ip_address);
+	}
+	char *mac_address = oval_sysint_get_mac_address(old_sysint);
+	if(mac_address){
+		oval_sysint_set_mac_address(new_sysint, mac_address);
+	}
+	char *name = oval_sysint_get_name(old_sysint);
+	if(name){
+		oval_sysint_set_name(new_sysint, name);
+	}
+	return new_sysint;
+}
+
 void oval_sysint_free(struct oval_sysint *sysint)
 {
 	if(sysint->ipAddress !=NULL)free(sysint->ipAddress);

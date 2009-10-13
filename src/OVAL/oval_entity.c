@@ -119,6 +119,33 @@ struct oval_entity *oval_entity_new()
 	return entity;
 }
 
+struct oval_entity *oval_entity_clone
+	(struct oval_entity *old_entity, struct oval_definition_model *model)
+{
+	struct oval_entity *new_entity = oval_entity_new();
+	oval_datatype_t datatype = oval_entity_get_datatype(old_entity);
+	oval_entity_set_datatype(new_entity, datatype);
+	int mask = oval_entity_get_mask(old_entity);
+	oval_entity_set_mask(new_entity, mask);
+	char *name = oval_entity_get_name(old_entity);
+	oval_entity_set_name(new_entity, name);
+	oval_operation_t operation = oval_entity_get_operation(old_entity);
+	oval_entity_set_operation(new_entity, operation);
+	oval_entity_type_t type = oval_entity_get_type(old_entity);
+	oval_entity_set_type(new_entity, type);
+	struct oval_value *value = oval_entity_get_value(old_entity);
+	oval_entity_set_value(new_entity, oval_value_clone(value));
+	struct oval_variable *old_variable = oval_entity_get_variable(old_entity);
+	if(old_variable){
+		struct oval_variable *new_variable = oval_variable_clone(old_variable, model);
+		oval_entity_set_variable(new_entity, new_variable);
+	}
+	oval_entity_varref_type_t reftype = oval_entity_get_varref_type(old_entity);
+	oval_entity_set_varref_type(new_entity, reftype);
+	return new_entity;
+}
+
+
 void oval_entity_free(struct oval_entity *entity)
 {
 	if (entity->value != NULL)
@@ -144,7 +171,7 @@ void oval_entity_set_datatype(struct oval_entity *entity,
 	entity->datatype = datatype;
 }
 
-static void set_oval_entity_operation(struct oval_entity *entity,
+void oval_entity_set_operation(struct oval_entity *entity,
 			       oval_operation_t operation)
 {
 	entity->operation = operation;
@@ -172,7 +199,7 @@ void oval_entity_set_value(struct oval_entity *entity, struct oval_value *value)
 	entity->value = value;
 }
 
-static void set_oval_entity_name(struct oval_entity *entity, char *name)
+void oval_entity_set_name(struct oval_entity *entity, char *name)
 {
 	if(entity->name!=NULL)free(entity->name);
 	entity->name = name==NULL?NULL:strdup(name);
@@ -241,10 +268,10 @@ int oval_entity_parse_tag(xmlTextReaderPtr reader,
 		return_code = 1;
 		free(varref);varref = NULL;
 	}
-	set_oval_entity_name(entity, name);
+	oval_entity_set_name(entity, name);
 	oval_entity_set_type(entity, type);
 	oval_entity_set_datatype(entity, datatype);
-	set_oval_entity_operation(entity, operation);
+	oval_entity_set_operation(entity, operation);
 	oval_entity_set_mask(entity, mask);
 	oval_entity_set_varref_type(entity, varref_type);
 	oval_entity_set_variable(entity, variable);

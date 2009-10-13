@@ -86,6 +86,19 @@ struct oval_reference *oval_reference_new()
 	return ref;
 }
 
+struct oval_reference *oval_reference_clone
+	(struct oval_reference *old_reference)
+{
+	struct oval_reference *new_reference = oval_reference_new();
+	char *id = oval_reference_get_id(old_reference);
+	oval_reference_set_id(new_reference, id);
+	char *source = oval_reference_get_source(old_reference);
+	oval_reference_set_source(new_reference, source);
+	char *url = oval_reference_get_url(old_reference);
+	oval_reference_set_url(new_reference, url);
+	return new_reference;
+}
+
 void oval_reference_free(struct oval_reference *ref)
 {
 	if (ref->id != NULL)

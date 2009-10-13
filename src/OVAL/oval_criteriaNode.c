@@ -104,36 +104,39 @@ char *oval_criteria_node_get_comment(struct oval_criteria_node *node)
 
 oval_operator_t oval_criteria_node_get_operator(struct oval_criteria_node *node)
 {
-	//type==NODETYPE_CRITERIA
-	return ((struct oval_criteria_node_CRITERIA *)node)->operator;
+	return (node->type==OVAL_NODETYPE_CRITERIA)
+	?((struct oval_criteria_node_CRITERIA *)node)->operator:OVAL_OPERATOR_UNKNOWN;
 }
 
 struct oval_criteria_node_iterator *oval_criteria_node_get_subnodes(struct
 								oval_criteria_node
 								*node)
 {
-	//type==NODETYPE_CRITERIA
-	struct oval_criteria_node_CRITERIA *criteria =
-	    (struct oval_criteria_node_CRITERIA *)node;
-	return (struct oval_criteria_node_iterator *)
-	    oval_collection_iterator(criteria->subnodes);
+	struct oval_criteria_node_iterator *subnodes = NULL;
+	if(OVAL_NODETYPE_CRITERIA){
+		struct oval_criteria_node_CRITERIA *criteria =
+		    (struct oval_criteria_node_CRITERIA *)node;
+		subnodes = (struct oval_criteria_node_iterator *)
+		    oval_collection_iterator(criteria->subnodes);
+	}
+	return subnodes;
 }
 
 struct oval_test *oval_criteria_node_get_test(struct oval_criteria_node *node)
 {
 	//type==NODETYPE_CRITERION
-	return ((struct oval_criteria_node_CRITERION *)node)->test;
+	return (node->type==OVAL_NODETYPE_CRITERION)
+	?((struct oval_criteria_node_CRITERION *)node)->test:NULL;
 }
 
-struct oval_definition *oval_criteria_node_get_definition(struct oval_criteria_node
-						      *node)
+struct oval_definition *oval_criteria_node_get_definition
+	(struct oval_criteria_node *node)
 {
-	//type==NODETYPE_EXTENDDEF
-	return ((struct oval_criteria_node_EXTENDDEF *)node)->definition;
+	return (node->type==OVAL_NODETYPE_EXTENDDEF)
+	?((struct oval_criteria_node_EXTENDDEF *)node)->definition:NULL;
 }
 
-struct oval_criteria_node *oval_criteria_node_new(oval_criteria_node_type_t
-						  type)
+struct oval_criteria_node *oval_criteria_node_new(oval_criteria_node_type_t type)
 {
 	struct oval_criteria_node *node;
 	switch (type) {
@@ -167,6 +170,42 @@ struct oval_criteria_node *oval_criteria_node_new(oval_criteria_node_type_t
 	node->negate = 0;
 	node->comment = NULL;
 	return node;
+}
+
+struct oval_criteria_node *oval_criteria_node_clone
+	(struct oval_criteria_node *old_node, struct oval_definition_model *model)
+{
+	struct oval_criteria_node *new_node = oval_criteria_node_new(old_node->type);
+	char *comment = oval_criteria_node_get_comment(old_node);
+	oval_criteria_node_set_comment(new_node, comment);
+	int negate = oval_criteria_node_get_negate(old_node);
+	oval_criteria_node_set_negate(new_node, negate);
+	switch(new_node->type)
+	{
+	case OVAL_NODETYPE_CRITERIA:{
+		oval_operator_t operator = oval_criteria_node_get_operator(old_node);
+		oval_criteria_node_set_operator(new_node, operator);
+		struct oval_criteria_node_iterator *subnodes = oval_criteria_node_get_subnodes(old_node);
+		while(oval_criteria_node_iterator_has_more(subnodes)){
+			struct oval_criteria_node *subnode = oval_criteria_node_iterator_next(subnodes);
+			oval_criteria_node_add_subnode(new_node, oval_criteria_node_clone(subnode, model));
+		}
+		oval_criteria_node_iterator_free(subnodes);
+	}break;
+	case OVAL_NODETYPE_EXTENDDEF:{
+		struct oval_definition *old_definition = oval_criteria_node_get_definition(old_node);
+		struct oval_definition *new_definition = oval_definition_clone(old_definition, model);
+		oval_criteria_node_set_definition(new_node, new_definition);
+	}break;
+	case OVAL_NODETYPE_CRITERION:{
+		struct oval_test *old_test = oval_criteria_node_get_test(old_node);
+		struct oval_test *new_test = oval_test_clone(old_test, model);
+		oval_criteria_node_set_test(new_node, new_test);
+	}break;
+	default: /*NOOP*/;
+	}
+
+	return new_node;
 }
 
 void oval_criteria_node_free(struct oval_criteria_node *node)
@@ -217,37 +256,41 @@ void oval_criteria_node_set_comment(struct oval_criteria_node *node,
 void oval_criteria_node_set_operator(struct oval_criteria_node *node,
 				     oval_operator_t operator)
 {
-	//type==NODETYPE_CRITERIA
-	struct oval_criteria_node_CRITERIA *criteria =
-	    (struct oval_criteria_node_CRITERIA *)node;
-	criteria->operator = operator;
+	if(node->type==OVAL_NODETYPE_CRITERIA){
+		struct oval_criteria_node_CRITERIA *criteria =
+		    (struct oval_criteria_node_CRITERIA *)node;
+		criteria->operator = operator;
+	}
 }
 
 void oval_criteria_node_add_subnode(struct oval_criteria_node *node,
 				     struct oval_criteria_node *subnode)
 {
-	//type==NODETYPE_CRITERIA
-	struct oval_criteria_node_CRITERIA *criteria =
-	    (struct oval_criteria_node_CRITERIA *)node;
-	oval_collection_add(criteria->subnodes, (void *)subnode);
+	if(node->type==OVAL_NODETYPE_CRITERIA){
+		struct oval_criteria_node_CRITERIA *criteria =
+		    (struct oval_criteria_node_CRITERIA *)node;
+		oval_collection_add(criteria->subnodes, (void *)subnode);
+	}
 }
 
 void oval_criteria_node_set_test(struct oval_criteria_node *node,
 				 struct oval_test *test)
 {
-	//type==NODETYPE_CRITERION
-	struct oval_criteria_node_CRITERION *criterion =
-	    (struct oval_criteria_node_CRITERION *)node;
-	criterion->test = test;
+	if(node->type==OVAL_NODETYPE_CRITERION){
+		struct oval_criteria_node_CRITERION *criterion =
+		    (struct oval_criteria_node_CRITERION *)node;
+		criterion->test = test;
+	}
 }
 
 void oval_criteria_node_set_definition(struct oval_criteria_node *node,
 				       struct oval_definition *definition)
 {
-	//type==NODETYPE_EXTENDDEF
-	struct oval_criteria_node_EXTENDDEF *extenddef =
-	    (struct oval_criteria_node_EXTENDDEF *)node;
-	extenddef->definition = definition;
+	if(node->type==OVAL_NODETYPE_EXTENDDEF){
+		struct oval_criteria_node_EXTENDDEF *extenddef =
+		    (struct oval_criteria_node_EXTENDDEF *)node;
+		extenddef->definition = definition;
+	}
 }
 
 static void _oval_criteria_subnode_consume(struct oval_criteria_node *subnode, void *criteria) {

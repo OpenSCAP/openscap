@@ -1,3 +1,4 @@
+#ifndef __STUB_PROBE
 #include <inttypes.h>
 #include <stdlib.h>
 #include <string.h>
@@ -303,7 +304,7 @@ SEXP_t *oval_object_to_sexp (const char *typestr, struct oval_object *object)
         varrefs = NULL;
         ent_cnt = varref_cnt = 0;
 
-        cit = oval_object_get_object_content (object);
+        cit = oval_object_get_object_contents (object);
         while (oval_object_content_iterator_has_more (cit)) {
                 oval_check_t ochk;
 
@@ -636,3 +637,4 @@ int oval_syschar_apply_sexp(struct oval_syschar *syschar, SEXP_t *sexp, struct o
 
 	return 1;
 }
+#endif /* __STUB_PROBE */

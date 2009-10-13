@@ -33,7 +33,7 @@
 #include "oval_definitions_impl.h"
 #include "oval_collection_impl.h"
 
-static int DEBUG_OVAL_VARIABLE_BINDING = 0;
+#define DEBUG_OVAL_VARIABLE_BINDING 0
 
 
 typedef struct oval_variable_binding {

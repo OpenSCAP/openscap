@@ -100,7 +100,7 @@ int oval_object_get_version(struct oval_object *object)
 	return ((struct oval_object *)object)->version;
 }
 
-struct oval_object_content_iterator *oval_object_get_object_content(struct
+struct oval_object_content_iterator *oval_object_get_object_contents(struct
 								oval_object
 								*object)
 {
@@ -126,6 +126,41 @@ struct oval_object *oval_object_new(char *id)
 	object->notes = oval_collection_new();
 	object->object_content = oval_collection_new();
 	return object;
+}
+
+struct oval_object *oval_object_clone
+	(struct oval_object *old_object, struct oval_definition_model *model)
+{
+	struct oval_object *new_object = oval_definition_model_get_object(model, old_object->id);
+	if(new_object==NULL){
+		new_object = oval_object_new(old_object->id);
+		oval_object_set_comment   (new_object, old_object->comment);
+		oval_object_set_subtype   (new_object, old_object->subtype);
+		oval_object_set_deprecated(new_object, old_object->deprecated);
+		oval_object_set_version   (new_object, old_object->version);
+
+		struct oval_behavior_iterator *behaviors = oval_object_get_behaviors(old_object);
+		while(oval_behavior_iterator_has_more(behaviors)){
+			struct oval_behavior *behavior = oval_behavior_iterator_next(behaviors);
+			oval_object_add_behavior(new_object, oval_behavior_clone(behavior));
+		}
+		oval_behavior_iterator_free(behaviors);
+		struct oval_string_iterator *notes = oval_object_get_notes(old_object);
+		while(oval_string_iterator_has_more(notes)){
+			char *note = oval_string_iterator_next(notes);
+			oval_object_add_note(new_object, note);
+		}
+		oval_string_iterator_free(notes);
+		struct oval_object_content_iterator *object_contents = oval_object_get_object_contents(old_object);
+		while(oval_object_content_iterator_has_more(object_contents)){
+			struct oval_object_content *object_content = oval_object_content_iterator_next(object_contents);
+			oval_object_add_object_content(new_object, oval_object_content_clone(object_content, model));
+		}
+		oval_object_content_iterator_free(object_contents);
+
+		oval_definition_model_add_object(model, new_object);
+	}
+	return new_object;
 }
 
 void oval_object_free(struct oval_object *object)
@@ -179,7 +214,7 @@ void oval_object_add_object_content(struct oval_object *object,
 	oval_collection_add(object->object_content, (void *)content);
 }
 
-void oval_object_add_behaviors(struct oval_object *object,
+void oval_object_add_behavior(struct oval_object *object,
 			       struct oval_behavior *behavior)
 {
 	oval_collection_add(object->behaviors, (void *)behavior);
@@ -197,7 +232,7 @@ static int _oval_object_parse_notes(xmlTextReaderPtr reader,
 
 static void oval_behavior_consume(struct oval_behavior *behavior,
 				  void *object) {
-	oval_object_add_behaviors(object, behavior);
+	oval_object_add_behavior(object, behavior);
 }
 static void oval_content_consume(struct oval_object_content *content,
 				 void *object) {
@@ -300,7 +335,7 @@ void oval_object_to_print(struct oval_object *object, char *indent, int idx)
 	}
 	oval_behavior_iterator_free(behaviors);
 	struct oval_object_content_iterator *contents =
-	    oval_object_get_object_content(object);
+	    oval_object_get_object_contents(object);
 	for (idx = 1; oval_object_content_iterator_has_more(contents);
 	     idx++) {
 		struct oval_object_content *content =
@@ -365,7 +400,7 @@ xmlNode *oval_object_to_dom
 	}
 	oval_behavior_iterator_free(behaviors);
 
-	struct oval_object_content_iterator *contents = oval_object_get_object_content(object);
+	struct oval_object_content_iterator *contents = oval_object_get_object_contents(object);
 	int i;for(i=0;oval_object_content_iterator_has_more(contents); i++){
 		struct oval_object_content *content = oval_object_content_iterator_next(contents);
 		oval_object_content_to_dom(content, doc, object_node);

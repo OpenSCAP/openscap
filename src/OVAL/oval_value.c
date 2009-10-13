@@ -100,6 +100,16 @@ struct oval_value *oval_value_new()
 	return value;
 }
 
+struct oval_value *oval_value_clone(struct oval_value *old_value)
+{
+	struct oval_value *new_value = oval_value_new();
+	oval_datatype_t datatype = oval_value_get_datatype(old_value);
+	oval_value_set_datatype(new_value, datatype);
+	char *text = oval_value_get_text(old_value);
+	oval_value_set_text(new_value, text);
+	return new_value;
+}
+
 void oval_value_free(struct oval_value *value)
 {
  	if (value) {

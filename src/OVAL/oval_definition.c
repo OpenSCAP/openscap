@@ -124,6 +124,43 @@ struct oval_definition *oval_definition_new(char *id)
 	return definition;
 }
 
+struct oval_definition *oval_definition_clone
+	(struct oval_definition *old_definition, struct oval_definition_model *model)
+{
+	struct oval_definition *new_definition = oval_definition_model_get_definition(model, old_definition->id);
+	if(new_definition==NULL){
+		new_definition = oval_definition_new(old_definition->id);
+		oval_definition_set_version    (new_definition, old_definition->version);
+		oval_definition_set_class      (new_definition, old_definition->class);
+		oval_definition_set_deprecated (new_definition, old_definition->deprecated);
+		oval_definition_set_title      (new_definition, old_definition->title);
+		oval_definition_set_description(new_definition, old_definition->description);
+
+		struct oval_affected_iterator *affecteds = oval_definition_get_affected(old_definition);
+		while(oval_affected_iterator_has_more(affecteds)){
+			struct oval_affected *old_affected = oval_affected_iterator_next(affecteds);
+			oval_definition_add_affected(new_definition, oval_affected_clone(old_affected));
+		}
+		oval_affected_iterator_free(affecteds);
+		struct oval_reference_iterator *references = oval_definition_get_references(old_definition);
+		while(oval_reference_iterator_has_more(references)){
+			struct oval_reference *old_reference = oval_reference_iterator_next(references);
+			oval_definition_add_reference(new_definition, oval_reference_clone(old_reference));
+		}
+		oval_reference_iterator_free(references);
+		struct oval_string_iterator *notes = oval_definition_get_notes(old_definition);
+		while(oval_string_iterator_has_more(notes)){
+			char *old_note = oval_string_iterator_next(notes);
+			oval_definition_add_note(new_definition, old_note);
+		}
+		oval_string_iterator_free(notes);
+
+		oval_definition_set_criteria(new_definition, oval_criteria_node_clone(old_definition->criteria, model));
+
+		oval_definition_model_add_definition(model, new_definition);
+	}
+	return new_definition;
+}
 void oval_definition_free(struct oval_definition *definition)
 {
 	if (definition->id != NULL)
@@ -200,7 +237,7 @@ void oval_definition_set_description(struct oval_definition *definition,
 				     char *description)
 {
 	if(definition->description)free(definition->description);
-	definition->description = description==NULL?NULL:description;
+	definition->description = description==NULL?NULL:strdup(description);
 }
 
 void oval_definition_set_criteria(struct oval_definition *definition,
@@ -454,13 +491,13 @@ xmlNode *oval_definition_to_dom (struct oval_definition *definition, xmlDoc *doc
 		struct oval_affected *affected = oval_affected_iterator_next(affecteds);
 		oval_affected_family_t family = oval_affected_get_family(affected);
 		xmlNewProp(affected_node, BAD_CAST "family", oval_affected_family_get_text(family));
-		struct oval_string_iterator *platforms = oval_affected_get_platform(affected);
+		struct oval_string_iterator *platforms = oval_affected_get_platforms(affected);
 		while(oval_string_iterator_has_more(platforms)){
 			char *platform = oval_string_iterator_next(platforms);
 			xmlNewChild(affected_node, ns_definitions, BAD_CAST "platform", platform);
 		}
 		oval_string_iterator_free(platforms);
-		struct oval_string_iterator *products = oval_affected_get_product(affected);
+		struct oval_string_iterator *products = oval_affected_get_products(affected);
 		while(oval_string_iterator_has_more(products)){
 			char *product = oval_string_iterator_next(products);
 			xmlNewChild(affected_node, ns_definitions, BAD_CAST "product", product);

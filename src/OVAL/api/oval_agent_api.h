@@ -75,11 +75,18 @@ void oval_export_target_free(struct oval_export_target *target);
 
 /**
  * @struct oval_definition_model
- * OVAL object model.
- * Object model holds OVAL definitions as a list of oval_definition
+ * OVAL definition model.
+ * Definition model holds OVAL definitions as a list of oval_definition
  * structure instances.
  */
 struct oval_definition_model;
+
+/**
+ * @struct oval_variable_model
+ * OVAL variable model.
+ * The OVAL variable model facilitates access to external variable value bindings used to to constrain the evaluation of OVAL objects.
+ */
+struct oval_variable_model;
 
 /**
  * @struct oval_syschar_model
@@ -101,6 +108,12 @@ struct oval_results_model;
  * Create an empty oval_definition_model.
  */
 struct oval_definition_model *oval_definition_model_new();
+
+/**
+ * Copy an oval_definition_model.
+ */
+struct oval_definition_model *oval_definition_model_clone(struct oval_definition_model *);
+
 
 /***
  * Free OVAL object model.
@@ -263,17 +276,98 @@ void oval_definition_model_add_state(struct oval_definition_model *, struct oval
 void oval_definition_model_add_variable(struct oval_definition_model *, struct oval_variable *);
 
 /**
+ * Bind an oval_variable_model to the specified oval_definition_model.
+ */
+void oval_definition_model_bind_variable_model
+	(struct oval_definition_model *, struct oval_variable_model *);
+
+/**
+ * Create a new OVAL variable model
+ */
+struct oval_variable_model *oval_variable_model_new();
+
+/**
+ * Create an OVAL variable model
+ */
+struct oval_variable_model *oval_variable_model_copy(struct oval_variable_model *);
+
+/**
+ * Free memory allocated to a specified oval_variable_model
+ * @param variable_model the specified oval_variable_model
+ */
+void oval_variable_model_free(struct oval_variable_model *);
+
+/**
+ * Load the specified oval_variable_model from an XML stream.
+ * The stream document element must be a valid instance of <http://oval.mitre.org/XMLSchema/oval-variables-5:oval_variables>.
+ * If the oval_variable model is not empty, the loaded content will be appended to the existing content.
+ * @param variable_model the specified oval_variable_model.
+ * @param import_source the oval_import_source that resolves the XML stream.
+ * @param error_handler the oval_xml_error_handler that tracks the parsing of the XML stream (may be NULL)
+ * @param user_param a user parameter that is passed the the error handler implementation.
+ */
+void oval_variable_model_load
+	(struct oval_variable_model *,
+	 struct oval_import_source *,
+	 oval_xml_error_handler, void*);
+
+/**
+ * Export the specified oval_variable_model to an XML stream.
+ * The exported document element is a valid instance of <http://oval.mitre.org/XMLSchema/oval-variables-5:oval_variables>.
+ * @param variable_model the specified oval_variable_model.
+ * @param export_target the oval_export_target that resolves the output XML stream.
+ */
+void oval_variable_model_export
+	(struct oval_variable_model *,
+	 struct oval_export_target *);
+
+/**
+ * Get all external variables managed by a specified oval_variable_model.
+ * @param variable_model the specified oval_variable_model.
+ */
+struct oval_string_iterator *oval_variable_model_get_variable_ids
+	(struct oval_variable_model *);
+
+/**
+ * Get a specified external variable datatype.
+ * If the varid does not resolve to a managed external variable, this method returns 0.
+ * @param variable_model the specified oval_variable_model.
+ * @param varid the identifier of the required oval_variable.
+ */
+oval_datatype_t oval_variable_model_get_datatype
+	(struct oval_variable_model *, char *);
+
+/**
+ * Get a specified external variable comment.
+ * If the varid does not resolve to a managed external variable, this method returns NULL.
+ * @param variable_model the specified oval_variable_model.
+ * @param varid the identifier of the required oval_variable.
+ */
+const char *oval_variable_model_get_comment
+	(struct oval_variable_model *, char *);
+
+/**
+ * Get the values bound to a specified external variable.
+ * If the varid does not resolve to a managed external variable, this method returns NULL.
+ * @param variable_model the specified oval_variable_model.
+ * @param varid the identifier of the required oval_variable.
+ */
+struct oval_string_iterator *oval_variable_model_get_values
+	(struct oval_variable_model *, char *);
+
+/**
  * Create new oval_syschar_model.
  * The new model is bound to a specified oval_definition_model and variable bindings.
  * @relates oval_definition_model
  * @param definition_model the specified oval_definition_model.
- * @param bindings the specified oval_variable_bindings.
  */
 struct oval_syschar_model *oval_syschar_model_new(
-		struct oval_definition_model *definition_model,
-		struct oval_variable_binding_iterator *bindings);
+		struct oval_definition_model *definition_model);
 
-
+/**
+ * Copy an oval_syschar_model.
+ */
+struct oval_syschar_model *oval_syschar_model_copy(struct oval_syschar_model *);
 
 /**
  * free memory allocated to a specified syschar model.
@@ -302,8 +396,7 @@ struct oval_syschar_iterator *oval_syschar_model_get_syschars(
  * @relates oval_syschar_model
  * @param model the specified oval_syschar_model.
  */
-struct oval_sysinfo *oval_syschar_model_get_sysinfo(
-		struct oval_syschar_model *model);
+struct oval_sysinfo *oval_syschar_model_get_sysinfo(struct oval_syschar_model *model);
 
 /**
  * Return the oval_syschar bound to a specified object_id.
@@ -317,7 +410,18 @@ struct oval_syschar *oval_syschar_model_get_syschar(
 		struct oval_syschar_model *model,
 		char *object_id);
 
-bool oval_syschar_model_add_variable_binding(struct oval_syschar_model *, struct oval_variable_binding *);
+
+/**
+ * Bind a variable model to the definitions bound to the syschar model.
+ */
+void oval_syschar_model_bind_variable_model
+	(struct oval_syschar_model *, struct oval_variable_model *);
+
+
+/**
+ * Probe oval_objects bound to oval_syschar_model
+ */
+void oval_syschar_model_probe_objects(struct oval_syschar_model *);
 
 /**
  * Export system characteristics as a XML file.
@@ -341,6 +445,11 @@ void oval_syschar_model_load(struct oval_syschar_model*, struct oval_import_sour
  */
 struct oval_results_model *oval_results_model_new(
 		struct oval_definition_model *definition_model, struct oval_syschar_model **);
+
+/**
+ * Copy an oval_results_model.
+ */
+struct oval_results_model *oval_results_model_copy(struct oval_results_model *);
 
 /**
  * free memory allocated to a specified oval results model.

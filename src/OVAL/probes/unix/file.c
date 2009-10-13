@@ -1,3 +1,4 @@
+#ifndef __STUB_PROBE
 #include <seap.h>
 #include <probe-api.h>
 #include <string.h>
@@ -277,3 +278,4 @@ SEXP_t *probe_main (SEXP_t *probe_in, int *err)
         *err = 0;
         return (items);
 }
+#endif

@@ -121,7 +121,7 @@ int ovalsys_parser_parse
 	context.reader          = reader;
 	context.definition_model    = oval_syschar_model_get_definition_model(model);
 	context.syschar_model   = model;
-	context.syschar_sysinfo = NULL;
+	//context.syschar_sysinfo = NULL;
 	context.user_data       = user_arg;
 	int return_code = 1;
 	xmlTextReaderSetErrorHandler(reader, &libxml_error_handler, &context);

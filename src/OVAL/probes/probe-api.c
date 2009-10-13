@@ -1,3 +1,4 @@
+#ifndef __STUB_PROBE
 #include <stdarg.h>
 #include <string.h>
 #include <errno.h>
@@ -788,3 +789,4 @@ void probe_free (SEXP_t *obj)
 {
         SEXP_free (obj);
 }
+#endif

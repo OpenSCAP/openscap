@@ -173,8 +173,10 @@ static void oval_string_map_main_freefunc(void *item)
 	printf("FREEFUNC: item = %s\n", (const char *) item);
 }
 
-	//TEST MAIN
-static int oval_string_map_main(int argc, char **argv)
+/**
+ * This method is included as a test stub.
+ */
+int oval_string_map_main(int argc, char **argv)
 {
 
 	printf("TEST::START\n");

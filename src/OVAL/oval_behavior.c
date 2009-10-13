@@ -78,6 +78,14 @@ struct oval_behavior *oval_behavior_new()
 	return behavior;
 }
 
+struct oval_behavior *oval_behavior_clone(struct oval_behavior *old_behavior)
+{
+	struct oval_behavior *new_behavior = oval_behavior_new();
+	oval_behavior_set_keyval
+		(new_behavior, oval_behavior_get_key(old_behavior), oval_behavior_get_value(old_behavior));
+	return new_behavior;
+}
+
 void oval_behavior_free(struct oval_behavior *behavior)
 {
 	if (behavior->value)free(behavior->value);
@@ -87,7 +95,7 @@ void oval_behavior_free(struct oval_behavior *behavior)
 	free(behavior);
 }
 
-void behavior_set_keyval(struct oval_behavior *behavior, const char* key, const char* value)
+void oval_behavior_set_keyval(struct oval_behavior *behavior, const char* key, const char* value)
 {
 	behavior->key   = strdup(key);
 	behavior->value = strdup(value);
@@ -104,7 +112,7 @@ int oval_behavior_parse_tag(xmlTextReaderPtr reader,
 		const char *value = (const char *) xmlTextReaderConstValue(reader);
 		if (name && value) {
                         oval_behavior_t *behavior = oval_behavior_new();
-			behavior_set_keyval(behavior, name, value);
+			oval_behavior_set_keyval(behavior, name, value);
                         (*consumer) (behavior, user);
                 }
 	}

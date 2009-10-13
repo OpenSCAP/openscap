@@ -152,6 +152,29 @@ struct oval_object_content
 	return content;
 }
 
+struct oval_object_content *oval_object_content_clone
+	(struct oval_object_content *old_content, struct oval_definition_model *model)
+{
+	struct oval_object_content *new_content
+	    = oval_object_content_new(old_content->type);
+	char *name = oval_object_content_get_field_name(old_content);
+	oval_object_content_set_field_name(new_content, name);
+	switch(new_content->type){
+	case OVAL_OBJECTCONTENT_ENTITY:{
+		struct oval_entity *entity = oval_object_content_get_entity(old_content);
+		oval_object_content_set_entity(new_content, entity);
+		oval_check_t check = oval_object_content_get_varCheck(old_content);
+		oval_object_content_set_varCheck(new_content, check);
+	}break;
+	case OVAL_OBJECTCONTENT_SET:{
+		struct oval_setobject *set = oval_object_content_get_setobject(old_content);
+		oval_object_content_set_setobject(new_content, oval_setobject_clone(set, model));
+	}
+	default: /*NOOP*/;
+	}
+	return new_content;
+}
+
 void oval_object_content_free(struct oval_object_content *content)
 {
 	if(content->fieldName!=NULL)free(content->fieldName);

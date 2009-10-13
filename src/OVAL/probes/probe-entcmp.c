@@ -1,3 +1,4 @@
+#ifndef __STUB_PROBE
 #include <config.h>
 #include <sexp-types.h>
 #include <sexp-manip.h>
@@ -868,3 +869,4 @@ oval_result_t probe_ent_result_byopr(SEXP_t *res_lst, oval_operator_t operator)
 
 	return result;
 }
+#endif

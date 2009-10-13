@@ -38,11 +38,6 @@
 
 int oval_errno;
 
-typedef struct oval_export_target {
-	char *filename;
-	char *encoding;
-} oval_export_target_t;
-
 struct oval_export_target *oval_export_target_new_file(char *filename, char* encoding){
 	oval_export_target_t *target = (oval_export_target_t *)malloc(sizeof(oval_export_target_t));
 	target->filename = strdup(filename);
@@ -57,10 +52,6 @@ void oval_export_target_free(struct oval_export_target *target){
 	target->encoding = NULL;
 	free(target);
 }
-
-typedef struct oval_import_source {
-	char *import_source_filename;
-} oval_import_source_t;
 
 struct oval_import_source *oval_import_source_new_file(char *filename)
 {
@@ -102,6 +93,42 @@ struct oval_definition_model *oval_definition_model_new()
 	return newmodel;
 }
 
+typedef void (*_oval_definition_model_clone_func)(void *, struct oval_definition_model *);
+
+void _oval_definition_model_clone
+	(struct oval_string_map *oldmap, struct oval_definition_model *newmodel, _oval_definition_model_clone_func cloner)
+{
+	struct oval_string_iterator *keys = (struct oval_string_iterator *)oval_string_map_keys(oldmap);
+	while(oval_string_iterator_has_more(keys)){
+		char *key = oval_string_iterator_next(keys);
+		void *olditem = oval_string_map_get_value(oldmap, key);
+		(*cloner)(olditem, newmodel);
+	}
+	oval_string_iterator_free(keys);
+}
+
+struct oval_definition_model *oval_definition_model_clone
+	(struct oval_definition_model *oldmodel)
+{
+	struct oval_definition_model *newmodel = oval_definition_model_new();
+	_oval_definition_model_clone
+		(oldmodel->definition_map, newmodel,
+				(_oval_definition_model_clone_func)oval_definition_clone);
+	_oval_definition_model_clone
+		(oldmodel->object_map, newmodel,
+				(_oval_definition_model_clone_func)oval_object_clone);
+	_oval_definition_model_clone
+		(oldmodel->state_map, newmodel,
+				(_oval_definition_model_clone_func)oval_state_clone);
+	_oval_definition_model_clone
+		(oldmodel->test_map, newmodel,
+				(_oval_definition_model_clone_func)oval_test_clone);
+	_oval_definition_model_clone
+		(oldmodel->variable_map, newmodel,
+				(_oval_definition_model_clone_func)oval_variable_clone);
+	return newmodel;
+}
+
 void oval_definition_model_free(struct oval_definition_model * model)
 {
 	oval_string_map_free(model->definition_map, (oscap_destruct_func)oval_definition_free);
@@ -121,6 +148,7 @@ void oval_definition_model_free(struct oval_definition_model * model)
 
 
 typedef struct oval_syschar_model{
+	struct oval_sysinfo          *sysinfo;
 	struct oval_definition_model *definition_model;
 	struct oval_string_map       *syschar_map;
 	struct oval_string_map       *sysdata_map;
@@ -128,35 +156,24 @@ typedef struct oval_syschar_model{
 } oval_syschar_model_t;
 
 struct oval_syschar_model *oval_syschar_model_new(
-		struct oval_definition_model *definition_model,
-		struct oval_variable_binding_iterator *bindings){
+		struct oval_definition_model *definition_model){
 	oval_syschar_model_t *newmodel =
 	    (oval_syschar_model_t *) malloc(sizeof(oval_syschar_model_t));
-	newmodel->definition_model         = definition_model;
+	newmodel->sysinfo              = NULL;
+	newmodel->definition_model     = definition_model;
 	newmodel->syschar_map          = oval_string_map_new();
 	newmodel->sysdata_map          = oval_string_map_new();
 	newmodel->variable_binding_map = oval_string_map_new();
-	if(bindings!=NULL){
-		while(oval_variable_binding_iterator_has_more(bindings)){
-			struct oval_variable_binding *binding = oval_variable_binding_iterator_next(bindings);
-			oval_syschar_model_add_variable_binding(newmodel, binding);
-			/*
-			struct oval_variable *variable = oval_variable_binding_variable(binding);
-			char *varid    = oval_variable_id(variable);
-			char *value    = oval_variable_binding_value(binding);
-			oval_string_map_put_string(newmodel->variable_binding_map, varid, value);
-			*/
-		}
-		oval_variable_binding_iterator_free(bindings);
-	}
 	return newmodel;
 }
 void oval_syschar_model_free(struct oval_syschar_model *model){
+	if(model->sysinfo)oval_sysinfo_free(model->sysinfo);
 	oval_string_map_free(model->syschar_map, (oscap_destruct_func)oval_syschar_free);
 	oval_string_map_free(model->sysdata_map, (oscap_destruct_func)oval_sysdata_free);
 	oval_string_map_free(model->variable_binding_map, (oscap_destruct_func)oval_variable_binding_free);
 
-	model->definition_model         = NULL;
+	model->sysinfo              = NULL;
+	model->definition_model     = NULL;
 	model->syschar_map          = NULL;
 	model->sysdata_map          = NULL;
 	model->variable_binding_map = NULL;
@@ -174,30 +191,16 @@ struct oval_syschar_iterator *oval_syschar_model_get_syschars(
 	return iterator;
 }
 
-struct oval_sysinfo *oval_syschar_model_get_sysinfo(
-		struct oval_syschar_model *model){
-	struct oval_syschar_iterator *syschars = oval_syschar_model_get_syschars(model);
-	struct oval_syschar *syschar = oval_syschar_iterator_has_more(syschars)
-		?oval_syschar_iterator_next(syschars):NULL;
-	oval_syschar_iterator_free(syschars);
-	return syschar==NULL?NULL:oval_syschar_get_sysinfo(syschar);
+struct oval_sysinfo *oval_syschar_model_get_sysinfo(struct oval_syschar_model *model)
+{
+	return model->sysinfo;
 }
 
-bool oval_syschar_model_add_variable_binding(struct oval_syschar_model *model, struct oval_variable_binding *binding)
+void oval_syschar_model_set_sysinfo(struct oval_syschar_model *model, struct oval_sysinfo *sysinfo)
 {
-	assert(model != NULL);
-	assert(binding != NULL);
-
-	struct oval_variable *variable = oval_variable_binding_get_variable(binding);
-	if (variable == NULL)
-		return false;
-
-	char *varid    = oval_variable_get_id(variable);
-	if (varid == NULL || strcmp(varid, "") == 0 || oval_string_map_get_value(model->variable_binding_map, varid) != NULL)
-		return false;
-
-	oval_string_map_put(model->variable_binding_map, varid, binding);
-	return true;
+	if(sysinfo){
+		model->sysinfo = oval_sysinfo_clone(sysinfo);
+	}
 }
 
 void oval_definition_model_add_definition(
@@ -234,13 +237,40 @@ void oval_definition_model_add_variable(struct oval_definition_model *model,
 	oval_string_map_put(model->variable_map, key, (void *)variable);
 }
 
-static void oval_syschar_model_add_syschar(struct oval_syschar_model *model,
+void oval_syschar_model_add_syschar(struct oval_syschar_model *model,
 		       struct oval_syschar *syschar)
 {
 	struct oval_object *object = oval_syschar_get_object(syschar);
 	if(object!=NULL){
 		char *id = oval_object_get_id(object);
 		oval_string_map_put(model->syschar_map, id, syschar);
+	}
+}
+
+void oval_syschar_model_probe_objects(struct oval_syschar_model *syschar_model){
+	struct oval_sysinfo *sysinfo = oval_syschar_model_get_sysinfo(syschar_model);
+	if(sysinfo==NULL){
+		sysinfo==NULL;//TODO: call probe function to return sysinfo
+		oval_syschar_model_set_sysinfo(syschar_model, sysinfo);
+		oval_sysinfo_free(sysinfo);//oval_syschar_model_set_sysinfo clones sysinfo
+	}
+	struct oval_definition_model *definition_model = oval_syschar_model_get_definition_model(syschar_model);
+	if(definition_model){
+		struct oval_object_iterator *objects = oval_definition_model_get_objects(definition_model);
+		while(oval_object_iterator_has_more(objects)){
+			struct oval_object *object = oval_object_iterator_next(objects);
+			char *objid = oval_object_get_id(object);
+			struct oval_syschar *syschar = oval_syschar_model_get_syschar(syschar_model, objid);
+			if(syschar==NULL){
+				syschar = oval_object_probe(object, definition_model);
+				if(syschar == NULL){
+					syschar = oval_syschar_new(object);
+					oval_syschar_set_flag(syschar,SYSCHAR_FLAG_NOT_COLLECTED);
+				}
+				oval_syschar_model_add_syschar(syschar_model, syschar);
+			}
+		}
+		oval_object_iterator_free(objects);
 	}
 }
 
@@ -320,6 +350,61 @@ struct oval_variable *oval_definition_model_get_variable(struct oval_definition_
 								 key);
 }
 
+oval_datatype_t oval_variable_model_get_datatype(struct oval_variable_model *model, char *key) /* TODO */
+{
+	return 0;
+}
+
+struct oval_string_iterator *oval_variable_model_get_values(struct oval_variable_model *model, char *key) /* TODO */
+{
+	return NULL;
+}
+
+void oval_definition_model_bind_variable_model
+	(struct oval_definition_model *sysmodel, struct oval_variable_model *varmodel)
+{
+	//Bind values to all external variables specified in the variable model.
+	struct oval_variable_iterator *variables = oval_definition_model_get_variables(sysmodel);
+	while(oval_variable_iterator_has_more(variables)){
+		struct oval_variable *variable = oval_variable_iterator_next(variables);
+		if(oval_variable_get_type(variable)==OVAL_VARIABLE_EXTERNAL){
+			char *varid = oval_variable_get_id(variable);
+			oval_datatype_t var_datatype = oval_variable_model_get_datatype(varmodel, varid);
+			if(var_datatype){//values are bound in the variable model
+				oval_datatype_t def_datatype = oval_variable_get_datatype(variable);
+				if(def_datatype==var_datatype){
+					struct oval_string_iterator *values = oval_variable_model_get_values(varmodel, varid);
+					while(oval_string_iterator_has_more(values)){
+						char *text = oval_string_iterator_next(values);
+						struct oval_value *value = oval_value_new();
+						oval_value_set_datatype(value, var_datatype);
+						oval_value_set_text(value, text);
+						oval_variable_add_value(variable, value);
+					}
+					oval_string_iterator_free(values);
+				}else{
+					fprintf(stderr,
+							"WARNING: Unmatched variable datatypes\n"
+							"                             varid = %s\n"
+							"         definition_model datatype = %s\n"
+							"           variable_model datatype = %s\n",
+							varid,
+							oval_datatype_get_text(def_datatype),
+							oval_datatype_get_text(var_datatype));
+				}
+			}
+		}
+	}
+	oval_variable_iterator_free(variables);
+}
+
+void oval_syschar_model_bind_variable_model
+	(struct oval_syschar_model *sysmodel, struct oval_variable_model *varmodel)
+{
+	oval_definition_model_bind_variable_model(sysmodel->definition_model, varmodel);
+}
+
+
 struct oval_syschar *oval_syschar_model_get_syschar(struct oval_syschar_model *model,
 					char *object_id)
 {
@@ -368,14 +453,6 @@ struct oval_variable_iterator *oval_definition_model_get_variables(struct oval_d
 {
 	struct oval_variable_iterator *iterator = (struct oval_variable_iterator *)oval_string_map_values(model->
 								       variable_map);
-	return iterator;
-}
-
-static struct oval_syschar_iterator *get_oval_syschars(struct oval_syschar_model
-						  *model)
-{
-	struct oval_syschar_iterator *iterator = (struct oval_syschar_iterator *)oval_string_map_values(model->
-								       syschar_map);
 	return iterator;
 }
 
@@ -597,7 +674,7 @@ static void _oval_agent_scan_object_for_references
 	 struct oval_string_map *sttmap,
 	 struct oval_string_map *varmap)
 {
-	struct oval_object_content_iterator *contents = oval_object_get_object_content(object);
+	struct oval_object_content_iterator *contents = oval_object_get_object_contents(object);
 	while(oval_object_content_iterator_has_more(contents)){
 		struct oval_object_content *content = oval_object_content_iterator_next(contents);
 		struct oval_entity *entity = oval_object_content_get_entity(content);
@@ -1029,3 +1106,13 @@ int oval_results_model_export
 
 	return 1;
 }
+
+#ifdef __STUB_PROBE
+//STUB for oval_object_probe
+struct oval_syschar *oval_object_probe(struct oval_object *object, struct oval_definition_model *model)
+{
+	struct oval_syschar *syschar = oval_syschar_new(object);
+	oval_syschar_set_flag(syschar, SYSCHAR_STATUS_NOT_COLLECTED);
+	return syschar;
+}
+#endif

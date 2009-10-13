@@ -349,7 +349,7 @@ static void _oval_result_system_scan_object_for_references
 	char *objid = oval_object_get_id(object);
 	struct oval_syschar *syschar = oval_syschar_model_get_syschar(syschar_model, objid);
 	if(syschar)oval_string_map_put(sysmap, objid, syschar);
-	struct oval_object_content_iterator *contents = oval_object_get_object_content(object);
+	struct oval_object_content_iterator *contents = oval_object_get_object_contents(object);
 	while(oval_object_content_iterator_has_more(contents)){
 		struct oval_object_content *content = oval_object_content_iterator_next(contents);
 		struct oval_entity *entity = oval_object_content_get_entity(content);

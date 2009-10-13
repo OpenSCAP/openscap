@@ -136,6 +136,40 @@ struct oval_test *oval_test_new(char *id)
 	return test;
 }
 
+struct oval_test *oval_test_clone
+	(struct oval_test *old_test, struct oval_definition_model *model)
+{
+	struct oval_test *new_test = oval_definition_model_get_test(model, old_test->id);
+	if(new_test==NULL){
+		new_test = oval_test_new(old_test->id);
+		oval_test_set_deprecated(new_test, old_test->deprecated);
+		oval_test_set_version   (new_test, old_test->version);
+		oval_test_set_check     (new_test, old_test->check);
+		oval_test_set_existence (new_test, old_test->existence);
+		oval_test_set_subtype   (new_test, old_test->subtype);
+		oval_test_set_comment   (new_test, old_test->comment);
+
+		if(old_test->object){
+			struct oval_object *object = oval_object_clone(old_test->object, model);
+			oval_test_set_object(new_test, object);
+		}
+		if(old_test->state){
+			struct oval_state *state = oval_state_clone(old_test->state, model);
+			oval_test_set_state(new_test, state);
+		}
+
+		struct oval_string_iterator *notes = oval_test_get_notes(old_test);
+		while(oval_string_iterator_has_more(notes)){
+			char *note = oval_string_iterator_next(notes);
+			oval_test_add_note(new_test, note);
+		}
+		oval_string_iterator_free(notes);
+
+		oval_definition_model_add_test(model, new_test);
+	}
+	return new_test;
+}
+
 void oval_test_free(struct oval_test *test)
 {
 	if (test->comment != NULL)

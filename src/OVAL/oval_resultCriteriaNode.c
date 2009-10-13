@@ -67,6 +67,7 @@ typedef struct oval_result_criteria_node_EXTENDDEF {
 } oval_result_criteria_node_EXTENDDEF_t;
 
 
+/*
 static struct oval_result_criteria_node *_oval_result_criteria_node_new()
 {
 	oval_result_criteria_node_t *node = (oval_result_criteria_node_t *)
@@ -75,6 +76,7 @@ static struct oval_result_criteria_node *_oval_result_criteria_node_new()
 	node->negate = 0;
 	return node;
 }
+*///TODO: REVIEW
 
 
 struct oval_result_criteria_node *oval_result_criteria_node_new
@@ -545,6 +547,7 @@ int oval_result_criteria_node_parse
 	}else{
 		char message[200];*message = '\0';
 		sprintf("oval_result_criteria_node_parse: TODO handle criteria node <%s>", localName);
+		oval_parser_log_warn(context, message);
 		oval_parser_skip_tag(reader, context);
 		return_code = 0;
 	}

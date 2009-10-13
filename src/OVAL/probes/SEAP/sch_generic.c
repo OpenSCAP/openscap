@@ -1,3 +1,4 @@
+#ifndef __STUB_PROBE
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
@@ -132,3 +133,4 @@ int sch_generic_select (SEAP_desc_t *desc, int ev, uint16_t timeout, uint32_t fl
         /* NOTREACHED */
         return (-1);
 }
+#endif

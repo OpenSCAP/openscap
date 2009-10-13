@@ -78,29 +78,40 @@ oval_setobject_operation_t oval_setobject_get_operation(struct oval_setobject * 
 
 struct oval_setobject_iterator *oval_setobject_get_subsets(struct oval_setobject *set)
 {
-	//type==OVAL_SET_AGGREGATE;
-	struct oval_set_AGGREGATE *aggregate =
-	    (struct oval_set_AGGREGATE *)set->extension;
-	return (struct oval_setobject_iterator *)oval_collection_iterator(aggregate->
-								    subsets);
+	struct oval_setobject_iterator *subsets = NULL;
+	if(set->type==OVAL_SET_AGGREGATE){
+		struct oval_set_AGGREGATE *aggregate =
+		    (struct oval_set_AGGREGATE *)set->extension;
+		subsets = (struct oval_setobject_iterator *)
+		oval_collection_iterator(aggregate->subsets);
+	}
+	return subsets;
 }
 
 struct oval_object_iterator *oval_setobject_get_objects(struct oval_setobject *set)
 {
 	//type==OVAL_SET_COLLECTIVE;
-	struct oval_set_COLLECTIVE *collective =
-	    (struct oval_set_COLLECTIVE *)set->extension;
-	return (struct oval_object_iterator *)
-	    oval_collection_iterator(collective->objects);
+	struct oval_object_iterator *objects = NULL;
+	if(set->type==OVAL_SET_COLLECTIVE){
+		struct oval_set_COLLECTIVE *collective =
+		    (struct oval_set_COLLECTIVE *)set->extension;
+		objects = (struct oval_object_iterator *)
+		    oval_collection_iterator(collective->objects);
+	}
+	return objects;
 }
 
 struct oval_state_iterator *oval_setobject_get_filters(struct oval_setobject *set)
 {
 	//type==OVAL_SET_COLLECTIVE;
-	struct oval_set_COLLECTIVE *collective =
-	    (struct oval_set_COLLECTIVE *)set->extension;
-	return (struct oval_state_iterator *)
-	    oval_collection_iterator(collective->filters);
+	struct oval_state_iterator *filters = NULL;
+	if(set->type==OVAL_SET_COLLECTIVE){
+		struct oval_set_COLLECTIVE *collective =
+		    (struct oval_set_COLLECTIVE *)set->extension;
+		filters = (struct oval_state_iterator *)
+		    oval_collection_iterator(collective->filters);
+	}
+	return filters;
 }
 
 struct oval_setobject *oval_setobject_new()
@@ -110,6 +121,44 @@ struct oval_setobject *oval_setobject_new()
 	set->type = OVAL_SET_UNKNOWN;
 	set->extension = NULL;
 	return set;
+}
+
+struct oval_setobject *oval_setobject_clone
+	(struct oval_setobject *old_setobject, struct oval_definition_model *model)
+{
+	struct oval_setobject *new_setobject = oval_setobject_new();
+	oval_setobject_type_t type = oval_setobject_get_type(old_setobject);
+	oval_setobject_set_type(new_setobject, type);
+	oval_setobject_operation_t operation = oval_setobject_get_operation(old_setobject);
+	oval_setobject_set_operation(new_setobject, operation);
+	switch(type)
+	{
+	case OVAL_SET_COLLECTIVE:{
+		struct oval_state_iterator *filters = oval_setobject_get_filters(old_setobject);
+		while(oval_state_iterator_has_more(filters)){
+			struct oval_state *filter = oval_state_iterator_next(filters);
+			oval_setobject_add_filter(new_setobject, oval_state_clone(filter, model));
+		}
+		oval_state_iterator_free(filters);
+		struct oval_object_iterator *objects = oval_setobject_get_objects(old_setobject);
+		while(oval_object_iterator_has_more(objects)){
+			struct oval_object *object = oval_object_iterator_next(objects);
+			oval_setobject_add_object(new_setobject, oval_object_clone(object, model));
+		}
+		oval_object_iterator_free(objects);
+
+	}break;
+	case OVAL_SET_AGGREGATE:{
+		struct oval_setobject_iterator *subsets = oval_setobject_get_subsets(old_setobject);
+		while(oval_setobject_iterator_has_more(subsets)){
+			struct oval_setobject *subset = oval_setobject_iterator_next(subsets);
+			oval_setobject_add_subset(new_setobject, subset);
+		}
+		oval_setobject_iterator_free(subsets);
+	}break;
+	default: /*NOOP*/;
+	}
+	return new_setobject;
 }
 
 void oval_set_free(struct oval_setobject *set)

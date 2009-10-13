@@ -52,6 +52,35 @@ struct oval_sysinfo *oval_sysinfo_new(){
 	return sysinfo;
 }
 
+struct oval_sysinfo *oval_sysinfo_clone(struct oval_sysinfo *old_sysinfo)
+{
+	struct oval_sysinfo *new_sysinfo = oval_sysinfo_new();
+	struct oval_sysint_iterator *interfaces = oval_sysinfo_get_interfaces(old_sysinfo);
+	while(oval_sysint_iterator_has_more(interfaces)){
+		struct oval_sysint *interface = oval_sysint_iterator_next(interfaces);
+		oval_sysinfo_add_interface(new_sysinfo, interface);
+	}
+	oval_sysint_iterator_free(interfaces);
+	char *os_architecture = oval_sysinfo_get_os_architecture(old_sysinfo);
+	if(os_architecture){
+		oval_sysinfo_set_os_architecture(new_sysinfo, os_architecture);
+	}
+	char *os_name = oval_sysinfo_get_os_name(old_sysinfo);
+	if(os_name){
+		oval_sysinfo_set_os_name(new_sysinfo, os_name);
+	}
+	char *os_version = oval_sysinfo_get_os_version(old_sysinfo);
+	if(os_version){
+		oval_sysinfo_set_os_version(new_sysinfo, os_version);
+	}
+	char *host_name = oval_sysinfo_get_primary_host_name(old_sysinfo);
+	if(host_name){
+		oval_sysinfo_set_primary_host_name(new_sysinfo, host_name);
+	}
+	return new_sysinfo;
+}
+
+
 void oval_sysinfo_free(struct oval_sysinfo *sysinfo){
 	if (sysinfo) {
 		if(sysinfo->osArchitecture  != NULL) free(sysinfo->osArchitecture);
@@ -138,9 +167,9 @@ struct oval_sysint_iterator *oval_sysinfo_get_interfaces(struct oval_sysinfo
 								       interfaces);
 }
 
-static void add_oval_sysinfo_interfaces(struct oval_sysinfo *sysinfo, struct oval_sysint *interface)
+void oval_sysinfo_add_interface(struct oval_sysinfo *sysinfo, struct oval_sysint *interface)
 {
-	oval_collection_add(sysinfo->interfaces, interface);
+	oval_collection_add(sysinfo->interfaces, oval_sysint_clone(interface));
 }
 
 		static void _oval_sysinfo_parse_tag_consume_os_name(char* text, void* sysinfo)
@@ -161,7 +190,7 @@ static void add_oval_sysinfo_interfaces(struct oval_sysinfo *sysinfo, struct ova
 		}
 		static void _oval_sysinfo_parse_tag_consume_int(struct oval_sysint *sysint, void *sysinfo)
 		{
-			add_oval_sysinfo_interfaces(sysinfo, sysint);
+			oval_sysinfo_add_interface(sysinfo, sysint);
 		}
 		static int _oval_sysinfo_parse_tag_parse_tag(xmlTextReaderPtr reader,
 			       struct oval_parser_context *context, void *sysinfo)
@@ -225,8 +254,8 @@ int oval_sysinfo_parse_tag(xmlTextReaderPtr reader,
 		sprintf(message, "oval_sysinfo_parse_tag:: return code is not 1::(%d)",return_code);
 		oval_parser_log_warn(context, message);
 	}
-	context->syschar_sysinfo = sysinfo;
-
+	oval_syschar_model_set_sysinfo(context->syschar_model, sysinfo);
+	oval_sysinfo_free(sysinfo);
 	return return_code;
 }
 

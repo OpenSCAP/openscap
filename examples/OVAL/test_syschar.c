@@ -47,16 +47,33 @@ int main(int argc, char **argv)
 		if(argc>2){
 			printf("LOAD OVAL SYSCHAR\n");
 			source = oval_import_source_new_file(argv[2]);
-			struct oval_syschar_model *syschar_model = oval_syschar_model_new(model,NULL);
+			struct oval_syschar_model *syschar_model = oval_syschar_model_new(model);
 			oval_syschar_model_load(syschar_model, source, &_test_error_handler, NULL);
 			oval_import_source_free(source);
 			printf("OVAL SYSCHAR LOADED\n");
+                        struct oval_syschar_iterator *syschars =
+                            oval_syschar_model_get_syschars(syschar_model);
+                        int count;
+                        for(count=0;oval_syschar_iterator_has_more(syschars);count++) {
+                        if(count){
+                                printf("THERE ARE %d SYSCHARS\n",count);
+                        }else{
+                                printf("NO DEFINITIONS FOUND\n");
+                                return 1;
+                        }
+			}
+                        oval_syschar_iterator_free(syschars);
+
+                        /*
 			struct oval_syschar_iterator *syschars = oval_syschar_model_get_syschars(syschar_model);
 			int numSyschars;for(numSyschars=0;oval_syschar_iterator_has_more(syschars);numSyschars++){
 				struct oval_syschar *syschar = oval_syschar_iterator_next(syschars);
 				oval_syschar_to_print(syschar, "", numSyschars+1);
 			}
 			printf("THERE ARE %d SYSCHARS\n",numSyschars);
+			*/
+
+			oval_syschar_model_export(syschar_model, oval_export_target_new_file("-","UTF-8"));
 			oval_syschar_model_free(syschar_model);
 		}
 		oval_definition_model_free(model);

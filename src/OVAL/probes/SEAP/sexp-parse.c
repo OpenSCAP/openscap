@@ -1,3 +1,4 @@
+#ifndef __STUB_PROBE
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
@@ -1464,4 +1465,5 @@ SEXP_t *SEXP_parse (SEXP_psetup_t *psetup, const char *buf, size_t buflen, SEXP_
         */
         return PARSER(label)(psetup, buf, buflen, pstate);
 }
+#endif
 #endif

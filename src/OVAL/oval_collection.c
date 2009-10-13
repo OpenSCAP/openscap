@@ -163,6 +163,7 @@ void oval_collection_iterator_free(struct oval_iterator *iterator)
 	}
 }
 
+/*
 static struct oval_string_iterator *oval_collection_string_iterator(struct
 								    oval_collection
 								    *os_string)
@@ -170,6 +171,8 @@ static struct oval_string_iterator *oval_collection_string_iterator(struct
 	return (struct oval_string_iterator *)
 	    oval_collection_iterator(os_string);
 }
+*///TODO: REVIEW
+
 
 struct oval_iterator *oval_collection_iterator_new()
 {
@@ -217,8 +220,11 @@ static void oval_collection_main_freefunc(void *item)
 	printf("FREEFUNC: item = %s\n", (char *) item);
 }
 
-//TEST MAIN
-static int oval_collection_main(int argc, char **argv)
+
+/**
+ * This procedure is included as a test stub.
+ */
+int oval_collection_main(int argc, char **argv)
 {
 
 	char *array[] =

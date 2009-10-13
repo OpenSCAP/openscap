@@ -36,7 +36,6 @@
 
 typedef struct oval_state {
 	oval_subtype_t subtype;
-	char *name;
 	char *comment;
 	char *id;
 	int deprecated;
@@ -74,9 +73,9 @@ oval_subtype_t oval_state_get_subtype(struct oval_state * state)
 	return ((struct oval_state *)state)->subtype;
 }
 
-char *oval_state_get_name(struct oval_state *state)
+const char *oval_state_get_name(struct oval_state *state)
 {
-	return ((struct oval_state *)state)->name;
+	return oval_subtype_get_text(oval_state_get_subtype(state));
 }
 
 struct oval_string_iterator *oval_state_get_notes(struct oval_state *state)
@@ -119,10 +118,38 @@ struct oval_state *oval_state_new(char* id)
 	state->subtype = OVAL_SUBTYPE_UNKNOWN;
 	state->comment = NULL;
 	state->id = strdup(id);
-	state->name = NULL;
 	state->notes = oval_collection_new();
 	state->contents = oval_collection_new();
 	return state;
+}
+
+struct oval_state *oval_state_clone
+	(struct oval_state *old_state, struct oval_definition_model *model)
+{
+	oval_state_t *new_state = oval_definition_model_get_state(model, old_state->id);
+	if(new_state==NULL){
+		new_state = oval_state_new(old_state->id);
+		oval_state_set_deprecated(new_state, old_state->deprecated);
+		oval_state_set_version   (new_state, old_state->version);
+		oval_state_set_subtype   (new_state, old_state->subtype);
+		oval_state_set_comment   (new_state, old_state->comment);
+
+		struct oval_string_iterator *notes = oval_state_get_notes(old_state);
+		while(oval_string_iterator_has_more(notes)){
+			char *note = oval_string_iterator_next(notes);
+			oval_state_add_note(new_state, strdup(note));
+		}
+		oval_string_iterator_free(notes);
+		struct oval_state_content_iterator *contents = oval_state_get_contents(old_state);
+		while(oval_state_content_iterator_has_more(contents)){
+			struct oval_state_content *content = oval_state_content_iterator_next(contents);
+			oval_state_add_content(new_state, oval_state_content_clone(content, model));
+		}
+		oval_state_content_iterator_free(contents);
+
+		oval_definition_model_add_state(model, new_state);
+	}
+	return new_state;
 }
 
 void oval_state_free(struct oval_state *state)
@@ -131,15 +158,12 @@ void oval_state_free(struct oval_state *state)
 		free(state->comment);
 	if (state->id != NULL)
 		free(state->id);
-	if (state->name != NULL)
-		free(state->name);
 	oval_collection_free_items(state->notes, &free);
 	oval_collection_free_items(state->contents, (oscap_destruct_func)oval_state_content_free);
 
 	state->comment =NULL;
 	state->contents =NULL;
 	state->id =NULL;
-	state->name =NULL;
 	state->notes =NULL;
 	free(state);
 }
@@ -147,12 +171,6 @@ void oval_state_free(struct oval_state *state)
 void oval_state_set_subtype(struct oval_state *state, oval_subtype_t subtype)
 {
 	state->subtype = subtype;
-}
-
-void oval_state_set_name(struct oval_state *state, char *name)
-{
-	if(state->name!=NULL)free(state->name);
-	state->name = name==NULL?NULL:strdup(name);
 }
 
 void oval_state_add_note(struct oval_state *state, char *notes)

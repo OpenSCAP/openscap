@@ -529,32 +529,6 @@ const char *oval_subtype_get_text(oval_subtype_t subtype)
 	return map[subidx-1].string;
 }
 
-static void _test_oval_subtype_mapping(const struct oscap_string_map *map)
-{
-	printf("\n");
-	int i;for(i=0;map[i].string;i++){
-		printf("[%05d] %s\n", map[i].value, map[i].string);
-	}
-}
-
-static void _test_oval_subtypes_mapping()
-{
-	_test_oval_subtype_mapping(OVAL_SUBTYPE_AIX_MAP        );// 1000
-	_test_oval_subtype_mapping(OVAL_SUBTYPE_APACHE_MAP     );// 2000
-	_test_oval_subtype_mapping(OVAL_SUBTYPE_CATOS_MAP      );// 3000
-	_test_oval_subtype_mapping(OVAL_SUBTYPE_ESX_MAP        );// 4000
-	_test_oval_subtype_mapping(OVAL_SUBTYPE_FREEBSD_MAP    );// 5000
-	_test_oval_subtype_mapping(OVAL_SUBTYPE_HPUX_MAP       );// 6000
-	_test_oval_subtype_mapping(OVAL_SUBTYPE_INDEPENDENT_MAP);// 7000
-	_test_oval_subtype_mapping(OVAL_SUBTYPE_IOS_MAP        );// 8000
-	_test_oval_subtype_mapping(OVAL_SUBTYPE_LINUX_MAP      );// 9000
-	_test_oval_subtype_mapping(OVAL_SUBTYPE_MACOS_MAP      );//10000
-	_test_oval_subtype_mapping(OVAL_SUBTYPE_PIXOS_MAP      );//11000
-	_test_oval_subtype_mapping(OVAL_SUBTYPE_SOLARIS_MAP    );//12000
-	_test_oval_subtype_mapping(OVAL_SUBTYPE_UNIX_MAP       );//13000
-	_test_oval_subtype_mapping(OVAL_SUBTYPE_WINDOWS_MAP    );//14000
-}
-
 static const struct oscap_string_map OVAL_RESULT_MAP[] = {
 	{ OVAL_RESULT_TRUE,           "true"          },
 	{ OVAL_RESULT_FALSE,          "false"         },

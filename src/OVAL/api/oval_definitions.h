@@ -615,13 +615,13 @@ oval_affected_family_t       oval_affected_get_family  (struct oval_affected *);
  * Get platforms from an affected platform description.
  * @relates oval_affected
  */
-struct oval_string_iterator *oval_affected_get_platform(struct oval_affected *);
+struct oval_string_iterator *oval_affected_get_platforms(struct oval_affected *);
 
 /**
  * Get product names from an affected platform description.
  * @relates oval_affected
  */
-struct oval_string_iterator *oval_affected_get_product (struct oval_affected *);
+struct oval_string_iterator *oval_affected_get_products (struct oval_affected *);
 
 struct oval_criteria_node *oval_criteria_node_new(oval_criteria_node_type_t);
 void oval_criteria_node_free(struct oval_criteria_node *);
@@ -798,7 +798,7 @@ void oval_object_set_comment(struct oval_object *, char *);
 void oval_object_set_deprecated(struct oval_object *, int);
 void oval_object_set_version(struct oval_object *, int);
 void oval_object_add_object_content(struct oval_object *, struct oval_object_content *);
-void oval_object_add_behaviors(struct oval_object *, struct oval_behavior *);
+void oval_object_add_behavior(struct oval_object *, struct oval_behavior *);
 
 int                 oval_object_iterator_has_more(struct oval_object_iterator *);
 struct oval_object *oval_object_iterator_next    (struct oval_object_iterator *);
@@ -851,7 +851,7 @@ int                                  oval_object_get_deprecated    (struct oval_
  * @relates oval_object
  */
 int                                  oval_object_get_version       (struct oval_object *);
-struct oval_object_content_iterator *oval_object_get_object_content(struct oval_object *);
+struct oval_object_content_iterator *oval_object_get_object_contents(struct oval_object *);
 struct oval_behavior_iterator       *oval_object_get_behaviors     (struct oval_object *);
 
 struct oval_test *oval_test_new(char *);
@@ -1020,6 +1020,8 @@ void oval_entity_set_mask(struct oval_entity *, int);
 void oval_entity_set_varref_type(struct oval_entity *, oval_entity_varref_type_t);
 void oval_entity_set_variable(struct oval_entity *, struct oval_variable *);
 void oval_entity_set_value(struct oval_entity *, struct oval_value *);
+void oval_entity_set_name(struct oval_entity *, char *);
+void oval_entity_set_operation(struct oval_entity *, oval_operation_t);
 
 int                        oval_state_content_iterator_has_more(struct oval_state_content_iterator *);
 struct oval_state_content *oval_state_content_iterator_next    (struct oval_state_content_iterator *);
@@ -1147,7 +1149,7 @@ struct oval_state_iterator  *oval_setobject_get_filters  (struct oval_setobject 
 struct oval_behavior *oval_behavior_new();
 void oval_behavior_free(struct oval_behavior *);
 
-void behavior_set_keyval(struct oval_behavior *behavior, const char* key, const char* value);
+void oval_behavior_set_keyval(struct oval_behavior *behavior, const char* key, const char* value);
 
 int                   oval_behavior_iterator_has_more(struct oval_behavior_iterator *);
 struct oval_behavior *oval_behavior_iterator_next    (struct oval_behavior_iterator *);
@@ -1248,7 +1250,7 @@ oval_subtype_t                      oval_state_get_subtype   (struct oval_state 
  * Get OVAL state name.
  * @relates oval_state
  */
-char                               *oval_state_get_name      (struct oval_state *);
+const char                         *oval_state_get_name      (struct oval_state *);
 
 /**
  * Get OVAL state comment.
@@ -1289,7 +1291,9 @@ struct oval_state_content_iterator *oval_state_get_contents  (struct oval_state 
 struct oval_variable *oval_variable_new(char *, oval_variable_type_t);
 void oval_variable_free(struct oval_variable *);
 
-void oval_variable_set_type(struct oval_variable *, oval_variable_type_t);
+void oval_variable_set_comment   (struct oval_variable *, char *);
+void oval_variable_set_deprecated(struct oval_variable *, bool);
+void oval_variable_set_version   (struct oval_variable *, int);
 void oval_variable_set_datatype(struct oval_variable *, oval_datatype_t);
 void oval_variable_add_value(struct oval_variable *, struct oval_value *);	//type==OVAL_VARIABLE_CONSTANT
 void oval_variable_set_component(struct oval_variable *, struct oval_component *);	//type==OVAL_VARIABLE_LOCAL
@@ -1463,6 +1467,99 @@ oval_datetime_format_t          oval_component_get_timedif_format_2    (struct o
  * @relates oval_component
  */
 char                           *oval_component_get_regex_pattern       (struct oval_component *); //type==OVAL_COMPONENT_REGEX_CAPTURE
+struct oval_value              *oval_component_get_literal_value       (struct oval_component *);//type==OVAL_COMPONENT_LITERAL
+
+/**
+ * Get OVAL component object.
+ * @see OVAL_COMPONENT_OBJECTREF
+ * @relates oval_component
+ */
+struct oval_object             *oval_component_get_object              (struct oval_component *);//type==OVAL_COMPONENT_OBJECTREF
+
+/**
+ * Get OVAL component object field.
+ * @see OVAL_COMPONENT_OBJECTREF
+ * @relates oval_component
+ */
+char                           *oval_component_get_object_field        (struct oval_component *);//type==OVAL_COMPONENT_OBJECTREF
+
+/**
+ * Get OVAL component variable.
+ * @see OVAL_COMPONENT_VARREF
+ * @relates oval_component
+ */
+struct oval_variable           *oval_component_get_variable            (struct oval_component *);//type==OVAL_COMPONENT_VARREF
+
+/**
+ * Get OVAL component function components.
+ * @see OVAL_COMPONENT_FUNCTION
+ * @relates oval_component
+ */
+struct oval_component_iterator *oval_component_get_function_components (struct oval_component *);//type==OVAL_COMPONENT_FUNCTION
+
+/**
+ * Set OVAL component arithmetic operation.
+ * @see OVAL_COMPONENT_ARITHMETIC
+ * @relates oval_component
+ */
+void oval_component_set_arithmetic_operation
+	(struct oval_component *,oval_arithmetic_operation_t);//type==OVAL_COMPONENT_ARITHMETIC
+
+/**
+ * Set OVAL component begin character.
+ * @see OVAL_COMPONENT_BEGIN
+ * @relates oval_component
+ */
+void oval_component_set_begin_character(struct oval_component *,char *);//type==OVAL_COMPONENT_BEGIN
+
+/**
+ * Set OVAL component end character.
+ * @see OVAL_COMPONENT_END
+ * @relates oval_component
+ */
+void oval_component_set_end_character(struct oval_component *, char *);//type==OVAL_COMPONENT_END
+
+/**
+ * Set OVAL component split delimiter.
+ * @see OVAL_COMPONENT_SPLIT
+ * @relates oval_component
+ */
+void oval_component_set_split_delimiter(struct oval_component *, char *);//type==OVAL_COMPONENT_SPLIT
+
+/**
+ * Set OVAL component start of a substring.
+ * @see OVAL_COMPONENT_SUBSTRING
+ * @relates oval_component
+ */
+void oval_component_set_substring_start(struct oval_component *, int);//type==OVAL_COMPONENT_SUBSTRING
+
+/**
+ * Set OVAL component substring length.
+ * @see OVAL_COMPONENT_SUBSTRING
+ * @relates oval_component
+ */
+void oval_component_set_substring_length    (struct oval_component *, int);//type==OVAL_COMPONENT_SUBSTRING
+
+/**
+ * Set OVAL component timedif format 1.
+ * @see OVAL_COMPONENT_TIMEDIF
+ * @relates oval_component
+ */
+void oval_component_set_timedif_format_1(struct oval_component *, oval_datetime_format_t);//type==OVAL_COMPONENT_TIMEDIF
+
+/**
+ * Set OVAL component timedif format 2.
+ * @see OVAL_COMPONENT_TIMEDIF
+ * @relates oval_component
+ */
+void oval_component_set_timedif_format_2(struct oval_component *, oval_datetime_format_t);//type==OVAL_COMPONENT_TIMEDIF
+
+/**
+ * Set OVAL component regex pattern.
+ * @see OVAL_COMPONENT_REGEX_CAPTURE
+ * @relates oval_component
+ */
+void oval_component_set_regex_pattern(struct oval_component *, char *); //type==OVAL_COMPONENT_REGEX_CAPTURE
 
 struct oval_message *oval_message_new();
 void oval_message_free(struct oval_message *);

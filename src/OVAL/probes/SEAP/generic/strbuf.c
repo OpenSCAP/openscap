@@ -1,3 +1,4 @@
+#ifndef __STUB_PROBE
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
@@ -279,3 +280,4 @@ ssize_t strbuf_write (strbuf_t *buf, int fd)
         
         return (size);
 }
+#endif /*__STUB_PROBE */

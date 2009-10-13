@@ -92,6 +92,19 @@ struct oval_state_content *oval_state_content_new()
 	return content;
 }
 
+struct oval_state_content *oval_state_content_clone
+	(struct oval_state_content *old_content, struct oval_definition_model *model)
+{
+	struct oval_state_content *new_content = oval_state_content_new();
+	oval_check_t echeck = oval_state_content_get_ent_check(old_content);
+	oval_state_content_set_entcheck(new_content, echeck);
+	struct oval_entity *entity = oval_state_content_get_entity(old_content);
+	oval_state_content_set_entity(new_content, oval_entity_clone(entity, model));
+	oval_check_t vcheck = oval_state_content_get_var_check(old_content);
+	oval_state_content_set_varcheck(new_content, vcheck);
+	return new_content;
+}
+
 void oval_state_content_free(struct oval_state_content *content)
 {
 	if(content->entity)oval_entity_free(content->entity);

@@ -36,6 +36,7 @@
 #include "oval_collection_impl.h"
 #include "oval_string_map_impl.h"
 #include "oval_errno.h"
+#include <alloca.h>
 
 #define OVAL_RESULT_TEST_DEBUG 0
 static int rpmvercmp(const char * a, const char * b); // don't really feel like creating a new header file just for this

@@ -32,6 +32,7 @@
 #include <string.h>
 #include "oval_definitions_impl.h"
 #include "oval_collection_impl.h"
+#include "oval_string_map_impl.h"
 #include "oval_agent_api_impl.h"
 
 
@@ -45,15 +46,15 @@ typedef struct oval_variable {
 	void *extension;
 } oval_variable_t;
 
-typedef struct oval_variable_CONSTANT {
+typedef struct oval_variable_CONEXT {
 	char *id;
 	char *comment;
 	int version;
 	int deprecated;
 	oval_variable_type_t type;
 	oval_datatype_t datatype;
-	struct oval_collection *values;	//type==OVAL_VARIABLE_CONSTANT
-} oval_variable_CONSTANT_t;
+	struct oval_string_map *values;	//type==OVAL_VARIABLE_CONSTANT/EXTERNAL
+} oval_variable_CONEXT_t;
 
 typedef struct oval_variable_LOCAL {
 	char *id;
@@ -119,14 +120,15 @@ oval_datatype_t oval_variable_get_datatype(struct oval_variable * variable)
 
 struct oval_value_iterator *oval_variable_get_values(struct oval_variable *variable)
 {
-	//type==OVAL_VARIABLE_CONSTANT
+	//type==OVAL_VARIABLE_CONSTANT or OVAL_VARIABLE_EXTERNAL
 	struct oval_value_iterator *values = NULL;
-	if (oval_variable_get_type(variable) == OVAL_VARIABLE_CONSTANT) {
-		oval_variable_CONSTANT_t *constant =
-		    (oval_variable_CONSTANT_t *) variable;
+	oval_variable_type_t type = oval_variable_get_type(variable);
+	if (type == OVAL_VARIABLE_EXTERNAL || type==OVAL_VARIABLE_CONSTANT) {
+		oval_variable_CONEXT_t *constant =
+		    (oval_variable_CONEXT_t *) variable;
 		values =
 		    (struct oval_value_iterator *)
-		    oval_collection_iterator(constant->values);
+		    oval_string_map_values(constant->values);
 	}
 	return values;
 }
@@ -149,10 +151,11 @@ static void _set_oval_variable_type
 	variable->type = type;
 	switch(type)
 	{
-		case OVAL_VARIABLE_CONSTANT:{
-			oval_variable_CONSTANT_t *constant
-			= (oval_variable_CONSTANT_t *)variable;
-			constant->values = oval_collection_new();
+		case OVAL_VARIABLE_CONSTANT:
+		case OVAL_VARIABLE_EXTERNAL:{
+			oval_variable_CONEXT_t *conext
+			= (oval_variable_CONEXT_t *)variable;
+			conext->values = oval_string_map_new();
 		}break;
 		default: variable->extension = NULL;
 	}
@@ -169,37 +172,82 @@ static void _set_oval_variable_type
 	return variable;
 }
 
+void _oval_variable_clone_CONEXT
+	(struct oval_variable *new_variable, struct oval_variable *old_variable)
+{
+	struct oval_value_iterator *values = oval_variable_get_values(old_variable);
+	while(oval_value_iterator_has_more(values)){
+		struct oval_value *value = oval_value_iterator_next(values);
+		oval_variable_add_value(new_variable, oval_value_clone(value));
+	}
+	oval_value_iterator_free(values);
+}
+
+void _oval_variable_clone_LOCAL
+	(struct oval_variable *new_variable, struct oval_variable *old_variable,
+	 struct oval_definition_model *model)
+{
+	struct oval_component *component = oval_variable_get_component(old_variable);
+	oval_variable_set_component(new_variable, oval_component_clone(component, model));
+}
+
+struct oval_variable   *oval_variable_clone
+	(struct oval_variable *old_variable, struct oval_definition_model *model)
+{
+	oval_variable_t *new_variable = oval_definition_model_get_variable(model, old_variable->id);
+	if(new_variable==NULL){
+		new_variable = oval_variable_new(old_variable->id, old_variable->type);
+
+		oval_variable_set_comment   (new_variable, old_variable->comment);
+		oval_variable_set_version   (new_variable, old_variable->version);
+		oval_variable_set_deprecated(new_variable, old_variable->deprecated);
+		oval_variable_set_datatype  (new_variable, old_variable->datatype);
+
+		switch(new_variable->type)
+		{
+		case OVAL_VARIABLE_EXTERNAL:
+		case OVAL_VARIABLE_CONSTANT: _oval_variable_clone_CONEXT(new_variable, old_variable);break;
+		case OVAL_VARIABLE_LOCAL   : _oval_variable_clone_LOCAL (new_variable, old_variable, model);break;
+		default: /*NOOP*/break;
+		}
+
+		oval_definition_model_add_variable(model, new_variable);
+	}
+	return new_variable;
+}
+
+
 void oval_variable_free(struct oval_variable *variable)
 {
-	if (variable == NULL)
-		return;
-	if (variable->id)free(variable->id);
-	if (variable->comment)free(variable->comment);
-	if (variable->extension != NULL) {
-		switch (variable->type) {
-		case OVAL_VARIABLE_LOCAL:{
-				oval_variable_LOCAL_t *local
-					= (oval_variable_LOCAL_t *)variable;
-				if(local->component)
-					oval_component_free(local->component);
-				local->component = NULL;
+	if (variable){
+		if (variable->id)free(variable->id);
+		if (variable->comment)free(variable->comment);
+		if (variable->extension != NULL) {
+			switch (variable->type) {
+			case OVAL_VARIABLE_LOCAL:{
+					oval_variable_LOCAL_t *local
+						= (oval_variable_LOCAL_t *)variable;
+					if(local->component)
+						oval_component_free(local->component);
+					local->component = NULL;
+				}
+				break;
+			case OVAL_VARIABLE_EXTERNAL:
+			case OVAL_VARIABLE_CONSTANT:{
+					oval_variable_CONEXT_t *conext
+						= (oval_variable_CONEXT_t *)variable;
+					oval_string_map_free
+						(conext->values, (oscap_destruct_func)oval_value_free);
+					conext->values = NULL;
+				} break;
+			case OVAL_VARIABLE_UNKNOWN: break;
 			}
-			break;
-		case OVAL_VARIABLE_CONSTANT:{
-				oval_variable_CONSTANT_t *constant
-					= (oval_variable_CONSTANT_t *)variable;
-				oval_collection_free_items
-					(constant->values, (oscap_destruct_func)oval_value_free);
-				constant->values = NULL;
-			} break;
-		case OVAL_VARIABLE_EXTERNAL: break;
-		case OVAL_VARIABLE_UNKNOWN: break;
 		}
-	}
-	variable->comment = NULL;
-	variable->id = NULL;
+		variable->comment = NULL;
+		variable->id = NULL;
 
-	free(variable);
+		free(variable);
+	}
 }
 
 void oval_variable_set_datatype(struct oval_variable *variable,
@@ -208,19 +256,19 @@ void oval_variable_set_datatype(struct oval_variable *variable,
 	variable->datatype = datatype;
 }
 
-static void set_oval_variable_comment(struct oval_variable *variable, char *comm)
+void oval_variable_set_comment(struct oval_variable *variable, char *comm)
 {
 	if(variable->comment!=NULL)free(variable->comment);
 	variable->comment = comm==NULL?NULL:strdup(comm);
 }
 
-static void set_oval_variable_deprecated(struct oval_variable *variable,
-					 int deprecated)
+void oval_variable_set_deprecated(struct oval_variable *variable,
+				  bool deprecated)
 {
 	variable->deprecated = deprecated;
 }
 
-static void set_oval_variable_version(struct oval_variable *variable, int version)
+void oval_variable_set_version(struct oval_variable *variable, int version)
 {
 	variable->version = version;
 }
@@ -229,10 +277,11 @@ void oval_variable_add_value(struct oval_variable *variable,
 			      struct oval_value *value)
 {
 	//type==OVAL_VARIABLE_CONSTANT
-	if (variable->type == OVAL_VARIABLE_CONSTANT) {
-		oval_variable_CONSTANT_t *constant =
-		    (oval_variable_CONSTANT_t *) variable;
-		oval_collection_add(constant->values, (void *)value);
+	if (variable->type == OVAL_VARIABLE_CONSTANT || variable->type == OVAL_VARIABLE_EXTERNAL) {
+		oval_variable_CONEXT_t *conext =
+		    (oval_variable_CONEXT_t *) variable;
+		char *text = oval_value_get_text(value);
+		oval_string_map_put(conext->values, text, (void *)value);
 	}
 }
 
@@ -327,13 +376,13 @@ int oval_variable_parse_tag(xmlTextReaderPtr reader,
 
 	char *comm = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "comment");
 	if(comm!=NULL){
-		set_oval_variable_comment(variable, comm);
+		oval_variable_set_comment(variable, comm);
 		free(comm);comm=NULL;
 	}
 	int deprecated = oval_parser_boolean_attribute(reader, "deprecated", 0);
-	set_oval_variable_deprecated(variable, deprecated);
+	oval_variable_set_deprecated(variable, deprecated);
 	char *version = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "version");
-	set_oval_variable_version(variable, atoi(version));
+	oval_variable_set_version(variable, atoi(version));
 	free(version);version = NULL;
 
 	oval_datatype_t datatype =

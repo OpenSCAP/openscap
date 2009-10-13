@@ -39,6 +39,7 @@ OSCAP_HIDDEN_START;
 extern const char NAMESPACE_OVALSYS[];
 
 struct oval_sysint *oval_sysint_new();
+struct oval_sysint *oval_sysint_clone(struct oval_sysint *);
 void oval_sysint_free(struct oval_sysint *);
 
 void oval_sysint_set_name(struct oval_sysint *, char *);
@@ -52,6 +53,7 @@ void oval_sysint_to_print(struct oval_sysint *, char *, int);
 void oval_sysint_to_dom  (struct oval_sysint *, xmlDoc *, xmlNode *);
 
 struct oval_sysinfo *oval_sysinfo_new();
+struct oval_sysinfo *oval_sysinfo_clone(struct oval_sysinfo *);
 void oval_sysinfo_free(struct oval_sysinfo *);
 void oval_sysinfo_to_print(struct oval_sysinfo *, char *, int);
 void oval_sysinfo_to_dom  (struct oval_sysinfo *, xmlDoc *, xmlNode *);
@@ -61,6 +63,7 @@ void oval_sysinfo_set_os_name(struct oval_sysinfo *, char *);
 void oval_sysinfo_set_os_version(struct oval_sysinfo *, char *);
 void oval_sysinfo_set_os_architecture(struct oval_sysinfo *, char *);
 void oval_sysinfo_set_primary_host_name(struct oval_sysinfo *, char *);
+void oval_sysinfo_add_interface(struct oval_sysinfo *, struct oval_sysint *);
 
 struct oval_sysdata *oval_sysdata_new(char *id);
 void oval_sysdata_free(struct oval_sysdata *);
@@ -75,14 +78,11 @@ void oval_sysdata_add_item(struct oval_sysdata *, struct oval_sysitem *);
 struct oval_syschar *oval_syschar_new(struct oval_object *);
 void oval_syschar_free(struct oval_syschar *);
 
-void set_oval_syschar_flag(struct oval_syschar *,
-			   oval_syschar_collection_flag_t);
 void oval_syschar_add_messages(struct oval_syschar *, char *);
-void oval_syschar_set_sysinfo(struct oval_syschar *, struct oval_sysinfo *);
+void oval_syschar_set_flag(struct oval_syschar *model, oval_syschar_collection_flag_t flag);
 void oval_syschar_set_object(struct oval_syschar *, struct oval_object *);
 void oval_syschar_add_variable_binding(struct oval_syschar *, struct oval_variable_binding *);
 void oval_syschar_add_sysdata(struct oval_syschar *, struct oval_sysdata *);
-void oval_syschar_to_print(struct oval_syschar *, char *, int);
 void oval_syschar_to_dom  (struct oval_syschar *, xmlDoc *, xmlNode *);
 int oval_syschar_parse_tag(xmlTextReaderPtr, struct oval_parser_context *context);
 oval_syschar_collection_flag_t oval_syschar_flag_parse(xmlTextReaderPtr, char *, oval_syschar_collection_flag_t);
