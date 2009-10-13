@@ -1,5 +1,5 @@
 /**
- * @file cpelang_priv.h
+ * @file cpedict_priv.h
  * \brief Interface to Common Platform Enumeration (CPE) Language
  *
  * See more details at http://nvd.nist.gov/cpe.cfm
@@ -30,9 +30,13 @@
 
 #include <libxml/xmlreader.h>
 
-struct cpe_platformspec * parse_platformspec(xmlTextReaderPtr reader);
-struct cpe_platform * parse_platform(xmlTextReaderPtr reader);
-struct cpe_lang_expr * parse_ret_expr(xmlTextReaderPtr reader);
-char * parse_text_element(xmlTextReaderPtr reader, char *name);
-void parse_file(const char *fname);
-void print_node(xmlTextReaderPtr reader);
+static char *str_trim(char *str);
+void cpedict_parse_file(const char *fname);
+static struct cpe_dict * parse_cpedict(xmlTextReaderPtr reader);
+static struct cpe_generator * cpe_generator_new_xml(xmlTextReaderPtr reader);
+static struct cpe_dictitem * cpe_dictitem_new_xml(xmlTextReaderPtr reader);
+static struct cpe_dict_check * cpe_dict_check_parse(xmlTextReaderPtr reader);
+static struct cpe_dict_vendor * cpe_dict_vendor_parse(xmlTextReaderPtr reader);
+static struct cpe_dicitem_title * cpe_dictitem_title_parse(xmlTextReaderPtr reader, char * name);
+static struct cpe_dictitem *cpe_dictitem_new_empty();
+static struct cpe_dict_vendor *cpe_dictvendor_new_empty();

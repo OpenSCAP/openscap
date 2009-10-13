@@ -30,6 +30,7 @@
  *
  * Authors:
  *      Lukas Kuklinek <lkuklinek@redhat.com>
+ *      Maros Barabas <mbarabas@redhat.com>
  */
 
 #ifndef _CPELANG_H_

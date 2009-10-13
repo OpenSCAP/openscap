@@ -68,16 +68,19 @@ struct cpe_platform {
 	struct cpe_lang_expr expr;	// expression for match evaluation
 };
 
+void print_node(xmlTextReaderPtr reader);
+
 /*
  * Function that jump to next XML element.
  */
-void xmlTextReaderNextElement(xmlTextReaderPtr reader) {
+int xmlTextReaderNextElement(xmlTextReaderPtr reader) {
 
         int ret;
         do { 
               ret = xmlTextReaderRead(reader); 
               if (ret == 0) break;
         } while (xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT);
+        return ret;
 }
 
 void parse_file(const char *fname) {
@@ -124,17 +127,17 @@ struct cpe_platformspec * parse_platformspec(xmlTextReaderPtr reader) {
 
                 ret->ns_href = (char *) xmlTextReaderConstNamespaceUri(reader);
                 ret->ns_prefix = (char *) xmlTextReaderConstPrefix(reader);
-                ret->xml.lang = xmlTextReaderConstXmlLang(reader);
+                ret->xml.lang = (char *) xmlTextReaderConstXmlLang(reader);
+                ret->xml.namespace = (char *) xmlTextReaderPrefix(reader);
                 
                 // skip nodes until new element
                 xmlTextReaderNextElement(reader);
 
                 while (xmlStrcmp (xmlTextReaderConstLocalName(reader), (const xmlChar *)"platform") == 0) {
                         
-                //print_node(reader);
-                parse_platform(reader);
-                xmlTextReaderNextElement(reader);
-
+                        //print_node(reader);
+                        parse_platform(reader);
+                        xmlTextReaderNextElement(reader);
                 }
                 //print_node(reader);
         }
@@ -169,11 +172,11 @@ struct cpe_platform * parse_platform(xmlTextReaderPtr reader) {
                 
             if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), BAD_CAST "title") &&
                 xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT){
-                        ret->title = parse_text_element(reader, "title");
+                        ret->title = parse_text_element(reader, "title"); // TODO: 0-n titles !
             } else 
                 if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), BAD_CAST "remark") &&
                     xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
-                        ret->remark = parse_text_element(reader, "remark");
+                        ret->remark = parse_text_element(reader, "remark"); // TODO: 0-n remarks !
             } else
                 if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), BAD_CAST "logical-test") &&
                     xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
@@ -206,6 +209,8 @@ struct cpe_lang_expr * parse_ret_expr(xmlTextReaderPtr reader) {
                 temp = xmlTextReaderGetAttribute(reader, BAD_CAST "name");
                 ret->meta.cpe = cpe_name_new((char *)temp);
                 xmlFree(temp);
+                ret->xml.lang = (char *) xmlTextReaderConstXmlLang(reader);
+                ret->xml.namespace = (char *) xmlTextReaderPrefix(reader);
                 return ret;
         } else {
                 // it's logical-test, fill the structure and go to next node

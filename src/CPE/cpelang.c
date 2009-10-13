@@ -25,6 +25,7 @@
  *
  * Authors:
  *      Lukas Kuklinek <lkuklinek@redhat.com>
+ *      Maros Barabas <mbarabas@redhat.com>
  */
 
 #include <libxml/tree.h>
