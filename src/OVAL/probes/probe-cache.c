@@ -11,7 +11,7 @@
 
 RBNODECMP(pcache)
 {
-        return SEXP_string_cmp (a->id, b->id);
+        return (SEXP_string_cmp (a->id, b->id));
 }
 
 RBNODEJOIN(pcache)
@@ -51,7 +51,7 @@ int pcache_sexp_add (pcache_t *cache, const SEXP_t *id, SEXP_t *item)
 
         new = RB_NEWNODE(pcache)();
         new->id   = SEXP_ref (id);
-        new->item = item;
+        new->item = SEXP_ref (item);
         
         if (RB_INSERT(pcache)(&(cache->tree), new) == E_OK) {
                 return (0);
@@ -101,7 +101,7 @@ SEXP_t *pcache_sexp_get (pcache_t *cache, const SEXP_t *id)
         key.id = (SEXP_t *)id;
         node = RB_SEARCH(pcache)(&(cache->tree), &key);
 
-        return (node == NULL ? NULL : node->item);
+        return (node == NULL ? NULL : SEXP_ref (node->item));
 }
 
 SEXP_t *pcache_cstr_get (pcache_t *cache, const char *id)
@@ -115,6 +115,6 @@ SEXP_t *pcache_cstr_get (pcache_t *cache, const char *id)
         node = RB_SEARCH(pcache)(&(cache->tree), &key);
         SEXP_free (key.id);
         
-        return (node == NULL ? NULL : node->item);
+        return (node == NULL ? NULL : SEXP_ref (node->item));
 }
 #endif

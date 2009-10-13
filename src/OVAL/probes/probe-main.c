@@ -20,7 +20,7 @@ void   *probe_worker (void *arg);
 
 #define MAX_EVAL_DEPTH 8
 
-SEXP_t *SEXP_OVALste_fetch (SEXP_t *id_list)
+SEXP_t *probe_ste_fetch (SEXP_t *id_list)
 {
         SEXP_t *res, *ste, *id;
         uint32_t i_len, r_len;
@@ -34,7 +34,7 @@ SEXP_t *SEXP_OVALste_fetch (SEXP_t *id_list)
         r_len = SEXP_list_length (res);
         
         if (i_len != r_len) {
-                SEXP_list_free (res);
+                SEXP_free (res);
                 return (NULL);
         }
         
@@ -46,15 +46,22 @@ SEXP_t *SEXP_OVALste_fetch (SEXP_t *id_list)
                 _A(ste != NULL);
 
                 if (pcache_sexp_add (global.pcache, id, ste) != 0) {
-                        SEXP_list_free (res);
+                        
+                        SEXP_free (res);
+                        SEXP_free (ste);
+                        SEXP_free (id);
+                        
                         return (NULL);
                 }
+
+                SEXP_free (ste);
+                SEXP_free (id);
         }
         
         return (res);
 }
 
-SEXP_t *SEXP_OVALobj_eval (SEXP_t *id)
+SEXP_t *probe_obj_eval (SEXP_t *id)
 {
         SEXP_t *res;
 
@@ -62,11 +69,13 @@ SEXP_t *SEXP_OVALobj_eval (SEXP_t *id)
 
         res = SEAP_cmd_exec (global.ctx, global.sd, 0, PROBECMD_OBJ_EVAL,
                              id, SEAP_CMDTYPE_SYNC, NULL, NULL);
+
+        SEXP_free (res);
         
         return pcache_sexp_get (global.pcache, id);
 }
 
-SEXP_t *SEXP_OVALset_combine(SEXP_t *item_lst1, SEXP_t *item_lst2, oval_setobject_operation_t op)
+SEXP_t *probe_set_combine(SEXP_t *item_lst1, SEXP_t *item_lst2, oval_setobject_operation_t op)
 {
 	char append;
 	SEXP_t *res_items, *item1, *item2, *id1, *id2;
@@ -75,7 +84,7 @@ SEXP_t *SEXP_OVALset_combine(SEXP_t *item_lst1, SEXP_t *item_lst2, oval_setobjec
 
 	if (SEXP_list_length(item_lst2) == 0)
 		return item_lst1;
-
+        
 	res_items = SEXP_list_new(NULL);
         
 	switch (op) {
@@ -83,16 +92,27 @@ SEXP_t *SEXP_OVALset_combine(SEXP_t *item_lst1, SEXP_t *item_lst2, oval_setobjec
 		SEXP_list_foreach(item1, item_lst1) {
 			id1 = probe_obj_getentval(item1, "id", 1);
 			append = 0;
+                        
 			SEXP_list_foreach(item2, item_lst2) {
 				id2 = probe_obj_getentval(item2, "id", 1);
-				if (!SEXP_string_cmp(id1, id2)) {
+				
+                                if (!SEXP_string_cmp(id1, id2)) {
 					append = 1;
-					break;
+                                        
+                                        SEXP_free (id2);
+                                        SEXP_free (item2);
+					
+                                        break;
 				}
+                                
+                                SEXP_free (id2);
 			}
-			if (append) {
+			
+                        if (append) {
 				SEXP_list_add(res_items, item1);
 			}
+                        
+                        SEXP_free (id1);
 		}
 		break;
 	case OVAL_SET_OPERATION_UNION:
@@ -102,16 +122,27 @@ SEXP_t *SEXP_OVALset_combine(SEXP_t *item_lst1, SEXP_t *item_lst2, oval_setobjec
 		SEXP_list_foreach(item1, item_lst1) {
 			id1 = probe_obj_getentval(item1, "id", 1);
 			append = 1;
-			SEXP_list_foreach(item2, item_lst2) {
+			
+                        SEXP_list_foreach(item2, item_lst2) {
 				id2 = probe_obj_getentval(item2, "id", 1);
-				if (!SEXP_string_cmp(id1, id2)) {
+			
+                                if (!SEXP_string_cmp(id1, id2)) {
 					append = 0;
+                                        
+                                        SEXP_free (id2);
+                                        SEXP_free (item2);
+
 					break;
 				}
+
+                                SEXP_free (id2);
 			}
+                        
 			if (append) {
 				SEXP_list_add(res_items, item1);
 			}
+
+                        SEXP_free (id1);
 		}
 		break;
 	default:
@@ -125,7 +156,7 @@ SEXP_t *SEXP_OVALset_combine(SEXP_t *item_lst1, SEXP_t *item_lst2, oval_setobjec
 	return res_items;
 }
 
-SEXP_t *SEXP_OVALset_apply_filters(SEXP_t *items, SEXP_t *filters)
+SEXP_t *probe_set_apply_filters(SEXP_t *items, SEXP_t *filters)
 {
 	int filtered, i;
 	SEXP_t *result_items, *item, *filter, *felm, *ielm;
@@ -142,6 +173,7 @@ SEXP_t *SEXP_OVALset_apply_filters(SEXP_t *items, SEXP_t *filters)
 
 	SEXP_list_foreach (item, items) {
 		item_status = probe_ent_getstatus(item);
+
 		switch(item_status) {
 		case OVAL_STATUS_DOESNOTEXIST:
 			continue;
@@ -149,7 +181,7 @@ SEXP_t *SEXP_OVALset_apply_filters(SEXP_t *items, SEXP_t *filters)
 		case OVAL_STATUS_NOTCOLLECTED:
 			_D("Supplied item has an invalid status: %d\n", item_status);
 			SEXP_free(result_items);
-
+                        
 			return NULL;
 		default:
 			break;
@@ -162,38 +194,56 @@ SEXP_t *SEXP_OVALset_apply_filters(SEXP_t *items, SEXP_t *filters)
 
 			SEXP_sublist_foreach(felm, filter, 2, -1) {
 				elm_res = SEXP_list_new(NULL);
-				stmp = probe_ent_getval(felm);
+				
+                                stmp     = probe_ent_getval(felm);
 				elm_name = SEXP_string_cstr(stmp);
+                                SEXP_free (stmp);
 
 				for (i = 1; ; ++i) {
 					ielm = probe_obj_getent(item, elm_name, i);
-					if (ielm == NULL)
+					
+                                        if (ielm == NULL)
 						break;
-					ores = probe_entste_cmp(felm, ielm);
-					SEXP_list_add(elm_res, SEXP_number_newi_32 (ores));
-				}
+					
+                                        ores = probe_entste_cmp(felm, ielm);
+					SEXP_list_add(elm_res, stmp = SEXP_number_newi_32 (ores));
 
+                                        SEXP_free (ielm);
+                                        SEXP_free (stmp);
+				}
+                                
 				stmp = probe_ent_getattrval(felm, "entity_check");
-				if (stmp == NULL)
+				
+                                if (stmp == NULL)
 					ochk = OVAL_CHECK_ALL;
 				else
 					ochk = SEXP_number_geti_32 (stmp);
-				ores = probe_ent_result_bychk(elm_res, ochk);
-				SEXP_list_add(ste_res, SEXP_number_newi_32 (ores));
+				
+                                SEXP_free (stmp);
+                                
+                                ores = probe_ent_result_bychk(elm_res, ochk);
+				SEXP_list_add(ste_res, stmp = SEXP_number_newi_32 (ores));
+                                SEXP_free (stmp);
 			}
 
 			stmp = probe_ent_getattrval(filter, "operator");
+                        
 			if (stmp == NULL)
 				oopr = OVAL_OPERATOR_AND;
 			else
 				oopr = SEXP_number_geti_32 (stmp);
-			ores = probe_ent_result_byopr(ste_res, oopr);
-			if (ores == OVAL_RESULT_TRUE) {
+                        
+                        SEXP_free (stmp);
+                        ores = probe_ent_result_byopr(ste_res, oopr);
+                        SEXP_free (ste_res);
+                        
+                        if (ores == OVAL_RESULT_TRUE) {
 				filtered = 1;
+                                SEXP_free (filter);
 				break;
 			}
 		}
-
+                
 		if (!filtered) {
 			SEXP_list_add(result_items, item);
 		}
@@ -202,7 +252,7 @@ SEXP_t *SEXP_OVALset_apply_filters(SEXP_t *items, SEXP_t *filters)
 	return result_items;
 }
 
-SEXP_t *SEXP_OVALset_eval (SEXP_t *set, size_t depth)
+SEXP_t *probe_set_eval (SEXP_t *set, size_t depth)
 {
         SEXP_t *filters_u, *filters_a;
         
@@ -245,27 +295,28 @@ SEXP_t *SEXP_OVALset_eval (SEXP_t *set, size_t depth)
                 op_num = SEXP_number_geti_32 (op_val);
         else 
                 op_num = OVAL_SET_OPERATION_UNION;
+      
+        SEXP_free (op_val);
         
         _A(op_num == OVAL_SET_OPERATION_UNION       ||
            op_num == OVAL_SET_OPERATION_COMPLEMENT  ||
            op_num == OVAL_SET_OPERATION_INTERSECTION);
         
-#define SEXP_OVALset_foreach(elm_var, set_list) SEXP_sublist_foreach (elm_var, set_list, 2, 1000)
+#define probe_set_foreach(elm_var, set_list) SEXP_sublist_foreach (elm_var, set_list, 2, 1000)
+#define CASE(__c1, __rest) case (__c1): if (strcmp (__rest, member_name + 1) == 0)
         
-        SEXP_OVALset_foreach (member, set) {
+        probe_set_foreach (member, set) {
                 if (probe_ent_getname_r (member,
                                          member_name, sizeof member_name) == 0)
                 {
                         _D("FAIL: Invalid set element: ptr=%p, type=%s\n", member, SEXP_strtype (member));
                         goto eval_fail;
                 }
-                
-#define CASE(__c1, __rest) case (__c1): if (strcmp (__rest, member_name + 1) == 0)
-                
+                                
                 switch (member_name[0]) {
                         CASE ('s',"et") {
                                 if (s_subset_i < 2) {
-                                        s_subset[s_subset_i] = SEXP_OVALset_eval (member, depth + 1);
+                                        s_subset[s_subset_i] = probe_set_eval (member, depth + 1);
                                         ++s_subset_i;
                                 } else {
                                         _D("FAIL: more than 2 \"set\"\n");
@@ -287,7 +338,7 @@ SEXP_t *SEXP_OVALset_eval (SEXP_t *set, size_t depth)
                                 
                                 if (res == NULL) {
                                         /* cache miss */
-                                        res = SEXP_OVALobj_eval (id);
+                                        res = probe_obj_eval (id);
                                         
                                         if (res == NULL) {
 #if !defined(NDEBUG)
@@ -295,15 +346,20 @@ SEXP_t *SEXP_OVALset_eval (SEXP_t *set, size_t depth)
                                                 _D("FAIL: obj=%s: evaluation failed.\n", tmp);
                                                 oscap_free (tmp);
 #endif
+                                                SEXP_free (id);
                                                 goto eval_fail;
                                         }
                                 }       
                                  
+                                SEXP_free (id);
+                                
                                 if (o_subset_i < 2) {
                                         o_subset[o_subset_i] = res;
                                         ++o_subset_i;
                                 } else {
                                         _D("FAIL: more than 2 obj_refs\n");
+                                        
+                                        SEXP_free (res);
                                         goto eval_fail;
                                 }
                                                                 
@@ -320,11 +376,14 @@ SEXP_t *SEXP_OVALset_eval (SEXP_t *set, size_t depth)
                                 }
                                         
                                 res = pcache_sexp_get (global.pcache, id);
-                                        
+                                
                                 if (res == NULL)
                                         SEXP_list_add (filters_u, id);
                                 else
                                         SEXP_list_add (filters_a, res);
+                                
+                                SEXP_free (id);
+                                SEXP_free (res);
                                 
                         } break;
                 default:
@@ -332,11 +391,12 @@ SEXP_t *SEXP_OVALset_eval (SEXP_t *set, size_t depth)
                         goto eval_fail;
                 }
 #undef CASE
-                
+
         }
         
+        member = NULL;
         /* request filters */
-        result = SEXP_OVALste_fetch (filters_u);
+        result = probe_ste_fetch (filters_u);
         
         if (result == NULL) {
 #if !defined(NDEBUG)
@@ -349,7 +409,16 @@ SEXP_t *SEXP_OVALset_eval (SEXP_t *set, size_t depth)
                 goto eval_fail;
         }
         
-        filters_a = SEXP_list_join (filters_a, result);
+        {
+                SEXP_t *filters_j;
+                
+                filters_j = SEXP_list_join (filters_a, result);
+                
+                SEXP_free (filters_a);
+                SEXP_free (result);
+
+                filters_a = filters_j;
+        }
         
         _A((s_subset_i > 0 || o_subset_i > 0));
         _A((s_subset_i > 0 && o_subset_i == 0)||
@@ -394,25 +463,33 @@ SEXP_t *SEXP_OVALset_eval (SEXP_t *set, size_t depth)
 #endif
         
         if (o_subset_i > 0) {
-                for (s_subset_i = 0; s_subset_i < o_subset_i; ++s_subset_i)
-                        s_subset[s_subset_i] = SEXP_OVALset_apply_filters (o_subset[s_subset_i], filters_a);
+                for (s_subset_i = 0; s_subset_i < o_subset_i; ++s_subset_i) {
+                        s_subset[s_subset_i] = probe_set_apply_filters (o_subset[s_subset_i], filters_a);
+                        SEXP_free (o_subset[s_subset_i]);
+                }
+                
+                SEXP_free (filters_a);
         }
         
-        result = SEXP_OVALset_combine (s_subset[0], s_subset[1], op_num);
-                
+        result = probe_set_combine (s_subset[0], s_subset[1], op_num);
+        
+        SEXP_free (s_subset[0]);
+        SEXP_free (s_subset[1]);
+        
         return (result);
 eval_fail:
-        /*
+        SEXP_free (member);
+        
         for (; s_subset_i > 0; --s_subset_i)
-                SEXP_list_free (s_subset[s_subset_i - 1]);
+                SEXP_free (s_subset[s_subset_i - 1]);
         
         for (; o_subset_i > 0; --o_subset_i)
-                SEXP_list_free_nr (o_subset[o_subset_i - 1]);
+                SEXP_free (o_subset[o_subset_i - 1]);
         
-        SEXP_list_free (filters_u);
-        SEXP_list_free_nr (filters_a);
-        SEXP_list_free (result);
-        */
+        SEXP_free (filters_u);
+        SEXP_free (filters_a);
+        SEXP_free (result);
+        
         return (NULL);
 }
 
@@ -703,7 +780,7 @@ void *probe_worker (void *arg)
         if (set != NULL) {
                 /* complex object */
                 probe_ret = 0;
-                probe_out = SEXP_OVALset_eval (set, 0);
+                probe_out = probe_set_eval (set, 0);
         } else {
                 /* simple object */
                 varrefs = probe_obj_getent (probe_in, "varrefs", 1);
@@ -737,11 +814,14 @@ void *probe_worker (void *arg)
                                 }
 
                                 r0 = item_lst;
-                                item_lst = SEXP_OVALset_combine (probe_out, r0, OVAL_SET_OPERATION_UNION);
+                                item_lst = probe_set_combine (probe_out, r0, OVAL_SET_OPERATION_UNION);
+                                
+                                SEXP_free (probe_out);
                                 SEXP_free (r0);
-                        } while (probe_varref_iterate_ctx (ctx));
-                        probe_out = item_lst;
 
+                        } while (probe_varref_iterate_ctx (ctx));
+                        
+                        probe_out = item_lst;
                         probe_varref_destroy_ctx (ctx);
                 }
         }
