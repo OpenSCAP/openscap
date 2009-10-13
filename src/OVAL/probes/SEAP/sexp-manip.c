@@ -623,6 +623,7 @@ SEXP_t *SEXP_string_newf (const char *format, ...)
         char      *v_string;
         int        v_strlen;
         
+        _A(format != NULL);
         _LOGCALL_;
 
         va_start (alist, format);
