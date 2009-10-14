@@ -124,6 +124,11 @@ static SEXP_t *oval_varref_to_sexp (struct oval_entity *entity)
 
         var = oval_entity_get_variable (entity);
         vit = oval_variable_get_values (var);
+        if (vit == NULL) {
+                SEXP_free(val_lst);
+                return NULL;
+        }
+
         while (oval_value_iterator_has_more (vit)) {
                 val = oval_value_iterator_next (vit);
 
