@@ -350,16 +350,6 @@ struct oval_variable *oval_definition_model_get_variable(struct oval_definition_
 								 key);
 }
 
-oval_datatype_t oval_variable_model_get_datatype(struct oval_variable_model *model, char *key) /* TODO */
-{
-	return 0;
-}
-
-struct oval_string_iterator *oval_variable_model_get_values(struct oval_variable_model *model, char *key) /* TODO */
-{
-	return NULL;
-}
-
 void oval_definition_model_bind_variable_model
 	(struct oval_definition_model *sysmodel, struct oval_variable_model *varmodel)
 {
