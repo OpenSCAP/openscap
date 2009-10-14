@@ -141,26 +141,29 @@ static SEXP_t *create_item(const char *path, const char *filename, char *pattern
 {
 	int i;
 	SEXP_t *item;
+        SEXP_t *r0, *r1, *r2, *r3, *r4;
 
 	item = probe_item_creat ("textfilecontent_item", NULL,
                                  /* entities */
                                  "path", NULL,
-                                 SEXP_string_newf(path),
+                                 r0 = SEXP_string_newf("%s", path),
                                  "filename", NULL,
-                                 SEXP_string_newf(filename),
+                                 r1 = SEXP_string_newf("%s", filename),
                                  "pattern", NULL,
-                                 SEXP_string_newf(pattern),
+                                 r2 = SEXP_string_newf("%s", pattern),
                                  "instance", NULL,
-                                 SEXP_number_newi_32(instance),
+                                 r3 = SEXP_number_newi_32(instance),
                                  "text", NULL,
-                                 SEXP_string_newf(substrs[0]),
+                                 r4 = SEXP_string_newf("%s", substrs[0]),
                                  NULL);
+        SEXP_vfree (r0, r1, r2, r3, r4, NULL);
 
 	probe_itement_setstatus(item, "path",     1, OVAL_STATUS_EXISTS);
 	probe_itement_setstatus(item, "filename", 1, OVAL_STATUS_EXISTS);
 
 	for (i = 1; i < substr_cnt; ++i) {
-                probe_item_ent_add (item, "subexpression", NULL, SEXP_string_newf(substrs[i]));
+                probe_item_ent_add (item, "subexpression", NULL, r0 = SEXP_string_newf(substrs[i]));
+                SEXP_free (r0);
 	}
 
 	return item;
@@ -212,24 +215,26 @@ static int process_file(const char *path, const char *filename, void *arg)
 
 	if (filename == NULL) {
 		SEXP_t *item;
+                SEXP_t *r0;
 
 		if (report_missing(pfd->filename_ent)) {
 			item = probe_item_creat ("textfilecontent_item", NULL,
                                                  /* entities */
-                                                 "path", NULL, SEXP_string_newf(path),
-                                                 "filename", NULL, NULL,
+                                                 "path", NULL, r0 = SEXP_string_newf("%s", path),
+                                                 "filename", NULL, probe_ent_getval(pfd->filename_ent),
                                                  NULL);
                         probe_item_setstatus (item, OVAL_STATUS_DOESNOTEXIST);
 		        probe_itement_setstatus (item, "filename", 1, OVAL_STATUS_DOESNOTEXIST);
 		} else {
 			item = probe_item_creat ("textfilecontent_item", NULL,
                                                  /* entities */
-                                                 "path", NULL,
-                                                 SEXP_string_newf(path),
+                                                 "path", NULL, r0 = SEXP_string_newf("%s", path),
                                                  NULL);
 		}
 
 		SEXP_list_add(pfd->item_list, item);
+
+                SEXP_vfree(r0, item, NULL);
 
 		goto cleanup;
 	}
@@ -272,10 +277,12 @@ static int process_file(const char *path, const char *filename, void *arg)
 
 			if (want_instance) {
 				int k;
+                                SEXP_t *item;
 
-				SEXP_list_add(pfd->item_list,
-					      create_item(path, filename, pfd->pattern,
-							  cur_inst, substrs, substr_cnt));
+                                item = create_item(path, filename, pfd->pattern,
+                                                   cur_inst, substrs, substr_cnt);
+                                SEXP_list_add(pfd->item_list, item);
+                                SEXP_free(item);
 				for (k = 0; k < substr_cnt; ++k)
 					free(substrs[k]);
 				free(substrs);
@@ -301,6 +308,7 @@ static int process_file(const char *path, const char *filename, void *arg)
 SEXP_t *probe_main(SEXP_t *probe_in, int *err)
 {
 	SEXP_t *path_ent, *filename_ent, *instance_ent, *behaviors_ent;
+        SEXP_t *r0, *r1;
 	char *pattern;
 
 	if (probe_in == NULL) {
@@ -322,18 +330,20 @@ SEXP_t *probe_main(SEXP_t *probe_in, int *err)
 	if (behaviors_ent == NULL) {
 		SEXP_t * behaviors_new;
 		behaviors_new = probe_ent_creat("behaviors",
-                                                probe_attr_creat("max_depth", SEXP_string_newf ("1"),
-                                                                 "recurse_direction", SEXP_string_newf ("none"),
+                                                probe_attr_creat("max_depth", r0 = SEXP_string_newf ("1"),
+                                                                 "recurse_direction", r1 = SEXP_string_newf ("none"),
                                                                  NULL),
                                                 NULL /* val */,
                                                 NULL /* end */);
 		behaviors_ent = SEXP_list_first(behaviors_new);
+                SEXP_vfree(r0, r1, behaviors_new, NULL);
 	}
 	else {
 		if (!probe_ent_attrexists (behaviors_ent, "max_depth"))
-			probe_ent_attr_add (behaviors_ent,"max_depth", SEXP_string_newf ("1"));
+			probe_ent_attr_add (behaviors_ent,"max_depth", r0 = SEXP_string_newf ("1"));
 		if (!probe_ent_attrexists (behaviors_ent, "recurse_direction"))
-			probe_ent_attr_add (behaviors_ent,"recurse_direction", SEXP_string_newf ("none"));
+			probe_ent_attr_add (behaviors_ent,"recurse_direction", r1 = SEXP_string_newf ("none"));
+                SEXP_vfree(r0, r1, NULL);
 	}
 
 	int fcnt;
@@ -358,15 +368,17 @@ SEXP_t *probe_main(SEXP_t *probe_in, int *err)
                         probe_item_setstatus(item, OVAL_STATUS_DOESNOTEXIST);
 			probe_itement_setstatus(item, "path", 1, OVAL_STATUS_DOESNOTEXIST);
 			SEXP_list_add(pfd.item_list, item);
+                        SEXP_free(item);
 		}
 	} else if (fcnt < 0) {
 		SEXP_t *item;
 		item = probe_item_creat("textfilecontent_item", NULL,
-					   "path", NULL,
-					   probe_ent_getval(path_ent),
-					   NULL);
+                                        "path", NULL,
+                                        probe_ent_getval(path_ent),
+                                        NULL);
                 probe_item_setstatus(item, OVAL_STATUS_ERROR);
 		SEXP_list_add(pfd.item_list, item);
+                SEXP_free(item);
 	}
 
 	*err = 0;
