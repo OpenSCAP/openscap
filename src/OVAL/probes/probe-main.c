@@ -435,45 +435,7 @@ SEXP_t *probe_set_eval (SEXP_t *set, size_t depth)
         _A((s_subset_i > 0 || o_subset_i > 0));
         _A((s_subset_i > 0 && o_subset_i == 0)||
            (s_subset_i == 0 && o_subset_i > 0));
-        
-#if !defined(NDEBUG)
-        { FILE *fp;
                 
-                fp = fopen ("seteval.log", "a");
-                setbuf (fp, NULL);
-                
-                fprintf (fp, "\n--- FILTERS ---\n");
-                SEXP_fprintfa (fp, filters_a);
-                
-                if (o_subset_i > 0) {
-                        fprintf (fp, "\n--- O-ITEMS ---\n");
-
-                        switch (o_subset_i) {
-                        case 2:
-                                fprintf (fp, "[1]\n");
-                                SEXP_fprintfa (fp, o_subset[1]);
-                        case 1:
-                                fprintf (fp, "\n[0]\n");
-                                SEXP_fprintfa (fp, o_subset[0]);
-                        }
-                } else {
-                        fprintf (fp, "\n--- S-ITEMS ---\n");
-
-                        switch (s_subset_i) {
-                        case 2:
-                                fprintf (fp, "[1]\n");
-                                SEXP_fprintfa (fp, s_subset[1]);
-                        case 1:
-                                fprintf (fp, "\n[0]\n");
-                                SEXP_fprintfa (fp, s_subset[0]);
-                        }
-                }
-                                
-                fprintf (fp, "\n---------------\n");
-                fclose (fp);
-        }
-#endif
-        
         if (o_subset_i > 0) {
                 for (s_subset_i = 0; s_subset_i < o_subset_i; ++s_subset_i) {
                         s_subset[s_subset_i] = probe_set_apply_filters (o_subset[s_subset_i], filters_a);

@@ -220,16 +220,6 @@ static SEXP_t *SEAP_packet_msg2sexp (SEAP_msg_t *msg)
         
         /* Add data */
         SEXP_list_add (sexp, msg->sexp);
-
-        { FILE *fp;
-                
-                fp = fopen ("sexp.log", "a");
-                setbuf (fp, NULL);
-                fprintf (fp, "--- SEXP ---\n");
-                SEXP_fprintfa (fp, sexp);
-                fprintf (fp, "\n-----------\n");
-                fclose (fp);
-        }
         
         return (sexp);        
 }
@@ -611,16 +601,6 @@ sexp_buf_recv:
         sexp_packet = SEXP_list_pop (dsc->sexpbuf);
         
         _A(sexp_packet != NULL);
-
-        { FILE *fp;
-                
-                fp = fopen ("packet-recv.log", "a");
-                setbuf (fp, NULL);
-                fprintf (fp, "--- PACKET ---\n");
-                SEXP_fprintfa (fp, sexp_packet);
-                fprintf (fp, "\n-----------\n");
-                fclose (fp);
-        }
         
         if (!SEXP_listp(sexp_packet)) {
                 _D("Invalid SEAP packet received: %s.\n", "not a list");

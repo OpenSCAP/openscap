@@ -2,6 +2,7 @@
 # include <stdio.h>
 # include <stdarg.h>
 # include <sys/types.h>
+# include <sys/file.h>
 # include <unistd.h>
 #  if defined(SEAP_THREAD_SAFE)
 #   include <pthread.h>
@@ -18,9 +19,16 @@ void __seap_debuglog (const char *file, const char *fn, size_t line, const char 
 #endif
         if (__debuglog_fp == NULL) {
                 __debuglog_fp = fopen ("seap_debug.log", "a");
+                
+                if (__debuglog_fp == NULL)
+                        return;
+                
                 setbuf (__debuglog_fp, NULL);
         }
 
+        if (flock (fileno (__debuglog_fp), LOCK_EX) == -1)
+                return;
+        
 #if defined(SEAP_THREAD_SAFE)        
         fprintf (__debuglog_fp, "(%u:%u) [%s: %zu: %s] ", (unsigned int)getpid (), (unsigned int)pthread_self(), file, line, fn);
 #else
@@ -29,6 +37,9 @@ void __seap_debuglog (const char *file, const char *fn, size_t line, const char 
         va_start (ap, fmt);
         vfprintf (__debuglog_fp, fmt, ap);
         va_end (ap);
+        
+        if (flock (fileno (__debuglog_fp), LOCK_UN) == -1)
+                abort ();
         
 #if defined(SEAP_THREAD_SAFE)  
         pthread_mutex_unlock (&__debuglog_mutex);

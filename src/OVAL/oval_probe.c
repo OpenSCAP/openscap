@@ -260,9 +260,10 @@ struct oval_syschar *oval_object_probe (struct oval_object *object, struct oval_
                         if (psd->sd < 0) {
                                 _D("Can't connect: %u, %s.\n", errno, strerror (errno));
                                 
-                                if (++retry <= OVAL_PROBE_MAXRETRY)
+                                if (++retry <= OVAL_PROBE_MAXRETRY) {
+                                        _D("connect: retry %u/%u\n", retry, OVAL_PROBE_MAXRETRY);
                                         continue;
-                                else {
+                                } else {
                                         _D("connect: retry limit (%u) reached.\n", OVAL_PROBE_MAXRETRY);
                                         
                                         SEXP_free (s_exp);
@@ -290,9 +291,10 @@ struct oval_syschar *oval_object_probe (struct oval_object *object, struct oval_
                                         
                         psd->sd = -1;
                         
-                        if (++retry <= OVAL_PROBE_MAXRETRY)
+                        if (++retry <= OVAL_PROBE_MAXRETRY) {
+                                _D("send: retry %u/%u\n", retry, OVAL_PROBE_MAXRETRY);
                                 continue;
-                        else {
+                        } else {
                                 _D("send: retry limit (%u) reached.\n", OVAL_PROBE_MAXRETRY);
                                 SEAP_msg_free (s_omsg);
                                 SEXP_free (s_exp);
@@ -318,9 +320,10 @@ struct oval_syschar *oval_object_probe (struct oval_object *object, struct oval_
                         
                         psd->sd = -1;
 
-                        if (++retry <= OVAL_PROBE_MAXRETRY)
+                        if (++retry <= OVAL_PROBE_MAXRETRY) {
+                                _D("recv: retry %u/%u\n", retry, OVAL_PROBE_MAXRETRY);
                                 continue;
-                        else {
+                        } else {
                                 _D("recv: retry limit (%u) reached.\n", OVAL_PROBE_MAXRETRY);
                                 
                                 SEAP_msg_free (s_imsg);
@@ -359,6 +362,8 @@ static SEXP_t *ovalp_cmd_obj_eval (SEXP_t *sexp, void *arg)
         if (SEXP_stringp (sexp)) {
                 id_str = SEXP_string_cstr (sexp);
                 obj    = oval_definition_model_get_object (model, id_str);
+                
+                _D("get_object: %s\n", id_str);
                 
                 if (obj == NULL) {
                         _D("FAIL: can't find obj: id=%s\n", id_str);
