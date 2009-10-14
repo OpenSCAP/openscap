@@ -238,6 +238,8 @@ SEXP_t *probe_obj_creat (const char *name, SEXP_t *attrs, ...)
                 
                 SEXP_list_add (ent, val);
                 SEXP_list_add (obj, ent);
+                
+                SEXP_free (ent);
 
                 name = va_arg (ap, const char *);
         }

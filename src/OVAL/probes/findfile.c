@@ -121,13 +121,15 @@ int find_files(SEXP_t * spath, SEXP_t *sfilename, SEXP_t *behaviors,
 		}
 	}
 
+        assert (strlen (path) > 0);
+
 	/* Is there a '/' at the end of the path? */
 	i = strlen(path)-1;
-	if( path[i] == '/' )
+
+	if( path[i] == '/' && i > 0)
 		path[i] = '\0';
 
-
-	/* Evaluate path(s) */
+        /* Evaluate path(s) */
 	if( SEXP_number_getu_32 (probe_ent_getattrval(spath,"operation")) ==  OVAL_OPERATION_PATTERN_MATCH ) {
 		rglobbuf.offs=10;
 		rc = rglob(path, &rglobbuf);
