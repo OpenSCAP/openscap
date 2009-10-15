@@ -468,6 +468,7 @@ uintptr_t SEXP_rawval_list_copy (uintptr_t lblkp, uint16_t n_skip)
                                 break;
                         
                         off_o  = 0;
+                        old_sz = lb_old->nxsz & SEXP_LBLKS_MASK;
                 }
                 
                 /*
