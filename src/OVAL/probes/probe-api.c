@@ -526,7 +526,22 @@ int probe_ent_getvals (const SEXP_t *ent, SEXP_t **res)
 SEXP_t *probe_ent_getval (const SEXP_t *ent)
 {
         _LOGCALL_;
-        return (SEXP_list_nth (ent, 2));
+        if (probe_ent_attrexists (ent, "var_ref")) {
+                SEXP_t *r0, *r1;
+                unsigned int val_idx;
+
+                r0 = probe_ent_getattrval (ent, "val_idx");
+                val_idx = SEXP_number_getu (r0);
+                SEXP_free (r0);
+
+                r0 = SEXP_list_nth (ent, 2);
+                r1 = SEXP_list_nth (r0, val_idx + 1);
+                SEXP_free (r0);
+
+                return (r1);
+        } else {
+                return (SEXP_list_nth (ent, 2));
+        }
 }
 
 SEXP_t *probe_ent_getattrval (const SEXP_t *ent, const char *name)
