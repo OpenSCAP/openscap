@@ -29,14 +29,62 @@
 
 
 #include <libxml/xmlreader.h>
+#include <libxml/xmlwriter.h>
+#include <stdlib.h>
 
-static char *str_trim(char *str);
-void cpedict_parse_file(const char *fname);
-static struct cpe_dict * parse_cpedict(xmlTextReaderPtr reader);
-static struct cpe_generator * cpe_generator_new_xml(xmlTextReaderPtr reader);
-static struct cpe_dictitem * cpe_dictitem_new_xml(xmlTextReaderPtr reader);
-static struct cpe_dict_check * cpe_dict_check_parse(xmlTextReaderPtr reader);
-static struct cpe_dict_vendor * cpe_dict_vendor_parse(xmlTextReaderPtr reader);
-static struct cpe_dicitem_title * cpe_dictitem_title_parse(xmlTextReaderPtr reader, char * name);
-static struct cpe_dictitem *cpe_dictitem_new_empty();
-static struct cpe_dict_vendor *cpe_dictvendor_new_empty();
+#include "cpeuri.h"
+#include "../common/oscap.h"
+
+char *str_trim(char *str);
+struct cpe_dict * cpedict_parse_file(const char *fname);
+struct cpe_generator * cpe_generator_parse(xmlTextReaderPtr reader);
+
+/*
+ * New dictionary item from XML
+ * @param node cpe-item node
+ * @return new dictionary item
+ * @retval NULL on failure
+ */
+struct cpe_dictitem * cpe_dictitem_parse(xmlTextReaderPtr reader);
+struct cpe_dict_check * cpe_dict_check_parse(xmlTextReaderPtr reader);
+struct cpe_dict_vendor * cpe_dict_vendor_parse(xmlTextReaderPtr reader);
+struct cpe_dictitem_title * cpe_dictitem_title_parse(xmlTextReaderPtr reader, const char * name);
+struct cpe_dictitem *cpe_dictitem_new_empty();
+struct cpe_dict_vendor * cpe_dictvendor_new_empty();
+struct cpe_dictitem * cpe_dictitem_new_empty();
+
+/**
+ * Create new empty CPE dictionary
+ * @relates cpe_dict
+ * @return new dictionary
+ * @retval NULL on failure
+ */
+struct cpe_dict *cpe_dict_new_empty();
+
+/**
+ * Add @a item to dictionary @a dict
+ *
+ * @relates cpe_dict
+ * @note The item will be deleted as soon as you call cpe_dict_free on the dictionary.
+ * @param dict dictionary to add new item to
+ * @param item pointer to item to add
+ * @return true on success
+ */
+bool cpe_dict_add_item(struct cpe_dict * dict, struct cpe_dictitem * item);
+
+/*
+ * Load new CPE dictionary from XML node
+ * @param node file name of dictionary to load
+ * @return new dictionary
+ * @retval NULL on failure
+ */
+struct cpe_dict * parse_cpedict(xmlTextReaderPtr reader);
+
+void dict_export(const struct cpe_dict * dict, const char * fname);
+void cpe_dict_export(const struct cpe_dict * dict, xmlTextWriterPtr writer);
+void cpe_generator_export(const struct cpe_generator * generator, xmlTextWriterPtr writer);
+void cpe_dictitem_export(const struct cpe_dictitem * item, xmlTextWriterPtr writer);
+void cpe_dict_vendor_export(const struct cpe_dict_vendor * vendor, xmlTextWriterPtr writer);
+//void cpe_dict_reference_export(const struct cpe_dict_reference * reference, xmlTextWriterPtr writer);
+void cpe_dict_check_export(const struct cpe_dict_check *check, xmlTextWriterPtr writer);
+void cpe_dict_note_export(const struct cpe_dictitem_title * title, xmlTextWriterPtr writer);

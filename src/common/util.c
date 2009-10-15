@@ -36,3 +36,12 @@ const char* oscap_enum_to_string(const struct oscap_string_map* map, int val)
 	while (map->string && map->value != val) ++map;
 	return map->string;
 }
+
+char* oscap_strdup(const char *str) {
+
+        if (str == NULL)
+            return NULL;
+
+        return strdup(str);
+}
+

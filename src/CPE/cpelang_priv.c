@@ -84,14 +84,6 @@ OSCAP_HGETTER_STRUCT(cpe_platform, cpe_platformspec, item)
 
 void print_node(xmlTextReaderPtr reader);
 
-static char * oscap_strdup(char *str) {
-
-    if (str == NULL)
-        return NULL;
-
-    return strdup(str);
-}
-
 /*
  * Function that jump to next XML element.
  */
@@ -173,15 +165,12 @@ struct cpe_platformspec * parse_platformspec(xmlTextReaderPtr reader) {
 
                 while (xmlStrcmp (xmlTextReaderConstLocalName(reader), (const xmlChar *)"platform") == 0) {
                         
-                        //print_node(reader);
                         platform = parse_platform(reader);
                         if (platform) oscap_list_add(ret->items, platform);
                         xmlTextReaderNextElement(reader);
                 }
-                //print_node(reader);
         }
 
-        //print_node(reader);
         return ret;
 }
 
@@ -358,7 +347,7 @@ static struct cpe_title * cpe_title_parse(xmlTextReaderPtr reader, char * name) 
 }
 
 
-void cpe_export(const struct cpe_platformspec * spec, const char * fname) {
+void cpe_lang_export(const struct cpe_platformspec * spec, const char * fname) {
 
         // TODO: ad macro to check return value from xmlTextWriter* functions
         xmlTextWriterPtr writer;
@@ -383,7 +372,7 @@ void cpe_platformspec_export2(const struct cpe_platformspec * spec, xmlTextWrite
 		// dump its contents to XML tree
                 cpe_platform_export( p, writer );
 	)
-       xmlTextWriterEndElement(writer);
+        xmlTextWriterEndElement(writer);
 }
 
 void cpe_platform_export(const struct cpe_platform * platform, xmlTextWriterPtr writer) {
@@ -446,36 +435,4 @@ void cpe_ret_expr_export(struct cpe_lang_expr expr, xmlTextWriterPtr writer) {
         }
         xmlTextWriterEndElement(writer);
 
-}
-
-/**
- * print_node:
- * @reader: the xmlReader
- *
- * Dump information about the current node
- */
-void print_node(xmlTextReaderPtr reader) {
-
-    const xmlChar *name, *value;
-
-    name = xmlTextReaderConstName(reader);
-    if (name == NULL)
-        name = BAD_CAST "--";
-
-    value = xmlTextReaderConstValue(reader);
-
-    printf("%d %d %s %d %d", 
-            xmlTextReaderDepth(reader),
-            xmlTextReaderNodeType(reader),
-            name,
-            xmlTextReaderIsEmptyElement(reader),
-            xmlTextReaderHasValue(reader));
-    if (value == NULL)
-        printf("\n");
-    else {
-        if (xmlStrlen(value) > 40)
-            printf(" %.40s...\n", value);
-        else
-            printf(" %s\n", value);
-    }
 }

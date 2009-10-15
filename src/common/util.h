@@ -216,6 +216,11 @@ int oscap_string_to_enum(const struct oscap_string_map* map, const char* str);
  */
 const char* oscap_enum_to_string(const struct oscap_string_map* map, int val);
 
+/**
+ * Use strdup on string, if string is NULL, return NULL
+ * @param str String we want to duplicate
+ */
+char* oscap_strdup(const char *str);
 
 #endif // OSCAP_UTIL_H_
 

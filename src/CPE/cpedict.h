@@ -113,24 +113,6 @@ void cpe_dict_check_iterator_free(struct cpe_dict_check_iterator* it);
  */
 struct cpe_dict *cpe_dict_new(const char *fname);
 
-/**
- * Create new empty CPE dictionary
- * @relates cpe_dict
- * @return new dictionary
- * @retval NULL on failure
- */
-struct cpe_dict *cpe_dict_new_empty(void);
-
-/**
- * Add @a item to dictionary @a dict
- *
- * @relates cpe_dict
- * @note The item will be deleted as soon as you call cpe_dict_free on the dictionary.
- * @param dict dictionary to add new item to
- * @param item pointer to item to add
- * @return true on success
- */
-bool cpe_dict_add_item(struct cpe_dict * dict, struct cpe_dictitem * item);
 
 /**
  * Frees CPE dictionary and its contents
@@ -293,8 +275,6 @@ bool cpe_name_match_dict(struct cpe_name * cpe, struct cpe_dict * dict);
  * @return true if dictionary contains given CPE
  */
 bool cpe_name_match_dict_str(const char *cpe, struct cpe_dict * dict);
-
-bool cpe_dict_export(const struct cpe_dict * dict, const char * fname);
 
 
 #endif				/* _CPEDICT_H_ */
