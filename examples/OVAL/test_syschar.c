@@ -68,7 +68,7 @@ int main(int argc, char **argv)
 			int count;
 			struct oval_syschar_iterator *syschars = oval_syschar_model_get_syschars(syschar_model);
 			for (count = 0; oval_syschar_iterator_has_more(syschars); count++) {
-				syschars = oval_syschar_iterator_next(syschars);
+				oval_syschar_iterator_next(syschars);
 			}
 			oval_syschar_iterator_free(syschars);
 
