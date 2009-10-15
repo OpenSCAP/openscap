@@ -481,9 +481,9 @@ bool cpe_platformspec_export(const struct cpe_platformspec * res, const char * f
         return true;
 }
 
-OSCAP_GETTER(const char*, cpe_platform, id)
+//OSCAP_GETTER(const char*, cpe_platform, id)
 OSCAP_GETTER(const char*, cpe_platform, title)
-OSCAP_GETTER(const char*, cpe_platform, remark)
+/*OSCAP_GETTER(const char*, cpe_platform, remark)
 OSCAP_IGETTER_GEN(cpe_platform, cpe_platformspec, items)
-OSCAP_HGETTER_STRUCT(cpe_platform, cpe_platformspec, item)
+OSCAP_HGETTER_STRUCT(cpe_platform, cpe_platformspec, item)*/
 

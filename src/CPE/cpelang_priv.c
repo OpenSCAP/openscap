@@ -358,15 +358,9 @@ static struct cpe_title * cpe_title_parse(xmlTextReaderPtr reader, char * name) 
 }
 
 
-/****** HELP *****
- *
- * Write comment <!--aaa-->
- *   rc = xmlTextWriterWriteComment(writer, "aaa");
- *
- */
 void cpe_export(const struct cpe_platformspec * spec, const char * fname) {
 
-        int rc;
+        // TODO: ad macro to check return value from xmlTextWriter* functions
         xmlTextWriterPtr writer;
 
         writer = xmlNewTextWriterFilename(fname, 0);
@@ -375,10 +369,10 @@ void cpe_export(const struct cpe_platformspec * spec, const char * fname) {
         xmlTextWriterSetIndent(writer, 1);
         xmlTextWriterSetIndentString(writer, BAD_CAST "    ");
 
-        rc = xmlTextWriterStartDocument(writer, NULL, FILE_ENCODING, NULL);
+        xmlTextWriterStartDocument(writer, NULL, FILE_ENCODING, NULL);
 
         cpe_platformspec_export2(spec, writer);
-        rc = xmlTextWriterEndDocument(writer);
+        xmlTextWriterEndDocument(writer);
         xmlFreeTextWriter(writer);
 }
 

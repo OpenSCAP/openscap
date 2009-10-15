@@ -74,7 +74,6 @@ struct cpe_dict_reference {
 struct cpe_dictitem_title {
         struct xml_metadata xml;
 	char *content;		        // human-readable name of this item
-        char *xmllang;                  // property xml:lang of title
 };
 
 struct cpe_dictitem {                   // the node <cpe-item>
