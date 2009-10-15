@@ -29,6 +29,7 @@
 
 
 #include <libxml/xmlreader.h>
+#include <libxml/xmlwriter.h>
 #include <libxml/tree.h>
 
 #include "cpelang_priv.h"
@@ -38,9 +39,16 @@
 #include "../common/util.h"
 #include "../common/list.h"
 
+#define FILE_ENCODING "UTF-8"
+
 struct xml_metadata {
         char *namespace;
         char *lang;
+};
+
+struct cpe_title {
+        struct xml_metadata xml;
+	char *content;		        // human-readable title
 };
 
 struct cpe_lang_expr {
@@ -48,8 +56,8 @@ struct cpe_lang_expr {
 	cpe_lang_oper_t oper;	// operator
 	union {
 		struct cpe_lang_expr *expr;	// array of subexpressions for operators
-		struct cpe_name *cpe;	// CPE for match operation
-	} meta;			// operation metadata
+		struct cpe_name *cpe;	        // CPE for match operation
+	} meta;			                // operation metadata
 };
 
 struct cpe_platformspec {
@@ -62,13 +70,27 @@ struct cpe_platformspec {
 
 struct cpe_platform {
         struct xml_metadata xml;
+	struct oscap_list* titles;   // human-readable platform description
 	char *id;                   // platform ID
-	char *title;                // human-readable platform description TODO: 0-n !!
 	char *remark;               // remark TODO: 0-n !!
-	struct cpe_lang_expr expr;	// expression for match evaluation
+	struct cpe_lang_expr expr;  // expression for match evaluation
 };
 
+OSCAP_GETTER(const char*, cpe_platform, id)
+OSCAP_GETTER(const char*, cpe_platform, remark)
+OSCAP_IGETTER_GEN(cpe_title, cpe_platform, titles)
+OSCAP_IGETTER_GEN(cpe_platform, cpe_platformspec, items)
+OSCAP_HGETTER_STRUCT(cpe_platform, cpe_platformspec, item)
+
 void print_node(xmlTextReaderPtr reader);
+
+static char * oscap_strdup(char *str) {
+
+    if (str == NULL)
+        return NULL;
+
+    return strdup(str);
+}
 
 /*
  * Function that jump to next XML element.
@@ -83,19 +105,21 @@ int xmlTextReaderNextElement(xmlTextReaderPtr reader) {
         return ret;
 }
 
-void parse_file(const char *fname) {
+struct cpe_platformspec * parse_file(const char *fname) {
         
     xmlTextReaderPtr reader;
+    struct cpe_platformspec *ret = NULL;
 
     reader = xmlReaderForFile(fname, NULL, 0);
     if (reader != NULL) {
         xmlTextReaderRead(reader);
-        //print_node(reader);
-        (void) parse_platformspec(reader);
+        ret = parse_platformspec(reader);
     } else {
         fprintf(stderr, "Unable to open %s\n", fname);
     }
     xmlFreeTextReader(reader);
+
+    return ret;
 }
 
 struct cpe_platformspec *cpe_platformspec_new_empty()
@@ -114,9 +138,23 @@ struct cpe_platformspec *cpe_platformspec_new_empty()
 	return res;
 }
 
+struct cpe_platform * cpe_platform_new_empty()
+{
+	struct cpe_platform *ret;
+
+	ret = oscap_alloc(sizeof(struct cpe_platform));
+	if (ret == NULL)
+		return NULL;
+
+	ret->titles = oscap_list_new();
+
+	return ret;
+}
+
 struct cpe_platformspec * parse_platformspec(xmlTextReaderPtr reader) {
 
         struct cpe_platformspec *ret = NULL;
+        struct cpe_platform *platform;
 
         if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), BAD_CAST "platform-specification") &&
             xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
@@ -125,9 +163,9 @@ struct cpe_platformspec * parse_platformspec(xmlTextReaderPtr reader) {
                 if (ret == NULL)
                         return NULL;
 
-                ret->ns_href = (char *) xmlTextReaderConstNamespaceUri(reader);
-                ret->ns_prefix = (char *) xmlTextReaderConstPrefix(reader);
-                ret->xml.lang = (char *) xmlTextReaderConstXmlLang(reader);
+                ret->ns_href = oscap_strdup((char *) xmlTextReaderConstNamespaceUri(reader));
+                ret->ns_prefix = oscap_strdup((char *) xmlTextReaderConstPrefix(reader));
+                ret->xml.lang = oscap_strdup((char *) xmlTextReaderConstXmlLang(reader));
                 ret->xml.namespace = (char *) xmlTextReaderPrefix(reader);
                 
                 // skip nodes until new element
@@ -136,28 +174,30 @@ struct cpe_platformspec * parse_platformspec(xmlTextReaderPtr reader) {
                 while (xmlStrcmp (xmlTextReaderConstLocalName(reader), (const xmlChar *)"platform") == 0) {
                         
                         //print_node(reader);
-                        parse_platform(reader);
+                        platform = parse_platform(reader);
+                        if (platform) oscap_list_add(ret->items, platform);
                         xmlTextReaderNextElement(reader);
                 }
                 //print_node(reader);
         }
 
+        //print_node(reader);
         return ret;
 }
 
 struct cpe_platform * parse_platform(xmlTextReaderPtr reader) {
         
         struct cpe_platform *ret;
+        struct cpe_title *title;
 
         // allocate platform structure here
-	ret = oscap_alloc(sizeof(struct cpe_platform));
+        ret = cpe_platform_new_empty();
 	if (ret == NULL)
 		return NULL;
-	memset(ret, 0, sizeof(struct cpe_platform));
 
         // parse platform attributes here
         ret->id = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST "id");
-        ret->xml.lang = (char *) xmlTextReaderConstXmlLang(reader);
+        ret->xml.lang = oscap_strdup((char *) xmlTextReaderConstXmlLang(reader));
         ret->xml.namespace = (char *) xmlTextReaderPrefix(reader);
         if (ret->id == NULL)
                 return NULL;    // if there is no "id" in platform element, return NULL
@@ -172,7 +212,8 @@ struct cpe_platform * parse_platform(xmlTextReaderPtr reader) {
                 
             if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), BAD_CAST "title") &&
                 xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT){
-                        ret->title = parse_text_element(reader, "title"); // TODO: 0-n titles !
+                        title = cpe_title_parse(reader, "title");
+                        if (title) oscap_list_add(ret->titles, title);
             } else 
                 if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), BAD_CAST "remark") &&
                     xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
@@ -180,7 +221,7 @@ struct cpe_platform * parse_platform(xmlTextReaderPtr reader) {
             } else
                 if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), BAD_CAST "logical-test") &&
                     xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
-                        ret->expr = * (parse_ret_expr(reader));
+                        ret->expr = *(parse_ret_expr(reader));
             }
             // get the next node
             xmlTextReaderRead(reader);
@@ -199,7 +240,6 @@ struct cpe_lang_expr * parse_ret_expr(xmlTextReaderPtr reader) {
         ret = oscap_alloc(sizeof(struct cpe_lang_expr));
         if (ret == NULL)
                 return NULL;
-        ret->meta.expr = NULL;
         //print_node(reader);
         
         // it's fact-ref only, fill the structure and return it
@@ -209,7 +249,7 @@ struct cpe_lang_expr * parse_ret_expr(xmlTextReaderPtr reader) {
                 temp = xmlTextReaderGetAttribute(reader, BAD_CAST "name");
                 ret->meta.cpe = cpe_name_new((char *)temp);
                 xmlFree(temp);
-                ret->xml.lang = (char *) xmlTextReaderConstXmlLang(reader);
+                ret->xml.lang = oscap_strdup((char *) xmlTextReaderConstXmlLang(reader));
                 ret->xml.namespace = (char *) xmlTextReaderPrefix(reader);
                 return ret;
         } else {
@@ -229,6 +269,9 @@ struct cpe_lang_expr * parse_ret_expr(xmlTextReaderPtr reader) {
 	        }
 	        xmlFree(temp);
 
+                ret->xml.lang = oscap_strdup((char *) xmlTextReaderConstXmlLang(reader));
+                ret->xml.namespace = (char *) xmlTextReaderPrefix(reader);
+
 	        temp = xmlTextReaderGetAttribute(reader, BAD_CAST "negate");
 	        if (temp && xmlStrcasecmp(temp, BAD_CAST "TRUE") == 0)
 		        ret->oper |= CPE_LANG_OPER_NOT;
@@ -236,34 +279,40 @@ struct cpe_lang_expr * parse_ret_expr(xmlTextReaderPtr reader) {
         }
 
         // go to next node
-        // skip nodes until new element
-        xmlTextReaderNextElement(reader);
+        // skip to next node
+        xmlTextReaderRead(reader);
 	ret->meta.expr = oscap_alloc(sizeof(struct cpe_lang_expr));
 
         // while it's not 'logical-test' or it's not ended element ..
         while (xmlStrcmp(xmlTextReaderConstLocalName(reader), (const xmlChar *) "logical-test") != 0 ||
                xmlTextReaderNodeType(reader) != XML_READER_TYPE_END_ELEMENT) {
 
+                if (xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT) {
+                        xmlTextReaderRead(reader);
+                        continue;
+                }
+                elem_cnt++;
                 // realloc the current structure to handle more fact-refs or logical-tests
-	        ret->meta.expr = (struct cpe_lang_expr *) oscap_realloc(ret->meta.expr, ++elem_cnt * sizeof(struct cpe_lang_expr));
+	        ret->meta.expr = (struct cpe_lang_expr *) oscap_realloc(ret->meta.expr, (elem_cnt+1) * sizeof(struct cpe_lang_expr));
 
                 // .. and the next node is logical-test element, we need recursive call
                 if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), BAD_CAST "logical-test") && 
                 xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
-                        //printf("Recursive call: "); print_node(reader);
                         ret->meta.expr[elem_cnt-1] = *(parse_ret_expr(reader));
                 } else // .. or it's fact-ref only
                         if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), BAD_CAST "fact-ref") &&
                             xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
                                 // fill the structure
-                                //print_node(reader);
                                 ret->meta.expr[elem_cnt-1].oper = CPE_LANG_OPER_MATCH;
                                 temp = xmlTextReaderGetAttribute(reader, BAD_CAST "name");
                                 ret->meta.expr[elem_cnt-1].meta.cpe = cpe_name_new((char *)temp);
                                 xmlFree(temp);
+                                ret->meta.expr[elem_cnt-1].xml.lang = oscap_strdup((char *) xmlTextReaderConstXmlLang(reader));
+                                ret->meta.expr[elem_cnt-1].xml.namespace = (char *) xmlTextReaderPrefix(reader);
                 }
                 xmlTextReaderRead(reader);
         }
+        ret->meta.expr[elem_cnt].oper = CPE_LANG_OPER_HALT;
 
         return ret;
 }
@@ -274,11 +323,9 @@ char * parse_text_element(xmlTextReaderPtr reader, char *name) {
 
     // parse string element attributes here (like xml:lang)
 
-    //print_node(reader);
     while (xmlTextReaderRead(reader)) {
         if (xmlTextReaderNodeType(reader) == XML_READER_TYPE_END_ELEMENT &&
             !xmlStrcmp(xmlTextReaderConstLocalName(reader), BAD_CAST name)) {
-                //printf("New parsed string: %s\n", string);
                 return string;
         }
         
@@ -288,11 +335,124 @@ char * parse_text_element(xmlTextReaderPtr reader, char *name) {
                     break;
         }
     }
-    //printf("New parsed string: %s\n", string);
-    fflush(stdout);
     return string;
 }
 
+static struct cpe_title * cpe_title_parse(xmlTextReaderPtr reader, char * name) {
+
+	struct cpe_title *ret;
+
+        if (xmlStrcmp (xmlTextReaderConstLocalName(reader), BAD_CAST name) != 0)
+		return NULL;
+
+	if ((ret = oscap_alloc(sizeof(struct cpe_title))) == NULL)
+		return NULL;
+	memset(ret, 0, sizeof(struct cpe_title));
+
+        ret->xml.lang = oscap_strdup((char *) xmlTextReaderConstXmlLang(reader));
+        ret->xml.namespace = (char *) xmlTextReaderPrefix(reader);
+
+	ret->content = (char *) xmlTextReaderReadString(reader);
+
+	return ret;
+}
+
+
+/****** HELP *****
+ *
+ * Write comment <!--aaa-->
+ *   rc = xmlTextWriterWriteComment(writer, "aaa");
+ *
+ */
+void cpe_export(const struct cpe_platformspec * spec, const char * fname) {
+
+        int rc;
+        xmlTextWriterPtr writer;
+
+        writer = xmlNewTextWriterFilename(fname, 0);
+
+        // Set properties of writer TODO: make public function to edit this ??
+        xmlTextWriterSetIndent(writer, 1);
+        xmlTextWriterSetIndentString(writer, BAD_CAST "    ");
+
+        rc = xmlTextWriterStartDocument(writer, NULL, FILE_ENCODING, NULL);
+
+        cpe_platformspec_export2(spec, writer);
+        rc = xmlTextWriterEndDocument(writer);
+        xmlFreeTextWriter(writer);
+}
+
+void cpe_platformspec_export2(const struct cpe_platformspec * spec, xmlTextWriterPtr writer) {
+
+        xmlTextWriterStartElementNS(writer, BAD_CAST spec->ns_prefix, BAD_CAST "platform-specification", BAD_CAST spec->ns_href);
+        OSCAP_FOREACH (cpe_platform, p, cpe_platformspec_get_items(spec),
+		// dump its contents to XML tree
+                cpe_platform_export( p, writer );
+	)
+       xmlTextWriterEndElement(writer);
+}
+
+void cpe_platform_export(const struct cpe_platform * platform, xmlTextWriterPtr writer) {
+    
+        xmlTextWriterStartElementNS(writer, BAD_CAST platform->xml.namespace, BAD_CAST "platform", NULL);
+        if (cpe_platform_get_id(platform) != NULL) 
+                xmlTextWriterWriteAttribute(writer, BAD_CAST "id", BAD_CAST cpe_platform_get_id(platform));
+        OSCAP_FOREACH (cpe_title, title, cpe_platform_get_titles(platform),
+		// dump its contents to XML tree
+                cpe_title_export(title, writer);
+	)
+        cpe_ret_expr_export(platform->expr, writer);
+        xmlTextWriterEndElement(writer);
+}
+
+void cpe_title_export(const struct cpe_title * title, xmlTextWriterPtr writer) {
+
+        xmlTextWriterStartElementNS(writer, BAD_CAST title->xml.namespace, BAD_CAST "title", NULL);
+        if (title->xml.lang != NULL) 
+                xmlTextWriterWriteAttribute(writer, BAD_CAST "xml:lang", BAD_CAST title->xml.lang);
+        xmlTextWriterWriteString(writer, BAD_CAST title->content);
+        xmlTextWriterEndElement(writer);
+}
+
+void cpe_ret_expr_export(struct cpe_lang_expr expr, xmlTextWriterPtr writer) {
+
+        if (expr.oper == CPE_LANG_OPER_HALT)
+            return;
+
+        if (expr.oper == CPE_LANG_OPER_MATCH) {
+                xmlTextWriterStartElementNS(writer, BAD_CAST expr.xml.namespace, BAD_CAST "fact-ref", NULL);
+                xmlTextWriterWriteAttribute(writer, BAD_CAST "name", BAD_CAST cpe_name_get_uri(expr.meta.cpe));
+                xmlTextWriterEndElement(writer);
+                return;
+        } else {
+                xmlTextWriterStartElementNS(writer, BAD_CAST expr.xml.namespace, BAD_CAST "logical-test", NULL);
+        }
+
+        if (expr.oper == CPE_LANG_OPER_AND) {
+                xmlTextWriterWriteAttribute(writer, BAD_CAST "operator", BAD_CAST "AND");
+                xmlTextWriterWriteAttribute(writer, BAD_CAST "negate", BAD_CAST "FALSE");
+        } else if (expr.oper == CPE_LANG_OPER_OR) {
+                xmlTextWriterWriteAttribute(writer, BAD_CAST "operator", BAD_CAST "OR");
+                xmlTextWriterWriteAttribute(writer, BAD_CAST "negate", BAD_CAST "FALSE");
+        } else if (expr.oper == CPE_LANG_OPER_NOR) {
+                xmlTextWriterWriteAttribute(writer, BAD_CAST "operator", BAD_CAST "OR");
+                xmlTextWriterWriteAttribute(writer, BAD_CAST "negate", BAD_CAST "TRUE");
+        } else if (expr.oper == CPE_LANG_OPER_NAND) {
+                xmlTextWriterWriteAttribute(writer, BAD_CAST "operator", BAD_CAST "AND");
+                xmlTextWriterWriteAttribute(writer, BAD_CAST "negate", BAD_CAST "TRUE");
+        } else {
+            // CPE_LANG_OPER_MATCH or raise exception ! We are dumped !
+        }
+
+        if ( expr.meta.expr == NULL) return;
+        int i = 0;
+        while (expr.meta.expr[i].oper != CPE_LANG_OPER_HALT){
+            cpe_ret_expr_export(expr.meta.expr[i], writer);
+            ++i;
+        }
+        xmlTextWriterEndElement(writer);
+
+}
 
 /**
  * print_node:
