@@ -262,43 +262,45 @@ void oval_sysdata_to_dom  (struct oval_sysdata *sysdata, xmlDoc *doc, xmlNode *t
 
 		char syschar_namespace[] = "http://oval.mitre.org/XMLSchema/oval-system-characteristics-5";
 		oval_subtype_t subtype = oval_sysdata_get_subtype(sysdata);
-		const char* family = oval_family_get_text(oval_subtype_get_family(subtype));
-		char  family_namespace[sizeof(syschar_namespace)+sizeof(family)+2];*family_namespace = '\0';
-		char *cat = strcpy(family_namespace, syschar_namespace)+sizeof(OVAL_SYSCHAR_NAMESPACE);
-		cat = strcat(cat, "#")+1;strcat(cat, family);
-		const char* subtype_text = oval_subtype_get_text(subtype);
-		char tagname[sizeof(subtype_text)+6];*tagname = '\0';
-		cat = strcpy(tagname, subtype_text)+sizeof(subtype_text);
-		strcat(cat, "_item");
-	    xmlNode *tag_sysdata = xmlNewChild
-			(tag_parent, NULL, BAD_CAST tagname, NULL);
-	    xmlNs *ns_family = xmlNewNs(tag_sysdata, BAD_CAST family_namespace, NULL);
-	    xmlSetNs(tag_sysdata, ns_family);
+		if(subtype){
+			const char* family = oval_family_get_text(oval_subtype_get_family(subtype));
+			char  family_namespace[sizeof(syschar_namespace)+strlen(family)+2];*family_namespace = '\0';
+			sprintf(family_namespace,"%s#%s",OVAL_SYSCHAR_NAMESPACE,family);
+			const char* subtype_text = oval_subtype_get_text(subtype);
+			char tagname[strlen(subtype_text)+6];*tagname = '\0';
+			sprintf(tagname, "%s_item", subtype_text);
+		    xmlNode *tag_sysdata = xmlNewChild
+				(tag_parent, NULL, BAD_CAST tagname, NULL);
+		    xmlNs *ns_family = xmlNewNs(tag_sysdata, BAD_CAST family_namespace, NULL);
+		    xmlSetNs(tag_sysdata, ns_family);
 
-	    {//attributes
-	    	xmlNewProp(tag_sysdata, BAD_CAST "id", BAD_CAST oval_sysdata_get_id(sysdata));
-	    	oval_syschar_status_t status_index = oval_sysdata_get_status(sysdata);
-	    	char* status = oval_syschar_status_text(status_index);
-	    	xmlNewProp(tag_sysdata, BAD_CAST "status", BAD_CAST status);
-	    }
-		{//message
-			char *message = oval_sysdata_get_message(sysdata);
-			if(message!=NULL){
-				xmlNode *tag_message = xmlNewChild
-					(tag_sysdata, ns_syschar, BAD_CAST "message", BAD_CAST message);
-				oval_message_level_t idx = oval_sysdata_get_message_level(sysdata);
-				const char* level = oval_message_level_text(idx);
-				xmlNewProp(tag_message, BAD_CAST "level", BAD_CAST level);
+		    {//attributes
+		    	xmlNewProp(tag_sysdata, BAD_CAST "id", BAD_CAST oval_sysdata_get_id(sysdata));
+		    	oval_syschar_status_t status_index = oval_sysdata_get_status(sysdata);
+		    	char* status = oval_syschar_status_text(status_index);
+		    	xmlNewProp(tag_sysdata, BAD_CAST "status", BAD_CAST status);
+		    }
+			{//message
+				char *message = oval_sysdata_get_message(sysdata);
+				if(message!=NULL){
+					xmlNode *tag_message = xmlNewChild
+						(tag_sysdata, ns_syschar, BAD_CAST "message", BAD_CAST message);
+					oval_message_level_t idx = oval_sysdata_get_message_level(sysdata);
+					const char* level = oval_message_level_text(idx);
+					xmlNewProp(tag_message, BAD_CAST "level", BAD_CAST level);
+				}
 			}
-		}
 
-		{//items
-			struct oval_sysitem_iterator *items = oval_sysdata_get_items(sysdata);
-			while(oval_sysitem_iterator_has_more(items)){
-				struct oval_sysitem *item = oval_sysitem_iterator_next(items);
-				oval_sysitem_to_dom(item, doc, tag_sysdata);
+			{//items
+				struct oval_sysitem_iterator *items = oval_sysdata_get_items(sysdata);
+				while(oval_sysitem_iterator_has_more(items)){
+					struct oval_sysitem *item = oval_sysitem_iterator_next(items);
+					oval_sysitem_to_dom(item, doc, tag_sysdata);
+				}
+				oval_sysitem_iterator_free(items);
 			}
-			oval_sysitem_iterator_free(items);
+		}else{
+			fprintf(stderr,"WARNING: Skipping XML generation of oval_sysdata with subtype OVAL_SUBTYPE_UNKNOWN");
 		}
 	}
 }
