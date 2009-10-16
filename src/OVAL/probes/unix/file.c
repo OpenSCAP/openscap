@@ -61,6 +61,7 @@ int file_cb (const char *p, const char *f, void *ptr)
         struct stat st;
         
         if (f != NULL) {
+                _D("p = \"%s\"; f = \"%s\"\n", p, f);
                 snprintf (path_buffer, sizeof path_buffer, "%s/%s", p, f);
                 st_path = path_buffer;
         } else {
@@ -173,15 +174,11 @@ int file_cb (const char *p, const char *f, void *ptr)
                                         NULL);
                 
                 SEXP_list_add (res, item);
-        
-                SEXP_free (item);
-                SEXP_free (r0); SEXP_free (r1);
-                SEXP_free (r2); SEXP_free (r3);
-                SEXP_free (r4); SEXP_free (r5);
-                SEXP_free (r6); SEXP_free (r7);
-                SEXP_free (r8);
-                SEXP_free (r_t); SEXP_free (r_f);
-                
+
+                SEXP_vfree (item,
+                            r0, r1, r2, r3,
+                            r4, r5, r6, r7,
+                            r8, r_t, r_f, NULL);
         }
         
         return (0);
@@ -223,13 +220,9 @@ SEXP_t *probe_main (SEXP_t *probe_in, int *err)
                                            NULL /* end */);
                 
                 behaviors = SEXP_list_first (bh_list);
-                
-                SEXP_free (bh_list);
-                SEXP_free (r0);
-                SEXP_free (r1);
-                SEXP_free (r2);
-                SEXP_free (r3);
-                SEXP_free (r4);
+         
+                SEXP_vfree (bh_list,
+                            r0, r1, r2, r3, r4, NULL);
         } else {
                 if (!probe_ent_attrexists (behaviors, "max_depth")) {
                         probe_ent_attr_add (behaviors,
@@ -266,7 +259,7 @@ SEXP_t *probe_main (SEXP_t *probe_in, int *err)
                 SEXP_free (behaviors);
                 SEXP_free (path);
                 SEXP_free (filename);
-
+                
                 *err = PROBE_EUNKNOWN;
                 return (NULL);
         }
