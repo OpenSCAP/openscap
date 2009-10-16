@@ -225,6 +225,7 @@ static int process_file(const char *path, const char *filename, void *arg)
                                                  "path", NULL, r0 = SEXP_string_newf("%s", path),
                                                  "filename", NULL, r1 = probe_ent_getval(pfd->filename_ent),
                                                  NULL);
+                        SEXP_vfree (r0, r1, NULL);
                         probe_item_setstatus (item, OVAL_STATUS_DOESNOTEXIST);
 		        probe_itement_setstatus (item, "filename", 1, OVAL_STATUS_DOESNOTEXIST);
 		} else {
@@ -232,11 +233,11 @@ static int process_file(const char *path, const char *filename, void *arg)
                                                  /* entities */
                                                  "path", NULL, r0 = SEXP_string_newf("%s", path),
                                                  NULL);
+                        SEXP_free(r0);
 		}
 
 		SEXP_list_add(pfd->item_list, item);
-
-                SEXP_vfree(r0, r1, item, NULL);
+                SEXP_free(item);
 
 		goto cleanup;
 	}
