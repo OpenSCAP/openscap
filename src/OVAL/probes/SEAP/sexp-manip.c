@@ -629,6 +629,8 @@ SEXP_t *SEXP_string_newf (const char *format, ...)
 
         va_start (alist, format);
         v_strlen = vasprintf (&v_string, format, alist);
+
+        _D("v_strlen = %d\n", v_strlen);
         
         if (v_strlen < 0) {
                 /* TODO: handle this */
@@ -1820,10 +1822,19 @@ static SEXP_t *SEXP_build (const char *s_str, ...)
 static int __SEXP_sizeof_lmemb (SEXP_t *s_exp, size_t *sz)
 {
         SEXP_val_t v_dsc;
+        int ret = 0;
 
+        _D("FUCK: %zu\n", *sz);
+
+        SEXP_VALIDATE(s_exp);
         SEXP_val_dsc (&v_dsc, s_exp->s_valp);
         
         switch (v_dsc.type) {
+        case SEXP_VALTYPE_NUMBER:
+        case SEXP_VALTYPE_STRING:
+                _D("add(v): %zu\n", sizeof (SEXP_valhdr_t) + v_dsc.hdr->size);
+                *sz = *sz + sizeof (SEXP_valhdr_t) + v_dsc.hdr->size;
+                break;
         case SEXP_VALTYPE_LIST:
         {
                 struct SEXP_val_lblk *lblk;
@@ -1831,23 +1842,24 @@ static int __SEXP_sizeof_lmemb (SEXP_t *s_exp, size_t *sz)
                 lblk = SEXP_VALP_LBLK(SEXP_LCASTP(v_dsc.mem)->b_addr);
                 
                 while (lblk != NULL) {
-                        (*sz) += sizeof (uintptr_t) + (2 * sizeof (uint16_t)) + sizeof (SEXP_t) * (1 << (lblk->nxsz & SEXP_LBLKS_MASK));
-                        lblk   = SEXP_VALP_LBLK(lblk->nxsz);
+                        *sz  = *sz + sizeof (uintptr_t) + (2 * sizeof (uint16_t)) + sizeof (SEXP_t) * (1 << (lblk->nxsz & SEXP_LBLKS_MASK));
+                        _D("add(l): %zu\n", sizeof (uintptr_t) + (2 * sizeof (uint16_t)) + sizeof (SEXP_t) * (1 << (lblk->nxsz & SEXP_LBLKS_MASK)));
+                        lblk = SEXP_VALP_LBLK(lblk->nxsz);
                 }
-
-                SEXP_rawval_lblk_cb (SEXP_LCASTP(v_dsc.mem)->b_addr, __SEXP_sizeof_lmemb, sz, 0);
-        }
-        case SEXP_VALTYPE_NUMBER:
-        case SEXP_VALTYPE_STRING:
-                (*sz) += sizeof (SEXP_valhdr_t) + v_dsc.hdr->size;
+                
+                *sz = *sz + sizeof (SEXP_valhdr_t) + v_dsc.hdr->size;
+                _D("add(h): %zu\n", sizeof (SEXP_valhdr_t) + v_dsc.hdr->size);
+                ret = SEXP_rawval_lblk_cb (SEXP_LCASTP(v_dsc.mem)->b_addr, __SEXP_sizeof_lmemb, sz, 1);
+        }       break;
+        default:
+                abort ();
         }
         
-        return (0);
+        return (ret);
 }
 
 size_t SEXP_sizeof (const SEXP_t *s_exp)
 {
-        SEXP_val_t v_dsc;
         size_t sz;
         
         if (s_exp == NULL)
@@ -1856,7 +1868,11 @@ size_t SEXP_sizeof (const SEXP_t *s_exp)
         SEXP_VALIDATE(s_exp);
         
         sz = sizeof (SEXP_t);
-        __SEXP_sizeof_lmemb (s_exp, &sz);
+        
+        if (__SEXP_sizeof_lmemb (s_exp, &sz) != 0) {
+                _D("FAIL: != 0\n");
+                return (0);
+        }
         
         return (sz);
 }
@@ -1921,7 +1937,7 @@ void __SEXP_VALIDATE(const SEXP_t *s_exp, const char *file, uint32_t line, const
                 info.file = file;
                 info.line = line;
                 info.func = func;
-
+                
                 SEXP_rawval_lblk_cb ((uintptr_t)SEXP_LCASTP(v_dsc.mem)->b_addr,
                                      (int (*)(SEXP_t *, void *)) __SEXP_VALIDATE_cb, (void *) &info,
                                      SEXP_LCASTP(v_dsc.mem)->offset + 1);

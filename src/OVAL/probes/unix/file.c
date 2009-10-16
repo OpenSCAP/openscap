@@ -173,10 +173,12 @@ int file_cb (const char *p, const char *f, void *ptr)
                                         
                                         NULL);
                 
-                _D("item memory size = %zu bytes\n", SEXP_sizeof (item));
                 
                 SEXP_list_add (res, item);
-
+                
+                _D("item memory size = %zu bytes\n", SEXP_sizeof (item));
+                _D("list memory size = %zu bytes\n", SEXP_sizeof (res));
+                
                 SEXP_vfree (item,
                             r0, r1, r2, r3,
                             r4, r5, r6, r7,
