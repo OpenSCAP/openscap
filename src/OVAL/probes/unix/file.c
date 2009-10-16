@@ -173,6 +173,8 @@ int file_cb (const char *p, const char *f, void *ptr)
                                         
                                         NULL);
                 
+                _D("item memory size = %zu bytes\n", SEXP_sizeof (item));
+                
                 SEXP_list_add (res, item);
 
                 SEXP_vfree (item,

@@ -134,6 +134,7 @@ const char *SEXP_datatype (const SEXP_t *s_exp);
 int         SEXP_datatype_set (SEXP_t *s_exp, const char *name) __attribute__ ((nonnull (2)));
 SEXP_type_t SEXP_typeof (const SEXP_t *s_exp);
 const char *SEXP_strtype (const SEXP_t *s_exp);
+size_t SEXP_sizeof (const SEXP_t *s_exp);
 
 #if !defined(NDEBUG)
 # define SEXP_VALIDATE(s) __SEXP_VALIDATE(s, __FILE__, __LINE__, __PRETTY_FUNCTION__)
