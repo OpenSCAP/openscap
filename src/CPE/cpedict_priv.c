@@ -247,6 +247,8 @@ OSCAP_GETTER(const char*, cpe_dict_language, value)
  */
 
 static struct cpe_dict_reference * cpe_dict_reference_parse(xmlTextReaderPtr reader);
+static struct cpe_dict_check * cpe_dict_check_parse(xmlTextReaderPtr reader);
+static struct cpe_dictitem_title * cpe_dictitem_title_parse(xmlTextReaderPtr reader, const char * name);
 
 static void cpe_dict_product_export(const struct cpe_dict_product * product, xmlTextWriterPtr writer);
 static void cpe_dict_version_export(const struct cpe_dict_version * version, xmlTextWriterPtr writer);
@@ -257,7 +259,6 @@ static void cpe_dict_note_export(const struct cpe_dictitem_title * title, xmlTex
 static void cpe_dict_check_export(const struct cpe_dict_check * check, xmlTextWriterPtr writer);
 static void cpe_dict_reference_export(const struct cpe_dict_reference * ref, xmlTextWriterPtr writer);
 
-static void cpe_dict_free(struct cpe_dict * dict);
 static void cpe_generator_free(struct cpe_generator * generator);
 static void cpe_dictitem_title_free(struct cpe_dictitem_title * title);
 static void cpe_dictitem_free(struct cpe_dictitem * item);
@@ -360,7 +361,7 @@ struct cpe_dict_vendor *cpe_dictvendor_new_empty() {
  * More info in representive header file.
  * returns the type of <structure>
  */
-struct cpe_dict * cpedict_parse_file(const char *fname) {
+struct cpe_dict * cpe_dict_parse(const char *fname) {
         
     xmlTextReaderPtr reader;
     struct cpe_dict *dict;
@@ -405,7 +406,6 @@ struct cpe_dict * parse_cpedict(xmlTextReaderPtr reader) {
 
         // go through elements and switch through actions till end of file..
         next_ret = xmlTextReaderNextElement(reader);
-        //ret->vendors = oscap_list_new(); // why this has to be here ? 
         while (next_ret != 0) {
                 
             if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), BAD_CAST "generator")) { // <generator> | count = 1
@@ -622,7 +622,7 @@ struct cpe_dictitem * cpe_dictitem_parse(xmlTextReaderPtr reader) {
         return ret;
 }
 
-struct cpe_dictitem_title * cpe_dictitem_title_parse(xmlTextReaderPtr reader, const char * name) {
+static struct cpe_dictitem_title * cpe_dictitem_title_parse(xmlTextReaderPtr reader, const char * name) {
 
 	struct cpe_dictitem_title *ret;
 
@@ -641,7 +641,7 @@ struct cpe_dictitem_title * cpe_dictitem_title_parse(xmlTextReaderPtr reader, co
 	return ret;
 }
 
-struct cpe_dict_check * cpe_dict_check_parse(xmlTextReaderPtr reader) {
+static struct cpe_dict_check * cpe_dict_check_parse(xmlTextReaderPtr reader) {
 
 	struct cpe_dict_check *ret;
 
@@ -652,9 +652,7 @@ struct cpe_dict_check * cpe_dict_check_parse(xmlTextReaderPtr reader) {
 		return NULL;
 	memset(ret, 0, sizeof(struct cpe_dict_check));
 
-        /* TODO: find out if there should be xml:lang lookup
-         * ret->xml.lang = oscap_strdup((char *) xmlTextReaderConstXmlLang(reader));
-         */ 
+        ret->xml.lang = oscap_strdup((char *) xmlTextReaderConstXmlLang(reader));
         ret->xml.namespace = (char *) xmlTextReaderPrefix(reader);
         ret->system = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST "system");
         ret->href = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST "href");
@@ -803,12 +801,13 @@ struct cpe_dict_vendor * cpe_dict_vendor_parse(xmlTextReaderPtr reader) {
  */
 void dict_export(struct cpe_dict * dict, const char * fname) {
 
-        // TODO: ad macro to check return value from xmlTextWriter* functions
+        // TODO: add macro to check return value from xmlTextWriter* functions
         xmlTextWriterPtr writer;
 
         writer = xmlNewTextWriterFilename(fname, 0);
 
         // Set properties of writer TODO: make public function to edit this ??
+        // Yes - there will be structure oscap_export_target & oscap_parse_target
         xmlTextWriterSetIndent(writer, 1);
         xmlTextWriterSetIndentString(writer, BAD_CAST "    ");
 
@@ -1062,7 +1061,7 @@ static void cpe_dict_reference_export(const struct cpe_dict_reference * ref, xml
  */
 
 
-static void cpe_dict_free(struct cpe_dict * dict) {
+void cpe_dict_free(struct cpe_dict * dict) {
 
         if (dict == NULL) return;
 

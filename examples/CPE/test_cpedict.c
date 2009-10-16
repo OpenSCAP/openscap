@@ -8,13 +8,13 @@ void cpe_dictitem_dump(struct cpe_dictitem * item)
 	cpe_name_write(cpe_dictitem_get_name(item), stdout);
 	printf("\n");
 	OSCAP_FOREACH (cpe_dictitem_title, title, cpe_dictitem_get_titles(item),
-		printf("  Title  %s (%s)\n", cpe_dictitem_title_get_content(title), cpe_dictitem_title_get_xmllang(title));
+		printf("  Title  %s (%s)\n", cpe_dictitem_title_get_content(title), "");
 	)
 
 	// print notes
 	printf("  Notes:\n");
-	OSCAP_FOREACH_STR (itn, cpe_dictitem_get_notes(item),
-		printf("    %s\n", oscap_string_iterator_next(itn));
+	OSCAP_FOREACH (cpe_dictitem_title, note, cpe_dictitem_get_notes(item),
+		printf("  Note  %s (%s)\n", cpe_dictitem_title_get_content(note), "");
 	)
 
 	// print deprecation info
@@ -40,9 +40,25 @@ void cpe_dictitem_dump(struct cpe_dictitem * item)
 	printf("\n");
 }
 
+// dump contents of an CPE dictionary vendor
+void cpe_dict_vendor_dump(struct cpe_dict_vendor * item)
+{
+	// print name and title
+	printf("  Vendor:  ");
+	if (cpe_dict_vendor_get_value(item) != NULL) printf("%s", cpe_dict_vendor_get_value(item));
+	printf("\n");
+	OSCAP_FOREACH (cpe_dict_product, product, cpe_dict_vendor_get_products(item),
+		printf("  Product  %s (%d)", cpe_dict_product_get_value(product), cpe_dict_product_get_part(product));
+	        OSCAP_FOREACH (cpe_dict_version, version, cpe_dict_product_get_versions(product),
+		        printf(" v.%s ", cpe_dict_version_get_value(version));
+	        )
+                printf("\n");
+	)
+	printf("\n");
+}
+
 void test_dict_export(struct cpe_dict * dict){
 
-    (void) cpe_dict_export( dict, "test_cpedict.out");
     fprintf(stdout, "Result saved in test_cpedict.out file\n");
 }
 
@@ -57,33 +73,38 @@ int main(int argc, char **argv)
 		return 1;
 	}
 	// create dictionary from specified filename
-	dict = cpe_dict_new(argv[1]);
+	//dict = cpe_dict_new(argv[1]);
+        printf("----------------------------------------------------\n");
+        dict = cpe_dict_parse(argv[1]);
+        printf("----------------------------------------------------\n");
 
-	if (dict != NULL) {
+        if (dict != NULL) {
 		// print dictionary generator info
+                struct cpe_generator *generator = cpe_dict_get_generator(dict);
 		printf
 		    ("Generated on %s by %s version %s using schema version %s.\n\n",
-		     cpe_dict_get_generator_timestamp(dict), cpe_dict_get_generator_product_name(dict),
-		     cpe_dict_get_generator_product_version(dict), cpe_dict_get_generator_schema_version(dict));
+		     cpe_generator_get_timestamp(generator), cpe_generator_get_product_name(generator),
+		     cpe_generator_get_product_version(generator), cpe_generator_get_schema_version(generator));
 
 		// dump each dictionary item
 		OSCAP_FOREACH (cpe_dictitem, item, cpe_dict_get_items(dict),
-			//cpe_dictitem_dump(item);
+			cpe_dictitem_dump(item);
+		)
+		OSCAP_FOREACH (cpe_dict_vendor, vendor, cpe_dict_get_vendors(dict),
+			cpe_dict_vendor_dump(vendor);
 		)
 
 		// for each CPE specified on command line, try to match it against the dictionary
 		for (i = 2; i < argc; ++i)
 			printf("%s KNOWN: %s\n", cpe_name_match_dict_str(argv[i], dict) ? "   " : "NOT", argv[i]);
 
-                test_dict_export(dict);
-
-		// free system resources
-		cpe_dict_free(dict);
 	} else {
 		// dictionary failed to load (dict == NULL)
 		printf("Error while loading CPE dictionary.\n");
 		return 1;
 	}
+        dict_export(dict, "test_cpedict.out");
+        printf("----------------------------------------------------\n");
 
 	oscap_cleanup(); // clean caches
 

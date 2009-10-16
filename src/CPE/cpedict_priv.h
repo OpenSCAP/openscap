@@ -39,7 +39,7 @@
 OSCAP_HIDDEN_START;
 
 char *str_trim(char *str);
-struct cpe_dict * cpedict_parse_file(const char *fname);
+struct cpe_dict * cpe_dict_parse(const char *fname);
 struct cpe_generator * cpe_generator_parse(xmlTextReaderPtr reader);
 
 /*
@@ -49,9 +49,7 @@ struct cpe_generator * cpe_generator_parse(xmlTextReaderPtr reader);
  * @retval NULL on failure
  */
 struct cpe_dictitem * cpe_dictitem_parse(xmlTextReaderPtr reader);
-struct cpe_dict_check * cpe_dict_check_parse(xmlTextReaderPtr reader);
 struct cpe_dict_vendor * cpe_dict_vendor_parse(xmlTextReaderPtr reader);
-struct cpe_dictitem_title * cpe_dictitem_title_parse(xmlTextReaderPtr reader, const char * name);
 struct cpe_dictitem *cpe_dictitem_new_empty();
 struct cpe_dict_vendor * cpe_dictvendor_new_empty();
 struct cpe_dictitem * cpe_dictitem_new_empty();
@@ -88,5 +86,7 @@ void cpe_dict_export(const struct cpe_dict * dict, xmlTextWriterPtr writer);
 void cpe_generator_export(const struct cpe_generator * generator, xmlTextWriterPtr writer);
 void cpe_dictitem_export(const struct cpe_dictitem * item, xmlTextWriterPtr writer);
 void cpe_dict_vendor_export(const struct cpe_dict_vendor * vendor, xmlTextWriterPtr writer);
+
+void cpe_dict_free(struct cpe_dict * dict);
 
 OSCAP_HIDDEN_END;
