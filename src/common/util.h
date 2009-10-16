@@ -188,6 +188,56 @@ typedef void(*oscap_consumer_func)(void*, void*);
 #define OSCAP_HGETTER_STRUCT(RTYPE,SNAME,MNAME) OSCAP_HGETTER_EXP(struct RTYPE*,SNAME,MNAME,MNAME)
 
 
+
+#define OSCAP_SETTER_HEADER(SNAME, MTYPE, MNAME) bool SNAME##_set_##MNAME(struct SNAME *obj, MTYPE item)
+
+/**
+ * Generete a setter function with a check.
+ * Signature of the generated function will be as follows (substitute uppercase strings with actual params):
+ * @code bool SNAME_get_MNAME(struct SNAME *obj, MTYPE *item); @endcode
+ * @param SNAME Name of the structure.
+ * @param MTYPE Type of the member item to set.
+ * @param MNAME Name of the member item to set.
+ * @param CHECK Code to check validity of the assignment (you can use obj and item variables here).
+ * @param DELETER Function used to delete the old value (or empty string).
+ * @param ASSIGNER Function used to assign value to the item.
+ */
+#define OSCAP_SETTER_GENERIC_CHECK(SNAME, MTYPE, MNAME, CHECK, DELETER, ASSIGNER) \
+	OSCAP_SETTER_HEADER(SNAME, MTYPE, MNAME) \
+	{ if (!(CHECK)) return false; DELETER(obj->MNAME); obj->MNAME = ASSIGNER(item); return true; }
+
+/**
+ * Generete a setter function without a check.
+ * @see OSCAP_SETTER_GENERIC_CHECK
+ */
+#define OSCAP_SETTER_GENERIC(SNAME, MTYPE, MNAME, DELETER, ASSIGNER) \
+	OSCAP_SETTER_HEADER(SNAME, MTYPE, MNAME) \
+	{ DELETER(obj->MNAME); obj->MNAME = ASSIGNER(item); return true; }
+
+/**
+ * Generete a setter function without a check that does not delete the previous value.
+ * @see OSCAP_SETTER_GENERIC_CHECK
+ */
+#define OSCAP_SETTER_GENERIC_NODELETE(SNAME, MTYPE, MNAME, ASSIGNER) \
+	OSCAP_SETTER_HEADER(SNAME, MTYPE, MNAME) \
+	{ obj->MNAME = ASSIGNER(item); return true; }
+
+/**
+ * Generete a setter function using a simple assignment.
+ * @see OSCAP_SETTER_GENERIC_CHECK
+ */
+#define OSCAP_SETTER_SIMPLE(SNAME, MTYPE, MNAME) \
+	OSCAP_SETTER_GENERIC_NODELETE(SNAME, MTYPE, MNAME, )
+
+/**
+ * Assign a string value to a structure member.
+ * @param SNAME Structure name
+ * @param MNAME Name of structure member containing the string to be set.
+ */
+#define OSCAP_SETTER_STRING(SNAME, MNAME) \
+	OSCAP_SETTER_GENERIC(SNAME, const char *, MNAME, free, strdup)
+
+
 /**
  * Define mapping between symbolic constant and its string representation.
  *
