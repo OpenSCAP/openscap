@@ -118,6 +118,9 @@ const oval_probe_t *ovalp_lookup (oval_subtype_t typenum)
 oval_subtype_t ovalp_lookup_type (const char *name)
 {
         _A(name != NULL);
+		for (int i = 0; i < OVALP_LTBL_SIZE; ++i)
+			if (strcmp(__ovalp_ltable[i].typestr, name) == 0)
+				return __ovalp_ltable[i].typenum;
         return (0);
 }
 

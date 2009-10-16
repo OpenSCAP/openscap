@@ -431,7 +431,8 @@ bool probe_obj_attrexists (const SEXP_t *obj, const char *name)
 int probe_obj_setstatus (SEXP_t *obj, oval_syschar_status_t status)
 {
         _LOGCALL_;
-        /* TBI */
+
+        probe_item_attr_add (obj, "status", SEXP_number_newi_32 (status));
         return (-1);
 }
 
@@ -715,7 +716,7 @@ oval_syschar_status_t probe_ent_getstatus (const SEXP_t *ent)
 {
         _LOGCALL_;
         /* TBI */
-        return (-1);
+        return (OVAL_STATUS_EXISTS);
 }
 
 char *probe_ent_getname (const SEXP_t *ent)

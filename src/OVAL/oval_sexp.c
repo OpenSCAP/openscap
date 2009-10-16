@@ -499,6 +499,9 @@ static struct oval_sysitem* oval_sysitem_from_sexp(SEXP_t *sexp)
 		return NULL;
 
 	sval = probe_ent_getval (sexp);
+	if (sval == NULL)
+		return NULL;
+
 	switch (SEXP_typeof(sval)) {
 		case SEXP_TYPE_STRING: {
 			val = SEXP_string_cstr(sval);
@@ -571,7 +574,7 @@ static struct oval_sysdata *oval_sysdata_from_sexp(SEXP_t *sexp)
 	char *name;
 	struct oval_sysdata* sysdata = NULL;
 
-        name = probe_ent_getname (sexp);
+    name = probe_ent_getname (sexp);
 
 	if (name == NULL)
 		return NULL;
