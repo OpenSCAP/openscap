@@ -632,14 +632,18 @@ static int probe_varref_create_ctx (const SEXP_t *probe_in, SEXP_t *varrefs, str
 
         /* entities that use var_refs are stored at the begining of an object */
         for (i = 0; i < ent_cnt; ++i) {
-                r0 = SEXP_listref_nth(ctx->pi2, i + 2);
+                /*
+                 * add variable values to entities and insert
+                 * them into the new probe_in object
+                 */
+                r0 = SEXP_list_nth(ctx->pi2, i + 2);
                 vid = probe_ent_getattrval(r0, "var_ref");
-                r1 = SEXP_listref_first(r0);
-                r2 = SEXP_listref_first(r1);
+                r1 = SEXP_list_first(r0);
+                r2 = SEXP_list_first(r1);
 
                 r3 = SEXP_list_new(r2, vidx_name, vidx_val, NULL);
                 SEXP_free(r0);
-                r0 = SEXP_listref_rest(r1);
+                r0 = SEXP_list_rest(r1);
                 ent_name = SEXP_list_join(r3, r0);
                 SEXP_vfree(r0, r1, r2, r3, NULL);
 
