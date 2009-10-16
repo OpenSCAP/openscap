@@ -55,7 +55,7 @@ enum cpe_field_t {
 struct cpe_name {
 	char *data_;           // parsed string, internal use only
 	char **fields_;        // NULL-terminated array of pointers to individual components of CPE URI, internal
-	cpe_part_t part;    // part
+	cpe_part_t part;       // part
 	const char *vendor;    // vendor
 	const char *product;   // product
 	const char *version;   // version

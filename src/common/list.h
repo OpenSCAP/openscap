@@ -63,7 +63,8 @@ void oscap_list_dump(struct oscap_list* list, oscap_dump_func dumper, int depth)
 typedef bool(*oscap_filter_func)(void*,void*);
 
 struct oscap_iterator {
-    struct oscap_list_item* cur;
+    struct oscap_list_item *cur;
+	struct oscap_list *list;
     oscap_filter_func filter;
     void* user_data;
 };
@@ -71,6 +72,7 @@ struct oscap_iterator {
 void* oscap_iterator_new(struct oscap_list* list);
 void* oscap_iterator_new_filter(struct oscap_list* list, oscap_filter_func filter, void* user_data);
 void* oscap_iterator_next(struct oscap_iterator* it);
+size_t oscap_iterator_get_itemcount(const struct oscap_iterator* it);
 bool oscap_iterator_has_more(struct oscap_iterator* it);
 void oscap_iterator_free(struct oscap_iterator* it);
 

@@ -85,7 +85,7 @@ void oscap_list_dump(struct oscap_list* list, oscap_dump_func dumper, int depth)
     }
 }
 
-static bool oscap_iterator_no_filter(void* foo, void* bar) { bar = foo; return true; }
+static bool oscap_iterator_no_filter(void* foo, void* bar) { return true; }
 
 static inline void oscap_iterator_find_nearest(struct oscap_iterator* it)
 {
@@ -96,8 +96,9 @@ static inline void oscap_iterator_find_nearest(struct oscap_iterator* it)
 void* oscap_iterator_new(struct oscap_list* list)
 {
     struct oscap_iterator* it = calloc(1, sizeof(struct oscap_iterator));
-    it->cur = list->first;
+    it->cur    = list->first;
     it->filter = oscap_iterator_no_filter;
+	it->list   = list;
     return it;
 }
 
@@ -108,6 +109,12 @@ void* oscap_iterator_new_filter(struct oscap_list* list, oscap_filter_func filte
     it->user_data = user_data;
     oscap_iterator_find_nearest(it);
     return it;
+}
+
+size_t oscap_iterator_get_itemcount(const struct oscap_iterator* it)
+{
+	assert(it != NULL);
+	return it->list->itemcount;
 }
 
 void oscap_iterator_free(struct oscap_iterator* it)
