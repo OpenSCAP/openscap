@@ -34,6 +34,9 @@
 
 #include "cpeuri.h"
 #include "../common/oscap.h"
+#include "../common/util.h"
+
+OSCAP_HIDDEN_START;
 
 char *str_trim(char *str);
 struct cpe_dict * cpedict_parse_file(const char *fname);
@@ -80,11 +83,10 @@ bool cpe_dict_add_item(struct cpe_dict * dict, struct cpe_dictitem * item);
  */
 struct cpe_dict * parse_cpedict(xmlTextReaderPtr reader);
 
-void dict_export(const struct cpe_dict * dict, const char * fname);
+void dict_export(struct cpe_dict * dict, const char * fname);
 void cpe_dict_export(const struct cpe_dict * dict, xmlTextWriterPtr writer);
 void cpe_generator_export(const struct cpe_generator * generator, xmlTextWriterPtr writer);
 void cpe_dictitem_export(const struct cpe_dictitem * item, xmlTextWriterPtr writer);
 void cpe_dict_vendor_export(const struct cpe_dict_vendor * vendor, xmlTextWriterPtr writer);
-//void cpe_dict_reference_export(const struct cpe_dict_reference * reference, xmlTextWriterPtr writer);
-void cpe_dict_check_export(const struct cpe_dict_check *check, xmlTextWriterPtr writer);
-void cpe_dict_note_export(const struct cpe_dictitem_title * title, xmlTextWriterPtr writer);
+
+OSCAP_HIDDEN_END;

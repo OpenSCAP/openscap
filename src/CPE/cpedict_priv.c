@@ -240,7 +240,38 @@ OSCAP_GETTER(const char*, cpe_dict_language, value)
  * */
 /***************************************************************************/
 
-void print_node(xmlTextReaderPtr reader);
+/***************************************************************************/
+/* Declaration of static (private to this file) functions
+ * These function shoud not be called from outside. For exporting these elements
+ * has to call parent element's 
+ */
+
+static struct cpe_dict_reference * cpe_dict_reference_parse(xmlTextReaderPtr reader);
+
+static void cpe_dict_product_export(const struct cpe_dict_product * product, xmlTextWriterPtr writer);
+static void cpe_dict_version_export(const struct cpe_dict_version * version, xmlTextWriterPtr writer);
+static void cpe_dict_update_export(const struct cpe_dict_update * update, xmlTextWriterPtr writer);
+static void cpe_dict_edition_export(const struct cpe_dict_edition * edition, xmlTextWriterPtr writer);
+static void cpe_dict_language_export(const struct cpe_dict_language * language, xmlTextWriterPtr writer);
+static void cpe_dict_note_export(const struct cpe_dictitem_title * title, xmlTextWriterPtr writer);
+static void cpe_dict_check_export(const struct cpe_dict_check * check, xmlTextWriterPtr writer);
+static void cpe_dict_reference_export(const struct cpe_dict_reference * ref, xmlTextWriterPtr writer);
+
+static void cpe_dict_free(struct cpe_dict * dict);
+static void cpe_generator_free(struct cpe_generator * generator);
+static void cpe_dictitem_title_free(struct cpe_dictitem_title * title);
+static void cpe_dictitem_free(struct cpe_dictitem * item);
+static void cpe_dictcheck_free(struct cpe_dict_check * check);
+static void cpe_dictreference_free(struct cpe_dict_reference * ref);
+static void cpe_dictvendor_free(struct cpe_dict_vendor * vendor);
+static void cpe_dictproduct_free(struct cpe_dict_product * product);
+static void cpe_dictversion_free(struct cpe_dict_version * version);
+static void cpe_dictupdate_free(struct cpe_dict_update * update);
+static void cpe_dictedition_free(struct cpe_dict_edition * edition);
+static void cpe_dictlanguage_free(struct cpe_dict_language * language);
+static void cpe_itemmetadata_free(struct cpe_item_metadata * meta);
+static void xml_metadata_free(struct xml_metadata xml);
+/***************************************************************************/
 
 bool cpe_dict_add_item(struct cpe_dict * dict, struct cpe_dictitem * item)
 {
@@ -296,8 +327,8 @@ struct cpe_dictitem *cpe_dictitem_new_empty() {
 	item = oscap_alloc(sizeof(struct cpe_dictitem));
 	if (item == NULL)
 		return NULL;
-
 	memset(item, 0, sizeof(struct cpe_dictitem));
+
 	item->notes      = oscap_list_new();
 	item->references = oscap_list_new();
 	item->checks     = oscap_list_new();
@@ -312,8 +343,8 @@ struct cpe_dict_vendor *cpe_dictvendor_new_empty() {
 	item = oscap_alloc(sizeof(struct cpe_dict_vendor));
 	if (item == NULL)
 		return NULL;
-
 	memset(item, 0, sizeof(struct cpe_dict_vendor));
+
         item->value      = NULL;
 	item->titles     = oscap_list_new();
 	item->products   = oscap_list_new();
@@ -390,8 +421,8 @@ struct cpe_dict * parse_cpedict(xmlTextReaderPtr reader) {
                         }
                         // We got an item !
 			if (!cpe_dict_add_item(ret, item)) {
-				//cpe_dictitem_free(item);
-				//cpe_dict_free(ret);
+				cpe_dictitem_free(item);
+				cpe_dict_free(ret);
 				return NULL;
 			}
                         continue;
@@ -483,7 +514,6 @@ struct cpe_dictitem * cpe_dictitem_parse(xmlTextReaderPtr reader) {
             xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
 
                 // we are on "<cpe-item>" element, let's alloc structure
-	        ret = oscap_alloc(sizeof(struct cpe_dictitem));
                 ret = cpe_dictitem_new_empty();
                 if (ret == NULL)
                         return NULL;
@@ -550,24 +580,21 @@ struct cpe_dictitem * cpe_dictitem_parse(xmlTextReaderPtr reader) {
                         } else 
                             if (xmlStrcmp(xmlTextReaderConstLocalName(reader), 
                                 (const xmlChar *)"reference") == 0) {
-				    ref = oscap_calloc(1, sizeof(struct cpe_dict_reference));
-				    ref->content = oscap_strdup(str_trim((char *) xmlTextReaderConstValue(reader)));
-				    ref->href = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST "href");
-				    if (ref) oscap_list_add(ret->references, ref);
+                                    ref = cpe_dict_reference_parse(reader);
+                                    if (ref) oscap_list_add(ret->references, ref);
+                                    if (ref) printf("ref: %s\n", ref->href);
                         } else 
                             if (xmlStrcmp(xmlTextReaderConstLocalName(reader), 
                                 (const xmlChar *)"item-metadata") == 0) {
                                     data = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST "modification-date");
                                     if ((data == NULL) || ((ret->metadata = oscap_alloc(sizeof(struct cpe_item_metadata))) == NULL)){
-                                            oscap_free(ret);
+                                            cpe_dictitem_free(ret);
                                             oscap_free(data);
                                             return NULL;
                                     }
-                                    if (data) {
-                                        ret->metadata->modification_date = data;
-                                        ret->metadata->xml.lang = oscap_strdup((char *) xmlTextReaderConstXmlLang(reader));
-                                        ret->metadata->xml.namespace = (char *) xmlTextReaderPrefix(reader);
-                                    }
+                                    ret->metadata->modification_date = data;
+                                    ret->metadata->xml.lang = oscap_strdup((char *) xmlTextReaderConstXmlLang(reader));
+                                    ret->metadata->xml.namespace = (char *) xmlTextReaderPrefix(reader);
 
                                     data = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST "status");
 	                            if (data) ret->metadata->status = data;
@@ -609,7 +636,7 @@ struct cpe_dictitem_title * cpe_dictitem_title_parse(xmlTextReaderPtr reader, co
         ret->xml.lang = oscap_strdup((char *) xmlTextReaderConstXmlLang(reader));
         ret->xml.namespace = (char *) xmlTextReaderPrefix(reader);
 
-	ret->content = oscap_strdup(str_trim((char *) xmlTextReaderReadString(reader)));
+	ret->content = str_trim((char *) xmlTextReaderReadString(reader));
 
 	return ret;
 }
@@ -636,6 +663,25 @@ struct cpe_dict_check * cpe_dict_check_parse(xmlTextReaderPtr reader) {
 	return ret;
 }
 
+static struct cpe_dict_reference * cpe_dict_reference_parse(xmlTextReaderPtr reader) {
+
+	struct cpe_dict_reference *ret;
+
+        if (xmlStrcmp (xmlTextReaderConstLocalName(reader), BAD_CAST "reference") != 0)
+		return NULL;
+
+	if ((ret = oscap_alloc(sizeof(struct cpe_dict_reference))) == NULL)
+		return NULL;
+	memset(ret, 0, sizeof(struct cpe_dict_reference));
+
+        ret->xml.lang = oscap_strdup((char *) xmlTextReaderConstXmlLang(reader));
+        ret->xml.namespace = (char *) xmlTextReaderPrefix(reader);
+        ret->href = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST "href");
+	ret->content = str_trim((char *) xmlTextReaderReadString(reader));
+
+	return ret;
+}
+
 struct cpe_dict_vendor * cpe_dict_vendor_parse(xmlTextReaderPtr reader) {
 
 
@@ -657,7 +703,6 @@ struct cpe_dict_vendor * cpe_dict_vendor_parse(xmlTextReaderPtr reader) {
 
         ret->xml.namespace = (char *) xmlTextReaderPrefix(reader);
         ret->value = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST "value");
-        
         // jump to next element (which should be product)
         xmlTextReaderNextElement(reader);
 
@@ -678,6 +723,7 @@ struct cpe_dict_vendor * cpe_dict_vendor_parse(xmlTextReaderPtr reader) {
                                     // initialization
                                     product = oscap_alloc(sizeof(struct cpe_dict_product));
                                     product->versions = oscap_list_new();
+                                    product->xml.lang = oscap_strdup((char *) xmlTextReaderConstXmlLang(reader));
                                     product->xml.namespace = (char *) xmlTextReaderPrefix(reader);
                                     product->value = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST "value");
 
@@ -706,6 +752,7 @@ struct cpe_dict_vendor * cpe_dict_vendor_parse(xmlTextReaderPtr reader) {
                                     // initialization
                                     version = oscap_alloc(sizeof(struct cpe_dict_version));
                                     version->updates = oscap_list_new();
+                                    version->xml.lang = oscap_strdup((char *) xmlTextReaderConstXmlLang(reader));
                                     version->xml.namespace = (char *) xmlTextReaderPrefix(reader);
                                     version->value = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST "value");
                                     oscap_list_add(product->versions, version);
@@ -715,6 +762,7 @@ struct cpe_dict_vendor * cpe_dict_vendor_parse(xmlTextReaderPtr reader) {
                                     // initialization
                                     update = oscap_alloc(sizeof(struct cpe_dict_update));
                                     update->editions = oscap_list_new();
+                                    update->xml.lang = oscap_strdup((char *) xmlTextReaderConstXmlLang(reader));
                                     update->xml.namespace = (char *) xmlTextReaderPrefix(reader);
                                     update->value = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST "value");
                                     oscap_list_add(version->updates, update);
@@ -724,6 +772,7 @@ struct cpe_dict_vendor * cpe_dict_vendor_parse(xmlTextReaderPtr reader) {
                                     // initialization
                                     edition = oscap_alloc(sizeof(struct cpe_dict_edition));
                                     edition->languages = oscap_list_new();
+                                    edition->xml.lang = oscap_strdup((char *) xmlTextReaderConstXmlLang(reader));
                                     edition->xml.namespace = (char *) xmlTextReaderPrefix(reader);
                                     edition->value = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST "value");
                                     oscap_list_add(update->editions, edition);
@@ -732,6 +781,7 @@ struct cpe_dict_vendor * cpe_dict_vendor_parse(xmlTextReaderPtr reader) {
                                 (const xmlChar *)"language") == 0) {
                                     // initialization
                                     language = oscap_alloc(sizeof(struct cpe_dict_language));
+                                    language->xml.lang = oscap_strdup((char *) xmlTextReaderConstXmlLang(reader));
                                     language->xml.namespace = (char *) xmlTextReaderPrefix(reader);
                                     language->value = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST "value");
                                     oscap_list_add(edition->languages, language);
@@ -751,7 +801,7 @@ struct cpe_dict_vendor * cpe_dict_vendor_parse(xmlTextReaderPtr reader) {
  * More info in representive header file.
  * returns the type of <structure>
  */
-void dict_export(const struct cpe_dict * dict, const char * fname) {
+void dict_export(struct cpe_dict * dict, const char * fname) {
 
         // TODO: ad macro to check return value from xmlTextWriter* functions
         xmlTextWriterPtr writer;
@@ -765,6 +815,7 @@ void dict_export(const struct cpe_dict * dict, const char * fname) {
         xmlTextWriterStartDocument(writer, NULL, FILE_ENCODING, NULL);
 
         cpe_dict_export(dict, writer);
+        cpe_dict_free(dict);
         xmlTextWriterEndDocument(writer);
         xmlFreeTextWriter(writer);
 }
@@ -798,162 +849,6 @@ void cpe_dict_export(const struct cpe_dict * dict, xmlTextWriterPtr writer) {
         xmlTextWriterEndElement(writer);
 }
 
-void cpe_dictitem_export(const struct cpe_dictitem * item, xmlTextWriterPtr writer) {
-
-        xmlTextWriterStartElementNS(writer, BAD_CAST item->xml.namespace, BAD_CAST "cpe-item", NULL);
-        if (item->name != NULL)
-                xmlTextWriterWriteAttribute(writer, BAD_CAST "name", BAD_CAST cpe_name_get_uri(item->name));
-        if (item->deprecated != NULL) {
-                xmlTextWriterWriteAttribute(writer, BAD_CAST "deprecated", BAD_CAST "true");
-                xmlTextWriterWriteAttribute(writer, BAD_CAST "deprecation_date", BAD_CAST item->deprecation_date);
-                xmlTextWriterWriteAttribute(writer, BAD_CAST "deprecated_by", BAD_CAST cpe_name_get_uri(item->deprecated));
-        }
-        
-        OSCAP_FOREACH (cpe_dictitem_title, title, cpe_dictitem_get_titles(item),
-                cpe_title_export( (const struct cpe_title *) title, writer);
-	)
-
-        if (item->metadata != NULL) {
-                xmlTextWriterStartElementNS(writer, BAD_CAST item->metadata->xml.namespace, BAD_CAST "item-metadata", NULL);
-                if (item->metadata->modification_date != NULL)
-                        xmlTextWriterWriteAttribute(writer, BAD_CAST "modification-date", BAD_CAST item->metadata->modification_date);
-                if (item->metadata->status != NULL)
-                        xmlTextWriterWriteAttribute(writer, BAD_CAST "status", BAD_CAST item->metadata->status);
-                if (item->metadata->nvd_id != NULL)
-                        xmlTextWriterWriteAttribute(writer, BAD_CAST "nvd-id", BAD_CAST item->metadata->nvd_id);
-                if (item->metadata->deprecated_by_nvd_id != NULL)
-                        xmlTextWriterWriteAttribute(writer, BAD_CAST "deprecated-by-nvd-id", BAD_CAST item->metadata->deprecated_by_nvd_id);
-                xmlTextWriterEndElement(writer);
-        }
-
-        /*OSCAP_FOREACH (cpe_dict_reference, ref, cpe_dictitem_get_references(item), 
-                cpe_dict_reference_export(ref, writer); 
-        )*/
-
-        struct oscap_iterator *it = oscap_iterator_new(item->notes);
-        if (oscap_iterator_has_more(it)) {
-                xmlTextWriterStartElementNS(writer, NULL, BAD_CAST "notes", NULL);
-                OSCAP_FOREACH (cpe_dictitem_title, note, cpe_dictitem_get_notes(item), 
-                        cpe_dict_note_export(note, writer); 
-                )
-                xmlTextWriterEndElement(writer);
-        }
-
-        OSCAP_FOREACH (cpe_dict_check, check, cpe_dictitem_get_checks(item), 
-                cpe_dict_check_export(check, writer); 
-        )
-
-        xmlTextWriterEndElement(writer);
-
-}
-
-void cpe_dict_product_export(const struct cpe_dict_product * product, xmlTextWriterPtr writer);
-void cpe_dict_version_export(const struct cpe_dict_version * version, xmlTextWriterPtr writer);
-void cpe_dict_update_export(const struct cpe_dict_update * update, xmlTextWriterPtr writer);
-void cpe_dict_edition_export(const struct cpe_dict_edition * edition, xmlTextWriterPtr writer);
-void cpe_dict_language_export(const struct cpe_dict_language * language, xmlTextWriterPtr writer);
-
-void cpe_dict_vendor_export(const struct cpe_dict_vendor * vendor, xmlTextWriterPtr writer) {
-
-        xmlTextWriterStartElementNS(writer, BAD_CAST vendor->xml.namespace, BAD_CAST "vendor", NULL);
-        if (vendor->value != NULL)
-                xmlTextWriterWriteAttribute(writer, BAD_CAST "value", BAD_CAST vendor->value);
-
-        OSCAP_FOREACH (cpe_dictitem_title, title, cpe_dict_vendor_get_titles(vendor),
-                cpe_title_export( (const struct cpe_title *) title, writer);
-	)
-
-        OSCAP_FOREACH (cpe_dict_product, product, cpe_dict_vendor_get_products(vendor),
-                cpe_dict_product_export(product, writer);
-	)
-
-        xmlTextWriterEndElement(writer);
-}
-
-void cpe_dict_product_export(const struct cpe_dict_product * product, xmlTextWriterPtr writer) {
-
-        xmlTextWriterStartElementNS(writer, BAD_CAST product->xml.namespace, BAD_CAST "product", NULL);
-        if (product->value != NULL)
-                xmlTextWriterWriteAttribute(writer, BAD_CAST "value", BAD_CAST product->value);
-        if (product->part != CPE_PART_NONE)
-                xmlTextWriterWriteAttribute(writer, BAD_CAST "part", BAD_CAST PART_TO_CHAR[product->part] );
-
-        OSCAP_FOREACH (cpe_dict_version, version, cpe_dict_product_get_versions(product),
-                cpe_dict_version_export(version, writer);
-	)
-
-        xmlTextWriterEndElement(writer);
-}
-
-void cpe_dict_version_export(const struct cpe_dict_version * version, xmlTextWriterPtr writer) {
-
-        xmlTextWriterStartElementNS(writer, BAD_CAST version->xml.namespace, BAD_CAST "version", NULL);
-        if (version->value != NULL)
-                xmlTextWriterWriteAttribute(writer, BAD_CAST "value", BAD_CAST version->value);
-
-        OSCAP_FOREACH (cpe_dict_update, update, cpe_dict_version_get_updates(version),
-                cpe_dict_update_export(update, writer);
-	)
-
-        xmlTextWriterEndElement(writer);
-
-}
-
-void cpe_dict_update_export(const struct cpe_dict_update * update, xmlTextWriterPtr writer){ 
-
-        xmlTextWriterStartElementNS(writer, BAD_CAST update->xml.namespace, BAD_CAST "update", NULL);
-        if (update->value != NULL)
-                xmlTextWriterWriteAttribute(writer, BAD_CAST "value", BAD_CAST update->value);
-
-        OSCAP_FOREACH (cpe_dict_edition, edition, cpe_dict_update_get_editions(update),
-                cpe_dict_edition_export(edition, writer);
-	)
-
-        xmlTextWriterEndElement(writer);
-}
-void cpe_dict_edition_export(const struct cpe_dict_edition * edition, xmlTextWriterPtr writer){
-
-        xmlTextWriterStartElementNS(writer, BAD_CAST edition->xml.namespace, BAD_CAST "edition", NULL);
-        if (edition->value != NULL)
-                xmlTextWriterWriteAttribute(writer, BAD_CAST "value", BAD_CAST edition->value);
-
-        OSCAP_FOREACH (cpe_dict_language, language, cpe_dict_edition_get_languages(edition),
-                cpe_dict_language_export(language, writer);
-	)
-
-        xmlTextWriterEndElement(writer);
-}
-void cpe_dict_language_export(const struct cpe_dict_language * language, xmlTextWriterPtr writer){
-
-        xmlTextWriterStartElementNS(writer, BAD_CAST language->xml.namespace, BAD_CAST "language", NULL);
-        if (language->value != NULL)
-                xmlTextWriterWriteAttribute(writer, BAD_CAST "value", BAD_CAST language->value);
-
-        xmlTextWriterEndElement(writer);
-}
-
-/*void cpe_dict_reference_export(const struct cpe_dict_reference * reference, xmlTextWriterPtr writer) {
-}*/
-void cpe_dict_note_export(const struct cpe_dictitem_title * title, xmlTextWriterPtr writer) {
-
-        xmlTextWriterStartElementNS(writer, BAD_CAST title->xml.namespace, BAD_CAST "note", NULL);
-        if (title->xml.lang != NULL) 
-                xmlTextWriterWriteAttribute(writer, BAD_CAST "xml:lang", BAD_CAST title->xml.lang);
-        xmlTextWriterWriteString(writer, BAD_CAST title->content);
-        xmlTextWriterEndElement(writer);
-}
-void cpe_dict_check_export(const struct cpe_dict_check *check, xmlTextWriterPtr writer) {
-
-        xmlTextWriterStartElementNS(writer, BAD_CAST check->xml.namespace, BAD_CAST "check", NULL);
-        if (check->system != NULL)
-                xmlTextWriterWriteAttribute(writer, BAD_CAST "system", BAD_CAST check->system);
-        if (check->href != NULL)
-                xmlTextWriterWriteAttribute(writer, BAD_CAST "href", BAD_CAST check->href);
-        if (check->identifier != NULL)
-                xmlTextWriterWriteString(writer, BAD_CAST check->identifier);
-        xmlTextWriterEndElement(writer);
-}
-
 void cpe_generator_export(const struct cpe_generator * generator, xmlTextWriterPtr writer) {
 
         xmlTextWriterStartElementNS(writer, BAD_CAST generator->xml.namespace, BAD_CAST "generator", NULL);
@@ -981,34 +876,339 @@ void cpe_generator_export(const struct cpe_generator * generator, xmlTextWriterP
 
 }
 
-/**
- * print_node:
- * @reader: the xmlReader
- *
- * Dump information about the current node
- */
-void print_node(xmlTextReaderPtr reader) {
+void cpe_dictitem_export(const struct cpe_dictitem * item, xmlTextWriterPtr writer) {
 
-    const xmlChar *name, *value;
+        char *temp;
+        struct oscap_iterator *it;;
 
-    name = xmlTextReaderConstName(reader);
-    if (name == NULL)
-        name = BAD_CAST "--";
+        xmlTextWriterStartElementNS(writer, BAD_CAST item->xml.namespace, BAD_CAST "cpe-item", NULL);
+        if (item->name != NULL) {
+                temp = cpe_name_get_uri(item->name);
+                xmlTextWriterWriteAttribute(writer, BAD_CAST "name", BAD_CAST temp);
+                oscap_free(temp);
+        }
+        if (item->deprecated != NULL) {
+                temp = cpe_name_get_uri(item->deprecated);
+                xmlTextWriterWriteAttribute(writer, BAD_CAST "deprecated", BAD_CAST "true");
+                xmlTextWriterWriteAttribute(writer, BAD_CAST "deprecation_date", BAD_CAST item->deprecation_date);
+                xmlTextWriterWriteAttribute(writer, BAD_CAST "deprecated_by", BAD_CAST temp);
+                oscap_free(temp);
+        }
+        
+        OSCAP_FOREACH (cpe_dictitem_title, title, cpe_dictitem_get_titles(item),
+                cpe_title_export( (const struct cpe_title *) title, writer);
+	)
 
-    value = xmlTextReaderConstValue(reader);
+        if (item->metadata != NULL) {
+                xmlTextWriterStartElementNS(writer, BAD_CAST item->metadata->xml.namespace, BAD_CAST "item-metadata", NULL);
+                if (item->metadata->modification_date != NULL)
+                        xmlTextWriterWriteAttribute(writer, BAD_CAST "modification-date", BAD_CAST item->metadata->modification_date);
+                if (item->metadata->status != NULL)
+                        xmlTextWriterWriteAttribute(writer, BAD_CAST "status", BAD_CAST item->metadata->status);
+                if (item->metadata->nvd_id != NULL)
+                        xmlTextWriterWriteAttribute(writer, BAD_CAST "nvd-id", BAD_CAST item->metadata->nvd_id);
+                if (item->metadata->deprecated_by_nvd_id != NULL)
+                        xmlTextWriterWriteAttribute(writer, BAD_CAST "deprecated-by-nvd-id", BAD_CAST item->metadata->deprecated_by_nvd_id);
+                xmlTextWriterEndElement(writer);
+        }
 
-    printf("%d %d %s %d %d", 
-            xmlTextReaderDepth(reader),
-            xmlTextReaderNodeType(reader),
-            name,
-            xmlTextReaderIsEmptyElement(reader),
-            xmlTextReaderHasValue(reader));
-    if (value == NULL)
-        printf("\n");
-    else {
-        if (xmlStrlen(value) > 40)
-            printf(" %.40s...\n", value);
-        else
-            printf(" %s\n", value);
-    }
+        it = oscap_iterator_new(item->references);
+        if (oscap_iterator_has_more(it)) {
+                xmlTextWriterStartElementNS(writer, NULL, BAD_CAST "references", NULL);
+                OSCAP_FOREACH (cpe_dict_reference, ref, cpe_dictitem_get_references(item), 
+                        cpe_dict_reference_export(ref, writer); 
+                )
+                xmlTextWriterEndElement(writer);
+        }
+        oscap_iterator_free(it);
+
+        it = oscap_iterator_new(item->notes);
+        if (oscap_iterator_has_more(it)) {
+                xmlTextWriterStartElementNS(writer, NULL, BAD_CAST "notes", NULL);
+                OSCAP_FOREACH (cpe_dictitem_title, note, cpe_dictitem_get_notes(item), 
+                        cpe_dict_note_export(note, writer); 
+                )
+                xmlTextWriterEndElement(writer);
+        }
+        oscap_iterator_free(it);
+
+        OSCAP_FOREACH (cpe_dict_check, check, cpe_dictitem_get_checks(item), 
+                cpe_dict_check_export(check, writer); 
+        )
+
+        xmlTextWriterEndElement(writer);
+
 }
+
+void cpe_dict_vendor_export(const struct cpe_dict_vendor * vendor, xmlTextWriterPtr writer) {
+
+        xmlTextWriterStartElementNS(writer, BAD_CAST vendor->xml.namespace, BAD_CAST "vendor", NULL);
+        if (vendor->value != NULL)
+                xmlTextWriterWriteAttribute(writer, BAD_CAST "value", BAD_CAST vendor->value);
+
+        OSCAP_FOREACH (cpe_dictitem_title, title, cpe_dict_vendor_get_titles(vendor),
+                cpe_title_export( (const struct cpe_title *) title, writer);
+	)
+
+        OSCAP_FOREACH (cpe_dict_product, product, cpe_dict_vendor_get_products(vendor),
+                cpe_dict_product_export(product, writer);
+	)
+
+        xmlTextWriterEndElement(writer);
+}
+
+static void cpe_dict_product_export(const struct cpe_dict_product * product, xmlTextWriterPtr writer) {
+
+        xmlTextWriterStartElementNS(writer, BAD_CAST product->xml.namespace, BAD_CAST "product", NULL);
+        if (product->value != NULL)
+                xmlTextWriterWriteAttribute(writer, BAD_CAST "value", BAD_CAST product->value);
+        if (product->part != CPE_PART_NONE)
+                xmlTextWriterWriteAttribute(writer, BAD_CAST "part", BAD_CAST PART_TO_CHAR[product->part] );
+
+        OSCAP_FOREACH (cpe_dict_version, version, cpe_dict_product_get_versions(product),
+                cpe_dict_version_export(version, writer);
+	)
+
+        xmlTextWriterEndElement(writer);
+}
+
+static void cpe_dict_version_export(const struct cpe_dict_version * version, xmlTextWriterPtr writer) {
+
+        xmlTextWriterStartElementNS(writer, BAD_CAST version->xml.namespace, BAD_CAST "version", NULL);
+        if (version->value != NULL)
+                xmlTextWriterWriteAttribute(writer, BAD_CAST "value", BAD_CAST version->value);
+
+        OSCAP_FOREACH (cpe_dict_update, update, cpe_dict_version_get_updates(version),
+                cpe_dict_update_export(update, writer);
+	)
+
+        xmlTextWriterEndElement(writer);
+
+}
+
+static void cpe_dict_update_export(const struct cpe_dict_update * update, xmlTextWriterPtr writer){ 
+
+        xmlTextWriterStartElementNS(writer, BAD_CAST update->xml.namespace, BAD_CAST "update", NULL);
+        if (update->value != NULL)
+                xmlTextWriterWriteAttribute(writer, BAD_CAST "value", BAD_CAST update->value);
+
+        OSCAP_FOREACH (cpe_dict_edition, edition, cpe_dict_update_get_editions(update),
+                cpe_dict_edition_export(edition, writer);
+	)
+
+        xmlTextWriterEndElement(writer);
+}
+static void cpe_dict_edition_export(const struct cpe_dict_edition * edition, xmlTextWriterPtr writer){
+
+        xmlTextWriterStartElementNS(writer, BAD_CAST edition->xml.namespace, BAD_CAST "edition", NULL);
+        if (edition->value != NULL)
+                xmlTextWriterWriteAttribute(writer, BAD_CAST "value", BAD_CAST edition->value);
+
+        OSCAP_FOREACH (cpe_dict_language, language, cpe_dict_edition_get_languages(edition),
+                cpe_dict_language_export(language, writer);
+	)
+
+        xmlTextWriterEndElement(writer);
+}
+static void cpe_dict_language_export(const struct cpe_dict_language * language, xmlTextWriterPtr writer){
+
+        xmlTextWriterStartElementNS(writer, BAD_CAST language->xml.namespace, BAD_CAST "language", NULL);
+        if (language->value != NULL)
+                xmlTextWriterWriteAttribute(writer, BAD_CAST "value", BAD_CAST language->value);
+        if (language->xml.lang != NULL)
+                xmlTextWriterWriteAttribute(writer, BAD_CAST "xml:lang", BAD_CAST language->xml.lang);
+
+        xmlTextWriterEndElement(writer);
+}
+
+static void cpe_dict_note_export(const struct cpe_dictitem_title * title, xmlTextWriterPtr writer) {
+
+        xmlTextWriterStartElementNS(writer, BAD_CAST title->xml.namespace, BAD_CAST "note", NULL);
+        if (title->xml.lang != NULL) 
+                xmlTextWriterWriteAttribute(writer, BAD_CAST "xml:lang", BAD_CAST title->xml.lang);
+        if (title->content != NULL) 
+                xmlTextWriterWriteString(writer, BAD_CAST title->content);
+        xmlTextWriterEndElement(writer);
+}
+static void cpe_dict_check_export(const struct cpe_dict_check *check, xmlTextWriterPtr writer) {
+
+        xmlTextWriterStartElementNS(writer, BAD_CAST check->xml.namespace, BAD_CAST "check", NULL);
+        if (check->system != NULL)
+                xmlTextWriterWriteAttribute(writer, BAD_CAST "system", BAD_CAST check->system);
+        if (check->href != NULL)
+                xmlTextWriterWriteAttribute(writer, BAD_CAST "href", BAD_CAST check->href);
+        if (check->identifier != NULL)
+                xmlTextWriterWriteString(writer, BAD_CAST check->identifier);
+        xmlTextWriterEndElement(writer);
+}
+static void cpe_dict_reference_export(const struct cpe_dict_reference * ref, xmlTextWriterPtr writer) {
+
+        xmlTextWriterStartElementNS(writer, BAD_CAST ref->xml.namespace, BAD_CAST "reference", NULL);
+        if (ref->href != NULL)
+                xmlTextWriterWriteAttribute(writer, BAD_CAST "href", BAD_CAST ref->href);
+        if (ref->content != NULL)
+                xmlTextWriterWriteString(writer, BAD_CAST ref->content);
+        if (ref->xml.lang != NULL)
+                xmlTextWriterWriteAttribute(writer, BAD_CAST "xml:lang", BAD_CAST ref->xml.lang);
+        xmlTextWriterEndElement(writer);
+}
+
+/* End of private export functions
+ * */
+/***************************************************************************/
+
+/***************************************************************************/
+/* Free functions - all are static private, do not use them outside this file
+ */
+
+
+static void cpe_dict_free(struct cpe_dict * dict) {
+
+        if (dict == NULL) return;
+
+	oscap_list_free(dict->items, (oscap_destruct_func)cpe_dictitem_free);
+	oscap_list_free(dict->vendors, (oscap_destruct_func)cpe_dictvendor_free);
+	cpe_generator_free(dict->generator);
+        xml_metadata_free(dict->xml);
+	oscap_free(dict);
+}
+
+static void cpe_dictitem_free(struct cpe_dictitem * item) {
+
+	if (item == NULL) return;
+	cpe_name_free(item->name);
+	cpe_name_free(item->deprecated);
+	oscap_free(item->deprecation_date);
+	oscap_list_free(item->references, (oscap_destruct_func)cpe_dictreference_free);
+	oscap_list_free(item->checks, (oscap_destruct_func)cpe_dictcheck_free);
+	oscap_list_free(item->notes, (oscap_destruct_func)cpe_dictitem_title_free);
+        oscap_list_free(item->titles, (oscap_destruct_func)cpe_dictitem_title_free);
+        cpe_itemmetadata_free(item->metadata);
+        xml_metadata_free(item->xml);
+	oscap_free(item);
+}
+
+static void cpe_generator_free(struct cpe_generator * generator) {
+
+	if (generator == NULL) return;
+
+	oscap_free(generator->product_name);
+	oscap_free(generator->product_version);
+	oscap_free(generator->schema_version);
+	oscap_free(generator->timestamp);
+        xml_metadata_free(generator->xml);
+	oscap_free(generator);
+}
+
+static void cpe_dictitem_title_free(struct cpe_dictitem_title * title) {
+
+	if (title == NULL) return;
+
+	oscap_free(title->content);
+        xml_metadata_free(title->xml);
+	oscap_free(title);
+}
+
+static void cpe_dictcheck_free(struct cpe_dict_check * check) {
+
+	if (check == NULL) return;
+
+	oscap_free(check->identifier);
+	oscap_free(check->system);
+	oscap_free(check->href);
+        xml_metadata_free(check->xml);
+	oscap_free(check);
+}
+
+static void cpe_dictreference_free(struct cpe_dict_reference* ref) {
+
+	if (ref == NULL) return;
+
+	oscap_free(ref->href);
+	oscap_free(ref->content);
+        xml_metadata_free(ref->xml);
+	oscap_free(ref);
+}
+
+static void cpe_dictvendor_free(struct cpe_dict_vendor * vendor) {
+
+	if (vendor == NULL) return;
+
+        oscap_free(vendor->value);
+	oscap_list_free(vendor->titles, (oscap_destruct_func)cpe_dictitem_title_free);
+	oscap_list_free(vendor->products, (oscap_destruct_func)cpe_dictproduct_free);
+        xml_metadata_free(vendor->xml);
+	oscap_free(vendor);
+}
+
+static void cpe_dictproduct_free(struct cpe_dict_product * product) {
+
+	if (product == NULL) return;
+
+	oscap_free(product->value);
+	oscap_list_free(product->versions, (oscap_destruct_func)cpe_dictversion_free);
+        xml_metadata_free(product->xml);
+	oscap_free(product);
+}
+
+static void cpe_dictversion_free(struct cpe_dict_version * version) {
+
+	if (version == NULL) return;
+
+	oscap_free(version->value);
+	oscap_list_free(version->updates, (oscap_destruct_func)cpe_dictupdate_free);
+        xml_metadata_free(version->xml);
+	oscap_free(version);
+}
+
+static void cpe_dictupdate_free(struct cpe_dict_update * update) {
+
+	if (update == NULL) return;
+
+	oscap_free(update->value);
+	oscap_list_free(update->editions, (oscap_destruct_func)cpe_dictedition_free);
+        xml_metadata_free(update->xml);
+	oscap_free(update);
+}
+
+static void cpe_dictedition_free(struct cpe_dict_edition * edition) {
+    
+	if (edition == NULL) return;
+
+	oscap_free(edition->value);
+	oscap_list_free(edition->languages, (oscap_destruct_func)cpe_dictlanguage_free);
+        xml_metadata_free(edition->xml);
+	oscap_free(edition);
+}
+
+static void cpe_dictlanguage_free(struct cpe_dict_language * language) {
+    
+	if (language == NULL) return;
+
+	oscap_free(language->value);
+        xml_metadata_free(language->xml);
+	oscap_free(language);
+}
+
+static void cpe_itemmetadata_free(struct cpe_item_metadata * meta) {
+
+        if (meta == NULL) return;
+
+        oscap_free(meta->modification_date);
+        oscap_free(meta->status);
+        oscap_free(meta->nvd_id);
+        oscap_free(meta->deprecated_by_nvd_id);
+        xml_metadata_free(meta->xml);
+        oscap_free(meta);
+}
+
+static void xml_metadata_free(struct xml_metadata xml) {
+
+        if (xml.lang != NULL) oscap_free(xml.lang);
+        if (xml.namespace != NULL) oscap_free(xml.namespace);
+
+}
+
+/* End of free functions
+ * */
+/***************************************************************************/
