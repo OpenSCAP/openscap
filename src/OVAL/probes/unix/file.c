@@ -36,16 +36,21 @@
 # error "Sorry, your OS isn't supported."
 #endif
 
-static const char *strfiletype (mode_t mode)
+
+static SEXP_t *gr_true   = NULL, *gr_false  = NULL, *gr_t_reg  = NULL;
+static SEXP_t *gr_t_dir  = NULL, *gr_t_lnk  = NULL, *gr_t_blk  = NULL;
+static SEXP_t *gr_t_fifo = NULL, *gr_t_sock = NULL, *gr_t_char = NULL;
+
+static SEXP_t *strfiletype (mode_t mode)
 {
         switch (mode & S_IFMT) {
-        case S_IFREG:  return ("regular");
-        case S_IFDIR:  return ("directory");
-        case S_IFLNK:  return ("symbolic link");
-        case S_IFBLK:  return ("block special");
-        case S_IFIFO:  return ("fifo");
-        case S_IFSOCK: return ("socket");
-        case S_IFCHR:  return ("character special");
+        case S_IFREG:  return (gr_t_reg);
+        case S_IFDIR:  return (gr_t_dir);
+        case S_IFLNK:  return (gr_t_lnk);
+        case S_IFBLK:  return (gr_t_blk);
+        case S_IFIFO:  return (gr_t_fifo);
+        case S_IFSOCK: return (gr_t_sock);
+        case S_IFCHR:  return (gr_t_char);
         default:
                 abort ();
         }
@@ -72,13 +77,9 @@ int file_cb (const char *p, const char *f, void *ptr)
                 _D("FAIL: errno=%u, %s.\n", errno, strerror (errno));
                 return (-1);
         } else {
-                SEXP_t *r0, *r1, *r2, *r3, *r4;
+                SEXP_t *r0, *r1, *r3, *r4;
                 SEXP_t *r5, *r6, *r7, *r8;
-                SEXP_t *r_t, *r_f;
-                
-                r_t = SEXP_number_newb (true);
-                r_f = SEXP_number_newb (false);
-                
+                                                
                 item = probe_obj_creat ("file_item", NULL,
                                         /* entities */                                        
                                         "path", NULL,
@@ -88,7 +89,7 @@ int file_cb (const char *p, const char *f, void *ptr)
                                         r1 = (f != NULL ? SEXP_string_newf (f) : NULL),
                                         
                                         "type", NULL,
-                                        r2 = SEXP_string_newf (strfiletype (st.st_mode)),
+                                        strfiletype (st.st_mode),
                                         
                                         "group_id", NULL,
                                         r3 = SEXP_string_newf ("%hu", st.st_gid),
@@ -139,37 +140,37 @@ int file_cb (const char *p, const char *f, void *ptr)
                                         r8 = SEXP_number_newu_32 (st.st_size),
 #endif
                                         "suid", NULL,
-                                        (st.st_mode & S_ISUID ? r_t : r_f),
+                                        (st.st_mode & S_ISUID ? gr_true : gr_false),
                                         
                                         "sticky", NULL,
-                                        (st.st_mode & S_ISVTX ? r_t : r_f),
+                                        (st.st_mode & S_ISVTX ? gr_true : gr_false),
                                         
                                         "uread", NULL,
-                                        (st.st_mode & S_IRUSR ? r_t : r_f),
+                                        (st.st_mode & S_IRUSR ? gr_true : gr_false),
                                         
                                         "uwrite", NULL,
-                                        (st.st_mode & S_IWUSR ? r_t : r_f),
+                                        (st.st_mode & S_IWUSR ? gr_true : gr_false),
                                         
                                         "uexec", NULL,
-                                        (st.st_mode & S_IXUSR ? r_t : r_f),
+                                        (st.st_mode & S_IXUSR ? gr_true : gr_false),
                                         
                                         "gread", NULL,
-                                        (st.st_mode & S_IRGRP ? r_t : r_f),
+                                        (st.st_mode & S_IRGRP ? gr_true : gr_false),
                                         
                                         "gwrite", NULL,
-                                        (st.st_mode & S_IWGRP ? r_t : r_f),
+                                        (st.st_mode & S_IWGRP ? gr_true : gr_false),
                                         
                                         "gexec", NULL,
-                                        (st.st_mode & S_IXGRP ? r_t : r_f),
+                                        (st.st_mode & S_IXGRP ? gr_true : gr_false),
                                         
                                         "oread", NULL,
-                                        (st.st_mode & S_IROTH ? r_t : r_f),
+                                        (st.st_mode & S_IROTH ? gr_true : gr_false),
                                         
                                         "owrite", NULL,
-                                        (st.st_mode & S_IWOTH ? r_t : r_f),
+                                        (st.st_mode & S_IWOTH ? gr_true : gr_false),
 
                                         "oexec", NULL,
-                                        (st.st_mode & S_IXOTH ? r_t : r_f),
+                                        (st.st_mode & S_IXOTH ? gr_true : gr_false),
                                         
                                         NULL);
                 
@@ -180,12 +181,49 @@ int file_cb (const char *p, const char *f, void *ptr)
                 _D("list memory size = %zu bytes\n", SEXP_sizeof (res));
                 
                 SEXP_vfree (item,
-                            r0, r1, r2, r3,
-                            r4, r5, r6, r7,
-                            r8, r_t, r_f, NULL);
+                            r0, r1, r3, r4,
+                            r5, r6, r7, r8, NULL);
         }
         
         return (0);
+}
+
+SEXP_t *probe_init (void)
+{
+        _LOGCALL_;
+
+        /*
+         * Initialize true/false global reference.
+         */
+        gr_true  = SEXP_number_newb (true);
+        gr_false = SEXP_number_newb (false);
+        
+        /*
+         * Initialize file type string references.
+         * (Used by strfiletype())
+         */
+        gr_t_reg  = SEXP_string_new ("regular", strlen ("regular"));
+        gr_t_dir  = SEXP_string_new ("directory", strlen ("directory"));
+        gr_t_lnk  = SEXP_string_new ("symbolic link", strlen ("symbolic link"));
+        gr_t_blk  = SEXP_string_new ("block special", strlen ("block special"));
+        gr_t_fifo = SEXP_string_new ("fifo", strlen ("fifo"));
+        gr_t_sock = SEXP_string_new ("socket", strlen ("socket"));
+        gr_t_char = SEXP_string_new ("character special", strlen ("character special"));
+        
+        return (NULL);
+}
+
+void probe_fini (SEXP_t *arg)
+{
+        /*
+         * Release global reference.
+         */
+        SEXP_vfree (gr_true, gr_false, gr_t_reg,
+                    gr_t_dir, gr_t_lnk, gr_t_blk,
+                    gr_t_fifo, gr_t_sock, gr_t_char,
+                    NULL);
+        
+        return;
 }
 
 SEXP_t *probe_main (SEXP_t *probe_in, int *err)
@@ -268,6 +306,14 @@ SEXP_t *probe_main (SEXP_t *probe_in, int *err)
                 return (NULL);
         }
         
+        fprintf (stderr,
+                 "item count: %zu\n"
+                 "    sizeof: %zu bytes\n",
+                 SEXP_list_length (items),
+                 SEXP_sizeof (items));
+        
+        abort ();
+
         SEXP_free (behaviors);
         SEXP_free (filename);
         SEXP_free (path);
