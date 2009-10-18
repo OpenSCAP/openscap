@@ -323,6 +323,9 @@ struct cpe_dict *cpe_dict_new() {
         dict->vendors   = oscap_list_new();
 	dict->items     = oscap_list_new();
 
+        dict->xml.lang      = NULL;
+        dict->xml.namespace = NULL;
+
 	return dict;
 }
 
@@ -339,6 +342,9 @@ struct cpe_dictitem *cpe_dictitem_new() {
 	item->checks     = oscap_list_new();
         item->titles     = oscap_list_new();
 
+        item->xml.lang      = NULL;
+        item->xml.namespace = NULL;
+
 	return item;
 }
 
@@ -353,6 +359,9 @@ struct cpe_dict_vendor *cpe_dictvendor_new() {
         item->value      = NULL;
 	item->titles     = oscap_list_new();
 	item->products   = oscap_list_new();
+
+        item->xml.lang      = NULL;
+        item->xml.namespace = NULL;
 
 	return item;
 }
@@ -370,7 +379,7 @@ struct cpe_dict * cpe_dict_parse(const char *fname) {
     xmlTextReaderPtr reader;
     struct cpe_dict *dict;
 
-    reader = xmlReaderForFile(fname, NULL, 0);
+    reader = xmlReaderForFile(fname, "UTF-8", 0);
     if (reader != NULL) {
         xmlTextReaderRead(reader);
         dict = parse_cpedict(reader);
@@ -458,11 +467,8 @@ struct cpe_generator * cpe_generator_parse(xmlTextReaderPtr reader) {
                 if (ret == NULL)
                         return NULL;
 
-                /* We don't have a language or namespace in <generator> elements, otherwise use this code:
-                 * ret->xml.lang = strdup((char *) xmlTextReaderConstXmlLang(reader));
-                 * ret->xml.namespace = (char *) xmlTextReaderPrefix(reader);
-                 * probably the product_name below will need language specification...
-                */
+                ret->xml.lang = (char *) xmlTextReaderConstXmlLang(reader);
+                ret->xml.namespace = (char *) xmlTextReaderPrefix(reader);
                 
                 // skip nodes until new element
                 xmlTextReaderNextElement(reader);
