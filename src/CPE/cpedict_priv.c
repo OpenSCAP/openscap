@@ -44,13 +44,14 @@
 
 /***************************************************************************/
 /* Variable definitions
- *
- * cpe_element_metadata -> meta structure for every XML element
- * with all information that are common as "XML namespace"
  * */
 
 const char *PART_TO_CHAR[] = { NULL, "h", "o", "a" };
 
+/* XML Metadata. Here should be every general attribute
+ * that can be present in every xml element such as xml:lang
+ * or xml namespace.
+ * */
 struct xml_metadata {
         char *namespace;
         char *lang;
@@ -60,55 +61,6 @@ struct xml_metadata {
  * CPE-List structures
  * ***************************************/
 
-/***********************************/
-/* <cpe-item><item-metadata>
- * */
-struct cpe_item_metadata {
-        struct xml_metadata xml;
-        char *modification_date;
-        char *status;
-        char *nvd_id;
-        char *deprecated_by_nvd_id;
-};
-OSCAP_GETTER(const char*, cpe_item_metadata, modification_date)
-OSCAP_GETTER(const char*, cpe_item_metadata, status)
-OSCAP_GETTER(const char*, cpe_item_metadata, nvd_id)
-OSCAP_GETTER(const char*, cpe_item_metadata, deprecated_by_nvd_id)
-
-/***********************************/
-/* <cpe-item><check>
- * */
-struct cpe_dict_check {
-        struct xml_metadata xml;
-	char *system;      // system check URI
-	char *href;        // external file reference (NULL if not present)
-	char *identifier;  // test identifier
-};
-OSCAP_GETTER(const char*, cpe_dict_check, system)
-OSCAP_GETTER(const char*, cpe_dict_check, href)
-OSCAP_GETTER(const char*, cpe_dict_check, identifier)
-
-/***********************************/
-/* <cpe-item><references><reference>
- * */
-struct cpe_dict_reference {
-        struct xml_metadata xml;
-	char *href;     // reference URL
-	char *content;  // reference description
-};
-OSCAP_GETTER(const char*, cpe_dict_reference, href)
-OSCAP_GETTER(const char*, cpe_dict_reference, content)
-
-/***********************************/
-/* <cpe-item><title>
- * */
-struct cpe_dictitem_title {
-        struct xml_metadata xml;
-	char *content;		        // human-readable name of this item
-};
-OSCAP_GETTER(const char*, cpe_dictitem_title, content)
-
-/***********************************/
 /* <cpe-item>
  * */
 struct cpe_dictitem {                   // the node <cpe-item>
@@ -134,7 +86,50 @@ OSCAP_IGETTER_GEN(cpe_dict_check, cpe_dictitem, checks)
 OSCAP_IGETTER_GEN(cpe_dictitem_title, cpe_dictitem, titles)
 OSCAP_IGETTER(cpe_dictitem_title, cpe_dictitem, notes)
 
-/***********************************/
+/* <cpe-item><item-metadata>
+ * */
+struct cpe_item_metadata {
+        struct xml_metadata xml;
+        char *modification_date;
+        char *status;
+        char *nvd_id;
+        char *deprecated_by_nvd_id;
+};
+OSCAP_GETTER(const char*, cpe_item_metadata, modification_date)
+OSCAP_GETTER(const char*, cpe_item_metadata, status)
+OSCAP_GETTER(const char*, cpe_item_metadata, nvd_id)
+OSCAP_GETTER(const char*, cpe_item_metadata, deprecated_by_nvd_id)
+
+/* <cpe-item><check>
+ * */
+struct cpe_dict_check {
+        struct xml_metadata xml;
+	char *system;      // system check URI
+	char *href;        // external file reference (NULL if not present)
+	char *identifier;  // test identifier
+};
+OSCAP_GETTER(const char*, cpe_dict_check, system)
+OSCAP_GETTER(const char*, cpe_dict_check, href)
+OSCAP_GETTER(const char*, cpe_dict_check, identifier)
+
+/* <cpe-item><references><reference>
+ * */
+struct cpe_dict_reference {
+        struct xml_metadata xml;
+	char *href;     // reference URL
+	char *content;  // reference description
+};
+OSCAP_GETTER(const char*, cpe_dict_reference, href)
+OSCAP_GETTER(const char*, cpe_dict_reference, content)
+
+/* <cpe-item><title>
+ * */
+struct cpe_dictitem_title {
+        struct xml_metadata xml;
+	char *content;		        // human-readable name of this item
+};
+OSCAP_GETTER(const char*, cpe_dictitem_title, content)
+
 /* <generator>
  * */
 struct cpe_generator {
@@ -150,7 +145,6 @@ OSCAP_GETTER(const char*, cpe_generator, product_version)
 OSCAP_GETTER(const char*, cpe_generator, schema_version)
 OSCAP_GETTER(const char*, cpe_generator, timestamp)
 
-/***********************************/
 /* <cpe-list>
  * */
 struct cpe_dict {                        // the main node
@@ -168,7 +162,6 @@ OSCAP_IGETTER_GEN(cpe_dict_vendor, cpe_dict, vendors)
  * Component-tree structures
  * ***************************************/
 
-/***********************************/
 /* vendor
  * */
 struct cpe_dict_vendor {
@@ -181,7 +174,6 @@ OSCAP_GETTER(const char*, cpe_dict_vendor, value)
 OSCAP_IGETTER(cpe_dictitem_title, cpe_dict_vendor, titles)
 OSCAP_IGETTER_GEN(cpe_dict_product, cpe_dict_vendor, products)
 
-/***********************************/
 /* vendor -> product 
  * */
 struct cpe_dict_product {
@@ -194,7 +186,6 @@ OSCAP_GETTER(const char*, cpe_dict_product, value)
 OSCAP_GETTER(int, cpe_dict_product, part)
 OSCAP_IGETTER_GEN(cpe_dict_version, cpe_dict_product, versions)
 
-/***********************************/
 /* vendor -> product -> version 
  * */
 struct cpe_dict_version {
@@ -205,7 +196,6 @@ struct cpe_dict_version {
 OSCAP_GETTER(const char*, cpe_dict_version, value)
 OSCAP_IGETTER_GEN(cpe_dict_update, cpe_dict_version, updates)
 
-/***********************************/
 /* vendor -> product -> version -> update 
  * */
 struct cpe_dict_update {
@@ -216,7 +206,6 @@ struct cpe_dict_update {
 OSCAP_GETTER(const char*, cpe_dict_update, value)
 OSCAP_IGETTER_GEN(cpe_dict_edition, cpe_dict_update, editions)
 
-/***********************************/
 /* vendor -> product -> version -> update -> edition 
  * */
 struct cpe_dict_edition {
@@ -227,7 +216,6 @@ struct cpe_dict_edition {
 OSCAP_GETTER(const char*, cpe_dict_edition, value)
 OSCAP_IGETTER_GEN(cpe_dict_language, cpe_dict_edition, languages)
 
-/***********************************/
 /* vendor -> product -> version -> update -> edition -> language
  * */
 struct cpe_dict_language {
@@ -245,6 +233,9 @@ OSCAP_GETTER(const char*, cpe_dict_language, value)
  * These function shoud not be called from outside. For exporting these elements
  * has to call parent element's 
  */
+static char * str_trim(char *str);
+static int xmlTextReaderNextElement(xmlTextReaderPtr reader);
+static bool cpe_dict_add_item(struct cpe_dict * dict, struct cpe_dictitem * item);
 
 static struct cpe_dict_reference * cpe_dict_reference_parse(xmlTextReaderPtr reader);
 static struct cpe_dict_check * cpe_dict_check_parse(xmlTextReaderPtr reader);
@@ -258,13 +249,11 @@ static void cpe_dict_language_export(const struct cpe_dict_language * language, 
 static void cpe_dict_note_export(const struct cpe_dictitem_title * title, xmlTextWriterPtr writer);
 static void cpe_dict_check_export(const struct cpe_dict_check * check, xmlTextWriterPtr writer);
 static void cpe_dict_reference_export(const struct cpe_dict_reference * ref, xmlTextWriterPtr writer);
+static void cpe_dictitem_title_export(const struct cpe_dictitem_title * title, xmlTextWriterPtr writer);
 
-static void cpe_generator_free(struct cpe_generator * generator);
 static void cpe_dictitem_title_free(struct cpe_dictitem_title * title);
-static void cpe_dictitem_free(struct cpe_dictitem * item);
 static void cpe_dictcheck_free(struct cpe_dict_check * check);
 static void cpe_dictreference_free(struct cpe_dict_reference * ref);
-static void cpe_dictvendor_free(struct cpe_dict_vendor * vendor);
 static void cpe_dictproduct_free(struct cpe_dict_product * product);
 static void cpe_dictversion_free(struct cpe_dict_version * version);
 static void cpe_dictupdate_free(struct cpe_dict_update * update);
@@ -274,8 +263,11 @@ static void cpe_itemmetadata_free(struct cpe_item_metadata * meta);
 static void xml_metadata_free(struct xml_metadata xml);
 /***************************************************************************/
 
-bool cpe_dict_add_item(struct cpe_dict * dict, struct cpe_dictitem * item)
-{
+/* Add item to dictionary. Function that just check both variables
+ * on NULL value.
+ * */
+static bool cpe_dict_add_item(struct cpe_dict * dict, struct cpe_dictitem * item) {
+
 	if (dict == NULL || item == NULL)
 		return false;
 
@@ -286,8 +278,7 @@ bool cpe_dict_add_item(struct cpe_dict * dict, struct cpe_dictitem * item)
 /* str_trim function that trims input string and returns string
  * without white characters as space or tabulator.
  * */
-char * str_trim(char *str)
-{
+static char * str_trim(char *str) {
 	int off, i;
 	if (str == NULL)
 		return NULL;
@@ -302,12 +293,25 @@ char * str_trim(char *str)
 	return str;
 }
 
+/* Function that jump to next XML starting element.
+ * */
+static int xmlTextReaderNextElement(xmlTextReaderPtr reader) {
+
+        int ret;
+        do { 
+              ret = xmlTextReaderRead(reader); 
+              // if end of file
+              if (ret == 0) break;
+        } while (xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT);
+        return ret;
+}
+
 /***************************************************************************/
 /* Constructors of CPE structures cpe_*<structure>*_new()
  * More info in representive header file.
  * returns the type of <structure>
  */
-struct cpe_dict *cpe_dict_new_empty() {
+struct cpe_dict *cpe_dict_new() {
 
         struct cpe_dict *dict;
 
@@ -322,7 +326,7 @@ struct cpe_dict *cpe_dict_new_empty() {
 	return dict;
 }
 
-struct cpe_dictitem *cpe_dictitem_new_empty() {
+struct cpe_dictitem *cpe_dictitem_new() {
 	struct cpe_dictitem *item;
 
 	item = oscap_alloc(sizeof(struct cpe_dictitem));
@@ -338,7 +342,7 @@ struct cpe_dictitem *cpe_dictitem_new_empty() {
 	return item;
 }
 
-struct cpe_dict_vendor *cpe_dictvendor_new_empty() {
+struct cpe_dict_vendor *cpe_dictvendor_new() {
 	struct cpe_dict_vendor *item;
 
 	item = oscap_alloc(sizeof(struct cpe_dict_vendor));
@@ -397,7 +401,7 @@ struct cpe_dict * parse_cpedict(xmlTextReaderPtr reader) {
 
         // we found cpe-list element, let's roll !
         // allocate memory for cpe_dict so we can fill items and vendors and general structures
-        ret = cpe_dict_new_empty();
+        ret = cpe_dict_new();
         if (ret == NULL)
             return NULL;
 
@@ -514,7 +518,7 @@ struct cpe_dictitem * cpe_dictitem_parse(xmlTextReaderPtr reader) {
             xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
 
                 // we are on "<cpe-item>" element, let's alloc structure
-                ret = cpe_dictitem_new_empty();
+                ret = cpe_dictitem_new();
                 if (ret == NULL)
                         return NULL;
 
@@ -695,7 +699,7 @@ struct cpe_dict_vendor * cpe_dict_vendor_parse(xmlTextReaderPtr reader) {
         if (xmlStrcmp (xmlTextReaderConstLocalName(reader), BAD_CAST "vendor") != 0)
 		return NULL;
 
-        ret = cpe_dictvendor_new_empty();
+        ret = cpe_dictvendor_new();
         if (ret == NULL)
                 return NULL;
 
@@ -895,7 +899,7 @@ void cpe_dictitem_export(const struct cpe_dictitem * item, xmlTextWriterPtr writ
         }
         
         OSCAP_FOREACH (cpe_dictitem_title, title, cpe_dictitem_get_titles(item),
-                cpe_title_export( (const struct cpe_title *) title, writer);
+                cpe_dictitem_title_export( title, writer);
 	)
 
         if (item->metadata != NULL) {
@@ -946,7 +950,7 @@ void cpe_dict_vendor_export(const struct cpe_dict_vendor * vendor, xmlTextWriter
                 xmlTextWriterWriteAttribute(writer, BAD_CAST "value", BAD_CAST vendor->value);
 
         OSCAP_FOREACH (cpe_dictitem_title, title, cpe_dict_vendor_get_titles(vendor),
-                cpe_title_export( (const struct cpe_title *) title, writer);
+                cpe_dictitem_title_export( title, writer);
 	)
 
         OSCAP_FOREACH (cpe_dict_product, product, cpe_dict_vendor_get_products(vendor),
@@ -1051,7 +1055,14 @@ static void cpe_dict_reference_export(const struct cpe_dict_reference * ref, xml
                 xmlTextWriterWriteAttribute(writer, BAD_CAST "xml:lang", BAD_CAST ref->xml.lang);
         xmlTextWriterEndElement(writer);
 }
+static void cpe_dictitem_title_export(const struct cpe_dictitem_title * title, xmlTextWriterPtr writer) {
 
+        xmlTextWriterStartElementNS(writer, BAD_CAST title->xml.namespace, BAD_CAST "title", NULL);
+        if (title->xml.lang != NULL) 
+                xmlTextWriterWriteAttribute(writer, BAD_CAST "xml:lang", BAD_CAST title->xml.lang);
+        xmlTextWriterWriteString(writer, BAD_CAST title->content);
+        xmlTextWriterEndElement(writer);
+}
 /* End of private export functions
  * */
 /***************************************************************************/
@@ -1059,8 +1070,6 @@ static void cpe_dict_reference_export(const struct cpe_dict_reference * ref, xml
 /***************************************************************************/
 /* Free functions - all are static private, do not use them outside this file
  */
-
-
 void cpe_dict_free(struct cpe_dict * dict) {
 
         if (dict == NULL) return;
@@ -1072,7 +1081,7 @@ void cpe_dict_free(struct cpe_dict * dict) {
 	oscap_free(dict);
 }
 
-static void cpe_dictitem_free(struct cpe_dictitem * item) {
+void cpe_dictitem_free(struct cpe_dictitem * item) {
 
 	if (item == NULL) return;
 	cpe_name_free(item->name);
@@ -1087,7 +1096,7 @@ static void cpe_dictitem_free(struct cpe_dictitem * item) {
 	oscap_free(item);
 }
 
-static void cpe_generator_free(struct cpe_generator * generator) {
+void cpe_generator_free(struct cpe_generator * generator) {
 
 	if (generator == NULL) return;
 
@@ -1129,7 +1138,7 @@ static void cpe_dictreference_free(struct cpe_dict_reference* ref) {
 	oscap_free(ref);
 }
 
-static void cpe_dictvendor_free(struct cpe_dict_vendor * vendor) {
+void cpe_dictvendor_free(struct cpe_dict_vendor * vendor) {
 
 	if (vendor == NULL) return;
 
@@ -1205,9 +1214,7 @@ static void xml_metadata_free(struct xml_metadata xml) {
 
         if (xml.lang != NULL) oscap_free(xml.lang);
         if (xml.namespace != NULL) oscap_free(xml.namespace);
-
 }
-
 /* End of free functions
  * */
 /***************************************************************************/

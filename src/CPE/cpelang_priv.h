@@ -30,17 +30,22 @@
 
 #include <libxml/xmlreader.h>
 #include <libxml/xmlwriter.h>
+#include "../common/util.h"
 
-struct cpe_platformspec * parse_platformspec(xmlTextReaderPtr reader);
-struct cpe_platform * parse_platform(xmlTextReaderPtr reader);
-struct cpe_lang_expr * parse_ret_expr(xmlTextReaderPtr reader);
-char * parse_text_element(xmlTextReaderPtr reader, char *name);
-struct cpe_platformspec *  parse_file(const char *fname);
-void print_node(xmlTextReaderPtr reader);
-static struct cpe_title * cpe_title_parse(xmlTextReaderPtr reader, char *name);
-void cpe_lang_export(const struct cpe_platformspec * spec, const char * fname);
-void cpe_platformspec_export2(const struct cpe_platformspec * spec, xmlTextWriterPtr writer);
+OSCAP_HIDDEN_START;
+
+struct cpe_platformspec * cpe_platformspec_parse(xmlTextReaderPtr reader);
+struct cpe_platform * cpe_platform_parse(xmlTextReaderPtr reader);
+struct cpe_lang_expr * cpe_ret_expr_parse(xmlTextReaderPtr reader);
+struct cpe_platformspec *  cpe_lang_parse(const char *fname);
+
+void cpe_lang_export(struct cpe_platformspec * spec, const char * fname);
+void cpe_platformspec_export(const struct cpe_platformspec * spec, xmlTextWriterPtr writer);
 void cpe_platform_export(const struct cpe_platform * platform, xmlTextWriterPtr writer);
-void cpe_title_export(const struct cpe_title * title, xmlTextWriterPtr writer);
-void cpe_ret_expr_export(struct cpe_lang_expr expr, xmlTextWriterPtr writer);
-int xmlTextReaderNextElement(xmlTextReaderPtr reader);
+void cpe_ret_expr_export(const struct cpe_lang_expr expr, xmlTextWriterPtr writer);
+
+void cpe_langexpr_free(struct cpe_lang_expr * expr);
+void cpe_platformspec_free(struct cpe_platformspec * platformspec);
+void cpe_platform_free(struct cpe_platform * platform);
+
+OSCAP_HIDDEN_END;

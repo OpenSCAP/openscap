@@ -38,7 +38,6 @@
 
 OSCAP_HIDDEN_START;
 
-char *str_trim(char *str);
 struct cpe_dict * cpe_dict_parse(const char *fname);
 struct cpe_generator * cpe_generator_parse(xmlTextReaderPtr reader);
 
@@ -50,9 +49,8 @@ struct cpe_generator * cpe_generator_parse(xmlTextReaderPtr reader);
  */
 struct cpe_dictitem * cpe_dictitem_parse(xmlTextReaderPtr reader);
 struct cpe_dict_vendor * cpe_dict_vendor_parse(xmlTextReaderPtr reader);
-struct cpe_dictitem *cpe_dictitem_new_empty();
-struct cpe_dict_vendor * cpe_dictvendor_new_empty();
-struct cpe_dictitem * cpe_dictitem_new_empty();
+struct cpe_dict_vendor * cpe_dictvendor_new();
+struct cpe_dictitem * cpe_dictitem_new();
 
 /**
  * Create new empty CPE dictionary
@@ -60,18 +58,7 @@ struct cpe_dictitem * cpe_dictitem_new_empty();
  * @return new dictionary
  * @retval NULL on failure
  */
-struct cpe_dict *cpe_dict_new_empty();
-
-/**
- * Add @a item to dictionary @a dict
- *
- * @relates cpe_dict
- * @note The item will be deleted as soon as you call cpe_dict_free on the dictionary.
- * @param dict dictionary to add new item to
- * @param item pointer to item to add
- * @return true on success
- */
-bool cpe_dict_add_item(struct cpe_dict * dict, struct cpe_dictitem * item);
+struct cpe_dict *cpe_dict_new();
 
 /*
  * Load new CPE dictionary from XML node
@@ -88,5 +75,8 @@ void cpe_dictitem_export(const struct cpe_dictitem * item, xmlTextWriterPtr writ
 void cpe_dict_vendor_export(const struct cpe_dict_vendor * vendor, xmlTextWriterPtr writer);
 
 void cpe_dict_free(struct cpe_dict * dict);
+void cpe_generator_free(struct cpe_generator * generator);
+void cpe_dictitem_free(struct cpe_dictitem * item);
+void cpe_dictvendor_free(struct cpe_dict_vendor * vendor);
 
 OSCAP_HIDDEN_END;

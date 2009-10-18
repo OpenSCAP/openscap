@@ -55,6 +55,8 @@ typedef enum {
 	CPE_LANG_OPER_NOR = CPE_LANG_OPER_OR | CPE_LANG_OPER_NOT,
 } cpe_lang_oper_t;
 
+struct cpe_platformspec * cpe_lang_load(const char *fname);
+
 /*
  * @struct cpe_lang_expr
  * CPE language boolean expression
@@ -85,73 +87,45 @@ bool cpe_platform_iterator_has_more(struct cpe_platform_iterator* it);
 /// @relates cpe_platform_iterator
 void cpe_platform_iterator_free(struct cpe_platform_iterator* it);
 
-/**
- * New platform specification from file
- * @relates cpe_platformspec
- * @param fname file name to load
- * @return new platform specification list
- * @retval NULL on failure
+/** @struct cpe_title_iterator
+ * Iterator over CPE dictionary titles.
+ * @see oscap_iterator
  */
-struct cpe_platformspec *cpe_platformspec_new(const char *fname);
+struct cpe_title_iterator;
+/// @relates cpe_platform_iterator
+struct cpe_title* cpe_title_iterator_next(struct cpe_title_iterator* it);
+/// @relates cpe_platform_iterator
+bool cpe_title_iterator_has_more(struct cpe_title_iterator* it);
+/// @relates cpe_platform_iterator
+void cpe_title_iterator_free(struct cpe_title_iterator* it);
 
 /**
- * Free specified platform specification list
- * @relates cpe_platformspec
- * @param platformspec pointer to list to be deleted
+ * cpe_lang_expr functions to get variable members
  */
-void cpe_platformspec_free(struct cpe_platformspec * platformspec);
+cpe_lang_oper_t cpe_lang_expr_get_oper(const struct cpe_lang_expr *item);
+
+struct cpe_lang_expr * cpe_lang_expr_get_meta_expr(const struct cpe_lang_expr *item);
+struct cpe_name * cpe_lang_expr_get_meta_cpe(const struct cpe_lang_expr *item);
 
 /**
- * Get an iterator to platforms contained in this specification.
- * @relates cpe_platformspec
+ * cpe_platform functions to get variable members
  */
-struct cpe_platform_iterator* cpe_platformspec_get_items(const struct cpe_platformspec * platformspec);
+const char * cpe_platform_get_id(const struct cpe_platform *item);
+const char * cpe_platform_get_remark(const struct cpe_platform *item);
+struct cpe_title_iterator * cpe_platform_get_titles(const struct cpe_platform *item);
 
 /**
- * Get platform with given ID.
- * @relates cpe_platformspec
- * @param platformspec Used platform specfication.
- * @param id Desired platform ID.
- * @raturn Platform with given ID.
- * @retval NULL on failure (e.g. no such platform exists)
+ * cpe_platformspec functions to get variable members
  */
-struct cpe_platform* cpe_platformspec_get_item(const struct cpe_platformspec * platformspec, const char* id);
+const char * cpe_platformspec_get_ns_href(const struct cpe_platformspec *item);
+const char * cpe_platformspec_get_ns_prefix(const struct cpe_platformspec *item);
+struct cpe_platform_iterator * cpe_platformspec_get_platforms(const struct cpe_platformspec *item);
+struct cpe_platform * cpe_platformspec_get_item(const struct cpe_platformspec *item, const char *key);
 
 /**
- * Match list of CPEs against CPE language platform specification
- * @relates cpe_platform
- * @param cpe List of CPEs describing tested platform as a list of pointers
- * @param n number of CPEs
- * @param platform CPE language platform, that is expected (not) to match given list of CPEs
- * @return result of expression evaluation
+ * cpe_title functions to get variable members
  */
-bool cpe_platform_match_cpe(struct cpe_name ** cpe, size_t n, const struct cpe_platform * platform);
-
-/**
- * Get CPE paltform ID.
- * @relates cpe_platform
- */
-const char* cpe_platform_get_id(const struct cpe_platform* platform);
-
-/**
- * Get CPE paltform title.
- * @relates cpe_platform
- */
-const char* cpe_platform_get_title(const struct cpe_platform* platform);
-
-/**
- * Get CPE paltform remark.
- * @relates cpe_platform
- */
-const char* cpe_platform_get_remark(const struct cpe_platform* platform);
-
-/**
- * Push cpe model to file.
- * @relates cpe_platform
- * @param res platformspec representing model of xml file
- * @param fname name of file for writing the model in
- */
-bool cpe_platformspec_export(const struct cpe_platformspec * res, const char * fname);
+const char * cpe_title_get_content(const struct cpe_title *item);
 
 #endif				/* _CPELANG_H_ */
 
