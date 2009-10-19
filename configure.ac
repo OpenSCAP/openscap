@@ -325,12 +325,12 @@ AC_ARG_ENABLE([regex-posix],
      esac],[regex_posix=yes])
      
 AC_ARG_ENABLE([debug],
-     [  --enable-debug          enable debugging flags [[default=yes]]],
+     [  --enable-debug          enable debugging flags [[default=no]]],
      [case "${enableval}" in
        yes) debug=yes ;;
        no)  debug=no ;;
        *) AC_MSG_ERROR([bad value ${enableval} for --enable-debug]) ;;
-     esac], [debug=yes])
+     esac], [debug=no])
 
 if test "$regex_posix" = "yes"; then
    AC_DEFINE([USE_REGEX_POSIX], [1], [Use POSIX regular expressions])
