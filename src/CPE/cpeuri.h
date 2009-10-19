@@ -118,6 +118,48 @@ const char* cpe_name_get_edition(const struct cpe_name * cpe);
 const char* cpe_name_get_language(const struct cpe_name * cpe);
 
 /**
+ * Set CPE name part type field.
+ * @relates cpe_name
+ */
+bool cpe_name_set_part(struct cpe_name * cpe, cpe_part_t newval);
+
+/**
+ * Set CPE name vendor field.
+ * @relates cpe_name
+ */
+bool cpe_name_set_vendor(struct cpe_name * cpe, const char *newval);
+
+/**
+ * Set CPE name product field.
+ * @relates cpe_name
+ */
+bool cpe_name_set_product(struct cpe_name * cpe, const char *newval);
+
+/**
+ * Set CPE name version field.
+ * @relates cpe_name
+ */
+bool cpe_name_set_version(struct cpe_name * cpe, const char *newval);
+
+/**
+ * Set CPE name update field.
+ * @relates cpe_name
+ */
+bool cpe_name_set_update(struct cpe_name * cpe, const char *newval);
+
+/**
+ * Set CPE name edition field.
+ * @relates cpe_name
+ */
+bool cpe_name_set_edition(struct cpe_name * cpe, const char *newval);
+
+/**
+ * Set CPE name language field.
+ * @relates cpe_name
+ */
+bool cpe_name_set_language(struct cpe_name * cpe, const char *newval);
+
+/**
  * Check if candidate CPE @a cpe matches CPE @a against
  * according to CPE specification v 2.1.
  * @relates cpe_name

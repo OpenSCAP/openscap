@@ -235,7 +235,7 @@ typedef void(*oscap_consumer_func)(void*, void*);
  * @param MNAME Name of structure member containing the string to be set.
  */
 #define OSCAP_SETTER_STRING(SNAME, MNAME) \
-	OSCAP_SETTER_GENERIC(SNAME, const char *, MNAME, free, strdup)
+	OSCAP_SETTER_GENERIC(SNAME, const char *, MNAME, free, oscap_strdup)
 
 
 /**
