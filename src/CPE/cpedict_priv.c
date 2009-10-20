@@ -70,10 +70,10 @@ OSCAP_GETTER(struct cpe_name*, cpe_item, name)
 OSCAP_GETTER(struct cpe_name*, cpe_item, deprecated)
 OSCAP_ACCESSOR_STRING(cpe_item, deprecation_date)
 OSCAP_GETTER(struct cpe_item_metadata*, cpe_item, metadata)
-OSCAP_IGETTER_GEN(cpe_reference, cpe_item, references)
-OSCAP_IGETTER_GEN(cpe_check, cpe_item, checks)
-OSCAP_IGETTER(oscap_title, cpe_item, titles)
-OSCAP_IGETTER(oscap_title, cpe_item, notes)
+OSCAP_IGETINS_GEN(cpe_reference, cpe_item, references, reference)
+OSCAP_IGETINS_GEN(cpe_check, cpe_item, checks, check)
+OSCAP_IGETINS(oscap_title, cpe_item, titles, title)
+OSCAP_IGETINS(oscap_title, cpe_item, notes, note)
 
 /* <cpe-item><item-metadata>
  * */
@@ -137,7 +137,7 @@ struct cpe_dict {                        // the main node
 };
 OSCAP_GETTER(struct cpe_generator*, cpe_dict, generator)
 OSCAP_IGETTER_GEN(cpe_item, cpe_dict, items)
-OSCAP_IGETTER_GEN(cpe_vendor, cpe_dict, vendors)
+OSCAP_IGETINS_GEN(cpe_vendor, cpe_dict, vendors, vendor)
 
 /* ****************************************
  * Component-tree structures
@@ -152,8 +152,8 @@ struct cpe_vendor {
         struct oscap_list* products;
 };
 OSCAP_ACCESSOR_STRING(cpe_vendor, value)
-OSCAP_IGETTER(oscap_title, cpe_vendor, titles)
-OSCAP_IGETTER_GEN(cpe_product, cpe_vendor, products)
+OSCAP_IGETINS(oscap_title, cpe_vendor, titles, title)
+OSCAP_IGETINS_GEN(cpe_product, cpe_vendor, products, product)
 
 /* vendor -> product 
  * */
@@ -165,7 +165,7 @@ struct cpe_product {
 };
 OSCAP_ACCESSOR_STRING(cpe_product, value)
 OSCAP_ACCESSOR_SIMPLE(cpe_part_t, cpe_product, part)
-OSCAP_IGETTER_GEN(cpe_version, cpe_product, versions)
+OSCAP_IGETINS_GEN(cpe_version, cpe_product, versions, version)
 
 /* vendor -> product -> version 
  * */
@@ -175,7 +175,7 @@ struct cpe_version {
         struct oscap_list* updates;
 };
 OSCAP_ACCESSOR_STRING(cpe_version, value)
-OSCAP_IGETTER_GEN(cpe_update, cpe_version, updates)
+OSCAP_IGETINS_GEN(cpe_update, cpe_version, updates, update)
 
 /* vendor -> product -> version -> update 
  * */
@@ -185,7 +185,7 @@ struct cpe_update {
         struct oscap_list* editions;
 };
 OSCAP_ACCESSOR_STRING(cpe_update, value)
-OSCAP_IGETTER_GEN(cpe_edition, cpe_update, editions)
+OSCAP_IGETINS_GEN(cpe_edition, cpe_update, editions, edition)
 
 /* vendor -> product -> version -> update -> edition 
  * */
@@ -195,7 +195,7 @@ struct cpe_edition {
         struct oscap_list* languages;
 };
 OSCAP_ACCESSOR_STRING(cpe_edition, value)
-OSCAP_IGETTER_GEN(cpe_language, cpe_edition, languages)
+OSCAP_IGETINS_GEN(cpe_language, cpe_edition, languages, language)
 
 /* vendor -> product -> version -> update -> edition -> language
  * */

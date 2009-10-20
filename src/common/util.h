@@ -249,6 +249,25 @@ typedef void(*oscap_consumer_func)(void*, void*);
 #define OSCAP_ACCESSOR_SIMPLE(MTYPE, SNAME, MNAME) \
 	OSCAP_SETTER_SIMPLE(SNAME, MTYPE, MNAME) OSCAP_GETTER(MTYPE, SNAME, MNAME)
 
+/**
+ * Generate function to insert an item into a list.
+ * Signature of the generated function will be as follows (substitute uppercase strings with actual params):
+ * @code bool SNAME_add_FNAME(struct SNAME *obj, struct MTYPE *item); @endcode
+ * @param SNAME structure typename (w/o the struct keyword)
+ * @param FNAME how should function name part after the _add_ look like
+ * @param MTYPE list member type
+ * @param MNAME name of the list within the structure
+ */
+#define OSCAP_INSERTER(SNAME, FNAME, MTYPE, MNAME) \
+	bool SNAME##_add_##FNAME(struct SNAME *obj, struct MTYPE *item) \
+	{ oscap_list_add(obj->MNAME, item); return true; }
+
+/// Generate iterator getter and list inserter
+#define OSCAP_IGETINS(ITYPE, SNAME, MNAME, FNAME) \
+	OSCAP_IGETTER(ITYPE, SNAME, MNAME) OSCAP_INSERTER(SNAME, FNAME, ITYPE, MNAME)
+/// Generate iterator getter, list inserter, and iterator manipulation functions.
+#define OSCAP_IGETINS_GEN(ITYPE, SNAME, MNAME, FNAME) \
+	OSCAP_IGETTER_GEN(ITYPE, SNAME, MNAME) OSCAP_INSERTER(SNAME, FNAME, ITYPE, MNAME)
 
 /**
  * Define mapping between symbolic constant and its string representation.
