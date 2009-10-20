@@ -381,24 +381,11 @@ void cpe_name_free(struct cpe_name * cpe)
 	oscap_free(cpe);
 }
 
-#define CPENAME_GETTER(RTYPE,MNAME) OSCAP_GETTER(RTYPE,cpe_name,MNAME)
-CPENAME_GETTER(cpe_part_t, part)
-CPENAME_GETTER(const char*, vendor)
-CPENAME_GETTER(const char*, product)
-CPENAME_GETTER(const char*, version)
-CPENAME_GETTER(const char*, update)
-CPENAME_GETTER(const char*, edition)
-CPENAME_GETTER(const char*, language)
-#undef CPENAME_GETTER
-
-#define CPENAME_SETTER(MNAME) OSCAP_SETTER_STRING(cpe_name,MNAME)
-OSCAP_SETTER_SIMPLE(cpe_name, cpe_part_t, part)
-CPENAME_SETTER(vendor)
-CPENAME_SETTER(product)
-CPENAME_SETTER(version)
-CPENAME_SETTER(update)
-CPENAME_SETTER(edition)
-CPENAME_SETTER(language)
-#undef CPENAME_SETTER
-
+OSCAP_ACCESSOR_SIMPLE(cpe_part_t, cpe_name, part)
+OSCAP_ACCESSOR_STRING(cpe_name, vendor)
+OSCAP_ACCESSOR_STRING(cpe_name, product)
+OSCAP_ACCESSOR_STRING(cpe_name, version)
+OSCAP_ACCESSOR_STRING(cpe_name, update)
+OSCAP_ACCESSOR_STRING(cpe_name, edition)
+OSCAP_ACCESSOR_STRING(cpe_name, language)
 
