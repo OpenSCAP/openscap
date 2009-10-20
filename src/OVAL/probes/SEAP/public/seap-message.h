@@ -6,9 +6,9 @@
 #include <sexp-types.h>
 
 #if SEAP_MSGID_BITS == 64
-typedef uint32_t SEAP_msgid_t;
-#else
 typedef uint64_t SEAP_msgid_t;
+#else
+typedef uint32_t SEAP_msgid_t;
 #endif
 
 typedef struct SEAP_msg  SEAP_msg_t;
