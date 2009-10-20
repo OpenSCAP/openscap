@@ -237,6 +237,18 @@ typedef void(*oscap_consumer_func)(void*, void*);
 #define OSCAP_SETTER_STRING(SNAME, MNAME) \
 	OSCAP_SETTER_GENERIC(SNAME, const char *, MNAME, free, oscap_strdup)
 
+/**
+ * Define both, getter and setter for a string structure member.
+ */
+#define OSCAP_ACCESSOR_STRING(SNAME, MNAME) \
+	OSCAP_SETTER_STRING(SNAME, MNAME) OSCAP_GETTER(const char*, SNAME, MNAME)
+
+/**
+ * Define both, getter and setter for a structure member using simple get/set.
+ */
+#define OSCAP_ACCESSOR_SIMPLE(MTYPE, SNAME, MNAME) \
+	OSCAP_SETTER_SIMPLE(SNAME, MTYPE, MNAME) OSCAP_GETTER(MTYPE, SNAME, MNAME)
+
 
 /**
  * Define mapping between symbolic constant and its string representation.
