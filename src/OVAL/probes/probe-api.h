@@ -366,6 +366,7 @@ void probe_free (SEXP_t *obj);
 #define PROBE_EDOM       9 /* Out of domain */
 #define PROBE_EFAULT    10 /* Memory fault/NULL value */
 #define PROBE_EACCES    11 /* Operation not perimitted */
+#define PROBE_EFATAL   254 /* Unrecoverable error */
 #define PROBE_EUNKNOWN 255 /* Unknown/Unexpected error */
 
 /* FIXME */

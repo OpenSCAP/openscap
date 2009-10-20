@@ -3,6 +3,7 @@
 #include <probe-api.h>
 #include <string.h>
 #include <sys/stat.h>
+#include <pthread.h>
 #include <errno.h>
 #include "findfile.h"
 
@@ -188,10 +189,12 @@ int file_cb (const char *p, const char *f, void *ptr)
         return (0);
 }
 
+static pthread_mutex_t __file_probe_mutex;
+
 SEXP_t *probe_init (void)
 {
         _LOGCALL_;
-
+        
         /*
          * Initialize true/false global reference.
          */
@@ -209,12 +212,24 @@ SEXP_t *probe_init (void)
         gr_t_fifo = SEXP_string_new ("fifo", strlen ("fifo"));
         gr_t_sock = SEXP_string_new ("socket", strlen ("socket"));
         gr_t_char = SEXP_string_new ("character special", strlen ("character special"));
+
+        /*
+         * Initialize mutex.
+         */
+        switch (pthread_mutex_init (&__file_probe_mutex, NULL)) {
+        case 0:
+                return ((void *)&__file_probe_mutex);
+        default:
+                _D("Can't initialize mutex: errno=%u, %s.\n", errno, strerror (errno));
+        }
         
         return (NULL);
 }
 
 void probe_fini (SEXP_t *arg)
 {
+        _A(arg == &__file_probe_mutex);
+        
         /*
          * Release global reference.
          */
@@ -223,13 +238,25 @@ void probe_fini (SEXP_t *arg)
                     gr_t_fifo, gr_t_sock, gr_t_char,
                     NULL);
         
+        /*
+         * Destroy mutex.
+         */
+        (void) pthread_mutex_destroy (&__file_probe_mutex);
+        
         return;
 }
 
-SEXP_t *probe_main (SEXP_t *probe_in, int *err)
+SEXP_t *probe_main (SEXP_t *probe_in, int *err, void *mutex)
 {
         SEXP_t *path, *filename, *behaviors, *items;
         SEXP_t *r0, *r1, *r2, *r3, *r4;
+        
+        if (mutex == NULL) {
+                *err = PROBE_EINIT;
+                return (NULL);
+        }
+        
+        _A(mutex == &__file_probe_mutex);
         
         path      = probe_obj_getent (probe_in, "path",      1);
         filename  = probe_obj_getent (probe_in, "filename",  1);
@@ -294,6 +321,16 @@ SEXP_t *probe_main (SEXP_t *probe_in, int *err)
         _A(behaviors != NULL);
         
         items = SEXP_list_new (NULL);
+
+        switch (pthread_mutex_lock (&__file_probe_mutex)) {
+        case 0:
+                break;
+        default:
+                _D("Can't lock mutex(%p): %u, %s.\n", &__file_probe_mutex, errno, strerror (errno));
+                
+                *err = PROBE_EFATAL;
+                return (NULL);
+        }
         
         /* FIXME: == 0 */
         if (find_files (path, filename, behaviors, &file_cb, items) < 0) {
@@ -302,6 +339,16 @@ SEXP_t *probe_main (SEXP_t *probe_in, int *err)
                 SEXP_free (path);
                 SEXP_free (filename);
                 
+                switch (pthread_mutex_unlock (&__file_probe_mutex)) {
+                case 0:
+                        break;
+                default:
+                        _D("Can't unlock mutex(%p): %u, %s.\n", &__file_probe_mutex, errno, strerror (errno));
+                        
+                        *err = PROBE_EFATAL;
+                        return (NULL);
+                }
+                
                 *err = PROBE_EUNKNOWN;
                 return (NULL);
         }
@@ -309,7 +356,17 @@ SEXP_t *probe_main (SEXP_t *probe_in, int *err)
         SEXP_free (behaviors);
         SEXP_free (filename);
         SEXP_free (path);
-
+        
+        switch (pthread_mutex_unlock (&__file_probe_mutex)) {
+        case 0:
+                break;
+        default:
+                _D("Can't unlock mutex(%p): %u, %s.\n", &__file_probe_mutex, errno, strerror (errno));
+                
+                *err = PROBE_EFATAL;
+                return (NULL);
+        }
+        
         *err = 0;
         return (items);
 }
