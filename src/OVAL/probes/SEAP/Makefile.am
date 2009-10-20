@@ -23,8 +23,6 @@ libseap_la_SOURCES= generic/bfind.c		\
 		    sch_generic.h		\
 		    sch_pipe.c			\
 		    sch_pipe.h			\
-		    sch_mq.c			\
-		    sch_mq.h			\
 		    seap-command-backendL.c	\
 		    seap-command-backendL.h	\
 		    seap-command-backendS.c	\
