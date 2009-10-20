@@ -187,15 +187,14 @@ int SEAP_recvsexp (SEAP_CTX_t *ctx, int sd, SEXP_t **sexp)
         _LOGCALL_;
 
         if (SEAP_recvmsg (ctx, sd, &msg) == 0) {
-                *sexp = msg->sexp;
-                msg->sexp = NULL;
+                *sexp = SEAP_msg_get (msg);
                 SEAP_msg_free (msg);
                 
                 return (0);
-        } else {
-                *sexp = NULL;
-                return (-1);
         }
+        
+        *sexp = NULL;
+        return (-1);
 }
 
 static int __SEAP_cmdexec_reply (SEAP_CTX_t *ctx, int sd, SEAP_cmd_t *cmd)
@@ -229,7 +228,7 @@ static int __SEAP_cmdexec_reply (SEAP_CTX_t *ctx, int sd, SEAP_cmd_t *cmd)
         cmdrep->args   = res;
         cmdrep->class  = cmd->class;
         cmdrep->code   = cmd->code;
-                
+        
         if (SEAP_packet_send (ctx, sd, packet) != 0) {
                 protect_errno {
                         _D("FAIL: errno=%u, %s.\n", errno, strerror (errno));
@@ -427,7 +426,7 @@ int SEAP_reply (SEAP_CTX_t *ctx, int sd, SEAP_msg_t *rep_msg, SEAP_msg_t *req_ms
 #else
                               r0 = SEXP_number_newu_32 (req_msg->id)
 #endif
-                    )== 0)
+                    ) == 0)
         {
                 SEXP_free (r0);
                 return SEAP_sendmsg (ctx, sd, rep_msg);

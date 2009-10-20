@@ -494,13 +494,16 @@ static struct oval_sysitem* oval_sysitem_from_sexp(SEXP_t *sexp)
 	char *val;
 
         key = probe_ent_getname (sexp);
-
+        
 	if (!key)
 		return NULL;
 
 	sval = probe_ent_getval (sexp);
-	if (sval == NULL)
+        
+	if (sval == NULL) {
+                oscap_free (key);
 		return NULL;
+        }
 
 	switch (SEXP_typeof(sval)) {
 		case SEXP_TYPE_STRING: {
@@ -509,7 +512,7 @@ static struct oval_sysitem* oval_sysitem_from_sexp(SEXP_t *sexp)
 		}
 		case SEXP_TYPE_NUMBER: {
 			size_t allocsize = 64;
-			val = malloc(allocsize * sizeof(char));
+			val = oscap_alloc(allocsize * sizeof(char));
 			*val = '\0';
 
 			switch (SEXP_number_type(sval)) {
@@ -540,11 +543,12 @@ static struct oval_sysitem* oval_sysitem_from_sexp(SEXP_t *sexp)
 		}
 		default: {
 			_D("Unsupported type: %u", SEXP_typeof(sval));
+                        SEXP_free (sval);
 			oscap_free(key);
 			return NULL;
 		}
 	}
-
+        
 	int datatype = probe_ent_getdatatype(sexp);
 	if (datatype < 0)
 		datatype = 0;
@@ -562,6 +566,9 @@ static struct oval_sysitem* oval_sysitem_from_sexp(SEXP_t *sexp)
 
 	oval_sysitem_set_datatype(item, datatype);
 
+        SEXP_free (sval);
+        /* oscap_free (key); ? */
+        
 	return item;
 }
 
@@ -574,8 +581,8 @@ static struct oval_sysdata *oval_sysdata_from_sexp(SEXP_t *sexp)
 	char *name;
 	struct oval_sysdata* sysdata = NULL;
 
-    name = probe_ent_getname (sexp);
-
+        name = probe_ent_getname (sexp);
+        
 	if (name == NULL)
 		return NULL;
 	else {
@@ -604,9 +611,11 @@ static struct oval_sysdata *oval_sysdata_from_sexp(SEXP_t *sexp)
 	//oval_sysdata_set_subtype_name(sysdata, name);
 
 	if (status == OVAL_STATUS_EXISTS) {
-		int i;for (i = 2; (sub = SEXP_list_nth(sexp, i)) != NULL; ++i)
+		for (int i = 2; (sub = SEXP_list_nth(sexp, i)) != NULL; ++i) {
 			if ((sysitem = oval_sysitem_from_sexp(sub)) != NULL)
 				oval_sysdata_add_item(sysdata, sysitem);
+                        SEXP_free (sub);
+                }
 	}
 
 cleanup:
@@ -642,7 +651,7 @@ int oval_syschar_apply_sexp(struct oval_syschar *syschar, SEXP_t *sexp, struct o
 		if (sysdata)
 			oval_syschar_add_sysdata(syschar, sysdata);
 	}
-
+        
 	return 1;
 }
 #endif /* __STUB_PROBE */

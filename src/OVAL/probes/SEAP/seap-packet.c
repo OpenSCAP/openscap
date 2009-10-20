@@ -156,6 +156,7 @@ static int SEAP_packet_sexp2msg (SEXP_t *sexp_msg, SEAP_msg_t *seap_msg)
                                 }
                                 
                                 SEXP_free (attr_val);
+                                --seap_msg->attrs_cnt;
                         } else {
                                 
                                 seap_msg->attrs[attr_i].name  = SEXP_string_subcstr (attr_name, 1, 0);
@@ -190,7 +191,10 @@ static int SEAP_packet_sexp2msg (SEXP_t *sexp_msg, SEAP_msg_t *seap_msg)
                 SEXP_free (attr_name);
         } /* END: attribute loop */
         
-        seap_msg->sexp = SEXP_list_last (sexp_msg);
+        _A(attr_i <= seap_msg->attrs_cnt);
+
+        seap_msg->attrs_cnt = attr_i;
+        seap_msg->sexp      = SEXP_list_last (sexp_msg);
         
         return (0);
 }

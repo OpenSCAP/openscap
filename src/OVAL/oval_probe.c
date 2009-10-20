@@ -167,7 +167,7 @@ struct oval_syschar *oval_object_probe (struct oval_object *object, struct oval_
         ovalp_sdtbl_t *p_tbl;
         
         SEAP_msg_t *s_omsg, *s_imsg;
-        SEXP_t     *s_exp;
+        SEXP_t     *s_exp, *r0;
         ovalp_sd_t *psd;
         
         _A(object != NULL);
@@ -277,7 +277,7 @@ struct oval_syschar *oval_object_probe (struct oval_object *object, struct oval_
                 
                 s_omsg = SEAP_msg_new ();
                 SEAP_msg_set (s_omsg, s_exp);
-
+                
                 _D("Sending message...\n");
                 
                 if (SEAP_sendmsg (p_tbl->ctx, psd->sd, s_omsg) != 0) {
@@ -339,7 +339,8 @@ struct oval_syschar *oval_object_probe (struct oval_object *object, struct oval_
                 
 #if !defined(NDEBUG)
                 fprintf (stderr,   "--- msg in ---\n");
-                SEXP_fprintfa (stderr, SEAP_msg_get (s_imsg));
+                SEXP_fprintfa (stderr, r0 = SEAP_msg_get (s_imsg));
+                SEXP_free (r0);
                 fprintf (stderr, "\n--------------\n");
 #endif
                 
@@ -347,8 +348,9 @@ struct oval_syschar *oval_object_probe (struct oval_object *object, struct oval_
                 break;
         }
         
-        sysch = sexp_to_oval_state (SEAP_msg_get(s_imsg), object);
-                
+        sysch = sexp_to_oval_state (r0 = SEAP_msg_get(s_imsg), object);
+        SEXP_free (r0);
+        
         SEAP_msg_free (s_omsg);
         SEAP_msg_free (s_imsg);
         SEXP_free (s_exp);

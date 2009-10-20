@@ -1819,22 +1819,15 @@ static SEXP_t *SEXP_build (const char *s_str, ...)
         return (NULL);
 }
 
-static int __SEXP_sizeof_lmemb (SEXP_t *s_exp, size_t *sz)
+static int __SEXP_sizeof_lmemb (const SEXP_t *s_exp, size_t *sz)
 {
         SEXP_val_t v_dsc;
         int ret = 0;
-
-        _D("FUCK: %zu\n", *sz);
-
+        
         SEXP_VALIDATE(s_exp);
         SEXP_val_dsc (&v_dsc, s_exp->s_valp);
         
         switch (v_dsc.type) {
-        case SEXP_VALTYPE_NUMBER:
-        case SEXP_VALTYPE_STRING:
-                _D("add(v): %zu\n", sizeof (SEXP_valhdr_t) + v_dsc.hdr->size);
-                *sz = *sz + sizeof (SEXP_valhdr_t) + v_dsc.hdr->size;
-                break;
         case SEXP_VALTYPE_LIST:
         {
                 struct SEXP_val_lblk *lblk;
@@ -1842,15 +1835,16 @@ static int __SEXP_sizeof_lmemb (SEXP_t *s_exp, size_t *sz)
                 lblk = SEXP_VALP_LBLK(SEXP_LCASTP(v_dsc.mem)->b_addr);
                 
                 while (lblk != NULL) {
-                        *sz  = *sz + sizeof (uintptr_t) + (2 * sizeof (uint16_t)) + sizeof (SEXP_t) * (1 << (lblk->nxsz & SEXP_LBLKS_MASK));
-                        _D("add(l): %zu\n", sizeof (uintptr_t) + (2 * sizeof (uint16_t)) + sizeof (SEXP_t) * (1 << (lblk->nxsz & SEXP_LBLKS_MASK)));
+                        (*sz) += sizeof (uintptr_t) + (2 * sizeof (uint16_t)) + sizeof (SEXP_t) * (1 << (lblk->nxsz & SEXP_LBLKS_MASK));
                         lblk = SEXP_VALP_LBLK(lblk->nxsz);
                 }
-                
-                *sz = *sz + sizeof (SEXP_valhdr_t) + v_dsc.hdr->size;
-                _D("add(h): %zu\n", sizeof (SEXP_valhdr_t) + v_dsc.hdr->size);
-                ret = SEXP_rawval_lblk_cb (SEXP_LCASTP(v_dsc.mem)->b_addr, __SEXP_sizeof_lmemb, sz, 1);
-        }       break;
+                  
+                ret = SEXP_rawval_lblk_cb ((uintptr_t)SEXP_LCASTP(v_dsc.mem)->b_addr, (int(*)(SEXP_t *, void *))__SEXP_sizeof_lmemb, sz, 1);
+        }
+        case SEXP_VALTYPE_NUMBER:
+        case SEXP_VALTYPE_STRING:
+                (*sz) += sizeof (SEXP_valhdr_t) + v_dsc.hdr->size;
+                break;
         default:
                 abort ();
         }
@@ -1869,13 +1863,57 @@ size_t SEXP_sizeof (const SEXP_t *s_exp)
         
         sz = sizeof (SEXP_t);
         
-        if (__SEXP_sizeof_lmemb (s_exp, &sz) != 0) {
-                _D("FAIL: != 0\n");
+        if (__SEXP_sizeof_lmemb (s_exp, &sz) != 0)
                 return (0);
-        }
         
         return (sz);
 }
+
+#if 0
+int SEXP_structprint (FILE *fp, const SEXP_t *s_exp)
+{
+        SEXP_val_t v_dsc;
+        
+        SEXP_val_dsc (&v_dsc, s_exp->s_valp);
+        
+        /*
+         *  print S-exp flags, type, value pointer
+         */
+        
+        fprintf (fp,
+                 "=> s-exp@%p ... type: %s (%x)\n"
+                 "            ... flgs: %c%c%c (%x)\n"
+                 "            ...  ptr: %p\n",
+                 SEXP_strtype (s_exp),
+                 (s_exp->s_flgs & SEXP_FLAG_SREF  ? 's' : '-'),
+                 (s_exp->s_flgs & SEXP_FLAG_INVAL ? 'i' : '-'),
+                 (s_exp->s_flgs & SEXP_FLAG_UNFIN ? 'u' : '-'),
+                 (void *)s_exp->s_valp);
+        
+        switch (v_dsc.type) {
+        case SEXP_VALTYPE_LIST:
+        {
+                struct SEXP_val_lblk *lblk;
+                
+                /* print list blocks */
+                
+                /* recursion */
+                
+        }       break;
+        case SEXP_VALTYPE_NUMBER:
+                
+                
+                break;
+        case SEXP_VALTYPE_STRING:
+                
+                break;
+        default:
+                abort ();
+        }
+        
+        return (0);
+}
+#endif /* 0 */
 
 #if !defined(NDEBUG) || defined(VALIDATE_SEXP)
 typedef struct {
