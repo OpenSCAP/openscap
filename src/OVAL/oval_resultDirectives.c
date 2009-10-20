@@ -62,22 +62,22 @@ void oval_result_directives_free(struct oval_result_directives *directives)
 	free(directives);
 }
 
-bool oval_result_directive_get_reported
+bool oval_result_directives_get_reported
 	(struct oval_result_directives *directives, oval_result_t type)
 {
 	return directives->directive[type].reported;
 }
-oval_result_directive_content_t oval_result_directive_get_content
+oval_result_directive_content_t oval_result_directives_get_content
 	(struct oval_result_directives *directives, oval_result_t type)
 {
 	return directives->directive[type].content;
 }
-void oval_result_directive_set_reported
+void oval_result_directives_set_reported
 	(struct oval_result_directives *directives, oval_result_t type, bool reported)
 {
 	directives->directive[type].reported = reported;
 }
-void oval_result_directive_set_content
+void oval_result_directives_set_content
 	(struct oval_result_directives *directives, oval_result_t type, oval_result_directive_content_t content)
 {
 	directives->directive[type].content = content;
@@ -111,7 +111,7 @@ static int _oval_result_directives_parse_tag
 			xmlChar* boolstr = xmlTextReaderGetAttribute(reader, BAD_CAST "reported");
 			bool reported = strcmp((const char *)boolstr,"1")==0 || strcmp((const char *)boolstr,"true")==0;
 			free(boolstr);
-			oval_result_directive_set_reported(directives, type, reported);
+			oval_result_directives_set_reported(directives, type, reported);
 		}
 		{//content
 			xmlChar *contentstr =  xmlTextReaderGetAttribute(reader, BAD_CAST "content");
@@ -124,7 +124,7 @@ static int _oval_result_directives_parse_tag
 					}
 				}
 				if(content){
-					oval_result_directive_set_content(directives, type, content);
+					oval_result_directives_set_content(directives, type, content);
 				}else{
 					char message[200];
 					sprintf(message, "_oval_result_directives_parse_tag: cannot resolve @content=\"%s\"",contentstr);
@@ -175,9 +175,9 @@ int oval_result_directives_to_dom
 	{
 		oval_result_t directive = (oval_result_t)
 			map->value;
-		bool reported = oval_result_directive_get_reported
+		bool reported = oval_result_directives_get_reported
 			(directives, directive);
-		oval_result_directive_content_t content = oval_result_directive_get_content
+		oval_result_directive_content_t content = oval_result_directives_get_content
 			(directives, directive);
 		xmlNode *directive_node = xmlNewChild
 			(directives_node, ns_results, (map->string),NULL);

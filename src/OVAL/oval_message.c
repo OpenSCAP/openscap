@@ -41,14 +41,16 @@ typedef struct oval_message {
 	oval_message_level_t level;
 } oval_message_t;
 
-struct oval_message *oval_message_new(){
+struct oval_message *oval_message_new()
+{
 	oval_message_t *message = (oval_message_t*)malloc(sizeof(oval_message_t));
 	message->text              = NULL;
 	message->level             = OVAL_MESSAGE_LEVEL_NONE;
 	return message;
 }
 
-void oval_message_free(struct oval_message *message){
+void oval_message_free(struct oval_message *message)
+{
 	if(message->text   !=NULL)free(message->text);
 
 	message->text = NULL;
@@ -74,8 +76,10 @@ void oval_message_iterator_free(struct oval_message_iterator
     oval_collection_iterator_free((struct oval_iterator *)oc_message);
 }
 
-char *oval_message_get_text(struct oval_message *message){return message->text;}
-oval_message_level_t oval_message_get_level(struct oval_message *message){return message->level;}
+char *oval_message_get_text(struct oval_message *message)
+{return message->text;}
+oval_message_level_t oval_message_get_level(struct oval_message *message)
+{return message->level;}
 
 void oval_message_set_text(struct oval_message *message, char *text)
 {

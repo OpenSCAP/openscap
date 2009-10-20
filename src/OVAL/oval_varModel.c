@@ -278,7 +278,7 @@ void _oval_variable_model_parse
 	free(namespace);
 }
 
-void oval_variable_model_load
+void oval_variable_model_import
 	(struct oval_variable_model *model,
 	 struct oval_import_source *source,
 	 oval_xml_error_handler error_handler, void *user_param)

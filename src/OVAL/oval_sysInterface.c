@@ -89,7 +89,7 @@ void oval_sysint_set_mac_address(struct oval_sysint *sysint, char *mac_address)
 	sysint->macAddress = (mac_address==NULL)?NULL:strdup(mac_address);
 }
 
-oval_sysint_t *oval_sysint_new()
+struct oval_sysint *oval_sysint_new()
 {
 	oval_sysint_t *sysint = (oval_sysint_t*)malloc(sizeof(oval_sysint_t));
 	sysint->ipAddress  = NULL;

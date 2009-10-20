@@ -22,7 +22,7 @@ int main(int argc, char **argv)
 	struct oval_definition_model *model = oval_definition_model_new();
 
 	struct oval_import_source *is = oval_import_source_new_file(argv[1]);
-	oval_definition_model_load(model, is, &_test_error_handler, NULL);
+	oval_definition_model_import(model, is, &_test_error_handler, NULL);
 	oval_import_source_free(is);
 
 	struct oval_object_iterator *objects = oval_definition_model_get_objects(model);

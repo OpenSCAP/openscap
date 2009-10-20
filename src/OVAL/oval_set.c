@@ -161,14 +161,14 @@ struct oval_setobject *oval_setobject_clone
 	return new_setobject;
 }
 
-void oval_set_free(struct oval_setobject *set)
+void oval_setobject_free(struct oval_setobject *set)
 {
 	switch (set->type) {
 	case OVAL_SET_AGGREGATE:{
 			oval_set_AGGREGATE_t *aggregate =
 			    (oval_set_AGGREGATE_t *) set->extension;
 			oval_collection_free_items(aggregate->subsets,
-						   (oscap_destruct_func)oval_set_free);
+						   (oscap_destruct_func)oval_setobject_free);
 			aggregate->subsets = NULL;
  			free(set->extension);
 			set->extension = NULL;

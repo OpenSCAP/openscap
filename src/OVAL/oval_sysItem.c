@@ -44,7 +44,8 @@ typedef struct oval_sysitem {
 	oval_syschar_status_t status;
 } oval_sysitem_t;
 
-struct oval_sysitem *oval_sysitem_new(){
+struct oval_sysitem *oval_sysitem_new()
+{
 	oval_sysitem_t *sysitem = (oval_sysitem_t*)malloc(sizeof(oval_sysitem_t));
 	sysitem->name              = NULL;
 	sysitem->value             = NULL;
@@ -54,7 +55,8 @@ struct oval_sysitem *oval_sysitem_new(){
 	return sysitem;
 }
 
-void oval_sysitem_free(struct oval_sysitem *sysitem){
+void oval_sysitem_free(struct oval_sysitem *sysitem)
+{
 	if(sysitem->name   !=NULL)free(sysitem->name);
 	if(sysitem->value  !=NULL)free(sysitem->value);
 
@@ -81,11 +83,16 @@ void oval_sysitem_iterator_free(struct oval_sysitem_iterator *oc_sysitem)
     oval_collection_iterator_free((struct oval_iterator *)oc_sysitem);
 }
 
-char *oval_sysitem_get_name(struct oval_sysitem *sysitem){return sysitem->name;}
-oval_syschar_status_t oval_sysitem_get_status(struct oval_sysitem *sysitem){return sysitem->status;}
-char *oval_sysitem_get_value(struct oval_sysitem *sysitem){return sysitem->value;}
-oval_datatype_t oval_sysitem_get_datatype(struct oval_sysitem *sysitem){return sysitem->datatype;}
-int oval_sysitem_get_mask(struct oval_sysitem *sysitem){return sysitem->mask;}
+char *oval_sysitem_get_name(struct oval_sysitem *sysitem)
+{return sysitem->name;}
+oval_syschar_status_t oval_sysitem_get_status(struct oval_sysitem *sysitem)
+{return sysitem->status;}
+char *oval_sysitem_get_value(struct oval_sysitem *sysitem)
+{return sysitem->value;}
+oval_datatype_t oval_sysitem_get_datatype(struct oval_sysitem *sysitem)
+{return sysitem->datatype;}
+int oval_sysitem_get_mask(struct oval_sysitem *sysitem)
+{return sysitem->mask;}
 
 void oval_sysitem_set_name(struct oval_sysitem *sysitem, char *name)
 {

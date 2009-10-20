@@ -54,14 +54,14 @@ int main(int argc, char **argv)
 		struct oval_definition_model *model = oval_definition_model_new();
 		printf("LOAD OVAL DEFINITIONS\n");
 		struct oval_import_source *source = oval_import_source_new_file(argv[1]);
-		oval_definition_model_load(model, source, &_test_error_handler, NULL);
+		oval_definition_model_import(model, source, &_test_error_handler, NULL);
 		oval_import_source_free(source);
 		printf("OVAL DEFINITIONS LOADED\n");
 		if (argc > 2) {
 			printf("LOAD OVAL SYSCHAR\n");
 			source = oval_import_source_new_file(argv[2]);
 			struct oval_syschar_model *syschar_model = oval_syschar_model_new(model);
-			oval_syschar_model_load(syschar_model, source, &_test_error_handler, NULL);
+			oval_syschar_model_import(syschar_model, source, &_test_error_handler, NULL);
 			oval_import_source_free(source);
 			printf("OVAL SYSCHAR LOADED\n");
 

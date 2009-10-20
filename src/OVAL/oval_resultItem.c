@@ -56,7 +56,8 @@ struct oval_result_item *oval_result_item_new
 	return item;
 }
 
-void oval_result_item_free(struct oval_result_item *item){
+void oval_result_item_free(struct oval_result_item *item)
+{
 	oval_collection_free_items
 		(item->messages, (oscap_destruct_func)oval_message_free);
 

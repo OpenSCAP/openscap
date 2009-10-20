@@ -80,7 +80,8 @@ struct oval_result_definition *oval_result_definition_new
 	definition->instance   = 1;
 	return definition;
 }
-void oval_result_definition_free(struct oval_result_definition *definition){
+void oval_result_definition_free(struct oval_result_definition *definition)
+{
 	if(definition->criteria)oval_result_criteria_node_free(definition->criteria);
 	oval_collection_free_items(definition->messages,(oscap_destruct_func)oval_message_free);
 
@@ -134,7 +135,7 @@ oval_result_t oval_result_definition_get_result
 {
 	if(definition->result==OVAL_RESULT_INVALID){
 		struct oval_result_criteria_node *criteria
-			= oval_result_definition_criteria(definition);
+			= oval_result_definition_get_criteria(definition);
 
 		definition-> result = (criteria==NULL)
 			?OVAL_RESULT_NOT_EVALUATED:oval_result_criteria_node_get_result(criteria);
@@ -142,14 +143,14 @@ oval_result_t oval_result_definition_get_result
 	return definition->result;
 }
 
-struct oval_message_iterator *oval_result_definition_messages
+struct oval_message_iterator *oval_result_definition_get_messages
 	(struct oval_result_definition *definition)
 {
 	return (struct oval_message_iterator *)
 		oval_collection_iterator(definition->messages);
 }
 
-struct oval_result_criteria_node *oval_result_definition_criteria
+struct oval_result_criteria_node *oval_result_definition_get_criteria
 	(struct oval_result_definition *definition)
 {
 	return definition->criteria;
@@ -332,7 +333,7 @@ xmlNode *oval_result_definition_to_dom
 	}
 
 	struct oval_message_iterator *messages
-		= oval_result_definition_messages(definition);
+		= oval_result_definition_get_messages(definition);
 	while(oval_message_iterator_has_more(messages)){
 		oval_message_to_dom
 			(oval_message_iterator_next(messages),
@@ -342,7 +343,7 @@ xmlNode *oval_result_definition_to_dom
 
 	if(content==OVAL_DIRECTIVE_CONTENT_FULL){
 		struct oval_result_criteria_node *criteria
-			= oval_result_definition_criteria(definition);
+			= oval_result_definition_get_criteria(definition);
 		if(criteria){
 			oval_result_criteria_node_to_dom
 				(criteria, doc, definition_node);

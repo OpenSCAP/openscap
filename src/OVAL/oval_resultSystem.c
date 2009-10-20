@@ -165,7 +165,7 @@ struct oval_result_definition *get_oval_result_definition_new
 			rslt_definition
 				= make_result_definition_from_oval_definition
 					(sys, oval_definition);
-			oval_result_system_add_definition_(sys, rslt_definition);
+			oval_result_system_add_definition(sys, rslt_definition);
 		}
 	}
 	return rslt_definition;
@@ -200,7 +200,7 @@ struct oval_sysinfo *oval_result_system_get_sysinfo
 		?oval_syschar_model_get_sysinfo(syschar_model):NULL;
 }
 
-void oval_result_system_add_definition_
+void oval_result_system_add_definition
 	(struct oval_result_system *sys, struct oval_result_definition *definition)
 {
 	if(definition){
@@ -239,7 +239,7 @@ static int _oval_result_system_test_parse
 static void _oval_result_system_definition_consume
 	(struct oval_result_definition *definition, struct oval_result_system *sys)
 {
-	oval_result_system_add_definition_(sys, definition);
+	oval_result_system_add_definition(sys, definition);
 }
 
 static int _oval_result_system_definition_parse
@@ -499,14 +499,14 @@ xmlNode *oval_result_system_to_dom
 			= get_oval_result_definition_new(sys, oval_definition);
 		if(rslt_definition){
 			oval_result_t result = oval_result_definition_get_result(rslt_definition);
-			if(oval_result_directive_get_reported(directives, result)){
+			if(oval_result_directives_get_reported(directives, result)){
 				oval_result_directive_content_t content
-					= oval_result_directive_get_content(directives, result);
+					= oval_result_directives_get_content(directives, result);
 				oval_result_definition_to_dom
 					(rslt_definition, content, doc, definitions_node);
 				if(content==OVAL_DIRECTIVE_CONTENT_FULL){
 					struct oval_result_criteria_node *criteria
-						= oval_result_definition_criteria(rslt_definition);
+						= oval_result_definition_get_criteria(rslt_definition);
 					if(criteria)_oval_result_system_scan_criteria_for_references(criteria, tstmap);
 				}
 			}

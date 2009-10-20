@@ -42,7 +42,8 @@ typedef struct oval_sysinfo {
 	struct oval_collection *interfaces;
 } oval_sysinfo_t;
 
-struct oval_sysinfo *oval_sysinfo_new(){
+struct oval_sysinfo *oval_sysinfo_new()
+{
 	oval_sysinfo_t *sysinfo = (oval_sysinfo_t*)malloc(sizeof(oval_sysinfo_t));
 	sysinfo->osArchitecture  = NULL;
 	sysinfo->osName          = NULL;
@@ -81,7 +82,8 @@ struct oval_sysinfo *oval_sysinfo_clone(struct oval_sysinfo *old_sysinfo)
 }
 
 
-void oval_sysinfo_free(struct oval_sysinfo *sysinfo){
+void oval_sysinfo_free(struct oval_sysinfo *sysinfo)
+{
 	if (sysinfo) {
 		if(sysinfo->osArchitecture  != NULL) free(sysinfo->osArchitecture);
 		if(sysinfo->osName          != NULL) free(sysinfo->osName);
@@ -122,7 +124,8 @@ char *oval_sysinfo_get_os_name(struct oval_sysinfo *sysinfo)
 	return sysinfo->osName;
 }
 
-void oval_sysinfo_set_os_name(struct oval_sysinfo *sysinfo, char *osName){
+void oval_sysinfo_set_os_name(struct oval_sysinfo *sysinfo, char *osName)
+{
 	if(sysinfo->osName!=NULL)free(sysinfo->osName);
 	sysinfo->osName = osName==NULL?NULL:strdup(osName);
 }

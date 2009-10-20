@@ -248,7 +248,7 @@ struct oval_variable_binding_iterator *oval_syschar_get_variable_bindings(struct
  * Get system characteristic data.
  * @relates oval_syschar
  */
-struct oval_sysdata_iterator          *oval_syschar_sysdata              (struct oval_syschar *);
+struct oval_sysdata_iterator          *oval_syschar_get_sysdata              (struct oval_syschar *);
 
 const char *oval_syschar_collection_flag_get_text(oval_syschar_collection_flag_t flag);
 

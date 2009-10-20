@@ -557,7 +557,7 @@ static oval_result_t _oval_result_test_evaluate_items
 			result=OVAL_RESULT_FALSE;
 		}
 	}
-	collected_items_iterator=oval_syschar_sysdata(syschar_object);
+	collected_items_iterator=oval_syschar_get_sysdata(syschar_object);
 	if (collected_items_iterator==NULL){
 if(OVAL_RESULT_TEST_DEBUG)fprintf(stderr,"%s:%d collected items iterator is null\n",__FILE__,__LINE__);
 		oval_errno=OVAL_INVALID_ARGUMENT;

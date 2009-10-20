@@ -153,7 +153,7 @@ typedef int (*oval_xml_error_handler) (struct oval_xml_error *, void *user_arg);
  * @param error_handler callback for detected error conditions (may be NULL)
  * @param client pointer to client data (may be NULL)
  */
-void oval_definition_model_load(
+void oval_definition_model_import(
 			struct oval_definition_model *model,
 			struct oval_import_source *source,
 			oval_xml_error_handler error_handler, void *client);
@@ -289,7 +289,7 @@ struct oval_variable_model *oval_variable_model_new();
 /**
  * Create an OVAL variable model
  */
-struct oval_variable_model *oval_variable_model_copy(struct oval_variable_model *);
+struct oval_variable_model *oval_variable_model_clone(struct oval_variable_model *);
 
 /**
  * Free memory allocated to a specified oval_variable_model
@@ -306,7 +306,7 @@ void oval_variable_model_free(struct oval_variable_model *);
  * @param error_handler the oval_xml_error_handler that tracks the parsing of the XML stream (may be NULL)
  * @param user_param a user parameter that is passed the the error handler implementation.
  */
-void oval_variable_model_load
+void oval_variable_model_import
 	(struct oval_variable_model *,
 	 struct oval_import_source *,
 	 oval_xml_error_handler, void*);
@@ -367,7 +367,7 @@ struct oval_syschar_model *oval_syschar_model_new(
 /**
  * Copy an oval_syschar_model.
  */
-struct oval_syschar_model *oval_syschar_model_copy(struct oval_syschar_model *);
+struct oval_syschar_model *oval_syschar_model_clone(struct oval_syschar_model *);
 
 /**
  * free memory allocated to a specified syschar model.
@@ -434,7 +434,7 @@ int oval_syschar_model_export(
  * Load OVAL system characteristics from a file.
  * @relates oval_syschar_model
  */
-void oval_syschar_model_load(struct oval_syschar_model*, struct oval_import_source*,
+void oval_syschar_model_import(struct oval_syschar_model*, struct oval_import_source*,
 			oval_xml_error_handler, void*);
 
 /**
@@ -449,7 +449,7 @@ struct oval_results_model *oval_results_model_new(
 /**
  * Copy an oval_results_model.
  */
-struct oval_results_model *oval_results_model_copy(struct oval_results_model *);
+struct oval_results_model *oval_results_model_clone(struct oval_results_model *);
 
 /**
  * free memory allocated to a specified oval results model.
@@ -485,7 +485,7 @@ void oval_results_model_add_system(struct oval_results_model *, struct oval_resu
  * @param error_handler the error handler
  * @param client_data client data;
  */
-struct oval_result_directives *oval_results_model_load
+struct oval_result_directives *oval_results_model_import
 	(struct oval_results_model *, struct oval_import_source *,
 			oval_xml_error_handler, void*);
 

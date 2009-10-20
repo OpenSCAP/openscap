@@ -106,7 +106,7 @@ struct oval_variable_binding_iterator *oval_syschar_get_variable_bindings(struct
 	    oval_collection_iterator(syschar->variable_bindings);
 }
 
-struct oval_sysdata_iterator *oval_syschar_sysdata(struct oval_syschar *syschar)
+struct oval_sysdata_iterator *oval_syschar_get_sysdata(struct oval_syschar *syschar)
 {
 	return (struct oval_sysdata_iterator *)
 	    oval_collection_iterator(syschar->sysdata);
@@ -130,7 +130,8 @@ void oval_syschar_add_variable_binding
 	oval_collection_add(syschar->variable_bindings, binding);
 }
 
-struct oval_syschar *oval_syschar_new(struct oval_object *object){
+struct oval_syschar *oval_syschar_new(struct oval_object *object)
+{
 	oval_syschar_t *syschar = (oval_syschar_t*)malloc(sizeof(oval_syschar_t));
 	syschar->flag              = SYSCHAR_FLAG_UNKNOWN;
 	syschar->object            = object;
@@ -140,7 +141,8 @@ struct oval_syschar *oval_syschar_new(struct oval_object *object){
 	return syschar;
 }
 
-void oval_syschar_free(struct oval_syschar *syschar){
+void oval_syschar_free(struct oval_syschar *syschar)
+{
 	oval_collection_free_items(syschar->messages, (oscap_destruct_func)oval_message_free);
 	oval_collection_free_items(syschar->sysdata, NULL);//sysdata items are shared
 	oval_collection_free_items(syschar->variable_bindings, NULL);//variable bindings are shared
@@ -280,7 +282,7 @@ void oval_syschar_to_dom  (struct oval_syschar *syschar, xmlDoc *doc, xmlNode *t
 			oval_variable_binding_iterator_free(bindings);
 		}
 		{//references
-			struct oval_sysdata_iterator *sysdatas = oval_syschar_sysdata(syschar);
+			struct oval_sysdata_iterator *sysdatas = oval_syschar_get_sysdata(syschar);
 			while(oval_sysdata_iterator_has_more(sysdatas)){
 				struct oval_sysdata *sysdata = oval_sysdata_iterator_next(sysdatas);
 				xmlNode *tag_reference = xmlNewChild

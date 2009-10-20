@@ -192,7 +192,7 @@ void oval_object_content_free(struct oval_object_content *content)
 			struct oval_object_content_SET *set =
 			    (oval_object_content_SET_t *) content;
 			if (set->set != NULL)
-				oval_set_free(set->set);
+				oval_setobject_free(set->set);
 			set->set = NULL;
 		}
 		break;

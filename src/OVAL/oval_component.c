@@ -678,7 +678,8 @@ void oval_component_free(struct oval_component *component)
 	free(component);
 }
 void oval_component_add_function_component
-	(struct oval_component *component, struct oval_component *func_component){
+	(struct oval_component *component, struct oval_component *func_component)
+{
 	if(component->type>OVAL_FUNCTION){
 		oval_component_FUNCTION_t *function = (oval_component_FUNCTION_t *)component;
 		if(func_component)oval_collection_add(function->function_components, func_component);

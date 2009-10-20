@@ -124,7 +124,7 @@ struct oval_iterator *oval_string_map_values(struct oval_string_map *map)
 {
 	struct oval_iterator *iterator = oval_collection_iterator_new();
 	struct _oval_string_map_entry *entry = map->entries;
-	while (entry != NULL) {
+	int count;for (count=0;entry != NULL;count++) {
 		oval_collection_iterator_add(iterator, entry->item);
 		entry = entry->next;
 	}

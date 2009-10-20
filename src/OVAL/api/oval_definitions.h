@@ -1099,7 +1099,7 @@ struct oval_variable         *oval_entity_get_variable   (struct oval_entity *);
 struct oval_value            *oval_entity_get_value      (struct oval_entity *);
 
 struct oval_setobject *oval_setobject_new();
-void oval_set_free(struct oval_setobject *);
+void oval_setobject_free(struct oval_setobject *);
 
 void oval_setobject_set_type(struct oval_setobject *, oval_setobject_type_t);
 void oval_setobject_set_operation(struct oval_setobject *, oval_setobject_operation_t);

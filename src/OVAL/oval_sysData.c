@@ -46,7 +46,8 @@ typedef struct oval_sysdata {
 	oval_syschar_status_t status;
 } oval_sysdata_t;
 
-struct oval_sysdata *oval_sysdata_new(char *id){
+struct oval_sysdata *oval_sysdata_new(char *id)
+{
 	oval_sysdata_t *sysdata = (oval_sysdata_t*)malloc(sizeof(oval_sysdata_t));
 	sysdata->id                = strdup(id);
 	sysdata->message_level     = OVAL_MESSAGE_LEVEL_NONE;
@@ -57,7 +58,8 @@ struct oval_sysdata *oval_sysdata_new(char *id){
 	return sysdata;
 }
 
-void oval_sysdata_free(struct oval_sysdata *sysdata){
+void oval_sysdata_free(struct oval_sysdata *sysdata)
+{
 	if(sysdata->message!=NULL)free(sysdata->message);
 
 	oval_collection_free_items(sysdata->items, (oscap_destruct_func)oval_sysitem_free);
@@ -98,33 +100,40 @@ void oval_sysdata_set_subtype(struct oval_sysdata *sysdata, oval_subtype_t subty
 	sysdata->subtype = subtype;
 }
 
-char *oval_sysdata_get_id(struct oval_sysdata *data){
+char *oval_sysdata_get_id(struct oval_sysdata *data)
+{
 	return data->id;
 }
 
-char *oval_sysdata_get_message(struct oval_sysdata *data){
+char *oval_sysdata_get_message(struct oval_sysdata *data)
+{
 	return data->message;
 }
 static void set_oval_sysdata_message(struct oval_sysdata *data, char *message){
 	if(data->message!=NULL)free(data->message);
 	data->message = message==NULL?NULL:strdup(message);
 }
-oval_message_level_t oval_sysdata_get_message_level(struct oval_sysdata *data){
+oval_message_level_t oval_sysdata_get_message_level(struct oval_sysdata *data)
+{
 	return data->message_level;
 }
 static void set_oval_sysdata_message_level(struct oval_sysdata *data, oval_message_level_t level){
 	data->message_level = level;
 }
-struct oval_sysitem_iterator *oval_sysdata_get_items(struct oval_sysdata *data){
+struct oval_sysitem_iterator *oval_sysdata_get_items(struct oval_sysdata *data)
+{
 	return (struct oval_sysitem_iterator *)oval_collection_iterator(data->items);
 }
-void oval_sysdata_add_item(struct oval_sysdata *data, struct oval_sysitem* item){
+void oval_sysdata_add_item(struct oval_sysdata *data, struct oval_sysitem* item)
+{
 	oval_collection_add(data->items, item);
 }
-oval_syschar_status_t oval_sysdata_get_status(struct oval_sysdata *data){
+oval_syschar_status_t oval_sysdata_get_status(struct oval_sysdata *data)
+{
 	return data->status;
 }
-void oval_sysdata_set_status(struct oval_sysdata *data, oval_syschar_status_t status){
+void oval_sysdata_set_status(struct oval_sysdata *data, oval_syschar_status_t status)
+{
 	data->status = status;
 }
 
