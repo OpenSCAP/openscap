@@ -1,7 +1,9 @@
 #ifndef __STUB_PROBE
-/*! \file findfile.c
- *  \brief auxiliary find_files() function used in different probes
+/**
+ * @file
+ * Auxiliary find_files() function used in different probes
  *
+ * @author Peter Vrabec <pvrabec@redhat.com>
  */
 
 /*
