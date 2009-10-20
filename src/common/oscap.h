@@ -29,6 +29,8 @@
 
 #ifndef OSCAP_H_
 #define OSCAP_H_
+#include <stdbool.h>
+
 
 /**
  * @struct oscap_iterator
@@ -43,15 +45,15 @@
  * Execute @a code for each array member stored in @a val.
  */
 #define OSCAP_FOREACH_GENERIC(itype, vtype, val, init_val, code) \
-	{ \
-		struct itype##_iterator *it_ = (init_val); \
-		vtype val; \
-		while (itype##_iterator_has_more(it_)) { \
-			val = itype##_iterator_next(it_); \
-			code \
-		} \
-		itype##_iterator_free(it_); \
-	}
+    {                                                            \
+        struct itype##_iterator *val##_it_ = (init_val);         \
+        vtype val;                                               \
+        while (itype##_iterator_has_more(val##_it_)) {           \
+            val = itype##_iterator_next(val##_it_);              \
+            code                                                 \
+        }                                                        \
+        itype##_iterator_free(val##_it_);                        \
+    }
 
 /**
  * Iterate over an array, given an iterator.
@@ -87,6 +89,42 @@ bool oscap_string_iterator_has_more(struct oscap_string_iterator* it);
 /// @relates oscap_string_iterator
 void oscap_string_iterator_free(struct oscap_string_iterator* it);
 
+/**
+ * @struct oscap_title
+ * Title of an OpenScap element.
+ */
+struct oscap_title;
+
+/**
+ * Get oscap title content.
+ * @relates oscap_title
+ */
+const char *oscap_title_get_content(const struct oscap_title *title);
+
+/**
+ * Get oscap title language.
+ * @relates oscap_title
+ */
+const char *oscap_title_get_language(const struct oscap_title *title);
+
+/**
+ * Set oscap title content.
+ * @relates oscap_title
+ */
+bool oscap_title_set_content(struct oscap_title *title, const char *new_content);
+
+/**
+ * @struct oscap_title_iterator
+ * Iterator over an array of oscap_title elements.
+ * @see oscap_iterator
+ */
+struct oscap_title_iterator;
+/// @relates oscap_title_iterator
+struct oscap_title* oscap_title_iterator_next(struct oscap_title_iterator* it);
+/// @relates oscap_title_iterator
+void oscap_title_iterator_free(struct oscap_title_iterator* it);
+/// @relates oscap_title_iterator
+bool oscap_title_iterator_has_more(struct oscap_title_iterator* it);
 
 /**
  * Release library internal caches.

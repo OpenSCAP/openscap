@@ -73,7 +73,7 @@ struct cpe_dict;
 struct cpe_item_metadata;
 struct cpe_item_title;
 struct cpe_generator;
-struct cpe_dict_vendor;
+struct cpe_vendor;
 struct cpe_dict_product;
 struct cpe_dict_version;
 struct cpe_dict_update;
@@ -221,7 +221,7 @@ const char * cpe_generator_get_timestamp(const struct cpe_generator *item);
  */
 struct cpe_generator * cpe_dict_get_generator(const struct cpe_dict *item);
 struct cpe_item_iterator * cpe_dict_get_items(const struct cpe_dict *item);
-struct cpe_dict_vendor * cpe_dict_get_vendors(const struct cpe_dict *item);
+struct cpe_vendor_iterator * cpe_dict_get_vendors(const struct cpe_dict *item);
 
 /**
  * cpe_vendor functions to get variable members
@@ -301,7 +301,7 @@ bool cpe_name_match_dict_str(const char *cpe, struct cpe_dict * dict);
 //void oscap_title_free(struct oscap_title * title);
 void cpe_check_free(struct cpe_dict_check * check);
 void cpe_reference_free(struct cpe_dict_reference * ref);
-void cpe_vendor_free(struct cpe_dict_vendor * vendor);
+void cpe_vendor_free(struct cpe_vendor * vendor);
 void cpe_product_free(struct cpe_dict_product * product);
 void cpe_version_free(struct cpe_dict_version * version);
 void cpe_update_free(struct cpe_dict_update * update);

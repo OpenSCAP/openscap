@@ -30,6 +30,7 @@
 #include <libxml/xmlreader.h>
 #include <libxml/xmlwriter.h>
 #include <stdbool.h>
+#include "oscap.h"
 
 /* XML Metadata. Here should be every general attribute
  * that can be present in every xml element such as xml:lang
@@ -51,10 +52,6 @@ struct oscap_title * oscap_title_parse(xmlTextReaderPtr reader, const char * nam
 void oscap_title_export(const struct oscap_title * title, xmlTextWriterPtr writer);
 void oscap_title_free(struct oscap_title * title);
 
-struct oscap_title_iterator;
-struct oscap_title* oscap_title_iterator_next(struct oscap_title_iterator* it);
-void oscap_title_iterator_free(struct oscap_title_iterator* it);
-bool oscap_title_iterator_has_more(struct oscap_title_iterator* it);
  
 void xml_metadata_free(struct xml_metadata xml);
 

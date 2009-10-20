@@ -33,7 +33,7 @@
 
 OSCAP_GETTER(const char*, xml_metadata, namespace)
 OSCAP_GETTER(const char*, xml_metadata, lang)
-OSCAP_GETTER(const char*, oscap_title, content)
+OSCAP_ACCESSOR_STRING(oscap_title, content)
 OSCAP_ITERATOR_GEN(oscap_title)
 
 struct oscap_title * oscap_title_parse(xmlTextReaderPtr reader, const char * name) {
@@ -53,6 +53,10 @@ struct oscap_title * oscap_title_parse(xmlTextReaderPtr reader, const char * nam
 	ret->content = (char *) xmlTextReaderReadString(reader);
 
 	return ret;
+}
+
+const char *oscap_title_get_language(const struct oscap_title *title) {
+	return title->xml.lang;
 }
 
 void oscap_title_export(const struct oscap_title * title, xmlTextWriterPtr writer) {
