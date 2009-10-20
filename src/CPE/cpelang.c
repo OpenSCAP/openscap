@@ -36,7 +36,7 @@
 #include "../common/list.h"
 
 
-struct cpe_platformspec * cpe_lang_load(const char *fname) {
+struct cpe_lang_model * cpe_lang_model_import(const char *fname) {
 
     if (fname == NULL) return NULL;
 
@@ -51,15 +51,15 @@ struct cpe_platformspec * cpe_lang_load(const char *fname) {
  * @return true on success
  */
 static bool cpe_language_match_expr(struct cpe_name ** cpe, size_t n,
-				    const struct cpe_lang_expr * expr)
+				    const struct cpe_testexpr * expr)
 {
-	struct cpe_lang_expr *cur;
+	struct cpe_testexpr *cur;
 	bool ret;
 
-	switch (cpe_lang_expr_get_oper(expr) & CPE_LANG_OPER_MASK) {
+	switch (cpe_testexpr_get_oper(expr) & CPE_LANG_OPER_MASK) {
 	case CPE_LANG_OPER_AND:
 		ret = true;
-		for (cur = cpe_lang_expr_get_meta_expr(expr); cpe_lang_expr_get_oper(cur); cur=cpe_lang_expr_get_meta_expr(cur)) {
+		for (cur = cpe_testexpr_get_meta_expr(expr); cpe_testexpr_get_oper(cur); cur=cpe_testexpr_get_meta_expr(cur)) {
 			if (!cpe_language_match_expr(cpe, n, cur)) {
 				ret = false;
 				break;
@@ -68,7 +68,7 @@ static bool cpe_language_match_expr(struct cpe_name ** cpe, size_t n,
 		break;
 	case CPE_LANG_OPER_OR:
 		ret = false;
-		for (cur = cpe_lang_expr_get_meta_expr(expr); cpe_lang_expr_get_oper(cur); cur=cpe_lang_expr_get_meta_expr(cur)) {
+		for (cur = cpe_testexpr_get_meta_expr(expr); cpe_testexpr_get_oper(cur); cur=cpe_testexpr_get_meta_expr(cur)) {
 			if (cpe_language_match_expr(cpe, n, cur)) {
 				ret = true;
 				break;
@@ -76,13 +76,13 @@ static bool cpe_language_match_expr(struct cpe_name ** cpe, size_t n,
 		}
 		break;
 	case CPE_LANG_OPER_MATCH:
-		ret = cpe_name_match_cpes(cpe_lang_expr_get_meta_cpe(expr), n, cpe);
+		ret = cpe_name_match_cpes(cpe_testexpr_get_meta_cpe(expr), n, cpe);
 		break;
 	default:
 		return false;
 	}
 
-	return (cpe_lang_expr_get_oper(expr) & CPE_LANG_OPER_NOT ? !ret : ret);
+	return (cpe_testexpr_get_oper(expr) & CPE_LANG_OPER_NOT ? !ret : ret);
 }
 
 bool cpe_platform_match_cpe(struct cpe_name ** cpe, size_t n,

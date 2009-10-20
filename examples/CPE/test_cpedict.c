@@ -1,56 +1,56 @@
 #include <cpedict.h>
 
 // dump contents of an CPE dictionary item
-void cpe_dictitem_dump(struct cpe_dictitem * item)
+void cpe_dictitem_dump(struct cpe_item * item)
 {
 	// print name and title
 	printf("  Name:  ");
-	cpe_name_write(cpe_dictitem_get_name(item), stdout);
+	cpe_name_write(cpe_item_get_name(item), stdout);
 	printf("\n");
-	OSCAP_FOREACH (cpe_dictitem_title, title, cpe_dictitem_get_titles(item),
-		printf("  Title  %s (%s)\n", cpe_dictitem_title_get_content(title), "");
+	OSCAP_FOREACH (oscap_title, title, cpe_item_get_titles(item),
+		printf("  Title  %s (%s)\n", oscap_title_get_content(title), "");
 	)
 
 	// print notes
 	printf("  Notes:\n");
-	OSCAP_FOREACH (cpe_dictitem_title, note, cpe_dictitem_get_notes(item),
-		printf("  Note  %s (%s)\n", cpe_dictitem_title_get_content(note), "");
+	OSCAP_FOREACH (oscap_title, note, cpe_item_get_notes(item),
+		printf("  Note  %s (%s)\n", oscap_title_get_content(note), "");
 	)
 
 	// print deprecation info
-	if (cpe_dictitem_get_deprecated(item)) {
+	if (cpe_item_get_deprecated(item)) {
 		printf("  Depracated by: ");
-		cpe_name_write(cpe_dictitem_get_deprecated(item), stdout);
-		printf(" on %s\n", cpe_dictitem_get_deprecation_date(item));
+		cpe_name_write(cpe_item_get_deprecated(item), stdout);
+		printf(" on %s\n", cpe_item_get_deprecation_date(item));
 	}
 
 	// print references
 	printf("  References:\n");
-	OSCAP_FOREACH (cpe_dict_reference, ref, cpe_dictitem_get_references(item),
-		printf("    %s (%s)\n", cpe_dict_reference_get_content(ref), cpe_dict_reference_get_href(ref));
+	OSCAP_FOREACH (cpe_reference, ref, cpe_item_get_references(item),
+		printf("    %s (%s)\n", cpe_reference_get_content(ref), cpe_reference_get_href(ref));
 	)
 
 	// print checks
 	printf("  Checks:\n");
-	OSCAP_FOREACH (cpe_dict_check, ck, cpe_dictitem_get_checks(item),
+	OSCAP_FOREACH (cpe_check, ck, cpe_item_get_checks(item),
 		printf("    id: %s, system: %s, href: %s\n",
-			cpe_dict_check_get_identifier(ck), cpe_dict_check_get_system(ck), cpe_dict_check_get_href(ck));
+			cpe_check_get_identifier(ck), cpe_check_get_system(ck), cpe_check_get_href(ck));
 	)
 
 	printf("\n");
 }
 
 // dump contents of an CPE dictionary vendor
-void cpe_dict_vendor_dump(struct cpe_dict_vendor * item)
+void cpe_dict_vendor_dump(struct cpe_vendor * item)
 {
 	// print name and title
 	printf("  Vendor:  ");
-	if (cpe_dict_vendor_get_value(item) != NULL) printf("%s", cpe_dict_vendor_get_value(item));
+	if (cpe_vendor_get_value(item) != NULL) printf("%s", cpe_vendor_get_value(item));
 	printf("\n");
-	OSCAP_FOREACH (cpe_dict_product, product, cpe_dict_vendor_get_products(item),
-		printf("  Product  %s (%d)", cpe_dict_product_get_value(product), cpe_dict_product_get_part(product));
-	        OSCAP_FOREACH (cpe_dict_version, version, cpe_dict_product_get_versions(product),
-		        printf(" v.%s ", cpe_dict_version_get_value(version));
+	OSCAP_FOREACH (cpe_product, product, cpe_vendor_get_products(item),
+		printf("  Product  %s (%d)", cpe_product_get_value(product), cpe_product_get_part(product));
+	        OSCAP_FOREACH (cpe_version, version, cpe_product_get_versions(product),
+		        printf(" v.%s ", cpe_version_get_value(version));
 	        )
                 printf("\n");
 	)
@@ -75,7 +75,7 @@ int main(int argc, char **argv)
 	// create dictionary from specified filename
 	//dict = cpe_dict_new(argv[1]);
         printf("----------------------------------------------------\n");
-        dict = cpe_dict_parse(argv[1]);
+        dict = cpe_dict_import(argv[1]);
         printf("----------------------------------------------------\n");
 
         if (dict != NULL) {
@@ -87,10 +87,10 @@ int main(int argc, char **argv)
 		     cpe_generator_get_product_version(generator), cpe_generator_get_schema_version(generator));
 
 		// dump each dictionary item
-		OSCAP_FOREACH (cpe_dictitem, item, cpe_dict_get_items(dict),
+		OSCAP_FOREACH (cpe_item, item, cpe_dict_get_items(dict),
 			cpe_dictitem_dump(item);
 		)
-		OSCAP_FOREACH (cpe_dict_vendor, vendor, cpe_dict_get_vendors(dict),
+		OSCAP_FOREACH (cpe_vendor, vendor, cpe_dict_get_vendors(dict),
 			cpe_dict_vendor_dump(vendor);
 		)
 

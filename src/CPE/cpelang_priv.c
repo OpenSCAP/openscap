@@ -44,49 +44,31 @@
 /***************************************************************************/
 /* Variable definitions
  * */
-
-/* XML Metadata. Here should be every general attribute
- * that can be present in every xml element such as xml:lang
- * or xml namespace.
- * */
-struct xml_metadata {
-        char *namespace;
-        char *lang;
-};
-
-/* 
- * */
-struct cpe_title {
-        struct xml_metadata xml;
-	char *content;		        // human-readable title
-};
-OSCAP_GETTER(const char*, cpe_title, content)
-
 /*
  * */
-struct cpe_lang_expr {
+struct cpe_testexpr {
         struct xml_metadata xml;
 	cpe_lang_oper_t oper;	// operator
 	union {
-		struct cpe_lang_expr *expr;	// array of subexpressions for operators
+		struct cpe_testexpr *expr;	// array of subexpressions for operators
 		struct cpe_name *cpe;	        // CPE for match operation
 	} meta;			                // operation metadata
 };
-OSCAP_GETTER(cpe_lang_oper_t, cpe_lang_expr, oper)
+OSCAP_GETTER(cpe_lang_oper_t, cpe_testexpr, oper)
 
 /*
  * */
-struct cpe_platformspec {
+struct cpe_lang_model {
         struct xml_metadata xml;
         char *ns_href;
         char *ns_prefix;
 	struct oscap_list* items;   // list of items
 	struct oscap_htable* item;  // item by ID
 };
-OSCAP_GETTER(const char*, cpe_platformspec, ns_href)
-OSCAP_GETTER(const char*, cpe_platformspec, ns_prefix)
-OSCAP_IGETTER_GEN(cpe_platform, cpe_platformspec, items)
-OSCAP_HGETTER_STRUCT(cpe_platform, cpe_platformspec, item)
+OSCAP_GETTER(const char*, cpe_lang_model, ns_href)
+OSCAP_GETTER(const char*, cpe_lang_model, ns_prefix)
+OSCAP_IGETTER_GEN(cpe_platform, cpe_lang_model, items)
+OSCAP_HGETTER_STRUCT(cpe_platform, cpe_lang_model, item)
 
 /*
  * */
@@ -95,12 +77,12 @@ struct cpe_platform {
 	struct oscap_list* titles;   // human-readable platform description
 	char *id;                   // platform ID
 	char *remark;               // remark TODO: 0-n !!
-	struct cpe_lang_expr expr;  // expression for match evaluation
+	struct cpe_testexpr expr;  // expression for match evaluation
 };
 
 OSCAP_GETTER(const char*, cpe_platform, id)
 OSCAP_GETTER(const char*, cpe_platform, remark)
-OSCAP_IGETTER_GEN(cpe_title, cpe_platform, titles)
+OSCAP_IGETTER(oscap_title, cpe_platform, titles)
 
 /* End of variable definitions
  * */
@@ -114,11 +96,6 @@ OSCAP_IGETTER_GEN(cpe_title, cpe_platform, titles)
  */
 static int xmlTextReaderNextElement(xmlTextReaderPtr reader);
 static char * parse_text_element(xmlTextReaderPtr reader, char *name);
-
-static struct cpe_title * cpe_title_parse(xmlTextReaderPtr reader, char * name);
-static void cpe_title_export(const struct cpe_title * title, xmlTextWriterPtr writer);
-static void cpe_title_free(struct cpe_title * title);
-static void xml_metadata_free(struct xml_metadata xml);
 
 /* End of static declarations 
  * */
@@ -137,14 +114,14 @@ static int xmlTextReaderNextElement(xmlTextReaderPtr reader) {
         return ret;
 }
 
-struct cpe_lang_expr * cpe_lang_expr_get_meta_expr(const struct cpe_lang_expr *item) {
+struct cpe_testexpr * cpe_testexpr_get_meta_expr(const struct cpe_testexpr *item) {
 
     if (item == NULL) return NULL;
 
     return item->meta.expr;
 }
 
-struct cpe_name * cpe_lang_expr_get_meta_cpe(const struct cpe_lang_expr *item) {
+struct cpe_name * cpe_testexpr_get_meta_cpe(const struct cpe_testexpr *item) {
 
     if (item == NULL) return NULL;
 
@@ -157,24 +134,40 @@ struct cpe_name * cpe_lang_expr_get_meta_cpe(const struct cpe_lang_expr *item) {
  * returns the type of <structure>
  */
 
-struct cpe_platformspec *cpe_platformspec_new()
-{
-	struct cpe_platformspec *res;
+struct cpe_testexpr * cpe_testexpr_new() {
 
-	res = oscap_alloc(sizeof(struct cpe_platformspec));
-	if (res == NULL)
-		return NULL;
+        struct cpe_testexpr *ret;
 
-	res->items = oscap_list_new();
-	res->item = oscap_htable_new();
-        res->ns_href = NULL;
-        res->ns_prefix = NULL;
+        ret = oscap_alloc(sizeof(struct cpe_testexpr));
+        if (ret == NULL)
+                return NULL;
 
-	return res;
+        ret->xml.lang       = NULL;
+        ret->xml.namespace  = NULL;
+        ret->meta.expr      = NULL;
+        ret->meta.cpe       = NULL;
 }
 
-struct cpe_platform * cpe_platform_new()
-{
+struct cpe_lang_model * cpe_lang_model_new() {
+
+	struct cpe_lang_model *ret;
+
+	ret = oscap_alloc(sizeof(struct cpe_lang_model));
+	if (ret == NULL)
+		return NULL;
+
+	ret->items = oscap_list_new();
+	ret->item = oscap_htable_new();
+        ret->ns_href        = NULL;
+        ret->ns_prefix      = NULL;
+        ret->xml.lang       = NULL;
+        ret->xml.namespace  = NULL;
+
+	return ret;
+}
+
+struct cpe_platform * cpe_platform_new() {
+
 	struct cpe_platform *ret;
 
 	ret = oscap_alloc(sizeof(struct cpe_platform));
@@ -182,6 +175,11 @@ struct cpe_platform * cpe_platform_new()
 		return NULL;
 
 	ret->titles = oscap_list_new();
+	//ret->expr           = *(cpe_testexpr_new()); // no need to allocate mem here
+        ret->xml.lang       = NULL;
+        ret->xml.namespace  = NULL;
+	ret->id             = NULL;
+	ret->remark         = NULL;
 
 	return ret;
 }
@@ -194,15 +192,15 @@ struct cpe_platform * cpe_platform_new()
  * More info in representive header file.
  * returns the type of <structure>
  */
-struct cpe_platformspec * cpe_lang_parse(const char *fname) {
+struct cpe_lang_model * cpe_lang_parse(const char *fname) {
         
     xmlTextReaderPtr reader;
-    struct cpe_platformspec *ret = NULL;
+    struct cpe_lang_model *ret = NULL;
 
     reader = xmlReaderForFile(fname, NULL, 0);
     if (reader != NULL) {
         xmlTextReaderRead(reader);
-        ret = cpe_platformspec_parse(reader);
+        ret = cpe_lang_model_parse(reader);
     } else {
         fprintf(stderr, "Unable to open %s\n", fname);
     }
@@ -211,15 +209,15 @@ struct cpe_platformspec * cpe_lang_parse(const char *fname) {
     return ret;
 }
 
-struct cpe_platformspec * cpe_platformspec_parse(xmlTextReaderPtr reader) {
+struct cpe_lang_model * cpe_lang_model_parse(xmlTextReaderPtr reader) {
 
-        struct cpe_platformspec *ret = NULL;
+        struct cpe_lang_model *ret = NULL;
         struct cpe_platform *platform;
 
         if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), BAD_CAST "platform-specification") &&
             xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
 
-                ret = cpe_platformspec_new();
+                ret = cpe_lang_model_new();
                 if (ret == NULL)
                         return NULL;
 
@@ -245,7 +243,7 @@ struct cpe_platformspec * cpe_platformspec_parse(xmlTextReaderPtr reader) {
 struct cpe_platform * cpe_platform_parse(xmlTextReaderPtr reader) {
         
         struct cpe_platform *ret;
-        struct cpe_title *title;
+        struct oscap_title *title;
 
         // allocate platform structure here
         ret = cpe_platform_new();
@@ -271,7 +269,7 @@ struct cpe_platform * cpe_platform_parse(xmlTextReaderPtr reader) {
                 
             if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), BAD_CAST "title") &&
                 xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT){
-                        title = cpe_title_parse(reader, "title");
+                        title = oscap_title_parse(reader, "title");
                         if (title) oscap_list_add(ret->titles, title);
             } else 
                 if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), BAD_CAST "remark") &&
@@ -280,7 +278,7 @@ struct cpe_platform * cpe_platform_parse(xmlTextReaderPtr reader) {
             } else
                 if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), BAD_CAST "logical-test") &&
                     xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
-                        ret->expr = *(cpe_ret_expr_parse(reader));
+                        ret->expr = *(cpe_testexpr_parse(reader));
             }
             // get the next node
             xmlTextReaderRead(reader);
@@ -289,14 +287,14 @@ struct cpe_platform * cpe_platform_parse(xmlTextReaderPtr reader) {
         return ret;
 }
 
-struct cpe_lang_expr * cpe_ret_expr_parse(xmlTextReaderPtr reader) {
+struct cpe_testexpr * cpe_testexpr_parse(xmlTextReaderPtr reader) {
 
 	xmlChar *temp;
 	size_t elem_cnt = 0;
-        struct cpe_lang_expr * ret;
+        struct cpe_testexpr * ret;
 
         // allocation
-        ret = oscap_alloc(sizeof(struct cpe_lang_expr));
+        ret = oscap_alloc(sizeof(struct cpe_testexpr));
         if (ret == NULL)
                 return NULL;
         
@@ -338,7 +336,7 @@ struct cpe_lang_expr * cpe_ret_expr_parse(xmlTextReaderPtr reader) {
         // go to next node
         // skip to next node
         xmlTextReaderRead(reader);
-	ret->meta.expr = oscap_alloc(sizeof(struct cpe_lang_expr));
+	ret->meta.expr = cpe_testexpr_new();
 
         // while it's not 'logical-test' or it's not ended element ..
         while (xmlStrcmp(xmlTextReaderConstLocalName(reader), (const xmlChar *) "logical-test") != 0 ||
@@ -350,12 +348,12 @@ struct cpe_lang_expr * cpe_ret_expr_parse(xmlTextReaderPtr reader) {
                 }
                 elem_cnt++;
                 // realloc the current structure to handle more fact-refs or logical-tests
-	        ret->meta.expr = (struct cpe_lang_expr *) oscap_realloc(ret->meta.expr, (elem_cnt+1) * sizeof(struct cpe_lang_expr));
+	        ret->meta.expr = (struct cpe_testexpr *) oscap_realloc(ret->meta.expr, (elem_cnt+1) * sizeof(struct cpe_testexpr));
 
                 // .. and the next node is logical-test element, we need recursive call
                 if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), BAD_CAST "logical-test") && 
                 xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
-                        ret->meta.expr[elem_cnt-1] = *(cpe_ret_expr_parse(reader));
+                        ret->meta.expr[elem_cnt-1] = *(cpe_testexpr_parse(reader));
                 } else // .. or it's fact-ref only
                         if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), BAD_CAST "fact-ref") &&
                             xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
@@ -395,24 +393,6 @@ static char * parse_text_element(xmlTextReaderPtr reader, char *name) {
     return string;
 }
 
-static struct cpe_title * cpe_title_parse(xmlTextReaderPtr reader, char * name) {
-
-	struct cpe_title *ret;
-
-        if (xmlStrcmp (xmlTextReaderConstLocalName(reader), BAD_CAST name) != 0)
-		return NULL;
-
-	if ((ret = oscap_alloc(sizeof(struct cpe_title))) == NULL)
-		return NULL;
-	memset(ret, 0, sizeof(struct cpe_title));
-
-        ret->xml.lang = oscap_strdup((char *) xmlTextReaderConstXmlLang(reader));
-        ret->xml.namespace = (char *) xmlTextReaderPrefix(reader);
-
-	ret->content = (char *) xmlTextReaderReadString(reader);
-
-	return ret;
-}
 /* End of private parsing functions
  * */
 /***************************************************************************/
@@ -422,7 +402,7 @@ static struct cpe_title * cpe_title_parse(xmlTextReaderPtr reader, char * name) 
  * More info in representive header file.
  * returns the type of <structure>
  */
-void cpe_lang_export(struct cpe_platformspec * spec, const char * fname) {
+void cpe_lang_export(struct cpe_lang_model * spec, const char * fname) {
 
         // TODO: ad macro to check return value from xmlTextWriter* functions
         xmlTextWriterPtr writer;
@@ -435,16 +415,16 @@ void cpe_lang_export(struct cpe_platformspec * spec, const char * fname) {
 
         xmlTextWriterStartDocument(writer, NULL, FILE_ENCODING, NULL);
 
-        cpe_platformspec_export(spec, writer);
+        cpe_lang_model_export(spec, writer);
         xmlTextWriterEndDocument(writer);
         xmlFreeTextWriter(writer);
-        cpe_platformspec_free(spec);
+        cpe_lang_model_free(spec);
 }
 
-void cpe_platformspec_export(const struct cpe_platformspec * spec, xmlTextWriterPtr writer) {
+void cpe_lang_model_export(const struct cpe_lang_model * spec, xmlTextWriterPtr writer) {
 
         xmlTextWriterStartElementNS(writer, BAD_CAST spec->ns_prefix, BAD_CAST "platform-specification", BAD_CAST spec->ns_href);
-        OSCAP_FOREACH (cpe_platform, p, cpe_platformspec_get_items(spec),
+        OSCAP_FOREACH (cpe_platform, p, cpe_lang_model_get_items(spec),
 		// dump its contents to XML tree
                 cpe_platform_export( p, writer );
 	)
@@ -456,24 +436,15 @@ void cpe_platform_export(const struct cpe_platform * platform, xmlTextWriterPtr 
         xmlTextWriterStartElementNS(writer, BAD_CAST platform->xml.namespace, BAD_CAST "platform", NULL);
         if (cpe_platform_get_id(platform) != NULL) 
                 xmlTextWriterWriteAttribute(writer, BAD_CAST "id", BAD_CAST cpe_platform_get_id(platform));
-        OSCAP_FOREACH (cpe_title, title, cpe_platform_get_titles(platform),
+        OSCAP_FOREACH (oscap_title, title, cpe_platform_get_titles(platform),
 		// dump its contents to XML tree
-                cpe_title_export(title, writer);
+                oscap_title_export(title, writer);
 	)
-        cpe_ret_expr_export(platform->expr, writer);
+        cpe_testexpr_export(platform->expr, writer);
         xmlTextWriterEndElement(writer);
 }
 
-static void cpe_title_export(const struct cpe_title * title, xmlTextWriterPtr writer) {
-
-        xmlTextWriterStartElementNS(writer, BAD_CAST title->xml.namespace, BAD_CAST "title", NULL);
-        if (title->xml.lang != NULL) 
-                xmlTextWriterWriteAttribute(writer, BAD_CAST "xml:lang", BAD_CAST title->xml.lang);
-        xmlTextWriterWriteString(writer, BAD_CAST title->content);
-        xmlTextWriterEndElement(writer);
-}
-
-void cpe_ret_expr_export(struct cpe_lang_expr expr, xmlTextWriterPtr writer) {
+void cpe_testexpr_export(struct cpe_testexpr expr, xmlTextWriterPtr writer) {
 
         if (expr.oper == CPE_LANG_OPER_HALT)
             return;
@@ -506,7 +477,7 @@ void cpe_ret_expr_export(struct cpe_lang_expr expr, xmlTextWriterPtr writer) {
         if ( expr.meta.expr == NULL) return;
         int i = 0;
         while (expr.meta.expr[i].oper != CPE_LANG_OPER_HALT){
-            cpe_ret_expr_export(expr.meta.expr[i], writer);
+            cpe_testexpr_export(expr.meta.expr[i], writer);
             ++i;
         }
         xmlTextWriterEndElement(writer);
@@ -520,7 +491,7 @@ void cpe_ret_expr_export(struct cpe_lang_expr expr, xmlTextWriterPtr writer) {
 /* Free functions - all are static private, do not use them outside this file
  */
 
-void cpe_platformspec_free(struct cpe_platformspec * platformspec)
+void cpe_lang_model_free(struct cpe_lang_model * platformspec)
 {
 	if (platformspec == NULL) return;
 
@@ -536,15 +507,15 @@ void cpe_platform_free(struct cpe_platform * platform)
 
 	xmlFree(platform->id);
 	xmlFree(platform->remark);
-        oscap_list_free(platform->titles, (oscap_destruct_func)cpe_title_free);
+        oscap_list_free(platform->titles, (oscap_destruct_func)oscap_title_free);
 	cpe_langexpr_free(&platform->expr);
         xml_metadata_free(platform->xml);
 	oscap_free(platform);
 }
 
-void cpe_langexpr_free(struct cpe_lang_expr * expr)
+void cpe_langexpr_free(struct cpe_testexpr * expr)
 {
-	struct cpe_lang_expr *cur;
+	struct cpe_testexpr *cur;
 
 	if (expr == NULL) return;
 
@@ -564,21 +535,6 @@ void cpe_langexpr_free(struct cpe_lang_expr * expr)
 
         xml_metadata_free(expr->xml);
 	expr->oper = 0;
-}
-
-static void cpe_title_free(struct cpe_title * title) {
-
-	if (title == NULL) return;
-
-	oscap_free(title->content);
-        xml_metadata_free(title->xml);
-	oscap_free(title);
-}
-
-static void xml_metadata_free(struct xml_metadata xml) {
-
-        if (xml.lang != NULL) oscap_free(xml.lang);
-        if (xml.namespace != NULL) oscap_free(xml.namespace);
 }
 /* End of free functions
  * */

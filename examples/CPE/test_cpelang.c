@@ -4,20 +4,11 @@
 void test_platform_dump(struct cpe_platform * plat);
 //void test_langexpr_dump(struct cpe_lang_expr * expr, int depth);
 
-void test_platformspec_dump(struct cpe_platformspec * plat)
-{
-	// dump all platforms belonging to a platform specification
-	struct cpe_platform_iterator* it = cpe_platformspec_get_items(plat);
-	while (cpe_platform_iterator_has_more(it))
-		test_platform_dump(cpe_platform_iterator_next(it));
-	cpe_platform_iterator_free(it);
-}
-
 void test_platform_dump(struct cpe_platform * plat)
 {
 	// print id, title, remark
-	printf("ID: %s\n  Title:  %s\n  Remark: %s\n",
-	       cpe_platform_get_id(plat), cpe_platform_get_title(plat), cpe_platform_get_remark(plat));
+	/*printf("ID: %s\n  Title:  %s\n  Remark: %s\n",
+	       cpe_platform_get_id(plat), cpe_platform_get_title(plat), cpe_platform_get_remark(plat));*/
 	// dump expression
 	//test_langexpr_dump(&(plat->expr), 4);
 }
@@ -62,9 +53,9 @@ void test_langexpr_dump(cpe_lang_expr_t * expr, int depth)
 }
 */
 
-void test_platformspec_export(struct cpe_platformspec * res){
+void test_lang_model_export(struct cpe_lang_model * res){
 
-    (void) cpe_platformspec_export( res, "test_cpelang.out");
+    (void) cpe_lang_export( res, "test_cpelang.out");
     fprintf(stdout, "Result saved in test_cpelang.out file\n");
 }
 
@@ -73,7 +64,7 @@ void test_platformspec_export(struct cpe_platformspec * res){
 
 int main(int argc, char **argv)
 {
-	struct cpe_platformspec *plat;	// pointer to our platform specification
+	struct cpe_lang_model *plat;	// pointer to our platform specification
 	unsigned int i;
 	struct cpe_name **cpes;		// list of CPEs
 	size_t cpes_n;		// number of CPEs
@@ -92,20 +83,20 @@ int main(int argc, char **argv)
 		cpes[i] = cpe_name_new(argv[i + 2]);
 
 	// load platform specification from file specified on the command line
-	plat = cpe_platformspec_new(argv[1]);
+	plat = cpe_lang_model_new(argv[1]);
 
-	if (plat != NULL) {
-		OSCAP_FOREACH (cpe_platform, p, cpe_platformspec_get_items(plat),
+	/*if (plat != NULL) {
+		OSCAP_FOREACH (cpe_platform, p, cpe_lang_model_get_platforms(plat),
 			// dump its contents
 			test_platform_dump(p);
 			// print whether list of CPEs matched
 			printf("    = %sMATCH\n\n", cpe_platform_match_cpe(cpes, cpes_n, p) ? "" : "MIS");
 		)
-	}
+	}*/
         //printf("RES_PREFIX:%s", plat->ns_prefix);
-        test_platformspec_export( plat );
+        test_lang_model_export( plat );
 	// free resources allocated for platform specification
-	cpe_platformspec_free(plat);
+	//cpe_lang_model_free(plat);
 	if (plat == NULL) return EXIT_FAILURE;
 
 	// free list of CPEs

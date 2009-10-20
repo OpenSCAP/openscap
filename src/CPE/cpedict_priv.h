@@ -35,6 +35,7 @@
 #include "cpeuri.h"
 #include "../common/oscap.h"
 #include "../common/util.h"
+#include "../common/elements.h"
 
 OSCAP_HIDDEN_START;
 
@@ -47,10 +48,10 @@ struct cpe_generator * cpe_generator_parse(xmlTextReaderPtr reader);
  * @return new dictionary item
  * @retval NULL on failure
  */
-struct cpe_dictitem * cpe_dictitem_parse(xmlTextReaderPtr reader);
-struct cpe_dict_vendor * cpe_dict_vendor_parse(xmlTextReaderPtr reader);
-struct cpe_dict_vendor * cpe_dictvendor_new();
-struct cpe_dictitem * cpe_dictitem_new();
+struct cpe_item * cpe_item_parse(xmlTextReaderPtr reader);
+struct cpe_vendor * cpe_vendor_parse(xmlTextReaderPtr reader);
+struct cpe_vendor * cpe_vendor_new();
+struct cpe_item * cpe_item_new();
 
 /**
  * Create new empty CPE dictionary
@@ -62,7 +63,7 @@ struct cpe_dict *cpe_dict_new();
 
 /*
  * Load new CPE dictionary from XML node
- * @param node file name of dictionary to load
+ * @param node file name of dictionary to import
  * @return new dictionary
  * @retval NULL on failure
  */
@@ -71,12 +72,7 @@ struct cpe_dict * parse_cpedict(xmlTextReaderPtr reader);
 void dict_export(struct cpe_dict * dict, const char * fname);
 void cpe_dict_export(const struct cpe_dict * dict, xmlTextWriterPtr writer);
 void cpe_generator_export(const struct cpe_generator * generator, xmlTextWriterPtr writer);
-void cpe_dictitem_export(const struct cpe_dictitem * item, xmlTextWriterPtr writer);
-void cpe_dict_vendor_export(const struct cpe_dict_vendor * vendor, xmlTextWriterPtr writer);
-
-void cpe_dict_free(struct cpe_dict * dict);
-void cpe_generator_free(struct cpe_generator * generator);
-void cpe_dictitem_free(struct cpe_dictitem * item);
-void cpe_dictvendor_free(struct cpe_dict_vendor * vendor);
+void cpe_item_export(const struct cpe_item * item, xmlTextWriterPtr writer);
+void cpe_vendor_export(const struct cpe_vendor * vendor, xmlTextWriterPtr writer);
 
 OSCAP_HIDDEN_END;

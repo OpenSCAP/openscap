@@ -32,7 +32,7 @@
 #include "../common/list.h"
 #include "../common/util.h"
 
-struct cpe_dict * cpe_dict_load(const char *fname) {
+struct cpe_dict * cpe_dict_import(const char *fname) {
 
     if (fname == NULL) return NULL;
 
@@ -51,7 +51,7 @@ bool cpe_name_match_dict(struct cpe_name * cpe, struct cpe_dict * dict) {
 	struct oscap_list_item* cur = ((struct oscap_list *) cpe_dict_get_items(dict))->first;
 
 	for (int i = 0; cur != NULL; ++i) {
-		cpes[i] = cpe_dictitem_get_name(((struct cpe_dictitem *) cur->data));
+		cpes[i] = cpe_item_get_name(((struct cpe_item *) cur->data));
 		cur = cur->next;
 	}
 	

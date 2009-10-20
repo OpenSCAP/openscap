@@ -30,22 +30,24 @@
 
 #include <libxml/xmlreader.h>
 #include <libxml/xmlwriter.h>
+
 #include "../common/util.h"
+#include "../common/elements.h"
 
 OSCAP_HIDDEN_START;
 
-struct cpe_platformspec * cpe_platformspec_parse(xmlTextReaderPtr reader);
+struct cpe_lang_model * cpe_lang_model_parse(xmlTextReaderPtr reader);
 struct cpe_platform * cpe_platform_parse(xmlTextReaderPtr reader);
-struct cpe_lang_expr * cpe_ret_expr_parse(xmlTextReaderPtr reader);
-struct cpe_platformspec *  cpe_lang_parse(const char *fname);
+struct cpe_testexpr * cpe_testexpr_parse(xmlTextReaderPtr reader);
+struct cpe_lang_model *  cpe_lang_parse(const char *fname);
 
-void cpe_lang_export(struct cpe_platformspec * spec, const char * fname);
-void cpe_platformspec_export(const struct cpe_platformspec * spec, xmlTextWriterPtr writer);
+void cpe_lang_export(struct cpe_lang_model * spec, const char * fname);
+void cpe_lang_model_export(const struct cpe_lang_model * spec, xmlTextWriterPtr writer);
 void cpe_platform_export(const struct cpe_platform * platform, xmlTextWriterPtr writer);
-void cpe_ret_expr_export(const struct cpe_lang_expr expr, xmlTextWriterPtr writer);
+void cpe_testexpr_export(const struct cpe_testexpr expr, xmlTextWriterPtr writer);
 
-void cpe_langexpr_free(struct cpe_lang_expr * expr);
-void cpe_platformspec_free(struct cpe_platformspec * platformspec);
-void cpe_platform_free(struct cpe_platform * platform);
+struct cpe_lang_model * cpe_lang_model_new();
+struct cpe_testexpr * cpe_testexpr_new();
+struct cpe_platform * cpe_platform_new();
 
 OSCAP_HIDDEN_END;
