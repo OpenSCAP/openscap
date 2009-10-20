@@ -132,21 +132,30 @@ static int SEAP_packet_sexp2msg (SEXP_t *sexp_msg, SEAP_msg_t *seap_msg)
                                         
                                         return (SEAP_EUNEXP);
                                 }
-
-                                /* FIXME:
-                                if (SEXP_number_get (attr_val, &(seap_msg->id),
-                                                     SEXP_NUM_UINT64) != 0)
-                                {
-                                        _D("\"id\": Invalid value or type: sexp=%p, type=%s.\n",
-                                           attr_val, SEXP_strtype (attr_val));
-                                        
-                                        sm_free (seap_msg->attrs);
-                                        
-                                        return (SEAP_EINVAL);
-                                }
-                                */
                                 
+#if SEAP_MSGID_BITS == 64
                                 seap_msg->id = SEXP_number_getu_64 (attr_val);
+                                if (seap_msg->id == UINT64_MAX) {
+#else
+                                seap_msg->id = SEXP_number_getu_32 (attr_val);
+                                if (seap_msg->id == UINT32_MAX) {
+#endif
+                                        switch (errno) {
+                                        case EDOM:
+                                                _D("id: invalid value or type: s_exp=%p, type=%s\n",
+                                                   (void *)attr_val, SEXP_strtype (attr_val));
+                                                
+                                                sm_free (seap_msg->attrs);
+                                                return (SEAP_EINVAL);
+                                        case EFAULT:
+                                                _D("id: not found\n");
+                                                        
+                                                sm_free (seap_msg->attrs);
+                                                return (SEAP_EINVAL);
+                                        }
+                                }
+                                
+                                SEXP_free (attr_val);
                         } else {
                                 
                                 seap_msg->attrs[attr_i].name  = SEXP_string_subcstr (attr_name, 1, 0);
@@ -177,6 +186,8 @@ static int SEAP_packet_sexp2msg (SEXP_t *sexp_msg, SEAP_msg_t *seap_msg)
                         ++msg_i;
                         ++attr_i;
                 }
+
+                SEXP_free (attr_name);
         } /* END: attribute loop */
         
         seap_msg->sexp = SEXP_list_last (sexp_msg);
@@ -187,35 +198,35 @@ static int SEAP_packet_sexp2msg (SEXP_t *sexp_msg, SEAP_msg_t *seap_msg)
 static SEXP_t *SEAP_packet_msg2sexp (SEAP_msg_t *msg)
 {
         SEXP_t *sexp;
-        char   *attr_name;
-        size_t  attr_namelen;
         uint16_t i;
         
+        SEXP_t *r0, *r1, *r2;
+
         _A(msg != NULL);
         _LOGCALL_;
 
-        /* FIXME: memory leak */
-        sexp = SEXP_list_new (SEXP_string_new (SEAP_SYM_MSG, strlen (SEAP_SYM_MSG)),
-                              SEXP_string_new (":id", 3),
-                              SEXP_number_newu_64 (msg->id),
+        sexp = SEXP_list_new (r0 = SEXP_string_new (SEAP_SYM_MSG, strlen (SEAP_SYM_MSG)),
+                              r1 = SEXP_string_new (":id", 3),
+#if SEAP_MSGID_BITS == 64
+                              r2 = SEXP_number_newu_64 (msg->id),
+#else
+                              r2 = SEXP_number_newu_32 (msg->id),
+#endif
                               NULL);
+        
+        SEXP_vfree (r0, r1, r2, NULL);
         
         /* Add message attributes */
         for (i = 0; i < msg->attrs_cnt; ++i) {
                 if (msg->attrs[i].value != NULL) {
-                        attr_namelen = strlen (msg->attrs[i].name) + 2;
-                        attr_name    = sm_alloc (sizeof (char) * attr_namelen);
-                        
-                        snprintf (attr_name, attr_namelen, ":%s", msg->attrs[i].name);
-                        
-                        SEXP_list_add (sexp, SEXP_string_new (attr_name, attr_namelen - 1));
+                        SEXP_list_add (sexp, r0 = SEXP_string_newf (":%s", msg->attrs[i].name));
                         SEXP_list_add (sexp, msg->attrs[i].value);
-                        
-                        sm_free (attr_name);
                 } else {
-                        SEXP_list_add (sexp, SEXP_string_new (msg->attrs[i].name,
-                                                              strlen (msg->attrs[i].name)));
+                        SEXP_list_add (sexp, r0 = SEXP_string_new (msg->attrs[i].name,
+                                                                   strlen (msg->attrs[i].name)));
                 }
+
+                SEXP_free (r0);
         }
         
         /* Add data */
@@ -257,6 +268,8 @@ static int SEAP_packet_sexp2cmd (SEXP_t *sexp_cmd, SEAP_cmd_t *seap_cmd)
                                                 seap_cmd->id = SEXP_number_getu_16 (val);
                                                 ++mattrs;
                                         }
+                                        
+                                        SEXP_free (val);
                                 }
                                 break;
                         case 'r':
@@ -270,6 +283,8 @@ static int SEAP_packet_sexp2cmd (SEXP_t *sexp_cmd, SEAP_cmd_t *seap_cmd)
                                                 seap_cmd->rid = SEXP_number_getu_16 (val);
                                                 seap_cmd->flags |= SEAP_CMDFLAG_REPLY;
                                         }
+                                        
+                                        SEXP_free (val);
                                 }
                                 break;
                         case 'c':
@@ -284,6 +299,8 @@ static int SEAP_packet_sexp2cmd (SEXP_t *sexp_cmd, SEAP_cmd_t *seap_cmd)
                                                         seap_cmd->class = SEAP_CMDCLASS_USR;
                                                 }
                                         }
+
+                                        SEXP_free (val);
                                 }
                                 break;
                         case 't':
@@ -297,6 +314,8 @@ static int SEAP_packet_sexp2cmd (SEXP_t *sexp_cmd, SEAP_cmd_t *seap_cmd)
                                                 if (SEXP_strcmp (val, "sync") == 0)
                                                         seap_cmd->flags |= SEAP_CMDFLAG_SYNC;
                                         }
+                                        
+                                        SEXP_free (val);
                                 }
                                 break;
                         }
@@ -306,6 +325,8 @@ static int SEAP_packet_sexp2cmd (SEXP_t *sexp_cmd, SEAP_cmd_t *seap_cmd)
                 } else {
                         break;
                 }
+
+                SEXP_free (item);
         }
         
         if (item == NULL || mattrs < 1) {
@@ -315,7 +336,9 @@ static int SEAP_packet_sexp2cmd (SEXP_t *sexp_cmd, SEAP_cmd_t *seap_cmd)
 
         if (SEXP_numberp (item)) {
                 seap_cmd->code = SEXP_number_getu_16 (item);
+                SEXP_free (item);
         } else {
+                SEXP_free (item);
                 errno = EINVAL;
                 return (-1);
         }
@@ -328,46 +351,58 @@ static int SEAP_packet_sexp2cmd (SEXP_t *sexp_cmd, SEAP_cmd_t *seap_cmd)
 static SEXP_t *SEAP_packet_cmd2sexp (SEAP_cmd_t *cmd)
 {
         SEXP_t *sexp;
+        SEXP_t *r0, *r1, *r2;
         
         _A(cmd != NULL);
         _LOGCALL_;
 
-        sexp = SEXP_list_new (SEXP_string_new (SEAP_SYM_CMD, strlen (SEAP_SYM_CMD)),
-                              SEXP_string_new (":id", 3),
-                              SEXP_number_newu_16 (cmd->id),
+        sexp = SEXP_list_new (r0 = SEXP_string_new (SEAP_SYM_CMD, strlen (SEAP_SYM_CMD)),
+                              r1 = SEXP_string_new (":id", 3),
+                              r2 = SEXP_number_newu_16 (cmd->id),
                               NULL);
+        
+        SEXP_vfree (r0, r1, r2, NULL);
         
         if (cmd->flags & SEAP_CMDFLAG_REPLY) {
                 SEXP_list_add (sexp,
-                               SEXP_string_new (":reply_id", 9));
+                               r0 = SEXP_string_new (":reply_id", 9));
                 SEXP_list_add (sexp,
-                               SEXP_number_newu_16 (cmd->rid));
+                               r1 = SEXP_number_newu_16 (cmd->rid));
+                
+                SEXP_vfree (r0, r1, NULL);
         }
         
         SEXP_list_add (sexp,
-                       SEXP_string_new (":class", 6));
+                       r0 = SEXP_string_new (":class", 6));
+        SEXP_free (r0);
+        
         switch (cmd->class) {
         case SEAP_CMDCLASS_USR:
                 SEXP_list_add (sexp,
-                               SEXP_string_new ("usr", 3));
+                               r0 = SEXP_string_new ("usr", 3));
                 break;
         case SEAP_CMDCLASS_INT:
                 SEXP_list_add (sexp,
-                               SEXP_string_new ("int", 3));
+                               r0 = SEXP_string_new ("int", 3));
                 break;
         default:
                 abort ();
         }
         
-        SEXP_list_add (sexp,
-                       SEXP_string_new (":type", 5));
+
+        SEXP_free (r0);
         
         SEXP_list_add (sexp,
-                       (cmd->flags & SEAP_CMDFLAG_SYNC ?
-                        SEXP_string_new ("sync", 4) : SEXP_string_new ("async", 5)));
+                       r0 = SEXP_string_new (":type", 5));
         
         SEXP_list_add (sexp,
-                       SEXP_number_newu_16 (cmd->code));
+                       r1 = (cmd->flags & SEAP_CMDFLAG_SYNC ?
+                             SEXP_string_new ("sync", 4) : SEXP_string_new ("async", 5)));
+        
+        SEXP_list_add (sexp,
+                       r2 = SEXP_number_newu_16 (cmd->code));
+        
+        SEXP_vfree (r0, r1, r2, NULL);
         
         if (cmd->args != NULL)
                 SEXP_list_add (sexp, cmd->args);
@@ -385,16 +420,23 @@ static int SEAP_packet_sexp2err (SEXP_t *sexp_err, SEAP_err_t *seap_err)
 static SEXP_t *SEAP_packet_err2sexp (SEAP_err_t *err)
 {
         SEXP_t *sexp;
-
+        SEXP_t *r0, *r1, *r2, *r3, *r4, *r5;
+        
         _LOGCALL_;
 
-        sexp = SEXP_list_new (SEXP_string_new (SEAP_SYM_ERR, strlen (SEAP_SYM_ERR)),
-                              SEXP_string_new (":orig_id", 8),
-                              SEXP_number_newu_64 (err->id),
-                              SEXP_string_new (":type", 5),
-                              SEXP_number_newu (err->type),
-                              SEXP_number_newu (err->code),
+        sexp = SEXP_list_new (r0 = SEXP_string_new (SEAP_SYM_ERR, strlen (SEAP_SYM_ERR)),
+                              r1 = SEXP_string_new (":orig_id", 8),
+#if SEAP_MSGID_BITS == 64
+                              r2 = SEXP_number_newu_64 (err->id),
+#else
+                              r2 = SEXP_number_newu_32 (err->id),
+#endif                    
+                              r3 = SEXP_string_new (":type", 5),
+                              r4 = SEXP_number_newu (err->type),
+                              r5 = SEXP_number_newu (err->code),
                               NULL);
+        
+        SEXP_vfree (r1, r2, r3, r4, r5, NULL);
         
         if (err->data != NULL)
                 SEXP_list_add (sexp, err->data);
@@ -604,12 +646,16 @@ sexp_buf_recv:
         
         if (!SEXP_listp(sexp_packet)) {
                 _D("Invalid SEAP packet received: %s.\n", "not a list");
+
                 SEXP_free (sexp_packet);
+
                 errno = EINVAL;
                 return (-1);
         } else if (SEXP_list_length (sexp_packet) < 2) {
                 _D("Invalid SEAP packet received: %s.\n", "list length < 2");
+
                 SEXP_free (sexp_packet);
+
                 errno = EINVAL;
                 return (-1);
         }
@@ -618,26 +664,33 @@ sexp_buf_recv:
         
         if (!SEXP_stringp(psym_sexp)) {
                 _D("Invalid SEAP packet received: %s.\n", "first list item is not a string");
+                
+                SEXP_free (psym_sexp);
                 SEXP_free (sexp_packet);
-                /* SEXP_free (psym_sexp) */
+                
                 errno = EINVAL;
                 return (-1);
         } else if (SEXP_string_length (psym_sexp) != (strlen (SEAP_SYM_PREFIX) + 3)) {
                 _D("Invalid SEAP packet received: %s.\n", "invalid packet type symbol length");
+                
+                SEXP_free (psym_sexp);
                 SEXP_free (sexp_packet);
-                /* SEXP_free (psym_sexp) */
+
                 errno = EINVAL;
                 return (-1);
         } else if (SEXP_strncmp (psym_sexp, SEAP_SYM_PREFIX, strlen (SEAP_SYM_PREFIX)) != 0) {
                 _D("Invalid SEAP packet received: %s.\n", "invalid prefix");
+
+                SEXP_free (psym_sexp);
                 SEXP_free (sexp_packet);
-                /* SEXP_free (psym_sexp) */
+
                 errno = EINVAL;
                 return (-1);
         }
         
         SEXP_string_cstr_r (psym_sexp, psym_cstr_b, sizeof psym_cstr_b);
         psym_cstr = psym_cstr_b + strlen (SEAP_SYM_PREFIX);
+        SEXP_free (psym_sexp);
         
         switch (psym_cstr[0]) {
         case 'm':
@@ -646,10 +699,14 @@ sexp_buf_recv:
                 {
                         (*packet) = SEAP_packet_new ();
                         (*packet)->type = SEAP_PACKET_MSG;
-
+                        
                         if (SEAP_packet_sexp2msg (sexp_packet, &((*packet)->data.msg)) != 0) {
                                 /* error */
                                 _D("Invalid SEAP packet received: %s.\n", "can't translate to msg struct");
+                                
+                                SEXP_free (sexp_packet);
+                                
+                                errno = EINVAL;
                                 return (-1);
                         }
                         break;
@@ -665,6 +722,9 @@ sexp_buf_recv:
                         if (SEAP_packet_sexp2cmd (sexp_packet, &((*packet)->data.cmd)) != 0) {
                                 /* error */
                                 _D("Invalid SEAP packet received: %s.\n", "can't translate to cmd struct");
+                                SEXP_free (sexp_packet);
+                                
+                                errno = EINVAL;
                                 return (-1);
                         }
                         break;
@@ -680,6 +740,9 @@ sexp_buf_recv:
                         if (SEAP_packet_sexp2err (sexp_packet, &((*packet)->data.err)) != 0) {
                                 /* error */
                                 _D("Invalid SEAP packet received: %s.\n", "can't translate to err struct");
+                                SEXP_free (sexp_packet);
+                                
+                                errno = EINVAL;
                                 return (-1);
                         }
                         break;
@@ -691,6 +754,8 @@ sexp_buf_recv:
                 errno = EINVAL;
                 return (-1);
         }
+        
+        SEXP_free (sexp_packet);
         
         return (0);
 }

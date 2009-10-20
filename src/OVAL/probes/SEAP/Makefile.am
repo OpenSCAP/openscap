@@ -23,6 +23,8 @@ libseap_la_SOURCES= generic/bfind.c		\
 		    sch_generic.h		\
 		    sch_pipe.c			\
 		    sch_pipe.h			\
+		    sch_mq.c			\
+		    sch_mq.h			\
 		    seap-command-backendL.c	\
 		    seap-command-backendL.h	\
 		    seap-command-backendS.c	\
@@ -55,7 +57,7 @@ libseap_la_SOURCES= generic/bfind.c		\
 		    sexp-value.c		\
 		    _sexp-value.h
 
-libseap_la_CFLAGS= @pthread_cflags@ -DUSE_XMALLOC -DXMALLOC_EXIT -DWANT_BASE64 -I$(top_srcdir) -I. -I $(top_srcdir)/src/OVAL/probes/SEAP/public/ -DSEAP_THREAD_SAFE -DHAVE_ATOMIC_FUNCTIONS
+libseap_la_CFLAGS= @pthread_cflags@ -DUSE_XMALLOC -DXMALLOC_EXIT -DWANT_BASE64 -I$(top_srcdir) -I. -I $(top_srcdir)/src/OVAL/probes/SEAP/public/ -DSEAP_THREAD_SAFE -DSEAP_MSGID_BITS=32
 libseap_la_LDFLAGS= @pthread_ldflags@
 
 pkginclude_HEADERS= public/seap-command.h	\

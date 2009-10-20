@@ -414,16 +414,27 @@ int SEAP_sendsexp (SEAP_CTX_t *ctx, int sd, SEXP_t *sexp)
 
 int SEAP_reply (SEAP_CTX_t *ctx, int sd, SEAP_msg_t *rep_msg, SEAP_msg_t *req_msg)
 {
+        SEXP_t *r0;
+        
         _A(ctx != NULL);
         _A(rep_msg != NULL);
         _A(req_msg != NULL);
         _LOGCALL_;
         
         if (SEAP_msgattr_set (rep_msg, "reply-id",
-                              SEXP_number_newu_64 (req_msg->id)) == 0)
+#if SEAP_MSGID_BITS == 64
+                              r0 = SEXP_number_newu_64 (req_msg->id)
+#else
+                              r0 = SEXP_number_newu_32 (req_msg->id)
+#endif
+                    )== 0)
+        {
+                SEXP_free (r0);
                 return SEAP_sendmsg (ctx, sd, rep_msg);
-        else
+        } else {
+                SEXP_free (r0);
                 return (-1);
+        }
 }
 
 static int __SEAP_senderr (SEAP_CTX_t *ctx, int sd, SEAP_err_t *err, unsigned int type)
@@ -519,11 +530,13 @@ int SEAP_close (SEAP_CTX_t *ctx, int sd)
         dsc = SEAP_desc_get (&(ctx->sd_table), sd);
         ret = SCH_CLOSE(dsc->scheme, dsc, 0); /* TODO: Are flags usable here? */
         
-        if (SEAP_desc_del (&(ctx->sd_table), sd) != 0) {
-                /* something very bad happened */
-                _D("SEAP_desc_del failed\n");
-                if (ret > 0)
-                        ret = -1;
+        protect_errno {
+                if (SEAP_desc_del (&(ctx->sd_table), sd) != 0) {
+                        /* something very bad happened */
+                        _D("SEAP_desc_del failed\n");
+                        if (ret > 0)
+                                ret = -1;
+                }
         }
         
         return (ret);

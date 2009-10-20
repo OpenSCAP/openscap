@@ -2,6 +2,10 @@
 #ifndef SEAP_H
 #define SEAP_H
 
+#ifndef SEAP_MSGID_BITS
+# define SEAP_MSGID_BITS 32
+#endif
+
 #include <stdint.h>
 #include <seap-debug.h>
 #include <sexp.h>
