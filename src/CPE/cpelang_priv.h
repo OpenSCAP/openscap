@@ -27,10 +27,13 @@
  *      Maros Barabas <mbarabas@redhat.com>
  */
 
+#ifndef CPELANG_PRIV_H_
+#define CPELANG_PRIV_H_
 
 #include <libxml/xmlreader.h>
 #include <libxml/xmlwriter.h>
 
+#include "cpelang.h"
 #include "../common/util.h"
 #include "../common/elements.h"
 
@@ -51,3 +54,6 @@ struct cpe_testexpr * cpe_testexpr_new();
 struct cpe_platform * cpe_platform_new();
 
 OSCAP_HIDDEN_END;
+
+#endif
+

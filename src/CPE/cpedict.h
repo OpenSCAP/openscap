@@ -34,14 +34,17 @@
  *      Lukas Kuklinek <lkuklinek@redhat.com>
  */
 
-#ifndef _CPEDICT_H_
-#define _CPEDICT_H_
+#ifndef CPEDICT_H_
+#define CPEDICT_H_
 
 #include <stdlib.h>
 
 #include "cpeuri.h"
-#include "cpedict_priv.h"
 #include "../common/oscap.h"
+
+
+// forward declaration
+struct oscap_title;
 
 /**
  * @struct cpe_dict_check

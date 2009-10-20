@@ -146,6 +146,8 @@ struct cpe_testexpr * cpe_testexpr_new() {
         ret->xml.namespace  = NULL;
         ret->meta.expr      = NULL;
         ret->meta.cpe       = NULL;
+
+		return ret;
 }
 
 struct cpe_lang_model * cpe_lang_model_new() {

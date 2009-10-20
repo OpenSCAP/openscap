@@ -27,6 +27,8 @@
  *      Maros Barabas <mbarabas@redhat.com>
  */
 
+#ifndef CPEDICT_PRIV_H_
+#define CPEDICT_PRIV_H_
 
 #include <libxml/xmlreader.h>
 #include <libxml/xmlwriter.h>
@@ -76,3 +78,6 @@ void cpe_item_export(const struct cpe_item * item, xmlTextWriterPtr writer);
 void cpe_vendor_export(const struct cpe_vendor * vendor, xmlTextWriterPtr writer);
 
 OSCAP_HIDDEN_END;
+
+#endif
+

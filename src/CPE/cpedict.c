@@ -29,6 +29,7 @@
  */
 
 #include "cpedict.h"
+#include "cpedict_priv.h"
 #include "../common/list.h"
 #include "../common/util.h"
 

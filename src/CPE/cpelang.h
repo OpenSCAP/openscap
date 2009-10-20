@@ -33,13 +33,12 @@
  *      Maros Barabas <mbarabas@redhat.com>
  */
 
-#ifndef _CPELANG_H_
-#define _CPELANG_H_
+#ifndef CPELANG_H_
+#define CPELANG_H_
 
 #include <stdlib.h>
 
 #include "cpeuri.h"
-#include "cpelang_priv.h"
 #include "../common/oscap.h"
 #include "../common/elements.h"
 
