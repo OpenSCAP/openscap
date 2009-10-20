@@ -6,8 +6,11 @@
  */
 
 #include <stdio.h>
+#include <string.h>
 #include <stdlib.h>
 #include "api/oval_agent_api.h"
+#include "oval_definitions_impl.h"
+#include "oval_system_characteristics_impl.h"
 
 int _test_error_handler(struct oval_xml_error *error, void *null)
 {
@@ -31,15 +34,15 @@ int main(int argc, char **argv)
 		return 1;
 	}
 
-	int index;
-	for (index = 1; oval_object_iterator_has_more(objects); index++) {
+	int idx;
+	for (idx = 1; oval_object_iterator_has_more(objects); idx++) {
 		struct oval_object *object = oval_object_iterator_next(objects);
-		oval_object_to_print(object, "    ", index);
+		oval_object_to_print(object, "    ", idx);
 		printf("Callin probe on object\n");
 		struct oval_syschar* syschar = oval_object_probe(object, model);
 		printf("System characteristics:\n");
 		if (syschar)
-			oval_syschar_to_print(syschar, "    ", index);
+			oval_syschar_to_print(syschar, "    ", idx);
 		else
 			printf("(NULL)\n");
 	}
@@ -79,7 +82,7 @@ void oval_syschar_to_print(struct oval_syschar *syschar, const char *indent, int
                if (object) oval_object_to_print(object, nxtindent, 0);
        }
        {//sysdata
-               struct oval_sysdata_iterator *sysdatas = oval_syschar_sysdata(syschar);
+               struct oval_sysdata_iterator *sysdatas = oval_syschar_get_sysdata(syschar);
                int hasMore = oval_sysdata_iterator_has_more(sysdatas);
                if(hasMore){
                        int i;for(i=1;oval_sysdata_iterator_has_more(sysdatas);i++){
