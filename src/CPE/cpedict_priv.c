@@ -68,7 +68,7 @@ struct cpe_item {                   // the node <cpe-item>
 };
 OSCAP_GETTER(struct cpe_name*, cpe_item, name)
 OSCAP_GETTER(struct cpe_name*, cpe_item, deprecated)
-OSCAP_GETTER(const char*, cpe_item, deprecation_date)
+OSCAP_ACCESSOR_STRING(cpe_item, deprecation_date)
 OSCAP_GETTER(struct cpe_item_metadata*, cpe_item, metadata)
 OSCAP_IGETTER_GEN(cpe_reference, cpe_item, references)
 OSCAP_IGETTER_GEN(cpe_check, cpe_item, checks)
@@ -84,10 +84,10 @@ struct cpe_item_metadata {
         char *nvd_id;
         char *deprecated_by_nvd_id;
 };
-OSCAP_GETTER(const char*, cpe_item_metadata, modification_date)
-OSCAP_GETTER(const char*, cpe_item_metadata, status)
-OSCAP_GETTER(const char*, cpe_item_metadata, nvd_id)
-OSCAP_GETTER(const char*, cpe_item_metadata, deprecated_by_nvd_id)
+OSCAP_ACCESSOR_STRING(cpe_item_metadata, modification_date)
+OSCAP_ACCESSOR_STRING(cpe_item_metadata, status)
+OSCAP_ACCESSOR_STRING(cpe_item_metadata, nvd_id)
+OSCAP_ACCESSOR_STRING(cpe_item_metadata, deprecated_by_nvd_id)
 
 /* <cpe-item><check>
  * */
@@ -97,9 +97,9 @@ struct cpe_check {
 	char *href;        // external file reference (NULL if not present)
 	char *identifier;  // test identifier
 };
-OSCAP_GETTER(const char*, cpe_check, system)
-OSCAP_GETTER(const char*, cpe_check, href)
-OSCAP_GETTER(const char*, cpe_check, identifier)
+OSCAP_ACCESSOR_STRING(cpe_check, system)
+OSCAP_ACCESSOR_STRING(cpe_check, href)
+OSCAP_ACCESSOR_STRING(cpe_check, identifier)
 
 /* <cpe-item><references><reference>
  * */
@@ -108,8 +108,8 @@ struct cpe_reference {
 	char *href;     // reference URL
 	char *content;  // reference description
 };
-OSCAP_GETTER(const char*, cpe_reference, href)
-OSCAP_GETTER(const char*, cpe_reference, content)
+OSCAP_ACCESSOR_STRING(cpe_reference, href)
+OSCAP_ACCESSOR_STRING(cpe_reference, content)
 
 /* <generator>
  * */
@@ -121,10 +121,10 @@ struct cpe_generator {
 	char *schema_version;	 // generator schema version
 	char *timestamp;       // generation date and time
 };
-OSCAP_GETTER(const char*, cpe_generator, product_name)
-OSCAP_GETTER(const char*, cpe_generator, product_version)
-OSCAP_GETTER(const char*, cpe_generator, schema_version)
-OSCAP_GETTER(const char*, cpe_generator, timestamp)
+OSCAP_ACCESSOR_STRING(cpe_generator, product_name)
+OSCAP_ACCESSOR_STRING(cpe_generator, product_version)
+OSCAP_ACCESSOR_STRING(cpe_generator, schema_version)
+OSCAP_ACCESSOR_STRING(cpe_generator, timestamp)
 
 /* <cpe-list>
  * */
@@ -151,7 +151,7 @@ struct cpe_vendor {
         struct oscap_list* titles;
         struct oscap_list* products;
 };
-OSCAP_GETTER(const char*, cpe_vendor, value)
+OSCAP_ACCESSOR_STRING(cpe_vendor, value)
 OSCAP_IGETTER(oscap_title, cpe_vendor, titles)
 OSCAP_IGETTER_GEN(cpe_product, cpe_vendor, products)
 
@@ -163,8 +163,8 @@ struct cpe_product {
         cpe_part_t part;
         struct oscap_list* versions;
 };
-OSCAP_GETTER(const char*, cpe_product, value)
-OSCAP_GETTER(int, cpe_product, part)
+OSCAP_ACCESSOR_STRING(cpe_product, value)
+OSCAP_ACCESSOR_SIMPLE(cpe_part_t, cpe_product, part)
 OSCAP_IGETTER_GEN(cpe_version, cpe_product, versions)
 
 /* vendor -> product -> version 
@@ -174,7 +174,7 @@ struct cpe_version {
         char *value;
         struct oscap_list* updates;
 };
-OSCAP_GETTER(const char*, cpe_version, value)
+OSCAP_ACCESSOR_STRING(cpe_version, value)
 OSCAP_IGETTER_GEN(cpe_update, cpe_version, updates)
 
 /* vendor -> product -> version -> update 
@@ -184,7 +184,7 @@ struct cpe_update {
         char *value;
         struct oscap_list* editions;
 };
-OSCAP_GETTER(const char*, cpe_update, value)
+OSCAP_ACCESSOR_STRING(cpe_update, value)
 OSCAP_IGETTER_GEN(cpe_edition, cpe_update, editions)
 
 /* vendor -> product -> version -> update -> edition 
@@ -194,7 +194,7 @@ struct cpe_edition {
         char *value;
         struct oscap_list* languages;
 };
-OSCAP_GETTER(const char*, cpe_edition, value)
+OSCAP_ACCESSOR_STRING(cpe_edition, value)
 OSCAP_IGETTER_GEN(cpe_language, cpe_edition, languages)
 
 /* vendor -> product -> version -> update -> edition -> language
@@ -203,7 +203,7 @@ struct cpe_language {
         struct xml_metadata xml;
         char *value;
 };
-OSCAP_GETTER(const char*, cpe_language, value)
+OSCAP_ACCESSOR_STRING(cpe_language, value)
 
 /* End of variable definitions
  * */

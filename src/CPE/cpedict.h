@@ -327,6 +327,138 @@ struct cpe_update *cpe_update_new();
 struct cpe_edition *cpe_edition_new();
 struct cpe_language *cpe_language_new();
 
-#endif				/* _CPEDICT_H_ */
+
+/*
+ * Setter functions.
+ */
+
+/**
+ * Set deprecation date.
+ * @relates cpe_item
+ */
+bool cpe_item_set_deprecation_date(struct cpe_item *item, const char *new_deprecation_date);
+
+/**
+ * Set modification date.
+ * @relates cpe_item_metadata
+ */
+bool cpe_item_metadata_set_modification_date(struct cpe_item_metadata *item_metadata, const char *new_modification_date);
+
+/**
+ * Set status.
+ * @relates cpe_item_metadata
+ */
+bool cpe_item_metadata_set_status(struct cpe_item_metadata *item_metadata, const char *new_status);
+
+/**
+ * Set nvd id.
+ * @relates cpe_item_metadata
+ */
+bool cpe_item_metadata_set_nvd_id(struct cpe_item_metadata *item_metadata, const char *new_nvd_id);
+
+/**
+ * Set deprecated by nvd id.
+ * @relates cpe_item_metadata
+ */
+bool cpe_item_metadata_set_deprecated_by_nvd_id(struct cpe_item_metadata *item_metadata, const char *new_deprecated_by_nvd_id);
+
+/**
+ * Set system.
+ * @relates cpe_check
+ */
+bool cpe_check_set_system(struct cpe_check *check, const char *new_system);
+
+/**
+ * Set href.
+ * @relates cpe_check
+ */
+bool cpe_check_set_href(struct cpe_check *check, const char *new_href);
+
+/**
+ * Set identifier.
+ * @relates cpe_check
+ */
+bool cpe_check_set_identifier(struct cpe_check *check, const char *new_identifier);
+
+/**
+ * Set href.
+ * @relates cpe_reference
+ */
+bool cpe_reference_set_href(struct cpe_reference *reference, const char *new_href);
+
+/**
+ * Set content.
+ * @relates cpe_reference
+ */
+bool cpe_reference_set_content(struct cpe_reference *reference, const char *new_content);
+
+/**
+ * Set product name.
+ * @relates cpe_generator
+ */
+bool cpe_generator_set_product_name(struct cpe_generator *generator, const char *new_product_name);
+
+/**
+ * Set product version.
+ * @relates cpe_generator
+ */
+bool cpe_generator_set_product_version(struct cpe_generator *generator, const char *new_product_version);
+
+/**
+ * Set schema version.
+ * @relates cpe_generator
+ */
+bool cpe_generator_set_schema_version(struct cpe_generator *generator, const char *new_schema_version);
+
+/**
+ * Set timestamp.
+ * @relates cpe_generator
+ */
+bool cpe_generator_set_timestamp(struct cpe_generator *generator, const char *new_timestamp);
+
+/**
+ * Set value.
+ * @relates cpe_vendor
+ */
+bool cpe_vendor_set_value(struct cpe_vendor *vendor, const char *new_value);
+
+/**
+ * Set value.
+ * @relates cpe_product
+ */
+bool cpe_product_set_value(struct cpe_product *product, const char *new_value);
+
+/**
+ * Set part.
+ * @relates cpe_product
+ */
+bool cpe_product_set_part(struct cpe_product *product, cpe_part_t new_part);
+
+/**
+ * Set value.
+ * @relates cpe_version
+ */
+bool cpe_version_set_value(struct cpe_version *version, const char *new_value);
+
+/**
+ * Set value.
+ * @relates cpe_update
+ */
+bool cpe_update_set_value(struct cpe_update *update, const char *new_value);
+
+/**
+ * Set value.
+ * @relates cpe_edition
+ */
+bool cpe_edition_set_value(struct cpe_edition *edition, const char *new_value);
+
+/**
+ * Set value.
+ * @relates cpe_language
+ */
+bool cpe_language_set_value(struct cpe_language *language, const char *new_value);
+
 
 /** @} */
+
+#endif				/* _CPEDICT_H_ */
