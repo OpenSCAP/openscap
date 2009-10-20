@@ -44,14 +44,14 @@ bool cpe_name_match_dict(struct cpe_name * cpe, struct cpe_dict * dict) {
 	if (cpe == NULL || dict == NULL)
 		return false;
 	
-    struct cpe_dictitem_iterator *items = cpe_dict_get_items(dict);
+    struct cpe_item_iterator *items = cpe_dict_get_items(dict);
 	size_t n = oscap_iterator_get_itemcount((struct oscap_iterator *)items);
 	struct cpe_name** cpes = oscap_alloc(sizeof(struct cpe_name*) * n);
 	//struct oscap_list_item* cur = ((struct oscap_list *) cpe_dict_get_items(dict))->first;
 
 	int i = 0;
-	OSCAP_FOREACH (cpe_dictitem, item, items,
-		cpes[i++] = cpe_dictitem_get_name(item);
+	OSCAP_FOREACH (cpe_item, item, items,
+		cpes[i++] = cpe_item_get_name(item);
 	)
 	
 	bool ret = cpe_name_match_cpes(cpe, n, cpes);
