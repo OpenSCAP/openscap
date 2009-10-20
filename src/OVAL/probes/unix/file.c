@@ -306,14 +306,6 @@ SEXP_t *probe_main (SEXP_t *probe_in, int *err)
                 return (NULL);
         }
         
-        fprintf (stderr,
-                 "item count: %zu\n"
-                 "    sizeof: %zu bytes\n",
-                 SEXP_list_length (items),
-                 SEXP_sizeof (items));
-        
-        abort ();
-
         SEXP_free (behaviors);
         SEXP_free (filename);
         SEXP_free (path);
