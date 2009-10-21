@@ -224,6 +224,7 @@ static int find_files_recursion(const char* path, setting_t * setting, int depth
 	char path_new[PATH_MAX];
 	DIR * pDir;
 	int rc, tmp;
+        size_t path_len;
 
 	pDir = opendir(path);
 	if( pDir == NULL) 
@@ -231,9 +232,12 @@ static int find_files_recursion(const char* path, setting_t * setting, int depth
 
 	rc = 0;
 	while ( (pDirent = readdir(pDir)) ) {
-		if (PATH_MAX < strlen(path) + 1 + pDirent->d_reclen + 1)
+                path_len = strlen(path);
+		if (PATH_MAX < path_len + 1 + pDirent->d_reclen + 1)
 			continue;
-		sprintf(path_new,"%s/%s",path,pDirent->d_name);
+		sprintf(path_new, "%s%s%s", path,
+                        (path[path_len - 1] == '/') ? "" : "/",
+                        pDirent->d_name);
 
 		if( lstat(path_new, &st) == -1)
 			continue;
@@ -374,6 +378,7 @@ static void find_paths_recursion(const char *path, regex_t *re, rglob_t *result 
 	struct stat st;
         DIR * pDir;
 	char path_new[PATH_MAX];
+        size_t path_len;
 
         pDir = opendir(path);
         if( pDir == NULL)
@@ -389,9 +394,12 @@ static void find_paths_recursion(const char *path, regex_t *re, rglob_t *result 
 	}
 
 	while ( (pDirent = readdir (pDir)) ) {
-		if (PATH_MAX < strlen(path) + 1 + pDirent->d_reclen + 1)
+                path_len = strlen(path);
+		if (PATH_MAX < path_len + 1 + pDirent->d_reclen + 1)
 			continue;
-		sprintf(path_new,"%s/%s",path,pDirent->d_name);
+		sprintf(path_new, "%s%s%s", path,
+                        (path[path_len - 1] == '/') ? "" : "/",
+                        pDirent->d_name);
 
                 if( lstat(path_new, &st) == -1)
                         continue;
