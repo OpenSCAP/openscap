@@ -37,8 +37,8 @@
 
 #include <seap.h>
 #include <stdarg.h>
-#include "api/oval_definitions.h"
-#include "api/oval_results.h"
+#include "oval_definitions.h"
+#include "oval_results.h"
 
 
 /**

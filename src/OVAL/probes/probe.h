@@ -6,7 +6,7 @@
 #include <seap.h>
 #include <stdarg.h>
 #include <probe-entcmp.h>
-#include "api/oval_definitions.h"
+#include "oval_definitions.h"
 
 SEXP_t *SEXP_OVALattr_create (const char *name, ...);
 SEXP_t *SEXP_OVALelm_create (const char *name, ...);

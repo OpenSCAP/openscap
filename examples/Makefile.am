@@ -34,7 +34,7 @@ if WANT_PROBES
 check_PROGRAMS += sexp_parser test_probes test_probe-api
 #test_findfile test_sexp_to_syschar
 TESTS += SEAP/test_sexp-valid.sh \
-         SEAP/test_sexp-inval.sh \	
+         SEAP/test_sexp-inval.sh \
 	 SEAP/test_sexp-types.sh \
 	 OVAL/test_probe-api.sh  \
          OVAL/test_probes.sh
@@ -42,7 +42,7 @@ TESTS += SEAP/test_sexp-valid.sh \
 EXTRA_DIST += SEAP/test_sexp-valid.sh 		\
 	      SEAP/test_sexp-inval.sh		\
 	      OVAL/test_probes.sh		\
-	      OVAL/test_probe_rpminfo.xml 	\	
+	      OVAL/test_probe_rpminfo.xml 	\
 	      OVAL/test_probe_runlevel.xml	\
 	      OVAL/test_probe_filecontent.xml	\
 	      OVAL/probes/file-set.xml		\

@@ -43,9 +43,9 @@
 #include <stdbool.h>
 #include <pthread.h>
 #include <probe-entcmp.h>
-#include "api/oval_definitions.h"
-#include "api/oval_system_characteristics.h"
-#include "api/oval_results.h"
+#include "oval_definitions.h"
+#include "oval_system_characteristics.h"
+#include "oval_results.h"
 
 /*
  * items

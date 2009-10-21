@@ -64,7 +64,7 @@ common_oval_sources = \
 
 # -I options go to CPPFLAGS, not CFLAGS
 # lets build one common for both normal and probe sources (does it mind?)
-AM_CPPFLAGS = $(libxml_cflags) -I.. $(pthread_cflags)
+AM_CPPFLAGS = $(libxml_cflags) $(pthread_cflags) -I.. -Iapi
 if WANT_PROBES
 AM_CPPFLAGS += -I$(top_srcdir)/src -I$(srcdir)/probes -I$(srcdir)/probes/SEAP/public
 endif
