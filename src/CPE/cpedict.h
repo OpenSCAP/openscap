@@ -40,7 +40,7 @@
 #include <stdlib.h>
 
 #include "cpeuri.h"
-#include "cpedict_priv.h"
+#include "../common/util.h"
 #include "../common/oscap.h"
 
 
@@ -196,6 +196,8 @@ const char * cpe_reference_get_content(const struct cpe_reference *item);
  * oscap_title functions to get variable members
  */
 const char * oscap_title_get_content(const struct oscap_title *item);
+
+struct cpe_dict_model * cpe_dict_model_parse_xml(const struct oscap_import_source * source);
 
 /**
  * cpe_item functions to get variable members

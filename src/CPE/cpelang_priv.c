@@ -116,6 +116,13 @@ static int xmlTextReaderNextElement(xmlTextReaderPtr reader) {
         return ret;
 }
 
+const struct cpe_testexpr * cpe_platform_get_expr(const struct cpe_platform *item) {
+
+    if (item == NULL)
+                return NULL;
+
+    return &(item->expr);
+}
 /***************************************************************************/
 /* Constructors of CPE structures cpe_*<structure>*_new()
  * More info in representive header file.

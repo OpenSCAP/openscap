@@ -39,7 +39,6 @@
 #include <stdlib.h>
 
 #include "cpeuri.h"
-#include "cpelang_priv.h"
 #include "../common/util.h"
 #include "../common/oscap.h"
 #include "../common/elements.h"
@@ -59,6 +58,7 @@ typedef enum {
 } cpe_lang_oper_t;
 
 struct cpe_lang_model * cpe_lang_model_import(const struct oscap_import_source * source);
+struct cpe_lang_model * cpe_lang_model_parse_xml(const struct oscap_import_source * source);
 
 /*
  * @struct cpe_testexpr
