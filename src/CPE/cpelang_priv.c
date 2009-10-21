@@ -55,6 +55,8 @@ struct cpe_testexpr {
 	} meta;			                // operation metadata
 };
 OSCAP_GETTER(cpe_lang_oper_t, cpe_testexpr, oper)
+OSCAP_GENERIC_GETTER(struct cpe_testexpr *, cpe_testexpr, meta_expr, meta.expr)
+OSCAP_GENERIC_GETTER(struct cpe_name *, cpe_testexpr, meta_cpe, meta.cpe)
 
 /*
  * */
@@ -114,20 +116,6 @@ static int xmlTextReaderNextElement(xmlTextReaderPtr reader) {
         return ret;
 }
 
-struct cpe_testexpr * cpe_testexpr_get_meta_expr(const struct cpe_testexpr *item) {
-
-    if (item == NULL) return NULL;
-
-    return item->meta.expr;
-}
-
-struct cpe_name * cpe_testexpr_get_meta_cpe(const struct cpe_testexpr *item) {
-
-    if (item == NULL) return NULL;
-
-    return item->meta.cpe;
-}
-
 /***************************************************************************/
 /* Constructors of CPE structures cpe_*<structure>*_new()
  * More info in representive header file.
@@ -147,7 +135,7 @@ struct cpe_testexpr * cpe_testexpr_new() {
         ret->meta.expr      = NULL;
         ret->meta.cpe       = NULL;
 
-		return ret;
+        return ret;
 }
 
 struct cpe_lang_model * cpe_lang_model_new() {
@@ -194,17 +182,18 @@ struct cpe_platform * cpe_platform_new() {
  * More info in representive header file.
  * returns the type of <structure>
  */
-struct cpe_lang_model * cpe_lang_parse(const char *fname) {
+struct cpe_lang_model * cpe_lang_model_parse_xml(const struct oscap_import_source * source) {
         
     xmlTextReaderPtr reader;
     struct cpe_lang_model *ret = NULL;
 
-    reader = xmlReaderForFile(fname, NULL, 0);
+    reader = xmlReaderForFile(oscap_import_source_get_filename(source),
+                              oscap_import_source_get_encoding(source), 0);
     if (reader != NULL) {
         xmlTextReaderRead(reader);
         ret = cpe_lang_model_parse(reader);
     } else {
-        fprintf(stderr, "Unable to open %s\n", fname);
+        fprintf(stderr, "Unable to open %s\n", oscap_import_source_get_filename(source));
     }
     xmlFreeTextReader(reader);
 
@@ -404,7 +393,7 @@ static char * parse_text_element(xmlTextReaderPtr reader, char *name) {
  * More info in representive header file.
  * returns the type of <structure>
  */
-void cpe_lang_export(struct cpe_lang_model * spec, const char * fname) {
+void cpe_lang_model_export(struct cpe_lang_model * spec, const char * fname) {
 
         // TODO: ad macro to check return value from xmlTextWriter* functions
         xmlTextWriterPtr writer;
@@ -417,13 +406,13 @@ void cpe_lang_export(struct cpe_lang_model * spec, const char * fname) {
 
         xmlTextWriterStartDocument(writer, NULL, FILE_ENCODING, NULL);
 
-        cpe_lang_model_export(spec, writer);
+        cpe_lang_export(spec, writer);
         xmlTextWriterEndDocument(writer);
         xmlFreeTextWriter(writer);
         cpe_lang_model_free(spec);
 }
 
-void cpe_lang_model_export(const struct cpe_lang_model * spec, xmlTextWriterPtr writer) {
+void cpe_lang_export(const struct cpe_lang_model * spec, xmlTextWriterPtr writer) {
 
         xmlTextWriterStartElementNS(writer, BAD_CAST spec->ns_prefix, BAD_CAST "platform-specification", BAD_CAST spec->ns_href);
         OSCAP_FOREACH (cpe_platform, p, cpe_lang_model_get_items(spec),

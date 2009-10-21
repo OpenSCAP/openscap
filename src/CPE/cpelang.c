@@ -35,11 +35,15 @@
 #include "../common/list.h"
 
 
-struct cpe_lang_model * cpe_lang_model_import(const char *fname) {
+struct cpe_lang_model * cpe_lang_model_import(const struct oscap_import_source *source) {
 
-    if (fname == NULL) return NULL;
+    if (oscap_import_source_get_filename(source) == NULL) return NULL;
 
-    return cpe_lang_parse(fname);
+    struct cpe_lang_model *lang;
+
+    lang = cpe_lang_model_parse_xml(source);
+
+    return lang;
 }
 
 /*
@@ -87,9 +91,7 @@ static bool cpe_language_match_expr(struct cpe_name ** cpe, size_t n,
 bool cpe_platform_match_cpe(struct cpe_name ** cpe, size_t n,
 			    const struct cpe_platform * platform)
 {
-        //TODO has an error when compiling
-	//return cpe_language_match_expr(cpe, n, &(cpe_platform_get_expr(platform)));
-        return true;
+	return cpe_language_match_expr(cpe, n, cpe_platform_get_expr(platform));
 }
 
 /*

@@ -40,6 +40,7 @@
 #include <stdlib.h>
 
 #include "cpeuri.h"
+#include "cpedict_priv.h"
 #include "../common/oscap.h"
 
 
@@ -50,13 +51,13 @@ struct oscap_title;
  * @struct cpe_dict_check
  * Structure representing single CPE check.
  */
-struct cpe_dict_check;
+struct cpe_check;
 
 /**
  * @struct cpe_dict_reference
  * CPE dictionary item reference.
  */
-struct cpe_dict_reference;
+struct cpe_reference;
 
 /**
  * @struct cpe_item
@@ -65,20 +66,20 @@ struct cpe_dict_reference;
 struct cpe_item;
 
 /**
- * @struct cpe_dict
+ * @struct cpe_dict_model
  * Structure representing a CPE dictionary.
  */
-struct cpe_dict;
+struct cpe_dict_model;
 
 struct cpe_item_metadata;
 struct cpe_item_title;
 struct cpe_generator;
 struct cpe_vendor;
-struct cpe_dict_product;
-struct cpe_dict_version;
-struct cpe_dict_update;
-struct cpe_dict_edition;
-struct cpe_dict_language;
+struct cpe_product;
+struct cpe_version;
+struct cpe_update;
+struct cpe_edition;
+struct cpe_language;
 
 /** @struct cpe_item_iterator
  * Iterator over CPE dictionary items.
@@ -217,11 +218,11 @@ const char * cpe_generator_get_schema_version(const struct cpe_generator *item);
 const char * cpe_generator_get_timestamp(const struct cpe_generator *item);
 
 /**
- * cpe_dict functions to get variable members
+ * cpe_dict_model functions to get variable members
  */
-struct cpe_generator * cpe_dict_get_generator(const struct cpe_dict *item);
-struct cpe_item_iterator * cpe_dict_get_items(const struct cpe_dict *item);
-struct cpe_vendor_iterator * cpe_dict_get_vendors(const struct cpe_dict *item);
+struct cpe_generator * cpe_dict_model_get_generator(const struct cpe_dict_model *item);
+struct cpe_item_iterator * cpe_dict_model_get_items(const struct cpe_dict_model *item);
+struct cpe_vendor_iterator * cpe_dict_model_get_vendors(const struct cpe_dict_model *item);
 
 /**
  * cpe_vendor functions to get variable members
@@ -267,14 +268,14 @@ const char * cpe_language_get_value(const struct cpe_language *item);
  * @return new dictionary
  * @retval NULL on failure
  */
-struct cpe_dict *cpe_dict_import(const char *fname);
+struct cpe_dict_model *cpe_dict_model_import(const struct oscap_import_source * source);
 
 /**
  * Frees CPE dictionary and its contents
  * @relates cpe_dict
  * @param dict dictionary to be deleted
  */
-void cpe_dict_free(struct cpe_dict * dict);
+void cpe_dict_model_free(struct cpe_dict_model * dict);
 
 /**
  * Verify wether given CPE is known according to specified dictionary
@@ -284,42 +285,42 @@ void cpe_dict_free(struct cpe_dict * dict);
  * @param dict used CPE dictionary
  * @return true if dictionary contains given CPE
  */
-bool cpe_name_match_dict(struct cpe_name * cpe, struct cpe_dict * dict);
+bool cpe_name_match_dict(struct cpe_name * cpe, struct cpe_dict_model * dict);
 
 /**
  * Verify if CPE given by string is known according to specified dictionary
  * @relates cpe_name
- * @relates cpe_dict
+ * @relates cpe_dict_model
  * @param cpe CPE to verify
  * @param dict used CPE dictionary
  * @return true if dictionary contains given CPE
  */
-bool cpe_name_match_dict_str(const char *cpe, struct cpe_dict * dict);
+bool cpe_name_match_dict_str(const char *cpe, struct cpe_dict_model * dict);
 
 /*
  * Free functions
  */
 //void oscap_title_free(struct oscap_title * title);
 /// @relates cpe_check
-void cpe_check_free(struct cpe_dict_check * check);
+void cpe_check_free(struct cpe_check * check);
 /// @relates cpe_reference
-void cpe_reference_free(struct cpe_dict_reference * ref);
+void cpe_reference_free(struct cpe_reference * ref);
 /// @relates cpe_vendor
 void cpe_vendor_free(struct cpe_vendor * vendor);
 /// @relates cpe_product
-void cpe_product_free(struct cpe_dict_product * product);
+void cpe_product_free(struct cpe_product * product);
 /// @relates cpe_version
-void cpe_version_free(struct cpe_dict_version * version);
+void cpe_version_free(struct cpe_version * version);
 /// @relates cpe_update
-void cpe_update_free(struct cpe_dict_update * update);
+void cpe_update_free(struct cpe_update * update);
 /// @relates cpe_edition
-void cpe_edition_free(struct cpe_dict_edition * edition);
+void cpe_edition_free(struct cpe_edition * edition);
 /// @relates cpe_language
-void cpe_language_free(struct cpe_dict_language * language);
+void cpe_language_free(struct cpe_language * language);
 /// @relates cpe_itemmetadata
 void cpe_itemmetadata_free(struct cpe_item_metadata * meta);
-/// @relates cpe_dict
-void cpe_dict_free(struct cpe_dict * dict);
+/// @relates cpe_dict_model
+void cpe_dict_free(struct cpe_dict_model * dict);
 /// @relates cpe_generator
 void cpe_generator_free(struct cpe_generator * generator);
 /// @relates cpe_item
@@ -328,8 +329,8 @@ void cpe_item_free(struct cpe_item * item);
 /*
  * New functions
  */
-/// @relates cpe_dict
-struct cpe_dict      *cpe_dict_new();
+/// @relates cpe_dict_model
+struct cpe_dict_model  *cpe_dict_model_new();
 /// @relates cpe_generator
 struct cpe_generator *cpe_generator_new();
 /// @relates cpe_check
@@ -437,7 +438,7 @@ bool cpe_item_add_title(struct cpe_item *item, struct oscap_title *new_title);
 bool cpe_item_add_note(struct cpe_item *item, struct oscap_title *new_title);
 
 /// @relates cpe_dict
-bool cpe_dict_add_vendor(struct cpe_dict *dict, struct cpe_vendor *new_vendor);
+bool cpe_dict_add_vendor(struct cpe_dict_model *dict, struct cpe_vendor *new_vendor);
 
 /// @relates cpe_vendor
 bool cpe_vendor_add_title(struct cpe_vendor *vendor, struct oscap_title *new_title);

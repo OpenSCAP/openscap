@@ -41,7 +41,7 @@
 
 OSCAP_HIDDEN_START;
 
-struct cpe_dict * cpe_dict_parse(const char *fname);
+struct cpe_dict_model * cpe_dict_model_parse_xml(const struct oscap_import_source *source);
 struct cpe_generator * cpe_generator_parse(xmlTextReaderPtr reader);
 
 /*
@@ -57,11 +57,11 @@ struct cpe_item * cpe_item_new();
 
 /**
  * Create new empty CPE dictionary
- * @relates cpe_dict
+ * @relates cpe_dict_model
  * @return new dictionary
  * @retval NULL on failure
  */
-struct cpe_dict *cpe_dict_new();
+struct cpe_dict_model *cpe_dict_model_new();
 
 /*
  * Load new CPE dictionary from XML node
@@ -69,10 +69,10 @@ struct cpe_dict *cpe_dict_new();
  * @return new dictionary
  * @retval NULL on failure
  */
-struct cpe_dict * parse_cpedict(xmlTextReaderPtr reader);
+struct cpe_dict_model * cpe_dict_model_parse(xmlTextReaderPtr reader);
 
-void dict_export(struct cpe_dict * dict, const char * fname);
-void cpe_dict_export(const struct cpe_dict * dict, xmlTextWriterPtr writer);
+void cpe_dict_model_export(struct cpe_dict_model * dict, const struct oscap_export_target * target);
+void cpe_dict_export(const struct cpe_dict_model * dict, xmlTextWriterPtr writer);
 void cpe_generator_export(const struct cpe_generator * generator, xmlTextWriterPtr writer);
 void cpe_item_export(const struct cpe_item * item, xmlTextWriterPtr writer);
 void cpe_vendor_export(const struct cpe_vendor * vendor, xmlTextWriterPtr writer);

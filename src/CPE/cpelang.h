@@ -39,6 +39,8 @@
 #include <stdlib.h>
 
 #include "cpeuri.h"
+#include "cpelang_priv.h"
+#include "../common/util.h"
 #include "../common/oscap.h"
 #include "../common/elements.h"
 
@@ -56,7 +58,7 @@ typedef enum {
 	CPE_LANG_OPER_NOR = CPE_LANG_OPER_OR | CPE_LANG_OPER_NOT,
 } cpe_lang_oper_t;
 
-struct cpe_lang_model * cpe_lang_import(const char *fname);
+struct cpe_lang_model * cpe_lang_model_import(const struct oscap_import_source * source);
 
 /*
  * @struct cpe_testexpr
@@ -102,6 +104,7 @@ struct cpe_name * cpe_testexpr_get_meta_cpe(const struct cpe_testexpr *item);
 const char * cpe_platform_get_id(const struct cpe_platform *item);
 const char * cpe_platform_get_remark(const struct cpe_platform *item);
 struct oscap_title_iterator * cpe_platform_get_titles(const struct cpe_platform *item);
+const struct cpe_testexpr * cpe_platform_get_expr(const struct cpe_platform *item);
 
 /**
  * cpe_lang_model functions to get variable members

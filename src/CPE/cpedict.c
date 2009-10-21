@@ -29,26 +29,29 @@
  */
 
 #include "cpedict.h"
-#include "cpedict_priv.h"
 #include "../common/list.h"
 #include "../common/util.h"
 
-struct cpe_dict * cpe_dict_import(const char *fname) {
+struct cpe_dict_model * cpe_dict_model_import(const struct oscap_import_source * source) {
 
-    if (fname == NULL) return NULL;
+    if (oscap_import_source_get_filename(source) == NULL) return NULL;
 
-    return cpe_dict_parse(fname);
+    struct cpe_dict_model *dict;
+
+    dict = cpe_dict_model_parse_xml(source);
+
+    return dict;
 }
 
-bool cpe_name_match_dict(struct cpe_name * cpe, struct cpe_dict * dict) {
+bool cpe_name_match_dict(struct cpe_name * cpe, struct cpe_dict_model * dict) {
 
 	if (cpe == NULL || dict == NULL)
 		return false;
 	
-    struct cpe_item_iterator *items = cpe_dict_get_items(dict);
+    struct cpe_item_iterator *items = cpe_dict_model_get_items(dict);
 	size_t n = oscap_iterator_get_itemcount((struct oscap_iterator *)items);
 	struct cpe_name** cpes = oscap_alloc(sizeof(struct cpe_name*) * n);
-	//struct oscap_list_item* cur = ((struct oscap_list *) cpe_dict_get_items(dict))->first;
+	//struct oscap_list_item* cur = ((struct oscap_list *) cpe_dict_model_get_items(dict))->first;
 
 	int i = 0;
 	OSCAP_FOREACH (cpe_item, item, items,
@@ -62,7 +65,7 @@ bool cpe_name_match_dict(struct cpe_name * cpe, struct cpe_dict * dict) {
 	return ret;
 }
 
-bool cpe_name_match_dict_str(const char *cpestr, struct cpe_dict * dict)
+bool cpe_name_match_dict_str(const char *cpestr, struct cpe_dict_model * dict)
 {
 	bool ret;
 	if (cpestr == NULL)

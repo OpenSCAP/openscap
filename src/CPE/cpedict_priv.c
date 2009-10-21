@@ -128,16 +128,16 @@ OSCAP_ACCESSOR_STRING(cpe_generator, timestamp)
 
 /* <cpe-list>
  * */
-struct cpe_dict {                        // the main node
+struct cpe_dict_model {                        // the main node
 
         struct xml_metadata xml;
 	struct oscap_list* items;        // dictionary items
         struct oscap_list* vendors;
         struct cpe_generator* generator;
 };
-OSCAP_GETTER(struct cpe_generator*, cpe_dict, generator)
-OSCAP_IGETTER_GEN(cpe_item, cpe_dict, items)
-OSCAP_IGETINS_GEN(cpe_vendor, cpe_dict, vendors, vendor)
+OSCAP_GETTER(struct cpe_generator*, cpe_dict_model, generator)
+OSCAP_IGETTER_GEN(cpe_item, cpe_dict_model, items)
+OSCAP_IGETINS_GEN(cpe_vendor, cpe_dict_model, vendors, vendor)
 
 /* ****************************************
  * Component-tree structures
@@ -216,7 +216,7 @@ OSCAP_ACCESSOR_STRING(cpe_language, value)
  */
 static char * str_trim(char *str);
 static int xmlTextReaderNextElement(xmlTextReaderPtr reader);
-static bool cpe_dict_add_item(struct cpe_dict * dict, struct cpe_item * item);
+static bool cpe_dict_model_add_item(struct cpe_dict_model * dict, struct cpe_item * item);
 
 static struct cpe_reference * cpe_reference_parse(xmlTextReaderPtr reader);
 static struct cpe_check * cpe_check_parse(xmlTextReaderPtr reader);
@@ -226,11 +226,11 @@ static void cpe_version_export(const struct cpe_version * version, xmlTextWriter
 static void cpe_update_export(const struct cpe_update * update, xmlTextWriterPtr writer);
 static void cpe_edition_export(const struct cpe_edition * edition, xmlTextWriterPtr writer);
 static void cpe_language_export(const struct cpe_language * language, xmlTextWriterPtr writer);
-static void cpe_dict_note_export(const struct oscap_title * title, xmlTextWriterPtr writer);
+static void cpe_note_export(const struct oscap_title * title, xmlTextWriterPtr writer);
 static void cpe_check_export(const struct cpe_check * check, xmlTextWriterPtr writer);
 static void cpe_reference_export(const struct cpe_reference * ref, xmlTextWriterPtr writer);
 
-void cpe_dict_free(struct cpe_dict * dict);
+void cpe_dict_model_free(struct cpe_dict_model * dict);
 void cpe_generator_free(struct cpe_generator * generator);
 void cpe_item_free(struct cpe_item * item);
 void cpe_vendor_free(struct cpe_vendor * vendor);
@@ -248,7 +248,7 @@ void cpe_itemmetadata_free(struct cpe_item_metadata * meta);
 /* Add item to dictionary. Function that just check both variables
  * on NULL value.
  * */
-static bool cpe_dict_add_item(struct cpe_dict * dict, struct cpe_item * item) {
+static bool cpe_dict_model_add_item(struct cpe_dict_model * dict, struct cpe_item * item) {
 
 	if (dict == NULL || item == NULL)
 		return false;
@@ -293,14 +293,14 @@ static int xmlTextReaderNextElement(xmlTextReaderPtr reader) {
  * More info in representive header file.
  * returns the type of <structure>
  */
-struct cpe_dict *cpe_dict_new() {
+struct cpe_dict_model *cpe_dict_model_new() {
 
-        struct cpe_dict *dict;
+        struct cpe_dict_model *dict;
 
-	dict = oscap_alloc(sizeof(struct cpe_dict));
+	dict = oscap_alloc(sizeof(struct cpe_dict_model));
 	if (dict == NULL)
 		return NULL;
-	memset(dict, 0, sizeof(struct cpe_dict));
+	memset(dict, 0, sizeof(struct cpe_dict_model));
 
         dict->vendors   = oscap_list_new();
 	dict->items     = oscap_list_new();
@@ -500,25 +500,26 @@ struct cpe_language *cpe_language_new() {
  * More info in representive header file.
  * returns the type of <structure>
  */
-struct cpe_dict * cpe_dict_parse(const char *fname) {
+struct cpe_dict_model * cpe_dict_model_parse_xml(const struct oscap_import_source * source) {
         
     xmlTextReaderPtr reader;
-    struct cpe_dict *dict = NULL;
+    struct cpe_dict_model *dict = NULL;
 
-    reader = xmlReaderForFile(fname, "UTF-8", 0);
+    reader = xmlReaderForFile(oscap_import_source_get_filename(source), 
+                              oscap_import_source_get_encoding(source), 0);
     if (reader != NULL) {
         xmlTextReaderRead(reader);
-        dict = parse_cpedict(reader);
+        dict = cpe_dict_model_parse(reader);
     } else {
-        fprintf(stderr, "Unable to open %s\n", fname);
+        fprintf(stderr, "[CPE] Unable to open %s !\n", oscap_import_source_get_filename(source));
     }
     xmlFreeTextReader(reader);
     return dict;
 }
 
-struct cpe_dict * parse_cpedict(xmlTextReaderPtr reader) {
+struct cpe_dict_model * cpe_dict_model_parse(xmlTextReaderPtr reader) {
 
-        struct cpe_dict *ret = NULL;
+        struct cpe_dict_model *ret = NULL;
         struct cpe_item *item = NULL;
         struct cpe_vendor *vendor = NULL;
         int next_ret = 1;
@@ -536,7 +537,7 @@ struct cpe_dict * parse_cpedict(xmlTextReaderPtr reader) {
 
         // we found cpe-list element, let's roll !
         // allocate memory for cpe_dict so we can fill items and vendors and general structures
-        ret = cpe_dict_new();
+        ret = cpe_dict_model_new();
         if (ret == NULL)
             return NULL;
 
@@ -559,9 +560,9 @@ struct cpe_dict * parse_cpedict(xmlTextReaderPtr reader) {
                                 continue;
                         }
                         // We got an item !
-			if (!cpe_dict_add_item(ret, item)) {
+			if (!cpe_dict_model_add_item(ret, item)) {
 				cpe_item_free(item);
-				cpe_dict_free(ret);
+				cpe_dict_model_free(ret);
 				return NULL;
 			}
                         continue;
@@ -912,27 +913,27 @@ struct cpe_vendor * cpe_vendor_parse(xmlTextReaderPtr reader) {
  * More info in representive header file.
  * returns the type of <structure>
  */
-void dict_export(struct cpe_dict * dict, const char * fname) {
+void cpe_dict_model_export(struct cpe_dict_model * dict, const struct oscap_export_target * target) {
 
         // TODO: add macro to check return value from xmlTextWriter* functions
         xmlTextWriterPtr writer;
 
-        writer = xmlNewTextWriterFilename(fname, 0);
+        writer = xmlNewTextWriterFilename(oscap_export_target_get_filename(target), 0);
 
         // Set properties of writer TODO: make public function to edit this ??
         // Yes - there will be structure oscap_export_target & oscap_parse_target
-        xmlTextWriterSetIndent(writer, 1);
-        xmlTextWriterSetIndentString(writer, BAD_CAST "    ");
+        xmlTextWriterSetIndent(writer, oscap_export_target_get_indent(target));
+        xmlTextWriterSetIndentString(writer, BAD_CAST oscap_export_target_get_indent_string(target));
 
-        xmlTextWriterStartDocument(writer, NULL, FILE_ENCODING, NULL);
+        xmlTextWriterStartDocument(writer, NULL, oscap_export_target_get_encoding(target), NULL);
 
         cpe_dict_export(dict, writer);
-        cpe_dict_free(dict);
+        cpe_dict_model_free(dict);
         xmlTextWriterEndDocument(writer);
         xmlFreeTextWriter(writer);
 }
 
-void cpe_dict_export(const struct cpe_dict * dict, xmlTextWriterPtr writer) {
+void cpe_dict_export(const struct cpe_dict_model * dict, xmlTextWriterPtr writer) {
 
         xmlTextWriterStartElementNS(writer, BAD_CAST dict->xml.namespace, BAD_CAST "cpe-list", NULL);
         // TODO: this shouldn't be hardcoded - find another way !
@@ -947,13 +948,13 @@ void cpe_dict_export(const struct cpe_dict * dict, xmlTextWriterPtr writer) {
         if (dict->generator != NULL) {
             cpe_generator_export( dict->generator, writer);
         }
-        OSCAP_FOREACH (cpe_item, item, cpe_dict_get_items(dict),
+        OSCAP_FOREACH (cpe_item, item, cpe_dict_model_get_items(dict),
 		// dump its contents to XML tree
                 cpe_item_export( item, writer );
 	)
         // TODO: NEED TO HAVE COMPONENT-TREE STRUCTURE TO GET XML-NAMESPACE 
         xmlTextWriterStartElementNS(writer, BAD_CAST "meta", BAD_CAST "component-tree", NULL);
-        OSCAP_FOREACH (cpe_vendor, vendor, cpe_dict_get_vendors(dict),
+        OSCAP_FOREACH (cpe_vendor, vendor, cpe_dict_model_get_vendors(dict),
                 cpe_vendor_export( vendor, writer );
 	)
         xmlTextWriterEndElement(writer);//</component-tree>
@@ -1038,7 +1039,7 @@ void cpe_item_export(const struct cpe_item * item, xmlTextWriterPtr writer) {
         if (oscap_iterator_has_more(it)) {
                 xmlTextWriterStartElementNS(writer, NULL, BAD_CAST "notes", NULL);
                 OSCAP_FOREACH (oscap_title, note, cpe_item_get_notes(item), 
-                        cpe_dict_note_export(note, writer); 
+                        cpe_note_export(note, writer); 
                 )
                 xmlTextWriterEndElement(writer);
         }
@@ -1133,7 +1134,7 @@ static void cpe_language_export(const struct cpe_language * language, xmlTextWri
         xmlTextWriterEndElement(writer);
 }
 
-static void cpe_dict_note_export(const struct oscap_title * title, xmlTextWriterPtr writer) {
+static void cpe_note_export(const struct oscap_title * title, xmlTextWriterPtr writer) {
 
         xmlTextWriterStartElementNS(writer, BAD_CAST title->xml.namespace, BAD_CAST "note", NULL);
         if (title->xml.lang != NULL) 
@@ -1171,7 +1172,7 @@ static void cpe_reference_export(const struct cpe_reference * ref, xmlTextWriter
 /***************************************************************************/
 /* Free functions - all are static private, do not use them outside this file
  */
-void cpe_dict_free(struct cpe_dict * dict) {
+void cpe_dict_model_free(struct cpe_dict_model * dict) {
 
         if (dict == NULL) return;
 
