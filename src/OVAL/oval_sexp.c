@@ -7,7 +7,7 @@
 
 #include "oval_probe.h"
 #include "oval_sexp.h"
-#include "probes/probe-api.h"
+#include "probes/public/probe-api.h"
 #include "oval_system_characteristics_impl.h"
 
 #ifndef _A

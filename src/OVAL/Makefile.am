@@ -66,7 +66,7 @@ common_oval_sources = \
 # lets build one common for both normal and probe sources (does it mind?)
 AM_CPPFLAGS = $(libxml_cflags) $(pthread_cflags) -I.. -Ipublic
 if WANT_PROBES
-AM_CPPFLAGS += -I$(top_srcdir)/src -I$(srcdir)/probes -I$(srcdir)/probes/SEAP/public -I$(top_srcdir)/src/common
+AM_CPPFLAGS += -I$(top_srcdir)/src -I$(srcdir)/probes -I$(srcdir)/probes/public -I$(srcdir)/probes/SEAP/public -I$(top_srcdir)/src/common
 endif
 
 # -l or -L options go to LIBADD (or LDADD), not to LDFLAGS
@@ -92,9 +92,9 @@ SUBDIRS = probes/SEAP
 liboval_la_LIBADD  += probes/SEAP/libseap.la
 
 pkginclude_HEADERS += \
-	probes/findfile.h \
-	probes/fsdev.h \
-	probes/probe-api.h
+	probes/public/findfile.h \
+	probes/public/fsdev.h	 \
+	probes/public/probe-api.h
 endif
 
 CLEANFILES = $(nodist_liboval_testing_la_SOURCES)

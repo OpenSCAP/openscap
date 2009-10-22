@@ -2,7 +2,7 @@
 #ifndef _PROBE_API_H
 #define _PROBE_API_H
 
-#include "probe-api.h"
+#include "public/probe-api.h"
 #include "probe-cache.h"
 
 /**

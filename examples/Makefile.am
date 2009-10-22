@@ -72,7 +72,7 @@ test_probes_CFLAGS = -I$(top_srcdir)/src/OVAL
 test_probes_LDADD = $(top_builddir)/src/libopenscap_testing.la
 
 test_probe_api_SOURCES = OVAL/test_probe-api.c
-test_probe_api_CFLAGS = -I$(top_srcdir)/src/OVAL/public -I$(top_srcdir)/src/OVAL/probes -I$(top_srcdir)/src/OVAL/probes/SEAP/public
+test_probe_api_CFLAGS = -I$(top_srcdir)/src/OVAL/public -I$(top_srcdir)/src/OVAL/probes/public -I$(top_srcdir)/src/OVAL/probes/SEAP/public
 test_probe_api_LDADD = $(top_builddir)/src/libopenscap_testing.la
 
 #test_findfile_SOURCES = OVAL/test_findfile.c
