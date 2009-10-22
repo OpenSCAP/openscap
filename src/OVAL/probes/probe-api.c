@@ -29,7 +29,7 @@
 #include <stdarg.h>
 #include <string.h>
 #include <errno.h>
-#include "probe-api.h"
+#include "_probe-api.h"
 
 /*
 This file contains functions for manipulating with the S-exp representation of OVAL objects and items.
@@ -54,6 +54,23 @@ where attr1 is the name of the attribute and val1 is the attribute's value. The 
 attribute name signals that this attribute has a value. 
 
 */
+
+
+/*
+ * Initialization
+ */
+
+int probe_api_init (void)
+{
+        /* initialize name cache */
+        return (0);
+}
+
+int probe_api_deinit (void)
+{
+        /* destroy name cache */
+        return (0);
+}
 
 /*
  * items

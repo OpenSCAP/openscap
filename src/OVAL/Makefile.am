@@ -94,7 +94,6 @@ liboval_la_LIBADD  += probes/SEAP/libseap.la
 pkginclude_HEADERS += \
 	probes/findfile.h \
 	probes/fsdev.h \
-	probes/probe-entcmp.h \
 	probes/probe-api.h
 endif
 

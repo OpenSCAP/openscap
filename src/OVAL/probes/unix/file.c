@@ -1,6 +1,7 @@
 #ifndef __STUB_PROBE
 #include <seap.h>
 #include <probe-api.h>
+#include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
 #include <pthread.h>
@@ -174,7 +175,6 @@ int file_cb (const char *p, const char *f, void *ptr)
                                         (st.st_mode & S_IXOTH ? gr_true : gr_false),
                                         
                                         NULL);
-                
                 
                 SEXP_list_add (res, item);
                 

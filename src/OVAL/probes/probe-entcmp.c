@@ -39,7 +39,8 @@
 #include <regex.h>
 #endif
 
-#include <probe-api.h>
+#include "probe-entcmp.h"
+#include "_probe-api.h"
 
 oval_result_t probe_ent_cmp_binary(SEXP_t *val1, SEXP_t *val2, oval_operation_t op)
 {

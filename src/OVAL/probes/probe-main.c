@@ -5,8 +5,8 @@
 #include <errno.h>
 #include <config.h>
 #include <common/alloc.h>
-#include <probe-api.h>
-#include <probe-entcmp.h>
+#include "_probe-api.h"
+#include "probe-entcmp.h"
 
 #ifndef _A
 #define _A(x) assert(x)
