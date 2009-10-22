@@ -35,9 +35,10 @@
 #include <libxml/xmlreader.h>
 #include <libxml/xmlstring.h>
 
-#include "cve.h"
 #include "../common/util.h"
 #include "../common/list.h"
+
+#include "public/cve.h"
 
 /*
  * Create new CVE Reference structure.
