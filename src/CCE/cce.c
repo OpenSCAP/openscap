@@ -28,9 +28,9 @@
  *      Riley C. Porter <Riley.Porter@g2-inc.com>
  */
 
-#include "cce.h"
+#include "public/cce.h"
 #include "cce_priv.h"
-#include "../common/util.h"
+#include "oscap.h"
 
 
 static struct cce* cce_new_empty(void)

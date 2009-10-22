@@ -32,7 +32,7 @@
  */
 
 #include <stdbool.h>
-#include "../common/oscap.h"
+#include "oscap.h"
 
 #ifndef _CCE_H
 #define _CCE_H
