@@ -57,14 +57,10 @@ void cpe_dict_vendor_dump(struct cpe_vendor * item)
 	printf("\n");
 }
 
-void test_dict_export(struct cpe_dict * dict){
-
-    fprintf(stdout, "Result saved in test_cpedict.out file\n");
-}
 
 int main(int argc, char **argv)
 {
-	struct cpe_dict *dict;	// pointer to our CPE dictionary
+	struct cpe_dict_model *dict;	// pointer to our CPE dictionary
 	int i;
 
 	if (argc < 2) {
@@ -75,36 +71,41 @@ int main(int argc, char **argv)
 	// create dictionary from specified filename
 	//dict = cpe_dict_new(argv[1]);
         printf("----------------------------------------------------\n");
-        dict = cpe_dict_import(argv[1]);
+		struct oscap_import_source *src = oscap_import_source_new(argv[1], NULL);
+        dict = cpe_dict_model_import(src);
+		oscap_import_source_free(src);
         printf("----------------------------------------------------\n");
 
         if (dict != NULL) {
 		// print dictionary generator info
-                struct cpe_generator *generator = cpe_dict_get_generator(dict);
+                struct cpe_generator *generator = cpe_dict_model_get_generator(dict);
 		printf
 		    ("Generated on %s by %s version %s using schema version %s.\n\n",
 		     cpe_generator_get_timestamp(generator), cpe_generator_get_product_name(generator),
 		     cpe_generator_get_product_version(generator), cpe_generator_get_schema_version(generator));
 
 		// dump each dictionary item
-		OSCAP_FOREACH (cpe_item, item, cpe_dict_get_items(dict),
+		OSCAP_FOREACH (cpe_item, item, cpe_dict_model_get_items(dict),
 			cpe_dictitem_dump(item);
 		)
-		OSCAP_FOREACH (cpe_vendor, vendor, cpe_dict_get_vendors(dict),
+		OSCAP_FOREACH (cpe_vendor, vendor, cpe_dict_model_get_vendors(dict),
 			cpe_dict_vendor_dump(vendor);
 		)
 
 		// for each CPE specified on command line, try to match it against the dictionary
 		for (i = 2; i < argc; ++i)
 			printf("%s KNOWN: %s\n", cpe_name_match_dict_str(argv[i], dict) ? "   " : "NOT", argv[i]);
+	
+		struct oscap_export_target *tgt = oscap_export_target_new("test_cpedict.out", NULL);
+        cpe_dict_model_export(dict, tgt);
+		oscap_export_target_free(tgt);
+        printf("----------------------------------------------------\n");
 
 	} else {
 		// dictionary failed to load (dict == NULL)
 		printf("Error while loading CPE dictionary.\n");
 		return 1;
 	}
-        dict_export(dict, "test_cpedict.out");
-        printf("----------------------------------------------------\n");
 
 	oscap_cleanup(); // clean caches
 

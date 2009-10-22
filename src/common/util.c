@@ -46,7 +46,7 @@ OSCAP_GETTER(const char *, oscap_export_target, indent_string)
 
 struct oscap_import_source * oscap_import_source_new(const char * filename, const char * encoding) {
 
-        struct oscap_import_source *target;
+        struct oscap_import_source *target = oscap_calloc(1, sizeof(struct oscap_import_source));
 
         if (filename == NULL)
                 return NULL;
@@ -59,7 +59,7 @@ struct oscap_import_source * oscap_import_source_new(const char * filename, cons
         return target;
 }
 
-void oscap_import_surce_free(struct oscap_import_source * target) {
+void oscap_import_source_free(struct oscap_import_source * target) {
         
         if (target == NULL) return;
 
@@ -70,7 +70,7 @@ void oscap_import_surce_free(struct oscap_import_source * target) {
 
 struct oscap_export_target * oscap_export_target_new(const char * filename, const char * encoding) {
 
-        struct oscap_export_target *target;
+        struct oscap_export_target *target = oscap_calloc(1, sizeof(struct oscap_export_target));
 
         if (filename == NULL)
                 return NULL;

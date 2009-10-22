@@ -55,7 +55,9 @@ void test_langexpr_dump(cpe_lang_expr_t * expr, int depth)
 
 void test_lang_model_export(struct cpe_lang_model * res){
 
-    (void) cpe_lang_export( res, "test_cpelang.out");
+	//struct oscap_export_target *tgt = oscap_export_target_new("test_cpelang.out", NULL);
+    (void) cpe_lang_model_export( res, "test_cpelang.out");
+	//oscap_export_target_free(tgt);
     fprintf(stdout, "Result saved in test_cpelang.out file\n");
 }
 
@@ -83,7 +85,9 @@ int main(int argc, char **argv)
 		cpes[i] = cpe_name_new(argv[i + 2]);
 
 	// load platform specification from file specified on the command line
-	plat = cpe_lang_model_new(argv[1]);
+	struct oscap_import_source *src = oscap_import_source_new(argv[1], NULL);
+	plat = cpe_lang_model_new(src);
+	oscap_import_source_free(src);
 
 	/*if (plat != NULL) {
 		OSCAP_FOREACH (cpe_platform, p, cpe_lang_model_get_platforms(plat),
@@ -94,7 +98,7 @@ int main(int argc, char **argv)
 		)
 	}*/
         //printf("RES_PREFIX:%s", plat->ns_prefix);
-        test_lang_model_export( plat );
+    test_lang_model_export(plat);
 	// free resources allocated for platform specification
 	//cpe_lang_model_free(plat);
 	if (plat == NULL) return EXIT_FAILURE;
