@@ -2,7 +2,7 @@
 #include <seap.h>
 #include <string.h>
 #include <assert.h>
-#include <common/alloc.h>
+#include <public/alloc.h>
 #include "probe-cache.h"
 
 #ifndef _A

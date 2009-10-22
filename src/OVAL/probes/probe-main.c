@@ -4,7 +4,7 @@
 #include <pthread.h>
 #include <errno.h>
 #include <config.h>
-#include <common/alloc.h>
+#include <public/alloc.h>
 #include "_probe-api.h"
 #include "probe-entcmp.h"
 

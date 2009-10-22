@@ -39,7 +39,7 @@
 #include <unistd.h>
 #include <regex.h>
 #include <assert.h>
-#include <common/alloc.h>
+#include <public/alloc.h>
 
 #include "findfile.h"
 
