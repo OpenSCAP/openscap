@@ -29,16 +29,17 @@
 
 
 #include <libxml/xmlreader.h>
-#include "cpedict_priv.h"
-
 #include <stdlib.h>
+
+#include "cpedict_priv.h"
+#include "cpeuri.h"
+
+// for functions isspace
 #include <ctype.h>
+// for functins memset, strcpy
 #include <string.h>
 
-#include "cpeuri.h"
 #include "../common/list.h"
-
-#define FILE_ENCODING "UTF-8"
 
 /***************************************************************************/
 /* Variable definitions
