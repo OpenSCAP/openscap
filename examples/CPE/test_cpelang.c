@@ -86,8 +86,23 @@ int main(int argc, char **argv)
 
 	// load platform specification from file specified on the command line
 	struct oscap_import_source *src = oscap_import_source_new(argv[1], NULL);
-	plat = cpe_lang_model_new(src);
+	plat = cpe_lang_model_import(src);
 	oscap_import_source_free(src);
+
+	if (plat == NULL) {
+		fprintf(stderr, "ERROR: Could not load language model from '%s'.\n", argv[1]);
+		return EXIT_FAILURE;
+	}
+
+
+	// modify it a bit
+	struct cpe_platform *platform = cpe_lang_model_get_item(plat, "789");
+	if (platform) {
+		printf("Old ID: %s\n", cpe_platform_get_id(platform));
+		cpe_platform_set_id(platform, "WOW");
+		printf("New ID: %s\n", cpe_platform_get_id(platform));
+	}
+
 
 	/*if (plat != NULL) {
 		OSCAP_FOREACH (cpe_platform, p, cpe_lang_model_get_platforms(plat),

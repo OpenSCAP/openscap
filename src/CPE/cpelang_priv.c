@@ -55,8 +55,8 @@ struct cpe_testexpr {
 	} meta;			                // operation metadata
 };
 OSCAP_GETTER(cpe_lang_oper_t, cpe_testexpr, oper)
-OSCAP_GENERIC_GETTER(struct cpe_testexpr *, cpe_testexpr, meta_expr, meta.expr)
-OSCAP_GENERIC_GETTER(struct cpe_name *, cpe_testexpr, meta_cpe, meta.cpe)
+//OSCAP_GENERIC_GETTER(struct cpe_testexpr *, cpe_testexpr, meta_expr, meta.expr)
+//OSCAP_GENERIC_GETTER(struct cpe_name *, cpe_testexpr, meta_cpe, meta.cpe)
 
 /*
  * */
@@ -67,8 +67,8 @@ struct cpe_lang_model {
 	struct oscap_list* items;   // list of items
 	struct oscap_htable* item;  // item by ID
 };
-OSCAP_GETTER(const char*, cpe_lang_model, ns_href)
-OSCAP_GETTER(const char*, cpe_lang_model, ns_prefix)
+OSCAP_ACCESSOR_STRING(cpe_lang_model, ns_href)
+OSCAP_ACCESSOR_STRING(cpe_lang_model, ns_prefix)
 OSCAP_IGETTER_GEN(cpe_platform, cpe_lang_model, items)
 OSCAP_HGETTER_STRUCT(cpe_platform, cpe_lang_model, item)
 
@@ -82,9 +82,9 @@ struct cpe_platform {
 	struct cpe_testexpr expr;  // expression for match evaluation
 };
 
-OSCAP_GETTER(const char*, cpe_platform, id)
-OSCAP_GETTER(const char*, cpe_platform, remark)
-OSCAP_IGETTER(oscap_title, cpe_platform, titles)
+OSCAP_ACCESSOR_STRING(cpe_platform, id)
+OSCAP_ACCESSOR_STRING(cpe_platform, remark)
+OSCAP_IGETINS(oscap_title, cpe_platform, titles, title)
 
 /* End of variable definitions
  * */
@@ -230,7 +230,7 @@ struct cpe_lang_model * cpe_lang_model_parse(xmlTextReaderPtr reader) {
                 while (xmlStrcmp (xmlTextReaderConstLocalName(reader), (const xmlChar *)"platform") == 0) {
                         
                         platform = cpe_platform_parse(reader);
-                        if (platform) oscap_list_add(ret->items, platform);
+                        if (platform) cpe_lang_model_add_item(ret, platform);
                         xmlTextReaderNextElement(reader);
                 }
         }
@@ -506,12 +506,12 @@ void cpe_platform_free(struct cpe_platform * platform)
 	xmlFree(platform->id);
 	xmlFree(platform->remark);
         oscap_list_free(platform->titles, (oscap_destruct_func)oscap_title_free);
-	cpe_langexpr_free(&platform->expr);
+	cpe_testexpr_free(&platform->expr);
         xml_metadata_free(platform->xml);
 	oscap_free(platform);
 }
 
-void cpe_langexpr_free(struct cpe_testexpr * expr)
+void cpe_testexpr_free(struct cpe_testexpr * expr)
 {
 	struct cpe_testexpr *cur;
 
@@ -521,7 +521,7 @@ void cpe_langexpr_free(struct cpe_testexpr * expr)
 	case CPE_LANG_OPER_AND:
 	case CPE_LANG_OPER_OR:
 		for (cur = expr->meta.expr; cur->oper; ++cur)
-			cpe_langexpr_free(cur);
+			cpe_testexpr_free(cur);
 		oscap_free(expr->meta.expr);
 		break;
 	case CPE_LANG_OPER_MATCH:
@@ -537,3 +537,28 @@ void cpe_langexpr_free(struct cpe_testexpr * expr)
 /* End of free functions
  * */
 /***************************************************************************/
+
+/* **************************************************************************
+ * Getters / setters / adders (not generated)
+ */
+
+struct cpe_testexpr *cpe_testexpr_get_meta_expr(const struct cpe_testexpr *item)
+{
+	if (item == NULL || (item->oper & 0x03) == 0) return NULL;
+	return item->meta.expr;
+}
+
+struct cpe_name *cpe_testexpr_get_meta_cpe(const struct cpe_testexpr *item)
+{
+	if (item == NULL || (item->oper & CPE_LANG_OPER_MASK) != CPE_LANG_OPER_MATCH) return NULL;
+	return item->meta.cpe;
+}
+
+bool cpe_lang_model_add_item(struct cpe_lang_model *lang, struct cpe_platform *platform)
+{
+	if (lang == NULL || platform == NULL || platform->id == NULL) return false;
+	oscap_list_add(lang->items, platform);
+	oscap_htable_add(lang->item, platform->id, platform);
+	return true;
+}
+

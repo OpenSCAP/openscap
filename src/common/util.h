@@ -30,52 +30,6 @@
 
 #include "alloc.h"
 
-/**
- */
-struct oscap_export_target;
-/**
- */
-struct oscap_import_source;
-
-/**
- */
-const char * oscap_import_source_get_filename(const struct oscap_import_source *item);
-/**
- * @relates oscap_import_source
-*/
-const char * oscap_import_source_get_encoding(const struct oscap_import_source *item);
-/**
- * @relates oscap_import_source
- */
-const char * oscap_export_target_get_filename(const struct oscap_export_target *item);
-/**
- * @relates oscap_export_target
- */
-const char * oscap_export_target_get_encoding(const struct oscap_export_target *item);
-/**
- * @relates oscap_export_target
- */
-int oscap_export_target_get_indent(const struct oscap_export_target *item);
-/**
- * @relates oscap_export_target
- */
-const char * oscap_export_target_get_indent_string(const struct oscap_export_target *item);
-/**
- * TODO
- */
-struct oscap_import_source * oscap_import_source_new(const char * filename, const char * encoding);
-/**
- * TODO
- */
-void oscap_import_surce_free(struct oscap_import_source * target);
-/**
- * TODO
- */
-struct oscap_export_target * oscap_export_target_new(const char * filename, const char * encoding);
-/**
- * TODO
- */
-void oscap_export_target_free(struct oscap_export_target * target);
 
 /*
  * Start a list of declarations that should not be available from outside the

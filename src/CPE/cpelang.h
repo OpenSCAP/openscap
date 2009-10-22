@@ -39,16 +39,16 @@
 #include <stdlib.h>
 
 #include "cpeuri.h"
-#include "../common/util.h"
+//#include "../common/util.h"
 #include "../common/oscap.h"
-#include "../common/elements.h"
+//#include "../common/elements.h"
 
 /// CPE language operators
 typedef enum {
 	CPE_LANG_OPER_HALT  =  0x00,  ///< end of instruction list
 	CPE_LANG_OPER_AND   =  0x01,  ///< logical AND
 	CPE_LANG_OPER_OR    =  0x02,  ///< logical OR
-	CPE_LANG_OPER_MATCH =  0x03,  ///< match against specified CPE
+	CPE_LANG_OPER_MATCH =  0x04,  ///< match against specified CPE
 
 	CPE_LANG_OPER_MASK  =  0xFF,  ///< mask to extract the operator w/o possible negation
 	CPE_LANG_OPER_NOT   = 0x100,  ///< negate
@@ -57,8 +57,6 @@ typedef enum {
 	CPE_LANG_OPER_NOR = CPE_LANG_OPER_OR | CPE_LANG_OPER_NOT,
 } cpe_lang_oper_t;
 
-struct cpe_lang_model * cpe_lang_model_import(const struct oscap_import_source * source);
-struct cpe_lang_model * cpe_lang_model_parse_xml(const struct oscap_import_source * source);
 
 /*
  * @struct cpe_testexpr
@@ -90,43 +88,107 @@ bool cpe_platform_iterator_has_more(struct cpe_platform_iterator* it);
 /// @relates cpe_platform_iterator
 void cpe_platform_iterator_free(struct cpe_platform_iterator* it);
 
+
+/**
+ * Load CPE language model from a XML document.
+ * @relates cpe_lang_model
+ */
+struct cpe_lang_model * cpe_lang_model_import(const struct oscap_import_source * source);
+
+/**
+ * Write the lang_model to a file.
+ * @relates cpe_lang_model
+ */
+void cpe_lang_model_export(struct cpe_lang_model * model, const char * fname);
+
+/**
+ * Load CPE language model from a XML.
+ * @relates cpe_lang_model
+ */
+struct cpe_lang_model * cpe_lang_model_parse_xml(const struct oscap_import_source * source);
+
 /**
  * cpe_testexpr functions to get variable members
  */
 cpe_lang_oper_t cpe_testexpr_get_oper(const struct cpe_testexpr *item);
 
+/**
+ * Get CPE expression subexpression.
+ * Not valid for CPE_LANG_OPER_MATCH operation.
+ * @relates cpe_testexpr
+ */
 struct cpe_testexpr * cpe_testexpr_get_meta_expr(const struct cpe_testexpr *item);
+
+/**
+ * Get CPE name to match against.
+ * Only valid for CPE_LANG_OPER_MATCH.
+ * @relates cpe_testexpr
+ */
 struct cpe_name * cpe_testexpr_get_meta_cpe(const struct cpe_testexpr *item);
 
 /**
  * cpe_platform functions to get variable members
  */
+/// @relates cpe_platform
 const char * cpe_platform_get_id(const struct cpe_platform *item);
+/// @relates cpe_platform
 const char * cpe_platform_get_remark(const struct cpe_platform *item);
+/// @relates cpe_platform
 struct oscap_title_iterator * cpe_platform_get_titles(const struct cpe_platform *item);
+/// @relates cpe_platform
 const struct cpe_testexpr * cpe_platform_get_expr(const struct cpe_platform *item);
 
 /**
  * cpe_lang_model functions to get variable members
  */
+/// @ realates cpe_lang_model
 const char * cpe_lang_model_get_ns_href(const struct cpe_lang_model *item);
+/// @ realates cpe_lang_model
 const char * cpe_lang_model_get_ns_prefix(const struct cpe_lang_model *item);
+/// @ realates cpe_lang_model
 struct cpe_platform_iterator * cpe_lang_model_get_platforms(const struct cpe_lang_model *item);
+/// @ realates cpe_lang_model
 struct cpe_platform * cpe_lang_model_get_item(const struct cpe_lang_model *item, const char *key);
+
+// add functions
+/// @ realates cpe_lang_model
+bool cpe_lang_model_add_item(struct cpe_lang_model *lang, struct cpe_platform *platform);
 
 /**
  * New functions
  * */
+/// @relates cpe_lang_model
 struct cpe_lang_model * cpe_lang_model_new();
+/// @relates cpe_testexpr
 struct cpe_testexpr * cpe_testexpr_new();
+/// @relates cpe_platform
 struct cpe_platform * cpe_platform_new();
 
 /**
  * Free functions
  * */
-void cpe_langexpr_free(struct cpe_testexpr * expr);
+/// @relates cpe_testexpr
+void cpe_testexpr_free(struct cpe_testexpr * expr);
+/// @relates cpe_lang_model
 void cpe_lang_model_free(struct cpe_lang_model * platformspec);
+/// @relates cpe_platform
 void cpe_platform_free(struct cpe_platform * platform);
+
+/**
+ * Set / add functions
+ * */
+/// @relates cpe_lang_model
+bool cpe_lang_model_setns_href(struct cpe_lang_model *model, const char *new_href);
+/// @relates cpe_lang_model
+bool cpe_lang_model_set_ns_prefix(struct cpe_lang_model *model, const char *new_prefix);
+/// @relates cpe_lang_model
+bool cpe_lang_model_add_item(struct cpe_lang_model *lang, struct cpe_platform *platform);
+/// @relates cpe_platform
+bool cpe_platform_set_id(struct cpe_platform *platform, const char *new_id);
+// @relates cpe_platform
+//bool cpe_platform_set_remark(cpe_platform, const char *new_remark);
+/// @relates cpe_platform
+bool cpe_platform_add_title(struct cpe_platform *platform, struct oscap_title *title);
 
 #endif				/* _CPELANG_H_ */
 
