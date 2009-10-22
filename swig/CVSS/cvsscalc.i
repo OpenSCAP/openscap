@@ -28,7 +28,7 @@
 
 %module cvsscalc
 %{
- #include "../../src/CVSS/cvsscalc.h"
+ #include "../../src/CVSS/public/cvsscalc.h"
 %}
 
 

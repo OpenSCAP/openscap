@@ -1,4 +1,4 @@
-AM_CPPFLAGS = -I$(top_builddir)/src/CVE -I$(top_srcdir)/src/CVE $(PYTHON_INCLUDES) -I$(PERL_INCLUDES) -D_LARGEFILE64_SOURCE -D_LARGEFILE_SOURCE=1 -iquote -I/usr/include -include "sys/types.h"
+AM_CPPFLAGS = -I${top_builddir}/src/common/public -I$(top_builddir)/src/CVSS/public -I$(top_srcdir)/src/CVSS $(PYTHON_INCLUDES) -I$(PERL_INCLUDES) -D_LARGEFILE64_SOURCE -D_LARGEFILE_SOURCE=1 -iquote -I/usr/include -include "sys/types.h"
 
 perl_vendorlib_DATA = cvsscalc.pm
 perl_vendorarch_LTLIBRARIES = _cvsscalc_pm.la

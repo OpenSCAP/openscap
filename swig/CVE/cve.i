@@ -28,7 +28,7 @@
 
 %module cve
 %{
- #include "../../src/CVE/cve.h"
+ #include "../../src/CVE/public/cve.h"
 %}
 
 /* Included file: ../../src/CVE/cve.h

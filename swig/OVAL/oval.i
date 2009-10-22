@@ -28,10 +28,8 @@
 
 %module oval
 %{
- #include "../../src/common/list.h"
  #include "../../src/common/public/alloc.h"
  #include "../../src/common/public/oscap.h"
- #include "../../src/common/util.h"
  #include "../../src/OVAL/public/oval_agent_api.h"
  #include "../../src/OVAL/public/oval_definitions.h"
  #include "../../src/OVAL/public/oval_system_characteristics.h"

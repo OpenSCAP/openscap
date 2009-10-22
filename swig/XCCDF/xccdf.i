@@ -28,7 +28,7 @@
 
 %module xccdf
 %{
- #include "../../src/XCCDF/xccdf.h"
+ #include "../../src/XCCDF/public/xccdf.h"
 %}
 
 

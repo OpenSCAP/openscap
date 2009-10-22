@@ -28,7 +28,7 @@
 
 %module cce
 %{
- #include "../../src/CCE/cce.h"
+ #include "../../src/CCE/public/cce.h"
 %}
 
 /* Included file: ../../src/CCE/cce.h

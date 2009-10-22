@@ -1,4 +1,4 @@
-AM_CPPFLAGS = -I$(top_builddir)/src/XCCDF -I$(top_srcdir)/src/XCCDF $(PYTHON_INCLUDES) -I$(PERL_INCLUDES) -D_LARGEFILE64_SOURCE -D_LARGEFILE_SOURCE=1 -iquote -I/usr/include -include "sys/types.h"
+AM_CPPFLAGS =-I${top_builddir}/src/common/public -I$(top_builddir)/src/XCCDF/public -I$(top_srcdir)/src/XCCDF $(PYTHON_INCLUDES) -I$(PERL_INCLUDES) -D_LARGEFILE64_SOURCE -D_LARGEFILE_SOURCE=1 -iquote -I/usr/include -include "sys/types.h"
 
 perl_vendorlib_DATA = xccdf.pm
 perl_vendorarch_LTLIBRARIES = _xccdf_pm.la
