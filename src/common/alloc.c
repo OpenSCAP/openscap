@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <errno.h>
-#include "alloc.h"
+#include "public/alloc.h"
 
 #if defined(NDEBUG)
 /*

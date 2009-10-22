@@ -30,7 +30,7 @@
 #include <libxml/xmlreader.h>
 #include <libxml/xmlwriter.h>
 #include <stdbool.h>
-#include "oscap.h"
+#include "public/oscap.h"
 
 /* XML Metadata. Here should be every general attribute
  * that can be present in every xml element such as xml:lang

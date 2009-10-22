@@ -28,7 +28,7 @@
 #ifndef OSCAP_UTIL_H_
 #define OSCAP_UTIL_H_
 
-#include "alloc.h"
+#include "public/alloc.h"
 
 
 /*
