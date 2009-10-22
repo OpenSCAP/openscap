@@ -25,8 +25,8 @@
 #ifndef XCCDF_ITEM_
 #define XCCDF_ITEM_
 
+#include "public/xccdf.h"
 #include <assert.h>
-#include "xccdf.h"
 #include "elements.h"
 #include "../common/list.h"
 #include "../common/util.h"

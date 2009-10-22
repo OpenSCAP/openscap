@@ -35,7 +35,7 @@
 
 #include <stdbool.h>
 #include <time.h>
-#include "../common/oscap.h"
+#include "oscap.h"
 
 
 /*--------------------*\

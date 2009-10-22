@@ -10,8 +10,8 @@ libxccdf_la_SOURCES = \
 	elements.h
 	
 
-libxccdf_la_CFLAGS  = @libxml_cflags@
+libxccdf_la_CFLAGS  = @libxml_cflags@ -I$(top_srcdir)/src/common/public
 libxccdf_la_LDFLAGS = @libxml_libs@
 
-pkginclude_HEADERS  = xccdf.h
+pkginclude_HEADERS  = public/xccdf.h
 
