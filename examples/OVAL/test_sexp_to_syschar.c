@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
-#include "api/oval_agent_api.h"
+#include "public/oval_agent_api.h"
 #include "seap.h"
 #include "oval_probe.h"
 #include "probes/probe.h"

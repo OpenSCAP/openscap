@@ -30,7 +30,7 @@
 #ifndef OVAL_AGENT_API_IMPL_H_
 #define OVAL_AGENT_API_IMPL_H_
 
-#include "api/oval_agent_api.h"
+#include "public/oval_agent_api.h"
 #include "oval_definitions_impl.h"
 #include "../common/util.h"
 

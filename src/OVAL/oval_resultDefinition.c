@@ -32,7 +32,7 @@
 #include <string.h>
 #include "oval_results_impl.h"
 #include "oval_collection_impl.h"
-#include "api/oval_agent_api.h"
+#include "public/oval_agent_api.h"
 
 #define OVAL_RESULT_DEFINITION_DEBUG 0
 

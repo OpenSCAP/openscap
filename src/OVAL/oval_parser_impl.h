@@ -31,7 +31,7 @@
 #define OVAL_PARSER_H_
 
 #include <libxml/xmlreader.h>
-#include "api/oval_agent_api.h"
+#include "public/oval_agent_api.h"
 #include "../common/util.h"
 
 OSCAP_HIDDEN_START;

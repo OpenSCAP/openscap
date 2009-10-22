@@ -19,15 +19,15 @@ EXTRA_DIST += OVAL/test_oval.sh OVAL/scap-rhel5-oval.xml \
 	      OVAL/test_results.sh OVAL/results.xml
 
 test_oval_SOURCES = OVAL/test_oval.c
-test_oval_CFLAGS = -I$(top_srcdir)/src/OVAL
+test_oval_CFLAGS = -I$(top_srcdir)/src/OVAL -I$(top_srcdir)/src/common
 test_oval_LDADD = $(top_builddir)/src/libopenscap_testing.la
 
 test_syschar_SOURCES = OVAL/test_syschar.c
-test_syschar_CFLAGS = -I$(top_srcdir)/src/OVAL
+test_syschar_CFLAGS = -I$(top_srcdir)/src/OVAL -I$(top_srcdir)/src/common
 test_syschar_LDADD = $(top_builddir)/src/libopenscap_testing.la
 
 test_results_SOURCES = OVAL/test_results.c
-test_results_CFLAGS = -I$(top_srcdir)/src/OVAL
+test_results_CFLAGS = -I$(top_srcdir)/src/OVAL -I$(top_srcdir)/src/common
 test_results_LDADD = $(top_builddir)/src/libopenscap_testing.la
 
 if WANT_PROBES
@@ -72,7 +72,7 @@ test_probes_CFLAGS = -I$(top_srcdir)/src/OVAL
 test_probes_LDADD = $(top_builddir)/src/libopenscap_testing.la
 
 test_probe_api_SOURCES = OVAL/test_probe-api.c
-test_probe_api_CFLAGS = -I$(top_srcdir)/src/OVAL -I$(top_srcdir)/src/OVAL/probes -I$(top_srcdir)/src/OVAL/probes/SEAP/public
+test_probe_api_CFLAGS = -I$(top_srcdir)/src/OVAL/public -I$(top_srcdir)/src/OVAL/probes -I$(top_srcdir)/src/OVAL/probes/SEAP/public
 test_probe_api_LDADD = $(top_builddir)/src/libopenscap_testing.la
 
 #test_findfile_SOURCES = OVAL/test_findfile.c

@@ -9,7 +9,7 @@
 #include "oval_agent_api_impl.h"
 #include "oval_parser_impl.h"
 #include "oval_string_map_impl.h"
-#include "api/oval_system_characteristics.h"
+#include "public/oval_system_characteristics.h"
 #include "../common/util.h"
 
 OSCAP_HIDDEN_START;

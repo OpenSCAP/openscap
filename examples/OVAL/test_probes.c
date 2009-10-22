@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "api/oval_agent_api.h"
+#include "public/oval_agent_api.h"
 #include "oval_definitions_impl.h"
 #include "oval_system_characteristics_impl.h"
 

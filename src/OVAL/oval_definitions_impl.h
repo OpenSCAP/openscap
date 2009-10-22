@@ -32,7 +32,7 @@
 #define OVAL_DEFINITIONS_IMPL
 
 #include <libxml/xmlreader.h>
-#include "api/oval_definitions.h"
+#include "public/oval_definitions.h"
 #include "oval_parser_impl.h"
 #include "oval_agent_api_impl.h"
 #include "../common/util.h"

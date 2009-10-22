@@ -31,7 +31,7 @@
 #ifndef OVAL_RESULTS_IMPL_H_
 #define OVAL_RESULTS_IMPL_H_
 
-#include "api/oval_results.h"
+#include "public/oval_results.h"
 #include "oval_definitions_impl.h"
 #include "oval_system_characteristics_impl.h"
 #include "../common/util.h"

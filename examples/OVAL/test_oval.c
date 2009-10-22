@@ -6,8 +6,8 @@
  */
 #include <stdio.h>
 #include <stdlib.h>
-#include "api/oval_agent_api.h"
-#include "../../src/common/oscap.h"
+#include <public/oval_agent_api.h>
+#include <public/oscap.h>
 
 int _test_error_handler(struct oval_xml_error *error, void *null)
 {

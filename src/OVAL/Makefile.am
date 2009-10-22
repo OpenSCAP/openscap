@@ -64,7 +64,7 @@ common_oval_sources = \
 
 # -I options go to CPPFLAGS, not CFLAGS
 # lets build one common for both normal and probe sources (does it mind?)
-AM_CPPFLAGS = $(libxml_cflags) $(pthread_cflags) -I.. -Iapi
+AM_CPPFLAGS = $(libxml_cflags) $(pthread_cflags) -I.. -Ipublic
 if WANT_PROBES
 AM_CPPFLAGS += -I$(top_srcdir)/src -I$(srcdir)/probes -I$(srcdir)/probes/SEAP/public -I$(top_srcdir)/src/common
 endif
@@ -73,8 +73,8 @@ endif
 liboval_la_LIBADD = $(libxml_libs) $(pthread_ldflags)
 liboval_testing_la_LIBADD = $(liboval_la_LIBADD)
 
-pkginclude_HEADERS  =	api/oval_agent_api.h api/oval_definitions.h \
-			api/oval_results.h api/oval_system_characteristics.h
+pkginclude_HEADERS  =	public/oval_agent_api.h public/oval_definitions.h \
+			public/oval_results.h public/oval_system_characteristics.h
 
 
 if WANT_PROBES

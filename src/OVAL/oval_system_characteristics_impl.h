@@ -30,7 +30,7 @@
 #ifndef OVAL_SYSCHAR_IMPL
 #define OVAL_SYSCHAR_IMPL
 
-#include "api/oval_system_characteristics.h"
+#include "public/oval_system_characteristics.h"
 #include "oval_definitions_impl.h"
 #include "../common/util.h"
 
