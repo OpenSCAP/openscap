@@ -39,9 +39,7 @@
 #include <stdlib.h>
 
 #include "cpeuri.h"
-//#include "../common/util.h"
-#include "../common/oscap.h"
-//#include "../common/elements.h"
+#include "oscap.h"
 
 /// CPE language operators
 typedef enum {
@@ -98,8 +96,16 @@ struct cpe_lang_model * cpe_lang_model_import(const struct oscap_import_source *
 /**
  * Write the lang_model to a file.
  * @relates cpe_lang_model
+ * @param spec CPE lang model
+ * @param target target structure with filename, endcoding and indent information
  */
-void cpe_lang_model_export(struct cpe_lang_model * model, const char * fname);
+void cpe_lang_model_export(struct cpe_lang_model * spec, struct oscap_export_target * target);
+
+/**
+ * Write the lang_model to a file.
+ * @relates cpe_lang_model
+ */
+void cpe_lang_model_export_xml(struct cpe_lang_model * spec, struct oscap_export_target * target);
 
 /**
  * Load CPE language model from a XML.

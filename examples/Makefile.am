@@ -93,14 +93,14 @@ EXTRA_DIST += CPE/test_cpe.sh CPE/dict.xml CPE/lang.xml
 
 test_cpelang_SOURCES = CPE/test_cpelang.c
 test_cpelang_LDADD = $(top_builddir)/src/libopenscap_testing.la
-test_cpelang_CFLAGS = -I$(top_srcdir)/src/CPE
+test_cpelang_CFLAGS = -I$(top_srcdir)/src/CPE -I${top_srcdir}/src/CPE/public -I${top_srcdir}/src/common/public
 
 test_cpedict_SOURCES = CPE/test_cpedict.c
-test_cpedict_CFLAGS = -I$(top_srcdir)/src/CPE
+test_cpedict_CFLAGS = -I$(top_srcdir)/src/CPE -I${top_srcdir}/src/CPE/public -I${top_srcdir}/src/common/public
 test_cpedict_LDADD = $(top_builddir)/src/libopenscap_testing.la
 
 test_cpeuri_SOURCES = CPE/test_cpeuri.c
-test_cpeuri_CFLAGS = -I$(top_srcdir)/src/CPE
+test_cpeuri_CFLAGS = -I$(top_srcdir)/src/CPE -I${top_srcdir}/src/CPE/public -I${top_srcdir}/src/common/public
 test_cpeuri_LDADD = $(top_builddir)/src/libopenscap_testing.la
 endif
 

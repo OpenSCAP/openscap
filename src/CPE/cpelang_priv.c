@@ -400,18 +400,18 @@ static char * parse_text_element(xmlTextReaderPtr reader, char *name) {
  * More info in representive header file.
  * returns the type of <structure>
  */
-void cpe_lang_model_export(struct cpe_lang_model * spec, const char * fname) {
+void cpe_lang_model_export_xml(struct cpe_lang_model * spec, struct oscap_export_target * target) {
 
         // TODO: ad macro to check return value from xmlTextWriter* functions
         xmlTextWriterPtr writer;
 
-        writer = xmlNewTextWriterFilename(fname, 0);
+        writer = xmlNewTextWriterFilename(oscap_export_target_get_filename(target), 0);
 
         // Set properties of writer TODO: make public function to edit this ??
-        xmlTextWriterSetIndent(writer, 1);
-        xmlTextWriterSetIndentString(writer, BAD_CAST "    ");
+        xmlTextWriterSetIndent(writer, oscap_export_target_get_indent(target));
+        xmlTextWriterSetIndentString(writer, BAD_CAST oscap_export_target_get_indent_string(target));
 
-        xmlTextWriterStartDocument(writer, NULL, FILE_ENCODING, NULL);
+        xmlTextWriterStartDocument(writer, NULL, oscap_export_target_get_encoding(target), NULL);
 
         cpe_lang_export(spec, writer);
         xmlTextWriterEndDocument(writer);

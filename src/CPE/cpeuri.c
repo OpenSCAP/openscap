@@ -36,7 +36,7 @@
 #include <ctype.h>
 #include <assert.h>
 
-#include "cpeuri.h"
+#include "public/cpeuri.h"
 #include "../common/util.h"
 
 

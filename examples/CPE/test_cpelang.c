@@ -55,8 +55,8 @@ void test_langexpr_dump(cpe_lang_expr_t * expr, int depth)
 
 void test_lang_model_export(struct cpe_lang_model * res){
 
-	//struct oscap_export_target *tgt = oscap_export_target_new("test_cpelang.out", NULL);
-    (void) cpe_lang_model_export( res, "test_cpelang.out");
+	struct oscap_export_target *tgt = oscap_export_target_new("test_cpelang.out", NULL);
+        cpe_lang_model_export(res, tgt);
 	//oscap_export_target_free(tgt);
     fprintf(stdout, "Result saved in test_cpelang.out file\n");
 }

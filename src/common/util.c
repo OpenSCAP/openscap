@@ -80,7 +80,7 @@ struct oscap_export_target * oscap_export_target_new(const char * filename, cons
                 
         target->filename = strdup(filename);
         // default values
-        target->indent = 0;
+        target->indent = 1;
         target->indent_string = strdup("    ");
 
         return target;

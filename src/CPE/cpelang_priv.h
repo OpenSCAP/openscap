@@ -39,12 +39,17 @@
 
 OSCAP_HIDDEN_START;
 
+/**
+ * Parse function for CPE Lang model
+ * @param source structure of import source with filename and encoding
+ * @relates cpe_lang_model
+ */
 struct cpe_lang_model * cpe_lang_model_parse_xml(const struct oscap_import_source * source);
 struct cpe_lang_model * cpe_lang_model_parse(xmlTextReaderPtr reader);
 struct cpe_platform * cpe_platform_parse(xmlTextReaderPtr reader);
 struct cpe_testexpr * cpe_testexpr_parse(xmlTextReaderPtr reader);
 
-void cpe_lang_model_export(struct cpe_lang_model * spec, const char * fname);
+void cpe_lang_model_export_xml(struct cpe_lang_model * spec, struct oscap_export_target * target);
 void cpe_lang_export(const struct cpe_lang_model * spec, xmlTextWriterPtr writer);
 void cpe_platform_export(const struct cpe_platform * platform, xmlTextWriterPtr writer);
 void cpe_testexpr_export(const struct cpe_testexpr expr, xmlTextWriterPtr writer);

@@ -28,10 +28,10 @@
 
 %module cpe
 %{
- #include "../../src/CPE/cpeuri.h"
- #include "../../src/CPE/cpedict.h"
- #include "../../src/CPE/cpelang.h"
- #include "../../src/common/oscap.h"
+ #include "../../src/CPE/public/cpeuri.h"
+ #include "../../src/CPE/public/cpedict.h"
+ #include "../../src/CPE/public/cpelang.h"
+ #include "../../src/common/public/oscap.h"
 %}
 
 /* Included file: ../../src/CPE/cpeuri.h
@@ -243,7 +243,7 @@ struct cpe_platform * cpe_lang_model_get_item(const struct cpe_lang_model *item,
 struct cpe_lang_model * cpe_lang_model_new();
 struct cpe_testexpr * cpe_testexpr_new();
 struct cpe_platform * cpe_platform_new();
-void cpe_langexpr_free(struct cpe_testexpr * expr);
+void cpe_testexpr_free(struct cpe_testexpr * expr);
 void cpe_lang_model_free(struct cpe_lang_model * platformspec);
 void cpe_platform_free(struct cpe_platform * platform);
 

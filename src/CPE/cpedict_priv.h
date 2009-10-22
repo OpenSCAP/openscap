@@ -35,7 +35,7 @@
 #include <stdlib.h>
 
 #include "cpeuri.h"
-#include "../common/oscap.h"
+#include "../common/public/oscap.h"
 #include "../common/util.h"
 #include "../common/elements.h"
 
@@ -111,7 +111,7 @@ struct cpe_dict_model * cpe_dict_model_parse(xmlTextReaderPtr reader);
  * @param target OSCAP exporting target
  * @relates oscap_export_target
  */
-void cpe_dict_model_export(struct cpe_dict_model * dict, const struct oscap_export_target * target);
+void cpe_dict_model_export_xml(struct cpe_dict_model * dict, const struct oscap_export_target * target);
 
 /**
  * Internal export function for CPE dictionary model

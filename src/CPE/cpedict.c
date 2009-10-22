@@ -28,7 +28,7 @@
  *      Lukas Kuklinek <lkuklinek@redhat.com>
  */
 
-#include "cpedict.h"
+#include "public/cpedict.h"
 #include "../common/list.h"
 #include "../common/util.h"
 
@@ -41,6 +41,14 @@ struct cpe_dict_model * cpe_dict_model_import(const struct oscap_import_source *
     dict = cpe_dict_model_parse_xml(source);
 
     return dict;
+}
+
+void cpe_dict_model_export(struct cpe_dict_model * dict, const struct oscap_export_target * target) {
+
+    if (oscap_export_target_get_filename(target) == NULL) return;
+
+    cpe_dict_model_export_xml(dict, target);
+
 }
 
 bool cpe_name_match_dict(struct cpe_name * cpe, struct cpe_dict_model * dict) {

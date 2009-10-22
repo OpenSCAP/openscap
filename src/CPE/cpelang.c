@@ -46,6 +46,13 @@ struct cpe_lang_model * cpe_lang_model_import(const struct oscap_import_source *
     return lang;
 }
 
+void cpe_lang_model_export(struct cpe_lang_model * spec, struct oscap_export_target * target) {
+
+    if (oscap_export_target_get_filename(target) == NULL) return;
+
+    cpe_lang_model_export_xml(spec, target);
+}
+
 /*
  * Add new platform entry to @a platformspec
  * @note @a platformspec will take over memory management of @a platform

@@ -914,7 +914,7 @@ struct cpe_vendor * cpe_vendor_parse(xmlTextReaderPtr reader) {
  * More info in representive header file.
  * returns the type of <structure>
  */
-void cpe_dict_model_export(struct cpe_dict_model * dict, const struct oscap_export_target * target) {
+void cpe_dict_model_export_xml(struct cpe_dict_model * dict, const struct oscap_export_target * target) {
 
         // TODO: add macro to check return value from xmlTextWriter* functions
         xmlTextWriterPtr writer;
