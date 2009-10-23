@@ -110,7 +110,7 @@ TESTS += CVE/test_cve.sh
 EXTRA_DIST += CVE/test_cve.sh CVE/nvdcve-2.0-recent.xml
 
 test_cve_SOURCES = CVE/test_cve.c
-test_cve_CFLAGS = -I$(top_srcdir)/src/CVE
+test_cve_CFLAGS = -I$(top_srcdir)/src/CVE/public -I${top_srcdir}/src/common/public
 test_cve_LDADD = $(top_builddir)/src/libopenscap_testing.la
 endif
 
@@ -120,7 +120,7 @@ TESTS += CCE/test_cce.sh
 EXTRA_DIST += CCE/test_cce.sh CCE/CCE_Sample.xml
 
 test_cce_SOURCES = CCE/test_cce.c
-test_cce_CFLAGS = -I$(top_srcdir)/src/CCE
+test_cce_CFLAGS = -I$(top_srcdir)/src/CCE/public -I${top_srcdir}/src/common/public
 test_cce_LDADD = $(top_builddir)/src/libopenscap_testing.la
 endif
 
@@ -129,7 +129,7 @@ check_PROGRAMS += test_cvsscalc
 TESTS += CVSS/test_cvsscalc.sh
 EXTRA_DIST += CVSS/test_cvsscalc.sh
 test_cvsscalc_SOURCES = CVSS/test_cvsscalc.c
-test_cvsscalc_CFLAGS  = -I$(top_srcdir)/src/CVSS
+test_cvsscalc_CFLAGS  = -I$(top_srcdir)/src/CVSS/public -I${top_srcdir}/src/common/public
 test_cvsscalc_LDADD = $(top_builddir)/src/libopenscap_testing.la
 EXTRA_DIST += CVSS/test_cvsscalc.py
 endif
@@ -140,6 +140,6 @@ TESTS += XCCDF/test_xccdf.sh
 EXTRA_DIST += XCCDF/test_xccdf.sh XCCDF/scap-rhel5-xccdf.xml
 
 xccdf_dump_SOURCES = XCCDF/xccdf_dump.c
-xccdf_dump_CFLAGS = -I$(top_srcdir)/src/XCCDF
+xccdf_dump_CFLAGS = -I$(top_srcdir)/src/XCCDF/public -I${top_srcdir}/src/common/public
 xccdf_dump_LDADD = $(top_builddir)/src/libopenscap_testing.la
 endif
