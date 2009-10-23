@@ -41,7 +41,9 @@
 #include "cpeuri.h"
 #include "oscap.h"
 
-/// CPE language operators
+/**
+ * CPE language operators
+ */
 typedef enum {
 	CPE_LANG_OPER_HALT  =  0x00,  ///< end of instruction list
 	CPE_LANG_OPER_AND   =  0x01,  ///< logical AND
@@ -56,7 +58,7 @@ typedef enum {
 } cpe_lang_oper_t;
 
 
-/*
+/**
  * @struct cpe_testexpr
  * CPE language boolean expression
  */
@@ -115,6 +117,7 @@ struct cpe_lang_model * cpe_lang_model_parse_xml(const struct oscap_import_sourc
 
 /**
  * cpe_testexpr functions to get variable members
+ * @relates cpe_testexpr
  */
 cpe_lang_oper_t cpe_testexpr_get_oper(const struct cpe_testexpr *item);
 
@@ -177,23 +180,39 @@ struct cpe_platform * cpe_lang_model_get_item(const struct cpe_lang_model *item,
 bool cpe_lang_model_add_item(struct cpe_lang_model *lang, struct cpe_platform *platform);
 
 /**
- * New functions
- * */
-/// @relates cpe_lang_model
+ * Constructor of CPE Language model
+ * @relates cpe_lang_model
+ */
 struct cpe_lang_model * cpe_lang_model_new();
-/// @relates cpe_testexpr
+
+/**
+ * Constructor of CPE test expression
+ * @relates cpe_testexpr
+ */
 struct cpe_testexpr * cpe_testexpr_new();
-/// @relates cpe_platform
+
+/**
+ * Constructor of CPE Platform
+ * @relates cpe_platform
+ */
 struct cpe_platform * cpe_platform_new();
 
 /**
- * Free functions
- * */
-/// @relates cpe_testexpr
+ * Free function of CPE test expression
+ * @relates cpe_testexpr
+ */
 void cpe_testexpr_free(struct cpe_testexpr * expr);
-/// @relates cpe_lang_model
+
+/**
+ * Free function of CPE test expression
+ * @relates cpe_lang_model
+ */
 void cpe_lang_model_free(struct cpe_lang_model * platformspec);
-/// @relates cpe_platform
+
+/**
+ * Free function of CPE Platform
+ * @relates cpe_platform
+ */
 void cpe_platform_free(struct cpe_platform * platform);
 
 /**

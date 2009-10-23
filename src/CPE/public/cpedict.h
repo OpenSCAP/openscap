@@ -44,13 +44,13 @@
 struct oscap_title;
 
 /**
- * @struct cpe_dict_check
+ * @struct cpe_check
  * Structure representing single CPE check.
  */
 struct cpe_check;
 
 /**
- * @struct cpe_dict_reference
+ * @struct cpe_reference
  * CPE dictionary item reference.
  */
 struct cpe_reference;
@@ -72,38 +72,40 @@ struct cpe_dict_model;
  * Structure representing metadata of CPE item
  */
 struct cpe_item_metadata;
+
 /**
- * @struct cpe_item_metadata
+ * @struct cpe_generator
  * Structure with information about document
  */
 struct cpe_generator;
+
 /**
- * @struct cpe_item_metadata
+ * @struct cpe_vendor
  * Structure with information about vendor
  */
 struct cpe_vendor;
 /**
- * @struct cpe_item_metadata
+ * @struct cpe_product
  * Product of some vendor
  */
 struct cpe_product;
 /**
- * @struct cpe_item_metadata
+ * @struct cpe_version
  * Version of product
  */
 struct cpe_version;
 /**
- * @struct cpe_item_metadata
+ * @struct cpe_update
  * Update of product version
  */
 struct cpe_update;
 /**
- * @struct cpe_item_metadata
+ * @struct cpe_edition
  * Edition of product update
  */
 struct cpe_edition;
 /**
- * @struct cpe_item_metadata
+ * @struct cpe_language
  * Language of product edition
  */
 struct cpe_language;
@@ -116,20 +118,23 @@ struct cpe_item_iterator;
 
 /** Iterator over CPE dictionary items.
  * @see oscap_iterator
+ * @relates cpe_item_iterator
  */
 struct cpe_item* cpe_item_iterator_next(struct cpe_item_iterator* it);
 
 /** Iterator over CPE dictionary items.
  * @see oscap_iterator
+ * @relates cpe_item_iterator
  */
 bool cpe_item_iterator_has_more(struct cpe_item_iterator* it);
 
 /** Iterator over CPE dictionary items.
  * @see oscap_iterator
+ * @relates cpe_item_iterator
  */
 void cpe_item_iterator_free(struct cpe_item_iterator* it);
 
-/** @struct cpe_dict_reference_iterator
+/** @struct cpe_reference_iterator
  * Iterator over CPE dictionary references.
  * @see oscap_iterator
  */
@@ -137,16 +142,19 @@ struct cpe_reference_iterator;
 
 /** Iterator over CPE item reference items.
  * @see oscap_iterator
+ * @relates cpe_reference_iterator
  */
 struct cpe_reference* cpe_reference_iterator_next(struct cpe_reference_iterator* it);
 
 /** Iterator over CPE item reference items.
  * @see oscap_iterator
+ * @relates cpe_reference_iterator
  */
 bool cpe_reference_iterator_has_more(struct cpe_reference_iterator* it);
 
 /** Iterator over CPE item reference items.
  * @see oscap_iterator
+ * @relates cpe_reference_iterator
  */
 void cpe_reference_iterator_free(struct cpe_reference_iterator* it);
 
@@ -158,16 +166,19 @@ struct cpe_check_iterator;
 
 /** Iterator over CPE item check items.
  * @see oscap_iterator
+ * @relates cpe_check_iterator
  */
 struct cpe_check* cpe_check_iterator_next(struct cpe_check_iterator* it);
 
 /** Iterator over CPE item check items.
  * @see oscap_iterator
+ * @relates cpe_check_iterator
  */
 bool cpe_check_iterator_has_more(struct cpe_check_iterator* it);
 
 /** Iterator over CPE item check items.
  * @see oscap_iterator
+ * @relates cpe_check_iterator
  */
 void cpe_check_iterator_free(struct cpe_check_iterator* it);
 
@@ -179,16 +190,19 @@ struct cpe_note_iterator;
 
 /** Iterator over CPE item ntoe items.
  * @see oscap_iterator
+ * @relates cpe_note_iterator
  */
 struct cpe_note* cpe_note_iterator_next(struct cpe_note_iterator* it);
 
 /** Iterator over CPE item ntoe items.
  * @see oscap_iterator
+ * @relates cpe_note_iterator
  */
 bool cpe_note_iterator_has_more(struct cpe_note_iterator* it);
 
 /** Iterator over CPE item ntoe items.
  * @see oscap_iterator
+ * @relates cpe_note_iterator
  */
 void cpe_note_iterator_free(struct cpe_note_iterator* it);
 
@@ -200,16 +214,19 @@ struct cpe_vendor_iterator;
 
 /** Iterator over CPE vendor items.
  * @see oscap_iterator
+ * @relates cpe_vendor_iterator
  */
 struct cpe_vendor* cpe_vendor_iterator_next(struct cpe_vendor_iterator* it);
 
 /** Iterator over CPE vendor items.
  * @see oscap_iterator
+ * @relates cpe_vendor_iterator
  */
 bool cpe_vendor_iterator_has_more(struct cpe_vendor_iterator* it);
 
 /** Iterator over CPE vendor items.
  * @see oscap_iterator
+ * @relates cpe_vendor_iterator
  */
 void cpe_vendor_iterator_free(struct cpe_vendor_iterator* it);
 
@@ -221,16 +238,19 @@ struct cpe_product_iterator;
 
 /** Iterator over CPE product items.
  * @see oscap_iterator
+ * @relates cpe_product_iterator
  */
 struct cpe_product* cpe_product_iterator_next(struct cpe_product_iterator* it);
 
 /** Iterator over CPE product items.
  * @see oscap_iterator
+ * @relates cpe_product_iterator
  */
 bool cpe_product_iterator_has_more(struct cpe_product_iterator* it);
 
 /** Iterator over CPE product items.
  * @see oscap_iterator
+ * @relates cpe_product_iterator
  */
 void cpe_product_iterator_free(struct cpe_product_iterator* it);
 
@@ -242,16 +262,19 @@ struct cpe_version_iterator;
 
 /** Iterator over CPE version items.
  * @see oscap_iterator
+ * @relates cpe_version_iterator
  */
 struct cpe_version* cpe_version_iterator_next(struct cpe_version_iterator* it);
 
 /** Iterator over CPE version items.
  * @see oscap_iterator
+ * @relates cpe_version_iterator
  */
 bool cpe_version_iterator_has_more(struct cpe_version_iterator* it);
 
 /** Iterator over CPE version items.
  * @see oscap_iterator
+ * @relates cpe_version_iterator
  */
 void cpe_version_iterator_free(struct cpe_version_iterator* it);
 
@@ -263,16 +286,19 @@ struct cpe_update_iterator;
 
 /** Iterator over CPE update items.
  * @see oscap_iterator
+ * @relates cpe_update_iterator
  */
 struct cpe_update* cpe_update_iterator_next(struct cpe_update_iterator* it);
 
 /** Iterator over CPE update items.
  * @see oscap_iterator
+ * @relates cpe_update_iterator
  */
 bool cpe_update_iterator_has_more(struct cpe_update_iterator* it);
 
 /** Iterator over CPE update items.
  * @see oscap_iterator
+ * @relates cpe_update_iterator
  */
 void cpe_update_iterator_free(struct cpe_update_iterator* it);
 
@@ -284,16 +310,19 @@ struct cpe_edition_iterator;
 
 /** Iterator over CPE edition items.
  * @see oscap_iterator
+ * @relates cpe_edition_iterator
  */
 struct cpe_edition* cpe_edition_iterator_next(struct cpe_edition_iterator* it);
 
 /** Iterator over CPE edition items.
  * @see oscap_iterator
+ * @relates cpe_edition_iterator
  */
 bool cpe_edition_iterator_has_more(struct cpe_edition_iterator* it);
 
 /** Iterator over CPE edition items.
  * @see oscap_iterator
+ * @relates cpe_edition_iterator
  */
 void cpe_edition_iterator_free(struct cpe_edition_iterator* it);
 
@@ -305,16 +334,19 @@ struct cpe_language_iterator;
 
 /** Iterator over CPE language items.
  * @see oscap_iterator
+ * @relates cpe_language_iterator
  */
 struct cpe_language* cpe_language_iterator_next(struct cpe_language_iterator* it);
 
 /** Iterator over CPE language items.
  * @see oscap_iterator
+ * @relates cpe_language_iterator
  */
 bool cpe_language_iterator_has_more(struct cpe_language_iterator* it);
 
 /** Iterator over CPE language items.
  * @see oscap_iterator
+ * @relates cpe_language_iterator
  */
 void cpe_language_iterator_free(struct cpe_language_iterator* it);
 
@@ -624,7 +656,7 @@ void cpe_language_free(struct cpe_language * language);
 /// @relates cpe_itemmetadata
 void cpe_itemmetadata_free(struct cpe_item_metadata * meta);
 /// @relates cpe_dict_model
-void cpe_dict_free(struct cpe_dict_model * dict);
+void cpe_dict_model_free(struct cpe_dict_model * dict);
 /// @relates cpe_generator
 void cpe_generator_free(struct cpe_generator * generator);
 /// @relates cpe_item

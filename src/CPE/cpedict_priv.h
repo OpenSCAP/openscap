@@ -105,7 +105,7 @@ struct cpe_dict_model *cpe_dict_model_new();
 
 /**
  * Load new CPE dictionary from XML node
- * @relates cpe_dict
+ * @relates cpe_dict_model
  * @param node file name of dictionary to import
  * @return new dictionary
  * @retval NULL on failure
@@ -117,7 +117,6 @@ struct cpe_dict_model * cpe_dict_model_parse(xmlTextReaderPtr reader);
  * @param dict CPE dictionary structure
  * @relates cpe_dict_model
  * @param target OSCAP exporting target
- * @relates oscap_export_target
  */
 void cpe_dict_model_export_xml(struct cpe_dict_model * dict, const struct oscap_export_target * target);
 
