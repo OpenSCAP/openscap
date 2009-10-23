@@ -58,10 +58,14 @@ SEXP_t *probe_item_build (const char *fmt, ...);
 
 /* SEXP_t *probe_item_creat (const char *name, SEXP_t *attrs, ...); */
 /**
- * Create a new item consisting of a name, optional attributes argument
- * and an arbitrary number of entities.
+ * Create a new item consisting of a name, optional attributes argument and an arbitrary number of entities.
+ * Every entity is a triple:
+ * const char *name - name of the new entity
+ * SEXP_t attrs - optional list of entity attributes in a sexp, can be NULL
+ * SEXP_t val - value of the new entity in a sexp
+ * This function increments its SEXP_t arguments' reference count.
  * @param name mandatory name argument
- * @param attrs optional attributes argument
+ * @param attrs optional item's attributes argument
  * @param ... arbitrary number of entity arguments
  */
 #define probe_item_creat(name, attrs, ...) probe_obj_creat (name, attrs, __VA_ARGS__)
@@ -75,6 +79,7 @@ SEXP_t *probe_item_new   (const char *name, SEXP_t *attrs);
 
 /**
  * Add a new attribute to an item.
+ * This function increments its val argument's reference count.
  * @param item the item to be modified
  * @param name name of the new attribute
  * @param val value of the new attribute
@@ -83,6 +88,7 @@ SEXP_t *probe_item_attr_add (SEXP_t *item, const char *name, SEXP_t *val);
 
 /**
  * Add a new entity to an item.
+ * This function increments its attrs and val arguments' reference count.
  * @param item the item to be modified
  * @param name name of the new entity
  * @param attrs optional attributes of the new entity
@@ -130,6 +136,7 @@ void probe_item_resetid(struct id_desc_t *id_desc);
 
 /**
  * Create a new list of attributes.
+ * This function increments its val argument's reference count.
  * @param name the name of the attribute
  * @param val the value of the attribute
  * @param ... there can be an arbitrary number of name - value pairs
@@ -147,16 +154,21 @@ SEXP_t *probe_attr_creat (const char *name, const SEXP_t *val, ...);
 SEXP_t *probe_obj_build (const char *fmt, ...);
 
 /**
- * Create a new object consisting of a name, optional attributes argument
- * and an arbitrary number of entities.
+ * Create a new object consisting of a name, optional attributes argument and an arbitrary number of entities.
+ * Every entity is a triple:
+ * const char *name - name of the new entity
+ * SEXP_t attrs - optional list of entity attributes in a sexp, can be NULL
+ * SEXP_t val - value of the new entity in a sexp
+ * This function increments its SEXP_t arguments' reference count.
  * @param name mandatory name argument
- * @param attrs optional attributes argument
+ * @param attrs optional object's attributes argument
  * @param ... arbitrary number of entity arguments
  */
 SEXP_t *probe_obj_creat (const char *name, SEXP_t *attrs, ...);
 
 /**
  * Create a new object with just a name and optional attributes argument.
+ * This function increments its SEXP_t argument's reference count.
  * @param name object's name
  * @param attrs optional attributes argument
  */
@@ -241,8 +253,9 @@ size_t probe_obj_getname_r (const SEXP_t *obj, char *buffer, size_t buflen);
 
 /**
  * Create a new list of entities.
+ * This function increments its SEXP_t arguments' reference count.
  * @param name the name of the entity
- * @param attrs optional attributes
+ * @param attrs optional entity's attributes argument
  * @param val the value of the entity
  * @param ... there can be an arbitrary number of name - attributes - value triples
  */
@@ -250,14 +263,16 @@ SEXP_t *probe_ent_creat (const char *name, SEXP_t *attrs, SEXP_t *val, ...);
 
 /**
  * Create a new entity.
+ * This function increments its SEXP_t arguments' reference count.
  * @param name the name of the entity
- * @param attrs optional attributes
+ * @param attrs optional entity's attributes argument
  * @param val the value of the entity
  */
 SEXP_t *probe_ent_creat1 (const char *name, SEXP_t *attrs, SEXP_t *val);
 
 /**
  * Add a new attribute to an entity.
+ * This function increments its val argument's reference count.
  * @param ent the entity to be modified
  * @param name name of the new attribute
  * @param val value of the new attribute
