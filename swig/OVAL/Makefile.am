@@ -3,7 +3,7 @@ AM_CPPFLAGS = -I${top_builddir}/src/common/public -I$(top_builddir)/src/OVAL/pub
 perl_vendorlib_DATA = oval.pm
 perl_vendorarch_LTLIBRARIES = _oval_pm.la
 _oval_pm_la_LDFLAGS = -module -avoid-version
-_oval_pm_la_LIBADD  = ${top_builddir}/src/OVAL/liboval.la
+_oval_pm_la_LIBADD  = ${top_builddir}/src/OVAL/liboval.la ${top_builddir}/src/common/liboscapcommon.la
 nodist__oval_pm_la_SOURCES = oval_pm_wrap.c
 
 nodist_pyexec_PYTHON = oval.py

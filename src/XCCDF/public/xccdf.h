@@ -614,7 +614,7 @@ xccdf_status_type_t xccdf_item_get_status_current(const struct xccdf_item* item)
  * @return Pointer to this item as the benchmark.
  * @retval NULL on faliure (e.g. item is not a benchmark)
  */
-struct xccdf_benchmark* xccdf_item_cast_benchmark(struct xccdf_item* item);
+/* struct xccdf_benchmark* xccdf_item_cast_benchmark(struct xccdf_item* item); TODO */
 
 /**
  * Convert the item to a profile.
@@ -622,7 +622,7 @@ struct xccdf_benchmark* xccdf_item_cast_benchmark(struct xccdf_item* item);
  * @return Pointer to this item as the profile.
  * @retval NULL on faliure (e.g. item is not a profile)
  */
-struct xccdf_profile* xccdf_item_cast_profile(struct xccdf_item* item);
+/* struct xccdf_profile* xccdf_item_cast_profile(struct xccdf_item* item); TODO */
 
 /**
  * Convert the item to a rule.
@@ -630,7 +630,7 @@ struct xccdf_profile* xccdf_item_cast_profile(struct xccdf_item* item);
  * @return Pointer to this item as the rule.
  * @retval NULL on faliure (e.g. item is not a rule)
  */
-struct xccdf_rule* xccdf_item_cast_rule(struct xccdf_item* item);
+/* struct xccdf_rule* xccdf_item_cast_rule(struct xccdf_item* item); TODO */
 
 /**
  * Convert the item to a group.
@@ -638,7 +638,7 @@ struct xccdf_rule* xccdf_item_cast_rule(struct xccdf_item* item);
  * @return Pointer to this item as the group.
  * @retval NULL on faliure (e.g. item is not a group)
  */
-struct xccdf_group* xccdf_item_cast_group(struct xccdf_item* item);
+/* struct xccdf_group* xccdf_item_cast_group(struct xccdf_item* item); TODO */
 
 /**
  * Convert the item to a value.
@@ -646,7 +646,7 @@ struct xccdf_group* xccdf_item_cast_group(struct xccdf_item* item);
  * @return Pointer to this item as the value.
  * @retval NULL on faliure (e.g. item is not a value)
  */
-struct xccdf_value* xccdf_item_cast_value(struct xccdf_item* item);
+/* struct xccdf_value* xccdf_item_cast_value(struct xccdf_item* item); TODO */
 
 /**
  * Convert the item to a test result.
@@ -654,7 +654,7 @@ struct xccdf_value* xccdf_item_cast_value(struct xccdf_item* item);
  * @return Pointer to this item as the test result.
  * @retval NULL on faliure (e.g. item is not a test result)
  */
-struct xccdf_result* xccdf_item_cast_result(struct xccdf_item* item);
+/* struct xccdf_result* xccdf_item_cast_result(struct xccdf_item* item); TODO */
 
 /*--------------------*\
 |   Benchmark methods  |
@@ -890,7 +890,7 @@ xccdf_status_type_t xccdf_profile_get_status_current(const struct xccdf_profile*
  * Get profile note tag.
  * @relates xccdf_profile
  */
-const char* xccdf_profile_note_get_tag(const struct xccdf_profile* profile);
+/* const char* xccdf_profile_note_get_tag(const struct xccdf_profile* profile); TODO */
 
 /**
  * Get an iterator to the select options of the profile.
@@ -1409,7 +1409,7 @@ bool xccdf_value_get_must_match(const struct xccdf_value* value);
  * Get an iterator to the XCCDF value's source URIs.
  * @relates xccdf_value
  */
-struct oscap_string_iterator* xccdf_value_sources(const struct xccdf_value* value);
+/* struct oscap_string_iterator* xccdf_value_sources(const struct xccdf_value* value); TODO */
 
 
 
@@ -1454,7 +1454,7 @@ const char* xccdf_model_get_system(const struct xccdf_model* model);
  * Get scoring model parameter.
  * @relates xccdf_model
  */
-const char* xccdf_model_get_param(const struct xccdf_model* model, const char* param_name);
+/* const char* xccdf_model_get_param(const struct xccdf_model* model, const char* param_name); TODO */
 
 
 /**
@@ -1520,21 +1520,21 @@ struct xccdf_rule* xccdf_check_get_parent(const struct xccdf_check* check);
  * @relates xccdf_check
  * @see xccdf_check_get_content_ref
  */
-struct xccdf_check_content_ref_iterator* xccdf_check_content_refs(const struct xccdf_check* check);
+/*  struct xccdf_check_content_ref_iterator* xccdf_check_content_refs(const struct xccdf_check* check); TODO */
 
 /**
  * Get an iterator to the check imports.
  * @relates xccdf_check
  * @see xccdf_check_get_import
  */
-struct xccdf_check_import_iterator* xccdf_check_imports(const struct xccdf_check* check);
+/* struct xccdf_check_import_iterator* xccdf_check_imports(const struct xccdf_check* check); TODO */
 
 /**
  * Get an iterator to the check exports.
  * @relates xccdf_check
  * @see xccdf_check_get_export
  */
-struct xccdf_check_export_iterator* xccdf_check_exports(const struct xccdf_check* check);
+/* struct xccdf_check_export_iterator* xccdf_check_exports(const struct xccdf_check* check); TODO */
 
 /**
  * Get an iterator to nested checks of the complex check.
