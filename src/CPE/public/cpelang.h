@@ -219,7 +219,7 @@ void cpe_platform_free(struct cpe_platform * platform);
  * Set / add functions
  * */
 /// @relates cpe_lang_model
-bool cpe_lang_model_setns_href(struct cpe_lang_model *model, const char *new_href);
+bool cpe_lang_model_set_ns_href(struct cpe_lang_model *model, const char *new_href);
 /// @relates cpe_lang_model
 bool cpe_lang_model_set_ns_prefix(struct cpe_lang_model *model, const char *new_prefix);
 /// @relates cpe_lang_model

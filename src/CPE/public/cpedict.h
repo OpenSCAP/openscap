@@ -182,30 +182,6 @@ bool cpe_check_iterator_has_more(struct cpe_check_iterator* it);
  */
 void cpe_check_iterator_free(struct cpe_check_iterator* it);
 
-/** @struct cpe_note_iterator
- * Iterator over CPE dictionary notes.
- * @see oscap_iterator
- */
-struct cpe_note_iterator;
-
-/** Iterator over CPE item ntoe items.
- * @see oscap_iterator
- * @relates cpe_note_iterator
- */
-struct cpe_note* cpe_note_iterator_next(struct cpe_note_iterator* it);
-
-/** Iterator over CPE item ntoe items.
- * @see oscap_iterator
- * @relates cpe_note_iterator
- */
-bool cpe_note_iterator_has_more(struct cpe_note_iterator* it);
-
-/** Iterator over CPE item ntoe items.
- * @see oscap_iterator
- * @relates cpe_note_iterator
- */
-void cpe_note_iterator_free(struct cpe_note_iterator* it);
-
 /** @struct cpe_vendor_iterator
  * Iterator over CPE dictionary item vendors.
  * @see oscap_iterator
