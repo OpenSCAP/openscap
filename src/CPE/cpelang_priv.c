@@ -64,12 +64,12 @@ struct cpe_lang_model {
         struct xml_metadata xml;
         char *ns_href;
         char *ns_prefix;
-	struct oscap_list* items;   // list of items
+	struct oscap_list* platforms;   // list of items
 	struct oscap_htable* item;  // item by ID
 };
 OSCAP_ACCESSOR_STRING(cpe_lang_model, ns_href)
 OSCAP_ACCESSOR_STRING(cpe_lang_model, ns_prefix)
-OSCAP_IGETTER_GEN(cpe_platform, cpe_lang_model, items)
+OSCAP_IGETTER_GEN(cpe_platform, cpe_lang_model, platforms)
 OSCAP_HGETTER_STRUCT(cpe_platform, cpe_lang_model, item)
 
 /*
@@ -154,7 +154,7 @@ struct cpe_lang_model * cpe_lang_model_new() {
 	if (ret == NULL)
 		return NULL;
 
-	ret->items = oscap_list_new();
+	ret->platforms = oscap_list_new();
 	ret->item = oscap_htable_new();
         ret->ns_href        = NULL;
         ret->ns_prefix      = NULL;
@@ -452,7 +452,7 @@ void cpe_lang_model_export_xml(struct cpe_lang_model * spec, struct oscap_export
 void cpe_lang_export(const struct cpe_lang_model * spec, xmlTextWriterPtr writer) {
 
         xmlTextWriterStartElementNS(writer, BAD_CAST spec->ns_prefix, BAD_CAST "platform-specification", BAD_CAST spec->ns_href);
-        OSCAP_FOREACH (cpe_platform, p, cpe_lang_model_get_items(spec),
+        OSCAP_FOREACH (cpe_platform, p, cpe_lang_model_get_platforms(spec),
 		// dump its contents to XML tree
                 cpe_platform_export( p, writer );
 	)
@@ -524,7 +524,7 @@ void cpe_lang_model_free(struct cpe_lang_model * platformspec)
 	if (platformspec == NULL) return;
 
 	oscap_htable_free(platformspec->item, NULL);
-	oscap_list_free(platformspec->items, (oscap_destruct_func)cpe_platform_free);
+	oscap_list_free(platformspec->platforms, (oscap_destruct_func)cpe_platform_free);
         xml_metadata_free(platformspec->xml);
 	oscap_free(platformspec);
 }
@@ -587,7 +587,7 @@ struct cpe_name *cpe_testexpr_get_meta_cpe(const struct cpe_testexpr *item)
 bool cpe_lang_model_add_item(struct cpe_lang_model *lang, struct cpe_platform *platform)
 {
 	if (lang == NULL || platform == NULL || platform->id == NULL) return false;
-	oscap_list_add(lang->items, platform);
+	oscap_list_add(lang->platforms, platform);
 	oscap_htable_add(lang->item, platform->id, platform);
 	return true;
 }
