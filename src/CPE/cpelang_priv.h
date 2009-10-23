@@ -1,6 +1,12 @@
 /**
+ * @addtogroup CPE
+ * @{
+ * @addtogroup cpelang CPE Language
+ * @{
+ * 
+ * 
  * @file cpelang_priv.h
- * \brief Interface to Common Platform Enumeration (CPE) Language
+ * \brief Interface to Common Platform Enumeration (CPE) Language.
  *
  * See more details at http://nvd.nist.gov/cpe.cfm
  */
