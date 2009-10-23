@@ -145,19 +145,35 @@ struct oscap_title_iterator * cpe_platform_get_titles(const struct cpe_platform 
 const struct cpe_testexpr * cpe_platform_get_expr(const struct cpe_platform *item);
 
 /**
- * cpe_lang_model functions to get variable members
+ * cpe_lang_model function to get namespace href
+ * @relates cpe_lang_model
  */
-/// @ realates cpe_lang_model
 const char * cpe_lang_model_get_ns_href(const struct cpe_lang_model *item);
-/// @ realates cpe_lang_model
+
+/**
+ * cpe_lang_model function to get namespace prefix
+ * @relates cpe_lang_model
+ */
 const char * cpe_lang_model_get_ns_prefix(const struct cpe_lang_model *item);
-/// @ realates cpe_lang_model
+
+/**
+ * cpe_lang_model function to get CPE platforms
+ * @relates cpe_lang_model
+ */
 struct cpe_platform_iterator * cpe_lang_model_get_platforms(const struct cpe_lang_model *item);
-/// @ realates cpe_lang_model
+
+/**
+ * cpe_lang_model function to get CPE items
+ * @relates cpe_lang_model
+ */
 struct cpe_platform * cpe_lang_model_get_item(const struct cpe_lang_model *item, const char *key);
 
 // add functions
-/// @ realates cpe_lang_model
+
+/**
+ * Add platform to CPE lang model
+ * @relates cpe_lang_model
+ */
 bool cpe_lang_model_add_item(struct cpe_lang_model *lang, struct cpe_platform *platform);
 
 /**

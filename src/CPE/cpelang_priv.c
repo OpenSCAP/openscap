@@ -98,6 +98,7 @@ OSCAP_IGETINS(oscap_title, cpe_platform, titles, title)
  */
 static int xmlTextReaderNextElement(xmlTextReaderPtr reader);
 static char * parse_text_element(xmlTextReaderPtr reader, char *name);
+static bool cpe_validate_xml(const char * filename);
 
 /* End of static declarations 
  * */
@@ -189,22 +190,51 @@ struct cpe_platform * cpe_platform_new() {
  * More info in representive header file.
  * returns the type of <structure>
  */
+
+static bool cpe_validate_xml(const char * filename) {
+
+	xmlParserCtxtPtr ctxt;	/* the parser context */
+	xmlDocPtr doc;		/* the resulting document tree */
+	bool ret = false;
+
+	/* create a parser context */
+	ctxt = xmlNewParserCtxt();
+	if (ctxt == NULL)
+		return false;
+	/* parse the file, activating the DTD validation option */
+	doc = xmlCtxtReadFile(ctxt, filename, NULL, XML_PARSE_DTDATTR);
+	/* check if parsing suceeded */
+	if (doc == NULL) {
+		xmlFreeParserCtxt(ctxt);
+		return false;
+	}
+	/* check if validation suceeded */
+	if (ctxt->valid)
+		ret = true;
+	xmlFreeDoc(doc);
+	/* free up the parser context */
+	xmlFreeParserCtxt(ctxt);
+	return ret;
+}
+
 struct cpe_lang_model * cpe_lang_model_parse_xml(const struct oscap_import_source * source) {
         
-    xmlTextReaderPtr reader;
-    struct cpe_lang_model *ret = NULL;
+        xmlTextReaderPtr reader;
+        struct cpe_lang_model *ret = NULL;
 
-    reader = xmlReaderForFile(oscap_import_source_get_filename(source),
-                              oscap_import_source_get_encoding(source), 0);
-    if (reader != NULL) {
-        xmlTextReaderRead(reader);
-        ret = cpe_lang_model_parse(reader);
-    } else {
-        fprintf(stderr, "Unable to open %s\n", oscap_import_source_get_filename(source));
-    }
-    xmlFreeTextReader(reader);
+        if (!cpe_validate_xml(oscap_import_source_get_filename(source))) return NULL;
 
-    return ret;
+        reader = xmlReaderForFile(oscap_import_source_get_filename(source),
+                                  oscap_import_source_get_encoding(source), 0);
+        if (reader != NULL) {
+            xmlTextReaderRead(reader);
+            ret = cpe_lang_model_parse(reader);
+        } else {
+            fprintf(stderr, "Unable to open %s\n", oscap_import_source_get_filename(source));
+        }
+        xmlFreeTextReader(reader);
+
+        return ret;
 }
 
 struct cpe_lang_model * cpe_lang_model_parse(xmlTextReaderPtr reader) {

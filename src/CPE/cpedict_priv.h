@@ -64,6 +64,7 @@ struct cpe_generator * cpe_generator_parse(xmlTextReaderPtr reader);
 
 /**
  * New dictionary item from XML
+ * @relates cpe_item
  * @param node cpe-item node
  * @return new dictionary item
  * @retval NULL on failure
@@ -104,6 +105,7 @@ struct cpe_dict_model *cpe_dict_model_new();
 
 /**
  * Load new CPE dictionary from XML node
+ * @relates cpe_dict
  * @param node file name of dictionary to import
  * @return new dictionary
  * @retval NULL on failure

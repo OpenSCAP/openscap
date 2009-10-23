@@ -244,6 +244,7 @@ void cpe_edition_free(struct cpe_edition * edition);
 void cpe_language_free(struct cpe_language * language);
 void cpe_itemmetadata_free(struct cpe_item_metadata * meta);
 
+static bool cpe_validate_xml(const char * filename);
 /***************************************************************************/
 
 /* Add item to dictionary. Function that just check both variables
@@ -287,6 +288,32 @@ static int xmlTextReaderNextElement(xmlTextReaderPtr reader) {
               if (ret == 0) break;
         } while (xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT);
         return ret;
+}
+
+static bool cpe_validate_xml(const char * filename) {
+
+	xmlParserCtxtPtr ctxt;	/* the parser context */
+	xmlDocPtr doc;		/* the resulting document tree */
+	bool ret = false;
+
+	/* create a parser context */
+	ctxt = xmlNewParserCtxt();
+	if (ctxt == NULL)
+		return false;
+	/* parse the file, activating the DTD validation option */
+	doc = xmlCtxtReadFile(ctxt, filename, NULL, XML_PARSE_DTDATTR);
+	/* check if parsing suceeded */
+	if (doc == NULL) {
+		xmlFreeParserCtxt(ctxt);
+		return false;
+	}
+	/* check if validation suceeded */
+	if (ctxt->valid)
+		ret = true;
+	xmlFreeDoc(doc);
+	/* free up the parser context */
+	xmlFreeParserCtxt(ctxt);
+	return ret;
 }
 
 /***************************************************************************/
@@ -505,6 +532,8 @@ struct cpe_dict_model * cpe_dict_model_parse_xml(const struct oscap_import_sourc
         
     xmlTextReaderPtr reader;
     struct cpe_dict_model *dict = NULL;
+
+    if (!cpe_validate_xml(oscap_import_source_get_filename(source))) return NULL;
 
     reader = xmlReaderForFile(oscap_import_source_get_filename(source), 
                               oscap_import_source_get_encoding(source), 0);
