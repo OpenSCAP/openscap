@@ -168,9 +168,16 @@ void oval_state_free(struct oval_state *state)
 	free(state);
 }
 
+void oval_state_set_family(struct oval_state *state, oval_family_t family) { /* TODO */
+	return NULL;
+}
+
 void oval_state_set_subtype(struct oval_state *state, oval_subtype_t subtype)
 {
 	state->subtype = subtype;
+}
+
+void oval_state_set_name(struct oval_state *state, char *name) { /* TODO */
 }
 
 void oval_state_add_note(struct oval_state *state, char *notes)

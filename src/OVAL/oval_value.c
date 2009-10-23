@@ -131,6 +131,21 @@ void oval_value_set_text(struct oval_value *value, char *text)
 	value->text = ((text==NULL)?NULL:strdup(text));
 }
 
+void oval_value_set_float(struct oval_value *value, float num) { /* TODO */
+}
+
+void oval_value_set_boolean(struct oval_value *value, int b) { /* TODO */
+	return;
+}
+
+void oval_value_set_binary(struct oval_value *value, unsigned char *num) { /* TODO */
+	return;
+}
+
+void oval_value_set_integer(struct oval_value *value, long num) { /* TODO */
+	return;
+}
+
 static void oval_value_parse_tag_consume_text(char *string, void *text) {
 	*(char**)text = strdup(string);
 }

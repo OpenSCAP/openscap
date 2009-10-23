@@ -9,7 +9,7 @@ nodist__oval_pm_la_SOURCES = oval_pm_wrap.c
 nodist_pyexec_PYTHON = oval.py
 pyexec_LTLIBRARIES = _oval_py.la
 _oval_py_la_LDFLAGS = -module -avoid-version
-_oval_py_la_LIBADD  = ${top_builddir}/src/OVAL/liboval.la
+_oval_py_la_LIBADD  = ${top_builddir}/src/OVAL/liboval.la ${top_builddir}/src/common/liboscapcommon.la
 nodist__oval_py_la_SOURCES = oval_py_wrap.c
 
 ##beware of: http://www.gnu.org/software/automake/manual/html_node/Multiple-Outputs.html

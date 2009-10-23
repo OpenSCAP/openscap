@@ -202,6 +202,10 @@ void oval_test_set_subtype(struct oval_test *test, oval_subtype_t subtype)
 	test->subtype = subtype;
 }
 
+void oval_test_set_family(struct oval_test *test, oval_family_t t) { /* TODO */
+	return NULL;
+}
+
 void oval_test_set_comment(struct oval_test *test, char *comm)
 {
 	if(test->comment!=NULL)free(test->comment);

@@ -167,6 +167,11 @@ struct oval_syschar_model *oval_syschar_model_new(
 	newmodel->variable_binding_map = oval_string_map_new();
 	return newmodel;
 }
+
+struct oval_syschar_model *oval_syschar_model_clone(struct oval_syschar_model *model){ /* TODO */
+	return NULL;
+}
+
 void oval_syschar_model_free(struct oval_syschar_model *model)
 {
 	if(model->sysinfo)oval_sysinfo_free(model->sysinfo);
@@ -567,6 +572,10 @@ struct oval_results_model *oval_results_model_new
 		}
 	}
 	return model;
+}
+
+struct oval_results_model *oval_results_model_clone(struct oval_results_model * model) { /* TODO */
+	return NULL;
 }
 
 void oval_results_model_free(struct oval_results_model *model)

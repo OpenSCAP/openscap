@@ -792,7 +792,7 @@ void oval_object_free(struct oval_object *);
 
 void oval_object_set_family(struct oval_object *, oval_family_t);
 void oval_object_set_subtype(struct oval_object *, oval_subtype_t);
-void oval_object_set_name(struct oval_object *, char *);
+/* void oval_object_set_name(struct oval_object *, char *); TODO */
 void oval_object_add_note(struct oval_object *, char *);
 void oval_object_set_comment(struct oval_object *, char *);
 void oval_object_set_deprecated(struct oval_object *, int);

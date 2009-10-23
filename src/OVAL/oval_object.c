@@ -74,6 +74,10 @@ oval_subtype_t oval_object_get_subtype(struct oval_object * object)
 	return ((struct oval_object *)object)->subtype;
 }
 
+char *oval_object_get_name (struct oval_object *object) { /* TODO */
+	return NULL;
+}
+
 struct oval_string_iterator *oval_object_get_notes(struct oval_object *object)
 {
 	return (struct oval_string_iterator *)oval_collection_iterator(object->
@@ -179,6 +183,10 @@ void oval_object_free(struct oval_object *object)
 	object->notes = NULL;
 	object->object_content = NULL;
 	free(object);
+}
+
+void oval_object_set_family(struct oval_object *obj, oval_family_t family) { /* TODO */
+	return NULL;
 }
 
 void oval_object_set_subtype(struct oval_object *object,

@@ -28,16 +28,16 @@
 
 %module oval
 %{
- #include "../../src/common/public/alloc.h"
- #include "../../src/common/public/oscap.h"
  #include "../../src/OVAL/public/oval_agent_api.h"
  #include "../../src/OVAL/public/oval_definitions.h"
  #include "../../src/OVAL/public/oval_system_characteristics.h"
  #include "../../src/OVAL/public/oval_results.h"
+ #include "../../src/common/public/oscap.h"
 %}
 
 %include "../../src/OVAL/public/oval_agent_api.h"
 %include "../../src/OVAL/public/oval_definitions.h"
 %include "../../src/OVAL/public/oval_system_characteristics.h"
 %include "../../src/OVAL/public/oval_results.h"
+%include "../../src/common/public/oscap.h"
 

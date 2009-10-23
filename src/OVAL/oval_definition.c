@@ -35,6 +35,7 @@
 #include "oval_collection_impl.h"
 #include "oval_string_map_impl.h"
 #include "oval_agent_api_impl.h"
+#include "../common/util.h"
 
 typedef struct oval_definition {
 	char *id;
@@ -207,6 +208,10 @@ void oval_definition_iterator_free(struct
 {
     oval_collection_iterator_free((struct oval_iterator *)
 					  oc_definition);
+}
+
+void oval_definition_set_id(struct oval_definition *definition, char *str) { /* NULL */
+	return NULL;
 }
 
 void oval_definition_set_version(struct oval_definition *definition,

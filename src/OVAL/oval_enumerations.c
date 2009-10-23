@@ -30,6 +30,7 @@
 #include <string.h>
 #include "oval_definitions_impl.h"
 #include "oval_string_map_impl.h"
+#include "../common/util.h"
 
 #define OVAL_ENUMERATION_INVALID (-1)
 

@@ -146,6 +146,10 @@ void oval_component_set_literal_value
 	}
 }
 
+void oval_component_set_type(struct oval_component *component, oval_component_type_t type) {
+	component->type = type;
+}
+
 struct oval_object *oval_component_get_object
 	(struct oval_component *component)
 {

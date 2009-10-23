@@ -79,6 +79,10 @@ struct oval_variable_model *oval_variable_model_new()
 	return model;
 }
 
+struct oval_variable_model *oval_variable_model_clone(struct oval_variable_model *model) { /* TODO */
+	return NULL;
+}
+
 void oval_variable_model_free(struct oval_variable_model *model)
 {
 	oval_string_map_free(model->varmap, (oscap_destruct_func)_oval_variable_model_frame_free);

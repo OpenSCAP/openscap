@@ -34,6 +34,7 @@
 #include "oval_collection_impl.h"
 #include "oval_parser_impl.h"
 #include "oval_string_map_impl.h"
+#include "../common/util.h"
 
 typedef struct oval_affected {
 	oval_affected_family_t family;
