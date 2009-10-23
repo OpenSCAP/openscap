@@ -79,8 +79,12 @@ pkginclude_HEADERS  =	public/oval_agent_api.h public/oval_definitions.h \
 
 if WANT_PROBES
 common_oval_sources += probes/probe-api.c 	\
+		       probes/_probe-api.h	\
 		       probes/fsdev.c		\
 		       probes/findfile.c 	\
+		       probes/public/probe-api.h\
+		       probes/public/fsdev.h	\
+		       probes/public/findfile.h	\
 		       oval_sexp.c		\
 		       oval_sexp.h		\
 		       oval_probe.h
@@ -91,10 +95,6 @@ nodist_liboval_testing_la_SOURCES = oval_testing_probe.c
 SUBDIRS = probes/SEAP
 liboval_la_LIBADD  += probes/SEAP/libseap.la
 
-pkginclude_HEADERS += \
-	probes/public/findfile.h \
-	probes/public/fsdev.h	 \
-	probes/public/probe-api.h
 endif
 
 CLEANFILES = $(nodist_liboval_testing_la_SOURCES)

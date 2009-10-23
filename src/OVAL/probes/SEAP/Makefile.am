@@ -53,25 +53,25 @@ libseap_la_SOURCES= generic/bfind.c		\
 		    _seap-packet.h		\
 		    _seap-error.h		\
 		    sexp-value.c		\
-		    _sexp-value.h
+		    _sexp-value.h		\
+		    public/seap-command.h	\
+		    public/seap-debug.h		\
+		    public/seap-types.h		\
+		    public/seap.h		\
+		    public/seap-scheme.h	\
+		    public/sexp-manip.h		\
+		    public/sexp-output.h	\
+		    public/sexp-parse.h		\
+		    public/sexp-types.h		\
+		    public/sexp.h		\
+		    public/sm_alloc.h		\
+		    public/seap-message.h	\
+		    public/seap-packet.h	\
+		    public/seap-error.h		\
+		    public/sexp-datatype.h 	\
+		    public/strbuf.h
 
 libseap_la_CFLAGS= @pthread_cflags@ -DUSE_XMALLOC -DXMALLOC_EXIT -DWANT_BASE64 -I$(top_srcdir) -I. -I $(top_srcdir)/src/OVAL/probes/SEAP/public/ -DSEAP_THREAD_SAFE -DSEAP_MSGID_BITS=32
 libseap_la_LDFLAGS= @pthread_ldflags@
 
-pkginclude_HEADERS= public/seap-command.h	\
-		 public/seap-debug.h	\
-		 public/seap-types.h	\
-		 public/seap.h		\
-		 public/seap-scheme.h	\
-		 public/sexp-manip.h	\
-		 public/sexp-output.h	\
-		 public/sexp-parse.h	\
-		 public/sexp-types.h	\
-		 public/sexp.h		\
-		 public/sm_alloc.h	\
-		 public/seap-message.h	\
-		 public/seap-packet.h	\
-		 public/seap-error.h	\
-		 public/sexp-datatype.h \
-		 public/strbuf.h
 
