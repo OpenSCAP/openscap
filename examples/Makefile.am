@@ -41,11 +41,15 @@ TESTS += SEAP/test_sexp-valid.sh \
 
 EXTRA_DIST += SEAP/test_sexp-valid.sh 		\
 	      SEAP/test_sexp-inval.sh		\
+	      SEAP/test_sexp-types.sh		\
+	      OVAL/test_probe-api.sh		\
 	      OVAL/test_probes.sh		\
 	      OVAL/test_probe_rpminfo.xml 	\
 	      OVAL/test_probe_runlevel.xml	\
 	      OVAL/test_probe_filecontent.xml	\
 	      OVAL/probes/file-set.xml		\
+	      OVAL/probes/file-set2.xml		\
+	      OVAL/probes/file-set3.xml		\
 	      OVAL/probes/file.xml
 
 sexp_parser_SOURCES = SEAP/sexp_parser.c
