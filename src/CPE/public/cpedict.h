@@ -749,8 +749,8 @@ bool cpe_item_add_title(struct cpe_item *item, struct oscap_title *new_title);
 /// @relates cpe_item
 bool cpe_item_add_note(struct cpe_item *item, struct oscap_title *new_title);
 
-/// @relates cpe_dict
-//bool cpe_dict_add_vendor(struct cpe_dict_model *dict, struct cpe_vendor *new_vendor);
+/// @relates cpe_dict_model
+bool cpe_dict_model_add_vendor(struct cpe_dict_model *dict, struct cpe_vendor *new_vendor);
 
 /// @relates cpe_vendor
 bool cpe_vendor_add_title(struct cpe_vendor *vendor, struct oscap_title *new_title);
