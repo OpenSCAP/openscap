@@ -218,7 +218,7 @@ static const struct oscap_string_map OVAL_DATATYPE_MAP[] = {
 	{ OVAL_DATATYPE_BINARY,            "binary"           },
 	{ OVAL_DATATYPE_BOOLEAN,           "boolean"          },
 	{ OVAL_DATATYPE_EVR_STRING,        "evr_string"       },
-	{ OVAL_DATATYPE_FILESET_REVISTION, "fileset_revision" },
+	{ OVAL_DATATYPE_FILESET_REVISION,  "fileset_revision" },
 	{ OVAL_DATATYPE_FLOAT,             "float"            },
 	{ OVAL_DATATYPE_IOS_VERSION,       "ios_version"      },
 	{ OVAL_DATATYPE_VERSION,           "version"          },

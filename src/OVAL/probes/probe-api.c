@@ -659,10 +659,10 @@ int probe_ent_setdatatype (SEXP_t *ent, oval_datatype_t type)
                 return SEXP_datatype_set (val, "bool");
         case OVAL_DATATYPE_EVR_STRING:
                 return SEXP_datatype_set (val, "evr_str");
-        case OVAL_DATATYPE_FILESET_REVISTION:
+        case OVAL_DATATYPE_FILESET_REVISION:
                 return SEXP_datatype_set (val, "fset_rev");
         case OVAL_DATATYPE_FLOAT:
-                /* TODO */
+                /* TODO */                
                 return (-1);
         case OVAL_DATATYPE_IOS_VERSION:
                 return SEXP_datatype_set (val, "ios_ver");
@@ -684,55 +684,68 @@ oval_datatype_t probe_ent_getdatatype (const SEXP_t *ent)
 {
         SEXP_t     *val;
         const char *str;
+        oval_datatype_t ret;
         
         _A(ent != NULL);
         _LOGCALL_;
 
         val = probe_ent_getval (ent);
+        ret = OVAL_DATATYPE_UNKNOWN;
 
         if (val == NULL)
-                return (-1);
+                return (OVAL_DATATYPE_UNKNOWN);
 
         str = SEXP_datatype (val);
         
         if (str != NULL) {
                 switch (str[0]) {
                 case 'b':
-                        if (strcmp (str, "bool") == 0)
-                                return (OVAL_DATATYPE_BOOLEAN);
-                        if (strcmp (str, "binary") == 0)
-                                return (OVAL_DATATYPE_BINARY);
+                        if (strcmp (str + 1, "ool") == 0)
+                                ret = OVAL_DATATYPE_BOOLEAN;
+                        else if (strcmp (str + 1, "inary") == 0)
+                                ret = OVAL_DATATYPE_BINARY;
                         break;
                 case 'e':
-                        if (strcmp (str, "evr_str") == 0)
-                                return (OVAL_DATATYPE_EVR_STRING);
+                        if (strcmp (str + 1, "vr_str") == 0)
+                                ret = OVAL_DATATYPE_EVR_STRING;
                         break;
                 case 'f':
-                        /* FIXME: typo in oval_definitions.h?
-                           if (strcmp (str, "fset_rev") == 0)
-                           return (OVAL_DATYPE_FILESET_REVISION);
-                        */
+                        if (strcmp (str + 1, "set_rev") == 0)
+                                ret = OVAL_DATATYPE_FILESET_REVISION;
                         break;
                 case 'i':
-                        if (strcmp (str, "ios_ver") == 0)
-                                return (OVAL_DATATYPE_IOS_VERSION);
+                        if (strcmp (str + 1, "os_ver") == 0)
+                                ret = OVAL_DATATYPE_IOS_VERSION;
                         break;
                 case 'v':
-                        if (strcmp (str, "version") == 0)
-                                return (OVAL_DATATYPE_VERSION);
+                        if (strcmp (str + 1, "ersion") == 0)
+                                ret = OVAL_DATATYPE_VERSION;
                         break;
                 }
         } else {
                 switch (SEXP_typeof (val)) {
                 case SEXP_TYPE_NUMBER:
-                        /* FIXME: float vs. integer */
-                        return (OVAL_DATATYPE_INTEGER);
+                        
+                        switch (SEXP_number_type (val)) {
+                        case SEXP_NUM_FLOAT:
+                                ret = OVAL_DATATYPE_FLOAT;
+                                break;
+                        case SEXP_NUM_NONE:
+                                abort ();
+                        default:
+                                ret = OVAL_DATATYPE_INTEGER;
+                        }
+                        
+                        break;
                 case SEXP_TYPE_STRING:
-                        return (OVAL_DATATYPE_STRING);
+                        ret = OVAL_DATATYPE_STRING;
+                        break;
                 }
         }
         
-        return (OVAL_DATATYPE_UNKNOWN);
+        SEXP_free (val);
+        
+        return (ret);
 }
 
 int probe_ent_setmask (SEXP_t *ent, bool mask)

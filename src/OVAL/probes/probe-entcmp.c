@@ -508,7 +508,7 @@ static oval_result_t probe_ent_cmp(SEXP_t *ent, SEXP_t *val2)
                 case OVAL_DATATYPE_EVR_STRING:
                         ores = probe_ent_cmp_evr(val1, val2, op);
                         break;
-                case OVAL_DATATYPE_FILESET_REVISTION:
+                case OVAL_DATATYPE_FILESET_REVISION:
                         ores = probe_ent_cmp_filesetrev(val1, val2, op);
                         break;
                 case OVAL_DATATYPE_FLOAT:
