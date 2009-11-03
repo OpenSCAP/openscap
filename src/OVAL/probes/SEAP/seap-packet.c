@@ -417,8 +417,91 @@ static SEXP_t *SEAP_packet_cmd2sexp (SEAP_cmd_t *cmd)
 
 static int SEAP_packet_sexp2err (SEXP_t *sexp_err, SEAP_err_t *seap_err)
 {
+        SEXP_t  *member;
+        uint32_t n;
+        
         _LOGCALL_;
-        return (-1);
+        
+        seap_err->id   = 0;
+        seap_err->code = SEAP_EUNKNOWN;
+        seap_err->type = SEAP_ETYPE_INT;
+        seap_err->data = NULL;
+        
+        n = 2;
+
+        while ((member = SEXP_list_nth (sexp_err, n)) != NULL) {
+                switch (SEXP_typeof (member)) {
+                case SEXP_TYPE_STRING:
+                        if (SEXP_string_nth (member, 1) != ':') {
+                                _D("Invalid string/attribute in packet\n");
+                                SEXP_free (member);
+                                errno = EINVAL;
+                                return (-1);
+                        }
+                        
+                        if (SEXP_strcmp (member, ":orig_id") == 0) {
+                                SEXP_t *val;
+
+                                val = SEXP_list_nth (member, ++n);
+
+                                if (!SEXP_numberp (val)) {
+                                        _D("Invalid type of :orig_id value\n");
+                                        SEXP_free (val);
+                                        SEXP_free (member);
+                                        errno = EINVAL;
+                                        return (-1);
+                                }
+                                
+#if SEAP_MSGID_BITS == 64
+                                seap_err->id = SEXP_number_getu_64 (val);
+#else
+                                seap_err->id = SEXP_number_getu_32 (val);
+#endif                    
+                                SEXP_free (val);
+                        } else if (SEXP_strcmp (member, ":type") == 0) {
+                                SEXP_t *val;
+
+                                val = SEXP_list_nth (member, ++n);
+                                
+                                if (SEXP_strcmp (val, "int") == 0)
+                                        seap_err->type = SEAP_ETYPE_INT;
+                                else if (SEXP_strcmp (val, "usr") == 0)
+                                        seap_err->type = SEAP_ETYPE_USER;
+                                else {
+                                        _D("Invalid value of :type attribute\n");
+                                        SEXP_free (val);
+                                        SEXP_free (member);
+                                        errno = EINVAL;
+                                        return (-1);
+                                }
+                                
+                                SEXP_free (val);
+                        } else {
+                                _D("Unknown packet attribute\n");
+                                SEXP_free (member);
+                                errno = EINVAL;
+                                return (-1);
+                        }
+
+                        break;
+                case SEXP_TYPE_NUMBER:
+                        seap_err->code = SEXP_number_getu_32 (member);
+                        SEXP_free (member);
+                        
+                        goto loop_exit;
+                default:
+                        _D("Unexpected type of packet member: list\n");
+                        SEXP_free (member);
+                        errno = EINVAL;
+                        return (-1);
+                }
+                
+                ++n;
+        }
+loop_exit:
+        seap_err->data = SEXP_list_nth (sexp_err, n + 1);
+        
+        return (0);
 }
 
 static SEXP_t *SEAP_packet_err2sexp (SEAP_err_t *err)

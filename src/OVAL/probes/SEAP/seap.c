@@ -1,5 +1,3 @@
-#ifndef __STUB_PROBE
-
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
@@ -311,10 +309,10 @@ static int __SEAP_recvmsg_process_cmd (SEAP_CTX_t *ctx, int sd, SEAP_cmd_t *cmd)
         return (0);
 }
 
-static int __SEAP_recvmsg_process_err (void)
+static int __SEAP_recvmsg_process_err (SEAP_CTX_t *ctx, int sd, SEAP_err_t *err)
 {
         _LOGCALL_;
-        return (-1);
+        return (0);
 }
 
 int SEAP_recvmsg (SEAP_CTX_t *ctx, int sd, SEAP_msg_t **seap_msg)
@@ -354,14 +352,25 @@ int SEAP_recvmsg (SEAP_CTX_t *ctx, int sd, SEAP_msg_t **seap_msg)
                                 return (-1);
                         }
                 case SEAP_PACKET_ERR:
-                        switch (__SEAP_recvmsg_process_err ()) {
+                        switch (__SEAP_recvmsg_process_err (ctx, sd, SEAP_packet_err (packet))) {
+                        case 0:
+                                break;
+                        case -1:
+                                SEXP_packet_free (packet);
+                                return (-1);
                         default:
                                 errno = EDOOFUS;
                                 return (-1);
                         }
+                        
+                        SEAP_packet_free (packet);
+                        errno = ECANCELED;
+                        return (-1);
                 default:
                         abort ();
                 }
+
+                SEXP_packet_free (packet);
         }
         
         /* NOTREACHED */
@@ -540,4 +549,3 @@ int SEAP_close (SEAP_CTX_t *ctx, int sd)
         
         return (ret);
 }
-#endif

@@ -513,7 +513,15 @@ const char *SEXP_datatype (const SEXP_t *s_exp);
  * Set the user data type of a sexp object.
  * @param s_exp the object to be modified
  */
-int         SEXP_datatype_set (SEXP_t *s_exp, const char *name) __attribute__ ((nonnull (2)));
+int SEXP_datatype_set (SEXP_t *s_exp, const char *name) __attribute__ ((nonnull (2)));
+
+/**
+ * Set the user data type of the nth sexp object in a list.
+ * @param list list containing the object to be modified
+ * @param n the position of the object
+ * @param name name of the user data type
+ */
+int SEXP_datatype_set_nth (SEXP_t *list, int n, const char *name) __attribute__ ((nonnull (3)));
 
 /**
  * Get the type of a sexp object.

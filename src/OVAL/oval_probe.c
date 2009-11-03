@@ -308,9 +308,24 @@ struct oval_syschar *oval_object_probe (struct oval_object *object, struct oval_
                 
                 _D("Waiting for reply...\n");
                 
+        recv_retry:
                 if (SEAP_recvmsg (p_tbl->ctx, psd->sd, &s_imsg) != 0) {
                         _D("Can't receive message: %u, %s\n", errno, strerror (errno));
                         
+                        switch (errno) {
+                        case ECANCELED:
+                        {
+                                SEAP_err_t err;
+
+                                if (SEXP_recverr_byid (ctx, sd, &err, SEAP_msg_id (s_omsg)) != 0)
+                                        goto recv_retry;
+                                
+                                /* 
+                                 * decide what to do based on the error code/type
+                                 */
+                        } break;
+                        }
+                        // end
                         if (SEAP_close (p_tbl->ctx, psd->sd) != 0) {
                                 _D("Can't close sd: %u, %s\n", errno, strerror (errno));
                                 

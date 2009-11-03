@@ -54,6 +54,11 @@ SEXP_t *SEAP_msg_get (SEAP_msg_t *msg)
         return SEXP_ref (msg->sexp);
 }
 
+SEAP_msgid_t SEAP_msg_id (SEAP_msg_t *msg)
+{
+        return (msg->id);
+}
+
 int SEAP_msgattr_set (SEAP_msg_t *msg, const char *attr, SEXP_t *value)
 {
         _A(msg != NULL);

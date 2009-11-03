@@ -1,4 +1,3 @@
-#ifndef __STUB_PROBE
 #pragma once
 #ifndef _SEAP_TYPES_H
 #define _SEAP_TYPES_H
@@ -29,4 +28,3 @@ struct SEAP_CTX {
 OSCAP_HIDDEN_END;
 
 #endif /* _SEAP_TYPES_H */
-#endif

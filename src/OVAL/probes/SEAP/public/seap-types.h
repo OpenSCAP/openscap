@@ -27,6 +27,7 @@ typedef struct SEAP_cmd SEAP_cmd_t;
 #define SEAP_EUSER  9  /* User-defined error */
 #define SEAP_ENOCMD 10 /* Unknown cmd */
 #define SEAP_EQFULL 11 /* Queue full */
+#define SEAP_EUNKNOWN 255 /* Unknown/Unexpected error */
 
 /* SEAP I/O flags */
 #define SEAP_IOFL_RECONN   0x00000001 /* Try to reconnect */
