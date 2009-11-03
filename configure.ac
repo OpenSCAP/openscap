@@ -115,6 +115,19 @@ AC_SEARCH_LIBS(
 )
 
 #
+# libnl
+#
+AC_CHECK_LIB(
+  [nl],
+  [nl_handle_alloc],
+  [libnl_cflags=`pkg-config --cflags libnl-1`
+   libnl_libs=`pkg-config --libs libnl-1`
+  ],
+  [AC_MSG_FAILURE([libnl is missing])],
+  [`pkg-config --libs libnl-1`]
+)
+
+#
 # threads
 #
 
@@ -195,6 +208,9 @@ AC_SUBST(pcre_libs)
 
 AC_SUBST(rpm_cflags)
 AC_SUBST(rpm_libs)
+
+AC_SUBST(libnl_cflags)
+AC_SUBST(libnl_libs)
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_HEADER_STDBOOL
