@@ -317,7 +317,7 @@ struct oval_syschar *oval_object_probe (struct oval_object *object, struct oval_
                         {
                                 SEAP_err_t err;
 
-                                if (SEXP_recverr_byid (ctx, sd, &err, SEAP_msg_id (s_omsg)) != 0)
+                                if (SEAP_recverr_byid (p_tbl->ctx, psd->sd, &err, SEAP_msg_id (s_omsg)) != 0)
                                         goto recv_retry;
                                 
                                 /* 

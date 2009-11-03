@@ -356,7 +356,7 @@ int SEAP_recvmsg (SEAP_CTX_t *ctx, int sd, SEAP_msg_t **seap_msg)
                         case 0:
                                 break;
                         case -1:
-                                SEXP_packet_free (packet);
+                                SEAP_packet_free (packet);
                                 return (-1);
                         default:
                                 errno = EDOOFUS;
