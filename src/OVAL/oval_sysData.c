@@ -58,6 +58,31 @@ struct oval_sysdata *oval_sysdata_new(char *id)
 	return sysdata;
 }
 
+struct oval_sysdata *oval_sysdata_clone(struct oval_sysdata *old_data, struct oval_syschar_model *model)
+{
+	struct oval_sysdata *new_data = oval_sysdata_new(oval_sysdata_get_id(old_data));
+	char *old_message = oval_sysdata_get_message(old_data);
+	if(old_message){
+		oval_sysdata_set_message(new_data, strdup(old_message));
+		oval_sysdata_set_message_level(new_data,oval_sysdata_get_message_level(old_data));
+	}
+
+	oval_sysdata_set_status(new_data, oval_sysdata_get_status(old_data));
+	oval_sysdata_set_subtype(old_data, oval_sysdata_get_subtype(old_data));
+
+	struct oval_sysitem_iterator *old_items = oval_sysdata_get_items(old_data);
+	while(oval_sysitem_iterator_has_more(old_items)){
+		struct oval_sysitem *old_item = oval_sysitem_iterator_next(old_items);
+		struct oval_sysitem *new_item = oval_sysitem_clone(old_item);
+		oval_sysdata_add_item(new_data, new_item);
+	}
+	oval_sysitem_iterator_free(old_items);
+
+	oval_syschar_model_add_sysdata(model, new_data);
+	return new_data;
+}
+
+
 void oval_sysdata_free(struct oval_sysdata *sysdata)
 {
 	if(sysdata->message!=NULL)free(sysdata->message);
@@ -109,7 +134,8 @@ char *oval_sysdata_get_message(struct oval_sysdata *data)
 {
 	return data->message;
 }
-static void set_oval_sysdata_message(struct oval_sysdata *data, char *message){
+void oval_sysdata_set_message(struct oval_sysdata *data, char *message)
+{
 	if(data->message!=NULL)free(data->message);
 	data->message = message==NULL?NULL:strdup(message);
 }
@@ -117,7 +143,8 @@ oval_message_level_t oval_sysdata_get_message_level(struct oval_sysdata *data)
 {
 	return data->message_level;
 }
-static void set_oval_sysdata_message_level(struct oval_sysdata *data, oval_message_level_t level){
+void oval_sysdata_set_message_level(struct oval_sysdata *data, oval_message_level_t level)
+{
 	data->message_level = level;
 }
 struct oval_sysitem_iterator *oval_sysdata_get_items(struct oval_sysdata *data)
@@ -138,7 +165,7 @@ void oval_sysdata_set_status(struct oval_sysdata *data, oval_syschar_status_t st
 }
 
 static void _oval_sysdata_parse_subtag_consume(char* message, void* sysdata) {
-			set_oval_sysdata_message(sysdata, message);
+			oval_sysdata_set_message(sysdata, message);
 }
 static void _oval_sysdata_parse_subtag_item_consumer(struct oval_sysitem *item, void* sysdata) {
 	oval_sysdata_add_item(sysdata, item);
@@ -153,7 +180,7 @@ static int _oval_sysdata_parse_subtag(
 	int return_code;
 	if(strcmp(NAMESPACE_OVALSYS,namespace)==0){
 		//This is a message
-		set_oval_sysdata_message_level(sysdata, oval_message_level_parse(reader, "level", OVAL_MESSAGE_LEVEL_INFO));
+		oval_sysdata_set_message_level(sysdata, oval_message_level_parse(reader, "level", OVAL_MESSAGE_LEVEL_INFO));
 		return_code = oval_parser_text_value(reader, context, _oval_sysdata_parse_subtag_consume, sysdata);
 	}else{
 		//typedef *(oval_sysitem_consumer)(struct oval_sysitem *, void* client);

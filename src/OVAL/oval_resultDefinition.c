@@ -80,6 +80,30 @@ struct oval_result_definition *oval_result_definition_new
 	definition->instance   = 1;
 	return definition;
 }
+
+struct oval_result_definition *oval_result_definition_clone
+	(struct oval_result_definition *old_definition, struct oval_result_system *new_system)
+{
+	struct oval_definition *ovaldef = oval_result_definition_get_definition(old_definition);
+	struct oval_result_definition *new_definition = oval_result_definition_new(new_system, oval_definition_get_id(ovaldef));
+
+	struct oval_result_criteria_node *old_crit = oval_result_definition_get_criteria(old_definition);
+	struct oval_result_criteria_node *new_crit = oval_result_criteria_node_clone(old_crit, new_system);
+	oval_result_definition_set_criteria(new_definition, new_crit);
+
+	struct oval_message_iterator *old_messages = oval_result_definition_get_messages(old_definition);
+	while(oval_message_iterator_has_more(old_messages)){
+		struct oval_message *old_message = oval_message_iterator_next(old_messages);
+		struct oval_message *new_message = oval_message_clone(old_message);
+		oval_result_definition_add_message(new_definition, new_message);
+	}
+	oval_message_iterator_free(old_messages);
+
+	oval_result_definition_set_result(new_definition, oval_result_definition_get_result(old_definition));
+	oval_result_definition_set_instance(new_definition, oval_result_definition_get_instance(old_definition));
+	return new_definition;
+}
+
 void oval_result_definition_free(struct oval_result_definition *definition)
 {
 	if(definition->criteria)oval_result_criteria_node_free(definition->criteria);

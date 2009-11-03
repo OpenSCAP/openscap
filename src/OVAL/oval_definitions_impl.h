@@ -123,6 +123,7 @@ typedef void (*oval_variable_binding_consumer) (struct oval_variable_binding *,
 					      void *);
 int oval_variable_binding_parse_tag
 	(xmlTextReaderPtr, struct oval_parser_context *, oval_variable_binding_consumer, void *);
+struct oval_variable_binding *oval_variable_binding_clone(struct oval_variable_binding *, struct oval_definition_model *);
 
 struct oval_object_content *oval_object_content_clone(struct oval_object_content *, struct oval_definition_model *);
 typedef void (*oval_object_content_consumer) (struct oval_object_content *,

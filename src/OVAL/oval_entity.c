@@ -177,10 +177,6 @@ void oval_entity_set_operation(struct oval_entity *entity,
 	entity->operation = operation;
 }
 
-void oval_entity_set_operator(struct oval_entity *entity, oval_operator_t oper) { /* TODO */
-	return NULL;
-}
-
 void oval_entity_set_mask(struct oval_entity *entity, int mask)
 {
 	entity->mask = mask;

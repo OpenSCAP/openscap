@@ -40,6 +40,7 @@ OSCAP_HIDDEN_START;
 
 struct oval_result_system *oval_result_system_new
 	(struct oval_syschar_model *);
+struct oval_result_system *oval_result_system_clone(struct oval_result_system *old_system, struct oval_results_model *new_model);
 void oval_result_system_free(struct oval_result_system *);
 int oval_result_system_parse
 	(xmlTextReaderPtr , struct oval_parser_context *,
@@ -60,6 +61,7 @@ struct oval_result_test *get_oval_result_test_new
 
 //MOVE
 struct oval_result_definition *oval_result_definition_new(struct oval_result_system *, char *);
+struct oval_result_definition *oval_result_definition_clone(struct oval_result_definition *old_definition, struct oval_result_system *new_system);
 void oval_result_definition_free(struct oval_result_definition *);
 
 
@@ -72,6 +74,7 @@ xmlNode *oval_result_definition_to_dom
 			xmlDocPtr, xmlNode *);
 
 struct oval_result_test *oval_result_test_new(struct oval_result_system *, char *);
+struct oval_result_test *oval_result_test_clone(struct oval_result_test *old_test, struct oval_result_system *system);
 void oval_result_test_free(struct oval_result_test *);
 struct oval_result_test *make_result_test_from_oval_test
 	(struct oval_result_system *system, struct oval_test *oval_test);
@@ -89,6 +92,8 @@ int oval_result_directives_to_dom
 
 struct oval_result_item *oval_result_item_new
 	(struct oval_result_system *, char *);
+struct oval_result_item *oval_result_item_clone
+	(struct oval_result_item *old_item, struct oval_result_system *new_system);
 void oval_result_item_free(struct oval_result_item *);
 int oval_result_item_parse_tag
 	(xmlTextReaderPtr , struct oval_parser_context *,
@@ -104,6 +109,7 @@ struct oval_result_test *oval_result_test_new();
 void oval_result_test_free(struct oval_result_test *);
 
 void oval_result_test_set_result(struct oval_result_test *, oval_result_t);
+void oval_result_test_set_instance(struct oval_result_test *test, int instance);
 void oval_result_test_set_message(struct oval_result_test *, struct oval_message *);
 void oval_result_test_add_item(struct oval_result_test *, struct oval_result_item *);
 void oval_result_test_add_binding(struct oval_result_test *, struct oval_variable_binding *);
@@ -111,6 +117,8 @@ void oval_result_test_add_binding(struct oval_result_test *, struct oval_variabl
 
 struct oval_result_criteria_node *oval_result_criteria_node_new
 	(oval_criteria_node_type_t, int, ...);
+struct oval_result_criteria_node *oval_result_criteria_node_clone
+	(struct oval_result_criteria_node *old_node, struct oval_result_system *new_system);
 void oval_result_criteria_node_free(struct oval_result_criteria_node *);
 struct oval_result_criteria_node *make_result_criteria_node_from_oval_criteria_node
 	(struct oval_result_system *, struct oval_criteria_node *);

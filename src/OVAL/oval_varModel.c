@@ -43,7 +43,7 @@ typedef struct _oval_variable_model_frame {
 } _oval_variable_model_frame_t;
 
 _oval_variable_model_frame_t *_oval_variable_model_frame_new
-	(char *id, char *comment, oval_datatype_t datatype)
+	(char *id, const char *comment, oval_datatype_t datatype)
 {
 	_oval_variable_model_frame_t *frame = (_oval_variable_model_frame_t *)malloc(sizeof(_oval_variable_model_frame_t));
 	frame->id       = strdup(id);
@@ -79,8 +79,23 @@ struct oval_variable_model *oval_variable_model_new()
 	return model;
 }
 
-struct oval_variable_model *oval_variable_model_clone(struct oval_variable_model *model) { /* TODO */
-	return NULL;
+struct oval_variable_model *oval_variable_model_clone(struct oval_variable_model *old_model) {
+	struct oval_variable_model *new_model = oval_variable_model_new();
+	struct oval_string_iterator *old_varids = oval_variable_model_get_variable_ids(old_model);
+	while(oval_string_iterator_has_more(old_varids)){
+		char *varid = oval_string_iterator_next(old_varids);
+		oval_datatype_t datatype = oval_variable_model_get_datatype(old_model, varid);
+		struct oval_string_iterator *values = oval_variable_model_get_values(old_model, varid);
+		const char *comment = oval_variable_model_get_comment(old_model, varid);
+		while(oval_string_iterator_has_more(values)){
+			char *value = oval_string_iterator_next(values);
+			oval_variable_model_add(new_model, varid, comment, datatype, value);
+		}
+		oval_string_iterator_free(values);
+	}
+	oval_string_iterator_free(old_varids);
+
+	return new_model;
 }
 
 void oval_variable_model_free(struct oval_variable_model *model)
@@ -88,6 +103,16 @@ void oval_variable_model_free(struct oval_variable_model *model)
 	oval_string_map_free(model->varmap, (oscap_destruct_func)_oval_variable_model_frame_free);
 	model->varmap = NULL;
 	free(model);
+}
+
+void oval_variable_model_add(struct oval_variable_model *model, char *varid, const char* comment, oval_datatype_t datatype, char *value)
+{
+	struct _oval_variable_model_frame *frame = (struct _oval_variable_model_frame *)oval_string_map_get_value(model->varmap, varid);
+	if(frame==NULL){
+		frame = _oval_variable_model_frame_new(varid, comment, datatype);
+	}
+	value   = (value)?strdup(value):NULL;
+	oval_collection_add(frame->values, value);
 }
 
 #define NAMESPACE_VARIABLES "http://oval.mitre.org/XMLSchema/oval-variables-5"

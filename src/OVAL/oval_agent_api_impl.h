@@ -65,6 +65,7 @@ struct oval_variable   *oval_variable_clone  (struct oval_variable   *, struct o
 
 struct oval_syschar *get_oval_syschar_new(struct oval_syschar_model *, struct oval_object *);
 struct oval_syschar_item *get_oval_syschar_item_new(struct oval_syschar_model *, char *);
+struct oval_sysdata *oval_syschar_model_get_sysdata(struct oval_syschar_model *, char*);
 
 typedef bool oval_syschar_resolver(struct oval_syschar *, void *);
 
@@ -74,7 +75,9 @@ xmlNode *oval_syschar_model_to_dom
 
 struct oval_sysdata *get_oval_sysdata_new(struct oval_syschar_model *, char *);
 void oval_syschar_model_add_syschar(struct oval_syschar_model *model, struct oval_syschar *syschar);
+void oval_syschar_model_add_sysdata(struct oval_syschar_model *model, struct oval_sysdata *sysdata);
 void oval_syschar_model_set_sysinfo(struct oval_syschar_model *model, struct oval_sysinfo *sysinfo);
+void oval_syschar_model_add_variable_binding(struct oval_syschar_model *model, struct oval_variable_binding *binding);
 
 typedef struct oval_export_target {
 	char *filename;

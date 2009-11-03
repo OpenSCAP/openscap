@@ -332,7 +332,7 @@ static int _oval_variable_parse_constant_tag(xmlTextReaderPtr reader,
 		int line = xmlTextReaderGetParserLineNumber(reader);
 		printf
 		    ("NOTICE: _oval_variable_parse_constant_tag::parse of <%s> TODO at line %d\n",
-		     tagname, line);//TODO: Implement parse of constant tag
+		     tagname, line);
 		return_code = oval_parser_skip_tag(reader, context);
 	}
 	if (return_code != 1) {
@@ -405,7 +405,7 @@ int oval_variable_parse_tag(xmlTextReaderPtr reader,
 		}
 		break;
 	case OVAL_VARIABLE_EXTERNAL: {
-		// TODO: implement external variable parse
+		// There's no content to process.
 		oval_parser_skip_tag(reader, context);
 		break;
 	}
@@ -487,7 +487,8 @@ static xmlNode *_oval_VARIABLE_CONSTANT_to_dom
 	struct oval_value_iterator *values = oval_variable_get_values(variable);
 	while(oval_value_iterator_has_more(values)){
 		struct oval_value *value = oval_value_iterator_next(values);
-		oval_value_to_dom(value, doc, variable_node);
+		char * text = oval_value_get_text(value);
+		xmlNewChild(variable_node, ns_definitions, BAD_CAST "value", text);
 	}
 	oval_value_iterator_free(values);
 

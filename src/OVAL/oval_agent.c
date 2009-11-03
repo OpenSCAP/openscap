@@ -93,10 +93,10 @@ struct oval_definition_model *oval_definition_model_new()
 	return newmodel;
 }
 
-typedef void (*_oval_definition_model_clone_func)(void *, struct oval_definition_model *);
+typedef void (*_oval_result_system_clone_func)(void *, struct oval_definition_model *);
 
-void _oval_definition_model_clone
-	(struct oval_string_map *oldmap, struct oval_definition_model *newmodel, _oval_definition_model_clone_func cloner)
+static void _oval_definition_model_clone
+	(struct oval_string_map *oldmap, struct oval_definition_model *newmodel, _oval_result_system_clone_func cloner)
 {
 	struct oval_string_iterator *keys = (struct oval_string_iterator *)oval_string_map_keys(oldmap);
 	while(oval_string_iterator_has_more(keys)){
@@ -113,19 +113,19 @@ struct oval_definition_model *oval_definition_model_clone
 	struct oval_definition_model *newmodel = oval_definition_model_new();
 	_oval_definition_model_clone
 		(oldmodel->definition_map, newmodel,
-				(_oval_definition_model_clone_func)oval_definition_clone);
+				(_oval_result_system_clone_func)oval_definition_clone);
 	_oval_definition_model_clone
 		(oldmodel->object_map, newmodel,
-				(_oval_definition_model_clone_func)oval_object_clone);
+				(_oval_result_system_clone_func)oval_object_clone);
 	_oval_definition_model_clone
 		(oldmodel->state_map, newmodel,
-				(_oval_definition_model_clone_func)oval_state_clone);
+				(_oval_result_system_clone_func)oval_state_clone);
 	_oval_definition_model_clone
 		(oldmodel->test_map, newmodel,
-				(_oval_definition_model_clone_func)oval_test_clone);
+				(_oval_result_system_clone_func)oval_test_clone);
 	_oval_definition_model_clone
 		(oldmodel->variable_map, newmodel,
-				(_oval_definition_model_clone_func)oval_variable_clone);
+				(_oval_result_system_clone_func)oval_variable_clone);
 	return newmodel;
 }
 
@@ -168,8 +168,40 @@ struct oval_syschar_model *oval_syschar_model_new(
 	return newmodel;
 }
 
-struct oval_syschar_model *oval_syschar_model_clone(struct oval_syschar_model *model){ /* TODO */
-	return NULL;
+
+typedef void (*_oval_syschar_model_clone_func)(void *, struct oval_syschar_model *);
+
+static void _oval_syschar_model_clone_variable_binding(struct oval_variable_binding *old_binding, struct oval_syschar_model *new_model){
+	struct oval_definition_model *new_defmodel = oval_syschar_model_get_definition_model(new_model);
+	struct oval_variable_binding *new_binding = oval_variable_binding_clone(old_binding, new_defmodel);
+	oval_syschar_model_add_variable_binding(new_model, new_binding);
+}
+
+static void _oval_syschar_model_clone
+	(struct oval_string_map *oldmap, struct oval_syschar_model *newmodel, _oval_syschar_model_clone_func cloner)
+{
+	struct oval_string_iterator *keys = (struct oval_string_iterator *)oval_string_map_keys(oldmap);
+	while(oval_string_iterator_has_more(keys)){
+		char *key = oval_string_iterator_next(keys);
+		void *olditem = oval_string_map_get_value(oldmap, key);
+		(*cloner)(olditem, newmodel);
+	}
+	oval_string_iterator_free(keys);
+}
+
+
+struct oval_syschar_model *oval_syschar_model_clone(struct oval_syschar_model *old_model){
+	struct oval_syschar_model *new_model = oval_syschar_model_new(old_model->definition_model);
+	_oval_syschar_model_clone(old_model->syschar_map, new_model,
+			(_oval_syschar_model_clone_func)oval_syschar_clone);
+	_oval_syschar_model_clone(old_model->sysdata_map, new_model,
+			(_oval_syschar_model_clone_func)oval_sysdata_clone);
+	_oval_syschar_model_clone(old_model->variable_binding_map, new_model,
+			(_oval_syschar_model_clone_func)_oval_syschar_model_clone_variable_binding);
+	struct oval_sysinfo *old_sysinfo = oval_syschar_model_get_sysinfo(old_model);
+	struct oval_sysinfo *new_sysinfo = oval_sysinfo_clone(old_sysinfo);
+	oval_syschar_model_set_sysinfo(new_model, new_sysinfo);
+	return new_model;
 }
 
 void oval_syschar_model_free(struct oval_syschar_model *model)
@@ -256,6 +288,13 @@ void oval_syschar_model_add_syschar(struct oval_syschar_model *model,
 	}
 }
 
+void oval_syschar_model_add_variable_binding(struct oval_syschar_model *model, struct oval_variable_binding *binding)
+{
+	struct oval_variable *variable = oval_variable_binding_get_variable(binding);
+	char *varid = oval_variable_get_id(variable);
+	oval_string_map_put(model->variable_binding_map, varid, binding);
+}
+
 void oval_syschar_model_probe_objects(struct oval_syschar_model *syschar_model)
 {
 	struct oval_sysinfo *sysinfo = oval_syschar_model_get_sysinfo(syschar_model);
@@ -284,8 +323,7 @@ void oval_syschar_model_probe_objects(struct oval_syschar_model *syschar_model)
 	}
 }
 
-static void oval_syschar_model_add_sysdata(struct oval_syschar_model *model,
-		       struct oval_sysdata *sysdata)
+void oval_syschar_model_add_sysdata(struct oval_syschar_model *model, struct oval_sysdata *sysdata)
 {
 	char *id = oval_sysdata_get_id(sysdata);
 	if(id!=NULL){
@@ -412,8 +450,7 @@ struct oval_syschar *oval_syschar_model_get_syschar(struct oval_syschar_model *m
 		(model->syschar_map, object_id);
 }
 
-static struct oval_sysdata *get_oval_sysdata(struct oval_syschar_model *model,
-					char *id)
+struct oval_sysdata *oval_syschar_model_get_sysdata(struct oval_syschar_model *model, char* id)
 {
 	return (struct oval_sysdata *)oval_string_map_get_value
 		(model->sysdata_map, id);
@@ -470,7 +507,7 @@ struct oval_syschar *get_oval_syschar_new
 
 struct oval_sysdata *get_oval_sysdata_new(struct oval_syschar_model *model, char *id)
 {
-	struct oval_sysdata *sysdata = get_oval_sysdata(model, id);
+	struct oval_sysdata *sysdata = oval_syschar_model_get_sysdata(model, id);
 	if (sysdata == NULL) {
 		sysdata = oval_sysdata_new(id);
 		oval_syschar_model_add_sysdata(model, sysdata);
@@ -574,9 +611,21 @@ struct oval_results_model *oval_results_model_new
 	return model;
 }
 
-struct oval_results_model *oval_results_model_clone(struct oval_results_model * model) { /* TODO */
-	return NULL;
+
+struct oval_results_model *oval_results_model_clone(struct oval_results_model * old_resmodel)
+{
+	struct oval_definition_model *old_defmodel = oval_results_model_get_definition_model(old_resmodel);
+	struct oval_results_model *new_resmodel = oval_results_model_new(old_defmodel, NULL);
+	struct oval_result_system_iterator *old_systems = oval_results_model_get_systems(old_resmodel);
+	while(oval_result_system_iterator_has_more(old_systems)){
+		struct oval_result_system *old_system = oval_result_system_iterator_next(old_systems);
+		oval_result_system_clone(old_system, new_resmodel);
+	}
+	oval_result_system_iterator_free(old_systems);
+
+	return new_resmodel;
 }
+
 
 void oval_results_model_free(struct oval_results_model *model)
 {

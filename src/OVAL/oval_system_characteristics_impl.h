@@ -66,6 +66,7 @@ void oval_sysinfo_set_primary_host_name(struct oval_sysinfo *, char *);
 void oval_sysinfo_add_interface(struct oval_sysinfo *, struct oval_sysint *);
 
 struct oval_sysdata *oval_sysdata_new(char *id);
+struct oval_sysdata *oval_sysdata_clone(struct oval_sysdata *old_data, struct oval_syschar_model *model);
 void oval_sysdata_free(struct oval_sysdata *);
 void oval_sysdata_to_print(struct oval_sysdata *, char *, int);
 void oval_sysdata_to_dom  (struct oval_sysdata *, xmlDoc *, xmlNode *);
@@ -73,12 +74,15 @@ int oval_sysdata_parse_tag(xmlTextReaderPtr, struct oval_parser_context *);
 
 void oval_sysdata_set_status(struct oval_sysdata *, oval_syschar_status_t);
 void oval_sysdata_set_subtype(struct oval_sysdata *sysdata, oval_subtype_t subtype);
+void oval_sysdata_set_message(struct oval_sysdata *data, char *message);
+void oval_sysdata_set_message_level(struct oval_sysdata *data, oval_message_level_t level);
 void oval_sysdata_add_item(struct oval_sysdata *, struct oval_sysitem *);
 
 struct oval_syschar *oval_syschar_new(struct oval_object *);
+struct oval_syschar *oval_syschar_clone(struct oval_syschar *old_syschar, struct oval_syschar_model *sys_model);
 void oval_syschar_free(struct oval_syschar *);
 
-void oval_syschar_add_messages(struct oval_syschar *, char *);
+void oval_syschar_add_message(struct oval_syschar *syschar, struct oval_message *message);
 void oval_syschar_set_flag(struct oval_syschar *model, oval_syschar_collection_flag_t flag);
 void oval_syschar_set_object(struct oval_syschar *, struct oval_object *);
 void oval_syschar_add_variable_binding(struct oval_syschar *, struct oval_variable_binding *);
@@ -95,6 +99,7 @@ char* oval_syschar_status_text(oval_syschar_status_t);
 //			    oval_affected_consumer, void *);
 
 struct oval_sysitem *oval_sysitem_new();
+struct oval_sysitem *oval_sysitem_clone(struct oval_sysitem *old_item);
 typedef void (*oval_sysitem_consumer)(struct oval_sysitem *, void* client);
 int oval_sysitem_parse_tag(
 		xmlTextReaderPtr,

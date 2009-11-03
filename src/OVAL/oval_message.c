@@ -49,6 +49,16 @@ struct oval_message *oval_message_new()
 	return message;
 }
 
+struct oval_message *oval_message_clone(struct oval_message *old_message)
+{
+	struct oval_message *new_message = oval_message_new();
+	oval_message_level_t level = oval_message_get_level(old_message);
+	oval_message_set_level(new_message, level);
+	char *text = oval_message_get_text(old_message);
+	oval_message_set_text(new_message, strdup(text));
+	return new_message;
+}
+
 void oval_message_free(struct oval_message *message)
 {
 	if(message->text   !=NULL)free(message->text);

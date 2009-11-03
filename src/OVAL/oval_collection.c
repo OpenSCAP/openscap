@@ -163,16 +163,6 @@ void oval_collection_iterator_free(struct oval_iterator *iterator)
 	}
 }
 
-/*
-static struct oval_string_iterator *oval_collection_string_iterator(struct
-								    oval_collection
-								    *os_string)
-{
-	return (struct oval_string_iterator *)
-	    oval_collection_iterator(os_string);
-}
-*///TODO: REVIEW
-
 
 struct oval_iterator *oval_collection_iterator_new()
 {

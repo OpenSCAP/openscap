@@ -55,6 +55,24 @@ struct oval_result_item *oval_result_item_new
 
 	return item;
 }
+struct oval_result_item *oval_result_item_clone
+	(struct oval_result_item *old_item, struct oval_result_system *new_system)
+{
+	struct oval_sysdata *old_sysdata = oval_result_item_get_sysdata(old_item);
+	char *datid = oval_sysdata_get_id(old_sysdata);
+	struct oval_result_item *new_item = oval_result_item_new(new_system, datid);
+	struct oval_message_iterator *old_messages = oval_result_item_get_messages(old_item);
+	while(oval_message_iterator_has_more(old_messages)){
+		struct oval_message *old_message = oval_message_iterator_next(old_messages);
+		struct oval_message *new_message = oval_message_clone(old_message);
+		oval_result_item_add_message(new_item, new_message);
+	}
+	oval_message_iterator_free(old_messages);
+
+	oval_result_item_set_result(old_item, oval_result_item_get_result(old_item));
+
+	return new_item;
+}
 
 void oval_result_item_free(struct oval_result_item *item)
 {

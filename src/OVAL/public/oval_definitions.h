@@ -712,7 +712,6 @@ char *oval_reference_get_url   (struct oval_reference *);
 struct oval_definition *oval_definition_new(char *id);
 void oval_definition_free(struct oval_definition *);
 
-void oval_definition_set_id(struct oval_definition *, char *);
 void oval_definition_set_version(struct oval_definition *, int);
 void oval_definition_set_class(struct oval_definition *, oval_definition_class_t);
 void oval_definition_set_deprecated(struct oval_definition *, int);
@@ -790,9 +789,7 @@ struct oval_criteria_node      *oval_definition_get_criteria(struct oval_definit
 struct oval_object *oval_object_new(char *id);
 void oval_object_free(struct oval_object *);
 
-void oval_object_set_family(struct oval_object *, oval_family_t);
 void oval_object_set_subtype(struct oval_object *, oval_subtype_t);
-/* void oval_object_set_name(struct oval_object *, char *); TODO */
 void oval_object_add_note(struct oval_object *, char *);
 void oval_object_set_comment(struct oval_object *, char *);
 void oval_object_set_deprecated(struct oval_object *, int);
@@ -820,7 +817,7 @@ oval_subtype_t                       oval_object_get_subtype       (struct oval_
  * Get OVAL object name.
  * @relates oval_object
  */
-char                                *oval_object_get_name          (struct oval_object *);
+const char                          *oval_object_get_name          (struct oval_object *);
 
 /**
  * Get iterator to OVAL object notes.
@@ -857,7 +854,6 @@ struct oval_behavior_iterator       *oval_object_get_behaviors     (struct oval_
 struct oval_test *oval_test_new(char *);
 void oval_test_free(struct oval_test *);
 
-void oval_test_set_family(struct oval_test *, oval_family_t);
 void oval_test_set_subtype(struct oval_test *, oval_subtype_t);
 void oval_test_set_comment(struct oval_test *, char *);
 void oval_test_set_deprecated(struct oval_test *, int);
@@ -1015,7 +1011,6 @@ void oval_entity_free(struct oval_entity *);
 
 void oval_entity_set_type(struct oval_entity *, oval_entity_type_t);
 void oval_entity_set_datatype(struct oval_entity *, oval_datatype_t);
-void oval_entity_set_operator(struct oval_entity *, oval_operator_t);
 void oval_entity_set_mask(struct oval_entity *, int);
 void oval_entity_set_varref_type(struct oval_entity *, oval_entity_varref_type_t);
 void oval_entity_set_variable(struct oval_entity *, struct oval_variable *);
@@ -1221,9 +1216,7 @@ long               oval_value_get_integer (struct oval_value *);//datatype==OVAL
 struct oval_state *oval_state_new(char *);
 void oval_state_free(struct oval_state *);
 
-void oval_state_set_family(struct oval_state *, oval_family_t);
 void oval_state_set_subtype(struct oval_state *, oval_subtype_t);
-void oval_state_set_name(struct oval_state *, char *);
 void oval_state_add_note(struct oval_state *, char *);
 void oval_state_set_comment(struct oval_state *, char *);
 void oval_state_set_deprecated(struct oval_state *, int);
@@ -1562,6 +1555,7 @@ void oval_component_set_timedif_format_2(struct oval_component *, oval_datetime_
 void oval_component_set_regex_pattern(struct oval_component *, char *); //type==OVAL_COMPONENT_REGEX_CAPTURE
 
 struct oval_message *oval_message_new();
+struct oval_message *oval_message_clone(struct oval_message *old_message);
 void oval_message_free(struct oval_message *);
 
 void oval_message_set_text(struct oval_message *, char *);

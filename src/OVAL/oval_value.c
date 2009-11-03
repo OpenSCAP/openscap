@@ -132,18 +132,19 @@ void oval_value_set_text(struct oval_value *value, char *text)
 }
 
 void oval_value_set_float(struct oval_value *value, float num) { /* TODO */
+	//TODO::VALUE
 }
 
 void oval_value_set_boolean(struct oval_value *value, int b) { /* TODO */
-	return;
+	//TODO::VALUE
 }
 
 void oval_value_set_binary(struct oval_value *value, unsigned char *num) { /* TODO */
-	return;
+	//TODO::VALUE
 }
 
 void oval_value_set_integer(struct oval_value *value, long num) { /* TODO */
-	return;
+	//TODO::VALUE
 }
 
 static void oval_value_parse_tag_consume_text(char *string, void *text) {

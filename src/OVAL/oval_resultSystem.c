@@ -56,6 +56,37 @@ struct oval_result_system *oval_result_system_new(struct oval_syschar_model *sys
 	return sys;
 }
 
+
+typedef void (*_oval_result_system_clone_func)(void *, struct oval_result_system *);
+
+static void _oval_result_system_clone
+	(struct oval_string_map *oldmap, struct oval_result_system *new_system, _oval_result_system_clone_func cloner)
+{
+	struct oval_string_iterator *keys = (struct oval_string_iterator *)oval_string_map_keys(oldmap);
+	while(oval_string_iterator_has_more(keys)){
+		char *key = oval_string_iterator_next(keys);
+		void *olditem = oval_string_map_get_value(oldmap, key);
+		(*cloner)(olditem, new_system);
+	}
+	oval_string_iterator_free(keys);
+}
+
+struct oval_result_system *oval_result_system_clone(struct oval_result_system *old_system, struct oval_results_model *resmodel)
+{
+	struct oval_result_system *new_system = oval_result_system_new(oval_result_system_get_syschar_model(old_system));
+
+	_oval_result_system_clone
+		(old_system->definitions, new_system,
+				(_oval_result_system_clone_func)oval_result_definition_clone);
+
+	_oval_result_system_clone
+		(old_system->tests, new_system,
+				(_oval_result_system_clone_func)oval_result_test_clone);
+
+
+	return new_system;
+}
+
 void oval_result_system_free(struct oval_result_system *sys)
 {
 	oval_string_map_free

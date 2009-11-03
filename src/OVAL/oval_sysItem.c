@@ -55,6 +55,28 @@ struct oval_sysitem *oval_sysitem_new()
 	return sysitem;
 }
 
+struct oval_sysitem *oval_sysitem_clone(struct oval_sysitem *old_item)
+{
+	struct oval_sysitem *new_item = oval_sysitem_new();
+
+
+	char *old_value = oval_sysitem_get_value(old_item);
+	if(old_value){
+		oval_sysitem_set_value(new_item, strdup(old_value));
+	}
+
+	char* old_name = oval_sysitem_get_name(old_item);
+	if(old_name){
+		oval_sysitem_set_name(new_item, strdup(old_name));
+	}
+
+	oval_sysitem_set_datatype(new_item, oval_sysitem_get_datatype(old_item));
+	oval_sysitem_set_mask(new_item, oval_sysitem_get_mask(old_item));
+	oval_sysitem_set_status(new_item, oval_sysitem_get_status(old_item));
+
+	return new_item;
+}
+
 void oval_sysitem_free(struct oval_sysitem *sysitem)
 {
 	if(sysitem->name   !=NULL)free(sysitem->name);

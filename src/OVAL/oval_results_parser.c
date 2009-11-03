@@ -40,31 +40,6 @@
 
 #define DEBUG_OVALRES_PARSER 1
 
-/*
-static int _ovalres_parser_process_node_consume_collected_objects(xmlTextReaderPtr reader,
-		  struct oval_parser_context *context, void *null)
-{
-	return oval_syschar_parse_tag(reader, context);
-}
-*///TODO: REVIEW
-
-/*
-static int _ovalres_parser_process_node_consume_system_data(xmlTextReaderPtr reader,
-		  struct oval_parser_context *context, void *null)
-{
-	return oval_sysdata_parse_tag(reader, context);
-}
-*///TODO: REVIEW
-
-//typedef int (*oval_xml_tag_parser)    (xmlTextReaderPtr, struct oval_parser_context*, void*);
-/*
-static int _oval_results_parser_consume_definitions
-	(xmlTextReaderPtr reader, struct oval_parser_context *context, void *null)
-{
-	if(DEBUG_OVALRES_PARSER)oval_parser_log_debug(context,"Calling oval_parser_parse_node");
-	return ovaldef_parse_node(reader, context);
-}
-*///TODO: REVIEW
 
 static void _oval_results_parser_consume_system
 	(struct oval_result_system *sys, struct oval_results_model *model)

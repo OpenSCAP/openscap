@@ -42,8 +42,8 @@
 #define OVAL_RESULT_TEST_DEBUG 0
 static int rpmvercmp(const char * a, const char * b); // don't really feel like creating a new header file just for this
 
-/* 
- * code from http://rpm.org/api/4.4.2.2/rpmvercmp_8c-source.html 
+/*
+ * code from http://rpm.org/api/4.4.2.2/rpmvercmp_8c-source.html
  */
 
 /* compare alpha and numeric segments of two versions */
@@ -178,6 +178,41 @@ struct oval_result_test *oval_result_test_new(struct oval_result_system *sys, ch
 	test->bindings_clearable   = false;
 	return test;
 }
+
+struct oval_result_test *oval_result_test_clone
+	(struct oval_result_test *old_test, struct oval_result_system *new_system)
+{
+	struct oval_test *oval_test = oval_result_test_get_test(old_test);
+	char *testid = oval_test_get_id(oval_test);
+	struct oval_result_test *new_test = oval_result_test_new(new_system, testid);
+	struct oval_result_item_iterator *old_items = oval_result_test_get_items(old_test);
+	while(oval_result_item_iterator_has_more(old_items)){
+		struct oval_result_item *old_item = oval_result_item_iterator_next(old_items);
+		struct oval_result_item *new_item = oval_result_item_clone(old_item, new_system);
+		oval_result_test_add_item(new_test, new_item);
+	}
+	oval_result_item_iterator_free(old_items);
+
+	struct oval_variable_binding_iterator *old_bindings = oval_result_test_get_bindings(old_test);
+	while(oval_variable_binding_iterator_has_more(old_bindings)){
+		struct oval_variable_binding *old_binding = oval_variable_binding_iterator_next(old_bindings);
+		struct oval_variable_binding *new_binding = oval_variable_binding_clone(old_binding, NULL);
+		oval_result_test_add_binding(new_test, new_binding);
+	}
+	oval_variable_binding_iterator_free(old_bindings);
+
+	struct oval_message *old_message = oval_result_test_get_message(old_test);
+	if(old_message){
+		struct oval_message *new_message = oval_message_clone(old_message);
+		oval_result_test_set_message(new_test, new_message);
+	}
+
+	oval_result_test_set_instance(new_test, oval_result_test_get_instance(old_test));
+	oval_result_test_set_result(new_test, old_test->result);
+
+	return new_test;
+}
+
 
 struct oval_result_test *make_result_test_from_oval_test
 	(struct oval_result_system *sys, struct oval_test *oval_test)
@@ -764,7 +799,7 @@ void oval_result_test_set_result(struct oval_result_test *test, oval_result_t re
 	test->result = result;
 }
 
-static void set_oval_result_test_instance(struct oval_result_test *test, int instance)
+void oval_result_test_set_instance(struct oval_result_test *test, int instance)
 {
 	test->instance = instance;
 }
@@ -868,7 +903,7 @@ int oval_result_test_parse_tag
 	oval_result_t result = oval_result_parse(reader, "result",0);
 	oval_result_test_set_result(test, result);
 	int veriable_instance = oval_parser_int_attribute(reader, "veriable_instance", 1);
-	set_oval_result_test_instance(test, veriable_instance);
+	oval_result_test_set_instance(test, veriable_instance);
 
 	struct oval_test *ovaltst = oval_result_test_get_test(test);
 
