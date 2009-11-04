@@ -93,7 +93,11 @@ void get_ifs(SEXP_t *item)
         nl_handle_destroy(sock);
 }
 #else
-void get_ifs(SEXP_t *item) {}
+void get_ifs(SEXP_t *item)
+{
+        /* TODO */
+        return;
+}
 #endif
 
 SEXP_t *probe_main(SEXP_t *probe_in, int *err)
@@ -148,7 +152,7 @@ SEXP_t *probe_main(SEXP_t *probe_in, int *err)
         get_ifs(item);
 
 	list = SEXP_list_new (item, NULL);
-        SEXP_free (item);
+        SEXP_vfree (item, r0, r1, r2, r3, NULL);
         
 	*err = 0;
 	return (list);

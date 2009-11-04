@@ -114,6 +114,8 @@ AC_SEARCH_LIBS(
 	]
 )
 
+case "${host}" in
+    *-*-linux*)
 #
 # libnl
 #
@@ -126,11 +128,12 @@ AC_CHECK_LIB(
   [AC_MSG_FAILURE([libnl is missing])],
   [`pkg-config --libs libnl-1`]
 )
+    ;;
+esac
 
 #
 # threads
 #
-
 pthread_cflags=error
 pthread_ldflags=error
 
