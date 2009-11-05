@@ -238,13 +238,20 @@ int ovaldef_parse_node(xmlTextReaderPtr reader,
 int ovaldef_parser_parse
     (struct oval_definition_model *model, xmlTextReader *reader, oval_xml_error_handler eh,
      void *user_arg) {
-	struct oval_parser_context context;
-	context.reader        = reader;
-	context.definition_model  = model;
-	context.error_handler = eh;
-	context.user_data     = user_arg;
-	xmlTextReaderSetErrorHandler(reader, &libxml_error_handler, &context);
-	return ovaldef_parse_node(reader, &context);
+	int retcode = 0;
+	if(reader){
+		struct oval_parser_context context;
+		context.reader        = reader;
+		context.definition_model  = model;
+		context.error_handler = eh;
+		context.user_data     = user_arg;
+		xmlTextReaderSetErrorHandler(reader, &libxml_error_handler, &context);
+		retcode = ovaldef_parse_node(reader, &context);
+	}else{
+		fprintf(stderr, "ERROR: ovaldef_parser_parse: xmlTextReader is NULL\n"
+		"    Code Location: %s(%d)\n", __FILE__, __LINE__);
+	}
+	return retcode;
 }
 
 int oval_parser_skip_tag(xmlTextReaderPtr reader,

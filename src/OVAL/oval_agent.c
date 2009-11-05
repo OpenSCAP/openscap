@@ -331,21 +331,26 @@ void oval_syschar_model_add_sysdata(struct oval_syschar_model *model, struct ova
 	}
 }
 
-void oval_definition_model_import(struct oval_definition_model *model,
+int oval_definition_model_import(struct oval_definition_model *model,
 			   struct oval_import_source *source,
 			   oval_xml_error_handler eh, void *user_arg)
 {
-	xmlDoc *doc = xmlParseFile
-		(source->import_source_filename);
 	xmlTextReader *reader = xmlNewTextReaderFilename
 		(source->import_source_filename);
-
-	xmlTextReaderRead(reader);
-	ovaldef_parser_parse
-		(model, reader, eh, user_arg);
-
-	xmlFreeTextReader(reader);
-	xmlFreeDoc(doc);
+	int retcode = 0;
+	if(reader){
+		if(xmlTextReaderRead(reader)>-1){
+			retcode = ovaldef_parser_parse
+				(model, reader, eh, user_arg);
+		}
+		xmlFreeTextReader(reader);
+	}else
+		fprintf(stderr, "ERROR: oval_definition_model_import: "
+		"cannot open XML reader for %s\n"
+		"    Code Location = %s(%d)\n",
+		source->import_source_filename,
+		__FILE__, __LINE__);
+	return retcode;
 }
 void oval_syschar_model_import(struct oval_syschar_model *model,
 			struct oval_import_source *source,
@@ -1154,8 +1159,12 @@ int oval_results_model_export
 	xmlDocPtr doc = xmlNewDoc(BAD_CAST "1.0");
 
 	oval_results_to_dom(results_model, directives, doc, NULL);
-	xmlSaveFormatFileEnc
+	int xmlCode = xmlSaveFormatFileEnc
 		(target->filename, doc, target->encoding, 1);
+	if(xmlCode<=0){
+		fprintf(stderr, "WARNING: No bytes exported: xmlCode = %d\n", xmlCode);
+	}
+
 
 	xmlFreeDoc(doc);
 

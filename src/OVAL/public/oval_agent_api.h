@@ -21,17 +21,6 @@
  */
 
 /**
- * @addtogroup OVAL
- * @{
- *
- * OVAL model is represented by several basic structures in OpenSCAP.
- *
- * - oval_definition_model structure represents an individual OVAL @ref Definitions document
- * - oval_syschar_model structure represents an OVAL @ref syschar document
- * - oval_results_model structure represents an OVAL @ref Results document
- *
- * See more details at http://oval.mitre.org/
- *
  * @file
  * OVAL agent API.
  * @author "David Niemoller" <David.Niemoller@g2-inc.com>
@@ -44,7 +33,38 @@
 #include "oval_system_characteristics.h"
 #include "oval_results.h"
 
+
+/// severity level
+typedef enum {
+	XML_VALIDITY_WARNING = 1,
+	XML_VALIDITY_ERROR   = 2,
+	XML_WARNING          = 3,
+	XML_ERROR            = 4,
+	OVAL_LOG_INFO        = 15,
+	OVAL_LOG_DEBUG       = 16,
+	OVAL_LOG_WARN        = 17
+} oval_xml_severity_t;
+
+struct oval_xml_error {
+	void *user_arg;
+	char *message;
+	oval_xml_severity_t severity;
+	int line_number;
+	char *system_id;
+};
+
+/// OVAL XML error handler function pointer type.
+typedef int (*oval_xml_error_handler) (struct oval_xml_error *, void *user_arg);
+
+/**
+ * @struct oval_export_target
+ * Specification of XML export target.
+ */
 struct oval_export_target;
+/**
+ * @struct oval_import_source;
+ * Specification of XML import source.
+ */
 struct oval_import_source;
 
 /**
@@ -72,7 +92,10 @@ struct oval_export_target *oval_export_target_new_file(char *filename, char* enc
  */
 void oval_export_target_free(struct oval_export_target *target);
 
-
+/**
+ * @addtogroup OVALDEF
+ * @{
+ */
 /**
  * @struct oval_definition_model
  * OVAL definition model.
@@ -80,29 +103,66 @@ void oval_export_target_free(struct oval_export_target *target);
  * structure instances.
  */
 struct oval_definition_model;
+/**
+ * @}
+ */
 
+/**
+ * @addtogroup OVALVAR
+ * @{
+ * OVAL Variables API.
+ */
 /**
  * @struct oval_variable_model
  * OVAL variable model.
  * The OVAL variable model facilitates access to external variable value bindings used to to constrain the evaluation of OVAL objects.
  */
 struct oval_variable_model;
+/**
+ * @}
+ */
+
+/**
+ * @addtogroup OVALSYS
+ * @{
+ * OVAL System Characteristics API.
+ */
 
 /**
  * @struct oval_syschar_model
- * OVAL object model.
- * Object model holds OVAL system characteristics as a list of oval_syschar
+ * OVAL System Characteristics model.
+ * Object model holds OVAL system characteristics
  * structure instances.
  */
 struct oval_syschar_model;
 
 /**
- * @struct oval_syschar_model
- * OVAL object model.
- * Object model holds OVAL results as a list of oval_system
+ * @}
+ */
+
+/**
+ * @addtogroup OVALRES
+ * @{
+ * OVAL Results API.
+ */
+
+/**
+ * @struct oval_results_model
+ * OVAL Results Model.
+ * Object model holds OVAL results
  * structure instances.
  */
 struct oval_results_model;
+
+/**
+ * @}
+ */
+
+/**
+ * @addtogroup OVALDEF
+ * @{
+ * OVAL Definitions API
+ */
 
 /**
  * Create an empty oval_definition_model.
@@ -120,40 +180,17 @@ struct oval_definition_model *oval_definition_model_clone(struct oval_definition
  */
 void oval_definition_model_free(struct oval_definition_model * model);
 
-/// severity level
-typedef enum {
-	XML_VALIDITY_WARNING = 1,
-	XML_VALIDITY_ERROR   = 2,
-	XML_WARNING          = 3,
-	XML_ERROR            = 4,
-	OVAL_LOG_INFO        = 15,
-	OVAL_LOG_DEBUG       = 16,
-	OVAL_LOG_WARN        = 17
-} oval_xml_severity_t;
-
-struct oval_xml_error {
-	void *user_arg;
-	char *message;
-	oval_xml_severity_t severity;
-	int line_number;
-	char *system_id;
-};
-
-/// OVAL XML error handler function pointer type.
-typedef int (*oval_xml_error_handler) (struct oval_xml_error *, void *user_arg);
-
 /**
  * Load OVAL definitions from a XML stream.
  * Merge content from a specified XML stream into a specified oval_definition_model.
  * If the input_source specifies a model entity (id=A, version=V) and the model specifies no entity (id=A, ...) then (id=A, version=V) is merged into the model.
  * If the input_source specifies a model entity (id=A, version=V) and the model specifies an entity (id=A, ...) then (id=A, version=V) then the source specification is skipped.
- * @relates oval_definition_model
  * @param model the merge target model.
  * @param source an <oval_def:oval_definitions> XML stream
  * @param error_handler callback for detected error conditions (may be NULL)
  * @param client pointer to client data (may be NULL)
  */
-void oval_definition_model_import(
+int  oval_definition_model_import(
 			struct oval_definition_model *model,
 			struct oval_import_source *source,
 			oval_xml_error_handler error_handler, void *client);
@@ -164,7 +201,6 @@ void oval_definition_model_import(
  * Get OVAL definition by ID.
  * Return a designated oval_definition from the specified oval_definition_model.
  * If the specified id does not resolve to an oval_definition the function returns NULL.
- * @relates oval_definition_model
  * @param model the queried model.
  * @param id the definition id.
  */
@@ -176,7 +212,6 @@ struct oval_definition *oval_definition_model_get_definition(
  * Get oval test by ID.
  * Return a designated oval_test from the specified oval_definition_model.
  * If the specified id does not resolve to an oval_test the function returns NULL.
- * @relates oval_definition_model
  * @param model the queried model.
  * @param id the test id.
  */
@@ -188,7 +223,6 @@ struct oval_test *oval_definition_model_get_test(
  * Get OVAL object by ID.
  * Return a designated oval_object from the specified oval_definition_model.
  * If the specified id does not resolve to an oval_object the function returns NULL.
- * @relates oval_definition_model
  * @param model the queried model.
  * @param id the object id.
  */
@@ -200,7 +234,6 @@ struct oval_object *oval_definition_model_get_object(
  * Get OVAL state by ID.
  * Return a designated oval_state from the specified oval_definition_model.
  * If the specified id does not resolve to an oval_state the function returns NULL.
- * @relates oval_definition_model
  * @param model the queried model.
  * @param id the state id.
  */
@@ -212,7 +245,6 @@ struct oval_state *oval_definition_model_get_state(
  * Get OVAL variable by ID.
  * Return a designated oval_variable from the specified oval_definition_model.
  * If the specified id does not resolve to an oval_variable the function returns NULL.
- * @relates oval_definition_model
  * @param model the queried model.
  * @param id the variable id.
  */
@@ -223,7 +255,6 @@ struct oval_variable *oval_definition_model_get_variable(
 /**
  * Get OVAL definitions.
  * Return all oval_definitions from the specified oval_definition_model.
- * @relates oval_definition_model
  * @param model the queried model.
  */
 struct oval_definition_iterator *oval_definition_model_get_definitions(
@@ -232,7 +263,6 @@ struct oval_definition_iterator *oval_definition_model_get_definitions(
 /**
  * Get OVAL tests.
  * Return all oval_tests from the specified oval_definition_model.
- * @relates oval_definition_model
  * @param model the queried model.
  */
 struct oval_test_iterator *oval_definition_model_get_tests(
@@ -241,7 +271,6 @@ struct oval_test_iterator *oval_definition_model_get_tests(
 /**
  * Get OVAL objects.
  * Return all oval_objects from the specified oval_definition_model.
- * @relates oval_definition_model
  * @param model the queried model.
  */
 struct oval_object_iterator *oval_definition_model_get_objects(
@@ -250,7 +279,6 @@ struct oval_object_iterator *oval_definition_model_get_objects(
 /**
  * Get OVAL states.
  * Return all oval_states from the specified oval_definition_model.
- * @relates oval_definition_model
  * @param model the queried model.
  */
 struct oval_state_iterator *oval_definition_model_get_states(
@@ -259,7 +287,6 @@ struct oval_state_iterator *oval_definition_model_get_states(
 /**
  * Get OVAL variables.
  * Return all oval_variables from the specified oval_definition_model.
- * @relates oval_definition_model
  * @param model the queried model.
  */
 struct oval_variable_iterator *oval_definition_model_get_variables(
@@ -280,6 +307,14 @@ void oval_definition_model_add_variable(struct oval_definition_model *, struct o
  */
 void oval_definition_model_bind_variable_model
 	(struct oval_definition_model *, struct oval_variable_model *);
+/**
+ * @}
+ */
+
+/**
+ * @addtogroup OVALVAR
+ * @{
+ */
 
 /**
  * Create a new OVAL variable model
@@ -290,6 +325,7 @@ struct oval_variable_model *oval_variable_model_new();
  * Create an OVAL variable model
  */
 struct oval_variable_model *oval_variable_model_clone(struct oval_variable_model *);
+
 
 /**
  * Free memory allocated to a specified oval_variable_model
@@ -355,10 +391,21 @@ const char *oval_variable_model_get_comment
 struct oval_string_iterator *oval_variable_model_get_values
 	(struct oval_variable_model *, char *);
 
+
+void oval_variable_model_add(struct oval_variable_model *model, char *varid, const char* comment, oval_datatype_t datatype, char *value);
+
+/**
+ * @}
+ */
+
+/**
+ * @addtogroup OVALSYS
+ * @{
+ */
+
 /**
  * Create new oval_syschar_model.
  * The new model is bound to a specified oval_definition_model and variable bindings.
- * @relates oval_definition_model
  * @param definition_model the specified oval_definition_model.
  */
 struct oval_syschar_model *oval_syschar_model_new(
@@ -371,21 +418,18 @@ struct oval_syschar_model *oval_syschar_model_clone(struct oval_syschar_model *)
 
 /**
  * free memory allocated to a specified syschar model.
- * @relates oval_syschar_model
  * @param model the specified syschar model
  */
 void oval_syschar_model_free(struct oval_syschar_model *model);
 
 /**
  * Return related oval_definition_model from an oval_syschar_model.
- * @relates oval_syschar_model
  * @param model the specified oval_syschar_model.
  */
 struct oval_definition_model *oval_syschar_model_get_definition_model(
 		struct oval_syschar_model *model);
 /**
  * Return an iterator over the oval_sychar objects persisted by this model.
- * @relates oval_syschar_model
  * @param model the specified oval_syschar_model.
  */
 struct oval_syschar_iterator *oval_syschar_model_get_syschars(
@@ -393,7 +437,6 @@ struct oval_syschar_iterator *oval_syschar_model_get_syschars(
 
 /**
  * Return default sysinfo bound to syschar model.
- * @relates oval_syschar_model
  * @param model the specified oval_syschar_model.
  */
 struct oval_sysinfo *oval_syschar_model_get_sysinfo(struct oval_syschar_model *model);
@@ -401,7 +444,6 @@ struct oval_sysinfo *oval_syschar_model_get_sysinfo(struct oval_syschar_model *m
 /**
  * Return the oval_syschar bound to a specified object_id.
  * Returns NULL if the object_id does not resolve to an oval_object in the bound oval_definition_model.
- * @relates oval_syschar_model
  * @param model the queried oval_syschar_model.
  * @param object_id the specified object_id.
  */
@@ -425,22 +467,28 @@ void oval_syschar_model_probe_objects(struct oval_syschar_model *);
 
 /**
  * Export system characteristics as a XML file.
- * @relates oval_syschar_model
  */
 int oval_syschar_model_export(
 		struct oval_syschar_model *, struct oval_export_target *);
 
 /**
  * Load OVAL system characteristics from a file.
- * @relates oval_syschar_model
  */
 void oval_syschar_model_import(struct oval_syschar_model*, struct oval_import_source*,
 			oval_xml_error_handler, void*);
 
 /**
+ * @}
+ */
+
+/**
+ * @addtogroup OVALRES
+ * @{
+ */
+
+/**
  * Create new oval_results_model.
  * The new model is bound to a specified oval_definition_model and variable bindings.
- * @relates oval_results_model
  * @param syschar_model the specified oval_syschar_model.
  */
 struct oval_results_model *oval_results_model_new(
@@ -453,7 +501,6 @@ struct oval_results_model *oval_results_model_clone(struct oval_results_model *)
 
 /**
  * free memory allocated to a specified oval results model.
- * @relates oval_results_model
  * @param the specified oval_results model
  */
 void oval_results_model_free(struct oval_results_model *model);
@@ -461,7 +508,6 @@ void oval_results_model_free(struct oval_results_model *model);
 
 /**
  * oval_results_model_definition_model Return bound object model from an oval_results_model.
- * @relates oval_results_model
  * @param model the specified oval_results_model.
  */
 struct oval_definition_model *oval_results_model_get_definition_model
@@ -469,7 +515,6 @@ struct oval_definition_model *oval_results_model_get_definition_model
 
 /**
  * Return iterator over reporting systems.
- * @relates oval_results_model
  * @param model the specified results model
  */
 struct oval_result_system_iterator *oval_results_model_get_systems
@@ -479,7 +524,6 @@ void oval_results_model_add_system(struct oval_results_model *, struct oval_resu
 
 /**
  * load oval results from XML file.
- * @relates oval_results_model
  * @param model the oval_results_model
  * @param source the input source (XML)
  * @param error_handler the error handler
@@ -491,13 +535,11 @@ struct oval_result_directives *oval_results_model_import
 
 /**
  * Create new OVAL results directives.
- * @relates oval_result_directives
  */
 struct oval_result_directives *oval_result_directives_new();
 
 /**
  * Destroy OVAL results directives.
- * @relates oval_result_directives
  */
 void oval_result_directives_free(struct oval_result_directives *);
 
@@ -511,8 +553,11 @@ int oval_results_model_export(struct oval_results_model *, struct oval_result_di
 
 /**
  * Probe single OVAL object.
- * @relates oval_object
  */
 struct oval_syschar *oval_object_probe(struct oval_object *, struct oval_definition_model *model);
+
+/**
+ * @}
+ */
 
 #endif				/**OVAL_AGENT_API_H_ */

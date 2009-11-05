@@ -31,6 +31,10 @@
 #ifndef OVAL_RESULTS_H_
 #define OVAL_RESULTS_H_
 
+/**
+ * @addtogroup OVALRES
+ * @{
+ */
 #include "oval_definitions.h"
 #include "oval_system_characteristics.h"
 #include <stdbool.h>
@@ -136,5 +140,9 @@ void oval_result_directives_set_reported(struct oval_result_directives *, oval_r
 void oval_result_directives_set_content (struct oval_result_directives *, oval_result_t, oval_result_directive_content_t);
 
 const char * oval_result_get_text(oval_result_t);
+
+/**
+ * @}
+ */
 
 #endif				/* OVAL_RESULTS_H_ */
