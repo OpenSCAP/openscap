@@ -489,7 +489,8 @@ void oval_syschar_model_import(struct oval_syschar_model*, struct oval_import_so
 /**
  * Create new oval_results_model.
  * The new model is bound to a specified oval_definition_model and variable bindings.
- * @param syschar_model the specified oval_syschar_model.
+ * @param definition_model the specified oval_definition_model.
+ * @param syschar_model the array of specified oval_syschar_model(s) terminated by NULL.
  */
 struct oval_results_model *oval_results_model_new(
 		struct oval_definition_model *definition_model, struct oval_syschar_model **);
