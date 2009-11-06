@@ -301,26 +301,26 @@ xmlNode *oval_state_to_dom (struct oval_state *state, xmlDoc *doc, xmlNode *pare
 	const char *subtype_text = oval_subtype_get_text(subtype);
 	char  state_name[strlen(subtype_text)+7]; *state_name = '\0';
 	strcat(strcat(state_name, subtype_text), "_state");
-	xmlNode *state_node = xmlNewChild(parent, NULL, state_name, NULL);
+	xmlNode *state_node = xmlNewChild(parent, NULL, BAD_CAST state_name, NULL);
 
 	oval_family_t family = oval_state_get_family(state);
 	const char *family_text = oval_family_get_text(family);
 	char family_uri[strlen((const char *)OVAL_DEFINITIONS_NAMESPACE)+strlen(family_text)+2];
 	*family_uri = '\0';
 	strcat(strcat(strcat(family_uri, (const char *)OVAL_DEFINITIONS_NAMESPACE),"#"),family_text);
-	xmlNs *ns_family = xmlNewNs(state_node, family_uri, NULL);
+	xmlNs *ns_family = xmlNewNs(state_node, BAD_CAST family_uri, NULL);
 
 	xmlSetNs(state_node, ns_family);
 
 	char *id = oval_state_get_id(state);
-	xmlNewProp(state_node, BAD_CAST "id", id);
+	xmlNewProp(state_node, BAD_CAST "id", BAD_CAST id);
 
 	char version[10]; *version = '\0';
 	snprintf(version, sizeof(version), "%d", oval_state_get_version(state));
 	xmlNewProp(state_node, BAD_CAST "version", BAD_CAST version);
 
 	char *comm = oval_state_get_comment(state);
-	if(comm)xmlNewProp(state_node, BAD_CAST "comment", comm);
+	if(comm)xmlNewProp(state_node, BAD_CAST "comment", BAD_CAST comm);
 
 	bool deprecated = oval_state_get_deprecated(state);
 	if(deprecated)
@@ -332,7 +332,7 @@ xmlNode *oval_state_to_dom (struct oval_state *state, xmlDoc *doc, xmlNode *pare
 		xmlNode *notes_node = xmlNewChild(state_node, ns_definitions, BAD_CAST "notes", NULL);
 		while(oval_string_iterator_has_more(notes)){
 			char *note = oval_string_iterator_next(notes);
-			xmlNewChild(notes_node, ns_definitions, BAD_CAST "note", note);
+			xmlNewChild(notes_node, ns_definitions, BAD_CAST "note", BAD_CAST note);
 		}
 	}
 	oval_string_iterator_free(notes);

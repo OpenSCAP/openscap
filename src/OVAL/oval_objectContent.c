@@ -334,7 +334,7 @@ xmlNode *oval_object_content_to_dom
 		content_node = oval_entity_to_dom(entity, doc, parent);
 		oval_check_t check = oval_object_content_get_varCheck(content);
 		if(check!=OVAL_CHECK_ALL)
-			xmlNewProp(content_node, BAD_CAST "var_check", oval_check_get_text(check));
+			xmlNewProp(content_node, BAD_CAST "var_check", BAD_CAST oval_check_get_text(check));
 	}break;
 	case OVAL_OBJECTCONTENT_SET:{
 		struct oval_setobject *set = oval_object_content_get_setobject(content);

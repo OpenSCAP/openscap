@@ -130,28 +130,28 @@ int _oval_generator_parse_tag
 	char message[200]; *message = 0;
 	bool is_common_ns =strcmp(NAMESPACE_COMMON, namespace)==0;
 	if(is_common_ns && strcmp("product_name", tagname)==0){
-		char *value = xmlTextReaderValue(reader);
+		char *value = (char *) xmlTextReaderValue(reader);
 		sprintf(message,
 				"%s:    product name: %s",label, value);
 		oval_parser_log_info(context, message);
 		free(value);
 		return_code = 1;
 	}else if(is_common_ns && strcmp("product_version", tagname)==0){
-		char *value = xmlTextReaderValue(reader);
+		char *value = (char *) xmlTextReaderValue(reader);
 		sprintf(message,
 				"%s: product version: %s",label, value);
 		oval_parser_log_info(context, message);
 		free(value);
 		return_code = 1;
 	}else if(is_common_ns && strcmp("schema_version", tagname)==0){
-		char *value = xmlTextReaderValue(reader);
+		char *value = (char *) xmlTextReaderValue(reader);
 		sprintf(message,
 				"%s:  schema version: %s",label, value);
 		oval_parser_log_info(context, message);
 		free(value);
 		return_code = 1;
 	}else if(is_common_ns && strcmp("timestamp", tagname)==0){
-		char *value = xmlTextReaderValue(reader);
+		char *value = (char *) xmlTextReaderValue(reader);
 		sprintf(message,
 				"%s:      time stamp: %s",label, value);
 		oval_parser_log_info(context, message);
@@ -201,8 +201,8 @@ int _oval_variable_model_parse_variable
 	 struct oval_parser_context *context,
 	 struct oval_variable_model *model)
 {
-	char *id      = xmlTextReaderGetAttribute(reader, BAD_CAST "id");
-	char *comment = xmlTextReaderGetAttribute(reader, BAD_CAST "comment");
+	char *id      = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST "id");
+	char *comment = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST "comment");
 	oval_datatype_t datatype = oval_datatype_parse(reader, "datatype", OVAL_DATATYPE_STRING);
 	_oval_variable_model_frame_t *frame = oval_string_map_get_value(model->varmap, id);
 	int return_code = 1;

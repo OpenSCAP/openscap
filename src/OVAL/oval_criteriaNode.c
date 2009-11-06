@@ -470,7 +470,7 @@ static xmlNode *_oval_CRITERIA_to_dom
 
 	oval_operator_t operator = oval_criteria_node_get_operator(cnode);
 	if(operator!=OVAL_OPERATOR_AND)
-		xmlNewProp(criteria_node, BAD_CAST "operator", oval_operator_get_text(operator));
+		xmlNewProp(criteria_node, BAD_CAST "operator", BAD_CAST oval_operator_get_text(operator));
 
 	struct oval_criteria_node_iterator *subnodes
 		= oval_criteria_node_get_subnodes(cnode);
@@ -492,7 +492,7 @@ static xmlNode *_oval_CRITERION_to_dom
 
 	struct oval_test *test = oval_criteria_node_get_test(cnode);
 	char *test_ref = oval_test_get_id(test);
-	xmlNewProp(criterion_node, BAD_CAST "test_ref", test_ref);
+	xmlNewProp(criterion_node, BAD_CAST "test_ref", BAD_CAST test_ref);
 
 	return criterion_node;
 }
@@ -505,7 +505,7 @@ static xmlNode *_oval_EXTENDDEF_to_dom
 
 	struct oval_definition *definition = oval_criteria_node_get_definition(cnode);
 	char *definition_ref = oval_definition_get_id(definition);
-	xmlNewProp(extenddef_node, BAD_CAST "definition_ref", definition_ref);
+	xmlNewProp(extenddef_node, BAD_CAST "definition_ref", BAD_CAST definition_ref);
 
 	return extenddef_node;
 }
@@ -530,7 +530,7 @@ xmlNode *oval_criteria_node_to_dom
 	if(negate)xmlNewProp(criteria_node, BAD_CAST "negate", BAD_CAST "true");
 
 	char *comm  = oval_criteria_node_get_comment(cnode);
-	if(comm)xmlNewProp(criteria_node, BAD_CAST "comment", comm);
+	if(comm)xmlNewProp(criteria_node, BAD_CAST "comment", BAD_CAST comm);
 
 	return criteria_node;
 }

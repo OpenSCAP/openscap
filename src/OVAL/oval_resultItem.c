@@ -160,7 +160,7 @@ int oval_result_item_parse_tag
 	int return_code = 0;
 
 	xmlChar *item_id = xmlTextReaderGetAttribute(reader, BAD_CAST "item_id");
-	struct oval_result_item *item = oval_result_item_new(sys, item_id);
+	struct oval_result_item *item = oval_result_item_new(sys, (char *) item_id);
 
 	oval_result_t result = oval_result_parse(reader, "result", 0);
 	oval_result_item_set_result(item, result);
@@ -197,10 +197,10 @@ xmlNode *oval_result_item_to_dom
 
 	struct oval_sysdata *oval_sysdata = oval_result_item_get_sysdata(rslt_item);
 	char *item_id = oval_sysdata_get_id(oval_sysdata);
-	xmlNewProp(item_node, BAD_CAST "item_id", item_id);
+	xmlNewProp(item_node, BAD_CAST "item_id", BAD_CAST item_id);
 
 	oval_result_t result = oval_result_item_get_result(rslt_item);
-	xmlNewProp(item_node, BAD_CAST "result", oval_result_get_text(result));
+	xmlNewProp(item_node, BAD_CAST "result", BAD_CAST oval_result_get_text(result));
 
 	return item_node;
 }

@@ -180,7 +180,7 @@ int oval_result_directives_to_dom
 		oval_result_directive_content_t content = oval_result_directives_get_content
 			(directives, directive);
 		xmlNode *directive_node = xmlNewChild
-			(directives_node, ns_results, (map->string),NULL);
+			(directives_node, ns_results, BAD_CAST (map->string),NULL);
 		char *val_reported = (reported)?"true":"false";
 		char *val_content  = (content==OVAL_DIRECTIVE_CONTENT_FULL)
 			?"full":"thin";

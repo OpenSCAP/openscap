@@ -397,7 +397,7 @@ xmlNode *oval_set_to_dom
 
 	oval_setobject_operation_t operation = oval_setobject_get_operation(set);
 	if(operation!=OVAL_SET_OPERATION_UNION)
-		xmlNewProp(set_node, BAD_CAST "set_operator", oval_set_operation_get_text(operation));
+		xmlNewProp(set_node, BAD_CAST "set_operator", BAD_CAST oval_set_operation_get_text(operation));
 
 	switch(oval_setobject_get_type(set))
 	{
@@ -415,7 +415,7 @@ xmlNode *oval_set_to_dom
 			while(oval_object_iterator_has_more(objects)){
 				struct oval_object *object = oval_object_iterator_next(objects);
 				char* id = oval_object_get_id(object);
-				xmlNewChild(set_node,  ns_definitions, BAD_CAST "object_reference", id);
+				xmlNewChild(set_node,  ns_definitions, BAD_CAST "object_reference", BAD_CAST id);
 			}
 			oval_object_iterator_free(objects);
 			struct oval_state_iterator *filters = oval_setobject_get_filters(set);
@@ -423,7 +423,7 @@ xmlNode *oval_set_to_dom
 			{
 				struct oval_state *filter = oval_state_iterator_next(filters);
 				char *id = oval_state_get_id(filter);
-				xmlNewChild(set_node, ns_definitions, BAD_CAST "filter",  id);
+				xmlNewChild(set_node, ns_definitions, BAD_CAST "filter",  BAD_CAST id);
 			}
 			oval_state_iterator_free(filters);
 	}break;

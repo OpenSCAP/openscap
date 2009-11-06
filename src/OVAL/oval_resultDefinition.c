@@ -264,7 +264,7 @@ int oval_result_definition_parse
 
 	xmlChar *definition_id = xmlTextReaderGetAttribute(reader, BAD_CAST "definition_id");
 	xmlChar *definition_version = xmlTextReaderGetAttribute(reader, BAD_CAST "version");
-	int resvsn = atoi(definition_version);
+	int resvsn = atoi( (char *) definition_version);
 	xmlChar *definition_result = xmlTextReaderGetAttribute(reader, BAD_CAST "result");
 	int instance = oval_parser_int_attribute(reader, "variable_instance", 1);
 
@@ -337,12 +337,12 @@ xmlNode *oval_result_definition_to_dom
 	struct oval_definition *oval_definition
 		= oval_result_definition_get_definition(definition);
 	char *definition_id = oval_definition_get_id(oval_definition);
-	xmlNewProp(definition_node, BAD_CAST "definition_id", definition_id);
+	xmlNewProp(definition_node, BAD_CAST "definition_id", BAD_CAST definition_id);
 
 	oval_result_t result
 		= oval_result_definition_get_result(definition);
 	const char* result_att = oval_result_get_text(result);
-	xmlNewProp(definition_node, BAD_CAST "result", result_att);
+	xmlNewProp(definition_node, BAD_CAST "result", BAD_CAST result_att);
 
 	int version = oval_definition_get_version(oval_definition);
 	char version_att[10]; *version_att = '\0';

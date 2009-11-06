@@ -469,14 +469,14 @@ xmlNode *oval_definition_to_dom (struct oval_definition *definition, xmlDoc *doc
 	xmlNode *definition_node = xmlNewChild(parent, ns_definitions, BAD_CAST "definition", NULL);
 
 	char *id = oval_definition_get_id(definition);
-	xmlNewProp(definition_node, BAD_CAST "id", id);
+	xmlNewProp(definition_node, BAD_CAST "id", BAD_CAST id);
 
 	char version[10]; *version = '\0';
 	snprintf(version, sizeof(version), "%d", oval_definition_get_version(definition));
 	xmlNewProp(definition_node, BAD_CAST "version", BAD_CAST version);
 
 	oval_definition_class_t class = oval_definition_get_class(definition);
-	xmlNewProp(definition_node, BAD_CAST "class", oval_definition_class_text(class));
+	xmlNewProp(definition_node, BAD_CAST "class", BAD_CAST oval_definition_class_text(class));
 
 	bool deprecated = oval_definition_get_deprecated(definition);
 	if(deprecated)xmlNewProp(definition_node, BAD_CAST "deprecated", BAD_CAST "true");
@@ -484,24 +484,24 @@ xmlNode *oval_definition_to_dom (struct oval_definition *definition, xmlDoc *doc
 	xmlNode *metadata_node = xmlNewChild(definition_node, ns_definitions, BAD_CAST "metadata", NULL);
 
 	char *title = oval_definition_get_title(definition);
-	xmlNewChild(metadata_node, ns_definitions, BAD_CAST "title", title);
+	xmlNewChild(metadata_node, ns_definitions, BAD_CAST "title", BAD_CAST title);
 
 	struct oval_affected_iterator *affecteds = oval_definition_get_affected(definition);
 	while(oval_affected_iterator_has_more(affecteds)){
 		xmlNode *affected_node = xmlNewChild(metadata_node, ns_definitions, BAD_CAST "affected", NULL);
 		struct oval_affected *affected = oval_affected_iterator_next(affecteds);
 		oval_affected_family_t family = oval_affected_get_family(affected);
-		xmlNewProp(affected_node, BAD_CAST "family", oval_affected_family_get_text(family));
+		xmlNewProp(affected_node, BAD_CAST "family", BAD_CAST oval_affected_family_get_text(family));
 		struct oval_string_iterator *platforms = oval_affected_get_platforms(affected);
 		while(oval_string_iterator_has_more(platforms)){
 			char *platform = oval_string_iterator_next(platforms);
-			xmlNewChild(affected_node, ns_definitions, BAD_CAST "platform", platform);
+			xmlNewChild(affected_node, ns_definitions, BAD_CAST "platform", BAD_CAST platform);
 		}
 		oval_string_iterator_free(platforms);
 		struct oval_string_iterator *products = oval_affected_get_products(affected);
 		while(oval_string_iterator_has_more(products)){
 			char *product = oval_string_iterator_next(products);
-			xmlNewChild(affected_node, ns_definitions, BAD_CAST "product", product);
+			xmlNewChild(affected_node, ns_definitions, BAD_CAST "product", BAD_CAST product);
 		}
 		oval_string_iterator_free(products);
 	}
@@ -514,22 +514,22 @@ xmlNode *oval_definition_to_dom (struct oval_definition *definition, xmlDoc *doc
 		char *source  = oval_reference_get_source(ref);
 		char *ref_id  = oval_reference_get_id    (ref);
 		char *ref_url = oval_reference_get_url   (ref);
-		xmlNewProp(referenceNode, BAD_CAST "source", source);
-		xmlNewProp(referenceNode, BAD_CAST "ref_id", ref_id);
+		xmlNewProp(referenceNode, BAD_CAST "source", BAD_CAST source);
+		xmlNewProp(referenceNode, BAD_CAST "ref_id", BAD_CAST ref_id);
 		if(ref_url)
-			xmlNewProp(referenceNode, BAD_CAST "ref_url", ref_url);
+			xmlNewProp(referenceNode, BAD_CAST "ref_url", BAD_CAST ref_url);
 	}
 	oval_reference_iterator_free(references);
 
 	char *description = oval_definition_get_description(definition);
-	xmlNewChild(metadata_node, ns_definitions, BAD_CAST "description", description);
+	xmlNewChild(metadata_node, ns_definitions, BAD_CAST "description", BAD_CAST description);
 
 	struct oval_string_iterator *notes = oval_definition_get_notes(definition);
 	if(oval_string_iterator_has_more(notes)){
 		xmlNode *notes_node = xmlNewChild(definition_node, ns_definitions, BAD_CAST "notes", NULL);
 		while(oval_string_iterator_has_more(notes)){
 			char *note = oval_string_iterator_next(notes);
-			xmlNewChild(notes_node, ns_definitions, BAD_CAST "note", note);
+			xmlNewChild(notes_node, ns_definitions, BAD_CAST "note", BAD_CAST note);
 		}
 	}
 	oval_string_iterator_free(notes);

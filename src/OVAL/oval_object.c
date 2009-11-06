@@ -356,26 +356,26 @@ xmlNode *oval_object_to_dom
 	const char *subtype_text = oval_subtype_get_text(subtype);
 	char  object_name[strlen(subtype_text)+8]; *object_name = '\0';
 	strcat(strcat(object_name, subtype_text), "_object");
-	xmlNode *object_node = xmlNewChild(parent, NULL, object_name, NULL);
+	xmlNode *object_node = xmlNewChild(parent, NULL, BAD_CAST object_name, NULL);
 
 	oval_family_t family = oval_object_get_family(object);
 	const char *family_text = oval_family_get_text(family);
 	char family_uri[strlen((const char *)OVAL_DEFINITIONS_NAMESPACE)+strlen(family_text)+2];
 	*family_uri = '\0';
 	strcat(strcat(strcat(family_uri, (const char *)OVAL_DEFINITIONS_NAMESPACE),"#"),family_text);
-	xmlNs *ns_family = xmlNewNs(object_node, family_uri, NULL);
+	xmlNs *ns_family = xmlNewNs(object_node, BAD_CAST family_uri, NULL);
 
 	xmlSetNs(object_node, ns_family);
 
 	char *id = oval_object_get_id(object);
-	xmlNewProp(object_node, BAD_CAST "id", id);
+	xmlNewProp(object_node, BAD_CAST "id", BAD_CAST id);
 
 	char version[10]; *version = '\0';
 	snprintf(version, sizeof(version), "%d", oval_object_get_version(object));
 	xmlNewProp(object_node, BAD_CAST "version", BAD_CAST version);
 
 	char *comm = oval_object_get_comment(object);
-	if(comm)xmlNewProp(object_node, BAD_CAST "comment", comm);
+	if(comm)xmlNewProp(object_node, BAD_CAST "comment", BAD_CAST comm);
 
 	bool deprecated = oval_object_get_deprecated(object);
 	if(deprecated)
@@ -387,7 +387,7 @@ xmlNode *oval_object_to_dom
 		xmlNode *notes_node = xmlNewChild(object_node, ns_definitions, BAD_CAST "notes", NULL);
 		while(oval_string_iterator_has_more(notes)){
 			char *note = oval_string_iterator_next(notes);
-			xmlNewChild(notes_node, ns_definitions, BAD_CAST "note", note);
+			xmlNewChild(notes_node, ns_definitions, BAD_CAST "note", BAD_CAST note);
 		}
 	}
 	oval_string_iterator_free(notes);
@@ -399,7 +399,7 @@ xmlNode *oval_object_to_dom
 			struct oval_behavior *behavior = oval_behavior_iterator_next(behaviors);
 			char *key   = oval_behavior_get_key  (behavior);
 			char *value = oval_behavior_get_value(behavior);
-			xmlNewProp(behaviors_node, key, value);
+			xmlNewProp(behaviors_node, BAD_CAST key, BAD_CAST value);
 		}
 	}
 	oval_behavior_iterator_free(behaviors);

@@ -376,19 +376,19 @@ xmlNode *oval_test_to_dom (struct oval_test *test, xmlDoc *doc, xmlNode *parent)
 		const char *subtype_text = oval_subtype_get_text(subtype);
 		char  test_name[strlen(subtype_text)+6]; *test_name = '\0';
 		strcat(strcat(test_name, subtype_text), "_test");
-		xmlNode *test_node = xmlNewChild(parent, NULL, test_name, NULL);
+		xmlNode *test_node = xmlNewChild(parent, NULL, BAD_CAST test_name, NULL);
 
 		oval_family_t family = oval_test_get_family(test);
 		const char *family_text = oval_family_get_text(family);
 		char family_uri[strlen((const char *)OVAL_DEFINITIONS_NAMESPACE)+strlen(family_text)+2];
 		*family_uri = '\0';
 		strcat(strcat(strcat(family_uri, (const char *)OVAL_DEFINITIONS_NAMESPACE),"#"),family_text);
-		xmlNs *ns_family = xmlNewNs(test_node, family_uri, NULL);
+		xmlNs *ns_family = xmlNewNs(test_node, BAD_CAST family_uri, NULL);
 
 		xmlSetNs(test_node, ns_family);
 
 		char *id = oval_test_get_id(test);
-		xmlNewProp(test_node, BAD_CAST "id", id);
+		xmlNewProp(test_node, BAD_CAST "id", BAD_CAST id);
 
 		char version[10]; *version = '\0';
 		snprintf(version, sizeof(version), "%d", oval_test_get_version(test));
@@ -396,13 +396,13 @@ xmlNode *oval_test_to_dom (struct oval_test *test, xmlDoc *doc, xmlNode *parent)
 
 		oval_existence_t existence = oval_test_get_existence(test);
 		if(existence!=OVAL_AT_LEAST_ONE_EXISTS)
-			xmlNewProp(test_node, BAD_CAST "check_existence", oval_existence_get_text(existence));
+			xmlNewProp(test_node, BAD_CAST "check_existence", BAD_CAST oval_existence_get_text(existence));
 
 		oval_check_t check = oval_test_get_check(test);
-		xmlNewProp(test_node, BAD_CAST "check", oval_check_get_text(check));
+		xmlNewProp(test_node, BAD_CAST "check", BAD_CAST oval_check_get_text(check));
 
 		char *comm = oval_test_get_comment(test);
-		xmlNewProp(test_node, BAD_CAST "comment", comm);
+		xmlNewProp(test_node, BAD_CAST "comment", BAD_CAST comm);
 
 		bool deprecated = oval_test_get_deprecated(test);
 		if(deprecated)
@@ -414,7 +414,7 @@ xmlNode *oval_test_to_dom (struct oval_test *test, xmlDoc *doc, xmlNode *parent)
 			xmlNode *notes_node = xmlNewChild(test_node, ns_definitions, BAD_CAST "notes", NULL);
 			while(oval_string_iterator_has_more(notes)){
 				char *note = oval_string_iterator_next(notes);
-				xmlNewChild(notes_node, ns_definitions, BAD_CAST "note", note);
+				xmlNewChild(notes_node, ns_definitions, BAD_CAST "note", BAD_CAST note);
 			}
 		}
 		oval_string_iterator_free(notes);
@@ -422,13 +422,13 @@ xmlNode *oval_test_to_dom (struct oval_test *test, xmlDoc *doc, xmlNode *parent)
 		struct oval_object *object = oval_test_get_object(test);
 		if(object){
 			xmlNode *object_node = xmlNewChild(test_node, ns_family, BAD_CAST "object", NULL);
-			xmlNewProp(object_node, BAD_CAST "object_ref", oval_object_get_id(object));
+			xmlNewProp(object_node, BAD_CAST "object_ref", BAD_CAST oval_object_get_id(object));
 		}
 
-		struct oval_state *state = oval_test_get_state(test);
+		struct oval_state *state = oval_test_get_state(test); 
 		if(state){
 			xmlNode *state_node = xmlNewChild(test_node, ns_family, BAD_CAST "state", NULL);
-			xmlNewProp(state_node, BAD_CAST "state_ref", oval_state_get_id(state));
+			xmlNewProp(state_node, BAD_CAST "state_ref", BAD_CAST oval_state_get_id(state));
 		}
 	}else
 		fprintf(stderr,

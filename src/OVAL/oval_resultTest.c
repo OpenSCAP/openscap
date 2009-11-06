@@ -841,11 +841,11 @@ static int _oval_result_test_binding_parse
         struct oval_definition_model *definition_model = oval_syschar_model_get_definition_model(syschar_model);
 
 	struct oval_variable *variable = get_oval_variable_new
- 		(definition_model, variable_id, OVAL_VARIABLE_UNKNOWN);
+ 		(definition_model, (char *) variable_id, OVAL_VARIABLE_UNKNOWN);
 
 	xmlChar *value = xmlTextReaderValue(reader);
 
-	struct oval_variable_binding *binding = oval_variable_binding_new(variable, value);
+	struct oval_variable_binding *binding = oval_variable_binding_new(variable, (char *) value);
 	oval_result_test_add_binding(TEST, binding);
 
 	xmlFree(value);
@@ -899,7 +899,7 @@ int oval_result_test_parse_tag
 	}
 
 	xmlChar *test_id = xmlTextReaderGetAttribute(reader, BAD_CAST "test_id");
-	struct oval_result_test *test = oval_result_test_new(sys, test_id);
+	struct oval_result_test *test = oval_result_test_new(sys, (char *) test_id);
 	oval_result_t result = oval_result_parse(reader, "result",0);
 	oval_result_test_set_result(test, result);
 	int veriable_instance = oval_parser_int_attribute(reader, "veriable_instance", 1);
@@ -979,11 +979,11 @@ static xmlNode *_oval_result_binding_to_dom
 {
 	char *value = oval_variable_binding_get_value(binding);
 	xmlNs *ns_results = xmlSearchNsByHref(doc, parent, OVAL_RESULTS_NAMESPACE);
-	xmlNode *binding_node = xmlNewChild(parent, ns_results, BAD_CAST "tested_variable", value);
+	xmlNode *binding_node = xmlNewChild(parent, ns_results, BAD_CAST "tested_variable", BAD_CAST value);
 
 	struct oval_variable *oval_variable = oval_variable_binding_get_variable(binding);
 	char *variable_id = oval_variable_get_id(oval_variable);
-	xmlNewProp(binding_node, BAD_CAST "variable_id", variable_id);
+	xmlNewProp(binding_node, BAD_CAST "variable_id", BAD_CAST variable_id);
 
 	return binding_node;
 }
@@ -1017,7 +1017,7 @@ xmlNode *oval_result_test_to_dom
 
 	struct oval_test *oval_test = oval_result_test_get_test(rslt_test);
 	char *test_id = oval_test_get_id(oval_test);
-	xmlNewProp(test_node, BAD_CAST "test_id", test_id);
+	xmlNewProp(test_node, BAD_CAST "test_id", BAD_CAST test_id);
 
 	char version[10]; *version = '\0';
 	snprintf(version, sizeof(version), "%d", oval_test_get_version(oval_test));
@@ -1025,11 +1025,11 @@ xmlNode *oval_result_test_to_dom
 
 	oval_existence_t existence = oval_test_get_existence(oval_test);
 	if(existence!=OVAL_AT_LEAST_ONE_EXISTS){
-		xmlNewProp(test_node, BAD_CAST "check_existence", oval_existence_get_text(existence));
+		xmlNewProp(test_node, BAD_CAST "check_existence", BAD_CAST oval_existence_get_text(existence));
 	}
 
 	oval_check_t check = oval_test_get_check(oval_test);
-	xmlNewProp(test_node, BAD_CAST "check", oval_check_get_text(check));
+	xmlNewProp(test_node, BAD_CAST "check", BAD_CAST oval_check_get_text(check));
 
 	int instance_val = oval_result_test_get_instance(rslt_test);
 	if(instance_val>1){
@@ -1039,7 +1039,7 @@ xmlNode *oval_result_test_to_dom
 	}
 
 	oval_result_t result = oval_result_test_get_result(rslt_test);
-	xmlNewProp(test_node, BAD_CAST "result", oval_result_get_text(result));
+	xmlNewProp(test_node, BAD_CAST "result", BAD_CAST oval_result_get_text(result));
 
 	struct oval_result_item_iterator *items = oval_result_test_get_items(rslt_test);
 	while(oval_result_item_iterator_has_more(items)){

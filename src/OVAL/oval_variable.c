@@ -488,7 +488,7 @@ static xmlNode *_oval_VARIABLE_CONSTANT_to_dom
 	while(oval_value_iterator_has_more(values)){
 		struct oval_value *value = oval_value_iterator_next(values);
 		char * text = oval_value_get_text(value);
-		xmlNewChild(variable_node, ns_definitions, BAD_CAST "value", text);
+		xmlNewChild(variable_node, ns_definitions, BAD_CAST "value", BAD_CAST text);
 	}
 	oval_value_iterator_free(values);
 
@@ -533,17 +533,17 @@ xmlNode *oval_variable_to_dom (struct oval_variable *variable, xmlDoc *doc, xmlN
 	};
 
 	char *id = oval_variable_get_id(variable);
-	xmlNewProp(variable_node, BAD_CAST "id", id);
+	xmlNewProp(variable_node, BAD_CAST "id", BAD_CAST id);
 
 	char version[10]; *version = '\0';
 	snprintf(version, sizeof(version), "%d", oval_variable_get_version(variable));
 	xmlNewProp(variable_node, BAD_CAST "version", BAD_CAST version);
 
 	oval_datatype_t datatype = oval_variable_get_datatype(variable);
-	xmlNewProp(variable_node, BAD_CAST "datatype", oval_datatype_get_text(datatype));
+	xmlNewProp(variable_node, BAD_CAST "datatype", BAD_CAST oval_datatype_get_text(datatype));
 
 	char *comm = oval_variable_get_comment(variable);
-	xmlNewProp(variable_node, BAD_CAST "comment", comm);
+	xmlNewProp(variable_node, BAD_CAST "comment", BAD_CAST comm);
 
 	bool deprecated = oval_variable_get_deprecated(variable);
 	if(deprecated)
