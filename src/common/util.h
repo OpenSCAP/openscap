@@ -263,10 +263,10 @@ typedef void(*oscap_consumer_func)(void*, void*);
 	bool SNAME##_add_##FNAME(struct SNAME *obj, struct MTYPE *item) \
 	{ oscap_list_add(obj->MNAME, item); return true; }
 
-/// Generate iterator getter and list inserter
+/* Generate iterator getter and list inserter */
 #define OSCAP_IGETINS(ITYPE, SNAME, MNAME, FNAME) \
 	OSCAP_IGETTER(ITYPE, SNAME, MNAME) OSCAP_INSERTER(SNAME, FNAME, ITYPE, MNAME)
-/// Generate iterator getter, list inserter, and iterator manipulation functions.
+/* Generate iterator getter, list inserter, and iterator manipulation functions. */
 #define OSCAP_IGETINS_GEN(ITYPE, SNAME, MNAME, FNAME) \
 	OSCAP_IGETTER_GEN(ITYPE, SNAME, MNAME) OSCAP_INSERTER(SNAME, FNAME, ITYPE, MNAME)
 
@@ -278,8 +278,8 @@ typedef void(*oscap_consumer_func)(void*, void*);
  * the default value for strings not defined elsewhere.
  */
 struct oscap_string_map {
-	int value;           ///< integer/enum value
-	const char* string;  ///< string representation of the value
+	int value;           /* integer/enum value */
+	const char* string;  /* string representation of the value */
 };
 
 /**
@@ -304,5 +304,13 @@ const char* oscap_enum_to_string(const struct oscap_string_map* map, int val);
  */
 char* oscap_strdup(const char *str);
 
-#endif // OSCAP_UTIL_H_
+/**
+ * Use strsep on string
+ * We can't use strsep from string.h because of compatibility issues
+ * @param str String we want to split
+ * @param delim Delimiter of string parts
+ */
+char* oscap_strsep(char** str, const char *delim);
+
+#endif /* OSCAP_UTIL_H_ */
 

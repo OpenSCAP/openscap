@@ -79,7 +79,7 @@ struct oscap_export_target * oscap_export_target_new(const char * filename, cons
         else target->encoding = strdup(encoding);
                 
         target->filename = strdup(filename);
-        // default values
+        /* default values */
         target->indent = 1;
         target->indent_string = strdup("    ");
 
@@ -115,5 +115,17 @@ char* oscap_strdup(const char *str) {
             return NULL;
 
         return strdup(str);
+}
+
+char* oscap_strsep(char** str, const char *delim)
+{
+	if (str == NULL || *str == NULL) return NULL;
+	char* ret = *str;
+	*str = strchr(*str, *delim);
+	if (*str) {
+		**str = '\0';
+		(*str)++;
+	}
+	return ret;
 }
 

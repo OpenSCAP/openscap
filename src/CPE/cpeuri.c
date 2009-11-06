@@ -102,7 +102,8 @@ static int cpe_fields_num(const struct cpe_name *cpe)
 {
 	if (cpe == NULL) return 0;
 	int maxnum = 0;
-	for (int i = 0; i < CPE_FIELDNUM; ++i)
+        int i;
+	for (i = 0; i < CPE_FIELDNUM; ++i)
 		if (cpe_get_field(cpe, i))
 			maxnum = i + 1;
 	return maxnum;
@@ -199,7 +200,7 @@ static char **cpe_split(char *str, const char *delim)
 				return NULL;
 			}
 		}
-		fields[i++] = strsep(stringp, delim);
+		fields[i++] = oscap_strsep(stringp, delim);
 	}
 	fields[i] = NULL;
 
@@ -234,6 +235,7 @@ static bool cpe_urldecode(char *str)
 bool cpe_name_match_one(const struct cpe_name * cpe, const struct cpe_name * against)
 {
 
+        int i;
 	if (cpe == NULL || against == NULL)
 		return false;
 
@@ -241,7 +243,7 @@ bool cpe_name_match_one(const struct cpe_name * cpe, const struct cpe_name * aga
 	if (cpe_fields_num(against) < cpefn)
 		return false;
 
-	for (int i = 0; i < cpefn; ++i) {
+	for (i = 0; i < cpefn; ++i) {
 		const char *cpefield = cpe_get_field(cpe, i);
 		if (cpefield && strcasecmp(cpefield, as_str(cpe_get_field(against, i))) != 0)
 			return false;
@@ -265,13 +267,14 @@ bool cpe_name_match_cpes(const struct cpe_name * name, size_t n, struct cpe_name
 
 int cpe_name_match_strs(const char *candidate, size_t n, char **targets)
 {
+        int i;
 	struct cpe_name *ccpe, *tcpe;
 
 	ccpe = cpe_name_new(candidate);	// candidate cpe
 	if (ccpe == NULL)
 		return -2;
 
-	for (int i = 0; i < (int)n; ++i) {
+	for (i = 0; i < (int)n; ++i) {
 		tcpe = cpe_name_new(targets[i]);	// target cpe
 
 		if (cpe_name_match_one(ccpe, tcpe)) {
@@ -376,7 +379,8 @@ static bool cpe_assign_values(struct cpe_name * cpe, char **fields)
 
 void cpe_name_free(struct cpe_name * cpe)
 {
-	for (int i = 0; i < CPE_FIELDNUM; ++i)
+        int i;
+	for (i = 0; i < CPE_FIELDNUM; ++i)
 		cpe_set_field(cpe, i, NULL);
 	oscap_free(cpe);
 }
