@@ -376,7 +376,6 @@ xmlNode *oval_test_to_dom (struct oval_test *test, xmlDoc *doc, xmlNode *parent)
 		const char *subtype_text = oval_subtype_get_text(subtype);
 		char  test_name[strlen(subtype_text)+6]; *test_name = '\0';
 		strcat(strcat(test_name, subtype_text), "_test");
-		fprintf(stderr, "DEBUG: %s(%d)\n", __FILE__, __LINE__);
 		xmlNode *test_node = xmlNewChild(parent, NULL, test_name, NULL);
 
 		oval_family_t family = oval_test_get_family(test);

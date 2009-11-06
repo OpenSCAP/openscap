@@ -45,6 +45,17 @@ static int oval_enumeration_attr(xmlTextReaderPtr reader, char *attname, const s
 	return ret == OVAL_ENUMERATION_INVALID ? defval : ret;
 }
 
+static const char _invalid[] = "**INVALID**";
+
+static const char *oval_enumeration_get_text(const struct oscap_string_map* map, int idx){
+	if(idx){
+		return map[idx-1].string;
+	}else{
+		fprintf(stderr, "WARNING: ZERO ENUMERATION INDEX\n    %s(%d)\n", __FILE__, __LINE__);
+		return _invalid;
+	}
+}
+
 static const struct oscap_string_map OVAL_SYSCHAR_FLAG_MAP[] = {
 	{ SYSCHAR_FLAG_ERROR,          "error" },
 	{ SYSCHAR_FLAG_COMPLETE,       "complete" },
@@ -66,7 +77,7 @@ oval_syschar_collection_flag_t oval_syschar_flag_parse(xmlTextReaderPtr
 
 const char *oval_syschar_collection_flag_get_text(oval_syschar_collection_flag_t flag)
 {
-	return (flag)?OVAL_SYSCHAR_FLAG_MAP[flag-1].string:"**INVALID**";
+	return oval_enumeration_get_text(OVAL_SYSCHAR_FLAG_MAP, flag);
 }
 
 static const struct oscap_string_map OVAL_SYSCHAR_STATUS_MAP[] = {
@@ -85,7 +96,7 @@ oval_syschar_status_t oval_syschar_status_parse(xmlTextReaderPtr
 	return oval_enumeration_attr(reader, attname, OVAL_SYSCHAR_STATUS_MAP, defval);
 }
 
-const char * oval_syschar_status_text(oval_syschar_status_t idx){
+const char * oval_syschar_status_get_text(oval_syschar_status_t idx){
 	return oscap_enum_to_string(OVAL_SYSCHAR_STATUS_MAP, idx);
 }
 
@@ -127,7 +138,7 @@ oval_arithmetic_operation_t oval_arithmetic_operation_parse(xmlTextReaderPtr
 }
 const char *oval_arithmetic_operation_get_text(oval_arithmetic_operation_t operation)
 {
-	return OVAL_ARITHMETIC_OPERATION_MAP[operation-1].string;
+	return oval_enumeration_get_text(OVAL_ARITHMETIC_OPERATION_MAP, operation);
 }
 
 static const struct oscap_string_map OVAL_DATETIME_FORMAT_MAP[] = {
@@ -148,7 +159,7 @@ oval_datetime_format_t oval_datetime_format_parse(xmlTextReaderPtr reader,
 }
 const char *oval_datetime_format_get_text(oval_datetime_format_t format)
 {
-	return OVAL_DATETIME_FORMAT_MAP[format-1].string;
+	return oval_enumeration_get_text(OVAL_DATETIME_FORMAT_MAP, format);
 }
 
 static const struct oscap_string_map OVAL_SET_OPERATION_MAP[] = {
@@ -166,7 +177,7 @@ oval_setobject_operation_t oval_set_operation_parse(xmlTextReaderPtr reader,
 }
 const char *oval_set_operation_get_text(oval_setobject_operation_t operation)
 {
-	return OVAL_SET_OPERATION_MAP[operation-1].string;
+	return oval_enumeration_get_text(OVAL_SET_OPERATION_MAP, operation);
 }
 
 static const struct oscap_string_map OVAL_OPERATION_MAP[] = {
@@ -191,7 +202,7 @@ oval_operation_t oval_operation_parse(xmlTextReaderPtr reader, char *attname,
 };
 const char *oval_operation_get_text(oval_operation_t operation)
 {
-	return OVAL_OPERATION_MAP[operation-1].string;
+	return oval_enumeration_get_text(OVAL_OPERATION_MAP, operation);
 }
 
 static const struct oscap_string_map OVAL_CHECK_MAP[] = {
@@ -210,7 +221,7 @@ oval_check_t oval_check_parse(xmlTextReaderPtr reader, char *attname,
 }
 const char * oval_check_get_text(oval_check_t check)
 {
-	return OVAL_CHECK_MAP[check-1].string;
+	return oval_enumeration_get_text(OVAL_CHECK_MAP, check);
 }
 
 
@@ -234,7 +245,7 @@ oval_datatype_t oval_datatype_parse(xmlTextReaderPtr reader, char *attname,
 }
 const char *oval_datatype_get_text(oval_datatype_t datatype)
 {
-	return OVAL_DATATYPE_MAP[datatype-1].string;
+	return oval_enumeration_get_text(OVAL_DATATYPE_MAP, datatype);
 }
 
 static const struct oscap_string_map OVAL_EXISTENCE_MAP[] = {
@@ -253,7 +264,7 @@ oval_existence_t oval_existence_parse(xmlTextReaderPtr reader, char *attname,
 }
 const char * oval_existence_get_text(oval_existence_t existence)
 {
-	return OVAL_EXISTENCE_MAP[existence-1].string;
+	return oval_enumeration_get_text(OVAL_EXISTENCE_MAP, existence);
 }
 
 static const struct oscap_string_map OVAL_OPERATOR_MAP[] = {
@@ -272,7 +283,7 @@ oval_operator_t oval_operator_parse(xmlTextReaderPtr reader, char *attname,
 
 const char* oval_operator_get_text(oval_operator_t operator)
 {
-	return OVAL_OPERATOR_MAP[operator-1].string;
+	return oval_enumeration_get_text(OVAL_OPERATOR_MAP, operator);
 }
 
 static const struct oscap_string_map OVAL_FAMILY_MAP[] = {
@@ -309,7 +320,7 @@ oval_family_t oval_family_parse(xmlTextReaderPtr reader)
 const char *oval_family_get_text(oval_family_t family)
 {
 	int family_idx = family/1000;
-	return OVAL_FAMILY_MAP[family_idx-1].string;
+	return oval_enumeration_get_text(OVAL_FAMILY_MAP, family_idx);
 }
 
 
@@ -525,9 +536,13 @@ const char *oval_subtype_get_text(oval_subtype_t subtype)
 	default: map = NULL;
 	}
 
-	int subidx = subtype%1000;
-
-	return map[subidx-1].string;
+	if(map){
+		int subidx = subtype%1000;
+		return oval_enumeration_get_text(map, subidx);
+	}else{
+		fprintf(stderr, "WARNING: ZERO FAMILY INDEX\n    %s(%d)\n", __FILE__, __LINE__);
+		return _invalid;
+	}
 }
 
 static const struct oscap_string_map OVAL_RESULT_MAP[] = {
@@ -548,6 +563,85 @@ oval_result_t oval_result_parse(xmlTextReaderPtr reader, char *attname,
 
 const char* oval_result_get_text(oval_result_t result)
 {
-	return (result)?OVAL_RESULT_MAP[result-1].string:"**INVALID**";
+	return oval_enumeration_get_text(OVAL_RESULT_MAP, result);
 }
-const char *oval_datetime_format_get_text(oval_datetime_format_t);
+
+static const struct oscap_string_map *maps[] =
+{
+		OVAL_SYSCHAR_FLAG_MAP,
+		OVAL_SYSCHAR_STATUS_MAP,
+		OVAL_MESSAGE_LEVEL_MAP,
+		OVAL_ARITHMETIC_OPERATION_MAP,
+		OVAL_DATETIME_FORMAT_MAP,
+		OVAL_SET_OPERATION_MAP,
+		OVAL_OPERATION_MAP,
+		OVAL_CHECK_MAP,
+		OVAL_DATATYPE_MAP,
+		OVAL_EXISTENCE_MAP,
+		OVAL_OPERATOR_MAP,
+		OVAL_FAMILY_MAP,
+		OVAL_SUBTYPE_AIX_MAP,
+		OVAL_SUBTYPE_APACHE_MAP,
+		OVAL_SUBTYPE_CATOS_MAP,
+		OVAL_SUBTYPE_ESX_MAP,
+		OVAL_SUBTYPE_FREEBSD_MAP,
+		OVAL_SUBTYPE_HPUX_MAP,
+		OVAL_SUBTYPE_INDEPENDENT_MAP,
+		OVAL_SUBTYPE_IOS_MAP,
+		OVAL_SUBTYPE_LINUX_MAP,
+		OVAL_SUBTYPE_MACOS_MAP,
+		OVAL_SUBTYPE_PIXOS_MAP,
+		OVAL_SUBTYPE_SOLARIS_MAP,
+		OVAL_SUBTYPE_UNIX_MAP,
+		OVAL_SUBTYPE_WINDOWS_MAP,
+		OVAL_RESULT_MAP,
+		NULL
+};
+
+typedef const char *(*_textfunc)(int idx);
+
+static _textfunc textfuncs[] =
+{
+	(_textfunc)oval_syschar_collection_flag_get_text,
+	(_textfunc)oval_syschar_status_get_text,
+	(_textfunc)oval_message_level_text,
+	(_textfunc)oval_arithmetic_operation_get_text,
+	(_textfunc)oval_datetime_format_get_text,
+	(_textfunc)oval_set_operation_get_text,
+	(_textfunc)oval_operation_get_text,
+	(_textfunc)oval_check_get_text,
+	(_textfunc)oval_datatype_get_text,
+	(_textfunc)oval_existence_get_text,
+	(_textfunc)oval_operator_get_text,
+	(_textfunc)oval_family_get_text,
+	(_textfunc)oval_subtype_get_text,
+	(_textfunc)oval_subtype_get_text,
+	(_textfunc)oval_subtype_get_text,
+	(_textfunc)oval_subtype_get_text,
+	(_textfunc)oval_subtype_get_text,
+	(_textfunc)oval_subtype_get_text,
+	(_textfunc)oval_subtype_get_text,
+	(_textfunc)oval_subtype_get_text,
+	(_textfunc)oval_subtype_get_text,
+	(_textfunc)oval_subtype_get_text,
+	(_textfunc)oval_subtype_get_text,
+	(_textfunc)oval_subtype_get_text,
+	(_textfunc)oval_subtype_get_text,
+	(_textfunc)oval_subtype_get_text,
+	(_textfunc)oval_result_get_text,
+	NULL
+};
+
+void oval_enumerations_test_driver(){
+	int i;for(i=0;maps[i];i++){
+		fprintf(stderr, "Testing enumeration #%d\n", i);
+		const struct oscap_string_map *map = maps[i];
+		_textfunc textfunc = textfuncs[i];
+		fprintf(stderr, "    INVALID INDEX: %s\n", (*textfunc)(0));
+		int j;for(j=0;map[j].string;j++){
+			int value = map[j].value;
+			const char *text = (*textfunc)(value);
+			fprintf(stderr, "    [%d]: %s\n", value, text);
+		}
+	}
+}

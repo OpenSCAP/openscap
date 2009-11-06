@@ -313,7 +313,7 @@ void oval_sysdata_to_dom  (struct oval_sysdata *sysdata, xmlDoc *doc, xmlNode *t
 		    {//attributes
 		    	xmlNewProp(tag_sysdata, BAD_CAST "id", BAD_CAST oval_sysdata_get_id(sysdata));
 		    	oval_syschar_status_t status_index = oval_sysdata_get_status(sysdata);
-		    	char* status = oval_syschar_status_text(status_index);
+		    	const char* status = oval_syschar_status_get_text(status_index);
 		    	xmlNewProp(tag_sysdata, BAD_CAST "status", BAD_CAST status);
 		    }
 			{//message

@@ -251,5 +251,6 @@ struct oval_variable_binding_iterator *oval_syschar_get_variable_bindings(struct
 struct oval_sysdata_iterator          *oval_syschar_get_sysdata              (struct oval_syschar *);
 
 const char *oval_syschar_collection_flag_get_text(oval_syschar_collection_flag_t flag);
+const char *oval_syschar_status_get_text(oval_syschar_status_t status);
 
 #endif

@@ -252,7 +252,7 @@ void oval_sysitem_to_dom  (struct oval_sysitem *sysitem, xmlDoc *doc, xmlNode *p
 
 	oval_syschar_status_t status_index = oval_sysitem_get_status(sysitem);
 	if(status_index!=SYSCHAR_STATUS_EXISTS){
-		xmlNewProp(sysitem_tag, BAD_CAST "status", BAD_CAST oval_syschar_status_text(status_index));
+		xmlNewProp(sysitem_tag, BAD_CAST "status", BAD_CAST oval_syschar_status_get_text(status_index));
 	}
 }
 

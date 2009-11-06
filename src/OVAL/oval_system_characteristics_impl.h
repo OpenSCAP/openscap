@@ -91,7 +91,6 @@ void oval_syschar_to_dom  (struct oval_syschar *, xmlDoc *, xmlNode *);
 int oval_syschar_parse_tag(xmlTextReaderPtr, struct oval_parser_context *context);
 oval_syschar_collection_flag_t oval_syschar_flag_parse(xmlTextReaderPtr, char *, oval_syschar_collection_flag_t);
 oval_syschar_status_t oval_syschar_status_parse(xmlTextReaderPtr, char *, oval_syschar_status_t);
-char* oval_syschar_status_text(oval_syschar_status_t);
 
 //typedef void (*oval_affected_consumer) (struct oval_affected *, void *);
 //int oval_affected_parse_tag(xmlTextReaderPtr reader,

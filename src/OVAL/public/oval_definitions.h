@@ -1605,5 +1605,6 @@ const char *oval_operation_get_text(oval_operation_t);
 const char *oval_set_operation_get_text(oval_setobject_operation_t);
 const char *oval_datetime_format_get_text(oval_datetime_format_t);
 const char *oval_arithmetic_operation_get_text(oval_arithmetic_operation_t);
+const char *oval_message_level_text(oval_message_level_t);
 
 #endif
