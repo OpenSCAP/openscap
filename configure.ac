@@ -388,13 +388,7 @@ AC_CONFIG_FILES([Makefile
                  src/CCE/Makefile
                  src/XCCDF/Makefile
                  src/common/Makefile
-                 swig/OVAL/Makefile
-                 swig/CVSS/Makefile
-                 swig/CVE/Makefile
-                 swig/CPE/Makefile
-                 swig/CCE/Makefile
-                 swig/XCCDF/Makefile
-                 examples/Makefile])
+                examples/Makefile])
 
 AC_OUTPUT
 
