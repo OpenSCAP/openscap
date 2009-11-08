@@ -388,7 +388,7 @@ AC_CONFIG_FILES([Makefile
                  src/CCE/Makefile
                  src/XCCDF/Makefile
                  src/common/Makefile
-                examples/Makefile])
+                 tests/Makefile])
 
 AC_OUTPUT
 
