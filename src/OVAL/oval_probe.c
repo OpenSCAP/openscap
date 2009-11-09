@@ -310,6 +310,7 @@ struct oval_sysinfo *oval_sysinfo_probe (void)
                  */
                 
                 SEAP_close (s_ctx, sd);
+                break;
         }
         
         SEXP_free (obj);
@@ -328,10 +329,13 @@ struct oval_sysinfo *oval_sysinfo_probe (void)
                                                                         \
                 val = probe_obj_getentval (obj, __STRING(name), 1);     \
                                                                         \
-                if (val == NULL)                                        \
+                if (val == NULL) {                                      \
+                        _D("No entity or value: %s\n", __STRING(name)); \
                         goto fail;                                      \
+                }                                                       \
                                                                         \
                 if (SEXP_string_cstr_r (val, buf, sizeof buf) >= sizeof buf) { \
+                        _D("Value too large: %s\n", __STRING(name));    \
                         SEXP_free (val);                                \
                         goto fail;                                      \
                 }                                                       \

@@ -124,19 +124,19 @@ SEXP_t *probe_main(SEXP_t *probe_in, int *err)
         architecture = sname.machine;
 
         if (gethostname(hname, sizeof (hname)) == -1) {
-                *err = PROBE_EUNKNOWN;
+                *err = PROBE_EUNKNOWN + 1;
                 return NULL;
         }
 
         if (getaddrinfo(hname, NULL, NULL, &results) != 0) {
-                *err = PROBE_EUNKNOWN;
+                *err = PROBE_EUNKNOWN + 2;
                 return NULL;
         }
 
         if (getnameinfo(results->ai_addr, sizeof (struct sockaddr),
                         hname, sizeof (hname), NULL, 0, 0) != 0) {
                 freeaddrinfo(results);
-                *err = PROBE_EUNKNOWN;
+                *err = PROBE_EUNKNOWN + 3;
                 return NULL;
         }
         freeaddrinfo(results);

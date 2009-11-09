@@ -808,6 +808,8 @@ void *probe_worker (void *arg)
                 }
         }
         
+        _D("probe_out = %p, probe_ret = %d\n", (void *)probe_out, probe_ret);
+
         if (probe_out == NULL || probe_ret != 0) {
                 if (SEAP_replyerr (global.ctx, global.sd, seap_request, probe_ret) == -1) {
                         int ret = errno;
