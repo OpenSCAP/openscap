@@ -319,52 +319,50 @@ struct oval_sysinfo *oval_sysinfo_probe (void)
         /*
          * Translate S-exp to sysinfo structure
          */
-        {
-                SEXP_t *obj;
-                
 #include <sys/cdefs.h>
-                
+        
 #define SYSINF_EXT(obj, name, sysinf, fail)                             \
-                do {                                                    \
-                        SEXP_t *val;                                    \
-                        char    buf[128+1];                             \
+        do {                                                            \
+                SEXP_t *val;                                            \
+                char    buf[128+1];                                     \
                                                                         \
-                        val = probe_obj_getentval (obj, __STRING(name), 1); \
+                val = probe_obj_getentval (obj, __STRING(name), 1);     \
                                                                         \
-                        if (val == NULL)                                \
-                                goto fail;                              \
+                if (val == NULL)                                        \
+                        goto fail;                                      \
                                                                         \
-                        if (SEXP_string_cstr_r (val, buf, sizeof buf) >= sizeof buf) { \
-                                SEXP_free (val);                        \
-                                goto fail;                              \
-                        }                                               \
-                                                                        \
-                        oval_sysinfo_set_##name (sysinf, buf);          \
+                if (SEXP_string_cstr_r (val, buf, sizeof buf) >= sizeof buf) { \
                         SEXP_free (val);                                \
-                } while (0)
-                
-
-                obj = SEAP_msg_get (s_imsg);
-                
-                if (obj == NULL) {
-                        oval_sysinfo_free (sysinf);
-                        return (NULL);
-                }
-                
-                SYSINF_EXT(obj, os_name, sysinf, fail);
-                SYSINF_EXT(obj, os_version, sysinf, fail);
-                SYSINF_EXT(obj, os_architecture, sysinf, fail);
-                SYSINF_EXT(obj, primary_host_name, sysinf, fail);
-                
-                SEXP_free (obj);
-        fail:
-                sysinf = NULL;
-                SEXP_free (obj);
+                        goto fail;                                      \
+                }                                                       \
+                                                                        \
+                oval_sysinfo_set_##name (sysinf, buf);                  \
+                SEXP_free (val);                                        \
+        } while (0)
+        
+        
+        obj = SEAP_msg_get (s_imsg);
+        
+        if (obj == NULL) {
+                oval_sysinfo_free (sysinf);
+                return (NULL);
         }
-
+        
+        SYSINF_EXT(obj, os_name, sysinf, fail);
+        SYSINF_EXT(obj, os_version, sysinf, fail);
+        SYSINF_EXT(obj, os_architecture, sysinf, fail);
+        SYSINF_EXT(obj, primary_host_name, sysinf, fail);
+        
+        SEXP_free (obj);
         SEAP_msg_free (s_imsg);
         
         return (sysinf);
+fail:
+        oval_sysinfo_free (sysinf);
+        SEXP_free (obj);
+        SEAP_msg_free (s_imsg);
+        
+        return (NULL);
 }
 
 struct oval_syschar *oval_object_probe (struct oval_object *object, struct oval_definition_model *model)
