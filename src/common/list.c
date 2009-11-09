@@ -51,6 +51,12 @@ bool oscap_list_add(struct oscap_list* list, void* value)
 	return true;
 }
 
+int oscap_list_get_itemcount(struct oscap_list* list)
+{
+	assert(list != NULL);
+	return list->itemcount;
+}
+
 void oscap_list_free(struct oscap_list* list, oscap_destruct_func destructor)
 {
 	struct oscap_list_item *item, *to_del;

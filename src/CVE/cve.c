@@ -33,7 +33,6 @@
 #include "config.h"
 
 #include <libxml/xmlreader.h>
-#include <libxml/xmlstring.h>
 
 #include "../common/util.h"
 #include "../common/list.h"
@@ -489,7 +488,7 @@ static int cve_parse(const char *xmlfile, struct cve* out)
 	return ret ? -1 : cve_cnt;
 }
 
-
+/*
 OSCAP_IGETTER_GEN(cve_info, cve, entries)
 OSCAP_HGETTER(struct cve_info*, cve, entry)
 
@@ -513,4 +512,4 @@ OSCAP_GETTER(const char*, cve_reference, summary)
 OSCAP_GETTER(const char*, cve_reference, href)
 OSCAP_GETTER(const char*, cve_reference, type)
 OSCAP_GETTER(const char*, cve_reference, source)
-
+*/

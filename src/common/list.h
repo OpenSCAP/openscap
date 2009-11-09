@@ -57,6 +57,7 @@ bool oscap_list_add(struct oscap_list* list, void* value);
 void oscap_list_free(struct oscap_list* list, oscap_destruct_func destructor);
 void oscap_list_free0(struct oscap_list* list);
 void oscap_list_dump(struct oscap_list* list, oscap_dump_func dumper, int depth);
+int oscap_list_get_itemcount(struct oscap_list* list);
 
 /* Linked List iterator. */
 

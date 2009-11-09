@@ -45,6 +45,17 @@
 
 OSCAP_HIDDEN_START;
 
+/*
+ * */
+
+struct cpe_testexpr {
+        struct xml_metadata xml;
+	cpe_lang_oper_t oper;	// operator
+	union {
+		struct cpe_testexpr *expr;	// array of subexpressions for operators
+		struct cpe_name *cpe;	        // CPE for match operation
+	} meta;			                // operation metadata
+};
 /**
  * Function for parsing XML CPE language file
  * @param source structure of import source with filename and encoding

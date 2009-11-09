@@ -79,6 +79,6 @@ void oscap_title_free(struct oscap_title * title) {
 
 void xml_metadata_free(struct xml_metadata xml) {
 
-        if (xml.lang != NULL) oscap_free(xml.lang);
-        if (xml.namespace != NULL) oscap_free(xml.namespace);
+        xmlFree(xml.lang);
+        oscap_free(xml.namespace);
 }
