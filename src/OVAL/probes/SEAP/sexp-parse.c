@@ -15,14 +15,14 @@
 #include "generic/xbase64.h"
 #include "generic/strto.h"
 
-static SEXP_t *SEXP_parse_fd (SEXP_format_t fmt, int fd, size_t max, SEXP_pstate_t **state)
+SEXP_t *SEXP_parse_fd (SEXP_format_t fmt, int fd, size_t max, SEXP_pstate_t **state)
 {
         _A(fd >= 0);
         errno = EOPNOTSUPP;
         return (NULL);
 }
 
-static SEXP_t *SEXP_parse_buf (SEXP_format_t fmt, void *buf, size_t len, SEXP_pstate_t **state)
+SEXP_t *SEXP_parse_buf (SEXP_format_t fmt, void *buf, size_t len, SEXP_pstate_t **state)
 {
         _A(buf != NULL);
         _A(len  > 0);

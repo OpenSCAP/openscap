@@ -61,11 +61,6 @@ static Stable_t *Stable_new (size_t capacity)
         return (t);
 }
 
-static void Stable_free (Stable_t *t)
-{
-        sm_free (t);
-}
-
 static int Stable_add (Stable_t *t, SEAP_cmdrec_t *r)
 {
         Stable_rec_t *t_r;

@@ -370,7 +370,7 @@ int SEAP_recvmsg (SEAP_CTX_t *ctx, int sd, SEAP_msg_t **seap_msg)
                         abort ();
                 }
 
-                SEXP_packet_free (packet);
+                SEAP_packet_free (packet);
         }
         
         /* NOTREACHED */

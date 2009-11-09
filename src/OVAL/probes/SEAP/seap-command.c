@@ -16,6 +16,7 @@
 #include "_seap-command.h"
 #include "_seap-packet.h"
 
+#if 0 /* XXX: dead code? */
 static SEAP_cmd_t *SEAP_cmd_new (void)
 {
         SEAP_cmd_t *cmd;
@@ -31,6 +32,7 @@ static void SEAP_cmd_free (SEAP_cmd_t *p)
 {
         sm_free (p);
 }
+#endif /* 0 */
 
 int SEAP_cmd_register (SEAP_CTX_t *ctx, SEAP_cmdcode_t code, uint32_t flags, SEAP_cmdfn_t func, ...) /* sd, arg */
 {

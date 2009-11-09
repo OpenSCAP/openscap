@@ -1837,7 +1837,7 @@ const char *SEXP_strtype (const SEXP_t *s_exp)
         return (__sexp_strtype[v_dsc.type]);
 }
 
-static SEXP_t *SEXP_build (const char *s_str, ...)
+SEXP_t *SEXP_build (const char *s_str, ...)
 {
         _LOGCALL_;
         /* (1 2 3 "asdf" %s %s) */

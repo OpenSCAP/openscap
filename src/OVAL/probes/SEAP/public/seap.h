@@ -11,7 +11,7 @@
 #include <sexp.h>
 #include <seap-types.h>
 #include <seap-message.h>
-#include <seap-command.h>
+#include <seap-command.h> 
 #include <seap-error.h>
 
 SEAP_CTX_t *SEAP_CTX_new  (void);

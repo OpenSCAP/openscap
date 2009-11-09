@@ -170,6 +170,7 @@ bitmap_bitn_t bitmap_setfree (bitmap_t *bitmap)
                 return (-1);
 }
 
+#if 0
 static bitmap_bitn_t bitmap_setrand (bitmap_t *bitmap)
 {
         bitmap_bitn_t n;
@@ -200,6 +201,7 @@ static bitmap_bitn_t bitmap_setrand (bitmap_t *bitmap)
         /* NOTREACHED */
         return (-1);
 }
+#endif /* 0 */
 
 bitmap_bitn_t bitmap_getfree (bitmap_t *bitmap)
 {

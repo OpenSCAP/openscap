@@ -104,7 +104,7 @@ int file_cb (const char *p, const char *f, void *ptr)
 #if defined(OS_FREEBSD)
                                                                st.st_atimespec.tv_sec
 #elif defined(OS_LINUX) || defined(OS_SOLARIS)
-                                                               st.st_atim.tv_sec
+                                                               (unsigned int)st.st_atim.tv_sec
 #endif
                                                 ),
                                         
@@ -113,7 +113,7 @@ int file_cb (const char *p, const char *f, void *ptr)
 #if defined(OS_FREEBSD)
                                                                st.st_ctimespec.tv_sec
 #elif defined(OS_LINUX) || defined(OS_SOLARIS)
-                                                               st.st_ctim.tv_sec
+                                                               (unsigned int)st.st_ctim.tv_sec
 #endif
                                                 ),
                                         
@@ -122,7 +122,7 @@ int file_cb (const char *p, const char *f, void *ptr)
 #if defined(OS_FREEBSD)
                                                                st.st_ctimespec.tv_sec
 #elif defined(OS_LINUX) || defined(OS_SOLARIS)
-                                                               st.st_ctim.tv_sec
+                                                               (unsigned int)st.st_ctim.tv_sec
 #endif
                                                 ),
                                         

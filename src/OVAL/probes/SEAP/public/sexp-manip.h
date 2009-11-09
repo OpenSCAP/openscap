@@ -534,6 +534,9 @@ SEXP_type_t SEXP_typeof (const SEXP_t *s_exp);
  * @param s_exp the object to be queried
  */
 const char *SEXP_strtype (const SEXP_t *s_exp);
+
+SEXP_t *SEXP_build (const char *s_str, ...);
+
 size_t SEXP_sizeof (const SEXP_t *s_exp);
 
 #if !defined(NDEBUG)
