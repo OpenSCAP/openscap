@@ -552,6 +552,8 @@ void oval_result_directives_free(struct oval_result_directives *);
 int oval_results_model_export(struct oval_results_model *, struct oval_result_directives *, struct oval_export_target *);
 
 
+struct oval_sysinfo *oval_sysinfo_probe (void);
+
 /**
  * Probe single OVAL object.
  */

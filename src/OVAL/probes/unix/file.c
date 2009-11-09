@@ -228,7 +228,7 @@ SEXP_t *probe_init (void)
 
 void probe_fini (SEXP_t *arg)
 {
-        _A(arg == &__file_probe_mutex);
+        _A((void *)arg == (void *)&__file_probe_mutex);
         
         /*
          * Release global reference.

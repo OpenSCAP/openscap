@@ -162,7 +162,8 @@ static int ovalp_sd_del (ovalp_sdtbl_t *tbl, oval_subtype_t type)
 struct oval_sysinfo *oval_sysinfo_probe (void)
 {
         struct oval_sysinfo *sysinf;
-        
+        SEXP_t *obj;
+
         int retry;
         SEAP_CTX_t *s_ctx;
         int         sd;
@@ -171,7 +172,7 @@ struct oval_sysinfo *oval_sysinfo_probe (void)
         char   probe_uri[PATH_MAX+1];
         size_t probe_urilen;
         char  *probe_dir;
-        
+
 #if defined(OVAL_PROBEDIR_ENV)
         probe_dir = getenv ("OVAL_PROBE_DIR");
         
@@ -192,7 +193,17 @@ struct oval_sysinfo *oval_sysinfo_probe (void)
         
         if (s_ctx == NULL)
                 return (NULL);
+        
+        {
+                SEXP_t *attrs, *r0;
 
+                obj = probe_obj_creat ("sysinfo_object",
+                                       attrs = probe_attr_creat ("id", r0 = SEXP_string_newf ("sysinfo:0"),
+                                                                 NULL),
+                                       NULL);
+                SEXP_vfree (attrs, r0, NULL);
+        }
+        
         for (sd = -1, retry = 0;;) {
                 /*
                  * connect
@@ -208,6 +219,7 @@ struct oval_sysinfo *oval_sysinfo_probe (void)
                                         continue;
                                 } else {
                                         _D("connect: retry limit (%u) reached.\n", OVAL_PROBE_MAXRETRY);
+                                        SEXP_free (obj);
                                         return (NULL);
                                 }
                         }
@@ -217,7 +229,7 @@ struct oval_sysinfo *oval_sysinfo_probe (void)
                  * send
                  */
                 s_omsg = SEAP_msg_new ();
-                SEAP_msg_set (s_omsg, NULL);
+                SEAP_msg_set (s_omsg, obj);
                 
                 if (SEAP_sendmsg (s_ctx, sd, s_omsg) != 0) {
                         _D("Can't send message: %u, %s\n", errno, strerror (errno));
@@ -226,6 +238,8 @@ struct oval_sysinfo *oval_sysinfo_probe (void)
                                 _D("Can't close sd: %u, %s\n", errno, strerror (errno));
                                 
                                 SEAP_msg_free (s_omsg);
+                                SEXP_free (obj);
+                                
                                 return (NULL);
                         }
                         
@@ -237,6 +251,8 @@ struct oval_sysinfo *oval_sysinfo_probe (void)
                         } else {
                                 _D("send: retry limit (%u) reached.\n", OVAL_PROBE_MAXRETRY);
                                 SEAP_msg_free (s_omsg);
+                                SEXP_free (obj);
+
                                 return (NULL);
                         }
                 }
@@ -268,6 +284,7 @@ struct oval_sysinfo *oval_sysinfo_probe (void)
                                 
                                 SEAP_msg_free (s_imsg);
                                 SEAP_msg_free (s_omsg);
+                                SEXP_free (obj);
 
                                 return (NULL);
                         }
@@ -282,6 +299,7 @@ struct oval_sysinfo *oval_sysinfo_probe (void)
                                 
                                 SEAP_msg_free (s_imsg);
                                 SEAP_msg_free (s_omsg);
+                                SEXP_free (obj);
                                                         
                                 return (NULL);
                         }
@@ -294,6 +312,7 @@ struct oval_sysinfo *oval_sysinfo_probe (void)
                 SEAP_close (s_ctx, sd);
         }
         
+        SEXP_free (obj);
         SEAP_msg_free (s_omsg);
         sysinf = oval_sysinfo_new ();
         
