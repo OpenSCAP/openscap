@@ -145,7 +145,7 @@ SEXP_t *probe_main(SEXP_t *probe_in, int *err)
                                   /* entities */
                                   "os_name", NULL, r0 = SEXP_string_newf("%s", os_name),
                                   "os_version", NULL, r1 = SEXP_string_newf("%s", os_version),
-                                  "architecture", NULL, r2 = SEXP_string_newf("%s", architecture),
+                                  "os_architecture", NULL, r2 = SEXP_string_newf("%s", architecture),
                                   "primary_host_name", NULL, r3 = SEXP_string_newf("%s", hname),
                                   NULL);
 
