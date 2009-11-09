@@ -31,13 +31,14 @@ test_results_CFLAGS = -I$(top_srcdir)/src/OVAL -I$(top_srcdir)/src/common
 test_results_LDADD = $(top_builddir)/src/libopenscap_testing.la
 
 if WANT_PROBES
-check_PROGRAMS += sexp_parser test_probes test_probe-api
+check_PROGRAMS += sexp_parser test_probes test_probe-api test_sysinfo
 #test_findfile test_sexp_to_syschar
 TESTS += SEAP/test_sexp-valid.sh \
          SEAP/test_sexp-inval.sh \
 	 SEAP/test_sexp-types.sh \
 	 OVAL/test_probe-api.sh  \
-         OVAL/test_probes.sh
+         OVAL/test_probes.sh	 \
+	 OVAL/test_sysinfo.sh
 
 EXTRA_DIST += SEAP/test_sexp-valid.sh 		\
 	      SEAP/test_sexp-inval.sh		\
@@ -50,7 +51,8 @@ EXTRA_DIST += SEAP/test_sexp-valid.sh 		\
 	      OVAL/probes/file-set.xml		\
 	      OVAL/probes/file-set2.xml		\
 	      OVAL/probes/file-set3.xml		\
-	      OVAL/probes/file.xml
+	      OVAL/probes/file.xml		\
+	      OVAL/test_sysinfo.sh
 
 sexp_parser_SOURCES = SEAP/sexp_parser.c
 sexp_parser_CFLAGS = -I$(top_srcdir)/src/OVAL/probes/SEAP/public
@@ -78,6 +80,10 @@ test_probes_LDADD = $(top_builddir)/src/libopenscap_testing.la
 test_probe_api_SOURCES = OVAL/test_probe-api.c
 test_probe_api_CFLAGS = -I$(top_srcdir)/src/OVAL/public -I$(top_srcdir)/src/OVAL/probes/public -I$(top_srcdir)/src/OVAL/probes/SEAP/public
 test_probe_api_LDADD = $(top_builddir)/src/libopenscap_testing.la
+
+test_sysinfo_SOURCES = OVAL/test_sysinfo.c
+test_sysinfo_CFLAGS = -I$(top_srcdir)/src/OVAL
+test_sysinfo_LDADD = $(top_builddir)/src/libopenscap_testing.la
 
 #test_findfile_SOURCES = OVAL/test_findfile.c
 #test_findfile_CFLAGS = -I$(top_srcdir)/src/OVAL/probes/SEAP/public -I$(top_srcdir)/src/OVAL/probes -I$(top_srcdir)/src/OVAL
