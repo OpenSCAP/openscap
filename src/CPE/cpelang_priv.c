@@ -46,14 +46,7 @@
  * */
 /*
  * */
-struct cpe_testexpr {
-        struct xml_metadata xml;
-	cpe_lang_oper_t oper;	// operator
-	union {
-		struct cpe_testexpr *expr;	// array of subexpressions for operators
-		struct cpe_name *cpe;	        // CPE for match operation
-	} meta;			                // operation metadata
-};
+
 OSCAP_GETTER(cpe_lang_oper_t, cpe_testexpr, oper)
 //OSCAP_GENERIC_GETTER(struct cpe_testexpr *, cpe_testexpr, meta_expr, meta.expr)
 //OSCAP_GENERIC_GETTER(struct cpe_name *, cpe_testexpr, meta_cpe, meta.cpe)
