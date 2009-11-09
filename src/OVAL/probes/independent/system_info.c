@@ -32,6 +32,7 @@
 #include <sys/socket.h>
 #include <netdb.h>
 #include <string.h>
+#include <errno.h>
 
 #if defined(__linux__)
 #include <arpa/inet.h>
@@ -102,13 +103,14 @@ void get_ifs(SEXP_t *item)
 
 SEXP_t *probe_main(SEXP_t *probe_in, int *err)
 {
-	SEXP_t *list, *item;
+	SEXP_t *item;
         SEXP_t *r0, *r1, *r2, *r3;
         char *os_name, *os_version, *architecture,
                 hname[NI_MAXHOST];
         struct utsname sname;
         struct addrinfo *results;
-
+        int e;
+        
 	if (probe_in == NULL) {
 		*err = PROBE_EINVAL;
 		return NULL;
@@ -124,19 +126,25 @@ SEXP_t *probe_main(SEXP_t *probe_in, int *err)
         architecture = sname.machine;
 
         if (gethostname(hname, sizeof (hname)) == -1) {
-                *err = PROBE_EUNKNOWN + 1;
+                _D("gethostname: %u, %s.\n", errno, strerror (errno));
+                *err = PROBE_EUNKNOWN;
+                
                 return NULL;
         }
 
-        if (getaddrinfo(hname, NULL, NULL, &results) != 0) {
-                *err = PROBE_EUNKNOWN + 2;
+        if ((e = getaddrinfo(hname, NULL, NULL, &results)) != 0) {
+                _D("getaddrinfo(%s): %s\n", hname, gai_strerror (e));
+                *err = PROBE_EUNKNOWN;
+                
                 return NULL;
         }
 
-        if (getnameinfo(results->ai_addr, sizeof (struct sockaddr),
-                        hname, sizeof (hname), NULL, 0, 0) != 0) {
+        if ((e = getnameinfo(results->ai_addr, sizeof (struct sockaddr),
+                             hname, sizeof (hname), NULL, 0, 0)) != 0) {
                 freeaddrinfo(results);
-                *err = PROBE_EUNKNOWN + 3;
+                _D("getnameinfo: %s\n", gai_strerror (e));
+                *err = PROBE_EUNKNOWN;
+                
                 return NULL;
         }
         freeaddrinfo(results);
@@ -150,10 +158,8 @@ SEXP_t *probe_main(SEXP_t *probe_in, int *err)
                                   NULL);
 
         get_ifs(item);
-
-	list = SEXP_list_new (item, NULL);
-        SEXP_vfree (item, r0, r1, r2, r3, NULL);
-        
+        SEXP_vfree (r0, r1, r2, r3, NULL);
 	*err = 0;
-	return (list);
+
+	return (item);
 }
