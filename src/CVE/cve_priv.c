@@ -33,10 +33,12 @@
 #include <libxml/xmlwriter.h>
 
 #include "cve_priv.h"
-#include "../CPE/cpelang_priv.h"
-#include "../CVSS/cvss_priv.h"
+#include "cpelang_priv.h"
+#include "cvss_priv.h"
+#include "../list.h"
 
-#include "../common/list.h"
+#include "cvss.h"
+
 
 /***************************************************************************/
 /* Variable definitions

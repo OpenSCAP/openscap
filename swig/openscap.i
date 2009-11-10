@@ -65,7 +65,7 @@
 #endif
 
 #ifdef WANT_CVSS
-%include "../src/CVSS/public/cvsscalc.h"
+%include "../src/CVSS/public/cvss.h"
 #endif
 
 #ifdef WANT_OVAL
