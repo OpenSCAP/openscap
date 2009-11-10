@@ -30,6 +30,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * Authors:
+ *      Maros Barabas  <mbarabas@redhat.com>
  *      Tomas Heinrich <theinric@redhat.com>
  */
 
@@ -38,22 +39,20 @@
 
 #include <stdbool.h>
 #include "oscap.h"
+#include "cpeuri.h"
 
-/** @struct cve
- * Structure holding all the cve_info entries.
- */
-struct cve;
-
-/** @struct cve_info
- * Structure holding Common Vulnerabilities and Exposures data
- */
-struct cve_info;
-
-/** @struct cve_reference
+/** 
+ * @struct cve_reference
  * Structure holding CVE Reference data
  */
 struct cve_reference;
-
+struct cve_model;
+struct cve_entry;
+struct cve_summary;
+struct cve_product;
+struct cvss_entry;
+struct cwe_entry;
+struct cve_configuration;
 
 
 /** @struct cve_info_iterator
@@ -80,7 +79,14 @@ bool cve_reference_iterator_has_more(struct cve_reference_iterator* it);
 /// @relates cve_reference_iterator
 void cve_reference_iterator_free(struct cve_reference_iterator* it);
 
-
+/*
+ * Parses the specified XML file and creates a list of CVE data structures.
+ * The returned list can be freed with cveDelAll().
+ *
+ * @param source oscap_import_source defining importing file
+ * @return non-negative value indicates the number of CVEs in the list, negative value indicates an error
+ */
+struct cve_model * ce_model_import(const struct oscap_import_source * source);
 
 /**
  * Create a new CVE catalogue from a XML file.
@@ -221,7 +227,29 @@ const char* cve_reference_get_type(const struct cve_reference* ref);
  * Get CVE reference summary.
  * @relates cve_reference
  */
-const char* cve_reference_get_source(const struct cve_reference* ref);
+const char* cve_reference_get_source(const struct cve_reference * ref);
+
+void cve_model_export_xml(struct cve_model * cve, const struct oscap_export_target * target);
+
+struct cve_model * cve_model_parse_xml(const struct oscap_import_source * source);
+
+struct cve_model * cve_model_import(const struct oscap_import_source * source);
+
+void cve_model_free(struct cve_model * cve_model);
+
+void cve_entry_free(struct cve_entry * entry);
+
+void cve_summary_free(struct cve_summary * summary);
+
+void cve_product_free(struct cve_product * product);
+
+void cve_reference_free(struct cve_reference * ref);
+
+void cvss_entry_free(struct cvss_entry * entry);
+
+void cwe_entry_free(struct cwe_entry * entry);
+
+void cve_configuration_free(struct cve_configuration * conf);
 
 #endif				/* _CVE_H_ */
 
