@@ -675,6 +675,7 @@ struct oval_sysinfo *oval_sysinfo_probe (void)
                         SYSINF_IEXT(ent, mac_address, ife, fail_int);
                         SYSINF_IEXT(ent, name, ife, fail_int);
                         
+                        oval_sysinfo_add_interface (sysinf, ife);
                         oval_sysint_free (ife);
                         SEXP_free (ent);
                 }

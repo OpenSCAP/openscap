@@ -156,7 +156,7 @@ SEXP_t *probe_item_ent_add (SEXP_t *item, const char *name, SEXP_t *attrs, SEXP_
 
         _LOGCALL_;
         
-        ent = probe_ent_creat (name, attrs, val, NULL);
+        ent = probe_ent_creat1 (name, attrs, val);
         SEXP_list_add (item, ent);
         SEXP_free (ent);
         
@@ -340,6 +340,12 @@ SEXP_t *probe_obj_getent (const SEXP_t *obj, const char *name, uint32_t n)
                 }
                 
                 if (SEXP_stringp (ent_name)) {
+#if !defined(NDEBUG)
+                        char buf[128];
+                        SEXP_string_cstr_r (ent_name, buf, sizeof buf);
+                        _D("1=\"%s\", 2=\"%s\", n=%u\n", buf, name, n);
+#endif
+
                         if (SEXP_strcmp (ent_name, name) == 0 && (--n == 0)) {
                                 SEXP_free (ent_name);
                                 break;

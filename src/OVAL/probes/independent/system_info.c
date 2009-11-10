@@ -97,6 +97,20 @@ void get_ifs(SEXP_t *item)
 void get_ifs(SEXP_t *item)
 {
         /* TODO */
+
+        SEXP_t *attrs, *r0, *r1, *r2;
+        
+        attrs = probe_attr_creat("name",
+                                 r0 = SEXP_string_newf("dummy0"),
+                                 "ip_address",
+                                 r1 = SEXP_string_newf("127.0.0.1"),
+                                 "mac_address",
+                                 r2 = SEXP_string_newf("aa:bb:cc:dd:ee:ff"),
+                                 NULL);
+        
+        probe_item_ent_add(item, "interface", attrs, NULL);
+        SEXP_vfree (attrs, r0, r1, r2, NULL);
+        
         return;
 }
 #endif
