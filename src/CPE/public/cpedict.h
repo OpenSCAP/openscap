@@ -386,23 +386,11 @@ const char * cpe_reference_get_content(const struct cpe_reference *item);
  */
 const char * oscap_title_get_content(const struct oscap_title *item);
 
-/** Parse XML file to CPE dictionary model structure 
- * @relates cpe_dict_model
- * @param source source structure with information about importing file and encoding
- */
-struct cpe_dict_model * cpe_dict_model_parse_xml(const struct oscap_import_source * source);
-
 /**
  * Write the dict_model to a file.
  * @relates cpe_dict_model
  */ 
 void cpe_dict_model_export(struct cpe_dict_model * dict, const struct oscap_export_target * target);
-
-/**
- * Write the dict_model to a file.
- * @relates cpe_dict_model
- */ 
-void cpe_dict_model_export_xml(struct cpe_dict_model * dict, const struct oscap_export_target * target);
 
 /** cpe_item functions to get variable member name
  * @relates cpe_item

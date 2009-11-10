@@ -30,7 +30,9 @@
 
 #include <libxml/tree.h>
 #include <string.h>
+
 #include "cpelang_priv.h"
+
 #include "../common/util.h"
 #include "../common/list.h"
 

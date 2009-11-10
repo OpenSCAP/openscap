@@ -104,18 +104,6 @@ struct cpe_lang_model * cpe_lang_model_import(const struct oscap_import_source *
 void cpe_lang_model_export(struct cpe_lang_model * spec, struct oscap_export_target * target);
 
 /**
- * Write the lang_model to a file.
- * @relates cpe_lang_model
- */
-void cpe_lang_model_export_xml(struct cpe_lang_model * spec, struct oscap_export_target * target);
-
-/**
- * Load CPE language model from a XML.
- * @relates cpe_lang_model
- */
-struct cpe_lang_model * cpe_lang_model_parse_xml(const struct oscap_import_source * source);
-
-/**
  * cpe_testexpr functions to get variable members
  * @relates cpe_testexpr
  */

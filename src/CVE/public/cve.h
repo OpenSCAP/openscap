@@ -132,7 +132,7 @@ void cve_reference_iterator_free(struct cve_reference_iterator* it);
  * @param source oscap_import_source defining importing file
  * @return non-negative value indicates the number of CVEs in the list, negative value indicates an error
  */
-struct cve_model * ce_model_import(const struct oscap_import_source * source);
+struct cve_model * cve_model_import(const struct oscap_import_source * source);
 
 /**
  * Create a new CVE catalogue from a XML file.
@@ -151,13 +151,13 @@ void cve_free(struct cve* cve);
  * Get en iterator to CVE entries.
  * @relates cve
  */
-struct cve_entry_iterator* cve_get_entries(const struct cve* cve);
+struct cve_entry_iterator* cve_model_get_entries(const struct cve* cve);
 
 /**
  * Get CVE entry by its ID.
  * @relates cve
  */
-struct cve_entry* cve_get_entry(const struct cve* cve, const char* id);
+struct cve_entry* cve_model_get_entry(const struct cve* cve, const char* id);
 
 
 /**
@@ -177,12 +177,6 @@ const char* cve_entry_get_cwe(const struct cve_entry* item);
  * @relates cve_entry
  */
 struct cve_summary_iterator* cve_entry_get_summaries(const struct cve_entry* item);
-
-/**
- * Get CVE entry generation datetime.
- * @relates cve_entry
- */
-const char* cve_entry_get_generated(const struct cve_entry* item);
 
 /**
  * Get an iterator to CVE entry's references.

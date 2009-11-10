@@ -80,30 +80,6 @@ struct cpe_item * cpe_item_parse(xmlTextReaderPtr reader);
 struct cpe_vendor * cpe_vendor_parse(xmlTextReaderPtr reader);
 
 /**
- * Constructor of vendor structure
- * Creates new vendor item
- * @return new structure cpe_venor
- * @relates cpe_vendor
- */
-struct cpe_vendor * cpe_vendor_new();
-
-/**
- * Constructor of CPE item structure
- * Creates new CPE item
- * @returns new structure cpe_item
- * @relates cpe_item
- */
-struct cpe_item * cpe_item_new();
-
-/**
- * Create new empty CPE dictionary
- * @relates cpe_dict_model
- * @return new dictionary
- * @retval NULL on failure
- */
-struct cpe_dict_model *cpe_dict_model_new();
-
-/**
  * Load new CPE dictionary from XML node
  * @relates cpe_dict_model
  * @param node file name of dictionary to import
