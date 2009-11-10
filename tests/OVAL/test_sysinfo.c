@@ -44,7 +44,7 @@ int main (void)
                                         oval_sysint_get_ip_address (ife),
                                         oval_sysint_get_mac_address (ife));
                                 
-                                oval_sysint_free (ife);
+                                /* oval_sysint_free (ife); */
                         }
                         
                         oval_sysint_iterator_free (ifit);
