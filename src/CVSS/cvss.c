@@ -34,7 +34,7 @@
 #include <stdlib.h>
 #include <math.h>
 
-#include "public/cvsscalc.h"
+#include "public/cvss.h"
 
 
 /**

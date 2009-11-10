@@ -2,7 +2,7 @@
 #include "config.h"
 
 #include <stdio.h>
-#include <cvsscalc.h>
+#include <cvss.h>
 
 int main()
 {

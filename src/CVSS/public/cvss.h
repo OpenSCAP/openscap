@@ -37,6 +37,11 @@
 #ifndef _CVSSCALC_H_
 #define _CVSSCALC_H_
 
+struct cvss_entry;
+
+struct cvss_entry * cvss_entry_new();
+void cvss_entry_free(struct cvss_entry * entry);
+
 //! Access Vector
 /*! This metric reflects how the vulnerability is exploited. */
 typedef enum {

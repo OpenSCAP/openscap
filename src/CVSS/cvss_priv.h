@@ -1,9 +1,7 @@
-/*! \file cve_priv.h
- *  \brief Common Vulnerability and Exposure dictionary
+/*! \file cvss_priv.h
+ *  \brief Interface to Common Vulnerability Scoring System Version 2
  * 
- *   See details at:
- *     http://cve.mitre.org/
- *     http://nvd.nist.gov/download.cfm
+ *  See details at http://nvd.nist.gov/cvss.cfm
  *  
  */
 
@@ -29,26 +27,20 @@
  *      Maros Barabas <mbarabas@redhat.com>
  */
 
-#ifndef CVE_PRIV_H_
-#define CVE_PRIV_H_
+#ifndef CVSS_PRIV_H_
+#define CVSS_PRIV_H_
 
 #include <libxml/xmlreader.h>
 #include <libxml/xmlwriter.h>
 
 #include "../common/list.h"
+#include "../common/util.h"
 #include "../common/elements.h"
 
 OSCAP_HIDDEN_START;
 
-struct cve_model * cve_model_parse_xml(const struct oscap_import_source * source);
-
-struct cve_model * cve_model_parse(xmlTextReaderPtr reader);
-
-struct cve_entry * cve_entry_parse(xmlTextReaderPtr reader);
-
-void cve_export(const struct cve_model * cve, xmlTextWriterPtr writer);
-
-void cve_model_export_xml(struct cve_model * cve, const struct oscap_export_target * target);
+struct cvss_entry * cvss_entry_parse(xmlTextReaderPtr reader);
+void cvss_entry_export(const struct cvss_entry * entry, xmlTextWriterPtr writer);
 
 OSCAP_HIDDEN_END;
 

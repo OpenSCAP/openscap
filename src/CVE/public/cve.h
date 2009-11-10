@@ -245,11 +245,17 @@ void cve_product_free(struct cve_product * product);
 
 void cve_reference_free(struct cve_reference * ref);
 
-void cvss_entry_free(struct cvss_entry * entry);
-
 void cwe_entry_free(struct cwe_entry * entry);
 
 void cve_configuration_free(struct cve_configuration * conf);
+
+struct cve_entry * cve_entry_new();
+struct cve_configuration * cve_configuration_new();
+struct cwe_entry * cwe_entry_new();
+struct cve_product * cve_product_new();
+struct cve_summary * cve_summary_new();
+struct cve_reference * cve_reference_new();
+struct cve_model * cve_model_new();
 
 #endif				/* _CVE_H_ */
 

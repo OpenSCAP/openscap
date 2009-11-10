@@ -38,7 +38,7 @@
 
  #include "../src/CVE/public/cve.h"
 
- #include "../src/CVSS/public/cvsscalc.h"
+ #include "../src/CVSS/public/cvss.h"
 
  #include "../src/OVAL/public/oval_agent_api.h"
  #include "../src/OVAL/public/oval_definitions.h"

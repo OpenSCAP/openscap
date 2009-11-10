@@ -1,0 +1,283 @@
+/*! \file cvss_priv.c
+ *  \brief Interface to Common Vulnerability Scoring System Version 2
+ * 
+ *  See details at http://nvd.nist.gov/cvss.cfm
+ *  
+ */
+
+/*
+ * Copyright 2008 Red Hat Inc., Durham, North Carolina.
+ * All Rights Reserved.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful, 
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software 
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ * Authors:
+ *      Maros Barabas <mbarabas@redhat.com>
+ */
+
+#include <libxml/xmlreader.h>
+#include <libxml/xmlwriter.h>
+
+#include "cvss_priv.h"
+#include "../common/list.h"
+
+/***************************************************************************/
+/* Variable definitions
+ * */
+
+/*
+ */
+struct cvss_entry {
+
+        char *score;
+        char *AV;
+        char *AC;
+        char *authentication;
+        /* impacts */
+        char *imp_confidentiality;
+        char *imp_integrity;
+        char *imp_availability;
+        /**/
+        char *source;
+        char *generated;
+};
+OSCAP_ACCESSOR_STRING(cvss_entry, score)
+OSCAP_ACCESSOR_STRING(cvss_entry, AV)
+OSCAP_ACCESSOR_STRING(cvss_entry, AC)
+OSCAP_ACCESSOR_STRING(cvss_entry, authentication)
+OSCAP_ACCESSOR_STRING(cvss_entry, imp_confidentiality)
+OSCAP_ACCESSOR_STRING(cvss_entry, imp_integrity)
+OSCAP_ACCESSOR_STRING(cvss_entry, imp_availability)
+OSCAP_ACCESSOR_STRING(cvss_entry, source)
+OSCAP_ACCESSOR_STRING(cvss_entry, generated)
+/* End of variable definitions
+ * */
+/***************************************************************************/
+
+/***************************************************************************/
+/* XML string variables definitions
+ * */
+#define TAG_CVSS_STR BAD_CAST "cvss"
+#define TAG_BASE_METRICS_STR BAD_CAST "base_metrics"
+#define TAG_SCORE_STR BAD_CAST "score"
+#define TAG_ACCESS_VECTOR_STR BAD_CAST "access-vector"
+#define TAG_ACCESS_COMPLEXITY_STR BAD_CAST "access-complexity"
+#define TAG_AUTHENTICATION_STR BAD_CAST "authentication"
+#define TAG_CONFIDENTIALITY_IMPACT_STR BAD_CAST "confidentiality-impact"
+#define TAG_INTEGRITY_IMPACT_STR BAD_CAST "integrity-impact"
+#define TAG_AVAILABILITY_IMPACT_STR BAD_CAST "availability-impact"
+#define TAG_GENERATED_ON_DATETIME_STR BAD_CAST "generated-on-datetime"
+#define TAG_SOURCE_STR BAD_CAST "source"
+/* End of XML string variables definitions
+ * */
+/***************************************************************************/
+
+/***************************************************************************/
+/* Constructors of CVSS structures cvss_*<structure>*_new()
+ * More info in representive header file.
+ * returns the type of <structure>
+ */
+struct cvss_entry * cvss_entry_new() {
+
+        struct cvss_entry *ret;
+
+        ret = oscap_alloc(sizeof(struct cvss_entry));
+        if (ret == NULL)
+                return NULL;
+
+        ret->score                  = NULL;
+        ret->AV                     = NULL;
+        ret->AC                     = NULL;
+        ret->authentication         = NULL;
+        ret->imp_confidentiality    = NULL;
+        ret->imp_integrity          = NULL;
+        ret->imp_availability       = NULL;
+        ret->source                 = NULL;
+        ret->generated              = NULL;
+
+        return ret;
+}
+
+/* End of CVE structures' contructors
+ * */
+/***************************************************************************/
+
+/***************************************************************************/
+/* Declaration of static (private to this file) functions
+ * These function shoud not be called from outside. For exporting these elements
+ * has to call parent element's 
+ */
+void cvss_entry_free(struct cvss_entry * entry);
+
+/* End of static declarations 
+ * */
+/***************************************************************************/
+
+/* Function that jump to next XML starting element.
+ */
+static int xmlTextReaderNextElement(xmlTextReaderPtr reader) {
+
+        int ret;
+        do { 
+              ret = xmlTextReaderRead(reader); 
+              /* if end of file */
+              if (ret == 0) break;
+        } while (xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT);
+        return ret;
+}
+
+
+/***************************************************************************/
+/* Private parsing functions cve_*<structure>*_parse( xmlTextReaderPtr )
+ * More info in representive header file.
+ * returns the type of <structure>
+ */
+struct cvss_entry * cvss_entry_parse(xmlTextReaderPtr reader) {
+
+        struct cvss_entry *ret = NULL;
+
+        if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_CVSS_STR) &&
+            xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
+
+                xmlTextReaderNextElement(reader); /* We are on base_metrics now */
+
+                if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_BASE_METRICS_STR))
+                    /* we want to end if there are no bas-metrics ! What else could be here ? */
+                    /**/
+                    return NULL;
+                
+                /* skip nodes until new element */
+                xmlTextReaderNextElement(reader); /* We are on score now */
+
+                ret = cvss_entry_new();
+                if (ret == NULL)
+                        return NULL;
+
+                /* ret->xml.lang = oscap_strdup((char *) xmlTextReaderConstXmlLang(reader)); */
+                /* ret->xml.namespace = (char *) xmlTextReaderPrefix(reader); */
+
+                /* CVSS-specification: score */ 
+                while (xmlStrcmp (xmlTextReaderConstLocalName(reader), TAG_CVSS_STR) != 0) {
+                        
+                    if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_SCORE_STR) &&
+                        xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
+                                ret->score = (char *) xmlTextReaderReadString(reader);
+                    } else
+                        if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_ACCESS_VECTOR_STR) &&
+                            xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
+                                    ret->AV = (char *) xmlTextReaderReadString(reader);
+                    } else
+                        if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_ACCESS_COMPLEXITY_STR) &&
+                            xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
+                                    ret->AC = (char *) xmlTextReaderReadString(reader);
+                    } else
+                        if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_AUTHENTICATION_STR) &&
+                            xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
+                                    ret->authentication = (char *) xmlTextReaderReadString(reader);
+                    } else
+                        if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_CONFIDENTIALITY_IMPACT_STR) &&
+                            xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
+                                    ret->imp_confidentiality = (char *) xmlTextReaderReadString(reader);
+                    } else
+                        if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_INTEGRITY_IMPACT_STR) &&
+                            xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
+                                    ret->imp_integrity = (char *) xmlTextReaderReadString(reader);
+                    } else
+                        if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_AVAILABILITY_IMPACT_STR) &&
+                            xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
+                                    ret->imp_availability = (char *) xmlTextReaderReadString(reader);
+                    } else
+                        if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_SOURCE_STR) &&
+                            xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
+                                    ret->source = (char *) xmlTextReaderReadString(reader);
+                    } else
+                        if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_GENERATED_ON_DATETIME_STR) &&
+                            xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
+                                    ret->generated = (char *) xmlTextReaderReadString(reader);
+                    }
+
+                    xmlTextReaderRead(reader);
+                }
+        }
+
+        return ret;
+}
+
+/***************************************************************************/
+/* Private exporting functions cvss_*<structure>*_export( xmlTextWriterPtr )
+ * More info in representive header file.
+ * returns the type of <structure>
+ */
+void cvss_entry_export(const struct cvss_entry * entry, xmlTextWriterPtr writer) {
+
+        xmlTextWriterStartElementNS(writer, BAD_CAST "vuln", TAG_CVSS_STR, BAD_CAST NULL);
+        xmlTextWriterStartElementNS(writer, BAD_CAST "cvss", TAG_BASE_METRICS_STR, BAD_CAST NULL);
+
+        if ((entry->score) != NULL)
+            xmlTextWriterWriteElementNS(writer, BAD_CAST "cvss", TAG_SCORE_STR, NULL, 
+                                                                    BAD_CAST entry->score);
+        if ((entry->AV) != NULL)
+            xmlTextWriterWriteElementNS(writer, BAD_CAST "cvss", TAG_ACCESS_VECTOR_STR, NULL, 
+                                                                    BAD_CAST entry->AV);
+        if ((entry->AC) != NULL)
+            xmlTextWriterWriteElementNS(writer, BAD_CAST "cvss", TAG_ACCESS_COMPLEXITY_STR, NULL, 
+                                                                    BAD_CAST entry->AC);
+        if ((entry->authentication) != NULL)
+            xmlTextWriterWriteElementNS(writer, BAD_CAST "cvss", TAG_AUTHENTICATION_STR, NULL, 
+                                                                    BAD_CAST entry->authentication);
+        if ((entry->imp_confidentiality) != NULL)
+            xmlTextWriterWriteElementNS(writer, BAD_CAST "cvss", TAG_CONFIDENTIALITY_IMPACT_STR, NULL, 
+                                                                    BAD_CAST entry->imp_confidentiality);
+        if ((entry->imp_integrity) != NULL)
+            xmlTextWriterWriteElementNS(writer, BAD_CAST "cvss", TAG_INTEGRITY_IMPACT_STR, NULL, 
+                                                                    BAD_CAST entry->imp_integrity);
+        if ((entry->imp_availability) != NULL)
+            xmlTextWriterWriteElementNS(writer, BAD_CAST "cvss", TAG_AVAILABILITY_IMPACT_STR, NULL, 
+                                                                    BAD_CAST entry->imp_availability);
+        if ((entry->source) != NULL)
+            xmlTextWriterWriteElementNS(writer, BAD_CAST "cvss", TAG_SOURCE_STR, NULL, 
+                                                                    BAD_CAST entry->source);
+        if ((entry->generated) != NULL)
+            xmlTextWriterWriteElementNS(writer, BAD_CAST "cvss", TAG_GENERATED_ON_DATETIME_STR, NULL, 
+                                                                    BAD_CAST entry->generated);
+
+        /*</base-metrics>*/
+        xmlTextWriterEndElement(writer);
+        /*</cvss>*/
+        xmlTextWriterEndElement(writer);
+
+}
+
+/***************************************************************************/
+/* Free functions - all will free their subtree so use carefuly !
+ */
+void cvss_entry_free(struct cvss_entry * entry) {
+
+        if (entry == NULL) return;
+
+        xmlFree(entry->score);
+        xmlFree(entry->AV);
+        xmlFree(entry->AC);
+        xmlFree(entry->authentication);
+        xmlFree(entry->imp_confidentiality);
+        xmlFree(entry->imp_integrity);
+        xmlFree(entry->imp_availability);
+        xmlFree(entry->source);
+        xmlFree(entry->generated);
+        oscap_free(entry);
+}
+/* End of free functions
+ * */
+/***************************************************************************/
