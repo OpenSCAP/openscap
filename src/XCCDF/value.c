@@ -144,9 +144,9 @@ static struct xccdf_value_val* xccdf_value_val_new(xccdf_value_type_t type)
 
 	switch (type) {
 		case XCCDF_TYPE_NUMBER:
-			v->value.n = v->defval.n = NAN;
-			v->limits.n.lower_bound = -INFINITY;
-			v->limits.n.upper_bound =  INFINITY;
+			v->value.n = v->defval.n = NAN;//TODO: REPLACE WITH ANSI
+			v->limits.n.lower_bound = -INFINITY;//TODO: REPLACE WITH ANSI
+			v->limits.n.upper_bound =  INFINITY;//TODO: REPLACE WITH ANSI
 			break;
 		case XCCDF_TYPE_STRING:
 		case XCCDF_TYPE_BOOLEAN:
@@ -217,7 +217,7 @@ const char* xccdf_value_get_defval_string(const struct xccdf_value* value) {
 
 xccdf_numeric xccdf_value_get_defval_number(const struct xccdf_value* value) {
 	if (XITEM(value)->sub.value.type != XCCDF_TYPE_NUMBER || XITEM(value)->sub.value.value == NULL)
-		return NAN;
+		return NAN;//TODO: REPLACE WITH ANSI
 	return XITEM(value)->sub.value.value->defval.n;
 }
 
@@ -239,7 +239,7 @@ const char* xccdf_value_get_value_string(const struct xccdf_value* value) {
 
 xccdf_numeric xccdf_value_get_value_number(const struct xccdf_value* value) {
 	if (XITEM(value)->sub.value.type != XCCDF_TYPE_NUMBER || XITEM(value)->sub.value.value == NULL)
-		return NAN;
+		return NAN;//TODO: REPLACE WITH ANSI
 	return XITEM(value)->sub.value.value->value.n;
 }
 
@@ -255,13 +255,13 @@ bool xccdf_value_get_value_boolean(const struct xccdf_value* value) {
 
 xccdf_numeric xccdf_value_get_lower_bound(const struct xccdf_value* value) {
 	if (XITEM(value)->sub.value.type != XCCDF_TYPE_NUMBER || XITEM(value)->sub.value.value == NULL)
-		return NAN;
+		return NAN;//TODO: REPLACE WITH ANSI
 	return XITEM(value)->sub.value.value->limits.n.lower_bound;
 }
 
 xccdf_numeric xccdf_value_get_upper_bound(const struct xccdf_value* value) {
 	if (XITEM(value)->sub.value.type != XCCDF_TYPE_NUMBER || XITEM(value)->sub.value.value == NULL)
-		return NAN;
+		return NAN;//TODO: REPLACE WITH ANSI
 	return XITEM(value)->sub.value.value->limits.n.upper_bound;
 }
 

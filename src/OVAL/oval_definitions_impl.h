@@ -184,6 +184,9 @@ void oval_message_to_print(struct oval_message *message, char *indent,
 			      int index);
 void oval_message_to_dom  (struct oval_message *, xmlDoc *, xmlNode *);
 
+//Synthetic object subtype for probing system info.
+#define  OVAL_INDEPENDENT_SYSCHAR_SUBTYPE 7999
+
 OSCAP_HIDDEN_END
 
 #endif

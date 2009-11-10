@@ -232,9 +232,18 @@ struct oval_syschar_iterator *oval_syschar_model_get_syschars(
 	return iterator;
 }
 
+static struct oval_sysinfo *_oval_syschar_model_probe_sysinfo(struct oval_syschar_model *model)
+{
+	struct oval_sysinfo *sysinfo = oval_sysinfo_probe();
+	if(sysinfo==NULL){
+		fprintf(stderr, "WARNING: sysinfo probe returns NULL\n    %s(%d)\n", __FILE__, __LINE__);
+	}
+	return (model->sysinfo=sysinfo);
+}
+
 struct oval_sysinfo *oval_syschar_model_get_sysinfo(struct oval_syschar_model *model)
 {
-	return model->sysinfo;
+	return (model->sysinfo)?model->sysinfo:_oval_syschar_model_probe_sysinfo(model);
 }
 
 void oval_syschar_model_set_sysinfo(struct oval_syschar_model *model, struct oval_sysinfo *sysinfo)
@@ -297,12 +306,7 @@ void oval_syschar_model_add_variable_binding(struct oval_syschar_model *model, s
 
 void oval_syschar_model_probe_objects(struct oval_syschar_model *syschar_model)
 {
-	struct oval_sysinfo *sysinfo = oval_syschar_model_get_sysinfo(syschar_model);
-	if(sysinfo==NULL){
-		sysinfo==NULL;//TODO: call probe function to return sysinfo
-		oval_syschar_model_set_sysinfo(syschar_model, sysinfo);
-		oval_sysinfo_free(sysinfo);//oval_syschar_model_set_sysinfo clones sysinfo
-	}
+	if(syschar_model->sysinfo==NULL)oval_syschar_model_get_sysinfo(syschar_model);
 	struct oval_definition_model *definition_model = oval_syschar_model_get_definition_model(syschar_model);
 	if(definition_model){
 		struct oval_object_iterator *objects = oval_definition_model_get_objects(definition_model);
@@ -1186,4 +1190,10 @@ struct oval_syschar *oval_object_probe(struct oval_object *object, struct oval_d
 	oval_syschar_add_sysdata(syschar, sysdata);
 	return syschar;
 }
+
+struct oval_sysinfo *oval_sysinfo_probe (void)
+{
+        return (NULL);
+}
 #endif
+
