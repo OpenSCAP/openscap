@@ -6,6 +6,8 @@
 int main (void)
 {
         struct oval_sysinfo *info;
+        struct oval_sysint_iterator *ifit;
+        struct oval_sysint *ife;
 
         info = oval_sysinfo_probe ();
         
@@ -26,9 +28,32 @@ int main (void)
                         oval_sysinfo_free (info);
                         return (1);
                 }
+
+                ifit = oval_sysinfo_get_interfaces (info);
+                
+                if (ifit != NULL) {
+                        printf ("Interfaces:\n");
+                        
+                        while (oval_sysint_iterator_has_more (ifit)) {
+                                ife = oval_sysint_iterator_next (ifit);
+                                
+                                printf ("%s:\n"
+                                        "\t IP: %s\n"
+                                        "\tMAC: %s\n",
+                                        oval_sysint_get_name (ife),
+                                        oval_sysint_get_ip_address (ife),
+                                        oval_sysint_get_mac_address (ife));
+                                
+                                oval_sysint_free (ife);
+                        }
+                        
+                        oval_sysint_iterator_free (ifit);
+                }
+                
+                oval_sysinfo_free (info);
                 
                 return (0);
         }
-
+        
         return (1);
 }
