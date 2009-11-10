@@ -443,8 +443,10 @@ static SEXP_t *ovalp_cmd_ste_fetch (SEXP_t *sexp, void *arg)
 struct oval_sysinfo *oval_sysinfo_probe (void)
 {
         struct oval_sysinfo *sysinf;
-        SEXP_t *obj;
-
+        struct oval_sysint  *ife;
+        
+        SEXP_t *obj, *ent;
+        
         int retry;
         SEAP_CTX_t *s_ctx;
         int         sd;
@@ -633,20 +635,62 @@ struct oval_sysinfo *oval_sysinfo_probe (void)
                 return (NULL);
         }
         
-        SYSINF_EXT(obj, os_name, sysinf, fail);
-        SYSINF_EXT(obj, os_version, sysinf, fail);
-        SYSINF_EXT(obj, os_architecture, sysinf, fail);
-        SYSINF_EXT(obj, primary_host_name, sysinf, fail);
+        SYSINF_EXT(obj, os_name, sysinf, fail_gen);
+        SYSINF_EXT(obj, os_version, sysinf, fail_gen);
+        SYSINF_EXT(obj, os_architecture, sysinf, fail_gen);
+        SYSINF_EXT(obj, primary_host_name, sysinf, fail_gen);
+        
+        /*
+         * Extract interface info
+         */
+        {
+                uint32_t n;
+                
+                for (n = 1; (ent = probe_obj_getent (obj, "interface", n)) != NULL; ++n) {
+                        ife = oval_sysint_new ();
+                        
+#define SYSINF_IEXT(ent, name, sysint, fail)                            \
+                        do {                                            \
+                                SEXP_t *val;                            \
+                                char    buf[128+1];                     \
+                                                                        \
+                                val = probe_ent_getattrval (ent, __STRING(name)); \
+                                                                        \
+                                if (val == NULL) {                      \
+                                        _D("No value: %s\n", __STRING(name)); \
+                                        goto fail;                      \
+                                }                                       \
+                                                                        \
+                                if (SEXP_string_cstr_r (val, buf, sizeof buf) >= sizeof buf) { \
+                                        _D("Value too large: %s\n", __STRING(name)); \
+                                        SEXP_free (val);                \
+                                        goto fail;                      \
+                                }                                       \
+                                                                        \
+                                oval_sysint_set_##name (sysint, buf);   \
+                                                                        \
+                        } while (0)
+                        
+                        SYSINF_IEXT(ent, ip_address, ife, fail_int);
+                        SYSINF_IEXT(ent, mac_address, ife, fail_int);
+                        SYSINF_IEXT(ent, name, ife, fail_int);
+                        
+                        oval_sysint_free (ife);
+                        SEXP_free (ent);
+                }
+        }
         
         SEXP_free (obj);
         SEAP_msg_free (s_imsg);
         
         return (sysinf);
-fail:
+fail_int:
+        SEXP_free (ent);
+        oval_sysint_free (ife);
+fail_gen:
         oval_sysinfo_free (sysinf);
         SEXP_free (obj);
         SEAP_msg_free (s_imsg);
         
         return (NULL);
 }
-

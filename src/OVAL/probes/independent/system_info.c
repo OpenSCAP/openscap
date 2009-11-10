@@ -64,8 +64,8 @@ static void cb(struct nl_object *obj, void *arg)
         absaddr = rtnl_link_get_addr(rtlink);
         rtnl_link_put(rtlink);
         nl_addr2str(absaddr, mabuf, sizeof (mabuf));
-
-        attrs = probe_attr_creat("interface_name",
+        
+        attrs = probe_attr_creat("name",
                                  r0 = SEXP_string_newf("%s", name),
                                  "ip_address",
                                  r1 = SEXP_string_newf("%s", iabuf),

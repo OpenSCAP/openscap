@@ -42,9 +42,9 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <pthread.h>
-#include <public/oval_definitions.h>
-#include <public/oval_system_characteristics.h>
-#include <public/oval_results.h>
+#include <oval_definitions.h>
+#include <oval_system_characteristics.h>
+#include <oval_results.h>
 
 /*
  * items
