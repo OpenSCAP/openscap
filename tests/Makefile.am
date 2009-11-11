@@ -1,7 +1,6 @@
-#AUTOMAKE_OPTIONS = color-tests
 check_PROGRAMS =
 TESTS =
-TESTS_ENVIRONMENT = $(SHELL) -x
+TESTS_ENVIRONMENT = $(SHELL)
 EXTRA_DIST =
 DISTCLEANFILES = *.log *.out
 
@@ -31,14 +30,13 @@ test_results_CFLAGS = -I$(top_srcdir)/src/OVAL -I$(top_srcdir)/src/common
 test_results_LDADD = $(top_builddir)/src/libopenscap_testing.la
 
 if WANT_PROBES
-check_PROGRAMS += sexp_parser test_probes test_probe-api test_sysinfo
+check_PROGRAMS += sexp_parser test_probes test_probe-api
 #test_findfile test_sexp_to_syschar
 TESTS += SEAP/test_sexp-valid.sh \
          SEAP/test_sexp-inval.sh \
 	 SEAP/test_sexp-types.sh \
 	 OVAL/test_probe-api.sh  \
-         OVAL/test_probes.sh	 \
-	 OVAL/test_sysinfo.sh
+         OVAL/test_probes.sh
 
 EXTRA_DIST += SEAP/test_sexp-valid.sh 		\
 	      SEAP/test_sexp-inval.sh		\
@@ -51,8 +49,7 @@ EXTRA_DIST += SEAP/test_sexp-valid.sh 		\
 	      OVAL/probes/file-set.xml		\
 	      OVAL/probes/file-set2.xml		\
 	      OVAL/probes/file-set3.xml		\
-	      OVAL/probes/file.xml		\
-	      OVAL/test_sysinfo.sh
+	      OVAL/probes/file.xml
 
 sexp_parser_SOURCES = SEAP/sexp_parser.c
 sexp_parser_CFLAGS = -I$(top_srcdir)/src/OVAL/probes/SEAP/public
@@ -81,10 +78,6 @@ test_probe_api_SOURCES = OVAL/test_probe-api.c
 test_probe_api_CFLAGS = -I$(top_srcdir)/src/OVAL/public -I$(top_srcdir)/src/OVAL/probes/public -I$(top_srcdir)/src/OVAL/probes/SEAP/public
 test_probe_api_LDADD = $(top_builddir)/src/libopenscap_testing.la
 
-test_sysinfo_SOURCES = OVAL/test_sysinfo.c
-test_sysinfo_CFLAGS = -I$(top_srcdir)/src/OVAL
-test_sysinfo_LDADD = $(top_builddir)/src/libopenscap_testing.la
-
 #test_findfile_SOURCES = OVAL/test_findfile.c
 #test_findfile_CFLAGS = -I$(top_srcdir)/src/OVAL/probes/SEAP/public -I$(top_srcdir)/src/OVAL/probes -I$(top_srcdir)/src/OVAL
 #test_findfile_LDADD = $(top_builddir)/src/libopenscap_testing.la
@@ -98,8 +91,10 @@ endif
 
 if WANT_CPE
 check_PROGRAMS += test_cpelang test_cpedict test_cpeuri
-TESTS += CPE/test_cpe.sh
-EXTRA_DIST += CPE/test_cpe.sh CPE/dict.xml CPE/lang.xml
+TESTS += CPE/test_cpeuri.sh  \
+	 CPE/test_cpedict.sh \
+	 CPE/test_cpelang.sh
+EXTRA_DIST += test_common.sh CPE/test_cpeuri.sh CPE/test_cpedict.sh CPE/test_cpelang.sh CPE/dict.xml CPE/lang.xml CPE/lang-corrupted.xml CPE/lang-copy.xml
 
 test_cpelang_SOURCES = CPE/test_cpelang.c
 test_cpelang_LDADD = $(top_builddir)/src/libopenscap_testing.la
@@ -120,8 +115,7 @@ TESTS += CVE/test_cve.sh
 EXTRA_DIST += CVE/test_cve.sh CVE/nvdcve-2.0-recent.xml
 
 test_cve_SOURCES = CVE/test_cve.c
-test_cve_CFLAGS = -I$(top_srcdir)/src/CVE/public -I${top_srcdir}/src/common/public -I${top_srcdir}/src/CVE \
-		  -I${top_srcdir}/src/CPE/public
+test_cve_CFLAGS = -I$(top_srcdir)/src/CVE/public -I${top_srcdir}/src/common/public
 test_cve_LDADD = $(top_builddir)/src/libopenscap_testing.la
 endif
 

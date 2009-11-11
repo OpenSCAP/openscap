@@ -1,124 +1,195 @@
-#include "config.h"
+/*
+ * Copyright 2008 Red Hat Inc., Durham, North Carolina.
+ * All Rights Reserved.
+ *
+ * OpenScap CPE URI Module Test Suite Helper
+ *
+ * Authors:
+ *      Ondrej Moris <omoris@redhat.com>
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <cpeuri.h>
 
-void print_help(const char *progname)
+// Print usage.
+void print_usage(const char *program_name, FILE *out) 
 {
-	// just print help message
-	fprintf(stderr,
-		"Usage:\n\n"
-		"  %s -w\n"
-		"        test CPE uri set functions\n\n"
-		"  %s -p CPE_URI\n"
-		"        parse CPE URI and print individual components\n\n"
-		"  %s -m CANDIDATE_CPE_URI CPE_URI [...]\n"
-		"        match candidate CPE URI against list of CPE URIs\n\n"
-		"  %s -h\n"
-		"        display this help message\n\n",
-		progname, progname, progname, progname);
+  fprintf(out, 
+	  "Usage: \n\n"
+	  "  %s --help\n"
+	  "  %s --creation PART VENDOR PRODUCT VERSION UPDATE EDITION LANGUAGE\n"
+	  "  %s --parsing  URI FILE\n"
+	  "  %s --matching CANDIDATE_URI URI_1 ... URI_n\n"
+	  "  %s --sanity-check\n",
+	  program_name, program_name, program_name, program_name, program_name);
 }
 
-// string representation of entries in cpe_part_t
-const char *CPE_PART_STR[] =
-    { "??? ERROR - run away!", "hardware", "operating system", "application" };
-
-bool cpe_example_parse(const char *cpeuri)
+// Create a new CPE according to given information.
+struct cpe_name *cpe_example_creation(int part, 
+				      const char *vendor,
+				      const char *product,
+				      const char *version,
+				      const char *update,
+				      const char *edition,
+				      const char *language)
 {
-	struct cpe_name *cpe = cpe_name_new(cpeuri);	// create CPE from URI string
-	char *uri;
+  struct cpe_name *cpe = NULL;
+  
+  if ((cpe = cpe_name_new(NULL)) != NULL) {
+    
+    // Set fields.
+    cpe_name_set_part(cpe, part);
+    cpe_name_set_vendor (cpe, vendor);
+    cpe_name_set_product(cpe, product);
+    cpe_name_set_version(cpe, version);
+    cpe_name_set_update(cpe, update);
+    cpe_name_set_edition(cpe, edition);
+    cpe_name_set_language(cpe, language);
+  }
 
-	if (cpe == NULL) {
-		// CPE failed to parse
-		fprintf(stderr, "Invalid CPE URI\n");
-		return false;
-	}
-	// get CPE URI as a string
-	uri = cpe_name_get_uri(cpe);
+  return cpe;
+}
 
-	// print URI components
-	printf("URI      : %s\n", uri);
-	printf("Part     : %s\n", CPE_PART_STR[cpe_name_get_part(cpe)]);
-	printf("Vendor   : %s\n", cpe_name_get_vendor(cpe));
-	printf("Product  : %s\n", cpe_name_get_product(cpe));
-	printf("Version  : %s\n", cpe_name_get_version(cpe));
-	printf("Update   : %s\n", cpe_name_get_update(cpe));
-	printf("Edition  : %s\n", cpe_name_get_edition(cpe));
-	printf("Language : %s\n", cpe_name_get_language(cpe));
+// Parse CPE URI string and print all contained information.
+void cpe_print(struct cpe_name *name)
+{
 
-	// delete CPE URI string
-	free(uri);
-	// delete CPE itself
-	cpe_name_free(cpe);
-
-	return true;
+  // Print out all contained information.
+  printf(" %d\n", cpe_name_get_part(name));
+  printf(" %s\n", cpe_name_get_vendor(name));
+  printf(" %s\n", cpe_name_get_product(name));
+  printf(" %s\n", cpe_name_get_version(name));
+  printf(" %s\n", cpe_name_get_update(name));
+  printf(" %s\n", cpe_name_get_edition(name));
+  printf(" %s\n", cpe_name_get_language(name));
 }
 
 int main(int argc, char **argv)
 {
-	if (argc < 2){
-		print_help(argv[0]);
-		return EXIT_FAILURE;
-	} else if(strcmp(argv[1], "-w") == 0) {
-		// construct an empty CPE
-		struct cpe_name *cpe = cpe_name_new(NULL);
+  struct cpe_name *name = NULL, *candidate_cpe = NULL, **cpes = NULL;
+  FILE *f;
+  int ret_val = 1, i;
+  char *cpe_uri = NULL;
+  bool match_result_a = false, match_result_b = false, match_result_c = false;
 
-		// set its fields
-		cpe_name_set_part(cpe, CPE_PART_APP);
-		cpe_name_set_product(cpe, "awesomeproduct");
-		cpe_name_set_vendor (cpe, "somevendor");
-		cpe_name_set_version(cpe, "123");
-		cpe_name_set_edition(cpe, "special");
+  if (argc == 2 && !strcmp(argv[1], "--help")) {   
+    print_usage(argv[0], stdout);
+    ret_val = 0;
+  }
 
-		// write the CPE as an URI
-		char *uri = cpe_name_get_uri(cpe);
-		printf("%s\n", uri);
+  // Create a new CPE name from given information and store it to given file.
+  else if (argc == 9 && strcmp(argv[1], "--creation") == 0) {    
+    
+    // Create CPE from given information.
+    if ((name = cpe_example_creation(atoi(argv[2]), argv[3], argv[4], argv[5], argv[6], argv[7], argv[8])) != NULL) {	
+      
+      // Extract URI of created CPE.
+      if ((cpe_uri = cpe_name_get_uri(name)) != NULL) {
 
-		// release resources
-		free(uri);
-		cpe_name_free(cpe);
-	} else if (strcmp(argv[1], "-h") == 0) {
-		print_help(argv[0]);
-	} else if (strcmp(argv[1], "-p") == 0) {
-		// we are to parse specified URI
+	// Check if URI is valid.
+	if (cpe_name_check(cpe_uri)) {	    
+	  
+	  // Write CPE URI to the screen.
+	  if (cpe_name_write(name, stdout) > 0)
+	    ret_val = 0;
+	  else 	    
+	    fprintf(stderr, "Unable to write CPE to output!\n");
+	} else 
+	  fprintf(stderr, "CPE URI is not valid!\n");	  
+	free(cpe_uri);	
+      } else 
+	fprintf(stderr, "Unable to get CPE uri!\n");
+      cpe_name_free(name);
+    } else 
+      fprintf(stderr, "Unable to create CPE name!\n");          
+  }
 
-		if (argc != 3) {
-			// not enough arguments
-			fprintf(stderr,
-				"ERROR: URI to parse was not specified!\n");
-			return EXIT_FAILURE;
-		}
-		if (!cpe_example_parse(argv[2]))	// parse CPE URI and write out its components
-			return EXIT_FAILURE;
-	} else if (strcmp(argv[1], "-m") == 0) {
-		// we are to match CPE names
+  // Parse given CPE URI.
+  else if (argc == 4 && strcmp(argv[1], "--parsing") == 0) {    
 
-		int result;
+    // Check if URI is valid.
+    if (cpe_name_check(argv[2])) {	    
 
-		if (argc < 4) {
-			// not enough arguments
-			fprintf(stderr,
-				"ERROR: At least two CPE URIs are needed to perform CPE names matching!\n");
-			return EXIT_FAILURE;
-		}
-		// perform CPE name matching
-		result = cpe_name_match_strs(argv[2], argc - 3, argv + 3);
+      // Create CPE from URI string.
+      if ((name = cpe_name_new(argv[2])) != NULL) {
+	
+	// Extract URI from created CPE.
+	if ((cpe_uri = cpe_name_get_uri(name)) != NULL) {
+      
+	  // Compare it to the original URI.
+	  if (!strcmp(cpe_uri, argv[2])) {
+ 
+	    // Write CPE to file.
+	    if ((f = fopen(argv[3], "w")) == NULL) 
+	      fprintf(stderr, "Unable to open or create file %s!\n", argv[3]);
+	    else 
+	      cpe_name_write(name, f), fclose(f);
+	    
+	    // Print CPE to the screen.
+	    cpe_print(name);	    
+	    ret_val = 0;
+	  }
+	  cpe_name_free(name);
+	} else
+	  fprintf(stderr, "Not enough memory!\n");
+      }
+      else 
+	fprintf(stderr, "Parse error!\n");
+    } else
+      fprintf(stderr, "CPE URI is not valid!\n");	  
+  }
+  
+  // Match candidate CPE URI agains the others.
+  else if (argc >= 4 && strcmp(argv[1], "--matching") == 0) {
 
-		// interpret result
-		if (result == -2)
-			fprintf(stderr,
-				"One of given strings is not a valid CPE URI.\n");
-		else if (result == -1)
-			printf("%s did not match anything\n", argv[2]);
-		else if (result >= 0)
-			printf("%s matched %s\n", argv[2], argv[result + 3]);
-	} else {
-		// unknown option on command line
-		fprintf(stderr, "ERROR: Unrecognized option: %s\n\n", argv[1]);
-		print_help(argv[0]);
-		return EXIT_FAILURE;
+    // Check match directly using CPE URIs.
+    match_result_a = cpe_name_match_strs(argv[2], argc - 2, &(argv[3])) >= 0 ? true : false;
+    
+    // Load candidate CPE.
+    if ((candidate_cpe = cpe_name_new(argv[2])) != NULL) {
+      if ((cpes = (struct cpe_name **) malloc((argc - 3) * sizeof(struct cpe_name *))) != NULL) {
+	for (i = 0; i < argc - 3; i++) {
+
+	  // Load CPE to check match.
+	  cpes[i] = cpe_name_new(argv[i+3]);	  
+
+	  // Match check (against last CPE).
+	  match_result_b = match_result_b || cpe_name_match_one(candidate_cpe, cpes[i]);
 	}
 
-	return EXIT_SUCCESS;
-}
+	// Match check agains all loaded CPEs.
+	match_result_c = cpe_name_match_cpes(candidate_cpe, argc - 3, cpes);
+
+	// Report result - all should be the same.
+	if (match_result_a && match_result_b && match_result_c) 
+	  printf("Match\n"), ret_val = 0;
+	if (!match_result_a && !match_result_b && !match_result_c) 
+	  printf("Mismatch\n"), ret_val = 0;
+	
+      } else 
+	fprintf(stderr, "Not enough memory!\n");
+      
+      for (i = 0; i < argc - 3; i++) 
+	cpe_name_free(cpes[i]);      
+      free(cpes);
+      cpe_name_free(candidate_cpe);
+
+    } else
+      fprintf(stderr, "Parse error!\n");
+  }
+  
+  else if (argc == 2 && strcmp(argv[1], "--sanity-check") == 0) {
+    if ((name = cpe_name_new(NULL)) != NULL) {
+      cpe_name_free(name);
+      ret_val = 0;
+    }
+  }
+
+  // Print usage only, invalid parameters.
+  else 
+    print_usage(argv[0], stderr);
+  
+  return ret_val;
+}      
