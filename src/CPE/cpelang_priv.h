@@ -48,6 +48,10 @@ OSCAP_HIDDEN_START;
 /*
  * */
 
+/**
+ * @struct cpe_testexpr
+ * CPE language boolean expression
+ */
 struct cpe_testexpr {
         struct xml_metadata xml;
 	cpe_lang_oper_t oper;	// operator
@@ -56,6 +60,19 @@ struct cpe_testexpr {
 		struct cpe_name *cpe;	        // CPE for match operation
 	} meta;			                // operation metadata
 };
+
+/**
+ * @struct cpe_lang_model
+ * CPE platform specification
+ */
+struct cpe_lang_model;
+
+/**
+ * @struct cpe_platform
+ * Single platform representation in CPE language
+ */
+struct cpe_platform;
+
 /**
  * Function for parsing XML CPE language file
  * @param source structure of import source with filename and encoding
@@ -117,27 +134,6 @@ void cpe_platform_export(const struct cpe_platform * platform, xmlTextWriterPtr 
  * @relates cpe_testexpr
  */
 void cpe_testexpr_export(const struct cpe_testexpr expr, xmlTextWriterPtr writer);
-
-/**
- * Constructor of CPE language model structure
- * @return new structure of cpe_lang_model
- * @relates cpe_lang_model
- */
-struct cpe_lang_model * cpe_lang_model_new();
-
-/**
- * Constructor of CPE test expression structure
- * @return new structure of cpe_testexpr
- * @relates cpe_testexpr
- */
-struct cpe_testexpr * cpe_testexpr_new();
-
-/**
- * Constructor of CPE platform structure
- * @return new structure of cpe_platform
- * @relates cpe_platform
- */
-struct cpe_platform * cpe_platform_new();
 
 OSCAP_HIDDEN_END;
 

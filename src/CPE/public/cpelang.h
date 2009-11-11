@@ -124,6 +124,13 @@ struct cpe_testexpr * cpe_testexpr_get_meta_expr(const struct cpe_testexpr *item
 struct cpe_name * cpe_testexpr_get_meta_cpe(const struct cpe_testexpr *item);
 
 /**
+ * Function to match cpe in platform
+ * @param cpe to be matched with
+ * @param n size
+ * @param platform CPE platform
+ */
+bool cpe_platform_match_cpe(struct cpe_name ** cpe, size_t n, const struct cpe_platform * platform);
+/**
  * cpe_platform functions to get variable members
  */
 /// @relates cpe_platform
@@ -171,19 +178,19 @@ bool cpe_lang_model_add_item(struct cpe_lang_model *lang, struct cpe_platform *p
  * Constructor of CPE Language model
  * @relates cpe_lang_model
  */
-struct cpe_lang_model * cpe_lang_model_new();
+struct cpe_lang_model * cpe_lang_model_new(void);
 
 /**
  * Constructor of CPE test expression
  * @relates cpe_testexpr
  */
-struct cpe_testexpr * cpe_testexpr_new();
+struct cpe_testexpr * cpe_testexpr_new(void);
 
 /**
  * Constructor of CPE Platform
  * @relates cpe_platform
  */
-struct cpe_platform * cpe_platform_new();
+struct cpe_platform * cpe_platform_new(void);
 
 /**
  * Free function of CPE test expression
@@ -207,17 +214,17 @@ void cpe_platform_free(struct cpe_platform * platform);
  * Set / add functions
  * */
 /// @relates cpe_lang_model
-bool cpe_lang_model_set_ns_href(struct cpe_lang_model *model, const char *new_href);
+bool cpe_lang_model_set_ns_href(struct cpe_lang_model * model, const char *new_href);
 /// @relates cpe_lang_model
-bool cpe_lang_model_set_ns_prefix(struct cpe_lang_model *model, const char *new_prefix);
+bool cpe_lang_model_set_ns_prefix(struct cpe_lang_model * model, const char *new_prefix);
 /// @relates cpe_lang_model
-bool cpe_lang_model_add_item(struct cpe_lang_model *lang, struct cpe_platform *platform);
+bool cpe_lang_model_add_item(struct cpe_lang_model * lang, struct cpe_platform *platform);
 /// @relates cpe_platform
-bool cpe_platform_set_id(struct cpe_platform *platform, const char *new_id);
+bool cpe_platform_set_id(struct cpe_platform * platform, const char *new_id);
 // @relates cpe_platform
-//bool cpe_platform_set_remark(cpe_platform, const char *new_remark);
+bool cpe_platform_set_remark(struct cpe_platform * platform, const char *new_remark);
 /// @relates cpe_platform
-bool cpe_platform_add_title(struct cpe_platform *platform, struct oscap_title *title);
+bool cpe_platform_add_title(struct cpe_platform * platform, struct oscap_title *title);
 
 #endif				/* _CPELANG_H_ */
 

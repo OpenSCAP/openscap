@@ -511,7 +511,7 @@ const char * cpe_product_get_value(const struct cpe_product *item);
  * @relates cpe_product
  * @param item cpe_product
  */
-int cpe_product_get_part(const struct cpe_product *item);
+cpe_part_t cpe_product_get_part(const struct cpe_product *item);
 
 /** cpe_product functions to get versions of product
  * @relates cpe_product
@@ -573,12 +573,6 @@ const char * cpe_language_get_value(const struct cpe_language *item);
  */
 struct cpe_dict_model *cpe_dict_model_import(const struct oscap_import_source * source);
 
-/** Frees CPE dictionary and its contents
- * @relates cpe_dict
- * @param dict dictionary to be deleted
- */
-void cpe_dict_model_free(struct cpe_dict_model * dict);
-
 /** Verify wether given CPE is known according to specified dictionary
  * @relates cpe_name
  * @relates cpe_dict
@@ -630,27 +624,27 @@ void cpe_item_free(struct cpe_item * item);
  * New functions
  */
 /// @relates cpe_dict_model
-struct cpe_dict_model  *cpe_dict_model_new();
+struct cpe_dict_model  *cpe_dict_model_new(void);
 /// @relates cpe_generator
-struct cpe_generator *cpe_generator_new();
+struct cpe_generator *cpe_generator_new(void);
 /// @relates cpe_check
-struct cpe_check     *cpe_check_new();
+struct cpe_check     *cpe_check_new(void);
 /// @relates cpe_reference
-struct cpe_reference *cpe_reference_new();
+struct cpe_reference *cpe_reference_new(void);
 /// @relates cpe_item
-struct cpe_item      *cpe_item_new();
+struct cpe_item      *cpe_item_new(void);
 /// @relates cpe_vendor
-struct cpe_vendor    *cpe_vendor_new();
+struct cpe_vendor    *cpe_vendor_new(void);
 /// @relates cpe_product
-struct cpe_product   *cpe_product_new();
+struct cpe_product   *cpe_product_new(void);
 /// @relates cpe_version
-struct cpe_version   *cpe_version_new();
+struct cpe_version   *cpe_version_new(void);
 /// @relates cpe_update
-struct cpe_update    *cpe_update_new();
+struct cpe_update    *cpe_update_new(void);
 /// @relates cpe_edition
-struct cpe_edition   *cpe_edition_new();
+struct cpe_edition   *cpe_edition_new(void);
 /// @relates cpe_language
-struct cpe_language  *cpe_language_new();
+struct cpe_language  *cpe_language_new(void);
 
 
 /*

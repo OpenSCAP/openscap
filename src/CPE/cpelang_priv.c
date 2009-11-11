@@ -31,15 +31,13 @@
 #include <libxml/xmlreader.h>
 #include <libxml/xmlwriter.h>
 #include <libxml/tree.h>
+#include <string.h>
 
 #include "cpelang_priv.h"
+#include "public/cpelang.h"
 
-#include <string.h>
-#include "cpelang.h"
 #include "../common/util.h"
 #include "../common/list.h"
-
-#define FILE_ENCODING "UTF-8"
 
 /***************************************************************************/
 /* Variable definitions

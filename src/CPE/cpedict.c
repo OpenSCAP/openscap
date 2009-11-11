@@ -29,10 +29,11 @@
  */
 
 #include "public/cpedict.h"
+#include "cpedict_priv.h"
+
 #include "../common/list.h"
 #include "../common/util.h"
 
-#include "cpedict_priv.h"
 
 struct cpe_dict_model * cpe_dict_model_import(const struct oscap_import_source * source) {
 

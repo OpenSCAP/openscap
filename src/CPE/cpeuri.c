@@ -36,7 +36,7 @@
 #include <ctype.h>
 #include <assert.h>
 
-#include "public/cpeuri.h"
+#include "cpeuri.h"
 #include "../common/util.h"
 
 
@@ -84,6 +84,7 @@ bool cpe_name_check(const char *str);
 static char **cpe_split(char *str, const char *delim);
 static const char *cpe_get_field(const struct cpe_name *cpe, int idx);
 static const char *as_str(const char *str);
+static bool cpe_set_field(struct cpe_name *cpe, int idx, const char *newval);
 /*
  * Fill @a cpe structure with parsed @a fields.
  *

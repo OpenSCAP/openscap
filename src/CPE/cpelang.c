@@ -32,6 +32,7 @@
 #include <string.h>
 
 #include "cpelang_priv.h"
+#include "public/cpelang.h"
 
 #include "../common/util.h"
 #include "../common/list.h"

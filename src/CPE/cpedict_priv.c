@@ -32,6 +32,7 @@
 #include <stdlib.h>
 
 #include "cpedict_priv.h"
+#include "cpedict.h"
 #include "cpeuri.h"
 
 // for functions isspace
@@ -230,19 +231,6 @@ static void cpe_language_export(const struct cpe_language * language, xmlTextWri
 static void cpe_note_export(const struct oscap_title * title, xmlTextWriterPtr writer);
 static void cpe_check_export(const struct cpe_check * check, xmlTextWriterPtr writer);
 static void cpe_reference_export(const struct cpe_reference * ref, xmlTextWriterPtr writer);
-
-void cpe_dict_model_free(struct cpe_dict_model * dict);
-void cpe_generator_free(struct cpe_generator * generator);
-void cpe_item_free(struct cpe_item * item);
-void cpe_vendor_free(struct cpe_vendor * vendor);
-void cpe_check_free(struct cpe_check * check);
-void cpe_reference_free(struct cpe_reference * ref);
-void cpe_product_free(struct cpe_product * product);
-void cpe_version_free(struct cpe_version * version);
-void cpe_update_free(struct cpe_update * update);
-void cpe_edition_free(struct cpe_edition * edition);
-void cpe_language_free(struct cpe_language * language);
-void cpe_itemmetadata_free(struct cpe_item_metadata * meta);
 
 static bool cpe_validate_xml(const char * filename);
 /***************************************************************************/
