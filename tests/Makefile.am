@@ -115,7 +115,7 @@ TESTS += CVE/test_cve.sh
 EXTRA_DIST += CVE/test_cve.sh CVE/nvdcve-2.0-recent.xml
 
 test_cve_SOURCES = CVE/test_cve.c
-test_cve_CFLAGS = -I$(top_srcdir)/src/CVE/public -I${top_srcdir}/src/common/public
+test_cve_CFLAGS = -I$(top_srcdir)/src/CVE/public -I${top_srcdir}/src/common/public -I$(top_srcdir)/src/CPE/public
 test_cve_LDADD = $(top_builddir)/src/libopenscap_testing.la
 endif
 
