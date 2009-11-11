@@ -33,11 +33,14 @@
 #include <libxml/xmlwriter.h>
 
 #include "cve_priv.h"
+#include "public/cve.h"
+
 #include "cpelang_priv.h"
 #include "cvss_priv.h"
+#include "cvss.h"
+
 #include "../list.h"
 
-#include "cvss.h"
 
 
 /***************************************************************************/
@@ -53,10 +56,8 @@ struct cve_model {
 
         struct xml_metadata xml;
 	struct oscap_list* entries; /* 1-n */
-	struct oscap_htable* entry;
 };
-OSCAP_IGETTER_GEN(cve_entry, cve_model, entries)
-OSCAP_HGETTER(struct cve_entry*, cve_model, entry)
+OSCAP_IGETINS(cve_entry, cve_model, entries, entry)
 
 /*
  */
@@ -307,7 +308,6 @@ struct cve_model * cve_model_new() {
         ret->xml.lang       = NULL;
         ret->xml.namespace  = NULL;
 	ret->entries        = oscap_list_new();
-	ret->entry          = oscap_htable_new();
 
         return ret;
 }
@@ -325,17 +325,6 @@ struct cve_model * cve_model_new() {
 static int xmlTextReaderNextElement(xmlTextReaderPtr reader);
 static bool cve_validate_xml(const char * filename);
 
-void cve_reference_export(const struct cve_reference * refer, xmlTextWriterPtr writer);
-void cve_summary_export(const struct cve_summary * sum, xmlTextWriterPtr writer);
-void cve_entry_export(const struct cve_entry * entry, xmlTextWriterPtr writer);
-
-void cve_model_free(struct cve_model * cve_model);
-void cve_entry_free(struct cve_entry * entry);
-void cve_summary_free(struct cve_summary * summary);
-void cve_product_free(struct cve_product * product);
-void cve_reference_free(struct cve_reference * ref);
-void cwe_entry_free(struct cwe_entry * entry);
-void cve_configuration_free(struct cve_configuration * conf);
 
 /* End of static declarations 
  * */

@@ -151,14 +151,7 @@ void cve_free(struct cve* cve);
  * Get en iterator to CVE entries.
  * @relates cve
  */
-struct cve_entry_iterator* cve_model_get_entries(const struct cve* cve);
-
-/**
- * Get CVE entry by its ID.
- * @relates cve
- */
-struct cve_entry* cve_model_get_entry(const struct cve* cve, const char* id);
-
+struct cve_entry_iterator* cve_model_get_entries(const struct cve_model* cve_model);
 
 /**
  * Get CVE entry ID.
@@ -209,7 +202,21 @@ const char* cve_reference_get_type(const struct cve_reference* ref);
  */
 const char* cve_reference_get_source(const struct cve_reference * ref);
 
-void cve_model_export_xml(struct cve_model * cve, const struct oscap_export_target * target);
+
+const char* cve_summary_get_summary(const struct cve_summary * summary);
+
+const char* cve_product_get_value(const struct cve_product * product);
+const char* cwe_entry_get_value(const struct cwe_entry * entry);
+const char* cve_configuration_get_id(const struct cve_configuration * conf);
+const char* cve_entry_get_published(const struct cve_entry * entry);
+const char* cve_entry_get_modified(const struct cve_entry * entry);
+const char* cve_entry_get_sec_protection(const struct cve_entry * entry);
+
+struct cve_product_iterator * cve_entry_get_products(const struct cve_entry * entry);
+struct cve_configuration_iterator * cve_entry_get_configurations(const struct cve_entry * entry);
+const struct cpe_testexpr * cve_configuration_get_expr(const struct cve_configuration * conf);
+
+void cve_model_export(struct cve_model * cve, const struct oscap_export_target * target);
 
 struct cve_model * cve_model_parse_xml(const struct oscap_import_source * source);
 
@@ -229,13 +236,37 @@ void cwe_entry_free(struct cwe_entry * entry);
 
 void cve_configuration_free(struct cve_configuration * conf);
 
-struct cve_entry * cve_entry_new();
-struct cve_configuration * cve_configuration_new();
-struct cwe_entry * cwe_entry_new();
-struct cve_product * cve_product_new();
-struct cve_summary * cve_summary_new();
-struct cve_reference * cve_reference_new();
-struct cve_model * cve_model_new();
+struct cve_entry * cve_entry_new(void);
+struct cve_configuration * cve_configuration_new(void);
+struct cwe_entry * cwe_entry_new(void);
+struct cve_product * cve_product_new(void);
+struct cve_summary * cve_summary_new(void);
+struct cve_reference * cve_reference_new(void);
+struct cve_model * cve_model_new(void);
 
+bool cve_model_add_entry(struct cve_model *motel, struct cve_entry *new_entry);
+
+bool cve_reference_set_value(struct cve_reference *reference, const char *new_value);
+bool cve_reference_set_href(struct cve_reference *reference, const char *new_href);
+bool cve_reference_set_type(struct cve_reference *reference, const char *new_type);
+bool cve_reference_set_source(struct cve_reference *reference, const char *new_source);
+
+bool cve_summary_set_summary(struct cve_summary *summary, const char *new_summary);
+
+bool cve_product_set_value(struct cve_product *product, const char *new_value);
+
+bool cve_entry_set_id(struct cve_entry *entry, const char *new_);
+bool cve_entry_set_published(struct cve_entry *entry, const char *new_);
+bool cve_entry_set_modified(struct cve_entry *entry, const char *new_);
+bool cve_entry_set_sec_protection(struct cve_entry *entry, const char *new_);
+bool cve_entry_set_cwe(struct cve_entry *entry, const char *cwe);
+
+bool cwe_entry_set_value(struct cwe_entry *entry, const char *new_value);
+
+bool cve_configuration_set_id(struct cve_configuration * conf, const char *new_id);
+
+/*
+ * bool cve__set_(struct cve_ *, const char *new_);
+*/
 #endif				/* _CVE_H_ */
 

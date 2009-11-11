@@ -40,6 +40,14 @@
 
 OSCAP_HIDDEN_START;
 
+struct cve_model;
+struct cve_entry;
+struct cve_summary;
+struct cve_product;
+struct cve_configuration;
+struct cwe_entry;
+struct cve_reference;
+
 struct cve_model * cve_model_parse_xml(const struct oscap_import_source * source);
 
 struct cve_model * cve_model_parse(xmlTextReaderPtr reader);
@@ -49,6 +57,12 @@ struct cve_entry * cve_entry_parse(xmlTextReaderPtr reader);
 void cve_export(const struct cve_model * cve, xmlTextWriterPtr writer);
 
 void cve_model_export_xml(struct cve_model * cve, const struct oscap_export_target * target);
+
+void cve_reference_export(const struct cve_reference * refer, xmlTextWriterPtr writer);
+
+void cve_summary_export(const struct cve_summary * sum, xmlTextWriterPtr writer);
+
+void cve_entry_export(const struct cve_entry * entry, xmlTextWriterPtr writer);
 
 OSCAP_HIDDEN_END;
 

@@ -32,6 +32,8 @@
  */
 
 #include "public/cve.h"
+#include "cve_priv.h"
+
 #include "../common/util.h"
 #include "../common/list.h"
 
