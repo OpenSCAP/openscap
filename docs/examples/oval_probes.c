@@ -76,6 +76,9 @@ int main(int argc, char **argv)
 	free(results_fname);
 	oval_export_target_free(result_out);
 
+        oval_definition_model_free(def_model);
+        oval_syschar_model_free(sys_model);
+        oval_results_model_free(res_model);
 
         return 0;
 }
