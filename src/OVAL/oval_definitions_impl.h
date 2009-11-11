@@ -35,6 +35,7 @@
 #include "public/oval_definitions.h"
 #include "oval_parser_impl.h"
 #include "oval_agent_api_impl.h"
+#include "oval_string_map_impl.h"
 #include "../common/util.h"
 
 OSCAP_HIDDEN_START;
@@ -167,6 +168,7 @@ void oval_value_to_print(struct oval_value *value, char *indent, int idx);
 xmlNode *oval_value_to_dom(struct oval_value *, xmlDoc *, xmlNode *);
 
 struct oval_component *oval_component_clone(struct oval_component *, struct oval_definition_model *);
+void oval_component_evaluate(struct oval_component *component, struct oval_string_map *map);
 typedef void (*oval_component_consumer) (struct oval_component *, void *);
 int oval_component_parse_tag(xmlTextReaderPtr, struct oval_parser_context *,
 			     oval_component_consumer, void *);

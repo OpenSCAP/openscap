@@ -43,18 +43,8 @@ typedef struct oval_variable {
 	int deprecated;
 	oval_variable_type_t type;
 	oval_datatype_t datatype;
-	void *extension;
-} oval_variable_t;
-
-typedef struct oval_variable_CONEXT {
-	char *id;
-	char *comment;
-	int version;
-	int deprecated;
-	oval_variable_type_t type;
-	oval_datatype_t datatype;
-	struct oval_string_map *values;	//type==OVAL_VARIABLE_CONSTANT/EXTERNAL
-} oval_variable_CONEXT_t;
+	struct oval_string_map *values;
+} oval_variable_t, oval_variable_CONEXT_t;
 
 typedef struct oval_variable_LOCAL {
 	char *id;
@@ -63,6 +53,7 @@ typedef struct oval_variable_LOCAL {
 	int deprecated;
 	oval_variable_type_t type;
 	oval_datatype_t datatype;
+	struct oval_string_map *values;
 	struct oval_component *component;	//type==OVAL_VARIABLE_LOCAL
 } oval_variable_LOCAL_t;
 
@@ -120,17 +111,20 @@ oval_datatype_t oval_variable_get_datatype(struct oval_variable * variable)
 
 struct oval_value_iterator *oval_variable_get_values(struct oval_variable *variable)
 {
-	//type==OVAL_VARIABLE_CONSTANT or OVAL_VARIABLE_EXTERNAL
-	struct oval_value_iterator *values = NULL;
-	oval_variable_type_t type = oval_variable_get_type(variable);
-	if (type == OVAL_VARIABLE_EXTERNAL || type==OVAL_VARIABLE_CONSTANT) {
-		oval_variable_CONEXT_t *constant =
-		    (oval_variable_CONEXT_t *) variable;
-		values =
-		    (struct oval_value_iterator *)
-		    oval_string_map_values(constant->values);
+	struct oval_string_map *value_map = variable->values;
+	if(value_map==NULL){//if variable values are NULL this is a LOCAL variable
+		variable->values = oval_string_map_new();
+		struct oval_component *component = oval_variable_get_component(variable);
+		if(component){
+			oval_component_evaluate(component, variable->values);
+		}else fprintf(stderr,
+				"WARNING: NULL component bound to variable\n"
+				"    variable type = %s\n"
+				"    variable id   = %s\n"
+				"    codeloc = %s(%d)\n",
+				oval_variable_type_get_text(variable->type), oval_variable_get_id(variable), __FILE__, __LINE__);
 	}
-	return values;
+	return (value_map)?(struct oval_value_iterator *)oval_string_map_values(variable->values):NULL;
 }
 
 struct oval_component *oval_variable_get_component(struct oval_variable *variable)
@@ -145,9 +139,15 @@ struct oval_component *oval_variable_get_component(struct oval_variable *variabl
 	return component;
 }
 
-static void _set_oval_variable_type
-	(struct oval_variable *variable, oval_variable_type_t type)
+
+  struct oval_variable *oval_variable_new(char *id, oval_variable_type_t type)
 {
+	oval_variable_t *variable = (oval_variable_t *)(type==OVAL_VARIABLE_LOCAL)
+			?malloc(sizeof(oval_variable_LOCAL_t))
+			:malloc(sizeof(oval_variable_CONEXT_t));
+	variable->id = strdup(id);
+	variable->comment = NULL;
+	variable->datatype = OVAL_DATATYPE_UNKNOWN;
 	variable->type = type;
 	switch(type)
 	{
@@ -157,38 +157,14 @@ static void _set_oval_variable_type
 			= (oval_variable_CONEXT_t *)variable;
 			conext->values = oval_string_map_new();
 		}break;
-		default: variable->extension = NULL;
+		case OVAL_VARIABLE_LOCAL:{
+			oval_variable_LOCAL_t *local
+			= (oval_variable_LOCAL_t *)variable;
+			local->component = NULL;
+			local->values    = NULL;
+		}
 	}
-}
-
-  struct oval_variable *oval_variable_new(char *id, oval_variable_type_t type)
-{
-	oval_variable_t *variable =
-	    (oval_variable_t *) malloc(sizeof(oval_variable_t));
-	variable->id = strdup(id);
-	variable->comment = NULL;
-	variable->datatype = OVAL_DATATYPE_UNKNOWN;
-	_set_oval_variable_type(variable, type);
 	return variable;
-}
-
-void _oval_variable_clone_CONEXT
-	(struct oval_variable *new_variable, struct oval_variable *old_variable)
-{
-	struct oval_value_iterator *values = oval_variable_get_values(old_variable);
-	while(oval_value_iterator_has_more(values)){
-		struct oval_value *value = oval_value_iterator_next(values);
-		oval_variable_add_value(new_variable, oval_value_clone(value));
-	}
-	oval_value_iterator_free(values);
-}
-
-void _oval_variable_clone_LOCAL
-	(struct oval_variable *new_variable, struct oval_variable *old_variable,
-	 struct oval_definition_model *model)
-{
-	struct oval_component *component = oval_variable_get_component(old_variable);
-	oval_variable_set_component(new_variable, oval_component_clone(component, model));
 }
 
 struct oval_variable   *oval_variable_clone
@@ -203,14 +179,21 @@ struct oval_variable   *oval_variable_clone
 		oval_variable_set_deprecated(new_variable, old_variable->deprecated);
 		oval_variable_set_datatype  (new_variable, old_variable->datatype);
 
-		switch(new_variable->type)
-		{
-		case OVAL_VARIABLE_EXTERNAL:
-		case OVAL_VARIABLE_CONSTANT: _oval_variable_clone_CONEXT(new_variable, old_variable);break;
-		case OVAL_VARIABLE_LOCAL   : _oval_variable_clone_LOCAL (new_variable, old_variable, model);break;
-		default: /*NOOP*/break;
+		if(old_variable->values){
+			struct oval_value_iterator *old_values = (struct oval_value_iterator *)oval_string_map_values(old_variable->values);
+			if(new_variable->values==NULL)new_variable->values = oval_string_map_new();
+			while(oval_value_iterator_has_more(old_values)){
+				struct oval_value *value = oval_value_iterator_next(old_values);
+				char *text = oval_value_get_text(value);
+				oval_string_map_put(new_variable->values, text, (void *)value);
+			}
+			oval_value_iterator_free(old_values);
 		}
 
+		if(new_variable->type==OVAL_VARIABLE_LOCAL){
+			struct oval_component *component = oval_variable_get_component(old_variable);
+			oval_variable_set_component(new_variable, oval_component_clone(component, model));
+		}
 		oval_definition_model_add_variable(model, new_variable);
 	}
 	return new_variable;
@@ -222,26 +205,15 @@ void oval_variable_free(struct oval_variable *variable)
 	if (variable){
 		if (variable->id)free(variable->id);
 		if (variable->comment)free(variable->comment);
-		if (variable->extension != NULL) {
-			switch (variable->type) {
-			case OVAL_VARIABLE_LOCAL:{
-					oval_variable_LOCAL_t *local
-						= (oval_variable_LOCAL_t *)variable;
-					if(local->component)
-						oval_component_free(local->component);
-					local->component = NULL;
-				}
-				break;
-			case OVAL_VARIABLE_EXTERNAL:
-			case OVAL_VARIABLE_CONSTANT:{
-					oval_variable_CONEXT_t *conext
-						= (oval_variable_CONEXT_t *)variable;
-					oval_string_map_free
-						(conext->values, (oscap_destruct_func)oval_value_free);
-					conext->values = NULL;
-				} break;
-			case OVAL_VARIABLE_UNKNOWN: break;
-			}
+		oval_variable_CONEXT_t *conext = (oval_variable_CONEXT_t *)variable;
+		oval_string_map_free(conext->values, (oscap_destruct_func)oval_value_free);
+		conext->values = NULL;
+		if(variable->type==OVAL_VARIABLE_LOCAL){
+			oval_variable_LOCAL_t *local
+				= (oval_variable_LOCAL_t *)variable;
+			if(local->component)
+				oval_component_free(local->component);
+			local->component = NULL;
 		}
 		variable->comment = NULL;
 		variable->id = NULL;
@@ -278,10 +250,8 @@ void oval_variable_add_value(struct oval_variable *variable,
 {
 	//type==OVAL_VARIABLE_CONSTANT
 	if (variable->type == OVAL_VARIABLE_CONSTANT || variable->type == OVAL_VARIABLE_EXTERNAL) {
-		oval_variable_CONEXT_t *conext =
-		    (oval_variable_CONEXT_t *) variable;
 		char *text = oval_value_get_text(value);
-		oval_string_map_put(conext->values, text, (void *)value);
+		oval_string_map_put(variable->values, text, (void *)value);
 	}
 }
 
@@ -369,9 +339,6 @@ int oval_variable_parse_tag(xmlTextReaderPtr reader,
 	}
 	char *id = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "id");
 	struct oval_variable *variable = get_oval_variable_new(model, id, type);
-	if(variable->type==OVAL_VARIABLE_UNKNOWN){
-		_set_oval_variable_type(variable, type);
-	}
 	free(id);id = variable->id;
 
 	char *comm = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "comment");

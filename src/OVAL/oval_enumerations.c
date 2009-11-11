@@ -288,6 +288,17 @@ const char* oval_operator_get_text(oval_operator_t operator)
 	return oval_enumeration_get_text(OVAL_OPERATOR_MAP, operator);
 }
 
+static const struct oscap_string_map OVAL_VARIABLE_TYPE_MAP[] = {
+	{ OVAL_VARIABLE_CONSTANT,  "constant_variable"},
+	{ OVAL_VARIABLE_EXTERNAL,  "external_variable"},
+	{ OVAL_VARIABLE_LOCAL,     "local_variable"},
+	{ OVAL_ENUMERATION_INVALID, NULL }
+};
+const char* oval_variable_type_get_text(oval_variable_type_t type)
+{
+	return oval_enumeration_get_text(OVAL_VARIABLE_TYPE_MAP, type);
+}
+
 static const struct oscap_string_map OVAL_FAMILY_MAP[] = {
 	{ OVAL_FAMILY_AIX,         "aix"         },
 	{ OVAL_FAMILY_APACHE,      "apache"      },
@@ -305,6 +316,8 @@ static const struct oscap_string_map OVAL_FAMILY_MAP[] = {
 	{ OVAL_FAMILY_WINDOWS,     "windows"     },
 	{ OVAL_ENUMERATION_INVALID, NULL }
 };
+
+
 
 oval_family_t oval_family_parse(xmlTextReaderPtr reader)
 {

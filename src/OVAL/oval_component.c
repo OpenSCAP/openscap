@@ -1215,3 +1215,7 @@ xmlNode *oval_component_to_dom
 
 	return component_node;
 }
+
+void oval_component_evaluate(struct oval_component *component, struct oval_string_map *map){
+	fprintf(stderr, "TODO: implement oval_component_evaluate");
+}
