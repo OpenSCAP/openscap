@@ -52,6 +52,11 @@ struct oscap_title * oscap_title_parse(xmlTextReaderPtr reader, const char * nam
 void oscap_title_export(const struct oscap_title * title, xmlTextWriterPtr writer);
 void oscap_title_free(struct oscap_title * title);
 
+const char* oscap_import_source_get_filename(const struct oscap_import_source * src);
+
+const char * xml_metadata_get_namespace(const struct xml_metadata * xml);
+
+const char * xml_metadata_get_lang(const struct xml_metadata * xml);
  
 void xml_metadata_free(struct xml_metadata xml);
 

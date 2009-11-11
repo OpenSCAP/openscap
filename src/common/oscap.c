@@ -21,6 +21,7 @@
  */
 
 #include <libxml/parser.h>
+#include "public/oscap.h"
 
 void oscap_cleanup(void)
 {

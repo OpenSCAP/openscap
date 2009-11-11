@@ -101,18 +101,6 @@ bool cve_configuration_iterator_has_more(struct cve_configuration_iterator* it);
 /* @relates cve_configuration_iterator */
 void cve_configuration_iterator_free(struct cve_configuration_iterator* it);
 
-/** @struct cve__iterator
- * Iterator over CVE entries.
- * @see oscap_iterator
- */
-struct cwe_entry_iterator;
-/* @relates cwe_entry_iterator */
-struct cwe_entry* cwe_entry_iterator_next(struct cwe_entry_iterator* it);
-/* @relates cwe_entry_iterator */
-bool cwe_entry_iterator_has_more(struct cwe_entry_iterator* it);
-/* @relates cwe_entry_iterator */
-void cwe_entry_iterator_free(struct cwe_entry_iterator* it);
-
 /** @struct cve_reference_iterator
  * Iterator over CVE references.
  * @see oscap_iterator
@@ -133,19 +121,6 @@ void cve_reference_iterator_free(struct cve_reference_iterator* it);
  * @return non-negative value indicates the number of CVEs in the list, negative value indicates an error
  */
 struct cve_model * cve_model_import(const struct oscap_import_source * source);
-
-/**
- * Create a new CVE catalogue from a XML file.
- * @relates cve
- * @param fname XML file name
- */
-struct cve* cve_new(const char* fname);
-
-/**
- * Delete CVE catalogue.
- * @relates cve
- */
-void cve_free(struct cve* cve);
 
 /**
  * Get en iterator to CVE entries.
@@ -217,8 +192,6 @@ struct cve_configuration_iterator * cve_entry_get_configurations(const struct cv
 const struct cpe_testexpr * cve_configuration_get_expr(const struct cve_configuration * conf);
 
 void cve_model_export(struct cve_model * cve, const struct oscap_export_target * target);
-
-struct cve_model * cve_model_parse_xml(const struct oscap_import_source * source);
 
 struct cve_model * cve_model_import(const struct oscap_import_source * source);
 

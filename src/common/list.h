@@ -31,7 +31,9 @@
 
 #include <stdlib.h>
 #include <stdbool.h>
+
 #include "util.h"
+#include "public/oscap.h"
 
 OSCAP_HIDDEN_START;
 
@@ -76,16 +78,6 @@ void* oscap_iterator_next(struct oscap_iterator* it);
 size_t oscap_iterator_get_itemcount(const struct oscap_iterator* it);
 bool oscap_iterator_has_more(struct oscap_iterator* it);
 void oscap_iterator_free(struct oscap_iterator* it);
-
-/** @struct oscap_string_iterator
- * Iterator over C-style strings.
- * @see oscap_iterator
- */
-struct oscap_string_iterator;
-/// @relates oscap_string_iterator
-const char* oscap_string_iterator_next(struct oscap_string_iterator*);
-/// @relates oscap_string_iterator
-bool oscap_string_iterator_has_more(struct oscap_string_iterator*);
 
 /*
  * Hash table

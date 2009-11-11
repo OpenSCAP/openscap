@@ -57,7 +57,7 @@ struct cve_model {
         struct xml_metadata xml;
 	struct oscap_list* entries; /* 1-n */
 };
-OSCAP_IGETINS(cve_entry, cve_model, entries, entry)
+OSCAP_IGETINS_GEN(cve_entry, cve_model, entries, entry)
 
 /*
  */
