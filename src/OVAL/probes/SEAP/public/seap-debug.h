@@ -20,4 +20,7 @@ void __seap_debuglog (const char *, const char *, size_t , const char *, ...);
 #endif /* NDEBUG */
 #endif /* _D */
 
+#define SEAP_DEBUG_FILE     "seap_debug.log"
+#define SEAP_DEBUG_FILE_ENV "SEAP_DEBUG_FILE"
+
 #endif /* SEAP_DEBUG_H */

@@ -1,9 +1,13 @@
 #ifndef NDEBUG
 # include <stdio.h>
 # include <stdarg.h>
+# include <stdlib.h>
 # include <sys/types.h>
 # include <sys/file.h>
 # include <unistd.h>
+# include <time.h>
+# include "public/seap-debug.h"
+
 #  if defined(SEAP_THREAD_SAFE)
 #   include <pthread.h>
 static pthread_mutex_t __debuglog_mutex = PTHREAD_MUTEX_INITIALIZER;
@@ -18,14 +22,28 @@ void __seap_debuglog (const char *file, const char *fn, size_t line, const char 
         pthread_mutex_lock (&__debuglog_mutex);
 #endif
         if (__debuglog_fp == NULL) {
-                __debuglog_fp = fopen ("seap_debug.log", "a");
+                char  *logfile;
+                char  *st;
+                time_t ut;
+                
+                logfile = getenv (SEAP_DEBUG_FILE_ENV);
+                
+                if (logfile == NULL)
+                        logfile = SEAP_DEBUG_FILE;
+                
+                __debuglog_fp = fopen (logfile, "a");
                 
                 if (__debuglog_fp == NULL)
                         return;
                 
                 setbuf (__debuglog_fp, NULL);
+                
+                ut = time (NULL);
+                st = ctime (&ut);
+                
+                fprintf (__debuglog_fp, "=============== LOG: %.24s ===============\n", st);
         }
-
+        
         if (flock (fileno (__debuglog_fp), LOCK_EX) == -1)
                 return;
         

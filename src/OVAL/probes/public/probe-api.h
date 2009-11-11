@@ -392,4 +392,8 @@ void probe_free (SEXP_t *obj);
 #define PROBECMD_STE_FETCH 1
 #define PROBECMD_OBJ_EVAL  2
 
+void   *probe_init (void) __attribute__ ((unused));
+void    probe_fini (void *) __attribute__ ((unused));
+SEXP_t *probe_main (SEXP_t *, int *, void *) __attribute__ ((nonnull (1,2)));
+
 #endif /* PROBE_API_H */

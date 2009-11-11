@@ -115,7 +115,7 @@ void get_ifs(SEXP_t *item)
 }
 #endif
 
-SEXP_t *probe_main(SEXP_t *probe_in, int *err)
+SEXP_t *probe_main(SEXP_t *probe_in, int *err, void *arg)
 {
 	SEXP_t *item;
         SEXP_t *r0, *r1, *r2, *r3;
@@ -125,6 +125,8 @@ SEXP_t *probe_main(SEXP_t *probe_in, int *err)
         struct addrinfo *results;
         int e;
         
+        (void)arg;
+
 	if (probe_in == NULL) {
 		*err = PROBE_EINVAL;
 		return NULL;

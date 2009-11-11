@@ -15,10 +15,12 @@
 #include <seap.h>
 #include <probe-api.h>
 
-SEXP_t *probe_main(SEXP_t *probe_in, int *err)
+SEXP_t *probe_main(SEXP_t *probe_in, int *err, void *arg)
 {
 	SEXP_t *list, *item, *v_fm;
 
+        (void)arg;
+        
 	const char *family =
 #       if defined PLATFORM_IOS
 		"ios";

@@ -310,11 +310,13 @@ static int process_file(const char *path, const char *filename, void *arg)
 	return ret;
 }
 
-SEXP_t *probe_main(SEXP_t *probe_in, int *err)
+SEXP_t *probe_main(SEXP_t *probe_in, int *err, void *arg)
 {
 	SEXP_t *path_ent, *filename_ent, *instance_ent, *behaviors_ent;
         SEXP_t *r0, *r1;
 	char *pattern;
+
+        (void)arg;
 
 	if (probe_in == NULL) {
 		*err = PROBE_EINVAL;

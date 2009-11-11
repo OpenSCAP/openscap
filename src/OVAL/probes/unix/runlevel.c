@@ -43,12 +43,6 @@ struct runlevel_rep {
 
 static int get_runlevel (struct runlevel_req *req, struct runlevel_rep *rep);
 
-void __runlevel_rep_free (struct runlevel_rep *ptr)
-{
-        oscap_free (ptr->service_name);
-        oscap_free (ptr->runlevel);
-}
-
 #if defined(__linux__)
 static int get_runlevel_redhat (struct runlevel_req *req, struct runlevel_rep *rep)
 {

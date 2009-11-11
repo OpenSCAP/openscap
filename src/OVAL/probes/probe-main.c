@@ -14,14 +14,11 @@
 
 globals_t global = GLOBALS_INITIALIZER;
 
-void   *probe_init (void);
-void    probe_fini (void *arg);
-SEXP_t *probe_main (SEXP_t *object, int *err, void *arg);
 void   *probe_worker (void *arg);
 
 #define MAX_EVAL_DEPTH 8
 
-SEXP_t *probe_ste_fetch (SEXP_t *id_list)
+static SEXP_t *probe_ste_fetch (SEXP_t *id_list)
 {
         SEXP_t *res, *ste, *id;
         uint32_t i_len, r_len;
@@ -66,7 +63,7 @@ SEXP_t *probe_ste_fetch (SEXP_t *id_list)
         return (res);
 }
 
-SEXP_t *probe_obj_eval (SEXP_t *id)
+static SEXP_t *probe_obj_eval (SEXP_t *id)
 {
         SEXP_t *res;
 
@@ -80,7 +77,7 @@ SEXP_t *probe_obj_eval (SEXP_t *id)
         return pcache_sexp_get (global.pcache, id);
 }
 
-SEXP_t *probe_set_combine(SEXP_t *item_lst1, SEXP_t *item_lst2, oval_setobject_operation_t op)
+static SEXP_t *probe_set_combine(SEXP_t *item_lst1, SEXP_t *item_lst2, oval_setobject_operation_t op)
 {
 	char append;
 	SEXP_t *res_items, *item1, *item2, *id1, *id2;
@@ -167,7 +164,7 @@ SEXP_t *probe_set_combine(SEXP_t *item_lst1, SEXP_t *item_lst2, oval_setobject_o
 	return res_items;
 }
 
-SEXP_t *probe_set_apply_filters(SEXP_t *items, SEXP_t *filters)
+static SEXP_t *probe_set_apply_filters(SEXP_t *items, SEXP_t *filters)
 {
 	int filtered, i;
 	SEXP_t *result_items, *item, *filter, *felm, *ielm;
@@ -263,7 +260,7 @@ SEXP_t *probe_set_apply_filters(SEXP_t *items, SEXP_t *filters)
 	return result_items;
 }
 
-SEXP_t *probe_set_eval (SEXP_t *set, size_t depth)
+static SEXP_t *probe_set_eval (SEXP_t *set, size_t depth)
 {
         SEXP_t *filters_u, *filters_a;
         

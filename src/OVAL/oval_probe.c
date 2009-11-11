@@ -8,9 +8,6 @@
 #include <common/bfind.h>
 #if defined(OSCAP_THREAD_SAFE)
 # include <pthread.h>
-#else
-# define EOPNOTSUPP 1
-# define ECANCELED 140
 #endif
 
 #include "oval_sexp.h"

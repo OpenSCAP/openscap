@@ -14,6 +14,14 @@
 #include <seap-command.h> 
 #include <seap-error.h>
 
+#ifndef EOPNOTSUPP
+# define EOPNOTSUPP 1001
+#endif
+
+#ifndef ECANCELED
+# define ECANCELED  1002
+#endif
+
 SEAP_CTX_t *SEAP_CTX_new  (void);
 void        SEAP_CTX_init (SEAP_CTX_t *ctx);
 void        SEAP_CTX_free (SEAP_CTX_t *ctx);

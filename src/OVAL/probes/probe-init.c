@@ -1,4 +1,4 @@
-#include <stddef.h>
+#include "_probe-api.h"
 
 void *probe_init (void)
 {

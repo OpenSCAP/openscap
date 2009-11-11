@@ -52,8 +52,9 @@ void *probe_init(void)
 	return NULL;
 }
 
-void probe_fini(void __attribute__((unused)) *arg)
+void probe_fini(void *arg)
 {
+        (void)arg;
 	/* deinit libxml */
 	xmlCleanupParser();
 }
@@ -199,11 +200,13 @@ static int process_file(const char *path, const char *filename, void *arg)
 	return ret;
 }
 
-SEXP_t *probe_main(SEXP_t *probe_in, int *err, void __attribute__((unused)) *arg)
+SEXP_t *probe_main(SEXP_t *probe_in, int *err, void *arg)
 {
 	SEXP_t *path_ent, *filename_ent, *xpath_ent, *behaviors_ent;
         SEXP_t *r0, *r1, *r2;
         
+        (void)arg;
+
 	if (probe_in == NULL) {
 		*err = PROBE_EINVAL;
 		return NULL;

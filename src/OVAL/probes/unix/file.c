@@ -60,7 +60,7 @@ static SEXP_t *strfiletype (mode_t mode)
         return (NULL);
 }
 
-int file_cb (const char *p, const char *f, void *ptr)
+static int file_cb (const char *p, const char *f, void *ptr)
 {
         char path_buffer[PATH_MAX];
         SEXP_t *res = (SEXP_t *)ptr, *item;
@@ -191,7 +191,7 @@ int file_cb (const char *p, const char *f, void *ptr)
 
 static pthread_mutex_t __file_probe_mutex;
 
-SEXP_t *probe_init (void)
+void *probe_init (void)
 {
         _LOGCALL_;
         
@@ -226,7 +226,7 @@ SEXP_t *probe_init (void)
         return (NULL);
 }
 
-void probe_fini (SEXP_t *arg)
+void probe_fini (void *arg)
 {
         _A((void *)arg == (void *)&__file_probe_mutex);
         

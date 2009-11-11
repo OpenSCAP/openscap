@@ -55,7 +55,7 @@ attribute name signals that this attribute has a value.
 
 */
 
-
+#if 0 /* experimental */
 /*
  * Initialization
  */
@@ -71,6 +71,7 @@ int probe_api_deinit (void)
         /* destroy name cache */
         return (0);
 }
+#endif
 
 /*
  * items
