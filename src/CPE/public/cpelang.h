@@ -209,6 +209,12 @@ void cpe_lang_model_free(struct cpe_lang_model * platformspec);
  * @relates cpe_platform
  */
 void cpe_platform_free(struct cpe_platform * platform);
+/**
+ * Function to get next expr from array
+ * @param expr CPE Test expression structure
+ * @relates cpe_testexpr
+ */
+const struct cpe_testexpr * cpe_testexpr_get_next(const struct cpe_testexpr * expr);
 
 /**
  * Set / add functions

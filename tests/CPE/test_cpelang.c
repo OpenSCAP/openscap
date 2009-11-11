@@ -62,12 +62,14 @@ int print_expr_prefix_form(const struct cpe_testexpr *expr)
   case CPE_LANG_OPER_AND:
   case CPE_LANG_OPER_OR:
     printf("%s", CPE_OPER_STRS[cpe_testexpr_get_oper(expr) & CPE_LANG_OPER_MASK]);
-/*    for (sub = cpe_testexpr_get_meta_expr(expr); cpe_testexpr_get_oper(sub); ++sub)
-      print_expr_prefix_form(sub);   */
+    for (sub = cpe_testexpr_get_meta_expr(expr); cpe_testexpr_get_oper(sub); sub=cpe_testexpr_get_next(sub))
+      print_expr_prefix_form(sub);
     break;
   case CPE_LANG_OPER_MATCH:
     printf("%s", cpe_name_get_uri(cpe_testexpr_get_meta_cpe(expr)));
     break;
+  case CPE_LANG_OPER_HALT:
+    return 0;
   default:  
     return 1;
   }

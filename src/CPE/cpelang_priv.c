@@ -115,6 +115,12 @@ const struct cpe_testexpr * cpe_platform_get_expr(const struct cpe_platform *ite
 
     return &(item->expr);
 }
+
+const struct cpe_testexpr * cpe_testexpr_get_next(const struct cpe_testexpr * expr) {
+
+    return ++(expr);
+}
+
 /***************************************************************************/
 /* Constructors of CPE structures cpe_*<structure>*_new()
  * More info in representive header file.
@@ -164,7 +170,7 @@ struct cpe_platform * cpe_platform_new() {
 		return NULL;
 
 	ret->titles = oscap_list_new();
-	//ret->expr           = *(cpe_testexpr_new()); // no need to allocate mem here
+	ret->expr           = *(cpe_testexpr_new());
         ret->xml.lang       = NULL;
         ret->xml.namespace  = NULL;
 	ret->id             = NULL;
