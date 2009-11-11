@@ -13,21 +13,6 @@
 #include <cpelang.h>
 #include <cpeuri.h>
 
-/* ###### FIX THIS ##### */
-/*
-#include "../../src/CPE/cpelang_priv.h"
-
-
-struct cpe_testexpr {
-  struct xml_metadata xml;
-  cpe_lang_oper_t oper;
-  union {
-    struct cpe_testexpr *expr;
-    struct cpe_name *cpe;	  
-  } meta;			          
-};
-*/
-
 // Strings representing operators.
 const char *CPE_OPER_STRS[] = { "", "AND", "OR", "" };
 
@@ -63,13 +48,11 @@ int print_expr_prefix_form(const struct cpe_testexpr *expr)
   case CPE_LANG_OPER_OR:
     printf("%s", CPE_OPER_STRS[cpe_testexpr_get_oper(expr) & CPE_LANG_OPER_MASK]);
     for (sub = cpe_testexpr_get_meta_expr(expr); cpe_testexpr_get_oper(sub); sub=cpe_testexpr_get_next(sub))
-      print_expr_prefix_form(sub);
+      print_expr_prefix_form(sub);   
     break;
   case CPE_LANG_OPER_MATCH:
     printf("%s", cpe_name_get_uri(cpe_testexpr_get_meta_cpe(expr)));
     break;
-  case CPE_LANG_OPER_HALT:
-    return 0;
   default:  
     return 1;
   }
@@ -127,8 +110,11 @@ int main (int argc, char *argv[])
 
   // Print complete content.
   else if (argc == 4 && !strcmp(argv[1], "--get-all")) {        
-    import_source = oscap_import_source_new(argv[2], argv[3]);    
-    lang_model = cpe_lang_model_import(import_source);
+    if ((import_source = oscap_import_source_new(argv[2], argv[3])) == NULL) 
+      return 1;
+    
+    if ((lang_model = cpe_lang_model_import(import_source)) == NULL)
+      return 1;
 
     printf("%s:", cpe_lang_model_get_ns_href(lang_model));
     printf("%s\n", cpe_lang_model_get_ns_prefix(lang_model));
@@ -143,7 +129,8 @@ int main (int argc, char *argv[])
   
   // Print platform of given key only.
   else if (argc == 5 && !strcmp(argv[1], "--get-key")) {        
-    import_source = oscap_import_source_new(argv[2], argv[3]);
+    if ((import_source = oscap_import_source_new(argv[2], argv[3])) == NULL) 
+      return 1;
     
     if ((lang_model = cpe_lang_model_import(import_source)) == NULL)
       return 1;
@@ -159,7 +146,8 @@ int main (int argc, char *argv[])
 
   // Set ns_prefix, ns_href, add new platforms.
   else if (argc >= 6 && !strcmp(argv[1], "--set-all")) {        
-    import_source = oscap_import_source_new(argv[2], argv[3]);    
+    if ((import_source = oscap_import_source_new(argv[2], argv[3])) == NULL) 
+      return 1;
     if ((lang_model = cpe_lang_model_import(import_source)) == NULL)
       return 1;
     oscap_import_source_free(import_source);
@@ -177,15 +165,17 @@ int main (int argc, char *argv[])
 	return 2;
     }      
 
-    export_target = oscap_export_target_new(argv[2], argv[3]);
+    if ((export_target = oscap_export_target_new(argv[2], argv[3])) == NULL) 
+      return 1;
     cpe_lang_model_export(lang_model, export_target);
     oscap_export_target_free(export_target);
-    cpe_lang_model_free(lang_model);      
+    //cpe_lang_model_free(lang_model);      
   }
 
   // Set id, change titles of platform of given key.
   else if (argc >= 6 && !strcmp(argv[1], "--set-key")) {        
-    import_source = oscap_import_source_new(argv[2], argv[3]);
+    if ((import_source = oscap_import_source_new(argv[2], argv[3])) == NULL) 
+      return 1;
     if ((lang_model = cpe_lang_model_import(import_source)) == NULL)
       return 1;
     oscap_import_source_free(import_source);
@@ -205,7 +195,8 @@ int main (int argc, char *argv[])
       i++;
     } 
 
-    export_target = oscap_export_target_new(argv[2], argv[3]);
+    if ((export_target = oscap_export_target_new(argv[2], argv[3])) == NULL) 
+      return 1;
     cpe_lang_model_export(lang_model, export_target);
     oscap_export_target_free(export_target);
     cpe_lang_model_free(lang_model);      
@@ -229,10 +220,11 @@ int main (int argc, char *argv[])
 	return 2;
     }      
 
-    export_target = oscap_export_target_new(argv[2], argv[3]);
+    if ((export_target = oscap_export_target_new(argv[2], argv[3])) == NULL) 
+      return 1;
     cpe_lang_model_export(lang_model, export_target);
     oscap_export_target_free(export_target);    
-    cpe_lang_model_free(lang_model);      
+    //cpe_lang_model_free(lang_model);      
   }
 
   // Sanity checks.
