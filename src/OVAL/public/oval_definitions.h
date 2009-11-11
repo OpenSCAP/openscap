@@ -594,7 +594,7 @@ void  oval_string_iterator_free    (struct oval_string_iterator *);
 
 
 
-struct oval_affected *oval_affected_new();
+struct oval_affected *oval_affected_new(void);
 void oval_affected_free(struct oval_affected *);
 
 void oval_affected_set_family(struct oval_affected *, oval_affected_family_t);
@@ -680,7 +680,7 @@ struct oval_test                   *oval_criteria_node_get_test      (struct ova
  */
 struct oval_definition             *oval_criteria_node_get_definition(struct oval_criteria_node *);//type==NODETYPE_EXTENDDEF
 
-struct oval_reference *oval_reference_new();
+struct oval_reference *oval_reference_new(void);
 void oval_reference_free(struct oval_reference *);
 
 void oval_reference_set_source(struct oval_reference *, char *);
@@ -999,14 +999,14 @@ oval_check_t                   oval_object_content_get_varCheck  (struct oval_ob
  */
 struct oval_setobject     *oval_object_content_get_setobject (struct oval_object_content *);//type == OVAL_OBJECTCONTENT_SET
 
-struct oval_state_content *oval_state_content_new();
+struct oval_state_content *oval_state_content_new(void);
 void oval_state_content_free(struct oval_state_content *);
 
 void oval_state_content_set_entity(struct oval_state_content *, struct oval_entity *);
 void oval_state_content_set_varcheck(struct oval_state_content *, oval_check_t);
 void oval_state_content_set_entcheck(struct oval_state_content *, oval_check_t);
 
-struct oval_entity *oval_entity_new();
+struct oval_entity *oval_entity_new(void);
 void oval_entity_free(struct oval_entity *);
 
 void oval_entity_set_type(struct oval_entity *, oval_entity_type_t);
@@ -1093,7 +1093,7 @@ struct oval_variable         *oval_entity_get_variable   (struct oval_entity *);
  */
 struct oval_value            *oval_entity_get_value      (struct oval_entity *);
 
-struct oval_setobject *oval_setobject_new();
+struct oval_setobject *oval_setobject_new(void);
 void oval_setobject_free(struct oval_setobject *);
 
 void oval_setobject_set_type(struct oval_setobject *, oval_setobject_type_t);
@@ -1141,7 +1141,7 @@ struct oval_object_iterator *oval_setobject_get_objects  (struct oval_setobject 
  */
 struct oval_state_iterator  *oval_setobject_get_filters  (struct oval_setobject *);//type==OVAL_SET_COLLECTIVE;
 
-struct oval_behavior *oval_behavior_new();
+struct oval_behavior *oval_behavior_new(void);
 void oval_behavior_free(struct oval_behavior *);
 
 void oval_behavior_set_keyval(struct oval_behavior *behavior, const char* key, const char* value);
@@ -1162,7 +1162,7 @@ char *oval_behavior_get_key  (struct oval_behavior *);
  */
 char *oval_behavior_get_value(struct oval_behavior *);
 
-struct oval_value *oval_value_new();
+struct oval_value *oval_value_new(void);
 void oval_value_free(struct oval_value *);
 
 void oval_value_set_datatype(struct oval_value *, oval_datatype_t);
@@ -1554,7 +1554,7 @@ void oval_component_set_timedif_format_2(struct oval_component *, oval_datetime_
  */
 void oval_component_set_regex_pattern(struct oval_component *, char *); //type==OVAL_COMPONENT_REGEX_CAPTURE
 
-struct oval_message *oval_message_new();
+struct oval_message *oval_message_new(void);
 struct oval_message *oval_message_clone(struct oval_message *old_message);
 void oval_message_free(struct oval_message *);
 

@@ -30,6 +30,8 @@
 #include <string.h>
 #include "oval_definitions_impl.h"
 #include "oval_string_map_impl.h"
+#include "oval_system_characteristics_impl.h"
+#include "oval_results_impl.h"
 #include "../common/util.h"
 
 #define OVAL_ENUMERATION_INVALID (-1)
@@ -556,8 +558,7 @@ static const struct oscap_string_map OVAL_RESULT_MAP[] = {
 	{ OVAL_ENUMERATION_INVALID, NULL }
 };
 
-oval_result_t oval_result_parse(xmlTextReaderPtr reader, char *attname,
-  				 oval_existence_t defval)
+oval_result_t oval_result_parse(xmlTextReaderPtr reader, char *attname, oval_result_t defval)
 {
 	  return oval_enumeration_attr(reader, attname, OVAL_RESULT_MAP, defval);
 }

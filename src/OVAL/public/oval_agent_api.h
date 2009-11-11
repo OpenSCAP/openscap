@@ -167,7 +167,7 @@ struct oval_results_model;
 /**
  * Create an empty oval_definition_model.
  */
-struct oval_definition_model *oval_definition_model_new();
+struct oval_definition_model *oval_definition_model_new(void);
 
 /**
  * Copy an oval_definition_model.
@@ -319,7 +319,7 @@ void oval_definition_model_bind_variable_model
 /**
  * Create a new OVAL variable model
  */
-struct oval_variable_model *oval_variable_model_new();
+struct oval_variable_model *oval_variable_model_new(void);
 
 /**
  * Create an OVAL variable model
@@ -537,7 +537,7 @@ struct oval_result_directives *oval_results_model_import
 /**
  * Create new OVAL results directives.
  */
-struct oval_result_directives *oval_result_directives_new();
+struct oval_result_directives *oval_result_directives_new(void);
 
 /**
  * Destroy OVAL results directives.

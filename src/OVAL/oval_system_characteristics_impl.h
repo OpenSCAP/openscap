@@ -38,7 +38,7 @@ OSCAP_HIDDEN_START;
 
 extern const char NAMESPACE_OVALSYS[];
 
-struct oval_sysint *oval_sysint_new();
+struct oval_sysint *oval_sysint_new(void);
 struct oval_sysint *oval_sysint_clone(struct oval_sysint *);
 void oval_sysint_free(struct oval_sysint *);
 
@@ -52,7 +52,7 @@ int oval_sysint_parse_tag
 void oval_sysint_to_print(struct oval_sysint *, char *, int);
 void oval_sysint_to_dom  (struct oval_sysint *, xmlDoc *, xmlNode *);
 
-struct oval_sysinfo *oval_sysinfo_new();
+struct oval_sysinfo *oval_sysinfo_new(void);
 struct oval_sysinfo *oval_sysinfo_clone(struct oval_sysinfo *);
 void oval_sysinfo_free(struct oval_sysinfo *);
 void oval_sysinfo_to_print(struct oval_sysinfo *, char *, int);
@@ -97,7 +97,7 @@ oval_syschar_status_t oval_syschar_status_parse(xmlTextReaderPtr, char *, oval_s
 //			    struct oval_parser_context *context,
 //			    oval_affected_consumer, void *);
 
-struct oval_sysitem *oval_sysitem_new();
+struct oval_sysitem *oval_sysitem_new(void);
 struct oval_sysitem *oval_sysitem_clone(struct oval_sysitem *old_item);
 typedef void (*oval_sysitem_consumer)(struct oval_sysitem *, void* client);
 int oval_sysitem_parse_tag(

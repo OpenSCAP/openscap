@@ -37,7 +37,7 @@ OSCAP_HIDDEN_START;
 
 struct oval_string_map_s;
 
-struct oval_string_map *oval_string_map_new();
+struct oval_string_map *oval_string_map_new(void);
 void oval_string_map_put(struct oval_string_map *, const char *, void *);
 
 void oval_string_map_put_string(struct oval_string_map *, const char *, const char *);

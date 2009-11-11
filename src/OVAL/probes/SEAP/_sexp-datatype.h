@@ -26,7 +26,7 @@ struct SEXP_datatypetbl {
         TREETYPE(datatype) tree;
 };
 
-SEXP_datatypetbl_t *SEXP_datatypetbl_new ();
+SEXP_datatypetbl_t *SEXP_datatypetbl_new (void);
 int SEXP_datatypetbl_init (SEXP_datatypetbl_t *t);
 
 SEXP_datatype_t *SEXP_datatype_get (SEXP_datatypetbl_t *t, const char *name);

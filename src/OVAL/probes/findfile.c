@@ -327,7 +327,7 @@ static int recurse_direction(const char *file, char *direction) {
  * use regexps 
  */
 static int rglob(const char *pattern, rglob_t *result) {
-	char * tmp, * token, * saveptr;
+	char * tmp, * token, * saveptr = NULL;
 	char path[PATH_MAX] = "/";
 	int len = 1;
 	regex_t re;

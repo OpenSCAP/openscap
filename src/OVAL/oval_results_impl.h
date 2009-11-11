@@ -105,9 +105,6 @@ xmlNode *oval_result_item_to_dom
 void oval_result_item_set_result(struct oval_result_item *, oval_result_t);
 void oval_result_item_add_message(struct oval_result_item *, struct oval_message *);
 
-struct oval_result_test *oval_result_test_new();
-void oval_result_test_free(struct oval_result_test *);
-
 void oval_result_test_set_result(struct oval_result_test *, oval_result_t);
 void oval_result_test_set_instance(struct oval_result_test *test, int instance);
 void oval_result_test_set_message(struct oval_result_test *, struct oval_message *);
@@ -136,8 +133,7 @@ void oval_result_criteria_node_add_subnode(struct oval_result_criteria_node *, s
 void oval_result_criteria_node_set_test(struct oval_result_criteria_node *, struct oval_result_test *);	//type==NODETYPE_CRITERION
 void oval_result_criteria_node_set_extends(struct oval_result_criteria_node *, struct oval_result_definition *);	//type==NODETYPE_EXTENDDEF
 
-oval_result_t oval_result_parse
-	(xmlTextReaderPtr, char *, oval_result_t);
+oval_result_t oval_result_parse(xmlTextReaderPtr, char *, oval_result_t);
 
 OSCAP_HIDDEN_END;
 

@@ -14,7 +14,7 @@ typedef struct SEAP_packet SEAP_packet_t;
 #define SEAP_PACKET_CMD 0x03 /* Command packet */
 #define SEAP_PACKET_RAW 0x04 /* Raw packet */
 
-SEAP_packet_t *SEAP_packet_new ();
+SEAP_packet_t *SEAP_packet_new (void);
 void SEAP_packet_free (SEAP_packet_t *packet);
 
 void   *SEAP_packet_settype (SEAP_packet_t *packet, uint8_t type);
