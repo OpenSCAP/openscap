@@ -113,8 +113,6 @@ void oval_sysitem_set_datatype(struct oval_sysitem *sysitem, oval_datatype_t typ
 void oval_sysitem_set_mask(struct oval_sysitem *sysitem, int mask);
 void oval_sysitem_to_dom  (struct oval_sysitem *sysitem, xmlDoc *doc, xmlNode *tag_parent);
 
-const char *oval_syschar_collection_flag_get_text(oval_syschar_collection_flag_t);
-
 OSCAP_HIDDEN_END;
 
 #endif

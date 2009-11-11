@@ -297,7 +297,6 @@ extern const struct oscap_string_map XCCDF_STRATEGY_MAP[];
 
 struct xccdf_item* xccdf_item_new(xccdf_type_t type, struct xccdf_item* bench, struct xccdf_item* parent);
 void xccdf_item_release(struct xccdf_item* item);
-xccdf_status_type_t xccdf_item_get_status_current(const struct xccdf_item* item);
 void xccdf_item_get_print(struct xccdf_item* item, int depth);
 void xccdf_item_dump(struct xccdf_item* item, int depth);
 void xccdf_item_free(struct xccdf_item* item);

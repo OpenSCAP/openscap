@@ -26,7 +26,7 @@ AC_PROG_LIBTOOL
 AC_PROG_SWIG([1.3.29])
 
 # Compiler flags
-CFLAGS="$CFLAGS -std=c99 -W -Wall -Wnonnull -Wshadow -Wformat -Wundef -Wno-unused-parameter -D_GNU_SOURCE"
+CFLAGS="$CFLAGS -std=c99 -W -Wall -Wnonnull -Wshadow -Wformat -Wundef -Wno-unused-parameter -Wmissing-prototypes -D_GNU_SOURCE"
 
 CFLAGS_OPTIMIZED="-O2 -finline-functions"
 CFLAGS_DEBUGGING="-fno-inline-functions -O0 -g"

@@ -66,10 +66,6 @@ oval_datetime_format_t oval_datetime_format_parse(xmlTextReaderPtr, char *,
 						     oval_arithmetic_operation_t);
 oval_message_level_t oval_message_level_parse(xmlTextReaderPtr, char *,
 						     oval_message_level_t);
-const char * oval_message_level_text(oval_message_level_t);
-
-
-
 
 
 
