@@ -37,10 +37,32 @@
 #ifndef _CVSSCALC_H_
 #define _CVSSCALC_H_
 
+#include <stdbool.h>
+
 struct cvss_entry;
 
-struct cvss_entry * cvss_entry_new();
+struct cvss_entry * cvss_entry_new(void);
 void cvss_entry_free(struct cvss_entry * entry);
+
+const char* cvss_entry_get_score(const struct cvss_entry * entry);
+const char* cvss_entry_get_AV(const struct cvss_entry * entry);
+const char* cvss_entry_get_AC(const struct cvss_entry * entry);
+const char* cvss_entry_get_authentication(const struct cvss_entry * entry);
+const char* cvss_entry_get_imp_confidentiality(const struct cvss_entry * entry);
+const char* cvss_entry_get_imp_integrity(const struct cvss_entry * entry);
+const char* cvss_entry_get_imp_availability(const struct cvss_entry * entry);
+const char* cvss_entry_get_source(const struct cvss_entry * entry);
+const char* cvss_entry_get_generated(const struct cvss_entry * entry);
+
+bool cvss_entry_set_score(struct cvss_entry *entry, const char *new_score);
+bool cvss_entry_set_AV(struct cvss_entry *entry, const char *new_AV);
+bool cvss_entry_set_AC(struct cvss_entry *entry, const char *new_AC);
+bool cvss_entry_set_authentication(struct cvss_entry *entry, const char *new_authentication);
+bool cvss_entry_set_imp_confidentiality(struct cvss_entry *entry, const char *new_item);
+bool cvss_entry_set_imp_integrity(struct cvss_entry *entry, const char *new_item);
+bool cvss_entry_set_imp_availability(struct cvss_entry *entry, const char *new_item);
+bool cvss_entry_set_source(struct cvss_entry *entry, const char *new_source);
+bool cvss_entry_set_generated(struct cvss_entry *entry, const char *new_generated);
 
 //! Access Vector
 /*! This metric reflects how the vulnerability is exploited. */

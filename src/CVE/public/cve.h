@@ -255,10 +255,10 @@ bool cve_summary_set_summary(struct cve_summary *summary, const char *new_summar
 
 bool cve_product_set_value(struct cve_product *product, const char *new_value);
 
-bool cve_entry_set_id(struct cve_entry *entry, const char *new_);
-bool cve_entry_set_published(struct cve_entry *entry, const char *new_);
-bool cve_entry_set_modified(struct cve_entry *entry, const char *new_);
-bool cve_entry_set_sec_protection(struct cve_entry *entry, const char *new_);
+bool cve_entry_set_id(struct cve_entry *entry, const char *new_id);
+bool cve_entry_set_published(struct cve_entry *entry, const char *new_published);
+bool cve_entry_set_modified(struct cve_entry *entry, const char *new_modified);
+bool cve_entry_set_sec_protection(struct cve_entry *entry, const char *new_protection);
 bool cve_entry_set_cwe(struct cve_entry *entry, const char *cwe);
 
 bool cwe_entry_set_value(struct cwe_entry *entry, const char *new_value);

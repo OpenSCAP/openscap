@@ -31,6 +31,7 @@
 #include <libxml/xmlwriter.h>
 
 #include "cvss_priv.h"
+#include "public/cvss.h"
 #include "../common/list.h"
 
 /***************************************************************************/
