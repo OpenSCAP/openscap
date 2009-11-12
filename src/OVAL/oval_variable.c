@@ -162,7 +162,11 @@ struct oval_component *oval_variable_get_component(struct oval_variable *variabl
 			= (oval_variable_LOCAL_t *)variable;
 			local->component = NULL;
 			local->values    = NULL;
-		}
+		};break;
+		default:{
+			variable->values = NULL;
+			fprintf(stderr, "ERROR: variable type %d not supported\n", type);
+		};
 	}
 	return variable;
 }
@@ -206,8 +210,10 @@ void oval_variable_free(struct oval_variable *variable)
 		if (variable->id)free(variable->id);
 		if (variable->comment)free(variable->comment);
 		oval_variable_CONEXT_t *conext = (oval_variable_CONEXT_t *)variable;
-		oval_string_map_free(conext->values, (oscap_destruct_func)oval_value_free);
-		conext->values = NULL;
+		if(conext->values){
+			oval_string_map_free(conext->values, (oscap_destruct_func)oval_value_free);
+			conext->values = NULL;
+		}
 		if(variable->type==OVAL_VARIABLE_LOCAL){
 			oval_variable_LOCAL_t *local
 				= (oval_variable_LOCAL_t *)variable;
