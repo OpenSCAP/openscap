@@ -438,7 +438,10 @@ void cpe_lang_model_export_xml(struct cpe_lang_model * spec, struct oscap_export
         xmlTextWriterSetIndent(writer, oscap_export_target_get_indent(target));
         xmlTextWriterSetIndentString(writer, BAD_CAST oscap_export_target_get_indent_string(target));
 
-        xmlTextWriterStartDocument(writer, NULL, oscap_export_target_get_encoding(target), NULL);
+        if ( xmlFindCharEncodingHandler(oscap_export_target_get_encoding(target)) == NULL ) 
+            // forced default encoding
+            xmlTextWriterStartDocument(writer, NULL, NULL, NULL);
+            else xmlTextWriterStartDocument(writer, NULL, oscap_export_target_get_encoding(target), NULL);
 
         cpe_lang_export(spec, writer);
         xmlTextWriterEndDocument(writer);

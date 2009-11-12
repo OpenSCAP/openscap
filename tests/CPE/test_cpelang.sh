@@ -92,26 +92,28 @@ EOF
     return $ret_val
 }
 
+# Function tests adding platform elements and xml namespace to Foo 
+# in platform-specification element.
 function test_cpelang_tc06 {
     local ret_val=0;
 
 cat > export.xml <<EOF
-<?xml version="1.0"  encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <Foo:platform-specification xmlns:Foo="Bar">
-<Foo:platform id="1"/>
-<Foo:platform id="2"/>
-<Foo:platform id="3"/>
-<Foo:platform id="4"/>
-<Foo:platform id="5"/>
-<Foo:platform id="6"/>
-<Foo:platform id="7"/>
-<Foo:platform id="8"/>
-<Foo:platform id="9"/>
-<Foo:platform id="10"/>
+<platform id="1"/>
+<platform id="2"/>
+<platform id="3"/>
+<platform id="4"/>
+<platform id="5"/>
+<platform id="6"/>
+<platform id="7"/>
+<platform id="8"/>
+<platform id="9"/>
+<platform id="10"/>
 </Foo:platform-specification>
 EOF
 
-    ./test_cpelang --set-new export.xml.out.1 "UTF-8" "Foo" "Bar" 1 2 3 4 5 6 8 9 10 "foobar" "ščťž"
+    ./test_cpelang --set-new export.xml.out.1 "UTF-8" "Foo" "Bar" 1 2 3 4 5 6 7 8 9 10
     ret_val=$?
     
     [ ! -e export.xml.out.1 ] && [ $ret_val -eq 0 ] && ret_val=1
@@ -124,15 +126,18 @@ EOF
     return $ret_val
 }
 
+# Function tests default behaviour of setting an unknown
+# encoding. Library should set default behaviour, that is 
+# not setting any encoding
 function test_cpelang_tc07 {
     local ret_val=0;
 
 cat > export.xml <<EOF
-<?xml version="1.0"  encoding="UTF-8"?>
+<?xml version="1.0"?>
 <Foo:platform-specification xmlns:Foo="Bar"/>
 EOF
 
-    ./test_cpelang --set-new export.xml.out.2 "StrangeEncoding:čšľľ" "Foo" "Bar"
+    ./test_cpelang --set-new export.xml.out.2 "UnknownEncoding" "Foo" "Bar"
     ret_val=$?
     
     [ ! -e export.xml.out.2 ] && [ $ret_val -eq 0 ] && ret_val=1
@@ -171,8 +176,8 @@ test_cpelang_tc02    ; ret_val=$? ; report_result "test_cpelang_tc02"    $ret_va
 test_cpelang_tc03    ; ret_val=$? ; report_result "test_cpelang_tc03"    $ret_val ; result=$[$result+$ret_val]   
 test_cpelang_tc04    ; ret_val=$? ; report_result "test_cpelang_tc04"    $ret_val ; result=$[$result+$ret_val]
 test_cpelang_tc05    ; ret_val=$? ; report_result "test_cpelang_tc05"    $ret_val ; result=$[$result+$ret_val]
-#test_cpelang_tc06    ; ret_val=$? ; report_result "test_cpelang_tc06"    $ret_val ; result=$[$result+$ret_val]
-#test_cpelang_tc07    ; ret_val=$? ; report_result "test_cpelang_tc07"    $ret_val ; result=$[$result+$ret_val]
+test_cpelang_tc06    ; ret_val=$? ; report_result "test_cpelang_tc06"    $ret_val ; result=$[$result+$ret_val]
+test_cpelang_tc07    ; ret_val=$? ; report_result "test_cpelang_tc07"    $ret_val ; result=$[$result+$ret_val]
 test_cpelang_cleanup ; ret_val=$? ; report_result "test_cpelang_cleanup" $ret_val ; result=$[$result+$ret_val]
 
 echo "------------------------------------------"

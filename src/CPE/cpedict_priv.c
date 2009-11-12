@@ -943,7 +943,10 @@ void cpe_dict_model_export_xml(struct cpe_dict_model * dict, const struct oscap_
         xmlTextWriterSetIndent(writer, oscap_export_target_get_indent(target));
         xmlTextWriterSetIndentString(writer, BAD_CAST oscap_export_target_get_indent_string(target));
 
-        xmlTextWriterStartDocument(writer, NULL, oscap_export_target_get_encoding(target), NULL);
+        if ( xmlFindCharEncodingHandler(oscap_export_target_get_encoding(target)) == NULL )
+            // forced default encoding
+            xmlTextWriterStartDocument(writer, NULL, NULL, NULL);
+        else xmlTextWriterStartDocument(writer, NULL, oscap_export_target_get_encoding(target), NULL);
 
         cpe_dict_export(dict, writer);
         cpe_dict_model_free(dict);
