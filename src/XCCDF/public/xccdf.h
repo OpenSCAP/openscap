@@ -1671,7 +1671,115 @@ xccdf_level_t xccdf_fixtext_get_disruption(const struct xccdf_fixtext* fixtext);
  */
 struct xccdf_fix* xccdf_fixtext_get_fixref(const struct xccdf_fixtext* fixtext);
 
+/* Get/Set functions */
+const char* xccdf_value_get_id(const struct xccdf_value* value);
+const char* xccdf_value_get_title(const struct xccdf_value* value);
+const char* xccdf_value_get_version(const struct xccdf_value* value);
+const char* xccdf_value_get_question(const struct xccdf_value* value);
+const char* xccdf_value_get_rationale(const struct xccdf_value* value);
+const char* xccdf_value_get_cluster_id(const struct xccdf_value* value);
+const char* xccdf_value_get_description(const struct xccdf_value* value);
+const char* xccdf_value_get_version_update(const struct xccdf_value* value);
+time_t xccdf_value_get_version_time(const struct xccdf_value* value);
+float xccdf_value_get_weight(const struct xccdf_value* value);
+struct xccdf_benchmark* xccdf_value_get_benchmark(const struct xccdf_value* value);
+struct oscap_string_iterator* xccdf_value_get_platforms(const struct xccdf_value* value);
+struct oscap_string_iterator* xccdf_value_get_sources(const struct xccdf_value* value);
 
+bool xccdf_value_get_resolved(const struct xccdf_value* value);
+bool xccdf_value_get_hidden(const struct xccdf_value* value);
+bool xccdf_value_get_selected(const struct xccdf_value* value);
+bool xccdf_value_get_multiple(const struct xccdf_value* value);
+bool xccdf_value_get_prohibit_changes(const struct xccdf_value* value);
+bool xccdf_value_get_abstract(const struct xccdf_value* value);
+bool xccdf_value_get_interactive(const struct xccdf_value* value);
+
+const char* xccdf_item_get_id(const struct xccdf_item* item);
+const char* xccdf_item_get_title(const struct xccdf_item* item);
+const char* xccdf_item_get_version(const struct xccdf_item* item);
+const char* xccdf_item_get_question(const struct xccdf_item* item);
+const char* xccdf_item_get_rationale(const struct xccdf_item* item);
+const char* xccdf_item_get_cluster_id(const struct xccdf_item* item);
+const char* xccdf_item_get_description(const struct xccdf_item* item);
+const char* xccdf_item_get_version_update(const struct xccdf_item* item);
+time_t xccdf_item_get_version_time(const struct xccdf_item* item);
+float xccdf_item_get_weight(const struct xccdf_item* item);
+struct xccdf_benchmark* xccdf_item_get_benchmark(const struct xccdf_item* item);
+struct oscap_string_iterator* xccdf_item_get_platforms(const struct xccdf_item* item);
+
+bool xccdf_benchmark_get_resolved(const struct xccdf_benchmark* benchmark);
+bool xccdf_benchmark_get_hidden(const struct xccdf_benchmark* benchmark);
+bool xccdf_benchmark_get_selected(const struct xccdf_benchmark* benchmark);
+bool xccdf_benchmark_get_multiple(const struct xccdf_benchmark* benchmark);
+bool xccdf_benchmark_get_prohibit_changes(const struct xccdf_benchmark* benchmark);
+bool xccdf_benchmark_get_abstract(const struct xccdf_benchmark* benchmark);
+bool xccdf_benchmark_get_interactive(const struct xccdf_benchmark* benchmark);
+
+//const char* xccdf_bechmark_get_id(const struct xccdf_benchmark* benchmark);
+const char* xccdf_benchmark_get_title(const struct xccdf_benchmark* benchmark);
+const char* xccdf_benchmark_get_version(const struct xccdf_benchmark* benchmark);
+const char* xccdf_benchmark_get_question(const struct xccdf_benchmark* benchmark);
+const char* xccdf_benchmark_get_rationale(const struct xccdf_benchmark* benchmark);
+const char* xccdf_benchmark_get_cluster_id(const struct xccdf_benchmark* benchmark);
+const char* xccdf_benchmark_get_description(const struct xccdf_benchmark* benchmark);
+const char* xccdf_benchmark_get_version_update(const struct xccdf_benchmark* benchmark);
+time_t xccdf_benchmark_get_version_time(const struct xccdf_benchmark* benchmark);
+float xccdf_benchmark_get_weight(const struct xccdf_benchmark* benchmark);
+struct xccdf_benchmark* xccdf_benchmark_get_benchmark(const struct xccdf_benchmark* benchmark);
+struct xccdf_item* xccdf_benchmark_get_parent(const struct xccdf_benchmark* benchmark);
+
+const char* xccdf_profile_get_id(const struct xccdf_profile* profile);
+const char* xccdf_profile_get_title(const struct xccdf_profile* profile);
+const char* xccdf_profile_get_version(const struct xccdf_profile* profile);
+const char* xccdf_profile_get_question(const struct xccdf_profile* profile);
+const char* xccdf_profile_get_rationale(const struct xccdf_profile* profile);
+const char* xccdf_profile_get_cluster_id(const struct xccdf_profile* profile);
+const char* xccdf_profile_get_description(const struct xccdf_profile* profile);
+const char* xccdf_profile_get_version_update(const struct xccdf_profile* profile);
+time_t xccdf_profile_get_version_time(const struct xccdf_profile* profile);
+float xccdf_profile_get_weight(const struct xccdf_profile* profile);
+struct xccdf_item* xccdf_profile_get_parent(const struct xccdf_profile* profile);
+const char* xccdf_profile_get_note_tag(const struct xccdf_profile* profile);
+
+bool xccdf_profile_get_resolved(const struct xccdf_profile* profile);
+bool xccdf_profile_get_hidden(const struct xccdf_profile* profile);
+bool xccdf_profile_get_selected(const struct xccdf_profile* profile);
+bool xccdf_profile_get_multiple(const struct xccdf_profile* profile);
+bool xccdf_profile_get_prohibit_changes(const struct xccdf_profile* profile);
+bool xccdf_profile_get_abstract(const struct xccdf_profile* profile);
+bool xccdf_profile_get_interactive(const struct xccdf_profile* profile);
+
+const char* xccdf_rule_get_id(const struct xccdf_rule* rule);
+const char* xccdf_rule_get_title(const struct xccdf_rule* rule);
+const char* xccdf_rule_get_version(const struct xccdf_rule* rule);
+const char* xccdf_rule_get_question(const struct xccdf_rule* rule);
+const char* xccdf_rule_get_rationale(const struct xccdf_rule* rule);
+const char* xccdf_rule_get_cluster_id(const struct xccdf_rule* rule);
+const char* xccdf_rule_get_description(const struct xccdf_rule* rule);
+const char* xccdf_rule_get_version_update(const struct xccdf_rule* rule);
+time_t xccdf_rule_get_version_time(const struct xccdf_rule* rule);
+float xccdf_rule_get_weight(const struct xccdf_rule* rule);
+struct xccdf_benchmark* xccdf_rule_get_benchmark(const struct xccdf_rule* rule);
+struct oscap_string_iterator* xccdf_rule_get_platforms(const struct xccdf_rule* rule);
+bool xccdf_rule_get_resolved(const struct xccdf_rule* rule);
+bool xccdf_rule_get_interactive(const struct xccdf_rule* rule);
+
+bool xccdf_group_get_resolved(const struct xccdf_group* group);
+bool xccdf_group_get_hidden(const struct xccdf_group* group);
+bool xccdf_group_get_selected(const struct xccdf_group* group);
+bool xccdf_group_get_multiple(const struct xccdf_group* group);
+bool xccdf_group_get_prohibit_changes(const struct xccdf_group* group);
+bool xccdf_group_get_abstract(const struct xccdf_group* group);
+bool xccdf_group_get_interactive(const struct xccdf_group* group);
+time_t xccdf_group_get_version_time(const struct xccdf_group* group);
+const char* xccdf_group_get_version_update(const struct xccdf_group* group);
+float xccdf_group_get_weight(const struct xccdf_group* group);
+struct xccdf_benchmark* xccdf_group_get_benchmark(const struct xccdf_group* group);
+
+struct xccdf_check_import_iterator* xccdf_check_get_imports(const struct xccdf_check* check);
+struct xccdf_check_export_iterator* xccdf_check_get_exports(const struct xccdf_check* check);
+struct xccdf_check_content_ref_iterator* xccdf_check_get_content_refs(const struct xccdf_check* check);
+const char* xccdf_fixtext_get_content(const struct xccdf_fixtext* fixtext);
 
 /**
  * Release library internal caches.

@@ -85,7 +85,8 @@ static void xccdf_deps_get(struct xccdf_item* item, struct oscap_list** conflict
 
 static bool xccdf_parse_deps(xmlTextReaderPtr reader, struct xccdf_item* item)
 {
-	struct oscap_list *conflicts, *requires;
+	struct oscap_list *conflicts = NULL;
+        struct oscap_list *requires  = NULL;
 	xccdf_deps_get(item, &conflicts, &requires);
 
 	switch (xccdf_element_get(reader)) {
