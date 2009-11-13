@@ -160,7 +160,7 @@ void oval_set_to_print(struct oval_setobject *, char *indent, int index);
 xmlNode *oval_set_to_dom
 	(struct oval_setobject *, xmlDoc *, xmlNode *);
 
-struct oval_value *oval_value_clone(struct oval_value *);
+
 typedef void (*oval_value_consumer) (struct oval_value *, void *);
 int oval_value_parse_tag(xmlTextReaderPtr, struct oval_parser_context *,
 			 oval_value_consumer, void *);
@@ -168,7 +168,8 @@ void oval_value_to_print(struct oval_value *value, char *indent, int idx);
 xmlNode *oval_value_to_dom(struct oval_value *, xmlDoc *, xmlNode *);
 
 struct oval_component *oval_component_clone(struct oval_component *, struct oval_definition_model *);
-void oval_component_evaluate(struct oval_component *component, struct oval_string_map *map);
+oval_syschar_collection_flag_t oval_component_evaluate
+	(struct oval_syschar_model *sysmod, struct oval_component *component, struct oval_collection *value_collection);
 typedef void (*oval_component_consumer) (struct oval_component *, void *);
 int oval_component_parse_tag(xmlTextReaderPtr, struct oval_parser_context *,
 			     oval_component_consumer, void *);

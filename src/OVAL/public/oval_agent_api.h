@@ -466,6 +466,16 @@ void oval_syschar_model_bind_variable_model
 void oval_syschar_model_probe_objects(struct oval_syschar_model *);
 
 /**
+ * Get the collection flag associated with a specified oval_variable
+ */
+oval_syschar_collection_flag_t oval_syschar_model_get_variable_collection_flag(struct oval_syschar_model *, struct oval_variable *);
+
+/**
+ * Get the oval_values bound to a specified variable.
+ */
+struct oval_value_iterator *oval_syschar_model_get_variable_values(struct oval_syschar_model *, struct oval_variable *);
+
+/**
  * Export system characteristics as a XML file.
  */
 int oval_syschar_model_export(

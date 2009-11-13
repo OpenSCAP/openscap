@@ -36,6 +36,20 @@
 #include "oval_agent_api_impl.h"
 #include "oval_parser_impl.h"
 
+static oval_syschar_collection_flag_t _flag_agg_map[7][7] =
+{
+		{SYSCHAR_FLAG_UNKNOWN       , SYSCHAR_FLAG_ERROR, SYSCHAR_FLAG_COMPLETE      , SYSCHAR_FLAG_INCOMPLETE    , SYSCHAR_FLAG_DOES_NOT_EXIST, SYSCHAR_FLAG_NOT_COLLECTED , SYSCHAR_FLAG_NOT_APPLICABLE},
+		{SYSCHAR_FLAG_ERROR         , SYSCHAR_FLAG_ERROR, SYSCHAR_FLAG_ERROR         , SYSCHAR_FLAG_ERROR         , SYSCHAR_FLAG_ERROR         , SYSCHAR_FLAG_ERROR         , SYSCHAR_FLAG_ERROR         },
+		{SYSCHAR_FLAG_COMPLETE      , SYSCHAR_FLAG_ERROR, SYSCHAR_FLAG_COMPLETE      , SYSCHAR_FLAG_INCOMPLETE    , SYSCHAR_FLAG_DOES_NOT_EXIST, SYSCHAR_FLAG_NOT_COLLECTED , SYSCHAR_FLAG_NOT_APPLICABLE},
+		{SYSCHAR_FLAG_INCOMPLETE    , SYSCHAR_FLAG_ERROR, SYSCHAR_FLAG_INCOMPLETE    , SYSCHAR_FLAG_INCOMPLETE    , SYSCHAR_FLAG_DOES_NOT_EXIST, SYSCHAR_FLAG_NOT_COLLECTED , SYSCHAR_FLAG_NOT_APPLICABLE},
+		{SYSCHAR_FLAG_DOES_NOT_EXIST, SYSCHAR_FLAG_ERROR, SYSCHAR_FLAG_DOES_NOT_EXIST, SYSCHAR_FLAG_DOES_NOT_EXIST, SYSCHAR_FLAG_DOES_NOT_EXIST, SYSCHAR_FLAG_NOT_COLLECTED , SYSCHAR_FLAG_NOT_APPLICABLE},
+		{SYSCHAR_FLAG_NOT_COLLECTED , SYSCHAR_FLAG_ERROR, SYSCHAR_FLAG_NOT_COLLECTED , SYSCHAR_FLAG_NOT_COLLECTED , SYSCHAR_FLAG_NOT_COLLECTED , SYSCHAR_FLAG_NOT_COLLECTED , SYSCHAR_FLAG_NOT_APPLICABLE},
+		{SYSCHAR_FLAG_NOT_APPLICABLE, SYSCHAR_FLAG_ERROR, SYSCHAR_FLAG_NOT_APPLICABLE, SYSCHAR_FLAG_NOT_APPLICABLE, SYSCHAR_FLAG_NOT_APPLICABLE, SYSCHAR_FLAG_NOT_APPLICABLE, SYSCHAR_FLAG_NOT_APPLICABLE},
+};
+#define _AGG_FLAG(f1, f2) _flag_agg_map[f2][f1]
+#define _COMP_TYPE(comp) oval_component_type_get_text(oval_component_get_type(comp))
+#define _FLAG_TYPE(flag) oval_syschar_collection_flag_get_text(flag)
+
 typedef struct oval_component {
 	oval_component_type_t type;
 } oval_component_t;
@@ -99,11 +113,13 @@ typedef struct oval_component_REGEX_CAPTURE {
 	char *pattern;	//type==OVAL_COMPONENT_REGEX_CAPTURE
 } oval_component_REGEX_CAPTURE_t;
 
-int oval_component_iterator_has_more(struct oval_component_iterator
-				     *oc_component)
+int oval_component_iterator_has_more(struct oval_component_iterator *oc_component)
 {
-	return oval_collection_iterator_has_more((struct oval_iterator *)
-						 oc_component);
+	return oval_collection_iterator_has_more((struct oval_iterator *) oc_component);
+}
+int oval_component_iterator_remaining(struct oval_component_iterator *oc_component)
+{
+	return oval_collection_iterator_remaining((struct oval_iterator *) oc_component);
 }
 
 struct oval_component *oval_component_iterator_next(struct
@@ -1216,6 +1232,351 @@ xmlNode *oval_component_to_dom
 	return component_node;
 }
 
-void oval_component_evaluate(struct oval_component *component, struct oval_string_map *map){
-	fprintf(stderr, "TODO: implement oval_component_evaluate");
+static oval_syschar_collection_flag_t _oval_component_evaluate_LITERAL(struct oval_syschar_model *sysmod, struct oval_component *component, struct oval_collection *value_collection)
+{
+	struct oval_component_LITERAL *literal = (struct oval_component_LITERAL *)component;
+	oval_collection_add(value_collection, oval_value_clone(literal->value));
+	return SYSCHAR_FLAG_COMPLETE;
+}
+static oval_syschar_collection_flag_t _oval_component_evaluate_OBJECTREF
+	(struct oval_syschar_model *sysmod, struct oval_component *component, struct oval_collection *value_collection)
+{
+	oval_syschar_collection_flag_t flag = SYSCHAR_FLAG_ERROR;
+	struct oval_component_OBJECTREF *objref = (struct oval_component_OBJECTREF *)component;
+	struct oval_object *object = objref->object;
+	if(object){
+		struct oval_definition_model *defmod = oval_syschar_model_get_definition_model(sysmod);
+		struct oval_syschar *syschar = oval_object_probe(object, defmod);
+		if(syschar){
+			flag = oval_syschar_get_flag(syschar);
+			char* field_name = objref->object_field;
+			struct oval_sysdata_iterator *sysdatas = oval_syschar_get_sysdata(syschar);
+			while(oval_sysdata_iterator_has_more(sysdatas)){
+				struct oval_sysdata *sysdata = oval_sysdata_iterator_next(sysdatas);
+				struct oval_sysitem_iterator *items = oval_sysdata_get_items(sysdata);
+				while(oval_sysitem_iterator_has_more(items)){
+					struct oval_sysitem *item = oval_sysitem_iterator_next(items);
+					char *item_name = oval_sysitem_get_name(item);
+					if(strcmp(field_name, item_name)==0){
+						char* text = oval_sysitem_get_value(item);
+						oval_datatype_t datatype = oval_sysitem_get_datatype(item);
+						struct oval_value *value = oval_value_new(datatype, text);
+						oval_collection_add(value_collection, value);
+					}
+				}
+				oval_sysitem_iterator_free(items);
+			}
+			oval_sysdata_iterator_free(sysdatas);
+		}
+	}
+	return flag;
+};
+#define _HAS_VALUES(flag) (flag==SYSCHAR_FLAG_COMPLETE || flag==SYSCHAR_FLAG_INCOMPLETE)
+static oval_syschar_collection_flag_t _oval_component_evaluate_VARREF(struct oval_syschar_model *sysmod, struct oval_component *component, struct oval_collection *value_collection)
+{
+	oval_syschar_collection_flag_t flag = SYSCHAR_FLAG_ERROR;
+	struct oval_component_VARREF *varref = (struct oval_component_VARREF *)component;
+	struct oval_variable *variable = varref->variable;
+	if(variable){
+		flag = oval_syschar_model_get_variable_collection_flag(sysmod, variable);
+		if(_HAS_VALUES(flag)){
+			struct oval_value_iterator *values = oval_syschar_model_get_variable_values(sysmod, variable);
+			while(oval_value_iterator_has_more(values)){
+				struct oval_value *value = oval_value_iterator_next(values);
+				oval_collection_add(value_collection, oval_value_clone(value));
+			}
+			oval_value_iterator_free(values);
+		}
+	}else{
+		fprintf(stderr,"ERROR: No variable bound to VARREF Component\n");
+	}
+	return flag;
+};
+static oval_syschar_collection_flag_t _oval_component_evaluate_BEGIN(struct oval_syschar_model *sysmod, struct oval_component *component, struct oval_collection *value_collection)
+{
+	oval_syschar_collection_flag_t flag = SYSCHAR_FLAG_ERROR;
+	char *prefix = oval_component_get_begin_character(component);
+	if(prefix){
+		int len_prefix = strlen(prefix);
+		struct oval_component_iterator *subcomps = oval_component_get_function_components(component);
+		if(oval_component_iterator_has_more(subcomps)){//only the first component is processed
+			struct oval_collection *subcoll = oval_collection_new();
+			struct oval_component  *subcomp = oval_component_iterator_next(subcomps);
+			flag = oval_component_evaluate(sysmod, subcomp, subcoll);
+			struct oval_value_iterator *values = (struct oval_value_iterator *)oval_collection_iterator(subcoll);
+			while(oval_value_iterator_has_more(values)){
+				char *key = oval_value_get_text(oval_value_iterator_next(values));
+				char concat[len_prefix+strlen(key)+1];
+				if(strncmp(prefix, key, len_prefix)){
+					snprintf(concat, sizeof(concat), "%s%s", prefix, key);
+				}else{
+					snprintf(concat, sizeof(concat), "%s", key);
+				}
+				struct oval_value *concat_value = oval_value_new(OVAL_DATATYPE_STRING, concat);
+				oval_collection_add(value_collection, concat_value);
+			}
+			oval_value_iterator_free(values);
+			oval_collection_free_items(subcoll, (oscap_destruct_func)oval_value_free);
+		}
+		oval_component_iterator_free(subcomps);
+	}else{
+		fprintf(stderr, "ERROR: No prefix specified for begin function\n    %s(%d)\n", __FILE__, __LINE__);
+	}
+	return flag;
+};
+static oval_syschar_collection_flag_t _oval_component_evaluate_END
+	(struct oval_syschar_model *sysmod, struct oval_component *component, struct oval_collection *value_collection)
+{
+	oval_syschar_collection_flag_t flag = SYSCHAR_FLAG_ERROR;
+	char *suffix = oval_component_get_end_character(component);
+	if(suffix){
+		int len_suffix = strlen(suffix);
+		struct oval_component_iterator *subcomps = oval_component_get_function_components(component);
+		if(oval_component_iterator_has_more(subcomps)){//only the first component is processed
+			struct oval_collection *subcoll = oval_collection_new();
+			struct oval_component *subcomp = oval_component_iterator_next(subcomps);
+			flag = oval_component_evaluate(sysmod, subcomp, subcoll);
+			struct oval_value_iterator *values = (struct oval_value_iterator *)oval_collection_iterator(subcoll);
+			while(oval_value_iterator_has_more(values)){
+				char *key = oval_value_get_text(oval_value_iterator_next(values));
+				int len_key = strlen(key);
+				char concat[len_suffix+len_key+1];
+				if((len_suffix<=len_key) && strncmp(suffix, key+len_key-len_suffix, len_suffix)){
+					snprintf(concat, sizeof(concat), "%s%s", key, suffix);
+				}else{
+					snprintf(concat, sizeof(concat), "%s", key);
+				}
+				struct oval_value *concat_value = oval_value_new(OVAL_DATATYPE_STRING, concat);
+				oval_collection_add(value_collection, concat_value);
+			}
+			oval_value_iterator_free(values);
+			oval_collection_free_items(subcoll, (oscap_destruct_func)oval_value_free);
+		}
+		oval_component_iterator_free(subcomps);
+	}else{
+		fprintf(stderr, "ERROR: No suffix specified for end function\n    %s(%d)\n", __FILE__, __LINE__);
+	}
+	return flag;
+};
+
+static oval_syschar_collection_flag_t _oval_component_evaluate_CONCAT
+	(struct oval_syschar_model *sysmod, struct oval_component *component, struct oval_collection *value_collection)
+{
+	oval_syschar_collection_flag_t flag = SYSCHAR_FLAG_UNKNOWN;
+	struct oval_component_iterator *subcomps = oval_component_get_function_components(component);
+	int len_subcomps = oval_component_iterator_remaining(subcomps);
+	struct oval_collection *component_colls[len_subcomps];
+	int idx0;for(idx0=0;oval_component_iterator_has_more(subcomps);idx0++){
+		struct oval_collection *subcoll = oval_collection_new();
+		struct oval_component  *subcomp = oval_component_iterator_next(subcomps);
+		oval_syschar_collection_flag_t subflag = oval_component_evaluate(sysmod, subcomp, subcoll);
+		flag = _AGG_FLAG(flag, subflag);
+		component_colls[idx0] = subcoll;
+	}
+	bool not_finished = (len_subcomps>0) && _HAS_VALUES(flag);
+	if(not_finished){
+		struct oval_value_iterator *values[len_subcomps];
+		bool has_some[len_subcomps];
+		not_finished = false;
+		char *texts[len_subcomps];
+		int  counts[len_subcomps];
+		int  catnum = 1;
+		for(idx0=0;idx0<len_subcomps;idx0++){
+			struct oval_value_iterator *comp_values = (struct oval_value_iterator *)oval_collection_iterator(component_colls[idx0]);
+			counts [idx0] = oval_string_iterator_remaining(comp_values);
+			if(counts[idx0]){
+				int dbgnum = catnum;
+				catnum = catnum*counts[idx0];
+				values[idx0] = comp_values;
+				texts [idx0] = oval_value_get_text(oval_value_iterator_next(comp_values));
+				not_finished = true;
+			}else{
+				oval_value_iterator_free(values[idx0]);
+				oval_collection_free_items(component_colls[idx0], (oscap_destruct_func)oval_value_free);
+				component_colls[idx0] = NULL;
+				values       [idx0] = NULL;
+				texts        [idx0] = NULL;
+			}
+		}
+		int passnum;for(passnum=1;passnum-1<catnum; passnum++){
+			int len_cat = 1;
+			for(idx0=0; idx0<len_subcomps; idx0++)if(texts[idx0])len_cat += strlen(texts[idx0]);
+			char concat[len_cat];*concat = '\0';
+			for(idx0=0; idx0<len_subcomps; idx0++)if(texts[idx0])strcat(concat, texts[idx0]);
+			struct oval_value *value = oval_value_new(OVAL_DATATYPE_STRING, concat);
+			oval_collection_add(value_collection, value);
+			bool rotate = true;
+			if(passnum<catnum){
+				for(idx0=0; idx0<len_subcomps && rotate; idx0++){
+					if(texts[idx0]){
+						if(oval_value_iterator_has_more(values[idx0])){
+							rotate = false;
+						}else{
+							oval_value_iterator_free(values[idx0]);
+							values[idx0] = (struct oval_value_iterator *)oval_collection_iterator(component_colls[idx0]);
+						}
+						texts[idx0] = oval_value_get_text(oval_value_iterator_next(values[idx0]));
+					}
+				}
+			}
+		}
+		for(idx0=0;idx0<len_subcomps;idx0++){
+			if(counts[idx0]){
+				oval_value_iterator_free(values[idx0]);
+				oval_collection_free_items(component_colls[idx0], (oscap_destruct_func)oval_value_free);
+			}
+		}
+	}
+	oval_component_iterator_free(subcomps);
+	return flag;
+}
+
+static oval_syschar_collection_flag_t _oval_component_evaluate_SPLIT
+	(struct oval_syschar_model *sysmod, struct oval_component *component, struct oval_collection *value_collection){
+	oval_syschar_collection_flag_t flag = SYSCHAR_FLAG_UNKNOWN;
+	struct oval_component_iterator *subcomps = oval_component_get_function_components(component);
+	char *delimiter = oval_component_get_split_delimiter(component);
+	int  len_delim  = strlen(delimiter);
+	if(oval_component_iterator_has_more(subcomps)){//Only first component is considered
+		struct oval_component  *subcomp = oval_component_iterator_next(subcomps);
+		struct oval_collection *subcoll = oval_collection_new();
+		flag = oval_component_evaluate(sysmod, subcomp, subcoll);
+		struct oval_value_iterator *values = (struct oval_value_iterator *)oval_collection_iterator(subcoll);
+		struct oval_value *value;
+		while(oval_value_iterator_has_more(values)){
+			char *text = oval_value_get_text(oval_value_iterator_next(values));
+			if(len_delim){
+				char split[strlen(text)+2], *split0 = split; *split0 = '\0'; strcat(split0, text);
+				split0[strlen(text)+1] = '\0';//last two characters are EOS
+				char *split1;for(split1=strstr(split0, delimiter); split1; split1=strstr(split0, delimiter) ){
+					*split1 = '\0';//terminate the text at the delimeter
+					value = oval_value_new(OVAL_DATATYPE_STRING, split0);
+					oval_collection_add(value_collection, value);
+					split0 = split1+len_delim;//advance split1
+				}
+				value = oval_value_new(OVAL_DATATYPE_STRING, split0);
+				oval_collection_add(value_collection, value);
+			}else{//Empty delimiter, Split at every character
+				char split[] = {'\0','\0'};
+				int idx;for(idx=0;text[idx];idx++){
+					*split = text[idx];
+					value = oval_value_new(OVAL_DATATYPE_STRING, split);
+					oval_collection_add(value_collection, value);
+				}
+			}
+		}
+		oval_value_iterator_free(values);
+		oval_collection_free_items(subcoll, (oscap_destruct_func)oval_value_free);
+	}
+	oval_component_iterator_free(subcomps);
+	return flag;
+};
+static oval_syschar_collection_flag_t _oval_component_evaluate_SUBSTRING
+	(struct oval_syschar_model *sysmod, struct oval_component *component, struct oval_collection *value_collection)
+{
+	oval_syschar_collection_flag_t flag = SYSCHAR_FLAG_UNKNOWN;
+	struct oval_component_iterator *subcomps = oval_component_get_function_components(component);
+	int start = oval_component_get_substring_start(component)-1, len = oval_component_get_substring_length(component);
+	start = (start<0)?0:start;
+	if(oval_component_iterator_has_more(subcomps)){//Only first component is considered
+		struct oval_component  *subcomp = oval_component_iterator_next(subcomps);
+		struct oval_collection *subcoll = oval_collection_new();
+		flag = oval_component_evaluate(sysmod, subcomp, subcoll);
+		struct oval_value_iterator *values = (struct oval_value_iterator *)oval_collection_iterator(subcoll);
+		struct oval_value *value;
+		while(oval_value_iterator_has_more(values)){
+			char *text = oval_value_get_text(oval_value_iterator_next(values));
+			char substr[len+1];
+			text += (start<strlen(text))?start:strlen(text);
+			strncpy(substr, text, len);
+			value = oval_value_new(OVAL_DATATYPE_STRING, substr);
+			oval_collection_add(value_collection, value);
+		}
+		oval_value_iterator_free(values);
+		oval_collection_free_items(subcoll, (oscap_destruct_func)oval_value_free);
+	}
+	return flag;
+}
+static oval_syschar_collection_flag_t _oval_component_evaluate_TIMEDIF
+	(struct oval_syschar_model *sysmod, struct oval_component *component, struct oval_collection *value_collection)
+{
+	return SYSCHAR_FLAG_NOT_COLLECTED;//TODO: implement this function
+}
+static bool _isEscape(char chr){return false;}//TODO: implement this function
+static oval_syschar_collection_flag_t _oval_component_evaluate_ESCAPE_REGEX
+	(struct oval_syschar_model *sysmod, struct oval_component *component, struct oval_collection *value_collection)
+{
+	oval_syschar_collection_flag_t flag = SYSCHAR_FLAG_UNKNOWN;
+	struct oval_component_iterator *subcomps = oval_component_get_function_components(component);
+	int start = oval_component_get_substring_start(component)-1, len = oval_component_get_substring_length(component);
+	start = (start<0)?0:start;
+	if(oval_component_iterator_has_more(subcomps)){//Only first component is considered
+		struct oval_component  *subcomp = oval_component_iterator_next(subcomps);
+		struct oval_collection *subcoll = oval_collection_new();
+		flag = oval_component_evaluate(sysmod, subcomp, subcoll);
+		struct oval_value_iterator *values = (struct oval_value_iterator *)oval_collection_iterator(subcoll);
+		struct oval_value *value;
+		while(oval_value_iterator_has_more(values)){
+			char *text = oval_value_get_text(oval_value_iterator_next(values));
+			int len = strlen(text);
+			char string[2*len+1], *insert = string;
+			while(*text){
+				if(_isEscape(*text)){
+					*insert     = '\\';
+					insert += 1;
+				}
+				*insert = *text;
+				insert += 1;
+			}
+			value = oval_value_new(OVAL_DATATYPE_STRING, string);
+			oval_collection_add(value_collection, value);
+		}
+		oval_value_iterator_free(values);
+		oval_collection_free_items(subcoll, (oscap_destruct_func)oval_value_free);
+		}
+	return flag;
+}
+
+static oval_syschar_collection_flag_t _oval_component_evaluate_REGEX_CAPTURE
+	(struct oval_syschar_model *sysmod, struct oval_component *component, struct oval_collection *value_collection)
+{
+}
+static oval_syschar_collection_flag_t _oval_component_evaluate_ARITHMETIC   (struct oval_syschar_model *sysmod, struct oval_component *component, struct oval_collection *value_collection){};
+
+
+typedef oval_syschar_collection_flag_t (_oval_component_evaluator)
+	(struct oval_syschar_model *, struct oval_component *, struct oval_collection *);
+static _oval_component_evaluator *_component_evaluators[15] =
+{
+		NULL,
+		_oval_component_evaluate_LITERAL,
+		_oval_component_evaluate_OBJECTREF,
+		_oval_component_evaluate_VARREF,
+		NULL,
+		_oval_component_evaluate_BEGIN,
+		_oval_component_evaluate_CONCAT,
+		_oval_component_evaluate_END,
+		_oval_component_evaluate_SPLIT,
+		_oval_component_evaluate_SUBSTRING,
+		_oval_component_evaluate_TIMEDIF,
+		_oval_component_evaluate_ESCAPE_REGEX,
+		_oval_component_evaluate_REGEX_CAPTURE,
+		_oval_component_evaluate_ARITHMETIC,
+		NULL
+};
+
+oval_syschar_collection_flag_t oval_component_evaluate
+	(struct oval_syschar_model *sysmod, struct oval_component *component, struct oval_collection *value_collection)
+{
+
+	oval_component_type_t type = component->type;
+	int evidx = (type>OVAL_FUNCTION)?type-OVAL_FUNCTION+OVAL_COMPONENT_FUNCTION:type;
+	_oval_component_evaluator *evaluator = (OVAL_COMPONENT_LITERAL<=type && type<= OVAL_FUNCTION_ARITHMETIC)
+	?_component_evaluators[evidx]: NULL;
+	oval_syschar_collection_flag_t flag = SYSCHAR_FLAG_ERROR;
+	if(evaluator){
+		flag = (*evaluator)(sysmod, component, value_collection);
+	}else fprintf
+	(stderr, "ERROR component type %d not supported\n    %s(%d)\n", __FILE__, __LINE__);
+	return flag;
 }

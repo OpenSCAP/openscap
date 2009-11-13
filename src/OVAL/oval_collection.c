@@ -123,6 +123,12 @@ int oval_collection_iterator_has_more(struct oval_iterator *iterator)
 	return iterator->item_iterator_frame != NULL;
 }
 
+int oval_collection_iterator_remaining(struct oval_iterator *iterator){
+	struct _oval_collection_item_frame *next = iterator->item_iterator_frame;
+	int remaining;for(remaining=0;next;remaining++)next = next->next;
+	return remaining;
+}
+
 void *oval_collection_iterator_next(struct oval_iterator *iterator)
 {
 	struct _oval_collection_item_frame *oc_next =
@@ -188,20 +194,22 @@ void oval_collection_iterator_add(struct oval_iterator *iterator, void *item)
 
 int oval_string_iterator_has_more(struct oval_string_iterator *iterator)
 {
-	return oval_collection_iterator_has_more((struct oval_iterator *)
-						 iterator);
+	return oval_collection_iterator_has_more((struct oval_iterator *)iterator);
+}
+
+int oval_string_iterator_remaining(struct oval_string_iterator *iterator)
+{
+	return oval_collection_iterator_remaining((struct oval_iterator *)iterator);
 }
 
 char *oval_string_iterator_next(struct oval_string_iterator *iterator)
 {
-	return (char *)oval_collection_iterator_next((struct oval_iterator *)
-						     iterator);
+	return (char *)oval_collection_iterator_next((struct oval_iterator *)iterator);
 }
 
 void oval_string_iterator_free(struct oval_string_iterator *iterator)
 {
-	oval_collection_iterator_free((struct oval_iterator *)
-						     iterator);
+	oval_collection_iterator_free((struct oval_iterator *)iterator);
 }
 
 //TEST FREEFUNC

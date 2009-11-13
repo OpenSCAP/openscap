@@ -1162,7 +1162,8 @@ char *oval_behavior_get_key  (struct oval_behavior *);
  */
 char *oval_behavior_get_value(struct oval_behavior *);
 
-struct oval_value *oval_value_new(void);
+struct oval_value *oval_value_new(oval_datatype_t datatype, char *text_value);
+struct oval_value *oval_value_clone(struct oval_value *);
 void oval_value_free(struct oval_value *);
 
 void oval_value_set_datatype(struct oval_value *, oval_datatype_t);

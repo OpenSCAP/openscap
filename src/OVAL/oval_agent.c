@@ -423,9 +423,7 @@ void oval_definition_model_bind_variable_model
 					struct oval_string_iterator *values = oval_variable_model_get_values(varmodel, varid);
 					while(oval_string_iterator_has_more(values)){
 						char *text = oval_string_iterator_next(values);
-						struct oval_value *value = oval_value_new();
-						oval_value_set_datatype(value, var_datatype);
-						oval_value_set_text(value, text);
+						struct oval_value *value = oval_value_new(var_datatype, text);
 						oval_variable_add_value(variable, value);
 					}
 					oval_string_iterator_free(values);

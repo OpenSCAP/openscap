@@ -92,21 +92,17 @@ long oval_value_get_integer(struct oval_value *value)
         return strtol( (const char *) value->text, &endptr, 10);
 }
 
-struct oval_value *oval_value_new()
+struct oval_value *oval_value_new(oval_datatype_t datatype, char *text_value)
 {
 	oval_value_t *value = (oval_value_t *) malloc(sizeof(oval_value_t));
-	value->datatype = OVAL_DATATYPE_UNKNOWN;
-	value->text = NULL;
+	value->datatype = datatype;
+	value->text = (text_value)?strdup(text_value):NULL;
 	return value;
 }
 
 struct oval_value *oval_value_clone(struct oval_value *old_value)
 {
-	struct oval_value *new_value = oval_value_new();
-	oval_datatype_t datatype = oval_value_get_datatype(old_value);
-	oval_value_set_datatype(new_value, datatype);
-	char *text = oval_value_get_text(old_value);
-	oval_value_set_text(new_value, text);
+	struct oval_value *new_value = oval_value_new(old_value->datatype, old_value->text);
 	return new_value;
 }
 
@@ -155,7 +151,6 @@ int oval_value_parse_tag(xmlTextReaderPtr reader,
 			 struct oval_parser_context *context,
 			 oval_value_consumer consumer, void *user)
 {
-	struct oval_value *value = oval_value_new();
 	int return_code;
 	oval_datatype_t datatype =
 	    oval_datatype_parse(reader, "datatype", OVAL_DATATYPE_STRING);
@@ -168,8 +163,7 @@ int oval_value_parse_tag(xmlTextReaderPtr reader,
 		return_code =
 		    oval_parser_text_value(reader, context, &oval_value_parse_tag_consume_text, &text);
 	}
-	oval_value_set_datatype(value, datatype);
-	oval_value_set_text(value, text);
+	struct oval_value *value = oval_value_new(datatype, text);
 	free(text);
 	(*consumer) (value, user);
 	return return_code;

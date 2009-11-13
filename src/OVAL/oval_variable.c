@@ -43,7 +43,8 @@ typedef struct oval_variable {
 	int deprecated;
 	oval_variable_type_t type;
 	oval_datatype_t datatype;
-	struct oval_string_map *values;
+	oval_syschar_collection_flag_t flag;
+	struct oval_collection *values;
 } oval_variable_t, oval_variable_CONEXT_t;
 
 typedef struct oval_variable_LOCAL {
@@ -53,7 +54,8 @@ typedef struct oval_variable_LOCAL {
 	int deprecated;
 	oval_variable_type_t type;
 	oval_datatype_t datatype;
-	struct oval_string_map *values;
+	oval_syschar_collection_flag_t flag;
+	struct oval_collection *values;
 	struct oval_component *component;	//type==OVAL_VARIABLE_LOCAL
 } oval_variable_LOCAL_t;
 
@@ -111,12 +113,27 @@ oval_datatype_t oval_variable_get_datatype(struct oval_variable * variable)
 
 struct oval_value_iterator *oval_variable_get_values(struct oval_variable *variable)
 {
-	struct oval_string_map *value_map = variable->values;
-	if(value_map==NULL){//if variable values are NULL this is a LOCAL variable
-		variable->values = oval_string_map_new();
+	struct oval_collection *value_collection = variable->values;
+	return (value_collection)?(struct oval_value_iterator *)oval_collection_iterator(variable->values):NULL;
+}
+
+oval_syschar_collection_flag_t oval_syschar_model_get_variable_collection_flag
+	(struct oval_syschar_model *sysmod, struct oval_variable *variable)
+{
+	if(variable->flag==SYSCHAR_FLAG_UNKNOWN){
+		oval_syschar_model_get_variable_values(sysmod, variable);
+	}
+	return variable->flag;
+}
+
+struct oval_value_iterator *oval_syschar_model_get_variable_values
+	(struct oval_syschar_model *sysmod, struct oval_variable *variable)
+{
+	if(variable->flag==SYSCHAR_FLAG_UNKNOWN){
+		variable->values = oval_collection_new();
 		struct oval_component *component = oval_variable_get_component(variable);
 		if(component){
-			oval_component_evaluate(component, variable->values);
+			variable->flag = oval_component_evaluate(sysmod, component, variable->values);
 		}else fprintf(stderr,
 				"WARNING: NULL component bound to variable\n"
 				"    variable type = %s\n"
@@ -124,7 +141,7 @@ struct oval_value_iterator *oval_variable_get_values(struct oval_variable *varia
 				"    codeloc = %s(%d)\n",
 				oval_variable_type_get_text(variable->type), oval_variable_get_id(variable), __FILE__, __LINE__);
 	}
-	return (value_map)?(struct oval_value_iterator *)oval_string_map_values(variable->values):NULL;
+	return (variable->values)?(struct oval_value_iterator *)oval_collection_iterator(variable->values):NULL;
 }
 
 struct oval_component *oval_variable_get_component(struct oval_variable *variable)
@@ -151,20 +168,28 @@ struct oval_component *oval_variable_get_component(struct oval_variable *variabl
 	variable->type = type;
 	switch(type)
 	{
-		case OVAL_VARIABLE_CONSTANT:
+		case OVAL_VARIABLE_CONSTANT:{
+			oval_variable_CONEXT_t *conext
+			= (oval_variable_CONEXT_t *)variable;
+			conext->values = oval_collection_new();
+			conext->flag = SYSCHAR_FLAG_NOT_COLLECTED;
+		}break;
 		case OVAL_VARIABLE_EXTERNAL:{
 			oval_variable_CONEXT_t *conext
 			= (oval_variable_CONEXT_t *)variable;
-			conext->values = oval_string_map_new();
+			conext->values = oval_collection_new();
+			conext->flag   = SYSCHAR_FLAG_NOT_COLLECTED;
 		}break;
 		case OVAL_VARIABLE_LOCAL:{
 			oval_variable_LOCAL_t *local
 			= (oval_variable_LOCAL_t *)variable;
 			local->component = NULL;
 			local->values    = NULL;
+			local->flag      = SYSCHAR_FLAG_UNKNOWN;
 		};break;
 		default:{
 			variable->values = NULL;
+			variable->flag   = SYSCHAR_FLAG_UNKNOWN;
 			fprintf(stderr, "ERROR: variable type %d not supported\n", type);
 		};
 	}
@@ -182,14 +207,15 @@ struct oval_variable   *oval_variable_clone
 		oval_variable_set_version   (new_variable, old_variable->version);
 		oval_variable_set_deprecated(new_variable, old_variable->deprecated);
 		oval_variable_set_datatype  (new_variable, old_variable->datatype);
+		new_variable->flag = old_variable->flag;
 
 		if(old_variable->values){
-			struct oval_value_iterator *old_values = (struct oval_value_iterator *)oval_string_map_values(old_variable->values);
-			if(new_variable->values==NULL)new_variable->values = oval_string_map_new();
+			struct oval_value_iterator *old_values = (struct oval_value_iterator *)oval_collection_iterator(old_variable->values);
+			if(new_variable->values==NULL)new_variable->values = oval_collection_new();
 			while(oval_value_iterator_has_more(old_values)){
 				struct oval_value *value = oval_value_iterator_next(old_values);
 				char *text = oval_value_get_text(value);
-				oval_string_map_put(new_variable->values, text, (void *)value);
+				oval_collection_add(new_variable->values, value);
 			}
 			oval_value_iterator_free(old_values);
 		}
@@ -211,7 +237,7 @@ void oval_variable_free(struct oval_variable *variable)
 		if (variable->comment)free(variable->comment);
 		oval_variable_CONEXT_t *conext = (oval_variable_CONEXT_t *)variable;
 		if(conext->values){
-			oval_string_map_free(conext->values, (oscap_destruct_func)oval_value_free);
+			oval_collection_free_items(conext->values, (oscap_destruct_func)oval_value_free);
 			conext->values = NULL;
 		}
 		if(variable->type==OVAL_VARIABLE_LOCAL){
@@ -257,7 +283,8 @@ void oval_variable_add_value(struct oval_variable *variable,
 	//type==OVAL_VARIABLE_CONSTANT
 	if (variable->type == OVAL_VARIABLE_CONSTANT || variable->type == OVAL_VARIABLE_EXTERNAL) {
 		char *text = oval_value_get_text(value);
-		oval_string_map_put(variable->values, text, (void *)value);
+		oval_collection_add(variable->values, value);
+		variable->flag = SYSCHAR_FLAG_COMPLETE;
 	}
 }
 

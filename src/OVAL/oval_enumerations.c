@@ -299,6 +299,28 @@ const char* oval_variable_type_get_text(oval_variable_type_t type)
 	return oval_enumeration_get_text(OVAL_VARIABLE_TYPE_MAP, type);
 }
 
+static const struct oscap_string_map OVAL_COMPONENT_TYPE_MAP[] = {
+	{ OVAL_COMPONENT_LITERAL,      "literal_component"},
+	{ OVAL_COMPONENT_OBJECTREF,    "object_component"},
+	{ OVAL_COMPONENT_VARREF,       "variable_component"},
+	{ OVAL_ENUMERATION_INVALID,NULL },
+	{ OVAL_FUNCTION_BEGIN,         "begin"},
+	{ OVAL_FUNCTION_CONCAT,        "concat"},
+	{ OVAL_FUNCTION_END,           "end"},
+	{ OVAL_FUNCTION_SPLIT,         "split"},
+	{ OVAL_FUNCTION_SUBSTRING,     "substring"},
+	{ OVAL_FUNCTION_TIMEDIF,       "time_difference"},
+	{ OVAL_FUNCTION_ESCAPE_REGEX,  "escape_regex"},
+	{ OVAL_FUNCTION_REGEX_CAPTURE, "regex_capture"},
+	{ OVAL_FUNCTION_ARITHMETIC,    "arithmetic"},
+	{ OVAL_ENUMERATION_INVALID, NULL }
+};
+const char* oval_component_type_get_text(oval_component_type_t type)
+{
+	if(type>OVAL_FUNCTION)type = type-OVAL_FUNCTION+OVAL_COMPONENT_FUNCTION;
+	return oval_enumeration_get_text(OVAL_COMPONENT_TYPE_MAP, type);
+}
+
 static const struct oscap_string_map OVAL_FAMILY_MAP[] = {
 	{ OVAL_FAMILY_AIX,         "aix"         },
 	{ OVAL_FAMILY_APACHE,      "apache"      },
