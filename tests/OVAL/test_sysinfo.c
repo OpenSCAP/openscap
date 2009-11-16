@@ -8,8 +8,18 @@ int main (void)
         struct oval_sysinfo *info;
         struct oval_sysint_iterator *ifit;
         struct oval_sysint *ife;
+        oval_pctx_t *pctx;
+        
+        /*
+         *  Create probe context. Definition model isn't used
+         *  by the sysinfo probe.
+         */
+        pctx = oval_pctx_new (NULL);
 
-        info = oval_sysinfo_probe ();
+        /*
+         *  Call the sysinfo probe.
+         */
+        info = oval_probe_sysinf_eval (pctx);
         
         if (info != NULL) {
                 char *a, *b, *c, *d;
@@ -26,6 +36,8 @@ int main (void)
 
                 if (a == NULL || b == NULL || c == NULL || d == NULL) {
                         oval_sysinfo_free (info);
+                        oval_pctx_free (pctx);
+                        
                         return (1);
                 }
 
@@ -51,9 +63,16 @@ int main (void)
                 }
                 
                 oval_sysinfo_free (info);
+                oval_pctx_free (pctx);
                 
                 return (0);
         }
+        
+        /*
+         *  Free the probe context. This also terminates
+         *  all running probes executed under this context.
+         */
+        oval_pctx_free (pctx);
         
         return (1);
 }

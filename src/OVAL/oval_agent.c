@@ -234,7 +234,13 @@ struct oval_syschar_iterator *oval_syschar_model_get_syschars(
 
 static struct oval_sysinfo *_oval_syschar_model_probe_sysinfo(struct oval_syschar_model *model)
 {
-	struct oval_sysinfo *sysinfo = oval_sysinfo_probe();
+        oval_pctx_t *pctx;
+	struct oval_sysinfo *sysinfo;
+
+        pctx    = oval_pctx_new (NULL);
+        sysinfo = oval_probe_sysinf_eval (pctx);
+        oval_pctx_free (pctx);
+        
 	if(sysinfo==NULL){
 		fprintf(stderr, "WARNING: sysinfo probe returns NULL\n    %s(%d)\n", __FILE__, __LINE__);
 	}
@@ -309,20 +315,28 @@ void oval_syschar_model_probe_objects(struct oval_syschar_model *syschar_model)
 	if(syschar_model->sysinfo==NULL)oval_syschar_model_get_sysinfo(syschar_model);
 	struct oval_definition_model *definition_model = oval_syschar_model_get_definition_model(syschar_model);
 	if(definition_model){
+                oval_pctx_t *pctx;
 		struct oval_object_iterator *objects = oval_definition_model_get_objects(definition_model);
-		while(oval_object_iterator_has_more(objects)){
+                
+                pctx = oval_pctx_new (definition_model);
+                
+		while(oval_object_iterator_has_more(objects)) {
 			struct oval_object *object = oval_object_iterator_next(objects);
 			char *objid = oval_object_get_id(object);
 			struct oval_syschar *syschar = oval_syschar_model_get_syschar(syschar_model, objid);
-			if(syschar==NULL){
-				syschar = oval_object_probe(object, definition_model);
-				if(syschar == NULL){
+                        
+			if(syschar==NULL) {
+                                syschar = oval_probe_object_eval (pctx, object);
+                                
+				if(syschar == NULL) {
 					syschar = oval_syschar_new(object);
 					oval_syschar_set_flag(syschar,SYSCHAR_FLAG_NOT_COLLECTED);
 				}
-				oval_syschar_model_add_syschar(syschar_model, syschar);
+                                oval_syschar_model_add_syschar(syschar_model, syschar);
 			}
 		}
+                
+                oval_pctx_free (pctx);
 		oval_object_iterator_free(objects);
 	}
 }
@@ -1173,10 +1187,11 @@ int oval_results_model_export
 	return 1;
 }
 
+#if 0
 #ifdef __STUB_PROBE
 //STUB for oval_object_probe
 static int item_id = 1;
-struct oval_syschar *oval_object_probe(struct oval_object *object, struct oval_definition_model *model)
+struct oval_syschar *oval_probe_object_eval (struct oval_object *object, struct oval_definition_model *model)
 {
 	struct oval_syschar *syschar = oval_syschar_new(object);
 	oval_syschar_set_flag(syschar, SYSCHAR_STATUS_NOT_COLLECTED);
@@ -1189,9 +1204,9 @@ struct oval_syschar *oval_object_probe(struct oval_object *object, struct oval_d
 	return syschar;
 }
 
-struct oval_sysinfo *oval_sysinfo_probe (void)
+struct oval_sysinfo *oval_probe_sysinf_eval (void)
 {
         return (NULL);
 }
 #endif
-
+#endif /* 0 */

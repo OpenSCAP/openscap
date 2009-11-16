@@ -32,7 +32,7 @@
 #include "oval_definitions.h"
 #include "oval_system_characteristics.h"
 #include "oval_results.h"
-
+#include "oval_probe.h"
 
 /// severity level
 typedef enum {
@@ -96,13 +96,7 @@ void oval_export_target_free(struct oval_export_target *target);
  * @addtogroup OVALDEF
  * @{
  */
-/**
- * @struct oval_definition_model
- * OVAL definition model.
- * Definition model holds OVAL definitions as a list of oval_definition
- * structure instances.
- */
-struct oval_definition_model;
+
 /**
  * @}
  */
@@ -560,14 +554,6 @@ void oval_result_directives_free(struct oval_result_directives *);
  * @param target the export target stream (XML)
  */
 int oval_results_model_export(struct oval_results_model *, struct oval_result_directives *, struct oval_export_target *);
-
-
-struct oval_sysinfo *oval_sysinfo_probe (void);
-
-/**
- * Probe single OVAL object.
- */
-struct oval_syschar *oval_object_probe(struct oval_object *, struct oval_definition_model *model);
 
 /**
  * @}

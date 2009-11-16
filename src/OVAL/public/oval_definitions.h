@@ -468,6 +468,13 @@ typedef enum {
 
 struct oval_string_iterator;
 
+/**
+ * @struct oval_definition_model
+ * OVAL definition model.
+ * Definition model holds OVAL definitions as a list of oval_definition
+ * structure instances.
+ */
+struct oval_definition_model;
 
 /**
  * @struct oval_affected

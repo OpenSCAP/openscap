@@ -1,6 +1,6 @@
 #pragma once
-#ifndef OVAL_PROBE_H
-#define OVAL_PROBE_H
+#ifndef OVAL_PROBE_IMPL_H
+#define OVAL_PROBE_IMPL_H
 
 #include <seap-types.h>
 #include <config.h>
@@ -11,6 +11,8 @@
 #include "oval_string_map_impl.h"
 #include "public/oval_system_characteristics.h"
 #include "../common/util.h"
+
+#include "public/oval_probe.h"
 
 OSCAP_HIDDEN_START;
 
@@ -46,6 +48,13 @@ typedef struct {
 const oval_probe_t *ovalp_lookup (oval_subtype_t typenum);
 oval_subtype_t      ovalp_lookup_type (const char *name);
 
+struct oval_pctx {
+        oval_probe_t  *p_table;
+        ovalp_sdtbl_t *s_table;
+        char          *p_dir;
+        struct oval_definition_model *model;
+};
+
 OSCAP_HIDDEN_END;
 
-#endif /* OVAL_PROBE_H */
+#endif /* OVAL_PROBE_IMPL_H */

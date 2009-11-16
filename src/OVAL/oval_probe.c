@@ -11,7 +11,7 @@
 #endif
 
 #include "oval_sexp.h"
-#include "oval_probe.h"
+#include "oval_probe_impl.h"
 #include "oval_system_characteristics_impl.h"
 #include "probes/public/probe-api.h"
 
@@ -21,9 +21,9 @@ static const oval_probe_t __ovalp_ltable[] = {
         /*  7006 */ { OVAL_INDEPENDENT_TEXT_FILE_CONTENT_54, "textfilecontent54", "probe_textfilecontent54" },
         /*  7010 */ { OVAL_INDEPENDENT_XML_FILE_CONTENT,     "xmlfilecontent",    "probe_xmlfilecontent"    },
         /*  7999 */ { OVAL_INDEPENDENT_SYSCHAR_SUBTYPE,      "system_info",       "probe_system_info"       },
-        /*  9001 */ { OVAL_LINUX_DPKG_INFO,                  "dpkginfo",          "probe_dpkginfo"          },
+//      /*  9001 */ { OVAL_LINUX_DPKG_INFO,                  "dpkginfo",          "probe_dpkginfo"          },
         /*  9003 */ { OVAL_LINUX_RPM_INFO,                   "rpminfo",           "probe_rpminfo"           },
-        /*  9004 */ { OVAL_LINUX_SLACKWARE_PKG_INFO_TEST,    "slackwarepkginfo",  "probe_slackwarepkginfo"  },
+//      /*  9004 */ { OVAL_LINUX_SLACKWARE_PKG_INFO_TEST,    "slackwarepkginfo",  "probe_slackwarepkginfo"  },
         /* 13001 */ { OVAL_UNIX_FILE,                        "file",              "probe_file"              },
         /* 13006 */ { OVAL_UNIX_RUNLEVEL,                    "runlevel",          "probe_runlevel"          }
 };
@@ -32,17 +32,10 @@ static const oval_probe_t __ovalp_ltable[] = {
 
 static SEXP_t *ovalp_cmd_obj_eval  (SEXP_t *sexp, void *arg);
 static SEXP_t *ovalp_cmd_ste_fetch (SEXP_t *sexp, void *arg);
-static int     ovalp_cmd_init (SEAP_CTX_t *ctx, struct oval_definition_model *model);
+static int     ovalp_cmd_init (SEAP_CTX_t *ctx, oval_pctx_t *);
 
-#if defined(OSCAP_THREAD_SAFE)
-static pthread_once_t __ovalp_init_once = PTHREAD_ONCE_INIT;
-static pthread_key_t  __ovalp_init_key;
-#else
-static ovalp_sdtbl_t *__ovalp_table = NULL;
-#endif
-
-static void ovalp_sdtbl_init (void);
-static void ovalp_sdtbl_free (void);
+static ovalp_sdtbl_t *ovalp_sdtbl_new (void);
+static void           ovalp_sdtbl_free (ovalp_sdtbl_t *);
 
 static int  ovalp_subtype_cmp (oval_subtype_t *a, oval_probe_t *b);
 
@@ -50,39 +43,44 @@ static int         ovalp_sd_add (ovalp_sdtbl_t *table, oval_subtype_t type, int 
 static ovalp_sd_t *ovalp_sd_get (ovalp_sdtbl_t *table, oval_subtype_t type);
 static int         ovalp_sd_cmp (const ovalp_sd_t *a, const ovalp_sd_t *b);
 
-static void ovalp_sdtbl_free (void)
+static ovalp_sdtbl_t *oval_sdtbl_new (void)
 {
-        return;
+        ovalp_sdtbl_t *tbl;
+        
+        tbl = oscap_talloc (ovalp_sdtbl_t);
+        tbl->memb  = NULL;
+        tbl->count = 0;
+        tbl->ctx   = SEAP_CTX_new ();
+        tbl->flags = 0;
+        
+        return (tbl);
 }
 
-static void ovalp_sdtbl_init (void)
+static ovalp_sdtbl_t *ovalp_sdtbl_new (void)
 {
         ovalp_sdtbl_t *p_tbl;
 
-#if defined(OSCAP_THREAD_SAFE)        
-        (void) pthread_key_create (&__ovalp_init_key, (void (*)(void *)) ovalp_sdtbl_free);
-#endif
         p_tbl = oscap_talloc (ovalp_sdtbl_t);
         
         p_tbl->memb  = NULL;
         p_tbl->count = 0;
         p_tbl->ctx   = SEAP_CTX_new ();
         p_tbl->flags = 0;
-      
-#if defined(OSCAP_THREAD_SAFE)          
-        (void) pthread_setspecific (__ovalp_init_key, (void *)p_tbl);
-#else
-        __ovalp_table = p_tbl;
-#endif  
+        
+        return (p_tbl);
+}
+
+static void ovalp_sdtbl_free (ovalp_sdtbl_t *tbl)
+{
         return;
 }
 
-static int ovalp_cmd_init (SEAP_CTX_t *ctx, struct oval_definition_model *model)
+static int ovalp_cmd_init (SEAP_CTX_t *ctx, oval_pctx_t *pctx)
 {
         _A(ctx != NULL);
         
         if (SEAP_cmd_register (ctx, PROBECMD_OBJ_EVAL, SEAP_CMDREG_USEARG,
-                               &ovalp_cmd_obj_eval, (void *)model) != 0)
+                               &ovalp_cmd_obj_eval, (void *)pctx) != 0)
         {
                 _D("FAIL: can't register command: %s: errno=%u, %s.\n",
                    "obj_eval", errno, strerror (errno));
@@ -90,7 +88,7 @@ static int ovalp_cmd_init (SEAP_CTX_t *ctx, struct oval_definition_model *model)
         }
         
         if (SEAP_cmd_register (ctx, PROBECMD_STE_FETCH, SEAP_CMDREG_USEARG,
-                               &ovalp_cmd_ste_fetch, (void *)model) != 0)
+                               &ovalp_cmd_ste_fetch, (void *)pctx) != 0)
         {
                 _D("FAIL: can't register command: %s: errno=%u, %s.\n",
                    "ste_fetch", errno, strerror (errno));
@@ -158,9 +156,55 @@ static int ovalp_sd_del (ovalp_sdtbl_t *tbl, oval_subtype_t type)
         return (0);
 }
 
-
-struct oval_syschar *oval_object_probe (struct oval_object *object, struct oval_definition_model *model)
+oval_pctx_t *oval_pctx_new (struct oval_definition_model *model)
 {
+        oval_pctx_t *ctx;
+
+        ctx = oscap_talloc (oval_pctx_t);
+        
+        ctx->p_table = __ovalp_ltable;
+        ctx->p_dir   = OVAL_PROBE_DIR;
+        ctx->s_table = ovalp_sdtbl_new ();
+        ctx->model   = model;
+        
+        if (model != NULL) {
+                if (ovalp_cmd_init (ctx->s_table->ctx, ctx) != 0) {
+                        _D("FAIL: Can't initialize SEAP commands\n");
+                        oval_pctx_free (ctx);
+                        
+                        return (NULL);
+                }
+        }
+        
+        return (ctx);
+}
+
+int oval_pctx_setattr (oval_pctx_t *ctx, uint32_t params)
+{
+        return (-1);
+}
+
+int oval_pctx_unsetattr (oval_pctx_t *ctx, uint32_t params)
+{
+        return (-1);
+}
+
+int oval_pctx_setparam (oval_pctx_t *ctx, uint32_t param, ...)
+{
+        return (-1);
+}
+
+void oval_pctx_free (oval_pctx_t *ctx)
+{
+        ovalp_sdtbl_free (ctx->s_table);
+        oscap_free (ctx);
+        
+        return;
+}
+
+struct oval_syschar *oval_probe_object_eval (oval_pctx_t *ctx, struct oval_object *object)
+{
+#if 0
         const  oval_probe_t *probe;
         struct oval_syschar *sysch;
         int retry;
@@ -171,27 +215,25 @@ struct oval_syschar *oval_object_probe (struct oval_object *object, struct oval_
         SEXP_t     *s_exp, *r0;
         ovalp_sd_t *psd;
         
+        _A(ctx    != NULL);
         _A(object != NULL);
         _A(model  != NULL);
 
-        probe = NULL;
-        sysch = NULL;
-        
+        probe  = NULL;
+        sysch  = NULL;
         psd    = NULL;
         s_exp  = NULL;
         s_omsg = NULL;
         s_imsg = NULL;
 
-#if defined(OSCAP_THREAD_SAFE)
-        pthread_once (&__ovalp_init_once, ovalp_sdtbl_init);
-        p_tbl = pthread_getspecific (__ovalp_init_key);
-#else
-        if (__ovalp_table == NULL)
-                ovalp_sbtbl_init ();
+        /*
+         * FIXME: lock ctx
+         */
         
-        p_tbl = __ovalp_table;
-#endif
+        p_tbl = ctx->p_table;
         
+
+
         _A(p_tbl != NULL);
         
         if (!(p_tbl->flags & OVALP_SDTBL_CMDDONE)) {
@@ -372,17 +414,19 @@ struct oval_syschar *oval_object_probe (struct oval_object *object, struct oval_
         SEXP_free (s_exp);
         
         return (sysch);
+#endif
+        return (NULL);
 }
 
 static SEXP_t *ovalp_cmd_obj_eval (SEXP_t *sexp, void *arg)
 {
         char   *id_str;
         struct oval_object *obj;
-        struct oval_definition_model *model = (struct oval_definition_model *)arg;
+        oval_pctx_t *ctx = (oval_pctx_t *)arg;
 
         if (SEXP_stringp (sexp)) {
                 id_str = SEXP_string_cstr (sexp);
-                obj    = oval_definition_model_get_object (model, id_str);
+                obj    = oval_definition_model_get_object (ctx->model, id_str);
                 
                 _D("get_object: %s\n", id_str);
                 
@@ -391,8 +435,8 @@ static SEXP_t *ovalp_cmd_obj_eval (SEXP_t *sexp, void *arg)
                         oscap_free (id_str);
                         return (NULL);
                 }
-
-                if (oval_object_probe (obj, model) == NULL) {
+                
+                if (oval_probe_object_eval (ctx, obj) == NULL) {
                         _D("FAIL: obj eval failed: id=%s\n", id_str);
                         oscap_free (id_str);
                         return (NULL);
@@ -412,21 +456,21 @@ static SEXP_t *ovalp_cmd_ste_fetch (SEXP_t *sexp, void *arg)
         SEXP_t *id, *ste_list, *ste_sexp;
         char   *id_str;
         struct oval_state *ste;
-        struct oval_definition_model *model = (struct oval_definition_model *)arg;
-
+        oval_pctx_t *ctx = (oval_pctx_t *)arg;
+        
         ste_list = SEXP_list_new (NULL);
 
         SEXP_list_foreach (id, sexp) {
                 if (SEXP_stringp (id)) {
                         id_str = SEXP_string_cstr (id);
-                        ste    = oval_definition_model_get_state (model, id_str);
+                        ste    = oval_definition_model_get_state (ctx->model, id_str);
 
                         if (ste == NULL) {
                                 _D("FAIL: can't find ste: id=%s\n", id_str);
                                 SEXP_list_free (ste_list);
                                 oscap_free (id_str);
                         }
-
+                        
                         ste_sexp = oval_state_to_sexp (ste);
                         SEXP_list_add (ste_list, ste_sexp);
 
@@ -437,7 +481,7 @@ static SEXP_t *ovalp_cmd_ste_fetch (SEXP_t *sexp, void *arg)
         return (ste_list);
 }
 
-struct oval_sysinfo *oval_sysinfo_probe (void)
+struct oval_sysinfo *oval_probe_sysinf_eval (oval_pctx_t *ctx)
 {
         struct oval_sysinfo *sysinf;
         struct oval_sysint  *ife;

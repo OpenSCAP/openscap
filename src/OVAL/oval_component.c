@@ -1245,8 +1245,14 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_OBJECTREF
 	struct oval_component_OBJECTREF *objref = (struct oval_component_OBJECTREF *)component;
 	struct oval_object *object = objref->object;
 	if(object){
+                oval_pctx_t *pctx;
 		struct oval_definition_model *defmod = oval_syschar_model_get_definition_model(sysmod);
-		struct oval_syschar *syschar = oval_object_probe(object, defmod);
+		struct oval_syschar *syschar;
+                
+                pctx = oval_pctx_new (defmod);
+                syschar = oval_probe_object_eval (pctx, object);
+                oval_pctx_free (pctx);
+                
 		if(syschar){
 			flag = oval_syschar_get_flag(syschar);
 			char* field_name = objref->object_field;
