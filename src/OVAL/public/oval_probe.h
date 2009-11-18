@@ -9,24 +9,31 @@
 
 typedef struct oval_pctx oval_pctx_t;
 
-#define OVAL_PCTX_ATTR_NOREPLY  0x0001 /* don't send probe result to library - just an ack */
-#define OVAL_PCTX_ATTR_NORECONN 0x0002 /* don't try to reconnect on fatal errors */
-#define OVAL_PCTX_ATTR_RUNALL   0x0003 /* execute all probes when executing the first */
-#define OVAL_PCTX_ATTR_RUNNOW   0x0004 /* execute all probes immediately */
-
-#define OVAL_PCTX_PARAM_RETRY       0x0001 /* set maximum retry count (send, connect) */
-#define OVAL_PCTX_PARAM_RECVTIMEOUT 0x0002 /* set receive timeout - in miliseconds */
-#define OVAL_PCTX_PARAM_SENDTIMEOUT 0x0003 /* set send timeout - in miliseconds */
-#define OVAL_PCTX_PARAM_SCHEME      0x0004 /* set communication scheme */
-#define OVAL_PCTX_PARAM_DIR         0x0005 /* set directory where the probes are located */
-#define OVAL_PCTX_PARAM_MODEL       0x0006 /* set definition model - update registered commands is necessary */ 
-
 oval_pctx_t *oval_pctx_new (struct oval_definition_model *);
 void         oval_pctx_free (oval_pctx_t *) __attribute__ ((nonnull (1)));
 
-int oval_pctx_setattr (oval_pctx_t *, uint32_t) __attribute__ ((nonnull (1)));
-int oval_pctx_unsetattr (oval_pctx_t *, uint32_t) __attribute__ ((nonnull (1)));
-int oval_pctx_setparam (oval_pctx_t *, uint32_t, ...) __attribute__ ((nonnull (1)));
+/*
+ * probe context flags
+ */
+#define OVAL_PCTX_FLAG_NOREPLY  0x0001 /* don't send probe result to library - just an ack */
+#define OVAL_PCTX_FLAG_NORECONN 0x0002 /* don't try to reconnect on fatal errors */
+#define OVAL_PCTX_FLAG_RUNALL   0x0003 /* execute all probes when executing the first */
+#define OVAL_PCTX_FLAG_RUNNOW   0x0004 /* execute all probes immediately */
+
+int oval_pctx_setflag (oval_pctx_t *, uint32_t) __attribute__ ((nonnull (1)));
+int oval_pctx_unsetflag (oval_pctx_t *, uint32_t) __attribute__ ((nonnull (1)));
+
+/*
+ * probe context attributes
+ */
+#define OVAL_PCTX_ATTR_RETRY       0x0001 /* set maximum retry count (send, connect) */
+#define OVAL_PCTX_ATTR_RECVTIMEOUT 0x0002 /* set receive timeout - in miliseconds */
+#define OVAL_PCTX_ATTR_SENDTIMEOUT 0x0003 /* set send timeout - in miliseconds */
+#define OVAL_PCTX_ATTR_SCHEME      0x0004 /* set communication scheme */
+#define OVAL_PCTX_ATTR_DIR         0x0005 /* set directory where the probes are located */
+#define OVAL_PCTX_ATTR_MODEL       0x0006 /* set definition model - update registered commands is necessary */ 
+
+int oval_pctx_setattr (oval_pctx_t *, uint32_t, ...) __attribute__ ((nonnull (1)));
 
 int oval_probe_reset (oval_pctx_t *, oval_subtype_t) __attribute__ ((nonnull (1)));
 int oval_probe_close (oval_pctx_t *, oval_subtype_t) __attribute__ ((nonnull (1)));

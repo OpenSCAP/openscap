@@ -275,7 +275,7 @@ static SEXP_t *oval_behaviors_to_sexp (struct oval_behavior_iterator *bit)
         return (r0);
 }
 
-SEXP_t *oval_object_to_sexp (const char *typestr, struct oval_object *object)
+SEXP_t *oval_object2sexp (const char *typestr, struct oval_object *object)
 {
         unsigned int ent_cnt, varref_cnt;
         SEXP_t *obj_sexp, *obj_name, *elm, *varrefs, *ent_lst, *lst, *stmp;
@@ -408,23 +408,23 @@ SEXP_t *oval_object_to_sexp (const char *typestr, struct oval_object *object)
         return (obj_sexp);
 }
 
-SEXP_t *oval_state_to_sexp (struct oval_state *state)
+SEXP_t *oval_state2sexp (struct oval_state *state)
 {
         SEXP_t *ste, *ste_name, *ste_ent;
         SEXP_t *r0, *r1, *r2;
         char   buffer[128];
         size_t buflen;
-        const  oval_probe_t *probe;
+        const  oval_pdsc_t *probe;
         struct oval_state_content_iterator *contents;
         
-        probe = ovalp_lookup (oval_state_get_subtype (state));
-
+        probe = oval_pdsc_lookup (oval_state_get_subtype (state));
+        
         if (probe == NULL) {
                 _D("FAIL: unknown subtype: %d\n", oval_state_get_subtype (state));
                 return (NULL);
         }
 
-        buflen = snprintf (buffer, sizeof buffer, "%s_state", probe->typestr);
+        buflen = snprintf (buffer, sizeof buffer, "%s_state", probe->subtype_name);
         _A(buflen < sizeof buffer);
         
         ste_name = SEXP_list_new (r0 = SEXP_string_new (buffer, buflen),
@@ -594,7 +594,7 @@ static struct oval_sysdata *oval_sysdata_from_sexp(SEXP_t *sexp)
 		*endptr = '\0'; // cut off the '_item' part
 	}
 
-	int type = ovalp_lookup_type (name);
+	int type = oval_pdsc_lookup_type (name);
         
 	_D("Syschar entry type: %d '%s' => %s\n", type, name, (type ? "OK" : "FAILED to decode"));
         
@@ -623,35 +623,52 @@ cleanup:
 	return sysdata;
 }
 
-struct oval_syschar *sexp_to_oval_state (SEXP_t *sexp, struct oval_object* object)
+struct oval_syschar *oval_sexp2sysch (const SEXP_t *s_exp, struct oval_object *object)
 {
-        _A(sexp != NULL);
-		struct oval_syschar *syschar = oval_syschar_new(object);
-		oval_syschar_apply_sexp(syschar, sexp, object);
-        return (syschar);
+        struct oval_syschar *sysch;
+        
+        _A(s_exp != NULL);
+        
+        sysch = oval_syschar_new(object);
+        
+        if (oval_sysch_apply_sexp (sysch, s_exp, object) != 0) {
+                oval_syschar_free (sysch);
+                return (NULL);
+        }
+                
+        return (sysch);
 }
 
-int oval_syschar_apply_sexp(struct oval_syschar *syschar, SEXP_t *sexp, struct oval_object* object)
+int oval_sysch_apply_sexp(struct oval_syschar *sysch, const SEXP_t *s_list, struct oval_object *object)
 {
-	_A(sexp != NULL);
-	_A(syschar != NULL);
+	_A(s_list != NULL);
+	_A(sysch  != NULL);
 
-	SEXP_t *s;
+	SEXP_t *s_exp;
 	struct oval_sysdata* sysdata;
-
-	if (oval_syschar_get_object(syschar) == NULL)
-		oval_syschar_set_object(syschar, object);
-	else if (object == NULL)
-		object = oval_syschar_get_object(syschar);
-
-	_A(object == oval_syschar_get_object(syschar));
-
-	SEXP_list_foreach (s, sexp) {
-		sysdata = oval_sysdata_from_sexp(s);
-		if (sysdata)
-			oval_syschar_add_sysdata(syschar, sysdata);
+        
+	if (oval_syschar_get_object(sysch) == NULL) {
+                if (object != NULL)
+                        oval_syschar_set_object(sysch, object);
+                else
+                        return (-1);
+                
+        } else if (object == NULL) {
+		object = oval_syschar_get_object(sysch);
+                
+                if (object == NULL)
+                        return (-1);
+        }
+        
+	_A(object == oval_syschar_get_object(sysch));
+        
+	SEXP_list_foreach (s_exp, s_list) {
+		sysdata = oval_sysdata_from_sexp(s_exp);
+                
+		if (sysdata != NULL)
+			oval_syschar_add_sysdata(sysch, sysdata);
 	}
         
-	return 1;
+	return (0);
 }
 #endif /* __STUB_PROBE */

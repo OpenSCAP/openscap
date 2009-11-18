@@ -22,35 +22,34 @@ OSCAP_HIDDEN_START;
 #endif
 
 typedef struct {
-        oval_subtype_t typenum;
-        char          *typestr;
+        oval_subtype_t subtype;
+        char          *subtype_name;
         char          *filename;
-} oval_probe_t;
+} oval_pdsc_t;
 
 typedef struct {
-        oval_subtype_t typenum;
+        oval_subtype_t subtype;
         int   sd;
         char *uri;
-} ovalp_sd_t;
+} oval_pd_t;
 
 typedef struct {
-        ovalp_sd_t *memb;
+        oval_pd_t  *memb;
         size_t      count;
         SEAP_CTX_t *ctx;
-        uint8_t     flags;
-} ovalp_sdtbl_t;
+} oval_pdtbl_t;
 
 #define OVALP_SDTBL_CMDDONE 0x01
 #define OVALP_SDTBL_INITIALIZER { NULL, 0, NULL, 0 }
 
 #define OVAL_PROBE_MAXRETRY 3
 
-const oval_probe_t *ovalp_lookup (oval_subtype_t typenum);
-oval_subtype_t      ovalp_lookup_type (const char *name);
+const oval_pdsc_t  *oval_pdsc_lookup (oval_subtype_t subtype);
+oval_subtype_t      oval_pdsc_lookup_type (const char *name);
 
 struct oval_pctx {
-        oval_probe_t  *p_table;
-        ovalp_sdtbl_t *s_table;
+        oval_pdsc_t   *pdsc_table;
+        oval_pdtbl_t  *pd_table;
         char          *p_dir;
         struct oval_definition_model *model;
 };
