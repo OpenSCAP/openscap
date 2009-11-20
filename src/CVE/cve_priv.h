@@ -40,28 +40,104 @@
 
 OSCAP_HIDDEN_START;
 
+/** 
+ * @struct cve_model
+ * Structure holding CVE model
+ */
 struct cve_model;
+/** 
+ * @struct cve_entry
+ * Structure holding CVE entry data
+ */
 struct cve_entry;
+/** 
+ * @struct cve_summary
+ * Structure holding CVE summary data
+ */
 struct cve_summary;
+/** 
+ * @struct cve_product
+ * Structure holding CVE product data
+ */
 struct cve_product;
+/** 
+ * @struct cve_configuration
+ * Structure CVE vulnerable configuration data
+ */
 struct cve_configuration;
+/** 
+ * @struct cwe_entry
+ * Structure holding CWE data
+ */
 struct cwe_entry;
+/** 
+ * @struct cve_reference
+ * Structure holding CVE reference data
+ */
 struct cve_reference;
 
+/**
+ * Parse CVE model from XML (private function)
+ * @param source OSCAP import source
+ * @relates cve_model
+ * @return new CVE model
+ */
 struct cve_model * cve_model_parse_xml(const struct oscap_import_source * source);
 
+/**
+ * Parse CVE model
+ * @param reader XML Text Reader representing XML model
+ * @relates cve_model
+ * @return parsed CVE mdoel
+ */
 struct cve_model * cve_model_parse(xmlTextReaderPtr reader);
 
+/**
+ * Parse CVE entry
+ * @param reader XML Text Reader representing XML model
+ * @relates cve_entry
+ * @return parsed CVE entry
+ */
 struct cve_entry * cve_entry_parse(xmlTextReaderPtr reader);
 
+/**
+ * Export CVE model to XML file
+ * @param cve CVE model
+ * @param writer XML Text Writer representing XML model
+ * @relates cve_model
+ */
 void cve_export(const struct cve_model * cve, xmlTextWriterPtr writer);
 
+/**
+ * Export CVE model to XML file
+ * @param cve CVE model
+ * @param target OSCAP export target
+ * @relates cve_model
+ */
 void cve_model_export_xml(struct cve_model * cve, const struct oscap_export_target * target);
 
+/**
+ * Export CVE reference to XML file
+ * @param refer CVE reference
+ * @param writer XML Text Writer representing XML model
+ * @relates cve_reference
+ */
 void cve_reference_export(const struct cve_reference * refer, xmlTextWriterPtr writer);
 
+/**
+ * Export CVE summary to XML file
+ * @param sum CVE summary
+ * @param writer XML Text Writer representing XML model
+ * @relates cve_summary
+ */
 void cve_summary_export(const struct cve_summary * sum, xmlTextWriterPtr writer);
 
+/**
+ * Export CVE entry to XML file
+ * @param entry CVE entry
+ * @param writer XML Text Writer representing XML model
+ * @relates cve_entry
+ */
 void cve_entry_export(const struct cve_entry * entry, xmlTextWriterPtr writer);
 
 OSCAP_HIDDEN_END;
