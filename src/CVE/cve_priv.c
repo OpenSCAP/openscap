@@ -399,7 +399,7 @@ struct cve_model * cve_model_parse(xmlTextReaderPtr reader) {
         struct cve_model *ret = NULL;
         struct cve_entry *entry;
 
-        if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), BAD_CAST "nvd") &&
+        if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_NVD_STR) &&
             xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
 
                 ret = cve_model_new();
@@ -413,7 +413,7 @@ struct cve_model * cve_model_parse(xmlTextReaderPtr reader) {
                 xmlTextReaderNextElement(reader);
 
                 /* CVE-specification: entry */ 
-                while (xmlStrcmp (xmlTextReaderConstLocalName(reader), (const xmlChar *)"entry") == 0) {
+                while (xmlStrcmp (xmlTextReaderConstLocalName(reader), TAG_CVE_STR) == 0) {
                         
                         entry = cve_entry_parse(reader);
                         if (entry) oscap_list_add(ret->entries, entry);
@@ -445,6 +445,9 @@ struct cve_entry * cve_entry_parse(xmlTextReaderPtr reader) {
                 cve_entry_free(ret);
                 return NULL;    /* if there is no "id" in entry element, return NULL */
         }
+
+        /* If <empty /> then return, because there is no child element */
+        if (xmlTextReaderIsEmptyElement(reader)) return ret;
 
         /* skip from <entry> node to next one */
         xmlTextReaderRead(reader);
@@ -572,7 +575,6 @@ void cve_model_export_xml(struct cve_model * cve, const struct oscap_export_targ
         cve_export(cve, writer);
         xmlTextWriterEndDocument(writer);
         xmlFreeTextWriter(writer);
-        cve_model_free(cve);
 }
 
 void cve_export(const struct cve_model * cve, xmlTextWriterPtr writer) {
@@ -726,7 +728,6 @@ void cve_model_free(struct cve_model * cve_model) {
 
 	if (cve_model == NULL) return;
 
-	/* oscap_htable_free(cve_model->entry, NULL); */
 	oscap_list_free(cve_model->entries, (oscap_destruct_func)cve_entry_free);
         xml_metadata_free(cve_model->xml);
 	oscap_free(cve_model);

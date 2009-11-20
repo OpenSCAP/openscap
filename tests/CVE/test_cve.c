@@ -2,53 +2,89 @@
 //#include "config.h"
 
 #include <stdio.h>
-
+#include <string.h>
 #include <cve.h>
 
+#define ASSERT(c) if ((c) == true) { return 1; }
+#define notNULL(c,d) if ((c) == NULL) { fprintf(stderr, "NULL exception: %s\n", d); return 1; }
+
+
+void print_usage(const char *program_name, FILE *out);
+
+// Print usage.
+void print_usage(const char *program_name, FILE *out) 
+{
+  fprintf(out, 
+	  "Usage: \n\n"
+	  "  %s --help\n"
+	  "  %s --get-all XML_IN ENCODING \n"
+	  "  %s --test-export-all XML_IN ENCODING XML_OUT ENCODING\n"
+	  "  %s --add-entries XML_IN ENCODING entry1 entry2 ...\n"
+	  "  %s --\n"
+	  "  %s --sanity-check\n",
+	  program_name, program_name, program_name, program_name, program_name, program_name);
+}
 
 int main(int argc, char **argv)
 {
-	struct cve_model* cve;
+    struct cve_model * model;
+    struct cve_reference * reference;
+    struct cve_summary * summary;
+    struct cve_product * product;
+    struct cve_configuration * conf;
+    struct cve_entry * entry;
+    struct cwe_entry * cwe;
+    struct cvss_entry * cvss;
+    // iterators
+    struct cve_entry_iterator * entry_it;
 
-	if (argc != 2) {
-		fprintf(stderr, "usage: %s <xmlfile>\n", argv[0]);
-		fprintf(stderr,
-			"You can get one at: http://nvd.nist.gov/download.cfm\n");
-		return -1;
-	}
+    struct oscap_import_source *import_source;
+    struct oscap_export_target *export_target;
+    int ret_val;
 
-	fprintf(stdout, "[begin: parse]\n");
-	struct oscap_import_source *src = oscap_import_source_new(argv[1], NULL);
-	cve = cve_model_import(src);
-	if (cve == NULL) {
-		fprintf(stderr, "cveParse returned an error.\n");
-		return -1;
-	}
-	fprintf(stdout, "[end: parse]\n");
-	fprintf(stdout, "[done]\n");
+    // Wrong argument count or --help
+    if (argc == 2 && !strcmp(argv[1], "--help")) {
+        print_usage(argv[0], stdout);
+        ret_val = 0;
+    }
+    
+    else if (argc == 6 && !strcmp(argv[1], "--test-export-all")) {
 
-	/*OSCAP_FOREACH (cve_info, info, cve_get_entries(cve),
-		fprintf(stdout, "[cveInfo: %s, %s, %s, %s, %s]\n", cve_info_get_id(info),
-			cve_info_get_pub(info), cve_info_get_mod(info),
-			cve_info_get_cwe(info) ? cve_info_get_cwe(info) : "",
-			cve_info_get_summary(info));
-		fprintf(stdout, "[cvss: %s, %s, %s, %s, %s, %s, %s, %s, %s]\n",
-			cve_info_get_score(info), cve_info_get_vector(info), cve_info_get_complexity(info),
-			cve_info_get_authentication(info), cve_info_get_confidentiality(info),
-			cve_info_get_integrity(info), cve_info_get_availability(info), cve_info_get_source(info),
-			cve_info_get_generated(info));
+        notNULL (import_source = oscap_import_source_new(argv[2], argv[3]), "import")
+        notNULL (model = cve_model_import(import_source), "model")
+        notNULL (export_target = oscap_export_target_new(argv[4], argv[5]), "export")
 
-		OSCAP_FOREACH (cve_reference, ref, cve_info_get_references(info),
-			fprintf(stdout, "\t[cveReference: %s, %s, %s, %s]\n",
-				cve_reference_get_summary(ref), cve_reference_get_href(ref),
-				cve_reference_get_type(ref), cve_reference_get_source(ref));
-		)
-		fprintf(stdout, "\n");
-	)*/
+        cve_model_export(model, export_target);
+        oscap_export_target_free(export_target);    
+        //cve_model_free(model);
+        return 0;
+    }
 
-	struct oscap_export_target *tgt = oscap_export_target_new("test_cve.out", NULL);
-	cve_model_export_xml(cve, tgt);
-	oscap_cleanup();  // clean caches
+    else if (argc > 4 && !strcmp(argv[1], "--add-entries")) {
+    
+        notNULL (model = cve_model_new(), "new model");
+        notNULL (export_target = oscap_export_target_new(argv[2], argv[3]), "export")
 
-	return 0;
+        int i;
+        for (i=4; i<argc; i++) {
+            entry = cve_entry_new();
+            cve_entry_set_id(entry, argv[i]);
+            cve_model_add_entry(model, entry);
+        }
+
+        cve_model_export(model, export_target);
+        cve_model_free(model);
+        return 0;
+    }
+    
+    else if (argc == 2 && !strcmp(argv[1], "--sanity-check")) {
+        return 0;
+    }
+
+    else {
+        print_usage(argv[0], stderr);
+        ret_val = 1;
+    }
+
+    return ret_val;
 }
