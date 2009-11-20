@@ -1,10 +1,19 @@
-/*! \file cve_priv.h
- *  \brief Common Vulnerability and Exposure dictionary
+/**
+ * @addtogroup CVE
+ * @{
+ *
+ * @file cve_priv.h
+ * \brief Common Vulnerability and Exposure dictionary
  * 
  *   See details at:
  *     http://cve.mitre.org/
  *     http://nvd.nist.gov/download.cfm
  *  
+ */
+
+/**
+ * @addtogroup CVEPrivate Private members
+ * @{
  */
 
 /*
@@ -38,7 +47,11 @@
 #include "../common/list.h"
 #include "../common/elements.h"
 
+/** 
+ * @cond INTERNAL
+ */
 OSCAP_HIDDEN_START;
+ /* @endcond */
 
 /** 
  * @struct cve_model
@@ -77,6 +90,12 @@ struct cwe_entry;
 struct cve_reference;
 
 /**
+ * @name Parse functions
+ * Functions for parsing structures from XML
+ * @{
+ * */
+
+/**
  * Parse CVE model from XML (private function)
  * @param source OSCAP import source
  * @relates cve_model
@@ -99,6 +118,14 @@ struct cve_model * cve_model_parse(xmlTextReaderPtr reader);
  * @return parsed CVE entry
  */
 struct cve_entry * cve_entry_parse(xmlTextReaderPtr reader);
+
+/*@}*/
+
+/**
+ * @name Export functions
+ * Functions for export structures to XML
+ * @{
+ * */
 
 /**
  * Export CVE model to XML file
@@ -140,6 +167,16 @@ void cve_summary_export(const struct cve_summary * sum, xmlTextWriterPtr writer)
  */
 void cve_entry_export(const struct cve_entry * entry, xmlTextWriterPtr writer);
 
+/** 
+ * @cond INTERNAL
+ */
 OSCAP_HIDDEN_END;
+ /* @endcond */
+
+/*@}*/
+
+/*@}*/
+/*@}*/
+
 
 #endif

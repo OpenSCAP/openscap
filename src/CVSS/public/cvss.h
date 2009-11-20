@@ -1,8 +1,8 @@
-/*! 
- *  \addtogroup CVSS
- *  \{
+/** 
+ * @addtogroup CVSS
+ * @{
  *
- *  \file cvsscalc.h
+ * @file cvsscalc.h
  *  \brief Interface to Common Vulnerability Scoring System Version 2
  *  
  *  See details at http://nvd.nist.gov/cvss.cfm
@@ -46,18 +46,10 @@
 struct cvss_entry;
 
 /**
- * New CVSS entry
- * @relates cvss_entry
- * @return new cvss_entry
- */
-struct cvss_entry * cvss_entry_new(void);
-
-/**
- * Free CVSS entry
- * @param entry CVSS entry
- * @relates cvss_entry
- */
-void cvss_entry_free(struct cvss_entry * entry);
+ * @name Get functions
+ * Functions for getting attributes from CVE model structures
+ * @{
+ * */
 
 /**
  * Get score from CVSS entry
@@ -122,6 +114,14 @@ const char* cvss_entry_get_source(const struct cvss_entry * entry);
  * @return CVSS generated date-time
  */
 const char* cvss_entry_get_generated(const struct cvss_entry * entry);
+
+/*@}*/
+
+/**
+ * @name Set functions
+ * Functions to set variables of structures
+ * @{
+ * */
 
 /**
  * Set of CVSS entry
@@ -195,6 +195,38 @@ bool cvss_entry_set_source(struct cvss_entry *entry, const char *new_source);
  * @return true if set, false otherwise
  */
 bool cvss_entry_set_generated(struct cvss_entry *entry, const char *new_generated);
+
+/*@}*/
+
+/**
+ * @name New functions
+ * Constructors of CVSS model structures
+ * @{
+ * */
+
+/**
+ * New CVSS entry
+ * @relates cvss_entry
+ * @return new cvss_entry
+ */
+struct cvss_entry * cvss_entry_new(void);
+
+/*@}*/
+
+/**
+ * @name Free functions
+ * Destructors of CVSS model structures
+ * @{
+ * */
+
+/**
+ * Free CVSS entry
+ * @param entry CVSS entry
+ * @relates cvss_entry
+ */
+void cvss_entry_free(struct cvss_entry * entry);
+
+/*@}*/
 
 //! Access Vector
 /*! This metric reflects how the vulnerability is exploited. */
@@ -390,4 +422,5 @@ int cvss_env_score(cvss_collateral_damage_potential_t cde, cvss_target_distribut
                    cvss_exploitability_t              exe, cvss_remediation_level_t     rle, 
                    cvss_report_confidence_t           rce);
 
+/*@}*/
 #endif /* _CVSSCALC_H_ */

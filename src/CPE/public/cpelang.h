@@ -76,6 +76,11 @@ struct cpe_lang_model;
  */
 struct cpe_platform;
 
+/**
+ * @name Iterator functions
+ * @{
+ * */
+
 /** @struct cpe_platform_iterator
  * Iterator over CPE dictionary items.
  * @see oscap_iterator
@@ -88,20 +93,13 @@ bool cpe_platform_iterator_has_more(struct cpe_platform_iterator* it);
 /// @relates cpe_platform_iterator
 void cpe_platform_iterator_free(struct cpe_platform_iterator* it);
 
+/*@}*/
 
 /**
- * Load CPE language model from a XML document.
- * @relates cpe_lang_model
- */
-struct cpe_lang_model * cpe_lang_model_import(const struct oscap_import_source * source);
-
-/**
- * Write the lang_model to a file.
- * @relates cpe_lang_model
- * @param spec CPE lang model
- * @param target target structure with filename, endcoding and indent information
- */
-void cpe_lang_model_export(struct cpe_lang_model * spec, struct oscap_export_target * target);
+ * @name Get functions
+ * Functions for getting attributes from CPE model structures
+ * @{
+ * */
 
 /**
  * cpe_testexpr functions to get variable members
@@ -124,23 +122,11 @@ struct cpe_testexpr * cpe_testexpr_get_meta_expr(const struct cpe_testexpr *item
 struct cpe_name * cpe_testexpr_get_meta_cpe(const struct cpe_testexpr *item);
 
 /**
- * Function to match cpe in platform
- * @param cpe to be matched with
- * @param n size
- * @param platform CPE platform
+ * Function to get next expr from array
+ * @param expr CPE Test expression structure
+ * @relates cpe_testexpr
  */
-bool cpe_platform_match_cpe(struct cpe_name ** cpe, size_t n, const struct cpe_platform * platform);
-/**
- * cpe_platform functions to get variable members
- */
-/// @relates cpe_platform
-const char * cpe_platform_get_id(const struct cpe_platform *item);
-/// @relates cpe_platform
-const char * cpe_platform_get_remark(const struct cpe_platform *item);
-/// @relates cpe_platform
-struct oscap_title_iterator * cpe_platform_get_titles(const struct cpe_platform *item);
-/// @relates cpe_platform
-const struct cpe_testexpr * cpe_platform_get_expr(const struct cpe_platform *item);
+const struct cpe_testexpr * cpe_testexpr_get_next(const struct cpe_testexpr * expr);
 
 /**
  * cpe_lang_model function to get namespace href
@@ -166,13 +152,58 @@ struct cpe_platform_iterator * cpe_lang_model_get_platforms(const struct cpe_lan
  */
 struct cpe_platform * cpe_lang_model_get_item(const struct cpe_lang_model *item, const char *key);
 
-// add functions
+/**
+ * cpe_platform functions to get id
+ * @relates cpe_platform
+ */
+const char * cpe_platform_get_id(const struct cpe_platform *item);
+/**
+ * cpe_platform functions to get remark
+ * @relates cpe_platform
+ */
+const char * cpe_platform_get_remark(const struct cpe_platform *item);
+/**
+ * cpe_platform functions to get titles
+ * @relates cpe_platform
+ */
+struct oscap_title_iterator * cpe_platform_get_titles(const struct cpe_platform *item);
+/**
+ * cpe_platform functions to get test expression
+ * @relates cpe_platform
+ */
+const struct cpe_testexpr * cpe_platform_get_expr(const struct cpe_platform *item);
+
+/*@}*/
+
+/**
+ * @name Add functions
+ * Functions to add member to list
+ * @{
+ * */
 
 /**
  * Add platform to CPE lang model
  * @relates cpe_lang_model
  */
 bool cpe_lang_model_add_item(struct cpe_lang_model *lang, struct cpe_platform *platform);
+/**
+ * Add item to CPE model
+ * @relates cpe_lang_model
+ */
+bool cpe_lang_model_add_item(struct cpe_lang_model * lang, struct cpe_platform *platform);
+/**
+ * Add title to platform
+ * @relates cpe_platform
+ */
+bool cpe_platform_add_title(struct cpe_platform * platform, struct oscap_title *title);
+
+/*@}*/
+
+/**
+ * @name New functions
+ * Constructors of CPE model structures
+ * @{
+ * */
 
 /**
  * Constructor of CPE Language model
@@ -192,6 +223,43 @@ struct cpe_testexpr * cpe_testexpr_new(void);
  */
 struct cpe_platform * cpe_platform_new(void);
 
+/*@}*/
+
+/**
+ * @name Set functions
+ * Functions to set variables of structures
+ * @{
+ * */
+
+/**
+ * Set ns_href to CPE lang model
+ * @relates cpe_lang_model
+ */
+bool cpe_lang_model_set_ns_href(struct cpe_lang_model * model, const char *new_href);
+/**
+ * Set ns_prefix to CPE lang model
+ * @relates cpe_lang_model
+ */
+bool cpe_lang_model_set_ns_prefix(struct cpe_lang_model * model, const char *new_prefix);
+/**
+ * Set ID of CPE platform
+ * @relates cpe_platform
+ */
+bool cpe_platform_set_id(struct cpe_platform * platform, const char *new_id);
+/**
+ * Set remark of CPE platform
+ * @relates cpe_platform
+ */
+bool cpe_platform_set_remark(struct cpe_platform * platform, const char *new_remark);
+
+/*@}*/
+
+/**
+ * @name Free functions
+ * Destructors of CPE model structures
+ * @{
+ * */
+
 /**
  * Free function of CPE test expression
  * @relates cpe_testexpr
@@ -209,28 +277,41 @@ void cpe_lang_model_free(struct cpe_lang_model * platformspec);
  * @relates cpe_platform
  */
 void cpe_platform_free(struct cpe_platform * platform);
-/**
- * Function to get next expr from array
- * @param expr CPE Test expression structure
- * @relates cpe_testexpr
- */
-const struct cpe_testexpr * cpe_testexpr_get_next(const struct cpe_testexpr * expr);
+
+/*@}*/
 
 /**
- * Set / add functions
+ * @name Other functions
+ * @{
  * */
-/// @relates cpe_lang_model
-bool cpe_lang_model_set_ns_href(struct cpe_lang_model * model, const char *new_href);
-/// @relates cpe_lang_model
-bool cpe_lang_model_set_ns_prefix(struct cpe_lang_model * model, const char *new_prefix);
-/// @relates cpe_lang_model
-bool cpe_lang_model_add_item(struct cpe_lang_model * lang, struct cpe_platform *platform);
-/// @relates cpe_platform
-bool cpe_platform_set_id(struct cpe_platform * platform, const char *new_id);
-// @relates cpe_platform
-bool cpe_platform_set_remark(struct cpe_platform * platform, const char *new_remark);
-/// @relates cpe_platform
-bool cpe_platform_add_title(struct cpe_platform * platform, struct oscap_title *title);
+
+/**
+ * Function to match cpe in platform
+ * @param cpe to be matched with
+ * @param n size
+ * @param platform CPE platform
+ */
+bool cpe_platform_match_cpe(struct cpe_name ** cpe, size_t n, const struct cpe_platform * platform);
+
+/**
+ * Load CPE language model from a XML document.
+ * @relates cpe_lang_model
+ */
+struct cpe_lang_model * cpe_lang_model_import(const struct oscap_import_source * source);
+
+/**
+ * Write the lang_model to a file.
+ * @relates cpe_lang_model
+ * @param spec CPE lang model
+ * @param target target structure with filename, endcoding and indent information
+ */
+void cpe_lang_model_export(struct cpe_lang_model * spec, struct oscap_export_target * target);
+
+/*@}*/
+
+/*@}*/
+
+/*@}*/
 
 #endif				/* _CPELANG_H_ */
 

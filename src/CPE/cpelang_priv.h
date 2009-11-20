@@ -11,6 +11,11 @@
  * See more details at http://nvd.nist.gov/cpe.cfm
  */
 
+/**
+ * @addtogroup CPELangPrivate Private members
+ * @{
+ */
+
 /*
  * Copyright 2008 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
@@ -43,10 +48,11 @@
 #include "../common/util.h"
 #include "../common/elements.h"
 
+/** 
+ * @cond INTERNAL
+ */
 OSCAP_HIDDEN_START;
-
-/*
- * */
+ /* @endcond */
 
 /**
  * @struct cpe_testexpr
@@ -54,11 +60,11 @@ OSCAP_HIDDEN_START;
  */
 struct cpe_testexpr {
         struct xml_metadata xml;
-	cpe_lang_oper_t oper;	// operator
+	cpe_lang_oper_t oper;	///< operator
 	union {
-		struct cpe_testexpr *expr;	// array of subexpressions for operators
-		struct cpe_name *cpe;	        // CPE for match operation
-	} meta;			                // operation metadata
+		struct cpe_testexpr *expr;	///< array of subexpressions for operators
+		struct cpe_name *cpe;	        ///< CPE for match operation
+	} meta;			                ///< operation metadata
 };
 
 /**
@@ -72,6 +78,12 @@ struct cpe_lang_model;
  * Single platform representation in CPE language
  */
 struct cpe_platform;
+
+/**
+ * @name Parse functions
+ * Functions for parsing structures from XML
+ * @{
+ * */
 
 /**
  * Function for parsing XML CPE language file
@@ -102,6 +114,14 @@ struct cpe_platform * cpe_platform_parse(xmlTextReaderPtr reader);
  * @relates cpe_testexpr
  */
 struct cpe_testexpr * cpe_testexpr_parse(xmlTextReaderPtr reader);
+
+/*@}*/
+
+/**
+ * @name Export functions
+ * Functions for export structures to XML
+ * @{
+ * */
 
 /**
  * Function for export CPE language model to XML
@@ -135,7 +155,18 @@ void cpe_platform_export(const struct cpe_platform * platform, xmlTextWriterPtr 
  */
 void cpe_testexpr_export(const struct cpe_testexpr expr, xmlTextWriterPtr writer);
 
+/*@}*/
+
+/** 
+ * @cond INTERNAL
+ */
 OSCAP_HIDDEN_END;
+ /* @endcond */
+
+/*@}*/
+
+/*@}*/
+/*@}*/
 
 #endif
 

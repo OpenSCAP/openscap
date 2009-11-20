@@ -1,9 +1,9 @@
-/*! 
- *  \addtogroup CVE
- *  \{
+/** 
+ * @addtogroup CVE
+ * @{
  *
- *  \file cve.h
- *  \brief Interface to Common Vulnerability and Exposure dictionary
+ * @file cve.h
+ * \brief Interface to Common Vulnerability and Exposure dictionary
  *   
  *   See details at:
  *     http://cve.mitre.org/
@@ -78,124 +78,10 @@ struct cwe_entry;
 struct cve_reference;
 
 /**
- * Export CVE model to XML file
- * @relates cve_model
- * @param cve CVE model
- * @param target OSCAP export target
- */
-void cve_model_export(struct cve_model * cve, const struct oscap_export_target * target);
-
-/**
- * Import CVE model from XML file
- * @param source OSCAP import source
- * @relates cve_model
- * @return New CVE model
- */
-struct cve_model * cve_model_import(const struct oscap_import_source * source);
-
-/** @struct cve_entry_iterator
- * Iterator over CVE entries.
- * @see oscap_iterator
- * @relates cve_entry
- */
-struct cve_entry_iterator;
-/** 
- * @relates cve_entry_iterator 
- */
-struct cve_entry* cve_entry_iterator_next(struct cve_entry_iterator* it);
-/** 
- * @relates cve_entry_iterator 
- */
-bool cve_entry_iterator_has_more(struct cve_entry_iterator* it);
-/** 
- * @relates cve_entry_iterator 
- */
-void cve_entry_iterator_free(struct cve_entry_iterator* it);
-
-/** @struct cve_summary_iterator
- * Iterator over CVE summaries.
- * @see oscap_iterator
- * @relates cve_summary
- */
-struct cve_summary_iterator;
-/** 
- * @relates cve_summary_iterator
- */
-struct cve_summary* cve_summary_iterator_next(struct cve_summary_iterator* it);
-/** 
- * @relates cve_summary_iterator
- */ 
-bool cve_summary_iterator_has_more(struct cve_summary_iterator* it);
-/**
- * @relates cve_summary_iterator 
- */
-void cve_summary_iterator_free(struct cve_summary_iterator* it);
-
-/** @struct cve_product_iterator
- * Iterator over CVE products.
- * @see oscap_iterator
- * @relates cve_product
- */
-struct cve_product_iterator;
-/** 
- * @relates cve_product_iterator 
- */
-struct cve_product* cve_product_iterator_next(struct cve_product_iterator* it);
-/** 
- * @relates cve_product_iterator 
- */
-bool cve_product_iterator_has_more(struct cve_product_iterator* it);
-/** 
- * @relates cve_product_iterator 
- */
-void cve_product_iterator_free(struct cve_product_iterator* it);
-
-/** @struct cve_configuration_iterator
- * Iterator over CVE vulnerable configurations.
- * @see oscap_iterator
- * @relates cve_configuration
- */
-struct cve_configuration_iterator;
-/** 
- * @relates cve_configuration_iterator 
- */
-struct cve_configuration* cve_configuration_iterator_next(struct cve_configuration_iterator* it);
-/** 
- * @relates cve_configuration_iterator 
- */
-bool cve_configuration_iterator_has_more(struct cve_configuration_iterator* it);
-/** 
- * @relates cve_configuration_iterator
- */
-void cve_configuration_iterator_free(struct cve_configuration_iterator* it);
-
-/** @struct cve_reference_iterator
- * Iterator over CVE references.
- * @see oscap_iterator
- * @relates cve_reference
- */
-struct cve_reference_iterator;
-/**
- * @relates cve_reference_iterator
- */
-struct cve_reference* cve_reference_iterator_next(struct cve_reference_iterator* it);
-/**
- * @relates cve_reference_iterator
- */
-bool cve_reference_iterator_has_more(struct cve_reference_iterator* it);
-/**
- * @relates cve_reference_iterator
- */
-void cve_reference_iterator_free(struct cve_reference_iterator* it);
-
-/*
- * Parses the specified XML file and creates a list of CVE data structures.
- * The returned list can be freed with cveDelAll().
- *
- * @param source oscap_import_source defining importing file
- * @return non-negative value indicates the number of CVEs in the list, negative value indicates an error
- */
-struct cve_model * cve_model_import(const struct oscap_import_source * source);
+ * @name Get functions
+ * Functions for getting attributes from CVE model structures
+ * @{
+ * */
 
 /**
  * Get en iterator to CVE entries
@@ -322,6 +208,14 @@ struct cve_configuration_iterator * cve_entry_get_configurations(const struct cv
  */
 const struct cpe_testexpr * cve_configuration_get_expr(const struct cve_configuration * conf);
 
+/*@}*/
+
+/**
+ * @name Add functions
+ * Functions to add member to list
+ * @{
+ * */
+
 /**
  * Add entry to CVE model
  * @param model CVE model
@@ -330,6 +224,14 @@ const struct cpe_testexpr * cve_configuration_get_expr(const struct cve_configur
  * @return true if added, false otherwise
  */
 bool cve_model_add_entry(struct cve_model *model, struct cve_entry *new_entry);
+
+/*@}*/
+
+/**
+ * @name Set functions
+ * Functions to set variables of structures
+ * @{
+ * */
 
 /**
  * Set id of CVE entry
@@ -438,52 +340,65 @@ bool cve_product_set_value(struct cve_product *product, const char *new_value);
  */
 bool cve_summary_set_summary(struct cve_summary *summary, const char *new_summary);
 
-/************* New functions *************/
+/*@}*/
+
 /**
- * Free CVE entry
+ * @name New functions
+ * Constructors of CVE model structures
+ * @{
+ * */
+
+/**
+ * New CVE entry
  * @relates cve_entry
  * @return New CVE entry
  */
 struct cve_entry * cve_entry_new(void);
 /**
- * Free CVE vulnerability configuration
+ * New CVE vulnerability configuration
  * @relates cve_configuration
  * @return New CVE vulnerability configuration
  */
 struct cve_configuration * cve_configuration_new(void);
 /**
- * Free CWE entry
+ * New CWE entry
  * @relates cwe_entry
  * @return New CWE entry
  */
 struct cwe_entry * cwe_entry_new(void);
 /**
- * Free CVE product
+ * New CVE product
  * @relates cve_product
  * @return New CVE product
  */
 struct cve_product * cve_product_new(void);
 /**
- * Free CVE summary
+ * New CVE summary
  * @relates cve_summary
  * @return New CVE summary
  */
 struct cve_summary * cve_summary_new(void);
 /**
- * Free CVE reference
+ * New CVE reference
  * @relates cve_reference
  * @return New CVE reference
  */
 struct cve_reference * cve_reference_new(void);
 /**
- * Free CVE model
+ * New CVE model
  * @relates cve_model
  * @return New CVE model
  */
 struct cve_model * cve_model_new(void);
 
+/*@}*/
 
-/************* Free functions *************/
+/**
+ * @name Free functions
+ * Destructors of CVE model structures
+ * @{
+ * */
+
 /**
  * Free CVE model
  * @param cve_model CVE model
@@ -533,8 +448,136 @@ void cwe_entry_free(struct cwe_entry * entry);
  */
 void cve_configuration_free(struct cve_configuration * conf);
 
-/*
- * bool cve__set_(struct cve_ *, const char *new_);
-*/
+/*@}*/
+
+/**
+ * @name Iterator functions
+ * @{
+ * */
+
+/** 
+ * @struct cve_entry_iterator
+ * Iterator over CVE entries.
+ * @see oscap_iterator
+ * @relates cve_entry
+ */
+struct cve_entry_iterator;
+/** 
+ * @relates cve_entry_iterator 
+ */
+struct cve_entry* cve_entry_iterator_next(struct cve_entry_iterator* it);
+/** 
+ * @relates cve_entry_iterator 
+ */
+bool cve_entry_iterator_has_more(struct cve_entry_iterator* it);
+/** 
+ * @relates cve_entry_iterator 
+ */
+void cve_entry_iterator_free(struct cve_entry_iterator* it);
+
+/** @struct cve_summary_iterator
+ * Iterator over CVE summaries.
+ * @see oscap_iterator
+ * @relates cve_summary
+ */
+struct cve_summary_iterator;
+/** 
+ * @relates cve_summary_iterator
+ */
+struct cve_summary* cve_summary_iterator_next(struct cve_summary_iterator* it);
+/** 
+ * @relates cve_summary_iterator
+ */ 
+bool cve_summary_iterator_has_more(struct cve_summary_iterator* it);
+/**
+ * @relates cve_summary_iterator 
+ */
+void cve_summary_iterator_free(struct cve_summary_iterator* it);
+
+/** @struct cve_product_iterator
+ * Iterator over CVE products.
+ * @see oscap_iterator
+ * @relates cve_product
+ */
+struct cve_product_iterator;
+/** 
+ * @relates cve_product_iterator 
+ */
+struct cve_product* cve_product_iterator_next(struct cve_product_iterator* it);
+/** 
+ * @relates cve_product_iterator 
+ */
+bool cve_product_iterator_has_more(struct cve_product_iterator* it);
+/** 
+ * @relates cve_product_iterator 
+ */
+void cve_product_iterator_free(struct cve_product_iterator* it);
+
+/** @struct cve_configuration_iterator
+ * Iterator over CVE vulnerable configurations.
+ * @see oscap_iterator
+ * @relates cve_configuration
+ */
+struct cve_configuration_iterator;
+/** 
+ * @relates cve_configuration_iterator 
+ */
+struct cve_configuration* cve_configuration_iterator_next(struct cve_configuration_iterator* it);
+/** 
+ * @relates cve_configuration_iterator 
+ */
+bool cve_configuration_iterator_has_more(struct cve_configuration_iterator* it);
+/** 
+ * @relates cve_configuration_iterator
+ */
+void cve_configuration_iterator_free(struct cve_configuration_iterator* it);
+
+/** @struct cve_reference_iterator
+ * Iterator over CVE references.
+ * @see oscap_iterator
+ * @relates cve_reference
+ */
+struct cve_reference_iterator;
+/**
+ * @relates cve_reference_iterator
+ */
+struct cve_reference* cve_reference_iterator_next(struct cve_reference_iterator* it);
+/**
+ * @relates cve_reference_iterator
+ */
+bool cve_reference_iterator_has_more(struct cve_reference_iterator* it);
+/**
+ * @relates cve_reference_iterator
+ */
+void cve_reference_iterator_free(struct cve_reference_iterator* it);
+
+/*@}*/
+
+/**
+ * @name Other functions
+ * @{
+ * */
+
+/**
+ * Export CVE model to XML file
+ * @relates cve_model
+ * @param cve CVE model
+ * @param target OSCAP export target
+ */
+void cve_model_export(struct cve_model * cve, const struct oscap_export_target * target);
+
+/**
+ * Parses the specified XML file and creates a list of CVE data structures.
+ * The returned list can be freed with cveDelAll().
+ * @relates cve_model
+ * @param source oscap_import_source defining importing file
+ * @return non-negative value indicates the number of CVEs in the list, negative value indicates an error
+ */
+struct cve_model * cve_model_import(const struct oscap_import_source * source);
+
+/*@}*/
+
+/*@}*/
+
 #endif				/* _CVE_H_ */
 

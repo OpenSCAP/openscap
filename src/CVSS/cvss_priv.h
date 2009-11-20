@@ -1,8 +1,17 @@
-/*! \file cvss_priv.h
- *  \brief Interface to Common Vulnerability Scoring System Version 2
+/**
+ * @addtogroup CVSS
+ * @{
+ *
+ * @file cvss_priv.h
+ * \brief Interface to Common Vulnerability Scoring System Version 2
  * 
  *  See details at http://nvd.nist.gov/cvss.cfm
  *  
+ */
+
+/**
+ * @addtogroup CVSSPrivate Private members
+ * @{
  */
 
 /*
@@ -37,13 +46,23 @@
 #include "../common/util.h"
 #include "../common/elements.h"
 
+/** 
+ * @cond INTERNAL
+ */
 OSCAP_HIDDEN_START;
+ /* @endcond */
 
 /**
  * @struct cvss_entry
  * Struct holding CVSS entry data
  */
 struct cvss_entry;
+
+/**
+ * @name Parse functions
+ * Functions for parse structures from XML
+ * @{
+ * */
 
 /**
  * Parse CVSS entry
@@ -53,6 +72,14 @@ struct cvss_entry;
  */
 struct cvss_entry * cvss_entry_parse(xmlTextReaderPtr reader);
 
+/*@}*/
+
+/**
+ * @name Export functions
+ * Functions for export structures to XML
+ * @{
+ * */
+
 /**
  * Export CVSS entry
  * @param entry CVSS entry
@@ -61,6 +88,12 @@ struct cvss_entry * cvss_entry_parse(xmlTextReaderPtr reader);
  */
 void cvss_entry_export(const struct cvss_entry * entry, xmlTextWriterPtr writer);
 
+/** 
+ * @cond INTERNAL
+ */
 OSCAP_HIDDEN_END;
+ /* @endcond */
+
+/*@}*/
 
 #endif

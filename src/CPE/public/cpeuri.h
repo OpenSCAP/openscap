@@ -58,6 +58,12 @@ typedef enum {
 struct cpe_name;
 
 /**
+ * @name New functions
+ * Constructors of CPE URI structures
+ * @{
+ * */
+
+/**
  * Create a new CPE structure from string @a cpe.
  *
  * @relates cpe_name
@@ -68,12 +74,28 @@ struct cpe_name;
  */
 struct cpe_name* cpe_name_new(const char *cpe);
 
+/*@}*/
+
+/**
+ * @name Free functions
+ * Destructors of CPE URI structures
+ * @{
+ * */
+
 /**
  * Destructor. Frees any used resources and safely destroys @a cpe.
  * @relates cpe_name
  * @param cpe CPE to be deleted
  */
 void cpe_name_free(struct cpe_name * cpe);
+
+/*@}*/
+
+/**
+ * @name Get functions
+ * Functions for getting attributes from CPE model structures
+ * @{
+ * */
 
 /**
  * Get CPE name part type field.
@@ -117,6 +139,14 @@ const char* cpe_name_get_edition(const struct cpe_name * cpe);
  */
 const char* cpe_name_get_language(const struct cpe_name * cpe);
 
+/*@}*/
+
+/**
+ * @name Set functions
+ * Functions to set variables of structures
+ * @{
+ * */
+
 /**
  * Set CPE name part type field.
  * @relates cpe_name
@@ -158,6 +188,13 @@ bool cpe_name_set_edition(struct cpe_name * cpe, const char *newval);
  * @relates cpe_name
  */
 bool cpe_name_set_language(struct cpe_name * cpe, const char *newval);
+
+/*@}*/
+
+/**
+ * @name Other functions
+ * @{
+ * */
 
 /**
  * Check if candidate CPE @a cpe matches CPE @a against
@@ -215,6 +252,9 @@ bool cpe_name_check(const char *str);
  */
 int cpe_name_match_strs(const char *candidate, size_t n, char **targets);
 
+/*@}*/
 
+/*@}*/
+/*@}*/
 
 #endif				/* _CPEURI_H_ */

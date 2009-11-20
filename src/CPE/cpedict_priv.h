@@ -11,6 +11,11 @@
  * See more details at http://nvd.nist.gov/cpe.cfm
  */
 
+/**
+ * @addtogroup CPEDictPrivate Private members
+ * @{
+ */
+
 /*
  * Copyright 2008 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
@@ -45,7 +50,11 @@
 #include "../common/util.h"
 #include "../common/elements.h"
 
+/** 
+ * @cond INTERNAL
+ */
 OSCAP_HIDDEN_START;
+ /* @endcond */
 
 /**
  * @struct cpe_check
@@ -115,6 +124,12 @@ struct cpe_edition;
 struct cpe_language;
 
 /**
+ * @name Parse functions
+ * Functions for parsing structures from XML
+ * @{
+ * */
+
+/**
  * Function to parse XML to CPE dictionary model
  * @relates cpe_dict_model
  * @param source Structure of name and encoding of importing XML file
@@ -155,6 +170,14 @@ struct cpe_vendor * cpe_vendor_parse(xmlTextReaderPtr reader);
  */
 struct cpe_dict_model * cpe_dict_model_parse(xmlTextReaderPtr reader);
 
+/*@}*/
+
+/**
+ * @name Export functions
+ * Functions for export structures to XML
+ * @{
+ * */
+
 /**
  * Export function for CPE dictionary model
  * @param dict CPE dictionary structure
@@ -194,8 +217,17 @@ void cpe_item_export(const struct cpe_item * item, xmlTextWriterPtr writer);
  * @param writer xmlTextWriterPtr representing XML model
  */
 void cpe_vendor_export(const struct cpe_vendor * vendor, xmlTextWriterPtr writer);
+/*@}*/
 
+/** 
+ * @cond INTERNAL
+ */
 OSCAP_HIDDEN_END;
+ /* @endcond */
+
+/** @} */
+/** @} */
+/** @} */
 
 #endif
 
