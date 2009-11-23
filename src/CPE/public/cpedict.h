@@ -532,6 +532,42 @@ bool cpe_edition_add_language(struct cpe_edition *edition, struct cpe_language *
 
 /*@}*/
 
+
+/**
+ * @name Remove functions
+ * Functions removing member elements from CPE data structures.
+ * @{
+ */
+
+/// @relates cpe_item
+void cpe_item_iterator_remove(struct cpe_item_iterator *it);
+
+/// @relates cpe_reference
+void cpe_reference_iterator_remove(struct cpe_reference_iterator *it);
+
+/// @relates cpe_check
+void cpe_check_iterator_remove(struct cpe_check_iterator *it);
+
+/// @relates cpe_vendor
+void cpe_vendor_iterator_remove(struct cpe_vendor_iterator *it);
+
+/// @relates cpe_product
+void cpe_product_iterator_remove(struct cpe_product_iterator *it);
+
+/// @relates cpe_version
+void cpe_version_iterator_remove(struct cpe_version_iterator *it);
+
+/// @relates cpe_update
+void cpe_update_iterator_remove(struct cpe_update_iterator *it);
+
+/// @relates cpe_edition
+void cpe_edition_iterator_remove(struct cpe_edition_iterator *it);
+
+/// @relates cpe_language
+void cpe_language_iterator_remove(struct cpe_language_iterator *it);
+
+/*@}*/
+
 /**
  * @name Iterator functions
  * @{
@@ -799,6 +835,7 @@ bool cpe_name_match_dict_str(const char *cpe, struct cpe_dict_model * dict);
 
 
 /** @} */
+
 /** @} */
 
 #endif				/* _CPEDICT_H_ */

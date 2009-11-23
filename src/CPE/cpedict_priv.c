@@ -76,6 +76,8 @@ OSCAP_IGETINS_GEN(cpe_reference, cpe_item, references, reference)
 OSCAP_IGETINS_GEN(cpe_check, cpe_item, checks, check)
 OSCAP_IGETINS(oscap_title, cpe_item, titles, title)
 OSCAP_IGETINS(oscap_title, cpe_item, notes, note)
+OSCAP_ITERATOR_REMOVE_F(cpe_reference)
+OSCAP_ITERATOR_REMOVE_F(cpe_check)
 
 /* <cpe-item><item-metadata>
  * */
@@ -139,7 +141,9 @@ struct cpe_dict_model {                        // the main node
 };
 OSCAP_GETTER(struct cpe_generator*, cpe_dict_model, generator)
 OSCAP_IGETTER_GEN(cpe_item, cpe_dict_model, items)
+OSCAP_ITERATOR_REMOVE_F(cpe_item)
 OSCAP_IGETINS_GEN(cpe_vendor, cpe_dict_model, vendors, vendor)
+OSCAP_ITERATOR_REMOVE_F(cpe_vendor)
 
 /* ****************************************
  * Component-tree structures
@@ -156,6 +160,7 @@ struct cpe_vendor {
 OSCAP_ACCESSOR_STRING(cpe_vendor, value)
 OSCAP_IGETINS(oscap_title, cpe_vendor, titles, title)
 OSCAP_IGETINS_GEN(cpe_product, cpe_vendor, products, product)
+OSCAP_ITERATOR_REMOVE_F(cpe_product)
 
 /* vendor -> product 
  * */
@@ -168,6 +173,7 @@ struct cpe_product {
 OSCAP_ACCESSOR_STRING(cpe_product, value)
 OSCAP_ACCESSOR_SIMPLE(cpe_part_t, cpe_product, part)
 OSCAP_IGETINS_GEN(cpe_version, cpe_product, versions, version)
+OSCAP_ITERATOR_REMOVE_F(cpe_version)
 
 /* vendor -> product -> version 
  * */
@@ -178,6 +184,7 @@ struct cpe_version {
 };
 OSCAP_ACCESSOR_STRING(cpe_version, value)
 OSCAP_IGETINS_GEN(cpe_update, cpe_version, updates, update)
+OSCAP_ITERATOR_REMOVE_F(cpe_update)
 
 /* vendor -> product -> version -> update 
  * */
@@ -188,6 +195,7 @@ struct cpe_update {
 };
 OSCAP_ACCESSOR_STRING(cpe_update, value)
 OSCAP_IGETINS_GEN(cpe_edition, cpe_update, editions, edition)
+OSCAP_ITERATOR_REMOVE_F(cpe_edition)
 
 /* vendor -> product -> version -> update -> edition 
  * */
@@ -198,6 +206,7 @@ struct cpe_edition {
 };
 OSCAP_ACCESSOR_STRING(cpe_edition, value)
 OSCAP_IGETINS_GEN(cpe_language, cpe_edition, languages, language)
+OSCAP_ITERATOR_REMOVE_F(cpe_language)
 
 /* vendor -> product -> version -> update -> edition -> language
  * */

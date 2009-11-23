@@ -67,6 +67,21 @@ function test_cpedict_tc04 {
     return $ret_val
 }
 
+function test_cpedict_tc05 {
+    local ret_val=0;
+
+    ./test_cpedict --remove ${srcdir}/CPE/dict.xml "UTF-8" 'cpe:/a:addsoft' | grep 'addsoft'
+
+	if [ "$?" == "1" ]; then
+		# grep did not find addsoft
+		ret_val=0
+	else
+		ret_val=1
+	fi
+
+    return $ret_val
+}
+
 # Cleanup.
 function test_cpedict_cleanup { 
     local ret_val=0;
@@ -91,6 +106,7 @@ test_cpedict_tc01     ; ret_val=$? ; report_result "test_cpedict_tc01"    $ret_v
 test_cpedict_tc02     ; ret_val=$? ; report_result "test_cpedict_tc02"    $ret_val  ; result=$[$result+$ret_val]   
 test_cpedict_tc03     ; ret_val=$? ; report_result "test_cpedict_tc03"    $ret_val  ; result=$[$result+$ret_val]   
 #test_cpedict_tc04     ; ret_val=$? ; report_result "test_cpedict_tc04"    $ret_val  ; result=$[$result+$ret_val]   
+test_cpedict_tc05     ; ret_val=$? ; report_result "test_cpedict_tc04"    $ret_val  ; result=$[$result+$ret_val]   
 test_cpedict_cleanup  ; ret_val=$? ; report_result "test_cpedict_cleanup" $ret_val  ; result=$[$result+$ret_val]
 
 echo "------------------------------------------"

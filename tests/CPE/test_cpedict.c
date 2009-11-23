@@ -20,9 +20,10 @@ void print_usage(const char *program_name, FILE *out)
 	  "  %s --help\n"
 	  "  %s --list    CPE_DICT_XML ENCODING\n"
 	  "  %s --match   CPE_DICT_XML ENCODING CPE_URI\n"
+	  "  %s --remove  CPE_DICT_XML ENCODING CPE_URI\n"
 	  "  %s --export  CPE_DICT_XML ENCODING CPE_DICT_XML ENCODING\n"
 	  "  %s --sanity-check\n",
-	  program_name, program_name, program_name, program_name, program_name);
+	  program_name, program_name, program_name, program_name, program_name, program_name);
 }
 
 int main (int argc, char **argv) 
@@ -155,6 +156,32 @@ int main (int argc, char **argv)
       ret_val = 2;
     } else
       ret_val = !ret_val_1;
+
+    cpe_name_free(name);
+    oscap_import_source_free(import_source);
+    cpe_dict_model_free(dict_model);
+  }
+
+  else if (argc == 5 && !strcmp(argv[1], "--remove")) {
+    
+    if ((import_source = oscap_import_source_new(argv[2], argv[3])) == NULL)
+      return 1;
+    
+    if ((dict_model = cpe_dict_model_import(import_source)) == NULL)
+      return 2;
+    
+    name = cpe_name_new(argv[4]);
+    
+	OSCAP_FOREACH (cpe_item, item, cpe_dict_model_get_items(dict_model),
+		// filter out items with CPEs given by third argument
+		if (cpe_name_match_one(name, cpe_item_get_name(item)))
+			cpe_item_iterator_remove(item_iter);
+	)
+	
+	OSCAP_FOREACH (cpe_item, item, cpe_dict_model_get_items(dict_model),
+		// print remaining CPEs
+		cpe_name_write(cpe_item_get_name(item), stdout); putchar('\n');
+	)
 
     cpe_name_free(name);
     oscap_import_source_free(import_source);

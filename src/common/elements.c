@@ -35,6 +35,7 @@ OSCAP_GETTER(const char*, xml_metadata, namespace)
 OSCAP_GETTER(const char*, xml_metadata, lang)
 OSCAP_ACCESSOR_STRING(oscap_title, content)
 OSCAP_ITERATOR_GEN(oscap_title)
+OSCAP_ITERATOR_REMOVE_F(oscap_title)
 
 struct oscap_title * oscap_title_parse(xmlTextReaderPtr reader, const char * name) {
 

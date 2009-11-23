@@ -46,13 +46,13 @@
  */
 #define OSCAP_FOREACH_GENERIC(itype, vtype, val, init_val, code) \
     {                                                            \
-        struct itype##_iterator *val##_it_ = (init_val);         \
+        struct itype##_iterator *val##_iter = (init_val);        \
         vtype val;                                               \
-        while (itype##_iterator_has_more(val##_it_)) {           \
-            val = itype##_iterator_next(val##_it_);              \
+        while (itype##_iterator_has_more(val##_iter)) {          \
+            val = itype##_iterator_next(val##_iter);             \
             code                                                 \
         }                                                        \
-        itype##_iterator_free(val##_it_);                        \
+        itype##_iterator_free(val##_iter);                       \
     }
 
 /**
@@ -88,6 +88,9 @@ const char* oscap_string_iterator_next(struct oscap_string_iterator* it);
 bool oscap_string_iterator_has_more(struct oscap_string_iterator* it);
 /// @relates oscap_string_iterator
 void oscap_string_iterator_free(struct oscap_string_iterator* it);
+/// @relates oscap_string_iterator
+void oscap_string_iterator_remove(struct oscap_string_iterator* it);
+
 
 /**
  * @struct oscap_title
@@ -125,6 +128,8 @@ struct oscap_title* oscap_title_iterator_next(struct oscap_title_iterator* it);
 void oscap_title_iterator_free(struct oscap_title_iterator* it);
 /// @relates oscap_title_iterator
 bool oscap_title_iterator_has_more(struct oscap_title_iterator* it);
+/// @relates oscap_title
+void oscap_title_iterator_remove(struct oscap_title_iterator* it);
 
 /**
  * Release library internal caches.

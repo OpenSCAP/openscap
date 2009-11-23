@@ -95,14 +95,22 @@ static bool oscap_iterator_no_filter(void* foo, void* bar) { return true; }
 
 static inline void oscap_iterator_find_nearest(struct oscap_iterator* it)
 {
+	assert(it != NULL);
+	assert(it->list != NULL);
+
+	do {
+		it->cur = (it->cur ? it->cur->next : it->list->first);
+	} while (!it->filter(it->cur->data, it->user_data) && oscap_iterator_has_more(it));
+	/*
     while (it->cur && !it->filter(it->cur->data, it->user_data))
         it->cur = it->cur->next;
+	*/
 }
 
 void* oscap_iterator_new(struct oscap_list* list)
 {
     struct oscap_iterator* it = calloc(1, sizeof(struct oscap_iterator));
-    it->cur    = list->first;
+    it->cur    = NULL;
     it->filter = oscap_iterator_no_filter;
 	it->list   = list;
     return it;
@@ -123,6 +131,47 @@ size_t oscap_iterator_get_itemcount(const struct oscap_iterator* it)
 	return it->list->itemcount;
 }
 
+void *oscap_iterator_detach(struct oscap_iterator* it)
+{
+	assert(it != NULL);
+
+	if (!it->cur) return NULL;
+
+	struct oscap_list_item *item = it->cur;
+	void *value = item->data;
+
+	assert(it->list->first != NULL && it->list->last != NULL);
+
+	if (it->list->first == it->list->last) {
+		assert(it->list->first == it->list->last);
+		assert(it->list->first == item);
+		it->list->first = it->list->last = NULL;
+		it->cur = NULL;
+	}
+	else if (item == it->list->first) {
+		assert(it->list->first != it->list->last);
+		assert(item->next != NULL);
+		it->list->first = item->next;
+		it->cur = NULL;
+	}
+	else {
+		struct oscap_list_item *cur = it->list->first;
+		while (cur->next != item) {
+			assert(cur->next != NULL);
+			cur = cur->next;
+		}
+		assert(cur->next == item);
+		cur->next = item->next;
+		if (item == it->list->last)
+			it->list->last = cur;
+		it->cur = cur;
+	}
+
+	free(item);
+	--it->list->itemcount;
+	return value;
+}
+
 void oscap_iterator_free(struct oscap_iterator* it)
 {
     free(it);
@@ -130,21 +179,27 @@ void oscap_iterator_free(struct oscap_iterator* it)
 
 void* oscap_iterator_next(struct oscap_iterator* it)
 {
-	if (!it->cur) return NULL;
-    void* ret = it->cur->data;
-    it->cur = it->cur->next;
+	assert(it != NULL);
+	//if (!it->cur) return NULL;
+    //void* ret = it->cur->data;
+    //it->cur = it->cur->next;
     oscap_iterator_find_nearest(it);
-    return ret;
+    return it->cur->data;
 }
 
 bool oscap_iterator_has_more(struct oscap_iterator* it)
 {
+	assert(it != NULL);
+	return (!it->cur && it->list->first) || (it->cur && it->cur->next);
+	/*
     if (it->cur) return true;
     // oscap_iterator_free(it);
     return false;
+	*/
 }
 
 OSCAP_ITERATOR_GEN_T(const char*, oscap_string)
+OSCAP_ITERATOR_REMOVE_T(const char*, oscap_string, free)
 
 
 #define OSCAP_DEFAULT_HSIZE 256
