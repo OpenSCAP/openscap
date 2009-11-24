@@ -26,7 +26,7 @@
 
 struct xccdf_backref {
 	struct xccdf_item** ptr; // pointer to a pointer that is supposed to be pointing to an item with id 'id'
-    xccdf_type_t type;    // expected item type
+        xccdf_type_t type;    // expected item type
 	char* id;                // id
 };
 
@@ -111,48 +111,49 @@ bool xccdf_benchmark_get_parse(struct xccdf_item* benchmark, xmlTextReaderPtr re
 
 	while (xccdf_to_start_element(reader, depth)) {
 		switch (xccdf_element_get(reader)) {
-			case XCCDFE_NOTICE: {
-                const char* id = xccdf_attribute_get(reader, XCCDFA_ID);
-				char* data = xccdf_get_xml(reader);
-                if (data && id)
-                    oscap_list_add(benchmark->sub.bench.notices, xccdf_notice_new(id, data));
-				break;
+		    case XCCDFE_NOTICE: {
+                        const char* id = xccdf_attribute_get(reader, XCCDFA_ID);
+			char* data = xccdf_get_xml(reader);
+                        if (data && id)
+                            oscap_list_add(benchmark->sub.bench.notices, xccdf_notice_new(id, data));
+		        break;
 			}
-            case XCCDFE_FRONT_MATTER:
-                if (!benchmark->sub.bench.front_matter)
-                    benchmark->sub.bench.front_matter = xccdf_get_xml(reader);
-                break;
-            case XCCDFE_REAR_MATTER:
-                if (!benchmark->sub.bench.rear_matter)
-                    benchmark->sub.bench.rear_matter = xccdf_get_xml(reader);
-                break;
-            case XCCDFE_METADATA:
-                if (!benchmark->sub.bench.metadata)
-                    benchmark->sub.bench.metadata = xccdf_get_xml(reader);
-                break;
-            case XCCDFE_PLATFORM:
-                oscap_list_add(benchmark->item.platforms, xccdf_attribute_copy(reader, XCCDFA_IDREF));
-                break;
-            case XCCDFE_MODEL:
-                oscap_list_add(benchmark->sub.bench.models, xccdf_model_new_xml(reader));
-                break;
-            case XCCDFE_PLAIN_TEXT: {
-                const char* id = xccdf_attribute_get(reader, XCCDFA_ID);
-                char* data = xccdf_element_string_copy(reader);
-                if (!id || !data || !oscap_htable_add(benchmark->sub.bench.plain_texts, id, data)) oscap_free(data);
-                break;
-            }
-            case XCCDFE_PROFILE:
-                oscap_list_add(benchmark->sub.bench.profiles, xccdf_profile_new_parse(reader, benchmark));
-                break;
-			case XCCDFE_GROUP: case XCCDFE_RULE:
-				xccdf_content_parse(reader, benchmark);
-				break;
-			case XCCDFE_VALUE:
-				oscap_list_add(benchmark->sub.bench.values, xccdf_value_new_parse(reader, benchmark));
-				break;
-			default: xccdf_item_get_process_element(benchmark, reader);
-		}
+                    case XCCDFE_FRONT_MATTER:
+                        if (!benchmark->sub.bench.front_matter)
+                            benchmark->sub.bench.front_matter = xccdf_get_xml(reader);
+                        break;
+                    case XCCDFE_REAR_MATTER:
+                        if (!benchmark->sub.bench.rear_matter)
+                            benchmark->sub.bench.rear_matter = xccdf_get_xml(reader);
+                        break;
+                    case XCCDFE_METADATA:
+                        if (!benchmark->sub.bench.metadata)
+                            benchmark->sub.bench.metadata = xccdf_get_xml(reader);
+                        break;
+                    case XCCDFE_PLATFORM:
+                        oscap_list_add(benchmark->item.platforms, xccdf_attribute_copy(reader, XCCDFA_IDREF));
+                        break;
+                    case XCCDFE_MODEL:
+                        oscap_list_add(benchmark->sub.bench.models, xccdf_model_new_xml(reader));
+                        break;
+                    case XCCDFE_PLAIN_TEXT: {
+                        const char* id = xccdf_attribute_get(reader, XCCDFA_ID);
+                        char* data = xccdf_element_string_copy(reader);
+                        if (!id || !data || !oscap_htable_add(benchmark->sub.bench.plain_texts, id, data)) oscap_free(data);
+                        break;
+                        }
+                    case XCCDFE_PROFILE:
+                        oscap_list_add(benchmark->sub.bench.profiles, xccdf_profile_new_parse(reader, benchmark));
+                        break;
+                    case XCCDFE_GROUP: 
+                    case XCCDFE_RULE:
+                        xccdf_content_parse(reader, benchmark);
+                        break;
+                    case XCCDFE_VALUE:
+                        oscap_list_add(benchmark->sub.bench.values, xccdf_value_new_parse(reader, benchmark));
+                        break;
+                    default: xccdf_item_get_process_element(benchmark, reader);
+	        }
 		xmlTextReaderRead(reader);
 	}
 

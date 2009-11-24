@@ -182,7 +182,7 @@ struct xccdf_item {
 	xccdf_type_t type;
 	struct xccdf_item_base item;
 	union {
-        struct xccdf_profile_item   profile;
+                struct xccdf_profile_item   profile;
 		struct xccdf_benchmark_item bench;
 		struct xccdf_rule_item      rule;
 		struct xccdf_group_item     group;

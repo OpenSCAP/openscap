@@ -41,7 +41,7 @@ struct xccdf_item* xccdf_item_new(xccdf_type_t type, struct xccdf_item* bench, s
 
 	item = oscap_calloc(1, size);
 	item->type = type;
-    item->item.statuses = oscap_list_new();
+        item->item.statuses = oscap_list_new();
 	item->item.platforms = oscap_list_new();
 	item->item.weight = 1.0;
 	item->item.flags.selected = true;
@@ -55,16 +55,16 @@ struct xccdf_item* xccdf_item_new(xccdf_type_t type, struct xccdf_item* bench, s
 void xccdf_item_release(struct xccdf_item* item)
 {
 	if (item) {
-        oscap_list_free(item->item.statuses, (oscap_destruct_func)xccdf_status_free);
+                oscap_list_free(item->item.statuses, (oscap_destruct_func)xccdf_status_free);
 		oscap_list_free(item->item.platforms, oscap_free);
 		oscap_free(item->item.id);
 		oscap_free(item->item.cluster_id);
 		oscap_free(item->item.title);
 		oscap_free(item->item.description);
-        oscap_free(item->item.version_update);
-        oscap_free(item->item.version);
-        oscap_free(item->item.rationale);
-        oscap_free(item->item.question);
+                oscap_free(item->item.version_update);
+                oscap_free(item->item.version);
+                oscap_free(item->item.rationale);
+                oscap_free(item->item.question);
 		oscap_free(item);
 	}
 }
@@ -112,6 +112,7 @@ void xccdf_item_get_print(struct xccdf_item* item, int depth)
 #define XCCDF_ITEM_PROCESS_FLAG(reader,flag,attr) \
 	if (xccdf_attribute_has((reader), (attr))) \
 		item->item.flags.flag = xccdf_attribute_get_bool((reader), (attr));
+//TODO: shouldn't be here item->item.flags.##flag ?
 
 bool xccdf_item_get_process_attributes(struct xccdf_item* item, xmlTextReaderPtr reader)
 {

@@ -58,7 +58,7 @@ static const struct xccdf_element_spec XCCDF_ELEMENT_MAP[] = {
 	{ XCCDFE_CHOICE,            XCCDF_XMLNS, "choice"                 },
 	{ XCCDFE_COMPLEX_CHECK,     XCCDF_XMLNS, "complex-check"          },
 	{ XCCDFE_CONFLICTS,         XCCDF_XMLNS, "conflicts"              },
-	{ XCCDFE_CPE_LIST,			CPE1D_XMLNS, "cpe-list"               },
+	{ XCCDFE_CPE_LIST,	    CPE1D_XMLNS, "cpe-list"               },
 	{ XCCDFE_DEFAULT,           XCCDF_XMLNS, "default"                },
 	{ XCCDFE_DESCRIPTION,       XCCDF_XMLNS, "description"            },
 	{ XCCDFE_FACT,              XCCDF_XMLNS, "fact"                   },
@@ -250,6 +250,7 @@ bool xccdf_to_start_element(xmlTextReaderPtr reader, int depth)
 	//int olddepth = xmlTextReaderDepth(reader);
 	while (xmlTextReaderDepth(reader) >= depth) {
 		switch (xmlTextReaderNodeType(reader)) {
+                        //TODO: change int values to macros XML_ELEMENT_TYPE_*
 			case 1:
 				if (xmlTextReaderDepth(reader) == depth)
 					return true;
