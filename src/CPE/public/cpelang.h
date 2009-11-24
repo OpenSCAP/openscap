@@ -78,6 +78,7 @@ struct cpe_platform;
 
 /**
  * @name Iterator functions
+ * Functions to iterate throught lists.
  * @{
  * */
 
@@ -97,7 +98,8 @@ void cpe_platform_iterator_free(struct cpe_platform_iterator* it);
 
 /**
  * @name Get functions
- * Functions for getting attributes from CPE model structures
+ * Functions for getting attributes from CVE model structures. Return value is pointer to structure's member. Do not 
+ * free unless you null the pointer in the structure. Use remove function otherwise.
  * @{
  * */
 
@@ -177,7 +179,7 @@ const struct cpe_testexpr * cpe_platform_get_expr(const struct cpe_platform *ite
 
 /**
  * @name Add functions
- * Functions to add member to list
+ * Functions to add member to list. Return value is true if added succesfuly or false in case of error. 
  * @{
  * */
 
@@ -201,7 +203,8 @@ bool cpe_platform_add_title(struct cpe_platform * platform, struct oscap_title *
 
 /**
  * @name New functions
- * Constructors of CPE model structures
+ * Constructors of CVE model structures. Free function returns new empty allocated structure.
+ * If returns non NULL it need to be freed by the caller.
  * @{
  * */
 
@@ -227,7 +230,8 @@ struct cpe_platform * cpe_platform_new(void);
 
 /**
  * @name Set functions
- * Functions to set variables of structures
+ * Set functions assign values to members of structures except lists. For lists use add functions. 
+ * Parameters of set functions are duplicated in memory and need to be freed by caller.
  * @{
  * */
 
@@ -256,7 +260,8 @@ bool cpe_platform_set_remark(struct cpe_platform * platform, const char *new_rem
 
 /**
  * @name Free functions
- * Destructors of CPE model structures
+ * Destructors of CVE model structures. Functions free structures with all members recursively. 
+ * For simple deletion of entity use remove functions.
  * @{
  * */
 

@@ -60,7 +60,8 @@ struct cvss_entry;
 
 /**
  * @name Parse functions
- * Functions for parse structures from XML
+ * Functions for parsing structures from XML. Return value is new structure filled by content of XML file
+ * represented by XML reader or import source structure. Structure needs to be freed by the caller.
  * @{
  * */
 
@@ -76,7 +77,7 @@ struct cvss_entry * cvss_entry_parse(xmlTextReaderPtr reader);
 
 /**
  * @name Export functions
- * Functions for export structures to XML
+ * Functions for export structures to XML by XML writer. Exported structures need to be freed by the caller.
  * @{
  * */
 

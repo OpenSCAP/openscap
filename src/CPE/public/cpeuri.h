@@ -59,7 +59,8 @@ struct cpe_name;
 
 /**
  * @name New functions
- * Constructors of CPE URI structures
+ * Constructors of CVE model structures. Free function returns new empty allocated structure.
+ * If returns non NULL it need to be freed by the caller.
  * @{
  * */
 
@@ -78,7 +79,8 @@ struct cpe_name* cpe_name_new(const char *cpe);
 
 /**
  * @name Free functions
- * Destructors of CPE URI structures
+ * Destructors of CVE model structures. Functions free structures with all members recursively. 
+ * For simple deletion of entity use remove functions.
  * @{
  * */
 
@@ -93,7 +95,8 @@ void cpe_name_free(struct cpe_name * cpe);
 
 /**
  * @name Get functions
- * Functions for getting attributes from CPE model structures
+ * Functions for getting attributes from CVE model structures. Return value is pointer to structure's member. Do not 
+ * free unless you null the pointer in the structure. Use remove function otherwise.
  * @{
  * */
 
@@ -143,7 +146,8 @@ const char* cpe_name_get_language(const struct cpe_name * cpe);
 
 /**
  * @name Set functions
- * Functions to set variables of structures
+ * Set functions assign values to members of structures except lists. For lists use add functions. 
+ * Parameters of set functions are duplicated in memory and need to be freed by caller.
  * @{
  * */
 

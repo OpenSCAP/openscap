@@ -112,7 +112,8 @@ struct cpe_language;
 
 /**
  * @name Get functions
- * Functions for getting attributes from CPE model structures
+ * Functions for getting attributes from CVE model structures. Return value is pointer to structure's member. Do not 
+ * free unless you null the pointer in the structure. Use remove function otherwise.
  * @{
  * */
 
@@ -354,7 +355,8 @@ const char * cpe_language_get_value(const struct cpe_language *item);
 
 /**
  * @name Free functions
- * Destructors of CPE model structures
+ * Destructors of CVE model structures. Functions free structures with all members recursively. 
+ * For simple deletion of entity use remove functions.
  * @{
  */
 
@@ -387,7 +389,8 @@ void cpe_item_free(struct cpe_item * item);
 
 /**
  * @name New functions
- * Constructors of CPE model structures
+ * Constructors of CVE model structures. Free function returns new empty allocated structure.
+ * If returns non NULL it need to be freed by the caller.
  * @{
  * */
 
@@ -418,7 +421,8 @@ struct cpe_language  *cpe_language_new(void);
 
 /**
  * @name Set functions
- * Functions to set variables of structures
+ * Set functions assign values to members of structures except lists. For lists use add functions. 
+ * Parameters of set functions are duplicated in memory and need to be freed by caller.
  * @{
  * */
 
@@ -489,7 +493,7 @@ bool cpe_language_set_value(struct cpe_language *language, const char *new_value
 
 /**
  * @name Add functions
- * Functions to add member to list
+ * Functions to add member to list. Return value is true if added succesfuly or false in case of error. 
  * @{
  * */
 
@@ -570,6 +574,7 @@ void cpe_language_iterator_remove(struct cpe_language_iterator *it);
 
 /**
  * @name Iterator functions
+ * Functions to iterate throught lists.
  * @{
  * */
 

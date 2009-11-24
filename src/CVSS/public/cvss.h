@@ -47,7 +47,8 @@ struct cvss_entry;
 
 /**
  * @name Get functions
- * Functions for getting attributes from CVE model structures
+ * Functions for getting attributes from CVE model structures. Return value is pointer to structure's member. Do not 
+ * free unless you null the pointer in the structure. Use remove function otherwise.
  * @{
  * */
 
@@ -119,7 +120,8 @@ const char* cvss_entry_get_generated(const struct cvss_entry * entry);
 
 /**
  * @name Set functions
- * Functions to set variables of structures
+ * Set functions assign values to members of structures except lists. For lists use add functions. 
+ * Parameters of set functions are duplicated in memory and need to be freed by caller.
  * @{
  * */
 
@@ -200,7 +202,8 @@ bool cvss_entry_set_generated(struct cvss_entry *entry, const char *new_generate
 
 /**
  * @name New functions
- * Constructors of CVSS model structures
+ * Constructors of CVE model structures. Free function returns new empty allocated structure.
+ * If returns non NULL it need to be freed by the caller.
  * @{
  * */
 
@@ -215,7 +218,8 @@ struct cvss_entry * cvss_entry_new(void);
 
 /**
  * @name Free functions
- * Destructors of CVSS model structures
+ * Destructors of CVE model structures. Functions free structures with all members recursively. 
+ * For simple deletion of entity use remove functions.
  * @{
  * */
 

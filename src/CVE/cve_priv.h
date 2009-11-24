@@ -91,7 +91,8 @@ struct cve_reference;
 
 /**
  * @name Parse functions
- * Functions for parsing structures from XML
+ * Functions for parsing structures from XML. Return value is new structure filled by content of XML file
+ * represented by XML reader or import source structure. Structure needs to be freed by the caller.
  * @{
  * */
 
@@ -123,7 +124,7 @@ struct cve_entry * cve_entry_parse(xmlTextReaderPtr reader);
 
 /**
  * @name Export functions
- * Functions for export structures to XML
+ * Functions for export structures to XML by XML writer. Exported structures need to be freed by the caller.
  * @{
  * */
 
