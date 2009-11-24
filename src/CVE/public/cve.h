@@ -226,6 +226,41 @@ const struct cpe_testexpr * cve_configuration_get_expr(const struct cve_configur
  */
 bool cve_model_add_entry(struct cve_model *model, struct cve_entry *new_entry);
 
+/// @relates cve_entry
+bool cve_entry_add_product(struct cve_entry *entry, struct cve_product *new_product);
+
+/// @relates cve_entry
+bool cve_entry_add_reference(struct cve_entry *entry, struct cve_reference *new_reference);
+
+/// @relates cve_entry
+bool cve_entry_add_summary(struct cve_entry *entry, struct cve_summary *new_summary);
+
+/// @relates cve_entry
+bool cve_entry_add_configuration(struct cve_entry *entry, struct cve_configuration *new_configuration);
+
+/*@}*/
+
+/**
+ * @name Remove functions
+ * Set of functions used to remove entries from lists.
+ * @{
+ */
+
+/// @relates cve_entry_iterator
+void cve_entry_iterator_remove(struct cve_entry_iterator *it);
+
+/// @relates cve_product_iterator
+void cve_product_iterator_remove(struct cve_product_iterator *it);
+
+/// @relates cve_reference_iterator
+void cve_reference_iterator_remove(struct cve_reference_iterator *it);
+
+/// @relates cve_summary_iterator
+void cve_summary_iterator_remove(struct cve_summary_iterator *it);
+
+/// @relates cve_configuration_iterator
+void cve_configuration_iterator_remove(struct cve_configuration_iterator *it);
+
 /*@}*/
 
 /**

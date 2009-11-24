@@ -546,28 +546,28 @@ bool cpe_edition_add_language(struct cpe_edition *edition, struct cpe_language *
 /// @relates cpe_item
 void cpe_item_iterator_remove(struct cpe_item_iterator *it);
 
-/// @relates cpe_reference
+/// @relates cpe_reference_iterator
 void cpe_reference_iterator_remove(struct cpe_reference_iterator *it);
 
-/// @relates cpe_check
+/// @relates cpe_check_iterator
 void cpe_check_iterator_remove(struct cpe_check_iterator *it);
 
-/// @relates cpe_vendor
+/// @relates cpe_vendor_iterator
 void cpe_vendor_iterator_remove(struct cpe_vendor_iterator *it);
 
-/// @relates cpe_product
+/// @relates cpe_product_iterator
 void cpe_product_iterator_remove(struct cpe_product_iterator *it);
 
-/// @relates cpe_version
+/// @relates cpe_version_iterator
 void cpe_version_iterator_remove(struct cpe_version_iterator *it);
 
-/// @relates cpe_update
+/// @relates cpe_update_iterator
 void cpe_update_iterator_remove(struct cpe_update_iterator *it);
 
-/// @relates cpe_edition
+/// @relates cpe_edition_iterator
 void cpe_edition_iterator_remove(struct cpe_edition_iterator *it);
 
-/// @relates cpe_language
+/// @relates cpe_language_iterator
 void cpe_language_iterator_remove(struct cpe_language_iterator *it);
 
 /*@}*/

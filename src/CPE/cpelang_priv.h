@@ -46,6 +46,7 @@
 
 #include "cpelang.h"
 #include "../common/util.h"
+#include "../common/list.h"
 #include "../common/elements.h"
 
 /** 

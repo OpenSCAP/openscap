@@ -148,8 +148,8 @@ const char * cpe_lang_model_get_ns_prefix(const struct cpe_lang_model *item);
  */
 struct cpe_platform_iterator * cpe_lang_model_get_platforms(const struct cpe_lang_model *item);
 
-/**
- * cpe_lang_model function to get CPE items
+/*
+ * cpe_lang_model function to get CPE item by ID
  * @relates cpe_lang_model
  */
 struct cpe_platform * cpe_lang_model_get_item(const struct cpe_lang_model *item, const char *key);
@@ -187,17 +187,23 @@ const struct cpe_testexpr * cpe_platform_get_expr(const struct cpe_platform *ite
  * Add platform to CPE lang model
  * @relates cpe_lang_model
  */
-bool cpe_lang_model_add_item(struct cpe_lang_model *lang, struct cpe_platform *platform);
-/**
- * Add item to CPE model
- * @relates cpe_lang_model
- */
-bool cpe_lang_model_add_item(struct cpe_lang_model * lang, struct cpe_platform *platform);
+bool cpe_lang_model_add_platform(struct cpe_lang_model *lang, struct cpe_platform *platform);
 /**
  * Add title to platform
  * @relates cpe_platform
  */
 bool cpe_platform_add_title(struct cpe_platform * platform, struct oscap_title *title);
+
+/*@}*/
+
+/**
+ * @name Remove functions
+ * Functions to remove list memebers that the given iterator is pointing to.
+ * @{
+ */
+
+/// @relates cpe_platform_iterator
+void cpe_platform_iterator_remove(struct cpe_platform_iterator *it, struct cpe_lang_model *parent);
 
 /*@}*/
 

@@ -257,7 +257,7 @@ struct cpe_lang_model * cpe_lang_model_parse(xmlTextReaderPtr reader) {
                 while (xmlStrcmp (xmlTextReaderConstLocalName(reader), (const xmlChar *)"platform") == 0) {
                         
                         platform = cpe_platform_parse(reader);
-                        if (platform) cpe_lang_model_add_item(ret, platform);
+                        if (platform) cpe_lang_model_add_platform(ret, platform);
                         xmlTextReaderNextElement(reader);
                 }
         }
@@ -584,11 +584,21 @@ struct cpe_name *cpe_testexpr_get_meta_cpe(const struct cpe_testexpr *item)
 	return item->meta.cpe;
 }
 
-bool cpe_lang_model_add_item(struct cpe_lang_model *lang, struct cpe_platform *platform)
+
+bool cpe_lang_model_add_platform(struct cpe_lang_model *lang, struct cpe_platform *platform)
 {
 	if (lang == NULL || platform == NULL || platform->id == NULL) return false;
 	oscap_list_add(lang->platforms, platform);
 	oscap_htable_add(lang->item, platform->id, platform);
 	return true;
+}
+
+void cpe_platform_iterator_remove(struct cpe_platform_iterator *it, struct cpe_lang_model *parent)
+{
+	struct cpe_platform *plat = oscap_iterator_detach((struct oscap_iterator *) it);
+	if (plat) {
+		oscap_htable_detach(parent->item, cpe_platform_get_id(plat));
+		cpe_platform_free(plat);
+	}
 }
 

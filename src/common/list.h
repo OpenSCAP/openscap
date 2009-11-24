@@ -131,6 +131,8 @@ bool oscap_htable_add(struct oscap_htable* htable, const char* key, void* item);
  */
 void* oscap_htable_get(struct oscap_htable* htable, const char* key);
 
+void *oscap_htable_detach(struct oscap_htable* htable, const char* key);
+
 void oscap_htable_dump(struct oscap_htable* htable, oscap_dump_func dumper, int depth);
 
 /*

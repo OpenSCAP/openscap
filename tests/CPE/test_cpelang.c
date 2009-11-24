@@ -161,7 +161,7 @@ int main (int argc, char *argv[])
       if ((new_platform =  cpe_platform_new()) == NULL)
 	return 1;
       cpe_platform_set_id(new_platform, argv[i]);      
-      if (!cpe_lang_model_add_item(lang_model, new_platform))
+      if (!cpe_lang_model_add_platform(lang_model, new_platform))
 	return 2;
     }      
 
@@ -216,7 +216,7 @@ int main (int argc, char *argv[])
       if ((new_platform =  cpe_platform_new()) == NULL)
 	return 1;
       cpe_platform_set_id(new_platform, argv[i]);      
-      if (!cpe_lang_model_add_item(lang_model, new_platform))
+      if (!cpe_lang_model_add_platform(lang_model, new_platform))
 	return 2;
     }      
 

@@ -216,12 +216,11 @@ struct oscap_htable* oscap_htable_new1(oscap_compare_func cmp, size_t hsize)
 {
 	struct oscap_htable* t;
 	t = malloc(sizeof(struct oscap_htable));
-	if(t == NULL) return NULL;
+	if (t == NULL) return NULL;
 	t->hsize = hsize;
 	t->itemcount = 0;
 	t->table = calloc(hsize, sizeof(struct oscap_list_item *));
-	if(t->table == NULL)
-	{
+	if (t->table == NULL) {
 		free(t);
 		return NULL;
 	}
@@ -229,14 +228,34 @@ struct oscap_htable* oscap_htable_new1(oscap_compare_func cmp, size_t hsize)
 	return t;
 }
 
+static int oscap_htable_cmp(const char *s1, const char *s2)
+{
+	if (s1 == NULL) return -1;
+	if (s2 == NULL) return  1;
+	return strcmp(s1, s2);
+}
+
 struct oscap_htable* oscap_htable_new(void)
 {
-	return oscap_htable_new1(strcmp, OSCAP_DEFAULT_HSIZE);
+	return oscap_htable_new1(oscap_htable_cmp, OSCAP_DEFAULT_HSIZE);
+}
+
+static struct oscap_htable_item *oscap_htable_lookup(struct oscap_htable* htable, const char* key)
+{
+	if (key == NULL) return NULL;
+	unsigned int hashcode = oscap_htable_hash(key, htable->hsize);
+	struct oscap_htable_item* htitem = htable->table[hashcode];
+	while (htitem != NULL) {
+		if (htable->cmp(htitem->key, key) == 0) return htitem;
+		htitem = htitem->next;
+	}
+	return NULL;
 }
 
 bool oscap_htable_add(struct oscap_htable* htable, const char* key, void* item)
 {
     assert(htable != NULL);
+	/*
     unsigned int hashcode = oscap_htable_hash(key, htable->hsize);
     struct oscap_htable_item* htitem = htable->table[hashcode];
     while(htitem != NULL)
@@ -246,30 +265,39 @@ bool oscap_htable_add(struct oscap_htable* htable, const char* key, void* item)
         htitem = htitem->next;
     }
     // htitem points to the last item
+	*/
+	if (oscap_htable_lookup(htable, key) != NULL) return false;
+	unsigned int hashcode = oscap_htable_hash(key, htable->hsize);
     struct oscap_htable_item* newhtitem;
-    newhtitem = malloc(sizeof(struct oscap_htable_item));
-    if(newhtitem == NULL) return false;
+    newhtitem = oscap_alloc(sizeof(struct oscap_htable_item));
     newhtitem->key = strdup(key);
-    newhtitem->next = NULL;
     newhtitem->value = item;
-    if(htitem == NULL)
-        htable->table[hashcode] = newhtitem;
-    else htitem->next = newhtitem;
+	newhtitem->next = htable->table[hashcode];
+    htable->table[hashcode] = newhtitem;
     htable->itemcount++;
     return true;
 }
 
-	
-void* oscap_htable_get(struct oscap_htable* htable, const char* key)
+void* oscap_htable_detach(struct oscap_htable* htable, const char* key)
 {
-	unsigned int hashcode = oscap_htable_hash(key, htable->hsize);
-	struct oscap_htable_item* htitem = htable->table[hashcode];
-	while(htitem != NULL)
-	{
-		if( (*(htable->cmp))(htitem->key, key) == 0) return htitem->value;
-		htitem = htitem->next;
+	struct oscap_htable_item* htitem = oscap_htable_lookup(htable, key);
+	if (htitem) {
+		void *val = htitem->value;
+		free(htitem->key);
+		htitem->key = NULL;
+		htitem->value = NULL;
+		htable->itemcount--;
+		return val;
 	}
 	return NULL;
+}
+
+
+void* oscap_htable_get(struct oscap_htable* htable, const char* key)
+{
+	assert(htable != NULL);
+	struct oscap_htable_item* htitem = oscap_htable_lookup(htable, key);
+	return htitem ? htitem->value : NULL;
 }	
 
 void oscap_print_depth(int);

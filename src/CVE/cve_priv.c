@@ -58,6 +58,7 @@ struct cve_model {
 	struct oscap_list* entries; /* 1-n */
 };
 OSCAP_IGETINS_GEN(cve_entry, cve_model, entries, entry)
+OSCAP_ITERATOR_REMOVE_F(cve_entry)
 
 /*
  */
@@ -133,10 +134,14 @@ OSCAP_ACCESSOR_STRING(cve_entry, published)
 OSCAP_ACCESSOR_STRING(cve_entry, modified)
 OSCAP_ACCESSOR_STRING(cve_entry, sec_protection)
 OSCAP_ACCESSOR_STRING(cve_entry, cwe)
-OSCAP_IGETTER_GEN(cve_product, cve_entry, products)
-OSCAP_IGETTER_GEN(cve_reference, cve_entry, references)
-OSCAP_IGETTER_GEN(cve_summary, cve_entry, summaries)
-OSCAP_IGETTER_GEN(cve_configuration, cve_entry, configurations)
+OSCAP_IGETINS_GEN(cve_product, cve_entry, products, product)
+OSCAP_IGETINS_GEN(cve_reference, cve_entry, references, reference)
+OSCAP_IGETINS_GEN(cve_summary, cve_entry, summaries, summary)
+OSCAP_IGETINS_GEN(cve_configuration, cve_entry, configurations, configuration)
+OSCAP_ITERATOR_REMOVE_F(cve_product)
+OSCAP_ITERATOR_REMOVE_F(cve_reference)
+OSCAP_ITERATOR_REMOVE_F(cve_summary)
+OSCAP_ITERATOR_REMOVE_F(cve_configuration)
 /* End of variable definitions
  * */
 /***************************************************************************/
