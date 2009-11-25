@@ -9,7 +9,7 @@
 
 typedef struct oval_pctx oval_pctx_t;
 
-oval_pctx_t *oval_pctx_new (struct oval_definition_model *);
+oval_pctx_t *oval_pctx_new (struct oval_syschar_model *);
 void         oval_pctx_free (oval_pctx_t *) __attribute__ ((nonnull (1)));
 
 /*

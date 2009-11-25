@@ -144,7 +144,7 @@ static int oval_pdtbl_del (oval_pdtbl_t *tbl, oval_subtype_t type)
         return (0);
 }
 
-oval_pctx_t *oval_pctx_new (struct oval_definition_model *model)
+oval_pctx_t *oval_pctx_new (struct oval_syschar_model *model)
 {
         oval_pctx_t *ctx;
 
@@ -384,7 +384,7 @@ struct oval_syschar *oval_probe_object_eval (oval_pctx_t *ctx, struct oval_objec
                         pd = oval_pdtbl_get (ctx->pd_table, oval_object_get_subtype (object));
         }
         
-        s_obj = oval_object2sexp (pdsc->subtype_name, object);
+        s_obj = oval_object2sexp (pdsc->subtype_name, object, ctx->model);
         
         if (s_obj == NULL) {
                 _D("Can't translate OVAL object to S-exp\n");
@@ -414,11 +414,13 @@ static SEXP_t *oval_probe_cmd_obj_eval (SEXP_t *sexp, void *arg)
 {
         char   *id_str;
         struct oval_object *obj;
+	struct oval_definition_model *definition_model;
         oval_pctx_t *ctx = (oval_pctx_t *)arg;
 
         if (SEXP_stringp (sexp)) {
                 id_str = SEXP_string_cstr (sexp);
-                obj    = oval_definition_model_get_object (ctx->model, id_str);
+		definition_model = oval_syschar_model_get_definition_model(ctx->model);
+                obj    = oval_definition_model_get_object (definition_model, id_str);
                 
                 _D("get_object: %s\n", id_str);
                 
@@ -448,6 +450,7 @@ static SEXP_t *oval_probe_cmd_ste_fetch (SEXP_t *sexp, void *arg)
         SEXP_t *id, *ste_list, *ste_sexp;
         char   *id_str;
         struct oval_state *ste;
+	struct oval_definition_model *definition_model;
         oval_pctx_t *ctx = (oval_pctx_t *)arg;
         
         ste_list = SEXP_list_new (NULL);
@@ -455,7 +458,8 @@ static SEXP_t *oval_probe_cmd_ste_fetch (SEXP_t *sexp, void *arg)
         SEXP_list_foreach (id, sexp) {
                 if (SEXP_stringp (id)) {
                         id_str = SEXP_string_cstr (id);
-                        ste    = oval_definition_model_get_state (ctx->model, id_str);
+			definition_model = oval_syschar_model_get_definition_model(ctx->model);
+                        ste    = oval_definition_model_get_state (definition_model, id_str);
 
                         if (ste == NULL) {
                                 _D("FAIL: can't find ste: id=%s\n", id_str);

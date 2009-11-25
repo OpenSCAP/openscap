@@ -8,6 +8,7 @@
 #include "oval_probe_impl.h"
 #include "oval_sexp.h"
 #include "probes/public/probe-api.h"
+#include "oval_definitions_impl.h"
 #include "oval_system_characteristics_impl.h"
 
 #ifndef _A
@@ -110,7 +111,7 @@ static SEXP_t *oval_entity_to_sexp (struct oval_entity *ent)
         return (elm);
 }
 
-static SEXP_t *oval_varref_to_sexp (struct oval_entity *entity)
+static SEXP_t *oval_varref_to_sexp (struct oval_entity *entity, struct oval_syschar_model *syschar_model)
 {
         unsigned int val_cnt = 0;
         SEXP_t *val_lst, *val_sexp, *varref, *id_sexp, *val_cnt_sexp;
@@ -123,7 +124,7 @@ static SEXP_t *oval_varref_to_sexp (struct oval_entity *entity)
         dt = oval_entity_get_datatype (entity);
 
         var = oval_entity_get_variable (entity);
-        vit = oval_variable_get_values (var);
+	vit = oval_syschar_model_get_variable_values (syschar_model, var);
         if (vit == NULL) {
                 SEXP_free(val_lst);
                 return NULL;
@@ -275,7 +276,7 @@ static SEXP_t *oval_behaviors_to_sexp (struct oval_behavior_iterator *bit)
         return (r0);
 }
 
-SEXP_t *oval_object2sexp (const char *typestr, struct oval_object *object)
+SEXP_t *oval_object2sexp (const char *typestr, struct oval_object *object, struct oval_syschar_model *syschar_model)
 {
         unsigned int ent_cnt, varref_cnt;
         SEXP_t *obj_sexp, *obj_name, *elm, *varrefs, *ent_lst, *lst, *stmp;
@@ -333,7 +334,7 @@ SEXP_t *oval_object2sexp (const char *typestr, struct oval_object *object)
                         }
 
                         if (oval_entity_get_varref_type (entity) == OVAL_ENTITY_VARREF_ATTRIBUTE) {
-                                stmp = oval_varref_to_sexp (entity);
+                                stmp = oval_varref_to_sexp (entity, syschar_model);
 
                                 if (stmp == NULL) {
                                         SEXP_free (elm);

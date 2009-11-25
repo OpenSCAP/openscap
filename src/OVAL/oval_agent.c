@@ -318,7 +318,7 @@ void oval_syschar_model_probe_objects(struct oval_syschar_model *syschar_model)
                 oval_pctx_t *pctx;
 		struct oval_object_iterator *objects = oval_definition_model_get_objects(definition_model);
                 
-                pctx = oval_pctx_new (definition_model);
+                pctx = oval_pctx_new (syschar_model);
                 
 		while(oval_object_iterator_has_more(objects)) {
 			struct oval_object *object = oval_object_iterator_next(objects);

@@ -51,7 +51,7 @@ struct oval_pctx {
         oval_pdsc_t   *pdsc_table;
         oval_pdtbl_t  *pd_table;
         char          *p_dir;
-        struct oval_definition_model *model;
+        struct oval_syschar_model *model;
 };
 
 OSCAP_HIDDEN_END;
