@@ -553,6 +553,8 @@ struct oval_variable *get_oval_variable_new(struct oval_definition_model *model,
 	if (variable == NULL) {
 		variable = oval_variable_new(id, type);
 		oval_definition_model_add_variable(model, variable);
+	}else{
+		oval_variable_set_type(variable, type);
 	}
 	return variable;
 }
@@ -920,7 +922,7 @@ xmlNode *oval_definitions_to_dom
     struct oval_string_map *sttmap = oval_string_map_new();
     struct oval_string_map *varmap = oval_string_map_new();
 
-    struct oval_test_iterator *tests = (struct oval_test_iterator *)oval_string_map_values(tstmap);
+    struct oval_test_iterator *tests = oval_definition_model_get_tests(definition_model);
     if(oval_test_iterator_has_more(tests)){
     	xmlNode *tests_node = xmlNewChild(root_node, ns_defntns, BAD_CAST "tests", NULL);
     	while(oval_test_iterator_has_more(tests)){
@@ -948,7 +950,7 @@ xmlNode *oval_definitions_to_dom
     }
     oval_test_iterator_free(tests);
 
-    struct oval_object_iterator *objects = (struct oval_object_iterator *)oval_string_map_values(objmap);
+    struct oval_object_iterator *objects = oval_definition_model_get_objects(definition_model);
     if(oval_object_iterator_has_more(objects)){
     	xmlNode *objects_node = xmlNewChild(root_node, ns_defntns, BAD_CAST "objects", NULL);
     	int i;for(i=0;oval_object_iterator_has_more(objects); i++){
@@ -957,7 +959,7 @@ xmlNode *oval_definitions_to_dom
     	}
     }
     oval_object_iterator_free(objects);
-    struct oval_state_iterator *states = (struct oval_state_iterator *)oval_string_map_values(sttmap);
+    struct oval_state_iterator *states = oval_definition_model_get_states(definition_model);
     if(oval_state_iterator_has_more(states)){
     	xmlNode *states_node = xmlNewChild(root_node, ns_defntns, BAD_CAST "states", NULL);
     	while(oval_state_iterator_has_more(states)){
@@ -966,7 +968,7 @@ xmlNode *oval_definitions_to_dom
     	}
     }
     oval_state_iterator_free(states);
-    struct oval_variable_iterator *variables = (struct oval_variable_iterator *)oval_string_map_values(varmap);
+    struct oval_variable_iterator *variables = oval_definition_model_get_variables(definition_model);
     if(oval_variable_iterator_has_more(variables)){
     	xmlNode *variables_node = xmlNewChild(root_node, ns_defntns, BAD_CAST "variables", NULL);
     	while(oval_variable_iterator_has_more(variables)){
@@ -1187,11 +1189,10 @@ int oval_results_model_export
 	return 1;
 }
 
-#if 0
-#ifdef __STUB_PROBE
+#ifdef __STUB_PROBE //This Macro is defined iff probes are stubbed.
 //STUB for oval_object_probe
 static int item_id = 1;
-struct oval_syschar *oval_probe_object_eval (struct oval_object *object, struct oval_definition_model *model)
+struct oval_syschar *oval_probe_object_eval (oval_pctx_t *pctx, struct oval_object *object)
 {
 	struct oval_syschar *syschar = oval_syschar_new(object);
 	oval_syschar_set_flag(syschar, SYSCHAR_STATUS_NOT_COLLECTED);
@@ -1204,9 +1205,10 @@ struct oval_syschar *oval_probe_object_eval (struct oval_object *object, struct 
 	return syschar;
 }
 
-struct oval_sysinfo *oval_probe_sysinf_eval (void)
+struct oval_sysinfo *oval_probe_sysinf_eval (oval_pctx_t *pctx)
 {
         return (NULL);
 }
+void oval_pctx_free (oval_pctx_t *ctx){}
+oval_pctx_t *oval_pctx_new (struct oval_syschar_model *model){return (NULL);}
 #endif
-#endif /* 0 */

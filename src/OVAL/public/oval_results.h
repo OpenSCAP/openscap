@@ -32,8 +32,10 @@
 #define OVAL_RESULTS_H_
 
 /**
- * @addtogroup OVALRES
+ * @addtogroup OVAL
  * @{
+ * @addtogroup OVALRES OVAL Results interface
+ * @(
  */
 #include "oval_definitions.h"
 #include "oval_system_characteristics.h"
@@ -72,6 +74,73 @@ struct oval_result_directives;
 
 struct oval_result_system;
 struct oval_result_system_iterator;
+
+
+/**
+ * Create new oval_results_model.
+ * The new model is bound to a specified oval_definition_model and variable bindings.
+ * @param definition_model the specified oval_definition_model.
+ * @param syschar_model the array of specified oval_syschar_model(s) terminated by NULL.
+ */
+struct oval_results_model *oval_results_model_new(
+		struct oval_definition_model *definition_model, struct oval_syschar_model **);
+
+/**
+ * Copy an oval_results_model.
+ */
+struct oval_results_model *oval_results_model_clone(struct oval_results_model *);
+
+/**
+ * free memory allocated to a specified oval results model.
+ * @param the specified oval_results model
+ */
+void oval_results_model_free(struct oval_results_model *model);
+
+
+/**
+ * oval_results_model_definition_model Return bound object model from an oval_results_model.
+ * @param model the specified oval_results_model.
+ */
+struct oval_definition_model *oval_results_model_get_definition_model
+	(struct oval_results_model *model);
+
+/**
+ * Return iterator over reporting systems.
+ * @param model the specified results model
+ */
+struct oval_result_system_iterator *oval_results_model_get_systems
+		(struct oval_results_model *);
+
+void oval_results_model_add_system(struct oval_results_model *, struct oval_result_system *);
+
+/**
+ * load oval results from XML file.
+ * @param model the oval_results_model
+ * @param source the input source (XML)
+ * @param error_handler the error handler
+ * @param client_data client data;
+ */
+struct oval_result_directives *oval_results_model_import
+	(struct oval_results_model *, struct oval_import_source *,
+			oval_xml_error_handler, void*);
+
+/**
+ * Create new OVAL results directives.
+ */
+struct oval_result_directives *oval_result_directives_new(void);
+
+/**
+ * Destroy OVAL results directives.
+ */
+void oval_result_directives_free(struct oval_result_directives *);
+
+/**
+ * export oval results to XML file.
+ * @param model the oval_results_model
+ * @param target the export target stream (XML)
+ */
+int oval_results_model_export(struct oval_results_model *, struct oval_result_directives *, struct oval_export_target *);
+
 
 int                        oval_result_system_iterator_has_more(struct oval_result_system_iterator *);
 struct oval_result_system *oval_result_system_iterator_next    (struct oval_result_system_iterator *);
@@ -142,7 +211,8 @@ void oval_result_directives_set_content (struct oval_result_directives *, oval_r
 const char * oval_result_get_text(oval_result_t);
 
 /**
- * @}
+ * @}END OVALRES
+ * @}END OVAL
  */
 
 #endif				/* OVAL_RESULTS_H_ */

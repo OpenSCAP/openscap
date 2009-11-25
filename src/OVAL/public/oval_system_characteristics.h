@@ -23,8 +23,8 @@
 /**
  * @addtogroup OVAL
  * @{
- * @addtogroup syschar System Characteristics
- * @{
+ * @addtogroup OVALSYS OVAL System Characteristics Interface
+ * @(
  * @file
  * OVAL System Characteristics interface
  * @author "David Niemoller" <David.Niemoller@g2-inc.com>
@@ -79,6 +79,95 @@ struct oval_sysdata_iterator;
  */
 struct oval_sysitem;
 struct oval_sysitem_iterator;
+
+
+
+/**
+ * Create new oval_syschar_model.
+ * The new model is bound to a specified oval_definition_model and variable bindings.
+ * @param definition_model the specified oval_definition_model.
+ */
+struct oval_syschar_model *oval_syschar_model_new(
+		struct oval_definition_model *definition_model);
+
+/**
+ * Copy an oval_syschar_model.
+ */
+struct oval_syschar_model *oval_syschar_model_clone(struct oval_syschar_model *);
+
+/**
+ * free memory allocated to a specified syschar model.
+ * @param model the specified syschar model
+ */
+void oval_syschar_model_free(struct oval_syschar_model *model);
+
+/**
+ * Return related oval_definition_model from an oval_syschar_model.
+ * @param model the specified oval_syschar_model.
+ */
+struct oval_definition_model *oval_syschar_model_get_definition_model(
+		struct oval_syschar_model *model);
+/**
+ * Return an iterator over the oval_sychar objects persisted by this model.
+ * @param model the specified oval_syschar_model.
+ */
+struct oval_syschar_iterator *oval_syschar_model_get_syschars(
+		struct oval_syschar_model *model);
+
+/**
+ * Return default sysinfo bound to syschar model.
+ * @param model the specified oval_syschar_model.
+ */
+struct oval_sysinfo *oval_syschar_model_get_sysinfo(struct oval_syschar_model *model);
+
+/**
+ * Return the oval_syschar bound to a specified object_id.
+ * Returns NULL if the object_id does not resolve to an oval_object in the bound oval_definition_model.
+ * @param model the queried oval_syschar_model.
+ * @param object_id the specified object_id.
+ */
+
+struct oval_syschar *oval_syschar_model_get_syschar(
+		struct oval_syschar_model *model,
+		char *object_id);
+
+
+/**
+ * Bind a variable model to the definitions bound to the syschar model.
+ */
+void oval_syschar_model_bind_variable_model
+	(struct oval_syschar_model *, struct oval_variable_model *);
+
+
+/**
+ * Probe oval_objects bound to oval_syschar_model
+ */
+void oval_syschar_model_probe_objects(struct oval_syschar_model *);
+
+/**
+ * Get the collection flag associated with a specified oval_variable
+ */
+oval_syschar_collection_flag_t oval_syschar_model_get_variable_collection_flag(struct oval_syschar_model *, struct oval_variable *);
+
+/**
+ * Get the oval_values bound to a specified variable.
+ */
+struct oval_value_iterator *oval_syschar_model_get_variable_values(struct oval_syschar_model *, struct oval_variable *);
+
+/**
+ * Export system characteristics as a XML file.
+ */
+int oval_syschar_model_export(
+		struct oval_syschar_model *, struct oval_export_target *);
+
+/**
+ * Load OVAL system characteristics from a file.
+ */
+void oval_syschar_model_import(struct oval_syschar_model*, struct oval_import_source*,
+			oval_xml_error_handler, void*);
+
+
+
 
 /**
  * Collection of characteristics bound to an object.
@@ -252,5 +341,8 @@ struct oval_sysdata_iterator          *oval_syschar_get_sysdata              (st
 
 const char *oval_syschar_collection_flag_get_text(oval_syschar_collection_flag_t flag);
 const char *oval_syschar_status_get_text(oval_syschar_status_t status);
-
+/**
+ * @}END OVALSYS
+ * @}END OVAL
+ */
 #endif

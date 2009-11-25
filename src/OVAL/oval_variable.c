@@ -59,13 +59,12 @@ typedef struct oval_variable_LOCAL {
 	struct oval_component *component;	//type==OVAL_VARIABLE_LOCAL
 } oval_variable_LOCAL_t;
 
-int oval_variable_iterator_has_more(struct oval_variable_iterator
+bool oval_variable_iterator_has_more(struct oval_variable_iterator
 				      *oc_variable)
 {
 	return oval_collection_iterator_has_more((struct oval_iterator *)
 						 oc_variable);
 }
-
 struct oval_variable *oval_variable_iterator_next(struct
 						    oval_variable_iterator
 						    *oc_variable)
@@ -96,7 +95,7 @@ int oval_variable_get_version(struct oval_variable *variable)
 	return variable->version;
 }
 
-int oval_variable_get_deprecated(struct oval_variable *variable)
+bool oval_variable_get_deprecated(struct oval_variable *variable)
 {
 	return variable->deprecated;
 }
@@ -260,6 +259,15 @@ void oval_variable_set_datatype(struct oval_variable *variable,
 	variable->datatype = datatype;
 }
 
+void oval_variable_set_type(struct oval_variable *variable, oval_variable_type_t type)
+{
+	if(variable->type==OVAL_VARIABLE_UNKNOWN)variable->type = type;
+	else{
+		fprintf(stderr, "ERROR: attempt to reset valid variable type\n    oldtype = %s\n    newtype = %s",
+		oval_variable_type_get_text(variable->type), oval_variable_type_get_text(type));
+	}
+}
+
 void oval_variable_set_comment(struct oval_variable *variable, char *comm)
 {
 	if(variable->comment!=NULL)free(variable->comment);
@@ -323,37 +331,41 @@ static int _oval_variable_parse_local_tag(xmlTextReaderPtr reader,
 	return return_code;
 }
 
+#define DEFINITION_NAMESPACE "http://oval.mitre.org/XMLSchema/oval-definitions-5"
+
+static void _oval_variable_parse_value(char *text_value, struct oval_variable *variable){
+	struct oval_value *value = oval_value_new(oval_variable_get_datatype(variable), text_value);
+	oval_variable_add_value(variable, value);
+}
 static int _oval_variable_parse_constant_tag(xmlTextReaderPtr reader,
 					     struct oval_parser_context *context,
-					     void *user)
+					     struct oval_variable *variable)
 {
-	struct oval_variable *variable = (struct oval_variable *)user;
+	fprintf(stderr,"DEBUG:: %s(%d)\n", __FILE__, __LINE__);
+	char *text_value = NULL;
 	xmlChar *tagname = xmlTextReaderName(reader);
 	xmlChar *namespace = xmlTextReaderNamespaceUri(reader);
 	int return_code = 1;
-	if (1) {
+	if (strcmp("value", tagname)==0 && strcmp(DEFINITION_NAMESPACE, namespace)==0) {
+		oval_parser_text_value(reader, context,
+					   (oval_xml_value_consumer)_oval_variable_parse_value, variable);
+	}else{
 		int line = xmlTextReaderGetParserLineNumber(reader);
-		printf
-		    ("NOTICE: _oval_variable_parse_constant_tag::parse of <%s> TODO at line %d\n",
-		     tagname, line);
-		return_code = oval_parser_skip_tag(reader, context);
-	}
-	if (return_code != 1) {
-		int line = xmlTextReaderGetParserLineNumber(reader);
-		printf
-		    ("NOTICE: oval_variable_parse_constant_tag::parse of %s terminated on error at <%s> line %d\n",
-		     variable->id, tagname, line);
+		fprintf
+		    (stderr, "NOTICE: Invalid element <%s:%s> in constant variable\n"
+		     "    <constant_variable id = %s> at line %d\n"
+		     "    %s(%d)\n",
+		     namespace, tagname, variable->id, line, __FILE__, __LINE__);
 	}
 	free(tagname);
 	free(namespace);
 	return return_code;
 }
 
-void oval_variable_to_print(struct oval_variable *variable, char *indent,
-			    int idx);
 int oval_variable_parse_tag(xmlTextReaderPtr reader,
 			    struct oval_parser_context *context)
 {
+	fprintf(stderr,"DEBUG:: %s(%d)\n", __FILE__, __LINE__);
 	struct oval_definition_model *model = oval_parser_context_model(context);
 	char *tagname = (char*) xmlTextReaderName(reader);
 	oval_variable_type_t type;
@@ -393,15 +405,13 @@ int oval_variable_parse_tag(xmlTextReaderPtr reader,
 	case OVAL_VARIABLE_CONSTANT:{
 			return_code =
 			    oval_parser_parse_tag(reader, context,
-						  _oval_variable_parse_constant_tag,
-						  variable);
+						 (oval_xml_tag_parser)_oval_variable_parse_constant_tag, variable);
 		}
 		break;
 	case OVAL_VARIABLE_LOCAL:{
 			return_code =
 			    oval_parser_parse_tag(reader, context,
-						  _oval_variable_parse_local_tag,
-						  variable);
+						  _oval_variable_parse_local_tag, variable);
 		}
 		break;
 	case OVAL_VARIABLE_EXTERNAL: {
@@ -516,7 +526,7 @@ static xmlNode *_oval_VARIABLE_LOCAL_to_dom
 
 xmlNode *oval_variable_to_dom (struct oval_variable *variable, xmlDoc *doc, xmlNode *parent)
 {
-
+	fprintf(stderr,"DEBUG:: %s(%d)\n", __FILE__, __LINE__);
 	xmlNode *variable_node = NULL;
 	switch(oval_variable_get_type(variable))
 	{

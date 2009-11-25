@@ -45,7 +45,7 @@ typedef struct oval_object {
 	struct oval_collection *behaviors;
 } oval_object_t;
 
-int oval_object_iterator_has_more(struct oval_object_iterator *oc_object)
+bool oval_object_iterator_has_more(struct oval_object_iterator *oc_object)
 {
 	return oval_collection_iterator_has_more((struct oval_iterator *)
 						 oc_object);
@@ -94,7 +94,7 @@ char *oval_object_get_id(struct oval_object *object)
 	return ((struct oval_object *)object)->id;
 }
 
-int oval_object_get_deprecated(struct oval_object *object)
+bool oval_object_get_deprecated(struct oval_object *object)
 {
 	return ((struct oval_object *)object)->deprecated;
 }
@@ -202,7 +202,7 @@ void oval_object_set_comment(struct oval_object *object, char *comm)
 	object->comment = comm==NULL?NULL:strdup(comm);
 }
 
-void oval_object_set_deprecated(struct oval_object *object, int deprecated)
+void oval_object_set_deprecated(struct oval_object *object, bool deprecated)
 {
 	object->deprecated = deprecated;
 }

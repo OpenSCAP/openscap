@@ -67,8 +67,7 @@ oval_datetime_format_t oval_datetime_format_parse(xmlTextReaderPtr, char *,
 						     oval_arithmetic_operation_t);
 oval_message_level_t oval_message_level_parse(xmlTextReaderPtr, char *,
 						     oval_message_level_t);
-
-
+void oval_variable_set_type(struct oval_variable *variable, oval_variable_type_t type);
 
 struct oval_affected *oval_affected_clone(struct oval_affected *);
 typedef void (*oval_affected_consumer) (struct oval_affected *, void *);

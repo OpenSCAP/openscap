@@ -92,7 +92,7 @@ oval_criteria_node_type_t oval_criteria_node_get_type(struct oval_criteria_node
 	return ((struct oval_criteria_node *)node)->type;
 }
 
-int oval_criteria_node_get_negate(struct oval_criteria_node *node)
+bool oval_criteria_node_get_negate(struct oval_criteria_node *node)
 {
 	return ((struct oval_criteria_node *)node)->negate;
 }
@@ -241,7 +241,7 @@ void oval_criteria_set_node_type(struct oval_criteria_node *node,
 	node->type = type;
 }
 
-void oval_criteria_node_set_negate(struct oval_criteria_node *node, int negate)
+void oval_criteria_node_set_negate(struct oval_criteria_node *node, bool negate)
 {
 	node->negate = negate;
 }

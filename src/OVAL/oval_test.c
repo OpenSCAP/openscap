@@ -47,7 +47,7 @@ typedef struct oval_test {
 	struct oval_state *state;
 } oval_test_t;
 
-int oval_test_iterator_has_more(struct oval_test_iterator *oc_test)
+bool oval_test_iterator_has_more(struct oval_test_iterator *oc_test)
 {
 	return oval_collection_iterator_has_more((struct oval_iterator *)
 						 oc_test);
@@ -90,7 +90,7 @@ char *oval_test_get_id(struct oval_test *test)
 	return test->id;
 }
 
-int oval_test_get_deprecated(struct oval_test *test)
+bool oval_test_get_deprecated(struct oval_test *test)
 {
 	return test->deprecated;
 }
@@ -187,7 +187,7 @@ void oval_test_free(struct oval_test *test)
 	free(test);
 }
 
-void oval_test_set_deprecated(struct oval_test *test, int deprecated)
+void oval_test_set_deprecated(struct oval_test *test, bool deprecated)
 {
 	test->deprecated = deprecated;
 }

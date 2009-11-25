@@ -66,7 +66,7 @@ oval_definition_class_t oval_definition_get_class(struct oval_definition
 	return ((struct oval_definition *)definition)->class;
 }
 
-int oval_definition_get_deprecated(struct oval_definition *definition)
+bool oval_definition_get_deprecated(struct oval_definition *definition)
 {
 	return ((struct oval_definition *)definition)->deprecated;
 }
@@ -186,7 +186,7 @@ void oval_definition_free(struct oval_definition *definition)
 	free(definition);
 }
 
-int oval_definition_iterator_has_more(struct oval_definition_iterator
+bool oval_definition_iterator_has_more(struct oval_definition_iterator
 				      *oc_definition)
 {
 	return oval_collection_iterator_has_more((struct oval_iterator *)
@@ -223,7 +223,7 @@ void oval_definition_set_class(struct oval_definition *definition,
 }
 
 void oval_definition_set_deprecated(struct oval_definition *definition,
-				    int deprecated)
+				    bool deprecated)
 {
 	definition->deprecated = deprecated;
 }

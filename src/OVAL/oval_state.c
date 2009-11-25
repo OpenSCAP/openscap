@@ -44,7 +44,7 @@ typedef struct oval_state {
 	struct oval_collection *contents;
 } oval_state_t;
 
-int oval_state_iterator_has_more(struct oval_state_iterator *oc_state)
+bool oval_state_iterator_has_more(struct oval_state_iterator *oc_state)
 {
 	return oval_collection_iterator_has_more((struct oval_iterator *)
 						 oc_state);
@@ -100,7 +100,7 @@ char *oval_state_get_id(struct oval_state *state)
 	return ((struct oval_state *)state)->id;
 }
 
-int oval_state_get_deprecated(struct oval_state *state)
+bool oval_state_get_deprecated(struct oval_state *state)
 {
 	return ((struct oval_state *)state)->deprecated;
 }
@@ -184,7 +184,7 @@ void oval_state_set_comment(struct oval_state *state, char *comm)
 	state->comment = comm==NULL?NULL:strdup(comm);
 }
 
-void oval_state_set_deprecated(struct oval_state *state, int deprecated)
+void oval_state_set_deprecated(struct oval_state *state, bool deprecated)
 {
 	state->deprecated = deprecated;
 }

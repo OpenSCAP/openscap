@@ -261,7 +261,7 @@ void oval_component_set_arithmetic_operation
 	}
 }
 
-char *oval_component_get_begin_character(struct oval_component *component)
+char *oval_component_get_prefix(struct oval_component *component)
 {
 	//type==OVAL_COMPONENT_BEGIN/END
 	char *character;
@@ -273,7 +273,7 @@ char *oval_component_get_begin_character(struct oval_component *component)
 		character = NULL;
 	return character;
 }
-void oval_component_set_begin_character
+void oval_component_set_prefix
 	(struct oval_component *component, char *character)
 {
 	//type==OVAL_COMPONENT_BEGIN
@@ -284,7 +284,7 @@ void oval_component_set_begin_character
 	}
 }
 
-char *oval_component_get_end_character(struct oval_component *component)
+char *oval_component_get_suffix(struct oval_component *component)
 {
 	//type==OVAL_COMPONENT_END
 	char *character;
@@ -296,7 +296,7 @@ char *oval_component_get_end_character(struct oval_component *component)
 		character = NULL;
 	return character;
 }
-void oval_component_set_end_character
+void oval_component_set_suffix
 	(struct oval_component *component, char *character)
 {
 	//type==OVAL_COMPONENT_END
@@ -585,12 +585,12 @@ struct oval_component *oval_component_clone(struct oval_component *old_component
 		if(operation)oval_component_set_arithmetic_operation(new_component, operation);
 	}break;
 	case OVAL_FUNCTION_BEGIN:{
-		char *begchar = oval_component_get_begin_character(old_component);
-		if(begchar)oval_component_set_begin_character(new_component, begchar);
+		char *begchar = oval_component_get_prefix(old_component);
+		if(begchar)oval_component_set_prefix(new_component, begchar);
 	}break;
 	case OVAL_FUNCTION_END:{
-		char *endchar = oval_component_get_end_character(old_component);
-		if(endchar)oval_component_set_end_character(new_component, endchar);
+		char *endchar = oval_component_get_suffix(old_component);
+		if(endchar)oval_component_set_suffix(new_component, endchar);
 	}break;
 	case OVAL_COMPONENT_LITERAL:{
 		struct oval_value *value = oval_component_get_literal_value(old_component);
@@ -1025,13 +1025,13 @@ void oval_component_to_print(struct oval_component *component, char *indent,
 		break;
 	case OVAL_FUNCTION_BEGIN:{
 			printf("%sBEGIN_CHARACTER %s\n", nxtindent,
-			       oval_component_get_begin_character(component));
+			       oval_component_get_prefix(component));
 			function_comp_to_print(component, nxtindent);
 		}
 		break;
 	case OVAL_FUNCTION_END:{
 			printf("%sEND_CHARACTER %s\n", nxtindent,
-			       oval_component_get_end_character(component));
+			       oval_component_get_suffix(component));
 			function_comp_to_print(component, nxtindent);
 		}
 		break;
@@ -1162,14 +1162,14 @@ xmlNode *oval_component_to_dom
 					BAD_CAST oval_arithmetic_operation_get_text(operation));
 	}break;
 	case OVAL_FUNCTION_BEGIN:{
-		char *character = oval_component_get_begin_character(component);
+		char *character = oval_component_get_prefix(component);
 		xmlNewProp
 			(component_node,
 					BAD_CAST "character",
 					BAD_CAST  character);
 	}break;
 	case OVAL_FUNCTION_END:{
-		char *character = oval_component_get_end_character(component);
+		char *character = oval_component_get_suffix(component);
 		xmlNewProp
 			(component_node,
 					BAD_CAST "character",
@@ -1245,11 +1245,10 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_OBJECTREF
 	struct oval_component_OBJECTREF *objref = (struct oval_component_OBJECTREF *)component;
 	struct oval_object *object = objref->object;
 	if(object){
-                oval_pctx_t *pctx;
-		struct oval_definition_model *defmod = oval_syschar_model_get_definition_model(sysmod);
+        oval_pctx_t *pctx;
 		struct oval_syschar *syschar;
                 
-                pctx = oval_pctx_new (defmod);
+                pctx = oval_pctx_new (sysmod);
                 syschar = oval_probe_object_eval (pctx, object);
                 oval_pctx_free (pctx);
                 
@@ -1301,7 +1300,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_VARREF(struct ova
 static oval_syschar_collection_flag_t _oval_component_evaluate_BEGIN(struct oval_syschar_model *sysmod, struct oval_component *component, struct oval_collection *value_collection)
 {
 	oval_syschar_collection_flag_t flag = SYSCHAR_FLAG_ERROR;
-	char *prefix = oval_component_get_begin_character(component);
+	char *prefix = oval_component_get_prefix(component);
 	if(prefix){
 		int len_prefix = strlen(prefix);
 		struct oval_component_iterator *subcomps = oval_component_get_function_components(component);
@@ -1334,7 +1333,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_END
 	(struct oval_syschar_model *sysmod, struct oval_component *component, struct oval_collection *value_collection)
 {
 	oval_syschar_collection_flag_t flag = SYSCHAR_FLAG_ERROR;
-	char *suffix = oval_component_get_end_character(component);
+	char *suffix = oval_component_get_suffix(component);
 	if(suffix){
 		int len_suffix = strlen(suffix);
 		struct oval_component_iterator *subcomps = oval_component_get_function_components(component);
