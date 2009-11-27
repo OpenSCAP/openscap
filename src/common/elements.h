@@ -37,8 +37,9 @@
  * or xml namespace.
  * */
 struct xml_metadata {
-        char *namespace;
-        char *lang;
+        char *namespace;    ///< XMLNS (namespace) prefix
+        char *URI;          ///< XMLNS (namespace) URI
+        char *lang;         ///< XML lang
 };
 
 /**
@@ -58,6 +59,30 @@ const char * xml_metadata_get_namespace(const struct xml_metadata * xml);
 
 const char * xml_metadata_get_lang(const struct xml_metadata * xml);
  
-void xml_metadata_free(struct xml_metadata xml);
+void xml_metadata_free(struct xml_metadata * xml);
+
+/** @struct xml_metadata_iterator
+ * Iterator over XML metadata.
+ * @see oscap_iterator
+ * @relates xml_metadata
+ */
+struct xml_metadata_iterator;
+/**
+ * @relates xml_metadata_iterator
+ */
+struct xml_metadata * xml_metadata_iterator_next(struct xml_metadata_iterator * it);
+/**
+ * @relates xml_metadata_iterator
+ */
+bool xml_metadata_iterator_has_more(struct xml_metadata_iterator * it);
+/**
+ * @relates xml_metadata_iterator
+ */
+void xml_metadata_iterator_free(struct xml_metadata_iterator * it);
+
+/**
+ * @relates xml_metadata_iterator
+ */
+void xml_metadata_iterator_remove(struct xml_metadata_iterator * it);
 
 #endif

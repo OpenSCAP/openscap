@@ -74,12 +74,22 @@ function test_cve_tc02 {
 
     return $ret_val
 }
+function test_cve_tc03 {
+
+    local ret_val=0
+
+    ./test_cve --test-export-all CVE/nvdcve-2.0-recent.xml "UTF-8" cve_export.xml.out.3 "UTF-8"
+	xml_cmp ${srcdir}/CVE/nvdcve-2.0-recent.xml cve_export.xml.out.3
+    ret_val=$?
+
+    return $ret_val
+}
 
 # Cleanup.
 function test_cve_cleanup {
     local ret_val=0
 
-    rm cve_export.xml.out.1 cve_export.xml.out.2 cve_export.xml
+    rm cve_export.xml.out.1 cve_export.xml.out.2 cve_export.xml.out.3 cve_export.xml
     ret_val=$?
     return $ret_val
 }
@@ -94,11 +104,12 @@ log=test_cve.log
 exec 2>$log
 
 #---- function ------#-------------------------- reporting -----------------------#--------------------------#
-test_cve_setup    ; ret_val=$? ; report_result "test_CVE_setup"   $ret_val  ; result=$[$result+$ret_val]
-test_cve_tc00     ; ret_val=$? ; report_result 'Test_CVE_sanity'    $ret_val  ; result=$[$result+$ret_val]   
-test_cve_tc01     ; ret_val=$? ; report_result 'Test_CVE_export'    $ret_val  ; result=$[$result+$ret_val]   
-test_cve_tc02     ; ret_val=$? ; report_result 'Test_CVE_entries'    $ret_val  ; result=$[$result+$ret_val]   
-test_cve_cleanup  ; ret_val=$? ; report_result "test_CVE_cleanup" $ret_val  ; result=$[$result+$ret_val]
+test_cve_setup    ; ret_val=$? ; report_result "test_CVE_setup"      $ret_val  ; result=$[$result+$ret_val]
+test_cve_tc00     ; ret_val=$? ; report_result 'Test_CVE_sanity'     $ret_val  ; result=$[$result+$ret_val]
+test_cve_tc01     ; ret_val=$? ; report_result 'Test_CVE_export'     $ret_val  ; result=$[$result+$ret_val]
+test_cve_tc02     ; ret_val=$? ; report_result 'Test_CVE_entries'    $ret_val  ; result=$[$result+$ret_val]
+test_cve_tc03     ; ret_val=$? ; report_result 'Test_CVE_export_all' $ret_val  ; result=$[$result+$ret_val]
+#test_cve_cleanup  ; ret_val=$? ; report_result "test_CVE_cleanup" $ret_val  ; result=$[$result+$ret_val]
 
 echo "------------------------------------------"
 echo "See ${srcdir}/${log}"

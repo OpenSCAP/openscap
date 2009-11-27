@@ -525,7 +525,7 @@ void cpe_lang_model_free(struct cpe_lang_model * platformspec)
 
 	oscap_htable_free(platformspec->item, NULL);
 	oscap_list_free(platformspec->platforms, (oscap_destruct_func)cpe_platform_free);
-        xml_metadata_free(platformspec->xml);
+        xml_metadata_free(&platformspec->xml);
 	oscap_free(platformspec);
 }
 
@@ -537,7 +537,7 @@ void cpe_platform_free(struct cpe_platform * platform)
 	xmlFree(platform->remark);
         oscap_list_free(platform->titles, (oscap_destruct_func)oscap_title_free);
 	cpe_testexpr_free(&platform->expr);
-        xml_metadata_free(platform->xml);
+        xml_metadata_free(&platform->xml);
 	oscap_free(platform);
 }
 
@@ -561,7 +561,7 @@ void cpe_testexpr_free(struct cpe_testexpr * expr)
 		break;
 	}
 
-        xml_metadata_free(expr->xml);
+        xml_metadata_free(&expr->xml);
 	expr->oper = 0;
 }
 /* End of free functions

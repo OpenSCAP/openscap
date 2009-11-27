@@ -1209,7 +1209,7 @@ void cpe_dict_model_free(struct cpe_dict_model * dict) {
 	oscap_list_free(dict->items, (oscap_destruct_func)cpe_item_free);
 	oscap_list_free(dict->vendors, (oscap_destruct_func)cpe_vendor_free);
 	cpe_generator_free(dict->generator);
-        xml_metadata_free(dict->xml);
+        xml_metadata_free(&dict->xml);
 	oscap_free(dict);
 }
 
@@ -1224,7 +1224,7 @@ void cpe_item_free(struct cpe_item * item) {
 	oscap_list_free(item->notes, (oscap_destruct_func)oscap_title_free);
         oscap_list_free(item->titles, (oscap_destruct_func)oscap_title_free);
         cpe_itemmetadata_free(item->metadata);
-        xml_metadata_free(item->xml);
+        xml_metadata_free(&item->xml);
 	oscap_free(item);
 }
 
@@ -1236,7 +1236,7 @@ void cpe_generator_free(struct cpe_generator * generator) {
 	oscap_free(generator->product_version);
 	oscap_free(generator->schema_version);
 	oscap_free(generator->timestamp);
-        xml_metadata_free(generator->xml);
+        xml_metadata_free(&generator->xml);
 	oscap_free(generator);
 }
 
@@ -1247,7 +1247,7 @@ void cpe_check_free(struct cpe_check * check) {
 	oscap_free(check->identifier);
 	oscap_free(check->system);
 	oscap_free(check->href);
-        xml_metadata_free(check->xml);
+        xml_metadata_free(&check->xml);
 	oscap_free(check);
 }
 
@@ -1257,7 +1257,7 @@ void cpe_reference_free(struct cpe_reference* ref) {
 
 	oscap_free(ref->href);
 	oscap_free(ref->content);
-        xml_metadata_free(ref->xml);
+        xml_metadata_free(&ref->xml);
 	oscap_free(ref);
 }
 
@@ -1268,7 +1268,7 @@ void cpe_vendor_free(struct cpe_vendor * vendor) {
         oscap_free(vendor->value);
 	oscap_list_free(vendor->titles, (oscap_destruct_func)oscap_title_free);
 	oscap_list_free(vendor->products, (oscap_destruct_func)cpe_product_free);
-        xml_metadata_free(vendor->xml);
+        xml_metadata_free(&vendor->xml);
 	oscap_free(vendor);
 }
 
@@ -1278,7 +1278,7 @@ void cpe_product_free(struct cpe_product * product) {
 
 	oscap_free(product->value);
 	oscap_list_free(product->versions, (oscap_destruct_func)cpe_version_free);
-        xml_metadata_free(product->xml);
+        xml_metadata_free(&product->xml);
 	oscap_free(product);
 }
 
@@ -1288,7 +1288,7 @@ void cpe_version_free(struct cpe_version * version) {
 
 	oscap_free(version->value);
 	oscap_list_free(version->updates, (oscap_destruct_func)cpe_update_free);
-        xml_metadata_free(version->xml);
+        xml_metadata_free(&version->xml);
 	oscap_free(version);
 }
 
@@ -1298,7 +1298,7 @@ void cpe_update_free(struct cpe_update * update) {
 
 	oscap_free(update->value);
 	oscap_list_free(update->editions, (oscap_destruct_func)cpe_edition_free);
-        xml_metadata_free(update->xml);
+        xml_metadata_free(&update->xml);
 	oscap_free(update);
 }
 
@@ -1308,7 +1308,7 @@ void cpe_edition_free(struct cpe_edition * edition) {
 
 	oscap_free(edition->value);
 	oscap_list_free(edition->languages, (oscap_destruct_func)cpe_language_free);
-        xml_metadata_free(edition->xml);
+        xml_metadata_free(&edition->xml);
 	oscap_free(edition);
 }
 
@@ -1317,7 +1317,7 @@ void cpe_language_free(struct cpe_language * language) {
 	if (language == NULL) return;
 
 	oscap_free(language->value);
-        xml_metadata_free(language->xml);
+        xml_metadata_free(&language->xml);
 	oscap_free(language);
 }
 
@@ -1329,7 +1329,7 @@ void cpe_itemmetadata_free(struct cpe_item_metadata * meta) {
         oscap_free(meta->status);
         oscap_free(meta->nvd_id);
         oscap_free(meta->deprecated_by_nvd_id);
-        xml_metadata_free(meta->xml);
+        xml_metadata_free(&meta->xml);
         oscap_free(meta);
 }
 /* End of free functions

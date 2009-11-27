@@ -74,12 +74,13 @@ void oscap_title_free(struct oscap_title * title) {
 	if (title == NULL) return;
 
 	oscap_free(title->content);
-        xml_metadata_free(title->xml);
+        xml_metadata_free(&title->xml);
 	oscap_free(title);
 }
 
-void xml_metadata_free(struct xml_metadata xml) {
+void xml_metadata_free(struct xml_metadata * xml) {
 
-        xmlFree(xml.lang);
-        oscap_free(xml.namespace);
+        oscap_free(xml->lang);
+        oscap_free(xml->namespace);
+        oscap_free(xml->URI);
 }

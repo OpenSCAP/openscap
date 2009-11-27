@@ -38,6 +38,10 @@
 #include "../common/list.h"
 
 
+/**
+ * Public function to import CVE model from OSCAP import source.
+ * Function returns CVE model, need to free source after calling this function
+ */
 struct cve_model * cve_model_import(const struct oscap_import_source * source) {
 
     if (oscap_import_source_get_filename(source) == NULL) return NULL;
@@ -49,6 +53,11 @@ struct cve_model * cve_model_import(const struct oscap_import_source * source) {
     return cve;
 }
 
+/**
+ * Public function to export CVE model to OSCAP export target.
+ * Function fill the structure _target_ with model that is represented by structure
+ * _cve_.
+ */
 void cve_model_export(struct cve_model * cve, const struct oscap_export_target * target) {
 
     if (oscap_export_target_get_filename(target) == NULL) return;

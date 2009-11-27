@@ -55,8 +55,11 @@
 struct cve_model {
 
         struct xml_metadata xml;
+        struct oscap_list* xmlns;
 	struct oscap_list* entries; /* 1-n */
 };
+OSCAP_IGETINS_GEN(xml_metadata, cve_model, xmlns, xml)
+OSCAP_ITERATOR_REMOVE_F(xml_metadata)
 OSCAP_IGETINS_GEN(cve_entry, cve_model, entries, entry)
 OSCAP_ITERATOR_REMOVE_F(cve_entry)
 
@@ -213,6 +216,7 @@ struct cve_entry * cve_entry_new() {
         ret->configurations     = oscap_list_new();
         ret->xml.lang           = NULL;
         ret->xml.namespace      = NULL;
+        ret->xml.URI            = NULL;
         ret->id                 = NULL;
         ret->cve_id             = NULL;
         ret->published          = NULL;
@@ -236,6 +240,7 @@ struct cve_configuration * cve_configuration_new() {
         ret->expr           = *(cpe_testexpr_new());
         ret->xml.lang       = NULL;
         ret->xml.namespace  = NULL;
+        ret->xml.URI        = NULL;
 
         return ret;
 }
@@ -250,6 +255,7 @@ struct cwe_entry * cwe_entry_new() {
 
         ret->xml.lang       = NULL;
         ret->xml.namespace  = NULL;
+        ret->xml.URI        = NULL;
         ret->value          = NULL;
 
         return ret;
@@ -265,6 +271,7 @@ struct cve_product * cve_product_new() {
 
         ret->xml.lang       = NULL;
         ret->xml.namespace  = NULL;
+        ret->xml.URI        = NULL;
         ret->value          = NULL;
 
         return ret;
@@ -280,6 +287,7 @@ struct cve_summary * cve_summary_new() {
 
         ret->xml.lang       = NULL;
         ret->xml.namespace  = NULL;
+        ret->xml.URI        = NULL;
         ret->summary        = NULL;
 
         return ret;
@@ -294,6 +302,7 @@ struct cve_reference * cve_reference_new() {
 
         ret->xml.lang       = NULL;
         ret->xml.namespace  = NULL;
+        ret->xml.URI        = NULL;
 	ret->value          = NULL;
 	ret->href           = NULL;
 	ret->type           = NULL;
@@ -312,6 +321,8 @@ struct cve_model * cve_model_new() {
 
         ret->xml.lang       = NULL;
         ret->xml.namespace  = NULL;
+        ret->xml.URI        = NULL;
+	ret->xmlns          = oscap_list_new();
 	ret->entries        = oscap_list_new();
 
         return ret;
@@ -329,7 +340,6 @@ struct cve_model * cve_model_new() {
 
 static int xmlTextReaderNextElement(xmlTextReaderPtr reader);
 static bool cve_validate_xml(const char * filename);
-
 
 /* End of static declarations 
  * */
@@ -401,8 +411,9 @@ struct cve_model * cve_model_parse_xml(const struct oscap_import_source * source
 
 struct cve_model * cve_model_parse(xmlTextReaderPtr reader) {
 
-        struct cve_model *ret = NULL;
-        struct cve_entry *entry;
+        struct cve_model *ret    = NULL;
+        struct xml_metadata *xml = NULL;
+        struct cve_entry *entry  = NULL;
 
         if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_NVD_STR) &&
             xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
@@ -413,7 +424,17 @@ struct cve_model * cve_model_parse(xmlTextReaderPtr reader) {
 
                 ret->xml.lang = oscap_strdup((char *) xmlTextReaderConstXmlLang(reader));
                 ret->xml.namespace = (char *) xmlTextReaderPrefix(reader);
-                
+
+                /* Reading XML namespaces */
+                if (xmlTextReaderHasAttributes(reader) && xmlTextReaderMoveToFirstAttribute(reader)==1) {
+                        do {
+                                xml = oscap_alloc(sizeof(struct xml_metadata));
+                                xml->lang = NULL;
+                                xml->namespace = oscap_strdup((char *) xmlTextReaderConstName(reader));
+                                xml->URI = oscap_strdup((char *) xmlTextReaderConstValue(reader));
+                                oscap_list_add(ret->xmlns, xml);
+                        } while (xmlTextReaderMoveToNextAttribute(reader)==1);
+                }
                 /* skip nodes until new element */
                 xmlTextReaderNextElement(reader);
 
@@ -584,24 +605,14 @@ void cve_model_export_xml(struct cve_model * cve, const struct oscap_export_targ
 
 void cve_export(const struct cve_model * cve, xmlTextWriterPtr writer) {
 
-        xmlTextWriterStartElementNS(writer, BAD_CAST NULL, TAG_NVD_STR, BAD_CAST NULL);
-        // TODO: This has to be done by some algorithm that read namespaces.
-        xmlTextWriterWriteAttribute(writer, BAD_CAST "xmlns:vuln", BAD_CAST 
-                "http://scap.nist.gov/schema/vulnerability/0.4");
-        xmlTextWriterWriteAttribute(writer, BAD_CAST "xmlns:cvss", BAD_CAST 
-                "http://scap.nist.gov/schema/cvss-v2/0.2");
-        xmlTextWriterWriteAttribute(writer, BAD_CAST "xmlns:cpe-lang", BAD_CAST 
-                "http://cpe.mitre.org/language/2.0");
-        xmlTextWriterWriteAttribute(writer, BAD_CAST "xmlns", BAD_CAST 
-                "http://scap.nist.gov/schema/feed/vulnerability/2.0");
-        xmlTextWriterWriteAttribute(writer, BAD_CAST "xmlns:xsi", BAD_CAST 
-                "http://www.w3.org/2001/XMLSchema-instance");
-        xmlTextWriterWriteAttribute(writer, BAD_CAST "nvd_xml_version", BAD_CAST 
-                "2.0");
-        xmlTextWriterWriteAttribute(writer, BAD_CAST "pub_date", BAD_CAST 
-                "2009-03-23T06:05:00");
-        xmlTextWriterWriteAttribute(writer, BAD_CAST "xsi:schemaLocation", BAD_CAST 
-                "http://scap.nist.gov/schema/feed/vulnerability/2.0 http://nvd.nist.gov/schema/nvd-cve-feed_2.0.xsd");
+        xmlTextWriterStartElementNS(writer, BAD_CAST cve->xml.namespace, TAG_NVD_STR, BAD_CAST NULL);
+        if ((cve->xml.lang) != NULL)
+                xmlTextWriterWriteAttribute(writer, ATTR_XML_LANG_STR, BAD_CAST cve->xml.lang);
+
+        OSCAP_FOREACH (xml_metadata, xml, cve_model_get_xmlns(cve),
+                if (xml->URI != NULL) xmlTextWriterWriteAttribute(writer, BAD_CAST xml->namespace, BAD_CAST xml->URI);
+        )
+
         OSCAP_FOREACH (cve_entry, e, cve_model_get_entries(cve),
 		/* dump its contents to XML tree */
                 cve_entry_export( e, writer );
@@ -725,7 +736,7 @@ void cve_summary_free(struct cve_summary * summary) {
         if (summary == NULL) return;
 
         xmlFree(summary->summary);
-        xml_metadata_free(summary->xml);
+        xml_metadata_free(&summary->xml);
         oscap_free(summary);
 }
 
@@ -734,7 +745,7 @@ void cve_model_free(struct cve_model * cve_model) {
 	if (cve_model == NULL) return;
 
 	oscap_list_free(cve_model->entries, (oscap_destruct_func)cve_entry_free);
-        xml_metadata_free(cve_model->xml);
+        oscap_list_free(cve_model->xmlns, (oscap_destruct_func)xml_metadata_free);
 	oscap_free(cve_model);
 }
 
@@ -744,7 +755,7 @@ void cve_configuration_free(struct cve_configuration * conf)  {
 
         xmlFree(conf->id);
         cpe_testexpr_free(&conf->expr);
-        xml_metadata_free(conf->xml);
+        xml_metadata_free(&conf->xml);
         oscap_free(conf);
 }
 
@@ -753,7 +764,7 @@ void cve_product_free(struct cve_product * product) {
         if (product == NULL) return;
 
         xmlFree(product->value);
-        xml_metadata_free(product->xml);
+        xml_metadata_free(&product->xml);
         oscap_free(product);
 }
 
@@ -765,7 +776,7 @@ void cve_reference_free(struct cve_reference * ref) {
         xmlFree(ref->href);
         xmlFree(ref->type);
         xmlFree(ref->source);
-        xml_metadata_free(ref->xml);
+        xml_metadata_free(&ref->xml);
         oscap_free(ref);
 }
 
@@ -774,7 +785,7 @@ void cwe_entry_free(struct cwe_entry * entry) {
         if (entry == NULL) return;
 
         xmlFree(entry->value);
-        xml_metadata_free(entry->xml);
+        xml_metadata_free(&entry->xml);
         oscap_free(entry);
 }
 
@@ -793,7 +804,7 @@ void cve_entry_free(struct cve_entry * entry) {
         oscap_list_free(entry->references, (oscap_destruct_func)cve_reference_free);
         oscap_list_free(entry->summaries, (oscap_destruct_func)cve_summary_free);
         oscap_list_free(entry->configurations, (oscap_destruct_func)cve_configuration_free);
-        xml_metadata_free(entry->xml);
+        xml_metadata_free(&entry->xml);
 	oscap_free(entry);
 }
 
