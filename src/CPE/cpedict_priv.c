@@ -41,6 +41,7 @@
 #include <string.h>
 
 #include "../common/list.h"
+#include "../common/elements.h"
 
 /***************************************************************************/
 /* Variable definitions
@@ -134,11 +135,14 @@ OSCAP_ACCESSOR_STRING(cpe_generator, timestamp)
  * */
 struct cpe_dict_model {                        // the main node
 
+        struct oscap_list * xmlns;
         struct xml_metadata xml;
 	struct oscap_list* items;        // dictionary items
         struct oscap_list* vendors;
         struct cpe_generator* generator;
 };
+OSCAP_IGETINS_GEN(xml_metadata, cpe_dict_model, xmlns, xml)
+OSCAP_ITERATOR_REMOVE_F(xml_metadata)
 OSCAP_GETTER(struct cpe_generator*, cpe_dict_model, generator)
 OSCAP_IGETTER_GEN(cpe_item, cpe_dict_model, items)
 OSCAP_ITERATOR_REMOVE_F(cpe_item)
@@ -329,11 +333,34 @@ struct cpe_dict_model *cpe_dict_model_new() {
 
         dict->vendors   = oscap_list_new();
 	dict->items     = oscap_list_new();
+	dict->xmlns     = oscap_list_new();
 
         dict->xml.lang      = NULL;
         dict->xml.namespace = NULL;
+        dict->xml.URI       = NULL;
 
 	return dict;
+}
+
+struct cpe_item_metadata *cpe_item_metadata_new() {
+
+	struct cpe_item_metadata *item;
+
+	item = oscap_alloc(sizeof(struct cpe_item_metadata));
+	if (item == NULL)
+		return NULL;
+	memset(item, 0, sizeof(struct cpe_item_metadata));
+
+        item->modification_date     = NULL;
+        item->status                = NULL;
+        item->nvd_id                = NULL;
+        item->deprecated_by_nvd_id  = NULL;
+
+        item->xml.lang      = NULL;
+        item->xml.namespace = NULL;
+        item->xml.URI       = NULL;
+
+
 }
 
 struct cpe_item *cpe_item_new() {
@@ -352,6 +379,7 @@ struct cpe_item *cpe_item_new() {
 
         item->xml.lang      = NULL;
         item->xml.namespace = NULL;
+        item->xml.URI       = NULL;
 
 	return item;
 }
@@ -371,6 +399,7 @@ struct cpe_check *cpe_check_new() {
 
         item->xml.lang      = NULL;
         item->xml.namespace = NULL;
+        item->xml.URI       = NULL;
 
         return item;
 }
@@ -389,6 +418,7 @@ struct cpe_reference *cpe_reference_new() {
 
         item->xml.lang      = NULL;
         item->xml.namespace = NULL;
+        item->xml.URI       = NULL;
 
         return item;
 }
@@ -409,6 +439,7 @@ struct cpe_generator *cpe_generator_new() {
 
         item->xml.lang          = NULL;
         item->xml.namespace     = NULL;
+        item->xml.URI           = NULL;
 
         return item;
 }
@@ -428,6 +459,7 @@ struct cpe_vendor *cpe_vendor_new() {
 
         item->xml.lang      = NULL;
         item->xml.namespace = NULL;
+        item->xml.URI       = NULL;
 
 	return item;
 }
@@ -443,8 +475,10 @@ struct cpe_product *cpe_product_new() {
 
         item->versions      = oscap_list_new();
         item->value         = NULL;
+
         item->xml.lang      = NULL;
         item->xml.namespace = NULL;
+        item->xml.URI       = NULL;
 
 	return item;
 }
@@ -460,8 +494,10 @@ struct cpe_version *cpe_version_new() {
 
         item->updates       = oscap_list_new();
         item->value         = NULL;
+
         item->xml.lang      = NULL;
         item->xml.namespace = NULL;
+        item->xml.URI       = NULL;
 
 	return item;
 }
@@ -477,8 +513,10 @@ struct cpe_update *cpe_update_new() {
 
         item->editions      = oscap_list_new();
         item->value         = NULL;
+
         item->xml.lang      = NULL;
         item->xml.namespace = NULL;
+        item->xml.URI       = NULL;
 
 	return item;
 }
@@ -494,8 +532,10 @@ struct cpe_edition *cpe_edition_new() {
 
         item->languages     = oscap_list_new();
         item->value         = NULL;
+
         item->xml.lang      = NULL;
         item->xml.namespace = NULL;
+        item->xml.URI       = NULL;
 
 	return item;
 }
@@ -510,8 +550,10 @@ struct cpe_language *cpe_language_new() {
 	memset(item, 0, sizeof(struct cpe_language));
 
         item->value         = NULL;
+
         item->xml.lang      = NULL;
         item->xml.namespace = NULL;
+        item->xml.URI       = NULL;
 
 	return item;
 }
@@ -546,9 +588,10 @@ struct cpe_dict_model * cpe_dict_model_parse_xml(const struct oscap_import_sourc
 
 struct cpe_dict_model * cpe_dict_model_parse(xmlTextReaderPtr reader) {
 
-        struct cpe_dict_model *ret = NULL;
-        struct cpe_item *item = NULL;
-        struct cpe_vendor *vendor = NULL;
+        struct cpe_dict_model *ret  = NULL;
+        struct cpe_item *item       = NULL;
+        struct xml_metadata *xml    = NULL;
+        struct cpe_vendor *vendor   = NULL;
         int next_ret = 1;
 
         // let's find "<cpe-list>" element
@@ -561,15 +604,23 @@ struct cpe_dict_model * cpe_dict_model_parse(xmlTextReaderPtr reader) {
                         return NULL;
                 }
         }
-
         // we found cpe-list element, let's roll !
         // allocate memory for cpe_dict so we can fill items and vendors and general structures
         ret = cpe_dict_model_new();
         if (ret == NULL)
             return NULL;
 
-        // TODO: here comes some header processing (for namespace definitions)
 
+        /* Reading XML namespaces */
+        if (xmlTextReaderHasAttributes(reader) && xmlTextReaderMoveToFirstAttribute(reader)==1) {
+                do {
+                        xml = oscap_alloc(sizeof(struct xml_metadata));
+                        xml->lang = NULL;
+                        xml->namespace = oscap_strdup((char *) xmlTextReaderConstName(reader));
+                        xml->URI = oscap_strdup((char *) xmlTextReaderConstValue(reader));
+                        oscap_list_add(ret->xmlns, xml);
+                } while (xmlTextReaderMoveToNextAttribute(reader)==1);
+        }
 
         // go through elements and switch through actions till end of file..
         next_ret = xmlTextReaderNextElement(reader);
@@ -617,7 +668,7 @@ struct cpe_generator * cpe_generator_parse(xmlTextReaderPtr reader) {
             xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
 
                 // we are on "<generator>" element, let's alloc structure
-	        ret = oscap_alloc(sizeof(struct cpe_generator));
+	        ret = cpe_generator_new();
                 if (ret == NULL)
                         return NULL;
 
@@ -751,7 +802,7 @@ struct cpe_item * cpe_item_parse(xmlTextReaderPtr reader) {
                             if (xmlStrcmp(xmlTextReaderConstLocalName(reader), 
                                 (const xmlChar *)"item-metadata") == 0) {
                                     data = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST "modification-date");
-                                    if ((data == NULL) || ((ret->metadata = oscap_alloc(sizeof(struct cpe_item_metadata))) == NULL)){
+                                    if ((data == NULL) || ((ret->metadata = cpe_item_metadata_new()) == NULL)){
                                             cpe_item_free(ret);
                                             oscap_free(data);
                                             return NULL;
@@ -958,7 +1009,6 @@ void cpe_dict_model_export_xml(struct cpe_dict_model * dict, const struct oscap_
         else xmlTextWriterStartDocument(writer, NULL, oscap_export_target_get_encoding(target), NULL);
 
         cpe_dict_export(dict, writer);
-        cpe_dict_model_free(dict);
         xmlTextWriterEndDocument(writer);
         xmlFreeTextWriter(writer);
 }
@@ -966,15 +1016,11 @@ void cpe_dict_model_export_xml(struct cpe_dict_model * dict, const struct oscap_
 void cpe_dict_export(const struct cpe_dict_model * dict, xmlTextWriterPtr writer) {
 
         xmlTextWriterStartElementNS(writer, BAD_CAST dict->xml.namespace, BAD_CAST "cpe-list", NULL);
-        // TODO: this shouldn't be hardcoded - find another way !
-        xmlTextWriterWriteAttribute(writer, BAD_CAST "xmlns", BAD_CAST 
-                "http://cpe.mitre.org/dictionary/2.0");
-        xmlTextWriterWriteAttribute(writer, BAD_CAST "xmlns:xsi", BAD_CAST 
-                "http://www.w3.org/2001/XMLSchema-instance");
-        xmlTextWriterWriteAttribute(writer, BAD_CAST "xmlns:meta", BAD_CAST 
-                "http://scap.nist.gov/schema/cpe-dictionary-metadata/0.2");
-        xmlTextWriterWriteAttribute(writer, BAD_CAST "xsi:schemaLocation", BAD_CAST 
-                "http://scap.nist.gov/schema/cpe-dictionary-metadata/0.2 http://nvd.nist.gov/schema/cpe-dictionary-metadata_0.2.xsd http://cpe.mitre.org/dictionary/2.0 http://cpe.mitre.org/files/cpe-dictionary_2.1.xsd");
+
+        OSCAP_FOREACH (xml_metadata, xml, cpe_dict_model_get_xmlns(dict),
+                if (xml->URI != NULL) xmlTextWriterWriteAttribute(writer, BAD_CAST xml->namespace, BAD_CAST xml->URI);
+        )
+
         if (dict->generator != NULL) {
             cpe_generator_export( dict->generator, writer);
         }
@@ -1208,6 +1254,7 @@ void cpe_dict_model_free(struct cpe_dict_model * dict) {
 
 	oscap_list_free(dict->items, (oscap_destruct_func)cpe_item_free);
 	oscap_list_free(dict->vendors, (oscap_destruct_func)cpe_vendor_free);
+        oscap_list_free(dict->xmlns, (oscap_destruct_func)xml_metadata_free);
 	cpe_generator_free(dict->generator);
         xml_metadata_free(&dict->xml);
 	oscap_free(dict);

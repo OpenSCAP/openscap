@@ -22,6 +22,7 @@ void print_usage(const char *program_name, FILE *out)
   fprintf(out, 
 	  "Usage: \n\n"
 	  "  %s --help\n"
+	  "  %s --export-all CPE_LANG_XML ENCODING CPE_EXPORT_XML ENCODING\n"
 	  "  %s --get-all CPE_LANG_XML ENCODING\n"
 	  "  %s --get-key CPE_LANG_XML ENCODING KEY\n"
 	  "  %s --set-all CPE_LANG_XML ENCODING NS_PREFIX NS_HREF (PLATFORM_ID)*\n"
@@ -165,16 +166,16 @@ int main (int argc, char *argv[])
 	return 2;
     }      
 
-    if ((export_target = oscap_export_target_new(argv[2], argv[3])) == NULL) 
+    if ((export_target = oscap_export_target_new(argv[2], argv[3])) == NULL)
       return 1;
     cpe_lang_model_export(lang_model, export_target);
     oscap_export_target_free(export_target);
-    //cpe_lang_model_free(lang_model);      
+    cpe_lang_model_free(lang_model);
   }
 
   // Set id, change titles of platform of given key.
-  else if (argc >= 6 && !strcmp(argv[1], "--set-key")) {        
-    if ((import_source = oscap_import_source_new(argv[2], argv[3])) == NULL) 
+  else if (argc >= 6 && !strcmp(argv[1], "--set-key")) {
+    if ((import_source = oscap_import_source_new(argv[2], argv[3])) == NULL)
       return 1;
     if ((lang_model = cpe_lang_model_import(import_source)) == NULL)
       return 1;
@@ -184,7 +185,7 @@ int main (int argc, char *argv[])
       return 2;
     
     if (strcmp(argv[5], "-"))
-      cpe_platform_set_id(platform, argv[5]);        
+      cpe_platform_set_id(platform, argv[5]);
 
     i = 6;
     title_it = cpe_platform_get_titles(platform);
@@ -199,7 +200,7 @@ int main (int argc, char *argv[])
       return 1;
     cpe_lang_model_export(lang_model, export_target);
     oscap_export_target_free(export_target);
-    cpe_lang_model_free(lang_model);      
+    cpe_lang_model_free(lang_model);
   }
 
   // Create new content with new platforms.
@@ -224,7 +225,7 @@ int main (int argc, char *argv[])
       return 1;
     cpe_lang_model_export(lang_model, export_target);
     oscap_export_target_free(export_target);    
-    //cpe_lang_model_free(lang_model);      
+    cpe_lang_model_free(lang_model);
   }
 
   // Sanity checks.
@@ -246,6 +247,22 @@ int main (int argc, char *argv[])
       cpe_testexpr_free(testexpr);
   }
   
+  else if (argc == 6 && !strcmp(argv[1], "--export-all")) {
+    if ((import_source = oscap_import_source_new(argv[2], argv[3])) == NULL)
+      return 1;
+
+    if ((export_target = oscap_export_target_new(argv[4], argv[5])) == NULL)
+      return 1;
+
+    if ((lang_model = cpe_lang_model_import(import_source)) == NULL)
+      return 1;
+
+    cpe_lang_model_export(lang_model, export_target);
+
+    oscap_import_source_free(import_source);
+    oscap_export_target_free(export_target);
+    cpe_lang_model_free(lang_model);
+  }
   else {
     print_usage(argv[0], stderr);
     ret_val = 1;

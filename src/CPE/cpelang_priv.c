@@ -38,6 +38,7 @@
 
 #include "../common/util.h"
 #include "../common/list.h"
+#include "../common/elements.h"
 
 /***************************************************************************/
 /* Variable definitions
@@ -53,11 +54,13 @@ OSCAP_GETTER(cpe_lang_oper_t, cpe_testexpr, oper)
  * */
 struct cpe_lang_model {
         struct xml_metadata xml;
+        struct oscap_list * xmlns;
         char *ns_href;
         char *ns_prefix;
 	struct oscap_list* platforms;   // list of items
 	struct oscap_htable* item;  // item by ID
 };
+OSCAP_IGETINS(xml_metadata, cpe_lang_model, xmlns, xml)
 OSCAP_ACCESSOR_STRING(cpe_lang_model, ns_href)
 OSCAP_ACCESSOR_STRING(cpe_lang_model, ns_prefix)
 OSCAP_IGETTER_GEN(cpe_platform, cpe_lang_model, platforms)
@@ -135,10 +138,12 @@ struct cpe_testexpr * cpe_testexpr_new() {
         if (ret == NULL)
                 return NULL;
 
-        ret->xml.lang       = NULL;
-        ret->xml.namespace  = NULL;
         ret->meta.expr      = NULL;
         ret->meta.cpe       = NULL;
+
+        ret->xml.lang       = NULL;
+        ret->xml.namespace  = NULL;
+        ret->xml.URI        = NULL;
 
         return ret;
 }
@@ -151,12 +156,14 @@ struct cpe_lang_model * cpe_lang_model_new() {
 	if (ret == NULL)
 		return NULL;
 
-	ret->platforms = oscap_list_new();
-	ret->item = oscap_htable_new();
+	ret->platforms      = oscap_list_new();
+	ret->item           = oscap_htable_new();
+        ret->xmlns          = oscap_list_new();
         ret->ns_href        = NULL;
         ret->ns_prefix      = NULL;
         ret->xml.lang       = NULL;
         ret->xml.namespace  = NULL;
+        ret->xml.URI        = NULL;
 
 	return ret;
 }
@@ -169,10 +176,11 @@ struct cpe_platform * cpe_platform_new() {
 	if (ret == NULL)
 		return NULL;
 
-	ret->titles = oscap_list_new();
+	ret->titles         = oscap_list_new();
 	ret->expr           = *(cpe_testexpr_new());
         ret->xml.lang       = NULL;
         ret->xml.namespace  = NULL;
+        ret->xml.URI        = NULL;
 	ret->id             = NULL;
 	ret->remark         = NULL;
 
@@ -236,8 +244,9 @@ struct cpe_lang_model * cpe_lang_model_parse_xml(const struct oscap_import_sourc
 
 struct cpe_lang_model * cpe_lang_model_parse(xmlTextReaderPtr reader) {
 
-        struct cpe_lang_model *ret = NULL;
-        struct cpe_platform *platform;
+        struct cpe_lang_model *ret      = NULL;
+        struct xml_metadata *xml        = NULL;
+        struct cpe_platform *platform   = NULL;
 
         if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), BAD_CAST "platform-specification") &&
             xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
@@ -246,10 +255,20 @@ struct cpe_lang_model * cpe_lang_model_parse(xmlTextReaderPtr reader) {
                 if (ret == NULL)
                         return NULL;
 
-                ret->ns_href = oscap_strdup((char *) xmlTextReaderConstNamespaceUri(reader));
                 ret->ns_prefix = oscap_strdup((char *) xmlTextReaderConstPrefix(reader));
                 ret->xml.lang = oscap_strdup((char *) xmlTextReaderConstXmlLang(reader));
                 ret->xml.namespace = (char *) xmlTextReaderPrefix(reader);
+
+                /* Reading XML namespaces */
+                if (xmlTextReaderHasAttributes(reader) && xmlTextReaderMoveToFirstAttribute(reader)==1) {
+                        do {
+                                xml = oscap_alloc(sizeof(struct xml_metadata));
+                                xml->lang = NULL;
+                                xml->namespace = oscap_strdup((char *) xmlTextReaderConstName(reader));
+                                xml->URI = oscap_strdup((char *) xmlTextReaderConstValue(reader));
+                                oscap_list_add(ret->xmlns, xml);
+                        } while (xmlTextReaderMoveToNextAttribute(reader)==1);
+                }
                 
                 // skip nodes until new element
                 xmlTextReaderNextElement(reader);
@@ -319,7 +338,7 @@ struct cpe_testexpr * cpe_testexpr_parse(xmlTextReaderPtr reader) {
         struct cpe_testexpr * ret;
 
         // allocation
-        ret = oscap_alloc(sizeof(struct cpe_testexpr));
+        ret = cpe_testexpr_new();
         if (ret == NULL)
                 return NULL;
         
@@ -389,6 +408,7 @@ struct cpe_testexpr * cpe_testexpr_parse(xmlTextReaderPtr reader) {
                                 xmlFree(temp);
                                 ret->meta.expr[elem_cnt-1].xml.lang = oscap_strdup((char *) xmlTextReaderConstXmlLang(reader));
                                 ret->meta.expr[elem_cnt-1].xml.namespace = (char *) xmlTextReaderPrefix(reader);
+                                ret->meta.expr[elem_cnt-1].xml.URI = NULL;
                 }
                 xmlTextReaderRead(reader);
         }
@@ -446,12 +466,16 @@ void cpe_lang_model_export_xml(struct cpe_lang_model * spec, struct oscap_export
         cpe_lang_export(spec, writer);
         xmlTextWriterEndDocument(writer);
         xmlFreeTextWriter(writer);
-        cpe_lang_model_free(spec);
 }
 
 void cpe_lang_export(const struct cpe_lang_model * spec, xmlTextWriterPtr writer) {
 
         xmlTextWriterStartElementNS(writer, BAD_CAST spec->ns_prefix, BAD_CAST "platform-specification", BAD_CAST spec->ns_href);
+
+        OSCAP_FOREACH (xml_metadata, xml, cpe_lang_model_get_xmlns(spec),
+                if (xml->URI != NULL) xmlTextWriterWriteAttribute(writer, BAD_CAST xml->namespace, BAD_CAST xml->URI);
+        )
+
         OSCAP_FOREACH (cpe_platform, p, cpe_lang_model_get_platforms(spec),
 		// dump its contents to XML tree
                 cpe_platform_export( p, writer );
@@ -525,6 +549,7 @@ void cpe_lang_model_free(struct cpe_lang_model * platformspec)
 
 	oscap_htable_free(platformspec->item, NULL);
 	oscap_list_free(platformspec->platforms, (oscap_destruct_func)cpe_platform_free);
+        oscap_list_free(platformspec->xmlns, (oscap_destruct_func)xml_metadata_free);
         xml_metadata_free(&platformspec->xml);
 	oscap_free(platformspec);
 }

@@ -150,12 +150,34 @@ EOF
     return $ret_val
 }
 
+# Function tests xml namespace
+function test_cpelang_tc08 {
+    local ret_val=0;
+
+cat > export.xml <<EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<foo:platform-specification xmlns:foo="Bar" xmlns:bla="Bla"/>
+EOF
+
+    ./test_cpelang --export-all export.xml "UTF-8" export.xml.out.3 "UTF-8"
+    ret_val=$?
+
+    [ ! -e export.xml.out.3 ] && [ $ret_val -eq 0 ] && ret_val=1
+
+    if [ $ret_val -eq 0 ]; then
+	xml_cmp ${srcdir}/export.xml export.xml.out.3
+	ret_val=$?
+    fi
+
+    return $ret_val
+}
+
 # Cleanup.
 function test_cpelang_cleanup {
     local ret_val=0;
 
     rm -f export.xml export.xml.out export.xml.out.0 export.xml.out.1 \
-	export.xml.out.2 diff.out get-all get-all.out get-key.out
+	export.xml.out.2 export.xml.out.3 diff.out get-all get-all.out get-key.out
 
     return $ret_val
 }
@@ -178,6 +200,7 @@ test_cpelang_tc04    ; ret_val=$? ; report_result "test_cpelang_tc04"    $ret_va
 test_cpelang_tc05    ; ret_val=$? ; report_result "test_cpelang_tc05"    $ret_val ; result=$[$result+$ret_val]
 test_cpelang_tc06    ; ret_val=$? ; report_result "test_cpelang_tc06"    $ret_val ; result=$[$result+$ret_val]
 test_cpelang_tc07    ; ret_val=$? ; report_result "test_cpelang_tc07"    $ret_val ; result=$[$result+$ret_val]
+test_cpelang_tc08    ; ret_val=$? ; report_result "test_cpelang_tc08"    $ret_val ; result=$[$result+$ret_val]
 test_cpelang_cleanup ; ret_val=$? ; report_result "test_cpelang_cleanup" $ret_val ; result=$[$result+$ret_val]
 
 echo "------------------------------------------"

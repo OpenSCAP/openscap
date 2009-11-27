@@ -202,6 +202,7 @@ int main (int argc, char **argv)
 
     oscap_import_source_free(import_source);
     oscap_export_target_free(export_target);
+    cpe_dict_model_free(dict_model);
   }
   
   else if (argc == 2 && !strcmp(argv[1], "--sanity-check")) {

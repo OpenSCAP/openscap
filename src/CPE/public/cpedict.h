@@ -351,6 +351,12 @@ struct cpe_language_iterator * cpe_edition_get_languages(const struct cpe_editio
  */
 const char * cpe_language_get_value(const struct cpe_language *item);
 
+/**
+ * Get XML namespace from CPE dict model
+ * @relates cpe_dict_model
+ */
+/*struct xml_metadata_iterator * cpe_dict_model_get_xmlns(const struct cpe_dict_model * model);*/
+
 /** @} */
 
 /**
@@ -416,6 +422,8 @@ struct cpe_update    *cpe_update_new(void);
 struct cpe_edition   *cpe_edition_new(void);
 /// @relates cpe_language
 struct cpe_language  *cpe_language_new(void);
+/// @relates cpe_item_metadata
+struct cpe_item_metadata *cpe_item_metadata_new(void);
 
 /*@}*/
 
@@ -533,6 +541,12 @@ bool cpe_update_add_edition(struct cpe_update *update, struct cpe_edition *new_e
 
 /// @relates cpe_edition
 bool cpe_edition_add_language(struct cpe_edition *edition, struct cpe_language *new_language);
+
+/**
+ * Add XML namespace to CPE dict model
+ * @relates cpe_dict_model
+ */
+/*bool cpe_dict_model_add_xmlns(struct cpe_dict_model * model, struct xml_metadata * xml);*/
 
 /*@}*/
 
@@ -808,7 +822,7 @@ void cpe_language_iterator_free(struct cpe_language_iterator* it);
 void cpe_dict_model_export(struct cpe_dict_model * dict, const struct oscap_export_target * target);
 
 /** 
- * Load new CPE onary from file
+ * Load new CPE dictionary from file
  * @relates cpe_dict_model
  * @param fname file name of dictionary to import
  * @return new dictionary

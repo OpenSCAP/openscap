@@ -175,6 +175,12 @@ struct oscap_title_iterator * cpe_platform_get_titles(const struct cpe_platform 
  */
 const struct cpe_testexpr * cpe_platform_get_expr(const struct cpe_platform *item);
 
+/**
+ * Get XML namespace from CPE lang model
+ * @relates cpe_lang_model
+ */
+/*struct xml_metadata_iterator * cpe_lang_model_get_xmlns(const struct cpe_lang_model * model);*/
+
 /*@}*/
 
 /**
@@ -193,6 +199,12 @@ bool cpe_lang_model_add_platform(struct cpe_lang_model *lang, struct cpe_platfor
  * @relates cpe_platform
  */
 bool cpe_platform_add_title(struct cpe_platform * platform, struct oscap_title *title);
+
+/**
+ * Add XML namespace to CPE lang model
+ * @relates cpe_lang_model
+ */
+/*bool cpe_lang_model_add_xmlns(struct cpe_lang_model * model, struct xml_metadata * xml);*/
 
 /*@}*/
 
