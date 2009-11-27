@@ -185,7 +185,7 @@ struct cpe_dict_model * cpe_dict_model_parse(xmlTextReaderPtr reader);
  * @relates cpe_dict_model
  * @param target OSCAP exporting target
  */
-void cpe_dict_model_export_xml(struct cpe_dict_model * dict, const struct oscap_export_target * target);
+void cpe_dict_model_export_xml(const struct cpe_dict_model * dict, const struct oscap_export_target * target);
 
 /**
  * Internal export function for CPE dictionary model

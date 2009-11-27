@@ -46,7 +46,7 @@ struct cpe_dict_model * cpe_dict_model_import(const struct oscap_import_source *
     return dict;
 }
 
-void cpe_dict_model_export(struct cpe_dict_model * dict, const struct oscap_export_target * target) {
+void cpe_dict_model_export(const struct cpe_dict_model * dict, const struct oscap_export_target * target) {
 
     if (oscap_export_target_get_filename(target) == NULL) return;
 

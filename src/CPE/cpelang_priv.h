@@ -131,7 +131,7 @@ struct cpe_testexpr * cpe_testexpr_parse(xmlTextReaderPtr reader);
  * @param spec CPE language model structure
  * @relates cpe_lang_model
  */
-void cpe_lang_model_export_xml(struct cpe_lang_model * spec, struct oscap_export_target * target);
+void cpe_lang_model_export_xml(const struct cpe_lang_model * spec, struct oscap_export_target * target);
 
 /**
  * Function for export CPE language top element

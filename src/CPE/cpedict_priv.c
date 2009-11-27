@@ -141,8 +141,7 @@ struct cpe_dict_model {                        // the main node
         struct oscap_list* vendors;
         struct cpe_generator* generator;
 };
-OSCAP_IGETINS_GEN(xml_metadata, cpe_dict_model, xmlns, xml)
-OSCAP_ITERATOR_REMOVE_F(xml_metadata)
+OSCAP_IGETINS(xml_metadata, cpe_dict_model, xmlns, xml)
 OSCAP_GETTER(struct cpe_generator*, cpe_dict_model, generator)
 OSCAP_IGETTER_GEN(cpe_item, cpe_dict_model, items)
 OSCAP_ITERATOR_REMOVE_F(cpe_item)
@@ -360,7 +359,7 @@ struct cpe_item_metadata *cpe_item_metadata_new() {
         item->xml.namespace = NULL;
         item->xml.URI       = NULL;
 
-
+        return item;
 }
 
 struct cpe_item *cpe_item_new() {
@@ -991,7 +990,7 @@ struct cpe_vendor * cpe_vendor_parse(xmlTextReaderPtr reader) {
  * More info in representive header file.
  * returns the type of <structure>
  */
-void cpe_dict_model_export_xml(struct cpe_dict_model * dict, const struct oscap_export_target * target) {
+void cpe_dict_model_export_xml(const struct cpe_dict_model * dict, const struct oscap_export_target * target) {
 
         // TODO: add macro to check return value from xmlTextWriter* functions
         xmlTextWriterPtr writer;

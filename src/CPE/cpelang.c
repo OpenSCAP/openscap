@@ -49,7 +49,7 @@ struct cpe_lang_model * cpe_lang_model_import(const struct oscap_import_source *
     return lang;
 }
 
-void cpe_lang_model_export(struct cpe_lang_model * spec, struct oscap_export_target * target) {
+void cpe_lang_model_export(const struct cpe_lang_model * spec, struct oscap_export_target * target) {
 
     if (oscap_export_target_get_filename(target) == NULL) return;
 

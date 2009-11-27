@@ -58,8 +58,7 @@ struct cve_model {
         struct oscap_list* xmlns;
 	struct oscap_list* entries; /* 1-n */
 };
-OSCAP_IGETINS_GEN(xml_metadata, cve_model, xmlns, xml)
-OSCAP_ITERATOR_REMOVE_F(xml_metadata)
+OSCAP_IGETINS(xml_metadata, cve_model, xmlns, xml)
 OSCAP_IGETINS_GEN(cve_entry, cve_model, entries, entry)
 OSCAP_ITERATOR_REMOVE_F(cve_entry)
 

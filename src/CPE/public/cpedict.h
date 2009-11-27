@@ -817,9 +817,10 @@ void cpe_language_iterator_free(struct cpe_language_iterator* it);
 
 /**
  * Write the dict_model to a file.
+ * @param dict CPE Dict model
  * @relates cpe_dict_model
  */ 
-void cpe_dict_model_export(struct cpe_dict_model * dict, const struct oscap_export_target * target);
+void cpe_dict_model_export(const struct cpe_dict_model * dict, const struct oscap_export_target * target);
 
 /** 
  * Load new CPE dictionary from file

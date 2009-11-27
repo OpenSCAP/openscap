@@ -60,7 +60,7 @@ struct cpe_lang_model {
 	struct oscap_list* platforms;   // list of items
 	struct oscap_htable* item;  // item by ID
 };
-OSCAP_IGETINS(xml_metadata, cpe_lang_model, xmlns, xml)
+OSCAP_IGETINS_GEN(xml_metadata, cpe_lang_model, xmlns, xml)
 OSCAP_ACCESSOR_STRING(cpe_lang_model, ns_href)
 OSCAP_ACCESSOR_STRING(cpe_lang_model, ns_prefix)
 OSCAP_IGETTER_GEN(cpe_platform, cpe_lang_model, platforms)
@@ -447,7 +447,7 @@ static char * parse_text_element(xmlTextReaderPtr reader, char *name) {
  * More info in representive header file.
  * returns the type of <structure>
  */
-void cpe_lang_model_export_xml(struct cpe_lang_model * spec, struct oscap_export_target * target) {
+void cpe_lang_model_export_xml(const struct cpe_lang_model * spec, struct oscap_export_target * target) {
 
         // TODO: ad macro to check return value from xmlTextWriter* functions
         xmlTextWriterPtr writer;
