@@ -60,7 +60,7 @@ struct cpe_lang_model {
 	struct oscap_list* platforms;   // list of items
 	struct oscap_htable* item;  // item by ID
 };
-OSCAP_IGETINS_GEN(xml_metadata, cpe_lang_model, xmlns, xml)
+OSCAP_IGETINS(xml_metadata, cpe_lang_model, xmlns, xml)
 OSCAP_ACCESSOR_STRING(cpe_lang_model, ns_href)
 OSCAP_ACCESSOR_STRING(cpe_lang_model, ns_prefix)
 OSCAP_IGETTER_GEN(cpe_platform, cpe_lang_model, platforms)
