@@ -29,53 +29,70 @@
 %module openscap
 %{
  #include "../src/common/public/oscap.h"
-
- #include "../src/CCE/public/cce.h"
-
- #include "../src/CPE/public/cpeuri.h"
- #include "../src/CPE/public/cpedict.h"
- #include "../src/CPE/public/cpelang.h"
-
- #include "../src/CVE/public/cve.h"
-
- #include "../src/CVSS/public/cvss.h"
-
- #include "../src/OVAL/public/oval_agent_api.h"
- #include "../src/OVAL/public/oval_definitions.h"
- #include "../src/OVAL/public/oval_system_characteristics.h"
- #include "../src/OVAL/public/oval_results.h"
-
- #include "../src/XCCDF/public/xccdf.h"
 %}
-
 %include "../src/common/public/oscap.h"
 
+
 #ifdef WANT_CCE
+%module openscap
+%{
+ #include "../src/CCE/public/cce.h"
+%}
 %include "../src/CCE/public/cce.h"
 #endif
 
+
 #ifdef WANT_CPE
+%module openscap
+%{
+ #include "../src/CPE/public/cpeuri.h"
+ #include "../src/CPE/public/cpedict.h"
+ #include "../src/CPE/public/cpelang.h"
+%}
 %include "../src/CPE/public/cpeuri.h"
 %include "../src/CPE/public/cpedict.h"
 %include "../src/CPE/public/cpelang.h"
 #endif
 
+
 #ifdef WANT_CVE
+%module openscap
+%{
+ #include "../src/CVE/public/cve.h"
+%}
 %include "../src/CVE/public/cve.h"
 #endif
 
+
 #ifdef WANT_CVSS
+%module openscap
+%{
+ #include "../src/CVSS/public/cvss.h"
+%}
 %include "../src/CVSS/public/cvss.h"
 #endif
 
+
 #ifdef WANT_OVAL
+%module openscap
+%{
+ #include "../src/OVAL/public/oval_agent_api.h"
+ #include "../src/OVAL/public/oval_definitions.h"
+ #include "../src/OVAL/public/oval_system_characteristics.h"
+ #include "../src/OVAL/public/oval_results.h"
+%}
 %include "../src/OVAL/public/oval_agent_api.h"
 %include "../src/OVAL/public/oval_definitions.h"
 %include "../src/OVAL/public/oval_system_characteristics.h"
 %include "../src/OVAL/public/oval_results.h"
 #endif
 
+
 #ifdef WANT_XCCDF
+%module openscap
+%{
+ #include "../src/XCCDF/public/xccdf.h"
+%}
 %include "../src/XCCDF/public/xccdf.h"
 #endif
 
