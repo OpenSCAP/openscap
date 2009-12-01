@@ -57,7 +57,7 @@ typedef struct oval_variable_LOCAL {
 	oval_syschar_collection_flag_t flag;
 	struct oval_collection *values;
 	struct oval_component *component;	//type==OVAL_VARIABLE_LOCAL
-} oval_variable_LOCAL_t;
+} oval_variable_LOCAL_t, oval_variable_UNKNOWN_t;
 
 bool oval_variable_iterator_has_more(struct oval_variable_iterator
 				      *oc_variable)
@@ -158,40 +158,48 @@ struct oval_component *oval_variable_get_component(struct oval_variable *variabl
 
   struct oval_variable *oval_variable_new(char *id, oval_variable_type_t type)
 {
-	oval_variable_t *variable = (oval_variable_t *)(type==OVAL_VARIABLE_LOCAL)
-			?malloc(sizeof(oval_variable_LOCAL_t))
-			:malloc(sizeof(oval_variable_CONEXT_t));
+	oval_variable_t *variable;
+	switch(type){
+	case OVAL_VARIABLE_CONSTANT:{
+		variable = (oval_variable_t*)malloc(sizeof(oval_variable_CONEXT_t));
+		oval_variable_CONEXT_t *conext
+		= (oval_variable_CONEXT_t *)variable;
+		conext->values = oval_collection_new();
+		conext->flag = SYSCHAR_FLAG_NOT_COLLECTED;
+	}break;
+	case OVAL_VARIABLE_EXTERNAL:{
+		variable = (oval_variable_t*)malloc(sizeof(oval_variable_CONEXT_t));
+		oval_variable_CONEXT_t *conext
+		= (oval_variable_CONEXT_t *)variable;
+		conext->values = oval_collection_new();
+		conext->flag   = SYSCHAR_FLAG_NOT_COLLECTED;
+	}break;
+	case OVAL_VARIABLE_LOCAL:{
+		variable = (oval_variable_t*)malloc(sizeof(oval_variable_LOCAL_t));
+		oval_variable_LOCAL_t *local
+		= (oval_variable_LOCAL_t *)variable;
+		local->component = NULL;
+		local->values    = NULL;
+		local->flag      = SYSCHAR_FLAG_UNKNOWN;
+	}break;
+	case OVAL_VARIABLE_UNKNOWN:{
+		variable = (oval_variable_t*)malloc(sizeof(oval_variable_UNKNOWN_t));
+		oval_variable_UNKNOWN_t *unknwn
+		= (oval_variable_UNKNOWN_t *)variable;
+		unknwn->component = NULL;
+		unknwn->values    = NULL;
+		unknwn->flag      = SYSCHAR_FLAG_UNKNOWN;
+	};break;
+	default:
+		variable = NULL;
+		fprintf(stderr," oval_variable type not valid: type = %d\n    %s(%d)\n"
+		, type, __FILE__, __LINE__);
+	}
+
 	variable->id = strdup(id);
 	variable->comment = NULL;
 	variable->datatype = OVAL_DATATYPE_UNKNOWN;
 	variable->type = type;
-	switch(type)
-	{
-		case OVAL_VARIABLE_CONSTANT:{
-			oval_variable_CONEXT_t *conext
-			= (oval_variable_CONEXT_t *)variable;
-			conext->values = oval_collection_new();
-			conext->flag = SYSCHAR_FLAG_NOT_COLLECTED;
-		}break;
-		case OVAL_VARIABLE_EXTERNAL:{
-			oval_variable_CONEXT_t *conext
-			= (oval_variable_CONEXT_t *)variable;
-			conext->values = oval_collection_new();
-			conext->flag   = SYSCHAR_FLAG_NOT_COLLECTED;
-		}break;
-		case OVAL_VARIABLE_LOCAL:{
-			oval_variable_LOCAL_t *local
-			= (oval_variable_LOCAL_t *)variable;
-			local->component = NULL;
-			local->values    = NULL;
-			local->flag      = SYSCHAR_FLAG_UNKNOWN;
-		};break;
-		default:{
-			variable->values = NULL;
-			variable->flag   = SYSCHAR_FLAG_UNKNOWN;
-			fprintf(stderr, "ERROR: variable type %d not supported\n", type);
-		};
-	}
 	return variable;
 }
 
@@ -261,8 +269,17 @@ void oval_variable_set_datatype(struct oval_variable *variable,
 
 void oval_variable_set_type(struct oval_variable *variable, oval_variable_type_t type)
 {
-	if(variable->type==OVAL_VARIABLE_UNKNOWN)variable->type = type;
-	else{
+	if(variable->type==OVAL_VARIABLE_UNKNOWN){
+		variable->type = type;
+		switch(type){
+		case OVAL_VARIABLE_CONSTANT:
+		case OVAL_VARIABLE_EXTERNAL:
+			variable->flag = SYSCHAR_FLAG_NOT_COLLECTED;break;
+		case OVAL_VARIABLE_LOCAL:
+		case OVAL_VARIABLE_UNKNOWN:
+			variable->flag = SYSCHAR_FLAG_UNKNOWN;break;
+		}
+	}else if (variable->type != type){
 		fprintf(stderr, "ERROR: attempt to reset valid variable type\n    oldtype = %s\n    newtype = %s",
 		oval_variable_type_get_text(variable->type), oval_variable_type_get_text(type));
 	}
