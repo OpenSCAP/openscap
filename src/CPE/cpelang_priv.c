@@ -83,8 +83,30 @@ OSCAP_IGETINS(oscap_title, cpe_platform, titles, title)
 /* End of variable definitions
  * */
 /***************************************************************************/
+/***************************************************************************/
+/* XML string variables definitions
+ * */
 
+#define TAG_PLATFORM_SPEC_STR   BAD_CAST "platform-specification"
+#define TAG_PLATFORM_STR        BAD_CAST "platform"
+#define TAG_LOGICAL_TEST_STR    BAD_CAST "logical-test"
+#define TAG_FACT_REF_STR        BAD_CAST "fact-ref"
+#define TAG_REMARK_STR          BAD_CAST "remark"
 
+#define ATTR_TITLE_STR      BAD_CAST "title"
+#define ATTR_NAME_STR       BAD_CAST "name"
+#define ATTR_OPERATOR_STR   BAD_CAST "operator"
+#define ATTR_NEGATE_STR     BAD_CAST "negate"
+#define ATTR_ID_STR         BAD_CAST "id"
+
+#define VAL_AND_STR     BAD_CAST "AND"
+#define VAL_OR_STR      BAD_CAST "OR"
+#define VAL_FALSE_STR   BAD_CAST "FALSE"
+#define VAL_TRUE_STR    BAD_CAST "TRUE"
+
+/* End of XML string variables definitions
+ * */
+/***************************************************************************/
 /***************************************************************************/
 /* Declaration of static (private to this file) functions
  * These function shoud not be called from outside. For exporting these elements
@@ -248,7 +270,7 @@ struct cpe_lang_model * cpe_lang_model_parse(xmlTextReaderPtr reader) {
         struct xml_metadata *xml        = NULL;
         struct cpe_platform *platform   = NULL;
 
-        if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), BAD_CAST "platform-specification") &&
+        if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_PLATFORM_SPEC_STR) &&
             xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
 
                 ret = cpe_lang_model_new();
@@ -273,7 +295,7 @@ struct cpe_lang_model * cpe_lang_model_parse(xmlTextReaderPtr reader) {
                 // skip nodes until new element
                 xmlTextReaderNextElement(reader);
 
-                while (xmlStrcmp (xmlTextReaderConstLocalName(reader), (const xmlChar *)"platform") == 0) {
+                while (xmlStrcmp (xmlTextReaderConstLocalName(reader), TAG_PLATFORM_STR) == 0) {
                         
                         platform = cpe_platform_parse(reader);
                         if (platform) cpe_lang_model_add_platform(ret, platform);
@@ -295,7 +317,7 @@ struct cpe_platform * cpe_platform_parse(xmlTextReaderPtr reader) {
 		return NULL;
 
         // parse platform attributes here
-        ret->id = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST "id");
+        ret->id = (char *) xmlTextReaderGetAttribute(reader, ATTR_ID_STR);
         ret->xml.lang = oscap_strdup((char *) xmlTextReaderConstXmlLang(reader));
         ret->xml.namespace = (char *) xmlTextReaderPrefix(reader);
         if (ret->id == NULL) {
@@ -309,18 +331,18 @@ struct cpe_platform * cpe_platform_parse(xmlTextReaderPtr reader) {
         // while we have element that is not "platform", it is inside this element, otherwise it's ended 
         // element </platform> and we should end. If there is no one from "if" statement cases, we are parsing
         // attribute or text ,.. and we can continue to next node.
-        while (xmlStrcmp (xmlTextReaderConstLocalName(reader), (const xmlChar *)"platform") != 0) {
+        while (xmlStrcmp (xmlTextReaderConstLocalName(reader), TAG_PLATFORM_STR) != 0) {
                 
-            if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), BAD_CAST "title") &&
+            if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), ATTR_TITLE_STR) &&
                 xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT){
-                        title = oscap_title_parse(reader, "title");
+                        title = oscap_title_parse(reader, (char *) ATTR_TITLE_STR);
                         if (title) oscap_list_add(ret->titles, title);
             } else 
-                if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), BAD_CAST "remark") &&
+                if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_REMARK_STR) &&
                     xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
-                        ret->remark = parse_text_element(reader, "remark"); // TODO: 0-n remarks !
+                        ret->remark = parse_text_element(reader, (char *) TAG_REMARK_STR); // TODO: 0-n remarks !
             } else
-                if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), BAD_CAST "logical-test") &&
+                if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_LOGICAL_TEST_STR) &&
                     xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
                         ret->expr = *(cpe_testexpr_parse(reader));
             }
@@ -343,10 +365,10 @@ struct cpe_testexpr * cpe_testexpr_parse(xmlTextReaderPtr reader) {
                 return NULL;
         
         // it's fact-ref only, fill the structure and return it
-        if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), BAD_CAST "fact-ref") && 
+        if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_FACT_REF_STR) && 
             xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
                 ret->oper = CPE_LANG_OPER_MATCH;
-                temp = xmlTextReaderGetAttribute(reader, BAD_CAST "name");
+                temp = xmlTextReaderGetAttribute(reader, ATTR_NAME_STR);
                 ret->meta.cpe = cpe_name_new((char *)temp);
                 xmlFree(temp);
                 ret->xml.lang = oscap_strdup((char *) xmlTextReaderConstXmlLang(reader));
@@ -355,10 +377,10 @@ struct cpe_testexpr * cpe_testexpr_parse(xmlTextReaderPtr reader) {
         } else {
                 // it's logical-test, fill the structure and go to next node
                 
-	        temp = xmlTextReaderGetAttribute(reader, BAD_CAST "operator");
-	        if (xmlStrcasecmp(temp, BAD_CAST "AND") == 0)
+	        temp = xmlTextReaderGetAttribute(reader, ATTR_OPERATOR_STR);
+	        if (xmlStrcasecmp(temp, VAL_AND_STR) == 0)
 		        ret->oper = CPE_LANG_OPER_AND;
-	        else if (xmlStrcasecmp(temp, BAD_CAST "OR") == 0)
+	        else if (xmlStrcasecmp(temp, VAL_OR_STR) == 0)
 		        ret->oper = CPE_LANG_OPER_OR;
 	        else {
                         // unknown operator problem
@@ -371,8 +393,8 @@ struct cpe_testexpr * cpe_testexpr_parse(xmlTextReaderPtr reader) {
                 ret->xml.lang = oscap_strdup((char *) xmlTextReaderConstXmlLang(reader));
                 ret->xml.namespace = (char *) xmlTextReaderPrefix(reader);
 
-	        temp = xmlTextReaderGetAttribute(reader, BAD_CAST "negate");
-	        if (temp && xmlStrcasecmp(temp, BAD_CAST "TRUE") == 0)
+	        temp = xmlTextReaderGetAttribute(reader, ATTR_NEGATE_STR);
+	        if (temp && xmlStrcasecmp(temp, VAL_TRUE_STR) == 0)
 		        ret->oper |= CPE_LANG_OPER_NOT;
 	        xmlFree(temp);
         }
@@ -383,7 +405,7 @@ struct cpe_testexpr * cpe_testexpr_parse(xmlTextReaderPtr reader) {
 	ret->meta.expr = cpe_testexpr_new();
 
         // while it's not 'logical-test' or it's not ended element ..
-        while (xmlStrcmp(xmlTextReaderConstLocalName(reader), (const xmlChar *) "logical-test") != 0 ||
+        while (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_LOGICAL_TEST_STR) != 0 ||
                xmlTextReaderNodeType(reader) != XML_READER_TYPE_END_ELEMENT) {
 
                 if (xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT) {
@@ -395,15 +417,15 @@ struct cpe_testexpr * cpe_testexpr_parse(xmlTextReaderPtr reader) {
 	        ret->meta.expr = (struct cpe_testexpr *) oscap_realloc(ret->meta.expr, (elem_cnt+1) * sizeof(struct cpe_testexpr));
 
                 // .. and the next node is logical-test element, we need recursive call
-                if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), BAD_CAST "logical-test") && 
+                if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_LOGICAL_TEST_STR) && 
                 xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
                         ret->meta.expr[elem_cnt-1] = *(cpe_testexpr_parse(reader));
                 } else // .. or it's fact-ref only
-                        if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), BAD_CAST "fact-ref") &&
+                        if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_FACT_REF_STR) &&
                             xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
                                 // fill the structure
                                 ret->meta.expr[elem_cnt-1].oper = CPE_LANG_OPER_MATCH;
-                                temp = xmlTextReaderGetAttribute(reader, BAD_CAST "name");
+                                temp = xmlTextReaderGetAttribute(reader, ATTR_NAME_STR);
                                 ret->meta.expr[elem_cnt-1].meta.cpe = cpe_name_new((char *)temp);
                                 xmlFree(temp);
                                 ret->meta.expr[elem_cnt-1].xml.lang = oscap_strdup((char *) xmlTextReaderConstXmlLang(reader));
@@ -470,7 +492,7 @@ void cpe_lang_model_export_xml(const struct cpe_lang_model * spec, struct oscap_
 
 void cpe_lang_export(const struct cpe_lang_model * spec, xmlTextWriterPtr writer) {
 
-        xmlTextWriterStartElementNS(writer, BAD_CAST spec->ns_prefix, BAD_CAST "platform-specification", BAD_CAST spec->ns_href);
+        xmlTextWriterStartElementNS(writer, BAD_CAST spec->ns_prefix, TAG_PLATFORM_SPEC_STR, BAD_CAST spec->ns_href);
 
         OSCAP_FOREACH (xml_metadata, xml, cpe_lang_model_get_xmlns(spec),
                 if (xml->URI != NULL) xmlTextWriterWriteAttribute(writer, BAD_CAST xml->namespace, BAD_CAST xml->URI);
@@ -485,9 +507,9 @@ void cpe_lang_export(const struct cpe_lang_model * spec, xmlTextWriterPtr writer
 
 void cpe_platform_export(const struct cpe_platform * platform, xmlTextWriterPtr writer) {
     
-        xmlTextWriterStartElementNS(writer, BAD_CAST platform->xml.namespace, BAD_CAST "platform", NULL);
+        xmlTextWriterStartElementNS(writer, BAD_CAST platform->xml.namespace, TAG_PLATFORM_STR, NULL);
         if (cpe_platform_get_id(platform) != NULL) 
-                xmlTextWriterWriteAttribute(writer, BAD_CAST "id", BAD_CAST cpe_platform_get_id(platform));
+                xmlTextWriterWriteAttribute(writer, ATTR_ID_STR, BAD_CAST cpe_platform_get_id(platform));
         OSCAP_FOREACH (oscap_title, title, cpe_platform_get_titles(platform),
 		// dump its contents to XML tree
                 oscap_title_export(title, writer);
@@ -502,26 +524,26 @@ void cpe_testexpr_export(struct cpe_testexpr expr, xmlTextWriterPtr writer) {
             return;
 
         if (expr.oper == CPE_LANG_OPER_MATCH) {
-                xmlTextWriterStartElementNS(writer, BAD_CAST expr.xml.namespace, BAD_CAST "fact-ref", NULL);
-                xmlTextWriterWriteAttribute(writer, BAD_CAST "name", BAD_CAST cpe_name_get_uri(expr.meta.cpe));
+                xmlTextWriterStartElementNS(writer, BAD_CAST expr.xml.namespace, TAG_FACT_REF_STR, NULL);
+                xmlTextWriterWriteAttribute(writer, ATTR_NAME_STR, BAD_CAST cpe_name_get_uri(expr.meta.cpe));
                 xmlTextWriterEndElement(writer);
                 return;
         } else {
-                xmlTextWriterStartElementNS(writer, BAD_CAST expr.xml.namespace, BAD_CAST "logical-test", NULL);
+                xmlTextWriterStartElementNS(writer, BAD_CAST expr.xml.namespace, TAG_LOGICAL_TEST_STR, NULL);
         }
 
         if (expr.oper == CPE_LANG_OPER_AND) {
-                xmlTextWriterWriteAttribute(writer, BAD_CAST "operator", BAD_CAST "AND");
-                xmlTextWriterWriteAttribute(writer, BAD_CAST "negate", BAD_CAST "FALSE");
+                xmlTextWriterWriteAttribute(writer, ATTR_OPERATOR_STR, VAL_AND_STR);
+                xmlTextWriterWriteAttribute(writer, ATTR_NEGATE_STR, VAL_FALSE_STR);
         } else if (expr.oper == CPE_LANG_OPER_OR) {
-                xmlTextWriterWriteAttribute(writer, BAD_CAST "operator", BAD_CAST "OR");
-                xmlTextWriterWriteAttribute(writer, BAD_CAST "negate", BAD_CAST "FALSE");
+                xmlTextWriterWriteAttribute(writer, ATTR_OPERATOR_STR, VAL_OR_STR);
+                xmlTextWriterWriteAttribute(writer, ATTR_NEGATE_STR, VAL_FALSE_STR);
         } else if (expr.oper == CPE_LANG_OPER_NOR) {
-                xmlTextWriterWriteAttribute(writer, BAD_CAST "operator", BAD_CAST "OR");
-                xmlTextWriterWriteAttribute(writer, BAD_CAST "negate", BAD_CAST "TRUE");
+                xmlTextWriterWriteAttribute(writer, ATTR_OPERATOR_STR, VAL_OR_STR);
+                xmlTextWriterWriteAttribute(writer, ATTR_NEGATE_STR, VAL_TRUE_STR);
         } else if (expr.oper == CPE_LANG_OPER_NAND) {
-                xmlTextWriterWriteAttribute(writer, BAD_CAST "operator", BAD_CAST "AND");
-                xmlTextWriterWriteAttribute(writer, BAD_CAST "negate", BAD_CAST "TRUE");
+                xmlTextWriterWriteAttribute(writer, ATTR_OPERATOR_STR, VAL_AND_STR);
+                xmlTextWriterWriteAttribute(writer, ATTR_NEGATE_STR, VAL_TRUE_STR);
         } else {
             // CPE_LANG_OPER_MATCH or raise exception ! We are dumped !
         }

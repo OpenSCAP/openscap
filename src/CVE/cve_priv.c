@@ -184,6 +184,8 @@ OSCAP_ITERATOR_REMOVE_F(cve_configuration)
 #define ATTR_REFERENCE_TYPE_STR BAD_CAST "reference_type"
 #define ATTR_REFERENCE_HREF_STR BAD_CAST "href"
 
+#define NS_VULN_STR BAD_CAST "vuln"
+
 /* End of XML string variables definitions
  * */
 /***************************************************************************/
@@ -677,7 +679,7 @@ void cve_entry_export(const struct cve_entry * entry, xmlTextWriterPtr writer) {
 
         if (oscap_list_get_itemcount(entry->products) != 0) {
             /* TODO: make vulnerable-software-list element with namespace */
-            xmlTextWriterStartElementNS(writer, BAD_CAST "vuln", TAG_VULNERABLE_SOFTWARE_LIST_STR, BAD_CAST NULL);
+            xmlTextWriterStartElementNS(writer, NS_VULN_STR, TAG_VULNERABLE_SOFTWARE_LIST_STR, BAD_CAST NULL);
             OSCAP_FOREACH (cve_product, product, cve_entry_get_products(entry),
 		    /* dump its contents to XML tree */
                     xmlTextWriterStartElementNS(writer, BAD_CAST product->xml.namespace, TAG_PRODUCT_STR, BAD_CAST NULL);
@@ -688,22 +690,22 @@ void cve_entry_export(const struct cve_entry * entry, xmlTextWriterPtr writer) {
             xmlTextWriterEndElement(writer);
         }
         if ((entry->cve_id) != NULL)
-                xmlTextWriterWriteElementNS(writer, BAD_CAST "vuln", TAG_CVE_ID_STR, NULL, BAD_CAST entry->cve_id);
+                xmlTextWriterWriteElementNS(writer, NS_VULN_STR, TAG_CVE_ID_STR, NULL, BAD_CAST entry->cve_id);
 
         if ((entry->published) != NULL)
-                xmlTextWriterWriteElementNS(writer, BAD_CAST "vuln", TAG_PUBLISHED_DATETIME_STR, NULL, BAD_CAST entry->published);
+                xmlTextWriterWriteElementNS(writer, NS_VULN_STR, TAG_PUBLISHED_DATETIME_STR, NULL, BAD_CAST entry->published);
 
         if ((entry->modified) != NULL)
-                xmlTextWriterWriteElementNS(writer, BAD_CAST "vuln", TAG_LAST_MODIFIED_DATETIME_STR, NULL, BAD_CAST entry->modified);
+                xmlTextWriterWriteElementNS(writer, NS_VULN_STR, TAG_LAST_MODIFIED_DATETIME_STR, NULL, BAD_CAST entry->modified);
 
         if ((entry->cvss) != NULL) {
                 cvss_entry_export(entry->cvss, writer);
         }
         if ((entry->sec_protection) != NULL)
-                xmlTextWriterWriteElementNS(writer, BAD_CAST "vuln", TAG_SECURITY_PROTECTION_STR, NULL, BAD_CAST entry->sec_protection);
+                xmlTextWriterWriteElementNS(writer, NS_VULN_STR, TAG_SECURITY_PROTECTION_STR, NULL, BAD_CAST entry->sec_protection);
 
         if ((entry->cwe) != NULL) {
-                xmlTextWriterStartElementNS(writer, BAD_CAST "vuln", TAG_CWE_STR, BAD_CAST NULL);
+                xmlTextWriterStartElementNS(writer, NS_VULN_STR, TAG_CWE_STR, BAD_CAST NULL);
                 xmlTextWriterWriteAttribute(writer, ATTR_CWEID_STR, BAD_CAST entry->cwe);
                 xmlTextWriterEndElement(writer);
         }

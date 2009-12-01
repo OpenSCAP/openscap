@@ -222,7 +222,54 @@ OSCAP_ACCESSOR_STRING(cpe_language, value)
 /* End of variable definitions
  * */
 /***************************************************************************/
+/***************************************************************************/
+/* XML string variables definitions
+ * */
 
+
+#define TAG_CHECK_STR               BAD_CAST "check"
+#define TAG_NOTES_STR               BAD_CAST "notes"
+#define TAG_REFERENCES_STR          BAD_CAST "references"
+#define ATTR_DEP_BY_NVDID_STR       BAD_CAST "deprecated-by-nvd-id"
+#define ATTR_NVD_ID_STR             BAD_CAST "nvd-id"
+#define ATTR_STATUS_STR             BAD_CAST "status"
+#define ATTR_MODIFICATION_DATE_STR  BAD_CAST "modification-date"
+#define TAG_ITEM_METADATA_STR       BAD_CAST "item-metadata"
+#define TAG_REFERENCE_STR           BAD_CAST "reference"
+#define TAG_NOTE_STR                BAD_CAST "note"
+#define TAG_TITLE_STR               BAD_CAST "title"
+#define TAG_CPE_ITEM_STR            BAD_CAST "cpe-item"
+#define ATTR_DEPRECATION_DATE_STR   BAD_CAST "deprecation_date"
+#define ATTR_DEPRECATED_BY_STR      BAD_CAST "deprecated_by"
+#define ATTR_DEPRECATED_STR         BAD_CAST "deprecated"
+#define ATTR_NAME_STR               BAD_CAST "name"
+/* Generator */
+#define TAG_GENERATOR_STR           BAD_CAST "generator"
+#define TAG_PRODUCT_STR             BAD_CAST "product"
+#define TAG_PRODUCT_NAME_STR        BAD_CAST "product_name"
+#define TAG_PRODUCT_VERSION_STR     BAD_CAST "product_version"
+#define TAG_SCHEMA_VERSION_STR      BAD_CAST "schema_version"
+#define TAG_TIMESTAMP_STR           BAD_CAST "timestamp"
+#define TAG_COMPONENT_TREE_STR      BAD_CAST "component-tree"
+#define TAG_VENDOR_STR              BAD_CAST "vendor"
+#define TAG_CPE_LIST_STR            BAD_CAST "cpe-list"
+#define TAG_VERSION_STR             BAD_CAST "version"
+#define TAG_UPDATE_STR              BAD_CAST "update"
+#define TAG_EDITION_STR             BAD_CAST "edition"
+#define TAG_LANGUAGE_STR            BAD_CAST "language"
+
+#define ATTR_VALUE_STR      BAD_CAST "value"
+#define ATTR_PART_STR       BAD_CAST "part"
+#define ATTR_SYSTEM_STR     BAD_CAST "system"
+#define ATTR_HREF_STR       BAD_CAST "href"
+#define NS_META_STR         BAD_CAST "meta"
+#define ATTR_XML_LANG_STR   BAD_CAST "xml:lang"
+
+#define VAL_TRUE_STR        BAD_CAST "true"
+
+/* End of XML string variables definitions
+ * */
+/***************************************************************************/
 /***************************************************************************/
 /* Declaration of static (private to this file) functions
  * These function shoud not be called from outside. For exporting these elements
@@ -594,7 +641,7 @@ struct cpe_dict_model * cpe_dict_model_parse(xmlTextReaderPtr reader) {
         int next_ret = 1;
 
         // let's find "<cpe-list>" element
-        while (xmlStrcmp(xmlTextReaderConstLocalName(reader), BAD_CAST "cpe-list") && 
+        while (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_CPE_LIST_STR) && 
                 (next_ret == 1)) {
                 next_ret = xmlTextReaderNextElement(reader);
                 // There is no "<cpe-list>" element :(( and we are at the end of file !
@@ -625,10 +672,10 @@ struct cpe_dict_model * cpe_dict_model_parse(xmlTextReaderPtr reader) {
         next_ret = xmlTextReaderNextElement(reader);
         while (next_ret != 0) {
                 
-            if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), BAD_CAST "generator")) { // <generator> | count = 1
+            if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_GENERATOR_STR)) { // <generator> | count = 1
                         ret->generator = cpe_generator_parse(reader);
             } else 
-                if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), BAD_CAST "cpe-item")) { // <cpe-item> | cout = 0-n
+                if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_CPE_ITEM_STR)) { // <cpe-item> | cout = 0-n
 			if ((item = cpe_item_parse(reader)) == NULL) {
 				// something bad happend, let's try to recover and continue
                                 // add here some bad nodes list to write it to stdout after parsing is done
@@ -644,12 +691,12 @@ struct cpe_dict_model * cpe_dict_model_parse(xmlTextReaderPtr reader) {
 			}
                         continue;
             } else
-                if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), BAD_CAST "vendor")) { // <vendor> | count = 0-n
+                if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_VENDOR_STR)) { // <vendor> | count = 0-n
                         vendor = cpe_vendor_parse(reader);
 			if (vendor) oscap_list_add(ret->vendors, vendor);
             } else
                 // TODO: we need to store meta xml data of <component-tree> element
-                if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), BAD_CAST "component-tree")) { // <vendor> | count = 0-n
+                if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_COMPONENT_TREE_STR)) { // <vendor> | count = 0-n
                         // we just need to jump over this element
             }
             // get the next node
@@ -663,7 +710,7 @@ struct cpe_generator * cpe_generator_parse(xmlTextReaderPtr reader) {
 
         struct cpe_generator *ret = NULL;
 
-        if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), BAD_CAST "generator") &&
+        if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_GENERATOR_STR) &&
             xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
 
                 // we are on "<generator>" element, let's alloc structure
@@ -677,25 +724,25 @@ struct cpe_generator * cpe_generator_parse(xmlTextReaderPtr reader) {
                 // skip nodes until new element
                 xmlTextReaderNextElement(reader);
 
-                while (xmlStrcmp (xmlTextReaderConstLocalName(reader), BAD_CAST "generator") != 0) {
+                while (xmlStrcmp (xmlTextReaderConstLocalName(reader), TAG_GENERATOR_STR) != 0) {
 
                         if ((xmlStrcmp(xmlTextReaderConstLocalName(reader), 
-                            (const xmlChar *)"product_name") == 0) &&
+                            TAG_PRODUCT_NAME_STR) == 0) &&
                             (xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT)){
 			            ret->product_name = (char *) xmlTextReaderReadString(reader);
                         } else 
                             if ((xmlStrcmp(xmlTextReaderConstLocalName(reader), 
-                                (const xmlChar *)"product_version") == 0) &&
+                                TAG_PRODUCT_VERSION_STR) == 0) &&
                                 (xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT)){
 			            ret->product_version = (char *) xmlTextReaderReadString(reader);
                         } else 
                             if ((xmlStrcmp(xmlTextReaderConstLocalName(reader), 
-                                (const xmlChar *)"schema_version") == 0) &&
+                                TAG_SCHEMA_VERSION_STR) == 0) &&
                                 (xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT)){
 			            ret->schema_version = (char *) xmlTextReaderReadString(reader);
                         } else 
                             if ((xmlStrcmp(xmlTextReaderConstLocalName(reader), 
-                                (const xmlChar *)"timestamp") == 0) &&
+                                TAG_TIMESTAMP_STR) == 0) &&
                                 (xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT)){
 			            ret->timestamp = (char *) xmlTextReaderReadString(reader);
                         }
@@ -724,7 +771,7 @@ struct cpe_item * cpe_item_parse(xmlTextReaderPtr reader) {
         struct cpe_reference *ref = NULL;
         char *data;
 
-        if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), BAD_CAST "cpe-item") &&
+        if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_CPE_ITEM_STR) &&
             xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
 
                 // we are on "<cpe-item>" element, let's alloc structure
@@ -736,17 +783,17 @@ struct cpe_item * cpe_item_parse(xmlTextReaderPtr reader) {
                 ret->xml.namespace = (char *) xmlTextReaderPrefix(reader);
 
                 // Get a name attribute of cpe-item
-                data = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST "name");
+                data = (char *) xmlTextReaderGetAttribute(reader, ATTR_NAME_STR);
                 if (data != NULL) 
                     ret->name = cpe_name_new(data);
                 oscap_free(data);
 
                 // if there is "deprecated", "deprecated_by" and "deprecation_date" in cpe-item element
                 // ************************************************************************************
-                data = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST "deprecated");
+                data = (char *) xmlTextReaderGetAttribute(reader, ATTR_DEPRECATED_STR);
                 if (data != NULL) { // we have a deprecation here !
 	                oscap_free(data);
-                        data = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST "deprecated_by");
+                        data = (char *) xmlTextReaderGetAttribute(reader, ATTR_DEPRECATED_BY_STR);
 	                if (data == NULL || (ret->deprecated = cpe_name_new(data)) == NULL) {
 		                oscap_free(ret);
 		                oscap_free(data);
@@ -754,7 +801,7 @@ struct cpe_item * cpe_item_parse(xmlTextReaderPtr reader) {
                         }
 	                oscap_free(data);
 
-                        data = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST "deprecation_date");
+                        data = (char *) xmlTextReaderGetAttribute(reader, ATTR_DEPRECATION_DATE_STR);
 	                if(data == NULL || (ret->deprecation_date = malloc(strlen(data)+1)) == NULL)   {
 		                oscap_free(ret);
 		                oscap_free(data);
@@ -768,7 +815,7 @@ struct cpe_item * cpe_item_parse(xmlTextReaderPtr reader) {
                 xmlTextReaderNextElement(reader);
                 // Now it's time to go deaply to cpe-item element and parse it's children
                 // Do while there is another cpe-item element. Then return.
-                while (xmlStrcmp (xmlTextReaderConstLocalName(reader), BAD_CAST "cpe-item") != 0) {
+                while (xmlStrcmp (xmlTextReaderConstLocalName(reader), TAG_CPE_ITEM_STR) != 0) {
                         
                         if (xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT) {
                                 xmlTextReaderRead(reader);
@@ -776,31 +823,31 @@ struct cpe_item * cpe_item_parse(xmlTextReaderPtr reader) {
                         }
 
                         if (xmlStrcmp(xmlTextReaderConstLocalName(reader), 
-                            (const xmlChar *)"title") == 0) {
-                                    title = oscap_title_parse(reader, "title");
+                            TAG_TITLE_STR) == 0) {
+                                    title = oscap_title_parse(reader, (char *) TAG_TITLE_STR);
                                     if (title) oscap_list_add(ret->titles, title);
                         } else 
                             if (xmlStrcmp(xmlTextReaderConstLocalName(reader), 
-                                (const xmlChar *)"note") == 0) {
+                                TAG_NOTE_STR) == 0) {
                                     // it's OK to use title varible here, because note is the same structure,
                                     // not the reason to make a new same one
-                                    title = oscap_title_parse(reader, "note");
+                                    title = oscap_title_parse(reader, (char *) TAG_NOTE_STR);
                                     if (title) oscap_list_add(ret->notes, title);
                         } else 
                             if (xmlStrcmp(xmlTextReaderConstLocalName(reader), 
-                                (const xmlChar *)"check") == 0) {
+                                TAG_CHECK_STR) == 0) {
                                     check = cpe_check_parse(reader);
                                     if (check) oscap_list_add(ret->checks, check);
                         } else 
                             if (xmlStrcmp(xmlTextReaderConstLocalName(reader), 
-                                (const xmlChar *)"reference") == 0) {
+                                TAG_REFERENCE_STR) == 0) {
                                     ref = cpe_reference_parse(reader);
                                     if (ref) oscap_list_add(ret->references, ref);
                                     if (ref) printf("ref: %s\n", ref->href);
                         } else 
                             if (xmlStrcmp(xmlTextReaderConstLocalName(reader), 
-                                (const xmlChar *)"item-metadata") == 0) {
-                                    data = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST "modification-date");
+                                TAG_ITEM_METADATA_STR) == 0) {
+                                    data = (char *) xmlTextReaderGetAttribute(reader, ATTR_MODIFICATION_DATE_STR);
                                     if ((data == NULL) || ((ret->metadata = cpe_item_metadata_new()) == NULL)){
                                             cpe_item_free(ret);
                                             oscap_free(data);
@@ -810,20 +857,20 @@ struct cpe_item * cpe_item_parse(xmlTextReaderPtr reader) {
                                     ret->metadata->xml.lang = oscap_strdup((char *) xmlTextReaderConstXmlLang(reader));
                                     ret->metadata->xml.namespace = (char *) xmlTextReaderPrefix(reader);
 
-                                    data = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST "status");
+                                    data = (char *) xmlTextReaderGetAttribute(reader, ATTR_STATUS_STR);
 	                            if (data) ret->metadata->status = data;
-                                    data = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST "nvd-id");
+                                    data = (char *) xmlTextReaderGetAttribute(reader, ATTR_NVD_ID_STR);
 	                            if (data) ret->metadata->nvd_id = (char *)data;
-                                    data = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST "deprecated-by-nvd-id");
+                                    data = (char *) xmlTextReaderGetAttribute(reader, ATTR_DEP_BY_NVDID_STR);
 	                            if (data) ret->metadata->deprecated_by_nvd_id = (char *)data;
                                     else ret->metadata->deprecated_by_nvd_id = NULL;
                                     data = NULL;
 
                         } else 
                             if ((xmlStrcmp(xmlTextReaderConstLocalName(reader), 
-                                (const xmlChar *)"references") == 0) || 
+                                TAG_REFERENCES_STR) == 0) || 
                                 (xmlStrcmp(xmlTextReaderConstLocalName(reader), 
-                                (const xmlChar *)"notes") == 0)) {
+                                TAG_NOTES_STR) == 0)) {
                                 // we just need to jump over this element
                         
                         } else {
@@ -840,7 +887,7 @@ static struct cpe_check * cpe_check_parse(xmlTextReaderPtr reader) {
 
 	struct cpe_check *ret;
 
-        if (xmlStrcmp (xmlTextReaderConstLocalName(reader), BAD_CAST "check") != 0)
+        if (xmlStrcmp (xmlTextReaderConstLocalName(reader), TAG_CHECK_STR) != 0)
 		return NULL;
 
 	if ((ret = oscap_alloc(sizeof(struct cpe_check))) == NULL)
@@ -849,8 +896,8 @@ static struct cpe_check * cpe_check_parse(xmlTextReaderPtr reader) {
 
         ret->xml.lang = oscap_strdup((char *) xmlTextReaderConstXmlLang(reader));
         ret->xml.namespace = (char *) xmlTextReaderPrefix(reader);
-        ret->system = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST "system");
-        ret->href = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST "href");
+        ret->system = (char *) xmlTextReaderGetAttribute(reader, ATTR_SYSTEM_STR);
+        ret->href = (char *) xmlTextReaderGetAttribute(reader, ATTR_HREF_STR);
 	ret->identifier = str_trim((char *) xmlTextReaderReadString(reader));
 
 	return ret;
@@ -860,7 +907,7 @@ static struct cpe_reference * cpe_reference_parse(xmlTextReaderPtr reader) {
 
 	struct cpe_reference *ret;
 
-        if (xmlStrcmp (xmlTextReaderConstLocalName(reader), BAD_CAST "reference") != 0)
+            if (xmlStrcmp (xmlTextReaderConstLocalName(reader), TAG_REFERENCE_STR) != 0)
 		return NULL;
 
 	if ((ret = oscap_alloc(sizeof(struct cpe_reference))) == NULL)
@@ -869,7 +916,7 @@ static struct cpe_reference * cpe_reference_parse(xmlTextReaderPtr reader) {
 
         ret->xml.lang = oscap_strdup((char *) xmlTextReaderConstXmlLang(reader));
         ret->xml.namespace = (char *) xmlTextReaderPrefix(reader);
-        ret->href = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST "href");
+        ret->href = (char *) xmlTextReaderGetAttribute(reader, ATTR_HREF_STR);
 	ret->content = str_trim((char *) xmlTextReaderReadString(reader));
 
 	return ret;
@@ -879,7 +926,7 @@ struct cpe_vendor * cpe_vendor_parse(xmlTextReaderPtr reader) {
 
 
         struct cpe_vendor *ret         = NULL;
-        struct oscap_title *title    = NULL;
+        struct oscap_title *title      = NULL;
         struct cpe_product *product    = NULL;
         struct cpe_version *version    = NULL;
         struct cpe_update *update      = NULL;
@@ -887,7 +934,7 @@ struct cpe_vendor * cpe_vendor_parse(xmlTextReaderPtr reader) {
         struct cpe_language *language  = NULL;
         char *data;
 
-        if (xmlStrcmp (xmlTextReaderConstLocalName(reader), BAD_CAST "vendor") != 0)
+        if (xmlStrcmp (xmlTextReaderConstLocalName(reader), TAG_VENDOR_STR) != 0)
 		return NULL;
 
         ret = cpe_vendor_new();
@@ -895,11 +942,11 @@ struct cpe_vendor * cpe_vendor_parse(xmlTextReaderPtr reader) {
                 return NULL;
 
         ret->xml.namespace = (char *) xmlTextReaderPrefix(reader);
-        ret->value = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST "value");
+        ret->value = (char *) xmlTextReaderGetAttribute(reader, ATTR_VALUE_STR);
         // jump to next element (which should be product)
         xmlTextReaderNextElement(reader);
 
-        while(xmlStrcmp (xmlTextReaderConstLocalName(reader), BAD_CAST "vendor") != 0) {
+        while(xmlStrcmp (xmlTextReaderConstLocalName(reader), TAG_VENDOR_STR) != 0) {
                         
                         if (xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT) {
                                 xmlTextReaderRead(reader);
@@ -907,19 +954,19 @@ struct cpe_vendor * cpe_vendor_parse(xmlTextReaderPtr reader) {
                         }
 
                         if (xmlStrcmp(xmlTextReaderConstLocalName(reader), 
-                            (const xmlChar *)"title") == 0) {
-                                    title = oscap_title_parse(reader, "title");
+                            TAG_TITLE_STR) == 0) {
+                                    title = oscap_title_parse(reader, (char *) TAG_TITLE_STR);
                                     if (title) oscap_list_add(ret->titles, title);
                         } else 
                             if (xmlStrcmp(xmlTextReaderConstLocalName(reader), 
-                                (const xmlChar *)"product") == 0) {
+                                TAG_PRODUCT_STR) == 0) {
                                     // initialization
                                     product = cpe_product_new();
                                     product->xml.lang = oscap_strdup((char *) xmlTextReaderConstXmlLang(reader));
                                     product->xml.namespace = (char *) xmlTextReaderPrefix(reader);
-                                    product->value = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST "value");
+                                    product->value = (char *) xmlTextReaderGetAttribute(reader, ATTR_VALUE_STR);
 
-	                            data = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST "part");
+	                            data = (char *) xmlTextReaderGetAttribute(reader, ATTR_PART_STR);
 	                            if (data) {
 	                                    if (strcasecmp((const char *)data, "h") == 0)
 		                                    product->part = CPE_PART_HW;
@@ -940,39 +987,39 @@ struct cpe_vendor * cpe_vendor_parse(xmlTextReaderPtr reader) {
                                     if (product) oscap_list_add(ret->products, product);
                         } else 
                             if (xmlStrcmp(xmlTextReaderConstLocalName(reader), 
-                                (const xmlChar *)"version") == 0) {
+                                TAG_VERSION_STR) == 0) {
                                     // initialization
                                     version = cpe_version_new();
                                     version->xml.lang = oscap_strdup((char *) xmlTextReaderConstXmlLang(reader));
                                     version->xml.namespace = (char *) xmlTextReaderPrefix(reader);
-                                    version->value = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST "value");
+                                    version->value = (char *) xmlTextReaderGetAttribute(reader, ATTR_VALUE_STR);
                                     oscap_list_add(product->versions, version);
                         } else 
                             if (xmlStrcmp(xmlTextReaderConstLocalName(reader), 
-                                (const xmlChar *)"update") == 0) {
+                                TAG_UPDATE_STR) == 0) {
                                     // initialization
                                     update = cpe_update_new();
                                     update->xml.lang = oscap_strdup((char *) xmlTextReaderConstXmlLang(reader));
                                     update->xml.namespace = (char *) xmlTextReaderPrefix(reader);
-                                    update->value = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST "value");
+                                    update->value = (char *) xmlTextReaderGetAttribute(reader, ATTR_VALUE_STR);
                                     oscap_list_add(version->updates, update);
                         } else 
                             if (xmlStrcmp(xmlTextReaderConstLocalName(reader), 
-                                (const xmlChar *)"edition") == 0) {
+                                TAG_EDITION_STR) == 0) {
                                     // initialization
                                     edition = cpe_edition_new();
                                     edition->xml.lang = oscap_strdup((char *) xmlTextReaderConstXmlLang(reader));
                                     edition->xml.namespace = (char *) xmlTextReaderPrefix(reader);
-                                    edition->value = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST "value");
+                                    edition->value = (char *) xmlTextReaderGetAttribute(reader, ATTR_VALUE_STR);
                                     oscap_list_add(update->editions, edition);
                         } else 
                             if (xmlStrcmp(xmlTextReaderConstLocalName(reader), 
-                                (const xmlChar *)"language") == 0) {
+                                TAG_LANGUAGE_STR) == 0) {
                                     // initialization
                                     language = cpe_language_new();
                                     language->xml.lang = oscap_strdup((char *) xmlTextReaderConstXmlLang(reader));
                                     language->xml.namespace = (char *) xmlTextReaderPrefix(reader);
-                                    language->value = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST "value");
+                                    language->value = (char *) xmlTextReaderGetAttribute(reader, ATTR_VALUE_STR);
                                     oscap_list_add(edition->languages, language);
                         }
                         xmlTextReaderRead(reader);
@@ -1014,7 +1061,7 @@ void cpe_dict_model_export_xml(const struct cpe_dict_model * dict, const struct 
 
 void cpe_dict_export(const struct cpe_dict_model * dict, xmlTextWriterPtr writer) {
 
-        xmlTextWriterStartElementNS(writer, BAD_CAST dict->xml.namespace, BAD_CAST "cpe-list", NULL);
+        xmlTextWriterStartElementNS(writer, BAD_CAST dict->xml.namespace, TAG_CPE_LIST_STR, NULL);
 
         OSCAP_FOREACH (xml_metadata, xml, cpe_dict_model_get_xmlns(dict),
                 if (xml->URI != NULL) xmlTextWriterWriteAttribute(writer, BAD_CAST xml->namespace, BAD_CAST xml->URI);
@@ -1028,7 +1075,7 @@ void cpe_dict_export(const struct cpe_dict_model * dict, xmlTextWriterPtr writer
                 cpe_item_export( item, writer );
 	)
         // TODO: NEED TO HAVE COMPONENT-TREE STRUCTURE TO GET XML-NAMESPACE 
-        xmlTextWriterStartElementNS(writer, BAD_CAST "meta", BAD_CAST "component-tree", NULL);
+        xmlTextWriterStartElementNS(writer, NS_META_STR, TAG_COMPONENT_TREE_STR, NULL);
         OSCAP_FOREACH (cpe_vendor, vendor, cpe_dict_model_get_vendors(dict),
                 cpe_vendor_export( vendor, writer );
 	)
@@ -1039,26 +1086,26 @@ void cpe_dict_export(const struct cpe_dict_model * dict, xmlTextWriterPtr writer
 
 void cpe_generator_export(const struct cpe_generator * generator, xmlTextWriterPtr writer) {
 
-        xmlTextWriterStartElementNS(writer, BAD_CAST generator->xml.namespace, BAD_CAST "generator", NULL);
+        xmlTextWriterStartElementNS(writer, BAD_CAST generator->xml.namespace, TAG_GENERATOR_STR, NULL);
         if (generator->product_name != NULL) {
-                xmlTextWriterStartElementNS(writer, BAD_CAST generator->xml.namespace, BAD_CAST "product_name", NULL);
+                xmlTextWriterStartElementNS(writer, BAD_CAST generator->xml.namespace, TAG_PRODUCT_NAME_STR, NULL);
                 xmlTextWriterWriteString(writer, BAD_CAST generator->product_name);
-                xmlTextWriterEndElement(writer); //</product_name>
+                xmlTextWriterEndElement(writer);
         }
         if (generator->product_version != NULL) {
-                xmlTextWriterStartElementNS(writer, BAD_CAST generator->xml.namespace, BAD_CAST "product_version", NULL);
+                xmlTextWriterStartElementNS(writer, BAD_CAST generator->xml.namespace, TAG_PRODUCT_VERSION_STR, NULL);
                 xmlTextWriterWriteString(writer, BAD_CAST generator->product_version);
-                xmlTextWriterEndElement(writer); //</product_name>
+                xmlTextWriterEndElement(writer);
         }
         if (generator->schema_version != NULL) {
-                xmlTextWriterStartElementNS(writer, BAD_CAST generator->xml.namespace, BAD_CAST "schema_version", NULL);
+                xmlTextWriterStartElementNS(writer, BAD_CAST generator->xml.namespace, TAG_SCHEMA_VERSION_STR, NULL);
                 xmlTextWriterWriteString(writer, BAD_CAST generator->schema_version);
-                xmlTextWriterEndElement(writer); //</product_name>
+                xmlTextWriterEndElement(writer);
         }
         if (generator->timestamp != NULL) {
-                xmlTextWriterStartElementNS(writer, BAD_CAST generator->xml.namespace, BAD_CAST "timestamp", NULL);
+                xmlTextWriterStartElementNS(writer, BAD_CAST generator->xml.namespace, TAG_TIMESTAMP_STR, NULL);
                 xmlTextWriterWriteString(writer, BAD_CAST generator->timestamp);
-                xmlTextWriterEndElement(writer); //</product_name>
+                xmlTextWriterEndElement(writer);
         }
         xmlTextWriterEndElement(writer); //</gnerator>
 
@@ -1069,17 +1116,17 @@ void cpe_item_export(const struct cpe_item * item, xmlTextWriterPtr writer) {
         char *temp;
         struct oscap_iterator *it;;
 
-        xmlTextWriterStartElementNS(writer, BAD_CAST item->xml.namespace, BAD_CAST "cpe-item", NULL);
+        xmlTextWriterStartElementNS(writer, BAD_CAST item->xml.namespace, TAG_CPE_ITEM_STR, NULL);
         if (item->name != NULL) {
                 temp = cpe_name_get_uri(item->name);
-                xmlTextWriterWriteAttribute(writer, BAD_CAST "name", BAD_CAST temp);
+                xmlTextWriterWriteAttribute(writer, ATTR_NAME_STR, BAD_CAST temp);
                 oscap_free(temp);
         }
         if (item->deprecated != NULL) {
                 temp = cpe_name_get_uri(item->deprecated);
-                xmlTextWriterWriteAttribute(writer, BAD_CAST "deprecated", BAD_CAST "true");
-                xmlTextWriterWriteAttribute(writer, BAD_CAST "deprecation_date", BAD_CAST item->deprecation_date);
-                xmlTextWriterWriteAttribute(writer, BAD_CAST "deprecated_by", BAD_CAST temp);
+                xmlTextWriterWriteAttribute(writer, ATTR_DEPRECATED_STR, VAL_TRUE_STR);
+                xmlTextWriterWriteAttribute(writer, ATTR_DEPRECATION_DATE_STR, BAD_CAST item->deprecation_date);
+                xmlTextWriterWriteAttribute(writer, ATTR_DEPRECATED_BY_STR, BAD_CAST temp);
                 oscap_free(temp);
         }
         
@@ -1088,21 +1135,21 @@ void cpe_item_export(const struct cpe_item * item, xmlTextWriterPtr writer) {
 	)
 
         if (item->metadata != NULL) {
-                xmlTextWriterStartElementNS(writer, BAD_CAST item->metadata->xml.namespace, BAD_CAST "item-metadata", NULL);
+                xmlTextWriterStartElementNS(writer, BAD_CAST item->metadata->xml.namespace, TAG_ITEM_METADATA_STR, NULL);
                 if (item->metadata->modification_date != NULL)
-                        xmlTextWriterWriteAttribute(writer, BAD_CAST "modification-date", BAD_CAST item->metadata->modification_date);
+                        xmlTextWriterWriteAttribute(writer, ATTR_MODIFICATION_DATE_STR, BAD_CAST item->metadata->modification_date);
                 if (item->metadata->status != NULL)
-                        xmlTextWriterWriteAttribute(writer, BAD_CAST "status", BAD_CAST item->metadata->status);
+                        xmlTextWriterWriteAttribute(writer, ATTR_STATUS_STR, BAD_CAST item->metadata->status);
                 if (item->metadata->nvd_id != NULL)
-                        xmlTextWriterWriteAttribute(writer, BAD_CAST "nvd-id", BAD_CAST item->metadata->nvd_id);
+                        xmlTextWriterWriteAttribute(writer, ATTR_NVD_ID_STR, BAD_CAST item->metadata->nvd_id);
                 if (item->metadata->deprecated_by_nvd_id != NULL)
-                        xmlTextWriterWriteAttribute(writer, BAD_CAST "deprecated-by-nvd-id", BAD_CAST item->metadata->deprecated_by_nvd_id);
+                        xmlTextWriterWriteAttribute(writer, ATTR_DEP_BY_NVDID_STR, BAD_CAST item->metadata->deprecated_by_nvd_id);
                 xmlTextWriterEndElement(writer);
         }
 
         it = oscap_iterator_new(item->references);
         if (oscap_iterator_has_more(it)) {
-                xmlTextWriterStartElementNS(writer, NULL, BAD_CAST "references", NULL);
+                xmlTextWriterStartElementNS(writer, NULL, TAG_REFERENCES_STR, NULL);
                 OSCAP_FOREACH (cpe_reference, ref, cpe_item_get_references(item), 
                         cpe_reference_export(ref, writer); 
                 )
@@ -1112,7 +1159,7 @@ void cpe_item_export(const struct cpe_item * item, xmlTextWriterPtr writer) {
 
         it = oscap_iterator_new(item->notes);
         if (oscap_iterator_has_more(it)) {
-                xmlTextWriterStartElementNS(writer, NULL, BAD_CAST "notes", NULL);
+                xmlTextWriterStartElementNS(writer, NULL, TAG_NOTES_STR, NULL);
                 OSCAP_FOREACH (oscap_title, note, cpe_item_get_notes(item), 
                         cpe_note_export(note, writer); 
                 )
@@ -1130,9 +1177,9 @@ void cpe_item_export(const struct cpe_item * item, xmlTextWriterPtr writer) {
 
 void cpe_vendor_export(const struct cpe_vendor * vendor, xmlTextWriterPtr writer) {
 
-        xmlTextWriterStartElementNS(writer, BAD_CAST vendor->xml.namespace, BAD_CAST "vendor", NULL);
+        xmlTextWriterStartElementNS(writer, BAD_CAST vendor->xml.namespace, TAG_VENDOR_STR, NULL);
         if (vendor->value != NULL)
-                xmlTextWriterWriteAttribute(writer, BAD_CAST "value", BAD_CAST vendor->value);
+                xmlTextWriterWriteAttribute(writer, ATTR_VALUE_STR, BAD_CAST vendor->value);
 
         OSCAP_FOREACH (oscap_title, title, cpe_vendor_get_titles(vendor),
                 oscap_title_export( title, writer);
@@ -1147,11 +1194,11 @@ void cpe_vendor_export(const struct cpe_vendor * vendor, xmlTextWriterPtr writer
 
 static void cpe_product_export(const struct cpe_product * product, xmlTextWriterPtr writer) {
 
-        xmlTextWriterStartElementNS(writer, BAD_CAST product->xml.namespace, BAD_CAST "product", NULL);
+        xmlTextWriterStartElementNS(writer, BAD_CAST product->xml.namespace, TAG_PRODUCT_STR, NULL);
         if (product->value != NULL)
-                xmlTextWriterWriteAttribute(writer, BAD_CAST "value", BAD_CAST product->value);
+                xmlTextWriterWriteAttribute(writer, ATTR_VALUE_STR, BAD_CAST product->value);
         if (product->part != CPE_PART_NONE)
-                xmlTextWriterWriteAttribute(writer, BAD_CAST "part", BAD_CAST PART_TO_CHAR[product->part] );
+                xmlTextWriterWriteAttribute(writer, ATTR_VALUE_STR, BAD_CAST PART_TO_CHAR[product->part] );
 
         OSCAP_FOREACH (cpe_version, version, cpe_product_get_versions(product),
                 cpe_version_export(version, writer);
@@ -1162,9 +1209,9 @@ static void cpe_product_export(const struct cpe_product * product, xmlTextWriter
 
 static void cpe_version_export(const struct cpe_version * version, xmlTextWriterPtr writer) {
 
-        xmlTextWriterStartElementNS(writer, BAD_CAST version->xml.namespace, BAD_CAST "version", NULL);
+        xmlTextWriterStartElementNS(writer, BAD_CAST version->xml.namespace, TAG_VERSION_STR, NULL);
         if (version->value != NULL)
-                xmlTextWriterWriteAttribute(writer, BAD_CAST "value", BAD_CAST version->value);
+                xmlTextWriterWriteAttribute(writer, ATTR_VALUE_STR, BAD_CAST version->value);
 
         OSCAP_FOREACH (cpe_update, update, cpe_version_get_updates(version),
                 cpe_update_export(update, writer);
@@ -1176,9 +1223,9 @@ static void cpe_version_export(const struct cpe_version * version, xmlTextWriter
 
 static void cpe_update_export(const struct cpe_update * update, xmlTextWriterPtr writer){ 
 
-        xmlTextWriterStartElementNS(writer, BAD_CAST update->xml.namespace, BAD_CAST "update", NULL);
+        xmlTextWriterStartElementNS(writer, BAD_CAST update->xml.namespace, TAG_UPDATE_STR, NULL);
         if (update->value != NULL)
-                xmlTextWriterWriteAttribute(writer, BAD_CAST "value", BAD_CAST update->value);
+                xmlTextWriterWriteAttribute(writer, ATTR_VALUE_STR, BAD_CAST update->value);
 
         OSCAP_FOREACH (cpe_edition, edition, cpe_update_get_editions(update),
                 cpe_edition_export(edition, writer);
@@ -1188,9 +1235,9 @@ static void cpe_update_export(const struct cpe_update * update, xmlTextWriterPtr
 }
 static void cpe_edition_export(const struct cpe_edition * edition, xmlTextWriterPtr writer){
 
-        xmlTextWriterStartElementNS(writer, BAD_CAST edition->xml.namespace, BAD_CAST "edition", NULL);
+        xmlTextWriterStartElementNS(writer, BAD_CAST edition->xml.namespace, TAG_EDITION_STR, NULL);
         if (edition->value != NULL)
-                xmlTextWriterWriteAttribute(writer, BAD_CAST "value", BAD_CAST edition->value);
+                xmlTextWriterWriteAttribute(writer, ATTR_VALUE_STR, BAD_CAST edition->value);
 
         OSCAP_FOREACH (cpe_language, language, cpe_edition_get_languages(edition),
                 cpe_language_export(language, writer);
@@ -1200,44 +1247,44 @@ static void cpe_edition_export(const struct cpe_edition * edition, xmlTextWriter
 }
 static void cpe_language_export(const struct cpe_language * language, xmlTextWriterPtr writer){
 
-        xmlTextWriterStartElementNS(writer, BAD_CAST language->xml.namespace, BAD_CAST "language", NULL);
+        xmlTextWriterStartElementNS(writer, BAD_CAST language->xml.namespace, TAG_LANGUAGE_STR, NULL);
         if (language->value != NULL)
-                xmlTextWriterWriteAttribute(writer, BAD_CAST "value", BAD_CAST language->value);
+                xmlTextWriterWriteAttribute(writer, ATTR_VALUE_STR, BAD_CAST language->value);
         if (language->xml.lang != NULL)
-                xmlTextWriterWriteAttribute(writer, BAD_CAST "xml:lang", BAD_CAST language->xml.lang);
+                xmlTextWriterWriteAttribute(writer, ATTR_XML_LANG_STR, BAD_CAST language->xml.lang);
 
         xmlTextWriterEndElement(writer);
 }
 
 static void cpe_note_export(const struct oscap_title * title, xmlTextWriterPtr writer) {
 
-        xmlTextWriterStartElementNS(writer, BAD_CAST title->xml.namespace, BAD_CAST "note", NULL);
+        xmlTextWriterStartElementNS(writer, BAD_CAST title->xml.namespace, TAG_NOTE_STR, NULL);
         if (title->xml.lang != NULL) 
-                xmlTextWriterWriteAttribute(writer, BAD_CAST "xml:lang", BAD_CAST title->xml.lang);
+                xmlTextWriterWriteAttribute(writer, ATTR_XML_LANG_STR, BAD_CAST title->xml.lang);
         if (title->content != NULL) 
                 xmlTextWriterWriteString(writer, BAD_CAST title->content);
         xmlTextWriterEndElement(writer);
 }
 static void cpe_check_export(const struct cpe_check *check, xmlTextWriterPtr writer) {
 
-        xmlTextWriterStartElementNS(writer, BAD_CAST check->xml.namespace, BAD_CAST "check", NULL);
+        xmlTextWriterStartElementNS(writer, BAD_CAST check->xml.namespace, TAG_CHECK_STR, NULL);
         if (check->system != NULL)
-                xmlTextWriterWriteAttribute(writer, BAD_CAST "system", BAD_CAST check->system);
+                xmlTextWriterWriteAttribute(writer, ATTR_SYSTEM_STR, BAD_CAST check->system);
         if (check->href != NULL)
-                xmlTextWriterWriteAttribute(writer, BAD_CAST "href", BAD_CAST check->href);
+                xmlTextWriterWriteAttribute(writer, ATTR_HREF_STR, BAD_CAST check->href);
         if (check->identifier != NULL)
                 xmlTextWriterWriteString(writer, BAD_CAST check->identifier);
         xmlTextWriterEndElement(writer);
 }
 static void cpe_reference_export(const struct cpe_reference * ref, xmlTextWriterPtr writer) {
 
-        xmlTextWriterStartElementNS(writer, BAD_CAST ref->xml.namespace, BAD_CAST "reference", NULL);
+        xmlTextWriterStartElementNS(writer, BAD_CAST ref->xml.namespace, TAG_REFERENCE_STR, NULL);
         if (ref->href != NULL)
-                xmlTextWriterWriteAttribute(writer, BAD_CAST "href", BAD_CAST ref->href);
+                xmlTextWriterWriteAttribute(writer, ATTR_HREF_STR, BAD_CAST ref->href);
         if (ref->content != NULL)
                 xmlTextWriterWriteString(writer, BAD_CAST ref->content);
         if (ref->xml.lang != NULL)
-                xmlTextWriterWriteAttribute(writer, BAD_CAST "xml:lang", BAD_CAST ref->xml.lang);
+                xmlTextWriterWriteAttribute(writer, ATTR_XML_LANG_STR, BAD_CAST ref->xml.lang);
         xmlTextWriterEndElement(writer);
 }
 /* End of private export functions
