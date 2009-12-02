@@ -190,6 +190,14 @@ OSCAP_ITERATOR_REMOVE_F(cve_configuration)
  * */
 /***************************************************************************/
 
+const struct cvss_entry * cve_entry_get_cvss(const struct cve_entry *item) {
+
+    if (item == NULL)
+                return NULL;
+
+    return item->cvss;
+}
+
 const struct cpe_testexpr * cve_configuration_get_expr(const struct cve_configuration *item) {
 
     if (item == NULL)

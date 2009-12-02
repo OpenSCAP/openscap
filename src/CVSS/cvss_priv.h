@@ -89,12 +89,34 @@ struct cvss_entry * cvss_entry_parse(xmlTextReaderPtr reader);
  */
 void cvss_entry_export(const struct cvss_entry * entry, xmlTextWriterPtr writer);
 
+/*@}*/
+
+/**
+ * @name Other functions
+ * @{
+ * */
+/**
+ */
+int cvss_map_av_get(const char * string);
+/**
+ */
+int cvss_map_ac_get(const char * string);
+/**
+ */
+int cvss_map_auth_get(const char * string);
+/**
+ */
+int cvss_map_imp_get(const char * string);
+
+/*@}*/
+
 /** 
  * @cond INTERNAL
  */
 OSCAP_HIDDEN_END;
  /* @endcond */
 
+/*@}*/
 /*@}*/
 
 #endif

@@ -85,6 +85,36 @@ function test_cve_tc03 {
     return $ret_val
 }
 
+function test_cve_tc04 {
+cat > cve_export.xml <<EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<nvd xmlns:cvss="cvss" xmlns:vuln="vuln">
+    <entry id="CVE-01">
+        <vuln:cvss>
+            <cvss:base_metrics>
+                <cvss:score>4.3</cvss:score>
+                <cvss:access-vector>NETWORK</cvss:access-vector>
+                <cvss:access-complexity>MEDIUM</cvss:access-complexity>
+                <cvss:authentication>NONE</cvss:authentication>
+                <cvss:confidentiality-impact>NONE</cvss:confidentiality-impact>
+                <cvss:integrity-impact>PARTIAL</cvss:integrity-impact>
+                <cvss:availability-impact>NONE</cvss:availability-impact>
+                <cvss:source>http://nvd.nist.gov</cvss:source>
+                <cvss:generated-on-datetime>2009-03-10T13:30:00.000-04:00</cvss:generated-on-datetime>
+            </cvss:base_metrics>
+        </vuln:cvss>
+    </entry>
+</nvd>
+EOF
+
+    local ret_val=0
+
+    ./test_cve --test-cvss cve_export.xml "UTF-8" 
+    ret_val=$?
+
+    return $ret_val
+}
+
 # Cleanup.
 function test_cve_cleanup {
     local ret_val=0
@@ -109,7 +139,8 @@ test_cve_tc00     ; ret_val=$? ; report_result 'Test_CVE_sanity'     $ret_val  ;
 test_cve_tc01     ; ret_val=$? ; report_result 'Test_CVE_export'     $ret_val  ; result=$[$result+$ret_val]
 test_cve_tc02     ; ret_val=$? ; report_result 'Test_CVE_entries'    $ret_val  ; result=$[$result+$ret_val]
 test_cve_tc03     ; ret_val=$? ; report_result 'Test_CVE_export_all' $ret_val  ; result=$[$result+$ret_val]
-#test_cve_cleanup  ; ret_val=$? ; report_result "test_CVE_cleanup" $ret_val  ; result=$[$result+$ret_val]
+test_cve_tc04     ; ret_val=$? ; report_result 'Test_CVE_get_CVSS'   $ret_val  ; result=$[$result+$ret_val]
+test_cve_cleanup  ; ret_val=$? ; report_result "test_CVE_cleanup" $ret_val  ; result=$[$result+$ret_val]
 
 echo "------------------------------------------"
 echo "See ${srcdir}/${log}"

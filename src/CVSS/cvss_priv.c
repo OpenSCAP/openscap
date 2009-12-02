@@ -29,6 +29,7 @@
 
 #include <libxml/xmlreader.h>
 #include <libxml/xmlwriter.h>
+#include <string.h>
 
 #include "cvss_priv.h"
 #include "public/cvss.h"
@@ -63,6 +64,50 @@ OSCAP_ACCESSOR_STRING(cvss_entry, imp_integrity)
 OSCAP_ACCESSOR_STRING(cvss_entry, imp_availability)
 OSCAP_ACCESSOR_STRING(cvss_entry, source)
 OSCAP_ACCESSOR_STRING(cvss_entry, generated)
+
+struct cvss_map_av {
+        cvss_access_vector_t id;
+        const char *name;
+};
+static const struct cvss_map_av CVSS_MAP_AV[] = {
+        {AV_LOCAL,              "LOCAL"},
+        {AV_ADJACENT_NETWORK,   "ADJACENT_NETWORK"},
+        {AV_NETWORK,            "NETWORK"}
+};
+
+struct cvss_map_ac {
+        cvss_access_complexity_t id;
+        const char *name;
+};
+static const struct cvss_map_ac CVSS_MAP_AC[] = {
+        {AC_HIGH,   "HIGH"},
+        {AC_MEDIUM, "MEDIUM"},
+        {AC_LOW,    "LOW"}
+};
+
+struct cvss_map_auth {
+        cvss_authentication_t id;
+        const char *name;
+};
+static const struct cvss_map_auth CVSS_MAP_AUTH[] = {
+        {AU_NONE,               "NONE"},
+        {AU_SINGLE_INSTANCE,    "SINGLE_INSTANCE"},
+        {AU_MULTIPLE_INSTANCE,  "MULTIPLE_INSTANCE"}
+};
+
+/* cvss_avail_impact_t is the same as other impacts
+ * -- TODO: for all impacts separate structures 
+ */
+struct cvss_map_imp {
+        cvss_avail_impact_t id;
+        const char *name;
+};
+static const struct cvss_map_imp CVSS_MAP_IMP[] = {
+        {AI_NONE,       "NONE"},
+        {AI_PARTIAL,    "PARTIAL"},
+        {AI_COMPLETE,   "COMPLETE"}
+};
+
 /* End of variable definitions
  * */
 /***************************************************************************/
@@ -87,6 +132,46 @@ OSCAP_ACCESSOR_STRING(cvss_entry, generated)
 /* End of XML string variables definitions
  * */
 /***************************************************************************/
+int cvss_map_av_get(const char * string) {
+
+	const struct cvss_map_av* map = CVSS_MAP_AV;
+	while (map->name) {
+		if (!strcmp(string, map->name))
+	                return map->id;
+		++map;
+	}
+	return -1;
+}
+int cvss_map_ac_get(const char * string) {
+
+	const struct cvss_map_ac* map = CVSS_MAP_AC;
+	while (map->name) {
+		if (!strcmp(string, map->name))
+	                return map->id;
+		++map;
+	}
+	return -1;
+}
+int cvss_map_auth_get(const char * string) {
+
+	const struct cvss_map_auth* map = CVSS_MAP_AUTH;
+	while (map->name) {
+		if (!strcmp(string, map->name))
+	                return map->id;
+		++map;
+	}
+	return -1;
+}
+int cvss_map_imp_get(const char * string) {
+
+	const struct cvss_map_imp* map = CVSS_MAP_IMP;
+	while (map->name) {
+		if (!strcmp(string, map->name))
+	                return map->id;
+		++map;
+	}
+	return -1;
+}
 
 /***************************************************************************/
 /* Constructors of CVSS structures cvss_*<structure>*_new()

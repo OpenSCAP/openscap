@@ -216,6 +216,13 @@ struct cve_configuration_iterator * cve_entry_get_configurations(const struct cv
  */
 const struct cpe_testexpr * cve_configuration_get_expr(const struct cve_configuration * conf);
 
+/**
+ * Get CVSS structure from CVE.
+ * @param item CVE entry
+ * @relates cve_entry
+ */
+const struct cvss_entry * cve_entry_get_cvss(const struct cve_entry *item);
+
 /*@}*/
 
 /**

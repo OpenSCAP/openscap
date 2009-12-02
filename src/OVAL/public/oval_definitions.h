@@ -286,6 +286,7 @@ struct oval_definition_model;
  * @{
  * @ref Oval_affected evaluator methods
  * @}
+ */
 /**
  * @struct oval_affected
  * Handle: @ref Oval_affected

@@ -2,7 +2,7 @@
  * @addtogroup CVSS
  * @{
  *
- * @file cvsscalc.h
+ * @file cvss.h
  *  \brief Interface to Common Vulnerability Scoring System Version 2
  *  
  *  See details at http://nvd.nist.gov/cvss.cfm
@@ -425,6 +425,14 @@ int cvss_env_score(cvss_collateral_damage_potential_t cde, cvss_target_distribut
                    cvss_integ_impact_t                iie, cvss_avail_impact_t          aie,	     
                    cvss_exploitability_t              exe, cvss_remediation_level_t     rle, 
                    cvss_report_confidence_t           rce);
+/**
+ * Get Base score of CVSS entry
+ * @return 0 if everything done
+ */
+int cvss_base_score_struct(const struct cvss_entry * entry,
+                           double *base_score,
+                           double *impact_score,
+                           double *exploitability_score);
 
 /*@}*/
 #endif /* _CVSSCALC_H_ */

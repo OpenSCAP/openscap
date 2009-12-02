@@ -1,4 +1,4 @@
-/*! \file cvsscalc.c
+/*! \file cvss.c
  *  \brief Interface to Common Vulnerability Scoring System Version 2
  *  
  *  See details at http://nvd.nist.gov/cvss.cfm
@@ -34,6 +34,7 @@
 #include <stdlib.h>
 #include <math.h>
 
+#include "cvss_priv.h"
 #include "public/cvss.h"
 
 
@@ -160,6 +161,22 @@ static const double ara[] = {
 	[AR_HIGH] = 1.51,
 	[AR_NOT_DEFINED] = 1.0
 };
+
+int cvss_base_score_struct(const struct cvss_entry * entry,
+                           double *base_score,
+                           double *impact_score,
+                           double *exploitability_score) {
+
+    cvss_access_vector_t        ave = (cvss_access_vector_t) cvss_map_av_get(cvss_entry_get_AV(entry));
+    cvss_access_complexity_t    ace = (cvss_access_complexity_t) cvss_map_ac_get(cvss_entry_get_AC(entry));
+    cvss_authentication_t       aue = (cvss_authentication_t) cvss_map_auth_get(cvss_entry_get_authentication(entry));
+    cvss_conf_impact_t          cie = (cvss_conf_impact_t) cvss_map_imp_get(cvss_entry_get_imp_confidentiality(entry));
+    cvss_integ_impact_t         iie = (cvss_integ_impact_t) cvss_map_imp_get(cvss_entry_get_imp_integrity(entry));
+    cvss_avail_impact_t         aie = (cvss_avail_impact_t) cvss_map_imp_get(cvss_entry_get_imp_availability(entry));
+
+    return cvss_base_score( ave, ace, aue, cie, iie, aie, base_score, impact_score, exploitability_score );
+
+}
 
 int cvss_base_score(cvss_access_vector_t ave, cvss_access_complexity_t ace, cvss_authentication_t aue, 
                     cvss_conf_impact_t   cie, cvss_integ_impact_t      iie, cvss_avail_impact_t    aie, 
