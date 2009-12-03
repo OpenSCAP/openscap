@@ -72,12 +72,12 @@ const struct oscap_string_map XCCDF_ROLE_MAP[] = {
 	{ 0, NULL }
 };
 
-struct xccdf_item* xccdf_profile_new_parse(xmlTextReaderPtr reader, struct xccdf_item* bench)
+struct xccdf_item* xccdf_profile_parse(xmlTextReaderPtr reader, struct xccdf_item* bench)
 {
 	XCCDF_ASSERT_ELEMENT(reader, XCCDFE_PROFILE);
     struct xccdf_item* prof = xccdf_profile_new_empty(bench);
 	
-	if (!xccdf_item_get_process_attributes(prof, reader)) {
+	if (!xccdf_item_process_attributes(prof, reader)) {
 		xccdf_profile_free(prof);
 		return NULL;
 	}
@@ -131,7 +131,7 @@ struct xccdf_item* xccdf_profile_new_parse(xmlTextReaderPtr reader, struct xccdf
 				break;
 			}
             //case XCCDFE_
-			default: xccdf_item_get_process_element(prof, reader);
+			default: xccdf_item_process_element(prof, reader);
 		}
 		xmlTextReaderRead(reader);
 	}
@@ -144,7 +144,7 @@ void xccdf_profile_dump(struct xccdf_item* prof, int depth)
     xccdf_print_depth(depth);
 	printf("Profile : %s\n", (prof ? prof->item.id : "(NULL)"));
     if (prof == NULL) return;
-    xccdf_item_get_print(prof, depth + 1);
+    xccdf_item_print(prof, depth + 1);
     xccdf_print_depth(depth + 1); printf("selects "); oscap_list_dump(prof->sub.profile.selects, (oscap_dump_func)xccdf_selected_dump, depth + 2);
 }
 

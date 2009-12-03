@@ -606,7 +606,7 @@ struct xccdf_reference_iterator* xccdf_item_get_references(const struct xccdf_it
  * Get item current status.
  * @relates xccdf_item
  */
-xccdf_status_type_t xccdf_item_get_status_current(const struct xccdf_item* item);
+xccdf_status_type_t xccdf_item_get_current_status(const struct xccdf_item* item);
 
 /**
  * Convert the item to a benchmark.
@@ -667,7 +667,7 @@ xccdf_status_type_t xccdf_item_get_status_current(const struct xccdf_item* item)
  * @return Pointer to the new benchmark.
  * @retval NULL on failure
  */
-struct xccdf_benchmark* xccdf_benchmark_new_from_file(const char* filename);
+struct xccdf_benchmark* xccdf_benchmark_parse_xml(const char* filename);
 
 /**
  * Get benchmark ID.

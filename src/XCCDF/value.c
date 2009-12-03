@@ -28,7 +28,7 @@
 static oscap_destruct_func xccdf_value_val_get_destructor(xccdf_value_type_t type);
 static struct xccdf_value_val* xccdf_value_val_new(xccdf_value_type_t type);
 
-static struct xccdf_item* xccdf_value_new_empty(struct xccdf_item* parent, xccdf_value_type_t type)
+static struct xccdf_item* xccdf_value_new(struct xccdf_item* parent, xccdf_value_type_t type)
 {
     struct xccdf_item* val = xccdf_item_new(XCCDF_VALUE, parent->item.benchmark, parent);
 	val->sub.value.type = type;
@@ -71,15 +71,15 @@ static union xccdf_value_unit xccdf_value_get(const char* str, xccdf_value_type_
 	return val;
 }
 
-struct xccdf_item* xccdf_value_new_parse(xmlTextReaderPtr reader, struct xccdf_item* parent)
+struct xccdf_item* xccdf_value_parse(xmlTextReaderPtr reader, struct xccdf_item* parent)
 {
 	if (xccdf_element_get(reader) != XCCDFE_VALUE) return NULL;
 	xccdf_value_type_t type = oscap_string_to_enum(XCCDF_VALUE_TYPE_MAP, xccdf_attribute_get(reader, XCCDFA_TYPE));
-	struct xccdf_item* value = xccdf_value_new_empty(parent, type);
+	struct xccdf_item* value = xccdf_value_new(parent, type);
 	
 	value->sub.value.oper = oscap_string_to_enum(XCCDF_OPERATOR_MAP, xccdf_attribute_get(reader, XCCDFA_OPERATOR));
 	value->sub.value.interface_hint = oscap_string_to_enum(XCCDF_IFACE_HINT_MAP, xccdf_attribute_get(reader, XCCDFA_INTERFACEHINT));
-	if (!xccdf_item_get_process_attributes(value, reader)) {
+	if (!xccdf_item_process_attributes(value, reader)) {
 		xccdf_value_free(value);
 		return NULL;
 	}
@@ -123,7 +123,7 @@ struct xccdf_item* xccdf_value_new_parse(xmlTextReaderPtr reader, struct xccdf_i
 					}
 					xmlTextReaderRead(reader);
 				}
-			default: xccdf_item_get_process_element(value, reader);
+			default: xccdf_item_process_element(value, reader);
 		}
 		xmlTextReaderRead(reader);
 	}
@@ -297,7 +297,7 @@ void xccdf_value_dump(struct xccdf_item* value, int depth)
 {
 	xccdf_print_depth(depth++); printf("Value : %s\n", (value ? value->item.id : "(NULL)"));
 	if (!value) return;
-	xccdf_item_get_print(value, depth);
+	xccdf_item_print(value, depth);
 	void(*valdump)(struct xccdf_value_val* val, int depth) = NULL;
 	xccdf_print_depth(depth); printf("type: ");
 	switch (value->sub.value.type) {

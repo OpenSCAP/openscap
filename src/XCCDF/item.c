@@ -92,7 +92,7 @@ void xccdf_item_dump(struct xccdf_item* item, int depth)
     }
 }
 
-void xccdf_item_get_print(struct xccdf_item* item, int depth)
+void xccdf_item_print(struct xccdf_item* item, int depth)
 {
 	if (item) {
 		if (item->item.parent)  { xccdf_print_depth(depth); printf("parent  : %s\n", item->item.parent->item.id); }
@@ -104,7 +104,7 @@ void xccdf_item_get_print(struct xccdf_item* item, int depth)
 		xccdf_print_depth(depth); printf("desc    : "); xccdf_print_max(item->item.description, 64, "..."); printf("\n");
         xccdf_print_depth(depth); printf("platforms "); oscap_list_dump(item->item.platforms, (oscap_dump_func)xccdf_cstring_dump, depth + 1);
         xccdf_print_depth(depth);
-            printf("status (cur = %d)", xccdf_item_get_status_current(item));
+            printf("status (cur = %d)", xccdf_item_get_current_status(item));
             oscap_list_dump(item->item.statuses, (oscap_dump_func)xccdf_status_dump, depth + 1);
 	}
 }
@@ -114,7 +114,7 @@ void xccdf_item_get_print(struct xccdf_item* item, int depth)
 		item->item.flags.flag = xccdf_attribute_get_bool((reader), (attr));
 //TODO: shouldn't be here item->item.flags.##flag ?
 
-bool xccdf_item_get_process_attributes(struct xccdf_item* item, xmlTextReaderPtr reader)
+bool xccdf_item_process_attributes(struct xccdf_item* item, xmlTextReaderPtr reader)
 {
 	item->item.id = xccdf_attribute_copy(reader, XCCDFA_ID);
 
@@ -137,7 +137,7 @@ bool xccdf_item_get_process_attributes(struct xccdf_item* item, xmlTextReaderPtr
 	return item->item.id != NULL;
 }
 
-bool xccdf_item_get_process_element(struct xccdf_item* item, xmlTextReaderPtr reader)
+bool xccdf_item_process_element(struct xccdf_item* item, xmlTextReaderPtr reader)
 {
 	xccdf_element_t el = xccdf_element_get(reader);
 
@@ -278,7 +278,7 @@ void xccdf_status_free(struct xccdf_status* status) { oscap_free(status); }
 XCCDF_GENERIC_GETTER(time_t, status, date)
 XCCDF_GENERIC_GETTER(xccdf_status_type_t, status, status)
 
-xccdf_status_type_t xccdf_item_get_status_current(const struct xccdf_item* item)
+xccdf_status_type_t xccdf_item_get_current_status(const struct xccdf_item* item)
 {
     time_t maxtime = 0;
     xccdf_status_type_t maxtype = XCCDF_STATUS_NOT_SPECIFIED;

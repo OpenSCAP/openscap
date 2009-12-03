@@ -29,7 +29,7 @@ void xccdf_benchmark_dump(struct xccdf_benchmark*);
 
 bool dump_benchmark(const char* fname)
 {
-    struct xccdf_benchmark* benchmark = xccdf_benchmark_new_from_file(fname);
+    struct xccdf_benchmark* benchmark = xccdf_benchmark_parse_xml(fname);
 	if (benchmark == NULL) return false;
 	printf("\n");
 	xccdf_benchmark_dump(benchmark);

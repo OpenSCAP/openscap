@@ -65,18 +65,18 @@ static bool xccdf_benchmark_resolve_refs(struct xccdf_item* bench)
     return ret;
 }
 
-struct xccdf_benchmark* xccdf_benchmark_new_from_file(const char* filename)
+struct xccdf_benchmark* xccdf_benchmark_parse_xml(const char* filename)
 {
 	xmlTextReaderPtr reader = xmlReaderForFile(filename, NULL, 0);
     if (!reader) return NULL;
 	while (xmlTextReaderRead(reader) == 1 && xmlTextReaderNodeType(reader) != 1);
-	struct xccdf_item* benchmark = xccdf_benchmark_new_empty();
-	xccdf_benchmark_get_parse(benchmark, reader);
+	struct xccdf_item* benchmark = xccdf_benchmark_new();
+	xccdf_benchmark_parse(benchmark, reader);
 	xmlFreeTextReader(reader);
     return XBENCHMARK(benchmark);
 }
 
-struct xccdf_item* xccdf_benchmark_new_empty(void)
+struct xccdf_item* xccdf_benchmark_new(void)
 {
 	struct xccdf_item* bench = xccdf_item_new(XCCDF_BENCHMARK, NULL, NULL);
 	bench->sub.bench.notices = oscap_list_new();
@@ -91,14 +91,14 @@ struct xccdf_item* xccdf_benchmark_new_empty(void)
 	return bench;
 }
 
-bool xccdf_benchmark_get_parse(struct xccdf_item* benchmark, xmlTextReaderPtr reader)
+bool xccdf_benchmark_parse(struct xccdf_item* benchmark, xmlTextReaderPtr reader)
 {
 	XCCDF_ASSERT_ELEMENT(reader, XCCDFE_BENCHMARK);
 	assert(benchmark != NULL);
 	if (benchmark->type != XCCDF_BENCHMARK)
 		return false;
 	
-	if (!xccdf_item_get_process_attributes(benchmark, reader)) {
+	if (!xccdf_item_process_attributes(benchmark, reader)) {
 		xccdf_benchmark_free(XBENCHMARK(benchmark));
 		return false;
 	}
@@ -143,16 +143,16 @@ bool xccdf_benchmark_get_parse(struct xccdf_item* benchmark, xmlTextReaderPtr re
                         break;
                         }
                     case XCCDFE_PROFILE:
-                        oscap_list_add(benchmark->sub.bench.profiles, xccdf_profile_new_parse(reader, benchmark));
+                        oscap_list_add(benchmark->sub.bench.profiles, xccdf_profile_parse(reader, benchmark));
                         break;
                     case XCCDFE_GROUP: 
                     case XCCDFE_RULE:
                         xccdf_content_parse(reader, benchmark);
                         break;
                     case XCCDFE_VALUE:
-                        oscap_list_add(benchmark->sub.bench.values, xccdf_value_new_parse(reader, benchmark));
+                        oscap_list_add(benchmark->sub.bench.values, xccdf_value_parse(reader, benchmark));
                         break;
-                    default: xccdf_item_get_process_element(benchmark, reader);
+                    default: xccdf_item_process_element(benchmark, reader);
 	        }
 		xmlTextReaderRead(reader);
 	}
@@ -175,7 +175,7 @@ void xccdf_benchmark_dump(struct xccdf_benchmark* benchmark)
 	struct xccdf_item* bench = XITEM(benchmark);
 	printf("Benchmark : %s\n", (bench ? bench->item.id : "(NULL)"));
 	if (bench) {
-        xccdf_item_get_print(bench, 1);
+        xccdf_item_print(bench, 1);
         printf("  front m.: "); xccdf_print_max(xccdf_benchmark_get_front_matter(benchmark), 64, "..."); printf("\n");
         printf("  rear m. : "); xccdf_print_max(xccdf_benchmark_get_rear_matter(benchmark), 64, "..."); printf("\n");
         printf("  profiles "); oscap_list_dump(bench->sub.bench.profiles, (oscap_dump_func)xccdf_profile_dump, 2);
