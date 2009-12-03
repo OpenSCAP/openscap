@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 # Copyright 2008 Red Hat Inc., Durham, North Carolina.
 # All Rights Reserved.

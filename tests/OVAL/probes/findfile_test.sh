@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 PROG="./test_findfile"
 
 output=`mktemp`
