@@ -14,13 +14,20 @@ static pthread_mutex_t __debuglog_mutex = PTHREAD_MUTEX_INITIALIZER;
 #  endif
 static FILE *__debuglog_fp = NULL;
 
+#if defined(SEAP_THREAD_SAFE)
+# define __LOCK_FP    do { if (pthread_mutex_lock   (&__debuglog_mutex) != 0) abort(); } while(0)
+# define __UNLOCK_FP  do { if (pthread_mutex_unlock (&__debuglog_mutex) != 0) abort(); } while(0)
+#else
+# define __LOCK_FP   while(0)
+# define __UNLOCK_FP while(0)
+#endif
+
 void __seap_debuglog (const char *file, const char *fn, size_t line, const char *fmt, ...)
 {
         va_list ap;
 
-#if defined(SEAP_THREAD_SAFE)        
-        pthread_mutex_lock (&__debuglog_mutex);
-#endif
+        __LOCK_FP;
+        
         if (__debuglog_fp == NULL) {
                 char  *logfile;
                 char  *st;
@@ -33,8 +40,10 @@ void __seap_debuglog (const char *file, const char *fn, size_t line, const char 
                 
                 __debuglog_fp = fopen (logfile, "a");
                 
-                if (__debuglog_fp == NULL)
+                if (__debuglog_fp == NULL) {
+                        __UNLOCK_FP;
                         return;
+                }
                 
                 setbuf (__debuglog_fp, NULL);
                 
@@ -44,10 +53,13 @@ void __seap_debuglog (const char *file, const char *fn, size_t line, const char 
                 fprintf (__debuglog_fp, "=============== LOG: %.24s ===============\n", st);
         }
         
-        if (flock (fileno (__debuglog_fp), LOCK_EX) == -1)
+        if (flock (fileno (__debuglog_fp), LOCK_EX) == -1) {
+                __UNLOCK_FP;
                 return;
+        }
         
 #if defined(SEAP_THREAD_SAFE)        
+        /* XXX: non-portable usage of pthread_t */
         fprintf (__debuglog_fp, "(%u:%u) [%s: %zu: %s] ", (unsigned int)getpid (), (unsigned int)pthread_self(), file, line, fn);
 #else
         fprintf (__debuglog_fp, "(%u) [%s: %zu: %s] ", (unsigned int)getpid (), file, line, fn);
@@ -56,12 +68,12 @@ void __seap_debuglog (const char *file, const char *fn, size_t line, const char 
         vfprintf (__debuglog_fp, fmt, ap);
         va_end (ap);
         
-        if (flock (fileno (__debuglog_fp), LOCK_UN) == -1)
+        if (flock (fileno (__debuglog_fp), LOCK_UN) == -1) {
+                /* __UNLOCK_FP; */
                 abort ();
+        }
         
-#if defined(SEAP_THREAD_SAFE)  
-        pthread_mutex_unlock (&__debuglog_mutex);
-#endif
+        __UNLOCK_FP;
         return;
 }
 #endif
