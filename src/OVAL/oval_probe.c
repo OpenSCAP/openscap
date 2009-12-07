@@ -7,6 +7,7 @@
 #include <assert.h>
 #include <errno.h>
 #include <common/bfind.h>
+#include "common/public/debug.h"
 #if defined(OSCAP_THREAD_SAFE)
 # include <pthread.h>
 #endif
@@ -227,6 +228,8 @@ static SEXP_t *oval_probe_comm (SEAP_CTX_t *ctx, oval_pd_t *pd, const SEXP_t *s_
         SEXP_fprintfa (stderr, s_iobj);
         fprintf (stderr, "\n---------------\n");
 #endif
+        
+        oscap_dprintf ("%s: ctx=%p, pd=%p, s_iobj=%p\n", ctx, pd, s_iobj);
         
         for (retry = 0;;) {
                 /*
