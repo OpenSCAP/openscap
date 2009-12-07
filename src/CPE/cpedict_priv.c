@@ -1198,7 +1198,7 @@ static void cpe_product_export(const struct cpe_product * product, xmlTextWriter
         if (product->value != NULL)
                 xmlTextWriterWriteAttribute(writer, ATTR_VALUE_STR, BAD_CAST product->value);
         if (product->part != CPE_PART_NONE)
-                xmlTextWriterWriteAttribute(writer, ATTR_VALUE_STR, BAD_CAST PART_TO_CHAR[product->part] );
+                xmlTextWriterWriteAttribute(writer, ATTR_PART_STR, BAD_CAST PART_TO_CHAR[product->part] );
 
         OSCAP_FOREACH (cpe_version, version, cpe_product_get_versions(product),
                 cpe_version_export(version, writer);
