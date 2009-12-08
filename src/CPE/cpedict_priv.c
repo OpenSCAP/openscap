@@ -39,9 +39,12 @@
 #include <ctype.h>
 // for functins memset, strcpy
 #include <string.h>
+#include <assert.h>
 
 #include "../common/list.h"
 #include "../common/elements.h"
+
+#define __attribute__nonnull__(x) assert((x) == NULL);
 
 /***************************************************************************/
 /* Variable definitions
@@ -299,6 +302,9 @@ static bool cpe_validate_xml(const char * filename);
  * */
 static bool cpe_dict_model_add_item(struct cpe_dict_model * dict, struct cpe_item * item) {
 
+        __attribute__nonnull__(dict)
+        __attribute__nonnull__(item)
+
 	if (dict == NULL || item == NULL)
 		return false;
 
@@ -328,6 +334,8 @@ static char * str_trim(char *str) {
  * */
 static int xmlTextReaderNextElement(xmlTextReaderPtr reader) {
 
+        __attribute__nonnull__(reader)
+
         int ret;
         do { 
               ret = xmlTextReaderRead(reader); 
@@ -338,6 +346,8 @@ static int xmlTextReaderNextElement(xmlTextReaderPtr reader) {
 }
 
 static bool cpe_validate_xml(const char * filename) {
+
+        __attribute__nonnull__(filename)
 
 	xmlParserCtxtPtr ctxt;	/* the parser context */
 	xmlDocPtr doc;		/* the resulting document tree */
@@ -615,6 +625,8 @@ struct cpe_language *cpe_language_new() {
  */
 struct cpe_dict_model * cpe_dict_model_parse_xml(const struct oscap_import_source * source) {
         
+    __attribute__nonnull__(source)
+
     xmlTextReaderPtr reader;
     struct cpe_dict_model *dict = NULL;
 
@@ -633,6 +645,8 @@ struct cpe_dict_model * cpe_dict_model_parse_xml(const struct oscap_import_sourc
 }
 
 struct cpe_dict_model * cpe_dict_model_parse(xmlTextReaderPtr reader) {
+
+        __attribute__nonnull__(reader)
 
         struct cpe_dict_model *ret  = NULL;
         struct cpe_item *item       = NULL;
@@ -708,6 +722,8 @@ struct cpe_dict_model * cpe_dict_model_parse(xmlTextReaderPtr reader) {
 
 struct cpe_generator * cpe_generator_parse(xmlTextReaderPtr reader) {
 
+        __attribute__nonnull__(reader)
+
         struct cpe_generator *ret = NULL;
 
         if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_GENERATOR_STR) &&
@@ -770,6 +786,8 @@ struct cpe_item * cpe_item_parse(xmlTextReaderPtr reader) {
         struct cpe_check *check = NULL;
         struct cpe_reference *ref = NULL;
         char *data;
+
+        __attribute__nonnull__(reader)
 
         if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_CPE_ITEM_STR) &&
             xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
@@ -887,6 +905,8 @@ static struct cpe_check * cpe_check_parse(xmlTextReaderPtr reader) {
 
 	struct cpe_check *ret;
 
+        __attribute__nonnull__(reader)
+
         if (xmlStrcmp (xmlTextReaderConstLocalName(reader), TAG_CHECK_STR) != 0)
 		return NULL;
 
@@ -907,7 +927,9 @@ static struct cpe_reference * cpe_reference_parse(xmlTextReaderPtr reader) {
 
 	struct cpe_reference *ret;
 
-            if (xmlStrcmp (xmlTextReaderConstLocalName(reader), TAG_REFERENCE_STR) != 0)
+        __attribute__nonnull__(reader)
+
+        if (xmlStrcmp (xmlTextReaderConstLocalName(reader), TAG_REFERENCE_STR) != 0)
 		return NULL;
 
 	if ((ret = oscap_alloc(sizeof(struct cpe_reference))) == NULL)
@@ -933,6 +955,8 @@ struct cpe_vendor * cpe_vendor_parse(xmlTextReaderPtr reader) {
         struct cpe_edition *edition    = NULL;
         struct cpe_language *language  = NULL;
         char *data;
+
+        __attribute__nonnull__(reader)
 
         if (xmlStrcmp (xmlTextReaderConstLocalName(reader), TAG_VENDOR_STR) != 0)
 		return NULL;
@@ -1039,6 +1063,9 @@ struct cpe_vendor * cpe_vendor_parse(xmlTextReaderPtr reader) {
  */
 void cpe_dict_model_export_xml(const struct cpe_dict_model * dict, const struct oscap_export_target * target) {
 
+        __attribute__nonnull__(dict)
+        __attribute__nonnull__(target)
+
         // TODO: add macro to check return value from xmlTextWriter* functions
         xmlTextWriterPtr writer;
 
@@ -1060,6 +1087,9 @@ void cpe_dict_model_export_xml(const struct cpe_dict_model * dict, const struct 
 }
 
 void cpe_dict_export(const struct cpe_dict_model * dict, xmlTextWriterPtr writer) {
+
+        __attribute__nonnull__(dict)
+        __attribute__nonnull__(writer)
 
         xmlTextWriterStartElementNS(writer, BAD_CAST dict->xml.namespace, TAG_CPE_LIST_STR, NULL);
 
@@ -1085,6 +1115,9 @@ void cpe_dict_export(const struct cpe_dict_model * dict, xmlTextWriterPtr writer
 }
 
 void cpe_generator_export(const struct cpe_generator * generator, xmlTextWriterPtr writer) {
+
+        __attribute__nonnull__(generator)
+        __attribute__nonnull__(writer)
 
         xmlTextWriterStartElementNS(writer, BAD_CAST generator->xml.namespace, TAG_GENERATOR_STR, NULL);
         if (generator->product_name != NULL) {
@@ -1115,6 +1148,9 @@ void cpe_item_export(const struct cpe_item * item, xmlTextWriterPtr writer) {
 
         char *temp;
         struct oscap_iterator *it;;
+
+        __attribute__nonnull__(item)
+        __attribute__nonnull__(writer)
 
         xmlTextWriterStartElementNS(writer, BAD_CAST item->xml.namespace, TAG_CPE_ITEM_STR, NULL);
         if (item->name != NULL) {
@@ -1177,6 +1213,9 @@ void cpe_item_export(const struct cpe_item * item, xmlTextWriterPtr writer) {
 
 void cpe_vendor_export(const struct cpe_vendor * vendor, xmlTextWriterPtr writer) {
 
+        __attribute__nonnull__(vendor)
+        __attribute__nonnull__(writer)
+
         xmlTextWriterStartElementNS(writer, BAD_CAST vendor->xml.namespace, TAG_VENDOR_STR, NULL);
         if (vendor->value != NULL)
                 xmlTextWriterWriteAttribute(writer, ATTR_VALUE_STR, BAD_CAST vendor->value);
@@ -1194,6 +1233,9 @@ void cpe_vendor_export(const struct cpe_vendor * vendor, xmlTextWriterPtr writer
 
 static void cpe_product_export(const struct cpe_product * product, xmlTextWriterPtr writer) {
 
+        __attribute__nonnull__(product)
+        __attribute__nonnull__(writer)
+
         xmlTextWriterStartElementNS(writer, BAD_CAST product->xml.namespace, TAG_PRODUCT_STR, NULL);
         if (product->value != NULL)
                 xmlTextWriterWriteAttribute(writer, ATTR_VALUE_STR, BAD_CAST product->value);
@@ -1209,6 +1251,9 @@ static void cpe_product_export(const struct cpe_product * product, xmlTextWriter
 
 static void cpe_version_export(const struct cpe_version * version, xmlTextWriterPtr writer) {
 
+        __attribute__nonnull__(version)
+        __attribute__nonnull__(writer)
+
         xmlTextWriterStartElementNS(writer, BAD_CAST version->xml.namespace, TAG_VERSION_STR, NULL);
         if (version->value != NULL)
                 xmlTextWriterWriteAttribute(writer, ATTR_VALUE_STR, BAD_CAST version->value);
@@ -1223,6 +1268,9 @@ static void cpe_version_export(const struct cpe_version * version, xmlTextWriter
 
 static void cpe_update_export(const struct cpe_update * update, xmlTextWriterPtr writer){ 
 
+        __attribute__nonnull__(update)
+        __attribute__nonnull__(writer)
+
         xmlTextWriterStartElementNS(writer, BAD_CAST update->xml.namespace, TAG_UPDATE_STR, NULL);
         if (update->value != NULL)
                 xmlTextWriterWriteAttribute(writer, ATTR_VALUE_STR, BAD_CAST update->value);
@@ -1234,6 +1282,9 @@ static void cpe_update_export(const struct cpe_update * update, xmlTextWriterPtr
         xmlTextWriterEndElement(writer);
 }
 static void cpe_edition_export(const struct cpe_edition * edition, xmlTextWriterPtr writer){
+
+        __attribute__nonnull__(edition)
+        __attribute__nonnull__(writer)
 
         xmlTextWriterStartElementNS(writer, BAD_CAST edition->xml.namespace, TAG_EDITION_STR, NULL);
         if (edition->value != NULL)
@@ -1247,6 +1298,9 @@ static void cpe_edition_export(const struct cpe_edition * edition, xmlTextWriter
 }
 static void cpe_language_export(const struct cpe_language * language, xmlTextWriterPtr writer){
 
+        __attribute__nonnull__(language)
+        __attribute__nonnull__(writer)
+
         xmlTextWriterStartElementNS(writer, BAD_CAST language->xml.namespace, TAG_LANGUAGE_STR, NULL);
         if (language->value != NULL)
                 xmlTextWriterWriteAttribute(writer, ATTR_VALUE_STR, BAD_CAST language->value);
@@ -1258,6 +1312,9 @@ static void cpe_language_export(const struct cpe_language * language, xmlTextWri
 
 static void cpe_note_export(const struct oscap_title * title, xmlTextWriterPtr writer) {
 
+        __attribute__nonnull__(title)
+        __attribute__nonnull__(writer)
+
         xmlTextWriterStartElementNS(writer, BAD_CAST title->xml.namespace, TAG_NOTE_STR, NULL);
         if (title->xml.lang != NULL) 
                 xmlTextWriterWriteAttribute(writer, ATTR_XML_LANG_STR, BAD_CAST title->xml.lang);
@@ -1266,6 +1323,9 @@ static void cpe_note_export(const struct oscap_title * title, xmlTextWriterPtr w
         xmlTextWriterEndElement(writer);
 }
 static void cpe_check_export(const struct cpe_check *check, xmlTextWriterPtr writer) {
+
+        __attribute__nonnull__(check)
+        __attribute__nonnull__(writer)
 
         xmlTextWriterStartElementNS(writer, BAD_CAST check->xml.namespace, TAG_CHECK_STR, NULL);
         if (check->system != NULL)
@@ -1277,6 +1337,9 @@ static void cpe_check_export(const struct cpe_check *check, xmlTextWriterPtr wri
         xmlTextWriterEndElement(writer);
 }
 static void cpe_reference_export(const struct cpe_reference * ref, xmlTextWriterPtr writer) {
+
+        __attribute__nonnull__(ref)
+        __attribute__nonnull__(writer)
 
         xmlTextWriterStartElementNS(writer, BAD_CAST ref->xml.namespace, TAG_REFERENCE_STR, NULL);
         if (ref->href != NULL)

@@ -39,6 +39,7 @@
 #include "cpeuri.h"
 #include "../common/util.h"
 
+#define __attribute__nonnull__(x) assert((x) == NULL);
 
 // enumeration of CPE URI fields (useful for indexing arrays)
 enum cpe_field_t {
@@ -101,6 +102,8 @@ static bool cpe_assign_values(struct cpe_name * cpe, char **fields);
 
 static int cpe_fields_num(const struct cpe_name *cpe)
 {
+        __attribute__nonnull__(cpe)
+
 	if (cpe == NULL) return 0;
 	int maxnum = 0;
         int i;
@@ -112,6 +115,8 @@ static int cpe_fields_num(const struct cpe_name *cpe)
 
 static const char *cpe_get_field(const struct cpe_name *cpe, int idx)
 {
+        __attribute__nonnull__(cpe)
+
 	if (cpe == NULL) return NULL;
 
 	switch (idx) {
@@ -128,6 +133,10 @@ static const char *cpe_get_field(const struct cpe_name *cpe, int idx)
 
 bool cpe_set_field(struct cpe_name *cpe, int idx, const char *newval)
 {
+
+        __attribute__nonnull__(cpe)
+        __attribute__nonnull__(newval)
+
 	if (cpe == NULL) return false;
 
 	char **fieldptr = NULL;
@@ -155,6 +164,9 @@ bool cpe_set_field(struct cpe_name *cpe, int idx, const char *newval)
 
 struct cpe_name *cpe_name_new(const char *cpestr)
 {
+
+        __attribute__nonnull__(cpestr)
+
 	int i;
 	struct cpe_name *cpe;
 
@@ -182,7 +194,8 @@ static const size_t CPE_SPLIT_INIT_ALLOC = 8;
 
 static char **cpe_split(char *str, const char *delim)
 {
-	assert(str != NULL);
+        
+        __attribute__nonnull__(str)
 
 	char **stringp = &str;
 	int alloc = CPE_SPLIT_INIT_ALLOC;
@@ -210,7 +223,9 @@ static char **cpe_split(char *str, const char *delim)
 
 static bool cpe_urldecode(char *str)
 {
-	assert(str != NULL);
+
+        __attribute__nonnull__(str)
+
 	char *inptr, *outptr;
 
 	for (inptr = outptr = str; *inptr; ++inptr) {
@@ -236,6 +251,9 @@ static bool cpe_urldecode(char *str)
 bool cpe_name_match_one(const struct cpe_name * cpe, const struct cpe_name * against)
 {
 
+        __attribute__nonnull__(cpe)
+        __attribute__nonnull__(against)
+
         int i;
 	if (cpe == NULL || against == NULL)
 		return false;
@@ -255,6 +273,10 @@ bool cpe_name_match_one(const struct cpe_name * cpe, const struct cpe_name * aga
 
 bool cpe_name_match_cpes(const struct cpe_name * name, size_t n, struct cpe_name ** namelist)
 {
+
+        __attribute__nonnull__(name)
+        __attribute__nonnull__(namelist)
+
 	int i;
 
 	if (name == NULL || namelist == NULL)
@@ -268,6 +290,9 @@ bool cpe_name_match_cpes(const struct cpe_name * name, size_t n, struct cpe_name
 
 int cpe_name_match_strs(const char *candidate, size_t n, char **targets)
 {
+        __attribute__nonnull__(candidate)
+        __attribute__nonnull__(targets)
+
         int i;
 	struct cpe_name *ccpe, *tcpe;
 
@@ -294,6 +319,8 @@ int cpe_name_match_strs(const char *candidate, size_t n, char **targets)
 
 bool cpe_name_check(const char *str)
 {
+        __attribute__nonnull__(str)
+
 	if (str == NULL) return false;
 
 	pcre *re;
@@ -313,12 +340,16 @@ bool cpe_name_check(const char *str)
 
 static const char *as_str(const char *str)
 {
+        __attribute__nonnull__(str)
+
 	if (str == NULL) return "";
 	return str;
 }
 
 char *cpe_name_get_uri(const struct cpe_name * cpe)
 {
+        __attribute__nonnull__(cpe)
+
 	int len = 16;
 	int i;
 	char *result;
@@ -352,6 +383,9 @@ char *cpe_name_get_uri(const struct cpe_name * cpe)
 
 int cpe_name_write(const struct cpe_name * cpe, FILE * f)
 {
+        __attribute__nonnull__(cpe)
+        __attribute__nonnull__(f)
+
 	int ret;
 	char *uri;
 
@@ -367,6 +401,8 @@ int cpe_name_write(const struct cpe_name * cpe, FILE * f)
 
 static bool cpe_assign_values(struct cpe_name * cpe, char **fields)
 {
+        __attribute__nonnull__(fields)
+
 	int i;
 
 	if (cpe == NULL || fields == NULL)
@@ -380,6 +416,7 @@ static bool cpe_assign_values(struct cpe_name * cpe, char **fields)
 
 void cpe_name_free(struct cpe_name * cpe)
 {
+
         int i;
 	for (i = 0; i < CPE_FIELDNUM; ++i)
 		cpe_set_field(cpe, i, NULL);

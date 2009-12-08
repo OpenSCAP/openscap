@@ -30,6 +30,7 @@
 
 #include <libxml/tree.h>
 #include <string.h>
+#include <assert.h>
 
 #include "cpelang_priv.h"
 #include "public/cpelang.h"
@@ -37,8 +38,11 @@
 #include "../common/util.h"
 #include "../common/list.h"
 
+#define __attribute__nonnull__(x) assert((x) == NULL);
 
 struct cpe_lang_model * cpe_lang_model_import(const struct oscap_import_source *source) {
+
+    __attribute__nonnull__(source)
 
     if (oscap_import_source_get_filename(source) == NULL) return NULL;
 
@@ -50,6 +54,9 @@ struct cpe_lang_model * cpe_lang_model_import(const struct oscap_import_source *
 }
 
 void cpe_lang_model_export(const struct cpe_lang_model * spec, struct oscap_export_target * target) {
+
+    __attribute__nonnull__(spec)
+    __attribute__nonnull__(target)
 
     if (oscap_export_target_get_filename(target) == NULL) return;
 
@@ -66,6 +73,9 @@ void cpe_lang_model_export(const struct cpe_lang_model * spec, struct oscap_expo
 static bool cpe_language_match_expr(struct cpe_name ** cpe, size_t n,
 				    const struct cpe_testexpr * expr)
 {
+        __attribute__nonnull__(cpe)
+        __attribute__nonnull__(expr)
+
 	struct cpe_testexpr *cur;
 	bool ret;
 
@@ -107,6 +117,10 @@ bool cpe_platform_match_cpe(struct cpe_name ** cpe, size_t n,
 /*
 bool cpe_language_match_str(const char* cpe, const struct cpe_platform* platform)
 {
+
+        __attribute__nonnull__(cpe)
+        __attribute__nonnull__(platform)
+
 	struct cpe_name* cpe_;
 	bool ret;
 

@@ -28,14 +28,19 @@
  *      Lukas Kuklinek <lkuklinek@redhat.com>
  */
 
+#include <assert.h>
+
 #include "public/cpedict.h"
 #include "cpedict_priv.h"
 
 #include "../common/list.h"
 #include "../common/util.h"
 
+#define __attribute__nonnull__(x) assert((x) == NULL);
 
 struct cpe_dict_model * cpe_dict_model_import(const struct oscap_import_source * source) {
+
+    __attribute__nonnull__(source)
 
     if (oscap_import_source_get_filename(source) == NULL) return NULL;
 
@@ -48,6 +53,9 @@ struct cpe_dict_model * cpe_dict_model_import(const struct oscap_import_source *
 
 void cpe_dict_model_export(const struct cpe_dict_model * dict, const struct oscap_export_target * target) {
 
+    __attribute__nonnull__(dict)
+    __attribute__nonnull__(target)
+        
     if (oscap_export_target_get_filename(target) == NULL) return;
 
     cpe_dict_model_export_xml(dict, target);
@@ -56,6 +64,9 @@ void cpe_dict_model_export(const struct cpe_dict_model * dict, const struct osca
 
 bool cpe_name_match_dict(struct cpe_name * cpe, struct cpe_dict_model * dict) {
 
+    __attribute__nonnull__(cpe)
+    __attribute__nonnull__(dict)
+        
 	if (cpe == NULL || dict == NULL)
 		return false;
 	
@@ -78,6 +89,9 @@ bool cpe_name_match_dict(struct cpe_name * cpe, struct cpe_dict_model * dict) {
 
 bool cpe_name_match_dict_str(const char *cpestr, struct cpe_dict_model * dict)
 {
+        __attribute__nonnull__(cpestr)
+        __attribute__nonnull__(dict)
+
 	bool ret;
 	if (cpestr == NULL)
 		return false;

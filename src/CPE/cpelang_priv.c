@@ -32,6 +32,7 @@
 #include <libxml/xmlwriter.h>
 #include <libxml/tree.h>
 #include <string.h>
+#include <assert.h>
 
 #include "cpelang_priv.h"
 #include "public/cpelang.h"
@@ -39,6 +40,8 @@
 #include "../common/util.h"
 #include "../common/list.h"
 #include "../common/elements.h"
+
+#define __attribute__nonnull__(x) assert((x) == NULL);
 
 /***************************************************************************/
 /* Variable definitions
@@ -124,6 +127,8 @@ static bool cpe_validate_xml(const char * filename);
  */
 static int xmlTextReaderNextElement(xmlTextReaderPtr reader) {
 
+        __attribute__nonnull__(reader)
+
         int ret;
         do { 
               ret = xmlTextReaderRead(reader); 
@@ -135,6 +140,8 @@ static int xmlTextReaderNextElement(xmlTextReaderPtr reader) {
 
 const struct cpe_testexpr * cpe_platform_get_expr(const struct cpe_platform *item) {
 
+    __attribute__nonnull__(item)
+
     if (item == NULL)
                 return NULL;
 
@@ -142,6 +149,8 @@ const struct cpe_testexpr * cpe_platform_get_expr(const struct cpe_platform *ite
 }
 
 const struct cpe_testexpr * cpe_testexpr_get_next(const struct cpe_testexpr * expr) {
+
+    __attribute__nonnull__(expr)
 
     return ++(expr);
 }
@@ -220,6 +229,8 @@ struct cpe_platform * cpe_platform_new() {
 
 static bool cpe_validate_xml(const char * filename) {
 
+        __attribute__nonnull__(filename)
+
 	xmlParserCtxtPtr ctxt;	/* the parser context */
 	xmlDocPtr doc;		/* the resulting document tree */
 	bool ret = false;
@@ -246,6 +257,8 @@ static bool cpe_validate_xml(const char * filename) {
 
 struct cpe_lang_model * cpe_lang_model_parse_xml(const struct oscap_import_source * source) {
         
+        __attribute__nonnull__(source)
+
         xmlTextReaderPtr reader;
         struct cpe_lang_model *ret = NULL;
 
@@ -269,6 +282,8 @@ struct cpe_lang_model * cpe_lang_model_parse(xmlTextReaderPtr reader) {
         struct cpe_lang_model *ret      = NULL;
         struct xml_metadata *xml        = NULL;
         struct cpe_platform *platform   = NULL;
+
+        __attribute__nonnull__(reader)
 
         if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_PLATFORM_SPEC_STR) &&
             xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
@@ -310,6 +325,8 @@ struct cpe_platform * cpe_platform_parse(xmlTextReaderPtr reader) {
         
         struct cpe_platform *ret;
         struct oscap_title *title;
+
+        __attribute__nonnull__(reader)
 
         // allocate platform structure here
         ret = cpe_platform_new();
@@ -355,9 +372,11 @@ struct cpe_platform * cpe_platform_parse(xmlTextReaderPtr reader) {
 
 struct cpe_testexpr * cpe_testexpr_parse(xmlTextReaderPtr reader) {
 
-	xmlChar *temp;
-	size_t elem_cnt = 0;
-        struct cpe_testexpr * ret;
+	xmlChar *temp               = NULL;
+	size_t elem_cnt             = 0;
+        struct cpe_testexpr * ret   = NULL;
+
+        __attribute__nonnull__(reader)
 
         // allocation
         ret = cpe_testexpr_new();
@@ -443,6 +462,9 @@ static char * parse_text_element(xmlTextReaderPtr reader, char *name) {
 
     char *string = NULL;
 
+    __attribute__nonnull__(reader)
+    __attribute__nonnull__(name)
+
     // parse string element attributes here (like xml:lang)
 
     while (xmlTextReaderRead(reader)) {
@@ -471,6 +493,9 @@ static char * parse_text_element(xmlTextReaderPtr reader, char *name) {
  */
 void cpe_lang_model_export_xml(const struct cpe_lang_model * spec, struct oscap_export_target * target) {
 
+        __attribute__nonnull__(spec)
+        __attribute__nonnull__(target)
+
         // TODO: ad macro to check return value from xmlTextWriter* functions
         xmlTextWriterPtr writer;
 
@@ -492,6 +517,9 @@ void cpe_lang_model_export_xml(const struct cpe_lang_model * spec, struct oscap_
 
 void cpe_lang_export(const struct cpe_lang_model * spec, xmlTextWriterPtr writer) {
 
+        __attribute__nonnull__(spec)
+        __attribute__nonnull__(writer)
+
         xmlTextWriterStartElementNS(writer, BAD_CAST spec->ns_prefix, TAG_PLATFORM_SPEC_STR, BAD_CAST spec->ns_href);
 
         OSCAP_FOREACH (xml_metadata, xml, cpe_lang_model_get_xmlns(spec),
@@ -507,6 +535,9 @@ void cpe_lang_export(const struct cpe_lang_model * spec, xmlTextWriterPtr writer
 
 void cpe_platform_export(const struct cpe_platform * platform, xmlTextWriterPtr writer) {
     
+        __attribute__nonnull__(platform)
+        __attribute__nonnull__(writer)
+
         xmlTextWriterStartElementNS(writer, BAD_CAST platform->xml.namespace, TAG_PLATFORM_STR, NULL);
         if (cpe_platform_get_id(platform) != NULL) 
                 xmlTextWriterWriteAttribute(writer, ATTR_ID_STR, BAD_CAST cpe_platform_get_id(platform));
@@ -519,6 +550,8 @@ void cpe_platform_export(const struct cpe_platform * platform, xmlTextWriterPtr 
 }
 
 void cpe_testexpr_export(struct cpe_testexpr expr, xmlTextWriterPtr writer) {
+
+        __attribute__nonnull__(writer)
 
         if (expr.oper == CPE_LANG_OPER_HALT)
             return;
