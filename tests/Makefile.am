@@ -32,7 +32,7 @@ test_results_CFLAGS = -I$(top_srcdir)/src/OVAL -I$(top_srcdir)/src/common
 test_results_LDADD = $(top_builddir)/src/libopenscap_testing.la
 
 if WANT_PROBES
-check_PROGRAMS += sexp_parser test_probes test_probe-api test_sysinfo
+check_PROGRAMS += sexp_parser test_probes test_probe-api test_sysinfo test_error
 #test_findfile test_sexp_to_syschar
 TESTS += OVAL/SEAP/test_seap.sh \
 	 OVAL/probes/test_probes.sh 
@@ -69,6 +69,10 @@ sexp_list_LDADD = $(top_builddir)/src/libopenscap_testing.la
 test_probes_SOURCES = OVAL/probes/test_probes.c
 test_probes_CFLAGS = -I$(top_srcdir)/src/OVAL
 test_probes_LDADD = $(top_builddir)/src/libopenscap_testing.la
+
+test_error_SOURCES = OVAL/probes/test_error.c
+test_error_CFLAGS = -I$(top_srcdir)/src/OVAL -I$(top_srcdir)/src/common
+test_error_LDADD = $(top_builddir)/src/libopenscap_testing.la
 
 test_probe_api_SOURCES = OVAL/probes/test_probe-api.c
 test_probe_api_CFLAGS = -I$(top_srcdir)/src/OVAL/public -I$(top_srcdir)/src/OVAL/probes/public -I$(top_srcdir)/src/OVAL/probes/SEAP/public

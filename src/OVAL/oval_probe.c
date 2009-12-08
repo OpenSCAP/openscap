@@ -8,6 +8,7 @@
 #include <errno.h>
 #include <common/bfind.h>
 #include "common/public/debug.h"
+#include "common/public/error.h"
 #if defined(OSCAP_THREAD_SAFE)
 # include <pthread.h>
 #endif
@@ -199,9 +200,13 @@ int oval_pctx_setattr (oval_pctx_t *ctx, uint32_t attr, ...)
                         oscap_free (ctx->p_dir);
                 
                 ctx->p_dir = strdup (va_arg (ap, const char *));
+                break;
+        case OVAL_PCTX_ATTR_MODEL:
+                ctx->model = va_arg (ap, struct oval_syschar_model *);
+                break;
         }
         
-        return (-1);
+        return (0);
 }
 
 void oval_pctx_free (oval_pctx_t *ctx)
@@ -355,7 +360,11 @@ struct oval_syschar *oval_probe_object_eval (oval_pctx_t *ctx, struct oval_objec
         
         /* XXX: lock ctx? */
         
+        oscap_clearerr ();
+        
         if (ctx->model == NULL) {
+                oscap_seterr (123, 123, "Hello! CTX broken!!!");
+                
                 errno = EINVAL;
                 return (NULL);
         }
