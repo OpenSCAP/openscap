@@ -187,37 +187,88 @@ typedef float xccdf_numeric;
 /*--------------------*\
 |   Core structures    |
 \*--------------------*/
-
+/**
+ * @addtogroup xccdf_item
+ * @{
+ * @addtogroup xccdf_item_setters Setters
+ * @{
+ * @ref xccdf_item set methods.
+ *	These methods will not change the state of a locked instance.
+ *	@see oval_sysinfo_get_locked
+ *	@see oval_syschar_model_set_lock
+ * @}
+ * @addtogroup xccdf_item_getters Getters
+ * @{
+ * @ref xccdf_item get methods.
+ * @}
+ * @addtogroup xccdf_item_iterators Iterators
+ * @{
+ * @ref xccdf_item iterator methods.
+ * @}
+ * @addtogroup xccdf_item_eval Evaluators
+ * @{
+ * @ref xccdf_item evaluator methods
+ * @}
+ */
 /** @struct xccdf_item
  * A base class for XCCDF items.
  */
 struct xccdf_item;
-
+/**
+ * @}
+ * @addtogroup xccdf_benchmark
+ * @{
+ */
 /** @struct xccdf_benchmark
  * XCCDF Benchmark.
  */
 struct xccdf_benchmark;
 
+/**
+ * @}
+ * @addtogroup xccdf_profile
+ * @{
+ */
 /** @struct xccdf_profile
  * XCCDF Profile.
  */
 struct xccdf_profile;
 
+/**
+ * @}
+ * @addtogroup xccdf_rule
+ * @{
+ */
 /** @struct xccdf_rule
  * XCCDF Rule.
  */
 struct xccdf_rule;
 
+/**
+ * @}
+ * @addtogroup xccdf_group
+ * @{
+ */
 /** @struct xccdf_group
  * XCCDF Group.
  */
 struct xccdf_group;
 
+/**
+ * @}
+ * @addtogroup xccdf_value
+ * @{
+ */
 /** @struct xccdf_value
  * XCDF Value
  */
 struct xccdf_value;
 
+/**
+ * @}
+ * @addtogroup xccdf_result
+ * @{
+ */
 /** @struct xccdf_result
  * XCCDF Test Result.
  */
@@ -228,92 +279,168 @@ struct xccdf_result;
 |  Support structures  |
 \*--------------------*/
 
+/**
+ * @}
+ * @addtogroup xccdf_notice
+ * @{
+ */
 /** @struct xccdf_notice
  * XCCDF benchmark legal notice.
  */
 struct xccdf_notice;
 
+/**
+ * @}
+ * @addtogroup xccdf_status
+ * @{
+ */
 /** @struct xccdf_status
  * XCCDF item status.
  */
 struct xccdf_status;
 
+/**
+ * @}
+ * @addtogroup xccdf_model
+ * @{
+ */
 /** @struct xccdf_model
  * XCCDF scoring model.
  */
 struct xccdf_model;
 
+/**
+ * @}
+ * @addtogroup xccdf_warning
+ * @{
+ */
 /** @struct xccdf_warning
  * XCCDF warning.
  */
 struct xccdf_warning;
 
+/**
+ * @}
+ * @addtogroup xccdf_select
+ * @{
+ */
 /** @struct xccdf_select
  * XCCDF select option usen in the profile.
  * @see xccdf_profile
  */
 struct xccdf_select;
 
+/**
+ * @}
+ * @addtogroup xccdf_set_value
+ * @{
+ */
 /** @struct xccdf_set_value
  * XCCDF set value option used in the profile.
  * @see xccdf_profile
  */
 struct xccdf_set_value;
 
+/**
+ * @}
+ * @addtogroup xccdf_refine_value
+ * @{
+ */
 /** @struct xccdf_refine_value
  * XCCDF refine value option used in the profile.
  * @see xccdf_profile
  */
 struct xccdf_refine_value;
-
+/**
+ * @}
+ * @addtogroup xccdf_refine_rule
+ * @{
+ */
 /** @struct xccdf_refine_rule
  * XCCDF refine rule option used in the profile.
  * @see xccdf_profile
  */
 struct xccdf_refine_rule;
 
+/**
+ * @}
+ * @addtogroup xccdf_ident
+ * @{
+ */
 /** @struct xccdf_ident
  * XCCDF rule ident URI.
  * @see xccdf_rule
  */
 struct xccdf_ident;
 
+/**
+ * @}
+ * @addtogroup xccdf_check
+ * @{
+ */
 /** @struct xccdf_check
  * XCCDF simple or complex check.
  * @see xccdf_rule
  */
 struct xccdf_check;
-
+/**
+ * @}
+ * @addtogroup xccdf_check_content_ref
+ * @{
+ */
 /** @struct xccdf_check_content_ref
  * XCCDF check content reference.
  * @see xccdf_rule
  */
 struct xccdf_check_content_ref;
 
+/**
+ * @}
+ * @addtogroup xccdf_profile_note
+ * @{
+ */
 /** @struct xccdf_profile_note
  * XCCDF note for given rule in context of given profile.
  * @see xccdf_rule
  */
 struct xccdf_profile_note;
 
+/**
+ * @}
+ * @addtogroup xccdf_check_import
+ * @{
+ */
 /** @struct xccdf_check_import
  * XCCDF check import.
  * @see xccdf_check
  */
 struct xccdf_check_import;
 
+/**
+ * @}
+ * @addtogroup xccdf_check_export
+ * @{
+ */
 /** @struct xccdf_check_export
  * XCCDF check export.
  * @see xccdf_check
  */
 struct xccdf_check_export;
-
+/**
+ * @}
+ * @addtogroup xccdf_fix
+ * @{
+ */
 /** @struct xccdf_fix
  * XCCDF automatic fix.
  * @see xccdf_rule
  */
 struct xccdf_fix;
-
+/**
+ * @}
+ * @addtogroup xccdf_fixtext
+ * @{
+ */
 /** @struct xccdf_fixtext
  * XCCDF textual fix instructions.
  * @see xccdf_rule
@@ -326,6 +453,11 @@ struct xccdf_fixtext;
 |       Iterators      |
 \*--------------------*/
 
+/**
+ * @}
+ * @addtogroup xccdf_item
+ * @{
+ */
 /** @struct xccdf_item_iterator
  * String iterator.
  * @see oscap_iterator
@@ -337,7 +469,11 @@ struct xccdf_item* xccdf_item_iterator_next(struct xccdf_item_iterator* it);
 bool xccdf_item_iterator_has_more(struct xccdf_item_iterator* it);
 /// @relates xccdf_item_iterator
 void xccdf_item_iterator_free(struct xccdf_item_iterator* it);
-
+/**
+ * @}
+ * @addtogroup xccdf_notice
+ * @{
+ */
 /** @struct xccdf_notice_iterator
  * Notice iterator.
  * @see oscap_iterator
@@ -349,7 +485,11 @@ struct xccdf_notice* xccdf_notice_iterator_next(struct xccdf_notice_iterator* it
 bool xccdf_notice_iterator_has_more(struct xccdf_notice_iterator* it);
 /// @relates xccdf_notice_iterator
 void xccdf_notice_iterator_free(struct xccdf_notice_iterator* it);
-
+/**
+ * @}
+ * @addtogroup xccdf_status
+ * @{
+ */
 /** @struct xccdf_status_iterator
  * Status iterator.
  * @see oscap_iterator
@@ -361,7 +501,11 @@ struct xccdf_status* xccdf_status_iterator_next(struct xccdf_status_iterator* it
 bool xccdf_status_iterator_has_more(struct xccdf_status_iterator* it);
 /// @relates xccdf_status_iterator
 void xccdf_status_iterator_free(struct xccdf_status_iterator* it);
-
+/**
+ * @}
+ * @addtogroup xccdf_reference
+ * @{
+ */
 /** @struct xccdf_reference_iterator
  * Reference iterator.
  * @see oscap_iterator
@@ -373,7 +517,11 @@ struct xccdf_reference* xccdf_reference_iterator_next(struct xccdf_reference_ite
 bool xccdf_reference_iterator_has_more(struct xccdf_reference_iterator* it);
 /// @relates xccdf_reference_iterator
 void xccdf_reference_iterator_free(struct xccdf_reference_iterator* it);
-
+/**
+ * @}
+ * @addtogroup xccdf_model
+ * @{
+ */
 /** @struct xccdf_model_iterator
  * Model iterator.
  * @see oscap_iterator
@@ -385,7 +533,11 @@ struct xccdf_model* xccdf_model_iterator_next(struct xccdf_model_iterator* it);
 bool xccdf_model_iterator_has_more(struct xccdf_model_iterator* it);
 /// @relates xccdf_model_iterator
 void xccdf_model_iterator_free(struct xccdf_model_iterator* it);
-
+/**
+ * @}
+ * @addtogroup xccdf_profile
+ * @{
+ */
 /** @struct xccdf_profile_iterator
  * Profile iterator.
  * @see oscap_iterator
@@ -398,6 +550,11 @@ bool xccdf_profile_iterator_has_more(struct xccdf_profile_iterator* it);
 /// @relates xccdf_profile_iterator
 void xccdf_profile_iterator_free(struct xccdf_profile_iterator* it);
 
+/**
+ * @}
+ * @addtogroup xccdf_select
+ * @{
+ */
 /** @struct xccdf_select_iterator
  * Select iterator.
  * @see oscap_iterator
@@ -410,6 +567,11 @@ bool xccdf_select_iterator_has_more(struct xccdf_select_iterator* it);
 /// @relates xccdf_select_iterator
 void xccdf_select_iterator_free(struct xccdf_select_iterator* it);
 
+/**
+ * @}
+ * @addtogroup xccdf_set_value
+ * @{
+ */
 /** @struct xccdf_set_value_iterator
  * Set value iterator.
  * @see oscap_iterator
@@ -422,6 +584,11 @@ bool xccdf_set_value_iterator_has_more(struct xccdf_set_value_iterator* it);
 /// @relates xccdf_set_value_iterator
 void xccdf_set_value_iterator_free(struct xccdf_set_value_iterator* it);
 
+/**
+ * @}
+ * @addtogroup xccdf_refile_value
+ * @{
+ */
 /** @struct xccdf_refine_value_iterator
  * Refine value iterator.
  * @see oscap_iterator
@@ -434,6 +601,11 @@ bool xccdf_refine_value_iterator_has_more(struct xccdf_refine_value_iterator* it
 /// @relates xccdf_refine_value_iterator
 void xccdf_refine_value_iterator_free(struct xccdf_refine_value_iterator* it);
 
+/**
+ * @}
+ * @addtogroup xccdf_refine_rule
+ * @{
+ */
 /** @struct xccdf_refine_rule_iterator
  * Refine rule iterator.
  * @see oscap_iterator
@@ -446,6 +618,11 @@ bool xccdf_refine_rule_iterator_has_more(struct xccdf_refine_rule_iterator* it);
 /// @relates xccdf_refine_rule_iterator
 void xccdf_refine_rule_iterator_free(struct xccdf_refine_rule_iterator* it);
 
+/**
+ * @}
+ * @addtogroup xccdf_ident
+ * @{
+ */
 /** @struct xccdf_ident_iterator
  * Ident iterator.
  * @see oscap_iterator
@@ -458,6 +635,11 @@ bool xccdf_ident_iterator_has_more(struct xccdf_ident_iterator* it);
 /// @relates xccdf_ident_iterator
 void xccdf_ident_iterator_free(struct xccdf_ident_iterator* it);
 
+/**
+ * @}
+ * @addtogroup xccdf_check
+ * @{
+ */
 /** @struct xccdf_check_iterator
  * Check iterator.
  * @see oscap_iterator
@@ -469,7 +651,11 @@ struct xccdf_check* xccdf_check_iterator_next(struct xccdf_check_iterator* it);
 bool xccdf_check_iterator_has_more(struct xccdf_check_iterator* it);
 /// @relates xccdf_check_iterator
 void xccdf_check_iterator_free(struct xccdf_check_iterator* it);
-
+/**
+ * @}
+ * @addtogroup xccdf_check_content_ref
+ * @{
+ */
 /** @struct xccdf_check_content_ref_iterator
  * Check content references iterator.
  * @see oscap_iterator
@@ -481,7 +667,11 @@ struct xccdf_check_content_ref* xccdf_check_content_ref_iterator_next(struct xcc
 bool xccdf_check_content_ref_iterator_has_more(struct xccdf_check_content_ref_iterator* it);
 /// @relates xccdf_check_content_ref_iterator
 void xccdf_check_content_ref_iterator_free(struct xccdf_check_content_ref_iterator* it);
-
+/**
+ * @}
+ * @addtogroup xccdf_profile_note
+ * @{
+ */
 /** @struct xccdf_profile_note_iterator
  * Profile note iterator.
  * @see oscap_iterator
@@ -493,7 +683,11 @@ struct xccdf_profile_note* xccdf_profile_note_iterator_next(struct xccdf_profile
 bool xccdf_profile_note_iterator_has_more(struct xccdf_profile_note_iterator* it);
 /// @relates xccdf_profile_note_iterator
 void xccdf_profile_note_iterator_free(struct xccdf_profile_note_iterator* it);
-
+/**
+ * @}
+ * @addtogroup xccdf_check_import
+ * @{
+ */
 /** @struct xccdf_check_import_iterator
  * Check import iterator.
  * @see oscap_iterator
@@ -506,6 +700,11 @@ bool xccdf_check_import_iterator_has_more(struct xccdf_check_import_iterator* it
 /// @relates xccdf_check_import_iterator
 void xccdf_check_import_iterator_free(struct xccdf_check_import_iterator* it);
 
+/**
+ * @}
+ * @addtogroup xccdf_check_export
+ * @{
+ */
 /** @struct xccdf_check_export_iterator
  * Check export iterator.
  * @see oscap_iterator
@@ -518,6 +717,11 @@ bool xccdf_check_export_iterator_has_more(struct xccdf_check_export_iterator* it
 /// @relates xccdf_check_export_iterator
 void xccdf_check_export_iterator_free(struct xccdf_check_export_iterator* it);
 
+/**
+ * @}
+ * @addtogroup xccdf_fix
+ * @{
+ */
 /** @struct xccdf_fix_iterator
  * Fix iterator.
  * @see oscap_iterator
@@ -530,6 +734,11 @@ bool xccdf_fix_iterator_has_more(struct xccdf_fix_iterator* it);
 /// @relates xccdf_fix_iterator
 void xccdf_fix_iterator_free(struct xccdf_fix_iterator* it);
 
+/**
+ * @}
+ * @addtogroup xccdf_fixtext
+ * @{
+ */
 /** @struct xccdf_fixtext_iterator
  * Textual fix iterator.
  * @see oscap_iterator
@@ -541,6 +750,9 @@ struct xccdf_fixtext* xccdf_fixtext_iterator_next(struct xccdf_fixtext_iterator*
 bool xccdf_fixtext_iterator_has_more(struct xccdf_fixtext_iterator* it);
 /// @relates xccdf_fixtext_iterator
 void xccdf_fixtext_iterator_free(struct xccdf_fixtext_iterator* it);
+/**
+ * @}
+ */
 
 
 /*--------------------*\

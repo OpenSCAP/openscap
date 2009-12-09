@@ -40,7 +40,7 @@ typedef struct oval_state_content {
 	oval_check_t     var_check;
 } oval_state_content_t;
 
-int oval_state_content_iterator_has_more(struct oval_state_content_iterator
+bool oval_state_content_iterator_has_more(struct oval_state_content_iterator
 					  *oc_state_content)
 {
 	return oval_collection_iterator_has_more((struct oval_iterator *)

@@ -239,7 +239,7 @@ void oval_result_test_free(struct oval_result_test *test)
 	free(test);
 }
 
-int oval_result_test_iterator_has_more(struct oval_result_test_iterator
+bool oval_result_test_iterator_has_more(struct oval_result_test_iterator
 				       *oc_result_test)
 {
 	return oval_collection_iterator_has_more((struct oval_iterator *)
@@ -408,13 +408,17 @@ if (OVAL_RESULT_TEST_DEBUG)fprintf(stderr,"%s:%d invalid EVR comparison:%d\n",__
 				if (tmp_sys_int<tmp_state_int) return(OVAL_RESULT_TRUE);
 				if (tmp_sys_int>tmp_state_int) return(OVAL_RESULT_FALSE);
 			}else{
-if (OVAL_RESULT_TEST_DEBUG)fprintf(stderr,"%s:%d invalid version comparison:%d\n",__FILE__,__LINE__,operation);
+				if (OVAL_RESULT_TEST_DEBUG)fprintf(stderr,"%s:%d invalid version comparison:%d\n",__FILE__,__LINE__,operation);
 				oval_errno=OVAL_INVALID_COMPARISON;
 				return(OVAL_RESULT_INVALID);
 			}
-			for(state_idx=(state_data[state_idx])?state_idx++:state_idx;((state_data[state_idx])&&(isdigit(state_data[state_idx])));++state_idx);// move to the next field within the version string (if there is one)
+			for(state_idx=(state_data[state_idx])?state_idx++:state_idx;
+					((state_data[state_idx])&&(isdigit(state_data[state_idx])));
+					++state_idx);// move to the next field within the version string (if there is one)
 			if ((state_data[state_idx])&&(!isdigit(state_data[state_idx])))++state_idx;
-			for(sys_idx=(sys_data[sys_idx])?++sys_idx:sys_idx;((sys_data[sys_idx])&&(isdigit(sys_data[sys_idx])));++sys_idx);// move to the next field within the version string (if there is one)
+			for(sys_idx=(sys_data[sys_idx])?++sys_idx:sys_idx;
+					((sys_data[sys_idx])&&(isdigit(sys_data[sys_idx])));
+					++sys_idx);// move to the next field within the version string (if there is one)
 			if ((sys_data[sys_idx])&&(!isdigit(sys_data[sys_idx])))++sys_idx;
 		}
 		// OK, we did not terminate early, and we're out of data, so we now know what to return

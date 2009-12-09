@@ -62,7 +62,7 @@ typedef struct oval_criteria_node_EXTENDDEF {
 	struct oval_definition *definition;	//type==NODETYPE_EXTENDDEF
 } oval_criteria_node_EXTENDDEF_t;
 
-int oval_criteria_node_iterator_has_more(struct oval_criteria_node_iterator
+bool oval_criteria_node_iterator_has_more(struct oval_criteria_node_iterator
 					 *oc_criteria_node)
 {
 	return oval_collection_iterator_has_more((struct oval_iterator *)

@@ -45,7 +45,7 @@ typedef struct oval_syschar {
 	struct oval_collection *sysdata;
 } oval_syschar_t;
 
-int oval_syschar_iterator_has_more(struct oval_syschar_iterator *oc_syschar)
+bool oval_syschar_iterator_has_more(struct oval_syschar_iterator *oc_syschar)
 {
 	return oval_collection_iterator_has_more((struct oval_iterator *)
 						 oc_syschar);

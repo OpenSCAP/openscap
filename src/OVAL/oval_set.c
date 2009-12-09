@@ -49,7 +49,7 @@ typedef struct oval_set_COLLECTIVE {
 	struct oval_collection *filters;	//type==OVAL_SET_COLLECTIVE;
 } oval_set_COLLECTIVE_t;
 
-int oval_setobject_iterator_has_more(struct oval_setobject_iterator *oc_set)
+bool oval_setobject_iterator_has_more(struct oval_setobject_iterator *oc_set)
 {
 	return oval_collection_iterator_has_more((struct oval_iterator *)
 						 oc_set);

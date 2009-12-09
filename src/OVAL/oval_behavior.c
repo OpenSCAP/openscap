@@ -39,7 +39,7 @@ typedef struct oval_behavior {
 	char *key;
 } oval_behavior_t;
 
-int oval_behavior_iterator_has_more(struct oval_behavior_iterator *oc_behavior)
+bool oval_behavior_iterator_has_more(struct oval_behavior_iterator *oc_behavior)
 {
 	return oval_collection_iterator_has_more((struct oval_iterator *)
 						 oc_behavior);

@@ -113,7 +113,7 @@ typedef struct oval_component_REGEX_CAPTURE {
 	char *pattern;	//type==OVAL_COMPONENT_REGEX_CAPTURE
 } oval_component_REGEX_CAPTURE_t;
 
-int oval_component_iterator_has_more(struct oval_component_iterator *oc_component)
+bool oval_component_iterator_has_more(struct oval_component_iterator *oc_component)
 {
 	return oval_collection_iterator_has_more((struct oval_iterator *) oc_component);
 }

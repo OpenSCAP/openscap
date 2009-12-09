@@ -73,12 +73,6 @@ xmlNode *oval_syschar_model_to_dom
 	(struct oval_syschar_model *, xmlDocPtr, xmlNode *,
 			oval_syschar_resolver, void *);
 
-struct oval_sysdata *get_oval_sysdata_new(struct oval_syschar_model *, char *);
-void oval_syschar_model_add_syschar(struct oval_syschar_model *model, struct oval_syschar *syschar);
-void oval_syschar_model_add_sysdata(struct oval_syschar_model *model, struct oval_sysdata *sysdata);
-void oval_syschar_model_set_sysinfo(struct oval_syschar_model *model, struct oval_sysinfo *sysinfo);
-void oval_syschar_model_add_variable_binding(struct oval_syschar_model *model, struct oval_variable_binding *binding);
-
 typedef struct oval_export_target {
 	char *filename;
 	char *encoding;

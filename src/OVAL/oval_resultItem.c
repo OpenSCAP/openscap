@@ -84,7 +84,7 @@ void oval_result_item_free(struct oval_result_item *item)
 	item->sysdata      = NULL;
 }
 
-int oval_result_item_iterator_has_more(struct oval_result_item_iterator
+bool oval_result_item_iterator_has_more(struct oval_result_item_iterator
 				       *oc_result_item)
 {
 	return oval_collection_iterator_has_more((struct oval_iterator *)

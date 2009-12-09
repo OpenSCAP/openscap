@@ -39,7 +39,7 @@ typedef struct oval_sysint {
 	char *macAddress;
 } oval_sysint_t;
 
-int oval_sysint_iterator_has_more(struct oval_sysint_iterator *oc_sysint)
+bool oval_sysint_iterator_has_more(struct oval_sysint_iterator *oc_sysint)
 {
 	return oval_collection_iterator_has_more((struct oval_iterator *)
 						 oc_sysint);

@@ -45,7 +45,7 @@ struct oval_entity {
 	struct oval_value *value;
 };
 
-int oval_entity_iterator_has_more(struct oval_entity_iterator *oc_entity)
+bool oval_entity_iterator_has_more(struct oval_entity_iterator *oc_entity)
 {
 	return oval_collection_iterator_has_more((struct oval_iterator *)
 						 oc_entity);

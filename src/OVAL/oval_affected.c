@@ -42,7 +42,7 @@ typedef struct oval_affected {
 	struct oval_collection *products;
 } oval_affected_t;
 
-int oval_affected_iterator_has_more(struct oval_affected_iterator *oc_affected)
+bool oval_affected_iterator_has_more(struct oval_affected_iterator *oc_affected)
 {
 	return oval_collection_iterator_has_more((struct oval_iterator *)
 						 oc_affected);

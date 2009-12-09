@@ -183,6 +183,7 @@ int _oval_variable_model_parse_variable_values
 		char *value = (char*)xmlTextReaderValue(reader);
 		oval_collection_add(frame->values, strdup(value));
 		free(value);
+		return_code = 1;
 	}else{
 		char message[200]; *message = 0;
 		sprintf(message,

@@ -96,7 +96,7 @@ void oval_sysdata_free(struct oval_sysdata *sysdata)
 	free(sysdata);
 }
 
-int oval_sysdata_iterator_has_more(struct oval_sysdata_iterator *oc_sysdata)
+bool oval_sysdata_iterator_has_more(struct oval_sysdata_iterator *oc_sysdata)
 {
 	return oval_collection_iterator_has_more((struct oval_iterator *)
 						 oc_sysdata);

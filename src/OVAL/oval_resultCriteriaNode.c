@@ -220,7 +220,7 @@ struct oval_result_criteria_node *make_result_criteria_node_from_oval_criteria_n
 	return rslt_node;
 }
 
-int oval_result_criteria_node_iterator_has_more(struct
+bool oval_result_criteria_node_iterator_has_more(struct
 						oval_result_criteria_node_iterator
 						*oc_result_criteria_node)
 {

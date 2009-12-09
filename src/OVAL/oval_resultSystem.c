@@ -102,7 +102,7 @@ void oval_result_system_free(struct oval_result_system *sys)
 
 	free(sys);
 }
-int oval_result_system_iterator_has_more
+bool oval_result_system_iterator_has_more
 	(struct oval_result_system_iterator *sys)
 {
 	return oval_collection_iterator_has_more

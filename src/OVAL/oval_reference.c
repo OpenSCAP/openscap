@@ -39,7 +39,7 @@ typedef struct oval_reference {
 	char *url;
 } oval_reference_t;
 
-int oval_reference_iterator_has_more(struct oval_reference_iterator
+bool oval_reference_iterator_has_more(struct oval_reference_iterator
 				     *oc_reference)
 {
 	return oval_collection_iterator_has_more((struct oval_iterator *)

@@ -39,7 +39,7 @@ typedef struct oval_value {
 	char *text;
 } oval_value_t;
 
-int oval_value_iterator_has_more(struct oval_value_iterator *oc_value)
+bool oval_value_iterator_has_more(struct oval_value_iterator *oc_value)
 {
 	return oval_collection_iterator_has_more((struct oval_iterator *)
 						 oc_value);

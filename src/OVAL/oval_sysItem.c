@@ -88,7 +88,7 @@ void oval_sysitem_free(struct oval_sysitem *sysitem)
 	free(sysitem);
 }
 
-int oval_sysitem_iterator_has_more(struct oval_sysitem_iterator *oc_sysitem)
+bool oval_sysitem_iterator_has_more(struct oval_sysitem_iterator *oc_sysitem)
 {
 	return oval_collection_iterator_has_more((struct oval_iterator *)
 						 oc_sysitem);

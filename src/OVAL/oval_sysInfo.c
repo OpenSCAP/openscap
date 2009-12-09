@@ -101,7 +101,7 @@ void oval_sysinfo_free(struct oval_sysinfo *sysinfo)
 	}
 }
 
-int oval_sysinfo_iterator_has_more(struct oval_sysinfo_iterator *oc_sysinfo)
+bool oval_sysinfo_iterator_has_more(struct oval_sysinfo_iterator *oc_sysinfo)
 {
 	return oval_collection_iterator_has_more((struct oval_iterator *)
 						 oc_sysinfo);

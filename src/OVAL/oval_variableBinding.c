@@ -41,7 +41,7 @@ typedef struct oval_variable_binding {
 	char *value;
 } oval_variable_binding_t;
 
-int oval_variable_binding_iterator_has_more(struct
+bool oval_variable_binding_iterator_has_more(struct
 					    oval_variable_binding_iterator
 					    *oc_variable_binding)
 {

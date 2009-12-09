@@ -67,7 +67,7 @@ void oval_message_free(struct oval_message *message)
 	free(message);
 }
 
-int oval_message_iterator_has_more(struct oval_message_iterator *oc_message)
+bool oval_message_iterator_has_more(struct oval_message_iterator *oc_message)
 {
 	return oval_collection_iterator_has_more((struct oval_iterator *)
 						 oc_message);

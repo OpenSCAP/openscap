@@ -43,7 +43,7 @@ void oval_collection_add(struct oval_collection *, void *);
 struct oval_iterator *oval_collection_iterator(struct oval_collection *);
 struct oval_iterator *oval_collection_iterator_new(void);
 void oval_collection_iterator_add(struct oval_iterator *, void *);
-int oval_collection_iterator_has_more(struct oval_iterator *);
+bool oval_collection_iterator_has_more(struct oval_iterator *);
 int oval_collection_iterator_remaining(struct oval_iterator *);
 void *oval_collection_iterator_next(struct oval_iterator *);
 void  oval_collection_iterator_free(struct oval_iterator *);

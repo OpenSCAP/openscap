@@ -118,7 +118,7 @@ struct oval_iterator *oval_collection_iterator(struct oval_collection
 	return iterator;
 }
 
-int oval_collection_iterator_has_more(struct oval_iterator *iterator)
+bool oval_collection_iterator_has_more(struct oval_iterator *iterator)
 {
 	return iterator->item_iterator_frame != NULL;
 }
@@ -192,7 +192,7 @@ void oval_collection_iterator_add(struct oval_iterator *iterator, void *item)
 	iterator->item_iterator_frame = newframe;
 }
 
-int oval_string_iterator_has_more(struct oval_string_iterator *iterator)
+bool oval_string_iterator_has_more(struct oval_string_iterator *iterator)
 {
 	return oval_collection_iterator_has_more((struct oval_iterator *)iterator);
 }

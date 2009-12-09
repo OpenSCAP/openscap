@@ -23,6 +23,7 @@
 #ifndef OVAL_TYPES_H_
 #define OVAL_TYPES_H_
 
+#include <stdbool.h>
 /**
  * @file
  * OVAL agent API.
@@ -330,14 +331,6 @@ void oval_export_target_free(struct oval_export_target *target);
 struct oval_variable_model;
 
 /**
- * @struct oval_syschar_model
- * OVAL System Characteristics model.
- * Object model holds OVAL system characteristics
- * structure instances.
- */
-struct oval_syschar_model;
-
-/**
  * @struct oval_results_model
  * OVAL Results Model.
  * Object model holds OVAL results
@@ -350,7 +343,7 @@ struct oval_sysinfo *oval_sysinfo_probe (void);
 
 struct oval_string_iterator;
 
-int   oval_string_iterator_has_more(struct oval_string_iterator *);
+bool  oval_string_iterator_has_more(struct oval_string_iterator *);
 char *oval_string_iterator_next    (struct oval_string_iterator *);
 void  oval_string_iterator_free    (struct oval_string_iterator *);
 /**

@@ -52,7 +52,7 @@ typedef struct oval_object_content_SET {
 	struct oval_setobject *set;	//type == OVAL_OBJECTCONTENT_SET
 } oval_object_content_SET_t;
 
-int oval_object_content_iterator_has_more(struct oval_object_content_iterator
+bool oval_object_content_iterator_has_more(struct oval_object_content_iterator
 					  *oc_object_content)
 {
 	return oval_collection_iterator_has_more((struct oval_iterator *)

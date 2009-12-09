@@ -45,7 +45,7 @@ typedef struct oval_result_definition{
 	int                               instance;
 } oval_result_definition_t;
 
-int oval_result_definition_iterator_has_more
+bool oval_result_definition_iterator_has_more
 	(struct oval_result_definition_iterator *definitions)
 {
 	return oval_collection_iterator_has_more
