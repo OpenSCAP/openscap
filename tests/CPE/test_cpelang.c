@@ -16,81 +16,11 @@
 // Strings representing operators.
 const char *CPE_OPER_STRS[] = { "", "AND", "OR", "" };
 
-// Print usage.
-void print_usage(const char *program_name, FILE *out) 
-{
-  fprintf(out, 
-	  "Usage: \n\n"
-	  "  %s --help\n"
-	  "  %s --export-all CPE_LANG_XML ENCODING CPE_EXPORT_XML ENCODING\n"
-	  "  %s --get-all CPE_LANG_XML ENCODING\n"
-	  "  %s --get-key CPE_LANG_XML ENCODING KEY\n"
-	  "  %s --set-all CPE_LANG_XML ENCODING NS_PREFIX NS_HREF (PLATFORM_ID)*\n"
-	  "  %s --set-key CPE_LANG_XML ENCODING KEY ID (TITLE)*\n"
-	  "  %s --set-new CPE_LANG_XML ENCODING NS_PREFIX NS_HREF (PLATFORM_ID)*\n"
-	  "  %s --sanity-check\n",
-	  program_name, program_name, program_name, program_name, program_name,
-	  program_name, program_name);
-}
+void print_usage(const char *, FILE *);
 
-// Print expression in prefix form.
-int print_expr_prefix_form(const struct cpe_testexpr *expr) 
-{
+int print_expr_prefix_form(const struct cpe_testexpr *);
 
-  const struct cpe_testexpr *sub;
-
-  putchar('(');
-  
-  if (cpe_testexpr_get_oper(expr) & CPE_LANG_OPER_NOT)
-    printf("!");
-
-  switch (cpe_testexpr_get_oper(expr) & CPE_LANG_OPER_MASK) {
-  case CPE_LANG_OPER_AND:
-  case CPE_LANG_OPER_OR:
-    printf("%s", CPE_OPER_STRS[cpe_testexpr_get_oper(expr) & CPE_LANG_OPER_MASK]);
-    for (sub = cpe_testexpr_get_meta_expr(expr); cpe_testexpr_get_oper(sub); sub=cpe_testexpr_get_next(sub))
-      print_expr_prefix_form(sub);   
-    break;
-  case CPE_LANG_OPER_MATCH:
-    printf("%s", cpe_name_get_uri(cpe_testexpr_get_meta_cpe(expr)));
-    break;
-  default:  
-    return 1;
-  }
-
-  putchar(')');
-
-  return 0;
-}
-
-// Print platform.
-void print_platform(struct cpe_platform *platform) 
-{
-  struct oscap_title *title = NULL;
-  struct oscap_title_iterator *title_it = NULL;
-  const char *remark, *id, *content, *language;
-
-  id = cpe_platform_get_id(platform);
-  printf("%s:", id == NULL ? "" : id);
-  
-  remark = cpe_platform_get_remark(platform);
-  printf("%s:", remark == NULL ? "" : remark);
-  
-  title_it = cpe_platform_get_titles(platform);
-  while (oscap_title_iterator_has_more(title_it)) {
-    title = oscap_title_iterator_next(title_it);
-
-    content = oscap_title_get_content(title);
-    printf("%s.", content == NULL ? "" : content);
-    
-    language = oscap_title_get_language(title);
-    printf("%s,", language == NULL ? "" : language);
-  }
-  putchar(':');
-  oscap_title_iterator_free(title_it);
-  print_expr_prefix_form(cpe_platform_get_expr(platform));
-  putchar('\n');
-} 
+void print_platform(struct cpe_platform *);
 
 int main (int argc, char *argv[]) 
 {  
@@ -229,7 +159,7 @@ int main (int argc, char *argv[])
   }
 
   // Sanity checks.
-  else if (argc == 2 && !strcmp(argv[1], "--sanity-check")) {        
+  else if (argc == 2 && !strcmp(argv[1], "--smoke-test")) {        
 
     if ((lang_model = cpe_lang_model_new()) == NULL) 
       return 1;
@@ -270,3 +200,78 @@ int main (int argc, char *argv[])
 
   return ret_val;
 }
+
+// Print usage.
+void print_usage(const char *program_name, FILE *out) 
+{
+  fprintf(out, 
+	  "Usage: \n\n"
+	  "  %s --export-all CPE_LANG_XML ENCODING CPE_EXPORT_XML ENCODING\n"
+	  "  %s --get-all CPE_LANG_XML ENCODING\n"
+	  "  %s --get-key CPE_LANG_XML ENCODING KEY\n"
+	  "  %s --set-all CPE_LANG_XML ENCODING NS_PREFIX NS_HREF (PLATFORM_ID)*\n"
+	  "  %s --set-key CPE_LANG_XML ENCODING KEY ID (TITLE)*\n"
+	  "  %s --set-new CPE_LANG_XML ENCODING NS_PREFIX NS_HREF (PLATFORM_ID)*\n"
+	  "  %s --smoke-test\n",
+	  program_name, program_name, program_name, program_name, program_name,
+	  program_name, program_name);
+}
+
+// Print expression in prefix form.
+int print_expr_prefix_form(const struct cpe_testexpr *expr) 
+{
+
+  const struct cpe_testexpr *sub;
+
+  putchar('(');
+  
+  if (cpe_testexpr_get_oper(expr) & CPE_LANG_OPER_NOT)
+    printf("!");
+
+  switch (cpe_testexpr_get_oper(expr) & CPE_LANG_OPER_MASK) {
+  case CPE_LANG_OPER_AND:
+  case CPE_LANG_OPER_OR:
+    printf("%s", CPE_OPER_STRS[cpe_testexpr_get_oper(expr) & CPE_LANG_OPER_MASK]);
+    for (sub = cpe_testexpr_get_meta_expr(expr); cpe_testexpr_get_oper(sub); sub=cpe_testexpr_get_next(sub))
+      print_expr_prefix_form(sub);   
+    break;
+  case CPE_LANG_OPER_MATCH:
+    printf("%s", cpe_name_get_uri(cpe_testexpr_get_meta_cpe(expr)));
+    break;
+  default:  
+    return 1;
+  }
+
+  putchar(')');
+
+  return 0;
+}
+
+// Print platform.
+void print_platform(struct cpe_platform *platform) 
+{
+  struct oscap_title *title = NULL;
+  struct oscap_title_iterator *title_it = NULL;
+  const char *remark, *id, *content, *language;
+
+  id = cpe_platform_get_id(platform);
+  printf("%s:", id == NULL ? "" : id);
+  
+  remark = cpe_platform_get_remark(platform);
+  printf("%s:", remark == NULL ? "" : remark);
+  
+  title_it = cpe_platform_get_titles(platform);
+  while (oscap_title_iterator_has_more(title_it)) {
+    title = oscap_title_iterator_next(title_it);
+
+    content = oscap_title_get_content(title);
+    printf("%s.", content == NULL ? "" : content);
+    
+    language = oscap_title_get_language(title);
+    printf("%s,", language == NULL ? "" : language);
+  }
+  putchar(':');
+  oscap_title_iterator_free(title_it);
+  print_expr_prefix_form(cpe_platform_get_expr(platform));
+  putchar('\n');
+} 

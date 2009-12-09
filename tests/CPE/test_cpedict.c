@@ -12,19 +12,7 @@
 #include <cpeuri.h>
 #include <string.h>
 
-// Print usage.
-void print_usage(const char *program_name, FILE *out) 
-{
-  fprintf(out, 
-	  "Usage: \n\n"
-	  "  %s --help\n"
-	  "  %s --list    CPE_DICT_XML ENCODING\n"
-	  "  %s --match   CPE_DICT_XML ENCODING CPE_URI\n"
-	  "  %s --remove  CPE_DICT_XML ENCODING CPE_URI\n"
-	  "  %s --export  CPE_DICT_XML ENCODING CPE_DICT_XML ENCODING\n"
-	  "  %s --sanity-check\n",
-	  program_name, program_name, program_name, program_name, program_name, program_name);
-}
+void print_usage(const char *, FILE *);
 
 int main (int argc, char **argv) 
 {
@@ -41,8 +29,8 @@ int main (int argc, char **argv)
   struct cpe_reference *reference;
   struct cpe_vendor_iterator *vendors_it;
   struct cpe_product_iterator *products_it;
-  struct cpe_check_iterator *check_it;  
-  struct cpe_reference_iterator *reference_it;  
+  //struct cpe_check_iterator *check_it;  
+  //struct cpe_reference_iterator *reference_it;  
   struct cpe_version_iterator *versions_it;
   struct cpe_update_iterator *updates_it;
   struct cpe_edition_iterator *editions_it;
@@ -58,6 +46,22 @@ int main (int argc, char **argv)
   if (argc == 2 && !strcmp(argv[1], "--help"))
     print_usage(argv[0], stdout);
   
+  else if (argc == 4 && !strcmp(argv[1], "--list-cpe-names")) {
+
+    if ((import_source = oscap_import_source_new(argv[2], argv[3])) == NULL)
+      return 1;
+    
+    if ((dict_model = cpe_dict_model_import(import_source)) == NULL)
+      return 2;
+    
+	OSCAP_FOREACH (cpe_item, local_item, cpe_dict_model_get_items(dict_model),
+		cpe_name_write(cpe_item_get_name(local_item), stdout); putchar('\n');
+	)
+
+    oscap_import_source_free(import_source);
+    cpe_dict_model_free(dict_model);
+  }
+
   // List all dictionary.
   else if (argc == 4 && !strcmp(argv[1], "--list")) {
     
@@ -172,15 +176,15 @@ int main (int argc, char **argv)
     
     name = cpe_name_new(argv[4]);
     
-	OSCAP_FOREACH (cpe_item, item, cpe_dict_model_get_items(dict_model),
+	OSCAP_FOREACH (cpe_item, local_item, cpe_dict_model_get_items(dict_model),
 		// filter out items with CPEs given by third argument
-		if (cpe_name_match_one(name, cpe_item_get_name(item)))
-			cpe_item_iterator_remove(item_iter);
+	       if (cpe_name_match_one(name, cpe_item_get_name(local_item)))
+			cpe_item_iterator_remove(local_item_iter);
 	)
 	
-	OSCAP_FOREACH (cpe_item, item, cpe_dict_model_get_items(dict_model),
+	OSCAP_FOREACH (cpe_item, local_item, cpe_dict_model_get_items(dict_model),
 		// print remaining CPEs
-		cpe_name_write(cpe_item_get_name(item), stdout); putchar('\n');
+	       cpe_name_write(cpe_item_get_name(local_item), stdout); putchar('\n');
 	)
 
     cpe_name_free(name);
@@ -205,7 +209,7 @@ int main (int argc, char **argv)
     cpe_dict_model_free(dict_model);
   }
   
-  else if (argc == 2 && !strcmp(argv[1], "--sanity-check")) {
+  else if (argc == 2 && !strcmp(argv[1], "--smoke-test")) {
     if ((dict_model = cpe_dict_model_new()) != NULL)
       cpe_dict_model_free(dict_model);      
 
@@ -246,4 +250,20 @@ int main (int argc, char **argv)
   }
     
   return ret_val;
+}
+
+// Print usage.
+void print_usage(const char *program_name, FILE *out) 
+{
+  fprintf(out, 
+	  "Usage: \n\n"
+	  "  %s --help\n"
+	  "  %s --list-cpe-names CPE_DICT_XML ENCODING\n"
+	  "  %s --list           CPE_DICT_XML ENCODING\n"
+	  "  %s --match          CPE_DICT_XML ENCODING CPE_URI\n"
+	  "  %s --remove         CPE_DICT_XML ENCODING CPE_URI\n"
+	  "  %s --export         CPE_DICT_XML ENCODING CPE_DICT_XML ENCODING\n"
+	  "  %s --smoke-test\n",
+	  program_name, program_name, program_name, program_name, program_name, 
+	  program_name, program_name);
 }

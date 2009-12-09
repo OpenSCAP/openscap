@@ -13,58 +13,12 @@
 #include <string.h>
 #include <cpeuri.h>
 
-// Print usage.
-void print_usage(const char *program_name, FILE *out) 
-{
-  fprintf(out, 
-	  "Usage: \n\n"
-	  "  %s --help\n"
-	  "  %s --creation PART VENDOR PRODUCT VERSION UPDATE EDITION LANGUAGE\n"
-	  "  %s --parsing  URI FILE\n"
-	  "  %s --matching CANDIDATE_URI URI_1 ... URI_n\n"
-	  "  %s --sanity-check\n",
-	  program_name, program_name, program_name, program_name, program_name);
-}
+void print_usage(const char *, FILE *);
 
-// Create a new CPE according to given information.
-struct cpe_name *cpe_example_creation(int part, 
-				      const char *vendor,
-				      const char *product,
-				      const char *version,
-				      const char *update,
-				      const char *edition,
-				      const char *language)
-{
-  struct cpe_name *cpe = NULL;
-  
-  if ((cpe = cpe_name_new(NULL)) != NULL) {
-    
-    // Set fields.
-    cpe_name_set_part(cpe, part);
-    cpe_name_set_vendor (cpe, vendor);
-    cpe_name_set_product(cpe, product);
-    cpe_name_set_version(cpe, version);
-    cpe_name_set_update(cpe, update);
-    cpe_name_set_edition(cpe, edition);
-    cpe_name_set_language(cpe, language);
-  }
+struct cpe_name *cpe_example_creation(int, const char *, const char *, const char *,
+				      const char *, const char *, const char *);
 
-  return cpe;
-}
-
-// Parse CPE URI string and print all contained information.
-void cpe_print(struct cpe_name *name)
-{
-
-  // Print out all contained information.
-  printf(" %d\n", cpe_name_get_part(name));
-  printf(" %s\n", cpe_name_get_vendor(name));
-  printf(" %s\n", cpe_name_get_product(name));
-  printf(" %s\n", cpe_name_get_version(name));
-  printf(" %s\n", cpe_name_get_update(name));
-  printf(" %s\n", cpe_name_get_edition(name));
-  printf(" %s\n", cpe_name_get_language(name));
-}
+void cpe_print(struct cpe_name *);
 
 int main(int argc, char **argv)
 {
@@ -180,7 +134,7 @@ int main(int argc, char **argv)
       fprintf(stderr, "Parse error!\n");
   }
   
-  else if (argc == 2 && strcmp(argv[1], "--sanity-check") == 0) {
+  else if (argc == 2 && strcmp(argv[1], "--smoke-test") == 0) {
     if ((name = cpe_name_new(NULL)) != NULL) {
       cpe_name_free(name);
       ret_val = 0;
@@ -193,3 +147,56 @@ int main(int argc, char **argv)
   
   return ret_val;
 }      
+
+// Print usage.
+void print_usage(const char *program_name, FILE *out) 
+{
+  fprintf(out, 
+	  "Usage: \n\n"
+	  "  %s --help\n"
+	  "  %s --creation PART VENDOR PRODUCT VERSION UPDATE EDITION LANGUAGE\n"
+	  "  %s --parsing  URI FILE\n"
+	  "  %s --matching CANDIDATE_URI URI_1 ... URI_n\n"
+	  "  %s --smoke-test\n",
+	  program_name, program_name, program_name, program_name, program_name);
+}
+
+// Create a new CPE according to given information.
+struct cpe_name *cpe_example_creation(int part, 
+				      const char *vendor,
+				      const char *product,
+				      const char *version,
+				      const char *update,
+				      const char *edition,
+				      const char *language)
+{
+  struct cpe_name *cpe = NULL;
+  
+  if ((cpe = cpe_name_new(NULL)) != NULL) {
+    
+    // Set fields.
+    cpe_name_set_part(cpe, part);
+    cpe_name_set_vendor (cpe, vendor);
+    cpe_name_set_product(cpe, product);
+    cpe_name_set_version(cpe, version);
+    cpe_name_set_update(cpe, update);
+    cpe_name_set_edition(cpe, edition);
+    cpe_name_set_language(cpe, language);
+  }
+
+  return cpe;
+}
+
+// Parse CPE URI string and print all contained information.
+void cpe_print(struct cpe_name *name)
+{
+
+  // Print out all contained information.
+  printf(" %d\n", cpe_name_get_part(name));
+  printf(" %s\n", cpe_name_get_vendor(name));
+  printf(" %s\n", cpe_name_get_product(name));
+  printf(" %s\n", cpe_name_get_version(name));
+  printf(" %s\n", cpe_name_get_update(name));
+  printf(" %s\n", cpe_name_get_edition(name));
+  printf(" %s\n", cpe_name_get_language(name));
+}

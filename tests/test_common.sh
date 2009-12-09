@@ -21,23 +21,10 @@ function report_result {
 # Compare content of two XML files.
 function xml_cmp {
     local ret_val=0
-    A=`mktemp` && sed "s/'/\"/g" $1 | sed 's|/>| />|g' | sed 's/^\s*//g' | sed 's/  / /g' > $A
-    B=`mktemp` && sed "s/'/\"/g" $2 | sed 's|/>| />|g' | sed 's/^\s*//g' | sed 's/  / /g' > $B
-    diff -wbB $A $B > diff.out 
-    if [ $? -ne 0 ]; then
-	for L in `cat diff.out | grep -v [\<\>-] | tr '\n' ' '`; do
-	    L_A=`echo $L | awk -F 'c' '{print $1}'`
-	    L_B=`echo $L | awk -F 'c' '{print $2}'`
-	    A_1=`mktemp` && sed -n "${L_A}p" $A > $A_1
-	    B_1=`mktemp` && sed -n "${L_B}p" $B > $B_1
-	    diff -wbB $A_1 $B_1 1>&2
-	    if [ ! $? -eq 0 ]; then
-		cat $A_1 | tr ' ' '\n' | sort > $A_1
-		cat $B_1 | tr ' ' '\n' | sort > $B_1
-		diff -wbB $A_1 $B_1 1>&2 || ret_val=1
-	    fi
-	done
-    fi	
+
+    /usr/bin/perl -w ./xmldiff.pl $1 $2 
+    ret_val=$?
+
     return $ret_val
 }
 

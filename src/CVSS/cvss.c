@@ -205,8 +205,8 @@ int cvss_base_score(cvss_access_vector_t ave, cvss_access_complexity_t ace, cvss
 	GETMAPVAL(ii, iia, iie);
 	GETMAPVAL(ai, aia, aie);
 
-	is = _round(10.41 * (1 - (1 - ci) * (1 - ii) * (1 - ai)), 0.1);
-	es = _round(20 * av * ac * au, 0.1);
+	is = 10.41 * (1 - (1 - ci) * (1 - ii) * (1 - ai));
+	es = 20 * av * ac * au;
 	bs = _round((0.6 * is + 0.4 * es - 1.5) * (is ? 1.176 : 0.0), 0.1);
 
 	if (base_score != NULL)
@@ -272,9 +272,7 @@ int cvss_env_score(cvss_collateral_damage_potential_t cde, cvss_target_distribut
 
 	ais = 10.41 * (1 - (1 - ci * cr) * (1 - ii * ir) * (1 - ai * ar));
 	ais = ais > 10.0 ? 10.0 : ais;
-	ais = _round(ais, 0.1);
 	aes = 20 * av * ac * au;
-	aes = _round(aes, 0.1);
 	abss = (0.6 * ais + 0.4 * aes - 1.5) * (ais ? 1.176 : 0.0);
 	abss = _round(abss, 0.1);
 	ats = abss * ex * rl * rc;
