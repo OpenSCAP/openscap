@@ -1208,8 +1208,7 @@ struct oval_criteria_node *oval_criteria_node_clone(struct oval_criteria_node *,
 /**
  * Return <b>true</b> if the instance of Oval_criteria_node is locked.
  * The state of a locked instance cannot be changed.
- * @ingroup oval_criteria_node_getter
- * @ingroup oval_criteria_node_getter
+ * @ingroup oval_criteria_node_getters
  */
 bool oval_criteria_node_is_locked(struct oval_affected *);
 /**
@@ -1219,18 +1218,18 @@ bool oval_criteria_node_is_locked(struct oval_affected *);
 void oval_criteria_node_free(struct oval_criteria_node *);
 /**
  * Returns <b>true</b> if the iterator is not exhausted.
- * @ingroup oval_criteria_node_iterator
+ * @ingroup oval_criteria_node_iterators
  */
 bool oval_criteria_node_iterator_has_more                (struct oval_criteria_node_iterator *);
 /**
  * Returns the next instance of @ref Oval_criteria_node from the iterator.
  * Returns NULL if the iterator is exhausted.
- * @ingroup oval_criteria_node_iterator
+ * @ingroup oval_criteria_node_iterators
  */
 struct oval_criteria_node *oval_criteria_node_iterator_next(struct oval_criteria_node_iterator *);
 /**
  * Free the iterator.
- * @ingroup oval_criteria_node_iterator
+ * @ingroup oval_criteria_node_iterators
  */
 void  oval_criteria_node_iterator_free(struct oval_criteria_node_iterator *);
 /**
@@ -1252,26 +1251,26 @@ bool oval_criteria_node_is_valid(struct oval_criteria_node *);
 /**
  * Returns attribute @ref Oval_criteria_node->type.
  * @see oval_criteria_node_new
- * @ingroup oval_criteria_getter
+ * @ingroup oval_criteria_node_getters
  */
 oval_criteria_node_type_t oval_criteria_node_get_type(struct oval_criteria_node *);
 /**
  * Returns attribute @ref Oval_criteria_node->negate.
  * @see oval_criteria_node_set_negate
- * @ingroup oval_criteria_getter
+ * @ingroup oval_criteria_node_getters
  */
 bool oval_criteria_node_get_negate(struct oval_criteria_node *);
 /**
  * Set attribute @ref Oval_criteria_node->negate.
  * @see oval_criteria_node_get_negate
  * @param negate - the required value of the negate attribute
- * @ingroup oval_criteria_setter
+ * @ingroup oval_criteria_node_setters
  */
 void oval_criteria_node_set_negate(struct oval_criteria_node *, bool negate);
 /**
  * Returns attribute @ref Oval_criteria_node->comment.
  * @see oval_criteria_node_set_comment
- * @ingroup oval_criteria_getter
+ * @ingroup oval_criteria_node_getters
  */
 char *oval_criteria_node_get_comment(struct oval_criteria_node *);
 /**
@@ -1285,7 +1284,7 @@ void oval_criteria_node_set_comment(struct oval_criteria_node *, char *comment);
  * Returns attribute @ref Oval_criteria->operator HOWDI.
  * @note If Oval_criteria_node->type <> @ref OVAL_NODETYPE_CRITERIA, this method shall return @ref OVAL_OPERATOR_UNKNOWN.
  * @see oval_criteria_node_set_operator
- * @ingroup oval_criteria_getter
+ * @ingroup oval_criteria_node_getters
  */
 oval_operator_t oval_criteria_node_get_operator(struct oval_criteria_node *);
 /**
@@ -1294,7 +1293,7 @@ oval_operator_t oval_criteria_node_get_operator(struct oval_criteria_node *);
  * this method shall overwrite the operator attribute value with the operator parameter.
  * Otherwise the Oval_criteria_node state shall not be changed by this method.
  * @see oval_criteria_node_get_operator
- * @ingroup oval_criteria_setter
+ * @ingroup oval_criteria_node_setters
  */
 void oval_criteria_node_set_operator(struct oval_criteria_node *, oval_operator_t operator);
 /**
@@ -1303,7 +1302,7 @@ void oval_criteria_node_set_operator(struct oval_criteria_node *, oval_operator_
  * @note An iterator returned by this method should be freed by the calling application.
  * @see oval_criteria_node_add_subnode
  * @see oval_criteria_node_iterator_free
- * @ingroup oval_criteria_getter
+ * @ingroup oval_criteria_node_getters
  */
 struct oval_criteria_node_iterator *oval_criteria_node_get_subnodes (struct oval_criteria_node *);
 /**
@@ -1315,14 +1314,14 @@ struct oval_criteria_node_iterator *oval_criteria_node_get_subnodes (struct oval
  * nor should a given Oval_criteria_node be bound more than once to a single Oval_criteria.
  * @see oval_criteria_node_get_subnodes
  * @param - (Not NULL) the subnode to be appended.
- * @ingroup oval_criteria_setter
+ * @ingroup oval_criteria_node_setters
  */
 void oval_criteria_node_add_subnode(struct oval_criteria_node *, struct oval_criteria_node *node);
 /**
  * Returns attribute @ref Oval_criterion->test.
  * If Oval_criteria_node->type <> @ref OVAL_NODETYPE_CRITERION, this method shall return NULL.
  * @see oval_criteria_node_set_test
- * @ingroup oval_criteria_getter
+ * @ingroup oval_criteria_node_getters
  */
 struct oval_test *oval_criteria_node_get_test(struct oval_criteria_node *);
 /**
@@ -1331,14 +1330,14 @@ struct oval_test *oval_criteria_node_get_test(struct oval_criteria_node *);
  * this method shall overwrite the test attribute value with the test parameter.
  * Otherwise the Oval_criteria_node state shall not be changed by this method.
  * @see oval_criteria_node_get_test
- * @ingroup oval_criteria_setter
+ * @ingroup oval_criteria_node_setters
  */
 void oval_criteria_node_set_test(struct oval_criteria_node *, struct oval_test *);
 /**
  * Returns attribute @ref Oval_extends->definition.
  * If Oval_criteria_node->type <> @ref OVAL_NODETYPE_EXTENDDEF, this method shall return NULL.
  * @see oval_criteria_node_set_definition
- * @ingroup oval_criteria_getter
+ * @ingroup oval_criteria_node_getters
  */
 struct oval_definition *oval_criteria_node_get_definition(struct oval_criteria_node *);
 /**
@@ -1347,7 +1346,7 @@ struct oval_definition *oval_criteria_node_get_definition(struct oval_criteria_n
  * this method shall overwrite the definition attribute value with the definition parameter.
  * Otherwise the Oval_criteria_node state shall not be changed by this method.
  * @see oval_criteria_node_get_definition
- * @ingroup oval_criteria_setter
+ * @ingroup oval_criteria_node_setters
  */
 void oval_criteria_node_set_definition(struct oval_criteria_node *, struct oval_definition *);	//type==NODETYPE_EXTENDDEF
 /**
@@ -1376,15 +1375,15 @@ void oval_reference_set_id(struct oval_reference *, char *);
  */
 void oval_reference_set_url(struct oval_reference *, char *);
 /**
- * @ingroup oval_reference_iterator
+ * @ingroup oval_reference_iterators
  */
 bool oval_reference_iterator_has_more(struct oval_reference_iterator *);
 /**
- * @ingroup oval_reference_iterator
+ * @ingroup oval_reference_iterators
  */
 struct oval_reference *oval_reference_iterator_next    (struct oval_reference_iterator *);
 /**
- * @ingroup oval_reference_iterator
+ * @ingroup oval_reference_iterators
  */
 void oval_reference_iterator_free    (struct oval_reference_iterator *);
 /**
@@ -1434,18 +1433,18 @@ struct oval_definition *oval_definition_new(char *id);
 void oval_definition_free(struct oval_definition *);
 /**
  * Returns <b>true</b> if the iterator contains more instances of @ref Oval_definition.
- * @ingroup oval_definition_iterator
+ * @ingroup oval_definition_iterators
  */
 bool  oval_definition_iterator_has_more(struct oval_definition_iterator *);
 /**
  * Returns the next iterated instance of @ref Oval_definition.
  * NULL is returned if the iterator is exhausted (@ref oval_definition_iterator_has_more == <b>false</b>)
- * @ingroup oval_definition_iterator
+ * @ingroup oval_definition_iterators
  */
 struct oval_definition *oval_definition_iterator_next    (struct oval_definition_iterator *);
 /**
  * Free the iterator.
- * @ingroup oval_definition_iterator
+ * @ingroup oval_definition_iterators
  */
 void                    oval_definition_iterator_free    (struct oval_definition_iterator *);
 /**
@@ -1776,17 +1775,17 @@ struct oval_object_content_iterator *oval_object_get_object_contents(struct oval
 void oval_object_add_object_content(struct oval_object *, struct oval_object_content *content);
 /**
  * Returns <b>true</b> if the iterator is not exhausted.
- * @ingroup oval_object_iterator
+ * @ingroup oval_object_iterators
  */
 bool oval_object_iterator_has_more(struct oval_object_iterator *);
 /**
  * Returns the next instance of @ref Oval_object.
- * @ingroup oval_object_iterator
+ * @ingroup oval_object_iterators
  */
 struct oval_object *oval_object_iterator_next    (struct oval_object_iterator *);
 /**
  * Frees the iterator.
- * @ingroup oval_object_iterator
+ * @ingroup oval_object_iterators
  */
 void              oval_object_iterator_free    (struct oval_object_iterator *);
 /**
@@ -1837,17 +1836,17 @@ struct oval_test *oval_test_new(char *id);
 void oval_test_free(struct oval_test *);
 /**
  * Returns <b>true</b> if the iterator is not exhausted.
- * @ingroup oval_test_iterator
+ * @ingroup oval_test_iterators
  */
 bool oval_test_iterator_has_more(struct oval_test_iterator *);
 /**
  * Returns the next instance of @ref Oval_test.
- * @ingroup oval_test_iterator
+ * @ingroup oval_test_iterators
  */
 struct oval_test *oval_test_iterator_next    (struct oval_test_iterator *);
 /**
  * Frees the iterator.
- * @ingroup oval_test_iterator
+ * @ingroup oval_test_iterators
  */
 void              oval_test_iterator_free    (struct oval_test_iterator *);
 
@@ -2021,35 +2020,41 @@ struct oval_state           *oval_test_get_state     (struct oval_test *);
  */
 void oval_test_set_state(struct oval_test *, struct oval_state *state);
 /**
+ * @relates oval_variable_binding
  * @ingroup Oval_variable_binding
  */
 struct oval_variable_binding *oval_variable_binding_new(struct oval_variable *, char *);
 /**
+ * @relates oval_variable_binding
  * @ingroup Oval_variable_binding
  */
 struct oval_variable_binding *oval_variable_binding_clone(struct oval_variable_binding *, struct oval_definition_model *);
 /**
+ * @relates oval_variable_binding
  * @ingroup Oval_variable_binding
  */
 void oval_variable_binding_free(struct oval_variable_binding *);
 /**
+ * @relates oval_variable_binding
  * @ingroup oval_variable_binding_setters
  */
 void oval_variable_binding_set_variable(struct oval_variable_binding *, struct oval_variable *);
 /**
+ * @relates oval_variable_binding
  * @ingroup oval_variable_binding_setters
  */
 void oval_variable_binding_set_value   (struct oval_variable_binding *, char *);
 /**
- * @ingroup oval_variable_binding_iterator
+ * @relates oval_variable_binding
+ * @ingroup oval_variable_binding_iterators
  */
 bool oval_variable_binding_iterator_has_more(struct oval_variable_binding_iterator *);
 /**
- * @ingroup oval_variable_binding_iterator
+ * @ingroup oval_variable_binding_iterators
  */
 struct oval_variable_binding *oval_variable_binding_iterator_next    (struct oval_variable_binding_iterator *);
 /**
- * @ingroup oval_variable_binding_iterator
+ * @ingroup oval_variable_binding_iterators
  */
 void                          oval_variable_binding_iterator_free    (struct oval_variable_binding_iterator *);
 /**
@@ -2097,15 +2102,15 @@ void oval_object_content_set_varCheck(struct oval_object_content *, oval_check_t
  */
 void oval_object_content_set_setobject(struct oval_object_content *, struct oval_setobject *);//type == OVAL_OBJECTCONTENT_SET
 /**
- * @ingroup oval_object_content_iterator
+ * @ingroup oval_object_content_iterators
  */
 bool oval_object_content_iterator_has_more(struct oval_object_content_iterator *);
 /**
- * @ingroup oval_object_content_iterator
+ * @ingroup oval_object_content_iterators
  */
 struct oval_object_content *oval_object_content_iterator_next    (struct oval_object_content_iterator *);
 /**
- * @ingroup oval_object_content_iterator
+ * @ingroup oval_object_content_iterators
  */
 void                        oval_object_content_iterator_free    (struct oval_object_content_iterator *);
 /**
@@ -2207,15 +2212,15 @@ void oval_entity_set_name(struct oval_entity *, char *);
  */
 void oval_entity_set_operation(struct oval_entity *, oval_operation_t);
 /**
- * @ingroup oval_state_content_iterator
+ * @ingroup oval_state_content_iterators
  */
 bool oval_state_content_iterator_has_more(struct oval_state_content_iterator *);
 /**
- * @ingroup oval_state_content_iterator
+ * @ingroup oval_state_content_iterators
  */
 struct oval_state_content *oval_state_content_iterator_next    (struct oval_state_content_iterator *);
 /**
- * @ingroup oval_state_content_iterator
+ * @ingroup oval_state_content_iterators
  */
 void                       oval_state_content_iterator_free    (struct oval_state_content_iterator *);
 /**
@@ -2237,15 +2242,15 @@ oval_check_t        oval_state_content_get_var_check(struct oval_state_content *
  */
 oval_check_t        oval_state_content_get_ent_check(struct oval_state_content *);
 /**
- * @ingroup oval_entity_iterator
+ * @ingroup oval_entity_iterators
  */
 bool oval_entity_iterator_has_more(struct oval_entity_iterator *);
 /**
- * @ingroup oval_entity_iterator
+ * @ingroup oval_entity_iterators
  */
 struct oval_entity *oval_entity_iterator_next    (struct oval_entity_iterator *);
 /**
- * @ingroup oval_entity_iterator
+ * @ingroup oval_entity_iterators
  */
 void                oval_entity_iterator_free    (struct oval_entity_iterator *);
 /**
@@ -2321,15 +2326,15 @@ void oval_setobject_add_object(struct oval_setobject *, struct oval_object *);	/
  */
 void oval_setobject_add_filter(struct oval_setobject *, struct oval_state *);	//type==OVAL_SET_COLLECTIVE;
 /**
- * @ingroup oval_setobject_iterator
+ * @ingroup oval_setobject_iterators
  */
 bool oval_setobject_iterator_has_more(struct oval_setobject_iterator *);
 /**
- * @ingroup oval_setobject_iterator
+ * @ingroup oval_setobject_iterators
  */
 struct oval_setobject *oval_setobject_iterator_next    (struct oval_setobject_iterator *);
 /**
- * @ingroup oval_setobject_iterator
+ * @ingroup oval_setobject_iterators
  */
 void oval_setobject_iterator_free    (struct oval_setobject_iterator *);
 /**
@@ -2377,15 +2382,15 @@ void oval_behavior_free(struct oval_behavior *);
  */
 void oval_behavior_set_keyval(struct oval_behavior *behavior, const char* key, const char* value);
 /**
- * @ingroup oval_behavior_iterator
+ * @ingroup oval_behavior_iterators
  */
 bool  oval_behavior_iterator_has_more(struct oval_behavior_iterator *);
 /**
- * @ingroup oval_behavior_iterator
+ * @ingroup oval_behavior_iterators
  */
 struct oval_behavior *oval_behavior_iterator_next    (struct oval_behavior_iterator *);
 /**
- * @ingroup oval_behavior_iterator
+ * @ingroup oval_behavior_iterators
  */
 void                  oval_behavior_iterator_free    (struct oval_behavior_iterator *);
 /**
@@ -2435,15 +2440,15 @@ void oval_value_set_float(struct oval_value *, float);	//datatype==OVAL_DATATYPE
  */
 void oval_value_set_integer(struct oval_value *, long);	//datatype==OVAL_DATATYPE_INTEGER
 /**
- * @ingroup oval_value_iterator
+ * @ingroup oval_value_iterators
  */
 bool  oval_value_iterator_has_more(struct oval_value_iterator *);
 /**
- * @ingroup oval_value_iterator
+ * @ingroup oval_value_iterators
  */
 struct oval_value *oval_value_iterator_next    (struct oval_value_iterator *);
 /**
- * @ingroup oval_value_iterator
+ * @ingroup oval_value_iterators
  */
 void               oval_value_iterator_free    (struct oval_value_iterator *);
 /**
@@ -2614,17 +2619,17 @@ struct oval_state_content_iterator *oval_state_get_contents(struct oval_state *)
 void oval_state_add_content(struct oval_state *, struct oval_state_content *content);
 /**
  * Returns <b>true</b> if the iterator is not exhausted.
- * @ingroup oval_state_iterator
+ * @ingroup oval_state_iterators
  */
 bool oval_state_iterator_has_more(struct oval_state_iterator *);
 /**
  * Returns the next instance of @ref Oval_state.
- * @ingroup oval_state_iterator
+ * @ingroup oval_state_iterators
  */
 struct oval_state *oval_state_iterator_next    (struct oval_state_iterator *);
 /**
  * Frees the iterator.
- * @ingroup oval_state_iterator
+ * @ingroup oval_state_iterators
  */
 void              oval_state_iterator_free    (struct oval_state_iterator *);
 /**
@@ -2788,17 +2793,17 @@ struct oval_component *oval_variable_get_component (struct oval_variable *);//ty
 void oval_variable_set_component(struct oval_variable *, struct oval_component *component);	//type==OVAL_VARIABLE_LOCAL
 /**
  * Returns <b>true</b> if iterator not exhausted.
- * @ingroup oval_variable_iterator
+ * @ingroup oval_variable_iterators
  */
 bool oval_variable_iterator_has_more(struct oval_variable_iterator *);
 /**
  * Returns next instance of @ref Oval_variable.
- * @ingroup oval_variable_iterator
+ * @ingroup oval_variable_iterators
  */
 struct oval_variable *oval_variable_iterator_next (struct oval_variable_iterator *);
 /**
  * Free iterator.
- * @ingroup oval_variable_iterator
+ * @ingroup oval_variable_iterators
  */
 void oval_variable_iterator_free (struct oval_variable_iterator *);
 /**
@@ -3085,18 +3090,18 @@ struct oval_value *oval_component_get_literal_value(struct oval_component *);//t
 void oval_component_set_literal_value(struct oval_component *, struct oval_value *);	//type==OVAL_COMPONENT_LITERAL
 /**
  * Return <b>true</b> if the iterator is not exhausted.
- * @ingroup oval_component_iterator
+ * @ingroup oval_component_iterators
  */
 bool oval_component_iterator_has_more(struct oval_component_iterator *);
 /**
  * return the next instance of @ref Oval_component.
  * If the iterator is exhausted this method shall return NULL.
- * @ingroup oval_component_iterator
+ * @ingroup oval_component_iterators
  */
 struct oval_component *oval_component_iterator_next(struct oval_component_iterator *);
 /**
  * Free the iterator.
- * @ingroup oval_component_iterator
+ * @ingroup oval_component_iterators
  */
 void  oval_component_iterator_free(struct oval_component_iterator *);
 
@@ -3121,15 +3126,15 @@ void oval_message_set_text(struct oval_message *, char *);
  */
 void oval_message_set_level(struct oval_message *, oval_message_level_t);
 /**
- * @ingroup oval_message_iterator
+ * @ingroup oval_message_iterators
  */
 bool oval_message_iterator_has_more(struct oval_message_iterator *oc_message);
 /**
- * @ingroup oval_message_iterator
+ * @ingroup oval_message_iterators
  */
 struct oval_message *oval_message_iterator_next    (struct oval_message_iterator *oc_message);
 /**
- * @ingroup oval_message_iterator
+ * @ingroup oval_message_iterators
  */
 void                 oval_message_iterator_free    (struct oval_message_iterator *oc_message);
 /**
