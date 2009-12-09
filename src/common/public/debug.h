@@ -4,7 +4,7 @@
 
 #ifndef oscap_dprintf
 #if defined(NDEBUG)
-# define _D(...) while(0)
+# define oscap_dprintf(...) while(0)
 #else
 # include <stddef.h>
 # include <stdarg.h>
