@@ -191,9 +191,9 @@ struct oval_component *oval_variable_get_component(struct oval_variable *variabl
 		unknwn->flag      = SYSCHAR_FLAG_UNKNOWN;
 	};break;
 	default:
-		variable = NULL;
 		fprintf(stderr," oval_variable type not valid: type = %d\n    %s(%d)\n"
 		, type, __FILE__, __LINE__);
+		return NULL;
 	}
 
 	variable->id = strdup(id);
@@ -283,7 +283,12 @@ void oval_variable_set_type(struct oval_variable *variable, oval_variable_type_t
 		switch(type){
 		case OVAL_VARIABLE_CONSTANT:
 		case OVAL_VARIABLE_EXTERNAL:
-			variable->flag = SYSCHAR_FLAG_NOT_COLLECTED;break;
+			{
+				oval_variable_CONEXT_t *conext =
+					(oval_variable_CONEXT_t *)variable;
+				conext->values = oval_collection_new();
+				conext->flag   = SYSCHAR_FLAG_NOT_COLLECTED;
+			}break;
 		case OVAL_VARIABLE_LOCAL:
 		case OVAL_VARIABLE_UNKNOWN:
 			variable->flag = SYSCHAR_FLAG_UNKNOWN;break;
