@@ -56,9 +56,9 @@ function test_probes_tc02 {
     if [ $ret_val -eq 0 ]; then
 	grep -q "os_name: `uname`" ${srcdir}/test_probes_tc02.out || ret_val=1
 	grep -q "os_version: `uname -v`" ${srcdir}/test_probes_tc02.out || ret_val=1
-	grep -q "os_architecture: `uname -i`" ${srcdir}/test_probes_tc02.out || ret_val=1
+	grep -q "os_architecture: `uname -m`" ${srcdir}/test_probes_tc02.out || ret_val=1
 	grep -q "primary_host_name: `uname -n`" ${srcdir}/test_probes_tc02.out || ret_val=1
-	for i in `sed -n '5,$p' ${srcdir}/test_probes_tc02.out | awk '{print $1}'`; do
+	for i in `sed -n '6,$p' ${srcdir}/test_probes_tc02.out | awk '{print $1}'`; do
 	    IPV4=`ifconfig $i | sed 's/  /\n/g' | grep "inet " | sed 's/addr://' | awk '{print $2}' | sed 's/\/.*$//'`
 	    IPV6=`ifconfig $i | sed 's/  /\n/g' | grep "inet6 " | sed 's/addr://' | awk '{print $2}' | sed 's/\/.*$//'`
 	    grep "$IPV4" ${srcdir}/test_probes_tc02.out | grep -q $i || ret_val=1
