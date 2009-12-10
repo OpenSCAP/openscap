@@ -203,6 +203,15 @@ struct oval_component *oval_variable_get_component(struct oval_variable *variabl
 	return variable;
 }
 
+bool oval_variable_is_valid(struct oval_variable *variable)
+{
+return true;//TODO
+}
+bool oval_variable_is_locked(struct oval_variable *variable)
+{
+	return false;//TODO
+}
+
 struct oval_variable   *oval_variable_clone
 	(struct oval_variable *old_variable, struct oval_definition_model *model)
 {
@@ -400,7 +409,7 @@ int oval_variable_parse_tag(xmlTextReaderPtr reader,
 		     tagname, line);
 	}
 	char *id = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "id");
-	struct oval_variable *variable = get_oval_variable_new(model, id, type);
+	struct oval_variable *variable = oval_variable_get_new(model, id, type);
 	free(id);id = variable->id;
 
 	char *comm = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "comment");

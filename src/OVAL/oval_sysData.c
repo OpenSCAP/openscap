@@ -58,6 +58,15 @@ struct oval_sysdata *oval_sysdata_new(char *id)
 	return sysdata;
 }
 
+bool oval_sysdata_is_valid(struct oval_sysdata *sysdata)
+{
+	return true;//TODO
+}
+bool oval_sysdata_is_locked(struct oval_sysdata *sysdata)
+{
+	return false;//TODO
+}
+
 struct oval_sysdata *oval_sysdata_clone(struct oval_sysdata *old_data, struct oval_syschar_model *model)
 {
 	struct oval_sysdata *new_data = oval_sysdata_new(oval_sysdata_get_id(old_data));
@@ -199,7 +208,7 @@ int oval_sysdata_parse_tag(xmlTextReaderPtr reader,
 	int return_code;
 	if(subtype!=OVAL_SUBTYPE_UNKNOWN){
 		char *item_id = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "id");
-		struct oval_sysdata *sysdata = get_oval_sysdata_new(context->syschar_model, item_id);
+		struct oval_sysdata *sysdata = oval_sysdata_get_new(context->syschar_model, item_id);
 		free(item_id);item_id=NULL;
 		oval_subtype_t sub = oval_subtype_parse(reader);
 		oval_sysdata_set_subtype(sysdata, sub);

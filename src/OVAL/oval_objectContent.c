@@ -152,6 +152,15 @@ struct oval_object_content
 	return content;
 }
 
+bool oval_object_content_is_valid(struct oval_object_content *object_content)
+{
+	return true;//TODO
+}
+bool oval_object_content_is_locked(struct oval_object_content *object_content)
+{
+	return false;//TODO
+}
+
 struct oval_object_content *oval_object_content_clone
 	(struct oval_object_content *old_content, struct oval_definition_model *model)
 {

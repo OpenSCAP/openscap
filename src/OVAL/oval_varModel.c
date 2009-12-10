@@ -53,6 +53,18 @@ _oval_variable_model_frame_t *_oval_variable_model_frame_new
 	return frame;
 }
 
+bool oval_variable_model_is_valid(struct oval_variable_model *variable_model)
+{
+	return true;//TODO
+}
+bool oval_variable_model_is_locked(struct oval_variable_model *variable_model)
+{
+	return false;//TODO
+}
+void oval_variable_model_lock(struct oval_variable_model *variable_model){
+	//TODO
+}
+
 void _oval_variable_model_frame_free(_oval_variable_model_frame_t *frame)
 {
 	if(frame){

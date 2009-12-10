@@ -100,6 +100,15 @@ struct oval_value *oval_value_new(oval_datatype_t datatype, char *text_value)
 	return value;
 }
 
+bool oval_value_is_valid(struct oval_value *value)
+{
+	return true;//TODO
+}
+bool oval_value_is_locked(struct oval_value *value)
+{
+	return false;//TODO
+}
+
 struct oval_value *oval_value_clone(struct oval_value *old_value)
 {
 	struct oval_value *new_value = oval_value_new(old_value->datatype, old_value->text);

@@ -124,6 +124,14 @@ struct oval_definition *oval_definition_new(char *id)
 	definition->criteria = NULL;
 	return definition;
 }
+bool oval_definition_is_valid(struct oval_definition *definition)
+{
+	return true;//TODO
+}
+bool oval_definition_is_locked(struct oval_definition *definition)
+{
+	return false;//TODO
+}
 
 struct oval_definition *oval_definition_clone
 	(struct oval_definition *old_definition, struct oval_definition_model *model)
@@ -410,7 +418,7 @@ int oval_definition_parse_tag(xmlTextReaderPtr reader,
 {
 	struct oval_definition_model *model = oval_parser_context_model(context);
 	char *id = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "id");
-	struct oval_definition *definition = get_oval_definition_new(model, id);
+	struct oval_definition *definition = oval_definition_get_new(model, id);
 	free(id);id=NULL;
 	char *version = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "version");
 	oval_definition_set_version(definition, atoi(version));

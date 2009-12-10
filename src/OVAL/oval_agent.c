@@ -92,6 +92,18 @@ struct oval_definition_model *oval_definition_model_new()
 	newmodel->variable_map = oval_string_map_new();
 	return newmodel;
 }
+void oval_definition_model_lock(struct oval_definition_model *definition_model)
+{
+	//TODO
+}
+bool oval_definition_model_is_locked(struct oval_definition_model *definition_model)
+{
+	return false;//TODO
+}
+bool oval_definition_model_is_valid(struct oval_definition_model *definition_model)
+{
+	return true;//TODO
+}
 
 typedef void (*_oval_result_system_clone_func)(void *, struct oval_definition_model *);
 
@@ -166,6 +178,19 @@ struct oval_syschar_model *oval_syschar_model_new(
 	newmodel->sysdata_map          = oval_string_map_new();
 	newmodel->variable_binding_map = oval_string_map_new();
 	return newmodel;
+}
+
+void oval_syschar_model_lock(struct oval_syschar_model *syschar_model)
+{
+	//TODO
+}
+bool oval_syschar_model_is_locked(struct oval_syschar_model *syschar_model)
+{
+	return false;//TODO
+}
+bool oval_syschar_model_is_valid(struct oval_syschar_model *syschar_model)
+{
+	return true;//TODO
 }
 
 
@@ -514,7 +539,7 @@ struct oval_variable_iterator *oval_definition_model_get_variables(struct oval_d
 	return iterator;
 }
 
-struct oval_syschar *get_oval_syschar_new
+struct oval_syschar *oval_syschar_get_new
 	(struct oval_syschar_model *model, struct oval_object *object)
 {
 	char *object_id = oval_object_get_id(object);
@@ -526,7 +551,7 @@ struct oval_syschar *get_oval_syschar_new
 	return syschar;
 }
 
-struct oval_sysdata *get_oval_sysdata_new(struct oval_syschar_model *model, char *id)
+struct oval_sysdata *oval_sysdata_get_new(struct oval_syschar_model *model, char *id)
 {
 	struct oval_sysdata *sysdata = oval_syschar_model_get_sysdata(model, id);
 	if (sysdata == NULL) {
@@ -536,7 +561,7 @@ struct oval_sysdata *get_oval_sysdata_new(struct oval_syschar_model *model, char
 	return sysdata;
 }
 
-struct oval_definition *get_oval_definition_new(struct oval_definition_model *model, char *id)
+struct oval_definition *oval_definition_get_new(struct oval_definition_model *model, char *id)
 {
 	struct oval_definition *definition = oval_definition_model_get_definition(model, id);
 	if (definition == NULL) {
@@ -547,7 +572,7 @@ struct oval_definition *get_oval_definition_new(struct oval_definition_model *mo
 }
 
 
-struct oval_variable *get_oval_variable_new(struct oval_definition_model *model, char *id, oval_variable_type_t type)
+struct oval_variable *oval_variable_get_new(struct oval_definition_model *model, char *id, oval_variable_type_t type)
 {
 	struct oval_variable *variable = oval_definition_model_get_variable(model, id);
 	if (variable == NULL) {
@@ -559,7 +584,7 @@ struct oval_variable *get_oval_variable_new(struct oval_definition_model *model,
 	return variable;
 }
 
-struct oval_state *get_oval_state_new(struct oval_definition_model *model, char *id)
+struct oval_state *oval_state_get_new(struct oval_definition_model *model, char *id)
 {
 	struct oval_state *state = oval_definition_model_get_state(model, id);
 	if (state == NULL) {
@@ -569,7 +594,7 @@ struct oval_state *get_oval_state_new(struct oval_definition_model *model, char 
 	return state;
 }
 
-struct oval_object *get_oval_object_new(struct oval_definition_model *model, char *id)
+struct oval_object *oval_object_get_new(struct oval_definition_model *model, char *id)
 {
 	struct oval_object *object = oval_definition_model_get_object(model, id);
 	if (object == NULL) {
@@ -579,7 +604,7 @@ struct oval_object *get_oval_object_new(struct oval_definition_model *model, cha
 	return object;
 }
 
-struct oval_test *get_oval_test_new(struct oval_definition_model *model, char *id)
+struct oval_test *oval_test_get_new(struct oval_definition_model *model, char *id)
 {
 	struct oval_test *test = oval_definition_model_get_test(model, id);
 	if (test == NULL) {
@@ -632,6 +657,19 @@ struct oval_results_model *oval_results_model_new
 		}
 	}
 	return model;
+}
+
+void oval_results_model_lock(struct oval_results_model *results_model)
+{
+	//TODO
+}
+bool oval_results_model_is_locked(struct oval_results_model *results_model)
+{
+	return false;//TODO
+}
+bool oval_results_model_is_valid(struct oval_results_model *results_model)
+{
+	return true;//TODO
 }
 
 

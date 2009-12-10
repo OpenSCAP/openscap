@@ -304,6 +304,24 @@ struct oval_result_system_iterator;
  */
 struct oval_results_model *oval_results_model_new(
 		struct oval_definition_model *definition_model, struct oval_syschar_model **);
+/**
+ * return <b>true</b> if the results_model instance is valid
+ * @ingroup OVALRES_eval
+ */
+bool oval_results_model_is_valid(struct oval_results_model *results_model);
+/**
+ * return <b>true</b> if the result_model instance is locked.
+ * The state of a locked instance cannot be changed.
+ * @ingroup OVALRES_getters
+ */
+bool oval_results_model_is_locked(struct oval_results_model *result_model);
+/**
+ * Lock the result_model instance.
+ * The state of a locked instance cannot be changed.
+ * This operation has no effect if the model is already locked.
+ * @ingroup OVALRES_setters
+ */
+void oval_results_model_lock(struct oval_results_model *result_model);
 
 /**
  * Copy an oval_results_model.
@@ -356,6 +374,17 @@ struct oval_result_directives *oval_results_model_import
  * @ingroup Oval_result_directives
  */
 struct oval_result_directives *oval_result_directives_new(void);
+/**
+ * return <b>true</b> if the result_directives instance is valid
+ * @ingroup oval_result_directives_eval
+ */
+bool oval_result_directives_is_valid(struct oval_result_directives *result_directives);
+/**
+ * return <b>true</b> if the result_directives instance is locked.
+ * The state of a locked instance cannot be changed.
+ * @ingroup oval_result_directives_getters
+ */
+bool oval_result_directives_is_locked(struct oval_result_directives *result_directives);
 
 /**
  * Destroy OVAL results directives.
@@ -583,6 +612,17 @@ void oval_result_directives_set_content (struct oval_result_directives *, oval_r
  */
 struct oval_result_system *oval_result_system_new(struct oval_syschar_model *);
 /**
+ * return <b>true</b> if the result_system instance is valid
+ * @ingroup oval_result_system_eval
+ */
+bool oval_result_system_is_valid(struct oval_result_system *result_system);
+/**
+ * return <b>true</b> if the result_system instance is locked.
+ * The state of a locked instance cannot be changed.
+ * @ingroup oval_result_system_getters
+ */
+bool oval_result_system_is_locked(struct oval_result_system *result_system);
+/**
  * @ingroup Oval_result_system
  */
 struct oval_result_system *oval_result_system_clone(struct oval_result_system *old_system, struct oval_results_model *new_model);
@@ -594,6 +634,17 @@ void oval_result_system_free(struct oval_result_system *);
  * @ingroup Oval_result_definition
  */
 struct oval_result_definition *oval_result_definition_new(struct oval_result_system *, char *);
+/**
+ * return <b>true</b> if the result_definition instance is valid
+ * @ingroup oval_result_definition_eval
+ */
+bool oval_result_definition_is_valid(struct oval_result_definition *result_definition);
+/**
+ * return <b>true</b> if the result_definition instance is locked.
+ * The state of a locked instance cannot be changed.
+ * @ingroup oval_result_definition_getters
+ */
+bool oval_result_definition_is_locked(struct oval_result_definition *result_definition);
 /**
  * @ingroup Oval_result_definition
  */
@@ -607,6 +658,17 @@ void oval_result_definition_free(struct oval_result_definition *);
  */
 struct oval_result_test *oval_result_test_new(struct oval_result_system *, char *);
 /**
+ * return <b>true</b> if the result_test instance is valid
+ * @ingroup oval_result_test_eval
+ */
+bool oval_result_test_is_valid(struct oval_result_test *result_test);
+/**
+ * return <b>true</b> if the result_test instance is locked.
+ * The state of a locked instance cannot be changed.
+ * @ingroup oval_result_test_getters
+ */
+bool oval_result_test_is_locked(struct oval_result_test *result_test);
+/**
  * @ingroup Oval_result_test
  */
 struct oval_result_test *oval_result_test_clone(struct oval_result_test *old_test, struct oval_result_system *system);
@@ -618,6 +680,17 @@ void oval_result_test_free(struct oval_result_test *);
  * @ingroup Oval_result_item
  */
 struct oval_result_item *oval_result_item_new(struct oval_result_system *, char *);
+/**
+ * return <b>true</b> if the result_item instance is valid
+ * @ingroup oval_result_item_eval
+ */
+bool oval_result_item_is_valid(struct oval_result_item *result_item);
+/**
+ * return <b>true</b> if the result_item instance is locked.
+ * The state of a locked instance cannot be changed.
+ * @ingroup oval_result_item_getters
+ */
+bool oval_result_item_is_locked(struct oval_result_item *result_item);
 /**
  * @ingroup Oval_result_item
  */
@@ -658,6 +731,17 @@ void oval_result_test_add_binding(struct oval_result_test *, struct oval_variabl
  * @ingroup Oval_result_criteria_node
  */
 struct oval_result_criteria_node *oval_result_criteria_node_new(oval_criteria_node_type_t, int, ...);
+/**
+ * return <b>true</b> if the result_criteria_node instance is valid
+ * @ingroup oval_result_criteria_node_eval
+ */
+bool oval_result_criteria_node_is_valid(struct oval_result_criteria_node *result_criteria_node);
+/**
+ * return <b>true</b> if the result_criteria_node instance is locked.
+ * The state of a locked instance cannot be changed.
+ * @ingroup oval_result_criteria_node_getters
+ */
+bool oval_result_criteria_node_is_locked(struct oval_result_criteria_node *result_criteria_node);
 /**
  * @ingroup Oval_result_criteria_node
  */

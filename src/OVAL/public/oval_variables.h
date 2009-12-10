@@ -43,6 +43,24 @@
  * @ingroup OVALVAR
  */
 struct oval_variable_model *oval_variable_model_new(void);
+/**
+ * return <b>true</b> if the variable_model instance is valid
+ * @ingroup OVALVAR_eval
+ */
+bool oval_variable_model_is_valid(struct oval_variable_model *variable_model);
+/**
+ * return <b>true</b> if the variable_model instance is locked.
+ * The state of a locked instance cannot be changed.
+ * @ingroup OVALVAR_getters
+ */
+bool oval_variable_model_is_locked(struct oval_variable_model *variable_model);
+/**
+ * Lock the variable_model instance.
+ * The state of a locked instance cannot be changed.
+ * This operation has no effect if the model is already locked.
+ * @ingroup OVALVAR_setters
+ */
+void oval_variable_model_lock(struct oval_variable_model *variable_model);
 
 /**
  * Create an OVAL variable model

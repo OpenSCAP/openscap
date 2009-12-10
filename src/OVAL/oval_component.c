@@ -565,6 +565,15 @@ struct oval_component *oval_component_new(oval_component_type_t type)
 	return component;
 }
 
+bool oval_component_is_valid(struct oval_component *component)
+{
+	return true;//TODO
+}
+bool oval_component_is_locked(struct oval_component *component)
+{
+	return false;//TODO
+}
+
 void _oval_component_clone_subcomponents
 	(struct oval_component *old_component, struct oval_component *new_component, struct oval_definition_model *model)
 {
@@ -734,7 +743,7 @@ static int _oval_component_parse_OBJECTREF_tag
      struct oval_component *component) {
 	struct oval_definition_model *model = oval_parser_context_model(context);
 	char *objref = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST "object_ref");
-	struct oval_object *object = get_oval_object_new(model, objref);
+	struct oval_object *object = oval_object_get_new(model, objref);
 	free(objref);objref=NULL;
 	oval_component_set_object(component, object);
 
@@ -751,7 +760,7 @@ static int _oval_component_parse_VARREF_tag
      struct oval_component *component) {
 	struct oval_definition_model *model = oval_parser_context_model(context);
 	char *varref = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST "var_ref");
-	struct oval_variable *variable = get_oval_variable_new(model, varref, OVAL_VARIABLE_UNKNOWN);
+	struct oval_variable *variable = oval_variable_get_new(model, varref, OVAL_VARIABLE_UNKNOWN);
 	if(varref!=NULL)free(varref);varref=NULL;
 	oval_component_set_variable(component, variable);
 

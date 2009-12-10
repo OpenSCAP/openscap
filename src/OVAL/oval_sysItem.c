@@ -55,6 +55,15 @@ struct oval_sysitem *oval_sysitem_new()
 	return sysitem;
 }
 
+bool oval_sysitem_is_valid(struct oval_sysitem *sysitem)
+{
+	return true;//TODO
+}
+bool oval_sysitem_is_locked(struct oval_sysitem *sysitem)
+{
+	return false;//TODO
+}
+
 struct oval_sysitem *oval_sysitem_clone(struct oval_sysitem *old_item)
 {
 	struct oval_sysitem *new_item = oval_sysitem_new();

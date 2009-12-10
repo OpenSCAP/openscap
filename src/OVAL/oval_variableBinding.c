@@ -141,7 +141,7 @@ int oval_variable_binding_parse_tag(xmlTextReaderPtr reader,
 	struct oval_variable_binding *binding = _oval_variable_binding_new();
 	{//variable
 		char* variableId = xmlTextReaderGetAttribute(reader, BAD_CAST "variable_id");
-		struct oval_variable *variable = get_oval_variable_new(context->definition_model, variableId, OVAL_VARIABLE_UNKNOWN);
+		struct oval_variable *variable = oval_variable_get_new(context->definition_model, variableId, OVAL_VARIABLE_UNKNOWN);
 		oval_variable_binding_set_variable(binding, variable);
 		free(variableId);variableId=NULL;
 	}

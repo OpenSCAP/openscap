@@ -90,9 +90,9 @@ xmlNode *oval_result_criteria_node_to_dom
 
 oval_result_t oval_result_parse(xmlTextReaderPtr, char *, oval_result_t);
 
-struct oval_result_definition *get_oval_result_definition    (struct oval_result_system *, char *);
-struct oval_result_definition *get_oval_result_definition_new(struct oval_result_system *, struct oval_definition *);
-struct oval_result_test *get_oval_result_test    (struct oval_result_system *, char *);
+struct oval_result_definition *oval_result_system_get_definition(struct oval_result_system *, char *);
+struct oval_result_definition *oval_result_system_get_new_definition(struct oval_result_system *, struct oval_definition *);
+struct oval_result_test *oval_result_system_get_test    (struct oval_result_system *, char *);
 
 
 OSCAP_HIDDEN_END;

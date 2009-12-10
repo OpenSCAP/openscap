@@ -92,6 +92,15 @@ struct oval_state_content *oval_state_content_new()
 	return content;
 }
 
+bool oval_state_content_is_valid(struct oval_state_content *state_content)
+{
+	return true;//TODO
+}
+bool oval_state_content_is_locked(struct oval_state_content *state_content)
+{
+	return false;//TODO
+}
+
 struct oval_state_content *oval_state_content_clone
 	(struct oval_state_content *old_content, struct oval_definition_model *model)
 {

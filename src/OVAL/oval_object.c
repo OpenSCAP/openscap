@@ -132,6 +132,15 @@ struct oval_object *oval_object_new(char *id)
 	return object;
 }
 
+bool oval_object_is_valid(struct oval_object *object)
+{
+	return true;//TODO
+}
+bool oval_object_is_locked(struct oval_object *object)
+{
+	return false;//TODO
+}
+
 struct oval_object *oval_object_clone
 	(struct oval_object *old_object, struct oval_definition_model *model)
 {
@@ -283,7 +292,7 @@ int oval_object_parse_tag(xmlTextReaderPtr reader,
 	struct oval_definition_model *model = oval_parser_context_model(context);
 	char *id = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "id");
 	if(DEBUG_OVAL_OBJECT)printf("DEBUG::oval_object_parse_tag::id = %s\n", id);
-	struct oval_object *object = get_oval_object_new(model, id);
+	struct oval_object *object = oval_object_get_new(model, id);
 	free(id);id=NULL;
 	oval_subtype_t subtype = oval_subtype_parse(reader);
 	oval_object_set_subtype(object, subtype);

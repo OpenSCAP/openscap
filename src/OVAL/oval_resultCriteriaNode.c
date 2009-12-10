@@ -110,6 +110,16 @@ struct oval_result_criteria_node *oval_result_criteria_node_new
 	va_end(ap);
 	return node;
 }
+
+bool oval_result_criteria_node_is_valid(struct oval_result_criteria_node *result_criteria_node)
+{
+	return true;//TODO
+}
+bool oval_result_criteria_node_is_locked(struct oval_result_criteria_node *result_criteria_node)
+{
+	return false;//TODO
+}
+
 struct oval_result_criteria_node *oval_result_criteria_node_clone
 	(struct oval_result_criteria_node *old_node, struct oval_result_system *new_system)
 {
@@ -210,7 +220,7 @@ struct oval_result_criteria_node *make_result_criteria_node_from_oval_criteria_n
 			struct oval_definition *oval_definition
 				= oval_criteria_node_get_definition(oval_node);
 			struct oval_result_definition *rslt_definition
-				= get_oval_result_definition_new(sys, oval_definition);
+				= oval_result_system_get_new_definition(sys, oval_definition);
 			rslt_node
 				= oval_result_criteria_node_new(type, negate, rslt_definition, 0);
 		}break;
@@ -561,7 +571,7 @@ int oval_result_criteria_node_parse
 		struct oval_definition *oval_definition
 			= oval_definition_model_get_definition(definition_model, (char *) definition_ref);
 		struct oval_result_definition *rslt_definition = (oval_definition)
-			?get_oval_result_definition_new(sys, oval_definition):NULL;
+			?oval_result_system_get_new_definition(sys, oval_definition):NULL;
 		node = (rslt_definition)
 		?oval_result_criteria_node_new
 			(OVAL_NODETYPE_EXTENDDEF, negate, rslt_definition, variable_instance):NULL;

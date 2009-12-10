@@ -90,6 +90,15 @@ struct oval_affected *oval_affected_new()
 	return affected;
 }
 
+bool oval_affected_is_valid(struct oval_affected *affected)
+{
+	return true;//TODO
+}
+bool oval_affected_is_locked(struct oval_affected *affected)
+{
+	return false;//TODO
+}
+
 struct oval_affected *oval_affected_clone(struct oval_affected *old_affected)
 {
 	struct oval_affected *new_affected = oval_affected_new();

@@ -49,6 +49,15 @@ struct oval_message *oval_message_new()
 	return message;
 }
 
+bool oval_message_is_valid(struct oval_message *message)
+{
+	return true;//TODO
+}
+bool oval_message_is_locked(struct oval_message *message)
+{
+	return false;//TODO
+}
+
 struct oval_message *oval_message_clone(struct oval_message *old_message)
 {
 	struct oval_message *new_message = oval_message_new();

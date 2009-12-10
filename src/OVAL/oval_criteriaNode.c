@@ -172,6 +172,15 @@ struct oval_criteria_node *oval_criteria_node_new(oval_criteria_node_type_t type
 	return node;
 }
 
+bool oval_criteria_node_is_valid(struct oval_criteria_node *criteria_node)
+{
+	return true;//TODO
+}
+bool oval_criteria_node_is_locked(struct oval_criteria_node *criteria_node)
+{
+	return false;//TODO
+}
+
 struct oval_criteria_node *oval_criteria_node_clone
 	(struct oval_criteria_node *old_node, struct oval_definition_model *model)
 {
@@ -357,7 +366,7 @@ int oval_criteria_parse_tag(xmlTextReaderPtr reader,
 							      BAD_CAST "test_ref");
 				struct oval_definition_model *model =
 				    oval_parser_context_model(context);
-				struct oval_test *test = get_oval_test_new(model, test_ref);
+				struct oval_test *test = oval_test_get_new(model, test_ref);
 				free(test_ref);test_ref=NULL;
 				oval_criteria_node_set_test(node, test);
 			} break;
@@ -368,7 +377,7 @@ int oval_criteria_parse_tag(xmlTextReaderPtr reader,
 				struct oval_definition_model *model =
 				    oval_parser_context_model(context);
 				struct oval_definition *definition =
-				    get_oval_definition_new(model, definition_ref);
+				    oval_definition_get_new(model, definition_ref);
 				oval_criteria_node_set_definition(node,
 								  definition);
 				free(definition_ref);definition_ref=NULL;

@@ -86,6 +86,15 @@ struct oval_reference *oval_reference_new()
 	return ref;
 }
 
+bool oval_reference_is_valid(struct oval_reference *reference)
+{
+	return true;//TODO
+}
+bool oval_reference_is_locked(struct oval_reference *reference)
+{
+	return false;//TODO
+}
+
 struct oval_reference *oval_reference_clone
 	(struct oval_reference *old_reference)
 {

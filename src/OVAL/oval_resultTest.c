@@ -108,7 +108,7 @@ static int rpmvercmp(const char * a, const char * b)
         /* take care of the case where the two version segments are */
         /* different types: one numeric, the other alpha (i.e. empty) */
         /* numeric segments are always newer than alpha segments */
-        /* XXX See patch #60884 (and details) from bugzilla #50977. */
+        /* result_test See patch #60884 (and details) from bugzilla #50977. */
         if (two == str2) return (isnum ? 1 : -1);
 
         if (isnum) {
@@ -168,7 +168,7 @@ struct oval_result_test *oval_result_test_new(struct oval_result_system *sys, ch
  	struct oval_definition_model *definition_model
  		= oval_syschar_model_get_definition_model(syschar_model);
 	test->system            = sys;
- 	test->test = get_oval_test_new(definition_model, tstid);
+ 	test->test = oval_test_get_new(definition_model, tstid);
 	test->message              = NULL;
 	test->result               = 0;
 	test->instance = 0;
@@ -177,6 +177,15 @@ struct oval_result_test *oval_result_test_new(struct oval_result_system *sys, ch
 	test->bindings_initialized = false;
 	test->bindings_clearable   = false;
 	return test;
+}
+
+bool oval_result_test_is_valid(struct oval_result_test *result_test)
+{
+	return true;//TODO
+}
+bool oval_result_test_is_locked(struct oval_result_test *result_test)
+{
+	return false;//TODO
 }
 
 struct oval_result_test *oval_result_test_clone
@@ -844,7 +853,7 @@ static int _oval_result_test_binding_parse
 	struct oval_syschar_model *syschar_model = oval_result_system_get_syschar_model(SYSTEM);
         struct oval_definition_model *definition_model = oval_syschar_model_get_definition_model(syschar_model);
 
-	struct oval_variable *variable = get_oval_variable_new
+	struct oval_variable *variable = oval_variable_get_new
  		(definition_model, (char *) variable_id, OVAL_VARIABLE_UNKNOWN);
 
 	xmlChar *value = xmlTextReaderValue(reader);

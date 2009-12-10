@@ -119,6 +119,15 @@ struct oval_entity *oval_entity_new()
 	return entity;
 }
 
+bool oval_entity_is_valid(struct oval_entity *entity)
+{
+	return true;//TODO
+}
+bool oval_entity_is_locked(struct oval_entity *entity)
+{
+	return false;//TODO
+}
+
 struct oval_entity *oval_entity_clone
 	(struct oval_entity *old_entity, struct oval_definition_model *model)
 {
@@ -262,7 +271,7 @@ int oval_entity_parse_tag(xmlTextReaderPtr reader,
 	} else {
 		struct oval_definition_model *model =
 		    oval_parser_context_model(context);
-		variable = get_oval_variable_new(model, varref, OVAL_VARIABLE_UNKNOWN);
+		variable = oval_variable_get_new(model, varref, OVAL_VARIABLE_UNKNOWN);
 		varref_type = OVAL_ENTITY_VARREF_ATTRIBUTE;
 		value = NULL;
 		return_code = 1;

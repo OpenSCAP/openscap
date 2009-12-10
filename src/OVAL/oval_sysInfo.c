@@ -53,6 +53,15 @@ struct oval_sysinfo *oval_sysinfo_new()
 	return sysinfo;
 }
 
+bool oval_sysinfo_is_valid(struct oval_sysinfo *sysinfo)
+{
+	return true;//TODO
+}
+bool oval_sysinfo_is_locked(struct oval_sysinfo *sysinfo)
+{
+	return false;//TODO
+}
+
 struct oval_sysinfo *oval_sysinfo_clone(struct oval_sysinfo *old_sysinfo)
 {
 	struct oval_sysinfo *new_sysinfo = oval_sysinfo_new();

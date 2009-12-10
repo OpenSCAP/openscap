@@ -57,6 +57,16 @@ struct oval_result_directives *oval_result_directives_new()
 	}
 	return directives;
 }
+
+bool oval_result_directives_is_valid(struct oval_result_directives *result_directives)
+{
+	return true;//TODO
+}
+bool oval_result_directives_is_locked(struct oval_result_directives *result_directives)
+{
+	return false;//TODO
+}
+
 void oval_result_directives_free(struct oval_result_directives *directives)
 {
 	free(directives);

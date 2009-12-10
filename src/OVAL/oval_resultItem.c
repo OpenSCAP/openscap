@@ -47,7 +47,7 @@ struct oval_result_item *oval_result_item_new
 	oval_result_item_t *item = (oval_result_item_t *)
 		malloc(sizeof(oval_result_item_t));
 	struct oval_syschar_model *syschar_model = oval_result_system_get_syschar_model(sys);
-	struct oval_sysdata *sysdata = get_oval_sysdata_new(syschar_model, item_id);
+	struct oval_sysdata *sysdata = oval_sysdata_get_new(syschar_model, item_id);
 
 	item->sysdata = sysdata;
 	item->messages = oval_collection_new();
@@ -55,6 +55,16 @@ struct oval_result_item *oval_result_item_new
 
 	return item;
 }
+
+bool oval_result_item_is_valid(struct oval_result_item *result_item)
+{
+	return true;//TODO
+}
+bool oval_result_item_is_locked(struct oval_result_item *result_item)
+{
+	return false;//TODO
+}
+
 struct oval_result_item *oval_result_item_clone
 	(struct oval_result_item *old_item, struct oval_result_system *new_system)
 {

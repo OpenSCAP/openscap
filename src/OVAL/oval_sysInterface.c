@@ -98,6 +98,15 @@ struct oval_sysint *oval_sysint_new()
 	return sysint;
 }
 
+bool oval_sysint_is_valid(struct oval_sysint *sysint)
+{
+	return true;//TODO
+}
+bool oval_sysint_is_locked(struct oval_sysint *sysint)
+{
+	return false;//TODO
+}
+
 struct oval_sysint *oval_sysint_clone(struct oval_sysint *old_sysint)
 {
 	struct oval_sysint *new_sysint = oval_sysint_new();

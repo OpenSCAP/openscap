@@ -287,6 +287,24 @@ struct oval_sysitem_iterator;
 struct oval_syschar_model *oval_syschar_model_new(
 		struct oval_definition_model *definition_model);
 /**
+ * return <b>true</b> if the syschar_model instance is valid
+ * @ingroup OVALSYS_eval
+ */
+bool oval_syschar_model_is_valid(struct oval_syschar_model *syschar_model);
+/**
+ * return <b>true</b> if the syschar_model instance is locked.
+ * The state of a locked instance cannot be changed.
+ * @ingroup OVALSYS_getters
+ */
+bool oval_syschar_model_is_locked(struct oval_syschar_model *syschar_model);
+/**
+ * Lock the syschar_model instance.
+ * The state of a locked instance cannot be changed.
+ * This operation has no effect if the model is already locked.
+ * @ingroup OVALSYS_setters
+ */
+void oval_syschar_model_lock(struct oval_syschar_model *syschar_model);
+/**
  * Copy an oval_syschar_model.
  * @ingroup OVALSYS
  */
@@ -610,6 +628,17 @@ const char *oval_syschar_status_get_text(oval_syschar_status_t status);
  */
 struct oval_sysint *oval_sysint_new(void);
 /**
+ * return <b>true</b> if the sysint instance is valid
+ * @ingroup oval_sysint_eval
+ */
+bool oval_sysint_is_valid(struct oval_sysint *sysint);
+/**
+ * return <b>true</b> if the sysint instance is locked.
+ * The state of a locked instance cannot be changed.
+ * @ingroup oval_sysint_getters
+ */
+bool oval_sysint_is_locked(struct oval_sysint *sysint);
+/**
  * @ingroup Oval_sysint
  */
 struct oval_sysint *oval_sysint_clone(struct oval_sysint *);
@@ -633,6 +662,17 @@ void oval_sysint_set_mac_address(struct oval_sysint *, char *);
  * @ingroup Oval_sysinfo
  */
 struct oval_sysinfo *oval_sysinfo_new(void);
+/**
+ * return <b>true</b> if the sysinfo instance is valid
+ * @ingroup oval_sysinfo_eval
+ */
+bool oval_sysinfo_is_valid(struct oval_sysinfo *sysinfo);
+/**
+ * return <b>true</b> if the sysinfo instance is locked.
+ * The state of a locked instance cannot be changed.
+ * @ingroup oval_sysinfo_getters
+ */
+bool oval_sysinfo_is_locked(struct oval_sysinfo *sysinfo);
 /**
  * @ingroup Oval_sysinfo
  */
@@ -666,6 +706,17 @@ void oval_sysinfo_add_interface(struct oval_sysinfo *, struct oval_sysint *);
  */
 struct oval_sysdata *oval_sysdata_new(char *id);
 /**
+ * return <b>true</b> if the sysdata instance is valid
+ * @ingroup oval_sysdata_eval
+ */
+bool oval_sysdata_is_valid(struct oval_sysdata *sysdata);
+/**
+ * return <b>true</b> if the sysdata instance is locked.
+ * The state of a locked instance cannot be changed.
+ * @ingroup oval_sysdata_getters
+ */
+bool oval_sysdata_is_locked(struct oval_sysdata *sysdata);
+/**
  * @ingroup Oval_sysdata
  */
 struct oval_sysdata *oval_sysdata_clone(struct oval_sysdata *old_data, struct oval_syschar_model *model);
@@ -698,6 +749,17 @@ void oval_sysdata_add_item(struct oval_sysdata *, struct oval_sysitem *);
  */
 struct oval_syschar *oval_syschar_new(struct oval_object *);
 /**
+ * return <b>true</b> if the syschar instance is valid
+ * @ingroup oval_syschar_eval
+ */
+bool oval_syschar_is_valid(struct oval_syschar *syschar);
+/**
+ * return <b>true</b> if the syschar instance is locked.
+ * The state of a locked instance cannot be changed.
+ * @ingroup oval_syschar_getters
+ */
+bool oval_syschar_is_locked(struct oval_syschar *syschar);
+/**
  * @ingroup Oval_syschar
  */
 struct oval_syschar *oval_syschar_clone(struct oval_syschar *old_syschar, struct oval_syschar_model *sys_model);
@@ -729,6 +791,17 @@ void oval_syschar_add_sysdata(struct oval_syschar *, struct oval_sysdata *);
  * @ingroup Oval_sysitem
  */
 struct oval_sysitem *oval_sysitem_new(void);
+/**
+ * return <b>true</b> if the sysitem instance is valid
+ * @ingroup oval_sysitem_eval
+ */
+bool oval_sysitem_is_valid(struct oval_sysitem *sysitem);
+/**
+ * return <b>true</b> if the sysitem instance is locked.
+ * The state of a locked instance cannot be changed.
+ * @ingroup oval_sysitem_getters
+ */
+bool oval_sysitem_is_locked(struct oval_sysitem *sysitem);
 /**
  * @ingroup Oval_sysitem
  */

@@ -73,12 +73,21 @@ struct oval_result_definition *oval_result_definition_new
 	definition->system = sys;
 	struct oval_syschar_model *syschar_model = oval_result_system_get_syschar_model(sys);
 	struct oval_definition_model  *definition_model  = oval_syschar_model_get_definition_model (syschar_model);
-	definition->definition = get_oval_definition_new(definition_model, definition_id);
+	definition->definition = oval_definition_get_new(definition_model, definition_id);
 	definition->result     = OVAL_RESULT_INVALID;
 	definition->criteria   = NULL;
 	definition->messages   = oval_collection_new();
 	definition->instance   = 1;
 	return definition;
+}
+
+bool oval_result_definition_is_valid(struct oval_result_definition *result_definition)
+{
+	return true;//TODO
+}
+bool oval_result_definition_is_locked(struct oval_result_definition *result_definition)
+{
+	return false;//TODO
 }
 
 struct oval_result_definition *oval_result_definition_clone

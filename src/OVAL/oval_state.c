@@ -123,6 +123,15 @@ struct oval_state *oval_state_new(char* id)
 	return state;
 }
 
+bool oval_state_is_valid(struct oval_state *state)
+{
+	return true;//TODO
+}
+bool oval_state_is_locked(struct oval_state *state)
+{
+	return false;//TODO
+}
+
 struct oval_state *oval_state_clone
 	(struct oval_state *old_state, struct oval_definition_model *model)
 {
@@ -248,7 +257,7 @@ int oval_state_parse_tag(xmlTextReaderPtr reader,
 {
 	struct oval_definition_model *model = oval_parser_context_model(context);
 	char *id = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "id");
-	struct oval_state *state = get_oval_state_new(model, id);
+	struct oval_state *state = oval_state_get_new(model, id);
 	free(id);
 	oval_subtype_t subtype = oval_subtype_parse(reader);
 	oval_state_set_subtype(state, subtype);

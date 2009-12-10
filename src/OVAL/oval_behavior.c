@@ -86,6 +86,15 @@ struct oval_behavior *oval_behavior_clone(struct oval_behavior *old_behavior)
 	return new_behavior;
 }
 
+bool oval_behavior_is_valid(struct oval_behavior *behavior)
+{
+	return true;//TODO
+}
+bool oval_behavior_is_locked(struct oval_behavior *behavior)
+{
+	return false;//TODO
+}
+
 void oval_behavior_free(struct oval_behavior *behavior)
 {
 	if (behavior->value)free(behavior->value);

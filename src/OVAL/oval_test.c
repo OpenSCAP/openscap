@@ -136,6 +136,15 @@ struct oval_test *oval_test_new(char *id)
 	return test;
 }
 
+bool oval_test_is_valid(struct oval_test *test)
+{
+	return true;//TODO
+}
+bool oval_test_is_locked(struct oval_test *test)
+{
+	return false;//TODO
+}
+
 struct oval_test *oval_test_clone
 	(struct oval_test *old_test, struct oval_definition_model *model)
 {
@@ -262,7 +271,7 @@ static int _oval_test_parse_tag(xmlTextReaderPtr reader,
 			struct oval_definition_model *model =
 			    oval_parser_context_model(context);
 			struct oval_object *object =
-			    get_oval_object_new(model, object_ref);
+			    oval_object_get_new(model, object_ref);
 			free(object_ref);object_ref=NULL;
 			oval_test_set_object(test, object);
 		}
@@ -273,7 +282,7 @@ static int _oval_test_parse_tag(xmlTextReaderPtr reader,
 			struct oval_definition_model *model =
 			    oval_parser_context_model(context);
 			struct oval_state *state =
-			    get_oval_state_new(model, state_ref);
+			    oval_state_get_new(model, state_ref);
 			oval_test_set_state(test, state);
 			free(state_ref);state_ref=NULL;
 		}
@@ -302,7 +311,7 @@ int oval_test_parse_tag(xmlTextReaderPtr reader,
 		printf("DEBUG::oval_test.c::oval_test_parse_tag %s STUBBED = %d\n", id, STUB_OVAL_TEST);
 	}
 
-	struct oval_test *test = get_oval_test_new(model, id);
+	struct oval_test *test = oval_test_get_new(model, id);
 	free(id);id=test->id;
 	oval_subtype_t subtype = oval_subtype_parse(reader);
 	oval_test_set_subtype(test, subtype);

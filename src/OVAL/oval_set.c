@@ -123,6 +123,15 @@ struct oval_setobject *oval_setobject_new()
 	return set;
 }
 
+bool oval_setobject_is_valid(struct oval_setobject *set_object)
+{
+	return true;//TODO
+}
+bool oval_setobject_is_locked(struct oval_setobject *setobject)
+{
+	return false;//TODO
+}
+
 struct oval_setobject *oval_setobject_clone
 	(struct oval_setobject *old_setobject, struct oval_definition_model *model)
 {
@@ -254,7 +263,7 @@ static void oval_consume_object_ref(char *objref, void *user) {
 	struct oval_definition_model *model =
 		oval_parser_context_model(ctx->context);
 	struct oval_object *object =
-		get_oval_object_new(model, objref);
+		oval_object_get_new(model, objref);
 	oval_setobject_add_object(ctx->set, object);
 }
 static void oval_consume_state_ref(char *steref, void *user) {
@@ -262,7 +271,7 @@ static void oval_consume_state_ref(char *steref, void *user) {
 	struct oval_definition_model *model =
 		oval_parser_context_model(ctx->context);
 	struct oval_state *state =
-		get_oval_state_new(model, steref);
+		oval_state_get_new(model, steref);
 	oval_setobject_add_filter(ctx->set, state);
 }
 
