@@ -132,6 +132,10 @@ bool oval_definition_is_locked(struct oval_definition *definition)
 {
 	return false;//TODO
 }
+void oval_definition_model_set_locked(struct oval_definition_model * model)
+{
+	return;
+}
 
 struct oval_definition *oval_definition_clone
 	(struct oval_definition *old_definition, struct oval_definition_model *model)
