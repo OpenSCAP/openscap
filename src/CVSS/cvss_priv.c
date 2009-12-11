@@ -30,13 +30,10 @@
 #include <libxml/xmlreader.h>
 #include <libxml/xmlwriter.h>
 #include <string.h>
-#include <assert.h>
 
 #include "cvss_priv.h"
 #include "public/cvss.h"
 #include "../common/list.h"
-
-#define __attribute__nonnull__(x) assert((x) == NULL);
 
 /***************************************************************************/
 /* Variable definitions
@@ -137,7 +134,7 @@ static const struct cvss_map_imp CVSS_MAP_IMP[] = {
 /***************************************************************************/
 int cvss_map_av_get(const char * string) {
 
-        __attribute__nonnull__(string)
+        __attribute__nonnull__(string);
 
 	const struct cvss_map_av* map = CVSS_MAP_AV;
 	while (map->name) {
@@ -149,7 +146,7 @@ int cvss_map_av_get(const char * string) {
 }
 int cvss_map_ac_get(const char * string) {
 
-        __attribute__nonnull__(string)
+        __attribute__nonnull__(string);
 
 	const struct cvss_map_ac* map = CVSS_MAP_AC;
 	while (map->name) {
@@ -161,7 +158,7 @@ int cvss_map_ac_get(const char * string) {
 }
 int cvss_map_auth_get(const char * string) {
 
-        __attribute__nonnull__(string)
+        __attribute__nonnull__(string);
 
 	const struct cvss_map_auth* map = CVSS_MAP_AUTH;
 	while (map->name) {
@@ -173,7 +170,7 @@ int cvss_map_auth_get(const char * string) {
 }
 int cvss_map_imp_get(const char * string) {
 
-        __attribute__nonnull__(string)
+        __attribute__nonnull__(string);
 
 	const struct cvss_map_imp* map = CVSS_MAP_IMP;
 	while (map->name) {
@@ -229,7 +226,7 @@ void cvss_entry_free(struct cvss_entry * entry);
  */
 static int xmlTextReaderNextElement(xmlTextReaderPtr reader) {
 
-        __attribute__nonnull__(reader)
+        __attribute__nonnull__(reader);
 
         int ret;
         do { 
@@ -248,7 +245,7 @@ static int xmlTextReaderNextElement(xmlTextReaderPtr reader) {
  */
 struct cvss_entry * cvss_entry_parse(xmlTextReaderPtr reader) {
 
-        __attribute__nonnull__(reader)
+        __attribute__nonnull__(reader);
 
         struct cvss_entry *ret = NULL;
 
@@ -326,8 +323,8 @@ struct cvss_entry * cvss_entry_parse(xmlTextReaderPtr reader) {
  */
 void cvss_entry_export(const struct cvss_entry * entry, xmlTextWriterPtr writer) {
 
-        __attribute__nonnull__(entry)
-        __attribute__nonnull__(writer)
+        __attribute__nonnull__(entry);
+        __attribute__nonnull__(writer);
 
         xmlTextWriterStartElementNS(writer, NS_VULN_STR, TAG_CVSS_STR, BAD_CAST NULL);
         xmlTextWriterStartElementNS(writer, NS_CVSS_STR, TAG_BASE_METRICS_STR, BAD_CAST NULL);

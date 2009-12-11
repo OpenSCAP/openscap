@@ -33,12 +33,9 @@
 
 #include <stdlib.h>
 #include <math.h>
-#include <assert.h>
 
 #include "cvss_priv.h"
 #include "public/cvss.h"
-
-#define __attribute__nonnull__(x) assert((x) == NULL);
 
 /**
  *   A test class. A more elaborate class description.
@@ -169,10 +166,10 @@ int cvss_base_score_struct(const struct cvss_entry * entry,
                            double *impact_score,
                            double *exploitability_score) {
 
-    __attribute__nonnull__(entry)
-    __attribute__nonnull__(base_score)
-    __attribute__nonnull__(impact_score)
-    __attribute__nonnull__(exploitability_score)
+    __attribute__nonnull__(entry);
+    __attribute__nonnull__(base_score);
+    __attribute__nonnull__(impact_score);
+    __attribute__nonnull__(exploitability_score);
 
 
     cvss_access_vector_t        ave = (cvss_access_vector_t) cvss_map_av_get(cvss_entry_get_AV(entry));
@@ -192,9 +189,9 @@ int cvss_base_score(cvss_access_vector_t ave, cvss_access_complexity_t ace, cvss
                     double *impact_score, 
                     double *exploitability_score)
 {
-        __attribute__nonnull__(base_score)
-        __attribute__nonnull__(impact_score)
-        __attribute__nonnull__(exploitability_score)
+        __attribute__nonnull__(base_score);
+        __attribute__nonnull__(impact_score);
+        __attribute__nonnull__(exploitability_score);
 
 	double av, ac, au, ci, ii, ai, bs, is, es;
 
@@ -225,7 +222,7 @@ int cvss_temp_score(cvss_exploitability_t    exe, cvss_remediation_level_t rle,
                     cvss_report_confidence_t rce, double      base_score, 
                     double *temporal_score)
 {
-        __attribute__nonnull__(temporal_score)
+        __attribute__nonnull__(temporal_score);
 
 	double ex, rl, rc, ts;
 
@@ -250,7 +247,7 @@ int cvss_env_score(cvss_collateral_damage_potential_t cde, cvss_target_distribut
                    cvss_exploitability_t              exe, cvss_remediation_level_t     rle, 
                    cvss_report_confidence_t           rce)
 {
-        __attribute__nonnull__(enviromental_score)
+        __attribute__nonnull__(enviromental_score);
 
 	double cd, td, cr, ir, ar, ais, aes, abss, ats, envs;
 	double av, ac, au, ci, ii, ai, ex, rl, rc;

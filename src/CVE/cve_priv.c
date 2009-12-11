@@ -31,7 +31,6 @@
 
 #include <libxml/xmlreader.h>
 #include <libxml/xmlwriter.h>
-#include <assert.h>
 
 #include "cve_priv.h"
 #include "public/cve.h"
@@ -41,8 +40,6 @@
 #include "cvss.h"
 
 #include "../list.h"
-
-#define __attribute__nonnull__(x) assert((x) == NULL);
 
 /***************************************************************************/
 /* Variable definitions
@@ -359,7 +356,7 @@ static bool cve_validate_xml(const char * filename);
  */
 static int xmlTextReaderNextElement(xmlTextReaderPtr reader) {
 
-        __attribute__nonnull__(reader)
+        __attribute__nonnull__(reader);
 
         int ret;
         do { 
@@ -372,7 +369,7 @@ static int xmlTextReaderNextElement(xmlTextReaderPtr reader) {
 
 static bool cve_validate_xml(const char * filename) {
 
-        __attribute__nonnull__(filename)
+        __attribute__nonnull__(filename);
 
 	xmlParserCtxtPtr ctxt;	/* the parser context */
 	xmlDocPtr doc;		/* the resulting document tree */
@@ -405,7 +402,7 @@ static bool cve_validate_xml(const char * filename) {
  */
 struct cve_model * cve_model_parse_xml(const struct oscap_import_source * source) {
         
-        __attribute__nonnull__(source)
+        __attribute__nonnull__(source);
 
         xmlTextReaderPtr reader;
         struct cve_model *ret = NULL;
@@ -427,7 +424,7 @@ struct cve_model * cve_model_parse_xml(const struct oscap_import_source * source
 
 struct cve_model * cve_model_parse(xmlTextReaderPtr reader) {
 
-        __attribute__nonnull__(reader)
+        __attribute__nonnull__(reader);
 
         struct cve_model *ret    = NULL;
         struct xml_metadata *xml = NULL;
@@ -470,7 +467,7 @@ struct cve_model * cve_model_parse(xmlTextReaderPtr reader) {
 
 struct cve_entry * cve_entry_parse(xmlTextReaderPtr reader) {
         
-        __attribute__nonnull__(reader)
+        __attribute__nonnull__(reader);
 
         struct cve_entry *ret;
         struct cve_product *product;
@@ -607,8 +604,8 @@ struct cve_entry * cve_entry_parse(xmlTextReaderPtr reader) {
  */
 void cve_model_export_xml(struct cve_model * cve, const struct oscap_export_target * target) {
 
-        __attribute__nonnull__(cve)
-        __attribute__nonnull__(target)
+        __attribute__nonnull__(cve);
+        __attribute__nonnull__(target);
 
         /* TODO: ad macro to check return value from xmlTextWriter* functions */
         xmlTextWriterPtr writer;
@@ -628,8 +625,8 @@ void cve_model_export_xml(struct cve_model * cve, const struct oscap_export_targ
 
 void cve_export(const struct cve_model * cve, xmlTextWriterPtr writer) {
 
-        __attribute__nonnull__(cve)
-        __attribute__nonnull__(writer)
+        __attribute__nonnull__(cve);
+        __attribute__nonnull__(writer);
 
         xmlTextWriterStartElementNS(writer, BAD_CAST cve->xml.namespace, TAG_NVD_STR, BAD_CAST NULL);
         if ((cve->xml.lang) != NULL)
@@ -648,8 +645,8 @@ void cve_export(const struct cve_model * cve, xmlTextWriterPtr writer) {
 
 void cve_reference_export(const struct cve_reference * refer, xmlTextWriterPtr writer) {
 
-        __attribute__nonnull__(refer)
-        __attribute__nonnull__(writer)
+        __attribute__nonnull__(refer);
+        __attribute__nonnull__(writer);
 
         xmlTextWriterStartElementNS(writer, BAD_CAST refer->xml.namespace, TAG_REFERENCES_STR, BAD_CAST NULL);
 
@@ -683,8 +680,8 @@ void cve_reference_export(const struct cve_reference * refer, xmlTextWriterPtr w
 
 void cve_summary_export(const struct cve_summary * sum, xmlTextWriterPtr writer) {
 
-        __attribute__nonnull__(sum)
-        __attribute__nonnull__(writer)
+        __attribute__nonnull__(sum);
+        __attribute__nonnull__(writer);
 
         xmlTextWriterStartElementNS(writer, BAD_CAST sum->xml.namespace, TAG_SUMMARY_STR, BAD_CAST NULL);
         if ((sum->xml.lang) != NULL)
@@ -696,8 +693,8 @@ void cve_summary_export(const struct cve_summary * sum, xmlTextWriterPtr writer)
 
 void cve_entry_export(const struct cve_entry * entry, xmlTextWriterPtr writer) {
 
-        __attribute__nonnull__(entry)
-        __attribute__nonnull__(writer)
+        __attribute__nonnull__(entry);
+        __attribute__nonnull__(writer);
 
         xmlTextWriterStartElementNS(writer, BAD_CAST entry->xml.namespace, TAG_CVE_STR, BAD_CAST NULL);
         if ((entry->id) != NULL) 
