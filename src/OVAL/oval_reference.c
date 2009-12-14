@@ -124,20 +124,23 @@ void oval_reference_free(struct oval_reference *ref)
 
 void oval_reference_set_source(struct oval_reference *ref, char *source)
 {
-	if(ref->source!=NULL)free(ref->source);
-	ref->source = ref->source==NULL?NULL:source;
+	if(ref->source != NULL)
+	  free(ref->source);
+	ref->source = source == NULL ? NULL : strdup(source);
 }
 
 void oval_reference_set_id(struct oval_reference *ref, char *id)
 {
-	if(ref->id!=NULL)free(ref->id);
-	ref->id = id==NULL?NULL:strdup(id);
+	if(ref->id != NULL)
+	  free(ref->id);
+	ref->id = id == NULL ? NULL : strdup(id);
 }
 
 void oval_reference_set_url(struct oval_reference *ref, char *url)
 {
-	if(ref->url!=NULL)free(ref->url);
-	ref->url = url==NULL?NULL:strdup(url);
+	if(ref->url != NULL) 
+	  free(ref->url);
+	ref->url = url == NULL ? NULL : strdup(url);
 }
 
 //typedef void (*oval_reference_consumer)(struct oval_reference*, void*);
