@@ -52,7 +52,12 @@ struct oval_pctx {
         oval_pdtbl_t  *pd_table;
         char          *p_dir;
         struct oval_syschar_model *model;
+        uint32_t p_flags;
 };
+
+#define OVAL_PCTX_SETFLAG(ctx, flg)   ((ctx)->p_flags |=  (flg))
+#define OVAL_PCTX_UNSETFLAG(ctx, flg) ((ctx)->p_flags &= ~(flg))
+#define OVAL_PCTX_ISSETFLAG(ctx, flg) ((ctx)->p_flags & (flg) == (flg))
 
 OSCAP_HIDDEN_END;
 

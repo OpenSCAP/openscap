@@ -128,10 +128,12 @@ int sch_pipe_connect (SEAP_desc_t *desc, const char *uri, uint32_t flags)
                 close (pfd[0]);
                 
                 /* err stream will be redirected to /dev/null */
+#ifdef NDEBUG
                 err = open ("/dev/null", O_WRONLY);
+                
                 if (err == -1)
                         _exit (errno);
-                
+#endif
                 /* setup in, out, err streams */
                 if (dup2 (pfd[1], STDIN_FILENO) != STDIN_FILENO) {
                         _exit (errno);
@@ -139,10 +141,11 @@ int sch_pipe_connect (SEAP_desc_t *desc, const char *uri, uint32_t flags)
                 if (dup2 (pfd[1], STDOUT_FILENO) != STDOUT_FILENO) {
                         _exit (errno);
                 }
+#ifdef NDEBUG
                 if (dup2 (err, STDERR_FILENO) != STDERR_FILENO) {
                         _exit (errno);
                 }
-                
+#endif   
                 /*
                   if (daemon (1, 1) != 0)
                         _exit (errno);

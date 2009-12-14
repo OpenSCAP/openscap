@@ -234,7 +234,16 @@ static SEXP_t *SEAP_packet_msg2sexp (SEAP_msg_t *msg)
         }
         
         /* Add data */
-        SEXP_list_add (sexp, msg->sexp);
+        if (msg->sexp != NULL)
+                SEXP_list_add (sexp, msg->sexp);
+        else
+                SEXP_list_add (sexp, r0 = SEXP_list_new (NULL)); /* FIXME */
+
+#if !defined(NDEBUG)
+        fprintf (stderr,   "--- pck out ---\n");
+        SEXP_fprintfa (stderr, sexp);
+        fprintf (stderr, "\n---------------\n");
+#endif
         
         return (sexp);        
 }
@@ -841,6 +850,12 @@ sexp_buf_recv:
                 errno = EINVAL;
                 return (-1);
         }
+
+#if !defined(NDEBUG)
+        fprintf (stderr,   "--- pck in ---\n");
+        SEXP_fprintfa (stderr, sexp_packet);
+        fprintf (stderr, "\n--------------\n");
+#endif
         
         SEXP_free (sexp_packet);
         

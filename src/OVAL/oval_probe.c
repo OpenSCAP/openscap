@@ -163,7 +163,7 @@ oval_pctx_t *oval_pctx_new (struct oval_syschar_model *model)
         ctx->p_dir = ctx->p_dir == NULL ? strdup (OVAL_PROBE_DIR) : strdup (ctx->p_dir);
         ctx->pd_table = oval_pdtbl_new ();
         ctx->model    = model;
-        
+                
         if (model != NULL) {
                 if (oval_probe_cmd_init (ctx->pd_table->ctx, ctx) != 0) {
                         _D("FAIL: Can't initialize SEAP commands\n");
@@ -173,17 +173,52 @@ oval_pctx_t *oval_pctx_new (struct oval_syschar_model *model)
                 }
         }
         
+        ctx->p_flags = 0;
+        
         return (ctx);
 }
 
-int oval_pctx_setflag (oval_pctx_t *ctx, uint32_t flags)
+int oval_pctx_setflag (oval_pctx_t *ctx, uint32_t n_flags)
 {
-        return (-1);
+        uint32_t o_flags;
+        
+        _A(ctx != NULL);
+        
+        o_flags  = ctx->p_flags;
+        n_flags &= OVAL_PCTX_FLAG_MASK;
+        
+        if (n_flags)
+                OVAL_PCTX_SETFLAG(ctx, n_flags);
+        else
+                return (-1);
+        /*
+         * per-flag special actions
+         */
+        
+        if ((n_flags & OVAL_PCTX_FLAG_RUNNOW) && !(o_flags & OVAL_PCTX_FLAG_RUNNOW)) {
+                /*
+                 * Start all probes
+                 */
+        }
+        
+        return (0);
 }
 
-int oval_pctx_unsetflag (oval_pctx_t *ctx, uint32_t flags)
+int oval_pctx_unsetflag (oval_pctx_t *ctx, uint32_t u_flags)
 {
-        return (-1);
+        uint32_t o_flags;
+        
+        _A(ctx != NULL);
+        
+        o_flags  = ctx->p_flags;
+        u_flags &= OVAL_PCTX_FLAG_MASK;
+
+        if (u_flags)
+                OVAL_PCTX_UNSETFLAG(ctx, u_flags);
+        else
+                return (-1);
+        
+        return (0);
 }
 
 int oval_pctx_setattr (oval_pctx_t *ctx, uint32_t attr, ...)
@@ -204,6 +239,8 @@ int oval_pctx_setattr (oval_pctx_t *ctx, uint32_t attr, ...)
         case OVAL_PCTX_ATTR_MODEL:
                 ctx->model = va_arg (ap, struct oval_syschar_model *);
                 break;
+        default:
+                return (-1);
         }
         
         return (0);
@@ -218,7 +255,7 @@ void oval_pctx_free (oval_pctx_t *ctx)
         return;
 }
 
-static SEXP_t *oval_probe_comm (SEAP_CTX_t *ctx, oval_pd_t *pd, const SEXP_t *s_iobj)
+static SEXP_t *oval_probe_comm (SEAP_CTX_t *ctx, oval_pd_t *pd, const SEXP_t *s_iobj, int noreply)
 {
         int retry;
         
@@ -261,6 +298,15 @@ static SEXP_t *oval_probe_comm (SEAP_CTX_t *ctx, oval_pd_t *pd, const SEXP_t *s_
                 s_omsg = SEAP_msg_new ();
                 SEAP_msg_set (s_omsg, (SEXP_t *)s_iobj);
                 
+                if (noreply) {
+                        if (SEAP_msgattr_set (s_omsg, "no-reply", NULL) != 0) {
+                                _D("Can't set no-reply attribute\n");
+                                SEAP_msg_free (s_omsg);
+                                
+                                return (NULL);
+                        }
+                }
+                
                 _D("Sending message...\n");
                 
                 if (SEAP_sendmsg (ctx, pd->sd, s_omsg) != 0) {
@@ -289,6 +335,8 @@ static SEXP_t *oval_probe_comm (SEAP_CTX_t *ctx, oval_pd_t *pd, const SEXP_t *s_
                 _D("Waiting for reply...\n");
                 
         recv_retry:
+                s_imsg = NULL;
+                
                 if (SEAP_recvmsg (ctx, pd->sd, &s_imsg) != 0) {
                         _D("Can't receive message: %u, %s\n", errno, strerror (errno));
                         
@@ -340,6 +388,10 @@ static SEXP_t *oval_probe_comm (SEAP_CTX_t *ctx, oval_pd_t *pd, const SEXP_t *s_
         
 #if !defined(NDEBUG)
         fprintf (stderr,   "--- msg in ---\n");
+        
+        if (noreply)
+                fprintf (stderr, "+ no-reply\n", s_oobj);
+        
         SEXP_fprintfa (stderr, s_oobj);
         fprintf (stderr, "\n--------------\n");
 #endif        
@@ -403,11 +455,19 @@ struct oval_syschar *oval_probe_object_eval (oval_pctx_t *ctx, struct oval_objec
                 return (NULL);
         }
                 
-        s_sysc = oval_probe_comm (ctx->pd_table->ctx, pd, s_obj);
+        s_sysc = oval_probe_comm (ctx->pd_table->ctx, pd, s_obj, ctx->p_flags & OVAL_PCTX_FLAG_NOREPLY);
         
         if (s_sysc == NULL) {
                 SEXP_free (s_obj);
                 return (NULL);
+        } else {
+                if (ctx->p_flags & OVAL_PCTX_FLAG_NOREPLY) {
+                        _D("WARN: obtrusive data from probe!\n");
+                        SEXP_free (s_sysc);
+                        SEXP_free (s_obj);
+                        
+                        return (NULL);
+                }
         }
         
         /*
@@ -425,36 +485,57 @@ struct oval_syschar *oval_probe_object_eval (oval_pctx_t *ctx, struct oval_objec
 static SEXP_t *oval_probe_cmd_obj_eval (SEXP_t *sexp, void *arg)
 {
         char   *id_str;
-        struct oval_object *obj;
-	struct oval_definition_model *definition_model;
-        oval_pctx_t *ctx = (oval_pctx_t *)arg;
-
-        if (SEXP_stringp (sexp)) {
-                id_str = SEXP_string_cstr (sexp);
-		definition_model = oval_syschar_model_get_definition_model(ctx->model);
-                obj    = oval_definition_model_get_object (definition_model, id_str);
-                
-                _D("get_object: %s\n", id_str);
-                
-                if (obj == NULL) {
-                        _D("FAIL: can't find obj: id=%s\n", id_str);
-                        oscap_free (id_str);
-                        return (NULL);
-                }
-                
-                if (oval_probe_object_eval (ctx, obj) == NULL) {
-                        _D("FAIL: obj eval failed: id=%s\n", id_str);
-                        oscap_free (id_str);
-                        return (NULL);
-                }
-
-                oscap_free (id_str);
-
-                return (sexp);
-        } else {
+        struct oval_definition_model *defs;
+        struct oval_object  *obj;
+        oval_pctx_t         *ctx = (oval_pctx_t *)arg;
+        
+        if (!SEXP_stringp (sexp)) {
                 _D("FAIL: invalid argument: type=%s\n", SEXP_strtype (sexp));
                 return (NULL);
         }
+        
+        id_str = SEXP_string_cstr (sexp);
+        defs   = oval_syschar_model_get_definition_model(ctx->model);
+        obj    = oval_definition_model_get_object (defs, id_str);
+                
+        _D("get_object: %s\n", id_str);
+                
+        if (obj == NULL) {
+                _D("FAIL: can't find obj: id=%s\n", id_str);
+                oscap_free (id_str);
+                        
+                return (NULL);
+        }
+                
+        if (oval_pctx_setflag (ctx, OVAL_PCTX_FLAG_NOREPLY) != 0) {
+                _D("FAIL: Can't set NOREPLY flag\n");
+                oscap_free (id_str);
+                        
+                return (NULL);
+        }
+        
+        oscap_clearerr ();                
+        _A(oval_probe_object_eval (ctx, obj) == NULL);
+        
+        if (oval_pctx_unsetflag (ctx, OVAL_PCTX_FLAG_NOREPLY) != 0) {
+                _D("FAIL: Can't unset NOREPLY flag\n");
+                oscap_free (id_str);
+                
+                return (NULL);
+        }
+        
+        if (oscap_err ()) {
+                _D("FAIL: obj eval failed: id=%s, err: %d, %d, %s\n",
+                   id_str, oscap_err_family (), oscap_err_code (), oscap_err_desc ());
+                oscap_clearerr ();
+                oscap_free (id_str);
+                
+                return (NULL);
+        }
+        
+        oscap_free (id_str);
+
+        return (sexp);        
 }
 
 static SEXP_t *oval_probe_cmd_ste_fetch (SEXP_t *sexp, void *arg)
@@ -532,7 +613,11 @@ struct oval_sysinfo *oval_probe_sysinf_eval (oval_pctx_t *ctx)
                 SEXP_vfree (attrs, r0, NULL);
         }
         
-        s_sinf = oval_probe_comm (ctx->pd_table->ctx, pd, s_obj);
+#ifndef NDEBUG
+        if (ctx->p_flags & OVAL_PCTX_FLAG_NOREPLY)
+                _D("WARN: NOREPLY flag set\n");
+#endif
+        s_sinf = oval_probe_comm (ctx->pd_table->ctx, pd, s_obj, ctx->p_flags & OVAL_PCTX_FLAG_NOREPLY);
         SEXP_free (s_obj);
         
         if (s_sinf == NULL)

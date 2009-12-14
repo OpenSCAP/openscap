@@ -17,8 +17,10 @@ void         oval_pctx_free (oval_pctx_t *) __attribute__ ((nonnull (1)));
  */
 #define OVAL_PCTX_FLAG_NOREPLY  0x0001 /* don't send probe result to library - just an ack */
 #define OVAL_PCTX_FLAG_NORECONN 0x0002 /* don't try to reconnect on fatal errors */
-#define OVAL_PCTX_FLAG_RUNALL   0x0003 /* execute all probes when executing the first */
-#define OVAL_PCTX_FLAG_RUNNOW   0x0004 /* execute all probes immediately */
+#define OVAL_PCTX_FLAG_RUNALL   0x0004 /* execute all probes when executing the first */
+#define OVAL_PCTX_FLAG_RUNNOW   0x0008 /* execute all probes immediately */
+
+#define OVAL_PCTX_FLAG_MASK (0x0001|0x0002|0x0004|0x0008)
 
 int oval_pctx_setflag (oval_pctx_t *, uint32_t) __attribute__ ((nonnull (1)));
 int oval_pctx_unsetflag (oval_pctx_t *, uint32_t) __attribute__ ((nonnull (1)));
