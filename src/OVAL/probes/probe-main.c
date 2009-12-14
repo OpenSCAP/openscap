@@ -664,7 +664,7 @@ static int probe_varref_create_ctx (const SEXP_t *probe_in, SEXP_t *varrefs, str
                 val_lst = SEXP_list_nth(varref, 3);
                 SEXP_vfree(varref, r0, NULL);
 
-                ent = SEXP_list_new(ent_name, val_lst);
+                ent = SEXP_list_new(ent_name, val_lst, NULL);
                 SEXP_vfree(ent_name, val_lst, NULL);
 
                 r0 = SEXP_list_replace(ctx->pi2, i + 2, ent);

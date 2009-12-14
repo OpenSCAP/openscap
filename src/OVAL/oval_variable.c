@@ -294,7 +294,7 @@ void oval_variable_set_type(struct oval_variable *variable, oval_variable_type_t
 			variable->flag = SYSCHAR_FLAG_UNKNOWN;break;
 		}
 	}else if (variable->type != type){
-		fprintf(stderr, "ERROR: attempt to reset valid variable type\n    oldtype = %s\n    newtype = %s",
+		fprintf(stderr, "ERROR: attempt to reset valid variable type\n    oldtype = %s\n    newtype = %s\n",
 		oval_variable_type_get_text(variable->type), oval_variable_type_get_text(type));
 	}
 }
