@@ -129,9 +129,9 @@ if WANT_CCE
 check_PROGRAMS += test_cce
 TESTS += CCE/test_cce.sh
 EXTRA_DIST += CCE/test_cce.sh            \
-	      CCE/cce_sample.xml         \
-              CCE/cce_sample-invalid.xml \
-              CCE/cce_sample-damaged.xml 
+	      CCE/cce-sample.xml         \
+              CCE/cce-sample-invalid.xml \
+              CCE/cce-sample-damaged.xml 
 
 test_cce_SOURCES = CCE/test_cce.c
 test_cce_CFLAGS = -I$(top_srcdir)/src/CCE/public -I${top_srcdir}/src/common/public
