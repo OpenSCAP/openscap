@@ -87,18 +87,20 @@ bool oval_result_definition_is_valid(struct oval_result_definition *result_defin
 }
 bool oval_result_definition_is_locked(struct oval_result_definition *result_definition)
 {
-	return false;//TODO
+	return oval_result_system_is_locked(result_definition->system);
 }
 
 struct oval_result_definition *oval_result_definition_clone
-	(struct oval_result_definition *old_definition, struct oval_result_system *new_system)
+	(struct oval_result_system *new_system, struct oval_result_definition *old_definition)
 {
 	struct oval_definition *ovaldef = oval_result_definition_get_definition(old_definition);
 	struct oval_result_definition *new_definition = oval_result_definition_new(new_system, oval_definition_get_id(ovaldef));
 
 	struct oval_result_criteria_node *old_crit = oval_result_definition_get_criteria(old_definition);
-	struct oval_result_criteria_node *new_crit = oval_result_criteria_node_clone(old_crit, new_system);
-	oval_result_definition_set_criteria(new_definition, new_crit);
+	if(old_crit){
+		struct oval_result_criteria_node *new_crit = oval_result_criteria_node_clone(new_system, old_crit);
+		oval_result_definition_set_criteria(new_definition, new_crit);
+	}
 
 	struct oval_message_iterator *old_messages = oval_result_definition_get_messages(old_definition);
 	while(oval_message_iterator_has_more(old_messages)){
@@ -192,32 +194,40 @@ struct oval_result_criteria_node *oval_result_definition_get_criteria
 void oval_result_definition_set_result
 	(struct oval_result_definition *definition, oval_result_t result)
 {
-	definition->result = result;
+	if(definition && !oval_result_definition_is_locked(definition)){
+		definition->result = result;
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 void oval_result_definition_set_instance
 	(struct oval_result_definition *definition, int instance)
 {
-	definition->instance = instance;
+	if(definition && !oval_result_definition_is_locked(definition)){
+		definition->instance = instance;
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 void oval_result_definition_set_criteria
 	(struct oval_result_definition *definition,
 		struct oval_result_criteria_node *criteria)
 {
-	if(definition->criteria){
-		if(oval_result_criteria_node_get_type(criteria)==OVAL_NODETYPE_CRITERIA){
-			oval_result_criteria_node_free(definition->criteria);
+	if(definition && !oval_result_definition_is_locked(definition)){
+		if(definition->criteria){
+			if(oval_result_criteria_node_get_type(criteria)==OVAL_NODETYPE_CRITERIA){
+				oval_result_criteria_node_free(definition->criteria);
+			}
 		}
-	}
-	definition->criteria = criteria;
+		definition->criteria = criteria;
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 void oval_result_definition_add_message
 	(struct oval_result_definition *definition,
 		struct oval_message *message)
 {
-	if(message)oval_collection_add(definition->messages, message);
+	if(definition && !oval_result_definition_is_locked(definition)){
+		if(message)oval_collection_add(definition->messages, message);
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 static void _oval_result_definition_consume_criteria

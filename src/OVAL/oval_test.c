@@ -35,6 +35,7 @@
 #include "oval_agent_api_impl.h"
 
 typedef struct oval_test {
+	struct oval_definition_model *model;
 	oval_subtype_t subtype;
 	struct oval_collection *notes;
 	char *comment;
@@ -120,7 +121,7 @@ struct oval_state *oval_test_get_state(struct oval_test *test)
 	return test->state;
 }
 
-struct oval_test *oval_test_new(char *id)
+struct oval_test *oval_test_new(struct oval_definition_model* model, char *id)
 {
 	oval_test_t *test = (oval_test_t *) malloc(sizeof(oval_test_t));
 	test->deprecated = 0;
@@ -133,6 +134,7 @@ struct oval_test *oval_test_new(char *id)
 	test->object = NULL;
 	test->state = NULL;
 	test->notes = oval_collection_new();
+	test->model = model;
 	return test;
 }
 
@@ -142,15 +144,15 @@ bool oval_test_is_valid(struct oval_test *test)
 }
 bool oval_test_is_locked(struct oval_test *test)
 {
-	return false;//TODO
+	return oval_definition_model_is_locked(test->model);
 }
 
 struct oval_test *oval_test_clone
-	(struct oval_test *old_test, struct oval_definition_model *model)
+	(struct oval_definition_model *new_model, struct oval_test *old_test)
 {
-	struct oval_test *new_test = oval_definition_model_get_test(model, old_test->id);
+	struct oval_test *new_test = oval_definition_model_get_test(new_model, old_test->id);
 	if(new_test==NULL){
-		new_test = oval_test_new(old_test->id);
+		new_test = oval_test_new(new_model,old_test->id);
 		oval_test_set_deprecated(new_test, old_test->deprecated);
 		oval_test_set_version   (new_test, old_test->version);
 		oval_test_set_check     (new_test, old_test->check);
@@ -159,11 +161,11 @@ struct oval_test *oval_test_clone
 		oval_test_set_comment   (new_test, old_test->comment);
 
 		if(old_test->object){
-			struct oval_object *object = oval_object_clone(old_test->object, model);
+			struct oval_object *object = oval_object_clone(new_model, old_test->object);
 			oval_test_set_object(new_test, object);
 		}
 		if(old_test->state){
-			struct oval_state *state = oval_state_clone(old_test->state, model);
+			struct oval_state *state = oval_state_clone(new_model, old_test->state);
 			oval_test_set_state(new_test, state);
 		}
 
@@ -174,7 +176,7 @@ struct oval_test *oval_test_clone
 		}
 		oval_string_iterator_free(notes);
 
-		oval_definition_model_add_test(model, new_test);
+		oval_definition_model_add_test(new_model, new_test);
 	}
 	return new_test;
 }
@@ -198,49 +200,67 @@ void oval_test_free(struct oval_test *test)
 
 void oval_test_set_deprecated(struct oval_test *test, bool deprecated)
 {
-	test->deprecated = deprecated;
+	if(test && !oval_test_is_locked(test)){
+		test->deprecated = deprecated;
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 void oval_test_set_version(struct oval_test *test, int version)
 {
-	test->version = version;
+	if(test && !oval_test_is_locked(test)){
+		test->version = version;
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 void oval_test_set_subtype(struct oval_test *test, oval_subtype_t subtype)
 {
-	test->subtype = subtype;
+	if(test && !oval_test_is_locked(test)){
+		test->subtype = subtype;
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 void oval_test_set_comment(struct oval_test *test, char *comm)
 {
-	if(test->comment!=NULL)free(test->comment);
-	test->comment = comm==NULL?NULL:strdup(comm);
+	if(test && !oval_test_is_locked(test)){
+		if(test->comment!=NULL)free(test->comment);
+		test->comment = comm==NULL?NULL:strdup(comm);
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 void oval_test_set_existence(struct oval_test *test,
 			     oval_existence_t existence)
 {
-	test->existence = existence;
+	if(test && !oval_test_is_locked(test)){
+		test->existence = existence;
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 void oval_test_set_check(struct oval_test *test, oval_check_t check)
 {
-	test->check = check;
+	if(test && !oval_test_is_locked(test)){
+		test->check = check;
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 void oval_test_set_object(struct oval_test *test, struct oval_object *object)
 {
-	test->object = object;
+	if(test && !oval_test_is_locked(test)){
+		test->object = object;
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 void oval_test_set_state(struct oval_test *test, struct oval_state *state)
 {
-	test->state = state;
+	if(test && !oval_test_is_locked(test)){
+		test->state = state;
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 void oval_test_add_note(struct oval_test *test, char *note)
 {
-	oval_collection_add(test->notes, (void *)strdup(note));
+	if(test && !oval_test_is_locked(test)){
+		oval_collection_add(test->notes, (void *)strdup(note));
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 static void _oval_test_parse_notes_consumer(char *text, void *test) {

@@ -38,7 +38,7 @@
 #define NAMESPACE_OVALRES "http://oval.mitre.org/XMLSchema/oval-results-5"
 #define NAMESPACE_OVALDEF "http://oval.mitre.org/XMLSchema/oval-definitions-5"
 
-#define DEBUG_OVALRES_PARSER 1
+#define DEBUG_OVALRES_PARSER 0
 
 
 static void _oval_results_parser_consume_system
@@ -92,7 +92,7 @@ static int _ovalres_parser_process_node
 					return_code =
 					    oval_parser_skip_tag(reader,context);
 				}else if (is_ovalres && (strcmp(tagname, "directives") == 0)) {
-					*directives = oval_result_directives_new();
+					*directives = oval_result_directives_new(context->results_model);
 					return_code = oval_result_directives_parse_tag(reader, context, *directives);
 				}else if (is_ovaldef && (strcmp(tagname, "oval_definitions") == 0)) {
 					if(DEBUG_OVALRES_PARSER)oval_parser_log_debug(context,"Calling oval_parser_parse_node");

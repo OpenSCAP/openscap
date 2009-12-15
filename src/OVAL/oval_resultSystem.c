@@ -40,19 +40,21 @@
 
 
 typedef struct oval_result_system {
+	struct oval_results_model *model;
 	struct oval_string_map    *definitions;
 	struct oval_string_map    *tests;
 	struct oval_syschar_model *syschar_model;
 	bool                       definitions_initialized;
 } oval_result_system_t;
 
-struct oval_result_system *oval_result_system_new(struct oval_syschar_model *syschar_model)
+struct oval_result_system *oval_result_system_new(struct oval_results_model *model, struct oval_syschar_model *syschar_model)
 {
 	oval_result_system_t *sys = (oval_result_system_t *)malloc(sizeof(oval_result_system_t));
 	sys->definitions   = oval_string_map_new();
 	sys->tests         = oval_string_map_new();
 	sys->syschar_model = syschar_model;
 	sys->definitions_initialized = false;
+	sys->model = model;
 	return sys;
 }
 
@@ -62,11 +64,11 @@ bool oval_result_system_is_valid(struct oval_result_system *result_system)
 }
 bool oval_result_system_is_locked(struct oval_result_system *result_system)
 {
-	return false;//TODO
+	return oval_results_model_is_locked(result_system->model);
 }
 
 
-typedef void (*_oval_result_system_clone_func)(void *, struct oval_result_system *);
+typedef void (*_oval_result_system_clone_func)(struct oval_result_system *, void *);
 
 static void _oval_result_system_clone
 	(struct oval_string_map *oldmap, struct oval_result_system *new_system, _oval_result_system_clone_func cloner)
@@ -74,15 +76,15 @@ static void _oval_result_system_clone
 	struct oval_string_iterator *keys = (struct oval_string_iterator *)oval_string_map_keys(oldmap);
 	while(oval_string_iterator_has_more(keys)){
 		char *key = oval_string_iterator_next(keys);
-		void *olditem = oval_string_map_get_value(oldmap, key);
-		(*cloner)(olditem, new_system);
+		void *old_item = oval_string_map_get_value(oldmap, key);
+		(*cloner)(new_system, old_item);
 	}
 	oval_string_iterator_free(keys);
 }
 
-struct oval_result_system *oval_result_system_clone(struct oval_result_system *old_system, struct oval_results_model *resmodel)
+struct oval_result_system *oval_result_system_clone(struct oval_results_model *new_model, struct oval_result_system *old_system)
 {
-	struct oval_result_system *new_system = oval_result_system_new(oval_result_system_get_syschar_model(old_system));
+	struct oval_result_system *new_system = oval_result_system_new(new_model, oval_result_system_get_syschar_model(old_system));
 
 	_oval_result_system_clone
 		(old_system->definitions, new_system,
@@ -243,21 +245,25 @@ struct oval_sysinfo *oval_result_system_get_sysinfo
 void oval_result_system_add_definition
 	(struct oval_result_system *sys, struct oval_result_definition *definition)
 {
-	if(definition){
-		struct oval_definition *ovaldef = oval_result_definition_get_definition(definition);
-		char *id = oval_definition_get_id(ovaldef);
-		oval_string_map_put(sys->definitions, id, definition);
-	}
+	if(sys && !oval_result_system_is_locked(sys)){
+		if(definition){
+			struct oval_definition *ovaldef = oval_result_definition_get_definition(definition);
+			char *id = oval_definition_get_id(ovaldef);
+			oval_string_map_put(sys->definitions, id, definition);
+		}
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 void oval_result_system_add_test
 	(struct oval_result_system *sys, struct oval_result_test *test)
 {
-	if(test){
-		struct oval_test *ovaldef = oval_result_test_get_test(test);
-		char *id = oval_test_get_id(ovaldef);
-		oval_string_map_put(sys->tests, id, test);
-	}
+	if(sys && !oval_result_system_is_locked(sys)){
+		if(test){
+			struct oval_test *ovaldef = oval_result_test_get_test(test);
+			char *id = oval_test_get_id(ovaldef);
+			oval_string_map_put(sys->tests, id, test);
+		}
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 static void _oval_result_system_test_consume
@@ -286,7 +292,7 @@ static int _oval_result_system_definition_parse
 	(xmlTextReaderPtr reader, struct oval_parser_context *context,
 			struct oval_result_system *sys)
 {
-	return oval_result_definition_parse
+	int returns = oval_result_definition_parse
 		(reader, context, sys,
 				(oscap_consumer_func)_oval_result_system_definition_consume, sys);
 }
@@ -332,8 +338,7 @@ int oval_result_system_parse
 	,void                       *client)
 {
 	int return_code = 1;
-	struct oval_result_system *sys = oval_result_system_new
-		(syschar_model);
+	struct oval_result_system *sys = oval_result_system_new(context->results_model, syschar_model);
 
 	return_code = oval_parser_parse_tag
 		(reader, context, (oval_xml_tag_parser)_oval_result_system_parse, sys);

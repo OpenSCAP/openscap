@@ -35,6 +35,7 @@
 #include "oval_string_map_impl.h"
 
 typedef struct oval_behavior {
+	struct oval_definition_model *model;
 	char *value;
 	char *key;
 } oval_behavior_t;
@@ -69,18 +70,19 @@ char *oval_behavior_get_key(struct oval_behavior
 	return behavior->key;
 }
 
-struct oval_behavior *oval_behavior_new()
+struct oval_behavior *oval_behavior_new(struct oval_definition_model* model)
 {
 	oval_behavior_t *behavior =
 	    (oval_behavior_t *) malloc(sizeof(oval_behavior_t));
+	behavior->model = model;
 	behavior->value = NULL;
 	behavior->key   = NULL;
 	return behavior;
 }
 
-struct oval_behavior *oval_behavior_clone(struct oval_behavior *old_behavior)
+struct oval_behavior *oval_behavior_clone(struct oval_definition_model *new_model, struct oval_behavior *old_behavior)
 {
-	struct oval_behavior *new_behavior = oval_behavior_new();
+	struct oval_behavior *new_behavior = oval_behavior_new(new_model);
 	oval_behavior_set_keyval
 		(new_behavior, oval_behavior_get_key(old_behavior), oval_behavior_get_value(old_behavior));
 	return new_behavior;
@@ -92,7 +94,7 @@ bool oval_behavior_is_valid(struct oval_behavior *behavior)
 }
 bool oval_behavior_is_locked(struct oval_behavior *behavior)
 {
-	return false;//TODO
+	return oval_definition_model_is_locked(behavior->model);
 }
 
 void oval_behavior_free(struct oval_behavior *behavior)
@@ -106,8 +108,10 @@ void oval_behavior_free(struct oval_behavior *behavior)
 
 void oval_behavior_set_keyval(struct oval_behavior *behavior, const char* key, const char* value)
 {
-	behavior->key   = strdup(key);
-	behavior->value = strdup(value);
+	if(behavior && !oval_behavior_is_locked(behavior)){
+		behavior->key   = strdup(key);
+		behavior->value = strdup(value);
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 //typedef void (*oval_behavior_consumer)(struct oval_behavior_node *, void*);
@@ -120,7 +124,7 @@ int oval_behavior_parse_tag(xmlTextReaderPtr reader,
 		const char *name  = (const char *) xmlTextReaderConstName(reader);
 		const char *value = (const char *) xmlTextReaderConstValue(reader);
 		if (name && value) {
-                        oval_behavior_t *behavior = oval_behavior_new();
+                        oval_behavior_t *behavior = oval_behavior_new(context->definition_model);
 			oval_behavior_set_keyval(behavior, name, value);
                         (*consumer) (behavior, user);
                 }

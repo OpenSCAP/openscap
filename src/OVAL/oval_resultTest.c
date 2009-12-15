@@ -185,11 +185,11 @@ bool oval_result_test_is_valid(struct oval_result_test *result_test)
 }
 bool oval_result_test_is_locked(struct oval_result_test *result_test)
 {
-	return false;//TODO
+	return oval_result_system_is_locked(result_test->system);
 }
 
 struct oval_result_test *oval_result_test_clone
-	(struct oval_result_test *old_test, struct oval_result_system *new_system)
+	(struct oval_result_system *new_system, struct oval_result_test *old_test)
 {
 	struct oval_test *oval_test = oval_result_test_get_test(old_test);
 	char *testid = oval_test_get_id(oval_test);
@@ -197,7 +197,7 @@ struct oval_result_test *oval_result_test_clone
 	struct oval_result_item_iterator *old_items = oval_result_test_get_items(old_test);
 	while(oval_result_item_iterator_has_more(old_items)){
 		struct oval_result_item *old_item = oval_result_item_iterator_next(old_items);
-		struct oval_result_item *new_item = oval_result_item_clone(old_item, new_system);
+		struct oval_result_item *new_item = oval_result_item_clone(new_system, old_item);
 		oval_result_test_add_item(new_test, new_item);
 	}
 	oval_result_item_iterator_free(old_items);
@@ -809,31 +809,41 @@ struct oval_variable_binding_iterator *oval_result_test_get_bindings(struct oval
 
 void oval_result_test_set_result(struct oval_result_test *test, oval_result_t result)
 {
-	test->result = result;
+	if(test && !oval_result_test_is_locked(test)){
+		test->result = result;
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 void oval_result_test_set_instance(struct oval_result_test *test, int instance)
 {
-	test->instance = instance;
+	if(test && !oval_result_test_is_locked(test)){
+		test->instance = instance;
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 void oval_result_test_set_message
 	(struct oval_result_test *test, struct oval_message *message)
 {
-	if(test->message)oval_message_free(test->message);
-	test->message = message;
+	if(test && !oval_result_test_is_locked(test)){
+		if(test->message)oval_message_free(test->message);
+		test->message = message;
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 void oval_result_test_add_item
 	(struct oval_result_test *test, struct oval_result_item *item)
 {
-	oval_collection_add(test->items, item);
+	if(test && !oval_result_test_is_locked(test)){
+		oval_collection_add(test->items, item);
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 void oval_result_test_add_binding
 	(struct oval_result_test *test, struct oval_variable_binding *binding)
 {
-	oval_collection_add(test->bindings, binding);
+	if(test && !oval_result_test_is_locked(test)){
+		oval_collection_add(test->bindings, binding);
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 //void(*oscap_consumer_func)(void*, void*);

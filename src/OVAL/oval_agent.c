@@ -32,6 +32,7 @@
 #include "oval_parser_impl.h"
 #include "oval_string_map_impl.h"
 #include "oval_system_characteristics_impl.h"
+#include "oval_probe_impl.h"
 #include "oval_results_impl.h"
 #include <string.h>
 #include <time.h>
@@ -78,7 +79,7 @@ typedef struct oval_definition_model {
 	struct oval_string_map *object_map;
 	struct oval_string_map *state_map;
 	struct oval_string_map *variable_map;
-	struct oval_sysinfo    *sysinfoX;
+	bool                   is_locked;
 } oval_definition_model_t;
 
 struct oval_definition_model *oval_definition_model_new()
@@ -90,15 +91,16 @@ struct oval_definition_model *oval_definition_model_new()
 	newmodel->state_map = oval_string_map_new();
 	newmodel->test_map = oval_string_map_new();
 	newmodel->variable_map = oval_string_map_new();
+	newmodel->is_locked = false;
 	return newmodel;
 }
 void oval_definition_model_lock(struct oval_definition_model *definition_model)
 {
-	//TODO
+	if(definition_model && oval_definition_model_is_valid(definition_model))definition_model->is_locked = true;
 }
 bool oval_definition_model_is_locked(struct oval_definition_model *definition_model)
 {
-	return false;//TODO
+	return definition_model->is_locked;
 }
 bool oval_definition_model_is_valid(struct oval_definition_model *definition_model)
 {
@@ -114,7 +116,7 @@ static void _oval_definition_model_clone
 	while(oval_string_iterator_has_more(keys)){
 		char *key = oval_string_iterator_next(keys);
 		void *olditem = oval_string_map_get_value(oldmap, key);
-		(*cloner)(olditem, newmodel);
+		(*cloner)(newmodel, olditem);
 	}
 	oval_string_iterator_free(keys);
 }
@@ -165,6 +167,7 @@ typedef struct oval_syschar_model{
 	struct oval_string_map       *syschar_map;
 	struct oval_string_map       *sysdata_map;
 	struct oval_string_map       *variable_binding_map;
+	bool is_locked;
 } oval_syschar_model_t;
 
 struct oval_syschar_model *oval_syschar_model_new(
@@ -177,16 +180,17 @@ struct oval_syschar_model *oval_syschar_model_new(
 	newmodel->syschar_map          = oval_string_map_new();
 	newmodel->sysdata_map          = oval_string_map_new();
 	newmodel->variable_binding_map = oval_string_map_new();
+	newmodel->is_locked = false;
 	return newmodel;
 }
 
 void oval_syschar_model_lock(struct oval_syschar_model *syschar_model)
 {
-	//TODO
+	if(syschar_model && oval_syschar_model_is_valid(syschar_model))syschar_model->is_locked = true;
 }
 bool oval_syschar_model_is_locked(struct oval_syschar_model *syschar_model)
 {
-	return false;//TODO
+	return syschar_model->is_locked;
 }
 bool oval_syschar_model_is_valid(struct oval_syschar_model *syschar_model)
 {
@@ -209,7 +213,7 @@ static void _oval_syschar_model_clone
 	while(oval_string_iterator_has_more(keys)){
 		char *key = oval_string_iterator_next(keys);
 		void *olditem = oval_string_map_get_value(oldmap, key);
-		(*cloner)(olditem, newmodel);
+		(*cloner)(newmodel, olditem);
 	}
 	oval_string_iterator_free(keys);
 }
@@ -224,7 +228,7 @@ struct oval_syschar_model *oval_syschar_model_clone(struct oval_syschar_model *o
 	_oval_syschar_model_clone(old_model->variable_binding_map, new_model,
 			(_oval_syschar_model_clone_func)_oval_syschar_model_clone_variable_binding);
 	struct oval_sysinfo *old_sysinfo = oval_syschar_model_get_sysinfo(old_model);
-	struct oval_sysinfo *new_sysinfo = oval_sysinfo_clone(old_sysinfo);
+	struct oval_sysinfo *new_sysinfo = oval_sysinfo_clone(new_model, old_sysinfo);
 	oval_syschar_model_set_sysinfo(new_model, new_sysinfo);
 	return new_model;
 }
@@ -279,60 +283,74 @@ struct oval_sysinfo *oval_syschar_model_get_sysinfo(struct oval_syschar_model *m
 
 void oval_syschar_model_set_sysinfo(struct oval_syschar_model *model, struct oval_sysinfo *sysinfo)
 {
-	if(sysinfo){
-		model->sysinfo = oval_sysinfo_clone(sysinfo);
-	}
+	if(model && !oval_syschar_model_is_locked(model)){
+		model->sysinfo = oval_sysinfo_clone(model, sysinfo);
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 void oval_definition_model_add_definition(
 			struct oval_definition_model *model,
 			struct oval_definition *definition)
 {
-	char *key = oval_definition_get_id(definition);
-	oval_string_map_put(model->definition_map, key, (void *)definition);
+	if(model && !oval_definition_model_is_locked(model)){
+		char *key = oval_definition_get_id(definition);
+		oval_string_map_put(model->definition_map, key, (void *)definition);
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 void oval_definition_model_add_test(struct oval_definition_model *model, struct oval_test *test)
 {
-	char *key = oval_test_get_id(test);
-	oval_string_map_put(model->test_map, key, (void *)test);
+	if(model && !oval_definition_model_is_locked(model)){
+		char *key = oval_test_get_id(test);
+		oval_string_map_put(model->test_map, key, (void *)test);
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 void oval_definition_model_add_object(struct oval_definition_model *model,
 		     struct oval_object *object)
 {
-	char *key = oval_object_get_id(object);
-	oval_string_map_put(model->object_map, key, (void *)object);
+	if(model && !oval_definition_model_is_locked(model)){
+		char *key = oval_object_get_id(object);
+		oval_string_map_put(model->object_map, key, (void *)object);
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 void oval_definition_model_add_state(struct oval_definition_model *model, struct oval_state *state)
 {
-	char *key = oval_state_get_id(state);
-	oval_string_map_put(model->state_map, key, (void *)state);
+	if(model && !oval_definition_model_is_locked(model)){
+		char *key = oval_state_get_id(state);
+		oval_string_map_put(model->state_map, key, (void *)state);
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 void oval_definition_model_add_variable(struct oval_definition_model *model,
 		       struct oval_variable *variable)
 {
-	char *key = oval_variable_get_id(variable);
-	oval_string_map_put(model->variable_map, key, (void *)variable);
+	if(model && !oval_definition_model_is_locked(model)){
+		char *key = oval_variable_get_id(variable);
+		oval_string_map_put(model->variable_map, key, (void *)variable);
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 void oval_syschar_model_add_syschar(struct oval_syschar_model *model,
 		       struct oval_syschar *syschar)
 {
-	struct oval_object *object = oval_syschar_get_object(syschar);
-	if(object!=NULL){
-		char *id = oval_object_get_id(object);
-		oval_string_map_put(model->syschar_map, id, syschar);
-	}
+	if(model && !oval_syschar_model_is_locked(model)){
+		struct oval_object *object = oval_syschar_get_object(syschar);
+		if(object!=NULL){
+			char *id = oval_object_get_id(object);
+			oval_string_map_put(model->syschar_map, id, syschar);
+		}
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 void oval_syschar_model_add_variable_binding(struct oval_syschar_model *model, struct oval_variable_binding *binding)
 {
-	struct oval_variable *variable = oval_variable_binding_get_variable(binding);
-	char *varid = oval_variable_get_id(variable);
-	oval_string_map_put(model->variable_binding_map, varid, binding);
+	if(model && !oval_syschar_model_is_locked(model)){
+		struct oval_variable *variable = oval_variable_binding_get_variable(binding);
+		char *varid = oval_variable_get_id(variable);
+		oval_string_map_put(model->variable_binding_map, varid, binding);
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 void oval_syschar_model_probe_objects(struct oval_syschar_model *syschar_model)
@@ -354,10 +372,10 @@ void oval_syschar_model_probe_objects(struct oval_syschar_model *syschar_model)
                                 syschar = oval_probe_object_eval (pctx, object);
                                 
 				if(syschar == NULL) {
-					syschar = oval_syschar_new(object);
+					syschar = oval_syschar_new(syschar_model, object);
 					oval_syschar_set_flag(syschar,SYSCHAR_FLAG_NOT_COLLECTED);
 				}
-                                oval_syschar_model_add_syschar(syschar_model, syschar);
+				oval_syschar_model_add_syschar(syschar_model, syschar);
 			}
 		}
                 
@@ -368,10 +386,12 @@ void oval_syschar_model_probe_objects(struct oval_syschar_model *syschar_model)
 
 void oval_syschar_model_add_sysdata(struct oval_syschar_model *model, struct oval_sysdata *sysdata)
 {
-	char *id = oval_sysdata_get_id(sysdata);
-	if(id!=NULL){
-		oval_string_map_put(model->sysdata_map, id, sysdata);
-	}
+	if(model && !oval_syschar_model_is_locked(model)){
+		char *id = oval_sysdata_get_id(sysdata);
+		if(id!=NULL){
+			oval_string_map_put(model->sysdata_map, id, sysdata);
+		}
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 int oval_definition_model_import(struct oval_definition_model *model,
@@ -447,10 +467,10 @@ struct oval_variable *oval_definition_model_get_variable(struct oval_definition_
 }
 
 void oval_definition_model_bind_variable_model
-	(struct oval_definition_model *sysmodel, struct oval_variable_model *varmodel)
+	(struct oval_definition_model *defmodel, struct oval_variable_model *varmodel)
 {
 	//Bind values to all external variables specified in the variable model.
-	struct oval_variable_iterator *variables = oval_definition_model_get_variables(sysmodel);
+	struct oval_variable_iterator *variables = oval_definition_model_get_variables(defmodel);
 	while(oval_variable_iterator_has_more(variables)){
 		struct oval_variable *variable = oval_variable_iterator_next(variables);
 		if(oval_variable_get_type(variable)==OVAL_VARIABLE_EXTERNAL){
@@ -545,7 +565,7 @@ struct oval_syschar *oval_syschar_get_new
 	char *object_id = oval_object_get_id(object);
 	struct oval_syschar *syschar = oval_syschar_model_get_syschar(model, object_id);
 	if (syschar == NULL) {
-		syschar = oval_syschar_new(object);
+		syschar = oval_syschar_new(model, object);
 		oval_syschar_model_add_syschar(model, syschar);
 	}
 	return syschar;
@@ -555,7 +575,7 @@ struct oval_sysdata *oval_sysdata_get_new(struct oval_syschar_model *model, char
 {
 	struct oval_sysdata *sysdata = oval_syschar_model_get_sysdata(model, id);
 	if (sysdata == NULL) {
-		sysdata = oval_sysdata_new(id);
+		sysdata = oval_sysdata_new(model, id);
 		oval_syschar_model_add_sysdata(model, sysdata);
 	}
 	return sysdata;
@@ -565,7 +585,7 @@ struct oval_definition *oval_definition_get_new(struct oval_definition_model *mo
 {
 	struct oval_definition *definition = oval_definition_model_get_definition(model, id);
 	if (definition == NULL) {
-		definition = oval_definition_new(id);
+		definition = oval_definition_new(model, id);
 		oval_definition_model_add_definition(model, definition);
 	}
 	return definition;
@@ -576,7 +596,7 @@ struct oval_variable *oval_variable_get_new(struct oval_definition_model *model,
 {
 	struct oval_variable *variable = oval_definition_model_get_variable(model, id);
 	if (variable == NULL) {
-		variable = oval_variable_new(id, type);
+		variable = oval_variable_new(model, id, type);
 		oval_definition_model_add_variable(model, variable);
 	}else{
 		oval_variable_set_type(variable, type);
@@ -588,7 +608,7 @@ struct oval_state *oval_state_get_new(struct oval_definition_model *model, char 
 {
 	struct oval_state *state = oval_definition_model_get_state(model, id);
 	if (state == NULL) {
-		state = oval_state_new(id);
+		state = oval_state_new(model, id);
 		oval_definition_model_add_state(model, state);
 	}
 	return state;
@@ -598,7 +618,7 @@ struct oval_object *oval_object_get_new(struct oval_definition_model *model, cha
 {
 	struct oval_object *object = oval_definition_model_get_object(model, id);
 	if (object == NULL) {
-		object = oval_object_new(id);
+		object = oval_object_new(model, id);
 		oval_definition_model_add_object(model, object);
 	}
 	return object;
@@ -608,7 +628,7 @@ struct oval_test *oval_test_get_new(struct oval_definition_model *model, char *i
 {
 	struct oval_test *test = oval_definition_model_get_test(model, id);
 	if (test == NULL) {
-		test = oval_test_new(id);
+		test = oval_test_new(model, id);
 		oval_definition_model_add_test(model, test);
 	}
 	return test;
@@ -636,6 +656,7 @@ static int _generator_to_dom(xmlDocPtr doc, xmlNode *tag_generator)
 struct oval_results_model{
 	struct oval_definition_model  *definition_model;
 	struct oval_collection        *systems;
+	bool   is_locked;
 };
 
 typedef struct oval_results_model oval_results_model_t;
@@ -652,20 +673,21 @@ struct oval_results_model *oval_results_model_new
 		struct oval_syschar_model *syschar_model;
 		for(syschar_model = *syschar_models;syschar_model;
 		    syschar_model = *(++syschar_models)){
-			struct oval_result_system *sys = oval_result_system_new(syschar_model);
+			struct oval_result_system *sys = oval_result_system_new(model, syschar_model);
 			oval_results_model_add_system(model, sys);
 		}
 	}
+	model->is_locked = false;
 	return model;
 }
 
 void oval_results_model_lock(struct oval_results_model *results_model)
 {
-	//TODO
+	if(results_model && oval_results_model_is_valid(results_model))results_model->is_locked = true;
 }
 bool oval_results_model_is_locked(struct oval_results_model *results_model)
 {
-	return false;//TODO
+	return results_model->is_locked;
 }
 bool oval_results_model_is_valid(struct oval_results_model *results_model)
 {
@@ -680,7 +702,8 @@ struct oval_results_model *oval_results_model_clone(struct oval_results_model * 
 	struct oval_result_system_iterator *old_systems = oval_results_model_get_systems(old_resmodel);
 	while(oval_result_system_iterator_has_more(old_systems)){
 		struct oval_result_system *old_system = oval_result_system_iterator_next(old_systems);
-		oval_result_system_clone(old_system, new_resmodel);
+		struct oval_result_system *new_system = oval_result_system_clone(new_resmodel, old_system);
+		oval_results_model_add_system(new_resmodel, new_system);
 	}
 	oval_result_system_iterator_free(old_systems);
 
@@ -713,7 +736,9 @@ struct oval_result_system_iterator *oval_results_model_get_systems
 void oval_results_model_add_system
 	(struct oval_results_model *model, struct oval_result_system *sys)
 {
-	if(sys)oval_collection_add(model->systems, sys);
+	if(model && !oval_results_model_is_locked(model)){
+		if(sys)oval_collection_add(model->systems, sys);
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 struct oval_result_directives *oval_results_model_import
@@ -937,8 +962,10 @@ xmlNode *oval_definitions_to_dom
     	int i;for(i=0;oval_definition_iterator_has_more(definitions); i++){
     		struct oval_definition *definition = oval_definition_iterator_next(definitions);
 			if(resolver==NULL || (*resolver)(definition, user_arg)){
-				if(definitions_node==NULL)definitions_node
+				if(definitions_node==NULL){
+					definitions_node
 					= xmlNewChild(root_node, ns_defntns, BAD_CAST "definitions", NULL);
+				}
 				oval_definition_to_dom
 					(definition, doc, definitions_node);
 				struct oval_criteria_node *criteria = oval_definition_get_criteria(definition);
@@ -1156,7 +1183,8 @@ static bool _resolve_oval_definition_from_map
 	(struct oval_definition *oval_definition, struct oval_string_map *defids)
 {
 	char *defid = oval_definition_get_id(oval_definition);
-	return oval_string_map_get_value(defids, defid)!=NULL;
+	bool resolved = oval_string_map_get_value(defids, defid)!=NULL;
+	return resolved;
 }
 
 static xmlNode *oval_results_to_dom
@@ -1232,11 +1260,12 @@ int oval_results_model_export
 static int item_id = 1;
 struct oval_syschar *oval_probe_object_eval (oval_pctx_t *pctx, struct oval_object *object)
 {
-	struct oval_syschar *syschar = oval_syschar_new(object);
+	struct oval_syschar_model *model = pctx->model;
+	struct oval_syschar *syschar = oval_syschar_new(model, object);
 	oval_syschar_set_flag(syschar, SYSCHAR_STATUS_NOT_COLLECTED);
 	char itemid[10];
 	snprintf(itemid, sizeof(item_id), "%d", (++item_id));
-	struct oval_sysdata *sysdata = oval_sysdata_new(itemid);
+	struct oval_sysdata *sysdata = oval_sysdata_new(model, itemid);
 	oval_sysdata_set_status(sysdata, SYSCHAR_STATUS_NOT_COLLECTED);
 	oval_sysdata_set_subtype(sysdata, oval_object_get_subtype(object));
 	oval_syschar_add_sysdata(syschar, sysdata);
@@ -1248,5 +1277,5 @@ struct oval_sysinfo *oval_probe_sysinf_eval (oval_pctx_t *pctx)
         return (NULL);
 }
 void oval_pctx_free (oval_pctx_t *ctx){}
-oval_pctx_t *oval_pctx_new (struct oval_syschar_model *model){return (NULL);}
+oval_pctx_t *oval_pctx_new (struct oval_syschar_model *sys){return (NULL);}
 #endif

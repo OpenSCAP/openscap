@@ -38,6 +38,7 @@ static int DEBUG_OVAL_SYSDATA = 0;
 
 typedef struct oval_sysdata {
 	//oval_family_enum family;
+	struct oval_syschar_model *model;
 	oval_subtype_t subtype;
 	oval_message_level_t message_level;
 	char* id;
@@ -46,7 +47,7 @@ typedef struct oval_sysdata {
 	oval_syschar_status_t status;
 } oval_sysdata_t;
 
-struct oval_sysdata *oval_sysdata_new(char *id)
+struct oval_sysdata *oval_sysdata_new(struct oval_syschar_model* model, char *id)
 {
 	oval_sysdata_t *sysdata = (oval_sysdata_t*)malloc(sizeof(oval_sysdata_t));
 	sysdata->id                = strdup(id);
@@ -55,6 +56,7 @@ struct oval_sysdata *oval_sysdata_new(char *id)
 	sysdata->status            = SYSCHAR_STATUS_UNKNOWN;
 	sysdata->message           = NULL;
 	sysdata->items             = oval_collection_new();
+	sysdata->model = model;
 	return sysdata;
 }
 
@@ -64,12 +66,12 @@ bool oval_sysdata_is_valid(struct oval_sysdata *sysdata)
 }
 bool oval_sysdata_is_locked(struct oval_sysdata *sysdata)
 {
-	return false;//TODO
+	return oval_syschar_model_is_locked(sysdata->model);
 }
 
-struct oval_sysdata *oval_sysdata_clone(struct oval_sysdata *old_data, struct oval_syschar_model *model)
+struct oval_sysdata *oval_sysdata_clone(struct oval_syschar_model *new_model, struct oval_sysdata *old_data)
 {
-	struct oval_sysdata *new_data = oval_sysdata_new(oval_sysdata_get_id(old_data));
+	struct oval_sysdata *new_data = oval_sysdata_new(new_model, oval_sysdata_get_id(old_data));
 	char *old_message = oval_sysdata_get_message(old_data);
 	if(old_message){
 		oval_sysdata_set_message(new_data, strdup(old_message));
@@ -77,17 +79,17 @@ struct oval_sysdata *oval_sysdata_clone(struct oval_sysdata *old_data, struct ov
 	}
 
 	oval_sysdata_set_status(new_data, oval_sysdata_get_status(old_data));
-	oval_sysdata_set_subtype(old_data, oval_sysdata_get_subtype(old_data));
+	oval_sysdata_set_subtype(new_data, oval_sysdata_get_subtype(old_data));
 
 	struct oval_sysitem_iterator *old_items = oval_sysdata_get_items(old_data);
 	while(oval_sysitem_iterator_has_more(old_items)){
 		struct oval_sysitem *old_item = oval_sysitem_iterator_next(old_items);
-		struct oval_sysitem *new_item = oval_sysitem_clone(old_item);
+		struct oval_sysitem *new_item = oval_sysitem_clone(new_model, old_item);
 		oval_sysdata_add_item(new_data, new_item);
 	}
 	oval_sysitem_iterator_free(old_items);
 
-	oval_syschar_model_add_sysdata(model, new_data);
+	oval_syschar_model_add_sysdata(new_model, new_data);
 	return new_data;
 }
 
@@ -131,7 +133,9 @@ oval_subtype_t oval_sysdata_get_subtype(struct oval_sysdata *sysdata)
 
 void oval_sysdata_set_subtype(struct oval_sysdata *sysdata, oval_subtype_t subtype)
 {
-	sysdata->subtype = subtype;
+	if(sysdata && !oval_sysdata_is_locked(sysdata)){
+		sysdata->subtype = subtype;
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 char *oval_sysdata_get_id(struct oval_sysdata *data)
@@ -145,8 +149,10 @@ char *oval_sysdata_get_message(struct oval_sysdata *data)
 }
 void oval_sysdata_set_message(struct oval_sysdata *data, char *message)
 {
-	if(data->message!=NULL)free(data->message);
-	data->message = message==NULL?NULL:strdup(message);
+	if(data && !oval_sysdata_is_locked(data)){
+		if(data->message!=NULL)free(data->message);
+		data->message = message==NULL?NULL:strdup(message);
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 oval_message_level_t oval_sysdata_get_message_level(struct oval_sysdata *data)
 {
@@ -154,7 +160,9 @@ oval_message_level_t oval_sysdata_get_message_level(struct oval_sysdata *data)
 }
 void oval_sysdata_set_message_level(struct oval_sysdata *data, oval_message_level_t level)
 {
-	data->message_level = level;
+	if(data && !oval_sysdata_is_locked(data)){
+		data->message_level = level;
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 struct oval_sysitem_iterator *oval_sysdata_get_items(struct oval_sysdata *data)
 {
@@ -162,7 +170,9 @@ struct oval_sysitem_iterator *oval_sysdata_get_items(struct oval_sysdata *data)
 }
 void oval_sysdata_add_item(struct oval_sysdata *data, struct oval_sysitem* item)
 {
-	oval_collection_add(data->items, item);
+	if(data && !oval_sysdata_is_locked(data)){
+		oval_collection_add(data->items, item);
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 oval_syschar_status_t oval_sysdata_get_status(struct oval_sysdata *data)
 {
@@ -170,7 +180,9 @@ oval_syschar_status_t oval_sysdata_get_status(struct oval_sysdata *data)
 }
 void oval_sysdata_set_status(struct oval_sysdata *data, oval_syschar_status_t status)
 {
-	data->status = status;
+	if(data && !oval_sysdata_is_locked(data)){
+		data->status = status;
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 static void _oval_sysdata_parse_subtag_consume(char* message, void* sysdata) {
@@ -314,7 +326,8 @@ void oval_sysdata_to_dom  (struct oval_sysdata *sysdata, xmlDoc *doc, xmlNode *t
 			const char* subtype_text = oval_subtype_get_text(subtype);
 			char tagname[strlen(subtype_text)+6];*tagname = '\0';
 			sprintf(tagname, "%s_item", subtype_text);
-		    xmlNode *tag_sysdata = xmlNewChild
+
+			xmlNode *tag_sysdata = xmlNewChild
 				(tag_parent, NULL, BAD_CAST tagname, NULL);
 		    xmlNs *ns_family = xmlNewNs(tag_sysdata, BAD_CAST family_namespace, NULL);
 		    xmlSetNs(tag_sysdata, ns_family);
@@ -345,7 +358,8 @@ void oval_sysdata_to_dom  (struct oval_sysdata *sysdata, xmlDoc *doc, xmlNode *t
 				oval_sysitem_iterator_free(items);
 			}
 		}else{
-			fprintf(stderr,"WARNING: Skipping XML generation of oval_sysdata with subtype OVAL_SUBTYPE_UNKNOWN");
+			fprintf(stderr,"WARNING: Skipping XML generation of oval_sysdata with subtype OVAL_SUBTYPE_UNKNOWN\n"
+					"    %s(%d)\n", __FILE__, __LINE__);
 		}
 	}
 }

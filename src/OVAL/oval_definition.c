@@ -38,6 +38,7 @@
 #include "../common/util.h"
 
 typedef struct oval_definition {
+	struct oval_definition_model *model;
 	char *id;
 	int version;
 	oval_definition_class_t class;
@@ -108,7 +109,7 @@ struct oval_criteria_node *oval_definition_get_criteria(struct oval_definition
 	return ((struct oval_definition *)definition)->criteria;
 }
 
-struct oval_definition *oval_definition_new(char *id)
+struct oval_definition *oval_definition_new(struct oval_definition_model* model, char *id)
 {
 	struct oval_definition *definition =
 	    (struct oval_definition *)malloc(sizeof(oval_definition_t));
@@ -122,6 +123,7 @@ struct oval_definition *oval_definition_new(char *id)
 	definition->reference = oval_collection_new();
 	definition->notes = oval_collection_new();
 	definition->criteria = NULL;
+	definition->model = model;
 	return definition;
 }
 bool oval_definition_is_valid(struct oval_definition *definition)
@@ -130,19 +132,15 @@ bool oval_definition_is_valid(struct oval_definition *definition)
 }
 bool oval_definition_is_locked(struct oval_definition *definition)
 {
-	return false;//TODO
-}
-void oval_definition_model_set_locked(struct oval_definition_model * model)
-{
-	return;
+	return oval_definition_model_is_locked(definition->model);
 }
 
 struct oval_definition *oval_definition_clone
-	(struct oval_definition *old_definition, struct oval_definition_model *model)
+	(struct oval_definition_model *new_model, struct oval_definition *old_definition)
 {
-	struct oval_definition *new_definition = oval_definition_model_get_definition(model, old_definition->id);
+	struct oval_definition *new_definition = oval_definition_model_get_definition(new_model, old_definition->id);
 	if(new_definition==NULL){
-		new_definition = oval_definition_new(old_definition->id);
+		new_definition = oval_definition_new(new_model, old_definition->id);
 		oval_definition_set_version    (new_definition, old_definition->version);
 		oval_definition_set_class      (new_definition, old_definition->class);
 		oval_definition_set_deprecated (new_definition, old_definition->deprecated);
@@ -152,13 +150,13 @@ struct oval_definition *oval_definition_clone
 		struct oval_affected_iterator *affecteds = oval_definition_get_affected(old_definition);
 		while(oval_affected_iterator_has_more(affecteds)){
 			struct oval_affected *old_affected = oval_affected_iterator_next(affecteds);
-			oval_definition_add_affected(new_definition, oval_affected_clone(old_affected));
+			oval_definition_add_affected(new_definition, oval_affected_clone(new_model, old_affected));
 		}
 		oval_affected_iterator_free(affecteds);
 		struct oval_reference_iterator *references = oval_definition_get_references(old_definition);
 		while(oval_reference_iterator_has_more(references)){
 			struct oval_reference *old_reference = oval_reference_iterator_next(references);
-			oval_definition_add_reference(new_definition, oval_reference_clone(old_reference));
+			oval_definition_add_reference(new_definition, oval_reference_clone(new_model, old_reference));
 		}
 		oval_reference_iterator_free(references);
 		struct oval_string_iterator *notes = oval_definition_get_notes(old_definition);
@@ -168,9 +166,9 @@ struct oval_definition *oval_definition_clone
 		}
 		oval_string_iterator_free(notes);
 
-		oval_definition_set_criteria(new_definition, oval_criteria_node_clone(old_definition->criteria, model));
+		oval_definition_set_criteria(new_definition, oval_criteria_node_clone(new_model, old_definition->criteria));
 
-		oval_definition_model_add_definition(model, new_definition);
+		oval_definition_model_add_definition(new_model, new_definition);
 	}
 	return new_definition;
 }
@@ -225,56 +223,74 @@ void oval_definition_iterator_free(struct
 void oval_definition_set_version(struct oval_definition *definition,
 				 int version)
 {
-	definition->version = version;
+	if(definition && !oval_definition_is_locked(definition)){
+		definition->version = version;
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 void oval_definition_set_class(struct oval_definition *definition,
 			       oval_definition_class_t class)
 {
-	definition->class = class;
+	if(definition && !oval_definition_is_locked(definition)){
+		definition->class = class;
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 void oval_definition_set_deprecated(struct oval_definition *definition,
 				    bool deprecated)
 {
-	definition->deprecated = deprecated;
+	if(definition && !oval_definition_is_locked(definition)){
+		definition->deprecated = deprecated;
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 void oval_definition_set_title(struct oval_definition *definition, char *title)
 {
-	if(definition->title!=NULL)free(definition->title);
-	definition->title = title==NULL?NULL:strdup(title);
+	if(definition && !oval_definition_is_locked(definition)){
+		if(definition->title!=NULL)free(definition->title);
+		definition->title = title==NULL?NULL:strdup(title);
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 void oval_definition_set_description(struct oval_definition *definition,
 				     char *description)
 {
-	if(definition->description)free(definition->description);
-	definition->description = description==NULL?NULL:strdup(description);
+	if(definition && !oval_definition_is_locked(definition)){
+		if(definition->description)free(definition->description);
+		definition->description = description==NULL?NULL:strdup(description);
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 void oval_definition_set_criteria(struct oval_definition *definition,
 				  struct oval_criteria_node *criteria)
 {
-	definition->criteria = criteria;
+	if(definition && !oval_definition_is_locked(definition)){
+		definition->criteria = criteria;
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 void oval_definition_add_affected(struct oval_definition *definition,
 				  struct oval_affected *affected)
 {
-	oval_collection_add(definition->affected, affected);
+	if(definition && !oval_definition_is_locked(definition)){
+		oval_collection_add(definition->affected, affected);
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 void oval_definition_add_reference(struct oval_definition *definition,
 				   struct oval_reference *ref)
 {
-	oval_collection_add(definition->reference, ref);
+	if(definition && !oval_definition_is_locked(definition)){
+		oval_collection_add(definition->reference, ref);
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 void oval_definition_add_note
 	(struct oval_definition *definition, char *note)
 {
-	oval_collection_add(definition->notes, note);
+	if(definition && !oval_definition_is_locked(definition)){
+		oval_collection_add(definition->notes, note);
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 static const struct oscap_string_map OVAL_DEFINITION_CLASS_MAP[] = {

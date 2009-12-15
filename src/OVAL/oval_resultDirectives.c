@@ -44,10 +44,11 @@ struct _oval_result_directive{
 #define NUMBER_OF_RESULTS 7
 
 typedef struct oval_result_directives {
+	struct oval_results_model *model;
 	struct _oval_result_directive directive[NUMBER_OF_RESULTS];
 } oval_result_directives_t;
 
-struct oval_result_directives *oval_result_directives_new()
+struct oval_result_directives *oval_result_directives_new(struct oval_results_model* model)
 {
 	oval_result_directives_t *directives = (oval_result_directives_t *)
 		malloc(sizeof(oval_result_directives_t));
@@ -55,6 +56,7 @@ struct oval_result_directives *oval_result_directives_new()
 		directives->directive[i].reported = false;
 		directives->directive[i].content  = OVAL_DIRECTIVE_CONTENT_UNKNOWN;
 	}
+	directives->model = model;
 	return directives;
 }
 
@@ -64,7 +66,7 @@ bool oval_result_directives_is_valid(struct oval_result_directives *result_direc
 }
 bool oval_result_directives_is_locked(struct oval_result_directives *result_directives)
 {
-	return false;//TODO
+	return oval_results_model_is_locked(result_directives->model);
 }
 
 void oval_result_directives_free(struct oval_result_directives *directives)
@@ -85,12 +87,16 @@ oval_result_directive_content_t oval_result_directives_get_content
 void oval_result_directives_set_reported
 	(struct oval_result_directives *directives, oval_result_t type, bool reported)
 {
-	directives->directive[type].reported = reported;
+	if(directives && !oval_result_directives_is_locked(directives)){
+		directives->directive[type].reported = reported;
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 void oval_result_directives_set_content
 	(struct oval_result_directives *directives, oval_result_t type, oval_result_directive_content_t content)
 {
-	directives->directive[type].content = content;
+	if(directives && !oval_result_directives_is_locked(directives)){
+		directives->directive[type].content = content;
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 //typedef int (*oval_xml_tag_parser) (xmlTextReaderPtr, struct oval_parser_context *, void *);

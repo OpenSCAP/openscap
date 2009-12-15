@@ -37,6 +37,7 @@
 static int DEBUG_OVAL_MESSAGE = 0;
 
 typedef struct oval_message {
+	void *model;
 	char*                   text;
 	oval_message_level_t level;
 } oval_message_t;
@@ -102,12 +103,16 @@ oval_message_level_t oval_message_get_level(struct oval_message *message)
 
 void oval_message_set_text(struct oval_message *message, char *text)
 {
-	if(message->text!=NULL)free(message->text);
-	message->text = (text==NULL)?NULL:strdup(text);
+	if(message && !oval_message_is_locked(message)){
+		if(message->text!=NULL)free(message->text);
+		message->text = (text==NULL)?NULL:strdup(text);
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 void oval_message_set_level(struct oval_message *message, oval_message_level_t level)
 {
-	message->level = level;
+	if(message && !oval_message_is_locked(message)){
+		message->level = level;
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 static void oval_message_parse_tag_consumer(char* text, void* message){

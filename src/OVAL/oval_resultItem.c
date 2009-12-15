@@ -36,6 +36,7 @@
 #define OVAL_RESULT_ITEM_DEBUG 0
 
 typedef struct oval_result_item {
+	struct oval_result_system *sys;
 	oval_result_t          result;
 	struct oval_collection   *messages;
 	struct oval_sysdata      *sysdata;
@@ -52,6 +53,7 @@ struct oval_result_item *oval_result_item_new
 	item->sysdata = sysdata;
 	item->messages = oval_collection_new();
 	item->result = 0;
+	item->sys = sys;
 
 	return item;
 }
@@ -62,11 +64,11 @@ bool oval_result_item_is_valid(struct oval_result_item *result_item)
 }
 bool oval_result_item_is_locked(struct oval_result_item *result_item)
 {
-	return false;//TODO
+	return oval_result_system_is_locked(result_item->sys);
 }
 
 struct oval_result_item *oval_result_item_clone
-	(struct oval_result_item *old_item, struct oval_result_system *new_system)
+	(struct oval_result_system *new_system, struct oval_result_item *old_item)
 {
 	struct oval_sysdata *old_sysdata = oval_result_item_get_sysdata(old_item);
 	char *datid = oval_sysdata_get_id(old_sysdata);
@@ -138,13 +140,17 @@ struct oval_message_iterator *oval_result_item_get_messages
 
 void oval_result_item_set_result(struct oval_result_item *item, oval_result_t result)
 {
-	item->result = result;
+	if(item && !oval_result_item_is_locked(item)){
+		item->result = result;
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 void oval_result_item_add_message
 	(struct oval_result_item *item, struct oval_message *message)
 {
-	oval_collection_add(item->messages, message);
+	if(item && !oval_result_item_is_locked(item)){
+		oval_collection_add(item->messages, message);
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 static void _oval_result_item_message_consumer

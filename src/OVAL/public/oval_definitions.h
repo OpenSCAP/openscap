@@ -1136,12 +1136,12 @@ void oval_affected_iterator_free    (struct oval_affected_iterator *);
  * Construct instance of @ref Oval_affected.
  * @ingroup Oval_affected
  */
-struct oval_affected *oval_affected_new(void);
+struct oval_affected *oval_affected_new(struct oval_definition_model *);
 /**
  * Clone instance of @ref Oval_affected.
  * @ingroup Oval_affected
  */
-struct oval_affected *oval_affected_clone(struct oval_affected *);
+struct oval_affected *oval_affected_clone(struct oval_definition_model *new_model, struct oval_affected *old_affected);
 /**
  * Returns <b>true</b>
  * @ingroup oval_affected_eval
@@ -1218,12 +1218,13 @@ struct oval_string_iterator *oval_affected_get_products (struct oval_affected *)
  * @param type - the required node type.
  * @ingroup Oval_criteria_node
  */
-struct oval_criteria_node *oval_criteria_node_new(oval_criteria_node_type_t type);
+struct oval_criteria_node *oval_criteria_node_new(struct oval_definition_model *, oval_criteria_node_type_t type);
 /**
  * Clone an instance of @ref Oval_criteria_node.
  * @ingroup Oval_criteria_node
  */
-struct oval_criteria_node *oval_criteria_node_clone(struct oval_criteria_node *, struct oval_definition_model *);
+struct oval_criteria_node *oval_criteria_node_clone
+(struct oval_definition_model *new_model, struct oval_criteria_node *old_node);
 /**
  * Return <b>true</b> if the instance of Oval_criteria_node is locked.
  * The state of a locked instance cannot be changed.
@@ -1371,7 +1372,7 @@ void oval_criteria_node_set_definition(struct oval_criteria_node *, struct oval_
 /**
  * @ingroup oval_reference
  */
-struct oval_reference *oval_reference_new(void);
+struct oval_reference *oval_reference_new(struct oval_definition_model*);
 /**
  * return <b>true</b> if the reference instance is valid
  * @ingroup oval_reference_eval
@@ -1386,7 +1387,8 @@ bool oval_reference_is_locked(struct oval_reference *reference);
 /**
  * @ingroup oval_reference
  */
-struct oval_reference *oval_reference_clone(struct oval_reference *);
+struct oval_reference *oval_reference_clone
+(struct oval_definition_model *new_model, struct oval_reference *old_reference);
 /**
  * @ingroup oval_reference
  */
@@ -1450,7 +1452,7 @@ char *oval_reference_get_url   (struct oval_reference *);
  * @param id - (non-NULL) A copy of this string is bound to the id attribute of the created instance.
  * @ingroup Oval_definition
  */
-struct oval_definition *oval_definition_new(char *id);
+struct oval_definition *oval_definition_new(struct oval_definition_model *, char *id);
 /**
  * Release an instance of @ref Oval_definition.
  * All attributes of the Oval_definition are also released.
@@ -1679,7 +1681,7 @@ void oval_definition_set_criteria(struct oval_definition *, struct oval_criteria
  * @param id - (Not NULL) the text of the required object id.
  * @ingroup Oval_object
  */
-struct oval_object *oval_object_new(char *id);
+struct oval_object *oval_object_new(struct oval_definition_model *, char *id);
 /**
  * return <b>true</b> if the object instance is valid
  * @ingroup oval_object_eval
@@ -1709,6 +1711,13 @@ oval_family_t  oval_object_get_family    (struct oval_object *);
  * @ingroup oval_object_getters
  */
 const char *oval_object_get_name   (struct oval_object *);
+
+/**
+ * Probe single OVAL object.
+ * TODO: GET THIS RIGHT
+ * @ingroup oval_object_eval
+ */
+struct oval_syschar *oval_object_probe(struct oval_object *, struct oval_definition_model *model);
 
 /**
  * Returns attribute @ref Oval_object->subtype
@@ -1868,7 +1877,7 @@ void oval_object_add_behavior(struct oval_object *, struct oval_behavior *behavi
  * @param id - (Not NULL) the text of the required test id.
  * @ingroup Oval_test
  */
-struct oval_test *oval_test_new(char *id);
+struct oval_test *oval_test_new(struct oval_definition_model *, char *id);
 /**
  * Construct instance of @ref Oval_test.
  * @ingroup Oval_test
@@ -2118,7 +2127,8 @@ char                 *oval_variable_binding_get_value   (struct oval_variable_bi
 /**
  * @ingroup Oval_object_content
  */
-struct oval_object_content *oval_object_content_new(oval_object_content_type_t type);
+struct oval_object_content
+    *oval_object_content_new(struct oval_definition_model *model, oval_object_content_type_t type);
 /**
  * return <b>true</b> if the object_content instance is valid
  * @ingroup oval_object_content_eval
@@ -2133,7 +2143,8 @@ bool oval_object_content_is_locked(struct oval_object_content *object_content);
 /**
  * @ingroup Oval_object_content
  */
-struct oval_object_content *oval_object_content_clone(struct oval_object_content *, struct oval_definition_model *);
+struct oval_object_content *oval_object_content_clone
+(struct oval_definition_model *new_model, struct oval_object_content *old_content);
 /**
  * @ingroup Oval_object_content
  */
@@ -2203,7 +2214,7 @@ struct oval_setobject     *oval_object_content_get_setobject (struct oval_object
 /**
  * @ingroup Oval_state_content
  */
-struct oval_state_content *oval_state_content_new(void);
+struct oval_state_content *oval_state_content_new(struct oval_definition_model *);
 /**
  * return <b>true</b> if the state instance is valid
  * @ingroup oval_state_eval
@@ -2218,7 +2229,8 @@ bool oval_state_is_locked(struct oval_state *state);
 	/**
  * @ingroup Oval_state_content
  */
-struct oval_state_content *oval_state_content_clone(struct oval_state_content *, struct oval_definition_model *);
+struct oval_state_content *oval_state_content_clone
+(struct oval_definition_model *new_model, struct oval_state_content *old_content);
 /**
  * @ingroup Oval_state_content
  */
@@ -2238,7 +2250,7 @@ void oval_state_content_set_entcheck(struct oval_state_content *, oval_check_t);
 /**
  * @ingroup Oval_entity
  */
-struct oval_entity *oval_entity_new(void);
+struct oval_entity *oval_entity_new(struct oval_definition_model *);
 /**
  * return <b>true</b> if the entity instance is valid
  * @ingroup oval_entity_eval
@@ -2253,7 +2265,8 @@ bool oval_entity_is_locked(struct oval_entity *entity);
 /**
  * @ingroup Oval_entity
  */
-struct oval_entity *oval_entity_clone(struct oval_entity *, struct oval_definition_model *);
+struct oval_entity *oval_entity_clone
+(struct oval_definition_model *model, struct oval_entity *old_entity);
 /**
  * @ingroup Oval_entity
  */
@@ -2375,7 +2388,7 @@ struct oval_value            *oval_entity_get_value      (struct oval_entity *);
 /**
  * @ingroup Oval_setobject
  */
-struct oval_setobject *oval_setobject_new(void);
+struct oval_setobject *oval_setobject_new(struct oval_definition_model *);
 /**
  * return <b>true</b> if the setobject instance is valid
  * @ingroup oval_setobject_eval
@@ -2390,7 +2403,8 @@ bool oval_setobject_is_locked(struct oval_setobject *setobject);
 /**
  * @ingroup Oval_setobject
  */
-struct oval_setobject *oval_setobject_clone(struct oval_setobject *, struct oval_definition_model *);
+struct oval_setobject *oval_setobject_clone
+(struct oval_definition_model *new_model, struct oval_setobject *old_setobject);
 /**
  * @ingroup Oval_setobject
  */
@@ -2458,7 +2472,7 @@ struct oval_state_iterator  *oval_setobject_get_filters  (struct oval_setobject 
 /**
  * @ingroup Oval_behavior
  */
-struct oval_behavior *oval_behavior_new(void);
+struct oval_behavior *oval_behavior_new(struct oval_definition_model *);
 /**
  * return <b>true</b> if the behavior instance is valid
  * @ingroup oval_behavior_eval
@@ -2473,7 +2487,7 @@ bool oval_behavior_is_locked(struct oval_behavior *behavior);
 /**
  * @ingroup Oval_behavior
  */
-struct oval_behavior *oval_behavior_clone(struct oval_behavior *);
+struct oval_behavior *oval_behavior_clone(struct oval_definition_model *new_model, struct oval_behavior *old_behavior);
 /**
  * @ingroup Oval_behavior
  */
@@ -2522,35 +2536,11 @@ bool oval_value_is_locked(struct oval_value *value);
 /**
  * @ingroup Oval_value
  */
-struct oval_value *oval_value_clone(struct oval_value *);
+struct oval_value *oval_value_clone(struct oval_value *old_value);
 /**
  * @ingroup Oval_value
  */
 void oval_value_free(struct oval_value *);
-/**
- * @ingroup oval_value_setters
- */
-void oval_value_set_datatype(struct oval_value *, oval_datatype_t);
-/**
- * @ingroup oval_value_setters
- */
-void oval_value_set_text(struct oval_value *, char *);
-/**
- * @ingroup oval_value_setters
- */
-void oval_value_set_binary(struct oval_value *, unsigned char *);	//datatype==OVAL_DATATYPE_BINARY
-/**
- * @ingroup oval_value_setters
- */
-void oval_value_set_boolean(struct oval_value *, int);	//datatype==OVAL_DATATYPE_BOOLEAN
-/**
- * @ingroup oval_value_setters
- */
-void oval_value_set_float(struct oval_value *, float);	//datatype==OVAL_DATATYPE_FLOAT
-/**
- * @ingroup oval_value_setters
- */
-void oval_value_set_integer(struct oval_value *, long);	//datatype==OVAL_DATATYPE_INTEGER
 /**
  * @ingroup oval_value_iterators
  */
@@ -2610,7 +2600,7 @@ long               oval_value_get_integer (struct oval_value *);//datatype==OVAL
  * @param id - (Not NULL) the text of the required state id.
  * @ingroup Oval_state
  */
-struct oval_state *oval_state_new(char *id);
+struct oval_state *oval_state_new(struct oval_definition_model *, char *id);
 /**
  * return <b>true</b> if the state instance is valid
  * @ingroup oval_state_eval
@@ -2800,7 +2790,7 @@ bool oval_variable_is_locked(struct oval_variable *variable);
  * @param type - (Not @ref OVAL_VARIABLE_UNKNOWN) the required type.
  * @ingroup Oval_variable
  */
-struct oval_variable *oval_variable_new(char * id, oval_variable_type_t type);
+struct oval_variable *oval_variable_new(struct oval_definition_model *model, char *id, oval_variable_type_t type);
 /**
  * Free instance of @ref Oval_variable.
  * @ingroup Oval_variable
@@ -2976,12 +2966,12 @@ void oval_variable_iterator_free (struct oval_variable_iterator *);
  * @param type - the required component type.
  * @ingroup Oval_component
  */
-struct oval_component *oval_component_new(oval_component_type_t type);
+struct oval_component *oval_component_new(struct oval_definition_model *, oval_component_type_t type);
 /**
  * Clone instance of @ref Oval_component.
  * @ingroup Oval_component
  */
-struct oval_component *oval_component_clone(struct oval_component *, struct oval_definition_model *);
+struct oval_component *oval_component_clone(struct oval_definition_model *new_model, struct oval_component *old_component);
 /**
  * Returns <b>true</b> if the @ref Oval_component is valid.
  * An Oval_component is valid if one of the following is true:

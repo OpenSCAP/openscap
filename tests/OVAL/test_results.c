@@ -52,7 +52,7 @@ int main(int argc, char **argv)
 			printf("OVAL RESULTS LOADED\n");
 			if (argc>3) {
 				printf("WRITE OVAL RESULTS\n");
-				struct oval_result_directives *directives = oval_result_directives_new();
+				struct oval_result_directives *directives = oval_result_directives_new(results_model);
 				struct oval_export_target* target = oval_export_target_new_file(argv[3], "UTF-8");
 				oval_results_model_export(results_model, directives, target);
 				oval_export_target_free(target);

@@ -408,11 +408,9 @@ int oval_syschar_model_export(
  * Load OVAL system characteristics from a file.
  * @ingroup OVALSYS_service
  */
-void oval_syschar_model_import(struct oval_syschar_model*, struct oval_import_source*,
-			oval_xml_error_handler, void*);
-
-
-
+void oval_syschar_model_import(struct oval_syschar_model *model,
+			struct oval_import_source *source,
+			oval_xml_error_handler eh, void *user_arg );
 
 /**
  * @ingroup oval_sysint_iterators
@@ -626,7 +624,7 @@ const char *oval_syschar_status_get_text(oval_syschar_status_t status);
 /**
  * @ingroup Oval_sysint
  */
-struct oval_sysint *oval_sysint_new(void);
+struct oval_sysint *oval_sysint_new(struct oval_syschar_model *);
 /**
  * return <b>true</b> if the sysint instance is valid
  * @ingroup oval_sysint_eval
@@ -641,7 +639,7 @@ bool oval_sysint_is_locked(struct oval_sysint *sysint);
 /**
  * @ingroup Oval_sysint
  */
-struct oval_sysint *oval_sysint_clone(struct oval_sysint *);
+struct oval_sysint *oval_sysint_clone(struct oval_syschar_model *new_model, struct oval_sysint *old_sysint);
 /**
  * @ingroup Oval_sysint
  */
@@ -661,7 +659,7 @@ void oval_sysint_set_mac_address(struct oval_sysint *, char *);
 /**
  * @ingroup Oval_sysinfo
  */
-struct oval_sysinfo *oval_sysinfo_new(void);
+struct oval_sysinfo *oval_sysinfo_new(struct oval_syschar_model *);
 /**
  * return <b>true</b> if the sysinfo instance is valid
  * @ingroup oval_sysinfo_eval
@@ -676,7 +674,7 @@ bool oval_sysinfo_is_locked(struct oval_sysinfo *sysinfo);
 /**
  * @ingroup Oval_sysinfo
  */
-struct oval_sysinfo *oval_sysinfo_clone(struct oval_sysinfo *);
+struct oval_sysinfo *oval_sysinfo_clone(struct oval_syschar_model *new_model, struct oval_sysinfo *old_sysinfo);
 /**
  * @ingroup Oval_sysinfo
  */
@@ -704,7 +702,7 @@ void oval_sysinfo_add_interface(struct oval_sysinfo *, struct oval_sysint *);
 /**
  * @ingroup Oval_sysdata
  */
-struct oval_sysdata *oval_sysdata_new(char *id);
+struct oval_sysdata *oval_sysdata_new(struct oval_syschar_model *, char *id);
 /**
  * return <b>true</b> if the sysdata instance is valid
  * @ingroup oval_sysdata_eval
@@ -719,7 +717,7 @@ bool oval_sysdata_is_locked(struct oval_sysdata *sysdata);
 /**
  * @ingroup Oval_sysdata
  */
-struct oval_sysdata *oval_sysdata_clone(struct oval_sysdata *old_data, struct oval_syschar_model *model);
+struct oval_sysdata *oval_sysdata_clone(struct oval_syschar_model *new_model, struct oval_sysdata *old_data);
 /**
  * @ingroup Oval_sysdata
  */
@@ -747,7 +745,7 @@ void oval_sysdata_add_item(struct oval_sysdata *, struct oval_sysitem *);
 /**
  * @ingroup Oval_syschar
  */
-struct oval_syschar *oval_syschar_new(struct oval_object *);
+struct oval_syschar *oval_syschar_new(struct oval_syschar_model *, struct oval_object *);
 /**
  * return <b>true</b> if the syschar instance is valid
  * @ingroup oval_syschar_eval
@@ -762,7 +760,7 @@ bool oval_syschar_is_locked(struct oval_syschar *syschar);
 /**
  * @ingroup Oval_syschar
  */
-struct oval_syschar *oval_syschar_clone(struct oval_syschar *old_syschar, struct oval_syschar_model *sys_model);
+struct oval_syschar *oval_syschar_clone(struct oval_syschar_model *new_model, struct oval_syschar *old_syschar);
 /**
  * @ingroup Oval_syschar
  */
@@ -790,7 +788,7 @@ void oval_syschar_add_sysdata(struct oval_syschar *, struct oval_sysdata *);
 /**
  * @ingroup Oval_sysitem
  */
-struct oval_sysitem *oval_sysitem_new(void);
+struct oval_sysitem *oval_sysitem_new(struct oval_syschar_model *);
 /**
  * return <b>true</b> if the sysitem instance is valid
  * @ingroup oval_sysitem_eval
@@ -805,7 +803,7 @@ bool oval_sysitem_is_locked(struct oval_sysitem *sysitem);
 /**
  * @ingroup Oval_sysitem
  */
-struct oval_sysitem *oval_sysitem_clone(struct oval_sysitem *old_item);
+struct oval_sysitem *oval_sysitem_clone(struct oval_syschar_model *new_model, struct oval_sysitem *old_item);
 /**
  * @ingroup Oval_sysitem
  */

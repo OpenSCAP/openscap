@@ -38,6 +38,7 @@
 static int OVAL_SYSCHAR_DEBUG = 0;
 
 typedef struct oval_syschar {
+	struct oval_syschar_model *model;
 	oval_syschar_collection_flag_t flag;
 	struct oval_collection *messages;
 	struct oval_object *object;
@@ -73,12 +74,16 @@ oval_syschar_collection_flag_t oval_syschar_get_flag(struct oval_syschar
 void oval_syschar_set_flag
 	(struct oval_syschar *syschar, oval_syschar_collection_flag_t flag)
 {
-	syschar->flag = flag;
+	if(syschar && !oval_syschar_is_locked(syschar)){
+		syschar->flag = flag;
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 void oval_syschar_set_object(struct oval_syschar *syschar, struct oval_object *object)
 {
-	syschar->object = object;
+	if(syschar && !oval_syschar_is_locked(syschar)){
+		syschar->object = object;
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 
@@ -90,7 +95,9 @@ struct oval_message_iterator *oval_syschar_get_messages(struct oval_syschar *sys
 
 void oval_syschar_add_message(struct oval_syschar *syschar, struct oval_message *message)
 {
-	oval_collection_add(syschar->messages, message);
+	if(syschar && !oval_syschar_is_locked(syschar)){
+		oval_collection_add(syschar->messages, message);
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 struct oval_object *oval_syschar_get_object(struct oval_syschar *syschar)
@@ -115,22 +122,20 @@ struct oval_sysdata_iterator *oval_syschar_get_sysdata(struct oval_syschar *sysc
 void oval_syschar_add_sysdata
 	(struct oval_syschar *syschar, struct oval_sysdata *sysdata)
 {
-	oval_collection_add(syschar->sysdata, sysdata);
-}
-
-static void add_oval_syschar_message
-	(struct oval_syschar *syschar, struct oval_message *message)
-{
-	oval_collection_add(syschar->messages, message);
+	if(syschar && !oval_syschar_is_locked(syschar)){
+		oval_collection_add(syschar->sysdata, sysdata);
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 void oval_syschar_add_variable_binding
 	(struct oval_syschar *syschar, struct oval_variable_binding *binding)
 {
-	oval_collection_add(syschar->variable_bindings, binding);
+	if(syschar && !oval_syschar_is_locked(syschar)){
+		oval_collection_add(syschar->variable_bindings, binding);
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
-struct oval_syschar *oval_syschar_new(struct oval_object *object)
+struct oval_syschar *oval_syschar_new(struct oval_syschar_model* model, struct oval_object *object)
 {
 	oval_syschar_t *syschar = (oval_syschar_t*)malloc(sizeof(oval_syschar_t));
 	syschar->flag              = SYSCHAR_FLAG_UNKNOWN;
@@ -138,6 +143,7 @@ struct oval_syschar *oval_syschar_new(struct oval_object *object)
 	syschar->messages          = oval_collection_new();
 	syschar->sysdata           = oval_collection_new();
 	syschar->variable_bindings = oval_collection_new();
+	syschar->model = model;
 	return syschar;
 }
 
@@ -147,19 +153,19 @@ bool oval_syschar_is_valid(struct oval_syschar *syschar)
 }
 bool oval_syschar_is_locked(struct oval_syschar *syschar)
 {
-	return false;//TODO
+	return oval_syschar_model_is_locked(syschar->model);
 }
 
-struct oval_syschar *oval_syschar_clone(struct oval_syschar *old_syschar, struct oval_syschar_model *sys_model)
+struct oval_syschar *oval_syschar_clone(struct oval_syschar_model *new_model, struct oval_syschar *old_syschar)
 {
-	struct oval_definition_model *def_model = oval_syschar_model_get_definition_model(sys_model);
+	struct oval_definition_model *def_model = oval_syschar_model_get_definition_model(new_model);
 	struct oval_object *old_object = oval_syschar_get_object(old_syschar);
 	struct oval_object *new_object = oval_definition_model_get_object(def_model, oval_object_get_id(old_object));
 	if(new_object==NULL){
-		new_object = oval_object_clone(old_object, def_model);
+		new_object = oval_object_clone(def_model, old_object);
 	}
 
-	struct oval_syschar *new_syschar = oval_syschar_new(new_object);
+	struct oval_syschar *new_syschar = oval_syschar_new(new_model, new_object);
 
 	oval_syschar_collection_flag_t flag = oval_syschar_get_flag(old_syschar);
 	oval_syschar_set_flag(new_syschar, flag);
@@ -175,8 +181,8 @@ struct oval_syschar *oval_syschar_clone(struct oval_syschar *old_syschar, struct
 	struct oval_sysdata_iterator *old_sysdatas = oval_syschar_get_sysdata(old_syschar);
 	while(oval_sysdata_iterator_has_more(old_sysdatas)){
 		struct oval_sysdata *old_sysdata = oval_sysdata_iterator_next(old_sysdatas);
-		struct oval_sysdata *new_sysdata = oval_syschar_model_get_sysdata(sys_model, oval_sysdata_get_id(old_sysdata));
-		if(new_sysdata==NULL)new_sysdata = oval_sysdata_clone(old_sysdata, sys_model);
+		struct oval_sysdata *new_sysdata = oval_syschar_model_get_sysdata(new_model, oval_sysdata_get_id(old_sysdata));
+		if(new_sysdata==NULL)new_sysdata = oval_sysdata_clone(new_model, old_sysdata);
 		oval_syschar_add_sysdata(new_syschar, new_sysdata);
 	}
 	oval_sysdata_iterator_free(old_sysdatas);
@@ -189,7 +195,7 @@ struct oval_syschar *oval_syschar_clone(struct oval_syschar *old_syschar, struct
 	}
 	oval_variable_binding_iterator_free(old_bindings);
 
-	oval_syschar_model_add_syschar(sys_model, new_syschar);
+	oval_syschar_model_add_syschar(new_model, new_syschar);
 
 	return new_syschar;
 }
@@ -206,6 +212,12 @@ void oval_syschar_free(struct oval_syschar *syschar)
 	syschar->sysdata = NULL;
 	syschar->variable_bindings = NULL;
 	free(syschar);
+}
+
+static void add_oval_syschar_message
+	(struct oval_syschar *syschar, struct oval_message *message)
+{
+	oval_collection_add(syschar->messages, message);
 }
 
 static void _oval_syschar_parse_subtag_consume_message(struct oval_message *message, void* syschar){
@@ -299,7 +311,6 @@ int oval_syschar_parse_tag(xmlTextReaderPtr reader,
 		sprintf(message, "oval_syschar_parse_tag:: return code is not 1::(%d)",return_code);
 		oval_parser_log_warn(context, message);
 	}
-
 	return return_code;
 }
 

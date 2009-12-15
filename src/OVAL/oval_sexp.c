@@ -624,13 +624,13 @@ cleanup:
 	return sysdata;
 }
 
-struct oval_syschar *oval_sexp2sysch (const SEXP_t *s_exp, struct oval_object *object)
+struct oval_syschar *oval_sexp2sysch (const SEXP_t *s_exp, struct oval_syschar_model *model, struct oval_object *object)
 {
         struct oval_syschar *sysch;
         
         _A(s_exp != NULL);
         
-        sysch = oval_syschar_new(object);
+        sysch = oval_syschar_new(model, object);
         
         if (oval_sysch_apply_sexp (sysch, s_exp, object) != 0) {
                 oval_syschar_free (sysch);

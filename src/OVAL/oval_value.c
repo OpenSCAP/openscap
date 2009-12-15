@@ -106,7 +106,7 @@ bool oval_value_is_valid(struct oval_value *value)
 }
 bool oval_value_is_locked(struct oval_value *value)
 {
-	return false;//TODO
+	return true;//oval_value is intrinsically locked
 }
 
 struct oval_value *oval_value_clone(struct oval_value *old_value)
@@ -124,33 +124,23 @@ void oval_value_free(struct oval_value *value)
 	}
 }
 
+
+/*
 void oval_value_set_datatype(struct oval_value *value,
 			     oval_datatype_t datatype)
 {
-	value->datatype = datatype;
+	if(value && !oval_value_is_locked(value)){
+		value->datatype = datatype;
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
-
 void oval_value_set_text(struct oval_value *value, char *text)
 {
-	if(value->text!=NULL)free(value->text);
-	value->text = ((text==NULL)?NULL:strdup(text));
+	if(value && !oval_value_is_locked(value)){
+		if(value->text!=NULL)free(value->text);
+		value->text = ((text==NULL)?NULL:strdup(text));
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
-
-void oval_value_set_float(struct oval_value *value, float num) { /* TODO */
-	//TODO::VALUE
-}
-
-void oval_value_set_boolean(struct oval_value *value, int b) { /* TODO */
-	//TODO::VALUE
-}
-
-void oval_value_set_binary(struct oval_value *value, unsigned char *num) { /* TODO */
-	//TODO::VALUE
-}
-
-void oval_value_set_integer(struct oval_value *value, long num) { /* TODO */
-	//TODO::VALUE
-}
+*/
 
 static void oval_value_parse_tag_consume_text(char *string, void *text) {
 	*(char**)text = strdup(string);

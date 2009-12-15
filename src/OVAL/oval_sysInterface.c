@@ -34,6 +34,7 @@
 #include "oval_collection_impl.h"
 
 typedef struct oval_sysint {
+	struct oval_syschar_model *model;
 	char *name;
 	char *ipAddress;
 	char *macAddress;
@@ -63,8 +64,10 @@ char *oval_sysint_get_name(struct oval_sysint *sysint)
 
 void oval_sysint_set_name(struct oval_sysint *sysint, char *name)
 {
-	if(sysint->name!=NULL)free(sysint->name);
-	sysint->name = name==NULL?NULL:strdup(name);
+	if(sysint && !oval_sysint_is_locked(sysint)){
+		if(sysint->name!=NULL)free(sysint->name);
+		sysint->name = name==NULL?NULL:strdup(name);
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 char *oval_sysint_get_ip_address(struct oval_sysint *sysint)
@@ -74,8 +77,10 @@ char *oval_sysint_get_ip_address(struct oval_sysint *sysint)
 
 void oval_sysint_set_ip_address(struct oval_sysint *sysint, char *ip_address)
 {
-	if(sysint->ipAddress!=NULL)free(sysint->ipAddress);
-	sysint->ipAddress = (ip_address==NULL)?NULL:strdup(ip_address);
+	if(sysint && !oval_sysint_is_locked(sysint)){
+		if(sysint->ipAddress!=NULL)free(sysint->ipAddress);
+		sysint->ipAddress = (ip_address==NULL)?NULL:strdup(ip_address);
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 char *oval_sysint_get_mac_address(struct oval_sysint *sysint)
@@ -85,16 +90,19 @@ char *oval_sysint_get_mac_address(struct oval_sysint *sysint)
 
 void oval_sysint_set_mac_address(struct oval_sysint *sysint, char *mac_address)
 {
-	if(sysint->macAddress!=NULL)free(sysint->macAddress);
-	sysint->macAddress = (mac_address==NULL)?NULL:strdup(mac_address);
+	if(sysint && !oval_sysint_is_locked(sysint)){
+		if(sysint->macAddress!=NULL)free(sysint->macAddress);
+		sysint->macAddress = (mac_address==NULL)?NULL:strdup(mac_address);
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
-struct oval_sysint *oval_sysint_new()
+struct oval_sysint *oval_sysint_new(struct oval_syschar_model* model)
 {
 	oval_sysint_t *sysint = (oval_sysint_t*)malloc(sizeof(oval_sysint_t));
 	sysint->ipAddress  = NULL;
 	sysint->macAddress = NULL;
 	sysint->name       = NULL;
+	sysint->model = model;
 	return sysint;
 }
 
@@ -104,12 +112,12 @@ bool oval_sysint_is_valid(struct oval_sysint *sysint)
 }
 bool oval_sysint_is_locked(struct oval_sysint *sysint)
 {
-	return false;//TODO
+	return oval_syschar_model_is_locked(sysint->model);
 }
 
-struct oval_sysint *oval_sysint_clone(struct oval_sysint *old_sysint)
+struct oval_sysint *oval_sysint_clone(struct oval_syschar_model *new_model, struct oval_sysint *old_sysint)
 {
-	struct oval_sysint *new_sysint = oval_sysint_new();
+	struct oval_sysint *new_sysint = oval_sysint_new(new_model);
 	char *ip_address = oval_sysint_get_ip_address(old_sysint);
 	if(ip_address){
 		oval_sysint_set_ip_address(new_sysint, ip_address);
@@ -179,7 +187,7 @@ static int _oval_sysint_parse_tag(xmlTextReaderPtr reader,
 
 int oval_sysint_parse_tag(xmlTextReaderPtr reader,
 			       struct oval_parser_context *context, oval_sysint_consumer consumer , void *user){
-	struct oval_sysint *sysint = oval_sysint_new();
+	struct oval_sysint *sysint = oval_sysint_new(context->syschar_model);
 	char *tagname   = (char*) xmlTextReaderName(reader);
 	char *namespace = (char*) xmlTextReaderNamespaceUri(reader);
 	int is_ovalsys = strcmp(namespace,NAMESPACE_OVALSYS)==0;

@@ -373,7 +373,7 @@ struct oval_result_directives *oval_results_model_import
  * Create new OVAL results directives.
  * @ingroup Oval_result_directives
  */
-struct oval_result_directives *oval_result_directives_new(void);
+struct oval_result_directives *oval_result_directives_new(struct oval_results_model *);
 /**
  * return <b>true</b> if the result_directives instance is valid
  * @ingroup oval_result_directives_eval
@@ -610,7 +610,7 @@ void oval_result_directives_set_content (struct oval_result_directives *, oval_r
 /**
  * @ingroup Oval_result_system
  */
-struct oval_result_system *oval_result_system_new(struct oval_syschar_model *);
+struct oval_result_system *oval_result_system_new(struct oval_results_model *, struct oval_syschar_model *);
 /**
  * return <b>true</b> if the result_system instance is valid
  * @ingroup oval_result_system_eval
@@ -625,7 +625,7 @@ bool oval_result_system_is_locked(struct oval_result_system *result_system);
 /**
  * @ingroup Oval_result_system
  */
-struct oval_result_system *oval_result_system_clone(struct oval_result_system *old_system, struct oval_results_model *new_model);
+struct oval_result_system *oval_result_system_clone(struct oval_results_model *new_model, struct oval_result_system *old_system);
 /**
  * @ingroup Oval_result_system
  */
@@ -648,7 +648,8 @@ bool oval_result_definition_is_locked(struct oval_result_definition *result_defi
 /**
  * @ingroup Oval_result_definition
  */
-struct oval_result_definition *oval_result_definition_clone(struct oval_result_definition *old_definition, struct oval_result_system *new_system);
+struct oval_result_definition *oval_result_definition_clone
+(struct oval_result_system *new_system, struct oval_result_definition *old_definition);
 /**
  * @ingroup Oval_result_definition
  */
@@ -671,7 +672,8 @@ bool oval_result_test_is_locked(struct oval_result_test *result_test);
 /**
  * @ingroup Oval_result_test
  */
-struct oval_result_test *oval_result_test_clone(struct oval_result_test *old_test, struct oval_result_system *system);
+struct oval_result_test *oval_result_test_clone
+(struct oval_result_system *new_system, struct oval_result_test *old_test);
 /**
  * @ingroup Oval_result_test
  */
@@ -694,7 +696,8 @@ bool oval_result_item_is_locked(struct oval_result_item *result_item);
 /**
  * @ingroup Oval_result_item
  */
-struct oval_result_item *oval_result_item_clone(struct oval_result_item *old_item, struct oval_result_system *new_system);
+struct oval_result_item *oval_result_item_clone
+(struct oval_result_system *new_system, struct oval_result_item *old_item);
 /**
  * @ingroup Oval_result_item
  */
@@ -730,7 +733,7 @@ void oval_result_test_add_binding(struct oval_result_test *, struct oval_variabl
 /**
  * @ingroup Oval_result_criteria_node
  */
-struct oval_result_criteria_node *oval_result_criteria_node_new(oval_criteria_node_type_t, int, ...);
+struct oval_result_criteria_node *oval_result_criteria_node_new(struct oval_result_system *, oval_criteria_node_type_t, int, ...);
 /**
  * return <b>true</b> if the result_criteria_node instance is valid
  * @ingroup oval_result_criteria_node_eval
@@ -745,7 +748,8 @@ bool oval_result_criteria_node_is_locked(struct oval_result_criteria_node *resul
 /**
  * @ingroup Oval_result_criteria_node
  */
-struct oval_result_criteria_node *oval_result_criteria_node_clone(struct oval_result_criteria_node *old_node, struct oval_result_system *new_system);
+struct oval_result_criteria_node *oval_result_criteria_node_clone
+(struct oval_result_system *new_system, struct oval_result_criteria_node *old_node);
 /**
  * @ingroup Oval_result_criteria_node
  */

@@ -37,6 +37,7 @@
 
 
 typedef struct oval_variable {
+	struct oval_definition_model *model;
 	char *id;
 	char *comment;
 	int version;
@@ -48,6 +49,7 @@ typedef struct oval_variable {
 } oval_variable_t, oval_variable_CONEXT_t;
 
 typedef struct oval_variable_LOCAL {
+	struct oval_definition_model *model;
 	char *id;
 	char *comment;
 	int version;
@@ -156,7 +158,7 @@ struct oval_component *oval_variable_get_component(struct oval_variable *variabl
 }
 
 
-  struct oval_variable *oval_variable_new(char *id, oval_variable_type_t type)
+struct oval_variable *oval_variable_new(struct oval_definition_model *model, char *id, oval_variable_type_t type)
 {
 	oval_variable_t *variable;
 	switch(type){
@@ -196,6 +198,7 @@ struct oval_component *oval_variable_get_component(struct oval_variable *variabl
 		return NULL;
 	}
 
+	variable->model = model;
 	variable->id = strdup(id);
 	variable->comment = NULL;
 	variable->datatype = OVAL_DATATYPE_UNKNOWN;
@@ -209,15 +212,15 @@ return true;//TODO
 }
 bool oval_variable_is_locked(struct oval_variable *variable)
 {
-	return false;//TODO
+	return oval_definition_model_is_locked(variable->model);
 }
 
 struct oval_variable   *oval_variable_clone
-	(struct oval_variable *old_variable, struct oval_definition_model *model)
+	(struct oval_definition_model* new_model, struct oval_variable *old_variable)
 {
-	oval_variable_t *new_variable = oval_definition_model_get_variable(model, old_variable->id);
+	oval_variable_t *new_variable = oval_definition_model_get_variable(new_model, old_variable->id);
 	if(new_variable==NULL){
-		new_variable = oval_variable_new(old_variable->id, old_variable->type);
+		new_variable = oval_variable_new(new_model, old_variable->id, old_variable->type);
 
 		oval_variable_set_comment   (new_variable, old_variable->comment);
 		oval_variable_set_version   (new_variable, old_variable->version);
@@ -238,9 +241,9 @@ struct oval_variable   *oval_variable_clone
 
 		if(new_variable->type==OVAL_VARIABLE_LOCAL){
 			struct oval_component *component = oval_variable_get_component(old_variable);
-			oval_variable_set_component(new_variable, oval_component_clone(component, model));
+			oval_variable_set_component(new_variable, oval_component_clone(new_model, component));
 		}
-		oval_definition_model_add_variable(model, new_variable);
+		oval_definition_model_add_variable(new_model, new_variable);
 	}
 	return new_variable;
 }
@@ -273,69 +276,81 @@ void oval_variable_free(struct oval_variable *variable)
 void oval_variable_set_datatype(struct oval_variable *variable,
 				oval_datatype_t datatype)
 {
-	variable->datatype = datatype;
+        if(variable && !oval_variable_is_locked(variable)){
+                variable->datatype = datatype;
+        }else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 void oval_variable_set_type(struct oval_variable *variable, oval_variable_type_t type)
 {
-	if(variable->type==OVAL_VARIABLE_UNKNOWN){
-		variable->type = type;
-		switch(type){
-		case OVAL_VARIABLE_CONSTANT:
-		case OVAL_VARIABLE_EXTERNAL:
+        if(variable && !oval_variable_is_locked(variable)){
+                if(variable->type==OVAL_VARIABLE_UNKNOWN){
+                        variable->type = type;
+                        switch(type){
+                        case OVAL_VARIABLE_CONSTANT:
+                        case OVAL_VARIABLE_EXTERNAL:
 			{
 				oval_variable_CONEXT_t *conext =
 					(oval_variable_CONEXT_t *)variable;
 				conext->values = oval_collection_new();
 				conext->flag   = SYSCHAR_FLAG_NOT_COLLECTED;
 			}break;
-		case OVAL_VARIABLE_LOCAL:
-		case OVAL_VARIABLE_UNKNOWN:
-			variable->flag = SYSCHAR_FLAG_UNKNOWN;break;
-		}
-	}else if (variable->type != type){
-		fprintf(stderr, "ERROR: attempt to reset valid variable type\n    oldtype = %s\n    newtype = %s\n",
-		oval_variable_type_get_text(variable->type), oval_variable_type_get_text(type));
-	}
+                        case OVAL_VARIABLE_LOCAL:
+                        case OVAL_VARIABLE_UNKNOWN:
+                                variable->flag = SYSCHAR_FLAG_UNKNOWN;break;
+                        }
+                }else if (variable->type != type){
+                        fprintf(stderr, "ERROR: attempt to reset valid variable type\n    oldtype = %s\n    newtype = %s",
+                        oval_variable_type_get_text(variable->type), oval_variable_type_get_text(type));
+                }
+        }else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 void oval_variable_set_comment(struct oval_variable *variable, char *comm)
 {
-	if(variable->comment!=NULL)free(variable->comment);
-	variable->comment = comm==NULL?NULL:strdup(comm);
+        if(variable && !oval_variable_is_locked(variable)){
+                if(variable->comment!=NULL)free(variable->comment);
+                variable->comment = comm==NULL?NULL:strdup(comm);
+        }else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 void oval_variable_set_deprecated(struct oval_variable *variable,
 				  bool deprecated)
 {
-	variable->deprecated = deprecated;
+        if(variable && !oval_variable_is_locked(variable)){
+                variable->deprecated = deprecated;
+        }else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 void oval_variable_set_version(struct oval_variable *variable, int version)
 {
-	variable->version = version;
+        if(variable && !oval_variable_is_locked(variable)){
+                variable->version = version;
+        }else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 void oval_variable_add_value(struct oval_variable *variable,
 			      struct oval_value *value)
 {
-	//type==OVAL_VARIABLE_CONSTANT
-	if (variable->type == OVAL_VARIABLE_CONSTANT || variable->type == OVAL_VARIABLE_EXTERNAL) {
-		char *text = oval_value_get_text(value);
-		oval_collection_add(variable->values, value);
-		variable->flag = SYSCHAR_FLAG_COMPLETE;
-	}
+        if(variable && !oval_variable_is_locked(variable)){
+                if (variable->type == OVAL_VARIABLE_CONSTANT || variable->type == OVAL_VARIABLE_EXTERNAL) {
+                        char *text = oval_value_get_text(value);
+                        oval_collection_add(variable->values, value);
+                        variable->flag = SYSCHAR_FLAG_COMPLETE;
+                }
+        }else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 void oval_variable_set_component(struct oval_variable *variable,
 				 struct oval_component *component)
 {
-	//type==OVAL_VARIABLE_LOCAL
-	if (variable->type == OVAL_VARIABLE_LOCAL) {
-		oval_variable_LOCAL_t *local =
-		    (oval_variable_LOCAL_t *) variable;
-		local->component = component;
-	}
+        if(variable && !oval_variable_is_locked(variable)){
+                if (variable->type == OVAL_VARIABLE_LOCAL) {
+                        oval_variable_LOCAL_t *local =
+                                (oval_variable_LOCAL_t *) variable;
+                        local->component = component;
+                }
+        }else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 static void _oval_variable_parse_local_tag_component_consumer(struct oval_component *component, void *variable) {
@@ -372,7 +387,6 @@ static int _oval_variable_parse_constant_tag(xmlTextReaderPtr reader,
 					     struct oval_parser_context *context,
 					     struct oval_variable *variable)
 {
-	fprintf(stderr,"DEBUG:: %s(%d)\n", __FILE__, __LINE__);
 	char *text_value = NULL;
 	xmlChar *tagname = xmlTextReaderName(reader);
 	xmlChar *namespace = xmlTextReaderNamespaceUri(reader);
@@ -396,7 +410,6 @@ static int _oval_variable_parse_constant_tag(xmlTextReaderPtr reader,
 int oval_variable_parse_tag(xmlTextReaderPtr reader,
 			    struct oval_parser_context *context)
 {
-	fprintf(stderr,"DEBUG:: %s(%d)\n", __FILE__, __LINE__);
 	struct oval_definition_model *model = oval_parser_context_model(context);
 	char *tagname = (char*) xmlTextReaderName(reader);
 	oval_variable_type_t type;
@@ -557,7 +570,6 @@ static xmlNode *_oval_VARIABLE_LOCAL_to_dom
 
 xmlNode *oval_variable_to_dom (struct oval_variable *variable, xmlDoc *doc, xmlNode *parent)
 {
-	fprintf(stderr,"DEBUG:: %s(%d)\n", __FILE__, __LINE__);
 	xmlNode *variable_node = NULL;
 	switch(oval_variable_get_type(variable))
 	{

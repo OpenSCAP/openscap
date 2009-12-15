@@ -52,7 +52,7 @@ int main(int argc, char **argv)
 	SEXP_printfa(probe_out);
 	printf("\n\n");
 
-	struct oval_syschar* syschar = oval_syschar_new(NULL);
+	struct oval_syschar* syschar = oval_syschar_new(NULL, NULL);//NOTE NEW API FOR oval_syschar_new
 
 	oval_syschar_apply_sexp(syschar, probe_out, NULL);
 

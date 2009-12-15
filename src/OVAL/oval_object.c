@@ -35,6 +35,7 @@
 #include "oval_agent_api_impl.h"
 
 typedef struct oval_object {
+	struct oval_definition_model *model;
 	oval_subtype_t subtype;
 	struct oval_collection *notes;
 	char *comment;
@@ -118,7 +119,7 @@ struct oval_behavior_iterator *oval_object_get_behaviors(struct oval_object *obj
 	    oval_collection_iterator(object->behaviors);
 }
 
-struct oval_object *oval_object_new(char *id)
+struct oval_object *oval_object_new(struct oval_definition_model* model, char *id)
 {
 	oval_object_t *object = (oval_object_t *) malloc(sizeof(oval_object_t));
 	object->comment = NULL;
@@ -129,6 +130,7 @@ struct oval_object *oval_object_new(char *id)
 	object->behaviors = oval_collection_new();
 	object->notes = oval_collection_new();
 	object->object_content = oval_collection_new();
+	object->model = model;
 	return object;
 }
 
@@ -138,15 +140,15 @@ bool oval_object_is_valid(struct oval_object *object)
 }
 bool oval_object_is_locked(struct oval_object *object)
 {
-	return false;//TODO
+	return oval_definition_model_is_locked(object->model);
 }
 
 struct oval_object *oval_object_clone
-	(struct oval_object *old_object, struct oval_definition_model *model)
+	(struct oval_definition_model *new_model, struct oval_object *old_object)
 {
-	struct oval_object *new_object = oval_definition_model_get_object(model, old_object->id);
+	struct oval_object *new_object = oval_definition_model_get_object(new_model, old_object->id);
 	if(new_object==NULL){
-		new_object = oval_object_new(old_object->id);
+		new_object = oval_object_new(new_model, old_object->id);
 		oval_object_set_comment   (new_object, old_object->comment);
 		oval_object_set_subtype   (new_object, old_object->subtype);
 		oval_object_set_deprecated(new_object, old_object->deprecated);
@@ -155,7 +157,7 @@ struct oval_object *oval_object_clone
 		struct oval_behavior_iterator *behaviors = oval_object_get_behaviors(old_object);
 		while(oval_behavior_iterator_has_more(behaviors)){
 			struct oval_behavior *behavior = oval_behavior_iterator_next(behaviors);
-			oval_object_add_behavior(new_object, oval_behavior_clone(behavior));
+			oval_object_add_behavior(new_object, oval_behavior_clone(new_model, behavior));
 		}
 		oval_behavior_iterator_free(behaviors);
 		struct oval_string_iterator *notes = oval_object_get_notes(old_object);
@@ -167,11 +169,11 @@ struct oval_object *oval_object_clone
 		struct oval_object_content_iterator *object_contents = oval_object_get_object_contents(old_object);
 		while(oval_object_content_iterator_has_more(object_contents)){
 			struct oval_object_content *object_content = oval_object_content_iterator_next(object_contents);
-			oval_object_add_object_content(new_object, oval_object_content_clone(object_content, model));
+			oval_object_add_object_content(new_object, oval_object_content_clone(new_model, object_content));
 		}
 		oval_object_content_iterator_free(object_contents);
 
-		oval_definition_model_add_object(model, new_object);
+		oval_definition_model_add_object(new_model, new_object);
 	}
 	return new_object;
 }
@@ -197,40 +199,54 @@ void oval_object_free(struct oval_object *object)
 void oval_object_set_subtype(struct oval_object *object,
 			     oval_subtype_t subtype)
 {
-	object->subtype = subtype;
+	if(object && !oval_object_is_locked(object)){
+		object->subtype = subtype;
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 void oval_object_add_note(struct oval_object *object, char *note)
 {
-	oval_collection_add(object->notes, (void *)strdup(note));
+	if(object && !oval_object_is_locked(object)){
+		oval_collection_add(object->notes, (void *)strdup(note));
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 void oval_object_set_comment(struct oval_object *object, char *comm)
 {
-	if(object->comment!=NULL)free(object->comment);
-	object->comment = comm==NULL?NULL:strdup(comm);
+	if(object && !oval_object_is_locked(object)){
+		if(object->comment!=NULL)free(object->comment);
+		object->comment = comm==NULL?NULL:strdup(comm);
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 void oval_object_set_deprecated(struct oval_object *object, bool deprecated)
 {
-	object->deprecated = deprecated;
+	if(object && !oval_object_is_locked(object)){
+		object->deprecated = deprecated;
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 void oval_object_set_version(struct oval_object *object, int version)
 {
-	object->version = version;
+	if(object && !oval_object_is_locked(object)){
+		object->version = version;
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 void oval_object_add_object_content(struct oval_object *object,
 				    struct oval_object_content *content)
 {
-	oval_collection_add(object->object_content, (void *)content);
+	if(object && !oval_object_is_locked(object)){
+		oval_collection_add(object->object_content, (void *)content);
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 void oval_object_add_behavior(struct oval_object *object,
 			       struct oval_behavior *behavior)
 {
-	oval_collection_add(object->behaviors, (void *)behavior);
+	if(object && !oval_object_is_locked(object)){
+		oval_collection_add(object->behaviors, (void *)behavior);
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 static void oval_note_consume(char *text, void *object) {

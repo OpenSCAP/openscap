@@ -79,7 +79,7 @@ int main(int argc, char **argv)
 			syschar = oval_probe_object_eval(pctx, object);
 
 			if (syschar == NULL) {
-				syschar = oval_syschar_new(object);
+				syschar = oval_syschar_new(syschar_model, object);
 				oval_syschar_set_flag(syschar, SYSCHAR_FLAG_NOT_COLLECTED);
 			}
 

@@ -37,6 +37,7 @@
 #include "../common/util.h"
 
 typedef struct oval_affected {
+	struct oval_definition_model *model;
 	oval_affected_family_t family;
 	struct oval_collection *platforms;
 	struct oval_collection *products;
@@ -80,10 +81,11 @@ struct oval_string_iterator *oval_affected_get_products(struct oval_affected
 	    oval_collection_iterator(affected->products);
 }
 
-struct oval_affected *oval_affected_new()
+struct oval_affected *oval_affected_new(struct oval_definition_model* model)
 {
 	struct oval_affected *affected =
 	    (struct oval_affected *)malloc(sizeof(oval_affected_t));
+	affected->model = model;
 	affected->family = OVAL_AFCFML_UNKNOWN;
 	affected->platforms = oval_collection_new();
 	affected->products = oval_collection_new();
@@ -96,12 +98,12 @@ bool oval_affected_is_valid(struct oval_affected *affected)
 }
 bool oval_affected_is_locked(struct oval_affected *affected)
 {
-	return false;//TODO
+	return oval_definition_model_is_locked(affected->model);
 }
 
-struct oval_affected *oval_affected_clone(struct oval_affected *old_affected)
+struct oval_affected *oval_affected_clone(struct oval_definition_model *new_model, struct oval_affected *old_affected)
 {
-	struct oval_affected *new_affected = oval_affected_new();
+	struct oval_affected *new_affected = oval_affected_new(new_model);
 
 	oval_affected_set_family(new_affected, old_affected->family);
 
@@ -133,31 +135,25 @@ void oval_affected_free(struct oval_affected *affected)
 void oval_affected_set_family(struct oval_affected *affected,
 			      oval_affected_family_t family)
 {
-	affected->family = family;
+
+	if(!oval_affected_is_locked(affected)){
+		affected->family = family;
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 void oval_affected_add_platform(struct oval_affected *affected, char *platform)
 {
-	oval_collection_add(affected->platforms, (void *)strdup(platform));
+	if(affected && !oval_affected_is_locked(affected)){
+		oval_collection_add(affected->platforms, (void *)strdup(platform));
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 void oval_affected_add_product(struct oval_affected *affected, char *product)
 {
-	oval_collection_add(affected->products, (void *)strdup(product));
+	if(affected && !oval_affected_is_locked(affected)){
+		oval_collection_add(affected->products, (void *)strdup(product));
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
-
-/*
-struct oval_string_map *_odafamilyMap = NULL;
-typedef struct _odafamily {
-	int value;
-} _odafamily_t;
-void _odafamily_set(char *name, int val)
-{
-	_odafamily_t *enumval = (_odafamily_t *) malloc(sizeof(_odafamily_t));
-	enumval->value = val;
-	oval_string_map_put(_odafamilyMap, name, (void *)enumval);
-}
-*/
 
 static const struct oscap_string_map OVAL_ODAFAMILY_MAP[] = {
 	{ OVAL_AFCFML_CATOS,     "catos"     },
@@ -218,7 +214,7 @@ int oval_affected_parse_tag(xmlTextReaderPtr reader,
 			    struct oval_parser_context *context,
 			    oval_affected_consumer consumer, void *user)
 {
-	struct oval_affected *affected = oval_affected_new();
+	struct oval_affected *affected = oval_affected_new(context->definition_model);
 	//xmlChar *tagname = xmlTextReaderName(reader);
 	//xmlChar *namespace = xmlTextReaderNamespaceUri(reader);
 	char *family = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "family");

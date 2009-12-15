@@ -237,7 +237,7 @@ int oval_pctx_setattr (oval_pctx_t *ctx, uint32_t attr, ...)
                 ctx->p_dir = strdup (va_arg (ap, const char *));
                 break;
         case OVAL_PCTX_ATTR_MODEL:
-                ctx->model = va_arg (ap, struct oval_syschar_model *);
+                ctx->sys = va_arg (ap, struct oval_syschar_model *);
                 break;
         default:
                 return (-1);
@@ -474,7 +474,8 @@ struct oval_syschar *oval_probe_object_eval (oval_pctx_t *ctx, struct oval_objec
          * Convert the received S-exp to OVAL system characteristic.
          */
         
-        o_sysc = oval_sexp2sysch (s_sysc, object);
+        struct oval_syschar_model *model = ctx->model;
+        o_sysc = oval_sexp2sysch (s_sysc, model, object);
         
         SEXP_free (s_sysc);
         SEXP_free (s_obj);

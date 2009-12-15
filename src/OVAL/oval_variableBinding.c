@@ -100,7 +100,7 @@ struct oval_variable_binding *oval_variable_binding_clone(struct oval_variable_b
 	struct oval_variable *old_variable = oval_variable_binding_get_variable(old_binding);
 	char *varid = oval_variable_get_id(old_variable);
 	struct oval_variable *new_variable = oval_definition_model_get_variable(def_model, varid);
-	if(new_variable==NULL)oval_variable_clone(old_variable, def_model);
+	if(new_variable==NULL)oval_variable_clone(def_model, old_variable);
 
 	char *old_value = oval_variable_binding_get_value(old_binding);
 	char *new_value = (old_value)?strdup(old_value):NULL;

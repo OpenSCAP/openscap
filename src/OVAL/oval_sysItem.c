@@ -37,6 +37,7 @@
 static int DEBUG_OVAL_SYSITEM = 0;
 
 typedef struct oval_sysitem {
+	struct oval_syschar_model *model;
 	char*              name;
 	char*              value;
 	int                mask;
@@ -44,7 +45,7 @@ typedef struct oval_sysitem {
 	oval_syschar_status_t status;
 } oval_sysitem_t;
 
-struct oval_sysitem *oval_sysitem_new()
+struct oval_sysitem *oval_sysitem_new(struct oval_syschar_model* model)
 {
 	oval_sysitem_t *sysitem = (oval_sysitem_t*)malloc(sizeof(oval_sysitem_t));
 	sysitem->name              = NULL;
@@ -52,6 +53,7 @@ struct oval_sysitem *oval_sysitem_new()
 	sysitem->status            = SYSCHAR_STATUS_UNKNOWN;
 	sysitem->datatype          = OVAL_DATATYPE_UNKNOWN;
 	sysitem->mask              = 0;
+	sysitem->model = model;
 	return sysitem;
 }
 
@@ -61,12 +63,12 @@ bool oval_sysitem_is_valid(struct oval_sysitem *sysitem)
 }
 bool oval_sysitem_is_locked(struct oval_sysitem *sysitem)
 {
-	return false;//TODO
+	return oval_syschar_model_is_locked(sysitem->model);
 }
 
-struct oval_sysitem *oval_sysitem_clone(struct oval_sysitem *old_item)
+struct oval_sysitem *oval_sysitem_clone(struct oval_syschar_model *new_model, struct oval_sysitem *old_item)
 {
-	struct oval_sysitem *new_item = oval_sysitem_new();
+	struct oval_sysitem *new_item = oval_sysitem_new(new_model);
 
 
 	char *old_value = oval_sysitem_get_value(old_item);
@@ -127,25 +129,35 @@ int oval_sysitem_get_mask(struct oval_sysitem *sysitem)
 
 void oval_sysitem_set_name(struct oval_sysitem *sysitem, char *name)
 {
-	if(sysitem->name!=NULL)free(sysitem->name);
-	sysitem->name = name==NULL?NULL:strdup(name);
+	if(sysitem && !oval_sysitem_is_locked(sysitem)){
+		if(sysitem->name!=NULL)free(sysitem->name);
+		sysitem->name = name==NULL?NULL:strdup(name);
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 void oval_sysitem_set_status(struct oval_sysitem *sysitem, oval_syschar_status_t status)
 {
-	sysitem->status = status;
+	if(sysitem && !oval_sysitem_is_locked(sysitem)){
+		sysitem->status = status;
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 void oval_sysitem_set_datatype(struct oval_sysitem *sysitem, oval_datatype_t datatype)
 {
-	sysitem->datatype = datatype;
+	if(sysitem && !oval_sysitem_is_locked(sysitem)){
+		sysitem->datatype = datatype;
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 void oval_sysitem_set_mask(struct oval_sysitem *sysitem, int mask)
 {
-	sysitem->mask = mask;
+	if(sysitem && !oval_sysitem_is_locked(sysitem)){
+		sysitem->mask = mask;
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 void oval_sysitem_set_value(struct oval_sysitem *sysitem, char *value)
 {
-	if(sysitem->value!=NULL)free(sysitem->value);
-	sysitem->value = value==NULL?NULL:strdup(value);
+	if(sysitem && !oval_sysitem_is_locked(sysitem)){
+		if(sysitem->value!=NULL)free(sysitem->value);
+		sysitem->value = value==NULL?NULL:strdup(value);
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 static void oval_sysitem_value_consumer_(char* value, void* sysitem){
@@ -165,7 +177,7 @@ int oval_sysitem_parse_tag(xmlTextReaderPtr reader,
 	int return_code = 1;
 	char *tagname   = (char*) xmlTextReaderName(reader);
 	if(strcmp("#text", tagname)){
-		struct oval_sysitem *sysitem = oval_sysitem_new();
+		struct oval_sysitem *sysitem = oval_sysitem_new(context->syschar_model);
 		{//sysitem->name
 			oval_sysitem_set_name(sysitem, tagname);
 		}

@@ -34,6 +34,7 @@
 #include "oval_collection_impl.h"
 
 typedef struct oval_reference {
+	struct oval_definition_model *model;
 	char *source;
 	char *id;
 	char *url;
@@ -76,13 +77,14 @@ char *oval_reference_get_url(struct oval_reference *ref)
 	return ((struct oval_reference *)ref)->url;
 }
 
-struct oval_reference *oval_reference_new()
+struct oval_reference *oval_reference_new(struct oval_definition_model* model)
 {
 	struct oval_reference *ref =
 	    (struct oval_reference *)malloc(sizeof(oval_reference_t));
 	ref->id = NULL;
 	ref->source = NULL;
 	ref->url = NULL;
+	ref->model = model;
 	return ref;
 }
 
@@ -92,13 +94,13 @@ bool oval_reference_is_valid(struct oval_reference *reference)
 }
 bool oval_reference_is_locked(struct oval_reference *reference)
 {
-	return false;//TODO
+	return oval_definition_model_is_locked(reference->model);
 }
 
 struct oval_reference *oval_reference_clone
-	(struct oval_reference *old_reference)
+	(struct oval_definition_model *new_model, struct oval_reference *old_reference)
 {
-	struct oval_reference *new_reference = oval_reference_new();
+	struct oval_reference *new_reference = oval_reference_new(new_model);
 	char *id = oval_reference_get_id(old_reference);
 	oval_reference_set_id(new_reference, id);
 	char *source = oval_reference_get_source(old_reference);
@@ -124,23 +126,29 @@ void oval_reference_free(struct oval_reference *ref)
 
 void oval_reference_set_source(struct oval_reference *ref, char *source)
 {
-	if(ref->source != NULL)
-	  free(ref->source);
-	ref->source = source == NULL ? NULL : strdup(source);
+        if(ref && !oval_reference_is_locked(ref)){
+                if(ref->source!=NULL)
+                        free(ref->source);
+                ref->source = source==NULL ? NULL : strdup(source);
+        }else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 void oval_reference_set_id(struct oval_reference *ref, char *id)
 {
-	if(ref->id != NULL)
-	  free(ref->id);
-	ref->id = id == NULL ? NULL : strdup(id);
+        if(ref && !oval_reference_is_locked(ref)){
+                if(ref->id!=NULL)
+                        free(ref->id);
+                ref->id = id==NULL ? NULL : strdup(id);
+        }else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 void oval_reference_set_url(struct oval_reference *ref, char *url)
 {
-	if(ref->url != NULL) 
-	  free(ref->url);
-	ref->url = url == NULL ? NULL : strdup(url);
+        if(ref && !oval_reference_is_locked(ref)){
+                if(ref->url!=NULL)
+                        free(ref->url);
+                ref->url = url==NULL ? NULL : strdup(url);
+        }else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 //typedef void (*oval_reference_consumer)(struct oval_reference*, void*);
@@ -148,7 +156,7 @@ int oval_reference_parse_tag(xmlTextReaderPtr reader,
 			     struct oval_parser_context *context,
 			     oval_reference_consumer consumer, void *user)
 {
-	struct oval_reference *ref = oval_reference_new();
+	struct oval_reference *ref = oval_reference_new(context->definition_model);
 	char *ref_id = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "ref_id");
 	if(ref_id!=NULL){
 		oval_reference_set_id(ref, ref_id);

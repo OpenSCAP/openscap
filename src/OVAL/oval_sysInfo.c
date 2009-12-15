@@ -35,6 +35,7 @@
 #include "oval_agent_api_impl.h"
 
 typedef struct oval_sysinfo {
+	struct oval_syschar_model *model;
 	char *osName;
 	char *osVersion;
 	char *osArchitecture;
@@ -42,7 +43,7 @@ typedef struct oval_sysinfo {
 	struct oval_collection *interfaces;
 } oval_sysinfo_t;
 
-struct oval_sysinfo *oval_sysinfo_new()
+struct oval_sysinfo *oval_sysinfo_new(struct oval_syschar_model* model)
 {
 	oval_sysinfo_t *sysinfo = (oval_sysinfo_t*)malloc(sizeof(oval_sysinfo_t));
 	sysinfo->osArchitecture  = NULL;
@@ -50,6 +51,7 @@ struct oval_sysinfo *oval_sysinfo_new()
 	sysinfo->osVersion       = NULL;
 	sysinfo->primaryHostName = NULL;
 	sysinfo->interfaces      = oval_collection_new();
+	sysinfo->model = model;
 	return sysinfo;
 }
 
@@ -59,12 +61,12 @@ bool oval_sysinfo_is_valid(struct oval_sysinfo *sysinfo)
 }
 bool oval_sysinfo_is_locked(struct oval_sysinfo *sysinfo)
 {
-	return false;//TODO
+	return oval_syschar_model_is_locked(sysinfo->model);
 }
 
-struct oval_sysinfo *oval_sysinfo_clone(struct oval_sysinfo *old_sysinfo)
+struct oval_sysinfo *oval_sysinfo_clone(struct oval_syschar_model *new_model, struct oval_sysinfo *old_sysinfo)
 {
-	struct oval_sysinfo *new_sysinfo = oval_sysinfo_new();
+	struct oval_sysinfo *new_sysinfo = oval_sysinfo_new(new_model);
 	struct oval_sysint_iterator *interfaces = oval_sysinfo_get_interfaces(old_sysinfo);
 	while(oval_sysint_iterator_has_more(interfaces)){
 		struct oval_sysint *interface = oval_sysint_iterator_next(interfaces);
@@ -135,8 +137,10 @@ char *oval_sysinfo_get_os_name(struct oval_sysinfo *sysinfo)
 
 void oval_sysinfo_set_os_name(struct oval_sysinfo *sysinfo, char *osName)
 {
-	if(sysinfo->osName!=NULL)free(sysinfo->osName);
-	sysinfo->osName = osName==NULL?NULL:strdup(osName);
+	if(sysinfo && !oval_sysinfo_is_locked(sysinfo)){
+		if(sysinfo->osName!=NULL)free(sysinfo->osName);
+		sysinfo->osName = osName==NULL?NULL:strdup(osName);
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 char *oval_sysinfo_get_os_version(struct oval_sysinfo *sysinfo)
@@ -146,8 +150,10 @@ char *oval_sysinfo_get_os_version(struct oval_sysinfo *sysinfo)
 
 void oval_sysinfo_set_os_version(struct oval_sysinfo *sysinfo, char *osVersion)
 {
-	if(sysinfo->osVersion!=NULL)free(sysinfo->osVersion);
-	sysinfo->osVersion = osVersion==NULL?NULL:strdup(osVersion);
+	if(sysinfo && !oval_sysinfo_is_locked(sysinfo)){
+		if(sysinfo->osVersion!=NULL)free(sysinfo->osVersion);
+		sysinfo->osVersion = osVersion==NULL?NULL:strdup(osVersion);
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 char *oval_sysinfo_get_os_architecture(struct oval_sysinfo *sysinfo)
@@ -157,8 +163,10 @@ char *oval_sysinfo_get_os_architecture(struct oval_sysinfo *sysinfo)
 
 void oval_sysinfo_set_os_architecture(struct oval_sysinfo *sysinfo, char *osArchitecture)
 {
-	if(sysinfo->osArchitecture!=NULL)free(sysinfo->osArchitecture);
-	sysinfo->osArchitecture = osArchitecture==NULL?NULL:strdup(osArchitecture);
+	if(sysinfo && !oval_sysinfo_is_locked(sysinfo)){
+		if(sysinfo->osArchitecture!=NULL)free(sysinfo->osArchitecture);
+		sysinfo->osArchitecture = osArchitecture==NULL?NULL:strdup(osArchitecture);
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 char *oval_sysinfo_get_primary_host_name(struct oval_sysinfo *sysinfo)
@@ -168,8 +176,10 @@ char *oval_sysinfo_get_primary_host_name(struct oval_sysinfo *sysinfo)
 
 void oval_sysinfo_set_primary_host_name(struct oval_sysinfo *sysinfo, char *primaryHostName)
 {
-	if(sysinfo->primaryHostName!=NULL)free(sysinfo->primaryHostName);
-	sysinfo->primaryHostName = primaryHostName==NULL?NULL:strdup(primaryHostName);
+	if(sysinfo && !oval_sysinfo_is_locked(sysinfo)){
+		if(sysinfo->primaryHostName!=NULL)free(sysinfo->primaryHostName);
+		sysinfo->primaryHostName = primaryHostName==NULL?NULL:strdup(primaryHostName);
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 struct oval_sysint_iterator *oval_sysinfo_get_interfaces(struct oval_sysinfo
@@ -181,7 +191,9 @@ struct oval_sysint_iterator *oval_sysinfo_get_interfaces(struct oval_sysinfo
 
 void oval_sysinfo_add_interface(struct oval_sysinfo *sysinfo, struct oval_sysint *interface)
 {
-	oval_collection_add(sysinfo->interfaces, oval_sysint_clone(interface));
+	if(sysinfo && !oval_sysinfo_is_locked(sysinfo)){
+		oval_collection_add(sysinfo->interfaces, oval_sysint_clone(sysinfo->model, interface));
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 		static void _oval_sysinfo_parse_tag_consume_os_name(char* text, void* sysinfo)
@@ -245,7 +257,7 @@ static int _oval_sysinfo_parse_tag(xmlTextReaderPtr reader,
 int oval_sysinfo_parse_tag(xmlTextReaderPtr reader,
 			       struct oval_parser_context *context)
 {
-	oval_sysinfo_t *sysinfo = oval_sysinfo_new();
+	oval_sysinfo_t *sysinfo = oval_sysinfo_new(context->syschar_model);
 	char *tagname   = (char*) xmlTextReaderName(reader);
 	char *namespace = (char*) xmlTextReaderNamespaceUri(reader);
 	int is_ovalsys = strcmp(namespace,NAMESPACE_OVALSYS)==0;

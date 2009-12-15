@@ -35,6 +35,7 @@
 #include "oval_agent_api_impl.h"
 
 struct oval_entity {
+	struct oval_definition_model *model;
 	oval_entity_type_t type;
 	oval_datatype_t datatype;
 	oval_operation_t operation;
@@ -105,7 +106,7 @@ struct oval_value *oval_entity_get_value(struct oval_entity *entity)
 	return entity->value;
 }
 
-struct oval_entity *oval_entity_new()
+struct oval_entity *oval_entity_new(struct oval_definition_model* model)
 {
 	struct oval_entity *entity =
 	    (struct oval_entity *)malloc(sizeof(struct oval_entity));
@@ -116,6 +117,7 @@ struct oval_entity *oval_entity_new()
 	entity->name = NULL;
 	entity->value = NULL;
 	entity->variable = NULL;
+	entity->model = model;
 	return entity;
 }
 
@@ -125,13 +127,13 @@ bool oval_entity_is_valid(struct oval_entity *entity)
 }
 bool oval_entity_is_locked(struct oval_entity *entity)
 {
-	return false;//TODO
+	return oval_definition_model_is_locked(entity->model);
 }
 
 struct oval_entity *oval_entity_clone
-	(struct oval_entity *old_entity, struct oval_definition_model *model)
+	(struct oval_definition_model *new_model, struct oval_entity *old_entity)
 {
-	struct oval_entity *new_entity = oval_entity_new();
+	struct oval_entity *new_entity = oval_entity_new(new_model);
 	oval_datatype_t datatype = oval_entity_get_datatype(old_entity);
 	oval_entity_set_datatype(new_entity, datatype);
 	int mask = oval_entity_get_mask(old_entity);
@@ -146,7 +148,7 @@ struct oval_entity *oval_entity_clone
 	oval_entity_set_value(new_entity, oval_value_clone(value));
 	struct oval_variable *old_variable = oval_entity_get_variable(old_entity);
 	if(old_variable){
-		struct oval_variable *new_variable = oval_variable_clone(old_variable, model);
+		struct oval_variable *new_variable = oval_variable_clone(new_model, old_variable);
 		oval_entity_set_variable(new_entity, new_variable);
 	}
 	oval_entity_varref_type_t reftype = oval_entity_get_varref_type(old_entity);
@@ -171,47 +173,63 @@ void oval_entity_free(struct oval_entity *entity)
 void oval_entity_set_type(struct oval_entity *entity,
 			  oval_entity_type_t type)
 {
-	entity->type = type;
+	if(entity && !oval_entity_is_locked(entity)){
+		entity->type = type;
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 void oval_entity_set_datatype(struct oval_entity *entity,
 			      oval_datatype_t datatype)
 {
-	entity->datatype = datatype;
+	if(entity && !oval_entity_is_locked(entity)){
+		entity->datatype = datatype;
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 void oval_entity_set_operation(struct oval_entity *entity,
 			       oval_operation_t operation)
 {
-	entity->operation = operation;
+	if(entity && !oval_entity_is_locked(entity)){
+		entity->operation = operation;
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 void oval_entity_set_mask(struct oval_entity *entity, int mask)
 {
-	entity->mask = mask;
+	if(entity && !oval_entity_is_locked(entity)){
+		entity->mask = mask;
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 void oval_entity_set_varref_type(struct oval_entity *entity,
 				 oval_entity_varref_type_t type)
 {
-	entity->varref_type = type;
+	if(entity && !oval_entity_is_locked(entity)){
+		entity->varref_type = type;
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 void oval_entity_set_variable(struct oval_entity *entity,
 			      struct oval_variable *variable)
 {
-	entity->variable = variable;
+	if(entity && !oval_entity_is_locked(entity)){
+		entity->variable = variable;
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 void oval_entity_set_value(struct oval_entity *entity, struct oval_value *value)
 {
-	entity->value = value;
+	if(entity && !oval_entity_is_locked(entity)){
+		entity->value = value;
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 void oval_entity_set_name(struct oval_entity *entity, char *name)
 {
-	if(entity->name!=NULL)free(entity->name);
-	entity->name = name==NULL?NULL:strdup(name);
+	if(entity && !oval_entity_is_locked(entity)){
+		if(entity->name!=NULL)free(entity->name);
+		entity->name = name==NULL?NULL:strdup(name);
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 struct oval_consume_varref_context {
@@ -231,7 +249,7 @@ int oval_entity_parse_tag(xmlTextReaderPtr reader,
 			  struct oval_parser_context *context,
 			  oscap_consumer_func consumer, void *user)
 {
-	struct oval_entity *entity = oval_entity_new();
+	struct oval_entity *entity = oval_entity_new(context->definition_model);
 	int return_code;
 	oval_datatype_t datatype =
 	    oval_datatype_parse(reader, "datatype", OVAL_DATATYPE_STRING);

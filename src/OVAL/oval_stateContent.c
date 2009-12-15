@@ -35,6 +35,7 @@
 #include "oval_agent_api_impl.h"
 
 typedef struct oval_state_content {
+	struct oval_definition_model *model;
 	struct oval_entity *entity;
 	oval_check_t     ent_check;
 	oval_check_t     var_check;
@@ -82,13 +83,14 @@ oval_check_t oval_state_content_get_ent_check(struct oval_state_content *
 	return content->ent_check;
 }
 
-struct oval_state_content *oval_state_content_new()
+struct oval_state_content *oval_state_content_new(struct oval_definition_model* model)
 {
 	oval_state_content_t *content = (oval_state_content_t *)
 		malloc(sizeof(oval_state_content_t));
 	content->entity = NULL;
 	content->ent_check = OVAL_CHECK_UNKNOWN;
 	content->var_check = OVAL_CHECK_UNKNOWN;
+	content->model = model;
 	return content;
 }
 
@@ -98,17 +100,17 @@ bool oval_state_content_is_valid(struct oval_state_content *state_content)
 }
 bool oval_state_content_is_locked(struct oval_state_content *state_content)
 {
-	return false;//TODO
+	return oval_definition_model_is_locked(state_content->model);
 }
 
 struct oval_state_content *oval_state_content_clone
-	(struct oval_state_content *old_content, struct oval_definition_model *model)
+	(struct oval_definition_model *new_model, struct oval_state_content *old_content)
 {
-	struct oval_state_content *new_content = oval_state_content_new();
+	struct oval_state_content *new_content = oval_state_content_new(new_model);
 	oval_check_t echeck = oval_state_content_get_ent_check(old_content);
 	oval_state_content_set_entcheck(new_content, echeck);
 	struct oval_entity *entity = oval_state_content_get_entity(old_content);
-	oval_state_content_set_entity(new_content, oval_entity_clone(entity, model));
+	oval_state_content_set_entity(new_content, oval_entity_clone(new_model, entity));
 	oval_check_t vcheck = oval_state_content_get_var_check(old_content);
 	oval_state_content_set_varcheck(new_content, vcheck);
 	return new_content;
@@ -122,18 +124,24 @@ void oval_state_content_free(struct oval_state_content *content)
 
 void oval_state_content_set_entity(struct oval_state_content *content, struct oval_entity *entity)
 {
-	if(content->entity)oval_entity_free(content->entity);
-	content->entity = entity;
+	if(content && !oval_state_content_is_locked(content)){
+		if(content->entity)oval_entity_free(content->entity);
+		content->entity = entity;
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 void oval_state_content_set_varcheck(struct oval_state_content *content, oval_check_t check)
 {
-	content->var_check = check;
+	if(content && !oval_state_content_is_locked(content)){
+		content->var_check = check;
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 void oval_state_content_set_entcheck(struct oval_state_content *content, oval_check_t check)
 {
-	content->ent_check = check;
+	if(content && !oval_state_content_is_locked(content)){
+		content->ent_check = check;
+	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 static void _oval_state_content_entity_consumer
@@ -146,7 +154,7 @@ int oval_state_content_parse_tag(xmlTextReaderPtr reader,
 				  void *user)
 {
 
-	struct oval_state_content *content = oval_state_content_new();
+	struct oval_state_content *content = oval_state_content_new(context->definition_model);
 	int retcode = oval_entity_parse_tag
 		(reader, context, (oscap_consumer_func)_oval_state_content_entity_consumer, content);
 

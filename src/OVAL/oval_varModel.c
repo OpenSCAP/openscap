@@ -53,16 +53,21 @@ _oval_variable_model_frame_t *_oval_variable_model_frame_new
 	return frame;
 }
 
+typedef struct oval_variable_model {
+	struct oval_string_map *varmap;
+	bool is_locked;
+} oval_variable_model_t;
+
 bool oval_variable_model_is_valid(struct oval_variable_model *variable_model)
 {
 	return true;//TODO
 }
 bool oval_variable_model_is_locked(struct oval_variable_model *variable_model)
 {
-	return false;//TODO
+	return variable_model->is_locked;
 }
 void oval_variable_model_lock(struct oval_variable_model *variable_model){
-	//TODO
+	variable_model->is_locked = true;
 }
 
 void _oval_variable_model_frame_free(_oval_variable_model_frame_t *frame)
@@ -80,14 +85,11 @@ void _oval_variable_model_frame_free(_oval_variable_model_frame_t *frame)
 }
 
 
-typedef struct oval_variable_model {
-	struct oval_string_map *varmap;
-} oval_variable_model_t;
-
 struct oval_variable_model *oval_variable_model_new()
 {
 	oval_variable_model_t *model = (oval_variable_model_t *)malloc(sizeof(oval_variable_model_t));
 	model->varmap = oval_string_map_new();
+	model->is_locked = false;
 	return model;
 }
 
