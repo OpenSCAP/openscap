@@ -203,9 +203,7 @@ static SEXP_t *probe_set_apply_filters(SEXP_t *items, SEXP_t *filters)
 			SEXP_sublist_foreach(felm, filter, 2, -1) {
 				elm_res = SEXP_list_new(NULL);
 				
-                                stmp     = probe_ent_getval(felm);
-				elm_name = SEXP_string_cstr(stmp);
-                                SEXP_free (stmp);
+                                elm_name = probe_ent_getname(felm);
 
 				for (i = 1; ; ++i) {
 					ielm = probe_obj_getent(item, elm_name, i);
