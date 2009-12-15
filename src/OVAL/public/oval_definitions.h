@@ -1532,7 +1532,7 @@ oval_definition_class_t oval_definition_get_class(struct oval_definition *);
  * @param class - the required class
  * @ingroup oval_definition_setters
  */
-void oval_definition_set_class(struct oval_definition *, oval_definition_class_t class);
+void oval_definition_set_class(struct oval_definition *, oval_definition_class_t);
 /**
  * Returns attribute @ref Oval_definition->deprecated.
  * @see oval_definition_set_deprecated

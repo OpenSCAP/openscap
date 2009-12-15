@@ -338,9 +338,6 @@ struct oval_variable_model;
  */
 struct oval_results_model;
 
-
-struct oval_sysinfo *oval_sysinfo_probe (void);
-
 struct oval_string_iterator;
 
 bool  oval_string_iterator_has_more(struct oval_string_iterator *);

@@ -713,3 +713,15 @@ fail_gen:
         
         return (NULL);
 }
+
+int oval_probe_reset (oval_pctx_t * ctx, oval_subtype_t type) 
+{
+	return 0; /* TODO */
+}
+
+int oval_probe_close (oval_pctx_t * ctx, oval_subtype_t type)
+{
+	return 0; /* TODO */
+}
+
+

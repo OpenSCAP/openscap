@@ -29,9 +29,11 @@
 %module openscap
 %{
  #include "../src/common/public/oscap.h"
+ #include "../src/common/public/error.h"
+
 %}
 %include "../src/common/public/oscap.h"
-
+%include "../src/common/public/error.h"
 
 #ifdef WANT_CCE
 %module openscap
@@ -80,11 +82,17 @@
  #include "../src/OVAL/public/oval_definitions.h"
  #include "../src/OVAL/public/oval_system_characteristics.h"
  #include "../src/OVAL/public/oval_results.h"
+ #include "../src/OVAL/public/oval_types.h"
+ #include "../src/OVAL/public/oval_variables.h"
+ #include "../src/OVAL/public/oval_probe.h"
 %}
 %include "../src/OVAL/public/oval_agent_api.h"
 %include "../src/OVAL/public/oval_definitions.h"
 %include "../src/OVAL/public/oval_system_characteristics.h"
 %include "../src/OVAL/public/oval_results.h"
+%include "../src/OVAL/public/oval_types.h"
+%include "../src/OVAL/public/oval_variables.h"
+%include "../src/OVAL/public/oval_probe.h"
 #endif
 
 
