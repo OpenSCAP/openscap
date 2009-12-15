@@ -42,6 +42,7 @@
 
 #include "../common/list.h"
 #include "../common/elements.h"
+#include "../_error.h"
 
 /***************************************************************************/
 /* Variable definitions
@@ -292,6 +293,7 @@ static void cpe_check_export(const struct cpe_check * check, xmlTextWriterPtr wr
 static void cpe_reference_export(const struct cpe_reference * ref, xmlTextWriterPtr writer);
 
 static bool cpe_validate_xml(const char * filename);
+static int xmlTextReaderNextNode(xmlTextReaderPtr reader);
 /***************************************************************************/
 
 /* Add item to dictionary. Function that just check both variables
@@ -337,10 +339,33 @@ static int xmlTextReaderNextElement(xmlTextReaderPtr reader) {
         do { 
               ret = xmlTextReaderRead(reader); 
               // if end of file
-              if (ret == 0) break;
+              if (ret < 1) break;
         } while (xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT);
+
+        if (ret == -1) {
+            oscap_setxmlerr(xmlCtxtGetLastError(reader));
+            /* TODO: Should we end here as fatal ? */
+        }
+
         return ret;
 }
+
+/* Function testing reader function 
+ */
+static int xmlTextReaderNextNode(xmlTextReaderPtr reader) {
+
+        __attribute__nonnull__(reader);
+
+        int ret;
+        ret = xmlTextReaderRead(reader);
+        if (ret == -1){
+            oscap_setxmlerr(xmlCtxtGetLastError(reader));
+            /* TODO: Should we end here as fatal ? */
+        }
+
+        return ret;
+}
+
 
 static bool cpe_validate_xml(const char * filename) {
 
@@ -359,11 +384,14 @@ static bool cpe_validate_xml(const char * filename) {
 	/* check if parsing suceeded */
 	if (doc == NULL) {
 		xmlFreeParserCtxt(ctxt);
+                oscap_setxmlerr(xmlCtxtGetLastError(ctxt));
 		return false;
 	}
 	/* check if validation suceeded */
 	if (ctxt->valid)
 		ret = true;
+        else /* set xml error */
+                oscap_setxmlerr(xmlCtxtGetLastError(ctxt));
 	xmlFreeDoc(doc);
 	/* free up the parser context */
 	xmlFreeParserCtxt(ctxt);
@@ -632,10 +660,10 @@ struct cpe_dict_model * cpe_dict_model_parse_xml(const struct oscap_import_sourc
     reader = xmlReaderForFile(oscap_import_source_get_filename(source), 
                               oscap_import_source_get_encoding(source), 0);
     if (reader != NULL) {
-        xmlTextReaderRead(reader);
+        xmlTextReaderNextNode(reader);
         dict = cpe_dict_model_parse(reader);
     } else {
-        fprintf(stderr, "[CPE] Unable to open %s !\n", oscap_import_source_get_filename(source));
+            oscap_seterr(ERR_FAMILY_GLIBC, errno, "Unable to open file.");
     }
     xmlFreeTextReader(reader);
     return dict;
@@ -709,6 +737,9 @@ struct cpe_dict_model * cpe_dict_model_parse(xmlTextReaderPtr reader) {
                 // TODO: we need to store meta xml data of <component-tree> element
                 if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_COMPONENT_TREE_STR)) { // <vendor> | count = 0-n
                         // we just need to jump over this element
+            } else  
+                if (xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
+                    oscap_seterr(ERR_FAMILY_OSCAP, OSCAP_EXMLELEM, "Unknown XML element in CPE dictionary");
             }
             // get the next node
             next_ret = xmlTextReaderNextElement(reader);
@@ -758,17 +789,21 @@ struct cpe_generator * cpe_generator_parse(xmlTextReaderPtr reader) {
                                 TAG_TIMESTAMP_STR) == 0) &&
                                 (xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT)){
 			            ret->timestamp = (char *) xmlTextReaderReadString(reader);
+                        } else 
+                            if (xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
+                            oscap_seterr(ERR_FAMILY_OSCAP, OSCAP_EXMLELEM, "Unknown XML element in CPE dictionary generator");
                         }
 
                         // element saved. Let's jump on the very next one node (not element, because we need to 
                         // find XML_READER_TYPE_END_ELEMENT node, see "while" condition and the condition below "while"
-                        xmlTextReaderRead(reader);
+                        xmlTextReaderNextNode(reader);
 
                 }
                 // we found another element generator which is not "end element" ? Horrible !
-                if (xmlTextReaderNodeType(reader) != XML_READER_TYPE_END_ELEMENT) 
-                        // print some nasty error message ?
+                if (xmlTextReaderNodeType(reader) != XML_READER_TYPE_END_ELEMENT) {
+                        oscap_seterr(ERR_FAMILY_OSCAP, OSCAP_EXMLNOELEMENT, "Found new node, but ending element expected");
                         return NULL;
+                }
         }
 
         return ret;
@@ -817,7 +852,7 @@ struct cpe_item * cpe_item_parse(xmlTextReaderPtr reader) {
 	                oscap_free(data);
 
                         data = (char *) xmlTextReaderGetAttribute(reader, ATTR_DEPRECATION_DATE_STR);
-	                if(data == NULL || (ret->deprecation_date = malloc(strlen(data)+1)) == NULL)   {
+	                if(data == NULL || (ret->deprecation_date = oscap_alloc(strlen(data)+1)) == NULL)   {
 		                oscap_free(ret);
 		                oscap_free(data);
 		                return NULL;
@@ -833,7 +868,7 @@ struct cpe_item * cpe_item_parse(xmlTextReaderPtr reader) {
                 while (xmlStrcmp (xmlTextReaderConstLocalName(reader), TAG_CPE_ITEM_STR) != 0) {
                         
                         if (xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT) {
-                                xmlTextReaderRead(reader);
+                                xmlTextReaderNextNode(reader);
                                 continue;
                         }
 
@@ -970,7 +1005,7 @@ struct cpe_vendor * cpe_vendor_parse(xmlTextReaderPtr reader) {
         while(xmlStrcmp (xmlTextReaderConstLocalName(reader), TAG_VENDOR_STR) != 0) {
                         
                         if (xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT) {
-                                xmlTextReaderRead(reader);
+                                xmlTextReaderNextNode(reader);
                                 continue;
                         }
 
@@ -1043,7 +1078,7 @@ struct cpe_vendor * cpe_vendor_parse(xmlTextReaderPtr reader) {
                                     language->value = (char *) xmlTextReaderGetAttribute(reader, ATTR_VALUE_STR);
                                     oscap_list_add(edition->languages, language);
                         }
-                        xmlTextReaderRead(reader);
+                        xmlTextReaderNextNode(reader);
         }
         return ret;
         
@@ -1067,6 +1102,10 @@ void cpe_dict_model_export_xml(const struct cpe_dict_model * dict, const struct 
         xmlTextWriterPtr writer;
 
         writer = xmlNewTextWriterFilename(oscap_export_target_get_filename(target), 0);
+        if (writer == NULL) {
+            oscap_setxmlerr(xmlGetLastError());
+            return;
+        }
 
         // Set properties of writer TODO: make public function to edit this ??
         // Yes - there will be structure oscap_export_target & oscap_parse_target
@@ -1081,6 +1120,7 @@ void cpe_dict_model_export_xml(const struct cpe_dict_model * dict, const struct 
         cpe_dict_export(dict, writer);
         xmlTextWriterEndDocument(writer);
         xmlFreeTextWriter(writer);
+        if (xmlGetLastError() != NULL) oscap_setxmlerr(xmlGetLastError());
 }
 
 void cpe_dict_export(const struct cpe_dict_model * dict, xmlTextWriterPtr writer) {
@@ -1109,6 +1149,7 @@ void cpe_dict_export(const struct cpe_dict_model * dict, xmlTextWriterPtr writer
         xmlTextWriterEndElement(writer);//</component-tree>
 
         xmlTextWriterEndElement(writer);
+        if (xmlGetLastError() != NULL) oscap_setxmlerr(xmlGetLastError());
 }
 
 void cpe_generator_export(const struct cpe_generator * generator, xmlTextWriterPtr writer) {
@@ -1138,6 +1179,7 @@ void cpe_generator_export(const struct cpe_generator * generator, xmlTextWriterP
                 xmlTextWriterEndElement(writer);
         }
         xmlTextWriterEndElement(writer); //</gnerator>
+        if (xmlGetLastError() != NULL) oscap_setxmlerr(xmlGetLastError());
 
 }
 
@@ -1205,6 +1247,7 @@ void cpe_item_export(const struct cpe_item * item, xmlTextWriterPtr writer) {
         )
 
         xmlTextWriterEndElement(writer);
+        if (xmlGetLastError() != NULL) oscap_setxmlerr(xmlGetLastError());
 
 }
 
@@ -1226,6 +1269,7 @@ void cpe_vendor_export(const struct cpe_vendor * vendor, xmlTextWriterPtr writer
 	)
 
         xmlTextWriterEndElement(writer);
+        if (xmlGetLastError() != NULL) oscap_setxmlerr(xmlGetLastError());
 }
 
 static void cpe_product_export(const struct cpe_product * product, xmlTextWriterPtr writer) {
@@ -1260,6 +1304,7 @@ static void cpe_version_export(const struct cpe_version * version, xmlTextWriter
 	)
 
         xmlTextWriterEndElement(writer);
+        if (xmlGetLastError() != NULL) oscap_setxmlerr(xmlGetLastError());
 
 }
 
@@ -1278,6 +1323,7 @@ static void cpe_update_export(const struct cpe_update * update, xmlTextWriterPtr
 
         xmlTextWriterEndElement(writer);
 }
+
 static void cpe_edition_export(const struct cpe_edition * edition, xmlTextWriterPtr writer){
 
         __attribute__nonnull__(edition);
@@ -1293,6 +1339,7 @@ static void cpe_edition_export(const struct cpe_edition * edition, xmlTextWriter
 
         xmlTextWriterEndElement(writer);
 }
+
 static void cpe_language_export(const struct cpe_language * language, xmlTextWriterPtr writer){
 
         __attribute__nonnull__(language);

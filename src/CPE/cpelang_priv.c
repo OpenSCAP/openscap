@@ -39,6 +39,7 @@
 #include "../common/util.h"
 #include "../common/list.h"
 #include "../common/elements.h"
+#include "../_error.h"
 
 /***************************************************************************/
 /* Variable definitions
@@ -115,10 +116,27 @@ OSCAP_IGETINS(oscap_title, cpe_platform, titles, title)
 static int xmlTextReaderNextElement(xmlTextReaderPtr reader);
 static char * parse_text_element(xmlTextReaderPtr reader, char *name);
 static bool cpe_validate_xml(const char * filename);
+static int xmlTextReaderNextNode(xmlTextReaderPtr reader);
 
 /* End of static declarations 
  * */
 /***************************************************************************/
+
+/* Function testing reader function 
+ */
+static int xmlTextReaderNextNode(xmlTextReaderPtr reader) {
+
+        __attribute__nonnull__(reader);
+
+        int ret;
+        ret = xmlTextReaderRead(reader);
+        if (ret == -1){
+            oscap_setxmlerr(xmlCtxtGetLastError(reader));
+            /* TODO: Should we end here as fatal ? */
+        }
+
+        return ret;
+}
 
 /* Function that jump to next XML starting element.
  */
@@ -130,8 +148,14 @@ static int xmlTextReaderNextElement(xmlTextReaderPtr reader) {
         do { 
               ret = xmlTextReaderRead(reader); 
               // if end of file
-              if (ret == 0) break;
+              if (ret < 1) break;
         } while (xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT);
+
+        if (ret == -1) {
+            oscap_setxmlerr(xmlCtxtGetLastError(reader));
+            /* TODO: Should we end here as fatal ? */
+        }
+
         return ret;
 }
 
@@ -241,11 +265,14 @@ static bool cpe_validate_xml(const char * filename) {
 	/* check if parsing suceeded */
 	if (doc == NULL) {
 		xmlFreeParserCtxt(ctxt);
+                oscap_setxmlerr(xmlCtxtGetLastError(ctxt));
 		return false;
 	}
 	/* check if validation suceeded */
 	if (ctxt->valid)
 		ret = true;
+        else /* set xml error */
+                oscap_setxmlerr(xmlCtxtGetLastError(ctxt));
 	xmlFreeDoc(doc);
 	/* free up the parser context */
 	xmlFreeParserCtxt(ctxt);
@@ -264,10 +291,10 @@ struct cpe_lang_model * cpe_lang_model_parse_xml(const struct oscap_import_sourc
         reader = xmlReaderForFile(oscap_import_source_get_filename(source),
                                   oscap_import_source_get_encoding(source), 0);
         if (reader != NULL) {
-            xmlTextReaderRead(reader);
+            xmlTextReaderNextNode(reader);
             ret = cpe_lang_model_parse(reader);
         } else {
-            fprintf(stderr, "Unable to open %s\n", oscap_import_source_get_filename(source));
+            oscap_seterr(ERR_FAMILY_GLIBC, errno, "Unable to open file.");
         }
         xmlFreeTextReader(reader);
 
@@ -340,7 +367,7 @@ struct cpe_platform * cpe_platform_parse(xmlTextReaderPtr reader) {
         }
 
         // skip from <platform> node to next one
-        xmlTextReaderRead(reader);
+        xmlTextReaderNextNode(reader);
 
         // while we have element that is not "platform", it is inside this element, otherwise it's ended 
         // element </platform> and we should end. If there is no one from "if" statement cases, we are parsing
@@ -359,9 +386,10 @@ struct cpe_platform * cpe_platform_parse(xmlTextReaderPtr reader) {
                 if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_LOGICAL_TEST_STR) &&
                     xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
                         ret->expr = *(cpe_testexpr_parse(reader));
-            }
+            } else  if (xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT)
+                    oscap_seterr(ERR_FAMILY_OSCAP, OSCAP_EXMLELEM, "Unknown XML element in platform");
             // get the next node
-            xmlTextReaderRead(reader);
+            xmlTextReaderNextNode(reader);
         }
 
         return ret;
@@ -390,7 +418,8 @@ struct cpe_testexpr * cpe_testexpr_parse(xmlTextReaderPtr reader) {
                 ret->xml.lang = oscap_strdup((char *) xmlTextReaderConstXmlLang(reader));
                 ret->xml.namespace = (char *) xmlTextReaderPrefix(reader);
                 return ret;
-        } else {
+        } else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_LOGICAL_TEST_STR) && 
+            xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
                 // it's logical-test, fill the structure and go to next node
                 
 	        temp = xmlTextReaderGetAttribute(reader, ATTR_OPERATOR_STR);
@@ -414,10 +443,12 @@ struct cpe_testexpr * cpe_testexpr_parse(xmlTextReaderPtr reader) {
 		        ret->oper |= CPE_LANG_OPER_NOT;
 	        xmlFree(temp);
         }
+        else if (xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT)
+                oscap_seterr(ERR_FAMILY_OSCAP, OSCAP_EXMLELEM, "Unknown XML element in test expression");
 
         // go to next node
         // skip to next node
-        xmlTextReaderRead(reader);
+        xmlTextReaderNextNode(reader);
 	ret->meta.expr = cpe_testexpr_new();
 
         // while it's not 'logical-test' or it's not ended element ..
@@ -425,7 +456,7 @@ struct cpe_testexpr * cpe_testexpr_parse(xmlTextReaderPtr reader) {
                xmlTextReaderNodeType(reader) != XML_READER_TYPE_END_ELEMENT) {
 
                 if (xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT) {
-                        xmlTextReaderRead(reader);
+                        xmlTextReaderNextNode(reader);
                         continue;
                 }
                 elem_cnt++;
@@ -447,8 +478,11 @@ struct cpe_testexpr * cpe_testexpr_parse(xmlTextReaderPtr reader) {
                                 ret->meta.expr[elem_cnt-1].xml.lang = oscap_strdup((char *) xmlTextReaderConstXmlLang(reader));
                                 ret->meta.expr[elem_cnt-1].xml.namespace = (char *) xmlTextReaderPrefix(reader);
                                 ret->meta.expr[elem_cnt-1].xml.URI = NULL;
+                } else
+                    if (xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
+                        oscap_seterr(ERR_FAMILY_OSCAP, OSCAP_EXMLELEM, "Unknown XML element in test expression");
                 }
-                xmlTextReaderRead(reader);
+                xmlTextReaderNextNode(reader);
         }
         ret->meta.expr[elem_cnt].oper = CPE_LANG_OPER_HALT;
 
@@ -464,7 +498,7 @@ static char * parse_text_element(xmlTextReaderPtr reader, char *name) {
 
     // parse string element attributes here (like xml:lang)
 
-    while (xmlTextReaderRead(reader)) {
+    while (xmlTextReaderNextNode(reader)) {
         if (xmlTextReaderNodeType(reader) == XML_READER_TYPE_END_ELEMENT &&
             !xmlStrcmp(xmlTextReaderConstLocalName(reader), BAD_CAST name)) {
                 return string;
@@ -473,6 +507,9 @@ static char * parse_text_element(xmlTextReaderPtr reader, char *name) {
         switch (xmlTextReaderNodeType(reader)) {
             case XML_READER_TYPE_TEXT:
                     string = (char *)xmlTextReaderValue(reader);
+                    break;
+            default:
+                    oscap_seterr(ERR_FAMILY_OSCAP, OSCAP_EXMLNODETYPE, "Unknown XML element in platform");
                     break;
         }
     }
@@ -497,6 +534,10 @@ void cpe_lang_model_export_xml(const struct cpe_lang_model * spec, struct oscap_
         xmlTextWriterPtr writer;
 
         writer = xmlNewTextWriterFilename(oscap_export_target_get_filename(target), 0);
+        if (writer == NULL) {
+            oscap_setxmlerr(xmlGetLastError());
+            return;
+        }
 
         // Set properties of writer TODO: make public function to edit this ??
         xmlTextWriterSetIndent(writer, oscap_export_target_get_indent(target));
@@ -510,6 +551,7 @@ void cpe_lang_model_export_xml(const struct cpe_lang_model * spec, struct oscap_
         cpe_lang_export(spec, writer);
         xmlTextWriterEndDocument(writer);
         xmlFreeTextWriter(writer);
+        if (xmlGetLastError() != NULL) oscap_setxmlerr(xmlGetLastError());
 }
 
 void cpe_lang_export(const struct cpe_lang_model * spec, xmlTextWriterPtr writer) {
@@ -528,6 +570,7 @@ void cpe_lang_export(const struct cpe_lang_model * spec, xmlTextWriterPtr writer
                 cpe_platform_export( p, writer );
 	)
         xmlTextWriterEndElement(writer);
+        if (xmlGetLastError() != NULL) oscap_setxmlerr(xmlGetLastError());
 }
 
 void cpe_platform_export(const struct cpe_platform * platform, xmlTextWriterPtr writer) {
@@ -544,6 +587,7 @@ void cpe_platform_export(const struct cpe_platform * platform, xmlTextWriterPtr 
 	)
         cpe_testexpr_export(platform->expr, writer);
         xmlTextWriterEndElement(writer);
+        if (xmlGetLastError() != NULL) oscap_setxmlerr(xmlGetLastError());
 }
 
 void cpe_testexpr_export(struct cpe_testexpr expr, xmlTextWriterPtr writer) {
@@ -575,7 +619,8 @@ void cpe_testexpr_export(struct cpe_testexpr expr, xmlTextWriterPtr writer) {
                 xmlTextWriterWriteAttribute(writer, ATTR_OPERATOR_STR, VAL_AND_STR);
                 xmlTextWriterWriteAttribute(writer, ATTR_NEGATE_STR, VAL_TRUE_STR);
         } else {
-            // CPE_LANG_OPER_MATCH or raise exception ! We are dumped !
+                oscap_seterr(ERR_FAMILY_OSCAP, OSCAP_ECPEINVOP, "Invalid operation in CPE Language expression");
+                return;
         }
 
         if ( expr.meta.expr == NULL) return;
@@ -585,6 +630,7 @@ void cpe_testexpr_export(struct cpe_testexpr expr, xmlTextWriterPtr writer) {
             ++i;
         }
         xmlTextWriterEndElement(writer);
+        if (xmlGetLastError() != NULL) oscap_setxmlerr(xmlGetLastError());
 
 }
 /* End of private export functions

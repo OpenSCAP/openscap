@@ -1,6 +1,16 @@
 #include <stdlib.h>
-#include <errno.h>
+#include "_error.h"
 #include "public/alloc.h"
+
+static void __oscap_err_check(void *m);
+
+static void __oscap_err_check(void *m) {
+
+        if (m == NULL) {
+            if (errno != 0) oscap_seterr(ERR_FAMILY_GLIBC, errno, "Memory allocation failed.");
+            else oscap_seterr(ERR_FAMILY_OSCAP, OSCAP_EALLOC, "Memory allocation failed.");
+        }
+}
 
 #if defined(NDEBUG)
 /*
@@ -14,6 +24,7 @@ void *__oscap_alloc (size_t s)
         _A(s > 0);
 #endif
         m = malloc (s);
+        __oscap_err_check(m);
 #if defined(OSCAP_ALLOC_EXIT)
         if (m == NULL)
                 exit (ENOMEM);
@@ -29,6 +40,7 @@ void *__oscap_calloc (size_t n, size_t s)
         _A(s > 0);
 #endif
         m = calloc (n, s);
+        __oscap_err_check(m);
 #if defined(OSCAP_ALLOC_EXIT)
         if (m == NULL)
                 exit (ENOMEM);
@@ -41,6 +53,7 @@ void *__oscap_realloc (void *p, size_t s)
         void *m;
 
         m = realloc (p, s);
+        __oscap_err_check(m);
 #if defined(OSCAP_ALLOC_EXIT)
         if (m == NULL && s > 0)
                 exit (ENOMEM);
@@ -53,6 +66,7 @@ void *__oscap_reallocf (void *p, size_t s)
         void *m;
 
         m = realloc (p, s);
+        __oscap_err_check(m);
         if (m == NULL && s > 0) {
                 oscap_free (p);
 #if defined(OSCAP_ALLOC_EXIT)
@@ -84,6 +98,7 @@ void *__oscap_alloc_dbg (size_t s, const char *func, size_t line)
         _A(s > 0);
 #endif
         m = malloc (s);
+        __oscap_err_check(m);
 #if defined(OSCAP_ALLOC_EXIT)
         if (m == NULL)
                 exit (ENOMEM);
@@ -99,6 +114,7 @@ void *__oscap_calloc_dbg (size_t n, size_t s, const char *f, size_t l)
         _A(s > 0);
 #endif
         m = calloc (n, s);
+        __oscap_err_check(m);
 #if defined(OSCAP_ALLOC_EXIT)
         if (m == NULL)
                 exit (ENOMEM);
@@ -110,6 +126,7 @@ void *__oscap_realloc_dbg (void *p, size_t s, const char *f, size_t l)
 {
         void *m;
         m = realloc (p, s);
+        __oscap_err_check(m);
 #if defined(OSCAP_ALLOC_EXIT)
         if (m == NULL && s > 0)
                 exit (ENOMEM);
@@ -121,6 +138,7 @@ void *__oscap_reallocf_dbg (void *p, size_t s, const char *f, size_t l)
 {
         void *m;
         m = realloc (p, s);
+        __oscap_err_check(m);
         if (m == NULL && s > 0) {
                 oscap_free (p);
 #if defined(OSCAP_ALLOC_EXIT)

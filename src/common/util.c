@@ -24,6 +24,7 @@
 
 
 #include "util.h"
+#include "_error.h"
 #include <string.h>
 
 struct oscap_import_source {
@@ -46,17 +47,17 @@ OSCAP_GETTER(const char *, oscap_export_target, indent_string)
 
 struct oscap_import_source * oscap_import_source_new(const char * filename, const char * encoding) {
 
-        struct oscap_import_source *target = oscap_calloc(1, sizeof(struct oscap_import_source));
+        struct oscap_import_source *source = oscap_calloc(1, sizeof(struct oscap_import_source));
 
         if (filename == NULL)
                 return NULL;
         if (encoding == NULL)
-             target->encoding = strdup("UTF-8");
-        else target->encoding = strdup(encoding);
+             source->encoding = strdup("UTF-8");
+        else source->encoding = strdup(encoding);
                 
-        target->filename = strdup(filename);
+        source->filename = strdup(filename);
 
-        return target;
+        return source;
 }
 
 void oscap_import_source_free(struct oscap_import_source * target) {
@@ -99,22 +100,33 @@ void oscap_export_target_free(struct oscap_export_target * target) {
 
 int oscap_string_to_enum(const struct oscap_string_map* map, const char* str)
 {
+        __attribute__nonnull__(map);
+
 	while (map->string && (str == NULL || strcmp(map->string, str) != 0)) ++map;
 	return map->value;
 }
 
 const char* oscap_enum_to_string(const struct oscap_string_map* map, int val)
 {
+        __attribute__nonnull__(map);
+
 	while (map->string && map->value != val) ++map;
 	return map->string;
 }
 
 char* oscap_strdup(const char *str) {
 
+        char* m;
+
         if (str == NULL)
             return NULL;
 
-        return strdup(str);
+        m = strdup(str);
+
+        if ((m == NULL) && (strlen(m) > 0))
+            oscap_seterr_errno(OSCAP_EALLOC, "Memory allocation failed");
+
+        return m;
 }
 
 char* oscap_strsep(char** str, const char *delim)
@@ -128,4 +140,3 @@ char* oscap_strsep(char** str, const char *delim)
 	}
 	return ret;
 }
-

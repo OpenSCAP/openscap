@@ -22,6 +22,7 @@
 
 
 #include "list.h"
+
 #include <assert.h>
 #include <string.h>
 #include <stdio.h>
@@ -29,15 +30,15 @@
 
 struct oscap_list* oscap_list_new(void)
 {
-	struct oscap_list* list = malloc(sizeof(struct oscap_list));
+	struct oscap_list* list = oscap_alloc(sizeof(struct oscap_list));
 	memset(list, 0, sizeof(struct oscap_list));
 	return list;
 }
 
 bool oscap_list_add(struct oscap_list* list, void* value)
 {
-	assert(list != NULL);
-	struct oscap_list_item* item = malloc(sizeof(struct oscap_list_item));
+	__attribute__nonnull__(list);
+	struct oscap_list_item* item = oscap_alloc(sizeof(struct oscap_list_item));
 	item->next = NULL;
 	item->data = value;
 	++list->itemcount;
@@ -53,7 +54,7 @@ bool oscap_list_add(struct oscap_list* list, void* value)
 
 int oscap_list_get_itemcount(struct oscap_list* list)
 {
-	assert(list != NULL);
+	__attribute__nonnull__(list);
 	return list->itemcount;
 }
 
@@ -95,8 +96,8 @@ static bool oscap_iterator_no_filter(void* foo, void* bar) { return true; }
 
 static inline void oscap_iterator_find_nearest(struct oscap_iterator* it)
 {
-	assert(it != NULL);
-	assert(it->list != NULL);
+	__attribute__nonnull__(it);
+	__attribute__nonnull__(it->list);
 
 	do {
 		it->cur = (it->cur ? it->cur->next : it->list->first);
@@ -109,7 +110,7 @@ static inline void oscap_iterator_find_nearest(struct oscap_iterator* it)
 
 void* oscap_iterator_new(struct oscap_list* list)
 {
-    struct oscap_iterator* it = calloc(1, sizeof(struct oscap_iterator));
+    struct oscap_iterator* it = oscap_calloc(1, sizeof(struct oscap_iterator));
     it->cur    = NULL;
     it->filter = oscap_iterator_no_filter;
 	it->list   = list;
@@ -127,13 +128,13 @@ void* oscap_iterator_new_filter(struct oscap_list* list, oscap_filter_func filte
 
 size_t oscap_iterator_get_itemcount(const struct oscap_iterator* it)
 {
-	assert(it != NULL);
+	__attribute__nonnull__(it);
 	return it->list->itemcount;
 }
 
 void *oscap_iterator_detach(struct oscap_iterator* it)
 {
-	assert(it != NULL);
+	__attribute__nonnull__(it);
 
 	if (!it->cur) return NULL;
 
@@ -179,7 +180,7 @@ void oscap_iterator_free(struct oscap_iterator* it)
 
 void* oscap_iterator_next(struct oscap_iterator* it)
 {
-	assert(it != NULL);
+    __attribute__nonnull__(it);
 	//if (!it->cur) return NULL;
     //void* ret = it->cur->data;
     //it->cur = it->cur->next;
@@ -189,7 +190,7 @@ void* oscap_iterator_next(struct oscap_iterator* it)
 
 bool oscap_iterator_has_more(struct oscap_iterator* it)
 {
-	assert(it != NULL);
+	__attribute__nonnull__(it);
 	return (!it->cur && it->list->first) || (it->cur && it->cur->next);
 	/*
     if (it->cur) return true;
@@ -215,11 +216,11 @@ static inline unsigned int oscap_htable_hash(const char *str, size_t htable_size
 struct oscap_htable* oscap_htable_new1(oscap_compare_func cmp, size_t hsize)
 {
 	struct oscap_htable* t;
-	t = malloc(sizeof(struct oscap_htable));
+	t = oscap_alloc(sizeof(struct oscap_htable));
 	if (t == NULL) return NULL;
 	t->hsize = hsize;
 	t->itemcount = 0;
-	t->table = calloc(hsize, sizeof(struct oscap_list_item *));
+	t->table = oscap_calloc(hsize, sizeof(struct oscap_list_item *));
 	if (t->table == NULL) {
 		free(t);
 		return NULL;
@@ -242,6 +243,7 @@ struct oscap_htable* oscap_htable_new(void)
 
 static struct oscap_htable_item *oscap_htable_lookup(struct oscap_htable* htable, const char* key)
 {
+        __attribute__nonnull__(htable);
 	if (key == NULL) return NULL;
 	unsigned int hashcode = oscap_htable_hash(key, htable->hsize);
 	struct oscap_htable_item* htitem = htable->table[hashcode];
@@ -254,7 +256,7 @@ static struct oscap_htable_item *oscap_htable_lookup(struct oscap_htable* htable
 
 bool oscap_htable_add(struct oscap_htable* htable, const char* key, void* item)
 {
-    assert(htable != NULL);
+    __attribute__nonnull__(htable);
 	/*
     unsigned int hashcode = oscap_htable_hash(key, htable->hsize);
     struct oscap_htable_item* htitem = htable->table[hashcode];
@@ -295,7 +297,7 @@ void* oscap_htable_detach(struct oscap_htable* htable, const char* key)
 
 void* oscap_htable_get(struct oscap_htable* htable, const char* key)
 {
-	assert(htable != NULL);
+	__attribute__nonnull__(htable);
 	struct oscap_htable_item* htitem = oscap_htable_lookup(htable, key);
 	return htitem ? htitem->value : NULL;
 }	

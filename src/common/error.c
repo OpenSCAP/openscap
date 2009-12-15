@@ -2,6 +2,7 @@
 #include <string.h>
 #include "public/alloc.h"
 #include "_error.h"
+#include "public/debug.h"
 
 static pthread_key_t       __key;
 static pthread_once_t      __once = PTHREAD_ONCE_INIT;
@@ -24,7 +25,43 @@ static struct oscap_err_t *oscap_err_new (oscap_errfamily_t family, oscap_errcod
         err->line   = line;
         err->file   = file;
         
+        char *family_str;
+
+        switch (family) {
+            case ERR_FAMILY_XML:
+                family_str = "XML";
+                break;
+            case ERR_FAMILY_GLIBC:
+                family_str = "GLIBC";
+                break;
+            case ERR_FAMILY_OSCAP:
+                family_str = "OSCAP";
+                break;
+            default:
+                family_str = "UNKNOWN";
+                break;
+        }
+        oscap_dprintf("[E (%d)]: %s::%s::%s:%d %s", code, family_str, file, func, line, desc);
+
         return (err);
+}
+
+void  __oscap_setxmlerr (const char *file,
+                         uint32_t line,
+                         const char *func,
+                         xmlErrorPtr error) {
+
+        if (error == NULL) return;
+
+        struct oscap_err_t *err;
+        (void) pthread_once (&__once, oscap_errkey_init);
+
+        oscap_clearerr ();
+        err = oscap_err_new (ERR_FAMILY_XML, error->code, error->message, func, line, file);
+        (void)pthread_setspecific (__key, err);
+
+        return;
+
 }
 
 void  __oscap_seterr (const char *file,

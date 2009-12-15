@@ -40,6 +40,7 @@
 #include "cvss.h"
 
 #include "../list.h"
+#include "../_error.h"
 
 /***************************************************************************/
 /* Variable definitions
@@ -347,11 +348,28 @@ struct cve_model * cve_model_new() {
 
 static int xmlTextReaderNextElement(xmlTextReaderPtr reader);
 static bool cve_validate_xml(const char * filename);
+static int xmlTextReaderNextNode(xmlTextReaderPtr reader);
 
 /* End of static declarations 
  * */
 /***************************************************************************/
-    
+ 
+/* Function testing reader function 
+ */
+static int xmlTextReaderNextNode(xmlTextReaderPtr reader) {
+
+        __attribute__nonnull__(reader);
+
+        int ret;
+        ret = xmlTextReaderRead(reader);
+        if (ret == -1){
+            oscap_setxmlerr(xmlCtxtGetLastError(reader));
+            /* TODO: Should we end here as fatal ? */
+        }
+
+        return ret;
+}
+
 /* Function that jump to next XML starting element.
  */
 static int xmlTextReaderNextElement(xmlTextReaderPtr reader) {
@@ -362,8 +380,14 @@ static int xmlTextReaderNextElement(xmlTextReaderPtr reader) {
         do { 
               ret = xmlTextReaderRead(reader); 
               /* if end of file */
-              if (ret == 0) break;
+              if (ret < 1) break;
         } while (xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT);
+
+        if (ret == -1) {
+            oscap_setxmlerr(xmlCtxtGetLastError(reader));
+            /* TODO: Should we end here as fatal ? */
+        }
+
         return ret;
 }
 
@@ -384,11 +408,14 @@ static bool cve_validate_xml(const char * filename) {
 	/* check if parsing suceeded */
 	if (doc == NULL) {
 		xmlFreeParserCtxt(ctxt);
+                oscap_setxmlerr(xmlCtxtGetLastError(ctxt));
 		return false;
 	}
 	/* check if validation suceeded */
 	if (ctxt->valid)
 		ret = true;
+        else /* set xml error */
+                oscap_setxmlerr(xmlCtxtGetLastError(ctxt));
 	xmlFreeDoc(doc);
 	/* free up the parser context */
 	xmlFreeParserCtxt(ctxt);
@@ -412,10 +439,10 @@ struct cve_model * cve_model_parse_xml(const struct oscap_import_source * source
         reader = xmlReaderForFile(oscap_import_source_get_filename(source),
                                   oscap_import_source_get_encoding(source), 0);
         if (reader != NULL) {
-            xmlTextReaderRead(reader);
+            xmlTextReaderNextNode(reader);
             ret = cve_model_parse(reader);
         } else {
-            fprintf(stderr, "Unable to open %s\n", oscap_import_source_get_filename(source));
+            oscap_seterr(ERR_FAMILY_GLIBC, errno, "Unable to open file.");
         }
         xmlFreeTextReader(reader);
 
@@ -493,7 +520,8 @@ struct cve_entry * cve_entry_parse(xmlTextReaderPtr reader) {
         if (xmlTextReaderIsEmptyElement(reader)) return ret;
 
         /* skip from <entry> node to next one */
-        xmlTextReaderRead(reader);
+        xmlTextReaderNextNode(reader);
+        
 
         /* while we have element that is not "entry", it is inside this element, otherwise it's ended 
          * element </entry> and we should end. If there is no one from "if" statement cases, we are parsing
@@ -515,7 +543,7 @@ struct cve_entry * cve_entry_parse(xmlTextReaderPtr reader) {
                 if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_VULNERABLE_SOFTWARE_LIST_STR) &&
                     xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
                         /* this will be list of products */
-                        xmlTextReaderRead(reader);
+                        xmlTextReaderNextNode(reader);
                         while (xmlStrcmp (xmlTextReaderConstLocalName(reader), TAG_VULNERABLE_SOFTWARE_LIST_STR) != 0) {
                                 if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_PRODUCT_STR) &&
                                     xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
@@ -531,7 +559,7 @@ struct cve_entry * cve_entry_parse(xmlTextReaderPtr reader) {
                                     oscap_free(data);*/
                                     if (product) oscap_list_add(ret->products, product);
                                 }
-                                xmlTextReaderRead(reader);
+                                xmlTextReaderNextNode(reader);
                         }
             } else
                 if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_CVE_ID_STR) &&
@@ -564,7 +592,7 @@ struct cve_entry * cve_entry_parse(xmlTextReaderPtr reader) {
                         refer->xml.lang = oscap_strdup((char *) xmlTextReaderConstXmlLang(reader));
                         refer->xml.namespace = (char *) xmlTextReaderPrefix(reader);
                         refer->type  = (char *) xmlTextReaderGetAttribute(reader, ATTR_REFERENCE_TYPE_STR);
-                        xmlTextReaderRead(reader);
+                        xmlTextReaderNextNode(reader);
                         while (xmlStrcmp (xmlTextReaderConstLocalName(reader), TAG_REFERENCES_STR) != 0) {
 
                                 if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_SOURCE_STR) &&
@@ -577,7 +605,7 @@ struct cve_entry * cve_entry_parse(xmlTextReaderPtr reader) {
                                         refer->value = (char *) xmlTextReaderReadString(reader);
 
                                 }
-                                xmlTextReaderRead(reader);
+                                xmlTextReaderNextNode(reader);
                         }
                         if (refer) oscap_list_add(ret->references, refer);
             } else
@@ -588,10 +616,13 @@ struct cve_entry * cve_entry_parse(xmlTextReaderPtr reader) {
                         summary->xml.lang = oscap_strdup((char *) xmlTextReaderConstXmlLang(reader));
                         summary->xml.namespace = (char *) xmlTextReaderPrefix(reader);
                         if (summary) oscap_list_add(ret->summaries, summary);
+            } else 
+                if (xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
+                        oscap_seterr(ERR_FAMILY_OSCAP, OSCAP_EXMLELEM, "Unknown XML element in CVE entry");
             }
             
             /* get the next node*/
-            xmlTextReaderRead(reader);
+            xmlTextReaderNextNode(reader);
         }
 
         return ret;
@@ -611,6 +642,10 @@ void cve_model_export_xml(struct cve_model * cve, const struct oscap_export_targ
         xmlTextWriterPtr writer;
 
         writer = xmlNewTextWriterFilename(oscap_export_target_get_filename(target), 0);
+        if (writer == NULL) {
+            oscap_setxmlerr(xmlGetLastError());
+            return;
+        }
 
         /* Set properties of writer TODO: make public function to edit this ?? */
         xmlTextWriterSetIndent(writer, oscap_export_target_get_indent(target));
@@ -621,6 +656,7 @@ void cve_model_export_xml(struct cve_model * cve, const struct oscap_export_targ
         cve_export(cve, writer);
         xmlTextWriterEndDocument(writer);
         xmlFreeTextWriter(writer);
+        if (xmlGetLastError() != NULL) oscap_setxmlerr(xmlGetLastError());
 }
 
 void cve_export(const struct cve_model * cve, xmlTextWriterPtr writer) {
@@ -641,6 +677,7 @@ void cve_export(const struct cve_model * cve, xmlTextWriterPtr writer) {
                 cve_entry_export( e, writer );
 	)
         xmlTextWriterEndElement(writer);
+        if (xmlGetLastError() != NULL) oscap_setxmlerr(xmlGetLastError());
 }
 
 void cve_reference_export(const struct cve_reference * refer, xmlTextWriterPtr writer) {
@@ -676,6 +713,7 @@ void cve_reference_export(const struct cve_reference * refer, xmlTextWriterPtr w
 
         /*</references>*/
         xmlTextWriterEndElement(writer);
+        if (xmlGetLastError() != NULL) oscap_setxmlerr(xmlGetLastError());
 }
 
 void cve_summary_export(const struct cve_summary * sum, xmlTextWriterPtr writer) {
@@ -689,6 +727,7 @@ void cve_summary_export(const struct cve_summary * sum, xmlTextWriterPtr writer)
         xmlTextWriterWriteString(writer, BAD_CAST sum->summary);
         /*</summary>*/
         xmlTextWriterEndElement(writer);
+        if (xmlGetLastError() != NULL) oscap_setxmlerr(xmlGetLastError());
 }
 
 void cve_entry_export(const struct cve_entry * entry, xmlTextWriterPtr writer) {
@@ -758,6 +797,7 @@ void cve_entry_export(const struct cve_entry * entry, xmlTextWriterPtr writer) {
 
         /* </entry> */
         xmlTextWriterEndElement(writer);
+        if (xmlGetLastError() != NULL) oscap_setxmlerr(xmlGetLastError());
 }
 
 /***************************************************************************/

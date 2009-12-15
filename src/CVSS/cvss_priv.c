@@ -34,6 +34,7 @@
 #include "cvss_priv.h"
 #include "public/cvss.h"
 #include "../common/list.h"
+#include "../common/_error.h"
 
 /***************************************************************************/
 /* Variable definitions
@@ -307,6 +308,9 @@ struct cvss_entry * cvss_entry_parse(xmlTextReaderPtr reader) {
                         if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_GENERATED_ON_DATETIME_STR) &&
                             xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
                                     ret->generated = (char *) xmlTextReaderReadString(reader);
+                    } else
+                        if (xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
+                            oscap_seterr(ERR_FAMILY_OSCAP, OSCAP_EXMLELEM, "Unknown XML element in CVSS element");
                     }
 
                     xmlTextReaderRead(reader);
@@ -361,6 +365,7 @@ void cvss_entry_export(const struct cvss_entry * entry, xmlTextWriterPtr writer)
         xmlTextWriterEndElement(writer);
         /*</cvss>*/
         xmlTextWriterEndElement(writer);
+        if (xmlGetLastError() != NULL) oscap_setxmlerr(xmlGetLastError());
 
 }
 
