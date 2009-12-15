@@ -66,6 +66,8 @@ int oval_sysitem_parse_tag(
 void oval_sysitem_to_dom  (struct oval_sysitem *sysitem, xmlDoc *doc, xmlNode *tag_parent);
 void oval_sysitem_to_print(struct oval_sysitem *, char *, int);
 
+struct oval_syschar_model *oval_syschar_get_model(struct oval_syschar *syschar);
+
 OSCAP_HIDDEN_END;
 
 #endif

@@ -487,7 +487,7 @@ SEXP_t *oval_state2sexp (struct oval_state *state)
 }
 
 
-static struct oval_sysitem* oval_sysitem_from_sexp(SEXP_t *sexp)
+static struct oval_sysitem* oval_sysitem_from_sexp(struct oval_syschar_model* model, SEXP_t *sexp)
 {
 	_A(sexp);
 	SEXP_t *sval;
@@ -556,7 +556,7 @@ static struct oval_sysitem* oval_sysitem_from_sexp(SEXP_t *sexp)
 
 	int status = probe_ent_getstatus(sexp);
 
-	struct oval_sysitem* item = oval_sysitem_new();
+	struct oval_sysitem* item = oval_sysitem_new(model);
 
 	oval_sysitem_set_status(item, status);
 	oval_sysitem_set_name(item, key);
@@ -573,7 +573,7 @@ static struct oval_sysitem* oval_sysitem_from_sexp(SEXP_t *sexp)
 	return item;
 }
 
-static struct oval_sysdata *oval_sysdata_from_sexp(SEXP_t *sexp)
+static struct oval_sysdata *oval_sysdata_from_sexp(struct oval_syschar_model *model, SEXP_t *sexp)
 {
 	_A(sexp);
 
@@ -606,14 +606,14 @@ static struct oval_sysdata *oval_sysdata_from_sexp(SEXP_t *sexp)
 	int status = probe_ent_getstatus(sexp);
 
 	sprintf(id, "%d", id_counter++);
-	sysdata = oval_sysdata_new(id);
+	sysdata = oval_sysdata_new(model, id);
 	oval_sysdata_set_status(sysdata, status);
 	oval_sysdata_set_subtype(sysdata, type);
 	//oval_sysdata_set_subtype_name(sysdata, name);
 
 	if (status == OVAL_STATUS_EXISTS) {
 		for (int i = 2; (sub = SEXP_list_nth(sexp, i)) != NULL; ++i) {
-			if ((sysitem = oval_sysitem_from_sexp(sub)) != NULL)
+			if ((sysitem = oval_sysitem_from_sexp(model, sub)) != NULL)
 				oval_sysdata_add_item(sysdata, sysitem);
                         SEXP_free (sub);
                 }
@@ -647,7 +647,8 @@ int oval_sysch_apply_sexp(struct oval_syschar *sysch, const SEXP_t *s_list, stru
 
 	SEXP_t *s_exp;
 	struct oval_sysdata* sysdata;
-        
+        struct oval_syschar_model *model;
+
 	if (oval_syschar_get_object(sysch) == NULL) {
                 if (object != NULL)
                         oval_syschar_set_object(sysch, object);
@@ -662,9 +663,11 @@ int oval_sysch_apply_sexp(struct oval_syschar *sysch, const SEXP_t *s_list, stru
         }
         
 	_A(object == oval_syschar_get_object(sysch));
-        
+
+	model = oval_syschar_get_model(sysch);
+
 	SEXP_list_foreach (s_exp, s_list) {
-		sysdata = oval_sysdata_from_sexp(s_exp);
+		sysdata = oval_sysdata_from_sexp(model,s_exp);
                 
 		if (sysdata != NULL)
 			oval_syschar_add_sysdata(sysch, sysdata);

@@ -237,7 +237,7 @@ int oval_pctx_setattr (oval_pctx_t *ctx, uint32_t attr, ...)
                 ctx->p_dir = strdup (va_arg (ap, const char *));
                 break;
         case OVAL_PCTX_ATTR_MODEL:
-                ctx->sys = va_arg (ap, struct oval_syschar_model *);
+                ctx->model = va_arg (ap, struct oval_syschar_model *);
                 break;
         default:
                 return (-1);
@@ -571,7 +571,7 @@ static SEXP_t *oval_probe_cmd_ste_fetch (SEXP_t *sexp, void *arg)
         return (ste_list);
 }
 
-struct oval_sysinfo *oval_probe_sysinf_eval (oval_pctx_t *ctx)
+struct oval_sysinfo *oval_probe_sysinf_eval (struct oval_syschar_model *model, oval_pctx_t *ctx)
 {
         struct oval_sysinfo *sysinf;
         struct oval_sysint  *ife;
@@ -624,7 +624,7 @@ struct oval_sysinfo *oval_probe_sysinf_eval (oval_pctx_t *ctx)
         if (s_sinf == NULL)
                 return (NULL);
         
-        sysinf = oval_sysinfo_new ();
+        sysinf = oval_sysinfo_new (model);
         
         /*
          * Translate S-exp to sysinfo structure
@@ -668,7 +668,7 @@ struct oval_sysinfo *oval_probe_sysinf_eval (oval_pctx_t *ctx)
                 uint32_t n;
                 
                 for (n = 1; (ent = probe_obj_getent (s_sinf, "interface", n)) != NULL; ++n) {
-                        ife = oval_sysint_new ();
+                        ife = oval_sysint_new (model);
                         
 #define SYSINF_IEXT(ent, name, sysint, fail)                            \
                         do {                                            \

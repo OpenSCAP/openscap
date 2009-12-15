@@ -5,6 +5,7 @@
 
 int main (void)
 {
+	struct oval_syschar_model *model;
         struct oval_sysinfo *info;
         struct oval_sysint_iterator *ifit;
         struct oval_sysint *ife;
@@ -19,7 +20,8 @@ int main (void)
         /*
          *  Call the sysinfo probe.
          */
-        info = oval_probe_sysinf_eval (pctx);
+	model = NULL;
+        info = oval_probe_sysinf_eval (model, pctx);
         
         if (info != NULL) {
                 char *a, *b, *c, *d;

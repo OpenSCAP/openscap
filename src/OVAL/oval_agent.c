@@ -267,7 +267,7 @@ static struct oval_sysinfo *_oval_syschar_model_probe_sysinfo(struct oval_syscha
 	struct oval_sysinfo *sysinfo;
 
         pctx    = oval_pctx_new (NULL);
-        sysinfo = oval_probe_sysinf_eval (pctx);
+        sysinfo = oval_probe_sysinf_eval (model, pctx);
         oval_pctx_free (pctx);
         
 	if(sysinfo==NULL){

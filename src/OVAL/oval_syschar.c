@@ -105,6 +105,11 @@ struct oval_object *oval_syschar_get_object(struct oval_syschar *syschar)
 	return ((struct oval_syschar *)syschar)->object;
 }
 
+struct oval_syschar_model *oval_syschar_get_model(struct oval_syschar *syschar)
+{
+	return ((struct oval_syschar *)syschar)->model;
+}
+
 struct oval_variable_binding_iterator *oval_syschar_get_variable_bindings(struct
 								      oval_syschar
 								      *syschar)

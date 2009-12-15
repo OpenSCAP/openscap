@@ -40,7 +40,7 @@ int oval_pctx_setattr (oval_pctx_t *, uint32_t, ...);
 int oval_probe_reset (oval_pctx_t *, oval_subtype_t);
 int oval_probe_close (oval_pctx_t *, oval_subtype_t);
 
-struct oval_sysinfo *oval_probe_sysinf_eval (oval_pctx_t *);
+struct oval_sysinfo *oval_probe_sysinf_eval (struct oval_syschar_model *, oval_pctx_t *);
 struct oval_syschar *oval_probe_object_eval (oval_pctx_t *, struct oval_object *);
 
 #endif /* OVAL_PROBE_H */
