@@ -86,47 +86,37 @@ SEAP_err_t *SEAP_packet_err (SEAP_packet_t *packet)
 
 static int SEAP_packet_sexp2msg (SEXP_t *sexp_msg, SEAP_msg_t *seap_msg)
 {
-        size_t msg_icnt, msg_i, attr_i;
+        size_t msg_icnt, msg_n, attr_i;
         SEXP_t *attr_name, *attr_val;
         
         _A(sexp_msg != NULL);
         _A(seap_msg != NULL);
         _LOGCALL_;
         
-        memset (seap_msg, 0, sizeof (SEAP_msg_t));
         msg_icnt = SEXP_list_length (sexp_msg);
         
-        /* 
-         * In the worst case there should be (msg_icnt - 2) - 1 attributes.
-         * That is: The mandatory attribute "id" which has a value + other
-         * attributes which could all be attributes without a value. The
-         * last element of the message is the S-exp to be transfered.
-         */
-        seap_msg->attrs_cnt = (msg_icnt - 2) - 1;
-        seap_msg->attrs = sm_alloc (sizeof (SEAP_attr_t) * (seap_msg->attrs_cnt));
+        seap_msg->attrs_cnt = msg_icnt - 4;
+        seap_msg->attrs     = sm_alloc (sizeof (SEAP_attr_t) * seap_msg->attrs_cnt);
         
-        /* BEG: attribute loop */
-        for (msg_i = 2, attr_i = 0; msg_i <= (msg_icnt - 1); ++msg_i) {
-        
-                attr_name = SEXP_list_nth (sexp_msg, msg_i);
+        for (msg_n = 2, attr_i = 0; msg_n < msg_icnt; ++msg_n) {
+                
+                attr_name = SEXP_list_nth (sexp_msg, msg_n);
                 if (attr_name == NULL) {
                         _D("Unexpected error: No S-exp (attr_name) at position %u in the message (%p).\n",
-                           msg_i, sexp_msg);
+                           msg_n, sexp_msg);
                         
                         sm_free (seap_msg->attrs);
                         
                         return (SEAP_EUNEXP);
                 }
-                 
-                if (SEXP_strncmp (attr_name, ":", 1) == 0) {
-                        /* with value */
-                        
+                
+                if (SEXP_string_nth (attr_name, 1) == ':') {
                         if (SEXP_strcmp (attr_name, ":id") == 0) {
                                 
-                                attr_val = SEXP_list_nth (sexp_msg, msg_i + 1);
+                                attr_val = SEXP_list_nth (sexp_msg, msg_n + 1);
                                 if (attr_val == NULL) {
                                         _D("Unexpected error: \"%s\": No attribute value at position %u in the message (%p).\n",
-                                           "id", msg_i + 1, sexp_msg);
+                                           "id", msg_n + 1, sexp_msg);
                                         
                                         sm_free (seap_msg->attrs);
                                         
@@ -135,11 +125,12 @@ static int SEAP_packet_sexp2msg (SEXP_t *sexp_msg, SEAP_msg_t *seap_msg)
                                 
 #if SEAP_MSGID_BITS == 64
                                 seap_msg->id = SEXP_number_getu_64 (attr_val);
-                                if (seap_msg->id == UINT64_MAX) {
+                                if (seap_msg->id == UINT64_MAX)
 #else
                                 seap_msg->id = SEXP_number_getu_32 (attr_val);
-                                if (seap_msg->id == UINT32_MAX) {
+                                if (seap_msg->id == UINT32_MAX)
 #endif
+                                {
                                         switch (errno) {
                                         case EDOM:
                                                 _D("id: invalid value or type: s_exp=%p, type=%s\n",
@@ -149,51 +140,54 @@ static int SEAP_packet_sexp2msg (SEXP_t *sexp_msg, SEAP_msg_t *seap_msg)
                                                 return (SEAP_EINVAL);
                                         case EFAULT:
                                                 _D("id: not found\n");
-                                                        
+                                                
                                                 sm_free (seap_msg->attrs);
                                                 return (SEAP_EINVAL);
                                         }
                                 }
                                 
                                 SEXP_free (attr_val);
-                                --seap_msg->attrs_cnt;
                         } else {
-                                
                                 seap_msg->attrs[attr_i].name  = SEXP_string_subcstr (attr_name, 1, 0);
-                                seap_msg->attrs[attr_i].value = SEXP_list_nth (sexp_msg, msg_i + 1);
+                                seap_msg->attrs[attr_i].value = SEXP_list_nth (sexp_msg, msg_n + 1);
                                 
                                 if (seap_msg->attrs[attr_i].value == NULL) {
                                         _D("Unexpected error: \"%s\": No attribute value at position %u in the message (%p).\n",
-                                           seap_msg->attrs[attr_i].name, msg_i + 1, sexp_msg);
+                                           seap_msg->attrs[attr_i].name, msg_n + 1, sexp_msg);
+                                        
+                                        sm_free (seap_msg->attrs[attr_i].name);
+                                        
+                                        for (; attr_i > 0; --attr_i) {
+                                                sm_free (seap_msg->attrs[attr_i - 1].name);
+                                                
+                                                if (seap_msg->attrs[attr_i - 1].value != NULL)
+                                                        SEXP_free (seap_msg->attrs[attr_i - 1].value);
+                                        }
                                         
                                         sm_free (seap_msg->attrs);
                                         
-                                        /* FIXME: free already processed attributes */
-
                                         return (SEAP_EINVAL);
                                 }
-                                                                
+                                
                                 ++attr_i;
                         }
                         
-                        ++msg_i;
-                        ++msg_i;
+                        ++msg_n;
                 } else {
-                        /* without value */
-                        
-                        seap_msg->attrs[attr_i].name = SEXP_string_cstr (attr_name);
+                        seap_msg->attrs[attr_i].name  = SEXP_string_cstr (attr_name);
                         seap_msg->attrs[attr_i].value = NULL;
                         
-                        ++msg_i;
                         ++attr_i;
                 }
 
                 SEXP_free (attr_name);
-        } /* END: attribute loop */
-        
-        _A(attr_i <= seap_msg->attrs_cnt);
+        }
 
+        _A(attr_i <= (SEXP_list_length (sexp_msg) - 4));
+        _A(attr_i >= (SEXP_list_length (sexp_msg) - 4)/2);
+        
         seap_msg->attrs_cnt = attr_i;
+        seap_msg->attrs     = sm_realloc (seap_msg->attrs, sizeof (SEAP_attr_t) * seap_msg->attrs_cnt);
         seap_msg->sexp      = SEXP_list_last (sexp_msg);
         
         return (0);

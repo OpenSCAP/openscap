@@ -513,7 +513,12 @@ int main (void)
                         
                         break;
                 }
-                
+
+/*
+#ifndef NDEBUG
+                SEAP_msg_print (stderr, seap_request);
+#endif  
+*/
                 probe_in = SEAP_msg_get (seap_request);
                 if (probe_in == NULL) {
                         _D("Unexpected error: probe_in = NULL\n");

@@ -1,4 +1,3 @@
-#ifndef __STUB_PROBE
 #include <string.h>
 #include "_sexp-types.h"
 #include "_seap-types.h"
@@ -136,4 +135,26 @@ SEXP_t *SEAP_msgattr_get (SEAP_msg_t *msg, const char *name)
         
         return (NULL);
 }
-#endif
+
+void SEAP_msg_print (FILE *fp, SEAP_msg_t *msg)
+{
+        uint16_t i;
+        
+        fprintf (fp, "==== SEAP MSG: %p ====\n", msg);
+        fprintf (fp, "> ID: %u, ap=%p, ac=%u, sp=%p\n",
+                 msg->id, msg->attrs, msg->attrs_cnt, msg->sexp);
+        fprintf (fp, "> attributes:\n");
+        
+        for (i = 0; i < msg->attrs_cnt; ++i) {
+                fprintf (fp, " name: %s", msg->attrs[i].name);
+                fprintf (fp, "value: ");
+                SEXP_fprintfa (fp, msg->attrs[i].value);
+                fprintf (fp, "\n");
+        }
+        
+        fprintf (fp, "> message:\n");
+        SEXP_fprintfa (fp, msg->sexp);
+        
+        fprintf (stderr, "\n======================\n");
+        return;
+}

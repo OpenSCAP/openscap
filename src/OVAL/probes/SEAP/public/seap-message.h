@@ -30,4 +30,7 @@ int     SEAP_msgattr_set (SEAP_msg_t *msg, const char *name, SEXP_t *value);
 int     SEAP_msgattr_del (SEAP_msg_t *msg, const char *name);
 bool    SEAP_msgattr_exists (SEAP_msg_t *msg, const char *name);
 
+#include <stdio.h>
+void SEAP_msg_print (FILE *fp, SEAP_msg_t *msg);
+
 #endif /* SEAP_MESSAGE_H */
