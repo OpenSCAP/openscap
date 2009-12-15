@@ -1,19 +1,10 @@
-/*
- *
- * Example program that read OVAL content (argv[1]) and
- * evaluate all objects in it. The output is system characteristic
- * xml file and oval results xml file.
- *
- * compile: $gcc oval_probes.c -lopenscap
- * author: Peter Vrabec <pvrabec@redhat.com>
- *
- */
 
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "openscap/oval_agent_api.h"
+#include <oval_probe.h>
+#include <oval_agent_api.h>
 
 int _test_error_handler(struct oval_xml_error *error, void *null)
 {
@@ -33,8 +24,32 @@ int main(int argc, char **argv)
 	/* create syschar model */
 	struct oval_syschar_model *sys_model = oval_syschar_model_new(def_model);
 
-	/* call probes */
-	oval_syschar_model_probe_objects(sys_model);
+	/* probe objects in tests */
+	oval_syschar_model_get_sysinfo(sys_model);
+	struct oval_definition_model *definition_model = oval_syschar_model_get_definition_model(sys_model); /* needed? */
+	struct oval_test * test;
+	struct oval_object *object;
+	char *objid;
+	struct oval_syschar *syschar;
+	oval_pctx_t *pctx = oval_pctx_new (sys_model);
+	struct oval_test_iterator * test_it = oval_definition_model_get_tests(definition_model);
+	while( oval_test_iterator_has_more(test_it) ) {
+		test = oval_test_iterator_next(test_it);
+		object = oval_test_get_object(test);
+		objid = oval_object_get_id(object);
+                syschar = oval_syschar_model_get_syschar(sys_model, objid);
+                if(syschar==NULL) {
+	                syschar = oval_probe_object_eval (pctx, object);
+	                if(syschar == NULL) {
+        	                syschar = oval_syschar_new(sys_model, object);
+ 	                        oval_syschar_set_flag(syschar,SYSCHAR_FLAG_NOT_COLLECTED);
+                        }
+                        oval_syschar_model_add_syschar(sys_model, syschar);
+                }
+	}
+        oval_pctx_free (pctx);
+        oval_test_iterator_free(test_it);
+
 
 	/* print # syschars */
         int count = 0;
