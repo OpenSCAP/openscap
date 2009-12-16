@@ -45,7 +45,7 @@ struct cve_model * cve_model_import(const struct oscap_import_source * source) {
 
     __attribute__nonnull__(source);
 
-    if (oscap_import_source_get_filename(source) == NULL) return NULL;
+    if (oscap_import_source_get_name(source) == NULL) return NULL;
 
     struct cve_model *cve;
 
@@ -63,7 +63,7 @@ void cve_model_export(struct cve_model * cve, const struct oscap_export_target *
 
     __attribute__nonnull__(target);
 
-    if (oscap_export_target_get_filename(target) == NULL) return;
+    if (oscap_export_target_get_name(target) == NULL) return;
 
     cve_model_export_xml(cve, target);
 

@@ -1,10 +1,9 @@
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "public/oval_agent_api.h"
-#include "oval_definitions_impl.h"
-#include "oval_system_characteristics_impl.h"
-#include "public/error.h"
+#include "oval_agent_api.h"
+#include "error.h"
 
 int main (void)
 {

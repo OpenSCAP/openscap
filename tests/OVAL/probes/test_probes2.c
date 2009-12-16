@@ -16,10 +16,10 @@ int _test_error_handler(struct oval_xml_error *error, void *null)
 int main(int argc, char **argv)
 {
 	/* definition model populate */
-        struct oval_import_source *def_in = oval_import_source_new_file(argv[1]);
+        struct oscap_import_source *def_in = oscap_import_source_new_file(argv[1], NULL);
         struct oval_definition_model *def_model = oval_definition_model_new();
         oval_definition_model_import(def_model, def_in, &_test_error_handler, NULL);
-        oval_import_source_free(def_in);
+        oscap_import_source_free(def_in);
 
 	/* create syschar model */
 	struct oval_syschar_model *sys_model = oval_syschar_model_new(def_model);
@@ -63,10 +63,10 @@ int main(int argc, char **argv)
 	/* report syschar into xml file */
 	char * syschar_fname = malloc( sizeof(char) * strlen(argv[1]) + 15 );
 	sprintf(syschar_fname, "%s.syschar.xml",argv[1]);
-	struct oval_export_target *syschar_out  = oval_export_target_new_file(syschar_fname, "UTF-8");
+	struct oscap_export_target *syschar_out  = oscap_export_target_new_file(syschar_fname, "UTF-8");
 	oval_syschar_model_export(sys_model, syschar_out);
 	free(syschar_fname);
-	oval_export_target_free(syschar_out);
+	oscap_export_target_free(syschar_out);
 
 	/* create result model */
 	struct oval_syschar_model *sys_models[] = {sys_model, NULL};
@@ -87,10 +87,10 @@ int main(int argc, char **argv)
 	/* report results */
 	char * results_fname = malloc( sizeof(char) * strlen(argv[1]) + 15 );
 	sprintf(results_fname, "%s.results.xml",argv[1]);
-	struct oval_export_target *result_out  = oval_export_target_new_file(results_fname, "UTF-8");
+	struct oscap_export_target *result_out  = oscap_export_target_new_file(results_fname, "UTF-8");
 	oval_results_model_export(res_model, res_direct, result_out);
 	free(results_fname);
-	oval_export_target_free(result_out);
+	oscap_export_target_free(result_out);
 
 	oval_definition_model_free(def_model);
 	oval_syschar_model_free(sys_model);

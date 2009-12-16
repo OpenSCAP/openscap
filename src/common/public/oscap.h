@@ -147,17 +147,27 @@ struct oscap_export_target;
  */
 struct oscap_import_source;
 
+typedef enum {
+	OSCAP_STREAM_UNKNOWN = 0,
+	OSCAP_STREAM_FILE = 1,
+	OSCAP_STREAM_URL = 2,
+} oscap_stream_type_t;
+
 /**
  */
-const char * oscap_import_source_get_filename(const struct oscap_import_source *item);
+oscap_stream_type_t oscap_import_source_get_type(const struct oscap_import_source *item);
+
 /**
- * @relates oscap_import_source
-*/
-const char * oscap_import_source_get_encoding(const struct oscap_import_source *item);
-/**
- * @relates oscap_import_source
  */
-const char * oscap_export_target_get_filename(const struct oscap_export_target *item);
+const char * oscap_import_source_get_name(const struct oscap_import_source *item);
+
+/**
+ */
+oscap_stream_type_t oscap_export_target_get_type(const struct oscap_export_target *item);
+/**
+ * @relates oscap_export_target
+ */
+const char * oscap_export_target_get_name(const struct oscap_export_target *item);
 /**
  * @relates oscap_export_target
  */
@@ -173,7 +183,11 @@ const char * oscap_export_target_get_indent_string(const struct oscap_export_tar
 /**
  * TODO
  */
-struct oscap_import_source * oscap_import_source_new(const char * filename, const char * encoding);
+struct oscap_import_source * oscap_import_source_new_file(const char * filename, const char *encoding);
+/**
+ * TODO
+ */
+struct oscap_import_source * oscap_import_source_new_URL(const char * url, const char *encoding);
 /**
  * TODO
  */
@@ -181,7 +195,11 @@ void oscap_import_source_free(struct oscap_import_source * target);
 /**
  * TODO
  */
-struct oscap_export_target * oscap_export_target_new(const char * filename, const char * encoding);
+struct oscap_export_target * oscap_export_target_new_file(const char * filename, const char * encoding);
+/**
+ * TODO
+ */
+struct oscap_export_target * oscap_export_target_new_URL(const char * url, const char * encoding);
 /**
  * TODO
  */

@@ -402,14 +402,14 @@ void oval_syschar_model_add_variable_binding(struct oval_syschar_model *model, s
  * @ingroup OVALSYS_service
  */
 int oval_syschar_model_export(
-		struct oval_syschar_model *, struct oval_export_target *);
+		struct oval_syschar_model *, struct oscap_export_target *);
 
 /**
  * Load OVAL system characteristics from a file.
  * @ingroup OVALSYS_service
  */
 void oval_syschar_model_import(struct oval_syschar_model *model,
-			struct oval_import_source *source,
+			struct oscap_import_source *source,
 			oval_xml_error_handler eh, void *user_arg );
 
 /**

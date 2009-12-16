@@ -30,6 +30,7 @@
 
 #include <stdbool.h>
 #include <assert.h>
+#include "public/oscap.h"
 #include "public/alloc.h"
 
 #define __attribute__nonnull__(x) assert((x) != NULL)
@@ -323,23 +324,6 @@ char* oscap_strdup(const char *str);
  * @param delim Delimiter of string parts
  */
 char* oscap_strsep(char** str, const char *delim);
-
-/*bool oscap_import_source_set_filename(struct oscap_import_source *src, const char *new_filename);*/
-/*bool oscap_export_target_set_(struct oscap_export_target *tgt, const char *new_);*/
-
-const char* oscap_import_source_get_filename(const struct oscap_import_source * src);
-const char* oscap_import_source_get_encoding(const struct oscap_import_source * src);
-
-const char* oscap_export_target_get_filename(const struct oscap_export_target * tgt);
-const char* oscap_export_target_get_encoding(const struct oscap_export_target * tgt);
-int oscap_export_target_get_indent(const struct oscap_export_target * tgt);
-const char* oscap_export_target_get_indent_string(const struct oscap_export_target * tgt);
-
-struct oscap_import_source * oscap_import_source_new(const char * filename, const char * encoding);
-void oscap_import_source_free(struct oscap_import_source * src);
-
-struct oscap_export_target * oscap_export_target_new(const char * filename, const char * encoding);
-void oscap_export_target_free(struct oscap_export_target * tgt);
 
 #endif /* OSCAP_UTIL_H_ */
 

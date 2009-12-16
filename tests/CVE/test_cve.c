@@ -52,9 +52,9 @@ int main(int argc, char **argv)
     
     else if (argc == 6 && !strcmp(argv[1], "--test-export-all")) {
 
-        notNULL (import_source = oscap_import_source_new(argv[2], argv[3]), "import")
+        notNULL (import_source = oscap_import_source_new_file(argv[2], argv[3]), "import")
         notNULL (model = cve_model_import(import_source), "model")
-        notNULL (export_target = oscap_export_target_new(argv[4], argv[5]), "export")
+        notNULL (export_target = oscap_export_target_new_file(argv[4], argv[5]), "export")
 
         cve_model_export(model, export_target);
         oscap_export_target_free(export_target);    
@@ -65,7 +65,7 @@ int main(int argc, char **argv)
     else if (argc > 4 && !strcmp(argv[1], "--add-entries")) {
     
         notNULL (model = cve_model_new(), "new model");
-        notNULL (export_target = oscap_export_target_new(argv[2], argv[3]), "export")
+        notNULL (export_target = oscap_export_target_new_file(argv[2], argv[3]), "export")
 
         int i;
         for (i=4; i<argc; i++) {
@@ -81,7 +81,7 @@ int main(int argc, char **argv)
 
     else if (argc == 4 && !strcmp(argv[1], "--test-cvss")) {
 
-        notNULL (import_source = oscap_import_source_new(argv[2], argv[3]), "import")
+        notNULL (import_source = oscap_import_source_new_file(argv[2], argv[3]), "import")
         notNULL (model = cve_model_import(import_source), "model")
 
         entry_it = cve_model_get_entries(model);

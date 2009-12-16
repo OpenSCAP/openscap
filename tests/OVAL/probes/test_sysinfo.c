@@ -1,6 +1,6 @@
 #include <stdio.h>
-#include "public/oval_agent_api.h"
-#include "public/oval_system_characteristics.h"
+#include "oval_agent_api.h"
+#include "oval_system_characteristics.h"
 #include "oval_definitions_impl.h"
 
 int main (void)

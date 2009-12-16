@@ -6,8 +6,8 @@
  */
 #include <stdio.h>
 #include <stdlib.h>
-#include <public/oval_agent_api.h>
-#include <public/oscap.h>
+#include <oval_agent_api.h>
+#include <oscap.h>
 
 int _test_error_handler(struct oval_xml_error *error, void *null)
 {
@@ -19,9 +19,9 @@ int main(int argc, char **argv)
 {
 	struct oval_definition_model *model = oval_definition_model_new();
 
-	struct oval_import_source *is = oval_import_source_new_file(argv[1]);
+	struct oscap_import_source *is = oscap_import_source_new_file(argv[1], NULL);
 	oval_definition_model_import(model, is, &_test_error_handler, NULL);
-	oval_import_source_free(is);
+	oscap_import_source_free(is);
 
 	struct oval_definition_iterator *definitions =
 	    oval_definition_model_get_definitions(model);

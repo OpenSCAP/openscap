@@ -39,39 +39,6 @@
 
 int oval_errno;
 
-struct oval_export_target *oval_export_target_new_file(char *filename, char* encoding){
-	oval_export_target_t *target = (oval_export_target_t *)malloc(sizeof(oval_export_target_t));
-	target->filename = strdup(filename);
-	target->encoding = strdup(encoding);
-	return target;
-}
-
-void oval_export_target_free(struct oval_export_target *target){
-	free(target->filename);
-	free(target->encoding);
-	target->filename = NULL;
-	target->encoding = NULL;
-	free(target);
-}
-
-struct oval_import_source *oval_import_source_new_file(char *filename)
-{
-	oval_import_source_t *source =
-	    (oval_import_source_t *) malloc(sizeof(oval_import_source_t));
-	int namesize = strlen(filename) + 1;
-	char *alloc_filename = (char *)malloc(namesize * sizeof(char));
-	*alloc_filename = 0;
-	strcpy(alloc_filename, filename);
-	source->import_source_filename = alloc_filename;
-	return source;
-}
-
-void oval_import_source_free(struct oval_import_source *source)
-{
-	free(source->import_source_filename);
-	source->import_source_filename = NULL;
-	free(source);
-}
 
 typedef struct oval_definition_model {
 	struct oval_string_map *definition_map;
@@ -395,11 +362,11 @@ void oval_syschar_model_add_sysdata(struct oval_syschar_model *model, struct ova
 }
 
 int oval_definition_model_import(struct oval_definition_model *model,
-			   struct oval_import_source *source,
+			   struct oscap_import_source *source,
 			   oval_xml_error_handler eh, void *user_arg)
 {
 	xmlTextReader *reader = xmlNewTextReaderFilename
-		(source->import_source_filename);
+		(oscap_import_source_get_name(source));
 	int retcode = 0;
 	if(reader){
 		if(xmlTextReaderRead(reader)>-1){
@@ -411,18 +378,18 @@ int oval_definition_model_import(struct oval_definition_model *model,
 		fprintf(stderr, "ERROR: oval_definition_model_import: "
 		"cannot open XML reader for %s\n"
 		"    Code Location = %s(%d)\n",
-		source->import_source_filename,
+		oscap_import_source_get_name(source),
 		__FILE__, __LINE__);
 	return retcode;
 }
 void oval_syschar_model_import(struct oval_syschar_model *model,
-			struct oval_import_source *source,
+			struct oscap_import_source *source,
 			oval_xml_error_handler eh, void *user_arg )
 {
 	xmlDoc *doc = xmlParseFile
-		(source->import_source_filename);
+		(oscap_import_source_get_name(source));
 	xmlTextReader *reader = xmlNewTextReaderFilename
-		(source->import_source_filename);
+		(oscap_import_source_get_name(source));
 
 	xmlTextReaderRead(reader);
 	ovalsys_parser_parse
@@ -742,11 +709,11 @@ void oval_results_model_add_system
 }
 
 struct oval_result_directives *oval_results_model_import
-	(struct oval_results_model *model, struct oval_import_source *source,
+	(struct oval_results_model *model, struct oscap_import_source *source,
 			oval_xml_error_handler handler, void *client_data)
 {
-	xmlDoc *doc = xmlParseFile(source->import_source_filename);
-	xmlTextReader *reader = xmlNewTextReaderFilename(source->import_source_filename);
+	xmlDoc *doc = xmlParseFile(oscap_import_source_get_name(source));
+	xmlTextReader *reader = xmlNewTextReaderFilename(oscap_import_source_get_name(source));
 
 	xmlTextReaderRead(reader);
 	struct oval_result_directives *directives = ovalres_parser_parse
@@ -1052,7 +1019,7 @@ xmlNode *oval_definitions_to_dom
 }
 
 int oval_definition_model_export(
-		struct oval_definition_model *model, struct oval_export_target *target){
+		struct oval_definition_model *model, struct oscap_export_target *target){
 
 	LIBXML_TEST_VERSION;
 
@@ -1061,7 +1028,7 @@ int oval_definition_model_export(
 	/*
 	 * Dumping document to stdio or file
 	 */
-	int retcode = xmlSaveFormatFileEnc(target->filename, doc, target->encoding, 1);
+	int retcode = xmlSaveFormatFileEnc(oscap_export_target_get_name(target), doc, oscap_export_target_get_encoding(target), 1);
 
 	xmlFreeDoc(doc);
     return retcode;
@@ -1140,7 +1107,7 @@ xmlNode *oval_syschar_model_to_dom
 }
 
 int oval_syschar_model_export(
-		struct oval_syschar_model *model, struct oval_export_target *target)
+		struct oval_syschar_model *model, struct oscap_export_target *target)
 {
 
 	LIBXML_TEST_VERSION;
@@ -1150,7 +1117,7 @@ int oval_syschar_model_export(
 	/*
 	 * Dumping document to stdio or file
 	 */
-	int retcode = xmlSaveFormatFileEnc(target->filename, doc, target->encoding, 1);
+	int retcode = xmlSaveFormatFileEnc(oscap_export_target_get_name(target), doc, oscap_export_target_get_encoding(target), 1);
 
 	xmlFreeDoc(doc);
     return retcode;
@@ -1236,7 +1203,7 @@ static xmlNode *oval_results_to_dom
 
 int oval_results_model_export
 	(struct oval_results_model *results_model, struct oval_result_directives *directives,
-			struct oval_export_target *target)
+			struct oscap_export_target *target)
 {
 	LIBXML_TEST_VERSION;
 
@@ -1244,7 +1211,7 @@ int oval_results_model_export
 
 	oval_results_to_dom(results_model, directives, doc, NULL);
 	int xmlCode = xmlSaveFormatFileEnc
-		(target->filename, doc, target->encoding, 1);
+		(oscap_export_target_get_name(target), doc, oscap_export_target_get_encoding(target), 1);
 	if(xmlCode<=0){
 		fprintf(stderr, "WARNING: No bytes exported: xmlCode = %d\n", xmlCode);
 	}
@@ -1272,7 +1239,7 @@ struct oval_syschar *oval_probe_object_eval (oval_pctx_t *pctx, struct oval_obje
 	return syschar;
 }
 
-struct oval_sysinfo *oval_probe_sysinf_eval (oval_pctx_t *pctx)
+struct oval_sysinfo *oval_probe_sysinf_eval (struct oval_syschar_model *model, oval_pctx_t *pctx)
 {
         return (NULL);
 }

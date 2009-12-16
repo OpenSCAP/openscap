@@ -25,61 +25,102 @@
 
 #include "util.h"
 #include "_error.h"
+#include "oscap.h"
 #include <string.h>
 
+
+
 struct oscap_import_source {
-        char * filename;
-        char * encoding;
+	oscap_stream_type_t type;
+	char * encoding;
+        char * name;
 };
-OSCAP_GETTER(const char *, oscap_import_source, filename)
-OSCAP_GETTER(const char *, oscap_import_source, encoding)
+OSCAP_GETTER(const char *, oscap_import_source , name)
+OSCAP_GETTER(oscap_stream_type_t, oscap_import_source, type)
 
 struct oscap_export_target {
-        char * filename;
+	oscap_stream_type_t type;
+        char * name;
         char * encoding;
         int indent; 
         char * indent_string;
 };
-OSCAP_GETTER(const char *, oscap_export_target, filename)
+OSCAP_GETTER(const char *, oscap_export_target, name)
 OSCAP_GETTER(const char *, oscap_export_target, encoding)
 OSCAP_GETTER(int, oscap_export_target, indent)
+OSCAP_GETTER(oscap_stream_type_t, oscap_export_target, type)
 OSCAP_GETTER(const char *, oscap_export_target, indent_string)
 
-struct oscap_import_source * oscap_import_source_new(const char * filename, const char * encoding) {
+struct oscap_import_source * oscap_import_source_new_file(const char * filename, const char * encoding) {
 
         struct oscap_import_source *source = oscap_calloc(1, sizeof(struct oscap_import_source));
 
+        source->type = OSCAP_STREAM_FILE;
         if (filename == NULL)
                 return NULL;
-        if (encoding == NULL)
-             source->encoding = strdup("UTF-8");
-        else source->encoding = strdup(encoding);
-                
-        source->filename = strdup(filename);
+
+        source->encoding = (encoding)?strdup(encoding):NULL;
+        source->name     = strdup(filename);
 
         return source;
 }
 
-void oscap_import_source_free(struct oscap_import_source * target) {
-        
-        if (target == NULL) return;
+struct oscap_import_source * oscap_import_source_new_URL(const char * url, const char *encoding) {
 
-        if (target->filename != NULL) oscap_free(target->filename);
-        if (target->encoding != NULL) oscap_free(target->encoding);
-        oscap_free(target);
+        struct oscap_import_source *source = oscap_calloc(1, sizeof(struct oscap_import_source));
+
+        source->type = OSCAP_STREAM_URL;
+        if (url == NULL)
+                return NULL;
+
+        source->encoding = (encoding)?strdup(encoding):NULL;
+        source->name     = strdup(url);
+
+        return source;
 }
 
-struct oscap_export_target * oscap_export_target_new(const char * filename, const char * encoding) {
+void oscap_import_source_free(struct oscap_import_source * source) {
+        
+        if (source == NULL) return;
+
+        if (source->encoding != NULL) oscap_free(source->encoding);
+        if (source->name != NULL) oscap_free(source->name);
+        oscap_free(source);
+}
+
+struct oscap_export_target * oscap_export_target_new_file(const char * filename, const char * encoding) {
 
         struct oscap_export_target *target = oscap_calloc(1, sizeof(struct oscap_export_target));
+
+        target->type = OSCAP_STREAM_FILE;
 
         if (filename == NULL)
                 return NULL;
         if (encoding == NULL)
              target->encoding = strdup("UTF-8");
         else target->encoding = strdup(encoding);
+
+        target->name = strdup(filename);
+        /* default values */
+        target->indent = 1;
+        target->indent_string = strdup("    ");
+
+        return target;
+}
+
+struct oscap_export_target * oscap_export_target_new_URL(const char * url, const char * encoding) {
+
+        struct oscap_export_target *target = oscap_calloc(1, sizeof(struct oscap_export_target));
+
+        target->type = OSCAP_STREAM_URL;
+
+        if (url == NULL)
+                return NULL;
+        if (encoding == NULL)
+             target->encoding = strdup("UTF-8");
+        else target->encoding = strdup(encoding);
                 
-        target->filename = strdup(filename);
+        target->name = strdup(url);
         /* default values */
         target->indent = 1;
         target->indent_string = strdup("    ");
@@ -91,7 +132,7 @@ void oscap_export_target_free(struct oscap_export_target * target) {
         
         if (target == NULL) return;
 
-        if (target->filename != NULL) oscap_free(target->filename);
+        if (target->name != NULL) oscap_free(target->name);
         if (target->encoding != NULL) oscap_free(target->encoding);
         if (target->indent_string != NULL) oscap_free(target->indent_string);
         oscap_free(target);

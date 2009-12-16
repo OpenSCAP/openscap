@@ -1,17 +1,31 @@
-check_PROGRAMS =
+
+
 TESTS =
-#TESTS_ENVIRONMENT = $(SHELL)
+check_PROGRAMS =
+AM_CPPFLAGS =	-I$(top_srcdir)/src/CVE/public \
+		-I${top_srcdir}/src/CVSS/public \
+		-I$(top_srcdir)/src/CPE/public \
+		-I$(top_srcdir)/src/CCE/public \
+		-I$(top_srcdir)/src/OVAL/public \
+		-I$(top_srcdir)/src/XCCDF/public \
+	 	-I$(top_srcdir)/src/common/public \
+		-I$(top_srcdir)/src/OVAL/probes/public \
+		-I$(top_srcdir)/src/OVAL/probes/SEAP/public
+LDADD = $(top_builddir)/src/libopenscap_testing.la
 EXTRA_DIST =
 DISTCLEANFILES = *.log *.out
 
-CFLAGS += @libxml_cflags@
 
 if WANT_OVAL
+TESTS += OVAL/test_oval.sh 
+
 check_PROGRAMS += test_oval \
 	          test_syschar \
 		  test_results
 
-TESTS += OVAL/test_oval.sh 
+test_oval_SOURCES =	OVAL/test_oval.c
+test_syschar_SOURCES =	OVAL/test_syschar.c
+test_results_SOURCES =	OVAL/test_results.c
 
 EXTRA_DIST += OVAL/test_oval.sh \
 	      OVAL/scap-rhel5-oval.xml \
@@ -19,23 +33,32 @@ EXTRA_DIST += OVAL/test_oval.sh \
 	      OVAL/system-characteristics.xml \
 	      OVAL/results.xml
 
-test_oval_SOURCES = OVAL/test_oval.c
-test_oval_CFLAGS = -I$(top_srcdir)/src/OVAL -I$(top_srcdir)/src/common
-test_oval_LDADD = $(top_builddir)/src/libopenscap_testing.la
-
-test_syschar_SOURCES = OVAL/test_syschar.c
-test_syschar_CFLAGS = -I$(top_srcdir)/src/OVAL -I$(top_srcdir)/src/common
-test_syschar_LDADD = $(top_builddir)/src/libopenscap_testing.la
-
-test_results_SOURCES = OVAL/test_results.c
-test_results_CFLAGS = -I$(top_srcdir)/src/OVAL -I$(top_srcdir)/src/common
-test_results_LDADD = $(top_builddir)/src/libopenscap_testing.la
 
 if WANT_PROBES
-check_PROGRAMS += sexp_parser test_probes test_probe-api test_sysinfo test_error test_probes2
-#test_findfile test_sexp_to_syschar
 TESTS += OVAL/SEAP/test_seap.sh \
 	 OVAL/probes/test_probes.sh 
+
+check_PROGRAMS +=	sexp_parser \
+			sexp_string \
+			sexp_number \
+			sexp_list \
+			test_probes \
+			test_probe-api \
+			test_sysinfo \
+			test_error \
+			test_probes2
+
+sexp_parser_SOURCES =	OVAL/SEAP/sexp_parser.c
+sexp_string_SOURCES =	OVAL/SEAP/sexp_string.c
+sexp_number_SOURCES =	OVAL/SEAP/sexp_number.c
+sexp_list_SOURCES =	OVAL/SEAP/sexp_list.c
+test_probes_SOURCES =	OVAL/probes/test_probes.c
+test_probes_CFLAGS =	-I$(top_srcdir)/src/OVAL @libxml_cflags@
+test_sysinfo_SOURCES =	OVAL/probes/test_sysinfo.c
+test_sysinfo_CFLAGS =	-I$(top_srcdir)/src/OVAL @libxml_cflags@
+test_probes2_SOURCES =	OVAL/probes/test_probes2.c
+test_error_SOURCES =	OVAL/probes/test_error.c
+test_probe_api_SOURCES =OVAL/probes/test_probe-api.c
 
 EXTRA_DIST += OVAL/SEAP/test_seap.sh 	  \
 	      OVAL/probes/test_probes.sh  \
@@ -47,117 +70,68 @@ EXTRA_DIST += OVAL/SEAP/test_seap.sh 	  \
 	      OVAL/probes/file-set3.xml	  \
 	      OVAL/probes/file.xml	  
 
-sexp_parser_SOURCES = OVAL/SEAP/sexp_parser.c
-sexp_parser_CFLAGS = -I$(top_srcdir)/src/OVAL/probes/SEAP/public
-sexp_parser_LDADD = $(top_builddir)/src/libopenscap_testing.la
+endif # WANT_PROBES 
+endif # WANT_OVAL
 
-check_PROGRAMS += sexp_string
-sexp_string_SOURCES = OVAL/SEAP/sexp_string.c
-sexp_string_CFLAGS = -I$(top_srcdir)/src/OVAL/probes/SEAP/public
-sexp_string_LDADD = $(top_builddir)/src/libopenscap_testing.la
-
-check_PROGRAMS += sexp_number
-sexp_number_SOURCES = OVAL/SEAP/sexp_number.c
-sexp_number_CFLAGS = -I$(top_srcdir)/src/OVAL/probes/SEAP/public
-sexp_number_LDADD = $(top_builddir)/src/libopenscap_testing.la
-
-check_PROGRAMS += sexp_list
-sexp_list_SOURCES = OVAL/SEAP/sexp_list.c
-sexp_list_CFLAGS = -I$(top_srcdir)/src/OVAL/probes/SEAP/public
-sexp_list_LDADD = $(top_builddir)/src/libopenscap_testing.la
-
-test_probes_SOURCES = OVAL/probes/test_probes.c
-test_probes_CFLAGS = -I$(top_srcdir)/src/OVAL
-test_probes_LDADD = $(top_builddir)/src/libopenscap_testing.la
-
-test_probes2_SOURCES = OVAL/probes/test_probes2.c
-test_probes2_CFLAGS = -I$(top_srcdir)/src/OVAL  -I$(top_srcdir)/src/OVAL/public
-test_probes2_LDADD = $(top_builddir)/src/libopenscap_testing.la
-
-test_error_SOURCES = OVAL/probes/test_error.c
-test_error_CFLAGS = -I$(top_srcdir)/src/OVAL -I$(top_srcdir)/src/common
-test_error_LDADD = $(top_builddir)/src/libopenscap_testing.la
-
-test_probe_api_SOURCES = OVAL/probes/test_probe-api.c
-test_probe_api_CFLAGS = -I$(top_srcdir)/src/OVAL/public -I$(top_srcdir)/src/OVAL/probes/public -I$(top_srcdir)/src/OVAL/probes/SEAP/public
-test_probe_api_LDADD = $(top_builddir)/src/libopenscap_testing.la
-
-test_sysinfo_SOURCES = OVAL/probes/test_sysinfo.c
-test_sysinfo_CFLAGS = -I$(top_srcdir)/src/OVAL
-test_sysinfo_LDADD = $(top_builddir)/src/libopenscap_testing.la
-
-#test_findfile_SOURCES = OVAL/test_findfile.c
-#test_findfile_CFLAGS = -I$(top_srcdir)/src/OVAL/probes/SEAP/public -I$(top_srcdir)/src/OVAL/probes -I$(top_srcdir)/src/OVAL
-#test_findfile_LDADD = $(top_builddir)/src/libopenscap_testing.la
-
-#test_sexp_to_syschar_SOURCES = OVAL/test_sexp_to_syschar.c
-#test_sexp_to_syschar_CFLAGS = -I$(top_srcdir)/src/OVAL/probes/SEAP/public -I$(top_srcdir)/src/OVAL -I$(top_srcdir)/src/OVAL/probes
-#test_sexp_to_syschar_LDADD = $(top_builddir)/src/libopenscap_testing.la
-
-endif
-endif
 
 if WANT_CPE
-check_PROGRAMS += test_cpelang test_cpedict test_cpeuri
 TESTS += CPE/test_cpeuri.sh  \
 	 CPE/test_cpedict.sh \
 	 CPE/test_cpelang.sh
-EXTRA_DIST += test_common.sh CPE/test_cpeuri.sh CPE/test_cpedict.sh CPE/test_cpelang.sh CPE/dict.xml CPE/lang.xml CPE/lang-corrupted.xml CPE/lang-copy.xml
+
+check_PROGRAMS +=	test_cpelang \
+		 	test_cpedict \
+			test_cpeuri
 
 test_cpelang_SOURCES = CPE/test_cpelang.c
-test_cpelang_LDADD = $(top_builddir)/src/libopenscap_testing.la
-test_cpelang_CFLAGS = -I$(top_srcdir)/src/CPE -I${top_srcdir}/src/CPE/public -I${top_srcdir}/src/common/public
-
 test_cpedict_SOURCES = CPE/test_cpedict.c
-test_cpedict_CFLAGS = -I$(top_srcdir)/src/CPE -I${top_srcdir}/src/CPE/public -I${top_srcdir}/src/common/public
-test_cpedict_LDADD = $(top_builddir)/src/libopenscap_testing.la
-
 test_cpeuri_SOURCES = CPE/test_cpeuri.c
-test_cpeuri_CFLAGS = -I$(top_srcdir)/src/CPE -I${top_srcdir}/src/CPE/public -I${top_srcdir}/src/common/public
-test_cpeuri_LDADD = $(top_builddir)/src/libopenscap_testing.la
+
+
+EXTRA_DIST +=	test_common.sh \
+		CPE/test_cpeuri.sh \
+		CPE/test_cpedict.sh \
+		CPE/test_cpelang.sh \
+		CPE/dict.xml \
+		CPE/lang.xml \
+		CPE/lang-corrupted.xml \
+		CPE/lang-copy.xml
 endif
+
 
 if WANT_CVE
-check_PROGRAMS += test_cve
 TESTS += CVE/test_cve.sh
-EXTRA_DIST += CVE/test_cve.sh CVE/nvdcve-2.0-recent.xml
-
+check_PROGRAMS += test_cve
 test_cve_SOURCES = CVE/test_cve.c
-test_cve_CFLAGS = -I$(top_srcdir)/src/CVE/public -I${top_srcdir}/src/CVE \
-		  -I${top_srcdir}/src/CVSS/public -I${top_srcdir}/src/CVSS \
-		  -I${top_srcdir}/src/common/public -I$(top_srcdir)/src/CPE/public 
-test_cve_LDADD = $(top_builddir)/src/libopenscap_testing.la
-endif
+EXTRA_DIST += CVE/test_cve.sh CVE/nvdcve-2.0-recent.xml
+endif 
+
 
 if WANT_CCE
-check_PROGRAMS += test_cce
 TESTS += CCE/test_cce.sh
+check_PROGRAMS += test_cce
+test_cce_SOURCES = CCE/test_cce.c
 EXTRA_DIST += CCE/test_cce.sh            \
 	      CCE/cce-sample.xml         \
               CCE/cce-sample-invalid.xml \
               CCE/cce-sample-damaged.xml 
-
-test_cce_SOURCES = CCE/test_cce.c
-test_cce_CFLAGS = -I$(top_srcdir)/src/CCE/public -I${top_srcdir}/src/common/public
-test_cce_LDADD = $(top_builddir)/src/libopenscap_testing.la
 endif
+
 
 if WANT_CVSS
-check_PROGRAMS += test_cvsscalc
 TESTS += CVSS/test_cvsscalc.sh
-EXTRA_DIST += CVSS/test_cvsscalc.sh
+check_PROGRAMS += test_cvsscalc
 test_cvsscalc_SOURCES = CVSS/test_cvsscalc.c
-test_cvsscalc_CFLAGS  = -I$(top_srcdir)/src/CVSS/public -I${top_srcdir}/src/common/public
-test_cvsscalc_LDADD = $(top_builddir)/src/libopenscap_testing.la
-EXTRA_DIST += CVSS/test_cvsscalc.py
+EXTRA_DIST +=	CVSS/test_cvsscalc.py \
+		CVSS/test_cvsscalc.sh
 endif
+
 
 if WANT_XCCDF
-check_PROGRAMS += xccdf_dump
 TESTS += XCCDF/test_xccdf.sh
-EXTRA_DIST += XCCDF/test_xccdf.sh XCCDF/scap-rhel5-xccdf.xml
-
+check_PROGRAMS += xccdf_dump
 xccdf_dump_SOURCES = XCCDF/xccdf_dump.c
-xccdf_dump_CFLAGS = -I$(top_srcdir)/src/XCCDF/public -I${top_srcdir}/src/common/public
-xccdf_dump_LDADD = $(top_builddir)/src/libopenscap_testing.la
+EXTRA_DIST +=	XCCDF/test_xccdf.sh \
+		XCCDF/scap-rhel5-xccdf.xml
 endif
+

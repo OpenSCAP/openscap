@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "public/oval_agent_api.h"
+#include "oval_agent_api.h"
 #include "oval_definitions_impl.h"
 #include "oval_system_characteristics_impl.h"
 
@@ -26,7 +26,7 @@ int main(int argc, char **argv)
 	char *id, *probe_dir;
 	struct oval_definition_model *definition_model;
 	struct oval_syschar_model *syschar_model;
-	struct oval_import_source *source;
+	struct oscap_import_source *source;
 	struct oval_object_iterator *obj_it;
 	struct oval_object *object;
 	struct oval_syschar *syschar;
@@ -36,14 +36,14 @@ int main(int argc, char **argv)
 		return 1;
 	}
 
-	source = oval_import_source_new_file(argv[1]);
+	source = oscap_import_source_new_file(argv[1], NULL);
 	definition_model = oval_definition_model_new();
 	ret = oval_definition_model_import(definition_model, source, &_test_error_handler, NULL);
 	if(ret != 1) {
 		printf("oval_definition_model_import() failed.\n");
 		return 2;
 	}
-	oval_import_source_free(source);
+	oscap_import_source_free(source);
 	syschar_model = oval_syschar_model_new(definition_model);
 
 	obj_it = oval_definition_model_get_objects(definition_model);

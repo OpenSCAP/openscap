@@ -7,8 +7,8 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include "public/oval_agent_api.h"
-#include "public/oscap.h"
+#include "oval_agent_api.h"
+#include "oscap.h"
 
 //typedef int (*oval_xml_error_handler) (struct oval_xml_error *, void *user_arg);
 int _test_error_handler(struct oval_xml_error *error, void *null)
@@ -53,16 +53,16 @@ int main(int argc, char **argv)
 	if (argc > 1) {
 		struct oval_definition_model *model = oval_definition_model_new();
 		printf("LOAD OVAL DEFINITIONS\n");
-		struct oval_import_source *source = oval_import_source_new_file(argv[1]);
+		struct oscap_import_source *source = oscap_import_source_new_file(argv[1], NULL);
 		oval_definition_model_import(model, source, &_test_error_handler, NULL);
-		oval_import_source_free(source);
+		oscap_import_source_free(source);
 		printf("OVAL DEFINITIONS LOADED\n");
 		if (argc > 2) {
 			printf("LOAD OVAL SYSCHAR\n");
-			source = oval_import_source_new_file(argv[2]);
+			source = oscap_import_source_new_file(argv[2], NULL);
 			struct oval_syschar_model *syschar_model = oval_syschar_model_new(model);
 			oval_syschar_model_import(syschar_model, source, &_test_error_handler, NULL);
-			oval_import_source_free(source);
+			oscap_import_source_free(source);
 			printf("OVAL SYSCHAR LOADED\n");
 
 			int count;
@@ -77,7 +77,7 @@ int main(int argc, char **argv)
 			else
 				printf("NO DEFINITIONS FOUND\n");
 
-			oval_syschar_model_export(syschar_model, oval_export_target_new_file("-", "UTF-8"));
+			oval_syschar_model_export(syschar_model, oscap_export_target_new_file("-", "UTF-8"));
 			oval_syschar_model_free(syschar_model);
 		}
 		oval_definition_model_free(model);

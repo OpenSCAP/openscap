@@ -38,7 +38,7 @@
 #include <probe-api.h>
 #include <probe-entcmp.h>
 #include <findfile.h>
-#include <public/alloc.h>
+#include <alloc.h>
 
 #define FILE_SEPARATOR '/'
 

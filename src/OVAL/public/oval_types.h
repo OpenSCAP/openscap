@@ -24,6 +24,8 @@
 #define OVAL_TYPES_H_
 
 #include <stdbool.h>
+#include <oscap.h>
+
 /**
  * @file
  * OVAL agent API.
@@ -264,16 +266,6 @@ typedef enum {
 	OVAL_WINDOWS_WUA_UPDATE_SEARCHER = OVAL_FAMILY_WINDOWS           + 33
 } oval_windows_subtype_t;
 
-/**
- * @struct oval_export_target
- * Specification of XML export target.
- */
-struct oval_export_target;
-/**
- * @struct oval_import_source;
- * Specification of XML import source.
- */
-struct oval_import_source;
 
 /// severity level
 typedef enum {
@@ -297,30 +289,7 @@ struct oval_xml_error {
 /// OVAL XML error handler function pointer type.
 typedef int (*oval_xml_error_handler) (struct oval_xml_error *, void *user_arg);
 
-/**
- * Create an import source from filename.
- * Return an import_source that streams from a designated file.
- * @param filename the name of the designated file
- */
-struct oval_import_source *oval_import_source_new_file(char *filename);
 
-/** free a specified import_source.
- * @param source the specified import_source
- */
-void oval_import_source_free(
-		struct oval_import_source *source);
-
-/** create export_target object.
- * Return the created export_target object.
- * @param filename the name of the target output file
- * @param encoding the target XML encoding.
- */
-struct oval_export_target *oval_export_target_new_file(char *filename, char* encoding);
-
-/** free an export_target object.
- * @param target the target to be freed.
- */
-void oval_export_target_free(struct oval_export_target *target);
 
 
 /**

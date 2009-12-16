@@ -41,7 +41,7 @@ int main (int argc, char *argv[])
 
   // Print complete content.
   else if (argc == 4 && !strcmp(argv[1], "--get-all")) {        
-    if ((import_source = oscap_import_source_new(argv[2], argv[3])) == NULL) 
+    if ((import_source = oscap_import_source_new_file(argv[2], argv[3])) == NULL)
       return 1;
     
     if ((lang_model = cpe_lang_model_import(import_source)) == NULL)
@@ -60,7 +60,7 @@ int main (int argc, char *argv[])
   
   // Print platform of given key only.
   else if (argc == 5 && !strcmp(argv[1], "--get-key")) {        
-    if ((import_source = oscap_import_source_new(argv[2], argv[3])) == NULL) 
+    if ((import_source = oscap_import_source_new_file(argv[2], argv[3])) == NULL)
       return 1;
     
     if ((lang_model = cpe_lang_model_import(import_source)) == NULL)
@@ -77,7 +77,7 @@ int main (int argc, char *argv[])
 
   // Set ns_prefix, ns_href, add new platforms.
   else if (argc >= 6 && !strcmp(argv[1], "--set-all")) {        
-    if ((import_source = oscap_import_source_new(argv[2], argv[3])) == NULL) 
+    if ((import_source = oscap_import_source_new_file(argv[2], argv[3])) == NULL)
       return 1;
     if ((lang_model = cpe_lang_model_import(import_source)) == NULL)
       return 1;
@@ -96,7 +96,7 @@ int main (int argc, char *argv[])
 	return 2;
     }      
 
-    if ((export_target = oscap_export_target_new(argv[2], argv[3])) == NULL)
+    if ((export_target = oscap_export_target_new_file(argv[2], argv[3])) == NULL)
       return 1;
     cpe_lang_model_export(lang_model, export_target);
     oscap_export_target_free(export_target);
@@ -105,7 +105,7 @@ int main (int argc, char *argv[])
 
   // Set id, change titles of platform of given key.
   else if (argc >= 6 && !strcmp(argv[1], "--set-key")) {
-    if ((import_source = oscap_import_source_new(argv[2], argv[3])) == NULL)
+    if ((import_source = oscap_import_source_new_file(argv[2], argv[3])) == NULL)
       return 1;
     if ((lang_model = cpe_lang_model_import(import_source)) == NULL)
       return 1;
@@ -126,7 +126,7 @@ int main (int argc, char *argv[])
       i++;
     } 
 
-    if ((export_target = oscap_export_target_new(argv[2], argv[3])) == NULL) 
+    if ((export_target = oscap_export_target_new_file(argv[2], argv[3])) == NULL) 
       return 1;
     cpe_lang_model_export(lang_model, export_target);
     oscap_export_target_free(export_target);
@@ -151,7 +151,7 @@ int main (int argc, char *argv[])
 	return 2;
     }      
 
-    if ((export_target = oscap_export_target_new(argv[2], argv[3])) == NULL) 
+    if ((export_target = oscap_export_target_new_file(argv[2], argv[3])) == NULL) 
       return 1;
     cpe_lang_model_export(lang_model, export_target);
     oscap_export_target_free(export_target);    
@@ -178,10 +178,10 @@ int main (int argc, char *argv[])
   }
   
   else if (argc == 6 && !strcmp(argv[1], "--export-all")) {
-    if ((import_source = oscap_import_source_new(argv[2], argv[3])) == NULL)
+    if ((import_source = oscap_import_source_new_file(argv[2], argv[3])) == NULL)
       return 1;
 
-    if ((export_target = oscap_export_target_new(argv[4], argv[5])) == NULL)
+    if ((export_target = oscap_export_target_new_file(argv[4], argv[5])) == NULL)
       return 1;
 
     if ((lang_model = cpe_lang_model_import(import_source)) == NULL)

@@ -81,26 +81,26 @@ void oval_variable_model_free(struct oval_variable_model *);
  * The stream document element must be a valid instance of <http://oval.mitre.org/XMLSchema/oval-variables-5:oval_variables>.
  * If the oval_variable model is not empty, the loaded content will be appended to the existing content.
  * @param variable_model the specified oval_variable_model.
- * @param import_source the oval_import_source that resolves the XML stream.
+ * @param import_source the oscap_import_source that resolves the XML stream.
  * @param error_handler the oval_xml_error_handler that tracks the parsing of the XML stream (may be NULL)
  * @param user_param a user parameter that is passed the the error handler implementation.
  * @ingroup OVALVAR_service
  */
 void oval_variable_model_import
 	(struct oval_variable_model *,
-	 struct oval_import_source *,
+	 struct oscap_import_source *,
 	 oval_xml_error_handler, void*);
 
 /**
  * Export the specified oval_variable_model to an XML stream.
  * The exported document element is a valid instance of <http://oval.mitre.org/XMLSchema/oval-variables-5:oval_variables>.
  * @param variable_model the specified oval_variable_model.
- * @param export_target the oval_export_target that resolves the output XML stream.
+ * @param export_target the oscap_export_target that resolves the output XML stream.
  * @ingroup OVALVAR_service
  */
 void oval_variable_model_export
 	(struct oval_variable_model *,
-	 struct oval_export_target *);
+	 struct oscap_export_target *);
 
 /**
  * Get all external variables managed by a specified oval_variable_model.

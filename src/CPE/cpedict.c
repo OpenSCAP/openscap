@@ -38,7 +38,7 @@ struct cpe_dict_model * cpe_dict_model_import(const struct oscap_import_source *
 
     __attribute__nonnull__(source);
 
-    if (oscap_import_source_get_filename(source) == NULL) return NULL;
+    if (oscap_import_source_get_name(source) == NULL) return NULL;
 
     struct cpe_dict_model *dict;
 
@@ -52,7 +52,7 @@ void cpe_dict_model_export(const struct cpe_dict_model * dict, const struct osca
     __attribute__nonnull__(dict);
     __attribute__nonnull__(target);
         
-    if (oscap_export_target_get_filename(target) == NULL) return;
+    if (oscap_export_target_get_name(target) == NULL) return;
 
     cpe_dict_model_export_xml(dict, target);
 

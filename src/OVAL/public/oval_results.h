@@ -366,7 +366,7 @@ void oval_results_model_add_system(struct oval_results_model *, struct oval_resu
  * @ingroup OVALRES_service
  */
 struct oval_result_directives *oval_results_model_import
-	(struct oval_results_model *, struct oval_import_source *,
+	(struct oval_results_model *, struct oscap_import_source *,
 			oval_xml_error_handler, void*);
 
 /**
@@ -398,7 +398,7 @@ void oval_result_directives_free(struct oval_result_directives *);
  * @param target the export target stream (XML)
  * @ingroup OVALRES_service
  */
-int oval_results_model_export(struct oval_results_model *, struct oval_result_directives *, struct oval_export_target *);
+int oval_results_model_export(struct oval_results_model *, struct oval_result_directives *, struct oscap_export_target *);
 /**
  * @ingroup oval_result_system_iterators
  */

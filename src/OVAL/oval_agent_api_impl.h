@@ -79,16 +79,6 @@ xmlNode *oval_syschar_model_to_dom
 	(struct oval_syschar_model *, xmlDocPtr, xmlNode *,
 			oval_syschar_resolver, void *);
 
-typedef struct oval_export_target {
-	char *filename;
-	char *encoding;
-} oval_export_target_t;
-
-
-typedef struct oval_import_source {
-	char *import_source_filename;
-} oval_import_source_t;
-
 OSCAP_HIDDEN_END;
 
 #endif				/* OVAL_AGENT_API_IMPL_H_ */

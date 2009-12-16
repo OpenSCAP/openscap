@@ -23,7 +23,7 @@
 
 #include <seap.h>
 #include <probe-api.h>
-#include <public/alloc.h>
+#include <alloc.h>
 
 #ifndef _A
 #define _A(x) assert(x)

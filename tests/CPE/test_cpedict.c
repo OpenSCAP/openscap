@@ -48,7 +48,7 @@ int main (int argc, char **argv)
   
   else if (argc == 4 && !strcmp(argv[1], "--list-cpe-names")) {
 
-    if ((import_source = oscap_import_source_new(argv[2], argv[3])) == NULL)
+    if ((import_source = oscap_import_source_new_file(argv[2], argv[3])) == NULL)
       return 1;
     
     if ((dict_model = cpe_dict_model_import(import_source)) == NULL)
@@ -65,7 +65,7 @@ int main (int argc, char **argv)
   // List all dictionary.
   else if (argc == 4 && !strcmp(argv[1], "--list")) {
     
-    if ((import_source = oscap_import_source_new(argv[2], argv[3])) == NULL)
+    if ((import_source = oscap_import_source_new_file(argv[2], argv[3])) == NULL)
       return 1;
     
     if ((dict_model = cpe_dict_model_import(import_source)) == NULL)
@@ -144,7 +144,7 @@ int main (int argc, char **argv)
 
   else if (argc == 5 && !strcmp(argv[1], "--match")) {
     
-    if ((import_source = oscap_import_source_new(argv[2], argv[3])) == NULL)
+    if ((import_source = oscap_import_source_new_file(argv[2], argv[3])) == NULL)
       return 1;
     
     if ((dict_model = cpe_dict_model_import(import_source)) == NULL)
@@ -168,7 +168,7 @@ int main (int argc, char **argv)
 
   else if (argc == 5 && !strcmp(argv[1], "--remove")) {
     
-    if ((import_source = oscap_import_source_new(argv[2], argv[3])) == NULL)
+    if ((import_source = oscap_import_source_new_file(argv[2], argv[3])) == NULL)
       return 1;
     
     if ((dict_model = cpe_dict_model_import(import_source)) == NULL)
@@ -193,13 +193,13 @@ int main (int argc, char **argv)
   }
 
   else if (argc == 6 && !strcmp(argv[1], "--export")) {
-    if ((import_source = oscap_import_source_new(argv[2], argv[3])) == NULL)
+    if ((import_source = oscap_import_source_new_file(argv[2], argv[3])) == NULL)
       return 1;
     
     if ((dict_model = cpe_dict_model_import(import_source)) == NULL)
       return 2;
 
-    if ((export_target = oscap_export_target_new(argv[4], argv[5])) == NULL)
+    if ((export_target = oscap_export_target_new_file(argv[4], argv[5])) == NULL)
       return 1;
     
     cpe_dict_model_export(dict_model, export_target);

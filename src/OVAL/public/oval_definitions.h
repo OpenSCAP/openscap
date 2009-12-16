@@ -995,7 +995,7 @@ void oval_definition_model_free(struct oval_definition_model * model);
  */
 int  oval_definition_model_import(
 			struct oval_definition_model *model,
-			struct oval_import_source *source,
+			struct oscap_import_source *source,
 			oval_xml_error_handler error_handler, void *client);
 /**
  * Returns the appended @ref Oval_definition having the specified id.
@@ -1115,7 +1115,7 @@ struct oval_variable_iterator *oval_definition_model_get_variables(
  * @ingroup OVALDEF_service
  */
 int oval_definition_model_export(
-		struct oval_definition_model *, struct oval_export_target *);
+		struct oval_definition_model *, struct oscap_export_target *);
 
 /**
  * Return <b>true</b> if iterator has more @ref Oval_affected.

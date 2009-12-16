@@ -326,13 +326,13 @@ void _oval_variable_model_parse
 
 void oval_variable_model_import
 	(struct oval_variable_model *model,
-	 struct oval_import_source *source,
+	 struct oscap_import_source *source,
 	 oval_xml_error_handler error_handler, void *user_param)
 {
 	xmlDoc *doc = xmlParseFile
-		(source->import_source_filename);
+		(oscap_import_source_get_name(source));
 	xmlTextReader *reader = xmlNewTextReaderFilename
-		(source->import_source_filename);
+		(oscap_import_source_get_name(source));
 
 	xmlTextReaderRead(reader);
 	_oval_variable_model_parse
@@ -344,7 +344,7 @@ void oval_variable_model_import
 
 void oval_variable_model_export
 	(struct oval_variable_model *model,
-	 struct oval_export_target *target)
+	 struct oscap_export_target *target)
 {
 	//TODO: implement oval_variable_model_export
 }

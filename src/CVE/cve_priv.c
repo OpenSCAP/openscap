@@ -434,10 +434,10 @@ struct cve_model * cve_model_parse_xml(const struct oscap_import_source * source
         xmlTextReaderPtr reader;
         struct cve_model *ret = NULL;
 
-        if (!cve_validate_xml(oscap_import_source_get_filename(source))) return NULL;
+        if (!cve_validate_xml(oscap_import_source_get_name(source))) return NULL;
 
-        reader = xmlReaderForFile(oscap_import_source_get_filename(source),
-                                  oscap_import_source_get_encoding(source), 0);
+        reader = xmlReaderForFile(oscap_import_source_get_name(source),
+                                  NULL, 0);
         if (reader != NULL) {
             xmlTextReaderNextNode(reader);
             ret = cve_model_parse(reader);
@@ -641,7 +641,7 @@ void cve_model_export_xml(struct cve_model * cve, const struct oscap_export_targ
         /* TODO: ad macro to check return value from xmlTextWriter* functions */
         xmlTextWriterPtr writer;
 
-        writer = xmlNewTextWriterFilename(oscap_export_target_get_filename(target), 0);
+        writer = xmlNewTextWriterFilename(oscap_export_target_get_name(target), 0);
         if (writer == NULL) {
             oscap_setxmlerr(xmlGetLastError());
             return;
