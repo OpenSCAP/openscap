@@ -9,16 +9,16 @@
       <definitions>
             <definition class="inventory" version="1" id="oval:gov.irs.rhel5:def:10000">
                   <metadata>
-                        <title>Red Hat Enterprise Linux 5</title>
+                        <title>Fedora 11</title>
                         <affected family="unix">
-                              <platform>Red Hat Enterprise Linux 5</platform>
+                              <platform>Fedora</platform>
                         </affected>
                         <reference ref_id="cpe:/o:redhat:enterprise_linux:5" source="CPE"/>
-                        <description>The operating system installed on the system is Red Hat Enterprise Linux 5</description>
+                        <description>The operating system installed on the system is Fedora</description>
                   </metadata>
                   <criteria>
                         <criterion test_ref="oval:gov.irs.rhel5:tst:10000" comment="Red Hat Enterprise Linux 5 is installed"/>
-                        <criterion test_ref="oval:gov.irs.rhel5:tst:10001" comment="Installed operating system is part of the unix family"/>
+<!--                        <criterion test_ref="oval:gov.irs.rhel5:tst:10001" comment="Installed operating system is part of the unix family"/>  -->
                   </criteria>
             </definition>
       </definitions>
@@ -30,12 +30,13 @@
       </tests>
       <objects>
             <rpminfo_object version="1" id="oval:gov.irs.rhel5:obj:10000" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
-                  <name>redhat-release</name>
+                  <name>fedora-release</name>
             </rpminfo_object>
       </objects>
       <states>
             <rpminfo_state version="1" id="oval:gov.irs.rhel5:ste:10000" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
-                  <version operation="pattern match">^5[^[:digit:]]</version>
+                  <version operation="pattern match">^11</version> 
+<!--              <version operation="pattern match">^11[^[:digit:]]</version>  -->
             </rpminfo_state>
       </states>
 </oval_definitions>
