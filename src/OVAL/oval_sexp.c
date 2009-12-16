@@ -466,14 +466,14 @@ SEXP_t *oval_state2sexp (struct oval_state *state)
                 ochk = oval_state_content_get_var_check(content);
                 if (ochk != OVAL_CHECK_UNKNOWN) {
                         probe_ent_attr_add(ste_ent, "var_check",
-                                           r0 = SEXP_string_newf("%s", oval_check_get_text(ochk)));
+                                           r0 = SEXP_number_newu_32(ochk));
                         SEXP_free (r0);
                 }
                 
                 ochk = oval_state_content_get_ent_check(content);
                 if (ochk != OVAL_CHECK_UNKNOWN) {
                         probe_ent_attr_add(ste_ent, "entity_check",
-                                           r0 = SEXP_string_newf("%s", oval_check_get_text(ochk)));
+                                           r0 = SEXP_number_newu_32(ochk));
                         SEXP_free (r0);
                 }
 
