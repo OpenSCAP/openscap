@@ -5,7 +5,8 @@
 
 int main (void)
 {
-	struct oval_syschar_model *model;
+	struct oval_definition_model * def_model;
+	struct oval_syschar_model *sys_model;
         struct oval_sysinfo *info;
         struct oval_sysint_iterator *ifit;
         struct oval_sysint *ife;
@@ -16,12 +17,15 @@ int main (void)
          *  by the sysinfo probe.
          */
         pctx = oval_pctx_new (NULL);
-
+	/* 
+	 *  Create empty models
+	 */
+	def_model = oval_definition_model_new();
+	sys_model = oval_syschar_model_new(def_model);
         /*
          *  Call the sysinfo probe.
          */
-	model = NULL;
-        info = oval_probe_sysinf_eval (model, pctx);
+        info = oval_probe_sysinf_eval (sys_model, pctx);
         
         if (info != NULL) {
                 char *a, *b, *c, *d;
