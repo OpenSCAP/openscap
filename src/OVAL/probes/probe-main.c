@@ -279,6 +279,9 @@ static SEXP_t *probe_set_eval (SEXP_t *set, size_t depth)
         
         if (depth > MAX_EVAL_DEPTH) {
                 _D("Too many levels: max=%zu\n", MAX_EVAL_DEPTH);
+#ifndef NDEBUG
+                abort ();
+#endif
                 return (NULL);
         }
                         
@@ -323,6 +326,13 @@ static SEXP_t *probe_set_eval (SEXP_t *set, size_t depth)
                         CASE ('s',"et") {
                                 if (s_subset_i < 2) {
                                         s_subset[s_subset_i] = probe_set_eval (member, depth + 1);
+
+                                        if (s_subset[s_subset_i] == NULL) {
+                                                _D("FAIL: recursive set evaluation failer: m=%p, d=%u\n",
+                                                   member, depth + 1);
+                                                goto eval_fail;
+                                        }
+                                        
                                         ++s_subset_i;
                                 } else {
                                         _D("FAIL: more than 2 \"set\"\n");
@@ -434,6 +444,13 @@ static SEXP_t *probe_set_eval (SEXP_t *set, size_t depth)
         if (o_subset_i > 0) {
                 for (s_subset_i = 0; s_subset_i < o_subset_i; ++s_subset_i) {
                         s_subset[s_subset_i] = probe_set_apply_filters (o_subset[s_subset_i], filters_a);
+
+#ifndef NDEBUG
+                        if (s_subset[s_subset_i] == NULL)
+                                _D("WARN: apply_filters returned NULL: set=%p, filters=%p\n",
+                                   o_subset[s_subset_i], filters_a);
+#endif
+                        
                         SEXP_free (o_subset[s_subset_i]);
                 }
                 
@@ -441,6 +458,8 @@ static SEXP_t *probe_set_eval (SEXP_t *set, size_t depth)
         }
         
         result = probe_set_combine (s_subset[0], s_subset[1], op_num);
+        
+        _A(result != NULL);
         
         SEXP_free (s_subset[0]);
         SEXP_free (s_subset[1]);
@@ -757,9 +776,9 @@ void *probe_worker (void *arg)
         
         if (set != NULL) {
                 /* complex object */
-                probe_ret = 0;
                 probe_out = probe_set_eval (set, 0);
                 SEXP_free (set);
+                probe_ret = (probe_out == NULL ? PROBE_ESETEVAL : 0);
         } else {
                 /* simple object */
                 varrefs = probe_obj_getent (probe_in, "varrefs", 1);
