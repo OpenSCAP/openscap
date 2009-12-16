@@ -1959,8 +1959,10 @@ void __SEXP_VALIDATE(const SEXP_t *s_exp, const char *file, uint32_t line, const
 {
         SEXP_val_t v_dsc;
 
+#ifdef SEXP_VALIDATE_DEBUG
         _D("VALIDATE: s_exp=%p (%s:%u:%s)\n", s_exp, file, line, func);
-        
+#endif        
+
         if (s_exp == NULL) abort ();
         if (s_exp->__magic0 != SEXP_MAGIC0) abort ();
         if (s_exp->__magic1 != SEXP_MAGIC1) abort ();
