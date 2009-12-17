@@ -259,8 +259,10 @@ AC_ARG_ENABLE([probes],
 
 if test "x${prefix}" = xNONE; then
 	AC_DEFINE_UNQUOTED([OVAL_PROBE_DIR], ["/usr/local/libexec/openscap"], [Path to probes])
+	probe_dir="/usr/local/libexec/openscap"
 else
 	AC_DEFINE_UNQUOTED([OVAL_PROBE_DIR], ["${prefix}/libexec/openscap"], [Path to probes])
+	probe_dir="${prefix}/libexec/openscap"
 fi
 
 AC_ARG_ENABLE([probes-independent],
@@ -361,6 +363,7 @@ if test "$debug" = "yes"; then
    CFLAGS="$CFLAGS $CFLAGS_DEBUGGING"
 else
    CFLAGS="$CFLAGS $CFLAGS_NODEBUG"
+   AC_SUBST([NODEBUG], [$CFLAGS_NODEBUG]) #for swig alloc.h
 fi
 
 AM_CONDITIONAL([WANT_OVAL], test "$oval" = yes)
@@ -406,6 +409,7 @@ if test "x$probes" = "xyes"; then
 echo "  independent probes enabled:  $probes_independent"
 echo "  unix probes enabled:         $probes_unix"
 echo "  linux probes enabled:        $probes_linux"
+echo "  probe directory set to:      $probe_dir"
 fi
 
 echo "XCCDF enabled:                 $xccdf"

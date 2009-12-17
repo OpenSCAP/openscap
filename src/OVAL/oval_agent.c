@@ -265,6 +265,11 @@ void oval_definition_model_add_definition(
 	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
+void oval_definition_model_set_locked(struct oval_definition_model * model) 
+{
+	return; /* TODO */
+}
+
 void oval_definition_model_add_test(struct oval_definition_model *model, struct oval_test *test)
 {
 	if(model && !oval_definition_model_is_locked(model)){

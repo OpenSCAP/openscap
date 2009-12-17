@@ -70,7 +70,6 @@ struct oval_variable   *oval_variable_clone
 
 struct oval_syschar *oval_syschar_get_new(struct oval_syschar_model *, struct oval_object *);
 struct oval_syschar_item *oval_syschar_item_get_new(struct oval_syschar_model *, char *);
-struct oval_sysdata *oval_syschar_model_get_sysdata(struct oval_syschar_model *, char*);
 struct oval_sysdata *oval_sysdata_get_new(struct oval_syschar_model *model, char *id);
 
 typedef bool oval_syschar_resolver(struct oval_syschar *, void *);

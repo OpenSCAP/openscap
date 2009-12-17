@@ -10,7 +10,7 @@
 typedef struct oval_pctx oval_pctx_t;
 
 oval_pctx_t *oval_pctx_new (struct oval_syschar_model *);
-void         oval_pctx_free (oval_pctx_t *);
+void         oval_pctx_free (oval_pctx_t *) __attribute__((nonnull (1)));
 
 /*
  * probe context flags
@@ -22,8 +22,8 @@ void         oval_pctx_free (oval_pctx_t *);
 
 #define OVAL_PCTX_FLAG_MASK (0x0001|0x0002|0x0004|0x0008)
 
-int oval_pctx_setflag (oval_pctx_t *, uint32_t);
-int oval_pctx_unsetflag (oval_pctx_t *, uint32_t);
+int oval_pctx_setflag (oval_pctx_t *, uint32_t)  __attribute__((nonnull (1)));
+int oval_pctx_unsetflag (oval_pctx_t *, uint32_t) __attribute__((nonnull (1)));
 
 /*
  * probe context attributes
@@ -35,12 +35,12 @@ int oval_pctx_unsetflag (oval_pctx_t *, uint32_t);
 #define OVAL_PCTX_ATTR_DIR         0x0005 /* set directory where the probes are located */
 #define OVAL_PCTX_ATTR_MODEL       0x0006 /* set definition model - update registered commands is necessary */ 
 
-int oval_pctx_setattr (oval_pctx_t *, uint32_t, ...);
+int oval_pctx_setattr (oval_pctx_t *, uint32_t, ...) __attribute__((nonnull (1)));
 
-int oval_probe_reset (oval_pctx_t *, oval_subtype_t);
-int oval_probe_close (oval_pctx_t *, oval_subtype_t);
+int oval_probe_reset (oval_pctx_t *, oval_subtype_t) __attribute__((nonnull (1)));
+int oval_probe_close (oval_pctx_t *, oval_subtype_t) __attribute__((nonnull (1)));
 
-struct oval_sysinfo *oval_probe_sysinf_eval (struct oval_syschar_model *, oval_pctx_t *);
-struct oval_syschar *oval_probe_object_eval (oval_pctx_t *, struct oval_object *);
+struct oval_sysinfo *oval_probe_sysinf_eval (struct oval_syschar_model *, oval_pctx_t *) __attribute__((nonnull (1)));
+struct oval_syschar *oval_probe_object_eval (oval_pctx_t *, struct oval_object *) __attribute__ ((nonnull (1,2)));
 
 #endif /* OVAL_PROBE_H */

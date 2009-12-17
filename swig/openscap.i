@@ -26,14 +26,20 @@
  *
  */
 
+/* SWIG can't understand __attribute__(x), so we make it go away */
+#define __attribute__(x)
+
 %module openscap
 %{
  #include "../src/common/public/oscap.h"
  #include "../src/common/public/error.h"
-
+ #include "../src/common/public/debug.h"
+ #include "../src/common/public/alloc.h"
 %}
 %include "../src/common/public/oscap.h"
 %include "../src/common/public/error.h"
+%include "../src/common/public/debug.h"
+%include "../src/common/public/alloc.h"
 
 #ifdef WANT_CCE
 %module openscap

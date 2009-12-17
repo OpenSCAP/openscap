@@ -47,7 +47,7 @@ endif
 ##beware of: http://www.gnu.org/software/automake/manual/html_node/Multiple-Outputs.html
 
 openscap_py_wrap.c: ${srcdir}/openscap.i
-	$(SWIG) -o openscap_py_wrap.c -python -module openscap_py ${INCLUDES} ${WANT_MODULE} ${srcdir}/openscap.i
+	$(SWIG) -o openscap_py_wrap.c -python -module openscap_py ${INCLUDES} ${WANT_MODULE} ${NODEBUG} ${srcdir}/openscap.i
 	mv openscap_py.py openscap.py
 
 openscap.py: openscap_py_wrap.c
@@ -57,7 +57,7 @@ openscap.py: openscap_py_wrap.c
 	fi
 
 openscap_pm_wrap.c: ${srcdir}/openscap.i
-	$(SWIG) -o openscap_pm_wrap.c -perl5 -module openscap_pm ${INCLUDES} ${WANT_MODULE} ${srcdir}/openscap.i
+	$(SWIG) -o openscap_pm_wrap.c -perl5 -module openscap_pm ${INCLUDES} ${WANT_MODULE} ${NODEBUG} ${srcdir}/openscap.i
 	mv openscap_pm.pm openscap.pm
 
 openscap.pm: openscap_pm_wrap.c

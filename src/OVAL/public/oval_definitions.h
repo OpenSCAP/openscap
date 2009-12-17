@@ -1713,13 +1713,6 @@ oval_family_t  oval_object_get_family    (struct oval_object *);
 const char *oval_object_get_name   (struct oval_object *);
 
 /**
- * Probe single OVAL object.
- * TODO: GET THIS RIGHT
- * @ingroup oval_object_eval
- */
-struct oval_syschar *oval_object_probe(struct oval_object *, struct oval_definition_model *model);
-
-/**
  * Returns attribute @ref Oval_object->subtype
  * @see oval_object_set_subtype
  * @ingroup oval_object_getters
