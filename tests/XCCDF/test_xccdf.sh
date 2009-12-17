@@ -13,14 +13,13 @@
 
 # Setup.
 function test_xccdf_setup {
-    local ret_val=0
-    
+    local ret_val=0    
     return $ret_val
 }
 
 # Test Cases.
 
-function test_xccdf_tc00 {
+function test_xccdf_import {
     local ret_val=0
 
     ./xccdf_dump "${srcdir}/XCCDF/scap-rhel5-xccdf.xml" > test_xccdf.out 2>&1
@@ -40,19 +39,30 @@ function test_xccdf_cleanup {
 
 # TESTING.
 
-echo "------------------------------------------"
+echo ""
+echo "--------------------------------------------------"
 
 result=0
 log=test_xccdf.log
 
 exec 2>$log
 
-#---- function ------#-------------------------- reporting -----------------------#--------------------------#
-test_xccdf_setup    ; ret_val=$? ; report_result "test_XCCDF_setup"   $ret_val  ; result=$[$result+$ret_val]
-test_xccdf_tc00     ; ret_val=$? ; report_result 'Test_XCCDF_TS00'    $ret_val  ; result=$[$result+$ret_val]   
-test_xccdf_cleanup  ; ret_val=$? ; report_result "test_XCCDF_cleanup" $ret_val  ; result=$[$result+$ret_val]
+test_xccdf_setup
+ret_val=$? 
+report_result "test_xccdf_setup" $ret_val
+result=$[$result+$ret_val]
 
-echo "------------------------------------------"
-echo "See ${srcdir}/${log}"
+test_xccdf_import
+ret_val=$? 
+report_result "test_xccdf_import" $ret_val
+result=$[$result+$ret_val]
+
+test_xccdf_cleanup
+ret_val=$? 
+report_result "test_xccdf_cleanup" $ret_val
+result=$[$result+$ret_val]
+
+echo "--------------------------------------------------"
+echo "See ${log} (in tests dir)"
 
 exit $result

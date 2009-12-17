@@ -104,7 +104,8 @@ function test_cvss_setup {
 
 # Test Cases.
 
-function test_cvss_tc01 {
+# Computes base score for all possible input values and check its correctness.
+function test_cvss_base_score {
     local ret_val=0
 
     for A in "${access_vector[@]}"; do
@@ -113,7 +114,7 @@ function test_cvss_tc01 {
 		for D in "${conf_impact[@]}"; do
 		    for E in "${integ_impact[@]}"; do
 			for F in "${avail_impact[@]}"; do
-  			    ./test_cvsscalc --base $A $B $C $D $E $F >/dev/null
+  			    ./test_cvss --base $A $B $C $D $E $F >/dev/null
 			    ret_val=$[$ret_val+$?]
 			done
 		    done
@@ -125,15 +126,15 @@ function test_cvss_tc01 {
     return $ret_val
 }
 
-
-function test_cvss_tc02 {
+# Computes temporal score for possible input values and check its correctness.
+function test_cvss_temporal_score {
     local ret_val=0
 
     for A in "${exploitability[@]}"; do
 	for B in "${remediation_level[@]}"; do
 	    for C in "${report_confidence[@]}"; do
 		for D in `seq 0.0 0.1 10`; do
-		    ./test_cvsscalc --temporal $A $B $C "$D" >/dev/null
+		    ./test_cvss --temporal $A $B $C "$D" >/dev/null
 		    ret_val=$[$ret_val+$?]		
 		done
 	    done
@@ -143,7 +144,8 @@ function test_cvss_tc02 {
     return $ret_val
 }
 
-function test_cvss_tc03 {
+# Computes environmental score for possible input values and check its correctness.
+function test_cvss_environmental_score {
     local ret_val=0
 
     for A in ${collateral_damage_potential[0]} ${collateral_damage_potential[5]}; do
@@ -160,7 +162,7 @@ function test_cvss_tc03 {
 						for L in ${exploitability[0]} ${exploitability[4]}; do
 						    for M in ${remediation_level[0]} ${remediation_level[4]}; do
 							for N in ${report_confidence[0]} ${report_confidence[3]}; do
-							    ./test_cvsscalc --enviromental $A $B $C $D $E $F $G $H $I $J $K $L $M $N >/dev/null
+							    ./test_cvss --enviromental $A $B $C $D $E $F $G $H $I $J $K $L $M $N >/dev/null
 							    ret_val=$[$ret_val+$?]		
 							done
 						    done
@@ -188,7 +190,8 @@ function test_cvss_cleanup {
 
 # TESTING.
 
-echo "------------------------------------------"
+echo ""
+echo "--------------------------------------------------"
 
 result=0
 log=${srcdir}/test_cvss.log
@@ -200,19 +203,19 @@ ret_val=$?
 report_result "test_cvss_setup" $ret_val
 result=$[$result+$ret_val]
 
-test_cvss_tc01     
+test_cvss_base_score  
 ret_val=$? 
-report_result "test_cvss_tc01" $ret_val  
+report_result "test_cvss_base_score" $ret_val  
 result=$[$result+$ret_val]   
 
-test_cvss_tc02
+test_cvss_temporal_score
 ret_val=$? 
-report_result "test_cvss_tc02" $ret_val  
+report_result "test_cvss_temporal_score" $ret_val  
 result=$[$result+$ret_val]   
 
-test_cvss_tc03
+test_cvss_environmental_score
 ret_val=$? 
-report_result "test_cvss_tc03" $ret_val  
+report_result "test_cvss_environmental_score" $ret_val  
 result=$[$result+$ret_val]   
 
 test_cvss_cleanup 
@@ -220,7 +223,7 @@ ret_val=$?
 report_result "test_cvss_cleanup" $ret_val  
 result=$[$result+$ret_val]
 
-echo "------------------------------------------"
-echo "See ${log} (in tests)"
+echo "--------------------------------------------------"
+echo "See ${log} (in tests dir)"
 
 exit $result

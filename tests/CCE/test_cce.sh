@@ -46,16 +46,18 @@ EOF
 
 # Test Cases.
 
-function test_cce_tc01 {
+# Creates a new CCE and frees it afterwards.
+function test_cce_smoke {
     local ret_val=0;
-
+    
     ${srcdir}/test_cce --smoke-test
     ret_val=$?
     
     return $ret_val
 }
 
-function test_cce_tc02 {
+# Validation of valid CCE XML.
+function test_cce_validate_valid_xml {
     local ret_val=0;
 
     ${srcdir}/test_cce --validate ${srcdir}/CCE/cce-sample.xml >&2
@@ -64,7 +66,8 @@ function test_cce_tc02 {
     return $ret_val
 }
 
-function test_cce_tc03 {
+# Validation of invalid CCE XML.
+function test_cce_validate_invalid_xml {
     local ret_val=0;
 
     ${srcdir}/test_cce --validate ${srcdir}/CCE/cce-sample-invalid.xml >&2
@@ -73,7 +76,8 @@ function test_cce_tc03 {
     return $ret_val
 }
 
-function test_cce_tc04 {
+# Validation of damaged CCE XML.
+function test_cce_validate_damaged_xml {
     local ret_val=0;
 
     ${srcdir}/test_cce --validate ${srcdir}/CCE/cce-sample-damaged.xml >&2
@@ -82,11 +86,12 @@ function test_cce_tc04 {
     return $ret_val
 }
 
-
-function test_cce_tc05 {
+# Parse imported CCE XML, print out content and check it.
+function test_cce_parse_xml {
     local ret_val=0;
 
-    ${srcdir}/test_cce --parse ${srcdir}/CCE/cce-sample.xml > ${srcdir}/test_cce_tc05.out
+    ${srcdir}/test_cce --parse ${srcdir}/CCE/cce-sample.xml > \
+	${srcdir}/test_cce_tc05.out
     ret_val=$?
 
     cat test_cce_tc05.out >&2
@@ -99,16 +104,19 @@ function test_cce_tc05 {
     return $ret_val
 }
 
-function test_cce_tc06 {
+# Import CCE XML and search for all CCE contained in it.
+function test_cce_search_existing {
     local ret_val=0;
 
-    ${srcdir}/test_cce --search ${srcdir}/CCE/cce-sample.xml "CCE-3416-5" > ${srcdir}/test_cce_tc06_01.out
+    ${srcdir}/test_cce --search ${srcdir}/CCE/cce-sample.xml "CCE-3416-5" > \
+	${srcdir}/test_cce_tc06_01.out
     ret_val=$[$ret_val + $?]
     cat ${srcdir}/test_cce_tc06_01.out >&2
     cmp ${srcdir}/test_cce_tc06_01.out ${srcdir}/test_cce_01.txt >&2
     ret_val=$[$ret_val + $?]
 
-    ${srcdir}/test_cce --search ${srcdir}/CCE/cce-sample.xml "CCE-4218-4" > ${srcdir}/test_cce_tc06_02.out
+    ${srcdir}/test_cce --search ${srcdir}/CCE/cce-sample.xml "CCE-4218-4" > \
+	${srcdir}/test_cce_tc06_02.out
     ret_val=$[$ret_val + $?]
     cat ${srcdir}/test_cce_tc06_02.out >&2
     cmp ${srcdir}/test_cce_tc06_02.out ${srcdir}/test_cce_02.txt >&2
@@ -117,12 +125,18 @@ function test_cce_tc06 {
     return $ret_val
 }
 
-function test_cce_tc07 {
+# Import CCE XML and search for non-existing CCE.
+function test_cce_search_non_existing {
     local ret_val=0;
 
-    ${srcdir}/test_cce --search ${srcdir}/CCE/cce-sample.xml "CCE-0000-0" >&2
-    [ ! $? -eq 1 ] && ret_val=1
-    
+    ${srcdir}/test_cce --search ${srcdir}/CCE/cce-sample.xml "CCE-0000-0" > out
+    ret_val=$?
+    cat out >&2	
+    if [ $ret_val -eq 0 ]; then
+	grep "Not found!" out
+	ret_va=$?
+    fi
+
     return $ret_val
 }
 
@@ -145,7 +159,8 @@ function test_cce_cleanup {
 
 # TESTING.
 
-echo "------------------------------------------"
+echo ""
+echo "--------------------------------------------------"
 
 result=0
 log=${srcdir}/test_cce.log
@@ -154,37 +169,42 @@ exec 2>$log
 
 test_cce_setup   
 ret_val=$? 
-report_result "test_cce_setup" $ret_val
+report_result "test_cce_setup" $ret_val 
 result=$[$result+$ret_val]
 
-test_cce_tc01
+test_cce_smoke
 ret_val=$? 
-report_result "test_cce_tc01" $ret_val 
+report_result "test_cce_smoke" $ret_val
 result=$[$result+$ret_val]   
 
-test_cce_tc02
+test_cce_validate_valid_xml
 ret_val=$? 
-report_result "test_cce_tc02" $ret_val 
+report_result "test_cce_validate_valid_xml" $ret_val 
 result=$[$result+$ret_val]   
 
-test_cce_tc03
+test_cce_validate_invalid_xml
 ret_val=$? 
-report_result "test_cce_tc03" $ret_val 
+report_result "test_cce_validate_invalid_xml" $ret_val 
 result=$[$result+$ret_val]   
 
-test_cce_tc04
+test_cce_validate_damaged_xml
 ret_val=$? 
-report_result "test_cce_tc04" $ret_val 
+report_result "test_cce_validate_damaged_xml" $ret_val 
 result=$[$result+$ret_val]   
 
-test_cce_tc05
+test_cce_parse_xml
 ret_val=$? 
-report_result "test_cce_tc05" $ret_val 
+report_result "test_cce_parse_xml" $ret_val 
 result=$[$result+$ret_val]   
 
-test_cce_tc06
+test_cce_search_existing
 ret_val=$? 
-report_result "test_cce_tc06" $ret_val 
+report_result "test_cce_search_existing" $ret_val 
+result=$[$result+$ret_val]   
+
+test_cce_search_non_existing
+ret_val=$? 
+report_result "test_cce_search_non_existing" $ret_val 
 result=$[$result+$ret_val]   
 
 test_cce_cleanup 
@@ -192,7 +212,7 @@ ret_val=$?
 report_result "test_cce_cleanup" $ret_val 
 result=$[$result+$ret_val]
 
-echo "------------------------------------------"
-echo "${log} (in tests directory)"
+echo "--------------------------------------------------"
+echo "${log} (in tests dir)"
 
 exit $result

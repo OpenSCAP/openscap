@@ -34,7 +34,7 @@ EOF
 
 # Test Cases.
 
-function test_cve_tc00 {
+function test_cve_smoke {
     local ret_val=0
 
     ./test_cve --sanity-check 
@@ -43,7 +43,7 @@ function test_cve_tc00 {
     return $ret_val
 }
 
-function test_cve_tc01 {
+function test_cve_export {
 
     local ret_val=0
 
@@ -59,7 +59,7 @@ function test_cve_tc01 {
     return $ret_val
 }
 
-function test_cve_tc02 {
+function test_cve_add_entry {
 
     local ret_val=0
 
@@ -74,7 +74,7 @@ function test_cve_tc02 {
 
     return $ret_val
 }
-function test_cve_tc03 {
+function test_cve_export_all {
 
     local ret_val=0
 
@@ -85,7 +85,7 @@ function test_cve_tc03 {
     return $ret_val
 }
 
-function test_cve_tc04 {
+function test_cve_cvss {
 cat > cve_export.xml <<EOF
 <?xml version="1.0" encoding="UTF-8"?>
 <nvd xmlns:cvss="cvss" xmlns:vuln="vuln">
@@ -126,23 +126,51 @@ function test_cve_cleanup {
 
 # TESTING.
 
-echo "------------------------------------------"
+echo ""
+echo "--------------------------------------------------"
 
 result=0
 log=test_cve.log
 
 exec 2>$log
 
-#---- function ------#-------------------------- reporting -----------------------#--------------------------#
-test_cve_setup    ; ret_val=$? ; report_result "test_CVE_setup"      $ret_val  ; result=$[$result+$ret_val]
-test_cve_tc00     ; ret_val=$? ; report_result 'Test_CVE_sanity'     $ret_val  ; result=$[$result+$ret_val]
-test_cve_tc01     ; ret_val=$? ; report_result 'Test_CVE_export'     $ret_val  ; result=$[$result+$ret_val]
-test_cve_tc02     ; ret_val=$? ; report_result 'Test_CVE_entries'    $ret_val  ; result=$[$result+$ret_val]
-test_cve_tc03     ; ret_val=$? ; report_result 'Test_CVE_export_all' $ret_val  ; result=$[$result+$ret_val]
-test_cve_tc04     ; ret_val=$? ; report_result 'Test_CVE_get_CVSS'   $ret_val  ; result=$[$result+$ret_val]
-test_cve_cleanup  ; ret_val=$? ; report_result "test_CVE_cleanup" $ret_val  ; result=$[$result+$ret_val]
+test_cve_setup
+ret_val=$? 
+report_result "test_cve_setup" $ret_val 
+result=$[$result+$ret_val]
 
-echo "------------------------------------------"
-echo "See ${srcdir}/${log}"
+test_cve_smoke
+ret_val=$? 
+report_result "test_cve_smoke" $ret_val 
+result=$[$result+$ret_val]
+
+test_cve_export
+ret_val=$? 
+report_result "test_cve_export" $ret_val 
+result=$[$result+$ret_val]
+
+test_cve_add_entry
+ret_val=$? 
+report_result "test_cve_add_entry" $ret_val 
+result=$[$result+$ret_val]
+
+test_cve_export_all
+ret_val=$? 
+report_result "test_cve_export_all" $ret_val 
+result=$[$result+$ret_val]
+
+test_cve_cvss
+ret_val=$? 
+report_result "test_cve_cvss" $ret_val 
+result=$[$result+$ret_val]
+
+test_cve_cleanup
+ret_val=$? 
+report_result "test_cve_cleanup" $ret_val 
+result=$[$result+$ret_val]
+
+
+echo "--------------------------------------------------"
+echo "See ${log} (in tests dir)"
 
 exit $result

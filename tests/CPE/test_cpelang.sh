@@ -27,7 +27,8 @@ function test_cpelang_setup {
 }
 
 # Test Cases.
-function test_cpelang_tc01 {
+
+function test_cpelang_smoke {
     local ret_val=0;
 
     ${srcdir}/test_cpelang --smoke-test
@@ -36,16 +37,20 @@ function test_cpelang_tc01 {
     return $ret_val
 }
    
-function test_cpelang_tc02 {
+function test_cpelang_import {
     local ret_val=0;
 
     ${srcdir}/test_cpelang --get-all ${srcdir}/CPE/lang.xml "UTF-8" > get-all.out
     ret_val=$?
+    if [ $ret_val -eq 0 ]; then
+	cmp get-all get-all.out >&2
+	ret_val=$?
+    fi    
 
     return $ret_val
 }
 
-function test_cpelang_tc03 {
+function test_cpelang_import_damaged {
     local ret_val=0;
 
     ${srcdir}/test_cpelang --get-all ${srcdir}/CPE/lang-damaged.xml "UTF-8" 
@@ -58,16 +63,31 @@ function test_cpelang_tc03 {
     return $ret_val
 }
 
-function test_cpelang_tc04 {
+function test_cpelang_import_key {
     local ret_val=0;
 
-    ${srcdir}/test_cpelang --get-key ${srcdir}/CPE/lang.xml "UTF-8" "123" > get-key.out
-    [ $? -ne 0 ] && ret_val=1
+    ${srcdir}/test_cpelang --get-key ${srcdir}/CPE/lang.xml "UTF-8" "123" > ${srcdir}/get-key.out
+    ret_val=$[$ret_val + $?]
+    if [ $ret_val -eq 0 ]; then
+	[ "`cat ${srcdir}/get-key.out`X" = "${KEY_123}X" ] || ret_val=$[$ret_val + $?]
+    fi
+
+    ${srcdir}/test_cpelang --get-key ${srcdir}/CPE/lang.xml "UTF-8" "456" > ${srcdir}/get-key.out
+    ret_val=$[$ret_val + $?]
+    if [ $ret_val -eq 0 ]; then
+	[ "`cat ${srcdir}/get-key.out`X" = "${KEY_456}X" ] || ret_val=$[$ret_val + $?]
+    fi
+
+    ${srcdir}/test_cpelang --get-key ${srcdir}/CPE/lang.xml "UTF-8" "789" > ${srcdir}/get-key.out
+    ret_val=$[$ret_val + $?]
+    if [ $ret_val -eq 0 ]; then
+	[ "`cat ${srcdir}/get-key.out`X" = "${KEY_789}X" ] || ret_val=$[$ret_val + $?]
+    fi
 
     return $ret_val
 }
 
-function test_cpelang_tc05 {
+function test_cpelang_export_new_empty_model {
     local ret_val=0;
 
 cat > export.xml <<EOF
@@ -90,7 +110,7 @@ EOF
 
 # Function tests adding platform elements and xml namespace to Foo 
 # in platform-specification element.
-function test_cpelang_tc06 {
+function test_cpelang_export_new_model {
     local ret_val=0;
 
 cat > export.xml <<EOF
@@ -125,7 +145,7 @@ EOF
 # Function tests default behaviour of setting an unknown
 # encoding. Library should set default behaviour, that is 
 # not setting any encoding
-function test_cpelang_tc07 {
+function test_cpelang_export_new_encoding {
     local ret_val=0;
 
 cat > export.xml <<EOF
@@ -147,7 +167,7 @@ EOF
 }
 
 # Function tests xml namespace
-function test_cpelang_tc08 {
+function test_cpelang_export_new_namespace {
     local ret_val=0;
 
 cat > export.xml <<EOF
@@ -173,21 +193,22 @@ function test_cpelang_cleanup {
     local ret_val=0;
 
     rm -f export.xml \
-	  export.xml.out \
-	  export.xml.out.0 \
-	  export.xml.out.1 \
-	  export.xml.out.2 \
-	  export.xml.out.3 \
-	  diff.out get-all \
-	  get-all.out \
-	  get-key.out
+    	  export.xml.out \
+    	  export.xml.out.0 \
+    	  export.xml.out.1 \
+    	  export.xml.out.2 \
+    	  export.xml.out.3 \
+    	  diff.out get-all \
+    	  get-all.out \
+    	  get-key.out
 
     return $ret_val
 }
 
 # TESTING.
 
-echo "------------------------------------------"
+echo ""
+echo "--------------------------------------------------"
 
 result=0
 log=${srcdir}/test_cpelang.log
@@ -199,44 +220,44 @@ ret_val=$?
 report_result "test_cpelang_setup" $ret_val 
 result=$[$result+$ret_val]
 
-test_cpelang_tc01
+test_cpelang_smoke
 ret_val=$? 
-report_result "test_cpelang_tc01" $ret_val 
+report_result "test_cpelang_smoke" $ret_val 
 result=$[$result+$ret_val]   
 
-test_cpelang_tc02  
+test_cpelang_import
 ret_val=$? 
-report_result "test_cpelang_tc02" $ret_val 
+report_result "test_cpelang_import" $ret_val 
 result=$[$result+$ret_val]   
 
-test_cpelang_tc03 
+test_cpelang_import_damaged
+ret_val=$? 
+report_result "test_cpelang_import_damaged" $ret_val
+result=$[$result+$ret_val]
+
+test_cpelang_import_key
 ret_val=$?
-report_result "test_cpelang_tc03" $ret_val 
+report_result "test_cpelang_import_key" $ret_val 
 result=$[$result+$ret_val]   
 
-test_cpelang_tc04 
+test_cpelang_export_new_empty_model
 ret_val=$? 
-report_result "test_cpelang_tc04" $ret_val
+report_result "test_cpelang_export_new_empty_model" $ret_val 
 result=$[$result+$ret_val]
 
-test_cpelang_tc05 
+test_cpelang_export_new_model
 ret_val=$? 
-report_result "test_cpelang_tc05" $ret_val 
+report_result "test_cpelang_export_new_model" $ret_val
 result=$[$result+$ret_val]
 
-test_cpelang_tc06 
+test_cpelang_export_new_encoding
 ret_val=$? 
-report_result "test_cpelang_tc06" $ret_val
+report_result "test_cpelang_export_new_encoding" $ret_val
 result=$[$result+$ret_val]
 
-test_cpelang_tc07 
+test_cpelang_export_new_namespace
 ret_val=$? 
-report_result "test_cpelang_tc07" $ret_val
-result=$[$result+$ret_val]
-
-test_cpelang_tc08 
-ret_val=$? 
-report_result "test_cpelang_tc08" $ret_val
+report_result "test_cpelang_export_new_namespace" $ret_val
 result=$[$result+$ret_val]
 
 test_cpelang_cleanup 
@@ -244,7 +265,7 @@ ret_val=$?
 report_result "test_cpelang_cleanup" $ret_val
 result=$[$result+$ret_val]
 
-echo "------------------------------------------"
-echo "See ${log} (in tests)"
+echo "--------------------------------------------------"
+echo "See ${log} (in tests dir)"
 
 exit $result

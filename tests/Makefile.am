@@ -119,11 +119,11 @@ endif
 
 
 if WANT_CVSS
-TESTS += CVSS/test_cvsscalc.sh
-check_PROGRAMS += test_cvsscalc
-test_cvsscalc_SOURCES = CVSS/test_cvsscalc.c
+TESTS += CVSS/test_cvss.sh
+check_PROGRAMS += test_cvss
+test_cvss_SOURCES = CVSS/test_cvss.c
 EXTRA_DIST +=	CVSS/test_cvsscalc.py \
-		CVSS/test_cvsscalc.sh
+		CVSS/test_cvssc.sh
 endif
 
 

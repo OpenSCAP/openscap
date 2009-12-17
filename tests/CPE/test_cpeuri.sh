@@ -24,7 +24,7 @@ function test_cpeuri_setup {
 
 # Test Cases.
 
-function test_cpeuri_tc01 {
+function test_cpeuri_smoke {
     local ret_val=0
 
     ${srcdir}/test_cpeuri --smoke-test
@@ -33,13 +33,29 @@ function test_cpeuri_tc01 {
     return $ret_val
 }
 
-function test_cpeuri_tc02 {
+function test_cpeuri_parse {
     local ret_val=0
 
     for URI in ${CPE_URIS[@]}; do
 	${srcdir}/test_cpeuri --parsing  $URI parsing.out.0 > parsing.out.1 
 	if [ $? -eq 0 ]; then
-	    if [ `cat  parsing.out.0` = "$URI" ]; then
+	    if [ ! "`cat  parsing.out.0`X" = "${URI}X" ]; then
+		ret_val=1
+	    fi
+	else
+	    ret_val=1
+	fi
+    done
+    return $ret_val
+}
+
+function test_cpeuri_create {
+    local ret_val=0
+
+    for URI in ${CPE_URIS[@]}; do
+	${srcdir}/test_cpeuri --parsing  $URI parsing.out.0 > parsing.out.1 
+	if [ $? -eq 0 ]; then
+	    if [ "`cat  parsing.out.0`X" = "${URI}X" ]; then
 		sed 's/(null)//g' parsing.out.1 > parsing.out
 		CPE=(`cat parsing.out | sed 's/^\s*//g' | tr '\n' ' '`)
 		
@@ -50,8 +66,27 @@ function test_cpeuri_tc02 {
                                                   "${CPE[4]}" \
                                                   "${CPE[5]}" \
                                                   "${CPE[6]}" > creation.out
- 		([ $? -eq 0 ] && [ "${URI}" = "`cat creation.out`" ]) || ret_val=1; 
-		
+ 		([ $? -eq 0 ] && [ "${URI}X" = "`cat creation.out`X" ]) || ret_val=1; 
+	    else
+		ret_val=1
+	    fi
+	else
+	    ret_val=1
+	fi
+    done
+    return $ret_val
+}
+
+function test_cpeuri_match {
+    local ret_val=0
+
+    for URI in ${CPE_URIS[@]}; do
+	${srcdir}/test_cpeuri --parsing  $URI parsing.out.0 > parsing.out.1 
+	if [ $? -eq 0 ]; then
+	    if [ `cat  parsing.out.0` = "$URI" ]; then
+		sed 's/(null)//g' parsing.out.1 > parsing.out
+		CPE=(`cat parsing.out | sed 's/^\s*//g' | tr '\n' ' '`)
+				
 		${srcdir}/test_cpeuri --matching $URI " " > matching.out
 
 		([ $? -eq 0 ] && grep -q "Mismatch" matching.out) || ret_val=1;
@@ -104,7 +139,8 @@ function test_cpeuri_cleanup {
 
 # TESTING.
 
-echo "------------------------------------------"
+echo ""
+echo "--------------------------------------------------"
 
 result=0
 log=${srcdir}/test_cpeuri.log
@@ -116,14 +152,24 @@ ret_val=$?
 report_result "test_cpeuri_setup" $ret_val
 result=$[$result+$ret_val]
 
-test_cpeuri_tc01
+test_cpeuri_smoke
 ret_val=$? 
-report_result "test_cpeuri_tc01" $ret_val
+report_result "test_cpeuri_smoke" $ret_val 
 result=$[$result+$ret_val]   
 
-test_cpeuri_tc02 
+test_cpeuri_parse
 ret_val=$? 
-report_result "test_cpeuri_tc02" $ret_val 
+report_result "test_cpeuri_parse" $ret_val
+result=$[$result+$ret_val]   
+
+test_cpeuri_create
+ret_val=$? 
+report_result "test_cpeuri_create" $ret_val
+result=$[$result+$ret_val]   
+
+test_cpeuri_match
+ret_val=$? 
+report_result "test_cpeuri_match" $ret_val
 result=$[$result+$ret_val]   
 
 test_cpeuri_cleanup
@@ -131,7 +177,7 @@ ret_val=$?
 report_result "test_cpeuri_cleanup" $ret_val 
 result=$[$result+$ret_val]
 
-echo "------------------------------------------"
-echo "See ${log} (in tests)"
+echo "--------------------------------------------------"
+echo "See ${log} (in tests dir)"
 
 exit $result

@@ -23,7 +23,7 @@ function test_probes_setup {
 
 # Test Cases.
 
-function test_probes_tc01 {
+function test_probes_import {
     local ret_val=0;
 
     FILES=(
@@ -45,7 +45,7 @@ function test_probes_tc01 {
 }
 
 # Check if selected system characteristics were populated correctly. 
-function test_probes_tc02 {
+function test_probes_get_system_chars {
     local ret_val=0
    
     ${srcdir}/test_sysinfo 2>&1 > ${srcdir}/test_probes_tc02.out
@@ -69,7 +69,7 @@ function test_probes_tc02 {
     return $ret_val
 }
 
-function test_probes_tc03 {
+function test_probes_probe_api {
     local ret_val=0;
 
     ${srcdir}/test_probe-api > ${srcdir}/test_probes_tc03.out
@@ -92,7 +92,8 @@ function test_probes_cleanup {
 
 # TESTING.
 
-echo "------------------------------------------"
+echo ""
+echo "--------------------------------------------------"
 
 result=0
 log=${srcdir}/test_probes.log
@@ -104,19 +105,19 @@ ret_val=$?
 report_result "test_probes_setup" $ret_val 
 result=$[$result+$ret_val]
 
-test_probes_tc01     
+test_probes_import 
 ret_val=$? 
-report_result "test_probes_tc01" $ret_val 
+report_result "test_probes_import" $ret_val 
 result=$[$result+$ret_val]   
 
-test_probes_tc02    
+test_probes_get_system_chars
 ret_val=$? 
-report_result "test_probes_tc02" $ret_val  
+report_result "test_probes_get_system_chars" $ret_val  
 result=$[$result+$ret_val]   
 
-test_probes_tc03
+test_probes_probe_api
 ret_val=$?
-report_result "test_probes_tc03" $ret_val  
+report_result "test_probes_probe_api" $ret_val  
 result=$[$result+$ret_val]   
 
 test_probes_cleanup
@@ -124,8 +125,8 @@ ret_val=$?
 report_result "test_probes_cleanup" $ret_val 
 result=$[$result+$ret_val]
 
-echo "------------------------------------------"
-echo "See ${log}"
+echo "--------------------------------------------------"
+echo "See ${log} (in tests dir)"
 
 exit $result
 

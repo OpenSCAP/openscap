@@ -16,14 +16,13 @@
 # Setup.
 function test_seap_setup {
     local ret_val=0
-
     return $ret_val
 }
 
 # Test Cases.
 
-# TC01: Parsing incorrect expression.
-function test_seap_tc01 {
+# Parsing incorrect expression.
+function test_seap_incorrect_expression {
     local ret_val=0;
     
     ARGS=( 
@@ -150,21 +149,35 @@ function test_seap_tc01 {
     return $ret_val
 }
 
-function test_seap_tc02 {
+function test_seap_string_expression {
     local ret_val=0;
 
     ${srcdir}/sexp_string > test_seap_tc02.out
-    ret_val=$[$ret_val+$?]
-    ${srcdir}/sexp_number >> test_seap_tc02.out
-    ret_val=$[$ret_val+$?]
-    ${srcdir}/sexp_list >> test_seap_tc02.out
-    ret_val=$[$ret_val+$?]
+    ret_val=$?
 
     return $ret_val
 }
 
-# TC03: Parsing correct expression.
-function test_seap_tc03 {
+function test_seap_number_expression {
+    local ret_val=0;
+
+    ${srcdir}/sexp_number >> test_seap_tc02.out
+    ret_val=$?
+
+    return $ret_val
+}
+
+function test_seap_list_expression {
+    local ret_val=0;
+
+    ${srcdir}/sexp_list >> test_seap_tc02.out
+    ret_val=$?
+
+    return $ret_val
+}
+
+# Parsing correct expression.
+function test_seap_correct_expression {
     local ret_val=0;
 
     ARGS=(
@@ -359,12 +372,15 @@ function test_seap_cleanup {
 	  ${srcdir}/test_seap_tc02.out \
 	  ${srcdir}/test_seap_tc03.out 
 
+    ret_val=$?
+    
     return $ret_val
 }
 
 # TESTING.
 
-echo "------------------------------------------"
+echo ""
+echo "--------------------------------------------------"
 
 result=0
 log=${srcdir}/test_seap.log
@@ -376,19 +392,29 @@ ret_val=$?
 report_result "test_seap_setup" $ret_val 
 result=$[$result+$ret_val]
 
-test_seap_tc01    
+test_seap_incorrect_expression
 ret_val=$?
-report_result "test_seap_tc01" $ret_val 
+report_result "test_seap_incorrect_expression" $ret_val 
 result=$[$result+$ret_val]   
 
-test_seap_tc02    
+test_seap_correct_expression
 ret_val=$? 
-report_result "test_seap_tc02" $ret_val 
+report_result "test_seap_correct_expression" $ret_val 
 result=$[$result+$ret_val]   
 
-test_seap_tc03
+test_seap_string_expression
 ret_val=$? 
-report_result "test_seap_tc03" $ret_val 
+report_result "test_seap_string_expression" $ret_val 
+result=$[$result+$ret_val]   
+
+test_seap_number_expression
+ret_val=$? 
+report_result "test_seap_number_expression" $ret_val 
+result=$[$result+$ret_val]   
+
+test_seap_list_expression
+ret_val=$? 
+report_result "test_seap_list_expression" $ret_val 
 result=$[$result+$ret_val]   
 
 test_seap_cleanup  
@@ -396,7 +422,7 @@ ret_val=$?
 report_result "test_seap_cleanup" $ret_val  
 result=$[$result+$ret_val]
 
-echo "------------------------------------------"
-echo "See ${log}"
+echo "--------------------------------------------------"
+echo "See ${log} (in tests dir)"
 
 exit $result

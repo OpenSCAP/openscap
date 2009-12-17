@@ -22,7 +22,7 @@ function test_oval_setup {
 
 # Test Cases.
 
-function test_oval_tc01 {
+function test_oval_definition {
     local ret_val=0;
 
     ${srcdir}/test_oval "${srcdir}/OVAL/scap-rhel5-oval.xml" \
@@ -32,7 +32,7 @@ function test_oval_tc01 {
     return $ret_val
 }
 
-function test_oval_tc02 {
+function test_oval_syschar {
     local ret_val=0;
 
     ${srcdir}/test_syschar "${srcdir}/OVAL/composed-oval.xml" \
@@ -43,7 +43,7 @@ function test_oval_tc02 {
     return $ret_val
 }
 
-function test_oval_tc03 {
+function test_oval_results {
     local ret_val=0;
 
     ${srcdir}/test_results "${srcdir}/OVAL/scap-rhel5-oval.xml" \
@@ -67,7 +67,8 @@ function test_oval_cleanup {
 
 # TESTING.
 
-echo "------------------------------------------"
+echo ""
+echo "--------------------------------------------------"
 
 result=0
 log=${srcdir}/test_oval.log
@@ -79,19 +80,19 @@ ret_val=$?
 report_result "test_oval_setup" $ret_val
 result=$[$result+$ret_val]
 
-test_oval_tc01
+test_oval_definition
 ret_val=$? 
-report_result "test_oval_tc01" $ret_val 
+report_result "test_oval_definition" $ret_val 
 result=$[$result+$ret_val]   
 
-test_oval_tc02
+test_oval_syschar
 ret_val=$? 
-report_result "test_oval_tc02" $ret_val 
+report_result "test_oval_syschar" $ret_val 
 result=$[$result+$ret_val]   
 
-test_oval_tc03
+test_oval_results
 ret_val=$? 
-report_result "test_oval_tc03" $ret_val 
+report_result "test_oval_results" $ret_val 
 result=$[$result+$ret_val]   
 
 test_oval_cleanup 
@@ -99,8 +100,8 @@ ret_val=$?
 report_result "test_oval_cleanup" $ret_val 
 result=$[$result+$ret_val]
 
-echo "------------------------------------------"
-echo "See ${log}"
+echo "--------------------------------------------------"
+echo "See ${log} (in tests dir)"
 
 exit $result
 

@@ -10,11 +10,12 @@
 
 # Reporting results.
 function report_result {    
-    printf "+ %-32s" ${1}; echo -n "${1} " >&2
+
+    printf "+ %-40s" ${1}; 
     if [ $2 -eq 0 ]; then 
-	echo "[ PASS ]"; echo "PASS" >&2
+	echo "[ PASS ]"; printf "*** %s PASSED ***\n\n" ${1} >&2
     else 
-	echo "[ FAIL ]"; echo "FAIL" >&2
+	echo "[ FAIL ]"; printf "*** %s FAILED ***\n\n" ${1} >&2
     fi
 }
 

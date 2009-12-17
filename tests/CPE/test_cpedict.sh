@@ -23,7 +23,7 @@ function test_cpedict_setup {
 }
 
 # Test Cases.
-function test_cpedict_tc01 {
+function test_cpedict_smoke {
     local ret_val=0;
 
     ${srcdir}/test_cpedict --smoke-test
@@ -32,7 +32,7 @@ function test_cpedict_tc01 {
     return $ret_val
 }
 
-function test_cpedict_tc02 {
+function test_cpedict_import_utf8_xml {
     local ret_val=0;
 
     ${srcdir}/test_cpedict --list-cpe-names ${srcdir}/CPE/dict.xml "UTF-8" > \
@@ -50,7 +50,7 @@ function test_cpedict_tc02 {
     return $ret_val
 }
 
-function test_cpedict_tc03 {
+function test_cpedict_import_cp1250_xml {
     local ret_val=0;
 
     ${srcdir}/test_cpedict --list-cpe-names ${srcdir}/CPE/dict-cp1250-dos.xml "X" >&2
@@ -59,7 +59,7 @@ function test_cpedict_tc03 {
     return $ret_val
 }
 
-function test_cpedict_tc04 {
+function test_cpedict_import_damaged_xml {
     local ret_val=0;
 
     ${srcdir}/test_cpedict --list-cpe-names ${srcdir}/CPE/dict-damaged.xml "UTF-8" >&2
@@ -68,7 +68,7 @@ function test_cpedict_tc04 {
     return $ret_val
 }
 
-function test_cpedict_tc05 {
+function test_cpedict_match_existing_cpe {
     local ret_val=0;
 
     for URI in ${CPE_URIS[@]}; do
@@ -79,7 +79,7 @@ function test_cpedict_tc05 {
     return $ret_val
 }
 
-function test_cpedict_tc06 {
+function test_cpedict_match_non_existing_cpe {
     local ret_val=0;
 
     ${srcdir}/test_cpedict --match ${srcdir}/CPE/dict.xml "UTF-8" \
@@ -89,7 +89,7 @@ function test_cpedict_tc06 {
     return $ret_val
 }
 
-function test_cpedict_tc07 {
+function test_cpedict_export_xml {
     local ret_val=0;
 
     ${srcdir}/test_cpedict --export ${srcdir}/CPE/dict.xml "UTF-8" \
@@ -105,7 +105,7 @@ function test_cpedict_tc07 {
     return $ret_val
 }
 
-function test_cpedict_tc08 {
+function test_cpedict_remove_cpe {
     local ret_val=0;
 
     ${srcdir}/test_cpedict --remove ${srcdir}/CPE/dict.xml "UTF-8" "cpe:/a:addsoft" \
@@ -129,7 +129,8 @@ function test_cpedict_cleanup {
 
 # TESTING.
 
-echo "------------------------------------------"
+echo ""
+echo "--------------------------------------------------"
 
 result=0
 log=${srcdir}/test_cpedict.log
@@ -141,44 +142,44 @@ ret_val=$?
 report_result "test_cpedict_setup" $ret_val
 result=$[$result+$ret_val]
 
-test_cpedict_tc01
+test_cpedict_smoke
 ret_val=$?
-report_result "test_cpedict_tc01" $ret_val 
+report_result "test_cpedict_smoke" $ret_val 
 result=$[$result+$ret_val]   
 
-test_cpedict_tc02 
+test_cpedict_import_utf8_xml 
 ret_val=$? 
-report_result "test_cpedict_tc02" $ret_val 
+report_result "test_cpedict_import_utf8_xml" $ret_val 
 result=$[$result+$ret_val]   
 
-# test_cpedict_tc03 
+# test_cpedict_import_cp1250_xml 
 # ret_val=$? 
-# report_result "test_cpedict_tc03" $ret_val 
+# report_result "test_cpedict_import_cp1250_xml" $ret_val 
 # result=$[$result+$ret_val]   
 
-test_cpedict_tc04  
+test_cpedict_import_damaged_xml
 ret_val=$? 
-report_result "test_cpedict_tc04" $ret_val  
+report_result "test_cpedict_import_damaged_xml" $ret_val  
 result=$[$result+$ret_val]   
 
-test_cpedict_tc05 
+test_cpedict_match_existing_cpe
 ret_val=$? 
-report_result "test_cpedict_tc05" $ret_val  
+report_result "test_cpedict_match_existing_cpe" $ret_val  
 result=$[$result+$ret_val]   
 
-test_cpedict_tc06
+test_cpedict_match_non_existing_cpe
 ret_val=$? 
-report_result "test_cpedict_tc06" $ret_val  
+report_result "test_cpedict_match_non_existing_cpe" $ret_val  
 result=$[$result+$ret_val]   
 
-test_cpedict_tc07 
+test_cpedict_export_xml
 ret_val=$? 
-report_result "test_cpedict_tc07" $ret_val  
+report_result "test_cpedict_export_xml" $ret_val  
 result=$[$result+$ret_val]   
 
-test_cpedict_tc08 
+test_cpedict_remove_cpe
 ret_val=$? 
-report_result "test_cpedict_tc08" $ret_val  
+report_result "test_cpedict_remove_cpe" $ret_val  
 result=$[$result+$ret_val]   
 
 test_cpedict_cleanup  
@@ -186,7 +187,7 @@ ret_val=$?
 report_result "test_cpedict_cleanup" $ret_val 
 result=$[$result+$ret_val]
 
-echo "------------------------------------------"
-echo "See ${log} (in tests)"
+echo "--------------------------------------------------"
+echo "See ${log} (in tests dir)"
 
 exit $result
