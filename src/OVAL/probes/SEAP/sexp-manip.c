@@ -926,14 +926,18 @@ char *SEXP_string_subcstr (const SEXP_t *s_exp, size_t beg, size_t len)
         if (s_len > len)
                 s_len = len;
         
-        s_len = v_dsc.hdr->size / sizeof (char);
-        s_str = sm_alloc (sizeof (char) * (s_len + 1));
+        if (s_len > 0) {
+                s_len = v_dsc.hdr->size / sizeof (char);
+                s_str = sm_alloc (sizeof (char) * (s_len + 1));
+                
+                memcpy (s_str, ((char *) v_dsc.mem) + beg, sizeof (char) * s_len);
+                
+                s_str[s_len] = '\0';
+                
+                return (s_str);
+        }
         
-        memcpy (s_str, ((char *) v_dsc.mem) + beg, sizeof (char) * s_len);
-        
-        s_str[s_len] = '\0';
-        
-        return (s_str);
+        return (NULL);
 }
 
 char *SEXP_string_cstrp (const SEXP_t *s_exp)
