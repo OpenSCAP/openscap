@@ -641,6 +641,7 @@ struct oval_results_model *oval_results_model_new
 		malloc(sizeof(oval_results_model_t));
 	model->systems       = oval_collection_new();
 	model->definition_model  = definition_model;
+	model->is_locked = false;
 	if(syschar_models){
 		struct oval_syschar_model *syschar_model;
 		for(syschar_model = *syschar_models;syschar_model;
@@ -649,7 +650,6 @@ struct oval_results_model *oval_results_model_new
 			oval_results_model_add_system(model, sys);
 		}
 	}
-	model->is_locked = false;
 	return model;
 }
 
