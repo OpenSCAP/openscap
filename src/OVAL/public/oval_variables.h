@@ -9,6 +9,7 @@
 #define OVAL_VARIABLES_H_
 
 #include "oval_types.h"
+#include "oval_definitions.h"
 
 /**
  * @addtogroup OVAL
