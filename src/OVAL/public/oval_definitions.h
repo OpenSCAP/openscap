@@ -1315,7 +1315,7 @@ oval_operator_t oval_criteria_node_get_operator(struct oval_criteria_node *);
  * @see oval_criteria_node_get_operator
  * @ingroup oval_criteria_node_setters
  */
-void oval_criteria_node_set_operator(struct oval_criteria_node *, oval_operator_t operator);
+void oval_criteria_node_set_operator(struct oval_criteria_node *, oval_operator_t op);
 /**
  * Returns attribute @ref Oval_criteria_node->subnodes.
  * If Oval_criteria_node->type <> @ref OVAL_NODETYPE_CRITERIA, this method shall return NULL.

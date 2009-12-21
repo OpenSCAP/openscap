@@ -324,13 +324,13 @@ void oval_criteria_node_set_comment(struct oval_criteria_node *node,
 }
 
 void oval_criteria_node_set_operator(struct oval_criteria_node *node,
-				     oval_operator_t operator)
+				     oval_operator_t op)
 {
 	if(node && !oval_criteria_node_is_locked(node)){
 		if(node->type==OVAL_NODETYPE_CRITERIA){
 			struct oval_criteria_node_CRITERIA *criteria =
 				(struct oval_criteria_node_CRITERIA *)node;
-			criteria->operator = operator;
+			criteria->operator = op;
 		}
 	} else 
                 oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
