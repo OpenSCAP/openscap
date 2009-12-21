@@ -45,7 +45,16 @@ typedef struct _oval_variable_model_frame {
 	oval_datatype_t         datatype;
 } _oval_variable_model_frame_t;
 
-_oval_variable_model_frame_t *_oval_variable_model_frame_new
+static _oval_variable_model_frame_t *_oval_variable_model_frame_new(char *id, const char *comm, oval_datatype_t datatype);
+static int _oval_variable_model_parse_tag(xmlTextReader *reader, struct oval_parser_context *context, struct oval_variable_model *model);
+static void _oval_variable_model_frame_free(_oval_variable_model_frame_t *frame);
+static int _oval_variable_model_parse_variable_values(xmlTextReader *reader,struct oval_parser_context *context, _oval_variable_model_frame_t *frame);
+static int _oval_variable_model_parse_variable(xmlTextReader *reader,struct oval_parser_context *context,struct oval_variable_model *model);
+static int _oval_variable_model_parse_variables(xmlTextReader *reader,struct oval_parser_context *context,struct oval_variable_model *model);
+static int _oval_variable_model_parse(struct oval_variable_model *model,xmlTextReader *reader,void *user_param);
+static int _oval_generator_parse_tag(xmlTextReader *reader,struct oval_parser_context *context, char *label);
+
+static _oval_variable_model_frame_t *_oval_variable_model_frame_new
 	(char *id, const char *comm, oval_datatype_t datatype)
 {
 	_oval_variable_model_frame_t *frame = 
@@ -82,7 +91,7 @@ void oval_variable_model_lock(struct oval_variable_model *variable_model){
 	variable_model->is_locked = true;
 }
 
-void _oval_variable_model_frame_free(_oval_variable_model_frame_t *frame)
+static void _oval_variable_model_frame_free(_oval_variable_model_frame_t *frame)
 {
 	if(frame){
 		if(frame->id)
@@ -154,7 +163,7 @@ void oval_variable_model_add(struct oval_variable_model *model, char *varid, con
 #define NAMESPACE_VARIABLES "http://oval.mitre.org/XMLSchema/oval-variables-5"
 #define NAMESPACE_COMMON    "http://oval.mitre.org/XMLSchema/oval-common-5"
 
-int _oval_generator_parse_tag
+static int _oval_generator_parse_tag
 	(xmlTextReader *reader,
 	 struct oval_parser_context *context, char *label)
 {
@@ -192,7 +201,7 @@ int _oval_generator_parse_tag
 	return return_code;
 }
 
-int _oval_variable_model_parse_variable_values
+static int _oval_variable_model_parse_variable_values
 	(xmlTextReader *reader,
 	 struct oval_parser_context *context,
 	 _oval_variable_model_frame_t *frame)
@@ -216,7 +225,7 @@ int _oval_variable_model_parse_variable_values
 	oscap_free(namespace);
 	return return_code;
 }
-int _oval_variable_model_parse_variable
+static int _oval_variable_model_parse_variable
 	(xmlTextReader *reader,
 	 struct oval_parser_context *context,
 	 struct oval_variable_model *model)
@@ -244,7 +253,7 @@ int _oval_variable_model_parse_variable
 	return return_code;
 }
 
-int _oval_variable_model_parse_variables
+static int _oval_variable_model_parse_variables
 	(xmlTextReader *reader,
 	 struct oval_parser_context *context,
 	 struct oval_variable_model *model)
@@ -267,7 +276,7 @@ int _oval_variable_model_parse_variables
 	return return_code;
 }
 
-int _oval_variable_model_parse_tag
+static int _oval_variable_model_parse_tag
 	(xmlTextReader *reader,
 	 struct oval_parser_context *context,
 	 struct oval_variable_model *model)
@@ -292,7 +301,7 @@ int _oval_variable_model_parse_tag
 }
 
 
-int _oval_variable_model_parse
+static int _oval_variable_model_parse
 	(struct oval_variable_model *model,
 	 xmlTextReader *reader,
 	 void *user_param)
@@ -350,11 +359,12 @@ int oval_variable_model_import
         return return_code;
 }
 
-void oval_variable_model_export
+int oval_variable_model_export
 	(struct oval_variable_model *model,
 	 struct oscap_export_target *target)
 {
 	//TODO: implement oval_variable_model_export
+        return 0;
 }
 
 struct oval_string_iterator *oval_variable_model_get_variable_ids

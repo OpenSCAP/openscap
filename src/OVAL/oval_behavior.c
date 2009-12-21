@@ -132,8 +132,8 @@ void oval_behavior_free(struct oval_behavior *behavior)
 void oval_behavior_set_keyval(struct oval_behavior *behavior, const char* key, const char* value)
 {
 	if (behavior && !oval_behavior_is_locked(behavior)) {
-		behavior->key   = strdup(key);
-		behavior->value = strdup(value);
+		behavior->key   = oscap_strdup(key);
+		behavior->value = oscap_strdup(value);
 	} else 
                 oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }

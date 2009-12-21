@@ -98,7 +98,7 @@ int oval_variable_model_import
  * @param export_target the oscap_export_target that resolves the output XML stream.
  * @ingroup OVALVAR_service
  */
-void oval_variable_model_export
+int oval_variable_model_export
 	(struct oval_variable_model *,
 	 struct oscap_export_target *);
 

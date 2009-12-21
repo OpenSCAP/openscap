@@ -265,6 +265,7 @@ void oval_setobject_add_subset(struct oval_setobject *set, struct oval_setobject
 	if(set && !oval_setobject_is_locked(set)){
 		oval_set_AGGREGATE_t *aggregate =
 			(oval_set_AGGREGATE_t *) set->extension;
+                assert(aggregate != NULL);
 		oval_collection_add(aggregate->subsets, (void *)subset);
 	} else
                 oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
@@ -275,6 +276,7 @@ void oval_setobject_add_object(struct oval_setobject *set, struct oval_object *o
 	if(set && !oval_setobject_is_locked(set)){
 		oval_set_COLLECTIVE_t *collective =
 			(oval_set_COLLECTIVE_t *) set->extension;
+                assert(collective != NULL);
 		oval_collection_add(collective->objects, (void *)object);
 	} else 
                 oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
@@ -285,6 +287,7 @@ void oval_setobject_add_filter(struct oval_setobject *set, struct oval_state *fi
 	if(set && !oval_setobject_is_locked(set)){
 		oval_set_COLLECTIVE_t *collective =
 			(oval_set_COLLECTIVE_t *) set->extension;
+                assert(collective != NULL);
 		oval_collection_add(collective->filters, (void *)filter);
 	} else 
                 oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);

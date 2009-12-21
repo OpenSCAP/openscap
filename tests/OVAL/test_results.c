@@ -65,8 +65,8 @@ int main(int argc, char **argv)
 			printf("LOAD OVAL RESULTS\n");
 			source = oscap_import_source_new_file(argv[2], NULL);
 			struct oval_results_model *results_model = oval_results_model_new(model,NULL);
-			oval_results_model_import(results_model, source, NULL);
-                        _test_error();
+			if (oval_results_model_import(results_model, source, NULL) < 1)
+                                _test_error();
 			oscap_import_source_free(source);
 			printf("OVAL RESULTS LOADED\n");
 			if (argc>3) {

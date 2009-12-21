@@ -257,12 +257,12 @@ void oval_string_iterator_free(struct oval_string_iterator *iterator)
 }
 
 //TEST FREEFUNC
-static void oval_collection_main_freefunc(void *item)
+/*static void oval_collection_main_freefunc(void *item)
 {
         // please test it with --enable-debug and see oscap_debug.log
         // you can still use oscap_dprintf for all debug messages 
 	oscap_dprintf("FREEFUNC: item = %s\n", (char *) item);
-}
+}*/
 
 
 /**

@@ -189,17 +189,16 @@ void oval_string_map_free_string(struct oval_string_map *map)
 	oval_string_map_free(map, oscap_free);
 }
 
-#include <stdio.h>
-	//TEST FREEFUNC
-static void oval_string_map_main_freefunc(void *item)
+//TEST FREEFUNC
+/*static void oval_string_map_main_freefunc(void *item)
 {
 	oscap_dprintf("FREEFUNC: item = %s\n", (const char *) item);
-}
+}*/
 
 /**
  * This method is included as a test stub.
  */
-int oval_string_map_main(int argc, char **argv)
+/*int oval_string_map_main(int argc, char **argv)
 {
 
 	oscap_dprintf("TEST::START\n");
@@ -224,4 +223,4 @@ int oval_string_map_main(int argc, char **argv)
 
 	oval_string_map_free(map, &oval_string_map_main_freefunc);
 	return 0;
-}
+}*/

@@ -105,10 +105,12 @@ struct oval_state_content *oval_state_content_new(struct oval_definition_model* 
 	return content;
 }
 
+/* TODO: don't know if this should be in API -> commenting now
 bool oval_state_content_is_valid(struct oval_state_content *state_content)
 {
 	return true;//TODO
-}
+}*/
+
 bool oval_state_content_is_locked(struct oval_state_content *state_content)
 {
         __attribute__nonnull__(state_content);

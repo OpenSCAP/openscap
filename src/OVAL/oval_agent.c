@@ -504,9 +504,6 @@ int oval_syschar_model_import(struct oval_syschar_model *model,
 	ret = ovalsys_parser_parse
 		(model, reader, user_arg);
 
-        /*This could be 0 or -1 in case of error or 1 in case of success, normalization to 0,-1: */
-        ret = (ret == 1) ? 0 : -1;
-
 	xmlFreeTextReader(reader);
 	xmlFreeDoc(doc);
         return ret;
@@ -890,6 +887,7 @@ struct oval_result_directives *oval_results_model_import(struct oval_results_mod
 
 	xmlFreeTextReader(reader);
 	xmlFreeDoc(doc);
+
 	return directives;
 }
 
@@ -1200,11 +1198,18 @@ int oval_definition_model_export(struct oval_definition_model *model,
 	LIBXML_TEST_VERSION;
 
 	xmlDocPtr doc = xmlNewDoc(BAD_CAST "1.0");
+        if (doc == NULL) {
+            oscap_setxmlerr(xmlGetLastError());
+            return -1;
+        }
+
 	oval_definitions_to_dom(model, doc, NULL, NULL, NULL);
 	/*
 	 * Dumping document to stdio or file
 	 */
 	retcode = xmlSaveFormatFileEnc(oscap_export_target_get_name(target), doc, oscap_export_target_get_encoding(target), 1);
+        if (retcode < 1)
+                oscap_setxmlerr(xmlGetLastError());
 
 	xmlFreeDoc(doc);
 
@@ -1297,11 +1302,18 @@ int oval_syschar_model_export(struct oval_syschar_model *model,
 	LIBXML_TEST_VERSION;
 
 	xmlDocPtr doc = xmlNewDoc(BAD_CAST "1.0");
+        if (doc == NULL) {
+            oscap_setxmlerr(xmlGetLastError());
+            return -1;
+        }
+
 	oval_syschar_model_to_dom(model, doc, NULL, NULL, NULL);
 	/*
 	 * Dumping document to stdio or file
 	 */
 	retcode = xmlSaveFormatFileEnc(oscap_export_target_get_name(target), doc, oscap_export_target_get_encoding(target), 1);
+        if (retcode < 1)
+                oscap_setxmlerr(xmlGetLastError());
 
 	xmlFreeDoc(doc);
         return retcode;
@@ -1401,18 +1413,22 @@ int oval_results_model_export(struct oval_results_model *results_model,
 	LIBXML_TEST_VERSION;
 
 	xmlDocPtr doc = xmlNewDoc(BAD_CAST "1.0");
+        if (doc == NULL) {
+            oscap_setxmlerr(xmlGetLastError());
+            return -1;
+        }
 
 	oval_results_to_dom(results_model, directives, doc, NULL);
 	xmlCode = xmlSaveFormatFileEnc
 		(oscap_export_target_get_name(target), doc, oscap_export_target_get_encoding(target), 1);
 	if(xmlCode<=0){
+                oscap_setxmlerr(xmlGetLastError());
 		oscap_dprintf("WARNING: No bytes exported: xmlCode = %d", xmlCode);
 	}
 
 	xmlFreeDoc(doc);
 
-        /* TODO: Maybe return int -> void ? */
-	return 1;
+	return ( (xmlCode>=1) ? 1 : -1 );
 }
 
 #ifdef __STUB_PROBE //This Macro is defined iff probes are stubbed.

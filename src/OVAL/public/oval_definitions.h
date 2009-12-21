@@ -1288,6 +1288,14 @@ bool oval_criteria_node_get_negate(struct oval_criteria_node *);
  */
 void oval_criteria_node_set_negate(struct oval_criteria_node *, bool negate);
 /**
+ * Set attribute @ref Oval_criteria_node->type.
+ * @see oval_criteria_node_get_type
+ * @param type - the required value of the type attribute
+ * @ingroup oval_criteria_node_setters
+ */
+void oval_criteria_set_node_type(struct oval_criteria_node *node,
+				 oval_criteria_node_type_t type);
+/**
  * Returns attribute @ref Oval_criteria_node->comment.
  * @see oval_criteria_node_set_comment
  * @ingroup oval_criteria_node_getters
@@ -2209,6 +2217,12 @@ struct oval_setobject     *oval_object_content_get_setobject (struct oval_object
  */
 struct oval_state_content *oval_state_content_new(struct oval_definition_model *);
 /**
+ * return <b>true</b> if the setobject instance is locked.
+ * The state of a locked instance cannot be changed.
+ * @ingroup oval_setobject_getters
+ */
+bool oval_state_content_is_locked(struct oval_state_content *);
+/**
  * return <b>true</b> if the state instance is valid
  * @ingroup oval_state_eval
  */
@@ -2893,6 +2907,11 @@ void oval_variable_add_value(struct oval_variable *, struct oval_value *);	//typ
  * @ingroup oval_variable_getters
  */
 struct oval_component *oval_variable_get_component (struct oval_variable *);//type==OVAL_VARIABLE_LOCAL
+/**
+ * Returns attribute @ref Oval_component_type->text.
+ * @ingroup oval_variable_getters
+ */
+const char* oval_component_type_get_text(oval_component_type_t type);
 /**
  * Bind an instance of @ref Oval_component to the attribute @ref Oval_local->component.
  * If attribute type <> @ref OVAL_VARIABLE_LOCAL, the component attribute <> NULL or the component parameter is NULL the state of the Oval_variable shall not be changed by this

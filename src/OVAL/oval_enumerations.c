@@ -670,7 +670,7 @@ static _textfunc textfuncs[] =
 	NULL
 };
 
-void oval_enumerations_test_driver(){
+/*void oval_enumerations_test_driver(){
 
 	int i;
         for(i=0; maps[i]; i++){
@@ -685,4 +685,4 @@ void oval_enumerations_test_driver(){
 			oscap_dprintf("    [%d]: %s", value, text);
 		}
 	}
-}
+}*/
