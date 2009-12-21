@@ -44,8 +44,6 @@
 /* Variable definitions
  * */
 
-int oval_errno; /* <-- Deprecated(TODO) */
-
 typedef struct oval_definition_model {
 	struct oval_string_map *definition_map;
 	struct oval_string_map *test_map;

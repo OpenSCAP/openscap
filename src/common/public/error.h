@@ -32,6 +32,11 @@ typedef uint16_t oscap_errcode_t;
 #define OSCAP_EXMLNODETYPE  3   /* Bad node type in XML */
 #define OSCAP_EXMLNOELEMENT 4   /* No expected element */
 #define OSCAP_ECPEINVOP     5   /* Invalid CPE Language operation */
+#define OSCAP_EOVALINT      6   /* OVAL internal error */
+#define OSCAP_EREGEXP       7   /* Error in regexp compilation */
+#define OSCAP_EREGEXPCOMP   8   /* Invalid string comparison in regexps */
+#define OSCAP_EUNDATATYPE   9   /* Unsupported data type */  
+#define OSCAP_EINVARG       10  /* Invalid argument */
 #define OSCAP_EUSER1        201 /* User defined error */
 #define OSCAP_EUSER2        202 /* User defined error */
 #define OSCAP_EUNKNOWN      255 /* Unknown/Unexpected error */
