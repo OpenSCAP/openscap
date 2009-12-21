@@ -34,7 +34,14 @@
 #include "oval_collection_impl.h"
 #include "oval_parser_impl.h"
 #include "oval_string_map_impl.h"
+
 #include "../common/util.h"
+#include "../common/public/debug.h"
+#include "../common/_error.h"
+
+/***************************************************************************/
+/* Variable definitions
+ * */
 
 typedef struct oval_affected {
 	struct oval_definition_model *model;
@@ -42,6 +49,21 @@ typedef struct oval_affected {
 	struct oval_collection *platforms;
 	struct oval_collection *products;
 } oval_affected_t;
+
+static const struct oscap_string_map OVAL_ODAFAMILY_MAP[] = {
+	{ OVAL_AFCFML_CATOS,     "catos"     },
+	{ OVAL_AFCFML_IOS,       "ios"       },
+	{ OVAL_AFCFML_MACOS,     "macos"     },
+	{ OVAL_AFCFML_PIXOS,     "pixos"     },
+	{ OVAL_AFCFML_UNDEFINED, "undefined" },
+	{ OVAL_AFCFML_UNIX,      "unix"      },
+	{ OVAL_AFCFML_WINDOWS,   "windows"   },
+	{ OVAL_CLASS_UNKNOWN, NULL }
+};
+
+/* End of variable definitions
+ * */
+/***************************************************************************/
 
 bool oval_affected_iterator_has_more(struct oval_affected_iterator *oc_affected)
 {
@@ -64,19 +86,23 @@ void oval_affected_iterator_free(struct oval_affected_iterator
 
 oval_affected_family_t oval_affected_get_family(struct oval_affected *affected)
 {
+        __attribute__nonnull__(affected);
+
 	return ((struct oval_affected *)affected)->family;
 }
 
-struct oval_string_iterator *oval_affected_get_platforms(struct oval_affected
-						    *affected)
+struct oval_string_iterator *oval_affected_get_platforms(struct oval_affected *affected)
 {
+        __attribute__nonnull__(affected);
+
 	return (struct oval_string_iterator *)
 	    oval_collection_iterator(affected->platforms);
 }
 
-struct oval_string_iterator *oval_affected_get_products(struct oval_affected
-						   *affected)
+struct oval_string_iterator *oval_affected_get_products(struct oval_affected *affected)
 {
+        __attribute__nonnull__(affected);
+
 	return (struct oval_string_iterator *)
 	    oval_collection_iterator(affected->products);
 }
@@ -84,7 +110,10 @@ struct oval_string_iterator *oval_affected_get_products(struct oval_affected
 struct oval_affected *oval_affected_new(struct oval_definition_model* model)
 {
 	struct oval_affected *affected =
-	    (struct oval_affected *)malloc(sizeof(oval_affected_t));
+	    (struct oval_affected *) oscap_alloc(sizeof(oval_affected_t));
+        if (affected == NULL)
+                return NULL;
+
 	affected->model = model;
 	affected->family = OVAL_AFCFML_UNKNOWN;
 	affected->platforms = oval_collection_new();
@@ -96,13 +125,18 @@ bool oval_affected_is_valid(struct oval_affected *affected)
 {
 	return true;//TODO
 }
+
 bool oval_affected_is_locked(struct oval_affected *affected)
 {
+        __attribute__nonnull__(affected);
+
 	return oval_definition_model_is_locked(affected->model);
 }
 
 struct oval_affected *oval_affected_clone(struct oval_definition_model *new_model, struct oval_affected *old_affected)
 {
+        __attribute__nonnull__(old_affected);
+
 	struct oval_affected *new_affected = oval_affected_new(new_model);
 
 	oval_affected_set_family(new_affected, old_affected->family);
@@ -113,6 +147,7 @@ struct oval_affected *oval_affected_clone(struct oval_definition_model *new_mode
 		oval_affected_add_platform(new_affected, platform);
 	}
 	oval_string_iterator_free(platforms);
+
 	struct oval_string_iterator *products = oval_affected_get_products(old_affected);
 	while(oval_string_iterator_has_more(products)){
 		char *product = oval_string_iterator_next(products);
@@ -125,9 +160,11 @@ struct oval_affected *oval_affected_clone(struct oval_definition_model *new_mode
 
 void oval_affected_free(struct oval_affected *affected)
 {
-	oval_collection_free_items(affected->platforms, &free);
+        __attribute__nonnull__(affected);
+
+	oval_collection_free_items(affected->platforms, (oscap_destruct_func) &oscap_free);
 	affected->platforms = NULL;
-	oval_collection_free_items(affected->products, &free);
+	oval_collection_free_items(affected->products, (oscap_destruct_func) &oscap_free);
 	affected->products = NULL;
 	free(affected);
 }
@@ -135,36 +172,30 @@ void oval_affected_free(struct oval_affected *affected)
 void oval_affected_set_family(struct oval_affected *affected,
 			      oval_affected_family_t family)
 {
+        __attribute__nonnull__(affected);
 
-	if(!oval_affected_is_locked(affected)){
+	if(!oval_affected_is_locked(affected)) {
 		affected->family = family;
-	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+	} else oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
 void oval_affected_add_platform(struct oval_affected *affected, char *platform)
 {
+        __attribute__nonnull__(affected);
+
 	if(affected && !oval_affected_is_locked(affected)){
-		oval_collection_add(affected->platforms, (void *)strdup(platform));
-	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+		oval_collection_add(affected->platforms, (void *)oscap_strdup(platform));
+	} else oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
 void oval_affected_add_product(struct oval_affected *affected, char *product)
 {
-	if(affected && !oval_affected_is_locked(affected)){
-		oval_collection_add(affected->products, (void *)strdup(product));
-	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
-}
+        __attribute__nonnull__(affected);
 
-static const struct oscap_string_map OVAL_ODAFAMILY_MAP[] = {
-	{ OVAL_AFCFML_CATOS,     "catos"     },
-	{ OVAL_AFCFML_IOS,       "ios"       },
-	{ OVAL_AFCFML_MACOS,     "macos"     },
-	{ OVAL_AFCFML_PIXOS,     "pixos"     },
-	{ OVAL_AFCFML_UNDEFINED, "undefined" },
-	{ OVAL_AFCFML_UNIX,      "unix"      },
-	{ OVAL_AFCFML_WINDOWS,   "windows"   },
-	{ OVAL_CLASS_UNKNOWN, NULL }
-};
+	if(affected && !oval_affected_is_locked(affected)){
+		oval_collection_add(affected->products, (void *)oscap_strdup(product));
+	} else oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+}
 
 static oval_affected_family_t _odafamily(char *family)
 {
@@ -177,49 +208,61 @@ const char* oval_affected_family_get_text(oval_affected_family_t family)
 }
 
 static int _oval_affected_parse_tag(xmlTextReaderPtr reader,
-			     struct oval_parser_context *context, void *user)
+			            struct oval_parser_context *context, 
+                                    void *user)
 {
-	struct oval_affected *affected = (struct oval_affected *)user;
+	struct oval_affected *affected = (struct oval_affected *) user;
 	int return_code;
 	xmlChar *tagname = xmlTextReaderName(reader);
 	//xmlChar *namespace = xmlTextReaderNamespaceUri(reader);
+        
 	if (strcmp((char *) tagname, "platform") == 0) {
 		char *platform = NULL;
 		return_code =
-		    oval_parser_text_value(reader, context, &oval_text_consumer,&platform);
+		    oval_parser_text_value(reader, context, &oval_text_consumer, &platform);
 		if (platform != NULL){
 			oval_affected_add_platform(affected, platform);
-			free(platform);
+			oscap_free(platform);
 		}
 	} else if (strcmp((char *) tagname, "product") == 0) {
 		char *product = NULL;
 		return_code =
-		    oval_parser_text_value(reader, context, &oval_text_consumer,&product);
+		    oval_parser_text_value(reader, context, &oval_text_consumer, &product);
 		if (product != NULL){
 			oval_affected_add_product(affected, product);
-			free(product);
+			oscap_free(product);
 		}
 	} else {
 		int linno = xmlTextReaderGetParserLineNumber(reader);
-		fprintf
-		    (stderr, "NOTICE::(oval_affected)skipping <%s> depth = %d line = %d\n",
-		     tagname, xmlTextReaderDepth(reader), linno);
+                int depth = xmlTextReaderDepth(reader);
+                if (depth == -1)
+                    oscap_setxmlerr(xmlGetLastError());
+
+		oscap_dprintf("NOTICE::(oval_affected)skipping <%s> depth = %d line = %d\n",
+		              tagname, depth, linno);
 		return_code = oval_parser_skip_tag(reader, context);
 	}
-	free(tagname);
+	oscap_free(tagname);
 	return return_code;
 }
 
 int oval_affected_parse_tag(xmlTextReaderPtr reader,
 			    struct oval_parser_context *context,
-			    oval_affected_consumer consumer, void *user)
+			    oval_affected_consumer consumer, 
+                            void *user)
 {
+        __attribute__nonnull__(context);
+
 	struct oval_affected *affected = oval_affected_new(context->definition_model);
+        if (affected == NULL) /* TODO: find out, if error propagation by -1 is valid */
+                return -1;
+
 	//xmlChar *tagname = xmlTextReaderName(reader);
 	//xmlChar *namespace = xmlTextReaderNamespaceUri(reader);
+        //
 	char *family = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "family");
 	oval_affected_set_family(affected, _odafamily(family));
-	free(family);
+	oscap_free(family);
 	(*consumer) (affected, user);
 	return oval_parser_parse_tag(reader, context, &_oval_affected_parse_tag,
 				     affected);
@@ -228,6 +271,8 @@ int oval_affected_parse_tag(xmlTextReaderPtr reader,
 void oval_affected_to_print(struct oval_affected *affected, char *indent,
 			    int idx)
 {
+        __attribute__nonnull__(affected);
+
 	char nxtindent[100];
 
 	if (strlen(indent) > 80)

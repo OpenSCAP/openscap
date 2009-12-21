@@ -366,8 +366,7 @@ void oval_results_model_add_system(struct oval_results_model *, struct oval_resu
  * @ingroup OVALRES_service
  */
 struct oval_result_directives *oval_results_model_import
-	(struct oval_results_model *, struct oscap_import_source *,
-			oval_xml_error_handler, void*);
+	(struct oval_results_model *, struct oscap_import_source *, void*);
 
 /**
  * Create new OVAL results directives.

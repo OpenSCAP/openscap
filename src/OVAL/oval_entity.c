@@ -33,6 +33,13 @@
 #include "oval_definitions_impl.h"
 #include "oval_collection_impl.h"
 #include "oval_agent_api_impl.h"
+#include "../common/util.h"
+#include "../common/public/debug.h"
+#include "../common/_error.h"
+
+/***************************************************************************/
+/* Variable definitions
+ * */
 
 struct oval_entity {
 	struct oval_definition_model *model;
@@ -45,6 +52,15 @@ struct oval_entity {
 	struct oval_variable *variable;
 	struct oval_value *value;
 };
+
+struct oval_consume_varref_context {
+	struct oval_definition_model * model;
+	struct oval_variable **variable;
+};
+
+/* End of variable definitions
+ * */
+/***************************************************************************/
 
 bool oval_entity_iterator_has_more(struct oval_entity_iterator *oc_entity)
 {
@@ -67,49 +83,68 @@ void oval_entity_iterator_free(struct oval_entity_iterator
 
 char *oval_entity_get_name(struct oval_entity *entity)
 {
+        __attribute__nonnull__(entity);
+
 	return entity->name;
 }
 
 oval_entity_type_t oval_entity_get_type(struct oval_entity * entity)
 {
+        __attribute__nonnull__(entity);
+
 	return entity->type;
 }
 
 oval_datatype_t oval_entity_get_datatype(struct oval_entity * entity)
 {
+        __attribute__nonnull__(entity);
+
 	return entity->datatype;
 }
 
 oval_operation_t oval_entity_get_operation(struct oval_entity * entity)
 {
+        __attribute__nonnull__(entity);
+
 	return entity->operation;
 }
 
 int oval_entity_get_mask(struct oval_entity *entity)
 {
+        __attribute__nonnull__(entity);
+
 	return entity->mask;
 }
 
 oval_entity_varref_type_t oval_entity_get_varref_type(struct oval_entity *
 						     entity)
 {
+        __attribute__nonnull__(entity);
+
 	return entity->varref_type;
 }
 
 struct oval_variable *oval_entity_get_variable(struct oval_entity *entity)
 {
+        __attribute__nonnull__(entity);
+
 	return entity->variable;
 }
 
 struct oval_value *oval_entity_get_value(struct oval_entity *entity)
 {
+        __attribute__nonnull__(entity);
+
 	return entity->value;
 }
 
 struct oval_entity *oval_entity_new(struct oval_definition_model* model)
 {
 	struct oval_entity *entity =
-	    (struct oval_entity *)malloc(sizeof(struct oval_entity));
+	    (struct oval_entity *) oscap_alloc(sizeof(struct oval_entity));
+        if (entity == NULL)
+                return NULL;
+
 	entity->datatype = OVAL_DATATYPE_UNKNOWN;
 	entity->mask = 0;
 	entity->operation = OVAL_OPERATOR_UNKNOWN;
@@ -127,6 +162,8 @@ bool oval_entity_is_valid(struct oval_entity *entity)
 }
 bool oval_entity_is_locked(struct oval_entity *entity)
 {
+        __attribute__nonnull__(entity);
+
 	return oval_definition_model_is_locked(entity->model);
 }
 
@@ -159,31 +196,35 @@ struct oval_entity *oval_entity_clone
 
 void oval_entity_free(struct oval_entity *entity)
 {
+        __attribute__nonnull__(entity);
+
 	if (entity->value != NULL)
 		oval_value_free(entity->value);
 	if (entity->name != NULL)
-		free(entity->name);
+		oscap_free(entity->name);
 
 	entity->name = NULL;
 	entity->value = NULL;
 	entity->variable = NULL;
-	free(entity);
+	oscap_free(entity);
 }
 
 void oval_entity_set_type(struct oval_entity *entity,
 			  oval_entity_type_t type)
 {
-	if(entity && !oval_entity_is_locked(entity)){
+	if (entity && !oval_entity_is_locked(entity)){
 		entity->type = type;
-	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+	} else 
+                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
 void oval_entity_set_datatype(struct oval_entity *entity,
 			      oval_datatype_t datatype)
 {
-	if(entity && !oval_entity_is_locked(entity)){
+	if (entity && !oval_entity_is_locked(entity)){
 		entity->datatype = datatype;
-	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+	} else 
+                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
 void oval_entity_set_operation(struct oval_entity *entity,
@@ -191,14 +232,16 @@ void oval_entity_set_operation(struct oval_entity *entity,
 {
 	if(entity && !oval_entity_is_locked(entity)){
 		entity->operation = operation;
-	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+	} else 
+                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
 void oval_entity_set_mask(struct oval_entity *entity, int mask)
 {
 	if(entity && !oval_entity_is_locked(entity)){
 		entity->mask = mask;
-	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+	} else 
+                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
 void oval_entity_set_varref_type(struct oval_entity *entity,
@@ -206,42 +249,48 @@ void oval_entity_set_varref_type(struct oval_entity *entity,
 {
 	if(entity && !oval_entity_is_locked(entity)){
 		entity->varref_type = type;
-	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+	} else 
+                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
 void oval_entity_set_variable(struct oval_entity *entity,
 			      struct oval_variable *variable)
 {
-	if(entity && !oval_entity_is_locked(entity)){
+	if (entity && !oval_entity_is_locked(entity)){
 		entity->variable = variable;
-	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+	} else 
+                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
 void oval_entity_set_value(struct oval_entity *entity, struct oval_value *value)
 {
-	if(entity && !oval_entity_is_locked(entity)){
+	if (entity && !oval_entity_is_locked(entity)){
 		entity->value = value;
-	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+	} else 
+                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
 void oval_entity_set_name(struct oval_entity *entity, char *name)
 {
-	if(entity && !oval_entity_is_locked(entity)){
-		if(entity->name!=NULL)free(entity->name);
-		entity->name = name==NULL?NULL:strdup(name);
-	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+	if (entity && !oval_entity_is_locked(entity)){
+		if(entity->name!=NULL)
+                        oscap_free(entity->name);
+		entity->name = (name == NULL) ? NULL : oscap_strdup(name);
+	} else 
+                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
-struct oval_consume_varref_context {
-	struct oval_definition_model * model;
-	struct oval_variable **variable;
-};
 static void oval_consume_varref(char *varref, void *user) {
+
+        __attribute__nonnull__(user);
+
 	struct oval_consume_varref_context* ctx = user;
 	*(ctx->variable) = oval_definition_model_get_variable((struct oval_definition_model *)ctx->model, varref);
 }
+
 static void oval_consume_value(struct oval_value *use_value, void *value) {
-	*(struct oval_value **)value = use_value;
+	
+        *(struct oval_value **)value = use_value;
 }
 
 //typedef void (*oval_entity_consumer)(struct oval_entity_node*, void*);
@@ -249,6 +298,8 @@ int oval_entity_parse_tag(xmlTextReaderPtr reader,
 			  struct oval_parser_context *context,
 			  oscap_consumer_func consumer, void *user)
 {
+        __attribute__nonnull__(context);
+
 	struct oval_entity *entity = oval_entity_new(context->definition_model);
 	int return_code;
 	oval_datatype_t datatype =
@@ -278,7 +329,8 @@ int oval_entity_parse_tag(xmlTextReaderPtr reader,
 			variable = oval_definition_model_get_variable(model, varref);
 			varref_type = OVAL_ENTITY_VARREF_ATTRIBUTE;
 			return_code = 1;
-			free(varref);varref=NULL;
+			oscap_free(varref);
+                        varref=NULL;
 		}
 		value = NULL;
 	} else if (varref == NULL) {
@@ -293,7 +345,8 @@ int oval_entity_parse_tag(xmlTextReaderPtr reader,
 		varref_type = OVAL_ENTITY_VARREF_ATTRIBUTE;
 		value = NULL;
 		return_code = 1;
-		free(varref);varref = NULL;
+		oscap_free(varref);
+                varref = NULL;
 	}
 	oval_entity_set_name(entity, name);
 	oval_entity_set_type(entity, type);
@@ -306,11 +359,10 @@ int oval_entity_parse_tag(xmlTextReaderPtr reader,
 	(*consumer) (entity, user);
 	if (return_code != 1) {
 		int line = xmlTextReaderGetParserLineNumber(reader);
-		printf
-		    ("NOTICE: oval_entity_parse_tag::parse of <%s> terminated on error line %d\n",
+		oscap_dprintf("NOTICE: oval_entity_parse_tag::parse of <%s> terminated on error line %d",
 		     name, line);
 	}
-	free(name);
+	oscap_free(name);
 	return return_code;
 }
 
@@ -326,29 +378,29 @@ void oval_entity_to_print(struct oval_entity *entity, char *indent, int idx)
 	else
 		snprintf(nxtindent, sizeof(nxtindent), "%sENTITY[%d].", indent, idx);
 
-	printf("%sNAME        = %s\n", nxtindent, oval_entity_get_name(entity));
-	printf("%sTYPE        = %d\n", nxtindent, oval_entity_get_type(entity));
+	oscap_dprintf("%sNAME        = %s\n", nxtindent, oval_entity_get_name(entity));
+	oscap_dprintf("%sTYPE        = %d\n", nxtindent, oval_entity_get_type(entity));
 	if (oval_entity_get_type(entity) > 10) {
-		printf("%s<<WARNING::TYPE OUT OF RANGE>>", nxtindent);
+		oscap_dprintf("%s<<WARNING::TYPE OUT OF RANGE>>", nxtindent);
 	} else {
-		printf("%sDATATYPE    = %d\n", nxtindent,
+		oscap_dprintf("%sDATATYPE    = %d\n", nxtindent,
 		       oval_entity_get_datatype(entity));
-		printf("%sOPERATION   = %d\n", nxtindent,
+		oscap_dprintf("%sOPERATION   = %d\n", nxtindent,
 		       oval_entity_get_operation(entity));
-		printf("%sMASK        = %d\n", nxtindent,
+		oscap_dprintf("%sMASK        = %d\n", nxtindent,
 		       oval_entity_get_mask(entity));
-		printf("%sVARREF_TYPE = %d\n", nxtindent,
+		oscap_dprintf("%sVARREF_TYPE = %d\n", nxtindent,
 		       oval_entity_get_varref_type(entity));
 
 		struct oval_variable *variable = oval_entity_get_variable(entity);
 		if (variable == NULL)
-			printf("%sVARIABLE    = <<NOT SET>>\n", nxtindent);
+			oscap_dprintf("%sVARIABLE    = <<NOT SET>>\n", nxtindent);
 		else
 			oval_variable_to_print(variable, nxtindent, 0);
 
 		struct oval_value *value = oval_entity_get_value(entity);
 		if (value == NULL)
-			printf("%sVALUE       = <<NOT SET>>\n", nxtindent);
+			oscap_dprintf("%sVALUE       = <<NOT SET>>\n", nxtindent);
 		else
 			oval_value_to_print(value, nxtindent, 0);
 	}

@@ -34,6 +34,8 @@
 #include "oval_collection_impl.h"
 #include "oval_string_map_impl.h"
 #include "oval_agent_api_impl.h"
+#include "../common/util.h"
+#include "../common/public/debug.h"
 
 
 typedef struct oval_variable {
@@ -84,36 +86,50 @@ void oval_variable_iterator_free(struct
 
 char *oval_variable_get_id(struct oval_variable *variable)
 {
+        __attribute__nonnull__(variable);
+
 	return variable->id;
 }
 
 char *oval_variable_get_comment(struct oval_variable *variable)
 {
+        __attribute__nonnull__(variable);
+
 	return variable->comment;
 }
 
 int oval_variable_get_version(struct oval_variable *variable)
 {
+        __attribute__nonnull__(variable);
+
 	return variable->version;
 }
 
 bool oval_variable_get_deprecated(struct oval_variable *variable)
 {
+        __attribute__nonnull__(variable);
+
 	return variable->deprecated;
 }
 
 oval_variable_type_t oval_variable_get_type(struct oval_variable * variable)
 {
+        __attribute__nonnull__(variable);
+
 	return variable->type;
 }
 
 oval_datatype_t oval_variable_get_datatype(struct oval_variable * variable)
 {
+        __attribute__nonnull__(variable);
+
 	return variable->datatype;
 }
 
 struct oval_value_iterator *oval_variable_get_values(struct oval_variable *variable)
 {
+        __attribute__nonnull__(variable);
+
 	struct oval_collection *value_collection = variable->values;
 	return (value_collection)?(struct oval_value_iterator *)oval_collection_iterator(variable->values):NULL;
 }
@@ -121,6 +137,8 @@ struct oval_value_iterator *oval_variable_get_values(struct oval_variable *varia
 oval_syschar_collection_flag_t oval_syschar_model_get_variable_collection_flag
 	(struct oval_syschar_model *sysmod, struct oval_variable *variable)
 {
+        __attribute__nonnull__(variable);
+
 	if(variable->flag==SYSCHAR_FLAG_UNKNOWN){
 		oval_syschar_model_get_variable_values(sysmod, variable);
 	}
@@ -130,13 +148,14 @@ oval_syschar_collection_flag_t oval_syschar_model_get_variable_collection_flag
 struct oval_value_iterator *oval_syschar_model_get_variable_values
 	(struct oval_syschar_model *sysmod, struct oval_variable *variable)
 {
+        __attribute__nonnull__(variable);
+
 	if(variable->flag==SYSCHAR_FLAG_UNKNOWN){
 		variable->values = oval_collection_new();
 		struct oval_component *component = oval_variable_get_component(variable);
 		if(component){
 			variable->flag = oval_component_evaluate(sysmod, component, variable->values);
-		}else fprintf(stderr,
-				"WARNING: NULL component bound to variable\n"
+		}else oscap_dprintf("WARNING: NULL component bound to variable\n"
 				"    variable type = %s\n"
 				"    variable id   = %s\n"
 				"    codeloc = %s(%d)\n",
@@ -147,7 +166,9 @@ struct oval_value_iterator *oval_syschar_model_get_variable_values
 
 struct oval_component *oval_variable_get_component(struct oval_variable *variable)
 {
-	//type==OVAL_VARIABLE_LOCAL
+        __attribute__nonnull__(variable);
+
+	/*type==OVAL_VARIABLE_LOCAL*/
 	struct oval_component *component = NULL;
 	if (oval_variable_get_type(variable) == OVAL_VARIABLE_LOCAL) {
 		oval_variable_LOCAL_t *local =
@@ -163,29 +184,41 @@ struct oval_variable *oval_variable_new(struct oval_definition_model *model, cha
 	oval_variable_t *variable;
 	switch(type){
 	case OVAL_VARIABLE_CONSTANT:{
-		variable = (oval_variable_t*)malloc(sizeof(oval_variable_CONEXT_t));
+		variable = (oval_variable_t*) oscap_alloc(sizeof(oval_variable_CONEXT_t));
+                if (variable == NULL) 
+                        return NULL;
+
 		oval_variable_CONEXT_t *conext
-		= (oval_variable_CONEXT_t *)variable;
+		= (oval_variable_CONEXT_t *) variable;
 		conext->values = oval_collection_new();
 		conext->flag = SYSCHAR_FLAG_NOT_COLLECTED;
 	}break;
 	case OVAL_VARIABLE_EXTERNAL:{
-		variable = (oval_variable_t*)malloc(sizeof(oval_variable_CONEXT_t));
+		variable = (oval_variable_t*) oscap_alloc(sizeof(oval_variable_CONEXT_t));
+                if (variable == NULL)
+                        return NULL;
+
 		oval_variable_CONEXT_t *conext
-		= (oval_variable_CONEXT_t *)variable;
+		= (oval_variable_CONEXT_t *) variable;
 		conext->values = oval_collection_new();
 		conext->flag   = SYSCHAR_FLAG_NOT_COLLECTED;
 	}break;
 	case OVAL_VARIABLE_LOCAL:{
-		variable = (oval_variable_t*)malloc(sizeof(oval_variable_LOCAL_t));
+		variable = (oval_variable_t*) oscap_alloc(sizeof(oval_variable_LOCAL_t));
+                if (variable == NULL)
+                        return NULL;
+
 		oval_variable_LOCAL_t *local
-		= (oval_variable_LOCAL_t *)variable;
+		= (oval_variable_LOCAL_t *) variable;
 		local->component = NULL;
 		local->values    = NULL;
 		local->flag      = SYSCHAR_FLAG_UNKNOWN;
 	}break;
 	case OVAL_VARIABLE_UNKNOWN:{
-		variable = (oval_variable_t*)malloc(sizeof(oval_variable_UNKNOWN_t));
+		variable = (oval_variable_t*) oscap_alloc(sizeof(oval_variable_UNKNOWN_t));
+                if (variable == NULL)
+                        return NULL;
+
 		oval_variable_UNKNOWN_t *unknwn
 		= (oval_variable_UNKNOWN_t *)variable;
 		unknwn->component = NULL;
@@ -193,13 +226,12 @@ struct oval_variable *oval_variable_new(struct oval_definition_model *model, cha
 		unknwn->flag      = SYSCHAR_FLAG_UNKNOWN;
 	};break;
 	default:
-		fprintf(stderr," oval_variable type not valid: type = %d\n    %s(%d)\n"
-		, type, __FILE__, __LINE__);
+		oscap_dprintf(" oval_variable type not valid: type = %d (%s:%d)", type, __FILE__, __LINE__);
 		return NULL;
 	}
 
 	variable->model = model;
-	variable->id = strdup(id);
+	variable->id = oscap_strdup(id);
 	variable->comment = NULL;
 	variable->datatype = OVAL_DATATYPE_UNKNOWN;
 	variable->type = type;
@@ -212,12 +244,16 @@ return true;//TODO
 }
 bool oval_variable_is_locked(struct oval_variable *variable)
 {
+        __attribute__nonnull__(variable);
+
 	return oval_definition_model_is_locked(variable->model);
 }
 
 struct oval_variable   *oval_variable_clone
 	(struct oval_definition_model* new_model, struct oval_variable *old_variable)
 {
+        __attribute__nonnull__(old_variable);
+
 	oval_variable_t *new_variable = oval_definition_model_get_variable(new_model, old_variable->id);
 	if(new_variable==NULL){
 		new_variable = oval_variable_new(new_model, old_variable->id, old_variable->type);
@@ -233,7 +269,7 @@ struct oval_variable   *oval_variable_clone
 			if(new_variable->values==NULL)new_variable->values = oval_collection_new();
 			while(oval_value_iterator_has_more(old_values)){
 				struct oval_value *value = oval_value_iterator_next(old_values);
-				char *text = oval_value_get_text(value);
+				/* char *text = oval_value_get_text(value); <-- unused */
 				oval_collection_add(new_variable->values, value);
 			}
 			oval_value_iterator_free(old_values);
@@ -252,9 +288,11 @@ struct oval_variable   *oval_variable_clone
 void oval_variable_free(struct oval_variable *variable)
 {
 	if (variable){
-		if (variable->id)free(variable->id);
-		if (variable->comment)free(variable->comment);
-		oval_variable_CONEXT_t *conext = (oval_variable_CONEXT_t *)variable;
+		if (variable->id)
+                        oscap_free(variable->id);
+		if (variable->comment)
+                        oscap_free(variable->comment);
+		oval_variable_CONEXT_t *conext = (oval_variable_CONEXT_t *) variable;
 		if(conext->values){
 			oval_collection_free_items(conext->values, (oscap_destruct_func)oval_value_free);
 			conext->values = NULL;
@@ -269,7 +307,7 @@ void oval_variable_free(struct oval_variable *variable)
 		variable->comment = NULL;
 		variable->id = NULL;
 
-		free(variable);
+		oscap_free(variable);
 	}
 }
 
@@ -278,7 +316,8 @@ void oval_variable_set_datatype(struct oval_variable *variable,
 {
         if(variable && !oval_variable_is_locked(variable)){
                 variable->datatype = datatype;
-        }else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+        } else 
+                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
 void oval_variable_set_type(struct oval_variable *variable, oval_variable_type_t type)
@@ -300,18 +339,20 @@ void oval_variable_set_type(struct oval_variable *variable, oval_variable_type_t
                                 variable->flag = SYSCHAR_FLAG_UNKNOWN;break;
                         }
                 }else if (variable->type != type){
-                        fprintf(stderr, "ERROR: attempt to reset valid variable type\n    oldtype = %s\n    newtype = %s",
+                        oscap_dprintf("ERROR: attempt to reset valid variable type    oldtype = %s    newtype = %s",
                         oval_variable_type_get_text(variable->type), oval_variable_type_get_text(type));
                 }
-        }else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+        } else oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
 void oval_variable_set_comment(struct oval_variable *variable, char *comm)
 {
         if(variable && !oval_variable_is_locked(variable)){
-                if(variable->comment!=NULL)free(variable->comment);
-                variable->comment = comm==NULL?NULL:strdup(comm);
-        }else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+                if(variable->comment!=NULL)
+                        oscap_free(variable->comment);
+                variable->comment = oscap_strdup(comm);
+        } else 
+                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
 void oval_variable_set_deprecated(struct oval_variable *variable,
@@ -319,14 +360,16 @@ void oval_variable_set_deprecated(struct oval_variable *variable,
 {
         if(variable && !oval_variable_is_locked(variable)){
                 variable->deprecated = deprecated;
-        }else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+        } else 
+                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
 void oval_variable_set_version(struct oval_variable *variable, int version)
 {
         if(variable && !oval_variable_is_locked(variable)){
                 variable->version = version;
-        }else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+        } else 
+                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
 void oval_variable_add_value(struct oval_variable *variable,
@@ -334,11 +377,12 @@ void oval_variable_add_value(struct oval_variable *variable,
 {
         if(variable && !oval_variable_is_locked(variable)){
                 if (variable->type == OVAL_VARIABLE_CONSTANT || variable->type == OVAL_VARIABLE_EXTERNAL) {
-                        char *text = oval_value_get_text(value);
+                        /* char *text = oval_value_get_text(value); <-- unused */
                         oval_collection_add(variable->values, value);
                         variable->flag = SYSCHAR_FLAG_COMPLETE;
                 }
-        }else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+        } else 
+                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
 void oval_variable_set_component(struct oval_variable *variable,
@@ -350,7 +394,8 @@ void oval_variable_set_component(struct oval_variable *variable,
                                 (oval_variable_LOCAL_t *) variable;
                         local->component = component;
                 }
-        }else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+        } else 
+                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
 static void _oval_variable_parse_local_tag_component_consumer(struct oval_component *component, void *variable) {
@@ -368,18 +413,19 @@ static int _oval_variable_parse_local_tag(xmlTextReaderPtr reader,
 				     variable);
 	if (return_code != 1) {
 		int line = xmlTextReaderGetParserLineNumber(reader);
-		printf
-		    ("NOTICE: oval_variable_parse_local_tag::parse of %s terminated on error at <%s> line %d\n",
+		oscap_dprintf
+		    ("NOTICE: oval_variable_parse_local_tag::parse of %s terminated on error at <%s> line %d",
 		     variable->id, tagname, line);
 	}
-	free(tagname);
-	free(namespace);
+	oscap_free(tagname);
+	oscap_free(namespace);
 	return return_code;
 }
 
 #define DEFINITION_NAMESPACE "http://oval.mitre.org/XMLSchema/oval-definitions-5"
 
 static void _oval_variable_parse_value(char *text_value, struct oval_variable *variable){
+
 	struct oval_value *value = oval_value_new(oval_variable_get_datatype(variable), text_value);
 	oval_variable_add_value(variable, value);
 }
@@ -387,23 +433,21 @@ static int _oval_variable_parse_constant_tag(xmlTextReaderPtr reader,
 					     struct oval_parser_context *context,
 					     struct oval_variable *variable)
 {
-	char *text_value = NULL;
 	xmlChar *tagname = xmlTextReaderName(reader);
 	xmlChar *namespace = xmlTextReaderNamespaceUri(reader);
 	int return_code = 1;
-	if (strcmp("value", tagname)==0 && strcmp(DEFINITION_NAMESPACE, namespace)==0) {
+	if (strcmp("value", (char *) tagname)==0 && strcmp(DEFINITION_NAMESPACE, (char *) namespace)==0) {
 		oval_parser_text_value(reader, context,
 					   (oval_xml_value_consumer)_oval_variable_parse_value, variable);
 	}else{
 		int line = xmlTextReaderGetParserLineNumber(reader);
-		fprintf
-		    (stderr, "NOTICE: Invalid element <%s:%s> in constant variable\n"
-		     "    <constant_variable id = %s> at line %d\n"
-		     "    %s(%d)\n",
+		oscap_dprintf("NOTICE: Invalid element <%s:%s> in constant variable"
+		     "    <constant_variable id = %s> at line %d"
+		     "    %s(%d)",
 		     namespace, tagname, variable->id, line, __FILE__, __LINE__);
 	}
-	free(tagname);
-	free(namespace);
+	oscap_free(tagname);
+	oscap_free(namespace);
 	return return_code;
 }
 
@@ -422,24 +466,27 @@ int oval_variable_parse_tag(xmlTextReaderPtr reader,
 	else {
 		type = OVAL_VARIABLE_UNKNOWN;
 		int line = xmlTextReaderGetParserLineNumber(reader);
-		fprintf
-		    (stderr, "NOTICE::oval_variable_parse_tag: <%s> unhandled variable type::line = %d\n",
+		oscap_dprintf("NOTICE::oval_variable_parse_tag: <%s> unhandled variable type::line = %d",
 		     tagname, line);
 	}
 	char *id = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "id");
 	struct oval_variable *variable = oval_variable_get_new(model, id, type);
-	free(id);id = variable->id;
+	oscap_free(id);
+        id = variable->id;
 
 	char *comm = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "comment");
 	if(comm!=NULL){
 		oval_variable_set_comment(variable, comm);
-		free(comm);comm=NULL;
+		oscap_free(comm);
+                comm=NULL;
+                
 	}
 	int deprecated = oval_parser_boolean_attribute(reader, "deprecated", 0);
 	oval_variable_set_deprecated(variable, deprecated);
 	char *version = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "version");
 	oval_variable_set_version(variable, atoi(version));
-	free(version);version = NULL;
+	oscap_free(version);
+        version = NULL;
 
 	oval_datatype_t datatype =
 	    oval_datatype_parse(reader, "datatype", OVAL_DATATYPE_UNKNOWN);
@@ -466,7 +513,7 @@ int oval_variable_parse_tag(xmlTextReaderPtr reader,
 	default:
 		return_code = 1;
 	}
-	free(tagname);
+	oscap_free(tagname);
 	return return_code;
 }
 
@@ -483,15 +530,15 @@ void oval_variable_to_print(struct oval_variable *variable, char *indent,
 	else
 		snprintf(nxtindent, sizeof(nxtindent), "%sVARIABLE[%d].", indent, idx);
 
-	printf("%sID         = %s\n", nxtindent, oval_variable_get_id(variable));
-	printf("%sVERSION    = %d\n", nxtindent,
+	oscap_dprintf("%sID         = %s\n", nxtindent, oval_variable_get_id(variable));
+	oscap_dprintf("%sVERSION    = %d\n", nxtindent,
 	       oval_variable_get_version(variable));
-	printf("%sCOMMENT    = %s\n", nxtindent,
+	oscap_dprintf("%sCOMMENT    = %s\n", nxtindent,
 	       oval_variable_get_comment(variable));
-	printf("%sDEPRECATED = %d\n", nxtindent,
+	oscap_dprintf("%sDEPRECATED = %d\n", nxtindent,
 	       oval_variable_get_deprecated(variable));
-	printf("%sTYPE       = %d\n", nxtindent, oval_variable_get_type(variable));
-	printf("%sDATATYPE   = %d\n", nxtindent,
+	oscap_dprintf("%sTYPE       = %d\n", nxtindent, oval_variable_get_type(variable));
+	oscap_dprintf("%sDATATYPE   = %d\n", nxtindent,
 	       oval_variable_get_datatype(variable));
 	switch (oval_variable_get_type(variable)) {
 	case OVAL_VARIABLE_CONSTANT:{
@@ -508,20 +555,20 @@ void oval_variable_to_print(struct oval_variable *variable, char *indent,
 							    i);
 				}
 			} else
-				printf
+				oscap_dprintf
 				    ("%sVALUES     = <<NO CONSTANTS BOUND>>\n",
 				     nxtindent);
 		}
 		break;
 	case OVAL_VARIABLE_EXTERNAL:{
-			printf("%sEXTERNAL   <<TODO>>\n", nxtindent);
+			oscap_dprintf("%sEXTERNAL   <<TODO>>\n", nxtindent);
 		}
 		break;
 	case OVAL_VARIABLE_LOCAL:{
 			struct oval_component *component =
 			    oval_variable_get_component(variable);
 			if (component == NULL)
-				printf
+				oscap_dprintf
 				    ("%sCOMPONENT  = <<NO COMPONENT BOUND>>\n",
 				     nxtindent);
 			else

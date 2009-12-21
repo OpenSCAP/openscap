@@ -287,7 +287,7 @@ struct oval_xml_error {
 };
 
 /// OVAL XML error handler function pointer type.
-typedef int (*oval_xml_error_handler) (struct oval_xml_error *, void *user_arg);
+/*typedef int (*oval_xml_error_handler) (struct oval_xml_error *, void *user_arg); <-- deprecated */
 
 
 
@@ -311,6 +311,7 @@ struct oval_string_iterator;
 
 bool  oval_string_iterator_has_more(struct oval_string_iterator *);
 char *oval_string_iterator_next    (struct oval_string_iterator *);
+int oval_string_iterator_remaining (struct oval_string_iterator *);
 void  oval_string_iterator_free    (struct oval_string_iterator *);
 /**
  * @}ENDOVAL

@@ -11,8 +11,25 @@
 #include "oval_agent_api.h"
 #include "oval_definitions_impl.h"
 #include "oval_system_characteristics_impl.h"
+#include "error.h"
 
-int _test_error_handler(struct oval_xml_error *error, void *null)
+int _test_error()
+{
+        if (oscap_err ()) {
+                oscap_errfamily_t f;
+                oscap_errcode_t   c;
+                const char       *d;
+
+                fprintf (stderr, "GOT error: %d, %d, %s.\n",
+                        f = oscap_err_family (),
+                        c = oscap_err_code (),
+                        d = oscap_err_desc ());
+        }
+                
+	return 0;
+}
+
+int _test_error_handler(struct oval_xml_error *error, void *null) /* <-- deprecated */
 {
 	return 1;
 }
@@ -37,10 +54,12 @@ int main(int argc, char **argv)
 	}
 
 	source = oscap_import_source_new_file(argv[1], NULL);
+        _test_error();
 	definition_model = oval_definition_model_new();
-	ret = oval_definition_model_import(definition_model, source, &_test_error_handler, NULL);
+	ret = oval_definition_model_import(definition_model, source, NULL);
 	if(ret != 1) {
 		printf("oval_definition_model_import() failed.\n");
+                _test_error();
 		return 2;
 	}
 	oscap_import_source_free(source);

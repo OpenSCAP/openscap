@@ -34,10 +34,11 @@
 #include "oval_parser_impl.h"
 #include "oval_definitions_impl.h"
 #include "oval_system_characteristics_impl.h"
+#include "../common/util.h"
+#include "../common/public/debug.h"
+#include "../common/_error.h"
 
 const char NAMESPACE_OVALSYS[] = "http://oval.mitre.org/XMLSchema/oval-system-characteristics-5";
-
-#define DEBUG_OVALSYS_PARSER 0
 
 static int _ovalsys_parser_process_node_consume_collected_objects(xmlTextReaderPtr reader,
 		  struct oval_parser_context *context, void *null)
@@ -56,24 +57,13 @@ static int _ovalsys_parser_process_node(xmlTextReaderPtr reader,
 	int return_code = xmlTextReaderRead(reader);
 	while (return_code == 1) {
 		if (xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
-			if(DEBUG_OVALSYS_PARSER){//DEBUG
-				char message[200]; *message = 0;
-				sprintf(message,
-						"ovalsys_parser: at depth %d",
-						xmlTextReaderDepth(reader));
-				oval_parser_log_debug(context, message);
-			}//DEBUG
+			oscap_dprintf("DEBUG: ovalsys_parser: at depth %d", xmlTextReaderDepth(reader));
 			if (xmlTextReaderDepth(reader) > 0) {
 				char *tagname = (char*) xmlTextReaderName(reader);
 				char *namespace =
 				    (char*) xmlTextReaderNamespaceUri(reader);
-				if(DEBUG_OVALSYS_PARSER){//DEBUG
-					char message[200]; *message = 0;
-					sprintf(message,
-							"ovalsys_parser: processing <%s:%s>",
+					oscap_dprintf("DEBUG: ovalsys_parser: processing <%s:%s>",
 							namespace, tagname);
-					oval_parser_log_debug(context, message);
-				}//DEBUG
 				int is_ovalsys = strcmp((const char *) NAMESPACE_OVALSYS, namespace)==0;
 				if (is_ovalsys && (strcmp(tagname, "generator") == 0)) {
 					//SKIP GENERATOR CODE
@@ -86,17 +76,15 @@ static int _ovalsys_parser_process_node(xmlTextReaderPtr reader,
 				}else if (is_ovalsys && (strcmp(tagname, "system_data") == 0)) {
 					return_code = oval_parser_parse_tag(reader, context, &_ovalsys_parser_process_node_consume_system_data, NULL);
 				} else {
-					char message[200]; *message = 0;
-					sprintf(message,
-							"ovalsys_parser: UNPROCESSED TAG <%s:%s>",
+                                        oscap_seterr(ERR_FAMILY_OSCAP, OSCAP_EXMLELEM, "Unknown element");
+					oscap_dprintf("WARNING: ovalsys_parser: UNPROCESSED TAG <%s:%s>",
 							namespace, tagname);
-					oval_parser_log_warn(context, message);
 					return_code =
 					    oval_parser_skip_tag(reader,
 								 context);
 				}
-				free(tagname);
-				free(namespace);
+				oscap_free(tagname);
+				oscap_free(namespace);
 			} else
 				return_code = xmlTextReaderRead(reader);
 			if ((return_code == 1)
@@ -112,34 +100,34 @@ static int _ovalsys_parser_process_node(xmlTextReaderPtr reader,
 	return return_code;
 }
 
+/**
+ * return -1 on error >=0 otherwise
+ */
 int ovalsys_parser_parse
-    (struct oval_syschar_model *model, xmlTextReader *reader, oval_xml_error_handler eh,
+    (struct oval_syschar_model *model, xmlTextReader *reader,
      void *user_arg)
 {
-	struct oval_parser_context context;
-	context.error_handler   = eh;
-	context.reader          = reader;
-	context.definition_model    = oval_syschar_model_get_definition_model(model);
-	context.syschar_model   = model;
-	//context.syschar_sysinfo = NULL;
-	context.user_data       = user_arg;
-	int return_code = 1;
-	xmlTextReaderSetErrorHandler(reader, &libxml_error_handler, &context);
+        struct oval_parser_context context;
+        context.reader          = reader;
+        context.definition_model= oval_syschar_model_get_definition_model(model);
+        context.syschar_model   = model;
+        //context.syschar_sysinfo = NULL;
+        context.user_data       = user_arg;
+        int return_code = 1;
+        xmlTextReaderSetErrorHandler(reader, &libxml_error_handler, &context);
 	char *tagname   = (char*) xmlTextReaderLocalName(reader);
 	char *namespace = (char*) xmlTextReaderNamespaceUri(reader);
 	int is_ovalsys = strcmp((char*)NAMESPACE_OVALSYS, namespace)==0;
 	if(is_ovalsys && (strcmp(tagname,"oval_system_characteristics")==0)){
 		return_code = _ovalsys_parser_process_node(reader, &context);
 	}else{
-		char message[200]; *message = 0;
-		sprintf(message,
-				"ovalsys_parser: UNPROCESSED TAG <%s:%s>",
+                oscap_seterr(ERR_FAMILY_OSCAP, OSCAP_EXMLELEM, "Missing expected oval_system_characteristics element");
+		oscap_dprintf("WARNING: ovalsys_parser: UNPROCESSED TAG <%s:%s>",
 				namespace, tagname);
-		oval_parser_log_warn(&context, message);
 		oval_parser_skip_tag(reader,&context);
-		return_code = 0;
+		return_code = -1;
 	}
-	free(tagname);
-	free(namespace);
+	oscap_free(tagname);
+	oscap_free(namespace);
 	return return_code;
 }

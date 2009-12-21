@@ -32,8 +32,8 @@
 #include "oval_results_impl.h"
 #include "oval_collection_impl.h"
 #include "oval_system_characteristics_impl.h"
-
-#define OVAL_RESULT_ITEM_DEBUG 0
+#include "../common/util.h"
+#include "../common/public/debug.h"
 
 typedef struct oval_result_item {
 	struct oval_result_system *sys;
@@ -46,7 +46,10 @@ struct oval_result_item *oval_result_item_new
 	(struct oval_result_system *sys, char *item_id)
 {
 	oval_result_item_t *item = (oval_result_item_t *)
-		malloc(sizeof(oval_result_item_t));
+		oscap_alloc(sizeof(oval_result_item_t));
+        if (item == NULL)
+                return NULL;
+
 	struct oval_syschar_model *syschar_model = oval_result_system_get_syschar_model(sys);
 	struct oval_sysdata *sysdata = oval_sysdata_get_new(syschar_model, item_id);
 
@@ -64,6 +67,8 @@ bool oval_result_item_is_valid(struct oval_result_item *result_item)
 }
 bool oval_result_item_is_locked(struct oval_result_item *result_item)
 {
+        __attribute__nonnull__(result_item);
+
 	return oval_result_system_is_locked(result_item->sys);
 }
 
@@ -88,6 +93,9 @@ struct oval_result_item *oval_result_item_clone
 
 void oval_result_item_free(struct oval_result_item *item)
 {
+        if (item == NULL)
+                return;
+
 	oval_collection_free_items
 		(item->messages, (oscap_destruct_func)oval_message_free);
 
@@ -122,18 +130,24 @@ void oval_result_item_iterator_free(struct
 
 struct oval_sysdata *oval_result_item_get_sysdata(struct oval_result_item *item)
 {
+        __attribute__nonnull__(item);
+
 	return item->sysdata;
 }
 
 
 oval_result_t oval_result_item_get_result(struct oval_result_item *item)
 {
+        __attribute__nonnull__(item);
+
 	return ((struct oval_result_item *)item)->result;
 }
 
 struct oval_message_iterator *oval_result_item_get_messages
 	(struct oval_result_item *item)
 {
+        __attribute__nonnull__(item);
+
 	return (struct oval_message_iterator *)
 		oval_collection_iterator(item->messages);
 }
@@ -142,7 +156,8 @@ void oval_result_item_set_result(struct oval_result_item *item, oval_result_t re
 {
 	if(item && !oval_result_item_is_locked(item)){
 		item->result = result;
-	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+	} else 
+                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
 void oval_result_item_add_message
@@ -150,7 +165,8 @@ void oval_result_item_add_message
 {
 	if(item && !oval_result_item_is_locked(item)){
 		oval_collection_add(item->messages, message);
-	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+	} else 
+                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
 static void _oval_result_item_message_consumer
@@ -181,19 +197,9 @@ int oval_result_item_parse_tag
 	oval_result_t result = oval_result_parse(reader, "result", 0);
 	oval_result_item_set_result(item, result);
 
-	if(OVAL_RESULT_ITEM_DEBUG){
-		char message[200]; *message = '\0';
-		sprintf
-		(
-				message,
-				"oval_result_item_parse_tag:\n"
-				"    item_id = %s\n"
-				"    result  = %d",
+        oscap_dprintf("DEBUG: oval_result_item_parse_tag: item_id = %s\n - result  = %d",
 				oval_sysdata_get_id(oval_result_item_get_sysdata(item)),
-				oval_result_item_get_result(item)
-		);
-		oval_parser_log_debug(context, message);
-	}
+				oval_result_item_get_result(item));
 
 	return_code = oval_parser_parse_tag
 		(reader, context,
@@ -201,7 +207,7 @@ int oval_result_item_parse_tag
 
 	(*consumer)(item, user);
 
-	free(item_id);
+	oscap_free(item_id);
 	return return_code;
 }
 

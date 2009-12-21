@@ -33,6 +33,8 @@
 #include "oval_definitions_impl.h"
 #include "oval_collection_impl.h"
 #include "oval_agent_api_impl.h"
+#include "../common/util.h"
+#include "../common/public/debug.h"
 
 typedef struct oval_state {
 	struct oval_definition_model *model;
@@ -71,6 +73,8 @@ oval_family_t oval_state_get_family(struct oval_state *state)
 
 oval_subtype_t oval_state_get_subtype(struct oval_state * state)
 {
+        __attribute__nonnull__(state);
+
 	return ((struct oval_state *)state)->subtype;
 }
 
@@ -81,39 +85,54 @@ const char *oval_state_get_name(struct oval_state *state)
 
 struct oval_string_iterator *oval_state_get_notes(struct oval_state *state)
 {
+        __attribute__nonnull__(state);
+
 	return (struct oval_string_iterator *)oval_collection_iterator(state->
 								       notes);
 }
 
 struct oval_state_content_iterator *oval_state_get_contents(struct oval_state *state)
 {
+        __attribute__nonnull__(state);
+
 	return (struct oval_state_content_iterator *)
 		oval_collection_iterator(state->contents);
 }
 
 char *oval_state_get_comment(struct oval_state *state)
 {
+        __attribute__nonnull__(state);
+
 	return ((struct oval_state *)state)->comment;
 }
 
 char *oval_state_get_id(struct oval_state *state)
 {
+        __attribute__nonnull__(state);
+
 	return ((struct oval_state *)state)->id;
 }
 
 bool oval_state_get_deprecated(struct oval_state *state)
 {
+        __attribute__nonnull__(state);
+
 	return ((struct oval_state *)state)->deprecated;
 }
 
 int oval_state_get_version(struct oval_state *state)
 {
+        __attribute__nonnull__(state);
+
 	return state->version;
 }
 
 struct oval_state *oval_state_new(struct oval_definition_model* model, char* id)
 {
-	oval_state_t *state = (oval_state_t *) malloc(sizeof(oval_state_t));
+	oval_state_t *state = (oval_state_t *) oscap_alloc(sizeof(oval_state_t));
+        if (state == NULL)
+                return NULL;
+
 	state->deprecated = 0;
 	state->version = 0;
 	state->subtype = OVAL_SUBTYPE_UNKNOWN;
@@ -131,12 +150,16 @@ bool oval_state_is_valid(struct oval_state *state)
 }
 bool oval_state_is_locked(struct oval_state *state)
 {
+        __attribute__nonnull__(state);
+
 	return oval_definition_model_is_locked(state->model);
 }
 
 struct oval_state *oval_state_clone
 	(struct oval_definition_model *new_model, struct oval_state *old_state)
 {
+        __attribute__nonnull__(old_state);
+
 	oval_state_t *new_state = oval_definition_model_get_state(new_model, old_state->id);
 	if(new_state==NULL){
 		new_state = oval_state_new(new_model, old_state->id);
@@ -165,6 +188,8 @@ struct oval_state *oval_state_clone
 
 void oval_state_free(struct oval_state *state)
 {
+        __attribute__nonnull__(state);
+
 	if (state->comment != NULL)
 		free(state->comment);
 	if (state->id != NULL)
@@ -242,6 +267,8 @@ static void _oval_state_content_consumer
 static int _oval_state_parse_tag(xmlTextReaderPtr reader,
 			  struct oval_parser_context *context, void *user)
 {
+        __attribute__nonnull__(user);
+
 	struct oval_state *state = (struct oval_state *)user;
 	char *tagname = (char*) xmlTextReaderName(reader);
 	xmlChar *namespace = xmlTextReaderNamespaceUri(reader);

@@ -33,6 +33,7 @@
 #include "oval_definitions_impl.h"
 #include "oval_collection_impl.h"
 #include "oval_agent_api_impl.h"
+#include "../common/public/debug.h"
 
 typedef struct oval_object {
 	struct oval_definition_model *model;
@@ -67,41 +68,58 @@ void oval_object_iterator_free(struct oval_object_iterator
 
 oval_family_t oval_object_get_family(struct oval_object *object)
 {
+        __attribute__nonnull__(object);
+
 	return ((object->subtype) / 1000) * 1000;
 }
 
 oval_subtype_t oval_object_get_subtype(struct oval_object * object)
 {
+        __attribute__nonnull__(object);
+
 	return ((struct oval_object *)object)->subtype;
 }
 
 const char *oval_object_get_name (struct oval_object *object) {
+
+        __attribute__nonnull__(object);
+
 	return oval_subtype_get_text(object->subtype);
 }
 
 struct oval_string_iterator *oval_object_get_notes(struct oval_object *object)
 {
+        __attribute__nonnull__(object);
+
 	return (struct oval_string_iterator *)oval_collection_iterator(object->
 								       notes);
 }
 
 char *oval_object_get_comment(struct oval_object *object)
 {
+        __attribute__nonnull__(object);
+
 	return ((struct oval_object *)object)->comment;
 }
 
 char *oval_object_get_id(struct oval_object *object)
 {
+        __attribute__nonnull__(object);
+
 	return ((struct oval_object *)object)->id;
 }
 
 bool oval_object_get_deprecated(struct oval_object *object)
 {
+        __attribute__nonnull__(object);
+
 	return ((struct oval_object *)object)->deprecated;
 }
 
 int oval_object_get_version(struct oval_object *object)
 {
+        __attribute__nonnull__(object);
+
 	return ((struct oval_object *)object)->version;
 }
 
@@ -109,21 +127,28 @@ struct oval_object_content_iterator *oval_object_get_object_contents(struct
 								oval_object
 								*object)
 {
+        __attribute__nonnull__(object);
+
 	return (struct oval_object_content_iterator *)
 	    oval_collection_iterator(object->object_content);
 }
 
 struct oval_behavior_iterator *oval_object_get_behaviors(struct oval_object *object)
 {
+        __attribute__nonnull__(object);
+
 	return (struct oval_behavior_iterator *)
 	    oval_collection_iterator(object->behaviors);
 }
 
 struct oval_object *oval_object_new(struct oval_definition_model* model, char *id)
 {
-	oval_object_t *object = (oval_object_t *) malloc(sizeof(oval_object_t));
+	oval_object_t *object = (oval_object_t *) oscap_alloc(sizeof(oval_object_t));
+        if (object == NULL)
+                return NULL;
+
 	object->comment = NULL;
-	object->id = strdup(id);
+	object->id = oscap_strdup(id);
 	object->subtype = OVAL_SUBTYPE_UNKNOWN;
 	object->deprecated = 0;
 	object->version = 0;
@@ -140,12 +165,16 @@ bool oval_object_is_valid(struct oval_object *object)
 }
 bool oval_object_is_locked(struct oval_object *object)
 {
+        __attribute__nonnull__(object);
+
 	return oval_definition_model_is_locked(object->model);
 }
 
 struct oval_object *oval_object_clone
 	(struct oval_definition_model *new_model, struct oval_object *old_object)
 {
+        __attribute__nonnull__(old_object);
+
 	struct oval_object *new_object = oval_definition_model_get_object(new_model, old_object->id);
 	if(new_object==NULL){
 		new_object = oval_object_new(new_model, old_object->id);
@@ -180,12 +209,15 @@ struct oval_object *oval_object_clone
 
 void oval_object_free(struct oval_object *object)
 {
+        if (object == NULL) 
+                return;
+
 	if (object->comment != NULL)
-		free(object->comment);
+		oscap_free(object->comment);
 	if (object->id != NULL)
-		free(object->id);
+		oscap_free(object->id);
 	oval_collection_free_items(object->behaviors, (oscap_destruct_func)oval_behavior_free);
-	oval_collection_free_items(object->notes, free);
+	oval_collection_free_items(object->notes, (oscap_destruct_func) oscap_free);
 	oval_collection_free_items(object->object_content, (oscap_destruct_func)oval_object_content_free);
 
 	object->comment = NULL;
@@ -193,7 +225,7 @@ void oval_object_free(struct oval_object *object)
 	object->behaviors = NULL;
 	object->notes = NULL;
 	object->object_content = NULL;
-	free(object);
+	oscap_free(object);
 }
 
 void oval_object_set_subtype(struct oval_object *object,
@@ -201,36 +233,42 @@ void oval_object_set_subtype(struct oval_object *object,
 {
 	if(object && !oval_object_is_locked(object)){
 		object->subtype = subtype;
-	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+	} else 
+                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
 void oval_object_add_note(struct oval_object *object, char *note)
 {
 	if(object && !oval_object_is_locked(object)){
-		oval_collection_add(object->notes, (void *)strdup(note));
-	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+		oval_collection_add(object->notes, (void *) oscap_strdup(note));
+	} else 
+                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
 void oval_object_set_comment(struct oval_object *object, char *comm)
 {
 	if(object && !oval_object_is_locked(object)){
-		if(object->comment!=NULL)free(object->comment);
-		object->comment = comm==NULL?NULL:strdup(comm);
-	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+		if(object->comment!=NULL)
+                        oscap_free(object->comment);
+		object->comment = (comm==NULL) ? NULL : oscap_strdup(comm);
+	} else 
+                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
 void oval_object_set_deprecated(struct oval_object *object, bool deprecated)
 {
 	if(object && !oval_object_is_locked(object)){
 		object->deprecated = deprecated;
-	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+	} else 
+                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
 void oval_object_set_version(struct oval_object *object, int version)
 {
 	if(object && !oval_object_is_locked(object)){
 		object->version = version;
-	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+	} else 
+                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
 void oval_object_add_object_content(struct oval_object *object,
@@ -238,7 +276,8 @@ void oval_object_add_object_content(struct oval_object *object,
 {
 	if(object && !oval_object_is_locked(object)){
 		oval_collection_add(object->object_content, (void *)content);
-	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+	} else
+                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
 void oval_object_add_behavior(struct oval_object *object,
@@ -246,12 +285,14 @@ void oval_object_add_behavior(struct oval_object *object,
 {
 	if(object && !oval_object_is_locked(object)){
 		oval_collection_add(object->behaviors, (void *)behavior);
-	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+	} else 
+                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
 static void oval_note_consume(char *text, void *object) {
 	oval_object_add_note(object, text);
 }
+
 static int _oval_object_parse_notes(xmlTextReaderPtr reader,
 			     struct oval_parser_context *context, void *user)
 {
@@ -290,16 +331,14 @@ static int _oval_object_parse_tag(xmlTextReaderPtr reader,
 	}
 	if (return_code != 1) {
 		int line = xmlTextReaderGetParserLineNumber(reader);
-		printf
-		    ("NOTICE: oval_object_parse_tag::parse of %s terminated on error at <%s> line %d\n",
+		oscap_dprintf("NOTICE: oval_object_parse_tag::parse of %s terminated on error at <%s> line %d\n",
 		     object->id, tagname, line);
 	}
-	free(tagname);
-	free(namespace);
+	oscap_free(tagname);
+	oscap_free(namespace);
 	return return_code;
 }
 
-#define DEBUG_OVAL_OBJECT 0
 #define  STUB_OVAL_OBJECT 0
 
 int oval_object_parse_tag(xmlTextReaderPtr reader,
@@ -307,21 +346,23 @@ int oval_object_parse_tag(xmlTextReaderPtr reader,
 {
 	struct oval_definition_model *model = oval_parser_context_model(context);
 	char *id = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "id");
-	if(DEBUG_OVAL_OBJECT)printf("DEBUG::oval_object_parse_tag::id = %s\n", id);
+        oscap_dprintf("DEBUG::oval_object_parse_tag::id = %s", id);
 	struct oval_object *object = oval_object_get_new(model, id);
-	free(id);id=NULL;
+	oscap_free(id);
+        id=NULL;
 	oval_subtype_t subtype = oval_subtype_parse(reader);
 	oval_object_set_subtype(object, subtype);
 	char *comm = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "comment");
-	if(comm!=NULL){
+	if(comm != NULL){
 		oval_object_set_comment(object, comm);
-		free(comm);comm=NULL;
+		oscap_free(comm);
+                comm=NULL;
 	}
 	int deprecated = oval_parser_boolean_attribute(reader, "deprecated", 0);
 	oval_object_set_deprecated(object, deprecated);
 	char *version = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "version");
 	oval_object_set_version(object, atoi(version));
-	free(version);
+	oscap_free(version);
 
 	int return_code = (STUB_OVAL_OBJECT)
 		?oval_parser_skip_tag(reader, context)
@@ -342,16 +383,16 @@ void oval_object_to_print(struct oval_object *object, char *indent, int idx)
 	else
 		snprintf(nxtindent, sizeof(nxtindent), "%sOBJECT[%d].", indent, idx);
 
-	printf("%sID         = %s\n", nxtindent, oval_object_get_id(object));
-	printf("%sFAMILY     = %d\n", nxtindent, oval_object_get_family(object));
-	printf("%sSUBTYPE    = %d\n", nxtindent, oval_object_get_subtype(object));
-	printf("%sVERSION    = %d\n", nxtindent, oval_object_get_version(object));
-	printf("%sCOMMENT    = %s\n", nxtindent, oval_object_get_comment(object));
-	printf("%sDEPRECATED = %d\n", nxtindent,
+	oscap_dprintf("%sID         = %s\n", nxtindent, oval_object_get_id(object));
+	oscap_dprintf("%sFAMILY     = %d\n", nxtindent, oval_object_get_family(object));
+	oscap_dprintf("%sSUBTYPE    = %d\n", nxtindent, oval_object_get_subtype(object));
+	oscap_dprintf("%sVERSION    = %d\n", nxtindent, oval_object_get_version(object));
+	oscap_dprintf("%sCOMMENT    = %s\n", nxtindent, oval_object_get_comment(object));
+	oscap_dprintf("%sDEPRECATED = %d\n", nxtindent,
 	       oval_object_get_deprecated(object));
 	struct oval_string_iterator *notes = oval_object_get_notes(object);
 	for (idx = 1; oval_string_iterator_has_more(notes); idx++) {
-		printf("%sNOTE[%d]    = %s\n", nxtindent, idx,
+		oscap_dprintf("%sNOTE[%d]    = %s\n", nxtindent, idx,
 		       oval_string_iterator_next(notes));
 	}
 	oval_string_iterator_free(notes);
@@ -430,7 +471,8 @@ xmlNode *oval_object_to_dom
 	oval_behavior_iterator_free(behaviors);
 
 	struct oval_object_content_iterator *contents = oval_object_get_object_contents(object);
-	int i;for(i=0;oval_object_content_iterator_has_more(contents); i++){
+	int i;
+        for(i=0;oval_object_content_iterator_has_more(contents); i++){
 		struct oval_object_content *content = oval_object_content_iterator_next(contents);
 		oval_object_content_to_dom(content, doc, object_node);
 	}

@@ -36,10 +36,12 @@
 #include "oval_collection_impl.h"
 #include "oval_string_map_impl.h"
 #include "oval_errno.h"
+#include "../common/util.h"
+#include "../common/public/debug.h"
 #if !defined(__FreeBSD__)
 # include <alloca.h>
 #endif
-#define OVAL_RESULT_TEST_DEBUG 0
+
 static int rpmvercmp(const char * a, const char * b); // don't really feel like creating a new header file just for this
 
 /*
@@ -61,6 +63,7 @@ static int rpmvercmp(const char * a, const char * b)
     /* easy comparison to see if versions are identical */
     if (!strcmp(a, b)) return 0;
 
+    /* TODO: make new oscap_alloca */
     str1 = alloca(strlen(a) + 1);
     str2 = alloca(strlen(b) + 1);
 
@@ -162,7 +165,10 @@ typedef struct oval_result_test {
 struct oval_result_test *oval_result_test_new(struct oval_result_system *sys, char* tstid)
 {
 	oval_result_test_t *test = (oval_result_test_t *)
-		malloc(sizeof(oval_result_test_t));
+		oscap_alloc(sizeof(oval_result_test_t));
+        if (test == NULL)
+                return NULL;
+
 	struct oval_syschar_model *syschar_model
 		= oval_result_system_get_syschar_model(sys);
  	struct oval_definition_model *definition_model
@@ -185,12 +191,16 @@ bool oval_result_test_is_valid(struct oval_result_test *result_test)
 }
 bool oval_result_test_is_locked(struct oval_result_test *result_test)
 {
+        __attribute__nonnull__(result_test);
+
 	return oval_result_system_is_locked(result_test->system);
 }
 
 struct oval_result_test *oval_result_test_clone
 	(struct oval_result_system *new_system, struct oval_result_test *old_test)
 {
+        __attribute__nonnull__(old_test);
+
 	struct oval_test *oval_test = oval_result_test_get_test(old_test);
 	char *testid = oval_test_get_id(oval_test);
 	struct oval_result_test *new_test = oval_result_test_new(new_system, testid);
@@ -232,7 +242,10 @@ struct oval_result_test *make_result_test_from_oval_test
 
 void oval_result_test_free(struct oval_result_test *test)
 {
-	if(test->message)free(test->message);
+        __attribute__nonnull__(test);
+
+	if(test->message)
+                oscap_free(test->message);
 	if(test->bindings_clearable)oval_collection_free_items
 		(test->bindings, (oscap_destruct_func)oval_variable_binding_free);
 	oval_collection_free_items
@@ -245,7 +258,7 @@ void oval_result_test_free(struct oval_result_test *test)
 	test->items             = NULL;
 	test->bindings          = NULL;
 	test->instance = 1;
-	free(test);
+	oscap_free(test);
 }
 
 bool oval_result_test_iterator_has_more(struct oval_result_test_iterator
@@ -274,11 +287,15 @@ void oval_result_test_iterator_free(struct
 
 struct oval_result_system *oval_result_test_get_system(struct oval_result_test *rtest)
 {
+        __attribute__nonnull__(rtest);
+
 	return rtest->system;
 }
 
 struct oval_test *oval_result_test_get_test(struct oval_result_test *rtest)
 {
+        __attribute__nonnull__(rtest);
+
 	return ((struct oval_result_test *)rtest)->test;
 }
 static int istrcmp(char *st1,char *st2)
@@ -297,19 +314,20 @@ static int strregcomp(char *pattern,char *test_str)
 	int status;
 
 	if ((status=regcomp(&re,pattern,REG_EXTENDED))){
-if (OVAL_RESULT_TEST_DEBUG)fprintf(stderr,"%s:%d unable to compile regex pattern:%d\n",__FILE__,__LINE__,status);
-			oval_errno=OVAL_INTERNAL_ERROR;
-			return(OVAL_RESULT_ERROR);
+                oscap_dprintf("%s:%d unable to compile regex pattern:%d",__FILE__,__LINE__,status);
+		oval_errno=OVAL_INTERNAL_ERROR;
+		return(OVAL_RESULT_ERROR);
 	}
 	if (!(status=regexec(&re,test_str,0,NULL,0))){// got a match
 		return(0);
 	}else if (status==REG_NOMATCH){// no match, no errror
 		return(1);
 	}else{
-if (OVAL_RESULT_TEST_DEBUG)fprintf(stderr,"%s:%d unable to match regex pattern:%d\n",__FILE__,__LINE__,status);
-			oval_errno=OVAL_INTERNAL_ERROR;
-			return(OVAL_RESULT_ERROR);
+            oscap_dprintf("%s:%d unable to match regex pattern:%d",__FILE__,__LINE__,status);
+	    oval_errno=OVAL_INTERNAL_ERROR;
+	    return(OVAL_RESULT_ERROR);
 	}
+        /* TODO: regfree -> oscap_free */
 	regfree(&re);
 	return(0);
 }
@@ -328,7 +346,7 @@ static oval_result_t evaluate(char *sys_data,char *state_data,oval_datatype_t sy
 		}else if (operation==OVAL_OPERATION_PATTERN_MATCH){
 			return((strregcomp(state_data,sys_data))?OVAL_RESULT_FALSE:OVAL_RESULT_TRUE);
 		}else{
-if (OVAL_RESULT_TEST_DEBUG)fprintf(stderr,"%s:%d invalid string comparison:%d\n",__FILE__,__LINE__,operation);
+                        oscap_dprintf("%s:%d invalid string comparison:%d",__FILE__,__LINE__,operation);
 			oval_errno=OVAL_INVALID_COMPARISON;
 			return(OVAL_RESULT_INVALID);
 		}
@@ -349,7 +367,7 @@ if (OVAL_RESULT_TEST_DEBUG)fprintf(stderr,"%s:%d invalid string comparison:%d\n"
 		}else if (operation==OVAL_OPERATION_LESS_THAN_OR_EQUAL){
 			return((syschar_val<=state_val)?OVAL_RESULT_TRUE:OVAL_RESULT_FALSE);
 		}else{
-if (OVAL_RESULT_TEST_DEBUG)fprintf(stderr,"%s:%d invalid integer comparison:%d\n",__FILE__,__LINE__,operation);
+                        oscap_dprintf("%s:%d invalid integer comparison:%d",__FILE__,__LINE__,operation);
 			oval_errno=OVAL_INVALID_COMPARISON;
 			return(OVAL_RESULT_INVALID);
 		}
@@ -363,7 +381,7 @@ if (OVAL_RESULT_TEST_DEBUG)fprintf(stderr,"%s:%d invalid integer comparison:%d\n
 		}else if (operation==OVAL_OPERATION_NOT_EQUAL){
 			return((state_int!=sys_int)?OVAL_RESULT_TRUE:OVAL_RESULT_FALSE);
 		}else{
-if (OVAL_RESULT_TEST_DEBUG)fprintf(stderr,"%s:%d invalid boolean comparison:%d\n",__FILE__,__LINE__,operation);
+                        oscap_dprintf("%s:%d invalid boolean comparison:%d",__FILE__,__LINE__,operation);
 			oval_errno=OVAL_INVALID_COMPARISON;
 			return(OVAL_RESULT_INVALID);
 		}
@@ -373,9 +391,9 @@ if (OVAL_RESULT_TEST_DEBUG)fprintf(stderr,"%s:%d invalid boolean comparison:%d\n
 		}else if (operation==OVAL_OPERATION_NOT_EQUAL){
 			return((istrcmp(state_data,sys_data)!=0)?OVAL_RESULT_TRUE:OVAL_RESULT_FALSE);
 		}else{
-if (OVAL_RESULT_TEST_DEBUG)fprintf(stderr,"%s:%d invalid binary comparison:%d\n",__FILE__,__LINE__,operation);
-			oval_errno=OVAL_INVALID_COMPARISON;
-			return(OVAL_RESULT_INVALID);
+                    oscap_dprintf("%s:%d invalid binary comparison:%d",__FILE__,__LINE__,operation);
+		    oval_errno=OVAL_INVALID_COMPARISON;
+		    return(OVAL_RESULT_INVALID);
 		}
 	}else if (state_data_type==OVAL_DATATYPE_EVR_STRING){
 		int result;
@@ -393,12 +411,13 @@ if (OVAL_RESULT_TEST_DEBUG)fprintf(stderr,"%s:%d invalid binary comparison:%d\n"
 		}else if (operation==OVAL_OPERATION_LESS_THAN_OR_EQUAL){
 			return((result!=1)?OVAL_RESULT_TRUE:OVAL_RESULT_FALSE);
 		}else{
-if (OVAL_RESULT_TEST_DEBUG)fprintf(stderr,"%s:%d invalid EVR comparison:%d\n",__FILE__,__LINE__,operation);
-			oval_errno=OVAL_INVALID_COMPARISON;
-			return(OVAL_RESULT_INVALID);
+                    oscap_dprintf("%s:%d invalid EVR comparison:%d",__FILE__,__LINE__,operation);
+                    oval_errno=OVAL_INVALID_COMPARISON;
+                    return(OVAL_RESULT_INVALID);
 		}
 	}else if (state_data_type==OVAL_DATATYPE_VERSION){
-		int state_idx,sys_idx;
+		int state_idx = 0;
+                int sys_idx = 0;
 		int result=-1;
 		int is_equal=1;
 		for(state_idx=0,sys_idx=0;(((state_data[state_idx])||(sys_data[sys_idx]))&&(result==-1));){ // keep going as long as there is data in either the state or sysdata
@@ -417,7 +436,7 @@ if (OVAL_RESULT_TEST_DEBUG)fprintf(stderr,"%s:%d invalid EVR comparison:%d\n",__
 				if (tmp_sys_int<tmp_state_int) return(OVAL_RESULT_TRUE);
 				if (tmp_sys_int>tmp_state_int) return(OVAL_RESULT_FALSE);
 			}else{
-				if (OVAL_RESULT_TEST_DEBUG)fprintf(stderr,"%s:%d invalid version comparison:%d\n",__FILE__,__LINE__,operation);
+				oscap_dprintf("%s:%d invalid version comparison:%d",__FILE__,__LINE__,operation);
 				oval_errno=OVAL_INVALID_COMPARISON;
 				return(OVAL_RESULT_INVALID);
 			}
@@ -476,24 +495,24 @@ static oval_result_t eval_item(struct oval_sysdata *cur_sysdata, struct oval_sta
 		int found_it;
 
 		if (!has_error && (content=oval_state_content_iterator_next(state_contents))==NULL){
-if(OVAL_RESULT_TEST_DEBUG)fprintf(stderr,"%s:%d found NULL state content\n",__FILE__,__LINE__);
+                        oscap_dprintf("%s:%d found NULL state content",__FILE__,__LINE__);
 			oval_errno=OVAL_INTERNAL_ERROR;
 			has_error = true;
 		}
 		//state_entity=oval_state_content_entity(content);
 		if (!has_error && (state_entity=oval_state_content_get_entity(content))==NULL){
-if(OVAL_RESULT_TEST_DEBUG)fprintf(stderr,"%s:%d found NULL entity\n",__FILE__,__LINE__);
+                    oscap_dprintf("%s:%d found NULL entity",__FILE__,__LINE__);
 			oval_errno=OVAL_INTERNAL_ERROR;
 			has_error = true;
 		}
 		//state_entity_name=oval_entity_name(state_entity);
 		if (!has_error && (state_entity_name=oval_entity_get_name(state_entity))==NULL){
-if(OVAL_RESULT_TEST_DEBUG)fprintf(stderr,"%s:%d found NULL entity name\n",__FILE__,__LINE__);
+                    oscap_dprintf("%s:%d found NULL entity name",__FILE__,__LINE__);
 			oval_errno=OVAL_INTERNAL_ERROR;
 			has_error = true;
 		}
 		if (!has_error && (state_value=oval_entity_get_value(state_entity))==NULL){
-if(OVAL_RESULT_TEST_DEBUG)fprintf(stderr,"%s:%d found NULL entity value\n",__FILE__,__LINE__);
+                        oscap_dprintf("%s:%d found NULL entity value",__FILE__,__LINE__);
 			oval_errno=OVAL_INTERNAL_ERROR;
 			has_error = true;
 		}
@@ -505,7 +524,7 @@ if(OVAL_RESULT_TEST_DEBUG)fprintf(stderr,"%s:%d found NULL entity value\n",__FIL
 
 				syschar_item=oval_sysitem_iterator_next(cur_items);
 				if (syschar_item==NULL){
-	if(OVAL_RESULT_TEST_DEBUG)fprintf(stderr,"%s:%d found NULL sysitem\n",__FILE__,__LINE__);
+                                        oscap_dprintf("%s:%d found NULL sysitem",__FILE__,__LINE__);
 					oval_errno=OVAL_INTERNAL_ERROR;
 					has_error = true;
 				}
@@ -529,7 +548,7 @@ if(OVAL_RESULT_TEST_DEBUG)fprintf(stderr,"%s:%d found NULL entity value\n",__FIL
 		while(oval_state_content_iterator_has_more(state_contents))
 			oval_state_content_iterator_next(state_contents);
 	oval_state_content_iterator_free(state_contents);
-	return (has_error)?-1:result;
+	return (has_error) ? (oval_result_t) -1 : result;
 }
 //typedef enum {
 	//OVAL_RESULT_INVALID        = 0,
@@ -579,7 +598,7 @@ static oval_result_t _oval_result_test_evaluate_items
 	bool has_more_sysdata, has_error = false;
 	collection_flag=oval_syschar_get_flag(syschar_object);
 	result = OVAL_RESULT_INVALID;
-//if (debug_flag)fprintf(stderr,"%s:%d collection flag is:%d\n",__FILE__,__LINE__,collection_flag);
+//if (debug_flag) oscap_dprintf("%s:%d collection flag is:%d",__FILE__,__LINE__,collection_flag);
 	if (collection_flag==SYSCHAR_FLAG_ERROR){// OK, the test_check and test_existence_check must simultaniously be true
 		am_done=1;
 		result=OVAL_RESULT_ERROR;
@@ -598,16 +617,16 @@ static oval_result_t _oval_result_test_evaluate_items
 			result=OVAL_RESULT_FALSE;
 		}
 	}else if (collection_flag==SYSCHAR_FLAG_COMPLETE){
-//if (debug_flag)fprintf(stderr,"%s:%d test_existence_check:%d none_exist:%d\n",__FILE__,__LINE__,test_existence_check,NONE_EXIST);
+//if (debug_flag) oscap_dprintf("%s:%d test_existence_check:%d none_exist:%d",__FILE__,__LINE__,test_existence_check,NONE_EXIST);
 		if (test_existence_check==OVAL_NONE_EXIST){
-//if (debug_flag)fprintf(stderr,"%s:%d setting result to false and done to true\n",__FILE__,__LINE__);
+//if (debug_flag) oscap_dprintf("%s:%d setting result to false and done to true",__FILE__,__LINE__);
 			am_done=1;
 			result=OVAL_RESULT_FALSE;
 		}
 	}
 	collected_items_iterator=oval_syschar_get_sysdata(syschar_object);
 	if (collected_items_iterator==NULL){
-if(OVAL_RESULT_TEST_DEBUG)fprintf(stderr,"%s:%d collected items iterator is null\n",__FILE__,__LINE__);
+                oscap_dprintf("%s:%d collected items iterator is null",__FILE__,__LINE__);
 		oval_errno=OVAL_INVALID_ARGUMENT;
 		return(-1);
 	}
@@ -619,7 +638,7 @@ if(OVAL_RESULT_TEST_DEBUG)fprintf(stderr,"%s:%d collected items iterator is null
 		char *cur_sysdata_id = oval_sysdata_get_id(cur_sysdata);
 		struct oval_result_item *cur_item = oval_result_item_new(SYSTEM, cur_sysdata_id);
 		if (cur_sysdata==NULL){
-if(OVAL_RESULT_TEST_DEBUG)fprintf(stderr,"%s:%d iterator returned null\n",__FILE__,__LINE__);
+                        oscap_dprintf("%s:%d iterator returned null",__FILE__,__LINE__);
 			oval_errno=OVAL_INTERNAL_ERROR;
 			has_error = true;
 		}
@@ -632,10 +651,10 @@ if(OVAL_RESULT_TEST_DEBUG)fprintf(stderr,"%s:%d iterator returned null\n",__FILE
 			result=OVAL_RESULT_ERROR;
 			oval_result_item_set_result(cur_item, result);
 		}else if (cur_sysdata_status==SYSCHAR_STATUS_EXISTS){ // found one, eval this item
-//if (debug_flag) fprintf(stderr,"%s:%d status is 'exists', doing eval_item with state:'%s'\n",__FILE__,__LINE__,(state!=NULL)?oval_state_get_id(state):"null");
+//if (debug_flag) oscap_dprintf("%s:%d status is 'exists', doing eval_item with state:'%s'",__FILE__,__LINE__,(state!=NULL)?oval_state_get_id(state):"null");
 			result=eval_item(cur_sysdata,state);
 			oval_result_item_set_result(cur_item, result);
-//if (debug_flag) fprintf(stderr,"%s:%d eval_item returned:%d\n",__FILE__,__LINE__,result);
+//if (debug_flag) oscap_dprintf("%s:%d eval_item returned:%d",__FILE__,__LINE__,result);
 			// we know one result, sometimes we can use that to make the full determination
 			if (result==OVAL_RESULT_TRUE){
 				if (test_check==OVAL_CHECK_AT_LEAST_ONE){
@@ -676,7 +695,7 @@ if(OVAL_RESULT_TEST_DEBUG)fprintf(stderr,"%s:%d iterator returned null\n",__FILE
 			result=OVAL_RESULT_NOT_EVALUATED;
 			oval_result_item_set_result(cur_item, result);
 		}else{
-if(OVAL_RESULT_TEST_DEBUG)fprintf(stderr,"%s:%d invalid sysdata status:%d\n",__FILE__,__LINE__,cur_sysdata_status);
+                        oscap_dprintf("%s:%d invalid sysdata status:%d",__FILE__,__LINE__,cur_sysdata_status);
 			oval_errno=OVAL_INVALID_ARGUMENT;
 			has_error = true;
 		}
@@ -685,7 +704,7 @@ if(OVAL_RESULT_TEST_DEBUG)fprintf(stderr,"%s:%d invalid sysdata status:%d\n",__F
 // OK, we have looked at all our collected items and matched them against any states, with no early termination
 	// we now know how to set our final result
 	if (!am_done){// if we have not yet made a final determination
-//if (debug_flag)fprintf(stderr,"%s:%d did not terminate early, check:%d matches:%d\n",__FILE__,__LINE__,test_check,matches_found);
+//if (debug_flag) oscap_dprintf("%s:%d did not terminate early, check:%d matches:%d",__FILE__,__LINE__,test_check,matches_found);
 		if ((test_check==OVAL_CHECK_ONLY_ONE)&&(matches_found==1)){
 			result=OVAL_RESULT_TRUE;
 		}else if (test_check==OVAL_CHECK_NONE_SATISFY){// since we did not terminate early, all we have are falses
@@ -700,7 +719,7 @@ if(OVAL_RESULT_TEST_DEBUG)fprintf(stderr,"%s:%d invalid sysdata status:%d\n",__F
 		while(oval_sysdata_iterator_has_more(collected_items_iterator))
 			oval_sysdata_iterator_next(collected_items_iterator);
 	oval_sysdata_iterator_free(collected_items_iterator);
-	return (has_error)?-1:result;
+	return (has_error) ? (oval_result_t) -1 : result;
 }
 
 // this function will gather all the necessary ingredients and call 'evaluate_items' when it finds them
@@ -708,6 +727,8 @@ static oval_result_t _oval_result_test_result(struct oval_result_test *rtest, vo
 {
 	// NOTE:  I'm defining all my variables at the beginning of a block because some compilers (cl) have trouble
 	// with variables defined anywhere else.  If that's not a concern, refactor at will.
+        __attribute__nonnull__(rtest);
+
 	struct oval_object *tmp_obj;
 	struct oval_state *tmp_state;
 	char *test_id_string;
@@ -720,26 +741,22 @@ static oval_result_t _oval_result_test_result(struct oval_result_test *rtest, vo
 	test2check = oval_result_test_get_test(rtest);
 	sys = oval_result_test_get_system(rtest);
 	syschar_model = oval_result_system_get_syschar_model(sys);
-	if (rtest==NULL){
-		oval_errno=OVAL_INVALID_ARGUMENT;
-		return(-1);
-	}
 	// first, let's see if we already did the test
 	if (rtest->result!=OVAL_RESULT_INVALID){
-if(OVAL_RESULT_TEST_DEBUG)fprintf(stderr,"%s:%d found result from previous evaluation, returning without further processing\n",__FILE__,__LINE__);
+                oscap_dprintf("%s:%d found result from previous evaluation, returning without further processing",__FILE__,__LINE__);
 		return(rtest->result);
 	}
 	oval_result_t result = OVAL_RESULT_INVALID;
 	// let's go looking for the stuff to test
 	if (test2check==NULL){
 		oval_errno=OVAL_INVALID_ARGUMENT;
-		return(-1);
+		return((oval_result_t)-1);
 	}
 	test_id_string=oval_test_get_id(test2check);
 	if (test_id_string==NULL){
-if(OVAL_RESULT_TEST_DEBUG)fprintf(stderr,"%s:%d oval test id is null\n",__FILE__,__LINE__);
+                oscap_dprintf("%s:%d oval test id is null",__FILE__,__LINE__);
 		oval_errno=OVAL_INVALID_ARGUMENT;
-		return(-1);
+		return( (oval_result_t) -1);
 	}
 //if (!strcmp("oval:org.mitre.oval:tst:99",test_id_string))debug_flag=1;
 //else debug_flag=0;
@@ -748,7 +765,7 @@ if(OVAL_RESULT_TEST_DEBUG)fprintf(stderr,"%s:%d oval test id is null\n",__FILE__
 	tmp_obj=oval_test_get_object(test2check);
 	tmp_state=oval_test_get_state(test2check);
 	if (tmp_obj==NULL){
-if(OVAL_RESULT_TEST_DEBUG)fprintf(stderr,"%s:%d oval object is null\n",__FILE__,__LINE__);
+                oscap_dprintf("%s:%d oval object is null",__FILE__,__LINE__);
 		oval_errno=OVAL_INVALID_ARGUMENT;
 		return(-1);
 	} else {  // I'm doing the else here to keep some of my local variables more local
@@ -756,14 +773,14 @@ if(OVAL_RESULT_TEST_DEBUG)fprintf(stderr,"%s:%d oval object is null\n",__FILE__,
 		struct oval_syschar *syschar_object;
 		definition_object_id_string=oval_object_get_id(tmp_obj);
 		if (definition_object_id_string==NULL){
-if(OVAL_RESULT_TEST_DEBUG)fprintf(stderr,"%s:%d oval object has null ID\n",__FILE__,__LINE__);
+                        oscap_dprintf("%s:%d oval object has null ID",__FILE__,__LINE__);
 			oval_errno=OVAL_INVALID_ARGUMENT;
-			return(-1);
+			return((oval_result_t)-1);
 		}
 		// OK, we have our object ID, now use that to find selected items in the syschar_model
 		syschar_object=oval_syschar_model_get_syschar(syschar_model,definition_object_id_string);
 		if (syschar_object==NULL){
-if(OVAL_RESULT_TEST_DEBUG)fprintf(stderr,"%s:%d system characteristics object is null\n",__FILE__,__LINE__);
+                        oscap_dprintf("%s:%d system characteristics object is null",__FILE__,__LINE__);
 			oval_errno=OVAL_INVALID_ARGUMENT;
 			return(-1);
 		}
@@ -775,27 +792,35 @@ if(OVAL_RESULT_TEST_DEBUG)fprintf(stderr,"%s:%d system characteristics object is
 
 oval_result_t oval_result_test_get_result(struct oval_result_test *rtest)
 {
+        __attribute__nonnull__(rtest);
 
 	if(rtest->result==OVAL_RESULT_INVALID){
 		void *args[] = {rtest->system, rtest, oval_string_map_new()};
 		rtest->result = _oval_result_test_result(rtest, args);
-		if(rtest->result==-1)rtest->result=OVAL_RESULT_UNKNOWN;
+		if(rtest->result == (oval_result_t) -1)
+                        rtest->result=OVAL_RESULT_UNKNOWN;
 	}
 	return rtest->result;
 }
 
 int oval_result_test_get_instance(struct oval_result_test *rtest)
 {
+        __attribute__nonnull__(rtest);
+
 	return rtest->instance;
 }
 
 struct oval_message *oval_result_test_get_message(struct oval_result_test *rtest)
 {
+        __attribute__nonnull__(rtest);
+
 	return ((struct oval_result_test *)rtest)->message;
 }
 
 struct oval_result_item_iterator *oval_result_test_get_items(struct oval_result_test *rtest)
 {
+        __attribute__nonnull__(rtest);
+
 	return (struct oval_result_item_iterator *)
 	    oval_collection_iterator(rtest->items);
 }
@@ -803,6 +828,8 @@ struct oval_result_item_iterator *oval_result_test_get_items(struct oval_result_
 struct oval_variable_binding_iterator *oval_result_test_get_bindings(struct oval_result_test
 							 *rtest)
 {
+        __attribute__nonnull__(rtest);
+
 	return (struct oval_variable_binding_iterator *)
 	    oval_collection_iterator(rtest->bindings);
 }
@@ -811,14 +838,16 @@ void oval_result_test_set_result(struct oval_result_test *test, oval_result_t re
 {
 	if(test && !oval_result_test_is_locked(test)){
 		test->result = result;
-	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+	} else 
+                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
 void oval_result_test_set_instance(struct oval_result_test *test, int instance)
 {
 	if(test && !oval_result_test_is_locked(test)){
 		test->instance = instance;
-	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+	} else 
+                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
 void oval_result_test_set_message
@@ -827,7 +856,8 @@ void oval_result_test_set_message
 	if(test && !oval_result_test_is_locked(test)){
 		if(test->message)oval_message_free(test->message);
 		test->message = message;
-	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+	} else 
+                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
 void oval_result_test_add_item
@@ -835,7 +865,8 @@ void oval_result_test_add_item
 {
 	if(test && !oval_result_test_is_locked(test)){
 		oval_collection_add(test->items, item);
-	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+	} else 
+                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
 void oval_result_test_add_binding
@@ -843,7 +874,8 @@ void oval_result_test_add_binding
 {
 	if(test && !oval_result_test_is_locked(test)){
 		oval_collection_add(test->bindings, binding);
-	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+	} else 
+                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
 //void(*oscap_consumer_func)(void*, void*);
@@ -883,11 +915,7 @@ static int _oval_result_test_parse
 	int return_code = 1;
 	xmlChar *localName = xmlTextReaderLocalName(reader);
 
-	if(OVAL_RESULT_TEST_DEBUG){
-		char message[200]; *message = '\0';
-		sprintf(message, "_oval_result_test_parse: parsing <%s>", localName);
-		oval_parser_log_debug(context, message);
-	}
+        oscap_dprintf("DEBUG: _oval_result_test_parse: parsing <%s>", localName);
 
 
 	if      (strcmp((const char *)localName, "message")==0){
@@ -900,13 +928,11 @@ static int _oval_result_test_parse
 	}else if(strcmp((const char *)localName, "tested-variable")==0){
 		return_code = _oval_result_test_binding_parse(reader, context, args);
 	}else{
-		char message[200]; *message = '\0';
-		sprintf(message, "_oval_result_test_parse: TODO: <%s> not handled", localName);
-		oval_parser_log_warn(context, message);
+		oscap_dprintf("WARNING: _oval_result_test_parse: TODO: <%s> not handled", localName);
 		return_code = oval_parser_skip_tag(reader, context);
 	}
 
-	free(localName);
+	oscap_free(localName);
 
 	return return_code;
 }
@@ -917,12 +943,13 @@ int oval_result_test_parse_tag
 			oscap_consumer_func consumer, void *client)
 {
 	int return_code = 1;
-	if(OVAL_RESULT_TEST_DEBUG){
-		oval_parser_log_debug(context, "oval_result_test_parse: BEGIN");
-	}
+        oscap_dprintf("DEBUG: oval_result_test_parse: BEGIN");
 
 	xmlChar *test_id = xmlTextReaderGetAttribute(reader, BAD_CAST "test_id");
 	struct oval_result_test *test = oval_result_test_new(sys, (char *) test_id);
+        if (test == NULL)
+                return -1;
+
 	oval_result_t result = oval_result_parse(reader, "result",0);
 	oval_result_test_set_result(test, result);
 	int veriable_instance = oval_parser_int_attribute(reader, "veriable_instance", 1);
@@ -937,15 +964,8 @@ int oval_result_test_parse_tag
 	if(tst_check_existence==OVAL_EXISTENCE_UNKNOWN){
 		oval_test_set_existence(ovaltst, check_existence);
 	}else if(tst_check_existence!=tst_check_existence){
-		char message[200];*message = '\0';
-		sprintf
-		(
-				message,
-				"oval_result_test_parse: @check_existence does not match\n"
-				"    test_id = %s",
-				test_id
-		);
-		oval_parser_log_warn(context, message);
+		oscap_dprintf("WARNING: oval_result_test_parse: @check_existence does not match\n"
+				"    test_id = %s", test_id);
 	}
 
 	oval_check_t check = oval_check_parse
@@ -955,15 +975,8 @@ int oval_result_test_parse_tag
 	if(tst_check==OVAL_CHECK_UNKNOWN){
 		oval_test_set_check(ovaltst, check);
 	}else if(tst_check!=check){
-		char message[200];*message = '\0';
-		sprintf
-		(
-				message,
-				"oval_result_test_parse: @check does not match\n"
-				"    test_id = %s",
-				test_id
-		);
-		oval_parser_log_warn(context, message);
+		oscap_dprintf("WARNING: oval_result_test_parse: @check does not match\n"
+				"    test_id = %s",test_id);
 	}
 
 	int version = oval_parser_int_attribute(reader, "version",0);
@@ -971,15 +984,8 @@ int oval_result_test_parse_tag
 	if(tst_version==0){
 		oval_test_set_version(ovaltst, version);
 	}else if(tst_version!=version){
-		char message[200];*message = '\0';
-		sprintf
-		(
-				message,
-				"oval_result_test_parse: @version does not match\n"
-				"    test_id = %s",
-				test_id
-		);
-		oval_parser_log_warn(context, message);
+		oscap_dprintf("WARNING: oval_result_test_parse: @version does not match\n"
+				"    test_id = %s",test_id);
 	}
 
 	struct oval_string_map *itemmap = oval_string_map_new();
@@ -990,10 +996,8 @@ int oval_result_test_parse_tag
 	test->bindings_clearable   = true;
 
 	(*consumer)(test, client);
-	if(OVAL_RESULT_TEST_DEBUG){
-		oval_parser_log_debug(context, "oval_result_test_parse: END");
-	}
-	free(test_id);
+        oscap_dprintf("DEBUG: oval_result_test_parse: END");
+	oscap_free(test_id);
 	return return_code;
 }
 
@@ -1013,6 +1017,8 @@ static xmlNode *_oval_result_binding_to_dom
 
 static void _oval_result_test_initialize_bindings(struct oval_result_test *rslt_test)
 {
+        __attribute__nonnull__(rslt_test);
+
 	struct oval_test *oval_test = oval_result_test_get_test(rslt_test);
 
 	struct oval_object *oval_object = oval_test_get_object(oval_test);
@@ -1035,6 +1041,8 @@ static void _oval_result_test_initialize_bindings(struct oval_result_test *rslt_
 xmlNode *oval_result_test_to_dom
 	(struct oval_result_test *rslt_test, xmlDocPtr doc, xmlNode *parent)
 {
+        __attribute__nonnull__(rslt_test);
+
 	xmlNs *ns_results = xmlSearchNsByHref(doc, parent, OVAL_RESULTS_NAMESPACE);
 	xmlNode *test_node = xmlNewChild(parent, ns_results, BAD_CAST "test", NULL);
 

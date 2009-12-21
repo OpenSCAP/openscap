@@ -408,9 +408,9 @@ int oval_syschar_model_export(
  * Load OVAL system characteristics from a file.
  * @ingroup OVALSYS_service
  */
-void oval_syschar_model_import(struct oval_syschar_model *model,
+int oval_syschar_model_import(struct oval_syschar_model *model,
 			struct oscap_import_source *source,
-			oval_xml_error_handler eh, void *user_arg );
+			void *user_arg );
 
 /**
  * @ingroup oval_sysint_iterators

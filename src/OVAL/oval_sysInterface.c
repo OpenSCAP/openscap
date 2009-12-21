@@ -32,6 +32,8 @@
 #include <string.h>
 #include "oval_system_characteristics_impl.h"
 #include "oval_collection_impl.h"
+#include "../common/util.h"
+#include "../common/public/debug.h"
 
 typedef struct oval_sysint {
 	struct oval_syschar_model *model;
@@ -59,28 +61,36 @@ void oval_sysint_iterator_free(struct oval_sysint_iterator *oc_sysint)
 
 char *oval_sysint_get_name(struct oval_sysint *sysint)
 {
+        __attribute__nonnull__(sysint);
+
 	return sysint->name;
 }
 
 void oval_sysint_set_name(struct oval_sysint *sysint, char *name)
 {
 	if(sysint && !oval_sysint_is_locked(sysint)){
-		if(sysint->name!=NULL)free(sysint->name);
-		sysint->name = name==NULL?NULL:strdup(name);
-	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+		if(sysint->name!=NULL)
+                        oscap_free(sysint->name);
+		sysint->name = oscap_strdup(name);
+	} else 
+                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
 char *oval_sysint_get_ip_address(struct oval_sysint *sysint)
 {
+        __attribute__nonnull__(sysint);
+
 	return ((struct oval_sysint *)sysint)->ipAddress;
 }
 
 void oval_sysint_set_ip_address(struct oval_sysint *sysint, char *ip_address)
 {
 	if(sysint && !oval_sysint_is_locked(sysint)){
-		if(sysint->ipAddress!=NULL)free(sysint->ipAddress);
-		sysint->ipAddress = (ip_address==NULL)?NULL:strdup(ip_address);
-	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+		if(sysint->ipAddress!=NULL)
+                        oscap_free(sysint->ipAddress);
+		sysint->ipAddress = oscap_strdup(ip_address);
+	} else 
+                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
 char *oval_sysint_get_mac_address(struct oval_sysint *sysint)
@@ -91,14 +101,19 @@ char *oval_sysint_get_mac_address(struct oval_sysint *sysint)
 void oval_sysint_set_mac_address(struct oval_sysint *sysint, char *mac_address)
 {
 	if(sysint && !oval_sysint_is_locked(sysint)){
-		if(sysint->macAddress!=NULL)free(sysint->macAddress);
-		sysint->macAddress = (mac_address==NULL)?NULL:strdup(mac_address);
-	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+		if(sysint->macAddress!=NULL)
+                        oscap_free(sysint->macAddress);
+		sysint->macAddress = oscap_strdup(mac_address);
+	} else 
+                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
 struct oval_sysint *oval_sysint_new(struct oval_syschar_model* model)
 {
-	oval_sysint_t *sysint = (oval_sysint_t*)malloc(sizeof(oval_sysint_t));
+	oval_sysint_t *sysint = (oval_sysint_t*) oscap_alloc(sizeof(oval_sysint_t));
+        if (sysint == NULL)
+                return NULL;
+
 	sysint->ipAddress  = NULL;
 	sysint->macAddress = NULL;
 	sysint->name       = NULL;
@@ -112,6 +127,8 @@ bool oval_sysint_is_valid(struct oval_sysint *sysint)
 }
 bool oval_sysint_is_locked(struct oval_sysint *sysint)
 {
+        __attribute__nonnull__(sysint);
+
 	return oval_syschar_model_is_locked(sysint->model);
 }
 
@@ -135,15 +152,18 @@ struct oval_sysint *oval_sysint_clone(struct oval_syschar_model *new_model, stru
 
 void oval_sysint_free(struct oval_sysint *sysint)
 {
-	if(sysint->ipAddress !=NULL)free(sysint->ipAddress);
-	if(sysint->macAddress!=NULL)free(sysint->macAddress);
-	if(sysint->name      !=NULL)free(sysint->name);
+        if (sysint == NULL)
+                return;
+
+	if(sysint->ipAddress !=NULL) oscap_free(sysint->ipAddress);
+	if(sysint->macAddress!=NULL) oscap_free(sysint->macAddress);
+	if(sysint->name      !=NULL) oscap_free(sysint->name);
 
 	sysint->ipAddress = NULL;
 	sysint->macAddress = NULL;
 	sysint->name = NULL;
 
-	free(sysint);
+	oscap_free(sysint);
 }
 
 static void oval_consume_interface_name(char* text, void* sysint)
@@ -173,20 +193,21 @@ static int _oval_sysint_parse_tag(xmlTextReaderPtr reader,
 	} else if(is_ovalsys && (strcmp(tagname,"mac_address")==0)) {
 		return_code = oval_parser_text_value(reader, context, &oval_consume_mac_address, sysint);
 	} else {
-		char message[200]; *message = 0;
-		sprintf(message, "_oval_sysint_parse_tag:: skipping <%s:%s>",
+		oscap_dprintf("WARNING: _oval_sysint_parse_tag:: skipping <%s:%s>",
 				namespace, tagname);
-		oval_parser_log_warn(context, message);
 		return_code = oval_parser_skip_tag(reader, context);
 	}
-	free(tagname);
-	free(namespace);
+	oscap_free(tagname);
+	oscap_free(namespace);
 	return return_code;
 }
 
 
 int oval_sysint_parse_tag(xmlTextReaderPtr reader,
 			       struct oval_parser_context *context, oval_sysint_consumer consumer , void *user){
+
+        __attribute__nonnull__(context);
+
 	struct oval_sysint *sysint = oval_sysint_new(context->syschar_model);
 	char *tagname   = (char*) xmlTextReaderName(reader);
 	char *namespace = (char*) xmlTextReaderNamespaceUri(reader);
@@ -195,14 +216,12 @@ int oval_sysint_parse_tag(xmlTextReaderPtr reader,
 	if        (is_ovalsys && (strcmp(tagname,"interface")==0)) {
 		return_code = oval_parser_parse_tag(reader, context, &_oval_sysint_parse_tag, sysint);
 	} else {
-		char message[200]; *message = 0;
-		sprintf(message, "oval_sysint_parse_tag:: expecting <interface> skipping <%s:%s>",
+		oscap_dprintf("WARNING: oval_sysint_parse_tag:: expecting <interface> skipping <%s:%s>",
 				namespace, tagname);
-		oval_parser_log_warn(context, message);
 		return_code = oval_parser_skip_tag(reader, context);
 	}
-	free(tagname);
-	free(namespace);
+	oscap_free(tagname);
+	oscap_free(namespace);
 	(*consumer)(sysint, user);
 	return return_code;
 }
@@ -225,15 +244,15 @@ void oval_sysint_to_print(struct oval_sysint *sysint, char *indent,
 	char *macAddress;
 	 */
 	{//name
-		printf("%sNAME           = %s\n", nxtindent, oval_sysint_get_name(sysint));
+		oscap_dprintf("%sNAME           = %s\n", nxtindent, oval_sysint_get_name(sysint));
 	}
 	char* ipadd = oval_sysint_get_ip_address(sysint);
 	if(ipadd!=NULL){//ipaddress
-		printf("%sIP_ADDRESS      = %s\n", nxtindent, ipadd);
+		oscap_dprintf("%sIP_ADDRESS      = %s\n", nxtindent, ipadd);
 	}
 	char* macadd = oval_sysint_get_mac_address(sysint);
 	if(macadd!=NULL){//mac address
-		printf("%sMAC_ADDRESS     = %s\n", nxtindent, macadd);
+		oscap_dprintf("%sMAC_ADDRESS     = %s\n", nxtindent, macadd);
 	}
 }
 

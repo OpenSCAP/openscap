@@ -31,6 +31,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "oval_string_map_impl.h"
+#include "../common/util.h"
+#include "../common/public/debug.h"
 
 struct _oval_string_map_entry_s;
 
@@ -47,7 +49,10 @@ typedef struct oval_string_map {
 struct oval_string_map *oval_string_map_new()
 {
 	struct oval_string_map *map =
-	    (struct oval_string_map *)malloc(sizeof(oval_string_map_t));
+	    (struct oval_string_map *) oscap_alloc(sizeof(oval_string_map_t));
+        if (map == NULL)
+                return NULL;
+
 	map->entries = NULL;
 	return map;
 }
@@ -60,8 +65,10 @@ static struct _oval_string_map_entry *_oval_string_map_entry_new(struct
 								 *before)
 {
 	struct _oval_string_map_entry *entry =
-	    (struct _oval_string_map_entry *)
-	    malloc(sizeof(_oval_string_map_entry_t));
+	    (struct _oval_string_map_entry *) oscap_alloc(sizeof(_oval_string_map_entry_t));
+        if (entry == NULL)
+                return NULL;
+
 	entry->next = before;
 	if (after != NULL)
 		after->next = entry;
@@ -70,9 +77,12 @@ static struct _oval_string_map_entry *_oval_string_map_entry_new(struct
 
 void oval_string_map_put(struct oval_string_map *map, const char *key, void *item)
 {
-	char *temp = (char *)malloc((strlen(key) + 1) * sizeof(char) + 1);
+        __attribute__nonnull__(map);
+
+	char *temp = (char *) oscap_alloc((strlen(key) + 1) * sizeof(char) + 1);
 	char *usekey = strcpy(temp, key);
-	//SEARCH FOR INSERTION POINT
+	
+        //SEARCH FOR INSERTION POINT
 	struct _oval_string_map_entry *insert_before =
 	    map->entries, *insert_after = NULL, *insertion;
 	if (insert_before == NULL) {
@@ -98,19 +108,24 @@ void oval_string_map_put(struct oval_string_map *map, const char *key, void *ite
 				map->entries = insertion;
 		}
 	}
+        if (insertion == NULL)
+                return;
+
 	insertion->key = usekey;
 	insertion->item = item;
 }
 
 void oval_string_map_put_string(struct oval_string_map *map, const char *key, const char *item)
 {
-	char *temp = (char *)malloc((strlen(item) + 1) * sizeof(char) + 1);
+	char *temp = (char *) oscap_alloc((strlen(item) + 1) * sizeof(char) + 1);
 	char *useval = strcpy(temp, item);
 	oval_string_map_put(map, key, useval);
 }
 
 struct oval_iterator *oval_string_map_keys(struct oval_string_map *map)
 {
+        __attribute__nonnull__(map);
+
 	struct oval_iterator *iterator = oval_collection_iterator_new();
 	struct _oval_string_map_entry *entry = map->entries;
 	while (entry != NULL) {
@@ -122,6 +137,8 @@ struct oval_iterator *oval_string_map_keys(struct oval_string_map *map)
 
 struct oval_iterator *oval_string_map_values(struct oval_string_map *map)
 {
+        __attribute__nonnull__(map);
+
 	struct oval_iterator *iterator = oval_collection_iterator_new();
 	struct _oval_string_map_entry *entry = map->entries;
 	int count;for (count=0;entry != NULL;count++) {
@@ -133,7 +150,11 @@ struct oval_iterator *oval_string_map_values(struct oval_string_map *map)
 
 void *oval_string_map_get_value(struct oval_string_map *map, char *key)
 {
-	if (key == NULL) return NULL;
+        __attribute__nonnull__(map);
+
+	if (key == NULL) 
+                return NULL;
+
 	struct _oval_string_map_entry *entry;
 	for (entry = map->entries;
 	     (entry != NULL) && (strcmp(key, entry->key) != 0);
@@ -145,32 +166,34 @@ void *oval_string_map_get_value(struct oval_string_map *map, char *key)
 void oval_string_map_free(struct oval_string_map *map,
 		oscap_destruct_func free_func)
 {
+        __attribute__nonnull__(map);
+
 	struct _oval_string_map_entry *entry = map->entries;
 	struct _oval_string_map_entry *next;
 	while (entry != NULL) {
 		if (free_func != NULL)
 			if(entry->item)(*free_func) (entry->item);
 		next = entry->next;
-		free(entry->key);
+		oscap_free(entry->key);
 		entry->item = NULL;
 		entry->key  = NULL;
 		entry->next = NULL;
 		free(entry);
 		entry = next;
 	}
-	free(map);
+	oscap_free(map);
 }
 
 void oval_string_map_free_string(struct oval_string_map *map)
 {
-	oval_string_map_free(map, free);
+	oval_string_map_free(map, oscap_free);
 }
 
 #include <stdio.h>
 	//TEST FREEFUNC
 static void oval_string_map_main_freefunc(void *item)
 {
-	printf("FREEFUNC: item = %s\n", (const char *) item);
+	oscap_dprintf("FREEFUNC: item = %s\n", (const char *) item);
 }
 
 /**
@@ -179,23 +202,23 @@ static void oval_string_map_main_freefunc(void *item)
 int oval_string_map_main(int argc, char **argv)
 {
 
-	printf("TEST::START\n");
+	oscap_dprintf("TEST::START\n");
 	char *keys[] = { "key1", "key3", "key0", "key2", "key2", 0 };
 	char *entries[] =
 	    { "hello", "tom", "now is the time", "for all good men", "for me",
       0 };
 
 	struct oval_string_map *map = oval_string_map_new();
-	printf("TEST::START::has new map\n");
+	oscap_dprintf("TEST::START::has new map\n");
 	int idx;
 	for (idx = 0; keys[idx] != NULL; idx++) {
 		char *key = keys[idx];
-		printf("TEST::adding key %s -> %s\n", key, entries[idx]);
+		oscap_dprintf("TEST::adding key %s -> %s\n", key, entries[idx]);
 		oval_string_map_put(map, key, (void *)entries[idx]);
 	}
 	for (idx = 0; keys[idx] != NULL; idx++) {
 		char *key = keys[idx];
-		printf("TEST::getting key %s -> %s\n", key,
+		oscap_dprintf("TEST::getting key %s -> %s\n", key,
 		       (const char *) oval_string_map_get_value(map, key));
 	}
 

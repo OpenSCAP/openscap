@@ -34,8 +34,8 @@
 #include "oval_system_characteristics_impl.h"
 #include "oval_collection_impl.h"
 #include "oval_agent_api_impl.h"
-
-static int OVAL_SYSCHAR_DEBUG = 0;
+#include "../common/util.h"
+#include "../common/public/debug.h"
 
 typedef struct oval_syschar {
 	struct oval_syschar_model *model;
@@ -68,6 +68,8 @@ void oval_syschar_iterator_free(struct oval_syschar_iterator
 oval_syschar_collection_flag_t oval_syschar_get_flag(struct oval_syschar
 						    *syschar)
 {
+        __attribute__nonnull__(syschar);
+
 	return ((struct oval_syschar *)syschar)->flag;
 }
 
@@ -76,14 +78,16 @@ void oval_syschar_set_flag
 {
 	if(syschar && !oval_syschar_is_locked(syschar)){
 		syschar->flag = flag;
-	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+	} else 
+                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
 void oval_syschar_set_object(struct oval_syschar *syschar, struct oval_object *object)
 {
 	if(syschar && !oval_syschar_is_locked(syschar)){
 		syschar->object = object;
-	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+	} else 
+                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
 
@@ -97,16 +101,21 @@ void oval_syschar_add_message(struct oval_syschar *syschar, struct oval_message 
 {
 	if(syschar && !oval_syschar_is_locked(syschar)){
 		oval_collection_add(syschar->messages, message);
-	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+	} else 
+                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
 struct oval_object *oval_syschar_get_object(struct oval_syschar *syschar)
 {
+        __attribute__nonnull__(syschar);
+
 	return ((struct oval_syschar *)syschar)->object;
 }
 
 struct oval_syschar_model *oval_syschar_get_model(struct oval_syschar *syschar)
 {
+        __attribute__nonnull__(syschar);
+
 	return ((struct oval_syschar *)syschar)->model;
 }
 
@@ -114,12 +123,16 @@ struct oval_variable_binding_iterator *oval_syschar_get_variable_bindings(struct
 								      oval_syschar
 								      *syschar)
 {
+        __attribute__nonnull__(syschar);
+
 	return (struct oval_variable_binding_iterator *)
 	    oval_collection_iterator(syschar->variable_bindings);
 }
 
 struct oval_sysdata_iterator *oval_syschar_get_sysdata(struct oval_syschar *syschar)
 {
+        __attribute__nonnull__(syschar);
+
 	return (struct oval_sysdata_iterator *)
 	    oval_collection_iterator(syschar->sysdata);
 }
@@ -129,7 +142,8 @@ void oval_syschar_add_sysdata
 {
 	if(syschar && !oval_syschar_is_locked(syschar)){
 		oval_collection_add(syschar->sysdata, sysdata);
-	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+	} else 
+                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
 void oval_syschar_add_variable_binding
@@ -137,12 +151,16 @@ void oval_syschar_add_variable_binding
 {
 	if(syschar && !oval_syschar_is_locked(syschar)){
 		oval_collection_add(syschar->variable_bindings, binding);
-	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+	} else 
+                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
 struct oval_syschar *oval_syschar_new(struct oval_syschar_model* model, struct oval_object *object)
 {
-	oval_syschar_t *syschar = (oval_syschar_t*)malloc(sizeof(oval_syschar_t));
+	oval_syschar_t *syschar = (oval_syschar_t*) oscap_alloc(sizeof(oval_syschar_t));
+        if (syschar == NULL)
+                return NULL;
+
 	syschar->flag              = SYSCHAR_FLAG_UNKNOWN;
 	syschar->object            = object;
 	syschar->messages          = oval_collection_new();
@@ -158,6 +176,8 @@ bool oval_syschar_is_valid(struct oval_syschar *syschar)
 }
 bool oval_syschar_is_locked(struct oval_syschar *syschar)
 {
+        __attribute__nonnull__(syschar);
+
 	return oval_syschar_model_is_locked(syschar->model);
 }
 
@@ -208,6 +228,9 @@ struct oval_syschar *oval_syschar_clone(struct oval_syschar_model *new_model, st
 
 void oval_syschar_free(struct oval_syschar *syschar)
 {
+        if (syschar == NULL)
+                return;
+
 	oval_collection_free_items(syschar->messages, (oscap_destruct_func)oval_message_free);
 	oval_collection_free_items(syschar->sysdata, NULL);//sysdata items are shared
 	oval_collection_free_items(syschar->variable_bindings, NULL);//variable bindings are shared
@@ -216,12 +239,14 @@ void oval_syschar_free(struct oval_syschar *syschar)
 	syschar->object = NULL;
 	syschar->sysdata = NULL;
 	syschar->variable_bindings = NULL;
-	free(syschar);
+	oscap_free(syschar);
 }
 
 static void add_oval_syschar_message
 	(struct oval_syschar *syschar, struct oval_message *message)
 {
+        __attribute__nonnull__(syschar);
+
 	oval_collection_add(syschar->messages, message);
 }
 
@@ -235,12 +260,18 @@ struct oval_syschar_parse_subtag_varval_context {
 };
 static void _oval_syschar_parse_subtag_consume_variable_binding(struct oval_variable_binding *binding, void* user){
 	struct oval_syschar_parse_subtag_varval_context *ctx = user;
+
+        __attribute__nonnull__(ctx);
+
 	oval_syschar_add_variable_binding(ctx->syschar, binding);
 }
 static int _oval_syschar_parse_subtag(
 		xmlTextReaderPtr reader,
 		struct oval_parser_context *context,
 		void *client){
+
+        __attribute__nonnull__(context);
+
 	struct oval_syschar *syschar = client;
 	char *tagname   = (char*) xmlTextReaderLocalName(reader);
 	char *namespace = (char*) xmlTextReaderNamespaceUri(reader);
@@ -256,16 +287,15 @@ static int _oval_syschar_parse_subtag(
 	}else if(strcmp("reference",tagname)==0){
 		char* itemid = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "item_ref");
 		struct oval_sysdata *sysdata = oval_sysdata_get_new(context->syschar_model, itemid);
-		free(itemid);itemid=NULL;
+		oscap_free(itemid);
+                itemid=NULL;
 		oval_syschar_add_sysdata(syschar, sysdata);
 		return_code = 1;
 	}
-	free(tagname);
-	free(namespace);
+	oscap_free(tagname);
+	oscap_free(namespace);
 	if(return_code!=1){
-		char message[200]; *message = 0;
-		sprintf(message, "_oval_syschar_parse_tag:: return code is not 1::(%d)",return_code);
-		oval_parser_log_warn(context, message);
+		oscap_dprintf("WARNING: _oval_syschar_parse_tag:: return code is not 1::(%d)",return_code);
 	}
 	return return_code;
 }
@@ -273,60 +303,50 @@ static int _oval_syschar_parse_subtag(
 int oval_syschar_parse_tag(xmlTextReaderPtr reader,
 			       struct oval_parser_context *context)
 {
+        __attribute__nonnull__(context);
+
 	char *tagname   = (char*) xmlTextReaderName(reader);
 	char *namespace = (char*) xmlTextReaderNamespaceUri(reader);
-	if(OVAL_SYSCHAR_DEBUG){//DEBUG
-		char message[200]; *message = 0;
-		sprintf(message,
-				"oval_syschar_parse_tag(<%s:%s>): enter",
+        oscap_dprintf("DEBUG: oval_syschar_parse_tag(<%s:%s>): enter",
 				namespace, tagname);
-		oval_parser_log_debug(context, message);
-	}//DEBUG
 	int is_ovalsys = strcmp(namespace,NAMESPACE_OVALSYS)==0;
 	int return_code;
 	if(is_ovalsys && (strcmp(tagname,"object")==0)){
 		char *object_id = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "id");
 		struct oval_object *object = oval_object_get_new(context->definition_model, object_id);
-		free(object_id);object_id=NULL;
+		oscap_free(object_id);
+                object_id=NULL;
 		oval_syschar_t *syschar = oval_syschar_get_new(context->syschar_model, object);
 		char *flag = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "flag");
 		oval_syschar_collection_flag_t flag_enum
 			= oval_syschar_flag_parse(reader, "flag", SYSCHAR_FLAG_UNKNOWN);
-		if(flag!=NULL)free(flag);
+		if (flag!=NULL)
+                        oscap_free(flag);
 		oval_syschar_set_flag(syschar, flag_enum);
 		return_code = oval_parser_parse_tag(reader, context, &_oval_syschar_parse_subtag, syschar);
 	}else{
-		char message[200]; *message = 0;
-		sprintf(message, "oval_syschar_parse_tag:: expecting <object> got <%s:%s>",
+		oscap_dprintf("WARNING: oval_syschar_parse_tag:: expecting <object> got <%s:%s>",
 				namespace, tagname);
-		oval_parser_log_warn(context, message);
 		return_code = oval_parser_skip_tag(reader, context);
 	}
-	if(OVAL_SYSCHAR_DEBUG){//DEBUG
-		char message[200]; *message = 0;
-		sprintf(message,
-				"oval_syschar_parse_tag(<%s:%s>): exit",
-				namespace, tagname);
-		oval_parser_log_debug(context, message);
-	}//DEBUG
-	free(tagname);
-	free(namespace);
+	oscap_dprintf("DEBUG: oval_syschar_parse_tag(<%s:%s>): exit", namespace, tagname);
+	oscap_free(tagname);
+	oscap_free(namespace);
 	if(return_code!=1){
-		char message[200]; *message = 0;
-		sprintf(message, "oval_syschar_parse_tag:: return code is not 1::(%d)",return_code);
-		oval_parser_log_warn(context, message);
+		oscap_dprintf("WARNING: oval_syschar_parse_tag:: return code is not 1::(%d)",return_code);
 	}
 	return return_code;
 }
 
 
 void oval_syschar_to_dom  (struct oval_syschar *syschar, xmlDoc *doc, xmlNode *tag_parent){
+
 	if(syschar){
 		xmlNs *ns_syschar = xmlSearchNsByHref(doc, tag_parent, OVAL_SYSCHAR_NAMESPACE);
 	    xmlNode *tag_syschar = xmlNewChild
 			(tag_parent, ns_syschar, BAD_CAST "object", NULL);
 
-	    {//attributes
+	    {/*attributes*/
 	    	struct oval_object *object = oval_syschar_get_object(syschar);
 	    	xmlNewProp(tag_syschar, BAD_CAST "id", BAD_CAST oval_object_get_id(object));
 	    	char version[17];
@@ -335,7 +355,7 @@ void oval_syschar_to_dom  (struct oval_syschar *syschar, xmlDoc *doc, xmlNode *t
 	    	oval_syschar_collection_flag_t flag = oval_syschar_get_flag(syschar);
 	    	xmlNewProp(tag_syschar, BAD_CAST "flag", BAD_CAST oval_syschar_collection_flag_get_text(flag));
 	    }
-		{//messages
+		{/*messages*/
 			struct oval_message_iterator *messages = oval_syschar_get_messages(syschar);
 			while(oval_message_iterator_has_more(messages)){
 				struct oval_message *message = oval_message_iterator_next(messages);
@@ -343,7 +363,7 @@ void oval_syschar_to_dom  (struct oval_syschar *syschar, xmlDoc *doc, xmlNode *t
 			}
 			oval_message_iterator_free(messages);
 		}
-		{//variable values
+		{/*variable values*/
 			struct oval_variable_binding_iterator *bindings = oval_syschar_get_variable_bindings(syschar);
 			while(oval_variable_binding_iterator_has_more(bindings)){
 				struct oval_variable_binding *binding = oval_variable_binding_iterator_next(bindings);
@@ -351,7 +371,7 @@ void oval_syschar_to_dom  (struct oval_syschar *syschar, xmlDoc *doc, xmlNode *t
 			}
 			oval_variable_binding_iterator_free(bindings);
 		}
-		{//references
+		{/*references*/
 			struct oval_sysdata_iterator *sysdatas = oval_syschar_get_sysdata(syschar);
 			while(oval_sysdata_iterator_has_more(sysdatas)){
 				struct oval_sysdata *sysdata = oval_sysdata_iterator_next(sysdatas);

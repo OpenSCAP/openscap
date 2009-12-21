@@ -33,6 +33,13 @@
 #include "oval_definitions_impl.h"
 #include "oval_collection_impl.h"
 #include "oval_agent_api_impl.h"
+#include "../common/util.h"
+#include "../common/public/debug.h"
+#include "../common/_error.h"
+
+/***************************************************************************/
+/* Variable definitions
+ * */
 
 typedef struct oval_criteria_node {
 	struct oval_definition_model *model;
@@ -46,8 +53,8 @@ typedef struct oval_criteria_node_CRITERIA {
 	oval_criteria_node_type_t type;
 	int negate;
 	char *comment;
-	oval_operator_t operator;	//type==NODETYPE_CRITERIA
-	struct oval_collection *subnodes;	//type==NODETYPE_CRITERIA
+	oval_operator_t operator;	/*type==NODETYPE_CRITERIA*/
+	struct oval_collection *subnodes;	/*type==NODETYPE_CRITERIA*/
 } oval_criteria_node_CRITERIA_t;
 
 typedef struct oval_criteria_node_CRITERION {
@@ -55,7 +62,7 @@ typedef struct oval_criteria_node_CRITERION {
 	oval_criteria_node_type_t type;
 	int negate;
 	char *comment;
-	struct oval_test *test;	//type==NODETYPE_CRITERION
+	struct oval_test *test;	/*type==NODETYPE_CRITERION*/
 } oval_criteria_node_CRITERION_t;
 
 typedef struct oval_criteria_node_EXTENDDEF {
@@ -63,8 +70,12 @@ typedef struct oval_criteria_node_EXTENDDEF {
 	oval_criteria_node_type_t type;
 	int negate;
 	char *comment;
-	struct oval_definition *definition;	//type==NODETYPE_EXTENDDEF
+	struct oval_definition *definition;	/*type==NODETYPE_EXTENDDEF*/
 } oval_criteria_node_EXTENDDEF_t;
+
+/* End of variable definitions
+ * */
+/***************************************************************************/
 
 bool oval_criteria_node_iterator_has_more(struct oval_criteria_node_iterator
 					 *oc_criteria_node)
@@ -93,21 +104,29 @@ void oval_criteria_node_iterator_free(struct
 oval_criteria_node_type_t oval_criteria_node_get_type(struct oval_criteria_node
 						     *node)
 {
+        __attribute__nonnull__(node);
+
 	return ((struct oval_criteria_node *)node)->type;
 }
 
 bool oval_criteria_node_get_negate(struct oval_criteria_node *node)
 {
+        __attribute__nonnull__(node);
+
 	return ((struct oval_criteria_node *)node)->negate;
 }
 
 char *oval_criteria_node_get_comment(struct oval_criteria_node *node)
 {
+        __attribute__nonnull__(node);
+
 	return ((struct oval_criteria_node *)node)->comment;
 }
 
 oval_operator_t oval_criteria_node_get_operator(struct oval_criteria_node *node)
 {
+        __attribute__nonnull__(node);
+
 	return (node->type==OVAL_NODETYPE_CRITERIA)
 	?((struct oval_criteria_node_CRITERIA *)node)->operator:OVAL_OPERATOR_UNKNOWN;
 }
@@ -116,6 +135,8 @@ struct oval_criteria_node_iterator *oval_criteria_node_get_subnodes(struct
 								oval_criteria_node
 								*node)
 {
+        __attribute__nonnull__(node);
+
 	struct oval_criteria_node_iterator *subnodes = NULL;
 	if(OVAL_NODETYPE_CRITERIA){
 		struct oval_criteria_node_CRITERIA *criteria =
@@ -128,7 +149,9 @@ struct oval_criteria_node_iterator *oval_criteria_node_get_subnodes(struct
 
 struct oval_test *oval_criteria_node_get_test(struct oval_criteria_node *node)
 {
-	//type==NODETYPE_CRITERION
+        __attribute__nonnull__(node);
+
+	/* type == NODETYPE_CRITERION */
 	return (node->type==OVAL_NODETYPE_CRITERION)
 	?((struct oval_criteria_node_CRITERION *)node)->test:NULL;
 }
@@ -136,6 +159,8 @@ struct oval_test *oval_criteria_node_get_test(struct oval_criteria_node *node)
 struct oval_definition *oval_criteria_node_get_definition
 	(struct oval_criteria_node *node)
 {
+        __attribute__nonnull__(node);
+
 	return (node->type==OVAL_NODETYPE_EXTENDDEF)
 	?((struct oval_criteria_node_EXTENDDEF *)node)->definition:NULL;
 }
@@ -147,7 +172,10 @@ struct oval_criteria_node *oval_criteria_node_new(struct oval_definition_model* 
 	case OVAL_NODETYPE_CRITERIA:{
 			node =
 			    (struct oval_criteria_node *)
-			    calloc(1, sizeof(oval_criteria_node_CRITERIA_t));
+			    oscap_calloc(1, sizeof(oval_criteria_node_CRITERIA_t));
+                        if (node == NULL)
+                                return NULL;
+
 			((struct oval_criteria_node_CRITERIA *)node)->
 			    operator = OVAL_OPERATOR_UNKNOWN;
 			((struct oval_criteria_node_CRITERIA *)node)->subnodes =
@@ -156,19 +184,26 @@ struct oval_criteria_node *oval_criteria_node_new(struct oval_definition_model* 
 	case OVAL_NODETYPE_CRITERION:{
 			node =
 			    (struct oval_criteria_node *)
-			    calloc(1, sizeof(oval_criteria_node_CRITERION_t));
+			    oscap_calloc(1, sizeof(oval_criteria_node_CRITERION_t));
+                        if (node == NULL)
+                                return NULL;
+
 			((struct oval_criteria_node_CRITERION *)node)->test =
 			    NULL;
 		} break;
 	case OVAL_NODETYPE_EXTENDDEF:{
 			node =
 			    (struct oval_criteria_node *)
-			    calloc(1, sizeof(oval_criteria_node_EXTENDDEF_t));
+			    oscap_calloc(1, sizeof(oval_criteria_node_EXTENDDEF_t));
+                        if (node == NULL)
+                                return NULL;
+
 			((struct oval_criteria_node_EXTENDDEF *)node)->
 			    definition = NULL;
 		}break;
 	case OVAL_NODETYPE_UNKNOWN:
-	default: return NULL;
+        default: /* TODO: propagate error, that node type unknown ? */
+            return NULL;
 	}
 	node->type = type;
 	node->negate = 0;
@@ -183,15 +218,22 @@ bool oval_criteria_node_is_valid(struct oval_criteria_node *criteria_node)
 }
 bool oval_criteria_node_is_locked(struct oval_criteria_node *criteria_node)
 {
+        __attribute__nonnull__(criteria_node);
+
 	return oval_definition_model_is_locked(criteria_node->model);
 }
 
 struct oval_criteria_node *oval_criteria_node_clone
 	(struct oval_definition_model *new_model, struct oval_criteria_node *old_node)
 {
+        __attribute__nonnull__(old_node);
+
 	struct oval_criteria_node *new_node = oval_criteria_node_new(new_model, old_node->type);
-	char *comment = oval_criteria_node_get_comment(old_node);
-	oval_criteria_node_set_comment(new_node, comment);
+        if (new_node == NULL)
+                return NULL;
+
+	char *cn_comment = oval_criteria_node_get_comment(old_node);
+	oval_criteria_node_set_comment(new_node, cn_comment);
 	int negate = oval_criteria_node_get_negate(old_node);
 	oval_criteria_node_set_negate(new_node, negate);
 	switch(new_node->type)
@@ -216,7 +258,8 @@ struct oval_criteria_node *oval_criteria_node_clone
 		struct oval_test *new_test = oval_test_clone(new_model, old_test);
 		oval_criteria_node_set_test(new_node, new_test);
 	}break;
-	default: /*NOOP*/;
+	default: /*NOOP -> this will never happen, because oval_criteria_node_new will return NULL 
+                   in case of unknown nodetype */;
 	}
 
 	return new_node;
@@ -224,6 +267,8 @@ struct oval_criteria_node *oval_criteria_node_clone
 
 void oval_criteria_node_free(struct oval_criteria_node *node)
 {
+        __attribute__nonnull__(node);
+
 	oval_criteria_node_type_t type = node->type;
 	switch (type) {
 	case OVAL_NODETYPE_CRITERIA:{
@@ -243,34 +288,39 @@ void oval_criteria_node_free(struct oval_criteria_node *node)
 		}
 	}
 	if (node->comment != NULL){
-		free(node->comment);
+		oscap_free(node->comment);
 	}
 	node->comment = NULL;
-	free(node);
+	oscap_free(node);
 }
 
 void oval_criteria_set_node_type(struct oval_criteria_node *node,
 				 oval_criteria_node_type_t type)
 {
+        __attribute__nonnull__(node);
+
 	if(node && !oval_criteria_node_is_locked(node)){
 		node->type = type;
-	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+	} else 
+                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
 void oval_criteria_node_set_negate(struct oval_criteria_node *node, bool negate)
 {
 	if(node && !oval_criteria_node_is_locked(node)){
 		node->negate = negate;
-	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+	} else 
+                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
 void oval_criteria_node_set_comment(struct oval_criteria_node *node,
 				    char *comm)
 {
 	if(node && !oval_criteria_node_is_locked(node)){
-		if(node->comment!=NULL)free(node->comment);
-		node->comment = comm==NULL?NULL:strdup(comm);
-	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+		if(node->comment!=NULL)
+                        oscap_free(node->comment);
+		node->comment = comm==NULL?NULL:oscap_strdup(comm);
+	} else oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
 void oval_criteria_node_set_operator(struct oval_criteria_node *node,
@@ -282,7 +332,8 @@ void oval_criteria_node_set_operator(struct oval_criteria_node *node,
 				(struct oval_criteria_node_CRITERIA *)node;
 			criteria->operator = operator;
 		}
-	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+	} else 
+                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
 void oval_criteria_node_add_subnode(struct oval_criteria_node *node,
@@ -294,7 +345,8 @@ void oval_criteria_node_add_subnode(struct oval_criteria_node *node,
 				(struct oval_criteria_node_CRITERIA *)node;
 			oval_collection_add(criteria->subnodes, (void *)subnode);
 		}
-	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+	} else 
+                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
 void oval_criteria_node_set_test(struct oval_criteria_node *node,
@@ -306,7 +358,8 @@ void oval_criteria_node_set_test(struct oval_criteria_node *node,
 				(struct oval_criteria_node_CRITERION *)node;
 			criterion->test = test;
 		}
-	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+	} else 
+                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
 void oval_criteria_node_set_definition(struct oval_criteria_node *node,
@@ -318,7 +371,8 @@ void oval_criteria_node_set_definition(struct oval_criteria_node *node,
 				(struct oval_criteria_node_EXTENDDEF *)node;
 			extenddef->definition = definition;
 		}
-	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+	} else 
+                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
 static void _oval_criteria_subnode_consume(struct oval_criteria_node *subnode, void *criteria) {
@@ -352,12 +406,15 @@ int oval_criteria_parse_tag(xmlTextReaderPtr reader,
 		type = OVAL_NODETYPE_EXTENDDEF;
 	int return_code;
 	if (type != OVAL_NODETYPE_UNKNOWN) {
+                assert(context != NULL); /* This is not asserted as attribute, because we 
+                                            can pass NULL pointer in case of OVAL_NODETYPE_UNKNOWN */
 		struct oval_criteria_node *node = oval_criteria_node_new(context->definition_model, type);
 		node->type = type;
 		char *comm = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST "comment");
 		if(comm!=NULL){
 			oval_criteria_node_set_comment(node, comm);
-			free(comm);comm=NULL;
+			oscap_free(comm);
+                        comm=NULL;
 		}
 		oval_criteria_node_set_negate(node,
 					      oval_parser_boolean_attribute
@@ -386,7 +443,8 @@ int oval_criteria_parse_tag(xmlTextReaderPtr reader,
 				struct oval_definition_model *model =
 				    oval_parser_context_model(context);
 				struct oval_test *test = oval_test_get_new(model, test_ref);
-				free(test_ref);test_ref=NULL;
+				oscap_free(test_ref);
+                                test_ref=NULL;
 				oval_criteria_node_set_test(node, test);
 			} break;
 		case OVAL_NODETYPE_EXTENDDEF:{
@@ -399,7 +457,8 @@ int oval_criteria_parse_tag(xmlTextReaderPtr reader,
 				    oval_definition_get_new(model, definition_ref);
 				oval_criteria_node_set_definition(node,
 								  definition);
-				free(definition_ref);definition_ref=NULL;
+				oscap_free(definition_ref);
+                                definition_ref=NULL;
 			}
 		case OVAL_NODETYPE_UNKNOWN: break;
 		}
@@ -407,17 +466,19 @@ int oval_criteria_parse_tag(xmlTextReaderPtr reader,
 		(*consumer) (node, user);
 	} else {
 		return_code = 0;
-		fprintf(stderr, "NOTICE::oval_criteria_parse_tag::node type unknown");
+		oscap_dprintf("NOTICE::oval_criteria_parse_tag::node type unknown");
 		oval_parser_skip_tag(reader, context);
 	}
-	free(tagname);
-	free(namespace);
+	oscap_free(tagname);
+	oscap_free(namespace);
 	return return_code;
 }
 
 void oval_criteria_node_to_print(struct oval_criteria_node *node, char *indent,
 				 int idx)
 {
+        __attribute__nonnull__(node);
+
 	char *nodetype = NULL;
 	char nxtindent[100];
 
@@ -444,13 +505,13 @@ void oval_criteria_node_to_print(struct oval_criteria_node *node, char *indent,
 	else
 		snprintf(nxtindent, sizeof(nxtindent), "%s%s[%d].", indent, nodetype, idx);
 
-	printf("%sCOMMENT = %s\n", nxtindent, node->comment);
-	printf("%sNEGATE  = %d\n", nxtindent, node->negate);
+	oscap_dprintf("%sCOMMENT = %s\n", nxtindent, node->comment);
+	oscap_dprintf("%sNEGATE  = %d\n", nxtindent, node->negate);
 	switch (node->type) {
 	case OVAL_NODETYPE_CRITERIA:{
 			struct oval_criteria_node_CRITERIA *criteria =
 			    (struct oval_criteria_node_CRITERIA *)node;
-			printf("%sOPERATOR = %d\n", nxtindent,
+			oscap_dprintf("%sOPERATOR = %d\n", nxtindent,
 			       criteria->operator);
 			struct oval_iterator *subnodes =
 			    oval_collection_iterator(criteria->subnodes);
@@ -473,7 +534,7 @@ void oval_criteria_node_to_print(struct oval_criteria_node *node, char *indent,
 				oval_test_to_print(criterion->test, nxtindent,
 						   0);
 			else
-				printf("%sTEST    = <<NONE>>\n", nxtindent);
+                                oscap_dprintf("%sTEST = <<NONE>>\n", nxtindent);
 		}
 		break;
 	case OVAL_NODETYPE_EXTENDDEF:{
@@ -483,7 +544,7 @@ void oval_criteria_node_to_print(struct oval_criteria_node *node, char *indent,
 				oval_definition_to_print(extenddef->definition,
 							 nxtindent, 0);
 			else
-				printf("%sDEFINITION = <<NONE>>\n", nxtindent);
+				oscap_dprintf("%sDEFINITION = <<NONE>>\n", nxtindent);
 		}
 		break;
 	case OVAL_NODETYPE_UNKNOWN: break;

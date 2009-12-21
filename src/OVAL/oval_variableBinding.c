@@ -32,8 +32,8 @@
 #include <string.h>
 #include "oval_definitions_impl.h"
 #include "oval_collection_impl.h"
-
-#define DEBUG_OVAL_VARIABLE_BINDING 0
+#include "../common/util.h"
+#include "../common/public/debug.h"
 
 
 typedef struct oval_variable_binding {
@@ -69,27 +69,40 @@ struct oval_variable *oval_variable_binding_get_variable(struct
 						     oval_variable_binding
 						     *binding)
 {
+        __attribute__nonnull__(binding);
+
 	return ((struct oval_variable_binding *)binding)->variable;
 }
 
 char *oval_variable_binding_get_value(struct oval_variable_binding *binding)
 {
+        __attribute__nonnull__(binding);
+
 	return ((struct oval_variable_binding *)binding)->value;
 }
 
 void oval_variable_binding_set_variable(struct oval_variable_binding *binding, struct oval_variable *variable)
 {
+        __attribute__nonnull__(binding);
+
 	binding->variable = variable;
 }
 void oval_variable_binding_set_value   (struct oval_variable_binding *binding, char *value)
 {
-	if(binding->value!=NULL)free(binding->value);
-	binding->value = ((value==NULL)?NULL:strdup(value));
+        __attribute__nonnull__(binding);
+
+	if(binding->value!=NULL)
+                oscap_free(binding->value);
+	binding->value = oscap_strdup(value);
 }
 
 struct oval_variable_binding *oval_variable_binding_new(struct oval_variable *variable, char *value)
 {
-	oval_variable_binding_t *binding = (oval_variable_binding_t*)malloc(sizeof(oval_variable_binding_t));
+	oval_variable_binding_t *binding = 
+            (oval_variable_binding_t*) oscap_alloc(sizeof(oval_variable_binding_t));
+        if (binding == NULL)
+                return NULL;
+
 	binding->variable = variable;
 	binding->value    = value;
 	return binding;
@@ -103,7 +116,7 @@ struct oval_variable_binding *oval_variable_binding_clone(struct oval_variable_b
 	if(new_variable==NULL)oval_variable_clone(def_model, old_variable);
 
 	char *old_value = oval_variable_binding_get_value(old_binding);
-	char *new_value = (old_value)?strdup(old_value):NULL;
+	char *new_value = oscap_strdup(old_value);
 
 	return oval_variable_binding_new(new_variable, new_value);
 }
@@ -111,7 +124,11 @@ struct oval_variable_binding *oval_variable_binding_clone(struct oval_variable_b
 
 static struct oval_variable_binding *_oval_variable_binding_new()
 {
-	oval_variable_binding_t *binding = (oval_variable_binding_t*)malloc(sizeof(oval_variable_binding_t));
+	oval_variable_binding_t *binding = 
+            (oval_variable_binding_t*) oscap_alloc(sizeof(oval_variable_binding_t));
+        if (binding == NULL)
+                return NULL;
+
 	binding->variable = NULL;
 	binding->value    = NULL;
 	return binding;
@@ -120,12 +137,13 @@ static struct oval_variable_binding *_oval_variable_binding_new()
 void oval_variable_binding_free(struct oval_variable_binding *binding)
 {
 	if (binding) {
-		if(binding->value!=NULL)free(binding->value);
+		if(binding->value!=NULL)
+                        oscap_free(binding->value);
 
 		binding->value = NULL;
 		binding->variable = NULL;
 
-		free(binding);
+		oscap_free(binding);
 	}
 }
 
@@ -137,30 +155,28 @@ static void _oval_variable_binding_value_consumer(char * value, void * user)
 int oval_variable_binding_parse_tag(xmlTextReaderPtr reader,
 			       struct oval_parser_context *context, oval_variable_binding_consumer consumer, void* client)
 {
+        __attribute__nonnull__(context);
+
 	int return_code = 1;
 	struct oval_variable_binding *binding = _oval_variable_binding_new();
 	{//variable
-		char* variableId = xmlTextReaderGetAttribute(reader, BAD_CAST "variable_id");
+		char* variableId = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST "variable_id");
 		struct oval_variable *variable = oval_variable_get_new(context->definition_model, variableId, OVAL_VARIABLE_UNKNOWN);
 		oval_variable_binding_set_variable(binding, variable);
-		free(variableId);variableId=NULL;
+		oscap_free(variableId);
+                variableId=NULL;
 	}
 	{//bound value
 		return_code = oval_parser_text_value(reader, context, &_oval_variable_binding_value_consumer, binding);
 	}
 	if(return_code!=1){
-		char warning[200]; *warning = 0;
-		sprintf(warning, "oval_warning_parse_tag:: return code is not 1::(%d)",return_code);
-		oval_parser_log_warn(context, warning);
+		oscap_dprintf("WARNING: oval_warning_parse_tag:: return code is not 1::(%d)",return_code);
 	}else{
-		if(DEBUG_OVAL_VARIABLE_BINDING){
-			int numchars = 0;
-			char debug[2000];debug[numchars]='\0';
-			numchars = numchars + sprintf(debug+numchars,"oval_variable_binding_parse_tag::");
-			numchars = numchars + sprintf(debug+numchars,"\n    binding->variable = %s",oval_variable_get_id(oval_variable_binding_get_variable(binding)));
-			numchars = numchars + sprintf(debug+numchars,"\n    binding->value    = %s",oval_variable_binding_get_value(binding));
-			oval_parser_log_debug(context, debug);
-		}
+		oscap_dprintf("DEBUG: oval_variable_binding_parse_tag::"
+			      "\n    binding->variable = %s"
+			      "\n    binding->value    = %s",
+                            oval_variable_get_id(oval_variable_binding_get_variable(binding)), 
+                            oval_variable_binding_get_value(binding));
 		(*consumer)(binding, client);
 	}
 	return return_code;

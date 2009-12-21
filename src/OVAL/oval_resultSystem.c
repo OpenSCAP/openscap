@@ -35,9 +35,8 @@
 #include "oval_string_map_impl.h"
 #include "public/oval_definitions.h"
 #include "public/oval_agent_api.h"
-
-#define OVAL_RESULT_SYSTEM_DEBUG 0
-
+#include "../common/util.h"
+#include "../common/public/debug.h"
 
 typedef struct oval_result_system {
 	struct oval_results_model *model;
@@ -49,7 +48,10 @@ typedef struct oval_result_system {
 
 struct oval_result_system *oval_result_system_new(struct oval_results_model *model, struct oval_syschar_model *syschar_model)
 {
-	oval_result_system_t *sys = (oval_result_system_t *)malloc(sizeof(oval_result_system_t));
+	oval_result_system_t *sys = (oval_result_system_t *) oscap_alloc(sizeof(oval_result_system_t));
+        if (sys == NULL)
+                return NULL;
+
 	sys->definitions   = oval_string_map_new();
 	sys->tests         = oval_string_map_new();
 	sys->syschar_model = syschar_model;
@@ -64,6 +66,8 @@ bool oval_result_system_is_valid(struct oval_result_system *result_system)
 }
 bool oval_result_system_is_locked(struct oval_result_system *result_system)
 {
+        __attribute__nonnull__(result_system);
+
 	return oval_results_model_is_locked(result_system->model);
 }
 
@@ -84,6 +88,8 @@ static void _oval_result_system_clone
 
 struct oval_result_system *oval_result_system_clone(struct oval_results_model *new_model, struct oval_result_system *old_system)
 {
+        __attribute__nonnull__(old_system);
+
 	struct oval_result_system *new_system = oval_result_system_new(new_model, oval_result_system_get_syschar_model(old_system));
 
 	_oval_result_system_clone
@@ -100,6 +106,8 @@ struct oval_result_system *oval_result_system_clone(struct oval_results_model *n
 
 void oval_result_system_free(struct oval_result_system *sys)
 {
+        __attribute__nonnull__(sys);
+
 	oval_string_map_free
 		(sys->definitions,
 				(oscap_destruct_func)oval_result_definition_free);
@@ -111,7 +119,7 @@ void oval_result_system_free(struct oval_result_system *sys)
 	sys->syschar_model = NULL;
 	sys->tests         = NULL;
 
-	free(sys);
+	oscap_free(sys);
 }
 bool oval_result_system_iterator_has_more
 	(struct oval_result_system_iterator *sys)
@@ -137,6 +145,8 @@ void oval_result_system_iterator_free
 static void _oval_result_system_initialize
 	(struct oval_result_system *sys)
 {
+        __attribute__nonnull__(sys);
+
 	sys->definitions_initialized = true;
 	struct oval_definition_model *definition_model = oval_syschar_model_get_definition_model(sys->syschar_model);
 
@@ -158,6 +168,8 @@ static void _oval_result_system_initialize
 struct oval_result_definition_iterator *oval_result_system_get_definitions
 	(struct oval_result_system *sys)
 {
+        __attribute__nonnull__(sys);
+
 	if(!sys->definitions_initialized){
 		_oval_result_system_initialize(sys);
 	}
@@ -168,6 +180,8 @@ struct oval_result_definition_iterator *oval_result_system_get_definitions
 struct oval_result_test_iterator *oval_result_system_get_tests
 	(struct oval_result_system *sys)
 {
+        __attribute__nonnull__(sys);
+
 	if(!sys->definitions_initialized){
 		_oval_result_system_initialize(sys);
 	}
@@ -178,6 +192,8 @@ struct oval_result_test_iterator *oval_result_system_get_tests
 struct oval_result_definition *oval_result_system_get_definition
 	(struct oval_result_system *sys, char *id)
 {
+        __attribute__nonnull__(sys);
+
 	if(!sys->definitions_initialized){
 		_oval_result_system_initialize(sys);
 	}
@@ -188,6 +204,8 @@ struct oval_result_definition *oval_result_system_get_definition
 struct oval_result_test *oval_result_system_get_test
 	(struct oval_result_system *sys, char *id)
 {
+        __attribute__nonnull__(sys);
+
 	if(!sys->definitions_initialized){
 		_oval_result_system_initialize(sys);
 	}
@@ -230,6 +248,8 @@ struct oval_result_test *get_oval_result_test_new
 struct oval_syschar_model *oval_result_system_get_syschar_model
 	(struct oval_result_system *sys)
 {
+        __attribute__nonnull__(sys);
+
 	return sys->syschar_model;
 }
 
@@ -251,7 +271,8 @@ void oval_result_system_add_definition
 			char *id = oval_definition_get_id(ovaldef);
 			oval_string_map_put(sys->definitions, id, definition);
 		}
-	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+	} else 
+                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
 void oval_result_system_add_test
@@ -263,7 +284,8 @@ void oval_result_system_add_test
 			char *id = oval_test_get_id(ovaldef);
 			oval_string_map_put(sys->tests, id, test);
 		}
-	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+	} else 
+                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
 static void _oval_result_system_test_consume
@@ -292,7 +314,7 @@ static int _oval_result_system_definition_parse
 	(xmlTextReaderPtr reader, struct oval_parser_context *context,
 			struct oval_result_system *sys)
 {
-	int returns = oval_result_definition_parse
+	return oval_result_definition_parse
 		(reader, context, sys,
 				(oscap_consumer_func)_oval_result_system_definition_consume, sys);
 }
@@ -301,12 +323,10 @@ static int _oval_result_system_parse
 	(xmlTextReaderPtr reader, struct oval_parser_context *context,
 			struct oval_result_system *sys)
 {
+        __attribute__nonnull__(sys);
+
 	xmlChar *localName = xmlTextReaderLocalName(reader);
-	if(OVAL_RESULT_SYSTEM_DEBUG){
-		char message[200];*message='\0';
-		sprintf(message, "_oval_result_system_parse: parse <%s>",localName);
-		oval_parser_log_debug(context,message);
-	}
+        oscap_dprintf("DEBUG: _oval_result_system_parse: parse <%s>",localName);
 	int return_code = 0;
 	if      (strcmp((const char *)localName, "definitions")==0){
 		return_code = oval_parser_parse_tag
@@ -318,15 +338,13 @@ static int _oval_result_system_parse
 				(oval_xml_tag_parser)_oval_result_system_test_parse, sys);
 	}else if(strcmp((const char *)localName, "oval_system_characteristics")==0){
 		return_code = ovalsys_parser_parse
-			(sys->syschar_model, reader, context->error_handler, context->user_data);
+			(sys->syschar_model, reader, context->user_data);
 		//return_code = oval_parser_skip_tag(reader, context);
 	}else{
 		return_code = 0;
-		char message[200];*message='\0';
-		sprintf(message, "_oval_result_system_parse: TODO: <%s> not handled",localName);
-		oval_parser_log_warn(context,message);
+		oscap_dprintf("WARNING: _oval_result_system_parse: TODO: <%s> not handled",localName);
 	}
-	free(localName);
+	oscap_free(localName);
 	return return_code;
 }
 
@@ -337,6 +355,8 @@ int oval_result_system_parse
 	,oscap_consumer_func         consumer
 	,void                       *client)
 {
+        __attribute__nonnull__(context);
+
 	int return_code = 1;
 	struct oval_result_system *sys = oval_result_system_new(context->results_model, syschar_model);
 

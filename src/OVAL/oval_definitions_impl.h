@@ -117,6 +117,8 @@ typedef void (*oval_variable_binding_consumer) (struct oval_variable_binding *,
 int oval_variable_binding_parse_tag
 	(xmlTextReaderPtr, struct oval_parser_context *, oval_variable_binding_consumer, void *);
 
+const char* oval_variable_type_get_text(oval_variable_type_t );
+
 typedef void (*oval_object_content_consumer) (struct oval_object_content *,
 					      void *);
 xmlNode *oval_object_content_to_dom

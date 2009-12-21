@@ -34,6 +34,8 @@
 #include <common/util.h>
 #include "oval_results_impl.h"
 #include "oval_collection_impl.h"
+#include "../common/util.h"
+#include "../common/public/debug.h"
 
 
 struct _oval_result_directive{
@@ -51,8 +53,12 @@ typedef struct oval_result_directives {
 struct oval_result_directives *oval_result_directives_new(struct oval_results_model* model)
 {
 	oval_result_directives_t *directives = (oval_result_directives_t *)
-		malloc(sizeof(oval_result_directives_t));
-	int i;for(i=0;i<NUMBER_OF_RESULTS;i++){
+		oscap_alloc(sizeof(oval_result_directives_t));
+        if (directives == NULL)
+                return NULL;
+
+	int i;
+        for(i=0;i<NUMBER_OF_RESULTS;i++){
 		directives->directive[i].reported = false;
 		directives->directive[i].content  = OVAL_DIRECTIVE_CONTENT_UNKNOWN;
 	}
@@ -66,22 +72,28 @@ bool oval_result_directives_is_valid(struct oval_result_directives *result_direc
 }
 bool oval_result_directives_is_locked(struct oval_result_directives *result_directives)
 {
+        __attribute__nonnull__(result_directives);
+
 	return oval_results_model_is_locked(result_directives->model);
 }
 
 void oval_result_directives_free(struct oval_result_directives *directives)
 {
-	free(directives);
+	oscap_free(directives);
 }
 
 bool oval_result_directives_get_reported
 	(struct oval_result_directives *directives, oval_result_t type)
 {
+        __attribute__nonnull__(directives);
+
 	return directives->directive[type].reported;
 }
 oval_result_directive_content_t oval_result_directives_get_content
 	(struct oval_result_directives *directives, oval_result_t type)
 {
+        __attribute__nonnull__(directives);
+
 	return directives->directive[type].content;
 }
 void oval_result_directives_set_reported
@@ -89,17 +101,19 @@ void oval_result_directives_set_reported
 {
 	if(directives && !oval_result_directives_is_locked(directives)){
 		directives->directive[type].reported = reported;
-	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+	} else 
+                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 void oval_result_directives_set_content
 	(struct oval_result_directives *directives, oval_result_t type, oval_result_directive_content_t content)
 {
 	if(directives && !oval_result_directives_is_locked(directives)){
 		directives->directive[type].content = content;
-	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+	} else 
+                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
-//typedef int (*oval_xml_tag_parser) (xmlTextReaderPtr, struct oval_parser_context *, void *);
+/*typedef int (*oval_xml_tag_parser) (xmlTextReaderPtr, struct oval_parser_context *, void *);*/
 static int _oval_result_directives_parse_tag
 	(xmlTextReaderPtr reader, struct oval_parser_context *context, void *client)
 {
@@ -123,13 +137,13 @@ static int _oval_result_directives_parse_tag
 		}
 	}
 	if(type){
-		{//reported
+		{/*reported*/
 			xmlChar* boolstr = xmlTextReaderGetAttribute(reader, BAD_CAST "reported");
 			bool reported = strcmp((const char *)boolstr,"1")==0 || strcmp((const char *)boolstr,"true")==0;
-			free(boolstr);
+			oscap_free(boolstr);
 			oval_result_directives_set_reported(directives, type, reported);
 		}
-		{//content
+		{/*content*/
 			xmlChar *contentstr =  xmlTextReaderGetAttribute(reader, BAD_CAST "content");
 			oval_result_directive_content_t content = OVAL_DIRECTIVE_CONTENT_UNKNOWN;
 			if(contentstr){
@@ -142,23 +156,19 @@ static int _oval_result_directives_parse_tag
 				if(content){
 					oval_result_directives_set_content(directives, type, content);
 				}else{
-					char message[200];
-					sprintf(message, "_oval_result_directives_parse_tag: cannot resolve @content=\"%s\"",contentstr);
-					oval_parser_log_warn(context, message);
+					oscap_dprintf("WARNING: _oval_result_directives_parse_tag: cannot resolve @content=\"%s\"", contentstr);
 					retcode = 0;
 				}
-				free(contentstr);
+				oscap_free(contentstr);
 			}else{
 				content = OVAL_DIRECTIVE_CONTENT_FULL;
 			}
 		}
 	}else{
-		char message[200];
-		sprintf(message, "_oval_result_directives_parse_tag: cannot resolve <%s>",name);
-		oval_parser_log_warn(context, message);
+		oscap_dprintf("WARNING: _oval_result_directives_parse_tag: cannot resolve <%s>", name);
 		retcode = 0;
 	}
-	free(name);
+	oscap_free(name);
 	return retcode;
 }
 

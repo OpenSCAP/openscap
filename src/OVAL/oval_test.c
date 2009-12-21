@@ -33,6 +33,8 @@
 #include "oval_definitions_impl.h"
 #include "oval_collection_impl.h"
 #include "oval_agent_api_impl.h"
+#include "../common/util.h"
+#include "../common/public/debug.h"
 
 typedef struct oval_test {
 	struct oval_definition_model *model;
@@ -67,70 +69,95 @@ void oval_test_iterator_free(struct oval_test_iterator *oc_test)
 
 oval_family_t oval_test_get_family(struct oval_test *test)
 {
+        __attribute__nonnull__(test);
+
 	return ((test->subtype) / 1000) * 1000;
 }
 
 oval_subtype_t oval_test_get_subtype(struct oval_test * test)
 {
+        __attribute__nonnull__(test);
+
 	return test->subtype;
 }
 
 struct oval_string_iterator *oval_test_get_notes(struct oval_test *test)
 {
+        __attribute__nonnull__(test);
+
 	return (struct oval_string_iterator *)oval_collection_iterator(test->
 								       notes);
 }
 
 char *oval_test_get_comment(struct oval_test *test)
 {
+        __attribute__nonnull__(test);
+
 	return test->comment;
 }
 
 char *oval_test_get_id(struct oval_test *test)
 {
+        __attribute__nonnull__(test);
+
 	return test->id;
 }
 
 bool oval_test_get_deprecated(struct oval_test *test)
 {
+        __attribute__nonnull__(test);
+
 	return test->deprecated;
 }
 
 int oval_test_get_version(struct oval_test *test)
 {
+        __attribute__nonnull__(test);
+
 	return test->version;
 }
 
 oval_existence_t oval_test_get_existence(struct oval_test * test)
 {
+        __attribute__nonnull__(test);
+
 	return test->existence;
 }
 
 oval_check_t oval_test_get_check(struct oval_test * test)
 {
+        __attribute__nonnull__(test);
+
 	return test->check;
 }
 
 struct oval_object *oval_test_get_object(struct oval_test *test)
 {
+        __attribute__nonnull__(test);
+
 	return test->object;
 }
 
 struct oval_state *oval_test_get_state(struct oval_test *test)
 {
+        __attribute__nonnull__(test);
+
 	return test->state;
 }
 
 struct oval_test *oval_test_new(struct oval_definition_model* model, char *id)
 {
-	oval_test_t *test = (oval_test_t *) malloc(sizeof(oval_test_t));
+	oval_test_t *test = (oval_test_t *) oscap_alloc(sizeof(oval_test_t));
+        if (test == NULL)
+                return NULL;
+
 	test->deprecated = 0;
 	test->version = 0;
 	test->check = OVAL_CHECK_UNKNOWN;
 	test->existence = OVAL_EXISTENCE_UNKNOWN;
 	test->subtype = OVAL_SUBTYPE_UNKNOWN;
 	test->comment = NULL;
-	test->id = strdup(id);
+	test->id = oscap_strdup(id);
 	test->object = NULL;
 	test->state = NULL;
 	test->notes = oval_collection_new();
@@ -144,12 +171,16 @@ bool oval_test_is_valid(struct oval_test *test)
 }
 bool oval_test_is_locked(struct oval_test *test)
 {
+        __attribute__nonnull__(test);
+
 	return oval_definition_model_is_locked(test->model);
 }
 
 struct oval_test *oval_test_clone
 	(struct oval_definition_model *new_model, struct oval_test *old_test)
 {
+        __attribute__nonnull__(old_test);
+
 	struct oval_test *new_test = oval_definition_model_get_test(new_model, old_test->id);
 	if(new_test==NULL){
 		new_test = oval_test_new(new_model,old_test->id);
@@ -183,11 +214,13 @@ struct oval_test *oval_test_clone
 
 void oval_test_free(struct oval_test *test)
 {
+        __attribute__nonnull__(test);
+
 	if (test->comment != NULL)
-		free(test->comment);
+		oscap_free(test->comment);
 	if (test->id != NULL)
-		free(test->id);
-	oval_collection_free_items(test->notes, &free);
+		oscap_free(test->id);
+	oval_collection_free_items(test->notes, &oscap_free);
 
 	test->comment = NULL;
 	test->id = NULL;
@@ -195,36 +228,41 @@ void oval_test_free(struct oval_test *test)
 	test->object = NULL;
 	test->state = NULL;
 
-	free(test);
+	oscap_free(test);
 }
 
 void oval_test_set_deprecated(struct oval_test *test, bool deprecated)
 {
 	if(test && !oval_test_is_locked(test)){
 		test->deprecated = deprecated;
-	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+	} else 
+                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
 void oval_test_set_version(struct oval_test *test, int version)
 {
 	if(test && !oval_test_is_locked(test)){
 		test->version = version;
-	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+	} else 
+                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
 void oval_test_set_subtype(struct oval_test *test, oval_subtype_t subtype)
 {
 	if(test && !oval_test_is_locked(test)){
 		test->subtype = subtype;
-	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+	} else 
+                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
 void oval_test_set_comment(struct oval_test *test, char *comm)
 {
 	if(test && !oval_test_is_locked(test)){
-		if(test->comment!=NULL)free(test->comment);
-		test->comment = comm==NULL?NULL:strdup(comm);
-	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+		if(test->comment!=NULL)
+                        oscap_free(test->comment);
+		test->comment = oscap_strdup(comm);
+	} else
+                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
 void oval_test_set_existence(struct oval_test *test,
@@ -232,35 +270,40 @@ void oval_test_set_existence(struct oval_test *test,
 {
 	if(test && !oval_test_is_locked(test)){
 		test->existence = existence;
-	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+	} else 
+                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
 void oval_test_set_check(struct oval_test *test, oval_check_t check)
 {
 	if(test && !oval_test_is_locked(test)){
 		test->check = check;
-	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+	} else
+                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
 void oval_test_set_object(struct oval_test *test, struct oval_object *object)
 {
 	if(test && !oval_test_is_locked(test)){
 		test->object = object;
-	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+	} else
+                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
 void oval_test_set_state(struct oval_test *test, struct oval_state *state)
 {
 	if(test && !oval_test_is_locked(test)){
 		test->state = state;
-	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+	} else
+                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
 void oval_test_add_note(struct oval_test *test, char *note)
 {
 	if(test && !oval_test_is_locked(test)){
-		oval_collection_add(test->notes, (void *)strdup(note));
-	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+		oval_collection_add(test->notes, (void *)oscap_strdup(note));
+	} else
+                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
 static void _oval_test_parse_notes_consumer(char *text, void *test) {
@@ -292,7 +335,8 @@ static int _oval_test_parse_tag(xmlTextReaderPtr reader,
 			    oval_parser_context_model(context);
 			struct oval_object *object =
 			    oval_object_get_new(model, object_ref);
-			free(object_ref);object_ref=NULL;
+			oscap_free(object_ref);
+                        object_ref=NULL;
 			oval_test_set_object(test, object);
 		}
 	} else if ((strcmp(tagname, "state") == 0)) {
@@ -304,22 +348,21 @@ static int _oval_test_parse_tag(xmlTextReaderPtr reader,
 			struct oval_state *state =
 			    oval_state_get_new(model, state_ref);
 			oval_test_set_state(test, state);
-			free(state_ref);state_ref=NULL;
+			oscap_free(state_ref);
+                        state_ref=NULL;
 		}
 	} else {
 		int linno = xmlTextReaderGetParserLineNumber(reader);
-		fprintf
-		    (stderr, "NOTICE::(oval_test)skipping <%s> depth = %d line = %d\n",
+		oscap_dprintf("NOTICE::(oval_test)skipping <%s> depth = %d line = %d",
 		     tagname, xmlTextReaderDepth(reader), linno);
 		return_code = oval_parser_skip_tag(reader, context);
 	}
 
-	free(tagname);
+	oscap_free(tagname);
 	return return_code;
 
 }
 
-#define DEBUG_OVAL_TEST 0
 #define  STUB_OVAL_TEST 0
 
 int oval_test_parse_tag(xmlTextReaderPtr reader,
@@ -327,12 +370,11 @@ int oval_test_parse_tag(xmlTextReaderPtr reader,
 {
 	struct oval_definition_model *model = oval_parser_context_model(context);
 	char *id = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "id");
-	if(DEBUG_OVAL_TEST){
-		printf("DEBUG::oval_test.c::oval_test_parse_tag %s STUBBED = %d\n", id, STUB_OVAL_TEST);
-	}
+	oscap_dprintf("DEBUG::oval_test.c::oval_test_parse_tag %s STUBBED = %d", id, STUB_OVAL_TEST);
 
 	struct oval_test *test = oval_test_get_new(model, id);
-	free(id);id=test->id;
+	oscap_free(id);
+        id=test->id;
 	oval_subtype_t subtype = oval_subtype_parse(reader);
 	oval_test_set_subtype(test, subtype);
 	oval_existence_t existence =
@@ -345,13 +387,15 @@ int oval_test_parse_tag(xmlTextReaderPtr reader,
 	char *comm = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "comment");
 	if(comm!=NULL){
 		oval_test_set_comment(test, comm);
-		free(comm);comm=NULL;
+		oscap_free(comm);
+                comm=NULL;
 	}
 	int deprecated = oval_parser_boolean_attribute(reader, "deprecated", 0);
 	oval_test_set_deprecated(test, deprecated);
 	char *version = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "version");
 	oval_test_set_version(test, atoi(version));
-	free(version);version=NULL;
+	oscap_free(version);
+        version=NULL;
 
 	int return_code = (STUB_OVAL_TEST)
 		?oval_parser_skip_tag(reader, context)
@@ -371,28 +415,28 @@ void oval_test_to_print(struct oval_test *test, char *indent, int idx)
 	else
 		snprintf(nxtindent, sizeof(nxtindent), "%sTEST[%d].", indent, idx);
 
-	printf("%sID         = %s\n", nxtindent, oval_test_get_id(test));
-	printf("%sFAMILY     = %d\n", nxtindent, oval_test_get_family(test));
-	printf("%sSUBTYPE    = %d\n", nxtindent, oval_test_get_subtype(test));
-	printf("%sVERSION    = %d\n", nxtindent, oval_test_get_version(test));
-	printf("%sCOMMENT    = %s\n", nxtindent, oval_test_get_comment(test));
-	printf("%sDEPRECATED = %d\n", nxtindent, oval_test_get_deprecated(test));
-	printf("%sEXISTENCE  = %d\n", nxtindent, oval_test_get_existence(test));
-	printf("%sCHECK      = %d\n", nxtindent, oval_test_get_check(test));
+	oscap_dprintf("%sID         = %s\n", nxtindent, oval_test_get_id(test));
+	oscap_dprintf("%sFAMILY     = %d\n", nxtindent, oval_test_get_family(test));
+	oscap_dprintf("%sSUBTYPE    = %d\n", nxtindent, oval_test_get_subtype(test));
+	oscap_dprintf("%sVERSION    = %d\n", nxtindent, oval_test_get_version(test));
+	oscap_dprintf("%sCOMMENT    = %s\n", nxtindent, oval_test_get_comment(test));
+	oscap_dprintf("%sDEPRECATED = %d\n", nxtindent, oval_test_get_deprecated(test));
+	oscap_dprintf("%sEXISTENCE  = %d\n", nxtindent, oval_test_get_existence(test));
+	oscap_dprintf("%sCHECK      = %d\n", nxtindent, oval_test_get_check(test));
 	struct oval_string_iterator *notes = oval_test_get_notes(test);
 	for (idx = 1; oval_string_iterator_has_more(notes); idx++) {
-		printf("%sNOTE[%d]    = %s\n", nxtindent, idx,
+		oscap_dprintf("%sNOTE[%d]    = %s\n", nxtindent, idx,
 		       oval_string_iterator_next(notes));
 	}
 	oval_string_iterator_free(notes);
 	struct oval_object *object = oval_test_get_object(test);
 	if (object == NULL)
-		printf("%sOBJECT     = <<NONE>>\n", nxtindent);
+		oscap_dprintf("%sOBJECT     = <<NONE>>\n", nxtindent);
 	else
 		oval_object_to_print(object, nxtindent, 0);
 	struct oval_state *state = oval_test_get_state(test);
 	if (state == NULL)
-		printf("%sSTATE      = <<NONE>>\n", nxtindent);
+		oscap_dprintf("%sSTATE      = <<NONE>>\n", nxtindent);
 	else
 		oval_state_to_print(state, nxtindent, 0);
 }
@@ -405,7 +449,7 @@ xmlNode *oval_test_to_dom (struct oval_test *test, xmlDoc *doc, xmlNode *parent)
 		const char *subtype_text = oval_subtype_get_text(subtype);
 		char  test_name[strlen(subtype_text)+6]; *test_name = '\0';
 		strcat(strcat(test_name, subtype_text), "_test");
-		xmlNode *test_node = xmlNewChild(parent, NULL, BAD_CAST test_name, NULL);
+		test_node = xmlNewChild(parent, NULL, BAD_CAST test_name, NULL);
 
 		oval_family_t family = oval_test_get_family(test);
 		const char *family_text = oval_family_get_text(family);
@@ -460,8 +504,6 @@ xmlNode *oval_test_to_dom (struct oval_test *test, xmlDoc *doc, xmlNode *parent)
 			xmlNewProp(state_node, BAD_CAST "state_ref", BAD_CAST oval_state_get_id(state));
 		}
 	}else
-		fprintf(stderr,
-		"WARNING: detected test without subtype\n    %s(%d)\n",
-		__FILE__, __LINE__);
+		oscap_dprintf("WARNING: detected test without subtype    (%s:%d)", __FILE__, __LINE__);
 	return test_node;
 }

@@ -42,7 +42,6 @@ struct oval_parser_context {
 	struct oval_results_model      *results_model;
 	//struct oval_sysinfo            *syschar_sysinfo;
 	xmlTextReader                  *reader;
-	oval_xml_error_handler         error_handler;
 	void*                          user_data;
 };
 
@@ -50,14 +49,14 @@ struct oval_definition_model *oval_parser_context_model(struct oval_parser_conte
 						    *context);
 
 int ovaldef_parser_parse
-    (struct oval_definition_model *, xmlTextReader *, oval_xml_error_handler, void *);
+    (struct oval_definition_model *, xmlTextReader *, void *);
 int ovaldef_parse_node(xmlTextReaderPtr, struct oval_parser_context *);
 
 int ovalsys_parser_parse
-    (struct oval_syschar_model *, xmlTextReader *, oval_xml_error_handler , void *);
+    (struct oval_syschar_model *, xmlTextReader *, void *);
 
 struct oval_result_directives *ovalres_parser_parse
-    (struct oval_results_model *, xmlTextReader *, oval_xml_error_handler, void *);
+    (struct oval_results_model *, xmlTextReader *, void *);
 
 int oval_parser_report(struct oval_parser_context*, struct oval_xml_error*);
 

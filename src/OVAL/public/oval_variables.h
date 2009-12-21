@@ -82,14 +82,13 @@ void oval_variable_model_free(struct oval_variable_model *);
  * If the oval_variable model is not empty, the loaded content will be appended to the existing content.
  * @param variable_model the specified oval_variable_model.
  * @param import_source the oscap_import_source that resolves the XML stream.
- * @param error_handler the oval_xml_error_handler that tracks the parsing of the XML stream (may be NULL)
  * @param user_param a user parameter that is passed the the error handler implementation.
  * @ingroup OVALVAR_service
  */
-void oval_variable_model_import
+int oval_variable_model_import
 	(struct oval_variable_model *,
 	 struct oscap_import_source *,
-	 oval_xml_error_handler, void*);
+         void*);
 
 /**
  * Export the specified oval_variable_model to an XML stream.

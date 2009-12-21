@@ -9,7 +9,7 @@
  * Copyright 2008 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
- * This library is free software; you can redistribute it and/or
+ * This library is oscap_free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
@@ -33,8 +33,8 @@
 #include "oval_results_impl.h"
 #include "oval_collection_impl.h"
 #include "public/oval_agent_api.h"
-
-#define OVAL_RESULT_DEFINITION_DEBUG 0
+#include "../common/util.h"
+#include "../common/public/debug.h"
 
 typedef struct oval_result_definition{
 	struct oval_definition           *definition;
@@ -44,6 +44,11 @@ typedef struct oval_result_definition{
 	struct oval_collection           *messages;
 	int                               instance;
 } oval_result_definition_t;
+
+static char* _oval_result_definition_results[] =
+{
+		NULL, "true", "false", "unknown", "error", "not evaluated", "not applicable"
+};
 
 bool oval_result_definition_iterator_has_more
 	(struct oval_result_definition_iterator *definitions)
@@ -69,7 +74,10 @@ struct oval_result_definition *oval_result_definition_new
 	(struct oval_result_system *sys, char *definition_id)
 {
 	oval_result_definition_t *definition = (oval_result_definition_t *)
-		malloc(sizeof(oval_result_definition_t));
+		oscap_alloc(sizeof(oval_result_definition_t));
+        if (definition == NULL)
+                return NULL;
+
 	definition->system = sys;
 	struct oval_syschar_model *syschar_model = oval_result_system_get_syschar_model(sys);
 	struct oval_definition_model  *definition_model  = oval_syschar_model_get_definition_model (syschar_model);
@@ -87,6 +95,8 @@ bool oval_result_definition_is_valid(struct oval_result_definition *result_defin
 }
 bool oval_result_definition_is_locked(struct oval_result_definition *result_definition)
 {
+        __attribute__nonnull__(result_definition);
+
 	return oval_result_system_is_locked(result_definition->system);
 }
 
@@ -117,6 +127,8 @@ struct oval_result_definition *oval_result_definition_clone
 
 void oval_result_definition_free(struct oval_result_definition *definition)
 {
+        __attribute__nonnull__(definition);
+
 	if(definition->criteria)oval_result_criteria_node_free(definition->criteria);
 	oval_collection_free_items(definition->messages,(oscap_destruct_func)oval_message_free);
 
@@ -126,7 +138,7 @@ void oval_result_definition_free(struct oval_result_definition *definition)
 	definition->messages   = NULL;
 	definition->result = 0;
 	definition->instance = 0;
-	free(definition);
+	oscap_free(definition);
 }
 
 struct oval_result_definition *make_result_definition_from_oval_definition
@@ -150,24 +162,32 @@ struct oval_result_definition *make_result_definition_from_oval_definition
 struct oval_definition *oval_result_definition_get_definition
 	(struct oval_result_definition *definition)
 {
+        __attribute__nonnull__(definition);
+
 	return definition->definition;
 }
 
 struct oval_result_system *oval_result_definition_get_system
 	(struct oval_result_definition *definition)
 {
+        __attribute__nonnull__(definition);
+
 	return definition->system;
 }
 
 int oval_result_definition_get_instance
 	(struct oval_result_definition *definition)
 {
+        __attribute__nonnull__(definition);
+
 	return definition->instance;
 }
 
 oval_result_t oval_result_definition_get_result
 	(struct oval_result_definition *definition)
 {
+        __attribute__nonnull__(definition);
+
 	if(definition->result==OVAL_RESULT_INVALID){
 		struct oval_result_criteria_node *criteria
 			= oval_result_definition_get_criteria(definition);
@@ -181,6 +201,8 @@ oval_result_t oval_result_definition_get_result
 struct oval_message_iterator *oval_result_definition_get_messages
 	(struct oval_result_definition *definition)
 {
+        __attribute__nonnull__(definition);
+
 	return (struct oval_message_iterator *)
 		oval_collection_iterator(definition->messages);
 }
@@ -188,6 +210,8 @@ struct oval_message_iterator *oval_result_definition_get_messages
 struct oval_result_criteria_node *oval_result_definition_get_criteria
 	(struct oval_result_definition *definition)
 {
+        __attribute__nonnull__(definition);
+
 	return definition->criteria;
 }
 
@@ -196,7 +220,8 @@ void oval_result_definition_set_result
 {
 	if(definition && !oval_result_definition_is_locked(definition)){
 		definition->result = result;
-	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+	} else 
+                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
 void oval_result_definition_set_instance
@@ -204,7 +229,8 @@ void oval_result_definition_set_instance
 {
 	if(definition && !oval_result_definition_is_locked(definition)){
 		definition->instance = instance;
-	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+	} else 
+                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
 void oval_result_definition_set_criteria
@@ -218,7 +244,8 @@ void oval_result_definition_set_criteria
 			}
 		}
 		definition->criteria = criteria;
-	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+	} else 
+                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
 void oval_result_definition_add_message
@@ -227,7 +254,8 @@ void oval_result_definition_add_message
 {
 	if(definition && !oval_result_definition_is_locked(definition)){
 		if(message)oval_collection_add(definition->messages, message);
-	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+	} else 
+                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
 static void _oval_result_definition_consume_criteria
@@ -250,9 +278,6 @@ static int _oval_result_definition_parse
 	int return_code = 1;
 	xmlChar *localName = xmlTextReaderLocalName(reader);
 
-	if(OVAL_RESULT_DEFINITION_DEBUG){
-
-	}
 	if       (strcmp((const char *)localName, "criteria")==0){
 		return_code = oval_result_criteria_node_parse
 			(reader, context,oval_result_definition_get_system(definition),
@@ -266,20 +291,13 @@ static int _oval_result_definition_parse
 	return return_code;
 }
 
-static char* _oval_result_definition_results[] =
-{
-		NULL, "true", "false", "unknown", "error", "not evaluated", "not applicable"
-};
-
 int oval_result_definition_parse
 	(xmlTextReaderPtr reader, struct oval_parser_context *context,
 			struct oval_result_system *sys,
 			oscap_consumer_func consumer, void *client)
 {
 	int return_code = 1;
-	if(OVAL_RESULT_DEFINITION_DEBUG){
-		oval_parser_log_debug(context, "oval_result_definition_parse: BEGIN");
-	}
+	oscap_dprintf("DEBUG: oval_result_definition_parse: BEGIN");
 
 	xmlChar *definition_id = xmlTextReaderGetAttribute(reader, BAD_CAST "definition_id");
 	xmlChar *definition_version = xmlTextReaderGetAttribute(reader, BAD_CAST "version");
@@ -289,16 +307,16 @@ int oval_result_definition_parse
 
 	struct oval_result_definition *definition = oval_result_definition_new
 		(sys, (char *)definition_id);
+        if (definition == NULL)
+                /* TODO: Check if -1 is appropriate error propagation */
+                return -1;
 
 	int defvsn = oval_definition_get_version(definition->definition);
 	if(defvsn && resvsn!=defvsn){
-		char message[200];*message = '\0';
-		sprintf(message,
-				"oval_result_definition_parse: definition versions don't match\n"
+		oscap_dprintf("WARNING: oval_result_definition_parse: definition versions don't match\n"
 				"    definition id = %s\n"
 				"    ovaldef vsn = %d resdef vsn = %d",
 				definition_id, defvsn, resvsn);
-		oval_parser_log_warn(context, message);
 	}
 	oval_definition_set_version(definition->definition, resvsn);
 	oval_result_definition_set_instance(definition, instance);
@@ -312,37 +330,27 @@ int oval_result_definition_parse
 	if(result){
 		oval_result_definition_set_result(definition, result);
 	}else{
-		char message[200];*message = '\0';
-		sprintf(message,
-				"oval_result_definition_parse: can't resolve result attribute\n"
+		oscap_dprintf("WARNING: oval_result_definition_parse: can't resolve result attribute\n"
 				"    definition id = %s\n"
 				"    result attribute = %s",
 				definition_id, definition_result);
-		oval_parser_log_warn(context, message);
 	}
 
 	//Process tag contents
-	if(OVAL_RESULT_DEFINITION_DEBUG){
-		char message[200];*message = '\0';
-		sprintf(message,
-				"oval_result_definition_parse: processing <definition> contents\n"
+        oscap_dprintf("DEBUG: oval_result_definition_parse: processing <definition> contents\n"
 				"    definition id = %s vsn = %d\n"
 				"    definition result = %s(%d)",
 				definition_id, defvsn, definition_result, result);
-		oval_parser_log_debug(context, message);
-	}
 	return_code = oval_parser_parse_tag
 		(reader, context,
 				(oval_xml_tag_parser)_oval_result_definition_parse, definition);
 
-	free(definition_id);
-	free(definition_version);
-	free(definition_result);
+	oscap_free(definition_id);
+	oscap_free(definition_version);
+	oscap_free(definition_result);
 
 	(*consumer)(definition, client);
-	if(OVAL_RESULT_DEFINITION_DEBUG){
-		oval_parser_log_debug(context, "oval_result_definition_parse: END");
-	}
+        oscap_dprintf("DEBUG: oval_result_definition_parse: END");
 	return return_code;
 }
 

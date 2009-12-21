@@ -33,6 +33,8 @@
 #include "oval_definitions_impl.h"
 #include "oval_collection_impl.h"
 #include "oval_agent_api_impl.h"
+#include "../common/util.h"
+#include "../common/public/debug.h"
 
 typedef struct oval_object_content {
 	struct oval_definition_model *model;
@@ -44,15 +46,15 @@ typedef struct oval_object_content_ENTITY {
 	struct oval_definition_model *model;
 	char *fieldName;
 	oval_object_content_type_t type;
-	struct oval_entity *entity;	//type == OVAL_OBJECTCONTENT_ENTITY
-	oval_check_t varCheck;	//type == OVAL_OBJECTCONTENT_ENTITY
+	struct oval_entity *entity;	/*type == OVAL_OBJECTCONTENT_ENTITY*/
+	oval_check_t varCheck;	/*type == OVAL_OBJECTCONTENT_ENTITY*/
 } oval_object_content_ENTITY_t;
 
 typedef struct oval_object_content_SET {
 	struct oval_definition_model *model;
 	char *fieldName;
 	oval_object_content_type_t type;
-	struct oval_setobject *set;	//type == OVAL_OBJECTCONTENT_SET
+	struct oval_setobject *set;	/*type == OVAL_OBJECTCONTENT_SET*/
 } oval_object_content_SET_t;
 
 bool oval_object_content_iterator_has_more(struct oval_object_content_iterator
@@ -88,13 +90,17 @@ oval_object_content_type_t oval_object_content_get_type(struct
 						       oval_object_content
 						       *content)
 {
+        __attribute__nonnull__(content);
+
 	return ((struct oval_object_content *)content)->type;
 }
 
 struct oval_entity *oval_object_content_get_entity(struct oval_object_content
 					       *content)
 {
-	//type == OVAL_OBJECTCONTENT_ENTITY
+        __attribute__nonnull__(content);
+
+	/*type == OVAL_OBJECTCONTENT_ENTITY*/
 	struct oval_entity *entity = NULL;
 	if (oval_object_content_get_type(content) == OVAL_OBJECTCONTENT_ENTITY) {
 		entity = ((struct oval_object_content_ENTITY *)content)->entity;
@@ -105,7 +111,9 @@ struct oval_entity *oval_object_content_get_entity(struct oval_object_content
 oval_check_t oval_object_content_get_varCheck(struct oval_object_content *
 					     content)
 {
-	//type == OVAL_OBJECTCONTENT_ENTITY
+        __attribute__nonnull__(content);
+
+	/*type == OVAL_OBJECTCONTENT_ENTITY*/
 	oval_check_t varCheck = OVAL_CHECK_UNKNOWN;
 	if (oval_object_content_get_type(content) == OVAL_OBJECTCONTENT_ENTITY) {
 		varCheck =
@@ -116,7 +124,9 @@ oval_check_t oval_object_content_get_varCheck(struct oval_object_content *
 
 struct oval_setobject *oval_object_content_get_setobject(struct oval_object_content *content)
 {
-	//type == OVAL_OBJECTCONTENT_SET
+        __attribute__nonnull__(content);
+
+	/*type == OVAL_OBJECTCONTENT_SET*/
 	struct oval_setobject *set = NULL;
 	if (oval_object_content_get_type(content) == OVAL_OBJECTCONTENT_SET) {
 		set = ((struct oval_object_content_SET *)content)->set;
@@ -130,20 +140,22 @@ struct oval_object_content
 	struct oval_object_content *content = NULL;
 	switch (type) {
 	case OVAL_OBJECTCONTENT_ENTITY:{
-			struct oval_object_content_ENTITY *entity
-			    =
-			    (oval_object_content_ENTITY_t *)
-			    malloc(sizeof(oval_object_content_ENTITY_t));
+			struct oval_object_content_ENTITY *entity =
+                            (oval_object_content_ENTITY_t *) oscap_alloc(sizeof(oval_object_content_ENTITY_t));
+                        if (entity == NULL)
+                                return NULL;
+
 			content = (oval_object_content_t *) entity;
 			entity->entity = NULL;
 			entity->varCheck = OVAL_CHECK_UNKNOWN;
 		}
 		break;
 	case OVAL_OBJECTCONTENT_SET:{
-			struct oval_object_content_SET *set
-			    =
-			    (oval_object_content_SET_t *)
-			    malloc(sizeof(oval_object_content_SET_t));
+			struct oval_object_content_SET *set =
+			    (oval_object_content_SET_t *) oscap_alloc(sizeof(oval_object_content_SET_t));
+                        if (set == NULL)
+                                return NULL;
+
 			set->set = NULL;
 			content = (oval_object_content_t *) set;
 		}
@@ -162,6 +174,8 @@ bool oval_object_content_is_valid(struct oval_object_content *object_content)
 }
 bool oval_object_content_is_locked(struct oval_object_content *object_content)
 {
+        __attribute__nonnull__(object_content);
+
 	return oval_definition_model_is_locked(object_content->model);
 }
 
@@ -190,7 +204,10 @@ struct oval_object_content *oval_object_content_clone
 
 void oval_object_content_free(struct oval_object_content *content)
 {
-	if(content->fieldName!=NULL)free(content->fieldName);
+        __attribute__nonnull__(content);
+
+	if(content->fieldName!=NULL)
+                oscap_free(content->fieldName);
 	content->fieldName = NULL;
 	switch (content->type) {
 	case OVAL_OBJECTCONTENT_ENTITY:{
@@ -211,55 +228,67 @@ void oval_object_content_free(struct oval_object_content *content)
 		break;
 	case OVAL_OBJECTCONTENT_UNKNOWN: break;
 	}
-	free(content);
+	oscap_free(content);
 }
 void oval_object_content_set_type(struct oval_object_content *content, oval_object_content_type_t type)
 {
 	if(content && !oval_object_content_is_locked(content)){
 		content->type = type;
-	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+	} else 
+                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 void oval_object_content_set_field_name(struct oval_object_content *content, char *name)
 {
 	if(content && !oval_object_content_is_locked(content)){
-		if(content->fieldName!=NULL)free(content->fieldName);
-		content->fieldName = name==NULL?NULL:strdup(name);
-	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+		if(content->fieldName!=NULL)
+                        oscap_free(content->fieldName);
+		content->fieldName = (name==NULL) ? NULL : oscap_strdup(name);
+	} else 
+                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
-void oval_object_content_set_entity(struct oval_object_content *content, struct oval_entity *entity)//type == OVAL_OBJECTCONTENT_ENTITY
+void oval_object_content_set_entity(struct oval_object_content *content, struct oval_entity *entity)/*type == OVAL_OBJECTCONTENT_ENTITY*/
 {
 	if(content && !oval_object_content_is_locked(content)){
 		if(content->type == OVAL_OBJECTCONTENT_ENTITY){
 			oval_object_content_ENTITY_t *content_ENTITY = (oval_object_content_ENTITY_t *)content;
 			content_ENTITY->entity = entity;
 		}
-	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+	} else 
+                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
-void oval_object_content_set_varCheck(struct oval_object_content *content, oval_check_t check)//type == OVAL_OBJECTCONTENT_ENTITY
+void oval_object_content_set_varCheck(struct oval_object_content *content, oval_check_t check)/*type == OVAL_OBJECTCONTENT_ENTITY*/
 {
 	if(content && !oval_object_content_is_locked(content)){
 		if(content->type == OVAL_OBJECTCONTENT_ENTITY){
 			oval_object_content_ENTITY_t *content_ENTITY = (oval_object_content_ENTITY_t *)content;
 			content_ENTITY->varCheck = check;
 		}
-	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+	} else 
+                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
-void oval_object_content_set_setobject(struct oval_object_content *content, struct oval_setobject *set)//type == OVAL_OBJECTCONTENT_SET
+void oval_object_content_set_setobject(struct oval_object_content *content, struct oval_setobject *set)/*type == OVAL_OBJECTCONTENT_SET*/
 {
 	if(content && !oval_object_content_is_locked(content)){
 		if(content->type == OVAL_OBJECTCONTENT_SET){
 			oval_object_content_SET_t *content_SET = (oval_object_content_SET_t *)content;
 			content_SET->set = set;
 		}
-	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+	} else 
+                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
-//typedef void (*oval_object_content_consumer)(struct oval_object_content*,void*);
+/*typedef void (*oval_object_content_consumer)(struct oval_object_content*,void*);*/
 static void oval_consume_entity(struct oval_entity *entity,
 			void *content_entity) {
+
+        __attribute__nonnull__(entity);
+
 	((struct oval_object_content_ENTITY *)content_entity)->entity = entity;
 }
 static void oval_consume_set(struct oval_setobject *set, void *content_set) {
+
+        __attribute__nonnull__(content_set);
+
 	((struct oval_object_content_SET *)content_set)->set = set;
 }
 int oval_object_content_parse_tag(xmlTextReaderPtr reader,
@@ -267,6 +296,8 @@ int oval_object_content_parse_tag(xmlTextReaderPtr reader,
 				  oval_object_content_consumer consumer,
 				  void *user)
 {
+        __attribute__nonnull__(context);
+
 	char *tagname = (char*) xmlTextReaderName(reader);
 	xmlChar *namespace = xmlTextReaderNamespaceUri(reader);
 
@@ -274,6 +305,9 @@ int oval_object_content_parse_tag(xmlTextReaderPtr reader,
 	    (strcmp(tagname, "set") ==
 	     0) ? OVAL_OBJECTCONTENT_SET : OVAL_OBJECTCONTENT_ENTITY;
 	struct oval_object_content *content = oval_object_content_new(context->definition_model, type);
+        if (content == NULL)
+                return -1;
+
 	content->fieldName = tagname;
 	int return_code = 0;
 	switch (type) {
@@ -301,11 +335,10 @@ int oval_object_content_parse_tag(xmlTextReaderPtr reader,
 	(*consumer) (content, user);
 	if (return_code != 1) {
 		int line = xmlTextReaderGetParserLineNumber(reader);
-		printf
-		    ("NOTICE: oval_object_content_parse_tag::parse of <%s> terminated on error line %d\n",
+		oscap_dprintf("NOTICE: oval_object_content_parse_tag::parse of <%s> terminated on error line %d",
 		     tagname, line);
 	}
-	free(namespace);
+	oscap_free(namespace);
 	return return_code;
 }
 
@@ -322,18 +355,18 @@ void oval_object_content_to_print(struct oval_object_content *content,
 	else
 		snprintf(nxtindent, sizeof(nxtindent), "%sCONTENT[%d].", indent, idx);
 
-	printf("%sFIELD     = %s\n", nxtindent,
+	oscap_dprintf("%sFIELD     = %s\n", nxtindent,
 	       oval_object_content_get_field_name(content));
-	printf("%sTYPE      = %d\n", nxtindent,
+	oscap_dprintf("%sTYPE      = %d\n", nxtindent,
 	       oval_object_content_get_type(content));
 	switch (oval_object_content_get_type(content)) {
 	case OVAL_OBJECTCONTENT_ENTITY:{
-			printf("%sVAR_CHECK = %d\n", nxtindent,
+			oscap_dprintf("%sVAR_CHECK = %d\n", nxtindent,
 			       oval_object_content_get_varCheck(content));
 			struct oval_entity *entity =
 			    oval_object_content_get_entity(content);
 			if (entity == NULL)
-				printf("%sENTITY    <<NOT SET>>\n", nxtindent);
+				oscap_dprintf("%sENTITY    <<NOT SET>>\n", nxtindent);
 			else
 				oval_entity_to_print(entity, nxtindent, 0);
 		}

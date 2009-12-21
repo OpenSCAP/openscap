@@ -33,8 +33,7 @@
 #include "oval_agent_api_impl.h"
 #include "oval_system_characteristics_impl.h"
 #include "oval_collection_impl.h"
-
-static int DEBUG_OVAL_MESSAGE = 0;
+#include "../common/public/debug.h"
 
 typedef struct oval_message {
 	void *model;
@@ -44,7 +43,10 @@ typedef struct oval_message {
 
 struct oval_message *oval_message_new()
 {
-	oval_message_t *message = (oval_message_t*)malloc(sizeof(oval_message_t));
+	oval_message_t *message = (oval_message_t*) oscap_alloc(sizeof(oval_message_t));
+        if (message == NULL)
+                return NULL;
+
 	message->text              = NULL;
 	message->level             = OVAL_MESSAGE_LEVEL_NONE;
 	return message;
@@ -65,16 +67,19 @@ struct oval_message *oval_message_clone(struct oval_message *old_message)
 	oval_message_level_t level = oval_message_get_level(old_message);
 	oval_message_set_level(new_message, level);
 	char *text = oval_message_get_text(old_message);
-	oval_message_set_text(new_message, strdup(text));
+	oval_message_set_text(new_message, oscap_strdup(text));
 	return new_message;
 }
 
 void oval_message_free(struct oval_message *message)
 {
-	if(message->text   !=NULL)free(message->text);
+        __attribute__nonnull__(message);
+
+	if(message->text != NULL)
+                oscap_free(message->text);
 
 	message->text = NULL;
-	free(message);
+	oscap_free(message);
 }
 
 bool oval_message_iterator_has_more(struct oval_message_iterator *oc_message)
@@ -96,52 +101,59 @@ void oval_message_iterator_free(struct oval_message_iterator
     oval_collection_iterator_free((struct oval_iterator *)oc_message);
 }
 
-char *oval_message_get_text(struct oval_message *message)
-{return message->text;}
-oval_message_level_t oval_message_get_level(struct oval_message *message)
-{return message->level;}
+char *oval_message_get_text(struct oval_message *message) {
+
+        __attribute__nonnull__(message);
+
+        return message->text;
+}
+
+oval_message_level_t oval_message_get_level(struct oval_message *message){
+
+        __attribute__nonnull__(message);
+
+        return message->level;
+}
 
 void oval_message_set_text(struct oval_message *message, char *text)
 {
 	if(message && !oval_message_is_locked(message)){
-		if(message->text!=NULL)free(message->text);
-		message->text = (text==NULL)?NULL:strdup(text);
-	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+		if(message->text!=NULL)
+                        oscap_free(message->text);
+		message->text = (text == NULL) ? NULL : oscap_strdup(text);
+	} else 
+                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 void oval_message_set_level(struct oval_message *message, oval_message_level_t level)
 {
 	if(message && !oval_message_is_locked(message)){
 		message->level = level;
-	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+	} else 
+                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
 static void oval_message_parse_tag_consumer(char* text, void* message){
 	oval_message_set_text(message, text);
 }
+
 int oval_message_parse_tag(xmlTextReaderPtr reader,
 			       struct oval_parser_context *context, oscap_consumer_func consumer, void* client)
 {
 	int return_code = 1;
 	struct oval_message *message = oval_message_new();
-	{//message->lever
+	{/*message->lever*/
 		oval_message_set_level(message, oval_message_level_parse(reader,"level",OVAL_MESSAGE_LEVEL_INFO));
 	}
-	{//message->text
+	{/*message->text*/
 		return_code = oval_parser_text_value(reader, context, &oval_message_parse_tag_consumer, message);
 	}
-	if(return_code!=1){
-		char warning[200]; *warning = 0;
-		sprintf(warning, "oval_warning_parse_tag:: return code is not 1::(%d)",return_code);
-		oval_parser_log_warn(context, warning);
+	if(return_code != 1){
+		oscap_dprintf("WARNING: oval_warning_parse_tag:: return code is not 1::(%d)", return_code);
 	}else{
-		if(DEBUG_OVAL_MESSAGE){
-			int numchars = 0;
-			char debug[2000];debug[numchars]='\0';
-			numchars = numchars + sprintf(debug+numchars,"oval_message_parse_tag::");
-			numchars = numchars + sprintf(debug+numchars,"\n    message->level    = %d",oval_message_get_level   (message));
-			numchars = numchars + sprintf(debug+numchars,"\n    message->text     = %s",oval_message_get_text    (message));
-			oval_parser_log_debug(context, debug);
-		}
+		oscap_dprintf("DEBUG: oval_message_parse_tag::"
+		"\n    message->level    = %d    message->text     = %s",
+                oval_message_get_level   (message), oval_message_get_text    (message));
+
 		(*consumer)(message, client);
 	}
 	return return_code;
@@ -164,13 +176,14 @@ void oval_message_to_print(struct oval_message *message, char *indent,
 	char*                   text;
 	oval_message_level_enum level;
 	 */
-	printf("%sLEVEL = %d\n", nxtindent, oval_message_get_level(message));
-	printf("%sTEXT  = %s\n", nxtindent, oval_message_get_text (message));
+	oscap_dprintf("%sLEVEL = %d\n", nxtindent, oval_message_get_level(message));
+	oscap_dprintf("%sTEXT  = %s\n", nxtindent, oval_message_get_text (message));
 }
 
 void oval_message_to_dom  (struct oval_message *message, xmlDoc *doc, xmlNode *tag_parent){
+
 	if(message){
-		xmlNs *ns_syschar = xmlSearchNsByHref(doc, tag_parent, OVAL_SYSCHAR_NAMESPACE);
+	    xmlNs *ns_syschar = xmlSearchNsByHref(doc, tag_parent, OVAL_SYSCHAR_NAMESPACE);
 	    xmlNode *tag_message = xmlNewChild
 			(tag_parent, ns_syschar, BAD_CAST "message", BAD_CAST oval_message_get_text(message));
 	    xmlNewProp(tag_message, BAD_CAST "level", BAD_CAST oval_message_level_text(oval_message_get_level(message)));

@@ -33,9 +33,11 @@
 #include "oval_system_characteristics_impl.h"
 #include "oval_results_impl.h"
 #include "../common/util.h"
+#include "../common/public/debug.h"
 
 #define OVAL_ENUMERATION_INVALID (-1)
 
+static const char _invalid[] = "**INVALID**";
 
 static int oval_enumeration_attr(xmlTextReaderPtr reader, char *attname, const struct oscap_string_map* map, int defval)
 {
@@ -43,17 +45,16 @@ static int oval_enumeration_attr(xmlTextReaderPtr reader, char *attname, const s
 	if (attrstr == NULL)
 		return defval;
 	int ret = oscap_string_to_enum(map, attrstr);
-	free(attrstr);
+	oscap_free(attrstr);
 	return ret == OVAL_ENUMERATION_INVALID ? defval : ret;
 }
 
-static const char _invalid[] = "**INVALID**";
-
 static const char *oval_enumeration_get_text(const struct oscap_string_map* map, int idx){
-	if(idx){
+
+	if (idx) {
 		return map[idx-1].string;
-	}else{
-		fprintf(stderr, "WARNING: ZERO ENUMERATION INDEX\n    %s(%d)\n", __FILE__, __LINE__);
+	} else {
+		oscap_dprintf("WARNING: ZERO ENUMERATION INDEX (%s:%d)\n", __FILE__, __LINE__);
 		return _invalid;
 	}
 }
@@ -346,11 +347,11 @@ oval_family_t oval_family_parse(xmlTextReaderPtr reader)
   	char *namespace = (char*) xmlTextReaderNamespaceUri(reader);
 	char *family_text = strrchr(namespace, '#');
 	if (family_text == NULL) {
-		free(namespace);
+		oscap_free(namespace);
 		return OVAL_FAMILY_UNKNOWN;
   	}
 	int ret = oscap_string_to_enum(OVAL_FAMILY_MAP, ++family_text);
-	free(namespace);
+	oscap_free(namespace);
 	return (ret != OVAL_ENUMERATION_INVALID ? ret : OVAL_FAMILY_UNKNOWN);
 }
 
@@ -544,7 +545,7 @@ oval_subtype_t oval_subtype_parse(xmlTextReaderPtr reader)
 	subtype = oscap_string_to_enum(map, tagname);
 
 	cleanup:
-	free(tagname);
+	oscap_free(tagname);
 	return subtype;
 }
 
@@ -670,15 +671,18 @@ static _textfunc textfuncs[] =
 };
 
 void oval_enumerations_test_driver(){
-	int i;for(i=0;maps[i];i++){
-		fprintf(stderr, "Testing enumeration #%d\n", i);
+
+	int i;
+        for(i=0; maps[i]; i++){
+		oscap_dprintf("Testing enumeration #%d", i);
 		const struct oscap_string_map *map = maps[i];
 		_textfunc textfunc = textfuncs[i];
-		fprintf(stderr, "    INVALID INDEX: %s\n", (*textfunc)(0));
-		int j;for(j=0;map[j].string;j++){
+		oscap_dprintf("    INVALID INDEX: %s", (*textfunc)(0));
+		int j;
+                for(j=0;map[j].string;j++){
 			int value = map[j].value;
 			const char *text = (*textfunc)(value);
-			fprintf(stderr, "    [%d]: %s\n", value, text);
+			oscap_dprintf("    [%d]: %s", value, text);
 		}
 	}
 }

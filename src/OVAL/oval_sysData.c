@@ -33,6 +33,8 @@
 #include "oval_agent_api_impl.h"
 #include "oval_system_characteristics_impl.h"
 #include "oval_collection_impl.h"
+#include "../common/util.h"
+#include "../common/public/debug.h"
 
 static int DEBUG_OVAL_SYSDATA = 0;
 
@@ -49,8 +51,11 @@ typedef struct oval_sysdata {
 
 struct oval_sysdata *oval_sysdata_new(struct oval_syschar_model* model, char *id)
 {
-	oval_sysdata_t *sysdata = (oval_sysdata_t*)malloc(sizeof(oval_sysdata_t));
-	sysdata->id                = strdup(id);
+	oval_sysdata_t *sysdata = (oval_sysdata_t*) oscap_alloc(sizeof(oval_sysdata_t));
+        if (sysdata == NULL)
+                return NULL;
+
+	sysdata->id                = oscap_strdup(id);
 	sysdata->message_level     = OVAL_MESSAGE_LEVEL_NONE;
 	sysdata->subtype           = OVAL_SUBTYPE_UNKNOWN;
 	sysdata->status            = SYSCHAR_STATUS_UNKNOWN;
@@ -66,6 +71,8 @@ bool oval_sysdata_is_valid(struct oval_sysdata *sysdata)
 }
 bool oval_sysdata_is_locked(struct oval_sysdata *sysdata)
 {
+        __attribute__nonnull__(sysdata);
+
 	return oval_syschar_model_is_locked(sysdata->model);
 }
 
@@ -74,7 +81,7 @@ struct oval_sysdata *oval_sysdata_clone(struct oval_syschar_model *new_model, st
 	struct oval_sysdata *new_data = oval_sysdata_new(new_model, oval_sysdata_get_id(old_data));
 	char *old_message = oval_sysdata_get_message(old_data);
 	if(old_message){
-		oval_sysdata_set_message(new_data, strdup(old_message));
+		oval_sysdata_set_message(new_data, oscap_strdup(old_message));
 		oval_sysdata_set_message_level(new_data,oval_sysdata_get_message_level(old_data));
 	}
 
@@ -96,15 +103,19 @@ struct oval_sysdata *oval_sysdata_clone(struct oval_syschar_model *new_model, st
 
 void oval_sysdata_free(struct oval_sysdata *sysdata)
 {
-	if(sysdata->message!=NULL)free(sysdata->message);
+        if (sysdata == NULL)
+                return;
+
+	if(sysdata->message!=NULL)
+                oscap_free(sysdata->message);
 
 	oval_collection_free_items(sysdata->items, (oscap_destruct_func)oval_sysitem_free);
-	free(sysdata->id);
+	oscap_free(sysdata->id);
 
 	sysdata->id = NULL;
 	sysdata->items = NULL;
 	sysdata->message = NULL;
-	free(sysdata);
+	oscap_free(sysdata);
 }
 
 bool oval_sysdata_iterator_has_more(struct oval_sysdata_iterator *oc_sysdata)
@@ -128,6 +139,8 @@ void oval_sysdata_iterator_free(struct oval_sysdata_iterator
 
 oval_subtype_t oval_sysdata_get_subtype(struct oval_sysdata *sysdata)
 {
+        __attribute__nonnull__(sysdata);
+
 	return sysdata->subtype;
 }
 
@@ -135,7 +148,8 @@ void oval_sysdata_set_subtype(struct oval_sysdata *sysdata, oval_subtype_t subty
 {
 	if(sysdata && !oval_sysdata_is_locked(sysdata)){
 		sysdata->subtype = subtype;
-	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+	} else 
+                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
 char *oval_sysdata_get_id(struct oval_sysdata *data)
@@ -150,19 +164,24 @@ char *oval_sysdata_get_message(struct oval_sysdata *data)
 void oval_sysdata_set_message(struct oval_sysdata *data, char *message)
 {
 	if(data && !oval_sysdata_is_locked(data)){
-		if(data->message!=NULL)free(data->message);
-		data->message = message==NULL?NULL:strdup(message);
-	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+		if(data->message!=NULL)
+                        oscap_free(data->message);
+		data->message = (message==NULL) ? NULL : oscap_strdup(message);
+	} else 
+                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 oval_message_level_t oval_sysdata_get_message_level(struct oval_sysdata *data)
 {
+        __attribute__nonnull__(data);
+
 	return data->message_level;
 }
 void oval_sysdata_set_message_level(struct oval_sysdata *data, oval_message_level_t level)
 {
 	if(data && !oval_sysdata_is_locked(data)){
 		data->message_level = level;
-	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+	} else 
+                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 struct oval_sysitem_iterator *oval_sysdata_get_items(struct oval_sysdata *data)
 {
@@ -172,17 +191,21 @@ void oval_sysdata_add_item(struct oval_sysdata *data, struct oval_sysitem* item)
 {
 	if(data && !oval_sysdata_is_locked(data)){
 		oval_collection_add(data->items, item);
-	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+	} else 
+                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 oval_syschar_status_t oval_sysdata_get_status(struct oval_sysdata *data)
 {
+        __attribute__nonnull__(data);
+
 	return data->status;
 }
 void oval_sysdata_set_status(struct oval_sysdata *data, oval_syschar_status_t status)
 {
-	if(data && !oval_sysdata_is_locked(data)){
+	if (data && !oval_sysdata_is_locked(data)){
 		data->status = status;
-	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+	} else 
+                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
 static void _oval_sysdata_parse_subtag_consume(char* message, void* sysdata) {
@@ -200,28 +223,31 @@ static int _oval_sysdata_parse_subtag(
 	char *namespace = (char*) xmlTextReaderNamespaceUri(reader);
 	int return_code;
 	if(strcmp(NAMESPACE_OVALSYS,namespace)==0){
-		//This is a message
+		/*This is a message*/
 		oval_sysdata_set_message_level(sysdata, oval_message_level_parse(reader, "level", OVAL_MESSAGE_LEVEL_INFO));
 		return_code = oval_parser_text_value(reader, context, _oval_sysdata_parse_subtag_consume, sysdata);
 	}else{
-		//typedef *(oval_sysitem_consumer)(struct oval_sysitem *, void* client);
+		/*typedef *(oval_sysitem_consumer)(struct oval_sysitem *, void* client);*/
 		return_code = oval_sysitem_parse_tag(reader, context, _oval_sysdata_parse_subtag_item_consumer, sysdata);
 	}
-	free(tagname);
-	free(namespace);
+	oscap_free(tagname);
+	oscap_free(namespace);
 	return return_code;
 }
 
 int oval_sysdata_parse_tag(xmlTextReaderPtr reader,
 			       struct oval_parser_context *context)
 {
+        __attribute__nonnull__(context);
+
 	char *tagname = (char*) xmlTextReaderLocalName(reader);
 	oval_subtype_t subtype = oval_subtype_parse(reader);
 	int return_code;
 	if(subtype!=OVAL_SUBTYPE_UNKNOWN){
 		char *item_id = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "id");
 		struct oval_sysdata *sysdata = oval_sysdata_get_new(context->syschar_model, item_id);
-		free(item_id);item_id=NULL;
+		oscap_free(item_id);
+                item_id=NULL;
 		oval_subtype_t sub = oval_subtype_parse(reader);
 		oval_sysdata_set_subtype(sysdata, sub);
 		oval_syschar_status_t  status_enum
@@ -229,6 +255,7 @@ int oval_sysdata_parse_tag(xmlTextReaderPtr reader,
 		oval_sysdata_set_status(sysdata, status_enum);
 		return_code = oval_parser_parse_tag(reader, context, &_oval_sysdata_parse_subtag, sysdata);
 		if(DEBUG_OVAL_SYSDATA){
+                        /* TODO: -> oscap_dprintf */
 			int numchars = 0;
 			char message[2000];message[numchars]='\0';
 			numchars = numchars + sprintf(message+numchars,"oval_sysdata_parse_tag::");
@@ -243,25 +270,21 @@ int oval_sysdata_parse_tag(xmlTextReaderPtr reader,
 			int numItems;for(numItems=0;oval_sysitem_iterator_has_more(items);numItems++)oval_sysitem_iterator_next(items);
 			oval_sysitem_iterator_free(items);
 			numchars = numchars + sprintf(message+numchars,"\n    sysdata->items.length  = %d",numItems);
-			oval_parser_log_debug(context, message);
+			oscap_dprintf(message); /* TODO: make this code in one string ^ */
 		}
 	}else{
-		char message[200]; *message = 0;
 		char *tagnm     = (char*) xmlTextReaderName(reader);
 		char *namespace = (char*) xmlTextReaderNamespaceUri(reader);
-		sprintf(message, "oval_sysdata_parse_tag:: expecting <item> got <%s:%s>",
+		oscap_dprintf("WARNING: oval_sysdata_parse_tag:: expecting <item> got <%s:%s>",
 				namespace, tagnm);
-		oval_parser_log_warn(context, message);
 		return_code = oval_parser_skip_tag(reader, context);
-		free(tagnm);
-		free(namespace);
+		oscap_free(tagnm);
+		oscap_free(namespace);
 	}
 	if(return_code!=1){
-		char message[200]; *message = 0;
-		sprintf(message, "oval_sysdata_parse_tag:: return code is not 1::(%d)",return_code);
-		oval_parser_log_warn(context, message);
+		oscap_dprintf("WARNING: oval_sysdata_parse_tag:: return code is not 1::(%d)",return_code);
 	}
-	free(tagname);
+	oscap_free(tagname);
 
 	return return_code;
 }
@@ -288,20 +311,20 @@ void oval_sysdata_to_print(struct oval_sysdata *sysdata, char *indent,
 	struct oval_collection *items;
 	 */
 	{//id
-		printf("%sID            = %s\n", nxtindent, oval_sysdata_get_id(sysdata));
+		oscap_dprintf("%sID            = %s\n", nxtindent, oval_sysdata_get_id(sysdata));
 	}
 	{//subtype
-		printf("%sSUBTYPE       = %d\n", nxtindent, oval_sysdata_get_subtype(sysdata));
+		oscap_dprintf("%sSUBTYPE       = %d\n", nxtindent, oval_sysdata_get_subtype(sysdata));
 	}
 	{//status
-		printf("%sSTATUS        = %d\n", nxtindent, oval_sysdata_get_status(sysdata));
+		oscap_dprintf("%sSTATUS        = %d\n", nxtindent, oval_sysdata_get_status(sysdata));
 	}
 	oval_message_level_t level = oval_sysdata_get_message_level(sysdata);
 	{//level
-		printf("%sMESSAGE_LEVEL = %d\n", nxtindent, level);
+		oscap_dprintf("%sMESSAGE_LEVEL = %d\n", nxtindent, level);
 	}
 	if(level!=OVAL_MESSAGE_LEVEL_NONE){//message
-		printf("%sMESSAGE       = %s\n", nxtindent, oval_sysdata_get_message(sysdata));
+		oscap_dprintf("%sMESSAGE       = %s\n", nxtindent, oval_sysdata_get_message(sysdata));
 	}
 	{//items
 		struct oval_sysitem_iterator *items = oval_sysdata_get_items(sysdata);
@@ -358,8 +381,8 @@ void oval_sysdata_to_dom  (struct oval_sysdata *sysdata, xmlDoc *doc, xmlNode *t
 				oval_sysitem_iterator_free(items);
 			}
 		}else{
-			fprintf(stderr,"WARNING: Skipping XML generation of oval_sysdata with subtype OVAL_SUBTYPE_UNKNOWN\n"
-					"    %s(%d)\n", __FILE__, __LINE__);
+			oscap_dprintf("WARNING: Skipping XML generation of oval_sysdata with subtype OVAL_SUBTYPE_UNKNOWN"
+					"%s(%d)", __FILE__, __LINE__);
 		}
 	}
 }

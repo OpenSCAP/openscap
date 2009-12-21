@@ -996,7 +996,7 @@ void oval_definition_model_free(struct oval_definition_model * model);
 int  oval_definition_model_import(
 			struct oval_definition_model *model,
 			struct oscap_import_source *source,
-			oval_xml_error_handler error_handler, void *client);
+                        void *client);
 /**
  * Returns the appended @ref Oval_definition having the specified id.
  * IF the specified id does not resolve to an appended Oval_definition the method shall return NULL.
@@ -2545,6 +2545,10 @@ struct oval_value *oval_value_iterator_next    (struct oval_value_iterator *);
 /**
  * @ingroup oval_value_iterators
  */
+int oval_value_iterator_remaining(struct oval_value_iterator *iterator);
+/**
+ * @ingroup oval_value_iterators
+ */
 void               oval_value_iterator_free    (struct oval_value_iterator *);
 /**
  * Get OVAL value datatype.
@@ -3031,6 +3035,13 @@ void oval_component_free(struct oval_component *);
  * @ingroup oval_component_getters
  */
 oval_component_type_t oval_component_get_type(struct oval_component *);
+
+/**
+ * Set type of component @ref Oval_component->type
+ * @see oval_component_new
+ * @ingroup oval_component_setters
+ */
+void oval_component_set_type(struct oval_component *component, oval_component_type_t type);
 /**
  * Returns attribute @ref Oval_component_object->object.
  * IF component->type <> @ref OVAL_COMPONENT_OBJECTREF, this method shall return NULL.
@@ -3222,6 +3233,11 @@ struct oval_component *oval_component_iterator_next(struct oval_component_iterat
  * @ingroup oval_component_iterators
  */
 void  oval_component_iterator_free(struct oval_component_iterator *);
+/**
+ * How many remains.
+ * @ingroup oval_component_iterators
+ */
+int oval_component_iterator_remaining(struct oval_component_iterator *);
 
 /**
  * @ingroup Oval_message

@@ -5,8 +5,25 @@
 #include <string.h>
 #include <oval_probe.h>
 #include <oval_agent_api.h>
+#include "error.h"
 
-int _test_error_handler(struct oval_xml_error *error, void *null)
+int _test_error()
+{
+        if (oscap_err ()) {
+                oscap_errfamily_t f;
+                oscap_errcode_t   c;
+                const char       *d;
+
+                fprintf (stderr, "GOT error: %d, %d, %s.\n",
+                        f = oscap_err_family (),
+                        c = oscap_err_code (),
+                        d = oscap_err_desc ());
+        }
+                
+	return 0;
+}
+
+int _test_error_handler(struct oval_xml_error *error, void *null) /* <-- deprecated */
 {
         //ERROR HANDLING IS TODO
         return 1;
@@ -18,7 +35,8 @@ int main(int argc, char **argv)
 	/* definition model populate */
         struct oscap_import_source *def_in = oscap_import_source_new_file(argv[1], NULL);
         struct oval_definition_model *def_model = oval_definition_model_new();
-        oval_definition_model_import(def_model, def_in, &_test_error_handler, NULL);
+        if (oval_definition_model_import(def_model, def_in, NULL) < 1)
+            _test_error();
         oscap_import_source_free(def_in);
 
 	/* create syschar model */

@@ -17,6 +17,7 @@
 #include "oval_probe_impl.h"
 #include "oval_system_characteristics_impl.h"
 #include "probes/public/probe-api.h"
+#include "../common/util.h"
 
 /* KEEP THIS LIST SORTED! (by subtype) */
 static const oval_pdsc_t __ovalp_ltable[] = {
