@@ -182,11 +182,12 @@ struct oval_entity *oval_entity_clone
 	oval_entity_type_t type = oval_entity_get_type(old_entity);
 	oval_entity_set_type(new_entity, type);
 	struct oval_value *value = oval_entity_get_value(old_entity);
-	oval_entity_set_value(new_entity, oval_value_clone(value));
+	if(value) {
+		oval_entity_set_value(new_entity, oval_value_clone(value));
+	}
 	struct oval_variable *old_variable = oval_entity_get_variable(old_entity);
 	if(old_variable){
-		struct oval_variable *new_variable = oval_variable_clone(new_model, old_variable);
-		oval_entity_set_variable(new_entity, new_variable);
+		oval_entity_set_variable(new_entity, oval_variable_clone(new_model, old_variable));
 	}
 	oval_entity_varref_type_t reftype = oval_entity_get_varref_type(old_entity);
 	oval_entity_set_varref_type(new_entity, reftype);

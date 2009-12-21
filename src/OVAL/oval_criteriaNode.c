@@ -138,7 +138,7 @@ struct oval_criteria_node_iterator *oval_criteria_node_get_subnodes(struct
         __attribute__nonnull__(node);
 
 	struct oval_criteria_node_iterator *subnodes = NULL;
-	if(OVAL_NODETYPE_CRITERIA){
+	if(node->type==OVAL_NODETYPE_CRITERIA){
 		struct oval_criteria_node_CRITERIA *criteria =
 		    (struct oval_criteria_node_CRITERIA *)node;
 		subnodes = (struct oval_criteria_node_iterator *)
