@@ -12,6 +12,7 @@
 #include <string.h>
 #include <cpelang.h>
 #include <cpeuri.h>
+#include <oscap.h>
 
 // Strings representing operators.
 const char *CPE_OPER_STRS[] = { "", "AND", "OR", "" };
@@ -47,7 +48,16 @@ int main (int argc, char *argv[])
     if ((lang_model = cpe_lang_model_import(import_source)) == NULL)
       return 1;
 
-    printf("%s:", cpe_lang_model_get_ns_href(lang_model));
+    struct xml_metadata_iterator *xml_it = cpe_lang_model_get_xmlns(lang_model);
+    struct xml_metadata *xml;
+
+    while (xml_metadata_iterator_has_more(xml_it)) {
+        xml = xml_metadata_iterator_next(xml_it);
+        if (strcmp(cpe_lang_model_get_ns_prefix(lang_model), xml_metadata_get_namespace(xml)))
+            printf("%s:", xml_metadata_get_URI(xml));
+    }
+
+    //printf("%s:", cpe_lang_model_get_ns_href(lang_model));
     printf("%s\n", cpe_lang_model_get_ns_prefix(lang_model));
     platform_it = cpe_lang_model_get_platforms(lang_model);
     while (cpe_platform_iterator_has_more(platform_it)) {
@@ -83,10 +93,19 @@ int main (int argc, char *argv[])
       return 1;
     oscap_import_source_free(import_source);
     
-    if (strcmp(argv[4], "-")) 
-      cpe_lang_model_set_ns_prefix(lang_model, argv[4]);
-    if (strcmp(argv[5], "-")) 
-      cpe_lang_model_set_ns_href(lang_model, argv[5]);
+    struct xml_metadata *xml = xml_metadata_new();
+
+    char *tmp = malloc(sizeof(char) * (strlen(argv[4])+6));
+    if (strcmp(argv[4], "-"))  {
+        sprintf(tmp, "xmlns:%s", argv[4]);
+        xml_metadata_set_namespace(xml, tmp);
+        cpe_lang_model_set_ns_prefix(lang_model, argv[4]);
+        free(tmp);
+    }
+    if (strcmp(argv[5], "-")) {
+        xml_metadata_set_URI(xml, argv[5]);
+        cpe_lang_model_add_xml(lang_model, xml);
+    }
 
     for (i = 6; i < argc; i++) {
       if ((new_platform =  cpe_platform_new()) == NULL)
@@ -138,10 +157,19 @@ int main (int argc, char *argv[])
     if ((lang_model = cpe_lang_model_new()) == NULL)
       return 1;
     
-    if (strcmp(argv[4], "-")) 
-      cpe_lang_model_set_ns_prefix(lang_model, argv[4]);
-    if (strcmp(argv[5], "-")) 
-      cpe_lang_model_set_ns_href(lang_model, argv[5]);
+    struct xml_metadata *xml = xml_metadata_new();
+    char *tmp = malloc(sizeof(char) * (strlen(argv[4])+6));
+
+    if (strcmp(argv[4], "-"))  {
+        sprintf(tmp, "xmlns:%s", argv[4]);
+        xml_metadata_set_namespace(xml, tmp);
+        cpe_lang_model_set_ns_prefix(lang_model, argv[4]);
+        free(tmp);
+    }
+    if (strcmp(argv[5], "-"))
+        xml_metadata_set_URI(xml, argv[5]);
+
+    cpe_lang_model_add_xml(lang_model, xml);
     
     for (i = 6; i < argc; i++) {
       if ((new_platform =  cpe_platform_new()) == NULL)

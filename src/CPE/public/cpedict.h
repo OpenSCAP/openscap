@@ -355,7 +355,7 @@ const char * cpe_language_get_value(const struct cpe_language *item);
  * Get XML namespace from CPE dict model
  * @relates cpe_dict_model
  */
-/*struct xml_metadata_iterator * cpe_dict_model_get_xmlns(const struct cpe_dict_model * model);*/
+struct xml_metadata_iterator * cpe_dict_model_get_xmlns(const struct cpe_dict_model * model);
 
 /** @} */
 
@@ -546,7 +546,7 @@ bool cpe_edition_add_language(struct cpe_edition *edition, struct cpe_language *
  * Add XML namespace to CPE dict model
  * @relates cpe_dict_model
  */
-/*bool cpe_dict_model_add_xmlns(struct cpe_dict_model * model, struct xml_metadata * xml);*/
+bool cpe_dict_model_add_xml(struct cpe_dict_model * model, struct xml_metadata * xml);
 
 /*@}*/
 

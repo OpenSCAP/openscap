@@ -92,7 +92,7 @@ static int _ovalres_parser_process_node
 						(reader, context,
 							(oval_xml_tag_parser)_ovalres_parser_parse_system, NULL);
 				} else {
-                                        oscap_seterr(ERR_FAMILY_OSCAP, OSCAP_EXMLELEM, "Unknown element");
+                                        oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EXMLELEM, "Unknown element");
 					oscap_dprintf("WARNING: ovalres_parser_process_node: UNPROCESSED TAG <%s:%s>",
 							namespace, tagname);
 					return_code = oval_parser_skip_tag(reader, context);

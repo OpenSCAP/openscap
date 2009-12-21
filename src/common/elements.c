@@ -30,14 +30,34 @@
 
 #include "util.h"
 #include "list.h"
+#include "public/oscap.h"
 
-OSCAP_GETTER(const char*, xml_metadata, namespace)
-OSCAP_GETTER(const char*, xml_metadata, lang)
+//OSCAP_GETTER(const char*, xml_metadata, namespace)
+//OSCAP_GETTER(const char*, xml_metadata, URI)
+//OSCAP_GETTER(const char*, xml_metadata, lang)
+
+OSCAP_ACCESSOR_STRING(xml_metadata, namespace)
+OSCAP_ACCESSOR_STRING(xml_metadata, URI)
+OSCAP_ACCESSOR_STRING(xml_metadata, lang)
 OSCAP_ACCESSOR_STRING(oscap_title, content)
 OSCAP_ITERATOR_GEN(oscap_title)
 OSCAP_ITERATOR_GEN(xml_metadata)
 OSCAP_ITERATOR_REMOVE_F(xml_metadata)
 OSCAP_ITERATOR_REMOVE_F(oscap_title)
+
+struct xml_metadata * xml_metadata_new() {
+
+    struct xml_metadata * item;
+    item = oscap_alloc(sizeof(struct xml_metadata));
+    if (item == NULL)
+            return NULL;
+
+    item->namespace = NULL;
+    item->URI       = NULL;
+    item->lang      = NULL;
+
+    return item;
+}
 
 struct oscap_title * oscap_title_parse(xmlTextReaderPtr reader, const char * name) {
 

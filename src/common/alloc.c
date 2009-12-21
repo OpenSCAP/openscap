@@ -7,8 +7,8 @@ static void __oscap_err_check(void *m);
 static void __oscap_err_check(void *m) {
 
         if (m == NULL) {
-            if (errno != 0) oscap_seterr(ERR_FAMILY_GLIBC, errno, "Memory allocation failed.");
-            else oscap_seterr(ERR_FAMILY_OSCAP, OSCAP_EALLOC, "Memory allocation failed.");
+            if (errno != 0) oscap_seterr(OSCAP_EFAMILY_GLIBC, errno, "Memory allocation failed.");
+            else oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EALLOC, "Memory allocation failed.");
         }
 }
 

@@ -28,13 +28,13 @@ static struct oscap_err_t *oscap_err_new (oscap_errfamily_t family, oscap_errcod
         char *family_str;
 
         switch (family) {
-            case ERR_FAMILY_XML:
+            case OSCAP_EFAMILY_XML:
                 family_str = "XML";
                 break;
-            case ERR_FAMILY_GLIBC:
+            case OSCAP_EFAMILY_GLIBC:
                 family_str = "GLIBC";
                 break;
-            case ERR_FAMILY_OSCAP:
+            case OSCAP_EFAMILY_OSCAP:
                 family_str = "OSCAP";
                 break;
             default:
@@ -57,7 +57,7 @@ void  __oscap_setxmlerr (const char *file,
         (void) pthread_once (&__once, oscap_errkey_init);
 
         oscap_clearerr ();
-        err = oscap_err_new (ERR_FAMILY_XML, error->code, error->message, func, line, file);
+        err = oscap_err_new (OSCAP_EFAMILY_XML, error->code, error->message, func, line, file);
         (void)pthread_setspecific (__key, err);
 
         return;

@@ -7,12 +7,12 @@
 #include "public/error.h"
 
 #define oscap_assert_errno(cond, etype, desc) \
-	{ if (!(cond)) { if ((errno)) oscap_seterr(ERR_FAMILY_GLIBC, errno, desc); \
-                         else oscap_seterr(ERR_FAMILY_OSCAP, (etype), desc); } }
+	{ if (!(cond)) { if ((errno)) oscap_seterr(OSCAP_EFAMILY_GLIBC, errno, desc); \
+                         else oscap_seterr(OSCAP_EFAMILY_OSCAP, (etype), desc); } }
 
 #define oscap_seterr_errno(etype, desc) \
-	{ if ((errno)) oscap_seterr(ERR_FAMILY_GLIBC, errno, desc); \
-            else oscap_seterr(ERR_FAMILY_OSCAP, (etype), desc); }
+	{ if ((errno)) oscap_seterr(OSCAP_EFAMILY_GLIBC, errno, desc); \
+            else oscap_seterr(OSCAP_EFAMILY_OSCAP, (etype), desc); }
 
 #define oscap_setxmlerr(error) __oscap_setxmlerr (__FILE__, __LINE__, __PRETTY_FUNCTION__, error)
 

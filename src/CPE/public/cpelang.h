@@ -131,12 +131,6 @@ struct cpe_name * cpe_testexpr_get_meta_cpe(const struct cpe_testexpr *item);
 const struct cpe_testexpr * cpe_testexpr_get_next(const struct cpe_testexpr * expr);
 
 /**
- * cpe_lang_model function to get namespace href
- * @relates cpe_lang_model
- */
-const char * cpe_lang_model_get_ns_href(const struct cpe_lang_model *item);
-
-/**
  * cpe_lang_model function to get namespace prefix
  * @relates cpe_lang_model
  */
@@ -153,6 +147,12 @@ struct cpe_platform_iterator * cpe_lang_model_get_platforms(const struct cpe_lan
  * @relates cpe_lang_model
  */
 struct cpe_platform * cpe_lang_model_get_item(const struct cpe_lang_model *item, const char *key);
+
+/**
+ * cpe_lang_model function to get xmlns attribute
+ * @relates cpe_lang_model
+ */
+struct xml_metadata_iterator * cpe_lang_model_get_xmlns(const struct cpe_lang_model *item);
 
 /**
  * cpe_platform functions to get id
@@ -194,6 +194,11 @@ const struct cpe_testexpr * cpe_platform_get_expr(const struct cpe_platform *ite
  * @relates cpe_lang_model
  */
 bool cpe_lang_model_add_platform(struct cpe_lang_model *lang, struct cpe_platform *platform);
+/**
+ * Add xml metadata to CPE lang model
+ * @relates cpe_lang_model
+ */
+bool cpe_lang_model_add_xml(struct cpe_lang_model *lang, struct xml_metadata *xml);
 /**
  * Add title to platform
  * @relates cpe_platform
@@ -253,11 +258,6 @@ struct cpe_platform * cpe_platform_new(void);
  * @{
  * */
 
-/**
- * Set ns_href to CPE lang model
- * @relates cpe_lang_model
- */
-bool cpe_lang_model_set_ns_href(struct cpe_lang_model * model, const char *new_href);
 /**
  * Set ns_prefix to CPE lang model
  * @relates cpe_lang_model

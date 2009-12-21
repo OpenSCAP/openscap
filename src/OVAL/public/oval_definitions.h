@@ -1212,6 +1212,7 @@ struct oval_string_iterator *oval_affected_get_products (struct oval_affected *)
  *			- test -- initialized to NULL
  *		- If type == @ref OVAL_NODETYPE_EXTENDDEF (@ref Oval_extends):
  *			- definition -- initialized to NULL
+ * Careful ! Calling this function with inappropriate number of arguments will cause undefined behavior !
  *
  * If the type parameter is entered as @ref OVAL_NODETYPE_UNKNOWN, no instance shall be constructed
  * and the method shall return NULL.

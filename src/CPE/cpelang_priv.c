@@ -56,13 +56,11 @@ OSCAP_GETTER(cpe_lang_oper_t, cpe_testexpr, oper)
 struct cpe_lang_model {
         struct xml_metadata xml;
         struct oscap_list * xmlns;
-        char *ns_href;
         char *ns_prefix;
 	struct oscap_list* platforms;   // list of items
 	struct oscap_htable* item;  // item by ID
 };
 OSCAP_IGETINS(xml_metadata, cpe_lang_model, xmlns, xml)
-OSCAP_ACCESSOR_STRING(cpe_lang_model, ns_href)
 OSCAP_ACCESSOR_STRING(cpe_lang_model, ns_prefix)
 OSCAP_IGETTER_GEN(cpe_platform, cpe_lang_model, platforms)
 OSCAP_HGETTER_STRUCT(cpe_platform, cpe_lang_model, item)
@@ -211,7 +209,6 @@ struct cpe_lang_model * cpe_lang_model_new() {
 	ret->platforms      = oscap_list_new();
 	ret->item           = oscap_htable_new();
         ret->xmlns          = oscap_list_new();
-        ret->ns_href        = NULL;
         ret->ns_prefix      = NULL;
         ret->xml.lang       = NULL;
         ret->xml.namespace  = NULL;
@@ -294,7 +291,7 @@ struct cpe_lang_model * cpe_lang_model_parse_xml(const struct oscap_import_sourc
             xmlTextReaderNextNode(reader);
             ret = cpe_lang_model_parse(reader);
         } else {
-            oscap_seterr(ERR_FAMILY_GLIBC, errno, "Unable to open file.");
+            oscap_seterr(OSCAP_EFAMILY_GLIBC, errno, "Unable to open file.");
         }
         xmlFreeTextReader(reader);
 
@@ -387,7 +384,7 @@ struct cpe_platform * cpe_platform_parse(xmlTextReaderPtr reader) {
                     xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
                         ret->expr = *(cpe_testexpr_parse(reader));
             } else  if (xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT)
-                    oscap_seterr(ERR_FAMILY_OSCAP, OSCAP_EXMLELEM, "Unknown XML element in platform");
+                    oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EXMLELEM, "Unknown XML element in platform");
             // get the next node
             xmlTextReaderNextNode(reader);
         }
@@ -444,7 +441,7 @@ struct cpe_testexpr * cpe_testexpr_parse(xmlTextReaderPtr reader) {
 	        xmlFree(temp);
         }
         else if (xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT)
-                oscap_seterr(ERR_FAMILY_OSCAP, OSCAP_EXMLELEM, "Unknown XML element in test expression");
+                oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EXMLELEM, "Unknown XML element in test expression");
 
         // go to next node
         // skip to next node
@@ -480,7 +477,7 @@ struct cpe_testexpr * cpe_testexpr_parse(xmlTextReaderPtr reader) {
                                 ret->meta.expr[elem_cnt-1].xml.URI = NULL;
                 } else
                     if (xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
-                        oscap_seterr(ERR_FAMILY_OSCAP, OSCAP_EXMLELEM, "Unknown XML element in test expression");
+                        oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EXMLELEM, "Unknown XML element in test expression");
                 }
                 xmlTextReaderNextNode(reader);
         }
@@ -509,7 +506,7 @@ static char * parse_text_element(xmlTextReaderPtr reader, char *name) {
                     string = (char *)xmlTextReaderValue(reader);
                     break;
             default:
-                    oscap_seterr(ERR_FAMILY_OSCAP, OSCAP_EXMLNODETYPE, "Unknown XML element in platform");
+                    oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EXMLNODETYPE, "Unknown XML element in platform");
                     break;
         }
     }
@@ -559,7 +556,7 @@ void cpe_lang_export(const struct cpe_lang_model * spec, xmlTextWriterPtr writer
         __attribute__nonnull__(spec);
         __attribute__nonnull__(writer);
 
-        xmlTextWriterStartElementNS(writer, BAD_CAST spec->ns_prefix, TAG_PLATFORM_SPEC_STR, BAD_CAST spec->ns_href);
+        xmlTextWriterStartElementNS(writer, BAD_CAST spec->ns_prefix, TAG_PLATFORM_SPEC_STR, BAD_CAST NULL);
 
         OSCAP_FOREACH (xml_metadata, xml, cpe_lang_model_get_xmlns(spec),
                 if (xml->URI != NULL) xmlTextWriterWriteAttribute(writer, BAD_CAST xml->namespace, BAD_CAST xml->URI);
@@ -619,7 +616,7 @@ void cpe_testexpr_export(struct cpe_testexpr expr, xmlTextWriterPtr writer) {
                 xmlTextWriterWriteAttribute(writer, ATTR_OPERATOR_STR, VAL_AND_STR);
                 xmlTextWriterWriteAttribute(writer, ATTR_NEGATE_STR, VAL_TRUE_STR);
         } else {
-                oscap_seterr(ERR_FAMILY_OSCAP, OSCAP_ECPEINVOP, "Invalid operation in CPE Language expression");
+                oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_ECPEINVOP, "Invalid operation in CPE Language expression");
                 return;
         }
 

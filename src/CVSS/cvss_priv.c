@@ -310,7 +310,7 @@ struct cvss_entry * cvss_entry_parse(xmlTextReaderPtr reader) {
                                     ret->generated = (char *) xmlTextReaderReadString(reader);
                     } else
                         if (xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
-                            oscap_seterr(ERR_FAMILY_OSCAP, OSCAP_EXMLELEM, "Unknown XML element in CVSS element");
+                            oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EXMLELEM, "Unknown XML element in CVSS element");
                     }
 
                     xmlTextReaderRead(reader);

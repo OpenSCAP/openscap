@@ -76,7 +76,7 @@ static int _ovalsys_parser_process_node(xmlTextReaderPtr reader,
 				}else if (is_ovalsys && (strcmp(tagname, "system_data") == 0)) {
 					return_code = oval_parser_parse_tag(reader, context, &_ovalsys_parser_process_node_consume_system_data, NULL);
 				} else {
-                                        oscap_seterr(ERR_FAMILY_OSCAP, OSCAP_EXMLELEM, "Unknown element");
+                                        oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EXMLELEM, "Unknown element");
 					oscap_dprintf("WARNING: ovalsys_parser: UNPROCESSED TAG <%s:%s>",
 							namespace, tagname);
 					return_code =
@@ -121,7 +121,7 @@ int ovalsys_parser_parse
 	if(is_ovalsys && (strcmp(tagname,"oval_system_characteristics")==0)){
 		return_code = _ovalsys_parser_process_node(reader, &context);
 	}else{
-                oscap_seterr(ERR_FAMILY_OSCAP, OSCAP_EXMLELEM, "Missing expected oval_system_characteristics element");
+                oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EXMLELEM, "Missing expected oval_system_characteristics element");
 		oscap_dprintf("WARNING: ovalsys_parser: UNPROCESSED TAG <%s:%s>",
 				namespace, tagname);
 		oval_parser_skip_tag(reader,&context);

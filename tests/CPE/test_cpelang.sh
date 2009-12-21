@@ -260,10 +260,10 @@ ret_val=$?
 report_result "test_cpelang_export_new_namespace" $ret_val
 result=$[$result+$ret_val]
 
-test_cpelang_cleanup 
-ret_val=$? 
-report_result "test_cpelang_cleanup" $ret_val
-result=$[$result+$ret_val]
+#test_cpelang_cleanup 
+#ret_val=$? 
+#report_result "test_cpelang_cleanup" $ret_val
+#result=$[$result+$ret_val]
 
 echo "--------------------------------------------------"
 echo "See ${log} (in tests dir)"

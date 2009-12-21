@@ -32,16 +32,6 @@
 #include <stdbool.h>
 #include "public/oscap.h"
 
-/* XML Metadata. Here should be every general attribute
- * that can be present in every xml element such as xml:lang
- * or xml namespace.
- * */
-struct xml_metadata {
-        char *namespace;    ///< XMLNS (namespace) prefix
-        char *URI;          ///< XMLNS (namespace) URI
-        char *lang;         ///< XML lang
-};
-
 /**
  * */
 struct oscap_title {
@@ -54,35 +44,5 @@ void oscap_title_export(const struct oscap_title * title, xmlTextWriterPtr write
 void oscap_title_free(struct oscap_title * title);
 
 const char* oscap_import_source_get_name(const struct oscap_import_source * src);
-
-const char * xml_metadata_get_namespace(const struct xml_metadata * xml);
-
-const char * xml_metadata_get_lang(const struct xml_metadata * xml);
- 
-void xml_metadata_free(struct xml_metadata * xml);
-
-/** @struct xml_metadata_iterator
- * Iterator over XML metadata.
- * @see oscap_iterator
- * @relates xml_metadata
- */
-struct xml_metadata_iterator;
-/**
- * @relates xml_metadata_iterator
- */
-struct xml_metadata * xml_metadata_iterator_next(struct xml_metadata_iterator * it);
-/**
- * @relates xml_metadata_iterator
- */
-bool xml_metadata_iterator_has_more(struct xml_metadata_iterator * it);
-/**
- * @relates xml_metadata_iterator
- */
-void xml_metadata_iterator_free(struct xml_metadata_iterator * it);
-
-/**
- * @relates xml_metadata_iterator
- */
-void xml_metadata_iterator_remove(struct xml_metadata_iterator * it);
 
 #endif

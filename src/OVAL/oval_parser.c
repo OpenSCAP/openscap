@@ -77,7 +77,7 @@ static int oval_parser_log
 	xml_error.severity    = severity;
 	xml_error.system_id   = (char*) xmlTextReaderBaseUri(reader);
 	xml_error.line_number = xmlTextReaderGetParserLineNumber(reader);*/
-        oscap_seterr(ERR_FAMILY_OSCAP, OSCAP_EUNKNOWN, "Deprecated error handler called !");
+        oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EUNKNOWN, "Deprecated error handler called !");
 	/*if(xml_error.system_id!=NULL)
                 oscap_free(xml_error.system_id);*/
 	return 0;
@@ -210,7 +210,7 @@ int ovaldef_parse_node(xmlTextReaderPtr reader,
 					    oval_parser_skip_tag(reader,
 								 context);
 				} else {
-                                        oscap_seterr(ERR_FAMILY_OSCAP, OSCAP_EXMLELEM, "Unknown xml element");
+                                        oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EXMLELEM, "Unknown xml element");
 					oscap_dprintf("WARNING: oval_parser: UNPROCESSED TAG <%s:%s>",namespace, tagname);
 					return_code =
 					    oval_parser_skip_tag(reader,

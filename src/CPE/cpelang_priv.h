@@ -48,6 +48,7 @@
 #include "../common/util.h"
 #include "../common/list.h"
 #include "../common/elements.h"
+#include "../common/public/oscap.h"
 
 /** 
  * @cond INTERNAL

@@ -663,7 +663,7 @@ struct cpe_dict_model * cpe_dict_model_parse_xml(const struct oscap_import_sourc
         xmlTextReaderNextNode(reader);
         dict = cpe_dict_model_parse(reader);
     } else {
-            oscap_seterr(ERR_FAMILY_GLIBC, errno, "Unable to open file.");
+            oscap_seterr(OSCAP_EFAMILY_GLIBC, errno, "Unable to open file.");
     }
     xmlFreeTextReader(reader);
     return dict;
@@ -739,7 +739,7 @@ struct cpe_dict_model * cpe_dict_model_parse(xmlTextReaderPtr reader) {
                         // we just need to jump over this element
             } else  
                 if (xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
-                    oscap_seterr(ERR_FAMILY_OSCAP, OSCAP_EXMLELEM, "Unknown XML element in CPE dictionary");
+                    oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EXMLELEM, "Unknown XML element in CPE dictionary");
             }
             // get the next node
             next_ret = xmlTextReaderNextElement(reader);
@@ -791,7 +791,7 @@ struct cpe_generator * cpe_generator_parse(xmlTextReaderPtr reader) {
 			            ret->timestamp = (char *) xmlTextReaderReadString(reader);
                         } else 
                             if (xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
-                            oscap_seterr(ERR_FAMILY_OSCAP, OSCAP_EXMLELEM, "Unknown XML element in CPE dictionary generator");
+                            oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EXMLELEM, "Unknown XML element in CPE dictionary generator");
                         }
 
                         // element saved. Let's jump on the very next one node (not element, because we need to 
@@ -801,7 +801,7 @@ struct cpe_generator * cpe_generator_parse(xmlTextReaderPtr reader) {
                 }
                 // we found another element generator which is not "end element" ? Horrible !
                 if (xmlTextReaderNodeType(reader) != XML_READER_TYPE_END_ELEMENT) {
-                        oscap_seterr(ERR_FAMILY_OSCAP, OSCAP_EXMLNOELEMENT, "Found new node, but ending element expected");
+                        oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EXMLNOELEMENT, "Found new node, but ending element expected");
                         return NULL;
                 }
         }

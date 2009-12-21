@@ -252,6 +252,12 @@ bool cve_entry_add_summary(struct cve_entry *entry, struct cve_summary *new_summ
 /// @relates cve_entry
 bool cve_entry_add_configuration(struct cve_entry *entry, struct cve_configuration *new_configuration);
 
+/**
+ * Add XML namespace to CVE model
+ * @relates cve_model
+ */
+bool cve_model_add_xml(struct cve_model * model, struct xml_metadata * xml);
+
 /*@}*/
 
 /**

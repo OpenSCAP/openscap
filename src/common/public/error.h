@@ -11,17 +11,17 @@ typedef uint16_t oscap_errcode_t;
 /* Error level (as defined in XML error handler library */
 /* Maybe for future use                                 */
 /********************************************************/
-#define ERR_LEVEL_NONE      0   /* None */
-#define ERR_LEVEL_WARNING   1   /* A simple warning */
-#define ERR_LEVEL_ERROR     2   /* A recoverable error */
-#define ERR_LEVEL_FATAL     3   /* A fatal error */
+#define OSCAP_ELEVEL_NONE      0   /* None */
+#define OSCAP_ELEVEL_WARNING   1   /* A simple warning */
+#define OSCAP_ELEVEL_ERROR     2   /* A recoverable error */
+#define OSCAP_ELEVEL_FATAL     3   /* A fatal error */
 
 /* For oscap error family there are : */
 /**************************************/
-#define ERR_FAMILY_NONE     0   /* None */
-#define ERR_FAMILY_GLIBC    1   /* Errno errors */
-#define ERR_FAMILY_XML      2   /* Libxml - xmlerror errors */
-#define ERR_FAMILY_OSCAP    3   /* OSCAP errors */
+#define OSCAP_EFAMILY_NONE     0   /* None */
+#define OSCAP_EFAMILY_GLIBC    1   /* Errno errors */
+#define OSCAP_EFAMILY_XML      2   /* Libxml - xmlerror errors */
+#define OSCAP_EFAMILY_OSCAP    3   /* OSCAP errors */
 
 /* For oscap error of family */
 /*****************************/
