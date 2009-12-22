@@ -249,13 +249,17 @@ struct oval_criteria_node *oval_criteria_node_clone
 		oval_criteria_node_iterator_free(subnodes);
 	}break;
 	case OVAL_NODETYPE_EXTENDDEF:{
+		struct oval_definition *new_definition = NULL;
 		struct oval_definition *old_definition = oval_criteria_node_get_definition(old_node);
-		struct oval_definition *new_definition = oval_definition_clone(new_model, old_definition);
+		if (old_definition)
+			new_definition = oval_definition_clone(new_model, old_definition);
 		oval_criteria_node_set_definition(new_node, new_definition);
 	}break;
 	case OVAL_NODETYPE_CRITERION:{
+		struct oval_test *new_test = NULL;
 		struct oval_test *old_test = oval_criteria_node_get_test(old_node);
-		struct oval_test *new_test = oval_test_clone(new_model, old_test);
+		if (old_test)
+			new_test = oval_test_clone(new_model, old_test);
 		oval_criteria_node_set_test(new_node, new_test);
 	}break;
 	default: /*NOOP -> this will never happen, because oval_criteria_node_new will return NULL 
