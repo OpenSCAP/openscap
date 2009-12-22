@@ -26,7 +26,7 @@ function test_cpedict_setup {
 function test_cpedict_smoke {
     local ret_val=0;
 
-    ${srcdir}/test_cpedict --smoke-test
+    ./test_cpedict --smoke-test
     ret_val=$?
 
     return $ret_val
@@ -35,7 +35,7 @@ function test_cpedict_smoke {
 function test_cpedict_import_utf8_xml {
     local ret_val=0;
 
-    ${srcdir}/test_cpedict --list-cpe-names ${srcdir}/CPE/dict.xml "UTF-8" > \
+    ./test_cpedict --list-cpe-names ${srcdir}/CPE/dict.xml "UTF-8" > \
 	test_cpedict_tc02_01.out
     ret_val=$?
 
@@ -62,7 +62,7 @@ function test_cpedict_import_cp1250_xml {
 function test_cpedict_import_damaged_xml {
     local ret_val=0;
 
-    ${srcdir}/test_cpedict --list-cpe-names ${srcdir}/CPE/dict-damaged.xml "UTF-8" >&2
+    ./test_cpedict --list-cpe-names ${srcdir}/CPE/dict-damaged.xml "UTF-8" >&2
     [ $? -eq 0 ] && ret_val=1
 
     return $ret_val
@@ -72,7 +72,7 @@ function test_cpedict_match_existing_cpe {
     local ret_val=0;
 
     for URI in ${CPE_URIS[@]}; do
-	${srcdir}/test_cpedict --match ${srcdir}/CPE/dict.xml "UTF-8" "$URI" >&2
+	./test_cpedict --match ${srcdir}/CPE/dict.xml "UTF-8" "$URI" >&2
 	ret_val=$[$ret_val + $?]
     done
 
@@ -82,7 +82,7 @@ function test_cpedict_match_existing_cpe {
 function test_cpedict_match_non_existing_cpe {
     local ret_val=0;
 
-    ${srcdir}/test_cpedict --match ${srcdir}/CPE/dict.xml "UTF-8" \
+    ./test_cpedict --match ${srcdir}/CPE/dict.xml "UTF-8" \
 	"cpe:/a:3com:3c16115-usNOT_IN_THE_DICTIONARY" >&2
     [ $? -eq 0 ] && ret_val=1
 
@@ -92,11 +92,11 @@ function test_cpedict_match_non_existing_cpe {
 function test_cpedict_export_xml {
     local ret_val=0;
 
-    ${srcdir}/test_cpedict --export ${srcdir}/CPE/dict.xml "UTF-8" \
-	${srcdir}/dict.xml.exported "UTF-8"
+    ./test_cpedict --export ${srcdir}/CPE/dict.xml "UTF-8" \
+	dict.xml.exported "UTF-8"
 
-    if [ -e ${srcdir}/dict.xml.exported ]; then
-	xml_cmp ${srcdir}/CPE/dict.xml ${srcdir}/dict.xml.exported >&2 
+    if [ -e dict.xml.exported ]; then
+	xml_cmp ${srcdir}/CPE/dict.xml dict.xml.exported >&2 
 	ret_val=$?
     else
 	ret_val=1
@@ -108,7 +108,7 @@ function test_cpedict_export_xml {
 function test_cpedict_remove_cpe {
     local ret_val=0;
 
-    ${srcdir}/test_cpedict --remove ${srcdir}/CPE/dict.xml "UTF-8" "cpe:/a:addsoft" \
+    ./test_cpedict --remove ${srcdir}/CPE/dict.xml "UTF-8" "cpe:/a:addsoft" \
 	| grep -q "addsoft" >&2
 
     [ $? -eq 0 ] && ret_val=1
@@ -120,7 +120,7 @@ function test_cpedict_remove_cpe {
 function test_cpedict_cleanup { 
     local ret_val=0;
 
-    rm ${srcdir}/dict.xml.exported
+    rm dict.xml.exported
 
     ret_val=$?
 
@@ -133,7 +133,7 @@ echo ""
 echo "--------------------------------------------------"
 
 result=0
-log=${srcdir}/test_cpedict.log
+log=test_cpedict.log
 
 exec 2>$log
 

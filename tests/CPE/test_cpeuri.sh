@@ -27,7 +27,7 @@ function test_cpeuri_setup {
 function test_cpeuri_smoke {
     local ret_val=0
 
-    ${srcdir}/test_cpeuri --smoke-test
+    ./test_cpeuri --smoke-test
     ret_val=$?
 
     return $ret_val
@@ -37,7 +37,7 @@ function test_cpeuri_parse {
     local ret_val=0
 
     for URI in ${CPE_URIS[@]}; do
-	${srcdir}/test_cpeuri --parsing  $URI parsing.out.0 > parsing.out.1 
+	./test_cpeuri --parsing  $URI parsing.out.0 > parsing.out.1 
 	if [ $? -eq 0 ]; then
 	    if [ ! "`cat  parsing.out.0`X" = "${URI}X" ]; then
 		ret_val=1
@@ -53,19 +53,19 @@ function test_cpeuri_create {
     local ret_val=0
 
     for URI in ${CPE_URIS[@]}; do
-	${srcdir}/test_cpeuri --parsing  $URI parsing.out.0 > parsing.out.1 
+	./test_cpeuri --parsing  $URI parsing.out.0 > parsing.out.1 
 	if [ $? -eq 0 ]; then
 	    if [ "`cat  parsing.out.0`X" = "${URI}X" ]; then
 		sed 's/(null)//g' parsing.out.1 > parsing.out
 		CPE=(`cat parsing.out | sed 's/^\s*//g' | tr '\n' ' '`)
 		
-		${srcdir}/test_cpeuri --creation  "${CPE[0]}" \
-		                                  "${CPE[1]}" \
-                                                  "${CPE[2]}" \
-                                                  "${CPE[3]}" \
-                                                  "${CPE[4]}" \
-                                                  "${CPE[5]}" \
-                                                  "${CPE[6]}" > creation.out
+		./test_cpeuri --creation  "${CPE[0]}" \
+		                          "${CPE[1]}" \
+                                          "${CPE[2]}" \
+                                          "${CPE[3]}" \
+                                          "${CPE[4]}" \
+                                          "${CPE[5]}" \
+                                          "${CPE[6]}" > creation.out
  		([ $? -eq 0 ] && [ "${URI}X" = "`cat creation.out`X" ]) || ret_val=1; 
 	    else
 		ret_val=1
@@ -81,40 +81,40 @@ function test_cpeuri_match {
     local ret_val=0
 
     for URI in ${CPE_URIS[@]}; do
-	${srcdir}/test_cpeuri --parsing  $URI parsing.out.0 > parsing.out.1 
+	./test_cpeuri --parsing  $URI parsing.out.0 > parsing.out.1 
 	if [ $? -eq 0 ]; then
 	    if [ `cat  parsing.out.0` = "$URI" ]; then
 		sed 's/(null)//g' parsing.out.1 > parsing.out
 		CPE=(`cat parsing.out | sed 's/^\s*//g' | tr '\n' ' '`)
 				
-		${srcdir}/test_cpeuri --matching $URI " " > matching.out
+		./test_cpeuri --matching $URI " " > matching.out
 
 		([ $? -eq 0 ] && grep -q "Mismatch" matching.out) || ret_val=1;
 		
-		${srcdir}/test_cpeuri --matching $URI "cpe:/:::::::" > matching.out
+		./test_cpeuri --matching $URI "cpe:/:::::::" > matching.out
 
 		([ $? -eq 0 ] && grep -q "Mismatch" matching.out) || ret_val=1;
 		
-		${srcdir}/test_cpeuri --matching $URI "cpe:/:foo" > matching.out
+		./test_cpeuri --matching $URI "cpe:/:foo" > matching.out
 
 		([ $? -eq 0 ] && grep -q "Mismatch" matching.out) || ret_val=1;
 		
-		${srcdir}/test_cpeuri --matching $URI "cpe:/foo" > matching.out
+		./test_cpeuri --matching $URI "cpe:/foo" > matching.out
 
 		([ $? -eq 0 ] && grep -q "Mismatch" matching.out) || ret_val=1;
 		
 		OTHER_URIS=(`echo ${CPE_URIS[@]} | tr ' ' '\n' | grep -v $URI | \
 		    tr '\n' ' '`)
 
-		${srcdir}/test_cpeuri --matching $URI ${OTHER_URIS[@]} > matching.out
+		./test_cpeuri --matching $URI ${OTHER_URIS[@]} > matching.out
 
 		([ $? -eq 0 ] && grep -q "Mismatch" matching.out) || ret_val=1
 		
-		${srcdir}/test_cpeuri --matching $URI $URI > matching.out
+		./test_cpeuri --matching $URI $URI > matching.out
 
 		([ $? -eq 0 ] && grep -q "Match" matching.out) || ret_val=1;
 		
-		${srcdir}/test_cpeuri --matching $URI ${CPE_URIS[@]} > matching.out
+		./test_cpeuri --matching $URI ${CPE_URIS[@]} > matching.out
 
 		([ $? -eq 0 ] && grep -q "Match" matching.out) || ret_val=1;
 	    else
@@ -143,7 +143,7 @@ echo ""
 echo "--------------------------------------------------"
 
 result=0
-log=${srcdir}/test_cpeuri.log
+log=test_cpeuri.log
 
 exec 2>$log
 

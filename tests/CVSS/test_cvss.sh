@@ -194,7 +194,7 @@ echo ""
 echo "--------------------------------------------------"
 
 result=0
-log=${srcdir}/test_cvss.log
+log=test_cvss.log
 
 exec 2>$log
 

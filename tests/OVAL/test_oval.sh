@@ -25,8 +25,8 @@ function test_oval_setup {
 function test_oval_definition {
     local ret_val=0;
 
-    ${srcdir}/test_oval "${srcdir}/OVAL/scap-rhel5-oval.xml" \
-	> ${srcdir}/test_oval_tc01.out
+    ./test_oval "${srcdir}/OVAL/scap-rhel5-oval.xml" \
+	> test_oval_tc01.out
     ret_val=$?
     
     return $ret_val
@@ -35,9 +35,9 @@ function test_oval_definition {
 function test_oval_syschar {
     local ret_val=0;
 
-    ${srcdir}/test_syschar "${srcdir}/OVAL/composed-oval.xml" \
+    ./test_syschar "${srcdir}/OVAL/composed-oval.xml" \
 	           "${srcdir}/OVAL/system-characteristics.xml" \
-	           > ${srcdir}/test_oval_tc02.out
+	           > test_oval_tc02.out
     ret_val=$?
     
     return $ret_val
@@ -46,9 +46,9 @@ function test_oval_syschar {
 function test_oval_results {
     local ret_val=0;
 
-    ${srcdir}/test_results "${srcdir}/OVAL/scap-rhel5-oval.xml" \
+    ./test_results "${srcdir}/OVAL/scap-rhel5-oval.xml" \
 	                   "${srcdir}/OVAL/results.xml" \
-	                   > ${srcdir}/test_oval_tc03.out
+	                   > test_oval_tc03.out
     ret_val=$?
     
     return $ret_val
@@ -58,9 +58,9 @@ function test_oval_results {
 function test_oval_cleanup {     
     local ret_val=0;    
 
-    rm -f ${srcdir}/test_oval_tc01.out \
-	  ${srcdir}/test_oval_tc02.out \
-	  ${srcdir}/test_oval_tc03.out
+    rm -f test_oval_tc01.out \
+	  test_oval_tc02.out \
+	  test_oval_tc03.out
 
     return $ret_val
 }
@@ -71,7 +71,7 @@ echo ""
 echo "--------------------------------------------------"
 
 result=0
-log=${srcdir}/test_oval.log
+log=test_oval.log
 
 exec 2>$log
 

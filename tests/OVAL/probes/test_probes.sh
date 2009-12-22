@@ -37,7 +37,7 @@ function test_probes_import {
     )
 
     for F in "${FILES[@]}"; do
-	${srcdir}/test_probes "${srcdir}/OVAL/${F}" > ${srcdir}/test_probes_tc01.out
+	./test_probes "${srcdir}/OVAL/${F}" > test_probes_tc01.out
 	ret_val=$[$ret_val+$?]
     done
 
@@ -48,21 +48,21 @@ function test_probes_import {
 function test_probes_get_system_chars {
     local ret_val=0
    
-    ${srcdir}/test_sysinfo 2>&1 > ${srcdir}/test_probes_tc02.out
+    ./test_sysinfo 2>&1 > test_probes_tc02.out
     ret_val=$?
         
-    [ `du ${srcdir}/test_probes_tc02.out | awk '{print $1}'` -eq 0 ] && ret_val=1
+    [ `du test_probes_tc02.out | awk '{print $1}'` -eq 0 ] && ret_val=1
     
     if [ $ret_val -eq 0 ]; then
-	grep -q "os_name: `uname`" ${srcdir}/test_probes_tc02.out || ret_val=1
-	grep -q "os_version: `uname -v`" ${srcdir}/test_probes_tc02.out || ret_val=1
-	grep -q "os_architecture: `uname -m`" ${srcdir}/test_probes_tc02.out || ret_val=1
-	grep -q "primary_host_name: `uname -n`" ${srcdir}/test_probes_tc02.out || ret_val=1
-	for i in `sed -n '6,$p' ${srcdir}/test_probes_tc02.out | awk '{print $1}'`; do
+	grep -q "os_name: `uname`" test_probes_tc02.out || ret_val=1
+	grep -q "os_version: `uname -v`" test_probes_tc02.out || ret_val=1
+	grep -q "os_architecture: `uname -m`" test_probes_tc02.out || ret_val=1
+	grep -q "primary_host_name: `uname -n`" test_probes_tc02.out || ret_val=1
+	for i in `sed -n '6,$p' test_probes_tc02.out | awk '{print $1}'`; do
 	    IPV4=`ifconfig $i | sed 's/  /\n/g' | grep "inet " | sed 's/addr://' | awk '{print $2}' | sed 's/\/.*$//'`
 	    IPV6=`ifconfig $i | sed 's/  /\n/g' | grep "inet6 " | sed 's/addr://' | awk '{print $2}' | sed 's/\/.*$//'`
-	    grep "$IPV4" ${srcdir}/test_probes_tc02.out | grep -q $i || ret_val=1
-	    grep "$IPV6" ${srcdir}/test_probes_tc02.out | grep -q $i || ret_val=1
+	    grep "$IPV4" test_probes_tc02.out | grep -q $i || ret_val=1
+	    grep "$IPV6" test_probes_tc02.out | grep -q $i || ret_val=1
 	done
     fi
 
@@ -72,7 +72,7 @@ function test_probes_get_system_chars {
 function test_probes_probe_api {
     local ret_val=0;
 
-    ${srcdir}/test_probe-api > ${srcdir}/test_probes_tc03.out
+    ./test_probe-api > ./test_probes_tc03.out
 
     ret_val=$?
 
@@ -83,9 +83,9 @@ function test_probes_probe_api {
 function test_probes_cleanup {     
     local ret_val=0;    
 
-    rm -f ${srcdir}/test_probes_tc01.out \
-          ${srcdir}/test_probes_tc02.out \
-	  ${srcdir}/test_probes_tc03.out 
+    rm -f test_probes_tc01.out \
+          test_probes_tc02.out \
+	  test_probes_tc03.out 
 
     return $ret_val
 }
@@ -96,7 +96,7 @@ echo ""
 echo "--------------------------------------------------"
 
 result=0
-log=${srcdir}/test_probes.log
+log=test_probes.log
 
 exec 2>$log
 

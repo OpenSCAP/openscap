@@ -78,7 +78,7 @@ function test_cve_export_all {
 
     local ret_val=0
 
-    ./test_cve --test-export-all CVE/nvdcve-2.0-recent.xml "UTF-8" cve_export.xml.out.3 "UTF-8"
+    ./test_cve --test-export-all ${srcdir}/CVE/nvdcve-2.0-recent.xml "UTF-8" cve_export.xml.out.3 "UTF-8"
 	xml_cmp ${srcdir}/CVE/nvdcve-2.0-recent.xml cve_export.xml.out.3
     ret_val=$?
 

@@ -136,7 +136,7 @@ function test_seap_incorrect_expression {
 	)
 
     for I in "${ARGS[@]}"; do
-	${srcdir}/sexp_parser $I > ${srcdir}/test_seap_tc01.out
+	./sexp_parser $I > test_seap_tc01.out
 	ret_val=$[$ret_val+$?]
     done 
 
@@ -152,7 +152,7 @@ function test_seap_incorrect_expression {
 function test_seap_string_expression {
     local ret_val=0;
 
-    ${srcdir}/sexp_string > test_seap_tc02.out
+    ./sexp_string > test_seap_tc02.out
     ret_val=$?
 
     return $ret_val
@@ -161,7 +161,7 @@ function test_seap_string_expression {
 function test_seap_number_expression {
     local ret_val=0;
 
-    ${srcdir}/sexp_number >> test_seap_tc02.out
+    ./sexp_number >> test_seap_tc02.out
     ret_val=$?
 
     return $ret_val
@@ -170,7 +170,7 @@ function test_seap_number_expression {
 function test_seap_list_expression {
     local ret_val=0;
 
-    ${srcdir}/sexp_list >> test_seap_tc02.out
+    ./sexp_list >> test_seap_tc02.out
     ret_val=$?
 
     return $ret_val
@@ -349,15 +349,15 @@ function test_seap_correct_expression {
     )
 
     for I in "${ARGS[@]}"; do
-	${srcdir}/sexp_parser "$I" > ${srcdir}/test_seap_tc01.out
+	./sexp_parser "$I" > test_seap_tc01.out
 	ret_val=$[$ret_val+$?]
-	${srcdir}/sexp_parser "($I)" >> ${srcdir}/test_seap_tc01.out
+	./sexp_parser "($I)" >> test_seap_tc01.out
 	ret_val=$[$ret_val+$?]
-	${srcdir}/sexp_parser "( $I)" >> ${srcdir}/test_seap_tc01.out
+	./sexp_parser "( $I)" >> test_seap_tc01.out
 	ret_val=$[$ret_val+$?]
-	${srcdir}/sexp_parser "($I )" >> ${srcdir}/test_seap_tc01.out
+	./sexp_parser "($I )" >> test_seap_tc01.out
 	ret_val=$[$ret_val+$?]
-	${srcdir}/sexp_parser "( $I )" >> ${srcdir}/test_seap_tc01.out
+	./sexp_parser "( $I )" >> test_seap_tc01.out
 	ret_val=$[$ret_val+$?]
     done 
 
@@ -368,9 +368,9 @@ function test_seap_correct_expression {
 function test_seap_cleanup { 
     local ret_val=0;
     
-    rm -f ${srcdir}/test_seap_tc01.out \
-	  ${srcdir}/test_seap_tc02.out \
-	  ${srcdir}/test_seap_tc03.out 
+    rm -f test_seap_tc01.out \
+	  test_seap_tc02.out \
+	  test_seap_tc03.out 
 
     ret_val=$?
     
@@ -383,7 +383,7 @@ echo ""
 echo "--------------------------------------------------"
 
 result=0
-log=${srcdir}/test_seap.log
+log=test_seap.log
 
 exec 2>$log
 

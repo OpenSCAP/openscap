@@ -16,7 +16,7 @@
 function test_cce_setup {
     local ret_val=0
 
-    cat >> ${srcdir}/test_cce_01.txt <<EOF
+    cat >> test_cce_01.txt <<EOF
 ID: CCE-3416-5
 Description: The rhnsd service should be enabled or disabled as appropriate.
 Reference Source: NSA Guide to the Secure Configuration of Red Hat Enterprise Linux 5 (Section 2.1.2.2)
@@ -27,7 +27,7 @@ Available Parameter Choices: disabled
 
 EOF
 
-    cat >> ${srcdir}/test_cce_02.txt <<EOF
+    cat >> test_cce_02.txt <<EOF
 ID: CCE-4218-4
 Description: The rhnsd service should be enabled or disabled as appropriate.
 Reference Source: NSA Guide to the Secure Configuration of Red Hat Enterprise Linux 5 (Section 2.1.2.2)
@@ -38,7 +38,7 @@ Available Parameter Choices: disabled
 
 EOF
 
-    cat ${srcdir}/test_cce_01.txt ${srcdir}/test_cce_02.txt > ${srcdir}/test_cce_all.txt
+    cat test_cce_01.txt test_cce_02.txt > test_cce_all.txt
     ret_val=$?
 
     return $ret_val
@@ -50,7 +50,7 @@ EOF
 function test_cce_smoke {
     local ret_val=0;
     
-    ${srcdir}/test_cce --smoke-test
+    ./test_cce --smoke-test
     ret_val=$?
     
     return $ret_val
@@ -60,7 +60,7 @@ function test_cce_smoke {
 function test_cce_validate_valid_xml {
     local ret_val=0;
 
-    ${srcdir}/test_cce --validate ${srcdir}/CCE/cce-sample.xml >&2
+    ./test_cce --validate ${srcdir}/CCE/cce-sample.xml >&2
     ret_val=$?
     
     return $ret_val
@@ -70,7 +70,7 @@ function test_cce_validate_valid_xml {
 function test_cce_validate_invalid_xml {
     local ret_val=0;
 
-    ${srcdir}/test_cce --validate ${srcdir}/CCE/cce-sample-invalid.xml >&2
+    ./test_cce --validate ${srcdir}/CCE/cce-sample-invalid.xml >&2
     [ $? -eq 2 ] || ret_val=1
     
     return $ret_val
@@ -80,7 +80,7 @@ function test_cce_validate_invalid_xml {
 function test_cce_validate_damaged_xml {
     local ret_val=0;
 
-    ${srcdir}/test_cce --validate ${srcdir}/CCE/cce-sample-damaged.xml >&2
+    ./test_cce --validate ${srcdir}/CCE/cce-sample-damaged.xml >&2
     [ $? -eq 2 ] || ret_val=1
     
     return $ret_val
@@ -90,14 +90,14 @@ function test_cce_validate_damaged_xml {
 function test_cce_parse_xml {
     local ret_val=0;
 
-    ${srcdir}/test_cce --parse ${srcdir}/CCE/cce-sample.xml > \
-	${srcdir}/test_cce_tc05.out
+    ./test_cce --parse ${srcdir}/CCE/cce-sample.xml > \
+	test_cce_tc05.out
     ret_val=$?
 
     cat test_cce_tc05.out >&2
 
     if [ $ret_val -eq 0 ]; then
-	cmp ${srcdir}/test_cce_tc05.out ${srcdir}/test_cce_all.txt >&2
+	cmp test_cce_tc05.out test_cce_all.txt >&2
 	ret_val=$?
     fi
     
@@ -108,18 +108,18 @@ function test_cce_parse_xml {
 function test_cce_search_existing {
     local ret_val=0;
 
-    ${srcdir}/test_cce --search ${srcdir}/CCE/cce-sample.xml "CCE-3416-5" > \
-	${srcdir}/test_cce_tc06_01.out
+    ./test_cce --search ${srcdir}/CCE/cce-sample.xml "CCE-3416-5" > \
+	test_cce_tc06_01.out
     ret_val=$[$ret_val + $?]
-    cat ${srcdir}/test_cce_tc06_01.out >&2
-    cmp ${srcdir}/test_cce_tc06_01.out ${srcdir}/test_cce_01.txt >&2
+    cat test_cce_tc06_01.out >&2
+    cmp test_cce_tc06_01.out test_cce_01.txt >&2
     ret_val=$[$ret_val + $?]
 
-    ${srcdir}/test_cce --search ${srcdir}/CCE/cce-sample.xml "CCE-4218-4" > \
-	${srcdir}/test_cce_tc06_02.out
+    ./test_cce --search ${srcdir}/CCE/cce-sample.xml "CCE-4218-4" > \
+	test_cce_tc06_02.out
     ret_val=$[$ret_val + $?]
-    cat ${srcdir}/test_cce_tc06_02.out >&2
-    cmp ${srcdir}/test_cce_tc06_02.out ${srcdir}/test_cce_02.txt >&2
+    cat test_cce_tc06_02.out >&2
+    cmp test_cce_tc06_02.out test_cce_02.txt >&2
     ret_val=$[$ret_val + $?]
 
     return $ret_val
@@ -129,7 +129,7 @@ function test_cce_search_existing {
 function test_cce_search_non_existing {
     local ret_val=0;
 
-    ${srcdir}/test_cce --search ${srcdir}/CCE/cce-sample.xml "CCE-0000-0" > out
+    ./test_cce --search ${srcdir}/CCE/cce-sample.xml "CCE-0000-0" > out
     ret_val=$?
     cat out >&2	
     if [ $ret_val -eq 0 ]; then
@@ -145,12 +145,12 @@ function test_cce_search_non_existing {
 function test_cce_cleanup {     
     local ret_val=0;    
     
-    rm  ${srcdir}/test_cce_01.txt \
-	${srcdir}/test_cce_02.txt \
-	${srcdir}/test_cce_all.txt \
-	${srcdir}/test_cce_tc05.out \
-	${srcdir}/test_cce_tc06_01.out \
-	${srcdir}/test_cce_tc06_02.out 
+    rm  test_cce_01.txt \
+	test_cce_02.txt \
+	test_cce_all.txt \
+	test_cce_tc05.out \
+	test_cce_tc06_01.out \
+	test_cce_tc06_02.out 
 
     ret_val=$?
 
@@ -163,7 +163,7 @@ echo ""
 echo "--------------------------------------------------"
 
 result=0
-log=${srcdir}/test_cce.log
+log=test_cce.log
 
 exec 2>$log
 

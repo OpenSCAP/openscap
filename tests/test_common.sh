@@ -23,7 +23,7 @@ function report_result {
 function xml_cmp {
     local ret_val=0
 
-    /usr/bin/perl -w ./xmldiff.pl $1 $2 
+    /usr/bin/perl -w ${srcdir}/xmldiff.pl $1 $2 
     ret_val=$?
 
     return $ret_val

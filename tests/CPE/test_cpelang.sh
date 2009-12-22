@@ -31,7 +31,7 @@ function test_cpelang_setup {
 function test_cpelang_smoke {
     local ret_val=0;
 
-    ${srcdir}/test_cpelang --smoke-test
+    ./test_cpelang --smoke-test
     ret_val=$?
 
     return $ret_val
@@ -40,7 +40,7 @@ function test_cpelang_smoke {
 function test_cpelang_import {
     local ret_val=0;
 
-    ${srcdir}/test_cpelang --get-all ${srcdir}/CPE/lang.xml "UTF-8" > get-all.out
+    ./test_cpelang --get-all ${srcdir}/CPE/lang.xml "UTF-8" > get-all.out
     ret_val=$?
     if [ $ret_val -eq 0 ]; then
 	cmp get-all get-all.out >&2
@@ -53,7 +53,7 @@ function test_cpelang_import {
 function test_cpelang_import_damaged {
     local ret_val=0;
 
-    ${srcdir}/test_cpelang --get-all ${srcdir}/CPE/lang-damaged.xml "UTF-8" 
+    ./test_cpelang --get-all ${srcdir}/CPE/lang-damaged.xml "UTF-8" 
 
     case $? in
 	0) ret_val=1 ;;   # success
@@ -66,22 +66,22 @@ function test_cpelang_import_damaged {
 function test_cpelang_import_key {
     local ret_val=0;
 
-    ${srcdir}/test_cpelang --get-key ${srcdir}/CPE/lang.xml "UTF-8" "123" > ${srcdir}/get-key.out
+    ./test_cpelang --get-key ${srcdir}/CPE/lang.xml "UTF-8" "123" > get-key.out
     ret_val=$[$ret_val + $?]
     if [ $ret_val -eq 0 ]; then
-	[ "`cat ${srcdir}/get-key.out`X" = "${KEY_123}X" ] || ret_val=$[$ret_val + $?]
+	[ "`cat get-key.out`X" = "${KEY_123}X" ] || ret_val=$[$ret_val + $?]
     fi
 
-    ${srcdir}/test_cpelang --get-key ${srcdir}/CPE/lang.xml "UTF-8" "456" > ${srcdir}/get-key.out
+    ./test_cpelang --get-key ${srcdir}/CPE/lang.xml "UTF-8" "456" > get-key.out
     ret_val=$[$ret_val + $?]
     if [ $ret_val -eq 0 ]; then
-	[ "`cat ${srcdir}/get-key.out`X" = "${KEY_456}X" ] || ret_val=$[$ret_val + $?]
+	[ "`cat get-key.out`X" = "${KEY_456}X" ] || ret_val=$[$ret_val + $?]
     fi
 
-    ${srcdir}/test_cpelang --get-key ${srcdir}/CPE/lang.xml "UTF-8" "789" > ${srcdir}/get-key.out
+    ./test_cpelang --get-key ${srcdir}/CPE/lang.xml "UTF-8" "789" > get-key.out
     ret_val=$[$ret_val + $?]
     if [ $ret_val -eq 0 ]; then
-	[ "`cat ${srcdir}/get-key.out`X" = "${KEY_789}X" ] || ret_val=$[$ret_val + $?]
+	[ "`cat get-key.out`X" = "${KEY_789}X" ] || ret_val=$[$ret_val + $?]
     fi
 
     return $ret_val
@@ -95,7 +95,7 @@ cat > export.xml <<EOF
 <Foo:platform-specification xmlns:Foo="Bar"/>
 EOF
 
-    ${srcdir}/test_cpelang --set-new export.xml.out.0 "UTF-8" "Foo" "Bar"
+    ./test_cpelang --set-new export.xml.out.0 "UTF-8" "Foo" "Bar"
     ret_val=$?
     
     [ ! -e export.xml.out.0 ] && [ $ret_val -eq 0 ] && ret_val=1
@@ -129,7 +129,7 @@ cat > export.xml <<EOF
 </Foo:platform-specification>
 EOF
 
-    ${srcdir}/test_cpelang --set-new export.xml.out.1 "UTF-8" "Foo" "Bar" 1 2 3 4 5 6 7 8 9 10
+    ./test_cpelang --set-new export.xml.out.1 "UTF-8" "Foo" "Bar" 1 2 3 4 5 6 7 8 9 10
     ret_val=$?
     
     [ ! -e export.xml.out.1 ] && [ $ret_val -eq 0 ] && ret_val=1
@@ -153,7 +153,7 @@ cat > export.xml <<EOF
 <Foo:platform-specification xmlns:Foo="Bar"/>
 EOF
 
-    ${srcdir}/test_cpelang --set-new export.xml.out.2 "UnknownEncoding" "Foo" "Bar"
+    ./test_cpelang --set-new export.xml.out.2 "UnknownEncoding" "Foo" "Bar"
     ret_val=$?
     
     [ ! -e export.xml.out.2 ] && [ $ret_val -eq 0 ] && ret_val=1
@@ -175,7 +175,7 @@ cat > export.xml <<EOF
 <foo:platform-specification xmlns:foo="Bar" xmlns:bla="Bla"/>
 EOF
 
-    ${srcdir}/test_cpelang --export-all export.xml "UTF-8" export.xml.out.3 "UTF-8"
+    ./test_cpelang --export-all export.xml "UTF-8" export.xml.out.3 "UTF-8"
     ret_val=$?
 
     [ ! -e export.xml.out.3 ] && [ $ret_val -eq 0 ] && ret_val=1
@@ -211,7 +211,7 @@ echo ""
 echo "--------------------------------------------------"
 
 result=0
-log=${srcdir}/test_cpelang.log
+log=test_cpelang.log
 
 exec 2>$log
 

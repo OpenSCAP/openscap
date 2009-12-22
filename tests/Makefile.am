@@ -12,7 +12,7 @@ AM_CPPFLAGS =	-I$(top_srcdir)/src/CVE/public \
 		-I$(top_srcdir)/src/OVAL/probes/public \
 		-I$(top_srcdir)/src/OVAL/probes/SEAP/public
 LDADD = $(top_builddir)/src/libopenscap_testing.la
-EXTRA_DIST =
+EXTRA_DIST = xmldiff.pl
 DISTCLEANFILES = *.log *.out
 
 
@@ -95,6 +95,7 @@ EXTRA_DIST +=	test_common.sh \
 		CPE/dict.xml \
 		CPE/lang.xml \
 		CPE/lang-corrupted.xml \
+		CPE/lang-damaged.xml \
 		CPE/lang-copy.xml
 endif
 
@@ -103,7 +104,8 @@ if WANT_CVE
 TESTS += CVE/test_cve.sh
 check_PROGRAMS += test_cve
 test_cve_SOURCES = CVE/test_cve.c
-EXTRA_DIST += CVE/test_cve.sh CVE/nvdcve-2.0-recent.xml
+EXTRA_DIST += CVE/test_cve.sh \
+	      CVE/nvdcve-2.0-recent.xml
 endif 
 
 
