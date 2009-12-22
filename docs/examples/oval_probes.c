@@ -15,19 +15,13 @@
 #include <string.h>
 #include "oval_agent_api.h"
 
-int _test_error_handler(struct oval_xml_error *error, void *null)
-{
-        //ERROR HANDLING IS TODO
-        return 1;
-}
-
 
 int main(int argc, char **argv)
 {
 	/* definition model populate */
         struct oscap_import_source *def_in = oscap_import_source_new_file(argv[1],NULL);
         struct oval_definition_model *def_model = oval_definition_model_new();
-        oval_definition_model_import(def_model, def_in, &_test_error_handler, NULL);
+        oval_definition_model_import(def_model, def_in, NULL);
         oscap_import_source_free(def_in);
 
 	/* create syschar model */
