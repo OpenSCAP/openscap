@@ -46,6 +46,9 @@ typedef struct oval_string_map {
 	struct _oval_string_map_entry *entries;
 } oval_string_map_t;
 
+/* failed   - NULL 
+ * success  - oval_definition_model 
+ * */
 struct oval_string_map *oval_string_map_new()
 {
 	struct oval_string_map *map =
@@ -82,7 +85,7 @@ void oval_string_map_put(struct oval_string_map *map, const char *key, void *ite
 	char *temp = (char *) oscap_alloc((strlen(key) + 1) * sizeof(char) + 1);
 	char *usekey = strcpy(temp, key);
 	
-        //SEARCH FOR INSERTION POINT
+        /* SEARCH FOR INSERTION POINT */
 	struct _oval_string_map_entry *insert_before =
 	    map->entries, *insert_after = NULL, *insertion;
 	if (insert_before == NULL) {
@@ -178,7 +181,7 @@ void oval_string_map_free(struct oval_string_map *map,
 		entry->item = NULL;
 		entry->key  = NULL;
 		entry->next = NULL;
-		free(entry);
+		oscap_free(entry);
 		entry = next;
 	}
 	oscap_free(map);

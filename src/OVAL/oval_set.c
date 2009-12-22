@@ -229,8 +229,6 @@ void oval_setobject_set_type(struct oval_setobject *set, oval_setobject_type_t t
 					(oval_set_AGGREGATE_t *) (set->extension =
 								  oscap_alloc(sizeof
 									 (oval_set_AGGREGATE_t)));
-                                /* TODO: error propagation */
-                                /* if (aggregate == NULL) return; */
 				aggregate->subsets = oval_collection_new();
 			}
 			break;
@@ -239,8 +237,6 @@ void oval_setobject_set_type(struct oval_setobject *set, oval_setobject_type_t t
 					(oval_set_COLLECTIVE_t *) (set->extension =
 								   oscap_alloc(sizeof
 									  (oval_set_COLLECTIVE_t)));
-                                /* TODO: error propagation */
-                                /* if (collective == NULL) return; */
 				collective->filters = oval_collection_new();
 				collective->objects = oval_collection_new();
 			}

@@ -202,7 +202,7 @@ struct oval_criteria_node *oval_criteria_node_new(struct oval_definition_model* 
 			    definition = NULL;
 		}break;
 	case OVAL_NODETYPE_UNKNOWN:
-        default: /* TODO: propagate error, that node type unknown ? */
+        default: /* TODO: Is constructor of criteria_node with unknown type valid ? */
             return NULL;
 	}
 	node->type = type;
@@ -323,7 +323,7 @@ void oval_criteria_node_set_comment(struct oval_criteria_node *node,
 	if(node && !oval_criteria_node_is_locked(node)){
 		if(node->comment!=NULL)
                         oscap_free(node->comment);
-		node->comment = comm==NULL?NULL:oscap_strdup(comm);
+		node->comment = (comm == NULL) ? NULL : oscap_strdup(comm);
 	} else oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 

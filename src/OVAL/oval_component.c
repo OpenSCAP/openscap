@@ -37,6 +37,7 @@
 #include "oval_parser_impl.h"
 #include "../common/util.h"
 #include "../common/public/debug.h"
+#include "../common/_error.h"
 
 /***************************************************************************/
 /* Variable definitions
@@ -464,7 +465,7 @@ int oval_component_get_substring_start(struct oval_component *component)
 void oval_component_set_substring_start(struct oval_component *component, int start)
 {
 	if(component && !oval_component_is_locked(component)){
-		//type==OVAL_COMPONENT_SUBSTRING
+		/* type==OVAL_COMPONENT_SUBSTRING */
 		if (component->type == OVAL_FUNCTION_SUBSTRING) {
 			oval_component_SUBSTRING_t *substring =
 				(oval_component_SUBSTRING_t *) component;
@@ -936,7 +937,6 @@ static int _oval_component_parse_OBJECTREF_tag(xmlTextReaderPtr reader,
             objfld = NULL;
         }
 
-        /* TODO: always 1 => return int -> void */
 	return 1;
 }
 
@@ -953,7 +953,6 @@ static int _oval_component_parse_VARREF_tag(xmlTextReaderPtr reader,
         }
 	oval_component_set_variable(component, variable);
 
-        /* TODO: always 1 => return int -> void */
 	return 1;
 }
 
@@ -1002,14 +1001,9 @@ static int _oval_component_parse_BEGEND_tag(xmlTextReaderPtr reader,
         __attribute__nonnull__(component);
 
 	oval_component_BEGEND_t *begend = (oval_component_BEGEND_t *) component;
-	char *character = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST "character");
-        /* TODO: Is here any case that begend->character is not NULL ? If so, free it,
-         * if not, rewrite it without 3rd variable */
-	if (character != NULL) {
-		begend->character = oscap_strdup(character);
-		oscap_free(character);
-                character = NULL;
-	}
+	begend->character = 
+            oscap_strdup( (char *) xmlTextReaderGetAttribute(reader, BAD_CAST "character") );
+
 	return _oval_component_parse_FUNCTION_tag(reader, context, component);
 }
 
@@ -1020,14 +1014,9 @@ static int _oval_component_parse_SPLIT_tag(xmlTextReaderPtr reader,
         __attribute__nonnull__(component);
 
 	oval_component_SPLIT_t *split = (oval_component_SPLIT_t *) component;
-	char *delimiter = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST "delimiter");
-        /* TODO: Is here any case that split->delimiter is not NULL ? If so, free it,
-         * if not, rewrite it without 3rd variable */
-	if(delimiter != NULL) {
-		split->delimiter = oscap_strdup(delimiter);
-		oscap_free(delimiter);
-                delimiter=NULL;
-	}
+	split->delimiter = 
+            oscap_strdup( (char *) xmlTextReaderGetAttribute(reader, BAD_CAST "delimiter") );
+
 	return _oval_component_parse_FUNCTION_tag(reader, context, component);
 }
 
@@ -1502,6 +1491,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_VARREF(struct ova
 		}
 	} else {
 		oscap_dprintf("ERROR: No variable bound to VARREF Component");
+                oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EOVALINT, "No variable bound to VARREF componenet");
 	}
 	return flag;
 }
@@ -1537,6 +1527,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_BEGIN(struct oval
 		oval_component_iterator_free(subcomps);
 	}else{
 		oscap_dprintf("ERROR: No prefix specified for begin function (%s:%d)", __FILE__, __LINE__);
+                oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EOVALINT, "No prefix specified for component evaluation");
 	}
 	return flag;
 }
@@ -1572,6 +1563,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_END
 		oval_component_iterator_free(subcomps);
 	}else{
 		oscap_dprintf("ERROR: No suffix specified for end function  (%s:%d)", __FILE__, __LINE__);
+                oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EOVALINT, "No suffix specified for component evaluation");
 	}
 	return flag;
 }
@@ -1701,7 +1693,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_SUBSTRING(struct 
 {
 	oval_syschar_collection_flag_t flag = SYSCHAR_FLAG_UNKNOWN;
 	struct oval_component_iterator *subcomps = oval_component_get_function_components(component);
-	int start = oval_component_get_substring_start(component)-1; /* TODO: is this always unsigned ? */
+	int start = oval_component_get_substring_start(component)-1; 
         int len = oval_component_get_substring_length(component);
 	start = (start < 0) ? 0 : start;
 	if(oval_component_iterator_has_more(subcomps)){/*Only first component is considered*/
@@ -1822,5 +1814,6 @@ oval_syschar_collection_flag_t oval_component_evaluate(struct oval_syschar_model
 		flag = (*evaluator)(sysmod, component, value_collection);
 	} else 
                 oscap_dprintf("ERROR component type %d not supported (%s:%d)", __FILE__, __LINE__);
+                oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EOVALINT, "Component type not supported");
 	return flag;
 }

@@ -36,8 +36,6 @@
 #include "../common/util.h"
 #include "../common/public/debug.h"
 
-static int DEBUG_OVAL_SYSDATA = 0;
-
 typedef struct oval_sysdata {
 	//oval_family_enum family;
 	struct oval_syschar_model *model;
@@ -254,7 +252,6 @@ int oval_sysdata_parse_tag(xmlTextReaderPtr reader,
 			= oval_syschar_status_parse(reader, "status", SYSCHAR_STATUS_EXISTS);
 		oval_sysdata_set_status(sysdata, status_enum);
 		return_code = oval_parser_parse_tag(reader, context, &_oval_sysdata_parse_subtag, sysdata);
-		if(DEBUG_OVAL_SYSDATA){
                         /* TODO: -> oscap_dprintf */
 			int numchars = 0;
 			char message[2000];message[numchars]='\0';
@@ -271,7 +268,6 @@ int oval_sysdata_parse_tag(xmlTextReaderPtr reader,
 			oval_sysitem_iterator_free(items);
 			numchars = numchars + sprintf(message+numchars,"\n    sysdata->items.length  = %d",numItems);
 			oscap_dprintf(message); /* TODO: make this code in one string ^ */
-		}
 	}else{
 		char *tagnm     = (char*) xmlTextReaderName(reader);
 		char *namespace = (char*) xmlTextReaderNamespaceUri(reader);

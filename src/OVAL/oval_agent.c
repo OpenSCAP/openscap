@@ -92,6 +92,9 @@ static void _oval_agent_scan_set_for_references(struct oval_setobject *set,
  * */
 /***************************************************************************/
 
+/* failed   - NULL 
+ * success  - oval_definition_model 
+ * */
 struct oval_definition_model *oval_definition_model_new()
 {
 	oval_definition_model_t *newmodel =
@@ -139,11 +142,16 @@ static void _oval_definition_model_clone(struct oval_string_map *oldmap,
 	oval_string_iterator_free(keys);
 }
 
+/* failed   - NULL 
+ * success  - oval_definition_model 
+ * */
 struct oval_definition_model *oval_definition_model_clone(struct oval_definition_model *oldmodel)
 {
         __attribute__nonnull__(oldmodel);
 
 	struct oval_definition_model *newmodel = oval_definition_model_new();
+        if (newmodel == NULL)
+                return NULL;
 
 	_oval_definition_model_clone
 		(oldmodel->definition_map, newmodel,
@@ -182,6 +190,9 @@ void oval_definition_model_free(struct oval_definition_model * model)
 	oscap_free(model);
 }
 
+/* failed   - NULL 
+ * success  - oval_definition_model 
+ * */
 struct oval_syschar_model *oval_syschar_model_new(
 		struct oval_definition_model *definition_model)
 {
@@ -196,6 +207,15 @@ struct oval_syschar_model *oval_syschar_model_new(
 	newmodel->sysdata_map          = oval_string_map_new();
 	newmodel->variable_binding_map = oval_string_map_new();
 	newmodel->is_locked = false;
+
+        /* check possible allocation problems */
+        if ((newmodel->syschar_map          == NULL) || 
+            (newmodel->sysdata_map          == NULL) || 
+            (newmodel->variable_binding_map == NULL)) {
+                oval_syschar_model_free(newmodel);
+                return NULL;
+        }
+
 	return newmodel;
 }
 
@@ -230,7 +250,7 @@ static void _oval_syschar_model_clone(struct oval_string_map *oldmap,
                                       _oval_syschar_model_clone_func cloner)
 {
 	struct oval_string_iterator *keys = 
-            (struct oval_string_iterator *)oval_string_map_keys(oldmap);
+            (struct oval_string_iterator *) oval_string_map_keys(oldmap);
 
 	while(oval_string_iterator_has_more(keys)){
 		char *key = oval_string_iterator_next(keys);
@@ -266,10 +286,13 @@ void oval_syschar_model_free(struct oval_syschar_model *model)
 {
         __attribute__nonnull__(model);
 
-	if(model->sysinfo)oval_sysinfo_free(model->sysinfo);
-	oval_string_map_free(model->syschar_map, (oscap_destruct_func)oval_syschar_free);
-	oval_string_map_free(model->sysdata_map, (oscap_destruct_func)oval_sysdata_free);
-	oval_string_map_free(model->variable_binding_map, (oscap_destruct_func)oval_variable_binding_free);
+	if (model->sysinfo) oval_sysinfo_free(model->sysinfo);
+	if (model->syschar_map) 
+                oval_string_map_free(model->syschar_map, (oscap_destruct_func)oval_syschar_free);
+	if (model->sysdata_map) 
+                oval_string_map_free(model->sysdata_map, (oscap_destruct_func)oval_sysdata_free);
+	if (model->variable_binding_map) 
+                oval_string_map_free(model->variable_binding_map, (oscap_destruct_func)oval_variable_binding_free);
 
 	model->sysinfo              = NULL;
 	model->definition_model     = NULL;
@@ -755,7 +778,7 @@ static int _generator_to_dom(xmlDocPtr doc, xmlNode *tag_generator)
 	1900+lt->tm_year, 1+lt->tm_mon, lt->tm_mday, lt->tm_hour, lt->tm_min, lt->tm_sec);
 	xmlNewChild
 		(tag_generator, ns_common, BAD_CAST "timestamp", BAD_CAST timestamp);
-        /* TODO: Use case: is this always returning 1 ? If so, return int -> void */
+
 	return 1;
 }
 
@@ -828,8 +851,7 @@ void oval_results_model_free(struct oval_results_model *model)
 {
         __attribute__nonnull__(model);
 
-	oval_collection_free_items
-	(model->systems, (oscap_destruct_func)oval_result_system_free);
+        oval_collection_free_items(model->systems, (oscap_destruct_func)oval_result_system_free);
 	model->definition_model  = NULL;
 	model->systems       = NULL;
 	oscap_free(model);
@@ -855,7 +877,7 @@ void oval_results_model_add_system(struct oval_results_model *model,
                                    struct oval_result_system *sys)
 {
 	if (model && !oval_results_model_is_locked(model)) {
-		if(sys)oval_collection_add(model->systems, sys);
+		if(sys) oval_collection_add(model->systems, sys);
 	} else 
             oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }

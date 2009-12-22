@@ -37,6 +37,8 @@ typedef uint16_t oscap_errcode_t;
 #define OSCAP_EREGEXPCOMP   8   /* Invalid string comparison in regexps */
 #define OSCAP_EUNDATATYPE   9   /* Unsupported data type */  
 #define OSCAP_EINVARG       10  /* Invalid argument */
+#define OSCAP_EVARTYPE      11  /* Variable type is not valid */
+#define OSCAP_ESEAPINIT     12  /* Failed seap initialization */
 #define OSCAP_EUSER1        201 /* User defined error */
 #define OSCAP_EUSER2        202 /* User defined error */
 #define OSCAP_EUNKNOWN      255 /* Unknown/Unexpected error */

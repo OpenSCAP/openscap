@@ -166,7 +166,7 @@ void oval_affected_free(struct oval_affected *affected)
 	affected->platforms = NULL;
 	oval_collection_free_items(affected->products, (oscap_destruct_func) &oscap_free);
 	affected->products = NULL;
-	free(affected);
+	oscap_free(affected);
 }
 
 void oval_affected_set_family(struct oval_affected *affected,
@@ -254,7 +254,7 @@ int oval_affected_parse_tag(xmlTextReaderPtr reader,
         __attribute__nonnull__(context);
 
 	struct oval_affected *affected = oval_affected_new(context->definition_model);
-        if (affected == NULL) /* TODO: find out, if error propagation by -1 is valid */
+        if (affected == NULL)
                 return -1;
 
 	//xmlChar *tagname = xmlTextReaderName(reader);

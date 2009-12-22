@@ -1260,7 +1260,7 @@ void  oval_criteria_node_iterator_free(struct oval_criteria_node_iterator *);
  * 		- The operator attribute is not @ref OVAL_OPERATOR_UNKNOWN -- AND
  * 		- The subnode attribute is not an empty iterator -- AND
  * 		- Each iterated Oval_criteria_node is valid.
- * 	- The type attribute is @ref OVAL_NODETYPE_CRITERON (@ref Oval_criterion) -- AND
+ * 	- The type attribute is @ref OVAL_NODETYPE_CRITERION (@ref Oval_criterion) -- AND
  * 		- The test attribute is not NULL -- AND
  * 		- The referenced test is valid.
  * 	- The type attribute is @ref OVAL_NODETYPE_EXTENDDEF (@ref Oval_extends) -- AND

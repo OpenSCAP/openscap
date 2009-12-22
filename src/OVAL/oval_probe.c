@@ -161,13 +161,14 @@ oval_pctx_t *oval_pctx_new (struct oval_syschar_model *model)
         ctx->p_dir = NULL;
 #endif
         
-        ctx->p_dir = ctx->p_dir == NULL ? strdup (OVAL_PROBE_DIR) : strdup (ctx->p_dir);
+        ctx->p_dir = ctx->p_dir == NULL ? oscap_strdup (OVAL_PROBE_DIR) : oscap_strdup (ctx->p_dir);
         ctx->pd_table = oval_pdtbl_new ();
         ctx->model    = model;
                 
         if (model != NULL) {
                 if (oval_probe_cmd_init (ctx->pd_table->ctx, ctx) != 0) {
                         _D("FAIL: Can't initialize SEAP commands\n");
+                        oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_ESEAPINIT, "Failed SEAP commands initialization");
                         oval_pctx_free (ctx);
                         
                         return (NULL);

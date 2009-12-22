@@ -36,7 +36,7 @@
 #include "oval_agent_api_impl.h"
 #include "../common/util.h"
 #include "../common/public/debug.h"
-
+#include "../common/_error.h"
 
 typedef struct oval_variable {
 	struct oval_definition_model *model;
@@ -179,6 +179,9 @@ struct oval_component *oval_variable_get_component(struct oval_variable *variabl
 }
 
 
+/* failed   - NULL 
+ * success  - oval_variable
+ * */
 struct oval_variable *oval_variable_new(struct oval_definition_model *model, char *id, oval_variable_type_t type)
 {
 	oval_variable_t *variable;
@@ -227,6 +230,7 @@ struct oval_variable *oval_variable_new(struct oval_definition_model *model, cha
 	};break;
 	default:
 		oscap_dprintf(" oval_variable type not valid: type = %d (%s:%d)", type, __FILE__, __LINE__);
+                oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EVARTYPE, "OVAL_VARIABLE type is not valid");
 		return NULL;
 	}
 
@@ -259,14 +263,14 @@ struct oval_variable   *oval_variable_clone
 		new_variable = oval_variable_new(new_model, old_variable->id, old_variable->type);
 
 		oval_variable_set_comment   (new_variable, old_variable->comment);
-		oval_variable_set_version   (new_variable, old_variable->version);
-		oval_variable_set_deprecated(new_variable, old_variable->deprecated);
-		oval_variable_set_datatype  (new_variable, old_variable->datatype);
+                oval_variable_set_version   (new_variable, old_variable->version);
+                oval_variable_set_deprecated(new_variable, old_variable->deprecated);
+                oval_variable_set_datatype  (new_variable, old_variable->datatype);
 		new_variable->flag = old_variable->flag;
 
 		if(old_variable->values){
-			struct oval_value_iterator *old_values = (struct oval_value_iterator *)oval_collection_iterator(old_variable->values);
-			if(new_variable->values==NULL)new_variable->values = oval_collection_new();
+			struct oval_value_iterator *old_values = (struct oval_value_iterator *) oval_collection_iterator(old_variable->values);
+			if(new_variable->values==NULL) new_variable->values = oval_collection_new();
 			while(oval_value_iterator_has_more(old_values)){
 				struct oval_value *value = oval_value_iterator_next(old_values);
 				/* char *text = oval_value_get_text(value); <-- unused */
@@ -339,6 +343,7 @@ void oval_variable_set_type(struct oval_variable *variable, oval_variable_type_t
                                 variable->flag = SYSCHAR_FLAG_UNKNOWN;break;
                         }
                 }else if (variable->type != type){
+                        /* TODO: Should we set and propagate error here ? */
                         oscap_dprintf("ERROR: attempt to reset valid variable type    oldtype = %s    newtype = %s",
                         oval_variable_type_get_text(variable->type), oval_variable_type_get_text(type));
                 }
@@ -353,6 +358,7 @@ void oval_variable_set_comment(struct oval_variable *variable, char *comm)
                 variable->comment = oscap_strdup(comm);
         } else 
                 oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+
 }
 
 void oval_variable_set_deprecated(struct oval_variable *variable,

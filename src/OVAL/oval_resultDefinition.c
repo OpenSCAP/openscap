@@ -308,7 +308,6 @@ int oval_result_definition_parse
 	struct oval_result_definition *definition = oval_result_definition_new
 		(sys, (char *)definition_id);
         if (definition == NULL)
-                /* TODO: Check if -1 is appropriate error propagation */
                 return -1;
 
 	int defvsn = oval_definition_get_version(definition->definition);
