@@ -501,7 +501,7 @@ static SEXP_t *oval_probe_cmd_obj_eval (SEXP_t *sexp, void *arg)
         obj    = oval_definition_model_get_object (defs, id_str);
                 
         _D("get_object: %s\n", id_str);
-                
+
         if (obj == NULL) {
                 _D("FAIL: can't find obj: id=%s\n", id_str);
                 oscap_free (id_str);
@@ -512,12 +512,12 @@ static SEXP_t *oval_probe_cmd_obj_eval (SEXP_t *sexp, void *arg)
         if (oval_pctx_setflag (ctx, OVAL_PCTX_FLAG_NOREPLY) != 0) {
                 _D("FAIL: Can't set NOREPLY flag\n");
                 oscap_free (id_str);
-                        
+                
                 return (NULL);
         }
         
         oscap_clearerr ();                
-        _A(oval_probe_object_eval (ctx, obj) == NULL);
+        oval_probe_object_eval (ctx, obj); /* DO NOT PUT THIS INSIDE ASSERT! */
         
         if (oval_pctx_unsetflag (ctx, OVAL_PCTX_FLAG_NOREPLY) != 0) {
                 _D("FAIL: Can't unset NOREPLY flag\n");
