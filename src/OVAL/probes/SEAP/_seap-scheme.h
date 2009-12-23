@@ -40,8 +40,8 @@ extern const SEAP_schemefn_t __schtbl[];
 #define SEAP_IO_EVWRITE 0x02
 #define SEAP_IO_EVANY   0x08
 
-#define SEAP_RECVBUF_SIZE 2*4096
-#define SEAP_SENDBUF_SIZE 2*4096
+#define SEAP_RECVBUF_SIZE 4*4096
+#define SEAP_SENDBUF_SIZE 4*4096
 
 SEAP_scheme_t SEAP_scheme_search (const SEAP_schemefn_t fntable[], const char *sch, size_t schlen);
 
