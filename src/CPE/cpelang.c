@@ -37,27 +37,31 @@
 #include "../common/util.h"
 #include "../common/list.h"
 
-struct cpe_lang_model * cpe_lang_model_import(const struct oscap_import_source *source) {
+struct cpe_lang_model *cpe_lang_model_import(const struct oscap_import_source *source)
+{
 
-    __attribute__nonnull__(source);
+	__attribute__nonnull__(source);
 
-    if (oscap_import_source_get_name(source) == NULL) return NULL;
+	if (oscap_import_source_get_name(source) == NULL)
+		return NULL;
 
-    struct cpe_lang_model *lang;
+	struct cpe_lang_model *lang;
 
-    lang = cpe_lang_model_parse_xml(source);
+	lang = cpe_lang_model_parse_xml(source);
 
-    return lang;
+	return lang;
 }
 
-void cpe_lang_model_export(const struct cpe_lang_model * spec, struct oscap_export_target * target) {
+void cpe_lang_model_export(const struct cpe_lang_model *spec, struct oscap_export_target *target)
+{
 
-    __attribute__nonnull__(spec);
-    __attribute__nonnull__(target);
+	__attribute__nonnull__(spec);
+	__attribute__nonnull__(target);
 
-    if (oscap_export_target_get_name(target) == NULL) return;
+	if (oscap_export_target_get_name(target) == NULL)
+		return;
 
-    cpe_lang_model_export_xml(spec, target);
+	cpe_lang_model_export_xml(spec, target);
 }
 
 /*
@@ -67,11 +71,10 @@ void cpe_lang_model_export(const struct cpe_lang_model * spec, struct oscap_expo
  * @param platform platform to add to the list
  * @return true on success
  */
-static bool cpe_language_match_expr(struct cpe_name ** cpe, size_t n,
-				    const struct cpe_testexpr * expr)
+static bool cpe_language_match_expr(struct cpe_name **cpe, size_t n, const struct cpe_testexpr *expr)
 {
-        __attribute__nonnull__(cpe);
-        __attribute__nonnull__(expr);
+	__attribute__nonnull__(cpe);
+	__attribute__nonnull__(expr);
 
 	struct cpe_testexpr *cur;
 	bool ret;
@@ -79,7 +82,8 @@ static bool cpe_language_match_expr(struct cpe_name ** cpe, size_t n,
 	switch (cpe_testexpr_get_oper(expr) & CPE_LANG_OPER_MASK) {
 	case CPE_LANG_OPER_AND:
 		ret = true;
-		for (cur = cpe_testexpr_get_meta_expr(expr); cpe_testexpr_get_oper(cur); cur=cpe_testexpr_get_meta_expr(cur)) {
+		for (cur = cpe_testexpr_get_meta_expr(expr); cpe_testexpr_get_oper(cur);
+		     cur = cpe_testexpr_get_meta_expr(cur)) {
 			if (!cpe_language_match_expr(cpe, n, cur)) {
 				ret = false;
 				break;
@@ -88,7 +92,8 @@ static bool cpe_language_match_expr(struct cpe_name ** cpe, size_t n,
 		break;
 	case CPE_LANG_OPER_OR:
 		ret = false;
-		for (cur = cpe_testexpr_get_meta_expr(expr); cpe_testexpr_get_oper(cur); cur=cpe_testexpr_get_meta_expr(cur)) {
+		for (cur = cpe_testexpr_get_meta_expr(expr); cpe_testexpr_get_oper(cur);
+		     cur = cpe_testexpr_get_meta_expr(cur)) {
 			if (cpe_language_match_expr(cpe, n, cur)) {
 				ret = true;
 				break;
@@ -105,8 +110,7 @@ static bool cpe_language_match_expr(struct cpe_name ** cpe, size_t n,
 	return (cpe_testexpr_get_oper(expr) & CPE_LANG_OPER_NOT ? !ret : ret);
 }
 
-bool cpe_platform_match_cpe(struct cpe_name ** cpe, size_t n,
-			    const struct cpe_platform * platform)
+bool cpe_platform_match_cpe(struct cpe_name ** cpe, size_t n, const struct cpe_platform * platform)
 {
 	return cpe_language_match_expr(cpe, n, cpe_platform_get_expr(platform));
 }

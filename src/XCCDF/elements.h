@@ -20,7 +20,6 @@
  *      Lukas Kuklinek <lkuklinek@redhat.com>
  */
 
-
 #ifndef XCCDF_ELEMENTS_H_
 #define XCCDF_ELEMENTS_H_
 #include <libxml/xmlreader.h>
@@ -110,7 +109,6 @@ xccdf_element_t xccdf_element_get(xmlTextReaderPtr reader);
 
 #define XCCDF_ASSERT_ELEMENT(reader, element) do { if (xccdf_element_get(reader) != element) return false; } while(false)
 
-
 typedef enum {
 	XCCDFA_NONE,
 	XCCDFA_ABSTRACT,
@@ -168,8 +166,8 @@ typedef enum {
 } xccdf_attribute_t;
 
 bool xccdf_attribute_has(xmlTextReaderPtr reader, xccdf_attribute_t attr);
-const char* xccdf_attribute_get(xmlTextReaderPtr reader, xccdf_attribute_t attr);
-char* xccdf_attribute_copy(xmlTextReaderPtr reader, xccdf_attribute_t attr);
+const char *xccdf_attribute_get(xmlTextReaderPtr reader, xccdf_attribute_t attr);
+char *xccdf_attribute_copy(xmlTextReaderPtr reader, xccdf_attribute_t attr);
 bool xccdf_attribute_get_bool(xmlTextReaderPtr reader, xccdf_attribute_t attr);
 int xccdf_attribute_get_int(xmlTextReaderPtr reader, xccdf_attribute_t attr);
 float xccdf_attribute_get_float(xmlTextReaderPtr reader, xccdf_attribute_t attr);
@@ -178,19 +176,17 @@ float xccdf_attribute_get_float(xmlTextReaderPtr reader, xccdf_attribute_t attr)
 extern const struct oscap_string_map XCCDF_BOOL_MAP[];
 
 bool xccdf_to_start_element(xmlTextReaderPtr reader, int depth);
-char* xccdf_element_string_copy(xmlTextReaderPtr reader);
-const char* xccdf_element_string_get(xmlTextReaderPtr reader);
+char *xccdf_element_string_copy(xmlTextReaderPtr reader);
+const char *xccdf_element_string_get(xmlTextReaderPtr reader);
 int xccdf_element_depth(xmlTextReaderPtr reader);
 
 void xccdf_print_depth(int depth);
-void xccdf_print_max(const char* str, int max, const char* ellipsis);
-char* xccdf_get_xml(xmlTextReaderPtr reader);
+void xccdf_print_max(const char *str, int max, const char *ellipsis);
+char *xccdf_get_xml(xmlTextReaderPtr reader);
 
-time_t xccdf_get_date(const char* date);
-time_t xccdf_get_datetime(const char* date);
+time_t xccdf_get_date(const char *date);
+time_t xccdf_get_datetime(const char *date);
 
 OSCAP_HIDDEN_END;
 
 #endif
-
-

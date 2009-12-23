@@ -35,14 +35,14 @@
 /**
  * */
 struct oscap_title {
-        struct xml_metadata xml;
-	char *content;		        // human-readable name of this item
+	struct xml_metadata xml;
+	char *content;		// human-readable name of this item
 };
 
-struct oscap_title * oscap_title_parse(xmlTextReaderPtr reader, const char * name);
-void oscap_title_export(const struct oscap_title * title, xmlTextWriterPtr writer);
-void oscap_title_free(struct oscap_title * title);
+struct oscap_title *oscap_title_parse(xmlTextReaderPtr reader, const char *name);
+void oscap_title_export(const struct oscap_title *title, xmlTextWriterPtr writer);
+void oscap_title_free(struct oscap_title *title);
 
-const char* oscap_import_source_get_name(const struct oscap_import_source * src);
+const char *oscap_import_source_get_name(const struct oscap_import_source *src);
 
 #endif

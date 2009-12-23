@@ -22,21 +22,21 @@ OSCAP_HIDDEN_START;
 #endif
 
 typedef struct {
-        oval_subtype_t subtype;
-        char          *subtype_name;
-        char          *filename;
+	oval_subtype_t subtype;
+	char *subtype_name;
+	char *filename;
 } oval_pdsc_t;
 
 typedef struct {
-        oval_subtype_t subtype;
-        int   sd;
-        char *uri;
+	oval_subtype_t subtype;
+	int sd;
+	char *uri;
 } oval_pd_t;
 
 typedef struct {
-        oval_pd_t  *memb;
-        size_t      count;
-        SEAP_CTX_t *ctx;
+	oval_pd_t *memb;
+	size_t count;
+	SEAP_CTX_t *ctx;
 } oval_pdtbl_t;
 
 #define OVALP_SDTBL_CMDDONE 0x01
@@ -44,15 +44,15 @@ typedef struct {
 
 #define OVAL_PROBE_MAXRETRY 3
 
-const oval_pdsc_t  *oval_pdsc_lookup (oval_subtype_t subtype);
-oval_subtype_t      oval_pdsc_lookup_type (const char *name);
+const oval_pdsc_t *oval_pdsc_lookup(oval_subtype_t subtype);
+oval_subtype_t oval_pdsc_lookup_type(const char *name);
 
 struct oval_pctx {
-        oval_pdsc_t   *pdsc_table;
-        oval_pdtbl_t  *pd_table;
-        char          *p_dir;
-        struct oval_syschar_model *model;
-        uint32_t p_flags;
+	oval_pdsc_t *pdsc_table;
+	oval_pdtbl_t *pd_table;
+	char *p_dir;
+	struct oval_syschar_model *model;
+	uint32_t p_flags;
 };
 
 #define OVAL_PCTX_SETFLAG(ctx, flg)   ((ctx)->p_flags |=  (flg))
@@ -61,4 +61,4 @@ struct oval_pctx {
 
 OSCAP_HIDDEN_END;
 
-#endif /* OVAL_PROBE_IMPL_H */
+#endif				/* OVAL_PROBE_IMPL_H */

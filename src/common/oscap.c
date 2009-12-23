@@ -27,5 +27,3 @@ void oscap_cleanup(void)
 {
 	xmlCleanupParser();
 }
-
-

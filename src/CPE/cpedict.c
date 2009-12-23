@@ -34,48 +34,51 @@
 #include "../common/list.h"
 #include "../common/util.h"
 
-struct cpe_dict_model * cpe_dict_model_import(const struct oscap_import_source * source) {
+struct cpe_dict_model *cpe_dict_model_import(const struct oscap_import_source *source)
+{
 
-    __attribute__nonnull__(source);
+	__attribute__nonnull__(source);
 
-    if (oscap_import_source_get_name(source) == NULL) return NULL;
+	if (oscap_import_source_get_name(source) == NULL)
+		return NULL;
 
-    struct cpe_dict_model *dict;
+	struct cpe_dict_model *dict;
 
-    dict = cpe_dict_model_parse_xml(source);
+	dict = cpe_dict_model_parse_xml(source);
 
-    return dict;
+	return dict;
 }
 
-void cpe_dict_model_export(const struct cpe_dict_model * dict, const struct oscap_export_target * target) {
+void cpe_dict_model_export(const struct cpe_dict_model *dict, const struct oscap_export_target *target)
+{
 
-    __attribute__nonnull__(dict);
-    __attribute__nonnull__(target);
-        
-    if (oscap_export_target_get_name(target) == NULL) return;
+	__attribute__nonnull__(dict);
+	__attribute__nonnull__(target);
 
-    cpe_dict_model_export_xml(dict, target);
+	if (oscap_export_target_get_name(target) == NULL)
+		return;
+
+	cpe_dict_model_export_xml(dict, target);
 
 }
 
-bool cpe_name_match_dict(struct cpe_name * cpe, struct cpe_dict_model * dict) {
+bool cpe_name_match_dict(struct cpe_name * cpe, struct cpe_dict_model * dict)
+{
 
-    __attribute__nonnull__(cpe);
-    __attribute__nonnull__(dict);
-        
+	__attribute__nonnull__(cpe);
+	__attribute__nonnull__(dict);
+
 	if (cpe == NULL || dict == NULL)
 		return false;
-	
-    struct cpe_item_iterator *items = cpe_dict_model_get_items(dict);
+
+	struct cpe_item_iterator *items = cpe_dict_model_get_items(dict);
 	size_t n = oscap_iterator_get_itemcount((struct oscap_iterator *)items);
-	struct cpe_name** cpes = oscap_alloc(sizeof(struct cpe_name*) * n);
+	struct cpe_name **cpes = oscap_alloc(sizeof(struct cpe_name *) * n);
 	//struct oscap_list_item* cur = ((struct oscap_list *) cpe_dict_model_get_items(dict))->first;
 
 	int i = 0;
-	OSCAP_FOREACH (cpe_item, item, items,
-		cpes[i++] = cpe_item_get_name(item);
-	)
-	
+	OSCAP_FOREACH(cpe_item, item, items, cpes[i++] = cpe_item_get_name(item);)
+
 	bool ret = cpe_name_match_cpes(cpe, n, cpes);
 
 	oscap_free(cpes);
@@ -85,14 +88,15 @@ bool cpe_name_match_dict(struct cpe_name * cpe, struct cpe_dict_model * dict) {
 
 bool cpe_name_match_dict_str(const char *cpestr, struct cpe_dict_model * dict)
 {
-        __attribute__nonnull__(cpestr);
-        __attribute__nonnull__(dict);
+	__attribute__nonnull__(cpestr);
+	__attribute__nonnull__(dict);
 
 	bool ret;
 	if (cpestr == NULL)
 		return false;
 	struct cpe_name *cpe = cpe_name_new(cpestr);
-	if (cpe == NULL) return false;
+	if (cpe == NULL)
+		return false;
 	ret = cpe_name_match_dict(cpe, dict);
 	cpe_name_free(cpe);
 	return ret;

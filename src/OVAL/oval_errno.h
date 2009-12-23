@@ -21,4 +21,4 @@ extern int oval_errno;
 
 OSCAP_HIDDEN_END;
 
-#endif /* OVAL_ERRNO_H_ */
+#endif				/* OVAL_ERRNO_H_ */

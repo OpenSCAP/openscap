@@ -34,22 +34,22 @@
  */
 /// System characteristics result flag
 typedef enum {
-	SYSCHAR_FLAG_UNKNOWN         = 0,
-	SYSCHAR_FLAG_ERROR           = 1,
-	SYSCHAR_FLAG_COMPLETE        = 2,
-	SYSCHAR_FLAG_INCOMPLETE      = 3,
-	SYSCHAR_FLAG_DOES_NOT_EXIST  = 4,
-	SYSCHAR_FLAG_NOT_COLLECTED   = 5,
-	SYSCHAR_FLAG_NOT_APPLICABLE  = 6
+	SYSCHAR_FLAG_UNKNOWN = 0,
+	SYSCHAR_FLAG_ERROR = 1,
+	SYSCHAR_FLAG_COMPLETE = 2,
+	SYSCHAR_FLAG_INCOMPLETE = 3,
+	SYSCHAR_FLAG_DOES_NOT_EXIST = 4,
+	SYSCHAR_FLAG_NOT_COLLECTED = 5,
+	SYSCHAR_FLAG_NOT_APPLICABLE = 6
 } oval_syschar_collection_flag_t;
 
 /// System characteristics status
-typedef enum{
-	SYSCHAR_STATUS_UNKNOWN        = 0,
-	SYSCHAR_STATUS_ERROR          = 1,
-	SYSCHAR_STATUS_EXISTS         = 2,
+typedef enum {
+	SYSCHAR_STATUS_UNKNOWN = 0,
+	SYSCHAR_STATUS_ERROR = 1,
+	SYSCHAR_STATUS_EXISTS = 2,
 	SYSCHAR_STATUS_DOES_NOT_EXIST = 3,
-	SYSCHAR_STATUS_NOT_COLLECTED  = 4
+	SYSCHAR_STATUS_NOT_COLLECTED = 4
 } oval_syschar_status_t;
 /**
 * @addtogroup OVALSYS_setters Setters
@@ -284,8 +284,7 @@ struct oval_sysitem_iterator;
  * @param definition_model the specified oval_definition_model.
  * @ingroup OVALSYS
  */
-struct oval_syschar_model *oval_syschar_model_new(
-		struct oval_definition_model *definition_model);
+struct oval_syschar_model *oval_syschar_model_new(struct oval_definition_model *definition_model);
 /**
  * return <b>true</b> if the syschar_model instance is valid
  * @ingroup OVALSYS_eval
@@ -321,15 +320,13 @@ void oval_syschar_model_free(struct oval_syschar_model *model);
  * @param model the specified oval_syschar_model.
  * @ingroup OVALSYS_getters
  */
-struct oval_definition_model *oval_syschar_model_get_definition_model(
-		struct oval_syschar_model *model);
+struct oval_definition_model *oval_syschar_model_get_definition_model(struct oval_syschar_model *model);
 /**
  * Return an iterator over the oval_sychar objects persisted by this model.
  * @param model the specified oval_syschar_model.
  * @ingroup OVALSYS_getters
  */
-struct oval_syschar_iterator *oval_syschar_model_get_syschars(
-		struct oval_syschar_model *model);
+struct oval_syschar_iterator *oval_syschar_model_get_syschars(struct oval_syschar_model *model);
 
 /**
  * Return default sysinfo bound to syschar model.
@@ -346,18 +343,13 @@ struct oval_sysinfo *oval_syschar_model_get_sysinfo(struct oval_syschar_model *m
  * @ingroup OVALSYS_getters
  */
 
-struct oval_syschar *oval_syschar_model_get_syschar(
-		struct oval_syschar_model *model,
-		char *object_id);
-
+struct oval_syschar *oval_syschar_model_get_syschar(struct oval_syschar_model *model, char *object_id);
 
 /**
  * Bind a variable model to the definitions bound to the syschar model.
  * @ingroup OVALSYS_setters
  */
-void oval_syschar_model_bind_variable_model
-	(struct oval_syschar_model *, struct oval_variable_model *);
-
+void oval_syschar_model_bind_variable_model(struct oval_syschar_model *, struct oval_variable_model *);
 
 /**
  * Probe oval_objects bound to oval_syschar_model
@@ -369,7 +361,8 @@ void oval_syschar_model_probe_objects(struct oval_syschar_model *);
  * Get the collection flag associated with a specified oval_variable
  * @ingroup OVALSYS_getters
  */
-oval_syschar_collection_flag_t oval_syschar_model_get_variable_collection_flag(struct oval_syschar_model *, struct oval_variable *);
+oval_syschar_collection_flag_t oval_syschar_model_get_variable_collection_flag(struct oval_syschar_model *,
+									       struct oval_variable *);
 
 /**
  * Get the oval_values bound to a specified variable.
@@ -379,7 +372,7 @@ struct oval_value_iterator *oval_syschar_model_get_variable_values(struct oval_s
 /**
  * @ingroup OVALSYS_getters
  */
-struct oval_sysdata *oval_syschar_model_get_sysdata(struct oval_syschar_model *, char*);
+struct oval_sysdata *oval_syschar_model_get_sysdata(struct oval_syschar_model *, char *);
 /**
  * @ingroup OVALSYS_setters
  */
@@ -401,41 +394,38 @@ void oval_syschar_model_add_variable_binding(struct oval_syschar_model *model, s
  * Export system characteristics as a XML file.
  * @ingroup OVALSYS_service
  */
-int oval_syschar_model_export(
-		struct oval_syschar_model *, struct oscap_export_target *);
+int oval_syschar_model_export(struct oval_syschar_model *, struct oscap_export_target *);
 
 /**
  * Load OVAL system characteristics from a file.
  * @ingroup OVALSYS_service
  */
-int oval_syschar_model_import(struct oval_syschar_model *model,
-			struct oscap_import_source *source,
-			void *user_arg );
+int oval_syschar_model_import(struct oval_syschar_model *model, struct oscap_import_source *source, void *user_arg);
 
 /**
  * @ingroup oval_sysint_iterators
  */
-bool                 oval_sysint_iterator_has_more(struct oval_sysint_iterator *);
+bool oval_sysint_iterator_has_more(struct oval_sysint_iterator *);
 /**
  * @ingroup oval_sysint_iterators
  */
-struct oval_sysint *oval_sysint_iterator_next    (struct oval_sysint_iterator *);
+struct oval_sysint *oval_sysint_iterator_next(struct oval_sysint_iterator *);
 /**
  * @ingroup oval_sysint_iterators
  */
-void                oval_sysint_iterator_free    (struct oval_sysint_iterator *);
+void oval_sysint_iterator_free(struct oval_sysint_iterator *);
 
 /**
  * Get interface name.
  * @ingroup oval_sysint_getters
  */
-char *oval_sysint_get_name       (struct oval_sysint *);
+char *oval_sysint_get_name(struct oval_sysint *);
 
 /**
  * Get interface IP address.
  * @ingroup oval_sysint_getters
  */
-char *oval_sysint_get_ip_address (struct oval_sysint *);
+char *oval_sysint_get_ip_address(struct oval_sysint *);
 
 /**
  * Get interface MAC address.
@@ -445,165 +435,165 @@ char *oval_sysint_get_mac_address(struct oval_sysint *);
 /**
  * @ingroup oval_sysinfo_iterators
  */
-bool                  oval_sysinfo_iterator_has_more(struct oval_sysinfo_iterator *);
+bool oval_sysinfo_iterator_has_more(struct oval_sysinfo_iterator *);
 /**
  * @ingroup oval_sysinfo_iterators
  */
-struct oval_sysinfo *oval_sysinfo_iterator_next    (struct oval_sysinfo_iterator *);
+struct oval_sysinfo *oval_sysinfo_iterator_next(struct oval_sysinfo_iterator *);
 /**
  * @ingroup oval_sysinfo_iterators
  */
-void                 oval_sysinfo_iterator_free    (struct oval_sysinfo_iterator *);
+void oval_sysinfo_iterator_free(struct oval_sysinfo_iterator *);
 
 /**
  * Get operating system name.
  * @ingroup oval_sysinfo_getters
  */
-char                        *oval_sysinfo_get_os_name          (struct oval_sysinfo *);
+char *oval_sysinfo_get_os_name(struct oval_sysinfo *);
 
 /**
  * Get operating system version.
  * @ingroup oval_sysinfo_getters
  */
-char                        *oval_sysinfo_get_os_version       (struct oval_sysinfo *);
+char *oval_sysinfo_get_os_version(struct oval_sysinfo *);
 
 /**
  * Get operating system architecture.
  * @ingroup oval_sysinfo_getters
  */
-char                        *oval_sysinfo_get_os_architecture  (struct oval_sysinfo *);
+char *oval_sysinfo_get_os_architecture(struct oval_sysinfo *);
 
 /**
  * Get primary host name of the tested machine.
  * @ingroup oval_sysinfo_getters
  */
-char                        *oval_sysinfo_get_primary_host_name(struct oval_sysinfo *);
+char *oval_sysinfo_get_primary_host_name(struct oval_sysinfo *);
 
 /**
  * Get an iterator to the list of network interfaces.
  * @ingroup oval_sysinfo_getters
  */
-struct oval_sysint_iterator *oval_sysinfo_get_interfaces       (struct oval_sysinfo *);
+struct oval_sysint_iterator *oval_sysinfo_get_interfaces(struct oval_sysinfo *);
 /**
  * @ingroup oval_sysdata_iterators
  */
-bool                  oval_sysdata_iterator_has_more(struct oval_sysdata_iterator *);
+bool oval_sysdata_iterator_has_more(struct oval_sysdata_iterator *);
 /**
  * @ingroup oval_sysdata_iterators
  */
-struct oval_sysdata *oval_sysdata_iterator_next    (struct oval_sysdata_iterator *);
+struct oval_sysdata *oval_sysdata_iterator_next(struct oval_sysdata_iterator *);
 /**
  * @ingroup oval_sysdata_iterators
  */
-void                 oval_sysdata_iterator_free    (struct oval_sysdata_iterator *);
+void oval_sysdata_iterator_free(struct oval_sysdata_iterator *);
 
 /**
  * Get system data subtype.
  * @ingroup oval_sysdata_getters
  */
-oval_subtype_t                oval_sysdata_get_subtype      (struct oval_sysdata *);
+oval_subtype_t oval_sysdata_get_subtype(struct oval_sysdata *);
 
 /**
  * Get system data ID.
  * @ingroup oval_sysdata_getters
  */
-char                         *oval_sysdata_get_id           (struct oval_sysdata *);
+char *oval_sysdata_get_id(struct oval_sysdata *);
 
 /**
  * Get system data status.
  * @ingroup oval_sysdata_getters
  */
-oval_syschar_status_t         oval_sysdata_get_status       (struct oval_sysdata *);
+oval_syschar_status_t oval_sysdata_get_status(struct oval_sysdata *);
 
 /**
  * Get system data individual items.
  * @ingroup oval_sysdata_getters
  */
-struct oval_sysitem_iterator *oval_sysdata_get_items        (struct oval_sysdata *);
+struct oval_sysitem_iterator *oval_sysdata_get_items(struct oval_sysdata *);
 
 /**
  * Get system data message.
  * @ingroup oval_sysdata_getters
  */
-char                         *oval_sysdata_get_message      (struct oval_sysdata *);
+char *oval_sysdata_get_message(struct oval_sysdata *);
 
 /**
  * Get system data message level.
  * @ingroup oval_sysdata_getters
  */
-oval_message_level_t          oval_sysdata_get_message_level(struct oval_sysdata *);
+oval_message_level_t oval_sysdata_get_message_level(struct oval_sysdata *);
 /**
  * @ingroup oval_sysitem_iterators
  */
-bool                  oval_sysitem_iterator_has_more(struct oval_sysitem_iterator *);
+bool oval_sysitem_iterator_has_more(struct oval_sysitem_iterator *);
 /**
  * @ingroup oval_sysitem_iterators
  */
-struct oval_sysitem *oval_sysitem_iterator_next    (struct oval_sysitem_iterator *);
+struct oval_sysitem *oval_sysitem_iterator_next(struct oval_sysitem_iterator *);
 /**
  * @ingroup oval_sysitem_iterators
  */
-void                 oval_sysitem_iterator_free    (struct oval_sysitem_iterator *);
+void oval_sysitem_iterator_free(struct oval_sysitem_iterator *);
 
 /**
  * Get system data item name.
  * @ingroup oval_sysitem_getters
  */
-char                    *oval_sysitem_get_name    (struct oval_sysitem *);
+char *oval_sysitem_get_name(struct oval_sysitem *);
 
 /**
  * Get system data item value.
  * @ingroup oval_sysitem_getters
  */
-char                    *oval_sysitem_get_value   (struct oval_sysitem *);
+char *oval_sysitem_get_value(struct oval_sysitem *);
 
 /**
  * Get system data item status.
  * @ingroup oval_sysitem_getters
  */
-oval_syschar_status_t    oval_sysitem_get_status  (struct oval_sysitem *);
+oval_syschar_status_t oval_sysitem_get_status(struct oval_sysitem *);
 
 /**
  * Get system data item data type.
  * @ingroup oval_sysitem_getters
  */
-oval_datatype_t          oval_sysitem_get_datatype(struct oval_sysitem *);
+oval_datatype_t oval_sysitem_get_datatype(struct oval_sysitem *);
 
 /**
  * Get system data item mask.
  * @ingroup oval_sysitem_getters
  */
-int                      oval_sysitem_get_mask    (struct oval_sysitem *);
+int oval_sysitem_get_mask(struct oval_sysitem *);
 /**
  * @ingroup oval_syschar_iterators
  */
-bool                  oval_syschar_iterator_has_more(struct oval_syschar_iterator *);
+bool oval_syschar_iterator_has_more(struct oval_syschar_iterator *);
 /**
  * @ingroup oval_syschar_iterators
  */
-struct oval_syschar *oval_syschar_iterator_next    (struct oval_syschar_iterator *);
+struct oval_syschar *oval_syschar_iterator_next(struct oval_syschar_iterator *);
 /**
  * @ingroup oval_syschar_iterators
  */
-void                 oval_syschar_iterator_free    (struct oval_syschar_iterator *);
+void oval_syschar_iterator_free(struct oval_syschar_iterator *);
 
 /**
  * Get system characteristic flag.
  * @ingroup oval_syschar_getters
  */
-oval_syschar_collection_flag_t         oval_syschar_get_flag             (struct oval_syschar *);
+oval_syschar_collection_flag_t oval_syschar_get_flag(struct oval_syschar *);
 
 /**
  * Get messages bound to this system characteristic.
  * @ingroup oval_syschar_getters
  */
-struct oval_message_iterator          *oval_syschar_get_messages         (struct oval_syschar *);
+struct oval_message_iterator *oval_syschar_get_messages(struct oval_syschar *);
 
 /**
  * Get object associated with this system characteristic.
  * @ingroup oval_syschar_getters
  */
-struct oval_object                    *oval_syschar_get_object           (struct oval_syschar *);
+struct oval_object *oval_syschar_get_object(struct oval_syschar *);
 
 /**
  * Get system characteristic variable bindings.
@@ -615,8 +605,7 @@ struct oval_variable_binding_iterator *oval_syschar_get_variable_bindings(struct
  * Get system characteristic data.
  * @ingroup oval_syschar_getters
  */
-struct oval_sysdata_iterator *oval_syschar_get_sysdata              (struct oval_syschar *);
-
+struct oval_sysdata_iterator *oval_syschar_get_sysdata(struct oval_syschar *);
 
 const char *oval_syschar_collection_flag_get_text(oval_syschar_collection_flag_t flag);
 const char *oval_syschar_status_get_text(oval_syschar_status_t status);

@@ -66,104 +66,101 @@ struct oval_behavior *oval_behavior_iterator_next(struct oval_behavior_iterator
 }
 
 void oval_behavior_iterator_free(struct oval_behavior_iterator
-						  *oc_behavior)
+				 *oc_behavior)
 {
-    oval_collection_iterator_free((struct oval_iterator *)oc_behavior);
+	oval_collection_iterator_free((struct oval_iterator *)oc_behavior);
 }
 
 char *oval_behavior_get_value(struct oval_behavior *behavior)
 {
-        __attribute__nonnull__(behavior);
+	__attribute__nonnull__(behavior);
 
 	return behavior->value;
 }
 
 char *oval_behavior_get_key(struct oval_behavior *behavior)
 {
-        __attribute__nonnull__(behavior);
+	__attribute__nonnull__(behavior);
 
 	return behavior->key;
 }
 
-struct oval_behavior *oval_behavior_new(struct oval_definition_model* model)
+struct oval_behavior *oval_behavior_new(struct oval_definition_model *model)
 {
-	oval_behavior_t *behavior =
-	    (oval_behavior_t *) oscap_alloc(sizeof(oval_behavior_t));
-        if (behavior == NULL)
-                return NULL;
+	oval_behavior_t *behavior = (oval_behavior_t *) oscap_alloc(sizeof(oval_behavior_t));
+	if (behavior == NULL)
+		return NULL;
 
 	behavior->model = model;
 	behavior->value = NULL;
-	behavior->key   = NULL;
+	behavior->key = NULL;
 	return behavior;
 }
 
-struct oval_behavior *oval_behavior_clone(struct oval_definition_model *new_model, 
-                                          struct oval_behavior *old_behavior)
+struct oval_behavior *oval_behavior_clone(struct oval_definition_model *new_model, struct oval_behavior *old_behavior)
 {
 	struct oval_behavior *new_behavior = oval_behavior_new(new_model);
 	oval_behavior_set_keyval
-		(new_behavior, oval_behavior_get_key(old_behavior), oval_behavior_get_value(old_behavior));
+	    (new_behavior, oval_behavior_get_key(old_behavior), oval_behavior_get_value(old_behavior));
 	return new_behavior;
 }
 
-bool oval_behavior_is_valid(struct oval_behavior *behavior)
+bool oval_behavior_is_valid(struct oval_behavior * behavior)
 {
-	return true;//TODO
+	return true;		//TODO
 }
-bool oval_behavior_is_locked(struct oval_behavior *behavior)
+
+bool oval_behavior_is_locked(struct oval_behavior * behavior)
 {
-        __attribute__nonnull__(behavior);
+	__attribute__nonnull__(behavior);
 
 	return oval_definition_model_is_locked(behavior->model);
 }
 
 void oval_behavior_free(struct oval_behavior *behavior)
 {
-        __attribute__nonnull__(behavior);
+	__attribute__nonnull__(behavior);
 
-	if (behavior->value) oscap_free(behavior->value);
-	if (behavior->key  ) oscap_free(behavior->key  );
-	behavior->key     = NULL;
-	behavior->value  = NULL;
+	if (behavior->value)
+		oscap_free(behavior->value);
+	if (behavior->key)
+		oscap_free(behavior->key);
+	behavior->key = NULL;
+	behavior->value = NULL;
 	oscap_free(behavior);
 }
 
-void oval_behavior_set_keyval(struct oval_behavior *behavior, const char* key, const char* value)
+void oval_behavior_set_keyval(struct oval_behavior *behavior, const char *key, const char *value)
 {
 	if (behavior && !oval_behavior_is_locked(behavior)) {
-		behavior->key   = oscap_strdup(key);
+		behavior->key = oscap_strdup(key);
 		behavior->value = oscap_strdup(value);
-	} else 
-                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+	} else
+		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
 //typedef void (*oval_behavior_consumer)(struct oval_behavior_node *, void*);
 int oval_behavior_parse_tag(xmlTextReaderPtr reader,
 			    struct oval_parser_context *context,
-			    oval_family_t family,
-			    oval_behavior_consumer consumer, 
-                            void *user)
+			    oval_family_t family, oval_behavior_consumer consumer, void *user)
 {
-        __attribute__nonnull__(context);
+	__attribute__nonnull__(context);
 
 	while (xmlTextReaderMoveToNextAttribute(reader) == 1) {
 
-		const char *name  = (const char *) xmlTextReaderConstName(reader);
-		const char *value = (const char *) xmlTextReaderConstValue(reader);
+		const char *name = (const char *)xmlTextReaderConstName(reader);
+		const char *value = (const char *)xmlTextReaderConstValue(reader);
 
 		if (name && value) {
-                        oval_behavior_t *behavior = oval_behavior_new(context->definition_model);
+			oval_behavior_t *behavior = oval_behavior_new(context->definition_model);
 			oval_behavior_set_keyval(behavior, name, value);
-                        (*consumer) (behavior, user);
-                }
+			(*consumer) (behavior, user);
+		}
 	}
 	return 1;
 }
 
-void oval_behavior_to_print(struct oval_behavior *behavior, 
-                            char *indent,
-			    int idx)
+void oval_behavior_to_print(struct oval_behavior *behavior, char *indent, int idx)
 {
 	char nxtindent[100];
 

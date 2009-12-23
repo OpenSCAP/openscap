@@ -50,7 +50,6 @@
  * @}
  */
 
-
 #ifndef OVAL_DEFINITIONS
 #define OVAL_DEFINITIONS
 
@@ -63,14 +62,14 @@
  * the value OVAL_AFCFML_UNDEFINED is to be used when the desired family is not available
  */
 typedef enum {
-	OVAL_AFCFML_UNKNOWN  = 0,
-	OVAL_AFCFML_CATOS    = 1,
-	OVAL_AFCFML_IOS      = 2,
-	OVAL_AFCFML_MACOS    = 3,
-	OVAL_AFCFML_PIXOS    = 4,
-	OVAL_AFCFML_UNDEFINED= 5,
-	OVAL_AFCFML_UNIX     = 6,
-	OVAL_AFCFML_WINDOWS  = 7
+	OVAL_AFCFML_UNKNOWN = 0,
+	OVAL_AFCFML_CATOS = 1,
+	OVAL_AFCFML_IOS = 2,
+	OVAL_AFCFML_MACOS = 3,
+	OVAL_AFCFML_PIXOS = 4,
+	OVAL_AFCFML_UNDEFINED = 5,
+	OVAL_AFCFML_UNIX = 6,
+	OVAL_AFCFML_WINDOWS = 7
 } oval_affected_family_t;
 
 /// Criteria node type
@@ -84,63 +83,63 @@ typedef enum {
 /// Boolean operators
 typedef enum {
 	OVAL_OPERATOR_UNKNOWN = 0,
-	OVAL_OPERATOR_AND     = 1,
-	OVAL_OPERATOR_ONE     = 2,
-	OVAL_OPERATOR_OR      = 3,
-	OVAL_OPERATOR_XOR     = 4
+	OVAL_OPERATOR_AND = 1,
+	OVAL_OPERATOR_ONE = 2,
+	OVAL_OPERATOR_OR = 3,
+	OVAL_OPERATOR_XOR = 4
 } oval_operator_t;
 
 /// Operations
 typedef enum {
-	OVAL_OPERATION_UNKNOWN                    =  0,
-	OVAL_OPERATION_EQUALS                     =  1,
-	OVAL_OPERATION_NOT_EQUAL                  =  2,
-	OVAL_OPERATION_CASE_INSENSITIVE_EQUALS    =  3,
-	OVAL_OPERATION_CASE_INSENSITIVE_NOT_EQUAL =  4,
-	OVAL_OPERATION_GREATER_THAN               =  5,
-	OVAL_OPERATION_LESS_THAN                  =  6,
-	OVAL_OPERATION_GREATER_THAN_OR_EQUAL      =  7,
-	OVAL_OPERATION_LESS_THAN_OR_EQUAL         =  8,
-	OVAL_OPERATION_BITWISE_AND                =  9,
-	OVAL_OPERATION_BITWISE_OR                 = 10,
-	OVAL_OPERATION_PATTERN_MATCH              = 11
+	OVAL_OPERATION_UNKNOWN = 0,
+	OVAL_OPERATION_EQUALS = 1,
+	OVAL_OPERATION_NOT_EQUAL = 2,
+	OVAL_OPERATION_CASE_INSENSITIVE_EQUALS = 3,
+	OVAL_OPERATION_CASE_INSENSITIVE_NOT_EQUAL = 4,
+	OVAL_OPERATION_GREATER_THAN = 5,
+	OVAL_OPERATION_LESS_THAN = 6,
+	OVAL_OPERATION_GREATER_THAN_OR_EQUAL = 7,
+	OVAL_OPERATION_LESS_THAN_OR_EQUAL = 8,
+	OVAL_OPERATION_BITWISE_AND = 9,
+	OVAL_OPERATION_BITWISE_OR = 10,
+	OVAL_OPERATION_PATTERN_MATCH = 11
 } oval_operation_t;
 
 /// Definition classes
 typedef enum {
-	/**Not valid*/OVAL_CLASS_UNKNOWN      = 0,
-	/**Valid*/    OVAL_CLASS_COMPLIANCE   = 1,
-	/**Valid*/    OVAL_CLASS_INVENTORY    = 2,
-	/**Valid*/    OVAL_CLASS_MISCELLANEOUS= 3,
-	/**Valid*/    OVAL_CLASS_PATCH        = 4,
-	/**Valid*/    OVAL_CLASS_VULNERABILITY= 5,
+	/**Not valid*/ OVAL_CLASS_UNKNOWN = 0,
+	/**Valid*/ OVAL_CLASS_COMPLIANCE = 1,
+	/**Valid*/ OVAL_CLASS_INVENTORY = 2,
+	/**Valid*/ OVAL_CLASS_MISCELLANEOUS = 3,
+	/**Valid*/ OVAL_CLASS_PATCH = 4,
+	/**Valid*/ OVAL_CLASS_VULNERABILITY = 5,
 } oval_definition_class_t;
 
 /// Existence check enumeration
 typedef enum {
-	OVAL_EXISTENCE_UNKNOWN  = 0,
-	OVAL_ALL_EXIST          = 1,
-	OVAL_ANY_EXIST          = 2,
-	OVAL_AT_LEAST_ONE_EXISTS= 3,
-	OVAL_ONLY_ONE_EXISTS    = 4,
-	OVAL_NONE_EXIST         = 5
+	OVAL_EXISTENCE_UNKNOWN = 0,
+	OVAL_ALL_EXIST = 1,
+	OVAL_ANY_EXIST = 2,
+	OVAL_AT_LEAST_ONE_EXISTS = 3,
+	OVAL_ONLY_ONE_EXISTS = 4,
+	OVAL_NONE_EXIST = 5
 } oval_existence_t;
 
 /// Check enumeration
 typedef enum {
-	OVAL_CHECK_UNKNOWN     = 0,
-	OVAL_CHECK_ALL         = 1,
-	OVAL_CHECK_AT_LEAST_ONE= 2,
-	OVAL_CHECK_NONE_EXIST  = 3,
-	OVAL_CHECK_NONE_SATISFY= 4,
-	OVAL_CHECK_ONLY_ONE    = 5
+	OVAL_CHECK_UNKNOWN = 0,
+	OVAL_CHECK_ALL = 1,
+	OVAL_CHECK_AT_LEAST_ONE = 2,
+	OVAL_CHECK_NONE_EXIST = 3,
+	OVAL_CHECK_NONE_SATISFY = 4,
+	OVAL_CHECK_ONLY_ONE = 5
 } oval_check_t;
 
 /// Type of object content
 typedef enum {
 	OVAL_OBJECTCONTENT_UNKNOWN = 0,
-	OVAL_OBJECTCONTENT_ENTITY  = 1,
-	OVAL_OBJECTCONTENT_SET     = 2
+	OVAL_OBJECTCONTENT_ENTITY = 1,
+	OVAL_OBJECTCONTENT_SET = 2
 } oval_object_content_type_t;
 
 /// Type of OVAL entity
@@ -156,16 +155,16 @@ typedef enum {
 
 /// Datatypes
 typedef enum {
-	OVAL_DATATYPE_UNKNOWN           = 0,
-	OVAL_DATATYPE_BINARY            = 1,
-	OVAL_DATATYPE_BOOLEAN           = 2,
-	OVAL_DATATYPE_EVR_STRING        = 3,
-	OVAL_DATATYPE_FILESET_REVISION  = 4,
-	OVAL_DATATYPE_FLOAT             = 5,
-	OVAL_DATATYPE_IOS_VERSION       = 6,
-	OVAL_DATATYPE_VERSION           = 7,
-	OVAL_DATATYPE_INTEGER           = 8,
-	OVAL_DATATYPE_STRING            = 9
+	OVAL_DATATYPE_UNKNOWN = 0,
+	OVAL_DATATYPE_BINARY = 1,
+	OVAL_DATATYPE_BOOLEAN = 2,
+	OVAL_DATATYPE_EVR_STRING = 3,
+	OVAL_DATATYPE_FILESET_REVISION = 4,
+	OVAL_DATATYPE_FLOAT = 5,
+	OVAL_DATATYPE_IOS_VERSION = 6,
+	OVAL_DATATYPE_VERSION = 7,
+	OVAL_DATATYPE_INTEGER = 8,
+	OVAL_DATATYPE_STRING = 9
 } oval_datatype_t;
 
 /// Varref types
@@ -186,9 +185,9 @@ typedef enum {
 /// Set operations
 typedef enum {
 	OVAL_SET_OPERATION_UNKNOWN,
-	OVAL_SET_OPERATION_COMPLEMENT   = 1,
+	OVAL_SET_OPERATION_COMPLEMENT = 1,
 	OVAL_SET_OPERATION_INTERSECTION = 2,
-	OVAL_SET_OPERATION_UNION        = 3
+	OVAL_SET_OPERATION_UNION = 3
 } oval_setobject_operation_t;
 
 /// OVAL variable types
@@ -221,30 +220,30 @@ typedef enum {
 /// Arithmetic format enumeration
 typedef enum {
 	OVAL_ARITHMETIC_UNKNOWN = 0,
-	OVAL_ARITHMETIC_ADD     = 1,
-	OVAL_ARITHMETIC_MULTIPLY =2,
-	OVAL_ARITHMETIC_SUBTRACT =3,	//NOT YET SUPPORTED BY OVAL
-	OVAL_ARITHMETIC_DIVIDE   =4	//NOT YET SUPPORTED BY OVAL
+	OVAL_ARITHMETIC_ADD = 1,
+	OVAL_ARITHMETIC_MULTIPLY = 2,
+	OVAL_ARITHMETIC_SUBTRACT = 3,	//NOT YET SUPPORTED BY OVAL
+	OVAL_ARITHMETIC_DIVIDE = 4	//NOT YET SUPPORTED BY OVAL
 } oval_arithmetic_operation_t;
 
 /// Datetime format enumeration.
 typedef enum {
-	OVAL_DATETIME_UNKNOWN             = 0,
-	OVAL_DATETIME_YEAR_MONTH_DAY      = 1,
-	OVAL_DATETIME_MONTH_DAY_YEAR      = 2,
-	OVAL_DATETIME_DAY_MONTH_YEAR      = 3,
-	OVAL_DATETIME_WIN_FILETIME        = 4,
+	OVAL_DATETIME_UNKNOWN = 0,
+	OVAL_DATETIME_YEAR_MONTH_DAY = 1,
+	OVAL_DATETIME_MONTH_DAY_YEAR = 2,
+	OVAL_DATETIME_DAY_MONTH_YEAR = 3,
+	OVAL_DATETIME_WIN_FILETIME = 4,
 	OVAL_DATETIME_SECONDS_SINCE_EPOCH = 5
 } oval_datetime_format_t;
 
 /// Message level.
 typedef enum {
-	OVAL_MESSAGE_LEVEL_NONE    = 0,
-	OVAL_MESSAGE_LEVEL_DEBUG   = 1,
-	OVAL_MESSAGE_LEVEL_INFO    = 2,
+	OVAL_MESSAGE_LEVEL_NONE = 0,
+	OVAL_MESSAGE_LEVEL_DEBUG = 1,
+	OVAL_MESSAGE_LEVEL_INFO = 2,
 	OVAL_MESSAGE_LEVEL_WARNING = 3,
-	OVAL_MESSAGE_LEVEL_ERROR   = 4,
-	OVAL_MESSAGE_LEVEL_FATAL   = 5
+	OVAL_MESSAGE_LEVEL_ERROR = 4,
+	OVAL_MESSAGE_LEVEL_FATAL = 5
 } oval_message_level_t;
 
 /**
@@ -981,7 +980,7 @@ struct oval_definition_model *oval_definition_model_clone(struct oval_definition
 /***
  * Free OVAL object model.
  */
-void oval_definition_model_free(struct oval_definition_model * model);
+void oval_definition_model_free(struct oval_definition_model *model);
 /**
  * Import the content from a specified XML stream into a @ref OVALDEF.
  * The imported XML stream must be
@@ -993,10 +992,7 @@ void oval_definition_model_free(struct oval_definition_model * model);
  * @param client pointer to client data (may be NULL)
  * @ingroup OVALDEF_service
  */
-int  oval_definition_model_import(
-			struct oval_definition_model *model,
-			struct oscap_import_source *source,
-                        void *client);
+int oval_definition_model_import(struct oval_definition_model *model, struct oscap_import_source *source, void *client);
 /**
  * Returns the appended @ref Oval_definition having the specified id.
  * IF the specified id does not resolve to an appended Oval_definition the method shall return NULL.
@@ -1043,9 +1039,7 @@ void oval_definition_model_add_variable(struct oval_definition_model *, struct o
  * @param id the test id.
  * @ingroup OVALDEF_getters
  */
-struct oval_test *oval_definition_model_get_test(
-		struct oval_definition_model *model,
-		char *id);
+struct oval_test *oval_definition_model_get_test(struct oval_definition_model *model, char *id);
 /**
  * Get OVAL object by ID.
  * Return a designated oval_object from the specified oval_definition_model.
@@ -1054,9 +1048,7 @@ struct oval_test *oval_definition_model_get_test(
  * @param id the object id.
  * @ingroup OVALDEF_getters
  */
-struct oval_object *oval_definition_model_get_object(
-		struct oval_definition_model *model,
-		char *id);
+struct oval_object *oval_definition_model_get_object(struct oval_definition_model *model, char *id);
 /**
  * Get OVAL state by ID.
  * Return a designated oval_state from the specified oval_definition_model.
@@ -1065,9 +1057,7 @@ struct oval_object *oval_definition_model_get_object(
  * @param id the state id.
  * @ingroup OVALDEF_getters
  */
-struct oval_state *oval_definition_model_get_state(
-		struct oval_definition_model *model,
-		char *id);
+struct oval_state *oval_definition_model_get_state(struct oval_definition_model *model, char *id);
 /**
  * Get OVAL variable by ID.
  * Return a designated oval_variable from the specified oval_definition_model.
@@ -1076,46 +1066,39 @@ struct oval_state *oval_definition_model_get_state(
  * @param id the variable id.
  * @ingroup OVALDEF_getters
  */
-struct oval_variable *oval_definition_model_get_variable(
-		struct oval_definition_model *model,
-		char *id);
+struct oval_variable *oval_definition_model_get_variable(struct oval_definition_model *model, char *id);
 /**
  * Get OVAL tests.
  * Return all oval_tests from the specified oval_definition_model.
  * @param model the queried model.
  * @ingroup OVALDEF_getters
  */
-struct oval_test_iterator *oval_definition_model_get_tests(
-		struct oval_definition_model *model);
+struct oval_test_iterator *oval_definition_model_get_tests(struct oval_definition_model *model);
 /**
  * Get OVAL objects.
  * Return all oval_objects from the specified oval_definition_model.
  * @param model the queried model.
  * @ingroup OVALDEF_getters
  */
-struct oval_object_iterator *oval_definition_model_get_objects(
-		struct oval_definition_model *model);
+struct oval_object_iterator *oval_definition_model_get_objects(struct oval_definition_model *model);
 /**
  * Get OVAL states.
  * Return all oval_states from the specified oval_definition_model.
  * @param model the queried model.
  * @ingroup OVALDEF_getters
  */
-struct oval_state_iterator *oval_definition_model_get_states(
-		struct oval_definition_model *model);
+struct oval_state_iterator *oval_definition_model_get_states(struct oval_definition_model *model);
 /**
  * Get OVAL variables.
  * Return all oval_variables from the specified oval_definition_model.
  * @param model the queried model.
  * @ingroup OVALDEF_getters
  */
-struct oval_variable_iterator *oval_definition_model_get_variables(
-		struct oval_definition_model *model);
+struct oval_variable_iterator *oval_definition_model_get_variables(struct oval_definition_model *model);
 /**
  * @ingroup OVALDEF_service
  */
-int oval_definition_model_export(
-		struct oval_definition_model *, struct oscap_export_target *);
+int oval_definition_model_export(struct oval_definition_model *, struct oscap_export_target *);
 
 /**
  * Return <b>true</b> if iterator has more @ref Oval_affected.
@@ -1126,12 +1109,12 @@ bool oval_affected_iterator_has_more(struct oval_affected_iterator *);
  * Return next instance of @ref Oval_affected from iterator.
  * @ingroup oval_affected_iterators
  */
-struct oval_affected *oval_affected_iterator_next    (struct oval_affected_iterator *);
+struct oval_affected *oval_affected_iterator_next(struct oval_affected_iterator *);
 /**
  * Release instance of @ref Oval_affected iterator.
  * @ingroup oval_affected_iterators
  */
-void oval_affected_iterator_free    (struct oval_affected_iterator *);
+void oval_affected_iterator_free(struct oval_affected_iterator *);
 /**
  * Construct instance of @ref Oval_affected.
  * @ingroup Oval_affected
@@ -1184,7 +1167,7 @@ void oval_affected_add_product(struct oval_affected *, char *product_name);
  * other than one of the defined values is targeted.
  * @ingroup oval_affected_setters
  */
-oval_affected_family_t       oval_affected_get_family  (struct oval_affected *);
+oval_affected_family_t oval_affected_get_family(struct oval_affected *);
 
 /**
  * Get member values @ref Oval_affected platform_names.
@@ -1198,7 +1181,7 @@ struct oval_string_iterator *oval_affected_get_platforms(struct oval_affected *)
  * If the returned iterator is empty, then the associated Oval_definition is not constrained to a specific product choice.
  * @ingroup oval_affected_getters
  */
-struct oval_string_iterator *oval_affected_get_products (struct oval_affected *);
+struct oval_string_iterator *oval_affected_get_products(struct oval_affected *);
 /**
  * Construct an instance of @ref Oval_criteria_node.
  * Initialized attribute values are:
@@ -1225,7 +1208,7 @@ struct oval_criteria_node *oval_criteria_node_new(struct oval_definition_model *
  * @ingroup Oval_criteria_node
  */
 struct oval_criteria_node *oval_criteria_node_clone
-(struct oval_definition_model *new_model, struct oval_criteria_node *old_node);
+    (struct oval_definition_model *new_model, struct oval_criteria_node *old_node);
 /**
  * Return <b>true</b> if the instance of Oval_criteria_node is locked.
  * The state of a locked instance cannot be changed.
@@ -1241,7 +1224,7 @@ void oval_criteria_node_free(struct oval_criteria_node *);
  * Returns <b>true</b> if the iterator is not exhausted.
  * @ingroup oval_criteria_node_iterators
  */
-bool oval_criteria_node_iterator_has_more                (struct oval_criteria_node_iterator *);
+bool oval_criteria_node_iterator_has_more(struct oval_criteria_node_iterator *);
 /**
  * Returns the next instance of @ref Oval_criteria_node from the iterator.
  * Returns NULL if the iterator is exhausted.
@@ -1252,7 +1235,7 @@ struct oval_criteria_node *oval_criteria_node_iterator_next(struct oval_criteria
  * Free the iterator.
  * @ingroup oval_criteria_node_iterators
  */
-void  oval_criteria_node_iterator_free(struct oval_criteria_node_iterator *);
+void oval_criteria_node_iterator_free(struct oval_criteria_node_iterator *);
 /**
  * Returns <b>true</b> if @ref Oval_criteria_node is valid.
  * An Oval_criteria_node is valid if one of the following is true:
@@ -1294,8 +1277,7 @@ void oval_criteria_node_set_negate(struct oval_criteria_node *, bool negate);
  * @param type - the required value of the type attribute
  * @ingroup oval_criteria_node_setters
  */
-void oval_criteria_set_node_type(struct oval_criteria_node *node,
-				 oval_criteria_node_type_t type);
+void oval_criteria_set_node_type(struct oval_criteria_node *node, oval_criteria_node_type_t type);
 /**
  * Returns attribute @ref Oval_criteria_node->comment.
  * @see oval_criteria_node_set_comment
@@ -1333,7 +1315,7 @@ void oval_criteria_node_set_operator(struct oval_criteria_node *, oval_operator_
  * @see oval_criteria_node_iterator_free
  * @ingroup oval_criteria_node_getters
  */
-struct oval_criteria_node_iterator *oval_criteria_node_get_subnodes (struct oval_criteria_node *);
+struct oval_criteria_node_iterator *oval_criteria_node_get_subnodes(struct oval_criteria_node *);
 /**
  * Append instance of @ref Oval_criteria_node to attribute @ref Oval_criteria->subnodes.
  * If Oval_criteria_node->type <> @ref OVAL_NODETYPE_CRITERIA, this method shall return without changing the Oval_criteria_node state.
@@ -1381,7 +1363,7 @@ void oval_criteria_node_set_definition(struct oval_criteria_node *, struct oval_
 /**
  * @ingroup oval_reference
  */
-struct oval_reference *oval_reference_new(struct oval_definition_model*);
+struct oval_reference *oval_reference_new(struct oval_definition_model *);
 /**
  * return <b>true</b> if the reference instance is valid
  * @ingroup oval_reference_eval
@@ -1397,7 +1379,7 @@ bool oval_reference_is_locked(struct oval_reference *reference);
  * @ingroup oval_reference
  */
 struct oval_reference *oval_reference_clone
-(struct oval_definition_model *new_model, struct oval_reference *old_reference);
+    (struct oval_definition_model *new_model, struct oval_reference *old_reference);
 /**
  * @ingroup oval_reference
  */
@@ -1422,11 +1404,11 @@ bool oval_reference_iterator_has_more(struct oval_reference_iterator *);
 /**
  * @ingroup oval_reference_iterators
  */
-struct oval_reference *oval_reference_iterator_next    (struct oval_reference_iterator *);
+struct oval_reference *oval_reference_iterator_next(struct oval_reference_iterator *);
 /**
  * @ingroup oval_reference_iterators
  */
-void oval_reference_iterator_free    (struct oval_reference_iterator *);
+void oval_reference_iterator_free(struct oval_reference_iterator *);
 /**
  * Get OVAL reference source.
  * @relates oval_reference
@@ -1438,13 +1420,13 @@ char *oval_reference_get_source(struct oval_reference *);
  * @relates oval_reference
  * @ingroup oval_reference_getters
  */
-char *oval_reference_get_id    (struct oval_reference *);
+char *oval_reference_get_id(struct oval_reference *);
 /**
  * Get OVAL reference URL.
  * @relates oval_reference
  * @ingroup oval_reference_getters
  */
-char *oval_reference_get_url   (struct oval_reference *);
+char *oval_reference_get_url(struct oval_reference *);
 /**
  * Construct an instance of @ref Oval_definition.
  * Initialized attribute values are
@@ -1476,18 +1458,18 @@ void oval_definition_free(struct oval_definition *);
  * Returns <b>true</b> if the iterator contains more instances of @ref Oval_definition.
  * @ingroup oval_definition_iterators
  */
-bool  oval_definition_iterator_has_more(struct oval_definition_iterator *);
+bool oval_definition_iterator_has_more(struct oval_definition_iterator *);
 /**
  * Returns the next iterated instance of @ref Oval_definition.
  * NULL is returned if the iterator is exhausted (@ref oval_definition_iterator_has_more == <b>false</b>)
  * @ingroup oval_definition_iterators
  */
-struct oval_definition *oval_definition_iterator_next    (struct oval_definition_iterator *);
+struct oval_definition *oval_definition_iterator_next(struct oval_definition_iterator *);
 /**
  * Free the iterator.
  * @ingroup oval_definition_iterators
  */
-void                    oval_definition_iterator_free    (struct oval_definition_iterator *);
+void oval_definition_iterator_free(struct oval_definition_iterator *);
 /**
  * Returns <b>true</b> if the @ref Oval_definition is valid.
  * An Oval_definition is valid if all the following are true
@@ -1598,7 +1580,7 @@ void oval_definition_set_description(struct oval_definition *, char *description
  * @see oval_affected_iterator_free
  * @ingroup oval_definition_getters
  */
-struct oval_affected_iterator *oval_definition_get_affected(struct oval_definition*);
+struct oval_affected_iterator *oval_definition_get_affected(struct oval_definition *);
 /**
  * Append instance of @ref Oval_affected to attribute @ref Oval_definition->affected.
  * @note Instances of Oval_affected bound to Oval_definition by this method should not be subsequently freed by
@@ -1620,7 +1602,7 @@ void oval_definition_add_affected(struct oval_definition *, struct oval_affected
  * @see oval_reference_iterator_free
  * @ingroup oval_definition_getters
  */
-struct oval_reference_iterator *oval_definition_get_references(struct oval_definition*);
+struct oval_reference_iterator *oval_definition_get_references(struct oval_definition *);
 /**
  * Append instance of @ref Oval_reference to attribute @ref Oval_definition->references.
  * @note Instances of Oval_reference bound to Oval_definition by this method should not be subsequently freed by
@@ -1712,21 +1694,21 @@ void oval_object_free(struct oval_object *);
  * @see oval_object_set_subtype
  * @ingroup oval_object_getters
  */
-oval_family_t  oval_object_get_family    (struct oval_object *);
+oval_family_t oval_object_get_family(struct oval_object *);
 /**
  * Returns the name of an @ref Oval_object.
  * This is a convenience method that is equivalent to @ref oval_subtype_get_text (@ref oval_object_get_subtype)+"_object".
  * @see oval_object_set_name
  * @ingroup oval_object_getters
  */
-const char *oval_object_get_name   (struct oval_object *);
+const char *oval_object_get_name(struct oval_object *);
 
 /**
  * Returns attribute @ref Oval_object->subtype
  * @see oval_object_set_subtype
  * @ingroup oval_object_getters
  */
-oval_subtype_t oval_object_get_subtype   (struct oval_object *);
+oval_subtype_t oval_object_get_subtype(struct oval_object *);
 /**
  * Sets attributes @ref Oval_object->subtype and @ref Oval_object->family.
  * If Oval_object->subtype == @ref OVAL_SUBTYPE_UNKNOWN and parameter subtype <> @ref OVAL_SUBTYPE_UNKNOWN,
@@ -1781,7 +1763,7 @@ char *oval_object_get_id(struct oval_object *);
  * @see oval_object_set_deprecated
  * @ingroup oval_object_getters
  */
-bool  oval_object_get_deprecated(struct oval_object *);
+bool oval_object_get_deprecated(struct oval_object *);
 /**
  * Sets attribute @ref Oval_object->deprecated.
  * @see oval_object_get_deprecated
@@ -1793,7 +1775,7 @@ void oval_object_set_deprecated(struct oval_object *, bool deprecated);
  * @see oval_object_set_version
  * @ingroup oval_object_getters
  */
-int  oval_object_get_version   (struct oval_object *);
+int oval_object_get_version(struct oval_object *);
 /**
  * Sets attribute @ref Oval_object->version.
  * If Oval_object->version == 0 and parameter version >0,
@@ -1833,18 +1815,18 @@ bool oval_object_iterator_has_more(struct oval_object_iterator *);
  * Returns the next instance of @ref Oval_object.
  * @ingroup oval_object_iterators
  */
-struct oval_object *oval_object_iterator_next    (struct oval_object_iterator *);
+struct oval_object *oval_object_iterator_next(struct oval_object_iterator *);
 /**
  * Frees the iterator.
  * @ingroup oval_object_iterators
  */
-void              oval_object_iterator_free    (struct oval_object_iterator *);
+void oval_object_iterator_free(struct oval_object_iterator *);
 /**
  * Returns attribute @ref Oval_object->behaviors.
  * @see oval_object_add_behavior
  * @ingroup oval_object_getters
  */
-struct oval_behavior_iterator       *oval_object_get_behaviors     (struct oval_object *);
+struct oval_behavior_iterator *oval_object_get_behaviors(struct oval_object *);
 /**
  * Append instance of @ref Oval_behavior to attribute @ref Oval_object->behaviors.
  *
@@ -1894,12 +1876,12 @@ bool oval_test_iterator_has_more(struct oval_test_iterator *);
  * Returns the next instance of @ref Oval_test.
  * @ingroup oval_test_iterators
  */
-struct oval_test *oval_test_iterator_next    (struct oval_test_iterator *);
+struct oval_test *oval_test_iterator_next(struct oval_test_iterator *);
 /**
  * Frees the iterator.
  * @ingroup oval_test_iterators
  */
-void              oval_test_iterator_free    (struct oval_test_iterator *);
+void oval_test_iterator_free(struct oval_test_iterator *);
 
 /**
  * Returns <b>true</b> if @ref Oval_test is valid.
@@ -1916,7 +1898,7 @@ void              oval_test_iterator_free    (struct oval_test_iterator *);
  * 		- the value of the check attribute is not @ref OVAL_CHECK_UNKNOWN
  * @ingroup oval_test_eval
  */
-bool oval_test_is_valid(struct oval_test*);
+bool oval_test_is_valid(struct oval_test *);
 /**
  * return <b>true</b> if the test instance is locked.
  * The state of a locked instance cannot be changed.
@@ -1928,13 +1910,13 @@ bool oval_test_is_locked(struct oval_test *test);
  * @see oval_test_set_subtype
  * @ingroup oval_test_getters
  */
-oval_family_t  oval_test_get_family    (struct oval_test *);
+oval_family_t oval_test_get_family(struct oval_test *);
 /**
  * Returns attribute @ref Oval_test->subtype
  * @see oval_test_set_subtype
  * @ingroup oval_test_getters
  */
-oval_subtype_t oval_test_get_subtype   (struct oval_test *);
+oval_subtype_t oval_test_get_subtype(struct oval_test *);
 /**
  * Sets attributes @ref Oval_test->subtype and @ref Oval_test->family.
  * If Oval_test->subtype == @ref OVAL_SUBTYPE_UNKNOWN and parameter subtype <> @ref OVAL_SUBTYPE_UNKNOWN,
@@ -1986,7 +1968,7 @@ char *oval_test_get_id(struct oval_test *);
  * @see oval_test_set_deprecated
  * @ingroup oval_test_getters
  */
-bool  oval_test_get_deprecated(struct oval_test *);
+bool oval_test_get_deprecated(struct oval_test *);
 /**
  * Sets attribute @ref Oval_test->deprecated.
  * @see oval_test_get_deprecated
@@ -1998,7 +1980,7 @@ void oval_test_set_deprecated(struct oval_test *, bool deprecated);
  * @see oval_test_set_version
  * @ingroup oval_test_getters
  */
-int  oval_test_get_version   (struct oval_test *);
+int oval_test_get_version(struct oval_test *);
 /**
  * Sets attribute @ref Oval_test->version.
  * If Oval_test->version == 0 and parameter version >0,
@@ -2014,7 +1996,7 @@ void oval_test_set_version(struct oval_test *, int version);
  * @see oval_test_set_existence
  * @ingroup oval_test_getters
  */
-oval_existence_t oval_test_get_existence (struct oval_test *);
+oval_existence_t oval_test_get_existence(struct oval_test *);
 /**
  * Sets attribute @ref Oval_test->existence.
  * If Oval_test->existence == @ref OVAL_CHECK_UNKNOWN and parameter existence <> @ref OVAL_CHECK_UNKNOWN,
@@ -2047,7 +2029,7 @@ void oval_test_set_check(struct oval_test *, oval_check_t);
  * @see oval_test_set_object
  * @ingroup oval_test_getters
  */
-struct oval_object *oval_test_get_object    (struct oval_test *);
+struct oval_object *oval_test_get_object(struct oval_test *);
 /**
  * Sets attribute @ref Oval_test->object.
  * If Oval_test->object == NULL and parameter object <> NULL,
@@ -2065,7 +2047,7 @@ void oval_test_set_object(struct oval_test *, struct oval_object *);
  * @see oval_test_set_state
  * @ingroup oval_test_getters
  */
-struct oval_state           *oval_test_get_state     (struct oval_test *);
+struct oval_state *oval_test_get_state(struct oval_test *);
 /**
  * Sets attribute @ref Oval_test->state.
  * If Oval_test->state == NULL and parameter state <> NULL,
@@ -2085,7 +2067,8 @@ struct oval_variable_binding *oval_variable_binding_new(struct oval_variable *, 
  * @relates oval_variable_binding
  * @ingroup Oval_variable_binding
  */
-struct oval_variable_binding *oval_variable_binding_clone(struct oval_variable_binding *, struct oval_definition_model *);
+struct oval_variable_binding *oval_variable_binding_clone(struct oval_variable_binding *,
+							  struct oval_definition_model *);
 /**
  * @relates oval_variable_binding
  * @ingroup Oval_variable_binding
@@ -2100,7 +2083,7 @@ void oval_variable_binding_set_variable(struct oval_variable_binding *, struct o
  * @relates oval_variable_binding
  * @ingroup oval_variable_binding_setters
  */
-void oval_variable_binding_set_value   (struct oval_variable_binding *, char *);
+void oval_variable_binding_set_value(struct oval_variable_binding *, char *);
 /**
  * @relates oval_variable_binding
  * @ingroup oval_variable_binding_iterators
@@ -2109,11 +2092,11 @@ bool oval_variable_binding_iterator_has_more(struct oval_variable_binding_iterat
 /**
  * @ingroup oval_variable_binding_iterators
  */
-struct oval_variable_binding *oval_variable_binding_iterator_next    (struct oval_variable_binding_iterator *);
+struct oval_variable_binding *oval_variable_binding_iterator_next(struct oval_variable_binding_iterator *);
 /**
  * @ingroup oval_variable_binding_iterators
  */
-void                          oval_variable_binding_iterator_free    (struct oval_variable_binding_iterator *);
+void oval_variable_binding_iterator_free(struct oval_variable_binding_iterator *);
 /**
  * Get variable for this binding.
  * @relates oval_variable_binding
@@ -2125,12 +2108,12 @@ struct oval_variable *oval_variable_binding_get_variable(struct oval_variable_bi
  * @relates oval_variable_binding
  * @ingroup oval_variable_binding_getters
  */
-char                 *oval_variable_binding_get_value   (struct oval_variable_binding *);
+char *oval_variable_binding_get_value(struct oval_variable_binding *);
 /**
  * @ingroup Oval_object_content
  */
 struct oval_object_content
-    *oval_object_content_new(struct oval_definition_model *model, oval_object_content_type_t type);
+*oval_object_content_new(struct oval_definition_model *model, oval_object_content_type_t type);
 /**
  * return <b>true</b> if the object_content instance is valid
  * @ingroup oval_object_content_eval
@@ -2146,7 +2129,7 @@ bool oval_object_content_is_locked(struct oval_object_content *object_content);
  * @ingroup Oval_object_content
  */
 struct oval_object_content *oval_object_content_clone
-(struct oval_definition_model *new_model, struct oval_object_content *old_content);
+    (struct oval_definition_model *new_model, struct oval_object_content *old_content);
 /**
  * @ingroup Oval_object_content
  */
@@ -2162,15 +2145,15 @@ void oval_object_content_set_field_name(struct oval_object_content *, char *);
 /**
  * @ingroup oval_object_content_setters
  */
-void oval_object_content_set_entity(struct oval_object_content *, struct oval_entity *);//type == OVAL_OBJECTCONTENT_ENTITY
+void oval_object_content_set_entity(struct oval_object_content *, struct oval_entity *);	//type == OVAL_OBJECTCONTENT_ENTITY
 /**
  * @ingroup oval_object_content_setters
  */
-void oval_object_content_set_varCheck(struct oval_object_content *, oval_check_t);	    //type == OVAL_OBJECTCONTENT_ENTITY
+void oval_object_content_set_varCheck(struct oval_object_content *, oval_check_t);	//type == OVAL_OBJECTCONTENT_ENTITY
 /**
  * @ingroup oval_object_content_setters
  */
-void oval_object_content_set_setobject(struct oval_object_content *, struct oval_setobject *);//type == OVAL_OBJECTCONTENT_SET
+void oval_object_content_set_setobject(struct oval_object_content *, struct oval_setobject *);	//type == OVAL_OBJECTCONTENT_SET
 /**
  * @ingroup oval_object_content_iterators
  */
@@ -2178,41 +2161,41 @@ bool oval_object_content_iterator_has_more(struct oval_object_content_iterator *
 /**
  * @ingroup oval_object_content_iterators
  */
-struct oval_object_content *oval_object_content_iterator_next    (struct oval_object_content_iterator *);
+struct oval_object_content *oval_object_content_iterator_next(struct oval_object_content_iterator *);
 /**
  * @ingroup oval_object_content_iterators
  */
-void                        oval_object_content_iterator_free    (struct oval_object_content_iterator *);
+void oval_object_content_iterator_free(struct oval_object_content_iterator *);
 /**
  * Get field name of a object content.
  * @relates oval_object_content
  * @ingroup oval_object_content_getters
  */
-char                          *oval_object_content_get_field_name(struct oval_object_content *);
+char *oval_object_content_get_field_name(struct oval_object_content *);
 /**
  * Get type of a object content (entity or set).
  * @relates oval_object_content
  * @ingroup oval_object_content_getters
  */
-oval_object_content_type_t     oval_object_content_get_type      (struct oval_object_content *);
+oval_object_content_type_t oval_object_content_get_type(struct oval_object_content *);
 /**
  * Get entity of a simple object content.
  * @relates oval_object_content
  * @ingroup oval_object_content_getters
  */
-struct oval_entity            *oval_object_content_get_entity    (struct oval_object_content *);//type == OVAL_OBJECTCONTENT_ENTITY
+struct oval_entity *oval_object_content_get_entity(struct oval_object_content *);	//type == OVAL_OBJECTCONTENT_ENTITY
 /**
  * Get varCheck of a simple object content.
  * @relates oval_object_content
  * @ingroup oval_object_content_getters
  */
-oval_check_t                   oval_object_content_get_varCheck  (struct oval_object_content *);//type == OVAL_OBJECTCONTENT_ENTITY
+oval_check_t oval_object_content_get_varCheck(struct oval_object_content *);	//type == OVAL_OBJECTCONTENT_ENTITY
 /**
  * Get varCheck of a set object content.
  * @relates oval_object_content
  * @ingroup oval_object_content_getters
  */
-struct oval_setobject     *oval_object_content_get_setobject (struct oval_object_content *);//type == OVAL_OBJECTCONTENT_SET
+struct oval_setobject *oval_object_content_get_setobject(struct oval_object_content *);	//type == OVAL_OBJECTCONTENT_SET
 /**
  * @ingroup Oval_state_content
  */
@@ -2238,7 +2221,7 @@ bool oval_state_is_locked(struct oval_state *state);
  * @ingroup Oval_state_content
  */
 struct oval_state_content *oval_state_content_clone
-(struct oval_definition_model *new_model, struct oval_state_content *old_content);
+    (struct oval_definition_model *new_model, struct oval_state_content *old_content);
 /**
  * @ingroup Oval_state_content
  */
@@ -2273,8 +2256,7 @@ bool oval_entity_is_locked(struct oval_entity *entity);
 /**
  * @ingroup Oval_entity
  */
-struct oval_entity *oval_entity_clone
-(struct oval_definition_model *model, struct oval_entity *old_entity);
+struct oval_entity *oval_entity_clone(struct oval_definition_model *model, struct oval_entity *old_entity);
 /**
  * @ingroup Oval_entity
  */
@@ -2318,29 +2300,29 @@ bool oval_state_content_iterator_has_more(struct oval_state_content_iterator *);
 /**
  * @ingroup oval_state_content_iterators
  */
-struct oval_state_content *oval_state_content_iterator_next    (struct oval_state_content_iterator *);
+struct oval_state_content *oval_state_content_iterator_next(struct oval_state_content_iterator *);
 /**
  * @ingroup oval_state_content_iterators
  */
-void                       oval_state_content_iterator_free    (struct oval_state_content_iterator *);
+void oval_state_content_iterator_free(struct oval_state_content_iterator *);
 /**
  * Get entity of a state content.
  * @relates oval_object_content
  * @ingroup oval_state_content_getters
  */
-struct oval_entity *oval_state_content_get_entity   (struct oval_state_content *);
+struct oval_entity *oval_state_content_get_entity(struct oval_state_content *);
 /**
  * Get multipe variable values processing of a state content.
  * @relates oval_object_content
  * @ingroup oval_state_content_getters
  */
-oval_check_t        oval_state_content_get_var_check(struct oval_state_content *);
+oval_check_t oval_state_content_get_var_check(struct oval_state_content *);
 /**
  * Get multipe entities processing of a state content.
  * @relates oval_object_content
  * @ingroup oval_state_content_getters
  */
-oval_check_t        oval_state_content_get_ent_check(struct oval_state_content *);
+oval_check_t oval_state_content_get_ent_check(struct oval_state_content *);
 /**
  * @ingroup oval_entity_iterators
  */
@@ -2348,51 +2330,51 @@ bool oval_entity_iterator_has_more(struct oval_entity_iterator *);
 /**
  * @ingroup oval_entity_iterators
  */
-struct oval_entity *oval_entity_iterator_next    (struct oval_entity_iterator *);
+struct oval_entity *oval_entity_iterator_next(struct oval_entity_iterator *);
 /**
  * @ingroup oval_entity_iterators
  */
-void                oval_entity_iterator_free    (struct oval_entity_iterator *);
+void oval_entity_iterator_free(struct oval_entity_iterator *);
 /**
  * Get OVAL entity name.
  * @ingroup oval_entity_getters
  */
-char                         *oval_entity_get_name       (struct oval_entity *);
+char *oval_entity_get_name(struct oval_entity *);
 /**
  * Get OVAL entity type.
  * @ingroup oval_entity_getters
  */
-oval_entity_type_t            oval_entity_get_type       (struct oval_entity *);
+oval_entity_type_t oval_entity_get_type(struct oval_entity *);
 /**
  * Get OVAL entity datatype.
  * @ingroup oval_entity_getters
  */
-oval_datatype_t               oval_entity_get_datatype   (struct oval_entity *);
+oval_datatype_t oval_entity_get_datatype(struct oval_entity *);
 /**
  * Get OVAL entity operation type.
  * @ingroup oval_entity_getters
  */
-oval_operation_t              oval_entity_get_operation  (struct oval_entity *);
+oval_operation_t oval_entity_get_operation(struct oval_entity *);
 /**
  * Get OVAL entity mask.
  * @ingroup oval_entity_getters
  */
-int                           oval_entity_get_mask       (struct oval_entity *);
+int oval_entity_get_mask(struct oval_entity *);
 /**
  * Get OVAL entity varref type.
  * @ingroup oval_entity_getters
  */
-oval_entity_varref_type_t     oval_entity_get_varref_type(struct oval_entity *);
+oval_entity_varref_type_t oval_entity_get_varref_type(struct oval_entity *);
 /**
  * Get OVAL entity varref variable.
  * @ingroup oval_entity_getters
  */
-struct oval_variable         *oval_entity_get_variable   (struct oval_entity *);
+struct oval_variable *oval_entity_get_variable(struct oval_entity *);
 /**
  * Get OVAL entity value.
  * @ingroup oval_entity_getters
  */
-struct oval_value            *oval_entity_get_value      (struct oval_entity *);
+struct oval_value *oval_entity_get_value(struct oval_entity *);
 /**
  * @ingroup Oval_setobject
  */
@@ -2412,7 +2394,7 @@ bool oval_setobject_is_locked(struct oval_setobject *setobject);
  * @ingroup Oval_setobject
  */
 struct oval_setobject *oval_setobject_clone
-(struct oval_definition_model *new_model, struct oval_setobject *old_setobject);
+    (struct oval_definition_model *new_model, struct oval_setobject *old_setobject);
 /**
  * @ingroup Oval_setobject
  */
@@ -2428,7 +2410,7 @@ void oval_setobject_set_operation(struct oval_setobject *, oval_setobject_operat
 /**
  * @ingroup oval_setobject_setters
  */
-void oval_setobject_add_subset(struct oval_setobject *, struct oval_setobject *);//type==OVAL_SET_AGGREGATE;
+void oval_setobject_add_subset(struct oval_setobject *, struct oval_setobject *);	//type==OVAL_SET_AGGREGATE;
 /**
  * @ingroup oval_setobject_setters
  */
@@ -2444,16 +2426,16 @@ bool oval_setobject_iterator_has_more(struct oval_setobject_iterator *);
 /**
  * @ingroup oval_setobject_iterators
  */
-struct oval_setobject *oval_setobject_iterator_next    (struct oval_setobject_iterator *);
+struct oval_setobject *oval_setobject_iterator_next(struct oval_setobject_iterator *);
 /**
  * @ingroup oval_setobject_iterators
  */
-void oval_setobject_iterator_free    (struct oval_setobject_iterator *);
+void oval_setobject_iterator_free(struct oval_setobject_iterator *);
 /**
  * Get OVAL set object type.
  * @ingroup oval_setobject_getters
  */
-oval_setobject_type_t oval_setobject_get_type     (struct oval_setobject *);
+oval_setobject_type_t oval_setobject_get_type(struct oval_setobject *);
 /**
  * Get OVAL set object operation type.
  * @ingroup oval_setobject_getters
@@ -2464,19 +2446,19 @@ oval_setobject_operation_t oval_setobject_get_operation(struct oval_setobject *)
  * This works only with sets of OVAL_SET_AGGREGATE type.
  * @ingroup oval_setobject_getters
  */
-struct oval_setobject_iterator    *oval_setobject_get_subsets  (struct oval_setobject *);//type==OVAL_SET_AGGREGATE;
+struct oval_setobject_iterator *oval_setobject_get_subsets(struct oval_setobject *);	//type==OVAL_SET_AGGREGATE;
 /**
  * Get OVAL set object referenced objects.
  * This works only with sets of OVAL_SET_COLLECTIVE type.
  * @ingroup oval_setobject_getters
  */
-struct oval_object_iterator *oval_setobject_get_objects  (struct oval_setobject *);//type==OVAL_SET_COLLECTIVE;
+struct oval_object_iterator *oval_setobject_get_objects(struct oval_setobject *);	//type==OVAL_SET_COLLECTIVE;
 /**
  * Get OVAL set object filters.
  * This works only with sets of OVAL_SET_COLLECTIVE type.
  * @ingroup oval_setobject_getters
  */
-struct oval_state_iterator  *oval_setobject_get_filters  (struct oval_setobject *);//type==OVAL_SET_COLLECTIVE;
+struct oval_state_iterator *oval_setobject_get_filters(struct oval_setobject *);	//type==OVAL_SET_COLLECTIVE;
 /**
  * @ingroup Oval_behavior
  */
@@ -2503,24 +2485,24 @@ void oval_behavior_free(struct oval_behavior *);
 /**
  * @ingroup oval_behavior_setters
  */
-void oval_behavior_set_keyval(struct oval_behavior *behavior, const char* key, const char* value);
+void oval_behavior_set_keyval(struct oval_behavior *behavior, const char *key, const char *value);
 /**
  * @ingroup oval_behavior_iterators
  */
-bool  oval_behavior_iterator_has_more(struct oval_behavior_iterator *);
+bool oval_behavior_iterator_has_more(struct oval_behavior_iterator *);
 /**
  * @ingroup oval_behavior_iterators
  */
-struct oval_behavior *oval_behavior_iterator_next    (struct oval_behavior_iterator *);
+struct oval_behavior *oval_behavior_iterator_next(struct oval_behavior_iterator *);
 /**
  * @ingroup oval_behavior_iterators
  */
-void                  oval_behavior_iterator_free    (struct oval_behavior_iterator *);
+void oval_behavior_iterator_free(struct oval_behavior_iterator *);
 /**
  * Get OVAL behavior name.
  * @ingroup oval_behavior_getters
  */
-char *oval_behavior_get_key  (struct oval_behavior *);
+char *oval_behavior_get_key(struct oval_behavior *);
 /**
  * Get OVAL behavior value.
  * @ingroup oval_behavior_getters
@@ -2552,11 +2534,11 @@ void oval_value_free(struct oval_value *);
 /**
  * @ingroup oval_value_iterators
  */
-bool  oval_value_iterator_has_more(struct oval_value_iterator *);
+bool oval_value_iterator_has_more(struct oval_value_iterator *);
 /**
  * @ingroup oval_value_iterators
  */
-struct oval_value *oval_value_iterator_next    (struct oval_value_iterator *);
+struct oval_value *oval_value_iterator_next(struct oval_value_iterator *);
 /**
  * @ingroup oval_value_iterators
  */
@@ -2564,37 +2546,37 @@ int oval_value_iterator_remaining(struct oval_value_iterator *iterator);
 /**
  * @ingroup oval_value_iterators
  */
-void               oval_value_iterator_free    (struct oval_value_iterator *);
+void oval_value_iterator_free(struct oval_value_iterator *);
 /**
  * Get OVAL value datatype.
  * @ingroup oval_value_getters
  */
-oval_datatype_t    oval_value_get_datatype(struct oval_value *);
+oval_datatype_t oval_value_get_datatype(struct oval_value *);
 /**
  * Get OVAL value as a text.
  * @ingroup oval_value_getters
  */
-char              *oval_value_get_text    (struct oval_value *);
+char *oval_value_get_text(struct oval_value *);
 /**
  * Get OVAL value as a piece of raw binary data.
  * @ingroup oval_value_getters
  */
-unsigned char     *oval_value_get_binary  (struct oval_value *);//datatype==OVAL_DATATYPE_BINARY
+unsigned char *oval_value_get_binary(struct oval_value *);	//datatype==OVAL_DATATYPE_BINARY
 /**
  * Get OVAL value as a boolean.
  * @ingroup oval_value_getters
  */
-bool               oval_value_get_boolean (struct oval_value *);//datatype==OVAL_DATATYPE_BOOLEAN
+bool oval_value_get_boolean(struct oval_value *);	//datatype==OVAL_DATATYPE_BOOLEAN
 /**
  * Get OVAL value as a floating point number.
  * @ingroup oval_value_getters
  */
-float              oval_value_get_float   (struct oval_value *);//datatype==OVAL_DATATYPE_FLOAT
+float oval_value_get_float(struct oval_value *);	//datatype==OVAL_DATATYPE_FLOAT
 /**
  * Get OVAL value as an integer.
  * @ingroup oval_value_getters
  */
-long               oval_value_get_integer (struct oval_value *);//datatype==OVAL_DATATYPE_INTEGER
+long oval_value_get_integer(struct oval_value *);	//datatype==OVAL_DATATYPE_INTEGER
 /**
  * Construct new intance of @ref Oval_state.
  * Attribute values shall be initialized:
@@ -2634,20 +2616,20 @@ void oval_state_free(struct oval_state *);
  * @see oval_state_set_subtype
  * @ingroup oval_state_getters
  */
-oval_family_t  oval_state_get_family    (struct oval_state *);
+oval_family_t oval_state_get_family(struct oval_state *);
 /**
  * Returns the name of an @ref Oval_state.
  * This is a convenience method that is equivalent to @ref oval_subtype_get_text (@ref oval_state_get_subtype)+"_state".
  * @see oval_state_set_name
  * @ingroup oval_state_getters
  */
-const char *oval_state_get_name   (struct oval_state *);
+const char *oval_state_get_name(struct oval_state *);
 /**
  * Returns attribute @ref Oval_state->subtype
  * @see oval_state_set_subtype
  * @ingroup oval_state_getters
  */
-oval_subtype_t oval_state_get_subtype   (struct oval_state *);
+oval_subtype_t oval_state_get_subtype(struct oval_state *);
 /**
  * Sets attributes @ref Oval_state->subtype and @ref Oval_state->family.
  * If Oval_state->subtype == @ref OVAL_SUBTYPE_UNKNOWN and parameter subtype <> @ref OVAL_SUBTYPE_UNKNOWN,
@@ -2699,7 +2681,7 @@ char *oval_state_get_id(struct oval_state *);
  * @see oval_state_set_deprecated
  * @ingroup oval_state_getters
  */
-bool  oval_state_get_deprecated(struct oval_state *);
+bool oval_state_get_deprecated(struct oval_state *);
 /**
  * Sets attribute @ref Oval_state->deprecated.
  * @see oval_state_get_deprecated
@@ -2711,7 +2693,7 @@ void oval_state_set_deprecated(struct oval_state *, bool deprecated);
  * @see oval_state_set_version
  * @ingroup oval_state_getters
  */
-int  oval_state_get_version   (struct oval_state *);
+int oval_state_get_version(struct oval_state *);
 /**
  * Sets attribute @ref Oval_state->version.
  * If Oval_state->version == 0 and parameter version >0,
@@ -2751,12 +2733,12 @@ bool oval_state_iterator_has_more(struct oval_state_iterator *);
  * Returns the next instance of @ref Oval_state.
  * @ingroup oval_state_iterators
  */
-struct oval_state *oval_state_iterator_next    (struct oval_state_iterator *);
+struct oval_state *oval_state_iterator_next(struct oval_state_iterator *);
 /**
  * Frees the iterator.
  * @ingroup oval_state_iterators
  */
-void              oval_state_iterator_free    (struct oval_state_iterator *);
+void oval_state_iterator_free(struct oval_state_iterator *);
 /**
  * Returns <b>true</b> if @ref Oval_variable is valid.
  * An Oval_variable is valid if all of the following are true:
@@ -2819,7 +2801,7 @@ char *oval_variable_get_id(struct oval_variable *);
  * @see oval_variable_set_comment
  * @ingroup oval_variable_getters
  */
-char *oval_variable_get_comment   (struct oval_variable *);
+char *oval_variable_get_comment(struct oval_variable *);
 /**
  * set attribute @ref Oval_variable->comment.
  * If attribute Oval_variable->comment == NULL this method shall overwrite the attribute with a copy of the comment parameter.
@@ -2828,13 +2810,13 @@ char *oval_variable_get_comment   (struct oval_variable *);
  * @param comm - (Not NULL) a copy of the comment parameter is set as  the comment attribute.
  * @ingroup oval_variable_setters
  */
-void oval_variable_set_comment   (struct oval_variable *, char *comment);
+void oval_variable_set_comment(struct oval_variable *, char *comment);
 /**
  * Returns attribute @ref Oval_variable->version.
  * @see oval_variable_set_version
  * @ingroup oval_variable_getters
  */
-int oval_variable_get_version   (struct oval_variable *);
+int oval_variable_get_version(struct oval_variable *);
 /**
  * set attribute @ref Oval_variable->version.
  * If attribute Oval_variable->version == 0 this method shall overwrite the attribute with the version parameter.
@@ -2843,7 +2825,7 @@ int oval_variable_get_version   (struct oval_variable *);
  * @param version - (>0) the required version.
  * @ingroup oval_variable_setters
  */
-void oval_variable_set_version   (struct oval_variable *, int version);
+void oval_variable_set_version(struct oval_variable *, int version);
 /**
  * Returns attribute @ref Oval_variable->deprecated.
  * @see oval_variable_set_deprecated
@@ -2868,7 +2850,7 @@ oval_variable_type_t oval_variable_get_type(struct oval_variable *);
  * @see oval_variable_set_datatype
  * @ingroup oval_variable_getters
  */
-oval_datatype_t             oval_variable_get_datatype  (struct oval_variable *);
+oval_datatype_t oval_variable_get_datatype(struct oval_variable *);
 /**
  * set attribute @ref Oval_variable->datatype.
  * If attribute Oval_variable->datatype == @ref OVAL_DATATYPE_UNKNOWN this method shall overwrite the attribute with the datatype parameter.
@@ -2885,7 +2867,7 @@ void oval_variable_set_datatype(struct oval_variable *, oval_datatype_t);
  * @see oval_definition_model_bind_variable_model
  * @ingroup oval_variable_getters
  */
-struct oval_value_iterator *oval_variable_get_values    (struct oval_variable *);//type==OVAL_VARIABLE_CONSTANT
+struct oval_value_iterator *oval_variable_get_values(struct oval_variable *);	//type==OVAL_VARIABLE_CONSTANT
 /**
  * Append an instance of @ref Oval_value to the attribute @ref Oval_constant->values.
  * If attribute type <> @ref OVAL_VARIABLE_CONSTANT or the value parameter is NULL the state of the Oval_variable shall not be changed by this
@@ -2907,12 +2889,12 @@ void oval_variable_add_value(struct oval_variable *, struct oval_value *);	//typ
  * @see oval_variable_set_component
  * @ingroup oval_variable_getters
  */
-struct oval_component *oval_variable_get_component (struct oval_variable *);//type==OVAL_VARIABLE_LOCAL
+struct oval_component *oval_variable_get_component(struct oval_variable *);	//type==OVAL_VARIABLE_LOCAL
 /**
  * Returns attribute @ref Oval_component_type->text.
  * @ingroup oval_variable_getters
  */
-const char* oval_component_type_get_text(oval_component_type_t type);
+const char *oval_component_type_get_text(oval_component_type_t type);
 /**
  * Bind an instance of @ref Oval_component to the attribute @ref Oval_local->component.
  * If attribute type <> @ref OVAL_VARIABLE_LOCAL, the component attribute <> NULL or the component parameter is NULL the state of the Oval_variable shall not be changed by this
@@ -2936,12 +2918,12 @@ bool oval_variable_iterator_has_more(struct oval_variable_iterator *);
  * Returns next instance of @ref Oval_variable.
  * @ingroup oval_variable_iterators
  */
-struct oval_variable *oval_variable_iterator_next (struct oval_variable_iterator *);
+struct oval_variable *oval_variable_iterator_next(struct oval_variable_iterator *);
 /**
  * Free iterator.
  * @ingroup oval_variable_iterators
  */
-void oval_variable_iterator_free (struct oval_variable_iterator *);
+void oval_variable_iterator_free(struct oval_variable_iterator *);
 /**
  * Construct new intance of @ref Oval_component.
  * Attribute values shall be initialized:
@@ -2988,7 +2970,8 @@ struct oval_component *oval_component_new(struct oval_definition_model *, oval_c
  * Clone instance of @ref Oval_component.
  * @ingroup Oval_component
  */
-struct oval_component *oval_component_clone(struct oval_definition_model *new_model, struct oval_component *old_component);
+struct oval_component *oval_component_clone(struct oval_definition_model *new_model,
+					    struct oval_component *old_component);
 /**
  * Returns <b>true</b> if the @ref Oval_component is valid.
  * An Oval_component is valid if one of the following is true:
@@ -3069,7 +3052,7 @@ void oval_component_set_type(struct oval_component *component, oval_component_ty
  * @see oval_component_set_object
  * @ingroup oval_component_getters
  */
-struct oval_object *oval_component_get_object(struct oval_component *);//type==OVAL_COMPONENT_OBJECTREF
+struct oval_object *oval_component_get_object(struct oval_component *);	//type==OVAL_COMPONENT_OBJECTREF
 /**
  * set attribute @ref Oval_component_object->object.
  * IF component->type <> @ref OVAL_COMPONENT_OBJECTREF OR component->object <> NULL, this method does nothing .
@@ -3092,7 +3075,7 @@ char *oval_component_get_object_field(struct oval_component *);
  * @ingroup oval_component_setters
  * @see oval_component_get_object_field
  */
-void oval_component_set_object_field(struct oval_component *, char * field);
+void oval_component_set_object_field(struct oval_component *, char *field);
 /**
  * Returns attribute @ref Oval_component_variable->variable.
  * IF component->type <> @ref OVAL_COMPONENT_VARREF, this method shall return NULL.
@@ -3114,7 +3097,7 @@ void oval_component_set_variable(struct oval_component *, struct oval_variable *
  * @see oval_component_add_function_component
  * @ingroup oval_component_getters
  */
-struct oval_component_iterator *oval_component_get_function_components (struct oval_component *);//type==OVAL_COMPONENT_FUNCTION
+struct oval_component_iterator *oval_component_get_function_components(struct oval_component *);	//type==OVAL_COMPONENT_FUNCTION
 /**
  * set attribute @ref Oval_component_object->object_field.
  * IF component->type <> @ref OVAL_COMPONENT_OBJECTREF OR component->object_field <> NULL, this method does nothing.
@@ -3129,22 +3112,22 @@ void oval_component_add_function_component(struct oval_component *, struct oval_
  * @see oval_component_add_function_component
  * @ingroup oval_component_getters
  */
-oval_arithmetic_operation_t     oval_component_get_arithmetic_operation(struct oval_component *);//type==OVAL_COMPONENT_ARITHMETIC
+oval_arithmetic_operation_t oval_component_get_arithmetic_operation(struct oval_component *);	//type==OVAL_COMPONENT_ARITHMETIC
 /**
  * @ingroup oval_component_setters
  */
-void oval_component_set_arithmetic_operation (struct oval_component *,oval_arithmetic_operation_t);//type==OVAL_COMPONENT_ARITHMETIC
+void oval_component_set_arithmetic_operation(struct oval_component *, oval_arithmetic_operation_t);	//type==OVAL_COMPONENT_ARITHMETIC
 /**
  * Returns attribute @ref Oval_function_BEGIN->prefix.
  * IF component->type <> @ref OVAL_FUNCTION_BEGIN, this method shall return NULL
  * @note applications should not free the char* returned by this method
  * @see oval_component_set_prefix
  */
-char *oval_component_get_prefix(struct oval_component *);//type==OVAL_COMPONENT_BEGIN
+char *oval_component_get_prefix(struct oval_component *);	//type==OVAL_COMPONENT_BEGIN
 /**
  * @ingroup oval_component_setters
  */
-void oval_component_set_prefix(struct oval_component *,char *);//type==OVAL_COMPONENT_BEGIN
+void oval_component_set_prefix(struct oval_component *, char *);	//type==OVAL_COMPONENT_BEGIN
 /**
  * Returns attribute @ref Oval_function_END->suffix.
  * IF component->type <> @ref OVAL_FUNCTION_END, this method shall return NULL
@@ -3152,11 +3135,11 @@ void oval_component_set_prefix(struct oval_component *,char *);//type==OVAL_COMP
  * @see oval_component_set_suffix
  * @ingroup oval_component_getters
  */
-char  *oval_component_get_suffix(struct oval_component *);//type==OVAL_COMPONENT_END
+char *oval_component_get_suffix(struct oval_component *);	//type==OVAL_COMPONENT_END
 /**
  * @ingroup oval_component_setters
  */
-void oval_component_set_suffix(struct oval_component *, char *);//type==OVAL_COMPONENT_END
+void oval_component_set_suffix(struct oval_component *, char *);	//type==OVAL_COMPONENT_END
 /**
  * Returns attribute @ref Oval_function_SPLIT->delimiter.
  * IF component->type <> @ref OVAL_FUNCTION_SPLIT, this method shall return NULL
@@ -3164,55 +3147,55 @@ void oval_component_set_suffix(struct oval_component *, char *);//type==OVAL_COM
  * @see oval_component_set_split_delimiter
  * @ingroup oval_component_getters
  */
-char *oval_component_get_split_delimiter(struct oval_component *);//type==OVAL_COMPONENT_SPLIT
+char *oval_component_get_split_delimiter(struct oval_component *);	//type==OVAL_COMPONENT_SPLIT
 /**
  * @ingroup oval_component_setters
  */
-void oval_component_set_split_delimiter(struct oval_component *, char *);//type==OVAL_COMPONENT_SPLIT
+void oval_component_set_split_delimiter(struct oval_component *, char *);	//type==OVAL_COMPONENT_SPLIT
 /**
  * Returns attribute @ref Oval_function_SUBSTRING->start.
  * IF component->type <> @ref OVAL_FUNCTION_SUBSTRING, this method shall return 0
  * @see oval_component_set_substring_start
  * @ingroup oval_component_getters
  */
-int oval_component_get_substring_start(struct oval_component *);//type==OVAL_COMPONENT_SUBSTRING
+int oval_component_get_substring_start(struct oval_component *);	//type==OVAL_COMPONENT_SUBSTRING
 /**
  * @ingroup oval_component_setters
  */
-void oval_component_set_substring_start(struct oval_component *, int);//type==OVAL_COMPONENT_SUBSTRING
+void oval_component_set_substring_start(struct oval_component *, int);	//type==OVAL_COMPONENT_SUBSTRING
 /**
  * Returns attribute @ref Oval_function_SUBSTRING->length.
  * IF component->type <> @ref OVAL_FUNCTION_SUBSTRING, this method shall return 0
  * @see oval_component_set_substring_length
  * @ingroup oval_component_getters
  */
-int oval_component_get_substring_length(struct oval_component *);//type==OVAL_COMPONENT_SUBSTRING
+int oval_component_get_substring_length(struct oval_component *);	//type==OVAL_COMPONENT_SUBSTRING
 /**
  * @ingroup oval_component_setters
  */
-void oval_component_set_substring_length(struct oval_component *, int);//type==OVAL_COMPONENT_SUBSTRING
+void oval_component_set_substring_length(struct oval_component *, int);	//type==OVAL_COMPONENT_SUBSTRING
 /**
  * Returns attribute @ref Oval_function_TIMEDIF->timedif_format_1.
  * IF component->type <> @ref OVAL_FUNCTION_TIMEDIF, this method shall return @ref OVAL_TIMEDATE_UNKNOWN
  * @see oval_component_set_timedif_format_1
  * @ingroup oval_component_getters
  */
-oval_datetime_format_t  oval_component_get_timedif_format_1(struct oval_component *);//type==OVAL_COMPONENT_TIMEDIF
+oval_datetime_format_t oval_component_get_timedif_format_1(struct oval_component *);	//type==OVAL_COMPONENT_TIMEDIF
 /**
  * @ingroup oval_component_setters
  */
-void oval_component_set_timedif_format_1(struct oval_component *, oval_datetime_format_t);//type==OVAL_COMPONENT_TIMEDIF
+void oval_component_set_timedif_format_1(struct oval_component *, oval_datetime_format_t);	//type==OVAL_COMPONENT_TIMEDIF
 /**
  * Returns attribute @ref Oval_function_TIMEDIF->timedif_format_2.
  * IF component->type <> @ref OVAL_FUNCTION_TIMEDIF, this method shall return @ref OVAL_TIMEDATE_UNKNOWN
  * @see oval_component_set_timedif_format_1
  * @ingroup oval_component_getters
  */
-oval_datetime_format_t  oval_component_get_timedif_format_2(struct oval_component *);//type==OVAL_COMPONENT_TIMEDIF
+oval_datetime_format_t oval_component_get_timedif_format_2(struct oval_component *);	//type==OVAL_COMPONENT_TIMEDIF
 /**
  * @ingroup oval_component_setters
  */
-void oval_component_set_timedif_format_2(struct oval_component *, oval_datetime_format_t);//type==OVAL_COMPONENT_TIMEDIF
+void oval_component_set_timedif_format_2(struct oval_component *, oval_datetime_format_t);	//type==OVAL_COMPONENT_TIMEDIF
 /**
  * Returns attribute @ref Oval_function_REGEX_CAPTURE->pattern.
  * IF component->type <> @ref OVAL_FUNCTION_REGEX_CAPTURE, this method shall return NULL
@@ -3220,11 +3203,11 @@ void oval_component_set_timedif_format_2(struct oval_component *, oval_datetime_
  * @see oval_component_set_regex_pattern
  * @ingroup oval_component_getters
  */
-char *oval_component_get_regex_pattern(struct oval_component *); //type==OVAL_COMPONENT_REGEX_CAPTURE
+char *oval_component_get_regex_pattern(struct oval_component *);	//type==OVAL_COMPONENT_REGEX_CAPTURE
 /**
  * @ingroup oval_component_setters
  */
-void oval_component_set_regex_pattern(struct oval_component *, char *); //type==OVAL_COMPONENT_REGEX_CAPTURE
+void oval_component_set_regex_pattern(struct oval_component *, char *);	//type==OVAL_COMPONENT_REGEX_CAPTURE
 /**
  * Returns attribute @ref Oval_literal->literal.
  * IF component->type <> @ref OVAL_COMPONENT_LITERAL, this method shall return NULL
@@ -3232,7 +3215,7 @@ void oval_component_set_regex_pattern(struct oval_component *, char *); //type==
  * @see oval_component_set_literal_value
  * @ingroup oval_component_getters
  */
-struct oval_value *oval_component_get_literal_value(struct oval_component *);//type==OVAL_COMPONENT_LITERAL
+struct oval_value *oval_component_get_literal_value(struct oval_component *);	//type==OVAL_COMPONENT_LITERAL
 /**
  * @ingroup oval_component_setters
  */
@@ -3252,7 +3235,7 @@ struct oval_component *oval_component_iterator_next(struct oval_component_iterat
  * Free the iterator.
  * @ingroup oval_component_iterators
  */
-void  oval_component_iterator_free(struct oval_component_iterator *);
+void oval_component_iterator_free(struct oval_component_iterator *);
 /**
  * How many remains.
  * @ingroup oval_component_iterators
@@ -3297,26 +3280,26 @@ bool oval_message_iterator_has_more(struct oval_message_iterator *oc_message);
 /**
  * @ingroup oval_message_iterators
  */
-struct oval_message *oval_message_iterator_next    (struct oval_message_iterator *oc_message);
+struct oval_message *oval_message_iterator_next(struct oval_message_iterator *oc_message);
 /**
  * @ingroup oval_message_iterators
  */
-void                 oval_message_iterator_free    (struct oval_message_iterator *oc_message);
+void oval_message_iterator_free(struct oval_message_iterator *oc_message);
 /**
  * Get OVAL message text.
  * @ingroup oval_message_getters
  */
-char                   *oval_message_get_text (struct oval_message *message);
+char *oval_message_get_text(struct oval_message *message);
 /**
  * Get OVAL message level.
  * @ingroup oval_message_getters
  */
-oval_message_level_t    oval_message_get_level(struct oval_message *message);
+oval_message_level_t oval_message_get_level(struct oval_message *message);
 
 /**
  * Convert an operator to its text representation.
  */
-const char*   oval_operator_get_text(oval_operator_t);
+const char *oval_operator_get_text(oval_operator_t);
 
 /**
  * Get the family associated with a given subtype.
@@ -3326,12 +3309,12 @@ oval_family_t oval_subtype_get_family(oval_subtype_t);
 /**
  * Convert OVAL subtype to its text representation.
  */
-const char*   oval_subtype_get_text(oval_subtype_t);
+const char *oval_subtype_get_text(oval_subtype_t);
 
 /**
  * Convert OVAL family to its text representation.
  */
-const char*   oval_family_get_text(oval_family_t);
+const char *oval_family_get_text(oval_family_t);
 
 const char *oval_check_get_text(oval_check_t);
 const char *oval_existence_get_text(oval_existence_t);

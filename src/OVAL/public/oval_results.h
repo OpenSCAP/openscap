@@ -27,7 +27,6 @@
  *      "David Niemoller" <David.Niemoller@g2-inc.com>
  */
 
-
 #ifndef OVAL_RESULTS_H_
 #define OVAL_RESULTS_H_
 
@@ -41,19 +40,19 @@
  * @{
  */
 typedef enum {
-	OVAL_RESULT_INVALID        = 0,
-	OVAL_RESULT_TRUE           = 1,
-	OVAL_RESULT_FALSE          = 2,
-	OVAL_RESULT_UNKNOWN        = 3,
-	OVAL_RESULT_ERROR          = 4,
-	OVAL_RESULT_NOT_EVALUATED  = 5,
+	OVAL_RESULT_INVALID = 0,
+	OVAL_RESULT_TRUE = 1,
+	OVAL_RESULT_FALSE = 2,
+	OVAL_RESULT_UNKNOWN = 3,
+	OVAL_RESULT_ERROR = 4,
+	OVAL_RESULT_NOT_EVALUATED = 5,
 	OVAL_RESULT_NOT_APPLICABLE = 6
 } oval_result_t;
 
 typedef enum {
 	OVAL_DIRECTIVE_CONTENT_UNKNOWN = 0,
-	OVAL_DIRECTIVE_CONTENT_THIN    = 1,
-	OVAL_DIRECTIVE_CONTENT_FULL    = 2
+	OVAL_DIRECTIVE_CONTENT_THIN = 1,
+	OVAL_DIRECTIVE_CONTENT_FULL = 2
 } oval_result_directive_content_t;
 /**
 * @addtogroup OVALRES_setters Setters
@@ -302,8 +301,8 @@ struct oval_result_system_iterator;
  * @param syschar_model the array of specified oval_syschar_model(s) terminated by NULL.
  * @ingroup OVALRES
  */
-struct oval_results_model *oval_results_model_new(
-		struct oval_definition_model *definition_model, struct oval_syschar_model **);
+struct oval_results_model *oval_results_model_new(struct oval_definition_model *definition_model,
+						  struct oval_syschar_model **);
 /**
  * return <b>true</b> if the results_model instance is valid
  * @ingroup OVALRES_eval
@@ -336,22 +335,19 @@ struct oval_results_model *oval_results_model_clone(struct oval_results_model *)
  */
 void oval_results_model_free(struct oval_results_model *model);
 
-
 /**
  * oval_results_model_definition_model Return bound object model from an oval_results_model.
  * @param model the specified oval_results_model.
  * @ingroup OVALRES_getters
  */
-struct oval_definition_model *oval_results_model_get_definition_model
-	(struct oval_results_model *model);
+struct oval_definition_model *oval_results_model_get_definition_model(struct oval_results_model *model);
 
 /**
  * Return iterator over reporting systems.
  * @param model the specified results model
  * @ingroup OVALRES_getters
  */
-struct oval_result_system_iterator *oval_results_model_get_systems
-		(struct oval_results_model *);
+struct oval_result_system_iterator *oval_results_model_get_systems(struct oval_results_model *);
 /**
  * @ingroup OVALRES_setters
  */
@@ -366,7 +362,7 @@ void oval_results_model_add_system(struct oval_results_model *, struct oval_resu
  * @ingroup OVALRES_service
  */
 struct oval_result_directives *oval_results_model_import
-	(struct oval_results_model *, struct oscap_import_source *, void*);
+    (struct oval_results_model *, struct oscap_import_source *, void *);
 
 /**
  * Create new OVAL results directives.
@@ -397,35 +393,36 @@ void oval_result_directives_free(struct oval_result_directives *);
  * @param target the export target stream (XML)
  * @ingroup OVALRES_service
  */
-int oval_results_model_export(struct oval_results_model *, struct oval_result_directives *, struct oscap_export_target *);
+int oval_results_model_export(struct oval_results_model *, struct oval_result_directives *,
+			      struct oscap_export_target *);
 /**
  * @ingroup oval_result_system_iterators
  */
-bool                        oval_result_system_iterator_has_more(struct oval_result_system_iterator *);
+bool oval_result_system_iterator_has_more(struct oval_result_system_iterator *);
 /**
  * @ingroup oval_result_system_iterators
  */
-struct oval_result_system *oval_result_system_iterator_next    (struct oval_result_system_iterator *);
+struct oval_result_system *oval_result_system_iterator_next(struct oval_result_system_iterator *);
 /**
  * @ingroup oval_result_system_iterators
  */
-void                       oval_result_system_iterator_free    (struct oval_result_system_iterator *);
+void oval_result_system_iterator_free(struct oval_result_system_iterator *);
 /**
  * @ingroup oval_result_system_getters
  */
-struct oval_result_definition_iterator *oval_result_system_get_definitions  (struct oval_result_system *);
+struct oval_result_definition_iterator *oval_result_system_get_definitions(struct oval_result_system *);
 /**
  * @ingroup oval_result_system_getters
  */
-struct oval_result_test_iterator       *oval_result_system_get_tests        (struct oval_result_system *);
+struct oval_result_test_iterator *oval_result_system_get_tests(struct oval_result_system *);
 /**
  * @ingroup oval_result_system_getters
  */
-struct oval_syschar_model              *oval_result_system_get_syschar_model(struct oval_result_system *);
+struct oval_syschar_model *oval_result_system_get_syschar_model(struct oval_result_system *);
 /**
  * @ingroup oval_result_system_getters
  */
-struct oval_sysinfo                    *oval_result_system_get_sysinfo      (struct oval_result_system *);
+struct oval_sysinfo *oval_result_system_get_sysinfo(struct oval_result_system *);
 /**
  * @ingroup oval_result_system_getters
  */
@@ -433,47 +430,47 @@ void oval_result_system_add_definition(struct oval_result_system *, struct oval_
 /**
  * @ingroup oval_result_system_getters
  */
-void oval_result_system_add_test       (struct oval_result_system *, struct oval_result_test *);
+void oval_result_system_add_test(struct oval_result_system *, struct oval_result_test *);
 /**
  * @ingroup oval_result_definition_iterators
  */
-bool                            oval_result_definition_iterator_has_more(struct oval_result_definition_iterator *);
+bool oval_result_definition_iterator_has_more(struct oval_result_definition_iterator *);
 /**
  * @ingroup oval_result_definition_iterators
  */
-struct oval_result_definition *oval_result_definition_iterator_next    (struct oval_result_definition_iterator *);
+struct oval_result_definition *oval_result_definition_iterator_next(struct oval_result_definition_iterator *);
 /**
  * @ingroup oval_result_definition_iterators
  */
-void                           oval_result_definition_iterator_free    (struct oval_result_definition_iterator *);
+void oval_result_definition_iterator_free(struct oval_result_definition_iterator *);
 /**
  * @ingroup oval_result_definition_getters
  */
-struct oval_definition           *oval_result_definition_get_definition(struct oval_result_definition *);
+struct oval_definition *oval_result_definition_get_definition(struct oval_result_definition *);
 /**
  * @ingroup oval_result_definition_getters
  */
-struct oval_result_system        *oval_result_definition_get_system    (struct oval_result_definition *);
+struct oval_result_system *oval_result_definition_get_system(struct oval_result_definition *);
 /**
  * @ingroup oval_result_definition_getters
  */
-int                               oval_result_definition_get_instance  (struct oval_result_definition *);
+int oval_result_definition_get_instance(struct oval_result_definition *);
 /**
  * @ingroup oval_result_definition_getters
  */
-oval_result_t                     oval_result_definition_get_result    (struct oval_result_definition *);
+oval_result_t oval_result_definition_get_result(struct oval_result_definition *);
 /**
  * @ingroup oval_result_definition_getters
  */
-struct oval_message_iterator     *oval_result_definition_get_messages      (struct oval_result_definition *);
+struct oval_message_iterator *oval_result_definition_get_messages(struct oval_result_definition *);
 /**
  * @ingroup oval_result_definition_getters
  */
-struct oval_result_criteria_node *oval_result_definition_get_criteria      (struct oval_result_definition *);
+struct oval_result_criteria_node *oval_result_definition_get_criteria(struct oval_result_definition *);
 /**
  * @ingroup oval_result_definition_setters
  */
-void oval_result_definition_set_result  (struct oval_result_definition *, oval_result_t);
+void oval_result_definition_set_result(struct oval_result_definition *, oval_result_t);
 /**
  * @ingroup oval_result_definition_setters
  */
@@ -485,27 +482,27 @@ void oval_result_definition_set_criteria(struct oval_result_definition *, struct
 /**
  * @ingroup oval_result_definition_setters
  */
-void oval_result_definition_add_message (struct oval_result_definition *, struct oval_message *);
+void oval_result_definition_add_message(struct oval_result_definition *, struct oval_message *);
 /**
  * @ingroup oval_result_item_iterators
  */
-bool                      oval_result_item_iterator_has_more(struct oval_result_item_iterator *);
+bool oval_result_item_iterator_has_more(struct oval_result_item_iterator *);
 /**
  * @ingroup oval_result_item_iterators
  */
-struct oval_result_item *oval_result_item_iterator_next    (struct oval_result_item_iterator *);
+struct oval_result_item *oval_result_item_iterator_next(struct oval_result_item_iterator *);
 /**
  * @ingroup oval_result_item_iterators
  */
-void                     oval_result_item_iterator_free    (struct oval_result_item_iterator *);
+void oval_result_item_iterator_free(struct oval_result_item_iterator *);
 /**
  * @ingroup oval_result_item_getters
  */
-struct oval_sysdata          *oval_result_item_get_sysdata (struct oval_result_item *);
+struct oval_sysdata *oval_result_item_get_sysdata(struct oval_result_item *);
 /**
  * @ingroup oval_result_item_getters
  */
-oval_result_t                 oval_result_item_get_result  (struct oval_result_item *);
+oval_result_t oval_result_item_get_result(struct oval_result_item *);
 /**
  * @ingroup oval_result_item_getters
  */
@@ -513,39 +510,39 @@ struct oval_message_iterator *oval_result_item_get_messages(struct oval_result_i
 /**
  * @ingroup oval_result_test_iterators
  */
-bool                      oval_result_test_iterator_has_more(struct oval_result_test_iterator *);
+bool oval_result_test_iterator_has_more(struct oval_result_test_iterator *);
 /**
  * @ingroup oval_result_test_iterators
  */
-struct oval_result_test *oval_result_test_iterator_next    (struct oval_result_test_iterator *);
+struct oval_result_test *oval_result_test_iterator_next(struct oval_result_test_iterator *);
 /**
  * @ingroup oval_result_test_iterators
  */
-void                     oval_result_test_iterator_free    (struct oval_result_test_iterator *);
+void oval_result_test_iterator_free(struct oval_result_test_iterator *);
 /**
  * @ingroup oval_result_test_getters
  */
-struct oval_test                      *oval_result_test_get_test    (struct oval_result_test *);
+struct oval_test *oval_result_test_get_test(struct oval_result_test *);
 /**
  * @ingroup oval_result_test_getters
  */
-struct oval_result_system             *oval_result_test_get_system  (struct oval_result_test *);
+struct oval_result_system *oval_result_test_get_system(struct oval_result_test *);
 /**
  * @ingroup oval_result_test_getters
  */
-oval_result_t                          oval_result_test_get_result  (struct oval_result_test *);
+oval_result_t oval_result_test_get_result(struct oval_result_test *);
 /**
  * @ingroup oval_result_test_getters
  */
-int                                    oval_result_test_get_instance(struct oval_result_test *);
+int oval_result_test_get_instance(struct oval_result_test *);
 /**
  * @ingroup oval_result_test_getters
  */
-struct oval_message                   *oval_result_test_get_message (struct oval_result_test *);
+struct oval_message *oval_result_test_get_message(struct oval_result_test *);
 /**
  * @ingroup oval_result_test_getters
  */
-struct oval_result_item_iterator      *oval_result_test_get_items   (struct oval_result_test *);
+struct oval_result_item_iterator *oval_result_test_get_items(struct oval_result_test *);
 /**
  * @ingroup oval_result_test_getters
  */
@@ -553,51 +550,51 @@ struct oval_variable_binding_iterator *oval_result_test_get_bindings(struct oval
 /**
  * @ingroup oval_result_criteria_node_iterators
  */
-bool                               oval_result_criteria_node_iterator_has_more(struct oval_result_criteria_node_iterator *);
+bool oval_result_criteria_node_iterator_has_more(struct oval_result_criteria_node_iterator *);
 /**
  * @ingroup oval_result_criteria_node_iterators
  */
-struct oval_result_criteria_node *oval_result_criteria_node_iterator_next    (struct oval_result_criteria_node_iterator *);
+struct oval_result_criteria_node *oval_result_criteria_node_iterator_next(struct oval_result_criteria_node_iterator *);
 /**
  * @ingroup oval_result_criteria_node_iterators
  */
-void                              oval_result_criteria_node_iterator_free    (struct oval_result_criteria_node_iterator *);
+void oval_result_criteria_node_iterator_free(struct oval_result_criteria_node_iterator *);
 /**
  * @ingroup oval_result_criteria_node_getters
  */
-oval_criteria_node_type_t                  oval_result_criteria_node_get_type    (struct oval_result_criteria_node *);
+oval_criteria_node_type_t oval_result_criteria_node_get_type(struct oval_result_criteria_node *);
 /**
  * @ingroup oval_result_criteria_node_getters
  */
-oval_result_t                              oval_result_criteria_node_get_result  (struct oval_result_criteria_node *);
+oval_result_t oval_result_criteria_node_get_result(struct oval_result_criteria_node *);
 /**
  * @ingroup oval_result_criteria_node_getters
  */
-bool                                       oval_result_criteria_node_get_negate  (struct oval_result_criteria_node *);
+bool oval_result_criteria_node_get_negate(struct oval_result_criteria_node *);
 /**
  * @ingroup oval_result_criteria_node_getters
  */
-oval_operator_t                            oval_result_criteria_node_get_operator(struct oval_result_criteria_node *);//type==NODETYPE_CRITERIA
+oval_operator_t oval_result_criteria_node_get_operator(struct oval_result_criteria_node *);	//type==NODETYPE_CRITERIA
 /**
  * @ingroup oval_result_criteria_node_getters
  */
-struct oval_result_criteria_node_iterator *oval_result_criteria_node_get_subnodes(struct oval_result_criteria_node *);//type==NODETYPE_CRITERIA
+struct oval_result_criteria_node_iterator *oval_result_criteria_node_get_subnodes(struct oval_result_criteria_node *);	//type==NODETYPE_CRITERIA
 /**
  * @ingroup oval_result_criteria_node_getters
  */
-struct oval_result_test                   *oval_result_criteria_node_get_test    (struct oval_result_criteria_node *);//type==NODETYPE_CRITERION
+struct oval_result_test *oval_result_criteria_node_get_test(struct oval_result_criteria_node *);	//type==NODETYPE_CRITERION
 /**
  * @ingroup oval_result_criteria_node_getters
  */
-struct oval_result_definition             *oval_result_criteria_node_get_extends (struct oval_result_criteria_node *);//type==NODETYPE_EXTENDDEF
+struct oval_result_definition *oval_result_criteria_node_get_extends(struct oval_result_criteria_node *);	//type==NODETYPE_EXTENDDEF
 /**
  * @ingroup oval_result_directives_getters
  */
-bool                               oval_result_directives_get_reported(struct oval_result_directives *, oval_result_t);
+bool oval_result_directives_get_reported(struct oval_result_directives *, oval_result_t);
 /**
  * @ingroup oval_result_directives_getters
  */
-oval_result_directive_content_t    oval_result_directives_get_content (struct oval_result_directives *, oval_result_t);
+oval_result_directive_content_t oval_result_directives_get_content(struct oval_result_directives *, oval_result_t);
 /**
  * @ingroup oval_result_directives_setters
  */
@@ -605,7 +602,8 @@ void oval_result_directives_set_reported(struct oval_result_directives *, oval_r
 /**
  * @ingroup oval_result_directives_setters
  */
-void oval_result_directives_set_content (struct oval_result_directives *, oval_result_t, oval_result_directive_content_t);
+void oval_result_directives_set_content(struct oval_result_directives *, oval_result_t,
+					oval_result_directive_content_t);
 /**
  * @ingroup Oval_result_system
  */
@@ -624,7 +622,8 @@ bool oval_result_system_is_locked(struct oval_result_system *result_system);
 /**
  * @ingroup Oval_result_system
  */
-struct oval_result_system *oval_result_system_clone(struct oval_results_model *new_model, struct oval_result_system *old_system);
+struct oval_result_system *oval_result_system_clone(struct oval_results_model *new_model,
+						    struct oval_result_system *old_system);
 /**
  * @ingroup Oval_result_system
  */
@@ -648,7 +647,7 @@ bool oval_result_definition_is_locked(struct oval_result_definition *result_defi
  * @ingroup Oval_result_definition
  */
 struct oval_result_definition *oval_result_definition_clone
-(struct oval_result_system *new_system, struct oval_result_definition *old_definition);
+    (struct oval_result_system *new_system, struct oval_result_definition *old_definition);
 /**
  * @ingroup Oval_result_definition
  */
@@ -672,7 +671,7 @@ bool oval_result_test_is_locked(struct oval_result_test *result_test);
  * @ingroup Oval_result_test
  */
 struct oval_result_test *oval_result_test_clone
-(struct oval_result_system *new_system, struct oval_result_test *old_test);
+    (struct oval_result_system *new_system, struct oval_result_test *old_test);
 /**
  * @ingroup Oval_result_test
  */
@@ -696,7 +695,7 @@ bool oval_result_item_is_locked(struct oval_result_item *result_item);
  * @ingroup Oval_result_item
  */
 struct oval_result_item *oval_result_item_clone
-(struct oval_result_system *new_system, struct oval_result_item *old_item);
+    (struct oval_result_system *new_system, struct oval_result_item *old_item);
 /**
  * @ingroup Oval_result_item
  */
@@ -732,7 +731,8 @@ void oval_result_test_add_binding(struct oval_result_test *, struct oval_variabl
 /**
  * @ingroup Oval_result_criteria_node
  */
-struct oval_result_criteria_node *oval_result_criteria_node_new(struct oval_result_system *, oval_criteria_node_type_t, int, ...);
+struct oval_result_criteria_node *oval_result_criteria_node_new(struct oval_result_system *, oval_criteria_node_type_t,
+								int, ...);
 /**
  * return <b>true</b> if the result_criteria_node instance is valid
  * @ingroup oval_result_criteria_node_eval
@@ -748,7 +748,7 @@ bool oval_result_criteria_node_is_locked(struct oval_result_criteria_node *resul
  * @ingroup Oval_result_criteria_node
  */
 struct oval_result_criteria_node *oval_result_criteria_node_clone
-(struct oval_result_system *new_system, struct oval_result_criteria_node *old_node);
+    (struct oval_result_system *new_system, struct oval_result_criteria_node *old_node);
 /**
  * @ingroup Oval_result_criteria_node
  */
@@ -778,7 +778,7 @@ void oval_result_criteria_node_set_test(struct oval_result_criteria_node *, stru
  */
 void oval_result_criteria_node_set_extends(struct oval_result_criteria_node *, struct oval_result_definition *);	//type==NODETYPE_EXTENDDEF
 
-const char * oval_result_get_text(oval_result_t);
+const char *oval_result_get_text(oval_result_t);
 
 /**
  * @}END OVALRES

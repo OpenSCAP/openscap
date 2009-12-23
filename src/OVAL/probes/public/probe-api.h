@@ -54,7 +54,7 @@
  * Build a new item according to the scpecified format.
  * @param fmt the desired format
  */
-SEXP_t *probe_item_build (const char *fmt, ...);
+SEXP_t *probe_item_build(const char *fmt, ...);
 
 /* SEXP_t *probe_item_creat (const char *name, SEXP_t *attrs, ...); */
 /**
@@ -75,7 +75,7 @@ SEXP_t *probe_item_build (const char *fmt, ...);
  * @param name item's name
  * @param attrs optional attributes argument
  */
-SEXP_t *probe_item_new   (const char *name, SEXP_t *attrs);
+SEXP_t *probe_item_new(const char *name, SEXP_t * attrs);
 
 /**
  * Add a new attribute to an item.
@@ -84,7 +84,7 @@ SEXP_t *probe_item_new   (const char *name, SEXP_t *attrs);
  * @param name name of the new attribute
  * @param val value of the new attribute
  */
-SEXP_t *probe_item_attr_add (SEXP_t *item, const char *name, SEXP_t *val);
+SEXP_t *probe_item_attr_add(SEXP_t * item, const char *name, SEXP_t * val);
 
 /**
  * Add a new entity to an item.
@@ -94,14 +94,14 @@ SEXP_t *probe_item_attr_add (SEXP_t *item, const char *name, SEXP_t *val);
  * @param attrs optional attributes of the new entity
  * @param val value of the new entity
  */
-SEXP_t *probe_item_ent_add (SEXP_t *item, const char *name, SEXP_t *attrs, SEXP_t *val);
+SEXP_t *probe_item_ent_add(SEXP_t * item, const char *name, SEXP_t * attrs, SEXP_t * val);
 
 /**
  * Set item's status.
  * @param obj the item to be modified
  * @param status the new status
  */
-int probe_item_setstatus (SEXP_t *obj, oval_syschar_status_t status);
+int probe_item_setstatus(SEXP_t * obj, oval_syschar_status_t status);
 
 /**
  * Set status of an item's entity.
@@ -110,7 +110,7 @@ int probe_item_setstatus (SEXP_t *obj, oval_syschar_status_t status);
  * @param n select the n-th occurence of an entity with the specified name
  * @param status the new status
  */
-int probe_itement_setstatus (SEXP_t *obj, const char *name, uint32_t n, oval_syschar_status_t status);
+int probe_itement_setstatus(SEXP_t * obj, const char *name, uint32_t n, oval_syschar_status_t status);
 
 /**
  *
@@ -141,7 +141,7 @@ void probe_item_resetid(struct id_desc_t *id_desc);
  * @param val the value of the attribute
  * @param ... there can be an arbitrary number of name - value pairs
  */
-SEXP_t *probe_attr_creat (const char *name, const SEXP_t *val, ...);
+SEXP_t *probe_attr_creat(const char *name, const SEXP_t * val, ...);
 
 /*
  * objects
@@ -151,7 +151,7 @@ SEXP_t *probe_attr_creat (const char *name, const SEXP_t *val, ...);
  * Build a new object according to the scpecified format.
  * @param fmt the desired format
  */
-SEXP_t *probe_obj_build (const char *fmt, ...);
+SEXP_t *probe_obj_build(const char *fmt, ...);
 
 /**
  * Create a new object consisting of a name, optional attributes argument and an arbitrary number of entities.
@@ -164,7 +164,7 @@ SEXP_t *probe_obj_build (const char *fmt, ...);
  * @param attrs optional object's attributes argument
  * @param ... arbitrary number of entity arguments
  */
-SEXP_t *probe_obj_creat (const char *name, SEXP_t *attrs, ...);
+SEXP_t *probe_obj_creat(const char *name, SEXP_t * attrs, ...);
 
 /**
  * Create a new object with just a name and optional attributes argument.
@@ -172,7 +172,7 @@ SEXP_t *probe_obj_creat (const char *name, SEXP_t *attrs, ...);
  * @param name object's name
  * @param attrs optional attributes argument
  */
-SEXP_t *probe_obj_new   (const char *name, SEXP_t *attrs);
+SEXP_t *probe_obj_new(const char *name, SEXP_t * attrs);
 
 /**
  * Get an entity from an object.
@@ -180,7 +180,7 @@ SEXP_t *probe_obj_new   (const char *name, SEXP_t *attrs);
  * @param name the name of the entity
  * @param n select the n-th occurence of an entity with the specified name
  */
-SEXP_t *probe_obj_getent (const SEXP_t *obj, const char *name, uint32_t n);
+SEXP_t *probe_obj_getent(const SEXP_t * obj, const char *name, uint32_t n);
 
 /**
  * Get the value of an object's entity.
@@ -189,7 +189,7 @@ SEXP_t *probe_obj_getent (const SEXP_t *obj, const char *name, uint32_t n);
  * @param name the name of the entity
  * @param n select the n-th occurence of an entity with the specified name
  */
-SEXP_t *probe_obj_getentval  (const SEXP_t *obj, const char *name, uint32_t n);
+SEXP_t *probe_obj_getentval(const SEXP_t * obj, const char *name, uint32_t n);
 
 /**
  * Get the list of values of an object's entity.
@@ -200,28 +200,28 @@ SEXP_t *probe_obj_getentval  (const SEXP_t *obj, const char *name, uint32_t n);
  * @param res the resulting value list is stored in this argument
  * @return number of values in the list stored in the res argument
  */
-int     probe_obj_getentvals (const SEXP_t *obj, const char *name, uint32_t n, SEXP_t **res);
+int probe_obj_getentvals(const SEXP_t * obj, const char *name, uint32_t n, SEXP_t ** res);
 
 /**
  * Get the value of an object's attribute.
  * @param obj the queried object
  * @param name the name of the attribute
  */
-SEXP_t *probe_obj_getattrval (const SEXP_t *obj, const char *name);
+SEXP_t *probe_obj_getattrval(const SEXP_t * obj, const char *name);
 
 /**
  * Check whether the specified attribute exists.
  * @param obj the queried object
  * @param name the name of the attribute
  */
-bool    probe_obj_attrexists (const SEXP_t *obj, const char *name);
+bool probe_obj_attrexists(const SEXP_t * obj, const char *name);
 
 /**
  * Set objects's status.
  * @param obj the object to be modified
  * @param status the new status
  */
-int probe_obj_setstatus (SEXP_t *obj, oval_syschar_status_t status);
+int probe_obj_setstatus(SEXP_t * obj, oval_syschar_status_t status);
 
 /**
  * Set status of an object's entity.
@@ -230,13 +230,13 @@ int probe_obj_setstatus (SEXP_t *obj, oval_syschar_status_t status);
  * @param n select the n-th occurence of an entity with the specified name
  * @param status the new status
  */
-int probe_objent_setstatus (SEXP_t *obj, const char *name, uint32_t n, oval_syschar_status_t status);
+int probe_objent_setstatus(SEXP_t * obj, const char *name, uint32_t n, oval_syschar_status_t status);
 
 /**
  * Get the name of an object.
  * @param obj the queried object
  */
-char  *probe_obj_getname   (const SEXP_t *obj);
+char *probe_obj_getname(const SEXP_t * obj);
 
 /**
  * Get the name of an object.
@@ -245,7 +245,7 @@ char  *probe_obj_getname   (const SEXP_t *obj);
  * @param buffer the buffer to store the name in
  * @param buflen the length of the buffer
  */
-size_t probe_obj_getname_r (const SEXP_t *obj, char *buffer, size_t buflen);
+size_t probe_obj_getname_r(const SEXP_t * obj, char *buffer, size_t buflen);
 
 /*
  * entities
@@ -259,7 +259,7 @@ size_t probe_obj_getname_r (const SEXP_t *obj, char *buffer, size_t buflen);
  * @param val the value of the entity
  * @param ... there can be an arbitrary number of name - attributes - value triples
  */
-SEXP_t *probe_ent_creat (const char *name, SEXP_t *attrs, SEXP_t *val, ...);
+SEXP_t *probe_ent_creat(const char *name, SEXP_t * attrs, SEXP_t * val, ...);
 
 /**
  * Create a new entity.
@@ -268,7 +268,7 @@ SEXP_t *probe_ent_creat (const char *name, SEXP_t *attrs, SEXP_t *val, ...);
  * @param attrs optional entity's attributes argument
  * @param val the value of the entity
  */
-SEXP_t *probe_ent_creat1 (const char *name, SEXP_t *attrs, SEXP_t *val);
+SEXP_t *probe_ent_creat1(const char *name, SEXP_t * attrs, SEXP_t * val);
 
 /**
  * Add a new attribute to an entity.
@@ -277,14 +277,14 @@ SEXP_t *probe_ent_creat1 (const char *name, SEXP_t *attrs, SEXP_t *val);
  * @param name name of the new attribute
  * @param val value of the new attribute
  */
-SEXP_t *probe_ent_attr_add (SEXP_t *ent, const char *name, SEXP_t *val);
+SEXP_t *probe_ent_attr_add(SEXP_t * ent, const char *name, SEXP_t * val);
 
 /**
  * Get the value of an entity.
  * The function respects the var_ref attribute and returns the currently selected value.
  * @param ent the queried entity
  */
-SEXP_t *probe_ent_getval  (const SEXP_t *ent);
+SEXP_t *probe_ent_getval(const SEXP_t * ent);
 
 /**
  * Get the list of values of an entity.
@@ -293,66 +293,66 @@ SEXP_t *probe_ent_getval  (const SEXP_t *ent);
  * @param res the resulting value list is stored in this argument
  * @return number of values in the list stored in the res argument
  */
-int     probe_ent_getvals (const SEXP_t *ent, SEXP_t **res);
+int probe_ent_getvals(const SEXP_t * ent, SEXP_t ** res);
 
 /**
  * Get the value of an entity's attribute.
  * @param ent the queried entity
  * @param name the name of the attribute
  */
-SEXP_t *probe_ent_getattrval (const SEXP_t *ent, const char *name);
+SEXP_t *probe_ent_getattrval(const SEXP_t * ent, const char *name);
 
 /**
  * Check whether the specified attribute exists.
  * @param ent the queried entity
  * @param name the name of the attribute
  */
-bool    probe_ent_attrexists (const SEXP_t *ent, const char *name);
+bool probe_ent_attrexists(const SEXP_t * ent, const char *name);
 
 /**
  * Set the OVAL data type of an entity.
  * @param ent the queried entity
  * @param type the new data type
  */
-int probe_ent_setdatatype (SEXP_t *ent, oval_datatype_t type);
+int probe_ent_setdatatype(SEXP_t * ent, oval_datatype_t type);
 
 /**
  * Get the OVAL data type of an entity.
  * @param ent the queried entity
  */
-oval_datatype_t probe_ent_getdatatype (const SEXP_t *ent);
+oval_datatype_t probe_ent_getdatatype(const SEXP_t * ent);
 
 /**
  * Set entity's mask.
  * @param ent the queried entity
  * @mask the new mask
  */
-int  probe_ent_setmask (SEXP_t *ent, bool mask);
+int probe_ent_setmask(SEXP_t * ent, bool mask);
 
 /**
  * Get entity's mask.
  * @param ent the queried entity
  */
-bool probe_ent_getmask (const SEXP_t *ent);
+bool probe_ent_getmask(const SEXP_t * ent);
 
 /**
  * Set entity's status.
  * @param ent the entity to be modified
  * @param status the new status
  */
-int probe_ent_setstatus (SEXP_t *ent, oval_syschar_status_t status);
+int probe_ent_setstatus(SEXP_t * ent, oval_syschar_status_t status);
 
 /**
  * Get entity status.
  * @param ent the queried entity
  */
-oval_syschar_status_t probe_ent_getstatus (const SEXP_t *ent);
+oval_syschar_status_t probe_ent_getstatus(const SEXP_t * ent);
 
 /**
  * Get the name of an entity.
  * @param ent the queried entity
  */
-char  *probe_ent_getname   (const SEXP_t *ent);
+char *probe_ent_getname(const SEXP_t * ent);
 
 /**
  * Get the name of an entity.
@@ -361,28 +361,28 @@ char  *probe_ent_getname   (const SEXP_t *ent);
  * @param buffer the buffer to store the name in
  * @param buflen the length of the buffer
  */
-size_t probe_ent_getname_r (const SEXP_t *ent, char *buffer, size_t buflen);
+size_t probe_ent_getname_r(const SEXP_t * ent, char *buffer, size_t buflen);
 
 /**
  * Free the memory allocated by the probe_* functions.
  * @param obj the object to be freed
  */
-void probe_free (SEXP_t *obj);
+void probe_free(SEXP_t * obj);
 
-#define PROBE_EINVAL     1 /* Invalid type/value/format */
-#define PROBE_ENOELM     2 /* Missing element */
-#define PROBE_ENOVAL     3 /* Missing value */
-#define PROBE_ENOATTR    4 /* Missing attribute */
-#define PROBE_EINIT      5 /* Initialization failed */
-#define PROBE_ENOMEM     6 /* No memory */
-#define PROBE_EOPNOTSUPP 7 /* Not supported */
-#define PROBE_ERANGE     8 /* Out of range */
-#define PROBE_EDOM       9 /* Out of domain */
-#define PROBE_EFAULT    10 /* Memory fault/NULL value */
-#define PROBE_EACCES    11 /* Operation not perimitted */
-#define PROBE_ESETEVAL  12 /* Set evaluation failed */
-#define PROBE_EFATAL   254 /* Unrecoverable error */
-#define PROBE_EUNKNOWN 255 /* Unknown/Unexpected error */
+#define PROBE_EINVAL     1	/* Invalid type/value/format */
+#define PROBE_ENOELM     2	/* Missing element */
+#define PROBE_ENOVAL     3	/* Missing value */
+#define PROBE_ENOATTR    4	/* Missing attribute */
+#define PROBE_EINIT      5	/* Initialization failed */
+#define PROBE_ENOMEM     6	/* No memory */
+#define PROBE_EOPNOTSUPP 7	/* Not supported */
+#define PROBE_ERANGE     8	/* Out of range */
+#define PROBE_EDOM       9	/* Out of domain */
+#define PROBE_EFAULT    10	/* Memory fault/NULL value */
+#define PROBE_EACCES    11	/* Operation not perimitted */
+#define PROBE_ESETEVAL  12	/* Set evaluation failed */
+#define PROBE_EFATAL   254	/* Unrecoverable error */
+#define PROBE_EUNKNOWN 255	/* Unknown/Unexpected error */
 
 /* FIXME */
 #define OVAL_STATUS_ERROR        1
@@ -393,8 +393,8 @@ void probe_free (SEXP_t *obj);
 #define PROBECMD_STE_FETCH 1
 #define PROBECMD_OBJ_EVAL  2
 
-void   *probe_init (void) __attribute__ ((unused));
-void    probe_fini (void *) __attribute__ ((unused));
-SEXP_t *probe_main (SEXP_t *, int *, void *) __attribute__ ((nonnull (1,2)));
+void *probe_init(void) __attribute__ ((unused));
+void probe_fini(void *) __attribute__ ((unused));
+SEXP_t *probe_main(SEXP_t *, int *, void *) __attribute__ ((nonnull(1, 2)));
 
-#endif /* PROBE_API_H */
+#endif				/* PROBE_API_H */

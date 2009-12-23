@@ -61,12 +61,12 @@ OSCAP_HIDDEN_START;
  * CPE language boolean expression
  */
 struct cpe_testexpr {
-        struct xml_metadata xml;
+	struct xml_metadata xml;
 	cpe_lang_oper_t oper;	///< operator
 	union {
 		struct cpe_testexpr *expr;	///< array of subexpressions for operators
-		struct cpe_name *cpe;	        ///< CPE for match operation
-	} meta;			                ///< operation metadata
+		struct cpe_name *cpe;	///< CPE for match operation
+	} meta;			///< operation metadata
 };
 
 /**
@@ -93,14 +93,14 @@ struct cpe_platform;
  * @param source structure of import source with filename and encoding
  * @relates cpe_lang_model
  */
-struct cpe_lang_model * cpe_lang_model_parse_xml(const struct oscap_import_source * source);
+struct cpe_lang_model *cpe_lang_model_parse_xml(const struct oscap_import_source *source);
 
 /**
  * Parse function for CPE Lang model
  * @param reader xmlTextReaderPtr structure representing XML model
  * @relates cpe_lang_model
  */
-struct cpe_lang_model * cpe_lang_model_parse(xmlTextReaderPtr reader);
+struct cpe_lang_model *cpe_lang_model_parse(xmlTextReaderPtr reader);
 
 /**
  * Parse CPE platform structure
@@ -108,7 +108,7 @@ struct cpe_lang_model * cpe_lang_model_parse(xmlTextReaderPtr reader);
  * @return cpe_platform structure with CPE platform item
  * @relates cpe_platform
  */
-struct cpe_platform * cpe_platform_parse(xmlTextReaderPtr reader);
+struct cpe_platform *cpe_platform_parse(xmlTextReaderPtr reader);
 
 /**
  * Parse CPE test expression structure
@@ -116,7 +116,7 @@ struct cpe_platform * cpe_platform_parse(xmlTextReaderPtr reader);
  * @return cpe_testexpr structure with CPE test expression item
  * @relates cpe_testexpr
  */
-struct cpe_testexpr * cpe_testexpr_parse(xmlTextReaderPtr reader);
+struct cpe_testexpr *cpe_testexpr_parse(xmlTextReaderPtr reader);
 
 /*@}*/
 
@@ -132,7 +132,7 @@ struct cpe_testexpr * cpe_testexpr_parse(xmlTextReaderPtr reader);
  * @param spec CPE language model structure
  * @relates cpe_lang_model
  */
-void cpe_lang_model_export_xml(const struct cpe_lang_model * spec, struct oscap_export_target * target);
+void cpe_lang_model_export_xml(const struct cpe_lang_model *spec, struct oscap_export_target *target);
 
 /**
  * Function for export CPE language top element
@@ -140,7 +140,7 @@ void cpe_lang_model_export_xml(const struct cpe_lang_model * spec, struct oscap_
  * @param spec CPE language model structure
  * @relates cpe_lang_model
  */
-void cpe_lang_export(const struct cpe_lang_model * spec, xmlTextWriterPtr writer);
+void cpe_lang_export(const struct cpe_lang_model *spec, xmlTextWriterPtr writer);
 
 /**
  * Function for export CPE platform element
@@ -148,7 +148,7 @@ void cpe_lang_export(const struct cpe_lang_model * spec, xmlTextWriterPtr writer
  * @param platform CPE platform structure
  * @relates cpe_platform
  */
-void cpe_platform_export(const struct cpe_platform * platform, xmlTextWriterPtr writer);
+void cpe_platform_export(const struct cpe_platform *platform, xmlTextWriterPtr writer);
 
 /**
  * Function for export CPE test expression element
@@ -172,4 +172,3 @@ OSCAP_HIDDEN_END;
 /*@}*/
 
 #endif
-

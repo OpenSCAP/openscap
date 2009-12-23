@@ -16,16 +16,15 @@
 
 #define oscap_setxmlerr(error) __oscap_setxmlerr (__FILE__, __LINE__, __PRETTY_FUNCTION__, error)
 
-void  __oscap_setxmlerr (const char *file, uint32_t line, const char *func,
-                      xmlErrorPtr error);
+void __oscap_setxmlerr(const char *file, uint32_t line, const char *func, xmlErrorPtr error);
 
 struct oscap_err_t {
-        oscap_errfamily_t family;
-        oscap_errcode_t   code;
-        char             *desc;
-        const char       *func;
-        const char       *file;
-        uint32_t          line;
+	oscap_errfamily_t family;
+	oscap_errcode_t code;
+	char *desc;
+	const char *func;
+	const char *file;
+	uint32_t line;
 };
 
-#endif /* _OSCAP_ERROR_H */
+#endif				/* _OSCAP_ERROR_H */

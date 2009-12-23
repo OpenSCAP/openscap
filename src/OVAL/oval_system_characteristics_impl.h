@@ -38,32 +38,27 @@ OSCAP_HIDDEN_START;
 
 extern const char NAMESPACE_OVALSYS[];
 
-typedef void (*oval_sysint_consumer)(struct oval_sysint*, void*);
-int oval_sysint_parse_tag
-	(xmlTextReaderPtr, struct oval_parser_context*,
-			oval_sysint_consumer, void*);
+typedef void (*oval_sysint_consumer) (struct oval_sysint *, void *);
+int oval_sysint_parse_tag(xmlTextReaderPtr, struct oval_parser_context *, oval_sysint_consumer, void *);
 void oval_sysint_to_print(struct oval_sysint *, char *, int);
-void oval_sysint_to_dom  (struct oval_sysint *, xmlDoc *, xmlNode *);
+void oval_sysint_to_dom(struct oval_sysint *, xmlDoc *, xmlNode *);
 
 void oval_sysinfo_to_print(struct oval_sysinfo *, char *, int);
-void oval_sysinfo_to_dom  (struct oval_sysinfo *, xmlDoc *, xmlNode *);
+void oval_sysinfo_to_dom(struct oval_sysinfo *, xmlDoc *, xmlNode *);
 int oval_sysinfo_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *);
 
 void oval_sysdata_to_print(struct oval_sysdata *, char *, int);
-void oval_sysdata_to_dom  (struct oval_sysdata *, xmlDoc *, xmlNode *);
+void oval_sysdata_to_dom(struct oval_sysdata *, xmlDoc *, xmlNode *);
 int oval_sysdata_parse_tag(xmlTextReaderPtr, struct oval_parser_context *);
 
-void oval_syschar_to_dom  (struct oval_syschar *, xmlDoc *, xmlNode *);
+void oval_syschar_to_dom(struct oval_syschar *, xmlDoc *, xmlNode *);
 int oval_syschar_parse_tag(xmlTextReaderPtr, struct oval_parser_context *context);
 oval_syschar_collection_flag_t oval_syschar_flag_parse(xmlTextReaderPtr, char *, oval_syschar_collection_flag_t);
 oval_syschar_status_t oval_syschar_status_parse(xmlTextReaderPtr, char *, oval_syschar_status_t);
 
-typedef void (*oval_sysitem_consumer)(struct oval_sysitem *, void* client);
-int oval_sysitem_parse_tag(
-		xmlTextReaderPtr,
-	   struct oval_parser_context *,
-	   oval_sysitem_consumer, void*);
-void oval_sysitem_to_dom  (struct oval_sysitem *sysitem, xmlDoc *doc, xmlNode *tag_parent);
+typedef void (*oval_sysitem_consumer) (struct oval_sysitem *, void *client);
+int oval_sysitem_parse_tag(xmlTextReaderPtr, struct oval_parser_context *, oval_sysitem_consumer, void *);
+void oval_sysitem_to_dom(struct oval_sysitem *sysitem, xmlDoc * doc, xmlNode * tag_parent);
 void oval_sysitem_to_print(struct oval_sysitem *, char *, int);
 
 struct oval_syschar_model *oval_syschar_get_model(struct oval_syschar *syschar);

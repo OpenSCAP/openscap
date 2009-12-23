@@ -48,8 +48,8 @@ typedef struct {
 	char *file;
 	char *direction;
 	char *follow;
-        fsdev_t *dev_list;
-	int (*cb) (const char * pathname, const char *filename, void *arg);
+	fsdev_t *dev_list;
+	int (*cb) (const char *pathname, const char *filename, void *arg);
 } setting_t;
 
 typedef struct {
@@ -58,14 +58,13 @@ typedef struct {
 	int offs;
 } rglob_t;
 
-static int find_files_recursion(const char* path, setting_t * setting, int depth, void *arg );
+static int find_files_recursion(const char *path, setting_t * setting, int depth, void *arg);
 static int recurse_direction(const char *file, char *direction);
 static int recurse_follow(struct stat *st, char *follow);
-static int noRegex(char * token);
-static int rglob(const char *pattern, rglob_t *result);
-static void find_paths_recursion(const char *path, regex_t *re, rglob_t *result );
+static int noRegex(char *token);
+static int rglob(const char *pattern, rglob_t * result);
+static void find_paths_recursion(const char *path, regex_t * re, rglob_t * result);
 static void rglobfree(rglob_t * result);
-
 
 /* ************************************* PUBLIC ***********************************  */
 
@@ -78,139 +77,138 @@ static void rglobfree(rglob_t * result);
  *  @behaviors Specify find_files settings
  *  @cb Callback that is called for each hit
  */
-int find_files(SEXP_t * spath, SEXP_t *sfilename, SEXP_t *behaviors,
-               int (*cb) (const char *pathname, const char *filename, void *arg), void *arg) {
+int find_files(SEXP_t * spath, SEXP_t * sfilename, SEXP_t * behaviors,
+	       int (*cb) (const char *pathname, const char *filename, void *arg), void *arg)
+{
 	char *name = NULL, *path = NULL, *tmp = NULL;
 	setting_t *setting = NULL;
 	int i, rc, max_depth;
 	rglob_t rglobbuf;
 	int finds = 0;
-        SEXP_t *stmp;
-        
-        SEXP_t  *r0;
-        uint32_t op;
+	SEXP_t *stmp;
+
+	SEXP_t *r0;
+	uint32_t op;
 
 	assert(sfilename);
 	assert(spath);
 	assert(behaviors);
-        
-	name = SEXP_string_cstr (r0 = probe_ent_getval(sfilename));
-        SEXP_free (r0);
-        
-	path = SEXP_string_cstr (r0 = probe_ent_getval(spath));
-        SEXP_free (r0);
-        
-	tmp = SEXP_string_cstr (r0 = probe_ent_getattrval(behaviors,"max_depth"));
-        SEXP_free (r0);
-        
+
+	name = SEXP_string_cstr(r0 = probe_ent_getval(sfilename));
+	SEXP_free(r0);
+
+	path = SEXP_string_cstr(r0 = probe_ent_getval(spath));
+	SEXP_free(r0);
+
+	tmp = SEXP_string_cstr(r0 = probe_ent_getattrval(behaviors, "max_depth"));
+	SEXP_free(r0);
+
 	max_depth = atoi(tmp);
 	oscap_free(tmp);
 
 	setting = oscap_calloc(1, sizeof(setting_t));
-	setting->direction = SEXP_string_cstr(r0 = probe_ent_getattrval(behaviors,"recurse_direction"));
-        SEXP_free (r0);
-        
-	setting->follow = SEXP_string_cstr(r0 = probe_ent_getattrval(behaviors,"recurse"));
-        SEXP_free (r0);
+	setting->direction = SEXP_string_cstr(r0 = probe_ent_getattrval(behaviors, "recurse_direction"));
+	SEXP_free(r0);
+
+	setting->follow = SEXP_string_cstr(r0 = probe_ent_getattrval(behaviors, "recurse"));
+	SEXP_free(r0);
 
 	setting->cb = cb;
-        
+
 	/* Init list of local devices */
 	setting->dev_list = NULL;
-	stmp = probe_ent_getattrval(behaviors,"recurse_file_system");
-	
-        if(stmp && !SEXP_strncmp(stmp, "local",6) ) {
-                if ((setting->dev_list = fsdev_init (NULL, 0)) == NULL) {
-                        SEXP_free (stmp);
+	stmp = probe_ent_getattrval(behaviors, "recurse_file_system");
+
+	if (stmp && !SEXP_strncmp(stmp, "local", 6)) {
+		if ((setting->dev_list = fsdev_init(NULL, 0)) == NULL) {
+			SEXP_free(stmp);
 			goto error;
 		}
 	}
-        
-        SEXP_free (stmp);
+
+	SEXP_free(stmp);
 
 	/* Filename */
 	setting->re = NULL;
 	setting->file = name;
-        
-	if( name ) {
-                r0 = probe_ent_getattrval (sfilename, "operation");
-                op = SEXP_number_getu_32 (r0);
-                SEXP_free (r0);
-                
-		if (op ==  OVAL_OPERATION_PATTERN_MATCH ) {
-			setting->re = oscap_talloc (regex_t);
-                        
-			if( regcomp(setting->re, name, REG_EXTENDED) != 0 ) {
-                                goto error;
+
+	if (name) {
+		r0 = probe_ent_getattrval(sfilename, "operation");
+		op = SEXP_number_getu_32(r0);
+		SEXP_free(r0);
+
+		if (op == OVAL_OPERATION_PATTERN_MATCH) {
+			setting->re = oscap_talloc(regex_t);
+
+			if (regcomp(setting->re, name, REG_EXTENDED) != 0) {
+				goto error;
 			}
 		}
-        }
-        
-        assert (strlen (path) > 0);
+	}
+
+	assert(strlen(path) > 0);
 
 	/* Is there a '/' at the end of the path? */
-	i = strlen(path)-1;
+	i = strlen(path) - 1;
 
-	if( path[i] == '/' && i > 0)
+	if (path[i] == '/' && i > 0)
 		path[i] = '\0';
-        
-        /* Evaluate path(s) */
-        r0 = probe_ent_getattrval (spath, "operation");
-        op = SEXP_number_getu_32 (r0);
-        SEXP_free (r0);
-        
-	if(op ==  OVAL_OPERATION_PATTERN_MATCH ) {
+
+	/* Evaluate path(s) */
+	r0 = probe_ent_getattrval(spath, "operation");
+	op = SEXP_number_getu_32(r0);
+	SEXP_free(r0);
+
+	if (op == OVAL_OPERATION_PATTERN_MATCH) {
 		rglobbuf.offs = 10;
 		rc = rglob(path, &rglobbuf);
-                
-		if(!rc && rglobbuf.pathc > 0) {
+
+		if (!rc && rglobbuf.pathc > 0) {
 			finds = 0;
-                        
-			for(i=0; i < rglobbuf.pathc; i++) {
+
+			for (i = 0; i < rglobbuf.pathc; i++) {
 				rc = find_files_recursion(rglobbuf.pathv[i], setting, max_depth, arg);
-				
-                                if( rc == 0 ) {/* add path, no files found*/
-					(*cb)(rglobbuf.pathv[i], NULL, arg);
+
+				if (rc == 0) {	/* add path, no files found */
+					(*cb) (rglobbuf.pathv[i], NULL, arg);
 					rc++;
 				}
-                                
-                                if( rc >= 0 )
+
+				if (rc >= 0)
 					finds += rc;
 			}
-	
-                        rglobfree(&rglobbuf);
+
+			rglobfree(&rglobbuf);
 		}
 	} else {
 		rc = find_files_recursion(path, setting, max_depth, arg);
-		
-                if( rc == 0 ) { /* add path, no files found */
-			(*cb)(path, NULL, arg);
+
+		if (rc == 0) {	/* add path, no files found */
+			(*cb) (path, NULL, arg);
 			rc++;
 		}
-                
-		if( rc >= 0 )
+
+		if (rc >= 0)
 			finds += rc;
 	}
-                
-error:
-	oscap_free(name);  /* setting->file is same adress*/
+
+ error:
+	oscap_free(name);	/* setting->file is same adress */
 	oscap_free(path);
 
 	oscap_free(setting->follow);
 	oscap_free(setting->direction);
 	fsdev_free(setting->dev_list);
-	
-        if (setting->re != NULL)
-                regfree(setting->re);
-        
+
+	if (setting->re != NULL)
+		regfree(setting->re);
+
 	oscap_free(setting);
-	
+
 	return finds;
 }
 
-
 /* ********************************* PRIVATE *******************************  */
-
 
 /*
  *  depth defines how many directories to recurse when a recurse direction is specified
@@ -218,54 +216,53 @@ error:
  *  '0' is equivalent to no recursion
  *  '1' means to step only one directory level up/down
  */
-static int find_files_recursion(const char* path, setting_t * setting, int depth, void *arg ) {
+static int find_files_recursion(const char *path, setting_t * setting, int depth, void *arg)
+{
 	struct stat st;
-	struct dirent * pDirent;
+	struct dirent *pDirent;
 	char path_new[PATH_MAX];
-	DIR * pDir;
+	DIR *pDir;
 	int rc, tmp;
-        size_t path_len;
+	size_t path_len;
 
 	pDir = opendir(path);
-	if( pDir == NULL) 
+	if (pDir == NULL)
 		return -1;
 
 	rc = 0;
-	while ( (pDirent = readdir(pDir)) ) {
-                path_len = strlen(path);
+	while ((pDirent = readdir(pDir))) {
+		path_len = strlen(path);
 		if (PATH_MAX < path_len + 1 + pDirent->d_reclen + 1)
 			continue;
-		sprintf(path_new, "%s%s%s", path,
-                        (path[path_len - 1] == '/') ? "" : "/",
-                        pDirent->d_name);
+		sprintf(path_new, "%s%s%s", path, (path[path_len - 1] == '/') ? "" : "/", pDirent->d_name);
 
-		if( lstat(path_new, &st) == -1)
+		if (lstat(path_new, &st) == -1)
 			continue;
 
-		if( depth &&                                                   /* how deep rabbit hole is? */
-		    recurse_direction(pDirent->d_name, setting->direction) &&  /* up or down direction? */
-		    recurse_follow(&st,setting->follow) &&                     /* follow symlinks? */
-		    fsdev_search (setting->dev_list, &st.st_dev)) {            /* local filesystem? */
-			tmp = find_files_recursion(path_new, setting, depth == - 1 ? -1 : depth - 1, arg);
-			if( tmp >=0 )
+		if (depth &&	/* how deep rabbit hole is? */
+		    recurse_direction(pDirent->d_name, setting->direction) &&	/* up or down direction? */
+		    recurse_follow(&st, setting->follow) &&	/* follow symlinks? */
+		    fsdev_search(setting->dev_list, &st.st_dev)) {	/* local filesystem? */
+			tmp = find_files_recursion(path_new, setting, depth == -1 ? -1 : depth - 1, arg);
+			if (tmp >= 0)
 				rc += tmp;
 		}
 
-		if( !S_ISDIR(st.st_mode) ) {
-			if( setting->re ) { /* patter match */
-				if( regexec(setting->re, pDirent->d_name, 0, NULL, 0) == 0 ) {
+		if (!S_ISDIR(st.st_mode)) {
+			if (setting->re) {	/* patter match */
+				if (regexec(setting->re, pDirent->d_name, 0, NULL, 0) == 0) {
 					rc++;
-					(setting->cb)(path, pDirent->d_name, arg);
+					(setting->cb) (path, pDirent->d_name, arg);
 				}
-			} else if ( setting->file ) { /* filename match */
-				if(!strncmp(setting->file, pDirent->d_name, pDirent->d_reclen)) {
+			} else if (setting->file) {	/* filename match */
+				if (!strncmp(setting->file, pDirent->d_name, pDirent->d_reclen)) {
 					rc++;
-					(setting->cb)(path, pDirent->d_name, arg);
+					(setting->cb) (path, pDirent->d_name, arg);
 				}
 			}
-		} else if( !setting->re && !setting->file ) { /*  collect directories */
+		} else if (!setting->re && !setting->file) {	/*  collect directories */
 			rc++;
-			(setting->cb)(path, pDirent->d_name, arg);
+			(setting->cb) (path, pDirent->d_name, arg);
 		}
 	}
 
@@ -279,23 +276,24 @@ static int find_files_recursion(const char* path, setting_t * setting, int depth
  * 'directories'
  * 'symlinks'
  */
-static int recurse_follow(struct stat *st, char *follow) {
-	
-	if ( !(S_ISDIR(st->st_mode) || S_ISLNK(st->st_mode)) )
+static int recurse_follow(struct stat *st, char *follow)
+{
+
+	if (!(S_ISDIR(st->st_mode) || S_ISLNK(st->st_mode)))
 		return 0;
 
 	/* default */
-	if( (!follow || !strncmp(follow, "symlinks and directories",24)) )
+	if ((!follow || !strncmp(follow, "symlinks and directories", 24)))
 		return 1;
 
 	/* deprecated */
-	if( !strncmp(follow,"files and directories",12)  && S_ISDIR(st->st_mode)  )
+	if (!strncmp(follow, "files and directories", 12) && S_ISDIR(st->st_mode))
 		return 1;
 
 	/* one or another, not very usual case */
-	if( !strncmp(follow,"symlinks",9)  && S_ISLNK(st->st_mode) )
-		return 1;	
-	if( !strncmp(follow,"directories",12)  && S_ISDIR(st->st_mode) )
+	if (!strncmp(follow, "symlinks", 9) && S_ISLNK(st->st_mode))
+		return 1;
+	if (!strncmp(follow, "directories", 12) && S_ISDIR(st->st_mode))
 		return 1;
 
 	return 0;
@@ -307,18 +305,18 @@ static int recurse_follow(struct stat *st, char *follow) {
  * 'up' to parent directories 
  * 'down' into child directories
  */
- 
-static int recurse_direction(const char *file, char *direction) {
 
-	if (!strncmp(direction,"down",5)) {
-		if( strncmp(file,"..",3) && strncmp(file,".",2) )
+static int recurse_direction(const char *file, char *direction)
+{
+
+	if (!strncmp(direction, "down", 5)) {
+		if (strncmp(file, "..", 3) && strncmp(file, ".", 2))
+			return 1;
+	} else if (!strncmp(direction, "up", 3)) {
+		if (!strncmp(file, "..", 3))
 			return 1;
 	}
-	else if (!strncmp(direction,"up",3)) {
-		if( !strncmp(file,"..",3) )
-			return 1;
-	}
-	/* default none*/
+	/* default none */
 	return 0;
 }
 
@@ -326,112 +324,113 @@ static int recurse_direction(const char *file, char *direction) {
  * Similar to glob function, but instead off shell wildcard 
  * use regexps 
  */
-static int rglob(const char *pattern, rglob_t *result) {
-	char * tmp, * token, * saveptr = NULL;
+static int rglob(const char *pattern, rglob_t * result)
+{
+	char *tmp, *token, *saveptr = NULL;
 	char path[PATH_MAX] = "/";
 	int len = 1;
 	regex_t re;
 
 	/* check pattern */
-	if( !pattern || pattern[0]!='/')
+	if (!pattern || pattern[0] != '/')
 		return 1;
 
-	/* get no regexp portion from pattern to path*/
-	tmp = strdup (pattern);
-	for ( ; ; tmp=NULL) {
+	/* get no regexp portion from pattern to path */
+	tmp = strdup(pattern);
+	for (;; tmp = NULL) {
 		token = strtok_r(tmp, "/", &saveptr);
-		if( token==NULL)
+		if (token == NULL)
 			break;
-		if( noRegex(token) ) {
-			strcat(path,token);
-			strcat(path,"/");
+		if (noRegex(token)) {
+			strcat(path, token);
+			strcat(path, "/");
 		} else
 			break;
 	}
 	oscap_free(tmp);
 	/* erase last slash, but not the first one! */
 	len = strlen(path);
-	if ( len > 1 )
-		path[len-1] = '\0';
-
+	if (len > 1)
+		path[len - 1] = '\0';
 
 	/* init regex machine */
-	 if( regcomp(&re, pattern, REG_EXTENDED) != 0 ) 
-                return 1; /* Can't init pattern buffer storage area */
+	if (regcomp(&re, pattern, REG_EXTENDED) != 0)
+		return 1;	/* Can't init pattern buffer storage area */
 
 	/* allocate memory for result */
-	if ( result->offs < 1 || result->offs > 1000 )
-		result->offs=10;
-	result->pathv = oscap_alloc( sizeof (char**) * result->offs);
-	result->pathc=0;
+	if (result->offs < 1 || result->offs > 1000)
+		result->offs = 10;
+	result->pathv = oscap_alloc(sizeof(char **) * result->offs);
+	result->pathc = 0;
 
 	/* find paths */
-	find_paths_recursion(path, &re, result );
+	find_paths_recursion(path, &re, result);
 
 	regfree(&re);
 	return 0;
-	
+
 }
 
-static void find_paths_recursion(const char *path, regex_t *re, rglob_t *result ) {
-        struct dirent * pDirent;
+static void find_paths_recursion(const char *path, regex_t * re, rglob_t * result)
+{
+	struct dirent *pDirent;
 	struct stat st;
-        DIR * pDir;
+	DIR *pDir;
 	char path_new[PATH_MAX];
-        size_t path_len;
+	size_t path_len;
 
-        pDir = opendir(path);
-        if( pDir == NULL)
-                return;
+	pDir = opendir(path);
+	if (pDir == NULL)
+		return;
 
-	if( regexec(re, path, 0, NULL, 0) == 0 ) { /* catch? */
+	if (regexec(re, path, 0, NULL, 0) == 0) {	/* catch? */
 		result->pathv[result->pathc] = strdup(path);
 		result->pathc++;
-		if( result->pathc == result->offs) {
-			result->offs = result->offs * 2; /* magic constant */
-			result->pathv = oscap_realloc(result->pathv, sizeof (char**) * result->offs);
+		if (result->pathc == result->offs) {
+			result->offs = result->offs * 2;	/* magic constant */
+			result->pathv = oscap_realloc(result->pathv, sizeof(char **) * result->offs);
 		}
 	}
 
-	while ( (pDirent = readdir (pDir)) ) {
-                path_len = strlen(path);
+	while ((pDirent = readdir(pDir))) {
+		path_len = strlen(path);
 		if (PATH_MAX < path_len + 1 + pDirent->d_reclen + 1)
 			continue;
-		sprintf(path_new, "%s%s%s", path,
-                        (path[path_len - 1] == '/') ? "" : "/",
-                        pDirent->d_name);
+		sprintf(path_new, "%s%s%s", path, (path[path_len - 1] == '/') ? "" : "/", pDirent->d_name);
 
-                if( lstat(path_new, &st) == -1)
-                        continue;
+		if (lstat(path_new, &st) == -1)
+			continue;
 
-		if( S_ISDIR(st.st_mode) && strncmp(pDirent->d_name,"..",3) && strncmp(pDirent->d_name,".",2) ) {
-			find_paths_recursion(path_new, re, result ); /* recursion */
+		if (S_ISDIR(st.st_mode) && strncmp(pDirent->d_name, "..", 3) && strncmp(pDirent->d_name, ".", 2)) {
+			find_paths_recursion(path_new, re, result);	/* recursion */
 		}
 	}
 	closedir(pDir);
 }
 
-static int noRegex(char * token) {
+static int noRegex(char *token)
+{
 	const char regexChars[] = "^$\\.[](){}*+?";
-	size_t i,token_len;
-	
+	size_t i, token_len;
+
 	token_len = strlen(token);
-	for(i=0; i<token_len; i++) {
-		if( strchr(regexChars, token[i]) )
+	for (i = 0; i < token_len; i++) {
+		if (strchr(regexChars, token[i]))
 			return 0;
 	}
 	return 1;
 }
 
-static void rglobfree(rglob_t * result) {
+static void rglobfree(rglob_t * result)
+{
 	int i;
 
-	for(i=0; i<result->pathc; i++) {
+	for (i = 0; i < result->pathc; i++) {
 		oscap_free(result->pathv[i]);
 	}
 	oscap_free(result->pathv);
 
-	result->pathc=0;
+	result->pathc = 0;
 }
 
 #endif

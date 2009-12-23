@@ -73,7 +73,7 @@ struct cpe_name;
  * @return new structure holding parsed data
  * @retval NULL on failure
  */
-struct cpe_name* cpe_name_new(const char *cpe);
+struct cpe_name *cpe_name_new(const char *cpe);
 
 /*@}*/
 
@@ -89,7 +89,7 @@ struct cpe_name* cpe_name_new(const char *cpe);
  * @relates cpe_name
  * @param cpe CPE to be deleted
  */
-void cpe_name_free(struct cpe_name * cpe);
+void cpe_name_free(struct cpe_name *cpe);
 
 /*@}*/
 
@@ -104,43 +104,43 @@ void cpe_name_free(struct cpe_name * cpe);
  * Get CPE name part type field.
  * @relates cpe_name
  */
-cpe_part_t cpe_name_get_part(const struct cpe_name * cpe);
+cpe_part_t cpe_name_get_part(const struct cpe_name *cpe);
 
 /**
  * Get CPE name vendor field.
  * @relates cpe_name
  */
-const char* cpe_name_get_vendor(const struct cpe_name * cpe);
+const char *cpe_name_get_vendor(const struct cpe_name *cpe);
 
 /**
  * Get CPE name product field.
  * @relates cpe_name
  */
-const char* cpe_name_get_product(const struct cpe_name * cpe);
+const char *cpe_name_get_product(const struct cpe_name *cpe);
 
 /**
  * Get CPE name version field.
  * @relates cpe_name
  */
-const char* cpe_name_get_version(const struct cpe_name * cpe);
+const char *cpe_name_get_version(const struct cpe_name *cpe);
 
 /**
  * Get CPE name update field.
  * @relates cpe_name
  */
-const char* cpe_name_get_update(const struct cpe_name * cpe);
+const char *cpe_name_get_update(const struct cpe_name *cpe);
 
 /**
  * Get CPE name edition field.
  * @relates cpe_name
  */
-const char* cpe_name_get_edition(const struct cpe_name * cpe);
+const char *cpe_name_get_edition(const struct cpe_name *cpe);
 
 /**
  * Get CPE name language field.
  * @relates cpe_name
  */
-const char* cpe_name_get_language(const struct cpe_name * cpe);
+const char *cpe_name_get_language(const struct cpe_name *cpe);
 
 /*@}*/
 
@@ -155,43 +155,43 @@ const char* cpe_name_get_language(const struct cpe_name * cpe);
  * Set CPE name part type field.
  * @relates cpe_name
  */
-bool cpe_name_set_part(struct cpe_name * cpe, cpe_part_t newval);
+bool cpe_name_set_part(struct cpe_name *cpe, cpe_part_t newval);
 
 /**
  * Set CPE name vendor field.
  * @relates cpe_name
  */
-bool cpe_name_set_vendor(struct cpe_name * cpe, const char *newval);
+bool cpe_name_set_vendor(struct cpe_name *cpe, const char *newval);
 
 /**
  * Set CPE name product field.
  * @relates cpe_name
  */
-bool cpe_name_set_product(struct cpe_name * cpe, const char *newval);
+bool cpe_name_set_product(struct cpe_name *cpe, const char *newval);
 
 /**
  * Set CPE name version field.
  * @relates cpe_name
  */
-bool cpe_name_set_version(struct cpe_name * cpe, const char *newval);
+bool cpe_name_set_version(struct cpe_name *cpe, const char *newval);
 
 /**
  * Set CPE name update field.
  * @relates cpe_name
  */
-bool cpe_name_set_update(struct cpe_name * cpe, const char *newval);
+bool cpe_name_set_update(struct cpe_name *cpe, const char *newval);
 
 /**
  * Set CPE name edition field.
  * @relates cpe_name
  */
-bool cpe_name_set_edition(struct cpe_name * cpe, const char *newval);
+bool cpe_name_set_edition(struct cpe_name *cpe, const char *newval);
 
 /**
  * Set CPE name language field.
  * @relates cpe_name
  */
-bool cpe_name_set_language(struct cpe_name * cpe, const char *newval);
+bool cpe_name_set_language(struct cpe_name *cpe, const char *newval);
 
 /*@}*/
 
@@ -205,7 +205,7 @@ bool cpe_name_set_language(struct cpe_name * cpe, const char *newval);
  * according to CPE specification v 2.1.
  * @relates cpe_name
  */
-bool cpe_name_match_one(const struct cpe_name* cpe, const struct cpe_name* against);
+bool cpe_name_match_one(const struct cpe_name *cpe, const struct cpe_name *against);
 
 /**
  * Check if CPE @a name matches any CPE in @a namelist.
@@ -215,7 +215,7 @@ bool cpe_name_match_one(const struct cpe_name* cpe, const struct cpe_name* again
  * @param namelist list of names to search in
  * @return true if @a name was found within @a namelist
  */
-bool cpe_name_match_cpes(const struct cpe_name* name, size_t n, struct cpe_name** namelist);
+bool cpe_name_match_cpes(const struct cpe_name *name, size_t n, struct cpe_name **namelist);
 
 /**
  * Return CPE URI as a new string.
@@ -225,7 +225,7 @@ bool cpe_name_match_cpes(const struct cpe_name* name, size_t n, struct cpe_name*
  * @return CPE URI as string
  * @retval NULL on failure
  */
-char *cpe_name_get_uri(const struct cpe_name * cpe);
+char *cpe_name_get_uri(const struct cpe_name *cpe);
 
 /**
  * Write CPE URI @a cpe to file a descriptor @a f
@@ -235,7 +235,7 @@ char *cpe_name_get_uri(const struct cpe_name * cpe);
  * @return number of written characters
  * @retval <0 on failure
  */
-int cpe_name_write(const struct cpe_name * cpe, FILE * f);
+int cpe_name_write(const struct cpe_name *cpe, FILE * f);
 
 /**
  * Ensures @a str is in proper CPE format.

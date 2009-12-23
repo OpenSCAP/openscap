@@ -43,7 +43,7 @@ typedef struct oval_reference {
 } oval_reference_t;
 
 bool oval_reference_iterator_has_more(struct oval_reference_iterator
-				     *oc_reference)
+				      *oc_reference)
 {
 	return oval_collection_iterator_has_more((struct oval_iterator *)
 						 oc_reference);
@@ -58,39 +58,38 @@ struct oval_reference *oval_reference_iterator_next(struct
 }
 
 void oval_reference_iterator_free(struct
-						    oval_reference_iterator
-						    *oc_reference)
+				  oval_reference_iterator
+				  *oc_reference)
 {
-    oval_collection_iterator_free((struct oval_iterator *)oc_reference);
+	oval_collection_iterator_free((struct oval_iterator *)oc_reference);
 }
 
 char *oval_reference_get_source(struct oval_reference *ref)
 {
-        __attribute__nonnull__(ref);
+	__attribute__nonnull__(ref);
 
 	return ((struct oval_reference *)ref)->source;
 }
 
 char *oval_reference_get_id(struct oval_reference *ref)
 {
-        __attribute__nonnull__(ref);
+	__attribute__nonnull__(ref);
 
 	return ((struct oval_reference *)ref)->id;
 }
 
 char *oval_reference_get_url(struct oval_reference *ref)
 {
-        __attribute__nonnull__(ref);
+	__attribute__nonnull__(ref);
 
 	return ((struct oval_reference *)ref)->url;
 }
 
-struct oval_reference *oval_reference_new(struct oval_definition_model* model)
+struct oval_reference *oval_reference_new(struct oval_definition_model *model)
 {
-	struct oval_reference *ref =
-	    (struct oval_reference *) oscap_alloc(sizeof(oval_reference_t));
-        if (ref == NULL)
-                return NULL;
+	struct oval_reference *ref = (struct oval_reference *)oscap_alloc(sizeof(oval_reference_t));
+	if (ref == NULL)
+		return NULL;
 
 	ref->id = NULL;
 	ref->source = NULL;
@@ -99,20 +98,20 @@ struct oval_reference *oval_reference_new(struct oval_definition_model* model)
 	return ref;
 }
 
-bool oval_reference_is_valid(struct oval_reference *ref)
+bool oval_reference_is_valid(struct oval_reference * ref)
 {
-	return true;//TODO
+	return true;		//TODO
 }
-bool oval_reference_is_locked(struct oval_reference *ref)
+
+bool oval_reference_is_locked(struct oval_reference * ref)
 {
-        __attribute__nonnull__(ref);
+	__attribute__nonnull__(ref);
 
 	return oval_definition_model_is_locked(ref->model);
 }
 
 struct oval_reference *oval_reference_clone
-	(struct oval_definition_model *new_model, struct oval_reference *old_reference)
-{
+    (struct oval_definition_model *new_model, struct oval_reference *old_reference) {
 	struct oval_reference *new_reference = oval_reference_new(new_model);
 	char *id = oval_reference_get_id(old_reference);
 	oval_reference_set_id(new_reference, id);
@@ -125,7 +124,7 @@ struct oval_reference *oval_reference_clone
 
 void oval_reference_free(struct oval_reference *ref)
 {
-        __attribute__nonnull__(ref);
+	__attribute__nonnull__(ref);
 
 	if (ref->id != NULL)
 		oscap_free(ref->id);
@@ -141,66 +140,64 @@ void oval_reference_free(struct oval_reference *ref)
 
 void oval_reference_set_source(struct oval_reference *ref, char *source)
 {
-        if(ref && !oval_reference_is_locked(ref)){
-                if(ref->source!=NULL)
-                        oscap_free(ref->source);
-                ref->source = (source==NULL) ? NULL : oscap_strdup(source);
-        } else 
-                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+	if (ref && !oval_reference_is_locked(ref)) {
+		if (ref->source != NULL)
+			oscap_free(ref->source);
+		ref->source = (source == NULL) ? NULL : oscap_strdup(source);
+	} else
+		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
 void oval_reference_set_id(struct oval_reference *ref, char *id)
 {
-        if(ref && !oval_reference_is_locked(ref)){
-                if(ref->id!=NULL)
-                        free(ref->id);
-                ref->id = (id == NULL) ? NULL : oscap_strdup(id);
-        } else 
-                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+	if (ref && !oval_reference_is_locked(ref)) {
+		if (ref->id != NULL)
+			free(ref->id);
+		ref->id = (id == NULL) ? NULL : oscap_strdup(id);
+	} else
+		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
 void oval_reference_set_url(struct oval_reference *ref, char *url)
 {
-        if(ref && !oval_reference_is_locked(ref)){
-                if(ref->url!=NULL)
-                        free(ref->url);
-                ref->url = (url == NULL) ? NULL : oscap_strdup(url);
-        } else 
-                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+	if (ref && !oval_reference_is_locked(ref)) {
+		if (ref->url != NULL)
+			free(ref->url);
+		ref->url = (url == NULL) ? NULL : oscap_strdup(url);
+	} else
+		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
 /*typedef void (*oval_reference_consumer)(struct oval_reference*, void*);*/
 int oval_reference_parse_tag(xmlTextReaderPtr reader,
-			     struct oval_parser_context *context,
-			     oval_reference_consumer consumer, void *user)
+			     struct oval_parser_context *context, oval_reference_consumer consumer, void *user)
 {
-        __attribute__nonnull__(context);
+	__attribute__nonnull__(context);
 
 	struct oval_reference *ref = oval_reference_new(context->definition_model);
-	char *ref_id = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "ref_id");
-	if(ref_id!=NULL){
+	char *ref_id = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "ref_id");
+	if (ref_id != NULL) {
 		oval_reference_set_id(ref, ref_id);
 		oscap_free(ref_id);
-                ref_id=NULL;
+		ref_id = NULL;
 	}
-	char *ref_url = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "ref_url");
-	if(ref_url!=NULL){
+	char *ref_url = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "ref_url");
+	if (ref_url != NULL) {
 		oval_reference_set_url(ref, ref_url);
 		oscap_free(ref_url);
-                ref_url=NULL;
+		ref_url = NULL;
 	}
-	char *source = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "source");
-	if(source!=NULL){
+	char *source = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "source");
+	if (source != NULL) {
 		oval_reference_set_source(ref, source);
 		oscap_free(source);
-                source=NULL;
+		source = NULL;
 	}
 	(*consumer) (ref, user);
 	return 1;
 }
 
-void oval_reference_to_print(struct oval_reference *ref, char *indent,
-			     int idx)
+void oval_reference_to_print(struct oval_reference *ref, char *indent, int idx)
 {
 	char nxtindent[100];
 

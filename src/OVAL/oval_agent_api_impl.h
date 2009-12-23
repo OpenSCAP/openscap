@@ -36,21 +36,19 @@
 
 OSCAP_HIDDEN_START;
 
-
 #define OVAL_COMMON_NAMESPACE      BAD_CAST "http://oval.mitre.org/XMLSchema/oval-common-5"
 #define OVAL_SYSCHAR_NAMESPACE     BAD_CAST "http://oval.mitre.org/XMLSchema/oval-system-characteristics-5"
 #define OVAL_RESULTS_NAMESPACE     BAD_CAST "http://oval.mitre.org/XMLSchema/oval-results-5"
 #define OVAL_DEFINITIONS_NAMESPACE BAD_CAST "http://oval.mitre.org/XMLSchema/oval-definitions-5"
 #define OVAL_DIGSIG_NAMESPACE      BAD_CAST "http://www.w3.org/2000/09/xmldsig#"
 
-struct oval_definition *oval_definition_get_new
-	(struct oval_definition_model *, char *);
+struct oval_definition *oval_definition_get_new(struct oval_definition_model *, char *);
 
 typedef bool oval_definitions_resolver(struct oval_definition *, void *);
 
 xmlNode *oval_definitions_to_dom
-	(struct oval_definition_model *definition_model, xmlDocPtr doc, xmlNode *parent,
-	 oval_definitions_resolver resolver, void *user_arg);
+    (struct oval_definition_model *definition_model, xmlDocPtr doc, xmlNode * parent,
+     oval_definitions_resolver resolver, void *user_arg);
 
 struct oval_test *oval_test_get_new(struct oval_definition_model *, char *);
 struct oval_object *oval_object_get_new(struct oval_definition_model *, char *);
@@ -58,15 +56,11 @@ struct oval_state *oval_state_get_new(struct oval_definition_model *, char *);
 struct oval_variable *oval_variable_get_new(struct oval_definition_model *, char *, oval_variable_type_t type);
 
 struct oval_definition *oval_definition_clone
-(struct oval_definition_model *new_model, struct oval_definition *old_definition);
-struct oval_test       *oval_test_clone
-(struct oval_definition_model *new_model, struct oval_test *old_test);
-struct oval_object     *oval_object_clone
-(struct oval_definition_model *new_model, struct oval_object *old_object);
-struct oval_state      *oval_state_clone
-(struct oval_definition_model *new_model, struct oval_state *old_state);
-struct oval_variable   *oval_variable_clone
-(struct oval_definition_model* new_model, struct oval_variable *old_variable);
+    (struct oval_definition_model *new_model, struct oval_definition *old_definition);
+struct oval_test *oval_test_clone(struct oval_definition_model *new_model, struct oval_test *old_test);
+struct oval_object *oval_object_clone(struct oval_definition_model *new_model, struct oval_object *old_object);
+struct oval_state *oval_state_clone(struct oval_definition_model *new_model, struct oval_state *old_state);
+struct oval_variable *oval_variable_clone(struct oval_definition_model *new_model, struct oval_variable *old_variable);
 
 struct oval_syschar *oval_syschar_get_new(struct oval_syschar_model *, struct oval_object *);
 struct oval_syschar_item *oval_syschar_item_get_new(struct oval_syschar_model *, char *);
@@ -74,9 +68,7 @@ struct oval_sysdata *oval_sysdata_get_new(struct oval_syschar_model *model, char
 
 typedef bool oval_syschar_resolver(struct oval_syschar *, void *);
 
-xmlNode *oval_syschar_model_to_dom
-	(struct oval_syschar_model *, xmlDocPtr, xmlNode *,
-			oval_syschar_resolver, void *);
+xmlNode *oval_syschar_model_to_dom(struct oval_syschar_model *, xmlDocPtr, xmlNode *, oval_syschar_resolver, void *);
 
 OSCAP_HIDDEN_END;
 

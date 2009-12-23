@@ -51,7 +51,6 @@
  * @param cb for each match, the callback function cb is called with first argument being the matched path and the second being the matched filename
  * @param arg an optional argument to the callback function
  */
-int find_files(SEXP_t * path, SEXP_t *filename, SEXP_t *behaviors,
-               int (*cb) (const char *, const char *, void *arg), void *arg);
+int find_files(SEXP_t * path, SEXP_t * filename, SEXP_t * behaviors,
+	       int (*cb) (const char *, const char *, void *arg), void *arg);
 #endif
-

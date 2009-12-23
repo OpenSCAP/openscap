@@ -34,8 +34,7 @@ void process_description(xmlTextReaderPtr reader, struct cce_entry *cce)
 {
 	while (xmlTextReaderRead(reader)) {
 		if (xmlTextReaderNodeType(reader) == 15 &&
-		    !xmlStrcmp(xmlTextReaderConstName(reader),
-			       BAD_CAST "description")) {
+		    !xmlStrcmp(xmlTextReaderConstName(reader), BAD_CAST "description")) {
 			return;
 		}
 
@@ -49,14 +48,12 @@ void process_description(xmlTextReaderPtr reader, struct cce_entry *cce)
 	return;
 }
 
-
 void process_node(xmlTextReaderPtr reader, struct cce *cce_list)
 {
-	if (!xmlStrcmp(xmlTextReaderConstName(reader), (const xmlChar *)"item") &&
-	    xmlTextReaderNodeType(reader) == 1) {
+	if (!xmlStrcmp(xmlTextReaderConstName(reader), (const xmlChar *)"item") && xmlTextReaderNodeType(reader) == 1) {
 
-		struct cce_entry* cce = cce_entry_new_empty();
-		cce->id = (char *)xmlTextReaderGetAttribute(reader, (const xmlChar *) "id");
+		struct cce_entry *cce = cce_entry_new_empty();
+		cce->id = (char *)xmlTextReaderGetAttribute(reader, (const xmlChar *)"id");
 		if (!cce->id) {
 			cce_entry_free(cce);
 			return;
@@ -67,33 +64,22 @@ void process_node(xmlTextReaderPtr reader, struct cce *cce_list)
 		xmlTextReaderRead(reader);
 		const xmlChar *name = xmlTextReaderConstName(reader);
 		int type = xmlTextReaderNodeType(reader);
-		while (xmlStrcmp (xmlTextReaderConstName(reader), (const xmlChar *)"item") != 0) {
-			if (!xmlStrcmp
-				(xmlTextReaderConstName(reader),
-				 (const xmlChar *)"description")
-				&& xmlTextReaderNodeType(reader) == 1) {
+		while (xmlStrcmp(xmlTextReaderConstName(reader), (const xmlChar *)"item") != 0) {
+			if (!xmlStrcmp(xmlTextReaderConstName(reader), (const xmlChar *)"description")
+			    && xmlTextReaderNodeType(reader) == 1) {
 				process_description(reader, cce);
-			} else
-				if (!xmlStrcmp
-				(xmlTextReaderConstName(reader),
-				 (const xmlChar *)"parameter")
-				&& xmlTextReaderNodeType(reader) == 1) {
+			} else if (!xmlStrcmp(xmlTextReaderConstName(reader), (const xmlChar *)"parameter")
+				   && xmlTextReaderNodeType(reader) == 1) {
 				process_parameter(reader, cce);
-			} else
-				if (!xmlStrcmp
-				(xmlTextReaderConstName(reader),
-				 (const xmlChar *)"technicalmechanisms")
-				&& xmlTextReaderNodeType(reader) == 1) {
+			} else if (!xmlStrcmp(xmlTextReaderConstName(reader), (const xmlChar *)"technicalmechanisms")
+				   && xmlTextReaderNodeType(reader) == 1) {
 				process_tech_mech(reader, cce);
-			} else
-				if (!xmlStrcmp
-				(xmlTextReaderConstName(reader),
-				 (const xmlChar *)"ref")
-				&& xmlTextReaderNodeType(reader) == 1) {
+			} else if (!xmlStrcmp(xmlTextReaderConstName(reader), (const xmlChar *)"ref")
+				   && xmlTextReaderNodeType(reader) == 1) {
 				process_refs(reader, cce);
 			}
 			xmlTextReaderRead(reader);
-			
+
 			name = xmlTextReaderConstName(reader);
 			type = xmlTextReaderNodeType(reader);
 		}
@@ -104,8 +90,7 @@ void process_parameter(xmlTextReaderPtr reader, struct cce_entry *cce)
 {
 	while (xmlTextReaderRead(reader)) {
 		if (xmlTextReaderNodeType(reader) == 15 &&
-		    !xmlStrcmp(xmlTextReaderConstName(reader),
-			       (const xmlChar *)"parameter")) {
+		    !xmlStrcmp(xmlTextReaderConstName(reader), (const xmlChar *)"parameter")) {
 			return;
 		}
 
@@ -126,11 +111,10 @@ void process_refs(xmlTextReaderPtr reader, struct cce_entry *cce)
 	source = xmlTextReaderGetAttribute(reader, (const xmlChar *)"source");
 	while (xmlTextReaderRead(reader)) {
 		if (xmlTextReaderNodeType(reader) == 15 &&
-		    !xmlStrcmp(xmlTextReaderConstName(reader),
-			       (const xmlChar *)"ref")) {
-			struct cce_reference* ref = oscap_calloc(1, sizeof(struct cce_reference));
-			ref->source = (char*)source;
-			ref->value  = (char*)value;
+		    !xmlStrcmp(xmlTextReaderConstName(reader), (const xmlChar *)"ref")) {
+			struct cce_reference *ref = oscap_calloc(1, sizeof(struct cce_reference));
+			ref->source = (char *)source;
+			ref->value = (char *)value;
 			oscap_list_add(cce->references, ref);
 			return;
 		}
@@ -148,8 +132,7 @@ void process_tech_mech(xmlTextReaderPtr reader, struct cce_entry *cce)
 {
 	while (xmlTextReaderRead(reader)) {
 		if (xmlTextReaderNodeType(reader) == 15 &&
-		    !xmlStrcmp(xmlTextReaderConstName(reader),
-			       (const xmlChar *)"technicalmechanisms")) {
+		    !xmlStrcmp(xmlTextReaderConstName(reader), (const xmlChar *)"technicalmechanisms")) {
 			return;
 		}
 
@@ -162,7 +145,7 @@ void process_tech_mech(xmlTextReaderPtr reader, struct cce_entry *cce)
 	return;
 }
 
-void cce_reference_free(struct cce_reference* ref)
+void cce_reference_free(struct cce_reference *ref)
 {
 	if (ref) {
 		oscap_free(ref->source);
@@ -170,4 +153,3 @@ void cce_reference_free(struct cce_reference* ref)
 		oscap_free(ref);
 	}
 }
-

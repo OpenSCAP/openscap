@@ -45,28 +45,29 @@ typedef struct oval_sysinfo {
 	struct oval_collection *interfaces;
 } oval_sysinfo_t;
 
-struct oval_sysinfo *oval_sysinfo_new(struct oval_syschar_model* model)
+struct oval_sysinfo *oval_sysinfo_new(struct oval_syschar_model *model)
 {
-	oval_sysinfo_t *sysinfo = (oval_sysinfo_t*) oscap_alloc(sizeof(oval_sysinfo_t));
-        if (sysinfo == NULL)
-                return NULL;
+	oval_sysinfo_t *sysinfo = (oval_sysinfo_t *) oscap_alloc(sizeof(oval_sysinfo_t));
+	if (sysinfo == NULL)
+		return NULL;
 
-	sysinfo->osArchitecture  = NULL;
-	sysinfo->osName          = NULL;
-	sysinfo->osVersion       = NULL;
+	sysinfo->osArchitecture = NULL;
+	sysinfo->osName = NULL;
+	sysinfo->osVersion = NULL;
 	sysinfo->primaryHostName = NULL;
-	sysinfo->interfaces      = oval_collection_new();
+	sysinfo->interfaces = oval_collection_new();
 	sysinfo->model = model;
 	return sysinfo;
 }
 
-bool oval_sysinfo_is_valid(struct oval_sysinfo *sysinfo)
+bool oval_sysinfo_is_valid(struct oval_sysinfo * sysinfo)
 {
-	return true;//TODO
+	return true;		//TODO
 }
-bool oval_sysinfo_is_locked(struct oval_sysinfo *sysinfo)
+
+bool oval_sysinfo_is_locked(struct oval_sysinfo * sysinfo)
 {
-        __attribute__nonnull__(sysinfo);
+	__attribute__nonnull__(sysinfo);
 
 	return oval_syschar_model_is_locked(sysinfo->model);
 }
@@ -75,39 +76,42 @@ struct oval_sysinfo *oval_sysinfo_clone(struct oval_syschar_model *new_model, st
 {
 	struct oval_sysinfo *new_sysinfo = oval_sysinfo_new(new_model);
 	struct oval_sysint_iterator *interfaces = oval_sysinfo_get_interfaces(old_sysinfo);
-	while(oval_sysint_iterator_has_more(interfaces)){
+	while (oval_sysint_iterator_has_more(interfaces)) {
 		struct oval_sysint *interface = oval_sysint_iterator_next(interfaces);
 		oval_sysinfo_add_interface(new_sysinfo, interface);
 	}
 	oval_sysint_iterator_free(interfaces);
 	char *os_architecture = oval_sysinfo_get_os_architecture(old_sysinfo);
-	if(os_architecture){
+	if (os_architecture) {
 		oval_sysinfo_set_os_architecture(new_sysinfo, os_architecture);
 	}
 	char *os_name = oval_sysinfo_get_os_name(old_sysinfo);
-	if(os_name){
+	if (os_name) {
 		oval_sysinfo_set_os_name(new_sysinfo, os_name);
 	}
 	char *os_version = oval_sysinfo_get_os_version(old_sysinfo);
-	if(os_version){
+	if (os_version) {
 		oval_sysinfo_set_os_version(new_sysinfo, os_version);
 	}
 	char *host_name = oval_sysinfo_get_primary_host_name(old_sysinfo);
-	if(host_name){
+	if (host_name) {
 		oval_sysinfo_set_primary_host_name(new_sysinfo, host_name);
 	}
 	return new_sysinfo;
 }
 
-
 void oval_sysinfo_free(struct oval_sysinfo *sysinfo)
 {
 	if (sysinfo) {
-		if(sysinfo->osArchitecture  != NULL) oscap_free(sysinfo->osArchitecture);
-		if(sysinfo->osName          != NULL) oscap_free(sysinfo->osName);
-		if(sysinfo->osVersion       != NULL) oscap_free(sysinfo->osVersion);
-		if(sysinfo->primaryHostName != NULL) oscap_free(sysinfo->primaryHostName);
-		oval_collection_free_items(sysinfo->interfaces, (oscap_destruct_func)oval_sysint_free);
+		if (sysinfo->osArchitecture != NULL)
+			oscap_free(sysinfo->osArchitecture);
+		if (sysinfo->osName != NULL)
+			oscap_free(sysinfo->osName);
+		if (sysinfo->osVersion != NULL)
+			oscap_free(sysinfo->osVersion);
+		if (sysinfo->primaryHostName != NULL)
+			oscap_free(sysinfo->primaryHostName);
+		oval_collection_free_items(sysinfo->interfaces, (oscap_destruct_func) oval_sysint_free);
 
 		sysinfo->interfaces = NULL;
 		sysinfo->osArchitecture = NULL;
@@ -139,19 +143,19 @@ void oval_sysinfo_iterator_free(struct oval_sysinfo_iterator *oc_sysinfo)
 
 char *oval_sysinfo_get_os_name(struct oval_sysinfo *sysinfo)
 {
-        __attribute__nonnull__(sysinfo);
+	__attribute__nonnull__(sysinfo);
 
 	return sysinfo->osName;
 }
 
 void oval_sysinfo_set_os_name(struct oval_sysinfo *sysinfo, char *osName)
 {
-	if(sysinfo && !oval_sysinfo_is_locked(sysinfo)){
-		if(sysinfo->osName!=NULL)
-                        oscap_free(sysinfo->osName);
+	if (sysinfo && !oval_sysinfo_is_locked(sysinfo)) {
+		if (sysinfo->osName != NULL)
+			oscap_free(sysinfo->osName);
 		sysinfo->osName = oscap_strdup(osName);
-	} else 
-                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+	} else
+		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
 char *oval_sysinfo_get_os_version(struct oval_sysinfo *sysinfo)
@@ -161,12 +165,12 @@ char *oval_sysinfo_get_os_version(struct oval_sysinfo *sysinfo)
 
 void oval_sysinfo_set_os_version(struct oval_sysinfo *sysinfo, char *osVersion)
 {
-	if(sysinfo && !oval_sysinfo_is_locked(sysinfo)){
-		if(sysinfo->osVersion!=NULL)
-                        oscap_free(sysinfo->osVersion);
+	if (sysinfo && !oval_sysinfo_is_locked(sysinfo)) {
+		if (sysinfo->osVersion != NULL)
+			oscap_free(sysinfo->osVersion);
 		sysinfo->osVersion = oscap_strdup(osVersion);
-	} else 
-                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+	} else
+		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
 char *oval_sysinfo_get_os_architecture(struct oval_sysinfo *sysinfo)
@@ -176,12 +180,12 @@ char *oval_sysinfo_get_os_architecture(struct oval_sysinfo *sysinfo)
 
 void oval_sysinfo_set_os_architecture(struct oval_sysinfo *sysinfo, char *osArchitecture)
 {
-	if(sysinfo && !oval_sysinfo_is_locked(sysinfo)){
-		if(sysinfo->osArchitecture!=NULL)
-                        oscap_free(sysinfo->osArchitecture);
+	if (sysinfo && !oval_sysinfo_is_locked(sysinfo)) {
+		if (sysinfo->osArchitecture != NULL)
+			oscap_free(sysinfo->osArchitecture);
 		sysinfo->osArchitecture = oscap_strdup(osArchitecture);
-	} else 
-                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+	} else
+		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
 char *oval_sysinfo_get_primary_host_name(struct oval_sysinfo *sysinfo)
@@ -191,79 +195,85 @@ char *oval_sysinfo_get_primary_host_name(struct oval_sysinfo *sysinfo)
 
 void oval_sysinfo_set_primary_host_name(struct oval_sysinfo *sysinfo, char *primaryHostName)
 {
-	if(sysinfo && !oval_sysinfo_is_locked(sysinfo)){
-		if(sysinfo->primaryHostName!=NULL)
-                        oscap_free(sysinfo->primaryHostName);
+	if (sysinfo && !oval_sysinfo_is_locked(sysinfo)) {
+		if (sysinfo->primaryHostName != NULL)
+			oscap_free(sysinfo->primaryHostName);
 		sysinfo->primaryHostName = oscap_strdup(primaryHostName);
-	} else 
-                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+	} else
+		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
 struct oval_sysint_iterator *oval_sysinfo_get_interfaces(struct oval_sysinfo
-						     *sysinfo)
+							 *sysinfo)
 {
-        __attribute__nonnull__(sysinfo);
+	__attribute__nonnull__(sysinfo);
 
-	return (struct oval_sysint_iterator *)oval_collection_iterator(sysinfo->
-								       interfaces);
+	return (struct oval_sysint_iterator *)oval_collection_iterator(sysinfo->interfaces);
 }
 
 void oval_sysinfo_add_interface(struct oval_sysinfo *sysinfo, struct oval_sysint *interface)
 {
-	if(sysinfo && !oval_sysinfo_is_locked(sysinfo)){
+	if (sysinfo && !oval_sysinfo_is_locked(sysinfo)) {
 		oval_collection_add(sysinfo->interfaces, oval_sysint_clone(sysinfo->model, interface));
-	} else 
-                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+	} else
+		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
-		static void _oval_sysinfo_parse_tag_consume_os_name(char* text, void* sysinfo)
-		{
-			oval_sysinfo_set_os_name(sysinfo, text);
-		}
-		static void _oval_sysinfo_parse_tag_consume_os_version(char* text, void* sysinfo)
-		{
-			oval_sysinfo_set_os_version(sysinfo, text);
-		}
-		static void _oval_sysinfo_parse_tag_consume_os_architecture(char* text, void* sysinfo)
-		{
-			oval_sysinfo_set_os_architecture(sysinfo, text);
-		}
-		static void _oval_sysinfo_parse_tag_consume_primary_host_name(char* text, void* sysinfo)
-		{
-			oval_sysinfo_set_primary_host_name(sysinfo, text);
-		}
-		static void _oval_sysinfo_parse_tag_consume_int(struct oval_sysint *sysint, void *sysinfo)
-		{
-			oval_sysinfo_add_interface(sysinfo, sysint);
-		}
-		static int _oval_sysinfo_parse_tag_parse_tag(xmlTextReaderPtr reader,
-			       struct oval_parser_context *context, void *sysinfo)
-		{
-			return oval_sysint_parse_tag
-					(reader, context, &_oval_sysinfo_parse_tag_consume_int, sysinfo);
-		}
-static int _oval_sysinfo_parse_tag(xmlTextReaderPtr reader,
-			       struct oval_parser_context *context, void *user)
+static void _oval_sysinfo_parse_tag_consume_os_name(char *text, void *sysinfo)
+{
+	oval_sysinfo_set_os_name(sysinfo, text);
+}
+
+static void _oval_sysinfo_parse_tag_consume_os_version(char *text, void *sysinfo)
+{
+	oval_sysinfo_set_os_version(sysinfo, text);
+}
+
+static void _oval_sysinfo_parse_tag_consume_os_architecture(char *text, void *sysinfo)
+{
+	oval_sysinfo_set_os_architecture(sysinfo, text);
+}
+
+static void _oval_sysinfo_parse_tag_consume_primary_host_name(char *text, void *sysinfo)
+{
+	oval_sysinfo_set_primary_host_name(sysinfo, text);
+}
+
+static void _oval_sysinfo_parse_tag_consume_int(struct oval_sysint *sysint, void *sysinfo)
+{
+	oval_sysinfo_add_interface(sysinfo, sysint);
+}
+
+static int _oval_sysinfo_parse_tag_parse_tag(xmlTextReaderPtr reader,
+					     struct oval_parser_context *context, void *sysinfo)
+{
+	return oval_sysint_parse_tag(reader, context, &_oval_sysinfo_parse_tag_consume_int, sysinfo);
+}
+
+static int _oval_sysinfo_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *context, void *user)
 {
 	struct oval_sysinfo *sysinfo = (struct oval_sysinfo *)user;
-	char *tagname   = (char*) xmlTextReaderName(reader);
-	char *namespace = (char*) xmlTextReaderNamespaceUri(reader);
-	int is_ovalsys = strcmp(namespace,NAMESPACE_OVALSYS)==0;
+	char *tagname = (char *)xmlTextReaderName(reader);
+	char *namespace = (char *)xmlTextReaderNamespaceUri(reader);
+	int is_ovalsys = strcmp(namespace, NAMESPACE_OVALSYS) == 0;
 	int return_code;
-	if        (is_ovalsys && (strcmp(tagname,"os_name"          )==0)) {
-		return_code = oval_parser_text_value(reader, context, &_oval_sysinfo_parse_tag_consume_os_name, sysinfo);
-	} else if (is_ovalsys && (strcmp(tagname,"os_version"       )==0)) {
-		return_code = oval_parser_text_value(reader, context, &_oval_sysinfo_parse_tag_consume_os_version, sysinfo);
-	} else if (is_ovalsys && (strcmp(tagname,"architecture"     )==0)) {
-		return_code = oval_parser_text_value(reader, context, &_oval_sysinfo_parse_tag_consume_os_architecture, sysinfo);
-	} else if (is_ovalsys && (strcmp(tagname,"primary_host_name")==0)) {
-		return_code = oval_parser_text_value(reader, context, &_oval_sysinfo_parse_tag_consume_primary_host_name, sysinfo);
-	} else if (is_ovalsys && (strcmp(tagname,"interfaces")==0)) {
-		return_code = oval_parser_parse_tag
-			(reader, context, &_oval_sysinfo_parse_tag_parse_tag, sysinfo);
+	if (is_ovalsys && (strcmp(tagname, "os_name") == 0)) {
+		return_code =
+		    oval_parser_text_value(reader, context, &_oval_sysinfo_parse_tag_consume_os_name, sysinfo);
+	} else if (is_ovalsys && (strcmp(tagname, "os_version") == 0)) {
+		return_code =
+		    oval_parser_text_value(reader, context, &_oval_sysinfo_parse_tag_consume_os_version, sysinfo);
+	} else if (is_ovalsys && (strcmp(tagname, "architecture") == 0)) {
+		return_code =
+		    oval_parser_text_value(reader, context, &_oval_sysinfo_parse_tag_consume_os_architecture, sysinfo);
+	} else if (is_ovalsys && (strcmp(tagname, "primary_host_name") == 0)) {
+		return_code =
+		    oval_parser_text_value(reader, context, &_oval_sysinfo_parse_tag_consume_primary_host_name,
+					   sysinfo);
+	} else if (is_ovalsys && (strcmp(tagname, "interfaces") == 0)) {
+		return_code = oval_parser_parse_tag(reader, context, &_oval_sysinfo_parse_tag_parse_tag, sysinfo);
 	} else {
-		oscap_dprintf("WARNING: _oval_sysinfo_parse_tag:: skipping <%s:%s>",
-				namespace, tagname);
+		oscap_dprintf("WARNING: _oval_sysinfo_parse_tag:: skipping <%s:%s>", namespace, tagname);
 		return_code = oval_parser_skip_tag(reader, context);
 	}
 	oscap_free(tagname);
@@ -271,36 +281,33 @@ static int _oval_sysinfo_parse_tag(xmlTextReaderPtr reader,
 	return return_code;
 }
 
-
-int oval_sysinfo_parse_tag(xmlTextReaderPtr reader,
-			       struct oval_parser_context *context)
+int oval_sysinfo_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *context)
 {
-        __attribute__nonnull__(context);
+	__attribute__nonnull__(context);
 
 	oval_sysinfo_t *sysinfo = oval_sysinfo_new(context->syschar_model);
-	char *tagname   = (char*) xmlTextReaderName(reader);
-	char *namespace = (char*) xmlTextReaderNamespaceUri(reader);
-	int is_ovalsys = strcmp(namespace,NAMESPACE_OVALSYS)==0;
+	char *tagname = (char *)xmlTextReaderName(reader);
+	char *namespace = (char *)xmlTextReaderNamespaceUri(reader);
+	int is_ovalsys = strcmp(namespace, NAMESPACE_OVALSYS) == 0;
 	int return_code;
-	if(is_ovalsys){
+	if (is_ovalsys) {
 		return_code = oval_parser_parse_tag(reader, context, &_oval_sysinfo_parse_tag, sysinfo);
-	}else{
+	} else {
 		oscap_dprintf("WARNING: oval_sysinfo_parse_tag:: expecting <system_info> got <%s:%s>",
-				namespace, tagname);
+			      namespace, tagname);
 		return_code = oval_parser_skip_tag(reader, context);
 	}
 	oscap_free(tagname);
 	oscap_free(namespace);
-	if(return_code!=1){
-		oscap_dprintf("WARNING: oval_sysinfo_parse_tag:: return code is not 1::(%d)",return_code);
+	if (return_code != 1) {
+		oscap_dprintf("WARNING: oval_sysinfo_parse_tag:: return code is not 1::(%d)", return_code);
 	}
 	oval_syschar_model_set_sysinfo(context->syschar_model, sysinfo);
 	oval_sysinfo_free(sysinfo);
 	return return_code;
 }
 
-void oval_sysinfo_to_print(struct oval_sysinfo *sysinfo, char *indent,
-			      int idx)
+void oval_sysinfo_to_print(struct oval_sysinfo *sysinfo, char *indent, int idx)
 {
 
 	char nxtindent[100];
@@ -314,27 +321,28 @@ void oval_sysinfo_to_print(struct oval_sysinfo *sysinfo, char *indent,
 		snprintf(nxtindent, sizeof(nxtindent), "%sSYSINFO[%d].", indent, idx);
 
 	/*
-	char *osName;
-	char *osVersion;
-	char *osArchitecture;
-	char *primaryHostName;
-	struct oval_collection *interfaces;
+	   char *osName;
+	   char *osVersion;
+	   char *osArchitecture;
+	   char *primaryHostName;
+	   struct oval_collection *interfaces;
 	 */
-	{//osName
+	{			//osName
 		oscap_dprintf("%sOS_NAME           = %s\n", nxtindent, oval_sysinfo_get_os_name(sysinfo));
 	}
-	{//osVersion
+	{			//osVersion
 		oscap_dprintf("%sOS_VERSION        = %s\n", nxtindent, oval_sysinfo_get_os_version(sysinfo));
 	}
-	{//osArchitecture
+	{			//osArchitecture
 		oscap_dprintf("%sOS_ARCHITECTURE   = %s	\n", nxtindent, oval_sysinfo_get_os_architecture(sysinfo));
 	}
-	{//host name
+	{			//host name
 		oscap_dprintf("%sPRIMARY_HOST_NAME = %s\n", nxtindent, oval_sysinfo_get_primary_host_name(sysinfo));
 	}
-	{//interfaces
+	{			//interfaces
 		struct oval_sysint_iterator *intrfcs = oval_sysinfo_get_interfaces(sysinfo);
-		int i;for(i=1;oval_sysint_iterator_has_more(intrfcs);i++){
+		int i;
+		for (i = 1; oval_sysint_iterator_has_more(intrfcs); i++) {
 			struct oval_sysint *intrfc = oval_sysint_iterator_next(intrfcs);
 			oval_sysint_to_print(intrfc, nxtindent, i);
 		}
@@ -342,32 +350,28 @@ void oval_sysinfo_to_print(struct oval_sysinfo *sysinfo, char *indent,
 	}
 }
 
-void oval_sysinfo_to_dom  (struct oval_sysinfo *sysinfo, xmlDoc *doc, xmlNode *tag_parent){
-	if(sysinfo){
+void oval_sysinfo_to_dom(struct oval_sysinfo *sysinfo, xmlDoc * doc, xmlNode * tag_parent)
+{
+	if (sysinfo) {
 		xmlNs *ns_syschar = xmlSearchNsByHref(doc, tag_parent, OVAL_SYSCHAR_NAMESPACE);
-	    xmlNode *tag_sysinfo = xmlNewChild
-			(tag_parent, ns_syschar, BAD_CAST "system_info", NULL);
-	    xmlNewChild
-			(tag_sysinfo, ns_syschar, BAD_CAST "os_name",
-					BAD_CAST oval_sysinfo_get_os_name(sysinfo));
-	    xmlNewChild
-			(tag_sysinfo, ns_syschar, BAD_CAST "os_version",
-					BAD_CAST oval_sysinfo_get_os_version(sysinfo));
-	    xmlNewChild
-			(tag_sysinfo, ns_syschar, BAD_CAST "architecture",
-					BAD_CAST oval_sysinfo_get_os_architecture(sysinfo));
-	    xmlNewChild
-			(tag_sysinfo, ns_syschar, BAD_CAST "primary_host_name",
-					BAD_CAST oval_sysinfo_get_primary_host_name(sysinfo));
+		xmlNode *tag_sysinfo = xmlNewChild(tag_parent, ns_syschar, BAD_CAST "system_info", NULL);
+		xmlNewChild(tag_sysinfo, ns_syschar, BAD_CAST "os_name", BAD_CAST oval_sysinfo_get_os_name(sysinfo));
+		xmlNewChild
+		    (tag_sysinfo, ns_syschar, BAD_CAST "os_version", BAD_CAST oval_sysinfo_get_os_version(sysinfo));
+		xmlNewChild
+		    (tag_sysinfo, ns_syschar, BAD_CAST "architecture",
+		     BAD_CAST oval_sysinfo_get_os_architecture(sysinfo));
+		xmlNewChild
+		    (tag_sysinfo, ns_syschar, BAD_CAST "primary_host_name",
+		     BAD_CAST oval_sysinfo_get_primary_host_name(sysinfo));
 
-	    xmlNode *tag_interfaces = xmlNewChild
-			(tag_sysinfo, ns_syschar, BAD_CAST "interfaces", NULL);
+		xmlNode *tag_interfaces = xmlNewChild(tag_sysinfo, ns_syschar, BAD_CAST "interfaces", NULL);
 		struct oval_sysint_iterator *intrfcs = oval_sysinfo_get_interfaces(sysinfo);
-		int i;for(i=1;oval_sysint_iterator_has_more(intrfcs);i++){
+		int i;
+		for (i = 1; oval_sysint_iterator_has_more(intrfcs); i++) {
 			struct oval_sysint *intrfc = oval_sysint_iterator_next(intrfcs);
 			oval_sysint_to_dom(intrfc, doc, tag_interfaces);
 		}
 		oval_sysint_iterator_free(intrfcs);
 	}
 }
-

@@ -42,7 +42,7 @@
 #include "probe-entcmp.h"
 #include "_probe-api.h"
 
-oval_result_t probe_ent_cmp_binary(SEXP_t *val1, SEXP_t *val2, oval_operation_t op)
+oval_result_t probe_ent_cmp_binary(SEXP_t * val1, SEXP_t * val2, oval_operation_t op)
 {
 	oval_result_t result = OVAL_RESULT_ERROR;
 	char *s1, *s2;
@@ -70,14 +70,14 @@ oval_result_t probe_ent_cmp_binary(SEXP_t *val1, SEXP_t *val2, oval_operation_t 
 	return result;
 }
 
-oval_result_t probe_ent_cmp_bool(SEXP_t *val1, SEXP_t *val2, oval_operation_t op)
+oval_result_t probe_ent_cmp_bool(SEXP_t * val1, SEXP_t * val2, oval_operation_t op)
 {
 	oval_result_t result = OVAL_RESULT_ERROR;
 	int v1, v2;
 
-	v1 = SEXP_number_geti_32 (val1);
-	v2 = SEXP_number_geti_32 (val2);
-        
+	v1 = SEXP_number_geti_32(val1);
+	v2 = SEXP_number_geti_32(val2);
+
 	switch (op) {
 	case OVAL_OPERATION_EQUALS:
 		if (v1 == v2)
@@ -98,7 +98,7 @@ oval_result_t probe_ent_cmp_bool(SEXP_t *val1, SEXP_t *val2, oval_operation_t op
 	return result;
 }
 
-oval_result_t probe_ent_cmp_evr(SEXP_t *val1, SEXP_t *val2, oval_operation_t op)
+oval_result_t probe_ent_cmp_evr(SEXP_t * val1, SEXP_t * val2, oval_operation_t op)
 {
 	oval_result_t result = OVAL_RESULT_ERROR;
 
@@ -107,7 +107,7 @@ oval_result_t probe_ent_cmp_evr(SEXP_t *val1, SEXP_t *val2, oval_operation_t op)
 	return result;
 }
 
-oval_result_t probe_ent_cmp_filesetrev(SEXP_t *val1, SEXP_t *val2, oval_operation_t op)
+oval_result_t probe_ent_cmp_filesetrev(SEXP_t * val1, SEXP_t * val2, oval_operation_t op)
 {
 	oval_result_t result = OVAL_RESULT_ERROR;
 
@@ -116,7 +116,7 @@ oval_result_t probe_ent_cmp_filesetrev(SEXP_t *val1, SEXP_t *val2, oval_operatio
 	return result;
 }
 
-oval_result_t probe_ent_cmp_float(SEXP_t *val1, SEXP_t *val2, oval_operation_t op)
+oval_result_t probe_ent_cmp_float(SEXP_t * val1, SEXP_t * val2, oval_operation_t op)
 {
 	oval_result_t result = OVAL_RESULT_ERROR;
 	double v1, v2;
@@ -168,13 +168,13 @@ oval_result_t probe_ent_cmp_float(SEXP_t *val1, SEXP_t *val2, oval_operation_t o
 	return result;
 }
 
-oval_result_t probe_ent_cmp_int(SEXP_t *val1, SEXP_t *val2, oval_operation_t op)
+oval_result_t probe_ent_cmp_int(SEXP_t * val1, SEXP_t * val2, oval_operation_t op)
 {
 	oval_result_t result = OVAL_RESULT_ERROR;
 	int v1, v2;
 
-	v1 = SEXP_number_geti_32 (val1);
-	v2 = SEXP_number_geti_32 (val2);
+	v1 = SEXP_number_geti_32(val1);
+	v2 = SEXP_number_geti_32(val2);
 
 	switch (op) {
 	case OVAL_OPERATION_EQUALS:
@@ -232,7 +232,7 @@ oval_result_t probe_ent_cmp_int(SEXP_t *val1, SEXP_t *val2, oval_operation_t op)
 	return result;
 }
 
-oval_result_t probe_ent_cmp_ios(SEXP_t *val1, SEXP_t *val2, oval_operation_t op)
+oval_result_t probe_ent_cmp_ios(SEXP_t * val1, SEXP_t * val2, oval_operation_t op)
 {
 	oval_result_t result = OVAL_RESULT_ERROR;
 
@@ -241,7 +241,8 @@ oval_result_t probe_ent_cmp_ios(SEXP_t *val1, SEXP_t *val2, oval_operation_t op)
 	return result;
 }
 
-static SEXP_t *version_parser(char *version) {
+static SEXP_t *version_parser(char *version)
+{
 	long long int token;
 	size_t len, nbr_len;
 	char *s, *v_dup = NULL;
@@ -267,7 +268,7 @@ static SEXP_t *version_parser(char *version) {
 			goto fail;
 		s[nbr_len] = '\0';
 		token = atoll(s);
-		SEXP_list_add(version_tokens, SEXP_number_newi_64 (token));
+		SEXP_list_add(version_tokens, SEXP_number_newi_64(token));
 		s += nbr_len + 1;
 		len -= nbr_len + 1;
 	}
@@ -288,7 +289,7 @@ static SEXP_t *version_parser(char *version) {
 	return NULL;
 }
 
-oval_result_t probe_ent_cmp_version(SEXP_t *val1, SEXP_t *val2, oval_operation_t op)
+oval_result_t probe_ent_cmp_version(SEXP_t * val1, SEXP_t * val2, oval_operation_t op)
 {
 	oval_result_t result = OVAL_RESULT_ERROR;
 	SEXP_t *v1_tkns = NULL, *v2_tkns = NULL, *stmp;
@@ -328,19 +329,19 @@ oval_result_t probe_ent_cmp_version(SEXP_t *val1, SEXP_t *val2, oval_operation_t
 	/* align token counts */
 	lendif = SEXP_list_length(v1_tkns) - SEXP_list_length(v2_tkns);
 	if (lendif < 0) {
-		lendif = - lendif;
+		lendif = -lendif;
 		stmp = v1_tkns;
 	} else if (lendif > 0) {
 		stmp = v2_tkns;
 	}
 	for (; lendif > 0; --lendif) {
-		SEXP_list_add(stmp, SEXP_number_newi_64 (0));
+		SEXP_list_add(stmp, SEXP_number_newi_64(0));
 	}
 
 	len = SEXP_list_length(v1_tkns);
 	for (i = 1; i <= len; ++i) {
-		v1 = SEXP_number_geti_64 (SEXP_list_nth(v1_tkns, i));
-		v2 = SEXP_number_geti_64 (SEXP_list_nth(v2_tkns, i));
+		v1 = SEXP_number_geti_64(SEXP_list_nth(v1_tkns, i));
+		v2 = SEXP_number_geti_64(SEXP_list_nth(v2_tkns, i));
 
 		if (op == OVAL_OPERATION_EQUALS) {
 			if (v1 != v2) {
@@ -352,8 +353,7 @@ oval_result_t probe_ent_cmp_version(SEXP_t *val1, SEXP_t *val2, oval_operation_t
 				result = OVAL_RESULT_TRUE;
 				break;
 			}
-		} else if ((op == OVAL_OPERATION_GREATER_THAN) ||
-			   (op == OVAL_OPERATION_GREATER_THAN_OR_EQUAL)) {
+		} else if ((op == OVAL_OPERATION_GREATER_THAN) || (op == OVAL_OPERATION_GREATER_THAN_OR_EQUAL)) {
 			if (v1 < v2) {
 				result = OVAL_RESULT_TRUE;
 				break;
@@ -361,8 +361,7 @@ oval_result_t probe_ent_cmp_version(SEXP_t *val1, SEXP_t *val2, oval_operation_t
 				result = OVAL_RESULT_FALSE;
 				break;
 			}
-		} else if ((op == OVAL_OPERATION_LESS_THAN) ||
-			   (op == OVAL_OPERATION_LESS_THAN_OR_EQUAL)) {
+		} else if ((op == OVAL_OPERATION_LESS_THAN) || (op == OVAL_OPERATION_LESS_THAN_OR_EQUAL)) {
 			if (v1 > v2) {
 				result = OVAL_RESULT_TRUE;
 				break;
@@ -379,7 +378,7 @@ oval_result_t probe_ent_cmp_version(SEXP_t *val1, SEXP_t *val2, oval_operation_t
 	return result;
 }
 
-oval_result_t probe_ent_cmp_string(SEXP_t *val1, SEXP_t *val2, oval_operation_t op)
+oval_result_t probe_ent_cmp_string(SEXP_t * val1, SEXP_t * val2, oval_operation_t op)
 {
 	oval_result_t result = OVAL_RESULT_ERROR;
 	char *s1, *s2;
@@ -458,108 +457,108 @@ oval_result_t probe_ent_cmp_string(SEXP_t *val1, SEXP_t *val2, oval_operation_t 
 	return result;
 }
 
-static oval_result_t probe_ent_cmp(SEXP_t *ent, SEXP_t *val2)
+static oval_result_t probe_ent_cmp(SEXP_t * ent, SEXP_t * val2)
 {
 	oval_operation_t op;
 	oval_datatype_t dtype;
 	SEXP_t *stmp, *val1, *vals, *res_lst;
-        int val_cnt, is_var;
-        oval_check_t ochk;
+	int val_cnt, is_var;
+	oval_check_t ochk;
 	oval_result_t ores, result;
-        
-        ores    = OVAL_RESULT_ERROR;
-        result  = OVAL_RESULT_ERROR;
-        val_cnt = probe_ent_getvals(ent, &vals);
 
-        if (probe_ent_attrexists(ent, "var_ref")) {
-                if (val_cnt == 0)
-                        return OVAL_RESULT_NOT_EVALUATED;
-                is_var = 1;
-        } else {
-                if (val_cnt != 1)
-                        return OVAL_RESULT_ERROR;
-                is_var = 0;
-        }
+	ores = OVAL_RESULT_ERROR;
+	result = OVAL_RESULT_ERROR;
+	val_cnt = probe_ent_getvals(ent, &vals);
 
-	stmp = probe_ent_getattrval (ent, "operation");
+	if (probe_ent_attrexists(ent, "var_ref")) {
+		if (val_cnt == 0)
+			return OVAL_RESULT_NOT_EVALUATED;
+		is_var = 1;
+	} else {
+		if (val_cnt != 1)
+			return OVAL_RESULT_ERROR;
+		is_var = 0;
+	}
+
+	stmp = probe_ent_getattrval(ent, "operation");
 	if (stmp == NULL)
 		op = OVAL_OPERATION_EQUALS;
 	else
-		op = SEXP_number_geti_32 (stmp);
+		op = SEXP_number_geti_32(stmp);
 
-        res_lst = SEXP_list_new(NULL);
+	res_lst = SEXP_list_new(NULL);
 
-        SEXP_list_foreach (val1, vals) {
-                if (SEXP_typeof(val1) != SEXP_typeof(val2)) {
-                        _D("Types of values to compare don't match: val1: %d, val2: %d\n",
-                           SEXP_typeof(val1), SEXP_typeof(val2));
-                        return OVAL_RESULT_ERROR;
-                }
+	SEXP_list_foreach(val1, vals) {
+		if (SEXP_typeof(val1) != SEXP_typeof(val2)) {
+			_D("Types of values to compare don't match: val1: %d, val2: %d\n",
+			   SEXP_typeof(val1), SEXP_typeof(val2));
+			return OVAL_RESULT_ERROR;
+		}
 
-                dtype = probe_ent_getdatatype(ent);
+		dtype = probe_ent_getdatatype(ent);
 
-                switch (dtype) {
-                case OVAL_DATATYPE_BINARY:
-                        ores = probe_ent_cmp_binary(val1, val2, op);
-                        break;
-                case OVAL_DATATYPE_BOOLEAN:
-                        ores = probe_ent_cmp_bool(val1, val2, op);
-                        break;
-                case OVAL_DATATYPE_EVR_STRING:
-                        ores = probe_ent_cmp_evr(val1, val2, op);
-                        break;
-                case OVAL_DATATYPE_FILESET_REVISION:
-                        ores = probe_ent_cmp_filesetrev(val1, val2, op);
-                        break;
-                case OVAL_DATATYPE_FLOAT:
-                        ores = probe_ent_cmp_float(val1, val2, op);
-                        break;
-                case OVAL_DATATYPE_IOS_VERSION:
-                        ores = probe_ent_cmp_ios(val1, val2, op);
-                        break;
-                case OVAL_DATATYPE_VERSION:
-                        ores = probe_ent_cmp_version(val1, val2, op);
-                        break;
-                case OVAL_DATATYPE_INTEGER:
-                        ores = probe_ent_cmp_int(val1, val2, op);
-                        break;
-                case OVAL_DATATYPE_STRING:
-                        ores = probe_ent_cmp_string(val1, val2, op);
-                        break;
-                default:
-                        ores = OVAL_RESULT_ERROR;
-                        _D("Unexpected data type: %d\n", dtype);
-                }
+		switch (dtype) {
+		case OVAL_DATATYPE_BINARY:
+			ores = probe_ent_cmp_binary(val1, val2, op);
+			break;
+		case OVAL_DATATYPE_BOOLEAN:
+			ores = probe_ent_cmp_bool(val1, val2, op);
+			break;
+		case OVAL_DATATYPE_EVR_STRING:
+			ores = probe_ent_cmp_evr(val1, val2, op);
+			break;
+		case OVAL_DATATYPE_FILESET_REVISION:
+			ores = probe_ent_cmp_filesetrev(val1, val2, op);
+			break;
+		case OVAL_DATATYPE_FLOAT:
+			ores = probe_ent_cmp_float(val1, val2, op);
+			break;
+		case OVAL_DATATYPE_IOS_VERSION:
+			ores = probe_ent_cmp_ios(val1, val2, op);
+			break;
+		case OVAL_DATATYPE_VERSION:
+			ores = probe_ent_cmp_version(val1, val2, op);
+			break;
+		case OVAL_DATATYPE_INTEGER:
+			ores = probe_ent_cmp_int(val1, val2, op);
+			break;
+		case OVAL_DATATYPE_STRING:
+			ores = probe_ent_cmp_string(val1, val2, op);
+			break;
+		default:
+			ores = OVAL_RESULT_ERROR;
+			_D("Unexpected data type: %d\n", dtype);
+		}
 
-                SEXP_list_add(res_lst, SEXP_number_newi_32(ores));
-        }
+		SEXP_list_add(res_lst, SEXP_number_newi_32(ores));
+	}
 
-        if (is_var) {
-                stmp = probe_ent_getattrval(ent, "var_check");
-                if (stmp == NULL) {
-                        ochk = OVAL_CHECK_ALL;
-                } else {
-                        ochk = SEXP_number_geti_32(stmp);
-                }
+	if (is_var) {
+		stmp = probe_ent_getattrval(ent, "var_check");
+		if (stmp == NULL) {
+			ochk = OVAL_CHECK_ALL;
+		} else {
+			ochk = SEXP_number_geti_32(stmp);
+		}
 
-                result = probe_ent_result_bychk(res_lst, ochk);
-        } else {
-                result = ores;
-        }
+		result = probe_ent_result_bychk(res_lst, ochk);
+	} else {
+		result = ores;
+	}
 
-        SEXP_free(res_lst);
+	SEXP_free(res_lst);
 
 	return result;
 }
 
-oval_result_t probe_entste_cmp(SEXP_t *ent_ste, SEXP_t *ent_itm)
+oval_result_t probe_entste_cmp(SEXP_t * ent_ste, SEXP_t * ent_itm)
 {
 	oval_syschar_status_t item_status;
-        oval_result_t ores;
+	oval_result_t ores;
 	SEXP_t *val2;
 
 	item_status = probe_ent_getstatus(ent_itm);
-	switch(item_status) {
+	switch (item_status) {
 	case OVAL_STATUS_DOESNOTEXIST:
 		return OVAL_RESULT_FALSE;
 	case OVAL_STATUS_ERROR:
@@ -569,47 +568,41 @@ oval_result_t probe_entste_cmp(SEXP_t *ent_ste, SEXP_t *ent_itm)
 		break;
 	}
 
-	if (probe_ent_getdatatype(ent_ste) !=
-	    probe_ent_getdatatype(ent_itm)) {
+	if (probe_ent_getdatatype(ent_ste) != probe_ent_getdatatype(ent_itm)) {
 		return OVAL_RESULT_ERROR;
 	}
 
 	val2 = probe_ent_getval(ent_itm);
 
 	ores = probe_ent_cmp(ent_ste, val2);
-        if (ores == OVAL_RESULT_NOT_EVALUATED)
-                return OVAL_RESULT_ERROR;
-        return ores;
+	if (ores == OVAL_RESULT_NOT_EVALUATED)
+		return OVAL_RESULT_ERROR;
+	return ores;
 }
 
-oval_result_t probe_entobj_cmp(SEXP_t *ent_obj, SEXP_t *val)
+oval_result_t probe_entobj_cmp(SEXP_t * ent_obj, SEXP_t * val)
 {
-        oval_result_t ores;
+	oval_result_t ores;
 
-	ores =  probe_ent_cmp(ent_obj, val);
-        if (ores == OVAL_RESULT_NOT_EVALUATED)
-                return OVAL_RESULT_FALSE;
-        return ores;
+	ores = probe_ent_cmp(ent_obj, val);
+	if (ores == OVAL_RESULT_NOT_EVALUATED)
+		return OVAL_RESULT_FALSE;
+	return ores;
 }
 
 struct _oresults {
-	int     true_cnt,
-		false_cnt,
-		unknown_cnt,
-		error_cnt,
-		noteval_cnt,
-		notappl_cnt;
+	int true_cnt, false_cnt, unknown_cnt, error_cnt, noteval_cnt, notappl_cnt;
 };
 
-static int results_parser(SEXP_t *res_lst, struct _oresults *ores)
+static int results_parser(SEXP_t * res_lst, struct _oresults *ores)
 {
 	oval_result_t r;
 	SEXP_t *res;
 
-	memset(ores, 0, sizeof (struct _oresults));
+	memset(ores, 0, sizeof(struct _oresults));
 
-	SEXP_list_foreach (res, res_lst) {
-		r = SEXP_number_geti_32 (res);
+	SEXP_list_foreach(res, res_lst) {
+		r = SEXP_number_geti_32(res);
 		switch (r) {
 		case OVAL_RESULT_TRUE:
 			++(ores->true_cnt);
@@ -629,15 +622,15 @@ static int results_parser(SEXP_t *res_lst, struct _oresults *ores)
 		case OVAL_RESULT_NOT_APPLICABLE:
 			++(ores->notappl_cnt);
 			break;
-                default:
-                        return -1;
+		default:
+			return -1;
 		}
 	}
 
 	return 0;
 }
 
-oval_result_t probe_ent_result_bychk(SEXP_t *res_lst, oval_check_t check)
+oval_result_t probe_ent_result_bychk(SEXP_t * res_lst, oval_check_t check)
 {
 	oval_result_t result = OVAL_RESULT_UNKNOWN;
 	struct _oresults ores;
@@ -651,33 +644,21 @@ oval_result_t probe_ent_result_bychk(SEXP_t *res_lst, oval_check_t check)
 
 	if (ores.notappl_cnt > 0 &&
 	    ores.noteval_cnt == 0 &&
-	    ores.false_cnt == 0 &&
-	    ores.error_cnt == 0 &&
-	    ores.unknown_cnt == 0 &&
-	    ores.true_cnt == 0)
+	    ores.false_cnt == 0 && ores.error_cnt == 0 && ores.unknown_cnt == 0 && ores.true_cnt == 0)
 		return OVAL_RESULT_NOT_APPLICABLE;
 
 	switch (check) {
 	case OVAL_CHECK_ALL:
 		if (ores.true_cnt > 0 &&
-		    ores.false_cnt == 0 &&
-		    ores.error_cnt == 0 &&
-		    ores.unknown_cnt == 0 &&
-		    ores.noteval_cnt == 0) {
+		    ores.false_cnt == 0 && ores.error_cnt == 0 && ores.unknown_cnt == 0 && ores.noteval_cnt == 0) {
 			result = OVAL_RESULT_TRUE;
 		} else if (ores.false_cnt > 0) {
 			result = OVAL_RESULT_FALSE;
-		} else if (ores.false_cnt == 0 &&
-			   ores.error_cnt > 0) {
+		} else if (ores.false_cnt == 0 && ores.error_cnt > 0) {
 			result = OVAL_RESULT_ERROR;
-		} else if (ores.false_cnt == 0 &&
-			   ores.error_cnt == 0 &&
-			   ores.unknown_cnt > 0) {
+		} else if (ores.false_cnt == 0 && ores.error_cnt == 0 && ores.unknown_cnt > 0) {
 			result = OVAL_RESULT_UNKNOWN;
-		} else if (ores.false_cnt == 0 &&
-			   ores.error_cnt == 0 &&
-			   ores.unknown_cnt == 0 &&
-			   ores.noteval_cnt > 0) {
+		} else if (ores.false_cnt == 0 && ores.error_cnt == 0 && ores.unknown_cnt == 0 && ores.noteval_cnt > 0) {
 			result = OVAL_RESULT_NOT_EVALUATED;
 		}
 		break;
@@ -686,69 +667,43 @@ oval_result_t probe_ent_result_bychk(SEXP_t *res_lst, oval_check_t check)
 			result = OVAL_RESULT_TRUE;
 		} else if (ores.false_cnt > 0 &&
 			   ores.true_cnt == 0 &&
-			   ores.unknown_cnt == 0 &&
-			   ores.error_cnt == 0 &&
-			   ores.noteval_cnt == 0) {
+			   ores.unknown_cnt == 0 && ores.error_cnt == 0 && ores.noteval_cnt == 0) {
 			result = OVAL_RESULT_FALSE;
-		} else if (ores.true_cnt == 0 &&
-			   ores.error_cnt > 0) {
+		} else if (ores.true_cnt == 0 && ores.error_cnt > 0) {
 			result = OVAL_RESULT_ERROR;
-		} else if (ores.false_cnt == 0 &&
-			   ores.error_cnt == 0 &&
-			   ores.unknown_cnt > 0) {
+		} else if (ores.false_cnt == 0 && ores.error_cnt == 0 && ores.unknown_cnt > 0) {
 			result = OVAL_RESULT_UNKNOWN;
-		} else if (ores.false_cnt == 0 &&
-			   ores.error_cnt == 0 &&
-			   ores.unknown_cnt == 0 &&
-			   ores.noteval_cnt > 0) {
+		} else if (ores.false_cnt == 0 && ores.error_cnt == 0 && ores.unknown_cnt == 0 && ores.noteval_cnt > 0) {
 			result = OVAL_RESULT_NOT_EVALUATED;
 		}
 		break;
 	case OVAL_CHECK_NONE_SATISFY:
 		if (ores.true_cnt > 0) {
 			result = OVAL_RESULT_FALSE;
-		} else if (ores.true_cnt == 0 &&
-			   ores.error_cnt > 0) {
+		} else if (ores.true_cnt == 0 && ores.error_cnt > 0) {
 			result = OVAL_RESULT_ERROR;
-		} else if (ores.true_cnt == 0 &&
-			   ores.error_cnt == 0 &&
-			   ores.unknown_cnt > 0) {
+		} else if (ores.true_cnt == 0 && ores.error_cnt == 0 && ores.unknown_cnt > 0) {
 			result = OVAL_RESULT_UNKNOWN;
-		} else if (ores.true_cnt == 0 &&
-			   ores.error_cnt == 0 &&
-			   ores.unknown_cnt == 0 &&
-			   ores.noteval_cnt > 0) {
+		} else if (ores.true_cnt == 0 && ores.error_cnt == 0 && ores.unknown_cnt == 0 && ores.noteval_cnt > 0) {
 			result = OVAL_RESULT_NOT_EVALUATED;
 		} else if (ores.false_cnt > 0 &&
 			   ores.error_cnt == 0 &&
-			   ores.unknown_cnt == 0 &&
-			   ores.noteval_cnt == 0 &&
-			   ores.true_cnt == 0) {
+			   ores.unknown_cnt == 0 && ores.noteval_cnt == 0 && ores.true_cnt == 0) {
 			result = OVAL_RESULT_TRUE;
 		}
 		break;
 	case OVAL_CHECK_ONLY_ONE:
-		if (ores.true_cnt == 1 &&
-		    ores.error_cnt == 0 &&
-		    ores.unknown_cnt == 0 &&
-		    ores.noteval_cnt == 0) {
+		if (ores.true_cnt == 1 && ores.error_cnt == 0 && ores.unknown_cnt == 0 && ores.noteval_cnt == 0) {
 			result = OVAL_RESULT_TRUE;
 		} else if (ores.true_cnt > 1) {
 			result = OVAL_RESULT_FALSE;
-		} else if (ores.true_cnt < 2 &&
-			   ores.error_cnt > 0) {
+		} else if (ores.true_cnt < 2 && ores.error_cnt > 0) {
 			result = OVAL_RESULT_ERROR;
-		} else if (ores.true_cnt < 2 &&
-			   ores.error_cnt == 0 &&
-			   ores.unknown_cnt > 0) {
+		} else if (ores.true_cnt < 2 && ores.error_cnt == 0 && ores.unknown_cnt > 0) {
 			result = OVAL_RESULT_UNKNOWN;
-		} else if (ores.true_cnt < 2 &&
-			   ores.error_cnt == 0 &&
-			   ores.unknown_cnt == 0 &&
-			   ores.noteval_cnt > 0) {
+		} else if (ores.true_cnt < 2 && ores.error_cnt == 0 && ores.unknown_cnt == 0 && ores.noteval_cnt > 0) {
 			result = OVAL_RESULT_NOT_EVALUATED;
-		} else if (ores.true_cnt != 1 &&
-			   ores.false_cnt > 0) {
+		} else if (ores.true_cnt != 1 && ores.false_cnt > 0) {
 			result = OVAL_RESULT_FALSE;
 		}
 		break;
@@ -759,7 +714,7 @@ oval_result_t probe_ent_result_bychk(SEXP_t *res_lst, oval_check_t check)
 	return result;
 }
 
-oval_result_t probe_ent_result_byopr(SEXP_t *res_lst, oval_operator_t operator)
+oval_result_t probe_ent_result_byopr(SEXP_t * res_lst, oval_operator_t operator)
 {
 	oval_result_t result = OVAL_RESULT_UNKNOWN;
 	struct _oresults ores;
@@ -773,78 +728,53 @@ oval_result_t probe_ent_result_byopr(SEXP_t *res_lst, oval_operator_t operator)
 
 	if (ores.notappl_cnt > 0 &&
 	    ores.noteval_cnt == 0 &&
-	    ores.false_cnt == 0 &&
-	    ores.error_cnt == 0 &&
-	    ores.unknown_cnt == 0 &&
-	    ores.true_cnt == 0)
+	    ores.false_cnt == 0 && ores.error_cnt == 0 && ores.unknown_cnt == 0 && ores.true_cnt == 0)
 		return OVAL_RESULT_NOT_APPLICABLE;
 
-	switch(operator) {
+	switch (operator) {
 	case OVAL_OPERATOR_AND:
 		if (ores.true_cnt > 0 &&
-		    ores.false_cnt == 0 &&
-		    ores.error_cnt == 0 &&
-		    ores.unknown_cnt == 0 &&
-		    ores.noteval_cnt == 0) {
+		    ores.false_cnt == 0 && ores.error_cnt == 0 && ores.unknown_cnt == 0 && ores.noteval_cnt == 0) {
 			result = OVAL_RESULT_TRUE;
 		} else if (ores.false_cnt > 0) {
 			result = OVAL_RESULT_FALSE;
-		} else if (ores.false_cnt == 0 &&
-			   ores.error_cnt > 0) {
+		} else if (ores.false_cnt == 0 && ores.error_cnt > 0) {
 			result = OVAL_RESULT_ERROR;
-		} else if (ores.false_cnt == 0 &&
-			   ores.error_cnt == 0 &&
-			   ores.unknown_cnt > 0) {
+		} else if (ores.false_cnt == 0 && ores.error_cnt == 0 && ores.unknown_cnt > 0) {
 			result = OVAL_RESULT_UNKNOWN;
-		} else if (ores.false_cnt == 0 &&
-			   ores.error_cnt == 0 &&
-			   ores.unknown_cnt == 0 &&
-			   ores.noteval_cnt > 0) {
+		} else if (ores.false_cnt == 0 && ores.error_cnt == 0 && ores.unknown_cnt == 0 && ores.noteval_cnt > 0) {
 			result = OVAL_RESULT_NOT_EVALUATED;
 		}
 		break;
 	case OVAL_OPERATOR_ONE:
 		if (ores.true_cnt == 1 &&
 		    ores.false_cnt >= 0 &&
-		    ores.error_cnt == 0 &&
-		    ores.unknown_cnt == 0 &&
-		    ores.noteval_cnt == 0 &&
-		    ores.notappl_cnt >= 0) {
+		    ores.error_cnt == 0 && ores.unknown_cnt == 0 && ores.noteval_cnt == 0 && ores.notappl_cnt >= 0) {
 			result = OVAL_RESULT_TRUE;
 		} else if (ores.true_cnt >= 2 &&
 			   ores.false_cnt >= 0 &&
 			   ores.error_cnt >= 0 &&
-			   ores.unknown_cnt >= 0 &&
-			   ores.noteval_cnt >= 0 &&
-			   ores.notappl_cnt >= 0) {
+			   ores.unknown_cnt >= 0 && ores.noteval_cnt >= 0 && ores.notappl_cnt >= 0) {
 			result = OVAL_RESULT_FALSE;
 		} else if (ores.true_cnt == 0 &&
 			   ores.false_cnt >= 0 &&
 			   ores.error_cnt == 0 &&
-			   ores.unknown_cnt == 0 &&
-			   ores.noteval_cnt == 0 &&
-			   ores.notappl_cnt >= 0) {
+			   ores.unknown_cnt == 0 && ores.noteval_cnt == 0 && ores.notappl_cnt >= 0) {
 			result = OVAL_RESULT_FALSE;
 		} else if (ores.true_cnt < 2 &&
 			   ores.false_cnt >= 0 &&
 			   ores.error_cnt > 0 &&
-			   ores.unknown_cnt >= 0 &&
-			   ores.noteval_cnt >= 0 &&
-			   ores.notappl_cnt >= 0) {
+			   ores.unknown_cnt >= 0 && ores.noteval_cnt >= 0 && ores.notappl_cnt >= 0) {
 			result = OVAL_RESULT_ERROR;
 		} else if (ores.true_cnt < 2 &&
 			   ores.false_cnt >= 0 &&
 			   ores.error_cnt == 0 &&
-			   ores.unknown_cnt >= 1 &&
-			   ores.noteval_cnt >= 0 &&
-			   ores.notappl_cnt >= 0) {
+			   ores.unknown_cnt >= 1 && ores.noteval_cnt >= 0 && ores.notappl_cnt >= 0) {
 			result = OVAL_RESULT_UNKNOWN;
 		} else if (ores.true_cnt < 2 &&
 			   ores.false_cnt >= 0 &&
 			   ores.error_cnt == 0 &&
-			   ores.unknown_cnt == 0 &&
-			   ores.noteval_cnt > 0 &&
-			   ores.notappl_cnt >= 0) {
+			   ores.unknown_cnt == 0 && ores.noteval_cnt > 0 && ores.notappl_cnt >= 0) {
 			result = OVAL_RESULT_NOT_EVALUATED;
 		}
 		break;
@@ -853,43 +783,27 @@ oval_result_t probe_ent_result_byopr(SEXP_t *res_lst, oval_operator_t operator)
 			result = OVAL_RESULT_TRUE;
 		} else if (ores.true_cnt == 0 &&
 			   ores.false_cnt > 0 &&
-			   ores.error_cnt == 0 &&
-			   ores.unknown_cnt == 0 &&
-			   ores.noteval_cnt == 0) {
+			   ores.error_cnt == 0 && ores.unknown_cnt == 0 && ores.noteval_cnt == 0) {
 			result = OVAL_RESULT_FALSE;
-		} else if (ores.true_cnt == 0 &&
-			   ores.error_cnt > 0) {
+		} else if (ores.true_cnt == 0 && ores.error_cnt > 0) {
 			result = OVAL_RESULT_ERROR;
-		} else if (ores.true_cnt == 0 &&
-			   ores.error_cnt == 0 &&
-			   ores.unknown_cnt > 0) {
+		} else if (ores.true_cnt == 0 && ores.error_cnt == 0 && ores.unknown_cnt > 0) {
 			result = OVAL_RESULT_UNKNOWN;
-		} else if (ores.true_cnt == 0 &&
-			   ores.error_cnt == 0 &&
-			   ores.unknown_cnt == 0 &&
-			   ores.noteval_cnt > 0) {
+		} else if (ores.true_cnt == 0 && ores.error_cnt == 0 && ores.unknown_cnt == 0 && ores.noteval_cnt > 0) {
 			result = OVAL_RESULT_NOT_EVALUATED;
 		}
 		break;
 	case OVAL_OPERATOR_XOR:
-		if ((ores.true_cnt % 2) == 1 &&
-		    ores.error_cnt == 0 &&
-		    ores.unknown_cnt == 0 &&
-		    ores.noteval_cnt == 0) {
+		if ((ores.true_cnt % 2) == 1 && ores.error_cnt == 0 && ores.unknown_cnt == 0 && ores.noteval_cnt == 0) {
 			result = OVAL_RESULT_TRUE;
 		} else if ((ores.true_cnt % 2) == 0 &&
-		    ores.error_cnt == 0 &&
-		    ores.unknown_cnt == 0 &&
-		    ores.noteval_cnt == 0) {
+			   ores.error_cnt == 0 && ores.unknown_cnt == 0 && ores.noteval_cnt == 0) {
 			result = OVAL_RESULT_FALSE;
 		} else if (ores.error_cnt > 0) {
 			result = OVAL_RESULT_ERROR;
-		} else if (ores.error_cnt == 0 &&
-			   ores.unknown_cnt > 0) {
+		} else if (ores.error_cnt == 0 && ores.unknown_cnt > 0) {
 			result = OVAL_RESULT_UNKNOWN;
-		} else if (ores.error_cnt == 0 &&
-			   ores.unknown_cnt == 0 &&
-			   ores.noteval_cnt > 0) {
+		} else if (ores.error_cnt == 0 && ores.unknown_cnt == 0 && ores.noteval_cnt > 0) {
 			result = OVAL_RESULT_NOT_EVALUATED;
 		}
 		break;

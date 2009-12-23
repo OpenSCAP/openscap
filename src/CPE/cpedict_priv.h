@@ -135,7 +135,7 @@ struct cpe_language;
  * @relates cpe_dict_model
  * @param source Structure of name and encoding of importing XML file
  */
-struct cpe_dict_model * cpe_dict_model_parse_xml(const struct oscap_import_source *source);
+struct cpe_dict_model *cpe_dict_model_parse_xml(const struct oscap_import_source *source);
 
 /**
  * Parse generator part of CPE dictionary XML file
@@ -143,7 +143,7 @@ struct cpe_dict_model * cpe_dict_model_parse_xml(const struct oscap_import_sourc
  * @relates cpe_generator
  * @return new structure cpe_generator
  */
-struct cpe_generator * cpe_generator_parse(xmlTextReaderPtr reader);
+struct cpe_generator *cpe_generator_parse(xmlTextReaderPtr reader);
 
 /**
  * New dictionary item from XML
@@ -152,7 +152,7 @@ struct cpe_generator * cpe_generator_parse(xmlTextReaderPtr reader);
  * @return new dictionary item
  * @retval NULL on failure
  */
-struct cpe_item * cpe_item_parse(xmlTextReaderPtr reader);
+struct cpe_item *cpe_item_parse(xmlTextReaderPtr reader);
 
 /**
  * Parsing function to parse vendors of CPE dictionary
@@ -160,7 +160,7 @@ struct cpe_item * cpe_item_parse(xmlTextReaderPtr reader);
  * @relates cpe_vendor
  * @return new structure cpe_vendor
  */
-struct cpe_vendor * cpe_vendor_parse(xmlTextReaderPtr reader);
+struct cpe_vendor *cpe_vendor_parse(xmlTextReaderPtr reader);
 
 /**
  * Load new CPE dictionary from XML node
@@ -169,7 +169,7 @@ struct cpe_vendor * cpe_vendor_parse(xmlTextReaderPtr reader);
  * @return new dictionary
  * @retval NULL on failure
  */
-struct cpe_dict_model * cpe_dict_model_parse(xmlTextReaderPtr reader);
+struct cpe_dict_model *cpe_dict_model_parse(xmlTextReaderPtr reader);
 
 /*@}*/
 
@@ -185,7 +185,7 @@ struct cpe_dict_model * cpe_dict_model_parse(xmlTextReaderPtr reader);
  * @relates cpe_dict_model
  * @param target OSCAP exporting target
  */
-void cpe_dict_model_export_xml(const struct cpe_dict_model * dict, const struct oscap_export_target * target);
+void cpe_dict_model_export_xml(const struct cpe_dict_model *dict, const struct oscap_export_target *target);
 
 /**
  * Internal export function for CPE dictionary model
@@ -193,7 +193,7 @@ void cpe_dict_model_export_xml(const struct cpe_dict_model * dict, const struct 
  * @param writer xmlTextWriterPtr representing XML model
  * @relates cpe_dict_model
  */
-void cpe_dict_export(const struct cpe_dict_model * dict, xmlTextWriterPtr writer);
+void cpe_dict_export(const struct cpe_dict_model *dict, xmlTextWriterPtr writer);
 
 /**
  * Exporting function for CPE generator - information of XML document
@@ -201,7 +201,7 @@ void cpe_dict_export(const struct cpe_dict_model * dict, xmlTextWriterPtr writer
  * @relates cpe_generator
  * @param writer xmlTextWriterPtr representing XML model
  */
-void cpe_generator_export(const struct cpe_generator * generator, xmlTextWriterPtr writer);
+void cpe_generator_export(const struct cpe_generator *generator, xmlTextWriterPtr writer);
 
 /**
  * Exporting function for CPE item
@@ -209,7 +209,7 @@ void cpe_generator_export(const struct cpe_generator * generator, xmlTextWriterP
  * @relates cpe_item
  * @param writer xmlTextWriterPtr representing XML model
  */
-void cpe_item_export(const struct cpe_item * item, xmlTextWriterPtr writer);
+void cpe_item_export(const struct cpe_item *item, xmlTextWriterPtr writer);
 
 /**
  * Exporting function for CPE vendor
@@ -217,7 +217,7 @@ void cpe_item_export(const struct cpe_item * item, xmlTextWriterPtr writer);
  * @relates cpe_vendor
  * @param writer xmlTextWriterPtr representing XML model
  */
-void cpe_vendor_export(const struct cpe_vendor * vendor, xmlTextWriterPtr writer);
+void cpe_vendor_export(const struct cpe_vendor *vendor, xmlTextWriterPtr writer);
 /*@}*/
 
 /** 
@@ -231,4 +231,3 @@ OSCAP_HIDDEN_END;
 /** @} */
 
 #endif
-

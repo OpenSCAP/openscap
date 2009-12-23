@@ -53,12 +53,12 @@ struct oscap_export_target;
 /**
  * Function pointer to an object destructor.
  */
-typedef void(*oscap_destruct_func)(void*);
+typedef void (*oscap_destruct_func) (void *);
 
 /**
  * Function pointer to an object consumer.
  */
-typedef void(*oscap_consumer_func)(void*, void*);
+typedef void (*oscap_consumer_func) (void *, void *);
 
 /**
  * Generate a getter function with an optional conversion.
@@ -119,8 +119,6 @@ typedef void(*oscap_consumer_func)(void*, void*);
 #define OSCAP_GETTER(RTYPE,SNAME,MNAME) \
 	OSCAP_GENERIC_GETTER(RTYPE,SNAME,MNAME,MNAME)
 
-
-
 #define ITERATOR_CAST(x) ((struct oscap_iterator*)(x))
 #define OSCAP_ITERATOR(n) struct n##_iterator*
 #define OSCAP_ITERATOR_FWD(n) struct n##_iterator;
@@ -148,7 +146,6 @@ typedef void(*oscap_consumer_func)(void*, void*);
 #define OSCAP_IGETTER_CONV(ITYPE,SNAME,MNAME,CONV) \
         struct ITYPE##_iterator* SNAME##_get_##MNAME(const struct SNAME* item) \
         { return oscap_iterator_new((CONV(item))->MNAME); }
-
 
 /**
  * Generate an iterator getter function.
@@ -190,7 +187,6 @@ typedef void(*oscap_consumer_func)(void*, void*);
  */
 #define OSCAP_HGETTER(RTYPE,SNAME,MNAME) OSCAP_HGETTER_EXP(RTYPE,SNAME,MNAME,MNAME)
 
-
 /**
  * Generete a geter function from a hash table.
  * Signature of the generated function will be as follows (substitute uppercase strings with actual params):
@@ -200,8 +196,6 @@ typedef void(*oscap_consumer_func)(void*, void*);
  * @param MNAME structure member name
  */
 #define OSCAP_HGETTER_STRUCT(RTYPE,SNAME,MNAME) OSCAP_HGETTER_EXP(struct RTYPE*,SNAME,MNAME,MNAME)
-
-
 
 #define OSCAP_SETTER_HEADER(SNAME, MTYPE, MNAME) bool SNAME##_set_##MNAME(struct SNAME *obj, MTYPE item)
 
@@ -291,8 +285,8 @@ typedef void(*oscap_consumer_func)(void*, void*);
  * the default value for strings not defined elsewhere.
  */
 struct oscap_string_map {
-	int value;           /* integer/enum value */
-	const char* string;  /* string representation of the value */
+	int value;		/* integer/enum value */
+	const char *string;	/* string representation of the value */
 };
 
 /**
@@ -301,7 +295,7 @@ struct oscap_string_map {
  * @param str string to be converted
  * @relates oscap_string_map
  */
-int oscap_string_to_enum(const struct oscap_string_map* map, const char* str);
+int oscap_string_to_enum(const struct oscap_string_map *map, const char *str);
 
 /**
  * Convert an enumeration constant to its corresponding string representation.
@@ -309,13 +303,13 @@ int oscap_string_to_enum(const struct oscap_string_map* map, const char* str);
  * @param val value to be converted
  * @relates oscap_string_map
  */
-const char* oscap_enum_to_string(const struct oscap_string_map* map, int val);
+const char *oscap_enum_to_string(const struct oscap_string_map *map, int val);
 
 /**
  * Use strdup on string, if string is NULL, return NULL
  * @param str String we want to duplicate
  */
-char* oscap_strdup(const char *str);
+char *oscap_strdup(const char *str);
 
 /**
  * Use strsep on string
@@ -323,7 +317,6 @@ char* oscap_strdup(const char *str);
  * @param str String we want to split
  * @param delim Delimiter of string parts
  */
-char* oscap_strsep(char** str, const char *delim);
+char *oscap_strsep(char **str, const char *delim);
 
-#endif /* OSCAP_UTIL_H_ */
-
+#endif				/* OSCAP_UTIL_H_ */

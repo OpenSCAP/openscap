@@ -102,7 +102,7 @@ struct cve_reference;
  * @relates cve_model
  * @return new CVE model
  */
-struct cve_model * cve_model_parse_xml(const struct oscap_import_source * source);
+struct cve_model *cve_model_parse_xml(const struct oscap_import_source *source);
 
 /**
  * Parse CVE model
@@ -110,7 +110,7 @@ struct cve_model * cve_model_parse_xml(const struct oscap_import_source * source
  * @relates cve_model
  * @return parsed CVE mdoel
  */
-struct cve_model * cve_model_parse(xmlTextReaderPtr reader);
+struct cve_model *cve_model_parse(xmlTextReaderPtr reader);
 
 /**
  * Parse CVE entry
@@ -118,7 +118,7 @@ struct cve_model * cve_model_parse(xmlTextReaderPtr reader);
  * @relates cve_entry
  * @return parsed CVE entry
  */
-struct cve_entry * cve_entry_parse(xmlTextReaderPtr reader);
+struct cve_entry *cve_entry_parse(xmlTextReaderPtr reader);
 
 /*@}*/
 
@@ -134,7 +134,7 @@ struct cve_entry * cve_entry_parse(xmlTextReaderPtr reader);
  * @param writer XML Text Writer representing XML model
  * @relates cve_model
  */
-void cve_export(const struct cve_model * cve, xmlTextWriterPtr writer);
+void cve_export(const struct cve_model *cve, xmlTextWriterPtr writer);
 
 /**
  * Export CVE model to XML file
@@ -142,7 +142,7 @@ void cve_export(const struct cve_model * cve, xmlTextWriterPtr writer);
  * @param target OSCAP export target
  * @relates cve_model
  */
-void cve_model_export_xml(struct cve_model * cve, const struct oscap_export_target * target);
+void cve_model_export_xml(struct cve_model *cve, const struct oscap_export_target *target);
 
 /**
  * Export CVE reference to XML file
@@ -150,7 +150,7 @@ void cve_model_export_xml(struct cve_model * cve, const struct oscap_export_targ
  * @param writer XML Text Writer representing XML model
  * @relates cve_reference
  */
-void cve_reference_export(const struct cve_reference * refer, xmlTextWriterPtr writer);
+void cve_reference_export(const struct cve_reference *refer, xmlTextWriterPtr writer);
 
 /**
  * Export CVE summary to XML file
@@ -158,7 +158,7 @@ void cve_reference_export(const struct cve_reference * refer, xmlTextWriterPtr w
  * @param writer XML Text Writer representing XML model
  * @relates cve_summary
  */
-void cve_summary_export(const struct cve_summary * sum, xmlTextWriterPtr writer);
+void cve_summary_export(const struct cve_summary *sum, xmlTextWriterPtr writer);
 
 /**
  * Export CVE entry to XML file
@@ -166,7 +166,7 @@ void cve_summary_export(const struct cve_summary * sum, xmlTextWriterPtr writer)
  * @param writer XML Text Writer representing XML model
  * @relates cve_entry
  */
-void cve_entry_export(const struct cve_entry * entry, xmlTextWriterPtr writer);
+void cve_entry_export(const struct cve_entry *entry, xmlTextWriterPtr writer);
 
 /** 
  * @cond INTERNAL
@@ -178,6 +178,5 @@ OSCAP_HIDDEN_END;
 
 /*@}*/
 /*@}*/
-
 
 #endif

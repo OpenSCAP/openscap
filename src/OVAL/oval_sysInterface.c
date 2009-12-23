@@ -56,41 +56,41 @@ struct oval_sysint *oval_sysint_iterator_next(struct oval_sysint_iterator *oc_sy
 
 void oval_sysint_iterator_free(struct oval_sysint_iterator *oc_sysint)
 {
-	    oval_collection_iterator_free((struct oval_iterator *)oc_sysint);
+	oval_collection_iterator_free((struct oval_iterator *)oc_sysint);
 }
 
 char *oval_sysint_get_name(struct oval_sysint *sysint)
 {
-        __attribute__nonnull__(sysint);
+	__attribute__nonnull__(sysint);
 
 	return sysint->name;
 }
 
 void oval_sysint_set_name(struct oval_sysint *sysint, char *name)
 {
-	if(sysint && !oval_sysint_is_locked(sysint)){
-		if(sysint->name!=NULL)
-                        oscap_free(sysint->name);
+	if (sysint && !oval_sysint_is_locked(sysint)) {
+		if (sysint->name != NULL)
+			oscap_free(sysint->name);
 		sysint->name = oscap_strdup(name);
-	} else 
-                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+	} else
+		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
 char *oval_sysint_get_ip_address(struct oval_sysint *sysint)
 {
-        __attribute__nonnull__(sysint);
+	__attribute__nonnull__(sysint);
 
 	return ((struct oval_sysint *)sysint)->ipAddress;
 }
 
 void oval_sysint_set_ip_address(struct oval_sysint *sysint, char *ip_address)
 {
-	if(sysint && !oval_sysint_is_locked(sysint)){
-		if(sysint->ipAddress!=NULL)
-                        oscap_free(sysint->ipAddress);
+	if (sysint && !oval_sysint_is_locked(sysint)) {
+		if (sysint->ipAddress != NULL)
+			oscap_free(sysint->ipAddress);
 		sysint->ipAddress = oscap_strdup(ip_address);
-	} else 
-                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+	} else
+		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
 char *oval_sysint_get_mac_address(struct oval_sysint *sysint)
@@ -100,34 +100,35 @@ char *oval_sysint_get_mac_address(struct oval_sysint *sysint)
 
 void oval_sysint_set_mac_address(struct oval_sysint *sysint, char *mac_address)
 {
-	if(sysint && !oval_sysint_is_locked(sysint)){
-		if(sysint->macAddress!=NULL)
-                        oscap_free(sysint->macAddress);
+	if (sysint && !oval_sysint_is_locked(sysint)) {
+		if (sysint->macAddress != NULL)
+			oscap_free(sysint->macAddress);
 		sysint->macAddress = oscap_strdup(mac_address);
-	} else 
-                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+	} else
+		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
-struct oval_sysint *oval_sysint_new(struct oval_syschar_model* model)
+struct oval_sysint *oval_sysint_new(struct oval_syschar_model *model)
 {
-	oval_sysint_t *sysint = (oval_sysint_t*) oscap_alloc(sizeof(oval_sysint_t));
-        if (sysint == NULL)
-                return NULL;
+	oval_sysint_t *sysint = (oval_sysint_t *) oscap_alloc(sizeof(oval_sysint_t));
+	if (sysint == NULL)
+		return NULL;
 
-	sysint->ipAddress  = NULL;
+	sysint->ipAddress = NULL;
 	sysint->macAddress = NULL;
-	sysint->name       = NULL;
+	sysint->name = NULL;
 	sysint->model = model;
 	return sysint;
 }
 
-bool oval_sysint_is_valid(struct oval_sysint *sysint)
+bool oval_sysint_is_valid(struct oval_sysint * sysint)
 {
-	return true;//TODO
+	return true;		//TODO
 }
-bool oval_sysint_is_locked(struct oval_sysint *sysint)
+
+bool oval_sysint_is_locked(struct oval_sysint * sysint)
 {
-        __attribute__nonnull__(sysint);
+	__attribute__nonnull__(sysint);
 
 	return oval_syschar_model_is_locked(sysint->model);
 }
@@ -136,15 +137,15 @@ struct oval_sysint *oval_sysint_clone(struct oval_syschar_model *new_model, stru
 {
 	struct oval_sysint *new_sysint = oval_sysint_new(new_model);
 	char *ip_address = oval_sysint_get_ip_address(old_sysint);
-	if(ip_address){
+	if (ip_address) {
 		oval_sysint_set_ip_address(new_sysint, ip_address);
 	}
 	char *mac_address = oval_sysint_get_mac_address(old_sysint);
-	if(mac_address){
+	if (mac_address) {
 		oval_sysint_set_mac_address(new_sysint, mac_address);
 	}
 	char *name = oval_sysint_get_name(old_sysint);
-	if(name){
+	if (name) {
 		oval_sysint_set_name(new_sysint, name);
 	}
 	return new_sysint;
@@ -152,12 +153,15 @@ struct oval_sysint *oval_sysint_clone(struct oval_syschar_model *new_model, stru
 
 void oval_sysint_free(struct oval_sysint *sysint)
 {
-        if (sysint == NULL)
-                return;
+	if (sysint == NULL)
+		return;
 
-	if(sysint->ipAddress !=NULL) oscap_free(sysint->ipAddress);
-	if(sysint->macAddress!=NULL) oscap_free(sysint->macAddress);
-	if(sysint->name      !=NULL) oscap_free(sysint->name);
+	if (sysint->ipAddress != NULL)
+		oscap_free(sysint->ipAddress);
+	if (sysint->macAddress != NULL)
+		oscap_free(sysint->macAddress);
+	if (sysint->name != NULL)
+		oscap_free(sysint->name);
 
 	sysint->ipAddress = NULL;
 	sysint->macAddress = NULL;
@@ -166,35 +170,36 @@ void oval_sysint_free(struct oval_sysint *sysint)
 	oscap_free(sysint);
 }
 
-static void oval_consume_interface_name(char* text, void* sysint)
+static void oval_consume_interface_name(char *text, void *sysint)
 {
 	oval_sysint_set_name(sysint, text);
 }
-static void oval_consume_ip_address(char* text, void* sysint)
+
+static void oval_consume_ip_address(char *text, void *sysint)
 {
 	oval_sysint_set_ip_address(sysint, text);
 }
-static void oval_consume_mac_address(char* text, void* sysint)
+
+static void oval_consume_mac_address(char *text, void *sysint)
 {
 	oval_sysint_set_mac_address(sysint, text);
 }
 
-static int _oval_sysint_parse_tag(xmlTextReaderPtr reader,
-			       struct oval_parser_context *context , void *user){
+static int _oval_sysint_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *context, void *user)
+{
 	struct oval_sysint *sysint = (struct oval_sysint *)user;
-	char *tagname   = (char*) xmlTextReaderName(reader);
-	char *namespace = (char*) xmlTextReaderNamespaceUri(reader);
-	int is_ovalsys = strcmp(namespace,NAMESPACE_OVALSYS)==0;
+	char *tagname = (char *)xmlTextReaderName(reader);
+	char *namespace = (char *)xmlTextReaderNamespaceUri(reader);
+	int is_ovalsys = strcmp(namespace, NAMESPACE_OVALSYS) == 0;
 	int return_code;
-	if        (is_ovalsys && (strcmp(tagname,"interface_name")==0)) {
+	if (is_ovalsys && (strcmp(tagname, "interface_name") == 0)) {
 		return_code = oval_parser_text_value(reader, context, &oval_consume_interface_name, sysint);
-	} else if(is_ovalsys && (strcmp(tagname,"ip_address")==0)) {
+	} else if (is_ovalsys && (strcmp(tagname, "ip_address") == 0)) {
 		return_code = oval_parser_text_value(reader, context, &oval_consume_ip_address, sysint);
-	} else if(is_ovalsys && (strcmp(tagname,"mac_address")==0)) {
+	} else if (is_ovalsys && (strcmp(tagname, "mac_address") == 0)) {
 		return_code = oval_parser_text_value(reader, context, &oval_consume_mac_address, sysint);
 	} else {
-		oscap_dprintf("WARNING: _oval_sysint_parse_tag:: skipping <%s:%s>",
-				namespace, tagname);
+		oscap_dprintf("WARNING: _oval_sysint_parse_tag:: skipping <%s:%s>", namespace, tagname);
 		return_code = oval_parser_skip_tag(reader, context);
 	}
 	oscap_free(tagname);
@@ -202,32 +207,31 @@ static int _oval_sysint_parse_tag(xmlTextReaderPtr reader,
 	return return_code;
 }
 
-
 int oval_sysint_parse_tag(xmlTextReaderPtr reader,
-			       struct oval_parser_context *context, oval_sysint_consumer consumer , void *user){
+			  struct oval_parser_context *context, oval_sysint_consumer consumer, void *user)
+{
 
-        __attribute__nonnull__(context);
+	__attribute__nonnull__(context);
 
 	struct oval_sysint *sysint = oval_sysint_new(context->syschar_model);
-	char *tagname   = (char*) xmlTextReaderName(reader);
-	char *namespace = (char*) xmlTextReaderNamespaceUri(reader);
-	int is_ovalsys = strcmp(namespace,NAMESPACE_OVALSYS)==0;
+	char *tagname = (char *)xmlTextReaderName(reader);
+	char *namespace = (char *)xmlTextReaderNamespaceUri(reader);
+	int is_ovalsys = strcmp(namespace, NAMESPACE_OVALSYS) == 0;
 	int return_code;
-	if        (is_ovalsys && (strcmp(tagname,"interface")==0)) {
+	if (is_ovalsys && (strcmp(tagname, "interface") == 0)) {
 		return_code = oval_parser_parse_tag(reader, context, &_oval_sysint_parse_tag, sysint);
 	} else {
 		oscap_dprintf("WARNING: oval_sysint_parse_tag:: expecting <interface> skipping <%s:%s>",
-				namespace, tagname);
+			      namespace, tagname);
 		return_code = oval_parser_skip_tag(reader, context);
 	}
 	oscap_free(tagname);
 	oscap_free(namespace);
-	(*consumer)(sysint, user);
+	(*consumer) (sysint, user);
 	return return_code;
 }
 
-void oval_sysint_to_print(struct oval_sysint *sysint, char *indent,
-			      int idx)
+void oval_sysint_to_print(struct oval_sysint *sysint, char *indent, int idx)
 {
 	char nxtindent[100];
 
@@ -239,37 +243,31 @@ void oval_sysint_to_print(struct oval_sysint *sysint, char *indent,
 	else
 		snprintf(nxtindent, sizeof(nxtindent), "%sINTERFACE[%d].", indent, idx);
 	/*
-	char *name;
-	char *ipAddress;
-	char *macAddress;
+	   char *name;
+	   char *ipAddress;
+	   char *macAddress;
 	 */
-	{//name
+	{			//name
 		oscap_dprintf("%sNAME           = %s\n", nxtindent, oval_sysint_get_name(sysint));
 	}
-	char* ipadd = oval_sysint_get_ip_address(sysint);
-	if(ipadd!=NULL){//ipaddress
+	char *ipadd = oval_sysint_get_ip_address(sysint);
+	if (ipadd != NULL) {	//ipaddress
 		oscap_dprintf("%sIP_ADDRESS      = %s\n", nxtindent, ipadd);
 	}
-	char* macadd = oval_sysint_get_mac_address(sysint);
-	if(macadd!=NULL){//mac address
+	char *macadd = oval_sysint_get_mac_address(sysint);
+	if (macadd != NULL) {	//mac address
 		oscap_dprintf("%sMAC_ADDRESS     = %s\n", nxtindent, macadd);
 	}
 }
 
-void oval_sysint_to_dom  (struct oval_sysint *sysint, xmlDoc *doc, xmlNode *tag_parent){
-	if(sysint){
+void oval_sysint_to_dom(struct oval_sysint *sysint, xmlDoc * doc, xmlNode * tag_parent)
+{
+	if (sysint) {
 		xmlNs *ns_syschar = xmlSearchNsByHref(doc, tag_parent, OVAL_SYSCHAR_NAMESPACE);
-	    xmlNode *tag_sysint = xmlNewChild
-			(tag_parent, ns_syschar, BAD_CAST "interface", NULL);
-	    xmlNewChild
-			(tag_sysint, ns_syschar, BAD_CAST "interface_name",
-					BAD_CAST oval_sysint_get_name(sysint));
-	    xmlNewChild
-			(tag_sysint, ns_syschar, BAD_CAST "ip_address",
-					BAD_CAST oval_sysint_get_ip_address(sysint));
-	    xmlNewChild
-			(tag_sysint, ns_syschar, BAD_CAST "mac_address",
-					BAD_CAST oval_sysint_get_mac_address(sysint));
+		xmlNode *tag_sysint = xmlNewChild(tag_parent, ns_syschar, BAD_CAST "interface", NULL);
+		xmlNewChild(tag_sysint, ns_syschar, BAD_CAST "interface_name", BAD_CAST oval_sysint_get_name(sysint));
+		xmlNewChild(tag_sysint, ns_syschar, BAD_CAST "ip_address", BAD_CAST oval_sysint_get_ip_address(sysint));
+		xmlNewChild
+		    (tag_sysint, ns_syschar, BAD_CAST "mac_address", BAD_CAST oval_sysint_get_mac_address(sysint));
 	}
 }
-

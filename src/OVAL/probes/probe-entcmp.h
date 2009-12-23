@@ -40,14 +40,13 @@
 #include "oval_definitions.h"
 #include "oval_results.h"
 
-
 /**
  * Compute the overall result.
  * Compute the overall result from a results vector and a check enumeration parameter.
  * @param res_lst the results vector
  * @param check the check enumeration value
  */
-oval_result_t probe_ent_result_bychk(SEXP_t *res_lst, oval_check_t check);
+oval_result_t probe_ent_result_bychk(SEXP_t * res_lst, oval_check_t check);
 
 /**
  * Compute the overall result.
@@ -55,7 +54,7 @@ oval_result_t probe_ent_result_bychk(SEXP_t *res_lst, oval_check_t check);
  * @param res_lst the results vector
  * @param check the operator enumeration value
  */
-oval_result_t probe_ent_result_byopr(SEXP_t *res_lst, oval_operator_t operator);
+oval_result_t probe_ent_result_byopr(SEXP_t * res_lst, oval_operator_t operator);
 
 /**
  * Compare object entity's content with a value.
@@ -64,7 +63,7 @@ oval_result_t probe_ent_result_byopr(SEXP_t *res_lst, oval_operator_t operator);
  * @param ent_obj object entity
  * @param val raw value
  */
-oval_result_t probe_entobj_cmp(SEXP_t *ent_obj, SEXP_t *val);
+oval_result_t probe_entobj_cmp(SEXP_t * ent_obj, SEXP_t * val);
 
 /**
  * Compare state entity's content with a item entity's value.
@@ -73,7 +72,7 @@ oval_result_t probe_entobj_cmp(SEXP_t *ent_obj, SEXP_t *val);
  * @param ent_ste state entity
  * @param ent_itm item entity
  */
-oval_result_t probe_entste_cmp(SEXP_t *ent_ste, SEXP_t *ent_itm);
+oval_result_t probe_entste_cmp(SEXP_t * ent_ste, SEXP_t * ent_itm);
 
 /**
  * Compare two binary values.
@@ -82,7 +81,7 @@ oval_result_t probe_entste_cmp(SEXP_t *ent_ste, SEXP_t *ent_itm);
  * @param val2 the second value
  * @param op the desired operation
  */
-oval_result_t probe_ent_cmp_binary(SEXP_t *val1, SEXP_t *val2, oval_operation_t op);
+oval_result_t probe_ent_cmp_binary(SEXP_t * val1, SEXP_t * val2, oval_operation_t op);
 
 /**
  * Compare two boolean values.
@@ -91,7 +90,7 @@ oval_result_t probe_ent_cmp_binary(SEXP_t *val1, SEXP_t *val2, oval_operation_t 
  * @param val2 the second value
  * @param op the desired operation
  */
-oval_result_t probe_ent_cmp_bool(SEXP_t *val1, SEXP_t *val2, oval_operation_t op);
+oval_result_t probe_ent_cmp_bool(SEXP_t * val1, SEXP_t * val2, oval_operation_t op);
 
 /**
  * Compare two epoch-version-release values.
@@ -100,7 +99,7 @@ oval_result_t probe_ent_cmp_bool(SEXP_t *val1, SEXP_t *val2, oval_operation_t op
  * @param val2 the second value
  * @param op the desired operation
  */
-oval_result_t probe_ent_cmp_evr(SEXP_t *val1, SEXP_t *val2, oval_operation_t op);
+oval_result_t probe_ent_cmp_evr(SEXP_t * val1, SEXP_t * val2, oval_operation_t op);
 
 /**
  * Compare two  values.
@@ -109,7 +108,7 @@ oval_result_t probe_ent_cmp_evr(SEXP_t *val1, SEXP_t *val2, oval_operation_t op)
  * @param val2 the second value
  * @param op the desired operation
  */
-oval_result_t probe_ent_cmp_filesetrev(SEXP_t *val1, SEXP_t *val2, oval_operation_t op);
+oval_result_t probe_ent_cmp_filesetrev(SEXP_t * val1, SEXP_t * val2, oval_operation_t op);
 
 /**
  * Compare two floating point values.
@@ -118,7 +117,7 @@ oval_result_t probe_ent_cmp_filesetrev(SEXP_t *val1, SEXP_t *val2, oval_operatio
  * @param val2 the second value
  * @param op the desired operation
  */
-oval_result_t probe_ent_cmp_float(SEXP_t *val1, SEXP_t *val2, oval_operation_t op);
+oval_result_t probe_ent_cmp_float(SEXP_t * val1, SEXP_t * val2, oval_operation_t op);
 
 /**
  * Compare two integer values.
@@ -127,7 +126,7 @@ oval_result_t probe_ent_cmp_float(SEXP_t *val1, SEXP_t *val2, oval_operation_t o
  * @param val2 the second value
  * @param op the desired operation
  */
-oval_result_t probe_ent_cmp_int(SEXP_t *val1, SEXP_t *val2, oval_operation_t op);
+oval_result_t probe_ent_cmp_int(SEXP_t * val1, SEXP_t * val2, oval_operation_t op);
 
 /**
  * Compare two ios values.
@@ -136,7 +135,7 @@ oval_result_t probe_ent_cmp_int(SEXP_t *val1, SEXP_t *val2, oval_operation_t op)
  * @param val2 the second value
  * @param op the desired operation
  */
-oval_result_t probe_ent_cmp_ios(SEXP_t *val1, SEXP_t *val2, oval_operation_t op);
+oval_result_t probe_ent_cmp_ios(SEXP_t * val1, SEXP_t * val2, oval_operation_t op);
 
 /**
  * Compare two version values.
@@ -145,7 +144,7 @@ oval_result_t probe_ent_cmp_ios(SEXP_t *val1, SEXP_t *val2, oval_operation_t op)
  * @param val2 the second value
  * @param op the desired operation
  */
-oval_result_t probe_ent_cmp_version(SEXP_t *val1, SEXP_t *val2, oval_operation_t op);
+oval_result_t probe_ent_cmp_version(SEXP_t * val1, SEXP_t * val2, oval_operation_t op);
 
 /**
  * Compare two string values.
@@ -154,6 +153,6 @@ oval_result_t probe_ent_cmp_version(SEXP_t *val1, SEXP_t *val2, oval_operation_t
  * @param val2 the second value
  * @param op the desired operation
  */
-oval_result_t probe_ent_cmp_string(SEXP_t *val1, SEXP_t *val2, oval_operation_t op);
+oval_result_t probe_ent_cmp_string(SEXP_t * val1, SEXP_t * val2, oval_operation_t op);
 
 #endif

@@ -20,8 +20,6 @@
  *      Lukas Kuklinek <lkuklinek@redhat.com>
  */
 
-
-
 #ifndef XCCDF_ITEM_
 #define XCCDF_ITEM_
 
@@ -34,74 +32,74 @@
 OSCAP_HIDDEN_START;
 
 struct xccdf_flags {
-	unsigned selected         : 1;
-	unsigned hidden           : 1;
-	unsigned resolved         : 1;
-	unsigned abstract         : 1;
-	unsigned prohibit_changes : 1;
-	unsigned interactive      : 1;
-	unsigned multiple         : 1;
+	unsigned selected:1;
+	unsigned hidden:1;
+	unsigned resolved:1;
+	unsigned abstract:1;
+	unsigned prohibit_changes:1;
+	unsigned interactive:1;
+	unsigned multiple:1;
 };
 
 struct xccdf_item;
 struct xccdf_check;
 
 struct xccdf_item_base {
-	char* id;
-	char* title;
-	char* description;
-	char* question;
-	char* rationale;
-	char* cluster_id;
+	char *id;
+	char *title;
+	char *description;
+	char *question;
+	char *rationale;
+	char *cluster_id;
 	float weight;
 
-    char* version;
-    char* version_update;
-    time_t version_time;
+	char *version;
+	char *version_update;
+	time_t version_time;
 
-	struct xccdf_item* extends;
-	struct xccdf_item* parent;
-	struct oscap_list* statuses;
-	struct oscap_list* references;
-	struct oscap_list* platforms;
+	struct xccdf_item *extends;
+	struct xccdf_item *parent;
+	struct oscap_list *statuses;
+	struct oscap_list *references;
+	struct oscap_list *platforms;
 	struct xccdf_flags flags;
-	struct xccdf_item* benchmark;
+	struct xccdf_item *benchmark;
 };
 
 struct xccdf_rule_item {
-	char* impact_metric;
+	char *impact_metric;
 	xccdf_role_t role;
 	xccdf_level_t severity;
-	struct xccdf_check* check;
+	struct xccdf_check *check;
 
-	struct oscap_list* requires;
-	struct oscap_list* conflicts;
+	struct oscap_list *requires;
+	struct oscap_list *conflicts;
 
-	struct oscap_list* profile_notes;
-	struct oscap_list* idents;
-	struct oscap_list* checks;
-	struct oscap_list* fixes;
-	struct oscap_list* fixtexts;
+	struct oscap_list *profile_notes;
+	struct oscap_list *idents;
+	struct oscap_list *checks;
+	struct oscap_list *fixes;
+	struct oscap_list *fixtexts;
 };
 
 struct xccdf_group_item {
-	struct oscap_list* requires;
-	struct oscap_list* conflicts;
+	struct oscap_list *requires;
+	struct oscap_list *conflicts;
 
-	struct oscap_list* values;
-	struct oscap_list* content;
+	struct oscap_list *values;
+	struct oscap_list *content;
 };
 
 union xccdf_value_unit {
 	xccdf_numeric n;
-	char* s;
-	bool  b;
+	char *s;
+	bool b;
 };
 
 struct xccdf_value_val {
 	union xccdf_value_unit value;
 	union xccdf_value_unit defval;
-	struct oscap_list* choices;
+	struct oscap_list *choices;
 	bool must_match;
 	union {
 		struct {
@@ -109,7 +107,7 @@ struct xccdf_value_val {
 			xccdf_numeric upper_bound;
 		} n;
 		struct {
-			char* match;
+			char *match;
 		} s;
 	} limits;
 };
@@ -118,156 +116,153 @@ struct xccdf_value_item {
 	xccdf_value_type_t type;
 	xccdf_interface_hint_t interface_hint;
 	xccdf_operator_t oper;
-	char* selector;
+	char *selector;
 
-	struct xccdf_value_val* value;
-	struct oscap_htable* values;
+	struct xccdf_value_val *value;
+	struct oscap_htable *values;
 
-	struct oscap_list* sources;
+	struct oscap_list *sources;
 };
-
-
 
 // @todo complete
 struct xccdf_result_item {
-	struct oscap_list* status;
+	struct oscap_list *status;
 	time_t start_time;
 	time_t end_time;
-	char* test_system;
-	char* remark;
-	char* organization;
-	char* benchmark_uri;
+	char *test_system;
+	char *remark;
+	char *organization;
+	char *benchmark_uri;
 
-	struct xccdf_item* profile;
-	struct oscap_list* identities;
-	struct oscap_list* targets;
-	struct oscap_list* target_addresses;
-	struct oscap_list* target_facts;
-	struct oscap_list* set_values;
-	struct oscap_list* rule_results;
-	struct oscap_list* scores;
+	struct xccdf_item *profile;
+	struct oscap_list *identities;
+	struct oscap_list *targets;
+	struct oscap_list *target_addresses;
+	struct oscap_list *target_facts;
+	struct oscap_list *set_values;
+	struct oscap_list *rule_results;
+	struct oscap_list *scores;
 };
 
 struct xccdf_profile_item {
-    char* note_tag;
-    struct oscap_list* selects;
-    struct oscap_list* set_values;
-    struct oscap_list* refine_values;
-    struct oscap_list* refine_rules;
+	char *note_tag;
+	struct oscap_list *selects;
+	struct oscap_list *set_values;
+	struct oscap_list *refine_values;
+	struct oscap_list *refine_rules;
 };
 
 struct xccdf_benchmark_item {
-	
-	struct oscap_htable* dict;
-	struct oscap_htable* auxdict;
-	struct oscap_list* idrefs;
-	struct oscap_list* notices;
-    struct oscap_htable* plain_texts;
 
-	char* style;
-	char* style_href;
-	char* front_matter;
-	char* rear_matter;
-	char* metadata;
+	struct oscap_htable *dict;
+	struct oscap_htable *auxdict;
+	struct oscap_list *idrefs;
+	struct oscap_list *notices;
+	struct oscap_htable *plain_texts;
 
-    struct oscap_list* models;
-	struct oscap_list* profiles;
-	struct oscap_list* values;
-	struct oscap_list* content;
-	struct oscap_list* results;
+	char *style;
+	char *style_href;
+	char *front_matter;
+	char *rear_matter;
+	char *metadata;
+
+	struct oscap_list *models;
+	struct oscap_list *profiles;
+	struct oscap_list *values;
+	struct oscap_list *content;
+	struct oscap_list *results;
 };
-
 
 struct xccdf_item {
 	xccdf_type_t type;
 	struct xccdf_item_base item;
 	union {
-                struct xccdf_profile_item   profile;
+		struct xccdf_profile_item profile;
 		struct xccdf_benchmark_item bench;
-		struct xccdf_rule_item      rule;
-		struct xccdf_group_item     group;
-		struct xccdf_value_item     value;
-		struct xccdf_result_item    result;
+		struct xccdf_rule_item rule;
+		struct xccdf_group_item group;
+		struct xccdf_value_item value;
+		struct xccdf_result_item result;
 	} sub;
 };
 
 struct xccdf_notice {
-	char* id;
-	char* text;
+	char *id;
+	char *text;
 };
 
 struct xccdf_status {
-    xccdf_status_type_t status;
-    time_t date;
+	xccdf_status_type_t status;
+	time_t date;
 };
 
 struct xccdf_model {
-    char* system;
-    struct oscap_htable* params;
+	char *system;
+	struct oscap_htable *params;
 };
 
 struct xccdf_selected {
-    struct xccdf_item* item;
-    bool selected;
+	struct xccdf_item *item;
+	bool selected;
 };
 
 struct xccdf_refine_rule {
-	struct xccdf_item* item;
-	char* remark;
-	char* selector;
+	struct xccdf_item *item;
+	char *remark;
+	char *selector;
 	xccdf_role_t role;
 	xccdf_level_t severity;
 	float weight;
 };
 
 struct xccdf_refine_value {
-	struct xccdf_item* item;
-	char* remark;
-	char* selector;
+	struct xccdf_item *item;
+	char *remark;
+	char *selector;
 	xccdf_operator_t oper;
 };
 
 struct xccdf_set_value {
-	struct xccdf_item* item;
-	char* value;
+	struct xccdf_item *item;
+	char *value;
 };
 
 struct xccdf_ident {
-	char* id;
-	char* system;
+	char *id;
+	char *system;
 };
 
 struct xccdf_check {
 	xccdf_bool_operator_t oper;
-	struct oscap_list* children;
-	struct xccdf_item* parent;
-	char* id;
-	char* system;
-	char* selector;
-	char* content;
-	struct oscap_list* imports;
-	struct oscap_list* exports;
-	struct oscap_list* content_refs;
+	struct oscap_list *children;
+	struct xccdf_item *parent;
+	char *id;
+	char *system;
+	char *selector;
+	char *content;
+	struct oscap_list *imports;
+	struct oscap_list *exports;
+	struct oscap_list *content_refs;
 };
 
 struct xccdf_check_content_ref {
-	char* href;
-	char* name;
+	char *href;
+	char *name;
 };
 
 struct xccdf_check_import {
-	char* name;
-	char* content;
+	char *name;
+	char *content;
 };
 
 struct xccdf_check_export {
-	char* name;
-	struct xccdf_item* value;
+	char *name;
+	struct xccdf_item *value;
 };
 
 struct xccdf_profile_note {
-	char* reftag;
-	char* text;
+	char *reftag;
+	char *text;
 };
 
 struct xccdf_fix {
@@ -275,10 +270,10 @@ struct xccdf_fix {
 	xccdf_strategy_t strategy;
 	xccdf_level_t disruption;
 	xccdf_level_t complexity;
-	char* id;
-	char* content;
-	char* system;
-	char* platform;
+	char *id;
+	char *content;
+	char *system;
+	char *platform;
 };
 
 struct xccdf_fixtext {
@@ -286,8 +281,8 @@ struct xccdf_fixtext {
 	xccdf_strategy_t strategy;
 	xccdf_level_t disruption;
 	xccdf_level_t complexity;
-	struct xccdf_fix* fixref;
-	char* content;
+	struct xccdf_fix *fixref;
+	char *content;
 };
 
 extern const struct oscap_string_map XCCDF_LEVEL_MAP[];
@@ -295,74 +290,72 @@ extern const struct oscap_string_map XCCDF_ROLE_MAP[];
 extern const struct oscap_string_map XCCDF_OPERATOR_MAP[];
 extern const struct oscap_string_map XCCDF_STRATEGY_MAP[];
 
-struct xccdf_item* xccdf_item_new(xccdf_type_t type, struct xccdf_item* bench, struct xccdf_item* parent);
-void xccdf_item_release(struct xccdf_item* item);
-void xccdf_item_print(struct xccdf_item* item, int depth);
-void xccdf_item_dump(struct xccdf_item* item, int depth);
-void xccdf_item_free(struct xccdf_item* item);
+struct xccdf_item *xccdf_item_new(xccdf_type_t type, struct xccdf_item *bench, struct xccdf_item *parent);
+void xccdf_item_release(struct xccdf_item *item);
+void xccdf_item_print(struct xccdf_item *item, int depth);
+void xccdf_item_dump(struct xccdf_item *item, int depth);
+void xccdf_item_free(struct xccdf_item *item);
 
-struct xccdf_item* xccdf_benchmark_new(void);
-bool xccdf_benchmark_parse(struct xccdf_item* benchmark, xmlTextReaderPtr reader);
-bool xccdf_benchmark_add_ref(struct xccdf_item* benchmark, struct xccdf_item** ptr, const char* id, xccdf_type_t type);
-void xccdf_benchmark_dump(struct xccdf_benchmark* benchmark);
+struct xccdf_item *xccdf_benchmark_new(void);
+bool xccdf_benchmark_parse(struct xccdf_item *benchmark, xmlTextReaderPtr reader);
+bool xccdf_benchmark_add_ref(struct xccdf_item *benchmark, struct xccdf_item **ptr, const char *id, xccdf_type_t type);
+void xccdf_benchmark_dump(struct xccdf_benchmark *benchmark);
 
-struct xccdf_item* xccdf_profile_new_empty(struct xccdf_item* bench);
-struct xccdf_item* xccdf_profile_parse(xmlTextReaderPtr reader, struct xccdf_item* bench);
-void xccdf_profile_dump(struct xccdf_item* prof, int depth);
-void xccdf_profile_free(struct xccdf_item* prof);
+struct xccdf_item *xccdf_profile_new_empty(struct xccdf_item *bench);
+struct xccdf_item *xccdf_profile_parse(xmlTextReaderPtr reader, struct xccdf_item *bench);
+void xccdf_profile_dump(struct xccdf_item *prof, int depth);
+void xccdf_profile_free(struct xccdf_item *prof);
 
-bool xccdf_item_process_attributes(struct xccdf_item* item, xmlTextReaderPtr reader);
-bool xccdf_item_process_element(struct xccdf_item* item, xmlTextReaderPtr reader);
+bool xccdf_item_process_attributes(struct xccdf_item *item, xmlTextReaderPtr reader);
+bool xccdf_item_process_element(struct xccdf_item *item, xmlTextReaderPtr reader);
 
-bool xccdf_content_parse(xmlTextReaderPtr reader, struct xccdf_item* parent);
-struct xccdf_item* xccdf_group_parse(xmlTextReaderPtr reader, struct xccdf_item* parent);
-void xccdf_group_dump(struct xccdf_item* group, int depth);
-void xccdf_group_free(struct xccdf_item* group);
+bool xccdf_content_parse(xmlTextReaderPtr reader, struct xccdf_item *parent);
+struct xccdf_item *xccdf_group_parse(xmlTextReaderPtr reader, struct xccdf_item *parent);
+void xccdf_group_dump(struct xccdf_item *group, int depth);
+void xccdf_group_free(struct xccdf_item *group);
 
-struct xccdf_item* xccdf_rule_parse(xmlTextReaderPtr reader, struct xccdf_item* parent);
-void xccdf_rule_dump(struct xccdf_item* rule, int depth);
-void xccdf_rule_free(struct xccdf_item* rule);
+struct xccdf_item *xccdf_rule_parse(xmlTextReaderPtr reader, struct xccdf_item *parent);
+void xccdf_rule_dump(struct xccdf_item *rule, int depth);
+void xccdf_rule_free(struct xccdf_item *rule);
 
-struct xccdf_item* xccdf_value_parse(xmlTextReaderPtr reader, struct xccdf_item* parent);
-void xccdf_value_dump(struct xccdf_item* value, int depth);
-void xccdf_value_free(struct xccdf_item* val);
+struct xccdf_item *xccdf_value_parse(xmlTextReaderPtr reader, struct xccdf_item *parent);
+void xccdf_value_dump(struct xccdf_item *value, int depth);
+void xccdf_value_free(struct xccdf_item *val);
 
-struct xccdf_notice* xccdf_notice_new(const char* id, char* text);
-void xccdf_notice_dump(struct xccdf_notice* notice, int depth);
-void xccdf_notice_free(struct xccdf_notice* notice);
+struct xccdf_notice *xccdf_notice_new(const char *id, char *text);
+void xccdf_notice_dump(struct xccdf_notice *notice, int depth);
+void xccdf_notice_free(struct xccdf_notice *notice);
 
-struct xccdf_status* xccdf_status_new(const char* status, const char* date);
-void xccdf_status_dump(struct xccdf_status* status, int depth);
-void xccdf_status_free(struct xccdf_status* status);
+struct xccdf_status *xccdf_status_new(const char *status, const char *date);
+void xccdf_status_dump(struct xccdf_status *status, int depth);
+void xccdf_status_free(struct xccdf_status *status);
 
-struct xccdf_model* xccdf_model_new_xml(xmlTextReaderPtr reader);
-void xccdf_model_free(struct xccdf_model* model);
+struct xccdf_model *xccdf_model_new_xml(xmlTextReaderPtr reader);
+void xccdf_model_free(struct xccdf_model *model);
 
-void xccdf_cstring_dump(const char* data, int depth);
+void xccdf_cstring_dump(const char *data, int depth);
 
-struct xccdf_ident* xccdf_ident_new(const char* id, const char* system);
-void xccdf_ident_free(struct xccdf_ident* ident);
+struct xccdf_ident *xccdf_ident_new(const char *id, const char *system);
+void xccdf_ident_free(struct xccdf_ident *ident);
 
-struct xccdf_check* xccdf_check_new(struct xccdf_item* parent);
-struct xccdf_check* xccdf_check_parse(xmlTextReaderPtr reader, struct xccdf_item* parent);
-void xccdf_check_dump(struct xccdf_check* check, int depth);
-void xccdf_check_free(struct xccdf_check* check);
-void xccdf_check_content_ref_free(struct xccdf_check_content_ref* ref);
-void xccdf_check_content_ref_dump(struct xccdf_check_content_ref* ref, int depth);
-struct xccdf_ident* xccdf_ident_new(const char* id, const char* system);
-struct xccdf_ident* xccdf_ident_parse(xmlTextReaderPtr reader);
-void xccdf_ident_dump(struct xccdf_ident* ident, int depth);
-void xccdf_ident_free(struct xccdf_ident* ident);
-void xccdf_profile_note_free(struct xccdf_profile_note* note);
-void xccdf_check_import_free(struct xccdf_check_import* item);
-void xccdf_check_export_free(struct xccdf_check_export* item);
-struct xccdf_fix* xccdf_fix_parse(xmlTextReaderPtr reader, struct xccdf_item* parent);
-struct xccdf_fixtext* xccdf_fixtext_parse(xmlTextReaderPtr reader, struct xccdf_item* parent);
-void xccdf_fixtext_free(struct xccdf_fixtext* item);
-void xccdf_fix_free(struct xccdf_fix* item);
-void xccdf_set_value_free(struct xccdf_set_value* sv);
-
-
+struct xccdf_check *xccdf_check_new(struct xccdf_item *parent);
+struct xccdf_check *xccdf_check_parse(xmlTextReaderPtr reader, struct xccdf_item *parent);
+void xccdf_check_dump(struct xccdf_check *check, int depth);
+void xccdf_check_free(struct xccdf_check *check);
+void xccdf_check_content_ref_free(struct xccdf_check_content_ref *ref);
+void xccdf_check_content_ref_dump(struct xccdf_check_content_ref *ref, int depth);
+struct xccdf_ident *xccdf_ident_new(const char *id, const char *system);
+struct xccdf_ident *xccdf_ident_parse(xmlTextReaderPtr reader);
+void xccdf_ident_dump(struct xccdf_ident *ident, int depth);
+void xccdf_ident_free(struct xccdf_ident *ident);
+void xccdf_profile_note_free(struct xccdf_profile_note *note);
+void xccdf_check_import_free(struct xccdf_check_import *item);
+void xccdf_check_export_free(struct xccdf_check_export *item);
+struct xccdf_fix *xccdf_fix_parse(xmlTextReaderPtr reader, struct xccdf_item *parent);
+struct xccdf_fixtext *xccdf_fixtext_parse(xmlTextReaderPtr reader, struct xccdf_item *parent);
+void xccdf_fixtext_free(struct xccdf_fixtext *item);
+void xccdf_fix_free(struct xccdf_fix *item);
+void xccdf_set_value_free(struct xccdf_set_value *sv);
 
 #define MACRO_BLOCK(code) do { code } while(false)
 #define ASSERT_TYPE(item,t) assert((item)->type & t)
@@ -476,4 +469,3 @@ void xccdf_set_value_free(struct xccdf_set_value* sv);
 OSCAP_HIDDEN_END;
 
 #endif
-

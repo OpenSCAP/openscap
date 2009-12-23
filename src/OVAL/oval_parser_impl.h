@@ -37,60 +37,49 @@
 OSCAP_HIDDEN_START;
 
 struct oval_parser_context {
-	struct oval_definition_model   *definition_model;
-	struct oval_syschar_model      *syschar_model;
-	struct oval_results_model      *results_model;
+	struct oval_definition_model *definition_model;
+	struct oval_syschar_model *syschar_model;
+	struct oval_results_model *results_model;
 	//struct oval_sysinfo            *syschar_sysinfo;
-	xmlTextReader                  *reader;
-	void*                          user_data;
+	xmlTextReader *reader;
+	void *user_data;
 };
 
 struct oval_definition_model *oval_parser_context_model(struct oval_parser_context
-						    *context);
+							*context);
 
-int ovaldef_parser_parse
-    (struct oval_definition_model *, xmlTextReader *, void *);
+int ovaldef_parser_parse(struct oval_definition_model *, xmlTextReader *, void *);
 int ovaldef_parse_node(xmlTextReaderPtr, struct oval_parser_context *);
 
-int ovalsys_parser_parse
-    (struct oval_syschar_model *, xmlTextReader *, void *);
+int ovalsys_parser_parse(struct oval_syschar_model *, xmlTextReader *, void *);
 
-struct oval_result_directives *ovalres_parser_parse
-    (struct oval_results_model *, xmlTextReader *, void *);
+struct oval_result_directives *ovalres_parser_parse(struct oval_results_model *, xmlTextReader *, void *);
 
-int oval_parser_report(struct oval_parser_context*, struct oval_xml_error*);
+int oval_parser_report(struct oval_parser_context *, struct oval_xml_error *);
 
-int oval_parser_log_info (struct oval_parser_context *context, char* message);
-int oval_parser_log_debug(struct oval_parser_context *context, char* message);
-int oval_parser_log_warn (struct oval_parser_context *context, char* message);
+int oval_parser_log_info(struct oval_parser_context *context, char *message);
+int oval_parser_log_debug(struct oval_parser_context *context, char *message);
+int oval_parser_log_warn(struct oval_parser_context *context, char *message);
 
 void libxml_error_handler(void *user, const char *message,
-			   xmlParserSeverities severity,
-			   xmlTextReaderLocatorPtr locator);
-
+			  xmlParserSeverities severity, xmlTextReaderLocatorPtr locator);
 
 int oval_parser_boolean(const char *, int);
 
-int oval_parser_boolean_attribute(xmlTextReaderPtr reader, char *attname,
-				  int defval);
+int oval_parser_boolean_attribute(xmlTextReaderPtr reader, char *attname, int defval);
 
-int oval_parser_int_attribute(xmlTextReaderPtr reader, char *attname,
-				  int defval);
+int oval_parser_int_attribute(xmlTextReaderPtr reader, char *attname, int defval);
 
-int oval_parser_skip_tag(xmlTextReaderPtr reader,
-			 struct oval_parser_context *context);
+int oval_parser_skip_tag(xmlTextReaderPtr reader, struct oval_parser_context *context);
 
 typedef void (*oval_xml_value_consumer) (char *, void *);
 
 int oval_parser_text_value(xmlTextReaderPtr reader,
-			   struct oval_parser_context *context,
-			   oval_xml_value_consumer, void *);
+			   struct oval_parser_context *context, oval_xml_value_consumer, void *);
 
-typedef int (*oval_xml_tag_parser) (xmlTextReaderPtr,
-				    struct oval_parser_context *, void *);
+typedef int (*oval_xml_tag_parser) (xmlTextReaderPtr, struct oval_parser_context *, void *);
 
-int oval_parser_parse_tag(xmlTextReaderPtr, struct oval_parser_context *,
-			  oval_xml_tag_parser, void *);
+int oval_parser_parse_tag(xmlTextReaderPtr, struct oval_parser_context *, oval_xml_tag_parser, void *);
 
 void oval_text_consumer(char *text, void *user);
 

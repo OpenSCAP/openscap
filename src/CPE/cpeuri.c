@@ -51,14 +51,14 @@ enum cpe_field_t {
 };
 
 struct cpe_name {
-//	char *uri;       // complete URI cache
-	cpe_part_t part; // part
-	char *vendor;    // vendor
-	char *product;   // product
-	char *version;   // version
-	char *update;    // update
-	char *edition;   // edition
-	char *language;  // language
+//      char *uri;       // complete URI cache
+	cpe_part_t part;	// part
+	char *vendor;		// vendor
+	char *product;		// product
+	char *version;		// version
+	char *update;		// update
+	char *edition;		// edition
+	char *language;		// language
 };
 
 /* h - hardware
@@ -70,10 +70,10 @@ struct cpe_name {
 static const char CPE_SEP_CHAR = ':';
 
 static const struct oscap_string_map CPE_PART_MAP[] = {
-	{ CPE_PART_HW,   "h"  },
-	{ CPE_PART_OS,   "o"  },
-	{ CPE_PART_APP,  "a"  },
-	{ CPE_PART_NONE, NULL }
+	{CPE_PART_HW, "h"},
+	{CPE_PART_OS, "o"},
+	{CPE_PART_APP, "a"},
+	{CPE_PART_NONE, NULL}
 };
 
 char **cpe_uri_split(char *str, const char *delim);
@@ -95,15 +95,16 @@ static bool cpe_set_field(struct cpe_name *cpe, int idx, const char *newval);
  * @param fields NULL-terminated array of strings representing individual fields
  * @return true on success
  */
-static bool cpe_assign_values(struct cpe_name * cpe, char **fields);
+static bool cpe_assign_values(struct cpe_name *cpe, char **fields);
 
 static int cpe_fields_num(const struct cpe_name *cpe)
 {
-        __attribute__nonnull__(cpe);
+	__attribute__nonnull__(cpe);
 
-	if (cpe == NULL) return 0;
+	if (cpe == NULL)
+		return 0;
 	int maxnum = 0;
-        int i;
+	int i;
 	for (i = 0; i < CPE_FIELDNUM; ++i)
 		if (cpe_get_field(cpe, i))
 			maxnum = i + 1;
@@ -112,52 +113,79 @@ static int cpe_fields_num(const struct cpe_name *cpe)
 
 static const char *cpe_get_field(const struct cpe_name *cpe, int idx)
 {
-        __attribute__nonnull__(cpe);
+	__attribute__nonnull__(cpe);
 
-	if (cpe == NULL) return NULL;
+	if (cpe == NULL)
+		return NULL;
 
 	switch (idx) {
-		case 0: return oscap_enum_to_string(CPE_PART_MAP, cpe->part);
-		case 1: return cpe->vendor;
-		case 2: return cpe->product;
-		case 3: return cpe->version;
-		case 4: return cpe->update;
-		case 5: return cpe->edition;
-		case 6: return cpe->language;
-		default: assert(false); return NULL;
+	case 0:
+		return oscap_enum_to_string(CPE_PART_MAP, cpe->part);
+	case 1:
+		return cpe->vendor;
+	case 2:
+		return cpe->product;
+	case 3:
+		return cpe->version;
+	case 4:
+		return cpe->update;
+	case 5:
+		return cpe->edition;
+	case 6:
+		return cpe->language;
+	default:
+		assert(false);
+		return NULL;
 	}
 }
 
-bool cpe_set_field(struct cpe_name *cpe, int idx, const char *newval)
+bool cpe_set_field(struct cpe_name * cpe, int idx, const char *newval)
 {
 
-        __attribute__nonnull__(cpe);
-        /*__attribute__nonnull__(newval); <-- can't be here, we want to set NULL */ 
+	__attribute__nonnull__(cpe);
+	/*__attribute__nonnull__(newval); <-- can't be here, we want to set NULL */
 
-	if (cpe == NULL) return false;
+	if (cpe == NULL)
+		return false;
 
 	char **fieldptr = NULL;
 	switch (idx) {
-		case 0:
-			cpe->part = oscap_string_to_enum(CPE_PART_MAP, newval);
-			return cpe->part != CPE_PART_NONE;
-		case 1: fieldptr = &cpe->vendor;   break;
-		case 2: fieldptr = &cpe->product;  break;
-		case 3: fieldptr = &cpe->version;  break;
-		case 4: fieldptr = &cpe->update;   break;
-		case 5: fieldptr = &cpe->edition;  break;
-		case 6: fieldptr = &cpe->language; break;
-		default: assert(false); return false;
+	case 0:
+		cpe->part = oscap_string_to_enum(CPE_PART_MAP, newval);
+		return cpe->part != CPE_PART_NONE;
+	case 1:
+		fieldptr = &cpe->vendor;
+		break;
+	case 2:
+		fieldptr = &cpe->product;
+		break;
+	case 3:
+		fieldptr = &cpe->version;
+		break;
+	case 4:
+		fieldptr = &cpe->update;
+		break;
+	case 5:
+		fieldptr = &cpe->edition;
+		break;
+	case 6:
+		fieldptr = &cpe->language;
+		break;
+	default:
+		assert(false);
+		return false;
 	}
 
 	oscap_free(*fieldptr);
-	if (newval && strcmp(newval, "") == 0) newval = NULL;
-	if (newval != NULL) *fieldptr = strdup(newval);
-	else *fieldptr = NULL;
+	if (newval && strcmp(newval, "") == 0)
+		newval = NULL;
+	if (newval != NULL)
+		*fieldptr = strdup(newval);
+	else
+		*fieldptr = NULL;
 
 	return true;
 }
-
 
 struct cpe_name *cpe_name_new(const char *cpestr)
 {
@@ -189,8 +217,8 @@ static const size_t CPE_SPLIT_INIT_ALLOC = 8;
 
 static char **cpe_split(char *str, const char *delim)
 {
-        
-        __attribute__nonnull__(str);
+
+	__attribute__nonnull__(str);
 
 	char **stringp = &str;
 	int alloc = CPE_SPLIT_INIT_ALLOC;
@@ -219,7 +247,7 @@ static char **cpe_split(char *str, const char *delim)
 static bool cpe_urldecode(char *str)
 {
 
-        __attribute__nonnull__(str);
+	__attribute__nonnull__(str);
 
 	char *inptr, *outptr;
 
@@ -246,7 +274,7 @@ static bool cpe_urldecode(char *str)
 bool cpe_name_match_one(const struct cpe_name * cpe, const struct cpe_name * against)
 {
 
-        int i;
+	int i;
 	if (cpe == NULL || against == NULL)
 		return false;
 
@@ -266,8 +294,8 @@ bool cpe_name_match_one(const struct cpe_name * cpe, const struct cpe_name * aga
 bool cpe_name_match_cpes(const struct cpe_name * name, size_t n, struct cpe_name ** namelist)
 {
 
-        __attribute__nonnull__(name);
-        __attribute__nonnull__(namelist);
+	__attribute__nonnull__(name);
+	__attribute__nonnull__(namelist);
 
 	int i;
 
@@ -282,10 +310,10 @@ bool cpe_name_match_cpes(const struct cpe_name * name, size_t n, struct cpe_name
 
 int cpe_name_match_strs(const char *candidate, size_t n, char **targets)
 {
-        __attribute__nonnull__(candidate);
-        __attribute__nonnull__(targets);
+	__attribute__nonnull__(candidate);
+	__attribute__nonnull__(targets);
 
-        int i;
+	int i;
 	struct cpe_name *ccpe, *tcpe;
 
 	ccpe = cpe_name_new(candidate);	// candidate cpe
@@ -311,15 +339,15 @@ int cpe_name_match_strs(const char *candidate, size_t n, char **targets)
 
 bool cpe_name_check(const char *str)
 {
-        __attribute__nonnull__(str);
+	__attribute__nonnull__(str);
 
-	if (str == NULL) return false;
+	if (str == NULL)
+		return false;
 
 	pcre *re;
 	const char *error;
 	int erroffset;
-	re = pcre_compile( "^cpe:/[aho]?(:[a-z0-9._~%-]*){0,6}$",
-				 PCRE_CASELESS, &error, &erroffset, NULL);
+	re = pcre_compile("^cpe:/[aho]?(:[a-z0-9._~%-]*){0,6}$", PCRE_CASELESS, &error, &erroffset, NULL);
 
 	int rc;
 	int ovector[30];
@@ -332,13 +360,14 @@ bool cpe_name_check(const char *str)
 
 static const char *as_str(const char *str)
 {
-	if (str == NULL) return "";
+	if (str == NULL)
+		return "";
 	return str;
 }
 
-char *cpe_name_get_uri(const struct cpe_name * cpe)
+char *cpe_name_get_uri(const struct cpe_name *cpe)
 {
-        __attribute__nonnull__(cpe);
+	__attribute__nonnull__(cpe);
 
 	int len = 16;
 	int i;
@@ -358,10 +387,7 @@ char *cpe_name_get_uri(const struct cpe_name * cpe)
 		    as_str(oscap_enum_to_string(CPE_PART_MAP, cpe->part)),
 		    as_str(cpe->vendor),
 		    as_str(cpe->product),
-		    as_str(cpe->version),
-		    as_str(cpe->update),
-		    as_str(cpe->edition),
-			as_str(cpe->language)
+		    as_str(cpe->version), as_str(cpe->update), as_str(cpe->edition), as_str(cpe->language)
 	    );
 
 	// trim trailing colons
@@ -371,10 +397,10 @@ char *cpe_name_get_uri(const struct cpe_name * cpe)
 	return result;
 }
 
-int cpe_name_write(const struct cpe_name * cpe, FILE * f)
+int cpe_name_write(const struct cpe_name *cpe, FILE * f)
 {
-        __attribute__nonnull__(cpe);
-        __attribute__nonnull__(f);
+	__attribute__nonnull__(cpe);
+	__attribute__nonnull__(f);
 
 	int ret;
 	char *uri;
@@ -389,10 +415,10 @@ int cpe_name_write(const struct cpe_name * cpe, FILE * f)
 	return ret;
 }
 
-static bool cpe_assign_values(struct cpe_name * cpe, char **fields)
+static bool cpe_assign_values(struct cpe_name *cpe, char **fields)
 {
-        __attribute__nonnull__(cpe);
-        __attribute__nonnull__(fields);
+	__attribute__nonnull__(cpe);
+	__attribute__nonnull__(fields);
 
 	int i;
 
@@ -405,22 +431,22 @@ static bool cpe_assign_values(struct cpe_name * cpe, char **fields)
 	return true;
 }
 
-void cpe_name_free(struct cpe_name * cpe)
+void cpe_name_free(struct cpe_name *cpe)
 {
 
-        if (cpe == NULL) return;
+	if (cpe == NULL)
+		return;
 
-        int i;
+	int i;
 	for (i = 0; i < CPE_FIELDNUM; ++i)
 		cpe_set_field(cpe, i, NULL);
 	oscap_free(cpe);
 }
 
 OSCAP_ACCESSOR_SIMPLE(cpe_part_t, cpe_name, part)
-OSCAP_ACCESSOR_STRING(cpe_name, vendor)
-OSCAP_ACCESSOR_STRING(cpe_name, product)
-OSCAP_ACCESSOR_STRING(cpe_name, version)
-OSCAP_ACCESSOR_STRING(cpe_name, update)
-OSCAP_ACCESSOR_STRING(cpe_name, edition)
-OSCAP_ACCESSOR_STRING(cpe_name, language)
-
+    OSCAP_ACCESSOR_STRING(cpe_name, vendor)
+    OSCAP_ACCESSOR_STRING(cpe_name, product)
+    OSCAP_ACCESSOR_STRING(cpe_name, version)
+    OSCAP_ACCESSOR_STRING(cpe_name, update)
+    OSCAP_ACCESSOR_STRING(cpe_name, edition)
+    OSCAP_ACCESSOR_STRING(cpe_name, language)

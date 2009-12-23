@@ -61,19 +61,19 @@ struct oval_state *oval_state_iterator_next(struct oval_state_iterator
 }
 
 void oval_state_iterator_free(struct oval_state_iterator
-					    *oc_state)
+			      *oc_state)
 {
-    oval_collection_iterator_free((struct oval_iterator *)oc_state);
+	oval_collection_iterator_free((struct oval_iterator *)oc_state);
 }
 
 oval_family_t oval_state_get_family(struct oval_state *state)
 {
-	return (oval_state_get_subtype(state)/1000)*1000;
+	return (oval_state_get_subtype(state) / 1000) * 1000;
 }
 
 oval_subtype_t oval_state_get_subtype(struct oval_state * state)
 {
-        __attribute__nonnull__(state);
+	__attribute__nonnull__(state);
 
 	return ((struct oval_state *)state)->subtype;
 }
@@ -85,53 +85,52 @@ const char *oval_state_get_name(struct oval_state *state)
 
 struct oval_string_iterator *oval_state_get_notes(struct oval_state *state)
 {
-        __attribute__nonnull__(state);
+	__attribute__nonnull__(state);
 
-	return (struct oval_string_iterator *)oval_collection_iterator(state->
-								       notes);
+	return (struct oval_string_iterator *)oval_collection_iterator(state->notes);
 }
 
 struct oval_state_content_iterator *oval_state_get_contents(struct oval_state *state)
 {
-        __attribute__nonnull__(state);
+	__attribute__nonnull__(state);
 
 	return (struct oval_state_content_iterator *)
-		oval_collection_iterator(state->contents);
+	    oval_collection_iterator(state->contents);
 }
 
 char *oval_state_get_comment(struct oval_state *state)
 {
-        __attribute__nonnull__(state);
+	__attribute__nonnull__(state);
 
 	return ((struct oval_state *)state)->comment;
 }
 
 char *oval_state_get_id(struct oval_state *state)
 {
-        __attribute__nonnull__(state);
+	__attribute__nonnull__(state);
 
 	return ((struct oval_state *)state)->id;
 }
 
 bool oval_state_get_deprecated(struct oval_state *state)
 {
-        __attribute__nonnull__(state);
+	__attribute__nonnull__(state);
 
 	return ((struct oval_state *)state)->deprecated;
 }
 
 int oval_state_get_version(struct oval_state *state)
 {
-        __attribute__nonnull__(state);
+	__attribute__nonnull__(state);
 
 	return state->version;
 }
 
-struct oval_state *oval_state_new(struct oval_definition_model* model, char* id)
+struct oval_state *oval_state_new(struct oval_definition_model *model, char *id)
 {
 	oval_state_t *state = (oval_state_t *) oscap_alloc(sizeof(oval_state_t));
-        if (state == NULL)
-                return NULL;
+	if (state == NULL)
+		return NULL;
 
 	state->deprecated = 0;
 	state->version = 0;
@@ -144,38 +143,37 @@ struct oval_state *oval_state_new(struct oval_definition_model* model, char* id)
 	return state;
 }
 
-bool oval_state_is_valid(struct oval_state *state)
+bool oval_state_is_valid(struct oval_state * state)
 {
-	return true;//TODO
+	return true;		//TODO
 }
-bool oval_state_is_locked(struct oval_state *state)
+
+bool oval_state_is_locked(struct oval_state * state)
 {
-        __attribute__nonnull__(state);
+	__attribute__nonnull__(state);
 
 	return oval_definition_model_is_locked(state->model);
 }
 
-struct oval_state *oval_state_clone
-	(struct oval_definition_model *new_model, struct oval_state *old_state)
-{
-        __attribute__nonnull__(old_state);
+struct oval_state *oval_state_clone(struct oval_definition_model *new_model, struct oval_state *old_state) {
+	__attribute__nonnull__(old_state);
 
 	oval_state_t *new_state = oval_definition_model_get_state(new_model, old_state->id);
-	if(new_state==NULL){
+	if (new_state == NULL) {
 		new_state = oval_state_new(new_model, old_state->id);
 		oval_state_set_deprecated(new_state, old_state->deprecated);
-		oval_state_set_version   (new_state, old_state->version);
-		oval_state_set_subtype   (new_state, old_state->subtype);
-		oval_state_set_comment   (new_state, old_state->comment);
+		oval_state_set_version(new_state, old_state->version);
+		oval_state_set_subtype(new_state, old_state->subtype);
+		oval_state_set_comment(new_state, old_state->comment);
 
 		struct oval_string_iterator *notes = oval_state_get_notes(old_state);
-		while(oval_string_iterator_has_more(notes)){
+		while (oval_string_iterator_has_more(notes)) {
 			char *note = oval_string_iterator_next(notes);
 			oval_state_add_note(new_state, strdup(note));
 		}
 		oval_string_iterator_free(notes);
 		struct oval_state_content_iterator *contents = oval_state_get_contents(old_state);
-		while(oval_state_content_iterator_has_more(contents)){
+		while (oval_state_content_iterator_has_more(contents)) {
 			struct oval_state_content *content = oval_state_content_iterator_next(contents);
 			oval_state_add_content(new_state, oval_state_content_clone(new_model, content));
 		}
@@ -188,99 +186,100 @@ struct oval_state *oval_state_clone
 
 void oval_state_free(struct oval_state *state)
 {
-        __attribute__nonnull__(state);
+	__attribute__nonnull__(state);
 
 	if (state->comment != NULL)
 		free(state->comment);
 	if (state->id != NULL)
 		free(state->id);
 	oval_collection_free_items(state->notes, &free);
-	oval_collection_free_items(state->contents, (oscap_destruct_func)oval_state_content_free);
+	oval_collection_free_items(state->contents, (oscap_destruct_func) oval_state_content_free);
 
-	state->comment =NULL;
-	state->contents =NULL;
-	state->id =NULL;
-	state->notes =NULL;
+	state->comment = NULL;
+	state->contents = NULL;
+	state->id = NULL;
+	state->notes = NULL;
 	free(state);
 }
 
 void oval_state_set_subtype(struct oval_state *state, oval_subtype_t subtype)
 {
-	if(state && !oval_state_is_locked(state)){
+	if (state && !oval_state_is_locked(state)) {
 		state->subtype = subtype;
-	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+	} else
+		fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 void oval_state_add_note(struct oval_state *state, char *notes)
 {
-	if(state && !oval_state_is_locked(state)){
+	if (state && !oval_state_is_locked(state)) {
 		oval_collection_add(state->notes, (void *)strdup(notes));
-	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+	} else
+		fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 void oval_state_set_comment(struct oval_state *state, char *comm)
 {
-	if(state && !oval_state_is_locked(state)){
-		if(state->comment!=NULL)free(state->comment);
-		state->comment = comm==NULL?NULL:strdup(comm);
-	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+	if (state && !oval_state_is_locked(state)) {
+		if (state->comment != NULL)
+			free(state->comment);
+		state->comment = comm == NULL ? NULL : strdup(comm);
+	} else
+		fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 void oval_state_set_deprecated(struct oval_state *state, bool deprecated)
 {
-	if(state && !oval_state_is_locked(state)){
+	if (state && !oval_state_is_locked(state)) {
 		state->deprecated = deprecated;
-	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+	} else
+		fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
 void oval_state_set_version(struct oval_state *state, int version)
 {
-	if(state && !oval_state_is_locked(state)){
+	if (state && !oval_state_is_locked(state)) {
 		state->version = version;
-	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+	} else
+		fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
-void oval_state_add_content
-	(struct oval_state *state, struct oval_state_content *content)
-{
-	if(state && !oval_state_is_locked(state)){
+void oval_state_add_content(struct oval_state *state, struct oval_state_content *content) {
+	if (state && !oval_state_is_locked(state)) {
 		oval_collection_add(state->contents, content);
-	}else fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+	} else
+		fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
-static void _oval_note_consumer(char *text, void *state) {
+static void _oval_note_consumer(char *text, void *state)
+{
 	oval_state_add_note(state, text);
 }
 
-static int _oval_state_parse_notes(xmlTextReaderPtr reader,
-			    struct oval_parser_context *context, void *user)
+static int _oval_state_parse_notes(xmlTextReaderPtr reader, struct oval_parser_context *context, void *user)
 {
 	struct oval_state *state = (struct oval_state *)user;
 	return oval_parser_text_value(reader, context, _oval_note_consumer, state);
 }
 
-static void _oval_state_content_consumer
-	(struct oval_state_content *content, struct oval_state *state) {
+static void _oval_state_content_consumer(struct oval_state_content *content, struct oval_state *state) {
 	oval_state_add_content(state, content);
 }
 
-static int _oval_state_parse_tag(xmlTextReaderPtr reader,
-			  struct oval_parser_context *context, void *user)
+static int _oval_state_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *context, void *user)
 {
-        __attribute__nonnull__(user);
+	__attribute__nonnull__(user);
 
 	struct oval_state *state = (struct oval_state *)user;
-	char *tagname = (char*) xmlTextReaderName(reader);
+	char *tagname = (char *)xmlTextReaderName(reader);
 	xmlChar *namespace = xmlTextReaderNamespaceUri(reader);
 	int return_code = 1;
 	if ((strcmp(tagname, "notes") == 0)) {
-		return_code =
-		    oval_parser_parse_tag(reader, context,
-					  &_oval_state_parse_notes, state);
+		return_code = oval_parser_parse_tag(reader, context, &_oval_state_parse_notes, state);
 	} else {
 		return_code =
 		    oval_state_content_parse_tag
-				(reader, context, (oscap_consumer_func)_oval_state_content_consumer, state);
+		    (reader, context, (oscap_consumer_func) _oval_state_content_consumer, state);
 	}
 	if (return_code != 1) {
 		int line = xmlTextReaderGetParserLineNumber(reader);
@@ -293,29 +292,28 @@ static int _oval_state_parse_tag(xmlTextReaderPtr reader,
 	return return_code;
 }
 
-int oval_state_parse_tag(xmlTextReaderPtr reader,
-			 struct oval_parser_context *context)
+int oval_state_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *context)
 {
 	struct oval_definition_model *model = oval_parser_context_model(context);
-	char *id = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "id");
+	char *id = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "id");
 	struct oval_state *state = oval_state_get_new(model, id);
 	free(id);
 	oval_subtype_t subtype = oval_subtype_parse(reader);
 	oval_state_set_subtype(state, subtype);
-	char *comm = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "comment");
-	if(comm!=NULL){
+	char *comm = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "comment");
+	if (comm != NULL) {
 		oval_state_set_comment(state, comm);
-		free(comm);comm=NULL;
+		free(comm);
+		comm = NULL;
 	}
 	int deprecated = oval_parser_boolean_attribute(reader, "deprecated", 0);
 	oval_state_set_deprecated(state, deprecated);
-	char *version = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "version");
+	char *version = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "version");
 	oval_state_set_version(state, atoi(version));
 	free(version);
 
-	int return_code =
-	    oval_parser_parse_tag(reader, context, &_oval_state_parse_tag,
-				  state);
+	int return_code = oval_parser_parse_tag(reader, context, &_oval_state_parse_tag,
+						state);
 	return return_code;
 }
 
@@ -339,25 +337,25 @@ void oval_state_to_print(struct oval_state *state, char *indent, int idx)
 	printf("%sDEPRECATED = %d\n", nxtindent, oval_state_get_deprecated(state));
 	struct oval_string_iterator *notes = oval_state_get_notes(state);
 	for (idx = 1; oval_string_iterator_has_more(notes); idx++) {
-		printf("%sNOTE[%d]    = %s\n", nxtindent, idx,
-		       oval_string_iterator_next(notes));
+		printf("%sNOTE[%d]    = %s\n", nxtindent, idx, oval_string_iterator_next(notes));
 	}
 	oval_string_iterator_free(notes);
 }
 
-xmlNode *oval_state_to_dom (struct oval_state *state, xmlDoc *doc, xmlNode *parent)
+xmlNode *oval_state_to_dom(struct oval_state *state, xmlDoc * doc, xmlNode * parent)
 {
 	oval_subtype_t subtype = oval_state_get_subtype(state);
 	const char *subtype_text = oval_subtype_get_text(subtype);
-	char  state_name[strlen(subtype_text)+7]; *state_name = '\0';
+	char state_name[strlen(subtype_text) + 7];
+	*state_name = '\0';
 	strcat(strcat(state_name, subtype_text), "_state");
 	xmlNode *state_node = xmlNewChild(parent, NULL, BAD_CAST state_name, NULL);
 
 	oval_family_t family = oval_state_get_family(state);
 	const char *family_text = oval_family_get_text(family);
-	char family_uri[strlen((const char *)OVAL_DEFINITIONS_NAMESPACE)+strlen(family_text)+2];
+	char family_uri[strlen((const char *)OVAL_DEFINITIONS_NAMESPACE) + strlen(family_text) + 2];
 	*family_uri = '\0';
-	strcat(strcat(strcat(family_uri, (const char *)OVAL_DEFINITIONS_NAMESPACE),"#"),family_text);
+	strcat(strcat(strcat(family_uri, (const char *)OVAL_DEFINITIONS_NAMESPACE), "#"), family_text);
 	xmlNs *ns_family = xmlNewNs(state_node, BAD_CAST family_uri, NULL);
 
 	xmlSetNs(state_node, ns_family);
@@ -365,22 +363,24 @@ xmlNode *oval_state_to_dom (struct oval_state *state, xmlDoc *doc, xmlNode *pare
 	char *id = oval_state_get_id(state);
 	xmlNewProp(state_node, BAD_CAST "id", BAD_CAST id);
 
-	char version[10]; *version = '\0';
+	char version[10];
+	*version = '\0';
 	snprintf(version, sizeof(version), "%d", oval_state_get_version(state));
 	xmlNewProp(state_node, BAD_CAST "version", BAD_CAST version);
 
 	char *comm = oval_state_get_comment(state);
-	if(comm)xmlNewProp(state_node, BAD_CAST "comment", BAD_CAST comm);
+	if (comm)
+		xmlNewProp(state_node, BAD_CAST "comment", BAD_CAST comm);
 
 	bool deprecated = oval_state_get_deprecated(state);
-	if(deprecated)
+	if (deprecated)
 		xmlNewProp(state_node, BAD_CAST "deprecated", BAD_CAST "true");
 
 	struct oval_string_iterator *notes = oval_state_get_notes(state);
-	if(oval_string_iterator_has_more(notes)){
+	if (oval_string_iterator_has_more(notes)) {
 		xmlNs *ns_definitions = xmlSearchNsByHref(doc, parent, OVAL_DEFINITIONS_NAMESPACE);
 		xmlNode *notes_node = xmlNewChild(state_node, ns_definitions, BAD_CAST "notes", NULL);
-		while(oval_string_iterator_has_more(notes)){
+		while (oval_string_iterator_has_more(notes)) {
 			char *note = oval_string_iterator_next(notes);
 			xmlNewChild(notes_node, ns_definitions, BAD_CAST "note", BAD_CAST note);
 		}
@@ -388,8 +388,7 @@ xmlNode *oval_state_to_dom (struct oval_state *state, xmlDoc *doc, xmlNode *pare
 	oval_string_iterator_free(notes);
 
 	struct oval_state_content_iterator *contents = oval_state_get_contents(state);
-	while(oval_state_content_iterator_has_more(contents))
-	{
+	while (oval_state_content_iterator_has_more(contents)) {
 		struct oval_state_content *content = oval_state_content_iterator_next(contents);
 		oval_state_content_to_dom(content, doc, state_node);
 	}

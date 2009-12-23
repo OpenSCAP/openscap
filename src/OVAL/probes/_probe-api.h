@@ -11,25 +11,25 @@
  */
 struct id_desc_t {
 #ifndef HAVE_ATOMIC_FUNCTIONS
-        pthread_mutex_t item_id_ctr_lock; ///< id counter lock
+	pthread_mutex_t item_id_ctr_lock;	///< id counter lock
 #endif
-        int item_id_ctr; ///< id counter
+	int item_id_ctr;	///< id counter
 };
 
 /// Probe's global runtime information
 typedef struct {
-        /* Protocol stuff */
-        SEAP_CTX_t *ctx; ///< protocol context for communication with the library
-        int         sd; ///< file descriptor used for communication
+	/* Protocol stuff */
+	SEAP_CTX_t *ctx;	///< protocol context for communication with the library
+	int sd;			///< file descriptor used for communication
 
-        /* Object cache */
-        pcache_t   *pcache; ///< probed objects cache
-        pthread_rwlock_t pcache_lock; ///< cache lock
+	/* Object cache */
+	pcache_t *pcache;	///< probed objects cache
+	pthread_rwlock_t pcache_lock;	///< cache lock
 
-        struct id_desc_t id_desc; ///< id generation information
+	struct id_desc_t id_desc;	///< id generation information
 
-        /* probe main */
-        void *probe_arg; ///< optional argument to probe_main()
+	/* probe main */
+	void *probe_arg;	///< optional argument to probe_main()
 } globals_t;
 
 /// Probe's global runtime information
@@ -49,4 +49,4 @@ extern globals_t global;
 #define SEAP_LOCK pthread_mutex_lock (&globals.seap_lock)
 #define SEAP_UNLOCK pthread_mutex_unlock (&globals.seap_lock)
 
-#endif /* _PROBE_API_H */
+#endif				/* _PROBE_API_H */

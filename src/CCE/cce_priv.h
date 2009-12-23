@@ -50,9 +50,9 @@ struct cce {
 struct cce_entry {
 	char *id;
 	char *description;
-	struct oscap_list *params;     // list of C-strings
-	struct oscap_list *tech_mechs; // list of C-strings
-	struct oscap_list *references; // list of 'struct cce_reference'
+	struct oscap_list *params;	// list of C-strings
+	struct oscap_list *tech_mechs;	// list of C-strings
+	struct oscap_list *references;	// list of 'struct cce_reference'
 };
 
 struct cce_reference {
@@ -66,9 +66,9 @@ void process_parameter(xmlTextReaderPtr reader, struct cce_entry *cce);
 void process_tech_mech(xmlTextReaderPtr reader, struct cce_entry *cce);
 void process_refs(xmlTextReaderPtr reader, struct cce_entry *cce);
 
-struct cce_entry* cce_entry_new_empty(void);
-void cce_reference_free(struct cce_reference* ref);
-void cce_entry_free(struct cce_entry* ref);
+struct cce_entry *cce_entry_new_empty(void);
+void cce_reference_free(struct cce_reference *ref);
+void cce_entry_free(struct cce_entry *ref);
 
 OSCAP_HIDDEN_END;
 
