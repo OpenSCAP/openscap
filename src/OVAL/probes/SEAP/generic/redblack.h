@@ -12,7 +12,7 @@ OSCAP_HIDDEN_START;
 #ifndef NDEBUG
 #  define _E(exp) exp
 #else
-#  define _E(exp)
+#  define _E(exp) while(0)
 #endif
 
 #define XMALLOC  malloc

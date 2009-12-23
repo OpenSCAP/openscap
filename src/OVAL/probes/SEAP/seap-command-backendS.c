@@ -43,6 +43,7 @@ static uint16_t Stable_prime_gt (uint16_t n) {
 static Stable_t *Stable_new (size_t capacity)
 {
         Stable_t *t;
+        size_t    i;
         
         _A(capacity > 0 &&
            capacity < SEAP_COMMAND_BACKENDS_MAXCAPACITY);
@@ -51,12 +52,8 @@ static Stable_t *Stable_new (size_t capacity)
         t->t_size = Stable_prime_gt (capacity);
         t->t_recs = sm_calloc (t->t_size, sizeof (Stable_rec_t));
         
-        if (NULL != (void *)0) {
-                size_t i;
-                
-                for (i = 0; i < t->t_size; ++i)
-                        t->t_recs[i].c_recs = NULL;
-        }
+        for (i = 0; i < t->t_size; ++i)
+                t->t_recs[i].c_recs = NULL;
         
         return (t);
 }

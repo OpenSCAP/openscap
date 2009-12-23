@@ -958,9 +958,9 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *setup, const char *buf, size_t buflen, 
                 /* Add new expression to list */
                 SEXP_list_add (SEXP_pstate_lstack_top (*statep), s_exp);
                 SEXP_free (s_exp);
-#ifndef NDEBUG
+
                 s_exp = NULL;
-#endif
+
                 i += e_dsc.t_len;
                 
                 continue;

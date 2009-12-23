@@ -97,6 +97,13 @@ SEXP_t *SEXP_number_newb (bool n)
         s_exp = SEXP_new ();
         s_exp->s_type = NULL;
         s_exp->s_valp = v_dsc.ptr;
+
+        if (SEXP_datatype_set (s_exp, "bool") != 0) {
+                _D("FAIL: can't set datatype\n");
+                
+                SEXP_free (s_exp);
+                return (NULL);
+        }
         
         return (s_exp);
 }
@@ -1804,6 +1811,52 @@ int SEXP_datatype_set (SEXP_t *s_exp, const char *name)
         else
                 s_exp->s_type = t;
         
+        return (0);
+}
+
+int SEXP_datatype_set_nth (SEXP_t *list, uint32_t n, const char *name)
+{
+        SEXP_datatype_t *t;
+
+        _A(list != NULL);
+        _A(name != NULL);
+        _LOGCALL_;
+
+        SEXP_VALIDATE(list);
+
+        t = SEXP_datatype_get (&g_datatypes, name);
+        
+        if (t == NULL) {
+                SEXP_datatype_t dt;
+
+                dt.name     = strdup (name);
+                dt.name_len = strlen (name);
+
+                dt.op     = NULL;
+                dt.op_cnt = 0;
+
+                t = SEXP_datatype_add (&g_datatypes, &dt);
+        }
+        
+        if (t == NULL)
+                return (-1);
+        else {
+                SEXP_val_t v_dsc;
+                SEXP_t    *s_nth;
+                
+                SEXP_val_dsc (&v_dsc, list->s_valp);
+                
+                if (v_dsc.type != SEXP_VALTYPE_LIST)
+                        return (-1);
+                
+                s_nth = SEXP_rawval_lblk_nth (list->s_valp, n);
+                
+                if (s_nth == NULL)
+                        return (-1);
+                
+                s_nth->s_type = t; /* XXX: atomic? */
+        }
+
         return (0);
 }
 

@@ -9,7 +9,7 @@
 
 typedef struct SEXP_ostate SEXP_ostate_t;
 
-size_t SEXP_fprintfa (FILE *fp, SEXP_t *s_exp);
+size_t SEXP_fprintfa (FILE *fp, const SEXP_t *s_exp);
 
 #if defined(STRBUF_H)
 int SEXP_sbprintf_t (SEXP_t *s_exp, strbuf_t *sb);

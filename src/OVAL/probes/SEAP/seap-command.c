@@ -340,11 +340,14 @@ SEXP_t *SEAP_cmd_exec (SEAP_CTX_t    *ctx,
                         
                         cmdptr->flags |= SEAP_CMDFLAG_SYNC;
                 
-                        pthread_cond_init (&h.cond, NULL);
-                        pthread_mutex_init (&h.mtx, NULL);
+                        if (pthread_cond_init (&h.cond, NULL) != 0 ||
+                            pthread_mutex_init (&h.mtx, NULL) != 0)
+                                abort ();
+
                         h.args = NULL;
                         
-                        pthread_mutex_lock (&(h.mtx));
+                        if (pthread_mutex_lock (&(h.mtx)) != 0)
+                                abort ();
                         
                         rec = SEAP_cmdrec_new ();
                         rec->code = cmdptr->id;
@@ -380,7 +383,7 @@ SEXP_t *SEAP_cmd_exec (SEAP_CTX_t    *ctx,
                         }
                         
                         if (pthread_cond_wait (&h.cond, &h.mtx) != 0) {
-                                res = NULL;
+                                abort ();
                         } else {
 
                                 _D("cond return: h.args=%p\n", h.args);
@@ -391,6 +394,10 @@ SEXP_t *SEAP_cmd_exec (SEAP_CTX_t    *ctx,
                                         res = func (h.args, funcarg);
                                 else
                                         res = h.args;
+                                
+                                pthread_mutex_unlock (&(h.mtx));
+                                pthread_cond_destroy (&(h.cond));
+                                pthread_mutex_destroy (&(h.mtx));
                         }
                         
                         SEAP_packet_free (packet);

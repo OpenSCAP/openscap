@@ -520,7 +520,7 @@ int SEXP_datatype_set (SEXP_t *s_exp, const char *name) __attribute__ ((nonnull 
  * @param n the position of the object
  * @param name name of the user data type
  */
-int SEXP_datatype_set_nth (SEXP_t *list, int n, const char *name) __attribute__ ((nonnull (3)));
+int SEXP_datatype_set_nth (SEXP_t *list, uint32_t n, const char *name) __attribute__ ((nonnull (3)));
 
 /**
  * Get the type of a sexp object.

@@ -200,14 +200,14 @@ typedef struct {
 
 #define AS(t,p) ((t)(p))
 
-static int __SEXP_fprintfa_lmemb (SEXP_t *s_exp, void *arg)
+static int __SEXP_fprintfa_lmemb (const SEXP_t *s_exp, void *arg)
 {
         AS(__fprintfa_t *, arg)->sz += SEXP_fprintfa (AS(__fprintfa_t *, arg)->fp, s_exp);
         fputc (' ', AS(__fprintfa_t *, arg)->fp);
         return (0);
 }
 
-size_t SEXP_fprintfa (FILE *fp, SEXP_t *s_exp)
+size_t SEXP_fprintfa (FILE *fp, const SEXP_t *s_exp)
 {
         SEXP_val_t v_dsc;
         
