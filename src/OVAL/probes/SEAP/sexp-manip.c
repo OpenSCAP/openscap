@@ -539,6 +539,51 @@ uint64_t SEXP_number_getu_64 (const SEXP_t *s_exp)
         return (UINT64_MAX);
 }
 
+bool SEXP_number_getb (const SEXP_t *s_exp)
+{
+        SEXP_val_t v_dsc;
+        SEXP_numtype_t t;
+        
+        _LOGCALL_;
+        
+        if (s_exp == NULL) {
+                errno = EFAULT;
+                return (false);
+        }
+        
+        SEXP_VALIDATE(s_exp);
+        
+        SEXP_val_dsc (&v_dsc, s_exp->s_valp);
+        t = SEXP_rawval_number_type (&v_dsc);
+        
+        if (t > SEXP_NUM_UINT64) {
+                errno = EDOM;
+                return (false);
+        }
+        
+        switch (t) {
+        case SEXP_NUM_UINT64:
+                return (SEXP_NCASTP(u64,v_dsc.mem)->n ? true : false);
+        case SEXP_NUM_INT64:
+                return (SEXP_NCASTP(i64,v_dsc.mem)->n ? true : false);
+        case SEXP_NUM_UINT32:
+                return (SEXP_NCASTP(u32,v_dsc.mem)->n ? true : false);
+        case SEXP_NUM_INT32:
+                return (SEXP_NCASTP(i32,v_dsc.mem)->n ? true : false);
+        case SEXP_NUM_UINT16:
+        case SEXP_NUM_INT16:
+                return (SEXP_NCASTP(u16,v_dsc.mem)->n ? true : false);
+        case SEXP_NUM_UINT8:
+        case SEXP_NUM_INT8:
+        case SEXP_NUM_BOOL:
+                return (SEXP_NCASTP(u8,v_dsc.mem)->n ? true : false);
+        default:
+                abort ();
+        }
+        
+        return (false);
+}
+
 SEXP_t *SEXP_number_newf (double n)
 {
         SEXP_t    *s_exp;
@@ -603,6 +648,7 @@ bool SEXP_numberp (const SEXP_t *s_exp)
 SEXP_numtype_t SEXP_number_type (const SEXP_t *s_exp)
 {
         SEXP_val_t v_dsc;
+        const char *type;
 
         _LOGCALL_;
 
@@ -618,6 +664,13 @@ SEXP_numtype_t SEXP_number_type (const SEXP_t *s_exp)
                 return (SEXP_NUM_NONE);
         }
 
+        type = SEXP_datatype (s_exp);
+
+        if (type != NULL) {
+                if (strcmp (type, "boolean"))
+                        return (SEXP_NUM_BOOLEAN);
+        }
+        
         SEXP_val_dsc (&v_dsc, s_exp->s_valp);
         
         return (*(SEXP_numtype_t *)((uint8_t *)(v_dsc.mem) + v_dsc.hdr->size - sizeof (SEXP_numtype_t)));

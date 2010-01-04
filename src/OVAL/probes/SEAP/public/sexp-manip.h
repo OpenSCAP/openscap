@@ -114,6 +114,12 @@ SEXP_t *SEXP_number_newi_32 (int32_t n);
 int32_t SEXP_number_geti_32 (const SEXP_t *s_exp);
 
 /**
+ * Get boolean value from a sexp object.
+ * @param s_exp the queried sexp object
+ */
+bool SEXP_number_getb (const SEXP_t *s_exp);
+
+/**
  * Create a new sexp object from an unsigned integer.
  * The size of the integer may be architecture dependent.
  */

@@ -517,8 +517,11 @@ static struct oval_sysitem *oval_sysitem_from_sexp(struct oval_syschar_model *mo
 			case SEXP_NUM_UINT64:
 				snprintf(val, allocsize, "%" PRIu64, SEXP_number_getu_64(sval));
 				break;
+                        case SEXP_NUM_BOOL:
+                                snprintf(val, allocsize, "%s", SEXP_number_getb (sval) ? "true" : "false");
+                                break;
 			case SEXP_NUM_NONE:
-			default:
+                        default:
 				_A(false);
 				break;
 			}
