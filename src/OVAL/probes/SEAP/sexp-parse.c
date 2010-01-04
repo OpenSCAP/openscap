@@ -363,6 +363,7 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *setup, const char *buf, size_t buflen, 
         for (;;) {
                 _A(((*statep)->l_real  > 1 && !(exflags & EXF_EOFOK)) ||
                    ((*statep)->l_real == 1 &&  (exflags & EXF_EOFOK)));
+                _A(i + 1 < buflen);
                 
                 s_exp = SEXP_new ();
                 
