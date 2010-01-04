@@ -75,16 +75,26 @@ static SEXP_t *probe_obj_eval(SEXP_t * id)
 	return pcache_sexp_get(global.pcache, id);
 }
 
-static SEXP_t *probe_set_combine(SEXP_t * item_lst1, SEXP_t * item_lst2, oval_setobject_operation_t op)
+static SEXP_t *probe_set_combine(SEXP_t *cobj1, SEXP_t *cobj2, oval_setobject_operation_t op)
 {
 	char append;
 	SEXP_t *res_items, *item1, *item2, *id1, *id2;
+	SEXP_t *res_cobj, *item_lst1, *item_lst2;
+	oval_syschar_collection_flag_t flag1, flag2, res_flag;
 
 	_LOGCALL_;
 
-	if (SEXP_list_length(item_lst2) == 0)
-		return SEXP_ref(item_lst1);
+	if (cobj1 == NULL)
+		return SEXP_ref(cobj2);
+	if (cobj2 == NULL)
+		return SEXP_ref(cobj1);
 
+	item_lst1 = _probe_cobj_get_items(cobj1);
+	item_lst2 = _probe_cobj_get_items(cobj2);
+	flag1 = _probe_cobj_get_flag(cobj1);
+	flag2 = _probe_cobj_get_flag(cobj2);
+
+	res_flag = _probe_cobj_combine_flags(flag1, flag2, op);
 	res_items = SEXP_list_new(NULL);
 
 	switch (op) {
@@ -153,29 +163,35 @@ static SEXP_t *probe_set_combine(SEXP_t * item_lst1, SEXP_t * item_lst2, oval_se
 		break;
 	default:
 		_D("Unexpected set operation: %d\n", op);
+		// todo: leak
 		return NULL;
 	}
 
-	// todo: set result flags
+	res_cobj = _probe_cobj_new(res_flag, res_items);
+	SEXP_vfree(item_lst1, item_lst2, res_items, NULL);
+
 	// todo: variables
 
-	return res_items;
+	return res_cobj;
 }
 
-static SEXP_t *probe_set_apply_filters(SEXP_t * items, SEXP_t * filters)
+static SEXP_t *probe_set_apply_filters(SEXP_t *cobj, SEXP_t *filters)
 {
 	int filtered, i;
-	SEXP_t *result_items, *item, *filter, *felm, *ielm;
+	SEXP_t *result_items, *items, *item, *filter, *felm, *ielm;
 	SEXP_t *ste_res, *elm_res, *stmp;
 	char *elm_name;
 	oval_syschar_status_t item_status;
 	oval_result_t ores;
 	oval_check_t ochk;
 	oval_operator_t oopr;
+	oval_syschar_collection_flag_t flag;
 
 	_LOGCALL_;
 
 	result_items = SEXP_list_new(NULL);
+	flag = _probe_cobj_get_flag(cobj);
+	items = _probe_cobj_get_items(cobj);
 
 	SEXP_list_foreach(item, items) {
 		item_status = probe_ent_getstatus(item);
@@ -186,7 +202,7 @@ static SEXP_t *probe_set_apply_filters(SEXP_t * items, SEXP_t * filters)
 		case OVAL_STATUS_ERROR:
 		case OVAL_STATUS_NOTCOLLECTED:
 			_D("Supplied item has an invalid status: %d\n", item_status);
-			SEXP_free(result_items);
+			SEXP_vfree(items, result_items, NULL);
 
 			return NULL;
 		default:
@@ -253,7 +269,10 @@ static SEXP_t *probe_set_apply_filters(SEXP_t * items, SEXP_t * filters)
 		}
 	}
 
-	return result_items;
+	cobj = _probe_cobj_new(flag, result_items);
+	SEXP_vfree(items, result_items, NULL);
+
+	return cobj;
 }
 
 static SEXP_t *probe_set_eval(SEXP_t * set, size_t depth)
@@ -443,11 +462,12 @@ static SEXP_t *probe_set_eval(SEXP_t * set, size_t depth)
 			s_subset[s_subset_i] = probe_set_apply_filters(o_subset[s_subset_i], filters_a);
 
 #ifndef NDEBUG
-			if (s_subset[s_subset_i] == NULL)
-				_D("WARN: apply_filters returned NULL: set=%p, filters=%p\n",
+			if (s_subset[s_subset_i] == NULL) {
+				_D("FAIL: apply_filters returned NULL: set=%p, filters=%p\n",
 				   o_subset[s_subset_i], filters_a);
+				goto eval_fail;
+			}
 #endif
-
 			SEXP_free(o_subset[s_subset_i]);
 		}
 
@@ -773,24 +793,29 @@ void *probe_worker(void *arg)
 		varrefs = probe_obj_getent(probe_in, "varrefs", 1);
 
 		if (varrefs == NULL) {
+			SEXP_t *r0;
+
 			_D("probe_main1\n");
 			probe_ret = -1;
-			probe_out = probe_main(probe_in, &probe_ret, global.probe_arg);
+			r0 = probe_main(probe_in, &probe_ret, global.probe_arg);
+			if (r0 != NULL) {
+				probe_out = _probe_cobj_new(SYSCHAR_FLAG_UNKNOWN, r0);
+				SEXP_free(r0);
+			}
 			_A(probe_ret != -1);
 		} else {
 			/*
 			 * there are variable references in the object.
 			 * create ctx, iterate through all variable combinations
 			 */
-			SEXP_t *item_lst;
-			SEXP_t *r0;
+			SEXP_t *cobj;
+			SEXP_t *r0, *r1;
 			struct probe_varref_ctx *ctx;
 
 			_D("probe_main2\n");
 
 			probe_varref_create_ctx(probe_in, varrefs, &ctx);
 			SEXP_free(varrefs);
-			item_lst = SEXP_list_new(NULL);
 
 			do {
 				probe_ret = -1;
@@ -798,20 +823,19 @@ void *probe_worker(void *arg)
 				_A(probe_ret != -1);
 
 				if (probe_out == NULL || probe_ret != 0) {
-					SEXP_free(item_lst);
-					item_lst = NULL;
+					SEXP_free(cobj);
+					cobj = NULL;
 					break;
 				}
 
-				r0 = item_lst;
-				item_lst = probe_set_combine(probe_out, r0, OVAL_SET_OPERATION_UNION);
+				r0 = _probe_cobj_new(SYSCHAR_FLAG_UNKNOWN, probe_out);
+				r1 = cobj;
+				cobj = probe_set_combine (r0, r1, OVAL_SET_OPERATION_UNION);
 
-				SEXP_free(probe_out);
-				SEXP_free(r0);
-
+				SEXP_vfree (probe_out, r0, r1, NULL);
 			} while (probe_varref_iterate_ctx(ctx));
 
-			probe_out = item_lst;
+			probe_out = cobj;
 			probe_varref_destroy_ctx(ctx);
 		}
 	}

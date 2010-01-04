@@ -248,6 +248,17 @@ char *probe_obj_getname(const SEXP_t * obj);
 size_t probe_obj_getname_r(const SEXP_t * obj, char *buffer, size_t buflen);
 
 /*
+ * collected objects
+ */
+
+SEXP_t *_probe_cobj_new(oval_syschar_collection_flag_t flag, const SEXP_t *item_list);
+SEXP_t *_probe_cobj_get_items(const SEXP_t *cobj);
+oval_syschar_collection_flag_t _probe_cobj_get_flag(const SEXP_t *cobj);
+oval_syschar_collection_flag_t _probe_cobj_combine_flags(oval_syschar_collection_flag_t f1,
+							 oval_syschar_collection_flag_t f2,
+							 oval_setobject_operation_t op);
+
+/*
  * entities
  */
 

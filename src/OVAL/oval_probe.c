@@ -574,7 +574,7 @@ struct oval_sysinfo *oval_probe_sysinf_eval(struct oval_syschar_model *model, ov
 	struct oval_sysint *ife;
 	oval_pd_t *pd;
 
-	SEXP_t *s_obj, *s_sinf, *ent;
+	SEXP_t *s_obj, *s_sinf, *ent, *r0;
 
 	pd = oval_pdtbl_get(ctx->pd_table, OVAL_INDEPENDENT_SYSCHAR_SUBTYPE);
 
@@ -612,11 +612,14 @@ struct oval_sysinfo *oval_probe_sysinf_eval(struct oval_syschar_model *model, ov
 	if (ctx->p_flags & OVAL_PCTX_FLAG_NOREPLY)
 		_D("WARN: NOREPLY flag set\n");
 #endif
-	s_sinf = oval_probe_comm(ctx->pd_table->ctx, pd, s_obj, ctx->p_flags & OVAL_PCTX_FLAG_NOREPLY);
+	r0 = oval_probe_comm(ctx->pd_table->ctx, pd, s_obj, ctx->p_flags & OVAL_PCTX_FLAG_NOREPLY);
 	SEXP_free(s_obj);
 
-	if (s_sinf == NULL)
+	if (r0 == NULL)
 		return (NULL);
+
+	s_sinf = _probe_cobj_get_items(r0);
+	SEXP_free(r0);
 
 	sysinf = oval_sysinfo_new(model);
 

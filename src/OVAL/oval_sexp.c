@@ -628,14 +628,15 @@ struct oval_syschar *oval_sexp2sysch(const SEXP_t * s_exp, struct oval_syschar_m
 	return (sysch);
 }
 
-int oval_sysch_apply_sexp(struct oval_syschar *sysch, const SEXP_t * s_list, struct oval_object *object)
+int oval_sysch_apply_sexp(struct oval_syschar *sysch, const SEXP_t *cobj, struct oval_object *object)
 {
-	_A(s_list != NULL);
+	_A(cobj != NULL);
 	_A(sysch != NULL);
 
-	SEXP_t *s_exp;
+	SEXP_t *s_exp, *items;
 	struct oval_sysdata *sysdata;
 	struct oval_syschar_model *model;
+	oval_syschar_collection_flag_t flag;
 
 	if (oval_syschar_get_object(sysch) == NULL) {
 		if (object != NULL)
@@ -653,8 +654,11 @@ int oval_sysch_apply_sexp(struct oval_syschar *sysch, const SEXP_t * s_list, str
 	_A(object == oval_syschar_get_object(sysch));
 
 	model = oval_syschar_get_model(sysch);
+	flag = _probe_cobj_get_flag(cobj);
+	oval_syschar_set_flag(sysch, flag);
 
-	SEXP_list_foreach(s_exp, s_list) {
+	items = _probe_cobj_get_items(cobj);
+	SEXP_list_foreach(s_exp, items) {
 		sysdata = oval_sysdata_from_sexp(model, s_exp);
 
 		if (sysdata != NULL)

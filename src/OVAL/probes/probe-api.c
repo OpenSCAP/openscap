@@ -505,6 +505,234 @@ size_t probe_obj_getname_r(const SEXP_t * obj, char *buffer, size_t buflen)
 }
 
 /*
+ * collected objects
+ */
+
+SEXP_t *_probe_cobj_new(oval_syschar_collection_flag_t flag, const SEXP_t *item_list)
+{
+	SEXP_t *cobj, *item, *sflag;
+	int error_cnt = 0;
+	int exists_cnt = 0;
+	int does_not_exist_cnt = 0;
+	int not_collected_cnt = 0;
+
+	if (flag == SYSCHAR_FLAG_UNKNOWN) {
+		SEXP_list_foreach(item, item_list) {
+			switch (probe_ent_getstatus(item)) {
+			case SYSCHAR_STATUS_ERROR:
+				++error_cnt;
+				break;
+			case SYSCHAR_STATUS_EXISTS:
+				++exists_cnt;
+				break;
+			case SYSCHAR_STATUS_DOES_NOT_EXIST:
+				++does_not_exist_cnt;
+				break;
+			case SYSCHAR_STATUS_NOT_COLLECTED:
+				++not_collected_cnt;
+				break;
+			default:
+				SEXP_free(item);
+				return NULL;
+			}
+		}
+
+		if (error_cnt > 0) {
+			flag = SYSCHAR_FLAG_ERROR;
+		} else if (not_collected_cnt > 0) {
+			flag = SYSCHAR_FLAG_INCOMPLETE;
+		} else if (exists_cnt > 0) {
+			flag = SYSCHAR_FLAG_COMPLETE;
+		} else {
+			flag = SYSCHAR_FLAG_DOES_NOT_EXIST;
+		}
+	}
+
+	sflag = SEXP_number_newi(flag);
+	cobj = SEXP_list_new(sflag, item_list, NULL);
+	SEXP_free(sflag);
+
+	return cobj;
+}
+
+SEXP_t *_probe_cobj_get_items(const SEXP_t *cobj)
+{
+	return SEXP_list_nth(cobj, 2);
+}
+
+oval_syschar_collection_flag_t _probe_cobj_get_flag(const SEXP_t *cobj)
+{
+	SEXP_t *sflag;
+	oval_syschar_collection_flag_t flag;
+
+	sflag = SEXP_list_first(cobj);
+	flag = SEXP_number_geti(sflag);
+	SEXP_free(sflag);
+
+	return flag;
+}
+
+oval_syschar_collection_flag_t _probe_cobj_combine_flags(oval_syschar_collection_flag_t f1,
+							 oval_syschar_collection_flag_t f2,
+							 oval_setobject_operation_t op)
+{
+	oval_syschar_collection_flag_t result;
+
+	switch (op) {
+	case OVAL_SET_OPERATION_COMPLEMENT:
+		if (f1 == SYSCHAR_FLAG_ERROR) {
+			result = SYSCHAR_FLAG_ERROR;
+		} else if (f1 == SYSCHAR_FLAG_COMPLETE) {
+			if (f2 == SYSCHAR_FLAG_NOT_APPLICABLE || f2 == SYSCHAR_FLAG_ERROR) {
+				result = SYSCHAR_FLAG_ERROR;
+			} else if (f2 == SYSCHAR_FLAG_COMPLETE || f2 == SYSCHAR_FLAG_DOES_NOT_EXIST) {
+				result = SYSCHAR_FLAG_COMPLETE;
+			} else if (f2 == SYSCHAR_FLAG_INCOMPLETE) {
+				result = SYSCHAR_FLAG_ERROR;
+			} else if (f2 == SYSCHAR_FLAG_NOT_COLLECTED) {
+				result = SYSCHAR_FLAG_ERROR;
+			}
+		} else if (f1 == SYSCHAR_FLAG_INCOMPLETE) {
+			if (f2 == SYSCHAR_FLAG_NOT_APPLICABLE || f2 == SYSCHAR_FLAG_ERROR) {
+				result = SYSCHAR_FLAG_ERROR;
+			} else if (f2 == SYSCHAR_FLAG_DOES_NOT_EXIST) {
+				result = SYSCHAR_FLAG_INCOMPLETE;
+			} else if (f2 == SYSCHAR_FLAG_NOT_COLLECTED) {
+				result = SYSCHAR_FLAG_ERROR;
+			} else if (f2 == SYSCHAR_FLAG_INCOMPLETE) {
+				result = SYSCHAR_FLAG_ERROR;
+			} else if (f2 == SYSCHAR_FLAG_COMPLETE) {
+				result = SYSCHAR_FLAG_INCOMPLETE;
+			}
+		} else if (f1 == SYSCHAR_FLAG_DOES_NOT_EXIST) {
+			if (f2 != SYSCHAR_FLAG_NOT_APPLICABLE) {
+				result = SYSCHAR_FLAG_DOES_NOT_EXIST;
+			} else {
+				result = SYSCHAR_FLAG_ERROR;
+			}
+		} else if (f1 == SYSCHAR_FLAG_NOT_COLLECTED) {
+			if (f2 != SYSCHAR_FLAG_NOT_APPLICABLE && f2 != SYSCHAR_FLAG_ERROR) {
+				result = SYSCHAR_FLAG_NOT_COLLECTED;
+			} else {
+				result = SYSCHAR_FLAG_ERROR;
+			}
+		} else if (f1 == SYSCHAR_FLAG_NOT_APPLICABLE) {
+			result = SYSCHAR_FLAG_ERROR;
+		}
+		break;
+
+	case OVAL_SET_OPERATION_INTERSECTION:
+		if (f1 == SYSCHAR_FLAG_ERROR) {
+			result = SYSCHAR_FLAG_ERROR;
+		} else if (f1 == SYSCHAR_FLAG_COMPLETE) {
+			if (f2 == SYSCHAR_FLAG_ERROR) {
+				result = SYSCHAR_FLAG_ERROR;
+			} else if (f2 == SYSCHAR_FLAG_DOES_NOT_EXIST) {
+				result = SYSCHAR_FLAG_DOES_NOT_EXIST;
+			} else if (f2 == SYSCHAR_FLAG_COMPLETE || f2 == SYSCHAR_FLAG_NOT_APPLICABLE) {
+				result = SYSCHAR_FLAG_COMPLETE;
+			} else if (f2 == SYSCHAR_FLAG_INCOMPLETE) {
+				result = SYSCHAR_FLAG_INCOMPLETE;
+			} else if (f2 == SYSCHAR_FLAG_NOT_COLLECTED) {
+				result = SYSCHAR_FLAG_NOT_COLLECTED;
+			}
+		} else if (f1 == SYSCHAR_FLAG_INCOMPLETE) {
+			if (f2 == SYSCHAR_FLAG_ERROR) {
+				result = SYSCHAR_FLAG_ERROR;
+			} else if (f2 == SYSCHAR_FLAG_DOES_NOT_EXIST) {
+				result = SYSCHAR_FLAG_DOES_NOT_EXIST;
+			} else if (f2 == SYSCHAR_FLAG_NOT_APPLICABLE) {
+				result = SYSCHAR_FLAG_NOT_APPLICABLE;
+			} else if (f2 == SYSCHAR_FLAG_NOT_COLLECTED || f2 == SYSCHAR_FLAG_COMPLETE || f2 == SYSCHAR_FLAG_INCOMPLETE) {
+				result = SYSCHAR_FLAG_INCOMPLETE;
+			}
+		} else if (f1 == SYSCHAR_FLAG_DOES_NOT_EXIST) {
+			result = SYSCHAR_FLAG_DOES_NOT_EXIST;
+		} else if (f1 == SYSCHAR_FLAG_NOT_COLLECTED) {
+			if (f2 == SYSCHAR_FLAG_ERROR) {
+				result = SYSCHAR_FLAG_ERROR;
+			} else if (f2 == SYSCHAR_FLAG_DOES_NOT_EXIST) {
+				result = SYSCHAR_FLAG_DOES_NOT_EXIST;
+			} else if (f2 == SYSCHAR_FLAG_COMPLETE || f2 == SYSCHAR_FLAG_INCOMPLETE || f2 == SYSCHAR_FLAG_NOT_APPLICABLE || f2 == SYSCHAR_FLAG_NOT_COLLECTED) {
+				result = SYSCHAR_FLAG_NOT_COLLECTED;
+			}
+		} else if (f1 == SYSCHAR_FLAG_NOT_APPLICABLE) {
+			if (f2 == SYSCHAR_FLAG_ERROR) {
+				result = SYSCHAR_FLAG_ERROR;
+			} else if (f2 == SYSCHAR_FLAG_DOES_NOT_EXIST) {
+				result = SYSCHAR_FLAG_DOES_NOT_EXIST;
+			} else if (f2 == SYSCHAR_FLAG_COMPLETE) {
+				result = SYSCHAR_FLAG_COMPLETE;
+			} else if (f2 == SYSCHAR_FLAG_INCOMPLETE) {
+				result = SYSCHAR_FLAG_INCOMPLETE;
+			} else if (f2 == SYSCHAR_FLAG_NOT_APPLICABLE) {
+				result = SYSCHAR_FLAG_NOT_APPLICABLE;
+			} else if (f2 == SYSCHAR_FLAG_NOT_COLLECTED) {
+				result = SYSCHAR_FLAG_NOT_COLLECTED;
+			}
+		}
+		break;
+
+	case OVAL_SET_OPERATION_UNION:
+		if (f1 == SYSCHAR_FLAG_ERROR) {
+			result = SYSCHAR_FLAG_ERROR;
+		} else if (f1 == SYSCHAR_FLAG_COMPLETE) {
+			if (f2 == SYSCHAR_FLAG_ERROR) {
+				result = SYSCHAR_FLAG_ERROR;
+			} else if (f2 == SYSCHAR_FLAG_COMPLETE || f2 == SYSCHAR_FLAG_DOES_NOT_EXIST || f2 == SYSCHAR_FLAG_NOT_APPLICABLE) {
+				result = SYSCHAR_FLAG_COMPLETE;
+			} else if (f2 == SYSCHAR_FLAG_INCOMPLETE || f2 == SYSCHAR_FLAG_NOT_COLLECTED) {
+				result = SYSCHAR_FLAG_INCOMPLETE;
+			}
+		} else if (f1 == SYSCHAR_FLAG_INCOMPLETE) {
+			if (f2 != SYSCHAR_FLAG_ERROR) {
+				result = SYSCHAR_FLAG_INCOMPLETE;
+			} else {
+				result = SYSCHAR_FLAG_ERROR;
+			}
+		} else if (f1 == SYSCHAR_FLAG_DOES_NOT_EXIST) {
+			if (f2 == SYSCHAR_FLAG_ERROR) {
+				result = SYSCHAR_FLAG_ERROR;
+			} else if (f2 == SYSCHAR_FLAG_COMPLETE) {
+				result = SYSCHAR_FLAG_COMPLETE;
+			} else if (f2 == SYSCHAR_FLAG_INCOMPLETE || f2 == SYSCHAR_FLAG_NOT_COLLECTED) {
+				result = SYSCHAR_FLAG_INCOMPLETE;
+			} else if (f2 == SYSCHAR_FLAG_NOT_APPLICABLE || f2 == SYSCHAR_FLAG_DOES_NOT_EXIST) {
+				result = SYSCHAR_FLAG_DOES_NOT_EXIST;
+			}
+		} else if (f1 == SYSCHAR_FLAG_NOT_COLLECTED) {
+			if (f2 == SYSCHAR_FLAG_ERROR) {
+				result = SYSCHAR_FLAG_ERROR;
+			} else if (f2 == SYSCHAR_FLAG_COMPLETE || f2 == SYSCHAR_FLAG_INCOMPLETE || f2 == SYSCHAR_FLAG_DOES_NOT_EXIST) {
+				result = SYSCHAR_FLAG_INCOMPLETE;
+			} else if (f2 == SYSCHAR_FLAG_NOT_APPLICABLE || f2 == SYSCHAR_FLAG_NOT_COLLECTED) {
+				result = SYSCHAR_FLAG_NOT_COLLECTED;
+			}
+		} else if (f1 == SYSCHAR_FLAG_NOT_APPLICABLE) {
+			if (f2 == SYSCHAR_FLAG_ERROR) {
+				result = SYSCHAR_FLAG_ERROR;
+			} else if (f2 == SYSCHAR_FLAG_COMPLETE) {
+				result = SYSCHAR_FLAG_COMPLETE;
+			} else if (f2 == SYSCHAR_FLAG_INCOMPLETE) {
+				result = SYSCHAR_FLAG_INCOMPLETE;
+			} else if (f2 == SYSCHAR_FLAG_NOT_APPLICABLE) {
+				result = SYSCHAR_FLAG_NOT_APPLICABLE;
+			} else if (f2 == SYSCHAR_FLAG_DOES_NOT_EXIST) {
+				result = SYSCHAR_FLAG_DOES_NOT_EXIST;
+			} else if (f2 == SYSCHAR_FLAG_NOT_COLLECTED) {
+				result = SYSCHAR_FLAG_NOT_COLLECTED;
+			}
+		}
+		break;
+
+	default:
+		result = SYSCHAR_FLAG_ERROR;
+	}
+
+	return result;
+}
+
+/*
  * entities
  */
 
