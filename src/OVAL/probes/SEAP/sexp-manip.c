@@ -667,7 +667,7 @@ SEXP_numtype_t SEXP_number_type (const SEXP_t *s_exp)
         type = SEXP_datatype (s_exp);
 
         if (type != NULL) {
-                if (strcmp (type, "boolean"))
+                if (strcmp (type, "bool"))
                         return (SEXP_NUM_BOOLEAN);
         }
         
