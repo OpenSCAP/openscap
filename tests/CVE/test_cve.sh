@@ -52,7 +52,7 @@ function test_cve_export {
     [ ! -e cve_export.xml.out.1 ] && [ $ret_val -eq 0 ] && ret_val=1
 
     if [ $ret_val -eq 0 ]; then
-	xml_cmp ${srcdir}/cve_export.xml cve_export.xml.out.1
+	xml_cmp cve_export.xml cve_export.xml.out.1
         ret_val=$?
     fi
 
@@ -68,7 +68,7 @@ function test_cve_add_entry {
     [ ! -e cve_export.xml.out.1 ] && [ $ret_val -eq 0 ] && ret_val=1
 
     if [ $ret_val -eq 0 ]; then
-	xml_cmp ${srcdir}/cve_export.xml cve_export.xml.out.2
+	xml_cmp cve_export.xml cve_export.xml.out.2
         ret_val=$?
     fi
 
@@ -119,7 +119,8 @@ EOF
 function test_cve_cleanup {
     local ret_val=0
 
-    rm cve_export.xml.out.1 cve_export.xml.out.2 cve_export.xml.out.3 cve_export.xml
+    rm -f cve_export.xml*
+
     ret_val=$?
     return $ret_val
 }

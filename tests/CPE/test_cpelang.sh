@@ -101,7 +101,7 @@ EOF
     [ ! -e export.xml.out.0 ] && [ $ret_val -eq 0 ] && ret_val=1
 
     if [ $ret_val -eq 0 ]; then
-	xml_cmp ${srcdir}/export.xml export.xml.out.0
+	xml_cmp export.xml export.xml.out.0
 	ret_val=$?
     fi    
 
@@ -135,7 +135,7 @@ EOF
     [ ! -e export.xml.out.1 ] && [ $ret_val -eq 0 ] && ret_val=1
 
     if [ $ret_val -eq 0 ]; then
-	xml_cmp ${srcdir}/export.xml export.xml.out.1
+	xml_cmp export.xml export.xml.out.1
 	ret_val=$?
     fi    
 
@@ -159,7 +159,7 @@ EOF
     [ ! -e export.xml.out.2 ] && [ $ret_val -eq 0 ] && ret_val=1
 
     if [ $ret_val -eq 0 ]; then
-	xml_cmp ${srcdir}/export.xml export.xml.out.2
+	xml_cmp export.xml export.xml.out.2
 	ret_val=$?
     fi    
 
@@ -181,7 +181,7 @@ EOF
     [ ! -e export.xml.out.3 ] && [ $ret_val -eq 0 ] && ret_val=1
 
     if [ $ret_val -eq 0 ]; then
-	xml_cmp ${srcdir}/export.xml export.xml.out.3
+	xml_cmp export.xml export.xml.out.3
 	ret_val=$?
     fi
 
@@ -192,12 +192,7 @@ EOF
 function test_cpelang_cleanup {
     local ret_val=0;
 
-    rm -f export.xml \
-    	  export.xml.out \
-    	  export.xml.out.0 \
-    	  export.xml.out.1 \
-    	  export.xml.out.2 \
-    	  export.xml.out.3 \
+    rm -f export.xml*
     	  diff.out get-all \
     	  get-all.out \
     	  get-key.out
