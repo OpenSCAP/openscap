@@ -26,8 +26,76 @@
  *
  */
 
+
+/* Convert a tuple element to a C array */
 /* SWIG can't understand __attribute__(x), so we make it go away */
 #define __attribute__(x)
+
+%typemap(python,in) struct cpe_name ** {
+
+    int i; 
+    int a_size = 0;
+    int res_o = 0;
+    a_size = (int) PySequence_Length($input);
+
+    if (!PySequence_Check($input)) {
+        PyErr_SetString(PyExc_ValueError,"Expected a sequence");
+        return NULL;
+    }
+    if (a_size <= 0) {
+        PyErr_SetString(PyExc_ValueError,"Expected not empty sequence");
+        return NULL;
+    }
+
+    $1 = (struct cpe_name **) malloc(a_size*sizeof(struct cpe_name *));
+    for (i = 0; i < a_size; i++) {
+        void *arg = 0;
+        PyObject *obj = PySequence_GetItem($input,i);
+        if (obj == NULL) {
+            SWIG_exception_fail(SWIG_ArgError(res_o), "in argument '" "cpe_name" "' substitution '" "', can't access sequence");
+            return NULL; /*5956*/
+        }
+        res_o = SWIG_ConvertPtr(obj, &arg, SWIGTYPE_p_cpe_name, 0 );
+        if (!SWIG_IsOK(res_o)) {
+            SWIG_exception_fail(SWIG_ArgError(res_o), "in argument '" "cpe_name" "' substitution invalid types");
+            return NULL;
+        }
+        $1[i] = (struct cpe_name *) arg;
+    }
+}
+
+%typemap(python,in) struct oval_syschar_model ** {
+
+    int i; 
+    int a_size = 0;
+    int res_o = 0;
+    a_size = (int) PySequence_Length($input);
+
+    if (!PySequence_Check($input)) {
+        PyErr_SetString(PyExc_ValueError,"Expected a sequence");
+        return NULL;
+    }
+    if (a_size <= 0) {
+        PyErr_SetString(PyExc_ValueError,"Expected not empty sequence");
+        return NULL;
+    }
+
+    $1 = (struct oval_syschar_model **) malloc(a_size*sizeof(struct oval_syschar_model *));
+    for (i = 0; i < a_size; i++) {
+        void *arg = 0;
+        PyObject *obj = PySequence_GetItem($input,i);
+        if (obj == NULL) {
+            SWIG_exception_fail(SWIG_ArgError(res_o), "in argument '" "oval_syschar_model" "' substitution '" "', can't access sequence");
+            return NULL;
+        }
+        res_o = SWIG_ConvertPtr(obj, &arg, SWIGTYPE_p_oval_syschar_model, 0 );
+        if (!SWIG_IsOK(res_o)) {
+            SWIG_exception_fail(SWIG_ArgError(res_o), "in argument '" "oval_syschar_model" "' substitution invalid types");
+            return NULL;
+        }
+        $1[i] = (struct oval_syschar_model *) arg;
+    }
+}
 
 %module openscap
 %{
@@ -36,6 +104,7 @@
  #include "../src/common/public/debug.h"
  #include "../src/common/public/alloc.h"
 %}
+
 %include "../src/common/public/oscap.h"
 %include "../src/common/public/error.h"
 %include "../src/common/public/debug.h"
@@ -110,3 +179,31 @@
 %include "../src/XCCDF/public/xccdf.h"
 #endif
 
+/*%typemap(in) value[ANY] {
+
+    int i;
+    PyErr_SetString(PyExc_ValueError,"Expected a sequence");
+    return NULL;
+    if (!PySequence_Check($input)) {
+        PyErr_SetString(PyExc_ValueError,"Expected a sequence");
+        return NULL;
+    }
+    if (PySequence_Length($input) != $1_dim0) {
+            PyErr_SetString(PyExc_ValueError,"Size mismatch. Expected $1_dim0 elements");
+            return NULL;
+    }
+    $1 = (void **) malloc($1_dim0*sizeof( Py_TYPE(PySequence_GetItem($input, 0)) ));
+
+    for (i = 0; i < $1_dim0; i++) {
+        PyObject *o = PySequence_GetItem($input,i);
+        if (Py_TYPE(PySequence_GetItem($input,i)) != Py_TYPE(PySequence_GetItem($input,0)) {
+                PyErr_SetString(PyExc_ValueError,"Type mismatch");
+                free($1);
+                return NULL;
+        }
+        $1[i] = (PyTYPE(PySequence_GetItem($input, i))) o;
+    }
+
+}
+
+*/
