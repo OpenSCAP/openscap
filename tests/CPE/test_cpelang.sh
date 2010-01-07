@@ -188,6 +188,30 @@ EOF
     return $ret_val
 }
 
+# Function for testing CPE match system
+function test_cpelang_match_cpe {
+    local ret_val=0;
+
+cat > export.xml <<EOF
+<?xml version="1.0"  encoding="UTF-8"?>
+<cpe:platform-specification xmlns:cpe="http://cpe.mitre.org/language/2.0">
+	<cpe:platform id="123">
+		<cpe:title xml:lang="en">Microsoft Windows XP with Adobe Reader</cpe:title>
+		<cpe:logical-test operator="AND" negate="FALSE">
+			<cpe:fact-ref name="cpe:/o:microsoft:windows_xp" />
+			<cpe:fact-ref name="cpe:/a:adobe:reader" />
+		</cpe:logical-test>
+	</cpe:platform>
+</cpe:platform-specification>
+EOF
+
+
+    ./test_cpelang --match-cpe export.xml "UTF-8" "cpe:/o:adobe:reader" "cpe:/o:microsoft:windows_xp"
+    ret_val=$?
+
+    return $ret_val
+}
+
 # Cleanup.
 function test_cpelang_cleanup {
     local ret_val=0;
@@ -253,6 +277,11 @@ result=$[$result+$ret_val]
 test_cpelang_export_new_namespace
 ret_val=$? 
 report_result "test_cpelang_export_new_namespace" $ret_val
+result=$[$result+$ret_val]
+
+test_cpelang_match_cpe
+ret_val=$? 
+report_result "test_cpelang_match_cpe" $ret_val
 result=$[$result+$ret_val]
 
 #test_cpelang_cleanup 

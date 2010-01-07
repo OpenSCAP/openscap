@@ -82,7 +82,7 @@ static bool cpe_language_match_expr(struct cpe_name **cpe, size_t n, const struc
 	switch (cpe_testexpr_get_oper(expr) & CPE_LANG_OPER_MASK) {
 	case CPE_LANG_OPER_AND:
 		ret = true;
-		for (cur = cpe_testexpr_get_meta_expr(expr); cpe_testexpr_get_oper(cur);
+		for (cur = cpe_testexpr_get_meta_expr(expr); (cur!=NULL && cpe_testexpr_get_oper(cur));
 		     cur = cpe_testexpr_get_meta_expr(cur)) {
 			if (!cpe_language_match_expr(cpe, n, cur)) {
 				ret = false;
@@ -92,7 +92,7 @@ static bool cpe_language_match_expr(struct cpe_name **cpe, size_t n, const struc
 		break;
 	case CPE_LANG_OPER_OR:
 		ret = false;
-		for (cur = cpe_testexpr_get_meta_expr(expr); cpe_testexpr_get_oper(cur);
+		for (cur = cpe_testexpr_get_meta_expr(expr); (cur!=NULL && cpe_testexpr_get_oper(cur));
 		     cur = cpe_testexpr_get_meta_expr(cur)) {
 			if (cpe_language_match_expr(cpe, n, cur)) {
 				ret = true;
