@@ -664,6 +664,7 @@ int oval_sysch_apply_sexp(struct oval_syschar *sysch, const SEXP_t *cobj, struct
 		if (sysdata != NULL)
 			oval_syschar_add_sysdata(sysch, sysdata);
 	}
+	SEXP_free(items);
 
 	return (0);
 }

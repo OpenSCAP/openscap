@@ -163,7 +163,8 @@ static SEXP_t *probe_set_combine(SEXP_t *cobj1, SEXP_t *cobj2, oval_setobject_op
 		break;
 	default:
 		_D("Unexpected set operation: %d\n", op);
-		// todo: leak
+		SEXP_vfree(item_lst1, item_lst2, res_items, NULL);
+
 		return NULL;
 	}
 
@@ -797,7 +798,7 @@ void *probe_worker(void *arg)
 
 			_D("probe_main1\n");
 			probe_ret = -1;
-			r0 = probe_main(probe_in, &probe_ret, global.probe_arg);
+			probe_out = r0 = probe_main(probe_in, &probe_ret, global.probe_arg);
 			if (r0 != NULL) {
 				probe_out = _probe_cobj_new(SYSCHAR_FLAG_UNKNOWN, r0);
 				SEXP_free(r0);
