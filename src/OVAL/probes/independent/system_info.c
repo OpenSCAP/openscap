@@ -155,7 +155,7 @@ SEXP_t *probe_main(SEXP_t *probe_in, int *err, void *arg)
                 return NULL;
         }
 
-        if ((e = getnameinfo(results->ai_addr, sizeof (struct sockaddr),
+        if ((e = getnameinfo(results->ai_addr, results->ai_addrlen,
                              hname, sizeof (hname), NULL, 0, 0)) != 0) {
                 freeaddrinfo(results);
                 _D("getnameinfo: %s\n", gai_strerror (e));
