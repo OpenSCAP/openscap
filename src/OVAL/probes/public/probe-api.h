@@ -1,12 +1,16 @@
 /**
  * @addtogroup OVAL
  * @{
- * @addtogroup Probes
+ * @addtogroup PROBES Probes and S-expression 
+ * Private interface for probe writes
+ * @{
+ * @addtogroup PROBESAPI Main probe API
+ * Most of the operations that need to be done in a probe, processing input object, 
+ * manipulating entities, creating output items.
+ * @{
  * @{
  *
  * @file
- * Interface to most of the operations that need to be done in a probe;
- * processing input object, manipulating entities, creating output items
  *
  * @author "Daniel Kopecek" <dkopecek@redhat.com>
  */

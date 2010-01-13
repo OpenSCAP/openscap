@@ -1,11 +1,15 @@
 /**
  * @addtogroup OVAL
  * @{
- * @addtogroup Probes
+ * @addtogroup PROBES Probes and S-expression 
+ * Private interface for probe writes
+ * @{
+ * @addtogroup PROBESCMP Entity comparison
+ * Comparison operations on entities in probes
+ * @{
  * @{
  *
  * @file
- * Interface to comparison operations on entities in probes
  *
  * @author "Tomas Heinrich" <theinric@redhat.com>
  */

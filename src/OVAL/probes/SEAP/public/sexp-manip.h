@@ -1,11 +1,15 @@
 /**
  * @addtogroup OVAL
  * @{
- * @addtogroup Probes
+ * @addtogroup PROBES Probes and S-expression 
+ * Private interface for probe writes
+ * @{
+ * @addtogroup SEXPMANIP S-expression manipulation.
+ * S-expression manipulation functions.
+ * @{
  * @{
  *
  * @file
- * S-expression manipulation functions
  *
  * @author "Daniel Kopecek" <dkopecek@redhat.com>
  */

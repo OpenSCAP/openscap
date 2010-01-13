@@ -1,11 +1,15 @@
 /**
  * @addtogroup OVAL
  * @{
- * @addtogroup Probes
+ * @addtogroup PROBES Probes and S-expression 
+ * Private interface for probe writes
+ * @{
+ * @addtogroup FINDFILE Find Files
+ *  Auxiliary find_files() function 
+ * @{
  * @{
  *
  * @file
- * Auxiliary find_files() function for use in different probes
  *
  * @author "Peter Vrabec" <pvrabec@redhat.com>
  */
@@ -44,7 +48,7 @@
 
 /**
  * Search the filesystem according to the specified path, filename and behaviors.
- * For all files that satisfy these requirements call the provided callback function.
+ * For all paths and files that satisfy these requirements call the provided callback function.
  * @param path the requested path in a sexp form, which may specify the matching operation or a var_ref
  * @param filenam the requested filename in a sexp form, which may specify the matching operation or a var_ref
  * @param behaviors the behaviors may specify the recursion depth or direction
