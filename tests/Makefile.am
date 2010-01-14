@@ -12,9 +12,9 @@ AM_CPPFLAGS =	-I$(top_srcdir)/src/CVE/public \
 		-I$(top_srcdir)/src/OVAL/probes/public \
 		-I$(top_srcdir)/src/OVAL/probes/SEAP/public
 LDADD = $(top_builddir)/src/libopenscap_testing.la
-EXTRA_DIST = xmldiff.pl
-DISTCLEANFILES = *.log *.out
-
+EXTRA_DIST = test_common.sh \
+             xmldiff.pl 
+DISTCLEANFILES = *.log *.out.*
 
 if WANT_OVAL
 TESTS += OVAL/test_oval.sh 
@@ -43,10 +43,10 @@ check_PROGRAMS +=	sexp_parser \
 			sexp_number \
 			sexp_list \
 			test_probes \
-			test_probe-api \
-			test_sysinfo \
-			test_error \
-			test_probes2
+			test_sysinfo 
+#			test_probe-api \
+#			test_error \
+#			test_probes2
 
 sexp_parser_SOURCES =	OVAL/SEAP/sexp_parser.c
 sexp_string_SOURCES =	OVAL/SEAP/sexp_string.c
@@ -56,19 +56,13 @@ test_probes_SOURCES =	OVAL/probes/test_probes.c
 test_probes_CFLAGS =	-I$(top_srcdir)/src/OVAL @libxml_cflags@
 test_sysinfo_SOURCES =	OVAL/probes/test_sysinfo.c
 test_sysinfo_CFLAGS =	-I$(top_srcdir)/src/OVAL @libxml_cflags@
-test_probes2_SOURCES =	OVAL/probes/test_probes2.c
-test_error_SOURCES =	OVAL/probes/test_error.c
-test_probe_api_SOURCES =OVAL/probes/test_probe-api.c
+# test_probes2_SOURCES =	OVAL/probes/test_probes2.c
+# test_error_SOURCES =	OVAL/probes/test_error.c
+# test_probe_api_SOURCES =OVAL/probes/test_probe-api.c
 
-EXTRA_DIST += OVAL/SEAP/test_seap.sh 	  \
-	      OVAL/probes/test_probes.sh  \
-	      OVAL/probes/rpminfo.xml 	  \
-	      OVAL/probes/runlevel.xml	  \
-	      OVAL/probes/filecontent.xml \
-	      OVAL/probes/file-set.xml	  \
-	      OVAL/probes/file-set2.xml	  \
-	      OVAL/probes/file-set3.xml	  \
-	      OVAL/probes/file.xml	  
+EXTRA_DIST += OVAL/SEAP/test_seap.sh 	       \
+	      OVAL/probes/test_probes.sh       \
+	      OVAL/probes/test_probes_file.xml 
 
 endif # WANT_PROBES 
 endif # WANT_OVAL
@@ -88,14 +82,13 @@ test_cpedict_SOURCES = CPE/test_cpedict.c
 test_cpeuri_SOURCES = CPE/test_cpeuri.c
 
 
-EXTRA_DIST +=	test_common.sh \
-		CPE/test_cpeuri.sh \
-		CPE/test_cpedict.sh \
-		CPE/test_cpelang.sh \
-		CPE/dict.xml \
-		CPE/lang.xml \
+EXTRA_DIST +=	CPE/test_cpeuri.sh     \
+		CPE/test_cpedict.sh    \
+		CPE/test_cpelang.sh    \
+		CPE/dict.xml           \
+		CPE/lang.xml           \
 		CPE/lang-corrupted.xml \
-		CPE/lang-damaged.xml \
+		CPE/lang-damaged.xml   \
 		CPE/lang-copy.xml
 endif
 
