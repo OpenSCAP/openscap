@@ -54,7 +54,7 @@ static void xccdf_selected_dump(struct xccdf_selected *sel, int depth)
 	printf("sel %c= %s\n", (sel->selected ? '+' : '-'), (sel->item ? sel->item->item.id : "(unknown)"));
 }
 
-struct xccdf_item *xccdf_profile_new_empty(struct xccdf_item *bench)
+struct xccdf_item *xccdf_profile_new(struct xccdf_item *bench)
 {
 	if (bench)
 		assert(bench->type == XCCDF_BENCHMARK);
@@ -76,7 +76,7 @@ const struct oscap_string_map XCCDF_ROLE_MAP[] = {
 struct xccdf_item *xccdf_profile_parse(xmlTextReaderPtr reader, struct xccdf_item *bench)
 {
 	XCCDF_ASSERT_ELEMENT(reader, XCCDFE_PROFILE);
-	struct xccdf_item *prof = xccdf_profile_new_empty(bench);
+	struct xccdf_item *prof = xccdf_profile_new(bench);
 
 	if (!xccdf_item_process_attributes(prof, reader)) {
 		xccdf_profile_free(prof);

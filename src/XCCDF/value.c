@@ -28,7 +28,7 @@
 static oscap_destruct_func xccdf_value_val_get_destructor(xccdf_value_type_t type);
 static struct xccdf_value_val *xccdf_value_val_new(xccdf_value_type_t type);
 
-static struct xccdf_item *xccdf_value_new(struct xccdf_item *parent, xccdf_value_type_t type)
+struct xccdf_item *xccdf_value_new(struct xccdf_item *parent, xccdf_value_type_t type)
 {
 	struct xccdf_item *val = xccdf_item_new(XCCDF_VALUE, parent->item.benchmark, parent);
 	val->sub.value.type = type;

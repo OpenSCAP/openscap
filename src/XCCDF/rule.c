@@ -182,7 +182,7 @@ static void xccdf_item_dump_deps(struct xccdf_item *item, int depth)
 	}
 }
 
-static struct xccdf_item *xccdf_group_new(struct xccdf_item *parent)
+struct xccdf_item *xccdf_group_new(struct xccdf_item *parent)
 {
 	struct xccdf_item *group = xccdf_item_new(XCCDF_GROUP, parent->item.benchmark, parent);
 	group->sub.group.content = oscap_list_new();
@@ -253,7 +253,7 @@ void xccdf_group_free(struct xccdf_item *group)
 	}
 }
 
-static struct xccdf_item *xccdf_rule_new(struct xccdf_item *parent)
+struct xccdf_item *xccdf_rule_new(struct xccdf_item *parent)
 {
 	struct xccdf_item *rule = xccdf_item_new(XCCDF_RULE, parent->item.benchmark, parent);
 	rule->sub.rule.role = XCCDF_ROLE_FULL;

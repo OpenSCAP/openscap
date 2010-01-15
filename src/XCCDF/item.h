@@ -301,7 +301,7 @@ bool xccdf_benchmark_parse(struct xccdf_item *benchmark, xmlTextReaderPtr reader
 bool xccdf_benchmark_add_ref(struct xccdf_item *benchmark, struct xccdf_item **ptr, const char *id, xccdf_type_t type);
 void xccdf_benchmark_dump(struct xccdf_benchmark *benchmark);
 
-struct xccdf_item *xccdf_profile_new_empty(struct xccdf_item *bench);
+struct xccdf_item *xccdf_profile_new(struct xccdf_item *bench);
 struct xccdf_item *xccdf_profile_parse(xmlTextReaderPtr reader, struct xccdf_item *bench);
 void xccdf_profile_dump(struct xccdf_item *prof, int depth);
 void xccdf_profile_free(struct xccdf_item *prof);
@@ -311,14 +311,17 @@ bool xccdf_item_process_element(struct xccdf_item *item, xmlTextReaderPtr reader
 
 bool xccdf_content_parse(xmlTextReaderPtr reader, struct xccdf_item *parent);
 struct xccdf_item *xccdf_group_parse(xmlTextReaderPtr reader, struct xccdf_item *parent);
+struct xccdf_item *xccdf_group_new(struct xccdf_item *parent);
 void xccdf_group_dump(struct xccdf_item *group, int depth);
 void xccdf_group_free(struct xccdf_item *group);
 
+struct xccdf_item *xccdf_rule_new(struct xccdf_item *parent);
 struct xccdf_item *xccdf_rule_parse(xmlTextReaderPtr reader, struct xccdf_item *parent);
 void xccdf_rule_dump(struct xccdf_item *rule, int depth);
 void xccdf_rule_free(struct xccdf_item *rule);
 
 struct xccdf_item *xccdf_value_parse(xmlTextReaderPtr reader, struct xccdf_item *parent);
+struct xccdf_item *xccdf_value_new(struct xccdf_item *parent, xccdf_value_type_t type);
 void xccdf_value_dump(struct xccdf_item *value, int depth);
 void xccdf_value_free(struct xccdf_item *val);
 
@@ -365,6 +368,7 @@ void xccdf_set_value_free(struct xccdf_set_value *sv);
 #define XGROUP(item) ((struct xccdf_group*)item)
 #define XRULE(item) ((struct xccdf_rule*)item)
 #define XITEM(item) ((struct xccdf_item*)item)
+#define XVALUE(item) ((struct xccdf_value*)item)
 
 #define XCCDF_STATUS_CURRENT(TYPE) \
 		xccdf_status_type_t xccdf_##TYPE##_get_status_current(const struct xccdf_##TYPE* item) {\

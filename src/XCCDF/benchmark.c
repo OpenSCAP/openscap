@@ -230,7 +230,8 @@ XCCDF_ITERATOR_GEN_S(notice)
 XCCDF_ITERATOR_GEN_S(model)
 XCCDF_ITERATOR_GEN_S(profile)
 XCCDF_HTABLE_GETTER(const char *, benchmark, plain_text, sub.bench.plain_texts)
-XCCDF_HTABLE_GETTER(struct xccdf_item *, benchmark, item, sub.bench.dict) XCCDF_STATUS_CURRENT(benchmark)
+XCCDF_HTABLE_GETTER(struct xccdf_item *, benchmark, item, sub.bench.dict) 
+XCCDF_STATUS_CURRENT(benchmark)
 
 struct xccdf_notice *xccdf_notice_new(const char *id, char *text)
 {

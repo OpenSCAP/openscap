@@ -875,6 +875,13 @@ xccdf_status_type_t xccdf_item_get_current_status(const struct xccdf_item *item)
 struct xccdf_benchmark *xccdf_benchmark_parse_xml(const char *filename);
 
 /**
++ * Create a group and append it to the benchmark.
++ * @param id - the identifier of the appended benchmark.
++ * @returns the handle of the new group.
++ */
+struct xccdf_group *xccdf_benchmark_append_new_group(const struct xccdf_benchmark *, const char *id);
+
+/**
  * Get benchmark ID.
  * @relates xccdf_benchmark
  */
@@ -1968,6 +1975,16 @@ struct xccdf_check_import_iterator *xccdf_check_get_imports(const struct xccdf_c
 struct xccdf_check_export_iterator *xccdf_check_get_exports(const struct xccdf_check *check);
 struct xccdf_check_content_ref_iterator *xccdf_check_get_content_refs(const struct xccdf_check *check);
 const char *xccdf_fixtext_get_content(const struct xccdf_fixtext *fixtext);
+
+bool xccdf_reference_get_override(const struct xccdf_reference *reference);
+const char *xccdf_reference_get_href(const struct xccdf_reference *reference);
+const char *xccdf_reference_get_text(const struct xccdf_reference *reference);
+
+
+bool xccdf_select_get_selected(const struct xccdf_select *select);
+const char *xccdf_select_get_idref(const struct xccdf_select *select);
+const char *xccdf_select_get_remark(const struct xccdf_select *select);
+struct xccdf_item *xccdf_select_get_item(const struct xccdf_select *select);
 
 /**
  * Release library internal caches.
