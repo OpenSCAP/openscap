@@ -31,7 +31,9 @@
 /* SWIG can't understand __attribute__(x), so we make it go away */
 #define __attribute__(x)
 
-%typemap(python,in) struct cpe_name ** {
+#if defined(SWIGPYTHON)
+/* Definitions for PYTHON */
+%typemap(in) struct cpe_name ** {
 
     int i; 
     int a_size = 0;
@@ -63,8 +65,7 @@
         $1[i] = (struct cpe_name *) arg;
     }
 }
-
-%typemap(python,in) struct oval_syschar_model ** {
+%typemap(in) struct oval_syschar_model ** {
 
     int i; 
     int a_size = 0;
@@ -96,6 +97,9 @@
         $1[i] = (struct oval_syschar_model *) arg;
     }
 }
+#elif defined(SWIGPERL)
+/* Definitions for PERL */
+#endif
 
 %module openscap
 %{
