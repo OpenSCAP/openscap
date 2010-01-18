@@ -24,6 +24,7 @@
 
 #include <seap.h>
 #include <probe-api.h>
+#include <config.h>
 
 #include <sys/utsname.h>
 #include <unistd.h>
@@ -38,6 +39,11 @@
 #include <arpa/inet.h>
 #include <netlink/route/link.h>
 #include <netlink/route/addr.h>
+
+/* Use netlink libnl 1.0 API */
+#ifdef HAVE_LIBNL10
+#define nl_cache_free nl_cache_destroy_and_free
+#endif
 
 struct nl_cache *link_cache;
 

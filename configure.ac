@@ -102,33 +102,72 @@ AC_CHECK_LIB(
   [`pcre-config --libs`]
 )
 
-#
-# rpmlib
-#
-AC_SEARCH_LIBS(
-	[rpmtsCreate],
-	[rpm],
-	[rpm_cflags=`pkg-config rpm --cflags`
-	 rpm_libs=`pkg-config rpm --libs`
-	 have_librpm=yes
-	]
-)
 
 case "${host}" in
     *-*-linux*)
 #
 # libnl
+# Check for libnl version and provide RHEL5 compatibility functions when necessary
 #
 AC_CHECK_LIB(
   [nl],
   [nl_handle_alloc],
-  [libnl_cflags=`pkg-config --cflags libnl-1`
-   libnl_libs=`pkg-config --libs libnl-1`
-  ],
-  [AC_MSG_FAILURE([libnl is missing])],
-  [`pkg-config --libs libnl-1`]
+  [AC_CHECK_LIB(
+     [nl],
+     [nl_cache_free],
+     [libnl_cflags=`pkg-config --cflags libnl-1`
+      libnl_libs=`pkg-config --libs libnl-1`
+      AC_DEFINE([HAVE_LIBNL11],[1],[libnl 1.1 compatibility])],
+     [AC_CHECK_LIB(
+        [nl],
+        [nl_cache_destroy_and_free],
+        [libnl_cflags=`pkg-config --cflags libnl-1`
+         libnl_libs=`pkg-config --libs libnl-1`
+         AC_DEFINE([HAVE_LIBNL10],[1],[libnl 1.0 compatibility])],
+        [AC_MSG_FAILURE([libnl missing nl_cache_free and nl_cache_destroy_and_free. libnl 1.0 or 1.1 required for Linux])]
+      )
+     ]
+   )
+   AC_DEFINE([HAVE_LIBNL],[1],[Use libnl])
+  ],[AC_MSG_FAILURE([libnl missing nl_handle_alloc.  Must have libnl 1.0 or 1.1 to build for Linux])]
+ )
+
+#
+# rpmlib
+# Check for rpmlib version and provide RHEL5 compatibility functions when necessary
+#
+have_librpm=no
+AC_SEARCH_LIBS(
+  [rpmtsCreate],
+  [rpm],
+  [AC_CHECK_LIB(
+     [rpm],
+     [headerFormat],
+     [rpm_cflags=`pkg-config rpm --cflags`
+      rpm_libs=`pkg-config rpm --libs`
+      have_librpm=yes
+      AC_DEFINE([HAVE_LIBRPM47],[1],[Use RPM lib 4.7 compatibility])],
+     [AC_MSG_CHECKING([for librpm v4.4])
+      saved_ldflags=$LDFLAGS 
+      LDFLAGS="$LDFLAGS -lrpm -lrpmio"
+      AC_LINK_IFELSE(
+        [AC_LANG_PROGRAM(
+         [[#include <rpm/header.h>]],
+         [[headerSprintf(0,0,0,0,0);]])],
+        [rpm_cflags="-I/usr/include/rpm"
+         rpm_libs="-lrpm -lrpmio"
+         have_librpm=yes
+         AC_DEFINE([HAVE_LIBRPM44],[1],[Use RPM lib 4.4 compatibility])  
+         AC_MSG_RESULT([yes])],
+        [AC_MSG_RESULT([no])
+         AC_MSG_FAILURE([RPM missing headerFormat & headerSprintf.  RPM probes will not be enabled.  Install RPM 4.7 or 4.4 libraries to enabled RPM support.])]
+      )
+      LDFLAGS=$saved_ldflags
+     ]
+   )
+  ],[AC_MSG_NOTICE([RPM missing rpmtsCreate compatibility.  RPM probes will not be enabled.])]
 )
-    ;;
+;;
 esac
 
 #
@@ -225,7 +264,8 @@ AC_FUNC_REALLOC
 AC_CHECK_FUNCS([memset strcasecmp strdup])
 
 
-AC_CANONICAL_HOST
+AC_DEFUN([canonical_wrap], [AC_REQUIRE([AC_CANONICAL_HOST])])
+canonical_wrap
 
 # Determine the platform
 # (For now just assume unix)
@@ -377,6 +417,7 @@ AM_CONDITIONAL([WANT_PROBES_INDEPENDENT], test "$probes_independent" = yes)
 AM_CONDITIONAL([WANT_PROBES_UNIX], test "$probes_unix" = yes)
 AM_CONDITIONAL([WANT_PROBES_LINUX], test "$probes_linux" = yes)
 AM_CONDITIONAL([ENABLE_PROBE_RPMINFO], test "$have_librpm" = yes)
+AM_CONDITIONAL([ENABLE_PROBE_RPMINFO44], test "$have_librpm44" = yes)
 AM_CONDITIONAL([WANT_BINDINGS], test "$bindings" = yes)
 
 AC_CONFIG_FILES([Makefile

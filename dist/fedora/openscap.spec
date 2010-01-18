@@ -3,7 +3,7 @@
 
 Name:           openscap
 Version:        0.5.6
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Set of open source libraries enabling integration of the SCAP line of standards
 Group:          System Environment/Libraries
 License:        LGPLv2+
@@ -45,7 +45,11 @@ libraries can be used by python.
 Summary:        Perl bindings for %{name}
 Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
+%if 0%{?fedora}
 BuildRequires:  perl-devel
+%else
+BuildRequires: perl
+%endif
 
 %description    perl
 The %{name}-perl package contains the bindings so that %{name}
@@ -93,6 +97,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Mon Jan 11 2010 Spencer Shimko <sshimko@tresys.com> 0.5.6-2
+- Support RHEL builds 
+
 * Mon Jan 04 2010 Peter Vrabec <pvrabec@redhat.com> 0.5.6-1
 - upgrade
 

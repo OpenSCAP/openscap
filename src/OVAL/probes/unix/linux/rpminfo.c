@@ -27,6 +27,13 @@
 #include <probe-api.h>
 #include <alloc.h>
 
+#include <config.h>
+
+#ifdef HAVE_LIBRPM44
+#include <rpm/header.h>
+#define headerFormat(_h, _fmt, _emsg) headerSprintf((_h),(_fmt),0,0,(_emsg))
+#endif
+
 #ifndef _A
 #define _A(x) assert(x)
 #endif
