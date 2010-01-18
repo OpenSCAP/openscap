@@ -218,8 +218,8 @@ SEXP_t *probe_main (SEXP_t *object, int *err, void *arg)
                                               NULL);
                                 
                 probe_item_setstatus (item_sexp, OVAL_STATUS_DOESNOTEXIST);
-                probe_itement_setstatus (item_sexp, "name", OVAL_STATUS_DOESNOTEXIST);
-
+                probe_itement_setstatus (item_sexp, "name", 1, OVAL_STATUS_DOESNOTEXIST);
+                
                 SEXP_list_add (probe_out, item_sexp);
                 SEXP_free (item_sexp);
                 SEXP_free (r0);
