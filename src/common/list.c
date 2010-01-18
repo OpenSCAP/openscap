@@ -201,7 +201,8 @@ bool oscap_iterator_has_more(struct oscap_iterator * it)
 }
 
 OSCAP_ITERATOR_GEN_T(const char *, oscap_string)
-    OSCAP_ITERATOR_REMOVE_T(const char *, oscap_string, free)
+OSCAP_ITERATOR_REMOVE_T(const char *, oscap_string, free)
+
 
 #define OSCAP_DEFAULT_HSIZE 256
 static inline unsigned int oscap_htable_hash(const char *str, size_t htable_size)

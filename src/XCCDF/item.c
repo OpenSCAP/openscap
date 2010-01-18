@@ -52,6 +52,10 @@ struct xccdf_item *xccdf_item_new(xccdf_type_t type, struct xccdf_item *bench, s
 
 	item = oscap_calloc(1, size);
 	item->type = type;
+	item->item.title = oscap_list_new();
+	item->item.description = oscap_list_new();
+	item->item.question = oscap_list_new();
+	item->item.rationale = oscap_list_new();
 	item->item.statuses = oscap_list_new();
 	item->item.platforms = oscap_list_new();
 	item->item.weight = 1.0;
@@ -148,11 +152,11 @@ void xccdf_item_print(struct xccdf_item *item, int depth)
 		}
 		xccdf_print_depth(depth);
 		printf("title   : ");
-		xccdf_print_max(item->item.title, 64, "...");
+		printf("TODO");//xccdf_print_max(item->item.title, 64, "...");//TODO
 		printf("\n");
 		xccdf_print_depth(depth);
 		printf("desc    : ");
-		xccdf_print_max(item->item.description, 64, "...");
+		printf("TODO");//xccdf_print_max(item->item.description, 64, "...");//TODO
 		printf("\n");
 		xccdf_print_depth(depth);
 		printf("platforms ");
@@ -197,14 +201,20 @@ bool xccdf_item_process_element(struct xccdf_item * item, xmlTextReaderPtr reade
 	xccdf_element_t el = xccdf_element_get(reader);
 
 	switch (el) {
-	case XCCDFE_TITLE:
-		if (!item->item.title)
-			item->item.title = xccdf_element_string_copy(reader);
+	case XCCDFE_TITLE:{
+		char *title = xccdf_element_string_copy(reader);
+		void *text  = oscap_text_from_string("eng-US", title);//TODO: INTERNATIONALIZE
+		oscap_list_add(item->item.title, strdup(title));
+		free(title);
 		return true;
-	case XCCDFE_DESCRIPTION:
-		if (!item->item.description)
-			item->item.description = xccdf_get_xml(reader);
+	}
+	case XCCDFE_DESCRIPTION:{
+		char *description = xccdf_element_string_copy(reader);
+		void *text  = oscap_text_from_string("eng-US", description);//TODO: INTERNATIONALIZE
+		oscap_list_add(item->item.description, strdup(description));
+		free(description);
 		return true;
+	}
 	case XCCDFE_STATUS:{
 			const char *date = xccdf_attribute_get(reader, XCCDFA_DATE);
 			char *str = xccdf_element_string_copy(reader);
@@ -221,14 +231,18 @@ bool xccdf_item_process_element(struct xccdf_item * item, xmlTextReaderPtr reade
 		item->item.version_update = xccdf_attribute_copy(reader, XCCDFA_UPDATE);
 		item->item.version = xccdf_element_string_copy(reader);
 		break;
-	case XCCDFE_RATIONALE:
-		if (item->item.rationale == NULL)
-			item->item.rationale = xccdf_get_xml(reader);
-		break;
-	case XCCDFE_QUESTION:
-		if (item->item.question == NULL)
-			item->item.question = xccdf_element_string_copy(reader);
-		break;
+	case XCCDFE_RATIONALE:{
+		char *rationale = xccdf_element_string_copy(reader);
+		void *text  = oscap_text_from_string("eng-US", rationale);//TODO: INTERNATIONALIZE
+		oscap_list_add(item->item.rationale, strdup(rationale));
+		free(rationale);
+	}break;
+	case XCCDFE_QUESTION:{
+		char *question = xccdf_element_string_copy(reader);
+		void *text  = oscap_text_from_string("eng-US", question);//TODO: INTERNATIONALIZE
+		oscap_list_add(item->item.question, strdup(question));
+		free(question);
+	}break;
 
 	default:
 		break;
@@ -252,12 +266,14 @@ XCCDF_ITEM_CONVERT(benchmark, BENCHMARK)
     XCCDF_ABSTRACT_GETTER(xccdf_type_t, item, type, type)
     XCCDF_ITEM_GETTER(const char *, id)
 
-XCCDF_ITEM_GETTER(const char *, title)
+XCCDF_ITEM_TIGETTER(question);
+XCCDF_ITEM_TIGETTER(rationale);
+XCCDF_ITEM_TIGETTER(title);
+XCCDF_ITEM_TIGETTER(description);
+
+
 XCCDF_ITEM_GETTER(const char *, version)
-XCCDF_ITEM_GETTER(const char *, question)
-XCCDF_ITEM_GETTER(const char *, rationale)
 XCCDF_ITEM_GETTER(const char *, cluster_id)
-XCCDF_ITEM_GETTER(const char *, description)
 XCCDF_ITEM_GETTER(const char *, version_update) XCCDF_ITEM_GETTER(time_t, version_time) XCCDF_ITEM_GETTER(float, weight)
 //XCCDF_ITEM_GETTER(struct xccdf_item*, extends)
 XCCDF_ITEM_GETTER(struct xccdf_item *, parent)
@@ -271,7 +287,9 @@ XCCDF_FLAG_GETTER(multiple)
 XCCDF_FLAG_GETTER(prohibit_changes)
 XCCDF_FLAG_GETTER(abstract)
 XCCDF_FLAG_GETTER(interactive)
-XCCDF_ITEM_SIGETTER(platforms) XCCDF_ITEM_IGETTER(reference, references) XCCDF_ITEM_IGETTER(status, statuses)
+XCCDF_ITEM_SIGETTER(platforms)
+XCCDF_ITEM_IGETTER(reference, references)
+XCCDF_ITEM_IGETTER(status, statuses)
  XCCDF_ITERATOR_GEN_S(item) XCCDF_ITERATOR_GEN_S(status) XCCDF_ITERATOR_GEN_S(reference)
 
 const struct oscap_string_map XCCDF_OPERATOR_MAP[] = {

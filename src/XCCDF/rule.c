@@ -298,7 +298,7 @@ struct xccdf_item *xccdf_rule_parse(xmlTextReaderPtr reader, struct xccdf_item *
 					break;
 				struct xccdf_profile_note *note = oscap_calloc(1, sizeof(struct xccdf_profile_note));
 				note->reftag = strdup(tag);
-				note->text = xccdf_get_xml(reader);
+				note->text = oscap_text_from_string("eng-US",xccdf_get_xml(reader));
 				oscap_list_add(rule->sub.rule.profile_notes, note);
 				break;
 			}

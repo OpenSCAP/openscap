@@ -302,6 +302,22 @@ void xccdf_print_depth(int depth)
 		printf("  ");
 }
 
+void xccdf_print_max_text(const struct oscap_text *txt, int max, const char *ellipsis)
+{
+	const wchar_t *text = oscap_text_get_text(txt);
+	if (txt)
+		while (isspace(*text))
+			++text;
+	int len = strlen("(null)");;
+	char buf[32];
+	if (txt)
+		len = oscap_text_get_len(txt);
+	sprintf(buf, "%%.%ds", max);
+	printf(buf, text);
+	if (len > max)
+		printf("%s", ellipsis);
+}
+
 void xccdf_print_max(const char *str, int max, const char *ellipsis)
 {
 	if (str)

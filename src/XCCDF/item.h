@@ -46,12 +46,13 @@ struct xccdf_check;
 
 struct xccdf_item_base {
 	char *id;
-	char *title;
-	char *description;
-	char *question;
-	char *rationale;
 	char *cluster_id;
 	float weight;
+
+	struct oscap_list *title;
+	struct oscap_list *description;
+	struct oscap_list *question;
+	struct oscap_list *rationale;
 
 	char *version;
 	char *version_update;
@@ -188,7 +189,7 @@ struct xccdf_item {
 
 struct xccdf_notice {
 	char *id;
-	char *text;
+	struct oscap_text *text;
 };
 
 struct xccdf_status {
@@ -262,7 +263,7 @@ struct xccdf_check_export {
 
 struct xccdf_profile_note {
 	char *reftag;
-	char *text;
+	struct oscap_text *text;
 };
 
 struct xccdf_fix {
@@ -325,7 +326,8 @@ struct xccdf_item *xccdf_value_new(struct xccdf_item *parent, xccdf_value_type_t
 void xccdf_value_dump(struct xccdf_item *value, int depth);
 void xccdf_value_free(struct xccdf_item *val);
 
-struct xccdf_notice *xccdf_notice_new(const char *id, char *text);
+struct xccdf_notice *xccdf_notice_from_string(const char *id, char *string);
+struct xccdf_notice *xccdf_notice_from_text(const char *id, struct oscap_text *string);
 void xccdf_notice_dump(struct xccdf_notice *notice, int depth);
 void xccdf_notice_free(struct xccdf_notice *notice);
 
@@ -387,6 +389,9 @@ void xccdf_set_value_free(struct xccdf_set_value *sv);
 #define XCCDF_SITERATOR_GETTER(TNAME,MNAME,MEMBER) \
         struct oscap_string_iterator* xccdf_##TNAME##_get_##MNAME(const struct xccdf_##TNAME* item) \
         { return oscap_iterator_new(XITEM(item)->MEMBER); }
+#define XCCDF_TITERATOR_GETTER(TNAME,MNAME,MEMBER) \
+        struct oscap_text_iterator* xccdf_##TNAME##_get_##MNAME(const struct xccdf_##TNAME* item) \
+        { return oscap_iterator_new(XITEM(item)->MEMBER); }
 #define XCCDF_HTABLE_GETTER(RTYPE,TNAME,MNAME,MEMBER) \
 		RTYPE xccdf_##TNAME##_get_##MNAME(const struct xccdf_##TNAME* item, const char* key) \
 		{ return (RTYPE)oscap_htable_get(XITEM(item)->MEMBER, key); }
@@ -445,6 +450,13 @@ void xccdf_set_value_free(struct xccdf_set_value *sv);
         XCCDF_SITERATOR_GETTER(rule,MNAME,item.MNAME) \
         XCCDF_SITERATOR_GETTER(value,MNAME,item.MNAME) \
         XCCDF_SITERATOR_GETTER(group,MNAME,item.MNAME)
+#define XCCDF_ITEM_TIGETTER(MNAME) \
+        XCCDF_TITERATOR_GETTER(item,MNAME,item.MNAME) \
+        XCCDF_TITERATOR_GETTER(benchmark,MNAME,item.MNAME) \
+        XCCDF_TITERATOR_GETTER(profile,MNAME,item.MNAME) \
+        XCCDF_TITERATOR_GETTER(rule,MNAME,item.MNAME) \
+        XCCDF_TITERATOR_GETTER(value,MNAME,item.MNAME) \
+        XCCDF_TITERATOR_GETTER(group,MNAME,item.MNAME)
 #define XCCDF_FLAG_GETTER(MNAME) \
         XCCDF_BENCHMARK_GETTER_A(bool,MNAME,item.flags.MNAME) \
         XCCDF_PROFILE_GETTER_A(bool,MNAME,item.flags.MNAME) \
@@ -469,6 +481,7 @@ void xccdf_set_value_free(struct xccdf_set_value *sv);
 #define XCCDF_ITERATOR_FREE(n) void xccdf_##n##_iterator_free(XCCDF_ITERATOR(n) it) { oscap_iterator_free(XITERATOR(it)); }
 #define XCCDF_ITERATOR_GEN_T(t,n) XCCDF_ITERATOR_FWD(n) XCCDF_ITERATOR_HAS_MORE(n) XCCDF_ITERATOR_NEXT(t,n) XCCDF_ITERATOR_FREE(n)
 #define XCCDF_ITERATOR_GEN_S(n) XCCDF_ITERATOR_GEN_T(struct xccdf_##n*,n)
+#define XCCDF_ITERATOR_GEN_TEXT(n) XCCDF_ITERATOR_GEN_T(struct oscap_text *,n)
 
 OSCAP_HIDDEN_END;
 
