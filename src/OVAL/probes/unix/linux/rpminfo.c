@@ -213,21 +213,13 @@ SEXP_t *probe_main (SEXP_t *object, int *err, void *arg)
                 _D("Package \"%s\" not found.\n", request_st.name);
         
                 item_sexp = probe_item_creat ("rpminfo_item", NULL,
-                                              
                                               "name", NULL,
                                               r0 = SEXP_string_newf(request_st.name),
-                                              
-                                              "arch",    NULL, NULL,
-                                              "epoch",   NULL, NULL,
-                                              "release", NULL, NULL,
-                                              "version", NULL, NULL,
-                                              "evr",     NULL, NULL,
-                                              "signature_keyid", NULL, NULL,
                                               NULL);
-                
-                
-                probe_obj_setstatus (item_sexp, OVAL_STATUS_DOESNOTEXIST);
-                
+                                
+                probe_item_setstatus (item_sexp, OVAL_STATUS_DOESNOTEXIST);
+                probe_itement_setstatus (item_sexp, "name", OVAL_STATUS_DOESNOTEXIST);
+
                 SEXP_list_add (probe_out, item_sexp);
                 SEXP_free (item_sexp);
                 SEXP_free (r0);
@@ -237,16 +229,8 @@ SEXP_t *probe_main (SEXP_t *object, int *err, void *arg)
                 _D("get_rpminfo failed\n");
                 
                 item_sexp = probe_item_creat ("rpminfo_item", NULL,
-                                              
                                               "name", NULL,
                                               r0 = SEXP_string_newf(request_st.name),
-                                              
-                                              "arch",    NULL, NULL,
-                                              "epoch",   NULL, NULL,
-                                              "release", NULL, NULL,
-                                              "version", NULL, NULL,
-                                              "evr",     NULL, NULL,
-                                              "signature_keyid", NULL, NULL,
                                               NULL);
                 
                 probe_item_setstatus (item_sexp, OVAL_STATUS_ERROR);
