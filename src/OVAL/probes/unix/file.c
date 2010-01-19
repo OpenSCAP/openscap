@@ -60,19 +60,58 @@ static SEXP_t *strfiletype (mode_t mode)
         return (NULL);
 }
 
+static int report_missing(SEXP_t *ent)
+{
+	oval_operation_t op;
+        SEXP_t *r0;
+
+	op = SEXP_number_geti_32 (r0 = probe_ent_getattrval(ent, "operation"));
+        SEXP_free (r0);
+
+        if (op == OVAL_OPERATION_EQUALS)
+		return 1;
+	else
+		return 0;
+}
+
+struct cbargs {
+        SEXP_t *filename_ent;
+        SEXP_t *items;
+};
+
 static int file_cb (const char *p, const char *f, void *ptr)
 {
         char path_buffer[PATH_MAX];
-        SEXP_t *res = (SEXP_t *)ptr, *item;
-        const char *st_path;
+        SEXP_t *res, *item;
+        struct cbargs *args = (struct cbargs *) ptr;
         struct stat st;
+        const char *st_path;
+                
+        res = args->items;
         
-        if (f != NULL) {
+        if (f == NULL) {
+                if (report_missing (args->filename_ent)) {
+                        SEXP_t *r0;
+                        
+                        item = probe_obj_creat ("file_item", NULL,
+                                                /* entities */                                        
+                                                "path",     NULL, r0 = SEXP_string_newf ("%s", p),
+                                                NULL);
+                        
+                        probe_item_setstatus(item, OVAL_STATUS_DOESNOTEXIST);
+                        probe_itement_setstatus(item, "filename", 1, OVAL_STATUS_DOESNOTEXIST);
+                        
+                        SEXP_list_add (res, item);
+                        SEXP_free (item);
+                        
+                        return (0);
+                }
+                
+                st_path = p;
+        } else {
                 _D("p = \"%s\"; f = \"%s\"\n", p, f);
                 snprintf (path_buffer, sizeof path_buffer, "%s/%s", p, f);
                 st_path = path_buffer;
-        } else {
-                st_path = p;
         }
         
         if (stat (st_path, &st) == -1) {
@@ -85,10 +124,10 @@ static int file_cb (const char *p, const char *f, void *ptr)
                 item = probe_obj_creat ("file_item", NULL,
                                         /* entities */                                        
                                         "path", NULL,
-                                        r0 = SEXP_string_newf (p),
+                                        r0 = SEXP_string_newf ("%s", p),
                                         
                                         "filename", NULL,
-                                        r1 = (f != NULL ? SEXP_string_newf (f) : NULL),
+                                        r1 = (f != NULL ? SEXP_string_newf ("%s", f) : NULL),
                                         
                                         "type", NULL,
                                         strfiletype (st.st_mode),
@@ -250,6 +289,8 @@ SEXP_t *probe_main (SEXP_t *probe_in, int *err, void *mutex)
 {
         SEXP_t *path, *filename, *behaviors, *items;
         SEXP_t *r0, *r1, *r2, *r3, *r4;
+        int     filecnt;
+        struct cbargs cbargs;
         
         if (mutex == NULL) {
                 *err = PROBE_EINIT;
@@ -331,31 +372,45 @@ SEXP_t *probe_main (SEXP_t *probe_in, int *err, void *mutex)
                 *err = PROBE_EFATAL;
                 return (NULL);
         }
+
+        cbargs.items = items;
+        cbargs.filename_ent = filename;
         
-        /* FIXME: == 0 */
-        if (find_files (path, filename, behaviors, &file_cb, items) < 0) {
+        filecnt = find_files (path, filename, behaviors, &file_cb, items);
+        *err    = 0;
+        
+        if (filecnt < 0) {
+                /* error */
                 SEXP_free (items);
-                SEXP_free (behaviors);
-                SEXP_free (path);
-                SEXP_free (filename);
+                r0    = probe_obj_creat ("file_item", NULL,
+                                        /* entities */                                        
+                                        "path",     NULL, path,
+                                         NULL);
                 
-                switch (pthread_mutex_unlock (&__file_probe_mutex)) {
-                case 0:
-                        break;
-                default:
-                        _D("Can't unlock mutex(%p): %u, %s.\n", &__file_probe_mutex, errno, strerror (errno));
+                probe_item_setstatus(r0, OVAL_STATUS_ERROR);
+                
+                SEXP_list_add (items, r0);
+                SEXP_free (r0);
+
+        } else if (filecnt == 0) {
+                /* not found */
+                if (report_missing (filename)) {
+                        r0   = probe_obj_creat ("file_item", NULL,
+                                                /* entities */                                        
+                                                "path",     NULL, path,
+                                                NULL);
                         
-                        *err = PROBE_EFATAL;
-                        return (NULL);
+                        probe_item_setstatus(r0, OVAL_STATUS_DOESNOTEXIST);
+                        probe_itement_setstatus(r0, "path", 1, OVAL_STATUS_DOESNOTEXIST);
+                        
+                        SEXP_list_add (items, r0);
+                        SEXP_free (r0);
                 }
-                
-                *err = PROBE_EUNKNOWN;
-                return (NULL);
         }
         
         SEXP_free (behaviors);
-        SEXP_free (filename);
         SEXP_free (path);
+        SEXP_free (filename);
         
         switch (pthread_mutex_unlock (&__file_probe_mutex)) {
         case 0:
@@ -367,7 +422,6 @@ SEXP_t *probe_main (SEXP_t *probe_in, int *err, void *mutex)
                 return (NULL);
         }
         
-        *err = 0;
         return (items);
 }
 #endif
