@@ -62,7 +62,8 @@ test_sysinfo_CFLAGS =	-I$(top_srcdir)/src/OVAL @libxml_cflags@
 
 EXTRA_DIST += OVAL/SEAP/test_seap.sh 	       \
 	      OVAL/probes/test_probes.sh       \
-	      OVAL/probes/test_probes_file.xml 
+	      OVAL/probes/test_probes_file.xml \
+	      OVAL/probes/test_probes_rpminfo.xml.sh
 
 endif # WANT_PROBES 
 endif # WANT_OVAL

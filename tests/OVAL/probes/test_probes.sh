@@ -45,9 +45,9 @@ function test_probes_import {
 }
 
 # Check if selected system characteristics were populated correctly. 
-function test_probes_system_chars {
+function test_probes_sysinfo {
     local ret_val=0;
-    local LOGFILE="test_probes_system_chars.out"
+    local LOGFILE="test_probes_sysinfo.out"
     local EXECDIR="$(pwd)"
    
     eval "\"${EXECDIR}/test_sysinfo\"" >> "$LOGFILE"
@@ -91,6 +91,8 @@ function test_probes_system_chars {
 	    ret_val=2
 	fi
     else	
+	echo "Unable to probe system characteristics!" >&2
+	echo "" >&2
 	ret_val=1
     fi
 
@@ -190,6 +192,115 @@ function test_probes_file {
     return $ret_val
 }
 
+function test_probes_rpminfo {
+    local ret_val=0;
+    local LOGFILE="test_probes_rpminfo.out"
+    local EXECDIR="$(pwd)"
+    local DEFFILE="test_probes_rpminfo.xml"
+    local RESFILE="test_probes_rmpinfo.xml.results.xml"
+
+    
+    local RPM_A=`rpm -qa | sed -n '1p'`
+    local RPM_B=`rpm -qa | sed -n '2p'`
+
+    EXISTING_RPM_PACKAGE_A=`rpm -qi ${RPM_A} | sed -n '1p' | awk '{ print $3 }'`
+    EXISTING_RPM_PACKAGE_B=`rpm -qi ${RPM_B} | sed -n '1p' | awk '{ print $3 }'`
+
+    NON_EXISTING_RPM_PACKAGE_A="non_existing_package_A"
+    NON_EXISTING_RPM_PACKAGE_B="non_existing_package_B"
+
+    EXISTING_RPM_VERSION=`rpm -qi ${RPM_A} | sed -n '2p' | awk '{ print $3 }'`
+    EXISTING_RPM_VERSION_PATTERN="^[:digit:].*"
+
+    NON_EXISTING_RPM_VERSION="1000.1000"
+    NON_EXISTING_RPM_VERSION_PATTERN="^X[^[X]]"
+
+    bash "${srcdir}/OVAL/probes/test_probes_rpminfo.xml.sh" \
+	 "$EXISTING_RPM_PACKAGE_A"                          \
+	 "$NON_EXISTING_RPM_PACKAGE_A"                      \
+	 "$EXISTING_RPM_PACKAGE_B"                          \
+	 "$NON_EXISTING_RPM_PACKAGE_B"                      \
+	 "$EXISTING_RPM_VERSION"                            \
+	 "$EXISTING_RPM_VERSION_PATTERN"                    \
+	 "$NON_EXISTING_RPM_VERSION"                        \
+	 "$NON_EXISTING_RPM_VERSION_PATTERN" > "$DEFFILE"
+    
+    eval "\"${EXECDIR}/test_probes\" \"$DEFFILE\" \"$RESFILE\"" >> "$LOGFILE"
+    
+    if [ $? -eq 0 ] && [ -e $RESFILE ]; then
+
+	for ID in `seq 1 15`; do
+	    
+	    DEF_DEF=`cat "$DEFFILE" | grep "id=\"definition:${ID}\""`
+	    DEF_RES=`cat "$RESFILE" | grep "definition_id=\"definition:${ID}\""`
+
+	    if (echo $DEF_RES | grep -q "result=\"true\""); then
+		RES="TRUE"
+	    elif (echo $DEF_RES | grep -q "result=\"false\""); then
+		RES="FALSE"
+	    else
+		RES="ERROR"
+	    fi
+
+	    if (echo $DEF_DEF | grep -q "comment=\"true\""); then
+		CMT="TRUE"
+	    elif (echo $DEF_DEF | grep -q "comment=\"false\""); then
+		CMT="FALSE"
+	    else
+		CMT="ERROR"
+	    fi
+
+	    if [ ! $RES = $CMT ]; then
+		echo "Result of definition:${ID} should be ${CMT}!" >&2
+		ret_val=$[$ret_val + 1]
+	    fi
+
+	done
+
+	for ID in `seq 1 49`; do
+	    
+	    TEST_DEF=`cat "$DEFFILE" | grep "id=\"test:${ID}\""`
+	    TEST_RES=`cat "$RESFILE" | grep "test_id=\"test:${ID}\""`
+
+	    if (echo $TEST_RES | grep -q "result=\"true\""); then
+		RES="TRUE"
+	    elif (echo $TEST_RES | grep -q "result=\"false\""); then
+		RES="FALSE"
+	    else
+		RES="ERROR"
+	    fi
+
+	    if (echo $TEST_DEF | grep -q "comment=\"true\""); then
+		CMT="TRUE"
+	    elif (echo $TEST_DEF | grep -q "comment=\"false\""); then
+		CMT="FALSE"
+	    else
+		CMT="ERROR"
+	    fi
+
+	    if [ ! $RES = $CMT ]; then
+		echo "Result of test:${ID} should be ${CMT}!" >&2
+		ret_val=$[$ret_val + 1]
+	    fi
+	    
+	done
+
+	if [ ! $ret_val -eq 0 ]; then
+	    echo "" >&2
+	    cat "$RESFILE" >&2
+	    echo "" >&2
+	    ret_val=2
+	fi
+
+    else 
+	ret_val=1
+    fi
+
+    [ -e $RESFILE ] && rm -f "$RESFILE"
+    
+    return $ret_val
+}
+
 # Cleanup.
 function test_probes_cleanup {     
     local ret_val=0;    
@@ -219,9 +330,9 @@ result=$[$result+$ret_val]
 # report_result "test_probes_import" $ret_val 
 # result=$[$result+$ret_val]   
 
-test_probes_system_chars
+test_probes_sysinfo
 ret_val=$? 
-report_result "test_probes_system_chars" $ret_val  
+report_result "test_probes_sysinfo" $ret_val  
 result=$[$result+$ret_val]   
 
 # test_probes_api
@@ -234,10 +345,10 @@ ret_val=$?
 report_result "test_probes_file" $ret_val  
 result=$[$result+$ret_val]   
 
-# test_probes_rpminfo
-# ret_val=$?
-# report_result "test_probes_rpminfo" $ret_val  
-# result=$[$result+$ret_val]   
+test_probes_rpminfo
+ret_val=$?
+report_result "test_probes_rpminfo" $ret_val  
+result=$[$result+$ret_val]   
 
 # test_probes_rpminfo
 # ret_val=$?

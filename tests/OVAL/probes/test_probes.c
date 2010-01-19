@@ -7,29 +7,31 @@
  *
  */
 
-#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <oval_agent_api.h>
 
+#define ASSERT(expr) \
+  if (!(expr)) fprintf(stderr, "%s:%d: Assertion failed!\n", __FUNCTION__, __LINE__);
+
 int main(int argc, char **argv) {
   
   /* definition model populate */
   struct oscap_import_source *def_in = oscap_import_source_new_file(argv[1], NULL);
-  assert(def_in != NULL);
+  ASSERT(def_in != NULL);
   
   struct oval_definition_model *def_model = oval_definition_model_new();
-  assert(def_model != NULL);
+  ASSERT(def_model != NULL);
 
   int ret = oval_definition_model_import(def_model, def_in, NULL);
-  assert(ret == 0);
+  ASSERT(ret != -1);
   
   oscap_import_source_free(def_in);
   
   /* create syschar model */
   struct oval_syschar_model *sys_model = oval_syschar_model_new(def_model);
-  assert(sys_model != NULL);
+  ASSERT(sys_model != NULL);
       
   /* call probes */
   oval_syschar_model_probe_objects(sys_model);
@@ -37,11 +39,11 @@ int main(int argc, char **argv) {
   /* create result model */
   struct oval_syschar_model *sys_models[] = {sys_model, NULL};
   struct oval_results_model* res_model = oval_results_model_new( def_model, sys_models );
-  assert(res_model != NULL);
+  ASSERT(res_model != NULL);
 
   /* set up directives */
   struct oval_result_directives * res_direct = oval_result_directives_new(res_model);
-  assert(res_direct != NULL);
+  ASSERT(res_direct != NULL);
   
   oval_result_directives_set_reported(res_direct, OVAL_RESULT_INVALID, true);
   oval_result_directives_set_reported(res_direct, OVAL_RESULT_TRUE, true);
@@ -55,20 +57,17 @@ int main(int argc, char **argv) {
   
   /* report results */
   struct oscap_export_target *result_out  = oscap_export_target_new_file(argv[2], "UTF-8");
-  assert(result_out != NULL);
+  ASSERT(result_out != NULL);
 
   oval_results_model_export(res_model, res_direct, result_out);
+
   oscap_export_target_free(result_out);
-  assert(result_out == NULL);
   
   oval_definition_model_free(def_model);
-  assert(def_model == NULL);
 
   oval_syschar_model_free(sys_model);
-  assert(sys_model == NULL);
 
   oval_results_model_free(res_model);
-  assert(res_model == NULL);
   
   return 0;
 }
