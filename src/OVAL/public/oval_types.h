@@ -302,12 +302,6 @@ struct oval_variable_model;
  */
 struct oval_results_model;
 
-struct oval_string_iterator;
-
-bool oval_string_iterator_has_more(struct oval_string_iterator *);
-char *oval_string_iterator_next(struct oval_string_iterator *);
-int oval_string_iterator_remaining(struct oval_string_iterator *);
-void oval_string_iterator_free(struct oval_string_iterator *);
 /**
  * @}ENDOVAL
  */
