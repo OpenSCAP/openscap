@@ -7,11 +7,23 @@
 
 #include "util.h"
 #include "list.h"
+#include <config.h>
 #include <string.h>
 #include <wchar.h>
-#include <endian.h>
 #include <stdio.h>
-
+#ifdef HAVE_ENDIAN_H
+# include <endian.h>
+#else
+/* XXX: workaround */
+# ifdef HAVE_SYS_ENDIAN_H
+# include <sys/endian.h>
+#  if _BYTE_ORDER == _LITTLE_ENDIAN
+#   define __LONG_LONG_PAIR(HI, LO) LO, HI
+#  elif _BYTE_ORDER == _BIG_ENDIAN
+#   define __LONG_LONG_PAIR(HI, LO) HI, LO
+#  endif
+# endif
+#endif
 
 OSCAP_ITERATOR_GEN_T(const struct oscap_text *, oscap_text)
 OSCAP_ITERATOR_REMOVE_T(const struct oscap_text *, oscap_text, oscap_text_free)
