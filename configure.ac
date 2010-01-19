@@ -209,7 +209,7 @@ AC_CHECK_HEADERS(
   [pthread.h],,
   [AC_MSG_FAILURE([pthread header file is missing])]
 )
-AC_CHECK_HEADERS([endian.h, sys/endian.h],,,)
+AC_CHECK_HEADERS([endian.h sys/endian.h],,,)
 
 #
 # xml
