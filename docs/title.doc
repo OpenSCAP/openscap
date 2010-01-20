@@ -36,6 +36,10 @@ To get started, see list of <a href="modules.html">available libraries</a>.
 
 /**
 
+@defgroup COMMON Common
+
+Definitions and functions common to all the OpenScap sublibraries.
+
 @defgroup CCE
 
 Common Configuration Enumeration.

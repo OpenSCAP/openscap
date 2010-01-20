@@ -1,3 +1,14 @@
+/**
+ * @file
+ * OpenScap debugging helpers.
+ *
+ * @addtogroup COMMON
+ * @{
+ * @addtogroup Internal
+ * @{
+ * @name Debugging
+ */
+
 #pragma once
 #ifndef OSCAP_DEBUG_H
 #define OSCAP_DEBUG_H

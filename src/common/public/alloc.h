@@ -1,3 +1,14 @@
+/**
+ * @file
+ * OpenScap allocation helpers.
+ *
+ * @addtogroup COMMON
+ * @{
+ * @addtogroup Internal
+ * @{
+ * @name Memory allocation
+ */
+
 #pragma once
 #ifndef OSCAP_ALLOC_H
 #define OSCAP_ALLOC_H
@@ -74,10 +85,29 @@ __P void oscap_free(void *p)
 	__oscap_free_dbg(&p, __FUNCTION__, 0);
 }
 
+/**
+ * malloc wrapper
+ */
 # define oscap_alloc(s)       __oscap_alloc_dbg (s, __PRETTY_FUNCTION__, __LINE__)
+
+/**
+ * calloc wrapper
+ */
 # define oscap_calloc(n, s)   __oscap_calloc_dbg (n, s, __PRETTY_FUNCTION__, __LINE__)
+
+/**
+ * realloc wrapper
+ */
 # define oscap_realloc(p, s)  __oscap_realloc_dbg ((void *)(p), s, __PRETTY_FUNCTION__, __LINE__)
+
+/**
+ * realloc wrapper freeing old memory on failure
+ */
 # define oscap_reallocf(p, s) __oscap_reallocf_dbg ((void *)(p), s, __PRETTY_FUNCTION__, __LINE__)
+
+/**
+ * free wrapper
+ */
 # define oscap_free(p)        __oscap_free_dbg ((void **)((void *)&(p)), __PRETTY_FUNCTION__, __LINE__)
 #endif
 

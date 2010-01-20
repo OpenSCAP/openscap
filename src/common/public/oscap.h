@@ -24,6 +24,9 @@
  * @file
  * General OpenScap functions and types.
  * @author Lukas Kuklinek <lkuklinek@redhat.com>
+ *
+ * @addtogroup COMMON
+ * @{
  */
 
 #ifndef OSCAP_H_
@@ -31,12 +34,22 @@
 #include <stdbool.h>
 #include <wchar.h>
 
+
 /**
- * @struct oscap_iterator
- * XCCDF iterator.
+ * @defgroup ITER Iterators & collections
+ * @{
+ *
+ * OpenScap iterators concept.
  *
  * Any iterator name takes a form of <tt>struct OBJECT_iterator</tt>, where @c OBJECT
- * is a name of a concrete datatype the iterator iterates over.
+ * is a name of particular datatype the iterator iterates over.
+ *
+ * Each iterator type defines several manipulation functions, namely:
+ * - @c OBJECT_iterator_has_more - returns true if there is anything left to iterate over
+ * - @c OBJECT_iterator_next     - returns next item in the collection
+ * - @c OBJECT_iterator_free     - destroys the iterator
+ *
+ * You can also use @ref OSCAP_FOREACH convience macro.
  */
 
 /**
@@ -75,27 +88,48 @@
 #define OSCAP_FOREACH_STR(val, init_val, code) \
         OSCAP_FOREACH_GENERIC(oscap_string, const char *, val, init_val, code)
 
-/* XML Metadata. Here should be every general attribute
- * that can be present in every xml element such as xml:lang
- * or xml namespace.
- * */
+/** @} */
+
+/**
+ * @defgroup XMLMETA XML element metadata
+ * @{
+ * Describes XML metadata such as namespace or language.
+ */
+
+/**
+ * @struct xml_metadata
+ * XML Metadata.
+ *
+ * Here should be every general attribute that can be present
+ * in every xml element such as xml:lang or xml namespace.
+ */
 struct xml_metadata {
 	char *namespace;	///< XMLNS (namespace) prefix
 	char *URI;		///< XMLNS (namespace) URI
 	char *lang;		///< XML lang
 };
 
+/// @memberof xml_metadata
 struct xml_metadata *xml_metadata_new(void);
 
+/// @memberof xml_metadata
 const char *xml_metadata_get_namespace(const struct xml_metadata *xml);
+/// @memberof xml_metadata
 const char *xml_metadata_get_lang(const struct xml_metadata *xml);
+/// @memberof xml_metadata
 const char *xml_metadata_get_URI(const struct xml_metadata *xml);
 
+/// @memberof xml_metadata
 bool xml_metadata_set_namespace(struct xml_metadata *xml, const char *new_namespace);
+/// @memberof xml_metadata
 bool xml_metadata_set_lang(struct xml_metadata *xml, const char *new_lang);
+/// @memberof xml_metadata
 bool xml_metadata_set_URI(struct xml_metadata *xml, const char *new_uri);
 
+/// @memberof xml_metadata
 void xml_metadata_free(struct xml_metadata *xml);
+
+
 
 /** @struct xml_metadata_iterator
  * Iterator over XML metadata.
@@ -120,6 +154,14 @@ void xml_metadata_iterator_free(struct xml_metadata_iterator *it);
  * @relates xml_metadata_iterator
  */
 void xml_metadata_iterator_remove(struct xml_metadata_iterator *it);
+
+/** @} */
+
+/**
+ * @defgroup STRINGS String manipulation
+ * @{
+ * Functions to access and manipulate textual data.
+ */
 
 /**
  * @struct oscap_text
@@ -171,7 +213,7 @@ size_t oscap_text_get_len(const struct oscap_text *);
 
 
 /** @struct oscap_text_iterator
- * String iterator.
+ * Internationalized string iterator.
  * @see oscap_iterator
  */
 struct oscap_text_iterator;
@@ -185,8 +227,11 @@ void oscap_text_iterator_free(struct oscap_text_iterator *it);
 void oscap_text_iterator_remove(struct oscap_text_iterator *it);
 
 
-/** @struct oscap_string_iterator
+/**
+ * @struct oscap_string_iterator
  * String iterator.
+ *
+ * An iterator iterating over a collection of char*-s.
  * @see oscap_iterator
  */
 struct oscap_string_iterator;
@@ -238,6 +283,8 @@ bool oscap_title_iterator_has_more(struct oscap_title_iterator *it);
 /// @relates oscap_title
 void oscap_title_iterator_remove(struct oscap_title_iterator *it);
 
+/** @} */
+
 /**
  * Release library internal caches.
  *
@@ -247,13 +294,25 @@ void oscap_title_iterator_remove(struct oscap_title_iterator *it);
  */
 void oscap_cleanup(void);
 
+
 /**
+ * @defgroup IMPORTEXPORT Import & export
+ * @{
+ * File loading and saving support.
+ */
+
+/**
+ * @struct oscap_export_target
  */
 struct oscap_export_target;
 /**
+ * @struct oscap_import_source
  */
 struct oscap_import_source;
 
+/**
+ * Stream type
+ */
 typedef enum {
 	OSCAP_STREAM_UNKNOWN = 0,
 	OSCAP_STREAM_FILE = 1,
@@ -261,55 +320,83 @@ typedef enum {
 } oscap_stream_type_t;
 
 /**
+ * Get type of this import source.
+ * @relates oscap_import_source
  */
 oscap_stream_type_t oscap_import_source_get_type(const struct oscap_import_source *item);
 
 /**
+ * Get name of this import source.
+ * @relates oscap_import_source
  */
 const char *oscap_import_source_get_name(const struct oscap_import_source *item);
 
 /**
+ * Get type of this export target.
+ * @relates oscap_export_target
  */
 oscap_stream_type_t oscap_export_target_get_type(const struct oscap_export_target *item);
+
 /**
+ * Get name of this export target.
  * @relates oscap_export_target
  */
 const char *oscap_export_target_get_name(const struct oscap_export_target *item);
+
 /**
+ * Get encoding for this export target.
  * @relates oscap_export_target
  */
 const char *oscap_export_target_get_encoding(const struct oscap_export_target *item);
+
 /**
+ * Get indentation for this export target.
  * @relates oscap_export_target
  */
 int oscap_export_target_get_indent(const struct oscap_export_target *item);
+
 /**
+ * Get indentation string for this export target.
  * @relates oscap_export_target
  */
 const char *oscap_export_target_get_indent_string(const struct oscap_export_target *item);
+
 /**
- * TODO
+ * New import source from file.
+ * @relates oscap_import_source
  */
 struct oscap_import_source *oscap_import_source_new_file(const char *filename, const char *encoding);
+
 /**
- * TODO
+ * New import source from URL.
+ * @relates oscap_import_source
  */
 struct oscap_import_source *oscap_import_source_new_URL(const char *url, const char *encoding);
+
 /**
- * TODO
+ * Destroy this import source structure.
+ * @relates oscap_import_source
  */
 void oscap_import_source_free(struct oscap_import_source *target);
+
 /**
- * TODO
+ * New export to a file.
+ * @relates oscap_export_target
  */
 struct oscap_export_target *oscap_export_target_new_file(const char *filename, const char *encoding);
+
 /**
- * TODO
+ * New export to an URL location.
+ * @relates oscap_export_target
  */
 struct oscap_export_target *oscap_export_target_new_URL(const char *url, const char *encoding);
+
 /**
- * TODO
+ * Destroy this export target structure.
+ * @relates oscap_export_target
  */
 void oscap_export_target_free(struct oscap_export_target *target);
+
+/** @} */
 
 #endif
