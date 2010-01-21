@@ -2,7 +2,8 @@
 
 TESTS =
 check_PROGRAMS =
-AM_CPPFLAGS =	-I$(top_srcdir)/src/CVE/public \
+AM_CPPFLAGS =   -I$(top_srcdir)/tests/include \
+		-I$(top_srcdir)/src/CVE/public \
 		-I${top_srcdir}/src/CVSS/public \
 		-I$(top_srcdir)/src/CPE/public \
 		-I$(top_srcdir)/src/CCE/public \
