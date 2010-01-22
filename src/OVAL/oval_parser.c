@@ -45,45 +45,6 @@ struct oval_definition_model *oval_parser_context_model(struct oval_parser_conte
 	return context->definition_model;
 }
 
-static int oval_parser_log(struct oval_parser_context *, oval_xml_severity_t severity, char *);
-
-int oval_parser_log_info(struct oval_parser_context *context, char *message)
-{
-
-	return oval_parser_log(context, OVAL_LOG_INFO, message);
-}
-
-int oval_parser_log_debug(struct oval_parser_context *context, char *message)
-{
-
-	return oval_parser_log(context, OVAL_LOG_DEBUG, message);
-}
-
-int oval_parser_log_warn(struct oval_parser_context *context, char *message)
-{
-
-	return oval_parser_log(context, OVAL_LOG_WARN, message);
-}
-
-static int oval_parser_log(struct oval_parser_context *context, oval_xml_severity_t severity, char *message) {
-
-	/*__attribute__nonnull__(context);
-
-	xmlTextReader *reader = context->reader;
-	char msgfield[strlen(message) + 1];
-	*msgfield = 0;
-	strcat(msgfield, message);
-	struct oval_xml_error xml_error;
-	xml_error.message     = msgfield;
-	xml_error.severity    = severity;
-	xml_error.system_id   = (char*) xmlTextReaderBaseUri(reader);
-	xml_error.line_number = xmlTextReaderGetParserLineNumber(reader);*/
-	oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EUNKNOWN, "Deprecated error handler called !");
-	/*if(xml_error.system_id!=NULL)
-	   oscap_free(xml_error.system_id); */
-	return 0;
-}
-
 void libxml_error_handler(void *user, const char *message,
 			  xmlParserSeverities severity, xmlTextReaderLocatorPtr locator)
 {

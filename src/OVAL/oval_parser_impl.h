@@ -55,11 +55,6 @@ int ovalsys_parser_parse(struct oval_syschar_model *, xmlTextReader *, void *);
 
 struct oval_result_directives *ovalres_parser_parse(struct oval_results_model *, xmlTextReader *, void *);
 
-int oval_parser_report(struct oval_parser_context *, struct oval_xml_error *);
-
-int oval_parser_log_info(struct oval_parser_context *context, char *message);
-int oval_parser_log_debug(struct oval_parser_context *context, char *message);
-int oval_parser_log_warn(struct oval_parser_context *context, char *message);
 
 void libxml_error_handler(void *user, const char *message,
 			  xmlParserSeverities severity, xmlTextReaderLocatorPtr locator);

@@ -279,16 +279,8 @@ typedef enum {
 	OVAL_LOG_WARN = 17
 } oval_xml_severity_t;
 
-struct oval_xml_error {
-	void *user_arg;
-	char *message;
-	oval_xml_severity_t severity;
-	int line_number;
-	char *system_id;
-};
-
 /**
- * @} ENDOVAL
+ * @}
  */
 
 
