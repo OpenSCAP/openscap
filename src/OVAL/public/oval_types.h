@@ -1,3 +1,13 @@
+/**
+ * @addtogroup OVAL
+ * @{
+ *
+ * @file
+ *
+ * @author "David Niemoller" <David.Niemoller@g2-inc.com>
+ */
+
+
 /*
  * Copyright 2008 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
@@ -26,13 +36,6 @@
 #include <stdbool.h>
 #include <oscap.h>
 
-/**
- * @file
- * OVAL agent API.
- * @author "David Niemoller" <David.Niemoller@g2-inc.com>
- * addtogroup OVAL
- * @{
- */
 
 /// OVAL family
 typedef enum {
@@ -284,26 +287,26 @@ struct oval_xml_error {
 	char *system_id;
 };
 
-/// OVAL XML error handler function pointer type.
-/*typedef int (*oval_xml_error_handler) (struct oval_xml_error *, void *user_arg); <-- deprecated */
+/**
+ * @} ENDOVAL
+ */
+
 
 /**
+ * @addtogroup OVAL
+ * @{
+ * @addtogroup OVALVAR OVAL External Variable Binding
+ * Public interface to OVAL External Variable Binding
+ * @{
+ *
  * @struct oval_variable_model
- * OVAL variable model.
  * The OVAL variable model facilitates access to external variable value bindings used to to constrain the evaluation of OVAL objects.
  */
 struct oval_variable_model;
+/** @} */
+/** @} */
 
-/**
- * @struct oval_results_model
- * OVAL Results Model.
- * Object model holds OVAL results
- * structure instances.
- */
-struct oval_results_model;
 
-/**
- * @}ENDOVAL
- */
+
 
 #endif				/* OVAL_TYPES_H_ */

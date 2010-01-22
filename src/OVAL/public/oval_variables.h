@@ -1,84 +1,43 @@
-/*
- * oval_variables.h
+/**
+ * @addtogroup OVAL
+ * @{
+ * @addtogroup OVALVAR OVAL External Variable Binding
+ * Public interface to OVAL External Variable Binding
+ * @{
  *
- *  Created on: Nov 13, 2009
- *      Author: david.niemoller
- */  
+ * @file
+ *
+ * @author "David Niemoller" <David.Niemoller@g2-inc.com>
+ * 
+ */ 
+
+/*
+ * Copyright 2008 Red Hat Inc., Durham, North Carolina.
+ * All Rights Reserved.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ * Authors:
+ *      "David Niemoller" <David.Niemoller@g2-inc.com>
+ */
     
 #ifndef OVAL_VARIABLES_H_
 #define OVAL_VARIABLES_H_
     
 #include "oval_types.h"
-#include "oval_definitions.h"
-    
-/**
- * @addtogroup OVAL
- * @{
- * @addtogroup OVALVAR OVAL External Variable Binding API
- * @{
- */ 
-/**
-* @addtogroup OVALVAR_setters Setters
-* @{
-* @ref OVALVAR set methods.
-*	These methods will not change the state of a locked instance.
-*	@see oval_syschar_model_get_locked
-*	@see oval_syschar_model_set_locked
-* @}
-* @addtogroup OVALVAR_getters Getters
-* @{
-* @ref OVALVAR get methods.
-* @}
-* @addtogroup OVALVAR_service Service
-* @{
-* @ref OVALVAR import/export methods.
-* @}
-* @addtogroup OVALVAR_eval    Evaluators
-* @{
-* @ref OVALVAR evaluation methods.
-* @}
-*/ 
-    
-/**
- * Create a new OVAL variable model
- * @ingroup OVALVAR
- */ 
-struct oval_variable_model *oval_variable_model_new(void);
 
-/**
- * return <b>true</b> if the variable_model instance is valid
- * @ingroup OVALVAR_eval
- */ 
-    bool oval_variable_model_is_valid(struct oval_variable_model *variable_model);
-
-/**
- * return <b>true</b> if the variable_model instance is locked.
- * The state of a locked instance cannot be changed.
- * @ingroup OVALVAR_getters
- */ 
-    bool oval_variable_model_is_locked(struct oval_variable_model *variable_model);
-
-/**
- * Lock the variable_model instance.
- * The state of a locked instance cannot be changed.
- * This operation has no effect if the model is already locked.
- * @ingroup OVALVAR_setters
- */ 
-void oval_variable_model_lock(struct oval_variable_model *variable_model);
-
-/**
- * Create an OVAL variable model
- * @ingroup OVALVAR
- */ 
-struct oval_variable_model *oval_variable_model_clone(struct oval_variable_model *);
-
-/**
- * Free memory allocated to a specified oval_variable_model
- * @param variable_model the specified oval_variable_model
- * @ingroup OVALVAR
- */ 
-void oval_variable_model_free(struct oval_variable_model *);
-
 /**
  * Load the specified oval_variable_model from an XML stream.
  * The stream document element must be a valid instance of <http://oval.mitre.org/XMLSchema/oval-variables-5:oval_variables>.
@@ -86,65 +45,116 @@ void oval_variable_model_free(struct oval_variable_model *);
  * @param variable_model the specified oval_variable_model.
  * @param import_source the oscap_import_source that resolves the XML stream.
  * @param user_param a user parameter that is passed the the error handler implementation.
- * @ingroup OVALVAR_service
+ * @memberof oval_variable_model
  */ 
-int oval_variable_model_import  (struct oval_variable_model *, struct oscap_import_source *, void *);
-
+int oval_variable_model_import (struct oval_variable_model *, struct oscap_import_source *, void *);
+/**
+ * Create a new OVAL variable model
+ * @memberof oval_variable_model
+ */ 
+struct oval_variable_model *oval_variable_model_new(void);
+/**
+ * Clone an OVAL variable model
+ * @memberof oval_variable_model
+ */ 
+struct oval_variable_model *oval_variable_model_clone(struct oval_variable_model *);
+/**
+ * Free memory allocated to a specified oval_variable_model
+ * @param variable_model the specified oval_variable_model
+ * @memberof oval_variable_model
+ */ 
+void oval_variable_model_free(struct oval_variable_model *);
 /**
  * Export the specified oval_variable_model to an XML stream.
  * The exported document element is a valid instance of <http://oval.mitre.org/XMLSchema/oval-variables-5:oval_variables>.
  * @param variable_model the specified oval_variable_model.
  * @param export_target the oscap_export_target that resolves the output XML stream.
- * @ingroup OVALVAR_service
+ * @memberof oval_variable_model
  */ 
-int oval_variable_model_export  (struct oval_variable_model *, struct oscap_export_target *);
-
+int oval_variable_model_export (struct oval_variable_model *, struct oscap_export_target *);
+
+
+/**
+ * @name Setters
+ * @{
+ */
+/**
+ * Lock the variable_model instance.
+ * The state of a locked instance cannot be changed.
+ * This operation has no effect if the model is already locked.
+ * @memberof oval_variable_model
+ */ 
+void oval_variable_model_lock(struct oval_variable_model *variable_model);
+/**
+ * Get the values bound to a specified external variable.
+ * If the varid does not resolve to a managed external variable, this method returns NULL.
+ * @param variable_model the specified oval_variable_model.
+ * @param varid the identifier of the required oval_variable.
+ * @memberof oval_variable_model
+ */ 
+void oval_variable_model_add(struct oval_variable_model *model, char *varid, const char *comment, oval_datatype_t datatype, char *value);
+/** @} */
+
+/**
+ * @name Getters
+ * @{
+ */
 /**
  * Get all external variables managed by a specified oval_variable_model.
  * @param variable_model the specified oval_variable_model.
- * @ingroup OVALVAR_getters
+ * @memberof oval_variable_model
  */ 
-struct oval_string_iterator *oval_variable_model_get_variable_ids  (struct oval_variable_model *);
-
+struct oval_string_iterator *oval_variable_model_get_variable_ids (struct oval_variable_model *);
 /**
  * Get a specified external variable datatype.
  * If the varid does not resolve to a managed external variable, this method returns 0.
  * @param variable_model the specified oval_variable_model.
  * @param varid the identifier of the required oval_variable.
- * @ingroup OVALVAR_getters
+ * @memberof oval_variable_model
  */ 
-    oval_datatype_t oval_variable_model_get_datatype  (struct oval_variable_model *, char *);
-
+oval_datatype_t oval_variable_model_get_datatype (struct oval_variable_model *, char *);
 /**
  * Get a specified external variable comment.
  * If the varid does not resolve to a managed external variable, this method returns NULL.
  * @param variable_model the specified oval_variable_model.
  * @param varid the identifier of the required oval_variable.
- * @ingroup OVALVAR_getters
+ * @memberof oval_variable_model
  */ 
-const char *oval_variable_model_get_comment  (struct oval_variable_model *, char *);
-
+const char *oval_variable_model_get_comment (struct oval_variable_model *, char *);
 /**
  * Get the values bound to a specified external variable.
  * If the varid does not resolve to a managed external variable, this method returns NULL.
  * @param variable_model the specified oval_variable_model.
  * @param varid the identifier of the required oval_variable.
- * @ingroup OVALVAR_getters
+ * @memberof oval_variable_model
  */ 
-struct oval_string_iterator *oval_variable_model_get_values  (struct oval_variable_model *, char *);
-
+struct oval_string_iterator *oval_variable_model_get_values (struct oval_variable_model *, char *);
 /**
- * Get the values bound to a specified external variable.
- * If the varid does not resolve to a managed external variable, this method returns NULL.
- * @param variable_model the specified oval_variable_model.
- * @param varid the identifier of the required oval_variable.
- * @ingroup OVALVAR_setters
+ * Return <b>true</b> if the variable_model instance is locked.
+ * The state of a locked instance cannot be changed.
+ * @memberof oval_variable_model
  */ 
-void oval_variable_model_add(struct oval_variable_model *model, char *varid, const char *comment,
-			     oval_datatype_t datatype, char *value);
-
+bool oval_variable_model_is_locked(struct oval_variable_model *variable_model);
+/** @} */
+
+
+/**
+ * @name Evaluators
+ * @{
+ */
+/**
+ * Return <b>true</b> if the variable_model instance is valid
+ * @memberof oval_variable_model
+ */ 
+bool oval_variable_model_is_valid(struct oval_variable_model *variable_model);
+/** @} */
+
+
+
 /**
  * @}END OVALVAR
  * @}END OVAL
  */ 
 #endif	/* OVAL_VARIABLES_H_ */
+
+

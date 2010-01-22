@@ -2,7 +2,7 @@
  * @addtogroup OVAL
  * @{
  * @addtogroup OVALDEF OVAL Definitions
- * Public interface fof OVAL Definitions.
+ * Public interface for OVAL Definitions.
  * @{
  *
  * @file
@@ -30,7 +30,6 @@
  *
  * Authors:
  *      "David Niemoller" <David.Niemoller@g2-inc.com>
- *
  */
 
 
@@ -221,15 +220,6 @@ typedef enum {
 	OVAL_DATETIME_SECONDS_SINCE_EPOCH = 5
 } oval_datetime_format_t;
 
-/// Message level.
-typedef enum {
-	OVAL_MESSAGE_LEVEL_NONE = 0,
-	OVAL_MESSAGE_LEVEL_DEBUG = 1,
-	OVAL_MESSAGE_LEVEL_INFO = 2,
-	OVAL_MESSAGE_LEVEL_WARNING = 3,
-	OVAL_MESSAGE_LEVEL_ERROR = 4,
-	OVAL_MESSAGE_LEVEL_FATAL = 5
-} oval_message_level_t;
 
 
 
@@ -248,17 +238,16 @@ const char *oval_operation_get_text(oval_operation_t);
 const char *oval_set_operation_get_text(oval_setobject_operation_t);
 const char *oval_datetime_format_get_text(oval_datetime_format_t);
 const char *oval_arithmetic_operation_get_text(oval_arithmetic_operation_t);
-const char *oval_message_level_text(oval_message_level_t);
-
-
 
 
 
 
 /**
  * @struct oval_definition_model
+ * Oval definition model
  */
 struct oval_definition_model;
+
 /**
  * @struct oval_definition
  * Oval definition specification.
@@ -582,11 +571,6 @@ struct oval_definition_model *oval_definition_model_new(void);
  */
 struct oval_definition_model *oval_definition_model_clone(struct oval_definition_model *);
 /**
- * Bind an oval_variable_model to the specified oval_definition_model.
- * @memberof oval_definition_model
- */
-void oval_definition_model_bind_variable_model(struct oval_definition_model *, struct oval_variable_model *);
-/**
  * @memberof oval_definition_model 
  */
 int oval_definition_model_export(struct oval_definition_model *, struct oscap_export_target *);
@@ -600,6 +584,11 @@ void oval_definition_model_free(struct oval_definition_model *model);
  * @name Setters
  * @{
  */
+/**
+ * Bind an oval_variable_model to the specified oval_definition_model.
+ * @memberof oval_definition_model
+ */
+void oval_definition_model_bind_variable_model(struct oval_definition_model *, struct oval_variable_model *);
 /**
  * @memberof oval_definition_model
  */
@@ -3133,170 +3122,12 @@ void oval_string_iterator_free(struct oval_string_iterator *);
 
 
 
-/**
- * @struct oval_message
- * OVAL message
- */
-struct oval_message;
-/**
- * @struct oval_message_iterator
- */
-struct oval_message_iterator;
-
-/**
- * @memberof oval_message
- */
-struct oval_message *oval_message_new(void);
-/**
- * @memberof oval_message
- */
-struct oval_message *oval_message_clone(struct oval_message *old_message);
-/**
- * @memberof oval_message
- */
-void oval_message_free(struct oval_message *);
-
-/**
- * @name Setters
- * @{
- */
-/**
- * @memberof oval_message
- */
-void oval_message_set_text(struct oval_message *, char *);
-/**
- * @memberof oval_message
- */
-void oval_message_set_level(struct oval_message *, oval_message_level_t);
-/** @} */
-
-/**
- * @name Getters
- * @{
- */
-/**
- * Get OVAL message text.
- * @memberof oval_message
- */
-char *oval_message_get_text(struct oval_message *message);
-/**
- * Get OVAL message level.
- * @memberof oval_message
- */
-oval_message_level_t oval_message_get_level(struct oval_message *message);
-/**
- * return <b>true</b> if the message instance is locked.
- * The state of a locked instance cannot be changed.
- * @memberof oval_message
- */
-bool oval_message_is_locked(struct oval_message *message);
-/** @} */
-
-/**
- * @name Iterators
- * @{
- */
-/**
- * @memberof oval_message_iterator
- */
-bool oval_message_iterator_has_more(struct oval_message_iterator *oc_message);
-/**
- * @memberof oval_message_iterator
- */
-struct oval_message *oval_message_iterator_next(struct oval_message_iterator *oc_message);
-/**
- * @memberof oval_message_iterator
- */
-void oval_message_iterator_free(struct oval_message_iterator *oc_message);
-/** @} */
-
-/**
- * @name Evaluators
- * @{
- */
-/**
- * Return <b>true</b> if the message instance is valid
- * @memberof oval_message
- */
-bool oval_message_is_valid(struct oval_message *message);
-/** @} */
 
 
 
 
 
 
-/**
- * @struct oval_variable_binding
- * Binding of an value to an OVAL variable.
- */
-struct oval_variable_binding;
-/**
- * @struct oval_variable_binding_iterator
- */
-struct oval_variable_binding_iterator;
-
-/**
- * @memberof oval_variable_binding
- */
-struct oval_variable_binding *oval_variable_binding_new(struct oval_variable *, char *);
-/**
- * @memberof oval_variable_binding
- */
-struct oval_variable_binding *oval_variable_binding_clone(struct oval_variable_binding *,
-							  struct oval_definition_model *);
-/**
- * @memberof oval_variable_binding
- */
-void oval_variable_binding_free(struct oval_variable_binding *);
-
-/**
- * @name Setters
- * @{
- */
-/**
- * @memberof oval_variable_binding
- */
-void oval_variable_binding_set_variable(struct oval_variable_binding *, struct oval_variable *);
-/**
- * @memberof oval_variable_binding
- */
-void oval_variable_binding_set_value(struct oval_variable_binding *, char *);
-/** @} */
-
-/**
- * @name Getters
- * @{
- */
-/**
- * Get variable for this binding.
- * @memberof oval_variable_binding
- */
-struct oval_variable *oval_variable_binding_get_variable(struct oval_variable_binding *);
-/**
- * Get value of this binding.
- * @memberof oval_variable_binding
- */
-char *oval_variable_binding_get_value(struct oval_variable_binding *);
-/** @} */
-
-/**
- * @name Iterators
- * @{
- */
-/**
- * @memberof oval_variable_binding_iterator
- */
-bool oval_variable_binding_iterator_has_more(struct oval_variable_binding_iterator *);
-/**
- * @memberof oval_variable_binding_iterator
- */
-struct oval_variable_binding *oval_variable_binding_iterator_next(struct oval_variable_binding_iterator *);
-/**
- * @memberof oval_variable_binding_iterator
- */
-void oval_variable_binding_iterator_free(struct oval_variable_binding_iterator *);
-/** @} */
 
 
 
