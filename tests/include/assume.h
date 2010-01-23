@@ -22,10 +22,10 @@
  * 
  */
 
-#define __LB(l, ...) l
-#define __RB(l, ...) __VA_ARGS__
+#define __LB(l, ...) __LB(l)
+#define __RB(l, ...) __LB(__VA_ARGS__)
 
-#define assume(expr, ...)                                               \
+#define __assume(expr, ...)                                             \
         do {                                                            \
                 if (!(expr)) {                                          \
                         fprintf (stderr, "%s:%d (%s): Assumption `%s' not fulfilled!\n", __FILE__, __LINE__, __PRETTY_FUNCTION__, #expr); \
@@ -34,3 +34,9 @@
                         do { __RB(__VA_ARGS__) } while(0);              \
                 }                                                       \
         } while (0)
+
+#if defined(__GNUC__)
+# define assume(expr, ...) __assume(__builtin_expect(expr, 1), __VA_ARGS__)
+#else
+# define assume(expr, ...) __assume(expr, __VA_ARGS__)
+#endif
