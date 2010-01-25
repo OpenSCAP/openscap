@@ -32,4 +32,16 @@ void __oscap_dprintf(const char *, const char *, size_t, const char *, ...);
 # define OSCAP_DEBUG_FILE_ENV "OSCAP_DEBUG_FILE"
 #endif
 
+#ifndef OSCAP_DEBUG_LEVEL_ENV
+# define OSCAP_DEBUG_LEVEL_ENV "OSCAP_DEBUG_LEVEL"
+#endif
+
+#ifndef NDEBUG
+#include <stdlib.h>
+extern int __debuglog_level;
+# define debug(l) if ((__debuglog_level = (__debuglog_level == -1 ? atoi (getenv (OSCAP_DEBUG_LEVEL_ENV)) : __debuglog_level)) && __debuglog_level > (l))
+#else
+# define debug(l) if (0)
+#endif
+
 #endif				/* OSCAP_DEBUG_H */

@@ -22,6 +22,7 @@ typedef uint16_t oscap_errcode_t;
 #define OSCAP_EFAMILY_GLIBC    1	/* Errno errors */
 #define OSCAP_EFAMILY_XML      2	/* Libxml - xmlerror errors */
 #define OSCAP_EFAMILY_OSCAP    3	/* OSCAP errors */
+#define OSCAP_EFAMILY_OVAL     4        /* OVAL errors (OVAL & probes) */
 
 /* For oscap error of family */
 /*****************************/

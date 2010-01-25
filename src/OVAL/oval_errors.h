@@ -1,0 +1,19 @@
+#pragma once
+#ifndef OVAL_ERRORS_H
+#define OVAL_ERRORS_H
+
+#define OVAL_EINVAL            1
+#define OVAL_EUNKNOWN        255
+
+#define OVAL_EPROBEINIT      256
+#define OVAL_EPROBECONN      257
+#define OVAL_EPROBENOTSUPP   258
+#define OVAL_EPROBEOBJINVAL  259
+#define OVAL_EPROBEITEMINVAL 260
+#define OVAL_EPROBENODATA    261
+#define OVAL_EPROBECLOSE     262
+#define OVAL_EPROBESEND      263
+#define OVAL_EPROBERECV      264
+#define OVAL_EPROBEUNKNOWN   511
+
+#endif /* OVAL_ERRORS_H */
