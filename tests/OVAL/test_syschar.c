@@ -28,41 +28,7 @@ int _test_error()
 	return 0;
 }
 
-int _test_error_handler(struct oval_xml_error *error, void *null) /* <-- deprecated */
-{
-	char *label;
-	switch (error->severity) {
-	case XML_ERROR:
-		label = "XML ERROR";
-		break;
-	case XML_VALIDITY_ERROR:
-		label = "XML VALIDITY ERROR";
-		break;
-	case XML_WARNING:
-		label = "XML WARNING";
-		break;
-	case XML_VALIDITY_WARNING:
-		label = "XML VALIDITY WARNING";
-		break;
-	case OVAL_LOG_INFO:
-		label = "LOG INFO";
-		break;
-	case OVAL_LOG_DEBUG:
-		label = "LOG DEBUG";
-		break;
-	case OVAL_LOG_WARN:
-		label = "LOG WARN";
-		break;
-	default:{
-			char labelarray[200];
-			*labelarray = 0;
-			sprintf(labelarray, "UNHANDLED SEVERITY(%d)", error->severity);
-			label = labelarray;
-		}
-	}
-	printf("test_error_handler:%s: %s\n     %s(%d)\n", label, error->message, error->system_id, error->line_number);
-	return 1;
-}
+
 
 int main(int argc, char **argv)
 {
