@@ -131,7 +131,7 @@ cat <<EOF
       </criteria>
     </definition>
 
-    <definition class="compliance" version="1" id="definition:10" comment="false">
+    <definition class="compliance" version="1" id="definition:10" comment="true">
       <criteria>
 	<criteria operator="XOR">
           <criterion test_ref="test:1"/>
@@ -140,7 +140,7 @@ cat <<EOF
       </criteria>
     </definition>
 
-    <definition class="compliance" version="1" id="definition:11" comment="true">
+    <definition class="compliance" version="1" id="definition:11" comment="false">
       <criteria>
 	<criteria operator="XOR">
           <criterion test_ref="test:1"/>
@@ -149,7 +149,7 @@ cat <<EOF
       </criteria>
     </definition>
 
-    <definition class="compliance" version="1" id="definition:12" comment="true">
+    <definition class="compliance" version="1" id="definition:12" comment="false">
       <criteria>
 	<criteria operator="XOR">
           <criterion test_ref="test:2"/>

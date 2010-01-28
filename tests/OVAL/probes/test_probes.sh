@@ -301,6 +301,160 @@ function test_probes_rpminfo {
     return $ret_val
 }
 
+function test_probes_runlevel_A {
+    local ret_val=0;
+    local LOGFILE="test_probes_runlevel_A.out"
+    local EXECDIR="$(pwd)"
+    local DEFFILE="test_probes_runlevel_A.xml"
+    local RESFILE="test_probes_runlevel_A.xml.results.xml"
+   
+    bash "${srcdir}/OVAL/probes/test_probes_runlevel_A.xml.sh" > "$DEFFILE"
+    
+    eval "\"${EXECDIR}/test_probes\" \"$DEFFILE\" \"$RESFILE\"" >> "$LOGFILE"
+    
+    if [ $? -eq 0 ] && [ -e $RESFILE ]; then
+
+	for S in `chkconfig --list | awk '{print $1}'`; do
+	    for L in `chkconfig $S --list | awk '{print $2 " " $3 " " $4 " " $5 " " $6 " " $7 " " $8}'`; do
+		LEVEL=`echo $L | awk -F : '{print $1}'`
+		STATE=`echo $L | awk -F : '{print $2}'`
+	    
+		for SUFFIX in "T F"; do
+		    TEST_DEF=`cat "$DEFFILE" | grep "id=\"test:${S}-${LEVEL}-${STATE}-${SUFFIX}"`
+		    TEST_RES=`cat "$RESFILE" | grep "test_id=\"test:${S}-${LEVEL}-${STATE}-${SUFFIX}\""`
+
+		    if (echo $TEST_RES | grep -q "result=\"true\""); then
+			RES="TRUE"
+		    elif (echo $TEST_RES | grep -q "result=\"false\""); then
+			RES="FALSE"
+		    else
+			RES="ERROR"
+		    fi
+		    
+		    if (echo $TEST_DEF | grep -q "comment=\"true\""); then
+			CMT="TRUE"
+		    elif (echo $TEST_DEF | grep -q "comment=\"false\""); then
+			CMT="FALSE"
+		    else
+			CMT="ERROR"
+		    fi
+		    
+		    if [ ! $RES = $CMT ]; then
+			echo "Result of test:${S}-${LEVEL}-${STATE}-${SUFFIX} should be ${CMT}!" >&2
+			ret_val=$[$ret_val + 1]
+		    fi
+		    
+		done
+	    done
+	done
+
+	if [ ! $ret_val -eq 0 ]; then
+	    echo "" >&2
+	    cat "$RESFILE" >&2
+	    echo "" >&2
+	    ret_val=2
+	fi
+	
+    else 
+	ret_val=1
+    fi
+
+    [ -e $RESFILE ] && rm -f "$RESFILE"
+    
+    return $ret_val
+}
+
+function test_probes_runlevel_B {
+    local ret_val=0;
+    local LOGFILE="test_probes_runlevel_B.out"
+    local EXECDIR="$(pwd)"
+    local DEFFILE="test_probes_runlevel_B.xml"
+    local RESFILE="test_probes_runlevel_B.xml.results.xml"
+
+    
+    local SERVICE_A=`chkconfig --list | grep "3:on" | head -1 | awk '{print $1}'`
+    local SERVICE_B=`chkconfig --list | grep "3:off" | head -1 | awk '{print $1}'`
+
+    bash "${srcdir}/OVAL/probes/test_probes_runlevel_B.xml.sh" \
+	 "$SERVICE_A"                                          \
+         "$SERVICE_B" > "$DEFFILE"
+    
+    eval "\"${EXECDIR}/test_probes\" \"$DEFFILE\" \"$RESFILE\"" >> "$LOGFILE"
+    
+    if [ $? -eq 0 ] && [ -e $RESFILE ]; then
+
+	for ID in `seq 1 13`; do
+	    
+	    DEF_DEF=`cat "$DEFFILE" | grep "id=\"definition:${ID}\""`
+	    DEF_RES=`cat "$RESFILE" | grep "definition_id=\"definition:${ID}\""`
+
+	    if (echo $DEF_RES | grep -q "result=\"true\""); then
+		RES="TRUE"
+	    elif (echo $DEF_RES | grep -q "result=\"false\""); then
+		RES="FALSE"
+	    else
+		RES="ERROR"
+	    fi
+
+	    if (echo $DEF_DEF | grep -q "comment=\"true\""); then
+		CMT="TRUE"
+	    elif (echo $DEF_DEF | grep -q "comment=\"false\""); then
+		CMT="FALSE"
+	    else
+		CMT="ERROR"
+	    fi
+
+	    if [ ! $RES = $CMT ]; then
+		echo "Result of definition:${ID} should be ${CMT}!" >&2
+		ret_val=$[$ret_val + 1]
+	    fi
+
+	done
+
+	for ID in `seq 1 40`; do
+	    
+	    TEST_DEF=`cat "$DEFFILE" | grep "id=\"test:${ID}\""`
+	    TEST_RES=`cat "$RESFILE" | grep "test_id=\"test:${ID}\""`
+
+	    if (echo $TEST_RES | grep -q "result=\"true\""); then
+		RES="TRUE"
+	    elif (echo $TEST_RES | grep -q "result=\"false\""); then
+		RES="FALSE"
+	    else
+		RES="ERROR"
+	    fi
+
+	    if (echo $TEST_DEF | grep -q "comment=\"true\""); then
+		CMT="TRUE"
+	    elif (echo $TEST_DEF | grep -q "comment=\"false\""); then
+		CMT="FALSE"
+	    else
+		CMT="ERROR"
+	    fi
+
+	    if [ ! $RES = $CMT ]; then
+		echo "Result of test:${ID} should be ${CMT}!" >&2
+		ret_val=$[$ret_val + 1]
+	    fi
+	    
+	done
+
+	if [ ! $ret_val -eq 0 ]; then
+	    echo "" >&2
+	    cat "$RESFILE" >&2
+	    echo "" >&2
+	    ret_val=2
+	fi
+
+    else 
+	ret_val=1
+    fi
+
+    [ -e $RESFILE ] && rm -f "$RESFILE"
+    
+    return $ret_val
+}
+
 # Cleanup.
 function test_probes_cleanup {     
     local ret_val=0;    
@@ -350,10 +504,15 @@ ret_val=$?
 report_result "test_probes_rpminfo" $ret_val  
 result=$[$result+$ret_val]   
 
-# test_probes_rpminfo
-# ret_val=$?
-# report_result "test_probes_runlevel" $ret_val  
-# result=$[$result+$ret_val]   
+test_probes_runlevel_A
+ret_val=$?
+report_result "test_probes_runlevel_A" $ret_val  
+result=$[$result+$ret_val]   
+
+test_probes_runlevel_B
+ret_val=$?
+report_result "test_probes_runlevel_B" $ret_val  
+result=$[$result+$ret_val]   
 
 # test_probes_textfilecontent
 # ret_val=$?
