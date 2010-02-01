@@ -60,7 +60,8 @@ common_oval_sources = \
 	oval_variable.c \
 	oval_variableBinding.c \
 	ovalsys_parser.c \
-	oval_varModel.c
+	oval_varModel.c \
+	oval_errors.h
 	
 
 # -I options go to CPPFLAGS, not CFLAGS

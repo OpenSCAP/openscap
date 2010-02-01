@@ -394,6 +394,7 @@ SEXP_t *oval_object2sexp(const char *typestr, struct oval_object * object, struc
 		SEXP_list_add(obj_sexp, elm);
 		SEXP_free(elm);
 	}
+	oval_behavior_iterator_free(bit);
 
 	return (obj_sexp);
 }
