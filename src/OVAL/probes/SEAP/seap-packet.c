@@ -587,6 +587,7 @@ int SEAP_packet_recv (SEAP_CTX_t *ctx, int sd, SEAP_packet_t **packet)
          */
         if (pqueue_notempty (dsc->pck_queue)) {
                 /* TODO */
+                abort ();
         }
 
         if (dsc->sexpbuf != NULL) {
@@ -674,11 +675,9 @@ eloop_exit:
                         
                         if (pstate != NULL) {
                                 _D("FAIL: incomplete S-exp received\n");
-                                SEXP_psetup_free (psetup);
                                 errno = ENETRESET;
                                 return (-1);
                         } else {
-                                SEXP_psetup_free (psetup);
                                 errno = ECONNRESET;
                                 return (-1);
                         }
