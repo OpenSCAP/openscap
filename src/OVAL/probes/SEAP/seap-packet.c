@@ -593,9 +593,7 @@ int SEAP_packet_recv (SEAP_CTX_t *ctx, int sd, SEAP_packet_t **packet)
                 if (SEXP_list_length (dsc->sexpbuf) > 0)
                         goto sexp_buf_recv;
         }
-        
-        psetup = SEXP_psetup_new ();
-                
+                        
         /*
          * Event loop
          * The read mutex is not locked during the wait for an event.
@@ -649,8 +647,10 @@ eloop_exit:
          * the execution stops if the received data forms a valid
          * S-expression.
          */
-        pstate = NULL;
         
+        pstate = NULL;
+        psetup = SEXP_psetup_new ();
+
         for (;;) {
                 data_buffer = sm_alloc (SEAP_RECVBUF_SIZE);
                 data_buflen = SEAP_RECVBUF_SIZE;
@@ -678,6 +678,7 @@ eloop_exit:
                                 errno = ENETRESET;
                                 return (-1);
                         } else {
+                                SEXP_psetup_free (psetup);
                                 errno = ECONNRESET;
                                 return (-1);
                         }
@@ -699,6 +700,7 @@ eloop_exit:
                                 break;
                         } else {
                                 SEXP_list_free (sexp_buffer);
+                                SEXP_psetup_free (psetup);
                                 _D("eloop_restart\n");
                                 goto eloop_start;
                         }
