@@ -130,6 +130,7 @@ void SEXP_psetup_init (SEXP_psetup_t *psetup)
 
 void SEXP_psetup_free (SEXP_psetup_t *p)
 {
+        sm_free (p);
         return;
 }
 
