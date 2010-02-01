@@ -30,7 +30,7 @@ void __oscap_dprintf(const char *file, const char *fn, size_t line, const char *
 	__LOCK_FP;
 
         if (__debuglog_level == -1)
-                __debuglog_level = atoi (getenv ("OSCAP_DEBUG_LEVEL"));
+                __debuglog_level = atoi (getenv (OSCAP_DEBUG_LEVEL_ENV) == NULL ? "0" : getenv (OSCAP_DEBUG_LEVEL_ENV));
         
 	if (__debuglog_fp == NULL) {
 		char *logfile;

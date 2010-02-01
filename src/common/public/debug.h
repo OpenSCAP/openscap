@@ -39,7 +39,7 @@ void __oscap_dprintf(const char *, const char *, size_t, const char *, ...);
 #ifndef NDEBUG
 #include <stdlib.h>
 extern int __debuglog_level;
-# define debug(l) if ((__debuglog_level = (__debuglog_level == -1 ? atoi (getenv (OSCAP_DEBUG_LEVEL_ENV)) : __debuglog_level)) && __debuglog_level >= (l))
+# define debug(l) if ((__debuglog_level = (__debuglog_level == -1 ? atoi (getenv (OSCAP_DEBUG_LEVEL_ENV) == NULL ? "0" : getenv (OSCAP_DEBUG_LEVEL_ENV)) : __debuglog_level)) && __debuglog_level >= (l))
 #else
 # define debug(l) if (0)
 #endif
