@@ -206,7 +206,7 @@ cat > export.xml <<EOF
 EOF
 
 
-    ./test_cpelang --match-cpe export.xml "UTF-8" "cpe:/o:adobe:reader" "cpe:/o:microsoft:windows_xp"
+    ./test_cpelang --match-cpe export.xml "UTF-8" "cpe:/a:adobe:reader" "cpe:/o:microsoft:windows_xp"
     ret_val=$?
 
     return $ret_val
