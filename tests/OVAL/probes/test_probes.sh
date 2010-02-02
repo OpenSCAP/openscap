@@ -455,6 +455,99 @@ function test_probes_runlevel_B {
     return $ret_val
 }
 
+function test_probes_textfilecontent54 {
+    local ret_val=0;
+    local LOGFILE="test_probes_textfilecontent54.out"
+    local EXECDIR="$(pwd)"
+    local DEFFILE="${srcdir}/OVAL/probes/test_probes_textfilecontent54.xml"
+    local RESFILE="test_probes_textfilecontent54.xml.results.xml"
+    
+    local FILE_A="/tmp/test_probes_textfilecontent54.tmp_file"
+    local FILE_B="/tmp/test_probes_textfilecontent54.tmp_file_empty"
+    local FILE_C="/tmp/test_probes_textfilecontent54.tmp_file_non_existing"
+
+    touch "$FILE_A"
+    touch "$FILE_B"
+
+    echo "valid_key = valid_value" > "$FILE_A"
+    echo "valid_key = valid_value" >> "$FILE_A"
+
+    eval "\"${EXECDIR}/test_probes\" \"$DEFFILE\" \"$RESFILE\"" >> "$LOGFILE"
+    
+    if [ $? -eq 0 ] && [ -e $RESFILE ]; then
+
+	for ID in `seq 1 13`; do
+	    
+	    DEF_DEF=`cat "$DEFFILE" | grep "id=\"definition:${ID}\""`
+	    DEF_RES=`cat "$RESFILE" | grep "definition_id=\"definition:${ID}\""`
+
+	    if (echo $DEF_RES | grep -q "result=\"true\""); then
+		RES="TRUE"
+	    elif (echo $DEF_RES | grep -q "result=\"false\""); then
+		RES="FALSE"
+	    else
+		RES="ERROR"
+	    fi
+
+	    if (echo $DEF_DEF | grep -q "comment=\"true\""); then
+		CMT="TRUE"
+	    elif (echo $DEF_DEF | grep -q "comment=\"false\""); then
+		CMT="FALSE"
+	    else
+		CMT="ERROR"
+	    fi
+
+	    if [ ! $RES = $CMT ]; then
+		echo "Result of definition:${ID} should be ${CMT}!" >&2
+		ret_val=$[$ret_val + 1]
+	    fi
+
+	done
+
+	for ID in `seq 1 16`; do
+	    
+	    TEST_DEF=`cat "$DEFFILE" | grep "id=\"test:${ID}\""`
+	    TEST_RES=`cat "$RESFILE" | grep "test_id=\"test:${ID}\""`
+
+	    if (echo $TEST_RES | grep -q "result=\"true\""); then
+		RES="TRUE"
+	    elif (echo $TEST_RES | grep -q "result=\"false\""); then
+		RES="FALSE"
+	    else
+		RES="ERROR"
+	    fi
+
+	    if (echo $TEST_DEF | grep -q "comment=\"true\""); then
+		CMT="TRUE"
+	    elif (echo $TEST_DEF | grep -q "comment=\"false\""); then
+		CMT="FALSE"
+	    else
+		CMT="ERROR"
+	    fi
+
+	    if [ ! $RES = $CMT ]; then
+		echo "Result of test:${ID} should be ${CMT}!" >&2
+		ret_val=$[$ret_val + 1]
+	    fi
+	    
+	done
+
+	if [ ! $ret_val -eq 0 ]; then
+	    echo "" >&2
+	    cat "$RESFILE" >&2
+	    echo "" >&2
+	    ret_val=2
+	fi
+
+    else 
+	ret_val=1
+    fi
+
+    [ -e $RESFILE ] && rm -f "$RESFILE"
+    
+    return $ret_val
+}
+
 # Cleanup.
 function test_probes_cleanup {     
     local ret_val=0;    
@@ -514,10 +607,10 @@ ret_val=$?
 report_result "test_probes_runlevel_B" $ret_val  
 result=$[$result+$ret_val]   
 
-# test_probes_textfilecontent
-# ret_val=$?
-# report_result "test_probes_textfilecontent" $ret_val  
-# result=$[$result+$ret_val]   
+test_probes_textfilecontent54
+ret_val=$?
+report_result "test_probes_textfilecontent54" $ret_val  
+result=$[$result+$ret_val]   
 
 test_probes_cleanup
 ret_val=$?

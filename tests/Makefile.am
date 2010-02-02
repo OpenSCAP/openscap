@@ -61,11 +61,12 @@ test_sysinfo_CFLAGS =	-I$(top_srcdir)/src/OVAL @libxml_cflags@
 # test_error_SOURCES =	OVAL/probes/test_error.c
 # test_probe_api_SOURCES =OVAL/probes/test_probe-api.c
 
-EXTRA_DIST += OVAL/SEAP/test_seap.sh 	                \
-	      OVAL/probes/test_probes.sh                \
-	      OVAL/probes/test_probes_file.xml          \
-	      OVAL/probes/test_probes_rpminfo.xml.sh    \
-	      OVAL/probes/test_probes_runlevel_A.xml.sh \
+EXTRA_DIST += OVAL/SEAP/test_seap.sh 	                    \
+	      OVAL/probes/test_probes.sh                    \
+	      OVAL/probes/test_probes_file.xml              \
+	      OVAL/probes/test_probes_textfilecontent54.xml \
+	      OVAL/probes/test_probes_rpminfo.xml.sh        \
+	      OVAL/probes/test_probes_runlevel_A.xml.sh     \
 	      OVAL/probes/test_probes_runlevel_B.xml.sh
 
 endif # WANT_PROBES 

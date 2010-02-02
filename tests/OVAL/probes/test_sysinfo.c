@@ -4,8 +4,10 @@
 #include "oval_definitions_impl.h"
 
 #define ASSERT(expr) \
-  if (!(expr)) fprintf(stderr, "%s:%d: Assertion failed!\n", __FUNCTION__, __LINE__);
-
+  if (!(expr)) { \
+    fprintf(stderr, "%s:%d: Assertion failed!\n", __FUNCTION__, __LINE__); \
+    abort(); \
+  }
 
 int main (void)
 {
