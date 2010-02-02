@@ -22,8 +22,8 @@
  * 
  */
 
-#define __LB(l, ...) __LB(l)
-#define __RB(l, ...) __LB(__VA_ARGS__)
+#define __LB(l, ...) l
+#define __RB(l, ...) __VA_ARGS__
 
 #define __assume(expr, ...)                                             \
         do {                                                            \
