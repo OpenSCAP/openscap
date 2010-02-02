@@ -1006,9 +1006,16 @@ int probe_ent_setstatus(SEXP_t * ent, oval_syschar_status_t status)
 
 oval_syschar_status_t probe_ent_getstatus(const SEXP_t * ent)
 {
+        SEXP_t *val;
+        oval_syschar_status_t sta;
+        
 	_LOGCALL_;
-	/* TBI */
-	return (OVAL_STATUS_EXISTS);
+	
+        val = probe_ent_getattrval (ent, "status");
+        sta = (oval_syschar_status_t) SEXP_number_getu_32 (val);
+        SEXP_free (val);
+        
+	return (sta);
 }
 
 char *probe_ent_getname(const SEXP_t * ent)
