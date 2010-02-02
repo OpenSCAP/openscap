@@ -297,12 +297,10 @@ bool cpe_name_match_cpes(const struct cpe_name * name, size_t n, struct cpe_name
 	__attribute__nonnull__(name);
 	__attribute__nonnull__(namelist);
 
-	int i;
-
 	if (name == NULL || namelist == NULL)
 		return false;
 
-	for (i = 0; i < (int)n; ++i)
+	for (size_t i = 0; i < n; ++i)
 		if (cpe_name_match_one(name, namelist[i]))
 			return true;
 	return false;

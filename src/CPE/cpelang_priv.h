@@ -64,7 +64,7 @@ struct cpe_testexpr {
 	struct xml_metadata xml;
 	cpe_lang_oper_t oper;	///< operator
 	union {
-		struct cpe_testexpr *expr;	///< array of subexpressions for operators
+		struct oscap_list *expr;	///< array of subexpressions for operators
 		struct cpe_name *cpe;	///< CPE for match operation
 	} meta;			///< operation metadata
 };
@@ -156,7 +156,7 @@ void cpe_platform_export(const struct cpe_platform *platform, xmlTextWriterPtr w
  * @param expr CPE test expression structure
  * @relates cpe_testexpr
  */
-void cpe_testexpr_export(const struct cpe_testexpr expr, xmlTextWriterPtr writer);
+void cpe_testexpr_export(const struct cpe_testexpr *expr, xmlTextWriterPtr writer);
 
 /*@}*/
 

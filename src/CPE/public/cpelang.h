@@ -45,7 +45,7 @@
  * CPE language operators
  */
 typedef enum {
-	CPE_LANG_OPER_HALT = 0x00,	///< end of instruction list
+	CPE_LANG_OPER_INVALID = 0x00, ///< invalid or unknown operation
 	CPE_LANG_OPER_AND = 0x01,	///< logical AND
 	CPE_LANG_OPER_OR = 0x02,	///< logical OR
 	CPE_LANG_OPER_MATCH = 0x04,	///< match against specified CPE
@@ -93,6 +93,18 @@ bool cpe_platform_iterator_has_more(struct cpe_platform_iterator *it);
 /// @relates cpe_platform_iterator
 void cpe_platform_iterator_free(struct cpe_platform_iterator *it);
 
+/** @struct cpe_testexpr_iterator
+ * Iterator over CPE language expressions.
+ * @see oscap_iterator
+ */
+struct cpe_testexpr_iterator;
+/// @relates cpe_testexpr_iterator
+struct cpe_testexpr *cpe_testexpr_iterator_next(struct cpe_testexpr_iterator *it);
+/// @relates cpe_testexpr_iterator
+bool cpe_testexpr_iterator_has_more(struct cpe_testexpr_iterator *it);
+/// @relates cpe_testexpr_iterator
+void cpe_testexpr_iterator_free(struct cpe_testexpr_iterator *it);
+
 /*@}*/
 
 /**
@@ -113,14 +125,14 @@ cpe_lang_oper_t cpe_testexpr_get_oper(const struct cpe_testexpr *item);
  * Not valid for CPE_LANG_OPER_MATCH operation.
  * @relates cpe_testexpr
  */
-struct cpe_testexpr *cpe_testexpr_get_meta_expr(const struct cpe_testexpr *item);
+struct cpe_testexpr_iterator *cpe_testexpr_get_meta_expr(const struct cpe_testexpr *item);
 
 /**
  * Get CPE name to match against.
  * Only valid for CPE_LANG_OPER_MATCH.
  * @relates cpe_testexpr
  */
-struct cpe_name *cpe_testexpr_get_meta_cpe(const struct cpe_testexpr *item);
+const struct cpe_name *cpe_testexpr_get_meta_cpe(const struct cpe_testexpr *item);
 
 /**
  * Function to get next expr from array
@@ -174,6 +186,12 @@ struct oscap_title_iterator *cpe_platform_get_titles(const struct cpe_platform *
  */
 const struct cpe_testexpr *cpe_platform_get_expr(const struct cpe_platform *item);
 
+/// @relates cpe_testexpr
+struct cpe_testexpr_iterator *cpe_testexpr_get_subexpressions(struct cpe_testexpr *expr);
+
+/// @relates cpe_testexpr
+const struct cpe_name *cpe_testexpr_get_cpe(struct cpe_testexpr *expr);
+
 /**
  * Get XML namespace from CPE lang model
  * @relates cpe_lang_model
@@ -209,6 +227,14 @@ bool cpe_platform_add_title(struct cpe_platform *platform, struct oscap_title *t
  * @relates cpe_lang_model
  */
 /*bool cpe_lang_model_add_xmlns(struct cpe_lang_model * model, struct xml_metadata * xml);*/
+
+/**
+ * Add an subexpression to a compound CPE language expression.
+ *
+ * Expression has to be of type CPE_LANG_OPER_AND or CPE_LANG_OPER_OR, possibly with negation.
+ * @relates cpe_testexpr
+ */
+bool cpe_testexpr_add_subexpression(struct cpe_testexpr *expr, struct cpe_testexpr *sub);
 
 /*@}*/
 
@@ -272,6 +298,27 @@ bool cpe_platform_set_id(struct cpe_platform *platform, const char *new_id);
  * @relates cpe_platform
  */
 bool cpe_platform_set_remark(struct cpe_platform *platform, const char *new_remark);
+/**
+ * Set evaluation expression for this CPE platform
+ * @relates cpe_platform
+ */
+bool cpe_platform_set_expr(struct cpe_platform *platform, struct cpe_testexpr *expr);
+/**
+ * Set CPE operation.
+ *
+ * Any subexpressions and CPE names associated with this expression will be removed.
+ * @relates cpe_testexpr
+ */
+bool cpe_testexpr_set_oper(struct cpe_testexpr *expr, cpe_lang_oper_t oper);
+
+/**
+ * Set CPE name.
+ *
+ * If the expression does not have type CPE_LANG_OPER_MATCH,
+ * this function has no effect and returns false.
+ * @relates cpe_testexpr
+ */
+bool cpe_testexpr_set_name(struct cpe_testexpr *expr, struct cpe_name *name);
 
 /*@}*/
 

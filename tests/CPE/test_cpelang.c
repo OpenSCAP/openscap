@@ -158,7 +158,7 @@ int main (int argc, char *argv[])
       return 1;
     
     struct xml_metadata *xml = xml_metadata_new();
-    char *tmp = malloc(sizeof(char) * (strlen(argv[4])+6));
+    char *tmp = malloc(sizeof(char) * (strlen(argv[4])+7));
 
     if (strcmp(argv[4], "-"))  {
         sprintf(tmp, "xmlns:%s", argv[4]);
@@ -175,6 +175,12 @@ int main (int argc, char *argv[])
       if ((new_platform =  cpe_platform_new()) == NULL)
 	return 1;
       cpe_platform_set_id(new_platform, argv[i]);      
+	  /*
+	  struct cpe_testexpr *expr = cpe_testexpr_new();
+	  cpe_testexpr_set_oper(expr, CPE_LANG_OPER_MATCH);
+	  cpe_testexpr_set_name(expr, cpe_name_new("cpe:/a:nevim"));
+	  cpe_platform_set_expr(new_platform, expr);
+	  */
       if (!cpe_lang_model_add_platform(lang_model, new_platform))
 	return 2;
     }      
@@ -245,8 +251,13 @@ int main (int argc, char *argv[])
     // let's get platform cpe's to match
     platform_it = cpe_lang_model_get_platforms(lang_model);
     platform = cpe_platform_iterator_next(platform_it); // we just need first one (no more there)
+    cpe_platform_iterator_free(platform_it);
     
     ret_val = !cpe_platform_match_cpe(names, 2, platform);
+
+    cpe_name_free(name1);
+    cpe_name_free(name2);
+    free(names);
 
     oscap_import_source_free(import_source);
     cpe_lang_model_free(lang_model);
@@ -257,6 +268,8 @@ int main (int argc, char *argv[])
     print_usage(argv[0], stderr);
     ret_val = 1;
   }
+
+  oscap_cleanup();
 
   return ret_val;
 }
@@ -275,14 +288,14 @@ void print_usage(const char *program_name, FILE *out)
 	  "  %s --match-cpe CPE_LANG_XML ENCODING CPE_NAME1 CPE_NAME2\n"
 	  "  %s --smoke-test\n",
 	  program_name, program_name, program_name, program_name, program_name,
-	  program_name, program_name);
+	  program_name, program_name, program_name);
 }
 
 // Print expression in prefix form.
 int print_expr_prefix_form(const struct cpe_testexpr *expr) 
 {
 
-  const struct cpe_testexpr *sub;
+  //const struct cpe_testexpr *sub;
 
   putchar('(');
   
@@ -293,8 +306,8 @@ int print_expr_prefix_form(const struct cpe_testexpr *expr)
   case CPE_LANG_OPER_AND:
   case CPE_LANG_OPER_OR:
     printf("%s", CPE_OPER_STRS[cpe_testexpr_get_oper(expr) & CPE_LANG_OPER_MASK]);
-    for (sub = cpe_testexpr_get_meta_expr(expr); cpe_testexpr_get_oper(sub); sub=cpe_testexpr_get_next(sub))
-      print_expr_prefix_form(sub);   
+    //for (sub = cpe_testexpr_get_meta_expr(expr); cpe_testexpr_get_oper(sub); sub=cpe_testexpr_get_next(sub))
+	OSCAP_FOREACH(cpe_testexpr, sub, cpe_testexpr_get_meta_expr(expr), print_expr_prefix_form(sub););
     break;
   case CPE_LANG_OPER_MATCH:
     printf("%s", cpe_name_get_uri(cpe_testexpr_get_meta_cpe(expr)));

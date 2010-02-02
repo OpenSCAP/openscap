@@ -5,6 +5,7 @@ liboscapcommon_la_SOURCES = oscap.c alloc.c text.c \
 			    error.c _error.h
 
 liboscapcommon_la_CPPFLAGS  = @libxml_cflags@ -I$(srcdir)/public
-liboscapcommon_la_LIBADD = @libxml_libs@
+liboscapcommon_la_LIBADD = @libxml_libs@ $(pthread_ldflags)
 
 pkginclude_HEADERS  = public/oscap.h public/alloc.h public/debug.h public/error.h
+
