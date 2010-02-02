@@ -109,7 +109,7 @@ struct cve_configuration {
 
 	struct xml_metadata xml;
 	char *id;
-	struct cpe_testexpr expr;	/* [cpe:lang] expression (0-1) */
+	struct cpe_testexpr *expr;	/* [cpe:lang] expression (0-1) */
 };
 OSCAP_ACCESSOR_STRING(cve_configuration, id)
 
@@ -195,7 +195,7 @@ const struct cpe_testexpr *cve_configuration_get_expr(const struct cve_configura
 	if (item == NULL)
 		return NULL;
 
-	return &(item->expr);
+	return item->expr;
 }
 
 /***************************************************************************/
@@ -240,7 +240,7 @@ struct cve_configuration *cve_configuration_new()
 		return NULL;
 
 	ret->id = NULL;
-	ret->expr = *(cpe_testexpr_new());
+	ret->expr = cpe_testexpr_new();
 	ret->xml.lang = NULL;
 	ret->xml.namespace = NULL;
 	ret->xml.URI = NULL;
@@ -545,7 +545,7 @@ struct cve_entry *cve_entry_parse(xmlTextReaderPtr reader)
 			conf->xml.lang = oscap_strdup((char *)xmlTextReaderConstXmlLang(reader));
 			conf->xml.namespace = (char *)xmlTextReaderPrefix(reader);
 			xmlTextReaderNextElement(reader);
-			conf->expr = *(cpe_testexpr_parse(reader));
+			conf->expr = cpe_testexpr_parse(reader);
 			if (conf)
 				oscap_list_add(ret->configurations, conf);
 		} else
@@ -853,7 +853,7 @@ void cve_configuration_free(struct cve_configuration *conf)
 		return;
 
 	xmlFree(conf->id);
-	cpe_testexpr_free(&conf->expr);
+	cpe_testexpr_free(conf->expr);
 	xml_metadata_free(&conf->xml);
 	oscap_free(conf);
 }
