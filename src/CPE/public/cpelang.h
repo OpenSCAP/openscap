@@ -299,7 +299,9 @@ bool cpe_platform_set_id(struct cpe_platform *platform, const char *new_id);
  */
 bool cpe_platform_set_remark(struct cpe_platform *platform, const char *new_remark);
 /**
- * Set evaluation expression for this CPE platform
+ * Set evaluation expression for this CPE platform.
+ *
+ * Expression has to be a logical-test (i.e. its operation shall be AND or OR, possibly with negation)
  * @relates cpe_platform
  */
 bool cpe_platform_set_expr(struct cpe_platform *platform, struct cpe_testexpr *expr);

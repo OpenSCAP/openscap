@@ -77,7 +77,6 @@ OSCAP_ACCESSOR_STRING(cpe_platform, id)
 OSCAP_ACCESSOR_STRING(cpe_platform, remark)
 OSCAP_IGETINS(oscap_title, cpe_platform, titles, title)
 OSCAP_GETTER(const struct cpe_testexpr*, cpe_platform, expr)
-OSCAP_SETTER_GENERIC(cpe_platform, struct cpe_testexpr*, expr, cpe_testexpr_free,)
 
 /* End of variable definitions
  * */
@@ -721,22 +720,6 @@ void cpe_testexpr_free(struct cpe_testexpr *expr)
  * Getters / setters / adders (not generated)
  */
 
-/*
-struct cpe_testexpr *cpe_testexpr_get_meta_expr(const struct cpe_testexpr *item)
-{
-	if (item == NULL || (item->oper & 0x03) == 0)
-		return NULL;
-	return item->meta.expr;
-}
-
-struct cpe_name *cpe_testexpr_get_meta_cpe(const struct cpe_testexpr *item)
-{
-	if (item == NULL || (item->oper & CPE_LANG_OPER_MASK) != CPE_LANG_OPER_MATCH)
-		return NULL;
-	return item->meta.cpe;
-}
-*/
-
 struct cpe_testexpr_iterator *cpe_testexpr_get_meta_expr(const struct cpe_testexpr *expr)
 {
 	if (expr == NULL) return NULL;
@@ -802,4 +785,16 @@ void cpe_platform_iterator_remove(struct cpe_platform_iterator *it, struct cpe_l
 		oscap_htable_detach(parent->item, cpe_platform_get_id(plat));
 		cpe_platform_free(plat);
 	}
+}
+
+bool cpe_platform_set_expr(struct cpe_platform *platform, struct cpe_testexpr *expr)
+{
+	assert(platform != NULL);
+
+	if (expr != NULL && !(expr->oper & (CPE_LANG_OPER_AND | CPE_LANG_OPER_OR)))
+		return false;
+
+	cpe_testexpr_free(platform->expr);
+	platform->expr = expr;
+	return true;
 }
