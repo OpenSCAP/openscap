@@ -262,6 +262,9 @@ void oval_result_test_free(struct oval_result_test *test)
 		oscap_free(test->message);
 	if (test->bindings_clearable)
 		oval_collection_free_items(test->bindings, (oscap_destruct_func) oval_variable_binding_free);
+	else {
+		oscap_free(test->bindings);	/* avoid leaks - remove collection but not bindings. Bindings are part of syschar model */
+	}
 	oval_collection_free_items(test->items, (oscap_destruct_func) oval_result_item_free);
 
 	test->system = NULL;
