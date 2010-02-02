@@ -134,6 +134,8 @@ SEXP_t *probe_item_newid(struct id_desc_t *id_desc);
  */
 void probe_item_resetid(struct id_desc_t *id_desc);
 
+#define probe_item_getent(item, name, n) probe_obj_getent (item, name, n)
+
 /*
  * attributes
  */

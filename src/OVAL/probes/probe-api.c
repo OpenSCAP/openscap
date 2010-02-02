@@ -151,7 +151,7 @@ SEXP_t *probe_item_attr_add(SEXP_t * item, const char *name, SEXP_t * val)
 	return (val);
 }
 
-SEXP_t *probe_item_ent_add(SEXP_t * item, const char *name, SEXP_t * attrs, SEXP_t * val)
+SEXP_t *probe_item_ent_add(SEXP_t *item, const char *name, SEXP_t *attrs, SEXP_t *val)
 {
 	SEXP_t *ent;
 
@@ -164,20 +164,29 @@ SEXP_t *probe_item_ent_add(SEXP_t * item, const char *name, SEXP_t * attrs, SEXP
 	return (item);
 }
 
-int probe_item_setstatus(SEXP_t * obj, oval_syschar_status_t status)
+int probe_item_setstatus(SEXP_t *obj, oval_syschar_status_t status)
 {
 	_A(obj != NULL);
 	_LOGCALL_;
 
-	probe_item_attr_add(obj, "status", SEXP_number_newi_32(status));
+	probe_item_attr_add(obj, "status", SEXP_number_newi_32((int) status));
 	return (0);
 }
 
-int probe_itement_setstatus(SEXP_t * obj, const char *name, uint32_t n, oval_syschar_status_t status)
+int probe_itement_setstatus(SEXP_t *obj, const char *name, uint32_t n, oval_syschar_status_t status)
 {
+        SEXP_t *ent_h, *ent_s;
 	_LOGCALL_;
-	/* TBI */
-	return (-1);
+	
+        ent_h = probe_item_getent (obj, name, n);
+        ent_s = SEXP_unref (ent_h);
+        
+        _A(ent_s != NULL);
+        
+        probe_ent_attr_add (ent_s, "status", SEXP_number_newi_32 ((int) status));
+        SEXP_free (ent_s);
+        
+        return (0);
 }
 
 SEXP_t *probe_item_newid(struct id_desc_t * id_desc)
@@ -1000,8 +1009,9 @@ bool probe_ent_getmask(const SEXP_t * ent)
 int probe_ent_setstatus(SEXP_t * ent, oval_syschar_status_t status)
 {
 	_LOGCALL_;
-	/* TBI */
-	return (-1);
+        
+        probe_item_attr_add (ent, "status", SEXP_number_newi_32(status));
+	return (0);
 }
 
 oval_syschar_status_t probe_ent_getstatus(const SEXP_t * ent)
@@ -1012,8 +1022,13 @@ oval_syschar_status_t probe_ent_getstatus(const SEXP_t * ent)
 	_LOGCALL_;
 	
         val = probe_ent_getattrval (ent, "status");
-        sta = (oval_syschar_status_t) SEXP_number_getu_32 (val);
-        SEXP_free (val);
+        
+        if (val != NULL) {
+                sta = (oval_syschar_status_t) SEXP_number_geti_32 (val);
+                SEXP_free (val);
+        } else {
+                sta = OVAL_STATUS_EXISTS;
+        }
         
 	return (sta);
 }
