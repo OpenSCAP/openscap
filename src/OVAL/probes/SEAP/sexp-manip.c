@@ -1656,6 +1656,52 @@ SEXP_t *SEXP_ref (const SEXP_t *s_exp_o)
         return (s_exp_r);
 }
 
+SEXP_t *SEXP_unref (SEXP_t *s_exp_o)
+{
+        _LOGCALL_;
+        SEXP_VALIDATE(s_exp_o);
+        
+        if (!SEXP_flag_isset (s_exp_o, SEXP_FLAG_SREF)) {
+                SEXP_val_t v_dsc;
+                
+                if (SEXP_rawval_decref (s_exp_o->s_valp)) {
+                        
+                        SEXP_val_dsc (&v_dsc, s_exp_o->s_valp);
+                        
+                        switch (v_dsc.type) {
+                        case SEXP_VALTYPE_STRING:
+                                sm_free (v_dsc.hdr);
+                                break;
+                        case SEXP_VALTYPE_NUMBER:
+                                sm_free (v_dsc.hdr);
+                                break;
+                        case SEXP_VALTYPE_LIST:
+                                if (SEXP_LCASTP(v_dsc.mem)->b_addr != NULL)
+                                        SEXP_rawval_lblk_free ((uintptr_t)SEXP_LCASTP(v_dsc.mem)->b_addr, SEXP_free_lmemb);
+                                
+                                sm_free (v_dsc.hdr);
+                                break;
+                        default:
+                                abort ();
+                        }
+                        
+#if !defined(NDEBUG) || defined(VALIDATE_SEXP)        
+                        s_exp_o->s_valp = 0;
+                        s_exp_o->s_type = NULL;
+                        s_exp_o->s_flgs = 0;
+                        s_exp_o->__magic0 = SEXP_MAGIC0_INV;
+                        s_exp_o->__magic1 = SEXP_MAGIC1_INV;        
+#endif
+                        sm_free (s_exp_o);
+                        s_exp_o = NULL;
+                }
+                
+                SEXP_flag_set (s_exp_o, SEXP_FLAG_SREF);
+        }
+        
+        return (s_exp_o);
+}
+
 SEXP_t *SEXP_softref (SEXP_t *s_exp_o)
 {
         SEXP_t *s_exp_r;
