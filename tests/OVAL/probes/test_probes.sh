@@ -64,8 +64,8 @@ function test_probes_sysinfo {
 	    ret_val=$[$ret_val + 1]
 	fi
 
-	if ! grep -q "os_architecture: `uname -i`" "$LOGFILE"; then 
-	    echo "os_architecture should be `uname -i`" >&2
+	if ! grep -q "os_architecture: `uname -m`" "$LOGFILE"; then 
+	    echo "os_architecture should be `uname -m`" >&2
 	    ret_val=$[$ret_val + 1]
 	fi
 
