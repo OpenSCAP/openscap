@@ -1197,9 +1197,10 @@ xmlNode *oval_syschar_model_to_dom(struct oval_syschar_model * syschar_model,
 
 	oval_sysinfo_to_dom(oval_syschar_model_get_sysinfo(syschar_model), doc, root_node);
 
+	struct oval_collection *collection = NULL;
 	struct oval_syschar_iterator *syschars = oval_syschar_model_get_syschars(syschar_model);
 	if (resolver) {
-		struct oval_collection *collection = oval_collection_new();
+		collection = oval_collection_new();
 		while (oval_syschar_iterator_has_more(syschars)) {
 			struct oval_syschar *syschar = oval_syschar_iterator_next(syschars);
 			if ((*resolver) (syschar, user_arg)) {
@@ -1225,6 +1226,7 @@ xmlNode *oval_syschar_model_to_dom(struct oval_syschar_model * syschar_model,
 			oval_sysdata_iterator_free(sysdatas);
 		}
 	}
+	oval_collection_free(collection);
 	oval_syschar_iterator_free(syschars);
 
 	struct oval_iterator *sysdatas = oval_string_map_values(sysdata_map);
@@ -1333,6 +1335,8 @@ static xmlNode *oval_results_to_dom(struct oval_results_model *results_model,
 	struct oval_definition_model *definition_model = oval_results_model_get_definition_model(results_model);
 	oval_definitions_to_dom
 	    (definition_model, doc, root_node, (oval_definitions_resolver *) _resolve_oval_definition_from_map, defids);
+
+	oval_string_map_free(defids, NULL);
 
 	xmlNode *results_node = xmlNewChild(root_node, ns_results, BAD_CAST "results", NULL);
 

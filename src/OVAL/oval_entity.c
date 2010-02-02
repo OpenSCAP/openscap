@@ -388,7 +388,7 @@ void oval_entity_to_print(struct oval_entity *entity, char *indent, int idx)
 
 xmlNode *oval_entity_to_dom(struct oval_entity *entity, xmlDoc * doc, xmlNode * parent) {
 	char *tagname = oval_entity_get_name(entity);
-	xmlNs *ns_family = *xmlGetNsList(doc, parent);
+	xmlNsPtr *ns_family = xmlGetNsList(doc, parent);
 
 	struct oval_variable *variable = oval_entity_get_variable(entity);
 	oval_entity_varref_type_t vtype = oval_entity_get_varref_type(entity);
@@ -401,7 +401,10 @@ xmlNode *oval_entity_to_dom(struct oval_entity *entity, xmlDoc * doc, xmlNode * 
 		content = oval_value_get_text(value);
 	}
 
-	xmlNode *entity_node = xmlNewChild(parent, ns_family, BAD_CAST tagname, BAD_CAST content);
+	xmlNode *entity_node = xmlNewChild(parent, ns_family[0], BAD_CAST tagname, BAD_CAST content);
+
+	if(ns_family)
+		xmlFree(ns_family);
 
 	oval_datatype_t datatype = oval_entity_get_datatype(entity);
 	if (datatype != OVAL_DATATYPE_STRING)

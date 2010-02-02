@@ -314,10 +314,13 @@ void oval_sysitem_to_print(struct oval_sysitem *sysitem, char *indent, int idx)
 
 void oval_sysitem_to_dom(struct oval_sysitem *sysitem, xmlDoc * doc, xmlNode * parent)
 {
-	xmlNs *ns_parent = xmlGetNsList(doc, parent)[0];
+	xmlNsPtr *ns_parent = xmlGetNsList(doc, parent);
 	xmlNode *sysitem_tag =
-	    xmlNewChild(parent, ns_parent, BAD_CAST oval_sysitem_get_name(sysitem),
+	    xmlNewChild(parent, ns_parent[0], BAD_CAST oval_sysitem_get_name(sysitem),
 			BAD_CAST oval_sysitem_get_value(sysitem));
+
+	if(ns_parent)
+		xmlFree(ns_parent);
 
 	bool mask_value = oval_sysitem_get_mask(sysitem);
 	if (mask_value) {

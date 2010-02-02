@@ -848,10 +848,12 @@ oval_result_t oval_result_test_get_result(struct oval_result_test * rtest)
 	__attribute__nonnull__(rtest);
 
 	if (rtest->result == OVAL_RESULT_INVALID) {
-		void *args[] = { rtest->system, rtest, oval_string_map_new() };
+		struct oval_string_map *tmp_map = oval_string_map_new();
+		void *args[] = { rtest->system, rtest, tmp_map };
 		rtest->result = _oval_result_test_result(rtest, args);
 		if (rtest->result == (oval_result_t) - 1)
 			rtest->result = OVAL_RESULT_UNKNOWN;
+		oval_string_map_free(tmp_map, NULL);
 	}
 	return rtest->result;
 }
