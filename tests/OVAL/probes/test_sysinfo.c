@@ -1,13 +1,8 @@
 #include <stdio.h>
+#include <assume.h>
 #include "oval_agent_api.h"
 #include "oval_system_characteristics.h"
 #include "oval_definitions_impl.h"
-
-#define ASSERT(expr) \
-  if (!(expr)) { \
-    fprintf(stderr, "%s:%d: Assertion failed!\n", __FUNCTION__, __LINE__); \
-    abort(); \
-  }
 
 int main (void)
 {
@@ -16,21 +11,21 @@ int main (void)
    *  by the sysinfo probe.
    */
   oval_pctx_t *pctx = oval_pctx_new (NULL);
-  ASSERT(pctx != NULL);
+  assume(pctx != NULL);
   
   /* 
    *  Create empty models
    */
   struct oval_definition_model *def_model = oval_definition_model_new();
-  ASSERT(def_model != NULL);
+  assume(def_model != NULL);
   
   struct oval_syschar_model *sys_model = oval_syschar_model_new(def_model);
-  ASSERT(sys_model != NULL);
+  assume(sys_model != NULL);
   /*
    *  Call the sysinfo probe.
    */
   struct oval_sysinfo *info = oval_probe_sysinf_eval (sys_model, pctx);
-  ASSERT(info != NULL);
+  assume(info != NULL);
   
   if (info != NULL) {
     char *a, *b, *c, *d;
@@ -45,10 +40,10 @@ int main (void)
 	    c = oval_sysinfo_get_os_architecture (info),
 	    d = oval_sysinfo_get_primary_host_name (info));
     
-    ASSERT(a != NULL);
-    ASSERT(b != NULL);
-    ASSERT(c != NULL);
-    ASSERT(d != NULL);
+    assume(a != NULL);
+    assume(b != NULL);
+    assume(c != NULL);
+    assume(d != NULL);
         
     struct oval_sysint_iterator *ifit = oval_sysinfo_get_interfaces (info);
     
@@ -57,7 +52,7 @@ int main (void)
       
       while (oval_sysint_iterator_has_more (ifit)) {
 	struct oval_sysint *ife = oval_sysint_iterator_next (ifit);
-        ASSERT(ife != NULL);
+        assume(ife != NULL);
 
 	printf ("%s %s %s\n",
 		oval_sysint_get_name (ife),

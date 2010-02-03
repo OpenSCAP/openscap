@@ -49,40 +49,36 @@ function test_probes_sysinfo {
     local ret_val=0;
     local LOGFILE="test_probes_sysinfo.out"
     local EXECDIR="$(pwd)"
-   
+
     eval "\"${EXECDIR}/test_sysinfo\"" >> "$LOGFILE"
 
     if [ $? -eq 0 ]; then 
 	
-	if ! grep -q "os_name: `uname -s`" "$LOGFILE"; then
+	OS_NAME="`uname -s`"
+	if ! grep -q "os_name: $OS_NAME" "$LOGFILE"; then
 	    echo "os_name should be `uname -s`" >&2
 	    ret_val=$[$ret_val + 1]
 	fi
 	
-	if ! grep -q "os_version: `uname -v`" "$LOGFILE"; then 
-	    echo "os_version should be `uname -v`" >&2
+	OS_VERSION="`uname -v`"
+	if ! grep -q "os_version: ${OS_VERSION}" "$LOGFILE"; then 
+	    echo "os_version should be ${OS_VERSION}" >&2
 	    ret_val=$[$ret_val + 1]
 	fi
 
-	if ! grep -q "os_architecture: `uname -m`" "$LOGFILE"; then 
-	    echo "os_architecture should be `uname -m`" >&2
+	OS_ARCHITECTURE="`uname -m`"
+	if ! grep -q "os_architecture: ${OS_ARCHITECTURE}" "$LOGFILE"; then 
+	    echo "os_architecture should be ${OS_ARCHITECTURE}" >&2
 	    ret_val=$[$ret_val + 1]
 	fi
 
-	if ! grep -q "primary_host_name: `uname -n`" "$LOGFILE"; then 
-	    echo "primary_host_name should be `uname -n`" >&2
+	PRIMARY_HOST_NAME="`uname -n`"
+	if ! grep -q "primary_host_name: ${PRIMARY_HOST_NAME}" "$LOGFILE"; then 
+	    echo "primary_host_name should be ${PRIMARY_HOST_NAME}" >&2
 	    ret_val=$[$ret_val + 1]
 	fi
 
-	# FIX ME! (network interfaces check)
-	# if [ $ret_val -eq 0 ]; then
-	#     for i in `sed -n '6,$p' test_probes_tc02.out | awk '{print $1}'`; do
-	# 	IPV4=`ifconfig $i | sed 's/  /\n/g' | grep "inet " | sed 's/addr://' | awk '{print $2}' | sed 's/\/.*$//'`
-	# 	IPV6=`ifconfig $i | sed 's/  /\n/g' | grep "inet6 " | sed 's/addr://' | awk '{print $2}' | sed 's/\/.*$//'`
-	# 	grep "$IPV4" test_probes_tc02.out | grep -q $i || ret_val=1
-	# 	grep "$IPV6" test_probes_tc02.out | grep -q $i || ret_val=1
-	#     done
-	# fi
+	# TODO: network interfaces check
 	
  	if [ ! $ret_val -eq 0 ]; then
 	    echo "" >&2
@@ -120,7 +116,8 @@ function test_probes_file {
 
     if [ $? -eq 0 ] && [ -e $RESFILE ]; then
 
-	for ID in `seq 1 15`; do
+	COUNT=15; ID=1
+	while [ $ID -le $COUNT ]; do
 	    
 	    DEF_DEF=`cat "$DEFFILE" | grep "id=\"definition:${ID}\""`
 	    DEF_RES=`cat "$RESFILE" | grep "definition_id=\"definition:${ID}\""`
@@ -145,10 +142,12 @@ function test_probes_file {
 		echo "Result of definition:${ID} should be ${CMT}!" >&2
 		ret_val=$[$ret_val + 1]
 	    fi
-
+	    
+	    ID=$[$ID+1]
 	done
 
-	for ID in `seq 1 75`; do
+	COUNT=75; ID=1
+	while [ $ID -le $COUNT ]; do
 	    
 	    TEST_DEF=`cat "$DEFFILE" | grep "id=\"test:${ID}\""`
 	    TEST_RES=`cat "$RESFILE" | grep "test_id=\"test:${ID}\""`
@@ -174,6 +173,7 @@ function test_probes_file {
 		ret_val=$[$ret_val + 1]
 	    fi
 	    
+	    ID=$[$ID+1]
 	done
 
 	if [ ! $ret_val -eq 0 ]; then
@@ -199,7 +199,11 @@ function test_probes_rpminfo {
     local DEFFILE="test_probes_rpminfo.xml"
     local RESFILE="test_probes_rmpinfo.xml.results.xml"
 
-    
+    eval "which rpm > /dev/null"    
+    if [ ! $? -eq 0 ]; then	
+	return 255; # Test is not applicable.
+    fi
+
     local RPM_A=`rpm -qa | sed -n '1p'`
     local RPM_B=`rpm -qa | sed -n '2p'`
 
@@ -229,7 +233,8 @@ function test_probes_rpminfo {
     
     if [ $? -eq 0 ] && [ -e $RESFILE ]; then
 
-	for ID in `seq 1 15`; do
+	COUNT=15; ID=1
+	while [ $ID -le $COUNT ]; do
 	    
 	    DEF_DEF=`cat "$DEFFILE" | grep "id=\"definition:${ID}\""`
 	    DEF_RES=`cat "$RESFILE" | grep "definition_id=\"definition:${ID}\""`
@@ -255,9 +260,11 @@ function test_probes_rpminfo {
 		ret_val=$[$ret_val + 1]
 	    fi
 
+	    ID=$[$ID+1]
 	done
 
-	for ID in `seq 1 49`; do
+	COUNT=49; ID=1
+	while [ $ID -le $COUNT ]; do
 	    
 	    TEST_DEF=`cat "$DEFFILE" | grep "id=\"test:${ID}\""`
 	    TEST_RES=`cat "$RESFILE" | grep "test_id=\"test:${ID}\""`
@@ -282,7 +289,8 @@ function test_probes_rpminfo {
 		echo "Result of test:${ID} should be ${CMT}!" >&2
 		ret_val=$[$ret_val + 1]
 	    fi
-	    
+
+	    ID=$[$ID+1]
 	done
 
 	if [ ! $ret_val -eq 0 ]; then
@@ -308,7 +316,12 @@ function test_probes_runlevel_A {
     local DEFFILE="test_probes_runlevel_A.xml"
     local RESFILE="test_probes_runlevel_A.xml.results.xml"
    
-    bash "${srcdir}/OVAL/probes/test_probes_runlevel_A.xml.sh" > "$DEFFILE"
+    eval "which chkconfig > /dev/null"    
+    if [ ! $? -eq 0 ]; then	
+	return 255; # Test is not applicable.
+    fi
+
+    eval "bash \"${srcdir}/OVAL/probes/test_probes_runlevel_A.xml.sh\"" > "$DEFFILE"
     
     eval "\"${EXECDIR}/test_probes\" \"$DEFFILE\" \"$RESFILE\"" >> "$LOGFILE"
     
@@ -370,20 +383,25 @@ function test_probes_runlevel_B {
     local EXECDIR="$(pwd)"
     local DEFFILE="test_probes_runlevel_B.xml"
     local RESFILE="test_probes_runlevel_B.xml.results.xml"
-
     
+    eval "which chkconfig > /dev/null"    
+    if [ ! $? -eq 0 ]; then	
+	return 255; # Test is not applicable.
+    fi
+
     local SERVICE_A=`chkconfig --list | grep "3:on" | head -1 | awk '{print $1}'`
     local SERVICE_B=`chkconfig --list | grep "3:off" | head -1 | awk '{print $1}'`
 
-    bash "${srcdir}/OVAL/probes/test_probes_runlevel_B.xml.sh" \
-	 "$SERVICE_A"                                          \
-         "$SERVICE_B" > "$DEFFILE"
+    eval "bash \"${srcdir}/OVAL/probes/test_probes_runlevel_B.xml.sh\" \
+	       \"$SERVICE_A\"                                          \
+               \"$SERVICE_B\"" > "$DEFFILE"
     
     eval "\"${EXECDIR}/test_probes\" \"$DEFFILE\" \"$RESFILE\"" >> "$LOGFILE"
     
     if [ $? -eq 0 ] && [ -e $RESFILE ]; then
 
-	for ID in `seq 1 13`; do
+	COUNT=13; ID=1
+	while [ $ID -le $COUNT ]; do
 	    
 	    DEF_DEF=`cat "$DEFFILE" | grep "id=\"definition:${ID}\""`
 	    DEF_RES=`cat "$RESFILE" | grep "definition_id=\"definition:${ID}\""`
@@ -409,9 +427,11 @@ function test_probes_runlevel_B {
 		ret_val=$[$ret_val + 1]
 	    fi
 
+	    ID=$[$ID+1]
 	done
 
-	for ID in `seq 1 40`; do
+	COUNT=40; ID=1
+	while [ $ID -le $COUNT ]; do
 	    
 	    TEST_DEF=`cat "$DEFFILE" | grep "id=\"test:${ID}\""`
 	    TEST_RES=`cat "$RESFILE" | grep "test_id=\"test:${ID}\""`
@@ -437,6 +457,7 @@ function test_probes_runlevel_B {
 		ret_val=$[$ret_val + 1]
 	    fi
 	    
+	    ID=$[$ID+1]
 	done
 
 	if [ ! $ret_val -eq 0 ]; then
@@ -476,7 +497,8 @@ function test_probes_textfilecontent54 {
     
     if [ $? -eq 0 ] && [ -e $RESFILE ]; then
 
-	for ID in `seq 1 13`; do
+	COUNT=13; ID=1
+	while [ $ID -le $COUNT ]; do
 	    
 	    DEF_DEF=`cat "$DEFFILE" | grep "id=\"definition:${ID}\""`
 	    DEF_RES=`cat "$RESFILE" | grep "definition_id=\"definition:${ID}\""`
@@ -502,9 +524,11 @@ function test_probes_textfilecontent54 {
 		ret_val=$[$ret_val + 1]
 	    fi
 
+	    ID=$[$ID+1]
 	done
 
-	for ID in `seq 1 16`; do
+	COUNT=16; ID=1
+	while [ $ID -le $COUNT ]; do
 	    
 	    TEST_DEF=`cat "$DEFFILE" | grep "id=\"test:${ID}\""`
 	    TEST_RES=`cat "$RESFILE" | grep "test_id=\"test:${ID}\""`
@@ -530,6 +554,7 @@ function test_probes_textfilecontent54 {
 		ret_val=$[$ret_val + 1]
 	    fi
 	    
+	    ID=$[$ID+1]
 	done
 
 	if [ ! $ret_val -eq 0 ]; then

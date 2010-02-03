@@ -14,7 +14,9 @@ function report_result {
     printf "+ %-40s" ${1}; 
     if [ $2 -eq 0 ]; then 
 	echo "[ PASS ]"; printf "*** %s PASSED ***\n\n" ${1} >&2
-    else 
+    elif [ $2 -eq 255 ]; then
+	echo "[ SKIPPED ]"; printf "*** %s SKIPPED ***\n\n" ${1} >&2
+    else
 	echo "[ FAIL ]"; printf "*** %s FAILED ***\n\n" ${1} >&2
     fi
 }

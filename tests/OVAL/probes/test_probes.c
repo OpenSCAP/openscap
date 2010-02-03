@@ -11,30 +11,25 @@
 #include <stdlib.h>
 #include <string.h>
 #include <oval_agent_api.h>
-
-#define ASSERT(expr) \
-  if (!(expr)) { \
-    fprintf(stderr, "%s:%d: Assertion failed!\n", __FUNCTION__, __LINE__); \
-    abort(); \
-  }
+#include <assume.h>
 
 int main(int argc, char **argv) {
   
   /* definition model populate */
   struct oscap_import_source *def_in = oscap_import_source_new_file(argv[1], NULL);
-  ASSERT(def_in != NULL);
+  assume(def_in != NULL);
   
   struct oval_definition_model *def_model = oval_definition_model_new();
-  ASSERT(def_model != NULL);
+  assume(def_model != NULL);
 
   int ret = oval_definition_model_import(def_model, def_in, NULL);
-  ASSERT(ret != -1);
+  assume(ret != -1);
   
   oscap_import_source_free(def_in);
   
   /* create syschar model */
   struct oval_syschar_model *sys_model = oval_syschar_model_new(def_model);
-  ASSERT(sys_model != NULL);
+  assume(sys_model != NULL);
       
   /* call probes */
   oval_syschar_model_probe_objects(sys_model);
@@ -42,11 +37,11 @@ int main(int argc, char **argv) {
   /* create result model */
   struct oval_syschar_model *sys_models[] = {sys_model, NULL};
   struct oval_results_model* res_model = oval_results_model_new( def_model, sys_models );
-  ASSERT(res_model != NULL);
+  assume(res_model != NULL);
 
   /* set up directives */
   struct oval_result_directives * res_direct = oval_result_directives_new(res_model);
-  ASSERT(res_direct != NULL);
+  assume(res_direct != NULL);
   
   oval_result_directives_set_reported(res_direct, OVAL_RESULT_INVALID, true);
   oval_result_directives_set_reported(res_direct, OVAL_RESULT_TRUE, true);
@@ -60,7 +55,7 @@ int main(int argc, char **argv) {
   
   /* report results */
   struct oscap_export_target *result_out  = oscap_export_target_new_file(argv[2], "UTF-8");
-  ASSERT(result_out != NULL);
+  assume(result_out != NULL);
 
   oval_results_model_export(res_model, res_direct, result_out);
 

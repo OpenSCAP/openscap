@@ -13,8 +13,10 @@ AM_CPPFLAGS =   -I$(top_srcdir)/tests/include \
 		-I$(top_srcdir)/src/OVAL/probes/public \
 		-I$(top_srcdir)/src/OVAL/probes/SEAP/public
 LDADD = $(top_builddir)/src/libopenscap_testing.la
-EXTRA_DIST = test_common.sh \
-             xmldiff.pl 
+EXTRA_DIST = test_common.sh   \
+             xmldiff.pl       \
+	     include/assume.h 
+
 DISTCLEANFILES = *.log *.out.*
 
 if WANT_OVAL
