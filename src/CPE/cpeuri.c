@@ -70,10 +70,10 @@ struct cpe_name {
 static const char CPE_SEP_CHAR = ':';
 
 static const struct oscap_string_map CPE_PART_MAP[] = {
-	{CPE_PART_HW, "h"},
-	{CPE_PART_OS, "o"},
-	{CPE_PART_APP, "a"},
-	{CPE_PART_NONE, NULL}
+	{ CPE_PART_HW,   "h"  },
+	{ CPE_PART_OS,   "o"  },
+	{ CPE_PART_APP,  "a"  },
+	{ CPE_PART_NONE, NULL }
 };
 
 char **cpe_uri_split(char *str, const char *delim);
@@ -363,6 +363,31 @@ static const char *as_str(const char *str)
 	return str;
 }
 
+static char *cpe_urlencode(const char *str)
+{
+	//return strdup(str);
+	if (str == NULL)
+		return NULL;
+
+	// allocate enough space
+	char *result = oscap_alloc(strlen(str) * 3 * sizeof(char) + 1);
+	char *out = result;
+
+	for (const char *in = str; *in != '\0'; ++in, ++out) {
+		if (isalnum(*in) || strchr("-._~", *in))
+			*out = *in;
+		else {
+			// this char shall be %-encoded
+			sprintf(out, "%%%02X", *in);
+			out += 2;
+		}
+	}
+
+	*out = '\0';
+
+	return result;
+}
+
 char *cpe_name_get_uri(const struct cpe_name *cpe)
 {
 	__attribute__nonnull__(cpe);
@@ -370,23 +395,29 @@ char *cpe_name_get_uri(const struct cpe_name *cpe)
 	int len = 16;
 	int i;
 	char *result;
+	char* part[CPE_FIELDNUM] = { NULL }; // CPE URI parts
 
 	if (cpe == NULL)
 		return NULL;
 
-	for (i = 0; i < CPE_FIELDNUM; ++i)
-		len += strlen(as_str(cpe_get_field(cpe, i)));
+	// get individual parts (%-encded)
+	for (i = 0; i < CPE_FIELDNUM; ++i) {
+		part[i] = cpe_urlencode(as_str(cpe_get_field(cpe, i)));
+		len += strlen(part[i]);
+	}
 
 	result = oscap_alloc(len * sizeof(char));
 	if (result == NULL)
 		return NULL;
 
-	i = sprintf(result, "cpe:/%s:%s:%s:%s:%s:%s:%s",
-		    as_str(oscap_enum_to_string(CPE_PART_MAP, cpe->part)),
-		    as_str(cpe->vendor),
-		    as_str(cpe->product),
-		    as_str(cpe->version), as_str(cpe->update), as_str(cpe->edition), as_str(cpe->language)
-	    );
+	// create the URI
+	i = snprintf(result, len, "cpe:/%s:%s:%s:%s:%s:%s:%s",
+		part[0], part[1], part[2], part[3], part[4], part[5], part[6]
+	);
+
+	// free individual parts
+	for (int j = 0; j < CPE_FIELDNUM; ++j)
+		oscap_free(part[j]);
 
 	// trim trailing colons
 	while (result[--i] == ':')
