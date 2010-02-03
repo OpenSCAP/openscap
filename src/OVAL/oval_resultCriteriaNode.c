@@ -336,7 +336,7 @@ static oval_result_t _oval_result_binary_op(oval_operator_t operator, int *count
 		case OVAL_OPERATOR_XOR:{
 				result =
 				    (_CT % 2 == 1 && _CE == 0 && _CU == 0 && _CNE == 0) ? OVAL_RESULT_TRUE :
-				    (_CT > 0 && _CE == 0 && _CU == 0 && _CNE == 0) ? OVAL_RESULT_FALSE :
+				    (_CT % 2 == 0 && _CE == 0 && _CU == 0 && _CNE == 0) ? OVAL_RESULT_FALSE :
 				    (_CE > 0) ? OVAL_RESULT_ERROR :
 				    (_CE == 0 && _CU > 0) ? OVAL_RESULT_UNKNOWN :
 				    (_CE == 0 && _CU == 0 && _CNE > 0) ? OVAL_RESULT_NOT_EVALUATED :
