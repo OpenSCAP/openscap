@@ -96,8 +96,8 @@ OSCAP_GETTER(const struct cpe_testexpr*, cpe_platform, expr)
 #define ATTR_ID_STR         BAD_CAST "id"
 #define VAL_AND_STR     BAD_CAST "AND"
 #define VAL_OR_STR      BAD_CAST "OR"
-#define VAL_FALSE_STR   BAD_CAST "FALSE"
-#define VAL_TRUE_STR    BAD_CAST "TRUE"
+#define VAL_FALSE_STR   BAD_CAST "false"
+#define VAL_TRUE_STR    BAD_CAST "true"
 /* End of XML string variables definitions
  * */
 /***************************************************************************/
