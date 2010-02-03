@@ -5,6 +5,9 @@
  * Public interface for OVAL Definitions.
  * @{
  *
+ * Class diagram
+ * \image html definition_model.png
+ *
  * @file
  *
  * @author "David Niemoller" <David.Niemoller@g2-inc.com>
