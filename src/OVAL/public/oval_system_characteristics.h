@@ -5,6 +5,9 @@
  * Public interface for OVAL System Characteristics.
  * @{
  *
+ * Class diagram
+ * \image html system_characteristic.png
+ *
  * @file
  *
  * @author "David Niemoller" <David.Niemoller@g2-inc.com>

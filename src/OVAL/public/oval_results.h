@@ -5,9 +5,14 @@
  * Public interface for OVAL Results
  * @{
  *
+ * Class diagram
+ * \image html result_model.png
+ *
  * @file
  *
  * @author "David Niemoller" <David.Niemoller@g2-inc.com>
+ *
+ *
  */
 
 
