@@ -6,7 +6,7 @@
  * 
  * 
  * @file cpedict_priv.h
- * \brief Interface to Common Platform Enumeration (CPE) Dictionary.
+ * @brief Interface to Common Platform Enumeration (CPE) Dictionary.
  *
  * See more details at http://nvd.nist.gov/cpe.cfm
  */

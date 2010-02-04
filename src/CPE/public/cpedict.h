@@ -5,10 +5,13 @@
  * @{
  *
  *
+ * See more details at http://nvd.nist.gov/cpe.cfm
+ *
+ * Class diagram
+ * @image html cpe_dictionary.png
+ *
  * @file cpedict.h
  * \brief Interface to Common Platform Enumeration (CPE) Dictionary.
- *
- * See more details at http://nvd.nist.gov/cpe.cfm
  */
 
 /*
