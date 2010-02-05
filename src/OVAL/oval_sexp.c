@@ -260,8 +260,6 @@ static SEXP_t *oval_behaviors_to_sexp(struct oval_behavior_iterator *bit)
 		}
 	}
 
-	oval_behavior_iterator_free(bit);
-
 	r0 = SEXP_list_new(elm_name, NULL);
 	SEXP_free(elm_name);
 
