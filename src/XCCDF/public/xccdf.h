@@ -28,6 +28,23 @@
  * @author Lukas Kuklinek <lkuklinek@redhat.com>
  */
 
+/**
+ * @defgroup benchmark XCCDF Benchmark
+ * Top level XCCDF structure containing profiles, rules, values and results.
+ *
+ * @defgroup profile   XCCDF Profile
+ * XCCDF profile is a set of tests and their settings in a compact package.
+ *
+ * @defgroup rule      XCCDF Rule
+ * XCCDF rule defines a test execution. Groups are in this module as well.
+ *
+ * @defgroup value     XCCDF Value
+ * XCCDF Value allows test parametrization or capturing output of tests.
+ *
+ * @defgroup result    XCCDF Test Result
+ * Actual results of running a XCCDF test or profile.
+ */
+
 #ifndef XCCDF_H_
 #define XCCDF_H_
 
@@ -184,7 +201,7 @@ typedef float xccdf_numeric;
 /*--------------------*\
 |   Core structures    |
 \*--------------------*/
-/**
+/*
  * @addtogroup xccdf_item
  * @{
  * @addtogroup xccdf_item_setters Setters
@@ -211,62 +228,38 @@ typedef float xccdf_numeric;
  * A base class for XCCDF items.
  */
 struct xccdf_item;
-/**
- * @}
- * @addtogroup xccdf_benchmark
- * @{
- */
 /** @struct xccdf_benchmark
+ * @ingroup benchmark
  * XCCDF Benchmark.
  */
 struct xccdf_benchmark;
 
-/**
- * @}
- * @addtogroup xccdf_profile
- * @{
- */
 /** @struct xccdf_profile
+ * @ingroup profile
  * XCCDF Profile.
  */
 struct xccdf_profile;
 
-/**
- * @}
- * @addtogroup xccdf_rule
- * @{
- */
 /** @struct xccdf_rule
+ * @ingroup rule
  * XCCDF Rule.
  */
 struct xccdf_rule;
 
-/**
- * @}
- * @addtogroup xccdf_group
- * @{
- */
 /** @struct xccdf_group
- * XCCDF Group.
+ * @ingroup rule
+ * XCCDF rule group.
  */
 struct xccdf_group;
 
-/**
- * @}
- * @addtogroup xccdf_value
- * @{
- */
 /** @struct xccdf_value
- * XCDF Value
+ * @ingroup value
+ * XCCDF Value
  */
 struct xccdf_value;
 
-/**
- * @}
- * @addtogroup xccdf_result
- * @{
- */
 /** @struct xccdf_result
+ * @ingroup result
  * XCCDF Test Result.
  */
 struct xccdf_result;
@@ -275,170 +268,97 @@ struct xccdf_result;
 |  Support structures  |
 \*--------------------*/
 
-/**
- * @}
- * @addtogroup xccdf_notice
- * @{
- */
 /** @struct xccdf_notice
+ * @ingroup benchmark
  * XCCDF benchmark legal notice.
  */
 struct xccdf_notice;
 
-/**
- * @}
- * @addtogroup xccdf_status
- * @{
- */
 /** @struct xccdf_status
+ * @ingroup benchmark
  * XCCDF item status.
  */
 struct xccdf_status;
 
-/**
- * @}
- * @addtogroup xccdf_model
- * @{
- */
 /** @struct xccdf_model
+ * @ingroup benchmark
  * XCCDF scoring model.
  */
 struct xccdf_model;
 
-/**
- * @}
- * @addtogroup xccdf_warning
- * @{
- */
 /** @struct xccdf_warning
  * XCCDF warning.
  */
 struct xccdf_warning;
 
-/**
- * @}
- * @addtogroup xccdf_select
- * @{
- */
 /** @struct xccdf_select
  * XCCDF select option usen in the profile.
- * @see xccdf_profile
+ * @ingroup profile
  */
 struct xccdf_select;
 
-/**
- * @}
- * @addtogroup xccdf_set_value
- * @{
- */
 /** @struct xccdf_set_value
  * XCCDF set value option used in the profile.
- * @see xccdf_profile
+ * @ingroup profile
  */
 struct xccdf_set_value;
 
-/**
- * @}
- * @addtogroup xccdf_refine_value
- * @{
- */
 /** @struct xccdf_refine_value
  * XCCDF refine value option used in the profile.
- * @see xccdf_profile
+ * @ingroup profile
  */
 struct xccdf_refine_value;
-/**
- * @}
- * @addtogroup xccdf_refine_rule
- * @{
- */
 /** @struct xccdf_refine_rule
  * XCCDF refine rule option used in the profile.
- * @see xccdf_profile
+ * @ingroup profile
  */
 struct xccdf_refine_rule;
 
-/**
- * @}
- * @addtogroup xccdf_ident
- * @{
- */
 /** @struct xccdf_ident
  * XCCDF rule ident URI.
- * @see xccdf_rule
+ * @ingroup rule
  */
 struct xccdf_ident;
 
-/**
- * @}
- * @addtogroup xccdf_check
- * @{
- */
 /** @struct xccdf_check
  * XCCDF simple or complex check.
- * @see xccdf_rule
+ * @ingroup rule
  */
 struct xccdf_check;
-/**
- * @}
- * @addtogroup xccdf_check_content_ref
- * @{
- */
 /** @struct xccdf_check_content_ref
  * XCCDF check content reference.
- * @see xccdf_rule
+ * @ingroup rule
  */
 struct xccdf_check_content_ref;
 
-/**
- * @}
- * @addtogroup xccdf_profile_note
- * @{
- */
 /** @struct xccdf_profile_note
  * XCCDF note for given rule in context of given profile.
- * @see xccdf_rule
+ * @ingroup rule
  */
 struct xccdf_profile_note;
 
-/**
- * @}
- * @addtogroup xccdf_check_import
- * @{
- */
 /** @struct xccdf_check_import
  * XCCDF check import.
+ * @ingroup rule
  * @see xccdf_check
  */
 struct xccdf_check_import;
 
-/**
- * @}
- * @addtogroup xccdf_check_export
- * @{
- */
 /** @struct xccdf_check_export
  * XCCDF check export.
+ * @ingroup rule
  * @see xccdf_check
  */
 struct xccdf_check_export;
-/**
- * @}
- * @addtogroup xccdf_fix
- * @{
- */
 /** @struct xccdf_fix
  * XCCDF automatic fix.
+ * @ingroup rule
  * @see xccdf_rule
  */
 struct xccdf_fix;
-/**
- * @}
- * @addtogroup xccdf_fixtext
- * @{
- */
 /** @struct xccdf_fixtext
  * XCCDF textual fix instructions.
+ * @ingroup rule
  * @see xccdf_rule
  */
 struct xccdf_fixtext;
@@ -447,11 +367,6 @@ struct xccdf_fixtext;
 |       Iterators      |
 \*--------------------*/
 
-/**
- * @}
- * @addtogroup xccdf_item
- * @{
- */
 /** @struct xccdf_item_iterator
  * String iterator.
  * @see oscap_iterator
@@ -463,11 +378,6 @@ struct xccdf_item *xccdf_item_iterator_next(struct xccdf_item_iterator *it);
 bool xccdf_item_iterator_has_more(struct xccdf_item_iterator *it);
 /// @memberof xccdf_item_iterator
 void xccdf_item_iterator_free(struct xccdf_item_iterator *it);
-/**
- * @}
- * @addtogroup xccdf_notice
- * @{
- */
 /** @struct xccdf_notice_iterator
  * Notice iterator.
  * @see oscap_iterator
@@ -479,11 +389,6 @@ struct xccdf_notice *xccdf_notice_iterator_next(struct xccdf_notice_iterator *it
 bool xccdf_notice_iterator_has_more(struct xccdf_notice_iterator *it);
 /// @memberof xccdf_notice_iterator
 void xccdf_notice_iterator_free(struct xccdf_notice_iterator *it);
-/**
- * @}
- * @addtogroup xccdf_status
- * @{
- */
 /** @struct xccdf_status_iterator
  * Status iterator.
  * @see oscap_iterator
@@ -495,11 +400,6 @@ struct xccdf_status *xccdf_status_iterator_next(struct xccdf_status_iterator *it
 bool xccdf_status_iterator_has_more(struct xccdf_status_iterator *it);
 /// @memberof xccdf_status_iterator
 void xccdf_status_iterator_free(struct xccdf_status_iterator *it);
-/**
- * @}
- * @addtogroup xccdf_reference
- * @{
- */
 /** @struct xccdf_reference_iterator
  * Reference iterator.
  * @see oscap_iterator
@@ -511,11 +411,6 @@ struct xccdf_reference *xccdf_reference_iterator_next(struct xccdf_reference_ite
 bool xccdf_reference_iterator_has_more(struct xccdf_reference_iterator *it);
 /// @memberof xccdf_reference_iterator
 void xccdf_reference_iterator_free(struct xccdf_reference_iterator *it);
-/**
- * @}
- * @addtogroup xccdf_model
- * @{
- */
 /** @struct xccdf_model_iterator
  * Model iterator.
  * @see oscap_iterator
@@ -527,11 +422,6 @@ struct xccdf_model *xccdf_model_iterator_next(struct xccdf_model_iterator *it);
 bool xccdf_model_iterator_has_more(struct xccdf_model_iterator *it);
 /// @memberof xccdf_model_iterator
 void xccdf_model_iterator_free(struct xccdf_model_iterator *it);
-/**
- * @}
- * @addtogroup xccdf_profile
- * @{
- */
 /** @struct xccdf_profile_iterator
  * Profile iterator.
  * @see oscap_iterator
@@ -544,11 +434,6 @@ bool xccdf_profile_iterator_has_more(struct xccdf_profile_iterator *it);
 /// @memberof xccdf_profile_iterator
 void xccdf_profile_iterator_free(struct xccdf_profile_iterator *it);
 
-/**
- * @}
- * @addtogroup xccdf_select
- * @{
- */
 /** @struct xccdf_select_iterator
  * Select iterator.
  * @see oscap_iterator
@@ -561,11 +446,6 @@ bool xccdf_select_iterator_has_more(struct xccdf_select_iterator *it);
 /// @memberof xccdf_select_iterator
 void xccdf_select_iterator_free(struct xccdf_select_iterator *it);
 
-/**
- * @}
- * @addtogroup xccdf_set_value
- * @{
- */
 /** @struct xccdf_set_value_iterator
  * Set value iterator.
  * @see oscap_iterator
@@ -578,11 +458,6 @@ bool xccdf_set_value_iterator_has_more(struct xccdf_set_value_iterator *it);
 /// @memberof xccdf_set_value_iterator
 void xccdf_set_value_iterator_free(struct xccdf_set_value_iterator *it);
 
-/**
- * @}
- * @addtogroup xccdf_refile_value
- * @{
- */
 /** @struct xccdf_refine_value_iterator
  * Refine value iterator.
  * @see oscap_iterator
@@ -595,11 +470,6 @@ bool xccdf_refine_value_iterator_has_more(struct xccdf_refine_value_iterator *it
 /// @memberof xccdf_refine_value_iterator
 void xccdf_refine_value_iterator_free(struct xccdf_refine_value_iterator *it);
 
-/**
- * @}
- * @addtogroup xccdf_refine_rule
- * @{
- */
 /** @struct xccdf_refine_rule_iterator
  * Refine rule iterator.
  * @see oscap_iterator
@@ -612,11 +482,6 @@ bool xccdf_refine_rule_iterator_has_more(struct xccdf_refine_rule_iterator *it);
 /// @memberof xccdf_refine_rule_iterator
 void xccdf_refine_rule_iterator_free(struct xccdf_refine_rule_iterator *it);
 
-/**
- * @}
- * @addtogroup xccdf_ident
- * @{
- */
 /** @struct xccdf_ident_iterator
  * Ident iterator.
  * @see oscap_iterator
@@ -629,11 +494,6 @@ bool xccdf_ident_iterator_has_more(struct xccdf_ident_iterator *it);
 /// @memberof xccdf_ident_iterator
 void xccdf_ident_iterator_free(struct xccdf_ident_iterator *it);
 
-/**
- * @}
- * @addtogroup xccdf_check
- * @{
- */
 /** @struct xccdf_check_iterator
  * Check iterator.
  * @see oscap_iterator
@@ -645,11 +505,6 @@ struct xccdf_check *xccdf_check_iterator_next(struct xccdf_check_iterator *it);
 bool xccdf_check_iterator_has_more(struct xccdf_check_iterator *it);
 /// @memberof xccdf_check_iterator
 void xccdf_check_iterator_free(struct xccdf_check_iterator *it);
-/**
- * @}
- * @addtogroup xccdf_check_content_ref
- * @{
- */
 /** @struct xccdf_check_content_ref_iterator
  * Check content references iterator.
  * @see oscap_iterator
@@ -661,11 +516,6 @@ struct xccdf_check_content_ref *xccdf_check_content_ref_iterator_next(struct xcc
 bool xccdf_check_content_ref_iterator_has_more(struct xccdf_check_content_ref_iterator *it);
 /// @memberof xccdf_check_content_ref_iterator
 void xccdf_check_content_ref_iterator_free(struct xccdf_check_content_ref_iterator *it);
-/**
- * @}
- * @addtogroup xccdf_profile_note
- * @{
- */
 /** @struct xccdf_profile_note_iterator
  * Profile note iterator.
  * @see oscap_iterator
@@ -677,11 +527,6 @@ struct xccdf_profile_note *xccdf_profile_note_iterator_next(struct xccdf_profile
 bool xccdf_profile_note_iterator_has_more(struct xccdf_profile_note_iterator *it);
 /// @memberof xccdf_profile_note_iterator
 void xccdf_profile_note_iterator_free(struct xccdf_profile_note_iterator *it);
-/**
- * @}
- * @addtogroup xccdf_check_import
- * @{
- */
 /** @struct xccdf_check_import_iterator
  * Check import iterator.
  * @see oscap_iterator
@@ -694,11 +539,6 @@ bool xccdf_check_import_iterator_has_more(struct xccdf_check_import_iterator *it
 /// @memberof xccdf_check_import_iterator
 void xccdf_check_import_iterator_free(struct xccdf_check_import_iterator *it);
 
-/**
- * @}
- * @addtogroup xccdf_check_export
- * @{
- */
 /** @struct xccdf_check_export_iterator
  * Check export iterator.
  * @see oscap_iterator
@@ -711,11 +551,6 @@ bool xccdf_check_export_iterator_has_more(struct xccdf_check_export_iterator *it
 /// @memberof xccdf_check_export_iterator
 void xccdf_check_export_iterator_free(struct xccdf_check_export_iterator *it);
 
-/**
- * @}
- * @addtogroup xccdf_fix
- * @{
- */
 /** @struct xccdf_fix_iterator
  * Fix iterator.
  * @see oscap_iterator
@@ -728,11 +563,6 @@ bool xccdf_fix_iterator_has_more(struct xccdf_fix_iterator *it);
 /// @memberof xccdf_fix_iterator
 void xccdf_fix_iterator_free(struct xccdf_fix_iterator *it);
 
-/**
- * @}
- * @addtogroup xccdf_fixtext
- * @{
- */
 /** @struct xccdf_fixtext_iterator
  * Textual fix iterator.
  * @see oscap_iterator
@@ -1879,116 +1709,214 @@ xccdf_level_t xccdf_fixtext_get_disruption(const struct xccdf_fixtext *fixtext);
 struct xccdf_fix *xccdf_fixtext_get_fixref(const struct xccdf_fixtext *fixtext);
 
 /* Get/Set functions */
+
+/// @memberof xccdf_value
 const char *xccdf_value_get_id(const struct xccdf_value *value);
+/// @memberof xccdf_value
 const char *xccdf_value_get_version(const struct xccdf_value *value);
+/// @memberof xccdf_value
 struct oscap_text_iterator *xccdf_value_get_question(const struct xccdf_value *value);
+/// @memberof xccdf_value
 const struct xccdf_warning_iterator *xccdf_value_get_warning(const struct xccdf_value *value);
+/// @memberof xccdf_value
 struct oscap_text_iterator *xccdf_value_get_rationale(const struct xccdf_value *value);
+/// @memberof xccdf_value
 const char *xccdf_value_get_cluster_id(const struct xccdf_value *value);
+/// @memberof xccdf_value
 const char *xccdf_value_get_version_update(const struct xccdf_value *value);
+/// @memberof xccdf_value
 time_t xccdf_value_get_version_time(const struct xccdf_value *value);
+/// @memberof xccdf_value
 float xccdf_value_get_weight(const struct xccdf_value *value);
+/// @memberof xccdf_value
 struct xccdf_benchmark *xccdf_value_get_benchmark(const struct xccdf_value *value);
+/// @memberof xccdf_value
 struct oscap_string_iterator *xccdf_value_get_platforms(const struct xccdf_value *value);
+/// @memberof xccdf_value
 struct oscap_string_iterator *xccdf_value_get_sources(const struct xccdf_value *value);
 
+/// @memberof xccdf_value
 bool xccdf_value_get_resolved(const struct xccdf_value *value);
+/// @memberof xccdf_value
 bool xccdf_value_get_hidden(const struct xccdf_value *value);
+/// @memberof xccdf_value
 bool xccdf_value_get_selected(const struct xccdf_value *value);
+/// @memberof xccdf_value
 bool xccdf_value_get_multiple(const struct xccdf_value *value);
+/// @memberof xccdf_value
 bool xccdf_value_get_prohibit_changes(const struct xccdf_value *value);
+/// @memberof xccdf_value
 bool xccdf_value_get_abstract(const struct xccdf_value *value);
+/// @memberof xccdf_value
 bool xccdf_value_get_interactive(const struct xccdf_value *value);
 
+/// @memberof xccdf_item
 const char *xccdf_item_get_id(const struct xccdf_item *item);
+/// @memberof xccdf_item
 const char *xccdf_item_get_version(const struct xccdf_item *item);
+/// @memberof xccdf_item
 struct oscap_text_iterator *xccdf_item_get_question(const struct xccdf_item *item);
+/// @memberof xccdf_item
 const struct xccdf_warning_iterator *xccdf_item_get_warning(const struct xccdf_item *item);
+/// @memberof xccdf_item
 struct oscap_text_iterator *xccdf_item_get_rationale(const struct xccdf_item *item);
+/// @memberof xccdf_item
 const char *xccdf_item_get_cluster_id(const struct xccdf_item *item);
+/// @memberof xccdf_item
 const char *xccdf_item_get_version_update(const struct xccdf_item *item);
+/// @memberof xccdf_item
 time_t xccdf_item_get_version_time(const struct xccdf_item *item);
+/// @memberof xccdf_item
 float xccdf_item_get_weight(const struct xccdf_item *item);
+/// @memberof xccdf_item
 struct xccdf_benchmark *xccdf_item_get_benchmark(const struct xccdf_item *item);
+/// @memberof xccdf_item
 struct oscap_string_iterator *xccdf_item_get_platforms(const struct xccdf_item *item);
 
+/// @memberof xccdf_benchmark
 bool xccdf_benchmark_get_resolved(const struct xccdf_benchmark *benchmark);
+/// @memberof xccdf_benchmark
 bool xccdf_benchmark_get_hidden(const struct xccdf_benchmark *benchmark);
+/// @memberof xccdf_benchmark
 bool xccdf_benchmark_get_selected(const struct xccdf_benchmark *benchmark);
+/// @memberof xccdf_benchmark
 bool xccdf_benchmark_get_multiple(const struct xccdf_benchmark *benchmark);
+/// @memberof xccdf_benchmark
 bool xccdf_benchmark_get_prohibit_changes(const struct xccdf_benchmark *benchmark);
+/// @memberof xccdf_benchmark
 bool xccdf_benchmark_get_abstract(const struct xccdf_benchmark *benchmark);
+/// @memberof xccdf_benchmark
 bool xccdf_benchmark_get_interactive(const struct xccdf_benchmark *benchmark);
 
 //const char* xccdf_bechmark_get_id(const struct xccdf_benchmark* benchmark);
 //const char *xccdf_benchmark_get_title(const struct xccdf_benchmark *benchmark);
+/// @memberof xccdf_benchmark
 const char *xccdf_benchmark_get_version(const struct xccdf_benchmark *benchmark);
+/// @memberof xccdf_benchmark
 struct oscap_text_iterator *xccdf_benchmark_get_question(const struct xccdf_benchmark *benchmark);
+/// @memberof xccdf_benchmark
 const struct xccdf_warning_iterator *xccdf_benchmark_get_warning(const struct xccdf_benchmark *benchmark);
+/// @memberof xccdf_benchmark
 struct oscap_text_iterator *xccdf_benchmark_get_rationale(const struct xccdf_benchmark *benchmark);
+/// @memberof xccdf_benchmark
 const char *xccdf_benchmark_get_cluster_id(const struct xccdf_benchmark *benchmark);
+/// @memberof xccdf_benchmark
 const char *xccdf_benchmark_get_version_update(const struct xccdf_benchmark *benchmark);
+/// @memberof xccdf_benchmark
 time_t xccdf_benchmark_get_version_time(const struct xccdf_benchmark *benchmark);
+/// @memberof xccdf_benchmark
 float xccdf_benchmark_get_weight(const struct xccdf_benchmark *benchmark);
+/// @memberof xccdf_benchmark
 struct xccdf_benchmark *xccdf_benchmark_get_benchmark(const struct xccdf_benchmark *benchmark);
+/// @memberof xccdf_benchmark
 struct xccdf_item *xccdf_benchmark_get_parent(const struct xccdf_benchmark *benchmark);
 
+/// @memberof xccdf_profile
 const char *xccdf_profile_get_id(const struct xccdf_profile *profile);
+/// @memberof xccdf_profile
 const char *xccdf_profile_get_version(const struct xccdf_profile *profile);
+/// @memberof xccdf_profile
 struct oscap_text_iterator *xccdf_profile_get_question(const struct xccdf_profile *profile);
+/// @memberof xccdf_profile
 const struct xccdf_warning_iterator *xccdf_profile_get_warning(const struct xccdf_profile *profile);
+/// @memberof xccdf_profile
 struct oscap_text_iterator *xccdf_profile_get_rationale(const struct xccdf_profile *profile);
+/// @memberof xccdf_profile
 const char *xccdf_profile_get_cluster_id(const struct xccdf_profile *profile);
+/// @memberof xccdf_profile
 const char *xccdf_profile_get_version_update(const struct xccdf_profile *profile);
+/// @memberof xccdf_profile
 time_t xccdf_profile_get_version_time(const struct xccdf_profile *profile);
+/// @memberof xccdf_profile
 float xccdf_profile_get_weight(const struct xccdf_profile *profile);
+/// @memberof xccdf_profile
 struct xccdf_item *xccdf_profile_get_parent(const struct xccdf_profile *profile);
+/// @memberof xccdf_profile
 const char *xccdf_profile_get_note_tag(const struct xccdf_profile *profile);
 
+/// @memberof xccdf_profile
 bool xccdf_profile_get_resolved(const struct xccdf_profile *profile);
+/// @memberof xccdf_profile
 bool xccdf_profile_get_hidden(const struct xccdf_profile *profile);
+/// @memberof xccdf_profile
 bool xccdf_profile_get_selected(const struct xccdf_profile *profile);
+/// @memberof xccdf_profile
 bool xccdf_profile_get_multiple(const struct xccdf_profile *profile);
+/// @memberof xccdf_profile
 bool xccdf_profile_get_prohibit_changes(const struct xccdf_profile *profile);
+/// @memberof xccdf_profile
 bool xccdf_profile_get_abstract(const struct xccdf_profile *profile);
+/// @memberof xccdf_profile
 bool xccdf_profile_get_interactive(const struct xccdf_profile *profile);
 
+/// @memberof xccdf_rule
 const char *xccdf_rule_get_id(const struct xccdf_rule *rule);
+/// @memberof xccdf_rule
 const char *xccdf_rule_get_version(const struct xccdf_rule *rule);
+/// @memberof xccdf_rule
 const char *xccdf_rule_get_cluster_id(const struct xccdf_rule *rule);
+/// @memberof xccdf_rule
 const char *xccdf_rule_get_version_update(const struct xccdf_rule *rule);
+/// @memberof xccdf_rule
 time_t xccdf_rule_get_version_time(const struct xccdf_rule *rule);
+/// @memberof xccdf_rule
 float xccdf_rule_get_weight(const struct xccdf_rule *rule);
+/// @memberof xccdf_rule
 struct xccdf_benchmark *xccdf_rule_get_benchmark(const struct xccdf_rule *rule);
+/// @memberof xccdf_rule
 struct oscap_string_iterator *xccdf_rule_get_platforms(const struct xccdf_rule *rule);
+/// @memberof xccdf_rule
 bool xccdf_rule_get_resolved(const struct xccdf_rule *rule);
+/// @memberof xccdf_rule
 bool xccdf_rule_get_interactive(const struct xccdf_rule *rule);
 
+/// @memberof xccdf_group
 bool xccdf_group_get_resolved(const struct xccdf_group *group);
+/// @memberof xccdf_group
 bool xccdf_group_get_hidden(const struct xccdf_group *group);
+/// @memberof xccdf_group
 bool xccdf_group_get_selected(const struct xccdf_group *group);
+/// @memberof xccdf_group
 bool xccdf_group_get_multiple(const struct xccdf_group *group);
+/// @memberof xccdf_group
 bool xccdf_group_get_prohibit_changes(const struct xccdf_group *group);
+/// @memberof xccdf_group
 bool xccdf_group_get_abstract(const struct xccdf_group *group);
+/// @memberof xccdf_group
 bool xccdf_group_get_interactive(const struct xccdf_group *group);
+/// @memberof xccdf_group
 time_t xccdf_group_get_version_time(const struct xccdf_group *group);
+/// @memberof xccdf_group
 const char *xccdf_group_get_version_update(const struct xccdf_group *group);
+/// @memberof xccdf_group
 float xccdf_group_get_weight(const struct xccdf_group *group);
+/// @memberof xccdf_group
 struct xccdf_benchmark *xccdf_group_get_benchmark(const struct xccdf_group *group);
 
+/// @memberof xccdf_check
 struct xccdf_check_import_iterator *xccdf_check_get_imports(const struct xccdf_check *check);
+/// @memberof xccdf_check
 struct xccdf_check_export_iterator *xccdf_check_get_exports(const struct xccdf_check *check);
+/// @memberof xccdf_check
 struct xccdf_check_content_ref_iterator *xccdf_check_get_content_refs(const struct xccdf_check *check);
+/// @memberof xccdf_check
 const char *xccdf_fixtext_get_content(const struct xccdf_fixtext *fixtext);
 
+/// @memberof xccdf_reference
 bool xccdf_reference_get_override(const struct xccdf_reference *reference);
+/// @memberof xccdf_reference
 const char *xccdf_reference_get_href(const struct xccdf_reference *reference);
+/// @memberof xccdf_reference
 const char *xccdf_reference_get_text(const struct xccdf_reference *reference);
 
 
+/// @memberof xccdf_select
 bool xccdf_select_get_selected(const struct xccdf_select *select);
+/// @memberof xccdf_select
 const char *xccdf_select_get_idref(const struct xccdf_select *select);
+/// @memberof xccdf_select
 const char *xccdf_select_get_remark(const struct xccdf_select *select);
+/// @memberof xccdf_select
 struct xccdf_item *xccdf_select_get_item(const struct xccdf_select *select);
 
 /**
@@ -2032,73 +1960,138 @@ struct xccdf_value *xccdf_benchmark_append_new_value(const struct xccdf_benchmar
 struct xccdf_rule *xccdf_benchmark_append_new_rule(const struct xccdf_benchmark *, const char *id);
 
 
-
+/// @memberof xccdf_item
 void xccdf_item_set_title(const struct xccdf_item* item, const char *title);
+/// @memberof xccdf_benchmark
 void xccdf_benchmark_set_title(const struct xccdf_benchmark* item, const char *title);
+/// @memberof xccdf_profile
 void xccdf_profile_set_title(const struct xccdf_profile* item, const char *title);
+/// @memberof xccdf_rule
 void xccdf_rule_set_title(const struct xccdf_rule* item, const char *title);
+/// @memberof xccdf_value
 void xccdf_value_set_title(const struct xccdf_value* item, const char *title);
+/// @memberof xccdf_group
 void xccdf_group_set_title(const struct xccdf_group* item, const char *title);
+/// @memberof xccdf_item
 void xccdf_item_set_description(const struct xccdf_item* item, const char *description);
+/// @memberof xccdf_benchmark
 void xccdf_benchmark_set_description(const struct xccdf_benchmark* item, const char *description);
+/// @memberof xccdf_profile
 void xccdf_profile_set_description(const struct xccdf_profile* item, const char *description);
+/// @memberof xccdf_rule
 void xccdf_rule_set_description(const struct xccdf_rule* item, const char *description);
+/// @memberof xccdf_value
 void xccdf_value_set_description(const struct xccdf_value* item, const char *description);
+/// @memberof xccdf_group
 void xccdf_group_set_description(const struct xccdf_group* item, const char *description);
+/// @memberof xccdf_item
 void xccdf_item_set_question(const struct xccdf_item* item, const char *question);
+/// @memberof xccdf_benchmark
 void xccdf_benchmark_set_question(const struct xccdf_benchmark* item, const char *question);
+/// @memberof xccdf_profile
 void xccdf_profile_set_question(const struct xccdf_profile* item, const char *question);
+/// @memberof xccdf_rule
 void xccdf_rule_set_question(const struct xccdf_rule* item, const char *question);
+/// @memberof xccdf_value
 void xccdf_value_set_question(const struct xccdf_value* item, const char *question);
+/// @memberof xccdf_group
 void xccdf_group_set_question(const struct xccdf_group* item, const char *question);
+/// @memberof xccdf_item
 void xccdf_item_set_rationale(const struct xccdf_item* item, const char *rationale);
+/// @memberof xccdf_benchmark
 void xccdf_benchmark_set_rationale(const struct xccdf_benchmark* item, const char *rationale);
+/// @memberof xccdf_profile
 void xccdf_profile_set_rationale(const struct xccdf_profile* item, const char *rationale);
+/// @memberof xccdf_rule
 void xccdf_rule_set_rationale(const struct xccdf_rule* item, const char *rationale);
+/// @memberof xccdf_value
 void xccdf_value_set_rationale(const struct xccdf_value* item, const char *rationale);
+/// @memberof xccdf_group
 void xccdf_group_set_rationale(const struct xccdf_group* item, const char *rationale);
+/// @memberof xccdf_item
 void xccdf_item_set_cluster_id(const struct xccdf_item* item, const char *cluster_id);
+/// @memberof xccdf_benchmark
 void xccdf_benchmark_set_cluster_id(const struct xccdf_benchmark* item, const char *cluster_id);
+/// @memberof xccdf_profile
 void xccdf_profile_set_cluster_id(const struct xccdf_profile* item, const char *cluster_id);
+/// @memberof xccdf_rule
 void xccdf_rule_set_cluster_id(const struct xccdf_rule* item, const char *cluster_id);
+/// @memberof xccdf_value
 void xccdf_value_set_cluster_id(const struct xccdf_value* item, const char *cluster_id);
+/// @memberof xccdf_group
 void xccdf_group_set_cluster_id(const struct xccdf_group* item, const char *cluster_id);
+/// @memberof xccdf_item
 void xccdf_item_set_version(const struct xccdf_item* item, const char *version);
+/// @memberof xccdf_benchmark
 void xccdf_benchmark_set_version(const struct xccdf_benchmark* item, const char *version);
+/// @memberof xccdf_profile
 void xccdf_profile_set_version(const struct xccdf_profile* item, const char *version);
+/// @memberof xccdf_rule
 void xccdf_rule_set_version(const struct xccdf_rule* item, const char *version);
+/// @memberof xccdf_value
 void xccdf_value_set_version(const struct xccdf_value* item, const char *version);
+/// @memberof xccdf_group
 void xccdf_group_set_version(const struct xccdf_group* item, const char *version);
+/// @memberof xccdf_item
 void xccdf_item_set_version_update(const struct xccdf_item* item, const char *version_update);
+/// @memberof xccdf_benchmark
 void xccdf_benchmark_set_version_update(const struct xccdf_benchmark* item, const char *version_update);
+/// @memberof xccdf_profile
 void xccdf_profile_set_version_update(const struct xccdf_profile* item, const char *version_update);
+/// @memberof xccdf_rule
 void xccdf_rule_set_version_update(const struct xccdf_rule* item, const char *version_update);
+/// @memberof xccdf_value
 void xccdf_value_set_version_update(const struct xccdf_value* item, const char *version_update);
+/// @memberof xccdf_group
 void xccdf_group_set_version_update(const struct xccdf_group* item, const char *version_update);
 
+/// @memberof xccdf_item
 void xccdf_item_set_weight(const struct xccdf_item* item, float weight);
+/// @memberof xccdf_benchmark
 void xccdf_benchmark_set_weight(const struct xccdf_benchmark* item, float weight);
+/// @memberof xccdf_profile
 void xccdf_profile_set_weight(const struct xccdf_profile* item, float weight);
+/// @memberof xccdf_rule
 void xccdf_rule_set_weight(const struct xccdf_rule* item, float weight);
+/// @memberof xccdf_value
 void xccdf_value_set_weight(const struct xccdf_value* item, float weight);
+/// @memberof xccdf_group
 void xccdf_group_set_weight(const struct xccdf_group* item, float weight);
+/// @memberof xccdf_item
 void xccdf_item_set_version_time(const struct xccdf_item* item, time_t version_time);
+/// @memberof xccdf_benchmark
 void xccdf_benchmark_set_version_time(const struct xccdf_benchmark* item, time_t version_time);
+/// @memberof xccdf_profile
 void xccdf_profile_set_version_time(const struct xccdf_profile* item, time_t version_time);
+/// @memberof xccdf_rule
 void xccdf_rule_set_version_time(const struct xccdf_rule* item, time_t version_time);
+/// @memberof xccdf_value
 void xccdf_value_set_version_time(const struct xccdf_value* item, time_t version_time);
+/// @memberof xccdf_group
 void xccdf_group_set_version_time(const struct xccdf_group* item, time_t version_time);
+/// @memberof xccdf_item
 void xccdf_item_set_extends(const struct xccdf_item* item, struct xccdf_item * extends);
+/// @memberof xccdf_benchmark
 void xccdf_benchmark_set_extends(const struct xccdf_benchmark* item, struct xccdf_item * extends);
+/// @memberof xccdf_profile
 void xccdf_profile_set_extends(const struct xccdf_profile* item, struct xccdf_item * extends);
+/// @memberof xccdf_rule
 void xccdf_rule_set_extends(const struct xccdf_rule* item, struct xccdf_item * extends);
+/// @memberof xccdf_value
 void xccdf_value_set_extends(const struct xccdf_value* item, struct xccdf_item * extends);
+/// @memberof xccdf_group
 void xccdf_group_set_extends(const struct xccdf_group* item, struct xccdf_item * extends);
+/// @memberof xccdf_item
 void xccdf_item_set_parent(const struct xccdf_item* item, struct xccdf_item * parent);
+/// @memberof xccdf_benchmark
 void xccdf_benchmark_set_parent(const struct xccdf_benchmark* item, struct xccdf_item * parent);
+/// @memberof xccdf_profile
 void xccdf_profile_set_parent(const struct xccdf_profile* item, struct xccdf_item * parent);
+/// @memberof xccdf_rule
 void xccdf_rule_set_parent(const struct xccdf_rule* item, struct xccdf_item * parent);
+/// @memberof xccdf_value
 void xccdf_value_set_parent(const struct xccdf_value* item, struct xccdf_item * parent);
+/// @memberof xccdf_group
 void xccdf_group_set_parent(const struct xccdf_group* item, struct xccdf_item * parent);
 
 #endif
