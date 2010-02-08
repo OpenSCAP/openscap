@@ -1,14 +1,16 @@
 /** 
  * @addtogroup CVE
  * @{
- *
- * @file cve.h
- * \brief Interface to Common Vulnerability and Exposure dictionary
  *   
- *   See details at:
- *     http://cve.mitre.org/
- *     http://nvd.nist.gov/download.cfm
+ * See details at:
+ * - http://cve.mitre.org/
+ * - http://nvd.nist.gov/download.cfm
+ *
+ * Class diagram
+ * @image html cve.png
  *  
+ * @file cve.h
+ * @brief Interface to Common Vulnerability and Exposure dictionary
  */
 
 /*
