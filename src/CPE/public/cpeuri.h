@@ -67,7 +67,7 @@ struct cpe_name;
 /**
  * Create a new CPE structure from string @a cpe.
  *
- * @relates cpe_name
+ * @memberof cpe_name
  * @note If @a cpe is NULL, empty cpe will be created.
  * @param cpe CPE URI string to be parsed
  * @return new structure holding parsed data
@@ -86,7 +86,7 @@ struct cpe_name *cpe_name_new(const char *cpe);
 
 /**
  * Destructor. Frees any used resources and safely destroys @a cpe.
- * @relates cpe_name
+ * @memberof cpe_name
  * @param cpe CPE to be deleted
  */
 void cpe_name_free(struct cpe_name *cpe);
@@ -102,43 +102,43 @@ void cpe_name_free(struct cpe_name *cpe);
 
 /**
  * Get CPE name part type field.
- * @relates cpe_name
+ * @memberof cpe_name
  */
 cpe_part_t cpe_name_get_part(const struct cpe_name *cpe);
 
 /**
  * Get CPE name vendor field.
- * @relates cpe_name
+ * @memberof cpe_name
  */
 const char *cpe_name_get_vendor(const struct cpe_name *cpe);
 
 /**
  * Get CPE name product field.
- * @relates cpe_name
+ * @memberof cpe_name
  */
 const char *cpe_name_get_product(const struct cpe_name *cpe);
 
 /**
  * Get CPE name version field.
- * @relates cpe_name
+ * @memberof cpe_name
  */
 const char *cpe_name_get_version(const struct cpe_name *cpe);
 
 /**
  * Get CPE name update field.
- * @relates cpe_name
+ * @memberof cpe_name
  */
 const char *cpe_name_get_update(const struct cpe_name *cpe);
 
 /**
  * Get CPE name edition field.
- * @relates cpe_name
+ * @memberof cpe_name
  */
 const char *cpe_name_get_edition(const struct cpe_name *cpe);
 
 /**
  * Get CPE name language field.
- * @relates cpe_name
+ * @memberof cpe_name
  */
 const char *cpe_name_get_language(const struct cpe_name *cpe);
 
@@ -153,43 +153,43 @@ const char *cpe_name_get_language(const struct cpe_name *cpe);
 
 /**
  * Set CPE name part type field.
- * @relates cpe_name
+ * @memberof cpe_name
  */
 bool cpe_name_set_part(struct cpe_name *cpe, cpe_part_t newval);
 
 /**
  * Set CPE name vendor field.
- * @relates cpe_name
+ * @memberof cpe_name
  */
 bool cpe_name_set_vendor(struct cpe_name *cpe, const char *newval);
 
 /**
  * Set CPE name product field.
- * @relates cpe_name
+ * @memberof cpe_name
  */
 bool cpe_name_set_product(struct cpe_name *cpe, const char *newval);
 
 /**
  * Set CPE name version field.
- * @relates cpe_name
+ * @memberof cpe_name
  */
 bool cpe_name_set_version(struct cpe_name *cpe, const char *newval);
 
 /**
  * Set CPE name update field.
- * @relates cpe_name
+ * @memberof cpe_name
  */
 bool cpe_name_set_update(struct cpe_name *cpe, const char *newval);
 
 /**
  * Set CPE name edition field.
- * @relates cpe_name
+ * @memberof cpe_name
  */
 bool cpe_name_set_edition(struct cpe_name *cpe, const char *newval);
 
 /**
  * Set CPE name language field.
- * @relates cpe_name
+ * @memberof cpe_name
  */
 bool cpe_name_set_language(struct cpe_name *cpe, const char *newval);
 
@@ -203,13 +203,13 @@ bool cpe_name_set_language(struct cpe_name *cpe, const char *newval);
 /**
  * Check if candidate CPE @a cpe matches CPE @a against
  * according to CPE specification v 2.1.
- * @relates cpe_name
+ * @memberof cpe_name
  */
 bool cpe_name_match_one(const struct cpe_name *cpe, const struct cpe_name *against);
 
 /**
  * Check if CPE @a name matches any CPE in @a namelist.
- * @relates cpe_name
+ * @memberof cpe_name
  * @param name name to be looked-up
  * @param n number of items in namelist
  * @param namelist list of names to search in
@@ -219,7 +219,7 @@ bool cpe_name_match_cpes(const struct cpe_name *name, size_t n, struct cpe_name 
 
 /**
  * Return CPE URI as a new string.
- * @relates cpe_name
+ * @memberof cpe_name
  * @note Returned string is newly allocated and is caller's responsibility to free it.
  * @param cpe CPE to be converted
  * @return CPE URI as string
@@ -229,7 +229,7 @@ char *cpe_name_get_uri(const struct cpe_name *cpe);
 
 /**
  * Write CPE URI @a cpe to file a descriptor @a f
- * @relates cpe_name
+ * @memberof cpe_name
  * @param cpe cpe to write
  * @param f file descriptor to write CPE URI to
  * @return number of written characters
@@ -239,14 +239,14 @@ int cpe_name_write(const struct cpe_name *cpe, FILE * f);
 
 /**
  * Ensures @a str is in proper CPE format.
- * @relates cpe_name
+ * @memberof cpe_name
  * @param str string to be validated
  */
 bool cpe_name_check(const char *str);
 
 /**
  * Match CPE URI @a candidate against list of @a n CPE URIs given by @a targets.
- * @relates cpe_name
+ * @memberof cpe_name
  * @param candidate candidarte CPE URI as string
  * @param n number of items in targets
  * @param targets list of CPE URIs to be candidate matched against
