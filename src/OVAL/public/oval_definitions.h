@@ -552,7 +552,7 @@ struct oval_string_iterator;
 
 
 /**
- * Import the content from a specified XML stream into a @ref OVALDEF.
+ * Import the content from a specified XML stream into a oval_definition_model, return -1 if an error occurred.
  * The imported XML stream must be
  * If the input_source specifies a model entity (id=A, version=V) and the model specifies no entity (id=A, ...) then (id=A, version=V) is merged into the model.
  * If the input_source specifies a model entity (id=A, version=V) and the model specifies an entity (id=A, ...) then (id=A, version=V) then the source specification is skipped.

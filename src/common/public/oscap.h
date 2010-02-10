@@ -362,13 +362,13 @@ int oscap_export_target_get_indent(const struct oscap_export_target *item);
 const char *oscap_export_target_get_indent_string(const struct oscap_export_target *item);
 
 /**
- * New import source from file.
+ * Function returns new import source structure, or NULL if an error occurred.
  * @relates oscap_import_source
  */
 struct oscap_import_source *oscap_import_source_new_file(const char *filename, const char *encoding);
 
 /**
- * New import source from URL.
+ * Function returns new import source structure, or NULL if an error occurred.
  * @relates oscap_import_source
  */
 struct oscap_import_source *oscap_import_source_new_URL(const char *url, const char *encoding);

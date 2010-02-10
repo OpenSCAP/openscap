@@ -54,8 +54,10 @@ struct oscap_import_source *oscap_import_source_new_file(const char *filename, c
 		return NULL;
 
 	source->type = OSCAP_STREAM_FILE;
-	if (filename == NULL)
+	if (filename == NULL) {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EINVARG, "filename argument can't point to NULL");
 		return NULL;
+	}
 
 	source->encoding = oscap_strdup(encoding);
 	source->name = oscap_strdup(filename);
@@ -71,8 +73,10 @@ struct oscap_import_source *oscap_import_source_new_URL(const char *url, const c
 		return NULL;
 
 	source->type = OSCAP_STREAM_URL;
-	if (url == NULL)
+	if (url == NULL) {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EINVARG, "url argument can't point to NULL");
 		return NULL;
+	}
 
 	source->encoding = oscap_strdup(encoding);
 	source->name = oscap_strdup(url);
