@@ -6,6 +6,7 @@
  * @{
  * @addtogroup Internal
  * @{
+ * Functions to be used from within the OpenSCAP library.
  * @name Memory allocation
  */
 

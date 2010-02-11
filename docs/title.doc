@@ -20,6 +20,7 @@ To get started, see list of <a href="modules.html">available libraries</a>.
 
 @section Libraries
 
+- @ref COMMON - structures and functions used in other libraries
 - @ref CCE - Common Configuration Enumeration
 - @ref CPE - Common Platform Enumeration
 - @ref CVE - Common Vulnerabilities and Exposures
