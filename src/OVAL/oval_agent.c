@@ -307,28 +307,11 @@ struct oval_syschar_iterator *oval_syschar_model_get_syschars(struct oval_syscha
 	return iterator;
 }
 
-static struct oval_sysinfo *_oval_syschar_model_probe_sysinfo(struct oval_syschar_model *model)
-{
-	__attribute__nonnull__(model);
-
-	oval_pctx_t *pctx;
-	struct oval_sysinfo *sysinfo;
-
-	pctx = oval_pctx_new(NULL);
-	sysinfo = oval_probe_sysinf_eval(model, pctx);
-	oval_pctx_free(pctx);
-
-	if (sysinfo == NULL) {
-		oscap_dprintf("WARNING: sysinfo probe returns NULL (%s:%d)", __FILE__, __LINE__);
-	}
-	return (model->sysinfo = sysinfo);
-}
-
 struct oval_sysinfo *oval_syschar_model_get_sysinfo(struct oval_syschar_model *model)
 {
 	__attribute__nonnull__(model);
 
-	return (model->sysinfo) ? model->sysinfo : _oval_syschar_model_probe_sysinfo(model);
+	return model->sysinfo;
 }
 
 void oval_syschar_model_set_sysinfo(struct oval_syschar_model *model, struct oval_sysinfo *sysinfo)
