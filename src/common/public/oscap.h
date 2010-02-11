@@ -380,13 +380,13 @@ struct oscap_import_source *oscap_import_source_new_URL(const char *url, const c
 void oscap_import_source_free(struct oscap_import_source *target);
 
 /**
- * New export to a file.
+ * Function returns new export target structure, or NULL if an error occurred.
  * @relates oscap_export_target
  */
 struct oscap_export_target *oscap_export_target_new_file(const char *filename, const char *encoding);
 
 /**
- * New export to an URL location.
+ * Function returns new export target structure, or NULL if an error occurred.
  * @relates oscap_export_target
  */
 struct oscap_export_target *oscap_export_target_new_URL(const char *url, const char *encoding);

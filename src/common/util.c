@@ -106,8 +106,11 @@ struct oscap_export_target *oscap_export_target_new_file(const char *filename, c
 
 	target->type = OSCAP_STREAM_FILE;
 
-	if (filename == NULL)
+	if (filename == NULL) {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EINVARG, "filename argument can't point to NULL");
 		return NULL;
+	}
+
 	if (encoding == NULL)
 		target->encoding = oscap_strdup("UTF-8");
 	else
@@ -130,8 +133,11 @@ struct oscap_export_target *oscap_export_target_new_URL(const char *url, const c
 
 	target->type = OSCAP_STREAM_URL;
 
-	if (url == NULL)
+	if (url == NULL) {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EINVARG, "filename argument can't point to NULL");
 		return NULL;
+	}
+
 	if (encoding == NULL)
 		target->encoding = oscap_strdup("UTF-8");
 	else
