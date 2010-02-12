@@ -101,6 +101,7 @@ static int file_cb (const char *p, const char *f, void *ptr)
                         item = probe_obj_creat ("file_item", NULL,
                                                 /* entities */                                        
                                                 "path",     NULL, r0 = SEXP_string_newf ("%s", p),
+                                                "filename", NULL, NULL,
                                                 NULL);
                         
                         probe_item_setstatus(item, OVAL_STATUS_DOESNOTEXIST);
@@ -381,7 +382,7 @@ SEXP_t *probe_main (SEXP_t *probe_in, int *err, void *mutex)
         cbargs.items = items;
         cbargs.filename_ent = filename;
         
-        filecnt = find_files (path, filename, behaviors, &file_cb, items);
+        filecnt = find_files (path, filename, behaviors, &file_cb, &cbargs);
         *err    = 0;
         
         if (filecnt < 0) {
