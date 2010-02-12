@@ -65,13 +65,18 @@ static int report_missing(SEXP_t *ent)
 	oval_operation_t op;
         SEXP_t *r0;
 
-	op = SEXP_number_geti_32 (r0 = probe_ent_getattrval(ent, "operation"));
+        r0 = probe_ent_getattrval(ent, "operation");
+        
+        if (r0 == NULL)
+                return (1);
+        
+	op = SEXP_number_geti_32 (r0);
         SEXP_free (r0);
-
+        
         if (op == OVAL_OPERATION_EQUALS)
-		return 1;
+		return (1);
 	else
-		return 0;
+		return (0);
 }
 
 struct cbargs {
