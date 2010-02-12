@@ -21,13 +21,6 @@
           <criterion test_ref="test:13"/>
           <criterion test_ref="test:14"/>
           <criterion test_ref="test:15"/>
-        </criteria>
-      </criteria>
-    </definition>
-
-    <definition class="compliance" version="1" id="definition:2" comment="false">
-      <criteria>
-        <criteria operator="AND">
           <criterion test_ref="test:16"/>
           <criterion test_ref="test:17"/>
           <criterion test_ref="test:18"/>
@@ -43,13 +36,6 @@
           <criterion test_ref="test:28"/>
           <criterion test_ref="test:29"/>
           <criterion test_ref="test:30"/>
-        </criteria>
-      </criteria>
-    </definition>
-
-    <definition class="compliance" version="1" id="definition:3>" comment="false">
-      <criteria>
-        <criteria operator="AND">
           <criterion test_ref="test:31"/>
           <criterion test_ref="test:32"/>
           <criterion test_ref="test:33"/>
@@ -95,6 +81,33 @@
           <criterion test_ref="test:73"/>
           <criterion test_ref="test:74"/>
           <criterion test_ref="test:75"/>
+          <criterion test_ref="test:76"/>
+          <criterion test_ref="test:77"/>
+          <criterion test_ref="test:78"/>
+          <criterion test_ref="test:79"/>
+          <criterion test_ref="test:80"/>
+          <criterion test_ref="test:81"/>
+          <criterion test_ref="test:82"/>
+          <criterion test_ref="test:83"/>
+          <criterion test_ref="test:84"/>
+        </criteria>
+      </criteria>
+    </definition>
+
+    <definition class="compliance" version="1" id="definition:2" comment="false">
+      <criteria>
+	<criteria operator="AND">
+          <criterion test_ref="test:1"/>
+          <criterion test_ref="test:4"/>
+        </criteria>
+      </criteria>
+    </definition>
+
+    <definition class="compliance" version="1" id="definition:3" comment="true">
+      <criteria>
+	<criteria operator="AND">
+          <criterion test_ref="test:1"/>
+          <criterion test_ref="test:1"/>
         </criteria>
       </criteria>
     </definition>
@@ -102,95 +115,77 @@
     <definition class="compliance" version="1" id="definition:4" comment="false">
       <criteria>
 	<criteria operator="AND">
-          <criterion test_ref="test:1"/>
-          <criterion test_ref="test:2"/>
+          <criterion test_ref="test:4"/>
+          <criterion test_ref="test:4"/>
         </criteria>
       </criteria>
     </definition>
 
     <definition class="compliance" version="1" id="definition:5" comment="true">
       <criteria>
-	<criteria operator="AND">
+	<criteria operator="OR">
           <criterion test_ref="test:1"/>
-          <criterion test_ref="test:1"/>
+          <criterion test_ref="test:4"/>
         </criteria>
       </criteria>
     </definition>
 
-    <definition class="compliance" version="1" id="definition:6" comment="false">
-      <criteria>
-	<criteria operator="AND">
-          <criterion test_ref="test:2"/>
-          <criterion test_ref="test:2"/>
-        </criteria>
-      </criteria>
-    </definition>
-
-    <definition class="compliance" version="1" id="definition:7" comment="true">
+    <definition class="compliance" version="1" id="definition:6" comment="true">
       <criteria>
 	<criteria operator="OR">
           <criterion test_ref="test:1"/>
-          <criterion test_ref="test:2"/>
+          <criterion test_ref="test:1"/>
+        </criteria>
+      </criteria>
+    </definition>
+
+    <definition class="compliance" version="1" id="definition:7" comment="false">
+      <criteria>
+	<criteria operator="OR">
+          <criterion test_ref="test:4"/>
+          <criterion test_ref="test:4"/>
         </criteria>
       </criteria>
     </definition>
 
     <definition class="compliance" version="1" id="definition:8" comment="true">
       <criteria>
-	<criteria operator="OR">
+	<criteria operator="XOR">
           <criterion test_ref="test:1"/>
-          <criterion test_ref="test:1"/>
+          <criterion test_ref="test:4"/>
         </criteria>
       </criteria>
     </definition>
 
     <definition class="compliance" version="1" id="definition:9" comment="false">
       <criteria>
-	<criteria operator="OR">
-          <criterion test_ref="test:2"/>
-          <criterion test_ref="test:2"/>
+	<criteria operator="XOR">
+          <criterion test_ref="test:1"/>
+          <criterion test_ref="test:1"/>
         </criteria>
       </criteria>
     </definition>
 
-    <definition class="compliance" version="1" id="definition:10" comment="true">
+    <definition class="compliance" version="1" id="definition:10" comment="false">
       <criteria>
 	<criteria operator="XOR">
-          <criterion test_ref="test:1"/>
-          <criterion test_ref="test:2"/>
+          <criterion test_ref="test:4"/>
+          <criterion test_ref="test:4"/>
         </criteria>
       </criteria>
     </definition>
 
-    <definition class="compliance" version="1" id="definition:11" comment="false">
+    <definition class="compliance" version="1" id="definition:11" comment="true">
       <criteria>
-	<criteria operator="XOR">
+	<criteria operator="ONE">
           <criterion test_ref="test:1"/>
-          <criterion test_ref="test:1"/>
+          <criterion test_ref="test:4"/>
         </criteria>
       </criteria>
     </definition>
 
     <definition class="compliance" version="1" id="definition:12" comment="false">
       <criteria>
-	<criteria operator="XOR">
-          <criterion test_ref="test:2"/>
-          <criterion test_ref="test:2"/>
-        </criteria>
-      </criteria>
-    </definition>
-
-    <definition class="compliance" version="1" id="definition:13" comment="true">
-      <criteria>
-	<criteria operator="ONE">
-          <criterion test_ref="test:1"/>
-          <criterion test_ref="test:2"/>
-        </criteria>
-      </criteria>
-    </definition>
-
-    <definition class="compliance" version="1" id="definition:14" comment="false">
-      <criteria>
 	<criteria operator="ONE">
           <criterion test_ref="test:1"/>
           <criterion test_ref="test:1"/>
@@ -198,458 +193,427 @@
       </criteria>
     </definition>
 
-    <definition class="compliance" version="1" id="definition:15" comment="false">
+    <definition class="compliance" version="1" id="definition:13" comment="false">
       <criteria>
 	<criteria operator="ONE">
-          <criterion test_ref="test:2"/>
-          <criterion test_ref="test:2"/>
+          <criterion test_ref="test:4"/>
+          <criterion test_ref="test:4"/>
         </criteria>
       </criteria>
     </definition>
 
   </definitions>
 
-  <tests>
+  <tests>    
 
-    <!-- ##### SINGLE OBJECT TESTS ##### -->
+    <!-- STATELESS DEFAULT -->
 
-    <!-- ALL_EXIST -->
-
-    <file_test check_existence="all_exist" version="1" id="test:1" check="all" comment="true">
+    <file_test version="1" id="test:1" check="all" comment="true">
       <object object_ref="object:1"/>
     </file_test>
 
-    <file_test check_existence="all_exist" version="1" id="test:2" check="all" comment="false">
+    <file_test version="1" id="test:2" check="all" comment="true">
       <object object_ref="object:2"/>
     </file_test>
 
-    <file_test check_existence="all_exist" version="1" id="test:3" check="all" comment="false">
+    <file_test version="1" id="test:3" check="all" comment="true">
       <object object_ref="object:3"/>
     </file_test>
 
-    <!-- ANY_EXIST -->
-
-    <file_test check_existence="any_exist" version="1" id="test:4" check="all" comment="true">
-      <object object_ref="object:1"/>
-    </file_test>
-
-    <file_test check_existence="any_exist" version="1" id="test:5" check="all" comment="false">
-      <object object_ref="object:2"/>
-    </file_test>
-
-    <file_test check_existence="any_exist" version="1" id="test:6" check="all" comment="false">
-      <object object_ref="object:3"/>
-    </file_test>
-
-    <!-- AT_LEAST_ONE_EXISTS -->
-
-    <file_test check_existence="at_least_one_exists" version="1" id="test:7" check="all" comment="true">
-      <object object_ref="object:1"/>
-    </file_test>
-
-    <file_test check_existence="at_least_one_exists" version="1" id="test:8" check="all" comment="false">
-      <object object_ref="object:2"/>
-    </file_test>
-
-    <file_test check_existence="at_least_one_exists" version="1" id="test:9" check="all" comment="false">
-      <object object_ref="object:3"/>
-    </file_test>
-
-    <!-- ONLY_ONE_EXISTS -->
-
-    <file_test check_existence="only_one_exists" version="1" id="test:10" check="all" comment="true">
-      <object object_ref="object:1"/>
-    </file_test>
-
-    <file_test check_existence="only_one_exists" version="1" id="test:11" check="all" comment="false">
-      <object object_ref="object:2"/>
-    </file_test>
-
-    <file_test check_existence="only_one_exists" version="1" id="test:12" check="all" comment="false">
-      <object object_ref="object:3"/>
-    </file_test>
-
-    <!-- NONE_EXIST -->
-
-    <file_test check_existence="none_exist" version="1" id="test:13" check="all" comment="false">
-      <object object_ref="object:1"/>
-    </file_test>
-
-    <file_test check_existence="none_exist" version="1" id="test:14" check="all" comment="true">
-      <object object_ref="object:2"/>
-    </file_test>
-
-    <file_test check_existence="none_exist" version="1" id="test:15" check="all" comment="true">
-      <object object_ref="object:3"/>
-    </file_test>
-
-    <!-- ##### MULTI OBJECT TESTS ##### -->
-
-    <!-- ALL_EXIST -->
-
-    <file_test check_existence="all_exist" version="1" id="test:16" check="all" comment="true">
-      <object object_ref="object:1"/>
+    <file_test version="1" id="test:4" check="all" comment="false">
       <object object_ref="object:4"/>
     </file_test>
 
-    <file_test check_existence="all_exist" version="1" id="test:17" check="all" comment="false">
+    <!-- STATELESS -->
+    
+    <!-- check_existence="all_exist" check="all" -->
+
+    <file_test version="1" id="test:5" check_existence="all_exist" check="all" comment="true">
       <object object_ref="object:1"/>
+    </file_test>
+
+    <file_test version="1" id="test:6" check_existence="all_exist" check="all" comment="true">
       <object object_ref="object:2"/>
     </file_test>
 
-    <file_test check_existence="all_exist" version="1" id="test:18" check="all" comment="false">
-      <object object_ref="object:2"/>
+    <file_test version="1" id="test:7" check_existence="all_exist" check="all" comment="true">
       <object object_ref="object:3"/>
     </file_test>
 
-    <!-- ANY_EXIST -->
-
-    <file_test check_existence="any_exist" version="1" id="test:19" check="all" comment="true">
-      <object object_ref="object:1"/>
+    <file_test version="1" id="test:8" check_existence="all_exist" check="all" comment="false">
       <object object_ref="object:4"/>
     </file_test>
 
-    <file_test check_existence="any_exist" version="1" id="test:20" check="all" comment="true">
+    <!-- check_existence="all_exist" check="at least one" -->
+
+    <file_test version="1" id="test:9" check_existence="all_exist" check="at least one" comment="true">
       <object object_ref="object:1"/>
+    </file_test>
+
+    <file_test version="1" id="test:10" check_existence="all_exist" check="at least one" comment="true">
       <object object_ref="object:2"/>
     </file_test>
 
-    <file_test check_existence="any_exist" version="1" id="test:21" check="all" comment="false">
-      <object object_ref="object:2"/>
+    <file_test version="1" id="test:11" check_existence="all_exist" check="at least one" comment="true">
       <object object_ref="object:3"/>
     </file_test>
 
-    <!-- AT_LEAST_ONE_EXISTS -->
-
-    <file_test check_existence="at_least_one_exists" version="1" id="test:22" check="all" comment="true">
-      <object object_ref="object:1"/>
+    <file_test version="1" id="test:12" check_existence="all_exist" check="at least one" comment="false">
       <object object_ref="object:4"/>
     </file_test>
 
-    <file_test check_existence="at_least_one_exists" version="1" id="test:23" check="all"  comment="true">
+    <!-- check_existence="all_exist" check="none satisfy" -->
+
+    <file_test version="1" id="test:13" check_existence="all_exist" check="none satisfy" comment="true">
       <object object_ref="object:1"/>
+    </file_test>
+
+    <file_test version="1" id="test:14" check_existence="all_exist" check="none satisfy" comment="true">
       <object object_ref="object:2"/>
     </file_test>
 
-    <file_test check_existence="at_least_one_exists" version="1" id="test:24" check="all" comment="false">
-      <object object_ref="object:2"/>
+    <file_test version="1" id="test:15" check_existence="all_exist" check="none satisfy" comment="true">
       <object object_ref="object:3"/>
     </file_test>
 
-    <!-- ONLY_ONE_EXISTS -->
-
-    <file_test check_existence="only_one_exists" version="1" id="test:25" check="all" comment="false">
-      <object object_ref="object:1"/>
+    <file_test version="1" id="test:16" check_existence="all_exist" check="none satisfy" comment="false">
       <object object_ref="object:4"/>
     </file_test>
 
-    <file_test check_existence="only_one_exists" version="1" id="test:26" check="all" comment="true">
+    <!-- check_existence="all_exist" check="only one" -->
+
+    <file_test version="1" id="test:17" check_existence="all_exist" check="only one" comment="true">
       <object object_ref="object:1"/>
+    </file_test>
+
+    <file_test version="1" id="test:18" check_existence="all_exist" check="only one" comment="true">
       <object object_ref="object:2"/>
     </file_test>
 
-    <file_test check_existence="only_one_exists" version="1" id="test:27" check="all" comment="false">
-      <object object_ref="object:2"/>
+    <file_test version="1" id="test:19" check_existence="all_exist" check="only one" comment="true">
       <object object_ref="object:3"/>
     </file_test>
 
-    <!-- NONE_EXIST -->
-
-    <file_test check_existence="none_exists" version="1" id="test:28" check="all" comment="false">
-      <object object_ref="object:1"/>
+    <file_test version="1" id="test:20" check_existence="all_exist" check="only one" comment="false">
       <object object_ref="object:4"/>
     </file_test>
 
-    <file_test check_existence="none_exists" version="1" id="test:29" check="all" comment="false">
+    <!-- check_existence="at_least_one_exists" check="all" -->
+
+    <file_test version="1" id="test:21" check_existence="at_least_one_exists" check="all" comment="true">
       <object object_ref="object:1"/>
+    </file_test>
+
+    <file_test version="1" id="test:22" check_existence="at_least_one_exists" check="all" comment="true">
       <object object_ref="object:2"/>
     </file_test>
 
-    <file_test check_existence="none_exists" version="1" id="test:30" check="all" comment="true">
-      <object object_ref="object:2"/>
+    <file_test version="1" id="test:23" check_existence="at_least_one_exists" check="all" comment="true">
       <object object_ref="object:3"/>
     </file_test>
 
-    <!-- ##### SINGLE OBJECT-STATE TESTS ##### -->
+    <file_test version="1" id="test:24" check_existence="at_least_one_exists" check="all" comment="false">
+      <object object_ref="object:4"/>
+    </file_test>
 
-    <!-- ALL_EXIST -->
+    <!-- check_existence="at_least_one_exists" check="at least one" -->
 
-    <file_test check_existence="all_exist" version="1" id="test:31" check="all" comment="true">
+    <file_test version="1" id="test:25" check_existence="at_least_one_exists" check="at least one" comment="true">
       <object object_ref="object:1"/>
-      <state state_ref="state:1"/>
     </file_test>
 
-    <file_test check_existence="all_exist" version="1" id="test:32" check="all" comment="false">
+    <file_test version="1" id="test:26" check_existence="at_least_one_exists" check="at least one" comment="true">
       <object object_ref="object:2"/>
-      <state state_ref="state:1"/>
     </file_test>
 
-    <file_test check_existence="all_exist" version="1" id="test:33" check="all" comment="false">
+    <file_test version="1" id="test:27" check_existence="at_least_one_exists" check="at least one" comment="true">
       <object object_ref="object:3"/>
-      <state state_ref="state:1"/>
     </file_test>
 
-    <file_test check_existence="all_exist" version="1" id="test:34" check="all" comment="false">
+    <file_test version="1" id="test:28" check_existence="at_least_one_exists" check="at least one" comment="false">
+      <object object_ref="object:4"/>
+    </file_test>
+
+    <!-- check_existence="at_least_one_exists" check="none satisfy" -->
+
+    <file_test version="1" id="test:29" check_existence="at_least_one_exists" check="none satisfy" comment="true">
       <object object_ref="object:1"/>
-      <state state_ref="state:2"/>
     </file_test>
 
-    <file_test check_existence="all_exist" version="1" id="test:35" check="all" comment="false">
+    <file_test version="1" id="test:30" check_existence="at_least_one_exists" check="none satisfy" comment="true">
       <object object_ref="object:2"/>
-      <state state_ref="state:2"/>
     </file_test>
 
-    <file_test check_existence="all_exist" version="1" id="test:36" check="all" comment="false">
+    <file_test version="1" id="test:31" check_existence="at_least_one_exists" check="none satisfy" comment="true">
       <object object_ref="object:3"/>
-      <state state_ref="state:2"/>
     </file_test>
 
-    <file_test check_existence="all_exist" version="1" id="test:37" check="all" comment="false">
+    <file_test version="1" id="test:32" check_existence="at_least_one_exists" check="none satisfy" comment="false">
+      <object object_ref="object:4"/>
+    </file_test>
+
+    <!-- check_existence="at_least_one_exists" check="only one" -->
+
+    <file_test version="1" id="test:33" check_existence="at_least_one_exists" check="only one" comment="true">
       <object object_ref="object:1"/>
-      <state state_ref="state:3"/>
     </file_test>
 
-    <file_test check_existence="all_exist" version="1" id="test:38" check="all" comment="false">
+    <file_test version="1" id="test:34" check_existence="at_least_one_exists" check="only one" comment="true">
       <object object_ref="object:2"/>
-      <state state_ref="state:3"/>
     </file_test>
 
-    <file_test check_existence="all_exist" version="1" id="test:39" check="all" comment="false">
+    <file_test version="1" id="test:35" check_existence="at_least_one_exists" check="only one" comment="true">
       <object object_ref="object:3"/>
-      <state state_ref="state:3"/>
     </file_test>
 
-    <!-- ANY_EXIST -->
+    <file_test version="1" id="test:36" check_existence="at_least_one_exists" check="only one" comment="false">
+      <object object_ref="object:4"/>
+    </file_test>
 
-    <file_test check_existence="any_exist" version="1" id="test:40" check="all" comment="true">
+    <!-- check_existence="any_exist" check="all" -->
+
+    <file_test version="1" id="test:37" check_existence="any_exist" check="all" comment="true">
       <object object_ref="object:1"/>
-      <state state_ref="state:1"/>
     </file_test>
 
-    <file_test check_existence="any_exist" version="1" id="test:41" check="all" comment="false">
+    <file_test version="1" id="test:38" check_existence="any_exist" check="all" comment="true">
       <object object_ref="object:2"/>
-      <state state_ref="state:1"/>
     </file_test>
 
-    <file_test check_existence="any_exist" version="1" id="test:42" check="all" comment="false">
+    <file_test version="1" id="test:39" check_existence="any_exist" check="all" comment="true">
       <object object_ref="object:3"/>
-      <state state_ref="state:1"/>
     </file_test>
 
-    <file_test check_existence="any_exist" version="1" id="test:43" check="all" comment="true">
+    <file_test version="1" id="test:40" check_existence="any_exist" check="all" comment="true">
+      <object object_ref="object:4"/>
+    </file_test>
+
+    <!-- check_existence="any_exist" check="at least one" -->
+
+    <file_test version="1" id="test:41" check_existence="any_exist" check="at least one" comment="true">
       <object object_ref="object:1"/>
-      <state state_ref="state:2"/>
     </file_test>
 
-    <file_test check_existence="any_exist" version="1" id="test:44" check="all" comment="false">
+    <file_test version="1" id="test:42" check_existence="any_exist" check="at least one" comment="true">
       <object object_ref="object:2"/>
-      <state state_ref="state:2"/>
     </file_test>
 
-    <file_test check_existence="any_exist" version="1" id="test:45" check="all" comment="false">
+    <file_test version="1" id="test:43" check_existence="any_exist" check="at least one" comment="true">
       <object object_ref="object:3"/>
-      <state state_ref="state:2"/>
     </file_test>
 
-    <file_test check_existence="any_exist" version="1" id="test:46" check="all" comment="true">
+    <file_test version="1" id="test:44" check_existence="any_exist" check="at least one" comment="true">
+      <object object_ref="object:4"/>
+    </file_test>
+
+    <!-- check_existence="any_exist" check="none satisfy" -->
+
+    <file_test version="1" id="test:45" check_existence="any_exist" check="none satisfy" comment="true">
       <object object_ref="object:1"/>
-      <state state_ref="state:3"/>
     </file_test>
 
-    <file_test check_existence="any_exist" version="1" id="test:47" check="all" comment="false">
+    <file_test version="1" id="test:46" check_existence="any_exist" check="none satisfy" comment="true">
       <object object_ref="object:2"/>
-      <state state_ref="state:3"/>
     </file_test>
 
-    <file_test check_existence="any_exist" version="1" id="test:48" check="all" comment="false">
+    <file_test version="1" id="test:47" check_existence="any_exist" check="none satisfy" comment="true">
       <object object_ref="object:3"/>
-      <state state_ref="state:3"/>
     </file_test>
 
-    <!-- AT_LEAST_ONE_EXISTS -->
+    <file_test version="1" id="test:48" check_existence="any_exist" check="none satisfy" comment="true">
+      <object object_ref="object:4"/>
+    </file_test>
 
-    <file_test check_existence="at_least_one_exist" version="1" id="test:49" check="all" comment="true">
+    <!-- check_existence="any_exist" check="only one" -->
+
+    <file_test version="1" id="test:49" check_existence="any_exist" check="only one" comment="true">
       <object object_ref="object:1"/>
-      <state state_ref="state:1"/>
     </file_test>
 
-    <file_test check_existence="at_least_one_exist" version="1" id="test:50" check="all" comment="false">
+    <file_test version="1" id="test:50" check_existence="any_exist" check="only one" comment="true">
       <object object_ref="object:2"/>
-      <state state_ref="state:1"/>
     </file_test>
 
-    <file_test check_existence="at_least_one_exist" version="1" id="test:51" check="all" comment="false">
+    <file_test version="1" id="test:51" check_existence="any_exist" check="only one" comment="true">
       <object object_ref="object:3"/>
-      <state state_ref="state:1"/>
     </file_test>
 
-    <file_test check_existence="at_least_one_exist" version="1" id="test:52" check="all" comment="true">
+    <file_test version="1" id="test:52" check_existence="any_exist" check="only one" comment="true">
+      <object object_ref="object:4"/>
+    </file_test>
+
+    <!-- check_existence="none_exist" check="all" -->
+
+    <file_test version="1" id="test:53" check_existence="none_exist" check="all" comment="false">
       <object object_ref="object:1"/>
-      <state state_ref="state:2"/>
     </file_test>
 
-    <file_test check_existence="at_least_one_exist" version="1" id="test:53" check="all" comment="false">
+    <file_test version="1" id="test:54" check_existence="none_exist" check="all" comment="false">
       <object object_ref="object:2"/>
-      <state state_ref="state:2"/>
     </file_test>
 
-    <file_test check_existence="at_least_one_exist" version="1" id="test:54" check="all" comment="false">
+    <file_test version="1" id="test:55" check_existence="none_exist" check="all" comment="false">
       <object object_ref="object:3"/>
-      <state state_ref="state:2"/>
     </file_test>
 
-    <file_test check_existence="at_least_one_exist" version="1" id="test:55" check="all" comment="true">
+    <file_test version="1" id="test:56" check_existence="none_exist" check="all" comment="true">
+      <object object_ref="object:4"/>
+    </file_test>
+
+    <!-- check_existence="none_exist" check="at least one" -->
+
+    <file_test version="1" id="test:57" check_existence="none_exist" check="at least one" comment="false">
       <object object_ref="object:1"/>
-      <state state_ref="state:3"/>
     </file_test>
 
-    <file_test check_existence="at_least_one_exist" version="1" id="test:56" check="all" comment="false">
+    <file_test version="1" id="test:58" check_existence="none_exist" check="at least one" comment="false">
       <object object_ref="object:2"/>
-      <state state_ref="state:3"/>
     </file_test>
 
-    <file_test check_existence="at_least_one_exist" version="1" id="test:57" check="all" comment="false">
+    <file_test version="1" id="test:59" check_existence="none_exist" check="at least one" comment="false">
       <object object_ref="object:3"/>
-      <state state_ref="state:3"/>
     </file_test>
 
-    <!-- NONE_EXIST -->
+    <file_test version="1" id="test:60" check_existence="none_exist" check="at least one" comment="true">
+      <object object_ref="object:4"/>
+    </file_test>
 
-    <file_test check_existence="none_exist" version="1" id="test:58" check="all" comment="false">
+    <!-- check_existence="none_exist" check="none satisfy" -->
+
+    <file_test version="1" id="test:61" check_existence="none_exist" check="none satisfy" comment="false">
       <object object_ref="object:1"/>
-      <state state_ref="state:1"/>
     </file_test>
 
-    <file_test check_existence="none_exist" version="1" id="test:59" check="all" comment="true">
+    <file_test version="1" id="test:62" check_existence="none_exist" check="none satisfy" comment="false">
       <object object_ref="object:2"/>
-      <state state_ref="state:1"/>
     </file_test>
 
-    <file_test check_existence="none_exist" version="1" id="test:60" check="all" comment="true">
+    <file_test version="1" id="test:63" check_existence="none_exist" check="none satisfy" comment="false">
       <object object_ref="object:3"/>
-      <state state_ref="state:1"/>
     </file_test>
 
-    <file_test check_existence="none_exist" version="1" id="test:61" check="all" comment="false">
+    <file_test version="1" id="test:64" check_existence="none_exist" check="none satisfy" comment="true">
+      <object object_ref="object:4"/>
+    </file_test>
+
+    <!-- check_existence="none_exist" check="only one" -->
+
+    <file_test version="1" id="test:65" check_existence="none_exist" check="only one" comment="false">
       <object object_ref="object:1"/>
-      <state state_ref="state:2"/>
     </file_test>
 
-    <file_test check_existence="none_exist" version="1" id="test:62" check="all" comment="true">
+    <file_test version="1" id="test:66" check_existence="none_exist" check="only one" comment="false">
       <object object_ref="object:2"/>
-      <state state_ref="state:2"/>
     </file_test>
 
-    <file_test check_existence="none_exist" version="1" id="test:63" check="all" comment="true">
+    <file_test version="1" id="test:67" check_existence="none_exist" check="only one" comment="false">
       <object object_ref="object:3"/>
-      <state state_ref="state:2"/>
     </file_test>
 
-    <file_test check_existence="none_exist" version="1" id="test:64" check="all" comment="false">
+    <file_test version="1" id="test:68" check_existence="none_exist" check="only one" comment="true">
+      <object object_ref="object:4"/>
+    </file_test>
+
+    <!-- check_existence="only_one_exists" check="all" -->
+
+    <file_test version="1" id="test:69" check_existence="only_one_exists" check="all" comment="true">
       <object object_ref="object:1"/>
-      <state state_ref="state:3"/>
     </file_test>
 
-    <file_test check_existence="none_exist" version="1" id="test:65" check="all" comment="true">
+    <file_test version="1" id="test:70" check_existence="only_one_exists" check="all" comment="false">
       <object object_ref="object:2"/>
-      <state state_ref="state:3"/>
     </file_test>
 
-    <file_test check_existence="none_exist" version="1" id="test:66" check="all" comment="true">
+    <file_test version="1" id="test:71" check_existence="only_one_exists" check="all" comment="true">
       <object object_ref="object:3"/>
-      <state state_ref="state:3"/>
     </file_test>
 
-    <!-- ONLY_ONE_EXISTS -->
+    <file_test version="1" id="test:72" check_existence="only_one_exists" check="all" comment="false">
+      <object object_ref="object:4"/>
+    </file_test>
 
-    <file_test check_existence="only_one_exists" version="1" id="test:67" check="all" comment="false">
+    <!-- check_existence="only_one_exists" check="at least one" -->
+
+    <file_test version="1" id="test:73" check_existence="only_one_exists" check="at least one" comment="true">
       <object object_ref="object:1"/>
-      <state state_ref="state:1"/>
     </file_test>
 
-    <file_test check_existence="only_one_exists" version="1" id="test:68" check="all" comment="false">
+    <file_test version="1" id="test:74" check_existence="only_one_exists" check="at least one" comment="false">
       <object object_ref="object:2"/>
-      <state state_ref="state:1"/>
     </file_test>
 
-    <file_test check_existence="only_one_exists" version="1" id="test:69" check="all" comment="false">
+    <file_test version="1" id="test:75" check_existence="only_one_exists" check="at least one" comment="true">
       <object object_ref="object:3"/>
-      <state state_ref="state:1"/>
     </file_test>
 
-    <file_test check_existence="only_one_exists" version="1" id="test:70" check="all" comment="true">
+    <file_test version="1" id="test:76" check_existence="only_one_exists" check="at least one" comment="false">
+      <object object_ref="object:4"/>
+    </file_test>
+
+    <!-- check_existence="only_one_exists" check="none satisfy" -->
+
+    <file_test version="1" id="test:77" check_existence="only_one_exists" check="none satisfy" comment="true">
       <object object_ref="object:1"/>
-      <state state_ref="state:2"/>
     </file_test>
 
-    <file_test check_existence="only_one_exists" version="1" id="test:71" check="all" comment="false">
+    <file_test version="1" id="test:78" check_existence="only_one_exists" check="none satisfy" comment="false">
       <object object_ref="object:2"/>
-      <state state_ref="state:2"/>
     </file_test>
 
-    <file_test check_existence="only_one_exists" version="1" id="test:72" check="all" comment="false">
+    <file_test version="1" id="test:79" check_existence="only_one_exists" check="none satisfy" comment="true">
       <object object_ref="object:3"/>
-      <state state_ref="state:2"/>
     </file_test>
 
-    <file_test check_existence="only_one_exists" version="1" id="test:73" check="all" comment="true">
+    <file_test version="1" id="test:80" check_existence="only_one_exists" check="none satisfy" comment="false">
+      <object object_ref="object:4"/>
+    </file_test>
+
+    <!-- check_existence="only_one_exists" check="only one" -->
+
+    <file_test version="1" id="test:81" check_existence="only_one_exists" check="only one" comment="true">
       <object object_ref="object:1"/>
-      <state state_ref="state:3"/>
     </file_test>
 
-    <file_test check_existence="only_one_exists" version="1" id="test:74" check="all" comment="false">
+    <file_test version="1" id="test:82" check_existence="only_one_exists" check="only one" comment="false">
       <object object_ref="object:2"/>
-      <state state_ref="state:3"/>
     </file_test>
 
-    <file_test check_existence="only_one_exists" version="1" id="test:75" check="all" comment="false">
+    <file_test version="1" id="test:83" check_existence="only_one_exists" check="only one" comment="true">
       <object object_ref="object:3"/>
-      <state state_ref="state:3"/>
+    </file_test>
+
+    <file_test version="1" id="test:84" check_existence="only_one_exists" check="only one" comment="false">
+      <object object_ref="object:4"/>
     </file_test>
 
   </tests>
 
   <objects>
 
+    <!-- OBJECT WITH ONE INSTANCE (ITEM) -->
     <file_object version="1" id="object:1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
       <path>/etc/</path>
       <filename>passwd</filename>
     </file_object>
 
+    <!-- OBJECT WITH TWO INSTANCES (ITEMS) -->
     <file_object version="1" id="object:2" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <path>/etc/</path>
+      <filename operation="pattern match">^(passwd|group)$</filename>
+    </file_object>
+
+    <!-- OBJECT WITH NONE INSTANCE (ITEM) -->
+    <file_object version="1" id="object:3" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
       <path>/etc/</path>
       <filename>non-existing-file</filename>
     </file_object>
 
-    <file_object version="1" id="object:3" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+    <!-- OBJECT WITH NONE INSTANCE (ITEM) -->
+    <file_object version="1" id="object:4" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
       <path>/non-existing-path/</path>
       <filename>non-existing-file</filename>
     </file_object>
 
-    <file_object version="1" id="object:4" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-      <path>/etc/</path>
-      <filename>group</filename>
-    </file_object>
-
   </objects>
-
-  <states>
-
-    <file_state version="1" id="state:1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-      <user_id>0</user_id>
-      <uread datatype="boolean">true</uread>
-    </file_state>
-
-    <file_state version="1" id="state:2" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-      <user_id>-1</user_id>
-      <uread datatype="boolean">true</uread>
-    </file_state>
-
-    <file_state version="1" id="state:3" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-      <user_id>-1</user_id>
-      <uread datatype="boolean">false</uread>
-    </file_state>
-
-  </states>
 
 </oval_definitions>

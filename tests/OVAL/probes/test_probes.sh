@@ -19,7 +19,6 @@ function test_probes_setup {
     local ret_val=0
 
     export OVAL_PROBE_DIR="`pwd`/../src/OVAL/probes/"
-
     return $ret_val
 }
 
@@ -116,7 +115,7 @@ function test_probes_file {
 
     if [ $? -eq 0 ] && [ -e $RESFILE ]; then
 
-	COUNT=15; ID=1
+	COUNT=13; ID=1
 	while [ $ID -le $COUNT ]; do
 	    
 	    DEF_DEF=`cat "$DEFFILE" | grep "id=\"definition:${ID}\""`
@@ -146,7 +145,7 @@ function test_probes_file {
 	    ID=$[$ID+1]
 	done
 
-	COUNT=75; ID=1
+	COUNT=84; ID=1
 	while [ $ID -le $COUNT ]; do
 	    
 	    TEST_DEF=`cat "$DEFFILE" | grep "id=\"test:${ID}\""`
