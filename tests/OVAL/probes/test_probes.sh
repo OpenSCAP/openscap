@@ -118,8 +118,8 @@ function test_probes_file {
 	COUNT=13; ID=1
 	while [ $ID -le $COUNT ]; do
 	    
-	    DEF_DEF=`cat "$DEFFILE" | grep "id=\"definition:${ID}\""`
-	    DEF_RES=`cat "$RESFILE" | grep "definition_id=\"definition:${ID}\""`
+	    DEF_DEF=`cat "$DEFFILE" | grep "id=\"oval:1:def:\${ID}\""`
+	    DEF_RES=`cat "$RESFILE" | grep "definition_id=\"oval:1:def:${ID}\""`
 
 	    if (echo $DEF_RES | grep -q "result=\"true\""); then
 		RES="TRUE"
@@ -138,18 +138,18 @@ function test_probes_file {
 	    fi
 
 	    if [ ! $RES = $CMT ]; then
-		echo "Result of definition:${ID} should be ${CMT}!" >&2
+		echo "Result of oval:1:def:${ID} should be ${CMT}!" >&2
 		ret_val=$[$ret_val + 1]
 	    fi
 	    
 	    ID=$[$ID+1]
 	done
 
-	COUNT=84; ID=1
+	COUNT=204; ID=1
 	while [ $ID -le $COUNT ]; do
 	    
-	    TEST_DEF=`cat "$DEFFILE" | grep "id=\"test:${ID}\""`
-	    TEST_RES=`cat "$RESFILE" | grep "test_id=\"test:${ID}\""`
+	    TEST_DEF=`cat "$DEFFILE" | grep "id=\"oval:1:tst:${ID}\""`
+	    TEST_RES=`cat "$RESFILE" | grep "test_id=\"oval:1:tst:${ID}\""`
 
 	    if (echo $TEST_RES | grep -q "result=\"true\""); then
 		RES="TRUE"
@@ -168,7 +168,7 @@ function test_probes_file {
 	    fi
 
 	    if [ ! $RES = $CMT ]; then
-		echo "Result of test:${ID} should be ${CMT}!" >&2
+		echo "Result of oval:1:tst:${ID} should be ${CMT}!" >&2
 		ret_val=$[$ret_val + 1]
 	    fi
 	    
@@ -203,40 +203,22 @@ function test_probes_rpminfo {
 	return 255; # Test is not applicable.
     fi
 
-    local RPM_A=`rpm -qa | sed -n '1p'`
-    local RPM_B=`rpm -qa | sed -n '2p'`
-
-    EXISTING_RPM_PACKAGE_A=`rpm -qi ${RPM_A} | sed -n '1p' | awk '{ print $3 }'`
-    EXISTING_RPM_PACKAGE_B=`rpm -qi ${RPM_B} | sed -n '1p' | awk '{ print $3 }'`
-
-    NON_EXISTING_RPM_PACKAGE_A="non_existing_package_A"
-    NON_EXISTING_RPM_PACKAGE_B="non_existing_package_B"
-
-    EXISTING_RPM_VERSION=`rpm -qi ${RPM_A} | sed -n '2p' | awk '{ print $3 }'`
-    EXISTING_RPM_VERSION_PATTERN="^[:digit:].*"
-
-    NON_EXISTING_RPM_VERSION="1000.1000"
-    NON_EXISTING_RPM_VERSION_PATTERN="^X[^[X]]"
-
+    local RPM_A_NAME=`rpm --qf "%{NAME}\n" -qa | sort -u | sed -n '1p'`
+    local RPM_B_NAME=`rpm --qf "%{NAME}\n" -qa | sort -u | sed -n '2p'`
+    
     bash "${srcdir}/OVAL/probes/test_probes_rpminfo.xml.sh" \
-	 "$EXISTING_RPM_PACKAGE_A"                          \
-	 "$NON_EXISTING_RPM_PACKAGE_A"                      \
-	 "$EXISTING_RPM_PACKAGE_B"                          \
-	 "$NON_EXISTING_RPM_PACKAGE_B"                      \
-	 "$EXISTING_RPM_VERSION"                            \
-	 "$EXISTING_RPM_VERSION_PATTERN"                    \
-	 "$NON_EXISTING_RPM_VERSION"                        \
-	 "$NON_EXISTING_RPM_VERSION_PATTERN" > "$DEFFILE"
+	 "$RPM_A_NAME"                                      \
+	 "$RPM_B_NAME" > "$DEFFILE"
     
     eval "\"${EXECDIR}/test_probes\" \"$DEFFILE\" \"$RESFILE\"" >> "$LOGFILE"
     
     if [ $? -eq 0 ] && [ -e $RESFILE ]; then
 
-	COUNT=15; ID=1
+	COUNT=13; ID=1
 	while [ $ID -le $COUNT ]; do
 	    
-	    DEF_DEF=`cat "$DEFFILE" | grep "id=\"definition:${ID}\""`
-	    DEF_RES=`cat "$RESFILE" | grep "definition_id=\"definition:${ID}\""`
+	    DEF_DEF=`cat "$DEFFILE" | grep "id=\"oval:1:def:${ID}\""`
+	    DEF_RES=`cat "$RESFILE" | grep "definition_id=\"oval:1:def:${ID}\""`
 
 	    if (echo $DEF_RES | grep -q "result=\"true\""); then
 		RES="TRUE"
@@ -255,18 +237,18 @@ function test_probes_rpminfo {
 	    fi
 
 	    if [ ! $RES = $CMT ]; then
-		echo "Result of definition:${ID} should be ${CMT}!" >&2
+		echo "Result of oval:1:def:${ID} should be ${CMT}!" >&2
 		ret_val=$[$ret_val + 1]
 	    fi
 
 	    ID=$[$ID+1]
 	done
 
-	COUNT=49; ID=1
+	COUNT=192; ID=1
 	while [ $ID -le $COUNT ]; do
 	    
-	    TEST_DEF=`cat "$DEFFILE" | grep "id=\"test:${ID}\""`
-	    TEST_RES=`cat "$RESFILE" | grep "test_id=\"test:${ID}\""`
+	    TEST_DEF=`cat "$DEFFILE" | grep "id=\"oval:1:tst:${ID}\""`
+	    TEST_RES=`cat "$RESFILE" | grep "test_id=\"oval:1:tst:${ID}\""`
 
 	    if (echo $TEST_RES | grep -q "result=\"true\""); then
 		RES="TRUE"
@@ -285,7 +267,7 @@ function test_probes_rpminfo {
 	    fi
 
 	    if [ ! $RES = $CMT ]; then
-		echo "Result of test:${ID} should be ${CMT}!" >&2
+		echo "Result of oval:1:tst:${ID} should be ${CMT}!" >&2
 		ret_val=$[$ret_val + 1]
 	    fi
 
