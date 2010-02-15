@@ -669,13 +669,16 @@ static SEXP_t *oval_probe_cmd_ste_fetch(SEXP_t * sexp, void *arg)
 	return (ste_list);
 }
 
-struct oval_sysinfo *oval_probe_sysinf_eval(struct oval_syschar_model *model, oval_pctx_t * ctx)
+struct oval_sysinfo *oval_probe_sysinf_eval(oval_pctx_t * ctx)
 {
 	struct oval_sysinfo *sysinf;
 	struct oval_sysint *ife;
 	oval_pd_t *pd;
 
 	SEXP_t *s_obj, *s_sinf, *ent, *r0;
+	
+	_A(ctx != NULL);
+	_A(ctx->model != NULL);
 
 	pd = oval_pdtbl_get(ctx->pd_table, OVAL_INDEPENDENT_SYSCHAR_SUBTYPE);
 
@@ -723,7 +726,7 @@ struct oval_sysinfo *oval_probe_sysinf_eval(struct oval_syschar_model *model, ov
 	s_sinf = _probe_cobj_get_items(r0);
 	SEXP_free(r0);
 
-	sysinf = oval_sysinfo_new(model);
+	sysinf = oval_sysinfo_new(ctx->model);
 
 	/*
 	 * Translate S-exp to sysinfo structure
@@ -767,7 +770,7 @@ struct oval_sysinfo *oval_probe_sysinf_eval(struct oval_syschar_model *model, ov
 		uint32_t n;
 
 		for (n = 1; (ent = probe_obj_getent(s_sinf, "interface", n)) != NULL; ++n) {
-			ife = oval_sysint_new(model);
+			ife = oval_sysint_new(ctx->model);
 
 #define SYSINF_IEXT(ent, name, sysint, fail)                            \
                         do {                                            \

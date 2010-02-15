@@ -6,12 +6,6 @@
 
 int main (void)
 {
-  /*
-   *  Create probe context. Definition model isn't used
-   *  by the sysinfo probe.
-   */
-  oval_pctx_t *pctx = oval_pctx_new (NULL);
-  assume(pctx != NULL);
   
   /* 
    *  Create empty models
@@ -21,10 +15,17 @@ int main (void)
   
   struct oval_syschar_model *sys_model = oval_syschar_model_new(def_model);
   assume(sys_model != NULL);
+
+  /*
+   *  Create probe context.
+   */
+  oval_pctx_t *pctx = oval_pctx_new (sys_model);
+  assume(pctx != NULL);
+
   /*
    *  Call the sysinfo probe.
    */
-  struct oval_sysinfo *info = oval_probe_sysinf_eval (sys_model, pctx);
+  struct oval_sysinfo *info = oval_probe_sysinf_eval (pctx);
   assume(info != NULL);
   
   if (info != NULL) {
