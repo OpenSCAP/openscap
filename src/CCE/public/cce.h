@@ -155,4 +155,12 @@ const char *cce_reference_get_source(const struct cce_reference *ref);
  */
 const char *cce_reference_get_value(const struct cce_reference *ref);
 
+/**
+ * Get supported version of CCE XML
+ * @return version of XML file format
+ * @relates cce
+ */
+const char * cce_supported(void);
+
+
 #endif

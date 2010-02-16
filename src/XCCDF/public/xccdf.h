@@ -850,6 +850,14 @@ xccdf_status_type_t xccdf_benchmark_get_status_current(const struct xccdf_benchm
  */
 void xccdf_benchmark_free(struct xccdf_benchmark *benchmark);
 
+/**
+ * Get supported version of XCCDF XML
+ * @return version of XML file format
+ * @memberof xccdf_benchmark
+ */
+const char * xccdf_benchmark_supported(void);
+
+
 /*--------------------*\
 |    Profile methods   |
 \*--------------------*/

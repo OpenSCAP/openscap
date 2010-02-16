@@ -637,6 +637,13 @@ void cve_model_export(struct cve_model *cve, const struct oscap_export_target *t
  */
 struct cve_model *cve_model_import(const struct oscap_import_source *source);
 
+/**
+ * Get supported version of CVE XML
+ * @return version of XML file format
+ * @memberof cve_model
+ */
+const char * cve_model_supported(void);
+
 /*@}*/
 
 /*@}*/

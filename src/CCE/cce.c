@@ -32,6 +32,8 @@
 #include "cce_priv.h"
 #include "oscap.h"
 
+#define CCE_SUPPORTED "5"
+
 static struct cce *cce_new_empty(void)
 {
 	struct cce *cce = oscap_calloc(1, sizeof(struct cce));
@@ -90,6 +92,11 @@ struct cce *cce_new(const char *fname)
 	struct cce *cce = cce_new_empty();
 	cce_parse(fname, cce);
 	return cce;
+}
+
+const char * cce_supported(void)
+{
+        return CCE_SUPPORTED;
 }
 
 bool cce_validate(const char *filename)

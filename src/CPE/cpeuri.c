@@ -38,6 +38,8 @@
 #include "cpeuri.h"
 #include "../common/util.h"
 
+#define CPE_URI_SUPPORTED "2.2"
+
 // enumeration of CPE URI fields (useful for indexing arrays)
 enum cpe_field_t {
 	CPE_FIELD_TYPE,
@@ -470,6 +472,11 @@ void cpe_name_free(struct cpe_name *cpe)
 	for (i = 0; i < CPE_FIELDNUM; ++i)
 		cpe_set_field(cpe, i, NULL);
 	oscap_free(cpe);
+}
+
+const char * cpe_name_supported(void)
+{
+        return CPE_URI_SUPPORTED;
 }
 
 OSCAP_ACCESSOR_SIMPLE(cpe_part_t, cpe_name, part)

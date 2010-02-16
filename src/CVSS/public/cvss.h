@@ -116,6 +116,13 @@ const char* cvss_entry_get_source(const struct cvss_entry * entry);
  */
 const char* cvss_entry_get_generated(const struct cvss_entry * entry);
 
+/**
+ * Get supported version of CVSS XML
+ * @return version of XML file format
+ * @memberof cvss_entry
+ */
+const char * cvss_model_supported(void);
+
 /*@}*/
 
 /**

@@ -37,6 +37,8 @@
 #include "cvss_priv.h"
 #include "public/cvss.h"
 
+#define CVSS_SUPPORTED "2.0"
+
 /**
  *   A test class. A more elaborate class description.
  */
@@ -271,4 +273,9 @@ int cvss_env_score(cvss_collateral_damage_potential_t cde, cvss_target_distribut
 		*enviromental_score = envs;
 
 	return 0;
+}
+
+const char * cvss_model_supported(void)
+{
+        return CVSS_SUPPORTED;
 }

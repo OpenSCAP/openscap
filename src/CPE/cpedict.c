@@ -34,6 +34,8 @@
 #include "../common/list.h"
 #include "../common/util.h"
 
+#define CPE_DICT_SUPPORTED "2.2"
+
 struct cpe_dict_model *cpe_dict_model_import(const struct oscap_import_source *source)
 {
 
@@ -101,3 +103,9 @@ bool cpe_name_match_dict_str(const char *cpestr, struct cpe_dict_model * dict)
 	cpe_name_free(cpe);
 	return ret;
 }
+
+const char * cpe_dict_model_supported(void) 
+{
+        return CPE_DICT_SUPPORTED;
+}
+

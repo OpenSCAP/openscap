@@ -37,6 +37,8 @@
 #include "../common/util.h"
 #include "../common/list.h"
 
+#define CVE_SUPPORTED "2.0"
+
 /**
  * Public function to import CVE model from OSCAP import source.
  * Function returns CVE model, need to free source after calling this function
@@ -71,4 +73,9 @@ void cve_model_export(struct cve_model *cve, const struct oscap_export_target *t
 
 	cve_model_export_xml(cve, target);
 
+}
+
+const char * cve_model_supported(void)
+{
+        return CVE_SUPPORTED;
 }

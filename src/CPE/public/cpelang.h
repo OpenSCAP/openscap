@@ -359,6 +359,13 @@ void cpe_platform_free(struct cpe_platform *platform);
  * */
 
 /**
+ * Get supported version of CPE language XML
+ * @return version of XML file format
+ * @memberof cpe_lang_model
+ */
+const char * cpe_lang_model_supported(void);
+
+/**
  * Function to match cpe in platform
  * @param cpe to be matched with
  * @param n size

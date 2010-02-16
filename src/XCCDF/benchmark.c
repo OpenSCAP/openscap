@@ -23,6 +23,8 @@
 #include <string.h>
 #include "item.h"
 
+#define XCCDF_SUPPORTED "1.1.4"
+
 struct xccdf_backref {
 	struct xccdf_item **ptr;	// pointer to a pointer that is supposed to be pointing to an item with id 'id'
 	xccdf_type_t type;	// expected item type
@@ -268,4 +270,9 @@ XCCDF_GENERIC_GETTER(const char *, notice, id) XCCDF_GENERIC_GETTER(const char *
 void xccdf_cleanup(void)
 {
 	xmlCleanupParser();
+}
+
+const char * xccdf_benchmark_supported(void)
+{
+    return XCCDF_SUPPORTED;
 }

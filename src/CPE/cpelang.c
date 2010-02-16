@@ -37,6 +37,8 @@
 #include "../common/util.h"
 #include "../common/list.h"
 
+#define CPE_LANG_SUPPORTED "2.2"
+
 struct cpe_lang_model *cpe_lang_model_import(const struct oscap_import_source *source)
 {
 
@@ -110,6 +112,11 @@ static bool cpe_language_match_expr(struct cpe_name **cpe, size_t n, const struc
 bool cpe_platform_match_cpe(struct cpe_name ** cpe, size_t n, const struct cpe_platform * platform)
 {
 	return cpe_language_match_expr(cpe, n, cpe_platform_get_expr(platform));
+}
+
+const char * cpe_lang_model_supported(void)
+{
+        return CPE_LANG_SUPPORTED;
 }
 
 /*

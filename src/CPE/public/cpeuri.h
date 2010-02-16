@@ -256,6 +256,13 @@ bool cpe_name_check(const char *str);
  */
 int cpe_name_match_strs(const char *candidate, size_t n, char **targets);
 
+/**
+ * Get supported version of CPE uri XML
+ * @return version of XML file format
+ * @memberof cpe_name
+ */
+const char * cpe_name_supported(void);
+
 /*@}*/
 
 /*@}*/

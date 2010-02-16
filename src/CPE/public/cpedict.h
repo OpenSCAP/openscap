@@ -818,6 +818,13 @@ void cpe_language_iterator_free(struct cpe_language_iterator *it);
  * */
 
 /**
+ * Get supported version of CPE dictionary XML
+ * @return version of XML file format
+ * @memberof cpe_dict_model
+ */
+const char * cpe_dict_model_supported(void);
+
+/**
  * Write the dict_model to a file.
  * @param dict CPE Dict model
  * @memberof cpe_dict_model

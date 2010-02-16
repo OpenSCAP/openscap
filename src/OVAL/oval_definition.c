@@ -38,6 +38,8 @@
 #include "../common/public/debug.h"
 #include "../common/_error.h"
 
+#define OVAL_SUPPORTED "5.5"
+
 /***************************************************************************/
 /* Variable definitions
  * */
@@ -611,4 +613,9 @@ xmlNode *oval_definition_to_dom(struct oval_definition *definition, xmlDoc * doc
 		oval_criteria_node_to_dom(criteria, doc, definition_node);
 
 	return definition_node;
+}
+
+const char * oval_definition_supported(void)
+{
+        return OVAL_SUPPORTED;
 }
