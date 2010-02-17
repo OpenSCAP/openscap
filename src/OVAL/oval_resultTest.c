@@ -509,22 +509,8 @@ static oval_result_t eval_item(struct oval_sysdata *cur_sysdata, struct oval_sta
 {
 	struct oval_state_content_iterator *state_contents;
 
-	if (state == NULL) {
-		bool has_more_items = false, syschar_status_exists = false;
-		struct oval_sysitem_iterator *cur_items = oval_sysdata_get_items(cur_sysdata);
-		while ((has_more_items = oval_sysitem_iterator_has_more(cur_items))) {
-			struct oval_sysitem *tmp_item = oval_sysitem_iterator_next(cur_items);
-			if ((syschar_status_exists = oval_sysitem_get_status(tmp_item)) == SYSCHAR_STATUS_EXISTS)
-				break;	//return(OVAL_RESULT_TRUE);
-		}
-		if (has_more_items)
-			while (oval_sysitem_iterator_has_more(cur_items))
-				oval_sysitem_iterator_next(cur_items);
-		oval_sysitem_iterator_free(cur_items);
-		return (syschar_status_exists) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE;
-	} else {
-		state_contents = oval_state_get_contents(state);
-	}
+	state_contents = oval_state_get_contents(state);
+
 	bool has_more_content = false, has_error = false;
 	oval_result_t result = OVAL_RESULT_INVALID;
 	while (!has_error && (has_more_content = oval_state_content_iterator_has_more(state_contents))) {
@@ -596,28 +582,9 @@ static oval_result_t eval_item(struct oval_sysdata *cur_sysdata, struct oval_sta
 		while (oval_state_content_iterator_has_more(state_contents))
 			oval_state_content_iterator_next(state_contents);
 	oval_state_content_iterator_free(state_contents);
-	return (has_error) ? (oval_result_t) - 1 : result;
-}
 
-//typedef enum {
-	//OVAL_RESULT_INVALID        = 0,
-	//OVAL_RESULT_TRUE           = 1,
-	//OVAL_RESULT_FALSE          = 2,
-	//OVAL_RESULT_UNKNOWN        = 3,
-	//OVAL_RESULT_ERROR          = 4,
-	//OVAL_RESULT_NOT_EVALUATED  = 5,
-	//OVAL_RESULT_NOT_APPLICABLE = 6
-//} oval_result_enum;
-//typedef enum {
-	//SYSCHAR_FLAG_UNKNOWN         = 0,
-	//SYSCHAR_FLAG_ERROR           = 1,
-	//SYSCHAR_FLAG_COMPLETE        = 2,
-	//SYSCHAR_FLAG_INCOMPLETE      = 3,
-	//SYSCHAR_FLAG_DOES_NOT_EXIST  = 4,
-	//SYSCHAR_FLAG_NOT_COLLECTED   = 5,
-	//SYSCHAR_FLAG_NOT_APPLICABLE  = 6
-//} oval_syschar_collection_flag_t;
-// here's where the actual OVAL business logic starts
+	return (has_error) ? OVAL_RESULT_INVALID : result;
+}
 
 #define ITEMMAP (struct oval_string_map    *)args[2]
 #define TEST    (struct oval_result_test   *)args[1]
@@ -633,144 +600,296 @@ static void _oval_test_item_consumer(struct oval_result_item *item, void **args)
 	}
 }
 
-//int debug_flag=0;
-static oval_result_t _oval_result_test_evaluate_items
-    (struct oval_syschar *syschar_object, struct oval_state *state, oval_check_t test_check,
-     oval_existence_t test_existence_check, void **args) {
-	int matches_found;
-	int am_done = 0;
-	oval_syschar_collection_flag_t collection_flag;
+static oval_result_t eval_check_state(struct oval_state *state, oval_check_t check, void **args)
+{
+	struct oval_result_item_iterator *ritems_itr;
 	oval_result_t result;
-	struct oval_sysdata_iterator *collected_items_iterator;
-	bool has_more_sysdata, has_error = false;
-	collection_flag = oval_syschar_get_flag(syschar_object);
-	result = OVAL_RESULT_INVALID;
-//if (debug_flag) oscap_dprintf("%s:%d collection flag is:%d",__FILE__,__LINE__,collection_flag);
-	if (collection_flag == SYSCHAR_FLAG_ERROR) {	// OK, the test_check and test_existence_check must simultaniously be true
-		am_done = 1;
-		result = OVAL_RESULT_ERROR;
-	} else if (collection_flag == SYSCHAR_FLAG_NOT_COLLECTED) {
-		am_done = 1;
-		result = OVAL_RESULT_UNKNOWN;
-	} else if (collection_flag == SYSCHAR_FLAG_NOT_APPLICABLE) {
-		am_done = 1;
-		result = OVAL_RESULT_NOT_APPLICABLE;
-	} else if (collection_flag == SYSCHAR_FLAG_DOES_NOT_EXIST) {
-		if ((test_check == OVAL_CHECK_NONE_EXIST) || (test_existence_check == OVAL_NONE_EXIST)) {
-			am_done = 1;
-			result = OVAL_RESULT_TRUE;
-		} else if ((test_check == OVAL_CHECK_AT_LEAST_ONE) || (test_check == OVAL_CHECK_ONLY_ONE)
-			   || (test_existence_check == OVAL_ONLY_ONE_EXISTS)
-			   || (test_existence_check == OVAL_AT_LEAST_ONE_EXISTS)) {
-			am_done = 1;
-			result = OVAL_RESULT_FALSE;
-		}
-	} else if (collection_flag == SYSCHAR_FLAG_COMPLETE) {
-//if (debug_flag) oscap_dprintf("%s:%d test_existence_check:%d none_exist:%d",__FILE__,__LINE__,test_existence_check,NONE_EXIST);
-		if (test_existence_check == OVAL_NONE_EXIST) {
-//if (debug_flag) oscap_dprintf("%s:%d setting result to false and done to true",__FILE__,__LINE__);
-			am_done = 1;
-			result = OVAL_RESULT_FALSE;
-		}
-	}
-	collected_items_iterator = oval_syschar_get_sysdata(syschar_object);
-	if (collected_items_iterator == NULL) {
-		oscap_dprintf("%s:%d collected items iterator is null", __FILE__, __LINE__);
-		oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EINVARG, "OVAL: Collected items iterator is null");
-		return (-1);
-	}
-	for (matches_found = 0;
-	     (am_done == 0) && (!has_error)
-	     && (has_more_sysdata = oval_sysdata_iterator_has_more(collected_items_iterator));) {
-		struct oval_sysdata *cur_sysdata;
-		oval_syschar_status_t cur_sysdata_status;
+	int true_cnt, false_cnt, unknown_cnt, error_cnt, noteval_cnt, notappl_cnt;
 
-		cur_sysdata = oval_sysdata_iterator_next(collected_items_iterator);
-		char *cur_sysdata_id = oval_sysdata_get_id(cur_sysdata);
-		struct oval_result_item *cur_item = oval_result_item_new(SYSTEM, cur_sysdata_id);
-		if (cur_sysdata == NULL) {
+	ritems_itr = oval_result_test_get_items(TEST);
+	while (oval_result_item_iterator_has_more(ritems_itr)) {
+		struct oval_result_item *ritem;
+		struct oval_sysdata *item;
+		oval_result_t item_res;
+
+		ritem = oval_result_item_iterator_next(ritems_itr);
+		item = oval_result_item_get_sysdata(ritem);
+
+		item_res = eval_item(item, state);
+		oval_result_item_set_result(ritem, item_res);
+
+		switch (item_res) {
+		case OVAL_RESULT_TRUE:
+			++true_cnt;
+			break;
+		case OVAL_RESULT_FALSE:
+			++false_cnt;
+			break;
+		case OVAL_RESULT_UNKNOWN:
+			++unknown_cnt;
+			break;
+		case OVAL_RESULT_ERROR:
+			++error_cnt;
+			break;
+		case OVAL_RESULT_NOT_EVALUATED:
+			++noteval_cnt;
+			break;
+		case OVAL_RESULT_NOT_APPLICABLE:
+			++notappl_cnt;
+			break;
+		default:
+			oval_result_item_iterator_free(ritems_itr);
+			return OVAL_RESULT_ERROR;
+		}
+	}
+	oval_result_item_iterator_free(ritems_itr);
+
+	if (notappl_cnt > 0 &&
+	    noteval_cnt == 0 &&
+	    false_cnt == 0 && error_cnt == 0 && unknown_cnt == 0 && true_cnt == 0)
+		return OVAL_RESULT_NOT_APPLICABLE;
+
+	switch (check) {
+	case OVAL_CHECK_ALL:
+		if (true_cnt > 0 &&
+		    false_cnt == 0 && error_cnt == 0 && unknown_cnt == 0 && noteval_cnt == 0) {
+			result = OVAL_RESULT_TRUE;
+		} else if (false_cnt > 0) {
+			result = OVAL_RESULT_FALSE;
+		} else if (false_cnt == 0 && error_cnt > 0) {
+			result = OVAL_RESULT_ERROR;
+		} else if (false_cnt == 0 && error_cnt == 0 && unknown_cnt > 0) {
+			result = OVAL_RESULT_UNKNOWN;
+		} else if (false_cnt == 0 && error_cnt == 0 && unknown_cnt == 0 && noteval_cnt > 0) {
+			result = OVAL_RESULT_NOT_EVALUATED;
+		}
+		break;
+	case OVAL_CHECK_AT_LEAST_ONE:
+		if (true_cnt > 0) {
+			result = OVAL_RESULT_TRUE;
+		} else if (false_cnt > 0 &&
+			   true_cnt == 0 &&
+			   unknown_cnt == 0 && error_cnt == 0 && noteval_cnt == 0) {
+			result = OVAL_RESULT_FALSE;
+		} else if (true_cnt == 0 && error_cnt > 0) {
+			result = OVAL_RESULT_ERROR;
+		} else if (false_cnt == 0 && error_cnt == 0 && unknown_cnt > 0) {
+			result = OVAL_RESULT_UNKNOWN;
+		} else if (false_cnt == 0 && error_cnt == 0 && unknown_cnt == 0 && noteval_cnt > 0) {
+			result = OVAL_RESULT_NOT_EVALUATED;
+		}
+		break;
+	case OVAL_CHECK_NONE_SATISFY:
+		if (true_cnt > 0) {
+			result = OVAL_RESULT_FALSE;
+		} else if (true_cnt == 0 && error_cnt > 0) {
+			result = OVAL_RESULT_ERROR;
+		} else if (true_cnt == 0 && error_cnt == 0 && unknown_cnt > 0) {
+			result = OVAL_RESULT_UNKNOWN;
+		} else if (true_cnt == 0 && error_cnt == 0 && unknown_cnt == 0 && noteval_cnt > 0) {
+			result = OVAL_RESULT_NOT_EVALUATED;
+		} else if (false_cnt > 0 &&
+			   error_cnt == 0 &&
+			   unknown_cnt == 0 && noteval_cnt == 0 && true_cnt == 0) {
+			result = OVAL_RESULT_TRUE;
+		}
+		break;
+	case OVAL_CHECK_ONLY_ONE:
+		if (true_cnt == 1 && error_cnt == 0 && unknown_cnt == 0 && noteval_cnt == 0) {
+			result = OVAL_RESULT_TRUE;
+		} else if (true_cnt > 1) {
+			result = OVAL_RESULT_FALSE;
+		} else if (true_cnt < 2 && error_cnt > 0) {
+			result = OVAL_RESULT_ERROR;
+		} else if (true_cnt < 2 && error_cnt == 0 && unknown_cnt > 0) {
+			result = OVAL_RESULT_UNKNOWN;
+		} else if (true_cnt < 2 && error_cnt == 0 && unknown_cnt == 0 && noteval_cnt > 0) {
+			result = OVAL_RESULT_NOT_EVALUATED;
+		} else if (true_cnt != 1 && false_cnt > 0) {
+			result = OVAL_RESULT_FALSE;
+		}
+		break;
+	default:
+		result = OVAL_RESULT_INVALID;
+	}
+
+	return result;
+}
+
+static oval_result_t eval_check_existence(oval_existence_t check_existence, int exists_cnt, int error_cnt)
+{
+	oval_result_t result = OVAL_RESULT_INVALID;
+
+	switch (check_existence) {
+	case OVAL_ALL_EXIST:
+		if (exists_cnt >= 1 && error_cnt == 0) {
+			result = OVAL_RESULT_TRUE;
+		} else if (exists_cnt == 0 && error_cnt == 0) {
+			result = OVAL_RESULT_FALSE;
+		} else if (exists_cnt >= 0 && error_cnt >= 1) {
+			result = OVAL_RESULT_ERROR;
+		}
+		break;
+	case OVAL_ANY_EXIST:
+		if (exists_cnt >= 0 && error_cnt == 0) {
+			result = OVAL_RESULT_TRUE;
+		} else if (exists_cnt >= 1 && error_cnt >= 1) {
+			result = OVAL_RESULT_TRUE;
+		} else if (exists_cnt == 0 && error_cnt >= 1) {
+			result = OVAL_RESULT_ERROR;
+		}
+		break;
+	case OVAL_AT_LEAST_ONE_EXISTS:
+		if (exists_cnt >= 1 && error_cnt >= 0) {
+			result = OVAL_RESULT_TRUE;
+		} else if (exists_cnt == 0 && error_cnt == 0) {
+			result = OVAL_RESULT_FALSE;
+		} else if (exists_cnt == 0 && error_cnt >= 1) {
+			result = OVAL_RESULT_ERROR;
+		}
+		break;
+	case OVAL_NONE_EXIST:
+		if (exists_cnt == 0 && error_cnt == 0) {
+			result = OVAL_RESULT_TRUE;
+		} else if (exists_cnt >= 1 && error_cnt == 0) {
+			result = OVAL_RESULT_FALSE;
+		} else if (exists_cnt == 0 && error_cnt >= 1) {
+			result = OVAL_RESULT_ERROR;
+		}
+		break;
+	case OVAL_ONLY_ONE_EXISTS:
+		if (exists_cnt == 1 && error_cnt == 0) {
+			result = OVAL_RESULT_TRUE;
+		} else if (exists_cnt >= 2 && error_cnt >= 0) {
+			result = OVAL_RESULT_FALSE;
+		} else if (exists_cnt == 0 && error_cnt == 0) {
+			result = OVAL_RESULT_FALSE;
+		} else if (exists_cnt == 0 && error_cnt >= 1) {
+			result = OVAL_RESULT_ERROR;
+		} else if (exists_cnt == 1 && error_cnt >= 1) {
+			result = OVAL_RESULT_ERROR;
+		}
+		break;
+	default:
+		break;
+	}
+
+	return result;
+}
+
+static oval_result_t
+_oval_result_test_evaluate_items(struct oval_syschar *syschar_object,
+				 struct oval_state *state,
+				 oval_check_t test_check,
+				 oval_existence_t test_check_existence,
+				 void **args)
+{
+	struct oval_sysdata_iterator *collected_items_itr;
+	oval_result_t result;
+	int exists_cnt, error_cnt;
+
+	exists_cnt = error_cnt = 0;
+	collected_items_itr = oval_syschar_get_sysdata(syschar_object);
+	while (oval_sysdata_iterator_has_more(collected_items_itr)) {
+		struct oval_sysdata *item;
+		char *item_id;
+		oval_syschar_status_t item_status;
+		struct oval_result_item *ritem;
+
+		item = oval_sysdata_iterator_next(collected_items_itr);
+		if (item == NULL) {
 			oscap_dprintf("%s:%d iterator returned null", __FILE__, __LINE__);
 			oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EOVALINT, "OVAL: Iterator returned null");
-			has_error = true;
+			oval_sysdata_iterator_free(collected_items_itr);
+			return OVAL_RESULT_INVALID;
 		}
-		cur_sysdata_status = oval_sysdata_get_status(cur_sysdata);
-		_oval_test_item_consumer(cur_item, args);
-		if (cur_sysdata_status == SYSCHAR_STATUS_UNKNOWN) {
-			result = OVAL_RESULT_UNKNOWN;
-			oval_result_item_set_result(cur_item, result);
-		} else if (cur_sysdata_status == SYSCHAR_STATUS_ERROR) {
-			result = OVAL_RESULT_ERROR;
-			oval_result_item_set_result(cur_item, result);
-		} else if (cur_sysdata_status == SYSCHAR_STATUS_EXISTS) {	// found one, eval this item
-//if (debug_flag) oscap_dprintf("%s:%d status is 'exists', doing eval_item with state:'%s'",__FILE__,__LINE__,(state!=NULL)?oval_state_get_id(state):"null");
-			result = eval_item(cur_sysdata, state);
-			oval_result_item_set_result(cur_item, result);
-//if (debug_flag) oscap_dprintf("%s:%d eval_item returned:%d",__FILE__,__LINE__,result);
-			// we know one result, sometimes we can use that to make the full determination
-			if (result == OVAL_RESULT_TRUE) {
-				if (test_check == OVAL_CHECK_AT_LEAST_ONE) {
-					result = OVAL_RESULT_TRUE;
-					am_done = 1;
-				} else if ((test_check == OVAL_CHECK_ONLY_ONE) && (matches_found > 0)) {
-					result = OVAL_RESULT_FALSE;
-					am_done = 1;
-				} else if (test_check == OVAL_CHECK_NONE_SATISFY) {
-					result = OVAL_RESULT_FALSE;
-					am_done = 1;
-				}
-				++matches_found;
-			} else if (result == OVAL_RESULT_FALSE) {
-				if (test_check == OVAL_CHECK_ALL) {
-					result = OVAL_RESULT_FALSE;
-					am_done = 1;
-				}
-			} else if (result == OVAL_RESULT_INVALID) {	// the OVAL truth table does not include 'INVALID' so I'm ignoring it for now...
-			} else if (result == OVAL_RESULT_UNKNOWN) {
-				result = OVAL_RESULT_UNKNOWN;
-				am_done = 1;
-			} else if (result == OVAL_RESULT_ERROR) {
-				result = OVAL_RESULT_ERROR;
-				am_done = 1;
-			} else if (result == OVAL_RESULT_NOT_EVALUATED) {
-				result = OVAL_RESULT_NOT_EVALUATED;
-				am_done = 1;
-			} else if (result == OVAL_RESULT_NOT_APPLICABLE) {
-				result = OVAL_RESULT_NOT_APPLICABLE;
-				am_done = 1;
-			} else {
-			}
-		} else if (cur_sysdata_status == SYSCHAR_STATUS_DOES_NOT_EXIST) {
-			result = OVAL_RESULT_FALSE;
-			oval_result_item_set_result(cur_item, result);
-		} else if (cur_sysdata_status == SYSCHAR_STATUS_NOT_COLLECTED) {
-			result = OVAL_RESULT_NOT_EVALUATED;
-			oval_result_item_set_result(cur_item, result);
+
+		item_status = oval_sysdata_get_status(item);
+		if (item_status == SYSCHAR_STATUS_EXISTS)
+			exists_cnt++;
+		if (item_status == SYSCHAR_STATUS_ERROR)
+			error_cnt++;
+
+		item_id = oval_sysdata_get_id(item);
+		ritem = oval_result_item_new(SYSTEM, item_id);
+		_oval_test_item_consumer(ritem, args);
+		oval_result_item_set_result(ritem, OVAL_RESULT_NOT_EVALUATED);
+	}
+	oval_sysdata_iterator_free(collected_items_itr);
+
+	switch (oval_syschar_get_flag(syschar_object)) {
+	case SYSCHAR_FLAG_ERROR:
+		if (test_check_existence == OVAL_ANY_EXIST
+		    && state == NULL) {
+			result = OVAL_RESULT_TRUE;
 		} else {
-			oscap_dprintf("%s:%d invalid sysdata status:%d", __FILE__, __LINE__, cur_sysdata_status);
-			oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EINVARG, "OVAL: Invalid sysdata status");
-			has_error = true;
+			result = OVAL_RESULT_ERROR;
 		}
-		oval_result_item_set_result(cur_item, result);
-	}
-// OK, we have looked at all our collected items and matched them against any states, with no early termination
-	// we now know how to set our final result
-	if (!am_done) {		// if we have not yet made a final determination
-//if (debug_flag) oscap_dprintf("%s:%d did not terminate early, check:%d matches:%d",__FILE__,__LINE__,test_check,matches_found);
-		if ((test_check == OVAL_CHECK_ONLY_ONE) && (matches_found == 1)) {
+		break;
+	case SYSCHAR_FLAG_NOT_COLLECTED:
+		if (test_check_existence == OVAL_ANY_EXIST
+		    && state == NULL) {
 			result = OVAL_RESULT_TRUE;
-		} else if (test_check == OVAL_CHECK_NONE_SATISFY) {	// since we did not terminate early, all we have are falses
+		} else {
+			result = OVAL_RESULT_UNKNOWN;
+		}
+		break;
+	case SYSCHAR_FLAG_NOT_APPLICABLE:
+		if (test_check_existence == OVAL_ANY_EXIST
+		    && state == NULL) {
 			result = OVAL_RESULT_TRUE;
-		} else if ((test_check == OVAL_CHECK_ALL) && (matches_found > 0)) {	// since we did not terminate early, all we found were true
+		} else {
+			result = OVAL_RESULT_NOT_APPLICABLE;
+		}
+		break;
+	case SYSCHAR_FLAG_DOES_NOT_EXIST:
+		if (test_check_existence == OVAL_NONE_EXIST
+		    || test_check_existence == OVAL_ANY_EXIST) {
 			result = OVAL_RESULT_TRUE;
-		} else {	// all the 'true' conditions should be covered above, so if we get here, our result is...
+		} else {
 			result = OVAL_RESULT_FALSE;
 		}
+		break;
+	case SYSCHAR_FLAG_COMPLETE:
+		result = eval_check_existence(test_check_existence, exists_cnt, error_cnt);
+		if (result == OVAL_RESULT_TRUE
+		    && state != NULL) {
+			result = eval_check_state(state, test_check, args);
+		}
+		break;
+	case SYSCHAR_FLAG_INCOMPLETE:
+		if (test_check_existence == OVAL_ANY_EXIST) {
+			result = OVAL_RESULT_TRUE;
+		} else if (test_check_existence == OVAL_AT_LEAST_ONE_EXISTS
+			   && exists_cnt > 0) {
+			result = OVAL_RESULT_TRUE;
+		} else if (test_check_existence == OVAL_NONE_EXIST
+			   && exists_cnt > 0) {
+			result = OVAL_RESULT_FALSE;
+		} else if (test_check_existence == OVAL_ONLY_ONE_EXISTS
+			   && exists_cnt > 1) {
+			result = OVAL_RESULT_FALSE;
+		} else {
+			result = OVAL_RESULT_UNKNOWN;
+		}
+
+		if (result == OVAL_RESULT_TRUE
+		    && state != NULL) {
+			result = eval_check_state(state, test_check, args);
+			if (result == OVAL_RESULT_TRUE) {
+				if (test_check != OVAL_CHECK_AT_LEAST_ONE) {
+					result = OVAL_RESULT_UNKNOWN;
+				}
+			} else if (result != OVAL_RESULT_FALSE) {
+				result = OVAL_RESULT_UNKNOWN;
+			}
+		}
+		break;
+	default:
+		return OVAL_RESULT_INVALID;
 	}
-	if (has_more_sysdata)
-		while (oval_sysdata_iterator_has_more(collected_items_iterator))
-			oval_sysdata_iterator_next(collected_items_iterator);
-	oval_sysdata_iterator_free(collected_items_iterator);
-	return (has_error) ? (oval_result_t) - 1 : result;
+
+	return result;
 }
 
 // this function will gather all the necessary ingredients and call 'evaluate_items' when it finds them
