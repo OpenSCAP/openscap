@@ -593,7 +593,7 @@ static struct oval_sysdata *oval_sysdata_from_sexp(struct oval_syschar_model *mo
 	int status = probe_ent_getstatus(sexp);
 
 	sprintf(id, "%d", id_counter++);
-	sysdata = oval_sysdata_new(model, id);
+	sysdata = oval_sysdata_get_new(model, id);
 	oval_sysdata_set_status(sysdata, status);
 	oval_sysdata_set_subtype(sysdata, type);
 	//oval_sysdata_set_subtype_name(sysdata, name);
