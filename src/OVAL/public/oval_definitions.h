@@ -709,6 +709,13 @@ struct oval_variable_iterator *oval_definition_model_get_variables(struct oval_d
  * @memberof oval_definition_model
  */
 bool oval_definition_model_is_locked(struct oval_definition_model *definition_model);
+
+/**
+ * Get supported version of OVAL XML
+ * @return version of XML file format
+ * @memberof oval_definition
+ */
+const char * oval_definition_model_supported(void);
 /** @} */
 
 /**
@@ -904,13 +911,6 @@ struct oval_criteria_node *oval_definition_get_criteria(struct oval_definition *
  * @memberof oval_definition
  */
 bool oval_definition_is_locked(struct oval_definition *definition);
-
-/**
- * Get supported version of OVAL XML
- * @return version of XML file format
- * @memberof oval_definition
- */
-const char * oval_definition_supported(void);
 
 /** @} */
 

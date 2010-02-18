@@ -615,7 +615,7 @@ xmlNode *oval_definition_to_dom(struct oval_definition *definition, xmlDoc * doc
 	return definition_node;
 }
 
-const char * oval_definition_supported(void)
+const char * oval_definition_model_supported(void)
 {
         return OVAL_SUPPORTED;
 }
