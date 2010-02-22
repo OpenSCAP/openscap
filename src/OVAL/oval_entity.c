@@ -145,7 +145,7 @@ struct oval_entity *oval_entity_new(struct oval_definition_model *model)
 
 	entity->datatype = OVAL_DATATYPE_UNKNOWN;
 	entity->mask = 0;
-	entity->operation = OVAL_OPERATOR_UNKNOWN;
+	entity->operation = OVAL_OPERATION_UNKNOWN;
 	entity->type = OVAL_ENTITY_TYPE_UNKNOWN;
 	entity->name = NULL;
 	entity->value = NULL;
@@ -296,7 +296,7 @@ int oval_entity_parse_tag(xmlTextReaderPtr reader,
 	struct oval_entity *entity = oval_entity_new(context->definition_model);
 	int return_code;
 	oval_datatype_t datatype = oval_datatype_parse(reader, "datatype", OVAL_DATATYPE_STRING);
-	oval_operator_t operation = oval_operation_parse(reader, "operation", OVAL_OPERATION_EQUALS);
+	oval_operation_t operation = oval_operation_parse(reader, "operation", OVAL_OPERATION_EQUALS);
 	int mask = oval_parser_boolean_attribute(reader, "mask", 1);
 	oval_entity_type_t type = OVAL_ENTITY_TYPE_UNKNOWN;
 	//The value of the type field vs. the complexity of extracting type is arguable
