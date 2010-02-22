@@ -311,8 +311,8 @@ int main(int argc, char **argv)
 	printf("THERE ARE %d SYSCHARS\n", count);
 
         /* Export syschar model to XML */
-	char * syschar_fname = malloc( sizeof(char) * strlen(argv[1]) + 15 );
-	sprintf(syschar_fname, "%s.syschar.xml",argv[1]);
+	char * syschar_fname = malloc( sizeof(char) * strlen(file_path) + 15 );
+	sprintf(syschar_fname, "%s.syschar.xml", file_path);
 	struct oscap_export_target *syschar_out  = oscap_export_target_new_file(syschar_fname, "UTF-8");
 	oval_syschar_model_export(sys_model, syschar_out);
 	free(syschar_fname);
@@ -335,8 +335,8 @@ int main(int argc, char **argv)
 	oval_result_directives_set_content(res_direct,OVAL_RESULT_TRUE, OVAL_DIRECTIVE_CONTENT_FULL);
         
         /* Export result model to XML */
-	char * results_fname = malloc( sizeof(char) * strlen(argv[1]) + 15 );
-	sprintf(results_fname, "%s.results.xml",argv[1]);
+	char * results_fname = malloc( sizeof(char) * strlen(file_path) + 15 );
+	sprintf(results_fname, "%s.results.xml", file_path);
 	struct oscap_export_target *result_out  = oscap_export_target_new_file(results_fname, "UTF-8");
 	oval_results_model_export(res_model, res_direct, result_out);
 	free(results_fname);
