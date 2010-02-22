@@ -606,6 +606,8 @@ static oval_result_t eval_check_state(struct oval_state *state, oval_check_t che
 	oval_result_t result;
 	int true_cnt, false_cnt, unknown_cnt, error_cnt, noteval_cnt, notappl_cnt;
 
+	true_cnt = false_cnt = unknown_cnt = error_cnt = noteval_cnt = notappl_cnt = 0;
+
 	ritems_itr = oval_result_test_get_items(TEST);
 	while (oval_result_item_iterator_has_more(ritems_itr)) {
 		struct oval_result_item *ritem;
