@@ -34,12 +34,16 @@ struct runlevel_req {
         char *runlevel;
 };
 
+#define RUNLEVEL_REQ_INITIALIZER { NULL, NULL }
+
 struct runlevel_rep {
         char *service_name;
         char *runlevel;
         int   start;
         int   kill;
 };
+
+#define RUNLEVEL_REP_INITIALIZER { NULL, NULL, 0, 0 }
 
 static int get_runlevel (struct runlevel_req *req, struct runlevel_rep *rep);
 
@@ -213,7 +217,7 @@ const distro_tbl_t distro_tbl[] = {
         { &is_arch,     &get_runlevel_arch     },
         { &is_mandriva, &get_runlevel_mandriva },
         { &is_suse,     &get_runlevel_suse     },
-        { &is_common,   &get_runlevel_common   },
+        { &is_common,   &get_runlevel_common   }
 };
 
 #define DISTRO_TBL_SIZE ((sizeof distro_tbl)/sizeof (distro_tbl_t))
@@ -260,8 +264,8 @@ SEXP_t *probe_main (SEXP_t *object, int *err, void *arg)
 {
         SEXP_t *probe_out, *val, *item_sexp;
         
-        struct runlevel_req request_st;
-        struct runlevel_rep reply_st;
+        struct runlevel_req request_st = RUNLEVEL_REQ_INITIALIZER;
+        struct runlevel_rep reply_st   = RUNLEVEL_REP_INITIALIZER;
         
         val = probe_obj_getentval (object, "service_name", 1);
         
@@ -285,11 +289,20 @@ SEXP_t *probe_main (SEXP_t *object, int *err, void *arg)
                         *err = PROBE_ENOELM;
                         break;
                 }
-                        
+                
                 return (NULL);
         }
                 
         val = probe_obj_getentval (object, "runlevel", 1);
+
+        if (val == NULL) {
+                _D("%s: no value\n", "runlevel");
+                *err = PROBE_ENOVAL;
+                oscap_free (request_st.service_name);
+                
+                return (NULL);
+        }
+
         request_st.runlevel = SEXP_string_cstr (val);
         SEXP_free (val);        
         
@@ -311,6 +324,13 @@ SEXP_t *probe_main (SEXP_t *object, int *err, void *arg)
         
         probe_out = SEXP_list_new (NULL);
         
+        /*
+         * == Implementation note #1 ==
+         *
+         * get_runlevel doesn't create copies of service_name and runlevel strings.
+         * Freeing service_name and runlevel in both request_st and reply_st will
+         * result in a double-free!
+         */
         if (get_runlevel (&request_st, &reply_st) == -1) {
                 _D("get_runlevel failed\n");
         
@@ -332,9 +352,9 @@ SEXP_t *probe_main (SEXP_t *object, int *err, void *arg)
                 item_sexp = probe_obj_creat ("runlevel_item", NULL,
                                              /* entities */
                                              "service_name", NULL,
-                                             r0 = SEXP_string_newf(reply_st.service_name),
+                                             r0 = SEXP_string_newf("%s", reply_st.service_name),
                                              "runlevel", NULL,
-                                             r1 = SEXP_string_newf(reply_st.runlevel),
+                                             r1 = SEXP_string_newf("%s", reply_st.runlevel),
                                              "start", NULL,
                                              r2 = SEXP_number_newu(reply_st.start),
                                              "kill", NULL,
@@ -344,11 +364,12 @@ SEXP_t *probe_main (SEXP_t *object, int *err, void *arg)
                 SEXP_vfree (r0, r1, r2, r3, NULL);
         }
         
+        /* See implementation note #1 */
         oscap_free (request_st.service_name);
         oscap_free (request_st.runlevel);
         
         SEXP_list_add (probe_out, item_sexp);
-        SEXP_free (item_sexp);        
+        SEXP_free (item_sexp);
 
         *err = 0;
         
