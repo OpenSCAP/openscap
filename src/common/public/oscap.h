@@ -103,24 +103,20 @@
  * Here should be every general attribute that can be present
  * in every xml element such as xml:lang or xml namespace.
  */
-struct xml_metadata {
-	char *namespace;	///< XMLNS (namespace) prefix
-	char *URI;		///< XMLNS (namespace) URI
-	char *lang;		///< XML lang
-};
+struct xml_metadata;
 
 /// @memberof xml_metadata
 struct xml_metadata *xml_metadata_new(void);
 
 /// @memberof xml_metadata
-const char *xml_metadata_get_namespace(const struct xml_metadata *xml);
+const char *xml_metadata_get_nspace(const struct xml_metadata *xml);
 /// @memberof xml_metadata
 const char *xml_metadata_get_lang(const struct xml_metadata *xml);
 /// @memberof xml_metadata
 const char *xml_metadata_get_URI(const struct xml_metadata *xml);
 
 /// @memberof xml_metadata
-bool xml_metadata_set_namespace(struct xml_metadata *xml, const char *new_namespace);
+bool xml_metadata_set_nspace(struct xml_metadata *xml, const char *new_namespace);
 /// @memberof xml_metadata
 bool xml_metadata_set_lang(struct xml_metadata *xml, const char *new_lang);
 /// @memberof xml_metadata

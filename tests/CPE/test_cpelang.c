@@ -53,7 +53,7 @@ int main (int argc, char *argv[])
 
     while (xml_metadata_iterator_has_more(xml_it)) {
         xml = xml_metadata_iterator_next(xml_it);
-        if (strcmp(cpe_lang_model_get_ns_prefix(lang_model), xml_metadata_get_namespace(xml)))
+        if (strcmp(cpe_lang_model_get_ns_prefix(lang_model), xml_metadata_get_nspace(xml)))
             printf("%s:", xml_metadata_get_URI(xml));
     }
 
@@ -98,7 +98,7 @@ int main (int argc, char *argv[])
     char *tmp = malloc(sizeof(char) * (strlen(argv[4])+6));
     if (strcmp(argv[4], "-"))  {
         sprintf(tmp, "xmlns:%s", argv[4]);
-        xml_metadata_set_namespace(xml, tmp);
+        xml_metadata_set_nspace(xml, tmp);
         cpe_lang_model_set_ns_prefix(lang_model, argv[4]);
         free(tmp);
     }
@@ -162,7 +162,7 @@ int main (int argc, char *argv[])
 
     if (strcmp(argv[4], "-"))  {
         sprintf(tmp, "xmlns:%s", argv[4]);
-        xml_metadata_set_namespace(xml, tmp);
+        xml_metadata_set_nspace(xml, tmp);
         cpe_lang_model_set_ns_prefix(lang_model, argv[4]);
         free(tmp);
     }

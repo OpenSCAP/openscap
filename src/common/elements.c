@@ -36,14 +36,15 @@
 //OSCAP_GETTER(const char*, xml_metadata, URI)
 //OSCAP_GETTER(const char*, xml_metadata, lang)
 
-OSCAP_ACCESSOR_STRING(xml_metadata, namespace)
-    OSCAP_ACCESSOR_STRING(xml_metadata, URI)
-    OSCAP_ACCESSOR_STRING(xml_metadata, lang)
-    OSCAP_ACCESSOR_STRING(oscap_title, content)
-    OSCAP_ITERATOR_GEN(oscap_title)
-    OSCAP_ITERATOR_GEN(xml_metadata)
-    OSCAP_ITERATOR_REMOVE_F(xml_metadata)
-    OSCAP_ITERATOR_REMOVE_F(oscap_title)
+
+OSCAP_ACCESSOR_STRING(xml_metadata, nspace)
+OSCAP_ACCESSOR_STRING(xml_metadata, URI)
+OSCAP_ACCESSOR_STRING(xml_metadata, lang)
+OSCAP_ACCESSOR_STRING(oscap_title, content)
+OSCAP_ITERATOR_GEN(oscap_title)
+OSCAP_ITERATOR_GEN(xml_metadata)
+OSCAP_ITERATOR_REMOVE_F(xml_metadata)
+OSCAP_ITERATOR_REMOVE_F(oscap_title)
 
 struct xml_metadata *xml_metadata_new()
 {
@@ -53,7 +54,7 @@ struct xml_metadata *xml_metadata_new()
 	if (item == NULL)
 		return NULL;
 
-	item->namespace = NULL;
+	item->nspace = NULL;
 	item->URI = NULL;
 	item->lang = NULL;
 
@@ -73,7 +74,7 @@ struct oscap_title *oscap_title_parse(xmlTextReaderPtr reader, const char *name)
 	memset(ret, 0, sizeof(struct oscap_title));
 
 	ret->xml.lang = oscap_strdup((char *)xmlTextReaderConstXmlLang(reader));
-	ret->xml.namespace = (char *)xmlTextReaderPrefix(reader);
+	ret->xml.nspace = (char *)xmlTextReaderPrefix(reader);
 
 	ret->content = (char *)xmlTextReaderReadString(reader);
 
@@ -88,7 +89,7 @@ const char *oscap_title_get_language(const struct oscap_title *title)
 void oscap_title_export(const struct oscap_title *title, xmlTextWriterPtr writer)
 {
 
-	xmlTextWriterStartElementNS(writer, BAD_CAST title->xml.namespace, BAD_CAST "title", NULL);
+	xmlTextWriterStartElementNS(writer, BAD_CAST title->xml.nspace, BAD_CAST "title", NULL);
 	if (title->xml.lang != NULL)
 		xmlTextWriterWriteAttribute(writer, BAD_CAST "xml:lang", BAD_CAST title->xml.lang);
 	xmlTextWriterWriteString(writer, BAD_CAST title->content);
@@ -110,6 +111,6 @@ void xml_metadata_free(struct xml_metadata *xml)
 {
 
 	oscap_free(xml->lang);
-	oscap_free(xml->namespace);
+	oscap_free(xml->nspace);
 	oscap_free(xml->URI);
 }

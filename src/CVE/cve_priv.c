@@ -217,7 +217,7 @@ struct cve_entry *cve_entry_new()
 	ret->summaries = oscap_list_new();
 	ret->configurations = oscap_list_new();
 	ret->xml.lang = NULL;
-	ret->xml.namespace = NULL;
+	ret->xml.nspace = NULL;
 	ret->xml.URI = NULL;
 	ret->id = NULL;
 	ret->cve_id = NULL;
@@ -242,7 +242,7 @@ struct cve_configuration *cve_configuration_new()
 	ret->id = NULL;
 	ret->expr = cpe_testexpr_new();
 	ret->xml.lang = NULL;
-	ret->xml.namespace = NULL;
+	ret->xml.nspace = NULL;
 	ret->xml.URI = NULL;
 
 	return ret;
@@ -258,7 +258,7 @@ struct cwe_entry *cwe_entry_new()
 		return NULL;
 
 	ret->xml.lang = NULL;
-	ret->xml.namespace = NULL;
+	ret->xml.nspace = NULL;
 	ret->xml.URI = NULL;
 	ret->value = NULL;
 
@@ -275,7 +275,7 @@ struct cve_product *cve_product_new()
 		return NULL;
 
 	ret->xml.lang = NULL;
-	ret->xml.namespace = NULL;
+	ret->xml.nspace = NULL;
 	ret->xml.URI = NULL;
 	ret->value = NULL;
 
@@ -292,7 +292,7 @@ struct cve_summary *cve_summary_new()
 		return NULL;
 
 	ret->xml.lang = NULL;
-	ret->xml.namespace = NULL;
+	ret->xml.nspace = NULL;
 	ret->xml.URI = NULL;
 	ret->summary = NULL;
 
@@ -308,7 +308,7 @@ struct cve_reference *cve_reference_new()
 		return NULL;
 
 	ret->xml.lang = NULL;
-	ret->xml.namespace = NULL;
+	ret->xml.nspace = NULL;
 	ret->xml.URI = NULL;
 	ret->value = NULL;
 	ret->href = NULL;
@@ -328,7 +328,7 @@ struct cve_model *cve_model_new()
 		return NULL;
 
 	ret->xml.lang = NULL;
-	ret->xml.namespace = NULL;
+	ret->xml.nspace = NULL;
 	ret->xml.URI = NULL;
 	ret->xmlns = oscap_list_new();
 	ret->entries = oscap_list_new();
@@ -471,14 +471,14 @@ struct cve_model *cve_model_parse(xmlTextReaderPtr reader)
 			return NULL;
 
 		ret->xml.lang = oscap_strdup((char *)xmlTextReaderConstXmlLang(reader));
-		ret->xml.namespace = (char *)xmlTextReaderPrefix(reader);
+		ret->xml.nspace = (char *)xmlTextReaderPrefix(reader);
 
 		/* Reading XML namespaces */
 		if (xmlTextReaderHasAttributes(reader) && xmlTextReaderMoveToFirstAttribute(reader) == 1) {
 			do {
 				xml = oscap_alloc(sizeof(struct xml_metadata));
 				xml->lang = NULL;
-				xml->namespace = oscap_strdup((char *)xmlTextReaderConstName(reader));
+				xml->nspace = oscap_strdup((char *)xmlTextReaderConstName(reader));
 				xml->URI = oscap_strdup((char *)xmlTextReaderConstValue(reader));
 				oscap_list_add(ret->xmlns, xml);
 			} while (xmlTextReaderMoveToNextAttribute(reader) == 1);
@@ -518,7 +518,7 @@ struct cve_entry *cve_entry_parse(xmlTextReaderPtr reader)
 	/* parse platform attributes here */
 	ret->id = (char *)xmlTextReaderGetAttribute(reader, ATTR_CVE_ID_STR);
 	ret->xml.lang = oscap_strdup((char *)xmlTextReaderConstXmlLang(reader));
-	ret->xml.namespace = (char *)xmlTextReaderPrefix(reader);
+	ret->xml.nspace = (char *)xmlTextReaderPrefix(reader);
 	if (ret->id == NULL) {
 		cve_entry_free(ret);
 		return NULL;	/* if there is no "id" in entry element, return NULL */
@@ -543,7 +543,7 @@ struct cve_entry *cve_entry_parse(xmlTextReaderPtr reader)
 			conf = cve_configuration_new();
 			conf->id = (char *)xmlTextReaderGetAttribute(reader, ATTR_CVE_ID_STR);
 			conf->xml.lang = oscap_strdup((char *)xmlTextReaderConstXmlLang(reader));
-			conf->xml.namespace = (char *)xmlTextReaderPrefix(reader);
+			conf->xml.nspace = (char *)xmlTextReaderPrefix(reader);
 			xmlTextReaderNextElement(reader);
 			conf->expr = cpe_testexpr_parse(reader);
 			if (conf)
@@ -558,7 +558,7 @@ struct cve_entry *cve_entry_parse(xmlTextReaderPtr reader)
 				    xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
 					product = cve_product_new();
 					product->xml.lang = oscap_strdup((char *)xmlTextReaderConstXmlLang(reader));
-					product->xml.namespace = (char *)xmlTextReaderPrefix(reader);
+					product->xml.nspace = (char *)xmlTextReaderPrefix(reader);
 					product->value = (char *)xmlTextReaderReadString(reader);
 					/*if (!data) { 
 					   cve_entry_free(ret);
@@ -600,7 +600,7 @@ struct cve_entry *cve_entry_parse(xmlTextReaderPtr reader)
 			xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
 			refer = cve_reference_new();
 			refer->xml.lang = oscap_strdup((char *)xmlTextReaderConstXmlLang(reader));
-			refer->xml.namespace = (char *)xmlTextReaderPrefix(reader);
+			refer->xml.nspace = (char *)xmlTextReaderPrefix(reader);
 			refer->type = (char *)xmlTextReaderGetAttribute(reader, ATTR_REFERENCE_TYPE_STR);
 			xmlTextReaderNextNode(reader);
 			while (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_REFERENCES_STR) != 0) {
@@ -626,7 +626,7 @@ struct cve_entry *cve_entry_parse(xmlTextReaderPtr reader)
 			summary = cve_summary_new();
 			summary->summary = (char *)xmlTextReaderReadString(reader);
 			summary->xml.lang = oscap_strdup((char *)xmlTextReaderConstXmlLang(reader));
-			summary->xml.namespace = (char *)xmlTextReaderPrefix(reader);
+			summary->xml.nspace = (char *)xmlTextReaderPrefix(reader);
 			if (summary)
 				oscap_list_add(ret->summaries, summary);
 		} else if (xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
@@ -679,12 +679,12 @@ void cve_export(const struct cve_model *cve, xmlTextWriterPtr writer)
 	__attribute__nonnull__(cve);
 	__attribute__nonnull__(writer);
 
-	xmlTextWriterStartElementNS(writer, BAD_CAST cve->xml.namespace, TAG_NVD_STR, BAD_CAST NULL);
+	xmlTextWriterStartElementNS(writer, BAD_CAST cve->xml.nspace, TAG_NVD_STR, BAD_CAST NULL);
 	if ((cve->xml.lang) != NULL)
 		xmlTextWriterWriteAttribute(writer, ATTR_XML_LANG_STR, BAD_CAST cve->xml.lang);
 
 	OSCAP_FOREACH(xml_metadata, xml, cve_model_get_xmlns(cve),
-		      if (xml->URI != NULL) xmlTextWriterWriteAttribute(writer, BAD_CAST xml->namespace,
+		      if (xml->URI != NULL) xmlTextWriterWriteAttribute(writer, BAD_CAST xml->nspace,
 									BAD_CAST xml->URI);)
 
 		OSCAP_FOREACH(cve_entry, e, cve_model_get_entries(cve),
@@ -701,7 +701,7 @@ void cve_reference_export(const struct cve_reference *refer, xmlTextWriterPtr wr
 	__attribute__nonnull__(refer);
 	__attribute__nonnull__(writer);
 
-	xmlTextWriterStartElementNS(writer, BAD_CAST refer->xml.namespace, TAG_REFERENCES_STR, BAD_CAST NULL);
+	xmlTextWriterStartElementNS(writer, BAD_CAST refer->xml.nspace, TAG_REFERENCES_STR, BAD_CAST NULL);
 
 	if ((refer->xml.lang) != NULL)
 		xmlTextWriterWriteAttribute(writer, ATTR_XML_LANG_STR, BAD_CAST refer->xml.lang);
@@ -709,13 +709,13 @@ void cve_reference_export(const struct cve_reference *refer, xmlTextWriterPtr wr
 		xmlTextWriterWriteAttribute(writer, ATTR_REFERENCE_TYPE_STR, BAD_CAST refer->type);
 
 	if ((refer->source) != NULL) {
-		xmlTextWriterStartElementNS(writer, BAD_CAST refer->xml.namespace, TAG_SOURCE_STR, BAD_CAST NULL);
+		xmlTextWriterStartElementNS(writer, BAD_CAST refer->xml.nspace, TAG_SOURCE_STR, BAD_CAST NULL);
 		xmlTextWriterWriteString(writer, BAD_CAST refer->source);
 		/*</source> */
 		xmlTextWriterEndElement(writer);
 	}
 
-	xmlTextWriterStartElementNS(writer, BAD_CAST refer->xml.namespace, TAG_REFERENCE_STR, BAD_CAST NULL);
+	xmlTextWriterStartElementNS(writer, BAD_CAST refer->xml.nspace, TAG_REFERENCE_STR, BAD_CAST NULL);
 
 	if ((refer->xml.lang) != NULL)
 		xmlTextWriterWriteAttribute(writer, ATTR_XML_LANG_STR, BAD_CAST refer->xml.lang);
@@ -739,7 +739,7 @@ void cve_summary_export(const struct cve_summary *sum, xmlTextWriterPtr writer)
 	__attribute__nonnull__(sum);
 	__attribute__nonnull__(writer);
 
-	xmlTextWriterStartElementNS(writer, BAD_CAST sum->xml.namespace, TAG_SUMMARY_STR, BAD_CAST NULL);
+	xmlTextWriterStartElementNS(writer, BAD_CAST sum->xml.nspace, TAG_SUMMARY_STR, BAD_CAST NULL);
 	if ((sum->xml.lang) != NULL)
 		xmlTextWriterWriteAttribute(writer, ATTR_XML_LANG_STR, BAD_CAST sum->xml.lang);
 	xmlTextWriterWriteString(writer, BAD_CAST sum->summary);
@@ -755,13 +755,13 @@ void cve_entry_export(const struct cve_entry *entry, xmlTextWriterPtr writer)
 	__attribute__nonnull__(entry);
 	__attribute__nonnull__(writer);
 
-	xmlTextWriterStartElementNS(writer, BAD_CAST entry->xml.namespace, TAG_CVE_STR, BAD_CAST NULL);
+	xmlTextWriterStartElementNS(writer, BAD_CAST entry->xml.nspace, TAG_CVE_STR, BAD_CAST NULL);
 	if ((entry->id) != NULL)
 		xmlTextWriterWriteAttribute(writer, ATTR_CVE_ID_STR, BAD_CAST entry->id);
 
 	OSCAP_FOREACH(cve_configuration, conf, cve_entry_get_configurations(entry),
 		      /* dump its contents to XML tree */
-		      xmlTextWriterStartElementNS(writer, BAD_CAST conf->xml.namespace,
+		      xmlTextWriterStartElementNS(writer, BAD_CAST conf->xml.nspace,
 						  TAG_VULNERABLE_CONFIGURATION_STR, BAD_CAST NULL);
 		      xmlTextWriterWriteAttribute(writer, ATTR_VULNERABLE_CONFIGURATION_ID_STR, BAD_CAST conf->id);
 		      cpe_testexpr_export(conf->expr, writer); xmlTextWriterEndElement(writer);)
@@ -771,7 +771,7 @@ void cve_entry_export(const struct cve_entry *entry, xmlTextWriterPtr writer)
 		xmlTextWriterStartElementNS(writer, NS_VULN_STR, TAG_VULNERABLE_SOFTWARE_LIST_STR, BAD_CAST NULL);
 		OSCAP_FOREACH(cve_product, product, cve_entry_get_products(entry),
 			      /* dump its contents to XML tree */
-			      xmlTextWriterStartElementNS(writer, BAD_CAST product->xml.namespace, TAG_PRODUCT_STR,
+			      xmlTextWriterStartElementNS(writer, BAD_CAST product->xml.nspace, TAG_PRODUCT_STR,
 							  BAD_CAST NULL);
 			      xmlTextWriterWriteString(writer, BAD_CAST product->value);
 			      xmlTextWriterEndElement(writer);)

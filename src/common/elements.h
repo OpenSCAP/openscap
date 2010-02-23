@@ -32,11 +32,15 @@
 #include <stdbool.h>
 #include "public/oscap.h"
 
-/**
- * */
+struct xml_metadata {
+        char *nspace;           ///< XMLNS (namespace) prefix
+        char *URI;              ///< XMLNS (namespace) URI
+        char *lang;             ///< XML lang
+};
+
 struct oscap_title {
-	struct xml_metadata xml;
-	char *content;		// human-readable name of this item
+        struct xml_metadata xml;
+        char *content;          // human-readable name of this item
 };
 
 struct oscap_title *oscap_title_parse(xmlTextReaderPtr reader, const char *name);
