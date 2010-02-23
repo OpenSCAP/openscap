@@ -171,6 +171,7 @@ AC_SEARCH_LIBS(
 ;;
 esac
 
+have_libapt_pkg=no
 AC_CHECK_LIB(
   [apt-pkg],
   [pkgVersion],
@@ -462,9 +463,14 @@ echo "OVAL enabled:                  $oval"
 echo "OVAL probes enabled:           $probes"
 
 if test "x$probes" = "xyes"; then
-echo "  independent probes enabled:  $probes_independent"
-echo "  unix probes enabled:         $probes_unix"
-echo "  linux probes enabled:        $probes_linux"
+echo "  family probe:                $probes_independent"
+echo "  system info probe:           $probes_independent"
+echo "  textfilecontent54 probe:     $probes_independent"
+echo "  xmlfilecontent probe:        $probes_independent"
+echo "  runlevel probe:              $probes_unix"
+echo "  file probe:                  $probes_unix"
+echo "  rpminfo probe:               $have_librpm"
+echo "  dpkginfo probe:              $have_libapt_pkg"
 echo "  probe directory set to:      $probe_dir"
 fi
 
