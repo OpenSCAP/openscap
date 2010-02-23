@@ -43,6 +43,7 @@ typedef struct oval_state {
 	char *id;
 	int deprecated;
 	int version;
+	oval_operator_t operator;
 	struct oval_collection *notes;
 	struct oval_collection *contents;
 } oval_state_t;
@@ -126,6 +127,13 @@ int oval_state_get_version(struct oval_state *state)
 	return state->version;
 }
 
+int oval_state_get_operator(struct oval_state *state)
+{
+	__attribute__nonnull__(state);
+
+	return state->operator;
+}
+
 struct oval_state *oval_state_new(struct oval_definition_model *model, char *id)
 {
 	oval_state_t *state = (oval_state_t *) oscap_alloc(sizeof(oval_state_t));
@@ -134,6 +142,7 @@ struct oval_state *oval_state_new(struct oval_definition_model *model, char *id)
 
 	state->deprecated = 0;
 	state->version = 0;
+	state->operator = OVAL_OPERATOR_UNKNOWN;
 	state->subtype = OVAL_SUBTYPE_UNKNOWN;
 	state->comment = NULL;
 	state->id = strdup(id);
@@ -163,6 +172,7 @@ struct oval_state *oval_state_clone(struct oval_definition_model *new_model, str
 		new_state = oval_state_new(new_model, old_state->id);
 		oval_state_set_deprecated(new_state, old_state->deprecated);
 		oval_state_set_version(new_state, old_state->version);
+		oval_state_set_operator(new_state, old_state->operator);
 		oval_state_set_subtype(new_state, old_state->subtype);
 		oval_state_set_comment(new_state, old_state->comment);
 
@@ -244,6 +254,14 @@ void oval_state_set_version(struct oval_state *state, int version)
 		fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
 }
 
+void oval_state_set_operator(struct oval_state *state, oval_operator_t operator)
+{
+	if (state && !oval_state_is_locked(state)) {
+		state->operator = operator;
+	} else
+		fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+}
+
 void oval_state_add_content(struct oval_state *state, struct oval_state_content *content) {
 	if (state && !oval_state_is_locked(state)) {
 		oval_collection_add(state->contents, content);
@@ -311,6 +329,8 @@ int oval_state_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *co
 	char *version = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "version");
 	oval_state_set_version(state, atoi(version));
 	free(version);
+	oval_operator_t operator = oval_operator_parse(reader, "operator", OVAL_OPERATOR_AND);
+	oval_state_set_operator(state, operator);
 
 	int return_code = oval_parser_parse_tag(reader, context, &_oval_state_parse_tag,
 						state);
@@ -335,6 +355,7 @@ void oval_state_to_print(struct oval_state *state, char *indent, int idx)
 	printf("%sVERSION    = %d\n", nxtindent, oval_state_get_version(state));
 	printf("%sCOMMENT    = %s\n", nxtindent, oval_state_get_comment(state));
 	printf("%sDEPRECATED = %d\n", nxtindent, oval_state_get_deprecated(state));
+	printf("%sOPERATOR   = %d\n", nxtindent, oval_state_get_operator(state));
 	struct oval_string_iterator *notes = oval_state_get_notes(state);
 	for (idx = 1; oval_string_iterator_has_more(notes); idx++) {
 		printf("%sNOTE[%d]    = %s\n", nxtindent, idx, oval_string_iterator_next(notes));
@@ -367,6 +388,11 @@ xmlNode *oval_state_to_dom(struct oval_state *state, xmlDoc * doc, xmlNode * par
 	*version = '\0';
 	snprintf(version, sizeof(version), "%d", oval_state_get_version(state));
 	xmlNewProp(state_node, BAD_CAST "version", BAD_CAST version);
+
+	oval_operator_t operator = oval_state_get_operator(state);
+	const char *operator_text = oval_operator_get_text(operator);
+	if (operator != OVAL_OPERATOR_AND)
+		xmlNewProp(state_node, BAD_CAST "operator", BAD_CAST operator_text);
 
 	char *comm = oval_state_get_comment(state);
 	if (comm)

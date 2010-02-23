@@ -1390,6 +1390,7 @@ void oval_object_iterator_free(struct oval_object_iterator *);
  *	- id -- initialized to a copy of the id parameter
  *	- deprecated -- initialized to <b>false</b>
  *	- version -- initialized to zero
+ *	- operator -- initialized to @ref OVAL_OPERATOR_AND
  *	- contents -- initialized to empty iterator
  *
  * @note This method shall not construct a new instance of Oval_state and shall return NULL if the text of the id parameter is not matched
@@ -1445,6 +1446,11 @@ void oval_state_set_deprecated(struct oval_state *, bool deprecated);
  * @memberof oval_state
  */
 void oval_state_set_version(struct oval_state *, int version);
+/**
+ * Sets attribute @ref oval_state->operator.
+ * @memberof oval_state
+ */
+void oval_state_set_operator(struct oval_state *, oval_operator_t operator);
 /**
  * Append instance of @ref oval_state_content to attribute @ref oval_state->state_contents.
  *
@@ -1506,6 +1512,11 @@ bool oval_state_get_deprecated(struct oval_state *);
  * @memberof oval_state
  */
 int oval_state_get_version(struct oval_state *);
+/**
+ * Returns attribute @ref oval_state->operator.
+ * @memberof oval_state
+ */
+int oval_state_get_operator(struct oval_state *);
 /**
  * Returns attribute @ref oval_state->contents.
  * @memberof oval_state
