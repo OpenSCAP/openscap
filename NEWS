@@ -1,3 +1,44 @@
+openscap-0.5.6							04-01-2010
+- OVAL API has been extended
+- OVAL doxygen documentation is available
+- migration to new checking mechanism is completed
+- new logging and error propagating mechanism
+- many many bugfixes + defensive code 
+
+openscap-0.5.5							12-11-2009
+- many fixes in OVAL
+- new system_info probe in OVAL
+- CVE is re-implemented
+- migration to improved testing mechanism has begun (see CPE)
+- bindings are merged into single module called openscap
+
+openscap-0.5.4							23-10-2009
+- new CPE model
+- evaluation of set objects and system characteristic output
+- bindings clean up
+- probes tune up, memory leaks fixes 
+
+openscap-0.5.3							29-09-2009
+- OVAL results part is code complete
+- improved memory management of definition and system characteristic model (OVAL)
+- improved memory management of S-expressions
+- new probe API
+- refactoring 
+
+openscap-0.5.2							19-08-2009
+- new family probe
+- simple objects in OVAL content can be processed
+- initial implementation of conversion of S-Expressions to System Characteristic
+- bugfixes 
+
+openscap-0.5.1							03-08-2009
+- all code except oval is after refactoring
+- populating of system-characteristics model from xml is available
+- implementation of probes: rpminfo, runlevel, textfilecontent54,xmlfilecontent is done
+- perl and python bindings are up2date 
+
+openscap-0.3.2							24-04-2009
+- perl bindings are available
 
 openscap-0.3.1							09-04-2009
 - python bindings for CPE, CCE, CVE and CVSS
