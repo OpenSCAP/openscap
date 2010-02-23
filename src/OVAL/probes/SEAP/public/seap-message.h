@@ -6,6 +6,10 @@
 #include <stdbool.h>
 #include <sexp-types.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #if SEAP_MSGID_BITS == 64
 typedef uint64_t SEAP_msgid_t;
 #else
@@ -32,5 +36,9 @@ bool    SEAP_msgattr_exists (SEAP_msg_t *msg, const char *name);
 
 #include <stdio.h>
 void SEAP_msg_print (FILE *fp, SEAP_msg_t *msg);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* SEAP_MESSAGE_H */

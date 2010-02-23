@@ -8,6 +8,10 @@
 #include <sexp-types.h>
 #include <seap-types.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef SEXP_t * (*SEAP_cmdfn_t) (SEXP_t *, void *);
 
 typedef uint16_t SEAP_cmdcode_t;
@@ -32,5 +36,9 @@ SEXP_t *SEAP_cmd_exec (SEAP_CTX_t    *ctx,
                        SEAP_cmdtype_t type,
                        SEAP_cmdfn_t   func,
                        void          *funcarg);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* SEAP_COMMAND_H */

@@ -5,6 +5,10 @@
 #include <stdint.h>
 #include <seap-debug.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef uint8_t SEXP_numtype_t;
 
 /* Number types */
@@ -65,5 +69,9 @@ typedef uint8_t SEXP_format_t;
 #define SEXP_TYPE_LIST   3
 
 typedef uint8_t SEXP_type_t;
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* SEXP_TYPES_H */

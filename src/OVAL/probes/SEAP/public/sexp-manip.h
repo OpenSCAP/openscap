@@ -46,6 +46,10 @@
 #include <stdbool.h>
 #include <sexp-types.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /*
  * number
  */
@@ -558,6 +562,10 @@ void __SEXP_VALIDATE(const SEXP_t *s_exp, const char *file, uint32_t line, const
 
 #else
 # define SEXP_VALIDATE(s)
+#endif
+
+#ifdef __cplusplus
+}
 #endif
 
 #endif /* SEXP_MANIP_H */

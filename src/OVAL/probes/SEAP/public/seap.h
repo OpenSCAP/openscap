@@ -2,6 +2,10 @@
 #ifndef SEAP_H
 #define SEAP_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifndef SEAP_MSGID_BITS
 # define SEAP_MSGID_BITS 32
 #endif
@@ -64,5 +68,9 @@ int SEAP_recverr (SEAP_CTX_t *ctx, int sd, SEAP_err_t **err);
 int SEAP_recverr_byid (SEAP_CTX_t *ctx, int sd, SEAP_err_t **err, SEAP_msgid_t id);
 
 int SEAP_replyerr (SEAP_CTX_t *ctx, int sd, SEAP_msg_t *rep_msg, uint32_t e);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* SEAP_H */

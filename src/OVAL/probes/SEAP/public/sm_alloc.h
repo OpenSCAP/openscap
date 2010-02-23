@@ -1,9 +1,12 @@
-#ifndef __STUB_PROBE
 #pragma once
 #ifndef SM_ALLOC_H
 #define SM_ALLOC_H
 
 #include <seap-debug.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #undef  __P
 #define __P __attribute__ ((unused)) static
@@ -49,5 +52,9 @@ __P void sm_free     (void *p) { __sm_free_dbg (p, __FUNCTION__, 0); }
 #ifndef _A
 # define _A(x) assert(x)
 #endif /* _A */
-#endif /* SM_ALLOC_H */
+
+#ifdef __cplusplus
+}
 #endif
+
+#endif /* SM_ALLOC_H */

@@ -6,6 +6,10 @@
 #include <seap-debug.h>
 #include <seap-message.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct SEAP_CTX SEAP_CTX_t;
 
 #define SEAP_CTX_INITIALIZER { NULL, 0, 0, 0, SEAP_DESCTBL_INITIALIZER, SEAP_CMDTABLE_INITIALIZER }
@@ -32,5 +36,9 @@ typedef struct SEAP_cmd SEAP_cmd_t;
 /* SEAP I/O flags */
 #define SEAP_IOFL_RECONN   0x00000001 /* Try to reconnect */
 #define SEAP_IOFL_NONBLOCK 0x00000002 /* Non-blocking mode */
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* SEAP_TYPES_H */

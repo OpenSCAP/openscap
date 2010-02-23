@@ -7,6 +7,10 @@
 #include <seap-debug.h>
 #include <sexp-types.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct SEXP_ostate SEXP_ostate_t;
 
 size_t SEXP_fprintfa (FILE *fp, const SEXP_t *s_exp);
@@ -88,5 +92,9 @@ int SEXP_snprintft (char *str, size_t size, SEXP_t *sexp);
 int SEXP_asprintft (char **ret, SEXP_t *sexp);
 int SEXP_asnprintft (char **ret, size_t maxsz, SEXP_t *sexp);
 #endif /* 0 */
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* SEXP_OUTPUT_H */

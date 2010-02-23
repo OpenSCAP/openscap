@@ -2,6 +2,10 @@
 #ifndef SEAP_DEBUG_H
 #define SEAP_DEBUG_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <assert.h>
 #ifndef _A
 #define _A(x) assert(x)
@@ -22,5 +26,9 @@ void __seap_debuglog (const char *, const char *, size_t , const char *, ...);
 
 #define SEAP_DEBUG_FILE     "seap_debug.log"
 #define SEAP_DEBUG_FILE_ENV "SEAP_DEBUG_FILE"
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* SEAP_DEBUG_H */

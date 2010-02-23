@@ -6,6 +6,10 @@
 #include <unistd.h>
 #include <stdio.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 struct strblk {
         struct strblk *next;
         size_t         size;
@@ -36,5 +40,9 @@ char *strbuf_cstr_r (strbuf_t *buf, char *str, size_t len);
 
 size_t strbuf_fwrite (FILE *fp, strbuf_t *buf);
 ssize_t strbuf_write  (strbuf_t *buf, int fd);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* STRBUF_H */

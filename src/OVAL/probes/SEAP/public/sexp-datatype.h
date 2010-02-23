@@ -6,6 +6,10 @@
 #include <stdint.h>
 #include <sexp.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef void (*SEXP_datatype_opfn_t) (const SEXP_t *, void *, ...);
 
 typedef struct {
@@ -28,5 +32,9 @@ int SEXP_datatype_register (SEXP_datatypetbl_t *t, const char *datatype, SEXP_da
 
 int SEXP_datatype_op (uint8_t op, const SEXP_t *sexp, void *res, ...);
 int SEXP_datatype_op_safe (const char *datatype, uint8_t op, const SEXP_t *sexp, void *res, ...);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* SEXP_DATATYPE */
