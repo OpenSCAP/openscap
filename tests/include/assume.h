@@ -1,3 +1,7 @@
+#pragma once
+#ifndef ASSUME_H
+#define ASSUME_H
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -29,7 +33,7 @@
         do {                                                            \
                 if (!(expr)) {                                          \
                         fprintf (stderr, "%s:%d (%s): Assumption `%s' not fulfilled!\n", __FILE__, __LINE__, __PRETTY_FUNCTION__, #expr); \
-                        do { __LB(__VA_ARGS__) } while(abort(),0);       \
+                        do { __LB(__VA_ARGS__) } while(abort(),0);      \
                 } else {                                                \
                         do { __RB(__VA_ARGS__) } while(0);              \
                 }                                                       \
@@ -40,3 +44,5 @@
 #else
 # define assume(expr, ...) __assume(expr, __VA_ARGS__)
 #endif
+
+#endif /* ASSUME_H */
