@@ -17,6 +17,7 @@ AM_PATH_PYTHON
 # Checks for programs.
 AC_PROG_CC
 AM_PROG_CC_C_O
+AC_PROG_CXX
 AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_PROG_MAKE_SET
@@ -170,6 +171,15 @@ AC_SEARCH_LIBS(
 ;;
 esac
 
+AC_CHECK_LIB(
+  [apt-pkg],
+  [pkgVersion],
+  [deb_cflags=""
+   deb_libs="-lapt-pkg"
+   have_libapt_pkg=yes
+  ]
+)
+
 #
 # threads
 #
@@ -251,6 +261,9 @@ AC_SUBST(pcre_libs)
 
 AC_SUBST(rpm_cflags)
 AC_SUBST(rpm_libs)
+
+AC_SUBST(deb_cflags)
+AC_SUBST(deb_libs)
 
 AC_SUBST(libnl_cflags)
 AC_SUBST(libnl_libs)
@@ -419,6 +432,7 @@ AM_CONDITIONAL([WANT_PROBES_UNIX], test "$probes_unix" = yes)
 AM_CONDITIONAL([WANT_PROBES_LINUX], test "$probes_linux" = yes)
 AM_CONDITIONAL([ENABLE_PROBE_RPMINFO], test "$have_librpm" = yes)
 AM_CONDITIONAL([ENABLE_PROBE_RPMINFO44], test "$have_librpm44" = yes)
+AM_CONDITIONAL([ENABLE_PROBE_DPKGINFO], test "$have_libapt_pkg" = yes)
 AM_CONDITIONAL([WANT_BINDINGS], test "$bindings" = yes)
 
 AC_CONFIG_FILES([Makefile

@@ -55,7 +55,16 @@ pkglibexec_PROGRAMS += probe_rpminfo
 probe_rpminfo_SOURCES= unix/linux/rpminfo.c
 probe_rpminfo_CFLAGS= @rpm_cflags@
 probe_rpminfo_LDFLAGS= @rpm_libs@
+endif
 
+if ENABLE_PROBE_DPKGINFO
+pkglibexec_PROGRAMS += probe_dpkginfo
+probe_dpkginfo_SOURCES= unix/linux/dpkginfo.c \
+       unix/linux/dpkginfo-helper.cxx \
+       unix/linux/dpkginfo-helper.h
+probe_dpkginfo_CFLAGS= @deb_cflags@
+probe_dpkginfo_CXXFLAGS= @deb_cflags@
+probe_dpkginfo_LDFLAGS= @deb_libs@
 endif
 endif
 endif
