@@ -476,10 +476,20 @@ static oval_result_t evaluate(char *sys_data, char *state_data, oval_datatype_t 
 					     "Invalid operation in OVAL result evaluation");
 				return (OVAL_RESULT_INVALID);
 			}
-			for (state_idx = (state_data[state_idx]) ? state_idx++ : state_idx; ((state_data[state_idx]) && (isdigit(state_data[state_idx]))); ++state_idx) ;	// move to the next field within the version string (if there is one)
+
+			if (state_data[state_idx])
+				++state_idx;
+			/* move to the next field within the version string (if there is one) */
+			while ((state_data[state_idx]) && (isdigit(state_data[state_idx])))
+				++state_idx;
 			if ((state_data[state_idx]) && (!isdigit(state_data[state_idx])))
 				++state_idx;
-			for (sys_idx = (sys_data[sys_idx]) ? ++sys_idx : sys_idx; ((sys_data[sys_idx]) && (isdigit(sys_data[sys_idx]))); ++sys_idx) ;	// move to the next field within the version string (if there is one)
+
+			if (sys_data[sys_idx])
+				++sys_idx;
+			/* move to the next field within the version string (if there is one) */
+			while ((sys_data[sys_idx]) && (isdigit(sys_data[sys_idx])))
+				++sys_idx;
 			if ((sys_data[sys_idx]) && (!isdigit(sys_data[sys_idx])))
 				++sys_idx;
 		}
