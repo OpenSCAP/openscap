@@ -574,6 +574,19 @@ struct xccdf_fixtext *xccdf_fixtext_iterator_next(struct xccdf_fixtext_iterator 
 bool xccdf_fixtext_iterator_has_more(struct xccdf_fixtext_iterator *it);
 /// @memberof xccdf_fixtext_iterator
 void xccdf_fixtext_iterator_free(struct xccdf_fixtext_iterator *it);
+
+/** @struct xccdf_warning_iterator
+ * Warning iterator.
+ * @see oscap_iterator
+ */
+struct xccdf_warning_iterator;
+/// @memberof xccdf_warning_iterator
+struct xccdf_warning *xccdf_warning_iterator_next(struct xccdf_warning_iterator *it);
+/// @memberof xccdf_warning_iterator
+bool xccdf_warning_iterator_has_more(struct xccdf_warning_iterator *it);
+/// @memberof xccdf_warning_iterator
+void xccdf_warning_iterator_free(struct xccdf_warning_iterator *it);
+
 /**
  * @}
  */
@@ -1002,7 +1015,7 @@ struct oscap_text_iterator *xccdf_rule_get_question(const struct xccdf_rule *rul
  * Get rule question.
  * @memberof xccdf_rule
  */
-const struct xccdf_warning_iterator *xccdf_rule_get_warning(const struct xccdf_rule *rule);
+struct xccdf_warning_iterator *xccdf_rule_get_warnings(const struct xccdf_rule *rule);
 
 /**
  * Get rule rationale.
@@ -1181,7 +1194,7 @@ struct oscap_text_iterator *xccdf_group_get_question(const struct xccdf_group *g
  * Get group question.
  * @memberof xccdf_group
  */
-const struct xccdf_warning_iterator *xccdf_group_get_warning(const struct xccdf_group *group);
+struct xccdf_warning_iterator *xccdf_group_get_warnings(const struct xccdf_group *group);
 
 /**
  * Get group rationale.
@@ -1725,7 +1738,7 @@ const char *xccdf_value_get_version(const struct xccdf_value *value);
 /// @memberof xccdf_value
 struct oscap_text_iterator *xccdf_value_get_question(const struct xccdf_value *value);
 /// @memberof xccdf_value
-const struct xccdf_warning_iterator *xccdf_value_get_warning(const struct xccdf_value *value);
+struct xccdf_warning_iterator *xccdf_value_get_warnings(const struct xccdf_value *value);
 /// @memberof xccdf_value
 struct oscap_text_iterator *xccdf_value_get_rationale(const struct xccdf_value *value);
 /// @memberof xccdf_value
@@ -1765,7 +1778,7 @@ const char *xccdf_item_get_version(const struct xccdf_item *item);
 /// @memberof xccdf_item
 struct oscap_text_iterator *xccdf_item_get_question(const struct xccdf_item *item);
 /// @memberof xccdf_item
-const struct xccdf_warning_iterator *xccdf_item_get_warning(const struct xccdf_item *item);
+struct xccdf_warning_iterator *xccdf_item_get_warnings(const struct xccdf_item *item);
 /// @memberof xccdf_item
 struct oscap_text_iterator *xccdf_item_get_rationale(const struct xccdf_item *item);
 /// @memberof xccdf_item
@@ -1803,7 +1816,7 @@ const char *xccdf_benchmark_get_version(const struct xccdf_benchmark *benchmark)
 /// @memberof xccdf_benchmark
 struct oscap_text_iterator *xccdf_benchmark_get_question(const struct xccdf_benchmark *benchmark);
 /// @memberof xccdf_benchmark
-const struct xccdf_warning_iterator *xccdf_benchmark_get_warning(const struct xccdf_benchmark *benchmark);
+struct xccdf_warning_iterator *xccdf_benchmark_get_warnings(const struct xccdf_benchmark *benchmark);
 /// @memberof xccdf_benchmark
 struct oscap_text_iterator *xccdf_benchmark_get_rationale(const struct xccdf_benchmark *benchmark);
 /// @memberof xccdf_benchmark
@@ -1825,8 +1838,6 @@ const char *xccdf_profile_get_id(const struct xccdf_profile *profile);
 const char *xccdf_profile_get_version(const struct xccdf_profile *profile);
 /// @memberof xccdf_profile
 struct oscap_text_iterator *xccdf_profile_get_question(const struct xccdf_profile *profile);
-/// @memberof xccdf_profile
-const struct xccdf_warning_iterator *xccdf_profile_get_warning(const struct xccdf_profile *profile);
 /// @memberof xccdf_profile
 struct oscap_text_iterator *xccdf_profile_get_rationale(const struct xccdf_profile *profile);
 /// @memberof xccdf_profile
@@ -1926,6 +1937,11 @@ const char *xccdf_select_get_idref(const struct xccdf_select *select);
 const char *xccdf_select_get_remark(const struct xccdf_select *select);
 /// @memberof xccdf_select
 struct xccdf_item *xccdf_select_get_item(const struct xccdf_select *select);
+
+/// @memberof xccdf_warning
+xccdf_warning_category_t xccdf_warning_get_category(const struct xccdf_warning *warning);
+/// @memberof xccdf_warning
+struct oscap_text *xccdf_warning_get_text(const struct xccdf_warning *warning);
 
 /**
  * Release library internal caches.

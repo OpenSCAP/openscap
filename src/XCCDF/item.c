@@ -58,6 +58,7 @@ struct xccdf_item *xccdf_item_new(xccdf_type_t type, struct xccdf_item *bench, s
 	item->item.rationale = oscap_list_new();
 	item->item.statuses = oscap_list_new();
 	item->item.platforms = oscap_list_new();
+	item->item.warnings = oscap_list_new();
 	item->item.weight = 1.0;
 	item->item.flags.selected = true;
 	if (type == XCCDF_BENCHMARK && bench == NULL)
@@ -77,6 +78,7 @@ void xccdf_item_release(struct xccdf_item *item)
 		oscap_list_free(item->item.description, (oscap_destruct_func) oscap_text_free);
 		oscap_list_free(item->item.rationale, (oscap_destruct_func) oscap_text_free);
 		oscap_list_free(item->item.question, (oscap_destruct_func) oscap_text_free);
+		oscap_list_free(item->item.warnings, (oscap_destruct_func) xccdf_warning_free);
 		oscap_free(item->item.id);
 		oscap_free(item->item.cluster_id);
 		oscap_free(item->item.version_update);
@@ -209,6 +211,9 @@ bool xccdf_item_process_element(struct xccdf_item * item, xmlTextReaderPtr reade
 	case XCCDFE_DESCRIPTION:
         oscap_list_add(item->item.description, oscap_text_new_parse(OSCAP_TEXT_TRAITS_HTML, reader));
 		return true;
+	case XCCDFE_WARNING:
+        oscap_list_add(item->item.warnings, xccdf_warning_new_parse(reader));
+		return true;
 	case XCCDFE_STATUS:{
         const char *date = xccdf_attribute_get(reader, XCCDFA_DATE);
         char *str = oscap_element_string_copy(reader);
@@ -276,8 +281,10 @@ XCCDF_FLAG_GETTER(abstract)
 XCCDF_FLAG_GETTER(interactive)
 XCCDF_ITEM_SIGETTER(platforms)
 XCCDF_ITEM_IGETTER(reference, references)
+XCCDF_ITEM_IGETTER(warning, warnings)
 XCCDF_ITEM_IGETTER(status, statuses)
  XCCDF_ITERATOR_GEN_S(item) XCCDF_ITERATOR_GEN_S(status) XCCDF_ITERATOR_GEN_S(reference)
+OSCAP_ITERATOR_GEN_T(struct xccdf_warning *, xccdf_warning)
 
 const struct oscap_string_map XCCDF_OPERATOR_MAP[] = {
 	{XCCDF_OPERATOR_EQUALS, "equals"},
@@ -388,6 +395,19 @@ static const char *xccdf_model_param(const struct xccdf_model *m, const char *p)
 }
 */
 
+static const struct oscap_string_map XCCDF_WARNING_MAP[] = {
+	{ XCCDF_WARNING_GENERAL, "general" },
+	{ XCCDF_WARNING_FUNCTIONALITY, "functionality" },
+	{ XCCDF_WARNING_PERFORMANCE, "performance" },
+	{ XCCDF_WARNING_HARDWARE, "hardware" },
+	{ XCCDF_WARNING_LEGAL, "legal" },
+	{ XCCDF_WARNING_REGULATORY, "regulatory" },
+	{ XCCDF_WARNING_MANAGEMENT, "management" },
+	{ XCCDF_WARNING_AUDIT, "audit" },
+	{ XCCDF_WARNING_DEPENDENCY, "dependency" },
+	{ XCCDF_WARNING_GENERAL, NULL }
+};
+
 void xccdf_model_free(struct xccdf_model *model)
 {
 	if (model) {
@@ -402,3 +422,30 @@ void xccdf_cstring_dump(const char *data, int depth)
 	xccdf_print_depth(depth);
 	printf("%s\n", data);
 }
+
+struct xccdf_warning *xccdf_warning_new(void)
+{
+    struct xccdf_warning *w = oscap_calloc(1, sizeof(struct xccdf_warning));
+    w->category = XCCDF_WARNING_GENERAL;
+    return w;
+}
+
+struct xccdf_warning *xccdf_warning_new_parse(xmlTextReaderPtr reader)
+{
+    struct xccdf_warning *w = xccdf_warning_new();
+    w->text = oscap_text_new_parse(OSCAP_TEXT_TRAITS_HTML, reader);
+    w->category = oscap_string_to_enum(XCCDF_WARNING_MAP, xccdf_attribute_get(reader, XCCDFA_CATEGORY));
+    return w;
+}
+
+void xccdf_warning_free(struct xccdf_warning * w)
+{
+    if (w != NULL) {
+        oscap_text_free(w->text);
+        oscap_free(w);
+    }
+}
+
+OSCAP_GETTER(xccdf_warning_category_t, xccdf_warning, category)
+OSCAP_GETTER(struct oscap_text *, xccdf_warning, text)
+

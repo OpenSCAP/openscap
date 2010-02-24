@@ -54,6 +54,7 @@ struct xccdf_item_base {
 	struct oscap_list *description;
 	struct oscap_list *question;
 	struct oscap_list *rationale;
+    struct oscap_list *warnings;
 
 	char *version;
 	char *version_update;
@@ -187,6 +188,11 @@ struct xccdf_item {
 		struct xccdf_value_item value;
 		struct xccdf_result_item result;
 	} sub;
+};
+
+struct xccdf_warning {
+    struct oscap_text *text;
+    xccdf_warning_category_t category;
 };
 
 struct xccdf_notice {
@@ -365,6 +371,14 @@ struct xccdf_fixtext *xccdf_fixtext_parse(xmlTextReaderPtr reader, struct xccdf_
 void xccdf_fixtext_free(struct xccdf_fixtext *item);
 void xccdf_fix_free(struct xccdf_fix *item);
 void xccdf_set_value_free(struct xccdf_set_value *sv);
+
+struct xccdf_warning *xccdf_warning_new(void);
+struct xccdf_warning *xccdf_warning_new_parse(xmlTextReaderPtr reader);
+bool xccdf_warning_parse(struct xccdf_warning * warn, xmlTextReaderPtr reader);
+void xccdf_warning_free(struct xccdf_warning * warn);
+
+// Prototypes to supress compiler warnings
+struct xccdf_warning_iterator *xccdf_profile_get_warnings(const struct xccdf_profile *profile);
 
 #define MACRO_BLOCK(code) do { code } while(false)
 #define ASSERT_TYPE(item,t) assert((item)->type & t)
