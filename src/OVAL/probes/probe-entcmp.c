@@ -630,6 +630,7 @@ static int results_parser(SEXP_t * res_lst, struct _oresults *ores)
 	return 0;
 }
 
+// todo: already implemented elsewhere; consolidate
 oval_result_t probe_ent_result_bychk(SEXP_t * res_lst, oval_check_t check)
 {
 	oval_result_t result = OVAL_RESULT_UNKNOWN;
@@ -714,6 +715,7 @@ oval_result_t probe_ent_result_bychk(SEXP_t * res_lst, oval_check_t check)
 	return result;
 }
 
+// todo: already implemented elsewhere; consolidate
 oval_result_t probe_ent_result_byopr(SEXP_t * res_lst, oval_operator_t operator)
 {
 	oval_result_t result = OVAL_RESULT_UNKNOWN;

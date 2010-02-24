@@ -514,86 +514,373 @@ static oval_result_t evaluate(char *sys_data, char *state_data, oval_datatype_t 
 	return (OVAL_RESULT_UNKNOWN);
 }
 
-// here we compare the data within an item with the conditions in a state
-static oval_result_t eval_item(struct oval_sysdata *cur_sysdata, struct oval_state *state)
+struct oresults {
+	int true_cnt, false_cnt, unknown_cnt, error_cnt, noteval_cnt, notappl_cnt;
+};
+
+static int ores_add_res(struct oresults *ores, oval_result_t res)
 {
-	struct oval_state_content_iterator *state_contents;
+		switch (res) {
+		case OVAL_RESULT_TRUE:
+			ores->true_cnt++;
+			break;
+		case OVAL_RESULT_FALSE:
+			ores->false_cnt++;
+			break;
+		case OVAL_RESULT_UNKNOWN:
+			ores->unknown_cnt++;
+			break;
+		case OVAL_RESULT_ERROR:
+			ores->error_cnt++;
+			break;
+		case OVAL_RESULT_NOT_EVALUATED:
+			ores->noteval_cnt++;
+			break;
+		case OVAL_RESULT_NOT_APPLICABLE:
+			ores->notappl_cnt++;
+			break;
+		default:
+			return 1;
+		}
 
-	state_contents = oval_state_get_contents(state);
+		return 0;
+}
 
-	bool has_more_content = false, has_error = false;
+static void ores_clear(struct oresults *ores)
+{
+	memset(ores, 0, sizeof (*ores));
+}
+
+// todo: already implemented elsewhere; consolidate
+static oval_result_t ores_get_result_bychk(struct oresults *ores, oval_check_t check)
+{
 	oval_result_t result = OVAL_RESULT_INVALID;
-	while (!has_error && (has_more_content = oval_state_content_iterator_has_more(state_contents))) {
+
+	if (ores->true_cnt == 0 &&
+	    ores->false_cnt == 0 &&
+	    ores->error_cnt == 0 &&
+	    ores->unknown_cnt == 0 &&
+	    ores->notappl_cnt == 0 &&
+	    ores->noteval_cnt == 0)
+		return OVAL_RESULT_UNKNOWN;
+
+	if (ores->notappl_cnt > 0 &&
+	    ores->noteval_cnt == 0 &&
+	    ores->false_cnt == 0 && ores->error_cnt == 0 && ores->unknown_cnt == 0 && ores->true_cnt == 0)
+		return OVAL_RESULT_NOT_APPLICABLE;
+
+	switch (check) {
+	case OVAL_CHECK_ALL:
+		if (ores->true_cnt > 0 &&
+		    ores->false_cnt == 0 && ores->error_cnt == 0 && ores->unknown_cnt == 0 && ores->noteval_cnt == 0) {
+			result = OVAL_RESULT_TRUE;
+		} else if (ores->false_cnt > 0) {
+			result = OVAL_RESULT_FALSE;
+		} else if (ores->false_cnt == 0 && ores->error_cnt > 0) {
+			result = OVAL_RESULT_ERROR;
+		} else if (ores->false_cnt == 0 && ores->error_cnt == 0 && ores->unknown_cnt > 0) {
+			result = OVAL_RESULT_UNKNOWN;
+		} else if (ores->false_cnt == 0 && ores->error_cnt == 0 && ores->unknown_cnt == 0 && ores->noteval_cnt > 0) {
+			result = OVAL_RESULT_NOT_EVALUATED;
+		}
+		break;
+	case OVAL_CHECK_AT_LEAST_ONE:
+		if (ores->true_cnt > 0) {
+			result = OVAL_RESULT_TRUE;
+		} else if (ores->false_cnt > 0 &&
+			   ores->true_cnt == 0 &&
+			   ores->unknown_cnt == 0 && ores->error_cnt == 0 && ores->noteval_cnt == 0) {
+			result = OVAL_RESULT_FALSE;
+		} else if (ores->true_cnt == 0 && ores->error_cnt > 0) {
+			result = OVAL_RESULT_ERROR;
+		} else if (ores->false_cnt == 0 && ores->error_cnt == 0 && ores->unknown_cnt > 0) {
+			result = OVAL_RESULT_UNKNOWN;
+		} else if (ores->false_cnt == 0 && ores->error_cnt == 0 && ores->unknown_cnt == 0 && ores->noteval_cnt > 0) {
+			result = OVAL_RESULT_NOT_EVALUATED;
+		}
+		break;
+	case OVAL_CHECK_NONE_SATISFY:
+		if (ores->true_cnt > 0) {
+			result = OVAL_RESULT_FALSE;
+		} else if (ores->true_cnt == 0 && ores->error_cnt > 0) {
+			result = OVAL_RESULT_ERROR;
+		} else if (ores->true_cnt == 0 && ores->error_cnt == 0 && ores->unknown_cnt > 0) {
+			result = OVAL_RESULT_UNKNOWN;
+		} else if (ores->true_cnt == 0 && ores->error_cnt == 0 && ores->unknown_cnt == 0 && ores->noteval_cnt > 0) {
+			result = OVAL_RESULT_NOT_EVALUATED;
+		} else if (ores->false_cnt > 0 &&
+			   ores->error_cnt == 0 &&
+			   ores->unknown_cnt == 0 && ores->noteval_cnt == 0 && ores->true_cnt == 0) {
+			result = OVAL_RESULT_TRUE;
+		}
+		break;
+	case OVAL_CHECK_ONLY_ONE:
+		if (ores->true_cnt == 1 && ores->error_cnt == 0 && ores->unknown_cnt == 0 && ores->noteval_cnt == 0) {
+			result = OVAL_RESULT_TRUE;
+		} else if (ores->true_cnt > 1) {
+			result = OVAL_RESULT_FALSE;
+		} else if (ores->true_cnt < 2 && ores->error_cnt > 0) {
+			result = OVAL_RESULT_ERROR;
+		} else if (ores->true_cnt < 2 && ores->error_cnt == 0 && ores->unknown_cnt > 0) {
+			result = OVAL_RESULT_UNKNOWN;
+		} else if (ores->true_cnt < 2 && ores->error_cnt == 0 && ores->unknown_cnt == 0 && ores->noteval_cnt > 0) {
+			result = OVAL_RESULT_NOT_EVALUATED;
+		} else if (ores->true_cnt != 1 && ores->false_cnt > 0) {
+			result = OVAL_RESULT_FALSE;
+		}
+		break;
+	default:
+		result = OVAL_RESULT_INVALID;
+	}
+
+	return result;
+}
+
+// todo: already implemented elsewhere; consolidate
+static oval_result_t ores_get_result_byopr(struct oresults *ores, oval_operator_t operator)
+{
+	oval_result_t result = OVAL_RESULT_INVALID;
+
+	if (ores->true_cnt == 0 &&
+	    ores->false_cnt == 0 &&
+	    ores->error_cnt == 0 &&
+	    ores->unknown_cnt == 0 &&
+	    ores->notappl_cnt == 0 &&
+	    ores->noteval_cnt == 0)
+		return OVAL_RESULT_UNKNOWN;
+
+	if (ores->notappl_cnt > 0 &&
+	    ores->noteval_cnt == 0 &&
+	    ores->false_cnt == 0 && ores->error_cnt == 0 && ores->unknown_cnt == 0 && ores->true_cnt == 0)
+		return OVAL_RESULT_NOT_APPLICABLE;
+
+	switch (operator) {
+	case OVAL_OPERATOR_AND:
+		if (ores->true_cnt > 0 &&
+		    ores->false_cnt == 0 && ores->error_cnt == 0 && ores->unknown_cnt == 0 && ores->noteval_cnt == 0) {
+			result = OVAL_RESULT_TRUE;
+		} else if (ores->false_cnt > 0) {
+			result = OVAL_RESULT_FALSE;
+		} else if (ores->false_cnt == 0 && ores->error_cnt > 0) {
+			result = OVAL_RESULT_ERROR;
+		} else if (ores->false_cnt == 0 && ores->error_cnt == 0 && ores->unknown_cnt > 0) {
+			result = OVAL_RESULT_UNKNOWN;
+		} else if (ores->false_cnt == 0 && ores->error_cnt == 0 && ores->unknown_cnt == 0 && ores->noteval_cnt > 0) {
+			result = OVAL_RESULT_NOT_EVALUATED;
+		}
+		break;
+	case OVAL_OPERATOR_ONE:
+		if (ores->true_cnt == 1 &&
+		    ores->false_cnt >= 0 &&
+		    ores->error_cnt == 0 && ores->unknown_cnt == 0 && ores->noteval_cnt == 0 && ores->notappl_cnt >= 0) {
+			result = OVAL_RESULT_TRUE;
+		} else if (ores->true_cnt >= 2 &&
+			   ores->false_cnt >= 0 &&
+			   ores->error_cnt >= 0 &&
+			   ores->unknown_cnt >= 0 && ores->noteval_cnt >= 0 && ores->notappl_cnt >= 0) {
+			result = OVAL_RESULT_FALSE;
+		} else if (ores->true_cnt == 0 &&
+			   ores->false_cnt >= 0 &&
+			   ores->error_cnt == 0 &&
+			   ores->unknown_cnt == 0 && ores->noteval_cnt == 0 && ores->notappl_cnt >= 0) {
+			result = OVAL_RESULT_FALSE;
+		} else if (ores->true_cnt < 2 &&
+			   ores->false_cnt >= 0 &&
+			   ores->error_cnt > 0 &&
+			   ores->unknown_cnt >= 0 && ores->noteval_cnt >= 0 && ores->notappl_cnt >= 0) {
+			result = OVAL_RESULT_ERROR;
+		} else if (ores->true_cnt < 2 &&
+			   ores->false_cnt >= 0 &&
+			   ores->error_cnt == 0 &&
+			   ores->unknown_cnt >= 1 && ores->noteval_cnt >= 0 && ores->notappl_cnt >= 0) {
+			result = OVAL_RESULT_UNKNOWN;
+		} else if (ores->true_cnt < 2 &&
+			   ores->false_cnt >= 0 &&
+			   ores->error_cnt == 0 &&
+			   ores->unknown_cnt == 0 && ores->noteval_cnt > 0 && ores->notappl_cnt >= 0) {
+			result = OVAL_RESULT_NOT_EVALUATED;
+		}
+		break;
+	case OVAL_OPERATOR_OR:
+		if (ores->true_cnt > 0) {
+			result = OVAL_RESULT_TRUE;
+		} else if (ores->true_cnt == 0 &&
+			   ores->false_cnt > 0 &&
+			   ores->error_cnt == 0 && ores->unknown_cnt == 0 && ores->noteval_cnt == 0) {
+			result = OVAL_RESULT_FALSE;
+		} else if (ores->true_cnt == 0 && ores->error_cnt > 0) {
+			result = OVAL_RESULT_ERROR;
+		} else if (ores->true_cnt == 0 && ores->error_cnt == 0 && ores->unknown_cnt > 0) {
+			result = OVAL_RESULT_UNKNOWN;
+		} else if (ores->true_cnt == 0 && ores->error_cnt == 0 && ores->unknown_cnt == 0 && ores->noteval_cnt > 0) {
+			result = OVAL_RESULT_NOT_EVALUATED;
+		}
+		break;
+	case OVAL_OPERATOR_XOR:
+		if ((ores->true_cnt % 2) == 1 && ores->error_cnt == 0 && ores->unknown_cnt == 0 && ores->noteval_cnt == 0) {
+			result = OVAL_RESULT_TRUE;
+		} else if ((ores->true_cnt % 2) == 0 &&
+			   ores->error_cnt == 0 && ores->unknown_cnt == 0 && ores->noteval_cnt == 0) {
+			result = OVAL_RESULT_FALSE;
+		} else if (ores->error_cnt > 0) {
+			result = OVAL_RESULT_ERROR;
+		} else if (ores->error_cnt == 0 && ores->unknown_cnt > 0) {
+			result = OVAL_RESULT_UNKNOWN;
+		} else if (ores->error_cnt == 0 && ores->unknown_cnt == 0 && ores->noteval_cnt > 0) {
+			result = OVAL_RESULT_NOT_EVALUATED;
+		}
+		break;
+	default:
+		break;
+	}
+
+	return result;
+}
+
+static oval_result_t eval_item(struct oval_syschar_model *syschar_model, struct oval_sysdata *cur_sysdata, struct oval_state *state)
+{
+	struct oval_state_content_iterator *state_contents_itr;
+	struct oresults ste_ores;
+	oval_operator_t operator;
+	oval_result_t result = OVAL_RESULT_INVALID;
+
+	ores_clear(&ste_ores);
+
+	state_contents_itr = oval_state_get_contents(state);
+	while (oval_state_content_iterator_has_more(state_contents_itr)) {
 		struct oval_state_content *content;
 		struct oval_entity *state_entity;
-		struct oval_value *state_value;
 		char *state_entity_name;
-		bool iterator_is_not_empty;
-		int found_it;
+		struct oval_value *state_entity_val;
+		char *state_entity_val_text;
+		oval_datatype_t state_entity_val_datatype;
+		oval_operation_t state_entity_operation;
+		oval_check_t entity_check;
+		struct oval_variable *state_entity_var;
+		oval_check_t var_check;
+		oval_result_t ste_ent_res;
+		struct oval_sysitem_iterator *item_entities_itr;
+		struct oresults ent_ores;
 
-		if (!has_error && (content = oval_state_content_iterator_next(state_contents)) == NULL) {
+		if ((content = oval_state_content_iterator_next(state_contents_itr)) == NULL) {
 			oscap_dprintf("%s:%d found NULL state content", __FILE__, __LINE__);
 			oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EOVALINT,
 				     "OVAL internal error: found NULL state content");
-			has_error = true;
+			goto fail;
 		}
-		//state_entity=oval_state_content_entity(content);
-		if (!has_error && (state_entity = oval_state_content_get_entity(content)) == NULL) {
+		if ((state_entity = oval_state_content_get_entity(content)) == NULL) {
 			oscap_dprintf("%s:%d found NULL entity", __FILE__, __LINE__);
-			oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EOVALINT, "OVAL internal error: found NULL entity");
-			has_error = true;
+			oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EOVALINT,
+				     "OVAL internal error: found NULL entity");
+			goto fail;
 		}
-		//state_entity_name=oval_entity_name(state_entity);
-		if (!has_error && (state_entity_name = oval_entity_get_name(state_entity)) == NULL) {
+		if ((state_entity_name = oval_entity_get_name(state_entity)) == NULL) {
 			oscap_dprintf("%s:%d found NULL entity name", __FILE__, __LINE__);
 			oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EOVALINT,
 				     "OVAL internal error: found NULL entity name");
-			has_error = true;
+			goto fail;
 		}
-		if (!has_error && (state_value = oval_entity_get_value(state_entity)) == NULL) {
-			oscap_dprintf("%s:%d found NULL entity value", __FILE__, __LINE__);
-			oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EOVALINT,
-				     "OVAL internal error: found NULL entity value");
-			has_error = true;
-		}
-		if (!has_error) {
-			struct oval_sysitem_iterator *cur_items = oval_sysdata_get_items(cur_sysdata);
-			for (found_it = 0;
-			     ((iterator_is_not_empty = oval_sysitem_iterator_has_more(cur_items)) && (!found_it));) {
-				char *syschar_entity_name;
-				struct oval_sysitem *syschar_item;
 
-				syschar_item = oval_sysitem_iterator_next(cur_items);
-				if (syschar_item == NULL) {
-					oscap_dprintf("%s:%d found NULL sysitem", __FILE__, __LINE__);
-					oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EOVALINT,
-						     "OVAL internal error: found NULL sysitem");
-					has_error = true;
-				}
-				syschar_entity_name = oval_sysitem_get_name(syschar_item);
-				if (!strcmp(syschar_entity_name, state_entity_name)) {
-					found_it = 1;
-					result = evaluate(oval_sysitem_get_value(syschar_item)
-							  , oval_value_get_text(state_value)
-							  , oval_sysitem_get_datatype(syschar_item)
-							  , oval_value_get_datatype(state_value)
-							  , oval_entity_get_operation(state_entity));
-					// TODO:  this does not cover all possible valid oval content
-					// come back and add support for none/all/only one/at least one....
-				}
+		entity_check = oval_state_content_get_ent_check(content);
+		state_entity_operation = oval_entity_get_operation(state_entity);
+
+		if (oval_entity_get_varref_type(state_entity) == OVAL_ENTITY_VARREF_ATTRIBUTE) {
+			if ((state_entity_var = oval_entity_get_variable(state_entity)) == NULL) {
+				oscap_dprintf("%s:%d found NULL variable", __FILE__, __LINE__);
+				oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EOVALINT,
+					     "OVAL internal error: found NULL variable");
+				goto fail;
 			}
-			if (iterator_is_not_empty)
-				while (oval_sysitem_iterator_has_more(cur_items))
-					oval_sysitem_iterator_next(cur_items);
-			oval_sysitem_iterator_free(cur_items);
-		}
-	}
-	if (has_more_content)
-		while (oval_state_content_iterator_has_more(state_contents))
-			oval_state_content_iterator_next(state_contents);
-	oval_state_content_iterator_free(state_contents);
+			var_check = oval_state_content_get_var_check(content);
+		} else {
+			state_entity_var = NULL;
 
-	return (has_error) ? OVAL_RESULT_INVALID : result;
+			if ((state_entity_val = oval_entity_get_value(state_entity)) == NULL) {
+				oscap_dprintf("%s:%d found NULL entity value", __FILE__, __LINE__);
+				oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EOVALINT,
+					     "OVAL internal error: found NULL entity value");
+				goto fail;
+			}
+			if ((state_entity_val_text = oval_value_get_text(state_entity_val)) == NULL) {
+				oscap_dprintf("%s:%d found NULL entity value text", __FILE__, __LINE__);
+				oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EOVALINT,
+					     "OVAL internal error: found NULL entity value text");
+				goto fail;
+			}
+			state_entity_val_datatype = oval_value_get_datatype(state_entity_val);
+		}
+
+		ores_clear(&ent_ores);
+
+		item_entities_itr = oval_sysdata_get_items(cur_sysdata);
+		while (oval_sysitem_iterator_has_more(item_entities_itr)) {
+			struct oval_sysitem *item_entity;
+			oval_result_t ent_val_res;
+			char *item_entity_name;
+
+			item_entity = oval_sysitem_iterator_next(item_entities_itr);
+			if (item_entity == NULL) {
+				oscap_dprintf("%s:%d found NULL sysitem", __FILE__, __LINE__);
+				oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EOVALINT,
+					     "OVAL internal error: found NULL sysitem");
+				oval_sysitem_iterator_free(item_entities_itr);
+				goto fail;
+			}
+
+			item_entity_name = oval_sysitem_get_name(item_entity);
+			if (strcmp(item_entity_name, state_entity_name))
+				continue;
+
+			if (state_entity_var != NULL) {
+				struct oresults var_ores;
+				struct oval_value_iterator *val_itr;
+
+				ores_clear(&var_ores);
+
+				val_itr = oval_syschar_model_get_variable_values(syschar_model, state_entity_var);
+				while (oval_value_iterator_has_more(val_itr)) {
+					struct oval_value *var_val;
+					oval_result_t var_val_res;
+
+					var_val = oval_value_iterator_next(val_itr);
+					state_entity_val_text = oval_value_get_text(var_val);
+					state_entity_val_datatype = oval_value_get_datatype(var_val);
+
+					var_val_res = evaluate(oval_sysitem_get_value(item_entity),
+							       state_entity_val_text,
+							       oval_sysitem_get_datatype(item_entity),
+							       state_entity_val_datatype,
+							       state_entity_operation);
+					ores_add_res(&var_ores, var_val_res);
+				}
+				oval_value_iterator_free(val_itr);
+
+				ent_val_res = ores_get_result_bychk(&var_ores, var_check);
+			} else {
+				ent_val_res = evaluate(oval_sysitem_get_value(item_entity),
+						       state_entity_val_text,
+						       oval_sysitem_get_datatype(item_entity),
+						       state_entity_val_datatype,
+						       state_entity_operation);
+			}
+			ores_add_res(&ent_ores, ent_val_res);
+		}
+		oval_sysitem_iterator_free(item_entities_itr);
+
+		ste_ent_res = ores_get_result_bychk(&ent_ores, entity_check);
+		ores_add_res(&ste_ores, ste_ent_res);
+	}
+	oval_state_content_iterator_free(state_contents_itr);
+
+	operator = oval_state_get_operator(state);
+	result = ores_get_result_byopr(&ste_ores, operator);
+
+	return result;
+
+ fail:
+	oval_state_content_iterator_free(state_contents_itr);
+
+	return OVAL_RESULT_INVALID;
 }
 
 #define ITEMMAP (struct oval_string_map    *)args[2]
@@ -612,11 +899,13 @@ static void _oval_test_item_consumer(struct oval_result_item *item, void **args)
 
 static oval_result_t eval_check_state(struct oval_state *state, oval_check_t check, void **args)
 {
+	struct oval_syschar_model *syschar_model;
 	struct oval_result_item_iterator *ritems_itr;
+	struct oresults ores;
 	oval_result_t result;
-	int true_cnt, false_cnt, unknown_cnt, error_cnt, noteval_cnt, notappl_cnt;
 
-	true_cnt = false_cnt = unknown_cnt = error_cnt = noteval_cnt = notappl_cnt = 0;
+	syschar_model = oval_result_system_get_syschar_model(SYSTEM);
+	ores_clear(&ores);
 
 	ritems_itr = oval_result_test_get_items(TEST);
 	while (oval_result_item_iterator_has_more(ritems_itr)) {
@@ -627,103 +916,17 @@ static oval_result_t eval_check_state(struct oval_state *state, oval_check_t che
 		ritem = oval_result_item_iterator_next(ritems_itr);
 		item = oval_result_item_get_sysdata(ritem);
 
-		item_res = eval_item(item, state);
+		item_res = eval_item(syschar_model, item, state);
 		oval_result_item_set_result(ritem, item_res);
 
-		switch (item_res) {
-		case OVAL_RESULT_TRUE:
-			++true_cnt;
-			break;
-		case OVAL_RESULT_FALSE:
-			++false_cnt;
-			break;
-		case OVAL_RESULT_UNKNOWN:
-			++unknown_cnt;
-			break;
-		case OVAL_RESULT_ERROR:
-			++error_cnt;
-			break;
-		case OVAL_RESULT_NOT_EVALUATED:
-			++noteval_cnt;
-			break;
-		case OVAL_RESULT_NOT_APPLICABLE:
-			++notappl_cnt;
-			break;
-		default:
+		if (ores_add_res(&ores, item_res)) {
 			oval_result_item_iterator_free(ritems_itr);
 			return OVAL_RESULT_ERROR;
 		}
 	}
 	oval_result_item_iterator_free(ritems_itr);
 
-	if (notappl_cnt > 0 &&
-	    noteval_cnt == 0 &&
-	    false_cnt == 0 && error_cnt == 0 && unknown_cnt == 0 && true_cnt == 0)
-		return OVAL_RESULT_NOT_APPLICABLE;
-
-	switch (check) {
-	case OVAL_CHECK_ALL:
-		if (true_cnt > 0 &&
-		    false_cnt == 0 && error_cnt == 0 && unknown_cnt == 0 && noteval_cnt == 0) {
-			result = OVAL_RESULT_TRUE;
-		} else if (false_cnt > 0) {
-			result = OVAL_RESULT_FALSE;
-		} else if (false_cnt == 0 && error_cnt > 0) {
-			result = OVAL_RESULT_ERROR;
-		} else if (false_cnt == 0 && error_cnt == 0 && unknown_cnt > 0) {
-			result = OVAL_RESULT_UNKNOWN;
-		} else if (false_cnt == 0 && error_cnt == 0 && unknown_cnt == 0 && noteval_cnt > 0) {
-			result = OVAL_RESULT_NOT_EVALUATED;
-		}
-		break;
-	case OVAL_CHECK_AT_LEAST_ONE:
-		if (true_cnt > 0) {
-			result = OVAL_RESULT_TRUE;
-		} else if (false_cnt > 0 &&
-			   true_cnt == 0 &&
-			   unknown_cnt == 0 && error_cnt == 0 && noteval_cnt == 0) {
-			result = OVAL_RESULT_FALSE;
-		} else if (true_cnt == 0 && error_cnt > 0) {
-			result = OVAL_RESULT_ERROR;
-		} else if (false_cnt == 0 && error_cnt == 0 && unknown_cnt > 0) {
-			result = OVAL_RESULT_UNKNOWN;
-		} else if (false_cnt == 0 && error_cnt == 0 && unknown_cnt == 0 && noteval_cnt > 0) {
-			result = OVAL_RESULT_NOT_EVALUATED;
-		}
-		break;
-	case OVAL_CHECK_NONE_SATISFY:
-		if (true_cnt > 0) {
-			result = OVAL_RESULT_FALSE;
-		} else if (true_cnt == 0 && error_cnt > 0) {
-			result = OVAL_RESULT_ERROR;
-		} else if (true_cnt == 0 && error_cnt == 0 && unknown_cnt > 0) {
-			result = OVAL_RESULT_UNKNOWN;
-		} else if (true_cnt == 0 && error_cnt == 0 && unknown_cnt == 0 && noteval_cnt > 0) {
-			result = OVAL_RESULT_NOT_EVALUATED;
-		} else if (false_cnt > 0 &&
-			   error_cnt == 0 &&
-			   unknown_cnt == 0 && noteval_cnt == 0 && true_cnt == 0) {
-			result = OVAL_RESULT_TRUE;
-		}
-		break;
-	case OVAL_CHECK_ONLY_ONE:
-		if (true_cnt == 1 && error_cnt == 0 && unknown_cnt == 0 && noteval_cnt == 0) {
-			result = OVAL_RESULT_TRUE;
-		} else if (true_cnt > 1) {
-			result = OVAL_RESULT_FALSE;
-		} else if (true_cnt < 2 && error_cnt > 0) {
-			result = OVAL_RESULT_ERROR;
-		} else if (true_cnt < 2 && error_cnt == 0 && unknown_cnt > 0) {
-			result = OVAL_RESULT_UNKNOWN;
-		} else if (true_cnt < 2 && error_cnt == 0 && unknown_cnt == 0 && noteval_cnt > 0) {
-			result = OVAL_RESULT_NOT_EVALUATED;
-		} else if (true_cnt != 1 && false_cnt > 0) {
-			result = OVAL_RESULT_FALSE;
-		}
-		break;
-	default:
-		result = OVAL_RESULT_INVALID;
-	}
+	result = ores_get_result_bychk(&ores, check);
 
 	return result;
 }

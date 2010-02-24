@@ -295,6 +295,7 @@ static oval_result_t _oval_result_negate(bool negate, oval_result_t result)
 #define _CNE (counts[5])
 #define _CNA (counts[6])
 
+// todo: already implemented elsewhere; consolidate
 static oval_result_t _oval_result_binary_op(oval_operator_t operator, int *counts) {
 	oval_result_t result = OVAL_RESULT_INVALID;
 	if (INVALID == 0) {
