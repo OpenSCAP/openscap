@@ -48,7 +48,7 @@ static void xccdf_refine_rule_free(struct xccdf_refine_rule *rr)
 	}
 }
 
-static void xccdf_selected_dump(struct xccdf_selected *sel, int depth)
+static void xccdf_select_dump(struct xccdf_select *sel, int depth)
 {
 	xccdf_print_depth(depth);
 	printf("sel %c= %s\n", (sel->selected ? '+' : '-'), (sel->item ? sel->item->item.id : "(unknown)"));
@@ -88,7 +88,7 @@ struct xccdf_item *xccdf_profile_parse(xmlTextReaderPtr reader, struct xccdf_ite
 	while (oscap_to_start_element(reader, depth)) {
 		switch (xccdf_element_get(reader)) {
 		case XCCDFE_SELECT:{
-				struct xccdf_selected *sel = oscap_calloc(1, sizeof(struct xccdf_selected));
+				struct xccdf_select *sel = oscap_calloc(1, sizeof(struct xccdf_select));
 				const char *id = xccdf_attribute_get(reader, XCCDFA_IDREF);
 				sel->selected = xccdf_attribute_get_bool(reader, XCCDFA_SELECTED);
 				xccdf_benchmark_add_ref(bench, &sel->item, id, XCCDF_RULE | XCCDF_GROUP);
@@ -159,7 +159,7 @@ void xccdf_profile_dump(struct xccdf_item *prof, int depth)
 	xccdf_item_print(prof, depth + 1);
 	xccdf_print_depth(depth + 1);
 	printf("selects ");
-	oscap_list_dump(prof->sub.profile.selects, (oscap_dump_func) xccdf_selected_dump, depth + 2);
+	oscap_list_dump(prof->sub.profile.selects, (oscap_dump_func) xccdf_select_dump, depth + 2);
 }
 
 void xccdf_profile_free(struct xccdf_item *prof)
@@ -183,3 +183,5 @@ XCCDF_PROFILE_IGETTER(refine_rule, refine_rules)
 XCCDF_ITERATOR_GEN_S(profile_note)
 XCCDF_ITERATOR_GEN_S(refine_value)
 XCCDF_ITERATOR_GEN_S(refine_rule) XCCDF_ITERATOR_GEN_S(set_value) XCCDF_ITERATOR_GEN_S(select)
+OSCAP_GETTER(struct xccdf_item *, xccdf_select, item)
+OSCAP_GETTER(bool, xccdf_select, selected)

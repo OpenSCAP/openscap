@@ -22,6 +22,7 @@
 
 #include <string.h>
 #include "item.h"
+#include "../common/public/error.h"
 
 #define XCCDF_SUPPORTED "1.1.4"
 
@@ -290,4 +291,29 @@ void xccdf_cleanup(void)
 const char * xccdf_benchmark_supported(void)
 {
     return XCCDF_SUPPORTED;
+}
+
+struct xccdf_benchmark *xccdf_benchmark_create(const char *id) 
+{
+    //TODO: not implemented
+    oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_ENOTIMPL, "This feature is not implemented");
+    return NULL;
+}
+struct xccdf_group *xccdf_benchmark_append_new_group(const struct xccdf_benchmark *benchmark, const char *id)
+{
+    //TODO: not implemented
+    oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_ENOTIMPL, "This feature is not implemented");
+    return NULL;
+}
+struct xccdf_value *xccdf_benchmark_append_new_value(const struct xccdf_benchmark *benchmark, const char *id, xccdf_value_type_t type)
+{
+    //TODO: not implemented
+    oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_ENOTIMPL, "This feature is not implemented");
+    return NULL;
+}
+struct xccdf_rule *xccdf_benchmark_append_new_rule(const struct xccdf_benchmark *benchmark, const char *id)
+{
+    //TODO: not implemented
+    oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_ENOTIMPL, "This feature is not implemented");
+    return NULL;
 }

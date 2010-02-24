@@ -210,9 +210,10 @@ struct xccdf_model {
 	struct oscap_htable *params;
 };
 
-struct xccdf_selected {
+struct xccdf_select {
 	struct xccdf_item *item;
 	bool selected;
+        struct oscap_list *remarks;
 };
 
 struct xccdf_refine_rule {

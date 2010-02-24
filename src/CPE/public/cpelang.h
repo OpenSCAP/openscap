@@ -188,12 +188,6 @@ struct oscap_title_iterator *cpe_platform_get_titles(const struct cpe_platform *
  */
 const struct cpe_testexpr *cpe_platform_get_expr(const struct cpe_platform *item);
 
-/// @memberof cpe_testexpr
-struct cpe_testexpr_iterator *cpe_testexpr_get_subexpressions(struct cpe_testexpr *expr);
-
-/// @memberof cpe_testexpr
-const struct cpe_name *cpe_testexpr_get_cpe(struct cpe_testexpr *expr);
-
 /**
  * Get XML namespace from CPE lang model
  * @memberof cpe_lang_model

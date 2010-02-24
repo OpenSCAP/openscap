@@ -79,6 +79,7 @@ typedef uint16_t oscap_errcode_t;
 #define OSCAP_ESEAPINIT     12	/**< Failed seap initialization */
 #define OSCAP_EUSER1        201	/**< User defined error */
 #define OSCAP_EUSER2        202	/**< User defined error */
+#define OSCAP_ENOTIMPL      254 /**< Not implemented*/
 #define OSCAP_EUNKNOWN      255	/**< Unknown/Unexpected error */
 /** @} */
 
