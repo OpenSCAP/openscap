@@ -1450,7 +1450,7 @@ void oval_state_set_version(struct oval_state *, int version);
  * Sets attribute @ref oval_state->operator.
  * @memberof oval_state
  */
-void oval_state_set_operator(struct oval_state *, oval_operator_t operator);
+void oval_state_set_operator(struct oval_state *, oval_operator_t);
 /**
  * Append instance of @ref oval_state_content to attribute @ref oval_state->state_contents.
  *
