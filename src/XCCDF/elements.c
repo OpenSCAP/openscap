@@ -21,6 +21,7 @@
  */
 
 #include "elements.h"
+#include "../common/elements.h"
 #include <string.h>
 #include <strings.h>
 #include <time.h>
@@ -227,15 +228,10 @@ char *xccdf_attribute_copy(xmlTextReaderPtr reader, xccdf_attribute_t attr)
 	return NULL;
 }
 
-const struct oscap_string_map XCCDF_BOOL_MAP[] = {
-	{true, "true"}, {true, "True"}, {true, "TRUE"},
-	{true, "yes"}, {true, "Yes"}, {true, "YES"},
-	{true, "1"}, {false, NULL}
-};
 
 bool xccdf_attribute_get_bool(xmlTextReaderPtr reader, xccdf_attribute_t attr)
 {
-	return oscap_string_to_enum(XCCDF_BOOL_MAP, xccdf_attribute_get(reader, attr));
+	return oscap_string_to_enum(OSCAP_BOOL_MAP, xccdf_attribute_get(reader, attr));
 }
 
 float xccdf_attribute_get_float(xmlTextReaderPtr reader, xccdf_attribute_t attr)
@@ -247,54 +243,6 @@ float xccdf_attribute_get_float(xmlTextReaderPtr reader, xccdf_attribute_t attr)
 		return NAN;	//TODO: Replace with ANSI
 }
 
-bool xccdf_to_start_element(xmlTextReaderPtr reader, int depth)
-{
-	//int olddepth = xmlTextReaderDepth(reader);
-	while (xmlTextReaderDepth(reader) >= depth) {
-		switch (xmlTextReaderNodeType(reader)) {
-			//TODO: change int values to macros XML_ELEMENT_TYPE_*
-		case 1:
-			if (xmlTextReaderDepth(reader) == depth)
-				return true;
-		default:
-			break;
-		}
-		if (xmlTextReaderRead(reader) != 1)
-			break;
-	}
-	return false;
-}
-
-char *xccdf_element_string_copy(xmlTextReaderPtr reader)
-{
-	if (xmlTextReaderNodeType(reader) == 1 || xmlTextReaderNodeType(reader) == 2)
-		xmlTextReaderRead(reader);
-	if (xmlTextReaderHasValue(reader))
-		return (char *)xmlTextReaderValue(reader);
-	return NULL;
-}
-
-const char *xccdf_element_string_get(xmlTextReaderPtr reader)
-{
-	if (xmlTextReaderNodeType(reader) == 1 || xmlTextReaderNodeType(reader) == 2)
-		xmlTextReaderRead(reader);
-	if (xmlTextReaderHasValue(reader))
-		return (const char *)xmlTextReaderConstValue(reader);
-	return NULL;
-}
-
-int xccdf_element_depth(xmlTextReaderPtr reader)
-{
-	int depth = xmlTextReaderDepth(reader);
-	switch (xmlTextReaderNodeType(reader)) {
-	case 2:
-	case 5:
-	case 3:
-		return depth - 1;
-	default:
-		return depth;
-	}
-}
 
 void xccdf_print_depth(int depth)
 {
@@ -304,14 +252,14 @@ void xccdf_print_depth(int depth)
 
 void xccdf_print_max_text(const struct oscap_text *txt, int max, const char *ellipsis)
 {
-	const wchar_t *text = oscap_text_get_text(txt);
-	if (txt)
+    if (txt == NULL) return;
+	const char *text = oscap_text_get_text(txt);
+	if (text)
 		while (isspace(*text))
 			++text;
 	int len = strlen("(null)");;
 	char buf[32];
-	if (txt)
-		len = oscap_text_get_len(txt);
+	if (text) len = strlen(text);
 	sprintf(buf, "%%.%ds", max);
 	printf(buf, text);
 	if (len > max)
@@ -333,37 +281,3 @@ void xccdf_print_max(const char *str, int max, const char *ellipsis)
 		printf("%s", ellipsis);
 }
 
-char *xccdf_get_xml(xmlTextReaderPtr reader)
-{
-	return (char *)xmlTextReaderReadOuterXml(reader);
-}
-
-time_t xccdf_get_date(const char *date)
-{
-	if (date) {
-		struct tm tm;
-		memset(&tm, 0, sizeof(tm));
-		if (sscanf(date, "%d-%d-%d", &tm.tm_year, &tm.tm_mon, &tm.tm_mday) == 3) {
-			tm.tm_mon -= 1;
-			tm.tm_year -= 1900;
-			return mktime(&tm);
-		}
-	}
-	return 0;
-}
-
-time_t xccdf_get_datetime(const char *date)
-{
-	if (date) {
-		struct tm tm;
-		memset(&tm, 0, sizeof(tm));
-		if (sscanf
-		    (date, "%d-%d-%dT%d:%d:%d", &tm.tm_year, &tm.tm_mon, &tm.tm_mday, &tm.tm_hour, &tm.tm_min,
-		     &tm.tm_sec) == 6) {
-			tm.tm_mon -= 1;
-			tm.tm_year -= 1900;
-			return mktime(&tm);
-		}
-	}
-	return 0;
-}

@@ -34,6 +34,7 @@
 #include <stdbool.h>
 #include <wchar.h>
 
+#include "text.h"
 
 /**
  * @defgroup ITER Iterators & collections
@@ -158,70 +159,6 @@ void xml_metadata_iterator_remove(struct xml_metadata_iterator *it);
  * @{
  * Functions to access and manipulate textual data.
  */
-
-/**
- * @struct oscap_text
- * Representation of internationalizable character strings
- */
-struct oscap_text;
-
-/**
- * Create a internationalized text field.
- * @param lang - language identifier (@see oscap_text_lang)
- * @param encoding - language encoding (@see oscap_text_encoding)
- */
-struct oscap_text *oscap_text_new(const char *lang, const char *encoding, const wchar_t *text);
-
-/**
- * Create a internationalized text field from an ASCII string.
- * @param lang - language identifier (@see oscap_text_lang)
- * @param encoding - language encoding (@see oscap_text_encoding)
- */
-struct oscap_text *oscap_text_from_string(const char *lang, const char *string);
-
-/**
- * Release an internationalized text field.
- */
-void oscap_text_free(struct oscap_text *);
-
-/**
- * Get the text language identifier.
- * Valid identifiers are specified in IETF BCP 47.  These are the values allowed by the XML 'lang' attribute.
- */
-const char *oscap_text_get_lang(const struct oscap_text *);
-
-/**
- * Get the text encoding identifier.
- * Valid identifiers are those recommended by the IANA as official character set names(http://www.iana.org/assignments/character-sets).
- * These are the values allowed as XML encodings.
- */
-const char *oscap_text_get_encoding(const struct oscap_text *);
-
-/**
- * Get the encoded text.
- */
-const wchar_t *oscap_text_get_text(const struct oscap_text *);
-
-/**
- * Get the length of the encoded text
- */
-size_t oscap_text_get_len(const struct oscap_text *);
-
-
-/** @struct oscap_text_iterator
- * Internationalized string iterator.
- * @see oscap_iterator
- */
-struct oscap_text_iterator;
-/// @relates oscap_text_iterator
-const struct oscap_text *oscap_text_iterator_next(struct oscap_text_iterator *it);
-/// @relates oscap_text_iterator
-bool oscap_text_iterator_has_more(struct oscap_text_iterator *it);
-/// @relates oscap_text_iterator
-void oscap_text_iterator_free(struct oscap_text_iterator *it);
-/// @relates oscap_text_iterator
-void oscap_text_iterator_remove(struct oscap_text_iterator *it);
-
 
 /**
  * @struct oscap_string_iterator

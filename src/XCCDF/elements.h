@@ -26,6 +26,7 @@
 #include <stdbool.h>
 #include <time.h>
 #include "../common/util.h"
+#include "../common/elements.h"
 
 OSCAP_HIDDEN_START;
 
@@ -175,17 +176,8 @@ float xccdf_attribute_get_float(xmlTextReaderPtr reader, xccdf_attribute_t attr)
 
 extern const struct oscap_string_map XCCDF_BOOL_MAP[];
 
-bool xccdf_to_start_element(xmlTextReaderPtr reader, int depth);
-char *xccdf_element_string_copy(xmlTextReaderPtr reader);
-const char *xccdf_element_string_get(xmlTextReaderPtr reader);
-int xccdf_element_depth(xmlTextReaderPtr reader);
-
 void xccdf_print_depth(int depth);
 void xccdf_print_max(const char *str, int max, const char *ellipsis);
-char *xccdf_get_xml(xmlTextReaderPtr reader);
-
-time_t xccdf_get_date(const char *date);
-time_t xccdf_get_datetime(const char *date);
 
 OSCAP_HIDDEN_END;
 

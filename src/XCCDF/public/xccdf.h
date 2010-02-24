@@ -649,7 +649,7 @@ xccdf_status_type_t xccdf_item_get_current_status(const struct xccdf_item *item)
  * @return Pointer to this item as the benchmark.
  * @retval NULL on faliure (e.g. item is not a benchmark)
  */
-/* struct xccdf_benchmark* xccdf_item_cast_benchmark(struct xccdf_item* item); TODO */
+struct xccdf_benchmark* xccdf_item_to_benchmark(struct xccdf_item* item);
 
 /**
  * Convert the item to a profile.
@@ -657,7 +657,7 @@ xccdf_status_type_t xccdf_item_get_current_status(const struct xccdf_item *item)
  * @return Pointer to this item as the profile.
  * @retval NULL on faliure (e.g. item is not a profile)
  */
-/* struct xccdf_profile* xccdf_item_cast_profile(struct xccdf_item* item); TODO */
+struct xccdf_profile* xccdf_item_to_profile(struct xccdf_item* item);
 
 /**
  * Convert the item to a rule.
@@ -665,7 +665,7 @@ xccdf_status_type_t xccdf_item_get_current_status(const struct xccdf_item *item)
  * @return Pointer to this item as the rule.
  * @retval NULL on faliure (e.g. item is not a rule)
  */
-/* struct xccdf_rule* xccdf_item_cast_rule(struct xccdf_item* item); TODO */
+struct xccdf_rule* xccdf_item_to_rule(struct xccdf_item* item);
 
 /**
  * Convert the item to a group.
@@ -673,7 +673,7 @@ xccdf_status_type_t xccdf_item_get_current_status(const struct xccdf_item *item)
  * @return Pointer to this item as the group.
  * @retval NULL on faliure (e.g. item is not a group)
  */
-/* struct xccdf_group* xccdf_item_cast_group(struct xccdf_item* item); TODO */
+struct xccdf_group* xccdf_item_to_group(struct xccdf_item* item);
 
 /**
  * Convert the item to a value.
@@ -681,7 +681,7 @@ xccdf_status_type_t xccdf_item_get_current_status(const struct xccdf_item *item)
  * @return Pointer to this item as the value.
  * @retval NULL on faliure (e.g. item is not a value)
  */
-/* struct xccdf_value* xccdf_item_cast_value(struct xccdf_item* item); TODO */
+struct xccdf_value* xccdf_item_to_value(struct xccdf_item* item);
 
 /**
  * Convert the item to a test result.
@@ -689,7 +689,7 @@ xccdf_status_type_t xccdf_item_get_current_status(const struct xccdf_item *item)
  * @return Pointer to this item as the test result.
  * @retval NULL on faliure (e.g. item is not a test result)
  */
-/* struct xccdf_result* xccdf_item_cast_result(struct xccdf_item* item); TODO */
+struct xccdf_result* xccdf_item_to_result(struct xccdf_item* item);
 
 /*--------------------*\
 |   Benchmark methods  |

@@ -9,94 +9,83 @@
 #include "list.h"
 #include <config.h>
 #include <string.h>
-#include <wchar.h>
 #include <stdio.h>
-#ifdef HAVE_ENDIAN_H
-# include <endian.h>
-#else
-/* XXX: workaround */
-# ifdef HAVE_SYS_ENDIAN_H
-# include <sys/endian.h>
-#  if _BYTE_ORDER == _LITTLE_ENDIAN
-#   define __LONG_LONG_PAIR(HI, LO) LO, HI
-#  elif _BYTE_ORDER == _BIG_ENDIAN
-#   define __LONG_LONG_PAIR(HI, LO) HI, LO
-#  endif
-# endif
-#endif
 
+#include "text_priv.h"
+
+const char * const OSCAP_LANG_ENGLISH    = "en";
+const char * const OSCAP_LANG_ENGLISH_US = "en_US";
+const char * const OSCAP_LANG_DEFAULT    = "en_US";
+
+const struct oscap_text_traits OSCAP_TEXT_TRAITS_PLAIN = { .html = false };
+const struct oscap_text_traits OSCAP_TEXT_TRAITS_HTML  = { .html = true };
+
+
+OSCAP_ACCESSOR_STRING(oscap_text, text)
+OSCAP_ACCESSOR_STRING(oscap_text, lang)
+OSCAP_GENERIC_GETTER(bool, oscap_text, is_html, traits.html)
+OSCAP_GENERIC_GETTER(bool, oscap_text, can_substitute, traits.can_substitute)
+OSCAP_GENERIC_GETTER(bool, oscap_text, can_override, traits.can_override)
+OSCAP_GENERIC_GETTER(bool, oscap_text, overrides, traits.overrides)
 OSCAP_ITERATOR_GEN_T(const struct oscap_text *, oscap_text)
 OSCAP_ITERATOR_REMOVE_T(const struct oscap_text *, oscap_text, oscap_text_free)
 
-typedef struct oscap_text {
-	char *lang;
-	char *encoding;
-	wchar_t *text;
-} oscap_text_t;
 
-#define _FREE(MNAME) if(text->MNAME)free(text->MNAME);text->MNAME = NULL;
 void oscap_text_free(struct oscap_text *text)
 {
-	_FREE(lang)
-	_FREE(encoding)
-	_FREE(text)
-	free(text);
+    if (text != NULL) {
+        oscap_free(text->lang);
+        oscap_free(text->text);
+        free(text);
+    }
 }
 
-#define _GET(MTYPE, MNAME)\
-		const MTYPE oscap_text_get_##MNAME(const struct oscap_text *text){return text->MNAME;}
-
-_GET(char *, lang)
-_GET(char *, encoding)
-_GET(wchar_t *, text);
-
-static const size_t _wlen(const wchar_t *text)
+struct oscap_text *oscap_text_new_full(struct oscap_text_traits traits, const char *string, const char *lang)
 {
-	size_t len;for(len=0;text[len]!=0;len++);
-	return len;
+    struct oscap_text *text = oscap_calloc(1, sizeof(struct oscap_text));
+    text->traits = traits;
+    text->text   = oscap_strdup(string);
+    text->lang   = oscap_strdup(lang);
+    return text;
 }
 
-size_t oscap_text_get_len(const struct oscap_text *text)
+
+struct oscap_text *oscap_text_new(void)
 {
-	return _wlen(oscap_text_get_text(text));
+    return oscap_text_new_full(OSCAP_TEXT_TRAITS_PLAIN, NULL, NULL);
 }
 
-static wchar_t *_clone_wchar(const wchar_t *text)
+struct oscap_text *oscap_text_new_html(void)
 {
-	size_t len = (_wlen(text)+1)*sizeof(wchar_t);
-	wchar_t *clone = (wchar_t *)malloc(len);
-	memcpy(clone, text, len);
-	return clone;
+    assert(false); // TODO implement
+    return oscap_text_new_full(OSCAP_TEXT_TRAITS_HTML, NULL, NULL);
 }
 
-struct oscap_text *oscap_text_new(const char *lang, const char *encoding, const wchar_t *text)
+struct oscap_text *oscap_text_new_parse(struct oscap_text_traits traits, xmlTextReaderPtr reader)
 {
-	struct oscap_text *oscap_text = (oscap_text_t *)malloc(sizeof(oscap_text_t));
-	oscap_text->lang     = (lang    )?strdup(lang):NULL;
-	oscap_text->encoding = (encoding)?strdup(encoding):NULL;
-	oscap_text->text     = (text    )?_clone_wchar(text):NULL;
-	return oscap_text;
+    assert(reader != NULL);
+
+    // new text
+    struct oscap_text *text = oscap_text_new_full(traits, NULL, NULL);
+
+    // extract 'overrides' attribute
+    if (text->traits.can_override) {
+        xmlTextReaderMoveToAttribute(reader, BAD_CAST "overrides");
+        text->traits.overrides = oscap_string_to_enum(OSCAP_BOOL_MAP, (const char *) xmlTextReaderConstValue(reader));
+    }
+
+    // extract language
+    text->lang = (char *) xmlTextReaderXmlLang(reader);
+
+    xmlTextReaderMoveToElement(reader);
+
+    // extract content
+    if (text->traits.html) text->text = oscap_get_xml(reader);
+    else text->text = oscap_element_string_copy(reader);
+
+    // TODO substitution support
+    
+    return text;
 }
 
-static wchar_t *_convert_UTF_8_to_UTF_16(const char *string)
-{
-	int slen = strlen(string)+1;
-	wchar_t *utf_16 = (wchar_t *)malloc(2*slen);
-	wchar_t *tmp_16 = utf_16;
 
-	int i;for(i=0;i<slen;i++){
-		char tmp_8[2] = {__LONG_LONG_PAIR((char)0, string[i])};
-		*tmp_16 = *((wchar_t *)tmp_8);
-		tmp_16++;
-	}
-
-	return utf_16;
-}
-
-struct oscap_text *oscap_text_from_string(const char *lang, const char *string)
-{
-	wchar_t *wstring = _convert_UTF_8_to_UTF_16(string);
-	struct oscap_text *text = oscap_text_new(lang, "UTF-16", wstring);
-	free(wstring);
-	return text;
-}

@@ -83,9 +83,9 @@ struct xccdf_item *xccdf_profile_parse(xmlTextReaderPtr reader, struct xccdf_ite
 		return NULL;
 	}
 
-	int depth = xccdf_element_depth(reader) + 1;
+	int depth = oscap_element_depth(reader) + 1;
 
-	while (xccdf_to_start_element(reader, depth)) {
+	while (oscap_to_start_element(reader, depth)) {
 		switch (xccdf_element_get(reader)) {
 		case XCCDFE_SELECT:{
 				struct xccdf_selected *sel = oscap_calloc(1, sizeof(struct xccdf_selected));
@@ -135,7 +135,7 @@ struct xccdf_item *xccdf_profile_parse(xmlTextReaderPtr reader, struct xccdf_ite
 				if (id == NULL)
 					break;
 				struct xccdf_set_value *sv = oscap_calloc(1, sizeof(struct xccdf_set_value));
-				sv->value = xccdf_element_string_copy(reader);
+				sv->value = oscap_element_string_copy(reader);
 				xccdf_benchmark_add_ref(bench, &sv->item, id, XCCDF_VALUE);
 				oscap_list_add(prof->sub.profile.set_values, sv);
 				break;

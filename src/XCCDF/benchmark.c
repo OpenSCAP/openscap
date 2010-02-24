@@ -111,28 +111,28 @@ bool xccdf_benchmark_parse(struct xccdf_item * benchmark, xmlTextReaderPtr reade
 	if (xccdf_attribute_has(reader, XCCDFA_RESOLVED))
 		benchmark->item.flags.resolved = xccdf_attribute_get_bool(reader, XCCDFA_RESOLVED);
 
-	int depth = xccdf_element_depth(reader) + 1;
+	int depth = oscap_element_depth(reader) + 1;
 
-	while (xccdf_to_start_element(reader, depth)) {
+	while (oscap_to_start_element(reader, depth)) {
 		switch (xccdf_element_get(reader)) {
 		case XCCDFE_NOTICE:{
 				const char *id = xccdf_attribute_get(reader, XCCDFA_ID);
-				char *data = xccdf_get_xml(reader);
+				char *data = oscap_get_xml(reader);
 				if (data && id)
 					oscap_list_add(benchmark->sub.bench.notices, xccdf_notice_from_string(id, data));
 				break;
 			}
 		case XCCDFE_FRONT_MATTER:
 			if (!benchmark->sub.bench.front_matter)
-				benchmark->sub.bench.front_matter = xccdf_get_xml(reader);
+				benchmark->sub.bench.front_matter = oscap_get_xml(reader);
 			break;
 		case XCCDFE_REAR_MATTER:
 			if (!benchmark->sub.bench.rear_matter)
-				benchmark->sub.bench.rear_matter = xccdf_get_xml(reader);
+				benchmark->sub.bench.rear_matter = oscap_get_xml(reader);
 			break;
 		case XCCDFE_METADATA:
 			if (!benchmark->sub.bench.metadata)
-				benchmark->sub.bench.metadata = xccdf_get_xml(reader);
+				benchmark->sub.bench.metadata = oscap_get_xml(reader);
 			break;
 		case XCCDFE_PLATFORM:
 			oscap_list_add(benchmark->item.platforms, xccdf_attribute_copy(reader, XCCDFA_IDREF));
@@ -142,7 +142,7 @@ bool xccdf_benchmark_parse(struct xccdf_item * benchmark, xmlTextReaderPtr reade
 			break;
 		case XCCDFE_PLAIN_TEXT:{
 				const char *id = xccdf_attribute_get(reader, XCCDFA_ID);
-				char *data = xccdf_element_string_copy(reader);
+				char *data = oscap_element_string_copy(reader);
 				if (!id || !data || !oscap_htable_add(benchmark->sub.bench.plain_texts, id, data))
 					oscap_free(data);
 				break;
@@ -183,10 +183,10 @@ void xccdf_benchmark_dump(struct xccdf_benchmark *benchmark)
 	if (bench) {
 		xccdf_item_print(bench, 1);
 		printf("  front m.: ");
-		xccdf_print_max_text(xccdf_benchmark_get_front_matter(benchmark), 64, "...");
+		xccdf_print_max(xccdf_benchmark_get_front_matter(benchmark), 64, "...");
 		printf("\n");
 		printf("  rear m. : ");
-		xccdf_print_max_text(xccdf_benchmark_get_rear_matter(benchmark), 64, "...");
+		xccdf_print_max(xccdf_benchmark_get_rear_matter(benchmark), 64, "...");
 		printf("\n");
 		printf("  profiles ");
 		oscap_list_dump(bench->sub.bench.profiles, (oscap_dump_func) xccdf_profile_dump, 2);
@@ -237,7 +237,8 @@ XCCDF_STATUS_CURRENT(benchmark)
 
 struct xccdf_notice *xccdf_notice_from_string(const char *id, char *string)
 {
-	return xccdf_notice_from_text(id, oscap_text_from_string("eng-US", string));
+	//return xccdf_notice_from_text(id, oscap_text_from_string("eng-US", string));
+    return NULL; // TODO
 }
 
 struct xccdf_notice *xccdf_notice_from_text(const char *id, struct oscap_text *text)

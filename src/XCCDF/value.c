@@ -22,6 +22,7 @@
 
 #include "item.h"
 #include "elements.h"
+#include "../common/elements.h"
 #include <math.h>
 #include <string.h>
 
@@ -72,7 +73,7 @@ static union xccdf_value_unit xccdf_value_get(const char *str, xccdf_value_type_
 		val.n = strtof(str, NULL);
 		break;
 	case XCCDF_TYPE_BOOLEAN:
-		val.b = oscap_string_to_enum(XCCDF_BOOL_MAP, str);
+		val.b = oscap_string_to_enum(OSCAP_BOOL_MAP, str);
 		break;
 	default:
 		assert(false);
@@ -95,9 +96,9 @@ struct xccdf_item *xccdf_value_parse(xmlTextReaderPtr reader, struct xccdf_item 
 		return NULL;
 	}
 
-	int depth = xccdf_element_depth(reader) + 1;
+	int depth = oscap_element_depth(reader) + 1;
 
-	while (xccdf_to_start_element(reader, depth)) {
+	while (oscap_to_start_element(reader, depth)) {
 		xccdf_element_t el = xccdf_element_get(reader);
 		const char *selector = xccdf_attribute_get(reader, XCCDFA_SELECTOR);
 		if (selector == NULL)
@@ -111,32 +112,32 @@ struct xccdf_item *xccdf_value_parse(xmlTextReaderPtr reader, struct xccdf_item 
 
 		switch (el) {
 		case XCCDFE_SOURCE:
-			oscap_list_add(value->sub.value.sources, xccdf_element_string_copy(reader));
+			oscap_list_add(value->sub.value.sources, oscap_element_string_copy(reader));
 			break;
 		case XCCDFE_VALUE_VAL:
-			val->value = xccdf_value_get(xccdf_element_string_get(reader), type);
+			val->value = xccdf_value_get(oscap_element_string_get(reader), type);
 			break;
 		case XCCDFE_DEFAULT:
-			val->defval = xccdf_value_get(xccdf_element_string_get(reader), type);
+			val->defval = xccdf_value_get(oscap_element_string_get(reader), type);
 			break;
 		case XCCDFE_MATCH:
 			if (type == XCCDF_TYPE_STRING && !val->limits.s.match)
-				val->limits.s.match = xccdf_element_string_copy(reader);
+				val->limits.s.match = oscap_element_string_copy(reader);
 			break;
 		case XCCDFE_LOWER_BOUND:
 			if (type == XCCDF_TYPE_NUMBER)
-				val->limits.n.lower_bound = xccdf_value_get(xccdf_element_string_get(reader), type).n;
+				val->limits.n.lower_bound = xccdf_value_get(oscap_element_string_get(reader), type).n;
 			break;
 		case XCCDFE_UPPER_BOUND:
 			if (type == XCCDF_TYPE_NUMBER)
-				val->limits.n.upper_bound = xccdf_value_get(xccdf_element_string_get(reader), type).n;
+				val->limits.n.upper_bound = xccdf_value_get(oscap_element_string_get(reader), type).n;
 			break;
 		case XCCDFE_CHOICES:
 			val->must_match = xccdf_attribute_get_bool(reader, XCCDFA_MUSTMATCH);
-			while (xccdf_to_start_element(reader, depth + 1)) {
+			while (oscap_to_start_element(reader, depth + 1)) {
 				if (xccdf_element_get(reader) == XCCDFE_CHOICE) {
 					union xccdf_value_unit *unit = oscap_calloc(1, sizeof(union xccdf_value_unit));
-					*unit = xccdf_value_get(xccdf_element_string_get(reader), type);
+					*unit = xccdf_value_get(oscap_element_string_get(reader), type);
 					oscap_list_add(val->choices, unit);
 				}
 				xmlTextReaderRead(reader);

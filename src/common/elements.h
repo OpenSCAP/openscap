@@ -30,7 +30,28 @@
 #include <libxml/xmlreader.h>
 #include <libxml/xmlwriter.h>
 #include <stdbool.h>
+#include <time.h>
 #include "public/oscap.h"
+#include "util.h"
+
+/// boolean to string (and vice versa) conversion map
+extern const struct oscap_string_map OSCAP_BOOL_MAP[];
+
+/// find starting element at given depth (returns false if none found)
+bool oscap_to_start_element(xmlTextReaderPtr reader, int depth);
+/// get a copy of a string contained by current element
+char *oscap_element_string_copy(xmlTextReaderPtr reader);
+/// get a string contained by current element
+const char *oscap_element_string_get(xmlTextReaderPtr reader);
+/// get depth of current element
+int oscap_element_depth(xmlTextReaderPtr reader);
+/// get xml content of current element as a string
+char *oscap_get_xml(xmlTextReaderPtr reader);
+/// get date from a string
+time_t oscap_get_date(const char *date);
+/// get datetime from a string
+time_t oscap_get_datetime(const char *date);
+
 
 struct xml_metadata {
         char *nspace;           ///< XMLNS (namespace) prefix

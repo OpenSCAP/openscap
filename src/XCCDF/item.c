@@ -202,22 +202,22 @@ bool xccdf_item_process_element(struct xccdf_item * item, xmlTextReaderPtr reade
 
 	switch (el) {
 	case XCCDFE_TITLE:{
-		char *title = xccdf_element_string_copy(reader);
-		void *text  = oscap_text_from_string("eng-US", title);//TODO: INTERNATIONALIZE
+		char *title = oscap_element_string_copy(reader);
+		//void *text  = oscap_text_from_string("eng-US", title);//TODO: INTERNATIONALIZE
 		oscap_list_add(item->item.title, strdup(title));
 		free(title);
 		return true;
 	}
 	case XCCDFE_DESCRIPTION:{
-		char *description = xccdf_element_string_copy(reader);
-		void *text  = oscap_text_from_string("eng-US", description);//TODO: INTERNATIONALIZE
+		char *description = oscap_element_string_copy(reader);
+		//void *text  = oscap_text_from_string("eng-US", description);//TODO: INTERNATIONALIZE
 		oscap_list_add(item->item.description, strdup(description));
 		free(description);
 		return true;
 	}
 	case XCCDFE_STATUS:{
 			const char *date = xccdf_attribute_get(reader, XCCDFA_DATE);
-			char *str = xccdf_element_string_copy(reader);
+			char *str = oscap_element_string_copy(reader);
 			struct xccdf_status *status = xccdf_status_new(str, date);
 			oscap_free(str);
 			if (status) {
@@ -227,19 +227,19 @@ bool xccdf_item_process_element(struct xccdf_item * item, xmlTextReaderPtr reade
 			break;
 		}
 	case XCCDFE_VERSION:
-		item->item.version_time = xccdf_get_datetime(xccdf_attribute_get(reader, XCCDFA_TIME));
+		item->item.version_time = oscap_get_datetime(xccdf_attribute_get(reader, XCCDFA_TIME));
 		item->item.version_update = xccdf_attribute_copy(reader, XCCDFA_UPDATE);
-		item->item.version = xccdf_element_string_copy(reader);
+		item->item.version = oscap_element_string_copy(reader);
 		break;
 	case XCCDFE_RATIONALE:{
-		char *rationale = xccdf_element_string_copy(reader);
-		void *text  = oscap_text_from_string("eng-US", rationale);//TODO: INTERNATIONALIZE
+		char *rationale = oscap_element_string_copy(reader);
+		//void *text  = oscap_text_from_string("eng-US", rationale);//TODO: INTERNATIONALIZE
 		oscap_list_add(item->item.rationale, strdup(rationale));
 		free(rationale);
 	}break;
 	case XCCDFE_QUESTION:{
-		char *question = xccdf_element_string_copy(reader);
-		void *text  = oscap_text_from_string("eng-US", question);//TODO: INTERNATIONALIZE
+		char *question = oscap_element_string_copy(reader);
+		//void *text  = oscap_text_from_string("eng-US", question);//TODO: INTERNATIONALIZE
 		oscap_list_add(item->item.question, strdup(question));
 		free(question);
 	}break;
@@ -255,16 +255,16 @@ static void *xccdf_item_convert(struct xccdf_item *item, xccdf_type_t type)
 	return (item != NULL && (item->type & type) ? item : NULL);
 }
 
-#define XCCDF_ITEM_CONVERT(T1,T2) static struct xccdf_##T1* xccdf_item_to_##T1(struct xccdf_item* item) { return xccdf_item_convert(item, XCCDF_##T2); }
+#define XCCDF_ITEM_CONVERT(T1,T2) struct xccdf_##T1* xccdf_item_to_##T1(struct xccdf_item* item) { return xccdf_item_convert(item, XCCDF_##T2); }
 XCCDF_ITEM_CONVERT(benchmark, BENCHMARK)
-    XCCDF_ITEM_CONVERT(profile, PROFILE)
-    XCCDF_ITEM_CONVERT(rule, RULE)
-    XCCDF_ITEM_CONVERT(group, GROUP)
-    XCCDF_ITEM_CONVERT(value, VALUE)
-    XCCDF_ITEM_CONVERT(result, RESULT)
+XCCDF_ITEM_CONVERT(profile, PROFILE)
+XCCDF_ITEM_CONVERT(rule, RULE)
+XCCDF_ITEM_CONVERT(group, GROUP)
+XCCDF_ITEM_CONVERT(value, VALUE)
+XCCDF_ITEM_CONVERT(result, RESULT)
 
-    XCCDF_ABSTRACT_GETTER(xccdf_type_t, item, type, type)
-    XCCDF_ITEM_GETTER(const char *, id)
+XCCDF_ABSTRACT_GETTER(xccdf_type_t, item, type, type)
+XCCDF_ITEM_GETTER(const char *, id)
 
 XCCDF_ITEM_TIGETTER(question);
 XCCDF_ITEM_TIGETTER(rationale);
@@ -331,7 +331,7 @@ struct xccdf_status *xccdf_status_new(const char *status, const char *date)
 		oscap_free(ret);
 		return NULL;
 	}
-	ret->date = xccdf_get_date(date);
+	ret->date = oscap_get_date(date);
 	return ret;
 }
 
@@ -371,7 +371,7 @@ xccdf_status_type_t xccdf_item_get_current_status(const struct xccdf_item *item)
 struct xccdf_model *xccdf_model_new_xml(xmlTextReaderPtr reader)
 {
 	xccdf_element_t el = xccdf_element_get(reader);
-	int depth = xccdf_element_depth(reader) + 1;
+	int depth = oscap_element_depth(reader) + 1;
 	struct xccdf_model *model;
 
 	if (el != XCCDFE_MODEL)
@@ -381,10 +381,10 @@ struct xccdf_model *xccdf_model_new_xml(xmlTextReaderPtr reader)
 	model->system = xccdf_attribute_copy(reader, XCCDFA_SYSTEM);
 	model->params = oscap_htable_new();
 
-	while (xccdf_to_start_element(reader, depth)) {
+	while (oscap_to_start_element(reader, depth)) {
 		if (xccdf_element_get(reader) == XCCDFE_PARAM) {
 			const char *name = xccdf_attribute_get(reader, XCCDFA_NAME);
-			char *value = xccdf_element_string_copy(reader);
+			char *value = oscap_element_string_copy(reader);
 			if (!name || !value || !oscap_htable_add(model->params, name, value))
 				oscap_free(value);
 		}

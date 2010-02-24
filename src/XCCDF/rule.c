@@ -203,9 +203,9 @@ struct xccdf_item *xccdf_group_parse(xmlTextReaderPtr reader, struct xccdf_item 
 		return NULL;
 	}
 
-	int depth = xccdf_element_depth(reader) + 1;
+	int depth = oscap_element_depth(reader) + 1;
 
-	while (xccdf_to_start_element(reader, depth)) {
+	while (oscap_to_start_element(reader, depth)) {
 		switch (xccdf_element_get(reader)) {
 		case XCCDFE_REQUIRES:
 		case XCCDFE_CONFLICTS:
@@ -284,9 +284,9 @@ struct xccdf_item *xccdf_rule_parse(xmlTextReaderPtr reader, struct xccdf_item *
 		rule->sub.rule.severity =
 		    oscap_string_to_enum(XCCDF_LEVEL_MAP, xccdf_attribute_get(reader, XCCDFA_SEVERITY));
 
-	int depth = xccdf_element_depth(reader) + 1;
+	int depth = oscap_element_depth(reader) + 1;
 
-	while (xccdf_to_start_element(reader, depth)) {
+	while (oscap_to_start_element(reader, depth)) {
 		switch (xccdf_element_get(reader)) {
 		case XCCDFE_REQUIRES:
 		case XCCDFE_CONFLICTS:
@@ -298,7 +298,7 @@ struct xccdf_item *xccdf_rule_parse(xmlTextReaderPtr reader, struct xccdf_item *
 					break;
 				struct xccdf_profile_note *note = oscap_calloc(1, sizeof(struct xccdf_profile_note));
 				note->reftag = strdup(tag);
-				note->text = oscap_text_from_string("eng-US",xccdf_get_xml(reader));
+				////note->text = oscap_text_from_string("eng-US",oscap_get_xml(reader));
 				oscap_list_add(rule->sub.rule.profile_notes, note);
 				break;
 			}
@@ -373,7 +373,7 @@ struct xccdf_ident *xccdf_ident_parse(xmlTextReaderPtr reader)
 {
 	XCCDF_ASSERT_ELEMENT(reader, XCCDFE_IDENT);
 	const char *sys = xccdf_attribute_get(reader, XCCDFA_SYSTEM);
-	const char *id = xccdf_element_string_get(reader);
+	const char *id = oscap_element_string_get(reader);
 	return xccdf_ident_new(id, sys);
 }
 
@@ -434,9 +434,9 @@ struct xccdf_check *xccdf_check_parse(xmlTextReaderPtr reader, struct xccdf_item
 	if (xccdf_attribute_get_bool(reader, XCCDFA_NEGATE))
 		check->oper |= XCCDF_OPERATOR_NOT;
 
-	int depth = xccdf_element_depth(reader) + 1;
+	int depth = oscap_element_depth(reader) + 1;
 
-	while (xccdf_to_start_element(reader, depth)) {
+	while (oscap_to_start_element(reader, depth)) {
 		switch (xccdf_element_get(reader)) {
 		case XCCDFE_CHECK:
 		case XCCDFE_COMPLEX_CHECK:
@@ -457,7 +457,7 @@ struct xccdf_check *xccdf_check_parse(xmlTextReaderPtr reader, struct xccdf_item
 			}
 		case XCCDFE_CHECK_CONTENT:
 			if (check->content == NULL)
-				check->content = xccdf_element_string_copy(reader);
+				check->content = oscap_element_string_copy(reader);
 			break;
 		case XCCDFE_CHECK_IMPORT:{
 				const char *name = xccdf_attribute_get(reader, XCCDFA_IMPORT_NAME);
@@ -465,7 +465,7 @@ struct xccdf_check *xccdf_check_parse(xmlTextReaderPtr reader, struct xccdf_item
 					break;
 				struct xccdf_check_import *imp = oscap_calloc(1, sizeof(struct xccdf_check_import));
 				imp->name = strdup(name);
-				imp->content = xccdf_element_string_copy(reader);
+				imp->content = oscap_element_string_copy(reader);
 				oscap_list_add(check->imports, imp);
 				break;
 			}
@@ -581,7 +581,7 @@ const struct oscap_string_map XCCDF_STRATEGY_MAP[] = {
 	fix->strategy   = oscap_string_to_enum(XCCDF_STRATEGY_MAP, xccdf_attribute_get(reader, XCCDFA_STRATEGY)); \
 	fix->disruption = oscap_string_to_enum(XCCDF_LEVEL_MAP, xccdf_attribute_get(reader, XCCDFA_DISRUPTION)); \
 	fix->complexity = oscap_string_to_enum(XCCDF_LEVEL_MAP, xccdf_attribute_get(reader, XCCDFA_COMPLEXITY)); \
-	fix->content    = xccdf_element_string_copy(reader); \
+	fix->content    = oscap_element_string_copy(reader); \
 	} while (false)
 
 struct xccdf_fix *xccdf_fix_parse(xmlTextReaderPtr reader, struct xccdf_item *parent)

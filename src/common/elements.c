@@ -32,10 +32,6 @@
 #include "list.h"
 #include "public/oscap.h"
 
-//OSCAP_GETTER(const char*, xml_metadata, namespace)
-//OSCAP_GETTER(const char*, xml_metadata, URI)
-//OSCAP_GETTER(const char*, xml_metadata, lang)
-
 
 OSCAP_ACCESSOR_STRING(xml_metadata, nspace)
 OSCAP_ACCESSOR_STRING(xml_metadata, URI)
@@ -45,6 +41,98 @@ OSCAP_ITERATOR_GEN(oscap_title)
 OSCAP_ITERATOR_GEN(xml_metadata)
 OSCAP_ITERATOR_REMOVE_F(xml_metadata)
 OSCAP_ITERATOR_REMOVE_F(oscap_title)
+
+const struct oscap_string_map OSCAP_BOOL_MAP[] = {
+	{true, "true"}, {true, "True"}, {true, "TRUE"},
+	{true, "yes"}, {true, "Yes"}, {true, "YES"},
+	{true, "1"}, {false, NULL}
+};
+
+
+bool oscap_to_start_element(xmlTextReaderPtr reader, int depth)
+{
+	//int olddepth = xmlTextReaderDepth(reader);
+	while (xmlTextReaderDepth(reader) >= depth) {
+		switch (xmlTextReaderNodeType(reader)) {
+			//TODO: change int values to macros XML_ELEMENT_TYPE_*
+		case 1:
+			if (xmlTextReaderDepth(reader) == depth)
+				return true;
+		default:
+			break;
+		}
+		if (xmlTextReaderRead(reader) != 1)
+			break;
+	}
+	return false;
+}
+
+char *oscap_element_string_copy(xmlTextReaderPtr reader)
+{
+	if (xmlTextReaderNodeType(reader) == 1 || xmlTextReaderNodeType(reader) == 2)
+		xmlTextReaderRead(reader);
+	if (xmlTextReaderHasValue(reader))
+		return (char *)xmlTextReaderValue(reader);
+	return NULL;
+}
+
+const char *oscap_element_string_get(xmlTextReaderPtr reader)
+{
+	if (xmlTextReaderNodeType(reader) == 1 || xmlTextReaderNodeType(reader) == 2)
+		xmlTextReaderRead(reader);
+	if (xmlTextReaderHasValue(reader))
+		return (const char *)xmlTextReaderConstValue(reader);
+	return NULL;
+}
+
+int oscap_element_depth(xmlTextReaderPtr reader)
+{
+	int depth = xmlTextReaderDepth(reader);
+	switch (xmlTextReaderNodeType(reader)) {
+	case 2:
+	case 5:
+	case 3:
+		return depth - 1;
+	default:
+		return depth;
+	}
+}
+
+char *oscap_get_xml(xmlTextReaderPtr reader)
+{
+	return (char *)xmlTextReaderReadOuterXml(reader);
+}
+
+time_t oscap_get_date(const char *date)
+{
+	if (date) {
+		struct tm tm;
+		memset(&tm, 0, sizeof(tm));
+		if (sscanf(date, "%d-%d-%d", &tm.tm_year, &tm.tm_mon, &tm.tm_mday) == 3) {
+			tm.tm_mon -= 1;
+			tm.tm_year -= 1900;
+			return mktime(&tm);
+		}
+	}
+	return 0;
+}
+
+time_t oscap_get_datetime(const char *date)
+{
+	if (date) {
+		struct tm tm;
+		memset(&tm, 0, sizeof(tm));
+		if (sscanf
+		    (date, "%d-%d-%dT%d:%d:%d", &tm.tm_year, &tm.tm_mon, &tm.tm_mday, &tm.tm_hour, &tm.tm_min,
+		     &tm.tm_sec) == 6) {
+			tm.tm_mon -= 1;
+			tm.tm_year -= 1900;
+			return mktime(&tm);
+		}
+	}
+	return 0;
+}
+
 
 struct xml_metadata *xml_metadata_new()
 {
