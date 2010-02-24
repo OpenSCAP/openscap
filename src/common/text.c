@@ -27,8 +27,8 @@ OSCAP_GENERIC_GETTER(bool, oscap_text, is_html, traits.html)
 OSCAP_GENERIC_GETTER(bool, oscap_text, can_substitute, traits.can_substitute)
 OSCAP_GENERIC_GETTER(bool, oscap_text, can_override, traits.can_override)
 OSCAP_GENERIC_GETTER(bool, oscap_text, overrides, traits.overrides)
-OSCAP_ITERATOR_GEN_T(const struct oscap_text *, oscap_text)
-OSCAP_ITERATOR_REMOVE_T(const struct oscap_text *, oscap_text, oscap_text_free)
+OSCAP_ITERATOR_GEN_T(struct oscap_text *, oscap_text)
+OSCAP_ITERATOR_REMOVE_T(struct oscap_text *, oscap_text, oscap_text_free)
 
 
 void oscap_text_free(struct oscap_text *text)

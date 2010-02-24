@@ -121,7 +121,7 @@ bool oscap_text_set_overrides(struct oscap_text *text, bool overrides);
  */
 struct oscap_text_iterator;
 /// @memberof oscap_text_iterator
-const struct oscap_text *oscap_text_iterator_next(struct oscap_text_iterator *it);
+struct oscap_text *oscap_text_iterator_next(struct oscap_text_iterator *it);
 /// @memberof oscap_text_iterator
 bool oscap_text_iterator_has_more(struct oscap_text_iterator *it);
 /// @memberof oscap_text_iterator

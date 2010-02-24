@@ -36,7 +36,7 @@
 
 OSCAP_HIDDEN_START;
 
-typedef void (*oscap_dump_func) (void *, int);
+typedef void (*oscap_dump_func) ();
 
 /*
  * Linear linked list.

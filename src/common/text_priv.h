@@ -80,6 +80,7 @@ struct oscap_text *oscap_text_new_full(struct oscap_text_traits traits, const ch
  */
 struct oscap_text *oscap_text_new_parse(struct oscap_text_traits traits, xmlTextReaderPtr reader);
 
+
 OSCAP_HIDDEN_END;
 
 #endif

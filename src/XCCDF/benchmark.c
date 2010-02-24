@@ -83,6 +83,9 @@ struct xccdf_benchmark *xccdf_benchmark_parse_xml(const char *filename)
 struct xccdf_item *xccdf_benchmark_new(void)
 {
 	struct xccdf_item *bench = xccdf_item_new(XCCDF_BENCHMARK, NULL, NULL);
+    // lists
+	bench->sub.bench.rear_matter  = oscap_list_new();
+	bench->sub.bench.front_matter = oscap_list_new();
 	bench->sub.bench.notices = oscap_list_new();
 	bench->sub.bench.models = oscap_list_new();
 	bench->sub.bench.idrefs = oscap_list_new();
@@ -90,6 +93,7 @@ struct xccdf_item *xccdf_benchmark_new(void)
 	bench->sub.bench.values = oscap_list_new();
 	bench->sub.bench.plain_texts = oscap_htable_new();
 	bench->sub.bench.profiles = oscap_list_new();
+    // hash tables
 	bench->sub.bench.dict = oscap_htable_new();
 	bench->sub.bench.auxdict = oscap_htable_new();
 	return bench;
@@ -115,20 +119,14 @@ bool xccdf_benchmark_parse(struct xccdf_item * benchmark, xmlTextReaderPtr reade
 
 	while (oscap_to_start_element(reader, depth)) {
 		switch (xccdf_element_get(reader)) {
-		case XCCDFE_NOTICE:{
-				const char *id = xccdf_attribute_get(reader, XCCDFA_ID);
-				char *data = oscap_get_xml(reader);
-				if (data && id)
-					oscap_list_add(benchmark->sub.bench.notices, xccdf_notice_from_string(id, data));
+		case XCCDFE_NOTICE:
+				oscap_list_add(benchmark->sub.bench.notices, xccdf_notice_new_parse(reader));
 				break;
-			}
 		case XCCDFE_FRONT_MATTER:
-			if (!benchmark->sub.bench.front_matter)
-				benchmark->sub.bench.front_matter = oscap_get_xml(reader);
+				oscap_list_add(benchmark->sub.bench.front_matter, oscap_text_new_parse(OSCAP_TEXT_TRAITS_HTML, reader));
 			break;
 		case XCCDFE_REAR_MATTER:
-			if (!benchmark->sub.bench.rear_matter)
-				benchmark->sub.bench.rear_matter = oscap_get_xml(reader);
+				oscap_list_add(benchmark->sub.bench.rear_matter, oscap_text_new_parse(OSCAP_TEXT_TRAITS_HTML, reader));
 			break;
 		case XCCDFE_METADATA:
 			if (!benchmark->sub.bench.metadata)
@@ -182,18 +180,16 @@ void xccdf_benchmark_dump(struct xccdf_benchmark *benchmark)
 	printf("Benchmark : %s\n", (bench ? bench->item.id : "(NULL)"));
 	if (bench) {
 		xccdf_item_print(bench, 1);
-		printf("  front m.: ");
-		xccdf_print_max(xccdf_benchmark_get_front_matter(benchmark), 64, "...");
-		printf("\n");
-		printf("  rear m. : ");
-		xccdf_print_max(xccdf_benchmark_get_rear_matter(benchmark), 64, "...");
-		printf("\n");
-		printf("  profiles ");
-		oscap_list_dump(bench->sub.bench.profiles, (oscap_dump_func) xccdf_profile_dump, 2);
+		printf("  front m.");
+		xccdf_print_textlist(xccdf_benchmark_get_front_matter(benchmark), 2, 80, "...");
+		printf("  rear m.");
+		xccdf_print_textlist(xccdf_benchmark_get_rear_matter(benchmark), 2, 80, "...");
+		printf("  profiles");
+		oscap_list_dump(bench->sub.bench.profiles, xccdf_profile_dump, 2);
 		printf("  values");
-		oscap_list_dump(bench->sub.bench.values, (oscap_dump_func) xccdf_value_dump, 2);
+		oscap_list_dump(bench->sub.bench.values, xccdf_value_dump, 2);
 		printf("  content");
-		oscap_list_dump(bench->sub.bench.content, (oscap_dump_func) xccdf_item_dump, 2);
+		oscap_list_dump(bench->sub.bench.content, xccdf_item_dump, 2);
 	}
 }
 
@@ -203,9 +199,9 @@ void xccdf_benchmark_free(struct xccdf_benchmark *benchmark)
 		struct xccdf_item *bench = XITEM(benchmark);
 		oscap_free(bench->sub.bench.style);
 		oscap_free(bench->sub.bench.style_href);
-		oscap_free(bench->sub.bench.front_matter);
-		oscap_free(bench->sub.bench.rear_matter);
 		oscap_free(bench->sub.bench.metadata);
+		oscap_list_free(bench->sub.bench.front_matter, (oscap_destruct_func) oscap_text_free);
+		oscap_list_free(bench->sub.bench.rear_matter, (oscap_destruct_func) oscap_text_free);
 		oscap_list_free(bench->sub.bench.notices, (oscap_destruct_func) xccdf_notice_free);
 		oscap_list_free(bench->sub.bench.models, (oscap_destruct_func) xccdf_model_free);
 		oscap_list_free(bench->sub.bench.idrefs, (oscap_destruct_func) xccdf_backref_free);
@@ -219,8 +215,8 @@ void xccdf_benchmark_free(struct xccdf_benchmark *benchmark)
 	}
 }
 
-XCCDF_BENCHMARK_GETTER(const struct oscap_text_iterator *, front_matter)
-XCCDF_BENCHMARK_GETTER(const struct oscap_text_iterator *, rear_matter)
+XCCDF_TEXT_IGETTER(benchmark, front_matter, sub.bench.front_matter)
+XCCDF_TEXT_IGETTER(benchmark, rear_matter, sub.bench.rear_matter)
 XCCDF_BENCHMARK_GETTER(const char *, metadata)
 XCCDF_BENCHMARK_GETTER(const char *, style)
 XCCDF_BENCHMARK_GETTER(const char *, style_href)
@@ -235,6 +231,22 @@ XCCDF_HTABLE_GETTER(const char *, benchmark, plain_text, sub.bench.plain_texts)
 XCCDF_HTABLE_GETTER(struct xccdf_item *, benchmark, item, sub.bench.dict) 
 XCCDF_STATUS_CURRENT(benchmark)
 
+struct xccdf_notice *xccdf_notice_new(void)
+{
+    struct xccdf_notice *notice = oscap_calloc(1, sizeof(struct xccdf_notice));
+    notice->text = oscap_text_new_full(OSCAP_TEXT_TRAITS_HTML, NULL, NULL);
+    return NULL;
+}
+
+struct xccdf_notice *xccdf_notice_new_parse(xmlTextReaderPtr reader)
+{
+    struct xccdf_notice *notice = oscap_calloc(1, sizeof(struct xccdf_notice));
+    notice->id = xccdf_attribute_copy(reader, XCCDFA_ID);
+    notice->text = oscap_text_new_parse(OSCAP_TEXT_TRAITS_HTML, reader);
+    return notice;
+}
+
+/*
 struct xccdf_notice *xccdf_notice_from_string(const char *id, char *string)
 {
 	//return xccdf_notice_from_text(id, oscap_text_from_string("eng-US", string));
@@ -248,12 +260,13 @@ struct xccdf_notice *xccdf_notice_from_text(const char *id, struct oscap_text *t
 	notice->text = text;
 	return notice;
 }
+*/
 
 void xccdf_notice_dump(struct xccdf_notice *notice, int depth)
 {
 	xccdf_print_depth(depth);
 	printf("%.20s: ", xccdf_notice_get_id(notice));
-	xccdf_print_max(xccdf_notice_get_text(notice), 50, "...");
+	xccdf_print_max_text(xccdf_notice_get_text(notice), 50, "...");
 	printf("\n");
 }
 
@@ -261,12 +274,13 @@ void xccdf_notice_free(struct xccdf_notice *notice)
 {
 	if (notice) {
 		oscap_free(notice->id);
-		oscap_free(notice->text);
+		oscap_text_free(notice->text);
 		oscap_free(notice);
 	}
 }
 
-XCCDF_GENERIC_GETTER(const char *, notice, id) XCCDF_GENERIC_GETTER(const char *, notice, text)
+XCCDF_GENERIC_GETTER(const char *, notice, id)
+XCCDF_GENERIC_GETTER(struct oscap_text *, notice, text)
 
 void xccdf_cleanup(void)
 {

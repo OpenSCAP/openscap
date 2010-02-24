@@ -253,17 +253,29 @@ void xccdf_print_depth(int depth)
 void xccdf_print_max_text(const struct oscap_text *txt, int max, const char *ellipsis)
 {
     if (txt == NULL) return;
-	const char *text = oscap_text_get_text(txt);
-	if (text)
-		while (isspace(*text))
-			++text;
-	int len = strlen("(null)");;
-	char buf[32];
-	if (text) len = strlen(text);
-	sprintf(buf, "%%.%ds", max);
-	printf(buf, text);
-	if (len > max)
-		printf("%s", ellipsis);
+
+    printf("[%c%c%c|%s] ",
+        oscap_text_get_is_html(txt) ? 'h' : '-',
+        oscap_text_get_can_override(txt) ? (oscap_text_get_overrides(txt) ? 'O' : 'o') : '-',
+        oscap_text_get_can_substitute(txt) ? 's' : '-',
+        oscap_text_get_lang(txt));
+    xccdf_print_max(oscap_text_get_text(txt), max, ellipsis);
+}
+
+void xccdf_print_textlist(struct oscap_text_iterator *txt, int depth, int max, const char *ellipsis)
+{
+    if (txt == NULL) return;
+
+    printf("\n");
+
+    while (oscap_text_iterator_has_more(txt)) {
+        struct oscap_text *text = oscap_text_iterator_next(txt);
+        xccdf_print_depth(depth);
+        xccdf_print_max_text(text, max, ellipsis);
+        printf("\n");
+    }
+
+    oscap_text_iterator_free(txt);
 }
 
 void xccdf_print_max(const char *str, int max, const char *ellipsis)

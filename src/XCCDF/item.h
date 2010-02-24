@@ -28,6 +28,7 @@
 #include "elements.h"
 #include "../common/list.h"
 #include "../common/util.h"
+#include "../common/text_priv.h"
 
 OSCAP_HIDDEN_START;
 
@@ -163,9 +164,10 @@ struct xccdf_benchmark_item {
 
 	char *style;
 	char *style_href;
-	char *front_matter;
-	char *rear_matter;
 	char *metadata;
+
+	struct oscap_list *front_matter;
+	struct oscap_list *rear_matter;
 
 	struct oscap_list *models;
 	struct oscap_list *profiles;
@@ -326,8 +328,10 @@ struct xccdf_item *xccdf_value_new(struct xccdf_item *parent, xccdf_value_type_t
 void xccdf_value_dump(struct xccdf_item *value, int depth);
 void xccdf_value_free(struct xccdf_item *val);
 
-struct xccdf_notice *xccdf_notice_from_string(const char *id, char *string);
-struct xccdf_notice *xccdf_notice_from_text(const char *id, struct oscap_text *string);
+//struct xccdf_notice *xccdf_notice_from_string(const char *id, char *string);
+//struct xccdf_notice *xccdf_notice_from_text(const char *id, struct oscap_text *string);
+struct xccdf_notice *xccdf_notice_new(void);
+struct xccdf_notice *xccdf_notice_new_parse(xmlTextReaderPtr reader);
 void xccdf_notice_dump(struct xccdf_notice *notice, int depth);
 void xccdf_notice_free(struct xccdf_notice *notice);
 
@@ -376,6 +380,9 @@ void xccdf_set_value_free(struct xccdf_set_value *sv);
 		xccdf_status_type_t xccdf_##TYPE##_get_status_current(const struct xccdf_##TYPE* item) {\
 			return xccdf_item_get_current_status(XITEM(item)); }
 
+#define XCCDF_TEXT_IGETTER(SNAME,MNAME,MEXP) \
+        struct oscap_text_iterator* xccdf_##SNAME##_get_##MNAME(const struct xccdf_##SNAME* item) \
+        { return oscap_iterator_new(XITEM(item)->MEXP); }
 #define XCCDF_GENERIC_GETTER(RTYPE,TNAME,MEMBER) \
         RTYPE xccdf_##TNAME##_get_##MEMBER(const struct xccdf_##TNAME* item) { return (RTYPE)((item)->MEMBER); }
 #define XCCDF_GENERIC_IGETTER(ITYPE,TNAME,MNAME) \
@@ -464,15 +471,6 @@ void xccdf_set_value_free(struct xccdf_set_value *sv);
         XCCDF_VALUE_GETTER_A(bool,MNAME,item.flags.MNAME) \
         XCCDF_GROUP_GETTER_A(bool,MNAME,item.flags.MNAME)
 
-/*
-#define XITERATOR(x) ((struct oscap_iterator*)(x))
-#define XCCDF_ITERATOR(n) struct xccdf_##n##_iterator*
-#define XCCDF_ITERATOR_FWD(n) struct xccdf_##n##_iterator;
-#define XCCDF_ITERATOR_HAS_MORE(n) bool xccdf_##n##_iterator_has_more(XCCDF_ITERATOR(n) it) { return oscap_iterator_has_more(XITERATOR(it)); }
-#define XCCDF_ITERATOR_NEXT(t,n) t xccdf_##n##_iterator_next(XCCDF_ITERATOR(n) it) { return oscap_iterator_next(XITERATOR(it)); }
-#define XCCDF_ITERATOR_GEN_T(t,n) XCCDF_ITERATOR_FWD(n) XCCDF_ITERATOR_HAS_MORE(n) XCCDF_ITERATOR_NEXT(t,n)
-#define XCCDF_ITERATOR_GEN_S(n) XCCDF_ITERATOR_GEN_T(struct xccdf_##n*,n)
-*/
 #define XITERATOR(x) ((struct oscap_iterator*)(x))
 #define XCCDF_ITERATOR(n) struct xccdf_##n##_iterator*
 #define XCCDF_ITERATOR_FWD(n) struct xccdf_##n##_iterator;

@@ -178,6 +178,8 @@ extern const struct oscap_string_map XCCDF_BOOL_MAP[];
 
 void xccdf_print_depth(int depth);
 void xccdf_print_max(const char *str, int max, const char *ellipsis);
+void xccdf_print_max_text(const struct oscap_text *txt, int max, const char *ellipsis);
+void xccdf_print_textlist(struct oscap_text_iterator *txt, int depth, int max, const char *ellipsis);
 
 OSCAP_HIDDEN_END;
 

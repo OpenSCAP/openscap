@@ -134,6 +134,7 @@ typedef void (*oscap_consumer_func) (void *, void *);
 #define OSCAP_ITERATOR_REMOVE(n,destructor) OSCAP_ITERATOR_REMOVE_T(struct n*,n,destructor)
 #define OSCAP_ITERATOR_REMOVE_F(n) OSCAP_ITERATOR_REMOVE(n, n##_free)
 
+
 /**
  * Generate an iterator getter function.
  * Signature of the generated function will be as follows (substitute uppercase strings with actual params):

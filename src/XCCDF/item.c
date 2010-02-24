@@ -73,14 +73,14 @@ void xccdf_item_release(struct xccdf_item *item)
 	if (item) {
 		oscap_list_free(item->item.statuses, (oscap_destruct_func) xccdf_status_free);
 		oscap_list_free(item->item.platforms, oscap_free);
+		oscap_list_free(item->item.title, (oscap_destruct_func) oscap_text_free);
+		oscap_list_free(item->item.description, (oscap_destruct_func) oscap_text_free);
+		oscap_list_free(item->item.rationale, (oscap_destruct_func) oscap_text_free);
+		oscap_list_free(item->item.question, (oscap_destruct_func) oscap_text_free);
 		oscap_free(item->item.id);
 		oscap_free(item->item.cluster_id);
-		oscap_free(item->item.title);
-		oscap_free(item->item.description);
 		oscap_free(item->item.version_update);
 		oscap_free(item->item.version);
-		oscap_free(item->item.rationale);
-		oscap_free(item->item.question);
 		oscap_free(item);
 	}
 }
@@ -152,18 +152,20 @@ void xccdf_item_print(struct xccdf_item *item, int depth)
 		}
 		xccdf_print_depth(depth);
 		printf("title   : ");
-		printf("TODO");//xccdf_print_max(item->item.title, 64, "...");//TODO
-		printf("\n");
+		//printf("TODO");//xccdf_print_max(item->item.title, 64, "...");//TODO
+        xccdf_print_textlist(oscap_iterator_new(item->item.title), depth + 1, 70, "...");
+		//printf("\n");
 		xccdf_print_depth(depth);
 		printf("desc    : ");
-		printf("TODO");//xccdf_print_max(item->item.description, 64, "...");//TODO
-		printf("\n");
+		//printf("TODO");//xccdf_print_max(item->item.description, 64, "...");//TODO
+        xccdf_print_textlist(oscap_iterator_new(item->item.description), depth + 1, 70, "...");
+		//printf("\n");
 		xccdf_print_depth(depth);
 		printf("platforms ");
-		oscap_list_dump(item->item.platforms, (oscap_dump_func) xccdf_cstring_dump, depth + 1);
+		oscap_list_dump(item->item.platforms, xccdf_cstring_dump, depth + 1);
 		xccdf_print_depth(depth);
 		printf("status (cur = %d)", xccdf_item_get_current_status(item));
-		oscap_list_dump(item->item.statuses, (oscap_dump_func) xccdf_status_dump, depth + 1);
+		oscap_list_dump(item->item.statuses, xccdf_status_dump, depth + 1);
 	}
 }
 
@@ -201,49 +203,34 @@ bool xccdf_item_process_element(struct xccdf_item * item, xmlTextReaderPtr reade
 	xccdf_element_t el = xccdf_element_get(reader);
 
 	switch (el) {
-	case XCCDFE_TITLE:{
-		char *title = oscap_element_string_copy(reader);
-		//void *text  = oscap_text_from_string("eng-US", title);//TODO: INTERNATIONALIZE
-		oscap_list_add(item->item.title, strdup(title));
-		free(title);
+	case XCCDFE_TITLE:
+        oscap_list_add(item->item.title, oscap_text_new_parse(OSCAP_TEXT_TRAITS_PLAIN, reader));
 		return true;
-	}
-	case XCCDFE_DESCRIPTION:{
-		char *description = oscap_element_string_copy(reader);
-		//void *text  = oscap_text_from_string("eng-US", description);//TODO: INTERNATIONALIZE
-		oscap_list_add(item->item.description, strdup(description));
-		free(description);
+	case XCCDFE_DESCRIPTION:
+        oscap_list_add(item->item.description, oscap_text_new_parse(OSCAP_TEXT_TRAITS_HTML, reader));
 		return true;
-	}
 	case XCCDFE_STATUS:{
-			const char *date = xccdf_attribute_get(reader, XCCDFA_DATE);
-			char *str = oscap_element_string_copy(reader);
-			struct xccdf_status *status = xccdf_status_new(str, date);
-			oscap_free(str);
-			if (status) {
-				oscap_list_add(item->item.statuses, status);
-				return true;
-			}
-			break;
-		}
+        const char *date = xccdf_attribute_get(reader, XCCDFA_DATE);
+        char *str = oscap_element_string_copy(reader);
+        struct xccdf_status *status = xccdf_status_new(str, date);
+        oscap_free(str);
+        if (status) {
+            oscap_list_add(item->item.statuses, status);
+            return true;
+        }
+        break;
+    }
 	case XCCDFE_VERSION:
 		item->item.version_time = oscap_get_datetime(xccdf_attribute_get(reader, XCCDFA_TIME));
 		item->item.version_update = xccdf_attribute_copy(reader, XCCDFA_UPDATE);
 		item->item.version = oscap_element_string_copy(reader);
 		break;
-	case XCCDFE_RATIONALE:{
-		char *rationale = oscap_element_string_copy(reader);
-		//void *text  = oscap_text_from_string("eng-US", rationale);//TODO: INTERNATIONALIZE
-		oscap_list_add(item->item.rationale, strdup(rationale));
-		free(rationale);
-	}break;
-	case XCCDFE_QUESTION:{
-		char *question = oscap_element_string_copy(reader);
-		//void *text  = oscap_text_from_string("eng-US", question);//TODO: INTERNATIONALIZE
-		oscap_list_add(item->item.question, strdup(question));
-		free(question);
-	}break;
-
+	case XCCDFE_RATIONALE:
+        oscap_list_add(item->item.rationale, oscap_text_new_parse(OSCAP_TEXT_TRAITS_PLAIN, reader));
+		return true;
+	case XCCDFE_QUESTION:
+        oscap_list_add(item->item.question, oscap_text_new_parse(OSCAP_TEXT_TRAITS_PLAIN, reader));
+		return true;
 	default:
 		break;
 	}
@@ -394,10 +381,12 @@ struct xccdf_model *xccdf_model_new_xml(xmlTextReaderPtr reader)
 }
 
 XCCDF_GENERIC_GETTER(const char *, model, system)
+/*
 static const char *xccdf_model_param(const struct xccdf_model *m, const char *p)
 {
 	return oscap_htable_get(m->params, p);
 }
+*/
 
 void xccdf_model_free(struct xccdf_model *model)
 {

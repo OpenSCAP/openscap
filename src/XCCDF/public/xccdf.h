@@ -757,13 +757,13 @@ const char *xccdf_benchmark_get_style_href(const struct xccdf_benchmark *benchma
  * Get benchmark front matter.
  * @memberof xccdf_benchmark
  */
-const  struct oscap_text_iterator *xccdf_benchmark_get_front_matter(const struct xccdf_benchmark *benchmark);
+struct oscap_text_iterator *xccdf_benchmark_get_front_matter(const struct xccdf_benchmark *benchmark);
 
 /**
  * Get benchmark rear matter.
  * @memberof xccdf_benchmark
  */
-const struct oscap_text_iterator *xccdf_benchmark_get_rear_matter(const struct xccdf_benchmark *benchmark);
+struct oscap_text_iterator *xccdf_benchmark_get_rear_matter(const struct xccdf_benchmark *benchmark);
 
 /**
  * Get benchmark metadata.
@@ -1492,7 +1492,7 @@ const char *xccdf_notice_get_id(const struct xccdf_notice *notice);
  * Get copyright notice text.
  * @memberof xccdf_notice
  */
-const char *xccdf_notice_get_text(const struct xccdf_notice *notice);
+struct oscap_text *xccdf_notice_get_text(const struct xccdf_notice *notice);
 
 /**
  * Get scoring model system URI.
