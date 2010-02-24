@@ -11,7 +11,7 @@ if WANT_PROBES
 SUBDIRS += src/OVAL/probes
 endif
 
-EXTRA_DIST = dist/fedora/openscap.spec docs/Doxyfile docs/examples/oval_probes.c docs/examples/oval_probes.py docs/examples/package-test.xml
+EXTRA_DIST = dist/fedora/openscap.spec docs/Doxyfile docs/examples/oscap_cli.c docs/examples/oval_probes.py docs/examples/package-test.xml
 
 dist-hook: ChangeLog
 	cd $(distdir)/docs && doxygen Doxyfile
