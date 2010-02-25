@@ -2,7 +2,7 @@ noinst_LTLIBRARIES = liboscapcommon.la
 
 liboscapcommon_la_SOURCES = oscap.c alloc.c text.c \
 			    util.h util.c list.h list.c bfind.c bfind.h elements.h elements.c debug.c \
-			    error.c _error.h assume.h
+			    error.c _error.h assume.h text_priv.h
 
 liboscapcommon_la_CPPFLAGS  = @libxml_cflags@ -I$(srcdir)/public
 liboscapcommon_la_LIBADD = @libxml_libs@ $(pthread_ldflags)

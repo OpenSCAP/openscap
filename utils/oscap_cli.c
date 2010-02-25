@@ -52,6 +52,19 @@
 #include <unistd.h>
 #include <errno.h>
 
+
+void print_usage(const char *pname, FILE *out);
+int app_evaluate_test(struct oval_test * test, oval_pctx_t * pctx, 
+                      struct oval_definition_model *def_model, 
+                      struct oval_syschar_model *sys_model,
+                      int verbose);
+int app_evaluate_criteria(struct oval_criteria_node *cnode, oval_pctx_t * pctx, 
+                          struct oval_definition_model *def_model, 
+                          struct oval_syschar_model *sys_model,
+                          int verbose);
+char * app_curl_download(char * url);
+
+
 /**
  * Function print usage of this program to specified output
  * @param pname name of program, standard usage argv[0]
@@ -107,10 +120,10 @@ int app_evaluate_test(struct oval_test * test, oval_pctx_t * pctx,
             syschar = oval_probe_object_eval (pctx, object);
             /* There is a problem with evaluating .. */
             if (syschar == NULL) {
-                    printf("WARNING: Syschar for object (%s %d) is not available\n", oval_test_get_id(test), objid);
+                    printf("WARNING: Syschar for object (%s) is not available\n", objid);
                     if( oscap_err() ) {
                             printf("Error: (%d) %s\n", oscap_err_code(), oscap_err_desc());
-                            return -1;
+                             /* does it make sense to continue? depens on error code */
                     }
                     syschar = oval_syschar_new(sys_model, object);
                     oval_syschar_set_flag(syschar,SYSCHAR_FLAG_NOT_COLLECTED);

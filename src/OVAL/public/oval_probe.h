@@ -42,6 +42,7 @@ int oval_pctx_setflag(oval_pctx_t *pctx, uint32_t flags) __attribute__ ((nonnull
  * Unset probe context flag
  * @param pctx probe context
  * @param flags set of flags to unset (combined with the bitwise or operator)
+ */
 int oval_pctx_unsetflag(oval_pctx_t *pctx, uint32_t flags) __attribute__ ((nonnull(1)));
 
 /*

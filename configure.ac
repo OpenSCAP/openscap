@@ -75,6 +75,18 @@ if test "x${HAVE_PCRE_CONFIG}" != "xyes"; then
   AC_MSG_FAILURE([pcre-config not found in PATH])
 fi
 
+#
+# curl-config
+#
+AC_CHECK_PROG(
+  [HAVE_CURL_CONFIG],
+  [curl-config],
+  [yes],,,
+)
+if test "x${HAVE_CURL_CONFIG}" != "xyes"; then
+  AC_MSG_FAILURE([curl-config not found in PATH])
+fi
+
 # Checks for libraries.
 
 #
@@ -103,6 +115,18 @@ AC_CHECK_LIB(
   [`pcre-config --libs`]
 )
 
+#
+# libcurl
+#
+AC_CHECK_LIB(
+  [curl],
+  [curl_easy_init],
+  [curl_cflags=`curl-config --cflags`
+   curl_libs=`curl-config --libs`
+  ],
+  [AC_MSG_FAILURE([curl library is missing])],
+  [`curl-config --libs`]
+)
 
 case "${host}" in
     *-*-linux*)
@@ -259,6 +283,9 @@ AC_SUBST(libxml_libs)
 
 AC_SUBST(pcre_cflags)
 AC_SUBST(pcre_libs)
+
+AC_SUBST(curl_cflags)
+AC_SUBST(curl_libs)
 
 AC_SUBST(rpm_cflags)
 AC_SUBST(rpm_libs)
@@ -448,7 +475,8 @@ AC_CONFIG_FILES([Makefile
                  src/CCE/Makefile
                  src/XCCDF/Makefile
                  src/common/Makefile
-                 tests/Makefile])
+                 tests/Makefile
+                 utils/Makefile])
 
 AC_OUTPUT
 

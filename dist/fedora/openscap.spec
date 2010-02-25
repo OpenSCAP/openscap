@@ -3,15 +3,15 @@
 
 Name:           openscap
 Version:        0.5.6
-Release:        2%{?dist}
+Release:        1%{?dist}
 Summary:        Set of open source libraries enabling integration of the SCAP line of standards
 Group:          System Environment/Libraries
 License:        LGPLv2+
 URL:            http://www.open-scap.org/
-Source0:        http://open-scap.org/download/%{name}-%{version}.tar.gz
+Source0:        http://fedorahosted.org/releases/o/p/openscap/%{name}-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  swig pcre-devel libxml2-devel
-BuildRequires:	rpm-devel
+BuildRequires:  rpm-devel
 BuildRequires:	libnl-devel
 Requires(post):   /sbin/ldconfig
 Requires(postun): /sbin/ldconfig
@@ -45,21 +45,26 @@ libraries can be used by python.
 Summary:        Perl bindings for %{name}
 Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
-%if 0%{?fedora}
 BuildRequires:  perl-devel
-%else
-BuildRequires: perl
-%endif
 
 %description    perl
 The %{name}-perl package contains the bindings so that %{name}
 libraries can be used by perl.
 
+%package        utils
+Summary:        Openscap utilities
+Group:          Applications/System
+Requires:       %{name} = %{version}-%{release}
+BuildRequires:  libcurl-devel
+
+%description    utils
+The %{name}-utils package contains various utilities based on %{name} library.
+
 %prep
 %setup -q
 
 %build
-%configure
+%configure --disable-debug
 make %{?_smp_mflags}
 
 %install
@@ -95,11 +100,11 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/*
 %{_libdir}/*.so
 
+%files utils
+%defattr(-,root,root,-)
+%{_bindir}/*
 
 %changelog
-* Mon Jan 11 2010 Spencer Shimko <sshimko@tresys.com> 0.5.6-2
-- Support RHEL builds 
-
 * Mon Jan 04 2010 Peter Vrabec <pvrabec@redhat.com> 0.5.6-1
 - upgrade
 
