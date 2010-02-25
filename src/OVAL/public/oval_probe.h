@@ -9,8 +9,17 @@
 
 typedef struct oval_pctx oval_pctx_t;
 
-oval_pctx_t *oval_pctx_new(struct oval_syschar_model *);
-void oval_pctx_free(oval_pctx_t *) __attribute__ ((nonnull(1)));
+/**
+ * Creaste new probe context.
+ * @param model system characteristics model
+ */
+oval_pctx_t *oval_pctx_new(struct oval_syschar_model *model);
+
+/**
+ * Free probe context
+ * @param pctx probe context
+ */
+void oval_pctx_free(oval_pctx_t *pctx) __attribute__ ((nonnull(1)));
 
 /*
  * probe context flags
@@ -22,8 +31,18 @@ void oval_pctx_free(oval_pctx_t *) __attribute__ ((nonnull(1)));
 
 #define OVAL_PCTX_FLAG_MASK (0x0001|0x0002|0x0004|0x0008)
 
-int oval_pctx_setflag(oval_pctx_t *, uint32_t) __attribute__ ((nonnull(1)));
-int oval_pctx_unsetflag(oval_pctx_t *, uint32_t) __attribute__ ((nonnull(1)));
+/**
+ * Set probe context flag
+ * @param pctx probe context
+ * @param flags set of flags to set (combined with the bitwise or operator)
+ */
+int oval_pctx_setflag(oval_pctx_t *pctx, uint32_t flags) __attribute__ ((nonnull(1)));
+
+/**
+ * Unset probe context flag
+ * @param pctx probe context
+ * @param flags set of flags to unset (combined with the bitwise or operator)
+int oval_pctx_unsetflag(oval_pctx_t *pctx, uint32_t flags) __attribute__ ((nonnull(1)));
 
 /*
  * probe context attributes
@@ -35,12 +54,39 @@ int oval_pctx_unsetflag(oval_pctx_t *, uint32_t) __attribute__ ((nonnull(1)));
 #define OVAL_PCTX_ATTR_DIR         0x0005	/* set directory where the probes are located */
 #define OVAL_PCTX_ATTR_MODEL       0x0006	/* set definition model - update registered commands is necessary */
 
-int oval_pctx_setattr(oval_pctx_t *, uint32_t, ...) __attribute__ ((nonnull(1)));
+/**
+ * Set probe context attribute
+ * @param pctx probe context
+ * @param attr the attribute to set
+ * @param ... attribute dependend arguments
+ */
+int oval_pctx_setattr(oval_pctx_t *pctx, uint32_t attr, ...) __attribute__ ((nonnull(1)));
 
-int oval_probe_reset(oval_pctx_t *, oval_subtype_t) __attribute__ ((nonnull(1)));
-int oval_probe_close(oval_pctx_t *, oval_subtype_t) __attribute__ ((nonnull(1)));
+/**
+ * Reset probe state
+ * @param pctx probe context
+ * @param subtype subtype of the probe which will be reset
+ */
+int oval_probe_reset(oval_pctx_t *pctx, oval_subtype_t subtype) __attribute__ ((nonnull(1)));
 
-struct oval_sysinfo *oval_probe_sysinf_eval(oval_pctx_t *) __attribute__ ((nonnull(1)));
-struct oval_syschar *oval_probe_object_eval(oval_pctx_t *, struct oval_object *) __attribute__ ((nonnull(1, 2)));
+/**
+ * Close connection and shutdown a probe
+ * @param pctx probe context
+ * @param subtype subtype of the probe which will be closed
+ */
+int oval_probe_close(oval_pctx_t *pctx, oval_subtype_t subtype) __attribute__ ((nonnull(1)));
+
+/**
+ * Evaluate system info probe
+ * @param pctx probe context
+ */
+struct oval_sysinfo *oval_probe_sysinf_eval(oval_pctx_t *pctx) __attribute__ ((nonnull(1)));
+
+/**
+ * Evaluate an object
+ * @param pctx probe context
+ * @param object the object to evaluate
+ */
+struct oval_syschar *oval_probe_object_eval(oval_pctx_t *pctx, struct oval_object *object) __attribute__ ((nonnull(1, 2)));
 
 #endif				/* OVAL_PROBE_H */
