@@ -12,7 +12,7 @@ for S in `chkconfig --list | awk '{print $1}'`; do
 	LEVEL=`echo $L | awk -F : '{print $1}'`
 	STATE=`echo $L | awk -F : '{print $2}'`
 	
-	echo "     <rpminfo_test check_existence=\"all_exist\" comment=\"true\" version=\"1\" id=\"test:${S}-${LEVEL}-${STATE}-T\" check=\"all\">"
+	echo "     <runlevel_test check_existence=\"all_exist\" comment=\"true\" version=\"1\" id=\"test:${S}-${LEVEL}-${STATE}-T\" check=\"all\">"
         echo "       <object object_ref=\"object:${S}-${LEVEL}-${STATE}\"/>"
 
 	if [ $STATE"X" = "onX" ]; then
@@ -21,9 +21,9 @@ for S in `chkconfig --list | awk '{print $1}'`; do
             echo "       <state state_ref=\"state:false\"/>"
 	fi
 
-	echo "     </rpminfo_test>"
+	echo "     </runlevel_test>"
 
-	echo "     <rpminfo_test check_existence=\"all_exist\" comment=\"false\" version=\"1\" id=\"test:${S}-${LEVEL}-${STATE}-F\" check=\"all\">"
+	echo "     <runlevel_test check_existence=\"all_exist\" comment=\"false\" version=\"1\" id=\"test:${S}-${LEVEL}-${STATE}-F\" check=\"all\">"
         echo "       <object object_ref=\"object:${S}-${LEVEL}-${STATE}\"/>"
 
 	if [ $STATE"X" = "onX" ]; then
@@ -32,7 +32,7 @@ for S in `chkconfig --list | awk '{print $1}'`; do
             echo "       <state state_ref=\"state:true\"/>"
 	fi
 
-	echo "     </rpminfo_test>"
+	echo "     </runlevel_test>"
     done
 done
 

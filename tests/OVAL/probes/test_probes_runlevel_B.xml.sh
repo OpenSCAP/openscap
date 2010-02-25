@@ -170,213 +170,213 @@ cat <<EOF
 
     <!-- ALL_EXIST -->
 
-    <rpminfo_test check_existence="all_exist" comment="true" version="1" id="test:1" check="all">
+    <runlevel_test check_existence="all_exist" comment="true" version="1" id="test:1" check="all">
       <object object_ref="object:1"/>
       <state state_ref="state:true"/>
-    </rpminfo_test>
+    </runlevel_test>
 
-    <rpminfo_test check_existence="all_exist" comment="false" version="1" id="test:2" check="all">
+    <runlevel_test check_existence="all_exist" comment="false" version="1" id="test:2" check="all">
       <object object_ref="object:1"/>
       <state state_ref="state:false"/>
-    </rpminfo_test>
+    </runlevel_test>
 
-    <rpminfo_test check_existence="all_exist" comment="false" version="1" id="test:3" check="all">
+    <runlevel_test check_existence="all_exist" comment="false" version="1" id="test:3" check="all">
       <object object_ref="object:2"/>
       <state state_ref="state:true"/>
-    </rpminfo_test>
+    </runlevel_test>
 
-    <rpminfo_test check_existence="all_exist" comment="true" version="1" id="test:4" check="all">
+    <runlevel_test check_existence="all_exist" comment="true" version="1" id="test:4" check="all">
       <object object_ref="object:2"/>
       <state state_ref="state:false"/>
-    </rpminfo_test>
+    </runlevel_test>
 
-    <rpminfo_test check_existence="all_exist" comment="false" version="1" id="test:5" check="all">
+    <runlevel_test check_existence="all_exist" comment="false" version="1" id="test:5" check="all">
       <object object_ref="object:3"/>
       <state state_ref="state:true"/>
-    </rpminfo_test>
+    </runlevel_test>
 
-    <rpminfo_test check_existence="all_exist" comment="false" version="1" id="test:6" check="all">
+    <runlevel_test check_existence="all_exist" comment="false" version="1" id="test:6" check="all">
       <object object_ref="object:3"/>
       <state state_ref="state:false"/>
-    </rpminfo_test>
+    </runlevel_test>
 
-    <rpminfo_test check_existence="all_exist" comment="false" version="1" id="test:7" check="all">
+    <runlevel_test check_existence="all_exist" comment="false" version="1" id="test:7" check="all">
       <object object_ref="object:4"/>
       <state state_ref="state:true"/>
-    </rpminfo_test>
+    </runlevel_test>
 
-    <rpminfo_test check_existence="all_exist" comment="true" version="1" id="test:8" check="all">
+    <runlevel_test check_existence="all_exist" comment="true" version="1" id="test:8" check="all">
       <object object_ref="object:4"/>
       <state state_ref="state:false"/>
-    </rpminfo_test>
+    </runlevel_test>
 
     <!-- ANY_EXIST -->
 
-    <rpminfo_test check_existence="any_exist" comment="true" version="1" id="test:9" check="all">
+    <runlevel_test check_existence="any_exist" comment="true" version="1" id="test:9" check="all">
       <object object_ref="object:1"/>
       <state state_ref="state:true"/>
-    </rpminfo_test>
+    </runlevel_test>
 
-    <rpminfo_test check_existence="any_exist" comment="true" version="1" id="test:10" check="all">
+    <runlevel_test check_existence="any_exist" comment="true" version="1" id="test:10" check="all">
       <object object_ref="object:1"/>
       <state state_ref="state:false"/>
-    </rpminfo_test>
+    </runlevel_test>
 
-    <rpminfo_test check_existence="any_exist" comment="true" version="1" id="test:11" check="all">
+    <runlevel_test check_existence="any_exist" comment="true" version="1" id="test:11" check="all">
       <object object_ref="object:2"/>
       <state state_ref="state:true"/>
-    </rpminfo_test>
+    </runlevel_test>
 
-    <rpminfo_test check_existence="any_exist" comment="true" version="1" id="test:12" check="all">
+    <runlevel_test check_existence="any_exist" comment="true" version="1" id="test:12" check="all">
       <object object_ref="object:2"/>
       <state state_ref="state:false"/>
-    </rpminfo_test>
+    </runlevel_test>
 
-    <rpminfo_test check_existence="any_exist" comment="true" version="1" id="test:13" check="all">
+    <runlevel_test check_existence="any_exist" comment="true" version="1" id="test:13" check="all">
       <object object_ref="object:3"/>
       <state state_ref="state:true"/>
-    </rpminfo_test>
+    </runlevel_test>
 
-    <rpminfo_test check_existence="any_exist" comment="true" version="1" id="test:14" check="all">
+    <runlevel_test check_existence="any_exist" comment="true" version="1" id="test:14" check="all">
       <object object_ref="object:3"/>
       <state state_ref="state:false"/>
-    </rpminfo_test>
+    </runlevel_test>
 
-    <rpminfo_test check_existence="any_exist" comment="true" version="1" id="test:15" check="all">
+    <runlevel_test check_existence="any_exist" comment="true" version="1" id="test:15" check="all">
       <object object_ref="object:4"/>
       <state state_ref="state:true"/>
-    </rpminfo_test>
+    </runlevel_test>
 
-    <rpminfo_test check_existence="any_exist" comment="true" version="1" id="test:16" check="all">
+    <runlevel_test check_existence="any_exist" comment="true" version="1" id="test:16" check="all">
       <object object_ref="object:4"/>
       <state state_ref="state:false"/>
-    </rpminfo_test>
+    </runlevel_test>
 
     <!-- AT_LEAST_ONE_EXISTS -->
 
-    <rpminfo_test check_existence="at_least_one_exists" comment="true" version="1" id="test:17" check="all">
+    <runlevel_test check_existence="at_least_one_exists" comment="true" version="1" id="test:17" check="all">
       <object object_ref="object:1"/>
       <state state_ref="state:true"/>
-    </rpminfo_test>
+    </runlevel_test>
 
-    <rpminfo_test check_existence="at_least_one_exists" comment="false" version="1" id="test:18" check="all">
+    <runlevel_test check_existence="at_least_one_exists" comment="false" version="1" id="test:18" check="all">
       <object object_ref="object:1"/>
       <state state_ref="state:false"/>
-    </rpminfo_test>
+    </runlevel_test>
 
-    <rpminfo_test check_existence="at_least_one_exists" comment="false" version="1" id="test:19" check="all">
+    <runlevel_test check_existence="at_least_one_exists" comment="false" version="1" id="test:19" check="all">
       <object object_ref="object:2"/>
       <state state_ref="state:true"/>
-    </rpminfo_test>
+    </runlevel_test>
 
-    <rpminfo_test check_existence="at_least_one_exists" comment="true" version="1" id="test:20" check="all">
+    <runlevel_test check_existence="at_least_one_exists" comment="true" version="1" id="test:20" check="all">
       <object object_ref="object:2"/>
       <state state_ref="state:false"/>
-    </rpminfo_test>
+    </runlevel_test>
 
-    <rpminfo_test check_existence="at_least_one_exists" comment="false" version="1" id="test:21" check="all">
+    <runlevel_test check_existence="at_least_one_exists" comment="false" version="1" id="test:21" check="all">
       <object object_ref="object:3"/>
       <state state_ref="state:true"/>
-    </rpminfo_test>
+    </runlevel_test>
 
-    <rpminfo_test check_existence="at_least_one_exists" comment="false" version="1" id="test:22" check="all">
+    <runlevel_test check_existence="at_least_one_exists" comment="false" version="1" id="test:22" check="all">
       <object object_ref="object:3"/>
       <state state_ref="state:false"/>
-    </rpminfo_test>
+    </runlevel_test>
 
-    <rpminfo_test check_existence="at_least_one_exists" comment="false" version="1" id="test:23" check="all">
+    <runlevel_test check_existence="at_least_one_exists" comment="false" version="1" id="test:23" check="all">
       <object object_ref="object:4"/>
       <state state_ref="state:true"/>
-    </rpminfo_test>
+    </runlevel_test>
 
-    <rpminfo_test check_existence="at_least_one_exists" comment="true" version="1" id="test:24" check="all">
+    <runlevel_test check_existence="at_least_one_exists" comment="true" version="1" id="test:24" check="all">
       <object object_ref="object:4"/>
       <state state_ref="state:false"/>
-    </rpminfo_test>
+    </runlevel_test>
 
     <!-- ONLY_ONE_EXISTS -->
 
-    <rpminfo_test check_existence="only_one_exists" comment="true" version="1" id="test:25" check="all">
+    <runlevel_test check_existence="only_one_exists" comment="true" version="1" id="test:25" check="all">
       <object object_ref="object:1"/>
       <state state_ref="state:true"/>
-    </rpminfo_test>
+    </runlevel_test>
 
-    <rpminfo_test check_existence="only_one_exists" comment="false" version="1" id="test:26" check="all">
+    <runlevel_test check_existence="only_one_exists" comment="false" version="1" id="test:26" check="all">
       <object object_ref="object:1"/>
       <state state_ref="state:false"/>
-    </rpminfo_test>
+    </runlevel_test>
 
-    <rpminfo_test check_existence="only_one_exists" comment="false" version="1" id="test:27" check="all">
+    <runlevel_test check_existence="only_one_exists" comment="false" version="1" id="test:27" check="all">
       <object object_ref="object:2"/>
       <state state_ref="state:true"/>
-    </rpminfo_test>
+    </runlevel_test>
 
-    <rpminfo_test check_existence="only_one_exists" comment="true" version="1" id="test:28" check="all">
+    <runlevel_test check_existence="only_one_exists" comment="true" version="1" id="test:28" check="all">
       <object object_ref="object:2"/>
       <state state_ref="state:false"/>
-    </rpminfo_test>
+    </runlevel_test>
 
-    <rpminfo_test check_existence="only_one_exists" comment="false" version="1" id="test:29" check="all">
+    <runlevel_test check_existence="only_one_exists" comment="false" version="1" id="test:29" check="all">
       <object object_ref="object:3"/>
       <state state_ref="state:true"/>
-    </rpminfo_test>
+    </runlevel_test>
 
-    <rpminfo_test check_existence="only_one_exists" comment="false" version="1" id="test:30" check="all">
+    <runlevel_test check_existence="only_one_exists" comment="false" version="1" id="test:30" check="all">
       <object object_ref="object:3"/>
       <state state_ref="state:false"/>
-    </rpminfo_test>
+    </runlevel_test>
 
-    <rpminfo_test check_existence="only_one_exists" comment="false" version="1" id="test:31" check="all">
+    <runlevel_test check_existence="only_one_exists" comment="false" version="1" id="test:31" check="all">
       <object object_ref="object:4"/>
       <state state_ref="state:true"/>
-    </rpminfo_test>
+    </runlevel_test>
 
-    <rpminfo_test check_existence="only_one_exists" comment="true" version="1" id="test:32" check="all">
+    <runlevel_test check_existence="only_one_exists" comment="true" version="1" id="test:32" check="all">
       <object object_ref="object:4"/>
       <state state_ref="state:false"/>
-    </rpminfo_test>
+    </runlevel_test>
 
     <!-- NONE_EXIST -->
 
-    <rpminfo_test check_existence="none_exist" comment="false" version="1" id="test:33" check="all">
+    <runlevel_test check_existence="none_exist" comment="false" version="1" id="test:33" check="all">
       <object object_ref="object:1"/>
       <state state_ref="state:true"/>
-    </rpminfo_test>
+    </runlevel_test>
 
-    <rpminfo_test check_existence="none_exist" comment="true" version="1" id="test:34" check="all">
+    <runlevel_test check_existence="none_exist" comment="true" version="1" id="test:34" check="all">
       <object object_ref="object:1"/>
       <state state_ref="state:false"/>
-    </rpminfo_test>
+    </runlevel_test>
 
-    <rpminfo_test check_existence="none_exist" comment="true" version="1" id="test:35" check="all">
+    <runlevel_test check_existence="none_exist" comment="true" version="1" id="test:35" check="all">
       <object object_ref="object:2"/>
       <state state_ref="state:true"/>
-    </rpminfo_test>
+    </runlevel_test>
 
-    <rpminfo_test check_existence="none_exist" comment="false" version="1" id="test:36" check="all">
+    <runlevel_test check_existence="none_exist" comment="false" version="1" id="test:36" check="all">
       <object object_ref="object:2"/>
       <state state_ref="state:false"/>
-    </rpminfo_test>
+    </runlevel_test>
 
-    <rpminfo_test check_existence="none_exist" comment="true" version="1" id="test:37" check="all">
+    <runlevel_test check_existence="none_exist" comment="true" version="1" id="test:37" check="all">
       <object object_ref="object:3"/>
       <state state_ref="state:true"/>
-    </rpminfo_test>
+    </runlevel_test>
 
-    <rpminfo_test check_existence="none_exist" comment="true" version="1" id="test:38" check="all">
+    <runlevel_test check_existence="none_exist" comment="true" version="1" id="test:38" check="all">
       <object object_ref="object:3"/>
       <state state_ref="state:false"/>
-    </rpminfo_test>
+    </runlevel_test>
 
-    <rpminfo_test check_existence="none_exist" comment="true" version="1" id="test:39" check="all">
+    <runlevel_test check_existence="none_exist" comment="true" version="1" id="test:39" check="all">
       <object object_ref="object:4"/>
       <state state_ref="state:true"/>
-    </rpminfo_test>
+    </runlevel_test>
 
-    <rpminfo_test check_existence="none_exist" comment="false" version="1" id="test:40" check="all">
+    <runlevel_test check_existence="none_exist" comment="false" version="1" id="test:40" check="all">
       <object object_ref="object:4"/>
       <state state_ref="state:false"/>
-    </rpminfo_test>
+    </runlevel_test>
 
   </tests>
 
