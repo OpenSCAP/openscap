@@ -217,12 +217,12 @@ cat <<EOF
       <state state_ref="state:true"/>
     </runlevel_test>
 
-    <runlevel_test check_existence="any_exist" comment="true" version="1" id="test:10" check="all">
+    <runlevel_test check_existence="any_exist" comment="false" version="1" id="test:10" check="all">
       <object object_ref="object:1"/>
       <state state_ref="state:false"/>
     </runlevel_test>
 
-    <runlevel_test check_existence="any_exist" comment="true" version="1" id="test:11" check="all">
+    <runlevel_test check_existence="any_exist" comment="false" version="1" id="test:11" check="all">
       <object object_ref="object:2"/>
       <state state_ref="state:true"/>
     </runlevel_test>
@@ -343,12 +343,12 @@ cat <<EOF
       <state state_ref="state:true"/>
     </runlevel_test>
 
-    <runlevel_test check_existence="none_exist" comment="true" version="1" id="test:34" check="all">
+    <runlevel_test check_existence="none_exist" comment="false" version="1" id="test:34" check="all">
       <object object_ref="object:1"/>
       <state state_ref="state:false"/>
     </runlevel_test>
 
-    <runlevel_test check_existence="none_exist" comment="true" version="1" id="test:35" check="all">
+    <runlevel_test check_existence="none_exist" comment="false" version="1" id="test:35" check="all">
       <object object_ref="object:2"/>
       <state state_ref="state:true"/>
     </runlevel_test>
