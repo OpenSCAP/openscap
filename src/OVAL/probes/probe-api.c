@@ -585,7 +585,7 @@ oval_syschar_collection_flag_t _probe_cobj_combine_flags(oval_syschar_collection
 							 oval_syschar_collection_flag_t f2,
 							 oval_setobject_operation_t op)
 {
-	oval_syschar_collection_flag_t result;
+	oval_syschar_collection_flag_t result = SYSCHAR_FLAG_ERROR;
 
 	switch (op) {
 	case OVAL_SET_OPERATION_COMPLEMENT:

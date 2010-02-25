@@ -103,7 +103,6 @@ int app_evaluate_test(struct oval_test * test, oval_pctx_t * pctx,
                       int verbose) {
 
     char                    *objid;
-    int                     count = 0;
     struct oval_object      *object;
     struct oval_syschar     *syschar = NULL;
 
@@ -188,7 +187,7 @@ int app_evaluate_criteria(struct oval_criteria_node *cnode, oval_pctx_t * pctx,
         case OVAL_NODETYPE_UNKNOWN:
             break;
     }
-
+    return 1;
 }
 
 /**

@@ -103,8 +103,10 @@ void oval_string_map_put(struct oval_string_map *map, const char *key, void *ite
 				map->entries = insertion;
 		}
 	}
-	if (insertion == NULL)
+	if (insertion == NULL) {
+		free(temp);
 		return;
+	}
 
 	insertion->key = usekey;
 	insertion->item = item;

@@ -99,17 +99,18 @@ void oscap_import_source_free(struct oscap_import_source *source)
 
 struct oscap_export_target *oscap_export_target_new_file(const char *filename, const char *encoding)
 {
-
-	struct oscap_export_target *target = oscap_calloc(1, sizeof(struct oscap_export_target));
-	if (target == NULL)
-		return NULL;
-
-	target->type = OSCAP_STREAM_FILE;
+	struct oscap_export_target *target;
 
 	if (filename == NULL) {
 		oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EINVARG, "filename argument can't point to NULL");
 		return NULL;
 	}
+
+	target = oscap_calloc(1, sizeof(struct oscap_export_target));
+	if (target == NULL)
+		return NULL;
+
+	target->type = OSCAP_STREAM_FILE;
 
 	if (encoding == NULL)
 		target->encoding = oscap_strdup("UTF-8");

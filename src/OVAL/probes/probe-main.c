@@ -809,7 +809,7 @@ void *probe_worker(void *arg)
 			 * there are variable references in the object.
 			 * create ctx, iterate through all variable combinations
 			 */
-			SEXP_t *cobj;
+			SEXP_t *cobj = NULL;
 			SEXP_t *r0, *r1;
 			struct probe_varref_ctx *ctx;
 
