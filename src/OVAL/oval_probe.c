@@ -284,7 +284,7 @@ static SEXP_t *oval_probe_comm(SEAP_CTX_t * ctx, oval_pd_t * pd, const SEXP_t * 
         }
         
 	oscap_dprintf("%s: ctx=%p, pd=%p, s_iobj=%p\n", ctx, pd, s_iobj);
-
+        
 	for (retry = 0;;) {
 		/*
 		 * Establish connection to probe. The connection may be
@@ -674,8 +674,7 @@ struct oval_sysinfo *oval_probe_sysinf_eval(oval_pctx_t * ctx)
 	struct oval_sysinfo *sysinf;
 	struct oval_sysint *ife;
 	oval_pd_t *pd;
-
-	SEXP_t *s_obj, *s_sinf, *ent, *r0;
+	SEXP_t *s_obj, *s_sinf, *ent, *r0, *r1, *attrs;
 	
 	_A(ctx != NULL);
 	_A(ctx->model != NULL);
@@ -705,20 +704,17 @@ struct oval_sysinfo *oval_probe_sysinf_eval(oval_pctx_t * ctx)
 	 * because the preprocessing machinery in probes need an id that
 	 * is used as key in cache lookups.
 	 */
-	{
-		SEXP_t *attrs, *r0;
-
-		s_obj = probe_obj_creat("sysinfo_object",
-					attrs = probe_attr_creat("id", r0 = SEXP_string_newf("sysinfo:0"), NULL), NULL);
-		SEXP_vfree(attrs, r0, NULL);
-	}
-
-#ifndef NDEBUG
-	if (ctx->p_flags & OVAL_PCTX_FLAG_NOREPLY)
-		_D("WARN: NOREPLY flag set\n");
-#endif
-	r0 = oval_probe_comm(ctx->pd_table->ctx, pd, s_obj, ctx->p_flags & OVAL_PCTX_FLAG_NOREPLY);
-	SEXP_free(s_obj);
+        s_obj = probe_obj_creat("sysinfo_object",
+                                attrs = probe_attr_creat("id", r1 = SEXP_string_newf("sysinfo:0"), NULL), NULL);
+        SEXP_vfree(attrs, r1, NULL);
+        
+        debug(3) {
+                if (ctx->p_flags & OVAL_PCTX_FLAG_NOREPLY)
+                        _D("WARN: NOREPLY flag set\n");
+        }
+        
+        r0 = oval_probe_comm(ctx->pd_table->ctx, pd, s_obj, ctx->p_flags & OVAL_PCTX_FLAG_NOREPLY);
+        SEXP_free(s_obj);
 
 	if (r0 == NULL)
 		return (NULL);
