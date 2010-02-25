@@ -295,6 +295,13 @@ struct xccdf_fixtext {
 	char *content;
 };
 
+struct xccdf_reference {
+    bool override;
+    char *href;
+    char *content;
+    char *lang;
+};
+
 extern const struct oscap_string_map XCCDF_LEVEL_MAP[];
 extern const struct oscap_string_map XCCDF_ROLE_MAP[];
 extern const struct oscap_string_map XCCDF_OPERATOR_MAP[];
@@ -375,8 +382,11 @@ void xccdf_set_value_free(struct xccdf_set_value *sv);
 
 struct xccdf_warning *xccdf_warning_new(void);
 struct xccdf_warning *xccdf_warning_new_parse(xmlTextReaderPtr reader);
-bool xccdf_warning_parse(struct xccdf_warning * warn, xmlTextReaderPtr reader);
 void xccdf_warning_free(struct xccdf_warning * warn);
+
+struct xccdf_reference *xccdf_reference_new(void);
+struct xccdf_reference *xccdf_reference_new_parse(xmlTextReaderPtr reader);
+void xccdf_reference_free(struct xccdf_reference * ref);
 
 // Prototypes to supress compiler warnings
 struct xccdf_warning_iterator *xccdf_profile_get_warnings(const struct xccdf_profile *profile);

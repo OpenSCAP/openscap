@@ -350,18 +350,26 @@ struct xccdf_check_import;
  * @see xccdf_check
  */
 struct xccdf_check_export;
+
 /** @struct xccdf_fix
  * XCCDF automatic fix.
  * @ingroup rule
  * @see xccdf_rule
  */
 struct xccdf_fix;
+
 /** @struct xccdf_fixtext
  * XCCDF textual fix instructions.
  * @ingroup rule
  * @see xccdf_rule
  */
 struct xccdf_fixtext;
+
+/** @struct xccdf_reference
+ * XCCDF reference.
+ * @see xccdf_rule
+ */
+struct xccdf_reference;
 
 /*--------------------*\
 |       Iterators      |
@@ -1922,11 +1930,13 @@ struct xccdf_check_content_ref_iterator *xccdf_check_get_content_refs(const stru
 const char *xccdf_fixtext_get_content(const struct xccdf_fixtext *fixtext);
 
 /// @memberof xccdf_reference
-//bool xccdf_reference_get_override(const struct xccdf_reference *reference);
+bool xccdf_reference_get_override(const struct xccdf_reference *reference);
 /// @memberof xccdf_reference
-//const char *xccdf_reference_get_href(const struct xccdf_reference *reference);
+const char *xccdf_reference_get_href(const struct xccdf_reference *reference);
 /// @memberof xccdf_reference
-//const char *xccdf_reference_get_text(const struct xccdf_reference *reference);
+const char *xccdf_reference_get_content(const struct xccdf_reference *reference);
+/// @memberof xccdf_reference
+const char *xccdf_reference_get_lang(const struct xccdf_reference *reference);
 
 
 /// @memberof xccdf_select

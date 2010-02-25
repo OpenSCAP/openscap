@@ -59,6 +59,7 @@ struct xccdf_item *xccdf_item_new(xccdf_type_t type, struct xccdf_item *bench, s
 	item->item.statuses = oscap_list_new();
 	item->item.platforms = oscap_list_new();
 	item->item.warnings = oscap_list_new();
+	item->item.references = oscap_list_new();
 	item->item.weight = 1.0;
 	item->item.flags.selected = true;
 	if (type == XCCDF_BENCHMARK && bench == NULL)
@@ -79,6 +80,7 @@ void xccdf_item_release(struct xccdf_item *item)
 		oscap_list_free(item->item.rationale, (oscap_destruct_func) oscap_text_free);
 		oscap_list_free(item->item.question, (oscap_destruct_func) oscap_text_free);
 		oscap_list_free(item->item.warnings, (oscap_destruct_func) xccdf_warning_free);
+		oscap_list_free(item->item.references, (oscap_destruct_func) xccdf_reference_free);
 		oscap_free(item->item.id);
 		oscap_free(item->item.cluster_id);
 		oscap_free(item->item.version_update);
@@ -213,6 +215,9 @@ bool xccdf_item_process_element(struct xccdf_item * item, xmlTextReaderPtr reade
 		return true;
 	case XCCDFE_WARNING:
         oscap_list_add(item->item.warnings, xccdf_warning_new_parse(reader));
+		return true;
+	case XCCDFE_REFERENCE:
+        oscap_list_add(item->item.references, xccdf_reference_new_parse(reader));
 		return true;
 	case XCCDFE_STATUS:{
         const char *date = xccdf_attribute_get(reader, XCCDFA_DATE);
@@ -448,4 +453,36 @@ void xccdf_warning_free(struct xccdf_warning * w)
 
 OSCAP_GETTER(xccdf_warning_category_t, xccdf_warning, category)
 OSCAP_GETTER(struct oscap_text *, xccdf_warning, text)
+
+struct xccdf_reference *xccdf_reference_new(void)
+{
+    struct xccdf_reference *ref = oscap_calloc(1, sizeof(struct xccdf_reference));
+    return ref;
+}
+
+struct xccdf_reference *xccdf_reference_new_parse(xmlTextReaderPtr reader)
+{
+    struct xccdf_reference *ref = xccdf_reference_new();
+    if (xccdf_attribute_has(reader, XCCDFA_OVERRIDE))
+        ref->override = oscap_string_to_enum(OSCAP_BOOL_MAP, xccdf_attribute_get(reader, XCCDFA_OVERRIDE));
+    ref->href = xccdf_attribute_copy(reader, XCCDFA_HREF);
+    ref->content = oscap_element_string_copy(reader);
+    // TODO lang, Dublin Core
+    return ref;
+}
+
+void xccdf_reference_free(struct xccdf_reference *ref)
+{
+    if (ref != NULL) {
+        oscap_free(ref->lang);
+        oscap_free(ref->href);
+        oscap_free(ref->content);
+        oscap_free(ref);
+    }
+}
+
+OSCAP_GETTER(const char*, xccdf_reference, lang)
+OSCAP_GETTER(const char*, xccdf_reference, href)
+OSCAP_GETTER(const char*, xccdf_reference, content)
+OSCAP_GETTER(bool,        xccdf_reference, override)
 
