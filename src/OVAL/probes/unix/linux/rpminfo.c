@@ -17,6 +17,10 @@
 #include <string.h>
 #include <errno.h>
 #include <assert.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+
 /* RPM headers */
 #include <rpm/rpmdb.h>
 #include <rpm/rpmlib.h>
@@ -40,6 +44,7 @@
 
 struct rpminfo_req {
         char *name;
+        oval_operation_t op;
 };
 
 struct rpminfo_rep {
@@ -53,7 +58,7 @@ struct rpminfo_rep {
 };
 
 struct rpminfo_global {
-        rpmts           rpmts;
+        rpmdb           rpmdb;
         pthread_mutex_t mutex;
 };
 
@@ -87,15 +92,40 @@ static int get_rpminfo (struct rpminfo_req *req, struct rpminfo_rep **rep)
 	char *str, *sid;
 	size_t len;
 	errmsg_t rpmerr;
-	
         
         pthread_mutex_lock (&(g_rpm.mutex));
-        match = rpmtsInitIterator (g_rpm.rpmts, RPMTAG_NAME, (const void *)req->name, 0);
-	
-        if (NULL == match) {
-                ret = 0;
+
+        switch (req->op) {
+        case OVAL_OPERATION_EQUALS:
+                match = rpmdbInitIterator (g_rpm.rpmdb, RPMTAG_NAME, (const void *)req->name, 0);
+                
+                if (match == NULL) {
+                        ret = 0;
+                        goto ret;
+                }
+                
+                break;
+        case OVAL_OPERATION_PATTERN_MATCH:
+                match = rpmdbInitIterator (g_rpm.rpmdb, RPMDBI_PACKAGES, NULL, 0);
+                
+                if (match == NULL) {
+                        ret = 0;
+                        goto ret;
+                }
+                
+                if (rpmdbSetIteratorRE (match, RPMTAG_NAME, RPMMIRE_REGEX,
+                                        (const char *)req->name) != 0)
+                {
+                        ret = -1;
+                        goto ret;
+                }
+                
+                break;
+        default:
+                /* not supported */
+                ret = -1;
                 goto ret;
-	}
+        }
         
         ret = rpmdbGetIteratorCount (match);
         
@@ -161,7 +191,9 @@ void *probe_init (void)
                 return (NULL);
         }
         
-        g_rpm.rpmts = rpmtsCreate ();
+        /* XXX: check retval */
+        rpmdbOpen (NULL, &g_rpm.rpmdb, O_RDONLY, 0644);
+        
         pthread_mutex_init (&(g_rpm.mutex), NULL);
         
         return ((void *)&g_rpm);
@@ -171,7 +203,7 @@ void probe_fini (void *ptr)
 {
         struct rpminfo_global *r = (struct rpminfo_global *)ptr;
         
-        rpmtsFree (r->rpmts);
+        rpmdbClose (r->rpmdb);
         pthread_mutex_destroy (&(r->mutex));
         
         return;
@@ -179,22 +211,54 @@ void probe_fini (void *ptr)
 
 SEXP_t *probe_main (SEXP_t *object, int *err, void *arg)
 {
-        SEXP_t *probe_out, *val, *item_sexp, *r0, *r1;
+        SEXP_t *probe_out, *val, *item_sexp, *r0, *r1, *ent;
 	int rpmret, i;
         
         struct rpminfo_req request_st;
         struct rpminfo_rep *reply_st;
 
-        val = probe_obj_getentval (object, "name", 1);
+        ent = probe_obj_getent (object, "name", 1);
+
+        if (ent == NULL) {
+                *err = PROBE_ENOENT;
+                return (NULL);
+        }
+        
+        val = probe_ent_getval (ent);
         
         if (val == NULL) {
                 _D("%s: no value\n", "name");
                 *err = PROBE_ENOVAL;
+                SEXP_free (ent);
                 return (NULL);
         }
         
         request_st.name = SEXP_string_cstr (val);
         SEXP_free (val);
+
+        val = probe_ent_getattrval (ent, "operation");
+        
+        if (val == NULL) {
+                request_st.op = OVAL_OPERATION_EQUALS;
+        } else {
+                request_st.op = (oval_operation_t) SEXP_number_geti_32 (val);
+
+                switch (request_st.op) {
+                case OVAL_OPERATION_EQUALS:
+                case OVAL_OPERATION_PATTERN_MATCH:
+                        break;
+                default:
+                        *err = PROBE_EOPNOTSUPP;
+                        SEXP_free (val);
+                        SEXP_free (ent);
+                        oscap_free (request_st.name);
+                        return (NULL);
+                }
+                
+                SEXP_free (val);
+        }
+        
+        SEXP_free (ent);
 
         if (request_st.name == NULL) {
                 switch (errno) {

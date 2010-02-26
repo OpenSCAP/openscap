@@ -387,7 +387,7 @@ size_t probe_ent_getname_r(const SEXP_t * ent, char *buffer, size_t buflen);
 void probe_free(SEXP_t * obj);
 
 #define PROBE_EINVAL     1	/* Invalid type/value/format */
-#define PROBE_ENOELM     2	/* Missing element */
+#define PROBE_ENOELM     2	/* Missing element OBSOLETE: use ENOENT */
 #define PROBE_ENOVAL     3	/* Missing value */
 #define PROBE_ENOATTR    4	/* Missing attribute */
 #define PROBE_EINIT      5	/* Initialization failed */
@@ -398,6 +398,7 @@ void probe_free(SEXP_t * obj);
 #define PROBE_EFAULT    10	/* Memory fault/NULL value */
 #define PROBE_EACCES    11	/* Operation not perimitted */
 #define PROBE_ESETEVAL  12	/* Set evaluation failed */
+#define PROBE_ENOENT    13      /* Missing entity */
 #define PROBE_EFATAL   254	/* Unrecoverable error */
 #define PROBE_EUNKNOWN 255	/* Unknown/Unexpected error */
 
