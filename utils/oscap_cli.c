@@ -291,6 +291,7 @@ int main(int argc, char **argv)
 		}
 	}
 	oval_syschar_model_set_sysinfo(sys_model, sysinfo);
+	oval_sysinfo_free(sysinfo);
 
         /* Use method 1 to suppress syschar assertion abort caused by bug in library and process
          * all objects first */
