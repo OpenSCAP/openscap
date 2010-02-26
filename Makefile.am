@@ -1,15 +1,15 @@
+
 SUBDIRS = src
 
-
-SUBDIRS += tests utils
+if WANT_PROBES
+SUBDIRS += src/OVAL/probes
+endif
 
 if WANT_BINDINGS
 SUBDIRS += swig
 endif
 
-if WANT_PROBES
-SUBDIRS += src/OVAL/probes
-endif
+SUBDIRS += utils tests
 
 EXTRA_DIST = dist/fedora/openscap.spec docs/Doxyfile docs/examples/oval_probes.py docs/examples/package-test.xml
 
