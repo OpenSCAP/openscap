@@ -26,8 +26,8 @@
 
  * Help:
  *      compile: $gcc oscap_cli.c -lcurl -lopenscap -I/usr/include/openscap/
-                 or
-                 $gcc -I../../src/OVAL/public/ -I../../src/common/public/ oscap_cli.c -L../../src/.libs/ -lcurl -lopenscap
+ *               or
+ *               $gcc -I../src/OVAL/public/ -I../src/common/public/ oscap_cli.c -L../src/.libs/ -lcurl -lopenscap
  *      run:     $./oscap_cli -vv definition_file.xml
  */
 
@@ -176,6 +176,7 @@ int app_evaluate_criteria(struct oval_criteria_node *cnode, oval_pctx_t * pctx,
                 node = oval_criteria_node_iterator_next(cnode_it);
                 app_evaluate_criteria(node, pctx, def_model, sys_model, verbose);
             }
+            oval_criteria_node_iterator_free(cnode_it);
         } break;
         /* Extended definition contains reference to definition, we need criteria of this
          * definition to be evaluated completely */
@@ -310,8 +311,9 @@ int main(int argc, char **argv)
                 cnode = oval_definition_get_criteria(oval_def);
                 app_evaluate_criteria(cnode, pctx, def_model, sys_model, verbose);
             }
-            oval_pctx_free (pctx);
+            oval_definition_iterator_free(oval_def_it);
         }
+        oval_pctx_free (pctx);
 
 	/* print # syschars */
         int count = 0;
