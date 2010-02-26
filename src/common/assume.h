@@ -38,7 +38,8 @@
 #define __RB(l, ...) __VA_ARGS__
 
 #include <sys/cdefs.h>
-#define __XC(a, b) __CONCAT(a, __CONCAT(b, __CONCAT(atcg /* random string */, b)))
+#define __XCB(a, b) __CONCAT(a, b)
+#define __XCA(a, b) __XCB(a, __XCB(b, __XCB(atcg /* random strign */,a)))
 
 #define __emitmsg_fp stderr
 
@@ -69,11 +70,11 @@
 
 #define __assume(expr, exprstr, retval, ...)                            \
         do {                                                            \
-                int __XC(__cont, __LINE__) = 1;                         \
+                int __XCA(__cont, __LINE__) = 1;                        \
                 if (!(expr)) {                                          \
                         __emitmsg ("%s:%d (%s): Assumption `%s' not fulfilled!\n", __FILE__, __LINE__, __PRETTY_FUNCTION__, exprstr); \
-                        do {__LB(__VA_ARGS__)} while((__XC(__cont, __LINE__) = 0)); \
-                        if (__XC(__cont, __LINE__) == 0) __terminate(retval); \
+                        do {__LB(__VA_ARGS__)} while((__XCA(__cont, __LINE__) = 0)); \
+                        if (__XCA(__cont, __LINE__) == 0) __terminate(retval); \
                 } else {                                                \
                         do {__RB(__VA_ARGS__)} while(0);                \
                 }                                                       \
