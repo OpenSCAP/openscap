@@ -30,7 +30,7 @@
 #include <seap.h>
 #include <probe-api.h>
 #include <alloc.h>
-
+#include <common/assume.h>
 #include <config.h>
 
 #ifdef HAVE_LIBRPM44
@@ -75,6 +75,47 @@ void __rpminfo_rep_free (struct rpminfo_rep *ptr)
         oscap_free (ptr->signature_keyid);
 }
 
+static void pkgh2rep (Header h, struct rpminfo_rep *r)
+{
+        errmsg_t rpmerr;
+        char *str, *sid;
+        size_t len;
+        
+        assume_d (h != NULL, /* void */);
+        assume_d (r != NULL, /* void */);
+        
+        r->name = headerFormat (h, "%{NAME}", &rpmerr);
+        r->arch = headerFormat (h, "%{ARCH}", &rpmerr);
+        str     = headerFormat (h, "%{EPOCH}", &rpmerr);
+        
+        if (strcmp (str, "(none)") == 0) {
+                str    = oscap_realloc (str, sizeof (char) * 2);
+                str[0] = '0';
+                str[1] = '\0';
+        }
+
+        r->epoch   = str;
+        r->release = headerFormat (h, "%{RELEASE}", &rpmerr);
+        r->version = headerFormat (h, "%{VERSION}", &rpmerr);
+                        
+        len = (strlen (r->epoch)   +
+               strlen (r->release) +
+               strlen (r->version) + 2);
+                        
+        str = oscap_alloc (sizeof (char) * (len + 1));
+        snprintf (str, len + 1, "%s:%s-%s",
+                  r->epoch,
+                  r->version,
+                  r->release);
+        
+        r->evr = str;
+                        
+        str = headerFormat (h, "%{SIGGPG:pgpsig}", &rpmerr);
+        sid = strrchr (str, ' ');
+        r->signature_keyid = (sid != NULL ? strdup (sid+1) : strdup ("0"));
+        oscap_free (str);
+}
+
 /*
  * req - Structure containing the name of the package.
  * rep - Pointer to rpminfo_rep structure pointer. An
@@ -89,11 +130,10 @@ static int get_rpminfo (struct rpminfo_req *req, struct rpminfo_rep **rep)
 	rpmdbMatchIterator match;
 	Header pkgh;
 	int ret = 0, i;
-	char *str, *sid;
-	size_t len;
-	errmsg_t rpmerr;
         
         pthread_mutex_lock (&(g_rpm.mutex));
+
+        ret = -1;
 
         switch (req->op) {
         case OVAL_OPERATION_EQUALS:
@@ -103,6 +143,8 @@ static int get_rpminfo (struct rpminfo_req *req, struct rpminfo_rep **rep)
                         ret = 0;
                         goto ret;
                 }
+                
+                ret = rpmdbGetIteratorCount (match);
                 
                 break;
         case OVAL_OPERATION_PATTERN_MATCH:
@@ -127,54 +169,30 @@ static int get_rpminfo (struct rpminfo_req *req, struct rpminfo_rep **rep)
                 goto ret;
         }
         
-        ret = rpmdbGetIteratorCount (match);
-        
-        if (ret > 0) {
+        if (ret != -1) {
+                /*
+                 * We can allocate all memory needed now because we know the number
+                 * of results.
+                 */
                 (*rep) = oscap_realloc (*rep, sizeof (struct rpminfo_rep) * ret);
-                
-                for (i = 0; ((pkgh = rpmdbNextIterator (match)) != NULL) && i < ret; ++i) {
-                        (*rep)[i].name    = headerFormat (pkgh, "%{NAME}", &rpmerr);
-                        (*rep)[i].arch    = headerFormat (pkgh, "%{ARCH}", &rpmerr);
-                        str = headerFormat (pkgh, "%{EPOCH}", &rpmerr);
-                        if (strcmp (str, "(none)") == 0) {
-                                str    = oscap_realloc (str, sizeof (char) * 2);
-                                str[0] = '0';
-                                str[1] = '\0';
-                        }
-                        (*rep)[i].epoch   = str;
-                        (*rep)[i].release = headerFormat (pkgh, "%{RELEASE}", &rpmerr);
-                        (*rep)[i].version = headerFormat (pkgh, "%{VERSION}", &rpmerr);
-                        
-                        len = (strlen ((*rep)[i].epoch)   +
-                               strlen ((*rep)[i].release) +
-                               strlen ((*rep)[i].version) + 2);
-                        
-                        str = oscap_alloc (sizeof (char) * (len + 1));
-                        snprintf (str, len + 1, "%s:%s-%s",
-                                  (*rep)[i].epoch,
-                                  (*rep)[i].version,
-                                  (*rep)[i].release);
-                        
-                        (*rep)[i].evr = str;
-                        
-                        str = headerFormat (pkgh, "%{SIGGPG:pgpsig}", &rpmerr);
-                        sid = strrchr (str, ' ');
-                        (*rep)[i].signature_keyid = (sid != NULL ? strdup (sid+1) : strdup ("0"));
-                        oscap_free (str);
-                }
 
-                if (ret != i) {
-                        _D("Something bad happened...\n");
+                for (i = 0; i < ret; ++i) {
+                        pkgh = rpmdbNextIterator (match);
                         
-                        if (i > 0) {
-                                do {
-                                        __rpminfo_rep_free (&((*rep)[--i]));
-                                } while (i > 0);
-                                
-                                oscap_free (*rep);
-                        }
-                        
-                        ret = -1;
+                        if (pkgh != NULL)
+                                pkgh2rep (pkgh, (*rep) + i);
+                        else {
+                                /* XXX: emit warning */
+                                break;
+                        }       
+                }
+        } else {
+                ret = 0;
+                
+                while ((pkgh = rpmdbNextIterator (match)) != NULL) {
+                        (*rep) = oscap_realloc (*rep, sizeof (struct rpminfo_rep) * ++ret);
+                        assume_r (*rep != NULL, -1);
+                        pkgh2rep (pkgh, (*rep) + (ret - 1));
                 }
         }
         
