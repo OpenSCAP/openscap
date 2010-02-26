@@ -1,3 +1,13 @@
+openscap-0.5.7							21-02-2010
+- Debian dpkginfo probe is available now
+- RHEL5 support
+- new command line tool - OVAL scanner 
+- Fedora 12 OVAL content available
+- documentation is heavy updated (with class diagrams)
+- new tests in make check
+- minor API changes
+- C++ reserved names cleanup
+
 openscap-0.5.6							04-01-2010
 - OVAL API has been extended
 - OVAL doxygen documentation is available
