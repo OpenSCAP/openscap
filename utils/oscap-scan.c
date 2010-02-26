@@ -25,10 +25,10 @@
  *      Maros Barabas  <mbarabas@redhat.com>
 
  * Help:
- *      compile: $gcc oscap_cli.c -lcurl -lopenscap -I/usr/include/openscap/
+ *      compile: $gcc oscap-scan.c -lcurl -lopenscap -I/usr/include/openscap/
  *               or
- *               $gcc -I../src/OVAL/public/ -I../src/common/public/ oscap_cli.c -L../src/.libs/ -lcurl -lopenscap
- *      run:     $./oscap_cli -vv definition_file.xml
+ *               $gcc -I../src/OVAL/public/ -I../src/common/public/ oscap-scan.c -L../src/.libs/ -lcurl -lopenscap
+ *      run:     $./oscap-scan -vv definition_file.xml
  */
 
 
