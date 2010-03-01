@@ -671,7 +671,7 @@ cat <<EOF
       <object object_ref="oval:1:obj:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:62" check_existence="only_one_exists" check="all" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:62" check_existence="only_one_exists" check="all" comment="true">
       <object object_ref="oval:1:obj:1"/>
     </rpminfo_test>
 
@@ -686,7 +686,7 @@ cat <<EOF
     </rpminfo_test>
 
     <rpminfo_test version="1" id="oval:1:tst:65" check_existence="only_one_exists" check="at least one" comment="false">
-      <object object_ref="oval:1:obj:1"/>
+      <object object_ref="oval:1:obj:2"/>
     </rpminfo_test>
 
     <rpminfo_test version="1" id="oval:1:tst:66" check_existence="only_one_exists" check="at least one" comment="false">
@@ -700,7 +700,7 @@ cat <<EOF
     </rpminfo_test>
 
     <rpminfo_test version="1" id="oval:1:tst:68" check_existence="only_one_exists" check="none satisfy" comment="false">
-      <object object_ref="oval:1:obj:1"/>
+      <object object_ref="oval:1:obj:2"/>
     </rpminfo_test>
 
     <rpminfo_test version="1" id="oval:1:tst:69" check_existence="only_one_exists" check="none satisfy" comment="false">
@@ -713,7 +713,7 @@ cat <<EOF
       <object object_ref="oval:1:obj:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:71" check_existence="only_one_exists" check="only one" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:71" check_existence="only_one_exists" check="only one" comment="true">
       <object object_ref="oval:1:obj:1"/>
     </rpminfo_test>
 
@@ -1326,7 +1326,7 @@ cat <<EOF
       <state state_ref="oval:1:ste:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:184" check_existence="only_one_exists" check="none satisfy" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:184" check_existence="only_one_exists" check="none satisfy" comment="true">
       <object object_ref="oval:1:obj:1"/>
       <state state_ref="oval:1:ste:3"/>
     </rpminfo_test>
@@ -1405,7 +1405,7 @@ cat <<EOF
     </rpminfo_state>
 
     <!-- TRUE STATE -->
-    <rpminfo_state version="1" id="oval:1:ste:1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+    <rpminfo_state version="1" id="oval:1:ste:2" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <name operation="pattern match">^(${RPM_A_NAME}|${RPM_B_NAME})$</name>
       <arch operation="pattern match">^(${RPM_A_ARCH}|${RPM_B_ARCH})$</arch>
     </rpminfo_state>
