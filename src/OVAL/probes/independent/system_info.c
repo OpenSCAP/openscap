@@ -29,9 +29,6 @@
 #include <sys/utsname.h>
 #include <unistd.h>
 #include <stdlib.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netdb.h>
 #include <string.h>
 #include <errno.h>
 
@@ -46,6 +43,7 @@
 #endif
 
 struct nl_cache *link_cache;
+void get_ifs(SEXP_t *item);
 
 static void cb(struct nl_object *obj, void *arg)
 {
@@ -127,11 +125,8 @@ SEXP_t *probe_main(SEXP_t *probe_in, int *err, void *arg)
 {
 	SEXP_t *item;
         SEXP_t *r0, *r1, *r2, *r3;
-        char *os_name, *os_version, *architecture,
-                hname[NI_MAXHOST];
+        char *os_name, *os_version, *architecture, *hname;
         struct utsname sname;
-        struct addrinfo *results;
-        int e;
         
         (void)arg;
 
@@ -148,30 +143,7 @@ SEXP_t *probe_main(SEXP_t *probe_in, int *err, void *arg)
         os_name = sname.sysname;
         os_version = sname.version;
         architecture = sname.machine;
-
-        if (gethostname(hname, sizeof (hname)) == -1) {
-                _D("gethostname: %u, %s.\n", errno, strerror (errno));
-                *err = PROBE_EUNKNOWN;
-                
-                return NULL;
-        }
-
-        if ((e = getaddrinfo(hname, NULL, NULL, &results)) != 0) {
-                _D("getaddrinfo(%s): %s\n", hname, gai_strerror (e));
-                *err = PROBE_EUNKNOWN;
-                
-                return NULL;
-        }
-
-        if ((e = getnameinfo(results->ai_addr, results->ai_addrlen,
-                             hname, sizeof (hname), NULL, 0, 0)) != 0) {
-                freeaddrinfo(results);
-                _D("getnameinfo: %s\n", gai_strerror (e));
-                *err = PROBE_EUNKNOWN;
-                
-                return NULL;
-        }
-        freeaddrinfo(results);
+	hname = sname.nodename;
 
         item  = probe_item_creat ("system_info_item", NULL,
                                   /* entities */
