@@ -504,7 +504,7 @@ int main(void)
 	int ret = EXIT_SUCCESS;
 	SEAP_msg_t *seap_request, *seap_reply;
 
-	SEXP_t *probe_in, *probe_out;
+	SEXP_t *probe_in, *probe_out = NULL;
 	int probe_ret;
 
 	SEXP_t *oid;

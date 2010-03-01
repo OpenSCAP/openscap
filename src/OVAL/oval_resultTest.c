@@ -752,12 +752,12 @@ static oval_result_t eval_item(struct oval_syschar_model *syschar_model, struct 
 		struct oval_entity *state_entity;
 		char *state_entity_name;
 		struct oval_value *state_entity_val;
-		char *state_entity_val_text;
+		char *state_entity_val_text = NULL;
 		oval_datatype_t state_entity_val_datatype;
 		oval_operation_t state_entity_operation;
 		oval_check_t entity_check;
 		struct oval_variable *state_entity_var;
-		oval_check_t var_check;
+		oval_check_t var_check = OVAL_CHECK_UNKNOWN;
 		oval_result_t ste_ent_res;
 		struct oval_sysitem_iterator *item_entities_itr;
 		struct oresults ent_ores;
