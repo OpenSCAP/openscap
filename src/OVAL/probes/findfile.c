@@ -326,7 +326,7 @@ static int recurse_direction(const char *file, char *direction)
  */
 static int rglob(const char *pattern, rglob_t * result)
 {
-	char *tmp, *token, *saveptr = NULL;
+	char *tmp_ptr, *tmp, *token, *saveptr = NULL;
 	char path[PATH_MAX] = "/";
 	int len = 1;
 	regex_t re;
@@ -336,7 +336,7 @@ static int rglob(const char *pattern, rglob_t * result)
 		return 1;
 
 	/* get no regexp portion from pattern to path */
-	tmp = strdup(pattern);
+	tmp_ptr = tmp = strdup(pattern);
 	for (;; tmp = NULL) {
 		token = strtok_r(tmp, "/", &saveptr);
 		if (token == NULL)
@@ -347,7 +347,7 @@ static int rglob(const char *pattern, rglob_t * result)
 		} else
 			break;
 	}
-	oscap_free(tmp);
+	oscap_free(tmp_ptr);
 	/* erase last slash, but not the first one! */
 	len = strlen(path);
 	if (len > 1)
