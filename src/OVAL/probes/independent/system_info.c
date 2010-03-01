@@ -69,17 +69,19 @@ static void cb(struct nl_object *obj, void *arg)
 
         absaddr = rtnl_link_get_addr(rtlink);
         rtnl_link_put(rtlink);
-        nl_addr2str(absaddr, mabuf, sizeof (mabuf));
+	if (absaddr && !nl_addr_iszero(absaddr)) {
+	        nl_addr2str(absaddr, mabuf, sizeof (mabuf));
         
-        attrs = probe_attr_creat("name",
+	        attrs = probe_attr_creat("name",
                                  r0 = SEXP_string_newf("%s", name),
                                  "ip_address",
                                  r1 = SEXP_string_newf("%s", iabuf),
                                  "mac_address",
                                  r2 = SEXP_string_newf("%s", mabuf),
                                  NULL);
-        probe_item_ent_add(item, "interface", attrs, NULL);
-        SEXP_vfree(attrs, r0, r1, r2, NULL);
+	        probe_item_ent_add(item, "interface", attrs, NULL);
+        	SEXP_vfree(attrs, r0, r1, r2, NULL);
+	}
 }
 
 void get_ifs(SEXP_t *item)
