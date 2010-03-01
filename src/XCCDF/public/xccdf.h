@@ -637,7 +637,7 @@ const char *xccdf_item_get_version(const struct xccdf_item *item);
  * Return item's parent in the inheritance hierarchy.
  * @memberof xccdf_item
  */
-struct xccdf_item *xccdf_item_get_extends(const struct xccdf_item *item);
+const char *xccdf_item_get_extends(const struct xccdf_item *item);
 
 /**
  * Return item's parent in the grouping hierarchy.
@@ -911,7 +911,7 @@ const char *xccdf_profile_get_version(const struct xccdf_profile *profile);
  * Return profile's parent in the inheritance hierarchy.
  * @memberof xccdf_profile
  */
-struct xccdf_profile *xccdf_profile_get_extends(const struct xccdf_profile *profile);
+const char *xccdf_profile_get_extends(const struct xccdf_profile *profile);
 
 /**
  * Return a benchmark containing this profile.
@@ -1053,7 +1053,7 @@ float xccdf_rule_get_weight(const struct xccdf_rule *rule);
  * Return rule's parent in the inheritance hierarchy.
  * @memberof xccdf_rule
  */
-struct xccdf_rule *xccdf_rule_get_extends(const struct xccdf_rule *rule);
+const char *xccdf_rule_get_extends(const struct xccdf_rule *rule);
 
 /**
  * Return rule's parent in the grouping hierarchy.
@@ -1226,7 +1226,7 @@ float xccdf_group_get_weight(const struct xccdf_group *group);
  * Return group's parent in the inheritance hierarchy.
  * @memberof xccdf_group
  */
-struct xccdf_group *xccdf_group_get_extends(const struct xccdf_group *group);
+const char *xccdf_group_get_extends(const struct xccdf_group *group);
 
 /**
  * Return group's parent in the grouping hierarchy.
@@ -1318,7 +1318,7 @@ struct oscap_text_iterator *xccdf_value_get_description(const struct xccdf_value
  * Return value's parent in the inheritance hierarchy.
  * @memberof xccdf_value
  */
-struct xccdf_value *xccdf_value_get_extends(const struct xccdf_value *value);
+const char *xccdf_value_get_extends(const struct xccdf_value *value);
 
 /**
  * Return value's parent in the grouping hierarchy.
@@ -1657,7 +1657,7 @@ const char *xccdf_check_export_get_name(const struct xccdf_check_export *item);
  * Get an XCCDF value bound to the check export item.
  * @memberof xccdf_check_export
  */
-struct xccdf_value *xccdf_check_export_get_value(const struct xccdf_check_export *item);
+const char *xccdf_check_export_get_value(const struct xccdf_check_export *item);
 
 /**
  * Get fix content (e.g. a script).
@@ -1946,7 +1946,7 @@ bool xccdf_select_get_selected(const struct xccdf_select *select);
 /// @memberof xccdf_select
 //const char *xccdf_select_get_remark(const struct xccdf_select *select);
 /// @memberof xccdf_select
-struct xccdf_item *xccdf_select_get_item(const struct xccdf_select *select);
+const char *xccdf_select_get_item(const struct xccdf_select *select);
 
 /// @memberof xccdf_warning
 xccdf_warning_category_t xccdf_warning_get_category(const struct xccdf_warning *warning);

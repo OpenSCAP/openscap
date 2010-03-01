@@ -32,6 +32,7 @@ struct xccdf_backref {
 	char *id;		// id
 };
 
+/*
 bool xccdf_benchmark_add_ref(struct xccdf_item *benchmark, struct xccdf_item **ptr, const char *id, xccdf_type_t type)
 {
 	assert(benchmark != NULL);
@@ -65,9 +66,9 @@ static bool xccdf_benchmark_resolve_refs(struct xccdf_item *bench)
 		}
 		*ref->ptr = item;
 	}
-	/// @todo detect dependency loops
 	return ret;
 }
+*/
 
 struct xccdf_benchmark *xccdf_benchmark_parse_xml(const char *filename)
 {
@@ -89,7 +90,7 @@ struct xccdf_item *xccdf_benchmark_new(void)
 	bench->sub.bench.front_matter = oscap_list_new();
 	bench->sub.bench.notices = oscap_list_new();
 	bench->sub.bench.models = oscap_list_new();
-	bench->sub.bench.idrefs = oscap_list_new();
+	//bench->sub.bench.idrefs = oscap_list_new();
 	bench->sub.bench.content = oscap_list_new();
 	bench->sub.bench.values = oscap_list_new();
 	bench->sub.bench.plain_texts = oscap_htable_new();
@@ -162,11 +163,12 @@ bool xccdf_benchmark_parse(struct xccdf_item * benchmark, xmlTextReaderPtr reade
 		xmlTextReaderRead(reader);
 	}
 
-	xccdf_benchmark_resolve_refs(benchmark);
+	//xccdf_benchmark_resolve_refs(benchmark);
 
 	return true;
 }
 
+/*
 static void xccdf_backref_free(struct xccdf_backref *idref)
 {
 	if (idref) {
@@ -174,6 +176,7 @@ static void xccdf_backref_free(struct xccdf_backref *idref)
 		oscap_free(idref);
 	}
 }
+*/
 
 void xccdf_benchmark_dump(struct xccdf_benchmark *benchmark)
 {
@@ -205,7 +208,7 @@ void xccdf_benchmark_free(struct xccdf_benchmark *benchmark)
 		oscap_list_free(bench->sub.bench.rear_matter, (oscap_destruct_func) oscap_text_free);
 		oscap_list_free(bench->sub.bench.notices, (oscap_destruct_func) xccdf_notice_free);
 		oscap_list_free(bench->sub.bench.models, (oscap_destruct_func) xccdf_model_free);
-		oscap_list_free(bench->sub.bench.idrefs, (oscap_destruct_func) xccdf_backref_free);
+		//oscap_list_free(bench->sub.bench.idrefs, (oscap_destruct_func) xccdf_backref_free);
 		oscap_list_free(bench->sub.bench.content, (oscap_destruct_func) xccdf_item_free);
 		oscap_list_free(bench->sub.bench.values, (oscap_destruct_func) xccdf_value_free);
 		oscap_htable_free(bench->sub.bench.plain_texts, oscap_free);

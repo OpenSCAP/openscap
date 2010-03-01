@@ -85,6 +85,7 @@ void xccdf_item_release(struct xccdf_item *item)
 		oscap_free(item->item.cluster_id);
 		oscap_free(item->item.version_update);
 		oscap_free(item->item.version);
+		oscap_free(item->item.extends);
 		oscap_free(item);
 	}
 }
@@ -140,7 +141,7 @@ void xccdf_item_print(struct xccdf_item *item, int depth)
 		}
 		if (item->item.extends) {
 			xccdf_print_depth(depth);
-			printf("extends : %s\n", item->item.extends->item.id);
+			printf("extends : %s\n", item->item.extends);
 		}
 		if (item->type == XCCDF_BENCHMARK) {
 			xccdf_print_depth(depth);
@@ -193,8 +194,9 @@ bool xccdf_item_process_attributes(struct xccdf_item *item, xmlTextReaderPtr rea
 	if (xccdf_attribute_has(reader, XCCDFA_WEIGHT))
 		item->item.weight = xccdf_attribute_get_float(reader, XCCDFA_WEIGHT);
 	if (xccdf_attribute_has(reader, XCCDFA_EXTENDS))
-		xccdf_benchmark_add_ref(item->item.benchmark, &item->item.extends,
-					xccdf_attribute_get(reader, XCCDFA_EXTENDS), item->type);
+		item->item.extends = xccdf_attribute_copy(reader, XCCDFA_EXTENDS);
+		/*xccdf_benchmark_add_ref(item->item.benchmark, &item->item.extends,
+					xccdf_attribute_get(reader, XCCDFA_EXTENDS), item->type);*/
 	item->item.cluster_id = xccdf_attribute_copy(reader, XCCDFA_CLUSTER_ID);
 
 	if (item->item.id && item->item.benchmark)
@@ -275,7 +277,7 @@ XCCDF_ITEM_GETTER(const char *, version_update) XCCDF_ITEM_GETTER(time_t, versio
 //XCCDF_ITEM_GETTER(struct xccdf_item*, extends)
 XCCDF_ITEM_GETTER(struct xccdf_item *, parent)
 //XCCDF_ITEM_GETTER(struct xccdf_item*, extends)
-XCCDF_ABSTRACT_GETTER(struct xccdf_item *, item, extends, item.extends)
+XCCDF_ITEM_GETTER(const char *, extends)
 XCCDF_ITEM_GETTER(struct xccdf_benchmark *, benchmark)
 XCCDF_FLAG_GETTER(resolved)
 XCCDF_FLAG_GETTER(hidden)

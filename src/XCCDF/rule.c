@@ -111,11 +111,9 @@ static bool xccdf_item_parse_deps(xmlTextReaderPtr reader, struct xccdf_item *it
 			char *ids = xccdf_attribute_copy(reader, XCCDFA_IDREF), *idsstr = ids, *id;
 
 			while ((id = xccdf_strsep(&ids, ' ')) != NULL) {
-				if (strcmp(id, "") == 0)
-					continue;
-				oscap_list_add(reqs, NULL);
-				xccdf_benchmark_add_ref(item->item.benchmark, (void *)&reqs->last->data, id,
-							XCCDF_CONTENT);
+				if (strcmp(id, "") == 0) continue;
+				oscap_list_add(reqs, oscap_strdup(id));
+				//xccdf_benchmark_add_ref(item->item.benchmark, (void *)&reqs->last->data, id, XCCDF_CONTENT);
 			}
 			if (reqs->itemcount == 0) {
 				oscap_list_free(reqs, NULL);
@@ -127,9 +125,9 @@ static bool xccdf_item_parse_deps(xmlTextReaderPtr reader, struct xccdf_item *it
 			break;
 		}
 	case XCCDFE_CONFLICTS:
-		oscap_list_add(conflicts, NULL);
-		xccdf_benchmark_add_ref(item->item.benchmark, (void *)&conflicts->last->data,
-					xccdf_attribute_get(reader, XCCDFA_IDREF), XCCDF_CONTENT);
+		oscap_list_add(conflicts, xccdf_attribute_copy(reader, XCCDFA_IDREF));
+		/* xccdf_benchmark_add_ref(item->item.benchmark, (void *)&conflicts->last->data,
+					xccdf_attribute_get(reader, XCCDFA_IDREF), XCCDF_CONTENT); */
 		break;
 	default:
 		assert(false);
@@ -146,7 +144,7 @@ static void xccdf_items_print_id_list(struct oscap_list *items, const char *sep)
 	for (it = items->first; it; it = it->next) {
 		if (it != items->first)
 			printf("%s", sep);
-		printf("%s", XITEM(it->data)->item.id);
+		printf("%s", (const char *) it->data);
 	}
 }
 
@@ -242,13 +240,18 @@ void xccdf_group_dump(struct xccdf_item *group, int depth)
 	}
 }
 
+static void xccdf_free_strlist(struct oscap_list *list)
+{
+	if (list) oscap_list_free(list, oscap_free);
+}
+
 void xccdf_group_free(struct xccdf_item *group)
 {
 	if (group) {
 		oscap_list_free(group->sub.group.content, (oscap_destruct_func) xccdf_item_free);
-		oscap_list_free(group->sub.group.requires, (oscap_destruct_func) oscap_list_free0);
 		oscap_list_free(group->sub.group.values, (oscap_destruct_func) xccdf_value_free);
-		oscap_list_free(group->sub.group.conflicts, NULL);
+		oscap_list_free(group->sub.group.requires, (oscap_destruct_func) xccdf_free_strlist);
+		oscap_list_free(group->sub.group.conflicts, oscap_free);
 		xccdf_item_release(group);
 	}
 }
@@ -350,11 +353,11 @@ void xccdf_rule_free(struct xccdf_item *rule)
 	if (rule) {
 		oscap_list_free(rule->sub.rule.idents, (oscap_destruct_func) xccdf_ident_free);
 		oscap_list_free(rule->sub.rule.checks, (oscap_destruct_func) xccdf_check_free);
-		oscap_list_free(rule->sub.rule.requires, (oscap_destruct_func) oscap_list_free0);
-		oscap_list_free(rule->sub.rule.conflicts, NULL);
 		oscap_list_free(rule->sub.rule.profile_notes, (oscap_destruct_func) xccdf_profile_note_free);
 		oscap_list_free(rule->sub.rule.fixes, (oscap_destruct_func) xccdf_fix_free);
 		oscap_list_free(rule->sub.rule.fixtexts, (oscap_destruct_func) xccdf_fixtext_free);
+		oscap_list_free(rule->sub.rule.requires, (oscap_destruct_func) xccdf_free_strlist);
+		oscap_list_free(rule->sub.rule.conflicts, oscap_free);
 		xccdf_item_release(rule);
 	}
 }
@@ -475,8 +478,9 @@ struct xccdf_check *xccdf_check_parse(xmlTextReaderPtr reader, struct xccdf_item
 					break;
 				struct xccdf_check_export *exp = oscap_calloc(1, sizeof(struct xccdf_check_export));
 				exp->name = strdup(name);
-				xccdf_benchmark_add_ref(parent->item.benchmark, &exp->value,
-							xccdf_attribute_get(reader, XCCDFA_VALUE_ID), XCCDF_VALUE);
+				/*xccdf_benchmark_add_ref(parent->item.benchmark, &exp->value,
+							xccdf_attribute_get(reader, XCCDFA_VALUE_ID), XCCDF_VALUE);*/
+				exp->value = xccdf_attribute_copy(reader, XCCDFA_VALUE_ID);
 				oscap_list_add(check->exports, exp);
 				break;
 			}
@@ -560,6 +564,7 @@ void xccdf_check_export_free(struct xccdf_check_export *item)
 {
 	if (item) {
 		oscap_free(item->name);
+		oscap_free(item->value);
 		oscap_free(item);
 	}
 }
@@ -600,8 +605,9 @@ struct xccdf_fixtext *xccdf_fixtext_parse(xmlTextReaderPtr reader, struct xccdf_
 {
 	struct xccdf_fixtext *fix = oscap_calloc(1, sizeof(struct xccdf_fixtext));
 	// TODO resolve fixref
-	xccdf_benchmark_add_ref(parent->item.benchmark, (void *)&fix->fixref,
-				xccdf_attribute_get(reader, XCCDFA_FIXREF), 0);
+	fix->fixref = xccdf_attribute_copy(reader, XCCDFA_FIXREF);
+	/* xccdf_benchmark_add_ref(parent->item.benchmark, (void *)&fix->fixref,
+				xccdf_attribute_get(reader, XCCDFA_FIXREF), 0); */
 	XCCDF_FIXCOMMON_PARSE(reader, fix);
 	return fix;
 }
@@ -629,7 +635,7 @@ XCCDF_STATUS_CURRENT(rule)
     XCCDF_STATUS_CURRENT(group)
 
     XCCDF_GROUP_IGETTER(item, content)
-    XCCDF_GROUP_GETTER_I(struct xccdf_group *, extends)
+    //XCCDF_GROUP_GETTER_I(struct xccdf_group *, extends)
 
 XCCDF_RULE_GETTER(const char *, impact_metric)
 XCCDF_RULE_GETTER(xccdf_role_t, role)
@@ -639,7 +645,9 @@ XCCDF_RULE_IGETTER(ident, idents)
 XCCDF_RULE_IGETTER(check, checks)
 XCCDF_RULE_IGETTER(profile_note, profile_notes)
 XCCDF_RULE_IGETTER(fix, fixes)
-XCCDF_RULE_IGETTER(fixtext, fixtexts) XCCDF_RULE_GETTER_I(struct xccdf_rule *, extends) XCCDF_ITERATOR_GEN_S(ident)
+XCCDF_RULE_IGETTER(fixtext, fixtexts)
+//XCCDF_RULE_GETTER_I(struct xccdf_rule *, extends)
+XCCDF_ITERATOR_GEN_S(ident)
 
 XCCDF_GENERIC_GETTER(const char *, check, id)
 XCCDF_GENERIC_GETTER(const char *, check, system)
@@ -654,10 +662,10 @@ XCCDF_GENERIC_IGETTER(check, check, children)
 XCCDF_ITERATOR_GEN_S(check_content_ref)
 XCCDF_ITERATOR_GEN_S(check_export) XCCDF_ITERATOR_GEN_S(check_import) XCCDF_ITERATOR_GEN_S(check)
 
- XCCDF_GENERIC_GETTER(const char *, profile_note, reftag) XCCDF_GENERIC_GETTER(const char *, profile_note, text)
- XCCDF_GENERIC_GETTER(const char *, check_import, name) XCCDF_GENERIC_GETTER(const char *, check_import, content)
- XCCDF_GENERIC_GETTER(const char *, check_export, name) XCCDF_GENERIC_GETTER(struct xccdf_value *, check_export, value)
- XCCDF_GENERIC_GETTER(const char *, check_content_ref, name) XCCDF_GENERIC_GETTER(const char *, check_content_ref, href)
+XCCDF_GENERIC_GETTER(const char *, profile_note, reftag) XCCDF_GENERIC_GETTER(const char *, profile_note, text)
+XCCDF_GENERIC_GETTER(const char *, check_import, name) XCCDF_GENERIC_GETTER(const char *, check_import, content)
+XCCDF_GENERIC_GETTER(const char *, check_export, name) XCCDF_GENERIC_GETTER(const char *, check_export, value)
+XCCDF_GENERIC_GETTER(const char *, check_content_ref, name) XCCDF_GENERIC_GETTER(const char *, check_content_ref, href)
 
 XCCDF_GENERIC_GETTER(xccdf_strategy_t, fixtext, strategy)
 XCCDF_GENERIC_GETTER(xccdf_level_t, fixtext, disruption)

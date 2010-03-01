@@ -36,7 +36,6 @@ struct xccdf_item *xccdf_value_new(struct xccdf_item *parent, xccdf_value_type_t
 	val->sub.value.values = oscap_htable_new();
 	oscap_htable_add(val->sub.value.values, "", xccdf_value_val_new(type));
 	val->sub.value.value = oscap_htable_get(val->sub.value.values, "");
-	val->sub.value.selector = strdup("");
 	val->sub.value.sources = oscap_list_new();
 	return val;
 }
@@ -400,7 +399,7 @@ void xccdf_value_dump(struct xccdf_item *value, int depth)
 }
 
 XCCDF_STATUS_CURRENT(value)
-XCCDF_VALUE_GETTER_I(struct xccdf_value *, extends)
+//XCCDF_VALUE_GETTER_I(struct xccdf_value *, extends)
 XCCDF_VALUE_GETTER(xccdf_value_type_t, type)
 XCCDF_VALUE_GETTER(xccdf_interface_hint_t, interface_hint)
 XCCDF_VALUE_GETTER(xccdf_operator_t, oper) XCCDF_VALUE_GETTER(const char *, selector) XCCDF_SIGETTER(value, sources)

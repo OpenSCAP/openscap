@@ -60,8 +60,8 @@ struct xccdf_item_base {
 	char *version_update;
 	time_t version_time;
 
-	struct xccdf_item *extends;
 	struct xccdf_item *parent;
+	char *extends;
 	struct oscap_list *statuses;
 	struct oscap_list *references;
 	struct oscap_list *platforms;
@@ -137,7 +137,7 @@ struct xccdf_result_item {
 	char *organization;
 	char *benchmark_uri;
 
-	struct xccdf_item *profile;
+	char *profile;
 	struct oscap_list *identities;
 	struct oscap_list *targets;
 	struct oscap_list *target_addresses;
@@ -159,7 +159,7 @@ struct xccdf_benchmark_item {
 
 	struct oscap_htable *dict;
 	struct oscap_htable *auxdict;
-	struct oscap_list *idrefs;
+//	struct oscap_list *idrefs;
 	struct oscap_list *notices;
 	struct oscap_htable *plain_texts;
 
@@ -211,13 +211,13 @@ struct xccdf_model {
 };
 
 struct xccdf_select {
-	struct xccdf_item *item;
+	char *item;
 	bool selected;
         struct oscap_list *remarks;
 };
 
 struct xccdf_refine_rule {
-	struct xccdf_item *item;
+	char *item;
 	char *remark;
 	char *selector;
 	xccdf_role_t role;
@@ -226,14 +226,14 @@ struct xccdf_refine_rule {
 };
 
 struct xccdf_refine_value {
-	struct xccdf_item *item;
+	char *item;
 	char *remark;
 	char *selector;
 	xccdf_operator_t oper;
 };
 
 struct xccdf_set_value {
-	struct xccdf_item *item;
+	char *item;
 	char *value;
 };
 
@@ -267,7 +267,7 @@ struct xccdf_check_import {
 
 struct xccdf_check_export {
 	char *name;
-	struct xccdf_item *value;
+	char *value;
 };
 
 struct xccdf_profile_note {
@@ -291,7 +291,7 @@ struct xccdf_fixtext {
 	xccdf_strategy_t strategy;
 	xccdf_level_t disruption;
 	xccdf_level_t complexity;
-	struct xccdf_fix *fixref;
+	char *fixref;
 	char *content;
 };
 
@@ -315,7 +315,7 @@ void xccdf_item_free(struct xccdf_item *item);
 
 struct xccdf_item *xccdf_benchmark_new(void);
 bool xccdf_benchmark_parse(struct xccdf_item *benchmark, xmlTextReaderPtr reader);
-bool xccdf_benchmark_add_ref(struct xccdf_item *benchmark, struct xccdf_item **ptr, const char *id, xccdf_type_t type);
+//bool xccdf_benchmark_add_ref(struct xccdf_item *benchmark, struct xccdf_item **ptr, const char *id, xccdf_type_t type);
 void xccdf_benchmark_dump(struct xccdf_benchmark *benchmark);
 
 struct xccdf_item *xccdf_profile_new(struct xccdf_item *bench);
@@ -390,6 +390,7 @@ void xccdf_reference_free(struct xccdf_reference * ref);
 
 // Prototypes to supress compiler warnings
 struct xccdf_warning_iterator *xccdf_profile_get_warnings(const struct xccdf_profile *profile);
+const char *xccdf_benchmark_get_extends(const struct xccdf_benchmark *);
 
 #define MACRO_BLOCK(code) do { code } while(false)
 #define ASSERT_TYPE(item,t) assert((item)->type & t)
