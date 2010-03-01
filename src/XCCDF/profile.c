@@ -102,7 +102,6 @@ struct xccdf_item *xccdf_profile_parse(xmlTextReaderPtr reader, struct xccdf_ite
 		case XCCDFE_SELECT:{
 				struct xccdf_select *sel = oscap_calloc(1, sizeof(struct xccdf_select));
 				sel->selected = xccdf_attribute_get_bool(reader, XCCDFA_SELECTED);
-				//xccdf_benchmark_add_ref(bench, &sel->item, id, XCCDF_RULE | XCCDF_GROUP);
 				sel->item = xccdf_attribute_copy(reader, XCCDFA_IDREF);
 				oscap_list_add(prof->sub.profile.selects, sel);
 				break;
@@ -138,7 +137,6 @@ struct xccdf_item *xccdf_profile_parse(xmlTextReaderPtr reader, struct xccdf_ite
 					rv->oper =
 					    oscap_string_to_enum(XCCDF_OPERATOR_MAP,
 								 xccdf_attribute_get(reader, XCCDFA_OPERATOR));
-				//xccdf_benchmark_add_ref(bench, &rv->item, id, XCCDF_VALUE);
 				///@todo parse remark
 				oscap_list_add(prof->sub.profile.refine_values, rv);
 				break;
@@ -150,11 +148,9 @@ struct xccdf_item *xccdf_profile_parse(xmlTextReaderPtr reader, struct xccdf_ite
 				struct xccdf_set_value *sv = oscap_calloc(1, sizeof(struct xccdf_set_value));
 				sv->item = oscap_strdup(id);
 				sv->value = oscap_element_string_copy(reader);
-				//xccdf_benchmark_add_ref(bench, &sv->item, id, XCCDF_VALUE);
 				oscap_list_add(prof->sub.profile.set_values, sv);
 				break;
 			}
-			//case XCCDFE_
 		default:
 			xccdf_item_process_element(prof, reader);
 		}
@@ -188,7 +184,6 @@ void xccdf_profile_free(struct xccdf_item *prof)
 }
 
 XCCDF_STATUS_CURRENT(profile)
-//XCCDF_PROFILE_GETTER_I(struct xccdf_profile *, extends)
 XCCDF_PROFILE_GETTER(const char *, note_tag)
 XCCDF_PROFILE_IGETTER(select, selects)
 XCCDF_PROFILE_IGETTER(set_value, set_values)

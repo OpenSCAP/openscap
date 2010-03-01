@@ -157,14 +157,10 @@ void xccdf_item_print(struct xccdf_item *item, int depth)
 		}
 		xccdf_print_depth(depth);
 		printf("title   : ");
-		//printf("TODO");//xccdf_print_max(item->item.title, 64, "...");//TODO
         xccdf_print_textlist(oscap_iterator_new(item->item.title), depth + 1, 70, "...");
-		//printf("\n");
 		xccdf_print_depth(depth);
 		printf("desc    : ");
-		//printf("TODO");//xccdf_print_max(item->item.description, 64, "...");//TODO
         xccdf_print_textlist(oscap_iterator_new(item->item.description), depth + 1, 70, "...");
-		//printf("\n");
 		xccdf_print_depth(depth);
 		printf("platforms ");
 		oscap_list_dump(item->item.platforms, xccdf_cstring_dump, depth + 1);
@@ -195,8 +191,6 @@ bool xccdf_item_process_attributes(struct xccdf_item *item, xmlTextReaderPtr rea
 		item->item.weight = xccdf_attribute_get_float(reader, XCCDFA_WEIGHT);
 	if (xccdf_attribute_has(reader, XCCDFA_EXTENDS))
 		item->item.extends = xccdf_attribute_copy(reader, XCCDFA_EXTENDS);
-		/*xccdf_benchmark_add_ref(item->item.benchmark, &item->item.extends,
-					xccdf_attribute_get(reader, XCCDFA_EXTENDS), item->type);*/
 	item->item.cluster_id = xccdf_attribute_copy(reader, XCCDFA_CLUSTER_ID);
 
 	if (item->item.id && item->item.benchmark)
@@ -395,12 +389,6 @@ struct xccdf_model *xccdf_model_new_xml(xmlTextReaderPtr reader)
 }
 
 XCCDF_GENERIC_GETTER(const char *, model, system)
-/*
-static const char *xccdf_model_param(const struct xccdf_model *m, const char *p)
-{
-	return oscap_htable_get(m->params, p);
-}
-*/
 
 static const struct oscap_string_map XCCDF_WARNING_MAP[] = {
 	{ XCCDF_WARNING_GENERAL, "general" },

@@ -32,44 +32,6 @@ struct xccdf_backref {
 	char *id;		// id
 };
 
-/*
-bool xccdf_benchmark_add_ref(struct xccdf_item *benchmark, struct xccdf_item **ptr, const char *id, xccdf_type_t type)
-{
-	assert(benchmark != NULL);
-	if (ptr == NULL || id == NULL)
-		return false;
-	struct xccdf_backref *idref = oscap_calloc(1, sizeof(struct xccdf_backref));
-	idref->ptr = ptr;
-	idref->id = strdup(id);
-	idref->type = type;
-	oscap_list_add(benchmark->sub.bench.idrefs, idref);
-	return true;
-}
-
-static bool xccdf_benchmark_resolve_refs(struct xccdf_item *bench)
-{
-	assert(bench->type == XCCDF_BENCHMARK);
-	bool ret = true;
-	struct oscap_list_item *refitem = bench->sub.bench.idrefs->first;
-	for (refitem = bench->sub.bench.idrefs->first; refitem != NULL; refitem = refitem->next) {
-		struct xccdf_backref *ref = refitem->data;
-		struct xccdf_item *item;
-
-		if (ref->type)
-			item = oscap_htable_get(bench->sub.bench.dict, ref->id);
-		else
-			item = oscap_htable_get(bench->sub.bench.auxdict, ref->id);
-
-		if (item == NULL || (ref->type != 0 && (item->type & ref->type) == 0)) {
-			ret = false;
-			continue;
-		}
-		*ref->ptr = item;
-	}
-	return ret;
-}
-*/
-
 struct xccdf_benchmark *xccdf_benchmark_parse_xml(const char *filename)
 {
 	xmlTextReaderPtr reader = xmlReaderForFile(filename, NULL, 0);
@@ -90,7 +52,6 @@ struct xccdf_item *xccdf_benchmark_new(void)
 	bench->sub.bench.front_matter = oscap_list_new();
 	bench->sub.bench.notices = oscap_list_new();
 	bench->sub.bench.models = oscap_list_new();
-	//bench->sub.bench.idrefs = oscap_list_new();
 	bench->sub.bench.content = oscap_list_new();
 	bench->sub.bench.values = oscap_list_new();
 	bench->sub.bench.plain_texts = oscap_htable_new();
@@ -163,20 +124,8 @@ bool xccdf_benchmark_parse(struct xccdf_item * benchmark, xmlTextReaderPtr reade
 		xmlTextReaderRead(reader);
 	}
 
-	//xccdf_benchmark_resolve_refs(benchmark);
-
 	return true;
 }
-
-/*
-static void xccdf_backref_free(struct xccdf_backref *idref)
-{
-	if (idref) {
-		oscap_free(idref->id);
-		oscap_free(idref);
-	}
-}
-*/
 
 void xccdf_benchmark_dump(struct xccdf_benchmark *benchmark)
 {
@@ -208,7 +157,6 @@ void xccdf_benchmark_free(struct xccdf_benchmark *benchmark)
 		oscap_list_free(bench->sub.bench.rear_matter, (oscap_destruct_func) oscap_text_free);
 		oscap_list_free(bench->sub.bench.notices, (oscap_destruct_func) xccdf_notice_free);
 		oscap_list_free(bench->sub.bench.models, (oscap_destruct_func) xccdf_model_free);
-		//oscap_list_free(bench->sub.bench.idrefs, (oscap_destruct_func) xccdf_backref_free);
 		oscap_list_free(bench->sub.bench.content, (oscap_destruct_func) xccdf_item_free);
 		oscap_list_free(bench->sub.bench.values, (oscap_destruct_func) xccdf_value_free);
 		oscap_htable_free(bench->sub.bench.plain_texts, oscap_free);
@@ -249,22 +197,6 @@ struct xccdf_notice *xccdf_notice_new_parse(xmlTextReaderPtr reader)
     notice->text = oscap_text_new_parse(OSCAP_TEXT_TRAITS_HTML, reader);
     return notice;
 }
-
-/*
-struct xccdf_notice *xccdf_notice_from_string(const char *id, char *string)
-{
-	//return xccdf_notice_from_text(id, oscap_text_from_string("eng-US", string));
-    return NULL; // TODO
-}
-
-struct xccdf_notice *xccdf_notice_from_text(const char *id, struct oscap_text *text)
-{
-	struct xccdf_notice *notice = oscap_calloc(1, sizeof(struct xccdf_notice));
-	notice->id = strdup(id);
-	notice->text = text;
-	return notice;
-}
-*/
 
 void xccdf_notice_dump(struct xccdf_notice *notice, int depth)
 {

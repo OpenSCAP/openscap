@@ -399,7 +399,6 @@ void xccdf_value_dump(struct xccdf_item *value, int depth)
 }
 
 XCCDF_STATUS_CURRENT(value)
-//XCCDF_VALUE_GETTER_I(struct xccdf_value *, extends)
 XCCDF_VALUE_GETTER(xccdf_value_type_t, type)
 XCCDF_VALUE_GETTER(xccdf_interface_hint_t, interface_hint)
 XCCDF_VALUE_GETTER(xccdf_operator_t, oper) XCCDF_VALUE_GETTER(const char *, selector) XCCDF_SIGETTER(value, sources)

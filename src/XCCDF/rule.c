@@ -113,7 +113,6 @@ static bool xccdf_item_parse_deps(xmlTextReaderPtr reader, struct xccdf_item *it
 			while ((id = xccdf_strsep(&ids, ' ')) != NULL) {
 				if (strcmp(id, "") == 0) continue;
 				oscap_list_add(reqs, oscap_strdup(id));
-				//xccdf_benchmark_add_ref(item->item.benchmark, (void *)&reqs->last->data, id, XCCDF_CONTENT);
 			}
 			if (reqs->itemcount == 0) {
 				oscap_list_free(reqs, NULL);
@@ -126,8 +125,6 @@ static bool xccdf_item_parse_deps(xmlTextReaderPtr reader, struct xccdf_item *it
 		}
 	case XCCDFE_CONFLICTS:
 		oscap_list_add(conflicts, xccdf_attribute_copy(reader, XCCDFA_IDREF));
-		/* xccdf_benchmark_add_ref(item->item.benchmark, (void *)&conflicts->last->data,
-					xccdf_attribute_get(reader, XCCDFA_IDREF), XCCDF_CONTENT); */
 		break;
 	default:
 		assert(false);
@@ -478,8 +475,6 @@ struct xccdf_check *xccdf_check_parse(xmlTextReaderPtr reader, struct xccdf_item
 					break;
 				struct xccdf_check_export *exp = oscap_calloc(1, sizeof(struct xccdf_check_export));
 				exp->name = strdup(name);
-				/*xccdf_benchmark_add_ref(parent->item.benchmark, &exp->value,
-							xccdf_attribute_get(reader, XCCDFA_VALUE_ID), XCCDF_VALUE);*/
 				exp->value = xccdf_attribute_copy(reader, XCCDFA_VALUE_ID);
 				oscap_list_add(check->exports, exp);
 				break;
@@ -604,10 +599,7 @@ struct xccdf_fix *xccdf_fix_parse(xmlTextReaderPtr reader, struct xccdf_item *pa
 struct xccdf_fixtext *xccdf_fixtext_parse(xmlTextReaderPtr reader, struct xccdf_item *parent)
 {
 	struct xccdf_fixtext *fix = oscap_calloc(1, sizeof(struct xccdf_fixtext));
-	// TODO resolve fixref
 	fix->fixref = xccdf_attribute_copy(reader, XCCDFA_FIXREF);
-	/* xccdf_benchmark_add_ref(parent->item.benchmark, (void *)&fix->fixref,
-				xccdf_attribute_get(reader, XCCDFA_FIXREF), 0); */
 	XCCDF_FIXCOMMON_PARSE(reader, fix);
 	return fix;
 }
@@ -632,10 +624,8 @@ void xccdf_fix_free(struct xccdf_fix *item)
 }
 
 XCCDF_STATUS_CURRENT(rule)
-    XCCDF_STATUS_CURRENT(group)
-
-    XCCDF_GROUP_IGETTER(item, content)
-    //XCCDF_GROUP_GETTER_I(struct xccdf_group *, extends)
+XCCDF_STATUS_CURRENT(group)
+XCCDF_GROUP_IGETTER(item, content)
 
 XCCDF_RULE_GETTER(const char *, impact_metric)
 XCCDF_RULE_GETTER(xccdf_role_t, role)
@@ -646,7 +636,6 @@ XCCDF_RULE_IGETTER(check, checks)
 XCCDF_RULE_IGETTER(profile_note, profile_notes)
 XCCDF_RULE_IGETTER(fix, fixes)
 XCCDF_RULE_IGETTER(fixtext, fixtexts)
-//XCCDF_RULE_GETTER_I(struct xccdf_rule *, extends)
 XCCDF_ITERATOR_GEN_S(ident)
 
 XCCDF_GENERIC_GETTER(const char *, check, id)
