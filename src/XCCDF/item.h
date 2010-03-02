@@ -142,7 +142,7 @@ struct xccdf_result_item {
 	struct oscap_list *targets;
 	struct oscap_list *target_addresses;
 	struct oscap_list *target_facts;
-	struct oscap_list *set_values;
+	struct oscap_list *setvalues;
 	struct oscap_list *rule_results;
 	struct oscap_list *scores;
 };
@@ -150,7 +150,7 @@ struct xccdf_result_item {
 struct xccdf_profile_item {
 	char *note_tag;
 	struct oscap_list *selects;
-	struct oscap_list *set_values;
+	struct oscap_list *setvalues;
 	struct oscap_list *refine_values;
 	struct oscap_list *refine_rules;
 };
@@ -230,7 +230,7 @@ struct xccdf_refine_value {
 	struct oscap_list *remarks;
 };
 
-struct xccdf_set_value {
+struct xccdf_setvalue {
 	char *item;
 	char *value;
 };
@@ -313,7 +313,6 @@ void xccdf_item_free(struct xccdf_item *item);
 
 struct xccdf_item *xccdf_benchmark_new(void);
 bool xccdf_benchmark_parse(struct xccdf_item *benchmark, xmlTextReaderPtr reader);
-//bool xccdf_benchmark_add_ref(struct xccdf_item *benchmark, struct xccdf_item **ptr, const char *id, xccdf_type_t type);
 void xccdf_benchmark_dump(struct xccdf_benchmark *benchmark);
 
 struct xccdf_item *xccdf_profile_new(struct xccdf_item *bench);
@@ -376,13 +375,13 @@ struct xccdf_fix *xccdf_fix_parse(xmlTextReaderPtr reader, struct xccdf_item *pa
 struct xccdf_fixtext *xccdf_fixtext_parse(xmlTextReaderPtr reader, struct xccdf_item *parent);
 void xccdf_fixtext_free(struct xccdf_fixtext *item);
 void xccdf_fix_free(struct xccdf_fix *item);
-void xccdf_set_value_free(struct xccdf_set_value *sv);
+void xccdf_setvalue_free(struct xccdf_setvalue *sv);
 
 
 struct xccdf_refine_value *xccdf_refine_value_new(void);
 struct xccdf_refine_rule *xccdf_refine_rule_new(void);
 struct xccdf_select *xccdf_select_new(void);
-void xccdf_set_value_free(struct xccdf_set_value *sv);
+void xccdf_setvalue_free(struct xccdf_setvalue *sv);
 void xccdf_refine_value_free(struct xccdf_refine_value *rv);
 void xccdf_refine_rule_free(struct xccdf_refine_rule *rr);
 void xccdf_select_free(struct xccdf_select *sel);

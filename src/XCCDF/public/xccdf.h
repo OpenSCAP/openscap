@@ -297,11 +297,11 @@ struct xccdf_warning;
  */
 struct xccdf_select;
 
-/** @struct xccdf_set_value
+/** @struct xccdf_setvalue
  * XCCDF set value option used in the profile.
  * @ingroup profile
  */
-struct xccdf_set_value;
+struct xccdf_setvalue;
 
 /** @struct xccdf_refine_value
  * XCCDF refine value option used in the profile.
@@ -454,17 +454,17 @@ bool xccdf_select_iterator_has_more(struct xccdf_select_iterator *it);
 /// @memberof xccdf_select_iterator
 void xccdf_select_iterator_free(struct xccdf_select_iterator *it);
 
-/** @struct xccdf_set_value_iterator
+/** @struct xccdf_setvalue_iterator
  * Set value iterator.
  * @see oscap_iterator
  */
-struct xccdf_set_value_iterator;
-/// @memberof xccdf_set_value_iterator
-struct xccdf_set_value *xccdf_set_value_iterator_next(struct xccdf_set_value_iterator *it);
-/// @memberof xccdf_set_value_iterator
-bool xccdf_set_value_iterator_has_more(struct xccdf_set_value_iterator *it);
-/// @memberof xccdf_set_value_iterator
-void xccdf_set_value_iterator_free(struct xccdf_set_value_iterator *it);
+struct xccdf_setvalue_iterator;
+/// @memberof xccdf_setvalue_iterator
+struct xccdf_setvalue *xccdf_setvalue_iterator_next(struct xccdf_setvalue_iterator *it);
+/// @memberof xccdf_setvalue_iterator
+bool xccdf_setvalue_iterator_has_more(struct xccdf_setvalue_iterator *it);
+/// @memberof xccdf_setvalue_iterator
+void xccdf_setvalue_iterator_free(struct xccdf_setvalue_iterator *it);
 
 /** @struct xccdf_refine_value_iterator
  * Refine value iterator.
@@ -971,7 +971,7 @@ struct xccdf_select_iterator *xccdf_profile_get_selects(const struct xccdf_profi
  * Get an iterator to the set value options of the profile.
  * @memberof xccdf_profile
  */
-struct xccdf_set_value_iterator *xccdf_profile_get_set_values(const struct xccdf_profile *profile);
+struct xccdf_setvalue_iterator *xccdf_profile_get_setvalues(const struct xccdf_profile *profile);
 
 /**
  * Get an iterator to the refine value options of the profile.
@@ -1974,6 +1974,11 @@ const char *     xccdf_refine_value_get_selector(const struct xccdf_refine_value
 xccdf_operator_t xccdf_refine_value_get_oper(const struct xccdf_refine_value* rv);
 /// @memberof xccdf_refine_value
 struct oscap_text_iterator* xccdf_refine_value_get_remarks(const struct xccdf_refine_value *rv);
+
+/// @memberof xccdf_set_value
+const char *xccdf_setvalue_get_item(const struct xccdf_setvalue* sv);
+/// @memberof xccdf_set_value
+const char *xccdf_setvalue_get_value(const struct xccdf_setvalue* sv);
 
 /**
  * Release library internal caches.

@@ -22,7 +22,7 @@
 
 #include "item.h"
 
-void xccdf_set_value_free(struct xccdf_set_value *sv)
+void xccdf_setvalue_free(struct xccdf_setvalue *sv)
 {
 	if (sv) {
 		oscap_free(sv->item);
@@ -96,6 +96,11 @@ static void xccdf_refine_value_dump(struct xccdf_refine_value *rv, int depth)
 	// oscap_text_dump(); // TODO
 }
 
+static void xccdf_setvalue_dump(struct xccdf_setvalue *sv, int depth)
+{
+	xccdf_print_depth(depth); printf("%s: %s", sv->item, sv->value);
+}
+
 
 struct xccdf_item *xccdf_profile_new(struct xccdf_item *bench)
 {
@@ -103,7 +108,7 @@ struct xccdf_item *xccdf_profile_new(struct xccdf_item *bench)
 		assert(bench->type == XCCDF_BENCHMARK);
 	struct xccdf_item *prof = xccdf_item_new(XCCDF_PROFILE, bench, bench);
 	prof->sub.profile.selects = oscap_list_new();
-	prof->sub.profile.set_values = oscap_list_new();
+	prof->sub.profile.setvalues = oscap_list_new();
 	prof->sub.profile.refine_values = oscap_list_new();
 	prof->sub.profile.refine_rules = oscap_list_new();
 	return prof;
@@ -184,10 +189,10 @@ struct xccdf_item *xccdf_profile_parse(xmlTextReaderPtr reader, struct xccdf_ite
 				const char *id = xccdf_attribute_get(reader, XCCDFA_IDREF);
 				if (id == NULL)
 					break;
-				struct xccdf_set_value *sv = oscap_calloc(1, sizeof(struct xccdf_set_value));
+				struct xccdf_setvalue *sv = oscap_calloc(1, sizeof(struct xccdf_setvalue));
 				sv->item = oscap_strdup(id);
 				sv->value = oscap_element_string_copy(reader);
-				oscap_list_add(prof->sub.profile.set_values, sv);
+				oscap_list_add(prof->sub.profile.setvalues, sv);
 				break;
 			}
 		default:
@@ -210,13 +215,15 @@ void xccdf_profile_dump(struct xccdf_item *prof, int depth)
 	oscap_list_dump(prof->sub.profile.selects, (oscap_dump_func) xccdf_select_dump, depth + 2);
 	xccdf_print_depth(depth + 1); printf("refine values ");
 	oscap_list_dump(prof->sub.profile.refine_values, (oscap_dump_func) xccdf_refine_value_dump, depth + 2);
+	xccdf_print_depth(depth + 1); printf("set values ");
+	oscap_list_dump(prof->sub.profile.setvalues, (oscap_dump_func) xccdf_setvalue_dump, depth + 2);
 }
 
 void xccdf_profile_free(struct xccdf_item *prof)
 {
 	if (prof) {
 		oscap_list_free(prof->sub.profile.selects, (oscap_destruct_func) xccdf_select_free);
-		oscap_list_free(prof->sub.profile.set_values, (oscap_destruct_func) xccdf_set_value_free);
+		oscap_list_free(prof->sub.profile.setvalues, (oscap_destruct_func) xccdf_setvalue_free);
 		oscap_list_free(prof->sub.profile.refine_values, (oscap_destruct_func) xccdf_refine_value_free);
 		oscap_list_free(prof->sub.profile.refine_rules, (oscap_destruct_func) xccdf_refine_rule_free);
 		xccdf_item_release(prof);
@@ -226,12 +233,12 @@ void xccdf_profile_free(struct xccdf_item *prof)
 XCCDF_STATUS_CURRENT(profile)
 XCCDF_PROFILE_GETTER(const char *, note_tag)
 XCCDF_PROFILE_IGETTER(select, selects)
-XCCDF_PROFILE_IGETTER(set_value, set_values)
+XCCDF_PROFILE_IGETTER(setvalue, setvalues)
 XCCDF_PROFILE_IGETTER(refine_value, refine_values)
 XCCDF_PROFILE_IGETTER(refine_rule, refine_rules)
 XCCDF_ITERATOR_GEN_S(profile_note)
 XCCDF_ITERATOR_GEN_S(refine_value)
-XCCDF_ITERATOR_GEN_S(refine_rule) XCCDF_ITERATOR_GEN_S(set_value) XCCDF_ITERATOR_GEN_S(select)
+XCCDF_ITERATOR_GEN_S(refine_rule) XCCDF_ITERATOR_GEN_S(setvalue) XCCDF_ITERATOR_GEN_S(select)
 OSCAP_GETTER(const char *, xccdf_select, item)
 OSCAP_GETTER(bool, xccdf_select, selected)
 OSCAP_IGETTER(oscap_text, xccdf_select, remarks)
@@ -244,3 +251,5 @@ OSCAP_GETTER(const char *, xccdf_refine_value, item)
 OSCAP_GETTER(const char *, xccdf_refine_value, selector)
 OSCAP_GETTER(xccdf_operator_t, xccdf_refine_value, oper)
 OSCAP_IGETTER(oscap_text, xccdf_refine_value, remarks)
+OSCAP_GETTER(const char *, xccdf_setvalue, item)
+OSCAP_GETTER(const char *, xccdf_setvalue, value)
