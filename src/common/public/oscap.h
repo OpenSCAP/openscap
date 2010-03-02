@@ -178,6 +178,31 @@ void oscap_string_iterator_free(struct oscap_string_iterator *it);
 void oscap_string_iterator_remove(struct oscap_string_iterator *it);
 
 /**
+ * @struct oscap_stringlist
+ * A collection of strings.
+ */
+struct oscap_stringlist;
+/// @relates oscap_stringlist
+struct oscap_string_iterator *oscap_stringlist_get_strings(const struct oscap_stringlist* list);
+/// @relates oscap_stringlist
+bool oscap_stringlist_add_string(struct oscap_stringlist* list, const char *str);
+
+/**
+ * @struct oscap_stringlist_iterator
+ * Iterator over collections of strings.
+ * @see oscap_iterator
+ */
+struct oscap_stringlist_iterator;
+/// @relates oscap_stringlist_iterator
+struct oscap_stringlist *oscap_stringlist_iterator_next(struct oscap_stringlist_iterator *it);
+/// @relates oscap_stringlist_iterator
+bool oscap_stringlist_iterator_has_more(struct oscap_stringlist_iterator *it);
+/// @relates oscap_stringlist_iterator
+void oscap_stringlist_iterator_free(struct oscap_stringlist_iterator *it);
+/// @relates oscap_stringlist_iterator
+void oscap_stringlist_iterator_remove(struct oscap_stringlist_iterator *it);
+
+/**
  * @struct oscap_title
  * Title of an OpenScap element.
  */

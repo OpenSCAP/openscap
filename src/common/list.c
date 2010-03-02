@@ -182,26 +182,35 @@ void oscap_iterator_free(struct oscap_iterator *it)
 void *oscap_iterator_next(struct oscap_iterator *it)
 {
 	__attribute__nonnull__(it);
-	//if (!it->cur) return NULL;
-	//void* ret = it->cur->data;
-	//it->cur = it->cur->next;
 	oscap_iterator_find_nearest(it);
 	return it->cur->data;
 }
 
-bool oscap_iterator_has_more(struct oscap_iterator * it)
+bool oscap_iterator_has_more(struct oscap_iterator *it)
 {
 	__attribute__nonnull__(it);
 	return (!it->cur && it->list->first) || (it->cur && it->cur->next);
-	/*
-	   if (it->cur) return true;
-	   // oscap_iterator_free(it);
-	   return false;
-	 */
+}
+
+struct oscap_string_iterator *oscap_stringlist_get_strings(const struct oscap_stringlist* list)
+{
+	return oscap_iterator_new((struct oscap_list *) list);
+}
+
+bool oscap_stringlist_add_string(struct oscap_stringlist* list, const char *str)
+{
+	return oscap_list_add((struct oscap_list *) list, strdup(str));
+}
+
+inline static void oscap_stringlist_free(struct oscap_stringlist *list)
+{
+	oscap_list_free((struct oscap_list *) list, oscap_free);
 }
 
 OSCAP_ITERATOR_GEN_T(const char *, oscap_string)
 OSCAP_ITERATOR_REMOVE_T(const char *, oscap_string, free)
+OSCAP_ITERATOR_GEN(oscap_stringlist)
+OSCAP_ITERATOR_REMOVE(oscap_stringlist, oscap_stringlist_free)
 
 
 #define OSCAP_DEFAULT_HSIZE 256
