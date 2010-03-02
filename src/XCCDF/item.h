@@ -212,23 +212,23 @@ struct xccdf_model {
 struct xccdf_select {
 	char *item;
 	bool selected;
-        struct oscap_list *remarks;
+	struct oscap_list *remarks;
 };
 
 struct xccdf_refine_rule {
 	char *item;
-	char *remark;
 	char *selector;
 	xccdf_role_t role;
 	xccdf_level_t severity;
 	float weight;
+	struct oscap_list *remarks;
 };
 
 struct xccdf_refine_value {
 	char *item;
-	char *remark;
 	char *selector;
 	xccdf_operator_t oper;
+	struct oscap_list *remarks;
 };
 
 struct xccdf_set_value {
@@ -378,6 +378,15 @@ struct xccdf_fixtext *xccdf_fixtext_parse(xmlTextReaderPtr reader, struct xccdf_
 void xccdf_fixtext_free(struct xccdf_fixtext *item);
 void xccdf_fix_free(struct xccdf_fix *item);
 void xccdf_set_value_free(struct xccdf_set_value *sv);
+
+
+struct xccdf_refine_value *xccdf_refine_value_new(void);
+struct xccdf_refine_rule *xccdf_refine_rule_new(void);
+struct xccdf_select *xccdf_select_new(void);
+void xccdf_set_value_free(struct xccdf_set_value *sv);
+void xccdf_refine_value_free(struct xccdf_refine_value *rv);
+void xccdf_refine_rule_free(struct xccdf_refine_rule *rr);
+void xccdf_select_free(struct xccdf_select *sel);
 
 struct xccdf_warning *xccdf_warning_new(void);
 struct xccdf_warning *xccdf_warning_new_parse(xmlTextReaderPtr reader);

@@ -31,30 +31,52 @@ void xccdf_set_value_free(struct xccdf_set_value *sv)
 	}
 }
 
-static void xccdf_refine_value_free(struct xccdf_refine_value *rv)
+struct xccdf_refine_value *xccdf_refine_value_new(void)
+{
+	struct xccdf_refine_value *foo = oscap_calloc(1, sizeof(struct xccdf_refine_value));
+	foo->remarks = oscap_list_new();
+	return foo;
+}
+
+struct xccdf_refine_rule *xccdf_refine_rule_new(void)
+{
+	struct xccdf_refine_rule *foo = oscap_calloc(1, sizeof(struct xccdf_refine_rule));
+	foo->remarks = oscap_list_new();
+	return foo;
+}
+
+struct xccdf_select *xccdf_select_new(void)
+{
+	struct xccdf_select *foo = oscap_calloc(1, sizeof(struct xccdf_select));
+	foo->remarks = oscap_list_new();
+	return foo;
+}
+
+void xccdf_refine_value_free(struct xccdf_refine_value *rv)
 {
 	if (rv) {
 		oscap_free(rv->item);
-		oscap_free(rv->remark);
+		oscap_list_free(rv->remarks, (oscap_destruct_func) oscap_text_free);
 		oscap_free(rv->selector);
 		oscap_free(rv);
 	}
 }
 
-static void xccdf_refine_rule_free(struct xccdf_refine_rule *rr)
+void xccdf_refine_rule_free(struct xccdf_refine_rule *rr)
 {
 	if (rr) {
 		oscap_free(rr->item);
-		oscap_free(rr->remark);
+		oscap_list_free(rr->remarks, (oscap_destruct_func) oscap_text_free);
 		oscap_free(rr->selector);
 		oscap_free(rr);
 	}
 }
 
-static void xccdf_select_free(struct xccdf_select *sel)
+void xccdf_select_free(struct xccdf_select *sel)
 {
 	if (sel) {
 		oscap_free(sel->item);
+		oscap_list_free(sel->remarks, (oscap_destruct_func) oscap_text_free);
 		oscap_free(sel);
 	}
 }
@@ -63,6 +85,15 @@ static void xccdf_select_dump(struct xccdf_select *sel, int depth)
 {
 	xccdf_print_depth(depth);
 	printf("sel %c= %s\n", (sel->selected ? '+' : '-'), (sel->item ? sel->item : "(unknown)"));
+	// oscap_text_dump(); // TODO
+}
+
+static void xccdf_refine_value_dump(struct xccdf_refine_value *rv, int depth)
+{
+	xccdf_print_depth(depth);
+	printf("%s: selector='%s', operator='%s'\n", 
+			rv->item, rv->selector, oscap_enum_to_string(XCCDF_OPERATOR_MAP, rv->oper));
+	// oscap_text_dump(); // TODO
 }
 
 
@@ -85,6 +116,13 @@ const struct oscap_string_map XCCDF_ROLE_MAP[] = {
 	{0, NULL}
 };
 
+static void xccdf_parse_remarks(xmlTextReaderPtr reader, struct oscap_list* list, int depth)
+{
+	while (oscap_to_start_element(reader, depth))
+		if (xccdf_element_get(reader) == XCCDFE_REMARK)
+			oscap_list_add(list, oscap_text_new_parse(OSCAP_TEXT_TRAITS_PLAIN, reader));
+}
+
 struct xccdf_item *xccdf_profile_parse(xmlTextReaderPtr reader, struct xccdf_item *bench)
 {
 	XCCDF_ASSERT_ELEMENT(reader, XCCDFE_PROFILE);
@@ -100,9 +138,10 @@ struct xccdf_item *xccdf_profile_parse(xmlTextReaderPtr reader, struct xccdf_ite
 	while (oscap_to_start_element(reader, depth)) {
 		switch (xccdf_element_get(reader)) {
 		case XCCDFE_SELECT:{
-				struct xccdf_select *sel = oscap_calloc(1, sizeof(struct xccdf_select));
+				struct xccdf_select *sel = xccdf_select_new();
 				sel->selected = xccdf_attribute_get_bool(reader, XCCDFA_SELECTED);
 				sel->item = xccdf_attribute_copy(reader, XCCDFA_IDREF);
+				xccdf_parse_remarks(reader, sel->remarks, depth + 1);
 				oscap_list_add(prof->sub.profile.selects, sel);
 				break;
 			}
@@ -110,7 +149,7 @@ struct xccdf_item *xccdf_profile_parse(xmlTextReaderPtr reader, struct xccdf_ite
 				const char *id = xccdf_attribute_get(reader, XCCDFA_IDREF);
 				if (id == NULL)
 					break;
-				struct xccdf_refine_rule *rr = oscap_calloc(1, sizeof(struct xccdf_refine_rule));
+				struct xccdf_refine_rule *rr = xccdf_refine_rule_new();
 				rr->item = oscap_strdup(id);
 				rr->selector = xccdf_attribute_copy(reader, XCCDFA_SELECTOR);
 				rr->weight = xccdf_attribute_get_float(reader, XCCDFA_WEIGHT);
@@ -122,7 +161,7 @@ struct xccdf_item *xccdf_profile_parse(xmlTextReaderPtr reader, struct xccdf_ite
 					rr->severity =
 					    oscap_string_to_enum(XCCDF_LEVEL_MAP,
 								 xccdf_attribute_get(reader, XCCDFA_SEVERITY));
-				///@todo parse remark
+				xccdf_parse_remarks(reader, rr->remarks, depth + 1);
 				oscap_list_add(prof->sub.profile.refine_rules, rr);
 				break;
 			}
@@ -130,14 +169,14 @@ struct xccdf_item *xccdf_profile_parse(xmlTextReaderPtr reader, struct xccdf_ite
 				const char *id = xccdf_attribute_get(reader, XCCDFA_IDREF);
 				if (id == NULL)
 					break;
-				struct xccdf_refine_value *rv = oscap_calloc(1, sizeof(struct xccdf_refine_value));
+				struct xccdf_refine_value *rv = xccdf_refine_value_new();
 				rv->item = oscap_strdup(id);
 				rv->selector = xccdf_attribute_copy(reader, XCCDFA_SELECTOR);
 				if (xccdf_attribute_has(reader, XCCDFA_OPERATOR))
 					rv->oper =
 					    oscap_string_to_enum(XCCDF_OPERATOR_MAP,
 								 xccdf_attribute_get(reader, XCCDFA_OPERATOR));
-				///@todo parse remark
+				xccdf_parse_remarks(reader, rv->remarks, depth + 1);
 				oscap_list_add(prof->sub.profile.refine_values, rv);
 				break;
 			}
@@ -167,9 +206,10 @@ void xccdf_profile_dump(struct xccdf_item *prof, int depth)
 	if (prof == NULL)
 		return;
 	xccdf_item_print(prof, depth + 1);
-	xccdf_print_depth(depth + 1);
-	printf("selects ");
+	xccdf_print_depth(depth + 1); printf("selects ");
 	oscap_list_dump(prof->sub.profile.selects, (oscap_dump_func) xccdf_select_dump, depth + 2);
+	xccdf_print_depth(depth + 1); printf("refine values ");
+	oscap_list_dump(prof->sub.profile.refine_values, (oscap_dump_func) xccdf_refine_value_dump, depth + 2);
 }
 
 void xccdf_profile_free(struct xccdf_item *prof)
@@ -194,3 +234,13 @@ XCCDF_ITERATOR_GEN_S(refine_value)
 XCCDF_ITERATOR_GEN_S(refine_rule) XCCDF_ITERATOR_GEN_S(set_value) XCCDF_ITERATOR_GEN_S(select)
 OSCAP_GETTER(const char *, xccdf_select, item)
 OSCAP_GETTER(bool, xccdf_select, selected)
+OSCAP_IGETTER(oscap_text, xccdf_select, remarks)
+OSCAP_GETTER(const char *, xccdf_refine_rule, item)
+OSCAP_GETTER(const char *, xccdf_refine_rule, selector)
+OSCAP_GETTER(xccdf_role_t, xccdf_refine_rule, role)
+OSCAP_GETTER(xccdf_level_t, xccdf_refine_rule, severity)
+OSCAP_IGETTER(oscap_text, xccdf_refine_rule, remarks)
+OSCAP_GETTER(const char *, xccdf_refine_value, item)
+OSCAP_GETTER(const char *, xccdf_refine_value, selector)
+OSCAP_GETTER(xccdf_operator_t, xccdf_refine_value, oper)
+OSCAP_IGETTER(oscap_text, xccdf_refine_value, remarks)

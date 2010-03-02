@@ -1942,16 +1942,38 @@ const char *xccdf_reference_get_lang(const struct xccdf_reference *reference);
 /// @memberof xccdf_select
 bool xccdf_select_get_selected(const struct xccdf_select *select);
 /// @memberof xccdf_select
-//const char *xccdf_select_get_idref(const struct xccdf_select *select);
+const char *xccdf_select_get_item(const struct xccdf_select *select);
 /// @memberof xccdf_select
-//const char *xccdf_select_get_remark(const struct xccdf_select *select);
+struct oscap_text_iterator *xccdf_select_get_remarks(const struct xccdf_select *select);
 /// @memberof xccdf_select
 const char *xccdf_select_get_item(const struct xccdf_select *select);
+/// @mamberof xccdf_select
+struct oscap_text_iterator* xccdf_select_get_remarks(const struct xccdf_select *sel);
 
 /// @memberof xccdf_warning
 xccdf_warning_category_t xccdf_warning_get_category(const struct xccdf_warning *warning);
 /// @memberof xccdf_warning
 struct oscap_text *xccdf_warning_get_text(const struct xccdf_warning *warning);
+
+/// @memeberof xccdf_refine_rule
+const char *  xccdf_refine_rule_get_item(const struct xccdf_refine_rule* rr);
+/// @memeberof xccdf_refine_rule
+const char *  xccdf_refine_rule_get_selector(const struct xccdf_refine_rule* rr);
+/// @memeberof xccdf_refine_rule
+xccdf_role_t  xccdf_refine_rule_get_role(const struct xccdf_refine_rule* rr);
+/// @memeberof xccdf_refine_rule
+xccdf_level_t xccdf_refine_rule_get_severity(const struct xccdf_refine_rule* rr);
+/// @memeberof xccdf_refine_rule
+struct oscap_text_iterator* xccdf_refine_rule_get_remarks(const struct xccdf_refine_rule *rr);
+
+/// @memberof xccdf_refine_value
+const char *     xccdf_refine_value_get_item(const struct xccdf_refine_value* rv);
+/// @memberof xccdf_refine_value
+const char *     xccdf_refine_value_get_selector(const struct xccdf_refine_value* rv);
+/// @memberof xccdf_refine_value
+xccdf_operator_t xccdf_refine_value_get_oper(const struct xccdf_refine_value* rv);
+/// @memberof xccdf_refine_value
+struct oscap_text_iterator* xccdf_refine_value_get_remarks(const struct xccdf_refine_value *rv);
 
 /**
  * Release library internal caches.
