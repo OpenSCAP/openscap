@@ -52,8 +52,6 @@ bool xccdf_content_parse(xmlTextReaderPtr reader, struct xccdf_item *parent)
 	case XCCDFE_GROUP:
 		item = xccdf_group_parse(reader, parent);
 		break;
-	case XCCDFE_VALUE:	   /** @todo implement */
-		break;
 	default:
 		assert(false);
 	}
@@ -298,7 +296,7 @@ struct xccdf_item *xccdf_rule_parse(xmlTextReaderPtr reader, struct xccdf_item *
 					break;
 				struct xccdf_profile_note *note = oscap_calloc(1, sizeof(struct xccdf_profile_note));
 				note->reftag = strdup(tag);
-				////note->text = oscap_text_from_string("eng-US",oscap_get_xml(reader));
+				note->text = oscap_text_new_parse(OSCAP_TEXT_TRAITS_HTML, reader);
 				oscap_list_add(rule->sub.rule.profile_notes, note);
 				break;
 			}
