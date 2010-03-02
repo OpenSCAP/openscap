@@ -385,57 +385,57 @@ cat <<EOF
 
     <!-- check="all" -->
 
-    <rpminfo_test version="1" id="oval:1:tst:1" check="all" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:1" check="all" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:2" check="all" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:2" check="all" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:3" check="all" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:3" check="all" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:3"/>
     </rpminfo_test>
 
     <!-- check="at least one" -->
 
-    <rpminfo_test version="1" id="oval:1:tst:4" check="at least one" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:4" check="at least one" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:5" check="at least one" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:5" check="at least one" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:6" check="at least one" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:6" check="at least one" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:3"/>
     </rpminfo_test>
 
     <!-- check="none satisfy" -->
 
-    <rpminfo_test version="1" id="oval:1:tst:7" check="none satisfy" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:7" check="none satisfy" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:8" check="none satisfy" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:8" check="none satisfy" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:9" check="none satisfy" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:9" check="none satisfy" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:3"/>
     </rpminfo_test>
 
     <!-- check="only one" -->
 
-    <rpminfo_test version="1" id="oval:1:tst:10" check="only one" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:10" check="only one" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:11" check="only one" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:11" check="only one" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:12" check="only one" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:12" check="only one" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:3"/>
     </rpminfo_test>
 
@@ -443,281 +443,281 @@ cat <<EOF
 
     <!-- check_existence="all_exist" check="all" -->
 
-    <rpminfo_test version="1" id="oval:1:tst:13" check_existence="all_exist" check="all" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:13" check_existence="all_exist" check="all" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:14" check_existence="all_exist" check="all" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:14" check_existence="all_exist" check="all" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:15" check_existence="all_exist" check="all" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:15" check_existence="all_exist" check="all" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:3"/>
     </rpminfo_test>
 
     <!-- check_existence="all_exist" check="at least one" -->
 
-    <rpminfo_test version="1" id="oval:1:tst:16" check_existence="all_exist" check="at least one" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:16" check_existence="all_exist" check="at least one" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:17" check_existence="all_exist" check="at least one" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:17" check_existence="all_exist" check="at least one" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:18" check_existence="all_exist" check="at least one" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:18" check_existence="all_exist" check="at least one" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:3"/>
     </rpminfo_test>
 
     <!-- check_existence="all_exist" check="none satisfy" -->
 
-    <rpminfo_test version="1" id="oval:1:tst:19" check_existence="all_exist" check="none satisfy" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:19" check_existence="all_exist" check="none satisfy" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:20" check_existence="all_exist" check="none satisfy" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:20" check_existence="all_exist" check="none satisfy" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:21" check_existence="all_exist" check="none satisfy" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:21" check_existence="all_exist" check="none satisfy" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:3"/>
     </rpminfo_test>
 
     <!-- check_existence="all_exist" check="only one" -->
 
-    <rpminfo_test version="1" id="oval:1:tst:22" check_existence="all_exist" check="only one" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:22" check_existence="all_exist" check="only one" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:23" check_existence="all_exist" check="only one" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:23" check_existence="all_exist" check="only one" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:24" check_existence="all_exist" check="only one" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:24" check_existence="all_exist" check="only one" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:3"/>
     </rpminfo_test>
 
     <!-- check_existence="at_least_one_exists" check="all" -->
 
-    <rpminfo_test version="1" id="oval:1:tst:25" check_existence="at_least_one_exists" check="all" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:25" check_existence="at_least_one_exists" check="all" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:26" check_existence="at_least_one_exists" check="all" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:26" check_existence="at_least_one_exists" check="all" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:27" check_existence="at_least_one_exists" check="all" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:27" check_existence="at_least_one_exists" check="all" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:3"/>
     </rpminfo_test>
 
     <!-- check_existence="at_least_one_exists" check="at least one" -->
 
-    <rpminfo_test version="1" id="oval:1:tst:28" check_existence="at_least_one_exists" check="at least one" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:28" check_existence="at_least_one_exists" check="at least one" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:29" check_existence="at_least_one_exists" check="at least one" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:29" check_existence="at_least_one_exists" check="at least one" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:30" check_existence="at_least_one_exists" check="at least one" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:30" check_existence="at_least_one_exists" check="at least one" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:3"/>
     </rpminfo_test>
 
     <!-- check_existence="at_least_one_exists" check="none satisfy" -->
 
-    <rpminfo_test version="1" id="oval:1:tst:31" check_existence="at_least_one_exists" check="none satisfy" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:31" check_existence="at_least_one_exists" check="none satisfy" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:32" check_existence="at_least_one_exists" check="none satisfy" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:32" check_existence="at_least_one_exists" check="none satisfy" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:33" check_existence="at_least_one_exists" check="none satisfy" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:33" check_existence="at_least_one_exists" check="none satisfy" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:3"/>
     </rpminfo_test>
 
     <!-- check_existence="at_least_one_exists" check="only one" -->
 
-    <rpminfo_test version="1" id="oval:1:tst:34" check_existence="at_least_one_exists" check="only one" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:34" check_existence="at_least_one_exists" check="only one" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:35" check_existence="at_least_one_exists" check="only one" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:35" check_existence="at_least_one_exists" check="only one" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:36" check_existence="at_least_one_exists" check="only one" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:36" check_existence="at_least_one_exists" check="only one" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:3"/>
     </rpminfo_test>
 
     <!-- check_existence="any_exist" check="all" -->
 
-    <rpminfo_test version="1" id="oval:1:tst:37" check_existence="any_exist" check="all" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:37" check_existence="any_exist" check="all" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:38" check_existence="any_exist" check="all" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:38" check_existence="any_exist" check="all" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:39" check_existence="any_exist" check="all" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:39" check_existence="any_exist" check="all" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:3"/>
     </rpminfo_test>
 
     <!-- check_existence="any_exist" check="at least one" -->
 
-    <rpminfo_test version="1" id="oval:1:tst:40" check_existence="any_exist" check="at least one" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:40" check_existence="any_exist" check="at least one" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:41" check_existence="any_exist" check="at least one" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:41" check_existence="any_exist" check="at least one" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:42" check_existence="any_exist" check="at least one" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:42" check_existence="any_exist" check="at least one" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:3"/>
     </rpminfo_test>
 
     <!-- check_existence="any_exist" check="none satisfy" -->
 
-    <rpminfo_test version="1" id="oval:1:tst:43" check_existence="any_exist" check="none satisfy" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:43" check_existence="any_exist" check="none satisfy" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:44" check_existence="any_exist" check="none satisfy" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:44" check_existence="any_exist" check="none satisfy" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:45" check_existence="any_exist" check="none satisfy" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:45" check_existence="any_exist" check="none satisfy" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:3"/>
     </rpminfo_test>
 
     <!-- check_existence="any_exist" check="only one" -->
 
-    <rpminfo_test version="1" id="oval:1:tst:46" check_existence="any_exist" check="only one" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:46" check_existence="any_exist" check="only one" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:47" check_existence="any_exist" check="only one" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:47" check_existence="any_exist" check="only one" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:48" check_existence="any_exist" check="only one" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:48" check_existence="any_exist" check="only one" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:3"/>
     </rpminfo_test>
 
     <!-- check_existence="none_exist" check="all" -->
 
-    <rpminfo_test version="1" id="oval:1:tst:49" check_existence="none_exist" check="all" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:49" check_existence="none_exist" check="all" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:50" check_existence="none_exist" check="all" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:50" check_existence="none_exist" check="all" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:51" check_existence="none_exist" check="all" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:51" check_existence="none_exist" check="all" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:3"/>
     </rpminfo_test>
 
     <!-- check_existence="none_exist" check="at least one" -->
 
-    <rpminfo_test version="1" id="oval:1:tst:52" check_existence="none_exist" check="at least one" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:52" check_existence="none_exist" check="at least one" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:53" check_existence="none_exist" check="at least one" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:53" check_existence="none_exist" check="at least one" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:54" check_existence="none_exist" check="at least one" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:54" check_existence="none_exist" check="at least one" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:3"/>
     </rpminfo_test>
 
     <!-- check_existence="none_exist" check="none satisfy" -->
 
-    <rpminfo_test version="1" id="oval:1:tst:55" check_existence="none_exist" check="none satisfy" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:55" check_existence="none_exist" check="none satisfy" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:56" check_existence="none_exist" check="none satisfy" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:56" check_existence="none_exist" check="none satisfy" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:57" check_existence="none_exist" check="none satisfy" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:57" check_existence="none_exist" check="none satisfy" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:3"/>
     </rpminfo_test>
 
     <!-- check_existence="none_exist" check="only one" -->
 
-    <rpminfo_test version="1" id="oval:1:tst:58" check_existence="none_exist" check="only one" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:58" check_existence="none_exist" check="only one" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:59" check_existence="none_exist" check="only one" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:59" check_existence="none_exist" check="only one" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:60" check_existence="none_exist" check="only one" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:60" check_existence="none_exist" check="only one" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:3"/>
     </rpminfo_test>
 
     <!-- check_existence="only_one_exists" check="all" -->
 
-    <rpminfo_test version="1" id="oval:1:tst:61" check_existence="only_one_exists" check="all" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:61" check_existence="only_one_exists" check="all" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:62" check_existence="only_one_exists" check="all" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:62" check_existence="only_one_exists" check="all" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:63" check_existence="only_one_exists" check="all" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:63" check_existence="only_one_exists" check="all" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:3"/>
     </rpminfo_test>
 
     <!-- check_existence="only_one_exists" check="at least one" -->
 
-    <rpminfo_test version="1" id="oval:1:tst:64" check_existence="only_one_exists" check="at least one" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:64" check_existence="only_one_exists" check="at least one" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:65" check_existence="only_one_exists" check="at least one" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:65" check_existence="only_one_exists" check="at least one" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:66" check_existence="only_one_exists" check="at least one" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:66" check_existence="only_one_exists" check="at least one" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:3"/>
     </rpminfo_test>
 
     <!-- check_existence="only_one_exists" check="none satisfy" -->
 
-    <rpminfo_test version="1" id="oval:1:tst:67" check_existence="only_one_exists" check="none satisfy" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:67" check_existence="only_one_exists" check="none satisfy" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:68" check_existence="only_one_exists" check="none satisfy" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:68" check_existence="only_one_exists" check="none satisfy" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:69" check_existence="only_one_exists" check="none satisfy" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:69" check_existence="only_one_exists" check="none satisfy" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:3"/>
     </rpminfo_test>
 
     <!-- check_existence="only_one_exists" check="only one" -->
 
-    <rpminfo_test version="1" id="oval:1:tst:70" check_existence="only_one_exists" check="only one" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:70" check_existence="only_one_exists" check="only one" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:71" check_existence="only_one_exists" check="only one" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:71" check_existence="only_one_exists" check="only one" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:72" check_existence="only_one_exists" check="only one" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:72" check_existence="only_one_exists" check="only one" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:3"/>
     </rpminfo_test>
 
@@ -725,108 +725,108 @@ cat <<EOF
 
     <!-- check="all" -->
 
-    <rpminfo_test version="1" id="oval:1:tst:73" check="all" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:73" check="all" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
       <state state_ref="oval:1:ste:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:74" check="all" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:74" check="all" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
       <state state_ref="oval:1:ste:3"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:75" check="all" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:75" check="all" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
       <state state_ref="oval:1:ste:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:76" check="all" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:76" check="all" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
       <state state_ref="oval:1:ste:2"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:77" check="all" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:77" check="all" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
       <state state_ref="oval:1:ste:3"/>
     </rpminfo_test>
 
     <!-- check="at least one" -->
 
-    <rpminfo_test version="1" id="oval:1:tst:78" check="at least one" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:78" check="at least one" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
       <state state_ref="oval:1:ste:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:79" check="at least one" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:79" check="at least one" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
       <state state_ref="oval:1:ste:3"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:80" check="at least one" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:80" check="at least one" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
       <state state_ref="oval:1:ste:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:81" check="at least one" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:81" check="at least one" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
       <state state_ref="oval:1:ste:2"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:82" check="at least one" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:82" check="at least one" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
       <state state_ref="oval:1:ste:3"/>
     </rpminfo_test>
 
     <!-- check="none satisfy" -->
 
-    <rpminfo_test version="1" id="oval:1:tst:83" check="none satisfy" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:83" check="none satisfy" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
       <state state_ref="oval:1:ste:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:84" check="none satisfy" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:84" check="none satisfy" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
       <state state_ref="oval:1:ste:3"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:85" check="none satisfy" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:85" check="none satisfy" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
       <state state_ref="oval:1:ste:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:86" check="none satisfy" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:86" check="none satisfy" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
       <state state_ref="oval:1:ste:2"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:87" check="none satisfy" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:87" check="none satisfy" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
       <state state_ref="oval:1:ste:3"/>
     </rpminfo_test>
 
     <!-- check="only one" -->
 
-    <rpminfo_test version="1" id="oval:1:tst:88" check="only one" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:88" check="only one" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
       <state state_ref="oval:1:ste:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:89" check="only one" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:89" check="only one" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
       <state state_ref="oval:1:ste:3"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:90" check="only one" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:90" check="only one" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
       <state state_ref="oval:1:ste:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:91" check="only one" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:91" check="only one" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
       <state state_ref="oval:1:ste:2"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:92" check="only one" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:92" check="only one" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
       <state state_ref="oval:1:ste:3"/>
     </rpminfo_test>
@@ -835,540 +835,540 @@ cat <<EOF
 
     <!-- check_existence="all_exist" check="all" -->
 
-    <rpminfo_test version="1" id="oval:1:tst:93" check_existence="all_exist" check="all" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:93" check_existence="all_exist" check="all" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
       <state state_ref="oval:1:ste:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:94" check_existence="all_exist" check="all" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:94" check_existence="all_exist" check="all" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
       <state state_ref="oval:1:ste:3"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:95" check_existence="all_exist" check="all" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:95" check_existence="all_exist" check="all" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
       <state state_ref="oval:1:ste:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:96" check_existence="all_exist" check="all" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:96" check_existence="all_exist" check="all" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
       <state state_ref="oval:1:ste:2"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:97" check_existence="all_exist" check="all" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:97" check_existence="all_exist" check="all" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
       <state state_ref="oval:1:ste:3"/>
     </rpminfo_test>
 
     <!-- check_existence="all_exist" check="at least one" -->
 
-    <rpminfo_test version="1" id="oval:1:tst:98" check_existence="all_exist" check="at least one" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:98" check_existence="all_exist" check="at least one" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
       <state state_ref="oval:1:ste:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:99" check_existence="all_exist" check="at least one" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:99" check_existence="all_exist" check="at least one" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
       <state state_ref="oval:1:ste:3"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:100" check_existence="all_exist" check="at least one" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:100" check_existence="all_exist" check="at least one" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
       <state state_ref="oval:1:ste:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:101" check_existence="all_exist" check="at least one" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:101" check_existence="all_exist" check="at least one" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
       <state state_ref="oval:1:ste:2"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:102"  check_existence="all_exist" check="at least one" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:102"  check_existence="all_exist" check="at least one" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
       <state state_ref="oval:1:ste:3"/>
     </rpminfo_test>
 
     <!-- check_existence="all_exist" check="none satisfy" -->
 
-    <rpminfo_test version="1" id="oval:1:tst:103" check_existence="all_exist" check="none satisfy" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:103" check_existence="all_exist" check="none satisfy" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
       <state state_ref="oval:1:ste:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:104" check_existence="all_exist" check="none satisfy" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:104" check_existence="all_exist" check="none satisfy" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
       <state state_ref="oval:1:ste:3"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:105" check_existence="all_exist" check="none satisfy" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:105" check_existence="all_exist" check="none satisfy" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
       <state state_ref="oval:1:ste:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:106" check_existence="all_exist" check="none satisfy" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:106" check_existence="all_exist" check="none satisfy" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
       <state state_ref="oval:1:ste:2"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:107" check_existence="all_exist" check="none satisfy" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:107" check_existence="all_exist" check="none satisfy" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
       <state state_ref="oval:1:ste:3"/>
     </rpminfo_test>
 
     <!-- check_existence="all_exist" check="only one" -->
 
-    <rpminfo_test version="1" id="oval:1:tst:108" check_existence="all_exist" check="only one" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:108" check_existence="all_exist" check="only one" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
       <state state_ref="oval:1:ste:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:109" check_existence="all_exist" check="only one" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:109" check_existence="all_exist" check="only one" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
       <state state_ref="oval:1:ste:3"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:110" check_existence="all_exist" check="only one" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:110" check_existence="all_exist" check="only one" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
       <state state_ref="oval:1:ste:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:111" check_existence="all_exist" check="only one" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:111" check_existence="all_exist" check="only one" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
       <state state_ref="oval:1:ste:2"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:112" check_existence="all_exist" check="only one" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:112" check_existence="all_exist" check="only one" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
       <state state_ref="oval:1:ste:3"/>
     </rpminfo_test>
 
     <!-- check_existence="any_exist" check="all" -->
 
-    <rpminfo_test version="1" id="oval:1:tst:113" check_existence="any_exist" check="all" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:113" check_existence="any_exist" check="all" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
       <state state_ref="oval:1:ste:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:114" check_existence="any_exist" check="all" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:114" check_existence="any_exist" check="all" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
       <state state_ref="oval:1:ste:3"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:115" check_existence="any_exist" check="all" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:115" check_existence="any_exist" check="all" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
       <state state_ref="oval:1:ste:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:116" check_existence="any_exist" check="all" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:116" check_existence="any_exist" check="all" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
       <state state_ref="oval:1:ste:2"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:117" check_existence="any_exist" check="all" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:117" check_existence="any_exist" check="all" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
       <state state_ref="oval:1:ste:3"/>
     </rpminfo_test>
 
     <!-- check_existence="any_exist" check="at least one" -->
 
-    <rpminfo_test version="1" id="oval:1:tst:118" check_existence="any_exist" check="at least one" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:118" check_existence="any_exist" check="at least one" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
       <state state_ref="oval:1:ste:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:119" check_existence="any_exist" check="at least one" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:119" check_existence="any_exist" check="at least one" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
       <state state_ref="oval:1:ste:3"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:120" check_existence="any_exist" check="at least one" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:120" check_existence="any_exist" check="at least one" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
       <state state_ref="oval:1:ste:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:121" check_existence="any_exist" check="at least one" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:121" check_existence="any_exist" check="at least one" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
       <state state_ref="oval:1:ste:2"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:122"  check_existence="any_exist" check="at least one" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:122"  check_existence="any_exist" check="at least one" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
       <state state_ref="oval:1:ste:3"/>
     </rpminfo_test>
 
     <!-- check_existence="any_exist" check="none satisfy" -->
 
-    <rpminfo_test version="1" id="oval:1:tst:123" check_existence="any_exist" check="none satisfy" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:123" check_existence="any_exist" check="none satisfy" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
       <state state_ref="oval:1:ste:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:124" check_existence="any_exist" check="none satisfy" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:124" check_existence="any_exist" check="none satisfy" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
       <state state_ref="oval:1:ste:3"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:125" check_existence="any_exist" check="none satisfy" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:125" check_existence="any_exist" check="none satisfy" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
       <state state_ref="oval:1:ste:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:126" check_existence="any_exist" check="none satisfy" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:126" check_existence="any_exist" check="none satisfy" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
       <state state_ref="oval:1:ste:2"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:127" check_existence="any_exist" check="none satisfy" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:127" check_existence="any_exist" check="none satisfy" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
       <state state_ref="oval:1:ste:3"/>
     </rpminfo_test>
 
     <!-- check_existence="any_exist" check="only one" -->
 
-    <rpminfo_test version="1" id="oval:1:tst:128" check_existence="any_exist" check="only one" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:128" check_existence="any_exist" check="only one" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
       <state state_ref="oval:1:ste:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:129" check_existence="any_exist" check="only one" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:129" check_existence="any_exist" check="only one" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
       <state state_ref="oval:1:ste:3"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:130" check_existence="any_exist" check="only one" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:130" check_existence="any_exist" check="only one" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
       <state state_ref="oval:1:ste:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:131" check_existence="any_exist" check="only one" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:131" check_existence="any_exist" check="only one" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
       <state state_ref="oval:1:ste:2"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:132" check_existence="any_exist" check="only one" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:132" check_existence="any_exist" check="only one" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
       <state state_ref="oval:1:ste:3"/>
     </rpminfo_test>
 
     <!-- check_existence="at_least_one_exists" check="all" -->
 
-    <rpminfo_test version="1" id="oval:1:tst:133" check_existence="at_least_one_exists" check="all" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:133" check_existence="at_least_one_exists" check="all" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
       <state state_ref="oval:1:ste:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:134" check_existence="at_least_one_exists" check="all" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:134" check_existence="at_least_one_exists" check="all" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
       <state state_ref="oval:1:ste:3"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:135" check_existence="at_least_one_exists" check="all" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:135" check_existence="at_least_one_exists" check="all" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
       <state state_ref="oval:1:ste:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:136" check_existence="at_least_one_exists" check="all" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:136" check_existence="at_least_one_exists" check="all" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
       <state state_ref="oval:1:ste:2"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:137" check_existence="at_least_one_exists" check="all" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:137" check_existence="at_least_one_exists" check="all" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
       <state state_ref="oval:1:ste:3"/>
     </rpminfo_test>
 
     <!-- check_existence="at_least_one_exists" check="at least one" -->
 
-    <rpminfo_test version="1" id="oval:1:tst:138" check_existence="at_least_one_exists" check="at least one" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:138" check_existence="at_least_one_exists" check="at least one" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
       <state state_ref="oval:1:ste:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:139" check_existence="at_least_one_exists" check="at least one" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:139" check_existence="at_least_one_exists" check="at least one" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
       <state state_ref="oval:1:ste:3"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:140" check_existence="at_least_one_exists" check="at least one" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:140" check_existence="at_least_one_exists" check="at least one" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
       <state state_ref="oval:1:ste:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:141" check_existence="at_least_one_exists" check="at least one" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:141" check_existence="at_least_one_exists" check="at least one" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
       <state state_ref="oval:1:ste:2"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:142"  check_existence="at_least_one_exists" check="at least one" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:142"  check_existence="at_least_one_exists" check="at least one" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
       <state state_ref="oval:1:ste:3"/>
     </rpminfo_test>
 
     <!-- check_existence="at_least_one_exists" check="none satisfy" -->
 
-    <rpminfo_test version="1" id="oval:1:tst:143" check_existence="at_least_one_exists" check="none satisfy" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:143" check_existence="at_least_one_exists" check="none satisfy" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
       <state state_ref="oval:1:ste:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:144" check_existence="at_least_one_exists" check="none satisfy" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:144" check_existence="at_least_one_exists" check="none satisfy" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
       <state state_ref="oval:1:ste:3"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:145" check_existence="at_least_one_exists" check="none satisfy" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:145" check_existence="at_least_one_exists" check="none satisfy" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
       <state state_ref="oval:1:ste:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:146" check_existence="at_least_one_exists" check="none satisfy" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:146" check_existence="at_least_one_exists" check="none satisfy" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
       <state state_ref="oval:1:ste:2"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:147" check_existence="at_least_one_exists" check="none satisfy" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:147" check_existence="at_least_one_exists" check="none satisfy" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
       <state state_ref="oval:1:ste:3"/>
     </rpminfo_test>
 
     <!-- check_existence="at_least_one_exists" check="only one" -->
 
-    <rpminfo_test version="1" id="oval:1:tst:148" check_existence="at_least_one_exists" check="only one" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:148" check_existence="at_least_one_exists" check="only one" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
       <state state_ref="oval:1:ste:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:149" check_existence="at_least_one_exists" check="only one" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:149" check_existence="at_least_one_exists" check="only one" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
       <state state_ref="oval:1:ste:3"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:150" check_existence="at_least_one_exists" check="only one" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:150" check_existence="at_least_one_exists" check="only one" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
       <state state_ref="oval:1:ste:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:151" check_existence="at_least_one_exists" check="only one" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:151" check_existence="at_least_one_exists" check="only one" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
       <state state_ref="oval:1:ste:2"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:152" check_existence="at_least_one_exists" check="only one" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:152" check_existence="at_least_one_exists" check="only one" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
       <state state_ref="oval:1:ste:3"/>
     </rpminfo_test>
 
     <!-- check_existence="none_exist" check="all" -->
 
-    <rpminfo_test version="1" id="oval:1:tst:153" check_existence="none_exist" check="all" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:153" check_existence="none_exist" check="all" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
       <state state_ref="oval:1:ste:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:154" check_existence="none_exist" check="all" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:154" check_existence="none_exist" check="all" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
       <state state_ref="oval:1:ste:3"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:155" check_existence="none_exist" check="all" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:155" check_existence="none_exist" check="all" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
       <state state_ref="oval:1:ste:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:156" check_existence="none_exist" check="all" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:156" check_existence="none_exist" check="all" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
       <state state_ref="oval:1:ste:2"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:157" check_existence="none_exist" check="all" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:157" check_existence="none_exist" check="all" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
       <state state_ref="oval:1:ste:3"/>
     </rpminfo_test>
 
     <!-- check_existence="none_exist" check="at least one" -->
 
-    <rpminfo_test version="1" id="oval:1:tst:158" check_existence="none_exist" check="at least one" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:158" check_existence="none_exist" check="at least one" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
       <state state_ref="oval:1:ste:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:159" check_existence="none_exist" check="at least one" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:159" check_existence="none_exist" check="at least one" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
       <state state_ref="oval:1:ste:3"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:160" check_existence="none_exist" check="at least one" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:160" check_existence="none_exist" check="at least one" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
       <state state_ref="oval:1:ste:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:161" check_existence="none_exist" check="at least one" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:161" check_existence="none_exist" check="at least one" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
       <state state_ref="oval:1:ste:2"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:162"  check_existence="none_exist" check="at least one" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:162"  check_existence="none_exist" check="at least one" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
       <state state_ref="oval:1:ste:3"/>
     </rpminfo_test>
 
     <!-- check_existence="none_exist" check="none satisfy" -->
 
-    <rpminfo_test version="1" id="oval:1:tst:163" check_existence="none_exist" check="none satisfy" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:163" check_existence="none_exist" check="none satisfy" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
       <state state_ref="oval:1:ste:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:164" check_existence="none_exist" check="none satisfy" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:164" check_existence="none_exist" check="none satisfy" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
       <state state_ref="oval:1:ste:3"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:165" check_existence="none_exist" check="none satisfy" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:165" check_existence="none_exist" check="none satisfy" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
       <state state_ref="oval:1:ste:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:166" check_existence="none_exist" check="none satisfy" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:166" check_existence="none_exist" check="none satisfy" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
       <state state_ref="oval:1:ste:2"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:167" check_existence="none_exist" check="none satisfy" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:167" check_existence="none_exist" check="none satisfy" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
       <state state_ref="oval:1:ste:3"/>
     </rpminfo_test>
 
     <!-- check_existence="none_exist" check="only one" -->
 
-    <rpminfo_test version="1" id="oval:1:tst:168" check_existence="none_exist" check="only one" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:168" check_existence="none_exist" check="only one" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
       <state state_ref="oval:1:ste:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:169" check_existence="none_exist" check="only one" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:169" check_existence="none_exist" check="only one" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
       <state state_ref="oval:1:ste:3"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:170" check_existence="none_exist" check="only one" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:170" check_existence="none_exist" check="only one" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
       <state state_ref="oval:1:ste:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:171" check_existence="none_exist" check="only one" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:171" check_existence="none_exist" check="only one" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
       <state state_ref="oval:1:ste:2"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:172" check_existence="none_exist" check="only one" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:172" check_existence="none_exist" check="only one" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
       <state state_ref="oval:1:ste:3"/>
     </rpminfo_test>
 
     <!-- check_existence="only_one_exists" check="all" -->
 
-    <rpminfo_test version="1" id="oval:1:tst:173" check_existence="only_one_exists" check="all" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:173" check_existence="only_one_exists" check="all" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
       <state state_ref="oval:1:ste:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:174" check_existence="only_one_exists" check="all" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:174" check_existence="only_one_exists" check="all" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
       <state state_ref="oval:1:ste:3"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:175" check_existence="only_one_exists" check="all" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:175" check_existence="only_one_exists" check="all" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
       <state state_ref="oval:1:ste:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:176" check_existence="only_one_exists" check="all" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:176" check_existence="only_one_exists" check="all" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
       <state state_ref="oval:1:ste:2"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:177" check_existence="only_one_exists" check="all" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:177" check_existence="only_one_exists" check="all" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
       <state state_ref="oval:1:ste:3"/>
     </rpminfo_test>
 
     <!-- check_existence="only_one_exists" check="at least one" -->
 
-    <rpminfo_test version="1" id="oval:1:tst:178" check_existence="only_one_exists" check="at least one" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:178" check_existence="only_one_exists" check="at least one" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
       <state state_ref="oval:1:ste:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:179" check_existence="only_one_exists" check="at least one" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:179" check_existence="only_one_exists" check="at least one" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
       <state state_ref="oval:1:ste:3"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:180" check_existence="only_one_exists" check="at least one" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:180" check_existence="only_one_exists" check="at least one" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
       <state state_ref="oval:1:ste:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:181" check_existence="only_one_exists" check="at least one" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:181" check_existence="only_one_exists" check="at least one" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
       <state state_ref="oval:1:ste:2"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:182"  check_existence="only_one_exists" check="at least one" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:182"  check_existence="only_one_exists" check="at least one" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
       <state state_ref="oval:1:ste:3"/>
     </rpminfo_test>
 
     <!-- check_existence="only_one_exists" check="none satisfy" -->
 
-    <rpminfo_test version="1" id="oval:1:tst:183" check_existence="only_one_exists" check="none satisfy" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:183" check_existence="only_one_exists" check="none satisfy" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
       <state state_ref="oval:1:ste:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:184" check_existence="only_one_exists" check="none satisfy" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:184" check_existence="only_one_exists" check="none satisfy" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
       <state state_ref="oval:1:ste:3"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:185" check_existence="only_one_exists" check="none satisfy" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:185" check_existence="only_one_exists" check="none satisfy" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
       <state state_ref="oval:1:ste:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:186" check_existence="only_one_exists" check="none satisfy" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:186" check_existence="only_one_exists" check="none satisfy" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
       <state state_ref="oval:1:ste:2"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:187" check_existence="only_one_exists" check="none satisfy" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:187" check_existence="only_one_exists" check="none satisfy" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
       <state state_ref="oval:1:ste:3"/>
     </rpminfo_test>
 
     <!-- check_existence="only_one_exists" check="only one" -->
 
-    <rpminfo_test version="1" id="oval:1:tst:188" check_existence="only_one_exists" check="only one" comment="true">
+    <rpminfo_test version="1" id="oval:1:tst:188" check_existence="only_one_exists" check="only one" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
       <state state_ref="oval:1:ste:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:189" check_existence="only_one_exists" check="only one" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:189" check_existence="only_one_exists" check="only one" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
       <state state_ref="oval:1:ste:3"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:190" check_existence="only_one_exists" check="only one" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:190" check_existence="only_one_exists" check="only one" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
       <state state_ref="oval:1:ste:1"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:191" check_existence="only_one_exists" check="only one" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:191" check_existence="only_one_exists" check="only one" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
       <state state_ref="oval:1:ste:2"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:192" check_existence="only_one_exists" check="only one" comment="false">
+    <rpminfo_test version="1" id="oval:1:tst:192" check_existence="only_one_exists" check="only one" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
       <state state_ref="oval:1:ste:3"/>
     </rpminfo_test>

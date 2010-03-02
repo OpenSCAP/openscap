@@ -142,67 +142,67 @@
 
     <!-- ALL_EXIST -->
 
-    <textfilecontent54_test check_existence="all_exist" version="1" id="test:1" check="all" comment="true">
+    <textfilecontent54_test check_existence="all_exist" version="1" id="test:1" check="all" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
       <object object_ref="object:1"/>
     </textfilecontent54_test>
 
-    <textfilecontent54_test check_existence="all_exist" version="1" id="test:2" check="all" comment="true">
+    <textfilecontent54_test check_existence="all_exist" version="1" id="test:2" check="all" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
       <object object_ref="object:2"/>
     </textfilecontent54_test>
 
-    <textfilecontent54_test check_existence="all_exist" version="1" id="test:3" check="all" comment="true">
+    <textfilecontent54_test check_existence="all_exist" version="1" id="test:3" check="all" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
       <object object_ref="object:3"/>
     </textfilecontent54_test>
 
-    <textfilecontent54_test check_existence="all_exist" version="1" id="test:4" check="all" comment="false">
+    <textfilecontent54_test check_existence="all_exist" version="1" id="test:4" check="all" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
       <object object_ref="object:4"/>
     </textfilecontent54_test>
 
-    <textfilecontent54_test check_existence="all_exist" version="1" id="test:5" check="all" comment="false">
+    <textfilecontent54_test check_existence="all_exist" version="1" id="test:5" check="all" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
       <object object_ref="object:5"/>
     </textfilecontent54_test>
 
-    <textfilecontent54_test check_existence="all_exist" version="1" id="test:6" check="all" comment="false">
+    <textfilecontent54_test check_existence="all_exist" version="1" id="test:6" check="all" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
       <object object_ref="object:6"/>
     </textfilecontent54_test>
 
-    <textfilecontent54_test check_existence="all_exist" version="1" id="test:7" check="all" comment="false">
+    <textfilecontent54_test check_existence="all_exist" version="1" id="test:7" check="all" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
       <object object_ref="object:7"/>
     </textfilecontent54_test>
 
-    <textfilecontent54_test check_existence="all_exist" version="1" id="test:8" check="all" comment="false">
+    <textfilecontent54_test check_existence="all_exist" version="1" id="test:8" check="all" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
       <object object_ref="object:8"/>
     </textfilecontent54_test>
 
-    <textfilecontent54_test check_existence="all_exist" version="1" id="test:9" check="all" comment="false">
+    <textfilecontent54_test check_existence="all_exist" version="1" id="test:9" check="all" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
       <object object_ref="object:9"/>
     </textfilecontent54_test>
 
-    <textfilecontent54_test check_existence="all_exist" version="1" id="test:10" check="all" comment="false">
+    <textfilecontent54_test check_existence="all_exist" version="1" id="test:10" check="all" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
       <object object_ref="object:10"/>
     </textfilecontent54_test>
 
-    <textfilecontent54_test check_existence="all_exist" version="1" id="test:11" check="all" comment="false">
+    <textfilecontent54_test check_existence="all_exist" version="1" id="test:11" check="all" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
       <object object_ref="object:11"/>
     </textfilecontent54_test>
 
-    <textfilecontent54_test check_existence="all_exist" version="1" id="test:12" check="all" comment="false">
+    <textfilecontent54_test check_existence="all_exist" version="1" id="test:12" check="all" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
       <object object_ref="object:12"/>
     </textfilecontent54_test>
 
-    <textfilecontent54_test check_existence="all_exist" version="1" id="test:13" check="all" comment="false">
+    <textfilecontent54_test check_existence="all_exist" version="1" id="test:13" check="all" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
       <object object_ref="object:13"/>
     </textfilecontent54_test>
 
-    <textfilecontent54_test check_existence="all_exist" version="1" id="test:14" check="all" comment="false">
+    <textfilecontent54_test check_existence="all_exist" version="1" id="test:14" check="all" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
       <object object_ref="object:14"/>
     </textfilecontent54_test>
 
-    <textfilecontent54_test check_existence="all_exist" version="1" id="test:15" check="all" comment="false">
+    <textfilecontent54_test check_existence="all_exist" version="1" id="test:15" check="all" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
       <object object_ref="object:15"/>
     </textfilecontent54_test>
 
-    <textfilecontent54_test check_existence="all_exist" version="1" id="test:16" check="all" comment="false">
+    <textfilecontent54_test check_existence="all_exist" version="1" id="test:16" check="all" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
       <object object_ref="object:16"/>
     </textfilecontent54_test>
 
