@@ -586,8 +586,6 @@ struct xccdf_fix *xccdf_fix_parse(xmlTextReaderPtr reader, struct xccdf_item *pa
 {
 	struct xccdf_fix *fix = oscap_calloc(1, sizeof(struct xccdf_fix));
 	fix->id = xccdf_attribute_copy(reader, XCCDFA_ID);
-	if (fix->id != NULL && strcmp(fix->id, "") != 0)
-		oscap_htable_add(parent->item.benchmark->sub.bench.auxdict, fix->id, (void *)fix);
 	fix->system = xccdf_attribute_copy(reader, XCCDFA_SYSTEM);
 	fix->platform = xccdf_attribute_copy(reader, XCCDFA_PLATFORM);
 	XCCDF_FIXCOMMON_PARSE(reader, fix);

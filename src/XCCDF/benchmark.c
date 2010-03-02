@@ -58,7 +58,6 @@ struct xccdf_item *xccdf_benchmark_new(void)
 	bench->sub.bench.profiles = oscap_list_new();
     // hash tables
 	bench->sub.bench.dict = oscap_htable_new();
-	bench->sub.bench.auxdict = oscap_htable_new();
 	return bench;
 }
 
@@ -161,7 +160,6 @@ void xccdf_benchmark_free(struct xccdf_benchmark *benchmark)
 		oscap_list_free(bench->sub.bench.values, (oscap_destruct_func) xccdf_value_free);
 		oscap_htable_free(bench->sub.bench.plain_texts, oscap_free);
 		oscap_htable_free(bench->sub.bench.dict, NULL);
-		oscap_htable_free(bench->sub.bench.auxdict, NULL);
 		oscap_list_free(bench->sub.bench.profiles, (oscap_destruct_func) xccdf_profile_free);
 		xccdf_item_release(bench);
 	}

@@ -158,7 +158,6 @@ struct xccdf_profile_item {
 struct xccdf_benchmark_item {
 
 	struct oscap_htable *dict;
-	struct oscap_htable *auxdict;
 	struct oscap_list *notices;
 	struct oscap_htable *plain_texts;
 
