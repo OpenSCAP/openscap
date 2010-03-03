@@ -24,7 +24,7 @@ cat <<EOF
         <description></description>
       </metadata>
       <criteria>
-        <criteria operator="AND">
+        <criteria operator="AND"> <!-- todo: add "negate=true" where necessary so the whole evaluates to true -->
           <criterion test_ref="oval:1:tst:1"/>
           <criterion test_ref="oval:1:tst:2"/>
           <criterion test_ref="oval:1:tst:3"/>
@@ -182,21 +182,29 @@ cat <<EOF
           <criterion test_ref="oval:1:tst:155"/>
           <criterion test_ref="oval:1:tst:156"/>
           <criterion test_ref="oval:1:tst:157"/>
+          <criterion test_ref="oval:1:tst:157.1"/>
+          <criterion test_ref="oval:1:tst:157.2"/>
           <criterion test_ref="oval:1:tst:158"/>
           <criterion test_ref="oval:1:tst:159"/>
           <criterion test_ref="oval:1:tst:160"/>
           <criterion test_ref="oval:1:tst:161"/>
           <criterion test_ref="oval:1:tst:162"/>
+          <criterion test_ref="oval:1:tst:162.1"/>
+          <criterion test_ref="oval:1:tst:162.2"/>
           <criterion test_ref="oval:1:tst:163"/>
           <criterion test_ref="oval:1:tst:164"/>
           <criterion test_ref="oval:1:tst:165"/>
           <criterion test_ref="oval:1:tst:166"/>
           <criterion test_ref="oval:1:tst:167"/>
+          <criterion test_ref="oval:1:tst:167.1"/>
+          <criterion test_ref="oval:1:tst:167.2"/>
           <criterion test_ref="oval:1:tst:168"/>
           <criterion test_ref="oval:1:tst:169"/>
           <criterion test_ref="oval:1:tst:170"/>
           <criterion test_ref="oval:1:tst:171"/>
           <criterion test_ref="oval:1:tst:172"/>
+          <criterion test_ref="oval:1:tst:172.1"/>
+          <criterion test_ref="oval:1:tst:172.2"/>
           <criterion test_ref="oval:1:tst:173"/>
           <criterion test_ref="oval:1:tst:174"/>
           <criterion test_ref="oval:1:tst:175"/>
@@ -799,7 +807,7 @@ cat <<EOF
       <state state_ref="oval:1:ste:2"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:87" check="none satisfy" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+    <rpminfo_test version="1" id="oval:1:tst:87" check="none satisfy" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
       <state state_ref="oval:1:ste:3"/>
     </rpminfo_test>
@@ -909,7 +917,7 @@ cat <<EOF
       <state state_ref="oval:1:ste:2"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:107" check_existence="all_exist" check="none satisfy" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+    <rpminfo_test version="1" id="oval:1:tst:107" check_existence="all_exist" check="none satisfy" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
       <state state_ref="oval:1:ste:3"/>
     </rpminfo_test>
@@ -963,7 +971,7 @@ cat <<EOF
       <state state_ref="oval:1:ste:2"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:117" check_existence="any_exist" check="all" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+    <rpminfo_test version="1" id="oval:1:tst:117" check_existence="any_exist" check="all" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
       <state state_ref="oval:1:ste:3"/>
     </rpminfo_test>
@@ -990,7 +998,7 @@ cat <<EOF
       <state state_ref="oval:1:ste:2"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:122"  check_existence="any_exist" check="at least one" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+    <rpminfo_test version="1" id="oval:1:tst:122"  check_existence="any_exist" check="at least one" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
       <state state_ref="oval:1:ste:3"/>
     </rpminfo_test>
@@ -1044,7 +1052,7 @@ cat <<EOF
       <state state_ref="oval:1:ste:2"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:132" check_existence="any_exist" check="only one" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+    <rpminfo_test version="1" id="oval:1:tst:132" check_existence="any_exist" check="only one" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
       <state state_ref="oval:1:ste:3"/>
     </rpminfo_test>
@@ -1125,7 +1133,7 @@ cat <<EOF
       <state state_ref="oval:1:ste:2"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:147" check_existence="at_least_one_exists" check="none satisfy" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+    <rpminfo_test version="1" id="oval:1:tst:147" check_existence="at_least_one_exists" check="none satisfy" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
       <state state_ref="oval:1:ste:3"/>
     </rpminfo_test>
@@ -1179,8 +1187,18 @@ cat <<EOF
       <state state_ref="oval:1:ste:2"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:157" check_existence="none_exist" check="all" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+    <rpminfo_test version="1" id="oval:1:tst:157" check_existence="none_exist" check="all" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
+      <state state_ref="oval:1:ste:3"/>
+    </rpminfo_test>
+
+    <rpminfo_test version="1" id="oval:1:tst:157.1" check_existence="none_exist" check="all" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <object object_ref="oval:1:obj:3"/>
+      <state state_ref="oval:1:ste:1"/>
+    </rpminfo_test>
+
+    <rpminfo_test version="1" id="oval:1:tst:157.2" check_existence="none_exist" check="all" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <object object_ref="oval:1:obj:3"/>
       <state state_ref="oval:1:ste:3"/>
     </rpminfo_test>
 
@@ -1206,8 +1224,18 @@ cat <<EOF
       <state state_ref="oval:1:ste:2"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:162"  check_existence="none_exist" check="at least one" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+    <rpminfo_test version="1" id="oval:1:tst:162" check_existence="none_exist" check="at least one" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
+      <state state_ref="oval:1:ste:3"/>
+    </rpminfo_test>
+
+    <rpminfo_test version="1" id="oval:1:tst:162.1" check_existence="none_exist" check="at least one" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <object object_ref="oval:1:obj:3"/>
+      <state state_ref="oval:1:ste:1"/>
+    </rpminfo_test>
+
+    <rpminfo_test version="1" id="oval:1:tst:162.2" check_existence="none_exist" check="at least one" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <object object_ref="oval:1:obj:3"/>
       <state state_ref="oval:1:ste:3"/>
     </rpminfo_test>
 
@@ -1233,8 +1261,18 @@ cat <<EOF
       <state state_ref="oval:1:ste:2"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:167" check_existence="none_exist" check="none satisfy" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+    <rpminfo_test version="1" id="oval:1:tst:167" check_existence="none_exist" check="none satisfy" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
+      <state state_ref="oval:1:ste:3"/>
+    </rpminfo_test>
+
+    <rpminfo_test version="1" id="oval:1:tst:167.1" check_existence="none_exist" check="none satisfy" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <object object_ref="oval:1:obj:3"/>
+      <state state_ref="oval:1:ste:1"/>
+    </rpminfo_test>
+
+    <rpminfo_test version="1" id="oval:1:tst:167.2" check_existence="none_exist" check="none satisfy" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <object object_ref="oval:1:obj:3"/>
       <state state_ref="oval:1:ste:3"/>
     </rpminfo_test>
 
@@ -1260,8 +1298,18 @@ cat <<EOF
       <state state_ref="oval:1:ste:2"/>
     </rpminfo_test>
 
-    <rpminfo_test version="1" id="oval:1:tst:172" check_existence="none_exist" check="only one" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+    <rpminfo_test version="1" id="oval:1:tst:172" check_existence="none_exist" check="only one" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
+      <state state_ref="oval:1:ste:3"/>
+    </rpminfo_test>
+
+    <rpminfo_test version="1" id="oval:1:tst:172.1" check_existence="none_exist" check="only one" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <object object_ref="oval:1:obj:3"/>
+      <state state_ref="oval:1:ste:1"/>
+    </rpminfo_test>
+
+    <rpminfo_test version="1" id="oval:1:tst:172.2" check_existence="none_exist" check="only one" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <object object_ref="oval:1:obj:3"/>
       <state state_ref="oval:1:ste:3"/>
     </rpminfo_test>
 
