@@ -50,6 +50,11 @@ probe_file_CFLAGS=
 probe_file_LDFLAGS=
 
 if WANT_PROBES_LINUX
+pkglibexec_PROGRAMS += probe_inetlisteningservers
+probe_inetlisteningservers_SOURCES= unix/linux/inetlisteningservers.c
+probe_inetlisteningservers_CFLAGS=
+probe_inetlisteningservers_LDFLAGS=
+
 if ENABLE_PROBE_RPMINFO
 pkglibexec_PROGRAMS += probe_rpminfo
 probe_rpminfo_SOURCES= unix/linux/rpminfo.c
