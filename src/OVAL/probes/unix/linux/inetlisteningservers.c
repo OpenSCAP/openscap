@@ -47,13 +47,16 @@
 #include <errno.h>
 #include <dirent.h>
 #include <fcntl.h>
+#include <arpa/inet.h>
 
 /* This structure contains the information OVAL is asking or requesting */
 struct server_info {
-        oval_operation_t op;
         char *protocol;
+        oval_operation_t proto_op;
 	char *local_address;
+        oval_operation_t addr_op;
 	char *local_port;
+        oval_operation_t port_op;
 };
 
 /* Convenience structure for the results being reported */
@@ -313,15 +316,15 @@ static int eval_data(const char *type, const char *local_address,
 
 	// We are assuming an "and" condition for these
 	if (req.protocol) {
-		if (option_compare(req.op, type, req.protocol) == 0)
+		if (option_compare(req.proto_op, type, req.protocol) == 0)
 			return 0;
 	}
 	if (req.local_address) {
-		if (option_compare(req.op, local_address, req.local_address) == 0)
+		if (option_compare(req.addr_op, local_address, req.local_address) == 0)
 			return 0;
 	}
 	if (req.local_port) {
-		if (option_compare(req.op, port, req.local_port) == 0)
+		if (option_compare(req.port_op, port, req.local_port) == 0)
 			return 0;
 	}
 	return 1;
@@ -354,6 +357,22 @@ static void report_finding(struct result_info *res, llist *l, SEXP_t *probe_out)
 	SEXP_free(item_sexp);
 }
 
+static void addr_convert(const char *src, char *dest, int size)
+{
+	if (strlen(src) > 8) {
+		struct in6_addr in6;
+		sscanf(src, "%08X%08X%08X%08X",
+			&in6.s6_addr32[0], &in6.s6_addr32[1],
+			&in6.s6_addr32[2], &in6.s6_addr32[3]);
+		inet_ntop(AF_INET6, &in6, dest, size);
+	} else {
+		int localaddr;
+		sscanf(src, "%X",&localaddr);
+		inet_ntop(AF_INET, &localaddr, dest, size);
+	}
+}
+
+
 static int read_tcp(const char *proc, const char *type, llist *l,
 		SEXP_t *probe_out)
 {
@@ -385,12 +404,16 @@ static int read_tcp(const char *proc, const char *type, llist *l,
 			&state, &txq, &rxq, &timer_run, &time_len, &retr,
 			&uid, &timeout, &inode, more);
 		if (list_find_inode(l, inode)) {
-			if (eval_data(type, local_addr, local_port)) {
+			char src[NI_MAXHOST], dest[NI_MAXHOST];
+			addr_convert(local_addr, src, NI_MAXHOST);
+			addr_convert(rem_addr, dest, NI_MAXHOST);
+			_D("Have tcp port: %s:%u\n", src, local_port);
+			if (eval_data(type, src, local_port)) {
 				struct result_info r;
 				r.proto = type;
-				r.laddr = local_addr;
+				r.laddr = src;
 				r.lport = local_port;
-				r.raddr = rem_addr;
+				r.raddr = dest;
 				r.rport = rem_port;
 				report_finding(&r, l, probe_out);
 			}
@@ -430,12 +453,16 @@ static int read_udp(const char *proc, const char *type, llist *l,
 			&state, &txq, &rxq, &timer_run, &time_len, &retr,
 			&uid, &timeout, &inode, more);
 		if (list_find_inode(l, inode)) {
-			if (eval_data(type, local_addr, local_port)) {
+			char src[NI_MAXHOST], dest[NI_MAXHOST];
+			addr_convert(local_addr, src, NI_MAXHOST);
+			addr_convert(rem_addr, dest, NI_MAXHOST);
+			_D("Have udp port: %s:%u\n", src, local_port);
+			if (eval_data(type, src, local_port)) {
 				struct result_info r;
 				r.proto = type;
-				r.laddr = local_addr;
+				r.laddr = src;
 				r.lport = local_port;
-				r.raddr = rem_addr;
+				r.raddr = dest;
 				r.rport = rem_port;
 				report_finding(&r, l, probe_out);
 			}
@@ -475,12 +502,16 @@ static int read_raw(const char *proc, const char *type, llist *l,
 			&state, &txq, &rxq, &timer_run, &time_len, &retr,
 			&uid, &timeout, &inode, more);
 		if (list_find_inode(l, inode)) {
-			if (eval_data(type, local_addr, local_port)) {
+			char src[NI_MAXHOST], dest[NI_MAXHOST];
+			addr_convert(local_addr, src, NI_MAXHOST);
+			addr_convert(rem_addr, dest, NI_MAXHOST);
+			_D("Have raw port: %s:%u\n", src, local_port);
+			if (eval_data(type, src, local_port)) {
 				struct result_info r;
 				r.proto = type;
-				r.laddr = local_addr;
+				r.laddr = src;
 				r.lport = local_port;
-				r.raddr = rem_addr;
+				r.raddr = dest;
 				r.rport = rem_port;
 				report_finding(&r, l, probe_out);
 			}
@@ -493,15 +524,18 @@ static int read_raw(const char *proc, const char *type, llist *l,
 SEXP_t *probe_main(SEXP_t *object, int *err, void *arg)
 {
 	llist ll;
-	SEXP_t *probe_out, *val, *item_sexp;
+	SEXP_t *probe_out, *val, *item_sexp, *ent;
 
-	val = probe_obj_getentval(object, "protocol", 1);
-	if (val == NULL) {
+	ent = probe_obj_getent(object, "protocol", 1);
+	if (ent)
+		val = probe_ent_getval(ent);
+	if (ent == NULL || val == NULL) {
 		*err = PROBE_ENOVAL;
 		return NULL;
 	}
 	req.protocol = SEXP_string_cstr(val);
 	if (req.protocol == NULL) {
+		_D("protocol error\n");
 		switch (errno) {
 			case EINVAL:
 				*err = PROBE_EINVAL;
@@ -513,13 +547,36 @@ SEXP_t *probe_main(SEXP_t *object, int *err, void *arg)
 		return NULL;
 	}
 	SEXP_free(val);
-	val = probe_obj_getentval(object, "local_address", 1);
-	if (val == NULL) {
+	val = probe_ent_getattrval(ent, "operation");
+	if (val == NULL)
+		req.proto_op = OVAL_OPERATION_EQUALS;
+	else {
+		req.proto_op = (oval_operation_t) SEXP_number_geti_32(val);
+		switch (req.proto_op) {
+			case OVAL_OPERATION_EQUALS:
+			case OVAL_OPERATION_NOT_EQUAL:
+			case OVAL_OPERATION_PATTERN_MATCH:
+				break;
+			default:
+				*err = PROBE_EOPNOTSUPP;
+				SEXP_free(val);
+				oscap_free(req.protocol);
+				return (NULL);
+		}
+		SEXP_free(val);
+	}
+	SEXP_free(ent);
+
+	ent = probe_obj_getent(object, "local_address", 1);
+	if (ent)
+		val = probe_ent_getval(ent);
+	if (ent == NULL || val == NULL) {
 		*err = PROBE_ENOVAL;
 		return NULL;
 	}
 	req.local_address = SEXP_string_cstr(val);
 	if (req.local_address == NULL) {
+		_D("local_address error\n");
 		switch (errno) {
 			case EINVAL:
 				*err = PROBE_EINVAL;
@@ -532,13 +589,37 @@ SEXP_t *probe_main(SEXP_t *object, int *err, void *arg)
 		return NULL;
 	}
 	SEXP_free(val);
-	val = probe_obj_getentval(object, "local_port", 1);
-	if (val == NULL) {
+	val = probe_ent_getattrval(ent, "operation");
+	if (val == NULL)
+		req.addr_op = OVAL_OPERATION_EQUALS;
+	else {
+		req.addr_op = (oval_operation_t) SEXP_number_geti_32(val);
+		switch (req.addr_op) {
+			case OVAL_OPERATION_EQUALS:
+			case OVAL_OPERATION_NOT_EQUAL:
+			case OVAL_OPERATION_PATTERN_MATCH:
+				break;
+			default:
+				*err = PROBE_EOPNOTSUPP;
+				SEXP_free(val);
+				oscap_free(req.protocol);
+				oscap_free(req.local_address);
+				return (NULL);
+		}
+		SEXP_free(val);
+	}
+	SEXP_free(ent);
+
+	ent = probe_obj_getent(object, "local_port", 1);
+	if (ent)
+		val = probe_ent_getval (ent);
+	if (ent == NULL || val == NULL) {
 		*err = PROBE_ENOVAL;
 		return NULL;
 	}
 	req.local_port = SEXP_string_cstr(val);
 	if (req.local_port == NULL) {
+		_D("local_port error\n");
 		switch (errno) {
 			case EINVAL:
 				*err = PROBE_EINVAL;
@@ -552,13 +633,15 @@ SEXP_t *probe_main(SEXP_t *object, int *err, void *arg)
 		return NULL;
 	}
 	SEXP_free(val);
-	val = probe_obj_getentval(object, "operation", 1);
+
+	val = probe_ent_getattrval(ent, "operation");
 	if (val == NULL)
-		req.op = OVAL_OPERATION_EQUALS;
+		req.port_op = OVAL_OPERATION_EQUALS;
 	else {
-		req.op = (oval_operation_t) SEXP_number_geti_32(val);
-		switch (req.op) {
+		req.port_op = (oval_operation_t) SEXP_number_geti_32(val);
+		switch (req.port_op) {
 			case OVAL_OPERATION_EQUALS:
+			case OVAL_OPERATION_NOT_EQUAL:
 			case OVAL_OPERATION_PATTERN_MATCH:
 				break;
 			default:
@@ -571,11 +654,13 @@ SEXP_t *probe_main(SEXP_t *object, int *err, void *arg)
 		}
 		SEXP_free(val);
 	}
+	SEXP_free(ent);
 	probe_out = SEXP_list_new(NULL);
 
 	// Now start collecting the info
 	list_create(&ll);
 	if (collect_process_info(&ll) || perm_warn) {
+		_D("Permission error\n");
 		/* We had a bad day... */
 		SEXP_t *r;
 		// FIXME: What do we send back?
