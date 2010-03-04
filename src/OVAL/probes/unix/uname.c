@@ -64,6 +64,7 @@ SEXP_t *probe_main(SEXP_t *object, int *err, void *arg)
 					}
 				}
 			}
+                        fclose(f);
 		}
 	}
 	
