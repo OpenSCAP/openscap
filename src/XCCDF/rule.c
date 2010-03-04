@@ -619,6 +619,39 @@ void xccdf_fix_free(struct xccdf_fix *item)
 	}
 }
 
+struct oscap_string_iterator *xccdf_item_get_conflicts(const struct xccdf_item* item)
+{
+	if (item == NULL) return NULL;
+	if (item->type == XCCDF_RULE)  return xccdf_rule_get_conflicts ( XRULE(item));
+	if (item->type == XCCDF_GROUP) return xccdf_group_get_conflicts(XGROUP(item));
+	return NULL;
+}
+struct oscap_string_iterator *xccdf_rule_get_conflicts(const struct xccdf_rule* rule)
+{
+	return oscap_iterator_new(XITEM(rule)->sub.rule.conflicts);
+}
+struct oscap_string_iterator *xccdf_group_get_conflicts(const struct xccdf_group* group)
+{
+	return oscap_iterator_new(XITEM(group)->sub.group.conflicts);
+}
+
+struct oscap_stringlist_iterator *xccdf_item_get_requires(const struct xccdf_item* item)
+{
+	if (item == NULL) return NULL;
+	if (item->type == XCCDF_RULE)  return xccdf_rule_get_requires ( XRULE(item));
+	if (item->type == XCCDF_GROUP) return xccdf_group_get_requires(XGROUP(item));
+	return NULL;
+}
+struct oscap_stringlist_iterator *xccdf_rule_get_requires(const struct xccdf_rule* rule)
+{
+	return oscap_iterator_new(XITEM(rule)->sub.rule.requires);
+}
+struct oscap_stringlist_iterator *xccdf_group_get_requires(const struct xccdf_group* group)
+{
+	return oscap_iterator_new(XITEM(group)->sub.group.requires);
+}
+
+
 XCCDF_STATUS_CURRENT(rule)
 XCCDF_STATUS_CURRENT(group)
 XCCDF_GROUP_IGETTER(item, content)
@@ -666,3 +699,4 @@ XCCDF_GENERIC_GETTER(bool, fix, reboot)
 XCCDF_GENERIC_GETTER(const char *, fix, content)
 XCCDF_GENERIC_GETTER(const char *, fix, system)
 XCCDF_GENERIC_GETTER(const char *, fix, platform) XCCDF_GENERIC_GETTER(const char *, fix, id) XCCDF_ITERATOR_GEN_S(fix)
+

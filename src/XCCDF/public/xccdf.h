@@ -658,6 +658,11 @@ struct xccdf_status_iterator *xccdf_item_get_statuses(const struct xccdf_item *i
  */
 struct xccdf_reference_iterator *xccdf_item_get_references(const struct xccdf_item *item);
 
+/// @memberof xccdf_item
+struct oscap_string_iterator *xccdf_item_get_conflicts(const struct xccdf_item* item);
+/// @memberof xccdf_item
+struct oscap_stringlist_iterator *xccdf_item_get_requires(const struct xccdf_item* item);
+
 /**
  * Get item current status.
  * @memberof xccdf_item
@@ -1164,6 +1169,11 @@ struct xccdf_fix_iterator *xccdf_rule_get_fixes(const struct xccdf_rule *rule);
  */
 struct xccdf_fixtext_iterator *xccdf_rule_get_fixtexts(const struct xccdf_rule *rule);
 
+/// @memberof xccdf_rule
+struct oscap_string_iterator *xccdf_rule_get_conflicts(const struct xccdf_rule* rule);
+/// @memberof xccdf_rule
+struct oscap_stringlist_iterator *xccdf_rule_get_requires(const struct xccdf_rule* rule);
+
 /*--------------------*\
 |     Group methods    |
 \*--------------------*/
@@ -1291,6 +1301,11 @@ struct xccdf_item_iterator *xccdf_group_get_content(const struct xccdf_group *be
  * @memberof xccdf_group
  */
 xccdf_status_type_t xccdf_group_get_status_current(const struct xccdf_group *group);
+
+/// @memberof xccdf_group
+struct oscap_string_iterator *xccdf_group_get_conflicts(const struct xccdf_group* group);
+/// @memberof xccdf_group
+struct oscap_stringlist_iterator *xccdf_group_get_requires(const struct xccdf_group* group);
 
 /*--------------------*\
 |     Value methods    |
