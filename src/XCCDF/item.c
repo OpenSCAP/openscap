@@ -204,10 +204,10 @@ bool xccdf_item_process_element(struct xccdf_item * item, xmlTextReaderPtr reade
 
 	switch (el) {
 	case XCCDFE_TITLE:
-        oscap_list_add(item->item.title, oscap_text_new_parse(OSCAP_TEXT_TRAITS_PLAIN, reader));
+        oscap_list_add(item->item.title, oscap_text_new_parse(XCCDF_TEXT_PLAIN, reader));
 		return true;
 	case XCCDFE_DESCRIPTION:
-        oscap_list_add(item->item.description, oscap_text_new_parse(OSCAP_TEXT_TRAITS_HTML, reader));
+        oscap_list_add(item->item.description, oscap_text_new_parse(XCCDF_TEXT_HTMLSUB, reader));
 		return true;
 	case XCCDFE_WARNING:
         oscap_list_add(item->item.warnings, xccdf_warning_new_parse(reader));
@@ -232,10 +232,10 @@ bool xccdf_item_process_element(struct xccdf_item * item, xmlTextReaderPtr reade
 		item->item.version = oscap_element_string_copy(reader);
 		break;
 	case XCCDFE_RATIONALE:
-        oscap_list_add(item->item.rationale, oscap_text_new_parse(OSCAP_TEXT_TRAITS_PLAIN, reader));
+        oscap_list_add(item->item.rationale, oscap_text_new_parse(XCCDF_TEXT_HTMLSUB, reader));
 		return true;
 	case XCCDFE_QUESTION:
-        oscap_list_add(item->item.question, oscap_text_new_parse(OSCAP_TEXT_TRAITS_PLAIN, reader));
+        oscap_list_add(item->item.question, oscap_text_new_parse(XCCDF_TEXT_PLAIN, reader));
 		return true;
 	default:
 		break;
@@ -428,7 +428,7 @@ struct xccdf_warning *xccdf_warning_new(void)
 struct xccdf_warning *xccdf_warning_new_parse(xmlTextReaderPtr reader)
 {
     struct xccdf_warning *w = xccdf_warning_new();
-    w->text = oscap_text_new_parse(OSCAP_TEXT_TRAITS_HTML, reader);
+    w->text = oscap_text_new_parse(XCCDF_TEXT_HTMLSUB, reader);
     w->category = oscap_string_to_enum(XCCDF_WARNING_MAP, xccdf_attribute_get(reader, XCCDFA_CATEGORY));
     return w;
 }
@@ -475,4 +475,11 @@ OSCAP_GETTER(const char*, xccdf_reference, lang)
 OSCAP_GETTER(const char*, xccdf_reference, href)
 OSCAP_GETTER(const char*, xccdf_reference, content)
 OSCAP_GETTER(bool,        xccdf_reference, override)
+
+const struct oscap_text_traits XCCDF_TEXT_PLAIN    = { .can_override = true };
+const struct oscap_text_traits XCCDF_TEXT_HTML     = { .html = true, .can_override = true };
+const struct oscap_text_traits XCCDF_TEXT_PLAINSUB = { .can_override = true, .can_substitute = true };
+const struct oscap_text_traits XCCDF_TEXT_HTMLSUB  = { .html = true, .can_override = true, .can_substitute = true };
+const struct oscap_text_traits XCCDF_TEXT_NOTICE   = { .html = true };
+const struct oscap_text_traits XCCDF_TEXT_PROFNOTE = { .html = true, .can_substitute = true };
 

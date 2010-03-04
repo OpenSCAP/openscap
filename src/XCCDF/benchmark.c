@@ -85,10 +85,10 @@ bool xccdf_benchmark_parse(struct xccdf_item * benchmark, xmlTextReaderPtr reade
 				oscap_list_add(benchmark->sub.bench.notices, xccdf_notice_new_parse(reader));
 				break;
 		case XCCDFE_FRONT_MATTER:
-				oscap_list_add(benchmark->sub.bench.front_matter, oscap_text_new_parse(OSCAP_TEXT_TRAITS_HTML, reader));
+				oscap_list_add(benchmark->sub.bench.front_matter, oscap_text_new_parse(XCCDF_TEXT_HTMLSUB, reader));
 			break;
 		case XCCDFE_REAR_MATTER:
-				oscap_list_add(benchmark->sub.bench.rear_matter, oscap_text_new_parse(OSCAP_TEXT_TRAITS_HTML, reader));
+				oscap_list_add(benchmark->sub.bench.rear_matter, oscap_text_new_parse(XCCDF_TEXT_HTMLSUB, reader));
 			break;
 		case XCCDFE_METADATA:
 			if (!benchmark->sub.bench.metadata)
@@ -184,7 +184,7 @@ XCCDF_STATUS_CURRENT(benchmark)
 struct xccdf_notice *xccdf_notice_new(void)
 {
     struct xccdf_notice *notice = oscap_calloc(1, sizeof(struct xccdf_notice));
-    notice->text = oscap_text_new_full(OSCAP_TEXT_TRAITS_HTML, NULL, NULL);
+    notice->text = oscap_text_new_full(XCCDF_TEXT_NOTICE, NULL, NULL);
     return NULL;
 }
 
@@ -192,7 +192,7 @@ struct xccdf_notice *xccdf_notice_new_parse(xmlTextReaderPtr reader)
 {
     struct xccdf_notice *notice = oscap_calloc(1, sizeof(struct xccdf_notice));
     notice->id = xccdf_attribute_copy(reader, XCCDFA_ID);
-    notice->text = oscap_text_new_parse(OSCAP_TEXT_TRAITS_HTML, reader);
+    notice->text = oscap_text_new_parse(XCCDF_TEXT_NOTICE, reader);
     return notice;
 }
 

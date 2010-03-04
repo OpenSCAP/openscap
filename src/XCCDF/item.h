@@ -305,6 +305,13 @@ extern const struct oscap_string_map XCCDF_ROLE_MAP[];
 extern const struct oscap_string_map XCCDF_OPERATOR_MAP[];
 extern const struct oscap_string_map XCCDF_STRATEGY_MAP[];
 
+extern const struct oscap_text_traits XCCDF_TEXT_PLAIN;
+extern const struct oscap_text_traits XCCDF_TEXT_HTML;
+extern const struct oscap_text_traits XCCDF_TEXT_PLAINSUB;
+extern const struct oscap_text_traits XCCDF_TEXT_HTMLSUB;
+extern const struct oscap_text_traits XCCDF_TEXT_NOTICE;
+extern const struct oscap_text_traits XCCDF_TEXT_PROFNOTE;
+
 struct xccdf_item *xccdf_item_new(xccdf_type_t type, struct xccdf_item *bench, struct xccdf_item *parent);
 void xccdf_item_release(struct xccdf_item *item);
 void xccdf_item_print(struct xccdf_item *item, int depth);

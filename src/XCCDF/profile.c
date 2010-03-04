@@ -125,7 +125,7 @@ static void xccdf_parse_remarks(xmlTextReaderPtr reader, struct oscap_list* list
 {
 	while (oscap_to_start_element(reader, depth))
 		if (xccdf_element_get(reader) == XCCDFE_REMARK)
-			oscap_list_add(list, oscap_text_new_parse(OSCAP_TEXT_TRAITS_PLAIN, reader));
+			oscap_list_add(list, oscap_text_new_parse(XCCDF_TEXT_PLAIN, reader));
 }
 
 struct xccdf_item *xccdf_profile_parse(xmlTextReaderPtr reader, struct xccdf_item *bench)
