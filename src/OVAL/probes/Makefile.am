@@ -49,6 +49,11 @@ probe_file_SOURCES= unix/file.c
 probe_file_CFLAGS=
 probe_file_LDFLAGS=
 
+pkglibexec_PROGRAMS += probe_uname
+probe_uname_SOURCES= unix/uname.c
+probe_uname_CFLAGS=
+probe_uname_LDFLAGS=
+
 if WANT_PROBES_LINUX
 pkglibexec_PROGRAMS += probe_inetlisteningservers
 probe_inetlisteningservers_SOURCES= unix/linux/inetlisteningservers.c
