@@ -24,7 +24,7 @@
 #include <string.h>
 #include <math.h>
 
-struct xccdf_item *xccdf_item_new(xccdf_type_t type, struct xccdf_item *bench, struct xccdf_item *parent)
+struct xccdf_item *xccdf_item_new(xccdf_type_t type, struct xccdf_item *parent)
 {
 	struct xccdf_item *item;
 	size_t size = sizeof(*item) - sizeof(item->sub);
@@ -62,10 +62,6 @@ struct xccdf_item *xccdf_item_new(xccdf_type_t type, struct xccdf_item *bench, s
 	item->item.references = oscap_list_new();
 	item->item.weight = 1.0;
 	item->item.flags.selected = true;
-	if (type == XCCDF_BENCHMARK && bench == NULL)
-		item->item.benchmark = item;
-	else
-		item->item.benchmark = bench;
 	item->item.parent = parent;
 	return item;
 }
@@ -193,8 +189,11 @@ bool xccdf_item_process_attributes(struct xccdf_item *item, xmlTextReaderPtr rea
 		item->item.extends = xccdf_attribute_copy(reader, XCCDFA_EXTENDS);
 	item->item.cluster_id = xccdf_attribute_copy(reader, XCCDFA_CLUSTER_ID);
 
-	if (item->item.id && item->item.benchmark)
-		oscap_htable_add(item->item.benchmark->sub.bench.dict, item->item.id, item);
+	if (item->item.id) {
+		struct xccdf_item *bench = XITEM(xccdf_item_get_benchmark_internal(item));
+		if (bench != NULL)
+			oscap_htable_add(bench->sub.bench.dict, item->item.id, item);
+	}
 	return item->item.id != NULL;
 }
 
@@ -243,6 +242,21 @@ bool xccdf_item_process_element(struct xccdf_item * item, xmlTextReaderPtr reade
 	return false;
 }
 
+inline struct xccdf_item* xccdf_item_get_benchmark_internal(struct xccdf_item* item)
+{
+	if (item == NULL) return NULL;
+	while (xccdf_item_get_parent(item) != NULL)
+		item = xccdf_item_get_parent(item);
+	return (xccdf_item_get_type(item) == XCCDF_BENCHMARK ? item : NULL);
+}
+
+#define XCCDF_BENCHGETTER(TYPE) \
+	struct xccdf_benchmark* xccdf_##TYPE##_get_benchmark(const struct xccdf_##TYPE* item) \
+	{ return XBENCHMARK(xccdf_item_get_benchmark_internal(XITEM(item))); }
+XCCDF_BENCHGETTER(item)  XCCDF_BENCHGETTER(profile) XCCDF_BENCHGETTER(rule)
+XCCDF_BENCHGETTER(group) XCCDF_BENCHGETTER(value) //XCCDF_BENCHGETTER(result)
+#undef XCCDF_BENCHGETTER
+
 static void *xccdf_item_convert(struct xccdf_item *item, xccdf_type_t type)
 {
 	return (item != NULL && (item->type & type) ? item : NULL);
@@ -272,7 +286,6 @@ XCCDF_ITEM_GETTER(const char *, version_update) XCCDF_ITEM_GETTER(time_t, versio
 XCCDF_ITEM_GETTER(struct xccdf_item *, parent)
 //XCCDF_ITEM_GETTER(struct xccdf_item*, extends)
 XCCDF_ITEM_GETTER(const char *, extends)
-XCCDF_ITEM_GETTER(struct xccdf_benchmark *, benchmark)
 XCCDF_FLAG_GETTER(resolved)
 XCCDF_FLAG_GETTER(hidden)
 XCCDF_FLAG_GETTER(selected)

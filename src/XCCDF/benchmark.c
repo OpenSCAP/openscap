@@ -46,7 +46,7 @@ struct xccdf_benchmark *xccdf_benchmark_parse_xml(const char *filename)
 
 struct xccdf_item *xccdf_benchmark_new(void)
 {
-	struct xccdf_item *bench = xccdf_item_new(XCCDF_BENCHMARK, NULL, NULL);
+	struct xccdf_item *bench = xccdf_item_new(XCCDF_BENCHMARK, NULL);
     // lists
 	bench->sub.bench.rear_matter  = oscap_list_new();
 	bench->sub.bench.front_matter = oscap_list_new();

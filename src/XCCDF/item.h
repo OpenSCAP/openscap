@@ -66,7 +66,6 @@ struct xccdf_item_base {
 	struct oscap_list *references;
 	struct oscap_list *platforms;
 	struct xccdf_flags flags;
-	struct xccdf_item *benchmark;
 };
 
 struct xccdf_rule_item {
@@ -312,11 +311,12 @@ extern const struct oscap_text_traits XCCDF_TEXT_HTMLSUB;
 extern const struct oscap_text_traits XCCDF_TEXT_NOTICE;
 extern const struct oscap_text_traits XCCDF_TEXT_PROFNOTE;
 
-struct xccdf_item *xccdf_item_new(xccdf_type_t type, struct xccdf_item *bench, struct xccdf_item *parent);
+struct xccdf_item *xccdf_item_new(xccdf_type_t type, struct xccdf_item *parent);
 void xccdf_item_release(struct xccdf_item *item);
 void xccdf_item_print(struct xccdf_item *item, int depth);
 void xccdf_item_dump(struct xccdf_item *item, int depth);
 void xccdf_item_free(struct xccdf_item *item);
+struct xccdf_item* xccdf_item_get_benchmark_internal(struct xccdf_item* item);
 
 struct xccdf_item *xccdf_benchmark_new(void);
 bool xccdf_benchmark_parse(struct xccdf_item *benchmark, xmlTextReaderPtr reader);

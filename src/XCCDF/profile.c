@@ -106,7 +106,7 @@ struct xccdf_item *xccdf_profile_new(struct xccdf_item *bench)
 {
 	if (bench)
 		assert(bench->type == XCCDF_BENCHMARK);
-	struct xccdf_item *prof = xccdf_item_new(XCCDF_PROFILE, bench, bench);
+	struct xccdf_item *prof = xccdf_item_new(XCCDF_PROFILE, bench);
 	prof->sub.profile.selects = oscap_list_new();
 	prof->sub.profile.setvalues = oscap_list_new();
 	prof->sub.profile.refine_values = oscap_list_new();

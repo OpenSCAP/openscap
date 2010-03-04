@@ -31,7 +31,7 @@ static struct xccdf_value_val *xccdf_value_val_new(xccdf_value_type_t type);
 
 struct xccdf_item *xccdf_value_new(struct xccdf_item *parent, xccdf_value_type_t type)
 {
-	struct xccdf_item *val = xccdf_item_new(XCCDF_VALUE, parent->item.benchmark, parent);
+	struct xccdf_item *val = xccdf_item_new(XCCDF_VALUE, parent);
 	val->sub.value.type = type;
 	val->sub.value.values = oscap_htable_new();
 	oscap_htable_add(val->sub.value.values, "", xccdf_value_val_new(type));
