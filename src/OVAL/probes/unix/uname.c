@@ -36,7 +36,9 @@
 #include "seap.h"
 #include "probe-api.h"
 #include "alloc.h"
-#include <stdio_ext.h>
+#ifdef HAVE_STDIO_EXT_H
+# include <stdio_ext.h>
+#endif
 #include <string.h>
 #include <sys/utsname.h>
 
@@ -50,12 +52,15 @@ SEXP_t *probe_main(SEXP_t *object, int *err, void *arg)
 	// Collect the info
 	uname(&buf);
 	processor = buf.machine;
+#ifdef __linux
 	if (strcmp(processor, "i686") == 0) {
 		// See if we have an athlon processor
 		FILE *f = fopen("/proc/cpu", "rt");
 		if (f) {
 			char tmp[128];
-			__fsetlocking(f, FSETLOCKING_BYCALLER);
+#ifdef HAVE_STDIO_EXT_H
+                        __fsetlocking(f, FSETLOCKING_BYCALLER);
+#endif
 			while (fgets(tmp, sizeof(tmp), f)) {
 				if (strncmp(tmp, "vendor_id", 9) == 0) {
 					if (strstr(tmp, "AuthenticAMD")) {
@@ -67,7 +72,7 @@ SEXP_t *probe_main(SEXP_t *object, int *err, void *arg)
                         fclose(f);
 		}
 	}
-	
+#endif
 	item_sexp = probe_obj_creat("uname_item", NULL,
 		/* entities */
 		"machine_class", NULL, r0 = SEXP_string_newf("%s", buf.machine),

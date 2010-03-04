@@ -42,8 +42,22 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-#include <stdio_ext.h>
 #include <errno.h>
+
+#ifndef HAVE_SHADOW_H
+SEXP_t *probe_main(SEXP_t *object, int *err, void *arg)
+{
+        SEXP_t *item_sexp, *probe_out;
+        
+	item_sexp = probe_obj_creat ("shadow_item", NULL, NULL);
+        probe_item_setstatus (item_sexp, OVAL_STATUS_NOTCOLLECTED);
+        probe_out = SEXP_list_new (item_sexp, NULL);
+        SEXP_free (item_sexp);
+        
+        return (probe_out);
+}
+#else
+/* shadow.h is present */
 #include <shadow.h>
 
 /* Convenience structure for the results being reported */
@@ -195,4 +209,4 @@ SEXP_t *probe_main(SEXP_t *object, int *err, void *arg)
 	*err = 0;
 	return probe_out;
 }
-
+#endif /* HAVE_SHADOW_H */

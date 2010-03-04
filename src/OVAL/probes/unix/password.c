@@ -40,7 +40,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-#include <stdio_ext.h>
 #include <errno.h>
 #include <pwd.h>
 
