@@ -55,63 +55,63 @@ struct cvss_entry;
 /**
  * Get score from CVSS entry
  * @param entry CVSS entry
- * @relates cvss_entry
+ * @memberof cvss_entry
  * @return CVSS score
  */
 const char* cvss_entry_get_score(const struct cvss_entry * entry);
 /**
  * Get access vector from CVSS entry
  * @param entry CVSS entry
- * @relates cvss_entry
+ * @memberof cvss_entry
  * @return CVSS access vector
  */
 const char* cvss_entry_get_AV(const struct cvss_entry * entry);
 /**
  * Get access complexity from CVSS entry
  * @param entry CVSS entry
- * @relates cvss_entry
+ * @memberof cvss_entry
  * @return CVSS access complexity
  */
 const char* cvss_entry_get_AC(const struct cvss_entry * entry);
 /**
  * Get authentication from CVSS entry
  * @param entry CVSS entry
- * @relates cvss_entry
+ * @memberof cvss_entry
  * @return CVSS authentication
  */
 const char* cvss_entry_get_authentication(const struct cvss_entry * entry);
 /**
  * Get confidentiality impact from CVSS entry
  * @param entry CVSS entry
- * @relates cvss_entry
+ * @memberof cvss_entry
  * @return CVSS conidentiality impact
  */
 const char* cvss_entry_get_imp_confidentiality(const struct cvss_entry * entry);
 /**
  * Get integrity impact from CVSS entry
  * @param entry CVSS entry
- * @relates cvss_entry
+ * @memberof cvss_entry
  * @return CVSS integrity impact
  */
 const char* cvss_entry_get_imp_integrity(const struct cvss_entry * entry);
 /**
  * Get availability impact from CVSS entry
  * @param entry CVSS entry
- * @relates cvss_entry
+ * @memberof cvss_entry
  * @return CVSS availability impact
  */
 const char* cvss_entry_get_imp_availability(const struct cvss_entry * entry);
 /**
  * Get source from CVSS entry
  * @param entry CVSS entry
- * @relates cvss_entry
+ * @memberof cvss_entry
  * @return CVSS source
  */
 const char* cvss_entry_get_source(const struct cvss_entry * entry);
 /**
  * Get generated date-time from CVSS entry
  * @param entry CVSS entry
- * @relates cvss_entry
+ * @memberof cvss_entry
  * @return CVSS generated date-time
  */
 const char* cvss_entry_get_generated(const struct cvss_entry * entry);
@@ -136,7 +136,7 @@ const char * cvss_model_supported(void);
  * Set of CVSS entry
  * @param entry CVSS entry
  * @param new_ new of CVSS
- * @relates cvss_entry
+ * @memberof cvss_entry
  * @return true if set, false otherwise
  */
 bool cvss_entry_set_score(struct cvss_entry *entry, const char *new_score);
@@ -144,7 +144,7 @@ bool cvss_entry_set_score(struct cvss_entry *entry, const char *new_score);
  * Set access vector of CVSS entry
  * @param entry CVSS entry
  * @param new_AV new access vector of CVSS
- * @relates cvss_entry
+ * @memberof cvss_entry
  * @return true if set, false otherwise
  */
 bool cvss_entry_set_AV(struct cvss_entry *entry, const char *new_AV);
@@ -152,7 +152,7 @@ bool cvss_entry_set_AV(struct cvss_entry *entry, const char *new_AV);
  * Set access complexity of CVSS entry
  * @param entry CVSS entry
  * @param new_AC new access complexity of CVSS
- * @relates cvss_entry
+ * @memberof cvss_entry
  * @return true if set, false otherwise
  */
 bool cvss_entry_set_AC(struct cvss_entry *entry, const char *new_AC);
@@ -160,7 +160,7 @@ bool cvss_entry_set_AC(struct cvss_entry *entry, const char *new_AC);
  * Set authentication of CVSS entry
  * @param entry CVSS entry
  * @param new_authentication new authentication of CVSS
- * @relates cvss_entry
+ * @memberof cvss_entry
  * @return true if set, false otherwise
  */
 bool cvss_entry_set_authentication(struct cvss_entry *entry, const char *new_authentication);
@@ -168,7 +168,7 @@ bool cvss_entry_set_authentication(struct cvss_entry *entry, const char *new_aut
  * Set confidentiality impact of CVSS entry
  * @param entry CVSS entry
  * @param new_item new impact of CVSS
- * @relates cvss_entry
+ * @memberof cvss_entry
  * @return true if set, false otherwise
  */
 bool cvss_entry_set_imp_confidentiality(struct cvss_entry *entry, const char *new_item);
@@ -176,7 +176,7 @@ bool cvss_entry_set_imp_confidentiality(struct cvss_entry *entry, const char *ne
  * Set integrity impact of CVSS entry
  * @param entry CVSS entry
  * @param new_item new impact of CVSS
- * @relates cvss_entry
+ * @memberof cvss_entry
  * @return true if set, false otherwise
  */
 bool cvss_entry_set_imp_integrity(struct cvss_entry *entry, const char *new_item);
@@ -184,7 +184,7 @@ bool cvss_entry_set_imp_integrity(struct cvss_entry *entry, const char *new_item
  * Set availability impact of CVSS entry
  * @param entry CVSS entry
  * @param new_item new impact of CVSS
- * @relates cvss_entry
+ * @memberof cvss_entry
  * @return true if set, false otherwise
  */
 bool cvss_entry_set_imp_availability(struct cvss_entry *entry, const char *new_item);
@@ -192,7 +192,7 @@ bool cvss_entry_set_imp_availability(struct cvss_entry *entry, const char *new_i
  * Set source of CVSS entry
  * @param entry CVSS entry
  * @param new_ new of CVSS
- * @relates cvss_entry
+ * @memberof cvss_entry
  * @return true if set, false otherwise
  */
 bool cvss_entry_set_source(struct cvss_entry *entry, const char *new_source);
@@ -200,7 +200,7 @@ bool cvss_entry_set_source(struct cvss_entry *entry, const char *new_source);
  * Set generated date-time of CVSS entry
  * @param entry CVSS entry
  * @param new_generated new generated date-time of CVSS
- * @relates cvss_entry
+ * @memberof cvss_entry
  * @return true if set, false otherwise
  */
 bool cvss_entry_set_generated(struct cvss_entry *entry, const char *new_generated);
@@ -216,7 +216,7 @@ bool cvss_entry_set_generated(struct cvss_entry *entry, const char *new_generate
 
 /**
  * New CVSS entry
- * @relates cvss_entry
+ * @memberof cvss_entry
  * @return new cvss_entry
  */
 struct cvss_entry * cvss_entry_new(void);
@@ -233,7 +233,7 @@ struct cvss_entry * cvss_entry_new(void);
 /**
  * Free CVSS entry
  * @param entry CVSS entry
- * @relates cvss_entry
+ * @memberof cvss_entry
  */
 void cvss_entry_free(struct cvss_entry * entry);
 

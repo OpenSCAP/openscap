@@ -294,7 +294,7 @@ struct oscap_string_map {
  * Convert a string to an enumeration constant.
  * @param map An array of oscap_string_map structures that defines mapping between constants and strings.
  * @param str string to be converted
- * @relates oscap_string_map
+ * @memberof oscap_string_map
  */
 int oscap_string_to_enum(const struct oscap_string_map *map, const char *str);
 
@@ -302,7 +302,7 @@ int oscap_string_to_enum(const struct oscap_string_map *map, const char *str);
  * Convert an enumeration constant to its corresponding string representation.
  * @param map An array of oscap_string_map structures that defines mapping between constants and strings.
  * @param val value to be converted
- * @relates oscap_string_map
+ * @memberof oscap_string_map
  */
 const char *oscap_enum_to_string(const struct oscap_string_map *map, int val);
 

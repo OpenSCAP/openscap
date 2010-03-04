@@ -68,7 +68,7 @@ struct cvss_entry;
 /**
  * Parse CVSS entry
  * @param reader XML Text Reader representing XML model
- * @relates cvss_entry
+ * @memberof cvss_entry
  * @return new parsed CVSS entry
  */
 struct cvss_entry * cvss_entry_parse(xmlTextReaderPtr reader);
@@ -85,7 +85,7 @@ struct cvss_entry * cvss_entry_parse(xmlTextReaderPtr reader);
  * Export CVSS entry
  * @param entry CVSS entry
  * @param writer XML Text Writer representing XML model
- * @relates cvss_entry
+ * @memberof cvss_entry
  */
 void cvss_entry_export(const struct cvss_entry * entry, xmlTextWriterPtr writer);
 
