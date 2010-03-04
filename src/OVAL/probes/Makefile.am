@@ -49,6 +49,11 @@ probe_file_SOURCES= unix/file.c
 probe_file_CFLAGS=
 probe_file_LDFLAGS=
 
+pkglibexec_PROGRAMS += probe_password
+probe_password_SOURCES= unix/password.c
+probe_password_CFLAGS=
+probe_password_LDFLAGS=
+
 pkglibexec_PROGRAMS += probe_uname
 probe_uname_SOURCES= unix/uname.c
 probe_uname_CFLAGS=

@@ -42,6 +42,7 @@ static const oval_pdsc_t __ovalp_ltable[] = {
 	/*  9003 */ {OVAL_LINUX_RPM_INFO,                   "rpminfo",           "probe_rpminfo"},
 //      /*  9004 */ { OVAL_LINUX_SLACKWARE_PKG_INFO_TEST,    "slackwarepkginfo",  "probe_slackwarepkginfo"  },
 	/* 13001 */ {OVAL_UNIX_FILE,                        "file",              "probe_file"},
+	/* 13004 */ {OVAL_UNIX_PASSWORD,                    "password",          "probe_password"},
 	/* 13006 */ {OVAL_UNIX_RUNLEVEL,                    "runlevel",          "probe_runlevel"},
 	/* 13009 */ {OVAL_UNIX_UNAME,                       "uname",             "probe_uname"}
 };
