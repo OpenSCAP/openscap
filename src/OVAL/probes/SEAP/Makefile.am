@@ -15,6 +15,8 @@ libseap_la_SOURCES= generic/bfind.c		\
 		    generic/pqueue.c		\
 		    generic/pqueue.h		\
 		    generic/strbuf.c		\
+		    generic/spb.c		\
+		    generic/spb.h		\	
 		    sch_cons.c			\
 		    sch_cons.h			\
 		    sch_dummy.c			\
