@@ -47,6 +47,7 @@
 #include <errno.h>
 #include <dirent.h>
 #include <fcntl.h>
+#include <netdb.h>
 #include <arpa/inet.h>
 
 /* This structure contains the information OVAL is asking or requesting */
@@ -524,7 +525,7 @@ static int read_raw(const char *proc, const char *type, llist *l,
 SEXP_t *probe_main(SEXP_t *object, int *err, void *arg)
 {
 	llist ll;
-	SEXP_t *probe_out, *val, *item_sexp, *ent;
+	SEXP_t *probe_out, *val = NULL, *item_sexp, *ent;
 
 	ent = probe_obj_getent(object, "protocol", 1);
 	if (ent)
