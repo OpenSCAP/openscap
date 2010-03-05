@@ -54,6 +54,11 @@ probe_password_SOURCES= unix/password.c
 probe_password_CFLAGS=
 probe_password_LDFLAGS=
 
+pkglibexec_PROGRAMS += probe_process
+probe_process_SOURCES= unix/process.c
+probe_process_CFLAGS=
+probe_process_LDFLAGS=
+
 pkglibexec_PROGRAMS += probe_shadow
 probe_shadow_SOURCES= unix/shadow.c
 probe_shadow_CFLAGS=
