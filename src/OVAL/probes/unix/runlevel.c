@@ -13,6 +13,7 @@
 
 #define _BSD_SOURCE
 #include <stdio.h>
+#include <stdbool.h>
 #include <string.h>
 #include <errno.h>
 #include <assert.h>
@@ -39,8 +40,8 @@ struct runlevel_req {
 struct runlevel_rep {
         char *service_name;
         char *runlevel;
-        int   start;
-        int   kill;
+        bool  start;
+        bool  kill;
 };
 
 #define RUNLEVEL_REP_INITIALIZER { NULL, NULL, 0, 0 }
@@ -62,8 +63,8 @@ static int get_runlevel_redhat (struct runlevel_req *req, struct runlevel_rep *r
         
         rep->service_name = req->service_name;
         rep->runlevel     = req->runlevel;
-        rep->start        = 0;
-        rep->kill         = 0;
+        rep->start        = false;
+        rep->kill         = false;
         
         snprintf (pathbuf, PATH_MAX, "/etc/init.d/%s", req->service_name);
         
@@ -110,10 +111,10 @@ static int get_runlevel_redhat (struct runlevel_req *req, struct runlevel_rep *r
                 if (rc_st.st_ino == st.st_ino) {
                         switch(dp->d_name[0]) {
                         case 'S':
-                                rep->start = 1;
+                                rep->start = true;
                                 goto out;
                         case 'K':
-                                rep->kill  = 1;
+                                rep->kill  = true;
                                 goto out;
                         default:
                                 _D("Unexpected character in filename: %c, %s/%s.\n",
@@ -349,9 +350,9 @@ SEXP_t *probe_main (SEXP_t *object, int *err, void *arg)
                                              "runlevel", NULL,
                                              r1 = SEXP_string_newf("%s", reply_st.runlevel),
                                              "start", NULL,
-                                             r2 = SEXP_number_newu(reply_st.start),
+                                             r2 = SEXP_number_newb(reply_st.start),
                                              "kill", NULL,
-                                             r3 = SEXP_number_newu(reply_st.kill),
+                                             r3 = SEXP_number_newb(reply_st.kill),
                                              NULL);
 
                 SEXP_vfree (r0, r1, r2, r3, NULL);
