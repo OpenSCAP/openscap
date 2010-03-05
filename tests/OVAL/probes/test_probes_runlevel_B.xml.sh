@@ -205,7 +205,7 @@ cat <<EOF
       <state state_ref="state:true"/>
     </runlevel_test>
 
-    <runlevel_test check_existence="all_exist" comment="true" version="1" id="test:8" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+    <runlevel_test check_existence="all_exist" comment="false" version="1" id="test:8" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
       <object object_ref="object:4"/>
       <state state_ref="state:false"/>
     </runlevel_test>
@@ -289,7 +289,7 @@ cat <<EOF
       <state state_ref="state:true"/>
     </runlevel_test>
 
-    <runlevel_test check_existence="at_least_one_exists" comment="true" version="1" id="test:24" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+    <runlevel_test check_existence="at_least_one_exists" comment="false" version="1" id="test:24" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
       <object object_ref="object:4"/>
       <state state_ref="state:false"/>
     </runlevel_test>
@@ -331,7 +331,7 @@ cat <<EOF
       <state state_ref="state:true"/>
     </runlevel_test>
 
-    <runlevel_test check_existence="only_one_exists" comment="true" version="1" id="test:32" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+    <runlevel_test check_existence="only_one_exists" comment="false" version="1" id="test:32" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
       <object object_ref="object:4"/>
       <state state_ref="state:false"/>
     </runlevel_test>
@@ -373,7 +373,7 @@ cat <<EOF
       <state state_ref="state:true"/>
     </runlevel_test>
 
-    <runlevel_test check_existence="none_exist" comment="false" version="1" id="test:40" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+    <runlevel_test check_existence="none_exist" comment="true" version="1" id="test:40" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
       <object object_ref="object:4"/>
       <state state_ref="state:false"/>
     </runlevel_test>
