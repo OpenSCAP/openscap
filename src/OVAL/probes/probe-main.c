@@ -533,6 +533,11 @@ int main(void)
 		exit(errno);
 	}
 
+        if (pthread_attr_setdetachstate (&thread_attr, PTHREAD_CREATE_DETACHED) != 0) {
+                _D("Can't set detach state: %u, %s.\n", errno, strerror (errno));
+                exit (errno);
+        }
+
 	global.probe_arg = probe_init();
 
 	/* Main loop */

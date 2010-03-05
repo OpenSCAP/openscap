@@ -287,7 +287,7 @@ static SEXP_t *oval_probe_comm(SEAP_CTX_t * ctx, oval_pd_t * pd, const SEXP_t * 
                 fprintf(stderr, "\n---------------\n");
         }
         
-	oscap_dprintf("%s: ctx=%p, pd=%p, s_iobj=%p\n", ctx, pd, s_iobj);
+	oscap_dprintf("ctx=%p, pd=%p, s_iobj=%p\n", ctx, pd, s_iobj);
         
 	for (retry = 0;;) {
 		/*
