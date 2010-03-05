@@ -53,7 +53,7 @@ void __seap_debuglog (const char *file, const char *fn, size_t line, const char 
                 fprintf (__debuglog_fp, "=============== LOG: %.24s ===============\n", st);
         }
         
-        if (flock (fileno (__debuglog_fp), LOCK_EX) == -1) {
+        if (flock (fileno (__debuglog_fp), LOCK_EX | LOCK_NB) == -1) {
                 __UNLOCK_FP;
                 return;
         }
@@ -68,7 +68,7 @@ void __seap_debuglog (const char *file, const char *fn, size_t line, const char 
         vfprintf (__debuglog_fp, fmt, ap);
         va_end (ap);
         
-        if (flock (fileno (__debuglog_fp), LOCK_UN) == -1) {
+        if (flock (fileno (__debuglog_fp), LOCK_UN | LOCK_NB) == -1) {
                 /* __UNLOCK_FP; */
                 abort ();
         }
