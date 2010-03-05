@@ -83,6 +83,9 @@ static int get_runlevel_redhat (struct runlevel_req *req, struct runlevel_rep *r
         
         snprintf (pathbuf, PATH_MAX, "/etc/rc%lu.d", runlevel);
         
+        if (runlevel > 6)
+                return (0);
+
         rcdir = opendir (pathbuf);
         if (rcdir == NULL) {
                 _D("Can't open directory \"%s\": errno=%d, %s.\n",
@@ -121,7 +124,7 @@ static int get_runlevel_redhat (struct runlevel_req *req, struct runlevel_rep *r
 out:
         closedir (rcdir);
         
-        return (0);
+        return (1);
 }
 
 static int get_runlevel_debian (struct runlevel_req *req, struct runlevel_rep *rep)
@@ -331,19 +334,9 @@ SEXP_t *probe_main (SEXP_t *object, int *err, void *arg)
          * Freeing service_name and runlevel in both request_st and reply_st will
          * result in a double-free!
          */
-        if (get_runlevel (&request_st, &reply_st) == -1) {
-                _D("get_runlevel failed\n");
-        
-                item_sexp = probe_item_creat ("runlevel_item", NULL,
-                                              /* entities */
-                                              "service_name", NULL, NULL,
-                                              "runlevel",     NULL, NULL,
-                                              "start",        NULL, NULL,
-                                              "kill",         NULL, NULL,
-                                              NULL);
-                
-                probe_obj_setstatus (item_sexp, OVAL_STATUS_ERROR);
-        } else {
+        switch (get_runlevel (&request_st, &reply_st)) {
+        case  1:
+        {
                 SEXP_t *r0, *r1, *r2, *r3;
 
                 _D("get_runlevel: [0]=\"%s\", [1]=\"%s\", [2]=\"%d\", [3]=\"%d\"\n",
@@ -362,6 +355,20 @@ SEXP_t *probe_main (SEXP_t *object, int *err, void *arg)
                                              NULL);
 
                 SEXP_vfree (r0, r1, r2, r3, NULL);
+                break;
+        }
+        case  0:
+                item_sexp = probe_item_creat ("runlevel_item", NULL, NULL);
+                probe_obj_setstatus (item_sexp, OVAL_STATUS_DOESNOTEXIST);
+                
+                break;
+        case -1:
+                _D("get_runlevel failed\n");
+        
+                item_sexp = probe_item_creat ("runlevel_item", NULL, NULL);
+                probe_obj_setstatus (item_sexp, OVAL_STATUS_ERROR);
+
+                break;
         }
         
         /* See implementation note #1 */
