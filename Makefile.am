@@ -18,3 +18,7 @@ dist-hook: ChangeLog
 
 ChangeLog:	
 	git log | sed '/^commit/d; /^Merge/d' > ChangeLog
+
+CONFIG_CLEAN_FILES = config/*
+clean-generic:
+	rm -rf autom4te*.cache

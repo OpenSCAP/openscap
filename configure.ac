@@ -4,6 +4,7 @@ AC_PREREQ(2.59)
 AC_INIT([openscap], [0.5.7], [open-scap-list@redhat.com])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_AUX_DIR([config])
+AC_CONFIG_MACRO_DIR([m4])
 
 AM_INIT_AUTOMAKE([foreign])
 
