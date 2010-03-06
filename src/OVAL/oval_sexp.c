@@ -17,37 +17,46 @@
 
 static SEXP_t *oval_value_to_sexp(struct oval_value *val, oval_datatype_t dtype)
 {
-	SEXP_t *val_sexp;
-
-	/* CHECK: check in val? */
+	SEXP_t *val_sexp = NULL;
+        char   *val_rptr = NULL;
+        
 	switch (dtype) {
 	case OVAL_DATATYPE_VERSION:
-		val_sexp = SEXP_string_newf("%s", oval_value_get_text(val));
-		SEXP_datatype_set(val_sexp, "version");
+                val_rptr = oval_value_get_text (val);
+                
+                if (val_rptr != NULL) {
+                        val_sexp = SEXP_string_newf("%s", val_rptr);
+                        SEXP_datatype_set(val_sexp, "version");
+                }
+                
 		break;
-
-	case OVAL_DATATYPE_EVR_STRING:
-		val_sexp = SEXP_string_newf("%s", oval_value_get_text(val));
-		SEXP_datatype_set(val_sexp, "evr_str");
+        case OVAL_DATATYPE_EVR_STRING:
+                val_rptr = oval_value_get_text (val);
+                
+                if (val_rptr != NULL) {
+                        val_sexp = SEXP_string_newf("%s", val_rptr);
+                        SEXP_datatype_set(val_sexp, "evr_str");
+                }
+                
 		break;
-
 	case OVAL_DATATYPE_STRING:
-		val_sexp = SEXP_string_newf("%s", oval_value_get_text(val));
-		break;
+                val_rptr = oval_value_get_text (val);
+                
+                if (val_rptr != NULL) {
+                        val_sexp = SEXP_string_newf("%s", val_rptr);
+                }
 
+		break;
 	case OVAL_DATATYPE_FLOAT:
 		val_sexp = SEXP_number_newf(oval_value_get_float(val));
 		break;
-
 	case OVAL_DATATYPE_INTEGER:
 		val_sexp = SEXP_number_newi_32(oval_value_get_integer(val));
 		break;
-
 	case OVAL_DATATYPE_BOOLEAN:
 		val_sexp = SEXP_number_newb(oval_value_get_boolean(val));
 		SEXP_datatype_set(val_sexp, "bool");
 		break;
-
 	default:
 		val_sexp = NULL;
 		break;
@@ -95,10 +104,7 @@ static SEXP_t *oval_entity_to_sexp(struct oval_entity *ent)
 
 		val_sexp = oval_value_to_sexp(oval_entity_get_value(ent), oval_entity_get_datatype(ent));
 
-		if (val_sexp == NULL) {
-			SEXP_free(elm);
-			elm = NULL;
-		} else {
+		if (val_sexp != NULL) {
 			SEXP_list_add(elm, val_sexp);
 			SEXP_free(val_sexp);
 		}
