@@ -230,11 +230,19 @@ static int find_files_recursion(const char *path, setting_t * setting, int depth
 		return -1;
 
 	rc = 0;
+	strcpy(path_new, path);
+	path_len = strlen(path);
+
+	// Make sure new_path always has a '/' at the end
+	if (path_len > 1 && path_new[path_len-1] != '/') {
+		path_new[path_len] = '/';
+		path_len++;
+	}
+
 	while ((pDirent = readdir(pDir))) {
-		path_len = strlen(path);
-		if (PATH_MAX < path_len + 1 + pDirent->d_reclen + 1)
+		if (PATH_MAX < path_len + pDirent->d_reclen + 1)
 			continue;
-		sprintf(path_new, "%s%s%s", path, (path[path_len - 1] == '/') ? "" : "/", pDirent->d_name);
+		strcpy(&path_new[path_len], pDirent->d_name);
 
 		if (lstat(path_new, &st) == -1)
 			continue;
