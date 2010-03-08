@@ -49,15 +49,19 @@
 #include <fcntl.h>
 #include <netdb.h>
 #include <arpa/inet.h>
+#include <regex.h>
 
 /* This structure contains the information OVAL is asking or requesting */
 struct server_info {
         char *protocol;
         oval_operation_t proto_op;
+	regex_t *proto_re;
 	char *local_address;
         oval_operation_t addr_op;
+	regex_t *addr_re;
 	char *local_port;
         oval_operation_t port_op;
+	regex_t *port_re;
 };
 
 /* Convenience structure for the results being reported */
@@ -290,7 +294,8 @@ static int collect_process_info(llist *l)
 	return 0;
 }
 
-static int option_compare(oval_operation_t op, const char *s1, const char * s2)
+static int option_compare(oval_operation_t op, regex_t *op_re, 
+		const char *s1, const char *s2)
 {
 	if (op == OVAL_OPERATION_EQUALS) {
 		if (strcmp(s1, s2) == 0)
@@ -302,8 +307,10 @@ static int option_compare(oval_operation_t op, const char *s1, const char * s2)
 			return 0;
 		else
 			return 1;
-	} else if (op == OVAL_OPERATION_PATTERN_MATCH)
-		return 0; // FIXME - not implemented
+	} else if (op == OVAL_OPERATION_PATTERN_MATCH) {
+		if (regexec(op_re, s2, 0, NULL, 0) != 0)
+			return 0;
+	}
 
 	// All matched
 	return 1;
@@ -317,15 +324,18 @@ static int eval_data(const char *type, const char *local_address,
 
 	// We are assuming an "and" condition for these
 	if (req.protocol) {
-		if (option_compare(req.proto_op, type, req.protocol) == 0)
+		if (option_compare(req.proto_op, req.proto_re, type,
+							req.protocol) == 0)
 			return 0;
 	}
 	if (req.local_address) {
-		if (option_compare(req.addr_op, local_address, req.local_address) == 0)
+		if (option_compare(req.addr_op, req.addr_re, local_address,
+							req.local_address) == 0)
 			return 0;
 	}
 	if (req.local_port) {
-		if (option_compare(req.port_op, port, req.local_port) == 0)
+		if (option_compare(req.port_op, req.port_re, port,
+							req.local_port) == 0)
 			return 0;
 	}
 	return 1;
@@ -336,7 +346,7 @@ static void report_finding(struct result_info *res, llist *l, SEXP_t *probe_out)
 	SEXP_t *r0, *r1, *r2, *r3, *r4, *r5, *r6, *r7, *r8, *r9, *item_sexp;
 	lnode *n = list_get_cur(l);
 		
-	item_sexp = probe_obj_creat("inetlisteningserver_item", NULL,
+	item_sexp = probe_obj_creat("inetlisteningservers_item", NULL,
 		/* entities */
 		"protocol", NULL, r0 = SEXP_string_newf("%s", res->proto),
 		"local_address", NULL, r1 = SEXP_string_newf("%s",
@@ -473,6 +483,7 @@ static int read_udp(const char *proc, const char *type, llist *l,
 	return 0;
 }
 
+/* Not part of the standard yet, but its here for when that happens
 static int read_raw(const char *proc, const char *type, llist *l,
 		SEXP_t *probe_out)
 {
@@ -520,7 +531,7 @@ static int read_raw(const char *proc, const char *type, llist *l,
 	}
 	fclose(f);
 	return 0;
-}
+} */
 
 SEXP_t *probe_main(SEXP_t *object, int *err, void *arg)
 {
@@ -548,6 +559,7 @@ SEXP_t *probe_main(SEXP_t *object, int *err, void *arg)
 		return NULL;
 	}
 	SEXP_free(val);
+	req.proto_re = NULL;
 	val = probe_ent_getattrval(ent, "operation");
 	if (val == NULL)
 		req.proto_op = OVAL_OPERATION_EQUALS;
@@ -556,13 +568,21 @@ SEXP_t *probe_main(SEXP_t *object, int *err, void *arg)
 		switch (req.proto_op) {
 			case OVAL_OPERATION_EQUALS:
 			case OVAL_OPERATION_NOT_EQUAL:
+				break;
 			case OVAL_OPERATION_PATTERN_MATCH:
+				req.proto_re = malloc(sizeof(regex_t));
+				if (regcomp(req.proto_re, req.protocol,
+							REG_EXTENDED) != 0) {
+					*err = PROBE_EINIT;
+					SEXP_free(val);
+					return NULL;
+				}
 				break;
 			default:
 				*err = PROBE_EOPNOTSUPP;
 				SEXP_free(val);
 				oscap_free(req.protocol);
-				return (NULL);
+				return NULL;
 		}
 		SEXP_free(val);
 	}
@@ -590,6 +610,7 @@ SEXP_t *probe_main(SEXP_t *object, int *err, void *arg)
 		return NULL;
 	}
 	SEXP_free(val);
+	req.addr_re = NULL;
 	val = probe_ent_getattrval(ent, "operation");
 	if (val == NULL)
 		req.addr_op = OVAL_OPERATION_EQUALS;
@@ -598,14 +619,24 @@ SEXP_t *probe_main(SEXP_t *object, int *err, void *arg)
 		switch (req.addr_op) {
 			case OVAL_OPERATION_EQUALS:
 			case OVAL_OPERATION_NOT_EQUAL:
+				break;
 			case OVAL_OPERATION_PATTERN_MATCH:
+				req.addr_re = malloc(sizeof(regex_t));
+				if (regcomp(req.addr_re, req.local_address,
+							REG_EXTENDED) != 0) {
+					*err = PROBE_EINIT;
+					SEXP_free(val);
+					oscap_free(req.protocol);
+					oscap_free(req.local_address);
+					return NULL;
+				}
 				break;
 			default:
 				*err = PROBE_EOPNOTSUPP;
 				SEXP_free(val);
 				oscap_free(req.protocol);
 				oscap_free(req.local_address);
-				return (NULL);
+				return NULL;
 		}
 		SEXP_free(val);
 	}
@@ -635,6 +666,7 @@ SEXP_t *probe_main(SEXP_t *object, int *err, void *arg)
 	}
 	SEXP_free(val);
 
+	req.port_re = NULL;
 	val = probe_ent_getattrval(ent, "operation");
 	if (val == NULL)
 		req.port_op = OVAL_OPERATION_EQUALS;
@@ -643,7 +675,18 @@ SEXP_t *probe_main(SEXP_t *object, int *err, void *arg)
 		switch (req.port_op) {
 			case OVAL_OPERATION_EQUALS:
 			case OVAL_OPERATION_NOT_EQUAL:
+				break;
 			case OVAL_OPERATION_PATTERN_MATCH:
+				req.port_re = malloc(sizeof(regex_t));
+				if (regcomp(req.port_re, req.local_port,
+							REG_EXTENDED) != 0) {
+					*err = PROBE_EINIT;
+					SEXP_free(val);
+					oscap_free(req.protocol);
+					oscap_free(req.local_address);
+					oscap_free(req.local_port);
+					return NULL;
+				}
 				break;
 			default:
 				*err = PROBE_EOPNOTSUPP;
@@ -651,7 +694,7 @@ SEXP_t *probe_main(SEXP_t *object, int *err, void *arg)
 				oscap_free(req.protocol);
 				oscap_free(req.local_address);
 				oscap_free(req.local_port);
-				return (NULL);
+				return NULL;
 		}
 		SEXP_free(val);
 	}
@@ -663,16 +706,30 @@ SEXP_t *probe_main(SEXP_t *object, int *err, void *arg)
 	if (collect_process_info(&ll) || perm_warn) {
 		_D("Permission error\n");
 		/* We had a bad day... */
-		SEXP_t *r;
-		// FIXME: What do we send back?
-		item_sexp = probe_item_creat("inetlisteningserver_item",
-					NULL, "protocol", NULL,
-					r = SEXP_string_newf(req.protocol),
-					NULL);
+		SEXP_t *r1, *r2, *r3, *r4;
+
+		item_sexp = probe_item_creat("inetlisteningservers_item",
+			NULL, "protocol", NULL,
+				r1 = SEXP_string_newf(req.protocol),
+			"local_address", NULL,
+				r2 = SEXP_string_newf(req.local_address),
+			"local_port", NULL,
+				r3 = SEXP_string_newf(req.local_port),
+			"local_full_address", NULL,
+				r4 = SEXP_string_newf("%s:%s",
+						req.local_address,
+						req.local_port),
+			"program_name", NULL, NULL,
+			"foreign_address", NULL, NULL,
+			"foreign_port", NULL, NULL,
+			"foreign_full_address", NULL, NULL,
+			"pid", NULL, NULL,
+			"user_id", NULL, NULL,
+			NULL);
 		probe_item_setstatus(item_sexp, OVAL_STATUS_ERROR);
 		SEXP_list_add(probe_out, item_sexp);
 		SEXP_free(item_sexp);
-		SEXP_free(r);
+		SEXP_vfree(r1, r2, r3, r4, NULL);
 	}
 
 	// Now we check the tcp socket list...
@@ -683,11 +740,18 @@ SEXP_t *probe_main(SEXP_t *object, int *err, void *arg)
 	read_udp("/proc/net/udp", "udp", &ll, probe_out);
 	read_udp("/proc/net/udp6", "udp6", &ll, probe_out);
 
-	// Next, raw sockets...
+	/* Next, raw sockets...not part of standard yet
 	read_raw("/proc/net/raw", "raw", &ll, probe_out);
-	read_raw("/proc/net/raw6", "raw6", &ll, probe_out);
+	read_raw("/proc/net/raw6", "raw6", &ll, probe_out); */
 
 	list_clear(&ll);
+	if (req.proto_re)
+		regfree(req.proto_re); 
+	if (req.addr_re)
+		regfree(req.addr_re); 
+	if (req.port_re)
+		regfree(req.port_re); 
+	
 	*err = 0;
 	return probe_out;
 }
