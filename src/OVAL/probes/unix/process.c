@@ -79,10 +79,7 @@ static int option_compare(oval_operation_t op, const char *s1, const char * s2)
 	} else if (op == OVAL_OPERATION_NOT_EQUAL) {
 		if (strcmp(s1, s2) == 0)
 			return 0;
-		else
-			return 1;
-	} else if (op == OVAL_OPERATION_PATTERN_MATCH)
-		return 0; // FIXME - not implemented
+	}
 
 	// All matched
 	return 1;
@@ -354,7 +351,6 @@ SEXP_t *probe_main(SEXP_t *object, int *err, void *arg)
 		switch (command_op) {
 			case OVAL_OPERATION_EQUALS:
 			case OVAL_OPERATION_NOT_EQUAL:
-			case OVAL_OPERATION_PATTERN_MATCH:
 				break;
 			default:
 				*err = PROBE_EOPNOTSUPP;
