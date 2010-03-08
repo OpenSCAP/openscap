@@ -694,13 +694,6 @@ struct xccdf_result* xccdf_item_to_result(struct xccdf_item* item);
  */
 struct xccdf_benchmark *xccdf_benchmark_parse_xml(const char *filename);
 
-/**
- * Create a group and append it to the benchmark.
- * @param id - the identifier of the appended benchmark.
- * @returns the handle of the new group.
- */
-struct xccdf_group *xccdf_benchmark_append_new_group(const struct xccdf_benchmark *, const char *id);
-
 /// @memberof xccdf_benchmark
 const char *xccdf_benchmark_get_id(const struct xccdf_benchmark *benchmark);
 /// @memberof xccdf_benchmark
@@ -980,6 +973,8 @@ bool xccdf_value_get_prohibit_changes(const struct xccdf_value *value);
 /// @memberof xccdf_value
 bool xccdf_value_get_hidden(const struct xccdf_value *value);
 /// @memberof xccdf_value
+bool xccdf_value_get_interactive(const struct xccdf_value *value);
+/// @memberof xccdf_value
 struct xccdf_status_iterator *xccdf_value_get_statuses(const struct xccdf_value *value);
 /// @memberof xccdf_value
 struct xccdf_reference_iterator *xccdf_value_get_references(const struct xccdf_value *value);
@@ -1225,30 +1220,15 @@ struct oscap_text_iterator *xccdf_value_get_question(const struct xccdf_value *v
 /// @memberof xccdf_value
 struct xccdf_warning_iterator *xccdf_value_get_warnings(const struct xccdf_value *value);
 /// @memberof xccdf_value
-struct oscap_text_iterator *xccdf_value_get_rationale(const struct xccdf_value *value);
-/// @memberof xccdf_value
-const char *xccdf_value_get_cluster_id(const struct xccdf_value *value);
-/// @memberof xccdf_value
 const char *xccdf_value_get_version_update(const struct xccdf_value *value);
 /// @memberof xccdf_value
 time_t xccdf_value_get_version_time(const struct xccdf_value *value);
 /// @memberof xccdf_value
-float xccdf_value_get_weight(const struct xccdf_value *value);
-/// @memberof xccdf_value
 struct xccdf_benchmark *xccdf_value_get_benchmark(const struct xccdf_value *value);
 /// @memberof xccdf_value
-struct oscap_string_iterator *xccdf_value_get_platforms(const struct xccdf_value *value);
-/// @memberof xccdf_value
 struct oscap_string_iterator *xccdf_value_get_sources(const struct xccdf_value *value);
-
 /// @memberof xccdf_value
-bool xccdf_value_get_resolved(const struct xccdf_value *value);
-/// @memberof xccdf_value
-bool xccdf_value_get_selected(const struct xccdf_value *value);
-/// @memberof xccdf_value
-bool xccdf_value_get_multiple(const struct xccdf_value *value);
-/// @memberof xccdf_value
-bool xccdf_value_get_interactive(const struct xccdf_value *value);
+const char *xccdf_value_get_cluster_id(const struct xccdf_value *value);
 
 /// @memberof xccdf_item
 struct oscap_text_iterator *xccdf_item_get_question(const struct xccdf_item *item);
@@ -1270,64 +1250,18 @@ struct xccdf_benchmark *xccdf_item_get_benchmark(const struct xccdf_item *item);
 struct oscap_string_iterator *xccdf_item_get_platforms(const struct xccdf_item *item);
 
 /// @memberof xccdf_benchmark
-bool xccdf_benchmark_get_hidden(const struct xccdf_benchmark *benchmark);
-/// @memberof xccdf_benchmark
-bool xccdf_benchmark_get_selected(const struct xccdf_benchmark *benchmark);
-/// @memberof xccdf_benchmark
-bool xccdf_benchmark_get_multiple(const struct xccdf_benchmark *benchmark);
-/// @memberof xccdf_benchmark
-bool xccdf_benchmark_get_prohibit_changes(const struct xccdf_benchmark *benchmark);
-/// @memberof xccdf_benchmark
-bool xccdf_benchmark_get_abstract(const struct xccdf_benchmark *benchmark);
-/// @memberof xccdf_benchmark
-bool xccdf_benchmark_get_interactive(const struct xccdf_benchmark *benchmark);
-
-/// @memberof xccdf_benchmark
-struct oscap_text_iterator *xccdf_benchmark_get_question(const struct xccdf_benchmark *benchmark);
-/// @memberof xccdf_benchmark
 struct xccdf_warning_iterator *xccdf_benchmark_get_warnings(const struct xccdf_benchmark *benchmark);
-/// @memberof xccdf_benchmark
-struct oscap_text_iterator *xccdf_benchmark_get_rationale(const struct xccdf_benchmark *benchmark);
-/// @memberof xccdf_benchmark
-const char *xccdf_benchmark_get_cluster_id(const struct xccdf_benchmark *benchmark);
 /// @memberof xccdf_benchmark
 const char *xccdf_benchmark_get_version_update(const struct xccdf_benchmark *benchmark);
 /// @memberof xccdf_benchmark
 time_t xccdf_benchmark_get_version_time(const struct xccdf_benchmark *benchmark);
-/// @memberof xccdf_benchmark
-float xccdf_benchmark_get_weight(const struct xccdf_benchmark *benchmark);
-/// @memberof xccdf_benchmark
-struct xccdf_benchmark *xccdf_benchmark_get_benchmark(const struct xccdf_benchmark *benchmark);
-/// @memberof xccdf_benchmark
-struct xccdf_item *xccdf_benchmark_get_parent(const struct xccdf_benchmark *benchmark);
 
-/// @memberof xccdf_profile
-struct oscap_text_iterator *xccdf_profile_get_question(const struct xccdf_profile *profile);
-/// @memberof xccdf_profile
-struct oscap_text_iterator *xccdf_profile_get_rationale(const struct xccdf_profile *profile);
-/// @memberof xccdf_profile
-const char *xccdf_profile_get_cluster_id(const struct xccdf_profile *profile);
 /// @memberof xccdf_profile
 const char *xccdf_profile_get_version_update(const struct xccdf_profile *profile);
 /// @memberof xccdf_profile
 time_t xccdf_profile_get_version_time(const struct xccdf_profile *profile);
 /// @memberof xccdf_profile
-float xccdf_profile_get_weight(const struct xccdf_profile *profile);
-/// @memberof xccdf_profile
-struct xccdf_item *xccdf_profile_get_parent(const struct xccdf_profile *profile);
-/// @memberof xccdf_profile
 const char *xccdf_profile_get_note_tag(const struct xccdf_profile *profile);
-
-/// @memberof xccdf_profile
-bool xccdf_profile_get_resolved(const struct xccdf_profile *profile);
-/// @memberof xccdf_profile
-bool xccdf_profile_get_hidden(const struct xccdf_profile *profile);
-/// @memberof xccdf_profile
-bool xccdf_profile_get_selected(const struct xccdf_profile *profile);
-/// @memberof xccdf_profile
-bool xccdf_profile_get_multiple(const struct xccdf_profile *profile);
-/// @memberof xccdf_profile
-bool xccdf_profile_get_interactive(const struct xccdf_profile *profile);
 
 /// @memberof xccdf_rule
 const char *xccdf_rule_get_version_update(const struct xccdf_rule *rule);
@@ -1335,17 +1269,7 @@ const char *xccdf_rule_get_version_update(const struct xccdf_rule *rule);
 time_t xccdf_rule_get_version_time(const struct xccdf_rule *rule);
 /// @memberof xccdf_rule
 struct xccdf_benchmark *xccdf_rule_get_benchmark(const struct xccdf_rule *rule);
-/// @memberof xccdf_rule
-bool xccdf_rule_get_resolved(const struct xccdf_rule *rule);
-/// @memberof xccdf_rule
-bool xccdf_rule_get_interactive(const struct xccdf_rule *rule);
 
-/// @memberof xccdf_group
-bool xccdf_group_get_resolved(const struct xccdf_group *group);
-/// @memberof xccdf_group
-bool xccdf_group_get_multiple(const struct xccdf_group *group);
-/// @memberof xccdf_group
-bool xccdf_group_get_interactive(const struct xccdf_group *group);
 /// @memberof xccdf_group
 time_t xccdf_group_get_version_time(const struct xccdf_group *group);
 /// @memberof xccdf_group
