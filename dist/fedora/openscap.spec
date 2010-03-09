@@ -103,6 +103,7 @@ rm -rf $RPM_BUILD_ROOT
 %files utils
 %defattr(-,root,root,-)
 %{_bindir}/*
+%{_mandir}/man8/*
 
 %changelog
 * Fri Feb 26 2010 Peter Vrabec <pvrabec@redhat.com> 0.5.7-1
