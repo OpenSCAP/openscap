@@ -1508,4 +1508,5 @@ struct xccdf_rule *xccdf_benchmark_append_new_rule(const struct xccdf_benchmark 
 /// @memberof xccdf_group
 //void xccdf_group_set_parent(const struct xccdf_group* item, struct xccdf_item * parent);
 
+void xccdf_item_free(struct xccdf_item *item);
 #endif

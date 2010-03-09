@@ -51,5 +51,9 @@ if WANT_XCCDF
 SUBDIRS += XCCDF
 libopenscap_la_LIBADD += XCCDF/libxccdf.la
 libopenscap_testing_la_LIBADD += XCCDF/libxccdf.la
+####### XCCDF_POLICY submodul ##########
+SUBDIRS += XCCDF_POLICY
+libopenscap_la_LIBADD += XCCDF_POLICY/libxccdf_policy.la
+libopenscap_testing_la_LIBADD += XCCDF_POLICY/libxccdf_policy.la
 
 endif

@@ -69,11 +69,27 @@ struct xccdf_value_binding_iterator;
 
 
 struct xccdf_policy_model *xccdf_policy_model_new(struct xccdf_benchmark *);
-void xccdf_policy_model_free(struct xccdf_policy_model *);
-struct xccdf_benchmark  *xccdf_policy_model_get_benchmark(struct xccdf_policy_model *);
-struct xccdf_policy_iterator *xccdf_policy_model_get_policies(struct xccdf_policy_model *);
+struct xccdf_policy * xccdf_policy_new(struct xccdf_item * profile);
 
-struct xccdf_rule_iterator   *xccdf_policy_get_selected_rules(struct xccdf_policy *);
+struct xccdf_benchmark * xccdf_policy_model_get_benchmark(const struct xccdf_policy_model * item);
+
+struct xccdf_policy_iterator *xccdf_policy_model_get_policies(const struct xccdf_policy_model *);
+
+/**
+ * Get selected rules from policy
+ * @memberof xccdf_policy
+ * @return Pointer to select iterator.
+ * @retval NULL on faliure
+ */
+struct xccdf_select_iterator   *xccdf_policy_get_selected_rules(struct xccdf_policy *);
+
+/**
+ * Evaluate policy
+ * @memberof xccdf_policy
+ * @return true if evaluation pass or false in case of error
+ */
+bool xccdf_policy_evaluate(struct xccdf_policy *);
+
 struct xccdf_value_binding_iterator *xccdf_policy_get_bound_values(struct xccdf_policy *);
 
 void xccdf_policy_export_variables(struct xccdf_policy *, char *export_namespace, struct oscap_export_target *);
@@ -81,6 +97,10 @@ void xccdf_policy_export_controls (struct xccdf_policy *, char *export_namespace
 
 void xccdf_policy_import_results(struct xccdf_policy *, char *import_namespace, struct oscap_import_source *);
 void xccdf_policy_export_results(struct xccdf_policy *, char *scoring_model_namespace, struct oscap_export_target *);
+
+void xccdf_policy_model_free(struct xccdf_policy_model *);
+void xccdf_policy_free(struct xccdf_policy *);
+void xccdf_value_binding_free(struct xccdf_value_binding *);
 
 #endif
 

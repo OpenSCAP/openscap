@@ -475,6 +475,7 @@ AC_CONFIG_FILES([Makefile
                  src/CPE/Makefile
                  src/CCE/Makefile
                  src/XCCDF/Makefile
+                 src/XCCDF_POLICY/Makefile
                  src/common/Makefile
                  tests/Makefile
                  utils/Makefile])
