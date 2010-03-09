@@ -62,7 +62,6 @@ common_oval_sources = \
 	ovalsys_parser.c \
 	oval_varModel.c \
 	oval_errors.h
-	
 
 # -I options go to CPPFLAGS, not CFLAGS
 # lets build one common for both normal and probe sources (does it mind?)
@@ -93,6 +92,8 @@ common_oval_sources += probes/probe-api.c 	\
 		       probes/public/probe-api.h\
 		       probes/public/fsdev.h	\
 		       probes/public/findfile.h \
+		       probes/encache.c		\
+		       probes/encache.h		\
 		       oval_sexp.c \
 		       oval_sexp.h \
 		       oval_probe_impl.h
