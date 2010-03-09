@@ -55,6 +55,7 @@ struct oscap_list {
 
 struct oscap_list *oscap_list_new(void);
 bool oscap_list_add(struct oscap_list *list, void *value);
+struct oscap_list *oscap_list_clone(const struct oscap_list * list, oscap_clone_func cloner);
 void oscap_list_free(struct oscap_list *list, oscap_destruct_func destructor);
 void oscap_list_free0(struct oscap_list *list);
 void oscap_list_dump(struct oscap_list *list, oscap_dump_func dumper, int depth);

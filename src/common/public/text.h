@@ -65,6 +65,13 @@ struct oscap_text;
 struct oscap_text *oscap_text_new(void);
 
 /**
+ * Clone an internationalized text field.
+ * @param text oscap_text structure to clone
+ * @memberof oscap_text
+ */
+struct oscap_text *oscap_text_clone(const struct oscap_text * text);
+
+/**
  * Create an internationalized text field with HTML content.
  * @param lang - language identifier (@see oscap_text_lang)
  * @param encoding - language encoding (@see oscap_text_encoding)

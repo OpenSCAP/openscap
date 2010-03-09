@@ -52,6 +52,17 @@ struct xccdf_select *xccdf_select_new(void)
 	return foo;
 }
 
+struct xccdf_select *xccdf_select_clone(const struct xccdf_select * select)
+{
+        struct xccdf_select *clone = xccdf_select_new();
+
+        clone->item     = oscap_strdup((char *) select->item);
+        clone->remarks  = oscap_list_clone(select->remarks, (oscap_clone_func) oscap_text_clone);
+        clone->selected = select->selected;
+
+        return clone;
+}
+
 void xccdf_refine_value_free(struct xccdf_refine_value *rv)
 {
 	if (rv) {

@@ -50,6 +50,25 @@ bool oscap_list_add(struct oscap_list * list, void *value)
 	return true;
 }
 
+struct oscap_list * oscap_list_clone(const struct oscap_list * list, oscap_clone_func cloner)
+{
+        if (list == NULL) 
+            return NULL;
+
+        struct oscap_list       * copy = oscap_list_new();
+        struct oscap_list_item  * item;
+
+        item = list->first;
+        while (item != NULL) {
+                if (cloner)
+                    oscap_list_add(copy, cloner(item->data));
+                else oscap_list_add(copy, NULL);
+                item = item->next;
+        }
+
+        return copy;
+}
+
 int oscap_list_get_itemcount(struct oscap_list *list)
 {
 	__attribute__nonnull__(list);

@@ -1508,5 +1508,12 @@ struct xccdf_rule *xccdf_benchmark_append_new_rule(const struct xccdf_benchmark 
 /// @memberof xccdf_group
 //void xccdf_group_set_parent(const struct xccdf_group* item, struct xccdf_item * parent);
 
+struct xccdf_select *xccdf_select_new(void);
 void xccdf_item_free(struct xccdf_item *item);
+void xccdf_select_free(struct xccdf_select *sel);
+void xccdf_refine_rule_free(struct xccdf_refine_rule *rr);
+void xccdf_refine_value_free(struct xccdf_refine_value *rv);
+void xccdf_setvalue_free(struct xccdf_setvalue *sv);
+struct xccdf_select *xccdf_select_clone(const struct xccdf_select * select);
+
 #endif

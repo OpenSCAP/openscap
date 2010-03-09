@@ -55,6 +55,11 @@ struct oscap_text *oscap_text_new(void)
     return oscap_text_new_full(OSCAP_TEXT_TRAITS_PLAIN, NULL, NULL);
 }
 
+struct oscap_text * oscap_text_clone(const struct oscap_text * text)
+{
+    return oscap_text_new_full(text->traits, text->text, text->lang);   
+}
+
 struct oscap_text *oscap_text_new_html(void)
 {
     assert(false); // TODO implement

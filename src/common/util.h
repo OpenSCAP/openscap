@@ -56,6 +56,11 @@ struct oscap_export_target;
 typedef void (*oscap_destruct_func) (void *);
 
 /**
+ * Pointer to a clone function.
+ */
+typedef void* (*oscap_clone_func) (void *);
+
+/**
  * Function pointer to an object consumer.
  */
 typedef void (*oscap_consumer_func) (void *, void *);

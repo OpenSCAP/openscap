@@ -57,14 +57,14 @@ OSCAP_IGETINS(xccdf_policy, xccdf_policy_model, policies, policy)
  */
 struct xccdf_policy {
 
-        struct xccdf_item   * item;     //< Profile structure
-        struct oscap_list   * selects;  //< Rules from profile
-        struct oscap_list   * values;   //< Bound values of profile
+        struct xccdf_profile    * profile;  //< Profile structure
+        struct oscap_list       * rules;    //< Rules from profile
+        struct oscap_list       * values;   //< Bound values of profile
 };
 
 /* Macros to generate iterators, getters and setters */
-OSCAP_GETTER(struct xccdf_item *, xccdf_policy, item)
-OSCAP_IGETINS(xccdf_item, xccdf_policy, selects, select)
+OSCAP_GETTER(struct xccdf_profile *, xccdf_policy, profile)
+OSCAP_IGETINS(xccdf_select, xccdf_policy, rules, rule)
 OSCAP_IGETINS(xccdf_value_binding, xccdf_policy, values, value)
 
 
@@ -76,12 +76,12 @@ struct xccdf_value_binding {
 
         struct oscap_list   * refine_rules;     //< Changing rules
         struct oscap_list   * refine_values;    //< Changing values
-        struct oscap_list   * set_values;       //< Setting values
+        struct oscap_list   * setvalues;       //< Setting values
 };
 /* Macros to generate iterators, getters and setters */
 OSCAP_IGETINS(xccdf_refine_rule, xccdf_value_binding, refine_rules, refine_rule)
 OSCAP_IGETINS(xccdf_refine_value, xccdf_value_binding, refine_values, refine_value)
-OSCAP_IGETINS(xccdf_setvalue, xccdf_value_binding, set_values, set_value)
+OSCAP_IGETINS(xccdf_setvalue, xccdf_value_binding, setvalues, setvalue)
 
 
 /***************************************************************************/
@@ -110,6 +110,18 @@ static bool xccdf_policy_is_rule(void *item, void *ruleid)
             return true;
         else 
             return false;
+}
+
+/**
+ * Resolve profile to policy:
+ * get all selects from all rules / groups if they're selected and
+ * if not add them with selected="0"
+ */
+/*static xccdf_ * xccdf_policy_model_resolve() {
+}*/
+
+static void xccdf_item_iterate(const struct xccdf_item * item)
+{
 }
 
 /***************************************************************************/
@@ -142,7 +154,7 @@ struct xccdf_policy_model * xccdf_policy_model_new(struct xccdf_benchmark * benc
         while (xccdf_profile_iterator_has_more(profile_it)) {
 
             profile = xccdf_profile_iterator_next(profile_it);
-            policy = xccdf_policy_new((struct xccdf_item *) profile);
+            policy = xccdf_policy_new(profile);
 
             /* Should we set the error code and return NULL here ? */
             if (policy != NULL) oscap_list_add(model->policies, policy);
@@ -152,56 +164,108 @@ struct xccdf_policy_model * xccdf_policy_model_new(struct xccdf_benchmark * benc
 	return model;
 }
 
-struct xccdf_policy * xccdf_policy_new(struct xccdf_item * profile) {
+struct xccdf_policy * xccdf_policy_new(struct xccdf_profile * profile) {
 
 	__attribute__nonnull__(profile);
 
-	struct xccdf_policy                 * policy;
-        struct xccdf_select_iterator        * sel_it;
-        struct xccdf_select                 * sel;
-        struct xccdf_setvalue_iterator      * value_it;
-        struct xccdf_setvalue               * value;
+	struct xccdf_policy             * policy;
+        struct xccdf_select_iterator    * sel_it;
+        struct xccdf_select             * sel;
+        struct xccdf_value_binding      * binding;
+        struct xccdf_benchmark          * benchmark;
+        struct xccdf_item_iterator      * item_it;
 
 	policy = oscap_alloc(sizeof(struct xccdf_policy));
 	if (policy == NULL)
 		return NULL;
 	memset(policy, 0, sizeof(struct xccdf_policy));
 
-	policy->item    = profile;
-	policy->selects   = oscap_list_new();
+	policy->profile = profile;
+	policy->rules = oscap_list_new();
 	policy->values  = oscap_list_new();
 
         /* Create selects from benchmark model */
-        sel_it = xccdf_profile_get_selects( (const struct xccdf_profile *) profile);
-        /* Iterate through profiles */
+        sel_it = xccdf_profile_get_selects(profile);
+        /* Iterate through selects in profile */
         while (xccdf_select_iterator_has_more(sel_it)) {
 
             sel = xccdf_select_iterator_next(sel_it);
             /* Should we set the error code and return NULL here ? */
-            if (sel != NULL) oscap_list_add(policy->selects, sel);
+            if (sel != NULL) oscap_list_add(policy->rules, xccdf_select_clone(sel));
+            //if (sel != NULL) oscap_list_add(policy->rules, oscap_strdup(xccdf_select_get_item(sel)));
         }
         xccdf_select_iterator_free(sel_it);
 
-        /* Create values from benchmark model */
-        /* TODO: Change this to refine_rules, refine_values, set_values */
-        value_it = xccdf_profile_get_setvalues( (const struct xccdf_profile *) profile);
-        /* Iterate through profiles */
-        while (xccdf_setvalue_iterator_has_more(value_it)) {
+        /* Iterate through items in benchmark */
+        benchmark = xccdf_profile_get_benchmark(profile);
+        item_it = xccdf_benchmark_get_content(benchmark);
 
-            value = xccdf_setvalue_iterator_next(value_it);
-            /* Should we set the error code and return NULL here ? */
-            if (value != NULL) oscap_list_add(policy->values, value);
-        }
-        xccdf_setvalue_iterator_free(value_it);
+        /* Create values from benchmark model */
+        binding = xccdf_value_binding_new(profile);
+        /* TODO: Clone */
+        if (binding) oscap_list_add(policy->values, binding);
 
 	return policy;
 }
+
+struct xccdf_value_binding * xccdf_value_binding_new(const struct xccdf_profile * profile) {
+
+        __attribute__nonnull__(profile);
+
+        struct xccdf_refine_rule_iterator   * refine_rule_it;
+        struct xccdf_refine_rule            * refine_rule;
+        struct xccdf_refine_value_iterator  * refine_value_it;
+        struct xccdf_refine_value           * refine_value;
+        struct xccdf_setvalue_iterator      * setvalue_it;
+        struct xccdf_setvalue               * setvalue;
+        struct xccdf_value_binding          * binding;
+
+        /* Initialization */
+	binding = oscap_alloc(sizeof(struct xccdf_value_binding));
+	if (binding == NULL)
+		return NULL;
+	memset(binding, 0, sizeof(struct xccdf_value_binding));
+
+	binding->refine_rules   = oscap_list_new();
+	binding->refine_values  = oscap_list_new();
+	binding->setvalues     = oscap_list_new();
+
+        /* Get all refine rules */
+        refine_rule_it = xccdf_profile_get_refine_rules(profile);
+        while (xccdf_refine_rule_iterator_has_more(refine_rule_it)) {
+
+            refine_rule = xccdf_refine_rule_iterator_next(refine_rule_it);
+            if (refine_rule != NULL) oscap_list_add(binding->refine_rules, refine_rule);
+        }
+        xccdf_refine_rule_iterator_free(refine_rule_it);
+
+        /* Get all refine values */
+        refine_value_it = xccdf_profile_get_refine_values(profile);
+        while (xccdf_refine_value_iterator_has_more(refine_value_it)) {
+
+            refine_value = xccdf_refine_value_iterator_next(refine_value_it);
+            if (refine_value != NULL) oscap_list_add(binding->refine_values, refine_value);
+        }
+        xccdf_refine_value_iterator_free(refine_value_it);
+
+        /* Get all set-values */
+        setvalue_it = xccdf_profile_get_setvalues(profile);
+        while (xccdf_setvalue_iterator_has_more(setvalue_it)) {
+
+            setvalue = xccdf_setvalue_iterator_next(setvalue_it);
+            if (setvalue != NULL) oscap_list_add(binding->setvalues, setvalue);
+        }
+        xccdf_setvalue_iterator_free(setvalue_it);
+
+        return binding;
+}
+
 /***************************************************************************/
 
 
 struct xccdf_select_iterator * xccdf_policy_get_selected_rules(struct xccdf_policy * policy) {
 
-    return (struct xccdf_select_iterator *) oscap_iterator_new_filter( policy->selects, 
+    return (struct xccdf_select_iterator *) oscap_iterator_new_filter( policy->rules, 
                                                                        (oscap_filter_func) xccdf_policy_is_selected, 
                                                                        NULL);
 }
@@ -209,7 +273,7 @@ struct xccdf_select_iterator * xccdf_policy_get_selected_rules(struct xccdf_poli
 bool xccdf_policy_set_selected(struct xccdf_policy * policy, char * idref) {
 
     struct oscap_iterator *sel_it = 
-        oscap_iterator_new_filter( policy->selects, (oscap_filter_func) xccdf_policy_is_rule, idref);
+        oscap_iterator_new_filter( policy->rules, (oscap_filter_func) xccdf_policy_is_rule, idref);
     if (oscap_iterator_get_itemcount(sel_it) > 0) {
         /* There is rule already, skip */
         return 0;
@@ -218,7 +282,7 @@ bool xccdf_policy_set_selected(struct xccdf_policy * policy, char * idref) {
         /* There is no such rule, add */
         struct xccdf_select * sel = NULL;
         //TODO: sel = xccdf_select_new <-- missing implementation
-        oscap_list_add(policy->selects, sel);
+        oscap_list_add(policy->rules, sel);
         return 1;
 
     }
@@ -265,17 +329,17 @@ void xccdf_policy_model_free(struct xccdf_policy_model * model) {
 
 void xccdf_policy_free(struct xccdf_policy * policy) {
 
-	oscap_free(policy->item);
-	oscap_list_free(policy->selects, (oscap_destruct_func) xccdf_item_free);
+	xccdf_item_free((struct xccdf_item *)policy->profile);
+	oscap_list_free(policy->rules, (oscap_destruct_func) xccdf_select_free);
 	oscap_list_free(policy->values, (oscap_destruct_func) xccdf_value_binding_free);
         oscap_free(policy);
 }
 
 void xccdf_value_binding_free(struct xccdf_value_binding * binding) {
 
-	oscap_list_free(binding->refine_rules, (oscap_destruct_func) xccdf_item_free);
-	oscap_list_free(binding->refine_values, (oscap_destruct_func) xccdf_item_free);
-	oscap_list_free(binding->set_values, (oscap_destruct_func) xccdf_item_free);
+	oscap_list_free(binding->refine_rules, (oscap_destruct_func) xccdf_refine_rule_free);
+	oscap_list_free(binding->refine_values, (oscap_destruct_func) xccdf_refine_value_free);
+	oscap_list_free(binding->setvalues, (oscap_destruct_func) xccdf_setvalue_free);
         oscap_free(binding);
 }
 
