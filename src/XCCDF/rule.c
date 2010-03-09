@@ -22,6 +22,7 @@
 
 #include "item.h"
 #include "elements.h"
+#include "helpers.h"
 #include <assert.h>
 #include <string.h>
 

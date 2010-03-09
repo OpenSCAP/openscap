@@ -22,6 +22,7 @@
 
 #include "item.h"
 #include "elements.h"
+#include "helpers.h"
 #include "../common/elements.h"
 #include <math.h>
 #include <string.h>

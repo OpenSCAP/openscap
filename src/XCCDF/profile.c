@@ -21,6 +21,7 @@
  */
 
 #include "item.h"
+#include "helpers.h"
 
 void xccdf_setvalue_free(struct xccdf_setvalue *sv)
 {

@@ -21,6 +21,7 @@
  */
 
 #include "item.h"
+#include "helpers.h"
 #include <string.h>
 #include <math.h>
 
