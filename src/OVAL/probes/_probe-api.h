@@ -4,6 +4,7 @@
 
 #include "public/probe-api.h"
 #include "probe-cache.h"
+#include "encache.h"
 
 /**
  * @struct id_desc_t
@@ -30,15 +31,26 @@ typedef struct {
 
 	/* probe main */
 	void *probe_arg;	///< optional argument to probe_main()
+
+        /*
+         * Element name cache. Elements are in our case a generalization of
+         * the basic structure of OVAL objects, entities, etc. Such elements
+         * have names and each probe uses just a small set of names that
+         * repeats in each generated item. For some probes, the number of
+         * items generated is very large and therefore we cache the repeating
+         * names utilizing the reference count mechanism in the S-exp object
+         * system.
+         */
+        encache_t *encache;
 } globals_t;
 
 /// Probe's global runtime information
 extern globals_t global;
 
 #if defined(HAVE_ATOMIC_FUNCTIONS)
-#define GLOBALS_INITIALIZER { NULL, -1, NULL, PTHREAD_RWLOCK_INITIALIZER, {1}, NULL }
+#define GLOBALS_INITIALIZER { NULL, -1, NULL, PTHREAD_RWLOCK_INITIALIZER, {1}, NULL, NULL }
 #else
-#define GLOBALS_INITIALIZER { NULL, -1, NULL, PTHREAD_RWLOCK_INITIALIZER, {PTHREAD_MUTEX_INITIALIZER, 1}, NULL }
+#define GLOBALS_INITIALIZER { NULL, -1, NULL, PTHREAD_RWLOCK_INITIALIZER, {PTHREAD_MUTEX_INITIALIZER, 1}, NULL, NULL }
 #endif
 
 #define READER_LOCK_CACHE pthread_rwlock_rdlock (&globals.pcache_lock)

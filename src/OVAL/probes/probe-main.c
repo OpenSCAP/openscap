@@ -7,6 +7,7 @@
 #include <alloc.h>
 #include "_probe-api.h"
 #include "probe-entcmp.h"
+#include "encache.h"
 
 #ifndef _A
 #define _A(x) assert(x)
@@ -539,6 +540,9 @@ int main(void)
         }
 
 	global.probe_arg = probe_init();
+
+        /* Create the element name cache */
+        global.encache = encache_new ();
 
 	/* Main loop */
 	for (;;) {

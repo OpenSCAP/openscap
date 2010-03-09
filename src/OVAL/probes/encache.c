@@ -59,14 +59,14 @@ void encache_free (encache_t *cache)
         return;
 }
 
-static int encache_cmp1 (const char *name, const SEXP_t *sexp)
+static int encache_cmp1 (const char *name, const SEXP_t **sexp)
 {
-        return ((-1) * SEXP_strcmp (sexp, name));
+        return ((-1) * SEXP_strcmp (*sexp, name));
 }
 
-static int encache_cmp2 (const SEXP_t *a, const SEXP_t *b)
+static int encache_cmp2 (const SEXP_t **a, const SEXP_t **b)
 {
-        return SEXP_string_cmp (a, b);
+        return SEXP_string_cmp (*a, *b);
 }
 
 SEXP_t *encache_add (encache_t *cache, const char *name)
@@ -104,7 +104,7 @@ SEXP_t *encache_add (encache_t *cache, const char *name)
 
 SEXP_t *encache_get (encache_t *cache, const char *name)
 {
-        SEXP_t *ref = NULL;
+        SEXP_t **ref = NULL;
         
         assume_d (cache != NULL);
         assume_d (name  != NULL);
@@ -112,16 +112,16 @@ SEXP_t *encache_get (encache_t *cache, const char *name)
         ENCACHE_RLOCK(cache, NULL);
         
         if (cache->real > 0) {
-                ref = oscap_bfind (cache->name, cache->real, sizeof (SEXP_t *),
-                                   (void *)name, (int (*)(void *, void *))&encache_cmp1);
-                                   
+                ref = (SEXP_t **)oscap_bfind (cache->name, cache->real, sizeof (SEXP_t *),
+                                              (void *)name, (int (*)(void *, void *))&encache_cmp1);
+                
                 if (ref != NULL)
-                        ref = SEXP_ref (ref);
+                        ref = (SEXP_t **)SEXP_ref (*ref);
         }
         
         ENCACHE_RUNLOCK(cache);
 
-        return (ref);
+        return ((SEXP_t *)(ref));
 }
 
 SEXP_t *encache_ref (encache_t *cache, const char *name)

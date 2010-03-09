@@ -269,7 +269,7 @@ uintptr_t SEXP_rawval_lblk_add1 (uintptr_t lblkp, const SEXP_t *s_exp)
                 /*
                  * We don't need to check the return value
                  * here because we are adding the S-exp to
-                 * a new allocated block and there is at
+                 * a newly allocated block and there is at
                  * least one free slot.
                  */
                 SEXP_rawval_lblk_add1 (new_lb, s_exp);
