@@ -4,8 +4,8 @@ pkglibexec_PROGRAMS=
 CFLAGS += @pthread_cflags@ -I$(top_srcdir)/src -I$(top_srcdir)/src/common/public -I$(top_srcdir)/src/OVAL -I$(top_srcdir)/src/OVAL/public -I$(top_srcdir)/src/OVAL/probes/public -I$(top_srcdir)/src/OVAL/probes/SEAP/public @pcre_cflags@ -DTHREAD_SAFE -DSEAP_THREAD_SAFE @libxml_cflags@
 LDFLAGS += @pthread_ldflags@
 
-noinst_LIBRARIES= libprobe.a
-libprobe_a_SOURCES= \
+noinst_LTLIBRARIES= libprobe.la
+libprobe_la_SOURCES= \
 	probe-cache.c \
 	probe-cache.h \
 	probe-entcmp.c \
@@ -14,7 +14,9 @@ libprobe_a_SOURCES= \
 	probe-init.c \
 	probe-main.c
 
-LDADD= $(top_builddir)/src/libopenscap.la libprobe.a @pcre_libs@
+libprobe_la_LDFLAGS = $(top_builddir)/src/libopenscap.la
+
+LDADD= libprobe.la @pcre_libs@
 
 if WANT_PROBES_INDEPENDENT
 pkglibexec_PROGRAMS += probe_family
