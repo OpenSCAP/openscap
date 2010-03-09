@@ -25,12 +25,21 @@
 #include <assert.h>
 #include <string.h>
 #include <stdio.h>
+#include <stdarg.h>
 
 struct oscap_list *oscap_list_new(void)
 {
-	struct oscap_list *list = oscap_alloc(sizeof(struct oscap_list));
-	memset(list, 0, sizeof(struct oscap_list));
+	struct oscap_list *list = oscap_calloc(1, sizeof(struct oscap_list));
 	return list;
+}
+
+void oscap_create_lists(struct oscap_list **first, ...)
+{
+	va_list ap;
+	va_start(ap, first);
+	for (struct oscap_list **cur = first; cur != NULL; cur = va_arg(ap, struct oscap_list **))
+		*cur = oscap_list_new();
+	va_end(ap);
 }
 
 bool oscap_list_add(struct oscap_list * list, void *value)
