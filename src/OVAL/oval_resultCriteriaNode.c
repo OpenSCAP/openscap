@@ -365,7 +365,7 @@ static oval_result_t _oval_result_criteria_node_result(struct oval_result_criter
 			while (oval_result_criteria_node_iterator_has_more(subnodes)) {
 				struct oval_result_criteria_node *subnode
 				    = oval_result_criteria_node_iterator_next(subnodes);
-				oval_result_t subres = oval_result_criteria_node_get_result(subnode);
+				oval_result_t subres = oval_result_criteria_node_eval(subnode);
 				counts[subres]++;
 			}
 			oval_result_criteria_node_iterator_free(subnodes);
@@ -373,11 +373,11 @@ static oval_result_t _oval_result_criteria_node_result(struct oval_result_criter
 		} break;
 	case OVAL_NODETYPE_CRITERION:{
 			struct oval_result_test *test = oval_result_criteria_node_get_test(node);
-			result = oval_result_test_get_result(test);
+			result = oval_result_test_eval(test);
 		} break;
 	case OVAL_NODETYPE_EXTENDDEF:{
 			struct oval_result_definition *extends = oval_result_criteria_node_get_extends(node);
-			result = oval_result_definition_get_result(extends);
+			result = oval_result_definition_eval(extends);
 		} break;
 	default:
 		break;
@@ -386,12 +386,20 @@ static oval_result_t _oval_result_criteria_node_result(struct oval_result_criter
 	return result;
 }
 
-oval_result_t oval_result_criteria_node_get_result(struct oval_result_criteria_node * node) {
+oval_result_t oval_result_criteria_node_eval(struct oval_result_criteria_node * node)
+{
 	__attribute__nonnull__(node);
 
 	if (node->result == OVAL_RESULT_INVALID) {
 		node->result = _oval_result_criteria_node_result(node);
 	}
+	return node->result;
+}
+
+oval_result_t oval_result_criteria_node_get_result(struct oval_result_criteria_node * node)
+{
+	__attribute__nonnull__(node);
+
 	return node->result;
 }
 

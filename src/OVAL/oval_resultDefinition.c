@@ -165,15 +165,23 @@ int oval_result_definition_get_instance(struct oval_result_definition *definitio
 	return definition->instance;
 }
 
-oval_result_t oval_result_definition_get_result(struct oval_result_definition * definition) {
+oval_result_t oval_result_definition_eval(struct oval_result_definition * definition)
+{
 	__attribute__nonnull__(definition);
 
 	if (definition->result == OVAL_RESULT_INVALID) {
 		struct oval_result_criteria_node *criteria = oval_result_definition_get_criteria(definition);
 
 		definition->result = (criteria == NULL)
-		    ? OVAL_RESULT_NOT_EVALUATED : oval_result_criteria_node_get_result(criteria);
+		    ? OVAL_RESULT_NOT_EVALUATED : oval_result_criteria_node_eval(criteria);
 	}
+	return definition->result;
+}
+
+oval_result_t oval_result_definition_get_result(struct oval_result_definition * definition)
+{
+	__attribute__nonnull__(definition);
+
 	return definition->result;
 }
 

@@ -167,6 +167,12 @@ struct oval_results_model *oval_results_model_clone(struct oval_results_model *)
  */
 void oval_results_model_free(struct oval_results_model *model);
 /**
+ * Evaluate the specified oval results model and gather results for individual definitions and tests.
+ * @param the specified oval_results model
+ * @memberof oval_results_model
+ */
+void oval_results_model_eval(struct oval_results_model *);
+/**
  * export oval results to XML file.
  * @param model the oval_results_model
  * @param target the export target stream (XML)
@@ -246,6 +252,10 @@ struct oval_result_system *oval_result_system_clone(struct oval_results_model *n
  * @memberof oval_result_system
  */
 void oval_result_system_free(struct oval_result_system *);
+/**
+ * @memberof oval_result_system
+ */
+void oval_result_system_eval(struct oval_result_system *);
 
 /**
  * @name Setters
@@ -265,6 +275,10 @@ void oval_result_system_add_test(struct oval_result_system *, struct oval_result
  * @name Getters
  * @{
  */
+/**
+ * @memberof oval_result_system
+ */
+struct oval_results_model *oval_result_system_get_results_model(struct oval_result_system *);
 /**
  * @memberof oval_result_system
  */
@@ -378,6 +392,10 @@ int oval_result_definition_get_instance(struct oval_result_definition *);
 /**
  * @memberof oval_result_definition
  */
+oval_result_t oval_result_definition_eval(struct oval_result_definition *);
+/**
+ * @memberof oval_result_definition
+ */
 oval_result_t oval_result_definition_get_result(struct oval_result_definition *);
 /**
  * @memberof oval_result_definition
@@ -481,6 +499,10 @@ struct oval_test *oval_result_test_get_test(struct oval_result_test *);
  * @memberof oval_result_test
  */
 struct oval_result_system *oval_result_test_get_system(struct oval_result_test *);
+/**
+ * @memberof oval_result_test
+ */
+oval_result_t oval_result_test_eval(struct oval_result_test *);
 /**
  * @memberof oval_result_test
  */
@@ -680,6 +702,10 @@ void oval_result_criteria_node_set_extends(struct oval_result_criteria_node *, s
 /**
  */
 oval_criteria_node_type_t oval_result_criteria_node_get_type(struct oval_result_criteria_node *);
+/**
+ * @memberof oval_result_criteria_node
+ */
+oval_result_t oval_result_criteria_node_eval(struct oval_result_criteria_node *);
 /**
  * @memberof oval_result_criteria_node
  */

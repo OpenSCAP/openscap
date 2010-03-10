@@ -337,6 +337,9 @@ int main(int argc, char **argv)
 	struct oval_syschar_model *sys_models[] = {sys_model, NULL};
         struct oval_results_model* res_model = oval_results_model_new( def_model, sys_models );
 
+	/* Evaluate gathered system characteristics */
+	oval_results_model_eval(res_model);
+
 	/* set up directives */
 	struct oval_result_directives * res_direct = oval_result_directives_new(res_model);
 	oval_result_directives_set_reported(res_direct, OVAL_RESULT_INVALID, true);

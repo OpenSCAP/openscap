@@ -221,6 +221,12 @@ struct oval_result_test *get_oval_result_test_new(struct oval_result_system *sys
 	return rslt_testtest;
 }
 
+struct oval_results_model *oval_result_system_get_results_model(struct oval_result_system *sys) {
+	__attribute__nonnull__(sys);
+
+	return sys->model;
+}
+
 struct oval_syschar_model *oval_result_system_get_syschar_model(struct oval_result_system *sys) {
 	__attribute__nonnull__(sys);
 
@@ -484,6 +490,28 @@ static bool _oval_result_system_resolve_syschar(struct oval_syschar *syschar, st
 	struct oval_object *object = oval_syschar_get_object(syschar);
 	char *objid = oval_object_get_id(object);
 	return oval_string_map_get_value(sysmap, objid) != NULL;
+}
+
+void oval_result_system_eval(struct oval_result_system *sys)
+{
+	struct oval_results_model *res_model;
+	struct oval_definition_model *definition_model;
+	struct oval_definition_iterator *definitions_itr;
+
+	res_model = oval_result_system_get_results_model(sys);
+	definition_model = oval_results_model_get_definition_model(res_model);
+	definitions_itr = oval_definition_model_get_definitions(definition_model);
+
+	while (oval_definition_iterator_has_more(definitions_itr)) {
+		struct oval_definition *definition;
+		struct oval_result_definition *rslt_definition;
+
+		definition = oval_definition_iterator_next(definitions_itr);
+		rslt_definition = oval_result_system_get_new_definition(sys, definition);
+		oval_result_definition_eval(rslt_definition);
+	}
+
+	oval_definition_iterator_free(definitions_itr);
 }
 
 xmlNode *oval_result_system_to_dom

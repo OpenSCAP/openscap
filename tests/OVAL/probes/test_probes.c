@@ -49,6 +49,9 @@ int main(int argc, char **argv) {
   struct oval_results_model* res_model = oval_results_model_new( def_model, sys_models );
   assume(res_model != NULL);
 
+  /* evaluate gathered system characteristics */
+  oval_results_model_eval(res_model);
+
   /* set up directives */
   struct oval_result_directives * res_direct = oval_result_directives_new(res_model);
   assume(res_direct != NULL);
