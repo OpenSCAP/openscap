@@ -1,4 +1,16 @@
 
+/**
+ * @addtogroup OVAL
+ * @{
+ * @addtogroup PROBESCONTEXT System checking mechanism
+ * Public interface to OpenSCAP system checking mechanism
+ * @{
+ *
+ * @file
+ *
+ * @author "Daniel Kopecek" <dkopecek@redhat.com>
+ */
+
 /*
  * Copyright 2008 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
