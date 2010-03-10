@@ -47,7 +47,7 @@ void encache_free (encache_t *cache)
 {
         size_t i;
 
-        assume_d (cache != NULL);
+        assume_d (cache != NULL, /* void */);
         
         for (i = 0; i < cache->real; ++i)
                 if (cache->name[i] != NULL)
@@ -73,8 +73,8 @@ SEXP_t *encache_add (encache_t *cache, const char *name)
 {
         SEXP_t *ref;
         
-        assume_d (cache != NULL);
-        assume_d (name  != NULL);
+        assume_d (cache != NULL, NULL);
+        assume_d (name  != NULL, NULL);
         
         ref = SEXP_string_new (name, strlen (name));
         
@@ -88,8 +88,8 @@ SEXP_t *encache_add (encache_t *cache, const char *name)
                 cache->name  = oscap_realloc (cache->name, sizeof (SEXP_t *) * cache->size);
         }
 
-        assume_d (cache->name != NULL);
-        assume_d (cache->size > cache->real);
+        assume_d (cache->name != NULL, NULL);
+        assume_d (cache->size > cache->real, NULL);
         
         cache->name[cache->real] = ref;
         ++cache->real;
@@ -106,8 +106,8 @@ SEXP_t *encache_get (encache_t *cache, const char *name)
 {
         SEXP_t **ref = NULL;
         
-        assume_d (cache != NULL);
-        assume_d (name  != NULL);
+        assume_d (cache != NULL, NULL);
+        assume_d (name  != NULL, NULL);
         
         ENCACHE_RLOCK(cache, NULL);
         
@@ -128,8 +128,8 @@ SEXP_t *encache_ref (encache_t *cache, const char *name)
 {
         SEXP_t *ref;
         
-        assume_d (cache != NULL);
-        assume_d (name  != NULL);
+        assume_d (cache != NULL, NULL);
+        assume_d (name  != NULL, NULL);
 
         ref = encache_get (cache, name);
         
