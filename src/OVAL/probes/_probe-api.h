@@ -1,4 +1,3 @@
-
 /*
  * Copyright 2008 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
@@ -40,41 +39,15 @@ struct id_desc_t {
 	int item_id_ctr;	///< id counter
 };
 
-/// Probe's global runtime information
-typedef struct {
-	/* Protocol stuff */
-	SEAP_CTX_t *ctx;	///< protocol context for communication with the library
-	int sd;			///< file descriptor used for communication
+#include <sys/cdefs.h>
+#define OSCAP_GSYM(s) __CONCAT(___G_, s)
 
-	/* Object cache */
-	pcache_t *pcache;	///< probed objects cache
-	pthread_rwlock_t pcache_lock;	///< cache lock
-
-	struct id_desc_t id_desc;	///< id generation information
-
-	/* probe main */
-	void *probe_arg;	///< optional argument to probe_main()
-
-        /*
-         * Element name cache. Elements are in our case a generalization of
-         * the basic structure of OVAL objects, entities, etc. Such elements
-         * have names and each probe uses just a small set of names that
-         * repeats in each generated item. For some probes, the number of
-         * items generated is very large and therefore we cache the repeating
-         * names utilizing the reference count mechanism in the S-exp object
-         * system.
-         */
-        encache_t *encache;
-} globals_t;
-
-/// Probe's global runtime information
-extern globals_t global;
-
-#if defined(HAVE_ATOMIC_FUNCTIONS)
-#define GLOBALS_INITIALIZER { NULL, -1, NULL, PTHREAD_RWLOCK_INITIALIZER, {1}, NULL, NULL }
-#else
-#define GLOBALS_INITIALIZER { NULL, -1, NULL, PTHREAD_RWLOCK_INITIALIZER, {PTHREAD_MUTEX_INITIALIZER, 1}, NULL, NULL }
-#endif
+extern SEAP_CTX_t *OSCAP_GSYM(ctx);
+extern int         OSCAP_GSYM(sd);
+extern pcache_t   *OSCAP_GSYM(pcache);
+extern void       *OSCAP_GSYM(probe_arg);
+extern encache_t  *OSCAP_GSYM(encache);
+extern struct id_desc_t OSCAP_GSYM(id_desc);
 
 #define READER_LOCK_CACHE pthread_rwlock_rdlock (&globals.pcache_lock)
 #define WRITER_LOCK_CACHE pthread_rwlock_wrlock (&globals.pcache_lock)

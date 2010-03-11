@@ -36,7 +36,13 @@
 #define _A(x) assert(x)
 #endif
 
-globals_t global = GLOBALS_INITIALIZER;
+SEAP_CTX_t *OSCAP_GSYM(ctx)       = NULL;
+int         OSCAP_GSYM(sd)        = -1;
+pcache_t   *OSCAP_GSYM(pcache)    = NULL;
+void       *OSCAP_GSYM(probe_arg) = NULL;
+encache_t  *OSCAP_GSYM(encache)   = NULL;
+
+struct id_desc_t OSCAP_GSYM(id_desc);
 
 void *probe_worker(void *arg);
 
@@ -54,7 +60,7 @@ static SEXP_t *probe_ste_fetch(SEXP_t * id_list)
 	if (i_len == 0)
 		return SEXP_list_new(NULL);
 
-	res = SEAP_cmd_exec(global.ctx, global.sd, 0, PROBECMD_STE_FETCH, id_list, SEAP_CMDTYPE_SYNC, NULL, NULL);
+	res = SEAP_cmd_exec(OSCAP_GSYM(ctx), OSCAP_GSYM(sd), 0, PROBECMD_STE_FETCH, id_list, SEAP_CMDTYPE_SYNC, NULL, NULL);
 
 	r_len = SEXP_list_length(res);
 
@@ -70,7 +76,7 @@ static SEXP_t *probe_ste_fetch(SEXP_t * id_list)
 		_A(id != NULL);
 		_A(ste != NULL);
 
-		if (pcache_sexp_add(global.pcache, id, ste) != 0) {
+		if (pcache_sexp_add(OSCAP_GSYM(pcache), id, ste) != 0) {
 
 			SEXP_free(res);
 			SEXP_free(ste);
@@ -92,11 +98,11 @@ static SEXP_t *probe_obj_eval(SEXP_t * id)
 
 	_LOGCALL_;
 
-	res = SEAP_cmd_exec(global.ctx, global.sd, 0, PROBECMD_OBJ_EVAL, id, SEAP_CMDTYPE_SYNC, NULL, NULL);
+	res = SEAP_cmd_exec(OSCAP_GSYM(ctx), OSCAP_GSYM(sd), 0, PROBECMD_OBJ_EVAL, id, SEAP_CMDTYPE_SYNC, NULL, NULL);
 
 	SEXP_free(res);
 
-	return pcache_sexp_get(global.pcache, id);
+	return pcache_sexp_get(OSCAP_GSYM(pcache), id);
 }
 
 static SEXP_t *probe_set_combine(SEXP_t *cobj1, SEXP_t *cobj2, oval_setobject_operation_t op)
@@ -390,7 +396,7 @@ static SEXP_t *probe_set_eval(SEXP_t * set, size_t depth)
 					goto eval_fail;
 				}
 
-				res = pcache_sexp_get(global.pcache, id);
+				res = pcache_sexp_get(OSCAP_GSYM(pcache), id);
 
 				if (res == NULL) {
 					/* cache miss */
@@ -432,7 +438,7 @@ static SEXP_t *probe_set_eval(SEXP_t * set, size_t depth)
 					goto eval_fail;
 				}
 
-				res = pcache_sexp_get(global.pcache, id);
+				res = pcache_sexp_get(OSCAP_GSYM(pcache), id);
 
 				if (res == NULL)
 					SEXP_list_add(filters_u, id);
@@ -537,17 +543,17 @@ int main(void)
 	pthread_t thread;
 
 	/* Initialize SEAP */
-	global.ctx = SEAP_CTX_new();
-	global.sd = SEAP_openfd2(global.ctx, STDIN_FILENO, STDOUT_FILENO, 0);
+	OSCAP_GSYM(ctx) = SEAP_CTX_new();
+	OSCAP_GSYM(sd) = SEAP_openfd2(OSCAP_GSYM(ctx), STDIN_FILENO, STDOUT_FILENO, 0);
 
-	if (global.sd < 0) {
+	if (OSCAP_GSYM(sd) < 0) {
 		_D("Can't create SEAP descriptor: errno=%u, %s.\n", errno, strerror(errno));
 		exit(errno);
 	}
 
 	/* Create cache */
-	global.pcache = pcache_new();
-	if (global.pcache == NULL) {
+	OSCAP_GSYM(pcache) = pcache_new();
+	if (OSCAP_GSYM(pcache) == NULL) {
 		_D("Can't create cache: %u, %s.\n", errno, strerror(errno));
 		exit(errno);
 	}
@@ -562,14 +568,14 @@ int main(void)
                 exit (errno);
         }
 
-	global.probe_arg = probe_init();
-
+	OSCAP_GSYM(probe_arg) = probe_init();
+        
         /* Create the element name cache */
-        global.encache = encache_new ();
+        OSCAP_GSYM(encache) = encache_new ();
 
 	/* Main loop */
 	for (;;) {
-		if (SEAP_recvmsg(global.ctx, global.sd, &seap_request) == -1) {
+		if (SEAP_recvmsg(OSCAP_GSYM(ctx), OSCAP_GSYM(sd), &seap_request) == -1) {
 			ret = errno;
 
 			_D("An error ocured while receiving SEAP message. errno=%u, %s.\n", errno, strerror(errno));
@@ -598,7 +604,7 @@ int main(void)
 		} else {
 			SEXP_VALIDATE(oid);
 
-			probe_out = pcache_sexp_get(global.pcache, oid);
+			probe_out = pcache_sexp_get(OSCAP_GSYM(pcache), oid);
 			if (probe_out == NULL) {
 				/* cache miss */
 
@@ -621,7 +627,7 @@ int main(void)
 		}
 
 		if (probe_out == NULL || probe_ret != 0) {
-			if (SEAP_replyerr(global.ctx, global.sd, seap_request, probe_ret) == -1) {
+			if (SEAP_replyerr(OSCAP_GSYM(ctx), OSCAP_GSYM(sd), seap_request, probe_ret) == -1) {
 				_D("An error ocured while sending error status. errno=%u, %s.\n",
 				   errno, strerror(errno));
 
@@ -634,7 +640,7 @@ int main(void)
 			seap_reply = SEAP_msg_new();
 			SEAP_msg_set(seap_reply, probe_out);
 
-			if (SEAP_reply(global.ctx, global.sd, seap_reply, seap_request) == -1) {
+			if (SEAP_reply(OSCAP_GSYM(ctx), OSCAP_GSYM(sd), seap_reply, seap_request) == -1) {
 				ret = errno;
 
 				_D("An error ocured while sending SEAP message. errno=%u, %s.\n",
@@ -652,10 +658,10 @@ int main(void)
 		SEAP_msg_free(seap_request);
 	}
 
-	probe_fini(global.probe_arg);
-	pcache_free(global.pcache);
-	SEAP_close(global.ctx, global.sd);
-	SEAP_CTX_free(global.ctx);
+	probe_fini(OSCAP_GSYM(probe_arg));
+	pcache_free(OSCAP_GSYM(pcache));
+	SEAP_close(OSCAP_GSYM(ctx), OSCAP_GSYM(sd));
+	SEAP_CTX_free(OSCAP_GSYM(ctx));
 
 	return (ret);
 }
@@ -830,7 +836,7 @@ void *probe_worker(void *arg)
 
 			_D("probe_main1\n");
 			probe_ret = -1;
-			probe_out = r0 = probe_main(probe_in, &probe_ret, global.probe_arg);
+			probe_out = r0 = probe_main(probe_in, &probe_ret, OSCAP_GSYM(probe_arg));
 			if (r0 != NULL) {
 				probe_out = _probe_cobj_new(SYSCHAR_FLAG_UNKNOWN, r0);
 				SEXP_free(r0);
@@ -852,7 +858,7 @@ void *probe_worker(void *arg)
 
 			do {
 				probe_ret = -1;
-				probe_out = probe_main(ctx->pi2, &probe_ret, global.probe_arg);
+				probe_out = probe_main(ctx->pi2, &probe_ret, OSCAP_GSYM(probe_arg));
 				_A(probe_ret != -1);
 
 				if (probe_out == NULL || probe_ret != 0) {
@@ -876,7 +882,7 @@ void *probe_worker(void *arg)
 	_D("probe_out = %p, probe_ret = %d\n", (void *)probe_out, probe_ret);
 
 	if (probe_out == NULL || probe_ret != 0) {
-		if (SEAP_replyerr(global.ctx, global.sd, seap_request, probe_ret) == -1) {
+		if (SEAP_replyerr(OSCAP_GSYM(ctx), OSCAP_GSYM(sd), seap_request, probe_ret) == -1) {
 			int ret = errno;
 
 			_D("An error ocured while sending error status. errno=%u, %s.\n", errno, strerror(errno));
@@ -894,7 +900,7 @@ void *probe_worker(void *arg)
 		oid = probe_obj_getattrval(probe_in, "id");
 		_A(oid != NULL);
 
-		if (pcache_sexp_add(global.pcache, oid, probe_out) != 0) {
+		if (pcache_sexp_add(OSCAP_GSYM(pcache), oid, probe_out) != 0) {
 			/* TODO */
 			abort();
 		}
@@ -904,7 +910,7 @@ void *probe_worker(void *arg)
 		seap_reply = SEAP_msg_new();
 		SEAP_msg_set(seap_reply, probe_out);
 
-		if (SEAP_reply(global.ctx, global.sd, seap_reply, seap_request) == -1) {
+		if (SEAP_reply(OSCAP_GSYM(ctx), OSCAP_GSYM(sd), seap_reply, seap_request) == -1) {
 			int ret = errno;
 
 			_D("An error ocured while sending SEAP message. errno=%u, %s.\n", errno, strerror(errno));

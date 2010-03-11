@@ -83,6 +83,11 @@ struct oval_pctx {
 #define OVAL_PCTX_UNSETFLAG(ctx, flg) ((ctx)->p_flags &= ~(flg))
 #define OVAL_PCTX_ISSETFLAG(ctx, flg) ((ctx)->p_flags & (flg) == (flg))
 
+#include <sys/cdefs.h>
+#include <probes/encache.h>
+#define OSCAP_GSYM(s) __CONCAT(___G_, s)
+extern encache_t *OSCAP_GSYM(encache);
+
 OSCAP_HIDDEN_END;
 
 #endif				/* OVAL_PROBE_IMPL_H */
