@@ -251,3 +251,53 @@ struct xccdf_rule *xccdf_benchmark_append_new_rule(const struct xccdf_benchmark 
     oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_ENOTIMPL, "This feature is not implemented");
     return NULL;
 }
+
+
+bool xccdf_benchmark_register_item(struct xccdf_benchmark *benchmark, struct xccdf_item *item)
+{
+	assert(benchmark != NULL);
+
+	if (item == NULL)
+		return false;
+
+	if (xccdf_item_get_benchmark(item) != NULL)
+		return xccdf_item_get_benchmark(item) == benchmark; // already registered
+
+	return oscap_htable_add(XITEM(benchmark)->sub.bench.dict, xccdf_item_get_id(item), item);
+}
+
+bool xccdf_benchmark_unregister_item(struct xccdf_item *item)
+{
+	if (item == NULL)
+		return false;
+
+	if (xccdf_item_get_benchmark(item) == NULL)
+		return false;
+
+	assert(xccdf_benchmark_get_item(xccdf_item_get_benchmark(item), xccdf_item_get_id(item)) == item);
+
+	return oscap_htable_detach(XITEM(xccdf_item_get_benchmark(item))->sub.bench.dict, xccdf_item_get_id(item)) != NULL;
+}
+
+bool xccdf_benchmark_rename_item(struct xccdf_item *item, const char *newid)
+{
+	if (item == NULL)
+		return false;
+
+	struct xccdf_item *bench = XITEM(xccdf_item_get_benchmark(item));
+
+	if (bench != NULL) {
+		if (newid != NULL && xccdf_benchmark_get_item(XBENCHMARK(bench), newid) != NULL)
+			return false; // ID already assigned
+		xccdf_benchmark_unregister_item(item);
+
+		if (newid != NULL)
+			oscap_htable_add(bench->sub.bench.dict, newid, item);
+	}
+
+	oscap_free(item->item.id);
+	item->item.id = oscap_strdup(newid);
+
+	return true;
+}
+

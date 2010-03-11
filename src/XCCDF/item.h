@@ -339,6 +339,9 @@ struct xccdf_item* xccdf_item_get_benchmark_internal(struct xccdf_item* item);
 struct xccdf_item *xccdf_benchmark_new(void);
 bool xccdf_benchmark_parse(struct xccdf_item *benchmark, xmlTextReaderPtr reader);
 void xccdf_benchmark_dump(struct xccdf_benchmark *benchmark);
+bool xccdf_benchmark_register_item(struct xccdf_benchmark *benchmark, struct xccdf_item *item);
+bool xccdf_benchmark_unregister_item(struct xccdf_item *item);
+bool xccdf_benchmark_rename_item(struct xccdf_item *item, const char *newid);
 
 struct xccdf_item *xccdf_profile_new(struct xccdf_item *bench);
 struct xccdf_item *xccdf_profile_parse(xmlTextReaderPtr reader, struct xccdf_item *bench);
