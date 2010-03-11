@@ -52,6 +52,7 @@
 #include <sched.h>
 #include <time.h>
 
+#if defined(__linux)
 /* Convenience structure for the results being reported */
 struct result_info {
         const char *command;
@@ -373,4 +374,16 @@ SEXP_t *probe_main(SEXP_t *object, int *err, void *arg)
 	*err = 0;
 	return probe_out;
 }
-
+#else
+SEXP_t *probe_main(SEXP_t *object, int *err, void *arg)
+{
+        SEXP_t *item_sexp, *probe_out;
+        
+	item_sexp = probe_obj_creat ("process_item", NULL, NULL);
+        probe_item_setstatus (item_sexp, OVAL_STATUS_NOTCOLLECTED);
+        probe_out = SEXP_list_new (item_sexp, NULL);
+        SEXP_free (item_sexp);
+        
+        return (probe_out);
+}
+#endif /* __linux */
