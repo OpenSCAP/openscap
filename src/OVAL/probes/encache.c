@@ -77,6 +77,7 @@ void encache_free (encache_t *cache)
                         SEXP_free (cache->name[i]);
         
         oscap_free (cache->name);
+        pthread_rwlock_destroy (&cache->lock);
         oscap_free (cache);
 
         return;

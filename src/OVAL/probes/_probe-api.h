@@ -49,11 +49,6 @@ extern void       *OSCAP_GSYM(probe_arg);
 extern encache_t  *OSCAP_GSYM(encache);
 extern struct id_desc_t OSCAP_GSYM(id_desc);
 
-#define READER_LOCK_CACHE pthread_rwlock_rdlock (&globals.pcache_lock)
-#define WRITER_LOCK_CACHE pthread_rwlock_wrlock (&globals.pcache_lock)
-#define READER_UNLOCK_CACHE pthread_rwlock_unlock (&globals.pcache_lock)
-#define WRITER_UNLOCK_CACHE pthread_rwlock_unlock (&globals.pcache_lock)
-
 #define SEAP_LOCK pthread_mutex_lock (&globals.seap_lock)
 #define SEAP_UNLOCK pthread_mutex_unlock (&globals.seap_lock)
 
