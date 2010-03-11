@@ -1,4 +1,3 @@
-
 /*
  * Copyright 2008 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
@@ -139,79 +138,4 @@ SEXP_t *pcache_cstr_get(pcache_t * cache, const char *id)
 
 	return (node == NULL ? NULL : SEXP_ref(node->item));
 }
-
-#if 0
-ncache_t *ncache_new(void)
-{
-	ncache_t *c;
-
-	c = oscap_talloc(ncache_t);
-	c->count = 0;
-
-	switch (pthread_rwlock_init(&c->lock, NULL)) {
-	case 0:
-		break;
-	default:
-		_D("Can't initialize rwlock: %u, %s.\n", errno, strerror(errno));
-		oscap_free(c);
-
-		return (NULL);
-	}
-
-	return (c);
-}
-
-void ncache_free(ncache_t * cache)
-{
-	if (cache == NULL)
-		return;
-
-	if (cache->count > 0) {
-		ncache_item_t *i;
-		uint16_t c;
-
-		for (; i_beg != i_end; i_beg = (i_beg + 1) % NCACHE_MAX_ITEMS) {
-			i = items + i_beg;
-
-			while (i->count > 0) {
-				SEXP_free(i->names + i->count);
-				oscap_free(i->iname);
-
-				--(i->count);
-			}
-		}
-	}
-
-	switch (pthread_rwlock_destroy(cache->lock)) {
-	case 0:
-		break;
-	default:
-		_D("Can't destroy rwlock: %u, %s.\n", errno, strerror(errno));
-	}
-
-	oscap_free(cache);
-	return;
-}
-
-int ncache_item_add(ncache_t * cache, const char *iname, SEXP_t * names, uint16_t count)
-{
-	return (-1);
-}
-
-int ncache_name_add(ncache_t * cache, const char *iname, SEXP_t * name)
-{
-	return (-1);
-}
-
-int ncache_item_exists(ncache_t * cache, const char *iname)
-{
-	return (-1);
-}
-
-int ncache_name_exists(ncache_t * cache)
-{
-	return (-1);
-}
-#endif				/* 0 */
-
 #endif
