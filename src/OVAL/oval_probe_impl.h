@@ -28,6 +28,8 @@
 
 #include <seap-types.h>
 #include <config.h>
+#include <sys/cdefs.h>
+#include <probes/encache.h>
 
 #include "oval_definitions_impl.h"
 #include "oval_agent_api_impl.h"
@@ -35,7 +37,6 @@
 #include "oval_string_map_impl.h"
 #include "public/oval_system_characteristics.h"
 #include "../common/util.h"
-
 #include "public/oval_probe.h"
 
 OSCAP_HIDDEN_START;
@@ -83,11 +84,9 @@ struct oval_pctx {
 #define OVAL_PCTX_UNSETFLAG(ctx, flg) ((ctx)->p_flags &= ~(flg))
 #define OVAL_PCTX_ISSETFLAG(ctx, flg) ((ctx)->p_flags & (flg) == (flg))
 
-#include <sys/cdefs.h>
-#include <probes/encache.h>
+OSCAP_HIDDEN_END;
+
 #define OSCAP_GSYM(s) __CONCAT(___G_, s)
 extern encache_t *OSCAP_GSYM(encache);
-
-OSCAP_HIDDEN_END;
 
 #endif				/* OVAL_PROBE_IMPL_H */

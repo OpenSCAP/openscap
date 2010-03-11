@@ -734,9 +734,18 @@ struct oval_sysinfo *oval_probe_sysinf_eval(oval_pctx_t * ctx)
 	 * because the preprocessing machinery in probes need an id that
 	 * is used as key in cache lookups.
 	 */
-        s_obj = probe_obj_creat("sysinfo_object",
-                                attrs = probe_attr_creat("id", r1 = SEXP_string_newf("sysinfo:0"), NULL), NULL);
-        SEXP_vfree(attrs, r1, NULL);
+        {
+                SEXP_t *r2, *r3;
+                
+                r0 = SEXP_list_new (r1 = SEXP_string_newf ("%s", "sysinfo_object"),
+                                    r2 = SEXP_string_newf (":%s", "id"),
+                                    r3 = SEXP_string_newf ("sysinfo:0"),
+                                    NULL);
+                
+                SEXP_vfree (r1, r2, r3, NULL);
+                s_obj = SEXP_list_new (r0, NULL);
+                SEXP_free (r0);
+        }
         
         debug(3) {
                 if (ctx->p_flags & OVAL_PCTX_FLAG_NOREPLY)
