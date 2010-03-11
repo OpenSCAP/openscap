@@ -27,8 +27,10 @@
 struct xccdf_result *xccdf_result_new(void)
 {
 	struct xccdf_item *result = xccdf_item_new(XCCDF_PROFILE, NULL);
-	oscap_create_lists(&result->sub.result.identities, &result->sub.result.targets, &result->sub.result.remarks, &result->sub.result.target_addresses,
-		&result->sub.result.target_facts, &result->sub.result.setvalues, &result->sub.result.rule_results, &result->sub.result.scores, NULL);
+	oscap_create_lists(&result->sub.result.identities, &result->sub.result.targets,
+		&result->sub.result.remarks, &result->sub.result.target_addresses,
+		&result->sub.result.target_facts, &result->sub.result.setvalues,
+		&result->sub.result.rule_results, &result->sub.result.scores, NULL);
 	return XRESULT(result);
 }
 
@@ -71,4 +73,45 @@ XCCDF_LISTMANIP(result, rule_result, rule_results)
 XCCDF_LISTMANIP(result, score, scores)
 
 
+struct xccdf_rule_result *xccdf_rule_result_new(void)
+{
+	struct xccdf_rule_result *rr = oscap_calloc(1, sizeof(struct xccdf_rule_result));
+	oscap_create_lists(&rr->overrides, &rr->idents, &rr->messages,
+		&rr->instances, &rr->fixes, &rr->checks, NULL);
+	return rr;
+}
 
+void xccdf_rule_result_free(struct xccdf_rule_result *rr)
+{
+	if (rr != NULL) {
+		oscap_free(rr->idref);
+		oscap_free(rr->version);
+		oscap_free(rr->version_update);
+
+		// TODO: call proper destructors
+		oscap_list_free(rr->overrides, NULL);
+		oscap_list_free(rr->idents, NULL);
+		oscap_list_free(rr->messages, NULL);
+		oscap_list_free(rr->instances, NULL);
+		oscap_list_free(rr->fixes, NULL);
+		oscap_list_free(rr->checks, NULL);
+
+		oscap_free(rr);
+	}
+}
+
+OSCAP_ACCESSOR_SIMPLE(time_t, xccdf_rule_result, time)
+OSCAP_ACCESSOR_SIMPLE(time_t, xccdf_rule_result, version_time)
+OSCAP_ACCESSOR_SIMPLE(xccdf_role_t, xccdf_rule_result, role)
+OSCAP_ACCESSOR_SIMPLE(float, xccdf_rule_result, weight)
+OSCAP_ACCESSOR_SIMPLE(xccdf_level_t, xccdf_rule_result, severity)
+OSCAP_ACCESSOR_SIMPLE(xccdf_test_result_type_t, xccdf_rule_result, result)
+OSCAP_ACCESSOR_STRING(xccdf_rule_result, version)
+OSCAP_ACCESSOR_STRING(xccdf_rule_result, version_update)
+OSCAP_ACCESSOR_STRING(xccdf_rule_result, idref)
+OSCAP_IGETINS(xccdf_ident, xccdf_rule_result, idents, ident)
+OSCAP_IGETINS(xccdf_fix, xccdf_rule_result, fixes, fix)
+OSCAP_IGETINS(xccdf_check, xccdf_rule_result, checks, check)
+OSCAP_IGETINS_GEN(xccdf_override, xccdf_rule_result, overrides, override)
+OSCAP_IGETINS_GEN(xccdf_message, xccdf_rule_result, messages, message)
+OSCAP_IGETINS_GEN(xccdf_instance, xccdf_rule_result, instances, instance)
