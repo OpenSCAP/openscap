@@ -289,7 +289,7 @@ static int get_runlevel (struct runlevel_req *req, struct runlevel_rep *rep)
 
 SEXP_t *probe_main (SEXP_t *object, int *err, void *arg)
 {
-        SEXP_t *probe_out, *val, *item_sexp;
+        SEXP_t *probe_out, *val, *item_sexp = NULL;
         
         struct runlevel_req request_st = RUNLEVEL_REQ_INITIALIZER;
         struct runlevel_rep reply_st   = RUNLEVEL_REP_INITIALIZER;
@@ -382,8 +382,10 @@ SEXP_t *probe_main (SEXP_t *object, int *err, void *arg)
                 break;
         }
         case  0:
+		/*
                 item_sexp = probe_item_creat ("runlevel_item", NULL, NULL);
                 probe_obj_setstatus (item_sexp, OVAL_STATUS_DOESNOTEXIST);
+		*/
                 
                 break;
         case -1:
@@ -398,9 +400,11 @@ SEXP_t *probe_main (SEXP_t *object, int *err, void *arg)
         /* See implementation note #1 */
         oscap_free (request_st.service_name);
         oscap_free (request_st.runlevel);
-        
-        SEXP_list_add (probe_out, item_sexp);
-        SEXP_free (item_sexp);
+
+	if (item_sexp) {
+		SEXP_list_add (probe_out, item_sexp);
+		SEXP_free (item_sexp);
+	}
 
         *err = 0;
         

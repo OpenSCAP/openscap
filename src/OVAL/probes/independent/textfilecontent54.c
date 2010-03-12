@@ -184,9 +184,6 @@ static SEXP_t *create_item(const char *path, const char *filename, char *pattern
                                  NULL);
         SEXP_vfree (r0, r1, r2, r3, r4, NULL);
 
-	probe_itement_setstatus(item, "path",     1, OVAL_STATUS_EXISTS);
-	probe_itement_setstatus(item, "filename", 1, OVAL_STATUS_EXISTS);
-
 	for (i = 1; i < substr_cnt; ++i) {
                 probe_item_ent_add (item, "subexpression", NULL, r0 = SEXP_string_newf(substrs[i]));
                 SEXP_free (r0);
@@ -242,12 +239,12 @@ static int process_file(const char *path, const char *filename, void *arg)
 #endif
 
 	if (filename == NULL) {
+		/*
 		SEXP_t *item;
                 SEXP_t *r0, *r1;
 
 		if (report_missing(pfd->filename_ent)) {
 			item = probe_item_creat ("textfilecontent_item", NULL,
-                                                 /* entities */
                                                  "path", NULL, r0 = SEXP_string_newf("%s", path),
                                                  "filename", NULL, r1 = probe_ent_getval(pfd->filename_ent),
                                                  NULL);
@@ -256,7 +253,6 @@ static int process_file(const char *path, const char *filename, void *arg)
 		        probe_itement_setstatus (item, "filename", 1, OVAL_STATUS_DOESNOTEXIST);
 		} else {
 			item = probe_item_creat ("textfilecontent_item", NULL,
-                                                 /* entities */
                                                  "path", NULL, r0 = SEXP_string_newf("%s", path),
                                                  NULL);
                         SEXP_free(r0);
@@ -264,6 +260,7 @@ static int process_file(const char *path, const char *filename, void *arg)
 
 		SEXP_list_add(pfd->item_list, item);
                 SEXP_free(item);
+		*/
 
 		goto cleanup;
 	}
@@ -395,11 +392,11 @@ SEXP_t *probe_main(SEXP_t *probe_in, int *err, void *arg)
 	fcnt = find_files(path_ent, filename_ent, behaviors_ent,
 			  process_file, (void *) &pfd);
 	if (fcnt == 0) {
+		/*
 		if (report_missing(pfd.filename_ent)) {
 			SEXP_t *item;
 
 			item = probe_item_creat("textfilecontent_item", NULL,
-                                                /* entities */
                                                 "path", NULL,
                                                 r0 = probe_ent_getval(path_ent),
                                                 NULL);
@@ -408,6 +405,7 @@ SEXP_t *probe_main(SEXP_t *probe_in, int *err, void *arg)
 			SEXP_list_add(pfd.item_list, item);
                         SEXP_vfree(r0, item, NULL);
 		}
+		*/
 	} else if (fcnt < 0) {
 		SEXP_t *item;
 		item = probe_item_creat("textfilecontent_item", NULL,

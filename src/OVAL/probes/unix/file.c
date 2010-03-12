@@ -118,11 +118,11 @@ static int file_cb (const char *p, const char *f, void *ptr)
         res = args->items;
         
         if (f == NULL) {
+		/*
                 if (report_missing (args->filename_ent)) {
                         SEXP_t *r0;
                         
                         item = probe_obj_creat ("file_item", NULL,
-                                                /* entities */                                        
                                                 "path",     NULL, r0 = SEXP_string_newf ("%s", p),
                                                 "filename", NULL, NULL,
                                                 NULL);
@@ -137,6 +137,8 @@ static int file_cb (const char *p, const char *f, void *ptr)
                 }
                 
                 st_path = p;
+		*/
+		return (0);
         } else {
                 _D("p = \"%s\"; f = \"%s\"\n", p, f);
                 snprintf (path_buffer, sizeof path_buffer, "%s/%s", p, f);
@@ -423,9 +425,9 @@ SEXP_t *probe_main (SEXP_t *probe_in, int *err, void *mutex)
 
         } else if (filecnt == 0) {
                 /* not found */
+		/*
                 if (report_missing (filename)) {
                         r0   = probe_obj_creat ("file_item", NULL,
-                                                /* entities */                                        
                                                 "path",     NULL, path,
                                                 NULL);
                         
@@ -435,6 +437,7 @@ SEXP_t *probe_main (SEXP_t *probe_in, int *err, void *mutex)
                         SEXP_list_add (items, r0);
                         SEXP_free (r0);
                 }
+		*/
         }
         
         SEXP_free (behaviors);

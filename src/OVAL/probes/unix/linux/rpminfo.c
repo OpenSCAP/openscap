@@ -323,7 +323,8 @@ SEXP_t *probe_main (SEXP_t *object, int *err, void *arg)
         switch (rpmret = get_rpminfo (&request_st, &reply_st)) {
         case 0: /* Not found */
                 _D("Package \"%s\" not found.\n", request_st.name);
-        
+
+		/*        
                 item_sexp = probe_item_creat ("rpminfo_item", NULL,
                                               "name", NULL,
                                               r0 = SEXP_string_newf(request_st.name),
@@ -335,6 +336,7 @@ SEXP_t *probe_main (SEXP_t *object, int *err, void *arg)
                 SEXP_list_add (probe_out, item_sexp);
                 SEXP_free (item_sexp);
                 SEXP_free (r0);
+		*/
                 
                 break;
         case -1: /* Error */
