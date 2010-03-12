@@ -1,0 +1,88 @@
+#!/bin/sh
+#
+# oscap-scan:		OpenSCAP security scanner
+#
+# chkconfig: - 96 99
+# description:  This service runs OpenSCAP security scanner to check the \
+#		system settings. The program does not stay resident, \
+#		but rather runs once. The results of security audit are 
+#		stored in /var/log/oscap-scan.xml.log
+#
+# processname: /usr/bin/oscap-scan
+# config: /etc/sysconfig/oscap-scan
+#
+# Return values according to LSB for all commands but status:
+# 0 - success
+# 1 - generic or unspecified error
+# 2 - invalid or excess argument(s)
+# 3 - unimplemented feature (e.g. "reload")
+# 4 - insufficient privilege
+# 5 - program is not installed
+# 6 - program is not configured
+# 7 - program is not running
+
+PATH=/sbin:/bin:/usr/sbin:/usr/bin
+prog="oscap-scan"
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+# Allow anyone to run status
+if [ "$1" = "status" ] ; then
+	exit 0
+fi
+
+# Check that we are root ... so non-root users stop here
+test $EUID = 0  ||  exit 4
+
+# Check config
+test -f /etc/sysconfig/oscap-scan && . /etc/sysconfig/oscap-scan
+
+RETVAL=0
+
+start() {
+	test -x /usr/bin/oscap-scan  || exit 5
+	# Now check that the sysconfig is found and has important things
+	# configured
+	test -f /etc/sysconfig/oscap-scan || exit 6
+	test x"$OPTIONS" != "x" || exit 6
+	echo  -n $"Starting $prog: "
+	$prog "$OPTIONS" >/dev/null 2>&1
+	RETVAL=$?
+	if [ $RETVAL -eq 0 ] ; then
+		sleep 1
+		logger "OpenSCAP security scan: PASS"
+	elif [ $RETVAL -eq -1 ] ; then
+		sleep 1
+		logger "OpenSCAP security scan: ERROR"
+	else
+		sleep 1
+		logger "OpenSCAP security scan: FAILED"
+	fi
+	[ "$RETVAL" -eq 0 ] && success $"$prog startup" || failure $"$prog startup"
+	echo
+}
+
+stop() {
+	/bin/true
+}
+
+# See how we were called.
+case "$1" in
+    start)
+	start
+	;;
+    stop)
+	stop
+	;;
+    restart)
+	stop
+	start
+	;;
+    *)
+	echo $"Usage: $0 {start|stop|restart}"
+	RETVAL=3
+	;;
+esac
+exit $RETVAL
+

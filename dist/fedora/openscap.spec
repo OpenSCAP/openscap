@@ -55,7 +55,9 @@ libraries can be used by perl.
 Summary:        Openscap utilities
 Group:          Applications/System
 Requires:       %{name} = %{version}-%{release}
-BuildRequires:  libcurl-devel
+Requires(post):  chkconfig
+Requires(preun): chkconfig initscripts
+BuildRequires:   libcurl-devel
 
 %description    utils
 The %{name}-utils package contains various utilities based on %{name} library.
@@ -69,7 +71,14 @@ make %{?_smp_mflags}
 
 %install
 rm -rf $RPM_BUILD_ROOT
+
 make install DESTDIR=$RPM_BUILD_ROOT
+
+install -d -m 755 $RPM_BUILD_ROOT%{_initrddir}
+install -d -m 755 $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig
+install -p -m 755 dist/fedora/oscap-scan.init $RPM_BUILD_ROOT%{_initrddir}/oscap-scan
+install -p -m 644 dist/fedora/oscap-scan.sys  $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig/oscap-scan
+
 find $RPM_BUILD_ROOT -name '*.la' -exec rm -f {} ';'
 
 %clean
@@ -78,6 +87,17 @@ rm -rf $RPM_BUILD_ROOT
 %post -p /sbin/ldconfig
 
 %postun -p /sbin/ldconfig
+
+
+%post utils
+/sbin/chkconfig --add oscap-scan
+
+%preun utils
+if [ $1 -eq 0 ]; then
+   /sbin/service oscap-scan stop > /dev/null 2>&1
+   /sbin/chkconfig --del oscap-scan
+fi
+
 
 %files
 %defattr(-,root,root,-)
@@ -102,8 +122,12 @@ rm -rf $RPM_BUILD_ROOT
 
 %files utils
 %defattr(-,root,root,-)
-%{_bindir}/*
+%config(noreplace) %{_sysconfdir}/sysconfig/oscap-scan
+%{_initrddir}/oscap-scan
+%{_datadir}/openscap/*
 %{_mandir}/man8/*
+%{_bindir}/*
+
 
 %changelog
 * Fri Feb 26 2010 Peter Vrabec <pvrabec@redhat.com> 0.5.7-1

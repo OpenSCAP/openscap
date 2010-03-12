@@ -11,7 +11,15 @@ endif
 
 SUBDIRS += utils tests
 
-EXTRA_DIST = dist/fedora/openscap.spec docs/Doxyfile docs/examples/oval_probes.py docs/examples/package-test.xml
+dist_pkgdata_DATA = dist/fedora/scap-fedora12-oval.xml
+
+EXTRA_DIST =	dist/fedora/openscap.spec \
+		dist/fedora/oscap-scan.sys \
+		dist/fedora/oscap-scan.init \
+		dist/fedora/scap-fedora12-oval.xml \
+		docs/Doxyfile \
+		docs/examples/oval_probes.py \
+		docs/examples/package-test.xml
 
 dist-hook: ChangeLog
 	cd $(distdir)/docs && doxygen Doxyfile
@@ -22,3 +30,4 @@ ChangeLog:
 CONFIG_CLEAN_FILES = config/*
 clean-generic:
 	rm -rf autom4te*.cache
+
