@@ -1515,5 +1515,7 @@ void xccdf_refine_rule_free(struct xccdf_refine_rule *rr);
 void xccdf_refine_value_free(struct xccdf_refine_value *rv);
 void xccdf_setvalue_free(struct xccdf_setvalue *sv);
 struct xccdf_select *xccdf_select_clone(const struct xccdf_select * select);
+void xccdf_select_set_selected(struct xccdf_select *select, bool selected);
+void xccdf_select_set_item(struct xccdf_select *select, const char *item);
 
 #endif

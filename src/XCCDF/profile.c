@@ -52,6 +52,18 @@ struct xccdf_select *xccdf_select_new(void)
 	return foo;
 }
 
+void xccdf_select_set_selected(struct xccdf_select *select, bool selected)
+{
+        __attribute__nonnull__(select);
+        select->selected = selected;
+}
+
+void xccdf_select_set_item(struct xccdf_select *select, const char *item)
+{
+        __attribute__nonnull__(select);
+        select->item = oscap_strdup(item);
+}
+
 struct xccdf_select *xccdf_select_clone(const struct xccdf_select * select)
 {
         struct xccdf_select *clone = xccdf_select_new();
