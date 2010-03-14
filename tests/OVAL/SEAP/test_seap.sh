@@ -404,6 +404,15 @@ EOF
     return $ret_val
 }
 
+function test_spb_api {
+    local ret_val=0;
+
+    ./test_spb_api >> test_spb_api.out
+    ret_val=$?
+
+    return $ret_val
+}
+
 # Cleanup.
 function test_seap_cleanup { 
     local ret_val=0;
@@ -460,6 +469,11 @@ result=$[$result+$ret_val]
 test_seap_split
 ret_val=$? 
 report_result "test_seap_split" $ret_val  
+result=$[$result+$ret_val]
+
+test_spb_api
+ret_val=$? 
+report_result "test_spb_api" $ret_val  
 result=$[$result+$ret_val]
 
 test_seap_cleanup  

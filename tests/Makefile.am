@@ -46,7 +46,8 @@ check_PROGRAMS +=	sexp_parser \
 			sexp_number \
 			sexp_list \
 			test_probes \
-			test_sysinfo 
+			test_sysinfo \ 
+			test_spb_api
 #			test_probe-api \
 #			test_error \
 #			test_probes2
@@ -55,6 +56,8 @@ sexp_parser_SOURCES =	OVAL/SEAP/sexp_parser.c
 sexp_string_SOURCES =	OVAL/SEAP/sexp_string.c
 sexp_number_SOURCES =	OVAL/SEAP/sexp_number.c
 sexp_list_SOURCES =	OVAL/SEAP/sexp_list.c
+test_spb_api_SOURCES=   OVAL/SEAP/test_spb_api.c
+test_spb_api_CFLAGS=    -I$(top_srcdir)/src/OVAL/probes/SEAP/generic
 test_probes_SOURCES =	OVAL/probes/test_probes.c
 test_probes_CFLAGS =	-I$(top_srcdir)/src/OVAL @libxml_cflags@
 test_sysinfo_SOURCES =	OVAL/probes/test_sysinfo.c

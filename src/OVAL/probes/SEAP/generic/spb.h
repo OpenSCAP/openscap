@@ -1,4 +1,3 @@
-
 /*
  * Copyright 2008 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
@@ -40,7 +39,7 @@ typedef struct {
 } spb_item_t;
 
 typedef struct {
-        spb_item_t *buffer; /* array of buffer representing the sparse buffer */
+        spb_item_t *buffer; /* array of buffers representing the sparse buffer */
         uint32_t    btotal; /* number of buffer */
         uint32_t    balloc; /* number of allocated slots */
         uint32_t    bflags; /* flags - not used at the moment */
@@ -49,7 +48,9 @@ typedef struct {
 #define SPB_FLAG_JOIN 0x00000001
 #define SPB_FLAG_FILE 0x00000002
 
-#define SPB_DEFAULT_BALLOC 32
+#define SPB_DEFAULT_BALLOC   32  /* default number of pre-allocated slots */
+#define SPB_BALLOC_HIGHTRESH 512 /* the number of new slots is doubled until this limit is reached */
+#define SPB_BALLOC_ADD       32  /* number of slot to add when we reached the high threshold */
 
 /**
  * Create a new sparse buffer.
@@ -60,6 +61,8 @@ typedef struct {
  *        increased). If 0, default value will be used (SPB_DEFAULT_BALLOC).
  */
 spb_t *spb_new (void *buffer, size_t buflen, uint32_t balloc);
+
+void spb_free (spb_t *spb);
 
 /**
  * Given the index of a byte in the sparse buffer, find the index
@@ -85,20 +88,20 @@ spb_size_t spb_size (spb_t *spb);
  */
 #define spb_iterate_oct(spb, start, end, name) /* TODO */ while(0)
 
-#define spb_iterate(spb, start, name)                                   \
+#define spb_iterate(spb, start, name, icode)                            \
         do {                                                            \
-                uint32_t   _sym(idx);                                   \
                 spb_size_t _sym(istart) = (start);                      \
                 spb_t     *_sym(ispb)   = (spb);                        \
+                uint32_t   _sym(idx)    = spb_bindex(_sym(ispb), _sym(istart)); \
                 size_t     _sym(l_off)  = (size_t)(_sym(idx) > 0 ? start - _sym(ispb)->buffer[_sym(idx) - 1].gend : start); \
                                                                         \
-                for (_sym(idx) = spb_bindex (_sym(ispb), start); _sym(idx) < _sym(ispb)->btotal; ++_sym(idx)) { \
+                for (; _sym(idx) < _sym(ispb)->btotal; ++_sym(idx)) {   \
                         register size_t   _sym(l);                      \
                         register uint8_t *_sym(b);                      \
                                                                         \
                         _sym(l) = (size_t)(_sym(idx) > 0 ?              \
                                            _sym(ispb)->buffer[_sym(idx)].gend - _sym(ispb)->buffer[_sym(idx) - 1].gend : \
-                                           _sym(ispb)->buffer[_sym(idx)].gend); \
+                                           _sym(ispb)->buffer[_sym(idx)].gend + 1); \
                         _sym(b) = ((uint8_t *)(_sym(ispb)->buffer[_sym(idx)].base)) + _sym(l_off); \
                         (name)  = *_sym(b);                             \
                                                                         \
@@ -112,6 +115,14 @@ spb_size_t spb_size (spb_t *spb);
                         _sym(l_off) = 0;                                \
                 }                                                       \
         } while (0)
+
+/**
+ * Add new buffer to the sparse buffer
+ * @param spb sparse buffer
+ * @param buffer
+ * @param buflen
+ */
+int spb_add (spb_t *spb, void *buffer, size_t buflen);
 
 /**
  * Pick a buffer region from the sparse buffer and copy it.

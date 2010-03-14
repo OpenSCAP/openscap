@@ -1,4 +1,3 @@
-
 /*
  * Copyright 2008 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
@@ -86,6 +85,32 @@ spb_size_t spb_size (spb_t *spb)
         return (spb->btotal > 0 ? spb->buffer[spb->btotal - 1].gend + 1 : 0);
 }
 
+int spb_add (spb_t *spb, void *buffer, size_t buflen)
+{
+        spb_size_t gend;
+        
+        if (spb->btotal >= spb->balloc) {
+                if (spb->balloc < SPB_BALLOC_HIGHTRESH)
+                        spb->balloc <<= 1;
+                else
+                        spb->balloc  += SPB_BALLOC_ADD;
+                
+                spb->buffer = sm_realloc (spb->buffer, sizeof (spb_item_t) * spb->balloc);
+        }
+        
+        /* XXX: assume that btotal > 0 if btotal > balloc? */
+        if (spb->btotal > 0)
+                gend = spb->buffer[spb->btotal - 1].gend + buflen;
+        else
+                gend = buflen - 1;
+        
+        spb->buffer[spb->btotal].base = buffer;
+        spb->buffer[spb->btotal].gend = gend;
+        ++spb->btotal;
+        
+        return (0);
+}
+
 int spb_pick (spb_t *spb, spb_size_t start, spb_size_t size, void *dst)
 {
         return (-1);
@@ -94,4 +119,17 @@ int spb_pick (spb_t *spb, spb_size_t start, spb_size_t size, void *dst)
 int spb_pick_raw (spb_t *spb, uint32_t bindex, spb_size_t start, spb_size_t size, void *dst)
 {
         return (-1);
+}
+
+void spb_free (spb_t *spb)
+{
+#ifndef NDEBUG
+        memset (spb->buffer, 0, sizeof (spb_item_t) * spb->balloc);
+#endif
+        sm_free (spb->buffer);
+#ifndef NDEBUG
+        memset (spb, 0, sizeof (spb_t));
+#endif
+        sm_free (spb);
+        return;
 }
