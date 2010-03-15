@@ -106,7 +106,6 @@ typedef void (*oscap_consumer_func) (void *, void *);
  * @param RTYPE return type
  * @param SNAME name of the structure of which we are getting a member
  * @param MNAME member name affects how the resultant function will be called
- * @param MEXP expression to get the member
  * @see OSCAP_GENERIC_GETTER_FORCE
  */
 #define OSCAP_GETTER_FORCE(RTYPE,SNAME,MNAME) \
@@ -118,7 +117,6 @@ typedef void (*oscap_consumer_func) (void *, void *);
  * @param RTYPE return type
  * @param SNAME name of the structure of which we are getting a member
  * @param MNAME member name affects how the resultant function will be called
- * @param MEXP expression to get the member
  * @see OSCAP_GENERIC_GETTER
  */
 #define OSCAP_GETTER(RTYPE,SNAME,MNAME) \
@@ -203,7 +201,7 @@ typedef void (*oscap_consumer_func) (void *, void *);
  */
 #define OSCAP_HGETTER_STRUCT(RTYPE,SNAME,MNAME) OSCAP_HGETTER_EXP(struct RTYPE*,SNAME,MNAME,MNAME)
 
-#define OSCAP_SETTER_HEADER(SNAME, MTYPE, MNAME) bool SNAME##_set_##MNAME(struct SNAME *obj, MTYPE item)
+#define OSCAP_SETTER_HEADER(SNAME, MTYPE, MNAME) bool SNAME##_set_##MNAME(struct SNAME *obj, MTYPE newval)
 
 /**
  * Generete a setter function with a check.
@@ -218,7 +216,7 @@ typedef void (*oscap_consumer_func) (void *, void *);
  */
 #define OSCAP_SETTER_GENERIC_CHECK(SNAME, MTYPE, MNAME, CHECK, DELETER, ASSIGNER) \
 	OSCAP_SETTER_HEADER(SNAME, MTYPE, MNAME) \
-	{ if (!(CHECK)) return false; DELETER(obj->MNAME); obj->MNAME = ASSIGNER(item); return true; }
+	{ if (!(CHECK)) return false; DELETER(obj->MNAME); obj->MNAME = ASSIGNER(newval); return true; }
 
 /**
  * Generete a setter function without a check.
@@ -226,7 +224,7 @@ typedef void (*oscap_consumer_func) (void *, void *);
  */
 #define OSCAP_SETTER_GENERIC(SNAME, MTYPE, MNAME, DELETER, ASSIGNER) \
 	OSCAP_SETTER_HEADER(SNAME, MTYPE, MNAME) \
-	{ DELETER(obj->MNAME); obj->MNAME = ASSIGNER(item); return true; }
+	{ DELETER(obj->MNAME); obj->MNAME = ASSIGNER(newval); return true; }
 
 /**
  * Generete a setter function without a check that does not delete the previous value.
@@ -234,7 +232,7 @@ typedef void (*oscap_consumer_func) (void *, void *);
  */
 #define OSCAP_SETTER_GENERIC_NODELETE(SNAME, MTYPE, MNAME, ASSIGNER) \
 	OSCAP_SETTER_HEADER(SNAME, MTYPE, MNAME) \
-	{ obj->MNAME = ASSIGNER(item); return true; }
+	{ obj->MNAME = ASSIGNER(newval); return true; }
 
 /**
  * Generete a setter function using a simple assignment.
@@ -255,13 +253,28 @@ typedef void (*oscap_consumer_func) (void *, void *);
  * Define both, getter and setter for a string structure member.
  */
 #define OSCAP_ACCESSOR_STRING(SNAME, MNAME) \
-	OSCAP_SETTER_STRING(SNAME, MNAME) OSCAP_GETTER(const char*, SNAME, MNAME)
+	OSCAP_GETTER(const char*, SNAME, MNAME) OSCAP_SETTER_STRING(SNAME, MNAME)
+
+/**
+ * Define both, getter and setter for a text structure member.
+ */
+#define OSCAP_ACCESSOR_TEXT(SNAME, MNAME) \
+	OSCAP_GETTER(struct oscap_text *, SNAME, MNAME) \
+    OSCAP_SETTER_GENERIC(SNAME, struct oscap_text*, MNAME, oscap_text_free, )
 
 /**
  * Define both, getter and setter for a structure member using simple get/set.
  */
 #define OSCAP_ACCESSOR_SIMPLE(MTYPE, SNAME, MNAME) \
-	OSCAP_SETTER_SIMPLE(SNAME, MTYPE, MNAME) OSCAP_GETTER(MTYPE, SNAME, MNAME)
+	OSCAP_GETTER(MTYPE, SNAME, MNAME) OSCAP_SETTER_SIMPLE(SNAME, MTYPE, MNAME)
+
+/**
+ * Define both, getter and setter for a structure member using simple get/set
+ * using different expression to het the member.
+ */
+#define OSCAP_ACCESSOR_EXP(MTYPE, SNAME, MNAME, MEXP) \
+    OSCAP_GENERIC_GETTER(MTYPE, SNAME, MNAME, MEXP) \
+    OSCAP_SETTER_HEADER(SNAME, MTYPE, MNAME) { obj->MEXP = newval; return true; }
 
 /**
  * Generate function to insert an item into a list.
