@@ -130,12 +130,12 @@ struct xccdf_result_item {
 	time_t start_time;
 	time_t end_time;
 	char *test_system;
-	char *organization;
 	char *benchmark_uri;
 	char *profile;
 
 	struct oscap_list *identities;
 	struct oscap_list *targets;
+	struct oscap_list *organizations;
 	struct oscap_list *remarks;
 	struct oscap_list *target_addresses;
 	struct oscap_list *target_facts;
@@ -304,10 +304,7 @@ struct xccdf_rule_result {
 	float weight;
 	xccdf_level_t severity;
 	xccdf_test_result_type_t result;
-
 	char *version;
-	char *version_update;
-	time_t version_time;
 
 	struct oscap_list *overrides;
 	struct oscap_list *idents;

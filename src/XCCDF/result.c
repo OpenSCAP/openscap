@@ -29,10 +29,12 @@ struct xccdf_result *xccdf_result_new(void)
 	struct xccdf_item *result = xccdf_item_new(XCCDF_PROFILE, NULL);
 	oscap_create_lists(&result->sub.result.identities, &result->sub.result.targets,
 		&result->sub.result.remarks, &result->sub.result.target_addresses,
-		&result->sub.result.target_facts, &result->sub.result.setvalues,
+		&result->sub.result.target_facts, &result->sub.result.setvalues, &result->sub.result.organizations,
 		&result->sub.result.rule_results, &result->sub.result.scores, NULL);
 	return XRESULT(result);
 }
+
+void xccdf_rule_result_free(struct xccdf_rule_result *rr);
 
 static inline void xccdf_result_free_impl(struct xccdf_item *result)
 {
@@ -40,19 +42,20 @@ static inline void xccdf_result_free_impl(struct xccdf_item *result)
 		xccdf_item_release(result);
 
 		oscap_free(result->sub.result.test_system);
-		oscap_free(result->sub.result.organization);
 		oscap_free(result->sub.result.benchmark_uri);
 		oscap_free(result->sub.result.profile);
 
-		// TODO: call proper destructors
+		// TODO: call proper destructors {
 		oscap_list_free(result->sub.result.identities, NULL);
-		oscap_list_free(result->sub.result.targets, NULL);
-		oscap_list_free(result->sub.result.remarks, NULL);
-		oscap_list_free(result->sub.result.target_addresses, NULL);
 		oscap_list_free(result->sub.result.target_facts, NULL);
-		oscap_list_free(result->sub.result.setvalues, NULL);
-		oscap_list_free(result->sub.result.rule_results, NULL);
 		oscap_list_free(result->sub.result.scores, NULL);
+		// }
+		oscap_list_free(result->sub.result.targets, oscap_free);
+		oscap_list_free(result->sub.result.remarks, (oscap_destruct_func) oscap_text_free);
+		oscap_list_free(result->sub.result.target_addresses, oscap_free);
+		oscap_list_free(result->sub.result.setvalues, (oscap_destruct_func) xccdf_setvalue_free);
+		oscap_list_free(result->sub.result.rule_results, (oscap_destruct_func) xccdf_rule_result_free);
+		oscap_list_free(result->sub.result.organizations, oscap_free);
 
 		oscap_free(result);
 	}
@@ -60,13 +63,13 @@ static inline void xccdf_result_free_impl(struct xccdf_item *result)
 XCCDF_FREE_GEN(result)
 
 XCCDF_ACCESSOR_STRING(result, test_system)
-XCCDF_ACCESSOR_STRING(result, organization)
 XCCDF_ACCESSOR_STRING(result, benchmark_uri)
 XCCDF_ACCESSOR_STRING(result, profile)
 XCCDF_LISTMANIP(result, identity, identities)
-XCCDF_LISTMANIP(result, target, targets)
-XCCDF_LISTMANIP(result, remark, remarks)
-XCCDF_LISTMANIP(result, target_address, target_addresses)
+XCCDF_LISTMANIP_STRING(result, target, targets)
+XCCDF_LISTMANIP_STRING(result, target_address, target_addresses)
+XCCDF_LISTMANIP_STRING(result, organization, organizations)
+XCCDF_LISTMANIP_TEXT(result, remark, remarks)
 XCCDF_LISTMANIP(result, target_fact, target_facts)
 XCCDF_LISTMANIP(result, setvalue, setvalues)
 XCCDF_LISTMANIP(result, rule_result, rule_results)
@@ -86,7 +89,6 @@ void xccdf_rule_result_free(struct xccdf_rule_result *rr)
 	if (rr != NULL) {
 		oscap_free(rr->idref);
 		oscap_free(rr->version);
-		oscap_free(rr->version_update);
 
 		// TODO: call proper destructors
 		oscap_list_free(rr->overrides, NULL);
@@ -101,13 +103,11 @@ void xccdf_rule_result_free(struct xccdf_rule_result *rr)
 }
 
 OSCAP_ACCESSOR_SIMPLE(time_t, xccdf_rule_result, time)
-OSCAP_ACCESSOR_SIMPLE(time_t, xccdf_rule_result, version_time)
 OSCAP_ACCESSOR_SIMPLE(xccdf_role_t, xccdf_rule_result, role)
 OSCAP_ACCESSOR_SIMPLE(float, xccdf_rule_result, weight)
 OSCAP_ACCESSOR_SIMPLE(xccdf_level_t, xccdf_rule_result, severity)
 OSCAP_ACCESSOR_SIMPLE(xccdf_test_result_type_t, xccdf_rule_result, result)
 OSCAP_ACCESSOR_STRING(xccdf_rule_result, version)
-OSCAP_ACCESSOR_STRING(xccdf_rule_result, version_update)
 OSCAP_ACCESSOR_STRING(xccdf_rule_result, idref)
 OSCAP_IGETINS(xccdf_ident, xccdf_rule_result, idents, ident)
 OSCAP_IGETINS(xccdf_fix, xccdf_rule_result, fixes, fix)

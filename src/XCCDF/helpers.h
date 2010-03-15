@@ -115,6 +115,14 @@
 		{ return oscap_list_add(XITEM(item)->sub.STYPE.MNAME, DUP(newval)); }
 #define XCCDF_LISTMANIP(TNAME,ITYPE,MNAME) \
 		XCCDF_IGETTER(TNAME,ITYPE,MNAME) XCCDF_ADDER(TNAME,MNAME,ITYPE,struct xccdf_##ITYPE*,)
+#define XCCDF_LISTMANIP_STRING(TNAME,SNAME,MNAME) \
+		struct oscap_string_iterator* xccdf_##TNAME##_get_##MNAME(const struct xccdf_##TNAME* item) \
+		{ return oscap_iterator_new(XITEM(item)->sub.TNAME.MNAME); } \
+		XCCDF_ADDER(TNAME,MNAME,SNAME,const char *,oscap_strdup)
+#define XCCDF_LISTMANIP_TEXT(TNAME,SNAME,MNAME) \
+		struct oscap_text_iterator* xccdf_##TNAME##_get_##MNAME(const struct xccdf_##TNAME* item) \
+		{ return oscap_iterator_new(XITEM(item)->sub.TNAME.MNAME); } \
+		XCCDF_ADDER(TNAME,MNAME,SNAME,struct oscap_text *,)
 
 #define XCCDF_ITEM_GETTER(RTYPE,MNAME) \
 		XCCDF_ABSTRACT_GETTER(RTYPE,item,MNAME,item.MNAME) \
