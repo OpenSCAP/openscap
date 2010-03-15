@@ -365,6 +365,9 @@ extern const struct oscap_text_traits XCCDF_TEXT_HTMLSUB;
 extern const struct oscap_text_traits XCCDF_TEXT_NOTICE;
 extern const struct oscap_text_traits XCCDF_TEXT_PROFNOTE;
 
+extern const size_t XCCDF_NUMERIC_SIZE;
+extern const char *XCCDF_NUMERIC_FORMAT;
+
 struct xccdf_item *xccdf_item_new(xccdf_type_t type, struct xccdf_item *parent);
 void xccdf_item_release(struct xccdf_item *item);
 void xccdf_item_print(struct xccdf_item *item, int depth);

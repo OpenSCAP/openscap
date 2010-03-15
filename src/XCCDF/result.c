@@ -29,6 +29,8 @@
 // constants
 static const xccdf_numeric XCCDF_SCORE_MAX_DAFAULT = 100.0f;
 static const char *XCCDF_INSTANCE_DEFAULT_CONTEXT = "undefined";
+const size_t XCCDF_NUMERIC_SIZE = 32;
+const char *XCCDF_NUMERIC_FORMAT = "%f";
 
 // prototypes
 void xccdf_rule_result_free(struct xccdf_rule_result *rr);
@@ -140,6 +142,10 @@ void xccdf_identity_free(struct xccdf_identity *identity)
 	}
 }
 
+OSCAP_ACCESSOR_EXP(bool, xccdf_identity, authenticated, sub.authenticated)
+OSCAP_ACCESSOR_EXP(bool, xccdf_identity, privileged, sub.privileged)
+OSCAP_ACCESSOR_STRING(xccdf_identity, name)
+
 struct xccdf_score *xccdf_score_new(void)
 {
 	struct xccdf_score *score = oscap_calloc(1, sizeof(struct xccdf_score));
@@ -156,6 +162,10 @@ void xccdf_score_free(struct xccdf_score *score)
 	}
 }
 
+OSCAP_ACCESSOR_SIMPLE(xccdf_numeric, xccdf_score, maximum)
+OSCAP_ACCESSOR_SIMPLE(xccdf_numeric, xccdf_score, score)
+OSCAP_ACCESSOR_STRING(xccdf_score, system)
+
 struct xccdf_override *xccdf_override_new(void)
 {
 	return oscap_calloc(1, sizeof(struct xccdf_override));
@@ -170,6 +180,12 @@ void xccdf_override_free(struct xccdf_override *oride)
 	}
 }
 
+OSCAP_ACCESSOR_SIMPLE(time_t, xccdf_override, time)
+OSCAP_ACCESSOR_SIMPLE(xccdf_test_result_type_t, xccdf_override, new_result)
+OSCAP_ACCESSOR_SIMPLE(xccdf_test_result_type_t, xccdf_override, old_result)
+OSCAP_ACCESSOR_STRING(xccdf_override, authority)
+OSCAP_ACCESSOR_TEXT(xccdf_override, remark)
+
 struct xccdf_message *xccdf_message_new(void)
 {
     return oscap_calloc(1, sizeof(struct xccdf_message));
@@ -182,6 +198,9 @@ void xccdf_message_free(struct xccdf_message *msg)
         oscap_free(msg);
     }
 }
+
+OSCAP_ACCESSOR_SIMPLE(xccdf_message_severity_t, xccdf_message, severity)
+OSCAP_ACCESSOR_STRING(xccdf_message, content)
 
 struct xccdf_target_fact* xccdf_target_fact_new(void)
 {
@@ -196,6 +215,36 @@ void xccdf_target_fact_free(struct xccdf_target_fact *fact)
         oscap_free(fact);
     }
 }
+
+static inline bool xccdf_target_fact_set_value(struct xccdf_target_fact *fact, xccdf_value_type_t type, const char *str)
+{
+    assert(fact != NULL);
+    oscap_free(fact->value);
+    fact->value = oscap_strdup(str);
+    fact->type  = type;
+    return true;
+}
+
+bool xccdf_target_fact_set_string(struct xccdf_target_fact *fact, const char *str)
+{
+    return xccdf_target_fact_set_value(fact, XCCDF_TYPE_STRING, str);
+}
+
+bool xccdf_target_fact_set_number(struct xccdf_target_fact *fact, xccdf_numeric val)
+{
+    char buff[XCCDF_NUMERIC_SIZE];
+    sprintf(buff, XCCDF_NUMERIC_FORMAT, val);
+    return xccdf_target_fact_set_value(fact, XCCDF_TYPE_NUMBER, buff);
+}
+
+bool xccdf_target_fact_set_boolean(struct xccdf_target_fact *fact, bool val)
+{
+    return xccdf_target_fact_set_value(fact, XCCDF_TYPE_BOOLEAN, oscap_enum_to_string(OSCAP_BOOL_MAP, val));
+}
+
+OSCAP_GETTER(xccdf_value_type_t, xccdf_target_fact, type)
+OSCAP_GETTER(const char *, xccdf_target_fact, value)
+OSCAP_ACCESSOR_STRING(xccdf_target_fact, name)
 
 struct xccdf_instance *xccdf_instance_new(void)
 {
@@ -213,3 +262,7 @@ void xccdf_instance_free(struct xccdf_instance *inst)
         oscap_free(inst);
     }
 }
+
+OSCAP_ACCESSOR_STRING(xccdf_instance, context)
+OSCAP_ACCESSOR_STRING(xccdf_instance, parent_context)
+OSCAP_ACCESSOR_STRING(xccdf_instance, content)
