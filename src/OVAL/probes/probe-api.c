@@ -974,6 +974,9 @@ oval_datatype_t probe_ent_getdatatype(const SEXP_t * ent)
 			case SEXP_NUM_FLOAT:
 				ret = OVAL_DATATYPE_FLOAT;
 				break;
+			case SEXP_NUM_BOOLEAN:
+				ret = OVAL_DATATYPE_BOOLEAN;
+				break;
 			case SEXP_NUM_NONE:
 				abort();
 			default:
