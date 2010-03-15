@@ -282,6 +282,10 @@ struct oval_results_model *oval_result_system_get_results_model(struct oval_resu
 /**
  * @memberof oval_result_system
  */
+struct oval_result_definition *oval_result_system_get_definition(struct oval_result_system *, char *);
+/**
+ * @memberof oval_result_system
+ */
 struct oval_result_definition_iterator *oval_result_system_get_definitions(struct oval_result_system *);
 /**
  * @memberof oval_result_system
