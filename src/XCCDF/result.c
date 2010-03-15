@@ -23,6 +23,21 @@
 
 #include "item.h"
 #include "helpers.h"
+#include <math.h>
+
+
+// constants
+static const xccdf_numeric XCCDF_SCORE_MAX_DAFAULT = 100.0f;
+static const char *XCCDF_INSTANCE_DEFAULT_CONTEXT = "undefined";
+
+// prototypes
+void xccdf_rule_result_free(struct xccdf_rule_result *rr);
+void xccdf_identity_free(struct xccdf_identity *identity);
+void xccdf_score_free(struct xccdf_score *score);
+void xccdf_target_fact_free(struct xccdf_target_fact *fact);
+void xccdf_message_free(struct xccdf_message *msg);
+void xccdf_instance_free(struct xccdf_instance *inst);
+void xccdf_override_free(struct xccdf_override *oride);
 
 struct xccdf_result *xccdf_result_new(void)
 {
@@ -34,8 +49,6 @@ struct xccdf_result *xccdf_result_new(void)
 	return XRESULT(result);
 }
 
-void xccdf_rule_result_free(struct xccdf_rule_result *rr);
-
 static inline void xccdf_result_free_impl(struct xccdf_item *result)
 {
 	if (result != NULL) {
@@ -45,11 +58,9 @@ static inline void xccdf_result_free_impl(struct xccdf_item *result)
 		oscap_free(result->sub.result.benchmark_uri);
 		oscap_free(result->sub.result.profile);
 
-		// TODO: call proper destructors {
-		oscap_list_free(result->sub.result.identities, NULL);
-		oscap_list_free(result->sub.result.target_facts, NULL);
-		oscap_list_free(result->sub.result.scores, NULL);
-		// }
+		oscap_list_free(result->sub.result.identities, (oscap_destruct_func) xccdf_identity_free);
+		oscap_list_free(result->sub.result.target_facts, (oscap_destruct_func) xccdf_target_fact_free);
+		oscap_list_free(result->sub.result.scores, (oscap_destruct_func) xccdf_score_free);
 		oscap_list_free(result->sub.result.targets, oscap_free);
 		oscap_list_free(result->sub.result.remarks, (oscap_destruct_func) oscap_text_free);
 		oscap_list_free(result->sub.result.target_addresses, oscap_free);
@@ -90,13 +101,12 @@ void xccdf_rule_result_free(struct xccdf_rule_result *rr)
 		oscap_free(rr->idref);
 		oscap_free(rr->version);
 
-		// TODO: call proper destructors
-		oscap_list_free(rr->overrides, NULL);
-		oscap_list_free(rr->idents, NULL);
-		oscap_list_free(rr->messages, NULL);
-		oscap_list_free(rr->instances, NULL);
-		oscap_list_free(rr->fixes, NULL);
-		oscap_list_free(rr->checks, NULL);
+		oscap_list_free(rr->overrides, (oscap_destruct_func) xccdf_override_free);
+		oscap_list_free(rr->idents, (oscap_destruct_func) xccdf_ident_free);
+		oscap_list_free(rr->messages, (oscap_destruct_func) xccdf_message_free);
+		oscap_list_free(rr->instances, (oscap_destruct_func) xccdf_instance_free);
+		oscap_list_free(rr->fixes, (oscap_destruct_func) xccdf_fix_free);
+		oscap_list_free(rr->checks, (oscap_destruct_func) xccdf_check_free);
 
 		oscap_free(rr);
 	}
@@ -115,3 +125,91 @@ OSCAP_IGETINS(xccdf_check, xccdf_rule_result, checks, check)
 OSCAP_IGETINS_GEN(xccdf_override, xccdf_rule_result, overrides, override)
 OSCAP_IGETINS_GEN(xccdf_message, xccdf_rule_result, messages, message)
 OSCAP_IGETINS_GEN(xccdf_instance, xccdf_rule_result, instances, instance)
+
+
+struct xccdf_identity *xccdf_identity_new(void)
+{
+	return oscap_calloc(1, sizeof(struct xccdf_identity));
+}
+
+void xccdf_identity_free(struct xccdf_identity *identity)
+{
+	if (identity != NULL) {
+		oscap_free(identity->name);
+		oscap_free(identity);
+	}
+}
+
+struct xccdf_score *xccdf_score_new(void)
+{
+	struct xccdf_score *score = oscap_calloc(1, sizeof(struct xccdf_score));
+	score->score = NAN;
+	score->maximum = XCCDF_SCORE_MAX_DAFAULT;
+	return score;
+}
+
+void xccdf_score_free(struct xccdf_score *score)
+{
+	if (score != NULL) {
+		oscap_free(score->system);
+		oscap_free(score);
+	}
+}
+
+struct xccdf_override *xccdf_override_new(void)
+{
+	return oscap_calloc(1, sizeof(struct xccdf_override));
+}
+
+void xccdf_override_free(struct xccdf_override *oride)
+{
+	if (oride != NULL) {
+		oscap_free(oride->authority);
+		oscap_text_free(oride->remark);
+		oscap_free(oride);
+	}
+}
+
+struct xccdf_message *xccdf_message_new(void)
+{
+    return oscap_calloc(1, sizeof(struct xccdf_message));
+}
+
+void xccdf_message_free(struct xccdf_message *msg)
+{
+    if (msg != NULL) {
+        oscap_free(msg->content);
+        oscap_free(msg);
+    }
+}
+
+struct xccdf_target_fact* xccdf_target_fact_new(void)
+{
+    return oscap_calloc(1, sizeof(struct xccdf_target_fact));
+}
+
+void xccdf_target_fact_free(struct xccdf_target_fact *fact)
+{
+    if (fact != NULL) {
+        oscap_free(fact->name);
+        oscap_free(fact->value);
+        oscap_free(fact);
+    }
+}
+
+struct xccdf_instance *xccdf_instance_new(void)
+{
+    struct xccdf_instance *inst = oscap_calloc(1, sizeof(struct xccdf_instance));
+    inst->context = oscap_strdup(XCCDF_INSTANCE_DEFAULT_CONTEXT);
+    return inst;
+}
+
+void xccdf_instance_free(struct xccdf_instance *inst)
+{
+    if (inst != NULL) {
+        oscap_free(inst->context);
+        oscap_free(inst->parent_context);
+        oscap_free(inst->content);
+        oscap_free(inst);
+    }
+}

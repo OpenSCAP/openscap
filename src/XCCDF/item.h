@@ -314,6 +314,45 @@ struct xccdf_rule_result {
 	struct oscap_list *checks;
 };
 
+struct xccdf_identity {
+	struct {
+		bool authenticated : 1;
+		bool privileged    : 1;
+	} sub;
+	char *name;
+};
+
+struct xccdf_score {
+	xccdf_numeric maximum;
+	xccdf_numeric score;
+	char *system;
+};
+
+struct xccdf_override {
+	time_t time;
+	char *authority;
+	xccdf_test_result_type_t old_result;
+	xccdf_test_result_type_t new_result;
+	struct oscap_text *remark;
+};
+
+struct xccdf_message {
+	xccdf_message_severity_t severity;
+	char *content;
+};
+
+struct xccdf_target_fact {
+	xccdf_value_type_t type;
+	char *name;
+	char *value;
+};
+
+struct xccdf_instance {
+    char *context;
+    char *parent_context;
+    char *content;
+};
+
 extern const struct oscap_string_map XCCDF_LEVEL_MAP[];
 extern const struct oscap_string_map XCCDF_ROLE_MAP[];
 extern const struct oscap_string_map XCCDF_OPERATOR_MAP[];
