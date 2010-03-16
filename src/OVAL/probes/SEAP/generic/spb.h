@@ -104,9 +104,9 @@ spb_size_t spb_size (spb_t *spb);
                                            _sym(ispb)->buffer[_sym(idx)].gend - _sym(ispb)->buffer[_sym(idx) - 1].gend : \
                                            _sym(ispb)->buffer[_sym(idx)].gend + 1); \
                         _sym(b) = ((uint8_t *)(_sym(ispb)->buffer[_sym(idx)].base)) + _sym(l_off); \
-                        (name)  = *_sym(b);                             \
                                                                         \
-                        for (; _sym(l) > 0; --_sym(l), (name) = *(++_sym(b))) { \
+                        for (; _sym(l) > 0; --_sym(l), ++_sym(b)) {     \
+                                (name) = *_sym(b);                      \
                                 icode;                                  \
                         }                                               \
                                                                         \
