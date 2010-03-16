@@ -25,13 +25,14 @@
 #define SPB_H
 
 #include <stddef.h>
-#include <stdint.h>
+#include <inttypes.h>
 #include <sys/cdefs.h>
 #undef  __XC
 #define __XC(a, b) __CONCAT(a, b)
 #define _sym(n) __XC(__XC(_sym, __LINE__), n)
 
 typedef uint64_t spb_size_t;
+#define SPB_SZ_FMT "%"PRIo64
 
 typedef struct {
         void       *base; /* buffer base address */

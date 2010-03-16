@@ -24,6 +24,8 @@
  * Sparse buffer API implementation
  */
 
+#include <string.h>
+#include <errno.h>
 #include "spb.h"
 #include "sm_alloc.h"
 
@@ -47,28 +49,27 @@ spb_t *spb_new (void *buffer, size_t buflen, uint32_t balloc)
         return (spb);
 }
 
-uint32_t spb_bindex (spb_t *spb, spb_size_t index)
+uint32_t spb_bindex (spb_t *spb, spb_size_t idx)
 {
         uint32_t w, s;
 
         w = spb->btotal;
         s = spb_size (spb);
         
-        if (index < s) {
+        if (idx < s) {
                 s = 0;
 
                 /* Find the correct buffer using binary search */
                 while (w > 0) {
-                        if (index > spb->buffer[s + w/2].gend) {
+                        if (idx > spb->buffer[s + w/2].gend) {
                                 s += w/2 + 1;
                                 w  = w - w/2 - 1;
-                        } else if (index < spb->buffer[s + w/2].gend) {
+                        } else {
                                 w  = w/2;
-                        } else
-                                break;
+                        }
                 }
-        }
-        
+        } else
+                s = w;
         /*
          * `s' should now contain the index of the spb array item
          * that contains the buffer that represents the byte range
@@ -113,6 +114,51 @@ int spb_add (spb_t *spb, void *buffer, size_t buflen)
 
 int spb_pick (spb_t *spb, spb_size_t start, spb_size_t size, void *dst)
 {
+        register uint32_t b_idx;
+        register uint8_t *b_dst = (uint8_t *)dst; 
+        
+        b_idx = spb_bindex (spb, start);
+        
+        if (b_idx < spb->btotal) {
+                size_t l_off;
+                size_t l_len;
+                
+                if (b_idx > 0) {
+                        l_off = (size_t)(start - spb->buffer[b_idx - 1].gend - 1);
+                        l_len = (size_t)(spb->buffer[b_idx].gend - spb->buffer[b_idx - 1].gend) - l_off;
+                } else {
+                        l_off = (size_t)(start);
+                        l_len = (size_t)(spb->buffer[b_idx].gend + 1) - l_off;
+                }
+                
+                if (size < l_len)
+                        l_len = (size_t)size;
+                
+                memcpy (b_dst, spb->buffer[b_idx].base + l_off, l_len);
+                
+                b_dst += l_len;
+                size  -= l_len;
+                
+                while (++b_idx < spb->btotal && size > 0) {
+                        l_len = (size_t)(spb->buffer[b_idx].gend - spb->buffer[b_idx - 1].gend);
+                        
+                        if (size < l_len)
+                                l_len = (size_t)size;
+                        
+                        memcpy (b_dst, spb->buffer[b_idx].base, l_len);
+                        
+                        b_dst += l_len;
+                        size  -= l_len;
+                }
+                
+                if (size > 0)
+                        return (1); /* less than size bytes were copyied */
+                else
+                        return (0);
+        }
+        /* else - the start offset is out of range*/
+        
+        errno = ERANGE;
         return (-1);
 }
 
