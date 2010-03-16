@@ -53,25 +53,25 @@ struct xccdf_select *xccdf_select_new(void)
 	return foo;
 }
 
-void xccdf_select_set_selected(struct xccdf_select *select, bool selected)
+void xccdf_select_set_selected(struct xccdf_select *sel, bool selected)
 {
-        __attribute__nonnull__(select);
-        select->selected = selected;
+        __attribute__nonnull__(sel);
+        sel->selected = selected;
 }
 
-void xccdf_select_set_item(struct xccdf_select *select, const char *item)
+void xccdf_select_set_item(struct xccdf_select *sel, const char *item)
 {
-        __attribute__nonnull__(select);
-        select->item = oscap_strdup(item);
+        __attribute__nonnull__(sel);
+        sel->item = oscap_strdup(item);
 }
 
-struct xccdf_select *xccdf_select_clone(const struct xccdf_select * select)
+struct xccdf_select *xccdf_select_clone(const struct xccdf_select * sel)
 {
         struct xccdf_select *clone = xccdf_select_new();
 
-        clone->item     = oscap_strdup((char *) select->item);
-        clone->remarks  = oscap_list_clone(select->remarks, (oscap_clone_func) oscap_text_clone);
-        clone->selected = select->selected;
+        clone->item     = oscap_strdup((char *) sel->item);
+        clone->remarks  = oscap_list_clone(sel->remarks, (oscap_clone_func) oscap_text_clone);
+        clone->selected = sel->selected;
 
         return clone;
 }
