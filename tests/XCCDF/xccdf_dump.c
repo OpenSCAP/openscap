@@ -26,6 +26,8 @@
 #include <stdlib.h>
 
 void xccdf_benchmark_dump(struct xccdf_benchmark*);
+bool dump_benchmark(const char* fname);
+void manipulate(struct xccdf_benchmark* bench);
 
 
 void manipulate(struct xccdf_benchmark* bench)

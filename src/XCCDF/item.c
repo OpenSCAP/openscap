@@ -104,6 +104,9 @@ void xccdf_item_free(struct xccdf_item *item)
 	case XCCDF_VALUE:
 		xccdf_value_free(item);
 		break;
+	case XCCDF_RESULT:
+		xccdf_result_free(XRESULT(item));
+		break;
 	default:
 		assert((fprintf(stderr, "Deletion of item of type no. %u is not yet supported.", item->type), false));
 	}

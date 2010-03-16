@@ -54,8 +54,6 @@ struct xccdf_result *xccdf_result_new(void)
 static inline void xccdf_result_free_impl(struct xccdf_item *result)
 {
 	if (result != NULL) {
-		xccdf_item_release(result);
-
 		oscap_free(result->sub.result.test_system);
 		oscap_free(result->sub.result.benchmark_uri);
 		oscap_free(result->sub.result.profile);
@@ -70,7 +68,7 @@ static inline void xccdf_result_free_impl(struct xccdf_item *result)
 		oscap_list_free(result->sub.result.rule_results, (oscap_destruct_func) xccdf_rule_result_free);
 		oscap_list_free(result->sub.result.organizations, oscap_free);
 
-		oscap_free(result);
+		xccdf_item_release(result);
 	}
 }
 XCCDF_FREE_GEN(result)
