@@ -8,9 +8,9 @@
 #include <time.h>
 #include <errno.h>
 
-#define BUFNUM 1024
+#define BUFNUM 256
 #define BUFLEN_MIN 1
-#define BUFLEN_MAX 1024
+#define BUFLEN_MAX 253
 
 int main (int argc, char *argv[])
 {
@@ -20,6 +20,9 @@ int main (int argc, char *argv[])
         unsigned long seed;
        
         spb_t *spb;
+
+        setbuf (stdout, NULL);
+        setbuf (stderr, NULL);
                 
         switch (argc) {
         case 1:
@@ -66,24 +69,25 @@ int main (int argc, char *argv[])
                         }
         }
         
+        //////////////////////////////////////////////////////////////////////////        
         spb = spb_new (NULL, 0, 0);
         spb_free (spb);
-        
+        //////////////////////////////////////////////////////////////////////////        
         spb = spb_new (NULL, 0, 1);
         spb_free (spb);
-
+        //////////////////////////////////////////////////////////////////////////        
         spb = spb_new (NULL, 0, 10);
         spb_free (spb);
-        
+        //////////////////////////////////////////////////////////////////////////        
         spb = spb_new (iov[0].iov_base, iov[0].iov_len, 0);
         spb_free (spb);
-        
+        //////////////////////////////////////////////////////////////////////////        
         spb = spb_new (iov[0].iov_base, iov[0].iov_len, 1);
         spb_free (spb);
-        
+        //////////////////////////////////////////////////////////////////////////        
         spb = spb_new (iov[0].iov_base, iov[0].iov_len, 10);
         spb_free (spb);
-
+        //////////////////////////////////////////////////////////////////////////        
         spb = spb_new (NULL, 0, 0);
         for (int add = 0; add < BUFNUM; ++add) {
                 if (spb_add (spb, iov[add].iov_base, iov[add].iov_len) != 0) {
@@ -91,7 +95,7 @@ int main (int argc, char *argv[])
                 }
         }
         spb_free (spb);
-
+        //////////////////////////////////////////////////////////////////////////        
         spb = spb_new (iov[0].iov_base, iov[0].iov_len, 0);
         for (int add = 1; add < BUFNUM; ++add) {
                 if (spb_add (spb, iov[add].iov_base, iov[add].iov_len) != 0) {
@@ -99,7 +103,7 @@ int main (int argc, char *argv[])
                 }                
         }
         spb_free (spb);
-        
+        //////////////////////////////////////////////////////////////////////////
         spb = spb_new (NULL, 0, 0);
         for (int add = 0; add < BUFNUM; ++add) {
                 if (spb_add (spb, iov[add].iov_base, iov[add].iov_len) != 0) {
@@ -107,8 +111,26 @@ int main (int argc, char *argv[])
                 }
         }
         
-        fprintf (stdout, "spb size= %zu\n", spb_size (spb));
+        {
+                spb_size_t s_idx, b_size;
+                uint32_t   b_idx, b_idx2;
+                
+                b_idx  = 0;
+                b_size = spb_size (spb);
+
+                for (s_idx = 0; s_idx < b_size; ++s_idx) {
+                        b_idx2 = spb_bindex (spb, s_idx);
+                        
+                        if (b_idx2 < b_idx) abort ();
+                        else b_idx = b_idx2;
+                }
+
+                if (b_idx != BUFNUM - 1) abort ();
+                /* out of range s_idx */
+                if (spb_bindex (spb, s_idx) < BUFNUM) abort ();
+        }
         
+        fprintf (stdout, "spb size= "SPB_SZ_FMT"\n", spb_size (spb));
         {
                 size_t  i = 0;
                 uint8_t b;
@@ -117,7 +139,7 @@ int main (int argc, char *argv[])
                              if (b != *(((uint8_t *)r_buf) + i)) {
                                      fprintf (stderr,
                                               "iterate: difference at position %zu: %hhu != %hhu",
-                                              b, *(((uint8_t *)r_buf) + i));
+                                              i, b, *(((uint8_t *)r_buf) + i));
                                      abort ();
                              } else {
                                      fprintf (stdout, "%c", i&1?((i&2)?'_':'^'):(i&2?'\\':'/'));
@@ -129,20 +151,91 @@ int main (int argc, char *argv[])
                 
                 if (i != spb_size(spb)) {
                         fprintf (stderr,
-                                 "iterate: iteration ended before the actual buffer end: i=%zu, size=%zu\n",
+                                 "iterate: iteration ended before the actual buffer end: i=%zu, size="SPB_SZ_FMT"\n",
                                  i, spb_size (spb));
                         abort ();
                 }
-        }
-        
+        }        
         spb_free (spb);
+        //////////////////////////////////////////////////////////////////////////        
+        spb = spb_new (iov[0].iov_base, iov[0].iov_len, 0);
+        for (int add = 1; add < BUFNUM; ++add) {
+                if (spb_add (spb, iov[add].iov_base, iov[add].iov_len) != 0) {
+                        abort ();
+                }                
+        }
 
+        fprintf (stdout, "spb size= "SPB_SZ_FMT"\n", spb_size (spb));
+        {
+                size_t  i = 0;
+                uint8_t b;
+                
+                spb_iterate (spb, 0, b,
+                             if (b != *(((uint8_t *)r_buf) + i)) {
+                                     fprintf (stderr,
+                                              "iterate: difference at position %zu: %hhu != %hhu",
+                                              i, b, *(((uint8_t *)r_buf) + i));
+                                     abort ();
+                             } else {
+                                     fprintf (stdout, "%c", i&1?((i&2)?'_':'^'):(i&2?'\\':'/'));
+                             }
+                             ++i;
+                        );
+
+                fprintf (stdout, "\n");
+                
+                if (i != spb_size(spb)) {
+                        fprintf (stderr,
+                                 "iterate: iteration ended before the actual buffer end: i=%zu, size="SPB_SZ_FMT"\n",
+                                 i, spb_size (spb));
+                        abort ();
+                }
+        }        
+        spb_free (spb);
+        //////////////////////////////////////////////////////////////////////////        
         spb = spb_new (NULL, 0, 10);
         {
                 uint8_t b;
                 spb_iterate (spb, 0, b, abort ());
         }
         spb_free (spb);
+        //////////////////////////////////////////////////////////////////////////        
+        spb = spb_new (iov[0].iov_base, iov[0].iov_len, 0);
+        for (int add = 1; add < BUFNUM; ++add) {
+                if (spb_add (spb, iov[add].iov_base, iov[add].iov_len) != 0) {
+                        abort ();
+                }                
+        }
                 
+        {
+                spb_size_t pick_size;
+                spb_size_t pick_start;
+                spb_size_t buf_size;
+                void *p_buf;
+                int p_ret, i;
+                spb_size_t o;
+                
+                buf_size = spb_size (spb);
+                p_buf = malloc (buf_size);
+                
+                for (pick_start = 0; pick_start < (buf_size - 1); ++pick_start) {
+                        for (i = 0; i < 8; ++i) {
+                                pick_size = 1 + (random () % (buf_size - pick_start));
+                                
+                                p_ret = spb_pick (spb, pick_start, pick_size, p_buf);
+                                if (p_ret != 0) abort ();
+                                
+                                o = 0;
+                                for (o = 0; o < pick_size; ++o) {
+                                        if (*(uint8_t *)(p_buf + o) != *(uint8_t *)(r_buf + pick_start + o))
+                                                abort ();
+                                }
+                        }
+                        fprintf (stdout, "\r%c", pick_start&1?(pick_start&2?'/':'\\'):(pick_start&2?'|':'-'));
+                }
+        }
+        spb_free (spb);
+        fprintf (stdout, "\n");
+        
         return (0);
 }
