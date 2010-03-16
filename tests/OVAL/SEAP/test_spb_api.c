@@ -7,6 +7,7 @@
 #include <unistd.h>
 #include <time.h>
 #include <errno.h>
+#include <assume.h>
 
 #define BUFNUM 256
 #define BUFLEN_MIN 1
@@ -71,22 +72,22 @@ int main (int argc, char *argv[])
         
         //////////////////////////////////////////////////////////////////////////        
         spb = spb_new (NULL, 0, 0);
-        spb_free (spb);
+        spb_free (spb, 0);
         //////////////////////////////////////////////////////////////////////////        
         spb = spb_new (NULL, 0, 1);
-        spb_free (spb);
+        spb_free (spb, 0);
         //////////////////////////////////////////////////////////////////////////        
         spb = spb_new (NULL, 0, 10);
-        spb_free (spb);
+        spb_free (spb, 0);
         //////////////////////////////////////////////////////////////////////////        
         spb = spb_new (iov[0].iov_base, iov[0].iov_len, 0);
-        spb_free (spb);
+        spb_free (spb, 0);
         //////////////////////////////////////////////////////////////////////////        
         spb = spb_new (iov[0].iov_base, iov[0].iov_len, 1);
-        spb_free (spb);
+        spb_free (spb, 0);
         //////////////////////////////////////////////////////////////////////////        
         spb = spb_new (iov[0].iov_base, iov[0].iov_len, 10);
-        spb_free (spb);
+        spb_free (spb, 0);
         //////////////////////////////////////////////////////////////////////////        
         spb = spb_new (NULL, 0, 0);
         for (int add = 0; add < BUFNUM; ++add) {
@@ -94,7 +95,7 @@ int main (int argc, char *argv[])
                         abort ();
                 }
         }
-        spb_free (spb);
+        spb_free (spb, 0);
         //////////////////////////////////////////////////////////////////////////        
         spb = spb_new (iov[0].iov_base, iov[0].iov_len, 0);
         for (int add = 1; add < BUFNUM; ++add) {
@@ -102,7 +103,7 @@ int main (int argc, char *argv[])
                         abort ();
                 }                
         }
-        spb_free (spb);
+        spb_free (spb, 0);
         //////////////////////////////////////////////////////////////////////////
         spb = spb_new (NULL, 0, 0);
         for (int add = 0; add < BUFNUM; ++add) {
@@ -156,7 +157,7 @@ int main (int argc, char *argv[])
                         abort ();
                 }
         }        
-        spb_free (spb);
+        spb_free (spb, 0);
         //////////////////////////////////////////////////////////////////////////        
         spb = spb_new (iov[0].iov_base, iov[0].iov_len, 0);
         for (int add = 1; add < BUFNUM; ++add) {
@@ -191,14 +192,14 @@ int main (int argc, char *argv[])
                         abort ();
                 }
         }        
-        spb_free (spb);
+        spb_free (spb, 0);
         //////////////////////////////////////////////////////////////////////////        
         spb = spb_new (NULL, 0, 10);
         {
                 uint8_t b;
                 spb_iterate (spb, 0, b, abort ());
         }
-        spb_free (spb);
+        spb_free (spb, 0);
         //////////////////////////////////////////////////////////////////////////        
         spb = spb_new (iov[0].iov_base, iov[0].iov_len, 0);
         for (int add = 1; add < BUFNUM; ++add) {
@@ -235,7 +236,7 @@ int main (int argc, char *argv[])
                 }
                 free (p_buf);
         }
-        spb_free (spb);
+        spb_free (spb, 0);
         fprintf (stdout, "\n");
 
         //////////////////////////////////////////////////////////////////////////
@@ -245,6 +246,28 @@ int main (int argc, char *argv[])
                 }
         }
         free (r_buf);
+        //////////////////////////////////////////////////////////////////////////
+        uint8_t b1[8], b2[16], b3[32], b4[64];
+
+        spb = spb_new (NULL, 0, 0);
+        spb_add (spb, b1, 8);
+        spb_add (spb, b2, 16);
+        spb_add (spb, b3, 32);
+        spb_add (spb, b4, 64);
         
+        assume (spb_size (spb) == 8+16+32+64);
+        assume (spb_drop_head (spb, 4, 0) == 0);
+        assume (spb_size (spb) == 8+16+32+64);
+        assume (spb_drop_head (spb, 8, 0) == 8);
+        assume (spb_size (spb) == 16+32+64);
+        assume (spb_drop_head (spb, 17, 0) == 16);
+        assume (spb_size (spb) == 32+64);
+        assume (spb_drop_head (spb, 31, 0) == 0);
+        assume (spb_size (spb) == 32+64);
+        assume (spb_drop_head (spb, 32+64, 0) == 32+64);
+        assume (spb_size (spb) == 0);
+
+        spb_free (spb, 0);
+
         return (0);
 }

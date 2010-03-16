@@ -31,6 +31,10 @@
 #define __XC(a, b) __CONCAT(a, b)
 #define _sym(n) __XC(__XC(_sym, __LINE__), n)
 
+typedef uint32_t spb_flags_t;
+
+#define SPB_FLAG_FREE 0x00000001
+
 typedef uint64_t spb_size_t;
 #define SPB_SZ_FMT "%"PRIo64
 
@@ -63,7 +67,7 @@ typedef struct {
  */
 spb_t *spb_new (void *buffer, size_t buflen, uint32_t balloc);
 
-void spb_free (spb_t *spb);
+void spb_free (spb_t *spb, spb_flags_t flags);
 
 /**
  * Given the index of a byte in the sparse buffer, find the index
@@ -145,5 +149,7 @@ int spb_pick (spb_t *spb, spb_size_t start, spb_size_t size, void *dst);
  * @param dst destination memory
  */
 int spb_pick_raw (spb_t *spb, uint32_t bindex, spb_size_t start, spb_size_t size, void *dst);
+
+spb_size_t spb_drop_head (spb_t *spb, spb_size_t size, spb_flags_t flags);
 
 #endif /* SPB_H */

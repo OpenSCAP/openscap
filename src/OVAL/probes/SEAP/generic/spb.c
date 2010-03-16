@@ -167,7 +167,7 @@ int spb_pick_raw (spb_t *spb, uint32_t bindex, spb_size_t start, spb_size_t size
         return (-1);
 }
 
-void spb_free (spb_t *spb)
+void spb_free (spb_t *spb, spb_flags_t flags)
 {
 #ifndef NDEBUG
         memset (spb->buffer, 0, sizeof (spb_item_t) * spb->balloc);
@@ -178,4 +178,60 @@ void spb_free (spb_t *spb)
 #endif
         sm_free (spb);
         return;
+}
+
+spb_size_t spb_drop_head (spb_t *spb, spb_size_t size, spb_flags_t flags)
+{
+        spb_size_t e_sub = 0;
+        uint32_t   b_idx;
+        
+        b_idx = spb_bindex (spb, size);
+
+        if (b_idx > 0) {
+                if (b_idx >= spb->btotal) {
+                        /* free everything */
+                        e_sub = spb->buffer[spb->btotal - 1].gend + 1;
+
+                        if (flags & SPB_FLAG_FREE) {
+                                register uint32_t i;
+                                
+                                for (i = spb->btotal; i > 0; --i)
+                                        sm_free (spb->buffer[i - 1].base);
+                        }
+                        
+                        spb->buffer = sm_realloc (spb->buffer, sizeof (spb_item_t) * SPB_DEFAULT_BALLOC);
+                        spb->btotal = 0;
+                        spb->balloc = SPB_DEFAULT_BALLOC;
+                } else {
+                        /* free buffer 0..(b_idx - 1) */
+                        register uint32_t i;
+                        
+                        e_sub = spb->buffer[b_idx - 1].gend + 1;
+                        
+                        if (flags & SPB_FLAG_FREE) {
+                                for (i = b_idx - 1; i > 0; --i)
+                                        sm_free (spb->buffer[i - 1].base);
+                        }
+                        
+                        spb->btotal -= b_idx;
+                        memmove (spb->buffer, spb->buffer + b_idx, sizeof (spb_item_t) * spb->btotal);
+
+                        /*
+                         * Shrink the pre-allocated memory if it's more than 2 times larger than
+                         * the space needed for the remaining buffers.
+                         */
+                        if ((spb->balloc >> 1) > spb->btotal) {
+                                spb->balloc >>= 1;
+                                spb->buffer   = sm_realloc (spb->buffer, sizeof (spb_item_t) * spb->balloc);
+                        }
+
+                        /*
+                         * Update the global end index member in each remaining buffer item
+                         */
+                        for (i = spb->btotal; i > 0; --i)
+                                spb->buffer[i - 1].gend -= e_sub;
+                }
+        }
+
+        return (e_sub);
 }
