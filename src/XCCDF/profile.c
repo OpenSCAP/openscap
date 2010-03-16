@@ -120,7 +120,7 @@ static void xccdf_refine_value_dump(struct xccdf_refine_value *rv, int depth)
 	// oscap_text_dump(); // TODO
 }
 
-static void xccdf_setvalue_dump(struct xccdf_setvalue *sv, int depth)
+void xccdf_setvalue_dump(struct xccdf_setvalue *sv, int depth)
 {
 	xccdf_print_depth(depth); printf("%s: %s", sv->item, sv->value);
 }

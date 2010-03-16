@@ -421,6 +421,7 @@ struct xccdf_model *xccdf_model_new_xml(xmlTextReaderPtr reader);
 void xccdf_model_free(struct xccdf_model *model);
 
 void xccdf_cstring_dump(const char *data, int depth);
+void xccdf_result_dump(struct xccdf_result *res, int depth);
 
 struct xccdf_ident *xccdf_ident_new(const char *id, const char *system);
 void xccdf_ident_free(struct xccdf_ident *ident);
@@ -442,12 +443,12 @@ struct xccdf_fix *xccdf_fix_parse(xmlTextReaderPtr reader, struct xccdf_item *pa
 struct xccdf_fixtext *xccdf_fixtext_parse(xmlTextReaderPtr reader, struct xccdf_item *parent);
 void xccdf_fixtext_free(struct xccdf_fixtext *item);
 void xccdf_fix_free(struct xccdf_fix *item);
-void xccdf_setvalue_free(struct xccdf_setvalue *sv);
 
 
 struct xccdf_refine_value *xccdf_refine_value_new(void);
 struct xccdf_refine_rule *xccdf_refine_rule_new(void);
 struct xccdf_select *xccdf_select_new(void);
+void xccdf_setvalue_dump(struct xccdf_setvalue *sv, int depth);
 void xccdf_setvalue_free(struct xccdf_setvalue *sv);
 void xccdf_refine_value_free(struct xccdf_refine_value *rv);
 void xccdf_refine_rule_free(struct xccdf_refine_rule *rr);

@@ -144,6 +144,8 @@ void xccdf_benchmark_dump(struct xccdf_benchmark *benchmark)
 		oscap_list_dump(bench->sub.bench.values, xccdf_value_dump, 2);
 		printf("  content");
 		oscap_list_dump(bench->sub.bench.content, xccdf_item_dump, 2);
+		printf("  results");
+		oscap_list_dump(bench->sub.bench.results, (oscap_dump_func) xccdf_result_dump, 2);
 	}
 }
 

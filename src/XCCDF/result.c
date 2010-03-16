@@ -265,3 +265,57 @@ void xccdf_instance_free(struct xccdf_instance *inst)
 OSCAP_ACCESSOR_STRING(xccdf_instance, context)
 OSCAP_ACCESSOR_STRING(xccdf_instance, parent_context)
 OSCAP_ACCESSOR_STRING(xccdf_instance, content)
+
+/*----------------------------*/
+/*           DUMP             */
+/*----------------------------*/
+
+
+static void xccdf_rule_result_dump(struct xccdf_rule_result *res, int depth)
+{
+	xccdf_print_depth(depth); printf("idref:     %s\n", xccdf_rule_result_get_idref(res));
+	xccdf_print_depth(depth); printf("version:   %s\n", xccdf_rule_result_get_version(res));
+	xccdf_print_depth(depth); printf("weight:    %f\n", xccdf_rule_result_get_weight(res));
+	/*
+	xccdf_role_t role;
+	time_t time;
+	xccdf_level_t severity;
+	xccdf_test_result_type_t result;
+	struct oscap_list *overrides;
+	struct oscap_list *idents;
+	struct oscap_list *messages;
+	struct oscap_list *instances;
+	struct oscap_list *fixes;
+	struct oscap_list *checks;
+	*/
+}
+
+void xccdf_result_dump(struct xccdf_result *res, int depth)
+{
+	xccdf_print_depth(depth); printf("TestResult : %s\n", (res ? xccdf_result_get_id(res) : "(NULL)"));
+	if (res != NULL) {
+		++depth; xccdf_item_print(XITEM(res), depth);
+		xccdf_print_depth(depth); printf("test system:   %s\n", xccdf_result_get_test_system(res));
+		xccdf_print_depth(depth); printf("benchmark URI: %s\n", xccdf_result_get_benchmark_uri(res));
+		xccdf_print_depth(depth); printf("profile ID:    %s\n", xccdf_result_get_profile(res));
+		// start time, end time...
+		//xccdf_print_depth(depth); printf("identities");
+		//oscap_list_dump(XITEM(res)->result.identities, NULL, depth+1);
+		xccdf_print_depth(depth); printf("targets");
+		oscap_list_dump(XITEM(res)->sub.result.targets, xccdf_cstring_dump, depth+1);
+		xccdf_print_depth(depth); printf("organizations");
+		oscap_list_dump(XITEM(res)->sub.result.organizations, xccdf_cstring_dump, depth+1);
+		xccdf_print_depth(depth); printf("remarks");
+		xccdf_print_textlist(xccdf_result_get_remarks(res), depth+1, 80, "...");
+		xccdf_print_depth(depth); printf("target addresses");
+		oscap_list_dump(XITEM(res)->sub.result.target_addresses, xccdf_cstring_dump, depth+1);
+		//xccdf_print_depth(depth); printf("target_facts");
+		xccdf_print_depth(depth); printf("setvalues");
+		oscap_list_dump(XITEM(res)->sub.result.setvalues, xccdf_setvalue_dump, depth+1);
+		xccdf_print_depth(depth); printf("rule results");
+		oscap_list_dump(XITEM(res)->sub.result.rule_results, (oscap_dump_func) xccdf_rule_result_dump, depth+1);
+		//xccdf_print_depth(depth); printf("scores");
+	}
+}
+
+

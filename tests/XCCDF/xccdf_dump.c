@@ -33,6 +33,13 @@ void manipulate(struct xccdf_benchmark* bench);
 void manipulate(struct xccdf_benchmark* bench)
 {
 	struct xccdf_result *result = xccdf_result_new();
+	xccdf_result_set_test_system(result, "SomeTestSystem");
+	xccdf_result_add_target(result, "whatever");
+	xccdf_result_add_target(result, "whatsoever");
+	struct xccdf_rule_result *rr = xccdf_rule_result_new();
+	xccdf_rule_result_set_version(rr, "0.0.0.1");
+	xccdf_rule_result_set_weight(rr, 3.14f);
+	xccdf_result_add_rule_result(result, rr);
 	xccdf_benchmark_add_result(bench, result);
 }
 
