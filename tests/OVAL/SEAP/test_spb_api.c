@@ -233,9 +233,18 @@ int main (int argc, char *argv[])
                         }
                         fprintf (stdout, "\r%c", pick_start&1?(pick_start&2?'/':'\\'):(pick_start&2?'|':'-'));
                 }
+                free (p_buf);
         }
         spb_free (spb);
         fprintf (stdout, "\n");
+
+        //////////////////////////////////////////////////////////////////////////
+        { size_t i;
+                for (i = 0; i < BUFNUM; ++i) {
+                        free (iov[i].iov_base);
+                }
+        }
+        free (r_buf);
         
         return (0);
 }
