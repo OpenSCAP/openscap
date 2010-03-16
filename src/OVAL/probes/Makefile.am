@@ -71,6 +71,11 @@ probe_uname_SOURCES= unix/uname.c
 probe_uname_CFLAGS=
 probe_uname_LDFLAGS=
 
+pkglibexec_PROGRAMS += probe_interface
+probe_interface_SOURCES= unix/interface.c
+probe_interface_CFLAGS= @libnl_cflags@
+probe_interface_LDFLAGS= @libnl_libs@
+
 if WANT_PROBES_LINUX
 pkglibexec_PROGRAMS += probe_inetlisteningservers
 probe_inetlisteningservers_SOURCES= unix/linux/inetlisteningservers.c
