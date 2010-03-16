@@ -381,6 +381,8 @@ void xccdf_benchmark_dump(struct xccdf_benchmark *benchmark);
 bool xccdf_benchmark_register_item(struct xccdf_benchmark *benchmark, struct xccdf_item *item);
 bool xccdf_benchmark_unregister_item(struct xccdf_item *item);
 bool xccdf_benchmark_rename_item(struct xccdf_item *item, const char *newid);
+char *xccdf_benchmark_gen_id(struct xccdf_benchmark *benchmark, const char *prefix);
+bool xccdf_add_item(struct oscap_list *list, struct xccdf_item *parent, struct xccdf_item *item, const char *prefix);
 
 struct xccdf_item *xccdf_profile_new(struct xccdf_item *bench);
 struct xccdf_item *xccdf_profile_parse(xmlTextReaderPtr reader, struct xccdf_item *bench);

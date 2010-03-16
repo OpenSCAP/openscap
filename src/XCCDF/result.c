@@ -87,6 +87,7 @@ XCCDF_LISTMANIP(result, target_fact, target_facts)
 XCCDF_LISTMANIP(result, setvalue, setvalues)
 XCCDF_LISTMANIP(result, rule_result, rule_results)
 XCCDF_LISTMANIP(result, score, scores)
+OSCAP_ITERATOR_GEN(xccdf_result)
 
 
 struct xccdf_rule_result *xccdf_rule_result_new(void)

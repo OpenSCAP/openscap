@@ -27,11 +27,19 @@
 
 void xccdf_benchmark_dump(struct xccdf_benchmark*);
 
+
+void manipulate(struct xccdf_benchmark* bench)
+{
+	struct xccdf_result *result = xccdf_result_new();
+	xccdf_benchmark_add_result(bench, result);
+}
+
 bool dump_benchmark(const char* fname)
 {
     struct xccdf_benchmark* benchmark = xccdf_benchmark_parse_xml(fname);
 	if (benchmark == NULL) return false;
 	printf("\n");
+	manipulate(benchmark);
 	xccdf_benchmark_dump(benchmark);
 	printf("\n\n");
 	xccdf_benchmark_free(benchmark);

@@ -57,6 +57,7 @@ struct xccdf_item *xccdf_benchmark_new(void)
 	bench->sub.bench.values = oscap_list_new();
 	bench->sub.bench.plain_texts = oscap_htable_new();
 	bench->sub.bench.profiles = oscap_list_new();
+	bench->sub.bench.results = oscap_list_new();
     // hash tables
 	bench->sub.bench.dict = oscap_htable_new();
 	return bench;
@@ -159,6 +160,7 @@ void xccdf_benchmark_free(struct xccdf_benchmark *benchmark)
 		oscap_list_free(bench->sub.bench.models, (oscap_destruct_func) xccdf_model_free);
 		oscap_list_free(bench->sub.bench.content, (oscap_destruct_func) xccdf_item_free);
 		oscap_list_free(bench->sub.bench.values, (oscap_destruct_func) xccdf_value_free);
+		oscap_list_free(bench->sub.bench.results, (oscap_destruct_func) xccdf_result_free);
 		oscap_htable_free(bench->sub.bench.plain_texts, oscap_free);
 		oscap_htable_free(bench->sub.bench.dict, NULL);
 		oscap_list_free(bench->sub.bench.profiles, (oscap_destruct_func) xccdf_profile_free);
@@ -175,6 +177,7 @@ XCCDF_BENCHMARK_IGETTER(notice, notices)
 XCCDF_BENCHMARK_IGETTER(model, models)
 XCCDF_BENCHMARK_IGETTER(profile, profiles)
 XCCDF_BENCHMARK_IGETTER(item, content)
+XCCDF_BENCHMARK_IGETTER(result, results)
 XCCDF_ITERATOR_GEN_S(notice)
 XCCDF_ITERATOR_GEN_S(model)
 XCCDF_ITERATOR_GEN_S(profile)
@@ -252,12 +255,52 @@ struct xccdf_rule *xccdf_benchmark_append_new_rule(const struct xccdf_benchmark 
     return NULL;
 }
 
+static const size_t XCCDF_ID_SIZE = 32;
+
+char *xccdf_benchmark_gen_id(struct xccdf_benchmark *benchmark, const char *prefix)
+{
+	assert(prefix != NULL);
+
+	char buff[XCCDF_ID_SIZE];
+	memset(buff, 0, XCCDF_ID_SIZE);
+	int i = 0;
+
+	do {
+		snprintf(buff, XCCDF_ID_SIZE - 1, "%s%03d", prefix, ++i);
+	} while (xccdf_benchmark_get_item(benchmark, buff) != NULL);
+
+	return oscap_strdup(buff);
+}
+
+bool xccdf_add_item(struct oscap_list *list, struct xccdf_item *parent, struct xccdf_item *item, const char *prefix)
+{
+	assert(list != NULL);
+	assert(item != NULL);
+
+    if (parent == NULL)
+        return false;
+
+	struct xccdf_benchmark *bench = xccdf_item_get_benchmark(parent);
+
+	if (bench != NULL) {
+		if (xccdf_item_get_id(item) == NULL)
+			item->item.id = xccdf_benchmark_gen_id(bench, prefix);
+
+		if (xccdf_benchmark_register_item(bench, item)) {
+			item->item.parent = parent;
+			return oscap_list_add(list, item);
+		}
+	}
+	else return true;
+
+    return false;
+}
 
 bool xccdf_benchmark_register_item(struct xccdf_benchmark *benchmark, struct xccdf_item *item)
 {
 	assert(benchmark != NULL);
 
-	if (item == NULL)
+	if (item == NULL || xccdf_item_get_id(item) == NULL)
 		return false;
 
 	if (xccdf_item_get_benchmark(item) != NULL)
@@ -299,5 +342,10 @@ bool xccdf_benchmark_rename_item(struct xccdf_item *item, const char *newid)
 	item->item.id = oscap_strdup(newid);
 
 	return true;
+}
+
+bool xccdf_benchmark_add_result(struct xccdf_benchmark *bench, struct xccdf_result *result)
+{
+	return xccdf_add_item(XITEM(bench)->sub.bench.results, XITEM(bench), XITEM(result), "result-");
 }
 
