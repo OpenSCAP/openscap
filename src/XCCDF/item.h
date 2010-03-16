@@ -496,6 +496,24 @@ struct xccdf_item *xccdf_benchmark_get_parent(const struct xccdf_benchmark *benc
 float xccdf_profile_get_weight(const struct xccdf_profile *profile);
 float xccdf_benchmark_get_weight(const struct xccdf_benchmark *benchmark);
 float xccdf_value_get_weight(const struct xccdf_value *value);
+struct oscap_text_iterator *xccdf_result_get_question(const struct xccdf_result *item);
+struct oscap_text_iterator *xccdf_result_get_rationale(const struct xccdf_result *item);
+struct oscap_text_iterator *xccdf_result_get_description(const struct xccdf_result *item);
+struct xccdf_reference_iterator *xccdf_result_get_references(const struct xccdf_result *item);
+struct xccdf_warning_iterator *xccdf_result_get_warnings(const struct xccdf_result *item);
+const char *xccdf_result_get_cluster_id(const struct xccdf_result *item);
+const char *xccdf_result_get_version_update(const struct xccdf_result *item);
+time_t xccdf_result_get_version_time(const struct xccdf_result *item);
+float xccdf_result_get_weight(const struct xccdf_result *item);
+struct xccdf_item *xccdf_result_get_parent(const struct xccdf_result *item);
+const char *xccdf_result_get_extends(const struct xccdf_result *item);
+bool xccdf_result_get_resolved(const struct xccdf_result *item);
+bool xccdf_result_get_hidden(const struct xccdf_result *item);
+bool xccdf_result_get_selected(const struct xccdf_result *item);
+bool xccdf_result_get_multiple(const struct xccdf_result *item);
+bool xccdf_result_get_prohibit_changes(const struct xccdf_result *item);
+bool xccdf_result_get_abstract(const struct xccdf_result *item);
+bool xccdf_result_get_interactive(const struct xccdf_result *item);
 
 
 OSCAP_HIDDEN_END;

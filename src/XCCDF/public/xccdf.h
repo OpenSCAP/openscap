@@ -371,6 +371,49 @@ struct xccdf_fixtext;
  */
 struct xccdf_reference;
 
+
+/** @struct xccdf_identity
+ * XCCDF identity.
+ * @see xccdf_result
+ */
+struct xccdf_identity;
+
+/** @struct xccdf_identity
+ * XCCDF instance.
+ * @see xccdf_rule_result
+ */
+struct xccdf_instance;
+
+/** @struct xccdf_identity
+ * XCCDF message.
+ * @see xccdf_rule_result
+ */
+struct xccdf_message;
+
+/** @struct xccdf_identity
+ * XCCDF override.
+ * @see xccdf_rule_result
+ */
+struct xccdf_override;
+
+/** @struct xccdf_identity
+ * XCCDF rule result.
+ * @see xccdf_result
+ */
+struct xccdf_rule_result;
+
+/** @struct xccdf_identity
+ * XCCDF score.
+ * @see xccdf_result
+ */
+struct xccdf_score;
+
+/** @struct xccdf_identity
+ * XCCDF target fact.
+ * @see xccdf_result
+ */
+struct xccdf_target_fact;
+
 /*--------------------*\
 |       Iterators      |
 \*--------------------*/
@@ -594,6 +637,42 @@ struct xccdf_warning *xccdf_warning_iterator_next(struct xccdf_warning_iterator 
 bool xccdf_warning_iterator_has_more(struct xccdf_warning_iterator *it);
 /// @memberof xccdf_warning_iterator
 void xccdf_warning_iterator_free(struct xccdf_warning_iterator *it);
+
+/** @struct xccdf_instance_iterator
+ * Instance iterator.
+ * @see oscap_iterator
+ */
+struct xccdf_instance_iterator;
+/// @memberof xccdf_instance_iterator
+struct xccdf_instance *xccdf_instance_iterator_next(struct xccdf_instance_iterator *it);
+/// @memberof xccdf_instance_iterator
+bool xccdf_instance_iterator_has_more(struct xccdf_instance_iterator *it);
+/// @memberof xccdf_instance_iterator
+void xccdf_instance_iterator_free(struct xccdf_instance_iterator *it);
+
+/** @struct xccdf_message_iterator
+ * Message iterator.
+ * @see oscap_iterator
+ */
+struct xccdf_message_iterator;
+/// @memberof xccdf_message_iterator
+struct xccdf_message *xccdf_message_iterator_next(struct xccdf_message_iterator *it);
+/// @memberof xccdf_message_iterator
+bool xccdf_message_iterator_has_more(struct xccdf_message_iterator *it);
+/// @memberof xccdf_message_iterator
+void xccdf_message_iterator_free(struct xccdf_message_iterator *it);
+
+/** @struct xccdf_override_iterator
+ * Override iterator.
+ * @see oscap_iterator
+ */
+struct xccdf_override_iterator;
+/// @memberof xccdf_override_iterator
+struct xccdf_override *xccdf_override_iterator_next(struct xccdf_override_iterator *it);
+/// @memberof xccdf_override_iterator
+bool xccdf_override_iterator_has_more(struct xccdf_override_iterator *it);
+/// @memberof xccdf_override_iterator
+void xccdf_override_iterator_free(struct xccdf_override_iterator *it);
 
 /**
  * @}
@@ -1142,27 +1221,6 @@ const char *xccdf_check_get_content(const struct xccdf_check *check);
 struct xccdf_rule *xccdf_check_get_parent(const struct xccdf_check *check);
 
 /**
- * Get an iterator to the check content references.
- * @memberof xccdf_check
- * @see xccdf_check_get_content_ref
- */
-/*  struct xccdf_check_content_ref_iterator* xccdf_check_content_refs(const struct xccdf_check* check); TODO */
-
-/**
- * Get an iterator to the check imports.
- * @memberof xccdf_check
- * @see xccdf_check_get_import
- */
-/* struct xccdf_check_import_iterator* xccdf_check_imports(const struct xccdf_check* check); TODO */
-
-/**
- * Get an iterator to the check exports.
- * @memberof xccdf_check
- * @see xccdf_check_get_export
- */
-/* struct xccdf_check_export_iterator* xccdf_check_exports(const struct xccdf_check* check); TODO */
-
-/**
  * Get an iterator to nested checks of the complex check.
  * @memberof xccdf_check
  * @see xccdf_check_get_export
@@ -1372,6 +1430,241 @@ struct xccdf_value *xccdf_benchmark_append_new_value(const struct xccdf_benchmar
  * @return the handle of the new rule.
  */
 struct xccdf_rule *xccdf_benchmark_append_new_rule(const struct xccdf_benchmark *, const char *id);
+
+
+/*--------------------*\
+|   Benchmark methods  |
+\*--------------------*/
+
+/// @memberof xccdf_result
+struct xccdf_result *xccdf_result_new(void);
+/// @memberof xccdf_result
+void xccdf_result_free(struct xccdf_result *item);
+/// @memberof xccdf_result
+const char *xccdf_result_get_id(const struct xccdf_result *item);
+/// @memberof xccdf_result
+struct oscap_text_iterator *xccdf_result_get_title(const struct xccdf_result *item);
+/// @memberof xccdf_result
+const char *xccdf_result_get_version(const struct xccdf_result *item);
+/// @memberof xccdf_result
+struct oscap_string_iterator *xccdf_result_get_platforms(const struct xccdf_result *item);
+/// @memberof xccdf_result
+struct xccdf_status_iterator *xccdf_result_get_statuses(const struct xccdf_result *item);
+/// @memberof xccdf_result
+bool xccdf_result_set_test_system(struct xccdf_result *item, const char *newval);
+/// @memberof xccdf_result
+const char *xccdf_result_get_test_system(const struct xccdf_result *item);
+/// @memberof xccdf_result
+bool xccdf_result_set_benchmark_uri(struct xccdf_result *item, const char *newval);
+/// @memberof xccdf_result
+const char *xccdf_result_get_benchmark_uri(const struct xccdf_result *item);
+/// @memberof xccdf_result
+bool xccdf_result_set_profile(struct xccdf_result *item, const char *newval);
+/// @memberof xccdf_result
+const char *xccdf_result_get_profile(const struct xccdf_result *item);
+/// @memberof xccdf_result
+struct xccdf_identity_iterator *xccdf_result_get_identities(const struct xccdf_result *item);
+/// @memberof xccdf_result
+bool xccdf_result_add_identity(struct xccdf_result *item, struct xccdf_identity *newval);
+/// @memberof xccdf_result
+struct oscap_string_iterator *xccdf_result_get_targets(const struct xccdf_result *item);
+/// @memberof xccdf_result
+bool xccdf_result_add_target(struct xccdf_result *item, const char *newval);
+/// @memberof xccdf_result
+struct oscap_string_iterator *xccdf_result_get_target_addresses(const struct xccdf_result *item);
+/// @memberof xccdf_result
+bool xccdf_result_add_target_address(struct xccdf_result *item, const char *newval);
+/// @memberof xccdf_result
+struct oscap_string_iterator *xccdf_result_get_organizations(const struct xccdf_result *item);
+/// @memberof xccdf_result
+bool xccdf_result_add_organization(struct xccdf_result *item, const char *newval);
+/// @memberof xccdf_result
+struct oscap_text_iterator *xccdf_result_get_remarks(const struct xccdf_result *item);
+/// @memberof xccdf_result
+bool xccdf_result_add_remark(struct xccdf_result *item, struct oscap_text *newval);
+/// @memberof xccdf_result
+struct xccdf_target_fact_iterator *xccdf_result_get_target_facts(const struct xccdf_result *item);
+/// @memberof xccdf_result
+bool xccdf_result_add_target_fact(struct xccdf_result *item, struct xccdf_target_fact *newval);
+/// @memberof xccdf_result
+struct xccdf_setvalue_iterator *xccdf_result_get_setvalues(const struct xccdf_result *item);
+/// @memberof xccdf_result
+bool xccdf_result_add_setvalue(struct xccdf_result *item, struct xccdf_setvalue *newval);
+/// @memberof xccdf_result
+struct xccdf_rule_result_iterator *xccdf_result_get_rule_results(const struct xccdf_result *item);
+/// @memberof xccdf_result
+bool xccdf_result_add_rule_result(struct xccdf_result *item, struct xccdf_rule_result *newval);
+/// @memberof xccdf_result
+struct xccdf_score_iterator *xccdf_result_get_scores(const struct xccdf_result *item);
+/// @memberof xccdf_result
+bool xccdf_result_add_score(struct xccdf_result *item, struct xccdf_score *newval);
+
+/// @memberof xccdf_rule_result
+struct xccdf_rule_result *xccdf_rule_result_new(void);
+/// @memberof xccdf_rule_result
+void xccdf_rule_result_free(struct xccdf_rule_result *rr);
+/// @memberof xccdf_rule_result
+time_t xccdf_rule_result_get_time(const struct xccdf_rule_result *item);
+/// @memberof xccdf_rule_result
+bool xccdf_rule_result_set_time(struct xccdf_rule_result *obj, time_t newval);
+/// @memberof xccdf_rule_result
+xccdf_role_t xccdf_rule_result_get_role(const struct xccdf_rule_result *item);
+/// @memberof xccdf_rule_result
+bool xccdf_rule_result_set_role(struct xccdf_rule_result *obj, xccdf_role_t newval);
+/// @memberof xccdf_rule_result
+float xccdf_rule_result_get_weight(const struct xccdf_rule_result *item);
+/// @memberof xccdf_rule_result
+bool xccdf_rule_result_set_weight(struct xccdf_rule_result *obj, float newval);
+/// @memberof xccdf_rule_result
+xccdf_level_t xccdf_rule_result_get_severity(const struct xccdf_rule_result *item);
+/// @memberof xccdf_rule_result
+bool xccdf_rule_result_set_severity(struct xccdf_rule_result *obj, xccdf_level_t newval);
+/// @memberof xccdf_rule_result
+xccdf_test_result_type_t xccdf_rule_result_get_result(const struct xccdf_rule_result *item);
+/// @memberof xccdf_rule_result
+bool xccdf_rule_result_set_result(struct xccdf_rule_result *obj, xccdf_test_result_type_t newval);
+/// @memberof xccdf_rule_result
+const char *xccdf_rule_result_get_version(const struct xccdf_rule_result *item);
+/// @memberof xccdf_rule_result
+bool xccdf_rule_result_set_version(struct xccdf_rule_result *obj, const char *newval);
+/// @memberof xccdf_rule_result
+const char *xccdf_rule_result_get_idref(const struct xccdf_rule_result *item);
+/// @memberof xccdf_rule_result
+bool xccdf_rule_result_set_idref(struct xccdf_rule_result *obj, const char *newval);
+/// @memberof xccdf_rule_result
+struct xccdf_ident_iterator *xccdf_rule_result_get_idents(const struct xccdf_rule_result *item);
+/// @memberof xccdf_rule_result
+bool xccdf_rule_result_add_ident(struct xccdf_rule_result *obj, struct xccdf_ident *item);
+/// @memberof xccdf_rule_result
+struct xccdf_fix_iterator *xccdf_rule_result_get_fixes(const struct xccdf_rule_result *item);
+/// @memberof xccdf_rule_result
+bool xccdf_rule_result_add_fix(struct xccdf_rule_result *obj, struct xccdf_fix *item);
+/// @memberof xccdf_rule_result
+struct xccdf_check_iterator *xccdf_rule_result_get_checks(const struct xccdf_rule_result *item);
+/// @memberof xccdf_rule_result
+bool xccdf_rule_result_add_check(struct xccdf_rule_result *obj, struct xccdf_check *item);
+/// @memberof xccdf_rule_result
+struct xccdf_override_iterator *xccdf_rule_result_get_overrides(const struct xccdf_rule_result *item);
+/// @memberof xccdf_rule_result
+bool xccdf_rule_result_add_override(struct xccdf_rule_result *obj, struct xccdf_override *item);
+/// @memberof xccdf_rule_result
+struct xccdf_message_iterator *xccdf_rule_result_get_messages(const struct xccdf_rule_result *item);
+/// @memberof xccdf_rule_result
+bool xccdf_rule_result_add_message(struct xccdf_rule_result *obj, struct xccdf_message *item);
+/// @memberof xccdf_rule_result
+struct xccdf_instance_iterator *xccdf_rule_result_get_instances(const struct xccdf_rule_result *item);
+/// @memberof xccdf_rule_result
+bool xccdf_rule_result_add_instance(struct xccdf_rule_result *obj, struct xccdf_instance *item);
+
+/// @memberof xccdf_identity
+struct xccdf_identity *xccdf_identity_new(void);
+/// @memberof xccdf_identity
+void xccdf_identity_free(struct xccdf_identity *identity);
+/// @memberof xccdf_identity
+bool xccdf_identity_get_authenticated(const struct xccdf_identity *item);
+/// @memberof xccdf_identity
+bool xccdf_identity_set_authenticated(struct xccdf_identity *obj, bool newval);
+/// @memberof xccdf_identity
+bool xccdf_identity_get_privileged(const struct xccdf_identity *item);
+/// @memberof xccdf_identity
+bool xccdf_identity_set_privileged(struct xccdf_identity *obj, bool newval);
+/// @memberof xccdf_identity
+const char *xccdf_identity_get_name(const struct xccdf_identity *item);
+/// @memberof xccdf_identity
+bool xccdf_identity_set_name(struct xccdf_identity *obj, const char *newval);
+
+/// @memberof xccdf_score
+struct xccdf_score *xccdf_score_new(void);
+/// @memberof xccdf_score
+void xccdf_score_free(struct xccdf_score *score);
+/// @memberof xccdf_score
+xccdf_numeric xccdf_score_get_maximum(const struct xccdf_score *item);
+/// @memberof xccdf_score
+bool xccdf_score_set_maximum(struct xccdf_score *obj, xccdf_numeric newval);
+/// @memberof xccdf_score
+xccdf_numeric xccdf_score_get_score(const struct xccdf_score *item);
+/// @memberof xccdf_score
+bool xccdf_score_set_score(struct xccdf_score *obj, xccdf_numeric newval);
+/// @memberof xccdf_score
+const char *xccdf_score_get_system(const struct xccdf_score *item);
+/// @memberof xccdf_score
+bool xccdf_score_set_system(struct xccdf_score *obj, const char *newval);
+
+/// @memberof xccdf_override
+struct xccdf_override *xccdf_override_new(void);
+/// @memberof xccdf_override
+void xccdf_override_free(struct xccdf_override *oride);
+/// @memberof xccdf_override
+time_t xccdf_override_get_time(const struct xccdf_override *item);
+/// @memberof xccdf_override
+bool xccdf_override_set_time(struct xccdf_override *obj, time_t newval);
+/// @memberof xccdf_override
+xccdf_test_result_type_t xccdf_override_get_new_result(const struct xccdf_override *item);
+/// @memberof xccdf_override
+bool xccdf_override_set_new_result(struct xccdf_override *obj, xccdf_test_result_type_t newval);
+/// @memberof xccdf_override
+xccdf_test_result_type_t xccdf_override_get_old_result(const struct xccdf_override *item);
+/// @memberof xccdf_override
+bool xccdf_override_set_old_result(struct xccdf_override *obj, xccdf_test_result_type_t newval);
+/// @memberof xccdf_override
+const char *xccdf_override_get_authority(const struct xccdf_override *item);
+/// @memberof xccdf_override
+bool xccdf_override_set_authority(struct xccdf_override *obj, const char *newval);
+/// @memberof xccdf_override
+struct oscap_text *xccdf_override_get_remark(const struct xccdf_override *item);
+/// @memberof xccdf_override
+bool xccdf_override_set_remark(struct xccdf_override *obj, struct oscap_text *newval);
+
+/// @memberof xccdf_message
+struct xccdf_message *xccdf_message_new(void);
+/// @memberof xccdf_message
+void xccdf_message_free(struct xccdf_message *msg);
+/// @memberof xccdf_message
+xccdf_message_severity_t xccdf_message_get_severity(const struct xccdf_message *item);
+/// @memberof xccdf_message
+bool xccdf_message_set_severity(struct xccdf_message *obj, xccdf_message_severity_t newval);
+/// @memberof xccdf_message
+const char *xccdf_message_get_content(const struct xccdf_message *item);
+/// @memberof xccdf_message
+bool xccdf_message_set_content(struct xccdf_message *obj, const char *newval);
+
+/// @memberof xccdf_target_fact
+struct xccdf_target_fact *xccdf_target_fact_new(void);
+/// @memberof xccdf_target_fact
+void xccdf_target_fact_free(struct xccdf_target_fact *fact);
+/// @memberof xccdf_target_fact
+bool xccdf_target_fact_set_string(struct xccdf_target_fact *fact, const char *str);
+/// @memberof xccdf_target_fact
+bool xccdf_target_fact_set_number(struct xccdf_target_fact *fact, xccdf_numeric val);
+/// @memberof xccdf_target_fact
+bool xccdf_target_fact_set_boolean(struct xccdf_target_fact *fact, bool val);
+/// @memberof xccdf_target_fact
+xccdf_value_type_t xccdf_target_fact_get_type(const struct xccdf_target_fact *item);
+/// @memberof xccdf_target_fact
+const char *xccdf_target_fact_get_value(const struct xccdf_target_fact *item);
+/// @memberof xccdf_target_fact
+const char *xccdf_target_fact_get_name(const struct xccdf_target_fact *item);
+/// @memberof xccdf_target_fact
+bool xccdf_target_fact_set_name(struct xccdf_target_fact *obj, const char *newval);
+
+/// @memberof xccdf_instance
+struct xccdf_instance *xccdf_instance_new(void);
+/// @memberof xccdf_instance
+void xccdf_instance_free(struct xccdf_instance *inst);
+/// @memberof xccdf_instance
+const char *xccdf_instance_get_context(const struct xccdf_instance *item);
+/// @memberof xccdf_instance
+bool xccdf_instance_set_context(struct xccdf_instance *obj, const char *newval);
+/// @memberof xccdf_instance
+const char *xccdf_instance_get_parent_context(const struct xccdf_instance *item);
+/// @memberof xccdf_instance
+bool xccdf_instance_set_parent_context(struct xccdf_instance *obj, const char *newval);
+/// @memberof xccdf_instance
+const char *xccdf_instance_get_content(const struct xccdf_instance *item);
+/// @memberof xccdf_instance
+bool xccdf_instance_set_content(struct xccdf_instance *obj, const char *newval);
+
+
 
 
 /// @memberof xccdf_item
