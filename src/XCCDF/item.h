@@ -519,6 +519,24 @@ bool xccdf_result_get_abstract(const struct xccdf_result *item);
 bool xccdf_result_get_interactive(const struct xccdf_result *item);
 bool xccdf_item_get_resolved(const struct xccdf_item *item);
 bool xccdf_item_get_multiple(const struct xccdf_item *item);
+bool xccdf_benchmark_set_weight(struct xccdf_benchmark *item, xccdf_numeric newval);
+bool xccdf_profile_set_weight(struct xccdf_profile *item, xccdf_numeric newval);
+bool xccdf_value_set_weight(struct xccdf_value *item, xccdf_numeric newval);
+bool xccdf_result_set_weight(struct xccdf_result *item, xccdf_numeric newval);
+/// @memberof xccdf_result
+bool xccdf_result_set_cluster_id(struct xccdf_result *item, const char *newval);
+/// @memberof xccdf_result
+bool xccdf_result_set_extends(struct xccdf_result *item, const char *newval);
+/// @memberof xccdf_result
+bool xccdf_result_set_version_time(struct xccdf_result *item, time_t newval);
+/// @memberof xccdf_result
+bool xccdf_result_set_version_update(struct xccdf_result *item, const char *newval);
+/// @memberof xccdf_profile
+bool xccdf_profile_set_cluster_id(struct xccdf_profile *item, const char *newval);
+/// @memberof xccdf_benchmark
+bool xccdf_benchmark_set_cluster_id(struct xccdf_benchmark *item, const char *newval);
+/// @memberof xccdf_benchmark
+bool xccdf_benchmark_set_extends(struct xccdf_benchmark *item, const char *newval);
 
 
 OSCAP_HIDDEN_END;

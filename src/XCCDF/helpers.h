@@ -165,6 +165,22 @@
         XCCDF_GROUP_GETTER_A(bool,MNAME,item.flags.MNAME) \
         XCCDF_RESULT_GETTER_A(bool,MNAME,item.flags.MNAME)
 
+#define XCCDF_ITEM_SETTER_ONE(STYPE,MNAME,MTYPE,DUP) \
+		bool xccdf_##STYPE##_set_##MNAME(struct xccdf_##STYPE* item, MTYPE newval) \
+		{ XITEM(item)->item.MNAME = DUP(newval); return true; }
+#define XCCDF_ITEM_SETTER_ONEF(STYPE,MNAME,MTYPE,FREE,DUP) \
+		bool xccdf_##STYPE##_set_##MNAME(struct xccdf_##STYPE* item, MTYPE newval) \
+		{ FREE(XITEM(item)->item.MNAME); XITEM(item)->item.MNAME = DUP(newval); return true; }
+#define XCCDF_ITEM_SETTER_ONES(STYPE,MNAME) XCCDF_ITEM_SETTER_ONEF(STYPE,MNAME,const char*,oscap_free,oscap_strdup)
+#define XCCDF_ITEM_SETTER_SIMPLE(MTYPE,MNAME) XCCDF_ITEM_SETTER_ONE(item,MNAME,MTYPE,) \
+		XCCDF_ITEM_SETTER_ONE(benchmark,MNAME,MTYPE,) XCCDF_ITEM_SETTER_ONE(profile,MNAME,MTYPE,) \
+		XCCDF_ITEM_SETTER_ONE(rule,MNAME,MTYPE,) XCCDF_ITEM_SETTER_ONE(value,MNAME,MTYPE,) \
+		XCCDF_ITEM_SETTER_ONE(group,MNAME,MTYPE,) XCCDF_ITEM_SETTER_ONE(result,MNAME,MTYPE,)
+#define XCCDF_ITEM_SETTER_STRING(MNAME) XCCDF_ITEM_SETTER_ONES(item,MNAME) \
+		XCCDF_ITEM_SETTER_ONES(benchmark,MNAME) XCCDF_ITEM_SETTER_ONES(profile,MNAME) \
+		XCCDF_ITEM_SETTER_ONES(rule,MNAME) XCCDF_ITEM_SETTER_ONES(value,MNAME) \
+		XCCDF_ITEM_SETTER_ONES(group,MNAME) XCCDF_ITEM_SETTER_ONES(result,MNAME)
+
 #define XITERATOR(x) ((struct oscap_iterator*)(x))
 #define XCCDF_ITERATOR(n) struct xccdf_##n##_iterator*
 #define XCCDF_ITERATOR_FWD(n) struct xccdf_##n##_iterator;

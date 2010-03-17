@@ -298,8 +298,15 @@ XCCDF_ITEM_SIGETTER(platforms)
 XCCDF_ITEM_IGETTER(reference, references)
 XCCDF_ITEM_IGETTER(warning, warnings)
 XCCDF_ITEM_IGETTER(status, statuses)
- XCCDF_ITERATOR_GEN_S(item) XCCDF_ITERATOR_GEN_S(status) XCCDF_ITERATOR_GEN_S(reference)
+XCCDF_ITERATOR_GEN_S(item) XCCDF_ITERATOR_GEN_S(status) XCCDF_ITERATOR_GEN_S(reference)
 OSCAP_ITERATOR_GEN_T(struct xccdf_warning *, xccdf_warning)
+
+XCCDF_ITEM_SETTER_SIMPLE(xccdf_numeric, weight)
+XCCDF_ITEM_SETTER_SIMPLE(time_t, version_time)
+XCCDF_ITEM_SETTER_STRING(version)
+XCCDF_ITEM_SETTER_STRING(version_update)
+XCCDF_ITEM_SETTER_STRING(extends)
+XCCDF_ITEM_SETTER_STRING(cluster_id)
 
 struct xccdf_item_iterator *xccdf_item_get_content(const struct xccdf_item *item)
 {
