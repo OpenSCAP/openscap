@@ -90,5 +90,20 @@ bool xccdf_result_set_version_update(struct xccdf_result *item, const char *newv
 bool xccdf_profile_set_cluster_id(struct xccdf_profile *item, const char *newval);
 bool xccdf_benchmark_set_cluster_id(struct xccdf_benchmark *item, const char *newval);
 bool xccdf_benchmark_set_extends(struct xccdf_benchmark *item, const char *newval);
+bool xccdf_benchmark_add_question(struct xccdf_benchmark *item, struct oscap_text *newval);
+bool xccdf_benchmark_add_rationale(struct xccdf_benchmark *item, struct oscap_text *newval);
+bool xccdf_benchmark_add_warning(struct xccdf_benchmark *item, struct xccdf_warning *newval);
+bool xccdf_profile_add_question(struct xccdf_profile *item, struct oscap_text *newval);
+bool xccdf_profile_add_rationale(struct xccdf_profile *item, struct oscap_text *newval);
+bool xccdf_profile_add_warning(struct xccdf_profile *item, struct xccdf_warning *newval);
+bool xccdf_value_add_rationale(struct xccdf_value *item, struct oscap_text *newval);
+bool xccdf_value_add_platform(struct xccdf_value *item, const char *newval);
+bool xccdf_result_add_description(struct xccdf_result *item, struct oscap_text *newval);
+bool xccdf_result_add_platform(struct xccdf_result *item, const char *newval);
+bool xccdf_result_add_question(struct xccdf_result *item, struct oscap_text *newval);
+bool xccdf_result_add_rationale(struct xccdf_result *item, struct oscap_text *newval);
+bool xccdf_result_add_reference(struct xccdf_result *item, struct xccdf_reference *newval);
+bool xccdf_result_add_status(struct xccdf_result *item, struct xccdf_status *newval);
+bool xccdf_result_add_warning(struct xccdf_result *item, struct xccdf_warning *newval);
 
 OSCAP_HIDDEN_END;

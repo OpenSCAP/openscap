@@ -280,6 +280,10 @@ XCCDF_ITEM_TIGETTER(question);
 XCCDF_ITEM_TIGETTER(rationale);
 XCCDF_ITEM_TIGETTER(title);
 XCCDF_ITEM_TIGETTER(description);
+XCCDF_ITEM_ADDER(struct oscap_text *, question, question)
+XCCDF_ITEM_ADDER(struct oscap_text *, title, title)
+XCCDF_ITEM_ADDER(struct oscap_text *, description, description)
+XCCDF_ITEM_ADDER(struct oscap_text *, rationale, rationale)
 
 XCCDF_ITEM_GETTER(const char *, version)
 XCCDF_ITEM_GETTER(const char *, cluster_id)
@@ -294,9 +298,13 @@ XCCDF_FLAG_GETTER(prohibit_changes)
 XCCDF_FLAG_GETTER(abstract)
 XCCDF_FLAG_GETTER(interactive)
 XCCDF_ITEM_SIGETTER(platforms)
+XCCDF_ITEM_ADDER_STRING(platform, platforms)
 XCCDF_ITEM_IGETTER(reference, references)
 XCCDF_ITEM_IGETTER(warning, warnings)
 XCCDF_ITEM_IGETTER(status, statuses)
+XCCDF_ITEM_ADDER(struct xccdf_reference *, reference, references)
+XCCDF_ITEM_ADDER(struct xccdf_warning *, warning, warnings)
+XCCDF_ITEM_ADDER(struct xccdf_status *, status, statuses)
 XCCDF_ITERATOR_GEN_S(item) XCCDF_ITERATOR_GEN_S(status) XCCDF_ITERATOR_GEN_S(reference)
 OSCAP_ITERATOR_GEN_T(struct xccdf_warning *, xccdf_warning)
 
