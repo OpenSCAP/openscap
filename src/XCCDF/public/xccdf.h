@@ -724,6 +724,19 @@ struct oscap_string_iterator *xccdf_item_get_conflicts(const struct xccdf_item* 
 struct oscap_stringlist_iterator *xccdf_item_get_requires(const struct xccdf_item* item);
 /// @memberof xccdf_item
 xccdf_status_type_t xccdf_item_get_current_status(const struct xccdf_item *item);
+/// @memberof xccdf_item
+bool xccdf_item_get_hidden(const struct xccdf_item *item);
+/// @memberof xccdf_item
+bool xccdf_item_get_selected(const struct xccdf_item *item);
+/// @memberof xccdf_item
+bool xccdf_item_get_prohibit_changes(const struct xccdf_item *item);
+/// @memberof xccdf_item
+bool xccdf_item_get_abstract(const struct xccdf_item *item);
+/// @memberof xccdf_item
+bool xccdf_item_get_interactive(const struct xccdf_item *item);
+/// @memberof xccdf_item
+struct xccdf_item_iterator *xccdf_item_get_content(const struct xccdf_item *item);
+
 
 /**
  * Return item's parent in the grouping hierarchy.

@@ -282,7 +282,6 @@ XCCDF_ITEM_TIGETTER(rationale);
 XCCDF_ITEM_TIGETTER(title);
 XCCDF_ITEM_TIGETTER(description);
 
-
 XCCDF_ITEM_GETTER(const char *, version)
 XCCDF_ITEM_GETTER(const char *, cluster_id)
 XCCDF_ITEM_GETTER(const char *, version_update) XCCDF_ITEM_GETTER(time_t, version_time) XCCDF_ITEM_GETTER(float, weight)
@@ -301,6 +300,16 @@ XCCDF_ITEM_IGETTER(warning, warnings)
 XCCDF_ITEM_IGETTER(status, statuses)
  XCCDF_ITERATOR_GEN_S(item) XCCDF_ITERATOR_GEN_S(status) XCCDF_ITERATOR_GEN_S(reference)
 OSCAP_ITERATOR_GEN_T(struct xccdf_warning *, xccdf_warning)
+
+struct xccdf_item_iterator *xccdf_item_get_content(const struct xccdf_item *item)
+{
+	if (item == NULL) return NULL;
+	switch (xccdf_item_get_type(item)) {
+		case XCCDF_GROUP:     return xccdf_group_get_content(XGROUP(item));
+		case XCCDF_BENCHMARK: return xccdf_benchmark_get_content(XBENCHMARK(item));
+		default: return NULL;
+	}
+}
 
 const struct oscap_string_map XCCDF_OPERATOR_MAP[] = {
 	{XCCDF_OPERATOR_EQUALS, "equals"},

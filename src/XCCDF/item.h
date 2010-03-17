@@ -517,6 +517,8 @@ bool xccdf_result_get_multiple(const struct xccdf_result *item);
 bool xccdf_result_get_prohibit_changes(const struct xccdf_result *item);
 bool xccdf_result_get_abstract(const struct xccdf_result *item);
 bool xccdf_result_get_interactive(const struct xccdf_result *item);
+bool xccdf_item_get_resolved(const struct xccdf_item *item);
+bool xccdf_item_get_multiple(const struct xccdf_item *item);
 
 
 OSCAP_HIDDEN_END;

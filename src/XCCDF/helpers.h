@@ -157,6 +157,7 @@
         XCCDF_TITERATOR_GETTER(group,MNAME,item.MNAME) \
         XCCDF_TITERATOR_GETTER(result,MNAME,item.MNAME)
 #define XCCDF_FLAG_GETTER(MNAME) \
+		XCCDF_ABSTRACT_GETTER(bool,item,MNAME,item.flags.MNAME) \
         XCCDF_BENCHMARK_GETTER_A(bool,MNAME,item.flags.MNAME) \
         XCCDF_PROFILE_GETTER_A(bool,MNAME,item.flags.MNAME) \
         XCCDF_RULE_GETTER_A(bool,MNAME,item.flags.MNAME) \
