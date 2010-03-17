@@ -1537,11 +1537,13 @@ struct xccdf_rule *xccdf_benchmark_append_new_rule(const struct xccdf_benchmark 
 
 
 /*--------------------*\
-|   Benchmark methods  |
+| Test result methods  |
 \*--------------------*/
 
 /// @memberof xccdf_result
 struct xccdf_result *xccdf_result_new(void);
+/// @memberof xccdf_result
+struct xccdf_benchmark *xccdf_result_get_benchmark(const struct xccdf_result *item);
 /// @memberof xccdf_result
 void xccdf_result_free(struct xccdf_result *item);
 /// @memberof xccdf_result

@@ -173,7 +173,6 @@ void xccdf_item_print(struct xccdf_item *item, int depth)
 #define XCCDF_ITEM_PROCESS_FLAG(reader,flag,attr) \
 	if (xccdf_attribute_has((reader), (attr))) \
 		item->item.flags.flag = xccdf_attribute_get_bool((reader), (attr));
-//TODO: shouldn't be here item->item.flags.##flag ?
 
 bool xccdf_item_process_attributes(struct xccdf_item *item, xmlTextReaderPtr reader)
 {
@@ -258,7 +257,7 @@ inline struct xccdf_item* xccdf_item_get_benchmark_internal(struct xccdf_item* i
 	struct xccdf_benchmark* xccdf_##TYPE##_get_benchmark(const struct xccdf_##TYPE* item) \
 	{ return XBENCHMARK(xccdf_item_get_benchmark_internal(XITEM(item))); }
 XCCDF_BENCHGETTER(item)  XCCDF_BENCHGETTER(profile) XCCDF_BENCHGETTER(rule)
-XCCDF_BENCHGETTER(group) XCCDF_BENCHGETTER(value) //XCCDF_BENCHGETTER(result)
+XCCDF_BENCHGETTER(group) XCCDF_BENCHGETTER(value)   XCCDF_BENCHGETTER(result)
 #undef XCCDF_BENCHGETTER
 
 static void *xccdf_item_convert(struct xccdf_item *item, xccdf_type_t type)
