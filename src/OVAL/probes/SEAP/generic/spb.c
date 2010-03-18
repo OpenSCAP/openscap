@@ -164,7 +164,8 @@ int spb_pick (spb_t *spb, spb_size_t start, spb_size_t size, void *dst)
 
 int spb_pick_raw (spb_t *spb, uint32_t bindex, spb_size_t start, spb_size_t size, void *dst)
 {
-        return (-1);
+        /* For now, just ignore the bindex argument and use spb_pick */
+        return spb_pick (spb, start, size, dst);
 }
 
 void spb_free (spb_t *spb, spb_flags_t flags)
@@ -234,4 +235,21 @@ spb_size_t spb_drop_head (spb_t *spb, spb_size_t size, spb_flags_t flags)
         }
 
         return (e_sub);
+}
+
+uint8_t spb_octet (spb_t *spb, spb_size_t idx)
+{
+        uint32_t b_idx;
+        size_t   l_off;
+        
+        b_idx = spb_bindex (spb, idx);
+        
+        if (b_idx < spb->btotal) {
+                l_off = (size_t)(b_idx > 0 ? idx - spb->buffer[b_idx - 1].gend : idx);
+                return *((uint8_t *)(spb->buffer[b_idx].base) + l_off);
+        }
+        
+        errno = ERANGE;
+        
+        return (uint8_t)(-1);
 }

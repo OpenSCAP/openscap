@@ -34,6 +34,8 @@
 typedef uint32_t spb_flags_t;
 
 #define SPB_FLAG_FREE 0x00000001
+#define SPB_FLAG_JOIN 0x00000002
+#define SPB_FLAG_FILE 0x00000004
 
 typedef uint64_t spb_size_t;
 #define SPB_SZ_FMT "%"PRIo64
@@ -49,9 +51,6 @@ typedef struct {
         uint32_t    balloc; /* number of allocated slots */
         uint32_t    bflags; /* flags - not used at the moment */
 } spb_t;
-
-#define SPB_FLAG_JOIN 0x00000001
-#define SPB_FLAG_FILE 0x00000002
 
 #define SPB_DEFAULT_BALLOC   32  /* default number of pre-allocated slots */
 #define SPB_BALLOC_HIGHTRESH 512 /* the number of new slots is doubled until this limit is reached */
@@ -151,5 +150,7 @@ int spb_pick (spb_t *spb, spb_size_t start, spb_size_t size, void *dst);
 int spb_pick_raw (spb_t *spb, uint32_t bindex, spb_size_t start, spb_size_t size, void *dst);
 
 spb_size_t spb_drop_head (spb_t *spb, spb_size_t size, spb_flags_t flags);
+
+uint8_t spb_octet (spb_t *spb, spb_size_t idx);
 
 #endif /* SPB_H */
