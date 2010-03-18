@@ -262,7 +262,7 @@ XCCDF_BENCHGETTER(group) XCCDF_BENCHGETTER(value)   XCCDF_BENCHGETTER(result)
 
 static void *xccdf_item_convert(struct xccdf_item *item, xccdf_type_t type)
 {
-	return (item != NULL && (item->type & type) ? item : NULL);
+	return ((item != NULL && (item->type & type)) ? item : NULL);
 }
 
 #define XCCDF_ITEM_CONVERT(T1,T2) struct xccdf_##T1* xccdf_item_to_##T1(struct xccdf_item* item) { return xccdf_item_convert(item, XCCDF_##T2); }
@@ -272,6 +272,12 @@ XCCDF_ITEM_CONVERT(rule, RULE)
 XCCDF_ITEM_CONVERT(group, GROUP)
 XCCDF_ITEM_CONVERT(value, VALUE)
 XCCDF_ITEM_CONVERT(result, RESULT)
+#undef XCCDF_ITEM_CONVERT
+
+#define XCCDF_ITEM_UPCAST(T) struct xccdf_item *xccdf_##T##_to_item(struct xccdf_##T *item) { return XITEM(item); }
+XCCDF_ITEM_UPCAST(benchmark) XCCDF_ITEM_UPCAST(profile) XCCDF_ITEM_UPCAST(rule)
+XCCDF_ITEM_UPCAST(group) XCCDF_ITEM_UPCAST(value) XCCDF_ITEM_UPCAST(result)
+#undef XCCDF_ITEM_UPCAST
 
 XCCDF_ABSTRACT_GETTER(xccdf_type_t, item, type, type)
 XCCDF_ITEM_GETTER(const char *, id)
@@ -314,6 +320,12 @@ XCCDF_ITEM_SETTER_STRING(version)
 XCCDF_ITEM_SETTER_STRING(version_update)
 XCCDF_ITEM_SETTER_STRING(extends)
 XCCDF_ITEM_SETTER_STRING(cluster_id)
+
+#define XCCDF_SETTER_ID(T) bool xccdf_##T##_set_id(struct xccdf_##T *item, const char *newval) \
+                { return xccdf_benchmark_rename_item(XITEM(item), newval); }
+XCCDF_SETTER_ID(item) XCCDF_SETTER_ID(benchmark) XCCDF_SETTER_ID(profile)
+XCCDF_SETTER_ID(rule) XCCDF_SETTER_ID(group) XCCDF_SETTER_ID(value) XCCDF_SETTER_ID(result)
+#undef XCCDF_SETTER_ID
 
 struct xccdf_item_iterator *xccdf_item_get_content(const struct xccdf_item *item)
 {

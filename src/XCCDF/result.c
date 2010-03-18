@@ -43,7 +43,7 @@ void xccdf_override_free(struct xccdf_override *oride);
 
 struct xccdf_result *xccdf_result_new(void)
 {
-	struct xccdf_item *result = xccdf_item_new(XCCDF_PROFILE, NULL);
+	struct xccdf_item *result = xccdf_item_new(XCCDF_RESULT, NULL);
 	oscap_create_lists(&result->sub.result.identities, &result->sub.result.targets,
 		&result->sub.result.remarks, &result->sub.result.target_addresses,
 		&result->sub.result.target_facts, &result->sub.result.setvalues, &result->sub.result.organizations,
