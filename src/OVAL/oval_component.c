@@ -1369,7 +1369,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_VARREF(struct ova
 		}
 	} else {
 		oscap_dprintf("ERROR: No variable bound to VARREF Component");
-		oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EOVALINT, "No variable bound to VARREF componenet");
+		oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "No variable bound to VARREF componenet");
 	}
 	return flag;
 }
@@ -1406,7 +1406,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_BEGIN(struct oval
 		oval_component_iterator_free(subcomps);
 	} else {
 		oscap_dprintf("ERROR: No prefix specified for begin function (%s:%d)", __FILE__, __LINE__);
-		oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EOVALINT, "No prefix specified for component evaluation");
+		oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "No prefix specified for component evaluation");
 	}
 	return flag;
 }
@@ -1442,7 +1442,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_END
 		oval_component_iterator_free(subcomps);
 	} else {
 		oscap_dprintf("ERROR: No suffix specified for end function  (%s:%d)", __FILE__, __LINE__);
-		oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EOVALINT, "No suffix specified for component evaluation");
+		oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "No suffix specified for component evaluation");
 	}
 	return flag;
 }
@@ -1710,6 +1710,6 @@ oval_syschar_collection_flag_t oval_component_evaluate(struct oval_syschar_model
 		flag = (*evaluator) (sysmod, component, value_collection);
 	} else
 		oscap_dprintf("ERROR component type %d not supported (%s:%d)", __FILE__, __LINE__);
-	oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EOVALINT, "Component type not supported");
+	oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "Component type not supported");
 	return flag;
 }

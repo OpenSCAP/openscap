@@ -229,7 +229,7 @@ struct oval_variable *oval_variable_new(struct oval_definition_model *model, cha
 		break;
 	default:
 		oscap_dprintf(" oval_variable type not valid: type = %d (%s:%d)", type, __FILE__, __LINE__);
-		oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EVARTYPE, "OVAL_VARIABLE type is not valid");
+		oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EVARTYPE, "Invalid OVAL variable type");
 		return NULL;
 	}
 

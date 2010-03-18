@@ -39,7 +39,6 @@
 #include "oval_sexp.h"
 #include "oval_probe_impl.h"
 #include "oval_system_characteristics_impl.h"
-#include "oval_errors.h"
 #include "probes/public/probe-api.h"
 #include "../common/util.h"
 
@@ -519,7 +518,7 @@ struct oval_syschar *oval_probe_object_eval(oval_pctx_t * ctx, struct oval_objec
 	oscap_clearerr();
 
 	if (ctx->model == NULL) {
-                oscap_seterr (OSCAP_EFAMILY_OVAL, OVAL_EINVAL, "Invalid probe context; model not set");
+                oscap_seterr (OSCAP_EFAMILY_OVAL, OVAL_EPROBECONTEXT, "Invalid probe context; model not set");
                 return (NULL);
 	}
         

@@ -520,7 +520,7 @@ static char *parse_text_element(xmlTextReaderPtr reader, char *name)
 			string = (char *)xmlTextReaderValue(reader);
 			break;
 		default:
-			oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EXMLNODETYPE, "Unknown XML element in platform");
+			oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EXMLELEM, "Unknown XML element in platform");
 			break;
 		}
 	}
@@ -634,7 +634,7 @@ void cpe_testexpr_export(const struct cpe_testexpr *expr, xmlTextWriterPtr write
 		xmlTextWriterWriteAttribute(writer, ATTR_OPERATOR_STR, VAL_AND_STR);
 		xmlTextWriterWriteAttribute(writer, ATTR_NEGATE_STR, VAL_TRUE_STR);
 	} else {
-		oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_ECPEINVOP, "Invalid operation in CPE Language expression");
+		oscap_seterr(OSCAP_EFAMILY_CPE, CPE_EOPERATION, "Invalid operation in CPE Language expression");
 		return;
 	}
 

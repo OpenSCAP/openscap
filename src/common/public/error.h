@@ -55,8 +55,9 @@ typedef uint16_t oscap_errcode_t;
 #define OSCAP_EFAMILY_NONE     0	/**< None */
 #define OSCAP_EFAMILY_GLIBC    1	/**< Errno errors */
 #define OSCAP_EFAMILY_XML      2	/**< Libxml - xmlerror errors */
-#define OSCAP_EFAMILY_OSCAP    3	/**< OSCAP errors */
+#define OSCAP_EFAMILY_OSCAP    3	/**< OSCAP general errors */
 #define OSCAP_EFAMILY_OVAL     4	/**< OVAL errors (OVAL & probes) */
+#define OSCAP_EFAMILY_CPE      5	/**< CPE errors */
 /** @} */
 
 /**
@@ -65,23 +66,47 @@ typedef uint16_t oscap_errcode_t;
  * @see OSCAP_EFAMILY_OSCAP
  */
 #define OSCAP_ENONE         0	/**< None */
-#define OSCAP_EALLOC        1	/**< OSCAP allocation error */
-#define OSCAP_EXMLELEM      2	/**< Unknown element in XML */
-#define OSCAP_EXMLNODETYPE  3	/**< Bad node type in XML */
-#define OSCAP_EXMLNOELEMENT 4	/**< No expected element */
-#define OSCAP_ECPEINVOP     5	/**< Invalid CPE Language operation */
-#define OSCAP_EOVALINT      6	/**< OVAL internal error */
-#define OSCAP_EREGEXP       7	/**< Error in regexp compilation */
-#define OSCAP_EREGEXPCOMP   8	/**< Invalid string comparison in regexps */
-#define OSCAP_EUNDATATYPE   9	/**< Unsupported data type */
-#define OSCAP_EINVARG       10	/**< Invalid argument */
-#define OSCAP_EVARTYPE      11	/**< Variable type is not valid */
-#define OSCAP_ESEAPINIT     12	/**< Failed seap initialization */
-#define OSCAP_EUSER1        201	/**< User defined error */
-#define OSCAP_EUSER2        202	/**< User defined error */
+#define OSCAP_EALLOC        1	/**< Memory allocation error */
+#define OSCAP_EXMLELEM      2	/**< Unknown XML element */
+#define OSCAP_EREGEXP       3	/**< Error in regexp compilation */
+#define OSCAP_EINVARG       4	/**< Function called with invalid argument */
 #define OSCAP_ENOTIMPL      254 /**< Not implemented*/
-#define OSCAP_EUNKNOWN      255	/**< Unknown/Unexpected error */
+#define OSCAP_EUSER1        255 /**< User defined */
 /** @} */
+
+
+/**
+ * @name OVAL family error codes
+ * @{
+ * @see OSCAP_EFAMILY_OVAL
+ */
+#define OVAL_EOVALINT        1	  /**< OVAL internal error */
+#define OVAL_EVARTYPE        2	  /**< Invalid variable type */
+#define OVAL_EDATATYPE       3	  /**< Invalid data type */
+#define OVAL_EOPERATION      4	  /**< Invalid operation type */
+
+#define OVAL_EPROBECONTEXT   255  /**< Invalid probe context */
+
+#define OVAL_EPROBEINIT      256
+#define OVAL_EPROBECONN      257
+#define OVAL_EPROBENOTSUPP   258
+#define OVAL_EPROBEOBJINVAL  259
+#define OVAL_EPROBEITEMINVAL 260
+#define OVAL_EPROBENODATA    261
+#define OVAL_EPROBECLOSE     262
+#define OVAL_EPROBESEND      263
+#define OVAL_EPROBERECV      264
+#define OVAL_EPROBEUNKNOWN   511
+/** @} */
+
+/**
+ * @name CPE family error codes
+ * @{
+ * @see OSCAP_EFAMILY_CPE
+ */
+#define CPE_EOPERATION        4   /**< Invalid CPE Language operation */
+/** @} */
+
 
 #define oscap_seterr(family, code, desc) __oscap_seterr (__FILE__, __LINE__, __PRETTY_FUNCTION__, family, code, desc)
 

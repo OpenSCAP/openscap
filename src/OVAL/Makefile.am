@@ -58,8 +58,7 @@ common_oval_sources = \
 	oval_variable.c \
 	oval_variableBinding.c \
 	ovalsys_parser.c \
-	oval_varModel.c \
-	oval_errors.h
+	oval_varModel.c
 
 # -I options go to CPPFLAGS, not CFLAGS
 # lets build one common for both normal and probe sources (does it mind?)

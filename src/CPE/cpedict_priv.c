@@ -804,12 +804,6 @@ struct cpe_generator *cpe_generator_parse(xmlTextReaderPtr reader)
 			xmlTextReaderNextNode(reader);
 
 		}
-		// we found another element generator which is not "end element" ? Horrible !
-		if (xmlTextReaderNodeType(reader) != XML_READER_TYPE_END_ELEMENT) {
-			oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EXMLNOELEMENT,
-				     "Found new node, but ending element expected");
-			return NULL;
-		}
 	}
 
 	return ret;
