@@ -266,14 +266,245 @@ OSCAP_ACCESSOR_STRING(xccdf_instance, context)
 OSCAP_ACCESSOR_STRING(xccdf_instance, parent_context)
 OSCAP_ACCESSOR_STRING(xccdf_instance, content)
 
-/*----------------------------*/
-/*           DUMP             */
-/*----------------------------*/
+/* ------ string maps ------ */
 
+const struct oscap_string_map XCCDF_FACT_TYPE_MAP[] = {
+	{ XCCDF_TYPE_BOOLEAN, "boolean" },
+	{ XCCDF_TYPE_STRING,  "string"  },
+	{ XCCDF_TYPE_NUMBER,  "number"  },
+	{ XCCDF_TYPE_BOOLEAN, NULL      }
+};
+
+const struct oscap_string_map XCCDF_RESULT_MAP[] = {
+	{ XCCDF_RESULT_PASS,           "pass"          },
+	{ XCCDF_RESULT_FAIL,           "fail"          },
+	{ XCCDF_RESULT_ERROR,          "error"         },
+	{ XCCDF_RESULT_UNKNOWN,        "unknown"       },
+	{ XCCDF_RESULT_NOT_APPLICABLE, "notapplicable" },
+	{ XCCDF_RESULT_NOT_CHECKED,    "notchecked"    },
+	{ XCCDF_RESULT_NOT_SELECTED,   "notselected"   },
+	{ XCCDF_RESULT_INFORMATIONAL,  "informational" },
+	{ XCCDF_RESULT_FIXED,          "fixed"         },
+	{ 0, NULL }
+};
+
+/* --------- import -------- */
+
+static struct xccdf_identity *xccdf_identity_new_parse(xmlTextReaderPtr reader);
+static struct xccdf_target_fact *xccdf_target_fact_new_parse(xmlTextReaderPtr reader);
+static struct xccdf_score *xccdf_score_new_parse(xmlTextReaderPtr reader);
+static struct xccdf_rule_result *xccdf_rule_result_new_parse(xmlTextReaderPtr reader);
+static struct xccdf_override *xccdf_override_new_parse(xmlTextReaderPtr reader);
+static struct xccdf_message *xccdf_message_new_parse(xmlTextReaderPtr reader);
+static struct xccdf_instance *xccdf_instance_new_parse(xmlTextReaderPtr reader);
+
+struct xccdf_result *xccdf_result_new_parse(xmlTextReaderPtr reader)
+{
+	assert(reader != NULL);
+	XCCDF_ASSERT_ELEMENT(reader, XCCDFE_TESTRESULT);
+
+	struct xccdf_item *res = XITEM(xccdf_result_new());
+
+	if (!xccdf_item_process_attributes(res, reader)) goto fail;
+
+	if (xccdf_attribute_has(reader, XCCDFA_END_TIME))
+		res->sub.result.start_time = oscap_get_datetime(xccdf_attribute_get(reader, XCCDFA_END_TIME));
+	else goto fail;
+	res->sub.result.start_time = oscap_get_datetime(xccdf_attribute_get(reader, XCCDFA_START_TIME));
+	res->item.version = xccdf_attribute_copy(reader, XCCDFA_VERSION);
+	res->sub.result.test_system = xccdf_attribute_copy(reader, XCCDFA_TEST_SYSTEM);
+
+	int depth = oscap_element_depth(reader) + 1;
+
+	while (oscap_to_start_element(reader, depth)) {
+		switch (xccdf_element_get(reader)) {
+		case XCCDFE_ORGANIZATION:
+			oscap_list_add(res->sub.result.organizations, oscap_element_string_copy(reader));
+			break;
+		case XCCDFE_IDENTITY:
+			oscap_list_add(res->sub.result.identities, xccdf_identity_new_parse(reader));
+			break;
+		case XCCDFE_RESULT_PROFILE:
+			if (res->sub.result.profile == NULL)
+				res->sub.result.profile = oscap_element_string_copy(reader);
+			break;
+		case XCCDFE_TARGET:
+			oscap_list_add(res->sub.result.targets, oscap_element_string_copy(reader));
+			break;
+		case XCCDFE_TARGET_ADDRESS:
+			oscap_list_add(res->sub.result.target_addresses, oscap_element_string_copy(reader));
+			break;
+		case XCCDFE_TARGET_FACTS:
+			while (oscap_to_start_element(reader, depth + 1)) {
+				if (xccdf_element_get(reader) == XCCDFE_FACT)
+					oscap_list_add(res->sub.result.target_facts, xccdf_target_fact_new_parse(reader));
+				xmlTextReaderRead(reader);
+			}
+			break;
+		case XCCDFE_SET_VALUE:
+			oscap_list_add(res->sub.result.setvalues, xccdf_setvalue_new_parse(reader));
+			break;
+		case XCCDFE_RULE_RESULT:
+			oscap_list_add(res->sub.result.rule_results, xccdf_rule_result_new_parse(reader));
+			break;
+		case XCCDFE_SCORE:
+			oscap_list_add(res->sub.result.scores, xccdf_score_new_parse(reader));
+			break;
+		case XCCDFE_RESULT_BENCHMARK:
+			if (res->sub.result.benchmark_uri == NULL)
+				res->sub.result.benchmark_uri = xccdf_attribute_copy(reader, XCCDFA_HREF);
+			break;
+		default: xccdf_item_process_element(res, reader);
+		}
+		xmlTextReaderRead(reader);
+	}
+
+	return XRESULT(res);
+
+fail:
+	xccdf_result_free(XRESULT(res));
+	return NULL;
+}
+
+static struct xccdf_identity *xccdf_identity_new_parse(xmlTextReaderPtr reader)
+{
+	XCCDF_ASSERT_ELEMENT(reader, XCCDFE_IDENTITY);
+
+	struct xccdf_identity *identity = xccdf_identity_new();
+	identity->sub.authenticated = xccdf_attribute_get_bool(reader, XCCDFA_AUTHENTICATED);
+	identity->sub.privileged    = xccdf_attribute_get_bool(reader, XCCDFA_PRIVILEDGED);
+	identity->name              = oscap_element_string_copy(reader);
+	return identity;
+}
+
+static struct xccdf_target_fact *xccdf_target_fact_new_parse(xmlTextReaderPtr reader)
+{
+	XCCDF_ASSERT_ELEMENT(reader, XCCDFE_FACT);
+
+	struct xccdf_target_fact *fact = xccdf_target_fact_new();
+	fact->type = oscap_string_to_enum(XCCDF_FACT_TYPE_MAP, xccdf_attribute_get(reader, XCCDFA_TYPE));
+	fact->name = xccdf_attribute_copy(reader, XCCDFA_NAME);
+	fact->value = oscap_element_string_copy(reader);
+	return fact;
+}
+
+static struct xccdf_score *xccdf_score_new_parse(xmlTextReaderPtr reader)
+{
+	XCCDF_ASSERT_ELEMENT(reader, XCCDFE_SCORE);
+
+	struct xccdf_score *score = xccdf_score_new();
+	score->system = xccdf_attribute_copy(reader, XCCDFA_SYSTEM);
+	if (xccdf_attribute_has(reader, XCCDFA_MAXIMUM))
+		score->maximum = xccdf_attribute_get_float(reader, XCCDFA_MAXIMUM);
+	else score->maximum = XCCDF_SCORE_MAX_DAFAULT;
+	score->score = atof(oscap_element_string_get(reader));
+	return score;
+}
+
+static struct xccdf_rule_result *xccdf_rule_result_new_parse(xmlTextReaderPtr reader)
+{
+	XCCDF_ASSERT_ELEMENT(reader, XCCDFE_RULE_RESULT);
+
+	struct xccdf_rule_result *rr = xccdf_rule_result_new();
+
+	rr->idref    = xccdf_attribute_copy(reader, XCCDFA_IDREF);
+	rr->role     = oscap_string_to_enum(XCCDF_ROLE_MAP, xccdf_attribute_get(reader, XCCDFA_ROLE));
+	rr->time     = oscap_get_datetime(xccdf_attribute_get(reader, XCCDFA_TIME));
+	rr->version  = xccdf_attribute_copy(reader, XCCDFA_VERSION);
+	rr->weight   = xccdf_attribute_get_float(reader, XCCDFA_WEIGHT);
+	rr->severity = oscap_string_to_enum(XCCDF_LEVEL_MAP, xccdf_attribute_get(reader, XCCDFA_SEVERITY));
+
+	int depth = oscap_element_depth(reader) + 1;
+
+	while (oscap_to_start_element(reader, depth)) {
+		switch (xccdf_element_get(reader)) {
+		case XCCDFE_RESULT:
+			rr->result = oscap_string_to_enum(XCCDF_RESULT_MAP, oscap_element_string_get(reader));
+			break;
+		case XCCDFE_OVERRIDE:
+			oscap_list_add(rr->overrides, xccdf_override_new_parse(reader));
+			break;
+		case XCCDFE_IDENT:
+			oscap_list_add(rr->idents, xccdf_ident_parse(reader));
+			break;
+		case XCCDFE_MESSAGE:
+			oscap_list_add(rr->messages, xccdf_message_new_parse(reader));
+			break;
+		case XCCDFE_INSTANCE:
+			oscap_list_add(rr->instances, xccdf_instance_new_parse(reader));
+			break;
+		case XCCDFE_FIX:
+			oscap_list_add(rr->fixes, xccdf_fix_parse(reader, XITEM(rr)));
+			break;
+		case XCCDFE_CHECK:
+			oscap_list_add(rr->checks, xccdf_check_parse(reader, XITEM(rr)));
+			break;
+		default: break;
+		}
+		xmlTextReaderRead(reader);
+	}
+
+	return rr;
+}
+
+static struct xccdf_override *xccdf_override_new_parse(xmlTextReaderPtr reader)
+{
+	XCCDF_ASSERT_ELEMENT(reader, XCCDFE_OVERRIDE);
+
+	struct xccdf_override *override = xccdf_override_new();
+
+	override->time      = oscap_get_datetime(xccdf_attribute_get(reader, XCCDFA_TIME));
+	override->authority = xccdf_attribute_copy(reader, XCCDFA_AUTHORITY);
+
+	int depth = oscap_element_depth(reader) + 1;
+
+	while (oscap_to_start_element(reader, depth)) {
+		switch (xccdf_element_get(reader)) {
+		case XCCDFE_OLD_RESULT:
+			override->old_result = oscap_string_to_enum(XCCDF_RESULT_MAP, oscap_element_string_get(reader));
+			break;
+		case XCCDFE_NEW_RESULT:
+			override->new_result = oscap_string_to_enum(XCCDF_RESULT_MAP, oscap_element_string_get(reader));
+			break;
+		case XCCDFE_REMARK:
+			if (override->remark == NULL)
+				override->remark = oscap_text_new_parse(XCCDF_TEXT_PLAIN, reader);
+			break;
+		default: break;
+		}
+		xmlTextReaderRead(reader);
+	}
+
+	return override;
+}
+
+static struct xccdf_message *xccdf_message_new_parse(xmlTextReaderPtr reader)
+{
+	XCCDF_ASSERT_ELEMENT(reader, XCCDFE_MESSAGE);
+
+	struct xccdf_message *msg = xccdf_message_new();
+	msg->severity = oscap_string_to_enum(XCCDF_LEVEL_MAP, xccdf_attribute_get(reader, XCCDFA_SEVERITY));
+	msg->content  = oscap_element_string_copy(reader);
+	return msg;
+}
+
+static struct xccdf_instance *xccdf_instance_new_parse(xmlTextReaderPtr reader)
+{
+	XCCDF_ASSERT_ELEMENT(reader, XCCDFE_INSTANCE);
+
+	struct xccdf_instance *inst = xccdf_instance_new();
+	if (xccdf_attribute_has(reader, XCCDFA_CONTEXT))
+		xccdf_instance_set_context(inst, xccdf_attribute_get(reader, XCCDFA_CONTEXT));
+	inst->parent_context = xccdf_attribute_copy(reader, XCCDFA_PARENTCONTEXT);
+	inst->content        = oscap_element_string_copy(reader);
+	return inst;
+}
+
+/* --------  DUMP ---------- */
 
 static void xccdf_rule_result_dump(struct xccdf_rule_result *res, int depth)
 {
-	xccdf_print_depth(depth); printf("idref:     %s\n", xccdf_rule_result_get_idref(res));
+	xccdf_print_depth(depth); printf("Rule result: %s\n", xccdf_rule_result_get_idref(res)); ++depth;
 	xccdf_print_depth(depth); printf("version:   %s\n", xccdf_rule_result_get_version(res));
 	xccdf_print_depth(depth); printf("weight:    %f\n", xccdf_rule_result_get_weight(res));
 	/*

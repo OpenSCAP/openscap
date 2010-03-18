@@ -45,6 +45,8 @@ void oscap_create_lists(struct oscap_list **first, ...)
 bool oscap_list_add(struct oscap_list * list, void *value)
 {
 	__attribute__nonnull__(list);
+	if (value == NULL) return false;
+
 	struct oscap_list_item *item = oscap_alloc(sizeof(struct oscap_list_item));
 	item->next = NULL;
 	item->data = value;

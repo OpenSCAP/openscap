@@ -395,7 +395,7 @@ void xccdf_profile_note_free(struct xccdf_profile_note *note)
 {
 	if (note) {
 		oscap_free(note->reftag);
-		oscap_free(note->text);
+		oscap_text_free(note->text);
 		oscap_free(note);
 	}
 }
@@ -605,6 +605,7 @@ void xccdf_fixtext_free(struct xccdf_fixtext *item)
 {
 	if (item) {
 		oscap_free(item->content);
+		oscap_free(item->fixref);
 		oscap_free(item);
 	}
 }

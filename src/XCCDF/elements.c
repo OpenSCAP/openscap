@@ -158,6 +158,7 @@ static const struct xccdf_attribute_spec XCCDF_ATTRIBUTE_MAP[] = {
 	{XCCDFA_IMPORT_NAME, XCCDF_XMLNS, "import-name"},
 	{XCCDFA_INTERACTIVE, XCCDF_XMLNS, "interactive"},
 	{XCCDFA_INTERFACEHINT, XCCDF_XMLNS, "interfaceHint"},
+	{XCCDFA_MAXIMUM, XCCDF_XMLNS, "maximum"},
 	{XCCDFA_MULTIPLE, XCCDF_XMLNS, "multiple"},
 	{XCCDFA_MUSTMATCH, XCCDF_XMLNS, "mustMatch"},
 	{XCCDFA_NAME, XCCDF_XMLNS, "name"},
@@ -187,6 +188,7 @@ static const struct xccdf_attribute_spec XCCDF_ATTRIBUTE_MAP[] = {
 	{XCCDFA_UPDATE, XCCDF_XMLNS, "update"},
 	{XCCDFA_URI, XCCDF_XMLNS, "uri"},
 	{XCCDFA_VALUE_ID, XCCDF_XMLNS, "value-id"},
+	{XCCDFA_VERSION, XCCDF_XMLNS, "version"},
 	{XCCDFA_WEIGHT, XCCDF_XMLNS, "weight"},
 	{0, NULL, NULL}
 };

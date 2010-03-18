@@ -357,6 +357,8 @@ extern const struct oscap_string_map XCCDF_LEVEL_MAP[];
 extern const struct oscap_string_map XCCDF_ROLE_MAP[];
 extern const struct oscap_string_map XCCDF_OPERATOR_MAP[];
 extern const struct oscap_string_map XCCDF_STRATEGY_MAP[];
+extern const struct oscap_string_map XCCDF_FACT_TYPE_MAP[];
+extern const struct oscap_string_map XCCDF_RESULT_MAP[];
 
 extern const struct oscap_text_traits XCCDF_TEXT_PLAIN;
 extern const struct oscap_text_traits XCCDF_TEXT_HTML;
@@ -422,6 +424,7 @@ void xccdf_model_free(struct xccdf_model *model);
 
 void xccdf_cstring_dump(const char *data, int depth);
 void xccdf_result_dump(struct xccdf_result *res, int depth);
+struct xccdf_result *xccdf_result_new_parse(xmlTextReaderPtr reader);
 
 struct xccdf_ident *xccdf_ident_new(const char *id, const char *system);
 void xccdf_ident_free(struct xccdf_ident *ident);
@@ -448,6 +451,8 @@ void xccdf_fix_free(struct xccdf_fix *item);
 struct xccdf_refine_value *xccdf_refine_value_new(void);
 struct xccdf_refine_rule *xccdf_refine_rule_new(void);
 struct xccdf_select *xccdf_select_new(void);
+struct xccdf_setvalue *xccdf_setvalue_new(void);
+struct xccdf_setvalue *xccdf_setvalue_new_parse(xmlTextReaderPtr reader);
 void xccdf_setvalue_dump(struct xccdf_setvalue *sv, int depth);
 void xccdf_setvalue_free(struct xccdf_setvalue *sv);
 void xccdf_refine_value_free(struct xccdf_refine_value *rv);

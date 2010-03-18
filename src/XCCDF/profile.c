@@ -23,6 +23,22 @@
 #include "item.h"
 #include "helpers.h"
 
+struct xccdf_setvalue *xccdf_setvalue_new(void)
+{
+	return oscap_calloc(1, sizeof(struct xccdf_setvalue));
+}
+
+struct xccdf_setvalue *xccdf_setvalue_new_parse(xmlTextReaderPtr reader)
+{
+	const char *id = xccdf_attribute_get(reader, XCCDFA_IDREF);
+	if (id == NULL)
+		return NULL;
+	struct xccdf_setvalue *sv = oscap_calloc(1, sizeof(struct xccdf_setvalue));
+	sv->item = oscap_strdup(id);
+	sv->value = oscap_element_string_copy(reader);
+	return sv;
+}
+
 void xccdf_setvalue_free(struct xccdf_setvalue *sv)
 {
 	if (sv) {
@@ -122,7 +138,7 @@ static void xccdf_refine_value_dump(struct xccdf_refine_value *rv, int depth)
 
 void xccdf_setvalue_dump(struct xccdf_setvalue *sv, int depth)
 {
-	xccdf_print_depth(depth); printf("%s: %s", sv->item, sv->value);
+	xccdf_print_depth(depth); printf("%s: %s\n", sv->item, sv->value);
 }
 
 
@@ -210,13 +226,7 @@ struct xccdf_item *xccdf_profile_parse(xmlTextReaderPtr reader, struct xccdf_ite
 				break;
 			}
 		case XCCDFE_SET_VALUE:{
-				const char *id = xccdf_attribute_get(reader, XCCDFA_IDREF);
-				if (id == NULL)
-					break;
-				struct xccdf_setvalue *sv = oscap_calloc(1, sizeof(struct xccdf_setvalue));
-				sv->item = oscap_strdup(id);
-				sv->value = oscap_element_string_copy(reader);
-				oscap_list_add(prof->sub.profile.setvalues, sv);
+				oscap_list_add(prof->sub.profile.setvalues, xccdf_setvalue_new_parse(reader));
 				break;
 			}
 		default:

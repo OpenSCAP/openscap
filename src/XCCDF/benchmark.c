@@ -119,6 +119,9 @@ bool xccdf_benchmark_parse(struct xccdf_item * benchmark, xmlTextReaderPtr reade
 		case XCCDFE_VALUE:
 			oscap_list_add(benchmark->sub.bench.values, xccdf_value_parse(reader, benchmark));
 			break;
+		case XCCDFE_TESTRESULT:
+			xccdf_benchmark_add_result(XBENCHMARK(benchmark), xccdf_result_new_parse(reader));
+			break;
 		default:
 			xccdf_item_process_element(benchmark, reader);
 		}
