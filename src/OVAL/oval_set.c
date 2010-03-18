@@ -422,9 +422,11 @@ void oval_set_to_print(struct oval_setobject *set, char *indent, int idx)
 
 xmlNode *oval_set_to_dom(struct oval_setobject *set, xmlDoc * doc, xmlNode * parent) {
 	xmlNs *ns_definitions = xmlSearchNsByHref(doc, parent, OVAL_DEFINITIONS_NAMESPACE);
-	if (ns_definitions == NULL)
-		ns_definitions = xmlNewNs(parent, OVAL_DEFINITIONS_NAMESPACE, NULL);
 	xmlNode *set_node = xmlNewChild(parent, ns_definitions, BAD_CAST "set", NULL);
+	if (ns_definitions == NULL) {
+		ns_definitions = xmlNewNs(set_node, OVAL_DEFINITIONS_NAMESPACE, NULL);
+		xmlSetNs(set_node, ns_definitions);
+	}
 
 	oval_setobject_operation_t operation = oval_setobject_get_operation(set);
 	if (operation != OVAL_SET_OPERATION_UNION)
