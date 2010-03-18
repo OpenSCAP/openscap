@@ -175,7 +175,7 @@ static void get_ifs(SEXP_t *name_ent, SEXP_t *item_list)
 
 	item = probe_item_creat("interface_item", NULL,
 				"name", NULL,
-				r0 = SEXP_string_newf("dummy0");
+				r0 = SEXP_string_newf("dummy0"),
 				"hardware_addr", NULL,
 				r1 = SEXP_string_newf("aa:bb:cc:dd:ee:ff"),
 				"inet_addr", NULL,
