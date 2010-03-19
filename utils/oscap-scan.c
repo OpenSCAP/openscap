@@ -28,19 +28,14 @@
  *      compile: $gcc oscap-scan.c -lcurl -lopenscap -I/usr/include/openscap/
  *               or
  *               $gcc -I../src/OVAL/public/ -I../src/common/public/ oscap-scan.c -L../src/.libs/ -lcurl -lopenscap
- *      run:     $./oscap-scan -vv definition_file.xml
+ *      run:     $./oscap-scan -v definition_file.xml --result-file=results.xml --syschar-file=syschars.xml
  */
 
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-/* OSCAP */
-#include <oval_probe.h>
-#include <oval_agent_api.h>
-#include <oval_results.h>
-#include <error.h>
+#include <getopt.h>
 
 /* curl */
 #include <curl/curl.h>
@@ -52,6 +47,12 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <errno.h>
+
+/* OSCAP */
+#include <oval_probe.h>
+#include <oval_agent_api.h>
+#include <oval_results.h>
+#include <error.h>
 
 
 void print_usage(const char *pname, FILE *out);
@@ -74,19 +75,21 @@ char * app_curl_download(char * url);
 void print_usage(const char *pname, FILE *out) {
 
   fprintf(out, 
-	  "Usage: %s [OPTION] XML_FILE\n"
-          "Evaluate OVAL definition file specified by XML_FILE.\n"
-          "Results are saved with suffix .syschar.xml and .results.xml\n"
-          "XML_FILE can be specified by URL\n"
+	  "Usage: %s [options] [url|path/]filename\n"
+          "\n"
+          "Evaluate OVAL definition file specified by filename.\n"
+          "The input source may be either the full path to the xml file "
+          "or an URL from which to download it.\n"
           "\n"
           "Options:\n"
 	  "   -h --help\r\t\t\t\t - show this help\n"
-	  "   -v\r\t\t\t\t - run in verbose mode \n"
-	  "   -vv\r\t\t\t\t - run in very verbose mode \n"
+	  "   -v --verbose <integer>\r\t\t\t\t - run in verbose mode (0,1,2)\n"
 	  "   -q --quiet\r\t\t\t\t - Quiet mode. Suppress all warning and messages.\n"
           "   -o --objects-only\r\t\t\t\t - evaluate objects only, ignore definitions "
-             " \n\r\t\t\t\t   and verbosity\n",
-	  pname);
+             " \n\r\t\t\t\t   and verbosity\n"
+	  "   --result-file <file>\r\t\t\t\t - The name of file with OVAL results output.\n"
+	  "   --syschar-file <file>\r\t\t\t\t - The name of file with Syschar output.\n"
+	  ,pname);
 }
 
 /**
@@ -234,6 +237,10 @@ char * app_curl_download(char * url) {
         curl_easy_setopt(curl, CURLOPT_URL, url);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
         res = curl_easy_perform(curl);
+        if (res != 0) {/* Something bad happend */
+                oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EUSER1, "CURL library initialization failed");
+                return NULL;
+        }
         /* Always cleanup */
         curl_easy_cleanup(curl);
         /* Close the file finally*/
@@ -246,14 +253,12 @@ char * app_curl_download(char * url) {
     return outfile;
 }
 
-
 /**
  * Main function
  */
 int main(int argc, char **argv)
 {
         int verbose         = 0;    /**< Verbosity level variable */
-        int quiet           = 0;    /**< If 1 ignore verbosity level */
         int method          = 0;    /**< Method 1 - iterate objects; 
                                                 0 - iterate definitions */
         char * url_OVAL     = NULL; /**< URL of OVAL definition file */
@@ -261,56 +266,129 @@ int main(int argc, char **argv)
         oval_pctx_t * pctx  = NULL; /**< */
         char * f_OVAL       = NULL; /**< Name of OVAL definition file*/
         //char * f_XCCDF       = NULL; /**< Name of XCCDF benchmark file*/
-       
-        int i;
-        /* Parse parameters */
-        for (i=1; i<argc; i++) {
-                if (!strcmp(argv[i], "-h") || !strcmp(argv[i], "--help")) {
-                        print_usage(argv[0], stdout);
-                        /* If help is request, ignore all and quit */
-                        return 0;
-                }
-                /* Verbosity level set to 1 */
-                else if (!strcmp(argv[i], "-v" )) verbose = 1;
-                /* Verbosity level set to 2 */
-                else if (!strcmp(argv[i], "-vv")) verbose = 2;
-                /* Method 1 - just iterate through objects */
-                else if ((!strcmp(argv[i], "-o")) ||
-                        (!strcmp(argv[i], "--objects-only"))) method = 1;
-                else if ((!strcmp(argv[i], "-q")) ||
-                        (!strcmp(argv[i], "--quiet"))) quiet = 1;
-                /* No more options so next one should be name of oval definition file */
-                else if (url_OVAL == NULL) url_OVAL = argv[i];
-                /* The name of file is already set & no more options -> bad usage */
-                else {
-                        fprintf(stderr, "Bad usage of %s !\n\n", argv[0]);
-                        print_usage(argv[0], stderr);
-                        return -1;
-                }
+        char * f_Results    = NULL;
+        char * f_Syschar    = NULL;
+
+        /**************** GETOPT  ***************/
+        int c;
+
+        while (1) {
+
+            int option_index = 0;
+            static struct option long_options[] = {
+                /* Long options. */
+                {"quiet",        0, 0, 'q'},
+                {"objects-only", 0, 0, 'o'},
+                {"help",         0, 0, 'h'},
+                {"result-file",  1, 0, 0},
+                {"syschar-file", 1, 0, 1},
+                {"verbose",      1, 0, 2},
+                {0, 0, 0, 0}
+            };
+
+            c = getopt_long(argc, argv, "qohv0123",
+                        long_options, &option_index);
+            if (c == -1)
+                break;
+
+            switch (c) {
+
+            case 0: /* Results */
+                f_Results = strdup(optarg);
+                break;
+
+            case 1: /* Syschars */
+                f_Syschar = strdup(optarg);
+                break;
+
+            case 2: /* Verbose */
+                if (verbose != -1) verbose = atoi(optarg);
+                if (verbose > 2) verbose = 2;
+                break;
+
+            case 'v':
+                /* quiet is higher priority then verbose */
+                if (verbose != -1) verbose += 1;
+                if (verbose > 2) verbose = 2;
+                break;
+
+            case 'q':
+                verbose = -1;
+                break;
+
+            case 'o':
+                method = 1;
+                break;
+
+            case 'h': /* Help */
+                print_usage(argv[0], stderr);
+                return 0;
+
+            default:
+                fprintf(stderr, "Bad usage of %s !\n\n", argv[0]);
+                print_usage(argv[0], stderr);
+                return 1;
+            }
         }
 
-        if (quiet == 1) verbose = -1; /* Suppress ALL output */
+        if (optind < argc) /* mandatory OVAL file */
+           url_OVAL = strdup(argv[optind++]);
 
-        /* prevent fail behaviour by validating OVAL content */
-        /* Note: XCCDF is not supported yet */
+        if (optind < argc) { /* No other not-optional argument */
+                fprintf(stderr, "Bad usage of %s !\n\n", argv[0]);
+                print_usage(argv[0], stderr);
+                return 1;
+        }
 
+        /* Post processing of options*/
         /* fetch file from remote source */
+        if (url_OVAL == NULL) {
+                fprintf(stderr, "Bad usage of %s !\n\n", argv[0]);
+                print_usage(argv[0], stderr);
+                return 1;
+        }
+
         f_OVAL = app_curl_download(url_OVAL);
         if (!f_OVAL) {
 		if (verbose >= 0) fprintf(stderr, "Error: (%d) %s\n", oscap_err_code(), oscap_err_desc());
-                return -1;
+                return 1;
         }
+
+        /* If results file and syschar file is not specified, we export it anyway */
+        /*if (f_Results == NULL) {
+            f_Results = malloc( sizeof(char) * strlen(f_OVAL) + 15 );
+            sprintf(f_Results, "%s.results.xml", f_OVAL);
+        }
+
+        if (f_Syschar == NULL) {
+            f_Syschar = malloc( sizeof(char) * strlen(f_OVAL) + 15 );
+            sprintf(f_Syschar, "%s.syschar.xml", f_OVAL);
+        }*/
+
+        if (verbose >= 2) {
+            printf("Running options:\n");
+            printf("\tOption Verbose:\r\t\t\t %d\n",  verbose);
+            printf("\tOption Method:\r\t\t\t %d\n",   method);
+            printf("\tOption OVAL:\r\t\t\t %s\n",     url_OVAL);
+            printf("\tOption Results:\r\t\t\t %s\n",  f_Results);
+            printf("\tOption Syschar:\r\t\t\t %s\n",  f_Syschar);
+        }
+        /**************** GETOPT ***************/
+
+        /* TODO: prevent fail behaviour by validating OVAL content */
+        /* Note: XCCDF is not supported yet */
 
         /* Get definition model from XML file */
         /* Set import source for OVAL definition file*/
-        struct oscap_import_source *def_in = oscap_import_source_new_file(f_OVAL,NULL);
+        struct oscap_import_source *def_in = oscap_import_source_new_file(f_OVAL, NULL);
         struct oval_definition_model *def_model = oval_definition_model_new();
+        free(f_OVAL);
         oval_definition_model_import(def_model, def_in, NULL);
         /* Import problems ? Do not continue then ! */
 	if( oscap_err() ) {
 		if (verbose >= 0) fprintf(stderr, "Error: (%d) %s\n",oscap_err_code(), oscap_err_desc());
                 oscap_import_source_free(def_in);
-		return -1;
+		return 1;
 	}
         oscap_import_source_free(def_in);
 
@@ -325,17 +403,15 @@ int main(int argc, char **argv)
 		if (verbose >= 1) fprintf(stdout, "Warning: sysinfo not available\n");
 		if( oscap_err() ) {
 			if (verbose >= 0) fprintf(stderr, "Error: (%d) %s\n", oscap_err_code(), oscap_err_desc());
-			return -1;
+			return 1;
 		}
 	}
 	oval_syschar_model_set_sysinfo(sys_model, sysinfo);
 	oval_sysinfo_free(sysinfo);
 
         int ret = 0; 
-        /* Use method 1 to suppress syschar assertion abort caused by bug in library and process
-         * all objects first */
 	if (method == 1) { 
-            /* First method */
+            /* First method - evaluate objects only */
             oval_syschar_model_probe_objects(sys_model);
 
         } else {
@@ -344,22 +420,39 @@ int main(int argc, char **argv)
 
             struct oval_criteria_node * cnode = NULL;
             struct oval_definition * oval_def = NULL;
-            /* Iterate through definitions and evaluate all criteria */
+
+            /* Get number of definitions */
+            int def_count = 0;
             while (oval_definition_iterator_has_more(oval_def_it) ) {
+                (void) oval_definition_iterator_next(oval_def_it);
+                def_count++;
+            }
+            oval_definition_iterator_free(oval_def_it);
+
+            /* Reset iterator */
+            oval_def_it = oval_definition_model_get_definitions(def_model);
+            /* Iterate through definitions and evaluate all criteria */
+            int curr = 0;
+            while (oval_definition_iterator_has_more(oval_def_it) ) {
+                curr++;
                 oval_def = oval_definition_iterator_next(oval_def_it);
-                if (verbose >= 1 ) fprintf(stdout, "Evaluating definition: %s\n", oval_definition_get_title(oval_def));
+
+                if (verbose == 0) fprintf(stdout, "\rEvaluating definition %d5 of %d5", curr, def_count);
+                else if (verbose >= 1 ) fprintf(stdout, "Evaluating definition: %s\n", oval_definition_get_title(oval_def));
+
                 cnode = oval_definition_get_criteria(oval_def);
                 ret = app_evaluate_criteria(cnode, pctx, def_model, sys_model, verbose);
                 if (ret == -1) break;
             }
+            if (verbose == 0) printf("\nEvaluation: All done.\n");
             oval_definition_iterator_free(oval_def_it);
         }
         oval_pctx_free (pctx);
 
         if (ret == -1) {
             if (( oscap_err() ) && (verbose >= 0)) 
-                fprintf(stderr, "Error: (%d) %s\n", oscap_err_code(), oscap_err_desc());
-            return -1;
+                if (verbose >=0) fprintf(stderr, "Error: (%d) %s\n", oscap_err_code(), oscap_err_desc());
+            return 1;
         }
 	/* print # syschars */
         int count = 0;
@@ -368,15 +461,14 @@ int main(int argc, char **argv)
         	oval_syschar_iterator_next(syschars);
         }
         oval_syschar_iterator_free(syschars);
-	if (verbose >= 0) fprintf(stdout, "Evaluated %d syschars\n", count);
 
-        /* Export syschar model to XML */
-	char * syschar_fname = malloc( sizeof(char) * strlen(f_OVAL) + 15 );
-	sprintf(syschar_fname, "%s.syschar.xml", f_OVAL);
-	struct oscap_export_target *syschar_out  = oscap_export_target_new_file(syschar_fname, "UTF-8");
-	oval_syschar_model_export(sys_model, syschar_out);
-	free(syschar_fname);
-	oscap_export_target_free(syschar_out);
+        if (f_Syschar != NULL) {
+            /* Export syschar model to XML */
+            struct oscap_export_target *syschar_out  = oscap_export_target_new_file(f_Syschar, "UTF-8");
+            oval_syschar_model_export(sys_model, syschar_out);
+            free(f_Syschar);
+            oscap_export_target_free(syschar_out);
+        }
 
 	/* create result model */
 	struct oval_syschar_model *sys_models[] = {sys_model, NULL};
@@ -429,14 +521,14 @@ int main(int argc, char **argv)
                 default: break;
             }
 
-            if (verbose >= 1)
+            if (verbose >= 0)
                 fprintf(stdout, "Definition \"%s\": %s\n", oval_definition_get_title(odefinition), 
                                                            oval_result_get_text(result));
         }
         oval_result_definition_iterator_free(definition_it);
         oval_result_system_iterator_free(rsystem_it);
 
-        if (verbose >= 1) {
+        if (verbose >= 2) {
             fprintf(stdout, "====== RESULTS ======\n");
             fprintf(stdout, "TRUE:          \r\t\t %d\n", result_true);
             fprintf(stdout, "FALSE:         \r\t\t %d\n", result_false);
@@ -445,32 +537,35 @@ int main(int argc, char **argv)
             fprintf(stdout, "NOT EVALUATED: \r\t\t %d\n", result_neval);
             fprintf(stdout, "NOT APPLICABLE:\r\t\t %d\n", result_napp);
         }
-	/* set up directives */
-	struct oval_result_directives * res_direct = oval_result_directives_new(res_model);
-	oval_result_directives_set_reported(res_direct, OVAL_RESULT_INVALID, true);
-	oval_result_directives_set_reported(res_direct, OVAL_RESULT_TRUE, true);
-	oval_result_directives_set_reported(res_direct, OVAL_RESULT_FALSE, true);
-	oval_result_directives_set_reported(res_direct, OVAL_RESULT_UNKNOWN, true);
-	oval_result_directives_set_reported(res_direct, OVAL_RESULT_ERROR, true);
-	oval_result_directives_set_reported(res_direct, OVAL_RESULT_NOT_EVALUATED, true);
-	oval_result_directives_set_reported(res_direct, OVAL_RESULT_NOT_APPLICABLE , true);
-	oval_result_directives_set_content(res_direct,OVAL_RESULT_FALSE, OVAL_DIRECTIVE_CONTENT_FULL);
-	oval_result_directives_set_content(res_direct,OVAL_RESULT_TRUE, OVAL_DIRECTIVE_CONTENT_FULL);
-        
-        /* Export result model to XML */
-	char * results_fname = malloc( sizeof(char) * strlen(f_OVAL) + 15 );
-	sprintf(results_fname, "%s.results.xml", f_OVAL);
-	struct oscap_export_target *result_out  = oscap_export_target_new_file(results_fname, "UTF-8");
-	oval_results_model_export(res_model, res_direct, result_out);
-	free(results_fname);
-	oscap_export_target_free(result_out);
 
-	oval_result_directives_free(res_direct);
-	oval_definition_model_free(def_model);
-	oval_syschar_model_free(sys_model);
-	oval_results_model_free(res_model);
+        if (f_Results != NULL) {
+
+            /* set up directives */
+            struct oval_result_directives * res_direct = oval_result_directives_new(res_model);
+            oval_result_directives_set_reported(res_direct, OVAL_RESULT_INVALID, true);
+            oval_result_directives_set_reported(res_direct, OVAL_RESULT_TRUE, true);
+            oval_result_directives_set_reported(res_direct, OVAL_RESULT_FALSE, true);
+            oval_result_directives_set_reported(res_direct, OVAL_RESULT_UNKNOWN, true);
+            oval_result_directives_set_reported(res_direct, OVAL_RESULT_ERROR, true);
+            oval_result_directives_set_reported(res_direct, OVAL_RESULT_NOT_EVALUATED, true);
+            oval_result_directives_set_reported(res_direct, OVAL_RESULT_NOT_APPLICABLE , true);
+            oval_result_directives_set_content(res_direct,OVAL_RESULT_FALSE, OVAL_DIRECTIVE_CONTENT_FULL);
+            oval_result_directives_set_content(res_direct,OVAL_RESULT_TRUE, OVAL_DIRECTIVE_CONTENT_FULL);
+            
+            /* Export result model to XML */
+	    struct oscap_export_target *result_out  = oscap_export_target_new_file(f_Results, "UTF-8");
+	    oval_results_model_export(res_model, res_direct, result_out);
+	    free(f_Results);
+	    oscap_export_target_free(result_out);
+
+            oval_result_directives_free(res_direct);
+        }
+
+        oval_definition_model_free(def_model);
+        oval_syschar_model_free(sys_model);
+        oval_results_model_free(res_model);
 
         /* FIN */
         if (result_false == 0) return 0;
-        else return 1;
+        else return 2;
 }

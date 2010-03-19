@@ -3,7 +3,7 @@
 oscap-scan \- Evaluate OVAL content
 .SH SYNOPSIS
 .B oscap-scan
-.RB [ option ]\ [ XML_FILE|URL ]
+.RB [ option ]\ [ URL|file ]
 .SH DESCRIPTION
 \fBoscap-scan\fP will perform an evaluation of the system based on the
 file given as input. The input source may be either the full path to
@@ -12,17 +12,23 @@ OVAL content is supported.
 
 .SH OPTIONS
 .TP
-.B \-v
-Run in verbose mode.
-.TP
-.B \-vv
-Run in very verbose mode
+\fB\-v, \-\-verbose\fR=\fIN\fR
+increment verbosity level, one level for each -v found on the command line or 
+specified by argument N of \fI--verbose\fR option.
 .TP
 .B \-q, \-\-quiet
-Quiet mode. Suppress all warning and messages
+quiet mode. Suppress all warning and messages
 .TP
 .B \-o, \-\-objects only
-evaluate objects only, ignore definitions and verbosity
-
+evaluate objects only, ignore definitions and verbosity 
+.TP
+\fB\-\-result-file FILE\fR
+send OVAL results to FILE
+.TP
+\fB\-\-syschar-file FILE\fR
+output system characteristic to separate file
+.TP
+.B \-h, \-\-help
+display this help and exit
 .SH AUTHOR
-Maros Barabas
+Maros Barabas <mbarabas@redhat.com>

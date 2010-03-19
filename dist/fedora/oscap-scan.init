@@ -52,7 +52,7 @@ start() {
 	if [ $RETVAL -eq 0 ] ; then
 		sleep 1
 		logger "OpenSCAP security scan: PASS"
-	elif [ $RETVAL -eq -1 ] ; then
+	elif [ $RETVAL -eq 1 ] ; then
 		sleep 1
 		logger "OpenSCAP security scan: ERROR"
 	else
