@@ -437,7 +437,7 @@ int main(int argc, char **argv)
                 curr++;
                 oval_def = oval_definition_iterator_next(oval_def_it);
 
-                if (verbose == 0) fprintf(stdout, "\rEvaluating definition %d5 of %d5", curr, def_count);
+                if (verbose == 0) fprintf(stdout, "\rEvaluating definition %d of %d", curr, def_count);
                 else if (verbose >= 1 ) fprintf(stdout, "Evaluating definition: %s\n", oval_definition_get_title(oval_def));
 
                 cnode = oval_definition_get_criteria(oval_def);
