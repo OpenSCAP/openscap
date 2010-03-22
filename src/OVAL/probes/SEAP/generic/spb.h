@@ -97,7 +97,7 @@ spb_size_t spb_size (spb_t *spb);
                 spb_size_t _sym(istart) = (start);                      \
                 spb_t     *_sym(ispb)   = (spb);                        \
                 uint32_t   _sym(idx)    = spb_bindex(_sym(ispb), _sym(istart)); \
-                size_t     _sym(l_off)  = (size_t)(_sym(idx) > 0 ? start - _sym(ispb)->buffer[_sym(idx) - 1].gend : start); \
+                size_t     _sym(l_off)  = (size_t)(_sym(idx) > 0 ? start - _sym(ispb)->buffer[_sym(idx) - 1].gend - 1 : start); \
                                                                         \
                 for (; _sym(idx) < _sym(ispb)->btotal; ++_sym(idx)) {   \
                         register size_t   _sym(l);                      \
@@ -105,7 +105,7 @@ spb_size_t spb_size (spb_t *spb);
                                                                         \
                         _sym(l) = (size_t)(_sym(idx) > 0 ?              \
                                            _sym(ispb)->buffer[_sym(idx)].gend - _sym(ispb)->buffer[_sym(idx) - 1].gend : \
-                                           _sym(ispb)->buffer[_sym(idx)].gend + 1); \
+                                           _sym(ispb)->buffer[_sym(idx)].gend + 1) - _sym(l_off); \
                         _sym(b) = ((uint8_t *)(_sym(ispb)->buffer[_sym(idx)].base)) + _sym(l_off); \
                                                                         \
                         for (; _sym(l) > 0; --_sym(l), ++_sym(b)) {     \
@@ -149,8 +149,23 @@ int spb_pick (spb_t *spb, spb_size_t start, spb_size_t size, void *dst);
  */
 int spb_pick_raw (spb_t *spb, uint32_t bindex, spb_size_t start, spb_size_t size, void *dst);
 
+/**
+ * Pick a buffer region from the sparse buffer, starting with buffer
+ * at index `bindex' and copy it. If the starting index isn't located
+ * in the given starting buffer, signal an error.
+ * @param spb sparse buffer
+ * @param start starting index
+ * @param size size of the region
+ * @param cb callback function
+ * @param cbarg argument that will be passed (as the first argument) to
+ *        the callback function among with the pointer to the memory
+ *        block holding the requested data and the size of this block
+ */
+int spb_pick_cb (spb_t *spb, spb_size_t start, spb_size_t size, void *cb (void *, void *, size_t), void *cbarg);
+
 spb_size_t spb_drop_head (spb_t *spb, spb_size_t size, spb_flags_t flags);
 
 uint8_t spb_octet (spb_t *spb, spb_size_t idx);
+const uint8_t *spb_direct (spb_t *spb, spb_size_t start, spb_size_t size);
 
 #endif /* SPB_H */

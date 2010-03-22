@@ -168,6 +168,54 @@ int spb_pick_raw (spb_t *spb, uint32_t bindex, spb_size_t start, spb_size_t size
         return spb_pick (spb, start, size, dst);
 }
 
+/*
+ * (cbarg) void *cb (void *cbarg, void *src, size_t size)
+ */
+int spb_pick_cb (spb_t *spb, spb_size_t start, spb_size_t size, void *cb (void *, void *, size_t), void *cbarg)
+{
+        register uint32_t b_idx;
+        
+        b_idx = spb_bindex (spb, start);
+        
+        if (b_idx < spb->btotal) {
+                size_t l_off;
+                size_t l_len;
+                
+                if (b_idx > 0) {
+                        l_off = (size_t)(start - spb->buffer[b_idx - 1].gend - 1);
+                        l_len = (size_t)(spb->buffer[b_idx].gend - spb->buffer[b_idx - 1].gend) - l_off;
+                } else {
+                        l_off = (size_t)(start);
+                        l_len = (size_t)(spb->buffer[b_idx].gend + 1) - l_off;
+                }
+                
+                if (size < l_len)
+                        l_len = (size_t)size;
+                
+                cbarg = cb (cbarg, spb->buffer[b_idx].base + l_off, l_len);
+                size -= l_len;
+                
+                while (++b_idx < spb->btotal && size > 0) {
+                        l_len = (size_t)(spb->buffer[b_idx].gend - spb->buffer[b_idx - 1].gend);
+                        
+                        if (size < l_len)
+                                l_len = (size_t)size;
+                        
+                        cbarg = cb (cbarg, spb->buffer[b_idx].base, l_len);
+                        size  -= l_len;
+                }
+                
+                if (size > 0)
+                        return (1); /* less than size bytes were copyied */
+                else
+                        return (0);
+        }
+        /* else - the start offset is out of range*/
+        
+        errno = ERANGE;
+        return (-1);        
+}
+
 void spb_free (spb_t *spb, spb_flags_t flags)
 {
 #ifndef NDEBUG
@@ -252,4 +300,22 @@ uint8_t spb_octet (spb_t *spb, spb_size_t idx)
         errno = ERANGE;
         
         return (uint8_t)(-1);
+}
+
+const uint8_t *spb_direct (spb_t *spb, spb_size_t start, spb_size_t size)
+{
+        uint32_t b_idx;
+        size_t   l_off;
+        
+        b_idx = spb_bindex (spb, start);
+        
+        if (b_idx < spb->btotal) {
+                if (start + size - 1 <= spb->buffer[b_idx].gend) {
+                        l_off = (size_t)(b_idx > 0 ? start - spb->buffer[b_idx - 1].gend : start);
+                        return ((const uint8_t *)(spb->buffer[b_idx].base) + l_off);
+                }
+        } else
+                errno = ERANGE;
+        
+        return (NULL);
 }
