@@ -73,6 +73,7 @@ int main (int argc, char *argv[])
                         if (s_exp != NULL) {
                                 _A(pstate == NULL);
                                 print_sexp (s_exp);
+                                
                                 SEXP_free (s_exp);
                         }
                 }
@@ -81,5 +82,7 @@ int main (int argc, char *argv[])
                         return (1);
         }
         
+        SEXP_psetup_free (psetup);
+
         return (0);
 }
