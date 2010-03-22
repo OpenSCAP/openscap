@@ -19,10 +19,9 @@
  * Authors:
  *      "Daniel Kopecek" <dkopecek@redhat.com>
  */
-
-#ifndef __STUB_PROBE
 #include <stdlib.h>
 #include <string.h>
+#include <stdint.h>
 #include <errno.h>
 #include <assert.h>
 #include <sys/types.h>
@@ -333,4 +332,3 @@ ssize_t strbuf_write (strbuf_t *buf, int fd)
         
         return (size);
 }
-#endif /*__STUB_PROBE */
