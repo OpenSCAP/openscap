@@ -55,13 +55,6 @@ struct oval_object *oval_object_get_new(struct oval_definition_model *, char *);
 struct oval_state *oval_state_get_new(struct oval_definition_model *, char *);
 struct oval_variable *oval_variable_get_new(struct oval_definition_model *, char *, oval_variable_type_t type);
 
-struct oval_definition *oval_definition_clone
-    (struct oval_definition_model *new_model, struct oval_definition *old_definition);
-struct oval_test *oval_test_clone(struct oval_definition_model *new_model, struct oval_test *old_test);
-struct oval_object *oval_object_clone(struct oval_definition_model *new_model, struct oval_object *old_object);
-struct oval_state *oval_state_clone(struct oval_definition_model *new_model, struct oval_state *old_state);
-struct oval_variable *oval_variable_clone(struct oval_definition_model *new_model, struct oval_variable *old_variable);
-
 struct oval_syschar *oval_syschar_get_new(struct oval_syschar_model *, struct oval_object *);
 struct oval_syschar_item *oval_syschar_item_get_new(struct oval_syschar_model *, char *);
 struct oval_sysdata *oval_sysdata_get_new(struct oval_syschar_model *model, char *id);

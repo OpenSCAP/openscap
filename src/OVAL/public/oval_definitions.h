@@ -751,6 +751,13 @@ bool oval_definition_model_is_valid(struct oval_definition_model *definition_mod
  * @memberof oval_definition
  */
 struct oval_definition *oval_definition_new(struct oval_definition_model *, char *id);
+
+/**
+ * Clone instance of @ref oval_definition and add it to the specified @ref oval_definition_model.
+ * @memberof oval_definition
+ */
+struct oval_definition *oval_definition_clone(struct oval_definition_model *new_model, struct oval_definition *old_definition);
+
 /**
  * Release an instance of @ref oval_definition.
  * All attributes of the Oval_definition are also released.
@@ -982,6 +989,11 @@ void oval_definition_iterator_free(struct oval_definition_iterator *);
  */
 struct oval_test *oval_test_new(struct oval_definition_model *, char *id);
 /**
+ * Clone instance of @ref oval_test and add it to the specified @ref oval_definition_model.
+ * @memberof oval_test
+ */
+struct oval_test *oval_test_clone(struct oval_definition_model *new_model, struct oval_test *old_test);
+/**
  * Destruct instance of @ref oval_test.
  * @memberof oval_test
  */
@@ -1203,6 +1215,11 @@ void oval_test_iterator_free(struct oval_test_iterator *);
  */
 struct oval_object *oval_object_new(struct oval_definition_model *, char *id);
 /**
+ * Clone instance of @ref oval_object and add it to the specified @ref oval_definition_model.
+ * @memberof oval_object
+ */
+struct oval_object *oval_object_clone(struct oval_definition_model *new_model, struct oval_object *old_object);
+/**
  * Free instance of @ref oval_object
  * @memberof oval_object
  */
@@ -1399,7 +1416,11 @@ void oval_object_iterator_free(struct oval_object_iterator *);
  * @memberof oval_state
  */
 struct oval_state *oval_state_new(struct oval_definition_model *, char *id);
-
+/**
+ * Clone instance of @ref oval_state and add it to the specified @ref oval_definition_model.
+ * @memberof oval_state
+ */
+struct oval_state *oval_state_clone(struct oval_definition_model *new_model, struct oval_state *old_state);
 /**
  * Free instance of @ref oval_state
  * @memberof oval_state
@@ -1592,6 +1613,11 @@ bool oval_state_is_valid(struct oval_state *state);
  * @memberof oval_variable
  */
 struct oval_variable *oval_variable_new(struct oval_definition_model *model, char *id, oval_variable_type_t type);
+/**
+ * Clone instance of @ref oval_variable and add it to the specified @ref oval_definition_model.
+ * @memberof oval_variable
+ */
+struct oval_variable *oval_variable_clone(struct oval_definition_model *new_model, struct oval_variable *old_variable);
 /**
  * Free instance of @ref oval_variable.
  * @memberof oval_variable
