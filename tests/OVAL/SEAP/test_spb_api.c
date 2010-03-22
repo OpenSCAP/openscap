@@ -253,8 +253,8 @@ int main (int argc, char *argv[])
         spb_add (spb, b1, 8);
         spb_add (spb, b2, 16);
         spb_add (spb, b3, 32);
-        spb_add (spb, b4, 64);
-        
+        spb_add (spb, b4, 64);        
+
         assume (spb_size (spb) == 8+16+32+64);
         assume (spb_drop_head (spb, 4, 0) == 0);
         assume (spb_size (spb) == 8+16+32+64);
@@ -268,6 +268,7 @@ int main (int argc, char *argv[])
         assume (spb_size (spb) == 0);
 
         spb_free (spb, 0);
+        //////////////////////////////////////////////////////////////////////////
 
         return (0);
 }
