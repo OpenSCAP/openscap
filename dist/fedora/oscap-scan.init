@@ -47,17 +47,17 @@ start() {
 	test -f /etc/sysconfig/oscap-scan || exit 6
 	test x"$OPTIONS" != "x" || exit 6
 	echo  -n $"Starting $prog: "
-	$prog "$OPTIONS" >/dev/null 2>&1
+	$prog $OPTIONS
 	RETVAL=$?
 	if [ $RETVAL -eq 0 ] ; then
 		sleep 1
 		logger "OpenSCAP security scan: PASS"
 	elif [ $RETVAL -eq 1 ] ; then
 		sleep 1
-		logger "OpenSCAP security scan: ERROR"
+		logger "OpenSCAP security scan: ERROR. Run oscap-scan from command line."
 	else
 		sleep 1
-		logger "OpenSCAP security scan: FAILED"
+		logger "OpenSCAP security scan: FAILED. See results in /var/log/oscap-scan.xml.log"
 	fi
 	[ "$RETVAL" -eq 0 ] && success $"$prog startup" || failure $"$prog startup"
 	echo
