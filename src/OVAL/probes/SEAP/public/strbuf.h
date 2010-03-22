@@ -1,4 +1,3 @@
-
 /*
  * Copyright 2008 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
@@ -54,12 +53,15 @@ int strbuf_add   (strbuf_t *buf, const char *str, size_t len);
 int strbuf_addf  (strbuf_t *buf, char *str, size_t len);
 int strbuf_add0  (strbuf_t *buf, const char *str);
 int strbuf_add0f (strbuf_t *buf, char *str);
+int strbuf_addc (strbuf_t *buf, char ch);
 
+size_t strbuf_size (strbuf_t *buf);
 int    strbuf_trunc  (strbuf_t *buf, size_t len);
 size_t strbuf_length (strbuf_t *buf);
 
 char *strbuf_cstr   (strbuf_t *buf);
 char *strbuf_cstr_r (strbuf_t *buf, char *str, size_t len);
+char *strbuf_copy (strbuf_t *buf, void *dst, size_t len);
 
 size_t strbuf_fwrite (FILE *fp, strbuf_t *buf);
 ssize_t strbuf_write  (strbuf_t *buf, int fd);

@@ -65,13 +65,16 @@ void strbuf_free (strbuf_t *buf)
         return;
 }
 
+size_t strbuf_size (strbuf_t *buf)
+{
+        return (buf->size);
+}
+
 static struct strblk *__strblk_new (size_t len)
 {
         struct strblk *blk;
         
-        blk = malloc (sizeof (struct strblk *) +
-                      sizeof (size_t) +
-                      (sizeof (char) * len));
+        blk = malloc (sizeof (struct strblk *) + sizeof (size_t) + (sizeof (char) * len));
         blk->next = NULL;
         blk->size = 0;
         
@@ -152,6 +155,12 @@ int strbuf_addf (strbuf_t *buf, char *str, size_t len)
 int strbuf_add0 (strbuf_t *buf, const char *str)
 {
         return __strbuf_add (buf, (char *)str, strlen (str));
+}
+
+int strbuf_addc (strbuf_t *buf, char ch)
+{
+        /* XXX: direct? */
+        return __strbuf_add (buf, &ch, 1);
 }
 
 int strbuf_add0f (strbuf_t *buf, char *str)
@@ -259,6 +268,28 @@ char *strbuf_cstr_r (strbuf_t *buf, char *str, size_t len)
         }
         
         return (str);
+}
+
+char *strbuf_copy (strbuf_t *buf, void *dst, size_t len)
+{
+        register struct strblk *cur;
+        register uint8_t *mem;
+        
+        if (len < buf->size) {
+                errno = ENOBUFS;
+                return (NULL);
+        }
+        
+        mem = (uint8_t *)dst;
+        cur = buf->beg;
+        
+        while (cur != NULL) {
+                memcpy (mem, cur->data, sizeof (char) * cur->size);
+                mem += cur->size;
+                cur  = cur->next;
+        }
+        
+        return (dst);
 }
 
 size_t strbuf_fwrite (FILE *fp, strbuf_t *buf)
