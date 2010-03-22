@@ -454,7 +454,7 @@ void       SEXP_listit_free (SEXP_it_t *it);
 
 #if __STDC_VERSION__ >= 199901L
 # include <sys/cdefs.h>
-# define __XC(a,b) __CONCAT(a,b)
+# define __SXC(a,b) __CONCAT(a,b)
 
 /* TODO: use alloca & softref_r here */
 /**
@@ -463,7 +463,7 @@ void       SEXP_listit_free (SEXP_it_t *it);
  * @param list the list the loop iterates through
  */
 #define SEXP_list_foreach(var, list)                                    \
-        for (uint32_t __XC(i,__LINE__) = 1; ((var) = SEXP_list_nth (list, __XC(i,__LINE__))) != NULL; ++__XC(i,__LINE__), SEXP_free (var))
+        for (uint32_t __SXC(i,__LINE__) = 1; ((var) = SEXP_list_nth (list, __SXC(i,__LINE__))) != NULL; ++__SXC(i,__LINE__), SEXP_free (var))
 
 /**
  * Iterate through a sublist, assigning each element to a variable.
@@ -473,7 +473,7 @@ void       SEXP_listit_free (SEXP_it_t *it);
  * @param end the index of the last element of the sublist
  */
 #define SEXP_sublist_foreach(var, list, beg, end)                       \
-        for (uint32_t __XC(i,__LINE__) = (beg); __XC(i,__LINE__) <= ((size_t)(end)) && ((var) = SEXP_list_nth (list, __XC(i,__LINE__))) != NULL; ++__XC(i,__LINE__), SEXP_free (var))
+        for (uint32_t __SXC(i,__LINE__) = (beg); __SXC(i,__LINE__) <= ((size_t)(end)) && ((var) = SEXP_list_nth (list, __SXC(i,__LINE__))) != NULL; ++__SXC(i,__LINE__), SEXP_free (var))
 
 #endif /* __STDC_VERSION__ >= 199901L */
 

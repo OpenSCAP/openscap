@@ -1547,52 +1547,73 @@ SEXP_t *SEXP_list_pop (SEXP_t *list)
         return (s_ref);
 }
 
+void SEXP_lstack_init (SEXP_lstack_t *stack)
+{
+        stack->p_list = SEXP_list_new (NULL);
+        stack->l_size = SEXP_LSTACK_INIT_SIZE;
+        stack->l_real = 1;
+        stack->l_sref = sm_alloc (sizeof (SEXP_t *) * SEXP_LSTACK_INIT_SIZE);
+        stack->l_sref[0] = SEXP_softref (stack->p_list);
+
+        return;
+}
+
 SEXP_lstack_t *SEXP_lstack_new (void)
 {
         SEXP_lstack_t *stack;
         
-        _LOGCALL_;
-        
         stack = sm_talloc (SEXP_lstack_t);
-        stack->l_size = SEXP_LSTACK_INIT_SIZE;
-        stack->l_real = 0;
-        stack->l_sref = sm_alloc (sizeof (SEXP_t *) * SEXP_LSTACK_INIT_SIZE);
+        SEXP_lstack_init (stack);
         
         return (stack);
 }
 
-SEXP_t *SEXP_lstack_push (SEXP_lstack_t *stack, const SEXP_t *ref)
+void SEXP_lstack_destroy (SEXP_lstack_t *stack)
 {
-        _A(stack != NULL);
-        _LOGCALL_;
+        size_t i;
 
+        for (i = stack->l_real; i > 0; --i)
+                SEXP_free (stack->l_sref[i - 1]);
+        
+        sm_free (stack->l_sref);
+        SEXP_free (stack->p_list);
+        return;
+}
+
+void SEXP_lstack_free (SEXP_lstack_t *stack)
+{
+        SEXP_lstack_destroy (stack);
+        sm_free (stack);
+        return;
+}
+
+SEXP_t *SEXP_lstack_push (SEXP_lstack_t *stack, SEXP_t *s_exp)
+{
         if (stack->l_real == stack->l_size) {
                 if (stack->l_size < SEXP_LSTACK_GROWFAST_TRESH)
                         stack->l_size <<= 1;
                 else
-                        stack->l_size  += SEXP_LSTACK_GROWSLOW_DIFF;
+                        stack->l_size += SEXP_LSTACK_GROWSLOW_DIFF;
                 
                 stack->l_sref = sm_realloc (stack->l_sref, sizeof (SEXP_t *) * stack->l_size);
         }
         
-        SEXP_VALIDATE(ref);
-
-        return (stack->l_sref[stack->l_real++] = (SEXP_t *)ref);
+        stack->l_sref[stack->l_real++] = s_exp;
+        
+        return (s_exp);
 }
 
 SEXP_t *SEXP_lstack_pop (SEXP_lstack_t *stack)
 {
         SEXP_t *ref;
         size_t  diff;
-
-        _LOGCALL_;
         
         ref  = stack->l_sref[--stack->l_real];
         diff = stack->l_size - stack->l_real;
         
         if (stack->l_size > SEXP_LSTACK_GROWFAST_TRESH) {
                 if (diff >= SEXP_LSTACK_GROWSLOW_DIFF) {
-                        stack->l_size  -= SEXP_LSTACK_GROWSLOW_DIFF;
+                        stack->l_size -= SEXP_LSTACK_GROWSLOW_DIFF;
                         goto resize;
                 }
         } else {
@@ -1601,9 +1622,7 @@ SEXP_t *SEXP_lstack_pop (SEXP_lstack_t *stack)
                         goto resize;
                 }
         }
-
-        SEXP_VALIDATE(ref);
-
+        
         return (ref);
 resize:
         stack->l_sref = sm_realloc (stack->l_sref, sizeof (SEXP_t *) * stack->l_size);
@@ -1612,8 +1631,17 @@ resize:
 
 SEXP_t *SEXP_lstack_top (const SEXP_lstack_t *stack)
 {
-        _LOGCALL_;
         return (stack->l_sref[stack->l_real - 1]);
+}
+
+SEXP_t *SEXP_lstack_list (SEXP_lstack_t *stack)
+{
+        return SEXP_ref (stack->p_list);
+}
+
+size_t SEXP_lstack_depth (SEXP_lstack_t *stack)
+{
+        return (stack->l_real);
 }
 
 /*

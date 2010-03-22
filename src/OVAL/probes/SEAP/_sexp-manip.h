@@ -1,4 +1,3 @@
-
 /*
  * Copyright 2008 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
@@ -30,25 +29,27 @@
 
 OSCAP_HIDDEN_START;
 
-#define SEXP_LSTACK_INIT_SIZE      32
-#define SEXP_LSTACK_GROWFAST_TRESH 512
-#define SEXP_LSTACK_GROWSLOW_DIFF  32
+#define SEXP_LSTACK_INIT_SIZE      8
+#define SEXP_LSTACK_GROWFAST_TRESH 64
+#define SEXP_LSTACK_GROWSLOW_DIFF  8
 
 typedef struct {
-        size_t   l_size;
-        size_t   l_real;
-        SEXP_t **l_sref;
+        SEXP_t   *p_list;
+        size_t    l_size;
+        size_t    l_real;
+        SEXP_t  **l_sref; /* stack of soft refs to lists */
 } SEXP_lstack_t;
 
 SEXP_lstack_t *SEXP_lstack_new (void);
-SEXP_t *SEXP_lstack_push (SEXP_lstack_t *stack, const SEXP_t *ref);
+void SEXP_lstack_init (SEXP_lstack_t *stack);
+void SEXP_lstack_free (SEXP_lstack_t *stack);
+void SEXP_lstack_destroy (SEXP_lstack_t *stack);
+
+SEXP_t *SEXP_lstack_push (SEXP_lstack_t *stack, SEXP_t *ref);
 SEXP_t *SEXP_lstack_pop (SEXP_lstack_t *stack);
 SEXP_t *SEXP_lstack_top (const SEXP_lstack_t *stack);
-
-struct SEXP_it {
-        SEXP_t *s_ref;
-        
-};
+SEXP_t *SEXP_lstack_list (SEXP_lstack_t *stack);
+size_t  SEXP_lstack_depth (SEXP_lstack_t *stack);
 
 OSCAP_HIDDEN_END;
 
