@@ -44,6 +44,11 @@ struct SEXP_pext_dsc {
         SEXP_t       *s_exp;
         void         *sp_data;          /* subparser data */
         void        (*sp_free)(void *); /* function for freeing the subparser data */
+
+        uint8_t       p_label;
+        uint8_t       p_numclass;
+        uint8_t       p_numbase;
+        uint8_t       p_numstage;
 };
 
 #define PEXT_DSC_INITIALIZER { NULL, 0, 0, NULL }
@@ -59,6 +64,13 @@ SEXP_pstate_t *SEXP_pstate_new (void)
         pstate->p_flags  = 0;
         pstate->p_flags0 = 0;
         pstate->p_sexp   = NULL;
+        pstate->sp_data  = NULL;
+        pstate->sp_free  = NULL;
+
+        pstate->p_label    = 128;
+        pstate->p_numclass = SEXP_NUMCLASS_INV;
+        pstate->p_numbase  = 0;
+        pstate->p_numstage = 255;
         
         return (pstate);
 }
@@ -81,14 +93,11 @@ void SEXP_pstate_free (SEXP_pstate_t *pstate)
 
         /*
          * Free the subparser data using the sp_free function
-         * if set. Otherwise use the standard free (sm_free)
-         * function.
+         * if set.
          */
         if (pstate->sp_data != NULL) {
                 if (pstate->sp_free != NULL)
                         pstate->sp_free (pstate->sp_data);
-                else
-                        sm_free (pstate->sp_data);
         }
         
 #ifndef NDEBUG
@@ -308,8 +317,16 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                 /* 125   } (right/closing brace)      */ &&L_BRACECLOSE,
                 /* 126   ~ (tilde)                    */ &&L_CHAR,
                 /* 127 DEL (delete)                   */ &&L_INVALID,
-                /* 128 -------- reserved ------------ */ &&L_INVALID
+                /* 128 -------- reserved ------------ */ &&L_INVALID,
+                /* 129                                */ &&L_CHAR_FIXEDLEN,
+                /* 130                                */ &&L_BRACKETOPEN_FIXEDLEN
         };
+
+#define SEXP_LABELNUM_CHAR        65
+#define SEXP_LABELNUM_CHAR_FIXED  129
+#define SEXP_LABELNUM_NUMBER      48
+#define SEXP_LABELNUM_DTYPE       91
+#define SEXP_LABELNUM_DTYPE_FIXED 130
         
         SEXP_pstate_t *state;
         spb_size_t     spb_len;
@@ -319,8 +336,9 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
         int     ret_p = SEXP_PRET_EUNDEF;
         
         struct SEXP_pext_dsc e_dsc;
-        uint8_t *nbuffer = NULL;
-        
+        uint8_t _nbuffer[512];
+        uint8_t *nbuffer;
+
         /*
          * First check the parser state. In case it already exists update the internal
          * state variables as appropriate. If not then just allocate a new parser state.
@@ -353,6 +371,11 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
         state->p_sexp  = NULL;
         e_dsc.sp_data  = state->sp_data;
         e_dsc.sp_free  = state->sp_free;
+
+        e_dsc.p_label    = state->p_label;        
+        e_dsc.p_numclass = state->p_numclass;
+        e_dsc.p_numbase  = state->p_numbase;
+        e_dsc.p_numstage = state->p_numstage;
         
         assume_d (e_dsc.p_buffer != NULL, NULL);
         
@@ -367,6 +390,13 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
         assume_d (e_dsc.p_bufoff + e_dsc.p_explen < spb_len, NULL);
         
         ref_l = SEXP_lstack_top (&state->l_stack);
+        
+        if (e_dsc.p_explen > 0) {
+                assume_d (e_dsc.s_exp   != NULL, NULL);
+                assume_r (e_dsc.p_label != 128, NULL);
+                
+                goto *d_labels[e_dsc.p_label];
+        }
         
         if (e_dsc.s_exp != NULL)
                 goto L_NO_SEXP_ALLOC;
@@ -400,10 +430,23 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                 /* NOTREACHED */
                 break;
         L_CHAR:
+                e_dsc.p_label = SEXP_LABELNUM_CHAR;
+                
                 if ((ret_p = SEXP_parse_ul_string_si (&e_dsc)) != SEXP_PRET_SUCCESS)
                         break;
                 goto L_SEXP_ADD;
         L_CHAR_FIXEDLEN:
+                e_dsc.p_label = SEXP_LABELNUM_CHAR_FIXED;
+                
+                if (e_dsc.p_bufoff + e_dsc.p_explen > spb_len) {
+                        ret_p = SEXP_PRET_EUNFIN;
+                        break;
+                } else {
+                        if ((ret_p = SEXP_parse_kl_string (&e_dsc)) != SEXP_PRET_SUCCESS)
+                                break;
+                        goto L_SEXP_ADD;
+                }
+                /* NOTREACHED */
         L_DQUOTE:
                 if ((ret_p = SEXP_parse_ul_string_dq (&e_dsc)) != SEXP_PRET_SUCCESS)
                         break;
@@ -412,31 +455,108 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                 if ((ret_p = SEXP_parse_ul_string_sq (&e_dsc)) != SEXP_PRET_SUCCESS)
                         break;
                 goto L_SEXP_ADD;
-        L_MINUS:
-                e_dsc.p_numclass = SEXP_NUMCLASS_INT;
-        L_PLUS:
         L_DOT:
+#define SEXP_NUMSTAGE1     0
+#define SEXP_NUMSTAGE2     1
+#define SEXP_NUMSTAGE3     2
+#define SEXP_NUMSTAGEf     3
+#define SEXP_NUMSTAGE_EXP  4
+#define SEXP_NUMSTAGE_EXP2 5
+#define SEXP_NUMSTAGE_FLT  6
+#define SEXP_NUMSTAGE_CONT_INT 7
+#define SEXP_NUMSTAGE_CHAR_FIXED 8
+
+                if (e_dsc.p_bufoff + 1 < spb_len) {
+                        ++e_dsc.p_explen;
+                        
+                        if (isdigit (spb_octet (e_dsc.p_buffer, e_dsc.p_bufoff + e_dsc.p_explen))) {
+                                e_dsc.p_numclass = SEXP_NUMCLASS_FLT;
+                                e_dsc.p_numstage = SEXP_NUMSTAGE_FLT;
+                                e_dsc.p_label    = SEXP_LABELNUM_NUMBER;
+                                goto L_NUMBER_final_flt;
+                        } else
+                                goto L_CHAR;
+                } else {
+                        if (e_dsc.p_flags & SEXP_PFLAG_EOFOK)
+                                goto L_CHAR;
+                        else {
+                                ret_p = SEXP_PRET_EUNFIN;
+                                break;
+                        }
+                }
+                /* NOTREACHED */
+        L_PLUS:
+        L_MINUS:
+                if (e_dsc.p_bufoff + 1 < spb_len) {
+                        register uint8_t tmp_c;
+                        
+                        tmp_c = spb_octet (e_dsc.p_buffer, e_dsc.p_bufoff + 1);
+                        
+                        if (isdigit (tmp_c)) {
+                                e_dsc.p_numclass = SEXP_NUMCLASS_INT;
+                                e_dsc.p_numstage = SEXP_NUMSTAGE_CONT_INT;
+                                e_dsc.p_label    = SEXP_LABELNUM_NUMBER;
+                                
+                                ++e_dsc.p_explen;
+                                
+                                goto L_NUMBER_cont_int;
+                        } else if (tmp_c == '.') {
+                                if (e_dsc.p_bufoff + 2 < spb_len) {
+                                        ++e_dsc.p_explen;
+                                        ++e_dsc.p_explen;
+                                        
+                                        if (isdigit (spb_octet (e_dsc.p_buffer, e_dsc.p_bufoff + 2))) {
+                                                e_dsc.p_numclass = SEXP_NUMCLASS_FLT;
+                                                e_dsc.p_numstage = SEXP_NUMSTAGE_FLT;
+                                                e_dsc.p_label    = SEXP_LABELNUM_NUMBER;
+                                                goto L_NUMBER_final_flt;
+                                        } else
+                                                goto L_CHAR;
+                                } else {
+                                        if (e_dsc.p_flags & SEXP_PFLAG_EOFOK) {
+                                                ++e_dsc.p_explen;
+                                                ++e_dsc.p_explen;
+                                                
+                                                goto L_CHAR;
+                                        } else {
+                                                ret_p = SEXP_PRET_EUNFIN;
+                                                break;
+                                        }
+                                }
+                        } else {
+                                ++e_dsc.p_explen;
+                                goto L_CHAR;
+                        }
+                } else {
+                        if (e_dsc.p_flags & SEXP_PFLAG_EOFOK) {
+                                ++e_dsc.p_explen;
+                                goto L_CHAR;
+                        } else {
+                                ret_p = SEXP_PRET_EUNFIN;
+                                break;
+                        }
+                }
+                break;
+                /* NOTREACHED */
+        L_NUMBER:
+                e_dsc.p_label = SEXP_LABELNUM_NUMBER;
+                
                 /*
                  * Numbers are handled in a special way because they can have the meaning of
                  * a "length prefix". Length prefix is always related to a expression and in
                  * our case it's always the very next expression in the buffer. In some cases
                  * the lenght prefix and the expression are separated with a colon character.
                  */
-        L_NUMBER:
                 if (e_dsc.p_explen > 0) {
                         const void *n_labels[] = {
                                 &&L_NUMBER_stage1,
-#define SEXP_NUMSTAGE1 0
                                 &&L_NUMBER_stage2,
-#define SEXP_NUMSTAGE2 1
                                 &&L_NUMBER_stage3,
-#define SEXP_NUMSTAGE3 2
                                 &&L_NUMBER_final,
-#define SEXP_NUMSTAGEf 3
                                 &&L_NUMBER_final_exp,
-#define SEXP_NUMSTAGE_EXP 4
-                                &&L_NUMBER_final_exp2
-#define SEXP_NUMSTAGE_EXP2 5
+                                &&L_NUMBER_final_exp2,
+                                &&L_NUMBER_final_flt,
+                                &&L_NUMBER_cont_int
                         };
                         
                         assume_d (e_dsc.p_numstage < (sizeof n_labels/sizeof (void *)), SEXP_PRET_EUNDEF);
@@ -448,18 +568,19 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                 
                 switch (cur_c) {
                 case '.':
-                        e_dsc.p_numclass = SEXP_NUMCLASS_FLT;                        
                 L_NUMBER_final_flt:
+                        e_dsc.p_numclass = SEXP_NUMCLASS_FLT;
                         ++e_dsc.p_explen;
 
                         spb_iterate (e_dsc.p_buffer, e_dsc.p_bufoff + e_dsc.p_explen, cur_c,
                                      if (!isdigit (cur_c)) {
                                              if (isnextexp (cur_c))
-                                                     goto L_NUMBER_final;;
+                                                     goto L_NUMBER_stage3;
                                              else {
                                                      switch (cur_c) {
                                                      case 'e':
                                                      case 'E':
+                                                             ++e_dsc.p_explen;
                                                              goto L_NUMBER_final_exp;
                                                      default:
                                                              goto L_NUMBER_invalid;
@@ -471,7 +592,7 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                                 );
                         
                         if (e_dsc.p_flags & SEXP_PFLAG_EOFOK)
-                                goto L_NUMBER_final;
+                                goto L_NUMBER_stage3;
                         else {
                                 ret_p = SEXP_PRET_EUNFIN;
                                 break; /* switch */
@@ -482,7 +603,7 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                                         e_dsc.p_numclass = SEXP_NUMCLASS_UINT;
                                 
                                 ++e_dsc.p_explen;
-                                
+                        L_NUMBER_cont_int:
                                 spb_iterate (e_dsc.p_buffer, e_dsc.p_bufoff + e_dsc.p_explen, cur_c,
                                              if (!isdigit (cur_c))
                                                      goto L_NUMBER_stage2;
@@ -506,17 +627,17 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                 
                 switch (cur_c) {
                 case '.':
-                        e_dsc.p_numclass = SEXP_NUMCLASS_FLT;                        
                         goto L_NUMBER_final_flt;
                 case 'e':
-                        1==1; /* fix indentation */
                 case 'E':
-                        e_dsc.p_numclass = SEXP_NUMCLASS_EXP;
                         ++e_dsc.p_explen;
                 L_NUMBER_final_exp:
+                        e_dsc.p_numclass = SEXP_NUMCLASS_EXP;
                         e_dsc.p_numstage = SEXP_NUMSTAGE_EXP;
                         
                         if (e_dsc.p_bufoff + e_dsc.p_explen < spb_len) {
+                                cur_c = spb_octet (e_dsc.p_buffer, e_dsc.p_bufoff + e_dsc.p_explen);
+                                
                                 switch (cur_c) {
                                 case '+':
                                 case '-':
@@ -546,6 +667,9 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                                              }
                                              ++e_dsc.p_explen;
                                         );
+                        } else {
+                                if (e_dsc.p_flags & SEXP_PFLAG_EOFOK)
+                                        goto L_NUMBER_invalid;
                         }
                         
                         if (e_dsc.p_flags & SEXP_PFLAG_EOFOK)
@@ -560,13 +684,23 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                  * Find out whether the number parsed in the previous stages
                  * in a length prefix. Length prefix a non-negative integer
                  * followed by an expression.
+                 *
+                 * We need the number to be stored in a continues memory region
+                 * because the string to number conversion API doesn't support
+                 * sparse buffers currently. However, if the whole number happens
+                 * to be stored in just one buffer, we can get a pointer to it
+                 * using the spb_direct function. In other case, we try to copy
+                 * the number to a statically allocated buffer and if it's too
+                 * large we allocate a new buffer on the heap.
                  */
                 
-                e_dsc.sp_data = spb_direct (e_dsc.p_buffer, e_dsc.p_bufoff, e_dsc.p_explen);
+                e_dsc.sp_data = (void *)spb_direct (e_dsc.p_buffer, e_dsc.p_bufoff, e_dsc.p_explen);
                 e_dsc.sp_free = NULL;
                 
                 if (e_dsc.sp_data == NULL) {
-                        if (e_dsc.p_explen >= nbuflen) {
+                        if (e_dsc.p_explen <= (sizeof _nbuffer / sizeof (uint8_t)))
+                                e_dsc.sp_data = (void *)_nbuffer;
+                        else {
                                 e_dsc.sp_data = sm_alloc (sizeof (uint8_t) * e_dsc.p_explen);
                                 e_dsc.sp_free = sm_free;
                                 
@@ -575,15 +709,22 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                                         ret_p = SEXP_PRET_EUNFIN;
                                         break;
                                 }
-                        } else
-                                e_dsc.sp_data = (void *)_nbuffer;
+                        }
+                        
+                        if (spb_pick (e_dsc.p_buffer, e_dsc.p_bufoff,
+                                      e_dsc.p_explen, e_dsc.sp_data) != 0)
+                        {
+                                e_dsc.p_numstage = SEXP_NUMSTAGE3;
+                                ret_p = SEXP_PRET_EUNDEF;
+                                break;
+                        }
                 }
                 
                 nbuffer = (uint8_t *)e_dsc.sp_data;
                 cur_c   = spb_octet (e_dsc.p_buffer, e_dsc.p_bufoff + e_dsc.p_explen);
                 
                 if (e_dsc.p_numclass == SEXP_NUMCLASS_UINT) {
-                        unsigned long long explen = strtoll (nbuffer, NULL, 10);
+                        uint64_t explen = strto_uint64_dec ((char *)nbuffer, e_dsc.p_explen, NULL);
                         
                         if (explen == 0 && (errno == EINVAL || errno == ERANGE)) {
                                 ret_p = SEXP_PRET_EINVAL;
@@ -592,25 +733,25 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                         
                         switch (cur_c) {
                         case ':':
-                                e_dsc.p_bufoff  += e_dsc.p_explen + 1;
+                                e_dsc.p_bufoff  += e_dsc.p_explen + 1 /* skip colon */;
                                 e_dsc.p_explen   = (spb_size_t)explen;
-                                e_dsc.p_fixedlen = 1;
+                                e_dsc.p_numclass = SEXP_NUMCLASS_PRE;
                                 goto L_CHAR_FIXEDLEN;
                         case '|':
                                 e_dsc.p_bufoff  += e_dsc.p_explen;
                                 e_dsc.p_explen   = (spb_size_t)explen;
-                                e_dsc.p_fixedlen = 1;
+                                e_dsc.p_numclass = SEXP_NUMCLASS_PRE;
                                 goto L_VERTBAR_FIXEDLEN;
                         case '[':
                                 e_dsc.p_bufoff  += e_dsc.p_explen;
                                 e_dsc.p_explen   = (spb_size_t)explen;
-                                e_dsc.p_fixedlen = 1;
+                                e_dsc.p_numclass = SEXP_NUMCLASS_PRE;
                                 goto L_BRACKETOPEN_FIXEDLEN;
                         case '{':
                                 e_dsc.p_bufoff  += e_dsc.p_explen;
                                 e_dsc.p_explen   = (spb_size_t)explen;
-                                e_dsc.p_fixedlen = 1;
-                                goto L_BRACEPOEN_FIXEDLEN;
+                                e_dsc.p_numclass = SEXP_NUMCLASS_PRE;
+                                goto L_BRACEOPEN_FIXEDLEN;
                         }
                 }
 
@@ -624,7 +765,7 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                         
                         switch (e_dsc.p_numclass) {
                         case SEXP_NUMCLASS_INT: {
-                                int64_t number = strto_int64_dec (nbuffer, e_dsc.p_explen, NULL);
+                                int64_t number = strto_int64_dec ((char *)nbuffer, e_dsc.p_explen, NULL);
                                 
                                 switch (errno) {
                                 case ERANGE:
@@ -639,20 +780,51 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                                 if (number < INT16_MIN) {
                                         if (number < INT32_MIN) {
                                                 /* 64 */
+                                                if (SEXP_val_new (&v_dsc, sizeof (struct SEXP_val_num_i64),
+                                                                  SEXP_VALTYPE_NUMBER) != 0)
+                                                {
+                                                        /* TODO: handle this */
+                                                        abort ();
+                                                }
+                                                SEXP_NCASTP(i64,v_dsc.mem)->n = (int64_t)number;
+                                                SEXP_NCASTP(i64,v_dsc.mem)->t = SEXP_NUM_INT64;
                                         } else {
                                                 /* 32 */
+                                                if (SEXP_val_new (&v_dsc, sizeof (struct SEXP_val_num_i32),
+                                                                  SEXP_VALTYPE_NUMBER) != 0)
+                                                {
+                                                        /* TODO: handle this */
+                                                        abort ();
+                                                }
+                                                SEXP_NCASTP(i32,v_dsc.mem)->n = (int32_t)number;
+                                                SEXP_NCASTP(i32,v_dsc.mem)->t = SEXP_NUM_INT32;
                                         }
                                 } else {
                                         if (number < INT8_MIN) {
                                                 /* 16 */
+                                                if (SEXP_val_new (&v_dsc, sizeof (struct SEXP_val_num_i16),
+                                                                  SEXP_VALTYPE_NUMBER) != 0)
+                                                {
+                                                        /* TODO: handle this */
+                                                        abort ();
+                                                }
+                                                SEXP_NCASTP(i16,v_dsc.mem)->n = (int16_t)number;
+                                                SEXP_NCASTP(i16,v_dsc.mem)->t = SEXP_NUM_INT16;
                                         } else {
                                                 /* 8 */
+                                                if (SEXP_val_new (&v_dsc, sizeof (struct SEXP_val_num_i8),
+                                                                  SEXP_VALTYPE_NUMBER) != 0)
+                                                {
+                                                        /* TODO: handle this */
+                                                        abort ();
+                                                }
+                                                SEXP_NCASTP(i8,v_dsc.mem)->n = (int8_t)number;
+                                                SEXP_NCASTP(i8,v_dsc.mem)->t = SEXP_NUM_INT8;
                                         }
                                 }
-
                         }       break;
                         case SEXP_NUMCLASS_UINT: {
-                                uint64_t number = strto_uint64_dec (nbuffer, e_dsc.p_explen, NULL);
+                                uint64_t number = strto_uint64_dec ((char *)nbuffer, e_dsc.p_explen, NULL);
                                 
                                 switch (errno) {
                                 case ERANGE:
@@ -667,33 +839,85 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                                 if (number > UINT16_MAX) {
                                         if (number > UINT32_MAX) {
                                                 /* 64 */
+                                                if (SEXP_val_new (&v_dsc, sizeof (struct SEXP_val_num_u64),
+                                                                  SEXP_VALTYPE_NUMBER) != 0)
+                                                {
+                                                        /* TODO: handle this */
+                                                        abort ();
+                                                }
+                                                SEXP_NCASTP(u64,v_dsc.mem)->n = (uint64_t)number;
+                                                SEXP_NCASTP(u64,v_dsc.mem)->t = SEXP_NUM_UINT64;
                                         } else {
                                                 /* 32 */
+                                                if (SEXP_val_new (&v_dsc, sizeof (struct SEXP_val_num_u32),
+                                                                  SEXP_VALTYPE_NUMBER) != 0)
+                                                {
+                                                        /* TODO: handle this */
+                                                        abort ();
+                                                }
+                                                SEXP_NCASTP(u32,v_dsc.mem)->n = (uint32_t)number;
+                                                SEXP_NCASTP(u32,v_dsc.mem)->t = SEXP_NUM_UINT32;
                                         }
                                 } else {
                                         if (number > UINT8_MAX) {
                                                 /* 16 */
+                                                if (SEXP_val_new (&v_dsc, sizeof (struct SEXP_val_num_u16),
+                                                                  SEXP_VALTYPE_NUMBER) != 0)
+                                                {
+                                                        /* TODO: handle this */
+                                                        abort ();
+                                                }
+                                                SEXP_NCASTP(u16,v_dsc.mem)->n = (uint16_t)number;
+                                                SEXP_NCASTP(u16,v_dsc.mem)->t = SEXP_NUM_UINT16;
                                         } else {
                                                 /* 8 */
+                                                if (SEXP_val_new (&v_dsc, sizeof (struct SEXP_val_num_u8),
+                                                                  SEXP_VALTYPE_NUMBER) != 0)
+                                                {
+                                                        /* TODO: handle this */
+                                                        abort ();
+                                                }
+                                                SEXP_NCASTP(u8,v_dsc.mem)->n = (uint8_t)number;
+                                                SEXP_NCASTP(u8,v_dsc.mem)->t = SEXP_NUM_UINT8;
                                         }
                                 }
-
                         }       break;
                         case SEXP_NUMCLASS_FLT:
                         case SEXP_NUMCLASS_EXP: {
                                 double number;
                                 
-                                number = strto_double (nbuffer, e_dsc.p_explen, NULL);
-                                
+                                number = strto_double ((char *)nbuffer, e_dsc.p_explen, NULL);
 
+                                switch (errno) {
+                                case ERANGE:
+                                        goto L_NUMBER_invalid;
+                                case EINVAL:
+#ifndef NDEBUG
+                                        abort ();
+#endif
+                                        goto L_NUMBER_invalid;
+                                }
+
+                                if (SEXP_val_new (&v_dsc, sizeof (struct SEXP_val_num_f),
+                                                  SEXP_VALTYPE_NUMBER) != 0)
+                                {
+                                        /* TODO: handle this */
+                                        abort ();
+                                }
+                                SEXP_NCASTP(f,v_dsc.mem)->n = (double)number;
+                                SEXP_NCASTP(f,v_dsc.mem)->t = SEXP_NUM_DOUBLE;
                         }       break;
-                        default:
+                        default: /* Unknown number class */
 #ifndef NDEBUG
                                 abort ();
 #endif
                                 goto L_NUMBER_invalid;
                         }
-
+                        assume_d (e_dsc.s_exp != NULL, SEXP_PRET_EUNDEF);
+                        /* update the value pointer */
+                        e_dsc.s_exp->s_valp = SEXP_val_ptr (&v_dsc);
+                        ret_p = SEXP_PRET_SUCCESS;
+                        
                         goto L_SEXP_ADD;
                 }
         L_NUMBER_invalid:
@@ -786,13 +1010,31 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                 }
                 /* NOTREACHED */
         L_BRACKETOPEN:
+                e_dsc.p_label = SEXP_LABELNUM_DTYPE;
+                
                 if ((ret_p = SEXP_parse_ul_datatype (&e_dsc)) != SEXP_PRET_SUCCESS)
                         break;
-                goto L_SEXP_ADD;
+
+                e_dsc.p_bufoff += e_dsc.p_explen;
+                e_dsc.p_explen  = 0;
+                
+                goto L_NO_SEXP_ALLOC;
         L_BRACKETOPEN_FIXEDLEN:
-                if ((ret_p = SEXP_parse_kl_datatype (&e_dsc)) != SEXP_PRET_SUCCESS)
+                e_dsc.p_label = SEXP_LABELNUM_DTYPE_FIXED;
+                
+                if (e_dsc.p_bufoff + e_dsc.p_explen + 2 /* [] */ > spb_len) {
+                        ret_p = SEXP_PRET_EUNFIN;
                         break;
-                goto L_SEXP_ADD;
+                } else {
+                        if ((ret_p = SEXP_parse_kl_datatype (&e_dsc)) != SEXP_PRET_SUCCESS)
+                                break;
+                
+                        e_dsc.p_bufoff += e_dsc.p_explen;
+                        e_dsc.p_explen  = 0;
+                
+                        goto L_NO_SEXP_ALLOC;
+                }
+                /* NOTREACHED */
         L_BRACEOPEN:
                 /* b64 decode - not supported yet */
                 ret_p = SEXP_PRET_EINVAL;
@@ -867,6 +1109,11 @@ SKIP_LOOP:
                 state->p_sexp   = e_dsc.s_exp;
                 state->sp_data  = e_dsc.sp_data;
                 state->sp_free  = e_dsc.sp_free;
+
+                state->p_label    = e_dsc.p_label;
+                state->p_numclass = e_dsc.p_numclass;
+                state->p_numbase  = e_dsc.p_numbase;
+                state->p_numstage = e_dsc.p_numstage;
                 
                 return (NULL);
         case SEXP_PRET_EINVAL:
@@ -937,9 +1184,7 @@ __PARSE_RT SEXP_parse_ul_string_si (__PARSE_PT(dsc))
                 
                 return (SEXP_PRET_EUNFIN);
         }
-found:
-        assume_r (spb_size (dsc->p_buffer) >= itb + cnt, SEXP_PRET_EUNDEF);
-        
+found:        
         /* 
          * update length of the processed expression - after this
          * step the e_length contains the whole length of the textual
@@ -949,6 +1194,7 @@ found:
         
         /* the buffer can't be smaller than the expression */
         assume_d (spb_size (dsc->p_buffer) >= dsc->p_explen, SEXP_PRET_EUNDEF);
+        assume_r (spb_size (dsc->p_buffer) >= dsc->p_bufoff + dsc->p_explen, SEXP_PRET_EUNDEF);
         
         {/******************************************************************************************/
                 /*
@@ -1186,11 +1432,10 @@ __PARSE_RT SEXP_parse_ul_string_sq (__PARSE_PT(dsc))
         dsc->p_explen += cnt;
         return (SEXP_PRET_EUNFIN);        
 found:
-        assume_r (spb_size (dsc->p_buffer) >= itb + cnt, SEXP_PRET_EUNDEF);
-        
         dsc->p_explen += cnt + 1 /* count in the last quote */;
         
         assume_d (spb_size (dsc->p_buffer) >= dsc->p_explen, SEXP_PRET_EUNDEF);
+        assume_r (spb_size (dsc->p_buffer) >= dsc->p_bufoff + dsc->p_explen, SEXP_PRET_EUNDEF);
         
         {/******************************************************************************************/
                 SEXP_val_t v_dsc;
@@ -1225,35 +1470,286 @@ found:
 
 __PARSE_RT SEXP_parse_kl_string (__PARSE_PT(dsc))
 {
+        SEXP_val_t v_dsc;
+        
         assume_d (dsc != NULL, SEXP_PRET_EUNDEF);
         assume_d (dsc->p_buffer != NULL, SEXP_PRET_EUNDEF);
-        return (SEXP_PRET_EUNDEF);
+
+        if (SEXP_val_new (&v_dsc, sizeof (char) * dsc->p_explen,
+                          SEXP_VALTYPE_STRING) != 0)
+        {
+                return (SEXP_PRET_EINVAL);
+        }
+        
+        if (spb_pick (dsc->p_buffer, dsc->p_bufoff,
+                      dsc->p_explen, v_dsc.mem) != 0)
+        {
+                /* XXX: value leak */
+                return (SEXP_PRET_EUNDEF);
+        }
+        
+        dsc->s_exp->s_valp = SEXP_val_ptr (&v_dsc);
+        
+        return (SEXP_PRET_SUCCESS);
 }
 
 __PARSE_RT SEXP_parse_ul_string_b64 (__PARSE_PT(dsc))
 {
+        register uint8_t    oct;
+        register spb_size_t cnt;
+        spb_size_t itb;
+        
         assume_d (dsc != NULL, SEXP_PRET_EUNDEF);
         assume_d (dsc->p_buffer != NULL, SEXP_PRET_EUNDEF);
-        return (SEXP_PRET_EUNDEF);
+
+        if (dsc->p_explen == 0) {
+                itb = dsc->p_bufoff + 1;
+                cnt = 1;
+        } else {
+                itb = dsc->p_bufoff + dsc->p_explen;
+                cnt = 0;
+        }
+        
+        spb_iterate (dsc->p_buffer, itb, oct,
+                     if (oct == '|')
+                             goto found;
+                     if ((oct >= '0' && oct <= '9') ||
+                         (oct >= 'A' && oct <= 'Z') ||
+                         (oct >= 'a' && oct <= 'z') ||
+                         (oct == '=' || oct == '+' || oct == '/'))
+                             ++cnt;
+                     else
+                             return (SEXP_PRET_EINVAL);
+                );
+        
+        dsc->p_explen += cnt;
+        return (SEXP_PRET_EUNFIN);
+found:
+        dsc->p_explen += cnt + 1;
+        
+        {
+                SEXP_val_t v_dsc;
+                char    *b_enc, _b_enc[1024];
+                bool     b_encfree;
+                uint8_t *b_dec;
+                size_t   b_declen;
+           
+                b_enc = (char *)spb_direct (dsc->p_buffer, dsc->p_bufoff + 1, dsc->p_explen - 2);
+                
+                if (b_enc == NULL) {
+                        if (dsc->p_explen - 2 <= sizeof (_b_enc)) {
+                                b_enc = _b_enc;
+                                b_encfree = false;
+                        } else {
+                                b_enc = sm_alloc (sizeof (char *) * (dsc->p_explen));
+                                b_encfree = true;
+                        }
+
+                        if (spb_pick (dsc->p_buffer, dsc->p_bufoff + 1, dsc->p_explen - 2, b_enc) != 0)
+                                return (SEXP_PRET_EUNDEF);
+                } else
+                        b_encfree = false;
+                
+                b_declen = base64_decode (b_enc, dsc->p_explen - 2, &b_dec);
+                
+                if (b_declen == 0) {
+                        if (b_encfree)
+                                sm_free (b_enc);
+                        
+                        return (SEXP_PRET_EINVAL);
+                }
+                
+                if (SEXP_val_new (&v_dsc, sizeof (char) * b_declen,
+                                  SEXP_VALTYPE_STRING) != 0)
+                {
+                        sm_free (b_dec);
+                        
+                        if (b_encfree)
+                                sm_free (b_enc);
+                        
+                        return (SEXP_PRET_EUNDEF);
+                }
+
+                memcpy (v_dsc.mem, b_dec, sizeof (char) * b_declen);
+                sm_free (b_dec);
+                
+                if (b_encfree)
+                        sm_free (b_enc);
+                
+                dsc->s_exp->s_valp = SEXP_val_ptr (&v_dsc);
+        }
+       
+        return (SEXP_PRET_SUCCESS);
 }
 
 __PARSE_RT SEXP_parse_kl_string_b64 (__PARSE_PT(dsc))
-{
+{        
+        SEXP_val_t v_dsc;
+        char    *b_enc, _b_enc[1024];
+        bool     b_encfree;
+        uint8_t *b_dec;
+        size_t   b_declen;
+ 
         assume_d (dsc != NULL, SEXP_PRET_EUNDEF);
         assume_d (dsc->p_buffer != NULL, SEXP_PRET_EUNDEF);
-        return (SEXP_PRET_EUNDEF);
+          
+        b_enc = (char *)spb_direct (dsc->p_buffer, dsc->p_bufoff + 1, dsc->p_explen);
+        
+        if (b_enc == NULL) {
+                if (dsc->p_explen <= sizeof (_b_enc)) {
+                        b_enc = _b_enc;
+                        b_encfree = false;
+                } else {
+                        b_enc = sm_alloc (sizeof (char *) * (dsc->p_explen));
+                        b_encfree = true;
+                }
+
+                if (spb_pick (dsc->p_buffer, dsc->p_bufoff + 1, dsc->p_explen, b_enc) != 0)
+                        return (SEXP_PRET_EUNDEF);
+        } else
+                b_encfree = false;
+        
+        b_declen = base64_decode (b_enc, dsc->p_explen, &b_dec);
+        
+        if (b_declen == 0) {
+                if (b_encfree)
+                        sm_free (b_enc);
+                        
+                return (SEXP_PRET_EINVAL);
+        }
+                
+        if (SEXP_val_new (&v_dsc, sizeof (char) * b_declen,
+                          SEXP_VALTYPE_STRING) != 0)
+        {
+                sm_free (b_dec);
+                        
+                if (b_encfree)
+                        sm_free (b_enc);
+                        
+                return (SEXP_PRET_EUNDEF);
+        }
+
+        memcpy (v_dsc.mem, b_dec, sizeof (char) * b_declen);
+        sm_free (b_dec);
+                
+        if (b_encfree)
+                sm_free (b_enc);
+                
+        dsc->s_exp->s_valp = SEXP_val_ptr (&v_dsc);
+        
+        ++dsc->p_explen;
+        ++dsc->p_explen;
+
+        return (SEXP_PRET_SUCCESS);
 }
 
 __PARSE_RT SEXP_parse_ul_datatype (__PARSE_PT(dsc))
 {
+        spb_size_t itb;
+        register spb_size_t cnt;
+        register uint8_t    oct;
+        
         assume_d (dsc != NULL, SEXP_PRET_EUNDEF);
         assume_d (dsc->p_buffer != NULL, SEXP_PRET_EUNDEF);
-        return (SEXP_PRET_EUNDEF);
+        assume_d (dsc->s_exp->s_type == NULL, SEXP_PRET_EUNDEF);
+        
+        /* count in the starting quote if this is the first invocation */
+        if (dsc->p_explen == 0) {
+                itb = dsc->p_bufoff + 1;
+                cnt = 1;
+        } else {
+                itb = dsc->p_bufoff + dsc->p_explen;
+                cnt = 0;
+        }
+        
+        spb_iterate (dsc->p_buffer, itb, oct,
+                     if (oct == ']')
+                             goto found;                     
+                     ++cnt;
+                );
+        
+        dsc->p_explen += cnt;
+        return (SEXP_PRET_EUNFIN);        
+found:
+        dsc->p_explen += cnt + 1 /* count in the last bracket */;
+        
+        assume_d (spb_size (dsc->p_buffer) >= dsc->p_explen, SEXP_PRET_EUNDEF);
+        assume_r (spb_size (dsc->p_buffer) >= dsc->p_bufoff + dsc->p_explen, SEXP_PRET_EUNDEF);
+
+        {
+                char *name, name_static[128];
+                
+                if ((dsc->p_explen - 2) < sizeof name_static)
+                        name = name_static;
+                else 
+                        name = sm_alloc (sizeof (char) * (dsc->p_explen - 1));
+                
+                if (spb_pick (dsc->p_buffer, dsc->p_bufoff + 1, dsc->p_explen - 2, name) != 0) {
+                        if (name != name_static)
+                                sm_free (name);
+                        
+                        return (SEXP_PRET_EUNDEF);
+                }
+                
+                name[dsc->p_explen - 2] = '\0';
+                dsc->s_exp->s_type = SEXP_datatype_get (&g_datatypes, name);
+                
+                if (dsc->s_exp->s_type == NULL) {
+                        SEXP_datatype_t datatype;
+                        
+                        datatype.name     = (name != name_static ? name : strdup (name));
+                        datatype.name_len = dsc->p_explen - 2;
+                        datatype.op       = NULL;
+                        datatype.op_cnt   = 0;
+                        
+                        dsc->s_exp->s_type = SEXP_datatype_add (&g_datatypes, &datatype);
+                } else {
+                        if (name != name_static)
+                                sm_free (name);
+                }
+        }
+        
+        return (SEXP_PRET_SUCCESS);
 }
 
 __PARSE_RT SEXP_parse_kl_datatype (__PARSE_PT(dsc))
 {
+        char *name, name_static[128];
+
         assume_d (dsc != NULL, SEXP_PRET_EUNDEF);
         assume_d (dsc->p_buffer != NULL, SEXP_PRET_EUNDEF);
-        return (SEXP_PRET_EUNDEF);
+                
+        if (dsc->p_explen < sizeof name_static)
+                name = name_static;
+        else 
+                name = sm_alloc (sizeof (char) * (dsc->p_explen + 1));
+        
+        if (spb_pick (dsc->p_buffer, dsc->p_bufoff + 1, dsc->p_explen, name) != 0) {
+                if (name != name_static)
+                        sm_free (name);
+                
+                return (SEXP_PRET_EUNDEF);
+        }
+                
+        name[dsc->p_explen] = '\0';
+        dsc->s_exp->s_type = SEXP_datatype_get (&g_datatypes, name);
+        
+        if (dsc->s_exp->s_type == NULL) {
+                SEXP_datatype_t datatype;
+                        
+                datatype.name     = (name != name_static ? name : strdup (name));
+                datatype.name_len = dsc->p_explen;
+                datatype.op       = NULL;
+                datatype.op_cnt   = 0;
+                
+                dsc->s_exp->s_type = SEXP_datatype_add (&g_datatypes, &datatype);
+        } else {
+                if (name != name_static)
+                        sm_free (name);
+        }
+        
+        ++dsc->p_explen;
+        ++dsc->p_explen;
+        
+        return (SEXP_PRET_SUCCESS);
 }

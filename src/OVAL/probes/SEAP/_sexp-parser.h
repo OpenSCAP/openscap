@@ -57,10 +57,11 @@ struct SEXP_pstate {
         void         *sp_data;          /* subparser data */
         void        (*sp_free)(void *); /* function for freeing the subparser data */
 
+        uint8_t       p_label;  /* where to jump if p_explen > 0 */
+        
         uint8_t       p_numclass;
         uint8_t       p_numbase;
         uint8_t       p_numstage;
-        int8_t        p_numsign;
         
         /*
          * Output data
