@@ -116,14 +116,6 @@ function test_seap_incorrect_expression {
 	"[UINT8]123)" \
 	"[url]http://example.com\"" \
 	"[simple string])hello" \
-	"#40414243" \
-	"#4041424#)" \
-	"#4#)" \
-	")#4#" \
-	"#akjsd#" \
-	"#234afg#" \
-	"(#404#" \
-	"[hex])#414243#" \
 	"|TWFu|)" \
 	"([base64]))|TWFu|" \
 	"|TW9ua2V5Cg==|))" \
@@ -136,7 +128,7 @@ function test_seap_incorrect_expression {
 	)
 
     for I in "${ARGS[@]}"; do
-	./sexp_parser $I > test_seap_tc01.out
+	./sexp_parser "$I" > test_seap_tc01.out
 	ret_val=$[$ret_val+$?]
     done 
 
@@ -295,11 +287,6 @@ function test_seap_correct_expression {
 	"[UINT8]123" \
 	"[url]\"http://example.com\"" \
 	"[simple string]hello" \
-	"#40414243#" \
-	"#4041424#" \
-	"#4#" \
-	"#404#" \
-	"[hex]#414243#" \
 	"|TWFu|" \
 	"[base64]|TWFu|" \
 	"|TW9ua2V5Cg==|" \
@@ -340,12 +327,7 @@ function test_seap_correct_expression {
 	"4|TWFu|" \
 	"(4|TWFu|4|TWFu|)" \
 	"4[type]4:abcd" \
-	"(4[type]3:123)" \
-	"4#4142#" \
-	"4#4142#4#4142#" \
-	"(4#4142#)" \
-	"3#414#" \
-	"(3#414#)"
+	"(4[type]3:123)"
     )
 
     for I in "${ARGS[@]}"; do
