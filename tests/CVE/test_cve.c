@@ -30,12 +30,7 @@ void print_usage(const char *program_name, FILE *out)
 int main(int argc, char **argv)
 {
     struct cve_model * model;
-    struct cve_reference * reference;
-    struct cve_summary * summary;
-    struct cve_product * product;
-    struct cve_configuration * conf;
     struct cve_entry * entry;
-    struct cwe_entry * cwe;
     struct cvss_entry * cvss;
     // iterators
     struct cve_entry_iterator * entry_it;

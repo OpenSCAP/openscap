@@ -10,7 +10,7 @@
 #include <oscap.h>
 #include "error.h"
 
-int _test_error()
+static int _test_error(void)
 {
         if (oscap_err ()) {
                 oscap_errfamily_t f;

@@ -13,7 +13,7 @@
 #include "error.h"
 
 //typedef int (*oval_xml_error_handler) (struct oval_xml_error *, void *user_arg);
-int _test_error()
+static int _test_error(void)
 {
         if (oscap_err ()) {
                 oscap_errfamily_t f;
@@ -45,7 +45,7 @@ int main(int argc, char **argv)
 			printf("LOAD OVAL RESULTS\n");
 			source = oscap_import_source_new_file(argv[2], NULL);
 			struct oval_results_model *results_model = oval_results_model_new(model,NULL);
-			if (oval_results_model_import(results_model, source, NULL) < 1)
+			if (oval_results_model_import(results_model, source, NULL) == NULL)
                                 _test_error();
 			oscap_import_source_free(source);
 			printf("OVAL RESULTS LOADED\n");

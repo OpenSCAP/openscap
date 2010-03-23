@@ -3,7 +3,7 @@
 #include <string.h>
 #include <sexp.h>
 
-int print_sexp (SEXP_t *s_exp)
+static int print_sexp (SEXP_t *s_exp)
 {
         strbuf_t *sb;
 

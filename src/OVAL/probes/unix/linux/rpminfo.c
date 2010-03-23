@@ -87,7 +87,7 @@ struct rpminfo_global {
 
 static struct rpminfo_global g_rpm;
 
-void __rpminfo_rep_free (struct rpminfo_rep *ptr)
+static void __rpminfo_rep_free (struct rpminfo_rep *ptr)
 {
         oscap_free (ptr->name);
         oscap_free (ptr->arch);

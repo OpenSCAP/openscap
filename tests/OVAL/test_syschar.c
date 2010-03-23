@@ -12,7 +12,7 @@
 #include "error.h"
 
 //typedef int (*oval_xml_error_handler) (struct oval_xml_error *, void *user_arg);
-int _test_error()
+static int _test_error(void)
 {
         if (oscap_err ()) {
                 oscap_errfamily_t f;
