@@ -44,8 +44,8 @@ libseap_la_SOURCES= generic/bfind.c		\
 		    _sexp-manip.h		\
 		    sexp-output.c		\
 		    _sexp-output.h		\
-		    sexp-parse.c		\
-		    _sexp-parse.h		\
+		    sexp-parser.c		\
+		    _sexp-parser.h		\
 		    _sexp-types.h		\
 		    sm_alloc.c			\
 		    seap-debug.c		\
@@ -63,7 +63,7 @@ libseap_la_SOURCES= generic/bfind.c		\
 		    public/seap-scheme.h	\
 		    public/sexp-manip.h		\
 		    public/sexp-output.h	\
-		    public/sexp-parse.h		\
+		    public/sexp-parser.h	\
 		    public/sexp-types.h		\
 		    public/sexp.h		\
 		    public/sm_alloc.h		\

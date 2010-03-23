@@ -1,4 +1,3 @@
-
 /*
  * Copyright 2008 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
@@ -28,7 +27,7 @@
 #include <seap-debug.h>
 #include <sexp-types.h>
 #include <sexp-manip.h>
-#include <sexp-parse.h>
+#include <sexp-parser.h>
 #include <sexp-output.h>
 
 #endif /* SEXP_H */

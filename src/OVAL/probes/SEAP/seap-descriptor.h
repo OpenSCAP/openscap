@@ -1,4 +1,3 @@
-
 /*
  * Copyright 2008 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
@@ -32,7 +31,7 @@
 #include "generic/bitmap.h"
 #include "generic/pqueue.h"
 #include "_sexp-types.h"
-#include "_sexp-parse.h"
+#include "_sexp-parser.h"
 #include "_sexp-output.h"
 #include "_seap-command.h"
 #include "public/seap-scheme.h"

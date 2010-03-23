@@ -1,4 +1,3 @@
-
 /*
  * Copyright 2008 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
@@ -27,7 +26,7 @@
 #include <errno.h>
 #include "generic/common.h"
 #include "public/sexp-manip.h"
-#include "_sexp-parse.h"
+#include "_sexp-parser.h"
 #include "_seap-packet.h"
 #include "_seap-scheme.h"
 #include "seap-descriptor.h"

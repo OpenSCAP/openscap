@@ -1,4 +1,3 @@
-
 /*
  * Copyright 2008 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
@@ -31,7 +30,7 @@
 #include "public/sm_alloc.h"
 #include "generic/common.h"
 #include "_sexp-types.h"
-#include "_sexp-parse.h"
+#include "_sexp-parser.h"
 #include "_seap-types.h"
 #include "_seap-scheme.h"
 #include "public/seap.h"
@@ -46,7 +45,7 @@ static void SEAP_CTX_initdefault (SEAP_CTX_t *ctx)
         _LOGCALL_;
         
         ctx->parser  = NULL /* PARSER(label) */;
-        ctx->pflags  = PF_EOFOK;
+        ctx->pflags  = SEXP_PFLAG_EOFOK;
         ctx->fmt_in  = SEXP_FMT_CANONICAL;
         ctx->fmt_out = SEXP_FMT_CANONICAL;
 
