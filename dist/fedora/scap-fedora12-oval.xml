@@ -1234,23 +1234,6 @@
                 <extend_definition comment="Fedora 12 is installed" definition_ref="oval:org.fedoraproject.f12:def:10000"/>
             </criteria>
         </definition>
-        <definition class="compliance" id="oval:org.fedoraproject.f12:def:142" version="1">
-            <metadata>
-                <title>Service gpm should be disabled</title>
-                <affected family="unix">
-                    <platform>Fedora 12</platform>
-                </affected>
-                <reference ref_id="CCE-4229-1" source="CCE"/>
-                <description>Service gpm should be disabled</description>
-            </metadata>
-            <criteria>
-                <criterion comment="The gpm service should not be started at runlevel 2" test_ref="oval:org.fedoraproject.f12:tst:211"/>
-                <criterion comment="The gpm service should not be started at runlevel 3" test_ref="oval:org.fedoraproject.f12:tst:212"/>
-                <criterion comment="The gpm service should not be started at runlevel 4" test_ref="oval:org.fedoraproject.f12:tst:213"/>
-                <criterion comment="The gpm service should not be started at runlevel 5" test_ref="oval:org.fedoraproject.f12:tst:214"/>
-                <extend_definition comment="Fedora 12 is installed" definition_ref="oval:org.fedoraproject.f12:def:10000"/>
-            </criteria>
-        </definition>
         <definition class="compliance" id="oval:org.fedoraproject.f12:def:140" version="1">
             <metadata>
                 <title>The tftp-server package should not be installed</title>
@@ -1756,22 +1739,6 @@
         <rpminfo_test check="all" check_existence="none_exist" comment="The tftp-server package should not be installed" id="oval:org.fedoraproject.f12:tst:206" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
             <object object_ref="oval:org.fedoraproject.f12:obj:203"/>
         </rpminfo_test>
-        <runlevel_test check="all" check_existence="any_exist" comment="The gpm service should not be started at runlevel 4" id="oval:org.fedoraproject.f12:tst:213" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <object object_ref="oval:org.fedoraproject.f12:obj:210"/>
-            <state state_ref="oval:org.fedoraproject.f12:ste:73"/>
-        </runlevel_test>
-        <runlevel_test check="all" check_existence="any_exist" comment="The gpm service should not be started at runlevel 5" id="oval:org.fedoraproject.f12:tst:214" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <object object_ref="oval:org.fedoraproject.f12:obj:211"/>
-            <state state_ref="oval:org.fedoraproject.f12:ste:73"/>
-        </runlevel_test>
-        <runlevel_test check="all" check_existence="any_exist" comment="The gpm service should not be started at runlevel 3" id="oval:org.fedoraproject.f12:tst:212" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <object object_ref="oval:org.fedoraproject.f12:obj:209"/>
-            <state state_ref="oval:org.fedoraproject.f12:ste:73"/>
-        </runlevel_test>
-        <runlevel_test check="all" check_existence="any_exist" comment="The gpm service should not be started at runlevel 2" id="oval:org.fedoraproject.f12:tst:211" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <object object_ref="oval:org.fedoraproject.f12:obj:208"/>
-            <state state_ref="oval:org.fedoraproject.f12:ste:73"/>
-        </runlevel_test>
         <runlevel_test check="all" check_existence="any_exist" comment="The isdn service should not be started at runlevel 4" id="oval:org.fedoraproject.f12:tst:221" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
             <object object_ref="oval:org.fedoraproject.f12:obj:218"/>
             <state state_ref="oval:org.fedoraproject.f12:ste:75"/>
@@ -3039,22 +3006,6 @@
             <service_name>isdn</service_name>
             <runlevel>4</runlevel>
         </runlevel_object>
-        <runlevel_object id="oval:org.fedoraproject.f12:obj:208" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <service_name>gpm</service_name>
-            <runlevel>2</runlevel>
-        </runlevel_object>
-        <runlevel_object id="oval:org.fedoraproject.f12:obj:209" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <service_name>gpm</service_name>
-            <runlevel>3</runlevel>
-        </runlevel_object>
-        <runlevel_object id="oval:org.fedoraproject.f12:obj:211" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <service_name>gpm</service_name>
-            <runlevel>5</runlevel>
-        </runlevel_object>
-        <runlevel_object id="oval:org.fedoraproject.f12:obj:210" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <service_name>gpm</service_name>
-            <runlevel>4</runlevel>
-        </runlevel_object>
         <rpminfo_object id="oval:org.fedoraproject.f12:obj:203" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
             <name>tftp-server</name>
         </rpminfo_object>
@@ -3675,18 +3626,6 @@
             <start datatype="boolean">false</start>
         </runlevel_state>
         <runlevel_state id="oval:org.fedoraproject.f12:ste:75" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f12:ste:73" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f12:ste:73" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f12:ste:73" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f12:ste:73" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
             <start datatype="boolean">false</start>
         </runlevel_state>
         <runlevel_state id="oval:org.fedoraproject.f12:ste:7" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
