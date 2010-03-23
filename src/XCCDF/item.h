@@ -374,7 +374,6 @@ struct xccdf_item *xccdf_item_new(xccdf_type_t type, struct xccdf_item *parent);
 void xccdf_item_release(struct xccdf_item *item);
 void xccdf_item_print(struct xccdf_item *item, int depth);
 void xccdf_item_dump(struct xccdf_item *item, int depth);
-void xccdf_item_free(struct xccdf_item *item);
 struct xccdf_item* xccdf_item_get_benchmark_internal(struct xccdf_item* item);
 
 struct xccdf_item *xccdf_benchmark_new(void);
@@ -450,14 +449,9 @@ void xccdf_fix_free(struct xccdf_fix *item);
 
 struct xccdf_refine_value *xccdf_refine_value_new(void);
 struct xccdf_refine_rule *xccdf_refine_rule_new(void);
-struct xccdf_select *xccdf_select_new(void);
 struct xccdf_setvalue *xccdf_setvalue_new(void);
 struct xccdf_setvalue *xccdf_setvalue_new_parse(xmlTextReaderPtr reader);
 void xccdf_setvalue_dump(struct xccdf_setvalue *sv, int depth);
-void xccdf_setvalue_free(struct xccdf_setvalue *sv);
-void xccdf_refine_value_free(struct xccdf_refine_value *rv);
-void xccdf_refine_rule_free(struct xccdf_refine_rule *rr);
-void xccdf_select_free(struct xccdf_select *sel);
 
 struct xccdf_warning *xccdf_warning_new(void);
 struct xccdf_warning *xccdf_warning_new_parse(xmlTextReaderPtr reader);
