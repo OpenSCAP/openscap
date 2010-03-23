@@ -176,7 +176,7 @@ struct oval_setobject *oval_setobject_clone
 			struct oval_setobject_iterator *subsets = oval_setobject_get_subsets(old_setobject);
 			while (oval_setobject_iterator_has_more(subsets)) {
 				struct oval_setobject *subset = oval_setobject_iterator_next(subsets);
-				oval_setobject_add_subset(new_setobject, subset);
+				oval_setobject_add_subset(new_setobject, oval_setobject_clone(new_model, subset));
 			}
 			oval_setobject_iterator_free(subsets);
 		} break;
