@@ -22,9 +22,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include <assume.h>
 #include <errno.h>
 #include <config.h>
+#include "common/assume.h"
 #include "generic/common.h"
 #include "public/sm_alloc.h"
 #include "_sexp-types.h"
@@ -459,12 +459,11 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
 #define SEXP_NUMSTAGE1     0
 #define SEXP_NUMSTAGE2     1
 #define SEXP_NUMSTAGE3     2
-#define SEXP_NUMSTAGEf     3
-#define SEXP_NUMSTAGE_EXP  4
-#define SEXP_NUMSTAGE_EXP2 5
-#define SEXP_NUMSTAGE_FLT  6
-#define SEXP_NUMSTAGE_CONT_INT 7
-#define SEXP_NUMSTAGE_CHAR_FIXED 8
+#define SEXP_NUMSTAGE_EXP  3
+#define SEXP_NUMSTAGE_EXP2 4
+#define SEXP_NUMSTAGE_FLT  5
+#define SEXP_NUMSTAGE_CONT_INT 6
+#define SEXP_NUMSTAGE_CHAR_FIXED 7
 
                 if (e_dsc.p_bufoff + 1 < spb_len) {
                         ++e_dsc.p_explen;
@@ -552,7 +551,6 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                                 &&L_NUMBER_stage1,
                                 &&L_NUMBER_stage2,
                                 &&L_NUMBER_stage3,
-                                &&L_NUMBER_final,
                                 &&L_NUMBER_final_exp,
                                 &&L_NUMBER_final_exp2,
                                 &&L_NUMBER_final_flt,
@@ -759,7 +757,7 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                         if (!isnextexp (cur_c))
                                 goto L_NUMBER_invalid;
                 }
-        L_NUMBER_final:
+
                 if (e_dsc.p_explen > 0) {
                         SEXP_val_t v_dsc;
                         
@@ -1213,7 +1211,7 @@ found:
                         return (SEXP_PRET_EUNDEF);
                 }
                 
-                assume_d (v_dsc.mem != NULL, SEXP_PRET_ENDEF);
+                assume_d (v_dsc.mem != NULL, NULL);
                 
                 if (spb_pick (dsc->p_buffer, dsc->p_bufoff, dsc->p_explen, v_dsc.mem) != 0)
                 {
@@ -1450,7 +1448,7 @@ found:
                         return (SEXP_PRET_EUNDEF);
                 }
 
-                assume_d (v_dsc.mem != NULL, SEXP_PRET_ENDEF);
+                assume_d (v_dsc.mem != NULL, NULL);
                 
                 if (spb_pick (dsc->p_buffer, dsc->p_bufoff + 1 /* skip the quote */,
                               dsc->p_explen - 2, v_dsc.mem) != 0)

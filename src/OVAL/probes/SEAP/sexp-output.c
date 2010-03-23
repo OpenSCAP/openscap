@@ -285,7 +285,8 @@ size_t SEXP_fprintfa (FILE *fp, const SEXP_t *s_exp)
                 fpa.fp = fp;
                 fputc ('(', fp);
                 
-                SEXP_rawval_lblk_cb ((uintptr_t)SEXP_LCASTP(v_dsc.mem)->b_addr, __SEXP_fprintfa_lmemb, &fpa,
+                SEXP_rawval_lblk_cb ((uintptr_t)SEXP_LCASTP(v_dsc.mem)->b_addr,
+                                     (int(*)(SEXP_t *, void *))__SEXP_fprintfa_lmemb, &fpa,
                                      SEXP_LCASTP(v_dsc.mem)->offset + 1);
                 
                 fputc (')', fp);
