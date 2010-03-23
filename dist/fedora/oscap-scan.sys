@@ -1,3 +1,4 @@
-# oscap-scan command line options:
-OPTIONS="-q --result-file /var/log/oscap-scan.xml.log /usr/share/openscap/scap-fedora12-oval.xml"
+
+#oscap-scan command line options:
+#OPTIONS="-q --result-file /var/log/oscap-scan.xml.log /usr/share/openscap/scap-fedora12-oval.xml"
 
