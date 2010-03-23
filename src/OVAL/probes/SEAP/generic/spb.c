@@ -311,7 +311,7 @@ const uint8_t *spb_direct (spb_t *spb, spb_size_t start, spb_size_t size)
         
         if (b_idx < spb->btotal) {
                 if (start + size - 1 <= spb->buffer[b_idx].gend) {
-                        l_off = (size_t)(b_idx > 0 ? start - spb->buffer[b_idx - 1].gend : start);
+                        l_off = (size_t)(b_idx > 0 ? start - spb->buffer[b_idx - 1].gend - 1 : start);
                         return ((const uint8_t *)(spb->buffer[b_idx].base) + l_off);
                 }
         } else

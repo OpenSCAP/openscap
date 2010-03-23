@@ -319,7 +319,9 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                 /* 127 DEL (delete)                   */ &&L_INVALID,
                 /* 128 -------- reserved ------------ */ &&L_INVALID,
                 /* 129                                */ &&L_CHAR_FIXEDLEN,
-                /* 130                                */ &&L_BRACKETOPEN_FIXEDLEN
+                /* 130                                */ &&L_BRACKETOPEN_FIXEDLEN,
+                /* 131                                */ &&L_VERTBAR_FIXEDLEN,
+                /* 132                                */ &&L_BRACEOPEN_FIXEDLEN
         };
 
 #define SEXP_LABELNUM_CHAR        65
@@ -327,7 +329,11 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
 #define SEXP_LABELNUM_NUMBER      48
 #define SEXP_LABELNUM_DTYPE       91
 #define SEXP_LABELNUM_DTYPE_FIXED 130
-        
+#define SEXP_LABELNUM_B64S        124
+#define SEXP_LABELNUM_B64S_FIXED  131
+#define SEXP_LABELNUM_B64E        123
+#define SEXP_LABELNUM_B64E_FIXED  132
+
         SEXP_pstate_t *state;
         spb_size_t     spb_len;
         SEXP_t        *ref_l;
@@ -387,7 +393,15 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                 goto SKIP_LOOP;
         }
         
-        assume_d (e_dsc.p_bufoff + e_dsc.p_explen < spb_len, NULL);
+#ifndef NDEBUG
+        if (e_dsc.p_label != SEXP_LABELNUM_CHAR_FIXED  &&
+            e_dsc.p_label != SEXP_LABELNUM_DTYPE_FIXED &&
+            e_dsc.p_label != SEXP_LABELNUM_B64S_FIXED  &&
+            e_dsc.p_label != SEXP_LABELNUM_B64E_FIXED)
+        {
+                assume_d (e_dsc.p_bufoff + e_dsc.p_explen < spb_len, NULL);
+        }
+#endif
         
         ref_l = SEXP_lstack_top (&state->l_stack);
         
@@ -456,21 +470,18 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                         break;
                 goto L_SEXP_ADD;
         L_DOT:
-#define SEXP_NUMSTAGE1     0
-#define SEXP_NUMSTAGE2     1
-#define SEXP_NUMSTAGE3     2
-#define SEXP_NUMSTAGE_EXP  3
-#define SEXP_NUMSTAGE_EXP2 4
-#define SEXP_NUMSTAGE_FLT  5
-#define SEXP_NUMSTAGE_CONT_INT 6
-#define SEXP_NUMSTAGE_CHAR_FIXED 7
+
+#define SEXP_NUMSTAGE_CONT_INT   0
+#define SEXP_NUMSTAGE_FINAL_EXP  1
+#define SEXP_NUMSTAGE_FINAL_EXP2 2
+#define SEXP_NUMSTAGE_FINAL_FLT  3
+#define SEXP_NUMSTAGE_3          4
 
                 if (e_dsc.p_bufoff + 1 < spb_len) {
                         ++e_dsc.p_explen;
                         
                         if (isdigit (spb_octet (e_dsc.p_buffer, e_dsc.p_bufoff + e_dsc.p_explen))) {
                                 e_dsc.p_numclass = SEXP_NUMCLASS_FLT;
-                                e_dsc.p_numstage = SEXP_NUMSTAGE_FLT;
                                 e_dsc.p_label    = SEXP_LABELNUM_NUMBER;
                                 goto L_NUMBER_final_flt;
                         } else
@@ -506,7 +517,6 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                                         
                                         if (isdigit (spb_octet (e_dsc.p_buffer, e_dsc.p_bufoff + 2))) {
                                                 e_dsc.p_numclass = SEXP_NUMCLASS_FLT;
-                                                e_dsc.p_numstage = SEXP_NUMSTAGE_FLT;
                                                 e_dsc.p_label    = SEXP_LABELNUM_NUMBER;
                                                 goto L_NUMBER_final_flt;
                                         } else
@@ -548,28 +558,25 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                  */
                 if (e_dsc.p_explen > 0) {
                         const void *n_labels[] = {
-                                &&L_NUMBER_stage1,
-                                &&L_NUMBER_stage2,
-                                &&L_NUMBER_stage3,
+                                &&L_NUMBER_cont_int,
                                 &&L_NUMBER_final_exp,
                                 &&L_NUMBER_final_exp2,
                                 &&L_NUMBER_final_flt,
-                                &&L_NUMBER_cont_int
+                                &&L_NUMBER_stage3
                         };
                         
                         assume_d (e_dsc.p_numstage < (sizeof n_labels/sizeof (void *)), SEXP_PRET_EUNDEF);
                         
                         goto *n_labels[e_dsc.p_numstage];
                 }
-        L_NUMBER_stage1:
-                e_dsc.p_numstage = SEXP_NUMSTAGE1;
+                //L_NUMBER_stage1:
                 
                 switch (cur_c) {
                 case '.':
+                        ++e_dsc.p_explen;
                 L_NUMBER_final_flt:
                         e_dsc.p_numclass = SEXP_NUMCLASS_FLT;
-                        ++e_dsc.p_explen;
-
+                        
                         spb_iterate (e_dsc.p_buffer, e_dsc.p_bufoff + e_dsc.p_explen, cur_c,
                                      if (!isdigit (cur_c)) {
                                              if (isnextexp (cur_c))
@@ -593,7 +600,9 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                                 goto L_NUMBER_stage3;
                         else {
                                 ret_p = SEXP_PRET_EUNFIN;
-                                break; /* switch */
+                                e_dsc.p_numstage = SEXP_NUMSTAGE_FINAL_FLT;
+
+                                goto SKIP_LOOP;
                         }
                 default:
                         if (isdigit (cur_c)) {
@@ -613,37 +622,37 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                                         goto L_NUMBER_stage3;
                                 else {
                                         ret_p = SEXP_PRET_EUNFIN;
-                                        break; /* switch */
+                                        e_dsc.p_numstage = SEXP_NUMSTAGE_CONT_INT;
+                                        
+                                        goto SKIP_LOOP;
                                 }
                         }
                         
                         goto L_NUMBER_invalid;
                 }
                 break;
-        L_NUMBER_stage2:
-                e_dsc.p_numstage = SEXP_NUMSTAGE1;
-                
+        L_NUMBER_stage2:                
+
                 switch (cur_c) {
                 case '.':
+                        ++e_dsc.p_explen;
                         goto L_NUMBER_final_flt;
                 case 'e':
                 case 'E':
                         ++e_dsc.p_explen;
                 L_NUMBER_final_exp:
                         e_dsc.p_numclass = SEXP_NUMCLASS_EXP;
-                        e_dsc.p_numstage = SEXP_NUMSTAGE_EXP;
                         
                         if (e_dsc.p_bufoff + e_dsc.p_explen < spb_len) {
                                 cur_c = spb_octet (e_dsc.p_buffer, e_dsc.p_bufoff + e_dsc.p_explen);
                                 
                                 switch (cur_c) {
                                 case '+':
+                                        
                                 case '-':
                                         ++e_dsc.p_explen;
                                 }
-                        L_NUMBER_final_exp2:
-                                e_dsc.p_numstage = SEXP_NUMSTAGE_EXP2;
-                                
+                        L_NUMBER_final_exp2:                                
                                 spb_iterate (e_dsc.p_buffer, e_dsc.p_bufoff + e_dsc.p_explen, cur_c,
                                              if (!isdigit (cur_c)) {
                                                      if (isdigit (spb_octet (e_dsc.p_buffer,
@@ -665,6 +674,15 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                                              }
                                              ++e_dsc.p_explen;
                                         );
+                                
+                                if (e_dsc.p_flags & SEXP_PFLAG_EOFOK)
+                                        goto L_NUMBER_stage3;
+                                else {
+                                        ret_p = SEXP_PRET_EUNFIN;
+                                        e_dsc.p_numstage = SEXP_NUMSTAGE_FINAL_EXP2;
+                                        
+                                        goto SKIP_LOOP;
+                                }
                         } else {
                                 if (e_dsc.p_flags & SEXP_PFLAG_EOFOK)
                                         goto L_NUMBER_invalid;
@@ -674,7 +692,9 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                                 goto L_NUMBER_stage3;
                         else {
                                 ret_p = SEXP_PRET_EUNFIN;
-                                break;
+                                e_dsc.p_numstage = SEXP_NUMSTAGE_FINAL_EXP;
+                                
+                                goto SKIP_LOOP;
                         }
                 }
         L_NUMBER_stage3:
@@ -703,7 +723,7 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                                 e_dsc.sp_free = sm_free;
                                 
                                 if (e_dsc.sp_data == NULL) {
-                                        e_dsc.p_numstage = SEXP_NUMSTAGE3;
+                                        e_dsc.p_numstage = SEXP_NUMSTAGE_3;
                                         ret_p = SEXP_PRET_EUNFIN;
                                         break;
                                 }
@@ -712,7 +732,6 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                         if (spb_pick (e_dsc.p_buffer, e_dsc.p_bufoff,
                                       e_dsc.p_explen, e_dsc.sp_data) != 0)
                         {
-                                e_dsc.p_numstage = SEXP_NUMSTAGE3;
                                 ret_p = SEXP_PRET_EUNDEF;
                                 break;
                         }
@@ -980,7 +999,9 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                         }
                 }
                 
+                ret_p = SEXP_PRET_EUNFIN;
                 ++e_dsc.p_bufoff;
+                
                 goto L_NO_SEXP_ALLOC;
         L_PARCLOSE:
                 if (e_dsc.s_exp->s_type != NULL) {
@@ -1015,6 +1036,7 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
 
                 e_dsc.p_bufoff += e_dsc.p_explen;
                 e_dsc.p_explen  = 0;
+                ret_p = SEXP_PRET_EUNFIN;
                 
                 goto L_NO_SEXP_ALLOC;
         L_BRACKETOPEN_FIXEDLEN:
@@ -1029,23 +1051,30 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                 
                         e_dsc.p_bufoff += e_dsc.p_explen;
                         e_dsc.p_explen  = 0;
-                
+                        ret_p = SEXP_PRET_EUNFIN;
+                        
                         goto L_NO_SEXP_ALLOC;
                 }
                 /* NOTREACHED */
         L_BRACEOPEN:
+                e_dsc.p_label = SEXP_LABELNUM_B64E;
                 /* b64 decode - not supported yet */
                 ret_p = SEXP_PRET_EINVAL;
                 break;
         L_BRACEOPEN_FIXEDLEN:
+                e_dsc.p_label = SEXP_LABELNUM_B64E_FIXED;
                 /* b64 decode - not supported yet */
                 ret_p = SEXP_PRET_EINVAL;
                 break;
         L_VERTBAR:
+                e_dsc.p_label = SEXP_LABELNUM_B64S;
+                
                 if ((ret_p = SEXP_parse_ul_string_b64 (&e_dsc)) != SEXP_PRET_SUCCESS)
                         break;
                 goto L_SEXP_ADD;
         L_VERTBAR_FIXEDLEN:
+                e_dsc.p_label = SEXP_LABELNUM_B64S_FIXED;
+
                 if ((ret_p = SEXP_parse_kl_string_b64 (&e_dsc)) != SEXP_PRET_SUCCESS)
                         break;
                 goto L_SEXP_ADD;
