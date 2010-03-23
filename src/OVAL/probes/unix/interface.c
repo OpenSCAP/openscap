@@ -77,7 +77,7 @@ static void cb(struct nl_object *obj, void *arg)
 		struct nl_addr *absaddr;
 		SEXP_t *item, *r0, *r1, *r2, *r3, *r4;
 		unsigned int prefixlen, mask, flags;
-		char iabuf[20], mabuf[20], babuf[20], netmask[20], fbuf[512], *p;
+		char iabuf[64], mabuf[20], babuf[64], netmask[20], fbuf[512], *p;
 
 		memset(mabuf, 0, sizeof (mabuf));
 		absaddr = rtnl_link_get_addr(rtlink);
