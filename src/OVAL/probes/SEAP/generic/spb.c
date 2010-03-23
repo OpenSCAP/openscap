@@ -293,7 +293,7 @@ uint8_t spb_octet (spb_t *spb, spb_size_t idx)
         b_idx = spb_bindex (spb, idx);
         
         if (b_idx < spb->btotal) {
-                l_off = (size_t)(b_idx > 0 ? idx - spb->buffer[b_idx - 1].gend : idx);
+                l_off = (size_t)(b_idx > 0 ? idx - spb->buffer[b_idx - 1].gend - 1 : idx);
                 return *((uint8_t *)(spb->buffer[b_idx].base) + l_off);
         }
         
