@@ -9,7 +9,8 @@ libxccdf_la_SOURCES = \
 	rule.c \
 	item.h \
 	elements.h \
-	helpers.h
+	helpers.h \
+	unused.h
 	
 
 libxccdf_la_CFLAGS  = @libxml_cflags@ -I$(top_srcdir)/src/common/public -I$(top_srcdir)/src/XCCDF/public
