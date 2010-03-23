@@ -11,11 +11,13 @@ endif
 
 SUBDIRS += utils tests
 
-dist_pkgdata_DATA = dist/fedora/scap-fedora12-oval.xml
+dist_pkgdata_DATA = dist/fedora/scap-fedora12-oval.xml \
+                    dist/fedora/oscap-scan.cron
 
 EXTRA_DIST =	dist/fedora/openscap.spec \
 		dist/fedora/oscap-scan.sys \
 		dist/fedora/oscap-scan.init \
+		dist/fedora/oscap-scan.cron \
 		dist/fedora/scap-fedora12-oval.xml \
 		docs/Doxyfile \
 		docs/examples/oval_probes.py \

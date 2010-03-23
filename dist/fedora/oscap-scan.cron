@@ -1,0 +1,18 @@
+#!/bin/sh
+
+##########
+# This script can be installed to get regular oscap-scan checks. Results
+# are sent to root mail.
+##########
+
+/usr/bin/oscap-scan /usr/share/openscap/scap-fedora12-oval.xml
+RETVAL=$?
+if [ $RETVAL -eq 0 ] ; then
+	logger "OpenSCAP security scan: PASS. (Cron job)"
+elif [ $RETVAL -eq 1 ] ; then
+	logger "OpenSCAP security scan: ERROR. (Cron job)"
+else
+	logger "OpenSCAP security scan: FAILED. (Cron job)"
+fi
+exit "$RETVAL"
+
