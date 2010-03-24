@@ -46,7 +46,7 @@ check_PROGRAMS +=	sexp_parser \
 			sexp_number \
 			sexp_list \
 			test_probes \
-			test_sysinfo \ 
+			test_sysinfo \
 			test_spb_api
 #			test_probe-api \
 #			test_error \
