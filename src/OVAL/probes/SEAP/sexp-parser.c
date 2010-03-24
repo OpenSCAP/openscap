@@ -49,6 +49,8 @@ struct SEXP_pext_dsc {
         uint8_t       p_numclass;
         uint8_t       p_numbase;
         uint8_t       p_numstage;
+
+        uintptr_t    *v_bool;
 };
 
 #define PEXT_DSC_INITIALIZER { NULL, 0, 0, NULL }
@@ -72,11 +74,16 @@ SEXP_pstate_t *SEXP_pstate_new (void)
         pstate->p_numbase  = 0;
         pstate->p_numstage = 255;
         
+        pstate->v_bool[0] = 0;
+        pstate->v_bool[1] = 0;
+        
         return (pstate);
 }
 
 void SEXP_pstate_free (SEXP_pstate_t *pstate)
 {
+        register uint32_t i;
+        
         assume_d (pstate != NULL, /* void */);
         
         if (pstate->p_buffer != NULL) {
@@ -98,6 +105,21 @@ void SEXP_pstate_free (SEXP_pstate_t *pstate)
         if (pstate->sp_data != NULL) {
                 if (pstate->sp_free != NULL)
                         pstate->sp_free (pstate->sp_data);
+        }
+
+        /*
+         * Free cached values
+         */
+        
+        for (i = 0; i < 2; ++i) {
+                if (pstate->v_bool[i] != 0) {
+                        if (SEXP_rawval_decref (pstate->v_bool[i])) {
+                                SEXP_val_t v_dsc;
+                                
+                                SEXP_val_dsc (&v_dsc, pstate->v_bool[i]);
+                                sm_free (v_dsc.hdr);
+                        }
+                }
         }
         
 #ifndef NDEBUG
@@ -147,25 +169,49 @@ void SEXP_psetup_free (SEXP_psetup_t *psetup)
 
 static inline bool isnextexp (int c)
 {
+        register uint8_t r = (uint8_t)c;
+        
         /*
          * characters that denote the beginning
          * or ending of an S-expression
          */
-        switch (c) {
-        case ' ' :
-        case '(' :
-        case ')' :
-        case '"' :
-        case '#' :
-        case '\'':
-        case '\t':
-        case '\n':
-        case '\r':
-        case '\a':
-                return (true);
-        default:
-                return (false);
+        if (r  < 40) {
+                if (r < 20) {
+                        switch (r) {
+                        case '\n': /* 10 */
+                        case '\t': /* 09 */
+                        case '\r': /* 13 */
+                        case '\a': /* 07 */
+                                return (true);
+                        }
+                } else {
+                        switch (r) {
+                        case ' ' : /* 32 */
+                        case '"' : /* 34 */
+                        case '#' : /* 35 */
+                        case '\'': /* 39 */
+                                return (true);
+                        }
+                }
+        } else {
+                if (r < 100) {
+                        switch (r) {
+                        case '(' : /* 40 */
+                        case ')' : /* 41 */
+                        case '[' : /* 91 */
+                        case ']' : /* 93 */
+                                return (true);
+                        }
+                } else {
+                        switch (r) {
+                        case '|' : /* 124 */
+                        case '{' : /* 123 */
+                        case '}' : /* 125 */
+                                return (true);
+                        }
+                }
         }
+        return (false);
 }
 
 #define __PARSE_RT static inline int
@@ -366,6 +412,7 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                 state->p_bufoff = 0;
                 state->p_flags  = psetup->p_flags;
                 SEXP_lstack_init (&state->l_stack);
+                e_dsc.v_bool    = state->v_bool;
         }
         
         assume_d (state != NULL, NULL);
@@ -1844,15 +1891,24 @@ __PARSE_RT SEXP_parse_bool (__PARSE_PT(dsc), bool val)
 {
         SEXP_val_t v_dsc;
 
-        if (SEXP_val_new (&v_dsc, sizeof (SEXP_numtype_t) + sizeof (bool),
-                          SEXP_VALTYPE_NUMBER) != 0)
-        {
-                return (SEXP_PRET_EUNDEF);
+        assume_d ((true  & 1) == 1, SEXP_PRET_EUNDEF);
+        assume_d ((false & 1) == 0, SEXP_PRET_EUNDEF);
+        
+        if (dsc->v_bool[val & 1] == 0) {
+                if (SEXP_val_new (&v_dsc, sizeof (SEXP_numtype_t) + sizeof (bool),
+                                  SEXP_VALTYPE_NUMBER) != 0)
+                {
+                        return (SEXP_PRET_EUNDEF);
+                }
+        
+                SEXP_NCASTP(b,v_dsc.mem)->t = SEXP_NUM_BOOL;
+                SEXP_NCASTP(b,v_dsc.mem)->n = val;
+                dsc->v_bool[val & 1] = SEXP_val_ptr (&v_dsc);
         }
         
-        SEXP_NCASTP(b,v_dsc.mem)->t = SEXP_NUM_BOOL;
-        SEXP_NCASTP(b,v_dsc.mem)->n = val;
-        dsc->s_exp->s_valp = SEXP_val_ptr (&v_dsc);
+        assume_d (dsc->v_bool[val & 1] != 0, SEXP_PRET_EUNDEF);
+        
+        dsc->s_exp->s_valp = SEXP_rawval_incref (dsc->v_bool[val & 1]);
         dsc->p_explen = 1;
         
         return (SEXP_PRET_SUCCESS);

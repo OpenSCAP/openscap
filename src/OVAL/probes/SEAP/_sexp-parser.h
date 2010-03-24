@@ -67,6 +67,11 @@ struct SEXP_pstate {
          * Output data
          */
         SEXP_lstack_t l_stack;
+
+        /*
+         * Value cache
+         */
+        uintptr_t v_bool[2];
 };
 
 struct SEXP_psetup {
