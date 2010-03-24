@@ -120,7 +120,9 @@ function test_cpedict_remove_cpe {
 function test_cpedict_cleanup { 
     local ret_val=0;
 
-    rm dict.xml.exported
+    rm dict.xml.exported \
+       test_cpedict_tc02_00.out \
+       test_cpedict_tc02_01.out \
 
     ret_val=$?
 

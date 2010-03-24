@@ -186,8 +186,6 @@ function test_probes_family {
 	ret_val=1
     fi
 
-    [ -e $RESFILE ] && rm -f "$RESFILE"
-    
     return $ret_val
 }
 
@@ -273,8 +271,6 @@ function test_probes_file {
 	ret_val=1
     fi
 
-    [ -e $RESFILE ] && rm -f "$RESFILE"
-    
     return $ret_val
 }
 
@@ -372,8 +368,6 @@ function test_probes_rpminfo {
 	ret_val=1
     fi
 
-    [ -e $RESFILE ] && rm -f "$RESFILE"
-    
     return $ret_val
 }
 
@@ -440,8 +434,6 @@ function test_probes_runlevel_A {
 	ret_val=1
     fi
 
-    [ -e $RESFILE ] && rm -f "$RESFILE"
-    
     return $ret_val
 }
 
@@ -538,8 +530,6 @@ function test_probes_runlevel_B {
     else 
 	ret_val=1
     fi
-
-    [ -e $RESFILE ] && rm -f "$RESFILE"
     
     return $ret_val
 }
@@ -636,8 +626,6 @@ function test_probes_textfilecontent54 {
 	ret_val=1
     fi
 
-    [ -e $RESFILE ] && rm -f "$RESFILE"
-    
     return $ret_val
 }
 
@@ -645,9 +633,27 @@ function test_probes_textfilecontent54 {
 function test_probes_cleanup {     
     local ret_val=0;    
 
-    rm -f "test_probes_*.out"
+    rm -f test_probes_sysinfo.out \
+	  test_probes_tc03.out \
+	  test_probes_family.out \
+	  test_probes_family.xml.results.xml \
+	  test_probes_file.out \
+          test_probes_file.xml.results.xml \
+	  test_probes_rpminfo.out \
+          test_probes_rpminfo.xml \
+          test_probes_rmpinfo.xml.results.xml \
+	  test_probes_runlevel_A.out \
+	  test_probes_runlevel_A.xml \
+	  test_probes_runlevel_A.xml.results.xml \
+	  test_probes_runlevel_B.out \
+	  test_probes_runlevel_B.xml \
+	  test_probes_runlevel_B.xml.results.xml \
+          test_probes_textfilecontent54.out \
+	  test_probes_textfilecontent54.xml.results.xml \
+	  /tmp/test_probes_textfilecontent54.tmp_file \
+	  /tmp/test_probes_textfilecontent54.tmp_file_empty 
 
-    return $ret_val
+    return 0
 }
 
 # TESTING.

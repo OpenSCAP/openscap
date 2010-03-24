@@ -145,7 +145,8 @@ function test_cce_search_non_existing {
 function test_cce_cleanup {     
     local ret_val=0;    
     
-    rm  test_cce_01.txt \
+    rm  out \
+        test_cce_01.txt \
 	test_cce_02.txt \
 	test_cce_all.txt \
 	test_cce_tc05.out \

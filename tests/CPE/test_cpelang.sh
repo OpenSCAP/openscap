@@ -216,8 +216,13 @@ EOF
 function test_cpelang_cleanup {
     local ret_val=0;
 
-    rm -f export.xml*
+    rm -f export.xml \
+          export.xml.out.0 \
+          export.xml.out.1 \
+          export.xml.out.2 \
+          export.xml.out.3 \
     	  diff.out get-all \
+    	  get-all \
     	  get-all.out \
     	  get-key.out
 
@@ -284,10 +289,10 @@ ret_val=$?
 report_result "test_cpelang_match_cpe" $ret_val
 result=$[$result+$ret_val]
 
-#test_cpelang_cleanup 
-#ret_val=$? 
-#report_result "test_cpelang_cleanup" $ret_val
-#result=$[$result+$ret_val]
+test_cpelang_cleanup 
+ret_val=$? 
+report_result "test_cpelang_cleanup" $ret_val
+result=$[$result+$ret_val]
 
 echo "--------------------------------------------------"
 echo "See ${log} (in tests dir)"

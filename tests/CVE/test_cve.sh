@@ -119,7 +119,7 @@ EOF
 function test_cve_cleanup {
     local ret_val=0
 
-    rm -f cve_export.xml*
+    rm -f cve_export.xml cve_export.xml.out.1 cve_export.xml.out.2 cve_export.xml.out.3
 
     ret_val=$?
     return $ret_val
