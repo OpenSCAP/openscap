@@ -224,8 +224,6 @@ typedef enum {
 } oval_datetime_format_t;
 
 
-
-
 /**
  * Get the family associated with a given subtype.
  */
@@ -241,8 +239,6 @@ const char *oval_operation_get_text(oval_operation_t);
 const char *oval_set_operation_get_text(oval_setobject_operation_t);
 const char *oval_datetime_format_get_text(oval_datetime_format_t);
 const char *oval_arithmetic_operation_get_text(oval_arithmetic_operation_t);
-
-
 
 
 /**
@@ -546,11 +542,6 @@ struct oval_component_iterator;
  */
 struct oval_string_iterator;
 
-
-
-
-
-
 /**
  * Import the content from a specified XML stream into a oval_definition_model, return -1 if an error occurred.
  * The imported XML stream must be
@@ -570,6 +561,7 @@ int oval_definition_model_import(struct oval_definition_model *model, struct osc
 struct oval_definition_model *oval_definition_model_new(void);
 /**
  * Copy an oval_definition_model.
+ * @return A copy of the specified @ref oval_definition_model.
  * @memberof oval_definition_model
  */
 struct oval_definition_model *oval_definition_model_clone(struct oval_definition_model *);
@@ -620,7 +612,6 @@ void oval_definition_model_add_variable(struct oval_definition_model *, struct o
  */
 void oval_definition_model_lock(struct oval_definition_model *definition_model);
 /** @} */
-
 
 /**
  * @name Getters
@@ -729,11 +720,6 @@ const char * oval_definition_model_supported(void);
 bool oval_definition_model_is_valid(struct oval_definition_model *definition_model);
 /** @} */
 
-
-
-
-
-
 /**
  * Construct an instance of @ref oval_definition.
  * Initialized attribute values are
@@ -754,6 +740,7 @@ struct oval_definition *oval_definition_new(struct oval_definition_model *, char
 
 /**
  * Clone instance of @ref oval_definition and add it to the specified @ref oval_definition_model.
+ * @return A copy of the specified @ref oval_definition.
  * @memberof oval_definition
  */
 struct oval_definition *oval_definition_clone(struct oval_definition_model *new_model, struct oval_definition *old_definition);
@@ -866,6 +853,7 @@ void oval_definition_set_criteria(struct oval_definition *, struct oval_criteria
 char *oval_definition_get_id(struct oval_definition *);
 /**
  * Returns attribute @ref oval_definition->version.
+ * @return A pointer to the id attribute of the specified @ref oval_definition.
  * @memberof oval_definition
  */
 int oval_definition_get_version(struct oval_definition *);
@@ -881,34 +869,40 @@ oval_definition_class_t oval_definition_get_class(struct oval_definition *);
 bool oval_definition_get_deprecated(struct oval_definition *);
 /**
  * Returns attribute @ref oval_definition->title.
+ * @return A pointer to the title attribute of the specified @ref oval_definition.
  * @memberof oval_definition
  */
 char *oval_definition_get_title(struct oval_definition *);
 /**
  * Returns attribute @ref oval_definition->description.
+ * @return A pointer to the description attribute of the specified @ref oval_definition.
  * @memberof oval_definition
  */
 char *oval_definition_get_description(struct oval_definition *);
 /**
  * Returns attribute @ref oval_definition->affected.
- * The iterator returned by this method should be freed after use by the calling application.
+ * @return A new iterator for the affected attribute of the specified @ref oval_definition.
+ * It should be freed after use by the calling application.
  * @memberof oval_definition
  */
 struct oval_affected_iterator *oval_definition_get_affected(struct oval_definition *);
 /**
  * Returns attribute @ref oval_definition->references.
- * The iterator returned by this method should be freed after use by the calling application.
+ * @return A new iterator for the reference attribute of the specified @ref oval_definition.
+ * It should be freed after use by the calling application.
  * @memberof oval_definition
  */
 struct oval_reference_iterator *oval_definition_get_references(struct oval_definition *);
 /**
  * Returns attribute @ref oval_definition->notes.
- * The iterator returned by this method should be freed after use by the calling application.
+ * @return A new iterator for the notes attribute of the specified @ref oval_definition.
+ * It should be freed after use by the calling application.
  * @memberof oval_definition
  */
 struct oval_string_iterator *oval_definition_get_notes(struct oval_definition *);
 /**
  * Returns attribute @ref oval_definition->criteria.
+ * @return A pointer to the criteria attribute of the specified @ref oval_definition.
  * @memberof oval_definition
  */
 struct oval_criteria_node *oval_definition_get_criteria(struct oval_definition *);
@@ -961,12 +955,6 @@ struct oval_definition *oval_definition_iterator_next(struct oval_definition_ite
 void oval_definition_iterator_free(struct oval_definition_iterator *);
 /** @} */
 
-
-
-
-
-
-
 /**
  * Construct new instance of @ref oval_test.
  * Attribute values shall be initialized:
@@ -990,6 +978,7 @@ void oval_definition_iterator_free(struct oval_definition_iterator *);
 struct oval_test *oval_test_new(struct oval_definition_model *, char *id);
 /**
  * Clone instance of @ref oval_test and add it to the specified @ref oval_definition_model.
+ * @return A copy of the specified @ref oval_test.
  * @memberof oval_test
  */
 struct oval_test *oval_test_clone(struct oval_definition_model *new_model, struct oval_test *old_test);
@@ -1094,17 +1083,20 @@ oval_family_t oval_test_get_family(struct oval_test *);
 oval_subtype_t oval_test_get_subtype(struct oval_test *);
 /**
  * Returns attribute @ref oval_test->notes.
- * @note The iterator returned by this method should be freed by the calling application.
+ * @return A new iterator for the notes attribute of the specified @ref oval_test.
+ * It should be freed after use by the calling application.
  * @memberof oval_test
  */
 struct oval_string_iterator *oval_test_get_notes(struct oval_test *);
 /**
  * Returns attribute @ref Oval_test->comment.
+ * @return A pointer to the comment attribute of the specified @ref oval_test.
  * @memberof oval_test
  */
 char *oval_test_get_comment(struct oval_test *);
 /**
  * Returns attribute @ref oval_test->id.
+ * @return A pointer to the id attribute of the specified @ref oval_test.
  * @memberof oval_test
  */
 char *oval_test_get_id(struct oval_test *);
@@ -1130,11 +1122,13 @@ oval_existence_t oval_test_get_existence(struct oval_test *);
 oval_check_t oval_test_get_check(struct oval_test *);
 /**
  * Returns attribute @ref oval_test->object.
+ * @return A pointer to the object attribute of the specified @ref oval_test.
  * @memberof oval_test
  */
 struct oval_object *oval_test_get_object(struct oval_test *);
 /**
  * Returns attribute @ref oval_test->state.
+ * @return A pointer to the state attribute of the specified @ref oval_test.
  * @memberof oval_test
  */
 struct oval_state *oval_test_get_state(struct oval_test *);
@@ -1190,11 +1184,6 @@ struct oval_test *oval_test_iterator_next(struct oval_test_iterator *);
 void oval_test_iterator_free(struct oval_test_iterator *);
 /** @} */
 
-
-
-
-
-
 /**
  * Construct new intance of @ref oval_object.
  * Attribute values shall be initialized:
@@ -1216,6 +1205,7 @@ void oval_test_iterator_free(struct oval_test_iterator *);
 struct oval_object *oval_object_new(struct oval_definition_model *, char *id);
 /**
  * Clone instance of @ref oval_object and add it to the specified @ref oval_definition_model.
+ * @return A copy of the specified @ref oval_object.
  * @memberof oval_object
  */
 struct oval_object *oval_object_clone(struct oval_definition_model *new_model, struct oval_object *old_object);
@@ -1317,17 +1307,20 @@ const char *oval_object_get_name(struct oval_object *);
 oval_subtype_t oval_object_get_subtype(struct oval_object *);
 /**
  * Returns attribute @ref oval_object->notes.
- * @note The iterator returned by this method should be freed by the calling application.
+ * @return A new iterator for the notes attribute of the specified @ref oval_object.
+ * It should be freed after use by the calling application.
  * @memberof oval_object
  */
 struct oval_string_iterator *oval_object_get_notes(struct oval_object *);
 /**
  * Returns attribute @ref oval_object->comment.
+ * @return A pointer to the comment attribute of the specified @ref oval_object.
  * @memberof oval_object
  */
 char *oval_object_get_comment(struct oval_object *);
 /**
  * Returns attribute @ref oval_object->id.
+ * @return A pointer to the id attribute of the specified @ref oval_object.
  * @memberof oval_object
  */
 char *oval_object_get_id(struct oval_object *);
@@ -1344,11 +1337,15 @@ bool oval_object_get_deprecated(struct oval_object *);
 int oval_object_get_version(struct oval_object *);
 /**
  * Returns attribute @ref oval_object->contents.
+ * @return A new iterator for the object_content attribute of the specified @ref oval_object.
+ * It should be freed after use by the calling application.
  * @memberof oval_object
  */
 struct oval_object_content_iterator *oval_object_get_object_contents(struct oval_object *);
 /**
  * Returns attribute @ref oval_object->behaviors.
+ * @return A new iterator for the behaviors attribute of the specified @ref oval_object.
+ * It should be freed after use by the calling application.
  * @memberof oval_object
  */
 struct oval_behavior_iterator *oval_object_get_behaviors(struct oval_object *);
@@ -1392,11 +1389,6 @@ struct oval_object *oval_object_iterator_next(struct oval_object_iterator *);
 void oval_object_iterator_free(struct oval_object_iterator *);
 /** @} */
 
-
-
-
-
-
 /**
  * Construct new intance of @ref oval_state.
  * Attribute values shall be initialized:
@@ -1418,6 +1410,7 @@ void oval_object_iterator_free(struct oval_object_iterator *);
 struct oval_state *oval_state_new(struct oval_definition_model *, char *id);
 /**
  * Clone instance of @ref oval_state and add it to the specified @ref oval_definition_model.
+ * @return A copy of the specified @ref oval_state.
  * @memberof oval_state
  */
 struct oval_state *oval_state_clone(struct oval_definition_model *new_model, struct oval_state *old_state);
@@ -1509,17 +1502,20 @@ const char *oval_state_get_name(struct oval_state *);
 oval_subtype_t oval_state_get_subtype(struct oval_state *);
 /**
  * Returns attribute @ref oval_state->notes.
- * @note The iterator returned by this method should be freed by the calling application.
+ * @return A new iterator for the notes attribute of the specified @ref oval_state.
+ * It should be freed after use by the calling application.
  * @memberof oval_state
  */
 struct oval_string_iterator *oval_state_get_notes(struct oval_state *);
 /**
  * Returns attribute @ref oval_state->comment.
+ * @return A pointer to the comment attribute of the specified @ref oval_state.
  * @memberof oval_state
  */
 char *oval_state_get_comment(struct oval_state *);
 /**
  * Returns attribute @ref oval_state->id.
+ * @return A pointer to the id attribute of the specified @ref oval_state.
  * @memberof oval_state
  */
 char *oval_state_get_id(struct oval_state *);
@@ -1540,6 +1536,8 @@ int oval_state_get_version(struct oval_state *);
 int oval_state_get_operator(struct oval_state *);
 /**
  * Returns attribute @ref oval_state->contents.
+ * @return A new iterator for the contents attribute of the specified @ref oval_state.
+ * It should be freed after use by the calling application.
  * @memberof oval_state
  */
 struct oval_state_content_iterator *oval_state_get_contents(struct oval_state *);
@@ -1583,11 +1581,6 @@ void oval_state_iterator_free(struct oval_state_iterator *);
 bool oval_state_is_valid(struct oval_state *state);
 /** @} */
 
-
-
-
-
-
 /**
  * Construct new instance of @ref oval_variable.
  * Attribute values shall be initialized:
@@ -1615,6 +1608,7 @@ bool oval_state_is_valid(struct oval_state *state);
 struct oval_variable *oval_variable_new(struct oval_definition_model *model, char *id, oval_variable_type_t type);
 /**
  * Clone instance of @ref oval_variable and add it to the specified @ref oval_definition_model.
+ * @return A copy of the specified @ref oval_variable.
  * @memberof oval_variable
  */
 struct oval_variable *oval_variable_clone(struct oval_definition_model *new_model, struct oval_variable *old_variable);
@@ -1693,11 +1687,13 @@ void oval_variable_set_component(struct oval_variable *, struct oval_component *
  */
 /**
  * Returns attribute @ref oval_variable->id.
+ * @return A pointer to the id attribute of the specified @ref oval_variable.
  * @memberof oval_variable
  */
 char *oval_variable_get_id(struct oval_variable *);
 /**
  * Returns attribute @ref oval_variable->comment.
+ * @return A pointer to the comment attribute of the specified @ref oval_variable.
  * @memberof oval_variable
  */
 char *oval_variable_get_comment(struct oval_variable *);
@@ -1724,12 +1720,15 @@ oval_datatype_t oval_variable_get_datatype(struct oval_variable *);
 /**
  * Returns attribute @ref Oval_external/@ref Oval_constant->values.
  * If attribute type == @ref OVAL_VARIABLE_LOCAL or @ref OVAL_VARIABLE_UNKNOWN, this method shall return NULL
+ * @return A new iterator for the values attribute of the specified @ref oval_variable.
+ * It should be freed after use by the calling application.
  * @memberof oval_variable
  */
 struct oval_value_iterator *oval_variable_get_values(struct oval_variable *);	//type==OVAL_VARIABLE_CONSTANT
 /**
  * Returns attribute @ref Oval_local->component.
  * If attribute type <> @ref OVAL_VARIABLE_LOCAL this method shall return NULL.
+ * @return A pointer to the component attribute of the specified @ref oval_variable.
  * @memberof oval_variable
  */
 struct oval_component *oval_variable_get_component(struct oval_variable *);	//type==OVAL_VARIABLE_LOCAL
@@ -1788,11 +1787,6 @@ void oval_variable_iterator_free(struct oval_variable_iterator *);
 bool oval_variable_is_valid(struct oval_variable *);
 /** @} */
 
-
-
-
-
-
 /**
  * Construct instance of @ref oval_affected.
  * @memberof oval_affected
@@ -1800,6 +1794,7 @@ bool oval_variable_is_valid(struct oval_variable *);
 struct oval_affected *oval_affected_new(struct oval_definition_model *);
 /**
  * Clone instance of @ref oval_affected.
+ * @return A copy of the specified @ref oval_affected.
  * @memberof oval_affected
  */
 struct oval_affected *oval_affected_clone(struct oval_definition_model *new_model, struct oval_affected *old_affected);
@@ -1844,12 +1839,16 @@ oval_affected_family_t oval_affected_get_family(struct oval_affected *);
 /**
  * Get member values @ref oval_affected platform_names.
  * If the returned iterator is empty, then the associated Oval_definition is not constrained to a specific platform choice.
+ * @return A new iterator for the platforms attribute of the specified @ref oval_affected.
+ * It should be freed after use by the calling application.
  * @memberof oval_affected
  */
 struct oval_string_iterator *oval_affected_get_platforms(struct oval_affected *);
 /**
  * Get member values @ref oval_affected product_names.
  * If the returned iterator is empty, then the associated Oval_definition is not constrained to a specific product choice.
+ * @return A new iterator for the products attribute of the specified @ref oval_affected.
+ * It should be freed after use by the calling application.
  * @memberof oval_affected
  */
 struct oval_string_iterator *oval_affected_get_products(struct oval_affected *);
@@ -1893,16 +1892,12 @@ struct oval_affected *oval_affected_iterator_next(struct oval_affected_iterator 
 void oval_affected_iterator_free(struct oval_affected_iterator *);
 /** @} */
 
-
-
-
-
-
 /**
  * @memberof oval_reference
  */
 struct oval_reference *oval_reference_new(struct oval_definition_model *);
 /**
+ * @return A copy of the specified @ref oval_reference.
  * @memberof oval_reference
  */
 struct oval_reference *oval_reference_clone
@@ -1911,7 +1906,6 @@ struct oval_reference *oval_reference_clone
  * @memberof oval_reference
  */
 void oval_reference_free(struct oval_reference *);
-
 
 /**
  * @name Setters
@@ -1939,16 +1933,19 @@ void oval_reference_set_url(struct oval_reference *, char *);
  */
 /**
  * Get OVAL reference source.
+ * @return A pointer to the source attribute of the specified @ref oval_reference.
  * @memberof oval_reference
  */
 char *oval_reference_get_source(struct oval_reference *);
 /**
  * Get OVAL reference ID.
+ * @return A pointer to the id attribute of the specified @ref oval_reference.
  * @memberof oval_reference
  */
 char *oval_reference_get_id(struct oval_reference *);
 /**
  * Get OVAL reference URL.
+ * @return A pointer to the url attribute of the specified @ref oval_reference.
  * @memberof oval_reference
  */
 char *oval_reference_get_url(struct oval_reference *);
@@ -1989,12 +1986,6 @@ void oval_reference_iterator_free(struct oval_reference_iterator *);
 bool oval_reference_is_valid(struct oval_reference *reference);
 /** @} */
 
-
-
-
-
-
-
 /**
  * Construct an instance of @ref oval_criteria_node.
  * Initialized attribute values are:
@@ -2018,6 +2009,7 @@ bool oval_reference_is_valid(struct oval_reference *reference);
 struct oval_criteria_node *oval_criteria_node_new(struct oval_definition_model *, oval_criteria_node_type_t type);
 /**
  * Clone an instance of @ref oval_criteria_node.
+ * @return A copy of the specified @ref oval_criteria_node.
  * @memberof oval_criteria_node
  */
 struct oval_criteria_node *oval_criteria_node_clone
@@ -2103,6 +2095,7 @@ oval_criteria_node_type_t oval_criteria_node_get_type(struct oval_criteria_node 
 bool oval_criteria_node_get_negate(struct oval_criteria_node *);
 /**
  * Returns attribute @ref Oval_criteria_node->comment.
+ * @return A pointer to the comment attribute of the specified @ref oval_criteria_node.
  * @memberof oval_criteria_node
  */
 char *oval_criteria_node_get_comment(struct oval_criteria_node *);
@@ -2115,19 +2108,22 @@ oval_operator_t oval_criteria_node_get_operator(struct oval_criteria_node *);
 /**
  * Returns attribute @ref Oval_criteria_node->subnodes.
  * If Oval_criteria_node->type <> @ref OVAL_NODETYPE_CRITERIA, this method shall return NULL.
- * @note An iterator returned by this method should be freed by the calling application.
+ * @return A new iterator for the subnodes attribute of the specified @ref oval_criteria_node.
+ * It should be freed after use by the calling application.
  * @memberof oval_criteria_node
  */
 struct oval_criteria_node_iterator *oval_criteria_node_get_subnodes(struct oval_criteria_node *);
 /**
  * Returns attribute @ref Oval_criterion->test.
  * If Oval_criteria_node->type <> @ref OVAL_NODETYPE_CRITERION, this method shall return NULL.
+ * @return A pointer to the test attribute of the specified @ref oval_criteria_node.
  * @memberof oval_criteria_node
  */
 struct oval_test *oval_criteria_node_get_test(struct oval_criteria_node *);
 /**
  * Returns attribute @ref Oval_extends->definition.
  * If Oval_criteria_node->type <> @ref OVAL_NODETYPE_EXTENDDEF, this method shall return NULL.
+ * @return A pointer to the definition attribute of the specified @ref oval_criteria_node.
  * @memberof oval_criteria_node
  */
 struct oval_definition *oval_criteria_node_get_definition(struct oval_criteria_node *);
@@ -2183,18 +2179,13 @@ void oval_criteria_node_iterator_free(struct oval_criteria_node_iterator *);
 bool oval_criteria_node_is_valid(struct oval_criteria_node *);
 /** @} */
 
-
-
-
-
-
-
 /**
  * @memberof oval_object_content
  */
 struct oval_object_content *oval_object_content_new(struct oval_definition_model *model, oval_object_content_type_t type);
 
 /**
+ * @return A copy of the specified @ref oval_object_content.
  * @memberof oval_object_content
  */
 struct oval_object_content *oval_object_content_clone
@@ -2238,6 +2229,7 @@ void oval_object_content_set_setobject(struct oval_object_content *, struct oval
  */
 /**
  * Get field name of a object content.
+ * @return A pointer to the fieldName attribute of the specified @ref oval_object_content.
  * @memberof oval_object_content
  */
 char *oval_object_content_get_field_name(struct oval_object_content *);
@@ -2247,8 +2239,9 @@ char *oval_object_content_get_field_name(struct oval_object_content *);
  */
 oval_object_content_type_t oval_object_content_get_type(struct oval_object_content *);
 /**
- * @memberof oval_object_content
  * Get entity of a simple object content.
+ * @return A pointer to the entity attribute of the specified @ref oval_object_content.
+ * @memberof oval_object_content
  */
 struct oval_entity *oval_object_content_get_entity(struct oval_object_content *);	//type == OVAL_OBJECTCONTENT_ENTITY
 /**
@@ -2257,7 +2250,8 @@ struct oval_entity *oval_object_content_get_entity(struct oval_object_content *)
  */
 oval_check_t oval_object_content_get_varCheck(struct oval_object_content *);	//type == OVAL_OBJECTCONTENT_ENTITY
 /**
- * Get varCheck of a set object content.
+ * Get setobject of a set object content.
+ * @return A pointer to the set attribute of the specified @ref oval_object_content.
  * @memberof oval_object_content
  */
 struct oval_setobject *oval_object_content_get_setobject(struct oval_object_content *);	//type == OVAL_OBJECTCONTENT_SET
@@ -2298,18 +2292,13 @@ void oval_object_content_iterator_free(struct oval_object_content_iterator *);
 bool oval_object_content_is_valid(struct oval_object_content *object_content);
 /** @} */
 
-
-
-
-
-
-
 /**
  * @memberof oval_behavior
  */
 struct oval_behavior *oval_behavior_new(struct oval_definition_model *);
 
 /**
+ * @return A copy of the specified @ref oval_behavior.
  * @memberof oval_behavior
  */
 struct oval_behavior *oval_behavior_clone(struct oval_definition_model *new_model, struct oval_behavior *old_behavior);
@@ -2334,11 +2323,13 @@ void oval_behavior_set_keyval(struct oval_behavior *behavior, const char *key, c
  */
 /**
  * Get OVAL behavior name.
+ * @return A pointer to the key attribute of the specified @ref oval_behavior.
  * @memberof oval_behavior
  */
 char *oval_behavior_get_key(struct oval_behavior *);
 /**
  * Get OVAL behavior value.
+ * @return A pointer to the value attribute of the specified @ref oval_behavior.
  * @memberof oval_behavior
  */
 char *oval_behavior_get_value(struct oval_behavior *);
@@ -2379,17 +2370,12 @@ void oval_behavior_iterator_free(struct oval_behavior_iterator *);
 bool oval_behavior_is_valid(struct oval_behavior *behavior);
 /** @} */
 
-
-
-
-
-
-
 /**
  * @memberof oval_state_content
  */
 struct oval_state_content *oval_state_content_new(struct oval_definition_model *);
 /**
+ * @return A copy of the specified @ref oval_state_content.
  * @memberof oval_state_content
  */
 struct oval_state_content *oval_state_content_clone (struct oval_definition_model *new_model, struct oval_state_content *old_content);
@@ -2422,6 +2408,7 @@ void oval_state_content_set_entcheck(struct oval_state_content *, oval_check_t);
  */
 /**
  * Get entity of a state content.
+ * @return A pointer to the entity attribute of the specified @ref oval_state_content.
  * @memberof oval_state_content
  */
 struct oval_entity *oval_state_content_get_entity(struct oval_state_content *);
@@ -2462,16 +2449,12 @@ struct oval_state_content *oval_state_content_iterator_next(struct oval_state_co
 void oval_state_content_iterator_free(struct oval_state_content_iterator *);
 /** @} */
 
-
-
-
-
-
 /**
  * @memberof oval_value
  */
 struct oval_value *oval_value_new(oval_datatype_t datatype, char *text_value);
 /**
+ * @return A copy of the specified @ref oval_value.
  * @memberof oval_value
  */
 struct oval_value *oval_value_clone(struct oval_value *old_value);
@@ -2491,6 +2474,7 @@ void oval_value_free(struct oval_value *);
 oval_datatype_t oval_value_get_datatype(struct oval_value *);
 /**
  * Get OVAL value as a text.
+ * @return A pointer to the text attribute of the specified @ref oval_value.
  * @memberof oval_value
  */
 char *oval_value_get_text(struct oval_value *);
@@ -2555,17 +2539,12 @@ void oval_value_iterator_free(struct oval_value_iterator *);
 bool oval_value_is_valid(struct oval_value *value);
 /** @} */
 
-
-
-
-
-
-
 /**
  * @memberof oval_entity
  */
 struct oval_entity *oval_entity_new(struct oval_definition_model *);
 /**
+ * @return A copy of the specified @ref oval_entity.
  * @memberof oval_entity
  */
 struct oval_entity *oval_entity_clone(struct oval_definition_model *model, struct oval_entity *old_entity);
@@ -2618,6 +2597,7 @@ void oval_entity_set_operation(struct oval_entity *, oval_operation_t);
  */
 /**
  * Get OVAL entity name.
+ * @return A pointer to the name attribute of the specified @ref oval_entity.
  * @memberof oval_entity
  */
 char *oval_entity_get_name(struct oval_entity *);
@@ -2638,11 +2618,13 @@ oval_datatype_t oval_entity_get_datatype(struct oval_entity *);
 oval_operation_t oval_entity_get_operation(struct oval_entity *);
 /**
  * Get OVAL entity varref variable.
+ * @return A pointer to the variable attribute of the specified @ref oval_entity.
  * @memberof oval_entity
  */
 struct oval_variable *oval_entity_get_variable(struct oval_entity *);
 /**
  * Get OVAL entity value.
+ * @return A pointer to the value attribute of the specified @ref oval_entity.
  * @memberof oval_entity
  */
 struct oval_value *oval_entity_get_value(struct oval_entity *);
@@ -2693,17 +2675,12 @@ void oval_entity_iterator_free(struct oval_entity_iterator *);
 bool oval_entity_is_valid(struct oval_entity *entity);
 /** @} */
 
-
-
-
-
-
-
 /**
  * @memberof oval_setobject
  */
 struct oval_setobject *oval_setobject_new(struct oval_definition_model *);
 /**
+ * @return A copy of the specified @ref oval_setobject.
  * @memberof oval_setobject
  */
 struct oval_setobject *oval_setobject_clone(struct oval_definition_model *new_model, struct oval_setobject *old_setobject);
@@ -2754,18 +2731,24 @@ oval_setobject_operation_t oval_setobject_get_operation(struct oval_setobject *)
 /**
  * Get OVAL set object subsets.
  * This works only with sets of OVAL_SET_AGGREGATE type.
+ * @return A new iterator for the subsets attribute of the specified @ref oval_setobject.
+ * It should be freed after use by the calling application.
  * @memberof oval_setobject
  */
 struct oval_setobject_iterator *oval_setobject_get_subsets(struct oval_setobject *);	//type==OVAL_SET_AGGREGATE;
 /**
  * Get OVAL set object referenced objects.
  * This works only with sets of OVAL_SET_COLLECTIVE type.
+ * @return A new iterator for the objects attribute of the specified @ref oval_setobject.
+ * It should be freed after use by the calling application.
  * @memberof oval_setobject
  */
 struct oval_object_iterator *oval_setobject_get_objects(struct oval_setobject *);	//type==OVAL_SET_COLLECTIVE;
 /**
  * Get OVAL set object filters.
  * This works only with sets of OVAL_SET_COLLECTIVE type.
+ * @return A new iterator for the filters attribute of the specified @ref oval_setobject.
+ * It should be freed after use by the calling application.
  * @memberof oval_setobject
  */
 struct oval_state_iterator *oval_setobject_get_filters(struct oval_setobject *);	//type==OVAL_SET_COLLECTIVE;
@@ -2805,12 +2788,6 @@ void oval_setobject_iterator_free(struct oval_setobject_iterator *);
  */
 bool oval_setobject_is_valid(struct oval_setobject *setobject);
 /** @} */
-
-
-
-
-
-
 
 /**
  * Construct new intance of @ref Oval_component.
@@ -2856,6 +2833,7 @@ bool oval_setobject_is_valid(struct oval_setobject *setobject);
 struct oval_component *oval_component_new(struct oval_definition_model *, oval_component_type_t type);
 /**
  * Clone instance of @ref Oval_component.
+ * @return A copy of the specified @ref oval_component.
  * @memberof oval_component
  */
 struct oval_component *oval_component_clone(struct oval_definition_model *new_model,
@@ -2955,6 +2933,7 @@ oval_component_type_t oval_component_get_type(struct oval_component *);
 /**
  * Returns attribute @ref Oval_component_object->object.
  * IF component->type <> @ref OVAL_COMPONENT_OBJECTREF, this method shall return NULL.
+ * @return A pointer to the object attribute of the specified @ref oval_component.
  * @note applications should not free the @ref Oval_object returned by this method
  * @memberof oval_component
  */
@@ -2962,6 +2941,7 @@ struct oval_object *oval_component_get_object(struct oval_component *);	//type==
 /**
  * Returns attribute @ref Oval_component_object->object_field.
  * IF component->type <> @ref OVAL_COMPONENT_OBJECTREF, this method shall return NULL.
+ * @return A pointer to the object_field attribute of the specified @ref oval_component.
  * @note applications should not free the char* returned by this method
  * @memberof oval_component
  */
@@ -2969,6 +2949,7 @@ char *oval_component_get_object_field(struct oval_component *);
 /**
  * Returns attribute @ref Oval_component_variable->variable.
  * IF component->type <> @ref OVAL_COMPONENT_VARREF, this method shall return NULL.
+ * @return A pointer to the variable attribute of the specified @ref oval_component.
  * @note applications should not free the @ref Oval_variable returned by this method
  * @memberof oval_component
  */
@@ -2976,6 +2957,8 @@ struct oval_variable *oval_component_get_variable(struct oval_component *);
 /**
  * Returns attribute @ref Oval_function->components.
  * IF component->type < @ref OVAL_COMPONENT_FUNCTION, this method shall return NULL.
+ * @return A new iterator for the function_components attribute of the specified @ref oval_component.
+ * It should be freed after use by the calling application.
  * @memberof oval_component
  */
 struct oval_component_iterator *oval_component_get_function_components(struct oval_component *);	//type==OVAL_COMPONENT_FUNCTION
@@ -2988,6 +2971,7 @@ oval_arithmetic_operation_t oval_component_get_arithmetic_operation(struct oval_
 /**
  * Returns attribute @ref Oval_function_BEGIN->prefix.
  * IF component->type <> @ref OVAL_FUNCTION_BEGIN, this method shall return NULL
+ * @return A pointer to the attribute of the specified @ref oval_component.
  * @note applications should not free the char* returned by this method
  * @memberof oval_component
  */
@@ -2995,6 +2979,7 @@ char *oval_component_get_prefix(struct oval_component *);	//type==OVAL_COMPONENT
 /**
  * Returns attribute @ref Oval_function_END->suffix.
  * IF component->type <> @ref OVAL_FUNCTION_END, this method shall return NULL
+ * @return A pointer to the attribute of the specified @ref oval_component.
  * @note applications should not free the char* returned by this method
  * @memberof oval_component
  */
@@ -3002,6 +2987,7 @@ char *oval_component_get_suffix(struct oval_component *);	//type==OVAL_COMPONENT
 /**
  * Returns attribute @ref Oval_function_SPLIT->delimiter.
  * IF component->type <> @ref OVAL_FUNCTION_SPLIT, this method shall return NULL
+ * @return A pointer to the attribute of the specified @ref oval_component.
  * @note applications should not free the char* returned by this method
  * @memberof oval_component
  */
@@ -3033,6 +3019,7 @@ oval_datetime_format_t oval_component_get_timedif_format_2(struct oval_component
 /**
  * Returns attribute @ref Oval_function_REGEX_CAPTURE->pattern.
  * IF component->type <> @ref OVAL_FUNCTION_REGEX_CAPTURE, this method shall return NULL
+ * @return A pointer to the attribute of the specified @ref oval_component.
  * @note applications should not free the char* returned by this method
  * @memberof oval_component
  */
@@ -3040,6 +3027,7 @@ char *oval_component_get_regex_pattern(struct oval_component *);	//type==OVAL_CO
 /**
  * Returns attribute @ref Oval_literal->literal.
  * IF component->type <> @ref OVAL_COMPONENT_LITERAL, this method shall return NULL
+ * @return A pointer to the value attribute of the specified @ref oval_component.
  * @note applications should not free the @ref Oval_value returned by this method
  * @memberof oval_component
  */
@@ -3134,12 +3122,6 @@ int oval_component_iterator_remaining(struct oval_component_iterator *);
 bool oval_component_is_valid(struct oval_component *);
 /** @} */
 
-
-
-
-
-
-
 /**
  * @name Iterators
  * @{
@@ -3165,23 +3147,6 @@ int oval_string_iterator_remaining(struct oval_string_iterator *);
  */
 void oval_string_iterator_free(struct oval_string_iterator *);
 /** @} */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /**
  * @) END OVALDEF

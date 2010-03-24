@@ -202,6 +202,7 @@ int oval_syschar_model_import(struct oval_syschar_model *model, struct oscap_imp
 struct oval_syschar_model *oval_syschar_model_new(struct oval_definition_model *definition_model);
 /**
  * Copy an oval_syschar_model.
+ * @return A copy of the specified @ref oval_syschar_model.
  * @memberof oval_syschar_model
  */
 struct oval_syschar_model *oval_syschar_model_clone(struct oval_syschar_model *);
@@ -330,6 +331,7 @@ bool oval_syschar_model_is_valid(struct oval_syschar_model *syschar_model);
  */
 struct oval_sysinfo *oval_sysinfo_new(struct oval_syschar_model *);
 /**
+ * @return A copy of the specified @ref oval_sysinfo.
  * @memberof oval_sysinfo
  */
 struct oval_sysinfo *oval_sysinfo_clone(struct oval_syschar_model *new_model, struct oval_sysinfo *old_sysinfo);
@@ -444,6 +446,7 @@ bool oval_sysinfo_is_valid(struct oval_sysinfo *sysinfo);
  */
 struct oval_syschar *oval_syschar_new(struct oval_syschar_model *, struct oval_object *);
 /**
+ * @return A copy of the specified @ref oval_syschar.
  * @memberof oval_syschar
  */
 struct oval_syschar *oval_syschar_clone(struct oval_syschar_model *new_model, struct oval_syschar *old_syschar);
@@ -558,6 +561,7 @@ bool oval_syschar_is_valid(struct oval_syschar *syschar);
  */
 struct oval_sysint *oval_sysint_new(struct oval_syschar_model *);
 /**
+ * @return A copy of the specified @ref oval_sysint.
  * @memberof oval_sysint
  */
 struct oval_sysint *oval_sysint_clone(struct oval_syschar_model *new_model, struct oval_sysint *old_sysint);
@@ -652,6 +656,7 @@ bool oval_sysint_is_valid(struct oval_sysint *sysint);
  */
 struct oval_sysdata *oval_sysdata_new(struct oval_syschar_model *, char *id);
 /**
+ * @return A copy of the specified @ref oval_sysdata.
  * @memberof oval_sysdata
  */
 struct oval_sysdata *oval_sysdata_clone(struct oval_syschar_model *new_model, struct oval_sysdata *old_data);
@@ -767,6 +772,7 @@ bool oval_sysdata_is_valid(struct oval_sysdata *sysdata);
  */
 struct oval_sysitem *oval_sysitem_new(struct oval_syschar_model *);
 /**
+ * @return A copy of the specified @ref oval_sysitem.
  * @memberof oval_sysitem
  */
 struct oval_sysitem *oval_sysitem_clone(struct oval_syschar_model *new_model, struct oval_sysitem *old_item);
@@ -879,6 +885,7 @@ bool oval_sysitem_is_valid(struct oval_sysitem *sysitem);
  */
 struct oval_message *oval_message_new(void);
 /**
+ * @return A copy of the specified @ref oval_message.
  * @memberof oval_message
  */
 struct oval_message *oval_message_clone(struct oval_message *old_message);
@@ -960,6 +967,7 @@ bool oval_message_is_valid(struct oval_message *message);
  */
 struct oval_variable_binding *oval_variable_binding_new(struct oval_variable *, char *);
 /**
+ * @return A copy of the specified @ref oval_variable_binding.
  * @memberof oval_variable_binding
  */
 struct oval_variable_binding *oval_variable_binding_clone(struct oval_variable_binding *,

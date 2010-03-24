@@ -55,6 +55,7 @@ int oval_variable_model_import (struct oval_variable_model *, struct oscap_impor
 struct oval_variable_model *oval_variable_model_new(void);
 /**
  * Clone an OVAL variable model
+ * @return A copy of the specified @ref oval_variable_model.
  * @memberof oval_variable_model
  */ 
 struct oval_variable_model *oval_variable_model_clone(struct oval_variable_model *);

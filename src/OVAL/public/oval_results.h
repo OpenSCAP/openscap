@@ -157,6 +157,7 @@ struct oval_results_model *oval_results_model_new(struct oval_definition_model *
 						  struct oval_syschar_model **);
 /**
  * Copy an oval_results_model.
+ * @return A copy of the specified @ref oval_results_model.
  * @memberof oval_results_model
  */
 struct oval_results_model *oval_results_model_clone(struct oval_results_model *);
@@ -244,6 +245,7 @@ bool oval_results_model_is_valid(struct oval_results_model *results_model);
  */
 struct oval_result_system *oval_result_system_new(struct oval_results_model *, struct oval_syschar_model *);
 /**
+ * @return A copy of the specified @ref oval_result_system.
  * @memberof oval_result_system
  */
 struct oval_result_system *oval_result_system_clone(struct oval_results_model *new_model,
@@ -346,6 +348,7 @@ bool oval_result_system_is_valid(struct oval_result_system *result_system);
  */
 struct oval_result_definition *oval_result_definition_new(struct oval_result_system *, char *);
 /**
+ * @return A copy of the specified @ref oval_result_definition.
  * @memberof oval_result_definition
  */
 struct oval_result_definition *oval_result_definition_clone
@@ -456,6 +459,7 @@ bool oval_result_definition_is_valid(struct oval_result_definition *result_defin
  */
 struct oval_result_test *oval_result_test_new(struct oval_result_system *, char *);
 /**
+ * @return A copy of the specified @ref oval_result_test.
  * @memberof oval_result_test
  */
 struct oval_result_test *oval_result_test_clone
@@ -573,6 +577,7 @@ bool oval_result_test_is_valid(struct oval_result_test *result_test);
  */
 struct oval_result_item *oval_result_item_new(struct oval_result_system *, char *);
 /**
+ * @return A copy of the specified @ref oval_result_item.
  * @memberof oval_result_item
  */
 struct oval_result_item *oval_result_item_clone
@@ -660,6 +665,7 @@ bool oval_result_item_is_valid(struct oval_result_item *result_item);
 struct oval_result_criteria_node *oval_result_criteria_node_new(struct oval_result_system *, oval_criteria_node_type_t,
 								int, ...);
 /**
+ * @return A copy of the specified @ref oval_result_criteria_node.
  * @memberof oval_result_criteria_node
  */
 struct oval_result_criteria_node *oval_result_criteria_node_clone
