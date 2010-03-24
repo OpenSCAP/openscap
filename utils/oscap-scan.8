@@ -30,5 +30,8 @@ output system characteristic to separate file
 .TP
 .B \-h, \-\-help
 display this help and exit
+.SH RETURN VALUE
+Oscap-scan returns exit code 1 on internal error.
+If evaluation succeed, but some definition fails, 2 is returned. Otherwise oscap-scan exits with 0 exit code.
 .SH AUTHOR
 Maros Barabas <mbarabas@redhat.com>
