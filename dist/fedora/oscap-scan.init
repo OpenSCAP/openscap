@@ -29,7 +29,7 @@ prog="oscap-scan"
 
 # Allow anyone to run status
 if [ "$1" = "status" ] ; then
-	exit 0
+	exit 3
 fi
 
 # Check that we are root ... so non-root users stop here
@@ -81,7 +81,7 @@ case "$1" in
 	;;
     *)
 	echo $"Usage: $0 {start|stop|restart}"
-	RETVAL=3
+	RETVAL=2
 	;;
 esac
 exit $RETVAL
