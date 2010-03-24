@@ -97,13 +97,6 @@ SEXP_t *SEXP_number_newb (bool n)
         s_exp = SEXP_new ();
         s_exp->s_type = NULL;
         s_exp->s_valp = v_dsc.ptr;
-
-        if (SEXP_datatype_set (s_exp, "bool") != 0) {
-                _D("FAIL: can't set datatype\n");
-                
-                SEXP_free (s_exp);
-                return (NULL);
-        }
         
         return (s_exp);
 }
@@ -648,7 +641,6 @@ bool SEXP_numberp (const SEXP_t *s_exp)
 SEXP_numtype_t SEXP_number_type (const SEXP_t *s_exp)
 {
         SEXP_val_t v_dsc;
-        const char *type;
 
         _LOGCALL_;
 
@@ -662,13 +654,6 @@ SEXP_numtype_t SEXP_number_type (const SEXP_t *s_exp)
         if (!SEXP_numberp (s_exp)) {
                 errno = EINVAL;
                 return (SEXP_NUM_NONE);
-        }
-
-        type = SEXP_datatype (s_exp);
-
-        if (type != NULL) {
-                if (strcmp (type, "bool") == 0)
-                        return (SEXP_NUM_BOOLEAN);
         }
         
         SEXP_val_dsc (&v_dsc, s_exp->s_valp);
