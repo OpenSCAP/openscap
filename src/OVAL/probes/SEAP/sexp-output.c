@@ -44,8 +44,8 @@ static int SEXP_sbprintf_t_cb (SEXP_t *s_exp, strbuf_t *sb)
 {
         if (SEXP_sbprintf_t (s_exp, sb) != 0)
                 return (-1);
-        if (strbuf_add (sb, " ", 1) != 0)
-                return (-1);
+        /*if (strbuf_add (sb, " ", 1) != 0)
+          return (-1); */
         else
                 return (0);
 }
@@ -58,7 +58,7 @@ int SEXP_sbprintf_t (SEXP_t *s_exp, strbuf_t *sb)
         if (s_exp->s_type != NULL) {
                 char buffer[64+1];
                 
-                buflen = snprintf (buffer, sizeof buffer, "%zu[%s]",
+                buflen = snprintf (buffer, sizeof buffer, "#d%zu[%s]",
                                    strlen (s_exp->s_type->name), s_exp->s_type->name);
                 
                 _A((size_t)buflen < sizeof buffer);
@@ -78,7 +78,7 @@ int SEXP_sbprintf_t (SEXP_t *s_exp, strbuf_t *sb)
                 
                 if (t <= SEXP_NUM_UINT16) {
                         if (t <= SEXP_NUM_UINT8) {
-                                char buffer[4+1];
+                                char buffer[6+1];
 
                                 switch (t) {
                                 case SEXP_NUM_BOOL:
@@ -87,11 +87,11 @@ int SEXP_sbprintf_t (SEXP_t *s_exp, strbuf_t *sb)
                                         break;
                                 case SEXP_NUM_INT8:
                                         buflen = snprintf (buffer, sizeof buffer,
-                                                           "%hhd", SEXP_NCASTP(i8,v_dsc.mem)->n);
+                                                           "#d%hhd", SEXP_NCASTP(i8,v_dsc.mem)->n);
                                         break;
                                 case SEXP_NUM_UINT8:
                                         buflen = snprintf (buffer, sizeof buffer,
-                                                           "%hhu", SEXP_NCASTP(u8,v_dsc.mem)->n);
+                                                           "#d%hhu", SEXP_NCASTP(u8,v_dsc.mem)->n);
                                         break;
                                 default:
                                         abort ();
@@ -104,16 +104,16 @@ int SEXP_sbprintf_t (SEXP_t *s_exp, strbuf_t *sb)
                                         return (-1);
                                 
                         } else {
-                                char buffer[6+1];
+                                char buffer[8+1];
                                 
                                 switch (t) {
                                 case SEXP_NUM_INT16:
                                         buflen = snprintf (buffer, sizeof buffer,
-                                                           "%hd", SEXP_NCASTP(i16,v_dsc.mem)->n);
+                                                           "#d%hd", SEXP_NCASTP(i16,v_dsc.mem)->n);
                                         break;
                                 case SEXP_NUM_UINT16:
                                         buflen = snprintf (buffer, sizeof buffer,
-                                                           "%hu", SEXP_NCASTP(u16,v_dsc.mem)->n);
+                                                           "#d%hu", SEXP_NCASTP(u16,v_dsc.mem)->n);
                                         break;
                                 default:
                                         abort ();
@@ -128,20 +128,20 @@ int SEXP_sbprintf_t (SEXP_t *s_exp, strbuf_t *sb)
                         }
                 } else {
                         if (t <= SEXP_NUM_INT64) {
-                                char buffer[20+1];
+                                char buffer[22+1];
                                 
                                 switch (t) {
                                 case SEXP_NUM_INT32:
                                         buflen = snprintf (buffer, sizeof buffer,
-                                                           "%" PRId32, SEXP_NCASTP(i32,v_dsc.mem)->n);
+                                                           "#d%" PRId32, SEXP_NCASTP(i32,v_dsc.mem)->n);
                                         break;
                                 case SEXP_NUM_UINT32:
                                         buflen = snprintf (buffer, sizeof buffer,
-                                                           "%" PRIu32, SEXP_NCASTP(u32,v_dsc.mem)->n);
+                                                           "#d%" PRIu32, SEXP_NCASTP(u32,v_dsc.mem)->n);
                                         break;
                                 case SEXP_NUM_INT64:
                                         buflen = snprintf (buffer, sizeof buffer,
-                                                           "%" PRId64, SEXP_NCASTP(i64,v_dsc.mem)->n);
+                                                           "#d%" PRId64, SEXP_NCASTP(i64,v_dsc.mem)->n);
                                         break;
                                 default:
                                         abort ();
@@ -154,16 +154,16 @@ int SEXP_sbprintf_t (SEXP_t *s_exp, strbuf_t *sb)
                                         return (-1);
                                 
                         } else {
-                                char buffer[64+1];
+                                char buffer[66+1];
                                 
                                 switch (t) {
                                 case SEXP_NUM_UINT64:
                                         buflen = snprintf (buffer, sizeof buffer,
-                                                           "%" PRIu64, SEXP_NCASTP(u64,v_dsc.mem)->n);
+                                                           "#d%" PRIu64, SEXP_NCASTP(u64,v_dsc.mem)->n);
                                         break;
                                 case SEXP_NUM_DOUBLE:
                                         buflen = snprintf (buffer, sizeof buffer,
-                                                           "%f", SEXP_NCASTP(f  ,v_dsc.mem)->n);
+                                                           "#d%g", SEXP_NCASTP(f  ,v_dsc.mem)->n);
                                         break;
                                 default:
                                         abort ();
@@ -183,7 +183,7 @@ int SEXP_sbprintf_t (SEXP_t *s_exp, strbuf_t *sb)
         {
                 char buffer[20+1];
                 
-                buflen = snprintf (buffer, sizeof buffer, "%zu:", v_dsc.hdr->size / sizeof (char));
+                buflen = snprintf (buffer, sizeof buffer, "#d%zu:", v_dsc.hdr->size / sizeof (char));
                 
                 _A(buflen >= 0);
                 _A((size_t)buflen < sizeof buffer);
@@ -199,7 +199,7 @@ int SEXP_sbprintf_t (SEXP_t *s_exp, strbuf_t *sb)
                 
                 if (strbuf_add (sb, "(", 1) != 0)
                         return (-1);
-                if (SEXP_rawval_lblk_cb ((uintptr_t)SEXP_LCASTP(v_dsc.mem)->b_addr, (int (*)(SEXP_t *, void *)) SEXP_sbprintf_t_cb, (void *)sb,
+                if (SEXP_rawval_lblk_cb ((uintptr_t)SEXP_LCASTP(v_dsc.mem)->b_addr, (int (*)(SEXP_t *, void *)) SEXP_sbprintf_t, (void *)sb,
                                          SEXP_LCASTP(v_dsc.mem)->offset + 1) != 0)
                         return (-1);
                 if (strbuf_trunc (sb, 1) != 0)
@@ -268,7 +268,7 @@ size_t SEXP_fprintfa (FILE *fp, const SEXP_t *s_exp)
                         } else {
                                 switch (t) {
                                 case SEXP_NUM_UINT64: return fprintf (fp, "%" PRIu64, SEXP_NCASTP(u64,v_dsc.mem)->n);
-                                case SEXP_NUM_DOUBLE: return fprintf (fp,   "%f", SEXP_NCASTP(f  ,v_dsc.mem)->n);
+                                case SEXP_NUM_DOUBLE: return fprintf (fp,   "%g", SEXP_NCASTP(f  ,v_dsc.mem)->n);
                                 }
                         }
                 }

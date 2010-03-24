@@ -156,6 +156,7 @@ static inline bool isnextexp (int c)
         case '(' :
         case ')' :
         case '"' :
+        case '#' :
         case '\'':
         case '\t':
         case '\n':
