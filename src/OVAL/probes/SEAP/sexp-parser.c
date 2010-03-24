@@ -178,6 +178,7 @@ __PARSE_RT SEXP_parse_ul_string_b64 (__PARSE_PT(dsc));
 __PARSE_RT SEXP_parse_kl_string_b64 (__PARSE_PT(dsc));
 __PARSE_RT SEXP_parse_ul_datatype   (__PARSE_PT(dsc));
 __PARSE_RT SEXP_parse_kl_datatype   (__PARSE_PT(dsc));
+__PARSE_RT SEXP_parse_bool          (__PARSE_PT(dsc), bool val);
 
 /**
  * The S-expression parser
@@ -957,6 +958,63 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                  *  #o377      - octal   (base 8)
                  *  #b11111111 - binary  (base 2)
                  */
+                if (e_dsc.p_bufoff + 1 < spb_len) {
+                        switch (spb_octet (e_dsc.p_buffer, e_dsc.p_bufoff + 1)) {
+                        case 'T':
+                                ++e_dsc.p_bufoff;
+                                
+                                if ((ret_p = SEXP_parse_bool (&e_dsc, true)) != SEXP_PRET_SUCCESS)
+                                        goto SKIP_LOOP;
+                                else
+                                        goto L_SEXP_ADD;
+                        case 'F':
+                                ++e_dsc.p_bufoff;
+
+                                if ((ret_p = SEXP_parse_bool (&e_dsc, false)) != SEXP_PRET_SUCCESS)
+                                        goto SKIP_LOOP;
+                                else
+                                        goto L_SEXP_ADD;
+                        case 'b':
+                                e_dsc.p_numbase = 2;
+                                break;
+                        case 'd':
+                                e_dsc.p_numbase = 10;
+                                break;
+                        case 'x':
+                                e_dsc.p_numbase = 16;
+                                break;
+                        case 'o':
+                                e_dsc.p_numbase = 8;
+                                break;
+                        default:
+                                ret_p = SEXP_PRET_EINVAL;
+                                goto SKIP_LOOP;
+                        }
+                        
+                        if (e_dsc.p_bufoff + 2 < spb_len) {
+                                ++e_dsc.p_bufoff;
+                                ++e_dsc.p_bufoff;
+                                
+                                cur_c = spb_octet (e_dsc.p_buffer, e_dsc.p_bufoff);
+                                
+                                switch (cur_c) {
+                                case '+':
+                                case '-':
+                                case '.':
+                                        goto *d_labels[cur_c];
+                                default:
+                                        if (isdigit (cur_c))
+                                                goto *d_labels[cur_c];
+                                }
+
+                                ret_p = SEXP_PRET_EINVAL;
+                                goto SKIP_LOOP;
+                        }
+                }
+                
+                ret_p = SEXP_PRET_EUNFIN;
+                e_dsc.p_label = '#';
+
                 break;
         L_WHITESPACE:
                 spb_iterate (e_dsc.p_buffer, e_dsc.p_bufoff, cur_c,
@@ -1777,6 +1835,24 @@ __PARSE_RT SEXP_parse_kl_datatype (__PARSE_PT(dsc))
         
         ++dsc->p_explen;
         ++dsc->p_explen;
+        
+        return (SEXP_PRET_SUCCESS);
+}
+
+__PARSE_RT SEXP_parse_bool (__PARSE_PT(dsc), bool val)
+{
+        SEXP_val_t v_dsc;
+
+        if (SEXP_val_new (&v_dsc, sizeof (SEXP_numtype_t) + sizeof (bool),
+                          SEXP_VALTYPE_NUMBER) != 0)
+        {
+                return (SEXP_PRET_EUNDEF);
+        }
+        
+        SEXP_NCASTP(b,v_dsc.mem)->t = SEXP_NUM_BOOL;
+        SEXP_NCASTP(b,v_dsc.mem)->n = val;
+        dsc->s_exp->s_valp = SEXP_val_ptr (&v_dsc);
+        dsc->p_explen = 1;
         
         return (SEXP_PRET_SUCCESS);
 }

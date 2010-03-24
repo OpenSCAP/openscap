@@ -83,7 +83,7 @@ int SEXP_sbprintf_t (SEXP_t *s_exp, strbuf_t *sb)
                                 switch (t) {
                                 case SEXP_NUM_BOOL:
                                         buflen = snprintf (buffer, sizeof buffer,
-                                                           "%hhu", SEXP_NCASTP(b ,v_dsc.mem)->n);
+                                                           "#%c", SEXP_NCASTP(b ,v_dsc.mem)->n ? 'T':'F');
                                         break;
                                 case SEXP_NUM_INT8:
                                         buflen = snprintf (buffer, sizeof buffer,
@@ -248,7 +248,7 @@ size_t SEXP_fprintfa (FILE *fp, const SEXP_t *s_exp)
                 if (t <= SEXP_NUM_UINT16) {
                         if (t <= SEXP_NUM_UINT8) {
                                 switch (t) {
-                                case SEXP_NUM_BOOL:  return fprintf (fp, "%hhu", SEXP_NCASTP(b ,v_dsc.mem)->n);
+                                case SEXP_NUM_BOOL:  return fprintf (fp, "#%c", SEXP_NCASTP(b ,v_dsc.mem)->n ? 'T':'F');
                                 case SEXP_NUM_INT8:  return fprintf (fp, "%hhd", SEXP_NCASTP(i8,v_dsc.mem)->n);
                                 case SEXP_NUM_UINT8: return fprintf (fp, "%hhu", SEXP_NCASTP(u8,v_dsc.mem)->n);
                                 }
