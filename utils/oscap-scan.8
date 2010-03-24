@@ -5,11 +5,9 @@ oscap-scan \- Evaluate OVAL content
 .B oscap-scan
 .RB [ option ]\ [ URL|file ]
 .SH DESCRIPTION
-\fBoscap-scan\fP will perform an evaluation of the system based on the
-file given as input. The input source may be either the full path to
-the xml file or an URL from which to download it. Currently, only
-OVAL content is supported.
-
+\fBoscap-scan\fP will perform evaluation of the system based on the
+OVAL definition \fBfile\fP. The input file may be found on disk or downloaded from a
+given URL. 
 .SH OPTIONS
 .TP
 \fB\-v, \-\-verbose\fR=\fIN\fR
@@ -31,7 +29,7 @@ output system characteristic to separate file
 .B \-h, \-\-help
 display this help and exit
 .SH RETURN VALUE
-Oscap-scan returns exit code 1 on internal error.
-If evaluation succeed, but some definition fails, 2 is returned. Otherwise oscap-scan exits with 0 exit code.
+oscap-scan returns 0 if all definitions pass. If there is an error during evaluation, the return code is 1.  
+If there is at least one failed result definition, oscap-scan finishes with return code 2.
 .SH AUTHOR
 Maros Barabas <mbarabas@redhat.com>
