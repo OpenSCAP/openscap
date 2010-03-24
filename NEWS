@@ -1,3 +1,15 @@
+openscap-0.5.8							24-03-2010
+- new s-expr parser
+- new probes from unix schema
+- file probe optimization
+- xccdf test_results implementation
+- extended OVAL API
+- documentaion update for OVAL + probes
+- tuned fedora content
+- initscript, cron job, oscap-scan (improved)
+- XCCDF_POLICY API specification
+- fixes(make distcheck pass)
+
 openscap-0.5.7							21-02-2010
 - Debian dpkginfo probe is available now
 - RHEL5 support
