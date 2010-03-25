@@ -412,7 +412,6 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                 state->p_bufoff = 0;
                 state->p_flags  = psetup->p_flags;
                 SEXP_lstack_init (&state->l_stack);
-                e_dsc.v_bool    = state->v_bool;
         }
         
         assume_d (state != NULL, NULL);
@@ -431,6 +430,7 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
         e_dsc.p_numclass = state->p_numclass;
         e_dsc.p_numbase  = state->p_numbase;
         e_dsc.p_numstage = state->p_numstage;
+        e_dsc.v_bool     = state->v_bool;
         
         assume_d (e_dsc.p_buffer != NULL, NULL);
         
