@@ -169,7 +169,36 @@ struct oval_object_content
 
 bool oval_object_content_is_valid(struct oval_object_content * object_content)
 {
-	return true;		//TODO
+	oval_object_content_type_t type;
+
+	if (object_content == NULL)
+		return false;
+
+	type = oval_object_content_get_type(object_content);
+	switch (type) {
+	case OVAL_OBJECTCONTENT_ENTITY:
+		{
+			struct oval_entity *entity;
+
+			entity = oval_object_content_get_entity(object_content);
+			if (oval_entity_is_valid(entity) != true)
+				return false;
+		}
+		break;
+	case OVAL_OBJECTCONTENT_SET:
+		{
+			struct oval_setobject *set;
+
+			set = oval_object_content_get_setobject(object_content);
+			if (oval_setobject_is_valid(set) != true)
+				return false;
+		}
+		break;
+	default:
+		return false;
+	}
+
+	return true;
 }
 
 bool oval_object_content_is_locked(struct oval_object_content * object_content)

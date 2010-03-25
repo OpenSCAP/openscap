@@ -107,7 +107,10 @@ struct oval_behavior *oval_behavior_clone(struct oval_definition_model *new_mode
 
 bool oval_behavior_is_valid(struct oval_behavior * behavior)
 {
-	return true;		//TODO
+	if (behavior == NULL)
+		return false;
+
+	return true;
 }
 
 bool oval_behavior_is_locked(struct oval_behavior * behavior)

@@ -169,7 +169,16 @@ struct oval_definition *oval_definition_new(struct oval_definition_model *model,
 
 bool oval_definition_is_valid(struct oval_definition * definition)
 {
-	return true;		//TODO
+	struct oval_criteria_node *criteria_node;
+
+	if (definition == NULL)
+		return false;
+
+	criteria_node = oval_definition_get_criteria(definition);
+	if (oval_criteria_node_is_valid(criteria_node) != true)
+		return false;
+
+	return true;
 }
 
 bool oval_definition_is_locked(struct oval_definition * definition)

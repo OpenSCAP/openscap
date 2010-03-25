@@ -139,7 +139,72 @@ struct oval_setobject *oval_setobject_new(struct oval_definition_model *model)
 
 bool oval_setobject_is_valid(struct oval_setobject * set_object)
 {
-	return true;		//TODO
+	bool is_valid = true;
+	oval_setobject_type_t type;
+
+	if (set_object == NULL)
+		return false;
+
+	type = oval_setobject_get_type(set_object);
+	switch (type) {
+	case OVAL_SET_AGGREGATE:
+		{
+			struct oval_setobject_iterator *subsets_itr;
+
+			subsets_itr = oval_setobject_get_subsets(set_object);
+			while (oval_setobject_iterator_has_more(subsets_itr)) {
+				struct oval_setobject *subset;
+
+				subset = oval_setobject_iterator_next(subsets_itr);
+				if (oval_setobject_is_valid(subset) != true) {
+					is_valid = false;
+					break;
+				}
+			}
+			oval_setobject_iterator_free(subsets_itr);
+			if (is_valid != true)
+				return false;
+		}
+		break;
+	case OVAL_SET_COLLECTIVE:
+		{
+			struct oval_object_iterator *objects_itr;
+			struct oval_state_iterator *filters_itr;
+
+			objects_itr = oval_setobject_get_objects(set_object);
+			while (oval_object_iterator_has_more(objects_itr)) {
+				struct oval_object *object;
+
+				object = oval_object_iterator_next(objects_itr);
+				if (oval_object_is_valid(object) != true) {
+					is_valid = false;
+					break;
+				}
+			}
+			oval_object_iterator_free(objects_itr);
+			if (is_valid != true)
+				return false;
+
+			filters_itr = oval_setobject_get_filters(set_object);
+			while (oval_state_iterator_has_more(filters_itr)) {
+				struct oval_state *state;
+
+				state = oval_state_iterator_next(filters_itr);
+				if (oval_state_is_valid(state) != true) {
+					is_valid = false;
+					break;
+				}
+			}
+			oval_state_iterator_free(filters_itr);
+			if (is_valid != true)
+				return false;
+		}
+		break;
+	default:
+		return false;
+	}
+
+	return true;
 }
 
 bool oval_setobject_is_locked(struct oval_setobject * setobject)

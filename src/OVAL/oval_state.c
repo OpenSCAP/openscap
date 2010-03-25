@@ -154,7 +154,29 @@ struct oval_state *oval_state_new(struct oval_definition_model *model, char *id)
 
 bool oval_state_is_valid(struct oval_state * state)
 {
-	return true;		//TODO
+	/*
+	bool is_valid = true;
+	struct oval_state_content_iterator *contents_itr;
+	*/
+
+	if (state == NULL)
+		return false;
+	/*
+	contents_itr = oval_state_get_contents(state);
+	while (oval_state_content_iterator_has_more(contents_itr)) {
+		struct oval_state_content *content;
+
+		content = oval_state_content_iterator_next(contents_itr);
+		if (oval_state_content_is_valid(content) != true) {
+			is_valid = false;
+			break;
+		}
+	}
+	oval_state_content_iterator_free(contents_itr);
+	if (is_valid != true)
+		return false;
+	*/
+	return true;
 }
 
 bool oval_state_is_locked(struct oval_state * state)

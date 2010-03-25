@@ -166,7 +166,21 @@ struct oval_test *oval_test_new(struct oval_definition_model *model, char *id)
 
 bool oval_test_is_valid(struct oval_test * test)
 {
-	return true;		//TODO
+	struct oval_object *object;
+	struct oval_state *state;
+
+	if (test == NULL)
+		return false;
+
+	object = oval_test_get_object(test);
+	if (oval_object_is_valid(object) != true)
+		return false;
+
+	state = oval_test_get_state(test);
+	if (state != NULL && oval_state_is_valid(state) != true)
+		return false;
+
+	return true;
 }
 
 bool oval_test_is_locked(struct oval_test * test)

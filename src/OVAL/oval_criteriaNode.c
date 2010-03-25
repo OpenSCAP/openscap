@@ -204,7 +204,56 @@ struct oval_criteria_node *oval_criteria_node_new(struct oval_definition_model *
 
 bool oval_criteria_node_is_valid(struct oval_criteria_node * criteria_node)
 {
-	return true;		//TODO
+	bool is_valid = true;
+	oval_criteria_node_type_t type;
+
+	if (criteria_node == NULL)
+		return false;
+
+	type = oval_criteria_node_get_type(criteria_node);
+	switch (type) {
+	case OVAL_NODETYPE_CRITERIA:
+		{
+			struct oval_criteria_node_iterator *subnodes_itr;
+
+			subnodes_itr = oval_criteria_node_get_subnodes(criteria_node);
+			while (oval_criteria_node_iterator_has_more(subnodes_itr)) {
+				struct oval_criteria_node *subnode;
+
+				subnode = oval_criteria_node_iterator_next(subnodes_itr);
+				if (oval_criteria_node_is_valid(subnode) != true) {
+					is_valid = false;
+					break;
+				}
+			}
+			oval_criteria_node_iterator_free(subnodes_itr);
+			if (is_valid != true)
+				return false;
+		}
+		break;
+	case OVAL_NODETYPE_CRITERION:
+		{
+			struct oval_test *test;
+
+			test = oval_criteria_node_get_test(criteria_node);
+			if (oval_test_is_valid(test) != true)
+				return false;
+		}
+		break;
+	case OVAL_NODETYPE_EXTENDDEF:
+		{
+			struct oval_definition *def;
+
+			def = oval_criteria_node_get_definition(criteria_node);
+			if (oval_definition_is_valid(def) != true)
+				return false;
+		}
+		break;
+	default:
+		return false;
+	}
+
+	return true;
 }
 
 bool oval_criteria_node_is_locked(struct oval_criteria_node * criteria_node)
