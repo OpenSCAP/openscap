@@ -213,3 +213,36 @@ char *oscap_strsep(char **str, const char *delim)
 	}
 	return ret;
 }
+
+static const size_t CPE_SPLIT_INIT_ALLOC = 8;
+
+char **oscap_split(char *str, const char *delim)
+{
+
+	__attribute__nonnull__(str);
+
+	char **stringp = &str;
+	int alloc = CPE_SPLIT_INIT_ALLOC;
+	char **fields = oscap_alloc(alloc * sizeof(char *));
+	if (!fields)
+		return NULL;
+
+	int i = 0;
+	while (*stringp) {
+		if (i + 2 > alloc) {
+			void *old = fields;
+			alloc *= 2;
+			fields = oscap_realloc(fields, alloc * sizeof(char *));
+			if (fields == NULL) {
+				oscap_free(old);
+				return NULL;
+			}
+		}
+		fields[i++] = oscap_strsep(stringp, delim);
+	}
+	fields[i] = NULL;
+
+	return fields;
+}
+
+

@@ -338,4 +338,14 @@ char *oscap_strdup(const char *str);
  */
 char *oscap_strsep(char **str, const char *delim);
 
+/**
+ * Split a string.
+ * Split string using given delimiter.
+ * Produces NULL-terminated array of strings.
+ * Modifies its first argument!
+ * @param str String we want to split
+ * @param delim Delimiter of string parts
+ */
+char **oscap_split(char *str, const char *delim);
+
 #endif				/* OSCAP_UTIL_H_ */

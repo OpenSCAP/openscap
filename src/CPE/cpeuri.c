@@ -81,7 +81,6 @@ static const struct oscap_string_map CPE_PART_MAP[] = {
 char **cpe_uri_split(char *str, const char *delim);
 static bool cpe_urldecode(char *str);
 bool cpe_name_check(const char *str);
-static char **cpe_split(char *str, const char *delim);
 static const char *cpe_get_field(const struct cpe_name *cpe, int idx);
 static const char *as_str(const char *str);
 static bool cpe_set_field(struct cpe_name *cpe, int idx, const char *newval);
@@ -205,7 +204,7 @@ struct cpe_name *cpe_name_new(const char *cpestr)
 
 	if (cpestr) {
 		char *data_ = strdup(cpestr + 5);	// without 'cpe:/'
-		char **fields_ = cpe_split(data_, ":");
+		char **fields_ = oscap_split(data_, ":");
 		for (i = 0; fields_[i]; ++i)
 			cpe_urldecode(fields_[i]);
 		cpe_assign_values(cpe, fields_);
@@ -215,36 +214,6 @@ struct cpe_name *cpe_name_new(const char *cpestr)
 	return cpe;
 }
 
-static const size_t CPE_SPLIT_INIT_ALLOC = 8;
-
-static char **cpe_split(char *str, const char *delim)
-{
-
-	__attribute__nonnull__(str);
-
-	char **stringp = &str;
-	int alloc = CPE_SPLIT_INIT_ALLOC;
-	char **fields = oscap_alloc(alloc * sizeof(char *));
-	if (!fields)
-		return NULL;
-
-	int i = 0;
-	while (*stringp) {
-		if (i + 2 > alloc) {
-			void *old = fields;
-			alloc *= 2;
-			fields = oscap_realloc(fields, alloc * sizeof(char *));
-			if (fields == NULL) {
-				oscap_free(old);
-				return NULL;
-			}
-		}
-		fields[i++] = oscap_strsep(stringp, delim);
-	}
-	fields[i] = NULL;
-
-	return fields;
-}
 
 static bool cpe_urldecode(char *str)
 {
