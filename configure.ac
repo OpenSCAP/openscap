@@ -136,7 +136,13 @@ if test "$with_nss3" = yes; then
    AC_CHECK_LIB([nss3], [NSS_NoDB_Init],
         [crapi_cflags=`nss-config --cflags`
          crapi_libs=`nss-config --libs`
-         AC_DEFINE([HAVE_NSS], [1], [Define to 1 if you have 'NSS' library.])],
+         AC_DEFINE([HAVE_NSS3], [1], [Define to 1 if you have 'NSS' library.])
+         AC_CHECK_LIB([nspr4], [PR_CreateThread],
+         	[crapi_cflags="$crapi_cflags `nspr-config --cflags`"
+         	 crapi_libs="$crapi_libs `nspr-config --libs`"
+         	 AC_DEFINE([HAVE_NSPR4], [1], [Define to 1 if you have 'NSPR' library.])],
+                [AC_MSG_ERROR([library 'nspr4' is required for NSS.])],
+                [`nspr-config --libs`])],
         [AC_MSG_ERROR([library 'nss3' is required for NSS.])],
         [`nss-config --libs`])
 fi
