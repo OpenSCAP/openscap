@@ -1,3 +1,5 @@
+SUBDIRS= crapi
+
 pkglibexecdir= $(libexecdir)/openscap
 pkglibexec_PROGRAMS=
 

@@ -129,6 +129,39 @@ AC_CHECK_LIB(
   [`curl-config --libs`]
 )
 
+crapi_cflags=""
+crapi_libs=""
+
+if test "$with_nss3" = yes; then
+   AC_CHECK_LIB([nss3], [NSS_NoDB_Init],
+        [crapi_cflags=`nss-config --cflags`
+         crapi_libs=`nss-config --libs`
+         AC_DEFINE([HAVE_NSS], [1], [Define to 1 if you have 'NSS' library.])],
+        [AC_MSG_ERROR([library 'nss3' is required for NSS.])],
+        [`nss-config --libs`])
+fi
+
+if test "$with_openssl" = yes; then
+   AC_CHECK_LIB([crypto], BN_init,
+        [crapi_cflags=-I'${prefix}'/include
+         crapi_libs=-lcrypto
+         AC_DEFINE([HAVE_OPENSSL], [1], [Define to 1 if you have 'OpenSSL' library.])],
+         [AC_MSG_ERROR([library 'crypto' is required for OpenSSL.])],
+        [-lcrypto])
+fi
+
+if test "$with_gcrypt" = yes; then
+   AC_CHECK_LIB([gcrypt], [gcry_check_version],
+        [crapi_cflags=`libgcrypt-config --cflags`
+         crapi_libs=`libgcrypt-config --libs`
+         AC_DEFINE([HAVE_GCRYPT], [1], [Define to 1 if you have 'gcrypt' library.])],
+         [AC_MSG_ERROR([library 'gcrypt' is required for GCrypt.])],
+        [`libgcrypt-config --libs`])
+fi
+
+AC_SUBST(crapi_cflags)
+AC_SUBST(crapi_libs)
+
 case "${host}" in
     *-*-linux*)
 #
@@ -269,7 +302,6 @@ AC_CHECK_HEADERS(
 )
 CPPFLAGS="$CPPFLAGS_SAVE"
 
-
 AC_PATH_PROG(PERL, perl)
 PERL_INCLUDES="`$PERL -e 'use Config; print $Config{archlib}'`/CORE"
 vendorlib="$(  $PERL -e 'use Config; print $Config{vendorlib}'  | sed "s|$($PERL -e 'use Config; print $Config{prefix}')||" )"
@@ -277,7 +309,6 @@ vendorarch="$( $PERL -e 'use Config; print $Config{vendorarch}' | sed "s|$($PERL
 AC_SUBST([PERL_INCLUDES], ["$PERL_INCLUDES"])
 AC_SUBST([perl_vendorlibdir], ['${prefix}'$vendorlib])
 AC_SUBST([perl_vendorarchdir], ['${prefix}'$vendorarch])
-
 
 AC_SUBST(libxml_cflags)
 AC_SUBST(libxml_libs)
@@ -436,6 +467,24 @@ AC_ARG_ENABLE([debug],
        *) AC_MSG_ERROR([bad value ${enableval} for --enable-debug]) ;;
      esac], [debug=no])
 
+AC_ARG_WITH([nss3],
+     [AS_HELP_STRING([--with-nss3],
+     [use the NSS 3.x library for crypto])],
+     [],
+     [with_nss3=no])
+
+AC_ARG_WITH([openssl],
+     [AS_HELP_STRING([--with-openssl],
+     [use the OpenSSL library for crypto])],
+     [],
+     [with_openssl=no])
+
+AC_ARG_WITH([gcrypt],
+     [AS_HELP_STRING([--with-gcrypt],
+     [use the GCrypt library for crypto])],
+     [],
+     [with_gcrypt=no])
+
 if test "$regex_posix" = "yes"; then
    AC_DEFINE([USE_REGEX_POSIX], [1], [Use POSIX regular expressions])
 else
@@ -469,6 +518,7 @@ AC_CONFIG_FILES([Makefile
                  swig/Makefile
                  src/OVAL/Makefile
                  src/OVAL/probes/Makefile
+                 src/OVAL/probes/crapi/Makefile
                  src/OVAL/probes/SEAP/Makefile
                  src/CVSS/Makefile
                  src/CVE/Makefile
@@ -492,12 +542,38 @@ echo "CVSS enabled:                  $cvss"
 echo "OVAL enabled:                  $oval"
 echo "OVAL probes enabled:           $probes"
 
+if test "$with_nss3" = yes; then
+echo "  === crypto === "
+echo "  library:                     NSS 3.x"
+echo "  libs:                        $crapi_libs"
+echo "  cflags:                      $crapi_cflags"
+echo ""
+fi
+
+if test "$with_openssl" = yes; then
+echo "  === crypto === "
+echo "  library:                     OpenSSL"
+echo "  libs:                        $crapi_libs"
+echo "  cflags:                      $crapi_cflags"
+echo ""
+fi
+
+if test "$with_gcrypt" = yes; then
+echo "  === crypto === "
+echo "  library:                     GCrypt"
+echo "  libs:                        $crapi_libs"
+echo "  cflags:                      $crapi_cflags"
+echo ""
+fi
+
 if test "x$probes" = "xyes"; then
 echo "  === independent probes ==="
 echo "  family probe:                $probes_independent"
 echo "  system info probe:           $probes_independent"
 echo "  textfilecontent54 probe:     $probes_independent"
 echo "  xmlfilecontent probe:        $probes_independent"
+echo ""
+
 echo "  === unix probes ==="
 echo "  file probe:                  $probes_unix"
 echo "  interface probe:             $probes_unix"
@@ -506,12 +582,17 @@ echo "  process probe:               $probes_unix"
 echo "  runlevel probe:              $probes_unix"
 echo "  shadow probe:                $probes_unix"
 echo "  uname probe:                 $probes_unix"
+echo ""
+
 echo "  === linux probes ==="
 echo "  dpkginfo probe:              $have_libapt_pkg"
 echo "  inetlisteningservers probe:  $probes_linux"
 echo "  rpminfo probe:               $have_librpm"
+echo ""
+
 echo "  === configuration ==="
 echo "  probe directory set to:      $probe_dir"
+echo ""
 fi
 
 echo "XCCDF enabled:                 $xccdf"
