@@ -24,8 +24,11 @@ int crapi_md5_fd (int fd, void *dst, size_t *size)
                 return (-1);
         
         buflen = st.st_size;
-        buffer = mmap (NULL, buflen, PROT_READ, MAP_NOCORE, fd, 0);
-        
+#if defined(__FreeBSD__)
+        buffer = mmap (NULL, buflen, PROT_READ, MAP_SHARED | MAP_NOCORE, fd, 0);
+#else
+        buffer = mmap (NULL, buflen, PROT_READ, MAP_SHARED, fd, 0);        
+#endif
         if (buffer == NULL) {
                 uint8_t _buffer[4096];
                 HASHContext *ctx;
@@ -73,10 +76,13 @@ int crapi_md5_fd (int fd, void *dst, size_t *size)
         
         if (fstat (fd, &st) != 0)
                 return (-1);
-        
+       
         buflen = st.st_size;
-        buffer = mmap (NULL, buflen, PROT_READ, MAP_NOCORE, fd, 0);
-        
+#if defined(__FreeBSD__)
+        buffer = mmap (NULL, buflen, PROT_READ, MAP_SHARED | MAP_NOCORE, fd, 0);
+#else
+        buffer = mmap (NULL, buflen, PROT_READ, MAP_SHARED, fd, 0);        
+#endif
         if (buffer == NULL) {
                 uint8_t _buffer[4096];
                 MD5_CTX ctx;
@@ -123,8 +129,11 @@ int crapi_md5_fd (int fd, void *dst, size_t *size)
                 return (-1);
         
         buflen = st.st_size;
-        buffer = mmap (NULL, buflen, PROT_READ, MAP_NOCORE, fd, 0);
-        
+#if defined(__FreeBSD__)
+        buffer = mmap (NULL, buflen, PROT_READ, MAP_SHARED | MAP_NOCORE, fd, 0);
+#else
+        buffer = mmap (NULL, buflen, PROT_READ, MAP_SHARED, fd, 0);        
+#endif        
         if (buffer == NULL) {
                 uint8_t _buffer[4096];
                 gcry_md_hd_t hd;
