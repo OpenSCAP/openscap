@@ -202,3 +202,106 @@ void xml_metadata_free(struct xml_metadata *xml)
 	oscap_free(xml->nspace);
 	oscap_free(xml->URI);
 }
+
+struct oscap_nsinfo_entry *oscap_nsinfo_entry_new(void)
+{
+	return oscap_calloc(1, sizeof(struct oscap_nsinfo_entry));
+}
+
+struct oscap_nsinfo_entry *oscap_nsinfo_entry_new_fill(const char *nsprefix, const char *nsname)
+{
+	struct oscap_nsinfo_entry *entry = oscap_nsinfo_entry_new();
+	entry->nsprefix = oscap_strdup(nsprefix);
+	entry->nsname = oscap_strdup(nsname);
+	return entry;
+}
+
+void oscap_nsinfo_entry_free(struct oscap_nsinfo_entry *entry)
+{
+	if (entry != NULL) {
+		oscap_free(entry->nsname);
+		oscap_free(entry->nsprefix);
+		oscap_free(entry->schema_location);
+		oscap_free(entry);
+	}
+}
+
+struct oscap_nsinfo *oscap_nsinfo_new(void)
+{
+	struct oscap_nsinfo *info = calloc(1, sizeof(struct oscap_nsinfo));
+	info->entries = oscap_list_new();
+	return info;
+}
+
+void oscap_nsinfo_free(struct oscap_nsinfo *info)
+{
+	if (info != NULL) {
+		oscap_list_free(info->entries, (oscap_destruct_func) oscap_nsinfo_entry_free);
+		oscap_free(info);
+	}
+}
+
+const char *oscap_strlist_find_value(const char **kvalues, const char *key)
+{
+	if (kvalues == NULL || key == NULL) return NULL;
+
+	for (int i = 0; kvalues[i] != NULL && kvalues[i + 1] != NULL; i += 2)
+		if (strcmp(kvalues[i], key) == 0)
+			return kvalues[i + 1];
+
+	return NULL;
+}
+
+bool oscap_nsinfo_add_parse(struct oscap_nsinfo *info, xmlTextReaderPtr reader, bool set_root)
+{
+	if (xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT &&
+		xmlTextReaderNodeType(reader) != XML_READER_TYPE_ATTRIBUTE)
+		return false;
+
+	char *schemalocattr = xmlTextReaderGetAttribute(reader, "schemaLocation");
+	char **schemaloc = (schemalocattr ? oscap_split(schemalocattr, " ") : NULL);
+	struct oscap_nsinfo_entry *entry = NULL;
+
+	for (int i = 0; xmlTextReaderMoveToAttributeNo(reader, i) == 1; ++i) {
+		if (strcmp(xmlTextReaderConstName(reader), "xmlns") == 0) {
+			entry = oscap_nsinfo_entry_new_fill(NULL, xmlTextReaderConstValue(reader));
+			if (set_root) info->root_entry = entry;
+		}
+		else if (strcmp(xmlTextReaderConstPrefix(reader), "xmlns") != 0)
+			continue;
+		else
+			entry = oscap_nsinfo_entry_new_fill(xmlTextReaderConstLocalName(reader),
+					xmlTextReaderConstValue(reader));
+
+		entry->schema_location = oscap_strdup(oscap_strlist_find_value(schemaloc, entry->nsname));
+		oscap_list_add(info->entries, entry);
+	}
+
+	oscap_free(schemaloc);
+	oscap_free(schemalocattr);
+
+	return true;
+}
+
+struct oscap_nsinfo *oscap_nsinfo_new_parse(xmlTextReaderPtr reader)
+{
+	assert(reader != NULL);
+	struct oscap_nsinfo *info = oscap_nsinfo_new();
+	if (!oscap_nsinfo_add_parse(info, reader, true)) {
+		oscap_nsinfo_free(info);
+		return NULL;
+	}
+	return info;
+}
+
+struct oscap_nsinfo *oscap_nsinfo_new_file(const char *fname)
+{
+	if (fname == NULL) return NULL;
+	xmlTextReaderPtr reader = xmlReaderForFile(fname, NULL, 0);
+	if (reader == NULL) return NULL;
+	oscap_to_start_element(reader, 1);
+	struct oscap_nsinfo *info = oscap_nsinfo_new_parse(reader);
+	xmlFreeTextReader(reader);
+	return info;
+}
+

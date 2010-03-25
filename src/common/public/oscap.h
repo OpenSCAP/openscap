@@ -355,6 +355,9 @@ struct oscap_export_target *oscap_export_target_new_URL(const char *url, const c
  */
 void oscap_export_target_free(struct oscap_export_target *target);
 
+
+bool oscap_validate_xml(const char *xmlfile, const char *schemafile);
+
 /** @} */
 
 #endif

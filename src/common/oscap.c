@@ -22,8 +22,101 @@
 
 #include <libxml/parser.h>
 #include "public/oscap.h"
+#include "error.h"
+#include "util.h"
+#include "elements.h"
+#include <libxml/xmlschemas.h>
 
 void oscap_cleanup(void)
 {
 	xmlCleanupParser();
 }
+
+#ifdef WIN32
+const char *OSCAP_OS_PATH_DELIM  = "\\";
+#else
+const char *OSCAP_OS_PATH_DELIM  = "/";
+#endif
+
+const char *OSCAP_PATH_SEPARATOR = ":";
+
+
+
+const char *oscap_get_xsd_dir(const char *dir)
+{
+#ifdef OSCAP_XSD_DIR_ENVVAR
+	if (dir == NULL) dir = getenv(OSCAP_XSD_DIR_ENVVAR);
+#endif
+#ifdef OSCAP_XSD_DIR
+	if (dir == NULL) dir = OSCAP_XSD_DIR;
+#endif
+	if (dir == NULL) dir = ".";
+	return dir;
+}
+
+char *oscap_get_schema_filename(const char *xmlfile)
+{
+	if (xmlfile == NULL) return NULL;
+	char *ret = NULL;
+	struct oscap_nsinfo *info = oscap_nsinfo_new_file(xmlfile);
+	if (info && info->root_entry && info->root_entry->schema_location)
+		ret = oscap_strdup(info->root_entry->schema_location);
+	oscap_nsinfo_free(info);
+	return ret;
+}
+
+char *oscap_get_schema_path(const char *xmlfile, const char *directory)
+{
+	if (xmlfile == NULL) return NULL;
+	const char *dir = oscap_get_xsd_dir(directory);
+	char *schemafile = oscap_get_schema_filename(xmlfile);
+	if (schemafile == NULL) return NULL;
+	char *schemapath = oscap_alloc(sizeof(char) * (strlen(schemafile) + strlen(OSCAP_OS_PATH_DELIM) + strlen(dir) + 1));
+	sprintf(schemapath, "%s%s%s", dir, OSCAP_OS_PATH_DELIM, schemafile);
+	oscap_free(schemafile);
+	return schemapath;
+}
+
+bool oscap_validate_xml(const char *xmlfile, const char *schemafile)
+{
+	assert(xmlfile != NULL);
+	assert(schemafile != NULL); // TODO: validate even w/o schema, just for well-formness
+
+	bool result = false; int ret = 0;
+	xmlSchemaParserCtxtPtr parser_ctxt = NULL;
+	xmlSchemaPtr schema = NULL;
+	xmlSchemaValidCtxtPtr ctxt = NULL;
+
+	parser_ctxt = xmlSchemaNewParserCtxt(schemafile);
+	if (parser_ctxt == NULL) {
+		oscap_seterr(OSCAP_EFAMILY_XML, 0, "Could not create parser context for validation");
+		goto cleanup;
+	}
+
+	schema = xmlSchemaParse(parser_ctxt);
+	if (schema == NULL) {
+		oscap_seterr(OSCAP_EFAMILY_XML, 0, "Could not parse XML schema");
+		goto cleanup;
+	}
+
+	ctxt = xmlSchemaNewValidCtxt(schema);
+	if (parser_ctxt == NULL) {
+		oscap_seterr(OSCAP_EFAMILY_XML, 0, "Could not create validation context");
+		goto cleanup;
+	}
+
+	ret = xmlSchemaValidateFile(ctxt, xmlfile, 0);
+	switch (ret) {
+		case  0: result = true; break;
+		case -1: oscap_seterr(OSCAP_EFAMILY_XML, 0, "Validation failure"); break;
+		default: oscap_seterr(OSCAP_EFAMILY_XML, ret, "The document is not valid"); break;
+	}
+
+cleanup:
+	if (ctxt)        xmlSchemaFreeValidCtxt(ctxt);
+	if (schema)      xmlSchemaFree(schema);
+	if (parser_ctxt) xmlSchemaFreeParserCtxt(parser_ctxt);
+
+	return result;
+}
+
