@@ -58,6 +58,15 @@ struct xccdf_policy_model;
  */
 struct xccdf_policy;
 struct xccdf_policy_iterator;
+struct xccdf_value_binding_iterator;
+
+bool xccdf_policy_iterator_has_more(struct xccdf_policy_iterator *it);
+struct xccdf_policy * xccdf_policy_iterator_next(struct xccdf_policy_iterator *it);
+void xccdf_policy_iterator_free(struct xccdf_policy_iterator *it);
+
+bool xccdf_value_binding_iterator_has_more(struct xccdf_value_binding_iterator *it);
+struct xccdf_value_binding * xccdf_value_binding_iterator_next(struct xccdf_value_binding_iterator *it);
+void xccdf_value_binding_iterator_free(struct xccdf_value_binding_iterator *it);
 
 /**
  * @struct xccdf_value_binding
@@ -69,7 +78,9 @@ struct xccdf_value_binding_iterator;
 
 
 struct xccdf_policy_model *xccdf_policy_model_new(struct xccdf_benchmark *);
-struct xccdf_policy * xccdf_policy_new(struct xccdf_profile * profile);
+struct xccdf_policy * xccdf_policy_new(struct xccdf_policy_model * model, struct xccdf_profile * profile);
+
+struct xccdf_policy_model * xccdf_policy_get_model(const struct xccdf_policy * policy);
 
 struct xccdf_benchmark * xccdf_policy_model_get_benchmark(const struct xccdf_policy_model * item);
 
@@ -137,6 +148,14 @@ bool xccdf_value_binding_add_setvalue(struct xccdf_value_binding *, struct xccdf
 
 /// @memberof xccdf_policy
 bool xccdf_policy_set_selected(struct xccdf_policy * policy, char * idref);
+
+
+/**
+ * function to register callback for checking system
+ */
+bool xccdf_policy_model_register_callback(struct xccdf_policy_model * model, char * sys, void * func, void * usr);
+
+struct xccdf_result * xccdf_policy_get_result(const struct xccdf_policy * policy);
 
 #endif
 
