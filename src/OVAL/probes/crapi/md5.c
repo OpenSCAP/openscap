@@ -68,62 +68,6 @@ int crapi_md5_fd (int fd, void *dst, size_t *size)
         }
         return (0);
 }
-#elif defined(HAVE_OPENSSL)
-# include <openssl/md5.h>
-
-int crapi_md5_fd (int fd, void *dst, size_t *size)
-{
-        struct stat st;
-        void   *buffer;
-        size_t  buflen;
-        
-        assume_r (size != NULL, -1, errno = EFAULT;);
-        assume_r (*size < MD5_DIGEST_LENGTH, -1, errno = ENOBUFS;);
-        assume_r (dst != NULL, -1, errno = EFAULT;);
-        
-        if (fstat (fd, &st) != 0)
-                return (-1);
-        else {
-#if _FILE_OFFSET_BITS == 32
-                buflen = st.st_size;
-# if defined(__FreeBSD__)
-                buffer = mmap (NULL, buflen, PROT_READ, MAP_SHARED | MAP_NOCORE, fd, 0);
-# else
-                buffer = mmap (NULL, buflen, PROT_READ, MAP_SHARED, fd, 0);        
-# endif
-                if (buffer == NULL) {
-#endif /* _FILE_OFFSET_BITS == 32 */
-                        uint8_t _buffer[CRAPI_IO_BUFSZ];
-                        MD5_CTX ctx;
-                        ssize_t ret;
-                
-                        buffer = _buffer;
-                
-                        MD5_Init (&ctx);
-                
-                        while ((ret = read (fd, buffer, sizeof _buffer)) == sizeof _buffer)
-                                MD5_Update (&ctx, (const void *)buffer, sizeof _buffer);
-                
-                        switch (ret) {
-                        case 0:
-                                break;
-                        case -1:
-                                return (-1);
-                        default:
-                                assume_r (ret > 0, -1);
-                                MD5_Update (&ctx, (const void *)buffer, (unsigned long)ret);
-                        }
-                
-                        MD5_Final((unsigned char *)dst, &ctx);
-#if _FILE_OFFSET_BITS == 32
-                } else {
-                        MD5 ((const unsigned char *)buffer, (unsigned long)buflen, (unsigned char *)dst);
-                        munmap (buffer, buflen);
-                }
-#endif /* _FILE_OFFSET_BITS == 32 */
-        }
-        return (0);
-}
 #elif defined(HAVE_GCRYPT)
 #include <gcrypt.h>
 

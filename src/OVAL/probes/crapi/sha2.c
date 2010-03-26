@@ -79,21 +79,6 @@ int crapi_sha512_fd (int fd, void *dst, size_t *size)
         return crapi_sha2_fd (HASH_AlgSHA512, fd, dst, size);        
 }
 
-#elif defined(HAVE_OPENSSL)
-# include <openssl/sha.h>
-
-int crapi_sha256_fd (int fd, void *dst, size_t *size)
-{
-        errno = EOPNOTSUPP;
-        return (-1);
-}
-
-int crapi_sha512_fd (int fd, void *dst, size_t *size)
-{
-        errno = EOPNOTSUPP;
-        return (-1);
-}
-
 #elif defined(HAVE_GCRYPT)
 #include <gcrypt.h>
 

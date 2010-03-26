@@ -149,16 +149,6 @@ if test "$with_nss3" = yes; then
     crapi_ok=yes
 fi
 
-if test "$with_openssl" = yes; then
-   AC_CHECK_LIB([crypto], BN_init,
-        [crapi_cflags=-I'${prefix}'/include
-         crapi_libs=-lcrypto
-         AC_DEFINE([HAVE_OPENSSL], [1], [Define to 1 if you have 'OpenSSL' library.])],
-         [AC_MSG_ERROR([library 'crypto' is required for OpenSSL.])],
-        [-lcrypto])
-   crapi_ok=yes
-fi
-
 if test "$with_gcrypt" = yes; then
    AC_CHECK_LIB([gcrypt], [gcry_check_version],
         [crapi_cflags=`libgcrypt-config --cflags`
@@ -486,12 +476,6 @@ AC_ARG_WITH([nss3],
      [use the NSS 3.x library for crypto])],
      [],
      [with_nss3=no])
-
-AC_ARG_WITH([openssl],
-     [AS_HELP_STRING([--with-openssl],
-     [use the OpenSSL library for crypto])],
-     [],
-     [with_openssl=no])
 
 AC_ARG_WITH([gcrypt],
      [AS_HELP_STRING([--with-gcrypt],
