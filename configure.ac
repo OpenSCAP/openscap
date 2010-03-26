@@ -131,6 +131,7 @@ AC_CHECK_LIB(
 
 crapi_cflags=""
 crapi_libs=""
+crapi_ok=no
 
 if test "$with_nss3" = yes; then
    AC_CHECK_LIB([nss3], [NSS_NoDB_Init],
@@ -145,6 +146,7 @@ if test "$with_nss3" = yes; then
                 [`nspr-config --libs`])],
         [AC_MSG_ERROR([library 'nss3' is required for NSS.])],
         [`nss-config --libs`])
+    crapi_ok=yes
 fi
 
 if test "$with_openssl" = yes; then
@@ -154,6 +156,7 @@ if test "$with_openssl" = yes; then
          AC_DEFINE([HAVE_OPENSSL], [1], [Define to 1 if you have 'OpenSSL' library.])],
          [AC_MSG_ERROR([library 'crypto' is required for OpenSSL.])],
         [-lcrypto])
+   crapi_ok=yes
 fi
 
 if test "$with_gcrypt" = yes; then
@@ -163,6 +166,11 @@ if test "$with_gcrypt" = yes; then
          AC_DEFINE([HAVE_GCRYPT], [1], [Define to 1 if you have 'gcrypt' library.])],
          [AC_MSG_ERROR([library 'gcrypt' is required for GCrypt.])],
         [`libgcrypt-config --libs`])
+   crapi_ok=yes
+fi
+
+if test "$crapi_ok" = no; then
+   AC_MSG_ERROR([No crypto library was selected! see ./configure --help)])
 fi
 
 AC_SUBST(crapi_cflags)
