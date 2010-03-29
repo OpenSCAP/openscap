@@ -49,7 +49,7 @@ AC_CACHE_CHECK([for atomic builtins], [ac_cv_atomic_builtins],
 if test $ac_cv_atomic_builtins = yes; then
   AC_DEFINE([HAVE_ATOMIC_BUILTINS], 1, [Define to 1 if the compiler supports atomic builtins.])
 else
-  AC_MSG_FAILURE([Compiler doesn't support atomic builtins])
+  AC_MSG_NOTICE([!!! Compiler doesn't support atomic builtins. Atomic operation will be emulated using mutex-based locking. !!!])
 fi
 
 #

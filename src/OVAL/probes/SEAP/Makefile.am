@@ -56,6 +56,8 @@ libseap_la_SOURCES= generic/bfind.c		\
 		    _seap-error.h		\
 		    sexp-value.c		\
 		    _sexp-value.h		\
+		    sexp-atomic.c		\
+		    _sexp-atomic.h		\
 		    public/seap-command.h	\
 		    public/seap-debug.h		\
 		    public/seap-types.h		\
