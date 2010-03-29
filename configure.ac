@@ -95,7 +95,7 @@ fi
 #
 AC_CHECK_LIB(
   [xml2],
-  [xmlSaveToBuffer],
+  [xmlParseFile],
   [libxml_cflags=`xml2-config --cflags`
    libxml_libs=`xml2-config --libs`
   ],
@@ -201,7 +201,7 @@ AC_CHECK_LIB(
 #
 have_librpm=no
 AC_SEARCH_LIBS(
-  [rpmtsCreate],
+  [rpmdbOpen],
   [rpm],
   [AC_CHECK_LIB(
      [rpm],
