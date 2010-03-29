@@ -50,6 +50,8 @@ struct oscap_export_target;
  */
 #define OSCAP_HIDDEN_END _Pragma("GCC visibility pop")
 
+OSCAP_HIDDEN_START
+
 /**
  * Function pointer to an object destructor.
  */
@@ -347,5 +349,13 @@ char *oscap_strsep(char **str, const char *delim);
  * @param delim Delimiter of string parts
  */
 char **oscap_split(char *str, const char *delim);
+
+
+/// Use strcmp on strings, NULL safe
+int oscap_strcmp(const char *s1, const char *s2);
+/// Check for string equality
+bool oscap_streq(const char *s1, const char *s2);
+
+OSCAP_HIDDEN_END;
 
 #endif				/* OSCAP_UTIL_H_ */

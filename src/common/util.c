@@ -25,6 +25,7 @@
 #include "_error.h"
 #include "oscap.h"
 #include <string.h>
+#include <limits.h>
 
 struct oscap_import_source {
 	oscap_stream_type_t type;
@@ -243,6 +244,19 @@ char **oscap_split(char *str, const char *delim)
 	fields[i] = NULL;
 
 	return fields;
+}
+
+
+int oscap_strcmp(const char *s1, const char *s2)
+{
+	if (s1 == NULL) return INT_MIN;
+	if (s2 == NULL) return INT_MAX;
+	return strcmp(s1, s2);
+}
+
+bool oscap_streq(const char *s1, const char *s2)
+{
+	return (oscap_strcmp(s1, s2) == 0);
 }
 
 

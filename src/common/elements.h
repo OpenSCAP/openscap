@@ -84,4 +84,7 @@ struct oscap_nsinfo {
 	struct oscap_nsinfo_entry *root_entry; ///< namespace info entry for the root element
 };
 
+bool oscap_nsinfo_add_parse(struct oscap_nsinfo *info, xmlTextReaderPtr reader, bool set_root);
+struct oscap_nsinfo *oscap_nsinfo_new_parse(xmlTextReaderPtr reader);
+
 #endif

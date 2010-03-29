@@ -226,6 +226,10 @@ void oscap_nsinfo_entry_free(struct oscap_nsinfo_entry *entry)
 	}
 }
 
+OSCAP_ACCESSOR_STRING(oscap_nsinfo_entry, nsname)
+OSCAP_ACCESSOR_STRING(oscap_nsinfo_entry, nsprefix)
+OSCAP_ACCESSOR_STRING(oscap_nsinfo_entry, schema_location)
+
 struct oscap_nsinfo *oscap_nsinfo_new(void)
 {
 	struct oscap_nsinfo *info = calloc(1, sizeof(struct oscap_nsinfo));
@@ -241,7 +245,10 @@ void oscap_nsinfo_free(struct oscap_nsinfo *info)
 	}
 }
 
-const char *oscap_strlist_find_value(const char **kvalues, const char *key)
+OSCAP_IGETINS_GEN(oscap_nsinfo_entry, oscap_nsinfo, entries, entry)
+OSCAP_ACCESSOR_SIMPLE(struct oscap_nsinfo_entry *, oscap_nsinfo, root_entry)
+
+static const char *oscap_strlist_find_value(char ** const kvalues, const char *key)
 {
 	if (kvalues == NULL || key == NULL) return NULL;
 
@@ -252,29 +259,55 @@ const char *oscap_strlist_find_value(const char **kvalues, const char *key)
 	return NULL;
 }
 
+struct oscap_nsinfo_entry *oscap_nsinfo_get_entry_by_ns(struct oscap_nsinfo *info, const char *ns)
+{
+    assert(info != NULL);
+    assert(ns != NULL);
+
+    struct oscap_nsinfo_entry *result = NULL;
+
+    OSCAP_FOREACH(oscap_nsinfo_entry, entry, oscap_nsinfo_get_entries(info),
+        if (oscap_streq(entry->nsname, ns)) result = entry;
+    )
+    return result;
+}
+
+static const char *OSCAP_XSI_NAMESPACE = "http://www.w3.org/2001/XMLSchema-instance";
+
 bool oscap_nsinfo_add_parse(struct oscap_nsinfo *info, xmlTextReaderPtr reader, bool set_root)
 {
 	if (xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT &&
 		xmlTextReaderNodeType(reader) != XML_READER_TYPE_ATTRIBUTE)
 		return false;
 
-	char *schemalocattr = xmlTextReaderGetAttribute(reader, "schemaLocation");
+	char *schemalocattr = (char *) xmlTextReaderGetAttributeNs(reader, BAD_CAST "schemaLocation", BAD_CAST OSCAP_XSI_NAMESPACE);
 	char **schemaloc = (schemalocattr ? oscap_split(schemalocattr, " ") : NULL);
 	struct oscap_nsinfo_entry *entry = NULL;
+    const char *ns;
+    bool present;
 
 	for (int i = 0; xmlTextReaderMoveToAttributeNo(reader, i) == 1; ++i) {
-		if (strcmp(xmlTextReaderConstName(reader), "xmlns") == 0) {
-			entry = oscap_nsinfo_entry_new_fill(NULL, xmlTextReaderConstValue(reader));
+        entry = NULL, present = false;
+
+		if (oscap_streq((const char *) xmlTextReaderConstName(reader), "xmlns")) {
+            ns = (const char *) xmlTextReaderConstValue(reader);
+            entry = oscap_nsinfo_get_entry_by_ns(info, ns);
+            if (entry == NULL) entry = oscap_nsinfo_entry_new_fill(NULL, ns);
+            else present = true;
 			if (set_root) info->root_entry = entry;
 		}
-		else if (strcmp(xmlTextReaderConstPrefix(reader), "xmlns") != 0)
-			continue;
-		else
-			entry = oscap_nsinfo_entry_new_fill(xmlTextReaderConstLocalName(reader),
-					xmlTextReaderConstValue(reader));
+		else if (oscap_streq((const char *) xmlTextReaderConstPrefix(reader), "xmlns")) {
+            ns = (const char *) xmlTextReaderConstValue(reader);
+            const char *prefix = (const char *) xmlTextReaderConstLocalName(reader);
+            entry = oscap_nsinfo_get_entry_by_ns(info, ns);
 
-		entry->schema_location = oscap_strdup(oscap_strlist_find_value(schemaloc, entry->nsname));
-		oscap_list_add(info->entries, entry);
+            if (entry != NULL) oscap_nsinfo_entry_set_nsprefix(entry, prefix), present = true;
+			else entry = oscap_nsinfo_entry_new_fill(prefix, ns);
+        }
+        else continue;
+
+		oscap_nsinfo_entry_set_schema_location(entry, oscap_strlist_find_value(schemaloc, entry->nsname));
+        if (!present) oscap_list_add(info->entries, entry);
 	}
 
 	oscap_free(schemaloc);
@@ -299,7 +332,7 @@ struct oscap_nsinfo *oscap_nsinfo_new_file(const char *fname)
 	if (fname == NULL) return NULL;
 	xmlTextReaderPtr reader = xmlReaderForFile(fname, NULL, 0);
 	if (reader == NULL) return NULL;
-	oscap_to_start_element(reader, 1);
+	while (xmlTextReaderRead(reader) == 1 && xmlTextReaderNodeType(reader) != 1);
 	struct oscap_nsinfo *info = oscap_nsinfo_new_parse(reader);
 	xmlFreeTextReader(reader);
 	return info;

@@ -356,6 +356,69 @@ struct oscap_export_target *oscap_export_target_new_URL(const char *url, const c
 void oscap_export_target_free(struct oscap_export_target *target);
 
 
+
+/**
+ * @struct oscap_nsinfo_entry_iterator
+ * Namespace info iterator
+ * @see oscap_iterator
+ */
+struct oscap_nsinfo_entry_iterator;
+/// @memberof oscap_nsinfo_entry_iterator
+bool oscap_nsinfo_entry_iterator_has_more(struct oscap_nsinfo_entry_iterator *it);
+/// @memberof oscap_nsinfo_entry_iterator
+struct oscap_nsinfo_entry *oscap_nsinfo_entry_iterator_next(struct oscap_nsinfo_entry_iterator *it);
+/// @memberof oscap_nsinfo_entry_iterator
+void oscap_nsinfo_entry_iterator_free(struct oscap_nsinfo_entry_iterator *it);
+
+/**
+ * @struct oscap_nsinfo_entry
+ * Namespace information entry.
+ * This structure carries namespace prefix,
+ * namespace URI and schema location.
+ */
+struct oscap_nsinfo_entry;
+/// @memberof oscap_nsinfo_entry
+struct oscap_nsinfo_entry *oscap_nsinfo_entry_new(void);
+/// @memberof oscap_nsinfo_entry
+struct oscap_nsinfo_entry *oscap_nsinfo_entry_new_fill(const char *nsprefix, const char *nsname);
+/// @memberof oscap_nsinfo_entry
+void oscap_nsinfo_entry_free(struct oscap_nsinfo_entry *entry);
+/// @memberof oscap_nsinfo_entry
+const char *oscap_nsinfo_entry_get_nsname(const struct oscap_nsinfo_entry *item);
+/// @memberof oscap_nsinfo_entry
+bool oscap_nsinfo_entry_set_nsname(struct oscap_nsinfo_entry *obj, const char *newval);
+/// @memberof oscap_nsinfo_entry
+const char *oscap_nsinfo_entry_get_nsprefix(const struct oscap_nsinfo_entry *item);
+/// @memberof oscap_nsinfo_entry
+bool oscap_nsinfo_entry_set_nsprefix(struct oscap_nsinfo_entry *obj, const char *newval);
+/// @memberof oscap_nsinfo_entry
+const char *oscap_nsinfo_entry_get_schema_location(const struct oscap_nsinfo_entry *item);
+/// @memberof oscap_nsinfo_entry
+bool oscap_nsinfo_entry_set_schema_location(struct oscap_nsinfo_entry *obj, const char *newval);
+
+/*
+ * @struct oscap_nsinfo
+ * Information on namespaces for given document
+ */
+struct oscap_nsinfo;
+/// @memberof oscap_nsinfo
+struct oscap_nsinfo *oscap_nsinfo_new(void);
+/// @memberof oscap_nsinfo
+struct oscap_nsinfo *oscap_nsinfo_new_file(const char *fname);
+/// @memberof oscap_nsinfo
+void oscap_nsinfo_free(struct oscap_nsinfo *info);
+/// @memberof oscap_nsinfo
+struct oscap_nsinfo_entry_iterator *oscap_nsinfo_get_entries(const struct oscap_nsinfo *item);
+/// @memberof oscap_nsinfo
+bool oscap_nsinfo_add_entry(struct oscap_nsinfo *obj, struct oscap_nsinfo_entry *item);
+/// @memberof oscap_nsinfo
+struct oscap_nsinfo_entry *oscap_nsinfo_get_root_entry(const struct oscap_nsinfo *item);
+/// @memberof oscap_nsinfo
+bool oscap_nsinfo_set_root_entry(struct oscap_nsinfo *obj, struct oscap_nsinfo_entry *newval);
+/// @memberof oscap_nsinfo
+struct oscap_nsinfo_entry *oscap_nsinfo_get_entry_by_ns(struct oscap_nsinfo *info, const char *ns);
+
+/// validate a xml file against given xml schema
 bool oscap_validate_xml(const char *xmlfile, const char *schemafile);
 
 /** @} */

@@ -26,6 +26,7 @@
 #include "util.h"
 #include "elements.h"
 #include <libxml/xmlschemas.h>
+#include <string.h>
 
 void oscap_cleanup(void)
 {
