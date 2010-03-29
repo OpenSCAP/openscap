@@ -156,8 +156,6 @@ uint32_t SEXP_atomic_dec_u32 (volatile uint32_t *ptr)
         r = *ptr - 1;
         *ptr = r;
         SEXP_atomic_unlock((uintptr_t)ptr);
-
-        fprintf (stderr, "%u\n", r);
         
         return (r);
 }
