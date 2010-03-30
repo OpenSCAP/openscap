@@ -511,6 +511,15 @@ function test_spb_api {
     return $ret_val
 }
 
+function test_sexp_concurency {
+    local ret_val=0;
+
+    ./sexp_concurency >> sexp_concurency.out
+    ret_val=$?
+
+    return $ret_val
+}
+
 # Cleanup.
 function test_seap_cleanup { 
     local ret_val=0;
@@ -519,7 +528,8 @@ function test_seap_cleanup {
 	  test_seap_tc02.out \
 	  test_seap_tc03.out \
           test_spb_api.out   \
-          test_seap_tc09.out
+          test_seap_tc09.out \
+          sexp_concurency.out
 
     ret_val=$?
     
@@ -574,6 +584,11 @@ result=$[$result+$ret_val]
 test_spb_api
 ret_val=$? 
 report_result "test_spb_api" $ret_val  
+result=$[$result+$ret_val]
+
+test_sexp_concurency
+ret_val=$?
+report_result "test_sexp_concurency" $ret_val  
 result=$[$result+$ret_val]
 
 test_seap_cleanup  
