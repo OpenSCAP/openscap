@@ -103,6 +103,8 @@ void *worker_thread (void *arg)
                      }
                 );
         /******************************************/
+        SEXP_free (ref1);
+
         return (ref0);
 }
 
