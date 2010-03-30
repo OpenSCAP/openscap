@@ -27,6 +27,7 @@
 #include "_sexp-parser.h"
 #include "_seap-scheme.h"
 #include "seap-descriptor.h"
+#include "_sexp-atomic.h"
 
 int SEAP_desc_add (SEAP_desctable_t *sd_table, SEXP_pstate_t *pstate,
                          SEAP_scheme_t scheme, void *scheme_data)
@@ -95,10 +96,11 @@ SEAP_msgid_t SEAP_desc_genmsgid (SEAP_desctable_t *sd_table, int sd)
                 errno = EINVAL;
                 return (-1);
         }
-#if defined(HAVE_ATOMIC_FUNCTIONS)
-        id = __sync_fetch_and_add (&(dsc->next_id), 1);
+
+#if SEAP_MSGID_BITS == 64
+        id = SEXP_atomic_inc_u64 (&(dsc->next_id));
 #else
-        id = dsc->next_id++;
+        id = SEXP_atomic_inc_u32 (&(dsc->next_id));
 #endif
         return (id);
 }
@@ -114,11 +116,9 @@ SEAP_cmdid_t SEAP_desc_gencmdid (SEAP_desctable_t *sd_table, int sd)
                 errno = EINVAL;
                 return (-1);
         }
-#if defined(HAVE_ATOMIC_FUNCTIONS)
-        id = __sync_fetch_and_add (&(dsc->next_cid), 1);
-#else
-        id = dsc->next_cid++;
-#endif
+
+        id = SEXP_atomic_inc_u16 (&(dsc->next_cid));
+
         return (id);
 }
 #endif
