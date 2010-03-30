@@ -181,12 +181,11 @@ int oval_value_parse_tag(xmlTextReaderPtr reader,
 	char *text = NULL;
 	int isNil = oval_parser_boolean_attribute(reader, "xsi:nil", 0);
 	if (isNil) {
-		text = NULL;
 		return_code = 1;
 	} else {
 		return_code = oval_parser_text_value(reader, context, &oval_value_parse_tag_consume_text, &text);
 	}
-	struct oval_value *value = oval_value_new(datatype, text);
+	struct oval_value *value = oval_value_new(datatype, text ? text : "");
 	oscap_free(text);
 	(*consumer) (value, user);
 	return return_code;
