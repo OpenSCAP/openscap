@@ -34,6 +34,8 @@
 #define TEST_REF_COUNT 32767
 #endif
 
+void *worker_thread (void *arg);
+
 #define __PRINT_TIME(ident, t0, t1, tz, code)                           \
         do {                                                            \
                 if (gettimeofday (&(t0), &(tz)) != 0) abort();          \
@@ -130,7 +132,7 @@ int main (void)
                 }
                 
                 for (i = 0; i < th_cnt; ++i) {
-                        if (pthread_join (th[i], &s0_ref) != 0) {
+                        if (pthread_join (th[i], (void **)&s0_ref) != 0) {
                                 abort ();
                         }
 
