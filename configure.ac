@@ -130,37 +130,40 @@ AC_CHECK_LIB(
 
 crapi_cflags=""
 crapi_libs=""
-crapi_ok=no
 
-if test "$with_nss3" = yes; then
-   AC_CHECK_LIB([nss3], [NSS_NoDB_Init],
-        [crapi_cflags=`nss-config --cflags`
-         crapi_libs=`nss-config --libs`
-         AC_DEFINE([HAVE_NSS3], [1], [Define to 1 if you have 'NSS' library.])
-         AC_CHECK_LIB([nspr4], [PR_CreateThread],
-         	[crapi_cflags="$crapi_cflags `nspr-config --cflags`"
-         	 crapi_libs="$crapi_libs `nspr-config --libs`"
-         	 AC_DEFINE([HAVE_NSPR4], [1], [Define to 1 if you have 'NSPR' library.])],
-                [AC_MSG_ERROR([library 'nspr4' is required for NSS.])],
-                [`nspr-config --libs`])],
-        [AC_MSG_ERROR([library 'nss3' is required for NSS.])],
-        [`nss-config --libs`])
-    crapi_ok=yes
+if test "${with_crypto}" = ""; then
+   with_crypto=gcrypt
 fi
 
-if test "$with_gcrypt" = yes; then
-   AC_CHECK_LIB([gcrypt], [gcry_check_version],
-        [crapi_cflags=`libgcrypt-config --cflags`
-         crapi_libs=`libgcrypt-config --libs`
-         AC_DEFINE([HAVE_GCRYPT], [1], [Define to 1 if you have 'gcrypt' library.])],
-         [AC_MSG_ERROR([library 'gcrypt' is required for GCrypt.])],
-        [`libgcrypt-config --libs`])
-   crapi_ok=yes
-fi
-
-if test "$crapi_ok" = no; then
-   AC_MSG_ERROR([No crypto library was selected! see ./configure --help)])
-fi
+case "${with_crypto}" in
+     nss3)
+        AC_CHECK_LIB([nss3], [NSS_NoDB_Init],
+                     [crapi_cflags=`nss-config --cflags`
+                      crapi_libs=`nss-config --libs`
+                      crapi_libname="NSS 3.x"
+                      AC_DEFINE([HAVE_NSS3], [1], [Define to 1 if you have 'NSS' library.])
+                      AC_CHECK_LIB([nspr4], [PR_CreateThread],
+                       	           [crapi_cflags="$crapi_cflags `nspr-config --cflags`"
+                                    crapi_libs="$crapi_libs `nspr-config --libs`"
+         	                    AC_DEFINE([HAVE_NSPR4], [1], [Define to 1 if you have 'NSPR' library.])],
+                                   [AC_MSG_ERROR([library 'nspr4' is required for NSS.])],
+                                   [`nspr-config --libs`])],
+                     [AC_MSG_ERROR([library 'nss3' is required for NSS.])],
+                     [`nss-config --libs`])
+        ;;
+    gcrypt)
+         AC_CHECK_LIB([gcrypt], [gcry_check_version],
+                      [crapi_cflags=`libgcrypt-config --cflags`
+                       crapi_libs=`libgcrypt-config --libs`
+                       crapi_libname="GCrypt"
+                       AC_DEFINE([HAVE_GCRYPT], [1], [Define to 1 if you have 'gcrypt' library.])],
+                      [AC_MSG_ERROR([library 'gcrypt' is required for GCrypt.])],
+                      [`libgcrypt-config --libs`])
+        ;;
+         *)
+          AC_MSG_ERROR([unknown crypto backend])
+        ;;
+esac
 
 AC_SUBST(crapi_cflags)
 AC_SUBST(crapi_libs)
@@ -470,17 +473,11 @@ AC_ARG_ENABLE([debug],
        *) AC_MSG_ERROR([bad value ${enableval} for --enable-debug]) ;;
      esac], [debug=no])
 
-AC_ARG_WITH([nss3],
-     [AS_HELP_STRING([--with-nss3],
-     [use the NSS 3.x library for crypto])],
+AC_ARG_WITH([crypto],
+     [AS_HELP_STRING([--with-crypto],
+     [use different crypto backend. Available options: nss3, gcrypt [default=gcrypt]])],
      [],
-     [with_nss3=no])
-
-AC_ARG_WITH([gcrypt],
-     [AS_HELP_STRING([--with-gcrypt],
-     [use the GCrypt library for crypto])],
-     [],
-     [with_gcrypt=no])
+     [crypto=gcrypt])
 
 if test "$regex_posix" = "yes"; then
    AC_DEFINE([USE_REGEX_POSIX], [1], [Use POSIX regular expressions])
@@ -539,29 +536,11 @@ echo "CVSS enabled:                  $cvss"
 echo "OVAL enabled:                  $oval"
 echo "OVAL probes enabled:           $probes"
 
-if test "$with_nss3" = yes; then
 echo "  === crypto === "
-echo "  library:                     NSS 3.x"
+echo "  library:                     $crapi_libname"
 echo "  libs:                        $crapi_libs"
 echo "  cflags:                      $crapi_cflags"
 echo ""
-fi
-
-if test "$with_openssl" = yes; then
-echo "  === crypto === "
-echo "  library:                     OpenSSL"
-echo "  libs:                        $crapi_libs"
-echo "  cflags:                      $crapi_cflags"
-echo ""
-fi
-
-if test "$with_gcrypt" = yes; then
-echo "  === crypto === "
-echo "  library:                     GCrypt"
-echo "  libs:                        $crapi_libs"
-echo "  cflags:                      $crapi_cflags"
-echo ""
-fi
 
 if test "x$probes" = "xyes"; then
 echo "  === independent probes ==="
