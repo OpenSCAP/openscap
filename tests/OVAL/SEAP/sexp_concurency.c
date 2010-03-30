@@ -27,7 +27,7 @@
 #include <stdlib.h>
 
 #ifndef TEST_THREAD_COUNT_MAX
-#define TEST_THREAD_COUNT_MAX 6
+#define TEST_THREAD_COUNT_MAX 8
 #endif
 
 #ifndef TEST_REF_COUNT
