@@ -52,10 +52,27 @@ uint32_t SEXP_atomic_inc_u32 (volatile uint32_t *ptr)
         return (__sync_fetch_and_add (ptr, 1));
 }
 
-bool SEXP_atomic_cas_u32 (volatile uint16_t *ptr, uint16_t old, uint16_t new)
+bool SEXP_atomic_cas_u32 (volatile uint32_t *ptr, uint32_t old, uint32_t new)
 {
         return ((bool) __sync_bool_compare_and_swap (ptr, old, new));
 }
+
+#ifdef SEXP_ATOMIC_64BITS
+uint64_t SEXP_atomic_dec_u64 (volatile uint64_t *ptr)
+{
+        return (__sync_sub_and_fetch (ptr, 1));        
+}
+
+uint64_t SEXP_atomic_inc_u64 (volatile uint64_t *ptr)
+{
+        return (__sync_fetch_and_add (ptr, 1));
+}
+
+bool SEXP_atomic_cas_u64 (volatile uint64_t *ptr, uint64_t old, uint64_t new)
+{
+        return ((bool) __sync_bool_compare_and_swap (ptr, old, new));
+}
+#endif /* SEXP_ATOMIC_64BITS */
 
 #else
 # warning "Using mutex-based emulation of atomic operations!"
@@ -188,4 +205,49 @@ bool SEXP_atomic_cas_u32 (volatile uint32_t *ptr, uint32_t old, uint32_t new)
 
         return (r);
 }
+
+#ifdef SEXP_ATOMIC_64BITS
+uint64_t SEXP_atomic_dec_u64 (volatile uint64_t *ptr)
+{
+        uint64_t r;
+        
+        SEXP_atomic_once();
+        SEXP_atomic_lock((uintptr_t)ptr);
+        r = *ptr - 1;
+        *ptr = r;
+        SEXP_atomic_unlock((uintptr_t)ptr);
+        
+        return (r);
+}
+
+uint64_t SEXP_atomic_inc_u64 (volatile uint64_t *ptr)
+{
+        uint64_t r;
+
+        SEXP_atomic_once();
+        SEXP_atomic_lock((uintptr_t)ptr);
+        r = *ptr;
+        *ptr = r + 1;
+        SEXP_atomic_unlock((uintptr_t)ptr);
+        
+        return (r);
+}
+
+bool SEXP_atomic_cas_u64 (volatile uint64_t *ptr, uint64_t old, uint64_t new)
+{
+        bool r;
+
+        SEXP_atomic_once();
+        SEXP_atomic_lock((uintptr_t)ptr);
+        if (*ptr == old) {
+                *ptr = new;
+                r = true;
+        } else
+                r = false;
+        SEXP_atomic_unlock((uintptr_t)ptr);
+
+        return (r);
+}
+#endif /* SEXP_ATOMIC_64BITS */
+
 #endif /* !HAVE_ATOMIC_BUILTINS */
