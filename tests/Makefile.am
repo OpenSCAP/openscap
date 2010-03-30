@@ -47,7 +47,8 @@ check_PROGRAMS +=	sexp_parser \
 			sexp_list \
 			test_probes \
 			test_sysinfo \
-			test_spb_api
+			test_spb_api \
+			sexp_concurency
 #			test_probe-api \
 #			test_error \
 #			test_probes2
@@ -56,6 +57,9 @@ sexp_parser_SOURCES =	OVAL/SEAP/sexp_parser.c
 sexp_string_SOURCES =	OVAL/SEAP/sexp_string.c
 sexp_number_SOURCES =	OVAL/SEAP/sexp_number.c
 sexp_list_SOURCES =	OVAL/SEAP/sexp_list.c
+sexp_concurency_SOURCES =     OVAL/SEAP/sexp_concurency.c
+sexp_concurency_CFLAGS = @pthread_cflags@
+sexp_concurency_LDFLAGS= @pthread_ldflags@
 test_spb_api_SOURCES=   OVAL/SEAP/test_spb_api.c
 test_spb_api_CFLAGS=    -I$(top_srcdir)/src/OVAL/probes/SEAP/generic
 test_probes_SOURCES =	OVAL/probes/test_probes.c
