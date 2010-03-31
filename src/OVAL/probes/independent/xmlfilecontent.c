@@ -21,7 +21,6 @@
  *      "Tomas Heinrich" <theinric@redhat.com>
  */
 
-#ifndef __STUB_PROBE
 /*
  * xmlfilecontent probe:
  *
@@ -319,4 +318,3 @@ SEXP_t *probe_main(SEXP_t *probe_in, int *err, void *arg)
 	*err = 0;
 	return pfd.item_list;
 }
-#endif

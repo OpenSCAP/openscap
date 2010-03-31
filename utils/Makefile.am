@@ -1,5 +1,5 @@
 
-if WANT_OVAL
+if WANT_PROBES
 
 bin_PROGRAMS = oscap-scan
 man_MANS = oscap-scan.8

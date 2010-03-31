@@ -21,7 +21,6 @@
  *      "Daniel Kopecek" <dkopecek@redhat.com>
  */
 
-#ifndef __STUB_PROBE
 #include <stdlib.h>
 #include <string.h>
 #include <pthread.h>
@@ -927,4 +926,4 @@ void *probe_worker(void *arg)
 	SEAP_msg_free(seap_request);
 	return (NULL);
 }
-#endif
+

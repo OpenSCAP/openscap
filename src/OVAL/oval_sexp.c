@@ -21,7 +21,6 @@
  *      "Daniel Kopecek" <dkopecek@redhat.com>
  */
 
-#ifndef __STUB_PROBE
 #include <inttypes.h>
 #include <stdlib.h>
 #include <string.h>
@@ -696,4 +695,3 @@ int oval_sysch_apply_sexp(struct oval_syschar *sysch, const SEXP_t *cobj, struct
 
 	return (0);
 }
-#endif				/* __STUB_PROBE */

@@ -20,7 +20,6 @@
  *      "Daniel Kopecek" <dkopecek@redhat.com>
  */
 
-#ifndef __STUB_PROBE
 #include <stdarg.h>
 #include <string.h>
 #include <errno.h>
@@ -492,4 +491,3 @@ void SEAP_cmdjob_free (SEAP_cmdjob_t *j)
 {
         sm_free (j);
 }
-#endif

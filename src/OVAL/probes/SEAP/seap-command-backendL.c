@@ -20,7 +20,6 @@
  *      "Daniel Kopecek" <dkopecek@redhat.com>
  */
 
-#ifndef __STUB_PROBE
 #include "seap-command.h"
 #include "seap-command-backendL.h"
 
@@ -58,4 +57,3 @@ int SEAP_cmdtbl_backendL_apply (SEAP_cmdtbl_t *t, int (*func) (SEAP_cmdrec_t *r,
 {
         return (-1);
 }
-#endif

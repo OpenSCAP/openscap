@@ -1,4 +1,3 @@
-#ifndef __STUB_PROBE
 /**
  * @file
  * Auxiliary find_files() function used in different probes
@@ -449,4 +448,3 @@ static void rglobfree(rglob_t * result)
 	result->pathc = 0;
 }
 
-#endif

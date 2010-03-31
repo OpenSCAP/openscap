@@ -21,7 +21,6 @@
  *      "Daniel Kopecek" <dkopecek@redhat.com>
  */
 
-#ifndef __STUB_PROBE
 /*
  * rpminfo probe:
  *
@@ -408,4 +407,3 @@ SEXP_t *probe_main (SEXP_t *object, int *err, void *arg)
 
         return (probe_out);
 }
-#endif

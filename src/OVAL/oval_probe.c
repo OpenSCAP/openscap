@@ -26,16 +26,21 @@
 #include <string.h>
 #include <limits.h>
 #include <sys/cdefs.h>
-#include <seap.h>
 #include <assert.h>
 #include <errno.h>
-#include <common/bfind.h>
-#include "common/public/debug.h"
-#include "common/public/error.h"
 #if defined(OSCAP_THREAD_SAFE)
 # include <pthread.h>
 #endif
 
+#include "config.h"
+#include "oval_probe.h"
+#include "common/public/error.h"
+
+#ifdef ENABLE_PROBES
+
+#include "seap.h"
+#include "common/bfind.h"
+#include "common/public/debug.h"
 #include "oval_sexp.h"
 #include "oval_probe_impl.h"
 #include "oval_system_characteristics_impl.h"
@@ -854,10 +859,53 @@ struct oval_sysinfo *oval_probe_sysinf_eval(oval_pctx_t * ctx)
 
 int oval_probe_reset(oval_pctx_t * ctx, oval_subtype_t type)
 {
+	oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_ENOTIMPL, "This feature is not implemented.");
 	return 0;		/* TODO */
 }
 
 int oval_probe_close(oval_pctx_t * ctx, oval_subtype_t type)
 {
+	oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_ENOTIMPL, "This feature is not implemented.");
 	return 0;		/* TODO */
 }
+
+#else
+oval_pctx_t * oval_pctx_new(struct oval_syschar_model * model) {
+	oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_ENOTIMPL, "This feature is not implemented, compiled without probes support.");
+	return NULL;
+}
+void oval_pctx_free(oval_pctx_t * ctx) {
+	oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_ENOTIMPL, "This feature is not implemented, compiled without probes support.");
+	return;
+}
+struct oval_sysinfo *oval_probe_sysinf_eval(oval_pctx_t * ctx) {
+	oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_ENOTIMPL, "This feature is not implemented, compiled without probes support.");
+	return NULL;
+}
+int oval_probe_reset(oval_pctx_t * ctx, oval_subtype_t type) {
+	oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_ENOTIMPL, "This feature is not implemented, compiled without probes support.");
+	return 0;
+}
+int oval_probe_close(oval_pctx_t * ctx, oval_subtype_t type) {
+	oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_ENOTIMPL, "This feature is not implemented, compiled without probes support.");
+	return 0;
+}
+int oval_pctx_setattr(oval_pctx_t * ctx, uint32_t attr, ...) {
+	oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_ENOTIMPL, "This feature is not implemented, compiled without probes support.");
+	return 0;
+}
+struct oval_syschar *oval_probe_object_eval(oval_pctx_t * ctx, struct oval_object *object) {
+	oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_ENOTIMPL, "This feature is not implemented, compiled without probes support.");
+	return NULL;
+}
+int oval_pctx_setflag(oval_pctx_t * ctx, uint32_t n_flags) {
+	oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_ENOTIMPL, "This feature is not implemented, compiled without probes support.");
+	return 0;
+}
+int oval_pctx_unsetflag(oval_pctx_t * ctx, uint32_t u_flags) {
+	oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_ENOTIMPL, "This feature is not implemented, compiled without probes support.");
+	return 0;
+}
+
+#endif /* ENABLE_PROBES */
+

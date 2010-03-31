@@ -20,7 +20,6 @@
  *      "Daniel Kopecek" <dkopecek@redhat.com>
  */
 
-#ifndef __STUB_PROBE
 #include <seap.h>
 #include <string.h>
 #include <assert.h>
@@ -176,4 +175,3 @@ SEXP_t *pcache_cstr_get(pcache_t * cache, const char *id)
         
         return (ret);
 }
-#endif

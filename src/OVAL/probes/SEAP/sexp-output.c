@@ -20,7 +20,6 @@
  *      "Daniel Kopecek" <dkopecek@redhat.com>
  */
 
-#ifndef __STUB_PROBE
 #include <inttypes.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -902,5 +901,4 @@ int SEXP_asnprintft (char **ret, size_t n, SEXP_t *sexp)
 {
         return (-1);
 }
-#endif
 #endif

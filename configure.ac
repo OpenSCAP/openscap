@@ -34,23 +34,6 @@ CFLAGS_OPTIMIZED="-O2 -finline-functions"
 CFLAGS_DEBUGGING="-fno-inline-functions -O0 -g"
 CFLAGS_NODEBUG="-DNDEBUG"
 
-#check for atomic functions
-case $host_cpu in
-	i386 | i486 | i586 | i686)
-		CFLAGS="$CFLAGS  -march=i686"
-		;;
-esac
-
-AC_CACHE_CHECK([for atomic builtins], [ac_cv_atomic_builtins],
-[AC_LINK_IFELSE([AC_LANG_PROGRAM([int foovar=0;],
-                                [return __sync_fetch_and_add(&foovar, 1);])],
-                [ac_cv_atomic_builtins=yes],
-                [ac_cv_atomic_builtins=no])])
-if test $ac_cv_atomic_builtins = yes; then
-  AC_DEFINE([HAVE_ATOMIC_BUILTINS], 1, [Define to 1 if the compiler supports atomic builtins.])
-else
-  AC_MSG_NOTICE([!!! Compiler doesn't support atomic builtins. Atomic operation will be emulated using mutex-based locking. !!!])
-fi
 
 #
 # xml2-config
@@ -171,32 +154,6 @@ AC_SUBST(crapi_libs)
 
 case "${host}" in
     *-*-linux*)
-#
-# libnl
-# Check for libnl version and provide RHEL5 compatibility functions when necessary
-#
-AC_CHECK_LIB(
-  [nl],
-  [nl_handle_alloc],
-  [AC_CHECK_LIB(
-     [nl],
-     [nl_cache_free],
-     [libnl_cflags=`pkg-config --cflags libnl-1`
-      libnl_libs=`pkg-config --libs libnl-1`
-      AC_DEFINE([HAVE_LIBNL11],[1],[libnl 1.1 compatibility])],
-     [AC_CHECK_LIB(
-        [nl],
-        [nl_cache_destroy_and_free],
-        [libnl_cflags=`pkg-config --cflags libnl-1`
-         libnl_libs=`pkg-config --libs libnl-1`
-         AC_DEFINE([HAVE_LIBNL10],[1],[libnl 1.0 compatibility])],
-        [AC_MSG_FAILURE([libnl missing nl_cache_free and nl_cache_destroy_and_free. libnl 1.0 or 1.1 required for Linux])]
-      )
-     ]
-   )
-   AC_DEFINE([HAVE_LIBNL],[1],[Use libnl])
-  ],[AC_MSG_FAILURE([libnl missing nl_handle_alloc.  Must have libnl 1.0 or 1.1 to build for Linux])]
- )
 
 #
 # rpmlib
@@ -348,19 +305,6 @@ AC_CHECK_FUNCS([memset strcasecmp strdup])
 AC_DEFUN([canonical_wrap], [AC_REQUIRE([AC_CANONICAL_HOST])])
 canonical_wrap
 
-# Determine the platform
-# (For now just assume unix)
-probes_unix=yes
-AC_DEFINE([PLATFORM_UNIX], [1], [Indicator for a Unix type OS])
-
-probes_independent=yes
-probes_linux=no
-
-case "${host}" in
-    *-*-linux*)
-        probes_linux=yes
-    ;;
-esac
 
 AC_ARG_ENABLE([oval],
      [  --enable-oval           include support for OVAL [[default=yes]]],
@@ -378,12 +322,50 @@ AC_ARG_ENABLE([probes],
        *) AC_MSG_ERROR([bad value ${enableval} for --enable-probes]) ;;
      esac],[probes=yes])
 
-if test "x${prefix}" = xNONE; then
-	AC_DEFINE_UNQUOTED([OVAL_PROBE_DIR], ["/usr/local/libexec/openscap"], [Path to probes])
-	probe_dir="/usr/local/libexec/openscap"
-else
-	AC_DEFINE_UNQUOTED([OVAL_PROBE_DIR], ["${prefix}/libexec/openscap"], [Path to probes])
-	probe_dir="${prefix}/libexec/openscap"
+if test "x${probes}" = xyes; then
+	AC_DEFINE([ENABLE_PROBES], [1], [compilation of probes is isnabled])
+
+	#check for atomic functions
+	case $host_cpu in
+		i386 | i486 | i586 | i686)
+			CFLAGS="$CFLAGS  -march=i686"
+			;;
+	esac
+
+	AC_CACHE_CHECK([for atomic builtins], [ac_cv_atomic_builtins],
+	[AC_LINK_IFELSE([AC_LANG_PROGRAM([int foovar=0;],
+	                                [return __sync_fetch_and_add(&foovar, 1);])],
+	                [ac_cv_atomic_builtins=yes],
+	                [ac_cv_atomic_builtins=no])])
+	if test $ac_cv_atomic_builtins = yes; then
+	  AC_DEFINE([HAVE_ATOMIC_BUILTINS], 1, [Define to 1 if the compiler supports atomic builtins.])
+	else
+	  AC_MSG_NOTICE([!!! Compiler doesn't support atomic builtins. Atomic operation will be emulated using mutex-based locking. !!!])
+	fi
+
+	# check for libnl version and provide RHEL5 compatibility functions when necessary
+	AC_CHECK_LIB(
+	  [nl],
+	  [nl_handle_alloc],
+	  [AC_CHECK_LIB(
+	     [nl],
+	     [nl_cache_free],
+	     [libnl_cflags=`pkg-config --cflags libnl-1`
+	      libnl_libs=`pkg-config --libs libnl-1`
+	      AC_DEFINE([HAVE_LIBNL11],[1],[libnl 1.1 compatibility])],
+	     [AC_CHECK_LIB(
+	        [nl],
+	        [nl_cache_destroy_and_free],
+	        [libnl_cflags=`pkg-config --cflags libnl-1`
+	         libnl_libs=`pkg-config --libs libnl-1`
+	         AC_DEFINE([HAVE_LIBNL10],[1],[libnl 1.0 compatibility])],
+	        [AC_MSG_FAILURE([libnl missing nl_cache_free and nl_cache_destroy_and_free. libnl 1.0 or 1.1 required for Linux])]
+	      )
+	     ]
+	   )
+	   AC_DEFINE([HAVE_LIBNL],[1],[Use libnl])
+	  ],[AC_MSG_FAILURE([libnl missing nl_handle_alloc.  Must have libnl 1.0 or 1.1 to build for Linux])]
+	 )
 fi
 
 AC_ARG_ENABLE([probes-independent],
@@ -392,7 +374,7 @@ AC_ARG_ENABLE([probes-independent],
        yes) probes_independent=yes ;;
        no)  probes_independent=no  ;;
        *) AC_MSG_ERROR([bad value ${enableval} for --enable-probes-independent]) ;;
-     esac],)
+     esac],[probes_independent=yes])
 
 AC_ARG_ENABLE([probes-unix],
      [  --enable-probes-unix    enable compilation of probes for UNIX based systems [[default=yes]]],
@@ -400,10 +382,20 @@ AC_ARG_ENABLE([probes-unix],
        yes) probes_unix=yes ;;
        no)  probes_unix=no  ;;
        *) AC_MSG_ERROR([bad value ${enableval} for --enable-probes-unix]) ;;
-     esac],)
+     esac],[probes_unix=yes])
+if test "x${probes_unix}" = xyes; then
+	AC_DEFINE([PLATFORM_UNIX], [1], [Indicator for a Unix type OS])
+fi
 
+
+probes_linux=no
+case "${host}" in
+    *-*-linux*)
+        probes_linux=yes
+    ;;
+esac
 AC_ARG_ENABLE([probes-linux],
-     [  --enable-probes-linux  enable compilation of probes for Linux based systems [[default=yes]]],
+     [  --enable-probes-linux  enable compilation of probes for Linux based systems [[default=autodetect]]],
      [case "${enableval}" in
        yes) probes_linux=yes ;;
        no)  probes_linux=no  ;;
@@ -479,6 +471,14 @@ AC_ARG_WITH([crypto],
      [use different crypto backend. Available options: nss3, gcrypt [default=gcrypt]])],
      [],
      [crypto=gcrypt])
+
+if test "x${prefix}" = xNONE; then
+	AC_DEFINE_UNQUOTED([OVAL_PROBE_DIR], ["/usr/local/libexec/openscap"], [Path to probes])
+	probe_dir="/usr/local/libexec/openscap"
+else
+	AC_DEFINE_UNQUOTED([OVAL_PROBE_DIR], ["${prefix}/libexec/openscap"], [Path to probes])
+	probe_dir="${prefix}/libexec/openscap"
+fi
 
 if test "$regex_posix" = "yes"; then
    AC_DEFINE([USE_REGEX_POSIX], [1], [Use POSIX regular expressions])

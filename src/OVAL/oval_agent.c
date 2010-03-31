@@ -27,6 +27,9 @@
  *      "David Niemoller" <David.Niemoller@g2-inc.com>
  */
 
+#include <string.h>
+#include <time.h>
+#include "config.h"
 #include "oval_definitions_impl.h"
 #include "oval_agent_api_impl.h"
 #include "oval_parser_impl.h"
@@ -34,8 +37,6 @@
 #include "oval_system_characteristics_impl.h"
 #include "oval_probe_impl.h"
 #include "oval_results_impl.h"
-#include <string.h>
-#include <time.h>
 #include "../common/util.h"
 #include "../common/public/debug.h"
 #include "../common/_error.h"
@@ -460,6 +461,7 @@ void oval_syschar_model_add_variable_binding(struct oval_syschar_model *model, s
 
 void oval_syschar_model_probe_objects(struct oval_syschar_model *syschar_model)
 {
+#ifdef ENABLE_PROBES
 	__attribute__nonnull__(syschar_model);
 
 	if (syschar_model->sysinfo == NULL)
@@ -491,6 +493,9 @@ void oval_syschar_model_probe_objects(struct oval_syschar_model *syschar_model)
 		oval_pctx_free(pctx);
 		oval_object_iterator_free(objects);
 	}
+#else
+    oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_ENOTIMPL, "This feature is not implemented, compiled without probes support.");
+#endif
 }
 
 void oval_syschar_model_add_sysdata(struct oval_syschar_model *model, struct oval_sysdata *sysdata)
@@ -1446,39 +1451,3 @@ int oval_results_model_export(struct oval_results_model *results_model,
 	return ((xmlCode >= 1) ? 1 : -1);
 }
 
-#ifdef __STUB_PROBE		//This Macro is defined iff probes are stubbed.
-//STUB for oval_object_probe
-static int item_id = 1;
-
-struct oval_syschar *oval_probe_object_eval(oval_pctx_t * pctx, struct oval_object *object)
-{
-	__attribute__nonnull__(pctx);
-
-	char itemid[10];
-
-	struct oval_syschar_model *model = pctx->model;
-	struct oval_syschar *syschar = oval_syschar_new(model, object);
-	oval_syschar_set_flag(syschar, SYSCHAR_STATUS_NOT_COLLECTED);
-	snprintf(itemid, sizeof(item_id), "%d", (++item_id));
-	struct oval_sysdata *sysdata = oval_sysdata_new(model, itemid);
-	oval_sysdata_set_status(sysdata, SYSCHAR_STATUS_NOT_COLLECTED);
-	oval_sysdata_set_subtype(sysdata, oval_object_get_subtype(object));
-	oval_syschar_add_sysdata(syschar, sysdata);
-
-	return syschar;
-}
-
-struct oval_sysinfo *oval_probe_sysinf_eval(struct oval_syschar_model *model, oval_pctx_t * pctx)
-{
-	return (NULL);
-a}
-
-void oval_pctx_free(oval_pctx_t * ctx)
-{
-}
-
-oval_pctx_t *oval_pctx_new(struct oval_syschar_model *sys)
-{
-	return (NULL);
-}
-#endif

@@ -22,7 +22,6 @@
  */
 
 
-#ifndef __STUB_PROBE
 #ifndef __DPKGINFO_HELPER__
 #define __DPKGINFO_HELPER__
 
@@ -52,4 +51,3 @@ void * dpkginfo_free_reply(struct dpkginfo_reply_t *reply);
 #endif
 
 #endif /* __DPKGINFO_HELPER__ */
-#endif /* __STUB_PROBE */

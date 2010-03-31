@@ -20,7 +20,6 @@
  *      "Daniel Kopecek" <dkopecek@redhat.com>
  */
 
-#ifndef __STUB_PROBE
 #include <stdint.h>
 #include <stddef.h>
 #include <unistd.h>
@@ -72,4 +71,3 @@ int sch_dummy_select (SEAP_desc_t *desc, int ev, uint16_t timeout, uint32_t flag
 {
         return (-1);
 }
-#endif

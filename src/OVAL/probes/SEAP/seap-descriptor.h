@@ -20,7 +20,6 @@
  *      "Daniel Kopecek" <dkopecek@redhat.com>
  */
 
-#ifndef __STUB_PROBE
 #pragma once
 #ifndef _SEAP_DESCRIPTOR_H
 #define _SEAP_DESCRIPTOR_H
@@ -138,4 +137,3 @@ SEAP_cmdid_t SEAP_desc_gencmdid (SEAP_desctable_t *sd_table, int sd);
 OSCAP_HIDDEN_END;
 
 #endif /* _SEAP_DESCRIPTOR_H */
-#endif

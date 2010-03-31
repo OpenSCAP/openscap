@@ -20,7 +20,6 @@
  *      "Daniel Kopecek" <dkopecek@redhat.com>
  */
 
-#ifndef __STUB_PROBE
 #include <string.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -84,4 +83,3 @@ long xrandom (void)
 {
         return random ();
 }
-#endif

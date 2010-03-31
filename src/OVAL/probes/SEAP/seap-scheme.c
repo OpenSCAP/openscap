@@ -20,7 +20,6 @@
  *      "Daniel Kopecek" <dkopecek@redhat.com>
  */
 
-#ifndef __STUB_PROBE
 #include <stddef.h>
 #include <string.h>
 #include "generic/common.h"
@@ -75,4 +74,3 @@ SEAP_scheme_t SEAP_scheme_search (const SEAP_schemefn_t fntable[SCHTBLSIZE], con
         
         return (SCH_NONE);
 }
-#endif

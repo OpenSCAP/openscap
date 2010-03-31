@@ -20,7 +20,6 @@
  *      "Daniel Kopecek" <dkopecek@redhat.com>
  */
 
-#ifndef __STUB_PROBE
 #include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
@@ -97,4 +96,3 @@ int sch_cons_select (SEAP_desc_t *desc, int ev, uint16_t timeout, uint32_t flags
 {
         return (-1);
 }
-#endif

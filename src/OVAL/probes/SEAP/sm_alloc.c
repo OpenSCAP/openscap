@@ -20,7 +20,6 @@
  *      "Daniel Kopecek" <dkopecek@redhat.com>
  */
 
-#ifndef __STUB_PROBE
 #include <stdlib.h>
 #include <errno.h>
 #include "public/sm_alloc.h"
@@ -210,5 +209,4 @@ void __sm_free_dbg (void *p, const char *f, size_t l)
                 free (p);
         return;
 }
-#endif
 #endif

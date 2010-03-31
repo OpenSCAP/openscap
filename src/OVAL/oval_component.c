@@ -30,6 +30,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include "config.h"
 #include "oval_definitions_impl.h"
 #include "oval_collection_impl.h"
 #include "oval_string_map_impl.h"
@@ -1309,6 +1310,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_OBJECTREF(struct 
 									 struct oval_component *component,
 									 struct oval_collection *value_collection)
 {
+#ifdef ENABLE_PROBES
 	__attribute__nonnull__(component);
 
 	oval_syschar_collection_flag_t flag = SYSCHAR_FLAG_ERROR;
@@ -1345,6 +1347,11 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_OBJECTREF(struct 
 		}
 	}
 	return flag;
+#else
+	oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_ENOTIMPL, "This feature is not implemented, compiled without probes support.");	
+	oval_syschar_collection_flag_t flag = SYSCHAR_FLAG_ERROR;
+	return flag;
+#endif
 }
 
 #define _HAS_VALUES(flag) (flag==SYSCHAR_FLAG_COMPLETE || flag==SYSCHAR_FLAG_INCOMPLETE)

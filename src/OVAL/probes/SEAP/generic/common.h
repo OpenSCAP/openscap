@@ -20,7 +20,6 @@
  *      "Daniel Kopecek" <dkopecek@redhat.com>
  */
 
-#ifndef __STUB_PROBE
 #pragma once
 #ifndef COMMON_H
 #define COMMON_H
@@ -57,4 +56,3 @@ long     xrandom (void);
 OSCAP_HIDDEN_END;
 
 #endif /* COMMON_H */
-#endif

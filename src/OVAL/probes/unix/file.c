@@ -21,7 +21,6 @@
  *      "Daniel Kopecek" <dkopecek@redhat.com>
  */
 
-#ifndef __STUB_PROBE
 #include <seap.h>
 #include <probe-api.h>
 #include <stdlib.h>
@@ -456,4 +455,3 @@ SEXP_t *probe_main (SEXP_t *probe_in, int *err, void *mutex)
         
         return (items);
 }
-#endif

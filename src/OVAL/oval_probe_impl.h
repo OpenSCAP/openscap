@@ -21,6 +21,9 @@
  *      "Daniel Kopecek" <dkopecek@redhat.com>
  */
 
+#include "config.h"
+
+#ifdef ENABLE_PROBES
 
 #pragma once
 #ifndef OVAL_PROBE_IMPL_H
@@ -90,3 +93,6 @@ OSCAP_HIDDEN_END;
 extern encache_t *OSCAP_GSYM(encache);
 
 #endif				/* OVAL_PROBE_IMPL_H */
+
+#endif				/* ENABLE_PROBES */
+

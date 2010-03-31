@@ -20,7 +20,6 @@
  *      "Daniel Kopecek" <dkopecek@redhat.com>
  */
 
-#ifndef __STUB_PROBE
 #include <stddef.h>
 #include <errno.h>
 #include "public/sm_alloc.h"
@@ -214,4 +213,3 @@ int SEAP_cmdtbl_backendS_apply (SEAP_cmdtbl_t *t, int (*func) (SEAP_cmdrec_t *r,
         
         return (0);
 }
-#endif

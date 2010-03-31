@@ -1,4 +1,3 @@
-#ifndef __STUB_PROBE
 /*
  * Author: Pierre Chifflier <chifflier@edenwall.com>
  */
@@ -127,4 +126,3 @@ int dpkginfo_fini()
         return 0;
 }
 
-#endif /* __STUB_PROBE */

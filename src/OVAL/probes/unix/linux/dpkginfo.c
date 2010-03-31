@@ -22,7 +22,6 @@
  */
 
 
-#ifndef __STUB_PROBE
 /*
  * dpkginfo probe:
  *
@@ -199,5 +198,4 @@ SEXP_t *probe_main (SEXP_t *object, int *err, void *arg)
         return (probe_out);
 }
 
-#endif
 

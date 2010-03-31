@@ -20,7 +20,6 @@
  *      "Daniel Kopecek" <dkopecek@redhat.com>
  */
 
-#ifndef __STUB_PROBE
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
@@ -355,5 +354,4 @@ int main (void)
         
         return (0);
 }
-#endif
 #endif
