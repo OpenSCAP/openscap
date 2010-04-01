@@ -261,8 +261,6 @@ int main (void)
 		fputc('\n', stdout);
 
 		SEXP_vfree (l1, l2, l3, NULL);
-
-		return 1;
 	}
 
         return (0);

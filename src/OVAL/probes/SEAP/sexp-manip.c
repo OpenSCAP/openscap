@@ -1294,15 +1294,13 @@ SEXP_t *SEXP_list_replace (SEXP_t *list, uint32_t n, const SEXP_t *n_val)
         }
 
         if (v_dsc.hdr->refs > 1) {
-		uintptr_t uptr;
-
-		uptr = SEXP_rawval_list_copy ((uintptr_t)SEXP_LCASTP(v_dsc.mem)->b_addr);
-
+		uintptr_t uptr = SEXP_rawval_list_copy (list->s_valp);
+                
 		if (SEXP_rawval_decref (list->s_valp)) {
 			/* TODO: handle this */
 			abort();
 		}
-
+                
 		list->s_valp = uptr;
 		SEXP_val_dsc (&v_dsc, list->s_valp);
         }
@@ -1414,9 +1412,7 @@ SEXP_t *SEXP_list_add (SEXP_t *list, const SEXP_t *s_exp)
                  * decrement the reference counter in the
                  * original value.
                  */
-                uintptr_t uptr;
-                
-                uptr = SEXP_rawval_list_copy ((uintptr_t)SEXP_LCASTP(v_dsc.mem)->b_addr);
+                uintptr_t uptr = SEXP_rawval_list_copy (list->s_valp);
                 
                 if (SEXP_rawval_decref (list->s_valp)) {
                         /* TODO: handle this */
@@ -1444,7 +1440,7 @@ SEXP_t *SEXP_list_add (SEXP_t *list, const SEXP_t *s_exp)
 
 SEXP_t *SEXP_list_join (const SEXP_t *list_a, const SEXP_t *list_b)
 {
-        SEXP_val_t v_dsc_j, v_dsc_a;
+        SEXP_val_t v_dsc_j;
         SEXP_t    *list_j, *memb;
         
         _LOGCALL_;
@@ -1463,19 +1459,7 @@ SEXP_t *SEXP_list_join (const SEXP_t *list_a, const SEXP_t *list_b)
         }
         
         list_j = SEXP_new ();
-        
-        if (SEXP_val_new (&v_dsc_j, sizeof (void *) + sizeof (uint16_t),
-                          SEXP_VALTYPE_LIST) != 0)
-        {
-                /* TODO: handle this */
-                return (NULL);
-        }
-        
-        SEXP_val_dsc (&v_dsc_a, list_a->s_valp);
-        SEXP_LCASTP(v_dsc_j.mem)->b_addr = (void *) SEXP_rawval_list_copy ((uintptr_t)SEXP_LCASTP(v_dsc_a.mem)->b_addr);
-        SEXP_LCASTP(v_dsc_j.mem)->offset = 0;
-        
-        list_j->s_valp = SEXP_val_ptr (&v_dsc_j);
+        list_j->s_valp = SEXP_rawval_list_copy (list_a->s_valp);
         
         SEXP_list_foreach (memb, list_b)
                 SEXP_list_add (list_j, memb);
@@ -1740,7 +1724,8 @@ SEXP_t *SEXP_softref (SEXP_t *s_exp_o)
 		if (v_dsc.type == SEXP_VALTYPE_LIST) {
 			uintptr_t uptr;
 
-			uptr = SEXP_rawval_list_copy ((uintptr_t)SEXP_LCASTP(v_dsc.mem)->b_addr);
+			uptr = SEXP_rawval_list_copy (s_exp_r->s_valp);
+
 			if (SEXP_rawval_decref (s_exp_r->s_valp)) {
 				/* TODO: handle this */
 				abort();
