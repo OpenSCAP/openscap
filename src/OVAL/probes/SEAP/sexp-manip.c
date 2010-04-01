@@ -1294,8 +1294,17 @@ SEXP_t *SEXP_list_replace (SEXP_t *list, uint32_t n, const SEXP_t *n_val)
         }
 
         if (v_dsc.hdr->refs > 1) {
-                /* copy */
-                abort ();
+		uintptr_t uptr;
+
+		uptr = SEXP_rawval_list_copy ((uintptr_t)SEXP_LCASTP(v_dsc.mem)->b_addr);
+
+		if (SEXP_rawval_decref (list->s_valp)) {
+			/* TODO: handle this */
+			abort();
+		}
+
+		list->s_valp = uptr;
+		SEXP_val_dsc (&v_dsc, list->s_valp);
         }
 
         _A(n > 0);
@@ -1728,8 +1737,20 @@ SEXP_t *SEXP_softref (SEXP_t *s_exp_o)
         SEXP_val_dsc (&v_dsc, s_exp_r->s_valp);
         
         if (v_dsc.hdr->refs > 1) {
-                abort ();
-                /* copy */
+		if (v_dsc.type == SEXP_VALTYPE_LIST) {
+			uintptr_t uptr;
+
+			uptr = SEXP_rawval_list_copy ((uintptr_t)SEXP_LCASTP(v_dsc.mem)->b_addr);
+			if (SEXP_rawval_decref (s_exp_r->s_valp)) {
+				/* TODO: handle this */
+				abort();
+			}
+
+			s_exp_r->s_valp = uptr;
+		} else {
+                        /* TODO: handle types other than lists */
+			abort();
+		}
         }
 
         SEXP_flag_set (s_exp_r, SEXP_FLAG_SREF);
