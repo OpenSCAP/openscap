@@ -343,6 +343,8 @@ if test "x${probes}" = xyes; then
 	  AC_MSG_NOTICE([!!! Compiler doesn't support atomic builtins. Atomic operation will be emulated using mutex-based locking. !!!])
 	fi
 
+        case "${host}" in
+        *-*-linux*)
 	# check for libnl version and provide RHEL5 compatibility functions when necessary
 	AC_CHECK_LIB(
 	  [nl],
@@ -366,6 +368,8 @@ if test "x${probes}" = xyes; then
 	   AC_DEFINE([HAVE_LIBNL],[1],[Use libnl])
 	  ],[AC_MSG_FAILURE([libnl missing nl_handle_alloc.  Must have libnl 1.0 or 1.1 to build for Linux])]
 	 )
+         ;;
+         esac
 fi
 
 AC_ARG_ENABLE([probes-independent],
