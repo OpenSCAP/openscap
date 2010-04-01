@@ -8,6 +8,10 @@ int main (void)
         
         setbuf (stdout, NULL);
 
+        i1   = SEXP_list_new (NULL);
+        i2   = SEXP_softref (i1);
+        SEXP_vfree (i1, i2, NULL);
+        
         i1   = SEXP_number_newu_8 (123);
         i2   = SEXP_string_newf ("asdf");
         

@@ -1815,14 +1815,13 @@ void __SEXP_free (SEXP_t *s_exp, const char *file, uint32_t line, const char *fu
                 return;
         }
         
-        SEXP_VALIDATE(s_exp);
-
         if (((s_exp->s_flgs &
               (SEXP_FLAG_SREF|SEXP_FLAG_INVAL|SEXP_FLAG_UNFIN)) == 0) &&
             SEXP_typeof (s_exp) != SEXP_TYPE_EMPTY)
         {
                 SEXP_val_t v_dsc;
 
+                SEXP_VALIDATE(s_exp);                
                 SEXP_val_dsc (&v_dsc, s_exp->s_valp);
                 
                 if (SEXP_rawval_decref (s_exp->s_valp)) {
