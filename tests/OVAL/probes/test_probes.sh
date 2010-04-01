@@ -534,6 +534,255 @@ function test_probes_runlevel_B {
     return $ret_val
 }
 
+function test_probes_password_A {
+    local ret_val=0;
+    local LOGFILE="test_probes_password_A.out"
+    local EXECDIR="$(pwd)"
+    local DEFFILE="test_probes_password_A.xml"
+    local RESFILE="test_probes_password_A.xml.results.xml"
+   
+    eval "bash \"${srcdir}/OVAL/probes/test_probes_password_A.xml.sh\"" > "$DEFFILE"
+    
+    eval "\"${EXECDIR}/test_probes\" \"$DEFFILE\" \"$RESFILE\"" >> "$LOGFILE"
+    
+    if [ $? -eq 0 ] && [ -e $RESFILE ]; then
+
+	DEF_DEF=`cat "$DEFFILE" | grep "id=\"oval:1:def:${ID}\""`
+	DEF_RES=`cat "$RESFILE" | grep "definition_id=\"oval:1:def:${ID}\""`
+
+	if (echo $DEF_RES | grep -q "result=\"true\""); then
+	    RES="TRUE"
+	elif (echo $DEF_RES | grep -q "result=\"false\""); then
+	    RES="FALSE"
+	else
+	    RES="ERROR"
+	fi
+	
+	if (echo $DEF_DEF | grep -q "comment=\"true\""); then
+	    CMT="TRUE"
+	elif (echo $DEF_DEF | grep -q "comment=\"false\""); then
+	    CMT="FALSE"
+	else
+	    CMT="ERROR"
+	fi
+	
+	if [ ! $RES = $CMT ]; then
+	    echo "Result of definition:1 should be ${CMT}!" >&2
+	    ret_val=$[$ret_val + 1]
+	fi
+	
+	ID=$[$ID+1]
+
+	COUNT=`cat /etc/passwd | wc -l`; ID=1
+	while [ $ID -le $COUNT ]; do
+	    
+	    TST_DEF=`cat "$DEFFILE" | grep "id=\"oval:1:tst:${ID}\""`
+	    TST_RES=`cat "$RESFILE" | grep "test_id=\"oval:1:tst:${ID}\""`
+
+	    if (echo $TST_RES | grep -q "result=\"true\""); then
+		RES="TRUE"
+	    elif (echo $TST_RES | grep -q "result=\"false\""); then
+		RES="FALSE"
+	    else
+		RES="ERROR"
+	    fi
+
+	    if (echo $TST_DEF | grep -q "comment=\"true\""); then
+		CMT="TRUE"
+	    elif (echo $TST_DEF | grep -q "comment=\"false\""); then
+		CMT="FALSE"
+	    else
+		CMT="ERROR"
+	    fi
+
+	    if [ ! $RES = $CMT ]; then
+		echo "Result of test:${ID} should be ${CMT}!" >&2
+		ret_val=$[$ret_val + 1]
+	    fi
+	    
+	    ID=$[$ID+1]
+	done
+
+	if [ ! $ret_val -eq 0 ]; then
+	    echo "" >&2
+	    cat "$RESFILE" >&2
+	    echo "" >&2
+	    ret_val=2
+	fi
+
+    else 
+	ret_val=1
+    fi
+
+    return $ret_val
+}
+
+function test_probes_shadow_A {
+    local ret_val=0;
+    local LOGFILE="test_probes_shadow_A.out"
+    local EXECDIR="$(pwd)"
+    local DEFFILE="test_probes_shadow_A.xml"
+    local RESFILE="test_probes_shadow_A.xml.results.xml"
+   
+    eval "bash \"${srcdir}/OVAL/probes/test_probes_shadow_A.xml.sh\"" > "$DEFFILE"
+    
+    eval "\"${EXECDIR}/test_probes\" \"$DEFFILE\" \"$RESFILE\"" >> "$LOGFILE"
+    
+    if [ $? -eq 0 ] && [ -e $RESFILE ]; then
+
+	DEF_DEF=`cat "$DEFFILE" | grep "id=\"oval:1:def:${ID}\""`
+	DEF_RES=`cat "$RESFILE" | grep "definition_id=\"oval:1:def:${ID}\""`
+
+	if (echo $DEF_RES | grep -q "result=\"true\""); then
+	    RES="TRUE"
+	elif (echo $DEF_RES | grep -q "result=\"false\""); then
+	    RES="FALSE"
+	else
+	    RES="ERROR"
+	fi
+	
+	if (echo $DEF_DEF | grep -q "comment=\"true\""); then
+	    CMT="TRUE"
+	elif (echo $DEF_DEF | grep -q "comment=\"false\""); then
+	    CMT="FALSE"
+	else
+	    CMT="ERROR"
+	fi
+	
+	if [ ! $RES = $CMT ]; then
+	    echo "Result of definition:1 should be ${CMT}!" >&2
+	    ret_val=$[$ret_val + 1]
+	fi
+	
+	ID=$[$ID+1]
+
+	COUNT=`cat /etc/shadow | wc -l`; ID=1
+	while [ $ID -le $COUNT ]; do
+	    
+	    TST_DEF=`cat "$DEFFILE" | grep "id=\"oval:1:tst:${ID}\""`
+	    TST_RES=`cat "$RESFILE" | grep "test_id=\"oval:1:tst:${ID}\""`
+
+	    if (echo $TST_RES | grep -q "result=\"true\""); then
+		RES="TRUE"
+	    elif (echo $TST_RES | grep -q "result=\"false\""); then
+		RES="FALSE"
+	    else
+		RES="ERROR"
+	    fi
+
+	    if (echo $TST_DEF | grep -q "comment=\"true\""); then
+		CMT="TRUE"
+	    elif (echo $TST_DEF | grep -q "comment=\"false\""); then
+		CMT="FALSE"
+	    else
+		CMT="ERROR"
+	    fi
+
+	    if [ ! $RES = $CMT ]; then
+		echo "Result of test:${ID} should be ${CMT}!" >&2
+		ret_val=$[$ret_val + 1]
+	    fi
+	    
+	    ID=$[$ID+1]
+	done
+
+	if [ ! $ret_val -eq 0 ]; then
+	    echo "" >&2
+	    cat "$RESFILE" >&2
+	    echo "" >&2
+	    ret_val=2
+	fi
+
+    else 
+	ret_val=1
+    fi
+
+    return $ret_val
+}
+
+function test_probes_process_A {
+    local ret_val=0;
+    local LOGFILE="test_probes_process_A.out"
+    local EXECDIR="$(pwd)"
+    local DEFFILE="test_probes_process_A.xml"
+    local RESFILE="test_probes_process_A.xml.results.xml"
+   
+    eval "bash \"${srcdir}/OVAL/probes/test_probes_process_A.xml.sh\"" > "$DEFFILE"
+    
+    eval "\"${EXECDIR}/test_probes\" \"$DEFFILE\" \"$RESFILE\"" >> "$LOGFILE"
+
+    if [ $? -eq 0 ] && [ -e $RESFILE ]; then
+
+	DEF_DEF=`cat "$DEFFILE" | grep "id=\"oval:1:def:${ID}\""`
+	DEF_RES=`cat "$RESFILE" | grep "definition_id=\"oval:1:def:${ID}\""`
+
+	if (echo $DEF_RES | grep -q "result=\"true\""); then
+	    RES="TRUE"
+	elif (echo $DEF_RES | grep -q "result=\"false\""); then
+	    RES="FALSE"
+	else
+	    RES="ERROR"
+	fi
+	
+	if (echo $DEF_DEF | grep -q "comment=\"true\""); then
+	    CMT="TRUE"
+	elif (echo $DEF_DEF | grep -q "comment=\"false\""); then
+	    CMT="FALSE"
+	else
+	    CMT="ERROR"
+	fi
+	
+	if [ ! $RES = $CMT ]; then
+	    echo "Result of definition:1 should be ${CMT}!" >&2
+	    ret_val=$[$ret_val + 1]
+	fi
+	
+	ID=$[$ID+1]
+
+	COUNT=$[`ps -A | wc -l` - 1 / 2]; ID=1
+	while [ $ID -le $COUNT ]; do
+	    
+	    TST_DEF=`cat "$DEFFILE" | grep "id=\"oval:1:tst:${ID}\""`
+	    TST_RES=`cat "$RESFILE" | grep "test_id=\"oval:1:tst:${ID}\""`
+
+	    if (echo $TST_RES | grep -q "result=\"true\""); then
+		RES="TRUE"
+	    elif (echo $TST_RES | grep -q "result=\"false\""); then
+		RES="FALSE"
+	    else
+		RES="ERROR"
+	    fi
+
+	    if (echo $TST_DEF | grep -q "comment=\"true\""); then
+		CMT="TRUE"
+	    elif (echo $TST_DEF | grep -q "comment=\"false\""); then
+		CMT="FALSE"
+	    else
+		CMT="ERROR"
+	    fi
+
+	    if [ ! $RES = $CMT ]; then
+		echo "Result of test:${ID} should be ${CMT}!" >&2
+		ret_val=$[$ret_val + 1]
+	    fi
+	    
+	    ID=$[$ID+1]
+	done
+
+	if [ ! $ret_val -eq 0 ]; then
+	    echo "" >&2
+	    cat "$RESFILE" >&2
+	    echo "" >&2
+	    ret_val=2
+	fi
+
+    else 
+	ret_val=1
+    fi
+
+    return $ret_val
+}
+
 function test_probes_textfilecontent54 {
     local ret_val=0;
     local LOGFILE="test_probes_textfilecontent54.out"
@@ -648,6 +897,15 @@ function test_probes_cleanup {
 	  test_probes_runlevel_B.out \
 	  test_probes_runlevel_B.xml \
 	  test_probes_runlevel_B.xml.results.xml \
+	  test_probes_password_A.out \
+	  test_probes_password_A.xml \
+	  test_probes_password_A.xml.results.xml \
+	  test_probes_shadow_A.out \
+	  test_probes_shadow_A.xml \
+	  test_probes_shadow_A.xml.results.xml \
+	  # test_probes_process_A.out \
+	  # test_probes_process_A.xml \
+	  # test_probes_process_A.xml.results.xml \
           test_probes_textfilecontent54.out \
 	  test_probes_textfilecontent54.xml.results.xml \
 	  /tmp/test_probes_textfilecontent54.tmp_file \
@@ -710,6 +968,21 @@ test_probes_runlevel_B
 ret_val=$?
 report_result "test_probes_runlevel_B" $ret_val  
 result=$[$result+$ret_val]   
+
+test_probes_password_A
+ret_val=$?
+report_result "test_probes_password_A" $ret_val  
+result=$[$result+$ret_val]   
+
+test_probes_shadow_A
+ret_val=$?
+report_result "test_probes_shadow_A" $ret_val  
+result=$[$result+$ret_val]   
+
+# test_probes_process_A
+# ret_val=$?
+# report_result "test_probes_process_A" $ret_val  
+# result=$[$result+$ret_val]   
 
 test_probes_textfilecontent54
 ret_val=$?

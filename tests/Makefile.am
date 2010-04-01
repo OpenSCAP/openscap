@@ -77,6 +77,9 @@ EXTRA_DIST += OVAL/SEAP/test_seap.sh 	                    \
 	      OVAL/probes/test_probes_rpminfo.xml.sh        \
 	      OVAL/probes/test_probes_runlevel_A.xml.sh     \
 	      OVAL/probes/test_probes_runlevel_B.xml.sh     \
+	      OVAL/probes/test_probes_password_A.xml.sh     \
+	      OVAL/probes/test_probes_shadow_A.xml.sh       \
+	      OVAL/probes/test_probes_process_A.xml.sh      \
               OVAL/probes/test_probes_family.xml
 
 endif # WANT_PROBES 
