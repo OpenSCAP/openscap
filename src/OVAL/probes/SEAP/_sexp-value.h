@@ -99,8 +99,9 @@ struct SEXP_val_lblk {
 } __attribute__ ((packed));
 
 size_t    SEXP_rawval_list_length (struct SEXP_val_list *list);
-uintptr_t SEXP_rawval_list_copy (uintptr_t lblkp, uint16_t n_skip);
+uintptr_t SEXP_rawval_list_copy (uintptr_t s_valp);
 
+uintptr_t SEXP_rawval_lblk_copy (uintptr_t lblkp, uint16_t n_skip);
 uintptr_t SEXP_rawval_lblk_new  (uint8_t sz);
 uintptr_t SEXP_rawval_lblk_incref (uintptr_t lblkp);
 int       SEXP_rawval_lblk_decref (uintptr_t lblkp);

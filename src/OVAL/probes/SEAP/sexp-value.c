@@ -147,7 +147,7 @@ uintptr_t SEXP_rawval_lblk_incref (uintptr_t lblkp)
                         if (SEXP_atomic_cas_u16 (&lblk->refs, refs, refs + 1))
                                 break;
                 } else
-                        return SEXP_rawval_list_copy (lblkp, 0);
+                        return SEXP_rawval_lblk_copy (lblkp, 0);
         }
         
         return (lblkp);
@@ -209,7 +209,7 @@ uintptr_t SEXP_rawval_lblk_add (uintptr_t lblkp, const SEXP_t *s_exp)
                                  * than one list so we have to create a copy of the
                                  * rest of the list.
                                  */
-                                lb_ptr = SEXP_rawval_list_copy (lblkp, 0);
+                                lb_ptr = SEXP_rawval_lblk_copy (lblkp, 0);
                                 
                                 if (lb_prev == 0)
                                         lb_head = lb_ptr;
@@ -349,7 +349,7 @@ uintptr_t SEXP_rawval_lblk_replace (uintptr_t lblkp, uint32_t n, const SEXP_t *n
                          * than one list so we have to create a copy of the
                          * rest of the list.
                          */
-                        lb_ptr = SEXP_rawval_list_copy ((uintptr_t)lblk, 0);
+                        lb_ptr = SEXP_rawval_lblk_copy ((uintptr_t)lblk, 0);
                         
                         if (lb_prev == 0)
                                 lb_head = lb_ptr;
@@ -433,7 +433,27 @@ int SEXP_rawval_lblk_cb (uintptr_t lblkp, int (*func) (SEXP_t *, void *), void *
         return (0);
 }
 
-uintptr_t SEXP_rawval_list_copy (uintptr_t lblkp, uint16_t n_skip)
+uintptr_t SEXP_rawval_list_copy (uintptr_t s_valp)
+{
+        SEXP_val_t v_dsc_o, v_dsc_c;
+        
+        if (SEXP_val_new (&v_dsc_c, sizeof (void *) + sizeof (uint16_t),
+                          SEXP_VALTYPE_LIST) != 0)
+        {
+                /* TODO: handle this */
+                return ((uintptr_t)NULL);
+        }
+        
+        SEXP_val_dsc (&v_dsc_o, s_valp);
+        
+        SEXP_LCASTP(v_dsc_c.mem)->b_addr = (uintptr_t) SEXP_rawval_lblk_copy ((uintptr_t)SEXP_LCASTP(v_dsc_o.mem)->b_addr,
+                                                                              (uintptr_t)SEXP_LCASTP(v_dsc_o.mem)->offset);
+        SEXP_LCASTP(v_dsc_c.mem)->offset = 0;
+        
+        return (SEXP_val_ptr (&v_dsc_c));
+}
+
+uintptr_t SEXP_rawval_lblk_copy (uintptr_t lblkp, uint16_t n_skip)
 {
         struct SEXP_val_lblk *lb_new, *lb_old;
         uintptr_t lb_next;
