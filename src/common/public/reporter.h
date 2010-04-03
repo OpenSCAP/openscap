@@ -96,8 +96,6 @@ oscap_reporter_family_t oscap_reporter_message_get_family(const struct oscap_rep
 /// @memberof oscap_reporter_message
 oscap_reporter_code_t oscap_reporter_message_get_code(const struct oscap_reporter_message *item);
 /// @memberof oscap_reporter_message
-oscap_reporter_code_t oscap_reporter_message_get_code2(const struct oscap_reporter_message *item);
-/// @memberof oscap_reporter_message
 const char *oscap_reporter_message_get_string(const struct oscap_reporter_message *item);
 
 

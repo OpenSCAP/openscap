@@ -267,7 +267,6 @@ OSCAP_ACCESSOR_STRING(cpe_language, value)
  * These function shoud not be called from outside. For exporting these elements
  * has to call parent element's 
  */
-static char *str_trim(char *str);
 static int xmlTextReaderNextElement(xmlTextReaderPtr reader);
 static bool cpe_dict_model_add_item(struct cpe_dict_model *dict, struct cpe_item *item);
 
@@ -301,25 +300,6 @@ static bool cpe_dict_model_add_item(struct cpe_dict_model *dict, struct cpe_item
 
 	oscap_list_add(dict->items, item);
 	return true;
-}
-
-/* str_trim function that trims input string and returns string
- * without white characters as space or tabulator.
- * */
-static char *str_trim(char *str)
-{
-	int off, i;
-	if (str == NULL)
-		return NULL;
-	for (i = 0; isspace(str[i]); ++i) ;
-	off = i;
-	while (str[i]) {
-		str[i - off] = str[i];
-		++i;
-	}
-	for (i -= off; isspace(str[--i]) && i >= 0;) ;
-	str[++i] = '\0';
-	return str;
 }
 
 /* Function that jump to next XML starting element.
@@ -950,7 +930,7 @@ static struct cpe_check *cpe_check_parse(xmlTextReaderPtr reader)
 	ret->xml.nspace = (char *)xmlTextReaderPrefix(reader);
 	ret->system = (char *)xmlTextReaderGetAttribute(reader, ATTR_SYSTEM_STR);
 	ret->href = (char *)xmlTextReaderGetAttribute(reader, ATTR_HREF_STR);
-	ret->identifier = str_trim((char *)xmlTextReaderReadString(reader));
+	ret->identifier = oscap_trim((char *)xmlTextReaderReadString(reader));
 
 	return ret;
 }
@@ -972,7 +952,7 @@ static struct cpe_reference *cpe_reference_parse(xmlTextReaderPtr reader)
 	ret->xml.lang = oscap_strdup((char *)xmlTextReaderConstXmlLang(reader));
 	ret->xml.nspace = (char *)xmlTextReaderPrefix(reader);
 	ret->href = (char *)xmlTextReaderGetAttribute(reader, ATTR_HREF_STR);
-	ret->content = str_trim((char *)xmlTextReaderReadString(reader));
+	ret->content = oscap_trim((char *)xmlTextReaderReadString(reader));
 
 	return ret;
 }

@@ -35,6 +35,7 @@
 #include <wchar.h>
 
 #include "text.h"
+#include "reporter.h"
 
 /**
  * @defgroup ITER Iterators & collections
@@ -419,7 +420,7 @@ bool oscap_nsinfo_set_root_entry(struct oscap_nsinfo *obj, struct oscap_nsinfo_e
 struct oscap_nsinfo_entry *oscap_nsinfo_get_entry_by_ns(struct oscap_nsinfo *info, const char *ns);
 
 /// validate a xml file against given xml schema
-bool oscap_validate_xml(const char *xmlfile, const char *schemafile);
+bool oscap_validate_xml(const char *xmlfile, const char *schemafile, struct oscap_reporter* reporter);
 
 /** @} */
 

@@ -355,6 +355,8 @@ char **oscap_split(char *str, const char *delim);
 int oscap_strcmp(const char *s1, const char *s2);
 /// Check for string equality
 bool oscap_streq(const char *s1, const char *s2);
+/// Trim whitespace (modifies its argument!)
+char *oscap_trim(char *str);
 
 OSCAP_HIDDEN_END;
 

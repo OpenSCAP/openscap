@@ -40,14 +40,15 @@ OSCAP_HIDDEN_START;
  * @{
  */
 
+/// Reporter cast
+#define XREPORTER(r) ((struct oscap_reporter*) r)
+
 /// @memberof oscap_reporter_message
 void oscap_reporter_message_free(struct oscap_reporter_message *msg);
 /// @memberof oscap_reporter_message
 bool oscap_reporter_message_set_family(struct oscap_reporter_message *obj, oscap_reporter_family_t newval);
 /// @memberof oscap_reporter_message
 bool oscap_reporter_message_set_code(struct oscap_reporter_message *obj, oscap_reporter_code_t newval);
-/// @memberof oscap_reporter_message
-bool oscap_reporter_message_set_code2(struct oscap_reporter_message *obj, oscap_reporter_code_t newval);
 /// @memberof oscap_reporter_message
 bool oscap_reporter_message_set_string(struct oscap_reporter_message *obj, const char *newval);
 /// @memberof oscap_reporter_message

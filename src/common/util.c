@@ -25,6 +25,7 @@
 #include "_error.h"
 #include "oscap.h"
 #include <string.h>
+#include <ctype.h>
 #include <limits.h>
 
 struct oscap_import_source {
@@ -259,4 +260,19 @@ bool oscap_streq(const char *s1, const char *s2)
 	return (oscap_strcmp(s1, s2) == 0);
 }
 
+char *oscap_trim(char *str)
+{
+	int off, i;
+	if (str == NULL)
+		return NULL;
+	for (i = 0; isspace(str[i]); ++i) ;
+	off = i;
+	while (str[i]) {
+		str[i - off] = str[i];
+		++i;
+	}
+	for (i -= off; isspace(str[--i]) && i >= 0;) ;
+	str[++i] = '\0';
+	return str;
+}
 

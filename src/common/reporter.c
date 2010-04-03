@@ -52,7 +52,6 @@ typedef enum oscap_reporeter_userdata {
 struct oscap_reporter_message {
 	oscap_reporter_family_t family;
 	oscap_reporter_code_t   code;
-	oscap_reporter_code_t   code2;
 
 	struct {
 		oscap_reporeter_userdata_t u1t : 2;
@@ -77,7 +76,7 @@ struct oscap_reporter_message *oscap_reporter_message_new_fill(oscap_reporter_fa
 	struct oscap_reporter_message *msg = oscap_reporter_message_new();
 	msg->family = family;
 	msg->code   = code;
-	msg->string = oscap_strdup(string);
+	msg->string = oscap_trim(oscap_strdup(string));
 	return msg;
 }
 
@@ -108,7 +107,7 @@ static inline void oscap_userdata_release(union oscap_reporter_userdata *data, o
 static inline void oscap_userdata_set_str(union oscap_reporter_userdata *data, const char *newstr)
 {
 	assert(data);
-	data->str = strdup(newstr);
+	data->str = oscap_strdup(newstr);
 }
 static inline void oscap_userdata_set_num(union oscap_reporter_userdata *data, int newnum)
 {
@@ -140,7 +139,6 @@ OSCAP_USERDATA_ACCESSOR(2)
 OSCAP_USERDATA_ACCESSOR(3)
 OSCAP_ACCESSOR_SIMPLE(oscap_reporter_family_t, oscap_reporter_message, family)
 OSCAP_ACCESSOR_SIMPLE(oscap_reporter_code_t, oscap_reporter_message, code)
-OSCAP_ACCESSOR_SIMPLE(oscap_reporter_code_t, oscap_reporter_message, code2)
 OSCAP_ACCESSOR_STRING(oscap_reporter_message, string)
 
 #define USERRELEASE(N) do { oscap_userdata_release(&msg->user##N, msg->flags.u##N##t); } while(0)
@@ -215,7 +213,7 @@ void oscap_reporter_report(struct oscap_reporter *reporter, struct oscap_reporte
 
 static void oscap_reporter_stdout_report(const struct oscap_reporter_message *msg, void *user)
 {
-	printf("report: %s\n", msg->string);
+	printf("> %s\n", msg->string);
 }
 
 const struct oscap_reporter_type OSCAP_REPORTER_STDOUT = {

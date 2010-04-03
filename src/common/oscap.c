@@ -25,6 +25,7 @@
 #include "error.h"
 #include "util.h"
 #include "elements.h"
+#include "reporter_priv.h"
 #include <libxml/xmlschemas.h>
 #include <string.h>
 
@@ -43,7 +44,7 @@ const char *OSCAP_PATH_SEPARATOR = ":";
 
 
 
-const char *oscap_get_xsd_dir(const char *dir)
+static const char *oscap_get_xsd_dir(const char *dir)
 {
 #ifdef OSCAP_XSD_DIR_ENVVAR
 	if (dir == NULL) dir = getenv(OSCAP_XSD_DIR_ENVVAR);
@@ -55,7 +56,7 @@ const char *oscap_get_xsd_dir(const char *dir)
 	return dir;
 }
 
-char *oscap_get_schema_filename(const char *xmlfile)
+static char *oscap_get_schema_filename(const char *xmlfile)
 {
 	if (xmlfile == NULL) return NULL;
 	char *ret = NULL;
@@ -66,7 +67,7 @@ char *oscap_get_schema_filename(const char *xmlfile)
 	return ret;
 }
 
-char *oscap_get_schema_path(const char *xmlfile, const char *directory)
+static char *oscap_get_schema_path(const char *xmlfile, const char *directory)
 {
 	if (xmlfile == NULL) return NULL;
 	const char *dir = oscap_get_xsd_dir(directory);
@@ -78,7 +79,15 @@ char *oscap_get_schema_path(const char *xmlfile, const char *directory)
 	return schemapath;
 }
 
-bool oscap_validate_xml(const char *xmlfile, const char *schemafile)
+static void oscap_xml_validity_handler(void *user, xmlErrorPtr error)
+{
+    struct oscap_reporter_message *msg = oscap_reporter_message_new_fill(OSCAP_EFAMILY_XML, error->code, error->message);
+    oscap_reporter_message_set_user1str(msg, error->file);
+    oscap_reporter_message_set_user2num(msg, error->line);
+    oscap_reporter_report(XREPORTER(user), msg);
+}
+
+bool oscap_validate_xml(const char *xmlfile, const char *schemafile, struct oscap_reporter *reporter)
 {
 	assert(xmlfile != NULL);
 	assert(schemafile != NULL); // TODO: validate even w/o schema, just for well-formness
@@ -94,6 +103,8 @@ bool oscap_validate_xml(const char *xmlfile, const char *schemafile)
 		goto cleanup;
 	}
 
+    xmlSchemaSetParserStructuredErrors(parser_ctxt, oscap_xml_validity_handler, reporter);
+
 	schema = xmlSchemaParse(parser_ctxt);
 	if (schema == NULL) {
 		oscap_seterr(OSCAP_EFAMILY_XML, 0, "Could not parse XML schema");
@@ -101,10 +112,12 @@ bool oscap_validate_xml(const char *xmlfile, const char *schemafile)
 	}
 
 	ctxt = xmlSchemaNewValidCtxt(schema);
-	if (parser_ctxt == NULL) {
+	if (ctxt == NULL) {
 		oscap_seterr(OSCAP_EFAMILY_XML, 0, "Could not create validation context");
 		goto cleanup;
 	}
+
+    xmlSchemaSetValidStructuredErrors(ctxt, oscap_xml_validity_handler, reporter);
 
 	ret = xmlSchemaValidateFile(ctxt, xmlfile, 0);
 	switch (ret) {
