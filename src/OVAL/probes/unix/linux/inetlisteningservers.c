@@ -483,7 +483,6 @@ static int read_udp(const char *proc, const char *type, llist *l,
 	return 0;
 }
 
-/* Not part of the standard yet, but its here for when that happens
 static int read_raw(const char *proc, const char *type, llist *l,
 		SEXP_t *probe_out)
 {
@@ -531,7 +530,7 @@ static int read_raw(const char *proc, const char *type, llist *l,
 	}
 	fclose(f);
 	return 0;
-} */
+}
 
 SEXP_t *probe_main(SEXP_t *object, int *err, void *arg)
 {
@@ -734,15 +733,16 @@ SEXP_t *probe_main(SEXP_t *object, int *err, void *arg)
 
 	// Now we check the tcp socket list...
 	read_tcp("/proc/net/tcp", "tcp", &ll, probe_out);
-	read_tcp("/proc/net/tcp6", "tcp6", &ll, probe_out);
+	read_tcp("/proc/net/tcp6", "tcp", &ll, probe_out);
 
 	// Next udp sockets...
 	read_udp("/proc/net/udp", "udp", &ll, probe_out);
-	read_udp("/proc/net/udp6", "udp6", &ll, probe_out);
+	read_udp("/proc/net/udp6", "udp", &ll, probe_out);
 
-	/* Next, raw sockets...not part of standard yet
-	read_raw("/proc/net/raw", "raw", &ll, probe_out);
-	read_raw("/proc/net/raw6", "raw6", &ll, probe_out); */
+	// Next, raw sockets...not exactly part of standard yet. They
+	// can be used to send datagrams, so we will pretend they are udp
+	read_raw("/proc/net/raw", "udp", &ll, probe_out);
+	read_raw("/proc/net/raw6", "udp", &ll, probe_out);
 
 	list_clear(&ll);
 	if (req.proto_re)
