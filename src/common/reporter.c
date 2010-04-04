@@ -24,6 +24,9 @@
 #include "list.h"
 #include <stdio.h>
 #include <string.h>
+#include "public/error.h"
+#include <errno.h>
+#include <limits.h>
 
 struct oscap_reporter_type {
 	oscap_reporter_init_func    init;
@@ -48,6 +51,8 @@ typedef enum oscap_reporeter_userdata {
 	OSCAP_REPORTER_USERDATA_STR,
 	OSCAP_REPORTER_USERDATA_PTR
 } oscap_reporeter_userdata_t;
+
+const oscap_reporter_code_t OSCAP_REPORTER_CODE_MAX = UINT_MAX;
 
 struct oscap_reporter_message {
 	oscap_reporter_family_t family;
@@ -157,7 +162,7 @@ static bool oscap_reporter_empty_init(void** user) { return true; }
 static void oscap_reporter_empty_report(const struct oscap_reporter_message *msg, void* user) {}
 static void oscap_reporter_empty_destroy(void* user) {}
 
-struct oscap_reporter_type *oscap_reporter_type_new_full(
+struct oscap_reporter_type *oscap_reporter_type_new(
 						oscap_reporter_init_func    init,
 						oscap_reporter_report_func  report,
 						oscap_reporter_destroy_func destroy)
@@ -210,6 +215,25 @@ void oscap_reporter_report(struct oscap_reporter *reporter, struct oscap_reporte
 	if (reporter != NULL && msg != NULL)
 		oscap_reporter_dispatch(reporter, msg);
 	oscap_reporter_message_free(msg);
+}
+
+// ================= reporting helpers ===================
+
+void oscap_reporter_report_xml(struct oscap_reporter *reporter, xmlErrorPtr error)
+{
+    if (reporter == NULL) return;
+    if (error == NULL) error = xmlGetLastError();
+    if (error == NULL) return;
+    struct oscap_reporter_message *msg = oscap_reporter_message_new_fill(OSCAP_EFAMILY_XML, error->code, error->message);
+    oscap_reporter_message_set_user1str(msg, error->file);
+    oscap_reporter_message_set_user2num(msg, error->line);
+    oscap_reporter_report(reporter, msg);
+}
+
+void oscap_reporter_report_libc(struct oscap_reporter *reporter)
+{
+    if (reporter == NULL) return;
+    oscap_reporter_report(reporter, oscap_reporter_message_new_fill(OSCAP_EFAMILY_GLIBC, errno, strerror(errno)));
 }
 
 // =============== stdout reporter =====================

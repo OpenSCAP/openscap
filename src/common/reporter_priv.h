@@ -30,6 +30,7 @@
 
 #include "public/reporter.h"
 #include "util.h"
+#include <libxml/xmlerror.h>
 
 OSCAP_HIDDEN_START;
 
@@ -70,6 +71,17 @@ bool oscap_reporter_message_set_user3num(struct oscap_reporter_message *msg, int
 /// @memberof oscap_reporter_message
 bool oscap_reporter_message_set_user3ptr(struct oscap_reporter_message *msg, void *newval);
 
+/**
+ * Feed a XML error to the reporter.
+ * @memberof oscap_reporter
+ */
+void oscap_reporter_report_xml(struct oscap_reporter *reporter, xmlErrorPtr error);
+
+/**
+ * Report standard C error (errno based) to a reporter
+ * @memberof oscap_reporter
+ */
+void oscap_reporter_report_libc(struct oscap_reporter *reporter);
 
 OSCAP_HIDDEN_END;
 

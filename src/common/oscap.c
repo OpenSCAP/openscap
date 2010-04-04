@@ -81,10 +81,7 @@ static char *oscap_get_schema_path(const char *xmlfile, const char *directory)
 
 static void oscap_xml_validity_handler(void *user, xmlErrorPtr error)
 {
-    struct oscap_reporter_message *msg = oscap_reporter_message_new_fill(OSCAP_EFAMILY_XML, error->code, error->message);
-    oscap_reporter_message_set_user1str(msg, error->file);
-    oscap_reporter_message_set_user2num(msg, error->line);
-    oscap_reporter_report(XREPORTER(user), msg);
+    oscap_reporter_report_xml(user, error);
 }
 
 bool oscap_validate_xml(const char *xmlfile, const char *schemafile, struct oscap_reporter *reporter)
