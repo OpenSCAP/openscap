@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2009,2010 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -18,6 +18,7 @@
  *
  * Authors:
  *      "Tomas Heinrich" <theinric@redhat.com>
+ *      "Steve Grubb"    <sgrubb@redhat.com>
  */
 
 /*
@@ -43,127 +44,107 @@
 #include <probe-entcmp.h>
 
 #if defined(__linux__)
-#  include <arpa/inet.h>
-#  include <netlink/route/link.h>
-#  include <netlink/route/addr.h>
+#include <unistd.h>
+#include <sys/socket.h>
+#include <ifaddrs.h>
+#include <netdb.h>
+#include <sys/ioctl.h>
+#include <string.h>
+#include <net/if.h>
 
-#  ifdef HAVE_LIBNL10
-#    define nl_cache_free nl_cache_destroy_and_free
-#  endif
+static int fd=-1;
 
-struct cbstate_s {
-	SEXP_t *item_list;
-	SEXP_t *name_ent;
-	struct nl_cache *link_cache;
-};
-
-static void cb(struct nl_object *obj, void *arg)
+static char *get_mac(const struct ifaddrs *ifa)
 {
-	struct cbstate_s *cbstate = (struct cbstate_s *) arg;
-	struct rtnl_addr *rtaddr = (struct rtnl_addr *) obj;
-	struct rtnl_link *rtlink;
-	int ifindex;
-	char *name = NULL;
-	SEXP_t *sname;
+	struct ifreq ifr;
+	unsigned char mac[6];
+	static char mac_buf[20];
 
-	ifindex = rtnl_addr_get_ifindex(rtaddr);
-	name = rtnl_addr_get_label(rtaddr);
-	rtlink = rtnl_link_get(cbstate->link_cache, ifindex);
-	if (name == NULL)
-		name = rtnl_link_get_name(rtlink);
-	sname = SEXP_string_newf("%s", name);
+	memset(&ifr, 0, sizeof(struct ifreq));
+	strcpy(ifr.ifr_name, ifa->ifa_name);
+	if (ioctl(fd, SIOCGIFHWADDR, &ifr) >= 0) {
+		memcpy(mac, ifr.ifr_hwaddr.sa_data, sizeof(mac));
+		snprintf(mac_buf, sizeof(mac_buf),
+			"%02X:%02X:%02X:%02X:%02X:%02X",
+			mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+	} else
+		mac_buf[0] = 0;
 
-	if (probe_entobj_cmp(cbstate->name_ent, sname) == OVAL_RESULT_TRUE) {
-		struct nl_addr *absaddr;
-		SEXP_t *item, *r0, *r1, *r2, *r3, *r4;
-		unsigned int prefixlen, mask, flags;
-		char iabuf[64], mabuf[20], babuf[64], netmask[20], fbuf[512], *p;
-
-		memset(mabuf, 0, sizeof (mabuf));
-		absaddr = rtnl_link_get_addr(rtlink);
-		if (absaddr && !nl_addr_iszero(absaddr))
-			nl_addr2str(absaddr, mabuf, sizeof (mabuf));
-
-		memset(iabuf, 0, sizeof (iabuf));
-		absaddr = rtnl_addr_get_local(rtaddr);
-		if (absaddr && !nl_addr_iszero(absaddr)) {
-			nl_addr2str(absaddr, iabuf, sizeof (iabuf));
-			if ((p = strchr(iabuf, '/')))
-				*p = '\0';
-		}
-
-		memset(babuf, 0, sizeof (babuf));
-		absaddr = rtnl_addr_get_broadcast(rtaddr);
-		if (absaddr && !nl_addr_iszero(absaddr))
-			nl_addr2str(absaddr, babuf, sizeof (babuf));
-
-		memset(netmask, 0, sizeof (netmask));
-		prefixlen = rtnl_addr_get_prefixlen(rtaddr);
-		mask = (~0) << (32 - prefixlen);
-		snprintf(netmask, sizeof (netmask), "%u.%u.%u.%u",
-			 (unsigned char) (mask >> 24),
-			 (unsigned char) (mask >> 16),
-			 (unsigned char) (mask >> 8),
-			 (unsigned char) mask);
-
-		item = probe_item_creat("interface_item", NULL,
-					"name", NULL, sname,
-					/* unix-system-characteristics-schema v5.6
-					"type", NULL,
-					r0 = SEXP_string_newf("%s", type),
-					*/
-					"hardware_addr", NULL,
-					r1 = SEXP_string_newf("%s", mabuf),
-					"inet_addr", NULL,
-					r2 = SEXP_string_newf("%s", iabuf),
-					"broadcast_addr", NULL,
-					r3 = SEXP_string_newf("%s", babuf),
-					"netmask", NULL,
-					r4 = SEXP_string_newf("%s", netmask),
-					NULL);
-		SEXP_vfree(r1, r2, r3, r4, sname, NULL);
-
-		flags = rtnl_link_get_flags(rtlink);
-		rtnl_link_flags2str(flags, fbuf, sizeof (fbuf));
-		p = fbuf;
-		do {
-			char *flag;
-
-			flag = p;
-			p = strchr(p, ',');
-			if (p)
-				*p++ = '\0';
-
-			probe_item_ent_add(item, "flag", NULL,
-					   r0 = SEXP_string_newf("%s", flag));
-			SEXP_free(r0);
-		} while (p);
-
-		rtnl_link_put(rtlink);
-		SEXP_list_add(cbstate->item_list, item);
-		SEXP_free(item);
-	}
+	return mac_buf;
 }
 
-static void get_ifs(SEXP_t *name_ent, SEXP_t *item_list)
+static int get_ifs(SEXP_t *name_ent, SEXP_t *item_list)
 {
-	struct cbstate_s cbstate;
-	struct nl_handle *sock;
-	struct nl_cache *addr_cache;
+	struct ifaddrs *ifaddr, *ifa;
+	int family, rc=1;
+	char host[NI_MAXHOST], broad[NI_MAXHOST], mask[NI_MAXHOST], *mac;
+	SEXP_t *item;
+	SEXP_t *r0, *r1, *r2, *r3, *r4;
 
-	cbstate.item_list = item_list;
-	cbstate.name_ent = name_ent;
-	sock = nl_handle_alloc();
-	nl_connect(sock, NETLINK_ROUTE);
-	cbstate.link_cache = rtnl_link_alloc_cache(sock);
-	addr_cache = rtnl_addr_alloc_cache(sock);
+	if (getifaddrs(&ifaddr) == -1)
+		return rc;
 
-	nl_cache_foreach(addr_cache, cb, (void *) &cbstate);
+	fd = socket(PF_INET, SOCK_DGRAM, IPPROTO_IP);
+	if (fd < 0)
+		goto leave1;
 
-	nl_cache_free(cbstate.link_cache);
-	nl_cache_free(addr_cache);
-	nl_close(sock);
-	nl_handle_destroy(sock);
+        /* Walk through linked list, maintaining head pointer so we
+	   can free list later */
+	for (ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next) {
+		if (ifa->ifa_addr) {
+			family = ifa->ifa_addr->sa_family;
+			if (family != AF_INET && family != AF_INET6)
+				continue;
+		} else
+			continue;
+
+		mac = get_mac(ifa);
+		rc = getnameinfo(ifa->ifa_addr, (family == AF_INET) ?
+			sizeof(struct sockaddr_in) :
+			sizeof(struct sockaddr_in6), host, NI_MAXHOST,
+			NULL, 0, NI_NUMERICHOST);
+		if (rc) {
+			rc = 1;
+			goto leave2;
+		}
+		rc = getnameinfo(ifa->ifa_netmask, (family == AF_INET) ?
+			sizeof(struct sockaddr_in) :
+			sizeof(struct sockaddr_in6), mask, NI_MAXHOST,
+			NULL, 0, NI_NUMERICHOST);
+		if (rc) {
+			rc = 1;
+			goto leave2;
+		}
+		rc = getnameinfo(ifa->ifa_broadaddr, (family == AF_INET) ?
+			sizeof(struct sockaddr_in) :
+			sizeof(struct sockaddr_in6), broad, NI_MAXHOST,
+			NULL, 0, NI_NUMERICHOST);
+		if (rc) {
+			rc = 1;
+			goto leave2;
+		}
+	
+		item = probe_item_creat("interface_item", NULL,
+				"name", NULL,
+				r0 = SEXP_string_newf(ifa->ifa_name),
+				"hardware_addr", NULL,
+				r1 = SEXP_string_newf(mac),
+				"inet_addr", NULL,
+				r2 = SEXP_string_newf(host),
+				"broadcast_addr", NULL,
+				r3 = SEXP_string_newf(broad),
+				"netmask", NULL,
+				r4 = SEXP_string_newf(mask),
+				NULL);
+
+		SEXP_list_add(item_list, item);
+		SEXP_vfree(r0, r1, r2, r3, r4, item, NULL);
+	}
+leave2:
+	close(fd);
+leave1:
+	freeifaddrs(ifaddr);
+	return rc;
 }
 #else
 static void get_ifs(SEXP_t *name_ent, SEXP_t *item_list)
@@ -208,7 +189,10 @@ SEXP_t *probe_main(SEXP_t *probe_in, int *err, void *arg)
 	}
 
 	probe_out = SEXP_list_new(NULL);
-	get_ifs(name_ent, probe_out);
+	if (get_ifs(name_ent, probe_out)) {
+		*err = PROBE_EUNKNOWN;
+		return NULL;
+	}
 
 	*err = 0;
 	return probe_out;
