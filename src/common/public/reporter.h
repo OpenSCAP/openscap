@@ -41,6 +41,10 @@
 typedef unsigned int oscap_reporter_family_t;
 /// Reporter message code type
 typedef unsigned int oscap_reporter_code_t;
+/// Maximum code
+extern const oscap_reporter_code_t OSCAP_REPORTER_CODE_MAX;
+/// Macro to match whole code range
+#define OSCAP_REPORTER_ALL 0, OSCAP_REPORTER_CODE_MAX
 
 /**
  * @struct oscap_reporter_message
@@ -133,6 +137,13 @@ void oscap_reporter_multi_add_reporter(struct oscap_reporter *multi, struct osca
 extern const struct oscap_reporter_type OSCAP_REPORTER_STDOUT;
 /// Reporter to multiple other reporters
 extern const struct oscap_reporter_type OSCAP_REPORTER_MULTI;
+/**
+ * Create a new filtering reporter.
+ * Messages will be forwarded to the child reporter if they match given family and code range.
+ * @relates oscap_reporter
+ */
+struct oscap_reporter *oscap_reporter_new_filter(struct oscap_reporter *child,
+            oscap_reporter_family_t family, oscap_reporter_code_t min_code, oscap_reporter_code_t max_code);
 
 /** @} */
 

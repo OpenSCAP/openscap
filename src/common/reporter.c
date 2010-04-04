@@ -25,7 +25,6 @@
 #include <stdio.h>
 #include <string.h>
 
-
 struct oscap_reporter_type {
 	oscap_reporter_init_func    init;
 	oscap_reporter_report_func  report;
@@ -270,3 +269,49 @@ const struct oscap_reporter_type OSCAP_REPORTER_MULTI = {
 	.destroy = oscap_reporter_multi_destroy
 };
 
+// =============== filter reporter ===================
+
+struct oscap_reporter_filter_data {
+    struct oscap_reporter *child;
+    oscap_reporter_family_t family;
+    oscap_reporter_code_t min_code;
+    oscap_reporter_code_t max_code;
+};
+
+#define XRFDATA(x) ((struct oscap_reporter_filter_data*) x)
+
+static void oscap_reporter_filter_report(const struct oscap_reporter_message *msg, void* user)
+{
+    assert(user != NULL);
+    assert(XRFDATA(user)->child != NULL);
+
+    if (XRFDATA(user)->family == msg->family && XRFDATA(user)->min_code <= msg->code && XRFDATA(user)->max_code >= msg->code)
+        oscap_reporter_dispatch(XRFDATA(user)->child, msg);
+}
+
+static void oscap_reporter_filter_destroy(void* user)
+{
+    assert(user != NULL);
+    oscap_reporter_free(XRFDATA(user)->child);
+    oscap_free(user);
+}
+
+static const struct oscap_reporter_type OSCAP_REPORTER_FILTER = {
+	.init    = oscap_reporter_empty_init,
+	.report  = oscap_reporter_filter_report,
+	.destroy = oscap_reporter_filter_destroy
+};
+
+struct oscap_reporter *oscap_reporter_new_filter(struct oscap_reporter *child,
+            oscap_reporter_family_t family, oscap_reporter_code_t min_code, oscap_reporter_code_t max_code)
+{
+    if (child == NULL) return NULL;
+
+    OSCAP_SALLOC(oscap_reporter_filter_data, user);
+    user->child = child;
+    user->family = family;
+    user->min_code = min_code;
+    user->max_code = max_code;
+
+    return oscap_reporter_new(&OSCAP_REPORTER_FILTER, user);
+}
