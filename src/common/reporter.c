@@ -21,6 +21,7 @@
  */
 
 #include "reporter_priv.h"
+#include "list.h"
 #include <stdio.h>
 #include <string.h>
 
@@ -33,7 +34,7 @@ struct oscap_reporter_type {
 
 struct oscap_reporter {
 	const struct oscap_reporter_type *type;
-	void *user;
+	void *userdata;
 };
 
 union oscap_reporter_userdata {
@@ -140,6 +141,7 @@ OSCAP_USERDATA_ACCESSOR(3)
 OSCAP_ACCESSOR_SIMPLE(oscap_reporter_family_t, oscap_reporter_message, family)
 OSCAP_ACCESSOR_SIMPLE(oscap_reporter_code_t, oscap_reporter_message, code)
 OSCAP_ACCESSOR_STRING(oscap_reporter_message, string)
+OSCAP_ACCESSOR_STRING(oscap_reporter, userdata)
 
 #define USERRELEASE(N) do { oscap_userdata_release(&msg->user##N, msg->flags.u##N##t); } while(0)
 void oscap_reporter_message_free(struct oscap_reporter_message *msg)
@@ -179,10 +181,10 @@ struct oscap_reporter *oscap_reporter_new(const struct oscap_reporter_type *type
 	assert(type != NULL);
 
 	struct oscap_reporter *reporter = oscap_calloc(1, sizeof(struct oscap_reporter));
-	reporter->user = user;
+	reporter->userdata = user;
 	reporter->type = type;
 
-	if (!reporter->type->init(&reporter->user)) {
+	if (!reporter->type->init(&reporter->userdata)) {
 		oscap_free(reporter);
 		return NULL;
 	}
@@ -193,15 +195,15 @@ struct oscap_reporter *oscap_reporter_new(const struct oscap_reporter_type *type
 void oscap_reporter_free(struct oscap_reporter *reporter)
 {
 	if (reporter) {
-		reporter->type->destroy(reporter->user);
+		reporter->type->destroy(reporter->userdata);
 		oscap_free(reporter);
 	}
 }
 
-void oscap_reporter_dispatch(struct oscap_reporter *reporter, struct oscap_reporter_message *msg)
+void oscap_reporter_dispatch(struct oscap_reporter *reporter, const struct oscap_reporter_message *msg)
 {
 	assert(reporter != NULL);
-	reporter->type->report(msg, reporter->user);
+	reporter->type->report(msg, reporter->userdata);
 }
 
 void oscap_reporter_report(struct oscap_reporter *reporter, struct oscap_reporter_message *msg)
@@ -211,14 +213,60 @@ void oscap_reporter_report(struct oscap_reporter *reporter, struct oscap_reporte
 	oscap_reporter_message_free(msg);
 }
 
+// =============== stdout reporter =====================
+
 static void oscap_reporter_stdout_report(const struct oscap_reporter_message *msg, void *user)
 {
-	printf("> %s\n", msg->string);
+	printf("%d.%d %s: %s\n", msg->family, msg->code, (user ? (const char *) user : ""), msg->string);
 }
 
 const struct oscap_reporter_type OSCAP_REPORTER_STDOUT = {
 	.init    = oscap_reporter_empty_init,
 	.report  = oscap_reporter_stdout_report,
 	.destroy = oscap_reporter_empty_destroy
+};
+
+// ===================== multireporter ===================
+
+static bool oscap_reporter_multi_init(void** user)
+{
+    if (*user != NULL) return false;
+    *user = oscap_list_new();
+    return true;
+}
+
+static void oscap_reporter_multi_report(const struct oscap_reporter_message *msg, void* user)
+{
+    assert(msg != NULL);
+    assert(user != NULL);
+
+    struct oscap_reporter *reporter;
+    struct oscap_iterator *it = oscap_iterator_new(user);
+
+    while (oscap_iterator_has_more(it)) {
+        reporter = oscap_iterator_next(it);
+        oscap_reporter_dispatch(reporter, msg);
+    }
+
+    oscap_iterator_free(it);
+}
+
+static void oscap_reporter_multi_destroy(void* user)
+{
+    assert(user != NULL);
+    oscap_list_free(user, (oscap_destruct_func) oscap_reporter_free);
+}
+
+void oscap_reporter_multi_add_reporter(struct oscap_reporter *multi, struct oscap_reporter *reporter)
+{
+    assert(multi != NULL);
+    if (reporter != NULL)
+        oscap_list_add(multi->userdata, reporter);
+}
+
+const struct oscap_reporter_type OSCAP_REPORTER_MULTI = {
+	.init    = oscap_reporter_multi_init,
+	.report  = oscap_reporter_multi_report,
+	.destroy = oscap_reporter_multi_destroy
 };
 

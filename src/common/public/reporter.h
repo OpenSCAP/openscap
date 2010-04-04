@@ -113,9 +113,16 @@ struct oscap_reporter *oscap_reporter_new(const struct oscap_reporter_type *type
 /// @memberof oscap_reporter
 void oscap_reporter_free(struct oscap_reporter *reporter);
 /// @memberof oscap_reporter
-void oscap_reporter_dispatch(struct oscap_reporter *reporter, struct oscap_reporter_message *msg);
+void oscap_reporter_dispatch(struct oscap_reporter *reporter, const struct oscap_reporter_message *msg);
 /// @memberof oscap_reporter
 void oscap_reporter_report(struct oscap_reporter *reporter, struct oscap_reporter_message *msg);
+/// @memberof oscap_reporter
+const char *oscap_reporter_get_userdata(const struct oscap_reporter *item);
+/// @memberof oscap_reporter
+bool oscap_reporter_set_userdata(struct oscap_reporter *obj, const char *newval);
+
+/// @memberof oscap_reporter
+void oscap_reporter_multi_add_reporter(struct oscap_reporter *multi, struct oscap_reporter *reporter);
 
 /**
  * @name Standard reporters
@@ -124,6 +131,8 @@ void oscap_reporter_report(struct oscap_reporter *reporter, struct oscap_reporte
 
 /// Standard output reporter
 extern const struct oscap_reporter_type OSCAP_REPORTER_STDOUT;
+/// Reporter to multiple other reporters
+extern const struct oscap_reporter_type OSCAP_REPORTER_MULTI;
 
 /** @} */
 

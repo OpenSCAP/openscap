@@ -206,7 +206,7 @@ void *oscap_iterator_detach(struct oscap_iterator *it)
 
 void oscap_iterator_free(struct oscap_iterator *it)
 {
-	free(it);
+	oscap_free(it);
 }
 
 void *oscap_iterator_next(struct oscap_iterator *it)
