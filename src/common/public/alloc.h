@@ -136,6 +136,7 @@ __P void oscap_free(void *p)
 
 #define  oscap_talloc(T) ((T *) oscap_alloc(sizeof(T)))
 #define  oscap_valloc(v) ((typeof(v) *) oscap_alloc(sizeof v))
+#define  OSCAP_SALLOC(TYPE, NAME) struct TYPE* NAME = oscap_calloc(1, sizeof(struct TYPE))
 
 #include <assert.h>
 #ifndef _A
