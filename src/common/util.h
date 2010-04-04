@@ -357,6 +357,10 @@ int oscap_strcmp(const char *s1, const char *s2);
 bool oscap_streq(const char *s1, const char *s2);
 /// Trim whitespace (modifies its argument!)
 char *oscap_trim(char *str);
+/// Print to a newly allocated string using a va_list.
+char *oscap_vsprintf(const char *fmt, va_list ap);
+/// Print to a newly allocated string using varialbe arguments.
+char *oscap_sprintf(const char *fmt, ...);
 
 OSCAP_HIDDEN_END;
 

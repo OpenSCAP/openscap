@@ -29,6 +29,7 @@
 #define OSCAP_REPORTER_H_
 
 #include <stdbool.h>
+#include <stdarg.h>
 
 /**
  * @addtogroup COMMON
@@ -75,6 +76,10 @@ typedef void(*oscap_reporter_destroy_func)(void *user);
 struct oscap_reporter_message *oscap_reporter_message_new(void);
 /// @memberof oscap_reporter_message
 struct oscap_reporter_message *oscap_reporter_message_new_fill(oscap_reporter_family_t family, oscap_reporter_code_t code, const char *string);
+/// @memberof oscap_reporter_message
+struct oscap_reporter_message *oscap_reporter_message_new_arg(oscap_reporter_family_t family, oscap_reporter_code_t code, const char *fmt, va_list ap);
+/// @memberof oscap_reporter_message
+struct oscap_reporter_message *oscap_reporter_message_new_fmt(oscap_reporter_family_t family, oscap_reporter_code_t code, const char *fmt, ...);
 /// @memberof oscap_reporter_message
 struct oscap_reporter_message *oscap_reporter_message_clone(const struct oscap_reporter_message *msg);
 /// @memberof oscap_reporter_message
@@ -145,6 +150,8 @@ void oscap_reporter_dispatch(struct oscap_reporter *reporter, const struct oscap
  * @memberof oscap_reporter
  */
 void oscap_reporter_report(struct oscap_reporter *reporter, struct oscap_reporter_message *msg);
+/// @memberof oscap_reporter
+void oscap_reporter_report_fmt(struct oscap_reporter *reporter, oscap_reporter_family_t family, oscap_reporter_code_t code, const char *fmt, ...);
 
 /// @memberof oscap_reporter
 const char *oscap_reporter_get_userdata(const struct oscap_reporter *item);

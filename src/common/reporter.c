@@ -85,6 +85,24 @@ struct oscap_reporter_message *oscap_reporter_message_new_fill(oscap_reporter_fa
 	return msg;
 }
 
+struct oscap_reporter_message *oscap_reporter_message_new_arg(oscap_reporter_family_t family, oscap_reporter_code_t code, const char *fmt, va_list ap)
+{
+    char *string = oscap_vsprintf(fmt, ap);
+    if (string == NULL) return NULL;
+    struct oscap_reporter_message *msg = oscap_reporter_message_new_fill(family, code, string);
+    oscap_free(string);
+    return msg;
+}
+
+struct oscap_reporter_message *oscap_reporter_message_new_fmt(oscap_reporter_family_t family, oscap_reporter_code_t code, const char *fmt, ...)
+{
+    va_list ap;
+    va_start(ap, fmt);
+    struct oscap_reporter_message *msg = oscap_reporter_message_new_arg(family, code, fmt, ap);
+    va_end(ap);
+    return msg;
+}
+
 #define USERCOPY(N) do { \
 	if (msg->flags.u##N##t == OSCAP_REPORTER_USERDATA_STR) { \
 		oscap_free(newmsg->user##N.str); \
@@ -215,6 +233,15 @@ void oscap_reporter_report(struct oscap_reporter *reporter, struct oscap_reporte
 	if (reporter != NULL && msg != NULL)
 		oscap_reporter_dispatch(reporter, msg);
 	oscap_reporter_message_free(msg);
+}
+
+void oscap_reporter_report_fmt(struct oscap_reporter *reporter, oscap_reporter_family_t family, oscap_reporter_code_t code, const char *fmt, ...)
+{
+	if (reporter == NULL) return;
+    va_list ap;
+    va_start(ap, fmt);
+	oscap_reporter_report(reporter, oscap_reporter_message_new_arg(family, code, fmt, ap));
+    va_end(ap);
 }
 
 // ================= reporting helpers ===================

@@ -27,6 +27,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <limits.h>
+#include <stdarg.h>
 
 struct oscap_import_source {
 	oscap_stream_type_t type;
@@ -274,5 +275,36 @@ char *oscap_trim(char *str)
 	for (i -= off; isspace(str[--i]) && i >= 0;) ;
 	str[++i] = '\0';
 	return str;
+}
+
+char *oscap_vsprintf(const char *fmt, va_list ap)
+{
+    if (fmt == NULL) return NULL;
+
+    char *ret = NULL;
+    va_list args;
+    va_copy(args, ap);
+
+    char foo[2];
+    int length = vsnprintf(foo, 1, fmt, ap);
+    if (length < 0) goto cleanup;
+
+    ret = oscap_alloc(sizeof(char) * (length + 1));
+    vsprintf(ret, fmt, args);
+    assert(ret[length] == '\0');
+
+cleanup:
+    va_end(args);
+    return ret;
+}
+
+char *oscap_sprintf(const char *fmt, ...)
+{
+    char *ret = NULL;
+    va_list ap;
+    va_start(ap, fmt);
+    ret = oscap_vsprintf(fmt, ap);
+    va_end(ap);
+    return ret;
 }
 
