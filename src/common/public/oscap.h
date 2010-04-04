@@ -57,6 +57,8 @@
 /**
  * Iterate over an array, given an iterator.
  * Execute @a code for each array member stored in @a val.
+ * It is NOT safe to use return or goto inside of the @a code
+ * or iterator will not be freed properly.
  */
 #define OSCAP_FOREACH_GENERIC(itype, vtype, val, init_val, code) \
     {                                                            \
@@ -89,6 +91,40 @@
  */
 #define OSCAP_FOREACH_STR(val, init_val, code) \
         OSCAP_FOREACH_GENERIC(oscap_string, const char *, val, init_val, code)
+
+/**
+ * Iterate over an array, given an iterator.
+ * It is generally not safe to use break, return or goto inside the loop
+ * (iterator wouldn't be properly freed otherwise).
+ * Two variables, named VAL and VAL_iter (substitute VAL for actual macro argument)
+ * will be added to current variable scope. You can free the iterator explicitly
+ * after previous unusual escape from the loop (e.g. using break).
+ * @param val name of an variable the string will be sequentially stored in
+ * @param init_val initial member value (i.e. an iterator pointing to the start element)
+ * @param code code to be executed for each string the iterator hits
+ */
+#define OSCAP_FOR_GENERIC(itype, vtype, val, init_val)                  \
+    vtype val = NULL; struct itype##_iterator *val##_iter = (init_val); \
+    while (itype##_iterator_has_more(val##_iter)                        \
+            ? (val = itype##_iterator_next(val##_iter), true)           \
+            : (itype##_iterator_free(val##_iter), val##_iter = NULL, false))
+
+/**
+ * Iterate over an array, given an iterator.
+ * @param type type of array elements (w/o the struct keyword)
+ * @param val name of an variable the member will be sequentially stored in
+ * @param init_val initial member value (i.e. an iterator pointing to the start element)
+ * @see OSCAP_FOR_GENERIC
+ */
+#define OSCAP_FOR(type, val, init_val) OSCAP_FOR_GENERIC(type, struct type *, val, init_val)
+
+/**
+ * Iterate over an array of strings, given an iterator.
+ * @param val name of an variable the member will be sequentially stored in
+ * @param init_val initial member value (i.e. an iterator pointing to the start element)
+ * @see OSCAP_FOR_GENERIC
+ */
+#define OSCAP_FOR_STR(val, init_val) OSCAP_FOR_GENERIC(oscap_string, const char *, val, init_val)
 
 /** @} */
 
