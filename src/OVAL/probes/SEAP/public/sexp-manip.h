@@ -496,8 +496,14 @@ SEXP_t *SEXP_unref (SEXP_t *s_exp_o);
  * @param s_exp the object to which create the soft reference
  */
 SEXP_t *SEXP_softref (SEXP_t *s_exp);
-#if defined(NDEBUG)
 
+/**
+ * Return the value of the reference counter
+ * @param ref
+ */
+uint32_t SEXP_refs (const SEXP_t *ref);
+
+#if defined(NDEBUG)
 /**
  * Free a sexp object.
  * @param s_exp the object to be freed

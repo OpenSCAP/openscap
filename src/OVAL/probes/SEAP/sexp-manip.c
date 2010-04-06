@@ -1746,6 +1746,21 @@ SEXP_t *SEXP_softref (SEXP_t *s_exp_o)
         return (s_exp_r);
 }
 
+uint32_t SEXP_refs (const SEXP_t *ref)
+{
+        SEXP_val_t v_dsc;
+        
+        if (ref == NULL) {
+                errno = EFAULT;
+                return 0;
+        }
+        
+        SEXP_VALIDATE(ref);
+        SEXP_val_dsc (&v_dsc, ref->s_valp);
+        
+        return (v_dsc.hdr->refs);
+}
+
 /*
  * SEXP_free for list members. The difference between
  * this function and SEXP_free is that SEXP_free frees
@@ -2135,6 +2150,9 @@ void __SEXP_VALIDATE(const SEXP_t *s_exp, const char *file, uint32_t line, const
         _D("VALIDATE: s_exp=%p (%s:%u:%s)\n", s_exp, file, line, func);
 #endif        
 
+        if (getenv ("SEXP_VALIDATE_DISABLE") != NULL)
+                return;
+        
         if (s_exp == NULL) abort ();
         if (s_exp->__magic0 != SEXP_MAGIC0) abort ();
         if (s_exp->__magic1 != SEXP_MAGIC1) abort ();
