@@ -514,8 +514,12 @@ function test_spb_api {
 function test_sexp_concurency {
     local ret_val=0;
 
+    export SEXP_VALIDATE_DISABLE="1"
+    export SEAP_DEBUGLOG_DISABLE="1"
     ./sexp_concurency >> sexp_concurency.out
     ret_val=$?
+    unset SEXP_VALIDATE_DISABLE
+    unset SEAP_DEBUGLOG_DISABLE
 
     return $ret_val
 }

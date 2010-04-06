@@ -2152,7 +2152,7 @@ void __SEXP_VALIDATE(const SEXP_t *s_exp, const char *file, uint32_t line, const
 
         if (getenv ("SEXP_VALIDATE_DISABLE") != NULL)
                 return;
-        
+
         if (s_exp == NULL) abort ();
         if (s_exp->__magic0 != SEXP_MAGIC0) abort ();
         if (s_exp->__magic1 != SEXP_MAGIC1) abort ();

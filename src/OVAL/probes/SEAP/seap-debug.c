@@ -48,6 +48,9 @@ void __seap_debuglog (const char *file, const char *fn, size_t line, const char 
 {
         va_list ap;
 
+        if (getenv ("SEAP_DEBUGLOG_DISABLE") != NULL)
+                return;
+        
         __LOCK_FP;
         
         if (__debuglog_fp == NULL) {

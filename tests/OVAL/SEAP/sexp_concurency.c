@@ -135,10 +135,13 @@ int main (void)
                         if (pthread_join (th[i], (void **)&s0_ref) != 0) {
                                 abort ();
                         }
-
+                        
                         SEXP_free (s0_ref);
                 }
         }
-        
+
+        if (SEXP_refs (s0) != 1) abort ();
         SEXP_free (s0);
+
+        return (0);
 }
