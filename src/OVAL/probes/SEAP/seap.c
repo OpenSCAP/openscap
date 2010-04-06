@@ -121,19 +121,6 @@ int SEAP_connect (SEAP_CTX_t *ctx, const char *uri, uint32_t flags)
                 return (-1);
         }
 
-        if (uri[schstr_len + 1] == '/') {
-                if (uri[schstr_len + 2] == '/') {
-                        ++schstr_len;
-                        ++schstr_len;
-                } else {
-                        errno = EINVAL;
-                        return (-1);
-                }
-        } else {
-                errno = EINVAL;
-                return (-1);
-        }
-        
         sd = SEAP_desc_add (&(ctx->sd_table), NULL, scheme, NULL);
         
         if (sd < 0) {

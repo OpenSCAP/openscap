@@ -59,50 +59,97 @@ extern char **environ;
 
 static char *get_exec_path (const char *uri, uint32_t flags)
 {
-        char *path = NULL;
-        uint32_t i = 0;
-
-        _LOGCALL_;
-again:
-        switch (*uri) {
-        case '/': /* absolute path */
-                if (eaccess (uri, X_OK) == 0)
-                        return strdup (uri);
-                else
-                        return (NULL);
-                
-        case '\0': /* end of string - error */
-                return (NULL);
-        case ' ':
-                if (i < MAX_WHITESPACE_CNT) {
-                        ++uri;
-                        ++i;
-                        goto again;
-                } else {
-                        _D("Maximum whitespace count reached: %u.\n", MAX_WHITESPACE_CNT);
-                        return (NULL);
-                }
-        default: { /* relative path */
-                char *ptok = NULL, *tokctx = NULL;
-                
-                path = sm_alloc (sizeof (char) * PATH_MAX);
-                
-                for (ptok = strtok_r (getenv ("PATH"), ":", &tokctx);
-                     ptok;
-                     ptok = strtok_r (NULL, ":", &tokctx))
-                {
-                        snprintf (path, PATH_MAX, "%s/%s", ptok, uri);
-                        if (eaccess (path, X_OK) == 0) {
-                                path = sm_reallocf (path, sizeof (char) * (strlen (path) + 1));
-                                return (path);
-                        }
-                }
-                /* not found */
-                sm_free (path);
-                return (NULL);
-        }}
+        char   *path;
+        size_t  plen, ulen;
         
-        /* NOTREACHED */
+        ulen = strlen (uri);
+        
+        if (ulen < 3)
+                return (NULL);
+        else if (uri[0] != '/' && uri[1] != '/')
+                return (NULL);
+        else {
+                uri  += 2;
+                ulen -= 2;
+                plen  = ulen;
+        }
+
+        path = sm_alloc (sizeof (char) * (PATH_MAX + 1));
+
+        if (*uri == '/') {
+                if (ulen <= PATH_MAX) {
+                        memcpy (path, uri, sizeof (char) * ulen);
+                        path[ulen] = '\0';
+                        path = (char *)sm_reallocf (path, sizeof (char) * (ulen + 1));
+                        
+                        return (path);
+                } else
+                        goto fail;
+        } else {
+#ifndef SEAP_SCHEME_PIPE_NORELPATH
+#ifndef SEAP_SCHEME_PIPE_NOPATHSEARCH
+                if (strchr (uri, '/') == NULL) {
+                        struct stat st;
+                        char *ptok = NULL;
+                        char *tctx = NULL;
+                        char *PATH = getenv ("PATH");
+                        char  __path[PATH_MAX];
+                        size_t tlen;
+
+                        for (ptok = strtok_r (PATH, ":", &tctx);
+                             ptok;
+                             ptok = strtok_r (NULL, ":", &tctx))
+                        {
+                                tlen = strlen (ptok);
+                                
+                                if (tlen + ulen + 1 < PATH_MAX) {
+                                        memcpy (__path, ptok, sizeof (char) * tlen);
+                                        __path[tlen] = '/';                                        
+                                        memcpy (__path + tlen + 1, uri, sizeof (char) * ulen);
+                                        __path[tlen + ulen + 1] = '\0';
+
+                                        if (stat (__path, &st) != 0)
+                                                continue;
+                                        
+                                        memcpy (path, __path, sizeof (char) * (tlen + ulen + 1));
+                                        path = (char *)sm_reallocf (path, sizeof (char) * (tlen + ulen + 1));
+                                        
+                                        return (path);
+                                } /* else - skip this token */
+                        }
+                        
+                        goto fail;
+                }
+#endif /* SEAP_SCHEME_PIPE_NOPATHSEARCH */
+                if (getcwd (path, PATH_MAX) == NULL)
+                        goto fail;
+                else {
+                        size_t clen = strlen (path);
+                        
+                        if (clen + ulen > PATH_MAX)
+                                goto fail;
+                        
+                        if (path[clen - 1] != '/') {
+                                if (clen + ulen + 1 > PATH_MAX)
+                                        goto fail;
+                                else {
+                                        path[clen] = '/';
+                                        ++clen;
+                                }
+                        }
+                        
+                        memcpy (path + clen, uri, sizeof (char) * ulen);
+                        path[clen + ulen] = '\0';
+                        path = (char *)sm_reallocf (path, sizeof (char) * (clen + ulen + 1));
+                        
+                        return (path);
+                }
+#else /* !SEAP_SCHEME_PIPE_NORELPATH */
+                goto fail;
+#endif
+        }
+fail:
+        sm_free (path);
         return (NULL);
 }
 

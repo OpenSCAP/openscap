@@ -189,40 +189,47 @@ static int get_runlevel_common (struct runlevel_req *req, struct runlevel_rep *r
 # define LINUX_DISTRO generic
 static int is_redhat (void)
 {
-        return (eaccess ("/etc/redhat-release", F_OK) == 0);
+        struct stat st;
+        return (stat ("/etc/redhat-release", &st) == 0);
 }
 
 static int is_debian (void)
 {
-        return (eaccess ("/etc/debian_version", F_OK) == 0 ||
-                eaccess ("/etc/debian_release", F_OK) == 0);
+        struct stat st;
+        return (stat ("/etc/debian_version", &st) == 0 ||
+                stat ("/etc/debian_release", &st) == 0);
 }
 
 static int is_slack (void)
 {
-        return (eaccess ("/etc/slackware-release", F_OK) == 0);
+        struct stat st;
+        return (stat ("/etc/slackware-release", &st) == 0);
 }
 
 static int is_gentoo (void)
 {
-        return (eaccess ("/etc/gentoo-release", F_OK) == 0);
+        struct stat st;
+        return (stat ("/etc/gentoo-release", &st) == 0);
 }
 
 static int is_arch (void)
 {
-        return (eaccess ("/etc/arch-release", F_OK) == 0);
+        struct stat st;
+        return (stat ("/etc/arch-release", &st) == 0);
 }
 
 static int is_mandriva (void)
 {
-        return (eaccess ("/etc/mandriva-release", F_OK) == 0);
+        struct stat st;
+        return (stat ("/etc/mandriva-release", &st) == 0);
 }
 
 static int is_suse (void)
 {
-        return (eaccess ("/etc/SuSE-release", F_OK)   == 0 ||
-                eaccess ("/etc/sles-release", F_OK)   == 0 ||
-                eaccess ("/etc/novell-release", F_OK) == 0);
+        struct stat st;
+        return (stat ("/etc/SuSE-release", &st)   == 0 ||
+                stat ("/etc/sles-release", &st)   == 0 ||
+                stat ("/etc/novell-release", &st) == 0);
 }
 
 static int is_common (void)
