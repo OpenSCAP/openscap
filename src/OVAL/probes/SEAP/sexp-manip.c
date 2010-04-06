@@ -1732,6 +1732,7 @@ SEXP_t *SEXP_softref (SEXP_t *s_exp_o)
 			}
 
 			s_exp_r->s_valp = uptr;
+                        s_exp_o->s_valp = uptr;
 		} else {
                         /* TODO: handle types other than lists */
 			abort();
