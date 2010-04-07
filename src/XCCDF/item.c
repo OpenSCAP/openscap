@@ -393,8 +393,8 @@ void xccdf_status_free(struct xccdf_status *status)
 	oscap_free(status);
 }
 
-XCCDF_GENERIC_GETTER(time_t, status, date)
-    XCCDF_GENERIC_GETTER(xccdf_status_type_t, status, status)
+OSCAP_ACCESSOR_SIMPLE(time_t, xccdf_status, date)
+OSCAP_ACCESSOR_SIMPLE(xccdf_status_type_t, xccdf_status, status)
 
 xccdf_status_type_t xccdf_item_get_current_status(const struct xccdf_item *item)
 {
@@ -438,7 +438,7 @@ struct xccdf_model *xccdf_model_new_xml(xmlTextReaderPtr reader)
 	return model;
 }
 
-XCCDF_GENERIC_GETTER(const char *, model, system)
+OSCAP_ACCESSOR_STRING(xccdf_model, system)
 
 static const struct oscap_string_map XCCDF_WARNING_MAP[] = {
 	{ XCCDF_WARNING_GENERAL, "general" },
@@ -491,8 +491,8 @@ void xccdf_warning_free(struct xccdf_warning * w)
     }
 }
 
-OSCAP_GETTER(xccdf_warning_category_t, xccdf_warning, category)
-OSCAP_GETTER(struct oscap_text *, xccdf_warning, text)
+OSCAP_ACCESSOR_SIMPLE(xccdf_warning_category_t, xccdf_warning, category)
+OSCAP_ACCESSOR_TEXT(xccdf_warning, text)
 
 struct xccdf_reference *xccdf_reference_new(void)
 {
@@ -521,10 +521,10 @@ void xccdf_reference_free(struct xccdf_reference *ref)
     }
 }
 
-OSCAP_GETTER(const char*, xccdf_reference, lang)
-OSCAP_GETTER(const char*, xccdf_reference, href)
-OSCAP_GETTER(const char*, xccdf_reference, content)
-OSCAP_GETTER(bool,        xccdf_reference, override)
+OSCAP_ACCESSOR_STRING(xccdf_reference, lang)
+OSCAP_ACCESSOR_STRING(xccdf_reference, href)
+OSCAP_ACCESSOR_STRING(xccdf_reference, content)
+OSCAP_ACCESSOR_SIMPLE(bool,        xccdf_reference, override)
 
 const struct oscap_text_traits XCCDF_TEXT_PLAIN    = { .can_override = true };
 const struct oscap_text_traits XCCDF_TEXT_HTML     = { .html = true, .can_override = true };

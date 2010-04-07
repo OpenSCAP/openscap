@@ -23,6 +23,7 @@
 #ifndef XCCDF_HELPERS_H_
 #define XCCDF_HELPERS_H_
 
+#include <assert.h>
 
 #define MACRO_BLOCK(code) do { code } while(false)
 #define ASSERT_TYPE(item,t) assert((item)->type & t)
@@ -156,14 +157,17 @@
         XCCDF_TITERATOR_GETTER(value,MNAME,item.MNAME) \
         XCCDF_TITERATOR_GETTER(group,MNAME,item.MNAME) \
         XCCDF_TITERATOR_GETTER(result,MNAME,item.MNAME)
+#define XCCDF_FLAG_SETTER(SNAME, FNAME) \
+        bool xccdf_##SNAME##_set_##FNAME(struct xccdf_##SNAME *item, bool newval) \
+        { assert(item != NULL); XITEM(item)->item.flags.FNAME = newval; return true; }
 #define XCCDF_FLAG_GETTER(MNAME) \
-		XCCDF_ABSTRACT_GETTER(bool,item,MNAME,item.flags.MNAME) \
-        XCCDF_BENCHMARK_GETTER_A(bool,MNAME,item.flags.MNAME) \
-        XCCDF_PROFILE_GETTER_A(bool,MNAME,item.flags.MNAME) \
-        XCCDF_RULE_GETTER_A(bool,MNAME,item.flags.MNAME) \
-        XCCDF_VALUE_GETTER_A(bool,MNAME,item.flags.MNAME) \
-        XCCDF_GROUP_GETTER_A(bool,MNAME,item.flags.MNAME) \
-        XCCDF_RESULT_GETTER_A(bool,MNAME,item.flags.MNAME)
+		XCCDF_ABSTRACT_GETTER(bool,item,MNAME,item.flags.MNAME) XCCDF_FLAG_SETTER(item,MNAME) \
+        XCCDF_BENCHMARK_GETTER_A(bool,MNAME,item.flags.MNAME)   XCCDF_FLAG_SETTER(benchmark,MNAME) \
+        XCCDF_PROFILE_GETTER_A(bool,MNAME,item.flags.MNAME)     XCCDF_FLAG_SETTER(profile,MNAME) \
+        XCCDF_RULE_GETTER_A(bool,MNAME,item.flags.MNAME)        XCCDF_FLAG_SETTER(rule,MNAME) \
+        XCCDF_GROUP_GETTER_A(bool,MNAME,item.flags.MNAME)       XCCDF_FLAG_SETTER(group,MNAME) \
+        XCCDF_VALUE_GETTER_A(bool,MNAME,item.flags.MNAME)       XCCDF_FLAG_SETTER(value,MNAME) \
+        XCCDF_RESULT_GETTER_A(bool,MNAME,item.flags.MNAME)      XCCDF_FLAG_SETTER(result,MNAME)
 
 #define XCCDF_ITEM_SETTER_ONE(STYPE,MNAME,MTYPE,DUP) \
 		bool xccdf_##STYPE##_set_##MNAME(struct xccdf_##STYPE* item, MTYPE newval) \
