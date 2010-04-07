@@ -503,7 +503,7 @@ uintptr_t SEXP_rawval_lblk_copy (uintptr_t lblkp, uint16_t n_skip)
                 /*
                  * copy list items
                  */
-                while (off_n < (1 << cur_sz) && off_o < (1 << old_sz)) {
+                while (off_n < (1 << cur_sz) && off_o < lb_old->real) {
                         lb_new->memb[off_n].s_valp = SEXP_rawval_incref (lb_old->memb[off_o].s_valp);
                         lb_new->memb[off_n].s_type = lb_old->memb[off_o].s_type;
                         lb_new->memb[off_n].s_flgs = lb_old->memb[off_o].s_flgs;
