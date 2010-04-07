@@ -1,3 +1,4 @@
+#include <stdarg.h>
 #include <stddef.h>
 #include <assume.h>
 #include <errno.h>
@@ -7,7 +8,7 @@
 #include "sha2.h"
 #include "rmd160.h"
 
-int crapi_digest_fd (crapi_alg_t alg, int fd, void *dst, size_t *size)
+int crapi_digest_fd (int fd, crapi_alg_t alg, void *dst, size_t *size)
 {
         assume_r(dst  != NULL, -1, errno = EFAULT;);
         assume_r(size != NULL, -1, errno = EFAULT;);
@@ -26,5 +27,11 @@ int crapi_digest_fd (crapi_alg_t alg, int fd, void *dst, size_t *size)
         }
         
         errno = EINVAL;
+        return (-1);
+}
+
+int crapi_mdigest_fd (int fd, int num, crapi_alg_t alg, void *dst, size_t *size, ...)
+{
+        errno = EOPNOTSUPP;
         return (-1);
 }

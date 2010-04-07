@@ -40,6 +40,11 @@ pkglibexec_PROGRAMS += probe_xmlfilecontent
 probe_xmlfilecontent_SOURCES= independent/xmlfilecontent.c
 probe_xmlfilecontent_CFLAGS= @libxml_cflags@
 probe_xmlfilecontent_LDFLAGS= @libxml_libs@
+
+pkglibexec_PROGRAMS += probe_filehash
+probe_filehash_SOURCES= independent/filehash.c
+probe_filehash_CFLAGS=
+probe_filehash_LDFLAGS= crapi/libcrapi.la
 endif
 
 if WANT_PROBES_UNIX

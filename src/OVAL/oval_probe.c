@@ -62,6 +62,7 @@ encache_t *OSCAP_GSYM(encache) = NULL;
 /* KEEP THIS LIST SORTED! (by subtype) */
 static const oval_pdsc_t __ovalp_ltable[] = {
 	/*  7001 */ {OVAL_INDEPENDENT_FAMILY,               "family",            "probe_family"},
+        /*  7003 */ {OVAL_INDEPENDENT_FILE_HASH,            "filehash",          "probe_filehash"},
 	/*  7006 */ {OVAL_INDEPENDENT_TEXT_FILE_CONTENT_54, "textfilecontent54", "probe_textfilecontent54"},
 	/*  7007 */ {OVAL_INDEPENDENT_TEXT_FILE_CONTENT,    "textfilecontent",   NULL},
 	/*  7010 */ {OVAL_INDEPENDENT_XML_FILE_CONTENT,     "xmlfilecontent",    "probe_xmlfilecontent"},
