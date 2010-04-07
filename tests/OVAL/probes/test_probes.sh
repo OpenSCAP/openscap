@@ -903,9 +903,6 @@ function test_probes_cleanup {
 	  test_probes_shadow_A.out \
 	  test_probes_shadow_A.xml \
 	  test_probes_shadow_A.xml.results.xml \
-	  # test_probes_process_A.out \
-	  # test_probes_process_A.xml \
-	  # test_probes_process_A.xml.results.xml \
           test_probes_textfilecontent54.out \
 	  test_probes_textfilecontent54.xml.results.xml \
 	  /tmp/test_probes_textfilecontent54.tmp_file \
