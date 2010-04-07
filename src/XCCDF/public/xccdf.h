@@ -378,41 +378,47 @@ struct xccdf_reference;
  */
 struct xccdf_identity;
 
-/** @struct xccdf_identity
+/** @struct xccdf_instance
  * XCCDF instance.
  * @see xccdf_rule_result
  */
 struct xccdf_instance;
 
-/** @struct xccdf_identity
+/** @struct xccdf_message
  * XCCDF message.
  * @see xccdf_rule_result
  */
 struct xccdf_message;
 
-/** @struct xccdf_identity
+/** @struct xccdf_override
  * XCCDF override.
  * @see xccdf_rule_result
  */
 struct xccdf_override;
 
-/** @struct xccdf_identity
+/** @struct xccdf_rule_result
  * XCCDF rule result.
  * @see xccdf_result
  */
 struct xccdf_rule_result;
 
-/** @struct xccdf_identity
+/** @struct xccdf_score
  * XCCDF score.
  * @see xccdf_result
  */
 struct xccdf_score;
 
-/** @struct xccdf_identity
+/** @struct xccdf_target_fact
  * XCCDF target fact.
  * @see xccdf_result
  */
 struct xccdf_target_fact;
+
+/** @struct xccdf_plain_text
+ * XCCDF target fact.
+ * @see xccdf_result
+ */
+struct xccdf_plain_text;
 
 /*--------------------*\
 |       Iterators      |
@@ -694,6 +700,18 @@ bool xccdf_override_iterator_has_more(struct xccdf_override_iterator *it);
 /// @memberof xccdf_override_iterator
 void xccdf_override_iterator_free(struct xccdf_override_iterator *it);
 
+/** @struct xccdf_plain_text_iterator
+ * Plain text iterator.
+ * @see oscap_iterator
+ */
+struct xccdf_plain_text_iterator;
+/// @memberof xccdf_plain_text_iterator
+struct xccdf_plain_text *xccdf_plain_text_iterator_next(struct xccdf_plain_text_iterator *it);
+/// @memberof xccdf_plain_text_iterator
+bool xccdf_plain_text_iterator_has_more(struct xccdf_plain_text_iterator *it);
+/// @memberof xccdf_plain_text_iterator
+void xccdf_plain_text_iterator_free(struct xccdf_plain_text_iterator *it);
+
 /**
  * @}
  */
@@ -882,6 +900,8 @@ xccdf_status_type_t xccdf_benchmark_get_status_current(const struct xccdf_benchm
 void xccdf_benchmark_free(struct xccdf_benchmark *benchmark);
 /// @memberof xccdf_benchmark
 struct xccdf_item *xccdf_benchmark_to_item(struct xccdf_benchmark *item);
+/// @memberof xccdf_benchmark
+struct xccdf_plain_text_iterator *xccdf_benchmark_get_plain_texts(const struct xccdf_benchmark *item);
 
 /// @memberof xccdf_benchmark
 struct xccdf_result_iterator* xccdf_benchmark_get_results(const struct xccdf_benchmark *bench);
@@ -898,6 +918,26 @@ bool xccdf_benchmark_add_reference(struct xccdf_benchmark *item, struct xccdf_re
 bool xccdf_benchmark_add_status(struct xccdf_benchmark *item, struct xccdf_status *newval);
 /// @memberof xccdf_benchmark
 bool xccdf_benchmark_add_title(struct xccdf_benchmark *item, struct oscap_text *newval);
+/// @memberof xccdf_benchmark
+bool xccdf_benchmark_add_front_matter(struct xccdf_benchmark *item, struct oscap_text *newval);
+/// @memberof xccdf_benchmark
+bool xccdf_benchmark_add_item(struct xccdf_benchmark *item, struct xccdf_item *newval);
+/// @memberof xccdf_benchmark
+bool xccdf_benchmark_add_model(struct xccdf_benchmark *item, struct xccdf_model *newval);
+/// @memberof xccdf_benchmark
+bool xccdf_benchmark_add_notice(struct xccdf_benchmark *item, struct xccdf_notice *newval);
+/// @memberof xccdf_benchmark
+bool xccdf_benchmark_add_plain_text(struct xccdf_benchmark *item, struct xccdf_plain_text *newval);
+/// @memberof xccdf_benchmark
+bool xccdf_benchmark_add_profile(struct xccdf_benchmark *item, struct xccdf_profile *newval);
+/// @memberof xccdf_benchmark
+bool xccdf_benchmark_add_rear_matter(struct xccdf_benchmark *item, struct oscap_text *newval);
+/// @memberof xccdf_benchmark
+bool xccdf_benchmark_set_metadata(struct xccdf_benchmark *item, const char *newval);
+/// @memberof xccdf_benchmark
+bool xccdf_benchmark_set_style_href(struct xccdf_benchmark *item, const char *newval);
+/// @memberof xccdf_benchmark
+bool xccdf_benchmark_set_style(struct xccdf_benchmark *item, const char *newval);
 
 /**
  * Get a plain text by ID.
@@ -962,6 +1002,16 @@ bool xccdf_benchmark_set_version(struct xccdf_benchmark *item, const char *newva
 bool xccdf_benchmark_set_version_time(struct xccdf_benchmark *item, time_t newval);
 /// @memberof xccdf_benchmark
 bool xccdf_benchmark_set_version_update(struct xccdf_benchmark *item, const char *newval);
+/// @memberof xccdf_benchmark
+struct xccdf_value_iterator *xccdf_benchmark_get_values(const struct xccdf_benchmark *item);
+/// @memberof xccdf_benchmark
+bool xccdf_benchmark_add_rule(struct xccdf_benchmark *benchmark, struct xccdf_rule *rule);
+/// @memberof xccdf_benchmark
+bool xccdf_benchmark_add_group(struct xccdf_benchmark *benchmark, struct xccdf_group *group);
+/// @memberof xccdf_benchmark
+bool xccdf_benchmark_add_value(struct xccdf_benchmark *benchmark, struct xccdf_value *value);
+/// @memberof xccdf_benchmark
+bool xccdf_benchmark_add_content(struct xccdf_benchmark *bench, struct xccdf_item *item);
 
 /*--------------------*\
 |    Profile methods   |
@@ -1447,6 +1497,10 @@ bool xccdf_status_set_status(struct xccdf_status *obj, xccdf_status_type_t newva
 const char *xccdf_notice_get_id(const struct xccdf_notice *notice);
 /// @memberof xccdf_notice
 struct oscap_text *xccdf_notice_get_text(const struct xccdf_notice *notice);
+/// @memberof xccdf_notice
+bool xccdf_notice_set_id(struct xccdf_notice *obj, const char *newval);
+/// @memberof xccdf_notice
+bool xccdf_notice_set_text(struct xccdf_notice *obj, struct oscap_text *newval);
 /// @memberof xccdf_model
 const char *xccdf_model_get_system(const struct xccdf_model *model);
 /// @memberof xccdf_model
@@ -1704,6 +1758,15 @@ struct xccdf_value *xccdf_benchmark_append_new_value(const struct xccdf_benchmar
  * @return the handle of the new rule.
  */
 struct xccdf_rule *xccdf_benchmark_append_new_rule(const struct xccdf_benchmark *, const char *id);
+
+/// @memberof xccdf_plain_text
+bool xccdf_plain_text_set_id(struct xccdf_plain_text *obj, const char *newval);
+/// @memberof xccdf_plain_text
+bool xccdf_plain_text_set_text(struct xccdf_plain_text *obj, const char *newval);
+/// @memberof xccdf_plain_text
+const char *xccdf_plain_text_get_id(const struct xccdf_plain_text *item);
+/// @memberof xccdf_plain_text
+const char *xccdf_plain_text_get_text(const struct xccdf_plain_text *item);
 
 
 /*--------------------*\

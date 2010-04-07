@@ -156,7 +156,7 @@ struct xccdf_benchmark_item {
 
 	struct oscap_htable *dict;
 	struct oscap_list *notices;
-	struct oscap_htable *plain_texts;
+	struct oscap_list *plain_texts;
 
 	char *style;
 	char *style_href;
@@ -177,7 +177,7 @@ struct xccdf_item {
 	struct xccdf_item_base item;
 	union {
 		struct xccdf_profile_item profile;
-		struct xccdf_benchmark_item bench;
+		struct xccdf_benchmark_item benchmark;
 		struct xccdf_rule_item rule;
 		struct xccdf_group_item group;
 		struct xccdf_value_item value;
@@ -353,6 +353,11 @@ struct xccdf_instance {
     char *content;
 };
 
+struct xccdf_plain_text {
+    char *id;
+    char *text;
+};
+
 extern const struct oscap_string_map XCCDF_LEVEL_MAP[];
 extern const struct oscap_string_map XCCDF_ROLE_MAP[];
 extern const struct oscap_string_map XCCDF_OPERATOR_MAP[];
@@ -446,6 +451,9 @@ struct xccdf_fixtext *xccdf_fixtext_parse(xmlTextReaderPtr reader, struct xccdf_
 void xccdf_fixtext_free(struct xccdf_fixtext *item);
 void xccdf_fix_free(struct xccdf_fix *item);
 
+struct xccdf_plain_text *xccdf_plain_text_new(void);
+struct xccdf_plain_text *xccdf_plain_text_new_fill(const char *id, const char *text);
+void xccdf_plain_text_free(struct xccdf_plain_text *plain);
 
 struct xccdf_refine_value *xccdf_refine_value_new(void);
 struct xccdf_refine_rule *xccdf_refine_rule_new(void);

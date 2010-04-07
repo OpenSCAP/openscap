@@ -35,7 +35,7 @@ bool xccdf_content_parse(xmlTextReaderPtr reader, struct xccdf_item *parent)
 
 	switch (parent->type) {
 	case XCCDF_BENCHMARK:
-		list = parent->sub.bench.content;
+		list = parent->sub.benchmark.content;
 		break;
 	case XCCDF_GROUP:
 		list = parent->sub.group.content;

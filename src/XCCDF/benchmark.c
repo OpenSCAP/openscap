@@ -49,17 +49,17 @@ struct xccdf_item *xccdf_benchmark_new(void)
 {
 	struct xccdf_item *bench = xccdf_item_new(XCCDF_BENCHMARK, NULL);
     // lists
-	bench->sub.bench.rear_matter  = oscap_list_new();
-	bench->sub.bench.front_matter = oscap_list_new();
-	bench->sub.bench.notices = oscap_list_new();
-	bench->sub.bench.models = oscap_list_new();
-	bench->sub.bench.content = oscap_list_new();
-	bench->sub.bench.values = oscap_list_new();
-	bench->sub.bench.plain_texts = oscap_htable_new();
-	bench->sub.bench.profiles = oscap_list_new();
-	bench->sub.bench.results = oscap_list_new();
+	bench->sub.benchmark.rear_matter  = oscap_list_new();
+	bench->sub.benchmark.front_matter = oscap_list_new();
+	bench->sub.benchmark.notices = oscap_list_new();
+	bench->sub.benchmark.models = oscap_list_new();
+	bench->sub.benchmark.content = oscap_list_new();
+	bench->sub.benchmark.values = oscap_list_new();
+	bench->sub.benchmark.plain_texts = oscap_list_new();
+	bench->sub.benchmark.profiles = oscap_list_new();
+	bench->sub.benchmark.results = oscap_list_new();
     // hash tables
-	bench->sub.bench.dict = oscap_htable_new();
+	bench->sub.benchmark.dict = oscap_htable_new();
 	return bench;
 }
 
@@ -74,8 +74,8 @@ bool xccdf_benchmark_parse(struct xccdf_item * benchmark, xmlTextReaderPtr reade
 		xccdf_benchmark_free(XBENCHMARK(benchmark));
 		return false;
 	}
-	benchmark->sub.bench.style = xccdf_attribute_copy(reader, XCCDFA_STYLE);
-	benchmark->sub.bench.style_href = xccdf_attribute_copy(reader, XCCDFA_STYLE_HREF);
+	benchmark->sub.benchmark.style = xccdf_attribute_copy(reader, XCCDFA_STYLE);
+	benchmark->sub.benchmark.style_href = xccdf_attribute_copy(reader, XCCDFA_STYLE_HREF);
 	if (xccdf_attribute_has(reader, XCCDFA_RESOLVED))
 		benchmark->item.flags.resolved = xccdf_attribute_get_bool(reader, XCCDFA_RESOLVED);
 
@@ -84,40 +84,41 @@ bool xccdf_benchmark_parse(struct xccdf_item * benchmark, xmlTextReaderPtr reade
 	while (oscap_to_start_element(reader, depth)) {
 		switch (xccdf_element_get(reader)) {
 		case XCCDFE_NOTICE:
-				oscap_list_add(benchmark->sub.bench.notices, xccdf_notice_new_parse(reader));
+				oscap_list_add(benchmark->sub.benchmark.notices, xccdf_notice_new_parse(reader));
 				break;
 		case XCCDFE_FRONT_MATTER:
-				oscap_list_add(benchmark->sub.bench.front_matter, oscap_text_new_parse(XCCDF_TEXT_HTMLSUB, reader));
+				oscap_list_add(benchmark->sub.benchmark.front_matter, oscap_text_new_parse(XCCDF_TEXT_HTMLSUB, reader));
 			break;
 		case XCCDFE_REAR_MATTER:
-				oscap_list_add(benchmark->sub.bench.rear_matter, oscap_text_new_parse(XCCDF_TEXT_HTMLSUB, reader));
+				oscap_list_add(benchmark->sub.benchmark.rear_matter, oscap_text_new_parse(XCCDF_TEXT_HTMLSUB, reader));
 			break;
 		case XCCDFE_METADATA:
-			if (!benchmark->sub.bench.metadata)
-				benchmark->sub.bench.metadata = oscap_get_xml(reader);
+			if (!benchmark->sub.benchmark.metadata)
+				benchmark->sub.benchmark.metadata = oscap_get_xml(reader);
 			break;
 		case XCCDFE_PLATFORM:
 			oscap_list_add(benchmark->item.platforms, xccdf_attribute_copy(reader, XCCDFA_IDREF));
 			break;
 		case XCCDFE_MODEL:
-			oscap_list_add(benchmark->sub.bench.models, xccdf_model_new_xml(reader));
+			oscap_list_add(benchmark->sub.benchmark.models, xccdf_model_new_xml(reader));
 			break;
 		case XCCDFE_PLAIN_TEXT:{
 				const char *id = xccdf_attribute_get(reader, XCCDFA_ID);
-				char *data = oscap_element_string_copy(reader);
-				if (!id || !data || !oscap_htable_add(benchmark->sub.bench.plain_texts, id, data))
-					oscap_free(data);
+				const char *data = oscap_element_string_get(reader);
+				if (id && data)
+                    oscap_list_add(benchmark->sub.benchmark.plain_texts,
+                                xccdf_plain_text_new_fill(id, data));
 				break;
 			}
 		case XCCDFE_PROFILE:
-			oscap_list_add(benchmark->sub.bench.profiles, xccdf_profile_parse(reader, benchmark));
+			oscap_list_add(benchmark->sub.benchmark.profiles, xccdf_profile_parse(reader, benchmark));
 			break;
 		case XCCDFE_GROUP:
 		case XCCDFE_RULE:
 			xccdf_content_parse(reader, benchmark);
 			break;
 		case XCCDFE_VALUE:
-			oscap_list_add(benchmark->sub.bench.values, xccdf_value_parse(reader, benchmark));
+			oscap_list_add(benchmark->sub.benchmark.values, xccdf_value_parse(reader, benchmark));
 			break;
 		case XCCDFE_TESTRESULT:
 			xccdf_benchmark_add_result(XBENCHMARK(benchmark), xccdf_result_new_parse(reader));
@@ -142,13 +143,13 @@ void xccdf_benchmark_dump(struct xccdf_benchmark *benchmark)
 		printf("  rear m.");
 		xccdf_print_textlist(xccdf_benchmark_get_rear_matter(benchmark), 2, 80, "...");
 		printf("  profiles");
-		oscap_list_dump(bench->sub.bench.profiles, xccdf_profile_dump, 2);
+		oscap_list_dump(bench->sub.benchmark.profiles, xccdf_profile_dump, 2);
 		printf("  values");
-		oscap_list_dump(bench->sub.bench.values, xccdf_value_dump, 2);
+		oscap_list_dump(bench->sub.benchmark.values, xccdf_value_dump, 2);
 		printf("  content");
-		oscap_list_dump(bench->sub.bench.content, xccdf_item_dump, 2);
+		oscap_list_dump(bench->sub.benchmark.content, xccdf_item_dump, 2);
 		printf("  results");
-		oscap_list_dump(bench->sub.bench.results, (oscap_dump_func) xccdf_result_dump, 2);
+		oscap_list_dump(bench->sub.benchmark.results, (oscap_dump_func) xccdf_result_dump, 2);
 	}
 }
 
@@ -156,39 +157,72 @@ void xccdf_benchmark_free(struct xccdf_benchmark *benchmark)
 {
 	if (benchmark) {
 		struct xccdf_item *bench = XITEM(benchmark);
-		oscap_free(bench->sub.bench.style);
-		oscap_free(bench->sub.bench.style_href);
-		oscap_free(bench->sub.bench.metadata);
-		oscap_list_free(bench->sub.bench.front_matter, (oscap_destruct_func) oscap_text_free);
-		oscap_list_free(bench->sub.bench.rear_matter, (oscap_destruct_func) oscap_text_free);
-		oscap_list_free(bench->sub.bench.notices, (oscap_destruct_func) xccdf_notice_free);
-		oscap_list_free(bench->sub.bench.models, (oscap_destruct_func) xccdf_model_free);
-		oscap_list_free(bench->sub.bench.content, (oscap_destruct_func) xccdf_item_free);
-		oscap_list_free(bench->sub.bench.values, (oscap_destruct_func) xccdf_value_free);
-		oscap_list_free(bench->sub.bench.results, (oscap_destruct_func) xccdf_result_free);
-		oscap_htable_free(bench->sub.bench.plain_texts, oscap_free);
-		oscap_htable_free(bench->sub.bench.dict, NULL);
-		oscap_list_free(bench->sub.bench.profiles, (oscap_destruct_func) xccdf_profile_free);
+		oscap_free(bench->sub.benchmark.style);
+		oscap_free(bench->sub.benchmark.style_href);
+		oscap_free(bench->sub.benchmark.metadata);
+		oscap_list_free(bench->sub.benchmark.front_matter, (oscap_destruct_func) oscap_text_free);
+		oscap_list_free(bench->sub.benchmark.rear_matter, (oscap_destruct_func) oscap_text_free);
+		oscap_list_free(bench->sub.benchmark.notices, (oscap_destruct_func) xccdf_notice_free);
+		oscap_list_free(bench->sub.benchmark.models, (oscap_destruct_func) xccdf_model_free);
+		oscap_list_free(bench->sub.benchmark.content, (oscap_destruct_func) xccdf_item_free);
+		oscap_list_free(bench->sub.benchmark.values, (oscap_destruct_func) xccdf_value_free);
+		oscap_list_free(bench->sub.benchmark.results, (oscap_destruct_func) xccdf_result_free);
+		oscap_list_free(bench->sub.benchmark.plain_texts, (oscap_destruct_func) xccdf_plain_text_free);
+		oscap_htable_free(bench->sub.benchmark.dict, NULL);
+		oscap_list_free(bench->sub.benchmark.profiles, (oscap_destruct_func) xccdf_profile_free);
 		xccdf_item_release(bench);
 	}
 }
 
-XCCDF_TEXT_IGETTER(benchmark, front_matter, sub.bench.front_matter)
-XCCDF_TEXT_IGETTER(benchmark, rear_matter, sub.bench.rear_matter)
-XCCDF_BENCHMARK_GETTER(const char *, metadata)
-XCCDF_BENCHMARK_GETTER(const char *, style)
-XCCDF_BENCHMARK_GETTER(const char *, style_href)
-XCCDF_BENCHMARK_IGETTER(notice, notices)
-XCCDF_BENCHMARK_IGETTER(model, models)
-XCCDF_BENCHMARK_IGETTER(profile, profiles)
+XCCDF_ACCESSOR_STRING(benchmark, metadata)
+XCCDF_ACCESSOR_STRING(benchmark, style)
+XCCDF_ACCESSOR_STRING(benchmark, style_href)
+XCCDF_LISTMANIP_TEXT(benchmark, front_matter, front_matter)
+XCCDF_LISTMANIP_TEXT(benchmark, rear_matter, rear_matter)
+XCCDF_LISTMANIP(benchmark, notice, notices)
+XCCDF_LISTMANIP(benchmark, model, models)
+XCCDF_LISTMANIP(benchmark, profile, profiles)
 XCCDF_BENCHMARK_IGETTER(item, content)
 XCCDF_BENCHMARK_IGETTER(result, results)
+XCCDF_BENCHMARK_IGETTER(value, values)
 XCCDF_ITERATOR_GEN_S(notice)
 XCCDF_ITERATOR_GEN_S(model)
 XCCDF_ITERATOR_GEN_S(profile)
-XCCDF_HTABLE_GETTER(const char *, benchmark, plain_text, sub.bench.plain_texts)
-XCCDF_HTABLE_GETTER(struct xccdf_item *, benchmark, item, sub.bench.dict) 
+XCCDF_LISTMANIP(benchmark, plain_text, plain_texts)
+XCCDF_HTABLE_GETTER(struct xccdf_item *, benchmark, item, sub.benchmark.dict)
 XCCDF_STATUS_CURRENT(benchmark)
+OSCAP_ITERATOR_GEN(xccdf_plain_text)
+
+
+XCCDF_ITEM_ADDER_REG(benchmark, result, results)
+XCCDF_ITEM_ADDER_REG(benchmark, rule, content)
+XCCDF_ITEM_ADDER_REG(benchmark, group, content)
+XCCDF_ITEM_ADDER_REG(benchmark, value, values)
+
+bool xccdf_benchmark_add_content(struct xccdf_benchmark *bench, struct xccdf_item *item)
+{
+	if (item == NULL) return false;
+	switch (xccdf_item_get_type(item)) {
+		case XCCDF_RULE:  return xccdf_benchmark_add_rule(bench, XRULE(item));
+		case XCCDF_GROUP: return xccdf_benchmark_add_group(bench, XGROUP(item));
+		case XCCDF_VALUE: return xccdf_benchmark_add_value(bench, XVALUE(item));
+		default: return false;
+	}
+}
+
+
+const char *xccdf_benchmark_get_plain_text(const struct xccdf_benchmark *bench, const char *id)
+{
+    assert(bench != NULL);
+
+    OSCAP_FOR(xccdf_plain_text, cur, xccdf_benchmark_get_plain_texts(bench)) {
+        if (oscap_streq(cur->id, id)) {
+            xccdf_plain_text_iterator_free(cur_iter);
+            return cur->text;
+        }
+    }
+    return NULL;
+}
 
 struct xccdf_notice *xccdf_notice_new(void)
 {
@@ -222,8 +256,8 @@ void xccdf_notice_free(struct xccdf_notice *notice)
 	}
 }
 
-XCCDF_GENERIC_GETTER(const char *, notice, id)
-XCCDF_GENERIC_GETTER(struct oscap_text *, notice, text)
+OSCAP_ACCESSOR_STRING(xccdf_notice, id)
+OSCAP_ACCESSOR_TEXT(xccdf_notice, text)
 
 void xccdf_cleanup(void)
 {
@@ -311,7 +345,7 @@ bool xccdf_benchmark_register_item(struct xccdf_benchmark *benchmark, struct xcc
 	if (xccdf_item_get_benchmark(item) != NULL)
 		return xccdf_item_get_benchmark(item) == benchmark; // already registered
 
-	return oscap_htable_add(XITEM(benchmark)->sub.bench.dict, xccdf_item_get_id(item), item);
+	return oscap_htable_add(XITEM(benchmark)->sub.benchmark.dict, xccdf_item_get_id(item), item);
 }
 
 bool xccdf_benchmark_unregister_item(struct xccdf_item *item)
@@ -324,7 +358,7 @@ bool xccdf_benchmark_unregister_item(struct xccdf_item *item)
 
 	assert(xccdf_benchmark_get_item(xccdf_item_get_benchmark(item), xccdf_item_get_id(item)) == item);
 
-	return oscap_htable_detach(XITEM(xccdf_item_get_benchmark(item))->sub.bench.dict, xccdf_item_get_id(item)) != NULL;
+	return oscap_htable_detach(XITEM(xccdf_item_get_benchmark(item))->sub.benchmark.dict, xccdf_item_get_id(item)) != NULL;
 }
 
 bool xccdf_benchmark_rename_item(struct xccdf_item *item, const char *newid)
@@ -340,7 +374,7 @@ bool xccdf_benchmark_rename_item(struct xccdf_item *item, const char *newid)
 		xccdf_benchmark_unregister_item(item);
 
 		if (newid != NULL)
-			oscap_htable_add(bench->sub.bench.dict, newid, item);
+			oscap_htable_add(bench->sub.benchmark.dict, newid, item);
 	}
 
 	oscap_free(item->item.id);
@@ -349,8 +383,29 @@ bool xccdf_benchmark_rename_item(struct xccdf_item *item, const char *newid)
 	return true;
 }
 
-bool xccdf_benchmark_add_result(struct xccdf_benchmark *bench, struct xccdf_result *result)
+
+struct xccdf_plain_text *xccdf_plain_text_new(void)
 {
-	return xccdf_add_item(XITEM(bench)->sub.bench.results, XITEM(bench), XITEM(result), "result-");
+    return oscap_calloc(1, sizeof(struct xccdf_plain_text));
 }
+
+struct xccdf_plain_text *xccdf_plain_text_new_fill(const char *id, const char *text)
+{
+    struct xccdf_plain_text *plain = xccdf_plain_text_new();
+    plain->id = oscap_strdup(id);
+    plain->text = oscap_strdup(text);
+    return plain;
+}
+
+void xccdf_plain_text_free(struct xccdf_plain_text *plain)
+{
+    if (plain != NULL) {
+        oscap_free(plain->id);
+        oscap_free(plain->text);
+        oscap_free(plain);
+    }
+}
+
+OSCAP_ACCESSOR_STRING(xccdf_plain_text, id)
+OSCAP_ACCESSOR_STRING(xccdf_plain_text, text)
 

@@ -195,7 +195,7 @@ bool xccdf_item_process_attributes(struct xccdf_item *item, xmlTextReaderPtr rea
 	if (item->item.id) {
 		struct xccdf_item *bench = XITEM(xccdf_item_get_benchmark_internal(item));
 		if (bench != NULL)
-			oscap_htable_add(bench->sub.bench.dict, item->item.id, item);
+			oscap_htable_add(bench->sub.benchmark.dict, item->item.id, item);
 	}
 	return item->item.id != NULL;
 }
