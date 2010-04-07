@@ -45,6 +45,11 @@ pkglibexec_PROGRAMS += probe_filehash
 probe_filehash_SOURCES= independent/filehash.c
 probe_filehash_CFLAGS=
 probe_filehash_LDFLAGS= crapi/libcrapi.la
+
+pkglibexec_PROGRAMS += probe_filemd5
+probe_filemd5_SOURCES= independent/filemd5.c
+probe_filemd5_CFLAGS=
+probe_filemd5_LDFLAGS= crapi/libcrapi.la
 endif
 
 if WANT_PROBES_UNIX
