@@ -76,11 +76,12 @@ pkginclude_HEADERS  =	public/oval_agent_api.h \
 			public/oval_system_characteristics.h \
 			public/oval_results.h \
 			public/oval_variables.h \
-			public/oval_types.h
+			public/oval_types.h \
+			public/oval_probe.h
+
+liboval_la_SOURCES += oval_probe.c
 
 if WANT_PROBES
-pkginclude_HEADERS += public/oval_probe.h
-
 common_oval_sources += probes/probe-api.c 	\
 		       probes/_probe-api.h	\
 		       probes/fsdev.c		\
@@ -94,7 +95,6 @@ common_oval_sources += probes/probe-api.c 	\
 		       oval_sexp.h \
 		       oval_probe_impl.h
 
-liboval_la_SOURCES += oval_probe.c
 nodist_liboval_testing_la_SOURCES = oval_testing_probe.c
 
 SUBDIRS = probes/SEAP
