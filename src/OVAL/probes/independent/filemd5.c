@@ -149,10 +149,11 @@ static int filehash_cb (const char *p, const char *f, void *ptr)
                                         "md5", NULL,
                                         r2 = SEXP_string_newf (md5_str, sizeof md5_str - 1),
                                         NULL);
+                SEXP_vfree (r0, r1, r2, NULL);
         }
 
         SEXP_list_add (res, itm);
-        SEXP_vfree (itm, r0, r1, r2, NULL);
+        SEXP_free (itm);
         
         return (0);
 }

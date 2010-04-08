@@ -158,10 +158,11 @@ static int filehash_cb (const char *p, const char *f, void *ptr)
                                         "sha1", NULL,
                                         r3 = SEXP_string_newf (sha1_str, sizeof sha1_str - 1),
                                         NULL);
+                SEXP_vfree (r0, r1, r2, r3, NULL);
         }
 
         SEXP_list_add (res, itm);
-        SEXP_vfree (itm, r0, r1, r2, r3, NULL);
+        SEXP_free (itm);
         
         return (0);
 }
