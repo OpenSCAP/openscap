@@ -12,7 +12,6 @@ Source0:        http://fedorahosted.org/releases/o/p/openscap/%{name}-%{version}
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  swig pcre-devel libxml2-devel
 BuildRequires:  rpm-devel
-BuildRequires:	libnl-devel
 Requires(post):   /sbin/ldconfig
 Requires(postun): /sbin/ldconfig
 

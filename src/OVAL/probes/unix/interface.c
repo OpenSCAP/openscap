@@ -139,6 +139,7 @@ static int get_ifs(SEXP_t *name_ent, SEXP_t *item_list)
 
 		SEXP_list_add(item_list, item);
 		SEXP_vfree(r0, r1, r2, r3, r4, item, NULL);
+		return 0;
 	}
 leave2:
 	close(fd);
@@ -147,7 +148,7 @@ leave1:
 	return rc;
 }
 #else
-static void get_ifs(SEXP_t *name_ent, SEXP_t *item_list)
+static int get_ifs(SEXP_t *name_ent, SEXP_t *item_list)
 {
 	/* todo */
 

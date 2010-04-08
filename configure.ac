@@ -289,9 +289,6 @@ AC_SUBST(rpm_libs)
 AC_SUBST(deb_cflags)
 AC_SUBST(deb_libs)
 
-AC_SUBST(libnl_cflags)
-AC_SUBST(libnl_libs)
-
 # Checks for typedefs, structures, and compiler characteristics.
 AC_HEADER_STDBOOL
 AC_TYPE_SIZE_T
@@ -342,34 +339,6 @@ if test "x${probes}" = xyes; then
 	else
 	  AC_MSG_NOTICE([!!! Compiler doesn't support atomic builtins. Atomic operation will be emulated using mutex-based locking. !!!])
 	fi
-
-        case "${host}" in
-        *-*-linux*)
-	# check for libnl version and provide RHEL5 compatibility functions when necessary
-	AC_CHECK_LIB(
-	  [nl],
-	  [nl_handle_alloc],
-	  [AC_CHECK_LIB(
-	     [nl],
-	     [nl_cache_free],
-	     [libnl_cflags=`pkg-config --cflags libnl-1`
-	      libnl_libs=`pkg-config --libs libnl-1`
-	      AC_DEFINE([HAVE_LIBNL11],[1],[libnl 1.1 compatibility])],
-	     [AC_CHECK_LIB(
-	        [nl],
-	        [nl_cache_destroy_and_free],
-	        [libnl_cflags=`pkg-config --cflags libnl-1`
-	         libnl_libs=`pkg-config --libs libnl-1`
-	         AC_DEFINE([HAVE_LIBNL10],[1],[libnl 1.0 compatibility])],
-	        [AC_MSG_FAILURE([libnl missing nl_cache_free and nl_cache_destroy_and_free. libnl 1.0 or 1.1 required for Linux])]
-	      )
-	     ]
-	   )
-	   AC_DEFINE([HAVE_LIBNL],[1],[Use libnl])
-	  ],[AC_MSG_FAILURE([libnl missing nl_handle_alloc.  Must have libnl 1.0 or 1.1 to build for Linux])]
-	 )
-         ;;
-         esac
 fi
 
 AC_ARG_ENABLE([probes-independent],

@@ -28,8 +28,6 @@ probe_family_LDFLAGS=
 
 pkglibexec_PROGRAMS += probe_system_info
 probe_system_info_SOURCES= independent/system_info.c
-probe_system_info_CFLAGS= @libnl_cflags@
-probe_system_info_LDFLAGS= @libnl_libs@
 
 pkglibexec_PROGRAMS += probe_textfilecontent54
 probe_textfilecontent54_SOURCES= independent/textfilecontent54.c
