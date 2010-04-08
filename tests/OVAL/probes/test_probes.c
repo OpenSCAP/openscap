@@ -26,7 +26,9 @@ int main(int argc, char **argv) {
   assume(ret != -1);
   
   oscap_import_source_free(def_in);
-  
+
+  assume(oval_definition_model_is_valid(def_model));
+
   /* create syschar model */
   struct oval_syschar_model *sys_model = oval_syschar_model_new(def_model);
   assume(sys_model != NULL);
