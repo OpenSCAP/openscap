@@ -200,7 +200,7 @@ int main (void)
 
 	{
 		/* test SEXP_list_replace(), SEXP_softref() */
-		SEXP_t *l1, *l2, *l3, *r0, *r1, *r2, *r3;
+		SEXP_t *l1, *l2, *l3, *l4, *r0, *r1, *r2, *r3;
 
 		l1 = SEXP_list_new(r0 = SEXP_string_newf ("a"),
 				   r1 = SEXP_string_newf ("b"),
@@ -225,7 +225,7 @@ int main (void)
 		SEXP_fprintfa (stdout, l1);
 		fputc('\n', stdout);
 		SEXP_fprintfa (stdout, l2);
-		fputc('\n', stdout);
+		fputs("\n---\n", stdout);
 
 		SEXP_vfree (l1, l2, NULL);
 
@@ -242,7 +242,7 @@ int main (void)
 		SEXP_fprintfa (stdout, l2);
 		fputc('\n', stdout);
 		SEXP_fprintfa (stdout, l3);
-		fputc('\n', stdout);
+		fputs("\n\n", stdout);
 
 		r0 = SEXP_list_replace (l3, 3, r1 = SEXP_string_newf ("Z"));
 		SEXP_vfree (r0, r1, NULL);
@@ -252,7 +252,7 @@ int main (void)
 		SEXP_fprintfa (stdout, l2);
 		fputc('\n', stdout);
 		SEXP_fprintfa (stdout, l3);
-		fputc('\n', stdout);
+		fputs("\n\n", stdout);
 
 		r0 = SEXP_list_replace (l2, 2, r1 = SEXP_string_newf ("Y"));
 		SEXP_vfree (r0, r1, NULL);
@@ -262,7 +262,64 @@ int main (void)
 		SEXP_fprintfa (stdout, l2);
 		fputc('\n', stdout);
 		SEXP_fprintfa (stdout, l3);
+		fputs("\n---\n", stdout);
+
+		SEXP_vfree (l1, l2, l3, NULL);
+
+		l1 = SEXP_list_new(r0 = SEXP_string_newf ("d"),
+				   r1 = SEXP_string_newf ("e"),
+				   r2 = SEXP_string_newf ("f"),
+				   r3 = SEXP_string_newf ("g"),
+				   NULL);
+		SEXP_vfree (r0, r1, r3, NULL);
+		l2 = SEXP_ref(l1);
+		l3 = SEXP_ref(l1);
+		l4 = SEXP_softref(l3);
+
+		SEXP_fprintfa (stdout, l1);
 		fputc('\n', stdout);
+		SEXP_fprintfa (stdout, l2);
+		fputc('\n', stdout);
+		SEXP_fprintfa (stdout, l3);
+		fputc('\n', stdout);
+		SEXP_fprintfa (stdout, l4);
+		fputs("\n\n", stdout);
+
+		r0 = SEXP_list_replace (l4, 4, r1 = SEXP_string_newf ("G"));
+		SEXP_vfree (r0, r1, NULL);
+
+		SEXP_fprintfa (stdout, l1);
+		fputc('\n', stdout);
+		SEXP_fprintfa (stdout, l2);
+		fputc('\n', stdout);
+		SEXP_fprintfa (stdout, l3);
+		fputc('\n', stdout);
+		SEXP_fprintfa (stdout, l4);
+		fputs("\n\n", stdout);
+
+		r0 = SEXP_list_replace (l1, 1, r1 = SEXP_string_newf ("D"));
+		SEXP_vfree (r0, r1, NULL);
+
+		SEXP_fprintfa (stdout, l1);
+		fputc('\n', stdout);
+		SEXP_fprintfa (stdout, l2);
+		fputc('\n', stdout);
+		SEXP_fprintfa (stdout, l3);
+		fputc('\n', stdout);
+		SEXP_fprintfa (stdout, l4);
+		fputs("\n\n", stdout);
+
+		r0 = SEXP_list_replace (l2, 2, r1 = SEXP_string_newf ("E"));
+		SEXP_vfree (r0, r1, NULL);
+
+		SEXP_fprintfa (stdout, l1);
+		fputc('\n', stdout);
+		SEXP_fprintfa (stdout, l2);
+		fputc('\n', stdout);
+		SEXP_fprintfa (stdout, l3);
+		fputc('\n', stdout);
+		SEXP_fprintfa (stdout, l4);
+		fputs("\n---\n", stdout);
 
 		SEXP_vfree (l1, l2, l3, NULL);
 	}
