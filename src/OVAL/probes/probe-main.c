@@ -690,9 +690,9 @@ static int probe_varref_create_ctx(const SEXP_t * probe_in, SEXP_t * varrefs, st
 	SEXP_vfree(r0, r1, NULL);
 
 	ctx = malloc(sizeof(struct probe_varref_ctx));
-	ctx->pi2 = SEXP_ref(probe_in);
+	ctx->pi2 = SEXP_softref(probe_in);
 	ctx->ent_cnt = ent_cnt;
-	ctx->ent_lst = malloc(ent_cnt * sizeof(struct probe_varref_ctx_ent));
+	ctx->ent_lst = malloc(ent_cnt * sizeof (ctx->ent_lst[0]));
 
 	vidx_name = SEXP_string_new(":val_idx", 8);
 	vidx_val = SEXP_number_newu(0);
@@ -786,16 +786,15 @@ static int probe_varref_iterate_ctx(struct probe_varref_ctx *ctx)
 	r0 = SEXP_number_newu(0);
 
 	while (++(*next_val_idx) >= val_cnt) {
-		*next_val_idx = 0;
-		r1 = SEXP_list_replace(ent_name_sref, 3, r0);
-		SEXP_free(r1);
-
-		if (ent == ent_end) {
+		if (++ent == ent_end) {
 			SEXP_free(r0);
 			return 0;
 		}
 
-		++ent;
+		*next_val_idx = 0;
+		r1 = SEXP_list_replace(ent_name_sref, 3, r0);
+		SEXP_free(r1);
+
 		val_cnt = ent->val_cnt;
 		next_val_idx = &ent->next_val_idx;
 		ent_name_sref = ent->ent_name_sref;
