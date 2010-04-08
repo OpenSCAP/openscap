@@ -10,7 +10,27 @@
 #include "sha2.h"
 
 #if defined(HAVE_NSS3)
-#include <nss3/sechash.h>
+#include <sechash.h>
+
+void *crapi_sha256_init (void *dst, void *size)
+{
+        return (NULL);
+}
+
+int crapi_sha256_update (void *ctxp, void *bptr, size_t blen)
+{
+        return (-1);
+}
+
+int crapi_sha256_fini (void *ctxp)
+{
+        return (-1);
+}
+
+void crapi_sha256_free (void *ctxp)
+{
+        return;
+}
 
 static int crapi_sha2_fd (HASH_HashType algo, int fd, void *dst, size_t *size)
 {
@@ -57,7 +77,7 @@ static int crapi_sha2_fd (HASH_HashType algo, int fd, void *dst, size_t *size)
                                 HASH_Update (ctx, (const unsigned char *)buffer, (unsigned int) ret);
                         }
                         
-                        HASH_End (ctx, dst, size, *size);
+                        HASH_End (ctx, dst, (unsigned int *)size, *size);
                         HASH_Destroy (ctx);
 #if _FILE_OFFSET_BITS == 32
                 } else {
@@ -74,6 +94,26 @@ int crapi_sha256_fd (int fd, void *dst, size_t *size)
         return crapi_sha2_fd (HASH_AlgSHA256, fd, dst, size);
 }
 
+void *crapi_sha512_init (void *dst, void *size)
+{
+        return (NULL);
+}
+
+int crapi_sha512_update (void *ctxp, void *bptr, size_t blen)
+{
+        return (-1);
+}
+
+int crapi_sha512_fini (void *ctxp)
+{
+        return (-1);
+}
+
+void crapi_sha512_free (void *ctxp)
+{
+        return;
+}
+
 int crapi_sha512_fd (int fd, void *dst, size_t *size)
 {
         return crapi_sha2_fd (HASH_AlgSHA512, fd, dst, size);        
@@ -81,6 +121,26 @@ int crapi_sha512_fd (int fd, void *dst, size_t *size)
 
 #elif defined(HAVE_GCRYPT)
 #include <gcrypt.h>
+
+void *crapi_sha256_init (void *dst, void *size)
+{
+        return (NULL);
+}
+
+int crapi_sha256_update (void *ctxp, void *bptr, size_t blen)
+{
+        return (-1);
+}
+
+int crapi_sha256_fini (void *ctxp)
+{
+        return (-1);
+}
+
+void crapi_sha256_free (void *ctxp)
+{
+        return;
+}
 
 static int crapi_sha2_fd (int algo, int fd, void *dst, size_t *size)
 {
@@ -142,6 +202,26 @@ static int crapi_sha2_fd (int algo, int fd, void *dst, size_t *size)
 int crapi_sha256_fd (int fd, void *dst, size_t *size)
 {
         return crapi_sha2_fd (GCRY_MD_SHA256, fd, dst, size);
+}
+
+void *crapi_sha512_init (void *dst, void *size)
+{
+        return (NULL);
+}
+
+int crapi_sha512_update (void *ctxp, void *bptr, size_t blen)
+{
+        return (-1);
+}
+
+int crapi_sha512_fini (void *ctxp)
+{
+        return (-1);
+}
+
+void crapi_sha512_free (void *ctxp)
+{
+        return;
 }
 
 int crapi_sha512_fd (int fd, void *dst, size_t *size)

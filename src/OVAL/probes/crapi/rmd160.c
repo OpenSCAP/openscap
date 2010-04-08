@@ -10,7 +10,27 @@
 #include "rmd160.h"
 
 #if defined(HAVE_NSS3)
-#include <nss3/sechash.h>
+#include <sechash.h>
+
+void *crapi_rmd160_init (void *dst, void *size)
+{
+        return (NULL);
+}
+
+int crapi_rmd160_update (void *ctxp, void *bptr, size_t blen)
+{
+        return (-1);
+}
+
+int crapi_rmd160_fini (void *ctxp)
+{
+        return (-1);
+}
+
+void crapi_rmd160_free (void *ctxp)
+{
+        return;
+}
 
 int crapi_rmd160_fd (int fd, void *dst, size_t *size)
 {
@@ -19,6 +39,26 @@ int crapi_rmd160_fd (int fd, void *dst, size_t *size)
 }
 #elif defined(HAVE_GCRYPT)
 #include <gcrypt.h>
+
+void *crapi_rmd160_init (void *dst, void *size)
+{
+        return (NULL);
+}
+
+int crapi_rmd160_update (void *ctxp, void *bptr, size_t blen)
+{
+        return (-1);
+}
+
+int crapi_rmd160_fini (void *ctxp)
+{
+        return (-1);
+}
+
+void crapi_rmd160_free (void *ctxp)
+{
+        return;
+}
 
 int crapi_rmd160_fd (int fd, void *dst, size_t *size)
 {

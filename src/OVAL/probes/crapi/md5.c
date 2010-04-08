@@ -6,11 +6,58 @@
 #include <errno.h>
 #include <unistd.h>
 #include <config.h>
+#include <alloc.h>
 #include "crapi.h"
 #include "md5.h"
 
 #if defined(HAVE_NSS3)
-#include <nss3/sechash.h>
+#include <sechash.h>
+
+struct crapi_md5_ctx {
+        HASHContext *ctx;
+        void        *dst;
+        size_t      *size;
+};
+
+void *crapi_md5_init (void *dst, void *size)
+{
+        struct crapi_md5_ctx *ctx = oscap_talloc (struct crapi_md5_ctx);
+
+        ctx->ctx  = HASH_Create (HASH_AlgMD5);
+        ctx->dst  = dst;
+        ctx->size = size;
+
+        return (ctx);
+}
+
+int crapi_md5_update (void *ctxp, void *bptr, size_t blen)
+{
+        struct crapi_md5_ctx *ctx = (struct crapi_md5_ctx *)ctxp;
+        
+        HASH_Update (ctx->ctx, (const unsigned char *)bptr, (unsigned int)blen);
+        return (0);
+}
+
+int crapi_md5_fini (void *ctxp)
+{
+        struct crapi_md5_ctx *ctx = (struct crapi_md5_ctx *)ctxp;
+
+        HASH_End (ctx->ctx, ctx->dst, (unsigned int *)ctx->size, *ctx->size);
+        HASH_Destroy (ctx->ctx);
+        oscap_free (ctx);
+
+        return (0);
+}
+
+void crapi_md5_free (void *ctxp)
+{
+        struct crapi_md5_ctx *ctx = (struct crapi_md5_ctx *)ctxp;
+
+        HASH_Destroy (ctx->ctx);
+        oscap_free (ctx);
+        
+        return;
+}
 
 int crapi_md5_fd (int fd, void *dst, size_t *size)
 {
@@ -57,7 +104,7 @@ int crapi_md5_fd (int fd, void *dst, size_t *size)
                                 HASH_Update (ctx, (const unsigned char *)buffer, (unsigned int) ret);
                         }
                 
-                        HASH_End (ctx, dst, size, *size);
+                        HASH_End (ctx, dst, (unsigned int *)size, *size);
                         HASH_Destroy (ctx);
 #if _FILE_OFFSET_BITS == 32
                 } else {
@@ -70,6 +117,52 @@ int crapi_md5_fd (int fd, void *dst, size_t *size)
 }
 #elif defined(HAVE_GCRYPT)
 #include <gcrypt.h>
+
+struct crapi_md5_ctx {
+        gcry_md_hd_t ctx;
+        void        *dst;
+        void        *size;
+};
+
+void *crapi_md5_init (void *dst, void *size)
+{
+        struct crapi_md5_ctx *ctx = oscap_talloc (struct crapi_md5_ctx);
+
+        gcry_md_open (&ctx->ctx, GCRY_MD_MD5, 0);
+        ctx->dst  = dst;
+        ctx->size = size;
+
+        return (ctx);
+}
+
+int crapi_md5_update (void *ctxp, void *bptr, size_t blen)
+{
+        struct crapi_md5_ctx *ctx = (struct crapi_md5_ctx *)ctxp;
+
+        gcry_md_write (ctx->ctx, (const void *)bptr, blen);
+        return (0);
+}
+
+int crapi_md5_fini (void *ctxp)
+{
+        struct crapi_md5_ctx *ctx = (struct crapi_md5_ctx *)ctxp;
+        void *buffer;
+
+        gcry_md_final (ctx->ctx);
+        buffer = (void *)gcry_md_read (ctx->ctx, GCRY_MD_MD5);
+        memcpy (ctx->dst, buffer, gcry_md_get_algo_dlen (GCRY_MD_MD5));
+        gcry_md_close (ctx->ctx);
+        
+        return (0);
+}
+
+void crapi_md5_free (void *ctxp)
+{
+        struct crapi_md5_ctx *ctx = (struct crapi_md5_ctx *)ctxp;
+        
+        gcry_md_close (ctx->ctx);
+        return;
+}
 
 int crapi_md5_fd (int fd, void *dst, size_t *size)
 {

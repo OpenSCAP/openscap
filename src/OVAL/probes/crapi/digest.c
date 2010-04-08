@@ -1,7 +1,10 @@
 #include <stdarg.h>
 #include <stddef.h>
+#include <stdint.h>
+#include <unistd.h>
 #include <assume.h>
 #include <errno.h>
+#include "crapi.h"
 #include "digest.h"
 #include "md5.h"
 #include "sha1.h"
@@ -30,8 +33,101 @@ int crapi_digest_fd (int fd, crapi_alg_t alg, void *dst, size_t *size)
         return (-1);
 }
 
-int crapi_mdigest_fd (int fd, int num, crapi_alg_t alg, void *dst, size_t *size, ...)
+int crapi_mdigest_fd (int fd, int num, ... /* crapi_alg_t alg, void *dst, size_t *size, ...*/)
 {
-        errno = EOPNOTSUPP;
+        register int i;
+        va_list ap;
+        struct digest_ctbl_t ctbl[num];
+
+        crapi_alg_t alg;
+        void       *dst;
+        size_t     *size;
+
+        uint8_t fd_buf[CRAPI_IO_BUFSZ];
+        ssize_t ret;
+
+        assume_r (num > 0, -1, errno = EINVAL;);
+        assume_r (fd  > 0, -1, errno = EINVAL;);
+
+        va_start (ap, num);
+        
+        for (i = 0; i < num; ++i) {
+                alg  = va_arg (ap, crapi_alg_t);
+                dst  = va_arg (ap, void *);
+                size = va_arg (ap, size_t *);
+
+                switch (alg) {
+                case CRAPI_DIGEST_MD5:
+                        ctbl[i].init   = &crapi_md5_init;
+                        ctbl[i].update = &crapi_md5_update;
+                        ctbl[i].fini   = &crapi_md5_fini;
+                        ctbl[i].free   = &crapi_md5_free;
+                        break;
+                case CRAPI_DIGEST_SHA1:
+                        ctbl[i].init   = &crapi_sha1_init;
+                        ctbl[i].update = &crapi_sha1_update;
+                        ctbl[i].fini   = &crapi_sha1_fini;
+                        ctbl[i].free   = &crapi_sha1_free;
+                        break;
+                case CRAPI_DIGEST_SHA256:
+                        ctbl[i].init   = &crapi_sha256_init;
+                        ctbl[i].update = &crapi_sha256_update;
+                        ctbl[i].fini   = &crapi_sha256_fini;
+                        ctbl[i].free   = &crapi_sha256_free;
+                        break;
+                case CRAPI_DIGEST_SHA512:
+                        ctbl[i].init   = &crapi_sha512_init;
+                        ctbl[i].update = &crapi_sha512_update;
+                        ctbl[i].fini   = &crapi_sha512_fini;
+                        ctbl[i].free   = &crapi_sha512_free;
+                        break;
+                case CRAPI_DIGEST_RMD160:
+                        ctbl[i].init   = &crapi_rmd160_init;
+                        ctbl[i].update = &crapi_rmd160_update;
+                        ctbl[i].fini   = &crapi_rmd160_fini;
+                        ctbl[i].free   = &crapi_rmd160_free;
+                        break;
+                default:
+                        va_end (ap);
+                        goto fail;
+                }
+                
+                ctbl[i].ctx = ctbl[i].init (dst, size);
+        }
+        
+        va_end (ap);
+
+        while ((ret = read (fd, fd_buf, sizeof fd_buf)) == sizeof fd_buf) {
+#pragma omp parallel for
+                for (i = 0; i < num; ++i) {
+                        if (ctbl[i].update (ctbl[i].ctx, fd_buf, sizeof fd_buf) != 0) {
+                                goto fail;
+                        }
+                }
+        }
+
+        switch (ret) {
+        case 0:
+                break;
+        case -1:
+                goto fail;
+        default:
+                assume_r (ret > 0, -1, goto fail;);
+
+                for (i = 0; i < num; ++i) {
+                        if (ctbl[i].update (ctbl[i].ctx, fd_buf, (size_t)ret) != 0) {
+                                goto fail;
+                        }
+                }
+        }
+
+        for (i = 0; i < num; ++i)
+                ctbl[i].free (ctbl[i].ctx);
+
+        return (0);
+fail:
+        for (i = 0; i < num; ++i)
+                ctbl[i].free (ctbl[i].ctx);
+        
         return (-1);
 }

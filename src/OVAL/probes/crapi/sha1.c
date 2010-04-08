@@ -5,12 +5,59 @@
 #include <assume.h>
 #include <errno.h>
 #include <unistd.h>
+#include <alloc.h>
 #include <config.h>
 #include "crapi.h"
 #include "sha1.h"
 
 #if defined(HAVE_NSS3)
-#include <nss3/sechash.h>
+#include <sechash.h>
+
+struct crapi_sha1_ctx {
+        HASHContext *ctx;
+        void        *dst;
+        size_t      *size;
+};
+
+void *crapi_sha1_init (void *dst, void *size)
+{
+        struct crapi_sha1_ctx *ctx = oscap_talloc (struct crapi_sha1_ctx);
+
+        ctx->ctx  = HASH_Create (HASH_AlgSHA1);
+        ctx->dst  = dst;
+        ctx->size = size;
+
+        return (ctx);
+}
+
+int crapi_sha1_update (void *ctxp, void *bptr, size_t blen)
+{
+        struct crapi_sha1_ctx *ctx = (struct crapi_sha1_ctx *)ctxp;
+        
+        HASH_Update (ctx->ctx, (const unsigned char *)bptr, (unsigned int)blen);
+        return (0);
+}
+
+int crapi_sha1_fini (void *ctxp)
+{
+        struct crapi_sha1_ctx *ctx = (struct crapi_sha1_ctx *)ctxp;
+
+        HASH_End (ctx->ctx, ctx->dst, (unsigned int *)ctx->size, *ctx->size);
+        HASH_Destroy (ctx->ctx);
+        oscap_free (ctx);
+
+        return (0);
+}
+
+void crapi_sha1_free (void *ctxp)
+{
+        struct crapi_sha1_ctx *ctx = (struct crapi_sha1_ctx *)ctxp;
+
+        HASH_Destroy (ctx->ctx);
+        oscap_free (ctx);
+        
+        return;
+}
 
 int crapi_sha1_fd (int fd, void *dst, size_t *size)
 {
@@ -57,7 +104,7 @@ int crapi_sha1_fd (int fd, void *dst, size_t *size)
                                 HASH_Update (ctx, (const unsigned char *)buffer, (unsigned int) ret);
                         }
                         
-                        HASH_End (ctx, dst, size, *size);
+                        HASH_End (ctx, dst, (unsigned int *)size, *size);
                         HASH_Destroy (ctx);
 #if _FILE_OFFSET_BITS == 32
                 } else {
@@ -70,6 +117,52 @@ int crapi_sha1_fd (int fd, void *dst, size_t *size)
 }
 #elif defined(HAVE_GCRYPT)
 #include <gcrypt.h>
+
+struct crapi_sha1_ctx {
+        gcry_md_hd_t ctx;
+        void        *dst;
+        void        *size;
+};
+
+void *crapi_sha1_init (void *dst, void *size)
+{
+        struct crapi_sha1_ctx *ctx = oscap_talloc (struct crapi_sha1_ctx);
+
+        gcry_md_open (&ctx->ctx, GCRY_MD_SHA1, 0);
+        ctx->dst  = dst;
+        ctx->size = size;
+
+        return (ctx);
+}
+
+int crapi_sha1_update (void *ctxp, void *bptr, size_t blen)
+{
+        struct crapi_sha1_ctx *ctx = (struct crapi_sha1_ctx *)ctxp;
+
+        gcry_md_write (ctx->ctx, (const void *)bptr, blen);
+        return (0);
+}
+
+int crapi_sha1_fini (void *ctxp)
+{
+        struct crapi_sha1_ctx *ctx = (struct crapi_sha1_ctx *)ctxp;
+        void *buffer;
+
+        gcry_md_final (ctx->ctx);
+        buffer = (void *)gcry_md_read (ctx->ctx, GCRY_MD_SHA1);
+        memcpy (ctx->dst, buffer, gcry_md_get_algo_dlen (GCRY_MD_SHA1));
+        gcry_md_close (ctx->ctx);
+        
+        return (0);
+}
+
+void crapi_sha1_free (void *ctxp)
+{
+        struct crapi_sha1_ctx *ctx = (struct crapi_sha1_ctx *)ctxp;
+        
+        gcry_md_close (ctx->ctx);
+        return;
+}
 
 int crapi_sha1_fd (int fd, void *dst, size_t *size)
 {
