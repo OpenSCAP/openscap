@@ -57,7 +57,7 @@
 
 #ifdef HAVE_LIBRPM44
 #include <rpm/header.h>
-#define headerFormat(_h, _fmt, _emsg) headerSprintf((_h),(_fmt),0,0,(_emsg))
+#define headerFormat(_h, _fmt, _emsg) headerSprintf((_h),( _fmt), rpmTagTable, rpmHeaderFormats, (_emsg))
 #endif
 
 #ifndef _A
