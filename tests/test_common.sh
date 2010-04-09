@@ -8,16 +8,22 @@
 # Authors:
 #      Ondrej Moris <omoris@redhat.com>
 
+# Normalized path.
+PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin
+
 # Reporting results.
 function report_result {    
 
     printf "+ %-40s" ${1}; 
     if [ $2 -eq 0 ]; then 
 	echo "[ PASS ]"; printf "*** %s PASSED ***\n\n" ${1} >&2
+	return 0;
     elif [ $2 -eq 255 ]; then
-	echo "[ SKIPPED ]"; printf "*** %s SKIPPED ***\n\n" ${1} >&2
+	echo "[ SKIP ]"; printf "*** %s SKIPPED ***\n\n" ${1} >&2
+	return 0;
     else
 	echo "[ FAIL ]"; printf "*** %s FAILED ***\n\n" ${1} >&2
+	return 1;
     fi
 }
 

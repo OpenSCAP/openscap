@@ -196,6 +196,12 @@ function test_probes_uname {
     local DEFFILE="test_probes_uname.xml"
     local RESFILE="test_probes_uname.xml.results.xml"
 
+    eval "which uname > /dev/null 2>&1"    
+    if [ ! $? -eq 0 ]; then		
+	echo -e "No uname found in $PATH!\n" >&2
+	return 255; # Test is not applicable.
+    fi
+
     bash "${srcdir}/OVAL/probes/test_probes_uname.xml.sh" > "$DEFFILE"
     
     eval "\"${EXECDIR}/test_probes\" \"$DEFFILE\" \"$RESFILE\"" >> "$LOGFILE"
@@ -368,8 +374,9 @@ function test_probes_rpminfo {
     local DEFFILE="test_probes_rpminfo.xml"
     local RESFILE="test_probes_rmpinfo.xml.results.xml"
 
-    eval "which rpm > /dev/null"    
+    eval "which rpm > /dev/null 2>&1"    
     if [ ! $? -eq 0 ]; then	
+	echo -e "No rpm found in $PATH!\n" >&2
 	return 255; # Test is not applicable.
     fi
 
@@ -465,8 +472,9 @@ function test_probes_runlevel_A {
     local DEFFILE="test_probes_runlevel_A.xml"
     local RESFILE="test_probes_runlevel_A.xml.results.xml"
    
-    eval "which chkconfig > /dev/null"    
+    eval "which chkconfig > /dev/null 2>&1"    
     if [ ! $? -eq 0 ]; then	
+	echo -e "No chkconfig found in path!\n" >&2
 	return 255; # Test is not applicable.
     fi
 
@@ -531,8 +539,9 @@ function test_probes_runlevel_B {
     local DEFFILE="test_probes_runlevel_B.xml"
     local RESFILE="test_probes_runlevel_B.xml.results.xml"
     
-    eval "which chkconfig > /dev/null"    
+    eval "which chkconfig > /dev/null 2>&1"    
     if [ ! $? -eq 0 ]; then	
+	echo -e "No chkconfig found in $PATH!\n" >&2
 	return 255; # Test is not applicable.
     fi
 
@@ -628,6 +637,12 @@ function test_probes_password_A {
     local DEFFILE="test_probes_password_A.xml"
     local RESFILE="test_probes_password_A.xml.results.xml"
    
+    eval "cat /etc/passwd > /dev/null 2>&1"    
+    if [ ! $? -eq 0 ]; then	
+	echo -e "Can't read /etc/passwd!\n" >&2
+	return 255; # Test is not applicable.
+    fi
+
     eval "bash \"${srcdir}/OVAL/probes/test_probes_password_A.xml.sh\"" > "$DEFFILE"
     
     eval "\"${EXECDIR}/test_probes\" \"$DEFFILE\" \"$RESFILE\"" >> "$LOGFILE"
@@ -710,6 +725,12 @@ function test_probes_shadow_A {
     local EXECDIR="$(pwd)"
     local DEFFILE="test_probes_shadow_A.xml"
     local RESFILE="test_probes_shadow_A.xml.results.xml"
+
+    eval "cat /etc/shadow > /dev/null 2>&1"    
+    if [ ! $? -eq 0 ]; then	
+	echo -e "Can't read /etc/shadow!\n" >&2
+	return 255; # Test is not applicable.
+    fi
    
     eval "bash \"${srcdir}/OVAL/probes/test_probes_shadow_A.xml.sh\"" > "$DEFFILE"
     
@@ -1014,7 +1035,7 @@ exec 2>$log
 test_probes_setup   
 ret_val=$? 
 report_result "test_probes_setup" $ret_val 
-result=$[$result+$ret_val]
+result=$[$result+$?]
 
 # test_probes_import 
 # ret_val=$? 
@@ -1024,67 +1045,67 @@ result=$[$result+$ret_val]
 test_probes_sysinfo
 ret_val=$? 
 report_result "test_probes_sysinfo" $ret_val  
-result=$[$result+$ret_val]   
+result=$[$result+$?]   
 
 # test_probes_api
 # ret_val=$?
 # report_result "test_probes_api" $ret_val  
-# result=$[$result+$ret_val]   
+# result=$[$result+$?]   
 
 test_probes_family
 ret_val=$?
 report_result "test_probes_family" $ret_val  
-result=$[$result+$ret_val]   
+result=$[$result+$?]   
 
 test_probes_uname
 ret_val=$?
 report_result "test_probes_uname" $ret_val  
-result=$[$result+$ret_val]   
+result=$[$result+$?]   
 
 test_probes_file
 ret_val=$?
 report_result "test_probes_file" $ret_val  
-result=$[$result+$ret_val]   
+result=$[$result+$?]   
 
 test_probes_rpminfo
 ret_val=$?
 report_result "test_probes_rpminfo" $ret_val  
-result=$[$result+$ret_val]   
+result=$[$result+$?]   
 
 test_probes_runlevel_A
 ret_val=$?
 report_result "test_probes_runlevel_A" $ret_val  
-result=$[$result+$ret_val]   
+result=$[$result+$?]   
 
 test_probes_runlevel_B
 ret_val=$?
 report_result "test_probes_runlevel_B" $ret_val  
-result=$[$result+$ret_val]   
+result=$[$result+$?]   
 
 test_probes_password_A
 ret_val=$?
 report_result "test_probes_password_A" $ret_val  
-result=$[$result+$ret_val]   
+result=$[$result+$?]   
 
 test_probes_shadow_A
 ret_val=$?
 report_result "test_probes_shadow_A" $ret_val  
-result=$[$result+$ret_val]   
+result=$[$result+$?]   
 
 # test_probes_process_A
 # ret_val=$?
 # report_result "test_probes_process_A" $ret_val  
-# result=$[$result+$ret_val]   
+# result=$[$result+$?]   
 
 test_probes_textfilecontent54
 ret_val=$?
 report_result "test_probes_textfilecontent54" $ret_val  
-result=$[$result+$ret_val]   
+result=$[$result+$?]   
 
 test_probes_cleanup
 ret_val=$?
 report_result "test_probes_cleanup" $ret_val 
-result=$[$result+$ret_val]
+result=$[$result+$?]
 
 echo "--------------------------------------------------"
 echo "See ${log} (in tests dir)"
