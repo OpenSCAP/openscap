@@ -12,6 +12,8 @@ AM_INIT_AUTOMAKE([foreign])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
 AC_DISABLE_STATIC
+#build dll on windows(cygwin)
+AC_LIBTOOL_WIN32_DLL
 AM_PROG_LIBTOOL
 AM_PATH_PYTHON
 

@@ -4,6 +4,7 @@ check_LTLIBRARIES= libopenscap_testing.la
 
 libopenscap_la_SOURCES = 
 libopenscap_la_LIBADD =
+libopenscap_la_LDFLAGS = -no-undefined -version-info 0:0:0
 
 libopenscap_testing_la_SOURCES = 
 libopenscap_testing_la_LIBADD =
