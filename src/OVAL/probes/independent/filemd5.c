@@ -48,8 +48,8 @@ static int mem2hex (uint8_t *mem, size_t mlen, char *str, size_t slen)
         }
 
         for (i = 0; i < mlen; ++i) {
-                str[i*2  ] = ch[mem[i]   & 0xf0];
-                str[i*2+1] = ch[mem[i+1] & 0x0f];
+                str[i*2  ] = ch[(mem[i] & 0xf0) >> 4];
+                str[i*2+1] = ch[(mem[i] & 0x0f)];
         }
 
         str[i*2] = '\0';
