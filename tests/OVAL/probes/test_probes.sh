@@ -1001,7 +1001,7 @@ function test_crapi_digest {
     
     for file in a b c d e f; do
         sum_md5=$((md5sum "${TEMPDIR}/${file}" || openssl md5 "${TEMPDIR}/${file}") | sed -n 's|^.*\([0-9a-f]\{32\}\).*$|\1|p')
-        sum_sha1=$((sha1sum "${TEMPDIR}/${file}" || openssl sha1 "${TEMPDIR}/${file}") | sed -n 's|^.*\([0-9a-f]\{80\}\).*$|\1|p')
+        sum_sha1=$((sha1sum "${TEMPDIR}/${file}" || openssl sha1 "${TEMPDIR}/${file}") | sed -n 's|^.*\([0-9a-f]\{40\}\).*$|\1|p')
 
         if [[ "$sum_md5" == "" || "$sum_sha1" == "" ]]; then
             return 2

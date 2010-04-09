@@ -84,7 +84,7 @@ int main (int argc, char *argv[])
         mem2hex (sha1_dst, sha1_dstlen, comp_sha1sum, sizeof comp_sha1sum);
 
         if (strcmp (orig_sha1sum, comp_sha1sum) != 0) {
-                fprintf (stderr, "crapi_digest::MD5(%s) != %s (== %s)\n", filename, orig_sha1sum, comp_sha1sum);
+                fprintf (stderr, "crapi_digest::SHA1(%s) != %s (== %s)\n", filename, orig_sha1sum, comp_sha1sum);
                 abort ();
         }
 
