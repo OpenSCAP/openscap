@@ -66,7 +66,7 @@ int crapi_md5_fd (int fd, void *dst, size_t *size)
         size_t  buflen;
         
         assume_r (size != NULL, -1, errno = EFAULT;);
-        assume_r (*size < MD5_LENGTH, -1, errno = ENOBUFS;);
+        assume_r (*size >= MD5_LENGTH, -1, errno = ENOBUFS;);
         assume_r (dst != NULL, -1, errno = EFAULT;);
         
         if (fstat (fd, &st) != 0)
@@ -172,7 +172,7 @@ int crapi_md5_fd (int fd, void *dst, size_t *size)
         
         assume_r (size != NULL, -1, errno = EFAULT;);
         assume_r (dst != NULL, -1, errno = EFAULT;);
-        assume_r (*size < gcry_md_get_algo_dlen (GCRY_MD_MD5), -1, errno = ENOBUFS;);
+        assume_r (*size >= gcry_md_get_algo_dlen (GCRY_MD_MD5), -1, errno = ENOBUFS;);
         
         if (fstat (fd, &st) != 0)
                 return (-1);

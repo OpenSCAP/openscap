@@ -39,7 +39,7 @@ static int crapi_sha2_fd (HASH_HashType algo, int fd, void *dst, size_t *size)
         size_t  buflen;
         
         assume_r (size != NULL, -1, errno = EFAULT;);
-        assume_r (*size < HASH_ResultLen (algo), -1, errno = ENOBUFS;);
+        assume_r (*size >= HASH_ResultLen (algo), -1, errno = ENOBUFS;);
         assume_r (dst != NULL, -1, errno = EFAULT;);
         
         if (fstat (fd, &st) != 0)
@@ -150,7 +150,7 @@ static int crapi_sha2_fd (int algo, int fd, void *dst, size_t *size)
         
         assume_r (size != NULL, -1, errno = EFAULT;);
         assume_r (dst != NULL, -1, errno = EFAULT;);
-        assume_r (*size < gcry_md_get_algo_dlen (algo), -1, errno = ENOBUFS;);
+        assume_r (*size >= gcry_md_get_algo_dlen (algo), -1, errno = ENOBUFS;);
         
         if (fstat (fd, &st) != 0)
                 return (-1);
