@@ -48,7 +48,8 @@ check_PROGRAMS +=	sexp_parser \
 			test_probes \
 			test_sysinfo \
 			test_spb_api \
-			sexp_concurency
+			sexp_concurency \
+			test_crapi_digest
 #			test_probe-api \
 #			test_error \
 #			test_probes2
@@ -66,6 +67,11 @@ test_probes_SOURCES =	OVAL/probes/test_probes.c
 test_probes_CFLAGS =	-I$(top_srcdir)/src/OVAL @libxml_cflags@
 test_sysinfo_SOURCES =	OVAL/probes/test_sysinfo.c
 test_sysinfo_CFLAGS =	-I$(top_srcdir)/src/OVAL @libxml_cflags@
+
+test_crapi_digest_SOURCES= OVAL/probes/crapi/test_crapi_digest.c
+test_crapi_digest_CFLAGS= -I$(top_srcdir)/src/OVAL/probes/
+test_crapi_digest_LDFLAGS= $(top_builddir)/src/OVAL/probes/crapi/libcrapi.la
+
 # test_probes2_SOURCES =	OVAL/probes/test_probes2.c
 # test_error_SOURCES =	OVAL/probes/test_error.c
 # test_probe_api_SOURCES =OVAL/probes/test_probe-api.c
