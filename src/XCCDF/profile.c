@@ -69,18 +69,6 @@ struct xccdf_select *xccdf_select_new(void)
 	return foo;
 }
 
-void xccdf_select_set_selected(struct xccdf_select *sel, bool selected)
-{
-        __attribute__nonnull__(sel);
-        sel->selected = selected;
-}
-
-void xccdf_select_set_item(struct xccdf_select *sel, const char *item)
-{
-        __attribute__nonnull__(sel);
-        sel->item = oscap_strdup(item);
-}
-
 struct xccdf_select *xccdf_select_clone(const struct xccdf_select * sel)
 {
         struct xccdf_select *clone = xccdf_select_new();
@@ -265,25 +253,25 @@ void xccdf_profile_free(struct xccdf_item *prof)
 }
 
 XCCDF_STATUS_CURRENT(profile)
-XCCDF_PROFILE_GETTER(const char *, note_tag)
-XCCDF_PROFILE_IGETTER(select, selects)
-XCCDF_PROFILE_IGETTER(setvalue, setvalues)
-XCCDF_PROFILE_IGETTER(refine_value, refine_values)
-XCCDF_PROFILE_IGETTER(refine_rule, refine_rules)
+XCCDF_ACCESSOR_STRING(profile, note_tag)
+XCCDF_LISTMANIP(profile, select, selects)
+XCCDF_LISTMANIP(profile, setvalue, setvalues)
+XCCDF_LISTMANIP(profile, refine_value, refine_values)
+XCCDF_LISTMANIP(profile, refine_rule, refine_rules)
 XCCDF_ITERATOR_GEN_S(profile_note)
 XCCDF_ITERATOR_GEN_S(refine_value)
 XCCDF_ITERATOR_GEN_S(refine_rule) XCCDF_ITERATOR_GEN_S(setvalue) XCCDF_ITERATOR_GEN_S(select)
-OSCAP_GETTER(const char *, xccdf_select, item)
-OSCAP_GETTER(bool, xccdf_select, selected)
-OSCAP_IGETTER(oscap_text, xccdf_select, remarks)
-OSCAP_GETTER(const char *, xccdf_refine_rule, item)
-OSCAP_GETTER(const char *, xccdf_refine_rule, selector)
-OSCAP_GETTER(xccdf_role_t, xccdf_refine_rule, role)
-OSCAP_GETTER(xccdf_level_t, xccdf_refine_rule, severity)
-OSCAP_IGETTER(oscap_text, xccdf_refine_rule, remarks)
-OSCAP_GETTER(const char *, xccdf_refine_value, item)
-OSCAP_GETTER(const char *, xccdf_refine_value, selector)
-OSCAP_GETTER(xccdf_operator_t, xccdf_refine_value, oper)
-OSCAP_IGETTER(oscap_text, xccdf_refine_value, remarks)
-OSCAP_GETTER(const char *, xccdf_setvalue, item)
-OSCAP_GETTER(const char *, xccdf_setvalue, value)
+OSCAP_ACCESSOR_STRING(xccdf_select, item)
+OSCAP_ACCESSOR_SIMPLE(bool, xccdf_select, selected)
+OSCAP_IGETINS(oscap_text, xccdf_select, remarks, remark)
+OSCAP_ACCESSOR_STRING(xccdf_refine_rule, item)
+OSCAP_ACCESSOR_STRING(xccdf_refine_rule, selector)
+OSCAP_ACCESSOR_SIMPLE(xccdf_role_t, xccdf_refine_rule, role)
+OSCAP_ACCESSOR_SIMPLE(xccdf_level_t, xccdf_refine_rule, severity)
+OSCAP_IGETINS(oscap_text, xccdf_refine_rule, remarks, remark)
+OSCAP_ACCESSOR_STRING(xccdf_refine_value, item)
+OSCAP_ACCESSOR_STRING(xccdf_refine_value, selector)
+OSCAP_ACCESSOR_SIMPLE(xccdf_operator_t, xccdf_refine_value, oper)
+OSCAP_IGETINS(oscap_text, xccdf_refine_value, remarks, remark)
+OSCAP_ACCESSOR_STRING(xccdf_setvalue, item)
+OSCAP_ACCESSOR_STRING(xccdf_setvalue, value)

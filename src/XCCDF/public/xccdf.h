@@ -1053,6 +1053,16 @@ struct xccdf_refine_value_iterator *xccdf_profile_get_refine_values(const struct
 struct xccdf_refine_rule_iterator *xccdf_profile_get_refine_rules(const struct xccdf_profile *profile);
 /// @memberof xccdf_profile
 struct xccdf_item *xccdf_profile_to_item(struct xccdf_profile *item);
+/// @memberof xccdf_profile
+bool xccdf_profile_set_note_tag(struct xccdf_profile *item, const char *newval);
+/// @memberof xccdf_profile
+bool xccdf_profile_add_select(struct xccdf_profile *item, struct xccdf_select *newval);
+/// @memberof xccdf_profile
+bool xccdf_profile_add_setvalue(struct xccdf_profile *item, struct xccdf_setvalue *newval);
+/// @memberof xccdf_profile
+bool xccdf_profile_add_refine_value(struct xccdf_profile *item, struct xccdf_refine_value *newval);
+/// @memberof xccdf_profile
+bool xccdf_profile_add_refine_rule(struct xccdf_profile *item, struct xccdf_refine_rule *newval);
 
 /// @memberof xccdf_profile
 bool xccdf_profile_add_description(struct xccdf_profile *item, struct oscap_text *newval);
@@ -1684,6 +1694,12 @@ bool xccdf_select_get_selected(const struct xccdf_select *select);
 const char *xccdf_select_get_item(const struct xccdf_select *select);
 /// @memberof xccdf_select
 struct oscap_text_iterator *xccdf_select_get_remarks(const struct xccdf_select *select);
+/// @memberof xccdf_select
+bool xccdf_select_set_item(struct xccdf_select *obj, const char *newval);
+/// @memberof xccdf_select
+bool xccdf_select_set_selected(struct xccdf_select *obj, bool newval);
+/// @memberof xccdf_select
+bool xccdf_select_add_remark(struct xccdf_select *obj, struct oscap_text *item);
 
 /// @memberof xccdf_warning
 xccdf_warning_category_t xccdf_warning_get_category(const struct xccdf_warning *warning);
@@ -1704,6 +1720,16 @@ xccdf_role_t  xccdf_refine_rule_get_role(const struct xccdf_refine_rule* rr);
 xccdf_level_t xccdf_refine_rule_get_severity(const struct xccdf_refine_rule* rr);
 /// @memeberof xccdf_refine_rule
 struct oscap_text_iterator* xccdf_refine_rule_get_remarks(const struct xccdf_refine_rule *rr);
+/// @memberof xccdf_refine_rule
+bool xccdf_refine_rule_set_item(struct xccdf_refine_rule *obj, const char *newval);
+/// @memberof xccdf_refine_rule
+bool xccdf_refine_rule_set_selector(struct xccdf_refine_rule *obj, const char *newval);
+/// @memberof xccdf_refine_rule
+bool xccdf_refine_rule_set_role(struct xccdf_refine_rule *obj, xccdf_role_t newval);
+/// @memberof xccdf_refine_rule
+bool xccdf_refine_rule_set_severity(struct xccdf_refine_rule *obj, xccdf_level_t newval);
+/// @memberof xccdf_refine_rule
+bool xccdf_refine_rule_add_remark(struct xccdf_refine_rule *obj, struct oscap_text *item);
 
 /// @memberof xccdf_refine_value
 const char *     xccdf_refine_value_get_item(const struct xccdf_refine_value* rv);
@@ -1713,11 +1739,23 @@ const char *     xccdf_refine_value_get_selector(const struct xccdf_refine_value
 xccdf_operator_t xccdf_refine_value_get_oper(const struct xccdf_refine_value* rv);
 /// @memberof xccdf_refine_value
 struct oscap_text_iterator* xccdf_refine_value_get_remarks(const struct xccdf_refine_value *rv);
+/// @memberof xccdf_refine_value
+bool xccdf_refine_value_set_item(struct xccdf_refine_value *obj, const char *newval);
+/// @memberof xccdf_refine_value
+bool xccdf_refine_value_set_selector(struct xccdf_refine_value *obj, const char *newval);
+/// @memberof xccdf_refine_value
+bool xccdf_refine_value_set_oper(struct xccdf_refine_value *obj, xccdf_operator_t newval);
+/// @memberof xccdf_refine_value
+bool xccdf_refine_value_add_remark(struct xccdf_refine_value *obj, struct oscap_text *item);
 
 /// @memberof xccdf_set_value
 const char *xccdf_setvalue_get_item(const struct xccdf_setvalue* sv);
 /// @memberof xccdf_set_value
 const char *xccdf_setvalue_get_value(const struct xccdf_setvalue* sv);
+/// @memberof xccdf_setvalue
+bool xccdf_setvalue_set_item(struct xccdf_setvalue *obj, const char *newval);
+/// @memberof xccdf_setvalue
+bool xccdf_setvalue_set_value(struct xccdf_setvalue *obj, const char *newval);
 
 /**
  * Release library internal caches.
@@ -2019,7 +2057,5 @@ void xccdf_refine_rule_free(struct xccdf_refine_rule *rr);
 void xccdf_refine_value_free(struct xccdf_refine_value *rv);
 void xccdf_setvalue_free(struct xccdf_setvalue *sv);
 struct xccdf_select *xccdf_select_clone(const struct xccdf_select * select);
-void xccdf_select_set_selected(struct xccdf_select *select, bool selected);
-void xccdf_select_set_item(struct xccdf_select *select, const char *item);
 
 #endif
