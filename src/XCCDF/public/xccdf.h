@@ -1198,6 +1198,24 @@ bool xccdf_rule_add_status(struct xccdf_rule *item, struct xccdf_status *newval)
 bool xccdf_rule_add_title(struct xccdf_rule *item, struct oscap_text *newval);
 /// @memberof xccdf_rule
 bool xccdf_rule_add_warning(struct xccdf_rule *item, struct xccdf_warning *newval);
+/// @memberof xccdf_rule
+bool xccdf_rule_set_impact_metric(struct xccdf_rule *item, const char *newval);
+/// @memberof xccdf_rule
+bool xccdf_rule_set_role(struct xccdf_rule *item, xccdf_role_t newval);
+/// @memberof xccdf_rule
+bool xccdf_rule_set_severity(struct xccdf_rule *item, xccdf_level_t newval);
+/// @memberof xccdf_rule
+bool xccdf_rule_set_check(struct xccdf_rule *item, struct xccdf_check *newval);
+/// @memberof xccdf_rule
+bool xccdf_rule_add_ident(struct xccdf_rule *item, struct xccdf_ident *newval);
+/// @memberof xccdf_rule
+bool xccdf_rule_add_check(struct xccdf_rule *item, struct xccdf_check *newval);
+/// @memberof xccdf_rule
+bool xccdf_rule_add_profile_note(struct xccdf_rule *item, struct xccdf_profile_note *newval);
+/// @memberof xccdf_rule
+bool xccdf_rule_add_fix(struct xccdf_rule *item, struct xccdf_fix *newval);
+/// @memberof xccdf_rule
+bool xccdf_rule_add_fixtext(struct xccdf_rule *item, struct xccdf_fixtext *newval);
 
 /// @memberof xccdf_profile
 bool xccdf_profile_set_extends(struct xccdf_profile *item, const char *newval);
@@ -1311,6 +1329,14 @@ bool xccdf_group_add_status(struct xccdf_group *item, struct xccdf_status *newva
 bool xccdf_group_add_title(struct xccdf_group *item, struct oscap_text *newval);
 /// @memberof xccdf_group
 bool xccdf_group_add_warning(struct xccdf_group *item, struct xccdf_warning *newval);
+/// @memberof xccdf_group
+bool xccdf_group_add_rule(struct xccdf_group *group, struct xccdf_rule *item);
+/// @memberof xccdf_group
+bool xccdf_group_add_group(struct xccdf_group *group, struct xccdf_group *item);
+/// @memberof xccdf_group
+bool xccdf_group_add_value(struct xccdf_group *group, struct xccdf_value *item);
+/// @memberof xccdf_group
+bool xccdf_group_add_content(struct xccdf_group *rule, struct xccdf_item *item);
 
 /*--------------------*\
 |     Value methods    |
@@ -1545,6 +1571,24 @@ const char *xccdf_check_get_selector(const struct xccdf_check *check);
 const char *xccdf_check_get_content(const struct xccdf_check *check);
 /// @memberof xccdf_check
 struct xccdf_rule *xccdf_check_get_parent(const struct xccdf_check *check);
+/// @memberof xccdf_check
+bool xccdf_check_set_id(struct xccdf_check *obj, const char *newval);
+/// @memberof xccdf_check
+bool xccdf_check_set_system(struct xccdf_check *obj, const char *newval);
+/// @memberof xccdf_check
+bool xccdf_check_set_selector(struct xccdf_check *obj, const char *newval);
+/// @memberof xccdf_check
+bool xccdf_check_set_content(struct xccdf_check *obj, const char *newval);
+/// @memberof xccdf_check
+bool xccdf_check_set_oper(struct xccdf_check *obj, xccdf_bool_operator_t newval);
+/// @memberof xccdf_check
+bool xccdf_check_add_import(struct xccdf_check *obj, struct xccdf_check_import *item);
+/// @memberof xccdf_check
+bool xccdf_check_add_export(struct xccdf_check *obj, struct xccdf_check_export *item);
+/// @memberof xccdf_check
+bool xccdf_check_add_content_ref(struct xccdf_check *obj, struct xccdf_check_content_ref *item);
+/// @memberof xccdf_check
+bool xccdf_check_add_child(struct xccdf_check *obj, struct xccdf_check *item);
 
 /**
  * Get an iterator to nested checks of the complex check.
@@ -1556,18 +1600,34 @@ struct xccdf_check_iterator *xccdf_check_get_children(const struct xccdf_check *
 const char *xccdf_check_content_ref_get_href(const struct xccdf_check_content_ref *ref);
 /// @memberof xccdf_check_content_ref
 const char *xccdf_check_content_ref_get_name(const struct xccdf_check_content_ref *ref);
+/// @memberof xccdf_check_content_ref
+bool xccdf_check_content_ref_set_name(struct xccdf_check_content_ref *obj, const char *newval);
+/// @memberof xccdf_check_content_ref
+bool xccdf_check_content_ref_set_href(struct xccdf_check_content_ref *obj, const char *newval);
 /// @memberof xccdf_profile_note
 const char *xccdf_profile_note_get_reftag(const struct xccdf_profile_note *note);
 /// @memberof xccdf_profile_note
-const char *xccdf_profile_note_get_text(const struct xccdf_profile_note *note);
+struct oscap_text *xccdf_profile_note_get_text(const struct xccdf_profile_note *note);
+/// @memberof xccdf_profile_note
+bool xccdf_profile_note_set_reftag(struct xccdf_profile_note *obj, const char *newval);
+/// @memberof xccdf_profile_note
+bool xccdf_profile_note_set_text(struct xccdf_profile_note *obj, struct oscap_text *newval);
 /// @memberof xccdf_check_import
 const char *xccdf_check_import_get_name(const struct xccdf_check_import *item);
 /// @memberof xccdf_check_import
 const char *xccdf_check_import_get_content(const struct xccdf_check_import *item);
+/// @memberof xccdf_check_import
+bool xccdf_check_import_set_name(struct xccdf_check_import *obj, const char *newval);
+/// @memberof xccdf_check_import
+bool xccdf_check_import_set_content(struct xccdf_check_import *obj, const char *newval);
 /// @memberof xccdf_check_export
 const char *xccdf_check_export_get_name(const struct xccdf_check_export *item);
 /// @memberof xccdf_check_export
 const char *xccdf_check_export_get_value(const struct xccdf_check_export *item);
+/// @memberof xccdf_check_export
+bool xccdf_check_export_set_name(struct xccdf_check_export *obj, const char *newval);
+/// @memberof xccdf_check_export
+bool xccdf_check_export_set_value(struct xccdf_check_export *obj, const char *newval);
 /// @memberof xccdf_fix
 const char *xccdf_fix_get_content(const struct xccdf_fix *fix);
 /// @memberof xccdf_fix
@@ -1584,6 +1644,22 @@ const char *xccdf_fix_get_id(const struct xccdf_fix *fix);
 const char *xccdf_fix_get_system(const struct xccdf_fix *fix);
 /// @memberof xccdf_fix
 const char *xccdf_fix_get_platform(const struct xccdf_fix *fix);
+/// @memberof xccdf_fix
+bool xccdf_fix_set_strategy(struct xccdf_fix *obj, xccdf_strategy_t newval);
+/// @memberof xccdf_fix
+bool xccdf_fix_set_disruption(struct xccdf_fix *obj, xccdf_level_t newval);
+/// @memberof xccdf_fix
+bool xccdf_fix_set_complexity(struct xccdf_fix *obj, xccdf_level_t newval);
+/// @memberof xccdf_fix
+bool xccdf_fix_set_reboot(struct xccdf_fix *obj, bool newval);
+/// @memberof xccdf_fix
+bool xccdf_fix_set_content(struct xccdf_fix *obj, const char *newval);
+/// @memberof xccdf_fix
+bool xccdf_fix_set_system(struct xccdf_fix *obj, const char *newval);
+/// @memberof xccdf_fix
+bool xccdf_fix_set_platform(struct xccdf_fix *obj, const char *newval);
+/// @memberof xccdf_fix
+bool xccdf_fix_set_id(struct xccdf_fix *obj, const char *newval);
 /// @memberof xccdf_fixtext
 bool xccdf_fixtext_get_reboot(const struct xccdf_fixtext *fixtext);
 /// @memberof xccdf_fixtext
@@ -1593,7 +1669,19 @@ xccdf_level_t xccdf_fixtext_get_complexity(const struct xccdf_fixtext *fixtext);
 /// @memberof xccdf_fixtext
 xccdf_level_t xccdf_fixtext_get_disruption(const struct xccdf_fixtext *fixtext);
 /// @memberof xccdf_fixtext
-struct xccdf_fix *xccdf_fixtext_get_fixref(const struct xccdf_fixtext *fixtext);
+const char *xccdf_fixtext_get_fixref(const struct xccdf_fixtext *fixtext);
+/// @memberof xccdf_fixtext
+bool xccdf_fixtext_set_strategy(struct xccdf_fixtext *obj, xccdf_strategy_t newval);
+/// @memberof xccdf_fixtext
+bool xccdf_fixtext_set_disruption(struct xccdf_fixtext *obj, xccdf_level_t newval);
+/// @memberof xccdf_fixtext
+bool xccdf_fixtext_set_complexity(struct xccdf_fixtext *obj, xccdf_level_t newval);
+/// @memberof xccdf_fixtext
+bool xccdf_fixtext_set_reboot(struct xccdf_fixtext *obj, bool newval);
+/// @memberof xccdf_fixtext
+bool xccdf_fixtext_set_content(struct xccdf_fixtext *obj, const char *newval);
+/// @memberof xccdf_fixtext
+bool xccdf_fixtext_set_fixref(struct xccdf_fixtext *obj, const char *newval);
 
 /* Get/Set functions */
 
@@ -1730,6 +1818,10 @@ bool xccdf_refine_rule_set_role(struct xccdf_refine_rule *obj, xccdf_role_t newv
 bool xccdf_refine_rule_set_severity(struct xccdf_refine_rule *obj, xccdf_level_t newval);
 /// @memberof xccdf_refine_rule
 bool xccdf_refine_rule_add_remark(struct xccdf_refine_rule *obj, struct oscap_text *item);
+/// @memberof xccdf_refine_rule
+xccdf_numeric xccdf_refine_rule_get_weight(const struct xccdf_refine_rule *item);
+/// @memberof xccdf_refine_rule
+bool xccdf_refine_rule_set_weight(struct xccdf_refine_rule *obj, xccdf_numeric newval);
 
 /// @memberof xccdf_refine_value
 const char *     xccdf_refine_value_get_item(const struct xccdf_refine_value* rv);

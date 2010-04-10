@@ -105,10 +105,15 @@
 #define XCCDF_SETTER_GENERIC(STYPE,MNAME,MTYPE,FREE,DUP) \
 		bool xccdf_##STYPE##_set_##MNAME(struct xccdf_##STYPE* item, MTYPE newval) \
 		{ FREE(XITEM(item)->sub.STYPE.MNAME); XITEM(item)->sub.STYPE.MNAME = DUP(newval); return true; }
+#define XCCDF_SETTER_SIMPLE(STYPE,MNAME,MTYPE) \
+		bool xccdf_##STYPE##_set_##MNAME(struct xccdf_##STYPE* item, MTYPE newval) \
+		{ XITEM(item)->sub.STYPE.MNAME = (newval); return true; }
 #define XCCDF_SETTER_STRING(STYPE,MNAME) \
 		XCCDF_SETTER_GENERIC(STYPE, MNAME, const char*, oscap_free, oscap_strdup)
 #define XCCDF_ACCESSOR_STRING(STYPE,MNAME) \
 		XCCDF_SETTER_STRING(STYPE, MNAME) XCCDF_ABSTRACT_GETTER(const char*, STYPE, MNAME, sub.STYPE.MNAME)
+#define XCCDF_ACCESSOR_SIMPLE(STYPE,MTYPE,MNAME) \
+		XCCDF_SETTER_SIMPLE(STYPE,MNAME,MTYPE) XCCDF_ABSTRACT_GETTER(MTYPE,STYPE,MNAME,sub.STYPE.MNAME)
 #define XCCDF_IGETTER(TNAME,ITYPE,MNAME) \
 		XCCDF_ITERATOR_GETTER(ITYPE, TNAME, MNAME, sub.TNAME.MNAME)
 #define XCCDF_ADDER(STYPE,MNAME,SINGNAME,MTYPE,DUP) \
@@ -199,8 +204,8 @@
         XCCDF_ITEM_ADDER_ONE(value,MNAME,MNAMES,MTYPE,) XCCDF_ITEM_ADDER_ONE(result,MNAME,MNAMES,MTYPE,)
 
 #define XCCDF_ITEM_ADDER_REG(STYPE, MTYPE, MNAME) \
-	bool xccdf_##STYPE##_add_##MTYPE(struct xccdf_##STYPE *STYPE, struct xccdf_##MTYPE *MTYPE) \
-	{ return xccdf_add_item(XITEM(STYPE)->sub.STYPE.MNAME, XITEM(STYPE), XITEM(MTYPE), #MTYPE "-"); }
+	bool xccdf_##STYPE##_add_##MTYPE(struct xccdf_##STYPE *STYPE, struct xccdf_##MTYPE *item) \
+	{ return xccdf_add_item(XITEM(STYPE)->sub.STYPE.MNAME, XITEM(STYPE), XITEM(item), #MTYPE "-"); }
 
 #define XITERATOR(x) ((struct oscap_iterator*)(x))
 #define XCCDF_ITERATOR(n) struct xccdf_##n##_iterator*

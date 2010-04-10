@@ -216,7 +216,7 @@ struct xccdf_refine_rule {
 	char *selector;
 	xccdf_role_t role;
 	xccdf_level_t severity;
-	float weight;
+	xccdf_numeric weight;
 	struct oscap_list *remarks;
 };
 
