@@ -118,10 +118,10 @@ xccdf_element_t xccdf_element_get(xmlTextReaderPtr reader)
 		return XCCDFE_ERROR;
 
 	const struct xccdf_element_spec *mapptr;
+    const char *name = (const char *)xmlTextReaderConstLocalName(reader);
+    const char *nsuri = (const char *)xmlTextReaderConstNamespaceUri(reader);
 
 	for (mapptr = XCCDF_ELEMENT_MAP; mapptr->id != 0; ++mapptr) {
-		const char *name = (const char *)xmlTextReaderConstLocalName(reader);
-		const char *nsuri = (const char *)xmlTextReaderConstNamespaceUri(reader);
 		if ((!name && !nsuri) ||
 		    (name && nsuri && strcmp(mapptr->name, name) == 0 && strcmp(mapptr->ns, nsuri) == 0))
 			return mapptr->id;
