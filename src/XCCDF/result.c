@@ -122,7 +122,7 @@ OSCAP_ACCESSOR_STRING(xccdf_rule_result, version)
 OSCAP_ACCESSOR_STRING(xccdf_rule_result, idref)
 OSCAP_IGETINS(xccdf_ident, xccdf_rule_result, idents, ident)
 OSCAP_IGETINS(xccdf_fix, xccdf_rule_result, fixes, fix)
-OSCAP_IGETINS(xccdf_check, xccdf_rule_result, checks, check)
+OSCAP_IGETTER(xccdf_check, xccdf_rule_result, checks)
 OSCAP_IGETINS_GEN(xccdf_override, xccdf_rule_result, overrides, override)
 OSCAP_IGETINS_GEN(xccdf_message, xccdf_rule_result, messages, message)
 OSCAP_IGETINS_GEN(xccdf_instance, xccdf_rule_result, instances, instance)
@@ -434,10 +434,10 @@ static struct xccdf_rule_result *xccdf_rule_result_new_parse(xmlTextReaderPtr re
 			oscap_list_add(rr->instances, xccdf_instance_new_parse(reader));
 			break;
 		case XCCDFE_FIX:
-			oscap_list_add(rr->fixes, xccdf_fix_parse(reader, XITEM(rr)));
+			oscap_list_add(rr->fixes, xccdf_fix_parse(reader));
 			break;
 		case XCCDFE_CHECK:
-			oscap_list_add(rr->checks, xccdf_check_parse(reader, XITEM(rr)));
+			oscap_list_add(rr->checks, xccdf_check_parse(reader));
 			break;
 		default: break;
 		}

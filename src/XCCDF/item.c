@@ -220,7 +220,7 @@ bool xccdf_item_process_element(struct xccdf_item * item, xmlTextReaderPtr reade
 	case XCCDFE_STATUS:{
         const char *date = xccdf_attribute_get(reader, XCCDFA_DATE);
         char *str = oscap_element_string_copy(reader);
-        struct xccdf_status *status = xccdf_status_new(str, date);
+        struct xccdf_status *status = xccdf_status_new_fill(str, date);
         oscap_free(str);
         if (status) {
             oscap_list_add(item->item.statuses, status);
@@ -366,7 +366,7 @@ static const struct oscap_string_map XCCDF_STATUS_MAP[] = {
 	{XCCDF_STATUS_NOT_SPECIFIED, NULL}
 };
 
-struct xccdf_status *xccdf_status_new(const char *status, const char *date)
+struct xccdf_status *xccdf_status_new_fill(const char *status, const char *date)
 {
 	struct xccdf_status *ret;
 	if (!status)
@@ -378,6 +378,11 @@ struct xccdf_status *xccdf_status_new(const char *status, const char *date)
 	}
 	ret->date = oscap_get_date(date);
 	return ret;
+}
+
+struct xccdf_status *xccdf_status_new(void)
+{
+    return oscap_calloc(1, sizeof(struct xccdf_status));
 }
 
 void xccdf_status_dump(struct xccdf_status *status, int depth)
@@ -413,6 +418,13 @@ xccdf_status_type_t xccdf_item_get_current_status(const struct xccdf_item *item)
 	return maxtype;
 }
 
+struct xccdf_model *xccdf_model_new(void)
+{
+    struct xccdf_model *model = oscap_calloc(1, sizeof(struct xccdf_model));
+    model->params = oscap_htable_new();
+    return model;
+}
+
 struct xccdf_model *xccdf_model_new_xml(xmlTextReaderPtr reader)
 {
 	xccdf_element_t el = xccdf_element_get(reader);
@@ -422,9 +434,8 @@ struct xccdf_model *xccdf_model_new_xml(xmlTextReaderPtr reader)
 	if (el != XCCDFE_MODEL)
 		return NULL;
 
-	model = oscap_calloc(1, sizeof(struct xccdf_model));
+	model = xccdf_model_new();
 	model->system = xccdf_attribute_copy(reader, XCCDFA_SYSTEM);
-	model->params = oscap_htable_new();
 
 	while (oscap_to_start_element(reader, depth)) {
 		if (xccdf_element_get(reader) == XCCDFE_PARAM) {

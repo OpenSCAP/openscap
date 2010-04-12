@@ -130,7 +130,7 @@ void xccdf_setvalue_dump(struct xccdf_setvalue *sv, int depth)
 }
 
 
-struct xccdf_item *xccdf_profile_new(struct xccdf_item *bench)
+struct xccdf_item *xccdf_profile_new_internal(struct xccdf_item *bench)
 {
 	if (bench)
 		assert(bench->type == XCCDF_BENCHMARK);
@@ -140,6 +140,11 @@ struct xccdf_item *xccdf_profile_new(struct xccdf_item *bench)
 	prof->sub.profile.refine_values = oscap_list_new();
 	prof->sub.profile.refine_rules = oscap_list_new();
 	return prof;
+}
+
+struct xccdf_profile *xccdf_profile_new(void)
+{
+    return XPROFILE(xccdf_profile_new_internal(NULL));
 }
 
 const struct oscap_string_map XCCDF_ROLE_MAP[] = {
@@ -159,7 +164,7 @@ static void xccdf_parse_remarks(xmlTextReaderPtr reader, struct oscap_list* list
 struct xccdf_item *xccdf_profile_parse(xmlTextReaderPtr reader, struct xccdf_item *bench)
 {
 	XCCDF_ASSERT_ELEMENT(reader, XCCDFE_PROFILE);
-	struct xccdf_item *prof = xccdf_profile_new(bench);
+	struct xccdf_item *prof = xccdf_profile_new_internal(bench);
 
 	if (!xccdf_item_process_attributes(prof, reader)) {
 		xccdf_profile_free(prof);

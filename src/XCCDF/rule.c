@@ -65,19 +65,6 @@ bool xccdf_content_parse(xmlTextReaderPtr reader, struct xccdf_item *parent)
 	return false;
 }
 
-static char *xccdf_strsep(char **str, char delim)
-{
-	if (str == NULL || *str == NULL)
-		return NULL;
-	char *ret = *str;
-	*str = strchr(*str, delim);
-	if (*str) {
-		**str = '\0';
-		(*str)++;
-	}
-	return ret;
-}
-
 static void xccdf_deps_get(struct xccdf_item *item, struct oscap_list **conflicts, struct oscap_list **requires)
 {
 	switch (item->type) {
@@ -109,7 +96,7 @@ static bool xccdf_item_parse_deps(xmlTextReaderPtr reader, struct xccdf_item *it
 			struct oscap_list *reqs = oscap_list_new();
 			char *ids = xccdf_attribute_copy(reader, XCCDFA_IDREF), *idsstr = ids, *id;
 
-			while ((id = xccdf_strsep(&ids, ' ')) != NULL) {
+			while ((id = oscap_strsep(&ids, " ")) != NULL) {
 				if (strcmp(id, "") == 0) continue;
 				oscap_list_add(reqs, oscap_strdup(id));
 			}
@@ -176,7 +163,7 @@ static void xccdf_item_dump_deps(struct xccdf_item *item, int depth)
 	}
 }
 
-struct xccdf_item *xccdf_group_new(struct xccdf_item *parent)
+struct xccdf_item *xccdf_group_new_internal(struct xccdf_item *parent)
 {
 	struct xccdf_item *group = xccdf_item_new(XCCDF_GROUP, parent);
 	group->sub.group.content = oscap_list_new();
@@ -186,11 +173,16 @@ struct xccdf_item *xccdf_group_new(struct xccdf_item *parent)
 	return group;
 }
 
+struct xccdf_group *xccdf_group_new(void)
+{
+    return XGROUP(xccdf_group_new_internal(NULL));
+}
+
 struct xccdf_item *xccdf_group_parse(xmlTextReaderPtr reader, struct xccdf_item *parent)
 {
 	XCCDF_ASSERT_ELEMENT(reader, XCCDFE_GROUP);
 
-	struct xccdf_item *group = xccdf_group_new(parent);
+	struct xccdf_item *group = xccdf_group_new_internal(parent);
 
 	if (!xccdf_item_process_attributes(group, reader)) {
 		xccdf_group_free(group);
@@ -252,7 +244,7 @@ void xccdf_group_free(struct xccdf_item *group)
 	}
 }
 
-struct xccdf_item *xccdf_rule_new(struct xccdf_item *parent)
+struct xccdf_item *xccdf_rule_new_internal(struct xccdf_item *parent)
 {
 	struct xccdf_item *rule = xccdf_item_new(XCCDF_RULE, parent);
 	rule->sub.rule.role = XCCDF_ROLE_FULL;
@@ -267,11 +259,16 @@ struct xccdf_item *xccdf_rule_new(struct xccdf_item *parent)
 	return rule;
 }
 
+struct xccdf_rule *xccdf_rule_new(void)
+{
+    return XRULE(xccdf_rule_new_internal(NULL));
+}
+
 struct xccdf_item *xccdf_rule_parse(xmlTextReaderPtr reader, struct xccdf_item *parent)
 {
 	XCCDF_ASSERT_ELEMENT(reader, XCCDFE_RULE);
 
-	struct xccdf_item *rule = xccdf_rule_new(parent);
+	struct xccdf_item *rule = xccdf_rule_new_internal(parent);
 
 	if (!xccdf_item_process_attributes(rule, reader)) {
 		xccdf_rule_free(rule);
@@ -295,14 +292,14 @@ struct xccdf_item *xccdf_rule_parse(xmlTextReaderPtr reader, struct xccdf_item *
 				const char *tag = xccdf_attribute_get(reader, XCCDFA_TAG);
 				if (tag == NULL)
 					break;
-				struct xccdf_profile_note *note = oscap_calloc(1, sizeof(struct xccdf_profile_note));
+				struct xccdf_profile_note *note = xccdf_profile_note_new();
 				note->reftag = strdup(tag);
 				note->text = oscap_text_new_parse(XCCDF_TEXT_PROFNOTE, reader);
 				oscap_list_add(rule->sub.rule.profile_notes, note);
 				break;
 			}
 		case XCCDFE_CHECK:{
-				struct xccdf_check *check = xccdf_check_parse(reader, rule);
+				struct xccdf_check *check = xccdf_check_parse(reader);
 				if (check == NULL)
 					break;
 				if (check->selector == NULL || strcmp(check->selector, "") == 0)
@@ -311,10 +308,10 @@ struct xccdf_item *xccdf_rule_parse(xmlTextReaderPtr reader, struct xccdf_item *
 				break;
 			}
 		case XCCDFE_FIX:
-			oscap_list_add(rule->sub.rule.fixes, xccdf_fix_parse(reader, rule));
+			oscap_list_add(rule->sub.rule.fixes, xccdf_fix_parse(reader));
 			break;
 		case XCCDFE_FIXTEXT:
-			oscap_list_add(rule->sub.rule.fixtexts, xccdf_fixtext_parse(reader, rule));
+			oscap_list_add(rule->sub.rule.fixtexts, xccdf_fixtext_parse(reader));
 			break;
 		case XCCDFE_IDENT:
 			oscap_list_add(rule->sub.rule.idents, xccdf_ident_parse(reader));
@@ -358,11 +355,14 @@ void xccdf_rule_free(struct xccdf_item *rule)
 	}
 }
 
-struct xccdf_ident *xccdf_ident_new(const char *id, const char *sys)
+struct xccdf_ident *xccdf_ident_new(void)
 {
-	if (id == NULL || sys == NULL)
-		return NULL;
-	struct xccdf_ident *ident = oscap_calloc(1, sizeof(struct xccdf_ident));
+    return oscap_calloc(1, sizeof(struct xccdf_ident));
+}
+
+struct xccdf_ident *xccdf_ident_new_fill(const char *id, const char *sys)
+{
+	struct xccdf_ident *ident = xccdf_ident_new();
 	ident->id = strdup(id);
 	ident->system = strdup(sys);
 	return ident;
@@ -373,7 +373,7 @@ struct xccdf_ident *xccdf_ident_parse(xmlTextReaderPtr reader)
 	XCCDF_ASSERT_ELEMENT(reader, XCCDFE_IDENT);
 	const char *sys = xccdf_attribute_get(reader, XCCDFA_SYSTEM);
 	const char *id = oscap_element_string_get(reader);
-	return xccdf_ident_new(id, sys);
+	return xccdf_ident_new_fill(id, sys);
 }
 
 void xccdf_ident_dump(struct xccdf_ident *ident, int depth)
@@ -391,6 +391,11 @@ void xccdf_ident_free(struct xccdf_ident *ident)
 	}
 }
 
+struct xccdf_profile_note *xccdf_profile_note_new(void)
+{
+    return oscap_calloc(1, sizeof(struct xccdf_profile_note));
+}
+
 void xccdf_profile_note_free(struct xccdf_profile_note *note)
 {
 	if (note) {
@@ -402,10 +407,9 @@ void xccdf_profile_note_free(struct xccdf_profile_note *note)
 
 XCCDF_GENERIC_GETTER(const char *, ident, id) XCCDF_GENERIC_GETTER(const char *, ident, system)
 
-struct xccdf_check *xccdf_check_new(struct xccdf_item *parent)
+struct xccdf_check *xccdf_check_new(void)
 {
 	struct xccdf_check *check = oscap_calloc(1, sizeof(struct xccdf_check));
-	check->parent = parent;
 	check->content_refs = oscap_list_new();
 	check->imports = oscap_list_new();
 	check->exports = oscap_list_new();
@@ -419,12 +423,12 @@ static const struct oscap_string_map XCCDF_BOOLOP_MAP[] = {
 	{0, NULL}
 };
 
-struct xccdf_check *xccdf_check_parse(xmlTextReaderPtr reader, struct xccdf_item *parent)
+struct xccdf_check *xccdf_check_parse(xmlTextReaderPtr reader)
 {
 	xccdf_element_t el = xccdf_element_get(reader);
 	if (el != XCCDFE_CHECK && el != XCCDFE_COMPLEX_CHECK)
 		return NULL;
-	struct xccdf_check *check = xccdf_check_new(parent);
+	struct xccdf_check *check = xccdf_check_new();
 
 	check->id = xccdf_attribute_copy(reader, XCCDFA_ID);
 	check->system = xccdf_attribute_copy(reader, XCCDFA_SYSTEM);
@@ -441,14 +445,13 @@ struct xccdf_check *xccdf_check_parse(xmlTextReaderPtr reader, struct xccdf_item
 		case XCCDFE_COMPLEX_CHECK:
 			if (check->oper == 0)
 				break;
-			oscap_list_add(check->children, xccdf_check_parse(reader, parent));
+			oscap_list_add(check->children, xccdf_check_parse(reader));
 			break;
 		case XCCDFE_CHECK_CONTENT_REF:{
 				const char *href = xccdf_attribute_get(reader, XCCDFA_HREF);
 				if (href == NULL)
 					break;
-				struct xccdf_check_content_ref *ref =
-				    oscap_calloc(1, sizeof(struct xccdf_check_content_ref));
+				struct xccdf_check_content_ref *ref = xccdf_check_content_ref_new();
 				ref->name = xccdf_attribute_copy(reader, XCCDFA_NAME);
 				ref->href = strdup(href);
 				oscap_list_add(check->content_refs, ref);
@@ -462,7 +465,7 @@ struct xccdf_check *xccdf_check_parse(xmlTextReaderPtr reader, struct xccdf_item
 				const char *name = xccdf_attribute_get(reader, XCCDFA_IMPORT_NAME);
 				if (name == NULL)
 					break;
-				struct xccdf_check_import *imp = oscap_calloc(1, sizeof(struct xccdf_check_import));
+				struct xccdf_check_import *imp = xccdf_check_import_new();
 				imp->name = strdup(name);
 				imp->content = oscap_element_string_copy(reader);
 				oscap_list_add(check->imports, imp);
@@ -472,7 +475,7 @@ struct xccdf_check *xccdf_check_parse(xmlTextReaderPtr reader, struct xccdf_item
 				const char *name = xccdf_attribute_get(reader, XCCDFA_EXPORT_NAME);
 				if (name == NULL)
 					break;
-				struct xccdf_check_export *exp = oscap_calloc(1, sizeof(struct xccdf_check_export));
+				struct xccdf_check_export *exp = xccdf_check_export_new();
 				exp->name = strdup(name);
 				exp->value = xccdf_attribute_copy(reader, XCCDFA_VALUE_ID);
 				oscap_list_add(check->exports, exp);
@@ -536,6 +539,11 @@ void xccdf_check_content_ref_dump(struct xccdf_check_content_ref *ref, int depth
 	printf("%s (%s)\n", ref->href, ref->name);
 }
 
+struct xccdf_check_content_ref *xccdf_check_content_ref_new(void)
+{
+    return oscap_calloc(1, sizeof(struct xccdf_check_content_ref));
+}
+
 void xccdf_check_content_ref_free(struct xccdf_check_content_ref *ref)
 {
 	if (ref) {
@@ -545,6 +553,11 @@ void xccdf_check_content_ref_free(struct xccdf_check_content_ref *ref)
 	}
 }
 
+struct xccdf_check_import *xccdf_check_import_new(void)
+{
+    return oscap_calloc(1, sizeof(struct xccdf_check_import));
+}
+
 void xccdf_check_import_free(struct xccdf_check_import *item)
 {
 	if (item) {
@@ -552,6 +565,11 @@ void xccdf_check_import_free(struct xccdf_check_import *item)
 		oscap_free(item->content);
 		oscap_free(item);
 	}
+}
+
+struct xccdf_check_export *xccdf_check_export_new(void)
+{
+    return oscap_calloc(1, sizeof(struct xccdf_check_export));
 }
 
 void xccdf_check_export_free(struct xccdf_check_export *item)
@@ -583,9 +601,14 @@ const struct oscap_string_map XCCDF_STRATEGY_MAP[] = {
 	fix->content    = oscap_element_string_copy(reader); \
 	} while (false)
 
-struct xccdf_fix *xccdf_fix_parse(xmlTextReaderPtr reader, struct xccdf_item *parent)
+struct xccdf_fix *xccdf_fix_new(void)
 {
-	struct xccdf_fix *fix = oscap_calloc(1, sizeof(struct xccdf_fix));
+    return oscap_calloc(1, sizeof(struct xccdf_fix));
+}
+
+struct xccdf_fix *xccdf_fix_parse(xmlTextReaderPtr reader)
+{
+	struct xccdf_fix *fix = xccdf_fix_new();
 	fix->id = xccdf_attribute_copy(reader, XCCDFA_ID);
 	fix->system = xccdf_attribute_copy(reader, XCCDFA_SYSTEM);
 	fix->platform = xccdf_attribute_copy(reader, XCCDFA_PLATFORM);
@@ -593,9 +616,14 @@ struct xccdf_fix *xccdf_fix_parse(xmlTextReaderPtr reader, struct xccdf_item *pa
 	return fix;
 }
 
-struct xccdf_fixtext *xccdf_fixtext_parse(xmlTextReaderPtr reader, struct xccdf_item *parent)
+struct xccdf_fixtext *xccdf_fixtext_new(void)
 {
-	struct xccdf_fixtext *fix = oscap_calloc(1, sizeof(struct xccdf_fixtext));
+    return oscap_calloc(1, sizeof(struct xccdf_fixtext));
+}
+
+struct xccdf_fixtext *xccdf_fixtext_parse(xmlTextReaderPtr reader)
+{
+	struct xccdf_fixtext *fix = xccdf_fixtext_new();
 	fix->fixref = xccdf_attribute_copy(reader, XCCDFA_FIXREF);
 	XCCDF_FIXCOMMON_PARSE(reader, fix);
 	return fix;
@@ -689,7 +717,6 @@ OSCAP_ACCESSOR_STRING(xccdf_check, id)
 OSCAP_ACCESSOR_STRING(xccdf_check, system)
 OSCAP_ACCESSOR_STRING(xccdf_check, selector)
 OSCAP_ACCESSOR_STRING(xccdf_check, content)
-XCCDF_GENERIC_GETTER(struct xccdf_rule *, check, parent)
 OSCAP_ACCESSOR_SIMPLE(xccdf_bool_operator_t, xccdf_check, oper)
 OSCAP_IGETINS(xccdf_check_import, xccdf_check, imports, import)
 OSCAP_IGETINS(xccdf_check_export, xccdf_check, exports, export)

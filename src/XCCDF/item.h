@@ -121,7 +121,7 @@ struct xccdf_value_item {
 	char *selector;
 
 	struct xccdf_value_val *value;
-	struct oscap_htable *values;
+	struct oscap_htable *values; // TODO: to list
 
 	struct oscap_list *sources;
 };
@@ -202,7 +202,7 @@ struct xccdf_status {
 
 struct xccdf_model {
 	char *system;
-	struct oscap_htable *params;
+	struct oscap_htable *params; // TODO: to list + accessors
 };
 
 struct xccdf_select {
@@ -240,7 +240,6 @@ struct xccdf_ident {
 struct xccdf_check {
 	xccdf_bool_operator_t oper;
 	struct oscap_list *children;
-	struct xccdf_item *parent;
 	char *id;
 	char *system;
 	char *selector;
@@ -381,7 +380,6 @@ void xccdf_item_print(struct xccdf_item *item, int depth);
 void xccdf_item_dump(struct xccdf_item *item, int depth);
 struct xccdf_item* xccdf_item_get_benchmark_internal(struct xccdf_item* item);
 
-struct xccdf_item *xccdf_benchmark_new(void);
 bool xccdf_benchmark_parse(struct xccdf_item *benchmark, xmlTextReaderPtr reader);
 void xccdf_benchmark_dump(struct xccdf_benchmark *benchmark);
 bool xccdf_benchmark_register_item(struct xccdf_benchmark *benchmark, struct xccdf_item *item);
@@ -390,84 +388,58 @@ bool xccdf_benchmark_rename_item(struct xccdf_item *item, const char *newid);
 char *xccdf_benchmark_gen_id(struct xccdf_benchmark *benchmark, const char *prefix);
 bool xccdf_add_item(struct oscap_list *list, struct xccdf_item *parent, struct xccdf_item *item, const char *prefix);
 
-struct xccdf_item *xccdf_profile_new(struct xccdf_item *bench);
+struct xccdf_item *xccdf_profile_new_internal(struct xccdf_item *bench);
 struct xccdf_item *xccdf_profile_parse(xmlTextReaderPtr reader, struct xccdf_item *bench);
 void xccdf_profile_dump(struct xccdf_item *prof, int depth);
-void xccdf_profile_free(struct xccdf_item *prof);
 
 bool xccdf_item_process_attributes(struct xccdf_item *item, xmlTextReaderPtr reader);
 bool xccdf_item_process_element(struct xccdf_item *item, xmlTextReaderPtr reader);
 
 bool xccdf_content_parse(xmlTextReaderPtr reader, struct xccdf_item *parent);
 struct xccdf_item *xccdf_group_parse(xmlTextReaderPtr reader, struct xccdf_item *parent);
-struct xccdf_item *xccdf_group_new(struct xccdf_item *parent);
+struct xccdf_item *xccdf_group_new_internal(struct xccdf_item *parent);
 void xccdf_group_dump(struct xccdf_item *group, int depth);
-void xccdf_group_free(struct xccdf_item *group);
 
-struct xccdf_item *xccdf_rule_new(struct xccdf_item *parent);
+struct xccdf_item *xccdf_rule_new_internal(struct xccdf_item *parent);
 struct xccdf_item *xccdf_rule_parse(xmlTextReaderPtr reader, struct xccdf_item *parent);
 void xccdf_rule_dump(struct xccdf_item *rule, int depth);
-void xccdf_rule_free(struct xccdf_item *rule);
 
 struct xccdf_item *xccdf_value_parse(xmlTextReaderPtr reader, struct xccdf_item *parent);
-struct xccdf_item *xccdf_value_new(struct xccdf_item *parent, xccdf_value_type_t type);
+struct xccdf_item *xccdf_value_new_internal(struct xccdf_item *parent, xccdf_value_type_t type);
 void xccdf_value_dump(struct xccdf_item *value, int depth);
-void xccdf_value_free(struct xccdf_item *val);
 
-struct xccdf_notice *xccdf_notice_new(void);
 struct xccdf_notice *xccdf_notice_new_parse(xmlTextReaderPtr reader);
 void xccdf_notice_dump(struct xccdf_notice *notice, int depth);
-void xccdf_notice_free(struct xccdf_notice *notice);
 
-struct xccdf_status *xccdf_status_new(const char *status, const char *date);
 void xccdf_status_dump(struct xccdf_status *status, int depth);
-void xccdf_status_free(struct xccdf_status *status);
 
 struct xccdf_model *xccdf_model_new_xml(xmlTextReaderPtr reader);
-void xccdf_model_free(struct xccdf_model *model);
 
 void xccdf_cstring_dump(const char *data, int depth);
 void xccdf_result_dump(struct xccdf_result *res, int depth);
 struct xccdf_result *xccdf_result_new_parse(xmlTextReaderPtr reader);
 
-struct xccdf_ident *xccdf_ident_new(const char *id, const char *system);
-void xccdf_ident_free(struct xccdf_ident *ident);
 
-struct xccdf_check *xccdf_check_new(struct xccdf_item *parent);
-struct xccdf_check *xccdf_check_parse(xmlTextReaderPtr reader, struct xccdf_item *parent);
+struct xccdf_check *xccdf_check_parse(xmlTextReaderPtr reader);
 void xccdf_check_dump(struct xccdf_check *check, int depth);
-void xccdf_check_free(struct xccdf_check *check);
 void xccdf_check_content_ref_free(struct xccdf_check_content_ref *ref);
 void xccdf_check_content_ref_dump(struct xccdf_check_content_ref *ref, int depth);
-struct xccdf_ident *xccdf_ident_new(const char *id, const char *system);
 struct xccdf_ident *xccdf_ident_parse(xmlTextReaderPtr reader);
 void xccdf_ident_dump(struct xccdf_ident *ident, int depth);
 void xccdf_ident_free(struct xccdf_ident *ident);
 void xccdf_profile_note_free(struct xccdf_profile_note *note);
 void xccdf_check_import_free(struct xccdf_check_import *item);
 void xccdf_check_export_free(struct xccdf_check_export *item);
-struct xccdf_fix *xccdf_fix_parse(xmlTextReaderPtr reader, struct xccdf_item *parent);
-struct xccdf_fixtext *xccdf_fixtext_parse(xmlTextReaderPtr reader, struct xccdf_item *parent);
+struct xccdf_fix *xccdf_fix_parse(xmlTextReaderPtr reader);
+struct xccdf_fixtext *xccdf_fixtext_parse(xmlTextReaderPtr reader);
 void xccdf_fixtext_free(struct xccdf_fixtext *item);
 void xccdf_fix_free(struct xccdf_fix *item);
 
-struct xccdf_plain_text *xccdf_plain_text_new(void);
-struct xccdf_plain_text *xccdf_plain_text_new_fill(const char *id, const char *text);
-void xccdf_plain_text_free(struct xccdf_plain_text *plain);
-
-struct xccdf_refine_value *xccdf_refine_value_new(void);
-struct xccdf_refine_rule *xccdf_refine_rule_new(void);
-struct xccdf_setvalue *xccdf_setvalue_new(void);
 struct xccdf_setvalue *xccdf_setvalue_new_parse(xmlTextReaderPtr reader);
 void xccdf_setvalue_dump(struct xccdf_setvalue *sv, int depth);
 
-struct xccdf_warning *xccdf_warning_new(void);
 struct xccdf_warning *xccdf_warning_new_parse(xmlTextReaderPtr reader);
-void xccdf_warning_free(struct xccdf_warning * warn);
-
-struct xccdf_reference *xccdf_reference_new(void);
 struct xccdf_reference *xccdf_reference_new_parse(xmlTextReaderPtr reader);
-void xccdf_reference_free(struct xccdf_reference * ref);
 
 #include "unused.h"
 

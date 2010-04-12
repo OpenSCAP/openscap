@@ -39,13 +39,13 @@ struct xccdf_benchmark *xccdf_benchmark_parse_xml(const char *filename)
 	if (!reader)
 		return NULL;
 	while (xmlTextReaderRead(reader) == 1 && xmlTextReaderNodeType(reader) != 1) ;
-	struct xccdf_item *benchmark = xccdf_benchmark_new();
+	struct xccdf_item *benchmark = XITEM(xccdf_benchmark_new());
 	xccdf_benchmark_parse(benchmark, reader);
 	xmlFreeTextReader(reader);
 	return XBENCHMARK(benchmark);
 }
 
-struct xccdf_item *xccdf_benchmark_new(void)
+struct xccdf_benchmark *xccdf_benchmark_new(void)
 {
 	struct xccdf_item *bench = xccdf_item_new(XCCDF_BENCHMARK, NULL);
     // lists
@@ -60,7 +60,7 @@ struct xccdf_item *xccdf_benchmark_new(void)
 	bench->sub.benchmark.results = oscap_list_new();
     // hash tables
 	bench->sub.benchmark.dict = oscap_htable_new();
-	return bench;
+	return XBENCHMARK(bench);
 }
 
 bool xccdf_benchmark_parse(struct xccdf_item * benchmark, xmlTextReaderPtr reader)
@@ -181,10 +181,10 @@ XCCDF_LISTMANIP_TEXT(benchmark, front_matter, front_matter)
 XCCDF_LISTMANIP_TEXT(benchmark, rear_matter, rear_matter)
 XCCDF_LISTMANIP(benchmark, notice, notices)
 XCCDF_LISTMANIP(benchmark, model, models)
-XCCDF_LISTMANIP(benchmark, profile, profiles)
 XCCDF_BENCHMARK_IGETTER(item, content)
 XCCDF_BENCHMARK_IGETTER(result, results)
 XCCDF_BENCHMARK_IGETTER(value, values)
+XCCDF_BENCHMARK_IGETTER(profile, profiles)
 XCCDF_ITERATOR_GEN_S(notice)
 XCCDF_ITERATOR_GEN_S(model)
 XCCDF_ITERATOR_GEN_S(profile)
@@ -198,6 +198,7 @@ XCCDF_ITEM_ADDER_REG(benchmark, result, results)
 XCCDF_ITEM_ADDER_REG(benchmark, rule, content)
 XCCDF_ITEM_ADDER_REG(benchmark, group, content)
 XCCDF_ITEM_ADDER_REG(benchmark, value, values)
+XCCDF_ITEM_ADDER_REG(benchmark, profile, profiles)
 
 bool xccdf_benchmark_add_content(struct xccdf_benchmark *bench, struct xccdf_item *item)
 {

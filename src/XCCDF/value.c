@@ -30,7 +30,7 @@
 static oscap_destruct_func xccdf_value_val_get_destructor(xccdf_value_type_t type);
 static struct xccdf_value_val *xccdf_value_val_new(xccdf_value_type_t type);
 
-struct xccdf_item *xccdf_value_new(struct xccdf_item *parent, xccdf_value_type_t type)
+struct xccdf_item *xccdf_value_new_internal(struct xccdf_item *parent, xccdf_value_type_t type)
 {
 	struct xccdf_item *val = xccdf_item_new(XCCDF_VALUE, parent);
 	val->sub.value.type = type;
@@ -39,6 +39,11 @@ struct xccdf_item *xccdf_value_new(struct xccdf_item *parent, xccdf_value_type_t
 	val->sub.value.value = oscap_htable_get(val->sub.value.values, "");
 	val->sub.value.sources = oscap_list_new();
 	return val;
+}
+
+struct xccdf_value *xccdf_value_new(xccdf_value_type_t type)
+{
+    return XVALUE(xccdf_value_new_internal(NULL, type));
 }
 
 static const struct oscap_string_map XCCDF_VALUE_TYPE_MAP[] = {
@@ -86,7 +91,7 @@ struct xccdf_item *xccdf_value_parse(xmlTextReaderPtr reader, struct xccdf_item 
 	if (xccdf_element_get(reader) != XCCDFE_VALUE)
 		return NULL;
 	xccdf_value_type_t type = oscap_string_to_enum(XCCDF_VALUE_TYPE_MAP, xccdf_attribute_get(reader, XCCDFA_TYPE));
-	struct xccdf_item *value = xccdf_value_new(parent, type);
+	struct xccdf_item *value = xccdf_value_new_internal(parent, type);
 
 	value->sub.value.oper = oscap_string_to_enum(XCCDF_OPERATOR_MAP, xccdf_attribute_get(reader, XCCDFA_OPERATOR));
 	value->sub.value.interface_hint =
