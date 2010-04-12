@@ -11,7 +11,9 @@ AM_CPPFLAGS =   -I$(top_srcdir)/tests/include \
 		-I$(top_srcdir)/src/XCCDF/public \
 	 	-I$(top_srcdir)/src/common/public \
 		-I$(top_srcdir)/src/OVAL/probes/public \
-		-I$(top_srcdir)/src/OVAL/probes/SEAP/public
+		-I$(top_srcdir)/src/OVAL/probes/SEAP/public \
+		-I$(top_srcdir)/src
+
 LDADD = $(top_builddir)/src/libopenscap_testing.la
 EXTRA_DIST = test_common.sh   \
              xmldiff.pl       \

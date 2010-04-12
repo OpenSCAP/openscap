@@ -27,6 +27,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include "util.h"
 
 /*
  * Note: the term "terminate" used in the following text means a call to abort()
@@ -59,11 +60,6 @@
 
 #define __LB(l, ...) l
 #define __RB(l, ...) __VA_ARGS__
-
-#include <sys/cdefs.h>
-#define __XCB(a, b) __CONCAT(a, b)
-#define __XCA(a, b) __XCB(a, __XCB(b, __XCB(atcg /* random strign */,a)))
-
 #define __emitmsg_fp stderr
 
 /*
@@ -93,11 +89,11 @@
 
 #define __assume(expr, exprstr, retval, ...)                            \
         do {                                                            \
-                int __XCA(__cont, __LINE__) = 1;                        \
+                int OSCAP_CONCAT(__cont, __LINE__) = 1;                        \
                 if (!(expr)) {                                          \
                         __emitmsg ("%s:%d (%s): Assumption `%s' not fulfilled!\n", __FILE__, __LINE__, __PRETTY_FUNCTION__, exprstr); \
-                        do {__LB(__VA_ARGS__)} while((__XCA(__cont, __LINE__) = 0)); \
-                        if (__XCA(__cont, __LINE__) == 0) __terminate(retval); \
+                        do {__LB(__VA_ARGS__)} while((OSCAP_CONCAT(__cont, __LINE__) = 0)); \
+                        if (OSCAP_CONCAT(__cont, __LINE__) == 0) __terminate(retval); \
                 } else {                                                \
                         do {__RB(__VA_ARGS__)} while(0);                \
                 }                                                       \

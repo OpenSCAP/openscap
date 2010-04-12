@@ -25,7 +25,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h>
-#include <sys/cdefs.h>
 #include <assert.h>
 #include <errno.h>
 #if defined(OSCAP_THREAD_SAFE)
@@ -47,15 +46,7 @@
 #include "probes/public/probe-api.h"
 #include "../common/util.h"
 
-#ifndef __XCONCAT
-# include <sys/cdefs.h>
-# define __XCONCAT(a, b) __CONCAT(a,b)
-#endif
-
 encache_t *OSCAP_GSYM(encache) = NULL;
-
-#define protect_errno for (int __XCONCAT(__e,__LINE__) = errno, __XCONCAT(__s,__LINE__) = 1; \
-                           __XCONCAT(__s,__LINE__)-- ; errno = __XCONCAT(__e,__LINE__))
 
 #define __ERRBUF_SIZE 128
 

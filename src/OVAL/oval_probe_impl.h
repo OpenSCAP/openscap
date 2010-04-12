@@ -31,7 +31,6 @@
 
 #include <seap-types.h>
 #include <config.h>
-#include <sys/cdefs.h>
 #include <probes/encache.h>
 
 #include "oval_definitions_impl.h"
@@ -89,7 +88,7 @@ struct oval_pctx {
 
 OSCAP_HIDDEN_END;
 
-#define OSCAP_GSYM(s) __CONCAT(___G_, s)
+#define OSCAP_GSYM(s) OSCAP_CONCAT(___G_, s)
 extern encache_t *OSCAP_GSYM(encache);
 
 #endif				/* OVAL_PROBE_IMPL_H */

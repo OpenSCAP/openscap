@@ -27,11 +27,6 @@
 #define _STR(x) #x
 #define  STR(x) _STR(x)
 
-#ifndef __XCONCAT
-# include <sys/cdefs.h>
-# define __XCONCAT(a, b) __CONCAT(a,b)
-#endif
-
 #include <stddef.h>
 #include <stdint.h>
 #include "../../../../common/util.h"
@@ -49,9 +44,6 @@ long     xrandom (void);
 #ifndef EDOOFUS
 # define EDOOFUS 88
 #endif
-
-#define protect_errno for (int __XCONCAT(__e,__LINE__) = errno, __XCONCAT(__s,__LINE__) = 1; \
-                           __XCONCAT(__s,__LINE__)-- ; errno = __XCONCAT(__e,__LINE__))
 
 OSCAP_HIDDEN_END;
 

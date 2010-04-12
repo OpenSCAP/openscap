@@ -26,9 +26,9 @@
 
 #include <stddef.h>
 #include <inttypes.h>
-#include <sys/cdefs.h>
-#undef  __XC
-#define __XC(a, b) __CONCAT(a, b)
+#include <common/util.h>
+
+#define __XC(a, b) OSCAP_CONCAT(a, b)
 #define _sym(n) __XC(__XC(_sym, __LINE__), n)
 
 typedef uint32_t spb_flags_t;

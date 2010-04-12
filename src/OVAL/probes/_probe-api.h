@@ -27,6 +27,7 @@
 #include "public/probe-api.h"
 #include "probe-cache.h"
 #include "encache.h"
+#include "common/util.h"
 
 /**
  * @struct id_desc_t
@@ -38,9 +39,6 @@ struct id_desc_t {
 #endif
 	int item_id_ctr;	///< id counter
 };
-
-#include <sys/cdefs.h>
-#define OSCAP_GSYM(s) __CONCAT(___G_, s)
 
 extern SEAP_CTX_t *OSCAP_GSYM(ctx);
 extern int         OSCAP_GSYM(sd);

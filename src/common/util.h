@@ -362,6 +362,16 @@ char *oscap_vsprintf(const char *fmt, va_list ap);
 /// Print to a newly allocated string using varialbe arguments.
 char *oscap_sprintf(const char *fmt, ...);
 
+#ifndef OSCAP_CONCAT
+# define OSCAP_CONCAT1(a,b) a ## b
+# define OSCAP_CONCAT(a,b) OSCAP_CONCAT1(a,b)
+#endif
+
+#define OSCAP_GSYM(s) OSCAP_CONCAT(___G_, s)
+
+#define protect_errno                                                   \
+        for (int OSCAP_CONCAT(__e,__LINE__)=errno, OSCAP_CONCAT(__s,__LINE__)=1; OSCAP_CONCAT(__s,__LINE__)--; errno=OSCAP_CONCAT(__e,__LINE__))
+
 OSCAP_HIDDEN_END;
 
 #endif				/* OSCAP_UTIL_H_ */
