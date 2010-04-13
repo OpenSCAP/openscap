@@ -323,7 +323,8 @@ const struct oscap_reporter_type OSCAP_REPORTER_MULTI = {
 // =============== filter reporter ===================
 
 struct oscap_reporter_filter_data {
-    struct oscap_reporter *child;
+    struct oscap_reporter *pos_child;
+    struct oscap_reporter *neg_child;
     oscap_reporter_family_t family;
     oscap_reporter_code_t min_code;
     oscap_reporter_code_t max_code;
@@ -334,16 +335,19 @@ struct oscap_reporter_filter_data {
 static void oscap_reporter_filter_report(const struct oscap_reporter_message *msg, void* user)
 {
     assert(user != NULL);
-    assert(XRFDATA(user)->child != NULL);
 
+	struct oscap_reporter *reporter = NULL;
     if (XRFDATA(user)->family == msg->family && XRFDATA(user)->min_code <= msg->code && XRFDATA(user)->max_code >= msg->code)
-        oscap_reporter_dispatch(XRFDATA(user)->child, msg);
+        reporter = XRFDATA(user)->pos_child;
+	else reporter = XRFDATA(user)->neg_child;
+	oscap_reporter_dispatch(reporter, msg);
 }
 
 static void oscap_reporter_filter_destroy(void* user)
 {
     assert(user != NULL);
-    oscap_reporter_free(XRFDATA(user)->child);
+    oscap_reporter_free(XRFDATA(user)->pos_child);
+    oscap_reporter_free(XRFDATA(user)->neg_child);
     oscap_free(user);
 }
 
@@ -353,16 +357,15 @@ static const struct oscap_reporter_type OSCAP_REPORTER_FILTER = {
 	.destroy = oscap_reporter_filter_destroy
 };
 
-struct oscap_reporter *oscap_reporter_new_filter(struct oscap_reporter *child,
+struct oscap_reporter *oscap_reporter_new_filter(struct oscap_reporter *pos_child, struct oscap_reporter *neg_child,
             oscap_reporter_family_t family, oscap_reporter_code_t min_code, oscap_reporter_code_t max_code)
 {
-    if (child == NULL) return NULL;
-
     OSCAP_SALLOC(oscap_reporter_filter_data, user);
-    user->child = child;
-    user->family = family;
-    user->min_code = min_code;
-    user->max_code = max_code;
+    user->pos_child = pos_child;
+    user->neg_child = neg_child;
+    user->family    = family;
+    user->min_code  = min_code;
+    user->max_code  = max_code;
 
     return oscap_reporter_new(&OSCAP_REPORTER_FILTER, user);
 }
