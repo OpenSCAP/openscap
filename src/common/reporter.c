@@ -251,7 +251,7 @@ void oscap_reporter_report_xml(struct oscap_reporter *reporter, xmlErrorPtr erro
     if (reporter == NULL) return;
     if (error == NULL) error = xmlGetLastError();
     if (error == NULL) return;
-    struct oscap_reporter_message *msg = oscap_reporter_message_new_fill(OSCAP_EFAMILY_XML, error->code, error->message);
+    struct oscap_reporter_message *msg = oscap_reporter_message_new_fill(OSCAP_REPORTER_FAMILY_XML, error->code, error->message);
     oscap_reporter_message_set_user1str(msg, error->file);
     oscap_reporter_message_set_user2num(msg, error->line);
     oscap_reporter_report(reporter, msg);

@@ -38,12 +38,19 @@
  * @{
  */
 
-/// Reporter message family type
-typedef unsigned int oscap_reporter_family_t;
+
+/// Reporter message family
+typedef enum oscap_reporter_family {
+	OSCAP_REPORTER_FAMILY_XML = 1,
+	OSCAP_REPORTER_FAMILY_USER_START = 1024
+} oscap_reporter_family_t;
+
 /// Reporter message code type
 typedef unsigned int oscap_reporter_code_t;
+
 /// Maximum code
 extern const oscap_reporter_code_t OSCAP_REPORTER_CODE_MAX;
+
 /// Macro to match whole code range
 #define OSCAP_REPORTER_ALL 0, OSCAP_REPORTER_CODE_MAX
 
@@ -193,13 +200,14 @@ void oscap_reporter_multi_add_reporter(struct oscap_reporter *multi, struct osca
  * Messages will be forwarded to the child reporter if they match given family and code range.
  * The child reporter will be freed with filter.
  * If you want to match all error codes, you can use OSCAP_REPORTER_ALL instead of two last params.
- * @param child Reporter to worward messages that pass filter criteria to.
+ * @param pos_child Reporter to forward messages that pass filter criteria.
+ * @param neg_child Reporter to forward messages that do NOT pass filter criteria.
  * @param family Error family to let pass through the filter.
  * @param min_code Minimum error code number to match (inclusive).
  * @param max_code Maximum error code number to match (inclusive).
  * @relates oscap_reporter
  */
-struct oscap_reporter *oscap_reporter_new_filter(struct oscap_reporter *child,
+struct oscap_reporter *oscap_reporter_new_filter(struct oscap_reporter *pos_child, struct oscap_reporter *neg_child,
             oscap_reporter_family_t family, oscap_reporter_code_t min_code, oscap_reporter_code_t max_code);
 
 /** @} */
