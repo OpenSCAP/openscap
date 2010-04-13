@@ -96,7 +96,7 @@ bool oscap_validate_xml(const char *xmlfile, const char *schemafile, struct osca
 
 	parser_ctxt = xmlSchemaNewParserCtxt(schemafile);
 	if (parser_ctxt == NULL) {
-		oscap_seterr(OSCAP_EFAMILY_XML, 0, "Could not create parser context for validation");
+		oscap_seterr(OSCAP_EFAMILY_XML, xmlGetLastError() ? xmlGetLastError()->code : 0, "Could not create parser context for validation");
 		goto cleanup;
 	}
 
@@ -104,13 +104,13 @@ bool oscap_validate_xml(const char *xmlfile, const char *schemafile, struct osca
 
 	schema = xmlSchemaParse(parser_ctxt);
 	if (schema == NULL) {
-		oscap_seterr(OSCAP_EFAMILY_XML, 0, "Could not parse XML schema");
+		oscap_seterr(OSCAP_EFAMILY_XML, xmlGetLastError() ? xmlGetLastError()->code : 0, "Could not parse XML schema");
 		goto cleanup;
 	}
 
 	ctxt = xmlSchemaNewValidCtxt(schema);
 	if (ctxt == NULL) {
-		oscap_seterr(OSCAP_EFAMILY_XML, 0, "Could not create validation context");
+		oscap_seterr(OSCAP_EFAMILY_XML, xmlGetLastError() ? xmlGetLastError()->code : 0, "Could not create validation context");
 		goto cleanup;
 	}
 
@@ -119,8 +119,8 @@ bool oscap_validate_xml(const char *xmlfile, const char *schemafile, struct osca
 	ret = xmlSchemaValidateFile(ctxt, xmlfile, 0);
 	switch (ret) {
 		case  0: result = true; break;
-		case -1: oscap_seterr(OSCAP_EFAMILY_XML, 0, "Validation failure"); break;
-		default: oscap_seterr(OSCAP_EFAMILY_XML, ret, "The document is not valid"); break;
+		case -1: oscap_seterr(OSCAP_EFAMILY_XML, xmlGetLastError() ? xmlGetLastError()->code : 0, "Validation failure"); break;
+		default: result = false; break;
 	}
 
 cleanup:
