@@ -252,7 +252,9 @@ static SEXP_t *__SEAP_cmd_sync_handler (SEXP_t *res, void *arg)
         _D("res=%p\n", res);
 
         h->args = res;
+        (void) pthread_mutex_lock (&h->mtx);
         (void) pthread_cond_signal (&h->cond);
+        (void) pthread_mutex_unlock (&h->mtx);
         
         return (NULL);
 }
