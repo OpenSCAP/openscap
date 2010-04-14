@@ -81,12 +81,8 @@ typedef uint16_t oscap_errcode_t;
  * @see OSCAP_EFAMILY_OVAL
  */
 #define OVAL_EOVALINT        1	  /**< OVAL internal error */
-#define OVAL_EVARTYPE        2	  /**< Invalid variable type */
-#define OVAL_EDATATYPE       3	  /**< Invalid data type */
-#define OVAL_EOPERATION      4	  /**< Invalid operation type */
 
 #define OVAL_EPROBECONTEXT   255  /**< Invalid probe context */
-
 #define OVAL_EPROBEINIT      256
 #define OVAL_EPROBECONN      257
 #define OVAL_EPROBENOTSUPP   258

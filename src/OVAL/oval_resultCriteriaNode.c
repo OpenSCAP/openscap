@@ -382,7 +382,10 @@ static oval_result_t _oval_result_criteria_node_result(struct oval_result_criter
 	default:
 		break;
 	}
-	result = (result == OVAL_RESULT_INVALID) ? OVAL_RESULT_UNKNOWN : _oval_result_negate(node->negate, result);
+
+	if ( result != OVAL_RESULT_INVALID ) 
+		result =  _oval_result_negate(node->negate, result);
+
 	return result;
 }
 

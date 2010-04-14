@@ -333,23 +333,27 @@ void oval_result_system_iterator_free(struct oval_result_system_iterator *);
  * @{
  */
 /**
+ * Function evaluates all OVAL definitions of specified result_system. It assumes that all necessary system 
+ * characteristics for evaluation were altready gathered.
  * @memberof oval_result_system
+ * @param sys is result_system from result_model
+ * @return 0 on sucess. -1 if there was a problem in evaluation. Use \ref ERRORS mechanism to examine the error.
  */
-bool oval_result_system_is_valid(struct oval_result_system *result_system);
+int oval_result_system_eval(struct oval_result_system *sys);
 /**
+ * Function evaluates specified OVAL definition in result_system. It assumes that all necessary system 
+ * characteristics for evaluation were altready gathered.
  * @memberof oval_result_system
- */
-void oval_result_system_eval(struct oval_result_system *);
-/**
- * Function evaluates specified OVAL definition. It assumes that all necessary system characteristics for 
- * evaluation were altready gathered.
- * @memberof oval_result_system
- * @param sys is result_system that is part of result_model
- * @param id of definition
+ * @param sys is result_system from result_model
+ * @param id of the definition from definition_model from result_model
  * @return OVAL_RESULT_INVALID if there was a problem in evaluation. Use \ref ERRORS mechanism to examine the error. Otherwise one of valid
  * values for the evaluation of an OVAL Definitions is returned.
  */
 oval_result_t oval_result_system_eval_definition(struct oval_result_system *sys, char *id);
+/**
+ * @memberof oval_result_system
+ */
+bool oval_result_system_is_valid(struct oval_result_system *result_system);
 /** @} */
 
 

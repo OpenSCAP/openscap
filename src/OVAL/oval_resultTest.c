@@ -327,28 +327,28 @@ static int istrcmp(char *st1, char *st2)
 	return (ret_val);
 }
 
-static int strregcomp(char *pattern, char *test_str)
+static oval_result_t strregcomp(char *pattern, char *test_str)
 {
 	regex_t re;
 	int status;
+	oval_result_t result;
 
-	if ((status = regcomp(&re, pattern, REG_EXTENDED))) {
-		oscap_dprintf("%s:%d unable to compile regex pattern:%d", __FILE__, __LINE__, status);
-		oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EREGEXP, "Error in oval regexp compilation");
-		return (OVAL_RESULT_ERROR);
+	if ( (status = regcomp(&re, pattern, REG_EXTENDED)) != 0 ) {
+		oscap_dprintf("%s:%d Unable to compile regex pattern:%d", __FILE__, __LINE__, status);
+		result = OVAL_RESULT_ERROR;
 	}
-	if (!(status = regexec(&re, test_str, 0, NULL, 0))) {	// got a match
-		return (0);
+
+	if ( (status = regexec(&re, test_str, 0, NULL, 0)) == 0) {	// got a match
+		result = OVAL_RESULT_TRUE;
 	} else if (status == REG_NOMATCH) {	// no match, no errror
-		return (1);
+		result = OVAL_RESULT_FALSE;
 	} else {
-		oscap_dprintf("%s:%d unable to match regex pattern:%d", __FILE__, __LINE__, status);
-		oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EREGEXP, "Error in oval regexp matching");
-		return (OVAL_RESULT_ERROR);
+		oscap_dprintf("%s:%d Unable to match regex pattern:%d", __FILE__, __LINE__, status);
+		result = OVAL_RESULT_ERROR;
 	}
 
 	regfree(&re);
-	return (0);
+	return result;
 }
 
 // finally, we have gotten to the point of comparing system data with a state
@@ -365,12 +365,11 @@ static oval_result_t evaluate(char *sys_data, char *state_data, oval_datatype_t 
 		} else if (operation == OVAL_OPERATION_CASE_INSENSITIVE_NOT_EQUAL) {
 			return ((istrcmp(state_data, sys_data)) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
 		} else if (operation == OVAL_OPERATION_PATTERN_MATCH) {
-			return ((strregcomp(state_data, sys_data)) ? OVAL_RESULT_FALSE : OVAL_RESULT_TRUE);
+			return strregcomp(state_data, sys_data);
 		} else {
-			oscap_dprintf("%s:%d invalid string comparison:%d", __FILE__, __LINE__, operation);
-			oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOPERATION,
-				     "Invalid operation in OVAL result evaluation");
-			return (OVAL_RESULT_INVALID);
+			oscap_dprintf("%s:%d Invalid type of operation(%d) in string evaluation.", __FILE__, __LINE__, operation);
+			oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "Invalid type of operation in string evaluation");
+			return OVAL_RESULT_INVALID;
 		}
 	} else if (state_data_type == OVAL_DATATYPE_INTEGER) {
 		int state_val, syschar_val;
@@ -389,10 +388,9 @@ static oval_result_t evaluate(char *sys_data, char *state_data, oval_datatype_t 
 		} else if (operation == OVAL_OPERATION_LESS_THAN_OR_EQUAL) {
 			return ((syschar_val <= state_val) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
 		} else {
-			oscap_dprintf("%s:%d invalid integer comparison:%d", __FILE__, __LINE__, operation);
-			oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOPERATION,
-				     "Invalid operation in OVAL result evaluation");
-			return (OVAL_RESULT_INVALID);
+			oscap_dprintf("%s:%d Invalid type of operation(%d) in integer evaluation.", __FILE__, __LINE__, operation);
+			oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "Invalid type of operation in integer evaluation");
+			return OVAL_RESULT_INVALID;
 		}
 	} else if (state_data_type == OVAL_DATATYPE_BOOLEAN) {
 		int state_int;
@@ -404,10 +402,9 @@ static oval_result_t evaluate(char *sys_data, char *state_data, oval_datatype_t 
 		} else if (operation == OVAL_OPERATION_NOT_EQUAL) {
 			return ((state_int != sys_int) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
 		} else {
-			oscap_dprintf("%s:%d invalid boolean comparison:%d", __FILE__, __LINE__, operation);
-			oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOPERATION,
-				     "Invalid operation in OVAL result evaluation");
-			return (OVAL_RESULT_INVALID);
+			oscap_dprintf("%s:%d Invalid type of operation(%d) in boolean evaluation.", __FILE__, __LINE__, operation);
+			oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "Invalid type of operation in boolean evaluation");
+			return OVAL_RESULT_INVALID;
 		}
 	} else if (state_data_type == OVAL_DATATYPE_BINARY) {	// I'm going to use case insensitive compare here - don't know if it's necessary
 		if (operation == OVAL_OPERATION_EQUALS) {
@@ -415,10 +412,9 @@ static oval_result_t evaluate(char *sys_data, char *state_data, oval_datatype_t 
 		} else if (operation == OVAL_OPERATION_NOT_EQUAL) {
 			return ((istrcmp(state_data, sys_data) != 0) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
 		} else {
-			oscap_dprintf("%s:%d invalid binary comparison:%d", __FILE__, __LINE__, operation);
-			oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOPERATION,
-				     "Invalid operation in OVAL result evaluation");
-			return (OVAL_RESULT_INVALID);
+			oscap_dprintf("%s:%d Invalid type of operation(%d) in binary evaluation.", __FILE__, __LINE__, operation);
+			oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "Invalid type of operation in binary evaluation");
+			return OVAL_RESULT_INVALID;
 		}
 	} else if (state_data_type == OVAL_DATATYPE_EVR_STRING) {
 		int result;
@@ -436,10 +432,9 @@ static oval_result_t evaluate(char *sys_data, char *state_data, oval_datatype_t 
 		} else if (operation == OVAL_OPERATION_LESS_THAN_OR_EQUAL) {
 			return ((result != 1) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
 		} else {
-			oscap_dprintf("%s:%d invalid EVR comparison:%d", __FILE__, __LINE__, operation);
-			oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOPERATION,
-				     "Invalid operation in OVAL result evaluation");
-			return (OVAL_RESULT_INVALID);
+			oscap_dprintf("%s:%d Invalid type of operation(%d) in rpm version comparison.", __FILE__, __LINE__, operation);
+			oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "Invalid type of operation in rpm version comparison");
+			return OVAL_RESULT_INVALID;
 		}
 	} else if (state_data_type == OVAL_DATATYPE_VERSION) {
 		int state_idx = 0;
@@ -471,10 +466,9 @@ static oval_result_t evaluate(char *sys_data, char *state_data, oval_datatype_t 
 				if (tmp_sys_int > tmp_state_int)
 					return (OVAL_RESULT_FALSE);
 			} else {
-				oscap_dprintf("%s:%d invalid version comparison:%d", __FILE__, __LINE__, operation);
-               			oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOPERATION,
-				             "Invalid operation in OVAL result evaluation");
-				return (OVAL_RESULT_INVALID);
+				oscap_dprintf("%s:%d Invalid type of operation(%d) in version comparison.", __FILE__, __LINE__, operation);
+				oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "Invalid type of operation in version comparison");
+				return OVAL_RESULT_INVALID;
 			}
 
 			if (state_data[state_idx])
@@ -508,10 +502,10 @@ static oval_result_t evaluate(char *sys_data, char *state_data, oval_datatype_t 
 			return (OVAL_RESULT_TRUE);
 		}		// we have already filtered out the invalid ones
 	} else {
-		oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EDATATYPE, "Ivalid OVAL data type");
-		return (-1);
+		oscap_dprintf("%s:%d Ivalid OVAL data type.", __FILE__, __LINE__);
+		oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "Ivalid OVAL data type");
+		return OVAL_RESULT_INVALID;
 	}
-	return (OVAL_RESULT_UNKNOWN);
 }
 
 struct oresults {
@@ -540,6 +534,8 @@ static int ores_add_res(struct oresults *ores, oval_result_t res)
 			ores->notappl_cnt++;
 			break;
 		default:
+	                oscap_dprintf("%s:%d Invalid oval result type", __FILE__, __LINE__);
+        	        oscap_seterr(OSCAP_EFAMILY_OSCAP, OVAL_EOVALINT, "Invalid oval result type");
 			return 1;
 		}
 
@@ -630,6 +626,8 @@ static oval_result_t ores_get_result_bychk(struct oresults *ores, oval_check_t c
 		}
 		break;
 	default:
+                oscap_dprintf("%s:%d Invalid check value", __FILE__, __LINE__);
+                oscap_seterr(OSCAP_EFAMILY_OSCAP, OVAL_EOVALINT, "Invalid check value");
 		result = OVAL_RESULT_INVALID;
 	}
 
@@ -731,6 +729,9 @@ static oval_result_t ores_get_result_byopr(struct oresults *ores, oval_operator_
 		}
 		break;
 	default:
+                oscap_dprintf("%s:%d Invalid operator value", __FILE__, __LINE__);
+                oscap_seterr(OSCAP_EFAMILY_OSCAP, OVAL_EOVALINT, "Invalid operator value");
+		result = OVAL_RESULT_INVALID;
 		break;
 	}
 
@@ -921,7 +922,7 @@ static oval_result_t eval_check_state(struct oval_state *state, oval_check_t che
 
 		if (ores_add_res(&ores, item_res)) {
 			oval_result_item_iterator_free(ritems_itr);
-			return OVAL_RESULT_ERROR;
+			return OVAL_RESULT_INVALID;
 		}
 	}
 	oval_result_item_iterator_free(ritems_itr);
@@ -986,6 +987,9 @@ static oval_result_t eval_check_existence(oval_existence_t check_existence, int 
 		}
 		break;
 	default:
+                oscap_dprintf("%s:%d Invalid check_existence value", __FILE__, __LINE__);
+                oscap_seterr(OSCAP_EFAMILY_OSCAP, OVAL_EOVALINT, "Invalid check_existence value");
+                result = OVAL_RESULT_INVALID;
 		break;
 	}
 
@@ -1013,8 +1017,8 @@ _oval_result_test_evaluate_items(struct oval_syschar *syschar_object,
 
 		item = oval_sysdata_iterator_next(collected_items_itr);
 		if (item == NULL) {
-			oscap_dprintf("%s:%d iterator returned null", __FILE__, __LINE__);
-			oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "OVAL: Iterator returned null");
+			oscap_dprintf("%s:%d Iterator returned null", __FILE__, __LINE__);
+			oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "Iterator returned null");
 			oval_sysdata_iterator_free(collected_items_itr);
 			return OVAL_RESULT_INVALID;
 		}
@@ -1101,6 +1105,8 @@ _oval_result_test_evaluate_items(struct oval_syschar *syschar_object,
 		}
 		break;
 	default:
+		oscap_dprintf("%s:%d Unknown syschar flag", __FILE__, __LINE__);
+		oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "Unknown syschar flag");
 		return OVAL_RESULT_INVALID;
 	}
 
@@ -1110,70 +1116,59 @@ _oval_result_test_evaluate_items(struct oval_syschar *syschar_object,
 // this function will gather all the necessary ingredients and call 'evaluate_items' when it finds them
 static oval_result_t _oval_result_test_result(struct oval_result_test *rtest, void **args)
 {
-	// NOTE:  I'm defining all my variables at the beginning of a block because some compilers (cl) have trouble
-	// with variables defined anywhere else.  If that's not a concern, refactor at will.
 	__attribute__nonnull__(rtest);
 
-	struct oval_object *tmp_obj;
-	struct oval_state *tmp_state;
-	char *test_id_string;
-	struct oval_test *test2check;
-	struct oval_result_system *sys;
-	struct oval_syschar_model *syschar_model;
-
-	oval_check_t test_check;
-	oval_existence_t test_check_existence;
-	test2check = oval_result_test_get_test(rtest);
-	sys = oval_result_test_get_system(rtest);
-	syschar_model = oval_result_system_get_syschar_model(sys);
 	// first, let's see if we already did the test
 	if (rtest->result != OVAL_RESULT_INVALID) {
-		oscap_dprintf("%s:%d found result from previous evaluation, returning without further processing",
-			      __FILE__, __LINE__);
+		oscap_dprintf("%s:%d found result from previous evaluation, returning without further processing", __FILE__, __LINE__);
 		return (rtest->result);
 	}
-	oval_result_t result = OVAL_RESULT_INVALID;
+
 	// let's go looking for the stuff to test
+	struct oval_test *test2check = oval_result_test_get_test(rtest);
 	if (test2check == NULL) {
-		oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EINVARG, "OVAL: Invalid oval test argument");
-		return ((oval_result_t) - 1);
+		oscap_dprintf("%s:%d Invalid oval test argument", __FILE__, __LINE__);
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, OVAL_EOVALINT, "Invalid oval test argument");
+		return OVAL_RESULT_INVALID;
 	}
-	test_id_string = oval_test_get_id(test2check);
+
+	char *test_id_string = oval_test_get_id(test2check);
 	if (test_id_string == NULL) {
-		oscap_dprintf("%s:%d oval test id is null", __FILE__, __LINE__);
-		oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EINVARG, "OVAL: Test id is null");
-		return ((oval_result_t) - 1);
+		oscap_dprintf("%s:%d Test id is null", __FILE__, __LINE__);
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, OVAL_EOVALINT, "Test ID is null");
+		return OVAL_RESULT_INVALID;
 	}
-//if (!strcmp("oval:org.mitre.oval:tst:99",test_id_string))debug_flag=1;
-//else debug_flag=0;
-	test_check = oval_test_get_check(test2check);
-	test_check_existence = oval_test_get_existence(test2check);
-	tmp_obj = oval_test_get_object(test2check);
-	tmp_state = oval_test_get_state(test2check);
+
+	oval_check_t test_check = oval_test_get_check(test2check);
+	oval_existence_t test_check_existence = oval_test_get_existence(test2check);
+	struct oval_object * tmp_obj = oval_test_get_object(test2check);
 	if (tmp_obj == NULL) {
-		oscap_dprintf("%s:%d oval object is null", __FILE__, __LINE__);
-		oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EINVARG, "OVAL: Object is null");
-		return (-1);
-	} else {		// I'm doing the else here to keep some of my local variables more local
-		char *definition_object_id_string;
-		struct oval_syschar *syschar_object;
-		definition_object_id_string = oval_object_get_id(tmp_obj);
-		if (definition_object_id_string == NULL) {
-			oscap_dprintf("%s:%d oval object has null ID", __FILE__, __LINE__);
-			oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EINVARG, "OVAL: Object has null ID");
-			return ((oval_result_t) - 1);
-		}
-		// OK, we have our object ID, now use that to find selected items in the syschar_model
-		syschar_object = oval_syschar_model_get_syschar(syschar_model, definition_object_id_string);
-		if (syschar_object == NULL) {
-			oscap_dprintf("%s:%d system characteristics object is null", __FILE__, __LINE__);
-			oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EINVARG, "OVAL: System characteristics object is null");
-			return (-1);
-		}
-		// FINALLY, we have all the pieces, now figure out the result
-		result =
-		    _oval_result_test_evaluate_items(syschar_object, tmp_state, test_check, test_check_existence, args);
+		oscap_dprintf("%s:%d Object is null", __FILE__, __LINE__);
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, OVAL_EOVALINT, "Object is null");
+		return OVAL_RESULT_INVALID;
+
 	}
+
+	char * definition_object_id_string = oval_object_get_id(tmp_obj);
+	if (definition_object_id_string == NULL) {
+		oscap_dprintf("%s:%d Object has null ID", __FILE__, __LINE__);
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, OVAL_EOVALINT, "Object has null ID");
+		return OVAL_RESULT_INVALID;
+	}
+
+	struct oval_result_system *sys = oval_result_test_get_system(rtest);
+	struct oval_syschar_model *syschar_model = oval_result_system_get_syschar_model(sys);
+	// OK, we have our object ID, now use that to find selected items in the syschar_model
+	struct oval_syschar * syschar_object = oval_syschar_model_get_syschar(syschar_model, definition_object_id_string);
+	if (syschar_object == NULL) {
+		oscap_dprintf("%s:%d system characteristics object is null", __FILE__, __LINE__);
+		return OVAL_RESULT_UNKNOWN;
+	}
+
+	struct oval_state *tmp_state = oval_test_get_state(test2check);
+	// FINALLY, we have all the pieces, now figure out the result
+	oval_result_t result = _oval_result_test_evaluate_items(syschar_object, tmp_state, test_check, test_check_existence, args);
+
 	return result;
 }
 
@@ -1185,8 +1180,6 @@ oval_result_t oval_result_test_eval(struct oval_result_test *rtest)
 		struct oval_string_map *tmp_map = oval_string_map_new();
 		void *args[] = { rtest->system, rtest, tmp_map };
 		rtest->result = _oval_result_test_result(rtest, args);
-		if (rtest->result == (oval_result_t) - 1)
-			rtest->result = OVAL_RESULT_UNKNOWN;
 		oval_string_map_free(tmp_map, NULL);
 	}
 
