@@ -88,7 +88,6 @@ struct oval_pctx {
 
 OSCAP_HIDDEN_END;
 
-#define OSCAP_GSYM(s) OSCAP_CONCAT(___G_, s)
 extern encache_t *OSCAP_GSYM(encache);
 
 #endif				/* OVAL_PROBE_IMPL_H */

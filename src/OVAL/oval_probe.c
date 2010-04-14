@@ -702,7 +702,7 @@ struct oval_sysinfo *oval_probe_sysinf_eval(oval_pctx_t * ctx)
 	struct oval_sysinfo *sysinf;
 	struct oval_sysint *ife;
 	oval_pd_t *pd;
-	SEXP_t *s_obj, *s_sinf, *ent, *r0, *r1, *attrs;
+	SEXP_t *s_obj, *s_sinf, *ent, *r0, *r1;
 	
 	_A(ctx != NULL);
 	_A(ctx->model != NULL);

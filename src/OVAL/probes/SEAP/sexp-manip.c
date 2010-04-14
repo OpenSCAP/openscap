@@ -1440,8 +1440,7 @@ SEXP_t *SEXP_list_add (SEXP_t *list, const SEXP_t *s_exp)
 
 SEXP_t *SEXP_list_join (const SEXP_t *list_a, const SEXP_t *list_b)
 {
-        SEXP_val_t v_dsc_j;
-        SEXP_t    *list_j, *memb;
+        SEXP_t *list_j, *memb;
         
         _LOGCALL_;
 

@@ -446,8 +446,8 @@ uintptr_t SEXP_rawval_list_copy (uintptr_t s_valp)
         
         SEXP_val_dsc (&v_dsc_o, s_valp);
         
-        SEXP_LCASTP(v_dsc_c.mem)->b_addr = (uintptr_t) SEXP_rawval_lblk_copy ((uintptr_t)SEXP_LCASTP(v_dsc_o.mem)->b_addr,
-                                                                              (uintptr_t)SEXP_LCASTP(v_dsc_o.mem)->offset);
+        SEXP_LCASTP(v_dsc_c.mem)->b_addr = (void *) SEXP_rawval_lblk_copy ((uintptr_t)SEXP_LCASTP(v_dsc_o.mem)->b_addr,
+                                                                           (uintptr_t)SEXP_LCASTP(v_dsc_o.mem)->offset);
         SEXP_LCASTP(v_dsc_c.mem)->offset = 0;
         
         return (SEXP_val_ptr (&v_dsc_c));

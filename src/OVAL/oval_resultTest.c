@@ -501,11 +501,12 @@ static oval_result_t evaluate(char *sys_data, char *state_data, oval_datatype_t 
 		} else if (operation == OVAL_OPERATION_LESS_THAN_OR_EQUAL) {
 			return (OVAL_RESULT_TRUE);
 		}		// we have already filtered out the invalid ones
-	} else {
-		oscap_dprintf("%s:%d Ivalid OVAL data type.", __FILE__, __LINE__);
-		oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "Ivalid OVAL data type");
-		return OVAL_RESULT_INVALID;
 	}
+
+        oscap_dprintf("%s:%d Ivalid OVAL data type.", __FILE__, __LINE__);
+        oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "Ivalid OVAL data type");
+        
+        return OVAL_RESULT_INVALID;
 }
 
 struct oresults {

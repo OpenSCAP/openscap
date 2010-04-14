@@ -689,10 +689,10 @@ static int probe_varref_create_ctx(const SEXP_t * probe_in, SEXP_t * varrefs, st
 	ent_cnt = SEXP_number_getu_32(r1 = SEXP_list_nth(varrefs, 3));
 	SEXP_vfree(r0, r1, NULL);
 
-	ctx = malloc(sizeof(struct probe_varref_ctx));
-	ctx->pi2 = SEXP_softref(probe_in);
+	ctx = oscap_talloc (struct probe_varref_ctx);
+	ctx->pi2 = SEXP_softref((SEXP_t *)probe_in);
 	ctx->ent_cnt = ent_cnt;
-	ctx->ent_lst = malloc(ent_cnt * sizeof (ctx->ent_lst[0]));
+	ctx->ent_lst = oscap_alloc(ent_cnt * sizeof (ctx->ent_lst[0]));
 
 	vidx_name = SEXP_string_new(":val_idx", 8);
 	vidx_val = SEXP_number_newu(0);
