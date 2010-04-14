@@ -634,7 +634,7 @@ void cpe_testexpr_export(const struct cpe_testexpr *expr, xmlTextWriterPtr write
 		xmlTextWriterWriteAttribute(writer, ATTR_OPERATOR_STR, VAL_AND_STR);
 		xmlTextWriterWriteAttribute(writer, ATTR_NEGATE_STR, VAL_TRUE_STR);
 	} else {
-		oscap_seterr(OSCAP_EFAMILY_CPE, CPE_EOPERATION, "Invalid operation in CPE Language expression");
+		/* can this happen? */
 		return;
 	}
 

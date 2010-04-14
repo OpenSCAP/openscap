@@ -22,9 +22,13 @@
  *
  * @addtogroup COMMON
  * @{
- * @defgroup ERRORS Error reporting
+ * @defgroup ERRORS Errors
  * @{
- * OpenSCAP error reporting mechanism.
+ * Error checking/setting mechanism. Purse of this mechanism is to provide ability to propagate 
+ * information about problems that occured in library functions. Mechanism is similar to linux errno variable.
+ * Information about the error is stored in libary buffer. Only one error can be stored at time. Structure of 
+ * error information consist of two values: error family and error code.
+ *
  */
 #pragma once
 #ifndef OSCAP_ERROR_H
@@ -33,56 +37,39 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+/// Error family type
 typedef uint16_t oscap_errfamily_t;
+/// Error code type
 typedef uint16_t oscap_errcode_t;
 
 /**
- * @name Error levels
- * @{
- * Error level (as defined in XML error handler library).
- * Maybe for future use.
- */
-#define OSCAP_ELEVEL_NONE      0	/**< None */
-#define OSCAP_ELEVEL_WARNING   1	/**< A simple warning */
-#define OSCAP_ELEVEL_ERROR     2	/**< A recoverable error */
-#define OSCAP_ELEVEL_FATAL     3	/**< A fatal error */
-/** @} */
-
-/**
- * @name Error families
+ * @name OpenSCAP error families
  * @{
  */
 #define OSCAP_EFAMILY_NONE     0	/**< None */
 #define OSCAP_EFAMILY_GLIBC    1	/**< Errno errors */
-#define OSCAP_EFAMILY_XML      2	/**< Libxml - xmlerror errors */
+#define OSCAP_EFAMILY_XML      2	/**< Libxml  errors */
 #define OSCAP_EFAMILY_OSCAP    3	/**< OSCAP general errors */
 #define OSCAP_EFAMILY_OVAL     4	/**< OVAL errors (OVAL & probes) */
-#define OSCAP_EFAMILY_CPE      5	/**< CPE errors */
 /** @} */
 
 /**
- * @name OSCAP family error codes
+ * @name OSCAP family codes
  * @{
- * @see OSCAP_EFAMILY_OSCAP
  */
 #define OSCAP_ENONE         0	/**< None */
-#define OSCAP_EALLOC        1	/**< Memory allocation error */
-#define OSCAP_EXMLELEM      2	/**< Unknown XML element */
-#define OSCAP_EREGEXP       3	/**< Error in regexp compilation */
-#define OSCAP_EINVARG       4	/**< Function called with invalid argument */
+#define OSCAP_EXMLELEM      1	/**< Unknown XML element */
+#define OSCAP_EINVARG       2	/**< Function called with invalid argument */
 #define OSCAP_ENOTIMPL      254 /**< Not implemented*/
 #define OSCAP_EUSER1        255 /**< User defined */
 /** @} */
 
-
 /**
- * @name OVAL family error codes
+ * @name OVAL family codes
  * @{
- * @see OSCAP_EFAMILY_OVAL
  */
-#define OVAL_EOVALINT        1	  /**< OVAL internal error */
-
-#define OVAL_EPROBECONTEXT   255  /**< Invalid probe context */
+#define OVAL_EOVALINT        1
+#define OVAL_EPROBECONTEXT   255
 #define OVAL_EPROBEINIT      256
 #define OVAL_EPROBECONN      257
 #define OVAL_EPROBENOTSUPP   258
@@ -96,22 +83,14 @@ typedef uint16_t oscap_errcode_t;
 /** @} */
 
 /**
- * @name CPE family error codes
- * @{
- * @see OSCAP_EFAMILY_CPE
+ * __oscap_seterr() wrapper function
  */
-#define CPE_EOPERATION        4   /**< Invalid CPE Language operation */
-/** @} */
-
-
 #define oscap_seterr(family, code, desc) __oscap_seterr (__FILE__, __LINE__, __PRETTY_FUNCTION__, family, code, desc)
 
 
 /**
- * @name Error manipulation functions
- * @{
+ * Set an error
  */
-
 void __oscap_seterr(const char *file, uint32_t line, const char *func,
 		    oscap_errfamily_t family, oscap_errcode_t code, const char *desc);
 
@@ -140,6 +119,5 @@ oscap_errcode_t oscap_err_code(void);
  */
 const char *oscap_err_desc(void);
 
-/** @} */
 
 #endif				/* OSCAP_ERROR_H */

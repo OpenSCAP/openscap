@@ -199,7 +199,7 @@ char *oscap_strdup(const char *str)
 	m = strdup(str);
 
 	if ((m == NULL) && (strlen(m) > 0))
-		oscap_seterr_errno(OSCAP_EALLOC, "Memory allocation failed");
+		oscap_seterr(OSCAP_EFAMILY_GLIBC, errno, "Memory allocation failed.");
 
 	return m;
 }

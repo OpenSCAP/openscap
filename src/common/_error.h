@@ -33,10 +33,6 @@
 	{ if (!(cond)) { if ((errno)) oscap_seterr(OSCAP_EFAMILY_GLIBC, errno, desc); \
                          else oscap_seterr(OSCAP_EFAMILY_OSCAP, (etype), desc); } }
 
-#define oscap_seterr_errno(etype, desc) \
-	{ if ((errno)) oscap_seterr(OSCAP_EFAMILY_GLIBC, errno, desc); \
-            else oscap_seterr(OSCAP_EFAMILY_OSCAP, (etype), desc); }
-
 #define oscap_setxmlerr(error) __oscap_setxmlerr (__FILE__, __LINE__, __PRETTY_FUNCTION__, error)
 
 void __oscap_setxmlerr(const char *file, uint32_t line, const char *func, xmlErrorPtr error);
