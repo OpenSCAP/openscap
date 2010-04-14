@@ -1761,6 +1761,15 @@ uint32_t SEXP_refs (const SEXP_t *ref)
         return (v_dsc.hdr->refs);
 }
 
+bool SEXP_eq (const SEXP_t *a, const SEXP_t *b)
+{
+        if (a == b)
+                return (true);
+        if (a == NULL || b == NULL)
+                return (false);
+        return (a->s_valp == b->s_valp);
+}
+
 /*
  * SEXP_free for list members. The difference between
  * this function and SEXP_free is that SEXP_free frees
