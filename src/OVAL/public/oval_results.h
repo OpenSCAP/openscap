@@ -46,21 +46,28 @@
 #include "oval_system_characteristics.h"
 #include <stdbool.h>
 
-
+/**
+ * @typedef oval_result_t
+ * Result values for the evaluation of an OVAL Definition or an OVAL Test
+ */
 typedef enum {
-	OVAL_RESULT_INVALID = 0,
-	OVAL_RESULT_TRUE = 1,
-	OVAL_RESULT_FALSE = 2,
-	OVAL_RESULT_UNKNOWN = 3,
-	OVAL_RESULT_ERROR = 4,
-	OVAL_RESULT_NOT_EVALUATED = 5,
-	OVAL_RESULT_NOT_APPLICABLE = 6
+	OVAL_RESULT_INVALID = 0, /**< Unspecified state. */
+	OVAL_RESULT_TRUE = 1,  /**< Characteristics being evaluated match the information represented in the system characteristic. */
+	OVAL_RESULT_FALSE = 2, /**< Characteristics being evaluated do not match the information represented in the system characteristic. */
+	OVAL_RESULT_UNKNOWN = 3, /**< Characteristics being evaluated can not be found in the system characteristic. */
+	OVAL_RESULT_ERROR = 4, /**< Characteristics being evaluated exist in the system characteristic file but there was an error either collecting information or in performing anaylsis. */
+	OVAL_RESULT_NOT_EVALUATED = 5, /**< Choice was made not to evaluate the given definition or test. */
+	OVAL_RESULT_NOT_APPLICABLE = 6 /**< Definition or test being evaluated is not valid on the given platform. */
 } oval_result_t;
 
+/**
+ * @typedef oval_result_directive_content_t
+ * Values for the directives controlling the expected content of the results file
+ */
 typedef enum {
-	OVAL_DIRECTIVE_CONTENT_UNKNOWN = 0,
-	OVAL_DIRECTIVE_CONTENT_THIN = 1,
-	OVAL_DIRECTIVE_CONTENT_FULL = 2
+	OVAL_DIRECTIVE_CONTENT_UNKNOWN = 0, /**< Undefined value */
+	OVAL_DIRECTIVE_CONTENT_THIN = 1, /**< Only the minimal amount of information will be provided. */
+	OVAL_DIRECTIVE_CONTENT_FULL = 2 /**< Very detailed information will be provided allowing in-depth reports to be generated from the results. */
 } oval_result_directive_content_t;
 
 
@@ -254,10 +261,6 @@ struct oval_result_system *oval_result_system_clone(struct oval_results_model *n
  * @memberof oval_result_system
  */
 void oval_result_system_free(struct oval_result_system *);
-/**
- * @memberof oval_result_system
- */
-void oval_result_system_eval(struct oval_result_system *);
 
 /**
  * @name Setters
@@ -302,8 +305,6 @@ struct oval_syschar_model *oval_result_system_get_syschar_model(struct oval_resu
  */
 struct oval_sysinfo *oval_result_system_get_sysinfo(struct oval_result_system *);
 /**
- * Return <b>true</b> if the result_system instance is locked.
- * The state of a locked instance cannot be changed.
  * @memberof oval_result_system
  */
 bool oval_result_system_is_locked(struct oval_result_system *result_system);
@@ -332,10 +333,23 @@ void oval_result_system_iterator_free(struct oval_result_system_iterator *);
  * @{
  */
 /**
- * Return <b>true</b> if the result_system instance is valid
  * @memberof oval_result_system
  */
 bool oval_result_system_is_valid(struct oval_result_system *result_system);
+/**
+ * @memberof oval_result_system
+ */
+void oval_result_system_eval(struct oval_result_system *);
+/**
+ * Function evaluates specified OVAL definition. It assumes that all necessary system characteristics for 
+ * evaluation were altready gathered.
+ * @memberof oval_result_system
+ * @param sys is result_system that is part of result_model
+ * @param id of definition
+ * @return OVAL_RESULT_INVALID if there was a problem in evaluation. Use \ref ERRORS mechanism to examine the error. Otherwise one of valid
+ * values for the evaluation of an OVAL Definitions is returned.
+ */
+oval_result_t oval_result_system_eval_definition(struct oval_result_system *sys, char *id);
 /** @} */
 
 
@@ -443,7 +457,6 @@ void oval_result_definition_iterator_free(struct oval_result_definition_iterator
  * @{
  */
 /**
- * Return <b>true</b> if the result_definition instance is valid
  * @memberof oval_result_definition
  */
 bool oval_result_definition_is_valid(struct oval_result_definition *result_definition);

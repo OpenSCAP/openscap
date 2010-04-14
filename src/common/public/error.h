@@ -24,7 +24,7 @@
  * @{
  * @defgroup ERRORS Error reporting
  * @{
- * OpenSCAP error reporting & logging mechanism.
+ * OpenSCAP error reporting mechanism.
  */
 #pragma once
 #ifndef OSCAP_ERROR_H

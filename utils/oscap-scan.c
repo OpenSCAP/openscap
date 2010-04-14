@@ -409,15 +409,21 @@ int main(int argc, char **argv)
 	oval_syschar_model_set_sysinfo(sys_model, sysinfo);
 	oval_sysinfo_free(sysinfo);
 
+	/* create result model */
+	struct oval_syschar_model *sys_models[] = {sys_model, NULL};
+        struct oval_results_model* res_model = oval_results_model_new( def_model, sys_models );
+	struct oval_result_system_iterator * rsystem_it = oval_results_model_get_systems(res_model);
+        struct oval_result_system * rsystem = oval_result_system_iterator_next(rsystem_it); /**< Only first system here */
+
         int ret = 0; 
 	if (method == 1) { 
             /* First method - evaluate objects only */
             oval_syschar_model_probe_objects(sys_model);
-
+	    /* Evaluate gathered system characteristics */
+            oval_results_model_eval(res_model);
         } else {
             /* Get the list of definitions */
             struct oval_definition_iterator * oval_def_it = oval_definition_model_get_definitions(def_model);
-
             struct oval_criteria_node * cnode = NULL;
             struct oval_definition * oval_def = NULL;
 
@@ -432,22 +438,35 @@ int main(int argc, char **argv)
             /* Reset iterator */
             oval_def_it = oval_definition_model_get_definitions(def_model);
             /* Iterate through definitions and evaluate all criteria */
+	    /* Evaluate each definition right after that */
             int curr = 0;
+	    char *id = NULL;
+	    oval_result_t result;
             while (oval_definition_iterator_has_more(oval_def_it) ) {
                 curr++;
                 oval_def = oval_definition_iterator_next(oval_def_it);
 
-                if (verbose == 0) fprintf(stdout, "\rEvaluating definition %d of %d", curr, def_count);
-                else if (verbose >= 1 ) fprintf(stdout, "Evaluating definition: %s\n", oval_definition_get_title(oval_def));
-
                 cnode = oval_definition_get_criteria(oval_def);
                 ret = app_evaluate_criteria(cnode, pctx, def_model, sys_model, verbose);
                 if (ret == -1) break;
+		
+		id = oval_definition_get_id(oval_def);
+		result = oval_result_system_eval_definition(rsystem, id);
+	        if( oscap_err() ) {
+         		if (verbose >= 0) 
+				fprintf(stderr, "Error: (%d) %s\n", oscap_err_code(), oscap_err_desc());
+                	return 1;
+	        }
+
+		if (verbose >= 0)
+	               fprintf(stdout, "Definition \"%s\": %s\n", oval_definition_get_title(oval_def),
+        	                                                  oval_result_get_text(result));
             }
-            if (verbose == 0) printf("\nEvaluation: All done.\n");
             oval_definition_iterator_free(oval_def_it);
         }
         oval_pctx_free (pctx);
+        if (verbose >= 0) 
+		printf("Evaluation: All done.\n");
 
         if (ret == -1) {
             if (( oscap_err() ) && (verbose >= 0)) 
@@ -470,19 +489,11 @@ int main(int argc, char **argv)
             oscap_export_target_free(syschar_out);
         }
 
-	/* create result model */
-	struct oval_syschar_model *sys_models[] = {sys_model, NULL};
-        struct oval_results_model* res_model = oval_results_model_new( def_model, sys_models );
-
-	/* Evaluate gathered system characteristics */
-	oval_results_model_eval(res_model);
 
         /* Output all results */
-        struct oval_result_system               * rsystem       = NULL;
-        struct oval_result_system_iterator      * rsystem_it    = NULL;
         struct oval_result_definition           * definition    = NULL;
         struct oval_result_definition_iterator  * definition_it = NULL;
-        struct oval_definition                  * odefinition   = NULL;
+        struct oval_definition  		* odefinition	= NULL;
         oval_result_t result;
         int result_false    = 0;
         int result_true     = 0;
@@ -491,13 +502,11 @@ int main(int argc, char **argv)
         int result_neval    = 0;
         int result_napp     = 0;
 
-        rsystem_it = oval_results_model_get_systems(res_model);
-        rsystem = oval_result_system_iterator_next(rsystem_it); /**< Only first system here */
 
         definition_it = oval_result_system_get_definitions(rsystem);
         while (oval_result_definition_iterator_has_more(definition_it)) {
             definition = oval_result_definition_iterator_next(definition_it);
-            odefinition = oval_result_definition_get_definition(definition);
+	    odefinition = oval_result_definition_get_definition(definition);
             result = oval_result_definition_get_result(definition);
             switch (result) {
                 case OVAL_RESULT_TRUE:{
@@ -521,10 +530,11 @@ int main(int argc, char **argv)
                 default: break;
             }
 
-            if (verbose >= 0)
-                fprintf(stdout, "Definition \"%s\": %s\n", oval_definition_get_title(odefinition), 
-                                                           oval_result_get_text(result));
-        }
+            if (method==1 && verbose >= 0)
+	        fprintf(stdout, "Definition \"%s\": %s\n", oval_definition_get_title(odefinition),
+        	                                           oval_result_get_text(result));
+	}
+
         oval_result_definition_iterator_free(definition_it);
         oval_result_system_iterator_free(rsystem_it);
 

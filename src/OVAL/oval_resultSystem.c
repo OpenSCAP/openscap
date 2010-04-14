@@ -37,6 +37,7 @@
 #include "public/oval_agent_api.h"
 #include "../common/util.h"
 #include "../common/public/debug.h"
+#include "../common/public/error.h"
 
 typedef struct oval_result_system {
 	struct oval_results_model *model;
@@ -513,6 +514,32 @@ void oval_result_system_eval(struct oval_result_system *sys)
 
 	oval_definition_iterator_free(definitions_itr);
 }
+
+oval_result_t oval_result_system_eval_definition(struct oval_result_system *sys, char *id)
+{
+        struct oval_results_model *res_model;
+        struct oval_definition_model *definition_model;
+        struct oval_definition *oval_definition;
+	struct oval_result_definition *rslt_definition;
+
+	res_model = oval_result_system_get_results_model(sys);
+	definition_model = oval_results_model_get_definition_model(res_model);
+	oval_definition = oval_definition_model_get_definition(definition_model, id);
+	if (oval_definition == NULL) {
+		oscap_dprintf("%s:%d No definition with ID (%s) in definition model.", __FILE__, __LINE__, id);
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EINVARG, "No definition with such an ID in definition model.");
+		return OVAL_RESULT_INVALID;
+	}
+ 
+        rslt_definition = oval_result_system_get_definition(sys, id);
+        if (rslt_definition == NULL) {
+        	rslt_definition = make_result_definition_from_oval_definition(sys, oval_definition);
+                oval_result_system_add_definition(sys, rslt_definition);
+        }
+
+	return oval_result_definition_eval(rslt_definition);
+}
+
 
 xmlNode *oval_result_system_to_dom
     (struct oval_result_system * sys,
