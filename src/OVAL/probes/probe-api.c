@@ -862,7 +862,9 @@ SEXP_t *probe_ent_getattrval(const SEXP_t * ent, const char *name)
 					if (attr_name[0] == ':') {
 						if (strcmp(attr_name + 1, name) == 0) {
 							SEXP_free(attr);
-							return SEXP_list_nth(attrs, i + 1);
+							attr = SEXP_list_nth(attrs, i + 1);
+							SEXP_free(attrs);
+							return attr;
 						}
 					}
 				}
@@ -874,6 +876,7 @@ SEXP_t *probe_ent_getattrval(const SEXP_t * ent, const char *name)
 		}
 	}
 
+	SEXP_free(attrs);
 	return (NULL);
 }
 
