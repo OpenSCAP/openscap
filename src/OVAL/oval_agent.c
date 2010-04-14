@@ -1330,7 +1330,7 @@ int oval_syschar_model_export(struct oval_syschar_model *model, struct oscap_exp
 	return retcode;
 }
 
-void oval_results_model_eval(struct oval_results_model *res_model)
+int oval_results_model_eval(struct oval_results_model *res_model)
 {
 	struct oval_result_system_iterator *systems_itr;
 
@@ -1340,10 +1340,13 @@ void oval_results_model_eval(struct oval_results_model *res_model)
 		struct oval_result_system *sys;
 
 		sys = oval_result_system_iterator_next(systems_itr);
-		oval_result_system_eval(sys);
+		if( oval_result_system_eval(sys) != 0 ) { 	/* evaluate each result_system */
+			oval_result_system_iterator_free(systems_itr);
+			return -1;
+		}
 	}
-
 	oval_result_system_iterator_free(systems_itr);
+	return 0;
 }
 
 static void _scan_for_viewable_definitions(struct oval_results_model *results_model,

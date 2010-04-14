@@ -77,8 +77,7 @@ const char *oval_result_get_text(oval_result_t);
 
 /**
  * @struct oval_results_model
- * OVAL Results Model holds OVAL results
- * structure instances.
+ * OVAL Results Model holds OVAL results structure instances.
  */
 struct oval_results_model;
 
@@ -169,19 +168,13 @@ struct oval_results_model *oval_results_model_new(struct oval_definition_model *
  */
 struct oval_results_model *oval_results_model_clone(struct oval_results_model *);
 /**
- * free memory allocated to a specified oval results model.
+ * Free memory allocated to a specified oval results model.
  * @param the specified oval_results model
  * @memberof oval_results_model
  */
 void oval_results_model_free(struct oval_results_model *model);
 /**
- * Evaluate the specified oval results model and gather results for individual definitions and tests.
- * @param the specified oval_results model
- * @memberof oval_results_model
- */
-void oval_results_model_eval(struct oval_results_model *);
-/**
- * export oval results to XML file.
+ * Export oval results to XML file.
  * @param model the oval_results_model
  * @param target the export target stream (XML)
  * @memberof oval_results_model
@@ -211,7 +204,7 @@ void oval_results_model_lock(struct oval_results_model *result_model);
  * @{
  */
 /**
- * oval_results_model_definition_model Return bound object model from an oval_results_model.
+ * Return bound definition model from an oval_results_model.
  * @param model the specified oval_results_model.
  * @memberof oval_results_model
  */
@@ -224,8 +217,6 @@ struct oval_definition_model *oval_results_model_get_definition_model(struct ova
  */
 struct oval_result_system_iterator *oval_results_model_get_systems(struct oval_results_model *);
 /**
- * Return <b>true</b> if the result_model instance is locked.
- * The state of a locked instance cannot be changed.
  * @memberof oval_results_model
  */
 bool oval_results_model_is_locked(struct oval_results_model *result_model);
@@ -236,7 +227,12 @@ bool oval_results_model_is_locked(struct oval_results_model *result_model);
  * @{
  */
 /**
- * Return <b>true</b> if the results_model instance is valid
+ * Evaluate the specified oval results model and gather results for individual definitions and tests.
+ * @memberof oval_results_model
+ * @return 0 on sucess and -1 on fail. Use \ref ERRORS mechanism to examine the error.
+ */
+int oval_results_model_eval(struct oval_results_model *);
+/**
  * @memberof oval_results_model
  */
 bool oval_results_model_is_valid(struct oval_results_model *results_model);
@@ -337,7 +333,7 @@ void oval_result_system_iterator_free(struct oval_result_system_iterator *);
  * characteristics for evaluation were altready gathered.
  * @memberof oval_result_system
  * @param sys is result_system from result_model
- * @return 0 on sucess. -1 if there was a problem in evaluation. Use \ref ERRORS mechanism to examine the error.
+ * @return 0 on sucess and -1 on fail. Use \ref ERRORS mechanism to examine the error.
  */
 int oval_result_system_eval(struct oval_result_system *sys);
 /**
@@ -431,8 +427,6 @@ struct oval_message_iterator *oval_result_definition_get_messages(struct oval_re
  */
 struct oval_result_criteria_node *oval_result_definition_get_criteria(struct oval_result_definition *);
 /**
- * return <b>true</b> if the result_definition instance is locked.
- * The state of a locked instance cannot be changed.
  * @memberof oval_result_definition
  */
 bool oval_result_definition_is_locked(struct oval_result_definition *result_definition);
@@ -578,7 +572,6 @@ void oval_result_test_iterator_free(struct oval_result_test_iterator *);
  * @{
  */
 /**
- * Return <b>true</b> if the result_test instance is valid
  * @memberof oval_result_test
  */
 bool oval_result_test_is_valid(struct oval_result_test *result_test);
@@ -635,8 +628,6 @@ oval_result_t oval_result_item_get_result(struct oval_result_item *);
  */
 struct oval_message_iterator *oval_result_item_get_messages(struct oval_result_item *);
 /**
- * Return <b>true</b> if the result_item instance is locked.
- * The state of a locked instance cannot be changed.
  * @memberof oval_result_item
  */
 bool oval_result_item_is_locked(struct oval_result_item *result_item);
@@ -665,7 +656,6 @@ void oval_result_item_iterator_free(struct oval_result_item_iterator *);
  * @{
  */
 /**
- * Return <b>true</b> if the result_item instance is valid
  * @memberof oval_result_item
  */
 bool oval_result_item_is_valid(struct oval_result_item *result_item);
@@ -758,8 +748,6 @@ struct oval_result_test *oval_result_criteria_node_get_test(struct oval_result_c
  */
 struct oval_result_definition *oval_result_criteria_node_get_extends(struct oval_result_criteria_node *);	//type==NODETYPE_EXTENDDEF
 /**
- * return <b>true</b> if the result_criteria_node instance is locked.
- * The state of a locked instance cannot be changed.
  * @memberof oval_result_criteria_node
  */
 bool oval_result_criteria_node_is_locked(struct oval_result_criteria_node *result_criteria_node);
@@ -788,7 +776,6 @@ void oval_result_criteria_node_iterator_free(struct oval_result_criteria_node_it
  * @{
  */
 /**
- * Return <b>true</b> if the result_criteria_node instance is valid
  * @memberof oval_result_criteria_node
  */
 bool oval_result_criteria_node_is_valid(struct oval_result_criteria_node *result_criteria_node);
@@ -836,8 +823,6 @@ bool oval_result_directives_get_reported(struct oval_result_directives *, oval_r
  */
 oval_result_directive_content_t oval_result_directives_get_content(struct oval_result_directives *, oval_result_t);
 /**
- * Return <b>true</b> if the result_directives instance is locked.
- * The state of a locked instance cannot be changed.
  * @memberof oval_result_directives
  */
 bool oval_result_directives_is_locked(struct oval_result_directives *result_directives);
@@ -848,7 +833,6 @@ bool oval_result_directives_is_locked(struct oval_result_directives *result_dire
  * @{
  */
 /**
- * Return <b>true</b> if the result_directives instance is valid
  * @memberof oval_result_directives
  */
 bool oval_result_directives_is_valid(struct oval_result_directives *result_directives);
