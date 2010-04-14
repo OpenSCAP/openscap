@@ -143,7 +143,7 @@ int crapi_mdigest_fd (int fd, int num, ... /* crapi_alg_t alg, void *dst, size_t
         }
 
         for (i = 0; i < num; ++i)
-                ctbl[i].free (ctbl[i].ctx);
+                ctbl[i].fini (ctbl[i].ctx);
 
         return (0);
 fail:
