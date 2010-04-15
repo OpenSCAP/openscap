@@ -149,6 +149,7 @@ if WANT_CVSS
 TESTS += CVSS/test_cvss.sh
 check_PROGRAMS += test_cvss
 test_cvss_SOURCES = CVSS/test_cvss.c
+test_cvss_CFLAGS  = -ffloat-store
 EXTRA_DIST +=	CVSS/test_cvsscalc.py \
 		CVSS/test_cvss.sh
 endif
