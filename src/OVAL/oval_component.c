@@ -6,7 +6,7 @@
  */
 
 /*
- * Copyright 2008 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2009-2010 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -25,6 +25,7 @@
  *
  * Authors:
  *      "David Niemoller" <David.Niemoller@g2-inc.com>
+ *      "Peter Vrabec" <pvabec@redhat.com>
  */
 
 #include <stdlib.h>
