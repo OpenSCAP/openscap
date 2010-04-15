@@ -20,15 +20,19 @@
  *      "Daniel Kopecek" <dkopecek@redhat.com>
  */
 
+#include <config.h>
+
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stddef.h>
-#include <sys/types.h>
-#include <sys/uio.h>
 #include <unistd.h>
 #include <errno.h>
-#include <config.h>
+#include <sys/types.h>
+#include <sys/uio.h>
+#include <sys/time.h>
+#include <sys/select.h>
+
 #include "public/sm_alloc.h"
 #include "public/strbuf.h"
 #include "_sexp-types.h"
