@@ -53,7 +53,10 @@
 #include <oval_agent_api.h>
 #include <oval_results.h>
 #include <error.h>
+#include <text.h>
 
+#include <xccdf.h>
+#include <xccdf_policy.h>
 
 void print_usage(const char *pname, FILE *out);
 int app_evaluate_test(struct oval_test * test, oval_pctx_t * pctx, 
@@ -66,6 +69,11 @@ int app_evaluate_criteria(struct oval_criteria_node *cnode, oval_pctx_t * pctx,
                           int verbose);
 char * app_curl_download(char * url);
 
+struct usr_s {
+
+    struct oval_result_system * rsystem;
+    char * result_id;
+};
 
 /**
  * Function print usage of this program to specified output
@@ -83,10 +91,11 @@ void print_usage(const char *pname, FILE *out) {
           "\n"
           "Options:\n"
 	  "   -h --help\r\t\t\t\t - show this help\n"
-	  "   -v --verbose <integer>\r\t\t\t\t - run in verbose mode (0,1,2)\n"
+	  "   -v --verbose <integer>\r\t\t\t\t - run in verbose mode (0,1)\n"
 	  "   -q --quiet\r\t\t\t\t - Quiet mode. Suppress all warning and messages.\n"
           "   -o --objects-only\r\t\t\t\t - evaluate objects only, ignore definitions "
              " \n\r\t\t\t\t   and verbosity\n"
+          "   --xccdf <file>\r\t\t\t\t - The name of XCCDF file (required XCCDF support) \n"
 	  "   --result-file <file>\r\t\t\t\t - The name of file with OVAL results output.\n"
 	  "   --syschar-file <file>\r\t\t\t\t - The name of file with Syschar output.\n"
 	  ,pname);
@@ -253,6 +262,36 @@ char * app_curl_download(char * url) {
     return outfile;
 }
 
+#ifdef ENABLE_XCCDF
+static bool callback(struct xccdf_policy_model * model, const char *href, const char *id, void * usr)
+{
+        oval_result_t result;
+        struct oval_result_definition * def = oval_result_system_get_definition( ((struct usr_s *) usr)->rsystem, (char *) id);
+        if (def == NULL) 
+            return false;
+
+        result = oval_result_definition_eval(def);
+        printf("Definition \"%s\" result: %s\n", id, oval_result_get_text(result));
+
+        /* Add result to Policy Model */
+        struct xccdf_result * ritem;
+        char * rid = ((struct usr_s *) usr)->result_id;
+
+        /* Is the Result already existing ? */
+        ritem = xccdf_policy_model_get_result_by_id(model, rid);
+        if (ritem == NULL) {
+            /* Should be here an error ? */
+        } else {
+            struct xccdf_rule_result * rule_ritem = xccdf_rule_result_new();
+            xccdf_rule_result_set_result(rule_ritem, result);
+            xccdf_result_add_rule_result(ritem, rule_ritem);
+            xccdf_result_set_id(ritem, id);
+        }
+
+        return true;
+}
+#endif
+
 /**
  * Main function
  */
@@ -262,10 +301,10 @@ int main(int argc, char **argv)
         int method          = 0;    /**< Method 1 - iterate objects; 
                                                 0 - iterate definitions */
         char * url_OVAL     = NULL; /**< URL of OVAL definition file */
-        //char * url_XCCDF    = NULL; /**< URL of OVAL definition file */
+        char * url_XCCDF    = NULL; /**< URL of OVAL definition file */
         oval_pctx_t * pctx  = NULL; /**< */
         char * f_OVAL       = NULL; /**< Name of OVAL definition file*/
-        //char * f_XCCDF       = NULL; /**< Name of XCCDF benchmark file*/
+        char * f_XCCDF      = NULL; /**< Name of XCCDF benchmark file*/
         char * f_Results    = NULL;
         char * f_Syschar    = NULL;
 
@@ -283,6 +322,7 @@ int main(int argc, char **argv)
                 {"result-file",  1, 0, 0},
                 {"syschar-file", 1, 0, 1},
                 {"verbose",      1, 0, 2},
+                {"xccdf",        1, 0, 3},
                 {0, 0, 0, 0}
             };
 
@@ -303,13 +343,17 @@ int main(int argc, char **argv)
 
             case 2: /* Verbose */
                 if (verbose != -1) verbose = atoi(optarg);
-                if (verbose > 2) verbose = 2;
+                if (verbose >= 1) verbose = 2;
+                break;
+
+            case 3: /* XCCDF */
+                url_XCCDF = strdup(optarg);
                 break;
 
             case 'v':
                 /* quiet is higher priority then verbose */
                 if (verbose != -1) verbose += 1;
-                if (verbose > 2) verbose = 2;
+                if (verbose >= 1) verbose = 2;
                 break;
 
             case 'q':
@@ -348,6 +392,15 @@ int main(int argc, char **argv)
                 return 1;
         }
 
+        if (url_XCCDF != NULL) {
+
+            f_XCCDF = app_curl_download(url_XCCDF);
+            if (!f_XCCDF) {
+                    if (verbose >= 0) fprintf(stderr, "Error: (%d) %s\n", oscap_err_code(), oscap_err_desc());
+                    return 1;
+            }
+        }
+
         f_OVAL = app_curl_download(url_OVAL);
         if (!f_OVAL) {
 		if (verbose >= 0) fprintf(stderr, "Error: (%d) %s\n", oscap_err_code(), oscap_err_desc());
@@ -372,11 +425,11 @@ int main(int argc, char **argv)
             printf("\tOption OVAL:\r\t\t\t %s\n",     url_OVAL);
             printf("\tOption Results:\r\t\t\t %s\n",  f_Results);
             printf("\tOption Syschar:\r\t\t\t %s\n",  f_Syschar);
+            printf("\tOption XCCDF:\r\t\t\t %s\n",    url_XCCDF);
         }
         /**************** GETOPT ***************/
 
         /* TODO: prevent fail behaviour by validating OVAL content */
-        /* Note: XCCDF is not supported yet */
 
         /* Get definition model from XML file */
         /* Set import source for OVAL definition file*/
@@ -548,6 +601,46 @@ int main(int argc, char **argv)
             fprintf(stdout, "NOT APPLICABLE:\r\t\t %d\n", result_napp);
         }
 
+#ifdef ENABLE_XCCDF
+        /* ========== XCCDF ========== */
+        if (f_XCCDF != NULL) { /* We have XCCDF specified */
+
+            struct xccdf_benchmark * benchmark = xccdf_benchmark_parse_xml(f_XCCDF);
+            struct xccdf_policy_model * policy_model = xccdf_policy_model_new(benchmark);
+
+            struct usr_s * usr = malloc(sizeof(struct usr_s *));
+            usr->rsystem = rsystem;
+            usr->result_id = "oscap_scan-test"; /* ID of TestResult in XCCDF model */
+
+            /* New TestResult structure */
+            struct xccdf_result * ritem = xccdf_result_new();
+            xccdf_result_set_id(ritem, usr->result_id);
+            /* Fill the structure */
+            xccdf_result_set_benchmark_uri(ritem, url_XCCDF);
+            struct oscap_text * title = oscap_text_new();
+            oscap_text_set_text(title, "OSCAP Scan Result");
+            xccdf_result_add_title(ritem, title);
+            xccdf_policy_model_add_result(policy_model, ritem);
+
+            /* Register callback */
+            bool reg = xccdf_policy_model_register_callback(policy_model, 
+                                                            "http://oval.mitre.org/XMLSchema/oval-definitions-5", 
+                                                            callback, (void *) usr);
+            if (verbose >= 2) printf("Register callback: %d\n", reg);
+
+            struct xccdf_policy_iterator * policy_it = xccdf_policy_model_get_policies(policy_model);
+            struct xccdf_policy * policy = NULL;
+
+            if (xccdf_policy_iterator_has_more(policy_it)) policy = xccdf_policy_iterator_next(policy_it);
+            xccdf_policy_iterator_free(policy_it);
+
+            xccdf_policy_evaluate(policy);
+            xccdf_benchmark_free(benchmark);
+            xccdf_policy_model_free(policy_model);
+            oscap_text_free(title);
+            free(usr);
+        }
+#endif
         if (f_Results != NULL) {
 
             /* set up directives */
@@ -574,8 +667,10 @@ int main(int argc, char **argv)
         oval_definition_model_free(def_model);
         oval_syschar_model_free(sys_model);
         oval_results_model_free(res_model);
+        if (url_XCCDF != NULL) free(url_XCCDF);
+        if (url_OVAL != NULL) free(url_OVAL);
 
         /* FIN */
-        if (result_false == 0) return 0;
+        if ((result_false == 0) && (result_unknown == 0)) return 0;
         else return 2;
 }

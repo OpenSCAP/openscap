@@ -1202,6 +1202,8 @@ bool xccdf_rule_set_selected(struct xccdf_rule *item, bool newval);
 bool xccdf_rule_set_interactive(struct xccdf_rule *item, bool newval);
 /// @memberof xccdf_rule
 bool xccdf_rule_set_multiple(struct xccdf_rule *item, bool newval);
+/// @memberof xccdf_rule
+bool xccdf_rule_set_selector(struct xccdf_rule *item, const char * selector);
 
 /// @memberof xccdf_rule
 bool xccdf_rule_add_description(struct xccdf_rule *item, struct oscap_text *newval);
@@ -1415,6 +1417,8 @@ bool xccdf_value_set_hidden(struct xccdf_value *item, bool newval);
 bool xccdf_value_set_multiple(struct xccdf_value *item, bool newval);
 /// @memberof xccdf_value
 bool xccdf_value_set_prohibit_changes(struct xccdf_value *item, bool newval);
+/// @memberof xccdf_value
+bool xccdf_value_set_oper(struct xccdf_value *item, xccdf_operator_t oper);
 
 /// @memberof xccdf_value
 bool xccdf_value_add_description(struct xccdf_value *item, struct oscap_text *newval);

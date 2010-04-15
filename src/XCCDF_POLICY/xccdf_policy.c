@@ -25,6 +25,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <math.h> /* For NAN <- TODO */
 
 #include "public/xccdf_policy.h"
 #include "../XCCDF/public/xccdf.h"
@@ -32,10 +33,16 @@
 #include "../common/list.h"
 #include "../_error.h"
 
+
+/**
+ * Typedef of callback structure with system identificator, callback function and usr data (optional) 
+ * On evaluation action will be selected checking system and appropriate callback registred by tool
+ * for that system.
+ */
 typedef struct callback_t {
 
     char * system;
-    struct xccdf_result * (*callback) (const char *, const char *, void *); /* format of callback function */
+    bool (*callback) (struct xccdf_policy_model *, const char *, const char *, void *); /* format of callback function */
     void * usr;
 
 } callback;
@@ -50,10 +57,12 @@ struct xccdf_policy_model {
         struct xccdf_benchmark  * benchmark;    //< Benchmark element (root element of XML file)
 	struct oscap_list       * policies;     //< List of xccdf_policy structures
         struct oscap_list       * callbacks;    // < callbacks for systems 
+        struct oscap_list       * results;      //< XCCDF result
 };
 /* Macros to generate iterators, getters and setters */
 OSCAP_GETTER(struct xccdf_benchmark *, xccdf_policy_model, benchmark)
 OSCAP_IGETINS_GEN(xccdf_policy, xccdf_policy_model, policies, policy)
+OSCAP_IGETINS(xccdf_result, xccdf_policy_model, results, result)
 
 /**
  * XCCDF policy structure is abstract (class) structure
@@ -68,16 +77,14 @@ struct xccdf_policy {
         struct xccdf_policy_model   * model;    //< XCCDF Policy model
         struct xccdf_profile        * profile;  //< Profile structure
         struct oscap_list           * rules;    //< Rules from profile
-        struct oscap_list           * values;   //< Bound values of profile
-        struct xccdf_result         * result;   //< XCCDF result
+        struct xccdf_value_binding  * values;   //< Bound values of profile
 };
 
 /* Macros to generate iterators, getters and setters */
 OSCAP_GETTER(struct xccdf_policy_model *, xccdf_policy, model)
 OSCAP_GETTER(struct xccdf_profile *, xccdf_policy, profile)
 OSCAP_IGETINS(xccdf_select, xccdf_policy, rules, rule)
-OSCAP_IGETINS_GEN(xccdf_value_binding, xccdf_policy, values, value)
-OSCAP_GETTER(struct xccdf_result *, xccdf_policy, result)
+OSCAP_GETTER(struct xccdf_value_binding *, xccdf_policy, values)
 
 /**
  * XCCDF value binding structure is abstract (class) structure
@@ -85,8 +92,8 @@ OSCAP_GETTER(struct xccdf_result *, xccdf_policy, result)
  */
 struct xccdf_value_binding {
 
-        struct oscap_list   * refine_rules;     //< Changing rules
-        struct oscap_list   * refine_values;    //< Changing values
+        struct oscap_list   * refine_rules;    //< Changing rules
+        struct oscap_list   * refine_values;   //< Changing values
         struct oscap_list   * setvalues;       //< Setting values
 };
 /* Macros to generate iterators, getters and setters */
@@ -94,13 +101,16 @@ OSCAP_IGETINS(xccdf_refine_rule, xccdf_value_binding, refine_rules, refine_rule)
 OSCAP_IGETINS(xccdf_refine_value, xccdf_value_binding, refine_values, refine_value)
 OSCAP_IGETINS(xccdf_setvalue, xccdf_value_binding, setvalues, setvalue)
 
-
 /***************************************************************************/
 /* Declaration of static (private to this file) functions
  * These function shoud not be called from outside. For exporting these elements
  * has to call parent element's 
  */
 
+/**
+ * Get callback from callback structure when system is selected 
+ * Parameter policy handle callback structure and sysname the name of system specified in XCCDF file
+ */
 static callback * xccdf_policy_get_callback(struct xccdf_policy * policy, const char * sysname) {
 
         struct oscap_list * cbs = policy->model->callbacks;
@@ -119,6 +129,7 @@ static callback * xccdf_policy_get_callback(struct xccdf_policy * policy, const 
 
 /**
  * Filter function returning true if the item is selected, false otherwise
+ * This function is only called from iterator
  */
 static bool xccdf_policy_filter_selected(void *item, void *foo)
 {
@@ -130,6 +141,7 @@ static bool xccdf_policy_filter_selected(void *item, void *foo)
 
 /**
  * Filter function returning true if the rule match ruleid, false otherwise
+ * This function is only called from iterator
  */
 static bool xccdf_policy_filter_rule(void *item, void *ruleid)
 {
@@ -140,13 +152,8 @@ static bool xccdf_policy_filter_rule(void *item, void *ruleid)
 }
 
 /**
- * Resolve profile to policy:
- * get all selects from all rules / groups if they're selected and
- * if not add them with selected="0"
+ * Return true if given policy has the rule, false otherwise
  */
-/*static xccdf_ * xccdf_policy_model_resolve() {
-}*/
-
 static bool xccdf_policy_has_rule(struct xccdf_policy * policy, const char *rule_id)
 {
         __attribute__nonnull__(policy);
@@ -157,11 +164,18 @@ static bool xccdf_policy_has_rule(struct xccdf_policy * policy, const char *rule
         sel_it = xccdf_policy_get_rules(policy);
         while (xccdf_select_iterator_has_more(sel_it)) {
                 sel = xccdf_select_iterator_next(sel_it);
-                if (!strcmp(xccdf_select_get_item(sel), rule_id)) return true;
+                if (!strcmp(xccdf_select_get_item(sel), rule_id)) {
+                    xccdf_select_iterator_free(sel_it);
+                    return true;
+                }
         }
+        xccdf_select_iterator_free(sel_it);
         return false;
 }
 
+/**
+ * Resolve the xccdf item 
+ */
 static void xccdf_policy_resolve_rule(struct xccdf_policy * policy, struct xccdf_item * item)
 {
         __attribute__nonnull__(policy);
@@ -204,25 +218,26 @@ static void xccdf_policy_resolve_rule(struct xccdf_policy * policy, struct xccdf
         } 
 }
 
-/* This shouldn't be here at all */
+/**
+ * Evaluate OVAL
+ */
 static bool xccdf_policy_evaluate_oval(struct xccdf_policy * policy, const char * sysname, const char * href, const char * id) 
 {
-    /* struct oval_result_system *sys;
-    struct oval_result_definition *rdef = oval_result_system_get_definition(sys, id)
-    */
-
     callback * cb = xccdf_policy_get_callback(policy, sysname);
-    if (cb == NULL) /* No callback found */
+    if (cb == NULL) { /* No callback found - checking system not registered */
+        oscap_seterr(OSCAP_EFAMILY_XCCDF, XCCDF_EUNKNOWNCB, 
+                "Unknown callback for given checking system. Set callback first");
         return false;
+    }
 
-
-    /* Each callback has format: "bool callback(const char * href, const char *id)" */
-    policy->result = cb->callback(href, id, cb->usr);
-
-    return true;
+    /* Each callback has format: "bool callback(struct xccdf_policy_model * model, const char * href, const char *id)" */
+    /* Don't proccess results here, tool should set them to Policy Model ad hoc */
+    return cb->callback(xccdf_policy_get_model(policy), href, id, cb->usr);
 }
 
-/* Name collision with xccdf_check -> changed to xccdf_policy_check */
+/** 
+ * Name collision with xccdf_check -> changed to xccdf_policy_check 
+ */
 static bool xccdf_policy_check_evaluate(struct xccdf_policy * policy, struct xccdf_check * check)
 {
     struct xccdf_check_iterator             * child_it;
@@ -257,12 +272,14 @@ static bool xccdf_policy_check_evaluate(struct xccdf_policy * policy, struct xcc
             }
             xccdf_check_content_ref_iterator_free(content_it);
     }
-    /* Process check-import and check-export elements here */
-    return false;
+    /* TODO: Process check-import and check-export elements here */
+    return ret;
 }
 
 
-/* Name collision with xccdf_item -> changed to xccdf_policy_item */
+/** 
+ * Name collision with xccdf_item -> changed to xccdf_policy_item 
+ */
 static bool xccdf_policy_item_evaluate(struct xccdf_policy * policy, struct xccdf_item * item)
 {
     struct xccdf_check_iterator     * check_it;
@@ -314,7 +331,10 @@ static bool xccdf_policy_item_evaluate(struct xccdf_policy * policy, struct xccd
 
 /***************************************************************************/
 
-
+/**
+ * Funtion to register callback for particular checking system. Used for evaluating content
+ * of rules.
+ */
 bool xccdf_policy_model_register_callback(struct xccdf_policy_model * model, char * sys, void * func, void * usr) {
 
         __attribute__nonnull__(model);
@@ -326,6 +346,22 @@ bool xccdf_policy_model_register_callback(struct xccdf_policy_model * model, cha
         cb->usr      = usr;
 
         return oscap_list_add(model->callbacks, cb);
+}
+
+struct xccdf_result * xccdf_policy_model_get_result_by_id(struct xccdf_policy_model * model, const char * id) {
+
+    struct xccdf_result_iterator    * result_it;
+    struct xccdf_result             * result;
+
+    result_it = xccdf_policy_model_get_results(model);
+    while (xccdf_result_iterator_has_more(result_it)){
+        result = xccdf_result_iterator_next(result_it);
+        if (!strcmp(xccdf_result_get_id(result), id) ){
+            xccdf_result_iterator_free(result_it);
+            return result;
+        }
+    }
+    return NULL;
 }
 
 /***************************************************************************/
@@ -350,6 +386,7 @@ struct xccdf_policy_model * xccdf_policy_model_new(struct xccdf_benchmark * benc
 	model->benchmark = benchmark;
 	model->policies  = oscap_list_new();
         model->callbacks = oscap_list_new();
+        model->results   = oscap_list_new();
 
         /* Create policies from benchmark model */
         profile_it = xccdf_benchmark_get_profiles(benchmark);
@@ -367,6 +404,9 @@ struct xccdf_policy_model * xccdf_policy_model_new(struct xccdf_benchmark * benc
 	return model;
 }
 
+/**
+ * Constructor for structure XCCDF Policy
+ */
 struct xccdf_policy * xccdf_policy_new(struct xccdf_policy_model * model, struct xccdf_profile * profile) {
 
 	__attribute__nonnull__(profile);
@@ -374,7 +414,6 @@ struct xccdf_policy * xccdf_policy_new(struct xccdf_policy_model * model, struct
 	struct xccdf_policy             * policy;
         struct xccdf_select_iterator    * sel_it;
         struct xccdf_select             * sel;
-        struct xccdf_value_binding      * binding;
         struct xccdf_benchmark          * benchmark;
         struct xccdf_item_iterator      * item_it;
         struct xccdf_item               * item;
@@ -385,8 +424,7 @@ struct xccdf_policy * xccdf_policy_new(struct xccdf_policy_model * model, struct
 	memset(policy, 0, sizeof(struct xccdf_policy));
 
 	policy->profile = profile;
-	policy->rules = oscap_list_new();
-	policy->values  = oscap_list_new();
+	policy->rules   = oscap_list_new();
 
         policy->model = model;
 
@@ -398,7 +436,7 @@ struct xccdf_policy * xccdf_policy_new(struct xccdf_policy_model * model, struct
             sel = xccdf_select_iterator_next(sel_it);
             /* Should we set the error code and return NULL here ? */
             if (sel != NULL) oscap_list_add(policy->rules, xccdf_select_clone(sel));
-            if (sel != NULL) printf ("Added %s to Policy\n", xccdf_select_get_item(sel));
+            //if (sel != NULL) printf ("Added %s to Policy\n", xccdf_select_get_item(sel));
         }
         xccdf_select_iterator_free(sel_it);
 
@@ -413,13 +451,14 @@ struct xccdf_policy * xccdf_policy_new(struct xccdf_policy_model * model, struct
         xccdf_item_iterator_free(item_it);
 
         /* Create values from benchmark model */
-        binding = xccdf_value_binding_new(profile);
-        /* TODO: Clone */
-        if (binding) oscap_list_add(policy->values, binding);
+        policy->values = xccdf_value_binding_new(profile);
 
 	return policy;
 }
 
+/**
+ * Constructor for structure XCCDF Policy Value bindings
+ */
 struct xccdf_value_binding * xccdf_value_binding_new(const struct xccdf_profile * profile) {
 
         __attribute__nonnull__(profile);
@@ -499,6 +538,158 @@ bool xccdf_policy_set_selected(struct xccdf_policy * policy, char * idref) {
     }
 }
 
+/**
+ * Tailoring function for rule preprocessing, use this function on cloned item before processing item 
+ * with value exporting or result exporting.
+ * returns false if no refine rule match item id
+ * returns true if tailoring procces for this rule is complete
+ */
+static bool xccdf_policy_tailor_item(struct xccdf_item * item, struct xccdf_value_binding * values) {
+
+    /* Proccess set values */
+    /* set-value element override Value object */
+
+    struct xccdf_refine_rule_iterator   * r_rule_it;
+    struct xccdf_refine_rule            * r_rule    = NULL;
+
+    bool found = false;
+
+    r_rule_it = xccdf_value_binding_get_refine_rules(values);
+    while (xccdf_refine_rule_iterator_has_more(r_rule_it)) {
+        r_rule = xccdf_refine_rule_iterator_next(r_rule_it);
+        if (!strcmp(xccdf_item_get_id(item), xccdf_refine_rule_get_item(r_rule))) {
+            if (found == true) {
+                /* Only one refine rule can match the rule */
+                oscap_seterr(OSCAP_EFAMILY_XCCDF, XCCDF_EREFIDCONFLICT, 
+                        "The 'idref' attribute values of sibling refine-rule element children of a Profile must be different");
+                xccdf_refine_rule_iterator_free(r_rule_it);
+                return false;            
+            }
+            found = true;
+        }
+    }
+    xccdf_refine_rule_iterator_free(r_rule_it);
+
+    /* No refine rule match this item, reutrn false */
+    if (found == false) return false;
+
+    /* In r_rule we have refine rule that match  - no more then one !*/
+    if (xccdf_item_get_type(item) == XCCDF_GROUP) { 
+        /* Perform check of weight attribute  - ignore other attributes */
+        if (xccdf_refine_rule_get_weight(r_rule) == NAN) {
+                oscap_seterr(OSCAP_EFAMILY_XCCDF, XCCDF_EREFGROUPATTR, 
+                        "'Weight' attribute not specified, only 'weight' attribute applies to groups items");
+                return false;            
+        }
+        else {
+            /* Apply the rule changes */
+            xccdf_group_set_weight((struct xccdf_group *) item, xccdf_refine_rule_get_weight(r_rule) );
+        }
+           
+    } else if (xccdf_item_get_type(item) == XCCDF_RULE) {
+        /* Perform all changes in rule */
+        if (xccdf_refine_rule_get_role(r_rule) != NAN)
+            xccdf_rule_set_role((struct xccdf_rule *) item, xccdf_refine_rule_get_role(r_rule));
+        if (xccdf_refine_rule_get_selector(r_rule) != NULL)
+            xccdf_rule_set_selector((struct xccdf_rule *) item, xccdf_refine_rule_get_selector(r_rule));
+        if (xccdf_refine_rule_get_severity(r_rule) != NAN)
+            xccdf_rule_set_severity((struct xccdf_rule *) item, xccdf_refine_rule_get_severity(r_rule));
+
+   } else {}/* TODO oscap_err ? */;
+
+    return true;
+}
+
+/**
+ * Tailor Benchmark - edit all refined rules and values
+ * Pass benchmark and xccdf_value_binding structure to this function
+ * Beware ! Benchmark items will be changed !
+ */
+static bool xccdf_tailor_benchmark(struct xccdf_benchmark * benchmark, struct xccdf_value_binding * values) {
+
+    /* Proccess set values */
+    /* set-value element override Value object */
+
+    struct xccdf_refine_rule_iterator   * r_rule_it;
+    struct xccdf_refine_rule            * r_rule;
+    struct xccdf_refine_value_iterator  * r_value_it;
+    struct xccdf_refine_value           * r_value;
+    struct xccdf_item                   * item;
+
+
+    /* Proccess refine rules */
+    r_rule_it = xccdf_value_binding_get_refine_rules(values);
+    while (xccdf_refine_rule_iterator_has_more(r_rule_it)) {
+        r_rule = xccdf_refine_rule_iterator_next(r_rule_it);
+        item = xccdf_benchmark_get_item(benchmark, xccdf_refine_rule_get_item(r_rule));
+        if (item != NULL) {
+            /* Proccess refine rule appliement */
+            /* In r_rule we have refine rule that match  - no more then one !*/
+            if (xccdf_item_get_type(item) == XCCDF_VALUE) { 
+                /* Perform check of weight attribute  - ignore other attributes */
+                if (xccdf_refine_rule_get_weight(r_rule) == NAN) {
+                        oscap_seterr(OSCAP_EFAMILY_XCCDF, XCCDF_EREFGROUPATTR, 
+                                "'Weight' attribute not specified, only 'weight' attribute applies to groups items");
+                        return false;            
+                }
+                else {
+                    /* Apply the rule changes */
+                    xccdf_group_set_weight((struct xccdf_group *) item, xccdf_refine_rule_get_weight(r_rule) );
+                }
+                
+            } else if (xccdf_item_get_type(item) == XCCDF_RULE) {
+                /* Perform all changes in rule */
+                if (xccdf_refine_rule_get_role(r_rule) != NAN)
+                    xccdf_rule_set_role((struct xccdf_rule *) item, xccdf_refine_rule_get_role(r_rule));
+                if (xccdf_refine_rule_get_selector(r_rule) != NULL)
+                    xccdf_rule_set_selector((struct xccdf_rule *) item, xccdf_refine_rule_get_selector(r_rule));
+                if (xccdf_refine_rule_get_severity(r_rule) != NAN)
+                    xccdf_rule_set_severity((struct xccdf_rule *) item, xccdf_refine_rule_get_severity(r_rule));
+
+            } else {}/* TODO oscap_err ? */;
+
+        } else {
+            oscap_seterr(OSCAP_EFAMILY_XCCDF, XCCDF_EREFIDCONFLICT, 
+                    "Refine rule item points to nonexisting XCCDF item");
+            xccdf_refine_rule_iterator_free(r_rule_it);
+            return false;            
+        }
+    }
+    xccdf_refine_rule_iterator_free(r_rule_it);
+
+    /* Proccess refine values */
+    r_value_it = xccdf_value_binding_get_refine_values(values);
+    while (xccdf_refine_value_iterator_has_more(r_value_it)) {
+        r_value = xccdf_refine_value_iterator_next(r_value_it);
+        item = xccdf_benchmark_get_item(benchmark, xccdf_refine_value_get_item(r_value));
+        if ((item != NULL) & (xccdf_item_get_type(item) == XCCDF_VALUE)) {
+            /* Proccess refine value appliement */
+            /* In r_value we have refine value that match  - no more then one !*/
+            /* Perform all changes in value */
+            if (xccdf_refine_value_get_oper(r_value) != NAN)
+                xccdf_value_set_oper((struct xccdf_value *) item, xccdf_refine_value_get_oper(r_value));
+            if (xccdf_refine_value_get_selector(r_value) != NULL)
+                xccdf_value_get_set_selector(item, xccdf_refine_value_get_selector(r_value));
+
+        } else {
+            oscap_seterr(OSCAP_EFAMILY_XCCDF, XCCDF_EREFIDCONFLICT, 
+                    "Refine value item points to nonexisting XCCDF item or item type is not XCCDF_VALUE");
+            xccdf_refine_value_iterator_free(r_value_it);
+            return false;            
+        }
+    }
+    xccdf_refine_value_iterator_free(r_value_it);
+
+    return true;
+}
+
+/**
+ * Evaluate XCCDF Policy
+ * Iterate through Benchmark items and evalute one by one by calling 
+ * callback for checking system that is defined by particular rules
+ * Callbacks for checking systems have to be defined before calling this function, otherwise 
+ * rules would not be evaluated and process ends with error.
+ */
 bool xccdf_policy_evaluate(struct xccdf_policy * policy) 
 {
 
@@ -535,21 +726,7 @@ bool xccdf_policy_evaluate(struct xccdf_policy * policy)
         /* TODO: we need to check if every requirement is met - some of required Item has to be sleected too */
 
         item = xccdf_benchmark_get_item(benchmark, xccdf_select_get_item(sel));
-        printf("Evaluating item: %s\n", xccdf_item_get_id(item));
-
-        //xccdf_type_t itype = xccdf_item_get_type(item);
-        /* We know that this group selection was overrided by profile. Each child of this group will be
-         * evaluated, but could be unselected so it's selection is up to item evaluation function */
-        /*if (itype == XCCDF_GROUP) {
-            child_it = xccdf_group_get_content((const struct xccdf_group *)item);
-            while (xccdf_item_iterator_has_more(child_it)) {
-                child = xccdf_item_iterator_next(child_it);
-                //TODO: handle more returns here 
-                ret = xccdf_policy_item_evaluate(item);
-            }
-            xccdf_item_iterator_free(child_it);
-          } else ret = xccdf_policy_item_evaluate(item);
-        */
+        //printf("Evaluating item: %s\n", xccdf_item_get_id(item));
 
         if (xccdf_item_get_type(item) == XCCDF_GROUP) continue;
         ret = xccdf_policy_item_evaluate(policy, item);
@@ -579,6 +756,8 @@ void xccdf_policy_model_free(struct xccdf_policy_model * model) {
 
         xccdf_benchmark_free(model->benchmark);
 	oscap_list_free(model->policies, (oscap_destruct_func) xccdf_policy_free);
+	oscap_list_free(model->results, (oscap_destruct_func) xccdf_result_free);
+	oscap_list_free(model->callbacks, (oscap_destruct_func) oscap_free);
         oscap_free(model);
 }
 
@@ -586,7 +765,7 @@ void xccdf_policy_free(struct xccdf_policy * policy) {
 
 	xccdf_item_free((struct xccdf_item *)policy->profile);
 	oscap_list_free(policy->rules, (oscap_destruct_func) xccdf_select_free);
-	oscap_list_free(policy->values, (oscap_destruct_func) xccdf_value_binding_free);
+	xccdf_value_binding_free(policy->values);
         oscap_free(policy);
 }
 
