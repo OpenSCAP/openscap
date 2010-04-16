@@ -736,10 +736,6 @@ bool xccdf_policy_evaluate(struct xccdf_policy * policy)
     return ret;
 }
 
-struct xccdf_value_binding_iterator * xccdf_policy_get_bound_values(struct xccdf_policy *policy) {
-    return NULL;
-}
-
 void xccdf_policy_export_variables(struct xccdf_policy *policy, char *export_namespace, struct oscap_export_target *target) {
 }
 

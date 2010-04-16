@@ -27,6 +27,7 @@ To get started, see list of <a href="modules.html">available libraries</a>.
 - @ref CVSS - Common Vulnerability Scoring System
 - @ref OVAL - Open Vulnerability and Assessment Language
 - @ref XCCDF - Extensible Configuration Checklist Description Format
+- @ref XCCDF_POLICY - Policy interface to XCCDF benchmark
 
 @section Links
 
@@ -77,6 +78,14 @@ Open Vulnerability and Assessment Language.
 Extensible Configuration Checklist Description Format.
 
 More info at http://scap.nist.gov/specifications/xccdf/.
+
+@defgroup XCCDF_POLICY
+
+Policy interface to Extensible Configuration Checklist Description Format. 
+Purpose of this layer is to separate the transport syntax of the XCCDF XML 
+from the processes of evaluating and scoring the policy content comprised 
+by the XCCDF documents. XCCDF Policy model performs the loading, evaluation 
+and scoring tasks of XCCDF.
 
 */
 
