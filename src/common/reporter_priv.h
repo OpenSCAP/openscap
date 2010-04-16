@@ -83,6 +83,9 @@ void oscap_reporter_report_xml(struct oscap_reporter *reporter, xmlErrorPtr erro
  */
 void oscap_reporter_report_libc(struct oscap_reporter *reporter);
 
+/** @} */
+/** @} */
+
 OSCAP_HIDDEN_END;
 
 #endif // OSCAP_REPORTER_PRIV_H_

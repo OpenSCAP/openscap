@@ -86,7 +86,6 @@ typedef uint16_t oscap_errcode_t;
 /**
  * @name XCCDF family error codes
  * @{
- * @see OSCAP_EFAMILY_XCCDF
  */
 #define XCCDF_EREFIDCONFLICT  1   /**< Conflict in refine rules - same idref */
 #define XCCDF_EREFGROUPATTR   2   /**< Bad attribute of group refid */
