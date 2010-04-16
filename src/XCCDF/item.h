@@ -423,18 +423,11 @@ struct xccdf_result *xccdf_result_new_parse(xmlTextReaderPtr reader);
 
 struct xccdf_check *xccdf_check_parse(xmlTextReaderPtr reader);
 void xccdf_check_dump(struct xccdf_check *check, int depth);
-void xccdf_check_content_ref_free(struct xccdf_check_content_ref *ref);
 void xccdf_check_content_ref_dump(struct xccdf_check_content_ref *ref, int depth);
 struct xccdf_ident *xccdf_ident_parse(xmlTextReaderPtr reader);
 void xccdf_ident_dump(struct xccdf_ident *ident, int depth);
-void xccdf_ident_free(struct xccdf_ident *ident);
-void xccdf_profile_note_free(struct xccdf_profile_note *note);
-void xccdf_check_import_free(struct xccdf_check_import *item);
-void xccdf_check_export_free(struct xccdf_check_export *item);
 struct xccdf_fix *xccdf_fix_parse(xmlTextReaderPtr reader);
 struct xccdf_fixtext *xccdf_fixtext_parse(xmlTextReaderPtr reader);
-void xccdf_fixtext_free(struct xccdf_fixtext *item);
-void xccdf_fix_free(struct xccdf_fix *item);
 
 struct xccdf_setvalue *xccdf_setvalue_new_parse(xmlTextReaderPtr reader);
 void xccdf_setvalue_dump(struct xccdf_setvalue *sv, int depth);
