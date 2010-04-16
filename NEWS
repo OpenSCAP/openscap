@@ -1,3 +1,16 @@
+openscap-0.5.9							16-04-2010
+- built on windows (without probe support)
+- better support on RHEL5
+- OVAL model validation functionality
+- OVAL, XCCDF xml file validation functionality
+- update XCDDF model manipulation functions
+- introduction of XCCDF_POLICY tailoring interface
+- new probes: filemd5, filehash
+- removed libnl dependency
+- extended and improved library selfcheck
+- alternative solution to atomic functions based on mutex
+- many many fixes
+
 openscap-0.5.8							24-03-2010
 - new s-expr parser
 - new probes from unix schema
