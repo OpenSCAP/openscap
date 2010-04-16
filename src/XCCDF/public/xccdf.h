@@ -1,3 +1,11 @@
+/**
+ * @addtogroup XCCDF
+ * @{
+ * @file xccdf.h
+ * Open-scap XCCDF library interface.
+ * @author Lukas Kuklinek <lkuklinek@redhat.com>
+ */
+
 /*
  * Copyright 2009 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
@@ -18,31 +26,6 @@
  *
  * Authors:
  *      Lukas Kuklinek <lkuklinek@redhat.com>
- */
-
-/**
- * @addtogroup XCCDF
- * @{
- * @file xccdf.h
- * Open-scap XCCDF library interface.
- * @author Lukas Kuklinek <lkuklinek@redhat.com>
- */
-
-/**
- * @defgroup benchmark XCCDF Benchmark
- * Top level XCCDF structure containing profiles, rules, values and results.
- *
- * @defgroup profile   XCCDF Profile
- * XCCDF profile is a set of tests and their settings in a compact package.
- *
- * @defgroup rule      XCCDF Rule
- * XCCDF rule defines a test execution. Groups are in this module as well.
- *
- * @defgroup value     XCCDF Value
- * XCCDF Value allows test parametrization or capturing output of tests.
- *
- * @defgroup result    XCCDF Test Result
- * Actual results of running a XCCDF test or profile.
  */
 
 #ifndef XCCDF_H_
@@ -198,69 +181,38 @@ typedef enum {
  */
 typedef float xccdf_numeric;
 
-/*--------------------*\
-|   Core structures    |
-\*--------------------*/
-/*
- * @addtogroup xccdf_item
- * @{
- * @addtogroup xccdf_item_setters Setters
- * @{
- * @ref xccdf_item set methods.
- *	These methods will not change the state of a locked instance.
- *	@see oval_sysinfo_get_locked
- *	@see oval_syschar_model_set_lock
- * @}
- * @addtogroup xccdf_item_getters Getters
- * @{
- * @ref xccdf_item get methods.
- * @}
- * @addtogroup xccdf_item_iterators Iterators
- * @{
- * @ref xccdf_item iterator methods.
- * @}
- * @addtogroup xccdf_item_eval Evaluators
- * @{
- * @ref xccdf_item evaluator methods
- * @}
- */
 /** @struct xccdf_item
  * A base class for XCCDF items.
  */
 struct xccdf_item;
+
 /** @struct xccdf_benchmark
- * @ingroup benchmark
- * XCCDF Benchmark.
+ * Top level XCCDF structure containing profiles, rules, values and results.
  */
 struct xccdf_benchmark;
 
 /** @struct xccdf_profile
- * @ingroup profile
- * XCCDF Profile.
+ * XCCDF profile is a set of tests and their settings in a compact package
  */
 struct xccdf_profile;
 
 /** @struct xccdf_rule
- * @ingroup rule
- * XCCDF Rule.
+ * XCCDF rule defines a test execution. Groups are in this module as well.
  */
 struct xccdf_rule;
 
 /** @struct xccdf_group
- * @ingroup rule
  * XCCDF rule group.
  */
 struct xccdf_group;
 
 /** @struct xccdf_value
- * @ingroup value
- * XCCDF Value
+ * XCCDF Value allows test parametrization or capturing output of tests.
  */
 struct xccdf_value;
 
 /** @struct xccdf_result
- * @ingroup result
- * XCCDF Test Result.
+ * Actual results of running a XCCDF test or profile.
  */
 struct xccdf_result;
 
@@ -269,19 +221,16 @@ struct xccdf_result;
 \*--------------------*/
 
 /** @struct xccdf_notice
- * @ingroup benchmark
  * XCCDF benchmark legal notice.
  */
 struct xccdf_notice;
 
 /** @struct xccdf_status
- * @ingroup benchmark
  * XCCDF item status.
  */
 struct xccdf_status;
 
 /** @struct xccdf_model
- * @ingroup benchmark
  * XCCDF scoring model.
  */
 struct xccdf_model;
@@ -293,74 +242,62 @@ struct xccdf_warning;
 
 /** @struct xccdf_select
  * XCCDF select option usen in the profile.
- * @ingroup profile
  */
 struct xccdf_select;
 
 /** @struct xccdf_setvalue
  * XCCDF set value option used in the profile.
- * @ingroup profile
  */
 struct xccdf_setvalue;
 
 /** @struct xccdf_refine_value
  * XCCDF refine value option used in the profile.
- * @ingroup profile
  */
 struct xccdf_refine_value;
 /** @struct xccdf_refine_rule
  * XCCDF refine rule option used in the profile.
- * @ingroup profile
  */
 struct xccdf_refine_rule;
 
 /** @struct xccdf_ident
  * XCCDF rule ident URI.
- * @ingroup rule
  */
 struct xccdf_ident;
 
 /** @struct xccdf_check
  * XCCDF simple or complex check.
- * @ingroup rule
  */
 struct xccdf_check;
 /** @struct xccdf_check_content_ref
  * XCCDF check content reference.
- * @ingroup rule
  */
 struct xccdf_check_content_ref;
 
 /** @struct xccdf_profile_note
  * XCCDF note for given rule in context of given profile.
- * @ingroup rule
  */
 struct xccdf_profile_note;
 
 /** @struct xccdf_check_import
  * XCCDF check import.
- * @ingroup rule
  * @see xccdf_check
  */
 struct xccdf_check_import;
 
 /** @struct xccdf_check_export
  * XCCDF check export.
- * @ingroup rule
  * @see xccdf_check
  */
 struct xccdf_check_export;
 
 /** @struct xccdf_fix
  * XCCDF automatic fix.
- * @ingroup rule
  * @see xccdf_rule
  */
 struct xccdf_fix;
 
 /** @struct xccdf_fixtext
  * XCCDF textual fix instructions.
- * @ingroup rule
  * @see xccdf_rule
  */
 struct xccdf_fixtext;
