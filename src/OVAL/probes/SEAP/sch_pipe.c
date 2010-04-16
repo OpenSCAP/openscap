@@ -31,7 +31,10 @@
 #include <sys/wait.h>
 #include <sys/socket.h>
 #include <sys/select.h>
+#include <sys/types.h>
+#include <signal.h>
 #include <fcntl.h>
+#include <common/assume.h>
 #include <errno.h>
 #include <config.h>
 #include "generic/common.h"
@@ -153,98 +156,99 @@ fail:
         return (NULL);
 }
 
-#define DATA(ptr) ((sch_pipedata_t *)((ptr)->scheme_data))
+static int check_child (pid_t pid)
+{
+        int status = -1;
+        
+        switch (pid = waitpid (pid, &status, WNOHANG)) {
+        case  0: return (0);
+        case -1: return (-1);
+        default:
+                /* child is dead */
+                if (WIFEXITED(status)) {
+                        errno = WEXITSTATUS(status);
+                }
+                if (WIFSIGNALED(status)) {
+                        errno = EINTR;
+                }
+        }
+        return (1);
+}
 
 int sch_pipe_connect (SEAP_desc_t *desc, const char *uri, uint32_t flags)
 {
-        char *execpath;
+        sch_pipedata_t *data;
         pid_t pid;
-        int   err;
-        int   pfd[2];
-        /* uint8_t i; */
-      
-        _LOGCALL_;
-          
-        desc->scheme_data = sm_talloc (sch_pipedata_t);
-        DATA(desc)->execpath = execpath = get_exec_path (uri, flags);
-        
-        if (DATA(desc)->execpath == NULL) {
-                _D("Invalid URI\n");
-                sm_free (desc->scheme_data);
-                return (-1);
-        }
+        int   pfd[2] = { -1, -1 };
 
-        _D("Executing: \"%s\"\n", execpath);
-        
-        err = socketpair (AF_UNIX, SOCK_STREAM, 0, pfd);
-        if (err < 0) {
-                protect_errno {
-                        sm_free (desc->scheme_data);
-                        sm_free (execpath);
-                }
-                return (-1);
+        assume_r (desc != NULL, -1, errno = EFAULT;);
+        assume_r (uri  != NULL, -1, errno = EFAULT;);
+        assume_r (desc->scheme_data == NULL, -1, errno = EALREADY;);
+
+        data = (sch_pipedata_t *) sm_talloc (sch_pipedata_t);
+        data->execpath = get_exec_path (uri, flags);
+
+        if (data->execpath == NULL) {
+                errno = EINVAL;
+                goto fail1;
+        } else {
+                struct stat st;
+                
+                if (stat (data->execpath, &st) != 0)
+                        goto fail1;
         }
         
+        if (socketpair (AF_UNIX, SOCK_STREAM, 0, pfd) < 0)
+                goto fail1;
+
         switch (pid = fork ()) {
         case -1: /* error */
-                protect_errno {
-                        sm_free (desc->scheme_data);
-                        sm_free (execpath);
-                }
-                return (-1);
+                goto fail1;
         case  0: /* child */
                 close (pfd[0]);
+
+                /*
+                 * setup input, output and error streams
+                 */
+                if (dup2 (pfd[1], STDIN_FILENO) != STDIN_FILENO)
+                        _exit (errno);
+                if (dup2 (pfd[1], STDOUT_FILENO) != STDOUT_FILENO)
+                        _exit (errno);
+#ifndef NDEBUG
+                pfd[0] = open ("/dev/null", O_WRONLY);
                 
-                /* err stream will be redirected to /dev/null */
-#ifdef NDEBUG
-                err = open ("/dev/null", O_WRONLY);
-                
-                if (err == -1)
+                if (pfd[0] < 0)
+                        _exit (errno);
+
+                if (dup2 (pfd[0], STDERR_FILENO) != STDERR_FILENO)
                         _exit (errno);
 #endif
-                /* setup in, out, err streams */
-                if (dup2 (pfd[1], STDIN_FILENO) != STDIN_FILENO) {
-                        _exit (errno);
-                }
-                if (dup2 (pfd[1], STDOUT_FILENO) != STDOUT_FILENO) {
-                        _exit (errno);
-                }
-#ifdef NDEBUG
-                if (dup2 (err, STDERR_FILENO) != STDERR_FILENO) {
-                        _exit (errno);
-                }
-#endif   
-                /*
-                  if (daemon (1, 1) != 0)
-                        _exit (errno);
-                */
-                        
-                /* exec */
-                execl (execpath, execpath, NULL);
+                execl (data->execpath, data->execpath, NULL);
                 _exit (errno);
         default: /* parent */
                 close (pfd[1]);
-                DATA(desc)->pfd = pfd[0];
-                DATA(desc)->pid = pid;
-
-                /*
-                err = -1;
-                waitpid (pid, &err, 0);
                 
-                if (WEXITSTATUS(err) != 0) {
-                        _D("Child died :[\n");
-                        close (DATA(desc)->pfd);
-                        xfre e (&(desc->scheme_data));
-                        xfre e (&execpath);
-                        return (-1);
-                }
-                */
+                data->pfd = pfd[0];
+                data->pid = pid;
+
+                if (check_child (data->pid) != 0)
+                        goto fail2;
         }
-        
-        _D("%s@%u ready. pfd=%d\n",
-           execpath, pid, DATA(desc)->pfd);
+
+        desc->scheme_data = (void *)data;
         
         return (0);
+fail2:
+        protect_errno {
+                close (data->pfd);
+        }
+fail1:
+        protect_errno {
+                if (data->execpath != NULL)
+                        sm_free (data->execpath);
+                sm_free (data);
+        }
+        return (-1);
 }
 
 int sch_pipe_openfd (SEAP_desc_t *desc, int fd, uint32_t flags)
@@ -263,102 +267,165 @@ int sch_pipe_openfd2 (SEAP_desc_t *desc, int ifd, int ofd, uint32_t flags)
 
 ssize_t sch_pipe_recv (SEAP_desc_t *desc, void *buf, size_t len, uint32_t flags)
 {
-        _LOGCALL_;
-        return read (DATA(desc)->pfd, buf, len);
+        sch_pipedata_t *data;
+
+        assume_d (desc != NULL, -1, errno = EFAULT;);
+        assume_d (buf  != NULL, -1, errno = EFAULT;);
+        
+        data = (sch_pipedata_t *)desc->scheme_data;
+        
+        assume_r (data != NULL, -1, errno = EBADF;);
+
+        if (check_child (data->pid) == 0)
+                return read (data->pfd, buf, len);
+        else
+                return (-1);
 }
 
 ssize_t sch_pipe_send (SEAP_desc_t *desc, void *buf, size_t len, uint32_t flags)
 {
-        _LOGCALL_;
-        return write (DATA(desc)->pfd, buf, len);
+        sch_pipedata_t *data;
+
+        assume_d (desc != NULL, -1, errno = EFAULT;);
+        assume_d (buf  != NULL, -1, errno = EFAULT;);
+        
+        data = (sch_pipedata_t *)desc->scheme_data;
+        
+        assume_r (data != NULL, -1, errno = EBADF;);
+
+        if (check_child (data->pid) == 0)
+                return write (data->pfd, buf, len);
+        else
+                return (-1);
 }
 
 ssize_t sch_pipe_sendsexp (SEAP_desc_t *desc, SEXP_t *sexp, uint32_t flags)
 {
-        ssize_t   ret;
         strbuf_t *sb;
+        sch_pipedata_t *data;
+
+        assume_d (desc != NULL, -1, errno = EFAULT;);
+        assume_d (sexp != NULL, -1, errno = EFAULT;);
         
-        _LOGCALL_;
+        data = (sch_pipedata_t *)desc->scheme_data;
         
-        ret = 0;
-        sb  = strbuf_new (1024);
-        
-        if (SEXP_sbprintf_t (sexp, sb) != 0)
-                ret = -1;
-        else
-                ret = strbuf_write (sb, DATA(desc)->pfd);
-        
-        strbuf_free (sb);
+        assume_r (data != NULL, -1, errno = EBADF;);
+
+        if (check_child (data->pid) != 0)
+                return (-1);
+        else {
+                ssize_t ret;
                 
-        return (ret);
+                ret = 0;
+                sb  = strbuf_new (1024);
+                
+                if (SEXP_sbprintf_t (sexp, sb) != 0)
+                        ret = -1;
+                else
+                        ret = strbuf_write (sb, data->pfd);
+                
+                strbuf_free (sb);
+                
+                return (ret);
+        }
 }
 
 int sch_pipe_close (SEAP_desc_t *desc, uint32_t flags)
 {
-        int ret, err = 0;
-        /* close the pipe */
-        /* FIXME: kill the process */
-        
-        _LOGCALL_;
+        int try;
+        sch_pipedata_t *data;
 
-        close (DATA(desc)->pfd);
+        assume_d (desc != NULL, -1, errno = EFAULT;);
         
-        if (waitpid (DATA(desc)->pid, &ret, WNOHANG) == DATA(desc)->pid) {
-                err = WEXITSTATUS(ret);
-                _D("child err: %u, %s.\n", err, strerror (err));
+        data = (sch_pipedata_t *)desc->scheme_data;
+        
+        assume_r (data != NULL, -1, errno = EBADF;);
+
+        for (try = 0; try < 3; ++try) {
+                switch (check_child (data->pid)) {
+                case  0:
+                        kill (data->pid, SIGTERM);
+                case -1:
+                        return (-1);
+                case  1:
+                        goto clean;
+                }
         }
-        sm_free (DATA(desc)->execpath);
-        sm_free (desc->scheme_data);
-        return (err);
+
+        /*
+         * Child is not responding to our request. Kill it.
+         */
+        kill (data->pid, SIGKILL);
+
+        switch (check_child (data->pid)) {
+        case  1:
+                break;
+        default:
+                return (-1);
+        }
+clean:
+        close (data->pfd);
+        
+        sm_free (data->execpath);
+        sm_free (data);
+        
+        desc->scheme_data = NULL;
+
+        return (0);
 }
 
 int sch_pipe_select (SEAP_desc_t *desc, int ev, uint16_t timeout, uint32_t flags)
 {
-        fd_set *wptr, *rptr;
-        fd_set  fset;
-        struct timeval *tv_ptr, tv;
+        sch_pipedata_t *data;
 
-        _LOGCALL_;
+        assume_d (desc != NULL, -1, errno = EFAULT;);
         
-        FD_ZERO(&fset);
-        tv_ptr = NULL;
-        wptr   = NULL;
-        rptr   = NULL;
+        data = (sch_pipedata_t *)desc->scheme_data;
         
-        switch (ev) {
-        case SEAP_IO_EVREAD:
-                FD_SET(DATA(desc)->pfd, &fset);
-                rptr = &fset;
-                break;
-        case SEAP_IO_EVWRITE:
-                FD_SET(DATA(desc)->pfd, &fset);
-                wptr = &fset;
-                break;
-        default:
-                abort ();
-        }
+        assume_r (data != NULL, -1, errno = EBADF;);
 
-        if (timeout > 0) {
-                tv.tv_sec  = (time_t)timeout;
-                tv.tv_usec = 0;
-                tv_ptr = &tv;
-        }
-        
-        _A(!(wptr == NULL && rptr == NULL));
-        _A(!(wptr != NULL && rptr != NULL));
-        
-        switch (select (DATA(desc)->pfd + 1, rptr, wptr, NULL, tv_ptr)) {
-        case -1:
-                protect_errno {
-                        _D("FAIL: errno=%u, %s.\n", errno, strerror (errno));
+        if (check_child (data->pid) == 0) {
+                fd_set *wptr, *rptr;
+                fd_set  fset;
+                struct timeval *tv_ptr, tv;
+                
+                FD_ZERO(&fset);
+                tv_ptr = NULL;
+                wptr   = NULL;
+                rptr   = NULL;
+                
+                switch (ev) {
+                case SEAP_IO_EVREAD:
+                        FD_SET(data->pfd, &fset);
+                        rptr = &fset;
+                        break;
+                case SEAP_IO_EVWRITE:
+                        FD_SET(data->pfd, &fset);
+                        wptr = &fset;
+                        break;
+                default:
+                        abort ();
                 }
-                return (-1);
-        case  0:
-                errno = ETIMEDOUT;
-                return (-1);
-        default:
-                return (FD_ISSET(DATA(desc)->pfd, &fset) ? 0 : -1);
+                
+                if (timeout > 0) {
+                        tv.tv_sec  = (time_t)timeout;
+                        tv.tv_usec = 0;
+                        tv_ptr = &tv;
+                }
+                
+                assume_d (!(wptr == NULL && rptr == NULL), -1, errno = EINVAL;);
+                assume_d (!(wptr != NULL && rptr != NULL), -1, errno = EINVAL;);
+                
+                switch (select (data->pfd + 1, rptr, wptr, NULL, tv_ptr)) {
+                case -1:
+                        return (-1);
+                case  0:
+                        errno = ETIMEDOUT;
+                        return (-1);
+                default:
+                        return (FD_ISSET(data->pfd, &fset) ? 0 : -1);
+                }
         }
-        /* NOTREACHED */
+
         return (-1);
 }
