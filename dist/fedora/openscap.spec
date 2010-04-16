@@ -10,8 +10,10 @@ License:        LGPLv2+
 URL:            http://www.open-scap.org/
 Source0:        http://fedorahosted.org/releases/o/p/openscap/%{name}-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
-BuildRequires:  swig pcre-devel libxml2-devel
+BuildRequires:  swig libxml2-devel
 BuildRequires:  rpm-devel
+BuildRequires:  libgcrypt-devel
+BuildRequires:  pcre-devel
 Requires(post):   /sbin/ldconfig
 Requires(postun): /sbin/ldconfig
 
