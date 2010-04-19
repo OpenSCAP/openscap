@@ -524,6 +524,8 @@ echo "  family probe:                $probes_independent"
 echo "  system info probe:           $probes_independent"
 echo "  textfilecontent54 probe:     $probes_independent"
 echo "  xmlfilecontent probe:        $probes_independent"
+echo "  filemd5 probe:               $probes_independent"
+echo "  filehash probe:              $probes_independent"
 echo ""
 
 echo "  === unix probes ==="
