@@ -512,16 +512,11 @@ echo "CVSS enabled:                  $cvss"
 echo "OVAL enabled:                  $oval"
 echo "OVAL probes enabled:           $probes"
 
-echo "  === crypto === "
-echo "  library:                     $crapi_libname"
-echo "  libs:                        $crapi_libs"
-echo "  cflags:                      $crapi_cflags"
-echo ""
-
 if test "x$probes" = "xyes"; then
+echo "  system info probe:           $probes"
+echo ""
 echo "  === independent probes ==="
 echo "  family probe:                $probes_independent"
-echo "  system info probe:           $probes_independent"
 echo "  textfilecontent54 probe:     $probes_independent"
 echo "  xmlfilecontent probe:        $probes_independent"
 echo "  filemd5 probe:               $probes_independent"
@@ -548,6 +543,12 @@ echo "  === configuration ==="
 echo "  probe directory set to:      $probe_dir"
 echo ""
 fi
+
+echo "  === crypto === "
+echo "  library:                     $crapi_libname"
+echo "  libs:                        $crapi_libs"
+echo "  cflags:                      $crapi_cflags"
+echo ""
 
 echo "XCCDF enabled:                 $xccdf"
 echo "python bindings enabled:       $bindings"
