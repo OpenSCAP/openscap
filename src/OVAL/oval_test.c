@@ -172,6 +172,9 @@ bool oval_test_is_valid(struct oval_test * test)
 	if (test == NULL)
 		return false;
 
+	if (oval_test_get_subtype(test) == OVAL_INDEPENDENT_UNKNOWN)
+		return true;
+
 	object = oval_test_get_object(test);
 	if (oval_object_is_valid(object) != true)
 		return false;
