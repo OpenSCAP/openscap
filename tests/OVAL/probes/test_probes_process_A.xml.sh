@@ -1,11 +1,18 @@
 #!/usr/bin/env bash
 
-LINES_COUNT=$[`ps -A -o pid -o ppid -o comm | awk '$1 != 2 && $2 != 2 {print $3}' | sort -u | wc -l` - 10]
+TMP_P=(`ps -A -o pid -o ppid -o comm | awk '$1 != 2 && $2 != 2 {print $3}' | \
+        sed -n '2,30p'`)
 
-[ $LINES_COUNT -gt 10 ] && LINES_COUNT=10
+COUNTER=1
+for I in "${TMP_P[@]}"; do
+    if [ `ps -A | grep $I | wc -l` -eq 1 ]; then
+	PROCS[$COUNTER]="$I"
+	COUNTER=$[$COUNTER+1];
+    fi
+done
 
 function getField {
-    echo `ps -A -o pid -o ppid -o comm -o ${1} | awk '$1 != 2 && $2 != 2 {print $3}' | sed -n "$[$2 + 1]p"`
+    echo `ps -A -o comm -o ${1} | grep ${2} | awk '{ print $2 }'`
 }
 
 cat <<EOF
@@ -14,7 +21,7 @@ cat <<EOF
 
   <definitions>
 
-    <definition class="compliance" version="1" id="oval:1:def:1">  <!-- comment="false" -->
+    <definition class="compliance" version="1" id="oval:1:def:1">  <!-- comment="true" -->
       <metadata>
         <title></title>
         <description></description>
@@ -23,7 +30,7 @@ cat <<EOF
         <criteria operator="AND">
 EOF
 I=1
-while [ $I -le $LINES_COUNT ]; do
+while [ $I -le "${#PROCS[@]}" ]; do
     echo "<criterion test_ref=\"oval:1:tst:${I}\"/>"
     I=$[$I+1]
 done
@@ -39,7 +46,7 @@ cat <<EOF
 EOF
 
 I=1
-while [ $I -le $LINES_COUNT ]; do
+while [ $I -le "${#PROCS[@]}" ]; do
     cat <<EOF
     <process_test version="1" id="oval:1:tst:${I}" check="all" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
       <object object_ref="oval:1:obj:${I}"/>
@@ -56,10 +63,10 @@ cat <<EOF
 EOF
 
 I=1
-while [ $I -le $LINES_COUNT ]; do
+while [ $I -le "${#PROCS[@]}" ]; do
     cat <<EOF
     <process_object version="1" id="oval:1:obj:${I}" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-      <command>`getField 'comm' ${I}`</command>
+      <command>`getField 'comm' ${PROCS[$I]}`</command>
     </process_object>
 EOF
     I=$[$I+1]
@@ -72,16 +79,15 @@ cat <<EOF
 EOF
 
 I=1
-while [ $I -le $LINES_COUNT ]; do
+while [ $I -le "${#PROCS[@]}" ]; do
     cat <<EOF
     <process_state version="1" id="oval:1:ste:${I}" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-      <command>`getField 'comm' $I`</command>
-      <exec_time>`getField 'cputime' $I`</exec_time>
-      <pid>`getField 'pid' $I`</pid>
-      <ppid>`getField 'ppid' $I`</ppid>
-      <scheduling_class>`getField 'cls' $I`</scheduling_class>
-      <start_time>`getField 'start_time' $I`</start_time>
-      <user_id>`getField 'uid' $I`</user_id>
+      <command>`getField 'comm' ${PROCS[$I]}`</command>
+      <pid>`getField 'pid' ${PROCS[$I]}`</pid>
+      <ppid>`getField 'ppid' ${PROCS[$I]}`</ppid>
+      <scheduling_class>`getField 'cls' ${PROCS[$I]}`</scheduling_class>
+      <start_time>`getField 'start_time' ${PROCS[$I]}`</start_time>
+      <user_id>`getField 'uid' ${PROCS[$I]}`</user_id>
     </process_state>
 EOF
     I=$[$I+1]

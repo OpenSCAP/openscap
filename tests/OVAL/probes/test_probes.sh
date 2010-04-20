@@ -17,8 +17,55 @@
 # Setup.
 function test_probes_setup {
     local ret_val=0
-
+    
     export OVAL_PROBE_DIR="`pwd`/../src/OVAL/probes/"
+    
+    # Check probes.
+    CONFIGLOG="`pwd`/../config.log"
+
+    if [ -r $CONFIGLOG ]; then 
+
+	if grep -q "WANT_PROBES_INDEPENDENT_TRUE=''" $CONFIGLOG; then
+	    FAMILY_PROBE="Y"
+	    SYSINFO_PROBE="Y"
+	    TEXTFILECONTENT54_PROBE="Y"
+	    XMLFILECONTENT_PROBE="Y"
+	    FILEMD5_PROBE="Y"
+	    FILEHASH_PROBE="Y"
+	    
+	    echo -e "Independent probes enabled.\n" >&2
+
+	    if grep -q "WANT_PROBES_UNIX_TRUE=''" $CONFIGLOG; then
+		FILE_PROBE="Y"
+		INTERFACE_PROBE="Y"
+		PASSWORD_PROBE="Y"
+		PROCESS_PROBE="Y"
+		RUNLEVEL_PROBE="Y"
+		SHADOW_PROBE="Y"
+		UNAME_PROBE="Y"
+		
+		echo -e "Unix probes enabled.\n" >&2
+
+		if grep -q "WANT_PROBES_LINUX_TRUE=''" $CONFIGLOG; then
+		    DPKGINFO_PROBE="Y"
+		    INETLISTENINGSERVERS_PROBE="Y"
+		    RPMINFO_PROBE="Y"
+		    
+		    echo -e "Linux probes enabled.\n" >&2
+		else
+		    echo -e "Linux probes disabled.\n" >&2
+		fi
+	    else
+		echo -e "Unix probes disabled. Disabling also linux probe tests.\n" >&2
+	    fi	    	    
+	else
+	    echo -e "Independent probes disabled. Disabling all probe tests.\n" >&2
+	fi
+	
+    else
+	echo -e "File config.log missing! Skipping all probe tests!\n" >&2
+    fi
+
     return $ret_val
 }
 
@@ -45,6 +92,12 @@ function test_probes_import {
 
 # Check if selected system characteristics were populated correctly. 
 function test_probes_sysinfo {
+
+    if [ -z "$SYSINFO_PROBE" ]; then
+	echo -e "Probe 'probe_system_info' not found!\n" >&2
+	return 255;
+    fi
+
     local ret_val=0;
     local LOGFILE="test_probes_sysinfo.out"
     local EXECDIR="$(pwd)"
@@ -105,6 +158,12 @@ function test_probes_api {
 }
 
 function test_probes_family {
+
+    if [ -z "$FAMILY_PROBE" ]; then
+	echo -e "Probe 'probe_family' not found!\n" >&2
+	return 255;
+    fi
+
     local ret_val=0;
     local LOGFILE="test_probes_family.out"
     local EXECDIR="$(pwd)"
@@ -190,6 +249,12 @@ function test_probes_family {
 }
 
 function test_probes_uname {
+
+    if [ -z "$UNAME_PROBE" ]; then
+	echo -e "Probe 'probe_uname' not found!\n" >&2
+	return 255;
+    fi
+
     local ret_val=0;
     local LOGFILE="test_probes_uname.out"
     local EXECDIR="$(pwd)"
@@ -283,6 +348,12 @@ function test_probes_uname {
 }
 
 function test_probes_file {
+
+    if [ -z $FILE_PROBE ]; then
+	echo -e "Probe 'probe_file' not found!\n" >&2
+	return 255;
+    fi
+
     local ret_val=0;
     local LOGFILE="test_probes_file.out"
     local EXECDIR="$(pwd)"
@@ -368,6 +439,12 @@ function test_probes_file {
 }
 
 function test_probes_rpminfo {
+
+    if [ -z "$RPMINFO_PROBE" ]; then
+	echo -e "Probe 'probe_rpminfo' not found!\n" >&2
+	return 255;
+    fi
+
     local ret_val=0;
     local LOGFILE="test_probes_rpminfo.out"
     local EXECDIR="$(pwd)"
@@ -466,6 +543,12 @@ function test_probes_rpminfo {
 }
 
 function test_probes_runlevel_A {
+
+    if [ -z "$RUNLEVEL_PROBE" ]; then
+	echo -e "Probe 'probe_runlevel' not found!\n" >&2
+	return 255;
+    fi
+
     local ret_val=0;
     local LOGFILE="test_probes_runlevel_A.out"
     local EXECDIR="$(pwd)"
@@ -533,6 +616,12 @@ function test_probes_runlevel_A {
 }
 
 function test_probes_runlevel_B {
+
+    if [ -z "$RUNLEVEL_PROBE" ]; then
+	echo -e "Probe 'probe_runlevel' not found!\n" >&2
+	return 255;
+    fi
+
     local ret_val=0;
     local LOGFILE="test_probes_runlevel_B.out"
     local EXECDIR="$(pwd)"
@@ -631,6 +720,12 @@ function test_probes_runlevel_B {
 }
 
 function test_probes_password_A {
+
+    if [ -z "$PASSWORD_PROBE" ]; then
+	echo -e "Probe 'probe_password' not found!\n" >&2
+	return 255;
+    fi
+
     local ret_val=0;
     local LOGFILE="test_probes_password_A.out"
     local EXECDIR="$(pwd)"
@@ -720,6 +815,12 @@ function test_probes_password_A {
 }
 
 function test_probes_shadow_A {
+
+    if [ -z "$SHADOW_PROBE" ]; then
+	echo -e "Probe 'probe_shadow' not found!\n" >&2
+	return 255;
+    fi
+
     local ret_val=0;
     local LOGFILE="test_probes_shadow_A.out"
     local EXECDIR="$(pwd)"
@@ -809,6 +910,12 @@ function test_probes_shadow_A {
 }
 
 function test_probes_process_A {
+
+    if [ -z "$PROCESS_PROBE" ]; then
+	echo -e "Probe 'probe_process' not found!\n" >&2
+	return 255;
+    fi
+
     local ret_val=0;
     local LOGFILE="test_probes_process_A.out"
     local EXECDIR="$(pwd)"
@@ -816,13 +923,14 @@ function test_probes_process_A {
     local RESFILE="test_probes_process_A.xml.results.xml"
    
     eval "bash \"${srcdir}/OVAL/probes/test_probes_process_A.xml.sh\"" > "$DEFFILE"
-    
-    eval "\"${EXECDIR}/test_probes\" \"$DEFFILE\" \"$RESFILE\"" >> "$LOGFILE"
+    COUNT=$?
 
+    eval "\"${EXECDIR}/test_probes\" \"$DEFFILE\" \"$RESFILE\"" >> "$LOGFILE"
+    
     if [ $? -eq 0 ] && [ -e $RESFILE ]; then
 
-	DEF_DEF=`cat "$DEFFILE" | grep "id=\"oval:1:def:${ID}\""`
-	DEF_RES=`cat "$RESFILE" | grep "definition_id=\"oval:1:def:${ID}\""`
+	DEF_DEF=`cat "$DEFFILE" | grep "id=\"oval:1:def:1\""`
+	DEF_RES=`cat "$RESFILE" | grep "definition_id=\"oval:1:def:1\""`
 
 	if (echo $DEF_RES | grep -q "result=\"true\""); then
 	    RES="TRUE"
@@ -845,9 +953,7 @@ function test_probes_process_A {
 	    ret_val=$[$ret_val + 1]
 	fi
 	
-	ID=$[$ID+1]
-
-	COUNT=$[`ps -A | wc -l` - 1 / 2]; ID=1
+	ID=1
 	while [ $ID -le $COUNT ]; do
 	    
 	    TST_DEF=`cat "$DEFFILE" | grep "id=\"oval:1:tst:${ID}\""`
@@ -892,6 +998,12 @@ function test_probes_process_A {
 }
 
 function test_probes_textfilecontent54 {
+
+    if [ -z "$TEXTFILECONTENT54_PROBE" ]; then
+	echo -e "Probe 'probe_textfilecontent54' not found!\n" >&2
+	return 255;
+    fi
+
     local ret_val=0;
     local LOGFILE="test_probes_textfilecontent54.out"
     local EXECDIR="$(pwd)"
@@ -1076,6 +1188,9 @@ function test_probes_cleanup {
 	  test_probes_shadow_A.out \
 	  test_probes_shadow_A.xml \
 	  test_probes_shadow_A.xml.results.xml \
+	  test_probes_process_A.out \
+	  test_probes_process_A.xml \
+	  test_probes_process_A.xml.results.xml \
           test_probes_textfilecontent54.out \
 	  test_probes_textfilecontent54.xml.results.xml \
 	  /tmp/test_probes_textfilecontent54.tmp_file \
@@ -1154,10 +1269,10 @@ ret_val=$?
 report_result "test_probes_shadow_A" $ret_val  
 result=$[$result+$?]   
 
-# test_probes_process_A
-# ret_val=$?
-# report_result "test_probes_process_A" $ret_val  
-# result=$[$result+$?]   
+test_probes_process_A
+ret_val=$?
+report_result "test_probes_process_A" $ret_val  
+result=$[$result+$?]   
 
 test_probes_textfilecontent54
 ret_val=$?
