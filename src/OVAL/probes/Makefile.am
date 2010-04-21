@@ -10,8 +10,6 @@ noinst_LTLIBRARIES= libprobe.la
 libprobe_la_SOURCES= \
 	probe-cache.c \
 	probe-cache.h \
-	probe-entcmp.c \
-	probe-entcmp.h \
 	probe-fini.c \
 	probe-init.c \
 	probe-main.c

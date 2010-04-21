@@ -41,10 +41,12 @@
 #include <alloc.h>
 
 #include "findfile.h"
+#include "probe-entcmp.h"
 
 typedef struct {
-	regex_t *re;
-	char *file;
+	SEXP_t *spath;
+	SEXP_t *sfilename;
+	bool filename_is_nil;
 	char *direction;
 	char *follow;
 	fsdev_t *dev_list;
@@ -79,25 +81,21 @@ static void rglobfree(rglob_t * result);
 int find_files(SEXP_t * spath, SEXP_t * sfilename, SEXP_t * behaviors,
 	       int (*cb) (const char *pathname, const char *filename, void *arg), void *arg)
 {
-	char *name = NULL, *path = NULL, *tmp = NULL;
+	char *path = NULL, *tmp = NULL;
 	setting_t *setting = NULL;
 	int i, rc, max_depth;
 	rglob_t rglobbuf;
 	int finds = 0;
 	SEXP_t *stmp;
 
-	SEXP_t *r0;
+	SEXP_t *r0, *r1;
 	uint32_t op;
 
 	assert(sfilename);
 	assert(spath);
 	assert(behaviors);
 
-	name = SEXP_string_cstr(r0 = probe_ent_getval(sfilename));
-	SEXP_free(r0);
-
-	path = SEXP_string_cstr(r0 = probe_ent_getval(spath));
-	SEXP_free(r0);
+	path = SEXP_string_cstr(r1 = probe_ent_getval(spath));
 
 	tmp = SEXP_string_cstr(r0 = probe_ent_getattrval(behaviors, "max_depth"));
 	SEXP_free(r0);
@@ -106,6 +104,7 @@ int find_files(SEXP_t * spath, SEXP_t * sfilename, SEXP_t * behaviors,
 	oscap_free(tmp);
 
 	setting = oscap_calloc(1, sizeof(setting_t));
+	setting->spath = spath;
 	setting->direction = SEXP_string_cstr(r0 = probe_ent_getattrval(behaviors, "recurse_direction"));
 	SEXP_free(r0);
 
@@ -128,22 +127,10 @@ int find_files(SEXP_t * spath, SEXP_t * sfilename, SEXP_t * behaviors,
 	SEXP_free(stmp);
 
 	/* Filename */
-	setting->re = NULL;
-	setting->file = name;
-
-	if (name) {
-		r0 = probe_ent_getattrval(sfilename, "operation");
-		op = SEXP_number_getu_32(r0);
-		SEXP_free(r0);
-
-		if (op == OVAL_OPERATION_PATTERN_MATCH) {
-			setting->re = oscap_talloc(regex_t);
-
-			if (regcomp(setting->re, name, REG_EXTENDED) != 0) {
-				goto error;
-			}
-		}
-	}
+	setting->sfilename = sfilename;
+	r0 = probe_ent_getval(sfilename);
+	setting->filename_is_nil = (SEXP_string_length(r0) == 0) ? true : false;
+	SEXP_free(r0);
 
 	assert(strlen(path) > 0);
 
@@ -166,42 +153,44 @@ int find_files(SEXP_t * spath, SEXP_t * sfilename, SEXP_t * behaviors,
 			finds = 0;
 
 			for (i = 0; i < rglobbuf.pathc; i++) {
-				rc = find_files_recursion(rglobbuf.pathv[i], setting, max_depth, arg);
+				r0 = SEXP_string_newf("%s", rglobbuf.pathv[i]);
+				if (probe_entobj_cmp(spath, r0) == OVAL_RESULT_TRUE) {
+					rc = find_files_recursion(rglobbuf.pathv[i], setting, max_depth, arg);
 
-				if (rc == 0) {	/* add path, no files found */
-					(*cb) (rglobbuf.pathv[i], NULL, arg);
-					rc++;
+					if (rc == 0) {	/* add path, no files found */
+						(*cb) (rglobbuf.pathv[i], NULL, arg);
+						rc++;
+					}
+
+					if (rc >= 0)
+						finds += rc;
 				}
-
-				if (rc >= 0)
-					finds += rc;
+				SEXP_free(r0);
 			}
 
 			rglobfree(&rglobbuf);
 		}
 	} else {
-		rc = find_files_recursion(path, setting, max_depth, arg);
+		if (probe_entobj_cmp(spath, r1) == OVAL_RESULT_TRUE) {
+			rc = find_files_recursion(path, setting, max_depth, arg);
 
-		if (rc == 0) {	/* add path, no files found */
-			(*cb) (path, NULL, arg);
-			rc++;
+			if (rc == 0) {	/* add path, no files found */
+				(*cb) (path, NULL, arg);
+				rc++;
+			}
+
+			if (rc >= 0)
+				finds += rc;
 		}
-
-		if (rc >= 0)
-			finds += rc;
 	}
 
  error:
-	oscap_free(name);	/* setting->file is same adress */
+	SEXP_free(r1);
 	oscap_free(path);
 
 	oscap_free(setting->follow);
 	oscap_free(setting->direction);
 	fsdev_free(setting->dev_list);
-
-	if (setting->re != NULL)
-		regfree(setting->re);
-
 	oscap_free(setting);
 
 	return finds;
@@ -256,18 +245,15 @@ static int find_files_recursion(const char *path, setting_t * setting, int depth
 		}
 
 		if (!S_ISDIR(st.st_mode)) {
-			if (setting->re) {	/* patter match */
-				if (regexec(setting->re, pDirent->d_name, 0, NULL, 0) == 0) {
-					rc++;
-					(setting->cb) (path, pDirent->d_name, arg);
-				}
-			} else if (setting->file) {	/* filename match */
-				if (!strncmp(setting->file, pDirent->d_name, pDirent->d_reclen)) {
-					rc++;
-					(setting->cb) (path, pDirent->d_name, arg);
-				}
+			SEXP_t *sf;
+
+			sf = SEXP_string_newf("%s", pDirent->d_name);
+			if (probe_entobj_cmp(setting->sfilename, sf) == OVAL_RESULT_TRUE) {
+				rc++;
+				(setting->cb) (path, pDirent->d_name, arg);
 			}
-		} else if (!setting->re && !setting->file) {	/*  collect directories */
+			SEXP_free(sf);
+		} else if (setting->filename_is_nil) { // collect directories
 			rc++;
 			(setting->cb) (path, pDirent->d_name, arg);
 		}

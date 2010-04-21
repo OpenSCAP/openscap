@@ -346,7 +346,7 @@ SEXP_t *oval_object2sexp(const char *typestr, struct oval_object * object, struc
 			ochk = oval_object_content_get_varCheck(content);
 			if (ochk != OVAL_CHECK_UNKNOWN) {
 				probe_ent_attr_add(elm, "var_check",
-						   r0 = SEXP_string_newf("%s", oval_check_get_text(ochk)));
+						   r0 = SEXP_number_newu_32(ochk));
 				SEXP_free(r0);
 			}
 

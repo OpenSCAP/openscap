@@ -91,6 +91,8 @@ common_oval_sources += probes/probe-api.c 	\
 		       probes/public/findfile.h \
 		       probes/encache.c		\
 		       probes/encache.h		\
+		       probes/probe-entcmp.c	\
+		       probes/probe-entcmp.h	\
 		       oval_sexp.c \
 		       oval_sexp.h \
 		       oval_probe_impl.h

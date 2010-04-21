@@ -807,7 +807,10 @@ SEXP_t *probe_ent_attr_add(SEXP_t * ent, const char *name, SEXP_t * val)
 int probe_ent_getvals(const SEXP_t * ent, SEXP_t ** res)
 {
 	_LOGCALL_;
-	(*res) = SEXP_list_rest(ent);
+	if (probe_ent_attrexists(ent, "var_ref"))
+		(*res) = SEXP_list_nth(ent, 2);
+	else
+		(*res) = SEXP_list_rest(ent);
 	return (SEXP_list_length(*res));
 }
 
