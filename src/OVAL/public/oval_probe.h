@@ -2,8 +2,8 @@
 /**
  * @addtogroup OVAL
  * @{
- * @addtogroup PROBESCONTEXT System checking mechanism
- * Public interface to OpenSCAP system checking mechanism
+ * @addtogroup PROBESCONTEXT
+ * Interface to OpenSCAP system checking mechanism.
  * @{
  *
  * @file

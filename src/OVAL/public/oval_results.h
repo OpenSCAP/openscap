@@ -1,8 +1,8 @@
 /**
  * @addtogroup OVAL
  * @{
- * @addtogroup OVALRES OVAL Results
- * Public interface for OVAL Results
+ * @addtogroup OVALRES
+ * Interface for Results model
  * @{
  *
  * Class diagram

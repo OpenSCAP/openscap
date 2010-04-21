@@ -287,8 +287,8 @@ typedef enum {
 /**
  * @addtogroup OVAL
  * @{
- * @addtogroup OVALVAR OVAL External Variable Binding
- * Public interface to OVAL External Variable Binding
+ * @addtogroup OVALVAR
+ * Interface to Variable model
  * @{
  *
  * @struct oval_variable_model

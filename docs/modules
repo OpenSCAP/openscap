@@ -1,0 +1,26 @@
+/**
+ *
+ * @defgroup COMMON
+ * @{
+ *   @defgroup IMPORTEXPORT Import & export
+ *   @defgroup ITER Iterators & collections
+ *   @defgroup STRINGS String manipulation
+ *   @defgroup XMLMETA Element metadata
+ *   @defgroup ERRORS Errors
+ *   @defgroup Reporters
+ *   @defgroup Debug
+ *   @defgroup Memory
+ * @}
+ *
+ * @addtogroup OVAL
+ * @{
+ *   @defgroup OVALDEF OVAL Definitions
+ *   @defgroup OVALSYS OVAL System Characteristics
+ *   @defgroup OVALRES OVAL Results
+ *   @defgroup OVALVAR OVAL External Variable Binding
+ *   @defgroup PROBESCONTEXT System checking mechanism
+ *   @defgroup PROBES Probes and S-expression (PRIVATE)
+ * @}
+ */
+
+

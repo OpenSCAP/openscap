@@ -1,8 +1,8 @@
 /**
  * @addtogroup OVAL
  * @{
- * @addtogroup PROBES Probes and S-expression 
- * Private interface for probe writes
+ * @addtogroup PROBES
+ * Probes and S-expression handling for probe writes.
  * @{
  * @addtogroup PROBESCMP Entity comparison
  * Comparison operations on entities in probes

@@ -1,8 +1,8 @@
 /**
  * @addtogroup OVAL
  * @{
- * @addtogroup PROBES Probes and S-expression 
- * Private interface for probe writes
+ * @addtogroup PROBES
+ * Probes and S-expression handling for probe writes.
  * @{
  * @addtogroup PROBESAPI Main probe API
  * Most of the operations that need to be done in a probe, processing input object, 

@@ -38,10 +38,10 @@
 #include "reporter.h"
 
 /**
- * @defgroup ITER Iterators & collections
+ * @addtogroup ITER
  * @{
  *
- * OpenScap iterators concept.
+ * Iterators concept.
  *
  * Any iterator name takes a form of <tt>struct OBJECT_iterator</tt>, where @c OBJECT
  * is a name of particular datatype the iterator iterates over.
@@ -129,9 +129,9 @@
 /** @} */
 
 /**
- * @defgroup XMLMETA XML element metadata
+ * @defgroup XMLMETA Element metadata
  * @{
- * Describes XML metadata such as namespace or language.
+ * Describes XML elemenent metadata such as namespace or language.
  */
 
 /**
@@ -192,7 +192,7 @@ void xml_metadata_iterator_remove(struct xml_metadata_iterator *it);
 /** @} */
 
 /**
- * @defgroup STRINGS String manipulation
+ * @addtogroup STRINGS
  * @{
  * Functions to access and manipulate textual data.
  */
@@ -291,9 +291,9 @@ void oscap_cleanup(void);
 
 
 /**
- * @defgroup IMPORTEXPORT Import & export
+ * @addtogroup IMPORTEXPORT
  * @{
- * File loading and saving support.
+ * Handling input and output files plus validation according to XML schema.
  */
 
 /**
@@ -411,7 +411,7 @@ void oscap_nsinfo_entry_iterator_free(struct oscap_nsinfo_entry_iterator *it);
  * @struct oscap_nsinfo_entry
  * Namespace information entry.
  * This structure carries namespace prefix,
- * namespace URI and schema location.
+ * Namespace URI and schema location.
  */
 struct oscap_nsinfo_entry;
 /// @memberof oscap_nsinfo_entry
@@ -433,7 +433,7 @@ const char *oscap_nsinfo_entry_get_schema_location(const struct oscap_nsinfo_ent
 /// @memberof oscap_nsinfo_entry
 bool oscap_nsinfo_entry_set_schema_location(struct oscap_nsinfo_entry *obj, const char *newval);
 
-/*
+/**
  * @struct oscap_nsinfo
  * Information on namespaces for given document
  */

@@ -21,19 +21,6 @@
  *      Lukas Kuklinek <lkuklinek@redhat.com>
  */
 
-/**
- * @file
- * Multilingual text processing internal interface.
- * @author Lukas Kuklinek <lkuklinek@redhat.com>
- * @author David Niemoller <David.Niemoller@g2-inc.com>
- *
- * @addtogroup COMMON
- * @{
- * @addtogroup Internal
- * @{
- * @name oscap_text internals
- */
-
 #pragma once
 #ifndef OSCAP_TEXT_PRIV_H_
 #define OSCAP_TEXT_PRIV_H_

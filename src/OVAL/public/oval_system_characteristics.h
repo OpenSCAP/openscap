@@ -1,8 +1,8 @@
 /**
  * @addtogroup OVAL
  * @{
- * @addtogroup OVALSYS OVAL System Characteristics
- * Public interface for OVAL System Characteristics.
+ * @addtogroup OVALSYS
+ * Interface for System Characteristics model.
  * @{
  *
  * Class diagram

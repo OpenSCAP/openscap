@@ -22,7 +22,7 @@
  *
  * @addtogroup COMMON
  * @{
- * @defgroup ERRORS Errors
+ * @addtogroup ERRORS
  * @{
  * Error checking/setting mechanism. Purse of this mechanism is to provide ability to propagate 
  * information about problems that occured in library functions. Mechanism is similar to linux errno variable.
@@ -84,7 +84,7 @@ typedef uint16_t oscap_errcode_t;
 /** @} */
 
 /**
- * @name XCCDF family error codes
+ * @name XCCDF family codes
  * @{
  */
 #define XCCDF_EREFIDCONFLICT  1   /**< Conflict in refine rules - same idref */

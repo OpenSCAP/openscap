@@ -4,9 +4,9 @@
  *
  * @addtogroup COMMON
  * @{
- * @addtogroup Internal
+ * @addtogroup Debug
  * @{
- * @name Debugging
+ * Debuging mechanism.
  */
 
 /*

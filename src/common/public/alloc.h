@@ -4,10 +4,9 @@
  *
  * @addtogroup COMMON
  * @{
- * @addtogroup Internal
+ * @addtogroup Memory
  * @{
- * Functions to be used from within the OpenSCAP library.
- * @name Memory allocation
+ * Memory allocation wrapper functions used in library.
  */
 
 /*
@@ -138,8 +137,4 @@ __P void oscap_free(void *p)
 #define  oscap_valloc(v) ((typeof(v) *) oscap_alloc(sizeof v))
 #define  OSCAP_SALLOC(TYPE, NAME) struct TYPE* NAME = oscap_calloc(1, sizeof(struct TYPE))
 
-#include <assert.h>
-#ifndef _A
-# define _A(x) assert(x)
-#endif				/* _A */
 #endif				/* OSCAP_ALLOC_H */

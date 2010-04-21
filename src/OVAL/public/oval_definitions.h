@@ -1,8 +1,8 @@
 /**
  * @addtogroup OVAL
  * @{
- * @addtogroup OVALDEF OVAL Definitions
- * Public interface for OVAL Definitions.
+ * @addtogroup OVALDEF
+ * Interface for Definition model.
  * @{
  *
  * Class diagram
