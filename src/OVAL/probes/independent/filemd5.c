@@ -161,6 +161,12 @@ static int filehash_cb (const char *p, const char *f, void *ptr)
 void *probe_init (void)
 {
         _LOGCALL_;
+
+        /*
+         * Initialize crypto API
+         */
+        if (crapi_init (NULL) != 0)
+                return (NULL);
         
         /*
          * Initialize mutex.

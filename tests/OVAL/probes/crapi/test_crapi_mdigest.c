@@ -72,6 +72,11 @@ int main (int argc, char *argv[])
         filename     = argv[1];
         orig_md5sum  = argv[2];
         orig_sha1sum = argv[3];
+
+        if (crapi_init (NULL) != 0) {
+                fprintf (stderr, "crapi_init() != 0\n");
+                abort ();
+        }
         
         fd = open (filename, O_RDONLY);
         

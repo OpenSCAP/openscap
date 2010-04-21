@@ -10,7 +10,8 @@ libcrapi_la_SOURCES= 		\
 		sha2.h		\
 		rmd160.c	\
 		rmd160.h	\
-		crapi.h
+		crapi.h		\
+		crapi.c
 
 libcrapi_la_LDFLAGS= @crapi_libs@
 libcrapi_la_CFLAGS= @crapi_cflags@ -I. -I$(top_srcdir) -I$(top_srcdir)/src/common -I$(top_srcdir)/src/common/public -D_FILE_OFFSET_BITS=32

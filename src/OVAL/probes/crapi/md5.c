@@ -50,6 +50,13 @@ void *crapi_md5_init (void *dst, void *size)
         ctx->dst  = dst;
         ctx->size = size;
 
+        if (ctx->ctx != NULL) {
+                HASH_Begin (ctx->ctx);
+        } else {
+                oscap_free (ctx);
+                ctx = NULL;
+        }
+
         return (ctx);
 }
 
@@ -184,8 +191,12 @@ int crapi_md5_fd (int fd, void *dst, size_t *size)
 #if _FILE_OFFSET_BITS == 32
 # if defined(HAVE_NSS3)
                 } else {
-                        HASH_HashBuf (HASH_AlgMD5, (unsigned char *)dst, (unsigned char *)buffer, (unsigned int)buflen);
+                        SECStatus ret;
+                        
+                        ret = HASH_HashBuf (HASH_AlgMD5, (unsigned char *)dst, (unsigned char *)buffer, (unsigned int)buflen);
                         munmap (buffer, buflen);
+
+                        return (ret == SECSuccess ? 0 : -1);
                 }
 # elif defined(HAVE_GCRYPT)
                 } else {

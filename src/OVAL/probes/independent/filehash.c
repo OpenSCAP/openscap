@@ -172,6 +172,12 @@ void *probe_init (void)
         _LOGCALL_;
         
         /*
+         * Initialize crypto API
+         */
+        if (crapi_init (NULL) != 0)
+                return (NULL);
+        
+        /*
          * Initialize mutex.
          */
         switch (pthread_mutex_init (&__filehash_probe_mutex, NULL)) {

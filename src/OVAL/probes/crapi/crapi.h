@@ -29,4 +29,6 @@
 # define _FILE_OFFSET_BITS 32
 #endif
 
+int crapi_init (void *unused);
+
 #endif /* CRAPI_H */
