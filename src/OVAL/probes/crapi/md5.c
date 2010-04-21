@@ -34,6 +34,8 @@
 #if defined(HAVE_NSS3)
 #include <sechash.h>
 
+#define CRAPI_MD5DST_LEN MD5_LENGTH
+
 struct crapi_md5_ctx {
         HASHContext *ctx;
         void        *dst;
@@ -79,65 +81,10 @@ void crapi_md5_free (void *ctxp)
         
         return;
 }
-
-int crapi_md5_fd (int fd, void *dst, size_t *size)
-{
-        struct stat st;
-        void   *buffer;
-        size_t  buflen;
-        
-        assume_r (size != NULL, -1, errno = EFAULT;);
-        assume_r (*size >= MD5_LENGTH, -1, errno = ENOBUFS;);
-        assume_r (dst != NULL, -1, errno = EFAULT;);
-        
-        if (fstat (fd, &st) != 0)
-                return (-1);
-        else {
-#if _FILE_OFFSET_BITS == 32
-                buflen = st.st_size;
-# if defined(__FreeBSD__)
-                buffer = mmap (NULL, buflen, PROT_READ, MAP_SHARED | MAP_NOCORE, fd, 0);
-# else
-                buffer = mmap (NULL, buflen, PROT_READ, MAP_SHARED, fd, 0);        
-# endif
-                if (buffer == NULL) {
-#endif
-                        uint8_t _buffer[CRAPI_IO_BUFSZ];
-                        HASHContext *ctx;
-                        ssize_t ret;
-                
-                        buffer = _buffer;
-                        ctx    = HASH_Create (HASH_AlgMD5);
-                
-                        if (ctx == NULL)
-                                return (-1);
-                
-                        while ((ret = read (fd, buffer, sizeof _buffer)) == sizeof _buffer)
-                                HASH_Update (ctx, (const unsigned char *)buffer, (unsigned int) sizeof _buffer);
-                
-                        switch (ret) {
-                        case 0:
-                                break;
-                        case -1:
-                                return (-1);
-                        default:
-                                assume_r (ret > 0, -1, HASH_Destroy (ctx););
-                                HASH_Update (ctx, (const unsigned char *)buffer, (unsigned int) ret);
-                        }
-                
-                        HASH_End (ctx, dst, (unsigned int *)size, *size);
-                        HASH_Destroy (ctx);
-#if _FILE_OFFSET_BITS == 32
-                } else {
-                        HASH_HashBuf (HASH_AlgMD5, (unsigned char *)dst, (unsigned char *)buffer, (unsigned int)buflen);
-                        munmap (buffer, buflen);
-                }
-#endif /* _FILE_OFFSET_BITS == 32 */
-        }
-        return (0);
-}
 #elif defined(HAVE_GCRYPT)
 #include <gcrypt.h>
+
+#define CRAPI_MD5DST_LEN gcry_md_get_algo_dlen (GCRY_MD_MD5)
 
 struct crapi_md5_ctx {
         gcry_md_hd_t ctx;
@@ -184,6 +131,9 @@ void crapi_md5_free (void *ctxp)
         gcry_md_close (ctx->ctx);
         return;
 }
+#else
+# error "No crypto library available!"
+#endif
 
 int crapi_md5_fd (int fd, void *dst, size_t *size)
 {
@@ -192,8 +142,8 @@ int crapi_md5_fd (int fd, void *dst, size_t *size)
         size_t  buflen;
         
         assume_r (size != NULL, -1, errno = EFAULT;);
+        assume_r (*size >= CRAPI_MD5DST_LEN, -1, errno = ENOBUFS;);
         assume_r (dst != NULL, -1, errno = EFAULT;);
-        assume_r (*size >= gcry_md_get_algo_dlen (GCRY_MD_MD5), -1, errno = ENOBUFS;);
         
         if (fstat (fd, &st) != 0)
                 return (-1);
@@ -206,41 +156,44 @@ int crapi_md5_fd (int fd, void *dst, size_t *size)
                 buffer = mmap (NULL, buflen, PROT_READ, MAP_SHARED, fd, 0);        
 # endif
                 if (buffer == NULL) {
-#endif /* _FILE_OFFSET_BITS == 32 */
+#endif
                         uint8_t _buffer[CRAPI_IO_BUFSZ];
-                        gcry_md_hd_t hd;
+                        void   *ctx;
                         ssize_t ret;
                 
                         buffer = _buffer;
-                        gcry_md_open (&hd, GCRY_MD_MD5, 0);
+                        ctx    = crapi_md5_init (dst, size);
+                        
+                        if (ctx == NULL)
+                                return (-1);
                 
                         while ((ret = read (fd, buffer, sizeof _buffer)) == sizeof _buffer)
-                                gcry_md_write (hd, (const void *)buffer, sizeof _buffer);
-                
+                                crapi_md5_update (ctx, buffer, sizeof _buffer);
+                        
                         switch (ret) {
                         case 0:
                                 break;
                         case -1:
                                 return (-1);
                         default:
-                                assume_r (ret > 0, -1, gcry_md_close (hd););
-                                gcry_md_write (hd, (const void *)buffer, (size_t)ret);
+                                assume_r (ret > 0, -1, crapi_md5_free (ctx););
+                                crapi_md5_update (ctx, buffer, (size_t) ret);
                         }
-                
-                        gcry_md_final (hd);
-                
-                        buffer = (void *)gcry_md_read (hd, GCRY_MD_MD5);
-                        memcpy (dst, buffer, gcry_md_get_algo_dlen (GCRY_MD_MD5));
-                        gcry_md_close (hd);
+                        
+                        crapi_md5_fini (ctx);
 #if _FILE_OFFSET_BITS == 32
+# if defined(HAVE_NSS3)
+                } else {
+                        HASH_HashBuf (HASH_AlgMD5, (unsigned char *)dst, (unsigned char *)buffer, (unsigned int)buflen);
+                        munmap (buffer, buflen);
+                }
+# elif defined(HAVE_GCRYPT)
                 } else {
                         gcry_md_hash_buffer (GCRY_MD_MD5, dst, (const void *)buffer, buflen);
                         munmap (buffer, buflen);
                 }
+# endif
 #endif /* _FILE_OFFSET_BITS == 32 */
         }
         return (0);
 }
-#else
-# error "No crypto library available!"
-#endif
