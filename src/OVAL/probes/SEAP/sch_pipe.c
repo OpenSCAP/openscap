@@ -196,6 +196,8 @@ int sch_pipe_connect (SEAP_desc_t *desc, const char *uri, uint32_t flags)
                 
                 if (stat (data->execpath, &st) != 0)
                         goto fail1;
+                if (!S_ISREG(st.st_mode))
+                        goto fail1;
         }
         
         if (socketpair (AF_UNIX, SOCK_STREAM, 0, pfd) < 0)
