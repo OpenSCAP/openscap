@@ -98,3 +98,5 @@ cat <<EOF
 
 </oval_definitions>
 EOF
+
+exit ${#PROCS[@]};

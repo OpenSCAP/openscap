@@ -19,52 +19,6 @@ function test_probes_setup {
     local ret_val=0
     
     export OVAL_PROBE_DIR="`pwd`/../src/OVAL/probes/"
-    
-    # Check probes.
-    CONFIGLOG="`pwd`/../config.log"
-
-    if [ -r $CONFIGLOG ]; then 
-
-	if grep -q "WANT_PROBES_INDEPENDENT_TRUE=''" $CONFIGLOG; then
-	    FAMILY_PROBE="Y"
-	    SYSINFO_PROBE="Y"
-	    TEXTFILECONTENT54_PROBE="Y"
-	    XMLFILECONTENT_PROBE="Y"
-	    FILEMD5_PROBE="Y"
-	    FILEHASH_PROBE="Y"
-	    
-	    echo -e "Independent probes enabled.\n" >&2
-
-	    if grep -q "WANT_PROBES_UNIX_TRUE=''" $CONFIGLOG; then
-		FILE_PROBE="Y"
-		INTERFACE_PROBE="Y"
-		PASSWORD_PROBE="Y"
-		PROCESS_PROBE="Y"
-		RUNLEVEL_PROBE="Y"
-		SHADOW_PROBE="Y"
-		UNAME_PROBE="Y"
-		
-		echo -e "Unix probes enabled.\n" >&2
-
-		if grep -q "WANT_PROBES_LINUX_TRUE=''" $CONFIGLOG; then
-		    DPKGINFO_PROBE="Y"
-		    INETLISTENINGSERVERS_PROBE="Y"
-		    RPMINFO_PROBE="Y"
-		    
-		    echo -e "Linux probes enabled.\n" >&2
-		else
-		    echo -e "Linux probes disabled.\n" >&2
-		fi
-	    else
-		echo -e "Unix probes disabled. Disabling also linux probe tests.\n" >&2
-	    fi	    	    
-	else
-	    echo -e "Independent probes disabled. Disabling all probe tests.\n" >&2
-	fi
-	
-    else
-	echo -e "File config.log missing! Skipping all probe tests!\n" >&2
-    fi
 
     return $ret_val
 }
@@ -93,9 +47,9 @@ function test_probes_import {
 # Check if selected system characteristics were populated correctly. 
 function test_probes_sysinfo {
 
-    if [ -z "$SYSINFO_PROBE" ]; then
-	echo -e "Probe 'probe_system_info' not found!\n" >&2
-	return 255;
+    if [ ! -x ${OVAL_PROBE_DIR}/probe_system_info ]; then		
+	echo -e "Probe sysinfo does not exist!\n" >&2
+	return 255; # Test is not applicable.
     fi
 
     local ret_val=0;
@@ -159,9 +113,9 @@ function test_probes_api {
 
 function test_probes_family {
 
-    if [ -z "$FAMILY_PROBE" ]; then
-	echo -e "Probe 'probe_family' not found!\n" >&2
-	return 255;
+    if [ ! -x ${OVAL_PROBE_DIR}/probe_family ]; then		
+	echo -e "Probe family does not exist!\n" >&2
+	return 255; # Test is not applicable.
     fi
 
     local ret_val=0;
@@ -250,9 +204,9 @@ function test_probes_family {
 
 function test_probes_uname {
 
-    if [ -z "$UNAME_PROBE" ]; then
-	echo -e "Probe 'probe_uname' not found!\n" >&2
-	return 255;
+    if [ ! -x ${OVAL_PROBE_DIR}/probe_uname ]; then		
+	echo -e "Probe uname does not exist!\n" >&2
+	return 255; # Test is not applicable.
     fi
 
     local ret_val=0;
@@ -349,9 +303,9 @@ function test_probes_uname {
 
 function test_probes_file {
 
-    if [ -z $FILE_PROBE ]; then
-	echo -e "Probe 'probe_file' not found!\n" >&2
-	return 255;
+    if [ ! -x ${OVAL_PROBE_DIR}/probe_file ]; then		
+	echo -e "Probe file does not exist!\n" >&2
+	return 255; # Test is not applicable.
     fi
 
     local ret_val=0;
@@ -440,9 +394,9 @@ function test_probes_file {
 
 function test_probes_rpminfo {
 
-    if [ -z "$RPMINFO_PROBE" ]; then
-	echo -e "Probe 'probe_rpminfo' not found!\n" >&2
-	return 255;
+    if [ ! -x ${OVAL_PROBE_DIR}/probe_rpminfo ]; then		
+	echo -e "Probe rpminfo does not exist!\n" >&2
+	return 255; # Test is not applicable.
     fi
 
     local ret_val=0;
@@ -544,9 +498,9 @@ function test_probes_rpminfo {
 
 function test_probes_runlevel_A {
 
-    if [ -z "$RUNLEVEL_PROBE" ]; then
-	echo -e "Probe 'probe_runlevel' not found!\n" >&2
-	return 255;
+    if [ ! -x ${OVAL_PROBE_DIR}/probe_runlevel ]; then		
+	echo -e "Probe runlevel does not exist!\n" >&2
+	return 255; # Test is not applicable.
     fi
 
     local ret_val=0;
@@ -617,9 +571,9 @@ function test_probes_runlevel_A {
 
 function test_probes_runlevel_B {
 
-    if [ -z "$RUNLEVEL_PROBE" ]; then
-	echo -e "Probe 'probe_runlevel' not found!\n" >&2
-	return 255;
+    if [ ! -x ${OVAL_PROBE_DIR}/probe_runlevel ]; then		
+	echo -e "Probe runlevel does not exist!\n" >&2
+	return 255; # Test is not applicable.
     fi
 
     local ret_val=0;
@@ -721,9 +675,9 @@ function test_probes_runlevel_B {
 
 function test_probes_password_A {
 
-    if [ -z "$PASSWORD_PROBE" ]; then
-	echo -e "Probe 'probe_password' not found!\n" >&2
-	return 255;
+    if [ ! -x ${OVAL_PROBE_DIR}/probe_password ]; then		
+	echo -e "Probe password does not exist!\n" >&2
+	return 255; # Test is not applicable.
     fi
 
     local ret_val=0;
@@ -744,8 +698,8 @@ function test_probes_password_A {
     
     if [ $? -eq 0 ] && [ -e $RESFILE ]; then
 
-	DEF_DEF=`cat "$DEFFILE" | grep "id=\"oval:1:def:${ID}\""`
-	DEF_RES=`cat "$RESFILE" | grep "definition_id=\"oval:1:def:${ID}\""`
+	DEF_DEF=`cat "$DEFFILE" | grep "id=\"oval:1:def:1\""`
+	DEF_RES=`cat "$RESFILE" | grep "definition_id=\"oval:1:def:1\""`
 
 	if (echo $DEF_RES | grep -q "result=\"true\""); then
 	    RES="TRUE"
@@ -768,8 +722,6 @@ function test_probes_password_A {
 	    ret_val=$[$ret_val + 1]
 	fi
 	
-	ID=$[$ID+1]
-
 	COUNT=`cat /etc/passwd | wc -l`; ID=1
 	while [ $ID -le $COUNT ]; do
 	    
@@ -816,9 +768,9 @@ function test_probes_password_A {
 
 function test_probes_shadow_A {
 
-    if [ -z "$SHADOW_PROBE" ]; then
-	echo -e "Probe 'probe_shadow' not found!\n" >&2
-	return 255;
+    if [ ! -x ${OVAL_PROBE_DIR}/probe_shadow ]; then		
+	echo -e "Probe shadow does not exist!\n" >&2
+	return 255; # Test is not applicable.
     fi
 
     local ret_val=0;
@@ -839,8 +791,8 @@ function test_probes_shadow_A {
     
     if [ $? -eq 0 ] && [ -e $RESFILE ]; then
 
-	DEF_DEF=`cat "$DEFFILE" | grep "id=\"oval:1:def:${ID}\""`
-	DEF_RES=`cat "$RESFILE" | grep "definition_id=\"oval:1:def:${ID}\""`
+	DEF_DEF=`cat "$DEFFILE" | grep "id=\"oval:1:def:1\""`
+	DEF_RES=`cat "$RESFILE" | grep "definition_id=\"oval:1:def:1\""`
 
 	if (echo $DEF_RES | grep -q "result=\"true\""); then
 	    RES="TRUE"
@@ -863,8 +815,6 @@ function test_probes_shadow_A {
 	    ret_val=$[$ret_val + 1]
 	fi
 	
-	ID=$[$ID+1]
-
 	COUNT=`cat /etc/shadow | wc -l`; ID=1
 	while [ $ID -le $COUNT ]; do
 	    
@@ -911,9 +861,9 @@ function test_probes_shadow_A {
 
 function test_probes_process_A {
 
-    if [ -z "$PROCESS_PROBE" ]; then
-	echo -e "Probe 'probe_process' not found!\n" >&2
-	return 255;
+    if [ ! -x ${OVAL_PROBE_DIR}/probe_process ]; then		
+	echo -e "Probe process does not exist!\n" >&2
+	return 255; # Test is not applicable.
     fi
 
     local ret_val=0;
@@ -999,9 +949,9 @@ function test_probes_process_A {
 
 function test_probes_textfilecontent54 {
 
-    if [ -z "$TEXTFILECONTENT54_PROBE" ]; then
-	echo -e "Probe 'probe_textfilecontent54' not found!\n" >&2
-	return 255;
+    if [ ! -x ${OVAL_PROBE_DIR}/probe_textfilecontent54 ]; then		
+	echo -e "Probe textfilecontent54 does not exist!\n" >&2
+	return 255; # Test is not applicable.
     fi
 
     local ret_val=0;

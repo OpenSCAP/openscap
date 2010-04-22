@@ -44,7 +44,7 @@ cat <<EOF
 
   <definitions>
 
-    <definition class="compliance" version="1" id="oval:1:def:1">  <!-- comment="false" -->
+    <definition class="compliance" version="1" id="oval:1:def:1">  <!-- comment="true" -->
       <metadata>
         <title></title>
         <description></description>

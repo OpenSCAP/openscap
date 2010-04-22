@@ -38,9 +38,10 @@ int main(int argc, char **argv) {
   struct oval_sysinfo *sysinfo;
   pctx = oval_pctx_new(sys_model);
   sysinfo = oval_probe_sysinf_eval(pctx);
-  assume(sysinfo != NULL);
-  oval_syschar_model_set_sysinfo(sys_model, sysinfo);
-  oval_sysinfo_free(sysinfo);
+  if (sysinfo != NULL) {
+    oval_syschar_model_set_sysinfo(sys_model, sysinfo);
+    oval_sysinfo_free(sysinfo);
+  }
   oval_pctx_free(pctx);
 
   /* call probes */
