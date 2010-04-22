@@ -1,4 +1,3 @@
-
 /*
  * Copyright 2009-2010 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
@@ -25,7 +24,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h>
-#include <assert.h>
 #include <errno.h>
 #if defined(OSCAP_THREAD_SAFE)
 # include <pthread.h>
@@ -34,6 +32,7 @@
 #include "config.h"
 #include "oval_probe.h"
 #include "common/public/error.h"
+#include "common/assume.h"
 
 #ifdef ENABLE_PROBES
 
@@ -98,14 +97,14 @@ static oval_pdtbl_t *oval_pdtbl_new(void)
 	return (p_tbl);
 }
 
-static void oval_pdtbl_free(oval_pdtbl_t * tbl)
+static void oval_pdtbl_free(oval_pdtbl_t* tbl)
 {
 	return;
 }
 
-static int oval_probe_cmd_init(SEAP_CTX_t * ctx, oval_pctx_t * pctx)
+static int oval_probe_cmd_init(SEAP_CTX_t* ctx, oval_pctx_t* pctx)
 {
-	_A(ctx != NULL);
+        assume_d (ctx != NULL, -1);
 
 	if (SEAP_cmd_register(ctx, PROBECMD_OBJ_EVAL, SEAP_CMDREG_USEARG, &oval_probe_cmd_obj_eval, (void *)pctx) != 0) {
 		_D("FAIL: can't register command: %s: errno=%u, %s.\n", "obj_eval", errno, strerror(errno));
@@ -124,10 +123,10 @@ static int oval_probe_cmd_init(SEAP_CTX_t * ctx, oval_pctx_t * pctx)
 	return (0);
 }
 
-static int oval_pdsc_subtype_cmp(oval_subtype_t * a, oval_pdsc_t * b)
+static int oval_pdsc_subtype_cmp(oval_subtype_t* a, oval_pdsc_t* b)
 {
-        _A(a != NULL);
-        _A(b != NULL);
+        assume_d (a != NULL, -1);
+        assume_d (b != NULL, -1);
         return (*a - b->subtype);
 }
 
@@ -141,7 +140,7 @@ oval_subtype_t oval_pdsc_lookup_type(const char *name)
 {
 	unsigned int i;
 
-	_A(name != NULL);
+	assume_d (name != NULL, -1);
 
 	for (i = 0; i < OVALP_LTBL_SIZE; ++i)
 		if (strcmp(__ovalp_ltable[i].subtype_name, name) == 0)
@@ -152,20 +151,22 @@ oval_subtype_t oval_pdsc_lookup_type(const char *name)
 
 static oval_pd_t *oval_pdtbl_get(oval_pdtbl_t * tbl, oval_subtype_t subtype)
 {
-	_A(tbl != NULL);
+	assume_d (tbl != NULL, NULL);
 	return oscap_bfind((void *)(tbl->memb), tbl->count, sizeof(oval_pd_t),
 			   &subtype, (int (*)(void *, void *))oval_pdsc_subtype_cmp);
 }
 
 static int oval_pd_cmp(const oval_pd_t * a, const oval_pd_t * b)
 {
+        assume_d (a != NULL, -1);
+        assume_d (b != NULL, -1);
 	return (a->subtype - b->subtype);
 }
 
 static int oval_pdtbl_add(oval_pdtbl_t * tbl, oval_subtype_t type, int sd, const char *uri)
 {
-	_A(tbl != NULL);
-	_A(uri != NULL);
+	assume_d (tbl != NULL, -1);
+	assume_d (uri != NULL, -1);
 
 	tbl->memb = oscap_realloc(tbl->memb, sizeof(oval_pd_t) * (++tbl->count));
         
@@ -180,7 +181,7 @@ static int oval_pdtbl_add(oval_pdtbl_t * tbl, oval_subtype_t type, int sd, const
 
 static int oval_pdtbl_del(oval_pdtbl_t * tbl, oval_subtype_t type)
 {
-	_A(tbl != NULL);
+	assume_d (tbl != NULL, -1);
 	/* TODO */
 	return (0);
 }
@@ -221,8 +222,8 @@ oval_pctx_t *oval_pctx_new(struct oval_syschar_model * model)
 int oval_pctx_setflag(oval_pctx_t * ctx, uint32_t n_flags)
 {
 	uint32_t o_flags;
-
-	_A(ctx != NULL);
+        
+	assume_d (ctx != NULL, -1);
 
 	o_flags = ctx->p_flags;
 	n_flags &= OVAL_PCTX_FLAG_MASK;
@@ -248,7 +249,7 @@ int oval_pctx_unsetflag(oval_pctx_t * ctx, uint32_t u_flags)
 {
 	uint32_t o_flags;
 
-	_A(ctx != NULL);
+	assume_d (ctx != NULL, -1);
 
 	o_flags = ctx->p_flags;
 	u_flags &= OVAL_PCTX_FLAG_MASK;
@@ -265,7 +266,7 @@ int oval_pctx_setattr(oval_pctx_t * ctx, uint32_t attr, ...)
 {
 	va_list ap;
 
-	_A(ctx != NULL);
+	assume_d (ctx != NULL, -1);
 
 	va_start(ap, attr);
 
@@ -302,8 +303,8 @@ static SEXP_t *oval_probe_comm(SEAP_CTX_t * ctx, oval_pd_t * pd, const SEXP_t * 
 	SEAP_msg_t *s_imsg, *s_omsg;
 	SEXP_t *s_oobj;
 
-	_A(pd != NULL);
-	_A(s_iobj != NULL);
+	assume_d (pd != NULL, -1);
+        assume_d (s_iobj != NULL, -1);
         
         debug(3) {
                 fprintf(stderr, "--- msg out ---\n");
@@ -507,9 +508,9 @@ struct oval_syschar *oval_probe_object_eval(oval_pctx_t * ctx, struct oval_objec
 	SEXP_t *s_obj, *s_sysc;
 	struct oval_syschar *o_sysc;
 
-	_A(ctx != NULL);
-	_A(object != NULL);
-	_A(ctx->pdsc_table != NULL);
+	assume_d (ctx != NULL, NULL);
+	assume_d (object != NULL, NULL);
+	assume_d (ctx->pdsc_table != NULL, NULL);
 
 	/* XXX: lock ctx? */
 
@@ -616,6 +617,9 @@ static SEXP_t *oval_probe_cmd_obj_eval(SEXP_t * sexp, void *arg)
 	struct oval_object *obj;
 	oval_pctx_t *ctx = (oval_pctx_t *) arg;
 
+        assume_d (sexp != NULL, NULL);
+        assume_d (arg  != NULL, NULL);
+
 	if (!SEXP_stringp(sexp)) {
 		_D("FAIL: invalid argument: type=%s\n", SEXP_strtype(sexp));
 		return (NULL);
@@ -673,6 +677,9 @@ static SEXP_t *oval_probe_cmd_ste_fetch(SEXP_t * sexp, void *arg)
 	struct oval_definition_model *definition_model;
 	oval_pctx_t *ctx = (oval_pctx_t *) arg;
 
+        assume_d (sexp != NULL, NULL);
+        assume_d (arg  != NULL, NULL);
+
 	ste_list = SEXP_list_new(NULL);
 
 	SEXP_list_foreach(id, sexp) {
@@ -704,8 +711,8 @@ struct oval_sysinfo *oval_probe_sysinf_eval(oval_pctx_t * ctx)
 	oval_pd_t *pd;
 	SEXP_t *s_obj, *s_sinf, *ent, *r0, *r1;
 	
-	_A(ctx != NULL);
-	_A(ctx->model != NULL);
+	assume_d (ctx != NULL, NULL);
+	assume_d (ctx->model != NULL, NULL);
 
 	pd = oval_pdtbl_get(ctx->pd_table, OVAL_INDEPENDENT_SYSCHAR_SUBTYPE);
 

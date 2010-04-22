@@ -24,6 +24,7 @@
 #include <stdlib.h>
 #include "_error.h"
 #include "public/alloc.h"
+#include "assume.h"
 
 static void __oscap_err_check(void *m);
 
@@ -43,7 +44,7 @@ void *__oscap_alloc(size_t s)
 {
 	void *m;
 #if defined(OSCAP_ALLOC_STRICT)
-	_A(s > 0);
+	assume_d (s > 0, NULL);
 #endif
 	m = malloc(s);
 	__oscap_err_check(m);
@@ -58,8 +59,8 @@ void *__oscap_calloc(size_t n, size_t s)
 {
 	void *m;
 #if defined(OSCAP_ALLOC_STRICT)
-	_A(n > 0);
-	_A(s > 0);
+	assume_d (n > 0, NULL);
+	assume_d (s > 0, NULL);
 #endif
 	m = calloc(n, s);
 	__oscap_err_check(m);
@@ -101,7 +102,7 @@ void *__oscap_reallocf(void *p, size_t s)
 void __oscap_free(void *p)
 {
 #if defined(OSCAP_ALLOC_STRICT)
-	_A(p != NULL);
+	assume_d (p != NULL, /* void */);
 #endif
 	if (p != NULL)
 		free(p);
@@ -117,7 +118,7 @@ void *__oscap_alloc_dbg(size_t s, const char *func, size_t line)
 {
 	void *m;
 #if defined(OSCAP_ALLOC_STRICT)
-	_A(s > 0);
+	assume_d (s > 0, NULL);
 #endif
 	m = malloc(s);
 	__oscap_err_check(m);
@@ -132,8 +133,8 @@ void *__oscap_calloc_dbg(size_t n, size_t s, const char *f, size_t l)
 {
 	void *m;
 #if defined(OSCAP_ALLOC_STRICT)
-	_A(n > 0);
-	_A(s > 0);
+	assume_d (n > 0, NULL);
+	assume_d (s > 0, NULL);
 #endif
 	m = calloc(n, s);
 	__oscap_err_check(m);
@@ -172,9 +173,9 @@ void *__oscap_reallocf_dbg(void *p, size_t s, const char *f, size_t l)
 
 void __oscap_free_dbg(void **p, const char *f, size_t l)
 {
-	_A(p != NULL);
+	assume_d (p != NULL, /* void */);
 #if defined(OSCAP_ALLOC_STRICT)
-	_A(*p != NULL);
+	assume_d (*p != NULL, /* void */);
 #endif
 	if (*p != NULL) {
 		free(*p);

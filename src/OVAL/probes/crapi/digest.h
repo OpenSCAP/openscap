@@ -36,6 +36,11 @@ typedef enum {
 
 #define CRAPI_DIGEST_CNT 5
 
+#include "md5.h"
+#include "sha1.h"
+#include "sha2.h"
+#include "rmd160.h"
+
 int crapi_digest_fd (int fd, crapi_alg_t alg, void *dst, size_t *size);
 
 struct digest_ctbl_t {

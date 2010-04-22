@@ -30,7 +30,7 @@
 #include <limits.h>
 #include <pthread.h>
 #include <errno.h>
-#include <crapi/digest.h>
+#include <crapi/crapi.h>
 #include "findfile.h"
 
 #define FILE_SEPARATOR '/'
