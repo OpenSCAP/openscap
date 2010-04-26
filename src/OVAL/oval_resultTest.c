@@ -1342,7 +1342,7 @@ int oval_result_test_parse_tag
 	oval_existence_t tst_check_existence = oval_test_get_existence(ovaltst);
 	if (tst_check_existence == OVAL_EXISTENCE_UNKNOWN) {
 		oval_test_set_existence(ovaltst, check_existence);
-	} else if (tst_check_existence != tst_check_existence) {
+	} else if (tst_check_existence != check_existence) {
 		oscap_dprintf("WARNING: oval_result_test_parse: @check_existence does not match\n"
 			      "    test_id = %s", test_id);
 	}
