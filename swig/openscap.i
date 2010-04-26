@@ -107,12 +107,14 @@
  #include "../src/common/public/error.h"
  #include "../src/common/public/debug.h"
  #include "../src/common/public/alloc.h"
+ #include "../src/common/public/text.h"
 %}
 
 %include "../src/common/public/oscap.h"
 %include "../src/common/public/error.h"
 %include "../src/common/public/debug.h"
 %include "../src/common/public/alloc.h"
+%include "../src/common/public/text.h"
 
 #ifdef WANT_CCE
 %module openscap

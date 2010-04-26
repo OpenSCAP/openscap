@@ -119,7 +119,7 @@ bool oscap_text_get_overrides(const struct oscap_text *text);
  * Set whether this text overrides parent content.
  * @memberof oscap_text
  */
-bool oscap_text_set_overrides(struct oscap_text *text, bool overrides);
+//bool oscap_text_set_overrides(struct oscap_text *text, bool overrides);
 
 
 /** @struct oscap_text_iterator
