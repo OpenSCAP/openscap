@@ -115,8 +115,8 @@ static int process_file(const char *path, const char *filename, void *arg)
 		if (report_missing(pfd->filename_ent)) {
                         item = probe_item_creat("xmlfilecontent_item", NULL,
                                                 /* entities */
-                                                "path",     NULL, r0 = SEXP_string_newf(path),
-                                                "filename", NULL, r1 = SEXP_string_newf(filename),
+                                                "path",     NULL, r0 = SEXP_string_new (path, strlen (path)),
+                                                "filename", NULL, r1 = SEXP_string_new (filename, strlen (filename)),
                                                 NULL);
                         
                         SEXP_vfree (r0, r1, NULL);
@@ -126,7 +126,7 @@ static int process_file(const char *path, const char *filename, void *arg)
 		} else {
                         item = probe_item_creat("xmlfilecontent_item", NULL,
                                                 /* entities */
-                                                "path", NULL, r0 = SEXP_string_newf(path),
+                                                "path", NULL, r0 = SEXP_string_new (path, strlen (path)),
                                                 NULL);
                         
                         SEXP_free (r0);
@@ -179,9 +179,9 @@ static int process_file(const char *path, const char *filename, void *arg)
 
         item = probe_item_creat("xmlfilecontent_item", NULL,
                                 /* entities */
-                                "path",     NULL, r0 = SEXP_string_newf(path),
-                                "filename", NULL, r1 = SEXP_string_newf(filename),
-                                "xpath",    NULL, r2 = SEXP_string_newf(pfd->xpath),
+                                "path",     NULL, r0 = SEXP_string_new(path, strlen (path)),
+                                "filename", NULL, r1 = SEXP_string_new(filename, strlen (filename)),
+                                "xpath",    NULL, r2 = SEXP_string_new(pfd->xpath, strlen (pfd->xpath)),
                                 NULL);
 
         SEXP_vfree (r0, r1, r2, NULL);
@@ -199,7 +199,7 @@ static int process_file(const char *path, const char *filename, void *arg)
 			    cur_node->type == XML_TEXT_NODE)
                         {
 				value = xmlNodeGetContent(cur_node);
-				probe_item_ent_add(item, "value_of", NULL, r0 = SEXP_string_newf((char *) value));
+				probe_item_ent_add(item, "value_of", NULL, r0 = SEXP_string_new ((char *) value, strlen ((char *) value)));
 				xmlFree(value);
                                 SEXP_free (r0);
 			}

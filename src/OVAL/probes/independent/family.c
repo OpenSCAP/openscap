@@ -36,6 +36,7 @@
 
 #include <config.h>
 #include <seap.h>
+#include <string.h>
 #include <probe-api.h>
 
 SEXP_t *probe_main(SEXP_t *probe_in, int *err, void *arg)
@@ -64,7 +65,7 @@ SEXP_t *probe_main(SEXP_t *probe_in, int *err, void *arg)
 
         item  = probe_item_creat ("family_item", NULL,
                                   /* entities */
-                                  "family", NULL, v_fm = SEXP_string_newf (family),
+                                  "family", NULL, v_fm = SEXP_string_new (family, strlen (family)),
                                   NULL);
         
 	list = SEXP_list_new (item, NULL);

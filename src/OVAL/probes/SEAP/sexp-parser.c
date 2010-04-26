@@ -372,6 +372,8 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                 /* 132                                */ &&L_BRACEOPEN_FIXEDLEN
         };
 
+#define laddr(i) *(void *)(d_labels[i])
+
 #define SEXP_LABELNUM_CHAR        65
 #define SEXP_LABELNUM_CHAR_FIXED  129
 #define SEXP_LABELNUM_NUMBER      48
@@ -458,7 +460,7 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                 assume_d (e_dsc.s_exp   != NULL, NULL);
                 assume_r (e_dsc.p_label != 128, NULL);
                 
-                goto *d_labels[e_dsc.p_label];
+                goto laddr(e_dsc.p_label);
         }
         
         if (e_dsc.s_exp != NULL)
@@ -487,9 +489,9 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                  * expression.
                  */
                 if (__predict(cur_c < 128, 1))
-                        goto *d_labels[cur_c];
+                        goto laddr(cur_c);
                 else
-                        goto *d_labels[128];
+                        goto laddr(128);
                 /* NOTREACHED */
                 break;
         L_CHAR:
@@ -616,7 +618,7 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                         
                         assume_d (e_dsc.p_numstage < (sizeof n_labels/sizeof (void *)), SEXP_PRET_EUNDEF);
                         
-                        goto *n_labels[e_dsc.p_numstage];
+                        goto *(void *)(n_labels[e_dsc.p_numstage]);
                 }
                 //L_NUMBER_stage1:
                 
@@ -1049,10 +1051,10 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                                 case '+':
                                 case '-':
                                 case '.':
-                                        goto *d_labels[cur_c];
+                                        goto laddr(cur_c);
                                 default:
                                         if (isdigit (cur_c))
-                                                goto *d_labels[cur_c];
+                                                goto laddr(cur_c);
                                 }
 
                                 ret_p = SEXP_PRET_EINVAL;

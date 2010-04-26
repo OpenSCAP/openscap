@@ -59,19 +59,19 @@ struct SEXP_pstate {
 
         uint8_t       p_label;  /* where to jump if p_explen > 0 */
         
-        uint8_t       p_numclass;
-        uint8_t       p_numbase;
-        uint8_t       p_numstage;
+        uint8_t       p_numclass; /* number class */
+        uint8_t       p_numbase;  /* number base */
+        uint8_t       p_numstage; /* number parsing stage */
         
         /*
          * Output data
          */
-        SEXP_lstack_t l_stack;
+        SEXP_lstack_t l_stack; /* output list stack */
 
         /*
          * Value cache
          */
-        uintptr_t v_bool[2];
+        uintptr_t v_bool[2]; /* true, false pre-allocated values */
 };
 
 struct SEXP_psetup {

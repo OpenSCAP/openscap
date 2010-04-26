@@ -183,7 +183,7 @@ static SEXP_t *create_item(const char *path, const char *filename, char *pattern
         SEXP_vfree (r0, r1, r2, r3, r4, NULL);
 
 	for (i = 1; i < substr_cnt; ++i) {
-                probe_item_ent_add (item, "subexpression", NULL, r0 = SEXP_string_newf(substrs[i]));
+                probe_item_ent_add (item, "subexpression", NULL, r0 = SEXP_string_new (substrs[i], strlen (substrs[i])));
                 SEXP_free (r0);
 	}
 

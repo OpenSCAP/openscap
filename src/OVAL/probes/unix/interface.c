@@ -126,15 +126,15 @@ static int get_ifs(SEXP_t *name_ent, SEXP_t *item_list)
 	
 		item = probe_item_creat("interface_item", NULL,
 				"name", NULL,
-				r0 = SEXP_string_newf(ifa->ifa_name),
+                                r0 = SEXP_string_new (ifa->ifa_name, strlen (ifa->ifa_name)),
 				"hardware_addr", NULL,
-				r1 = SEXP_string_newf(mac),
+                                r1 = SEXP_string_new (mac, strlen (mac)),
 				"inet_addr", NULL,
-				r2 = SEXP_string_newf(host),
+                                r2 = SEXP_string_new (host, strlen (host)),
 				"broadcast_addr", NULL,
-				r3 = SEXP_string_newf(broad),
+                                r3 = SEXP_string_new (broad, strlen (broad)),
 				"netmask", NULL,
-				r4 = SEXP_string_newf(mask),
+                                r4 = SEXP_string_new (mask, strlen (mask)),
 				NULL);
 
 		SEXP_list_add(item_list, item);
