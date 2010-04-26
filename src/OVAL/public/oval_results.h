@@ -227,8 +227,8 @@ bool oval_results_model_is_locked(struct oval_results_model *result_model);
  * @{
  */
 /**
- * Evaluate the specified oval results model and gather results for individual definitions and tests.
- * @memberof oval_results_model
+ * Evaluate all result_systems. It's assumed that all necessary system 
+ * characteristics for evaluation were altready gathered. 
  * @return 0 on sucess and -1 on fail. Use \ref ERRORS mechanism to examine the error.
  */
 int oval_results_model_eval(struct oval_results_model *);
