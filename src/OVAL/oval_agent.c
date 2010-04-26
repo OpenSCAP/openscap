@@ -459,13 +459,11 @@ void oval_syschar_model_add_variable_binding(struct oval_syschar_model *model, s
 		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
-void oval_syschar_model_probe_objects(struct oval_syschar_model *syschar_model)
+int oval_syschar_model_probe_objects(struct oval_syschar_model *syschar_model)
 {
 #ifdef ENABLE_PROBES
 	__attribute__nonnull__(syschar_model);
 
-	if (syschar_model->sysinfo == NULL)
-		oval_syschar_model_get_sysinfo(syschar_model);
 	struct oval_definition_model *definition_model = oval_syschar_model_get_definition_model(syschar_model);
 
 	if (definition_model) {
@@ -481,22 +479,51 @@ void oval_syschar_model_probe_objects(struct oval_syschar_model *syschar_model)
 
 			if (syschar == NULL) {
 				syschar = oval_probe_object_eval(pctx, object);
-
 				if (syschar == NULL) {
 					syschar = oval_syschar_new(syschar_model, object);
 					oval_syschar_set_flag(syschar, SYSCHAR_FLAG_NOT_COLLECTED);
+					if(  oscap_err() ) {
+						oval_syschar_model_add_syschar(syschar_model, syschar);
+						oval_pctx_free(pctx);
+						oval_object_iterator_free(objects);
+						return 1;
+					} 
 				}
 				oval_syschar_model_add_syschar(syschar_model, syschar);
 			}
 		}
-
 		oval_pctx_free(pctx);
 		oval_object_iterator_free(objects);
 	}
+	
+	return 0;
 #else
-    oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_ENOTIMPL, "This feature is not implemented, compiled without probes support.");
+	oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_ENOTIMPL, "This feature is not implemented, compiled without probes support.");
 #endif
 }
+
+int oval_syschar_model_probe_sysinfo(struct oval_syschar_model *syschar_model) {
+#ifdef ENABLE_PROBES
+	oval_pctx_t *pctx;
+        struct oval_sysinfo *sysinfo;
+
+	pctx = oval_pctx_new(syschar_model);
+        sysinfo = oval_probe_sysinf_eval(pctx);
+        if( sysinfo == NULL && oscap_err() ) {
+		oval_pctx_free(pctx);
+		return 1;
+	}
+
+        oval_syschar_model_set_sysinfo(syschar_model, sysinfo);
+        oval_sysinfo_free(sysinfo);
+	oval_pctx_free(pctx);
+
+	return 0;
+#else
+	oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_ENOTIMPL, "This feature is not implemented, compiled without probes support.");
+#endif
+}
+
 
 void oval_syschar_model_add_sysdata(struct oval_syschar_model *model, struct oval_sysdata *sysdata)
 {
