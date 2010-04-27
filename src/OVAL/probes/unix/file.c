@@ -151,7 +151,7 @@ static int file_cb (const char *p, const char *f, void *ptr)
                 SEXP_t *r0, *r1, *r3, *r4;
                 SEXP_t *r5, *r6, *r7, *r8;
                                                 
-                item = probe_obj_creat ("file_item", NULL,
+                item = probe_item_creat ("file_item", NULL,
                                         /* entities */                                        
                                         "path", NULL,
                                         r0 = SEXP_string_newf ("%s", p),
@@ -412,7 +412,7 @@ SEXP_t *probe_main (SEXP_t *probe_in, int *err, void *mutex)
         if (filecnt < 0) {
                 /* error */
                 SEXP_free (items);
-                r0    = probe_obj_creat ("file_item", NULL,
+                r0    = probe_item_creat ("file_item", NULL,
                                         /* entities */                                        
                                         "path",     NULL, path,
                                          NULL);
