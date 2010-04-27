@@ -31,7 +31,7 @@
 
 #include <seap-types.h>
 #include <config.h>
-#include <probes/encache.h>
+//#include <probes/encache.h>
 
 #include "oval_definitions_impl.h"
 #include "oval_agent_api_impl.h"
@@ -40,6 +40,7 @@
 #include "public/oval_system_characteristics.h"
 #include "../common/util.h"
 #include "public/oval_probe.h"
+#include "probes/_probe-api.h"
 
 OSCAP_HIDDEN_START;
 

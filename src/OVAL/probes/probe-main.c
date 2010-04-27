@@ -572,6 +572,9 @@ int main(void)
         /* Create the element name cache */
         OSCAP_GSYM(encache) = encache_new ();
 
+	/* Reset the item id generator */
+	probe_item_resetidctr(&(OSCAP_GSYM(id_desc)));
+
 	/* Main loop */
 	for (;;) {
 		if (SEAP_recvmsg(OSCAP_GSYM(ctx), OSCAP_GSYM(sd), &seap_request) == -1) {

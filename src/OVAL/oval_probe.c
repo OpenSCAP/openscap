@@ -46,6 +46,7 @@
 #include "../common/util.h"
 
 encache_t *OSCAP_GSYM(encache) = NULL;
+struct id_desc_t OSCAP_GSYM(id_desc);
 
 #define __ERRBUF_SIZE 128
 

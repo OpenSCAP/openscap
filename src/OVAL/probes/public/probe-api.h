@@ -72,7 +72,7 @@ SEXP_t *probe_item_build(const char *fmt, ...);
  * @param attrs optional item's attributes argument
  * @param ... arbitrary number of entity arguments
  */
-#define probe_item_creat(name, attrs, ...) probe_obj_creat (name, attrs, __VA_ARGS__)
+SEXP_t *probe_item_creat(const char *name, SEXP_t * attrs, ...);
 
 /**
  * Create a new item with just a name and optional attributes argument.
@@ -132,7 +132,7 @@ SEXP_t *probe_item_newid(struct id_desc_t *id_desc);
  * Reset the item id generator.
  * @param id_desc pointer to a structure holding the global id context
  */
-void probe_item_resetid(struct id_desc_t *id_desc);
+void probe_item_resetidctr(struct id_desc_t *id_desc);
 
 #define probe_item_getent(item, name, n) probe_obj_getent (item, name, n)
 

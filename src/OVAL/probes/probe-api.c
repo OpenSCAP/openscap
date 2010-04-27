@@ -83,20 +83,70 @@ SEXP_t *probe_item_build(const char *fmt, ...)
 	return (NULL);
 }
 
-/*
-  SEXP_t *probe_item_creat (const char *name, SEXP_t *attrs, ...)
-  {
-  return probe_obj_creat (name, attrs, ...);
-  }
-*/
+SEXP_t *probe_item_creat(const char *name, SEXP_t * attrs, ...)
+{
+	va_list ap;
+	SEXP_t *itm, *ns, *val, *ent;
+
+	_LOGCALL_;
+
+	va_start(ap, attrs);
+
+	itm = probe_item_new(name, attrs);
+	name = va_arg(ap, const char *);
+
+	while (name != NULL) {
+		attrs = va_arg(ap, SEXP_t *);
+		val = va_arg(ap, SEXP_t *);
+
+                ns  = encache_ref (OSCAP_GSYM(encache), name);
+		ent = SEXP_list_new(NULL);
+
+		if (attrs != NULL) {
+			SEXP_t *nl, *nj;
+
+			nl = SEXP_list_new(ns, NULL);
+			nj = SEXP_list_join(nl, attrs);
+
+			SEXP_list_add(ent, nj);
+			SEXP_free(nl);
+			SEXP_free(nj);
+		} else
+			SEXP_list_add(ent, ns);
+
+		SEXP_free(ns);
+
+		SEXP_list_add(ent, val);
+		SEXP_list_add(itm, ent);
+
+		SEXP_free(ent);
+
+		name = va_arg(ap, const char *);
+	}
+
+	return (itm);
+}
 
 SEXP_t *probe_item_new(const char *name, SEXP_t * attrs)
 {
+	SEXP_t *itm, *sid, *attr;
+
 	_LOGCALL_;
+
+	sid = probe_item_newid(&(OSCAP_GSYM(id_desc)));
+	attr = probe_attr_creat("id", sid, NULL);
+	if (attrs != NULL) {
+		attrs = SEXP_list_join(attr, attrs);
+		SEXP_free(attr);
+	} else
+		attrs = attr;
 	/*
 	 * Objects have the same structure as items.
 	 */
-	return probe_obj_new(name, attrs);
+	itm = probe_obj_new(name, attrs);
+	SEXP_vfree(sid, attrs, NULL);
+
+	return itm;
 }
 
 SEXP_t *probe_item_attr_add(SEXP_t * item, const char *name, SEXP_t * val)
@@ -205,7 +255,7 @@ SEXP_t *probe_item_newid(struct id_desc_t * id_desc)
 	return sid;
 }
 
-static void probe_item_resetidctr(struct id_desc_t *id_desc)
+void probe_item_resetidctr(struct id_desc_t *id_desc)
 {
 	id_desc->item_id_ctr = 1;
 }
