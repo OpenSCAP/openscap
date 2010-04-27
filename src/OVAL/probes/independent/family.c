@@ -1,4 +1,3 @@
-
 /*
  * Copyright 2009 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
@@ -18,9 +17,9 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * Authors:
+ *      "Tomas Heinrich" <theinric@redhat.com>
  *      "Daniel Kopecek" <dkopecek@redhat.com>
  */
-
 
 /*
  * family probe:
@@ -46,18 +45,18 @@ SEXP_t *probe_main(SEXP_t *probe_in, int *err, void *arg)
         (void)arg;
         
 	const char *family =
-#       if defined PLATFORM_IOS
-		"ios";
-#       elif defined PLATFORM_MACOS
-		"macos";
-#       elif defined PLATFORM_UNIX
-		"unix";
-#       elif defined PLATFORM_WINDOWS
-		"windows";
-#       else
-		"error";
-#       endif
-
+#if defined(_WIN32)
+        "windows";
+#elif defined(Macintosh) || defined(macintosh) || (defined(__APPLE__) && defined(__MACH__))
+        "macos";
+#elif defined(__unix__) || defined(__unix)
+        "unix";
+#elif defined(CISCO_IOS) /* XXX: how to detect IOS? */
+        "ios";
+#else
+        "error";
+#endif
+        
 	if (probe_in == NULL) {
 		*err = PROBE_EINVAL;
 		return NULL;
