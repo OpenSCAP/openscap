@@ -47,7 +47,7 @@
  * CPE language operators
  */
 typedef enum {
-	CPE_LANG_OPER_INVALID = 0x00, ///< invalid or unknown operation
+	CPE_LANG_OPER_INVALID = 0x00,   ///< invalid or unknown operation
 	CPE_LANG_OPER_AND = 0x01,	///< logical AND
 	CPE_LANG_OPER_OR = 0x02,	///< logical OR
 	CPE_LANG_OPER_MATCH = 0x04,	///< match against specified CPE
@@ -77,17 +77,19 @@ struct cpe_lang_model;
  */
 struct cpe_platform;
 
+/************************************************************/
 /**
- * @name Iterator functions
- * Functions to iterate throught lists.
+ * @name Iterators
  * @{
  * */
 
-/** @struct cpe_platform_iterator
+/** 
+ * @struct cpe_platform_iterator
  * Iterator over CPE dictionary items.
  * @see oscap_iterator
  */
 struct cpe_platform_iterator;
+
 /// @memberof cpe_platform_iterator
 struct cpe_platform *cpe_platform_iterator_next(struct cpe_platform_iterator *it);
 /// @memberof cpe_platform_iterator
@@ -95,7 +97,8 @@ bool cpe_platform_iterator_has_more(struct cpe_platform_iterator *it);
 /// @memberof cpe_platform_iterator
 void cpe_platform_iterator_free(struct cpe_platform_iterator *it);
 
-/** @struct cpe_testexpr_iterator
+/**
+ * @struct cpe_testexpr_iterator
  * Iterator over CPE language expressions.
  * @see oscap_iterator
  */
@@ -107,12 +110,14 @@ bool cpe_testexpr_iterator_has_more(struct cpe_testexpr_iterator *it);
 /// @memberof cpe_testexpr_iterator
 void cpe_testexpr_iterator_free(struct cpe_testexpr_iterator *it);
 
-/*@}*/
+/************************************************************/
+/** @} End of Iterators group */
 
+/************************************************************/
 /**
- * @name Get functions
- * Functions for getting attributes from CVE model structures. Return value is pointer to structure's member. Do not 
- * free unless you null the pointer in the structure. Use remove function otherwise.
+ * @name Getters
+ * Return value is pointer to structure's member. Do not free unless you null the pointer in the structure. 
+ * Use remove function otherwise.
  * @{
  * */
 
@@ -155,8 +160,8 @@ const char *cpe_lang_model_get_ns_prefix(const struct cpe_lang_model *item);
  */
 struct cpe_platform_iterator *cpe_lang_model_get_platforms(const struct cpe_lang_model *item);
 
-/*
- * cpe_lang_model function to get CPE item by ID
+/**
+ * cpe_lang_model function to get CPE platforms
  * @memberof cpe_lang_model
  */
 struct cpe_platform *cpe_lang_model_get_item(const struct cpe_lang_model *item, const char *key);
@@ -194,13 +199,16 @@ const struct cpe_testexpr *cpe_platform_get_expr(const struct cpe_platform *item
  */
 /*struct xml_metadata_iterator * cpe_lang_model_get_xmlns(const struct cpe_lang_model * model);*/
 
-/*@}*/
+/************************************************************/
+/** @} End of Getters group */
 
+/************************************************************/
 /**
- * @name Add functions
- * Functions to add member to list. Return value is true if added succesfuly or false in case of error. 
+ * @name Setters
+ * For lists use add functions. Parameters of set functions are duplicated in memory and need to 
+ * be freed by caller.
  * @{
- * */
+ */
 
 /**
  * Add platform to CPE lang model
@@ -231,53 +239,6 @@ bool cpe_platform_add_title(struct cpe_platform *platform, struct oscap_title *t
  * @memberof cpe_testexpr
  */
 bool cpe_testexpr_add_subexpression(struct cpe_testexpr *expr, struct cpe_testexpr *sub);
-
-/*@}*/
-
-/**
- * @name Remove functions
- * Functions to remove list memebers that the given iterator is pointing to.
- * @{
- */
-
-/// @memberof cpe_platform_iterator
-void cpe_platform_iterator_remove(struct cpe_platform_iterator *it, struct cpe_lang_model *parent);
-
-/*@}*/
-
-/**
- * @name New functions
- * Constructors of CVE model structures. Free function returns new empty allocated structure.
- * If returns non NULL it need to be freed by the caller.
- * @{
- * */
-
-/**
- * Constructor of CPE Language model
- * @memberof cpe_lang_model
- */
-struct cpe_lang_model *cpe_lang_model_new(void);
-
-/**
- * Constructor of CPE test expression
- * @memberof cpe_testexpr
- */
-struct cpe_testexpr *cpe_testexpr_new(void);
-
-/**
- * Constructor of CPE Platform
- * @memberof cpe_platform
- */
-struct cpe_platform *cpe_platform_new(void);
-
-/*@}*/
-
-/**
- * @name Set functions
- * Set functions assign values to members of structures except lists. For lists use add functions. 
- * Parameters of set functions are duplicated in memory and need to be freed by caller.
- * @{
- * */
 
 /**
  * Set ns_prefix to CPE lang model
@@ -318,14 +279,31 @@ bool cpe_testexpr_set_oper(struct cpe_testexpr *expr, cpe_lang_oper_t oper);
  */
 bool cpe_testexpr_set_name(struct cpe_testexpr *expr, struct cpe_name *name);
 
-/*@}*/
+/************************************************************/
+/** @} End of Setters group */
+
+/// @memberof cpe_platform_iterator
+void cpe_platform_iterator_remove(struct cpe_platform_iterator *it, struct cpe_lang_model *parent);
 
 /**
- * @name Free functions
- * Destructors of CVE model structures. Functions free structures with all members recursively. 
- * For simple deletion of entity use remove functions.
- * @{
- * */
+ * Constructor of CPE Language model
+ * @memberof cpe_lang_model
+ */
+struct cpe_lang_model *cpe_lang_model_new(void);
+
+/**
+ * Constructor of CPE test expression
+ * @memberof cpe_testexpr
+ */
+struct cpe_testexpr *cpe_testexpr_new(void);
+
+/**
+ * Constructor of CPE Platform
+ * @memberof cpe_platform
+ */
+struct cpe_platform *cpe_platform_new(void);
+
+
 
 /**
  * Free function of CPE test expression
@@ -345,10 +323,9 @@ void cpe_lang_model_free(struct cpe_lang_model *platformspec);
  */
 void cpe_platform_free(struct cpe_platform *platform);
 
-/*@}*/
-
+/************************************************************/
 /**
- * @name Other functions
+ * @name Evaluators
  * @{
  * */
 
@@ -364,8 +341,12 @@ const char * cpe_lang_model_supported(void);
  * @param cpe to be matched with
  * @param n size
  * @param platform CPE platform
+ * @memberof cpe_platform
  */
 bool cpe_platform_match_cpe(struct cpe_name **cpe, size_t n, const struct cpe_platform *platform);
+
+/************************************************************/
+/** @} End of Evaluators group */
 
 /**
  * Load CPE language model from a XML document.
@@ -380,8 +361,6 @@ struct cpe_lang_model *cpe_lang_model_import(const struct oscap_import_source *s
  * @param target target structure with filename, endcoding and indent information
  */
 void cpe_lang_model_export(const struct cpe_lang_model *spec, struct oscap_export_target *target);
-
-/*@}*/
 
 /*@}*/
 

@@ -150,27 +150,17 @@ struct xml_metadata;
  */
 struct xml_metadata_iterator;
 
-/**
- * @name New functions
- * Constructors of XML metadata model structures. Free function returns new empty allocated structure.
- * If returns non NULL it need to be freed by the caller.
- * @{
- * */
-
 /** 
  * Constructor of XML metadata
  * @memberof xml_metadata
  */
 struct xml_metadata *xml_metadata_new(void);
 
+/************************************************************/
 /**
- * @}
- */
-
-/**
- * @name Get functions
- * Functions for getting attributes from XML metadata model structure. Return value is pointer to structure's member. Do not 
- * free unless you null the pointer in the structure. Use remove function otherwise.
+ * @name Getters
+ * Return value is pointer to structure's member. Do not free unless you null the pointer in the structure. 
+ * Use remove function otherwise.
  * @{
  * */
 
@@ -192,14 +182,14 @@ const char *xml_metadata_get_lang(const struct xml_metadata *xml);
  */
 const char *xml_metadata_get_URI(const struct xml_metadata *xml);
 
-/**
- * @}
- */
+/************************************************************/
+/** @} End of Getters group */
 
+/************************************************************/
 /**
- * @name Add and Set functions
- * Set functions assign values to members of structures except lists. For lists use add functions. 
- * Parameters of set functions are duplicated in memory and need to be freed by caller.
+ * @name Setters
+ * For lists use add functions. Parameters of set functions are duplicated in memory and need to 
+ * be freed by caller.
  * @{
  */
 
@@ -221,16 +211,8 @@ bool xml_metadata_set_lang(struct xml_metadata *xml, const char *new_lang);
  */
 bool xml_metadata_set_URI(struct xml_metadata *xml, const char *new_uri);
 
-/**
- * @}
- */
-
-/**
- * @name Free functions
- * Destructors of XML metadata model structures. Functions free structures with all members recursively. 
- * For simple deletion of entity use remove functions.
- * @{
- */
+/************************************************************/
+/** @} End of Setters group */
 
 /** 
  * Destructor of XML metadata structure
@@ -238,16 +220,12 @@ bool xml_metadata_set_URI(struct xml_metadata *xml, const char *new_uri);
  */
 void xml_metadata_free(struct xml_metadata *xml);
 
+/************************************************************/
 /**
- * @}
- */
-
-
-/**
- * @name Iterator functions
- * Functions to iterate throught lists.
+ * @name Iterators
  * @{
  * */
+
 
 /// @memberof xml_metadata_iterator
 struct xml_metadata *xml_metadata_iterator_next(struct xml_metadata_iterator *it);
@@ -261,10 +239,9 @@ void xml_metadata_iterator_free(struct xml_metadata_iterator *it);
 /// @memberof xml_metadata_iterator
 void xml_metadata_iterator_remove(struct xml_metadata_iterator *it);
 
-/**
- * @}
- */
 
+/************************************************************/
+/** @} End of Evaluators group */
 /** @} */
 
 /**

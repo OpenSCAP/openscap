@@ -235,8 +235,8 @@ struct xccdf_result_iterator * xccdf_policy_model_get_results(const struct xccdf
  */
 struct xccdf_result * xccdf_policy_model_get_result_by_id(struct xccdf_policy_model * model, const char * id);
 
-/************************************************************
- * @} End of Getters group */
+/************************************************************/
+/** @} End of Getters group */
 
 /************************************************************/
 /**
@@ -294,8 +294,8 @@ bool xccdf_policy_set_selected(struct xccdf_policy * policy, char * idref);
  */
 bool xccdf_policy_model_add_result(struct xccdf_policy_model * model, struct xccdf_result * item);
 
-/************************************************************
- ** @} End of Setters group */
+/************************************************************/
+/** @} End of Setters group */
 
 /************************************************************/
 /**
@@ -311,8 +311,8 @@ bool xccdf_policy_model_add_result(struct xccdf_policy_model * model, struct xcc
  */
 bool xccdf_policy_evaluate(struct xccdf_policy * policy);
 
-/************************************************************
- ** @} End of Iterators group */
+/************************************************************/
+/** @} End of Evaluators group */
 
 /************************************************************/
 /**
@@ -338,8 +338,8 @@ struct xccdf_policy * xccdf_policy_iterator_next(struct xccdf_policy_iterator *i
  */
 void xccdf_policy_iterator_free(struct xccdf_policy_iterator *it);
 
-/************************************************************
- ** @} End of Iterators group */
+/************************************************************/
+/** @} End of Iterators group */
 
 /*
  * @}

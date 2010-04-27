@@ -45,10 +45,11 @@
  */
 struct cvss_entry;
 
+/************************************************************/
 /**
- * @name Get functions
- * Functions for getting attributes from CVE model structures. Return value is pointer to structure's member. Do not 
- * free unless you null the pointer in the structure. Use remove function otherwise.
+ * @name Getters
+ * Return value is pointer to structure's member. Do not free unless you null the pointer in the structure. 
+ * Use remove function otherwise.
  * @{
  * */
 
@@ -116,21 +117,16 @@ const char* cvss_entry_get_source(const struct cvss_entry * entry);
  */
 const char* cvss_entry_get_generated(const struct cvss_entry * entry);
 
-/**
- * Get supported version of CVSS XML
- * @return version of XML file format
- * @memberof cvss_entry
- */
-const char * cvss_model_supported(void);
+/************************************************************/
+/** @} End of Getters group */
 
-/*@}*/
-
+/************************************************************/
 /**
- * @name Set functions
- * Set functions assign values to members of structures except lists. For lists use add functions. 
- * Parameters of set functions are duplicated in memory and need to be freed by caller.
+ * @name Setters
+ * For lists use add functions. Parameters of set functions are duplicated in memory and need to 
+ * be freed by caller.
  * @{
- * */
+ */
 
 /**
  * Set of CVSS entry
@@ -205,14 +201,8 @@ bool cvss_entry_set_source(struct cvss_entry *entry, const char *new_source);
  */
 bool cvss_entry_set_generated(struct cvss_entry *entry, const char *new_generated);
 
-/*@}*/
-
-/**
- * @name New functions
- * Constructors of CVE model structures. Free function returns new empty allocated structure.
- * If returns non NULL it need to be freed by the caller.
- * @{
- * */
+/************************************************************/
+/** @} End of Setters group */
 
 /**
  * New CVSS entry
@@ -221,23 +211,12 @@ bool cvss_entry_set_generated(struct cvss_entry *entry, const char *new_generate
  */
 struct cvss_entry * cvss_entry_new(void);
 
-/*@}*/
-
-/**
- * @name Free functions
- * Destructors of CVE model structures. Functions free structures with all members recursively. 
- * For simple deletion of entity use remove functions.
- * @{
- * */
-
 /**
  * Free CVSS entry
  * @param entry CVSS entry
  * @memberof cvss_entry
  */
 void cvss_entry_free(struct cvss_entry * entry);
-
-/*@}*/
 
 //! Access Vector
 /*! This metric reflects how the vulnerability is exploited. */
@@ -395,6 +374,14 @@ typedef enum {
 	AR_NOT_DEFINED
 } cvss_avail_req_t;
 
+
+/************************************************************/
+/**
+ * @name Evaluators
+ * @{
+ * */
+
+
 /*! \fn cvss_base_score(cvss_access_vector_t ave, cvss_access_complexity_t ace, cvss_authentication_t aue,
  *                      cvss_conf_impact_t   cie, cvss_integ_impact_t      iie, cvss_avail_impact_t    aie,
  *                      double *base_score,
@@ -440,6 +427,16 @@ int cvss_base_score_struct(const struct cvss_entry * entry,
                            double *base_score,
                            double *impact_score,
                            double *exploitability_score);
+
+/**
+ * Get supported version of CVSS XML
+ * @return version of XML file format
+ * @memberof cvss_entry
+ */
+const char * cvss_model_supported(void);
+
+/************************************************************/
+/** @} End of Evaluators group */
 
 /*@}*/
 #endif /* _CVSSCALC_H_ */

@@ -85,15 +85,18 @@ struct oscap_text *oscap_text_new_html(void);
  */
 void oscap_text_free(struct oscap_text *);
 
+/************************************************************/
+/**
+ * @name Getters
+ * Return value is pointer to structure's member. Do not free unless you null the pointer in the structure. 
+ * Use remove function otherwise.
+ * @{
+ * */
+
 /// @memberof oscap_text
 const char *oscap_text_get_text(const struct oscap_text *text);
 /// @memberof oscap_text
-bool oscap_text_set_text(struct oscap_text *text, const char * string);
-
-/// @memberof oscap_text
 const char *oscap_text_get_lang(const struct oscap_text *text);
-/// @memberof oscap_text
-bool oscap_text_set_lang(struct oscap_text *text, const char *string);
 
 /**
  * Does this text posses a HTML content?
@@ -115,12 +118,38 @@ bool oscap_text_get_can_override(const struct oscap_text *text);
  * @memberof oscap_text
  */
 bool oscap_text_get_overrides(const struct oscap_text *text);
+
+/************************************************************/
+/** @} End of Getters group */
+
+/************************************************************/
+/**
+ * @name Setters
+ * For lists use add functions. Parameters of set functions are duplicated in memory and need to 
+ * be freed by caller.
+ * @{
+ */
+
 /**
  * Set whether this text overrides parent content.
  * @memberof oscap_text
  */
 //bool oscap_text_set_overrides(struct oscap_text *text, bool overrides);
 
+/// @memberof oscap_text
+bool oscap_text_set_text(struct oscap_text *text, const char * string);
+/// @memberof oscap_text
+bool oscap_text_set_lang(struct oscap_text *text, const char *string);
+
+
+/************************************************************/
+/** @} End of Setters group */
+
+/************************************************************/
+/**
+ * @name Iterators
+ * @{
+ * */
 
 /** @struct oscap_text_iterator
  * Internationalized string iterator.
@@ -135,6 +164,12 @@ bool oscap_text_iterator_has_more(struct oscap_text_iterator *it);
 void oscap_text_iterator_free(struct oscap_text_iterator *it);
 /// @memberof oscap_text_iterator
 void oscap_text_iterator_remove(struct oscap_text_iterator *it);
+
+/************************************************************/
+/** @} End of Iterators group */
+
+/** @} */
+/** @} */
 
 #endif
 

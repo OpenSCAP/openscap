@@ -113,10 +113,11 @@ struct cpe_edition;
  */
 struct cpe_language;
 
+/************************************************************/
 /**
- * @name Get functions
- * Functions for getting attributes from CVE model structures. Return value is pointer to structure's member. Do not 
- * free unless you null the pointer in the structure. Use remove function otherwise.
+ * @name Getters
+ * Return value is pointer to structure's member. Do not free unless you null the pointer in the structure. 
+ * Use remove function otherwise.
  * @{
  * */
 
@@ -359,14 +360,8 @@ const char *cpe_language_get_value(const struct cpe_language *item);
  */
 struct xml_metadata_iterator *cpe_dict_model_get_xmlns(const struct cpe_dict_model *model);
 
-/** @} */
-
-/**
- * @name Free functions
- * Destructors of CVE model structures. Functions free structures with all members recursively. 
- * For simple deletion of entity use remove functions.
- * @{
- */
+/************************************************************/
+/** @} End of Getters group */
 
 /// @memberof cpe_check
 void cpe_check_free(struct cpe_check *check);
@@ -393,15 +388,6 @@ void cpe_generator_free(struct cpe_generator *generator);
 /// @memberof cpe_item
 void cpe_item_free(struct cpe_item *item);
 
-/*@}*/
-
-/**
- * @name New functions
- * Constructors of CVE model structures. Free function returns new empty allocated structure.
- * If returns non NULL it need to be freed by the caller.
- * @{
- * */
-
 /// @memberof cpe_dict_model
 struct cpe_dict_model *cpe_dict_model_new(void);
 /// @memberof cpe_generator
@@ -427,14 +413,13 @@ struct cpe_language *cpe_language_new(void);
 /// @memberof cpe_item_metadata
 struct cpe_item_metadata *cpe_item_metadata_new(void);
 
-/*@}*/
-
+/************************************************************/
 /**
- * @name Set functions
- * Set functions assign values to members of structures except lists. For lists use add functions. 
- * Parameters of set functions are duplicated in memory and need to be freed by caller.
+ * @name Setters
+ * For lists use add functions. Parameters of set functions are duplicated in memory and need to 
+ * be freed by caller.
  * @{
- * */
+ */
 
 /// @memberof cpe_item
 bool cpe_item_set_deprecation_date(struct cpe_item *item, const char *new_deprecation_date);
@@ -501,14 +486,6 @@ bool cpe_edition_set_value(struct cpe_edition *edition, const char *new_value);
 /// @memberof cpe_language
 bool cpe_language_set_value(struct cpe_language *language, const char *new_value);
 
-/*@}*/
-
-/**
- * @name Add functions
- * Functions to add member to list. Return value is true if added succesfuly or false in case of error. 
- * @{
- * */
-
 /*
  * Add functions
  */
@@ -552,13 +529,9 @@ bool cpe_edition_add_language(struct cpe_edition *edition, struct cpe_language *
  */
 bool cpe_dict_model_add_xml(struct cpe_dict_model *model, struct xml_metadata *xml);
 
-/*@}*/
 
-/**
- * @name Remove functions
- * Functions removing member elements from CPE data structures.
- * @{
- */
+/************************************************************/
+/** @} End of Setters group */
 
 /// @memberof cpe_item
 void cpe_item_iterator_remove(struct cpe_item_iterator *it);
@@ -587,233 +560,270 @@ void cpe_edition_iterator_remove(struct cpe_edition_iterator *it);
 /// @memberof cpe_language_iterator
 void cpe_language_iterator_remove(struct cpe_language_iterator *it);
 
-/*@}*/
-
+/************************************************************/
 /**
- * @name Iterator functions
- * Functions to iterate throught lists.
+ * @name Iterators
  * @{
  * */
 
-/** @struct cpe_item_iterator
+/**
+ * @struct cpe_item_iterator
  * Iterator over CPE dictionary items.
  * @see oscap_iterator
  */
 struct cpe_item_iterator;
 
-/** Iterator over CPE dictionary items.
+/**
+ * Iterator over CPE dictionary items.
  * @see oscap_iterator
  * @memberof cpe_item_iterator
  */
 struct cpe_item *cpe_item_iterator_next(struct cpe_item_iterator *it);
 
-/** Iterator over CPE dictionary items.
+/**
+ * Iterator over CPE dictionary items.
  * @see oscap_iterator
  * @memberof cpe_item_iterator
  */
 bool cpe_item_iterator_has_more(struct cpe_item_iterator *it);
 
-/** Iterator over CPE dictionary items.
+/**
+ * Iterator over CPE dictionary items.
  * @see oscap_iterator
  * @memberof cpe_item_iterator
  */
 void cpe_item_iterator_free(struct cpe_item_iterator *it);
 
-/** @struct cpe_reference_iterator
+/**
+ * @struct cpe_reference_iterator
  * Iterator over CPE dictionary references.
  * @see oscap_iterator
  */
 struct cpe_reference_iterator;
 
-/** Iterator over CPE item reference items.
+/**
+ * Iterator over CPE item reference items.
  * @see oscap_iterator
  * @memberof cpe_reference_iterator
  */
 struct cpe_reference *cpe_reference_iterator_next(struct cpe_reference_iterator *it);
 
-/** Iterator over CPE item reference items.
+/**
+ * Iterator over CPE item reference items.
  * @see oscap_iterator
  * @memberof cpe_reference_iterator
  */
 bool cpe_reference_iterator_has_more(struct cpe_reference_iterator *it);
 
-/** Iterator over CPE item reference items.
+/**
+ * Iterator over CPE item reference items.
  * @see oscap_iterator
  * @memberof cpe_reference_iterator
  */
 void cpe_reference_iterator_free(struct cpe_reference_iterator *it);
 
-/** @struct cpe_check_iterator
+/**
+ * @struct cpe_check_iterator
  * Iterator over CPE dictionary checks.
  * @see oscap_iterator
  */
 struct cpe_check_iterator;
 
-/** Iterator over CPE item check items.
+/**
+ * Iterator over CPE item check items.
  * @see oscap_iterator
  * @memberof cpe_check_iterator
  */
 struct cpe_check *cpe_check_iterator_next(struct cpe_check_iterator *it);
 
-/** Iterator over CPE item check items.
+/**
+ * Iterator over CPE item check items.
  * @see oscap_iterator
  * @memberof cpe_check_iterator
  */
 bool cpe_check_iterator_has_more(struct cpe_check_iterator *it);
 
-/** Iterator over CPE item check items.
+/**
+ * Iterator over CPE item check items.
  * @see oscap_iterator
  * @memberof cpe_check_iterator
  */
 void cpe_check_iterator_free(struct cpe_check_iterator *it);
 
-/** @struct cpe_vendor_iterator
+/**
+ * @struct cpe_vendor_iterator
  * Iterator over CPE dictionary item vendors.
  * @see oscap_iterator
  */
 struct cpe_vendor_iterator;
 
-/** Iterator over CPE vendor items.
+/**
+ * Iterator over CPE vendor items.
  * @see oscap_iterator
  * @memberof cpe_vendor_iterator
  */
 struct cpe_vendor *cpe_vendor_iterator_next(struct cpe_vendor_iterator *it);
 
-/** Iterator over CPE vendor items.
+/**
+ * Iterator over CPE vendor items.
  * @see oscap_iterator
  * @memberof cpe_vendor_iterator
  */
 bool cpe_vendor_iterator_has_more(struct cpe_vendor_iterator *it);
 
-/** Iterator over CPE vendor items.
+/**
+ * Iterator over CPE vendor items.
  * @see oscap_iterator
  * @memberof cpe_vendor_iterator
  */
 void cpe_vendor_iterator_free(struct cpe_vendor_iterator *it);
 
-/** @struct cpe_product_iterator
+/**
+ * @struct cpe_product_iterator
  * Iterator over CPE dictionary item products.
  * @see oscap_iterator
  */
 struct cpe_product_iterator;
 
-/** Iterator over CPE product items.
+/**
+ * Iterator over CPE product items.
  * @see oscap_iterator
  * @memberof cpe_product_iterator
  */
 struct cpe_product *cpe_product_iterator_next(struct cpe_product_iterator *it);
 
-/** Iterator over CPE product items.
+/**
+ * Iterator over CPE product items.
  * @see oscap_iterator
  * @memberof cpe_product_iterator
  */
 bool cpe_product_iterator_has_more(struct cpe_product_iterator *it);
 
-/** Iterator over CPE product items.
+/**
+ * Iterator over CPE product items.
  * @see oscap_iterator
  * @memberof cpe_product_iterator
  */
 void cpe_product_iterator_free(struct cpe_product_iterator *it);
 
-/** @struct cpe_version_iterator
+/**
+ * @struct cpe_version_iterator
  * Iterator over CPE dictionary item versions.
  * @see oscap_iterator
  */
 struct cpe_version_iterator;
 
-/** Iterator over CPE version items.
+/**
+ * Iterator over CPE version items.
  * @see oscap_iterator
  * @memberof cpe_version_iterator
  */
 struct cpe_version *cpe_version_iterator_next(struct cpe_version_iterator *it);
 
-/** Iterator over CPE version items.
+/**
+ * Iterator over CPE version items.
  * @see oscap_iterator
  * @memberof cpe_version_iterator
  */
 bool cpe_version_iterator_has_more(struct cpe_version_iterator *it);
 
-/** Iterator over CPE version items.
+/**
+ * Iterator over CPE version items.
  * @see oscap_iterator
  * @memberof cpe_version_iterator
  */
 void cpe_version_iterator_free(struct cpe_version_iterator *it);
 
-/** @struct cpe_update_iterator
+/**
+ * @struct cpe_update_iterator
  * Iterator over CPE dictionary item updates.
  * @see oscap_iterator
  */
 struct cpe_update_iterator;
 
-/** Iterator over CPE update items.
+/**
+ * Iterator over CPE update items.
  * @see oscap_iterator
  * @memberof cpe_update_iterator
  */
 struct cpe_update *cpe_update_iterator_next(struct cpe_update_iterator *it);
 
-/** Iterator over CPE update items.
+/**
+ * Iterator over CPE update items.
  * @see oscap_iterator
  * @memberof cpe_update_iterator
  */
 bool cpe_update_iterator_has_more(struct cpe_update_iterator *it);
 
-/** Iterator over CPE update items.
+/**
+ * Iterator over CPE update items.
  * @see oscap_iterator
  * @memberof cpe_update_iterator
  */
 void cpe_update_iterator_free(struct cpe_update_iterator *it);
 
-/** @struct cpe_edition_iterator
+/**
+ * @struct cpe_edition_iterator
  * Iterator over CPE dictionary item editions.
  * @see oscap_iterator
  */
 struct cpe_edition_iterator;
 
-/** Iterator over CPE edition items.
+/**
+ * Iterator over CPE edition items.
  * @see oscap_iterator
  * @memberof cpe_edition_iterator
  */
 struct cpe_edition *cpe_edition_iterator_next(struct cpe_edition_iterator *it);
 
-/** Iterator over CPE edition items.
+/**
+ * Iterator over CPE edition items.
  * @see oscap_iterator
  * @memberof cpe_edition_iterator
  */
 bool cpe_edition_iterator_has_more(struct cpe_edition_iterator *it);
 
-/** Iterator over CPE edition items.
+/**
+ * Iterator over CPE edition items.
  * @see oscap_iterator
  * @memberof cpe_edition_iterator
  */
 void cpe_edition_iterator_free(struct cpe_edition_iterator *it);
 
-/** @struct cpe_language_iterator
+/**
+ * @struct cpe_language_iterator
  * Iterator over CPE dictionary item languages.
  * @see oscap_iterator
  */
 struct cpe_language_iterator;
 
-/** Iterator over CPE language items.
+/**
+ * Iterator over CPE language items.
  * @see oscap_iterator
  * @memberof cpe_language_iterator
  */
 struct cpe_language *cpe_language_iterator_next(struct cpe_language_iterator *it);
 
-/** Iterator over CPE language items.
+/**
+ * Iterator over CPE language items.
  * @see oscap_iterator
  * @memberof cpe_language_iterator
  */
 bool cpe_language_iterator_has_more(struct cpe_language_iterator *it);
 
-/** Iterator over CPE language items.
+/**
+ * Iterator over CPE language items.
  * @see oscap_iterator
  * @memberof cpe_language_iterator
  */
 void cpe_language_iterator_free(struct cpe_language_iterator *it);
-/** @} */
 
+/************************************************************/
+/** @} End of Iterators group */
+
+/************************************************************/
 /**
- * @name Other functions
+ * @name Evaluators
  * @{
  * */
 
@@ -823,22 +833,6 @@ void cpe_language_iterator_free(struct cpe_language_iterator *it);
  * @memberof cpe_dict_model
  */
 const char * cpe_dict_model_supported(void);
-
-/**
- * Write the dict_model to a file.
- * @param dict CPE Dict model
- * @memberof cpe_dict_model
- */
-void cpe_dict_model_export(const struct cpe_dict_model *dict, const struct oscap_export_target *target);
-
-/** 
- * Load new CPE dictionary from file
- * @memberof cpe_dict_model
- * @param fname file name of dictionary to import
- * @return new dictionary
- * @retval NULL on failure
- */
-struct cpe_dict_model *cpe_dict_model_import(const struct oscap_import_source *source);
 
 /** 
  * Verify wether given CPE is known according to specified dictionary
@@ -860,7 +854,24 @@ bool cpe_name_match_dict(struct cpe_name *cpe, struct cpe_dict_model *dict);
  */
 bool cpe_name_match_dict_str(const char *cpe, struct cpe_dict_model *dict);
 
-/** @} */
+/************************************************************/
+/** @} End of Evaluators group */
+
+/**
+ * Write the dict_model to a file.
+ * @param dict CPE Dict model
+ * @memberof cpe_dict_model
+ */
+void cpe_dict_model_export(const struct cpe_dict_model *dict, const struct oscap_export_target *target);
+
+/** 
+ * Load new CPE dictionary from file
+ * @memberof cpe_dict_model
+ * @param fname file name of dictionary to import
+ * @return new dictionary
+ * @retval NULL on failure
+ */
+struct cpe_dict_model *cpe_dict_model_import(const struct oscap_import_source *source);
 
 /** @} */
 

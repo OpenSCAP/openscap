@@ -79,10 +79,11 @@ struct cwe_entry;
  */
 struct cve_reference;
 
+/************************************************************/
 /**
- * @name Get functions
- * Functions for getting attributes from CVE model structures. Return value is pointer to structure's member. Do not 
- * free unless you null the pointer in the structure. Use remove function otherwise.
+ * @name Getters
+ * Return value is pointer to structure's member. Do not free unless you null the pointer in the structure. 
+ * Use remove function otherwise.
  * @{
  * */
 
@@ -225,13 +226,16 @@ const struct cpe_testexpr *cve_configuration_get_expr(const struct cve_configura
  */
 const struct cvss_entry *cve_entry_get_cvss(const struct cve_entry *item);
 
-/*@}*/
+/************************************************************/
+/** @} End of Getters group */
 
+/************************************************************/
 /**
- * @name Add functions
- * Functions to add member to list. Return value is true if added succesfuly or false in case of error. 
+ * @name Setters
+ * For lists use add functions. Parameters of set functions are duplicated in memory and need to 
+ * be freed by caller.
  * @{
- * */
+ */
 
 /**
  * Add entry to CVE model
@@ -259,38 +263,6 @@ bool cve_entry_add_configuration(struct cve_entry *entry, struct cve_configurati
  * @memberof cve_model
  */
 bool cve_model_add_xml(struct cve_model *model, struct xml_metadata *xml);
-
-/*@}*/
-
-/**
- * @name Remove functions
- * Set of functions used to remove entries from lists.
- * @{
- */
-
-/// @memberof cve_entry_iterator
-void cve_entry_iterator_remove(struct cve_entry_iterator *it);
-
-/// @memberof cve_product_iterator
-void cve_product_iterator_remove(struct cve_product_iterator *it);
-
-/// @memberof cve_reference_iterator
-void cve_reference_iterator_remove(struct cve_reference_iterator *it);
-
-/// @memberof cve_summary_iterator
-void cve_summary_iterator_remove(struct cve_summary_iterator *it);
-
-/// @memberof cve_configuration_iterator
-void cve_configuration_iterator_remove(struct cve_configuration_iterator *it);
-
-/*@}*/
-
-/**
- * @name Set functions
- * Set functions assign values to members of structures except lists. For lists use add functions. 
- * Parameters of set functions are duplicated in memory and need to be freed by caller.
- * @{
- * */
 
 /**
  * Set id of CVE entry
@@ -399,121 +371,12 @@ bool cve_product_set_value(struct cve_product *product, const char *new_value);
  */
 bool cve_summary_set_summary(struct cve_summary *summary, const char *new_summary);
 
-/*@}*/
+/************************************************************/
+/** @} End of Setters group */
 
+/************************************************************/
 /**
- * @name New functions
- * Constructors of CVE model structures. Free function returns new empty allocated structure.
- * If returns non NULL it need to be freed by the caller.
- * @{
- * */
-
-/**
- * New CVE entry
- * @memberof cve_entry
- * @return New CVE entry
- */
-struct cve_entry *cve_entry_new(void);
-/**
- * New CVE vulnerability configuration
- * @memberof cve_configuration
- * @return New CVE vulnerability configuration
- */
-struct cve_configuration *cve_configuration_new(void);
-/**
- * New CWE entry
- * @memberof cwe_entry
- * @return New CWE entry
- */
-struct cwe_entry *cwe_entry_new(void);
-/**
- * New CVE product
- * @memberof cve_product
- * @return New CVE product
- */
-struct cve_product *cve_product_new(void);
-/**
- * New CVE summary
- * @memberof cve_summary
- * @return New CVE summary
- */
-struct cve_summary *cve_summary_new(void);
-/**
- * New CVE reference
- * @memberof cve_reference
- * @return New CVE reference
- */
-struct cve_reference *cve_reference_new(void);
-/**
- * New CVE model
- * @memberof cve_model
- * @return New CVE model
- */
-struct cve_model *cve_model_new(void);
-
-/*@}*/
-
-/**
- * @name Free functions
- * Destructors of CVE model structures. Functions free structures with all members recursively. 
- * For simple deletion of entity use remove functions.
- * @{
- * */
-
-/**
- * Free CVE model
- * @param cve_model CVE model
- * @memberof cve_model
- */
-void cve_model_free(struct cve_model *cve_model);
-
-/**
- * Free CVE entry
- * @param entry CVE entry
- * @memberof cve_entry
- */
-void cve_entry_free(struct cve_entry *entry);
-
-/**
- * Free CVE summary
- * @param summary CVE summary
- * @memberof cve_summary
- */
-void cve_summary_free(struct cve_summary *summary);
-
-/**
- * Free CVE product
- * @param product CVE product
- * @memberof cve_product
- */
-void cve_product_free(struct cve_product *product);
-
-/**
- * Free CVE reference
- * @param ref CVE reference
- * @memberof cve_reference
- */
-void cve_reference_free(struct cve_reference *ref);
-
-/**
- * Free CVE entry
- * @param entry CVE entry
- * @memberof cve_entry
- */
-void cwe_entry_free(struct cwe_entry *entry);
-
-/**
- * Free CVE configuration
- * @param conf CVE vulnerability configuration
- * @memberof cve_configuration
- */
-void cve_configuration_free(struct cve_configuration *conf);
-
-/*@}*/
-
-/**
- * @name Iterator functions
- * Functions to iterate throught lists.
+ * @name Iterators
  * @{
  * */
 
@@ -613,12 +476,134 @@ bool cve_reference_iterator_has_more(struct cve_reference_iterator *it);
  */
 void cve_reference_iterator_free(struct cve_reference_iterator *it);
 
-/*@}*/
 
+/************************************************************/
+/** @} End of Iterators group */
+
+/************************************************************/
 /**
- * @name Other functions
+ * @name Evaluators
  * @{
  * */
+
+/**
+ * Get supported version of CVE XML
+ * @return version of XML file format
+ * @memberof cve_model
+ */
+const char * cve_model_supported(void);
+
+/************************************************************/
+/** @} End of Evaluators group */
+
+/**
+ * New CVE entry
+ * @memberof cve_entry
+ * @return New CVE entry
+ */
+struct cve_entry *cve_entry_new(void);
+/**
+ * New CVE vulnerability configuration
+ * @memberof cve_configuration
+ * @return New CVE vulnerability configuration
+ */
+struct cve_configuration *cve_configuration_new(void);
+/**
+ * New CWE entry
+ * @memberof cwe_entry
+ * @return New CWE entry
+ */
+struct cwe_entry *cwe_entry_new(void);
+/**
+ * New CVE product
+ * @memberof cve_product
+ * @return New CVE product
+ */
+struct cve_product *cve_product_new(void);
+/**
+ * New CVE summary
+ * @memberof cve_summary
+ * @return New CVE summary
+ */
+struct cve_summary *cve_summary_new(void);
+/**
+ * New CVE reference
+ * @memberof cve_reference
+ * @return New CVE reference
+ */
+struct cve_reference *cve_reference_new(void);
+/**
+ * New CVE model
+ * @memberof cve_model
+ * @return New CVE model
+ */
+struct cve_model *cve_model_new(void);
+
+/**
+ * Free CVE model
+ * @param cve_model CVE model
+ * @memberof cve_model
+ */
+void cve_model_free(struct cve_model *cve_model);
+
+/**
+ * Free CVE entry
+ * @param entry CVE entry
+ * @memberof cve_entry
+ */
+void cve_entry_free(struct cve_entry *entry);
+
+/**
+ * Free CVE summary
+ * @param summary CVE summary
+ * @memberof cve_summary
+ */
+void cve_summary_free(struct cve_summary *summary);
+
+/**
+ * Free CVE product
+ * @param product CVE product
+ * @memberof cve_product
+ */
+void cve_product_free(struct cve_product *product);
+
+/**
+ * Free CVE reference
+ * @param ref CVE reference
+ * @memberof cve_reference
+ */
+void cve_reference_free(struct cve_reference *ref);
+
+/**
+ * Free CVE entry
+ * @param entry CVE entry
+ * @memberof cve_entry
+ */
+void cwe_entry_free(struct cwe_entry *entry);
+
+/**
+ * Free CVE configuration
+ * @param conf CVE vulnerability configuration
+ * @memberof cve_configuration
+ */
+void cve_configuration_free(struct cve_configuration *conf);
+
+/*@}*/
+
+/// @memberof cve_entry_iterator
+void cve_entry_iterator_remove(struct cve_entry_iterator *it);
+
+/// @memberof cve_product_iterator
+void cve_product_iterator_remove(struct cve_product_iterator *it);
+
+/// @memberof cve_reference_iterator
+void cve_reference_iterator_remove(struct cve_reference_iterator *it);
+
+/// @memberof cve_summary_iterator
+void cve_summary_iterator_remove(struct cve_summary_iterator *it);
+
+/// @memberof cve_configuration_iterator
+void cve_configuration_iterator_remove(struct cve_configuration_iterator *it);
 
 /**
  * Export CVE model to XML file
@@ -636,15 +621,6 @@ void cve_model_export(struct cve_model *cve, const struct oscap_export_target *t
  * @return non-negative value indicates the number of CVEs in the list, negative value indicates an error
  */
 struct cve_model *cve_model_import(const struct oscap_import_source *source);
-
-/**
- * Get supported version of CVE XML
- * @return version of XML file format
- * @memberof cve_model
- */
-const char * cve_model_supported(void);
-
-/*@}*/
 
 /*@}*/
 

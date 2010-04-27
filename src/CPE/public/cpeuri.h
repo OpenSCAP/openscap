@@ -58,13 +58,6 @@ typedef enum {
 struct cpe_name;
 
 /**
- * @name New functions
- * Constructors of CVE model structures. Free function returns new empty allocated structure.
- * If returns non NULL it need to be freed by the caller.
- * @{
- * */
-
-/**
  * Create a new CPE structure from string @a cpe.
  *
  * @memberof cpe_name
@@ -75,15 +68,6 @@ struct cpe_name;
  */
 struct cpe_name *cpe_name_new(const char *cpe);
 
-/*@}*/
-
-/**
- * @name Free functions
- * Destructors of CVE model structures. Functions free structures with all members recursively. 
- * For simple deletion of entity use remove functions.
- * @{
- * */
-
 /**
  * Destructor. Frees any used resources and safely destroys @a cpe.
  * @memberof cpe_name
@@ -91,12 +75,11 @@ struct cpe_name *cpe_name_new(const char *cpe);
  */
 void cpe_name_free(struct cpe_name *cpe);
 
-/*@}*/
-
+/************************************************************/
 /**
- * @name Get functions
- * Functions for getting attributes from CVE model structures. Return value is pointer to structure's member. Do not 
- * free unless you null the pointer in the structure. Use remove function otherwise.
+ * @name Getters
+ * Return value is pointer to structure's member. Do not free unless you null the pointer in the structure. 
+ * Use remove function otherwise.
  * @{
  * */
 
@@ -142,14 +125,26 @@ const char *cpe_name_get_edition(const struct cpe_name *cpe);
  */
 const char *cpe_name_get_language(const struct cpe_name *cpe);
 
-/*@}*/
-
 /**
- * @name Set functions
- * Set functions assign values to members of structures except lists. For lists use add functions. 
- * Parameters of set functions are duplicated in memory and need to be freed by caller.
+ * Return CPE URI as a new string.
+ * @memberof cpe_name
+ * @note Returned string is newly allocated and is caller's responsibility to free it.
+ * @param cpe CPE to be converted
+ * @return CPE URI as string
+ * @retval NULL on failure
+ */
+char *cpe_name_get_uri(const struct cpe_name *cpe);
+
+/************************************************************/
+/** @} End of Getters group */
+
+/************************************************************/
+/**
+ * @name Setters
+ * For lists use add functions. Parameters of set functions are duplicated in memory and need to 
+ * be freed by caller.
  * @{
- * */
+ */
 
 /**
  * Set CPE name part type field.
@@ -193,10 +188,12 @@ bool cpe_name_set_edition(struct cpe_name *cpe, const char *newval);
  */
 bool cpe_name_set_language(struct cpe_name *cpe, const char *newval);
 
-/*@}*/
+/************************************************************/
+/** @} End of Setters group */
 
+/************************************************************/
 /**
- * @name Other functions
+ * @name Evaluators
  * @{
  * */
 
@@ -216,16 +213,6 @@ bool cpe_name_match_one(const struct cpe_name *cpe, const struct cpe_name *again
  * @return true if @a name was found within @a namelist
  */
 bool cpe_name_match_cpes(const struct cpe_name *name, size_t n, struct cpe_name **namelist);
-
-/**
- * Return CPE URI as a new string.
- * @memberof cpe_name
- * @note Returned string is newly allocated and is caller's responsibility to free it.
- * @param cpe CPE to be converted
- * @return CPE URI as string
- * @retval NULL on failure
- */
-char *cpe_name_get_uri(const struct cpe_name *cpe);
 
 /**
  * Write CPE URI @a cpe to file a descriptor @a f
@@ -263,9 +250,11 @@ int cpe_name_match_strs(const char *candidate, size_t n, char **targets);
  */
 const char * cpe_name_supported(void);
 
-/*@}*/
+/************************************************************/
+/** @} End of Evaluators group */
 
 /*@}*/
+
 /*@}*/
 
 #endif				/* _CPEURI_H_ */
