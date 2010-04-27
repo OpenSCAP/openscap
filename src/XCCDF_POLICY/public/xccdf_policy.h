@@ -23,7 +23,7 @@
  * @addtogroup XCCDF_POLICY
  * @{
  * @file xccdf_policy.h
- * Open-scap XCCDF library interface.
+ * Open-scap XCCDF Policy library interface.
  * @author Maros Barabas <mbarabas@redhat.com>
  * @author Dave Niemoller <david.niemoller@g2-inc.com>
  */
@@ -36,62 +36,35 @@
 #include <oscap.h>
 #include <xccdf.h>
  
-/* @defgroup Xccdf_policy XCCDF Policy
- * @defgroup Xccdf_policy_model XCCDF Policy Model
- * @defgroup Xccdf_value_binding XCCDF Value Binding
- */
-
 /**
  * @struct xccdf_policy_model
- * Handle: @ref XCCDFPOLICY.
- * @ingroup Xccdf_policy
+ * Handle all policies for given XCCDF benchmark
  */
 struct xccdf_policy_model;
 
 /**
  * @struct xccdf_policy
- * Handle: @ref Xccdf_policy.
- * @ingroup Xccdf_policy
+ * Policy structure that abstract benchmark's profile
  */
 struct xccdf_policy;
 
 /**
  * @struct xccdf_value_binding
- * @ingroup Xccdf_value_binding
+ * Value bindings of policy
  */
 struct xccdf_value_binding;
 
 /**
  * @struct xccdf_policy_iterator
  * Iterate through policies
- * @ingroup Xccdf_policy
+ * @see xccdf_policy_model_get_policies
  */
 struct xccdf_policy_iterator;
 
-/**
- * @name Iterator functions
- * Functions to iterate throught lists.
- * @{
- * */
-
-/// @memberof xccdf_policy_iterator
-bool xccdf_policy_iterator_has_more(struct xccdf_policy_iterator *it);
-/// @memberof xccdf_policy_iterator
-struct xccdf_policy * xccdf_policy_iterator_next(struct xccdf_policy_iterator *it);
-/// @memberof xccdf_policy_iterator
-void xccdf_policy_iterator_free(struct xccdf_policy_iterator *it);
-
-/*@}*/
+/************************************************************/
 
 /**
- * @name New functions
- * Constructors of XCCDF Policy model structures. Free function returns new empty allocated structure.
- * If returns non NULL it need to be freed by the caller.
- * @{
- * */
-
-/**
- * Constructor for Policy Model
+ * Constructor of Policy Model structure
  * @param benchmark Struct xccdf_benchmark with benchmark model
  * @return new xccdf_policy_model
  * @memberof xccdf_policy_model
@@ -99,7 +72,7 @@ void xccdf_policy_iterator_free(struct xccdf_policy_iterator *it);
 struct xccdf_policy_model *xccdf_policy_model_new(struct xccdf_benchmark *benchmark);
 
 /**
- * Constructor for Policy
+ * Constructor of Policy structure
  * @param model Policy model
  * @param profile Profile from XCCDF Benchmark
  * @memberof xccdf_policy
@@ -107,20 +80,72 @@ struct xccdf_policy_model *xccdf_policy_model_new(struct xccdf_benchmark *benchm
 struct xccdf_policy * xccdf_policy_new(struct xccdf_policy_model * model, struct xccdf_profile * profile);
 
 /**
- * Constructor for structure with profile bindings - refine_rules, refine_values and set_values
+ * Constructor of structure with profile bindings - refine_rules, refine_values and set_values
  * @param profile XCCDF Benchmark Profile to get all elements
  * @memberof xccdf_value_binding
  * @return new structure of xccdf_value_binding
  */
 struct xccdf_value_binding * xccdf_value_binding_new(const struct xccdf_profile * profile);
 
+/** 
+ * Destructor of Policy Model structure
+ * @memberof xccdf_policy_model
+ */
+void xccdf_policy_model_free(struct xccdf_policy_model *);
 
-/*@}*/
+/** 
+ * Destructor of Policy structure
+ * @memberof xccdf_policy
+ */
+void xccdf_policy_free(struct xccdf_policy *);
+
+/** 
+ * Destructor of Value binding structure
+ * @memberof xccdf_value_binding
+ */
+void xccdf_value_binding_free(struct xccdf_value_binding *);
 
 /**
- * @name Get functions
- * Functions for getting attributes from XCCDF Policy model structures. Return value is pointer to structure's member. Do not 
- * free unless you null the pointer in the structure. Use remove function otherwise.
+ * Import/Export function
+ * Not yet implemented
+ * @memberof xccdf_policy
+ */
+void xccdf_policy_export_variables(struct xccdf_policy *, char *export_namespace, struct oscap_export_target *);
+/**
+ * Import/Export function
+ * Not yet implemented 
+ * @memberof xccdf_policy
+ */
+void xccdf_policy_export_controls (struct xccdf_policy *, char *export_namespace, struct oscap_export_target *);
+/**
+ * Import/Export function
+ * Not yet implemented
+ * @memberof xccdf_policy
+ */
+void xccdf_policy_import_results(struct xccdf_policy *, char *import_namespace, struct oscap_import_source *);
+/**
+ * Import/Export function
+ * Not yet implemented
+ * @memberof xccdf_policy
+ */
+void xccdf_policy_export_results(struct xccdf_policy *, char *scoring_model_namespace, struct oscap_export_target *);
+
+/**
+ * Function to register callback for checking system
+ * @param model XCCDF Policy Model
+ * @param sys String representing given checking system
+ * @param func Callback - pointer to function called by XCCDF Policy system when rule parsed
+ * @param usr optional parameter for passing user data to callback
+ * @memberof xccdf_policy_model
+ * @return true if callback registered succesfully, false otherwise
+ */
+bool xccdf_policy_model_register_callback(struct xccdf_policy_model * model, char * sys, void * func, void * usr);
+
+/************************************************************/
+/**
+ * @name Getters
+ * Return value is pointer to structure's member. Do not free unless you null the pointer in the structure. 
+ * Use remove function otherwise.
  * @{
  * */
 
@@ -136,6 +161,7 @@ struct xccdf_policy_model * xccdf_policy_get_model(const struct xccdf_policy * p
  * Get Benchmark from Policy Model
  * @param item Policy model structure
  * @return XCCDF Benchmark for given policy model
+ * @memberof xccdf_policy_model
  */
 struct xccdf_benchmark * xccdf_policy_model_get_benchmark(const struct xccdf_policy_model * item);
 
@@ -209,75 +235,14 @@ struct xccdf_result_iterator * xccdf_policy_model_get_results(const struct xccdf
  */
 struct xccdf_result * xccdf_policy_model_get_result_by_id(struct xccdf_policy_model * model, const char * id);
 
-/** @} */
+/************************************************************
+ * @} End of Getters group */
 
+/************************************************************/
 /**
- * @name Other functions
- * @{
- * */
-
-/**
- * Evaluate policy
- * @param policy Given Policy to evaluate
- * @memberof xccdf_policy
- * @return true if evaluation pass or false in case of error
- */
-bool xccdf_policy_evaluate(struct xccdf_policy * policy);
-
-/**
- * Import/Export function
- * Not yet implemented
- */
-void xccdf_policy_export_variables(struct xccdf_policy *, char *export_namespace, struct oscap_export_target *);
-/**
- * Import/Export function
- * Not yet implemented
- */
-void xccdf_policy_export_controls (struct xccdf_policy *, char *export_namespace, struct oscap_export_target *);
-/**
- * Import/Export function
- * Not yet implemented
- */
-void xccdf_policy_import_results(struct xccdf_policy *, char *import_namespace, struct oscap_import_source *);
-/**
- * Import/Export function
- * Not yet implemented
- */
-void xccdf_policy_export_results(struct xccdf_policy *, char *scoring_model_namespace, struct oscap_export_target *);
-
-/**
- * Function to register callback for checking system
- * @param model XCCDF Policy Model
- * @param sys String representing given checking system
- * @param func Callback - pointer to function called by XCCDF Policy system when rule parsed
- * @param usr optional parameter for passing user data to callback
- * @memberof xccdf_policy_model
- * @return true if callback registered succesfully, false otherwise
- */
-bool xccdf_policy_model_register_callback(struct xccdf_policy_model * model, char * sys, void * func, void * usr);
-
-/** @} */
-
-/**
- * @name Free functions
- * Destructors of XCCDF Policy model structures. Functions free structures with all members recursively. 
- * For simple deletion of entity use remove functions.
- * @{
- */
-
-/// @memberof xccdf_policy_model
-void xccdf_policy_model_free(struct xccdf_policy_model *);
-/// @memberof xccdf_policy
-void xccdf_policy_free(struct xccdf_policy *);
-/// @memberof xccdf_value_binding
-void xccdf_value_binding_free(struct xccdf_value_binding *);
-
-/** @} */
-
-/**
- * @name Add and Set functions
- * Set functions assign values to members of structures except lists. For lists use add functions. 
- * Parameters of set functions are duplicated in memory and need to be freed by caller.
+ * @name Setters
+ * For lists use add functions. Parameters of set functions are duplicated in memory and need to 
+ * be freed by caller.
  * @{
  */
 
@@ -295,14 +260,32 @@ bool xccdf_policy_model_add_policy(struct xccdf_policy_model *, struct xccdf_pol
  */
 bool xccdf_policy_add_rule(struct xccdf_policy *, struct xccdf_select *);
 
-/// @memberof xccdf_value_binding
+/**
+ * Add refine rule to the Value Binding structure
+ * @memberof xccdf_value_binding
+ * @return true if rule has been added succesfully
+ */
 bool xccdf_value_binding_add_refine_rule(struct xccdf_value_binding *, struct xccdf_refine_rule *);
-/// @memberof xccdf_value_binding
+
+/**
+ * Add refine value to the Value Binding structure
+ * @memberof xccdf_value_binding
+ * @return true if rule has been added succesfully
+ */
 bool xccdf_value_binding_add_refine_value(struct xccdf_value_binding *, struct xccdf_refine_value *);
-/// @memberof xccdf_value_binding
+
+/**
+ * Add value to the Value Binding structure
+ * @memberof xccdf_value_binding
+ * @return true if rule has been added succesfully
+ */
 bool xccdf_value_binding_add_setvalue(struct xccdf_value_binding *, struct xccdf_setvalue *);
 
-/// @memberof xccdf_policy
+/**
+ * Set a new selector to the Policy structure
+ * @memberof xccdf_policy
+ * @return true if rule has been added succesfully
+ */
 bool xccdf_policy_set_selected(struct xccdf_policy * policy, char * idref);
 
 /**
@@ -311,8 +294,52 @@ bool xccdf_policy_set_selected(struct xccdf_policy * policy, char * idref);
  */
 bool xccdf_policy_model_add_result(struct xccdf_policy_model * model, struct xccdf_result * item);
 
-/** @} */
+/************************************************************
+ ** @} End of Setters group */
 
+/************************************************************/
+/**
+ * @name Evaluators
+ * @{
+ * */
+
+/**
+ * Call the checking engine for each selected rule in given policy structure
+ * @param policy given Policy to evaluate
+ * @memberof xccdf_policy
+ * @return true if evaluation pass or false in case of error
+ */
+bool xccdf_policy_evaluate(struct xccdf_policy * policy);
+
+/************************************************************
+ ** @} End of Iterators group */
+
+/************************************************************/
+/**
+ * @name Iterators
+ * @{
+ * */
+
+/**
+ * Return true if the list is not empty, false otherwise
+ * @memberof xccdf_policy_iterator
+ */
+bool xccdf_policy_iterator_has_more(struct xccdf_policy_iterator *it);
+
+/**
+ * Return the next xccdf_policy structure from the list and increment the iterator
+ * @memberof xccdf_policy_iterator
+ */
+struct xccdf_policy * xccdf_policy_iterator_next(struct xccdf_policy_iterator *it);
+
+/**
+ * Free the iterator structure (it makes no changes to the list structure)
+ * @memberof xccdf_policy_iterator
+ */
+void xccdf_policy_iterator_free(struct xccdf_policy_iterator *it);
+
+/************************************************************
+ ** @} End of Iterators group */
 
 /*
  * @}

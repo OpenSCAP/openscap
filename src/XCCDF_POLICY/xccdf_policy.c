@@ -41,9 +41,9 @@
  */
 typedef struct callback_t {
 
-    char * system;
-    bool (*callback) (struct xccdf_policy_model *, const char *, const char *, void *); /* format of callback function */
-    void * usr;
+    char * system;                                                                      ///< Identificator of checking engine
+    bool (*callback) (struct xccdf_policy_model *, const char *, const char *, void *); ///< format of callback function 
+    void * usr;                                                                         ///< User data structure
 
 } callback;
 
@@ -54,10 +54,10 @@ typedef struct callback_t {
  */
 struct xccdf_policy_model {
 
-        struct xccdf_benchmark  * benchmark;    //< Benchmark element (root element of XML file)
-	struct oscap_list       * policies;     //< List of xccdf_policy structures
-        struct oscap_list       * callbacks;    // < callbacks for systems 
-        struct oscap_list       * results;      //< XCCDF result
+        struct xccdf_benchmark  * benchmark;    ///< Benchmark element (root element of XML file)
+	struct oscap_list       * policies;     ///< List of xccdf_policy structures
+        struct oscap_list       * callbacks;    ///< Callbacks for checking engines (see callback_t)
+        struct oscap_list       * results;      ///< List of XCCDF results
 };
 /* Macros to generate iterators, getters and setters */
 OSCAP_GETTER(struct xccdf_benchmark *, xccdf_policy_model, benchmark)
@@ -74,10 +74,10 @@ OSCAP_IGETINS(xccdf_result, xccdf_policy_model, results, result)
  */
 struct xccdf_policy {
 
-        struct xccdf_policy_model   * model;    //< XCCDF Policy model
-        struct xccdf_profile        * profile;  //< Profile structure
-        struct oscap_list           * rules;    //< Rules from profile
-        struct xccdf_value_binding  * values;   //< Bound values of profile
+        struct xccdf_policy_model   * model;    ///< XCCDF Policy model
+        struct xccdf_profile        * profile;  ///< Profile structure (from benchmark)
+        struct oscap_list           * rules;    ///< Selected rules of profile
+        struct xccdf_value_binding  * values;   ///< Bound values of profile
 };
 
 /* Macros to generate iterators, getters and setters */
@@ -89,12 +89,15 @@ OSCAP_GETTER(struct xccdf_value_binding *, xccdf_policy, values)
 /**
  * XCCDF value binding structure is abstract (class) structure
  * of Value element from Profile.
+ *
+ * It contains lists of refine rules, refine values and set-values for 
+ * tailoring the benchmark. 
  */
 struct xccdf_value_binding {
 
-        struct oscap_list   * refine_rules;    //< Changing rules
-        struct oscap_list   * refine_values;   //< Changing values
-        struct oscap_list   * setvalues;       //< Setting values
+        struct oscap_list   * refine_rules;    ///< Refine rules of profile
+        struct oscap_list   * refine_values;   ///< Refine values of profile
+        struct oscap_list   * setvalues;       ///< Set values of profile
 };
 /* Macros to generate iterators, getters and setters */
 OSCAP_IGETINS(xccdf_refine_rule, xccdf_value_binding, refine_rules, refine_rule)
