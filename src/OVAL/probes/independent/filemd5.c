@@ -264,7 +264,7 @@ SEXP_t *probe_main (SEXP_t *probe_in, int *err, void *mutex)
                 return (NULL);
         }
 
-        filecnt = find_files (path, filename, behaviors, &filehash_cb, &items);
+        filecnt = find_files (path, filename, behaviors, &filehash_cb, (void *)items);
         *err    = 0;
         
         if (filecnt < 0) {
