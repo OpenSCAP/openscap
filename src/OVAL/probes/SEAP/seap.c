@@ -350,6 +350,7 @@ int SEAP_recvmsg (SEAP_CTX_t *ctx, int sd, SEAP_msg_t **seap_msg)
                         (*seap_msg) = sm_talloc (SEAP_msg_t);
                         memcpy ((*seap_msg), SEAP_packet_msg (packet), sizeof (SEAP_msg_t));
                         
+			SEAP_packet_free (packet);
                         return (0);
                 case SEAP_PACKET_CMD:
                         switch (__SEAP_recvmsg_process_cmd (ctx, sd, SEAP_packet_cmd (packet))) {

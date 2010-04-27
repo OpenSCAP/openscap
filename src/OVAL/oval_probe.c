@@ -832,6 +832,7 @@ struct oval_sysinfo *oval_probe_sysinf_eval(oval_pctx_t * ctx)
                                 }                                       \
                                                                         \
                                 oval_sysint_set_##name (sysint, buf);   \
+                                SEXP_free (val);                        \
                                                                         \
                         } while (0)
 

@@ -706,10 +706,13 @@ eloop_exit:
                 
                 _A(data_length > 0);
                 
-                if (data_buflen != (size_t)(data_length))
+                if (data_buflen != (size_t)(data_length)) {
                         data_buffer = sm_realloc (data_buffer, data_length);
+			data_buflen = data_length;
+		}
                 
                 sexp_buffer = SEXP_parse (psetup, data_buffer, data_length, &pstate);
+                sm_free (data_buffer);
                 
                 if (sexp_buffer != NULL) {
                         _A(pstate == NULL);
@@ -738,7 +741,6 @@ eloop_exit:
                                         _D("FAIL: recv failed: dsc=%p, errno=%u, %s.\n",
                                            dsc, errno, strerror (errno));
                                         
-                                        sm_free (data_buffer);
                                         SEXP_psetup_free (psetup);
                                         SEXP_pstate_free (pstate);
                                 }

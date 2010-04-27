@@ -583,7 +583,8 @@ static struct oval_sysitem *oval_sysitem_from_sexp(struct oval_syschar_model *mo
 	oval_sysitem_set_datatype(item, datatype);
 
 	SEXP_free(sval);
-	/* oscap_free (key); ? */
+	oscap_free(key);
+	oscap_free(val);
 
 	return item;
 }
@@ -622,6 +623,7 @@ static struct oval_sysdata *oval_sysdata_from_sexp(struct oval_syschar_model *mo
 
 	sprintf(id, "%d", id_counter++);
 	sysdata = oval_sysdata_get_new(model, id);
+	oscap_free(id);
 	oval_sysdata_set_status(sysdata, status);
 	oval_sysdata_set_subtype(sysdata, type);
 	//oval_sysdata_set_subtype_name(sysdata, name);
