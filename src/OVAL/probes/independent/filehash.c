@@ -122,11 +122,11 @@ static int filehash_cb (const char *p, const char *f, void *ptr)
         } else {
                 uint8_t md5_dst[16];
                 size_t  md5_dstlen = sizeof md5_dst;
-                char    md5_str[32+1];
+                char    md5_str[(sizeof md5_dst * 2) + 1];
                 
-                uint8_t sha1_dst[32];
+                uint8_t sha1_dst[20];
                 size_t  sha1_dstlen = sizeof sha1_dst;
-                char    sha1_str[64+1];
+                char    sha1_str[(sizeof sha1_dst * 2) + 1];
 
                 /*
                  * Compute hash values
