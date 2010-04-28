@@ -202,6 +202,105 @@ function test_probes_family {
     return $ret_val
 }
 
+function test_probes_filemd5 {
+
+    if [ ! -x ${OVAL_PROBE_DIR}/probe_filemd5 ]; then		
+	echo -e "Probe filemd5 does not exist!\n" >&2
+	return 255; # Test is not applicable.
+    fi
+
+    local ret_val=0;
+    local LOGFILE="test_probes_filemd5.out"
+    local EXECDIR="$(pwd)"
+    local DEFFILE="test_probes_filemd5.xml"
+    local RESFILE="test_probes_filemd5.xml.results.xml"
+
+    eval "which md5sum > /dev/null 2>&1"    
+    if [ ! $? -eq 0 ]; then		
+	echo -e "No md5sum found in $PATH!\n" >&2
+	return 255; # Test is not applicable.
+    fi
+    
+    bash "${srcdir}/OVAL/probes/test_probes_filemd5.xml.sh" > "$DEFFILE"
+    
+    eval "\"${EXECDIR}/test_probes\" \"$DEFFILE\" \"$RESFILE\"" >> "$LOGFILE"
+    
+    if [ $? -eq 0 ] && [ -e $RESFILE ]; then
+
+	COUNT=13; ID=1
+	while [ $ID -le $COUNT ]; do
+	    
+	    DEF_DEF=`cat "$DEFFILE" | grep "id=\"oval:1:def:${ID}\""`
+	    DEF_RES=`cat "$RESFILE" | grep "definition_id=\"oval:1:def:${ID}\""`
+
+	    if (echo $DEF_RES | grep -q "result=\"true\""); then
+		RES="TRUE"
+	    elif (echo $DEF_RES | grep -q "result=\"false\""); then
+		RES="FALSE"
+	    else
+		RES="ERROR"
+	    fi
+
+	    if (echo $DEF_DEF | grep -q "comment=\"true\""); then
+		CMT="TRUE"
+	    elif (echo $DEF_DEF | grep -q "comment=\"false\""); then
+		CMT="FALSE"
+	    else
+		CMT="ERROR"
+	    fi
+
+	    if [ ! $RES = $CMT ]; then
+		echo "Result of oval:1:def:${ID} should be ${CMT}!" >&2
+		ret_val=$[$ret_val + 1]
+	    fi
+
+	    ID=$[$ID+1]
+	done
+
+	COUNT=96; ID=1
+	while [ $ID -le $COUNT ]; do
+	    
+	    TEST_DEF=`cat "$DEFFILE" | grep "id=\"oval:1:tst:${ID}\""`
+	    TEST_RES=`cat "$RESFILE" | grep "test_id=\"oval:1:tst:${ID}\""`
+
+	    if (echo $TEST_RES | grep -q "result=\"true\""); then
+		RES="TRUE"
+	    elif (echo $TEST_RES | grep -q "result=\"false\""); then
+		RES="FALSE"
+	    else
+		RES="ERROR"
+	    fi
+
+	    if (echo $TEST_DEF | grep -q "comment=\"true\""); then
+		CMT="TRUE"
+	    elif (echo $TEST_DEF | grep -q "comment=\"false\""); then
+		CMT="FALSE"
+	    else
+		CMT="ERROR"
+	    fi
+
+	    if [ ! $RES = $CMT ]; then
+		echo "Result of oval:1:tst:${ID} should be ${CMT}!" >&2
+		ret_val=$[$ret_val + 1]
+	    fi
+
+	    ID=$[$ID+1]
+	done
+
+	if [ ! $ret_val -eq 0 ]; then
+	    echo "" >&2
+	    cat "$RESFILE" >&2
+	    echo "" >&2
+	    ret_val=2
+	fi
+
+    else 
+	ret_val=1
+    fi
+
+    return $ret_val
+}
+
 function test_probes_uname {
 
     if [ ! -x ${OVAL_PROBE_DIR}/probe_uname ]; then		
@@ -1141,6 +1240,9 @@ function test_probes_cleanup {
 	  test_probes_process_A.out \
 	  test_probes_process_A.xml \
 	  test_probes_process_A.xml.results.xml \
+	  test_probes_filemd5.out \
+	  test_probes_filemd5.xml \
+	  test_probes_filemd5.xml.results.xml \
           test_probes_textfilecontent54.out \
 	  test_probes_textfilecontent54.xml.results.xml \
 	  /tmp/test_probes_textfilecontent54.tmp_file \
@@ -1182,6 +1284,11 @@ result=$[$result+$?]
 test_probes_family
 ret_val=$?
 report_result "test_probes_family" $ret_val  
+result=$[$result+$?]   
+
+test_probes_filemd5
+ret_val=$?
+report_result "test_probes_filemd5" $ret_val  
 result=$[$result+$?]   
 
 test_probes_uname

@@ -94,6 +94,7 @@ EXTRA_DIST += OVAL/SEAP/test_seap.sh 	                    \
 	      OVAL/probes/test_probes_shadow_A.xml.sh       \
 	      OVAL/probes/test_probes_process_A.xml.sh      \
               OVAL/probes/test_probes_family.xml            \
+              OVAL/probes/test_probes_filemd5.xml.sh        \
               OVAL/probes/test_probes_uname.xml.sh
 
 endif # WANT_PROBES 
