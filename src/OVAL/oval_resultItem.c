@@ -99,6 +99,8 @@ void oval_result_item_free(struct oval_result_item *item)
 	item->messages = NULL;
 	item->result = 0;
 	item->sysdata = NULL;
+
+	oscap_free(item);
 }
 
 bool oval_result_item_iterator_has_more(struct oval_result_item_iterator * oc_result_item)

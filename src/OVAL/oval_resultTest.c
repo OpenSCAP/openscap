@@ -897,6 +897,8 @@ static void _oval_test_item_consumer(struct oval_result_item *item, void **args)
 	if (mapped_item == NULL) {
 		oval_string_map_put(ITEMMAP, item_id, item);
 		oval_result_test_add_item(TEST, item);
+	} else {
+		oval_result_item_free(item);
 	}
 }
 
@@ -1033,8 +1035,8 @@ _oval_result_test_evaluate_items(struct oval_syschar *syschar_object,
 
 		item_id = oval_sysdata_get_id(item);
 		ritem = oval_result_item_new(SYSTEM, item_id);
-		_oval_test_item_consumer(ritem, args);
 		oval_result_item_set_result(ritem, OVAL_RESULT_NOT_EVALUATED);
+		_oval_test_item_consumer(ritem, args);
 	}
 	oval_sysdata_iterator_free(collected_items_itr);
 

@@ -615,7 +615,7 @@ static struct oval_sysdata *oval_sysdata_from_sexp(struct oval_syschar_model *mo
 
 	_D("Syschar entry type: %d '%s' => %s\n", type, name, (type ? "OK" : "FAILED to decode"));
 
-	char *id = oscap_alloc(sizeof(char) * 16);
+	char id[16];
 	SEXP_t *sub;
 	struct oval_sysitem *sysitem;
 
@@ -623,7 +623,6 @@ static struct oval_sysdata *oval_sysdata_from_sexp(struct oval_syschar_model *mo
 
 	sprintf(id, "%d", id_counter++);
 	sysdata = oval_sysdata_get_new(model, id);
-	oscap_free(id);
 	oval_sysdata_set_status(sysdata, status);
 	oval_sysdata_set_subtype(sysdata, type);
 	//oval_sysdata_set_subtype_name(sysdata, name);
