@@ -1,19 +1,8 @@
 /**
- * @addtogroup CPE
- * @{
- * @addtogroup cpedict CPE Dictionary
- * @{
- * 
- * 
  * @file cpedict_priv.h
  * @brief Interface to Common Platform Enumeration (CPE) Dictionary.
  *
  * See more details at http://nvd.nist.gov/cpe.cfm
- */
-
-/**
- * @addtogroup CPEDictPrivate Private members
- * @{
  */
 
 /*
@@ -124,13 +113,6 @@ struct cpe_edition;
 struct cpe_language;
 
 /**
- * @name Parse functions
- * Functions for parsing structures from XML. Return value is new structure filled by content of XML file
- * represented by XML reader or import source structure. Structure needs to be freed by the caller.
- * @{
- * */
-
-/**
  * Function to parse XML to CPE dictionary model
  * @memberof cpe_dict_model
  * @param source Structure of name and encoding of importing XML file
@@ -171,14 +153,6 @@ struct cpe_vendor *cpe_vendor_parse(xmlTextReaderPtr reader);
  */
 struct cpe_dict_model *cpe_dict_model_parse(xmlTextReaderPtr reader);
 
-/*@}*/
-
-/**
- * @name Export functions
- * Functions for export structures to XML by XML writer. Exported structures need to be freed by the caller.
- * @{
- * */
-
 /**
  * Export function for CPE dictionary model
  * @param dict CPE dictionary structure
@@ -218,16 +192,11 @@ void cpe_item_export(const struct cpe_item *item, xmlTextWriterPtr writer);
  * @param writer xmlTextWriterPtr representing XML model
  */
 void cpe_vendor_export(const struct cpe_vendor *vendor, xmlTextWriterPtr writer);
-/*@}*/
 
 /** 
  * @cond INTERNAL
  */
 OSCAP_HIDDEN_END;
  /* @endcond */
-
-/** @} */
-/** @} */
-/** @} */
 
 #endif

@@ -31,12 +31,12 @@
  * @{
  * @addtogroup STRINGS
  * @{
+ * Functions to access and manipulate textual data.
  */
 
 #pragma once
 #ifndef OSCAP_TEXT_H_
 #define OSCAP_TEXT_H_
-
 
 /**
  * @name Common language codes
@@ -55,6 +55,18 @@ extern const char * const OSCAP_LANG_DEFAULT;
  * Representation of internationalizable character strings
  */
 struct oscap_text;
+
+/**
+ * @struct oscap_title
+ * Title of an OpenScap element.
+ */
+struct oscap_title;
+
+/**
+ * @struct oscap_stringlist
+ * A collection of strings.
+ */
+struct oscap_stringlist;
 
 /**
  * Create an internationalized text field.
@@ -92,6 +104,21 @@ void oscap_text_free(struct oscap_text *);
  * Use remove function otherwise.
  * @{
  * */
+
+/**
+ * Get oscap title content.
+ * @memberof oscap_title
+ */
+const char *oscap_title_get_content(const struct oscap_title *title);
+
+/// @memberof oscap_stringlist
+struct oscap_string_iterator *oscap_stringlist_get_strings(const struct oscap_stringlist* list);
+
+/**
+ * Get oscap title language.
+ * @memberof oscap_title
+ */
+const char *oscap_title_get_language(const struct oscap_title *title);
 
 /// @memberof oscap_text
 const char *oscap_text_get_text(const struct oscap_text *text);
@@ -141,6 +168,14 @@ bool oscap_text_set_text(struct oscap_text *text, const char * string);
 /// @memberof oscap_text
 bool oscap_text_set_lang(struct oscap_text *text, const char *string);
 
+/**
+ * Set oscap title content.
+ * @memberof oscap_title
+ */
+bool oscap_title_set_content(struct oscap_title *title, const char *new_content);
+/// @memberof oscap_stringlist
+bool oscap_stringlist_add_string(struct oscap_stringlist* list, const char *str);
+
 
 /************************************************************/
 /** @} End of Setters group */
@@ -164,6 +199,54 @@ bool oscap_text_iterator_has_more(struct oscap_text_iterator *it);
 void oscap_text_iterator_free(struct oscap_text_iterator *it);
 /// @memberof oscap_text_iterator
 void oscap_text_iterator_remove(struct oscap_text_iterator *it);
+
+/**
+ * @struct oscap_title_iterator
+ * Iterator over an array of oscap_title elements.
+ * @see oscap_iterator
+ */
+struct oscap_title_iterator;
+/// @memberof oscap_title_iterator
+struct oscap_title *oscap_title_iterator_next(struct oscap_title_iterator *it);
+/// @memberof oscap_title_iterator
+void oscap_title_iterator_free(struct oscap_title_iterator *it);
+/// @memberof oscap_title_iterator
+bool oscap_title_iterator_has_more(struct oscap_title_iterator *it);
+/// @memberof oscap_title
+void oscap_title_iterator_remove(struct oscap_title_iterator *it);
+
+/**
+ * @struct oscap_string_iterator
+ * String iterator.
+ *
+ * An iterator iterating over a collection of char*-s.
+ * @see oscap_iterator
+ */
+struct oscap_string_iterator;
+/// @memberof oscap_string_iterator
+const char *oscap_string_iterator_next(struct oscap_string_iterator *it);
+/// @memberof oscap_string_iterator
+bool oscap_string_iterator_has_more(struct oscap_string_iterator *it);
+/// @memberof oscap_string_iterator
+void oscap_string_iterator_free(struct oscap_string_iterator *it);
+/// @memberof oscap_string_iterator
+void oscap_string_iterator_remove(struct oscap_string_iterator *it);
+
+/**
+ * @struct oscap_stringlist_iterator
+ * Iterator over collections of strings.
+ * @see oscap_iterator
+ */
+struct oscap_stringlist_iterator;
+/// @memberof oscap_stringlist_iterator
+struct oscap_stringlist *oscap_stringlist_iterator_next(struct oscap_stringlist_iterator *it);
+/// @memberof oscap_stringlist_iterator
+bool oscap_stringlist_iterator_has_more(struct oscap_stringlist_iterator *it);
+/// @memberof oscap_stringlist_iterator
+void oscap_stringlist_iterator_free(struct oscap_stringlist_iterator *it);
+/// @memberof oscap_stringlist_iterator
+void oscap_stringlist_iterator_remove(struct oscap_stringlist_iterator *it);
+
 
 /************************************************************/
 /** @} End of Iterators group */

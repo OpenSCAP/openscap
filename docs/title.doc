@@ -46,28 +46,21 @@ Definitions and functions common to all the OpenScap sublibraries.
 
 Common Configuration Enumeration.
 
-More info at http://cce.mitre.org/ web page.
-
 
 @defgroup CPE
 
 Common Platform Enumeration.
-
-More info at http://cpe.mitre.org/ web page.
 
 
 @defgroup CVE
 
 Common Vulnerabilities and Exposures.
 
-More info at http://cve.mitre.org/ web page.
-
 
 @defgroup CVSS
 
 Common Vulnerability Scoring System.
 
-More info at http://nvd.nist.gov/cvss.cfm web page.
 
 @defgroup OVAL
 

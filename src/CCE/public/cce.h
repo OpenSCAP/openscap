@@ -2,10 +2,16 @@
  * @addtogroup CCE
  * @{
  *
- * @file cce.h
- * \brief Interface to Common Configuration Enumeration (CCE).
+ * CCE provides unique identifiers to system configuration issues in order to facilitate fast 
+ * and accurate correlation of configuration data across multiple information sources and tools. For example, 
+ * CCE Identifiers can be used to associate checks in configuration assessment tools 
+ * with statements in configuration best-practice documents
  *
- * See more details at http://cce.mitre.org/
+ * Supported version: 2.2
+ * 
+ * More info at http://cce.mitre.org/ web page
+ *
+ * @file cce.h
  */
 
 /*

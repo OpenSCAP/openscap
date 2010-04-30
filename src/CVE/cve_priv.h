@@ -1,7 +1,4 @@
 /**
- * @addtogroup CVE
- * @{
- *
  * @file cve_priv.h
  * \brief Common Vulnerability and Exposure dictionary
  * 
@@ -9,11 +6,6 @@
  *     http://cve.mitre.org/
  *     http://nvd.nist.gov/download.cfm
  *  
- */
-
-/**
- * @addtogroup CVEPrivate Private members
- * @{
  */
 
 /*
@@ -90,13 +82,6 @@ struct cwe_entry;
 struct cve_reference;
 
 /**
- * @name Parse functions
- * Functions for parsing structures from XML. Return value is new structure filled by content of XML file
- * represented by XML reader or import source structure. Structure needs to be freed by the caller.
- * @{
- * */
-
-/**
  * Parse CVE model from XML (private function)
  * @param source OSCAP import source
  * @memberof cve_model
@@ -119,14 +104,6 @@ struct cve_model *cve_model_parse(xmlTextReaderPtr reader);
  * @return parsed CVE entry
  */
 struct cve_entry *cve_entry_parse(xmlTextReaderPtr reader);
-
-/*@}*/
-
-/**
- * @name Export functions
- * Functions for export structures to XML by XML writer. Exported structures need to be freed by the caller.
- * @{
- * */
 
 /**
  * Export CVE model to XML file
@@ -173,10 +150,5 @@ void cve_entry_export(const struct cve_entry *entry, xmlTextWriterPtr writer);
  */
 OSCAP_HIDDEN_END;
  /* @endcond */
-
-/*@}*/
-
-/*@}*/
-/*@}*/
 
 #endif

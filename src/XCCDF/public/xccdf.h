@@ -183,12 +183,6 @@ typedef enum {
 typedef float xccdf_numeric;
 
 /** 
- * @struct xccdf_item
- * A base class for XCCDF items.
- */
-struct xccdf_item;
-
-/** 
  * @struct xccdf_benchmark
  * Top level XCCDF structure containing profiles, rules, values and results.
  */
@@ -199,6 +193,12 @@ struct xccdf_benchmark;
  * XCCDF profile is a set of tests and their settings in a compact package
  */
 struct xccdf_profile;
+
+/** 
+ * @struct xccdf_item
+ * A base class for XCCDF items.
+ */
+struct xccdf_item;
 
 /** 
  * @struct xccdf_rule

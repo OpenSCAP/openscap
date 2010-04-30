@@ -1,7 +1,4 @@
 /*
- * @addtogroup CCE
- * @{
- *
  * @file cce_priv.h
  * \brief Interface to Common Configuration Enumeration (CCE) - internal definitions.
  *

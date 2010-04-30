@@ -1,19 +1,8 @@
 /**
- * @addtogroup CPE
- * @{
- * @addtogroup cpelang CPE Language
- * @{
- * 
- * 
  * @file cpelang_priv.h
  * \brief Interface to Common Platform Enumeration (CPE) Language.
  *
  * See more details at http://nvd.nist.gov/cpe.cfm
- */
-
-/**
- * @addtogroup CPELangPrivate Private members
- * @{
  */
 
 /*
@@ -82,13 +71,6 @@ struct cpe_lang_model;
 struct cpe_platform;
 
 /**
- * @name Parse functions
- * Functions for parsing structures from XML. Return value is new structure filled by content of XML file
- * represented by XML reader or import source structure. Structure needs to be freed by the caller.
- * @{
- * */
-
-/**
  * Function for parsing XML CPE language file
  * @param source structure of import source with filename and encoding
  * @memberof cpe_lang_model
@@ -117,14 +99,6 @@ struct cpe_platform *cpe_platform_parse(xmlTextReaderPtr reader);
  * @memberof cpe_testexpr
  */
 struct cpe_testexpr *cpe_testexpr_parse(xmlTextReaderPtr reader);
-
-/*@}*/
-
-/**
- * @name Export functions
- * Functions for export structures to XML by XML writer. Exported structures need to be freed by the caller.
- * @{
- * */
 
 /**
  * Function for export CPE language model to XML
@@ -158,17 +132,10 @@ void cpe_platform_export(const struct cpe_platform *platform, xmlTextWriterPtr w
  */
 void cpe_testexpr_export(const struct cpe_testexpr *expr, xmlTextWriterPtr writer);
 
-/*@}*/
-
 /** 
  * @cond INTERNAL
  */
 OSCAP_HIDDEN_END;
  /* @endcond */
-
-/*@}*/
-
-/*@}*/
-/*@}*/
 
 #endif

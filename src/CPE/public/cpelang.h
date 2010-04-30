@@ -60,12 +60,6 @@ typedef enum {
 } cpe_lang_oper_t;
 
 /**
- * @struct cpe_testexpr
- * CPE language boolean expression
- */
-struct cpe_testexpr;
-
-/**
  * @struct cpe_lang_model
  * CPE platform specification
  */
@@ -76,6 +70,13 @@ struct cpe_lang_model;
  * Single platform representation in CPE language
  */
 struct cpe_platform;
+
+/**
+ * @struct cpe_testexpr
+ * CPE language boolean expression
+ */
+struct cpe_testexpr;
+
 
 /************************************************************/
 /**

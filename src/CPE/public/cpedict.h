@@ -43,8 +43,29 @@
 #include "cpeuri.h"
 #include "oscap.h"
 
-// forward declaration
-struct oscap_title;
+/**
+ * @struct cpe_dict_model
+ * Structure representing a CPE dictionary.
+ */
+struct cpe_dict_model;
+
+/**
+ * @struct cpe_item
+ * Structure representing single CPE dictionary item.
+ */
+struct cpe_item;
+
+/**
+ * @struct cpe_vendor
+ * Structure with information about vendor
+ */
+struct cpe_vendor;
+
+/**
+ * @struct cpe_generator
+ * Structure with information about document
+ */
+struct cpe_generator;
 
 /**
  * @struct cpe_check
@@ -59,34 +80,11 @@ struct cpe_check;
 struct cpe_reference;
 
 /**
- * @struct cpe_item
- * Structure representing single CPE dictionary item.
- */
-struct cpe_item;
-
-/**
- * @struct cpe_dict_model
- * Structure representing a CPE dictionary.
- */
-struct cpe_dict_model;
-
-/**
  * @struct cpe_item_metadata
  * Structure representing metadata of CPE item
  */
 struct cpe_item_metadata;
 
-/**
- * @struct cpe_generator
- * Structure with information about document
- */
-struct cpe_generator;
-
-/**
- * @struct cpe_vendor
- * Structure with information about vendor
- */
-struct cpe_vendor;
 /**
  * @struct cpe_product
  * Product of some vendor
@@ -112,6 +110,9 @@ struct cpe_edition;
  * Language of product edition
  */
 struct cpe_language;
+
+// forward declaration
+struct oscap_title;
 
 /************************************************************/
 /**
