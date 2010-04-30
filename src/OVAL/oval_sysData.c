@@ -65,7 +65,28 @@ struct oval_sysdata *oval_sysdata_new(struct oval_syschar_model *model, char *id
 
 bool oval_sysdata_is_valid(struct oval_sysdata * sysdata)
 {
-	return true;		//TODO
+	bool is_valid = true;
+	struct oval_sysitem_iterator *sysitems_itr;
+
+	if (sysdata == NULL)
+		return false;
+
+	/* validate sysitems */
+	sysitems_itr = oval_sysdata_get_items(sysdata);
+	while (oval_sysitem_iterator_has_more(sysitems_itr)) {
+		struct oval_sysitem *sysitem;
+
+		sysitem = oval_sysitem_iterator_next(sysitems_itr);
+		if (oval_sysitem_is_valid(sysitem) != true) {
+			is_valid = false;
+			break;
+		}
+	}
+	oval_sysitem_iterator_free(sysitems_itr);
+	if (is_valid != true)
+		return false;
+
+	return true;
 }
 
 bool oval_sysdata_is_locked(struct oval_sysdata * sysdata)

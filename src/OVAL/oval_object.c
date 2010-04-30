@@ -168,6 +168,7 @@ bool oval_object_is_valid(struct oval_object * object)
 	if (object == NULL)
 		return false;
 
+	/* validate object contents */
 	contents_itr = oval_object_get_object_contents(object);
 	while (oval_object_content_iterator_has_more(contents_itr)) {
 		struct oval_object_content *content;
@@ -182,6 +183,7 @@ bool oval_object_is_valid(struct oval_object * object)
 	if (is_valid != true)
 		return false;
 
+	/* validate behaviors */
 	behaviors_itr = oval_object_get_behaviors(object);
 	while (oval_behavior_iterator_has_more(behaviors_itr)) {
 		struct oval_behavior *behavior;

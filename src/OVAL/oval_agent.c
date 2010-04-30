@@ -294,7 +294,41 @@ bool oval_syschar_model_is_locked(struct oval_syschar_model *syschar_model)
 
 bool oval_syschar_model_is_valid(struct oval_syschar_model * syschar_model)
 {
-	return true;		//TODO
+	bool is_valid = true;
+	struct oval_syschar_iterator *syschars_itr;
+
+	if (syschar_model == NULL)
+		return false;
+
+	/* validate sysinfo */
+	if (oval_sysinfo_is_valid(oval_syschar_model_get_sysinfo(syschar_model))
+	    != true)
+		return false;
+
+	/* validate definition_model */
+	if (oval_definition_model_is_valid(oval_syschar_model_get_definition_model(syschar_model))
+	    != true)
+		return false;
+
+	/* validate syschars */
+	syschars_itr = oval_syschar_model_get_syschars(syschar_model);
+	while (oval_syschar_iterator_has_more(syschars_itr)) {
+		struct oval_syschar *syschar;
+
+		syschar = oval_syschar_iterator_next(syschars_itr);
+		if (oval_syschar_is_valid(syschar) != true) {
+			is_valid = false;
+			break;
+		}
+	}
+	oval_syschar_iterator_free(syschars_itr);
+	if (is_valid != true)
+		return false;
+
+	/* validate variable_bindings */
+	// todo
+
+	return true;
 }
 
 static void _oval_syschar_model_clone_variable_binding(struct oval_variable_binding *old_binding,

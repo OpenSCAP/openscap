@@ -163,7 +163,37 @@ struct oval_syschar *oval_syschar_new(struct oval_syschar_model *model, struct o
 
 bool oval_syschar_is_valid(struct oval_syschar * syschar)
 {
-	return true;		//TODO
+	bool is_valid = true;
+	struct oval_object *object;
+	struct oval_sysdata_iterator *sysdatas_itr;
+
+	if (syschar == NULL)
+		return false;
+
+	/* validate object */
+	object = oval_syschar_get_object(syschar);
+	if (oval_object_is_valid(object) != true)
+		return false;
+
+	/* validate variable_bindings */
+	// todo
+
+	/* validate sysdatas */
+	sysdatas_itr = oval_syschar_get_sysdata(syschar);
+	while (oval_sysdata_iterator_has_more(sysdatas_itr)) {
+		struct oval_sysdata *sysdata;
+
+		sysdata = oval_sysdata_iterator_next(sysdatas_itr);
+		if (oval_sysdata_is_valid(sysdata) != true) {
+			is_valid = false;
+			break;
+		}
+	}
+	oval_sysdata_iterator_free(sysdatas_itr);
+	if (is_valid != true)
+		return false;
+
+	return true;
 }
 
 bool oval_syschar_is_locked(struct oval_syschar * syschar)
