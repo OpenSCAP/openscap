@@ -22,7 +22,7 @@ int main(int argc, char **argv) {
   struct oval_definition_model *def_model = oval_definition_model_new();
   assume(def_model != NULL);
 
-  int ret = oval_definition_model_import(def_model, def_in, NULL);
+  int ret = oval_definition_model_import(def_model, def_in);
   assume(ret != -1);
   
   oscap_import_source_free(def_in);

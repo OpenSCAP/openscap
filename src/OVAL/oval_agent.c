@@ -573,7 +573,7 @@ void oval_syschar_model_add_sysdata(struct oval_syschar_model *model, struct ova
 }
 
 int oval_definition_model_import(struct oval_definition_model *model,
-				 struct oscap_import_source *source, void *user_arg)
+				 struct oscap_import_source *source)
 {
 	__attribute__nonnull__(source);
 
@@ -582,7 +582,7 @@ int oval_definition_model_import(struct oval_definition_model *model,
 	int retcode = 0;
 	if (reader) {
 		if (xmlTextReaderRead(reader) > -1) {
-			retcode = ovaldef_parser_parse(model, reader, user_arg);
+			retcode = ovaldef_parser_parse(model, reader, NULL);
 		}
 		xmlFreeTextReader(reader);
 	} else {

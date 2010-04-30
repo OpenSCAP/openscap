@@ -31,7 +31,7 @@ int main(int argc, char **argv)
 	struct oval_definition_model *model = oval_definition_model_new();
 
 	struct oscap_import_source *is = oscap_import_source_new_file(argv[1], NULL);
-	if (oval_definition_model_import(model, is, NULL) < 1)
+	if (oval_definition_model_import(model, is) < 1)
             _test_error();
 
 	struct oval_definition_iterator *definitions =

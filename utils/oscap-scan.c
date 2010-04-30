@@ -437,7 +437,7 @@ int main(int argc, char **argv)
 	struct oscap_import_source *def_in = oscap_import_source_new_file(f_OVAL, NULL);
 	struct oval_definition_model *def_model = oval_definition_model_new();
 	free(f_OVAL);
-	oval_definition_model_import(def_model, def_in, NULL);
+	oval_definition_model_import(def_model, def_in);
 	/* Import problems ? Do not continue then ! */
 	if (oscap_err()) {
 		if (verbose >= 0)

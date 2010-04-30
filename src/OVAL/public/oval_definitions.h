@@ -549,11 +549,9 @@ struct oval_string_iterator;
  * If the input_source specifies a model entity (id=A, version=V) and the model specifies an entity (id=A, ...) then (id=A, version=V) then the source specification is skipped.
  * @param model the merge target model.
  * @param source an <oval_def:oval_definitions> XML stream
- * @param error_handler callback for detected error conditions (may be NULL)
- * @param client pointer to client data (may be NULL)
  * @memberof oval_definition_model
  */
-int oval_definition_model_import(struct oval_definition_model *model, struct oscap_import_source *source, void *client);
+int oval_definition_model_import(struct oval_definition_model *model, struct oscap_import_source *source);
 /**
  * Create an empty oval_definition_model.
  * @memberof oval_definition_model
