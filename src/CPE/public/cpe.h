@@ -9,6 +9,8 @@
  *
  * More info at http://cpe.mitre.org/ web page
  *
+ * Supported version: 2.2
+ *
  * @file cpe.h
  */
 

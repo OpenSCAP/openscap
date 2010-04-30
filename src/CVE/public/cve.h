@@ -7,12 +7,9 @@
  * enable data exchange between security products and provide a baseline index point 
  * for evaluating coverage of tools and services.
  *
- * See details at:
- * - http://cve.mitre.org/
- * - http://nvd.nist.gov/download.cfm
+ * More info at http://cve.mitre.org/ web page
  *
- * Class diagram
- * @image html cve.png
+ * @image html cve.png "Class diagram"
  *  
  * @file cve.h
  * @brief Interface to Common Vulnerability and Exposure dictionary

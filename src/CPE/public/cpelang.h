@@ -3,12 +3,10 @@
  * @{
  * @addtogroup cpelang CPE Language
  * @{
- * See more details at http://nvd.nist.gov/cpe.cfm
  *
- * Class diagram
- * @image html cpe_language.png
- *
+ * @image html cpe_language.png "Class diagram"
  * @file cpelang.h
+ *
  * @brief Interface to Common Platform Enumeration (CPE) Language
  */
 

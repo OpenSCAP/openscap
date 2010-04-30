@@ -7,7 +7,7 @@
  * CCE Identifiers can be used to associate checks in configuration assessment tools 
  * with statements in configuration best-practice documents
  *
- * Supported version: 2.2
+ * Supported version: 5
  * 
  * More info at http://cce.mitre.org/ web page
  *

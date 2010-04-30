@@ -1,6 +1,13 @@
 /**
  * @addtogroup XCCDF
  * @{
+ *
+ * XCCDF is a specification language for writing security checklists, benchmarks, and related kinds of documents.
+ * The intent of XCCDF is to provide a uniform foundation for expression of security checklists, benchmarks, 
+ * and other configuration guidance, and thereby foster more widespread application of good security practices.
+ *
+ * Supported version: 1.1.4
+ *
  * @file xccdf.h
  * Open-scap XCCDF library interface.
  * @author Lukas Kuklinek <lkuklinek@redhat.com>
