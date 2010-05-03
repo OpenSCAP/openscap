@@ -215,7 +215,7 @@ struct oval_object_content *oval_object_content_clone
 	oval_object_content_set_field_name(new_content, name);
 	switch (new_content->type) {
 	case OVAL_OBJECTCONTENT_ENTITY:{
-			struct oval_entity *entity = oval_object_content_get_entity(old_content);
+			struct oval_entity *entity = oval_entity_clone(new_model, oval_object_content_get_entity(old_content));
 			oval_object_content_set_entity(new_content, entity);
 			oval_check_t check = oval_object_content_get_varCheck(old_content);
 			oval_object_content_set_varCheck(new_content, check);
