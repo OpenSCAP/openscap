@@ -1955,6 +1955,9 @@ struct oscap_string_iterator *xccdf_value_get_sources(const struct xccdf_value *
 /// @memberof xccdf_value
 const char *xccdf_value_get_cluster_id(const struct xccdf_value *value);
 
+/// @memberof xccdf_value
+char *  xccdf_value_get_selected_value(const struct xccdf_value * value);
+
 /// @memberof xccdf_item
 struct oscap_text_iterator *xccdf_item_get_question(const struct xccdf_item *item);
 /// @memberof xccdf_item
@@ -2314,7 +2317,7 @@ bool xccdf_value_set_multiple(struct xccdf_value *item, bool newval);
 /// @memberof xccdf_value
 bool xccdf_value_set_prohibit_changes(struct xccdf_value *item, bool newval);
 /// @memberof xccdf_value
-//bool xccdf_value_set_oper(struct xccdf_value *item, xccdf_operator_t oper);
+bool xccdf_value_set_oper(struct xccdf_item * item, xccdf_operator_t oper);
 
 /// @memberof xccdf_status
 bool xccdf_status_set_date(struct xccdf_status *obj, time_t newval);

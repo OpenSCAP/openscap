@@ -257,6 +257,15 @@ bool xccdf_value_get_set_selector(struct xccdf_item * value, const char *selecto
 	return value->sub.value.value != NULL;
 }
 
+bool xccdf_value_set_oper(struct xccdf_item * value, xccdf_operator_t oper)
+{
+        __attribute__nonnull__(value);
+
+        value->sub.value.oper = oper;
+        return true;
+
+}
+
 const char *xccdf_value_get_defval_string(const struct xccdf_value *value)
 {
 	if (XITEM(value)->sub.value.type != XCCDF_TYPE_STRING || XITEM(value)->sub.value.value == NULL)
@@ -284,6 +293,30 @@ bool xccdf_value_get_defval_boolean(const struct xccdf_value * value)
 		return XITEM(value)->sub.value.value->defval.s != NULL;
 	}
 	return false;
+}
+
+char *  xccdf_value_get_selected_value(const struct xccdf_value * value)
+{
+        const char * selector = xccdf_value_get_selector(value);
+        char * selected = NULL;
+        if (selector == NULL) /* default value */
+                selector = "";
+        struct xccdf_value_val *val = oscap_htable_get(XITEM(value)->sub.value.values, selector);
+        switch (XITEM(value)->sub.value.type) {
+            case XCCDF_TYPE_BOOLEAN:
+            case XCCDF_TYPE_NUMBER:
+                    if (val != NULL)
+                         sprintf(selected, "%d", val->value);
+                    else sprintf(selected, "%d", val->defval);
+                    break;
+            case XCCDF_TYPE_STRING:
+                    if (val != NULL)
+                         selected = strdup(val->value.s);
+                    else selected = strdup(val->defval.s);
+                    break;
+        }
+        
+        return selected;
 }
 
 const char *xccdf_value_get_value_string(const struct xccdf_value *value)

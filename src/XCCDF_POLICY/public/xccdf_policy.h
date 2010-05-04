@@ -81,11 +81,10 @@ struct xccdf_policy * xccdf_policy_new(struct xccdf_policy_model * model, struct
 
 /**
  * Constructor of structure with profile bindings - refine_rules, refine_values and set_values
- * @param profile XCCDF Benchmark Profile to get all elements
  * @memberof xccdf_value_binding
  * @return new structure of xccdf_value_binding
  */
-struct xccdf_value_binding * xccdf_value_binding_new(const struct xccdf_profile * profile);
+struct xccdf_value_binding * xccdf_value_binding_new();
 
 /** 
  * Destructor of Policy Model structure
@@ -235,6 +234,22 @@ struct xccdf_result_iterator * xccdf_policy_model_get_results(const struct xccdf
  */
 struct xccdf_result * xccdf_policy_model_get_result_by_id(struct xccdf_policy_model * model, const char * id);
 
+/**
+ * Get ID of XCCDF Profile that is implemented by XCCDF Policy
+ * @param policy XCCDF Policy
+ * @memberof xccdf_policy
+ * @return ID of Policy's Profile
+ */
+const char * xccdf_policy_get_id(struct xccdf_policy * policy);
+
+/**
+ * Get all values that are affected by refine-values of Policy
+ * @param policy XCCDF Policy
+ * @return OSCAP List structure of XCCDF values
+ */
+struct oscap_list * xccdf_policy_get_affected_values(struct xccdf_policy * policy);
+
+
 /************************************************************/
 /** @} End of Getters group */
 
@@ -310,6 +325,16 @@ bool xccdf_policy_model_add_result(struct xccdf_policy_model * model, struct xcc
  * @return true if evaluation pass or false in case of error
  */
 bool xccdf_policy_evaluate(struct xccdf_policy * policy);
+
+/**
+ * Resolve benchmark by applying all refine_rules and refine_values to rules / values
+ * of benchmark. All properties in benchmark will be irreversible changed and user has to
+ * load benchmark (from XML) again to discard these changes.
+ * @param policy XCCDF policy containing rules/values that will be applied to benchmark rules/values.
+ * @return true if process ends succesfuly or false in case of error
+ * @memberof xccdf_policy
+ */
+bool xccdf_policy_resolve(struct xccdf_policy * policy);
 
 /************************************************************/
 /** @} End of Evaluators group */
