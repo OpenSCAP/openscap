@@ -296,18 +296,20 @@ bool oval_syschar_model_is_valid(struct oval_syschar_model * syschar_model)
 {
 	bool is_valid = true;
 	struct oval_syschar_iterator *syschars_itr;
+	struct oval_sysinfo *sysinfo;
+	struct oval_definition_model *definition_model;
 
 	if (syschar_model == NULL)
 		return false;
 
 	/* validate sysinfo */
-	if (oval_sysinfo_is_valid(oval_syschar_model_get_sysinfo(syschar_model))
-	    != true)
+	sysinfo = oval_syschar_model_get_sysinfo(syschar_model);
+	if (oval_sysinfo_is_valid(sysinfo) != true)
 		return false;
 
 	/* validate definition_model */
-	if (oval_definition_model_is_valid(oval_syschar_model_get_definition_model(syschar_model))
-	    != true)
+	definition_model = oval_syschar_model_get_definition_model(syschar_model);
+	if (oval_definition_model_is_valid(definition_model) != true)
 		return false;
 
 	/* validate syschars */
@@ -885,7 +887,34 @@ bool oval_results_model_is_locked(struct oval_results_model *results_model)
 
 bool oval_results_model_is_valid(struct oval_results_model * results_model)
 {
-	return true;		//TODO
+	bool is_valid = true;
+	struct oval_result_system_iterator *systems_itr;
+	struct oval_definition_model *definition_model;
+
+	if (results_model == NULL)
+		return false;
+
+	/* validate definition_model */
+	definition_model = oval_results_model_get_definition_model(results_model);
+	if (oval_definition_model_is_valid(definition_model) != true)
+		return false;
+
+	/* validate systems */
+	systems_itr = oval_results_model_get_systems(results_model);
+	while (oval_result_system_iterator_has_more(systems_itr)) {
+		struct oval_result_system *rslt_system;
+
+		rslt_system = oval_result_system_iterator_next(systems_itr);
+		if (oval_result_system_is_valid(rslt_system) != true) {
+			is_valid = false;
+			break;
+		}
+	}
+	oval_result_system_iterator_free(systems_itr);
+	if (is_valid != true)
+		return false;
+
+	return true;
 }
 
 struct oval_results_model *oval_results_model_clone(struct oval_results_model *old_resmodel)

@@ -81,7 +81,26 @@ struct oval_result_definition *oval_result_definition_new(struct oval_result_sys
 
 bool oval_result_definition_is_valid(struct oval_result_definition * result_definition)
 {
-	return true;		//TODO
+	struct oval_definition *definition;
+	struct oval_result_criteria_node *rslt_criteria_node;
+
+	if (result_definition == NULL)
+		return false;
+
+	if (oval_result_definition_get_system(result_definition) == NULL)
+		return false;
+
+	/* validate definition */
+	definition = oval_result_definition_get_definition(result_definition);
+	if (oval_definition_is_valid(definition) != true)
+		return false;
+
+	/* validate criteria */
+	rslt_criteria_node = oval_result_definition_get_criteria(result_definition);
+	if (oval_result_criteria_node_is_valid(rslt_criteria_node) != true)
+		return false;
+
+	return true;
 }
 
 bool oval_result_definition_is_locked(struct oval_result_definition * result_definition)

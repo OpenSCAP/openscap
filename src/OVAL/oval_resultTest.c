@@ -205,7 +205,37 @@ struct oval_result_test *oval_result_test_new(struct oval_result_system *sys, ch
 
 bool oval_result_test_is_valid(struct oval_result_test * result_test)
 {
-	return true;		//TODO
+	bool is_valid = true;
+	struct oval_test *test;
+	struct oval_result_item_iterator *rslt_items_itr;
+
+	if (result_test == NULL)
+		return false;
+
+	/* validate test */
+	test = oval_result_test_get_test(result_test);
+	if (oval_test_is_valid(test) != true)
+		return NULL;
+
+	/* validate items */
+	rslt_items_itr = oval_result_test_get_items(result_test);
+	while (oval_result_item_iterator_has_more(rslt_items_itr)) {
+		struct oval_result_item *rslt_item;
+
+		rslt_item = oval_result_item_iterator_next(rslt_items_itr);
+		if (oval_result_item_is_valid(rslt_item) != true) {
+			is_valid = false;
+			break;
+		}
+	}
+	oval_result_item_iterator_free(rslt_items_itr);
+	if (is_valid != true)
+		return false;
+
+	/* validate bindings */
+	// todo
+
+	return true;
 }
 
 bool oval_result_test_is_locked(struct oval_result_test * result_test)

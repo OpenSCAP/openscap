@@ -61,7 +61,16 @@ struct oval_result_item *oval_result_item_new(struct oval_result_system *sys, ch
 
 bool oval_result_item_is_valid(struct oval_result_item * result_item)
 {
-	return true;		//TODO
+	struct oval_sysdata *sysdata;
+
+	if (result_item == NULL)
+		return false;
+
+	sysdata = oval_result_item_get_sysdata(result_item);
+	if (oval_sysdata_is_valid(sysdata) != true)
+		return false;
+
+	return true;
 }
 
 bool oval_result_item_is_locked(struct oval_result_item * result_item)

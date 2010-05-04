@@ -62,7 +62,10 @@ struct oval_sysitem *oval_sysitem_new(struct oval_syschar_model *model)
 
 bool oval_sysitem_is_valid(struct oval_sysitem * sysitem)
 {
-	return true;		//TODO
+	if (sysitem == NULL)
+		return false;
+
+	return true;
 }
 
 bool oval_sysitem_is_locked(struct oval_sysitem * sysitem)

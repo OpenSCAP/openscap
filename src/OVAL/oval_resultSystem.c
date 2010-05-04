@@ -65,7 +65,50 @@ struct oval_result_system *oval_result_system_new(struct oval_results_model *mod
 
 bool oval_result_system_is_valid(struct oval_result_system * result_system)
 {
-	return true;		//TODO
+	bool is_valid = true;
+	struct oval_result_definition_iterator *rslt_definitions_itr;
+	struct oval_result_test_iterator *rslt_tests_itr;
+	struct oval_syschar_model *syschar_model;
+
+	if (result_system == NULL)
+		return false;
+
+	/* validate syschar_model */
+	syschar_model = oval_result_system_get_syschar_model(result_system);
+	if (oval_syschar_model_is_valid(syschar_model) != true)
+		return false;
+
+	/* validate result definitions */
+	rslt_definitions_itr = oval_result_system_get_definitions(result_system);
+	while (oval_result_definition_iterator_has_more(rslt_definitions_itr)) {
+		struct oval_result_definition *rslt_definition;
+
+		rslt_definition = oval_result_definition_iterator_next(rslt_definitions_itr);
+		if (oval_result_definition_is_valid(rslt_definition) != true) {
+			is_valid = false;
+			break;
+		}
+	}
+	oval_result_definition_iterator_free(rslt_definitions_itr);
+	if (is_valid != true)
+		return false;
+
+	/* validate result tests */
+	rslt_tests_itr = oval_result_system_get_tests(result_system);
+	while (oval_result_test_iterator_has_more(rslt_tests_itr)) {
+		struct oval_result_test *rslt_test;
+
+		rslt_test = oval_result_test_iterator_next(rslt_tests_itr);
+		if (oval_result_test_is_valid(rslt_test) != true) {
+			is_valid = false;
+			break;
+		}
+	}
+	oval_result_test_iterator_free(rslt_tests_itr);
+	if (is_valid != true)
+		return false;
+
+	return true;
 }
 
 bool oval_result_system_is_locked(struct oval_result_system * result_system)
