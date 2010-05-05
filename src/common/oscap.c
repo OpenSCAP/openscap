@@ -22,7 +22,7 @@
 
 #include <libxml/parser.h>
 #include "public/oscap.h"
-#include "error.h"
+#include "_error.h"
 #include "util.h"
 #include "elements.h"
 #include "reporter_priv.h"

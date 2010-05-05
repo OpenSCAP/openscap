@@ -31,19 +31,19 @@
 
 #include "config.h"
 #include "oval_probe.h"
-#include "common/public/error.h"
+#include "common/_error.h"
 #include "common/assume.h"
 
 #ifdef ENABLE_PROBES
 
 #include "seap.h"
-#include "common/bfind.h"
-#include "common/public/debug.h"
 #include "oval_sexp.h"
 #include "oval_probe_impl.h"
 #include "oval_system_characteristics_impl.h"
 #include "probes/public/probe-api.h"
-#include "../common/util.h"
+#include "common/util.h"
+#include "common/bfind.h"
+#include "common/public/debug.h"
 
 encache_t *OSCAP_GSYM(encache) = NULL;
 struct id_desc_t OSCAP_GSYM(id_desc);

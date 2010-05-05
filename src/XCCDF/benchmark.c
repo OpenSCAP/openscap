@@ -23,7 +23,7 @@
 #include <string.h>
 #include "item.h"
 #include "helpers.h"
-#include "../common/public/error.h"
+#include "common/_error.h"
 
 #define XCCDF_SUPPORTED "1.1.4"
 

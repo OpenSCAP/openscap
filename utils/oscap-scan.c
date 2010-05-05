@@ -174,10 +174,8 @@ int app_evaluate_criteria(struct oval_criteria_node *cnode, oval_pctx_t * pctx,
         case OVAL_NODETYPE_CRITERION:{
             /* There should be a test .. */
             struct oval_test * test = oval_criteria_node_get_test(cnode);
-            if (test == NULL) {
-                oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EUSER1, "Criteria node has no test");
+            if (test == NULL)
                 return -1;
-            }
             /* .. evaluate it and return */
             return app_evaluate_test(test, pctx, def_model, sys_model, verbose);
 
@@ -187,10 +185,8 @@ int app_evaluate_criteria(struct oval_criteria_node *cnode, oval_pctx_t * pctx,
         case OVAL_NODETYPE_CRITERIA:{
             /* group of criterion nodes, get subnodes, continue recursive */
             struct oval_criteria_node_iterator * cnode_it = oval_criteria_node_get_subnodes(cnode);
-            if (cnode_it == NULL) {
-                oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EUSER1, "Node CRITERIA should have subnodes");
+            if (cnode_it == NULL)
                 return -1;
-            }
             /* we have subnotes */
             struct oval_criteria_node * node;
             while (oval_criteria_node_iterator_has_more(cnode_it)) {
@@ -210,9 +206,9 @@ int app_evaluate_criteria(struct oval_criteria_node *cnode, oval_pctx_t * pctx,
             cnode = oval_definition_get_criteria(oval_def);
             return app_evaluate_criteria(cnode, pctx, def_model, sys_model, verbose);
         } break;
-        case OVAL_NODETYPE_UNKNOWN:
-            oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EUSER1, "UNKNOWN Node type");
-            break;
+	case OVAL_NODETYPE_UNKNOWN:
+	default:
+		return NULL;
     }
     return ret;
 }
@@ -240,24 +236,22 @@ char * app_curl_download(char * url) {
     CURLcode res;
     /* Initialize CURL for download remote file */
     curl = curl_easy_init();
-    if (curl) {
-        fp = fopen(outfile,"wb");
-        /* Set options for download file to *fp* from *url* */
-        curl_easy_setopt(curl, CURLOPT_URL, url);
-        curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
-        res = curl_easy_perform(curl);
-        if (res != 0) {/* Something bad happend */
-                oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EUSER1, "CURL library initialization failed");
-                return NULL;
-        }
-        /* Always cleanup */
-        curl_easy_cleanup(curl);
-        /* Close the file finally*/
-        fclose(fp);
-    } else {
-        oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EUSER1, "CURL library initialization failed");
+    if (!curl) 
         return NULL;
+
+    fp = fopen(outfile,"wb");
+    /* Set options for download file to *fp* from *url* */
+    curl_easy_setopt(curl, CURLOPT_URL, url);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
+    res = curl_easy_perform(curl);
+    if (res != 0) {
+    	curl_easy_cleanup(curl);
+    	fclose(fp);
+	return NULL;
     }
+
+    curl_easy_cleanup(curl);
+    fclose(fp);
 
     return outfile;
 }

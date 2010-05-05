@@ -62,7 +62,6 @@ typedef uint16_t oscap_errcode_t;
 #define OSCAP_EXMLELEM      1	/**< Unknown XML element */
 #define OSCAP_EINVARG       2	/**< Function called with invalid argument */
 #define OSCAP_ENOTIMPL      254 /**< Not implemented*/
-#define OSCAP_EUSER1        255 /**< User defined */
 /** @} */
 
 /**
@@ -93,17 +92,6 @@ typedef uint16_t oscap_errcode_t;
 #define XCCDF_EUNKNOWNCB      4   /**< Unknown callback - missing registration */
 /** @} */
 
-/**
- * __oscap_seterr() wrapper function
- */
-#define oscap_seterr(family, code, desc) __oscap_seterr (__FILE__, __LINE__, __PRETTY_FUNCTION__, family, code, desc)
-
-
-/**
- * Set an error
- */
-void __oscap_seterr(const char *file, uint32_t line, const char *func,
-		    oscap_errfamily_t family, oscap_errcode_t code, const char *desc);
 
 /**
  * Clear an error.

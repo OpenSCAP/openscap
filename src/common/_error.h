@@ -46,4 +46,16 @@ struct oscap_err_t {
 	uint32_t line;
 };
 
+/**
+ * __oscap_seterr() wrapper function
+ */
+#define oscap_seterr(family, code, desc) __oscap_seterr (__FILE__, __LINE__, __PRETTY_FUNCTION__, family, code, desc)
+
+
+/**
+ * Set an error
+ */
+void __oscap_seterr(const char *file, uint32_t line, const char *func,
+		    oscap_errfamily_t family, oscap_errcode_t code, const char *desc);
+
 #endif				/* _OSCAP_ERROR_H */
