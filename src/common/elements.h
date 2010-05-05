@@ -70,15 +70,12 @@ void oscap_title_free(struct oscap_title *title);
 
 const char *oscap_import_source_get_name(const struct oscap_import_source *src);
 
-
-/// namespace information entry
 struct oscap_nsinfo_entry {
 	char *nsprefix;        ///< namespace prefix
 	char *nsname;          ///< namespace name
 	char *schema_location; ///< schema location for the namespace
 };
 
-/// namespace information extracted from the root element
 struct oscap_nsinfo {
 	struct oscap_list *entries;            ///< list of 'struct oscap_nsinfo_entry'
 	struct oscap_nsinfo_entry *root_entry; ///< namespace info entry for the root element

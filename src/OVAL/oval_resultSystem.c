@@ -36,7 +36,7 @@
 #include "oval_results_impl.h"
 #include "oval_collection_impl.h"
 #include "oval_string_map_impl.h"
-#include "common/public/debug.h"
+#include "common/debug_priv.h"
 #include "common/_error.h"
 #include "common/util.h"
 

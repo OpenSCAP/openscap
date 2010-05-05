@@ -268,6 +268,24 @@ struct oscap_export_target;
  * @struct oscap_import_source
  */
 struct oscap_import_source;
+/**
+ * @struct oscap_nsinfo
+ * Information on namespaces for given document.
+ */
+struct oscap_nsinfo;
+/**
+ * @struct oscap_nsinfo_entry
+ * Namespace information entry.
+ * This structure carries namespace prefix,
+ * Namespace URI and schema location.
+ */
+struct oscap_nsinfo_entry;
+/**
+ * @struct oscap_nsinfo_entry_iterator
+ * Namespace info iterator
+ * @see oscap_nsinfo
+ */
+struct oscap_nsinfo_entry_iterator;
 
 /**
  * Stream type
@@ -278,17 +296,32 @@ typedef enum {
 	OSCAP_STREAM_URL = 2,
 } oscap_stream_type_t;
 
-/**
- * Get type of this import source.
- * @memberof oscap_import_source
- */
-oscap_stream_type_t oscap_import_source_get_type(const struct oscap_import_source *item);
 
 /**
- * Get name of this import source.
- * @memberof oscap_import_source
+ * Function returns new export target structure, or NULL if an error occurred.
+ * @memberof oscap_export_target
  */
-const char *oscap_import_source_get_name(const struct oscap_import_source *item);
+struct oscap_export_target *oscap_export_target_new_file(const char *filename, const char *encoding);
+
+/**
+ * Function returns new export target structure, or NULL if an error occurred.
+ * @memberof oscap_export_target
+ */
+struct oscap_export_target *oscap_export_target_new_URL(const char *url, const char *encoding);
+
+/**
+ * Destroy this export target structure.
+ * @memberof oscap_export_target
+ */
+void oscap_export_target_free(struct oscap_export_target *target);
+
+
+/************************************************************/
+/**
+ * @name Getters
+ * If return value is a pointer to structure's member, do not free it unless you null the pointer in the structure.
+ * @{
+ * */
 
 /**
  * Get type of this export target.
@@ -320,6 +353,10 @@ int oscap_export_target_get_indent(const struct oscap_export_target *item);
  */
 const char *oscap_export_target_get_indent_string(const struct oscap_export_target *item);
 
+/************************************************************/
+/** @} End of Getters group */
+
+
 /**
  * Function returns new import source structure, or NULL if an error occurred.
  * @memberof oscap_import_source
@@ -338,89 +375,124 @@ struct oscap_import_source *oscap_import_source_new_URL(const char *url, const c
  */
 void oscap_import_source_free(struct oscap_import_source *target);
 
-/**
- * Function returns new export target structure, or NULL if an error occurred.
- * @memberof oscap_export_target
- */
-struct oscap_export_target *oscap_export_target_new_file(const char *filename, const char *encoding);
 
+/************************************************************/
 /**
- * Function returns new export target structure, or NULL if an error occurred.
- * @memberof oscap_export_target
- */
-struct oscap_export_target *oscap_export_target_new_URL(const char *url, const char *encoding);
+ * @name Getters
+ * If return value is a pointer to structure's member, do not free it unless you null the pointer in the structure.
+ * @{
+ * */
 
 /**
- * Destroy this export target structure.
- * @memberof oscap_export_target
+ * Get type of this import source.
+ * @memberof oscap_import_source
  */
-void oscap_export_target_free(struct oscap_export_target *target);
-
-
+oscap_stream_type_t oscap_import_source_get_type(const struct oscap_import_source *item);
 
 /**
- * @struct oscap_nsinfo_entry_iterator
- * Namespace info iterator
- * @see oscap_iterator
+ * Get name of this import source.
+ * @memberof oscap_import_source
  */
-struct oscap_nsinfo_entry_iterator;
-/// @memberof oscap_nsinfo_entry_iterator
-bool oscap_nsinfo_entry_iterator_has_more(struct oscap_nsinfo_entry_iterator *it);
-/// @memberof oscap_nsinfo_entry_iterator
-struct oscap_nsinfo_entry *oscap_nsinfo_entry_iterator_next(struct oscap_nsinfo_entry_iterator *it);
-/// @memberof oscap_nsinfo_entry_iterator
-void oscap_nsinfo_entry_iterator_free(struct oscap_nsinfo_entry_iterator *it);
+const char *oscap_import_source_get_name(const struct oscap_import_source *item);
 
-/**
- * @struct oscap_nsinfo_entry
- * Namespace information entry.
- * This structure carries namespace prefix,
- * Namespace URI and schema location.
- */
-struct oscap_nsinfo_entry;
-/// @memberof oscap_nsinfo_entry
-struct oscap_nsinfo_entry *oscap_nsinfo_entry_new(void);
-/// @memberof oscap_nsinfo_entry
-struct oscap_nsinfo_entry *oscap_nsinfo_entry_new_fill(const char *nsprefix, const char *nsname);
-/// @memberof oscap_nsinfo_entry
-void oscap_nsinfo_entry_free(struct oscap_nsinfo_entry *entry);
-/// @memberof oscap_nsinfo_entry
-const char *oscap_nsinfo_entry_get_nsname(const struct oscap_nsinfo_entry *item);
-/// @memberof oscap_nsinfo_entry
-bool oscap_nsinfo_entry_set_nsname(struct oscap_nsinfo_entry *obj, const char *newval);
-/// @memberof oscap_nsinfo_entry
-const char *oscap_nsinfo_entry_get_nsprefix(const struct oscap_nsinfo_entry *item);
-/// @memberof oscap_nsinfo_entry
-bool oscap_nsinfo_entry_set_nsprefix(struct oscap_nsinfo_entry *obj, const char *newval);
-/// @memberof oscap_nsinfo_entry
-const char *oscap_nsinfo_entry_get_schema_location(const struct oscap_nsinfo_entry *item);
-/// @memberof oscap_nsinfo_entry
-bool oscap_nsinfo_entry_set_schema_location(struct oscap_nsinfo_entry *obj, const char *newval);
+/************************************************************/
+/** @} End of Getters group */
 
-/**
- * @struct oscap_nsinfo
- * Information on namespaces for given document
- */
-struct oscap_nsinfo;
+
 /// @memberof oscap_nsinfo
 struct oscap_nsinfo *oscap_nsinfo_new(void);
 /// @memberof oscap_nsinfo
 struct oscap_nsinfo *oscap_nsinfo_new_file(const char *fname);
 /// @memberof oscap_nsinfo
 void oscap_nsinfo_free(struct oscap_nsinfo *info);
+
+/************************************************************/
+/**
+ * @name Getters
+ * If return value is a pointer to structure's member, do not free it unless you null the pointer in the structure.
+ * @{
+ * */
 /// @memberof oscap_nsinfo
 struct oscap_nsinfo_entry_iterator *oscap_nsinfo_get_entries(const struct oscap_nsinfo *item);
 /// @memberof oscap_nsinfo
-bool oscap_nsinfo_add_entry(struct oscap_nsinfo *obj, struct oscap_nsinfo_entry *item);
-/// @memberof oscap_nsinfo
 struct oscap_nsinfo_entry *oscap_nsinfo_get_root_entry(const struct oscap_nsinfo *item);
 /// @memberof oscap_nsinfo
-bool oscap_nsinfo_set_root_entry(struct oscap_nsinfo *obj, struct oscap_nsinfo_entry *newval);
-/// @memberof oscap_nsinfo
 struct oscap_nsinfo_entry *oscap_nsinfo_get_entry_by_ns(struct oscap_nsinfo *info, const char *ns);
+/************************************************************/
+/** @} End of Getters group */
 
-/// validate a xml file against given xml schema
+/**
+ * @name Setters
+ * For lists use add functions. Parameters of set functions are duplicated in memory and need to 
+ * be freed by caller.
+ * @{
+ */
+/// @memberof oscap_nsinfo
+bool oscap_nsinfo_add_entry(struct oscap_nsinfo *obj, struct oscap_nsinfo_entry *item);
+/// @memberof oscap_nsinfo
+bool oscap_nsinfo_set_root_entry(struct oscap_nsinfo *obj, struct oscap_nsinfo_entry *newval);
+/************************************************************/
+/** @} End of Setters group */
+
+
+/// @memberof oscap_nsinfo_entry
+struct oscap_nsinfo_entry *oscap_nsinfo_entry_new(void);
+/// @memberof oscap_nsinfo_entry
+struct oscap_nsinfo_entry *oscap_nsinfo_entry_new_fill(const char *nsprefix, const char *nsname);
+/// @memberof oscap_nsinfo_entry
+void oscap_nsinfo_entry_free(struct oscap_nsinfo_entry *entry);
+/************************************************************/
+/**
+ * @name Getters
+ * If return value is a pointer to structure's member, do not free it unless you null the pointer in the structure.
+ * @{
+ * */
+/// @memberof oscap_nsinfo_entry
+const char *oscap_nsinfo_entry_get_nsname(const struct oscap_nsinfo_entry *item);
+/// @memberof oscap_nsinfo_entry
+const char *oscap_nsinfo_entry_get_nsprefix(const struct oscap_nsinfo_entry *item);
+/// @memberof oscap_nsinfo_entry
+const char *oscap_nsinfo_entry_get_schema_location(const struct oscap_nsinfo_entry *item);
+/************************************************************/
+/** @} End of Getters group */
+
+/**
+ * @name Setters
+ * For lists use add functions. Parameters of set functions are duplicated in memory and need to 
+ * be freed by caller.
+ * @{
+ */
+/// @memberof oscap_nsinfo_entry
+bool oscap_nsinfo_entry_set_nsname(struct oscap_nsinfo_entry *obj, const char *newval);
+/// @memberof oscap_nsinfo_entry
+bool oscap_nsinfo_entry_set_nsprefix(struct oscap_nsinfo_entry *obj, const char *newval);
+/// @memberof oscap_nsinfo_entry
+bool oscap_nsinfo_entry_set_schema_location(struct oscap_nsinfo_entry *obj, const char *newval);
+/************************************************************/
+/** @} End of Setters group */
+
+/************************************************************/
+/**
+ * @name Iterators
+ * @{
+ */
+/// @memberof oscap_nsinfo_entry_iterator
+bool oscap_nsinfo_entry_iterator_has_more(struct oscap_nsinfo_entry_iterator *it);
+/// @memberof oscap_nsinfo_entry_iterator
+struct oscap_nsinfo_entry *oscap_nsinfo_entry_iterator_next(struct oscap_nsinfo_entry_iterator *it);
+/// @memberof oscap_nsinfo_entry_iterator
+void oscap_nsinfo_entry_iterator_free(struct oscap_nsinfo_entry_iterator *it);
+/************************************************************/
+/** @} End of Iterators group */
+
+/**
+ * @name Evaluators
+ * @{
+ */
+/// Validate a xml file against given xml schema
 bool oscap_validate_xml(const char *xmlfile, const char *schemafile, struct oscap_reporter* reporter);
+/************************************************************/
+/** @} End of Evaluators group */
 
 /** @} */
 

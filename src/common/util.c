@@ -34,7 +34,6 @@ struct oscap_import_source {
 	char *encoding;
 	char *name;
 };
-OSCAP_GETTER(const char *, oscap_import_source, name) OSCAP_GETTER(oscap_stream_type_t, oscap_import_source, type)
 
 struct oscap_export_target {
 	oscap_stream_type_t type;
@@ -43,6 +42,9 @@ struct oscap_export_target {
 	int indent;
 	char *indent_string;
 };
+
+OSCAP_GETTER(const char *, oscap_import_source, name) OSCAP_GETTER(oscap_stream_type_t, oscap_import_source, type)
+
 OSCAP_GETTER(const char *, oscap_export_target, name)
 OSCAP_GETTER(const char *, oscap_export_target, encoding)
 OSCAP_GETTER(int, oscap_export_target, indent)

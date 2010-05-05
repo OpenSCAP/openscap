@@ -32,8 +32,8 @@
 #include <string.h>
 #include "oval_definitions_impl.h"
 #include "oval_collection_impl.h"
-#include "../common/util.h"
-#include "../common/public/debug.h"
+#include "common/util.h"
+#include "common/debug_priv.h"
 
 typedef struct oval_variable_binding {
 	struct oval_variable *variable;

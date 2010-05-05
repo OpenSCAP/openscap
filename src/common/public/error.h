@@ -24,10 +24,18 @@
  * @{
  * @addtogroup ERRORS
  * @{
- * Error checking/setting mechanism. Purse of this mechanism is to provide ability to propagate 
- * information about problems that occured in library functions. Mechanism is similar to linux errno variable.
- * Information about the error is stored in libary buffer. Only one error can be stored at time. Structure of 
- * error information consist of two values: error family and error code.
+ * Error checking mechanism. Purse of this mechanism is to inform user about problems that occured 
+ * during executaion of library functions. Mechanism is similar to linux errno variable. When the problem 
+ * raise, the information about it is stored in library buffer. This information consists of error family,
+ * error code(detailed classification in scope of family) and textual description. Example of usage:
+ *
+ * @code
+ * syschar = oval_probe_object_eval (pctx, object);
+ * if (syschar == NULL && oscap_err()) {
+ *     printf("Error: (%d) %s\n", oscap_err_code(), oscap_err_desc());
+ * }
+ * oscap_clearerr()
+ * @endcode
  *
  */
 #pragma once

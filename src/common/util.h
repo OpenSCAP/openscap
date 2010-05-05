@@ -20,10 +20,6 @@
  *      Lukas Kuklinek <lkuklinek@redhat.com>
  */
 
-/**
- * @file
- * Common openscap utilities.
- */
 
 #ifndef OSCAP_UTIL_H_
 #define OSCAP_UTIL_H_

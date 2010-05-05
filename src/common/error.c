@@ -25,7 +25,7 @@
 #include <string.h>
 #include "public/alloc.h"
 #include "_error.h"
-#include "public/debug.h"
+#include "debug_priv.h"
 
 static pthread_key_t __key;
 static pthread_once_t __once = PTHREAD_ONCE_INIT;

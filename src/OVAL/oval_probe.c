@@ -43,7 +43,7 @@
 #include "probes/public/probe-api.h"
 #include "common/util.h"
 #include "common/bfind.h"
-#include "common/public/debug.h"
+#include "common/debug_priv.h"
 
 encache_t *OSCAP_GSYM(encache) = NULL;
 struct id_desc_t OSCAP_GSYM(id_desc);

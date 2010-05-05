@@ -33,9 +33,9 @@
 #include "public/oval_agent_api.h"
 #include "oval_parser_impl.h"
 #include "oval_definitions_impl.h"
-#include "../common/util.h"
-#include "../common/public/debug.h"
-#include "../common/_error.h"
+#include "common/util.h"
+#include "common/debug_priv.h"
+#include "common/_error.h"
 
 struct oval_definition_model *oval_parser_context_model(struct oval_parser_context
 							*context)

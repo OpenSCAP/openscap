@@ -33,9 +33,9 @@
 #include "oval_definitions_impl.h"
 #include "oval_collection_impl.h"
 #include "oval_agent_api_impl.h"
-#include "../common/util.h"
-#include "../common/public/debug.h"
-#include "../common/_error.h"
+#include "common/util.h"
+#include "common/debug_priv.h"
+#include "common/_error.h"
 
 /***************************************************************************/
 /* Variable definitions

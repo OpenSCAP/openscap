@@ -37,9 +37,9 @@
 #include "oval_system_characteristics_impl.h"
 #include "oval_probe_impl.h"
 #include "oval_results_impl.h"
-#include "../common/util.h"
-#include "../common/public/debug.h"
-#include "../common/_error.h"
+#include "common/util.h"
+#include "common/debug_priv.h"
+#include "common/_error.h"
 
 /***************************************************************************/
 /* Variable definitions

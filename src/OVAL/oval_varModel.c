@@ -34,9 +34,9 @@
 #include "oval_results_impl.h"
 #include <string.h>
 #include <time.h>
-#include "../common/util.h"
-#include "../common/public/debug.h"
-#include "../common/_error.h"
+#include "common/util.h"
+#include "common/debug_priv.h"
+#include "common/_error.h"
     typedef struct _oval_variable_model_frame {
 	char *id;
 	 char *comment;

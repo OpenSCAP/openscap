@@ -33,8 +33,8 @@
 #include "oval_system_characteristics_impl.h"
 #include "oval_collection_impl.h"
 #include "oval_agent_api_impl.h"
-#include "../common/util.h"
-#include "../common/public/debug.h"
+#include "common/util.h"
+#include "common/debug_priv.h"
 
 typedef struct oval_syschar {
 	struct oval_syschar_model *model;

@@ -34,9 +34,9 @@
 #include "oval_parser_impl.h"
 #include "oval_definitions_impl.h"
 #include "oval_system_characteristics_impl.h"
-#include "../common/util.h"
-#include "../common/public/debug.h"
-#include "../common/_error.h"
+#include "common/util.h"
+#include "common/debug_priv.h"
+#include "common/_error.h"
 
 const char NAMESPACE_OVALSYS[] = "http://oval.mitre.org/XMLSchema/oval-system-characteristics-5";
 

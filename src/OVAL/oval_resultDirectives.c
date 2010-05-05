@@ -34,8 +34,8 @@
 #include <common/util.h>
 #include "oval_results_impl.h"
 #include "oval_collection_impl.h"
-#include "../common/util.h"
-#include "../common/public/debug.h"
+#include "common/util.h"
+#include "common/debug_priv.h"
 
 struct _oval_result_directive {
 	bool reported;

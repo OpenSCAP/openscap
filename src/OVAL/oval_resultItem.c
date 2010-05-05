@@ -32,8 +32,8 @@
 #include "oval_results_impl.h"
 #include "oval_collection_impl.h"
 #include "oval_system_characteristics_impl.h"
-#include "../common/util.h"
-#include "../common/public/debug.h"
+#include "common/util.h"
+#include "common/debug_priv.h"
 
 typedef struct oval_result_item {
 	struct oval_result_system *sys;

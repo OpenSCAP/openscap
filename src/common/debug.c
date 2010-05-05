@@ -30,6 +30,7 @@
 # include <unistd.h>
 # include <time.h>
 # include "public/debug.h"
+# include "debug_priv.h"
 
 #  if defined(OSCAP_THREAD_SAFE)
 #   include <pthread.h>

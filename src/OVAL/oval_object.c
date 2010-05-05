@@ -33,7 +33,7 @@
 #include "oval_definitions_impl.h"
 #include "oval_collection_impl.h"
 #include "oval_agent_api_impl.h"
-#include "../common/public/debug.h"
+#include "common/debug_priv.h"
 
 typedef struct oval_object {
 	struct oval_definition_model *model;
