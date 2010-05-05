@@ -56,7 +56,7 @@ static const oval_pdsc_t __ovalp_ltable[] = {
         /*  7002 */ {OVAL_INDEPENDENT_FILE_MD5,             "filemd5",           "probe_filemd5"},
         /*  7003 */ {OVAL_INDEPENDENT_FILE_HASH,            "filehash",          "probe_filehash"},
 	/*  7006 */ {OVAL_INDEPENDENT_TEXT_FILE_CONTENT_54, "textfilecontent54", "probe_textfilecontent54"},
-	/*  7007 */ {OVAL_INDEPENDENT_TEXT_FILE_CONTENT,    "textfilecontent",   NULL},
+	/*  7007 */ {OVAL_INDEPENDENT_TEXT_FILE_CONTENT,    "textfilecontent",   "probe_textfilecontent"},
 	/*  7010 */ {OVAL_INDEPENDENT_XML_FILE_CONTENT,     "xmlfilecontent",    "probe_xmlfilecontent"},
 	/*  7999 */ {OVAL_INDEPENDENT_SYSCHAR_SUBTYPE,      "system_info",       "probe_system_info"},
 	/*  9001 */ {OVAL_LINUX_DPKG_INFO,                  "dpkginfo",          "probe_dpkginfo"},

@@ -30,6 +30,11 @@ probe_family_CFLAGS=
 probe_family_LDFLAGS=
 
 
+pkglibexec_PROGRAMS += probe_textfilecontent
+probe_textfilecontent_SOURCES= independent/textfilecontent.c
+probe_textfilecontent_CFLAGS= @pcre_cflags@
+probe_textfilecontent_LDFLAGS= @pcre_libs@
+
 pkglibexec_PROGRAMS += probe_textfilecontent54
 probe_textfilecontent54_SOURCES= independent/textfilecontent54.c
 probe_textfilecontent54_CFLAGS= @pcre_cflags@
