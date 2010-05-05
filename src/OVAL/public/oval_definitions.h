@@ -715,6 +715,12 @@ const char * oval_definition_model_supported(void);
  */
 /**
  * Return <b>true</b> if the definition_model instance is valid
+ * An oval_definition_model is valid if all the following are true
+ * 	- All included definitions are valid
+ * 	- All included tests are valid
+ * 	- All included objects are valid
+ * 	- All included states are valid
+ * 	- All included variables are valid
  * @memberof oval_definition_model
  */
 bool oval_definition_model_is_valid(struct oval_definition_model *definition_model);
@@ -922,11 +928,6 @@ bool oval_definition_is_locked(struct oval_definition *definition);
 /**
  * Returns <b>true</b> if the @ref oval_definition is valid.
  * An Oval_definition is valid if all the following are true
- * 	- attribute_id is bound to a valid oval definition identifier.
- * 	- attribute version is bound to a positive integer.
- * 	- attribute class is bound to a valid value of @ref OVAL_CLASS_UNKNOWN
- *	- attribute title is bound to a non-null string.
- *	- attribute description is bound to a non-null string.
  *	- attribute criteria is bound to a valid instance of @ref Oval_criteria.
  * @memberof oval_definition
  */
@@ -1147,17 +1148,11 @@ bool oval_test_is_locked(struct oval_test *test);
  */
 /**
  * Returns <b>true</b> if @ref oval_test is valid.
- * An Oval_test is valid if all of the following are true:
- * 	- The value of the version attribute is not zero.
- * 	- The object attribute is not NULL
+ * An Oval_test is valid if the test subtype is OVAL_INDEPENDENT_UNKNOWN
+ * or if all of the following are true:
  * 	- The object attribute is valid
- * 	- The subtype of the object attribute is the same as the subtype of the test.
- * 	- The value of the existence attribute is not @ref OVAL_CHECK_UNKNOWN
  * 	- If the state attribute is not NULL
- *		- the subtype of the state attribute is the same as the subtype of the test
  *		- the state attribute is valid
- * 		- the value of the operator attribute is not @ref OVAL_CHECK_UNKNOWN
- * 		- the value of the check attribute is not @ref OVAL_CHECK_UNKNOWN
  * @memberof oval_test
  */
 bool oval_test_is_valid(struct oval_test *);
@@ -1362,7 +1357,10 @@ bool oval_object_is_locked(struct oval_object *object);
  * @{
  */
 /**
- * Return <b>true</b> if the object instance is valid
+ * Return <b>true</b> if the object instance is valid.
+ * An Oval_object is valid if all of the following are true
+ * 	- All included object contents are valid
+ * 	- All included behaviors are valid
  * @memberof oval_object
  */
 bool oval_object_is_valid(struct oval_object *object);
@@ -1576,6 +1574,8 @@ void oval_state_iterator_free(struct oval_state_iterator *);
  */
 /**
  * Return <b>true</b> if the state instance is valid
+ * An Oval_state is valid if all of the following are true
+ * 	- All included state contents are valid
  * @memberof oval_state
  */
 bool oval_state_is_valid(struct oval_state *state);
@@ -2165,15 +2165,12 @@ void oval_criteria_node_iterator_free(struct oval_criteria_node_iterator *);
  * Returns <b>true</b> if @ref Oval_criteria_node is valid.
  * An Oval_criteria_node is valid if one of the following is true:
  * 	- The type attribute is @ref OVAL_NODETYPE_CRITERIA (@ref Oval_criteria)-- AND
- * 		- The operator attribute is not @ref OVAL_OPERATOR_UNKNOWN -- AND
  * 		- The subnode attribute is not an empty iterator -- AND
  * 		- Each iterated Oval_criteria_node is valid.
  * 	- The type attribute is @ref OVAL_NODETYPE_CRITERION (@ref Oval_criterion) -- AND
- * 		- The test attribute is not NULL -- AND
  * 		- The referenced test is valid.
  * 	- The type attribute is @ref OVAL_NODETYPE_EXTENDDEF (@ref Oval_extends) -- AND
- * 		- The test attribute is not NULL -- AND
- * 		- The referenced test is valid.
+ * 		- The referenced definition is valid.
  * @memberof oval_criteria_node
  */
 bool oval_criteria_node_is_valid(struct oval_criteria_node *);
@@ -2287,6 +2284,11 @@ void oval_object_content_iterator_free(struct oval_object_content_iterator *);
  */
 /**
  * Return <b>true</b> if the object_content instance is valid
+ * An Oval_object_content is valid if one of the following is true:
+ * 	- The type attribute is @ref OVAL_OBJECTCONTENT_ENTITY -- AND
+ * 		- The @ref oval_entity is valid.
+ * 	- The type attribute is @ref OVAL_OBJECTCONTENT_SET -- AND
+ * 		- The @ref oval_setobject is valid.
  * @memberof oval_object_content
  */
 bool oval_object_content_is_valid(struct oval_object_content *object_content);
@@ -2784,6 +2786,15 @@ void oval_setobject_iterator_free(struct oval_setobject_iterator *);
  */
 /**
  * Return <b>true</b> if the setobject instance is valid
+ * An Oval_setobject is valid if one of the following is true:
+ * 	- The type attribute is @ref OVAL_SET_AGGREGATE -- AND
+ * 		- The subsets attribute is not an empty iterator -- AND
+ * 		- Each iterated oval_setobject is valid.
+ * 	- The type attribute is @ref OVAL_SET_COLLECTIVE -- AND
+ * 		- The objects attribute is not an empty iterator -- AND
+ * 		- Each iterated oval_object is valid.
+ * 		- The filters attribute is not an empty iterator -- AND
+ * 		- Each iterated oval_state is valid.
  * @memberof oval_setobject
  */
 bool oval_setobject_is_valid(struct oval_setobject *setobject);

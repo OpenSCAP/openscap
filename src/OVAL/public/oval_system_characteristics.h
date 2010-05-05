@@ -324,6 +324,11 @@ int oval_syschar_model_probe_objects(struct oval_syschar_model *);
 int oval_syschar_model_probe_sysinfo(struct oval_syschar_model *);
 /**
  * Return <b>true</b> if the syschar_model instance is valid
+ * An oval_syschar_model is valid if all the following are true
+ * 	- The sysinfo attribute is valid
+ * 	- The associated oval_definition_model is valid
+ * 	- All included syschars are valid
+ * 	- All included variable_bindings are valid
  * @memberof oval_syschar_model
  */
 bool oval_syschar_model_is_valid(struct oval_syschar_model *syschar_model);
@@ -554,6 +559,10 @@ void oval_syschar_iterator_free(struct oval_syschar_iterator *);
  */
 /**
  * Return <b>true</b> if the syschar instance is valid
+ * An oval_syschar is valid if all the following are true
+ * 	- The object attribute is valid
+ * 	- All included variable_bindings are valid
+ * 	- All included sysdata are valid
  * @memberof oval_syschar
  */
 bool oval_syschar_is_valid(struct oval_syschar *syschar);
@@ -765,6 +774,8 @@ void oval_sysdata_iterator_free(struct oval_sysdata_iterator *);
  */
 /**
  * Return <b>true</b> if the sysdata instance is valid
+ * An oval_sysdata is valid if all the following are true
+ * 	- All included sysitems are valid
  * @memberof oval_sysdata
  */
 bool oval_sysdata_is_valid(struct oval_sysdata *sysdata);
