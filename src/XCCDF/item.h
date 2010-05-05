@@ -54,7 +54,7 @@ struct xccdf_item_base {
 	struct oscap_list *description;
 	struct oscap_list *question;
 	struct oscap_list *rationale;
-    struct oscap_list *warnings;
+        struct oscap_list *warnings;
 
 	char *version;
 	char *version_update;

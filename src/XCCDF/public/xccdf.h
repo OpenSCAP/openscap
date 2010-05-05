@@ -455,6 +455,13 @@ struct xccdf_profile_iterator;
 struct xccdf_select_iterator;
 
 /**
+ * @struct xccdf_value_iterator
+ * Select iterator.
+ * @see oscap_iterator
+ */
+struct xccdf_value_iterator;
+
+/**
  * @struct xccdf_setvalue_iterator
  * Set value iterator.
  * @see oscap_iterator
@@ -1261,6 +1268,23 @@ bool xccdf_plain_text_iterator_has_more(struct xccdf_plain_text_iterator *it);
  */
 void xccdf_plain_text_iterator_free(struct xccdf_plain_text_iterator *it);
 
+
+/**
+ * Return the next xccdf_value structure from the list and increment the iterator
+ * @memberof xccdf_value_iterator
+ */
+struct xccdf_value *xccdf_value_iterator_next(struct xccdf_value_iterator *it);
+/**
+ * Return true if the list is not empty, false otherwise
+ * @memberof xccdf_value_iterator
+ */
+bool xccdf_value_iterator_has_more(struct xccdf_value_iterator *it);
+/**
+ * Free the iterator structure (it makes no changes to the list structure)
+ * @memberof xccdf_value_iterator
+ */
+void xccdf_value_iterator_free(struct xccdf_value_iterator *it);
+
 /************************************************************
  ** @} End of Iterators group */
 
@@ -1911,6 +1935,8 @@ const char *xccdf_check_import_get_name(const struct xccdf_check_import *item);
 const char *xccdf_check_import_get_content(const struct xccdf_check_import *item);
 /// @memberof xccdf_check_export
 const char *xccdf_check_export_get_value(const struct xccdf_check_export *item);
+/// @memberof xccdf_check_export
+const char *xccdf_check_export_get_name(const struct xccdf_check_export *item);
 
 /// @memberof xccdf_fix
 const char *xccdf_fix_get_content(const struct xccdf_fix *fix);
@@ -2168,6 +2194,9 @@ const char *xccdf_instance_get_context(const struct xccdf_instance *item);
 const char *xccdf_instance_get_parent_context(const struct xccdf_instance *item);
 /// @memberof xccdf_instance
 const char *xccdf_instance_get_content(const struct xccdf_instance *item);
+/// @memberof xccdf_value
+char *  xccdf_value_get_selected_value(const struct xccdf_value * value);
+
 
 /************************************************************
  ** @} End of Getters group */

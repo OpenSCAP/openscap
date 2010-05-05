@@ -302,17 +302,20 @@ char *  xccdf_value_get_selected_value(const struct xccdf_value * value)
         if (selector == NULL) /* default value */
                 selector = "";
         struct xccdf_value_val *val = oscap_htable_get(XITEM(value)->sub.value.values, selector);
+        if (val == NULL)
+            return NULL;
         switch (XITEM(value)->sub.value.type) {
             case XCCDF_TYPE_BOOLEAN:
+                    selected = malloc(sizeof(char));
+                    sprintf(selected, "%b", val->value.b);
+                    break;
             case XCCDF_TYPE_NUMBER:
-                    if (val != NULL)
-                         sprintf(selected, "%d", val->value);
-                    else sprintf(selected, "%d", val->defval);
+                    /* TODO: compatibility issue: what precision should be here ? */
+                    selected = malloc(5*sizeof(char));
+                    sprintf(selected, "%.5f", val->value.n);
                     break;
             case XCCDF_TYPE_STRING:
-                    if (val != NULL)
-                         selected = strdup(val->value.s);
-                    else selected = strdup(val->defval.s);
+                    selected = oscap_strdup(val->value.s);
                     break;
         }
         

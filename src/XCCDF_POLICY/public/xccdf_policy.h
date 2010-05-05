@@ -80,6 +80,12 @@ struct xccdf_policy_model *xccdf_policy_model_new(struct xccdf_benchmark *benchm
 struct xccdf_policy * xccdf_policy_new(struct xccdf_policy_model * model, struct xccdf_profile * profile);
 
 /**
+ * Constructor for Value binding
+ * @memberof xccdf_value_binding
+ */
+struct xccdf_value_binding * xccdf_value_binding_new(void);
+
+/**
  * Constructor of structure with profile bindings - refine_rules, refine_values and set_values
  * @memberof xccdf_value_binding
  * @return new structure of xccdf_value_binding
@@ -168,7 +174,7 @@ struct xccdf_benchmark * xccdf_policy_model_get_benchmark(const struct xccdf_pol
  * Get Value Bindings from XCCDF Policy
  * @memberof xccdf_policy
  */
-struct xccdf_value_binding  * xccdf_policy_get_values(const struct xccdf_policy * item);
+struct xccdf_value_binding_iterator  * xccdf_policy_get_values(const struct xccdf_policy * item);
 
 /**
  * Get policies from Policy Model
@@ -201,25 +207,32 @@ struct xccdf_profile * xccdf_policy_get_profile(const struct xccdf_policy *);
 struct xccdf_select_iterator * xccdf_policy_get_rules(const struct xccdf_policy *);
 
 /**
- * Get refine rules from value bindings
+ * Get refine value from value bindings
  * @memberof xccdf_value_binding
- * @return xccdf_refine_rule_iterator
+ * @return xccdf_refine_value
  */
-struct xccdf_refine_rule_iterator * xccdf_value_binding_get_refine_rules(const struct xccdf_value_binding *);
+struct xccdf_refine_value * xccdf_value_binding_get_refine_value(const struct xccdf_value_binding *);
 
 /**
- * Get refine values from value bindings
+ * Get set value from value bindings
  * @memberof xccdf_value_binding
- * @return xccdf_refine_value_iterator
+ * @return xccdf_setvalue
  */
-struct xccdf_refine_value_iterator * xccdf_value_binding_get_refine_values(const struct xccdf_value_binding *);
+struct xccdf_setvalue * xccdf_value_binding_get_set_value(const struct xccdf_value_binding *);
 
 /**
- * Get set values from value bindings
+ * get value (element value) from value bindings
  * @memberof xccdf_value_binding
- * @return xccdf_setvalue_iterator
+ * @return xccdf_value
  */
-struct xccdf_setvalue_iterator * xccdf_value_binding_get_setvalues(const struct xccdf_value_binding *);
+struct xccdf_value * xccdf_value_binding_get_rule_value(const struct xccdf_value_binding *);
+
+/**
+ * get check export elements from value bindings
+ * @memberof xccdf_value_binding
+ * @return xccdf_check_export_iterator
+ */
+struct xccdf_check_export_iterator * xccdf_value_binding_get_check_exports(const struct xccdf_value_binding *);
 
 /**
  * Get results of all XCCDF Policy results
@@ -243,12 +256,13 @@ struct xccdf_result * xccdf_policy_model_get_result_by_id(struct xccdf_policy_mo
 const char * xccdf_policy_get_id(struct xccdf_policy * policy);
 
 /**
- * Get all values that are affected by refine-values of Policy
- * @param policy XCCDF Policy
- * @return OSCAP List structure of XCCDF values
+ * Get XCCDF Policy from Policy model by speciefied ID of Profile
+ * @param policy_model XCCDF Policy model
+ * @param id ID of Profile
+ * @memberof xccdf_policy_model
+ * @return XCCDF Policy
  */
-struct oscap_list * xccdf_policy_get_affected_values(struct xccdf_policy * policy);
-
+struct xccdf_policy * xccdf_policy_model_get_policy_by_id(struct xccdf_policy_model * policy_model, const char * id);
 
 /************************************************************/
 /** @} End of Getters group */
@@ -309,6 +323,20 @@ bool xccdf_policy_set_selected(struct xccdf_policy * policy, char * idref);
  */
 bool xccdf_policy_model_add_result(struct xccdf_policy_model * model, struct xccdf_result * item);
 
+/**
+ * Add value binding to the Policy structure
+ * @memberof xccdf_policy
+ * @return true if rule has been added succesfully
+ */
+bool xccdf_policy_add_value(struct xccdf_policy *, struct xccdf_value_binding *);
+
+/**
+ * Add check export to the Value Binding structure
+ * @memberof xccdf_value_binding
+ * @return true if rule has been added succesfully
+ */
+bool xccdf_value_binding_add_check_export(struct xccdf_value_binding *, struct xccdf_check_export *);
+
 /************************************************************/
 /** @} End of Setters group */
 
@@ -362,6 +390,24 @@ struct xccdf_policy * xccdf_policy_iterator_next(struct xccdf_policy_iterator *i
  * @memberof xccdf_policy_iterator
  */
 void xccdf_policy_iterator_free(struct xccdf_policy_iterator *it);
+
+/**
+ * Return true if the list is not empty, false otherwise
+ * @memberof xccdf_value_binding_iterator
+ */
+bool xccdf_value_binding_iterator_has_more(struct xccdf_value_binding_iterator *it);
+
+/**
+ * Return the next xccdf_value_binding structure from the list and increment the iterator
+ * @memberof xccdf_value_binding_iterator
+ */
+struct xccdf_value_binding * xccdf_value_binding_iterator_next(struct xccdf_value_binding_iterator *it);
+
+/**
+ * Free the iterator structure (it makes no changes to the list structure)
+ * @memberof xccdf_value_binding_iterator
+ */
+void xccdf_value_binding_iterator_free(struct xccdf_value_binding_iterator *it);
 
 /************************************************************/
 /** @} End of Iterators group */
