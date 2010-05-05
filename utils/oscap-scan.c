@@ -736,7 +736,9 @@ int main(int argc, char **argv)
         oval_definition_model_free(def_model);
         oval_syschar_model_free(sys_model);
         oval_results_model_free(res_model);
+#ifdef ENABLE_XCCDF
         oval_variable_model_free(var_model);
+#endif
         if (url_XCCDF != NULL) free(url_XCCDF);
         if (url_OVAL != NULL) free(url_OVAL);
 
