@@ -161,25 +161,25 @@ static int _oval_generator_parse_tag(xmlTextReader * reader, struct oval_parser_
 	int return_code;
 	bool is_common_ns = strcmp(NAMESPACE_COMMON, namespace) == 0;
 	if (is_common_ns && strcmp("product_name", tagname) == 0) {
+		return_code = xmlTextReaderRead(reader);
 		char *value = (char *)xmlTextReaderValue(reader);
 		oscap_dprintf("INFO: %s:    product name: %s", label, value);
 		oscap_free(value);
-		return_code = 1;
 	} else if (is_common_ns && strcmp("product_version", tagname) == 0) {
+		return_code = xmlTextReaderRead(reader);
 		char *value = (char *)xmlTextReaderValue(reader);
 		oscap_dprintf("INFO: %s: product version: %s", label, value);
 		oscap_free(value);
-		return_code = 1;
 	} else if (is_common_ns && strcmp("schema_version", tagname) == 0) {
+		return_code = xmlTextReaderRead(reader);
 		char *value = (char *)xmlTextReaderValue(reader);
 		oscap_dprintf("INFO: %s:  schema version: %s", label, value);
 		oscap_free(value);
-		return_code = 1;
 	} else if (is_common_ns && strcmp("timestamp", tagname) == 0) {
+		return_code = xmlTextReaderRead(reader);
 		char *value = (char *)xmlTextReaderValue(reader);
 		oscap_dprintf("INFO: %s:      time stamp: %s", label, value);
 		oscap_free(value);
-		return_code = 1;
 	} else {
 		oscap_dprintf("WARNING: UNPROCESSED TAG <%s:%s>", namespace, tagname);
 		oval_parser_skip_tag(reader, context);
@@ -197,10 +197,10 @@ static int _oval_variable_model_parse_variable_values
 	int return_code;
 	bool is_variable_ns = strcmp(NAMESPACE_VARIABLES, namespace) == 0;
 	if (is_variable_ns && strcmp("value", tagname) == 0) {
+		return_code = xmlTextReaderRead(reader);
 		char *value = (char *)xmlTextReaderValue(reader);
 		oval_collection_add(frame->values, strdup(value));
 		oscap_free(value);
-		return_code = 1;
 	} else {
 		oscap_dprintf("WARNING: UNPROCESSED TAG <%s:%s>", namespace, tagname);
 		oval_parser_skip_tag(reader, context);
