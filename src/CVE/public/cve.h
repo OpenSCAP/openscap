@@ -2,13 +2,6 @@
  * @addtogroup CVE
  * @{
  *
- * CVE International in scope and free for public use, CVE is a dictionary of publicly 
- * known information security vulnerabilities and exposures. CVE’s common identifiers 
- * enable data exchange between security products and provide a baseline index point 
- * for evaluating coverage of tools and services.
- *
- * More info at http://cve.mitre.org/ web page
- *
  * @image html cve.png "Class diagram"
  *  
  * @file cve.h

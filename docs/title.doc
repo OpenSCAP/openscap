@@ -46,31 +46,43 @@ Definitions and functions common to all the OpenScap sublibraries.
 
 Common Configuration Enumeration.
 
+Supported version: 5
 
 @defgroup CPE
 
 Common Platform Enumeration.
 
+Supported version: 2.2
 
 @defgroup CVE
 
 Common Vulnerabilities and Exposures.
 
-
 @defgroup CVSS
 
 Common Vulnerability Scoring System.
 
+Supported version: 2
 
 @defgroup OVAL
 
 Open Vulnerability and Assessment Language.
 
+This layer covers interface to OVAL language. It provides easier way for
+manipulation with OVAL Definition, OVAL System Characteristics and 
+OVAL Result content. Content can be imported from XML file adjusted 
+and exported back to the file. Besides this basic functionality, it also 
+enables user to use system checking mechanism. This mechanism probe 
+the OS and gather OVAL System characteristics that can be later used to
+create OVAL Results.
+
+Supported version: 5.5
+
 @defgroup XCCDF
 
 Extensible Configuration Checklist Description Format.
 
-More info at http://scap.nist.gov/specifications/xccdf/.
+Supported version: 1.1.4
 
 @defgroup XCCDF_POLICY
 

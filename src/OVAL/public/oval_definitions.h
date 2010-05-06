@@ -704,7 +704,7 @@ bool oval_definition_model_is_locked(struct oval_definition_model *definition_mo
 /**
  * Get supported version of OVAL XML
  * @return version of XML file format
- * @memberof oval_definition
+ * @memberof oval_definition_model
  */
 const char * oval_definition_model_supported(void);
 /** @} */

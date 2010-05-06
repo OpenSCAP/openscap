@@ -2,15 +2,6 @@
  * @addtogroup CPE
  * @{
  *
- * CPE is a structured naming scheme for information technology systems, platforms, and packages. 
- * Based upon the generic syntax for Uniform Resource Identifiers (URI), CPE includes a formal 
- * name format, a language for describing complex platforms, a method for checking names against 
- * a system, and a description format for binding text and tests to a name. 
- *
- * More info at http://cpe.mitre.org/ web page
- *
- * Supported version: 2.2
- *
  * @file cpe.h
  */
 

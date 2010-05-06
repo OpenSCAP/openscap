@@ -2,18 +2,8 @@
  * @addtogroup CVSS
  * @{
  *
- * CVSS is a vulnerability scoring system designed to provide an open and standardized 
- * method for rating IT vulnerabilities. CVSS helps organizations prioritize and coordinate 
- * a joint response to security vulnerabilities by communicating the base, temporal 
- * and environmental properties of a vulnerability. 
- *
- * Supported version: 2
- *
- * More info at http://www.first.org/cvss/ web page
- *
  * @file cvss.h
  *  \brief Interface to Common Vulnerability Scoring System Version 2
- *  
  *
  */
 
