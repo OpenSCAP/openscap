@@ -490,6 +490,7 @@ AC_CONFIG_FILES([Makefile
                  src/OVAL/probes/Makefile
                  src/OVAL/probes/crapi/Makefile
                  src/OVAL/probes/SEAP/Makefile
+                 src/OVAL/probes/SEAP/generic/rbt/Makefile
                  src/CVSS/Makefile
                  src/CVE/Makefile
                  src/CPE/Makefile
