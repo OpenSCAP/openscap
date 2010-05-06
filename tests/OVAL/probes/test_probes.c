@@ -37,7 +37,7 @@ int main(int argc, char **argv) {
   oval_syschar_model_probe_sysinfo(sys_model);
 
   /* call probes */
-  oval_syschar_model_probe_objects(sys_model);
+  assume(oval_syschar_model_probe_objects(sys_model) == 0);
   
   /* create result model */
   struct oval_syschar_model *sys_models[] = {sys_model, NULL};
