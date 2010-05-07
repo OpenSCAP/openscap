@@ -101,8 +101,10 @@ static void oval_pdtbl_free(oval_pdtbl_t *tbl)
 {
         register int i;
 
-        for (i = 0; i < tbl->count; ++i)
+        for (i = 0; i < tbl->count; ++i) {
+                SEAP_close(tbl->ctx, tbl->memb[i].sd);
                 oscap_free(tbl->memb[i].uri);
+        }
 
         oscap_free(tbl->memb);
         SEAP_CTX_free(tbl->ctx);

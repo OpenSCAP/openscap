@@ -68,28 +68,32 @@ void rbt_free(rbt_t *rbt, void (*callback)(void *))
         rbt_wlock(rbt);
 
         depth = 0;
-        rbt_walk_push(rbt_node_ptr(rbt->root));
+        n = rbt_node_ptr(rbt->root);
 
-        while(depth > 0) {
-                n = rbt_node_ptr(rbt_walk_top()->_chld[RBT_NODE_SL]);
+        if (n != NULL) {
+                rbt_walk_push(n);
 
-                if (n != NULL)
-                        rbt_walk_push(n);
-                else {
-                __in:
-                        if (callback != NULL)
-                                callback((void *)&(rbt_walk_top()->_node));
-
-                        sm_free(rbt_walk_top());
-                        n = rbt_node_ptr(rbt_walk_top()->_chld[RBT_NODE_SR]);
+                while(depth > 0) {
+                        n = rbt_node_ptr(rbt_walk_top()->_chld[RBT_NODE_SL]);
 
                         if (n != NULL)
-                                rbt_walk_top() = n;
+                                rbt_walk_push(n);
                         else {
-                                if (--depth > 0)
-                                        goto __in;
-                                else
-                                        break;
+                        __in:
+                                if (callback != NULL)
+                                        callback((void *)&(rbt_walk_top()->_node));
+
+                                n = rbt_node_ptr(rbt_walk_top()->_chld[RBT_NODE_SR]);
+                                sm_free(rbt_walk_top());
+
+                                if (n != NULL)
+                                        rbt_walk_top() = n;
+                                else {
+                                        if (--depth > 0)
+                                                goto __in;
+                                        else
+                                                break;
+                                }
                         }
                 }
         }
@@ -296,8 +300,15 @@ int rbt_walk_inorder(rbt_t *rbt, int (*callback)(void *))
         register uint8_t depth;
         register int     r;
 
+        assume_d(rbt != NULL, -1);
+
         depth = 0;
-        rbt_walk_push(rbt_node_ptr(rbt->root));
+        n = rbt_node_ptr(rbt->root);
+
+        if (n != NULL)
+                rbt_walk_push(n);
+        else
+                return (0);
 
         while(depth > 0) {
                 n = rbt_node_ptr(rbt_walk_top()->_chld[RBT_NODE_SL]);

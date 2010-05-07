@@ -149,6 +149,7 @@ void SEAP_cmdtbl_free (SEAP_cmdtbl_t *t)
 {
         if (t != NULL)
                 SEAP_cmdtbl_backendT_free (t);
+        sm_free(t);
 }
 
 int SEAP_cmdtbl_setsize (SEAP_cmdtbl_t *t, size_t maxsz)

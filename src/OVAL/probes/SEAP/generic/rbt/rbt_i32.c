@@ -61,7 +61,7 @@ int rbt_i32_free_cb (rbt_t *rbt, int (*callback)(rbt_i32_node_t *))
 {
         int ret;
 
-        if ((ret = rbt_i32_walk_preorder (rbt, callback)) != 0)
+        if ((ret = rbt_i32_walk_inorder (rbt, callback)) != 0)
                 return (ret);
 
         rbt_i32_free (rbt);
@@ -313,7 +313,7 @@ int rbt_i32_del(rbt_t *rbt, int32_t key, void **n)
                  * red in case the node is not the root node.
                  */
                 assume_d(rbt_node_ptr(fake._chld[RBT_NODE_SR]) == h[0] || rbt_node_getcolor(h[0]) == RBT_NODE_CR, -1);
-                if (*n != NULL)
+                if (n != NULL)
                         *n = rbt_i32_node_data(save);
 
                 rbt_i32_node_data(save) = rbt_i32_node_data(h[0]);
@@ -382,8 +382,7 @@ int rbt_i32_walk_preorder(rbt_t *rbt, int (*callback)(rbt_i32_node_t *))
 
 int rbt_i32_walk_inorder(rbt_t *rbt, int (*callback)(rbt_i32_node_t *))
 {
-        errno = ENOSYS;
-        return (-1);
+        return rbt_walk_inorder(rbt, (int(*)(void *))callback);
 }
 
 int rbt_i32_walk_postorder(rbt_t *rbt, int (*callback)(rbt_i32_node_t *))

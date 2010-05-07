@@ -156,11 +156,11 @@ fail:
         return (NULL);
 }
 
-static int check_child (pid_t pid)
+static int check_child (pid_t pid, int wait)
 {
         int status = -1;
-        
-        switch (pid = waitpid (pid, &status, WNOHANG)) {
+
+        switch (pid = waitpid (pid, &status, wait ? 0 : WNOHANG)) {
         case  0: return (0);
         case -1: return (-1);
         default:
@@ -233,7 +233,7 @@ int sch_pipe_connect (SEAP_desc_t *desc, const char *uri, uint32_t flags)
                 data->pfd = pfd[0];
                 data->pid = pid;
 
-                if (check_child (data->pid) != 0)
+                if (check_child (data->pid, 0) != 0)
                         goto fail2;
         }
 
@@ -278,7 +278,7 @@ ssize_t sch_pipe_recv (SEAP_desc_t *desc, void *buf, size_t len, uint32_t flags)
         
         assume_r (data != NULL, -1, errno = EBADF;);
 
-        if (check_child (data->pid) == 0)
+        if (check_child (data->pid, 0) == 0)
                 return read (data->pfd, buf, len);
         else
                 return (-1);
@@ -295,7 +295,7 @@ ssize_t sch_pipe_send (SEAP_desc_t *desc, void *buf, size_t len, uint32_t flags)
         
         assume_r (data != NULL, -1, errno = EBADF;);
 
-        if (check_child (data->pid) == 0)
+        if (check_child (data->pid, 0) == 0)
                 return write (data->pfd, buf, len);
         else
                 return (-1);
@@ -313,7 +313,7 @@ ssize_t sch_pipe_sendsexp (SEAP_desc_t *desc, SEXP_t *sexp, uint32_t flags)
         
         assume_r (data != NULL, -1, errno = EBADF;);
 
-        if (check_child (data->pid) != 0)
+        if (check_child (data->pid, 0) != 0)
                 return (-1);
         else {
                 ssize_t ret;
@@ -337,35 +337,42 @@ int sch_pipe_close (SEAP_desc_t *desc, uint32_t flags)
         int try;
         sch_pipedata_t *data;
 
+        fprintf(stderr, "pipe close 2\n");
+
         assume_d (desc != NULL, -1, errno = EFAULT;);
         
         data = (sch_pipedata_t *)desc->scheme_data;
         
         assume_r (data != NULL, -1, errno = EBADF;);
 
+        kill (data->pid, SIGTERM);
+
         for (try = 0; try < 3; ++try) {
-                switch (check_child (data->pid)) {
+                switch (check_child (data->pid, 1)) {
                 case  0:
                         kill (data->pid, SIGTERM);
+                        break;
                 case -1:
                         return (-1);
                 case  1:
                         goto clean;
                 }
         }
+        fprintf(stderr, "pipe close 1\n");
 
         /*
          * Child is not responding to our request. Kill it.
          */
         kill (data->pid, SIGKILL);
 
-        switch (check_child (data->pid)) {
+        switch (check_child (data->pid, 0)) {
         case  1:
                 break;
         default:
                 return (-1);
         }
 clean:
+        fprintf(stderr, "pipe close\n");
         close (data->pfd);
         
         sm_free (data->execpath);
@@ -386,7 +393,7 @@ int sch_pipe_select (SEAP_desc_t *desc, int ev, uint16_t timeout, uint32_t flags
         
         assume_r (data != NULL, -1, errno = EBADF;);
 
-        if (check_child (data->pid) == 0) {
+        if (check_child (data->pid, 0) == 0) {
                 fd_set *wptr, *rptr;
                 fd_set  fset;
                 struct timeval *tv_ptr, tv;

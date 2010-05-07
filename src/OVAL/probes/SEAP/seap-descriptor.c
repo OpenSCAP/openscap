@@ -109,6 +109,8 @@ int SEAP_desc_del (SEAP_desctable_t *sd_table, int sd)
         if (rbt_i32_del(sd_table->tree, sd, (void **)&dsc) != 0)
                 return (-1);
 
+        fprintf(stderr, "dsc=%p\n", dsc);
+
         bitmap_unset(sd_table->bmap, sd);
 
         if (dsc != NULL)
@@ -119,6 +121,9 @@ int SEAP_desc_del (SEAP_desctable_t *sd_table, int sd)
 
 void SEAP_desc_free(SEAP_desc_t *dsc)
 {
+        if (dsc->sexpbuf != NULL)
+                SEXP_free(dsc->sexpbuf);
+
         SEAP_cmdtbl_free(dsc->cmd_c_table);
         SEAP_cmdtbl_free(dsc->cmd_w_table);
         pqueue_free(dsc->pck_queue);
@@ -136,6 +141,7 @@ void SEAP_desctable_free(SEAP_desctable_t *sd_table)
 {
         rbt_i32_free_cb(sd_table->tree, &SEAP_desc_free_node);
         bitmap_free(sd_table->bmap);
+        sm_free(sd_table);
 }
 
 SEAP_desc_t *SEAP_desc_get (SEAP_desctable_t *sd_table, int sd)

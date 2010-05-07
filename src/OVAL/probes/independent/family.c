@@ -75,4 +75,3 @@ SEXP_t *probe_main(SEXP_t *probe_in, int *err, void *arg)
 	*err = 0;
 	return (list);
 }
-

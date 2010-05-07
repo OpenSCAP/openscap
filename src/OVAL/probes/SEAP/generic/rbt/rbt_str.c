@@ -197,7 +197,7 @@ void *rbt_str_rep(rbt_t *rbt, const char *key, void *data)
         return (NULL);
 }
 
-int rbt_str_del(rbt_t *rbt, const char *key)
+int rbt_str_del(rbt_t *rbt, const char *key, void **n)
 {
         struct rbt_node fake, *save;
         struct rbt_node *h[4];
@@ -323,6 +323,8 @@ int rbt_str_del(rbt_t *rbt, const char *key)
                  * red in case the node is not the root node.
                  */
                 assume_d(rbt_node_ptr(fake._chld[RBT_NODE_SR]) == h[0] || rbt_node_getcolor(h[0]) == RBT_NODE_CR, -1);
+                if (n != NULL)
+                        *n = rbt_str_node_data(save);
 
                 rbt_str_node_data(save) = rbt_str_node_data(h[0]);
                 rbt_str_node_key(save)  = rbt_str_node_key(h[0]);
