@@ -69,7 +69,7 @@ libseap_la_SOURCES= generic/bfind.c		\
 		    public/sexp.h		\
 		    public/sm_alloc.h		\
 		    public/seap-message.h	\
-O		    public/seap-packet.h	\
+		    public/seap-packet.h	\
 		    public/seap-error.h		\
 		    public/sexp-datatype.h 	\
 		    public/strbuf.h
