@@ -31,8 +31,6 @@
 #include <../../common/util.h>
 #include "SEAP/generic/rbt/rbt.h"
 
-OSCAP_HIDDEN_START;
-
 typedef struct {
         rbt_t *tree;
 } pcache_t;
@@ -48,7 +46,5 @@ int pcache_cstr_del(pcache_t * cache, const char *id);
 
 SEXP_t *pcache_sexp_get(pcache_t * cache, const SEXP_t * id);
 SEXP_t *pcache_cstr_get(pcache_t * cache, const char *id);
-
-OSCAP_HIDDEN_END;
 
 #endif				/* PROBE_CACHE_H */
