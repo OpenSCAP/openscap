@@ -1,6 +1,6 @@
 
 /*
- * Copyright 2009 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2009-2010 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -38,6 +38,7 @@
 #include "config.h"
 #include "seap.h"
 #include "probe-api.h"
+#include "probe-entcmp.h"
 #include "alloc.h"
 #include <stdlib.h>
 #include <string.h>
@@ -66,40 +67,13 @@ struct result_info {
         unsigned user_id;
 };
 
-oval_operation_t command_op;
-char *command = NULL;
 unsigned long ticks, boot;
-
-static int option_compare(oval_operation_t op, const char *s1, const char * s2)
-{
-	if (op == OVAL_OPERATION_EQUALS) {
-		if (strcmp(s1, s2) == 0)
-			return 1;
-		else
-			return 0;
-	} else if (op == OVAL_OPERATION_NOT_EQUAL) {
-		if (strcmp(s1, s2) == 0)
-			return 0;
-	}
-
-	// All matched
-	return 1;
-}
-
-static int eval_data(const char *cur_command)
-{
-	if (command) {
-		if (option_compare(command_op, cur_command, command) == 0)
-			return 0;
-	}
-	return 1;
-}
 
 static void report_finding(struct result_info *res, SEXP_t *probe_out)
 {
 	SEXP_t *r0, *r1, *r2, *r3, *r4, *r5, *r6, *r7, *r8, *item_sexp;
-		
-	item_sexp = probe_obj_creat("process_item", NULL,
+
+	item_sexp = probe_item_creat("process_item", NULL,
 		/* entities */
 		"command", NULL, r0 = SEXP_string_newf("%s", res->command),
 		"exec_time", NULL, r1 = SEXP_string_newf("%s", res->exec_time),
@@ -189,7 +163,7 @@ static char *convert_time(unsigned long long t, char *tbuf, int tb_size)
 	return tbuf;
 }
 
-static int read_process(SEXP_t *probe_out)
+static int read_process(SEXP_t *cmd_ent, SEXP_t *probe_out)
 {
 	int err = 1;
 	DIR *d;
@@ -213,6 +187,7 @@ static int read_process(SEXP_t *probe_out)
 		unsigned long minflt, cminflt, majflt, cmajflt, uutime, ustime;
 		long cutime, cstime, priority, cnice, nthreads, itrealvalue;
 		unsigned long long start;
+		SEXP_t *cmd_sexp;
 
 		// Skip non-process dir entries
 		if(*ent->d_name<'0' || *ent->d_name>'9')
@@ -255,7 +230,8 @@ static int read_process(SEXP_t *probe_out)
 
 		err = 0; // If we get this far, no permission problems
 		_D("Have command: %s\n", cmd);
-		if (eval_data(cmd)) {
+		cmd_sexp = SEXP_string_newf("%s", cmd);
+		if (probe_entobj_cmp(cmd_ent, cmd_sexp) == OVAL_RESULT_TRUE) {
 			struct result_info r;
 			unsigned long t = uutime/ticks + ustime/ticks;
 			char tbuf[32], sbuf[32];
@@ -315,63 +291,30 @@ static int read_process(SEXP_t *probe_out)
 			r.user_id = get_effective_id(pid);
 			report_finding(&r, probe_out);
 		}
+		SEXP_free(cmd_sexp);
 	}
 	return err;
 }
 
 SEXP_t *probe_main(SEXP_t *object, int *err, void *arg)
 {
-	SEXP_t *probe_out, *val = NULL, *ent;
+	SEXP_t *probe_out, *ent;
 
 	ent = probe_obj_getent(object, "command", 1);
-	if (ent)
-		val = probe_ent_getval(ent);
-	if (ent == NULL || val == NULL) {
+	if (ent == NULL) {
 		*err = PROBE_ENOVAL;
 		return NULL;
 	}
-	command = SEXP_string_cstr(val);
-	if (command == NULL) {
-		_D("command error\n");
-		switch (errno) {
-			case EINVAL:
-				*err = PROBE_EINVAL;
-				break;
-			case EFAULT:
-				*err = PROBE_ENOELM;
-				break;
-		}
-		return NULL;
-	}
-	SEXP_free(val);
-	val = probe_ent_getattrval(ent, "operation");
-	if (val == NULL)
-		command_op = OVAL_OPERATION_EQUALS;
-	else {
-		command_op = (oval_operation_t) SEXP_number_geti_32(val);
-		switch (command_op) {
-			case OVAL_OPERATION_EQUALS:
-			case OVAL_OPERATION_NOT_EQUAL:
-				break;
-			default:
-				*err = PROBE_EOPNOTSUPP;
-				SEXP_free(val);
-				oscap_free(command);
-				return (NULL);
-		}
-		SEXP_free(val);
-	}
-	SEXP_free(ent);
 	probe_out = SEXP_list_new(NULL);
 
-	// Now we check the file...
-	if (read_process(probe_out)) {
+	if (read_process(ent, probe_out)) {
 		*err = PROBE_EACCES;
-		SEXP_free(val);
-		return NULL;
-	}
+		SEXP_free(probe_out);
+		probe_out = NULL;
+	} else
+		*err = 0;
 
-	*err = 0;
+	SEXP_free(ent);
 	return probe_out;
 }
 #else
