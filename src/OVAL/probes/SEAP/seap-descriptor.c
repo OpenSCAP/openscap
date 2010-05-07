@@ -133,8 +133,10 @@ static void SEAP_desc_free_node(struct rbt_i32_node *n)
 
 void SEAP_desctable_free(SEAP_desctable_t *sd_table)
 {
-        rbt_i32_free_cb(sd_table->tree, &SEAP_desc_free_node);
-        bitmap_free(sd_table->bmap);
+        if (sd_table->tree != NULL)
+                rbt_i32_free_cb(sd_table->tree, &SEAP_desc_free_node);
+        if (sd_table->bmap != NULL)
+                bitmap_free(sd_table->bmap);
         sm_free(sd_table);
 }
 
