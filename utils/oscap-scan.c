@@ -455,22 +455,9 @@ int main(int argc, char **argv)
 	struct xccdf_policy *policy;
 	struct xccdf_benchmark *benchmark;
 	struct xccdf_policy_model *policy_model;
-	struct oval_variable *o_variable;
-	struct xccdf_value_binding *binding;
-	struct xccdf_value_binding_iterator *binding_it;
-	struct oscap_text_iterator *text_it;
-	struct oscap_text *text;
-	struct xccdf_value *value;
-	struct xccdf_check_export_iterator *check_it;
-	struct xccdf_check_export *check;
-	const char *comment;
-	oval_datatype_t o_type;
 
 	benchmark = xccdf_benchmark_parse_xml(f_XCCDF);
 	policy_model = xccdf_policy_model_new(benchmark);
-
-	/* Create and fill the OVAL variable model */
-	var_model = oval_variable_model_new();
 
 	/* Get the first policy, just for prototype */
 	policy_it = xccdf_policy_model_get_policies(policy_model);
@@ -478,53 +465,9 @@ int main(int argc, char **argv)
 		policy = xccdf_policy_iterator_next(policy_it);
 	xccdf_policy_iterator_free(policy_it);
 
-	/* Add all variables to OVAL variable model */
-	binding_it = xccdf_policy_get_values(policy);
-	while (xccdf_value_binding_iterator_has_more(binding_it)) {
-		binding = xccdf_value_binding_iterator_next(binding_it);
-		value = xccdf_value_binding_get_rule_value(binding);
-
-		/* Assume some comment of variable - required in OVAL v>5.5 TODO: improve this (what language and so) */
-		text_it = xccdf_item_get_description((const struct xccdf_item *)value);
-		if (oscap_text_iterator_has_more(text_it)) {
-			text = oscap_text_iterator_next(text_it);
-			comment = oscap_text_get_text(text);
-		} else {
-			oscap_text_iterator_free(text_it);
-			text_it = xccdf_item_get_title((const struct xccdf_item *)value);
-			if (oscap_text_iterator_has_more(text_it)) {
-				text = oscap_text_iterator_next(text_it);
-				comment = oscap_text_get_text(text);
-			} else {
-				comment = "Unknown";
-			}
-			oscap_text_iterator_free(text_it);
-		}
-
-		/* Get all check export OVAL variables and pass it to model */
-		check_it = xccdf_value_binding_get_check_exports(binding);
-		while (xccdf_check_export_iterator_has_more(check_it)) {
-			check = xccdf_check_export_iterator_next(check_it);
-			//printf("Added variable %s :: %s to the model\n", xccdf_check_export_get_value(check), xccdf_check_export_get_name(check));
-			/* Get the type of variable in OVAL context */
-			o_variable = oval_definition_model_get_variable(def_model, (char *)xccdf_check_export_get_name(check));
-			if (o_variable == NULL) {
-				/* TODO: What should I do when variable is missing on OVAL side ? */
-				if (verbose >= 0)
-					fprintf(stderr, "Error: Missing variable \"%s\" in OVAL definition\n",
-						xccdf_check_export_get_name(check));
-				continue;
-			}
-			o_type = oval_variable_get_datatype(o_variable);
-
-			oval_variable_model_add(var_model,
-						(char *)xccdf_check_export_get_name(check),
-						comment, o_type, xccdf_value_get_selected_value(value));
-		}
-		xccdf_check_export_iterator_free(check_it);
-	}
-	xccdf_value_binding_iterator_free(binding_it);
-
+        /* Get Variable model from XCCDF and add it to OVAL */
+        var_model = xccdf_policy_get_variables(policy, def_model);
+        
 	/* Add model to definition model */
 	oval_definition_model_bind_variable_model(def_model, var_model);
 

@@ -35,6 +35,7 @@
 #include <time.h>
 #include <oscap.h>
 #include <xccdf.h>
+#include <oval_definitions.h>
  
 /**
  * @struct xccdf_policy_model
@@ -263,6 +264,16 @@ const char * xccdf_policy_get_id(struct xccdf_policy * policy);
  * @return XCCDF Policy
  */
 struct xccdf_policy * xccdf_policy_model_get_policy_by_id(struct xccdf_policy_model * policy_model, const char * id);
+
+/**
+ * Get external variables from XCCDF for given Policy and export them to OVAL Variable model
+ * @param policy XCCDF Policy
+ * @param def_model OVAL definition model
+ * @return OVAL Variable model
+ * @see oval_variable_model
+ * @memberof xccdf_policy
+ */
+struct oval_variable_model * xccdf_policy_get_variables(struct xccdf_policy * policy, struct oval_definition_model * def_model);
 
 /************************************************************/
 /** @} End of Getters group */
