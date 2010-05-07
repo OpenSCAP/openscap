@@ -8,8 +8,6 @@ LDFLAGS += @pthread_ldflags@
 
 noinst_LTLIBRARIES= libprobe.la
 libprobe_la_SOURCES= \
-	probe-cache.c \
-	probe-cache.h \
 	probe-fini.c \
 	probe-init.c \
 	probe-main.c

@@ -64,7 +64,7 @@ common_oval_sources = \
 # lets build one common for both normal and probe sources (does it mind?)
 AM_CPPFLAGS = $(libxml_cflags) $(pthread_cflags) -I$(srcdir)/public -I$(top_srcdir)/src/common/public
 if WANT_PROBES
-AM_CPPFLAGS += -I$(top_srcdir)/src -I$(srcdir)/probes -I$(srcdir)/probes/public -I$(srcdir)/probes/SEAP/public -DSEAP_MSGID_BITS=32 -DSEAP_THREAD_SAFE
+AM_CPPFLAGS += -I$(top_srcdir)/src -I$(top_srcdir)/src/common -I$(srcdir)/probes -I$(srcdir)/probes/public -I$(srcdir)/probes/SEAP/public -DSEAP_MSGID_BITS=32 -DSEAP_THREAD_SAFE
 endif
 
 # -l or -L options go to LIBADD (or LDADD), not to LDFLAGS
@@ -93,6 +93,8 @@ common_oval_sources += probes/probe-api.c 	\
 		       probes/encache.h		\
 		       probes/probe-entcmp.c	\
 		       probes/probe-entcmp.h	\
+		       probes/probe-cache.c	\
+		       probes/probe-cache.h	\
 		       oval_sexp.c \
 		       oval_sexp.h \
 		       oval_probe_impl.h
