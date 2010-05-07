@@ -47,6 +47,11 @@ int __debuglog_level = -1;
 # define __UNLOCK_FP while(0)
 #endif
 
+static void __oscap_debuglog_close(void)
+{
+        fclose(__debuglog_fp);
+}
+
 void __oscap_dprintf(const char *file, const char *fn, size_t line, const char *fmt, ...)
 {
 	va_list ap;
@@ -79,6 +84,7 @@ void __oscap_dprintf(const char *file, const char *fn, size_t line, const char *
 		st = ctime(&ut);
 
 		fprintf(__debuglog_fp, "=============== LOG: %.24s ===============\n", st);
+                atexit(&__oscap_debuglog_close);
 	}
 
 	if (flock(fileno(__debuglog_fp), LOCK_EX) == -1) {

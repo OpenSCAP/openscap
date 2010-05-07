@@ -337,8 +337,6 @@ int sch_pipe_close (SEAP_desc_t *desc, uint32_t flags)
         int try;
         sch_pipedata_t *data;
 
-        fprintf(stderr, "pipe close 2\n");
-
         assume_d (desc != NULL, -1, errno = EFAULT;);
         
         data = (sch_pipedata_t *)desc->scheme_data;
@@ -358,7 +356,6 @@ int sch_pipe_close (SEAP_desc_t *desc, uint32_t flags)
                         goto clean;
                 }
         }
-        fprintf(stderr, "pipe close 1\n");
 
         /*
          * Child is not responding to our request. Kill it.
@@ -372,7 +369,6 @@ int sch_pipe_close (SEAP_desc_t *desc, uint32_t flags)
                 return (-1);
         }
 clean:
-        fprintf(stderr, "pipe close\n");
         close (data->pfd);
         
         sm_free (data->execpath);

@@ -145,7 +145,7 @@ int SEXP_psetup_unsetflags (SEXP_psetup_t *psetup, SEXP_pflags_t flags)
         assume_d (psetup != NULL, -1);
         assume_r (flags & SEXP_PFLAG_ALL, -1);
         
-        psetup->p_flags &= ~flags;        
+        psetup->p_flags &= ~flags;
         
         return (0);
 }
@@ -153,7 +153,7 @@ int SEXP_psetup_unsetflags (SEXP_psetup_t *psetup, SEXP_pflags_t flags)
 SEXP_psetup_t *SEXP_psetup_new (void)
 {
         SEXP_psetup_t *psetup;
-        
+
         psetup = sm_talloc (SEXP_psetup_t);
         psetup->p_format = 0;
         psetup->p_flags  = SEXP_PFLAG_EOFOK;

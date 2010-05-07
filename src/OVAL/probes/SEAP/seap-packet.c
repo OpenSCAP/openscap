@@ -614,8 +614,11 @@ int SEAP_packet_recv (SEAP_CTX_t *ctx, int sd, SEAP_packet_t **packet)
         if (dsc->sexpbuf != NULL) {
                 if (SEXP_list_length (dsc->sexpbuf) > 0)
                         goto sexp_buf_recv;
+                else {
+                        SEXP_free(dsc->sexpbuf);
+                        dsc->sexpbuf = NULL;
+                }
         }
-                        
         /*
          * Event loop
          * The read mutex is not locked during the wait for an event.
@@ -673,6 +676,12 @@ eloop_exit:
         pstate = NULL;
         psetup = SEXP_psetup_new ();
 
+        /*
+         * All buffer passed to SEXP_parse will be freed by
+         * SEXP_pstate_free (i.e. after successful parsing)
+         */
+        SEXP_psetup_setflags(psetup, SEXP_PFLAG_FREEBUF);
+
         for (;;) {
                 data_buffer = sm_alloc (SEAP_RECVBUF_SIZE);
                 data_buflen = SEAP_RECVBUF_SIZE;
@@ -703,22 +712,21 @@ eloop_exit:
                                 return (-1);
                         }
                 }
-                
+
                 _A(data_length > 0);
-                
+
                 if (data_buflen != (size_t)(data_length)) {
                         data_buffer = sm_realloc (data_buffer, data_length);
 			data_buflen = data_length;
 		}
-                
+
                 sexp_buffer = SEXP_parse (psetup, data_buffer, data_length, &pstate);
-                sm_free (data_buffer);
-                
+
                 if (sexp_buffer != NULL) {
                         _A(pstate == NULL);
-                        
+
                         DESC_RUNLOCK(dsc);
-                        
+
                         if (SEXP_list_length (sexp_buffer) > 0) {
                                 break;
                         } else {
@@ -728,7 +736,7 @@ eloop_exit:
                                 goto eloop_start;
                         }
                 }
-                
+
                 if (SCH_SELECT(dsc->scheme, dsc, SEAP_IO_EVREAD, ctx->recv_timeout, 0) != 0) {
                         switch (errno) {
                         case ETIMEDOUT:
@@ -740,7 +748,7 @@ eloop_exit:
                                 protect_errno {
                                         _D("FAIL: recv failed: dsc=%p, errno=%u, %s.\n",
                                            dsc, errno, strerror (errno));
-                                        
+
                                         SEXP_psetup_free (psetup);
                                         SEXP_pstate_free (pstate);
                                 }
@@ -748,16 +756,16 @@ eloop_exit:
                         }
                 }
         }
-        
+
         SEXP_psetup_free (psetup);
         dsc->sexpbuf = sexp_buffer;
-        
+
 sexp_buf_recv:
         SEXP_VALIDATE(dsc->sexpbuf);
         sexp_packet = SEXP_list_pop (dsc->sexpbuf);
-        
+
         _A(sexp_packet != NULL);
-        
+
         if (!SEXP_listp(sexp_packet)) {
                 _D("Invalid SEAP packet received: %s.\n", "not a list");
 

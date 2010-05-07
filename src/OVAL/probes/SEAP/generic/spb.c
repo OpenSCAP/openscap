@@ -218,6 +218,17 @@ int spb_pick_cb (spb_t *spb, spb_size_t start, spb_size_t size, void *cb (void *
 
 void spb_free (spb_t *spb, spb_flags_t flags)
 {
+        if (spb == NULL) {
+                errno = EFAULT;
+                return;
+        }
+
+        if (flags & SPB_FLAG_FREE) {
+                register int i;
+
+                for (i = 0; i < spb->btotal; ++i)
+                        sm_free(spb->buffer[i].base);
+        }
 #ifndef NDEBUG
         memset (spb->buffer, 0, sizeof (spb_item_t) * spb->balloc);
 #endif
