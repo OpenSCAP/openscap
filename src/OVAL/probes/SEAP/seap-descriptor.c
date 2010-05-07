@@ -28,41 +28,64 @@
 #include "seap-descriptor.h"
 #include "_sexp-atomic.h"
 
+SEAP_desctable_t *SEAP_desctable_new (void)
+{
+        SEAP_desctable_t *t;
+
+        t = sm_talloc(SEAP_desctable_t);
+        t->tree = NULL;
+        t->bmap = NULL;
+
+        return(t);
+}
+
 int SEAP_desc_add (SEAP_desctable_t *sd_table, SEXP_pstate_t *pstate,
                          SEAP_scheme_t scheme, void *scheme_data)
 {
         bitmap_bitn_t sd;
         pthread_mutexattr_t mutex_attr;
-        
-        sd = bitmap_setfree (&(sd_table->bitmap));
-        
-        if (sd >= 0) {
-                if (sd >= sd_table->sdsize) {
-                        /* sd araay is to small -> realloc */
-                        sd_table->sdsize = sd + SDTABLE_REALLOC_ADD;
-                        sd_table->sd = sm_realloc (sd_table->sd, sizeof (SEAP_desc_t) * sd_table->sdsize);
-                }
+        SEAP_desc_t  *sd_dsc;
 
-                sd_table->sd[sd].next_id = 0;
-                sd_table->sd[sd].sexpbuf = NULL;
-                /* sd_table->sd[sd].sexpcnt = 0; */
-                sd_table->sd[sd].pstate  = pstate;
-                sd_table->sd[sd].scheme  = scheme;
-                sd_table->sd[sd].scheme_data = scheme_data;
-                sd_table->sd[sd].ostate  = NULL;
-                sd_table->sd[sd].next_cid = 0;
-                sd_table->sd[sd].cmd_c_table = SEAP_cmdtbl_new ();
-                sd_table->sd[sd].cmd_w_table = SEAP_cmdtbl_new ();
-                sd_table->sd[sd].pck_queue   = pqueue_new (1024); /* FIXME */
-                
+        if (sd_table->bmap == NULL)
+                sd_table->bmap = bitmap_new(128); /* XXX: hardcoded size */
+        if (sd_table->bmap == NULL)
+                return (-1);
+
+        sd = bitmap_setfree (sd_table->bmap);
+
+        if (sd >= 0) {
+                if (sd_table->tree == NULL)
+                        sd_table->tree = rbt_i32_new();
+
+                sd_dsc = sm_talloc(SEAP_desc_t);
+
+                sd_dsc->next_id = 0;
+                sd_dsc->sexpbuf = NULL;
+                /* sd_dsc->sexpcnt = 0; */
+                sd_dsc->pstate  = pstate;
+                sd_dsc->scheme  = scheme;
+                sd_dsc->scheme_data = scheme_data;
+                sd_dsc->ostate  = NULL;
+                sd_dsc->next_cid = 0;
+                sd_dsc->cmd_c_table = SEAP_cmdtbl_new ();
+                sd_dsc->cmd_w_table = SEAP_cmdtbl_new ();
+                sd_dsc->pck_queue   = pqueue_new (1024); /* FIXME */
+
                 pthread_mutexattr_init (&mutex_attr);
                 pthread_mutexattr_settype (&mutex_attr, PTHREAD_MUTEX_RECURSIVE);
-                
-                pthread_mutex_init (&(sd_table->sd[sd].r_lock), &mutex_attr);
-                pthread_mutex_init (&(sd_table->sd[sd].w_lock), &mutex_attr);
-                
+
+                pthread_mutex_init (&(sd_dsc->r_lock), &mutex_attr);
+                pthread_mutex_init (&(sd_dsc->w_lock), &mutex_attr);
+
                 pthread_mutexattr_destroy (&mutex_attr);
-                
+
+                fprintf(stderr, "adding sd=%d\n", sd);
+
+                if (rbt_i32_add(sd_table->tree, (int32_t)sd, (void *)sd_dsc) != 0) {
+                        SEAP_desc_free(sd_dsc);
+                        return (-1);
+                }
+
                 return ((int)sd);
         }
 
@@ -71,18 +94,65 @@ int SEAP_desc_add (SEAP_desctable_t *sd_table, SEXP_pstate_t *pstate,
 
 int SEAP_desc_del (SEAP_desctable_t *sd_table, int sd)
 {
-        
+        SEAP_desc_t *dsc = NULL;
+
+        if (sd < 0) {
+                errno = EINVAL;
+                return (-1);
+        }
+
+        if (sd_table->tree == NULL)
+                return (-1);
+
+        fprintf(stderr, "deleting sd=%d\n", sd);
+
+        if (rbt_i32_del(sd_table->tree, sd, (void **)&dsc) != 0)
+                return (-1);
+
+        bitmap_unset(sd_table->bmap, sd);
+
+        if (dsc != NULL)
+                SEAP_desc_free(dsc);
+
         return (0);
+}
+
+void SEAP_desc_free(SEAP_desc_t *dsc)
+{
+        SEAP_cmdtbl_free(dsc->cmd_c_table);
+        SEAP_cmdtbl_free(dsc->cmd_w_table);
+        pqueue_free(dsc->pck_queue);
+        pthread_mutex_destroy(&(dsc->r_lock));
+        pthread_mutex_destroy(&(dsc->w_lock));
+        sm_free(dsc);
+}
+
+static void SEAP_desc_free_node(struct rbt_i32_node *n)
+{
+        SEAP_desc_free(n->data);
+}
+
+void SEAP_desctable_free(SEAP_desctable_t *sd_table)
+{
+        rbt_i32_free_cb(sd_table->tree, &SEAP_desc_free_node);
+        bitmap_free(sd_table->bmap);
 }
 
 SEAP_desc_t *SEAP_desc_get (SEAP_desctable_t *sd_table, int sd)
 {
-        if (sd < 0 || sd > sd_table->sdsize) {
+        SEAP_desc_t *dsc = NULL;
+
+        if (sd < 0) {
                 errno = EBADF;
                 return (NULL);
         }
 
-        return (&(sd_table->sd[sd]));
+        if (rbt_i32_get(sd_table->tree, sd, (void **)&dsc) != 0) {
+                errno = EBADF;
+                return (NULL);
+        }
+
+        return(dsc);
 }
 
 SEAP_msgid_t SEAP_desc_genmsgid (SEAP_desctable_t *sd_table, int sd)
@@ -90,7 +160,7 @@ SEAP_msgid_t SEAP_desc_genmsgid (SEAP_desctable_t *sd_table, int sd)
         SEAP_desc_t *dsc;
         SEAP_msgid_t  id;
         dsc = SEAP_desc_get (sd_table, sd);
-        
+
         if (dsc == NULL) {
                 errno = EINVAL;
                 return (-1);
@@ -110,7 +180,7 @@ SEAP_cmdid_t SEAP_desc_gencmdid (SEAP_desctable_t *sd_table, int sd)
         SEAP_cmdid_t  id;
 
         dsc = SEAP_desc_get (sd_table, sd);
-        
+
         if (dsc == NULL) {
                 errno = EINVAL;
                 return (-1);

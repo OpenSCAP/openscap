@@ -596,7 +596,7 @@ int SEAP_packet_recv (SEAP_CTX_t *ctx, int sd, SEAP_packet_t **packet)
         
         _LOGCALL_;
 
-        dsc = SEAP_desc_get (&(ctx->sd_table), sd);
+        dsc = SEAP_desc_get (ctx->sd_table, sd);
         
         if (dsc == NULL) {
                 errno = EFAULT;
@@ -894,7 +894,7 @@ int SEAP_packet_recv_bytype (SEAP_CTX_t *ctx, int sd, SEAP_packet_t **packet, ui
 
         _LOGCALL_;
         
-        dsc = SEAP_desc_get (&(ctx->sd_table), sd);
+        dsc = SEAP_desc_get (ctx->sd_table, sd);
         
         if (dsc == NULL)
                 return (-1);
@@ -925,7 +925,7 @@ int SEAP_packet_send (SEAP_CTX_t *ctx, int sd, SEAP_packet_t *packet)
         _LOGCALL_;
 
         ret = -1;
-        dsc = SEAP_desc_get (&(ctx->sd_table), sd);
+        dsc = SEAP_desc_get (ctx->sd_table, sd);
         
         if (dsc == NULL)
                 return (-1);

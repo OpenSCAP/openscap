@@ -108,7 +108,7 @@ rbt_t *rbt_new(rbt_type_t type);
  * in a node.
  * @param rbt tree pointer
  */
-void rbt_free(rbt_t *rbt);
+void rbt_free(rbt_t *rbt, void (*callback)(void *));
 
 /**
  * Lock a tree for reading
@@ -140,5 +140,13 @@ struct rbt_node *rbt_node_rotate_LR(struct rbt_node *);
 struct rbt_node *rbt_node_rotate_RL(struct rbt_node *);
 
 size_t rbt_size(rbt_t *rbt);
+
+#define rbt_walk_push(n) stack[depth++] = (n)
+#define rbt_walk_pop()   stack[--depth]
+#define rbt_walk_top()   stack[depth-1]
+
+int rbt_walk_preorder(rbt_t *rbt, int (*callback)(void *));
+int rbt_walk_inorder(rbt_t *rbt, int (*callback)(void *));
+int rbt_walk_postorder(rbt_t *rbt, int (*callback)(void *));
 
 #endif /* RBT_COMMON_H */

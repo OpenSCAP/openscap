@@ -36,18 +36,18 @@ typedef struct rbt_str_node rbt_str_node_t;
 
 rbt_t *rbt_str_new (void);
 void rbt_str_free (rbt_t *rbt);
-int rbt_str_free_cb (rbt_t *rbt, int (*callback)(rbt_str_node_t *));
+int rbt_str_free_cb (rbt_t *rbt, int (*callback)(struct rbt_str_node *));
 
 int rbt_str_add(rbt_t *rbt, char *key, void *data);
 void *rbt_str_rep(rbt_t *rbt, const char *key, void *data);
 int rbt_str_del(rbt_t *rbt, const char *key);
 int rbt_str_get(rbt_t *rbt, const char *key, void **data);
 
-int rbt_str_walk_preorder(rbt_t *rbt, int (*callback)(rbt_str_node_t *));
-int rbt_str_walk_inorder(rbt_t *rbt, int (*callback)(rbt_str_node_t *));
-int rbt_str_walk_postorder(rbt_t *rbt, int (*callback)(rbt_str_node_t *));
-int rbt_str_walk_levelorder(rbt_t *rbt, int (*callback)(rbt_str_node_t *));
-int rbt_str_walk(rbt_t *rbt, rbt_walk_t type, int (*callback)(rbt_str_node_t *));
+int rbt_str_walk_preorder(rbt_t *rbt, int (*callback)(struct rbt_str_node *));
+int rbt_str_walk_inorder(rbt_t *rbt, int (*callback)(struct rbt_str_node *));
+int rbt_str_walk_postorder(rbt_t *rbt, int (*callback)(struct rbt_str_node *));
+int rbt_str_walk_levelorder(rbt_t *rbt, int (*callback)(struct rbt_str_node *));
+int rbt_str_walk(rbt_t *rbt, rbt_walk_t type, int (*callback)(struct rbt_str_node *));
 size_t rbt_str_size(rbt_t *rbt);
 
 #endif /* RBT_STR_H */

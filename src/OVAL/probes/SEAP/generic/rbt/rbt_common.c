@@ -59,11 +59,42 @@ rbt_t *rbt_new(rbt_type_t type)
  * tree type.
  * @param rbt tree pointer
  */
-void rbt_free(rbt_t *rbt)
+void rbt_free(rbt_t *rbt, void (*callback)(void *))
 {
-        /*
-         * TODO: free nodes
-         */
+        struct rbt_node *stack[48], *n;
+        register uint8_t depth;
+        register int     r;
+
+        rbt_wlock(rbt);
+
+        depth = 0;
+        rbt_walk_push(rbt_node_ptr(rbt->root));
+
+        while(depth > 0) {
+                n = rbt_node_ptr(rbt_walk_top()->_chld[RBT_NODE_SL]);
+
+                if (n != NULL)
+                        rbt_walk_push(n);
+                else {
+                __in:
+                        if (callback != NULL)
+                                callback((void *)&(rbt_walk_top()->_node));
+
+                        sm_free(rbt_walk_top());
+                        n = rbt_node_ptr(rbt_walk_top()->_chld[RBT_NODE_SR]);
+
+                        if (n != NULL)
+                                rbt_walk_top() = n;
+                        else {
+                                if (--depth > 0)
+                                        goto __in;
+                                else
+                                        break;
+                        }
+                }
+        }
+        rbt_wunlock(rbt);
+
         rbt->root = NULL;
         rbt->size = 0;
         rbt->type = -1;
@@ -252,4 +283,51 @@ size_t rbt_size(rbt_t *rbt)
         rbt_runlock(rbt);
 
         return (size);
+}
+
+int rbt_walk_preorder(rbt_t *rbt, int (*callback)(void *))
+{
+        return(-1);
+}
+
+int rbt_walk_inorder(rbt_t *rbt, int (*callback)(void *))
+{
+        struct rbt_node *stack[48], *n;
+        register uint8_t depth;
+        register int     r;
+
+        depth = 0;
+        rbt_walk_push(rbt_node_ptr(rbt->root));
+
+        while(depth > 0) {
+                n = rbt_node_ptr(rbt_walk_top()->_chld[RBT_NODE_SL]);
+
+                if (n != NULL)
+                        rbt_walk_push(n);
+                else {
+                __in:
+                        r = callback((void *)&(rbt_walk_top()->_node));
+
+                        if (r != 0)
+                                return (r);
+
+                        n = rbt_node_ptr(rbt_walk_top()->_chld[RBT_NODE_SR]);
+
+                        if (n != NULL)
+                                rbt_walk_top() = n;
+                        else {
+                                if (--depth > 0)
+                                        goto __in;
+                                else
+                                        break;
+                        }
+                }
+        }
+
+        return(0);
+}
+
+int rbt_walk_postorder(rbt_t *rbt, int (*callback)(void *))
+{
+        return(-1);
 }

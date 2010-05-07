@@ -887,7 +887,7 @@ char *SEXP_string_cstr (const SEXP_t *s_exp)
         }
 
         SEXP_VALIDATE(s_exp);
-        
+
         SEXP_val_dsc (&v_dsc, s_exp->s_valp);
 
         if (v_dsc.type != SEXP_VALTYPE_STRING) {
@@ -897,11 +897,11 @@ char *SEXP_string_cstr (const SEXP_t *s_exp)
 
         len = v_dsc.hdr->size / sizeof (char);
         str = sm_alloc (sizeof (char) * (len + 1));
-        
+
         memcpy (str, v_dsc.mem, sizeof (char) * len);
-        
+
         str[len] = '\0';
-        
+
         return (str);
 }
 
@@ -917,7 +917,7 @@ size_t SEXP_string_cstr_r (const SEXP_t *s_exp, char *buf, size_t len)
         }
 
         SEXP_VALIDATE(s_exp);
-        
+
         SEXP_val_dsc (&v_dsc, s_exp->s_valp);
 
         if (v_dsc.type != SEXP_VALTYPE_STRING) {
@@ -931,7 +931,7 @@ size_t SEXP_string_cstr_r (const SEXP_t *s_exp, char *buf, size_t len)
 
                 return (v_dsc.hdr->size / sizeof (char));
         }
-        
+
         errno = ERANGE;
         return ((size_t)-1);
 }
@@ -943,44 +943,44 @@ char *SEXP_string_subcstr (const SEXP_t *s_exp, size_t beg, size_t len)
         size_t     s_len;
 
         _LOGCALL_;
-        
+
         if (s_exp == NULL) {
                 errno = EFAULT;
                 return (NULL);
         }
 
         SEXP_VALIDATE(s_exp);
-        
+
         SEXP_val_dsc (&v_dsc, s_exp->s_valp);
 
         if (v_dsc.type != SEXP_VALTYPE_STRING) {
                 errno = EINVAL;
                 return (NULL);
         }
-        
+
         s_len = v_dsc.hdr->size / sizeof (char);
-        
+
         if (beg > s_len) {
                 errno = EINVAL;
                 return (NULL);
         }
-        
+
         s_len -= beg;
-        
+
         if (s_len > len)
                 s_len = len;
-        
+
         if (s_len > 0) {
                 s_len = v_dsc.hdr->size / sizeof (char);
                 s_str = sm_alloc (sizeof (char) * (s_len + 1));
-                
+
                 memcpy (s_str, ((char *) v_dsc.mem) + beg, sizeof (char) * s_len);
-                
+
                 s_str[s_len] = '\0';
-                
+
                 return (s_str);
         }
-        
+
         return (NULL);
 }
 
@@ -1002,7 +1002,7 @@ int SEXP_string_cmp (const SEXP_t *str_a, const SEXP_t *str_b)
 {
         char *a, *b;
         int   c;
-        
+
         _LOGCALL_;
 
         if (str_a == NULL || str_b == NULL) {

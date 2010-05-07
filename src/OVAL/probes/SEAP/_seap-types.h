@@ -39,7 +39,7 @@ struct SEAP_CTX {
         SEXP_pflags_t pflags;
         SEXP_format_t fmt_in;
         SEXP_format_t fmt_out;
-        SEAP_desctable_t  sd_table;
+        SEAP_desctable_t *sd_table;
         SEAP_cmdtbl_t *cmd_c_table;
         SEAP_cflags_t  cflags;
 

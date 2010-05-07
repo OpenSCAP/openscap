@@ -90,7 +90,6 @@ static oval_pdtbl_t *oval_pdtbl_new(void)
 	oval_pdtbl_t *p_tbl;
 
 	p_tbl = oscap_talloc(oval_pdtbl_t);
-        
 	p_tbl->memb = NULL;
 	p_tbl->count = 0;
 	p_tbl->ctx = SEAP_CTX_new();
@@ -98,8 +97,17 @@ static oval_pdtbl_t *oval_pdtbl_new(void)
 	return (p_tbl);
 }
 
-static void oval_pdtbl_free(oval_pdtbl_t* tbl)
+static void oval_pdtbl_free(oval_pdtbl_t *tbl)
 {
+        register int i;
+
+        for (i = 0; i < tbl->count; ++i)
+                oscap_free(tbl->memb[i].uri);
+
+        oscap_free(tbl->memb);
+        SEAP_CTX_free(tbl->ctx);
+        oscap_free(tbl);
+
 	return;
 }
 
@@ -170,7 +178,7 @@ static int oval_pdtbl_add(oval_pdtbl_t * tbl, oval_subtype_t type, int sd, const
 	assume_d (uri != NULL, -1);
 
 	tbl->memb = oscap_realloc(tbl->memb, sizeof(oval_pd_t) * (++tbl->count));
-        
+
 	tbl->memb[tbl->count - 1].subtype = type;
 	tbl->memb[tbl->count - 1].sd      = sd;
 	tbl->memb[tbl->count - 1].uri     = strdup(uri);
@@ -210,7 +218,6 @@ oval_pctx_t *oval_pctx_new(struct oval_syschar_model * model)
 			_D("FAIL: Can't initialize SEAP commands\n");
                         oval_pctx_free(ctx);
                         oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EPROBEINIT, "Initialization of SEAP commands failed");
-			
 			return (NULL);
 		}
 	}
@@ -223,7 +230,7 @@ oval_pctx_t *oval_pctx_new(struct oval_syschar_model * model)
 int oval_pctx_setflag(oval_pctx_t * ctx, uint32_t n_flags)
 {
 	uint32_t o_flags;
-        
+
 	assume_d (ctx != NULL, -1);
 
 	o_flags = ctx->p_flags;
@@ -306,15 +313,15 @@ static SEXP_t *oval_probe_comm(SEAP_CTX_t * ctx, oval_pd_t * pd, const SEXP_t * 
 
 	assume_d (pd != NULL, -1);
         assume_d (s_iobj != NULL, -1);
-        
+
         debug(3) {
                 fprintf(stderr, "--- msg out ---\n");
                 SEXP_fprintfa(stderr, s_iobj);
                 fprintf(stderr, "\n---------------\n");
         }
-        
+
 	oscap_dprintf("ctx=%p, pd=%p, s_iobj=%p\n", ctx, pd, s_iobj);
-        
+
 	for (retry = 0;;) {
 		/*
 		 * Establish connection to probe. The connection may be
@@ -325,26 +332,26 @@ static SEXP_t *oval_probe_comm(SEAP_CTX_t * ctx, oval_pd_t * pd, const SEXP_t * 
 			pd->sd = SEAP_connect(ctx, pd->uri, 0);
 
 			if (pd->sd < 0) {
-                                
+
                                 protect_errno {
                                         _D("Can't connect: %u, %s.\n", errno, strerror(errno));
                                 }
-                                
+
 				if (++retry <= OVAL_PROBE_MAXRETRY) {
 					_D("connect: retry %u/%u\n", retry, OVAL_PROBE_MAXRETRY);
 					continue;
 				} else {
                                         char errbuf[__ERRBUF_SIZE];
-                                        
+
                                         protect_errno {
                                                 _D("connect: retry limit (%u) reached.\n", OVAL_PROBE_MAXRETRY);
                                         }
-                                        
+
                                         if (strerror_r (errno, errbuf, sizeof errbuf - 1) != 0)
                                                 oscap_seterr (OSCAP_EFAMILY_OVAL, OVAL_EPROBECONN, "Can't connect to the probe");
                                         else
                                                 oscap_seterr (OSCAP_EFAMILY_OVAL, OVAL_EPROBECONN, errbuf);
-                                        
+
 					return (NULL);
 				}
 			}
@@ -355,14 +362,14 @@ static SEXP_t *oval_probe_comm(SEAP_CTX_t * ctx, oval_pd_t * pd, const SEXP_t * 
 
 		if (noreply) {
 			if (SEAP_msgattr_set(s_omsg, "no-reply", NULL) != 0) {
-                                
+
                                 protect_errno {
                                         _D("Can't set no-reply attribute\n");
                                 }
-                                
+
                                 SEAP_msg_free(s_omsg);
                                 oscap_seterr (OSCAP_EFAMILY_OVAL, OVAL_EPROBEUNKNOWN, NULL);
-                                
+
 				return (NULL);
 			}
 		}
@@ -370,24 +377,24 @@ static SEXP_t *oval_probe_comm(SEAP_CTX_t * ctx, oval_pd_t * pd, const SEXP_t * 
 		_D("Sending message...\n");
 
 		if (SEAP_sendmsg(ctx, pd->sd, s_omsg) != 0) {
-                        
+
                         protect_errno {
                                 _D("Can't send message: %u, %s\n", errno, strerror(errno));
                         }
-                        
+
 			if (SEAP_close(ctx, pd->sd) != 0) {
                                 char errbuf[__ERRBUF_SIZE];
-                                
+
                                 protect_errno {
                                         _D("Can't close sd: %u, %s\n", errno, strerror(errno));
                                         SEAP_msg_free(s_omsg);
                                 }
-                                
+
                                 if (strerror_r (errno, errbuf, sizeof errbuf - 1) != 0)
                                         oscap_seterr (OSCAP_EFAMILY_OVAL, OVAL_EPROBECLOSE, "Can't close sd");
                                 else
                                         oscap_seterr (OSCAP_EFAMILY_OVAL, OVAL_EPROBECLOSE, errbuf);
-                                
+
 				return (NULL);
 			}
 
@@ -398,17 +405,17 @@ static SEXP_t *oval_probe_comm(SEAP_CTX_t * ctx, oval_pd_t * pd, const SEXP_t * 
 				continue;
 			} else {
                                 char errbuf[__ERRBUF_SIZE];
-                                
+
                                 protect_errno {
                                         _D("send: retry limit (%u) reached.\n", OVAL_PROBE_MAXRETRY);
                                         SEAP_msg_free(s_omsg);
                                 }
-                                
+
                                 if (strerror_r (errno, errbuf, sizeof errbuf - 1) != 0)
                                         oscap_seterr (OSCAP_EFAMILY_OVAL, OVAL_EPROBESEND, "Unable to send a message to probe");
                                 else
                                         oscap_seterr (OSCAP_EFAMILY_OVAL, OVAL_EPROBESEND, errbuf);
-                                
+
 				return (NULL);
 			}
 		}
@@ -419,11 +426,11 @@ static SEXP_t *oval_probe_comm(SEAP_CTX_t * ctx, oval_pd_t * pd, const SEXP_t * 
 		s_imsg = NULL;
 
 		if (SEAP_recvmsg(ctx, pd->sd, &s_imsg) != 0) {
-                        
+
                         protect_errno {
                                 _D("Can't receive message: %u, %s\n", errno, strerror(errno));
                         }
-                        
+
 			switch (errno) {
 			case ECANCELED:
 				{
@@ -441,18 +448,18 @@ static SEXP_t *oval_probe_comm(SEAP_CTX_t * ctx, oval_pd_t * pd, const SEXP_t * 
 
 			if (SEAP_close(ctx, pd->sd) != 0) {
                                 char errbuf[__ERRBUF_SIZE];
-                                
+
                                 protect_errno {
                                         _D("Can't close sd: %u, %s\n", errno, strerror(errno));
                                         SEAP_msg_free(s_imsg);
                                         SEAP_msg_free(s_omsg);
                                 }
-                                
+
                                 if (strerror_r (errno, errbuf, sizeof errbuf - 1) != 0)
                                         oscap_seterr (OSCAP_EFAMILY_OVAL, OVAL_EPROBECLOSE, "Unable to close probe sd");
                                 else
                                         oscap_seterr (OSCAP_EFAMILY_OVAL, OVAL_EPROBECLOSE, errbuf);
-                                                                
+
 				return (NULL);
 			}
 
@@ -469,12 +476,12 @@ static SEXP_t *oval_probe_comm(SEAP_CTX_t * ctx, oval_pd_t * pd, const SEXP_t * 
                                         SEAP_msg_free(s_imsg);
                                         SEAP_msg_free(s_omsg);
                                 }
-                                
+
                                 if (strerror_r (errno, errbuf, sizeof errbuf - 1) != 0)
                                         oscap_seterr (OSCAP_EFAMILY_OVAL, OVAL_EPROBERECV, "Unable to receive a message from probe");
                                 else
                                         oscap_seterr (OSCAP_EFAMILY_OVAL, OVAL_EPROBERECV, errbuf);
-                                                                
+
 				return (NULL);
 			}
 		}
@@ -484,20 +491,20 @@ static SEXP_t *oval_probe_comm(SEAP_CTX_t * ctx, oval_pd_t * pd, const SEXP_t * 
 	}
 
 	s_oobj = SEAP_msg_get(s_imsg);
-        
+
 	SEAP_msg_free(s_imsg);
 	SEAP_msg_free(s_omsg);
 
         debug(3) {
                 fprintf(stderr, "--- msg in ---\n");
-                
+
                 if (noreply)
                         fprintf(stderr, "+ no-reply\n");
-                
+
                 SEXP_fprintfa(stderr, s_oobj);
                 fprintf(stderr, "\n--------------\n");
         }
-        
+
 	return (s_oobj);
 }
 
@@ -521,7 +528,7 @@ struct oval_syschar *oval_probe_object_eval(oval_pctx_t * ctx, struct oval_objec
                 oscap_seterr (OSCAP_EFAMILY_OVAL, OVAL_EPROBECONTEXT, "Invalid probe context; model not set");
                 return (NULL);
 	}
-        
+
 	pdsc = oval_pdsc_lookup(oval_object_get_subtype(object));
 
 	if (pdsc == NULL) {
@@ -539,7 +546,7 @@ struct oval_syschar *oval_probe_object_eval(oval_pctx_t * ctx, struct oval_objec
 		probe_dir    = ctx->p_dir;
 		probe_urilen = snprintf(probe_uri, sizeof probe_uri,
 					"%s://%s/%s", OVAL_PROBE_SCHEME, probe_dir, pdsc->filename);
-                
+
 		_D("URI: %s\n", probe_uri);
 
 		if (oval_pdtbl_add(ctx->pd_table, oval_object_get_subtype(object), -1, probe_uri) != 0) {
@@ -547,7 +554,7 @@ struct oval_syschar *oval_probe_object_eval(oval_pctx_t * ctx, struct oval_objec
 
                         snprintf (errmsg, sizeof errmsg, "%s probe not supported", pdsc->subtype_name);
                         oscap_seterr (OSCAP_EFAMILY_OVAL, OVAL_EPROBENOTSUPP, errmsg);
-                        
+
 			return (NULL);
 		} else
 			pd = oval_pdtbl_get(ctx->pd_table, oval_object_get_subtype(object));
@@ -562,10 +569,10 @@ struct oval_syschar *oval_probe_object_eval(oval_pctx_t * ctx, struct oval_objec
 	}
 
 	s_sysc = oval_probe_comm(ctx->pd_table->ctx, pd, s_obj, ctx->p_flags & OVAL_PCTX_FLAG_NOREPLY);
-        
+
 	if (s_sysc == NULL) {
                 SEXP_free(s_obj);
-                
+
                 if (ctx->p_flags & OVAL_PCTX_FLAG_NOREPLY) {
                         /*
                          * NULL is ok here because the no-reply flag is set and we don't expect
@@ -580,7 +587,7 @@ struct oval_syschar *oval_probe_object_eval(oval_pctx_t * ctx, struct oval_objec
                                 oscap_dprintf ("oval_probe_comm failed but didn't set an error!\n");
                                 oscap_seterr (OSCAP_EFAMILY_OVAL, OVAL_EPROBENODATA, "No data received");
                         }
-                        
+
                         return (NULL);
                 }
 	} else {
@@ -590,10 +597,10 @@ struct oval_syschar *oval_probe_object_eval(oval_pctx_t * ctx, struct oval_objec
                          * data. This considered as a non-fatal error.
                          */
                         oscap_dprintf ("obtrusive data from probe!\n");
-			
+
                         SEXP_free(s_sysc);
 			SEXP_free(s_obj);
-                        
+
 			return (NULL);
 		}
 	}
@@ -711,7 +718,7 @@ struct oval_sysinfo *oval_probe_sysinf_eval(oval_pctx_t * ctx)
 	struct oval_sysint *ife;
 	oval_pd_t *pd;
 	SEXP_t *s_obj, *s_sinf, *ent, *r0, *r1;
-	
+
 	assume_d (ctx != NULL, NULL);
 	assume_d (ctx->model != NULL, NULL);
 
@@ -742,22 +749,22 @@ struct oval_sysinfo *oval_probe_sysinf_eval(oval_pctx_t * ctx)
 	 */
         {
                 SEXP_t *r2, *r3;
-                
+
                 r0 = SEXP_list_new (r1 = SEXP_string_newf ("%s", "sysinfo_object"),
                                     r2 = SEXP_string_newf (":%s", "id"),
                                     r3 = SEXP_string_newf ("sysinfo:0"),
                                     NULL);
-                
+
                 SEXP_vfree (r1, r2, r3, NULL);
                 s_obj = SEXP_list_new (r0, NULL);
                 SEXP_free (r0);
         }
-        
+
         debug(3) {
                 if (ctx->p_flags & OVAL_PCTX_FLAG_NOREPLY)
                         _D("WARN: NOREPLY flag set\n");
         }
-        
+
         r0 = oval_probe_comm(ctx->pd_table->ctx, pd, s_obj, ctx->p_flags & OVAL_PCTX_FLAG_NOREPLY);
         SEXP_free(s_obj);
 

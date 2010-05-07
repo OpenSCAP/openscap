@@ -110,8 +110,7 @@ typedef uint8_t SEAP_cflags_t;
 #define SEAP_CFLG_WATCH  0x02
 
 /* Backends */
-#include "seap-command-backendL.h"
-#include "seap-command-backendS.h"
+#include "seap-command-backendT.h"
 
 typedef struct {
         SEAP_CTX_t *ctx;

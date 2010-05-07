@@ -22,156 +22,95 @@
 
 #include <seap.h>
 #include <string.h>
-#include <assert.h>
+#include <assume.h>
 #include <alloc.h>
+#include "SEAP/generic/rbt/rbt.h"
 #include "probe-cache.h"
-
-#ifndef _A
-#define _A(x) assert (x)
-#endif
-
-#define PCACHE_RLOCK(c,r)                                       \
-        do {                                                    \
-                if (pthread_rwlock_rdlock (&(c)->lock) != 0)    \
-                        return (r);                             \
-        } while (0)
-
-#define PCACHE_RUNLOCK(c)                                       \
-        do {                                                    \
-                if (pthread_rwlock_unlock (&(c)->lock) != 0)    \
-                        abort ();                               \
-        } while (0)
-
-#define PCACHE_WLOCK(c,r)                                       \
-        do {                                                    \
-                if (pthread_rwlock_wrlock (&(c)->lock) != 0)    \
-                        return (r);                             \
-        } while (0)
-
-#define PCACHE_WUNLOCK(c) PCACHE_RUNLOCK(c)
-
-RBNODECMP(pcache)
-{
-	return (SEXP_string_cmp(a->id, b->id));
-}
-
-RBNODEJOIN(pcache)
-{
-	(void)b;
-	return (a);
-}
-
-RBTREECODE(pcache);
 
 pcache_t *pcache_new(void)
 {
 	pcache_t *cache;
 
 	cache = oscap_talloc(pcache_t);
-	cache->tree.root = NULL;
-	cache->tree.size = 0;
+	cache->tree = rbt_str_new();
 
-        if (pthread_rwlock_init (&cache->lock, NULL) != 0) {
-                oscap_free (cache);
-                return (NULL);
-        }
-        
 	return (cache);
 }
 
-void pcache_free(pcache_t * cache)
+int pcache_free_node(struct rbt_str_node *n)
 {
-	_A(cache != NULL);
-	/* FIXME: free tree */
-        pthread_rwlock_destroy (&cache->lock);
+        oscap_free(n->key);
+        SEXP_free(n->data);
+        return(0);
+}
+
+void pcache_free(pcache_t *cache)
+{
+        rbt_str_free_cb(cache->tree, &pcache_free_node);
 	oscap_free(cache);
 	return;
 }
 
 int pcache_sexp_add(pcache_t *cache, const SEXP_t *id, SEXP_t *item)
 {
-        int ret;
-        NODETYPE(pcache) *new;
+        SEXP_t *r;
+        char   *k;
 
-	_A(cache != NULL);
-	_A(id != NULL);
-	_A(item != NULL);
+	assume_d(cache != NULL, -1);
+	assume_d(id    != NULL, -1);
+	assume_d(item  != NULL, -1);
 
-        PCACHE_WLOCK(cache, -1);
-        
-	new = RB_NEWNODE(pcache) ();
-	new->id = SEXP_ref(id);
-	new->item = SEXP_ref(item);
-        
-	if (RB_INSERT(pcache) (&(cache->tree), new) == E_OK) {
-		ret = 0;
-	} else {
-		_D("Can't add item to cache: item=%p, id=%p.\n", item, id);
-		oscap_free(new);
-		ret = -1;
-	}
-        
-        PCACHE_WUNLOCK(cache);
-	return (ret);
+        k = SEXP_string_cstr(id);
+        r = SEXP_ref(item);
+
+        if (rbt_str_add(cache->tree, k, (void *)r) != 0) {
+                SEXP_free(r);
+                oscap_free(k);
+                return (-1);
+        }
+
+	return (0);
 }
 
-int pcache_cstr_add(pcache_t * cache, const char *id, SEXP_t * item)
+int pcache_cstr_add(pcache_t *cache, const char *id, SEXP_t * item)
 {
-	_A(cache != NULL);
-	_A(id != NULL);
-	_A(item != NULL);
-
 	return (-1);
 }
 
-int pcache_sexp_del(pcache_t * cache, const SEXP_t * id)
+int pcache_sexp_del(pcache_t *cache, const SEXP_t * id)
 {
-	_A(cache != NULL);
-	_A(id != NULL);
-
 	return (-1);
 }
 
-int pcache_cstr_del(pcache_t * cache, const char *id)
+int pcache_cstr_del(pcache_t *cache, const char *id)
 {
-	_A(cache != NULL);
-	_A(id != NULL);
-
 	return (-1);
 }
 
-SEXP_t *pcache_sexp_get(pcache_t * cache, const SEXP_t * id)
+SEXP_t *pcache_sexp_get(pcache_t *cache, const SEXP_t * id)
 {
-        SEXP_t *ret;
-	NODETYPE(pcache) key, *node;
+        char    b[128], *k = b;
+        SEXP_t *r = NULL;
 
-	_A(cache != NULL);
-	_A(id != NULL);
+        if (SEXP_string_cstr_r(id, k, sizeof b) < 0)
+                k = SEXP_string_cstr(id);
 
-	key.id = (SEXP_t *) id;
+        if (k == NULL)
+                return(NULL);
 
-        PCACHE_RLOCK(cache, NULL);
-	node = RB_SEARCH(pcache) (&(cache->tree), &key);
-        ret  = node == NULL ? NULL : SEXP_ref (node->item);
-        PCACHE_RUNLOCK(cache);
-        
-        return (ret);
+        rbt_str_get(cache->tree, k, (void *)&r);
+
+        if (k != b)
+                oscap_free(k);
+
+        return (r != NULL ? SEXP_ref(r) : NULL);
 }
 
-SEXP_t *pcache_cstr_get(pcache_t * cache, const char *id)
+SEXP_t *pcache_cstr_get(pcache_t *cache, const char *k)
 {
-        SEXP_t *ret;
-	NODETYPE(pcache) key, *node;
+        SEXP_t *r = NULL;
 
-	_A(cache != NULL);
-	_A(id != NULL);
+        rbt_str_get(cache->tree, k, (void *)&r);
 
-        PCACHE_RLOCK(cache, NULL);
-        key.id = SEXP_string_new(id, strlen(id));
-	node = RB_SEARCH(pcache) (&(cache->tree), &key);
-        ret  = node == NULL ? NULL : SEXP_ref (node->item);
-        PCACHE_RUNLOCK(cache);
-        SEXP_free(key.id);
-        
-        return (ret);
+        return (r != NULL ? SEXP_ref(r) : NULL);
 }

@@ -29,6 +29,7 @@
 #include <stdint.h>
 #include "generic/bitmap.h"
 #include "generic/pqueue.h"
+#include "generic/rbt/rbt.h"
 #include "_sexp-types.h"
 #include "_sexp-parser.h"
 #include "_sexp-output.h"
@@ -51,19 +52,16 @@ typedef struct {
         SEXP_pstate_t *pstate; /* Parser state */
         SEAP_scheme_t  scheme; /* Protocol/Scheme used for this descriptor */
         void          *scheme_data; /* Protocol/Scheme related data */
-        
-        
+
         SEXP_t *msg_queue;
         SEXP_t *err_queue;
         SEXP_t *cmd_queue;
-        
+
         pqueue_t *pck_queue;
-        
-        //SEAP_packet_t *pck_queue;
 
         pthread_mutex_t w_lock;
         pthread_mutex_t r_lock;
-        
+
         SEAP_cmdid_t   next_cid;
         SEAP_cmdtbl_t *cmd_c_table; /* Local SEAP commands */
         SEAP_cmdtbl_t *cmd_w_table; /* Waiting SEAP commands */
@@ -74,12 +72,11 @@ typedef struct {
 #define SEAP_DESC_SELF  -1
 
 typedef struct {
-        SEAP_desc_t *sd;
-        uint16_t     sdsize;
-        bitmap_t     bitmap;
+        rbt_t       *tree;
+        bitmap_t    *bmap;
 } SEAP_desctable_t;
 
-#define SEAP_DESCTBL_INITIALIZER { NULL, 0, BITMAP_INITIALIZER }
+#define SEAP_DESCTBL_INITIALIZER { NULL, NULL }
 
 #define SEAP_BUFFER_SIZE 2*4096
 #define SEAP_MAX_OPENDESC 128
@@ -88,6 +85,10 @@ typedef struct {
 int          SEAP_desc_add (SEAP_desctable_t *sd_table, SEXP_pstate_t *pstate, SEAP_scheme_t scheme, void *scheme_data);
 int          SEAP_desc_del (SEAP_desctable_t *sd_table, int sd);
 SEAP_desc_t *SEAP_desc_get (SEAP_desctable_t *sd_table, int sd);
+
+SEAP_desctable_t *SEAP_desctable_new (void);
+void SEAP_desctable_free(SEAP_desctable_t *sd_table);
+void SEAP_desc_free(SEAP_desc_t *dsc);
 
 static inline int SEAP_desc_trylock (pthread_mutex_t *m)
 {

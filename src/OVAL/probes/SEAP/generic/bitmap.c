@@ -130,22 +130,22 @@ int bitmap_unset (bitmap_t *bitmap, bitmap_bitn_t bitn)
 
         _A(bitmap != NULL);
         _A((size_t)bitn < (size_t)bitmap->size * BITMAP_CELLSIZE);
-        
+
         i = bitn/BITMAP_CELLSIZE + 1;
-        
+
         if (i <= bitmap->realsize) {
                 bitmap->cells[i - 1] &= ~(1 << (bitn % BITMAP_CELLSIZE));
                 --bitmap->count;
-                
+
                 if (bitmap->realsize - i == 0) {
                         while (bitmap->cells[bitmap->realsize - 1] == 0)
                                 --bitmap->realsize;
-                        
+
                         bitmap->cells = sm_realloc (bitmap->cells,
                                                     sizeof (uint32_t) * bitmap->realsize);
                 }
         }
-        
+
         return (0);
 }
 
@@ -191,39 +191,6 @@ bitmap_bitn_t bitmap_setfree (bitmap_t *bitmap)
                 return (-1);
 }
 
-#if 0
-static bitmap_bitn_t bitmap_setrand (bitmap_t *bitmap)
-{
-        bitmap_bitn_t n;
-        
-#define CELLI(num) (num/BITMAP_CELLSIZE)
-
-        
-        if ((size_t)bitmap->count < (bitmap->size*BITMAP_CELLSIZE)/2) {
-                while (CELLI(n) < bitmap->realsize) {
-                        n = xrandom () % (bitmap->size * BITMAP_CELLSIZE);
-                        
-                }
-        } else {
-                n = xrandom () % (bitmap->size * BITMAP_CELLSIZE);
-                
-                if (bitmap_set (bitmap, n) == 0) {
-                        return (n);
-                } else {
-                        if (xrandom () % 2) {
-                                
-                        } else {
-                                
-                        }
-                }
-        }
-        
-#undef CELLI
-        /* NOTREACHED */
-        return (-1);
-}
-#endif /* 0 */
-
 bitmap_bitn_t bitmap_getfree (bitmap_t *bitmap)
 {
         _A(bitmap != NULL);
@@ -237,8 +204,7 @@ void bitmap_free (bitmap_t *bitmap)
 
         if (bitmap->realsize > 0)
                 sm_free (bitmap->cells);
-
-        /* FIXME: xfree ((void **)&(bitmap)); */
+        sm_free(bitmap);
 }
 
 #if defined(BITMAP_TEST)

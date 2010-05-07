@@ -28,37 +28,14 @@
 #include <stdbool.h>
 #include <pthread.h>
 #include <sexp-types.h>
-#include <SEAP/generic/redblack.h>
 #include <../../common/util.h>
+#include "SEAP/generic/rbt/rbt.h"
 
 OSCAP_HIDDEN_START;
 
-DEFRBTREE(pcache, SEXP_t * id;
-	  SEXP_t * item);
-
 typedef struct {
-	TREETYPE(pcache) tree;
-	pthread_rwlock_t lock;
+        rbt_t *tree;
 } pcache_t;
-
-static inline int pcache_rlock(pcache_t * c)
-{
-	return (pthread_rwlock_rdlock(&c->lock) == 0 ? 0 : -1);
-}
-
-static inline int pcache_wlock(pcache_t * c)
-{
-	return (pthread_rwlock_wrlock(&c->lock) == 0 ? 0 : -1);
-}
-
-static inline int pcache_wunlock(pcache_t * c)
-{
-	return (pthread_rwlock_unlock(&c->lock) == 0 ? 0 : -1);
-}
-
-#define pcache_runlock(c) pcache_wunlock(c)
-#define with_pcache_rlocked(c) for (bool __rlk__ = (pcache_rlock (c) == 0 ? true : false); __rlk__; __rlk__ = (pcache_runlock (c) == 0 ? false : abort(), false))
-#define with_pcache_wlocked(c) for (bool __wlk__ = (pcache_wlock (c) == 0 ? true : false); __wlk__; __wlk__ = (pcache_wunlock (c) == 0 ? false : abort(), false))
 
 pcache_t *pcache_new(void);
 void pcache_free(pcache_t * cache);

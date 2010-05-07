@@ -54,7 +54,7 @@ rbt_t *rbt_i32_new (void)
 
 void rbt_i32_free (rbt_t *rbt)
 {
-        rbt_free (rbt);
+        rbt_free (rbt, NULL);
 }
 
 int rbt_i32_free_cb (rbt_t *rbt, int (*callback)(rbt_i32_node_t *))
@@ -189,7 +189,7 @@ void *rbt_i32_rep(rbt_t *rbt, int32_t key, void *data)
         return (NULL);
 }
 
-int rbt_i32_del(rbt_t *rbt, int32_t key)
+int rbt_i32_del(rbt_t *rbt, int32_t key, void **n)
 {
         struct rbt_node fake, *save;
         struct rbt_node *h[4];
@@ -313,6 +313,8 @@ int rbt_i32_del(rbt_t *rbt, int32_t key)
                  * red in case the node is not the root node.
                  */
                 assume_d(rbt_node_ptr(fake._chld[RBT_NODE_SR]) == h[0] || rbt_node_getcolor(h[0]) == RBT_NODE_CR, -1);
+                if (*n != NULL)
+                        *n = rbt_i32_node_data(save);
 
                 rbt_i32_node_data(save) = rbt_i32_node_data(h[0]);
                 rbt_i32_node_key(save)  = rbt_i32_node_key(h[0]);

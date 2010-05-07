@@ -53,19 +53,24 @@ rbt_t *rbt_str_new (void)
         return rbt_new (RBT_STRKEY);
 }
 
-void rbt_str_free (rbt_t *rbt)
+static void rbt_str_free_callback(struct rbt_str_node *n)
 {
-        rbt_free (rbt);
+        sm_free(n->key);
 }
 
-int rbt_str_free_cb (rbt_t *rbt, int (*callback)(rbt_str_node_t *))
+void rbt_str_free (rbt_t *rbt)
+{
+        rbt_free (rbt, (void(*)(void *))&rbt_str_free_callback);
+}
+
+int rbt_str_free_cb (rbt_t *rbt, int (*callback)(struct rbt_str_node *))
 {
         int ret;
 
-        if ((ret = rbt_str_walk_preorder (rbt, callback)) != 0)
+        if ((ret = rbt_str_walk_inorder (rbt, callback)) != 0)
                 return (ret);
 
-        rbt_str_free (rbt);
+        sm_free (rbt);
         return (0);
 }
 
@@ -379,31 +384,30 @@ int rbt_str_get(rbt_t *rbt, const char *key, void **data)
         return (r);
 }
 
-int rbt_str_walk_preorder(rbt_t *rbt, int (*callback)(rbt_str_node_t *))
+int rbt_str_walk_preorder(rbt_t *rbt, int (*callback)(struct rbt_str_node *))
 {
         errno = ENOSYS;
         return (-1);
 }
 
-int rbt_str_walk_inorder(rbt_t *rbt, int (*callback)(rbt_str_node_t *))
+int rbt_str_walk_inorder(rbt_t *rbt, int (*callback)(struct rbt_str_node *))
+{
+        return rbt_walk_inorder(rbt, (int(*)(void *))callback);
+}
+
+int rbt_str_walk_postorder(rbt_t *rbt, int (*callback)(struct rbt_str_node *))
 {
         errno = ENOSYS;
         return (-1);
 }
 
-int rbt_str_walk_postorder(rbt_t *rbt, int (*callback)(rbt_str_node_t *))
+int rbt_str_walk_levelorder(rbt_t *rbt, int (*callback)(struct rbt_str_node *))
 {
         errno = ENOSYS;
         return (-1);
 }
 
-int rbt_str_walk_levelorder(rbt_t *rbt, int (*callback)(rbt_str_node_t *))
-{
-        errno = ENOSYS;
-        return (-1);
-}
-
-int rbt_str_walk(rbt_t *rbt, rbt_walk_t type, int (*callback)(rbt_str_node_t *))
+int rbt_str_walk(rbt_t *rbt, rbt_walk_t type, int (*callback)(struct rbt_str_node *))
 {
         assume_d (rbt      != NULL, -1, errno = EINVAL;);
         assume_d (callback != NULL, -1, errno = EINVAL;);
