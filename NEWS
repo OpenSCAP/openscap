@@ -1,3 +1,12 @@
+openscap-0.5.10							07-05-2010
+- fixing many many leaks
+- variables support in: findfiles and process, password probes
+- new probes: textfilecontent
+- semantic validation available for: syschar model, result model
+- library selftests: two new tests, skiping missing probes
+- documentation: better coverege of  "common" part
+- xccdf_policy: new variables support
+
 openscap-0.5.9							16-04-2010
 - built on windows (without probe support)
 - better support on RHEL5
