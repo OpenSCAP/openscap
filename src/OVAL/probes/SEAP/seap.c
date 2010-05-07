@@ -550,13 +550,10 @@ int SEAP_close (SEAP_CTX_t *ctx, int sd)
                 return (-1);
         }
 
-        fprintf(stderr, "closing sd=%d\n", sd);
-
         dsc = SEAP_desc_get (ctx->sd_table, sd);
         ret = SCH_CLOSE(dsc->scheme, dsc, 0); /* TODO: Are flags usable here? */
 
         protect_errno {
-                fprintf(stderr, "close\n");
                 if (SEAP_desc_del (ctx->sd_table, sd) != 0) {
                         /* something very bad happened */
                         _D("SEAP_desc_del failed\n");

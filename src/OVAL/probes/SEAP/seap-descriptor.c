@@ -79,8 +79,6 @@ int SEAP_desc_add (SEAP_desctable_t *sd_table, SEXP_pstate_t *pstate,
 
                 pthread_mutexattr_destroy (&mutex_attr);
 
-                fprintf(stderr, "adding sd=%d\n", sd);
-
                 if (rbt_i32_add(sd_table->tree, (int32_t)sd, (void *)sd_dsc) != 0) {
                         SEAP_desc_free(sd_dsc);
                         return (-1);
@@ -104,12 +102,8 @@ int SEAP_desc_del (SEAP_desctable_t *sd_table, int sd)
         if (sd_table->tree == NULL)
                 return (-1);
 
-        fprintf(stderr, "deleting sd=%d\n", sd);
-
         if (rbt_i32_del(sd_table->tree, sd, (void **)&dsc) != 0)
                 return (-1);
-
-        fprintf(stderr, "dsc=%p\n", dsc);
 
         bitmap_unset(sd_table->bmap, sd);
 
