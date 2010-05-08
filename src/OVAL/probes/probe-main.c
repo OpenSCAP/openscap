@@ -24,6 +24,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <pthread.h>
+#include <signal.h>
 #include <errno.h>
 #include <config.h>
 #include <alloc.h>
@@ -35,11 +36,15 @@
 #define _A(x) assert(x)
 #endif
 
-SEAP_CTX_t *OSCAP_GSYM(ctx)       = NULL;
-int         OSCAP_GSYM(sd)        = -1;
-pcache_t   *OSCAP_GSYM(pcache)    = NULL;
-void       *OSCAP_GSYM(probe_arg) = NULL;
-encache_t  *OSCAP_GSYM(encache)   = NULL;
+#define PROBE_SIGEXIT_CLEAN   1
+#define PROBE_SIGEXIT_UNCLEAN 2
+
+volatile int OSCAP_GSYM(sigexit)   = 0;
+SEAP_CTX_t  *OSCAP_GSYM(ctx)       = NULL;
+int          OSCAP_GSYM(sd)        = -1;
+pcache_t    *OSCAP_GSYM(pcache)    = NULL;
+void        *OSCAP_GSYM(probe_arg) = NULL;
+encache_t   *OSCAP_GSYM(encache)   = NULL;
 
 struct id_desc_t OSCAP_GSYM(id_desc);
 
@@ -528,6 +533,31 @@ static SEXP_t *probe_set_eval(SEXP_t * set, size_t depth)
 	return (NULL);
 }
 
+static void probe_cleanup(void)
+{
+	probe_fini(OSCAP_GSYM(probe_arg));
+	pcache_free(OSCAP_GSYM(pcache));
+        encache_free(OSCAP_GSYM(encache));
+	SEAP_close(OSCAP_GSYM(ctx), OSCAP_GSYM(sd));
+	SEAP_CTX_free(OSCAP_GSYM(ctx));
+}
+
+static void probe_sigexit(int signum)
+{
+        switch(signum) {
+        case SIGTERM:
+        case SIGINT:
+        case SIGPIPE:
+        case SIGQUIT:
+                OSCAP_GSYM(sigexit) = PROBE_SIGEXIT_CLEAN;
+                break;
+        case SIGSEGV:
+        case SIGABRT:
+                OSCAP_GSYM(sigexit) = PROBE_SIGEXIT_UNCLEAN;
+                break;
+        }
+}
+
 int main(void)
 {
 	int ret = EXIT_SUCCESS;
@@ -540,6 +570,32 @@ int main(void)
 
 	pthread_attr_t thread_attr;
 	pthread_t thread;
+
+        struct sigaction sigact;
+        sigset_t         sigset;
+
+        /* Setup signal handler */
+        sigemptyset(&sigact.sa_mask);
+        sigaddset(&sigact.sa_mask, SIGTERM);
+        sigaddset(&sigact.sa_mask, SIGINT);
+        sigaddset(&sigact.sa_mask, SIGPIPE);
+        sigaddset(&sigact.sa_mask, SIGQUIT);
+        sigaddset(&sigact.sa_mask, SIGSEGV);
+        sigaddset(&sigact.sa_mask, SIGABRT);
+
+        sigact.sa_handler = &probe_sigexit;
+        sigact.sa_flags   = 0;
+
+        if (sigaction(SIGTERM, &sigact, NULL) != 0 ||
+            sigaction(SIGINT,  &sigact, NULL) != 0 ||
+            sigaction(SIGPIPE, &sigact, NULL) != 0 ||
+            sigaction(SIGQUIT, &sigact, NULL) != 0 ||
+            sigaction(SIGSEGV, &sigact, NULL) != 0 ||
+            sigaction(SIGABRT, &sigact, NULL) != 0)
+        {
+                _D("Can't setup signal handlers: errno=%u, %s.\n", errno, strerror(errno));
+                exit(errno);
+        }
 
 	/* Initialize SEAP */
 	OSCAP_GSYM(ctx) = SEAP_CTX_new();
@@ -568,28 +624,33 @@ int main(void)
         }
 
 	OSCAP_GSYM(probe_arg) = probe_init();
-        
+
         /* Create the element name cache */
         OSCAP_GSYM(encache) = encache_new ();
 
 	/* Reset the item id generator */
 	probe_item_resetidctr(&(OSCAP_GSYM(id_desc)));
 
+        /* Register cleanup function */
+        atexit(&probe_cleanup);
+
 	/* Main loop */
-	for (;;) {
+	while(OSCAP_GSYM(sigexit) == 0) {
 		if (SEAP_recvmsg(OSCAP_GSYM(ctx), OSCAP_GSYM(sd), &seap_request) == -1) {
 			ret = errno;
-
 			_D("An error ocured while receiving SEAP message. errno=%u, %s.\n", errno, strerror(errno));
+                        switch(OSCAP_GSYM(sigexit)) {
+                        case PROBE_SIGEXIT_CLEAN:
+                                ret = 0;
+                                break;
+                        case PROBE_SIGEXIT_UNCLEAN:
+                                /* Try to save cached data & restart? */
+                                _exit(ret);
+                        }
 
 			break;
 		}
 
-/*
-#ifndef NDEBUG
-                SEAP_msg_print (stderr, seap_request);
-#endif  
-*/
 		probe_in = SEAP_msg_get(seap_request);
 		if (probe_in == NULL) {
 			_D("Unexpected error: probe_in = NULL\n");
@@ -648,8 +709,19 @@ int main(void)
 				_D("An error ocured while sending SEAP message. errno=%u, %s.\n",
 				   errno, strerror(errno));
 
-				SEAP_msg_free(seap_reply);
-				SEAP_msg_free(seap_request);
+                                switch(OSCAP_GSYM(sigexit)) {
+                                case PROBE_SIGEXIT_CLEAN:
+                                        SEAP_msg_free(seap_reply);
+                                        SEAP_msg_free(seap_request);
+                                        ret = 0;
+                                        break;
+                                case PROBE_SIGEXIT_UNCLEAN:
+                                        /* Try to save cache & restart? */
+                                        _exit(ret);
+                                default:
+                                        SEAP_msg_free(seap_reply);
+                                        SEAP_msg_free(seap_request);
+                                }
 
 				break;
 			}
@@ -659,11 +731,6 @@ int main(void)
 
 		SEAP_msg_free(seap_request);
 	}
-
-	probe_fini(OSCAP_GSYM(probe_arg));
-	pcache_free(OSCAP_GSYM(pcache));
-	SEAP_close(OSCAP_GSYM(ctx), OSCAP_GSYM(sd));
-	SEAP_CTX_free(OSCAP_GSYM(ctx));
 
 	return (ret);
 }

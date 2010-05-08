@@ -53,22 +53,31 @@ int sch_generic_connect (SEAP_desc_t *desc, const char *uri, uint32_t flags)
 
 int sch_generic_openfd (SEAP_desc_t *desc, int fd, uint32_t flags)
 {
-        desc->scheme_data = sm_talloc (sch_genericdata_t); 
+        sch_genericdata_t *data;
+
+        data = sm_talloc (sch_genericdata_t);
+        data->ifd = -1;
+        data->ofd = -1;
 
         if (flags & SEAP_DESC_FDIN)
-                DATA(desc->scheme_data)->ifd = fd;
+                data->ifd = fd;
         if (flags & SEAP_DESC_FDOUT)
-                DATA(desc->scheme_data)->ofd = fd;
-        
+                data->ofd = fd;
+
+        desc->scheme_data = data;
+
         return (0);
 }
 
 int sch_generic_openfd2 (SEAP_desc_t *desc, int ifd, int ofd, uint32_t flags)
 {
-        desc->scheme_data = sm_talloc (sch_genericdata_t);
-        
-        DATA(desc->scheme_data)->ifd = ifd;
-        DATA(desc->scheme_data)->ofd = ofd;
+        sch_genericdata_t *data;
+
+        data = sm_talloc (sch_genericdata_t);
+        data->ifd = ifd;
+        data->ofd = ofd;
+        desc->scheme_data = data;
+
         return (0);
 }
 
@@ -104,6 +113,16 @@ ssize_t sch_generic_sendsexp (SEAP_desc_t *desc, SEXP_t *sexp, uint32_t flags)
 
 int sch_generic_close (SEAP_desc_t *desc, uint32_t flags)
 {
+        sch_genericdata_t *data;
+
+        data = (sch_genericdata_t *)desc->scheme_data;
+
+        if (data->ifd != -1)
+                close(data->ifd);
+        if (data->ofd != -1)
+                close(data->ofd);
+        sm_free(data);
+
         return (0);
 }
 
