@@ -990,6 +990,7 @@ void *probe_worker(void *arg)
 		}
 
 		SEAP_msg_free(seap_reply);
+                SEXP_free(probe_out);
 	}
 
 	SEAP_msg_free(seap_request);

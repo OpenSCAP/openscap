@@ -66,6 +66,9 @@ oval_result_t probe_ent_cmp_binary(SEXP_t * val1, SEXP_t * val2, oval_operation_
 		_D("Unexpected compare operation: %d\n", op);
 	}
 
+        oscap_free(s1);
+        oscap_free(s2);
+
 	return result;
 }
 
@@ -246,7 +249,7 @@ static SEXP_t *version_parser(char *version)
 	size_t len, nbr_len;
 	char *s, *v_dup = NULL;
 	const char *ac = "0123456789";
-	SEXP_t *version_tokens = NULL;
+	SEXP_t *version_tokens = NULL, *r0;
 
 	len = strlen(version);
 	if (len == 0)
@@ -267,9 +270,10 @@ static SEXP_t *version_parser(char *version)
 			goto fail;
 		s[nbr_len] = '\0';
 		token = atoll(s);
-		SEXP_list_add(version_tokens, SEXP_number_newi_64(token));
+		SEXP_list_add(version_tokens, r0 = SEXP_number_newi_64(token));
 		s += nbr_len + 1;
 		len -= nbr_len + 1;
+                SEXP_free(r0);
 	}
 	if (len == 0)
 		/* trailing delimiter */
@@ -291,7 +295,7 @@ static SEXP_t *version_parser(char *version)
 oval_result_t probe_ent_cmp_version(SEXP_t * val1, SEXP_t * val2, oval_operation_t op)
 {
 	oval_result_t result = OVAL_RESULT_ERROR;
-	SEXP_t *v1_tkns = NULL, *v2_tkns = NULL, *stmp;
+	SEXP_t *v1_tkns = NULL, *v2_tkns = NULL, *stmp, *r0;
 	char *vtmp;
 	size_t len, i;
 	int lendif;
@@ -334,13 +338,16 @@ oval_result_t probe_ent_cmp_version(SEXP_t * val1, SEXP_t * val2, oval_operation
 		stmp = v2_tkns;
 	}
 	for (; lendif > 0; --lendif) {
-		SEXP_list_add(stmp, SEXP_number_newi_64(0));
+		SEXP_list_add(stmp, r0 = SEXP_number_newi_64(0));
+                SEXP_free(r0);
 	}
 
 	len = SEXP_list_length(v1_tkns);
 	for (i = 1; i <= len; ++i) {
-		v1 = SEXP_number_geti_64(SEXP_list_nth(v1_tkns, i));
-		v2 = SEXP_number_geti_64(SEXP_list_nth(v2_tkns, i));
+		v1 = SEXP_number_geti_64(r0 = SEXP_list_nth(v1_tkns, i));
+                SEXP_free(r0);
+		v2 = SEXP_number_geti_64(r0 = SEXP_list_nth(v2_tkns, i));
+                SEXP_free(r0);
 
 		if (op == OVAL_OPERATION_EQUALS) {
 			if (v1 != v2) {
@@ -453,6 +460,9 @@ oval_result_t probe_ent_cmp_string(SEXP_t * val1, SEXP_t * val2, oval_operation_
 		_D("Unexpected compare operation: %d\n", op);
 	}
 
+        oscap_free(s1);
+        oscap_free(s2);
+
 	return result;
 }
 
@@ -460,13 +470,14 @@ static oval_result_t probe_ent_cmp(SEXP_t * ent, SEXP_t * val2)
 {
 	oval_operation_t op;
 	oval_datatype_t dtype;
-	SEXP_t *stmp, *val1, *vals, *res_lst;
+	SEXP_t *stmp, *val1, *vals, *res_lst, *r0;
 	int val_cnt, is_var;
 	oval_check_t ochk;
 	oval_result_t ores, result;
 
 	ores = OVAL_RESULT_ERROR;
 	result = OVAL_RESULT_ERROR;
+        vals = NULL;
 	val_cnt = probe_ent_getvals(ent, &vals);
 
 	if (probe_ent_attrexists(ent, "var_ref")) {
@@ -485,6 +496,7 @@ static oval_result_t probe_ent_cmp(SEXP_t * ent, SEXP_t * val2)
 	else
 		op = SEXP_number_geti_32(stmp);
 
+        SEXP_free(stmp);
 	res_lst = SEXP_list_new(NULL);
 
 	SEXP_list_foreach(val1, vals) {
@@ -529,7 +541,8 @@ static oval_result_t probe_ent_cmp(SEXP_t * ent, SEXP_t * val2)
 			_D("Unexpected data type: %d\n", dtype);
 		}
 
-		SEXP_list_add(res_lst, SEXP_number_newi_32(ores));
+		SEXP_list_add(res_lst, r0 = SEXP_number_newi_32(ores));
+                SEXP_free(r0);
 	}
 
 	if (is_var) {
@@ -546,6 +559,7 @@ static oval_result_t probe_ent_cmp(SEXP_t * ent, SEXP_t * val2)
 	}
 
 	SEXP_free(res_lst);
+        SEXP_free(vals);
 
 	return result;
 }
@@ -572,8 +586,9 @@ oval_result_t probe_entste_cmp(SEXP_t * ent_ste, SEXP_t * ent_itm)
 	}
 
 	val2 = probe_ent_getval(ent_itm);
-
 	ores = probe_ent_cmp(ent_ste, val2);
+        SEXP_free(val2);
+
 	if (ores == OVAL_RESULT_NOT_EVALUATED)
 		return OVAL_RESULT_ERROR;
 	return ores;
