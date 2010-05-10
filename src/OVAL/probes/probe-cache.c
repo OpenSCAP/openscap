@@ -37,11 +37,10 @@ pcache_t *pcache_new(void)
 	return (cache);
 }
 
-int pcache_free_node(struct rbt_str_node *n)
+void pcache_free_node(struct rbt_str_node *n)
 {
         oscap_free(n->key);
         SEXP_free(n->data);
-        return(0);
 }
 
 void pcache_free(pcache_t *cache)

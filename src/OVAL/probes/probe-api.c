@@ -324,7 +324,7 @@ SEXP_t *probe_obj_creat(const char *name, SEXP_t * attrs, ...)
 
                 ns  = encache_ref (OSCAP_GSYM(encache), name);
 		ent = SEXP_list_new(NULL);
-                
+
 		if (attrs != NULL) {
 			SEXP_t *nl, *nj;
 

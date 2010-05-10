@@ -535,6 +535,7 @@ static SEXP_t *probe_set_eval(SEXP_t * set, size_t depth)
 
 static void probe_cleanup(void)
 {
+        fprintf(stderr, "Cleanup time!\n");
 	probe_fini(OSCAP_GSYM(probe_arg));
 	pcache_free(OSCAP_GSYM(pcache));
         encache_free(OSCAP_GSYM(encache));

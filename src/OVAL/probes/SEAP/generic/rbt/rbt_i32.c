@@ -54,18 +54,12 @@ rbt_t *rbt_i32_new (void)
 
 void rbt_i32_free (rbt_t *rbt)
 {
-        rbt_free (rbt, NULL);
+        rbt_free(rbt, NULL);
 }
 
-int rbt_i32_free_cb (rbt_t *rbt, int (*callback)(rbt_i32_node_t *))
+void rbt_i32_free_cb (rbt_t *rbt, void (*callback)(rbt_i32_node_t *))
 {
-        int ret;
-
-        if ((ret = rbt_i32_walk_inorder (rbt, callback)) != 0)
-                return (ret);
-
-        rbt_i32_free (rbt);
-        return (0);
+        rbt_free(rbt, callback);
 }
 
 int rbt_i32_add(rbt_t *rbt, int32_t key, void *data)
@@ -374,24 +368,24 @@ int rbt_i32_get(rbt_t *rbt, int32_t key, void **data)
         return (r);
 }
 
-int rbt_i32_walk_preorder(rbt_t *rbt, int (*callback)(rbt_i32_node_t *))
+int rbt_i32_walk_preorder(rbt_t *rbt, int (*callback)(rbt_i32_node_t *), rbt_walk_t flags)
 {
         errno = ENOSYS;
         return (-1);
 }
 
-int rbt_i32_walk_inorder(rbt_t *rbt, int (*callback)(rbt_i32_node_t *))
+int rbt_i32_walk_inorder(rbt_t *rbt, int (*callback)(rbt_i32_node_t *), rbt_walk_t flags)
 {
-        return rbt_walk_inorder(rbt, (int(*)(void *))callback);
+        return rbt_walk_inorder(rbt, (int(*)(void *))callback, flags);
 }
 
-int rbt_i32_walk_postorder(rbt_t *rbt, int (*callback)(rbt_i32_node_t *))
+int rbt_i32_walk_postorder(rbt_t *rbt, int (*callback)(rbt_i32_node_t *), rbt_walk_t flags)
 {
         errno = ENOSYS;
         return (-1);
 }
 
-int rbt_i32_walk_levelorder(rbt_t *rbt, int (*callback)(rbt_i32_node_t *))
+int rbt_i32_walk_levelorder(rbt_t *rbt, int (*callback)(rbt_i32_node_t *), rbt_walk_t flags)
 {
         errno = ENOSYS;
         return (-1);
@@ -402,11 +396,11 @@ int rbt_i32_walk(rbt_t *rbt, rbt_walk_t type, int (*callback)(rbt_i32_node_t *))
         assume_d (rbt      != NULL, -1, errno = EINVAL;);
         assume_d (callback != NULL, -1, errno = EINVAL;);
 
-        switch (type) {
-        case RBT_WALK_PREORDER:   return rbt_i32_walk_preorder(rbt, callback);
-        case RBT_WALK_INORDER:    return rbt_i32_walk_inorder(rbt, callback);
-        case RBT_WALK_POSTORDER:  return rbt_i32_walk_postorder(rbt, callback);
-        case RBT_WALK_LEVELORDER: return rbt_i32_walk_levelorder(rbt, callback);
+        switch (type & RBT_WALK_TYPEMASK) {
+        case RBT_WALK_PREORDER:   return rbt_i32_walk_preorder(rbt, callback, type);
+        case RBT_WALK_INORDER:    return rbt_i32_walk_inorder(rbt, callback, type);
+        case RBT_WALK_POSTORDER:  return rbt_i32_walk_postorder(rbt, callback, type);
+        case RBT_WALK_LEVELORDER: return rbt_i32_walk_levelorder(rbt, callback, type);
         }
 
         errno = EINVAL;

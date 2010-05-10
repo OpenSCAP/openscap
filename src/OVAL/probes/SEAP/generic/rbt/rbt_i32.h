@@ -36,17 +36,17 @@ typedef struct rbt_i32_node rbt_i32_node_t;
 
 rbt_t *rbt_i32_new (void);
 void rbt_i32_free (rbt_t *rbt);
-int rbt_i32_free_cb (rbt_t *rbt, int (*callback)(rbt_i32_node_t *));
+void rbt_i32_free_cb (rbt_t *rbt, void (*callback)(rbt_i32_node_t *));
 
 int rbt_i32_add(rbt_t *rbt, int32_t key, void *data);
 void *rbt_i32_rep(rbt_t *rbt, int32_t key, void *data);
 int rbt_i32_del(rbt_t *rbt, int32_t key, void **n);
 int rbt_i32_get(rbt_t *rbt, int32_t key, void **data);
 
-int rbt_i32_walk_preorder(rbt_t *rbt, int (*callback)(rbt_i32_node_t *));
-int rbt_i32_walk_inorder(rbt_t *rbt, int (*callback)(rbt_i32_node_t *));
-int rbt_i32_walk_postorder(rbt_t *rbt, int (*callback)(rbt_i32_node_t *));
-int rbt_i32_walk_levelorder(rbt_t *rbt, int (*callback)(rbt_i32_node_t *));
+int rbt_i32_walk_preorder(rbt_t *rbt, int (*callback)(rbt_i32_node_t *), rbt_walk_t flags);
+int rbt_i32_walk_inorder(rbt_t *rbt, int (*callback)(rbt_i32_node_t *), rbt_walk_t flags);
+int rbt_i32_walk_postorder(rbt_t *rbt, int (*callback)(rbt_i32_node_t *), rbt_walk_t flags);
+int rbt_i32_walk_levelorder(rbt_t *rbt, int (*callback)(rbt_i32_node_t *), rbt_walk_t flags);
 int rbt_i32_walk(rbt_t *rbt, rbt_walk_t type, int (*callback)(rbt_i32_node_t *));
 size_t rbt_i32_size(rbt_t *rbt);
 

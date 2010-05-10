@@ -16,11 +16,15 @@ typedef enum {
 } rbt_type_t;
 
 typedef enum {
-        RBT_WALK_PREORDER,
-        RBT_WALK_INORDER,
-        RBT_WALK_POSTORDER,
-        RBT_WALK_LEVELORDER
+        RBT_WALK_PREORDER   = 0x01,
+        RBT_WALK_INORDER    = 0x02,
+        RBT_WALK_POSTORDER  = 0x03,
+        RBT_WALK_LEVELORDER = 0x04,
+        RBT_WALK_RAWNODE    = 0x10
 } rbt_walk_t;
+
+#define RBT_WALK_TYPEMASK 0x0f
+#define RBT_WALK_FLAGMASK 0xf0
 
 /**
  * Generic node structure
@@ -145,8 +149,8 @@ size_t rbt_size(rbt_t *rbt);
 #define rbt_walk_pop()   stack[--depth]
 #define rbt_walk_top()   stack[depth-1]
 
-int rbt_walk_preorder(rbt_t *rbt, int (*callback)(void *));
-int rbt_walk_inorder(rbt_t *rbt, int (*callback)(void *));
-int rbt_walk_postorder(rbt_t *rbt, int (*callback)(void *));
+int rbt_walk_preorder(rbt_t *rbt, int (*callback)(void *), rbt_walk_t flags);
+int rbt_walk_inorder(rbt_t *rbt, int (*callback)(void *), rbt_walk_t flags);
+int rbt_walk_postorder(rbt_t *rbt, int (*callback)(void *), rbt_walk_t flags);
 
 #endif /* RBT_COMMON_H */

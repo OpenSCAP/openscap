@@ -86,10 +86,9 @@ SEAP_cmdrec_t *SEAP_cmdtbl_backendT_get (SEAP_cmdtbl_t *t, SEAP_cmdcode_t c)
         return (t->table == NULL ? NULL : Ttable_get ((Ttable_t *)t->table, c));
 }
 
-static int backendT_free_callback(struct rbt_i32_node *n)
+static void backendT_free_callback(struct rbt_i32_node *n)
 {
         SEAP_cmdrec_free(n->data);
-        return (0);
 }
 
 void SEAP_cmdtbl_backendT_free (SEAP_cmdtbl_t *t)

@@ -289,18 +289,23 @@ size_t rbt_size(rbt_t *rbt)
         return (size);
 }
 
-int rbt_walk_preorder(rbt_t *rbt, int (*callback)(void *))
+int rbt_walk_preorder(rbt_t *rbt, int (*callback)(void *), rbt_walk_t flags)
 {
         return(-1);
 }
 
-int rbt_walk_inorder(rbt_t *rbt, int (*callback)(void *))
+int rbt_walk_inorder(rbt_t *rbt, int (*callback)(void *), rbt_walk_t flags)
 {
         struct rbt_node *stack[48], *n;
-        register uint8_t depth;
+        register uint8_t depth, delta;
         register int     r;
 
         assume_d(rbt != NULL, -1);
+
+        if (flags & RBT_WALK_RAWNODE)
+                delta = 0;
+        else
+                delta = (uint8_t)(((struct rbt_node *)NULL)->_node);
 
         depth = 0;
         n = rbt_node_ptr(rbt->root);
@@ -317,7 +322,7 @@ int rbt_walk_inorder(rbt_t *rbt, int (*callback)(void *))
                         rbt_walk_push(n);
                 else {
                 __in:
-                        r = callback((void *)&(rbt_walk_top()->_node));
+                        r = callback((void *)((uintptr_t)(rbt_walk_top()) + delta));
 
                         if (r != 0)
                                 return (r);
@@ -338,7 +343,7 @@ int rbt_walk_inorder(rbt_t *rbt, int (*callback)(void *))
         return(0);
 }
 
-int rbt_walk_postorder(rbt_t *rbt, int (*callback)(void *))
+int rbt_walk_postorder(rbt_t *rbt, int (*callback)(void *), rbt_walk_t flags)
 {
         return(-1);
 }

@@ -56,22 +56,17 @@ rbt_t *rbt_str_new (void)
 static void rbt_str_free_callback(struct rbt_str_node *n)
 {
         sm_free(n->key);
+        /* node memory is freed by rbt_free */
 }
 
 void rbt_str_free (rbt_t *rbt)
 {
-        rbt_free (rbt, (void(*)(void *))&rbt_str_free_callback);
+        rbt_free(rbt, (void(*)(void *))&rbt_str_free_callback);
 }
 
-int rbt_str_free_cb (rbt_t *rbt, int (*callback)(struct rbt_str_node *))
+void rbt_str_free_cb (rbt_t *rbt, void (*callback)(struct rbt_str_node *))
 {
-        int ret;
-
-        if ((ret = rbt_str_walk_inorder (rbt, callback)) != 0)
-                return (ret);
-
-        sm_free (rbt);
-        return (0);
+        rbt_free(rbt, callback);
 }
 
 int rbt_str_add(rbt_t *rbt, char *key, void *data)
@@ -386,24 +381,24 @@ int rbt_str_get(rbt_t *rbt, const char *key, void **data)
         return (r);
 }
 
-int rbt_str_walk_preorder(rbt_t *rbt, int (*callback)(struct rbt_str_node *))
+int rbt_str_walk_preorder(rbt_t *rbt, int (*callback)(struct rbt_str_node *), rbt_walk_t flags)
 {
         errno = ENOSYS;
         return (-1);
 }
 
-int rbt_str_walk_inorder(rbt_t *rbt, int (*callback)(struct rbt_str_node *))
+int rbt_str_walk_inorder(rbt_t *rbt, int (*callback)(struct rbt_str_node *), rbt_walk_t flags)
 {
-        return rbt_walk_inorder(rbt, (int(*)(void *))callback);
+        return rbt_walk_inorder(rbt, (int(*)(void *))callback, flags);
 }
 
-int rbt_str_walk_postorder(rbt_t *rbt, int (*callback)(struct rbt_str_node *))
+int rbt_str_walk_postorder(rbt_t *rbt, int (*callback)(struct rbt_str_node *), rbt_walk_t flags)
 {
         errno = ENOSYS;
         return (-1);
 }
 
-int rbt_str_walk_levelorder(rbt_t *rbt, int (*callback)(struct rbt_str_node *))
+int rbt_str_walk_levelorder(rbt_t *rbt, int (*callback)(struct rbt_str_node *), rbt_walk_t flags)
 {
         errno = ENOSYS;
         return (-1);
@@ -414,11 +409,11 @@ int rbt_str_walk(rbt_t *rbt, rbt_walk_t type, int (*callback)(struct rbt_str_nod
         assume_d (rbt      != NULL, -1, errno = EINVAL;);
         assume_d (callback != NULL, -1, errno = EINVAL;);
 
-        switch (type) {
-        case RBT_WALK_PREORDER:   return rbt_str_walk_preorder(rbt, callback);
-        case RBT_WALK_INORDER:    return rbt_str_walk_inorder(rbt, callback);
-        case RBT_WALK_POSTORDER:  return rbt_str_walk_postorder(rbt, callback);
-        case RBT_WALK_LEVELORDER: return rbt_str_walk_levelorder(rbt, callback);
+        switch (type & RBT_WALK_TYPEMASK) {
+        case RBT_WALK_PREORDER:   return rbt_str_walk_preorder(rbt, callback, type);
+        case RBT_WALK_INORDER:    return rbt_str_walk_inorder(rbt, callback, type);
+        case RBT_WALK_POSTORDER:  return rbt_str_walk_postorder(rbt, callback, type);
+        case RBT_WALK_LEVELORDER: return rbt_str_walk_levelorder(rbt, callback, type);
         }
 
         errno = EINVAL;
