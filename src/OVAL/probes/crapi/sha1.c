@@ -127,15 +127,18 @@ int crapi_sha1_fini (void *ctxp)
         buffer = (void *)gcry_md_read (ctx->ctx, GCRY_MD_SHA1);
         memcpy (ctx->dst, buffer, gcry_md_get_algo_dlen (GCRY_MD_SHA1));
         gcry_md_close (ctx->ctx);
-        
+        oscap_free(ctx);
+
         return (0);
 }
 
 void crapi_sha1_free (void *ctxp)
 {
         struct crapi_sha1_ctx *ctx = (struct crapi_sha1_ctx *)ctxp;
-        
+
         gcry_md_close (ctx->ctx);
+        oscap_free(ctx);
+
         return;
 }
 #else

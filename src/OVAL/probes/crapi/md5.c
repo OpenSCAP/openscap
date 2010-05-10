@@ -127,15 +127,18 @@ int crapi_md5_fini (void *ctxp)
         buffer = (void *)gcry_md_read (ctx->ctx, GCRY_MD_MD5);
         memcpy (ctx->dst, buffer, gcry_md_get_algo_dlen (GCRY_MD_MD5));
         gcry_md_close (ctx->ctx);
-        
+        oscap_free(ctx);
+
         return (0);
 }
 
 void crapi_md5_free (void *ctxp)
 {
         struct crapi_md5_ctx *ctx = (struct crapi_md5_ctx *)ctxp;
-        
+
         gcry_md_close (ctx->ctx);
+        oscap_free(ctx);
+
         return;
 }
 #else
