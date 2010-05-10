@@ -705,6 +705,8 @@ int main(int argc, char **argv)
 	if (url_OVAL != NULL)
 		free(url_OVAL);
 
+	oscap_cleanup();
+
 	/* FIN */
 	if ((result_false == 0) && (result_unknown == 0))
 		return 0;
