@@ -29,6 +29,12 @@ int crapi_init (void *unused)
 {
         return (NSS_NoDB_Init (NULL) == SECSuccess ? 0 : -1);
 }
+#elif defined(HAVE_GCRYPT)
+#include <gcrypt.h>
+int crapi_init (void *unused)
+{
+        return (gcry_check_version(GCRYPT_VERSION) ? 0 : -1);
+}
 #else
 int crapi_init (void *unused)
 {
