@@ -216,13 +216,13 @@ oval_result_t probe_ent_cmp_int(SEXP_t * val1, SEXP_t * val2, oval_operation_t o
 			result = OVAL_RESULT_FALSE;
 		break;
 	case OVAL_OPERATION_BITWISE_AND:
-		if ((v1 && v2) == v1)
+		if ((v1 & v2) == v1)
 			result = OVAL_RESULT_TRUE;
 		else
 			result = OVAL_RESULT_FALSE;
 		break;
 	case OVAL_OPERATION_BITWISE_OR:
-		if ((v1 || v2) == v1)
+		if ((v1 | v2) == v1)
 			result = OVAL_RESULT_TRUE;
 		else
 			result = OVAL_RESULT_FALSE;
