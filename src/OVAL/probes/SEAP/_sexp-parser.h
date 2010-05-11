@@ -74,10 +74,57 @@ struct SEXP_pstate {
         uintptr_t v_bool[2]; /* true, false pre-allocated values */
 };
 
-struct SEXP_psetup {
-        SEXP_format_t p_format; /* expected or required format (depends on p_flags) */
-        SEXP_pflags_t p_flags;  /* initial parser flags */
+struct SEXP_pext_dsc {
+        spb_t        *p_buffer;
+        spb_size_t    p_bufoff;
+        spb_size_t    p_explen;
+        SEXP_pflags_t p_flags;
+        SEXP_t       *s_exp;
+        void         *sp_data;          /* subparser data */
+        void        (*sp_free)(void *); /* function for freeing the subparser data */
+
+        uint8_t       p_label;
+        uint8_t       p_numclass;
+        uint8_t       p_numbase;
+        uint8_t       p_numstage;
+
+        uintptr_t    *v_bool;
 };
+
+#define PEXT_DSC_INITIALIZER { NULL, 0, 0, NULL }
+
+#define __PARSE_RT int
+#define __PARSE_PT(n1) struct SEXP_pext_dsc *n1
+
+typedef __PARSE_RT (SEXP_pfunc_t)(__PARSE_PT());
+
+#define SEXP_PFUNC_COUNT 8
+
+struct SEXP_psetup {
+        SEXP_format_t  p_format; /* expected or required format (depends on p_flags) */
+        SEXP_pflags_t  p_flags;  /* initial parser flags */
+        SEXP_pfunc_t  *p_funcp[SEXP_PFUNC_COUNT];
+};
+
+#define SEXP_PFUNC_UL_STRING_SI  0
+#define SEXP_PFUNC_UL_STRING_DQ  1
+#define SEXP_PFUNC_UL_STRING_SQ  2
+#define SEXP_PFUNC_KL_STRING     3
+#define SEXP_PFUNC_UL_STRING_B64 4
+#define SEXP_PFUNC_KL_STRING_B64 5
+#define SEXP_PFUNC_UL_DATATYPE   6
+#define SEXP_PFUNC_KL_DATATYPE   7
+#define SEXP_PFUNC_BOOL          8
+
+__PARSE_RT SEXP_parse_ul_string_si  (__PARSE_PT(dsc));
+__PARSE_RT SEXP_parse_ul_string_dq  (__PARSE_PT(dsc));
+__PARSE_RT SEXP_parse_ul_string_sq  (__PARSE_PT(dsc));
+__PARSE_RT SEXP_parse_kl_string     (__PARSE_PT(dsc));
+__PARSE_RT SEXP_parse_ul_string_b64 (__PARSE_PT(dsc));
+__PARSE_RT SEXP_parse_kl_string_b64 (__PARSE_PT(dsc));
+__PARSE_RT SEXP_parse_ul_datatype   (__PARSE_PT(dsc));
+__PARSE_RT SEXP_parse_kl_datatype   (__PARSE_PT(dsc));
+__PARSE_RT SEXP_parse_bool          (__PARSE_PT(dsc), bool val);
 
 #define SEXP_PSLOT_MAX 1024
 
@@ -91,6 +138,11 @@ struct SEXP_psetup {
 #else
 # define __predict(expr, v) expr
 #endif /* __GNUC__ */
+
+/*
+ * TODO: make this function public in the future
+ */
+int SEXP_psetup_setpfunc(SEXP_psetup_t *psetup, int pfunctype, SEXP_pfunc_t *pfunc);
 
 OSCAP_HIDDEN_END;
 

@@ -36,25 +36,6 @@
 #include "generic/strto.h"
 #include "public/strbuf.h"
 
-struct SEXP_pext_dsc {
-        spb_t        *p_buffer;
-        spb_size_t    p_bufoff;
-        spb_size_t    p_explen;
-        SEXP_pflags_t p_flags;
-        SEXP_t       *s_exp;
-        void         *sp_data;          /* subparser data */
-        void        (*sp_free)(void *); /* function for freeing the subparser data */
-
-        uint8_t       p_label;
-        uint8_t       p_numclass;
-        uint8_t       p_numbase;
-        uint8_t       p_numstage;
-
-        uintptr_t    *v_bool;
-};
-
-#define PEXT_DSC_INITIALIZER { NULL, 0, 0, NULL }
-
 SEXP_pstate_t *SEXP_pstate_new (void)
 {
         SEXP_pstate_t *pstate;
@@ -158,7 +139,28 @@ SEXP_psetup_t *SEXP_psetup_new (void)
         psetup->p_format = 0;
         psetup->p_flags  = SEXP_PFLAG_EOFOK;
 
+        psetup->p_funcp[SEXP_PFUNC_UL_STRING_SI] =  &SEXP_parse_ul_string_si;
+        psetup->p_funcp[SEXP_PFUNC_UL_STRING_DQ] =  &SEXP_parse_ul_string_dq;
+        psetup->p_funcp[SEXP_PFUNC_UL_STRING_SQ] =  &SEXP_parse_ul_string_sq;
+        psetup->p_funcp[SEXP_PFUNC_KL_STRING] =     &SEXP_parse_kl_string;
+        psetup->p_funcp[SEXP_PFUNC_UL_STRING_B64] = &SEXP_parse_ul_string_b64;
+        psetup->p_funcp[SEXP_PFUNC_KL_STRING_B64] = &SEXP_parse_kl_string_b64;
+        psetup->p_funcp[SEXP_PFUNC_UL_DATATYPE] =   &SEXP_parse_ul_datatype;
+        psetup->p_funcp[SEXP_PFUNC_KL_DATATYPE] =   &SEXP_parse_kl_datatype;
+        /* psetup->p_funcp[SEXP_PFUNC_BOOL] =          &SEXP_parse_bool; */
+
         return (psetup);
+}
+
+int SEXP_psetup_setpfunc(SEXP_psetup_t *psetup, int pfunctype, SEXP_pfunc_t *pfunc)
+{
+        assume_r(psetup != NULL, -1, errno = EFAULT;);
+        assume_r(pfunc  != NULL, -1, errno = EINVAL;);
+        assume_r(pfunctype >= 0 && pfunctype < SEXP_PFUNC_COUNT, -1, errno = EINVAL;);
+
+        psetup->p_funcp[pfunctype] = pfunc;
+
+        return(0);
 }
 
 void SEXP_psetup_free (SEXP_psetup_t *psetup)
@@ -213,19 +215,6 @@ static inline bool isnextexp (int c)
         }
         return (false);
 }
-
-#define __PARSE_RT static inline int
-#define __PARSE_PT(n1) struct SEXP_pext_dsc *n1
-
-__PARSE_RT SEXP_parse_ul_string_si  (__PARSE_PT(dsc));
-__PARSE_RT SEXP_parse_ul_string_dq  (__PARSE_PT(dsc));
-__PARSE_RT SEXP_parse_ul_string_sq  (__PARSE_PT(dsc));
-__PARSE_RT SEXP_parse_kl_string     (__PARSE_PT(dsc));
-__PARSE_RT SEXP_parse_ul_string_b64 (__PARSE_PT(dsc));
-__PARSE_RT SEXP_parse_kl_string_b64 (__PARSE_PT(dsc));
-__PARSE_RT SEXP_parse_ul_datatype   (__PARSE_PT(dsc));
-__PARSE_RT SEXP_parse_kl_datatype   (__PARSE_PT(dsc));
-__PARSE_RT SEXP_parse_bool          (__PARSE_PT(dsc), bool val);
 
 /**
  * The S-expression parser
@@ -497,7 +486,7 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
         L_CHAR:
                 e_dsc.p_label = SEXP_LABELNUM_CHAR;
                 
-                if ((ret_p = SEXP_parse_ul_string_si (&e_dsc)) != SEXP_PRET_SUCCESS)
+                if ((ret_p = psetup->p_funcp[SEXP_PFUNC_UL_STRING_SI](&e_dsc)) != SEXP_PRET_SUCCESS)
                         break;
                 goto L_SEXP_ADD;
         L_CHAR_FIXEDLEN:
@@ -507,17 +496,17 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                         ret_p = SEXP_PRET_EUNFIN;
                         break;
                 } else {
-                        if ((ret_p = SEXP_parse_kl_string (&e_dsc)) != SEXP_PRET_SUCCESS)
+                        if ((ret_p = psetup->p_funcp[SEXP_PFUNC_KL_STRING](&e_dsc)) != SEXP_PRET_SUCCESS)
                                 break;
                         goto L_SEXP_ADD;
                 }
                 /* NOTREACHED */
         L_DQUOTE:
-                if ((ret_p = SEXP_parse_ul_string_dq (&e_dsc)) != SEXP_PRET_SUCCESS)
+                if ((ret_p = psetup->p_funcp[SEXP_PFUNC_UL_STRING_DQ](&e_dsc)) != SEXP_PRET_SUCCESS)
                         break;
                 goto L_SEXP_ADD;
         L_SQUOTE:
-                if ((ret_p = SEXP_parse_ul_string_sq (&e_dsc)) != SEXP_PRET_SUCCESS)
+                if ((ret_p = psetup->p_funcp[SEXP_PFUNC_UL_STRING_SQ](&e_dsc)) != SEXP_PRET_SUCCESS)
                         break;
                 goto L_SEXP_ADD;
         L_DOT:
@@ -1139,7 +1128,7 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
         L_BRACKETOPEN:
                 e_dsc.p_label = SEXP_LABELNUM_DTYPE;
                 
-                if ((ret_p = SEXP_parse_ul_datatype (&e_dsc)) != SEXP_PRET_SUCCESS)
+                if ((ret_p = psetup->p_funcp[SEXP_PFUNC_UL_DATATYPE](&e_dsc)) != SEXP_PRET_SUCCESS)
                         break;
 
                 e_dsc.p_bufoff += e_dsc.p_explen;
@@ -1154,7 +1143,7 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                         ret_p = SEXP_PRET_EUNFIN;
                         break;
                 } else {
-                        if ((ret_p = SEXP_parse_kl_datatype (&e_dsc)) != SEXP_PRET_SUCCESS)
+                        if ((ret_p = psetup->p_funcp[SEXP_PFUNC_KL_DATATYPE](&e_dsc)) != SEXP_PRET_SUCCESS)
                                 break;
                 
                         e_dsc.p_bufoff += e_dsc.p_explen;
@@ -1177,13 +1166,13 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
         L_VERTBAR:
                 e_dsc.p_label = SEXP_LABELNUM_B64S;
                 
-                if ((ret_p = SEXP_parse_ul_string_b64 (&e_dsc)) != SEXP_PRET_SUCCESS)
+                if ((ret_p = psetup->p_funcp[SEXP_PFUNC_UL_STRING_B64](&e_dsc)) != SEXP_PRET_SUCCESS)
                         break;
                 goto L_SEXP_ADD;
         L_VERTBAR_FIXEDLEN:
                 e_dsc.p_label = SEXP_LABELNUM_B64S_FIXED;
 
-                if ((ret_p = SEXP_parse_kl_string_b64 (&e_dsc)) != SEXP_PRET_SUCCESS)
+                if ((ret_p = psetup->p_funcp[SEXP_PFUNC_KL_STRING_B64](&e_dsc)) != SEXP_PRET_SUCCESS)
                         break;
                 goto L_SEXP_ADD;
         L_NUL:
