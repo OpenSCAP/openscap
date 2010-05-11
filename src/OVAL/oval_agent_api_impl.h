@@ -41,6 +41,7 @@ OSCAP_HIDDEN_START;
 #define OVAL_RESULTS_NAMESPACE     BAD_CAST "http://oval.mitre.org/XMLSchema/oval-results-5"
 #define OVAL_DEFINITIONS_NAMESPACE BAD_CAST "http://oval.mitre.org/XMLSchema/oval-definitions-5"
 #define OVAL_DIGSIG_NAMESPACE      BAD_CAST "http://www.w3.org/2000/09/xmldsig#"
+#define OVAL_VARIABLES_NAMESPACE   BAD_CAST "http://oval.mitre.org/XMLSchema/oval-variables-5"
 
 struct oval_definition *oval_definition_get_new(struct oval_definition_model *, char *);
 

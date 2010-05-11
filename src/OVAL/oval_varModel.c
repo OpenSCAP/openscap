@@ -147,6 +147,7 @@ void oval_variable_model_add(struct oval_variable_model *model, char *varid, con
 	    (struct _oval_variable_model_frame *)oval_string_map_get_value(model->varmap, varid);
 	if (frame == NULL) {
 		frame = _oval_variable_model_frame_new(varid, comm, datatype);
+		oval_string_map_put(model->varmap, varid, frame);
 	}
 	value = oscap_strdup(value);
 	oval_collection_add(frame->values, value);
@@ -320,19 +321,107 @@ int oval_variable_model_import(struct oval_variable_model *model, struct oscap_i
 	xmlFreeDoc(doc);
 	return return_code;
 }
+static int _generator_to_dom(xmlDocPtr doc, xmlNode * tag_generator)
+{
+	xmlNs *ns_common = xmlSearchNsByHref(doc, tag_generator, OVAL_COMMON_NAMESPACE);
+	xmlNewChild(tag_generator, ns_common, BAD_CAST "product_name", BAD_CAST "OPEN SCAP");
+	xmlNewChild(tag_generator, ns_common, BAD_CAST "schema_version", BAD_CAST "5.5");
+	time_t epoch_time[] = { 0 };
+	time(epoch_time);
+	struct tm *lt = localtime(epoch_time);
+	char timestamp[] = "yyyy-mm-ddThh:mm:ss";
+	snprintf(timestamp, sizeof(timestamp), "%4d-%02d-%02dT%02d:%02d:%02d",
+		 1900 + lt->tm_year, 1 + lt->tm_mon, lt->tm_mday, lt->tm_hour, lt->tm_min, lt->tm_sec);
+	xmlNewChild(tag_generator, ns_common, BAD_CAST "timestamp", BAD_CAST timestamp);
+
+	return 1;
+}
+
+
+static xmlNode *oval_variable_model_to_dom(struct oval_variable_model * variable_model,
+				   xmlDocPtr doc, xmlNode * parent, void *user_arg)
+{
+
+	xmlNodePtr root_node;
+
+	if (parent) {
+		root_node = xmlNewChild(parent, NULL, BAD_CAST "oval_variables", NULL);
+	} else {
+		root_node = xmlNewNode(NULL, BAD_CAST "oval_variables");
+		xmlDocSetRootElement(doc, root_node);
+	}
+	xmlNs *ns_common = xmlNewNs(root_node, OVAL_COMMON_NAMESPACE, BAD_CAST "oval");
+	xmlNs *ns_variables = xmlNewNs(root_node, OVAL_VARIABLES_NAMESPACE, NULL);
+
+	xmlSetNs(root_node, ns_common);
+	xmlSetNs(root_node, ns_variables);
+
+	xmlNode *tag_generator = xmlNewChild(root_node, ns_variables, BAD_CAST "generator", NULL);
+
+	_generator_to_dom(doc, tag_generator);
+
+	xmlNode *variables = xmlNewChild(root_node, ns_variables, BAD_CAST "variables", NULL);
+
+
+	struct oval_string_iterator *varids = oval_variable_model_get_variable_ids(variable_model);
+	while (oval_string_iterator_has_more(varids)) {
+		char *varid = oval_string_iterator_next(varids);
+                printf("VARIABLE: %s\n", varid);
+		oval_datatype_t datatype = oval_variable_model_get_datatype(variable_model, varid);
+		const char *comm = oval_variable_model_get_comment(variable_model, varid);
+
+                xmlNode *variable = xmlNewChild(variables, ns_variables, BAD_CAST "variable", NULL);
+                xmlNewProp(variable, BAD_CAST "id", BAD_CAST varid);
+                xmlNewProp(variable, BAD_CAST "datatype", BAD_CAST oval_datatype_get_text(datatype));
+                xmlNewProp(variable, BAD_CAST "comment", BAD_CAST comm);
+
+		struct oval_string_iterator *values = oval_variable_model_get_values(variable_model, varid);
+		while (oval_string_iterator_has_more(values)) {
+			char *value = oval_string_iterator_next(values);
+                        xmlNewChild(variable, ns_variables, BAD_CAST "value", BAD_CAST value);
+		}
+                oval_string_iterator_free(values);
+	}
+        oval_string_iterator_free(varids);
+
+	return root_node;
+}
 
 int oval_variable_model_export(struct oval_variable_model *model, struct oscap_export_target *target)
 {
 
-	//TODO: implement oval_variable_model_export
-	return 0;
+	__attribute__nonnull__(target);
+
+	int retcode = 0;
+
+	LIBXML_TEST_VERSION;
+
+	xmlDocPtr doc = xmlNewDoc(BAD_CAST "1.0");
+	if (doc == NULL) {
+		oscap_setxmlerr(xmlGetLastError());
+		return -1;
+	}
+
+	oval_variable_model_to_dom(model, doc, NULL, NULL);
+	/*
+	 * Dumping document to stdio or file
+	 */
+	retcode =
+	    xmlSaveFormatFileEnc(oscap_export_target_get_name(target), doc, oscap_export_target_get_encoding(target),
+				 1);
+	if (retcode < 1)
+		oscap_setxmlerr(xmlGetLastError());
+
+	xmlFreeDoc(doc);
+	return retcode;
 }
 
 struct oval_string_iterator *oval_variable_model_get_variable_ids(struct oval_variable_model *model)
 {
 	__attribute__nonnull__(model);
 	return (struct oval_string_iterator *)oval_string_map_keys(model->varmap);
-} oval_datatype_t oval_variable_model_get_datatype(struct oval_variable_model *model, char *varid)
+}
+oval_datatype_t oval_variable_model_get_datatype(struct oval_variable_model *model, char *varid)
 {
 
 	__attribute__nonnull__(model);
