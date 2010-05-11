@@ -372,7 +372,7 @@ SEXP_t *probe_main (SEXP_t *object, int *err, void *arg)
                 _D("get_runlevel: [0]=\"%s\", [1]=\"%s\", [2]=\"%d\", [3]=\"%d\"\n",
                    reply_st.service_name, reply_st.runlevel, reply_st.start, reply_st.kill);
                 
-                item_sexp = probe_obj_creat ("runlevel_item", NULL,
+                item_sexp = probe_item_creat ("runlevel_item", NULL,
                                              /* entities */
                                              "service_name", NULL,
                                              r0 = SEXP_string_newf("%s", reply_st.service_name),
