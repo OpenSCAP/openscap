@@ -1,5 +1,6 @@
 /*
  * Copyright 2009 Red Hat Inc., Durham, North Carolina.
+ * Copyright (C) 2010 Tresys Technology, LLC
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -18,11 +19,13 @@
  *
  * Authors:
  *      Lukas Kuklinek <lkuklinek@redhat.com>
+ *      Josh Adams <jadams@tresys.com>
  */
 
 #include "item.h"
 #include "elements.h"
 #include "helpers.h"
+#include "xccdf_impl.h"
 #include <assert.h>
 #include <string.h>
 
@@ -681,6 +684,162 @@ struct oscap_stringlist_iterator *xccdf_group_get_requires(const struct xccdf_gr
 	return oscap_iterator_new(XITEM(group)->sub.group.requires);
 }
 
+void xccdf_rule_to_dom(struct xccdf_rule *rule, xmlNode *rule_node, xmlDoc *doc, xmlNode *parent)
+{
+	xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent, XCCDF_BASE_NAMESPACE);
+
+	/* Handle Attributes */
+	const char *extends = xccdf_rule_get_extends(rule);
+	if (extends)
+		xmlNewProp(rule_node, BAD_CAST "extends", BAD_CAST extends);
+
+	if (xccdf_rule_get_multiple(rule))
+		xmlNewProp(rule_node, BAD_CAST "multiple", BAD_CAST "True");
+
+	if (xccdf_rule_get_selected(rule))
+		xmlNewProp(rule_node, BAD_CAST "selected", BAD_CAST "True");
+
+	float weight = xccdf_rule_get_weight(rule);
+	char weight_str[10];
+	sprintf(weight_str, "%f", weight);
+	xmlNewProp(rule_node, BAD_CAST "weight", BAD_CAST weight_str);
+
+	xccdf_role_t role = xccdf_rule_get_role(rule);
+	xmlNewProp(rule_node, BAD_CAST "role", BAD_CAST XCCDF_ROLE_MAP[role - 1].string);
+
+	xccdf_level_t severity = xccdf_rule_get_severity(rule);
+	xmlNewProp(rule_node, BAD_CAST "severity", BAD_CAST XCCDF_LEVEL_MAP[severity - 1].string);
+
+	/* Handle Child Nodes */
+	struct oscap_text_iterator *rationales = xccdf_rule_get_rationale(rule);
+	while (oscap_text_iterator_has_more(rationales)) {
+		struct oscap_text *rationale = oscap_text_iterator_next(rationales);
+		xmlNewChild(rule_node, ns_xccdf, BAD_CAST "rationale", BAD_CAST oscap_text_get_text(rationale));
+	}
+	oscap_text_iterator_free(rationales);
+
+	struct oscap_string_iterator *platforms = xccdf_rule_get_platforms(rule);
+	while (oscap_string_iterator_has_more(platforms)) {
+		const char *platform = oscap_string_iterator_next(platforms);
+		xmlNewChild(rule_node, ns_xccdf, BAD_CAST "platform", BAD_CAST platform);
+	}
+	oscap_string_iterator_free(platforms);
+
+	struct oscap_stringlist_iterator *lists = xccdf_rule_get_requires(rule);
+	while (oscap_stringlist_iterator_has_more(lists)) {
+		struct oscap_stringlist *list = oscap_stringlist_iterator_next(lists);
+		struct oscap_string_iterator *strings = oscap_stringlist_get_strings(list);
+		while (oscap_string_iterator_has_more(strings)) {
+			const char *requires = oscap_string_iterator_next(strings);
+			xmlNewChild(rule_node, ns_xccdf, BAD_CAST "requires", BAD_CAST requires);
+		}
+		oscap_string_iterator_free(strings);
+	}
+	oscap_stringlist_iterator_free(lists);
+
+	struct oscap_string_iterator *conflicts = xccdf_rule_get_conflicts(rule);
+	while (oscap_string_iterator_has_more(conflicts)) {
+		const char *conflict = oscap_string_iterator_next(conflicts);
+		xmlNewChild(rule_node, ns_xccdf, BAD_CAST "conflicts", BAD_CAST conflict);
+	}
+	oscap_string_iterator_free(conflicts);
+
+	struct xccdf_ident_iterator *idents = xccdf_rule_get_idents(rule);
+	while (xccdf_ident_iterator_has_more(idents)) {
+		struct xccdf_ident *ident = xccdf_ident_iterator_next(idents);
+		xccdf_ident_to_dom(ident, doc, rule_node);
+	}
+	xccdf_ident_iterator_free(idents);
+
+	struct xccdf_profile_note_iterator *notes = xccdf_rule_get_profile_notes(rule);
+	while (xccdf_profile_note_iterator_has_more(notes)) {
+		struct xccdf_profile_note *note = xccdf_profile_note_iterator_next(notes);
+		xccdf_profile_note_to_dom(note, doc, rule_node);
+	}
+	xccdf_profile_note_iterator_free(notes);
+
+	struct xccdf_fixtext_iterator *fixtexts = xccdf_rule_get_fixtexts(rule);
+	while (xccdf_fixtext_iterator_has_more(fixtexts)) {
+		struct xccdf_fixtext *fixtext = xccdf_fixtext_iterator_next(fixtexts);
+		xccdf_fixtext_to_dom(fixtext, doc, rule_node);
+	}
+	xccdf_fixtext_iterator_free(fixtexts);
+
+	struct xccdf_fix_iterator *fixes = xccdf_rule_get_fixes(rule);
+	while (xccdf_fix_iterator_has_more(fixes)) {
+		struct xccdf_fix *fix = xccdf_fix_iterator_next(fixes);
+		xccdf_fix_to_dom(fix, doc, rule_node);
+	}
+	xccdf_fix_iterator_free(fixes);
+
+	struct xccdf_check_iterator *checks = xccdf_rule_get_checks(rule);
+	while (xccdf_check_iterator_has_more(checks)) {
+		struct xccdf_check *check = xccdf_check_iterator_next(checks);
+		xccdf_check_to_dom(check, doc, rule_node);
+	}
+	xccdf_check_iterator_free(checks);
+}
+
+void xccdf_group_to_dom(struct xccdf_group *group, xmlNode *group_node, xmlDoc *doc, xmlNode *parent)
+{
+	xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent, XCCDF_BASE_NAMESPACE);
+
+	/* Handle Attributes */
+	const char *extends = xccdf_group_get_extends(group);
+	if (extends)
+		xmlNewProp(group_node, BAD_CAST "extends", BAD_CAST extends);
+
+	if (xccdf_group_get_selected(group))
+		xmlNewProp(group_node, BAD_CAST "selected", BAD_CAST "True");
+
+	float weight = xccdf_group_get_weight(group);
+	char weight_str[10];
+	sprintf(weight_str, "%f", weight);
+	xmlNewProp(group_node, BAD_CAST "weight", BAD_CAST weight_str);
+
+	/* Handle Child Nodes */
+	struct oscap_text_iterator *rationales = xccdf_group_get_rationale(group);
+	while (oscap_text_iterator_has_more(rationales)) {
+		struct oscap_text *rationale = oscap_text_iterator_next(rationales);
+		xmlNewChild(group_node, ns_xccdf, BAD_CAST "rationale", BAD_CAST oscap_text_get_text(rationale));
+	}
+	oscap_text_iterator_free(rationales);
+
+	struct oscap_string_iterator *platforms = xccdf_group_get_platforms(group);
+	while (oscap_string_iterator_has_more(platforms)) {
+		const char *platform = oscap_string_iterator_next(platforms);
+		xmlNewChild(group_node, ns_xccdf, BAD_CAST "platform", BAD_CAST platform);
+	}
+	oscap_string_iterator_free(platforms);
+
+	struct oscap_stringlist_iterator *lists = xccdf_group_get_requires(group);
+	while (oscap_stringlist_iterator_has_more(lists)) {
+		struct oscap_stringlist *list = oscap_stringlist_iterator_next(lists);
+		struct oscap_string_iterator *strings = oscap_stringlist_get_strings(list);
+		while (oscap_string_iterator_has_more(strings)) {
+			const char *requires = oscap_string_iterator_next(strings);
+			xmlNewChild(group_node, ns_xccdf, BAD_CAST "requires", BAD_CAST requires);
+		}
+		oscap_string_iterator_free(strings);
+	}
+	oscap_stringlist_iterator_free(lists);
+
+	struct oscap_string_iterator *conflicts = xccdf_group_get_conflicts(group);
+	while (oscap_string_iterator_has_more(conflicts)) {
+		const char *conflict = oscap_string_iterator_next(conflicts);
+		xmlNewChild(group_node, ns_xccdf, BAD_CAST "conflicts", BAD_CAST conflict);
+	}
+	oscap_string_iterator_free(conflicts);
+
+	struct xccdf_item_iterator *items = xccdf_group_get_content(group);
+	while (xccdf_item_iterator_has_more(items)) {
+		struct xccdf_item *item = xccdf_item_iterator_next(items);
+		if (XGROUP(xccdf_item_get_parent(item)) == group) {
+			xccdf_item_to_dom(item, doc, group_node);
+		}
+	}
+	xccdf_item_iterator_free(items);
+}
 
 XCCDF_STATUS_CURRENT(rule)
 XCCDF_STATUS_CURRENT(group)

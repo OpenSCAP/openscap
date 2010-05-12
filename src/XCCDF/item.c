@@ -1,5 +1,6 @@
 /*
  * Copyright 2009 Red Hat Inc., Durham, North Carolina.
+ * Copyright (C) 2010 Tresys Technology, LLC
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -18,12 +19,46 @@
  *
  * Authors:
  *      Lukas Kuklinek <lkuklinek@redhat.com>
+ * 	Josh Adams <jadams@tresys.com>
  */
 
 #include "item.h"
 #include "helpers.h"
+#include "xccdf_impl.h"
+#include "../common/util.h"
 #include <string.h>
+#include <time.h>
 #include <math.h>
+
+const struct oscap_string_map XCCDF_OPERATOR_MAP[] = {
+	{XCCDF_OPERATOR_EQUALS, "equals"},
+	{XCCDF_OPERATOR_NOT_EQUAL, "not equal"},
+	{XCCDF_OPERATOR_GREATER, "greater than"},
+	{XCCDF_OPERATOR_GREATER_EQUAL, "greater than or equal"},
+	{XCCDF_OPERATOR_LESS, "less than"},
+	{XCCDF_OPERATOR_LESS_EQUAL, "less than or equal"},
+	{XCCDF_OPERATOR_PATTERN_MATCH, "pattern match"},
+	{0, NULL}
+};
+
+const struct oscap_string_map XCCDF_LEVEL_MAP[] = {
+	{XCCDF_UNKNOWN, "unknown"},
+	{XCCDF_INFO, "info"},
+	{XCCDF_LOW, "low"},
+	{XCCDF_MEDIUM, "medium"},
+	{XCCDF_HIGH, "high"},
+	{0, NULL}
+};
+
+static const struct oscap_string_map XCCDF_STATUS_MAP[] = {
+	{XCCDF_STATUS_ACCEPTED, "accepted"},
+	{XCCDF_STATUS_DEPRECATED, "deprecated"},
+	{XCCDF_STATUS_DRAFT, "draft"},
+	{XCCDF_STATUS_INCOMPLETE, "incomplete"},
+	{XCCDF_STATUS_INTERIM, "interim"},
+	{XCCDF_STATUS_NOT_SPECIFIED, NULL}
+};
+
 
 struct xccdf_item *xccdf_item_new(xccdf_type_t type, struct xccdf_item *parent)
 {
@@ -168,6 +203,306 @@ void xccdf_item_print(struct xccdf_item *item, int depth)
 		printf("status (cur = %d)", xccdf_item_get_current_status(item));
 		oscap_list_dump(item->item.statuses, xccdf_status_dump, depth + 1);
 	}
+}
+
+xmlNode *xccdf_item_to_dom(struct xccdf_item *item, xmlDoc *doc, xmlNode *parent)
+{
+	xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent, XCCDF_BASE_NAMESPACE);
+	xmlNode *item_node = xmlNewChild(parent, ns_xccdf, BAD_CAST "Item", NULL);
+
+	/* Handle generic item attributes */
+	const char *id = xccdf_item_get_id(item);
+	xmlNewProp(item_node, BAD_CAST "id", BAD_CAST id);
+
+	const char *cluster_id = xccdf_item_get_cluster_id(item);
+	if (cluster_id)
+		xmlNewProp(item_node, BAD_CAST "cluster-id", BAD_CAST cluster_id);
+
+	if (xccdf_item_get_hidden(item))
+		xmlNewProp(item_node, BAD_CAST "hidden", BAD_CAST "True");
+
+	if (xccdf_item_get_prohibit_changes(item))
+		xmlNewProp(item_node, BAD_CAST "prohibitChanges", BAD_CAST "True");
+
+	if (xccdf_item_get_abstract(item))
+		xmlNewProp(item_node, BAD_CAST "abstract", BAD_CAST "True");
+
+	/* Handle generic item child nodes */
+        struct oscap_text_iterator *titles = xccdf_item_get_title(item);
+        while (oscap_text_iterator_has_more(titles)) {
+                struct oscap_text *title = oscap_text_iterator_next(titles);
+                xmlNewChild(item_node, ns_xccdf, BAD_CAST "title", BAD_CAST oscap_text_get_text(title));
+        }
+        oscap_text_iterator_free(titles);
+
+        struct oscap_text_iterator *descriptions = xccdf_item_get_description(item);
+        while (oscap_text_iterator_has_more(descriptions)) {
+                struct oscap_text *description = oscap_text_iterator_next(descriptions);
+                xmlNewChild(item_node, ns_xccdf, BAD_CAST "description", BAD_CAST oscap_text_get_text(description));
+        }
+        oscap_text_iterator_free(descriptions);
+
+        if (xccdf_item_get_version(item)) {
+                char version[10];
+                *version = '\0';
+                snprintf(version, sizeof(version), "%s", xccdf_item_get_version(item));
+                xmlNewChild(item_node, ns_xccdf, BAD_CAST "version", BAD_CAST version);
+        }
+
+	struct xccdf_status_iterator *statuses = xccdf_item_get_statuses(item);
+	while (xccdf_status_iterator_has_more(statuses)) {
+		struct xccdf_status *status = xccdf_status_iterator_next(statuses);
+		xccdf_status_to_dom(status, doc, item_node);
+	}
+	xccdf_status_iterator_free(statuses);
+
+        struct oscap_text_iterator *questions = xccdf_item_get_question(item);
+        while (oscap_text_iterator_has_more(questions)) {
+                struct oscap_text *question = oscap_text_iterator_next(questions);
+                xmlNewChild(item_node, ns_xccdf, BAD_CAST "question", BAD_CAST oscap_text_get_text(question));
+        }
+        oscap_text_iterator_free(questions);
+
+	struct xccdf_reference_iterator *references = xccdf_item_get_references(item);
+	while (xccdf_reference_iterator_has_more(references)) {
+		struct xccdf_reference *ref = xccdf_reference_iterator_next(references);
+		xccdf_reference_to_dom(ref, doc, item_node);
+	}
+
+	/* Handle type specific attributes and children */
+	switch (xccdf_item_get_type(item)) {
+		case XCCDF_RULE:
+			xmlNodeSetName(item_node,BAD_CAST "Rule");
+			xccdf_rule_to_dom(XRULE(item), item_node, doc, parent);
+			break;
+		case XCCDF_BENCHMARK:
+			xmlNodeSetName(item_node,BAD_CAST "Benchmark");
+			break;
+		case XCCDF_PROFILE:
+			xmlNodeSetName(item_node,BAD_CAST "Profile");
+			break;
+		case XCCDF_RESULT:
+			xmlNodeSetName(item_node,BAD_CAST "Result");
+			break;
+		case XCCDF_GROUP:
+			xmlNodeSetName(item_node,BAD_CAST "Group");
+			xccdf_group_to_dom(XGROUP(item), item_node, doc, parent);
+			break;
+		case XCCDF_VALUE:
+			xmlNodeSetName(item_node,BAD_CAST "Value");
+			break;
+		case XCCDF_CONTENT:
+			xmlNodeSetName(item_node,BAD_CAST "Content");
+			break;
+		case XCCDF_ITEM:
+			xmlNodeSetName(item_node,BAD_CAST "Item");
+			break;
+		case XCCDF_OBJECT:
+			xmlNodeSetName(item_node,BAD_CAST "Object");
+			break;
+		default:
+			return item_node;
+	}
+
+	return item_node;
+}
+
+xmlNode *xccdf_reference_to_dom(struct xccdf_reference *ref, xmlDoc *doc, xmlNode *parent)
+{
+	xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent, XCCDF_BASE_NAMESPACE);
+	xmlNode *reference_node = xmlNewChild(parent, ns_xccdf, BAD_CAST "reference", BAD_CAST xccdf_reference_get_content(ref));
+
+	const char *lang = xccdf_reference_get_lang(ref);
+	xmlNewProp(reference_node, BAD_CAST "xml:lang", BAD_CAST lang);
+
+	const char *href = xccdf_reference_get_href(ref);
+	xmlNewProp(reference_node, BAD_CAST "href", BAD_CAST href);
+
+	//const char *content = xccdef_reference_get_content(ref);
+	//if (content)
+	//	xmlNewChild(reference_node, ns_xccdf, BAD_CAST "content", BAD_CAST content);
+
+	return reference_node;
+}
+
+xmlNode *xccdf_profile_note_to_dom(struct xccdf_profile_note *note, xmlDoc *doc, xmlNode *parent)
+{
+	xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent, XCCDF_BASE_NAMESPACE);
+	xmlNode *note_node = xmlNewChild(parent, ns_xccdf, BAD_CAST "profile-note", NULL);
+
+	// This is in the XCCDF Spec, but not implemented in OpenSCAP
+	//const char *lang = xccdf_profile_note_get_lang(note);
+	//xmlNewProp(note_node, BAD_CAST "xml:lang", BAD_CAST lang);
+
+	struct oscap_text *text = xccdf_profile_note_get_text(note);
+	xmlNewChild(note_node, ns_xccdf, BAD_CAST "sub", BAD_CAST oscap_text_get_text(text));
+
+	const char *reftag = xccdf_profile_note_get_reftag(note);
+	xmlNewChild(note_node, ns_xccdf, BAD_CAST "tag", BAD_CAST reftag);
+
+	return note_node;
+}
+
+xmlNode *xccdf_status_to_dom(struct xccdf_status *status, xmlDoc *doc, xmlNode *parent)
+{
+	xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent, XCCDF_BASE_NAMESPACE);
+
+	xccdf_level_t level = xccdf_status_get_status(status);
+	xmlNode *status_node = xmlNewChild(parent, ns_xccdf, BAD_CAST "status",
+					   BAD_CAST XCCDF_STATUS_MAP[level - 1].string);
+
+	time_t date = xccdf_status_get_date(status);
+	xmlNewProp(status_node, BAD_CAST "date", BAD_CAST ctime(&date));
+
+	return status_node;
+}
+
+xmlNode *xccdf_fixtext_to_dom(struct xccdf_fixtext *fixtext, xmlDoc *doc, xmlNode *parent)
+{
+	xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent, XCCDF_BASE_NAMESPACE);
+	xmlNode *fixtext_node = xmlNewChild(parent, ns_xccdf, BAD_CAST "fixtext", NULL);
+
+	// This is in the XCCDF Spec, but not implemented in OpenSCAP
+	//const char *lang = xccdf_fixtext_get_lang(note);
+	//xmlNewProp(note_node, BAD_CAST "xml:lang", BAD_CAST lang);
+	//if (xccdf_fixtext_get_override(note))
+	//	xmlNewProp(fixtext_node, BAD_CAST "override", BAD_CAST "True");
+	
+	if (xccdf_fixtext_get_reboot(fixtext))
+		xmlNewProp(fixtext_node, BAD_CAST "reboot", BAD_CAST "True");
+
+	const char *fixref = xccdf_fixtext_get_fixref(fixtext);
+	xmlNewProp(fixtext_node, BAD_CAST "fixref", BAD_CAST fixref);
+
+	xccdf_level_t complexity = xccdf_fixtext_get_complexity(fixtext);
+	xmlNewProp(fixtext_node, BAD_CAST "complexity", BAD_CAST XCCDF_LEVEL_MAP[complexity - 1].string);
+
+	xccdf_level_t disruption = xccdf_fixtext_get_disruption(fixtext);
+	xmlNewProp(fixtext_node, BAD_CAST "disruption", BAD_CAST XCCDF_LEVEL_MAP[disruption - 1].string);
+
+	xccdf_strategy_t strategy = xccdf_fixtext_get_strategy(fixtext);
+	xmlNewProp(fixtext_node, BAD_CAST "strategy", BAD_CAST XCCDF_STRATEGY_MAP[strategy - 1].string);
+
+	const char *content = fixtext->content;
+	xmlNewChild(fixtext_node, ns_xccdf, BAD_CAST "sub", BAD_CAST content);
+
+	return fixtext_node;
+}
+
+xmlNode *xccdf_fix_to_dom(struct xccdf_fix *fix, xmlDoc *doc, xmlNode *parent)
+{
+	xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent, XCCDF_BASE_NAMESPACE);
+	xmlNode *fix_node = xmlNewChild(parent, ns_xccdf, BAD_CAST "fix", NULL);
+
+	const char *id = xccdf_fix_get_id(fix);
+	xmlNewProp(fix_node, BAD_CAST "id", BAD_CAST id);
+
+	const char *sys = xccdf_fix_get_system(fix);
+	xmlNewProp(fix_node, BAD_CAST "system", BAD_CAST sys);
+
+	if (xccdf_fix_get_reboot(fix))
+		xmlNewProp(fix_node, BAD_CAST "reboot", BAD_CAST "True");
+
+	xccdf_level_t complexity = xccdf_fix_get_complexity(fix);
+	xmlNewProp(fix_node, BAD_CAST "complexity", BAD_CAST XCCDF_LEVEL_MAP[complexity - 1].string);
+
+	xccdf_level_t disruption = xccdf_fix_get_disruption(fix);
+	xmlNewProp(fix_node, BAD_CAST "disruption", BAD_CAST XCCDF_LEVEL_MAP[disruption - 1].string);
+
+	xccdf_strategy_t strategy = xccdf_fix_get_strategy(fix);
+	xmlNewProp(fix_node, BAD_CAST "strategy", BAD_CAST XCCDF_STRATEGY_MAP[strategy - 1].string);
+
+	const char *content = xccdf_fix_get_content(fix);
+	xmlNewChild(fix_node, ns_xccdf, BAD_CAST "sub", BAD_CAST content);
+
+	// This is in the XCCDF Spec, but not implemented in OpenSCAP
+	//const char *instance = xccdf_fix_get_instance(fix);
+	//xmlNewChild(fix_node, ns_xccdf, BAD_CAST "instance", BAD_CAST instance);
+	
+	return fix_node;
+}
+
+xmlNode *xccdf_ident_to_dom(struct xccdf_ident *ident, xmlDoc *doc, xmlNode *parent)
+{
+	xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent, XCCDF_BASE_NAMESPACE);
+	const char *id = xccdf_ident_get_id(ident);
+	xmlNode *ident_node = xmlNewChild(parent, ns_xccdf, BAD_CAST "ident", BAD_CAST id);
+
+	const char *sys = xccdf_ident_get_system(ident);
+	xmlNewProp(ident_node, BAD_CAST "system", BAD_CAST sys);
+
+	return ident_node;
+}
+
+xmlNode *xccdf_check_to_dom(struct xccdf_check *check, xmlDoc *doc, xmlNode *parent)
+{
+	xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent, XCCDF_BASE_NAMESPACE);
+	xmlNode *check_node = NULL;
+	if (xccdf_check_get_complex(check))
+		check_node = xmlNewChild(parent, ns_xccdf, BAD_CAST "complex-check", NULL);
+	else
+		check_node = xmlNewChild(parent, ns_xccdf, BAD_CAST "check", NULL);
+
+	const char *id = xccdf_check_get_id(check);
+	if (id)
+		xmlNewProp(check_node, BAD_CAST "id", BAD_CAST id);
+
+	const char *sys = xccdf_check_get_system(check);
+	xmlNewProp(check_node, BAD_CAST "system", BAD_CAST sys);
+
+	const char *selector = xccdf_check_get_selector(check);
+	if (selector)
+		xmlNewProp(check_node, BAD_CAST "selector", BAD_CAST selector);
+
+	/* Handle complex checks */
+	struct xccdf_check_iterator *checks = xccdf_check_get_children(check);
+	while (xccdf_check_iterator_has_more(checks)) {
+		struct xccdf_check *new_check = xccdf_check_iterator_next(checks);
+		xccdf_check_to_dom(new_check, doc, check_node);
+	}
+	xccdf_check_iterator_free(checks);
+
+	struct xccdf_check_import_iterator *imports = xccdf_check_get_imports(check);
+	while (xccdf_check_import_iterator_has_more(imports)) {
+		struct xccdf_check_import *import = xccdf_check_import_iterator_next(imports);
+		const char *name = xccdf_check_import_get_name(import);
+		const char *content = xccdf_check_import_get_content(import);
+		xmlNode *import_node = xmlNewChild(check_node, ns_xccdf, BAD_CAST "check-import", BAD_CAST content);
+		xmlNewProp(import_node, BAD_CAST "import-name", BAD_CAST name);
+	}
+	xccdf_check_import_iterator_free(imports);
+
+	struct xccdf_check_export_iterator *exports = xccdf_check_get_exports(check);
+	while (xccdf_check_export_iterator_has_more(exports)) {
+		struct xccdf_check_export *export = xccdf_check_export_iterator_next(exports);
+		// This function seems like it should be in OpenSCAP, but isn't according to the docs
+		//const char *name = xccdf_check_export_get_name(export);
+		const char *name = export->name;
+		const char *value= xccdf_check_export_get_value(export);
+		xmlNode *export_node = xmlNewChild(check_node, ns_xccdf, BAD_CAST "check-export", NULL);
+		xmlNewProp(export_node, BAD_CAST "export-name", BAD_CAST name);
+		xmlNewProp(export_node, BAD_CAST "value-id", BAD_CAST value);
+	}
+	xccdf_check_export_iterator_free(exports);
+
+	const char *content = xccdf_check_get_content(check);
+	if (content)
+		xmlNewChild(check_node, ns_xccdf, BAD_CAST "check-content", BAD_CAST content);
+
+	struct xccdf_check_content_ref_iterator *refs = xccdf_check_get_content_refs(check);
+	while (xccdf_check_content_ref_iterator_has_more(refs)) {
+		struct xccdf_check_content_ref *ref = xccdf_check_content_ref_iterator_next(refs);
+		xmlNode *ref_node = xmlNewChild(check_node, ns_xccdf, BAD_CAST "check-content-ref", NULL);
+
+		const char *name = xccdf_check_content_ref_get_name(ref);
+		xmlNewProp(ref_node, BAD_CAST "name", BAD_CAST name);
+
+		const char *href = xccdf_check_content_ref_get_href(ref);
+		xmlNewProp(ref_node, BAD_CAST "href", BAD_CAST href);
+	}
+	xccdf_check_content_ref_iterator_free(refs);
+
+	return check_node;
 }
 
 #define XCCDF_ITEM_PROCESS_FLAG(reader,flag,attr) \
@@ -336,35 +671,6 @@ struct xccdf_item_iterator *xccdf_item_get_content(const struct xccdf_item *item
 		default: return NULL;
 	}
 }
-
-const struct oscap_string_map XCCDF_OPERATOR_MAP[] = {
-	{XCCDF_OPERATOR_EQUALS, "equals"},
-	{XCCDF_OPERATOR_NOT_EQUAL, "not equal"},
-	{XCCDF_OPERATOR_GREATER, "greater than"},
-	{XCCDF_OPERATOR_GREATER_EQUAL, "greater than or equal"},
-	{XCCDF_OPERATOR_LESS, "less than"},
-	{XCCDF_OPERATOR_LESS_EQUAL, "less than or equal"},
-	{XCCDF_OPERATOR_PATTERN_MATCH, "pattern match"},
-	{0, NULL}
-};
-
-const struct oscap_string_map XCCDF_LEVEL_MAP[] = {
-	{XCCDF_UNKNOWN, "unknown"},
-	{XCCDF_INFO, "info"},
-	{XCCDF_LOW, "low"},
-	{XCCDF_MEDIUM, "medium"},
-	{XCCDF_HIGH, "high"},
-	{0, NULL}
-};
-
-static const struct oscap_string_map XCCDF_STATUS_MAP[] = {
-	{XCCDF_STATUS_ACCEPTED, "accepted"},
-	{XCCDF_STATUS_DEPRECATED, "deprecated"},
-	{XCCDF_STATUS_DRAFT, "draft"},
-	{XCCDF_STATUS_INCOMPLETE, "incomplete"},
-	{XCCDF_STATUS_INTERIM, "interim"},
-	{XCCDF_STATUS_NOT_SPECIFIED, NULL}
-};
 
 struct xccdf_status *xccdf_status_new_fill(const char *status, const char *date)
 {

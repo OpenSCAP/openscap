@@ -9,6 +9,7 @@
 
 /*
  * Copyright 2009 Red Hat Inc., Durham, North Carolina.
+ * Copyright (C) 2010 Tresys Technology, LLC
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -27,6 +28,7 @@
  *
  * Authors:
  *      Lukas Kuklinek <lkuklinek@redhat.com>
+ *      Josh Adams <jadams@tresys.com>
  */
 
 #ifndef XCCDF_H_
@@ -626,7 +628,15 @@ struct xccdf_result* xccdf_item_to_result(struct xccdf_item* item);
  * @return Pointer to the new benchmark.
  * @retval NULL on failure
  */
-struct xccdf_benchmark *xccdf_benchmark_parse_xml(const char *filename);
+struct xccdf_benchmark* xccdf_benchmark_parse_xml(const char *filename);
+
+/**
+ * Export a benchmark to an XML stream
+ * @memberof xccdf_benchmark
+ * @return Integer
+ * @retval -1 if error occurred
+ */
+int xccdf_benchmark_export(struct xccdf_benchmark *benchmark, struct oscap_export_target *target);
 
 /// @memberof xccdf_benchmark
 struct xccdf_benchmark *xccdf_benchmark_new(void);
