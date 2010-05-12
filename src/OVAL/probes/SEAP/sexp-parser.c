@@ -91,7 +91,6 @@ void SEXP_pstate_free (SEXP_pstate_t *pstate)
         /*
          * Free cached values
          */
-        
         for (i = 0; i < 2; ++i) {
                 if (pstate->v_bool[i] != 0) {
                         if (SEXP_rawval_decref (pstate->v_bool[i])) {
@@ -1819,14 +1818,15 @@ found:
                 dsc->s_exp->s_type = SEXP_datatype_get (&g_datatypes, name);
                 
                 if (dsc->s_exp->s_type == NULL) {
-                        SEXP_datatype_t datatype;
-                        
-                        datatype.name     = (name != name_static ? name : strdup (name));
-                        datatype.name_len = dsc->p_explen - 2;
-                        datatype.op       = NULL;
-                        datatype.op_cnt   = 0;
-                        
-                        dsc->s_exp->s_type = SEXP_datatype_add (&g_datatypes, &datatype);
+                        if (name == name_static)
+                                name = strdup(name);
+
+                        dsc->s_exp->s_type = SEXP_datatype_add (&g_datatypes, name, NULL, NULL);
+
+                        if (dsc->s_exp->s_type == NULL) {
+                                sm_free(name);
+                                return(SEXP_PRET_EUNDEF);
+                        }
                 } else {
                         if (name != name_static)
                                 sm_free (name);
@@ -1859,14 +1859,15 @@ __PARSE_RT SEXP_parse_kl_datatype (__PARSE_PT(dsc))
         dsc->s_exp->s_type = SEXP_datatype_get (&g_datatypes, name);
         
         if (dsc->s_exp->s_type == NULL) {
-                SEXP_datatype_t datatype;
-                        
-                datatype.name     = (name != name_static ? name : strdup (name));
-                datatype.name_len = dsc->p_explen;
-                datatype.op       = NULL;
-                datatype.op_cnt   = 0;
-                
-                dsc->s_exp->s_type = SEXP_datatype_add (&g_datatypes, &datatype);
+                if (name == name_static)
+                        name = strdup(name);
+
+                dsc->s_exp->s_type = SEXP_datatype_add (&g_datatypes, name, NULL, NULL);
+
+                if (dsc->s_exp->s_type == NULL) {
+                        sm_free(name);
+                        return(SEXP_PRET_EUNDEF);
+                }
         } else {
                 if (name != name_static)
                         sm_free (name);

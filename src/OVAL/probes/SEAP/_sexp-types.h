@@ -46,9 +46,9 @@ struct SEXP {
         volatile uint16_t __magic0;
 #endif
 
-        SEXP_datatype_t *s_type;
-        uintptr_t        s_valp;
-        uint8_t          s_flgs;
+        SEXP_datatypePtr_t *s_type;
+        uintptr_t           s_valp;
+        uint8_t             s_flgs;
 
 #if !defined(NDEBUG) || defined(VALIDATE_SEXP)
         volatile uint16_t __magic1;

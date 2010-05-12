@@ -25,7 +25,7 @@
 #define _SEXP_DATATYPE
 
 #include "public/sexp-datatype.h"
-#include "generic/redblack.h"
+#include "generic/rbt/rbt.h"
 #include "../../../common/util.h"
 
 OSCAP_HIDDEN_START;
@@ -33,27 +33,58 @@ OSCAP_HIDDEN_START;
 typedef struct {
         uint8_t              arity;
         SEXP_datatype_opfn_t fn[3];
-} SEXP_dtype_op_t;
+} SEXP_datatypeOP_t;
 
 struct SEXP_datatype {
-        char            *name;
-        uint16_t         name_len;
-        uint16_t         op_cnt;
-        SEXP_dtype_op_t *op;
+        uint16_t          dt_flg;
+        uint8_t          _dt[];
 };
 
-DEFRBTREE(datatype, SEXP_datatype_t datatype);
+#define SEXP_DTFLG_LOCALDATA 0x01 /* whether a extended pointer should be used */
+#define SEXP_DTFLG_HAVEDTOPS 0x02 /* whether there are defined some operations */
 
-struct SEXP_datatypetbl {
-        TREETYPE(datatype) tree;
+struct SEXP_datatype_ops {
+        uint16_t           dt_opcnt;
+        SEXP_datatypeOP_t *dt_op;
 };
 
-SEXP_datatypetbl_t *SEXP_datatypetbl_new (void);
-int SEXP_datatypetbl_init (SEXP_datatypetbl_t *t);
+struct SEXP_datatypeTbl {
+        rbt_t *tree;
+};
 
-SEXP_datatype_t *SEXP_datatype_get (SEXP_datatypetbl_t *t, const char *name);
-SEXP_datatype_t *SEXP_datatype_add (SEXP_datatypetbl_t *t, SEXP_datatype_t *datatype);
-int              SEXP_datatype_del (SEXP_datatypetbl_t *t, const char *name);
+/*
+ * Datatype pointer
+ */
+typedef struct rbt_str_node SEXP_datatypePtr_t;
+
+/*
+ * Extended datatype pointer
+ */
+struct SEXP_datatype_extptr {
+        struct rbt_str_node *n; /* datatype tree node */
+        void                *l; /* local data related to an S-exp reference */
+};
+
+typedef struct SEXP_datatype_extptr SEXP_datatypeExtptr_t;
+
+
+const char *SEXP_datatype_name(SEXP_datatypePtr_t *p);
+
+void SEXP_datatype_once(void);
+void SEXP_datatypeGlobalTbl_init(void);
+void SEXP_datatypeGlobalTbl_free(void);
+
+SEXP_datatypeTbl_t *SEXP_datatypeTbl_new (void);
+int SEXP_datatypeTbl_init(SEXP_datatypeTbl_t *t);
+void SEXP_datatypeTbl_free(SEXP_datatypeTbl_t *t);
+
+SEXP_datatypePtr_t *SEXP_datatype_get(SEXP_datatypeTbl_t *t, const char *name);
+SEXP_datatypePtr_t *SEXP_datatype_add(SEXP_datatypeTbl_t *t, char *name, SEXP_datatype_t *d, void *l);
+int SEXP_datatype_del(SEXP_datatypeTbl_t *t, const char *name);
+
+#define SEXP_OP_CONTINUE 0 /* continue with the default handler */
+#define SEXP_OP_ABORT    1 /* abort with an error status */
+#define SEXP_OP_RETURN   2 /* return success, don't execute default handler */
 
 OSCAP_HIDDEN_END;
 

@@ -350,7 +350,7 @@ int rbt_str_del(rbt_t *rbt, const char *key, void **n)
         return (save == NULL ? 1 : 0);
 }
 
-int rbt_str_get(rbt_t *rbt, const char *key, void **data)
+int rbt_str_getnode(rbt_t *rbt, const char *key, struct rbt_str_node **node)
 {
         int r;
         register struct rbt_node *n;
@@ -372,13 +372,26 @@ int rbt_str_get(rbt_t *rbt, const char *key, void **data)
                         n = rbt_node_ptr(n->_chld[RBT_NODE_SR]);
                 else {
                         r = 0;
-                        *data = rbt_str_node_data(n);
+                        *node = (struct rbt_str_node *)(n->_node);
                         break;
                 }
         }
 
         rbt_runlock(rbt);
         return (r);
+}
+
+int rbt_str_get(rbt_t *rbt, const char *key, void **data)
+{
+        int r;
+        struct rbt_str_node *n = NULL;
+
+        r = rbt_str_getnode(rbt, key, &n);
+
+        if (r == 0)
+                *data = n->data;
+
+        return(r);
 }
 
 int rbt_str_walk_preorder(rbt_t *rbt, int (*callback)(struct rbt_str_node *), rbt_walk_t flags)

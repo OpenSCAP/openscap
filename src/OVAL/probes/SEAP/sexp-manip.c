@@ -29,6 +29,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <errno.h>
+#include "common/assume.h"
 #include "_sexp-types.h"
 #include "_sexp-value.h"
 #include "_sexp-manip.h"
@@ -1903,26 +1904,14 @@ void __SEXP_vfree (const char *file, uint32_t line, const char *func, SEXP_t *s_
 
 const char *SEXP_datatype (const SEXP_t *s_exp)
 {
-        _LOGCALL_;
-
-        if (s_exp == NULL) {
-                errno = EFAULT;
-                return (NULL);
-        }
-
+        assume_r(s_exp != NULL, NULL, errno=EFAULT;);
         SEXP_VALIDATE(s_exp);
-
-        if (s_exp->s_type != NULL) {
-                _A(s_exp->s_type->name != NULL);
-                return ((const char *)s_exp->s_type->name);
-        }
-
-        return (NULL);
+        return(s_exp->s_type == NULL ? NULL : SEXP_datatype_name(s_exp->s_type));
 }
 
 int SEXP_datatype_set (SEXP_t *s_exp, const char *name)
 {
-        SEXP_datatype_t *t;
+        SEXP_datatypePtr_t *t;
 
         _A(s_exp != NULL);
         _A(name  != NULL);
@@ -1931,69 +1920,58 @@ int SEXP_datatype_set (SEXP_t *s_exp, const char *name)
         SEXP_VALIDATE(s_exp);
 
         t = SEXP_datatype_get (&g_datatypes, name);
-        
+
         if (t == NULL) {
-                SEXP_datatype_t dt;
+                char *k = strdup(name);
 
-                dt.name     = strdup (name);
-                dt.name_len = strlen (name);
+                t = SEXP_datatype_add (&g_datatypes, k, NULL, NULL);
 
-                dt.op     = NULL;
-                dt.op_cnt = 0;
-
-                t = SEXP_datatype_add (&g_datatypes, &dt);
+                if (t == NULL) {
+                        sm_free(k);
+                        return(-1);
+                }
         }
 
-        if (t == NULL)
-                return (-1);
-        else
-                s_exp->s_type = t;
-        
+        s_exp->s_type = t;
+
         return (0);
 }
 
 int SEXP_datatype_set_nth (SEXP_t *list, uint32_t n, const char *name)
 {
-        SEXP_datatype_t *t;
+        SEXP_datatypePtr_t *t;
+        SEXP_val_t v_dsc;
+        SEXP_t    *s_nth;
 
-        _A(list != NULL);
-        _A(name != NULL);
-        _LOGCALL_;
+        assume_r(list != NULL, -1, errno=EFAULT;);
+        assume_r(name != NULL, -1, errno=EFAULT;);
 
         SEXP_VALIDATE(list);
 
         t = SEXP_datatype_get (&g_datatypes, name);
-        
+
         if (t == NULL) {
-                SEXP_datatype_t dt;
+                char *k = strdup(name);
 
-                dt.name     = strdup (name);
-                dt.name_len = strlen (name);
+                t = SEXP_datatype_add (&g_datatypes, k, NULL, NULL);
 
-                dt.op     = NULL;
-                dt.op_cnt = 0;
-
-                t = SEXP_datatype_add (&g_datatypes, &dt);
+                if (t == NULL) {
+                        sm_free(k);
+                        return(-1);
+                }
         }
-        
-        if (t == NULL)
+
+        SEXP_val_dsc (&v_dsc, list->s_valp);
+
+        if (v_dsc.type != SEXP_VALTYPE_LIST)
                 return (-1);
-        else {
-                SEXP_val_t v_dsc;
-                SEXP_t    *s_nth;
-                
-                SEXP_val_dsc (&v_dsc, list->s_valp);
-                
-                if (v_dsc.type != SEXP_VALTYPE_LIST)
-                        return (-1);
-                
-                s_nth = SEXP_rawval_lblk_nth (list->s_valp, n);
-                
-                if (s_nth == NULL)
-                        return (-1);
-                
-                s_nth->s_type = t; /* XXX: atomic? */
-        }
+
+        s_nth = SEXP_rawval_lblk_nth (list->s_valp, n);
+
+        if (s_nth == NULL)
+                return (-1);
+
+        s_nth->s_type = t; /* XXX: atomic? */
 
         return (0);
 }
@@ -2005,7 +1983,7 @@ SEXP_type_t SEXP_typeof (const SEXP_t *s_exp)
         _LOGCALL_;
         SEXP_VALIDATE(s_exp);
         SEXP_val_dsc (&v_dsc, s_exp->s_valp);
-        
+
         return ((SEXP_type_t) v_dsc.type);
 }
 

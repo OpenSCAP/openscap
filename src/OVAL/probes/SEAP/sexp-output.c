@@ -53,13 +53,15 @@ int SEXP_sbprintf_t (SEXP_t *s_exp, strbuf_t *sb)
 {
         SEXP_val_t v_dsc;
         int buflen;
-        
+
         if (s_exp->s_type != NULL) {
-                char buffer[64+1];
-                
-                buflen = snprintf (buffer, sizeof buffer, "#d%zu[%s]",
-                                   strlen (s_exp->s_type->name), s_exp->s_type->name);
-                
+                const char *name;
+                char  buffer[64+1];
+
+                name   = SEXP_datatype_name(s_exp->s_type);
+                buflen = snprintf (buffer, sizeof buffer,
+                                   "#d%zu[%s]", strlen (name), name);
+
                 _A((size_t)buflen < sizeof buffer);
 
                 if (strbuf_add (sb, buffer, buflen) != 0)
@@ -231,10 +233,10 @@ static int __SEXP_fprintfa_lmemb (const SEXP_t *s_exp, void *arg)
 size_t SEXP_fprintfa (FILE *fp, const SEXP_t *s_exp)
 {
         SEXP_val_t v_dsc;
-        
+
         if (s_exp->s_type != NULL)
-                fprintf (fp, "[%s]", s_exp->s_type->name);
-        
+                fprintf (fp, "[%s]", SEXP_datatype_name(s_exp->s_type));
+
         SEXP_val_dsc (&v_dsc, s_exp->s_valp);
         
         switch (v_dsc.type) {

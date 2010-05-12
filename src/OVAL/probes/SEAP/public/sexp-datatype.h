@@ -43,13 +43,13 @@ typedef struct {
 } SEXP_datatype_op_t;
 
 typedef struct SEXP_datatype    SEXP_datatype_t;
-typedef struct SEXP_datatypetbl SEXP_datatypetbl_t;
+typedef struct SEXP_datatypeTbl SEXP_datatypeTbl_t;
 
-extern SEXP_datatypetbl_t g_datatypes;
+extern SEXP_datatypeTbl_t g_datatypes;
 
 /* const char *SEXP_datatype (const SEXP_t *sexp); */
 
-int SEXP_datatype_register (SEXP_datatypetbl_t *t, const char *datatype, SEXP_datatype_op_t *op, uint8_t opnummax);
+int SEXP_datatype_register (SEXP_datatypeTbl_t *t, const char *datatype, SEXP_datatype_op_t *op, uint8_t opnummax);
 /* int SEXP_datatype_unregister (void); */
 
 int SEXP_datatype_op (uint8_t op, const SEXP_t *sexp, void *res, ...);
