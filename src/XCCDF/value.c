@@ -23,6 +23,7 @@
 #include "item.h"
 #include "elements.h"
 #include "helpers.h"
+#include "xccdf_impl.h"
 #include "../common/elements.h"
 #include <math.h>
 #include <string.h>
@@ -155,6 +156,75 @@ struct xccdf_item *xccdf_value_parse(xmlTextReaderPtr reader, struct xccdf_item 
 
 	return value;
 }
+
+void xccdf_value_to_dom(struct xccdf_value *value, xmlNode *value_node, xmlDoc *doc, xmlNode *parent)
+{
+	xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent, XCCDF_BASE_NAMESPACE);
+
+	/* Handle Attributes */
+	const char *extends = xccdf_value_get_extends(value);
+	if (extends)
+		xmlNewProp(value_node, BAD_CAST "extends", BAD_CAST extends);
+
+	xccdf_operator_t operator = xccdf_value_get_oper(value);
+	xmlNewProp(value_node, BAD_CAST "operator", BAD_CAST XCCDF_OPERATOR_MAP[operator - 1].string);
+
+	xccdf_value_type_t type = xccdf_value_get_type(value);
+	xmlNewProp(value_node, BAD_CAST "type", BAD_CAST XCCDF_VALUE_TYPE_MAP[type - 1].string);
+
+	if (xccdf_value_get_interactive(value))
+		xmlNewProp(value_node, BAD_CAST "interactive", BAD_CAST "True");
+
+	xccdf_interface_hint_t hint = xccdf_value_get_interface_hint(value);
+	xmlNewProp(value_node, BAD_CAST "interfaceHint", BAD_CAST XCCDF_IFACE_HINT_MAP[hint - 1].string);
+
+	/* Handle Child Nodes */
+	const char *val_str = xccdf_value_get_value_string(value);
+	xmlNode *val_node = xmlNewChild(parent, ns_xccdf, BAD_CAST "value", BAD_CAST val_str);
+	const char *selector = xccdf_value_get_selector(value);
+	if (selector)
+		xmlNewProp(val_node, BAD_CAST "Selector", BAD_CAST selector);
+
+	const char *defval_str = xccdf_value_get_defval_string(value);
+	xmlNode *defval_node = xmlNewChild(parent, ns_xccdf, BAD_CAST "default", BAD_CAST defval_str);
+	const char *defval_selector = xccdf_value_get_selector(value);
+	if (defval_selector)
+		xmlNewProp(defval_node, BAD_CAST "Selector", BAD_CAST defval_selector);
+
+	const char *match = xccdf_value_get_match(value);
+	xmlNode *match_node = xmlNewChild(parent, ns_xccdf, BAD_CAST "match", BAD_CAST match);
+	const char *match_selector = xccdf_value_get_selector(value);
+	if (match_selector)
+		xmlNewProp(match_node, BAD_CAST "Selector", BAD_CAST match_selector);
+
+	xccdf_numeric lower_val = xccdf_value_get_lower_bound(value);
+	char lower_str[10];
+	*lower_str = '\0';
+	snprintf(lower_str, sizeof(lower_str), "%f", lower_val);
+	xmlNode *lower_node = xmlNewChild(parent, ns_xccdf, BAD_CAST "lower-bound", BAD_CAST lower_str);
+	const char *lower_selector = xccdf_value_get_selector(value);
+	if (lower_selector)
+		xmlNewProp(lower_node, BAD_CAST "Selector", BAD_CAST lower_selector);
+
+	xccdf_numeric upper_val = xccdf_value_get_upper_bound(value);
+	char upper_str[10];
+	*upper_str = '\0';
+	snprintf(upper_str, sizeof(upper_str), "%f", upper_val);
+	xmlNode *upper_node = xmlNewChild(parent, ns_xccdf, BAD_CAST "upper-bound", BAD_CAST upper_str);
+	const char *upper_selector = xccdf_value_get_selector(value);
+	if (upper_selector)
+		xmlNewProp(upper_node, BAD_CAST "Selector", BAD_CAST upper_selector);
+
+	// No support for choices in OpenSCAP
+	
+	struct oscap_string_iterator *sources = xccdf_value_get_sources(value);
+	while (oscap_string_iterator_has_more(sources)) {
+		const char *source = oscap_string_iterator_next(sources);
+		xmlNewChild(value_node, ns_xccdf, BAD_CAST "source", BAD_CAST source);
+	}
+	oscap_string_iterator_free(sources);
+}
+
 
 void xccdf_value_free(struct xccdf_item *val)
 {

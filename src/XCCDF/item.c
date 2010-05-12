@@ -242,12 +242,9 @@ xmlNode *xccdf_item_to_dom(struct xccdf_item *item, xmlDoc *doc, xmlNode *parent
         }
         oscap_text_iterator_free(descriptions);
 
-        if (xccdf_item_get_version(item)) {
-                char version[10];
-                *version = '\0';
-                snprintf(version, sizeof(version), "%s", xccdf_item_get_version(item));
-                xmlNewChild(item_node, ns_xccdf, BAD_CAST "version", BAD_CAST version);
-        }
+	const char *version= xccdf_item_get_version(item);
+	if (version)
+		xmlNewProp(item_node, BAD_CAST "version", BAD_CAST version);
 
 	struct xccdf_status_iterator *statuses = xccdf_item_get_statuses(item);
 	while (xccdf_status_iterator_has_more(statuses)) {
@@ -290,12 +287,10 @@ xmlNode *xccdf_item_to_dom(struct xccdf_item *item, xmlDoc *doc, xmlNode *parent
 			break;
 		case XCCDF_VALUE:
 			xmlNodeSetName(item_node,BAD_CAST "Value");
+			xccdf_value_to_dom(XVALUE(item), item_node, doc, parent);
 			break;
 		case XCCDF_CONTENT:
 			xmlNodeSetName(item_node,BAD_CAST "Content");
-			break;
-		case XCCDF_ITEM:
-			xmlNodeSetName(item_node,BAD_CAST "Item");
 			break;
 		case XCCDF_OBJECT:
 			xmlNodeSetName(item_node,BAD_CAST "Object");
