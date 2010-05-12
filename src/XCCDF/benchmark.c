@@ -23,6 +23,7 @@
 #include <string.h>
 #include "item.h"
 #include "helpers.h"
+#include "xccdf_impl.h"
 #include "common/_error.h"
 
 #define XCCDF_SUPPORTED "1.1.4"
@@ -130,6 +131,57 @@ bool xccdf_benchmark_parse(struct xccdf_item * benchmark, xmlTextReaderPtr reade
 	}
 
 	return true;
+}
+
+int xccdf_benchmark_export(struct xccdf_benchmark *benchmark, struct oscap_export_target *target)
+{
+	__attribute__nonnull__(target);
+
+	int retcode = 0;
+
+	LIBXML_TEST_VERSION;
+
+	xmlDocPtr doc = xmlNewDoc(BAD_CAST "1.0");
+	if (doc == NULL) {
+		oscap_setxmlerr(xmlGetLastError());
+		return -1;
+	}
+
+	xccdf_benchmark_to_dom(benchmark, doc, NULL, NULL);
+
+	retcode = xmlSaveFormatFileEnc(oscap_export_target_get_name(target), doc, oscap_export_target_get_encoding(target), 1);
+	if (retcode < 1)
+		oscap_setxmlerr(xmlGetLastError());
+
+	xmlFreeDoc(doc);
+
+	return retcode;
+}
+
+xmlNode *xccdf_benchmark_to_dom(struct xccdf_benchmark *benchmark, xmlDocPtr doc,
+				xmlNode *parent, void *user_args)
+{
+	xmlNodePtr root_node = NULL;
+
+	if (parent) {
+		root_node = xmlNewChild(parent, NULL, BAD_CAST "Benchmark", NULL);
+	} else {
+		root_node = xmlNewNode(NULL, BAD_CAST "Benchmark");
+		xmlDocSetRootElement(doc, root_node);
+	}
+	xmlNs *ns_xccdf = xmlNewNs(root_node, XCCDF_BASE_NAMESPACE, NULL);
+
+	xmlSetNs(root_node, ns_xccdf);
+
+	struct xccdf_item_iterator *items = xccdf_benchmark_get_content(benchmark);
+	while (xccdf_item_iterator_has_more(items)) {
+		struct xccdf_item *item = xccdf_item_iterator_next(items);
+		if (XBENCHMARK(xccdf_item_get_parent(item)) == benchmark)
+			xccdf_item_to_dom(item, doc, root_node);
+	}
+	xccdf_item_iterator_free(items);
+
+	return root_node;
 }
 
 void xccdf_benchmark_dump(struct xccdf_benchmark *benchmark)
