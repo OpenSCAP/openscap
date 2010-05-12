@@ -91,12 +91,19 @@ static int get_ifs(SEXP_t *name_ent, SEXP_t *item_list)
         /* Walk through linked list, maintaining head pointer so we
 	   can free list later */
 	for (ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next) {
-		if (ifa->ifa_addr) {
-			family = ifa->ifa_addr->sa_family;
-			if (family != AF_INET && family != AF_INET6)
-				continue;
-		} else
+		SEXP_t *sname;
+
+		if (!ifa->ifa_addr)
 			continue;
+
+		family = ifa->ifa_addr->sa_family;
+		if (family != AF_INET && family != AF_INET6)
+			continue;
+
+		sname = SEXP_string_newf("%s", ifa->ifa_name);
+		if (probe_entobj_cmp(name_ent, sname) != OVAL_RESULT_TRUE)
+			continue;
+		SEXP_free(sname);
 
 		mac = get_mac(ifa);
 		rc = getnameinfo(ifa->ifa_addr, (family == AF_INET) ?
@@ -115,15 +122,18 @@ static int get_ifs(SEXP_t *name_ent, SEXP_t *item_list)
 			rc = 1;
 			goto leave2;
 		}
-		rc = getnameinfo(ifa->ifa_broadaddr, (family == AF_INET) ?
-			sizeof(struct sockaddr_in) :
-			sizeof(struct sockaddr_in6), broad, NI_MAXHOST,
-			NULL, 0, NI_NUMERICHOST);
-		if (rc) {
-			rc = 1;
-			goto leave2;
-		}
-	
+		if (ifa->ifa_flags & IFF_BROADCAST) {
+			rc = getnameinfo(ifa->ifa_broadaddr, (family == AF_INET) ?
+					 sizeof(struct sockaddr_in) :
+					 sizeof(struct sockaddr_in6), broad, NI_MAXHOST,
+					 NULL, 0, NI_NUMERICHOST);
+			if (rc) {
+				rc = 1;
+				goto leave2;
+			}
+		} else
+			*broad = '\0';
+
 		item = probe_item_creat("interface_item", NULL,
 				"name", NULL,
                                 r0 = SEXP_string_new (ifa->ifa_name, strlen (ifa->ifa_name)),
@@ -139,7 +149,6 @@ static int get_ifs(SEXP_t *name_ent, SEXP_t *item_list)
 
 		SEXP_list_add(item_list, item);
 		SEXP_vfree(r0, r1, r2, r3, r4, item, NULL);
-		return 0;
 	}
 leave2:
 	close(fd);
