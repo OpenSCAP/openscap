@@ -231,14 +231,16 @@ xmlNode *xccdf_item_to_dom(struct xccdf_item *item, xmlDoc *doc, xmlNode *parent
         struct oscap_text_iterator *titles = xccdf_item_get_title(item);
         while (oscap_text_iterator_has_more(titles)) {
                 struct oscap_text *title = oscap_text_iterator_next(titles);
-                xmlNewChild(item_node, ns_xccdf, BAD_CAST "title", BAD_CAST oscap_text_get_text(title));
+                xmlNode * child = xmlNewChild(item_node, ns_xccdf, BAD_CAST "title", BAD_CAST oscap_text_get_text(title));
+                if (oscap_text_get_lang(title) != NULL) xmlNewProp(child, BAD_CAST "xml:lang", BAD_CAST oscap_text_get_lang(title));
         }
         oscap_text_iterator_free(titles);
 
         struct oscap_text_iterator *descriptions = xccdf_item_get_description(item);
         while (oscap_text_iterator_has_more(descriptions)) {
                 struct oscap_text *description = oscap_text_iterator_next(descriptions);
-                xmlNewChild(item_node, ns_xccdf, BAD_CAST "description", BAD_CAST oscap_text_get_text(description));
+                xmlNode * child = xmlNewChild(item_node, ns_xccdf, BAD_CAST "description", BAD_CAST oscap_text_get_text(description));
+                if (oscap_text_get_lang(description) != NULL) xmlNewProp(child, BAD_CAST "xml:lang", BAD_CAST oscap_text_get_lang(description));
         }
         oscap_text_iterator_free(descriptions);
 
@@ -256,7 +258,8 @@ xmlNode *xccdf_item_to_dom(struct xccdf_item *item, xmlDoc *doc, xmlNode *parent
         struct oscap_text_iterator *questions = xccdf_item_get_question(item);
         while (oscap_text_iterator_has_more(questions)) {
                 struct oscap_text *question = oscap_text_iterator_next(questions);
-                xmlNewChild(item_node, ns_xccdf, BAD_CAST "question", BAD_CAST oscap_text_get_text(question));
+                xmlNode * child = xmlNewChild(item_node, ns_xccdf, BAD_CAST "question", BAD_CAST oscap_text_get_text(question));
+                if (oscap_text_get_lang(question) != NULL) xmlNewProp(child, BAD_CAST "xml:lang", BAD_CAST oscap_text_get_lang(question));
         }
         oscap_text_iterator_free(questions);
 
@@ -308,14 +311,12 @@ xmlNode *xccdf_reference_to_dom(struct xccdf_reference *ref, xmlDoc *doc, xmlNod
 	xmlNode *reference_node = xmlNewChild(parent, ns_xccdf, BAD_CAST "reference", BAD_CAST xccdf_reference_get_content(ref));
 
 	const char *lang = xccdf_reference_get_lang(ref);
-	xmlNewProp(reference_node, BAD_CAST "xml:lang", BAD_CAST lang);
+	if (lang != NULL) xmlNewProp(reference_node, BAD_CAST "xml:lang", BAD_CAST lang);
 
 	const char *href = xccdf_reference_get_href(ref);
 	xmlNewProp(reference_node, BAD_CAST "href", BAD_CAST href);
 
-	//const char *content = xccdef_reference_get_content(ref);
-	//if (content)
-	//	xmlNewChild(reference_node, ns_xccdf, BAD_CAST "content", BAD_CAST content);
+        /* TODO: Dublin Core Elements /XML spec p. 69/ */
 
 	return reference_node;
 }
@@ -370,13 +371,16 @@ xmlNode *xccdf_fixtext_to_dom(struct xccdf_fixtext *fixtext, xmlDoc *doc, xmlNod
 	xmlNewProp(fixtext_node, BAD_CAST "fixref", BAD_CAST fixref);
 
 	xccdf_level_t complexity = xccdf_fixtext_get_complexity(fixtext);
-	xmlNewProp(fixtext_node, BAD_CAST "complexity", BAD_CAST XCCDF_LEVEL_MAP[complexity - 1].string);
+        if (complexity != 0)
+	        xmlNewProp(fixtext_node, BAD_CAST "complexity", BAD_CAST XCCDF_LEVEL_MAP[complexity].string);
 
 	xccdf_level_t disruption = xccdf_fixtext_get_disruption(fixtext);
-	xmlNewProp(fixtext_node, BAD_CAST "disruption", BAD_CAST XCCDF_LEVEL_MAP[disruption - 1].string);
+        if (disruption != 0)
+	        xmlNewProp(fixtext_node, BAD_CAST "disruption", BAD_CAST XCCDF_LEVEL_MAP[disruption].string);
 
 	xccdf_strategy_t strategy = xccdf_fixtext_get_strategy(fixtext);
-	xmlNewProp(fixtext_node, BAD_CAST "strategy", BAD_CAST XCCDF_STRATEGY_MAP[strategy - 1].string);
+        if (strategy != 0)
+	        xmlNewProp(fixtext_node, BAD_CAST "strategy", BAD_CAST XCCDF_STRATEGY_MAP[strategy].string);
 
 	const char *content = fixtext->content;
 	xmlNewChild(fixtext_node, ns_xccdf, BAD_CAST "sub", BAD_CAST content);
@@ -387,28 +391,33 @@ xmlNode *xccdf_fixtext_to_dom(struct xccdf_fixtext *fixtext, xmlDoc *doc, xmlNod
 xmlNode *xccdf_fix_to_dom(struct xccdf_fix *fix, xmlDoc *doc, xmlNode *parent)
 {
 	xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent, XCCDF_BASE_NAMESPACE);
-	xmlNode *fix_node = xmlNewChild(parent, ns_xccdf, BAD_CAST "fix", NULL);
+	const char *content = xccdf_fix_get_content(fix);
+	xmlNode *fix_node = xmlNewChild(parent, ns_xccdf, BAD_CAST "fix", BAD_CAST content);
 
 	const char *id = xccdf_fix_get_id(fix);
-	xmlNewProp(fix_node, BAD_CAST "id", BAD_CAST id);
+	if (id != NULL) xmlNewProp(fix_node, BAD_CAST "id", BAD_CAST id);
 
 	const char *sys = xccdf_fix_get_system(fix);
-	xmlNewProp(fix_node, BAD_CAST "system", BAD_CAST sys);
+	if (sys != NULL) xmlNewProp(fix_node, BAD_CAST "system", BAD_CAST sys);
 
 	if (xccdf_fix_get_reboot(fix))
 		xmlNewProp(fix_node, BAD_CAST "reboot", BAD_CAST "True");
 
 	xccdf_level_t complexity = xccdf_fix_get_complexity(fix);
-	xmlNewProp(fix_node, BAD_CAST "complexity", BAD_CAST XCCDF_LEVEL_MAP[complexity - 1].string);
+        if (complexity != 0) {
+	    xmlNewProp(fix_node, BAD_CAST "complexity", BAD_CAST XCCDF_LEVEL_MAP[complexity-1].string);
+        }
 
 	xccdf_level_t disruption = xccdf_fix_get_disruption(fix);
-	xmlNewProp(fix_node, BAD_CAST "disruption", BAD_CAST XCCDF_LEVEL_MAP[disruption - 1].string);
+        if (disruption != 0)
+	        xmlNewProp(fix_node, BAD_CAST "disruption", BAD_CAST XCCDF_LEVEL_MAP[disruption-1].string);
 
 	xccdf_strategy_t strategy = xccdf_fix_get_strategy(fix);
-	xmlNewProp(fix_node, BAD_CAST "strategy", BAD_CAST XCCDF_STRATEGY_MAP[strategy - 1].string);
+        if (strategy != 0)
+	        xmlNewProp(fix_node, BAD_CAST "strategy", BAD_CAST XCCDF_STRATEGY_MAP[strategy-1].string);
 
-	const char *content = xccdf_fix_get_content(fix);
-	xmlNewChild(fix_node, ns_xccdf, BAD_CAST "sub", BAD_CAST content);
+        // Sub element is used to store XCCDF value substitutions, not a content
+	//xmlNewChild(fix_node, ns_xccdf, BAD_CAST "sub", BAD_CAST content);
 
 	// This is in the XCCDF Spec, but not implemented in OpenSCAP
 	//const char *instance = xccdf_fix_get_instance(fix);
@@ -816,10 +825,10 @@ struct xccdf_reference *xccdf_reference_new_parse(xmlTextReaderPtr reader)
 {
     struct xccdf_reference *ref = xccdf_reference_new();
     if (xccdf_attribute_has(reader, XCCDFA_OVERRIDE))
-        ref->override = oscap_string_to_enum(OSCAP_BOOL_MAP, xccdf_attribute_get(reader, XCCDFA_OVERRIDE));
+            ref->override = oscap_string_to_enum(OSCAP_BOOL_MAP, xccdf_attribute_get(reader, XCCDFA_OVERRIDE));
     ref->href = xccdf_attribute_copy(reader, XCCDFA_HREF);
     ref->content = oscap_element_string_copy(reader);
-    // TODO lang, Dublin Core
+    // TODO Dublin Core
     return ref;
 }
 

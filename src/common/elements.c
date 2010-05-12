@@ -100,7 +100,7 @@ int oscap_element_depth(xmlTextReaderPtr reader)
 
 char *oscap_get_xml(xmlTextReaderPtr reader)
 {
-	return (char *)xmlTextReaderReadOuterXml(reader);
+	return (char *)xmlTextReaderReadInnerXml(reader);
 }
 
 time_t oscap_get_date(const char *date)

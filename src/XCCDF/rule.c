@@ -606,7 +606,7 @@ const struct oscap_string_map XCCDF_STRATEGY_MAP[] = {
 
 struct xccdf_fix *xccdf_fix_new(void)
 {
-    return oscap_calloc(1, sizeof(struct xccdf_fix));
+        return oscap_calloc(1, sizeof(struct xccdf_fix));
 }
 
 struct xccdf_fix *xccdf_fix_parse(xmlTextReaderPtr reader)
@@ -708,13 +708,14 @@ void xccdf_rule_to_dom(struct xccdf_rule *rule, xmlNode *rule_node, xmlDoc *doc,
 	xmlNewProp(rule_node, BAD_CAST "role", BAD_CAST XCCDF_ROLE_MAP[role - 1].string);
 
 	xccdf_level_t severity = xccdf_rule_get_severity(rule);
-	xmlNewProp(rule_node, BAD_CAST "severity", BAD_CAST XCCDF_LEVEL_MAP[severity - 1].string);
+	xmlNewProp(rule_node, BAD_CAST "severity", BAD_CAST XCCDF_LEVEL_MAP[severity].string);
 
 	/* Handle Child Nodes */
 	struct oscap_text_iterator *rationales = xccdf_rule_get_rationale(rule);
 	while (oscap_text_iterator_has_more(rationales)) {
 		struct oscap_text *rationale = oscap_text_iterator_next(rationales);
-		xmlNewChild(rule_node, ns_xccdf, BAD_CAST "rationale", BAD_CAST oscap_text_get_text(rationale));
+		xmlNode * child = xmlNewChild(rule_node, ns_xccdf, BAD_CAST "rationale", BAD_CAST oscap_text_get_text(rationale));
+                if (oscap_text_get_lang(rationale) != NULL) xmlNewProp(child, BAD_CAST "xml:lang", BAD_CAST oscap_text_get_lang(rationale));
 	}
 	oscap_text_iterator_free(rationales);
 
@@ -801,7 +802,8 @@ void xccdf_group_to_dom(struct xccdf_group *group, xmlNode *group_node, xmlDoc *
 	struct oscap_text_iterator *rationales = xccdf_group_get_rationale(group);
 	while (oscap_text_iterator_has_more(rationales)) {
 		struct oscap_text *rationale = oscap_text_iterator_next(rationales);
-		xmlNewChild(group_node, ns_xccdf, BAD_CAST "rationale", BAD_CAST oscap_text_get_text(rationale));
+		xmlNode * child = xmlNewChild(group_node, ns_xccdf, BAD_CAST "rationale", BAD_CAST oscap_text_get_text(rationale));
+                if (oscap_text_get_lang(rationale) != NULL) xmlNewProp(child, BAD_CAST "xml:lang", BAD_CAST oscap_text_get_lang(rationale));
 	}
 	oscap_text_iterator_free(rationales);
 
