@@ -52,9 +52,9 @@ pqueue_t *pqueue_new  (size_t max)
 {
         pthread_mutexattr_t attrs;
         pqueue_t *q;
-        
+
         _A(max > 0);
-        
+
         q = sm_talloc (pqueue_t);
         q->count_max = max;
         q->count = 0;
@@ -66,7 +66,7 @@ pqueue_t *pqueue_new  (size_t max)
         pthread_mutexattr_settype (&attrs, PTHREAD_MUTEX_RECURSIVE);
         pthread_mutex_init (&(q->mutex), &attrs);
         pthread_mutexattr_destroy (&attrs);
-        
+
         return (q);
 }
 
@@ -75,21 +75,21 @@ void pqueue_free (pqueue_t *q)
         pqueue_hdr_t *c_hdr, *n_hdr;
 
         _A(q != NULL);
-        
+
         PQUEUE_LOCK(q); /* FIXME */
         c_hdr = (pqueue_hdr_t *)(q->queue);
-        
+
         while (c_hdr != NULL) {
                 n_hdr = (pqueue_hdr_t *)(c_hdr->n);
                 sm_free (c_hdr);
                 c_hdr = n_hdr;
         }
-        
+
         PQUEUE_UNLOCK(q);
-        
+
         pthread_mutex_destroy (&(q->mutex));
         sm_free (q);
-        
+
         return;
 }
 
@@ -118,15 +118,15 @@ int pqueue_add_last (pqueue_t *q, void *ptr)
 
         _A(q != NULL);
         _A(ptr != NULL);
-        
+
         PQUEUE_LOCK(q);
-        
+
         c_hdr = (pqueue_hdr_t  *)(q->queue);
         w_ptr = (pqueue_hdr_t **)((void *)&(q->queue));
 
         while (c_hdr != NULL) {
                 n_hdr = (pqueue_hdr_t *)(c_hdr->n);
-                
+
                 if (n_hdr == NULL) {
                         if (c_hdr->s < (size_t)(2 << c_hdr->e)) {
                                 goto pq_add;
@@ -134,8 +134,8 @@ int pqueue_add_last (pqueue_t *q, void *ptr)
                                 w_ptr = (pqueue_hdr_t **)((void *)&(c_hdr->n));
                                 goto pq_new;
                         }
-                } 
-                
+                }
+
                 c_hdr = n_hdr;
         }
 pq_new:
@@ -143,14 +143,14 @@ pq_new:
         c_hdr->e = q->exp;
         c_hdr->n = NULL;
         c_hdr->s = 0;
-        
+
         ++(q->exp);
 pq_add:
         PQ_PARRAY(c_hdr, c_hdr->s++) = ptr;
         ++(q->count);
-        
+
         PQUEUE_UNLOCK(q);
-        
+
         return (0);
 }
 
@@ -158,29 +158,29 @@ void *pqueue_first (pqueue_t *q)
 {
         void *ret;
         pqueue_hdr_t *c_hdr;
-        
+
         _A(q != NULL);
-        
+
         PQUEUE_LOCK(q);
         c_hdr = (pqueue_hdr_t *)(q->queue);
-        
+
         if (c_hdr == NULL) {
                 PQUEUE_UNLOCK(q);
                 return (NULL);
         }
-        
+
         ret = PQ_PARRAY(c_hdr, q->i_first++);
         --(q->count);
-        
+
         _A(q->i_first <= c_hdr->s);
-        
+
         if (q->i_first >= (size_t)(2 << c_hdr->s)) {
                 q->queue = c_hdr->n;
                 --(q->exp);
                 q->i_first = 0;
-                sm_free (c_hdr);                
+                sm_free (c_hdr);
         }
-        
+
         PQUEUE_UNLOCK(q);
         return (ret);
 }
@@ -209,18 +209,18 @@ void *pqueue_pick_first (pqueue_t *q, int (*pickp) (void *ptr))
         pqueue_hdr_t *c_hdr, **w_ptr;
         void *ptr;
         size_t i, null_cnt;
-        
+
         _A(q     != NULL);
         _A(pickp != NULL);
-        
+
         PQUEUE_LOCK(q);
         c_hdr = (pqueue_hdr_t *)(q->queue);
         w_ptr = (pqueue_hdr_t **)((void *)&(q->queue));
-        
+
         while (c_hdr != NULL) {
                 for (i = 0, null_cnt = 0; i < c_hdr->s; ++i) {
                         ptr = PQ_PARRAY(c_hdr, i);
-                        
+
                         if (ptr != NULL) {
                                 null_cnt = 0;
 
@@ -228,7 +228,7 @@ void *pqueue_pick_first (pqueue_t *q, int (*pickp) (void *ptr))
                                         PQ_PARRAY(c_hdr, i) = NULL;
                                         --(q->count);
                                         PQUEUE_UNLOCK(q);
-                                        
+
                                         return (NULL);
                                 }
                         } else {
@@ -238,11 +238,11 @@ void *pqueue_pick_first (pqueue_t *q, int (*pickp) (void *ptr))
                                 }
                         }
                 }
-                
+
                 if (c_hdr->s == null_cnt) {
                         if (c_hdr == q->queue)
                                 q->i_first = 0;
-                        
+
                         (*w_ptr) = c_hdr->n;
                         sm_free (c_hdr);
                         c_hdr = (*w_ptr);
@@ -251,9 +251,9 @@ void *pqueue_pick_first (pqueue_t *q, int (*pickp) (void *ptr))
                         c_hdr = c_hdr->n;
                 }
         }
-        
+
         PQUEUE_UNLOCK(q);
-        
+
         return (NULL);
 }
 
@@ -261,7 +261,7 @@ void *pqueue_pick_last (pqueue_t *q, int (*pickp) (void *ptr))
 {
         _A(q     != NULL);
         _A(pickp != NULL);
-        
+
         return (NULL);
 }
 
@@ -274,19 +274,19 @@ size_t pqueue_count (pqueue_t *q)
         PQUEUE_LOCK(q);
         c = q->count;
         PQUEUE_UNLOCK(q);
-        
+
         return (c);
 }
 
 int pqueue_notempty (pqueue_t *q)
 {
         int b;
-        
+
         _A(q != NULL);
 
         PQUEUE_LOCK(q);
         b = (q->count > 0);
         PQUEUE_UNLOCK(q);
-        
+
         return (b);
 }

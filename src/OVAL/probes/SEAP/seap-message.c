@@ -35,7 +35,7 @@ SEAP_msg_t *SEAP_msg_new (void)
         new->attrs = NULL;
         new->attrs_cnt = 0;
         new->sexp = NULL;
-        
+
         return (new);
 }
 
@@ -46,16 +46,16 @@ SEAP_msg_t *SEAP_msg_clone (SEAP_msg_t *msg)
 
         new = sm_talloc (SEAP_msg_t);
         memcpy (new, msg, sizeof (SEAP_msg_t));
-        
+
         new->attrs = sm_alloc (sizeof (SEAP_attr_t) * new->attrs_cnt);
-        
+
         for (i = 0; i < new->attrs_cnt; ++i) {
                 new->attrs[i].name  = strdup (msg->attrs[i].name);
                 new->attrs[i].value = SEXP_ref (msg->attrs[i].value);
         }
-        
+
         new->sexp  = SEXP_ref (msg->sexp);
-        
+
         return (new);
 }
 
@@ -63,7 +63,7 @@ void SEAP_msg_free (SEAP_msg_t *msg)
 {
         if (msg == NULL)
                 return;
-        
+
         if (msg->attrs != NULL) {
                 for (; msg->attrs_cnt > 0; --msg->attrs_cnt) {
                         _D("name=%s, value=%p\n",
@@ -73,13 +73,13 @@ void SEAP_msg_free (SEAP_msg_t *msg)
                         sm_free (msg->attrs[msg->attrs_cnt - 1].name);
                         SEXP_free (msg->attrs[msg->attrs_cnt - 1].value);
                 }
-                
+
                 sm_free (msg->attrs);
         }
-        
+
         if (msg->sexp != NULL)
                 SEXP_free (msg->sexp);
-        
+
         sm_free (msg);
         return;
 }
@@ -115,11 +115,11 @@ int SEAP_msgattr_set (SEAP_msg_t *msg, const char *attr, SEXP_t *value)
 #ifndef NDEBUG
         if (value != NULL)
                 SEXP_VALIDATE(value);
-#endif        
+#endif
         msg->attrs = sm_realloc (msg->attrs, sizeof (SEAP_attr_t) * (++msg->attrs_cnt));
         msg->attrs[msg->attrs_cnt - 1].name  = strdup (attr);
         msg->attrs[msg->attrs_cnt - 1].value = (value != NULL ? SEXP_ref (value) : NULL);
-        
+
         return (0);
 }
 
@@ -139,7 +139,7 @@ bool SEAP_msgattr_exists (SEAP_msg_t *msg, const char *name)
                 if (strcmp (name, msg->attrs[i].name) == 0)
                         return (true);
         }
-        
+
         return (false);
 }
 
@@ -155,29 +155,29 @@ SEXP_t *SEAP_msgattr_get (SEAP_msg_t *msg, const char *name)
                 if (strcmp (name, msg->attrs[i].name) == 0)
                         return SEXP_ref (msg->attrs[i].value);
         }
-        
+
         return (NULL);
 }
 
 void SEAP_msg_print (FILE *fp, SEAP_msg_t *msg)
 {
         uint16_t i;
-        
+
         fprintf (fp, "==== SEAP MSG: %p ====\n", msg);
         fprintf (fp, "> ID: %u, ap=%p, ac=%u, sp=%p\n",
                  msg->id, msg->attrs, msg->attrs_cnt, msg->sexp);
         fprintf (fp, "> attributes:\n");
-        
+
         for (i = 0; i < msg->attrs_cnt; ++i) {
                 fprintf (fp, " name: %s", msg->attrs[i].name);
                 fprintf (fp, "value: ");
                 SEXP_fprintfa (fp, msg->attrs[i].value);
                 fprintf (fp, "\n");
         }
-        
+
         fprintf (fp, "> message:\n");
         SEXP_fprintfa (fp, msg->sexp);
-        
+
         fprintf (stderr, "\n======================\n");
         return;
 }

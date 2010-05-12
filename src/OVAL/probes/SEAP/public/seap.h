@@ -37,7 +37,7 @@ extern "C" {
 #include <sexp.h>
 #include <seap-types.h>
 #include <seap-message.h>
-#include <seap-command.h> 
+#include <seap-command.h>
 #include <seap-error.h>
 
 #ifndef EOPNOTSUPP

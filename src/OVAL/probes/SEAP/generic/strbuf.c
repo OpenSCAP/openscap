@@ -34,7 +34,7 @@ strbuf_t *strbuf_new  (size_t max)
         strbuf_t *buf;
 
         buf = malloc (sizeof (strbuf_t));
-        
+
         if (buf != NULL) {
                 buf->beg = NULL;
                 buf->lbo = NULL;
@@ -42,22 +42,22 @@ strbuf_t *strbuf_new  (size_t max)
                 buf->blkoff = 0;
                 buf->size   = 0;
         }
-        
+
         return (buf);
 }
 
 void strbuf_free (strbuf_t *buf)
 {
         struct strblk *blk, *next;
-        
+
         next = buf->beg;
-        
+
         while (next != NULL) {
                 blk  = next;
                 next = next->next;
                 free (blk);
         }
-        
+
         memset (buf, 0, sizeof (strbuf_t));
         free (buf);
         return;
@@ -71,11 +71,11 @@ size_t strbuf_size (strbuf_t *buf)
 static struct strblk *__strblk_new (size_t len)
 {
         struct strblk *blk;
-        
+
         blk = malloc (sizeof (struct strblk *) + sizeof (size_t) + (sizeof (char) * len));
         blk->next = NULL;
         blk->size = 0;
-        
+
         return (blk);
 }
 
@@ -83,7 +83,7 @@ static int __strbuf_add (strbuf_t *buf, char *str, size_t len)
 {
         struct strblk *cur, *prev;
         size_t cpylen;
-        
+
         if (buf->beg != NULL)
                 if (buf->lbo != NULL)
                         cur = buf->lbo->next;
@@ -95,12 +95,12 @@ static int __strbuf_add (strbuf_t *buf, char *str, size_t len)
                 if (cur == NULL)
                         return (-1);
         }
-        
+
         prev = buf->lbo;
-        
+
         for (;;) {
                 cpylen = buf->blkmax - buf->blkoff;
-                
+
                 if (cpylen >= len)
                         cpylen = len;
 
@@ -111,24 +111,24 @@ static int __strbuf_add (strbuf_t *buf, char *str, size_t len)
 
                 len -= cpylen;
                 str += cpylen;
-                
+
                 buf->blkoff += cpylen;
-                
+
                 assert (buf->blkoff <= buf->blkmax);
-                
+
                 if (buf->blkoff == buf->blkmax) {
                         cur->next = __strblk_new (buf->blkmax);
                         prev = cur;
                         cur  = cur->next;
                         buf->blkoff = 0;
                 }
-                
+
                 if (len == 0)
                         break;
         }
-        
+
         buf->lbo = prev;
-        
+
         return (0);
 }
 
@@ -140,9 +140,9 @@ int strbuf_add (strbuf_t *buf, const char *str, size_t len)
 int strbuf_addf (strbuf_t *buf, char *str, size_t len)
 {
         int ret;
-        
+
         ret = __strbuf_add (buf, str, len);
-        
+
         if (ret == 0) {
                 free (str);
                 return (0);
@@ -184,37 +184,37 @@ int strbuf_trunc (strbuf_t *buf, size_t len)
                 errno = ERANGE;
                 return (-1);
         }
-        
+
         if (buf->blkoff >= len) {
                 buf->blkoff -= len;
                 buf->size   -= len;
         } else {
                 struct strblk *cur, *par;
                 size_t esz;
-                
+
                 cur = buf->beg;
                 par = NULL;
                 esz = buf->size - len;
-                
+
                 while (esz > cur->size) {
                         par  = cur;
                         esz -= cur->size;
                         cur  = cur->next;
                 }
-                
+
                 buf->lbo    = par;
                 //buf->beg    = cur;
                 buf->blkoff = esz;
                 buf->size  -= len;
                 cur         = cur->next;
-                
+
                 while (cur != NULL) {
                         par = cur->next;
                         free (cur);
                         cur = par;
                 }
         }
-        
+
         return (0);
 #endif
 }
@@ -228,13 +228,13 @@ char *strbuf_cstr (strbuf_t *buf)
 {
         struct strblk *cur;
         char  *stroff, *strbeg;
-        
+
         strbeg = malloc (sizeof (char) * buf->size);
         stroff = strbeg;
-        
+
         if (strbeg == NULL)
                 return (NULL);
-        
+
         cur = buf->beg;
 
         while (cur != NULL) {
@@ -242,7 +242,7 @@ char *strbuf_cstr (strbuf_t *buf)
                 stroff += cur->size;
                 cur = cur->next;
         }
-        
+
         return (strbeg);
 }
 
@@ -255,16 +255,16 @@ char *strbuf_cstr_r (strbuf_t *buf, char *str, size_t len)
                 errno = ENOBUFS;
                 return (NULL);
         }
-        
+
         stroff = str;
         cur    = buf->beg;
-        
+
         while (cur != NULL) {
                 memcpy (stroff, cur->data, sizeof (char) * cur->size);
                 stroff += cur->size;
                 cur = cur->next;
         }
-        
+
         return (str);
 }
 
@@ -272,21 +272,21 @@ char *strbuf_copy (strbuf_t *buf, void *dst, size_t len)
 {
         register struct strblk *cur;
         register uint8_t *mem;
-        
+
         if (len < buf->size) {
                 errno = ENOBUFS;
                 return (NULL);
         }
-        
+
         mem = (uint8_t *)dst;
         cur = buf->beg;
-        
+
         while (cur != NULL) {
                 memcpy (mem, cur->data, sizeof (char) * cur->size);
                 mem += cur->size;
                 cur  = cur->next;
         }
-        
+
         return (dst);
 }
 
@@ -294,16 +294,16 @@ size_t strbuf_fwrite (FILE *fp, strbuf_t *buf)
 {
         struct strblk *cur;
         size_t size;
-        
+
         cur   = buf->beg;
         size  = 0;
-        
+
         while (cur != NULL) {
                 size += fwrite (cur->data, sizeof (char),
                                 cur->next == NULL ? buf->blkoff : cur->size, fp);
                 cur   = cur->next;
         }
-        
+
         return (size);
 }
 
@@ -311,7 +311,7 @@ ssize_t strbuf_write (strbuf_t *buf, int fd)
 {
         struct strblk *cur;
         ssize_t size;
-        
+
         struct iovec  *iov;
         int            ioc;
 
@@ -326,9 +326,9 @@ ssize_t strbuf_write (strbuf_t *buf, int fd)
                 ++ioc;
                 cur = cur->next;
         }
-        
+
         size = writev (fd, iov, ioc);
         free (iov);
-        
+
         return (size);
 }

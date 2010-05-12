@@ -46,7 +46,7 @@ int sch_cons_connect (SEAP_desc_t *desc, const char *uri, uint32_t flags)
         desc->scheme_data = sm_talloc (sch_consdata_t);
         DATA(desc)->ifd   = fileno (stdin);
         DATA(desc)->ofd   = fileno (stdout);
-        
+
         return (0);
 }
 
@@ -58,7 +58,7 @@ int sch_cons_openfd (SEAP_desc_t *desc, int fd, uint32_t flags)
                 DATA(desc)->ifd = fd;
         if (flags & SEAP_DESC_FDOUT)
                 DATA(desc)->ofd = fd;
-        
+
         return (0);
 }
 

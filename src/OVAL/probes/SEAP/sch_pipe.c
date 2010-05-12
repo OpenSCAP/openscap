@@ -64,9 +64,9 @@ static char *get_exec_path (const char *uri, uint32_t flags)
 {
         char   *path;
         size_t  plen, ulen;
-        
+
         ulen = strlen (uri);
-        
+
         if (ulen < 3)
                 return (NULL);
         else if (uri[0] != '/' && uri[1] != '/')
@@ -84,7 +84,7 @@ static char *get_exec_path (const char *uri, uint32_t flags)
                         memcpy (path, uri, sizeof (char) * ulen);
                         path[ulen] = '\0';
                         path = (char *)sm_reallocf (path, sizeof (char) * (ulen + 1));
-                        
+
                         return (path);
                 } else
                         goto fail;
@@ -104,23 +104,23 @@ static char *get_exec_path (const char *uri, uint32_t flags)
                              ptok = strtok_r (NULL, ":", &tctx))
                         {
                                 tlen = strlen (ptok);
-                                
+
                                 if (tlen + ulen + 1 < PATH_MAX) {
                                         memcpy (__path, ptok, sizeof (char) * tlen);
-                                        __path[tlen] = '/';                                        
+                                        __path[tlen] = '/';
                                         memcpy (__path + tlen + 1, uri, sizeof (char) * ulen);
                                         __path[tlen + ulen + 1] = '\0';
 
                                         if (stat (__path, &st) != 0)
                                                 continue;
-                                        
+
                                         memcpy (path, __path, sizeof (char) * (tlen + ulen + 1));
                                         path = (char *)sm_reallocf (path, sizeof (char) * (tlen + ulen + 1));
-                                        
+
                                         return (path);
                                 } /* else - skip this token */
                         }
-                        
+
                         goto fail;
                 }
 #endif /* SEAP_SCHEME_PIPE_NOPATHSEARCH */
@@ -128,10 +128,10 @@ static char *get_exec_path (const char *uri, uint32_t flags)
                         goto fail;
                 else {
                         size_t clen = strlen (path);
-                        
+
                         if (clen + ulen > PATH_MAX)
                                 goto fail;
-                        
+
                         if (path[clen - 1] != '/') {
                                 if (clen + ulen + 1 > PATH_MAX)
                                         goto fail;
@@ -140,11 +140,11 @@ static char *get_exec_path (const char *uri, uint32_t flags)
                                         ++clen;
                                 }
                         }
-                        
+
                         memcpy (path + clen, uri, sizeof (char) * ulen);
                         path[clen + ulen] = '\0';
                         path = (char *)sm_reallocf (path, sizeof (char) * (clen + ulen + 1));
-                        
+
                         return (path);
                 }
 #else /* !SEAP_SCHEME_PIPE_NORELPATH */
@@ -193,13 +193,13 @@ int sch_pipe_connect (SEAP_desc_t *desc, const char *uri, uint32_t flags)
                 goto fail1;
         } else {
                 struct stat st;
-                
+
                 if (stat (data->execpath, &st) != 0)
                         goto fail1;
                 if (!S_ISREG(st.st_mode))
                         goto fail1;
         }
-        
+
         if (socketpair (AF_UNIX, SOCK_STREAM, 0, pfd) < 0)
                 goto fail1;
 
@@ -218,7 +218,7 @@ int sch_pipe_connect (SEAP_desc_t *desc, const char *uri, uint32_t flags)
                         _exit (errno);
 #ifndef NDEBUG
                 pfd[0] = open ("/dev/null", O_WRONLY);
-                
+
                 if (pfd[0] < 0)
                         _exit (errno);
 
@@ -229,7 +229,7 @@ int sch_pipe_connect (SEAP_desc_t *desc, const char *uri, uint32_t flags)
                 _exit (errno);
         default: /* parent */
                 close (pfd[1]);
-                
+
                 data->pfd = pfd[0];
                 data->pid = pid;
 
@@ -238,7 +238,7 @@ int sch_pipe_connect (SEAP_desc_t *desc, const char *uri, uint32_t flags)
         }
 
         desc->scheme_data = (void *)data;
-        
+
         return (0);
 fail2:
         protect_errno {
@@ -273,9 +273,9 @@ ssize_t sch_pipe_recv (SEAP_desc_t *desc, void *buf, size_t len, uint32_t flags)
 
         assume_d (desc != NULL, -1, errno = EFAULT;);
         assume_d (buf  != NULL, -1, errno = EFAULT;);
-        
+
         data = (sch_pipedata_t *)desc->scheme_data;
-        
+
         assume_r (data != NULL, -1, errno = EBADF;);
 
         if (check_child (data->pid, 0) == 0)
@@ -290,9 +290,9 @@ ssize_t sch_pipe_send (SEAP_desc_t *desc, void *buf, size_t len, uint32_t flags)
 
         assume_d (desc != NULL, -1, errno = EFAULT;);
         assume_d (buf  != NULL, -1, errno = EFAULT;);
-        
+
         data = (sch_pipedata_t *)desc->scheme_data;
-        
+
         assume_r (data != NULL, -1, errno = EBADF;);
 
         if (check_child (data->pid, 0) == 0)
@@ -308,26 +308,26 @@ ssize_t sch_pipe_sendsexp (SEAP_desc_t *desc, SEXP_t *sexp, uint32_t flags)
 
         assume_d (desc != NULL, -1, errno = EFAULT;);
         assume_d (sexp != NULL, -1, errno = EFAULT;);
-        
+
         data = (sch_pipedata_t *)desc->scheme_data;
-        
+
         assume_r (data != NULL, -1, errno = EBADF;);
 
         if (check_child (data->pid, 0) != 0)
                 return (-1);
         else {
                 ssize_t ret;
-                
+
                 ret = 0;
                 sb  = strbuf_new (1024);
-                
+
                 if (SEXP_sbprintf_t (sexp, sb) != 0)
                         ret = -1;
                 else
                         ret = strbuf_write (sb, data->pfd);
-                
+
                 strbuf_free (sb);
-                
+
                 return (ret);
         }
 }
@@ -338,9 +338,9 @@ int sch_pipe_close (SEAP_desc_t *desc, uint32_t flags)
         sch_pipedata_t *data;
 
         assume_d (desc != NULL, -1, errno = EFAULT;);
-        
+
         data = (sch_pipedata_t *)desc->scheme_data;
-        
+
         assume_r (data != NULL, -1, errno = EBADF;);
 
         kill (data->pid, SIGTERM);
@@ -370,10 +370,10 @@ int sch_pipe_close (SEAP_desc_t *desc, uint32_t flags)
         }
 clean:
         close (data->pfd);
-        
+
         sm_free (data->execpath);
         sm_free (data);
-        
+
         desc->scheme_data = NULL;
 
         return (0);
@@ -384,21 +384,21 @@ int sch_pipe_select (SEAP_desc_t *desc, int ev, uint16_t timeout, uint32_t flags
         sch_pipedata_t *data;
 
         assume_d (desc != NULL, -1, errno = EFAULT;);
-        
+
         data = (sch_pipedata_t *)desc->scheme_data;
-        
+
         assume_r (data != NULL, -1, errno = EBADF;);
 
         if (check_child (data->pid, 0) == 0) {
                 fd_set *wptr, *rptr;
                 fd_set  fset;
                 struct timeval *tv_ptr, tv;
-                
+
                 FD_ZERO(&fset);
                 tv_ptr = NULL;
                 wptr   = NULL;
                 rptr   = NULL;
-                
+
                 switch (ev) {
                 case SEAP_IO_EVREAD:
                         FD_SET(data->pfd, &fset);
@@ -411,16 +411,16 @@ int sch_pipe_select (SEAP_desc_t *desc, int ev, uint16_t timeout, uint32_t flags
                 default:
                         abort ();
                 }
-                
+
                 if (timeout > 0) {
                         tv.tv_sec  = (time_t)timeout;
                         tv.tv_usec = 0;
                         tv_ptr = &tv;
                 }
-                
+
                 assume_d (!(wptr == NULL && rptr == NULL), -1, errno = EINVAL;);
                 assume_d (!(wptr != NULL && rptr != NULL), -1, errno = EINVAL;);
-                
+
                 switch (select (data->pfd + 1, rptr, wptr, NULL, tv_ptr)) {
                 case -1:
                         return (-1);

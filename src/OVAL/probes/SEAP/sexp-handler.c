@@ -72,20 +72,20 @@ void SEXP_handlertbl_init (SEXP_handlertbl_t *htbl)
 
 SEXP_handler_t *SEXP_gethandler (SEXP_handlertbl_t *htbl, const char *typestr, size_t typelen)
 {
-        SEXP_handler_t *ret = NULL; 
+        SEXP_handler_t *ret = NULL;
         NODETYPE(handlers) *nret, key;
 
         _A(htbl != NULL);
         _A(typestr != NULL);
         _A(typelen > 0);
-        
+
 #if defined(SEAP_THREAD_SAFE)
         pthread_rwlock_rdlock (&(htbl->rwlock));
 #endif
-        
+
         key.handler.typestr = (char *)typestr;
         key.handler.typelen = typelen;
-        
+
         if ((nret = RB_SEARCH(handlers)(&(htbl->tree), &key)) != NULL) {
                 _D("Found handler for: %.*s\n", key.handler.typelen, key.handler.typestr);
                 ret = &(nret->handler);
@@ -93,7 +93,7 @@ SEXP_handler_t *SEXP_gethandler (SEXP_handlertbl_t *htbl, const char *typestr, s
                 _D("Handler for %.*s not found\n", key.handler.typelen, key.handler.typestr);
                 ret = NULL;
         }
-        
+
 #if defined(SEAP_THREAD_SAFE)
         pthread_rwlock_unlock (&(htbl->rwlock));
 #endif
@@ -104,17 +104,17 @@ SEXP_handler_t *SEXP_reghandler (SEXP_handlertbl_t *htbl, SEXP_handler_t *handle
 {
         SEXP_handler_t *ret = NULL;
         NODETYPE(handlers) *new;
-        
+
         _A(htbl != NULL);
         _A(handler != NULL);
 
 #if defined(SEAP_THREAD_SAFE)
         pthread_rwlock_wrlock (&(htbl->rwlock));
 #endif
-        
+
         new = RB_NEWNODE(handlers)();
         memcpy (&(new->handler), handler, sizeof (SEXP_handler_t));
-        
+
         if (RB_INSERT(handlers)(&(htbl->tree), new) == E_OK) {
                 _D("Registered handler for: %.*s\n", handler->typelen, handler->typestr);
                 ret = &(new->handler);
@@ -123,7 +123,7 @@ SEXP_handler_t *SEXP_reghandler (SEXP_handlertbl_t *htbl, SEXP_handler_t *handle
                 sm_free (new);
                 ret = NULL;
         }
-        
+
 #if defined(SEAP_THREAD_SAFE)
         pthread_rwlock_unlock (&(htbl->rwlock));
 #endif
@@ -143,7 +143,7 @@ int SEXP_delhandler (SEXP_handlertbl_t *htbl, const char *typestr, size_t typele
 #endif
 
         /* TODO: implement rb tree delete :] */
-        
+
 #if defined(SEAP_THREAD_SAFE)
         pthread_rwlock_unlock (&(htbl->rwlock));
 #endif

@@ -82,13 +82,13 @@ static inline void __xb64_dec2 (const char in[2], uint8_t out[1]) {
 size_t xbase64_encode (const uint8_t *data, size_t size, char **buffer) {
         register uint8_t    d = size % 3;
         register size_t  i, s = size - d;
-  
+
         *buffer = sm_alloc (sizeof (char) * (1 + (s/3 * 4) + (d != 0 ? 4 : 0)));
-        
+
         for (i = 0; i < s/3; ++i) {
                 __xb64_enc3 (data + (i * 3), (*buffer) + (i * 4));
         }
-        
+
         switch (d) {
         case 2:
                 __xb64_enc2 (data + (i * 3), (*buffer) + (i * 4));
@@ -99,7 +99,7 @@ size_t xbase64_encode (const uint8_t *data, size_t size, char **buffer) {
                 ++i;
                 break;
         }
-        
+
         (*buffer)[(i * 4)] = '\0';
         return (i * 4);
 }
@@ -109,7 +109,7 @@ size_t xbase64_decode (const char *data, size_t size, uint8_t **buffer) {
         register uint8_t d = 0;
 
         d = 4 - (size % 4);
-        
+
         if (d == 4) {
                 if (*(data + s - 1) == XBASE64_PADDING_CHAR) {
                         if (*(data + s - 2) == XBASE64_PADDING_CHAR) {
@@ -117,7 +117,7 @@ size_t xbase64_decode (const char *data, size_t size, uint8_t **buffer) {
                         } else {
                                 d = 1;
                         }
-                        
+
                         s -= 4;
                 }
         } else {
@@ -126,15 +126,15 @@ size_t xbase64_decode (const char *data, size_t size, uint8_t **buffer) {
                         return 0;
                 }
         }
-        
+
         fprintf(stderr, "d = %u\n", d);
 
         *buffer = sm_alloc (sizeof (uint8_t) * ((s/4 * 3) + d));
-        
+
         for (i = 0; i < s/4; ++i) {
                 __xb64_dec4 (data + (i * 4), (*buffer) + (i * 3));
         }
-        
+
         switch (d) {
         case 2:
                 __xb64_dec2 (data + (i * 4), (*buffer) + (i * 3));
@@ -210,7 +210,7 @@ static const char b64_dec_alphabet[75] = {
         /* h */ 33,
         /* i */ 34,
         /* j */ 35,
-        /* k */ 36,        
+        /* k */ 36,
         /* l */ 37,
         /* m */ 38,
         /* n */ 39,
@@ -277,13 +277,13 @@ static inline void __b64_dec2 (const char in[2], uint8_t out[1]) {
 size_t base64_encode (const uint8_t *data, size_t size, char **buffer) {
         register uint8_t    d = size % 3;
         register size_t  i, s = size - d;
-  
+
         *buffer = sm_alloc (sizeof (char) * (1 + (s/3 * 4) + (d != 0 ? 4 : 0)));
-  
+
         for (i = 0; i < s/3; ++i) {
                 __b64_enc3 (data + (i * 3), (*buffer) + (i * 4));
         }
-        
+
         switch (d) {
         case 2:
                 __b64_enc2 (data + (i * 3), (*buffer) + (i * 4));
@@ -294,7 +294,7 @@ size_t base64_encode (const uint8_t *data, size_t size, char **buffer) {
                 ++i;
                 break;
         }
-        
+
         (*buffer)[(i * 4)] = '\0';
         return (i * 4);
 }
@@ -312,7 +312,7 @@ size_t base64_decode (const char *data, size_t size, uint8_t **buffer) {
                         } else {
                                 d = 1;
                         }
-                        
+
                         s -= 4;
                 }
         } else {
@@ -321,13 +321,13 @@ size_t base64_decode (const char *data, size_t size, uint8_t **buffer) {
                         return 0;
                 }
         }
-        
+
         *buffer = sm_alloc (sizeof (uint8_t) * ((s/4 * 3) + d));
-        
+
         for (i = 0; i < s/4; ++i) {
                 __b64_dec4 (data + (i * 4), (*buffer) + (i * 3));
         }
-        
+
         switch (d) {
         case 2:
                 __b64_dec2 (data + (i * 4), (*buffer) + (i * 3));

@@ -45,7 +45,7 @@ spb_t *spb_new (void *buffer, size_t buflen, uint32_t balloc)
         } else {
                 spb->btotal = 0;
         }
-        
+
         return (spb);
 }
 
@@ -55,7 +55,7 @@ uint32_t spb_bindex (spb_t *spb, spb_size_t idx)
 
         w = spb->btotal;
         s = spb_size (spb);
-        
+
         if (idx < s) {
                 s = 0;
 
@@ -89,40 +89,40 @@ spb_size_t spb_size (spb_t *spb)
 int spb_add (spb_t *spb, void *buffer, size_t buflen)
 {
         spb_size_t gend;
-        
+
         if (spb->btotal >= spb->balloc) {
                 if (spb->balloc < SPB_BALLOC_HIGHTRESH)
                         spb->balloc <<= 1;
                 else
                         spb->balloc  += SPB_BALLOC_ADD;
-                
+
                 spb->buffer = sm_realloc (spb->buffer, sizeof (spb_item_t) * spb->balloc);
         }
-        
+
         /* XXX: assume that btotal > 0 if btotal > balloc? */
         if (spb->btotal > 0)
                 gend = spb->buffer[spb->btotal - 1].gend + buflen;
         else
                 gend = buflen - 1;
-        
+
         spb->buffer[spb->btotal].base = buffer;
         spb->buffer[spb->btotal].gend = gend;
         ++spb->btotal;
-        
+
         return (0);
 }
 
 int spb_pick (spb_t *spb, spb_size_t start, spb_size_t size, void *dst)
 {
         register uint32_t b_idx;
-        register uint8_t *b_dst = (uint8_t *)dst; 
-        
+        register uint8_t *b_dst = (uint8_t *)dst;
+
         b_idx = spb_bindex (spb, start);
-        
+
         if (b_idx < spb->btotal) {
                 size_t l_off;
                 size_t l_len;
-                
+
                 if (b_idx > 0) {
                         l_off = (size_t)(start - spb->buffer[b_idx - 1].gend - 1);
                         l_len = (size_t)(spb->buffer[b_idx].gend - spb->buffer[b_idx - 1].gend) - l_off;
@@ -130,34 +130,34 @@ int spb_pick (spb_t *spb, spb_size_t start, spb_size_t size, void *dst)
                         l_off = (size_t)(start);
                         l_len = (size_t)(spb->buffer[b_idx].gend + 1) - l_off;
                 }
-                
+
                 if (size < l_len)
                         l_len = (size_t)size;
-                
+
                 memcpy (b_dst, spb->buffer[b_idx].base + l_off, l_len);
-                
+
                 b_dst += l_len;
                 size  -= l_len;
-                
+
                 while (++b_idx < spb->btotal && size > 0) {
                         l_len = (size_t)(spb->buffer[b_idx].gend - spb->buffer[b_idx - 1].gend);
-                        
+
                         if (size < l_len)
                                 l_len = (size_t)size;
-                        
+
                         memcpy (b_dst, spb->buffer[b_idx].base, l_len);
-                        
+
                         b_dst += l_len;
                         size  -= l_len;
                 }
-                
+
                 if (size > 0)
                         return (1); /* less than size bytes were copyied */
                 else
                         return (0);
         }
         /* else - the start offset is out of range*/
-        
+
         errno = ERANGE;
         return (-1);
 }
@@ -174,13 +174,13 @@ int spb_pick_raw (spb_t *spb, uint32_t bindex, spb_size_t start, spb_size_t size
 int spb_pick_cb (spb_t *spb, spb_size_t start, spb_size_t size, void *cb (void *, void *, size_t), void *cbarg)
 {
         register uint32_t b_idx;
-        
+
         b_idx = spb_bindex (spb, start);
-        
+
         if (b_idx < spb->btotal) {
                 size_t l_off;
                 size_t l_len;
-                
+
                 if (b_idx > 0) {
                         l_off = (size_t)(start - spb->buffer[b_idx - 1].gend - 1);
                         l_len = (size_t)(spb->buffer[b_idx].gend - spb->buffer[b_idx - 1].gend) - l_off;
@@ -188,32 +188,32 @@ int spb_pick_cb (spb_t *spb, spb_size_t start, spb_size_t size, void *cb (void *
                         l_off = (size_t)(start);
                         l_len = (size_t)(spb->buffer[b_idx].gend + 1) - l_off;
                 }
-                
+
                 if (size < l_len)
                         l_len = (size_t)size;
-                
+
                 cbarg = cb (cbarg, spb->buffer[b_idx].base + l_off, l_len);
                 size -= l_len;
-                
+
                 while (++b_idx < spb->btotal && size > 0) {
                         l_len = (size_t)(spb->buffer[b_idx].gend - spb->buffer[b_idx - 1].gend);
-                        
+
                         if (size < l_len)
                                 l_len = (size_t)size;
-                        
+
                         cbarg = cb (cbarg, spb->buffer[b_idx].base, l_len);
                         size  -= l_len;
                 }
-                
+
                 if (size > 0)
                         return (1); /* less than size bytes were copyied */
                 else
                         return (0);
         }
         /* else - the start offset is out of range*/
-        
+
         errno = ERANGE;
-        return (-1);        
+        return (-1);
 }
 
 void spb_free (spb_t *spb, spb_flags_t flags)
@@ -244,7 +244,7 @@ spb_size_t spb_drop_head (spb_t *spb, spb_size_t size, spb_flags_t flags)
 {
         spb_size_t e_sub = 0;
         uint32_t   b_idx;
-        
+
         b_idx = spb_bindex (spb, size);
 
         if (b_idx > 0) {
@@ -254,25 +254,25 @@ spb_size_t spb_drop_head (spb_t *spb, spb_size_t size, spb_flags_t flags)
 
                         if (flags & SPB_FLAG_FREE) {
                                 register uint32_t i;
-                                
+
                                 for (i = spb->btotal; i > 0; --i)
                                         sm_free (spb->buffer[i - 1].base);
                         }
-                        
+
                         spb->buffer = sm_realloc (spb->buffer, sizeof (spb_item_t) * SPB_DEFAULT_BALLOC);
                         spb->btotal = 0;
                         spb->balloc = SPB_DEFAULT_BALLOC;
                 } else {
                         /* free buffer 0..(b_idx - 1) */
                         register uint32_t i;
-                        
+
                         e_sub = spb->buffer[b_idx - 1].gend + 1;
-                        
+
                         if (flags & SPB_FLAG_FREE) {
                                 for (i = b_idx - 1; i > 0; --i)
                                         sm_free (spb->buffer[i - 1].base);
                         }
-                        
+
                         spb->btotal -= b_idx;
                         memmove (spb->buffer, spb->buffer + b_idx, sizeof (spb_item_t) * spb->btotal);
 
@@ -300,16 +300,16 @@ uint8_t spb_octet (spb_t *spb, spb_size_t idx)
 {
         uint32_t b_idx;
         size_t   l_off;
-        
+
         b_idx = spb_bindex (spb, idx);
-        
+
         if (b_idx < spb->btotal) {
                 l_off = (size_t)(b_idx > 0 ? idx - spb->buffer[b_idx - 1].gend - 1 : idx);
                 return *((uint8_t *)(spb->buffer[b_idx].base) + l_off);
         }
-        
+
         errno = ERANGE;
-        
+
         return (uint8_t)(-1);
 }
 
@@ -317,9 +317,9 @@ const uint8_t *spb_direct (spb_t *spb, spb_size_t start, spb_size_t size)
 {
         uint32_t b_idx;
         size_t   l_off;
-        
+
         b_idx = spb_bindex (spb, start);
-        
+
         if (b_idx < spb->btotal) {
                 if (start + size - 1 <= spb->buffer[b_idx].gend) {
                         l_off = (size_t)(b_idx > 0 ? start - spb->buffer[b_idx - 1].gend - 1 : start);
@@ -327,6 +327,6 @@ const uint8_t *spb_direct (spb_t *spb, spb_size_t start, spb_size_t size)
                 }
         } else
                 errno = ERANGE;
-        
+
         return (NULL);
 }

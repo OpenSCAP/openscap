@@ -39,7 +39,7 @@ struct SEXP_ostate {
         uint32_t      *p_stack; /* list position stack */
         uint8_t       *s_part;  /* S-exp part */
         size_t        *s_pos;   /* S-exp position */
-        
+
 #if 0
         SEXP_t      *sexp;
         LIST_stack_t lstack;

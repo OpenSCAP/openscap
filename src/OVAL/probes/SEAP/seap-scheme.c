@@ -55,13 +55,13 @@ SEAP_scheme_t SEAP_scheme_search (const SEAP_schemefn_t fntable[SCHTBLSIZE], con
 {
         SEAP_scheme_t w, s;
         int cmp;
-        
+
         w = SCHTBLSIZE;
         s = 0;
 
         while (w > 0) {
                 cmp = strncmp (sch, fntable[s + w/2].schstr, schlen);
-                
+
                 if (cmp > 0) {
                         s += w/2 + 1;
                         w  = w - w/2 - 1;
@@ -71,6 +71,6 @@ SEAP_scheme_t SEAP_scheme_search (const SEAP_schemefn_t fntable[SCHTBLSIZE], con
                         return (s + w/2);
                 }
         }
-        
+
         return (SCH_NONE);
 }

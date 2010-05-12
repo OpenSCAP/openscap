@@ -95,19 +95,19 @@ ssize_t sch_generic_sendsexp (SEAP_desc_t *desc, SEXP_t *sexp, uint32_t flags)
 {
         ssize_t   ret;
         strbuf_t *sb;
-        
+
         _LOGCALL_;
-        
+
         ret = 0;
         sb  = strbuf_new (1024);
-        
+
         if (SEXP_sbprintf_t (sexp, sb) != 0)
                 ret = -1;
         else
                 ret = strbuf_write (sb, DATA(desc->scheme_data)->ofd);
-        
+
         strbuf_free (sb);
-                
+
         return (ret);
 }
 
@@ -132,12 +132,12 @@ int sch_generic_select (SEAP_desc_t *desc, int ev, uint16_t timeout, uint32_t fl
         fd_set  fset;
         int fd;
         struct timeval *tv_ptr, tv;
-        
+
         FD_ZERO(&fset);
         tv_ptr = NULL;
         wptr   = NULL;
         rptr   = NULL;
-        
+
         switch (ev) {
         case SEAP_IO_EVREAD:
                 fd = DATA(desc->scheme_data)->ifd;
@@ -158,10 +158,10 @@ int sch_generic_select (SEAP_desc_t *desc, int ev, uint16_t timeout, uint32_t fl
                 tv.tv_usec = 0;
                 tv_ptr = &tv;
         }
-        
+
         _A(!(wptr == NULL && rptr == NULL));
         _A(!(wptr != NULL && rptr != NULL));
-        
+
         switch (select (fd + 1, rptr, wptr, NULL, tv_ptr)) {
         case -1:
                 protect_errno {

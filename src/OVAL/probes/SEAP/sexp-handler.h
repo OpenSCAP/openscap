@@ -41,7 +41,7 @@ typedef struct {
 
         SEXP_dtype_op_t *op;
         size_t op_cnt;
-        
+
 } SEXP_handler_t;
 
 #include "generic/redblack.h"

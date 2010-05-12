@@ -53,16 +53,16 @@ struct SEXP_pstate {
         SEXP_pflags_t p_flags;  /* current parser flags */
         SEXP_t       *p_sexp;   /* last S-exp object */
         SEXP_pflags_t p_flags0; /* initial parser flags */
-        
+
         void         *sp_data;          /* subparser data */
         void        (*sp_free)(void *); /* function for freeing the subparser data */
 
         uint8_t       p_label;  /* where to jump if p_explen > 0 */
-        
+
         uint8_t       p_numclass; /* number class */
         uint8_t       p_numbase;  /* number base */
         uint8_t       p_numstage; /* number parsing stage */
-        
+
         /*
          * Output data
          */

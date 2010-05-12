@@ -45,7 +45,7 @@ bool SEXP_atomic_cas_u16 (volatile uint16_t *ptr, uint16_t old, uint16_t new)
 
 uint32_t SEXP_atomic_dec_u32 (volatile uint32_t *ptr)
 {
-        return (__sync_sub_and_fetch (ptr, 1));        
+        return (__sync_sub_and_fetch (ptr, 1));
 }
 
 uint32_t SEXP_atomic_inc_u32 (volatile uint32_t *ptr)
@@ -61,7 +61,7 @@ bool SEXP_atomic_cas_u32 (volatile uint32_t *ptr, uint32_t old, uint32_t new)
 #ifdef SEXP_ATOMIC_64BITS
 uint64_t SEXP_atomic_dec_u64 (volatile uint64_t *ptr)
 {
-        return (__sync_sub_and_fetch (ptr, 1));        
+        return (__sync_sub_and_fetch (ptr, 1));
 }
 
 uint64_t SEXP_atomic_inc_u64 (volatile uint64_t *ptr)
@@ -89,8 +89,8 @@ static void SEXP_atomic_deinit (void)
 
         for (i = SEXP_ATOMIC_MTX_CNT; i > 0; --i)
                 pthread_mutex_destroy (&__SEXP_atomic_mtx[i - 1]);
-        
-        return;        
+
+        return;
 }
 
 static void SEXP_atomic_init (void)
@@ -99,7 +99,7 @@ static void SEXP_atomic_init (void)
 
         for (i = SEXP_ATOMIC_MTX_CNT; i > 0; --i)
                 pthread_mutex_init (&__SEXP_atomic_mtx[i - 1], NULL);
-        
+
         atexit (SEXP_atomic_deinit);
 
         return;
@@ -126,13 +126,13 @@ static inline void SEXP_atomic_unlock (uintptr_t ptr)
 uint16_t SEXP_atomic_dec_u16 (volatile uint16_t *ptr)
 {
         uint16_t r;
-        
+
         SEXP_atomic_once();
         SEXP_atomic_lock((uintptr_t)ptr);
         r = *ptr - 1;
         *ptr = r;
         SEXP_atomic_unlock((uintptr_t)ptr);
-        
+
         return (r);
 }
 
@@ -168,13 +168,13 @@ bool SEXP_atomic_cas_u16 (volatile uint16_t *ptr, uint16_t old, uint16_t new)
 uint32_t SEXP_atomic_dec_u32 (volatile uint32_t *ptr)
 {
         uint32_t r;
-        
+
         SEXP_atomic_once();
         SEXP_atomic_lock((uintptr_t)ptr);
         r = *ptr - 1;
         *ptr = r;
         SEXP_atomic_unlock((uintptr_t)ptr);
-        
+
         return (r);
 }
 
@@ -187,7 +187,7 @@ uint32_t SEXP_atomic_inc_u32 (volatile uint32_t *ptr)
         r = *ptr;
         *ptr = r + 1;
         SEXP_atomic_unlock((uintptr_t)ptr);
-        
+
         return (r);
 }
 
@@ -211,13 +211,13 @@ bool SEXP_atomic_cas_u32 (volatile uint32_t *ptr, uint32_t old, uint32_t new)
 uint64_t SEXP_atomic_dec_u64 (volatile uint64_t *ptr)
 {
         uint64_t r;
-        
+
         SEXP_atomic_once();
         SEXP_atomic_lock((uintptr_t)ptr);
         r = *ptr - 1;
         *ptr = r;
         SEXP_atomic_unlock((uintptr_t)ptr);
-        
+
         return (r);
 }
 
@@ -230,7 +230,7 @@ uint64_t SEXP_atomic_inc_u64 (volatile uint64_t *ptr)
         r = *ptr;
         *ptr = r + 1;
         SEXP_atomic_unlock((uintptr_t)ptr);
-        
+
         return (r);
 }
 

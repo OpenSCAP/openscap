@@ -37,7 +37,7 @@
 bitmap_t *bitmap_new (bitmap_size_t size)
 {
         bitmap_t *bitmap;
-        
+
         _A(size > 0);
 
         bitmap = sm_talloc (bitmap_t);
@@ -48,7 +48,7 @@ bitmap_t *bitmap_new (bitmap_size_t size)
 
         xsrandom ((unsigned long)clock () ^
                   (unsigned long)getpid ());
-        
+
         return (bitmap);
 }
 
@@ -64,7 +64,7 @@ int *bitmap_init (bitmap_t *bitmap, bitmap_size_t size)
 
         xsrandom ((unsigned long)clock () ^
                   (unsigned long)getpid ());
-        
+
         return (0);
 }
 
@@ -72,7 +72,7 @@ int *bitmap_reinit (bitmap_t *bitmap, bitmap_size_t size)
 {
         _A(bitmap != NULL);
         _A(size > 0);
-        
+
         if (bitmap->cells != NULL)
                 sm_free (bitmap->cells);
 
@@ -80,36 +80,36 @@ int *bitmap_reinit (bitmap_t *bitmap, bitmap_size_t size)
         bitmap->size = (size / BITMAP_CELLSIZE) + 1;
         bitmap->realsize = 0;
         bitmap->count = 0;
-        
+
         return (0);
 }
 
 int bitmap_set (bitmap_t *bitmap, bitmap_bitn_t bitn)
 {
         bitmap_size_t i;
-        
+
         _A(bitmap != NULL);
         _A((size_t)bitn < (size_t)bitmap->size * BITMAP_CELLSIZE);
-        
+
         i = bitn/BITMAP_CELLSIZE + 1;
-        
+
         if (i > bitmap->realsize) {
                 if (i <= bitmap->size) {
                         bitmap->cells = sm_realloc (bitmap->cells,
                                                     sizeof (uint32_t) * i);
-                        
+
                         memset (bitmap->cells + bitmap->realsize, 0,
                                 sizeof (bitmap_cell_t) * (i - bitmap->realsize));
-                        
+
                         bitmap->realsize = i;
                 } else {
                         return (1);
                 }
         }
-        
+
         bitmap->cells[i - 1] |= 1 << (bitn % BITMAP_CELLSIZE);
         ++bitmap->count;
-        
+
         return (0);
 }
 
@@ -118,7 +118,7 @@ int bitmap_cas (bitmap_t *bitmap, bitmap_bitn_t bitn, int v)
         _A(bitmap != NULL);
         _A((size_t)bitn < (size_t)bitmap->size * BITMAP_CELLSIZE);
         _A(v == 0 || v == 1);
-        
+
         abort ();
 
         return (1);
@@ -160,30 +160,30 @@ int bitmap_clear (bitmap_t *bitmap)
                 bitmap->realsize = 0;
                 bitmap->count = 0;
         }
-        
+
         return (0);
 }
 
 bitmap_bitn_t bitmap_setfree (bitmap_t *bitmap)
 {
         bitmap_size_t i, j;
-        
+
         _A(bitmap != NULL);
-        
+
         for (i = 0; i < bitmap->realsize; ++i) {
                 if (bitmap->cells[i] != ~(bitmap_cell_t)(0)) {
                         /* TODO: binary search */
                         for (j = 0; j < BITMAP_CELLSIZE; ++j) {
                                 if (((bitmap->cells[i] >> j) & 1) == 0) {
-                                        
+
                                         bitmap->cells[i] |= 1 << j;
-                                        
+
                                         return ((i * BITMAP_CELLSIZE) + j);
                                 }
                         }
                 }
         }
-        
+
         if (bitmap->realsize < bitmap->size)
                 return (bitmap_set (bitmap,
                                     BITMAP_CELLSIZE * bitmap->realsize) ? -1 : (bitmap_bitn_t)(bitmap->realsize * BITMAP_CELLSIZE));
@@ -194,7 +194,7 @@ bitmap_bitn_t bitmap_setfree (bitmap_t *bitmap)
 bitmap_bitn_t bitmap_getfree (bitmap_t *bitmap)
 {
         _A(bitmap != NULL);
-        
+
         return (-1);
 }
 
@@ -213,17 +213,17 @@ void bitmap_free (bitmap_t *bitmap)
 void bitmap_print (bitmap_t *bitmap)
 {
         bitmap_size_t i, j;
-        
+
         printf ("bitmap@%p: size=%u, realsize=%u, cells@%p\n",
                 (void *)bitmap, bitmap->size, bitmap->realsize, (void *)bitmap->cells);
-        
+
         for (i = 0; i < bitmap->realsize; ++i) {
                 printf ("[%u] hex: %08x | bin: ", i, bitmap->cells[i]);
                 for (j = 0; j < BITMAP_CELLSIZE; ++j)
                         printf ("%u", bitmap->cells[i] & (1 << j) ? 1 : 0);
                 printf ("\n");
         }
-        
+
         return;
 }
 
@@ -233,10 +233,10 @@ int main (void)
         bitmap_t  bmap2;
 
         printf ("Create, print.\n");
-        
+
         bmap1 = bitmap_new (8);
         bitmap_print (bmap1);
-        
+
         printf ("Set 1, 2, 5, 9, 56, 77, 79\n ");
 
         if (bitmap_set (bmap1, 1) == 0)
@@ -255,11 +255,11 @@ int main (void)
                 printf ("ok ");
 
         printf ("\n");
-        
+
         bitmap_print (bmap1);
-        
+
         printf ("Unset 1, 9, 56, 77\n ");
-        
+
         if (bitmap_unset (bmap1, 1) == 0)
                 printf ("ok ");
         if (bitmap_unset (bmap1, 9) == 0)
@@ -267,17 +267,17 @@ int main (void)
         if (bitmap_unset (bmap1, 56) == 0)
                 printf ("ok ");
         if (bitmap_unset (bmap1, 77) == 0)
-                printf ("ok ");        
-        
+                printf ("ok ");
+
         printf ("\n");
 
         bitmap_print (bmap1);
 
         printf ("Unset 79\n ");
-        
+
         if (bitmap_unset (bmap1, 79) == 0)
                 printf ("ok ");
-        
+
         printf ("\n");
 
         bitmap_print (bmap1);
@@ -290,17 +290,17 @@ int main (void)
                 printf ("ok ");
 
         printf ("\n");
-        
+
         bitmap_print (bmap1);
-        
+
         printf ("setfree: %d, %d, %d\n",
                 bitmap_setfree (bmap1), bitmap_setfree (bmap1), bitmap_setfree (bmap1));
-        
+
         bitmap_print (bmap1);
 
         printf ("while setfree != -1\n");
         while (bitmap_setfree (bmap1) != -1);
-        
+
         bitmap_print (bmap1);
 
         printf ("Clear\n");
@@ -311,13 +311,13 @@ int main (void)
 
         printf ("while setfree != -1\n");
         while (bitmap_setfree (bmap1) != -1);
-        
+
         bitmap_print (bmap1);
-        
+
         printf ("Free\n");
 
         bitmap_free (bmap1);
-        
+
         return (0);
 }
 #endif

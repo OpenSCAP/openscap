@@ -34,12 +34,12 @@
 void *xmemdup (const void *src, size_t len)
 {
         void *new;
-        
+
         _A(src != NULL);
 
         new = sm_alloc (len);
         memcpy (new, src, len);
-        
+
         return (new);
 }
 
@@ -62,7 +62,7 @@ int xstrncoll (const char *a, size_t alen,
 
         _A(a != NULL);
         _A(b != NULL);
-        
+
         if (alen > blen) {
                 cmp = strncmp (a, b, blen);
                 return (cmp == 0 ?  1 : cmp);

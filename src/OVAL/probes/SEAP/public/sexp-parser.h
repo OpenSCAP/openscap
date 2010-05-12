@@ -38,7 +38,7 @@ SEXP_psetup_t *SEXP_psetup_new  (void);
 void           SEXP_psetup_free (SEXP_psetup_t *);
 
 typedef uint8_t SEXP_pflags_t;
-        
+
 #define SEXP_PFLAG_EOFOK   0x01
 #define SEXP_PFLAG_FREEBUF 0x02
 #define SEXP_PFLAG_ALL     0x03

@@ -55,41 +55,41 @@ void __seap_debuglog (const char *file, const char *fn, size_t line, const char 
 
         if (getenv ("SEAP_DEBUGLOG_DISABLE") != NULL)
                 return;
-        
+
         __LOCK_FP;
-        
+
         if (__debuglog_fp == NULL) {
                 char  *logfile;
                 char  *st;
                 time_t ut;
-                
+
                 logfile = getenv (SEAP_DEBUG_FILE_ENV);
-                
+
                 if (logfile == NULL)
                         logfile = SEAP_DEBUG_FILE;
-                
+
                 __debuglog_fp = fopen (logfile, "a");
-                
+
                 if (__debuglog_fp == NULL) {
                         __UNLOCK_FP;
                         return;
                 }
-                
+
                 setbuf (__debuglog_fp, NULL);
-                
+
                 ut = time (NULL);
                 st = ctime (&ut);
 
                 fprintf (__debuglog_fp, "=============== LOG: %.24s ===============\n", st);
                 atexit(&__seap_debuglog_close);
         }
-        
+
         if (flock (fileno (__debuglog_fp), LOCK_EX | LOCK_NB) == -1) {
                 __UNLOCK_FP;
                 return;
         }
-        
-#if defined(SEAP_THREAD_SAFE)        
+
+#if defined(SEAP_THREAD_SAFE)
         /* XXX: non-portable usage of pthread_t */
         fprintf (__debuglog_fp, "(%u:%u) [%s: %zu: %s] ", (unsigned int)getpid (), (unsigned int)pthread_self(), file, line, fn);
 #else
@@ -98,12 +98,12 @@ void __seap_debuglog (const char *file, const char *fn, size_t line, const char 
         va_start (ap, fmt);
         vfprintf (__debuglog_fp, fmt, ap);
         va_end (ap);
-        
+
         if (flock (fileno (__debuglog_fp), LOCK_UN | LOCK_NB) == -1) {
                 /* __UNLOCK_FP; */
                 abort ();
         }
-        
+
         __UNLOCK_FP;
         return;
 }

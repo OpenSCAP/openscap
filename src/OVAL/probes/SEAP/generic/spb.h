@@ -135,7 +135,7 @@ int spb_add (spb_t *spb, void *buffer, size_t buflen);
  * @param size size of the region
  * @param dst destination memory
  */
-int spb_pick (spb_t *spb, spb_size_t start, spb_size_t size, void *dst); 
+int spb_pick (spb_t *spb, spb_size_t start, spb_size_t size, void *dst);
 
 /**
  * Pick a buffer region from the sparse buffer, starting with buffer

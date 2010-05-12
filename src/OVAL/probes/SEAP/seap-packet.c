@@ -44,7 +44,7 @@ SEAP_packet_t *SEAP_packet_new (void)
         p = sm_talloc (SEAP_packet_t);
         memset (p, 0, sizeof (SEAP_packet_t));
         p->type = SEAP_PACKET_INV;
-        
+
         return (p);
 }
 
@@ -64,7 +64,7 @@ void *SEAP_packet_settype (SEAP_packet_t *packet, uint8_t type)
         _LOGCALL_;
 
         packet->type = type;
-        
+
         switch (type) {
         case SEAP_PACKET_MSG:
                 return ((void *)&(packet->data.msg));
@@ -75,7 +75,7 @@ void *SEAP_packet_settype (SEAP_packet_t *packet, uint8_t type)
         default:
                 abort ();
         }
-        
+
         /* not reached */
         return (NULL);
 }
@@ -109,41 +109,41 @@ static int SEAP_packet_sexp2msg (SEXP_t *sexp_msg, SEAP_msg_t *seap_msg)
 {
         size_t msg_icnt, msg_n, attr_i;
         SEXP_t *attr_name, *attr_val;
-        
+
         _A(sexp_msg != NULL);
         _A(seap_msg != NULL);
         _LOGCALL_;
-        
+
         msg_icnt = SEXP_list_length (sexp_msg);
-        
+
         seap_msg->attrs_cnt = msg_icnt - 4;
         seap_msg->attrs     = sm_alloc (sizeof (SEAP_attr_t) * seap_msg->attrs_cnt);
-        
+
         for (msg_n = 2, attr_i = 0; msg_n < msg_icnt; ++msg_n) {
-                
+
                 attr_name = SEXP_list_nth (sexp_msg, msg_n);
                 if (attr_name == NULL) {
                         _D("Unexpected error: No S-exp (attr_name) at position %u in the message (%p).\n",
                            msg_n, sexp_msg);
-                        
+
                         sm_free (seap_msg->attrs);
-                        
+
                         return (SEAP_EUNEXP);
                 }
-                
+
                 if (SEXP_string_nth (attr_name, 1) == ':') {
                         if (SEXP_strcmp (attr_name, ":id") == 0) {
-                                
+
                                 attr_val = SEXP_list_nth (sexp_msg, msg_n + 1);
                                 if (attr_val == NULL) {
                                         _D("Unexpected error: \"%s\": No attribute value at position %u in the message (%p).\n",
                                            "id", msg_n + 1, sexp_msg);
-                                        
+
                                         sm_free (seap_msg->attrs);
-                                        
+
                                         return (SEAP_EUNEXP);
                                 }
-                                
+
 #if SEAP_MSGID_BITS == 64
                                 seap_msg->id = SEXP_number_getu_64 (attr_val);
                                 if (seap_msg->id == UINT64_MAX)
@@ -156,48 +156,48 @@ static int SEAP_packet_sexp2msg (SEXP_t *sexp_msg, SEAP_msg_t *seap_msg)
                                         case EDOM:
                                                 _D("id: invalid value or type: s_exp=%p, type=%s\n",
                                                    (void *)attr_val, SEXP_strtype (attr_val));
-                                                
+
                                                 sm_free (seap_msg->attrs);
                                                 return (SEAP_EINVAL);
                                         case EFAULT:
                                                 _D("id: not found\n");
-                                                
+
                                                 sm_free (seap_msg->attrs);
                                                 return (SEAP_EINVAL);
                                         }
                                 }
-                                
+
                                 SEXP_free (attr_val);
                         } else {
                                 seap_msg->attrs[attr_i].name  = SEXP_string_subcstr (attr_name, 1, 0);
                                 seap_msg->attrs[attr_i].value = SEXP_list_nth (sexp_msg, msg_n + 1);
-                                
+
                                 if (seap_msg->attrs[attr_i].value == NULL) {
                                         _D("Unexpected error: \"%s\": No attribute value at position %u in the message (%p).\n",
                                            seap_msg->attrs[attr_i].name, msg_n + 1, sexp_msg);
-                                        
+
                                         sm_free (seap_msg->attrs[attr_i].name);
-                                        
+
                                         for (; attr_i > 0; --attr_i) {
                                                 sm_free (seap_msg->attrs[attr_i - 1].name);
-                                                
+
                                                 if (seap_msg->attrs[attr_i - 1].value != NULL)
                                                         SEXP_free (seap_msg->attrs[attr_i - 1].value);
                                         }
-                                        
+
                                         sm_free (seap_msg->attrs);
-                                        
+
                                         return (SEAP_EINVAL);
                                 }
-                                
+
                                 ++attr_i;
                         }
-                        
+
                         ++msg_n;
                 } else {
                         seap_msg->attrs[attr_i].name  = SEXP_string_cstr (attr_name);
                         seap_msg->attrs[attr_i].value = NULL;
-                        
+
                         ++attr_i;
                 }
 
@@ -206,11 +206,11 @@ static int SEAP_packet_sexp2msg (SEXP_t *sexp_msg, SEAP_msg_t *seap_msg)
 
         _A(attr_i <= (SEXP_list_length (sexp_msg) - 4));
         _A(attr_i >= (SEXP_list_length (sexp_msg) - 4)/2);
-        
+
         seap_msg->attrs_cnt = attr_i;
         seap_msg->attrs     = sm_realloc (seap_msg->attrs, sizeof (SEAP_attr_t) * seap_msg->attrs_cnt);
         seap_msg->sexp      = SEXP_list_last (sexp_msg);
-        
+
         return (0);
 }
 
@@ -218,7 +218,7 @@ static SEXP_t *SEAP_packet_msg2sexp (SEAP_msg_t *msg)
 {
         SEXP_t *sexp;
         uint16_t i;
-        
+
         SEXP_t *r0, *r1, *r2;
 
         _A(msg != NULL);
@@ -232,9 +232,9 @@ static SEXP_t *SEAP_packet_msg2sexp (SEAP_msg_t *msg)
                               r2 = SEXP_number_newu_32 (msg->id),
 #endif
                               NULL);
-        
+
         SEXP_vfree (r0, r1, r2, NULL);
-        
+
         /* Add message attributes */
         for (i = 0; i < msg->attrs_cnt; ++i) {
                 if (msg->attrs[i].value != NULL) {
@@ -247,7 +247,7 @@ static SEXP_t *SEAP_packet_msg2sexp (SEAP_msg_t *msg)
 
                 SEXP_free (r0);
         }
-        
+
         /* Add data */
         if (msg->sexp != NULL)
                 SEXP_list_add (sexp, msg->sexp);
@@ -259,8 +259,8 @@ static SEXP_t *SEAP_packet_msg2sexp (SEAP_msg_t *msg)
         SEXP_fprintfa (stderr, sexp);
         fprintf (stderr, "\n---------------\n");
 #endif
-        
-        return (sexp);        
+
+        return (sexp);
 }
 
 static int SEAP_packet_sexp2cmd (SEXP_t *sexp_cmd, SEAP_cmd_t *seap_cmd)
@@ -274,36 +274,36 @@ static int SEAP_packet_sexp2cmd (SEXP_t *sexp_cmd, SEAP_cmd_t *seap_cmd)
         memset (seap_cmd, 0, sizeof (SEAP_cmd_t));
         seap_cmd->class = SEAP_CMDCLASS_INT;
         seap_cmd->args  = NULL;
-        
+
         mattrs = 0;
         i = 2;
-        
+
         while ((item = SEXP_list_nth (sexp_cmd, i)) != NULL) {
                 if (SEXP_strncmp (item, ":", 1) == 0) {
                         char *attr_name;
-                        
+
                         attr_name = SEXP_string_cstr (item);
-                        
+
                         switch (*(attr_name + 1)) {
                         case 'i':
                                 if (strcmp (attr_name + 1, "id") == 0) {
                                         val = SEXP_list_nth (sexp_cmd, i + 1);
-                                        
+
                                         if (val == NULL)
                                                 break;
-                                        
+
                                         if (SEXP_numberp (val)) {
                                                 seap_cmd->id = SEXP_number_getu_16 (val);
                                                 ++mattrs;
                                         }
-                                        
+
                                         SEXP_free (val);
                                 }
                                 break;
                         case 'r':
                                 if (strcmp (attr_name + 1, "reply_id") == 0) {
                                         val = SEXP_list_nth (sexp_cmd, i + 1);
-                                        
+
                                         if (val == NULL)
                                                 break;
 
@@ -311,7 +311,7 @@ static int SEAP_packet_sexp2cmd (SEXP_t *sexp_cmd, SEAP_cmd_t *seap_cmd)
                                                 seap_cmd->rid = SEXP_number_getu_16 (val);
                                                 seap_cmd->flags |= SEAP_CMDFLAG_REPLY;
                                         }
-                                        
+
                                         SEXP_free (val);
                                 }
                                 break;
@@ -334,20 +334,20 @@ static int SEAP_packet_sexp2cmd (SEXP_t *sexp_cmd, SEAP_cmd_t *seap_cmd)
                         case 't':
                                 if (strcmp (attr_name + 1, "type") == 0) {
                                         val = SEXP_list_nth (sexp_cmd, i + 1);
-                                        
+
                                         if (val == NULL)
                                                 break;
-                                        
+
                                         if (SEXP_stringp (val)) {
                                                 if (SEXP_strcmp (val, "sync") == 0)
                                                         seap_cmd->flags |= SEAP_CMDFLAG_SYNC;
                                         }
-                                        
+
                                         SEXP_free (val);
                                 }
                                 break;
                         }
-                        
+
                         free (attr_name);
                         ++i; ++i;
                 } else {
@@ -356,7 +356,7 @@ static int SEAP_packet_sexp2cmd (SEXP_t *sexp_cmd, SEAP_cmd_t *seap_cmd)
 
                 SEXP_free (item);
         }
-        
+
         if (item == NULL || mattrs < 1) {
                 errno = EINVAL;
                 return (-1);
@@ -370,9 +370,9 @@ static int SEAP_packet_sexp2cmd (SEXP_t *sexp_cmd, SEAP_cmd_t *seap_cmd)
                 errno = EINVAL;
                 return (-1);
         }
-        
+
         seap_cmd->args = SEXP_list_nth (sexp_cmd, ++i);
-        
+
         return (0);
 }
 
@@ -380,7 +380,7 @@ static SEXP_t *SEAP_packet_cmd2sexp (SEAP_cmd_t *cmd)
 {
         SEXP_t *sexp;
         SEXP_t *r0, *r1, *r2;
-        
+
         _A(cmd != NULL);
         _LOGCALL_;
 
@@ -388,22 +388,22 @@ static SEXP_t *SEAP_packet_cmd2sexp (SEAP_cmd_t *cmd)
                               r1 = SEXP_string_new (":id", 3),
                               r2 = SEXP_number_newu_16 (cmd->id),
                               NULL);
-        
+
         SEXP_vfree (r0, r1, r2, NULL);
-        
+
         if (cmd->flags & SEAP_CMDFLAG_REPLY) {
                 SEXP_list_add (sexp,
                                r0 = SEXP_string_new (":reply_id", 9));
                 SEXP_list_add (sexp,
                                r1 = SEXP_number_newu_16 (cmd->rid));
-                
+
                 SEXP_vfree (r0, r1, NULL);
         }
-        
+
         SEXP_list_add (sexp,
                        r0 = SEXP_string_new (":class", 6));
         SEXP_free (r0);
-        
+
         switch (cmd->class) {
         case SEAP_CMDCLASS_USR:
                 SEXP_list_add (sexp,
@@ -416,25 +416,25 @@ static SEXP_t *SEAP_packet_cmd2sexp (SEAP_cmd_t *cmd)
         default:
                 abort ();
         }
-        
+
 
         SEXP_free (r0);
-        
+
         SEXP_list_add (sexp,
                        r0 = SEXP_string_new (":type", 5));
-        
+
         SEXP_list_add (sexp,
                        r1 = (cmd->flags & SEAP_CMDFLAG_SYNC ?
                              SEXP_string_new ("sync", 4) : SEXP_string_new ("async", 5)));
-        
+
         SEXP_list_add (sexp,
                        r2 = SEXP_number_newu_16 (cmd->code));
-        
+
         SEXP_vfree (r0, r1, r2, NULL);
-        
+
         if (cmd->args != NULL)
                 SEXP_list_add (sexp, cmd->args);
-        
+
         SEXP_VALIDATE(sexp);
         return (sexp);
 }
@@ -443,14 +443,14 @@ static int SEAP_packet_sexp2err (SEXP_t *sexp_err, SEAP_err_t *seap_err)
 {
         SEXP_t  *member;
         uint32_t n;
-        
+
         _LOGCALL_;
-        
+
         seap_err->id   = 0;
         seap_err->code = SEAP_EUNKNOWN;
         seap_err->type = SEAP_ETYPE_INT;
         seap_err->data = NULL;
-        
+
         n = 2;
 
         while ((member = SEXP_list_nth (sexp_err, n)) != NULL) {
@@ -462,7 +462,7 @@ static int SEAP_packet_sexp2err (SEXP_t *sexp_err, SEAP_err_t *seap_err)
                                 errno = EINVAL;
                                 return (-1);
                         }
-                        
+
                         if (SEXP_strcmp (member, ":orig_id") == 0) {
                                 SEXP_t *val;
 
@@ -475,18 +475,18 @@ static int SEAP_packet_sexp2err (SEXP_t *sexp_err, SEAP_err_t *seap_err)
                                         errno = EINVAL;
                                         return (-1);
                                 }
-                                
+
 #if SEAP_MSGID_BITS == 64
                                 seap_err->id = SEXP_number_getu_64 (val);
 #else
                                 seap_err->id = SEXP_number_getu_32 (val);
-#endif                    
+#endif
                                 SEXP_free (val);
                         } else if (SEXP_strcmp (member, ":type") == 0) {
                                 SEXP_t *val;
 
                                 val = SEXP_list_nth (member, ++n);
-                                
+
                                 if (SEXP_strcmp (val, "int") == 0)
                                         seap_err->type = SEAP_ETYPE_INT;
                                 else if (SEXP_strcmp (val, "usr") == 0)
@@ -498,7 +498,7 @@ static int SEAP_packet_sexp2err (SEXP_t *sexp_err, SEAP_err_t *seap_err)
                                         errno = EINVAL;
                                         return (-1);
                                 }
-                                
+
                                 SEXP_free (val);
                         } else {
                                 _D("Unknown packet attribute\n");
@@ -511,7 +511,7 @@ static int SEAP_packet_sexp2err (SEXP_t *sexp_err, SEAP_err_t *seap_err)
                 case SEXP_TYPE_NUMBER:
                         seap_err->code = SEXP_number_getu_32 (member);
                         SEXP_free (member);
-                        
+
                         goto loop_exit;
                 default:
                         _D("Unexpected type of packet member: list\n");
@@ -519,12 +519,12 @@ static int SEAP_packet_sexp2err (SEXP_t *sexp_err, SEAP_err_t *seap_err)
                         errno = EINVAL;
                         return (-1);
                 }
-                
+
                 ++n;
         }
 loop_exit:
         seap_err->data = SEXP_list_nth (sexp_err, n + 1);
-        
+
         return (0);
 }
 
@@ -532,7 +532,7 @@ static SEXP_t *SEAP_packet_err2sexp (SEAP_err_t *err)
 {
         SEXP_t *sexp;
         SEXP_t *r0, *r1, *r2, *r3, *r4, *r5;
-        
+
         _LOGCALL_;
 
         sexp = SEXP_list_new (r0 = SEXP_string_new (SEAP_SYM_ERR, strlen (SEAP_SYM_ERR)),
@@ -541,26 +541,26 @@ static SEXP_t *SEAP_packet_err2sexp (SEAP_err_t *err)
                               r2 = SEXP_number_newu_64 (err->id),
 #else
                               r2 = SEXP_number_newu_32 (err->id),
-#endif                    
+#endif
                               r3 = SEXP_string_new (":type", 5),
                               r4 = SEXP_number_newu (err->type),
                               r5 = SEXP_number_newu (err->code),
                               NULL);
-        
+
         SEXP_vfree (r1, r2, r3, r4, r5, NULL);
-        
+
         if (err->data != NULL)
                 SEXP_list_add (sexp, err->data);
-        
+
         return (sexp);
 }
 
 static SEXP_t *SEAP_packet2sexp (SEAP_packet_t *packet)
 {
         SEXP_t *sexp = NULL;
-        
+
         _LOGCALL_;
-        
+
         switch (packet->type) {
         case SEAP_PACKET_MSG:
                 sexp = SEAP_packet_msg2sexp (SEAP_packet_msg (packet));
@@ -574,7 +574,7 @@ static SEXP_t *SEAP_packet2sexp (SEAP_packet_t *packet)
         default:
                 errno = EINVAL;
         }
-        
+
         return (sexp);
 }
 
@@ -586,18 +586,18 @@ int SEAP_packet_recv (SEAP_CTX_t *ctx, int sd, SEAP_packet_t **packet)
         void        *data_buffer;
         size_t       data_buflen;
         ssize_t      data_length;
-        
+
         SEXP_psetup_t *psetup;
         SEXP_pstate_t *pstate;
 
         SEXP_t     *psym_sexp;
         char        psym_cstr_b[16+1];
         char       *psym_cstr;
-        
+
         _LOGCALL_;
 
         dsc = SEAP_desc_get (ctx->sd_table, sd);
-        
+
         if (dsc == NULL) {
                 errno = EFAULT;
                 return (-1);
@@ -631,13 +631,13 @@ int SEAP_packet_recv (SEAP_CTX_t *ctx, int sd, SEAP_packet_t **packet)
          */
 
 eloop_start:
-                
+
         for (;;) {
                 if (SCH_SELECT(dsc->scheme, dsc, SEAP_IO_EVREAD, 0, 0) != 0)
                         return (-1);
-                
+
                 _D("return from select\n");
-                
+
                 switch (DESC_TRYRLOCK (dsc)) {
                 case  1:
                         goto eloop_exit;
@@ -653,26 +653,26 @@ eloop_start:
                         }
                 case -1:
                         fail_rmutex:
-                        
+
                         protect_errno {
                                 _D("An error ocured while locking the read mutex: dsc=%p, errno=%u, %s.\n",
                                    dsc, errno, strerror (errno));
                         }
-                        
+
                         return (-1);
                 default:
                         abort ();
                 }
         }
 eloop_exit:
-        
+
         /*
          * Receive loop
          * The read mutex is locked during execution of this loop and
          * the execution stops if the received data forms a valid
          * S-expression.
          */
-        
+
         pstate = NULL;
         psetup = SEXP_psetup_new ();
 
@@ -686,11 +686,11 @@ eloop_exit:
                 data_buffer = sm_alloc (SEAP_RECVBUF_SIZE);
                 data_buflen = SEAP_RECVBUF_SIZE;
                 data_length = SCH_RECV(dsc->scheme, dsc, data_buffer, data_buflen, 0);
-                
+
                 if (data_length < 0) {
                         protect_errno {
                                 _D("FAIL: recv failed: dsc=%p, errno=%u, %s.\n", dsc, errno, strerror (errno));
-                                
+
                                 sm_free (data_buffer);
                                 SEXP_psetup_free (psetup);
 
@@ -702,7 +702,7 @@ eloop_exit:
                         _D("zero bytes received -> EOF\n");
                         sm_free (data_buffer);
                         SEXP_psetup_free (psetup);
-                        
+
                         if (pstate != NULL) {
                                 _D("FAIL: incomplete S-exp received\n");
                                 errno = ENETRESET;
@@ -781,20 +781,20 @@ sexp_buf_recv:
                 errno = EINVAL;
                 return (-1);
         }
-        
+
         psym_sexp = SEXP_list_first (sexp_packet);
-        
+
         if (!SEXP_stringp(psym_sexp)) {
                 _D("Invalid SEAP packet received: %s.\n", "first list item is not a string");
-                
+
                 SEXP_free (psym_sexp);
                 SEXP_free (sexp_packet);
-                
+
                 errno = EINVAL;
                 return (-1);
         } else if (SEXP_string_length (psym_sexp) != (strlen (SEAP_SYM_PREFIX) + 3)) {
                 _D("Invalid SEAP packet received: %s.\n", "invalid packet type symbol length");
-                
+
                 SEXP_free (psym_sexp);
                 SEXP_free (sexp_packet);
 
@@ -809,11 +809,11 @@ sexp_buf_recv:
                 errno = EINVAL;
                 return (-1);
         }
-        
+
         SEXP_string_cstr_r (psym_sexp, psym_cstr_b, sizeof psym_cstr_b);
         psym_cstr = psym_cstr_b + strlen (SEAP_SYM_PREFIX);
         SEXP_free (psym_sexp);
-        
+
         switch (psym_cstr[0]) {
         case 'm':
                 if (psym_cstr[1] == 's' &&
@@ -821,13 +821,13 @@ sexp_buf_recv:
                 {
                         (*packet) = SEAP_packet_new ();
                         (*packet)->type = SEAP_PACKET_MSG;
-                        
+
                         if (SEAP_packet_sexp2msg (sexp_packet, &((*packet)->data.msg)) != 0) {
                                 /* error */
                                 _D("Invalid SEAP packet received: %s.\n", "can't translate to msg struct");
-                                
+
                                 SEXP_free (sexp_packet);
-                                
+
                                 errno = EINVAL;
                                 return (-1);
                         }
@@ -845,7 +845,7 @@ sexp_buf_recv:
                                 /* error */
                                 _D("Invalid SEAP packet received: %s.\n", "can't translate to cmd struct");
                                 SEXP_free (sexp_packet);
-                                
+
                                 errno = EINVAL;
                                 return (-1);
                         }
@@ -858,12 +858,12 @@ sexp_buf_recv:
                 {
                         (*packet) = SEAP_packet_new ();
                         (*packet)->type = SEAP_PACKET_ERR;
-                        
+
                         if (SEAP_packet_sexp2err (sexp_packet, &((*packet)->data.err)) != 0) {
                                 /* error */
                                 _D("Invalid SEAP packet received: %s.\n", "can't translate to err struct");
                                 SEXP_free (sexp_packet);
-                                
+
                                 errno = EINVAL;
                                 return (-1);
                         }
@@ -882,9 +882,9 @@ sexp_buf_recv:
         SEXP_fprintfa (stderr, sexp_packet);
         fprintf (stderr, "\n--------------\n");
 #endif
-        
+
         SEXP_free (sexp_packet);
-        
+
         return (0);
 }
 
@@ -901,16 +901,16 @@ int SEAP_packet_recv_bytype (SEAP_CTX_t *ctx, int sd, SEAP_packet_t **packet, ui
            type == SEAP_PACKET_ERR);
 
         _LOGCALL_;
-        
+
         dsc = SEAP_desc_get (ctx->sd_table, sd);
-        
+
         if (dsc == NULL)
                 return (-1);
-        
+
         for (;;) {
                 pck = NULL;
                 ret = SEAP_packet_recv (ctx, sd, &pck);
-        
+
                 if (ret != 0)
                         return (ret);
                 else if (pck->type == type)
@@ -918,7 +918,7 @@ int SEAP_packet_recv_bytype (SEAP_CTX_t *ctx, int sd, SEAP_packet_t **packet, ui
                 else if (pqueue_add (dsc->pck_queue, pck) != 0)
                         return (-1);
         }
-        
+
         *packet = pck;
 
         return (ret);
@@ -929,17 +929,17 @@ int SEAP_packet_send (SEAP_CTX_t *ctx, int sd, SEAP_packet_t *packet)
         SEXP_t *packet_sexp;
         SEAP_desc_t *dsc;
         int ret;
-                
+
         _LOGCALL_;
 
         ret = -1;
         dsc = SEAP_desc_get (ctx->sd_table, sd);
-        
+
         if (dsc == NULL)
                 return (-1);
-        
+
         packet_sexp = SEAP_packet2sexp (packet);
-        
+
         if (packet_sexp == NULL) {
                 _D("Can't convert S-exp to packet\n");
                 return (-1);
@@ -947,22 +947,22 @@ int SEAP_packet_send (SEAP_CTX_t *ctx, int sd, SEAP_packet_t *packet)
 
         if (DESC_WLOCK (dsc)) {
                 ret = 0;
-                
+
                 if (SCH_SENDSEXP(dsc->scheme, dsc, packet_sexp, 0) < 0) {
                         ret = -1;
-                        
+
                         protect_errno {
                                 _D("FAIL: errno=%u, %s.\n", errno, strerror (errno));
                         }
                 }
-                
+
                 DESC_WUNLOCK(dsc);
         }
-        
+
         protect_errno {
                 SEXP_free (packet_sexp);
         }
-        
+
         return (ret);
 }
 

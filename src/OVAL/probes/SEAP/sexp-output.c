@@ -67,16 +67,16 @@ int SEXP_sbprintf_t (SEXP_t *s_exp, strbuf_t *sb)
                 if (strbuf_add (sb, buffer, buflen) != 0)
                         return (-1);
         }
-        
+
         SEXP_val_dsc (&v_dsc, s_exp->s_valp);
-        
+
         switch (v_dsc.type) {
         case SEXP_VALTYPE_NUMBER:
         {
                 SEXP_numtype_t t;
-                
+
                 t = SEXP_NTYPEP(v_dsc.hdr->size, v_dsc.mem);
-                
+
                 if (t <= SEXP_NUM_UINT16) {
                         if (t <= SEXP_NUM_UINT8) {
                                 char buffer[6+1];
@@ -100,13 +100,13 @@ int SEXP_sbprintf_t (SEXP_t *s_exp, strbuf_t *sb)
 
                                 _A(buflen >= 0);
                                 _A((size_t)buflen < sizeof buffer);
-                                
+
                                 if (strbuf_add (sb, (const char *)buffer, (size_t)buflen) != 0)
                                         return (-1);
-                                
+
                         } else {
                                 char buffer[8+1];
-                                
+
                                 switch (t) {
                                 case SEXP_NUM_INT16:
                                         buflen = snprintf (buffer, sizeof buffer,
@@ -122,15 +122,15 @@ int SEXP_sbprintf_t (SEXP_t *s_exp, strbuf_t *sb)
 
                                 _A(buflen >= 0);
                                 _A((size_t)buflen < sizeof buffer);
-                                
+
                                 if (strbuf_add (sb, (const char *)buffer, (size_t)buflen) != 0)
                                         return (-1);
-                                
+
                         }
                 } else {
                         if (t <= SEXP_NUM_INT64) {
                                 char buffer[22+1];
-                                
+
                                 switch (t) {
                                 case SEXP_NUM_INT32:
                                         buflen = snprintf (buffer, sizeof buffer,
@@ -150,13 +150,13 @@ int SEXP_sbprintf_t (SEXP_t *s_exp, strbuf_t *sb)
 
                                 _A(buflen >= 0);
                                 _A((size_t)buflen < sizeof buffer);
-                                
+
                                 if (strbuf_add (sb, (const char *)buffer, (size_t)buflen) != 0)
                                         return (-1);
-                                
+
                         } else {
                                 char buffer[66+1];
-                                
+
                                 switch (t) {
                                 case SEXP_NUM_UINT64:
                                         buflen = snprintf (buffer, sizeof buffer,
@@ -172,10 +172,10 @@ int SEXP_sbprintf_t (SEXP_t *s_exp, strbuf_t *sb)
 
                                 _A(buflen >= 0);
                                 _A((size_t)buflen < sizeof buffer);
-                                
+
                                 if (strbuf_add (sb, (const char *)buffer, (size_t)buflen) != 0)
                                         return (-1);
-                                
+
                         }
                 }
                 break;
@@ -183,21 +183,21 @@ int SEXP_sbprintf_t (SEXP_t *s_exp, strbuf_t *sb)
         case SEXP_VALTYPE_STRING:
         {
                 char buffer[20+1];
-                
+
                 buflen = snprintf (buffer, sizeof buffer, "#d%zu:", v_dsc.hdr->size / sizeof (char));
-                
+
                 _A(buflen >= 0);
                 _A((size_t)buflen < sizeof buffer);
-                
+
                 if (strbuf_add (sb, (const char *)buffer, (size_t)buflen) != 0)
                         return (-1);
                 if (strbuf_add (sb, (const char *)v_dsc.mem, v_dsc.hdr->size / sizeof (char)) != 0)
                         return (-1);
-                
+
                 break;
         }
         case SEXP_VALTYPE_LIST:
-                
+
                 if (strbuf_add (sb, "(", 1) != 0)
                         return (-1);
                 if (SEXP_rawval_lblk_cb ((uintptr_t)SEXP_LCASTP(v_dsc.mem)->b_addr, (int (*)(SEXP_t *, void *)) SEXP_sbprintf_t, (void *)sb,
@@ -207,12 +207,12 @@ int SEXP_sbprintf_t (SEXP_t *s_exp, strbuf_t *sb)
                         return (-1);
                 if (strbuf_add (sb, ")", 1) != 0)
                         return (-1);
-                
+
                 break;
         default:
                 abort ();
         }
-        
+
         return (0);
 }
 
@@ -238,14 +238,14 @@ size_t SEXP_fprintfa (FILE *fp, const SEXP_t *s_exp)
                 fprintf (fp, "[%s]", SEXP_datatype_name(s_exp->s_type));
 
         SEXP_val_dsc (&v_dsc, s_exp->s_valp);
-        
+
         switch (v_dsc.type) {
         case SEXP_VALTYPE_NUMBER:
         {
                 SEXP_numtype_t t;
-                
+
                 t = SEXP_NTYPEP(v_dsc.hdr->size, v_dsc.mem);
-                
+
                 if (t <= SEXP_NUM_UINT16) {
                         if (t <= SEXP_NUM_UINT8) {
                                 switch (t) {
@@ -273,7 +273,7 @@ size_t SEXP_fprintfa (FILE *fp, const SEXP_t *s_exp)
                                 }
                         }
                 }
-                
+
                 abort ();
         }       break;
         case SEXP_VALTYPE_STRING:
@@ -281,23 +281,23 @@ size_t SEXP_fprintfa (FILE *fp, const SEXP_t *s_exp)
         case SEXP_VALTYPE_LIST:
         {
                 __fprintfa_t fpa;
-                
+
                 fpa.sz = 2;
                 fpa.fp = fp;
                 fputc ('(', fp);
-                
+
                 SEXP_rawval_lblk_cb ((uintptr_t)SEXP_LCASTP(v_dsc.mem)->b_addr,
                                      (int(*)(SEXP_t *, void *))__SEXP_fprintfa_lmemb, &fpa,
                                      SEXP_LCASTP(v_dsc.mem)->offset + 1);
-                
+
                 fputc (')', fp);
-         
+
                 return (fpa.sz);
         }
         default:
                 abort ();
         }
-        
+
         return (0);
 }
 
@@ -312,7 +312,7 @@ static SEXP_ostate_t *__SEXP_ostate_new (void)
         ost->sexp_pos = 0;
         ost->sexp_part = 0;
         LIST_stack_init (&(ost->lstack));
-        
+
         return (ost);
 }
 
@@ -380,7 +380,7 @@ int SEXP_printf (SEXP_format_t fmt, SEXP_t *sexp)
         default:
                 abort ();
         }
-        
+
         /* NOTREACHED */
         return (-1);
 }
@@ -397,7 +397,7 @@ int SEXP_fprintf (FILE *fp, SEXP_format_t fmt, SEXP_t *sexp)
         default:
                 abort ();
         }
-        
+
         /* NOTREACHED */
         return (-1);
 }
@@ -414,7 +414,7 @@ int SEXP_sprintf (char *str, SEXP_format_t fmt, SEXP_t *sexp)
         default:
                 abort ();
         }
-        
+
         /* NOTREACHED */
         return (-1);
 }
@@ -431,7 +431,7 @@ int SEXP_snprintf (char *str, size_t size, SEXP_format_t fmt, SEXP_t *sexp)
         default:
                 abort ();
         }
-        
+
         /* NOTREACHED */
         return (-1);
 }
@@ -448,7 +448,7 @@ int SEXP_asprintf (char **ret, SEXP_format_t fmt, SEXP_t *sexp)
         default:
                 abort ();
         }
-        
+
         /* NOTREACHED */
         return (-1);
 }
@@ -465,7 +465,7 @@ int SEXP_asnprintf (char **ret, size_t maxsz, SEXP_format_t fmt, SEXP_t *sexp)
         default:
                 abort ();
         }
-        
+
         /* NOTREACHED */
         return (-1);
 }
@@ -475,17 +475,17 @@ int SEXP_asnprintf (char **ret, size_t maxsz, SEXP_format_t fmt, SEXP_t *sexp)
 size_t SEXP_st_dprintc (int fd, SEXP_t *s_exp, SEXP_ostate_t **ost)
 {
         SEXP_t *s_cur;
-        
+
         /* create output state */
-        
+
 
         for (;;) {
                 s_cur = SEXP_ostate_sexp (*ost);
-                
+
                 if (s_cur->s_type != NULL) {
                         /* print datatype */
                 }
-                 
+
                 switch (SEXP_typeof (
         }
 }
@@ -499,15 +499,15 @@ ssize_t SEXP_st_dprintc (int fd, SEXP_t *sexp, SEXP_ostate_t **ost)
         uint32_t digits;
         ssize_t wret = -1;
         size_t  wlen =  0;
-        
+
         struct iovec vec[3];
-        
+
         _A(fd >= 0);
         _A(sexp != NULL);
         _A(ost  != NULL);
 
 #define SCNT (LIST_stack_cnt (&((*ost)->lstack)))
-        
+
         if (*ost == NULL) {
                 *ost = __SEXP_ostate_new ();
                 (*ost)->sexp = psexp = sexp;
@@ -515,18 +515,18 @@ ssize_t SEXP_st_dprintc (int fd, SEXP_t *sexp, SEXP_ostate_t **ost)
                 psexp = (*ost)->sexp;
                 /* FIXME */
         }
-        
+
 print_loop:
         if (psexp->handler != NULL) {
                 SEXP_datatype_t *h = psexp->handler;
-                
+
                 ch = ']';
-                
+
                 digits = xnumdigits (h->name_len);
                 buffer = sm_alloc (sizeof (char) * (digits + 2));
                 snprintf (buffer, sizeof (char) * (digits + 2), "%.*hu[",
                           digits, h->name_len);
-                
+
                 vec[0].iov_base = buffer;
                 vec[0].iov_len  = digits + 1;
                 vec[1].iov_base = h->name;
@@ -535,22 +535,22 @@ print_loop:
                 vec[2].iov_len  = 1;
 
                 wret = writev (fd, vec, 3);
-                
+
                 _D("wrote: %.*s%.*s\n", digits + 1, buffer, h->name_len, h->name);
-                
+
                 if (wret == -1) {
                         protect_errno {
                                 _D("errno=%u, %s.\n", errno, strerror (errno));
                         }
-                        
+
                         return (-1);
                 }
-                
+
                 sm_free (buffer);
-                
+
                 wlen += (size_t)wret;
         }
-        
+
         switch (SEXP_TYPE(psexp)) {
         case ATOM_LIST:
                 ch = '(';
@@ -559,20 +559,20 @@ print_loop:
                         protect_errno {
                                 _D("errno=%u, %s.\n", errno, strerror (errno));
                         }
-                
+
                         return (-1);
                 }
-                
+
                 _D("wrote: (\n");
-                
+
                 wlen += sizeof ch;
-                
+
                 LIST_stack_push (&((*ost)->lstack), &(psexp->atom.list));
                 (*ost)->list_pos = sm_realloc ((*ost)->list_pos,
                                                sizeof (uint32_t) * SCNT);
-                
+
                 _A(SCNT > 0);
-                
+
                 (*ost)->list_pos[SCNT - 1] = 0;
                 break;
         case ATOM_STRING:
@@ -580,26 +580,26 @@ print_loop:
                 buffer = sm_alloc (sizeof (char) * (digits + 2));
                 snprintf (buffer, sizeof (char) * (digits + 2), "%.*u:",
                           digits, psexp->atom.string.len);
-                
+
                 vec[0].iov_base = buffer;
                 vec[0].iov_len  = digits + 1;
                 vec[1].iov_base = psexp->atom.string.str;
                 vec[1].iov_len  = psexp->atom.string.len;
-                
+
                 _D("wrote: %.*s%.*s\n", digits + 1, buffer,
                    psexp->atom.string.len, psexp->atom.string.str);
-                
+
                 if ((wret = writev (fd, vec, 2)) == -1) {
                         /* write error */
                         protect_errno {
                                 _D("errno=%u, %s.\n", errno, strerror (errno));
                         }
-                
+
                         return (-1);
                 }
-                
+
                 sm_free (buffer);
-                
+
                 if ((wret - digits - 1 - psexp->atom.string.len) != 0) {
                         /* not everything was written to fd */
                         (*ost)->sexp_pos  = wret;
@@ -608,16 +608,16 @@ print_loop:
                         protect_errno {
                                 _D("errno=%u, %s.\n", errno, strerror (errno));
                         }
-                
+
                         return (-1);
                 }
-                
+
                 wlen += (size_t)wret;
                 break;
         case ATOM_NUMBER: {
                 char numstr[64];
                 int  numlen;
-                /* 
+                /*
                  * Number is converted to string with datatype.
                  * e.g.: 123 -> 4[int8]3:123
                  *
@@ -631,7 +631,7 @@ print_loop:
                                            __fmt, num);                 \
                 }                                                       \
                         break
-                
+
                 switch (psexp->atom.number.type) {
                         CASE(NUM_INT8,     int8_t, SEXP_number_gethhd, "%hhd ");
                         CASE(NUM_UINT8,   uint8_t, SEXP_number_gethhu, "%hhu ");
@@ -651,28 +651,28 @@ print_loop:
                         protect_errno {
                                 _D("errno=%u, %s.\n", errno, strerror (errno));
                         }
-                        
+
                         return (-1);
                 }
-                
+
                 _D("wrote: %.*s\n", numlen, numstr);
 
                 wlen += numlen;
         }
-                break;  
+                break;
         default:
                 abort ();
         }
 
         while (SCNT > 0) {
                 LIST_t *ltop;
-                
+
                 ltop = LIST_stack_top (&((*ost)->lstack));
-                
+
                 if ((*ost)->list_pos[SCNT - 1] < ltop->count) {
                         psexp = &(SEXP(ltop->memb)[((*ost)->list_pos[SCNT - 1])]);
                         ++((*ost)->list_pos[SCNT - 1]);
-                        
+
                         goto print_loop;
                 } else {
                         /* end of list */
@@ -685,25 +685,25 @@ print_loop:
                                 protect_errno {
                                         _D("errno=%u, %s.\n", errno, strerror (errno));
                                 }
-                
+
                                 return (-1);
                         }
-                        
+
                         wlen += sizeof ch;
-                        
+
                         LIST_stack_dec (&((*ost)->lstack));
                         (*ost)->list_pos = sm_realloc ((*ost)->list_pos,
                                                        sizeof (uint32_t) * SCNT);
                 }
         }
-        
-        /* 
+
+        /*
          *  If we got here, we can destroy
          *  the ostate because everything
          *  went fine.
          */
         (*ost) = NULL;
-        
+
         return ((ssize_t)wlen);
 }
 
@@ -724,7 +724,7 @@ int SEXP_fprintfc (FILE *fp, SEXP_t *sexp)
 
 int SEXP_dprintfc (int fd, SEXP_t *sexp)
 {
-        
+
         return (-1);
 }
 
@@ -767,12 +767,12 @@ int SEXP_printfa (SEXP_t *sexp)
 static int __SEXP_fprintfa (FILE *fp, SEXP_t *sexp, uint32_t indent)
 {
         const char *datatype;
-        
+
         datatype = SEXP_datatype (sexp);
-        
+
         if (datatype != NULL)
                 fprintf (fp, "[%s]", datatype);
-        
+
         switch (SEXP_TYPE(sexp)) {
         case ATOM_STRING:
                 return fprintf (fp, "\"%.*s\"", sexp->atom.string.len, sexp->atom.string.str);
@@ -803,7 +803,7 @@ static int __SEXP_fprintfa (FILE *fp, SEXP_t *sexp, uint32_t indent)
                 break;
         case ATOM_LIST: {
                 uint32_t i;
-                
+
                 if (indent > 0)
                         putc ('\n', fp);
                 for (i = 0; i < indent; ++i)
@@ -824,7 +824,7 @@ static int __SEXP_fprintfa (FILE *fp, SEXP_t *sexp, uint32_t indent)
                                 }
                         }
                 }
-                
+
                 putc (')', fp);
                 return (0);
         }
@@ -833,7 +833,7 @@ static int __SEXP_fprintfa (FILE *fp, SEXP_t *sexp, uint32_t indent)
         default:
                 abort ();
         }
-        
+
         /* NOTREACHED */
         return (-1);
 }
