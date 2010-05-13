@@ -410,12 +410,12 @@ AC_ARG_ENABLE([cce],
      esac],[cce=yes])
 
 AC_ARG_ENABLE([xccdf],
-     [  --enable-xccdf            include support for XCCDF [[default=no]]],
+     [  --enable-xccdf            include support for XCCDF [[default=yes]]],
      [case "${enableval}" in
        yes) xccdf=yes ;;
        no)  xccdf=no  ;;
        *) AC_MSG_ERROR([bad value ${enableval} for --enable-xccdf]) ;;
-     esac],[xccdf=no])
+     esac],[xccdf=yes])
 
 AC_ARG_ENABLE([bindings],
      [  --enable-bindings       enable compilation of bindings [[default=yes]]],
