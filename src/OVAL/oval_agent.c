@@ -593,7 +593,7 @@ int oval_definition_model_import(struct oval_definition_model *model,
 	return retcode;
 }
 
-int oval_syschar_model_import(struct oval_syschar_model *model, struct oscap_import_source *source, void *user_arg)
+int oval_syschar_model_import(struct oval_syschar_model *model, struct oscap_import_source *source)
 {
 	__attribute__nonnull__(source);
 
@@ -612,7 +612,7 @@ int oval_syschar_model_import(struct oval_syschar_model *model, struct oscap_imp
 	}
 
 	xmlTextReaderRead(reader);
-	ret = ovalsys_parser_parse(model, reader, user_arg);
+	ret = ovalsys_parser_parse(model, reader, NULL);
 
 	xmlFreeTextReader(reader);
 	xmlFreeDoc(doc);
@@ -969,7 +969,7 @@ void oval_results_model_add_system(struct oval_results_model *model, struct oval
 }
 
 struct oval_result_directives *oval_results_model_import(struct oval_results_model *model,
-							 struct oscap_import_source *source, void *client_data)
+							 struct oscap_import_source *source)
 {
 	__attribute__nonnull__(source);
 
@@ -989,7 +989,7 @@ struct oval_result_directives *oval_results_model_import(struct oval_results_mod
 		oscap_setxmlerr(xmlGetLastError());
 		return NULL;
 	}
-	struct oval_result_directives *directives = ovalres_parser_parse(model, reader, client_data);
+	struct oval_result_directives *directives = ovalres_parser_parse(model, reader, NULL);
 
 	xmlFreeTextReader(reader);
 	xmlFreeDoc(doc);

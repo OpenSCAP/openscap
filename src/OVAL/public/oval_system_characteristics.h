@@ -192,7 +192,7 @@ struct oval_variable_binding_iterator;
  * Load OVAL system characteristics from a file.
  * @memberof oval_syschar_model
  */
-int oval_syschar_model_import(struct oval_syschar_model *model, struct oscap_import_source *source, void *user_arg);
+int oval_syschar_model_import(struct oval_syschar_model *model, struct oscap_import_source *source);
 /**
  * Create new oval_syschar_model.
  * The new model is bound to a specified oval_definition_model and variable bindings.

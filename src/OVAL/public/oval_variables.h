@@ -44,10 +44,9 @@
  * If the oval_variable model is not empty, the loaded content will be appended to the existing content.
  * @param variable_model the specified oval_variable_model.
  * @param import_source the oscap_import_source that resolves the XML stream.
- * @param user_param a user parameter that is passed the the error handler implementation.
  * @memberof oval_variable_model
  */ 
-int oval_variable_model_import (struct oval_variable_model *, struct oscap_import_source *, void *);
+int oval_variable_model_import (struct oval_variable_model *, struct oscap_import_source *);
 /**
  * Create a new OVAL variable model
  * @memberof oval_variable_model

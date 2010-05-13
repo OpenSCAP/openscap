@@ -302,7 +302,7 @@ static int _oval_variable_model_parse(struct oval_variable_model *model, xmlText
 	return return_code;
 }
 
-int oval_variable_model_import(struct oval_variable_model *model, struct oscap_import_source *source, void *user_param)
+int oval_variable_model_import(struct oval_variable_model *model, struct oscap_import_source *source)
 {
 	int return_code;
 	xmlDoc *doc = xmlParseFile(oscap_import_source_get_name(source));
@@ -316,7 +316,7 @@ int oval_variable_model_import(struct oval_variable_model *model, struct oscap_i
 		return -1;
 	}
 	xmlTextReaderRead(reader);
-	return_code = _oval_variable_model_parse(model, reader, user_param);
+	return_code = _oval_variable_model_parse(model, reader, NULL);
 	xmlFreeTextReader(reader);
 	xmlFreeDoc(doc);
 	return return_code;

@@ -146,12 +146,10 @@ struct oval_result_directives;
  * Load oval results from XML file.
  * @param model the oval_results_model
  * @param source the input source (XML)
- * @param error_handler the error handler
- * @param client_data client data;
  * @memberof oval_results_model
  */
 struct oval_result_directives *oval_results_model_import
-    (struct oval_results_model *, struct oscap_import_source *, void *);
+    (struct oval_results_model *, struct oscap_import_source *);
 /**
  * Create new oval_results_model.
  * The new model is bound to a specified oval_definition_model and variable bindings.

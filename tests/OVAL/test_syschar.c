@@ -45,7 +45,7 @@ int main(int argc, char **argv)
 			printf("LOAD OVAL SYSCHAR\n");
 			source = oscap_import_source_new_file(argv[2], NULL);
 			struct oval_syschar_model *syschar_model = oval_syschar_model_new(model);
-			if (oval_syschar_model_import(syschar_model, source, NULL) < 1)
+			if (oval_syschar_model_import(syschar_model, source) < 1)
                                 _test_error();
 			oscap_import_source_free(source);
 			printf("OVAL SYSCHAR LOADED\n");
