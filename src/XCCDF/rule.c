@@ -698,6 +698,8 @@ void xccdf_rule_to_dom(struct xccdf_rule *rule, xmlNode *rule_node, xmlDoc *doc,
 
 	if (xccdf_rule_get_selected(rule))
 		xmlNewProp(rule_node, BAD_CAST "selected", BAD_CAST "True");
+	else
+		xmlNewProp(rule_node, BAD_CAST "selected", BAD_CAST "False");
 
 	float weight = xccdf_rule_get_weight(rule);
 	char weight_str[10];
@@ -792,6 +794,8 @@ void xccdf_group_to_dom(struct xccdf_group *group, xmlNode *group_node, xmlDoc *
 
 	if (xccdf_group_get_selected(group))
 		xmlNewProp(group_node, BAD_CAST "selected", BAD_CAST "True");
+	else
+		xmlNewProp(group_node, BAD_CAST "selected", BAD_CAST "False");
 
 	float weight = xccdf_group_get_weight(group);
 	char weight_str[10];
