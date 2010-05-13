@@ -456,7 +456,8 @@ int main(int argc, char **argv)
 	struct xccdf_benchmark *benchmark;
 	struct xccdf_policy_model *policy_model;
 
-	benchmark = xccdf_benchmark_parse_xml(f_XCCDF);
+	struct oscap_import_source *ben_in = oscap_import_source_new_file(f_XCCDF, NULL);
+	benchmark = xccdf_benchmark_import(ben_in);
 	policy_model = xccdf_policy_model_new(benchmark);
 
 	/* Get the first policy, just for prototype */
@@ -471,6 +472,7 @@ int main(int argc, char **argv)
 	/* Add model to definition model */
 	oval_definition_model_bind_variable_model(def_model, var_model);
 
+	oscap_import_source_free(ben_in);
 #endif
 
 	/* TODO: prevent fail behaviour by validating OVAL content */

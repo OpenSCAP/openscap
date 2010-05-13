@@ -34,9 +34,9 @@ struct xccdf_backref {
 	char *id;		// id
 };
 
-struct xccdf_benchmark *xccdf_benchmark_parse_xml(const char *filename)
+struct xccdf_benchmark *xccdf_benchmark_import(struct oscap_import_source *source)
 {
-	xmlTextReaderPtr reader = xmlReaderForFile(filename, NULL, 0);
+	xmlTextReaderPtr reader = xmlReaderForFile(oscap_import_source_get_name(source), NULL, 0);
 	if (!reader)
 		return NULL;
 	while (xmlTextReaderRead(reader) == 1 && xmlTextReaderNodeType(reader) != 1) ;
@@ -322,12 +322,6 @@ const char * xccdf_benchmark_supported(void)
     return XCCDF_SUPPORTED;
 }
 
-struct xccdf_benchmark *xccdf_benchmark_create(const char *id) 
-{
-    //TODO: not implemented
-    oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_ENOTIMPL, "This feature is not implemented");
-    return NULL;
-}
 struct xccdf_group *xccdf_benchmark_append_new_group(const struct xccdf_benchmark *benchmark, const char *id)
 {
     //TODO: not implemented

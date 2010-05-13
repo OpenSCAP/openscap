@@ -622,13 +622,13 @@ struct xccdf_value* xccdf_item_to_value(struct xccdf_item* item);
 struct xccdf_result* xccdf_item_to_result(struct xccdf_item* item);
 
 /**
- * Create a new benmchmark from a benchmark XML file.
+ * Import the content from a specified XML stream into a benchmark.
  * @memberof xccdf_benchmark
- * @param filename Name of the file to load the contents from.
+ * @param source oscap import structure.
  * @return Pointer to the new benchmark.
  * @retval NULL on failure
  */
-struct xccdf_benchmark* xccdf_benchmark_parse_xml(const char *filename);
+struct xccdf_benchmark* xccdf_benchmark_import(struct oscap_import_source *source);
 
 /**
  * Export a benchmark to an XML stream
@@ -765,14 +765,6 @@ void xccdf_setvalue_free(struct xccdf_setvalue *sv);
  * @deprecated Use oscap_cleanup() instead.
  */
 void xccdf_cleanup(void);
-
-/**
- * Create a new benchmark from a benchmark XML file.
- * @memberof xccdf_benchmark
- * @param id the benchmark identifier.
- * @return Pointer to the new benchmark.
- */
-struct xccdf_benchmark *xccdf_benchmark_create(const char *id);
 
 /**
  * Create a group and append it to the benchmark.
