@@ -143,13 +143,13 @@ struct oval_result_directives;
 
 
 /**
- * Load oval results from XML file.
+ * Import the content from a specified XML stream into a oval_result_model, return -1 if an error occurred.
+ * If the input_source specifies a model entity that is already registered within the model its content is overwritten.
  * @param model the oval_results_model
  * @param source the input source (XML)
  * @memberof oval_results_model
  */
-struct oval_result_directives *oval_results_model_import
-    (struct oval_results_model *, struct oscap_import_source *);
+struct oval_result_directives *oval_results_model_import(struct oval_results_model *, struct oscap_import_source *);
 /**
  * Create new oval_results_model.
  * The new model is bound to a specified oval_definition_model and variable bindings.

@@ -189,7 +189,8 @@ struct oval_variable_binding_iterator;
 
 
 /**
- * Load OVAL system characteristics from a file.
+ * Import the content from a specified XML stream into a oval_syschar_model, return -1 if an error occurred.
+ * If the input_source specifies a model entity that is already registered within the model its content is overwritten.
  * @memberof oval_syschar_model
  */
 int oval_syschar_model_import(struct oval_syschar_model *model, struct oscap_import_source *source);

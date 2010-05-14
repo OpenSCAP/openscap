@@ -544,11 +544,9 @@ struct oval_string_iterator;
 
 /**
  * Import the content from a specified XML stream into a oval_definition_model, return -1 if an error occurred.
- * The imported XML stream must be
- * If the input_source specifies a model entity (id=A, version=V) and the model specifies no entity (id=A, ...) then (id=A, version=V) is merged into the model.
- * If the input_source specifies a model entity (id=A, version=V) and the model specifies an entity (id=A, ...) then (id=A, version=V) then the source specification is skipped.
+ * If the input_source specifies a model entity that is already registered within the model its content is overwritten.
  * @param model the merge target model.
- * @param source an <oval_def:oval_definitions> XML stream
+ * @param source an OVAL stream.
  * @memberof oval_definition_model
  */
 int oval_definition_model_import(struct oval_definition_model *model, struct oscap_import_source *source);
