@@ -51,6 +51,7 @@
 /* SEAP */
 #include <seap.h>
 #include <probe-api.h>
+#include "probe-entcmp.h"
 #include <alloc.h>
 #include <common/assume.h>
 #include <config.h>
@@ -298,8 +299,6 @@ SEXP_t *probe_main (SEXP_t *object, int *err, void *arg)
                 SEXP_free (val);
         }
         
-        SEXP_free (ent);
-
         if (request_st.name == NULL) {
                 switch (errno) {
                 case EINVAL:
@@ -357,44 +356,32 @@ SEXP_t *probe_main (SEXP_t *object, int *err, void *arg)
                 _A(rpmret   >= 0);
                 _A(reply_st != NULL);
                 {
-                        SEXP_t *r2, *r3, *r4, *r5, *r6;
-                        
-                        for (i = 0; i < rpmret; ++i) {
-                                item_sexp = probe_item_creat ("rpminfo_item", NULL,
-                                                              
-                                                              "name", NULL,
-                                                              r0 = SEXP_string_newf (reply_st[i].name),
-                                                              
-                                                              "arch", NULL,
-                                                              r1 = SEXP_string_newf (reply_st[i].arch),
-                                                              
-                                                              "epoch", NULL,
-                                                              r2 = SEXP_string_newf (reply_st[i].epoch),
-                                                              
-                                                              "release", NULL,
-                                                              r3 = SEXP_string_newf (reply_st[i].release),
-                                                              
-                                                              "version", NULL,
-                                                              r4 = SEXP_string_newf (reply_st[i].version),
-                                                              
-                                                              "evr", NULL,
-                                                              r5 = SEXP_string_newf (reply_st[i].evr),
-                                                              
-                                                              "signature_keyid", NULL,
-                                                              r6 = SEXP_string_newf (reply_st[i].signature_keyid),
-                                                              
-                                                              NULL);
+			SEXP_t *r2, *r3, *r4, *r5, *r6;
 
+                        for (i = 0; i < rpmret; ++i) {
+				r0 = SEXP_string_newf("%s", reply_st[i].name);
+				if (probe_entobj_cmp(ent, r0) != OVAL_RESULT_TRUE) {
+					SEXP_free(r0);
+					continue;
+				}
+
+                                item_sexp = probe_item_creat ("rpminfo_item", NULL,
+					"name", NULL, r0,
+					"arch", NULL,
+					r1 = SEXP_string_newf ("%s", reply_st[i].arch),
+					"epoch", NULL,
+					r2 = SEXP_string_newf ("%s", reply_st[i].epoch),
+					"release", NULL,
+					r3 = SEXP_string_newf ("%s", reply_st[i].release),
+					"version", NULL,
+					r4 = SEXP_string_newf ("%s", reply_st[i].version),
+					"evr", NULL,
+					r5 = SEXP_string_newf ("%s", reply_st[i].evr),
+					"signature_keyid", NULL,
+					r6 = SEXP_string_newf ("%s", reply_st[i].signature_keyid),
+					NULL);
                                 SEXP_list_add (probe_out, item_sexp);
-                                SEXP_free (item_sexp);
-                                /* FIXME: this is... stupid */
-                                SEXP_free (r0);
-                                SEXP_free (r1);
-                                SEXP_free (r2);
-                                SEXP_free (r3);
-                                SEXP_free (r4);
-                                SEXP_free (r5);
-                                SEXP_free (r6);
+				SEXP_vfree(item_sexp, r0, r1, r2, r3, r4, r5, r6, NULL);
                                 
                                 __rpminfo_rep_free (&(reply_st[i]));        
                         }
@@ -402,7 +389,8 @@ SEXP_t *probe_main (SEXP_t *object, int *err, void *arg)
                         oscap_free (reply_st);
                 }
         }
-                
+
+	SEXP_vfree(ent, NULL);
         *err = 0;
 
         return (probe_out);
