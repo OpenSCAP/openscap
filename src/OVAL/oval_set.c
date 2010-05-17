@@ -383,7 +383,7 @@ static int _oval_set_parse_tag(xmlTextReaderPtr reader, struct oval_parser_conte
 	__attribute__nonnull__(user);
 
 	struct oval_setobject *set = (struct oval_setobject *)user;
-	char *tagname = (char *)xmlTextReaderName(reader);
+	char *tagname = (char *)xmlTextReaderLocalName(reader);
 	xmlChar *namespace = xmlTextReaderNamespaceUri(reader);
 	struct oval_set_context ctx = {.context = context,.set = set };
 
@@ -423,7 +423,7 @@ int oval_set_parse_tag(xmlTextReaderPtr reader,
 {
 	__attribute__nonnull__(context);
 
-	xmlChar *tagname = xmlTextReaderName(reader);
+	xmlChar *tagname = xmlTextReaderLocalName(reader);
 	xmlChar *namespace = xmlTextReaderNamespaceUri(reader);
 	struct oval_setobject *set = oval_setobject_new(context->definition_model);
 

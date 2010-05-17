@@ -212,7 +212,7 @@ static int _oval_affected_parse_tag(xmlTextReaderPtr reader, struct oval_parser_
 {
 	struct oval_affected *affected = (struct oval_affected *)user;
 	int return_code;
-	xmlChar *tagname = xmlTextReaderName(reader);
+	xmlChar *tagname = xmlTextReaderLocalName(reader);
 	//xmlChar *namespace = xmlTextReaderNamespaceUri(reader);
 
 	if (strcmp((char *)tagname, "platform") == 0) {

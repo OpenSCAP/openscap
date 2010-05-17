@@ -334,7 +334,7 @@ static int _oval_test_parse_notes(xmlTextReaderPtr reader, struct oval_parser_co
 static int _oval_test_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *context, void *user)
 {
 	struct oval_test *test = (struct oval_test *)user;
-	char *tagname = (char *)xmlTextReaderName(reader);
+	char *tagname = (char *)xmlTextReaderLocalName(reader);
 	//xmlChar *namespace = xmlTextReaderNamespaceUri(reader);
 	int return_code = 1;
 	if ((strcmp(tagname, "notes") == 0)) {

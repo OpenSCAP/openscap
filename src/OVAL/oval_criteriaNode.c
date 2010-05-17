@@ -428,7 +428,7 @@ static int _oval_criteria_subnode_consumer(xmlTextReaderPtr reader, struct oval_
 int oval_criteria_parse_tag(xmlTextReaderPtr reader,
 			    struct oval_parser_context *context, oval_criteria_consumer consumer, void *user)
 {
-	char *tagname = (char *)xmlTextReaderName(reader);
+	char *tagname = (char *)xmlTextReaderLocalName(reader);
 	xmlChar *namespace = xmlTextReaderNamespaceUri(reader);
 	oval_criteria_node_type_t type = OVAL_NODETYPE_UNKNOWN;
 	if (strcmp(tagname, "criteria") == 0)

@@ -347,7 +347,7 @@ static void oval_content_consume(struct oval_object_content *content, void *obje
 static int _oval_object_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *context, void *user)
 {
 	struct oval_object *object = (struct oval_object *)user;
-	char *tagname = (char *)xmlTextReaderName(reader);
+	char *tagname = (char *)xmlTextReaderLocalName(reader);
 	xmlChar *namespace = xmlTextReaderNamespaceUri(reader);
 	int return_code = 1;
 	if ((strcmp(tagname, "notes") == 0)) {

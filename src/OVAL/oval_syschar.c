@@ -325,7 +325,7 @@ int oval_syschar_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *
 {
 	__attribute__nonnull__(context);
 
-	char *tagname = (char *)xmlTextReaderName(reader);
+	char *tagname = (char *)xmlTextReaderLocalName(reader);
 	char *namespace = (char *)xmlTextReaderNamespaceUri(reader);
 	oscap_dprintf("DEBUG: oval_syschar_parse_tag(<%s:%s>): enter", namespace, tagname);
 	int is_ovalsys = strcmp(namespace, NAMESPACE_OVALSYS) == 0;

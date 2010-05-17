@@ -311,7 +311,7 @@ static int _oval_state_parse_tag(xmlTextReaderPtr reader, struct oval_parser_con
 	__attribute__nonnull__(user);
 
 	struct oval_state *state = (struct oval_state *)user;
-	char *tagname = (char *)xmlTextReaderName(reader);
+	char *tagname = (char *)xmlTextReaderLocalName(reader);
 	xmlChar *namespace = xmlTextReaderNamespaceUri(reader);
 	int return_code = 1;
 	if ((strcmp(tagname, "notes") == 0)) {

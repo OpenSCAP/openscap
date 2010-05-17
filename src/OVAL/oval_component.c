@@ -1027,7 +1027,7 @@ int oval_component_parse_tag(xmlTextReaderPtr reader,
 	int return_code = 0;
 
 	struct oval_definition_model *model = context->definition_model;
-	char *tagname = (char *)xmlTextReaderName(reader);
+	char *tagname = (char *)xmlTextReaderLocalName(reader);
 	/* oval_component_type_enum type; */
 	struct oval_component *component = NULL;
 	if (strcmp(tagname, "literal_component") == 0) {

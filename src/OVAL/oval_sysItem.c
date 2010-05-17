@@ -227,7 +227,7 @@ int oval_sysitem_parse_tag(xmlTextReaderPtr reader,
 	__attribute__nonnull__(context);
 
 	int return_code = 1;
-	char *tagname = (char *)xmlTextReaderName(reader);
+	char *tagname = (char *)xmlTextReaderLocalName(reader);
 	if (strcmp("#text", tagname)) {
 		struct oval_sysitem *sysitem = oval_sysitem_new(context->syschar_model);
 		{		/*sysitem->name */

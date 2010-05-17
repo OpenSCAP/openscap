@@ -308,7 +308,7 @@ int oval_sysdata_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *
 		numchars = numchars + sprintf(message + numchars, "\n    sysdata->items.length  = %d", numItems);
 		oscap_dprintf(message);	/* TODO: make this code in one string ^ */
 	} else {
-		char *tagnm = (char *)xmlTextReaderName(reader);
+		char *tagnm = (char *)xmlTextReaderLocalName(reader);
 		char *namespace = (char *)xmlTextReaderNamespaceUri(reader);
 		oscap_dprintf("WARNING: oval_sysdata_parse_tag:: expecting <item> got <%s:%s>", namespace, tagnm);
 		return_code = oval_parser_skip_tag(reader, context);

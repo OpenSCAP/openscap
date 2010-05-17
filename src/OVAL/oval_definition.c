@@ -428,7 +428,7 @@ static void oval_reference_consume(struct oval_reference *ref, void *def)
 static int _oval_definition_parse_metadata(xmlTextReaderPtr reader, struct oval_parser_context *context, void *user)
 {
 	struct oval_definition *definition = (struct oval_definition *)user;
-	char *tagname = (char *)xmlTextReaderName(reader);
+	char *tagname = (char *)xmlTextReaderLocalName(reader);
 	int return_code;
 	if ((strcmp(tagname, "title") == 0)) {
 		return_code = oval_parser_text_value(reader, context, &_oval_definition_title_consumer, definition);
@@ -465,7 +465,7 @@ static void _oval_definition_criteria_consumer(struct oval_criteria_node *criter
 static int _oval_definition_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *context, void *user)
 {
 	struct oval_definition *definition = (struct oval_definition *)user;
-	char *tagname = (char *)xmlTextReaderName(reader);
+	char *tagname = (char *)xmlTextReaderLocalName(reader);
 	int return_code;
 	if ((strcmp(tagname, "metadata") == 0)) {
 		return_code = oval_parser_parse_tag(reader, context, &_oval_definition_parse_metadata, definition);

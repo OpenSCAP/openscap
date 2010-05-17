@@ -59,7 +59,7 @@ static int _ovalsys_parser_process_node(xmlTextReaderPtr reader, struct oval_par
 		if (xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
 			oscap_dprintf("DEBUG: ovalsys_parser: at depth %d", xmlTextReaderDepth(reader));
 			if (xmlTextReaderDepth(reader) > 0) {
-				char *tagname = (char *)xmlTextReaderName(reader);
+				char *tagname = (char *)xmlTextReaderLocalName(reader);
 				char *namespace = (char *)xmlTextReaderNamespaceUri(reader);
 				oscap_dprintf("DEBUG: ovalsys_parser: processing <%s:%s>", namespace, tagname);
 				int is_ovalsys = strcmp((const char *)NAMESPACE_OVALSYS, namespace) == 0;

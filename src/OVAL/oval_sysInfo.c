@@ -253,7 +253,7 @@ static int _oval_sysinfo_parse_tag_parse_tag(xmlTextReaderPtr reader,
 static int _oval_sysinfo_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *context, void *user)
 {
 	struct oval_sysinfo *sysinfo = (struct oval_sysinfo *)user;
-	char *tagname = (char *)xmlTextReaderName(reader);
+	char *tagname = (char *)xmlTextReaderLocalName(reader);
 	char *namespace = (char *)xmlTextReaderNamespaceUri(reader);
 	int is_ovalsys = strcmp(namespace, NAMESPACE_OVALSYS) == 0;
 	int return_code;
@@ -286,7 +286,7 @@ int oval_sysinfo_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *
 	__attribute__nonnull__(context);
 
 	oval_sysinfo_t *sysinfo = oval_sysinfo_new(context->syschar_model);
-	char *tagname = (char *)xmlTextReaderName(reader);
+	char *tagname = (char *)xmlTextReaderLocalName(reader);
 	char *namespace = (char *)xmlTextReaderNamespaceUri(reader);
 	int is_ovalsys = strcmp(namespace, NAMESPACE_OVALSYS) == 0;
 	int return_code;

@@ -407,7 +407,7 @@ static void _oval_variable_parse_local_tag_component_consumer(struct oval_compon
 static int _oval_variable_parse_local_tag(xmlTextReaderPtr reader, struct oval_parser_context *context, void *user)
 {
 	struct oval_variable *variable = (struct oval_variable *)user;
-	xmlChar *tagname = xmlTextReaderName(reader);
+	xmlChar *tagname = xmlTextReaderLocalName(reader);
 	xmlChar *namespace = xmlTextReaderNamespaceUri(reader);
 	int return_code = oval_component_parse_tag(reader, context, &_oval_variable_parse_local_tag_component_consumer,
 						   variable);
@@ -434,7 +434,7 @@ static void _oval_variable_parse_value(char *text_value, struct oval_variable *v
 static int _oval_variable_parse_constant_tag(xmlTextReaderPtr reader,
 					     struct oval_parser_context *context, struct oval_variable *variable)
 {
-	xmlChar *tagname = xmlTextReaderName(reader);
+	xmlChar *tagname = xmlTextReaderLocalName(reader);
 	xmlChar *namespace = xmlTextReaderNamespaceUri(reader);
 	int return_code = 1;
 	if (strcmp("value", (char *)tagname) == 0 && strcmp(DEFINITION_NAMESPACE, (char *)namespace) == 0) {
@@ -453,7 +453,7 @@ static int _oval_variable_parse_constant_tag(xmlTextReaderPtr reader,
 int oval_variable_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *context)
 {
 	struct oval_definition_model *model = oval_parser_context_model(context);
-	char *tagname = (char *)xmlTextReaderName(reader);
+	char *tagname = (char *)xmlTextReaderLocalName(reader);
 	oval_variable_type_t type;
 	if (strcmp(tagname, "constant_variable") == 0)
 		type = OVAL_VARIABLE_CONSTANT;

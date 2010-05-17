@@ -332,7 +332,7 @@ int oval_object_content_parse_tag(xmlTextReaderPtr reader,
 {
 	__attribute__nonnull__(context);
 
-	char *tagname = (char *)xmlTextReaderName(reader);
+	char *tagname = (char *)xmlTextReaderLocalName(reader);
 	xmlChar *namespace = xmlTextReaderNamespaceUri(reader);
 
 	oval_object_content_type_t type =
