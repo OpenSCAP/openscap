@@ -449,30 +449,33 @@ int main(int argc, char **argv)
 
 #ifdef ENABLE_XCCDF
 
+        struct oval_variable_model      * var_model     = NULL;
+        struct xccdf_policy_iterator    * policy_it     = NULL;
+        struct xccdf_policy             * policy        = NULL;
+        struct xccdf_benchmark          * benchmark     = NULL;
+        struct xccdf_policy_model       * policy_model  = NULL;
+
 	/* ========== XCCDF Variables ========== */
-	struct oval_variable_model *var_model;
-	struct xccdf_policy_iterator *policy_it;
-	struct xccdf_policy *policy;
-	struct xccdf_benchmark *benchmark;
-	struct xccdf_policy_model *policy_model;
+        if (f_XCCDF != NULL) {
 
-	struct oscap_import_source *ben_in = oscap_import_source_new_file(f_XCCDF, NULL);
-	benchmark = xccdf_benchmark_import(ben_in);
-	policy_model = xccdf_policy_model_new(benchmark);
+            struct oscap_import_source *ben_in = oscap_import_source_new_file(f_XCCDF, NULL);
+            benchmark = xccdf_benchmark_import(ben_in);
+            policy_model = xccdf_policy_model_new(benchmark);
 
-	/* Get the first policy, just for prototype */
-	policy_it = xccdf_policy_model_get_policies(policy_model);
-	if (xccdf_policy_iterator_has_more(policy_it))
-		policy = xccdf_policy_iterator_next(policy_it);
-	xccdf_policy_iterator_free(policy_it);
+            /* Get the first policy, just for prototype */
+            policy_it = xccdf_policy_model_get_policies(policy_model);
+            if (xccdf_policy_iterator_has_more(policy_it))
+                    policy = xccdf_policy_iterator_next(policy_it);
+            xccdf_policy_iterator_free(policy_it);
 
-        /* Get Variable model from XCCDF and add it to OVAL */
-        var_model = xccdf_policy_get_variables(policy, def_model);
-        
-	/* Add model to definition model */
-	oval_definition_model_bind_variable_model(def_model, var_model);
+            /* Get Variable model from XCCDF and add it to OVAL */
+            var_model = xccdf_policy_get_variables(policy, def_model);
+            
+            /* Add model to definition model */
+            oval_definition_model_bind_variable_model(def_model, var_model);
 
-	oscap_import_source_free(ben_in);
+            oscap_import_source_free(ben_in);
+        }
 #endif
 
 	/* TODO: prevent fail behaviour by validating OVAL content */
@@ -534,9 +537,14 @@ int main(int argc, char **argv)
 			oval_def = oval_definition_iterator_next(oval_def_it);
 
 			cnode = oval_definition_get_criteria(oval_def);
-			ret = app_evaluate_criteria(cnode, pctx, def_model, sys_model, verbose);
-			if (ret == -1)
-				break;
+                        if (cnode == NULL) {
+                                fprintf(stderr, "No criteria node for OVAL definitoin %s\n", oval_definition_get_id(oval_def));
+                                continue;
+                        }
+
+                        ret = app_evaluate_criteria(cnode, pctx, def_model, sys_model, verbose);
+                        if (ret == -1)
+                                break;
 
 			id = oval_definition_get_id(oval_def);
 			result = oval_result_system_eval_definition(rsystem, id);
@@ -700,7 +708,7 @@ int main(int argc, char **argv)
 	oval_syschar_model_free(sys_model);
 	oval_results_model_free(res_model);
 #ifdef ENABLE_XCCDF
-	oval_variable_model_free(var_model);
+	if (f_XCCDF != NULL) oval_variable_model_free(var_model);
 #endif
 	if (url_XCCDF != NULL)
 		free(url_XCCDF);
