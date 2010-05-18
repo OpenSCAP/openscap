@@ -330,6 +330,10 @@ static struct oscap_list * xccdf_policy_model_collect_check_exports(struct xccdf
             /* If the rule/group is not selected, just do not pass variables */
             if (!xccdf_select_get_selected(sel)) continue;
             item = xccdf_benchmark_get_item(benchmark, xccdf_select_get_item(sel));
+            if (item == NULL) {
+                oscap_seterr(OSCAP_EFAMILY_XCCDF, XCCDF_EBADID, "Check-exports collection: ID of selector does not exist in Benchmark !");
+                continue; /* TODO: Should we just skip that selector ? XCCDF is not valid here !! */
+            }
             __xccdf_policy_model_collect_check_exports(item, collection);
     }
     xccdf_select_iterator_free(sel_it);
@@ -1001,6 +1005,10 @@ bool xccdf_policy_evaluate(struct xccdf_policy * policy)
         /* TODO: we need to check if every requirement is met - some of required Item has to be sleected too */
 
         item = xccdf_benchmark_get_item(benchmark, xccdf_select_get_item(sel));
+        if (item == NULL) {
+            oscap_seterr(OSCAP_EFAMILY_XCCDF, XCCDF_EBADID, "Check-exports collection: ID of selector does not exist in Benchmark !");
+            continue; /* TODO: Should we just skip that selector ? XCCDF is not valid here !! */
+        }
 
         if (xccdf_item_get_type(item) == XCCDF_GROUP) continue;
         ret = xccdf_policy_item_evaluate(policy, item);

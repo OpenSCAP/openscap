@@ -670,14 +670,14 @@ int main(int argc, char **argv)
 		/* Register callback */
 		bool reg = xccdf_policy_model_register_callback(policy_model,
 								"http://oval.mitre.org/XMLSchema/oval-definitions-5",
-								callback, (void *)usr);
+								callback, (void *) usr);
 		if (verbose >= 2)
 			printf("Register callback: %d\n", reg);
 
 		xccdf_policy_evaluate(policy);
-		xccdf_benchmark_free(benchmark);
+		/* xccdf_benchmark_free(benchmark); << You can't free benchmark here cause it's still bound to policy model */
+		/* oscap_text_free(title); << You can't free title here cause it's bound to result model that is freed by policy model */
 		xccdf_policy_model_free(policy_model);
-		oscap_text_free(title);
 		free(usr);
 	}
 #endif
