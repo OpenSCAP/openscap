@@ -576,7 +576,11 @@ xmlNode *xccdf_rule_result_to_dom(struct xccdf_rule_result *result, xmlDoc *doc,
 	xmlNewProp(result_node, BAD_CAST "role", BAD_CAST XCCDF_ROLE_MAP[role - 1].string);
 
 	time_t date = xccdf_rule_result_get_time(result);
-	xmlNewProp(result_node, BAD_CAST "date", BAD_CAST ctime(&date));
+	struct tm *lt = localtime(&date);
+	char timestamp[] = "yyyy-mm-ddThh:mm:ss";
+	snprintf(timestamp, sizeof(timestamp), "%4d-%02d-%02dT%02d:%02d:%02d",
+		 1900 + lt->tm_year, 1 + lt->tm_mon, lt->tm_mday, lt->tm_hour, lt->tm_min, lt->tm_sec);
+	xmlNewProp(result_node, BAD_CAST "date", BAD_CAST timestamp);
 
 	xccdf_level_t severity = xccdf_rule_result_get_severity(result);
 	xmlNewProp(result_node, BAD_CAST "severity", BAD_CAST XCCDF_LEVEL_MAP[severity - 1].string);
@@ -688,7 +692,11 @@ xmlNode *xccdf_override_to_dom(struct xccdf_override *override, xmlDoc *doc, xml
 
 	/* Handle attributes */
 	time_t date = xccdf_override_get_time(override);
-	xmlNewProp(override_node, BAD_CAST "date", BAD_CAST ctime(&date));
+	struct tm *lt = localtime(&date);
+	char timestamp[] = "yyyy-mm-ddThh:mm:ss";
+	snprintf(timestamp, sizeof(timestamp), "%4d-%02d-%02dT%02d:%02d:%02d",
+		 1900 + lt->tm_year, 1 + lt->tm_mon, lt->tm_mday, lt->tm_hour, lt->tm_min, lt->tm_sec);
+	xmlNewProp(override_node, BAD_CAST "date", BAD_CAST timestamp);
 
 	const char *authority = xccdf_override_get_authority(override);
 	if (authority)

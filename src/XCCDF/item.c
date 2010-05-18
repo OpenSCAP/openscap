@@ -208,7 +208,11 @@ void xccdf_item_print(struct xccdf_item *item, int depth)
 xmlNode *xccdf_item_to_dom(struct xccdf_item *item, xmlDoc *doc, xmlNode *parent)
 {
 	xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent, XCCDF_BASE_NAMESPACE);
-	xmlNode *item_node = xmlNewChild(parent, ns_xccdf, BAD_CAST "Item", NULL);
+	xmlNode *item_node = NULL;
+	if (parent == NULL)
+		item_node = xmlNewNode(NULL, BAD_CAST "Item");
+	else
+		item_node = xmlNewChild(parent, ns_xccdf, BAD_CAST "Item", NULL);
 
 	/* Handle generic item attributes */
 	const char *id = xccdf_item_get_id(item);
@@ -246,7 +250,7 @@ xmlNode *xccdf_item_to_dom(struct xccdf_item *item, xmlDoc *doc, xmlNode *parent
 
 	const char *version= xccdf_item_get_version(item);
 	if (version)
-		xmlNewProp(item_node, BAD_CAST "version", BAD_CAST version);
+		xmlNewChild(item_node, ns_xccdf, BAD_CAST "version", BAD_CAST version);
 
 	struct xccdf_status_iterator *statuses = xccdf_item_get_statuses(item);
 	while (xccdf_status_iterator_has_more(statuses)) {
@@ -348,8 +352,11 @@ xmlNode *xccdf_status_to_dom(struct xccdf_status *status, xmlDoc *doc, xmlNode *
 	xmlNode *status_node = xmlNewChild(parent, ns_xccdf, BAD_CAST "status",
 					   BAD_CAST XCCDF_STATUS_MAP[level - 1].string);
 
-	time_t date = xccdf_status_get_date(status);
-	xmlNewProp(status_node, BAD_CAST "date", BAD_CAST ctime(&date));
+	time_t date_time = xccdf_status_get_date(status);
+	struct tm *date = localtime(&date_time);
+	char date_str[] = "YYYY-DD-MM";
+	snprintf(date_str, sizeof(date_str), "%d-%d-%d", date->tm_year + 1900, date->tm_mon + 1, date->tm_mday);
+	xmlNewProp(status_node, BAD_CAST "date", BAD_CAST date_str);
 
 	return status_node;
 }

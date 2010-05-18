@@ -25,6 +25,7 @@
 #include "helpers.h"
 #include "xccdf_impl.h"
 #include "common/_error.h"
+#include <text.h>
 
 #define XCCDF_SUPPORTED "1.1.4"
 
@@ -164,14 +165,87 @@ xmlNode *xccdf_benchmark_to_dom(struct xccdf_benchmark *benchmark, xmlDocPtr doc
 	xmlNodePtr root_node = NULL;
 
 	if (parent) {
-		root_node = xmlNewChild(parent, NULL, BAD_CAST "Benchmark", NULL);
+		root_node = xccdf_item_to_dom(XITEM(benchmark), doc, parent);
 	} else {
-		root_node = xmlNewNode(NULL, BAD_CAST "Benchmark");
+		root_node = xccdf_item_to_dom(XITEM(benchmark), doc, parent);
 		xmlDocSetRootElement(doc, root_node);
 	}
 	xmlNs *ns_xccdf = xmlNewNs(root_node, XCCDF_BASE_NAMESPACE, NULL);
 
 	xmlSetNs(root_node, ns_xccdf);
+
+	/* Handle attributes */
+	if (xccdf_benchmark_get_resolved(benchmark))
+		xmlNewProp(root_node, BAD_CAST "resolved", BAD_CAST "1");
+	else
+		xmlNewProp(root_node, BAD_CAST "resolved", BAD_CAST "0");
+
+	const char *style = xccdf_benchmark_get_style(benchmark);
+	if (style)
+		xmlNewProp(root_node, BAD_CAST "style", BAD_CAST style);
+
+	const char *style_href = xccdf_benchmark_get_style_href(benchmark);
+	if (style_href)
+		xmlNewProp(root_node, BAD_CAST "style-href", BAD_CAST style_href);
+
+	/* In spec but not in OpenSCAP
+	const char *lang = xccdf_benchmark_get_lang(benchmark);
+	if (lang)
+		xmlNewProp(root_node, BAD_CAST "xml:lang", BAD_CAST lang);*/
+
+	/* Handle children */
+	struct xccdf_notice_iterator *notices = xccdf_benchmark_get_notices(benchmark);
+	while (xccdf_notice_iterator_has_more(notices)) {
+		struct xccdf_notice *notice = xccdf_notice_iterator_next(notices);
+		xmlNode *notice_node = xmlNewChild(root_node, ns_xccdf, BAD_CAST "notice", BAD_CAST xccdf_notice_get_text(notice));
+
+		const char *id = xccdf_notice_get_id(notice);
+		if (id)
+			xmlNewProp(notice_node, BAD_CAST "id", BAD_CAST id);
+	}
+	xccdf_notice_iterator_free(notices);
+
+	struct oscap_text_iterator *fronts = xccdf_benchmark_get_front_matter(benchmark);
+	while (oscap_text_iterator_has_more(fronts)) {
+		struct oscap_text *front = oscap_text_iterator_next(fronts);
+		xmlNode *front_node = xmlNewChild(root_node, ns_xccdf, BAD_CAST "front-matter", BAD_CAST oscap_text_get_text(front));
+
+		const char *lang = oscap_text_get_lang(front);
+		if (lang)
+			xmlNewProp(front_node, BAD_CAST "xml:lang", BAD_CAST lang);
+
+		/* TODO: Dublin Core */
+	}
+	oscap_text_iterator_free(fronts);
+
+	struct oscap_text_iterator *rears = xccdf_benchmark_get_rear_matter(benchmark);
+	while (oscap_text_iterator_has_more(rears)) {
+		struct oscap_text *rear = oscap_text_iterator_next(rears);
+		xmlNode *rear_node = xmlNewChild(root_node, ns_xccdf, BAD_CAST "rear-matter", BAD_CAST oscap_text_get_text(rear));
+
+		const char *lang = oscap_text_get_lang(rear);
+		if (lang)
+			xmlNewProp(rear_node, BAD_CAST "xml:lang", BAD_CAST lang);
+
+		/* TODO: Dublin Core */
+	}
+	oscap_text_iterator_free(rears);
+
+	struct oscap_string_iterator *platforms = xccdf_benchmark_get_platforms(benchmark);
+	while (oscap_string_iterator_has_more(platforms)) {
+		xmlNode *platform_node = xmlNewChild(root_node, ns_xccdf, BAD_CAST "platform", NULL);
+
+		const char *idref = oscap_string_iterator_next(platforms);
+		if (idref)
+			xmlNewProp(platform_node, BAD_CAST "idref", BAD_CAST idref);
+	}
+	oscap_string_iterator_free(platforms);
+
+	const char *metadata = xccdf_benchmark_get_metadata(benchmark);
+	if (metadata) {
+		xmlNode *metadata_node = xmlNewChild(root_node, ns_xccdf, BAD_CAST "metadata", NULL);
+		xmlNewChild(metadata_node, ns_xccdf, NULL, BAD_CAST metadata);
+	}
 
 	struct xccdf_profile_iterator *profiles = xccdf_benchmark_get_profiles(benchmark);
 	while (xccdf_profile_iterator_has_more(profiles)) {
