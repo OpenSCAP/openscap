@@ -22,6 +22,7 @@
 
 #include "item.h"
 #include "helpers.h"
+#include "xccdf_impl.h"
 
 struct xccdf_setvalue *xccdf_setvalue_new(void)
 {
@@ -37,6 +38,17 @@ struct xccdf_setvalue *xccdf_setvalue_new_parse(xmlTextReaderPtr reader)
 	sv->item = oscap_strdup(id);
 	sv->value = oscap_element_string_copy(reader);
 	return sv;
+}
+
+xmlNode *xccdf_setvalue_to_dom(struct xccdf_setvalue *setvalue, xmlDoc *doc, xmlNode *parent)
+{
+	xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent, XCCDF_BASE_NAMESPACE);
+	xmlNode *setvalue_node = xmlNewChild(parent, ns_xccdf, BAD_CAST "set-value",  BAD_CAST setvalue->value);
+
+	if (setvalue->item)
+		xmlNewProp(setvalue_node, BAD_CAST "idref", BAD_CAST setvalue->item);
+
+	return setvalue_node;
 }
 
 void xccdf_setvalue_free(struct xccdf_setvalue *sv)
@@ -229,6 +241,98 @@ struct xccdf_item *xccdf_profile_parse(xmlTextReaderPtr reader, struct xccdf_ite
 	}
 
 	return prof;
+}
+
+void xccdf_profile_to_dom(struct xccdf_profile *profile, xmlNode *profile_node, xmlDoc *doc, xmlNode *parent)
+{
+	xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent, XCCDF_BASE_NAMESPACE);
+
+	/* Handle attributes */
+	if (xccdf_profile_get_abstract(profile))
+		xmlNewProp(profile_node, BAD_CAST "abstract", BAD_CAST "True");
+
+	const char *extends = xccdf_profile_get_extends(profile);
+	if (extends)
+		xmlNewProp(profile_node, BAD_CAST "extends", BAD_CAST extends);
+
+	const char *note_tag = xccdf_profile_get_note_tag(profile);
+	if (note_tag)
+		xmlNewProp(profile_node, BAD_CAST "note-tag", BAD_CAST note_tag);
+
+	/* Hanlde children */
+        struct oscap_string_iterator *platforms = xccdf_profile_get_platforms(profile);
+        while (oscap_string_iterator_has_more(platforms)) {
+                const char *platform = oscap_string_iterator_next(platforms);
+                xmlNewChild(profile_node, ns_xccdf, BAD_CAST "platform", BAD_CAST platform);
+        }   
+        oscap_string_iterator_free(platforms);
+
+	struct xccdf_select_iterator *selects = xccdf_profile_get_selects(profile);
+	while (xccdf_select_iterator_has_more(selects)) {
+		struct xccdf_select *sel = xccdf_select_iterator_next(selects);
+		xmlNode *select_node = xmlNewChild(profile_node, ns_xccdf, BAD_CAST "select", NULL);
+		
+		const char *idref = xccdf_select_get_item(sel);
+		if (idref)
+			xmlNewProp(select_node, BAD_CAST "idref", BAD_CAST idref);
+
+		if (xccdf_select_get_selected(sel))
+			xmlNewProp(select_node, BAD_CAST "selected", BAD_CAST "1");
+		else
+			xmlNewProp(select_node, BAD_CAST "selected", BAD_CAST "0");
+	}
+	xccdf_select_iterator_free(selects);
+
+	struct xccdf_setvalue_iterator *setvalues = xccdf_profile_get_setvalues(profile);
+	while (xccdf_setvalue_iterator_has_more(setvalues)) {
+		struct xccdf_setvalue *setvalue = xccdf_setvalue_iterator_next(setvalues);
+		xccdf_setvalue_to_dom(setvalue, doc, profile_node);
+	}
+	xccdf_setvalue_iterator_free(setvalues);
+
+	struct xccdf_refine_value_iterator *refine_values = xccdf_profile_get_refine_values(profile);
+	while (xccdf_refine_value_iterator_has_more(refine_values)) {
+		struct xccdf_refine_value *refine_value = xccdf_refine_value_iterator_next(refine_values);
+		xmlNode *refval_node = xmlNewChild(profile_node, ns_xccdf, BAD_CAST "refine-value", NULL);
+
+		const char *idref = xccdf_refine_value_get_item(refine_value);
+		if (idref)
+			xmlNewProp(refval_node, BAD_CAST "idref", BAD_CAST idref);
+
+		xccdf_operator_t operator = xccdf_refine_value_get_oper(refine_value);
+		xmlNewProp(refval_node, BAD_CAST "operator", BAD_CAST XCCDF_OPERATOR_MAP[operator - 1].string);
+
+		const char *selector = xccdf_refine_value_get_selector(refine_value);
+		if (selector)
+			xmlNewProp(refval_node, BAD_CAST "selector", BAD_CAST selector);
+	}
+	xccdf_refine_value_iterator_free(refine_values);
+
+	struct xccdf_refine_rule_iterator *refine_rules = xccdf_profile_get_refine_rules(profile);
+	while (xccdf_refine_rule_iterator_has_more(refine_rules)) {
+		struct xccdf_refine_rule *refine_rule = xccdf_refine_rule_iterator_next(refine_rules);
+		xmlNode *refrule_node = xmlNewChild(profile_node, ns_xccdf, BAD_CAST "refine-value", NULL);
+
+		const char *idref = xccdf_refine_rule_get_item(refine_rule);
+		if (idref)
+			xmlNewProp(refrule_node, BAD_CAST "idref", BAD_CAST idref);
+
+		xccdf_role_t role = xccdf_refine_rule_get_role(refine_rule);
+		xmlNewProp(refrule_node, BAD_CAST "role", BAD_CAST XCCDF_ROLE_MAP[role - 1].string);
+
+		const char *selector = xccdf_refine_rule_get_selector(refine_rule);
+		if (selector)
+			xmlNewProp(refrule_node, BAD_CAST "selector", BAD_CAST selector);
+
+		xccdf_level_t severity = xccdf_refine_rule_get_severity(refine_rule);
+		xmlNewProp(refrule_node, BAD_CAST "severity", BAD_CAST XCCDF_LEVEL_MAP[severity].string);
+
+		float weight = xccdf_refine_rule_get_weight(refine_rule);
+		char weight_str[10];
+		sprintf(weight_str, "%f", weight);
+		xmlNewProp(refrule_node, BAD_CAST "weight", BAD_CAST weight_str);
+	}
+	xccdf_refine_rule_iterator_free(refine_rules);
 }
 
 void xccdf_profile_dump(struct xccdf_item *prof, int depth)

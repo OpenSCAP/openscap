@@ -173,6 +173,20 @@ xmlNode *xccdf_benchmark_to_dom(struct xccdf_benchmark *benchmark, xmlDocPtr doc
 
 	xmlSetNs(root_node, ns_xccdf);
 
+	struct xccdf_profile_iterator *profiles = xccdf_benchmark_get_profiles(benchmark);
+	while (xccdf_profile_iterator_has_more(profiles)) {
+		struct xccdf_profile *profile = xccdf_profile_iterator_next(profiles);
+		xccdf_item_to_dom(XITEM(profile), doc, root_node);
+	}
+	xccdf_profile_iterator_free(profiles);
+
+	struct xccdf_value_iterator *values = xccdf_benchmark_get_values(benchmark);
+	while (xccdf_value_iterator_has_more(values)) {
+		struct xccdf_value *value = xccdf_value_iterator_next(values);
+		xccdf_item_to_dom(XITEM(value), doc, root_node);
+	}
+	xccdf_value_iterator_free(values);
+
 	struct xccdf_item_iterator *items = xccdf_benchmark_get_content(benchmark);
 	while (xccdf_item_iterator_has_more(items)) {
 		struct xccdf_item *item = xccdf_item_iterator_next(items);

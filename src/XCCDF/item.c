@@ -280,6 +280,7 @@ xmlNode *xccdf_item_to_dom(struct xccdf_item *item, xmlDoc *doc, xmlNode *parent
 			break;
 		case XCCDF_PROFILE:
 			xmlNodeSetName(item_node,BAD_CAST "Profile");
+			xccdf_profile_to_dom(XPROFILE(item), item_node, doc, parent);
 			break;
 		case XCCDF_RESULT:
 			xmlNodeSetName(item_node,BAD_CAST "Result");
