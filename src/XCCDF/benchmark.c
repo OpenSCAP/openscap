@@ -195,6 +195,13 @@ xmlNode *xccdf_benchmark_to_dom(struct xccdf_benchmark *benchmark, xmlDocPtr doc
 	}
 	xccdf_item_iterator_free(items);
 
+	struct xccdf_result_iterator *results = xccdf_benchmark_get_results(benchmark);
+	while (xccdf_result_iterator_has_more(results)) {
+		struct xccdf_result *result = xccdf_result_iterator_next(results);
+		xccdf_item_to_dom(XITEM(result), doc, root_node);
+	}
+	xccdf_result_iterator_free(results);
+
 	return root_node;
 }
 

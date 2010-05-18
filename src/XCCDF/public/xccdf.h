@@ -423,6 +423,13 @@ struct xccdf_status_iterator;
 struct xccdf_reference_iterator;
 
 /**
+ * @struct xccdf_identity_iterator
+ * Reference iterator.
+ * @see oscap_iterator
+ */
+struct xccdf_identity_iterator;
+
+/**
  * @struct xccdf_model_iterator
  * Model iterator.
  * @see oscap_iterator
@@ -560,6 +567,27 @@ struct xccdf_message_iterator;
  * @see oscap_iterator
  */
 struct xccdf_override_iterator;
+
+/**
+ * @struct xccdf_rule_result_iterator
+ * Override iterator.
+ * @see oscap_iterator
+ */
+struct xccdf_rule_result_iterator;
+
+/**
+ * @struct xccdf_score_iterator
+ * Override iterator.
+ * @see oscap_iterator
+ */
+struct xccdf_score_iterator;
+
+/**
+ * @struct xccdf_target_fact_iterator
+ * Override iterator.
+ * @see oscap_iterator
+ */
+struct xccdf_target_fact_iterator;
 
 /**
  * @struct xccdf_plain_text_iterator
@@ -1246,6 +1274,74 @@ bool xccdf_override_iterator_has_more(struct xccdf_override_iterator *it);
  * @memberof xccdf_override_iterator
  */
 void xccdf_override_iterator_free(struct xccdf_override_iterator *it);
+
+
+/**
+ * Return the next xccdf_identity structure from the list and increment the iterator
+ * @memberof xccdf_identity_iterator
+ */
+struct xccdf_identity *xccdf_identity_iterator_next(struct xccdf_identity_iterator *it);
+/**
+ * Return true if the list is not empty, false otherwise
+ * @memberof xccdf_identity_iterator
+ */
+bool xccdf_identity_iterator_has_more(struct xccdf_identity_iterator *it);
+/**
+ * Free the iterator structure (it makes no changes to the list structure)
+ * @memberof xccdf_identity_iterator
+ */
+void xccdf_identity_iterator_free(struct xccdf_identity_iterator *it);
+
+
+/**
+ * Return the next xccdf_rule_result structure from the list and increment the iterator
+ * @memberof xccdf_rule_result_iterator
+ */
+struct xccdf_rule_result *xccdf_rule_result_iterator_next(struct xccdf_rule_result_iterator *it);
+/**
+ * Return true if the list is not empty, false otherwise
+ * @memberof xccdf_rule_result_iterator
+ */
+bool xccdf_rule_result_iterator_has_more(struct xccdf_rule_result_iterator *it);
+/**
+ * Free the iterator structure (it makes no changes to the list structure)
+ * @memberof xccdf_rule_result_iterator
+ */
+void xccdf_rule_result_iterator_free(struct xccdf_rule_result_iterator *it);
+
+
+/**
+ * Return the next xccdf_score structure from the list and increment the iterator
+ * @memberof xccdf_score_iterator
+ */
+struct xccdf_score *xccdf_score_iterator_next(struct xccdf_score_iterator *it);
+/**
+ * Return true if the list is not empty, false otherwise
+ * @memberof xccdf_score_iterator
+ */
+bool xccdf_score_iterator_has_more(struct xccdf_score_iterator *it);
+/**
+ * Free the iterator structure (it makes no changes to the list structure)
+ * @memberof xccdf_score_iterator
+ */
+void xccdf_score_iterator_free(struct xccdf_score_iterator *it);
+
+
+/**
+ * Return the next xccdf_target_fact structure from the list and increment the iterator
+ * @memberof xccdf_target_fact_iterator
+ */
+struct xccdf_target_fact *xccdf_target_fact_iterator_next(struct xccdf_target_fact_iterator *it);
+/**
+ * Return true if the list is not empty, false otherwise
+ * @memberof xccdf_target_fact_iterator
+ */
+bool xccdf_target_fact_iterator_has_more(struct xccdf_target_fact_iterator *it);
+/**
+ * Free the iterator structure (it makes no changes to the list structure)
+ * @memberof xccdf_target_fact_iterator
+ */
+void xccdf_target_fact_iterator_free(struct xccdf_target_fact_iterator *it);
 
 
 /**

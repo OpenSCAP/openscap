@@ -23,7 +23,9 @@
 
 #include "item.h"
 #include "helpers.h"
+#include "xccdf_impl.h"
 #include <math.h>
+#include <text.h>
 
 
 // constants
@@ -126,6 +128,7 @@ OSCAP_IGETTER(xccdf_check, xccdf_rule_result, checks)
 OSCAP_IGETINS_GEN(xccdf_override, xccdf_rule_result, overrides, override)
 OSCAP_IGETINS_GEN(xccdf_message, xccdf_rule_result, messages, message)
 OSCAP_IGETINS_GEN(xccdf_instance, xccdf_rule_result, instances, instance)
+OSCAP_ITERATOR_GEN(xccdf_rule_result)
 
 
 struct xccdf_identity *xccdf_identity_new(void)
@@ -144,6 +147,7 @@ void xccdf_identity_free(struct xccdf_identity *identity)
 OSCAP_ACCESSOR_EXP(bool, xccdf_identity, authenticated, sub.authenticated)
 OSCAP_ACCESSOR_EXP(bool, xccdf_identity, privileged, sub.privileged)
 OSCAP_ACCESSOR_STRING(xccdf_identity, name)
+OSCAP_ITERATOR_GEN(xccdf_identity)
 
 struct xccdf_score *xccdf_score_new(void)
 {
@@ -164,6 +168,7 @@ void xccdf_score_free(struct xccdf_score *score)
 OSCAP_ACCESSOR_SIMPLE(xccdf_numeric, xccdf_score, maximum)
 OSCAP_ACCESSOR_SIMPLE(xccdf_numeric, xccdf_score, score)
 OSCAP_ACCESSOR_STRING(xccdf_score, system)
+OSCAP_ITERATOR_GEN(xccdf_score)
 
 struct xccdf_override *xccdf_override_new(void)
 {
@@ -244,6 +249,7 @@ bool xccdf_target_fact_set_boolean(struct xccdf_target_fact *fact, bool val)
 OSCAP_GETTER(xccdf_value_type_t, xccdf_target_fact, type)
 OSCAP_GETTER(const char *, xccdf_target_fact, value)
 OSCAP_ACCESSOR_STRING(xccdf_target_fact, name)
+OSCAP_ITERATOR_GEN(xccdf_target_fact)
 
 struct xccdf_instance *xccdf_instance_new(void)
 {
@@ -366,6 +372,115 @@ fail:
 	return NULL;
 }
 
+void xccdf_result_to_dom(struct xccdf_result *result, xmlNode *result_node, xmlDoc *doc, xmlNode *parent)
+{
+	xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent, XCCDF_BASE_NAMESPACE);
+
+	/* Handle attributes */
+	/* start-time and end-time do not appear to be implemented in OpenSCAP */
+
+	/* Handle children */
+	struct oscap_text_iterator *remarks = xccdf_result_get_remarks(result);
+	while (oscap_text_iterator_has_more(remarks)) {
+		struct oscap_text *remark = oscap_text_iterator_next(remarks);
+		xccdf_remark_to_dom(remark, doc, result_node);
+	}
+	oscap_text_iterator_free(remarks);
+
+	struct oscap_string_iterator *orgs = xccdf_result_get_organizations(result);
+	while (oscap_string_iterator_has_more(orgs)) {
+		const char *org = oscap_string_iterator_next(orgs);
+		xmlNewChild(result_node, ns_xccdf, BAD_CAST "organization", BAD_CAST org);
+	}
+	oscap_string_iterator_free(orgs);
+
+	struct xccdf_identity_iterator *identities = xccdf_result_get_identities(result);
+	while (xccdf_identity_iterator_has_more(identities)) {
+		struct xccdf_identity *identity = xccdf_identity_iterator_next(identities);
+		xmlNode *identity_node = xmlNewChild(result_node, ns_xccdf, BAD_CAST "identity", BAD_CAST xccdf_identity_get_name(identity));
+		
+		if (xccdf_identity_get_authenticated(identity))
+			xmlNewProp(identity_node, BAD_CAST "authenticated", BAD_CAST "True");
+		else
+			xmlNewProp(identity_node, BAD_CAST "authenticated", BAD_CAST "False");
+
+		if (xccdf_identity_get_privileged(identity))
+			xmlNewProp(identity_node, BAD_CAST "privileged", BAD_CAST "True");
+		else
+			xmlNewProp(identity_node, BAD_CAST "privileged", BAD_CAST "False");
+	}
+	xccdf_identity_iterator_free(identities);
+
+	const char *profile = xccdf_result_get_profile(result);
+	if (profile) {
+		xmlNode *prof_node = xmlNewChild(result_node, ns_xccdf, BAD_CAST "profile", NULL);
+		xmlNewProp(prof_node, BAD_CAST "idref", BAD_CAST profile);
+	}
+
+	struct xccdf_setvalue_iterator *setvalues = xccdf_result_get_setvalues(result);
+	while (xccdf_setvalue_iterator_has_more(setvalues)) {
+		struct xccdf_setvalue *setvalue = xccdf_setvalue_iterator_next(setvalues);
+		xccdf_setvalue_to_dom(setvalue, doc, result_node);
+	}
+	xccdf_setvalue_iterator_free(setvalues);
+
+	struct oscap_string_iterator *targets = xccdf_result_get_targets(result);
+	while (oscap_string_iterator_has_more(targets)) {
+		const char *target = oscap_string_iterator_next(targets);
+		xmlNewChild(result_node, ns_xccdf, BAD_CAST "target", BAD_CAST target);
+	}
+	oscap_string_iterator_free(targets);
+
+	struct oscap_string_iterator *target_addresses = xccdf_result_get_target_addresses(result);
+	while (oscap_string_iterator_has_more(target_addresses)) {
+		const char *target_address = oscap_string_iterator_next(target_addresses);
+		xmlNewChild(result_node, ns_xccdf, BAD_CAST "target_address", BAD_CAST target_address);
+	}
+	oscap_string_iterator_free(target_addresses);
+
+	struct xccdf_target_fact_iterator *target_facts = xccdf_result_get_target_facts(result);
+	while (xccdf_target_fact_iterator_has_more(target_facts)) {
+		struct xccdf_target_fact *target_fact = xccdf_target_fact_iterator_next(target_facts);
+		xmlNode *target_node = xmlNewChild(result_node, ns_xccdf, BAD_CAST "target_fact", BAD_CAST target_fact->value);
+		xmlNode *fact_node = xmlNewChild(target_node, ns_xccdf, BAD_CAST "fact", NULL);
+
+		const char *name = xccdf_target_fact_get_name(target_fact);
+		if (name)
+			xmlNewProp(fact_node, BAD_CAST "name", BAD_CAST name);
+
+		xccdf_value_type_t value = xccdf_target_fact_get_type(target_fact);
+		xmlNewProp(fact_node, BAD_CAST "type", BAD_CAST XCCDF_FACT_TYPE_MAP[value - 1].string);
+	}
+	xccdf_target_fact_iterator_free(target_facts);
+
+	struct xccdf_rule_result_iterator *rule_results = xccdf_result_get_rule_results(result);
+	while (xccdf_rule_result_iterator_has_more(rule_results)) {
+		struct xccdf_rule_result *rule_result = xccdf_rule_result_iterator_next(rule_results);
+		xccdf_rule_result_to_dom(rule_result, doc, result_node);
+	}
+	xccdf_rule_result_iterator_free(rule_results);
+
+	struct xccdf_score_iterator *scores = xccdf_result_get_scores(result);
+	while (xccdf_score_iterator_has_more(scores)) {
+		struct xccdf_score *score = xccdf_score_iterator_next(scores);
+
+                float value = xccdf_score_get_score(score);
+                char value_str[10];
+                sprintf(value_str, "%f", value);
+                xmlNode *score_node = xmlNewChild(result_node, ns_xccdf, BAD_CAST "score", BAD_CAST value_str);
+
+		const char *sys = xccdf_score_get_system(score);
+		if (sys)
+			xmlNewProp(score_node, BAD_CAST "system", BAD_CAST sys);
+
+		float max = xccdf_score_get_maximum(score);
+		char max_str[10];
+		sprintf(max_str, "%f", max);
+		xmlNewProp(score_node, BAD_CAST "maximum", BAD_CAST max_str);
+	}
+	xccdf_score_iterator_free(scores);
+}
+
 static struct xccdf_identity *xccdf_identity_new_parse(xmlTextReaderPtr reader)
 {
 	XCCDF_ASSERT_ELEMENT(reader, XCCDFE_IDENTITY);
@@ -447,6 +562,94 @@ static struct xccdf_rule_result *xccdf_rule_result_new_parse(xmlTextReaderPtr re
 	return rr;
 }
 
+xmlNode *xccdf_rule_result_to_dom(struct xccdf_rule_result *result, xmlDoc *doc, xmlNode *parent)
+{
+	xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent, XCCDF_BASE_NAMESPACE);
+	xmlNode *result_node = xmlNewChild(parent, ns_xccdf, BAD_CAST "rule-result", NULL);
+
+	/* Handle attributes */
+	const char *idref = xccdf_rule_result_get_idref(result);
+	if (idref)
+		xmlNewProp(result_node, BAD_CAST "idref", BAD_CAST idref);
+
+	xccdf_role_t role = xccdf_rule_result_get_role(result);
+	xmlNewProp(result_node, BAD_CAST "role", BAD_CAST XCCDF_ROLE_MAP[role - 1].string);
+
+	time_t date = xccdf_rule_result_get_time(result);
+	xmlNewProp(result_node, BAD_CAST "date", BAD_CAST ctime(&date));
+
+	xccdf_level_t severity = xccdf_rule_result_get_severity(result);
+	xmlNewProp(result_node, BAD_CAST "severity", BAD_CAST XCCDF_LEVEL_MAP[severity - 1].string);
+
+	const char *version = xccdf_rule_result_get_version(result);
+	if (version)
+		xmlNewProp(result_node, BAD_CAST "version", BAD_CAST version);
+
+	float weight = xccdf_rule_result_get_weight(result);
+	char weight_str[10];
+	sprintf(weight_str, "%f", weight);
+	xmlNewProp(result_node, BAD_CAST "weight", BAD_CAST weight_str);
+
+	/* Handle children */
+	xccdf_test_result_type_t test_res = xccdf_rule_result_get_result(result);
+	xmlNewChild(result_node, ns_xccdf, BAD_CAST "result", BAD_CAST XCCDF_RESULT_MAP[test_res - 1].string);
+
+	struct xccdf_override_iterator *overrides = xccdf_rule_result_get_overrides(result);
+	while (xccdf_override_iterator_has_more(overrides)) {
+		struct xccdf_override *override = xccdf_override_iterator_next(overrides);
+		xccdf_override_to_dom(override, doc, result_node);
+	}
+	xccdf_override_iterator_free(overrides);
+
+	struct xccdf_ident_iterator *idents = xccdf_rule_result_get_idents(result);
+	while (xccdf_ident_iterator_has_more(idents)) {
+		struct xccdf_ident *ident = xccdf_ident_iterator_next(idents);
+		xccdf_ident_to_dom(ident, doc, result_node);
+	}
+	xccdf_ident_iterator_free(idents);
+
+	struct xccdf_message_iterator *messages = xccdf_rule_result_get_messages(result);
+	while (xccdf_message_iterator_has_more(messages)) {
+		struct xccdf_message *message = xccdf_message_iterator_next(messages);
+		const char *content = xccdf_message_get_content(message);
+		xmlNode *message_node = xmlNewChild(result_node, ns_xccdf, BAD_CAST "message", BAD_CAST content);
+		xmlNewProp(message_node, BAD_CAST "severity", BAD_CAST XCCDF_LEVEL_MAP[severity - 1].string);
+	}
+	xccdf_message_iterator_free(messages);
+
+	struct xccdf_instance_iterator *instances = xccdf_rule_result_get_instances(result);
+	while (xccdf_instance_iterator_has_more(instances)) {
+		struct xccdf_instance *instance = xccdf_instance_iterator_next(instances);
+		const char *content = xccdf_instance_get_content(instance);
+		xmlNode *instance_node = xmlNewChild(result_node, ns_xccdf, BAD_CAST "instance", BAD_CAST content);
+		
+		const char *context = xccdf_instance_get_context(instance);
+		if (context)
+			xmlNewProp(instance_node, BAD_CAST "context", BAD_CAST context); 
+
+		const char *parent_context = xccdf_instance_get_context(instance);
+		if (parent_context)
+			xmlNewProp(instance_node, BAD_CAST "parentContext", BAD_CAST context); 
+	}
+	xccdf_instance_iterator_free(instances);
+
+	struct xccdf_fix_iterator *fixes = xccdf_rule_result_get_fixes(result);
+	while (xccdf_fix_iterator_has_more(fixes)) {
+		struct xccdf_fix *fix = xccdf_fix_iterator_next(fixes);
+		xccdf_fix_to_dom(fix, doc, result_node);
+	}
+	xccdf_fix_iterator_free(fixes);
+
+	struct xccdf_check_iterator *checks = xccdf_rule_result_get_checks(result);
+	while (xccdf_check_iterator_has_more(checks)) {
+		struct xccdf_check *check = xccdf_check_iterator_next(checks);
+		xccdf_check_to_dom(check, doc, result_node);
+	}
+	xccdf_check_iterator_free(checks);
+
+	return result_node;
+}
+
 static struct xccdf_override *xccdf_override_new_parse(xmlTextReaderPtr reader)
 {
 	XCCDF_ASSERT_ELEMENT(reader, XCCDFE_OVERRIDE);
@@ -476,6 +679,44 @@ static struct xccdf_override *xccdf_override_new_parse(xmlTextReaderPtr reader)
 	}
 
 	return override;
+}
+
+xmlNode *xccdf_override_to_dom(struct xccdf_override *override, xmlDoc *doc, xmlNode *parent)
+{
+	xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent, XCCDF_BASE_NAMESPACE);
+	xmlNode *override_node = xmlNewChild(parent, ns_xccdf, BAD_CAST "override", NULL);
+
+	/* Handle attributes */
+	time_t date = xccdf_override_get_time(override);
+	xmlNewProp(override_node, BAD_CAST "date", BAD_CAST ctime(&date));
+
+	const char *authority = xccdf_override_get_authority(override);
+	if (authority)
+		xmlNewProp(override_node, BAD_CAST "authority", BAD_CAST authority);
+
+	xccdf_test_result_type_t old = xccdf_override_get_old_result(override);
+	xmlNewProp(override_node, BAD_CAST "old-result", BAD_CAST XCCDF_RESULT_MAP[old - 1].string);
+
+	xccdf_test_result_type_t new = xccdf_override_get_new_result(override);
+	xmlNewProp(override_node, BAD_CAST "new-result", BAD_CAST XCCDF_RESULT_MAP[new - 1].string);
+
+	struct oscap_text *remark = xccdf_override_get_remark(override);
+	if (remark)
+		xccdf_remark_to_dom(remark, doc, override_node);
+
+	return override_node;
+}
+
+xmlNode *xccdf_remark_to_dom(struct oscap_text *remark, xmlDoc *doc, xmlNode *parent)
+{
+	xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent, XCCDF_BASE_NAMESPACE);
+	xmlNode *remark_node = xmlNewChild(parent, ns_xccdf, BAD_CAST "remark", BAD_CAST oscap_text_get_text(remark));
+
+	const char *lang = oscap_text_get_lang(remark);
+	if (lang)
+		xmlNewProp(remark_node, BAD_CAST "xml:lang", BAD_CAST lang);
+
+	return remark_node;
 }
 
 static struct xccdf_message *xccdf_message_new_parse(xmlTextReaderPtr reader)

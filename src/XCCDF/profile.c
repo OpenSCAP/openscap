@@ -280,6 +280,13 @@ void xccdf_profile_to_dom(struct xccdf_profile *profile, xmlNode *profile_node, 
 			xmlNewProp(select_node, BAD_CAST "selected", BAD_CAST "1");
 		else
 			xmlNewProp(select_node, BAD_CAST "selected", BAD_CAST "0");
+
+		struct oscap_text_iterator *remarks = xccdf_select_get_remarks(sel);
+		while (oscap_text_iterator_has_more(remarks)) {
+			struct oscap_text *remark = oscap_text_iterator_next(remarks);
+			xccdf_remark_to_dom(remark, doc, select_node);
+		}
+		oscap_text_iterator_free(remarks);
 	}
 	xccdf_select_iterator_free(selects);
 
@@ -305,6 +312,13 @@ void xccdf_profile_to_dom(struct xccdf_profile *profile, xmlNode *profile_node, 
 		const char *selector = xccdf_refine_value_get_selector(refine_value);
 		if (selector)
 			xmlNewProp(refval_node, BAD_CAST "selector", BAD_CAST selector);
+
+		struct oscap_text_iterator *remarks = xccdf_refine_value_get_remarks(refine_value);
+		while (oscap_text_iterator_has_more(remarks)) {
+			struct oscap_text *remark = oscap_text_iterator_next(remarks);
+			xccdf_remark_to_dom(remark, doc, refval_node);
+		}
+		oscap_text_iterator_free(remarks);
 	}
 	xccdf_refine_value_iterator_free(refine_values);
 
@@ -331,6 +345,13 @@ void xccdf_profile_to_dom(struct xccdf_profile *profile, xmlNode *profile_node, 
 		char weight_str[10];
 		sprintf(weight_str, "%f", weight);
 		xmlNewProp(refrule_node, BAD_CAST "weight", BAD_CAST weight_str);
+		
+		struct oscap_text_iterator *remarks = xccdf_refine_rule_get_remarks(refine_rule);
+		while (oscap_text_iterator_has_more(remarks)) {
+			struct oscap_text *remark = oscap_text_iterator_next(remarks);
+			xccdf_remark_to_dom(remark, doc, refrule_node);
+		}
+		oscap_text_iterator_free(remarks);
 	}
 	xccdf_refine_rule_iterator_free(refine_rules);
 }
