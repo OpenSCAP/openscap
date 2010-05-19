@@ -123,8 +123,8 @@ xccdf_element_t xccdf_element_get(xmlTextReaderPtr reader)
 
 	for (mapptr = XCCDF_ELEMENT_MAP; mapptr->id != 0; ++mapptr) {
 		if ((!name && !nsuri) ||
-		    (name && nsuri && strcmp(mapptr->name, name) == 0 ))
-		    //(name && nsuri && strcmp(mapptr->name, name) == 0 && strcmp(mapptr->ns, nsuri) == 0)) /* We can't use NS now */
+		    //(name && nsuri && strcmp(mapptr->name, name) == 0 ))
+		    (name && nsuri && strcmp(mapptr->name, name) == 0 && strcmp(mapptr->ns, nsuri) == 0))
 			return mapptr->id;
 	}
 
