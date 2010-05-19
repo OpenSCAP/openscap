@@ -100,7 +100,9 @@ common_oval_sources += probes/probe-api.c 	\
 		       oval_sexp.c 		\
 		       oval_sexp.h 		\
 		       oval_probe_session.c	\
+		       _oval_probe_session.h	\
 		       oval_probe_handler.c	\
+		       _oval_probe_handler.h	\
 		       oval_probe_ext.c		\
 		       oval_probe_ext.h		\
 		       oval_probe_impl.h
