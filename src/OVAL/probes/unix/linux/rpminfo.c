@@ -245,6 +245,7 @@ void probe_fini (void *ptr)
         struct rpminfo_global *r = (struct rpminfo_global *)ptr;
         
         rpmdbClose (r->rpmdb);
+	rpmFreeCrypto();
         pthread_mutex_destroy (&(r->mutex));
         
         return;
