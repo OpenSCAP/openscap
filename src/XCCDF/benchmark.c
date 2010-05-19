@@ -65,6 +65,17 @@ struct xccdf_benchmark *xccdf_benchmark_new(void)
 	return XBENCHMARK(bench);
 }
 
+struct xccdf_benchmark *xccdf_benchmark_clone(const struct xccdf_benchmark *old_benchmark)
+{
+	struct xccdf_item *new_benchmark = oscap_calloc(1, sizeof(struct xccdf_item) + sizeof(struct xccdf_benchmark_item));
+	struct xccdf_item *old = XITEM(old_benchmark);
+	new_benchmark->item = *(xccdf_item_base_clone(&(old->item)));
+	new_benchmark->type = old->type;
+	//second argument is a pointer to the benchmark being created which will be the parent of all of its sub elements.
+	new_benchmark->sub.benchmark = *(xccdf_benchmark_item_clone(&(old->sub.benchmark), new_benchmark));
+	return XBENCHMARK(new_benchmark);
+}
+
 bool xccdf_benchmark_parse(struct xccdf_item * benchmark, xmlTextReaderPtr reader)
 {
 	XCCDF_ASSERT_ELEMENT(reader, XCCDFE_BENCHMARK);
@@ -384,6 +395,14 @@ struct xccdf_notice *xccdf_notice_new(void)
     return NULL;
 }
 
+struct xccdf_notice *xccdf_notice_clone(const struct xccdf_notice * notice)
+{
+	 struct xccdf_notice *new_notice = oscap_calloc(1, sizeof(struct xccdf_notice));
+	 new_notice->id = oscap_strdup(notice->id);
+    new_notice->text = oscap_text_clone(notice->text);
+    return new_notice;
+}
+
 struct xccdf_notice *xccdf_notice_new_parse(xmlTextReaderPtr reader)
 {
     struct xccdf_notice *notice = oscap_calloc(1, sizeof(struct xccdf_notice));
@@ -541,6 +560,14 @@ struct xccdf_plain_text *xccdf_plain_text_new_fill(const char *id, const char *t
     struct xccdf_plain_text *plain = xccdf_plain_text_new();
     plain->id = oscap_strdup(id);
     plain->text = oscap_strdup(text);
+    return plain;
+}
+
+struct xccdf_plain_text * xccdf_plain_text_clone(const struct xccdf_plain_text * pt)
+{
+    struct xccdf_plain_text *plain = oscap_calloc(1, sizeof(struct xccdf_plain_text));
+    plain->id = oscap_strdup(pt->id);
+    plain->text = oscap_strdup(pt->text);
     return plain;
 }
 

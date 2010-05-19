@@ -121,6 +121,13 @@ struct oscap_htable *oscap_htable_new1(oscap_compare_func cmp, size_t hsize);
 struct oscap_htable *oscap_htable_new(void);
 
 /*
+ * Do a Deep Copy of a hashtable and all of its items
+ *
+ * @return deep copy of hash table
+ */
+struct oscap_htable * oscap_htable_clone(const struct oscap_htable * table, oscap_clone_func cloner);
+
+/*
  * Add an item to the hash table.
  * @return True on success, false if the key already exists.
  */
