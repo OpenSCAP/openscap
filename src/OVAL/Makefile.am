@@ -77,7 +77,9 @@ pkginclude_HEADERS  =	public/oval_agent_api.h \
 			public/oval_results.h \
 			public/oval_variables.h \
 			public/oval_types.h \
-			public/oval_probe.h
+			public/oval_probe.h \
+			public/oval_probe_session.h \
+			public/oval_probe_handler.h
 
 liboval_la_SOURCES += oval_probe.c
 
@@ -95,8 +97,12 @@ common_oval_sources += probes/probe-api.c 	\
 		       probes/probe-entcmp.h	\
 		       probes/probe-cache.c	\
 		       probes/probe-cache.h	\
-		       oval_sexp.c \
-		       oval_sexp.h \
+		       oval_sexp.c 		\
+		       oval_sexp.h 		\
+		       oval_probe_session.c	\
+		       oval_probe_handler.c	\
+		       oval_probe_ext.c		\
+		       oval_probe_ext.h		\
 		       oval_probe_impl.h
 
 nodist_liboval_testing_la_SOURCES = oval_testing_probe.c

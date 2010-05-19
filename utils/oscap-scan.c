@@ -59,9 +59,9 @@
 #include <xccdf_policy.h>
 
 void print_usage(const char *pname, FILE * out);
-int app_evaluate_test(struct oval_test *test, oval_pctx_t * pctx,
+int app_evaluate_test(struct oval_test *test, oval_probe_session_t *sess,
 		      struct oval_definition_model *def_model, struct oval_syschar_model *sys_model, int verbose);
-int app_evaluate_criteria(struct oval_criteria_node *cnode, oval_pctx_t * pctx,
+int app_evaluate_criteria(struct oval_criteria_node *cnode, oval_probe_session_t *sess,
 			  struct oval_definition_model *def_model, struct oval_syschar_model *sys_model, int verbose);
 char *app_curl_download(char *url);
 
@@ -101,13 +101,13 @@ void print_usage(const char *pname, FILE * out)
  * Function evaluating tests. First get object from test and try if it's already
  * evaluated. If not, process the evaluation.
  * @param test oval_test structure which is being evaluated
- * @param pctx oval_pctx structure for probe process
+ * @param sess oval_probe_session structure for probe process
  * @param def_model Definition model
  * @param sys_model System characteristic model
  * @param verbose Verbosity level
  * @returns -1 in case of error, 0 in case of warning and 1 in case of success
  */
-int app_evaluate_test(struct oval_test *test, oval_pctx_t * pctx,
+int app_evaluate_test(struct oval_test *test, oval_probe_session_t *sess,
 		      struct oval_definition_model *def_model, struct oval_syschar_model *sys_model, int verbose)
 {
 
@@ -126,7 +126,7 @@ int app_evaluate_test(struct oval_test *test, oval_pctx_t * pctx,
 			/* NO it's not done yet, continue .. */
 			if (verbose == 2)
 				fprintf(stdout, "Probing object (%s)\n", objid);
-			syschar = oval_probe_object_eval(pctx, object);
+			syschar = oval_probe_object_eval(sess, object, 0);
 			/* There is a problem with evaluating .. */
 			if (syschar == NULL) {
 				if (verbose >= 1)
@@ -157,13 +157,13 @@ int app_evaluate_test(struct oval_test *test, oval_pctx_t * pctx,
  * app_evaluate_test on final criterion node.
  * @param cnode oval_criteria_node structure represents criteria, criterion and 
  *              extended definition node
- * @param pctx oval_pctx structure for probe process
+ * @param sess oval_probe_session structure for probe process
  * @param def_model Definition model
  * @param sys_model System characteristic model
  * @param verbose Verbosity level
  * @returns -1 in case of error, 0 in case of warning and 1 in case of success
  */
-int app_evaluate_criteria(struct oval_criteria_node *cnode, oval_pctx_t * pctx,
+int app_evaluate_criteria(struct oval_criteria_node *cnode, oval_probe_session_t *sess,
 			  struct oval_definition_model *def_model, struct oval_syschar_model *sys_model, int verbose)
 {
 
@@ -176,7 +176,7 @@ int app_evaluate_criteria(struct oval_criteria_node *cnode, oval_pctx_t * pctx,
 			if (test == NULL)
 				return -1;
 			/* .. evaluate it and return */
-			return app_evaluate_test(test, pctx, def_model, sys_model, verbose);
+			return app_evaluate_test(test, sess, def_model, sys_model, verbose);
 
 		}
 		break;
@@ -191,7 +191,7 @@ int app_evaluate_criteria(struct oval_criteria_node *cnode, oval_pctx_t * pctx,
 			struct oval_criteria_node *node;
 			while (oval_criteria_node_iterator_has_more(cnode_it)) {
 				node = oval_criteria_node_iterator_next(cnode_it);
-				ret = app_evaluate_criteria(node, pctx, def_model, sys_model, verbose);
+				ret = app_evaluate_criteria(node, sess, def_model, sys_model, verbose);
 				if (ret < 0) {
 					oval_criteria_node_iterator_free(cnode_it);
 					return ret;
@@ -205,7 +205,7 @@ int app_evaluate_criteria(struct oval_criteria_node *cnode, oval_pctx_t * pctx,
 	case OVAL_NODETYPE_EXTENDDEF:{
 			struct oval_definition *oval_def = oval_criteria_node_get_definition(cnode);
 			cnode = oval_definition_get_criteria(oval_def);
-			return app_evaluate_criteria(cnode, pctx, def_model, sys_model, verbose);
+			return app_evaluate_criteria(cnode, sess, def_model, sys_model, verbose);
 		}
 		break;
 	case OVAL_NODETYPE_UNKNOWN:
@@ -300,7 +300,7 @@ int main(int argc, char **argv)
                                                 0 - iterate definitions */
 	char *url_OVAL = NULL;	    /**< URL of OVAL definition file */
 	char *url_XCCDF = NULL;	    /**< URL of OVAL definition file */
-	oval_pctx_t *pctx = NULL;   /**< */
+	oval_probe_session_t *sess = NULL;   /**< */
 	char *f_OVAL = NULL;	    /**< Name of OVAL definition file*/
 	char *f_XCCDF = NULL;	    /**< Name of XCCDF benchmark file*/
 	char *f_Results = NULL;
@@ -483,10 +483,10 @@ int main(int argc, char **argv)
 	/* create syschar model */
 	struct oval_syschar_model *sys_model = oval_syschar_model_new(def_model);
 
-	pctx = oval_pctx_new(sys_model);
+	sess = oval_probe_session_new(sys_model);
 	/* probe sysinfo */
 	struct oval_sysinfo *sysinfo;
-	sysinfo = oval_probe_sysinf_eval(pctx);
+	sysinfo = oval_probe_sysinf_eval(sess);
 	if (sysinfo == NULL) {
 		if (verbose >= 1)
 			fprintf(stdout, "Warning: sysinfo not available\n");
@@ -542,7 +542,7 @@ int main(int argc, char **argv)
                                 continue;
                         }
 
-                        ret = app_evaluate_criteria(cnode, pctx, def_model, sys_model, verbose);
+			ret = app_evaluate_criteria(cnode, sess, def_model, sys_model, verbose);
                         if (ret == -1)
                                 break;
 
@@ -560,7 +560,7 @@ int main(int argc, char **argv)
 		}
 		oval_definition_iterator_free(oval_def_it);
 	}
-	oval_pctx_free(pctx);
+	oval_probe_session_destroy(sess);
 	if (verbose >= 0)
 		printf("Evaluation: All done.\n");
 

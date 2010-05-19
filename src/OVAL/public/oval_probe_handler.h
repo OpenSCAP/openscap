@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2010 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -19,36 +19,23 @@
  * Authors:
  *      "Daniel Kopecek" <dkopecek@redhat.com>
  */
+#ifndef OVAL_PROBE_HANDLER
+#define OVAL_PROBE_HANDLER
 
-#pragma once
-#ifndef SEXP_DATATYPE
-#define SEXP_DATATYPE
+#include "oval_definitions.h"
 
-#include <stdarg.h>
-#include <stdint.h>
-#include <sexp.h>
+typedef struct oval_phtbl oval_phtbl_t;
+typedef struct oval_ph    oval_ph_t;
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+typedef int (oval_probe_handler_t)(oval_subtype_t, void *, int, ...);
 
-typedef void (*SEXP_datatypeOP_t) (SEXP_t *, const SEXP_t *, void *);
+#define PROBE_HANDLER_ACT_INIT  0
+#define PROBE_HANDLER_ACT_FREE  1
+#define PROBE_HANDLER_ACT_OPEN  2
+#define PROBE_HANDLER_ACT_EVAL  3
+#define PROBE_HANDLER_ACT_RESET 4
+#define PROBE_HANDLER_ACT_CLOSE 5
 
-typedef struct SEXP_datatype    SEXP_datatype_t;
-typedef struct SEXP_datatypeTbl SEXP_datatypeTbl_t;
+#define PROBE_HANDLER_IGNORE NULL
 
-extern SEXP_datatypeTbl_t g_datatypes;
-
-/* const char *SEXP_datatype (const SEXP_t *sexp); */
-
-int SEXP_datatype_register (SEXP_datatypeTbl_t *t, const char *datatype);
-/* int SEXP_datatype_unregister (void); */
-
-int SEXP_datatype_op (uint8_t op, const SEXP_t *sexp, void *res, ...);
-int SEXP_datatype_op_safe (const char *datatype, uint8_t op, const SEXP_t *sexp, void *res, ...);
-
-#ifdef __cplusplus
-}
-#endif
-
-#endif /* SEXP_DATATYPE */
+#endif /* OVAL_PROBE_HANDLER */

@@ -40,6 +40,8 @@ OSCAP_HIDDEN_START;
 #define SEXP_NUMCLASS_FRA  5
 #define SEXP_NUMCLASS_PRE  6
 
+#define SEXP_PFUNC_COUNT 8
+
 /*
  * Parser state
  */
@@ -56,6 +58,9 @@ struct SEXP_pstate {
 
         void         *sp_data;          /* subparser data */
         void        (*sp_free)(void *); /* function for freeing the subparser data */
+
+        void         *sp_shptr[SEXP_PFUNC_COUNT]; /* subparser shared pointer */
+        void        (*sp_shfree[SEXP_PFUNC_COUNT])(void *); /* functions for freeing subparser shared pointer */
 
         uint8_t       p_label;  /* where to jump if p_explen > 0 */
 
@@ -82,6 +87,8 @@ struct SEXP_pext_dsc {
         SEXP_t       *s_exp;
         void         *sp_data;          /* subparser data */
         void        (*sp_free)(void *); /* function for freeing the subparser data */
+        void         *sp_shptr[SEXP_PFUNC_COUNT];
+        void        (*sp_shfree[SEXP_PFUNC_COUNT])(void *);
 
         uint8_t       p_label;
         uint8_t       p_numclass;
@@ -98,7 +105,6 @@ struct SEXP_pext_dsc {
 
 typedef __PARSE_RT (SEXP_pfunc_t)(__PARSE_PT());
 
-#define SEXP_PFUNC_COUNT 8
 
 struct SEXP_psetup {
         SEXP_format_t  p_format; /* expected or required format (depends on p_flags) */

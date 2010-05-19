@@ -503,10 +503,10 @@ int oval_syschar_model_probe_objects(struct oval_syschar_model *syschar_model)
 	struct oval_definition_model *definition_model = oval_syschar_model_get_definition_model(syschar_model);
 
 	if (definition_model) {
-		oval_pctx_t *pctx;
+		oval_probe_session_t *sess;
 		struct oval_object_iterator *objects = oval_definition_model_get_objects(definition_model);
 
-		pctx = oval_pctx_new(syschar_model);
+		sess = oval_probe_session_new(syschar_model);
 
 		while (oval_object_iterator_has_more(objects)) {
 			struct oval_object *object = oval_object_iterator_next(objects);
@@ -514,24 +514,25 @@ int oval_syschar_model_probe_objects(struct oval_syschar_model *syschar_model)
 			struct oval_syschar *syschar = oval_syschar_model_get_syschar(syschar_model, objid);
 
 			if (syschar == NULL) {
-				syschar = oval_probe_object_eval(pctx, object);
+				syschar = oval_probe_object_eval(sess, object, 0);
 				if (syschar == NULL) {
 					syschar = oval_syschar_new(syschar_model, object);
 					oval_syschar_set_flag(syschar, SYSCHAR_FLAG_NOT_COLLECTED);
 					if(  oscap_err() ) {
 						oval_syschar_model_add_syschar(syschar_model, syschar);
-						oval_pctx_free(pctx);
+						oval_probe_session_destroy(sess);
 						oval_object_iterator_free(objects);
 						return 1;
-					} 
+					}
 				}
 				oval_syschar_model_add_syschar(syschar_model, syschar);
 			}
 		}
-		oval_pctx_free(pctx);
+
+		oval_probe_session_destroy(sess);
 		oval_object_iterator_free(objects);
 	}
-	
+
 	return 0;
 #else
 	oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_ENOTIMPL, "This feature is not implemented, compiled without probes support.");
@@ -540,19 +541,20 @@ int oval_syschar_model_probe_objects(struct oval_syschar_model *syschar_model)
 
 int oval_syschar_model_probe_sysinfo(struct oval_syschar_model *syschar_model) {
 #ifdef ENABLE_PROBES
-	oval_pctx_t *pctx;
+	oval_probe_session_t *sess;
         struct oval_sysinfo *sysinfo;
 
-	pctx = oval_pctx_new(syschar_model);
-        sysinfo = oval_probe_sysinf_eval(pctx);
-        if( sysinfo == NULL && oscap_err() ) {
-		oval_pctx_free(pctx);
+	sess = oval_probe_session_new(syschar_model);
+        sysinfo = oval_probe_sysinf_eval(sess);
+
+        if (sysinfo == NULL && oscap_err() ) {
+		oval_probe_session_destroy(sess);
 		return 1;
 	}
 
         oval_syschar_model_set_sysinfo(syschar_model, sysinfo);
         oval_sysinfo_free(sysinfo);
-	oval_pctx_free(pctx);
+	oval_probe_session_destroy(sess);
 
 	return 0;
 #else

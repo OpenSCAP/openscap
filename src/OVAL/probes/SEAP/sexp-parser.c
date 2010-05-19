@@ -50,6 +50,11 @@ SEXP_pstate_t *SEXP_pstate_new (void)
         pstate->sp_data  = NULL;
         pstate->sp_free  = NULL;
 
+        for(int i = 0; i < SEXP_PFUNC_COUNT; ++i) {
+                pstate->sp_shptr[i]  = NULL;
+                pstate->sp_shfree[i] = NULL;
+        }
+
         pstate->p_label    = 128;
         pstate->p_numclass = SEXP_NUMCLASS_INV;
         pstate->p_numbase  = 0;
@@ -86,6 +91,15 @@ void SEXP_pstate_free (SEXP_pstate_t *pstate)
         if (pstate->sp_data != NULL) {
                 if (pstate->sp_free != NULL)
                         pstate->sp_free (pstate->sp_data);
+        }
+
+        /*
+         * Free the subparser shared pointer using functions
+         * from the sp_shfree array (if != NULL)
+         */
+        for(int i = 0; i < SEXP_PFUNC_COUNT; ++i) {
+                if (pstate->sp_shptr[i] != NULL && pstate->sp_shfree[i] != NULL)
+                        pstate->sp_shfree[i](pstate->sp_shptr[i]);
         }
 
         /*
@@ -415,6 +429,11 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
         state->p_sexp  = NULL;
         e_dsc.sp_data  = state->sp_data;
         e_dsc.sp_free  = state->sp_free;
+
+        for(int i = 0; i < SEXP_PFUNC_COUNT; ++i) {
+                e_dsc.sp_shptr[i]  = state->sp_shptr[i];
+                e_dsc.sp_shfree[i] = state->sp_shfree[i];
+        }
 
         e_dsc.p_label    = state->p_label;
         e_dsc.p_numclass = state->p_numclass;
@@ -1232,6 +1251,11 @@ SKIP_LOOP:
                 state->p_sexp   = e_dsc.s_exp;
                 state->sp_data  = e_dsc.sp_data;
                 state->sp_free  = e_dsc.sp_free;
+
+                for(int i = 0; i < SEXP_PFUNC_COUNT; ++i) {
+                        state->sp_shptr[i]  = e_dsc.sp_shptr[i];
+                        state->sp_shfree[i] = e_dsc.sp_shfree[i];
+                }
 
                 state->p_label    = e_dsc.p_label;
                 state->p_numclass = e_dsc.p_numclass;
