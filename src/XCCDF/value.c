@@ -47,6 +47,16 @@ struct xccdf_value *xccdf_value_new(xccdf_value_type_t type)
     return XVALUE(xccdf_value_new_internal(NULL, type));
 }
 
+struct xccdf_value * xccdf_value_clone(const struct xccdf_value * value)
+{
+	struct xccdf_item *new_value = oscap_calloc(1, sizeof(struct xccdf_item) + sizeof(struct xccdf_value_item));
+	struct xccdf_item *old = XITEM(value);
+	new_value->item = *(xccdf_item_base_clone(&(old->item)));
+	new_value->type = old->type;
+	new_value->sub.value = *(xccdf_value_item_clone(&(old->sub.value)));
+	return XVALUE(new_value);
+}
+
 static const struct oscap_string_map XCCDF_VALUE_TYPE_MAP[] = {
 	{XCCDF_TYPE_NUMBER, "number"},
 	{XCCDF_TYPE_STRING, "string"},

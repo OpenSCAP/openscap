@@ -181,6 +181,16 @@ struct xccdf_group *xccdf_group_new(void)
     return XGROUP(xccdf_group_new_internal(NULL));
 }
 
+struct xccdf_group * xccdf_group_clone(const struct xccdf_group * group)
+{
+	struct xccdf_item *new_group = oscap_calloc(1, sizeof(struct xccdf_item) + sizeof(struct xccdf_group_item));
+	struct xccdf_item *old = XITEM(group);
+	new_group->item = *(xccdf_item_base_clone(&(old->item)));
+	new_group->type = old->type;
+	new_group->sub.group = *(xccdf_group_item_clone(&(old->sub.group), new_group));
+	return XGROUP(new_group);
+}
+
 struct xccdf_item *xccdf_group_parse(xmlTextReaderPtr reader, struct xccdf_item *parent)
 {
 	XCCDF_ASSERT_ELEMENT(reader, XCCDFE_GROUP);
@@ -265,6 +275,16 @@ struct xccdf_item *xccdf_rule_new_internal(struct xccdf_item *parent)
 struct xccdf_rule *xccdf_rule_new(void)
 {
     return XRULE(xccdf_rule_new_internal(NULL));
+}
+
+struct xccdf_rule *xccdf_rule_clone(const struct xccdf_rule * rule)
+{
+	struct xccdf_item *new_rule = oscap_calloc(1, sizeof(struct xccdf_item) + sizeof(struct xccdf_rule_item));
+	struct xccdf_item *old = XITEM(rule);
+	new_rule->item = *(xccdf_item_base_clone(&(old->item)));
+	new_rule->type = old->type;
+	new_rule->sub.rule = *(xccdf_rule_item_clone(&(old->sub.rule)));
+	return XRULE(new_rule);
 }
 
 struct xccdf_item *xccdf_rule_parse(xmlTextReaderPtr reader, struct xccdf_item *parent)
@@ -363,6 +383,14 @@ struct xccdf_ident *xccdf_ident_new(void)
     return oscap_calloc(1, sizeof(struct xccdf_ident));
 }
 
+struct xccdf_ident * xccdf_ident_clone(const struct xccdf_ident * ident)
+{
+	struct xccdf_ident * clone = xccdf_ident_new();
+	clone->id = oscap_strdup(ident->id);
+	clone->system = oscap_strdup(ident->system);
+	return clone;
+}
+
 struct xccdf_ident *xccdf_ident_new_fill(const char *id, const char *sys)
 {
 	struct xccdf_ident *ident = xccdf_ident_new();
@@ -399,6 +427,14 @@ struct xccdf_profile_note *xccdf_profile_note_new(void)
     return oscap_calloc(1, sizeof(struct xccdf_profile_note));
 }
 
+struct xccdf_profile_note * xccdf_profile_note_clone(const struct xccdf_profile_note * note)
+{
+	struct xccdf_profile_note * clone = xccdf_profile_note_new();
+	clone->reftag = oscap_strdup(note->reftag);
+	clone->text = oscap_text_clone(note->text);
+	return clone;
+}
+
 void xccdf_profile_note_free(struct xccdf_profile_note *note)
 {
 	if (note) {
@@ -419,6 +455,53 @@ struct xccdf_check *xccdf_check_new(void)
 	check->children = oscap_list_new();
 	return check;
 }
+
+/* Performs a deep copy of a provided xccdf_check, returns a pointer to that copy */
+struct xccdf_check *xccdf_check_clone(const struct xccdf_check* old_check)
+{
+	struct xccdf_check *new_check = oscap_calloc(1, sizeof(struct xccdf_check));
+
+	new_check->id = oscap_strdup(old_check->id);
+	new_check->system = oscap_strdup(old_check->system);
+	new_check->selector = oscap_strdup(old_check->selector);
+	new_check->content =  oscap_strdup(old_check->content);
+	new_check->oper = old_check->oper;
+
+	new_check->imports = oscap_list_clone(old_check->imports, (oscap_clone_func) xccdf_check_import_clone);
+	new_check->exports = oscap_list_clone(old_check->exports, (oscap_clone_func) xccdf_check_export_clone);
+	new_check->content_refs = oscap_list_clone(old_check->content_refs, (oscap_clone_func) xccdf_check_content_ref_clone);
+	new_check->children = oscap_list_clone(old_check->children, (oscap_clone_func) xccdf_check_clone);
+
+	return new_check;
+}
+
+/* Performs a deep copy of a provided xccdf_check_import, returns a pointer to that copy */
+struct xccdf_check_import *xccdf_check_import_clone(const struct xccdf_check_import* old_import)
+{
+	struct xccdf_check_import *new_import = xccdf_check_import_new();
+	new_import->name = oscap_strdup(old_import->name);
+	new_import->content = oscap_strdup(old_import->content);
+	return new_import;
+}
+
+/* Performs a deep copy of a provided xccdf_check_export, returns a pointer to that copy */
+struct xccdf_check_export *xccdf_check_export_clone(const struct xccdf_check_export* old_export)
+{
+	struct xccdf_check_export *new_export = xccdf_check_export_new();
+	new_export->name = oscap_strdup(old_export->name);
+	new_export->value = oscap_strdup(old_export->value);
+	return new_export;
+}
+
+/* Performs a deep copy of a provided xcdf_check_content_ref, returns a pointer to that copy */
+struct xccdf_check_content_ref *xccdf_check_content_ref_clone(const struct xccdf_check_content_ref* old_ref)
+{
+	struct xccdf_check_content_ref *new_ref = xccdf_check_content_ref_new();
+	new_ref->name = oscap_strdup(old_ref->name);
+	new_ref->href = oscap_strdup(old_ref->href);
+	return new_ref;
+}
+
 
 static const struct oscap_string_map XCCDF_BOOLOP_MAP[] = {
 	{XCCDF_OPERATOR_AND, "and"}, {XCCDF_OPERATOR_AND, "AND"},
@@ -609,6 +692,26 @@ struct xccdf_fix *xccdf_fix_new(void)
         return oscap_calloc(1, sizeof(struct xccdf_fix));
 }
 
+/* Creates a deep copy of a provided xccdf_fix, returns a pointer to that copy */
+struct xccdf_fix *xccdf_fix_clone(const struct xccdf_fix *old_fix)
+{
+	struct xccdf_fix *new_fix = oscap_calloc(1, sizeof(struct xccdf_fix));
+
+	new_fix->reboot = old_fix->reboot;
+	new_fix->strategy = old_fix->strategy;
+	new_fix->disruption = old_fix->disruption;
+	new_fix->complexity = old_fix->complexity;
+
+	new_fix->id = oscap_strdup(old_fix->id);
+	new_fix->content = oscap_strdup(old_fix->content);
+	new_fix->system = oscap_strdup(old_fix->system);
+	new_fix->platform = oscap_strdup(old_fix->platform);
+
+	return new_fix;
+}
+
+
+
 struct xccdf_fix *xccdf_fix_parse(xmlTextReaderPtr reader)
 {
 	struct xccdf_fix *fix = xccdf_fix_new();
@@ -622,6 +725,18 @@ struct xccdf_fix *xccdf_fix_parse(xmlTextReaderPtr reader)
 struct xccdf_fixtext *xccdf_fixtext_new(void)
 {
     return oscap_calloc(1, sizeof(struct xccdf_fixtext));
+}
+
+struct xccdf_fixtext * xccdf_fixtext_clone(const struct xccdf_fixtext * fixtext)
+{
+	struct xccdf_fixtext * clone = xccdf_fixtext_new();
+	clone->reboot = fixtext->reboot;
+	clone->strategy = fixtext->strategy;
+	clone->disruption = fixtext->disruption;
+	clone->complexity = fixtext->complexity;
+	clone->fixref = oscap_strdup(fixtext->fixref);
+	clone->content = oscap_strdup(fixtext->content);
+	return clone;	
 }
 
 struct xccdf_fixtext *xccdf_fixtext_parse(xmlTextReaderPtr reader)

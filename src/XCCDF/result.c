@@ -53,6 +53,16 @@ struct xccdf_result *xccdf_result_new(void)
 	return XRESULT(result);
 }
 
+struct xccdf_result * xccdf_result_clone(const struct xccdf_result * result)
+{
+	struct xccdf_item *new_result = oscap_calloc(1, sizeof(struct xccdf_item) + sizeof(struct xccdf_result_item));
+	struct xccdf_item *old = XITEM(result);
+	new_result->item = *(xccdf_item_base_clone(&(old->item)));
+	new_result->type = old->type;
+	new_result->sub.result = *(xccdf_result_item_clone(&(old->sub.result)));
+	return XRESULT(new_result);
+}
+
 static inline void xccdf_result_free_impl(struct xccdf_item *result)
 {
 	if (result != NULL) {

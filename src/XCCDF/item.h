@@ -435,6 +435,29 @@ void xccdf_setvalue_dump(struct xccdf_setvalue *sv, int depth);
 struct xccdf_warning *xccdf_warning_new_parse(xmlTextReaderPtr reader);
 struct xccdf_reference *xccdf_reference_new_parse(xmlTextReaderPtr reader);
 
+//private methods for cloning items
+//Will clone the item member of a xccdf_item object
+struct xccdf_item_base * xccdf_item_base_clone(const struct xccdf_item_base * item);
+
+//clones the specific types of items
+struct xccdf_profile_item * xccdf_profile_item_clone(const struct xccdf_profile_item * item);
+struct xccdf_benchmark_item * xccdf_benchmark_item_clone(const struct xccdf_benchmark_item * item, struct xccdf_item * parent);
+struct xccdf_rule_item * xccdf_rule_item_clone(const struct xccdf_rule_item * item);
+struct xccdf_group_item * xccdf_group_item_clone(const struct xccdf_group_item * item, struct xccdf_item * parent);
+union xccdf_value_unit xccdf_value_unit_clone_str(const union xccdf_value_unit unit);
+union xccdf_value_unit xccdf_value_unit_clone_numeric(const union xccdf_value_unit unit);
+union xccdf_value_unit xccdf_value_unit_clone_bool(const union xccdf_value_unit unit);
+struct xccdf_value_val * xccdf_value_val_clone_str(const struct xccdf_value_val * val);
+struct xccdf_value_val * xccdf_value_val_clone_numeric(const struct xccdf_value_val * val);
+struct xccdf_value_val * xccdf_value_val_clone_bool(const struct xccdf_value_val * val);
+struct xccdf_value_val * xccdf_value_val_clone(const struct xccdf_value_val * val, xccdf_value_type_t type);
+struct xccdf_value_item * xccdf_value_item_clone(const struct xccdf_value_item * item);
+struct xccdf_result_item * xccdf_result_item_clone(const struct xccdf_result_item * item);
+struct xccdf_ident * xccdf_ident_clone(const struct xccdf_ident * ident);
+struct xccdf_profile_note * xccdf_profile_note_clone(const struct xccdf_profile_note * note);
+void xccdf_reparent_list(struct oscap_list * item_list, struct xccdf_item * parent);
+void xccdf_reparent_item(struct xccdf_item * item, struct xccdf_item * parent);
+
 #include "unused.h"
 
 OSCAP_HIDDEN_END;

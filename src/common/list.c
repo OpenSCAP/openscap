@@ -270,6 +270,25 @@ struct oscap_htable *oscap_htable_new1(oscap_compare_func cmp, size_t hsize)
 	return t;
 }
 
+struct oscap_htable * oscap_htable_clone(const struct oscap_htable * table, oscap_clone_func cloner)
+{
+	struct oscap_htable *t = oscap_htable_new();
+	if (t == NULL)
+		return NULL;
+
+	int i;
+	for (i = 0; i < table->hsize; ++i) {
+		struct oscap_htable_item *item = table->table[i];
+		while (item != NULL) {
+			oscap_htable_add(t, item->key, (void *) cloner(item->value));
+			item = item->next;
+		}
+		
+	}
+	
+	return t;
+}
+
 static int oscap_htable_cmp(const char *s1, const char *s2)
 {
 	if (s1 == NULL)
