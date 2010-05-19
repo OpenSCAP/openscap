@@ -202,3 +202,55 @@ const char *SEXP_datatype_name(SEXP_datatypePtr_t *p)
 
         return(name);
 }
+
+SEXP_datatype_t *SEXP_datatype_new(void)
+{
+        SEXP_datatype_t *d;
+
+        d = sm_talloc(SEXP_datatype_t);
+        d->dt_flg = 0;
+
+        return(d);
+}
+
+int SEXP_datatype_setflag(SEXP_datatype_t **dp, uint16_t flag, ...)
+{
+        assume_r( dp != NULL, -1, errno = EFAULT;);
+        assume_r(*dp != NULL, -1, errno = EFAULT;);
+
+        switch(flag) {
+        case SEXP_DTFLG_LOCALDATA:
+                break;
+        case SEXP_DTFLG_HAVEDTOPS:
+                break;
+        }
+
+        errno = EINVAL;
+        return(-1);
+}
+
+int SEXP_datatype_unsetflag(SEXP_datatype_t **dp, uint16_t flag)
+{
+        assume_r( dp != NULL, -1, errno = EFAULT;);
+        assume_r(*dp != NULL, -1, errno = EFAULT;);
+
+        switch(flag) {
+        case SEXP_DTFLG_LOCALDATA:
+                break;
+        case SEXP_DTFLG_HAVEDTOPS:
+                break;
+        }
+
+        errno = EINVAL;
+        return(-1);
+}
+
+int SEXP_datatype_addop(SEXP_datatype_t **dp, int opnum, SEXP_datatypeOP_t *op)
+{
+        return(-1);
+}
+
+int SEXP_datatype_delop(SEXP_datatype_t **dp, int opnum)
+{
+        return(-1);
+}
