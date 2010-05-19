@@ -1318,12 +1318,12 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_OBJECTREF(struct 
 	struct oval_component_OBJECTREF *objref = (struct oval_component_OBJECTREF *)component;
 	struct oval_object *object = objref->object;
 	if (object) {
-		oval_pctx_t *pctx;
+		oval_probe_session_t *sess;
 		struct oval_syschar *syschar;
 
-		pctx = oval_pctx_new(sysmod);
-		syschar = oval_probe_object_eval(pctx, object);
-		oval_pctx_free(pctx);
+		sess = oval_probe_session_new(sysmod);
+		syschar = oval_probe_object_eval(sess, object, 0);
+		oval_probe_session_destroy(sess);
 
 		if (syschar) {
 			flag = oval_syschar_get_flag(syschar);

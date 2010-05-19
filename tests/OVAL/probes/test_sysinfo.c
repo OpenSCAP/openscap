@@ -17,17 +17,17 @@ int main (void)
   assume(sys_model != NULL);
 
   /*
-   *  Create probe context.
+   *  Create probe session
    */
-  oval_pctx_t *pctx = oval_pctx_new (sys_model);
-  assume(pctx != NULL);
+  oval_probe_session_t *sess = oval_probe_session_new(sys_model);
+  assume(sess != NULL);
 
   /*
    *  Call the sysinfo probe.
    */
-  struct oval_sysinfo *info = oval_probe_sysinf_eval (pctx);
+  struct oval_sysinfo *info = oval_probe_sysinf_eval (sess);
   assume(info != NULL);
-  
+
   if (info != NULL) {
     char *a, *b, *c, *d;
 
@@ -67,8 +67,8 @@ int main (void)
     }
     
     oval_sysinfo_free (info);
-    oval_pctx_free (pctx);
-    
+    oval_probe_session_destroy(sess);
+
     return (0);
   }
   
@@ -76,7 +76,7 @@ int main (void)
    *  Free the probe context. This also terminates
    *  all running probes executed under this context.
    */
-  oval_pctx_free (pctx);
+  oval_probe_session_destroy(sess);
   
   return (1);
 }

@@ -30,11 +30,6 @@
 
 OSCAP_HIDDEN_START;
 
-typedef struct {
-        uint8_t              arity;
-        SEXP_datatype_opfn_t fn[3];
-} SEXP_datatypeOP_t;
-
 struct SEXP_datatype {
         uint16_t          dt_flg;
         uint8_t          _dt[];

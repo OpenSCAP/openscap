@@ -119,7 +119,8 @@ typedef enum {
 /// Unknown subtypes
 typedef enum {
 	OVAL_SUBTYPE_UNKNOWN = 0,
-	OVAL_SUBTYPE_ALL = 1
+	OVAL_SUBTYPE_ALL = 1,
+        OVAL_SUBTYPE_SYSINFO = 2
 } oval_subtype_t;
 
 /// AIX subtypes

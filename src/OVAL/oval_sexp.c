@@ -431,17 +431,17 @@ SEXP_t *oval_state2sexp(struct oval_state * state)
 	SEXP_t *r0, *r1, *r2;
 	char buffer[128];
 	size_t buflen;
-	const oval_pdsc_t *probe;
+	const char *subtype_name;
 	struct oval_state_content_iterator *contents;
 
-	probe = oval_pdsc_lookup(oval_state_get_subtype(state));
+        subtype_name = oval_subtype2str(oval_state_get_subtype(state));
 
-	if (probe == NULL) {
+	if (subtype_name == NULL) {
 		_D("FAIL: unknown subtype: %d\n", oval_state_get_subtype(state));
 		return (NULL);
 	}
 
-	buflen = snprintf(buffer, sizeof buffer, "%s_state", probe->subtype_name);
+	buflen = snprintf(buffer, sizeof buffer, "%s_state", subtype_name);
 	_A(buflen < sizeof buffer);
 
 	ste_name = SEXP_list_new(r0 = SEXP_string_new(buffer, buflen),
@@ -611,7 +611,7 @@ static struct oval_sysdata *oval_sysdata_from_sexp(struct oval_syschar_model *mo
 		*endptr = '\0';	// cut off the '_item' part
 	}
 
-	int type = oval_pdsc_lookup_type(name);
+	int type = oval_str2subtype(name);
 
 	_D("Syschar entry type: %d '%s' => %s\n", type, name, (type ? "OK" : "FAILED to decode"));
 
