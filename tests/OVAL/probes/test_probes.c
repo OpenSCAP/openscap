@@ -141,7 +141,7 @@ int main(int argc, char **argv) {
 /* 	source = oscap_import_source_new_file(argv[1], NULL); */
 /*         _test_error(); */
 /* 	definition_model = oval_definition_model_new(); */
-/* 	ret = oval_definition_model_import(definition_model, source); */
+/* 	ret = oval_definition_model_import(definition_model, source, NULL); */
 /* 	if(ret != 1) { */
 /* 		printf("oval_definition_model_import() failed.\n"); */
 /*                 _test_error(); */

@@ -1271,6 +1271,11 @@ function test_probes_inetlisteningservers {
 	return 255; # Test is not applicable.
     fi
 
+    if [ ! "`whoami`X" = "rootX" ]; then		
+	echo -e "Root access required!\n" >&2
+	return 255; # Test is not applicable.
+    fi
+
     bash "${srcdir}/OVAL/probes/test_probes_inetlisteningservers.xml.sh" > "$DEFFILE"
     LINES=$?
 
@@ -1303,6 +1308,113 @@ function test_probes_inetlisteningservers {
 	fi
 	
 	COUNT=$[3*$LINES]; ID=1
+	while [ $ID -le $COUNT ]; do
+	    
+	    TEST_DEF=`cat "$DEFFILE" | grep "id=\"oval:1:tst:${ID}\""`
+	    TEST_RES=`cat "$RESFILE" | grep "test_id=\"oval:1:tst:${ID}\""`
+
+	    if (echo $TEST_RES | grep -q "result=\"true\""); then
+		RES="TRUE"
+	    elif (echo $TEST_RES | grep -q "result=\"false\""); then
+		RES="FALSE"
+	    else
+		RES="ERROR"
+	    fi
+
+	    if (echo $TEST_DEF | grep -q "comment=\"true\""); then
+		CMT="TRUE"
+	    elif (echo $TEST_DEF | grep -q "comment=\"false\""); then
+		CMT="FALSE"
+	    else
+		CMT="ERROR"
+	    fi
+
+	    if [ ! $RES = $CMT ]; then
+
+		STATE_ID=`grep "id=\"oval:1:tst:${ID}\"" "$DEFFILE" -A2 | sed -n '3p' | sed 's/.*state_ref="\(.*\)".*/\1/'`
+		PROTOCOL=`grep "id=\"${STATE_ID}\"" "$DEFFILE" -A5 | sed -n '2p' | sed 's/\s*<protocol>\(.*\)<\/protocol>\s*/\1/'`
+		ADDRESS=`grep "id=\"${STATE_ID}\"" "$DEFFILE" -A5 | sed -n '3p' | sed 's/\s*<local_address>\(.*\)<\/local_address>\s*/\1/'`
+		PORT=`grep "id=\"${STATE_ID}\"" "$DEFFILE" -A5 | sed -n '4p' | sed 's/\s*<local_port>\(.*\)<\/local_port>\s*/\1/'`
+		PID=`grep "id=\"${STATE_ID}\"" "$DEFFILE" -A5 | sed -n '5p' | sed 's/\s*<pid>\(.*\)<\/pid>\s*/\1/'`		
+		PROGRAM=`grep "id=\"${STATE_ID}\"" "$DEFFILE" -A5 | sed -n '6p' | sed 's/\s*<program_name>\(.*\)<\/program_name>\s*/\1/'`		
+		
+		if [ `ss -a -u -t -n -p  | grep "$PROTOCOL" | grep "$ADDRESS" | grep "$PORT" | grep "$PID" | grep "$PROGRAM" | wc -l` -eq 0 ]; then
+		    echo "Subtest oval:1:tst:${ID} is skipped!" >&2
+		    echo "" >&2
+		else
+		    echo "Result of oval:1:tst:${ID} should be ${CMT}!" >&2
+		    ret_val=$[$ret_val + 1]
+		fi		    
+	    fi
+
+	    ID=$[$ID+1]
+	done
+
+	if [ ! $ret_val -eq 0 ]; then
+	    echo "" >&2
+	    cat "$RESFILE" >&2
+	    echo "" >&2
+	    ret_val=2
+	fi
+
+    else 
+	ret_val=1
+    fi
+
+    return $ret_val
+}
+
+function test_probes_interface {
+
+    if [ ! -x ${OVAL_PROBE_DIR}/probe_interface ]; then		
+	echo -e "Probe interface does not exist!\n" >&2
+	return 255; # Test is not applicable.
+    fi
+
+    local ret_val=0;
+    local LOGFILE="test_probes_interface.out"
+    local EXECDIR="$(pwd)"
+    local DEFFILE="test_probes_interface.xml"
+    local RESFILE="test_probes_interface.xml.results.xml"
+
+    eval "which ifconfig  > /dev/null 2>&1"    
+    if [ ! $? -eq 0 ]; then		
+	echo -e "No ifconfig found in $PATH!\n" >&2
+	return 255; # Test is not applicable.
+    fi
+
+    bash "${srcdir}/OVAL/probes/test_probes_interface.xml.sh" > "$DEFFILE"
+    LINES=$?
+
+    eval "\"${EXECDIR}/test_probes\" \"$DEFFILE\" \"$RESFILE\"" >> "$LOGFILE"
+    
+    if [ $? -eq 0 ] && [ -e $RESFILE ]; then
+
+	DEF_DEF=`cat "$DEFFILE" | grep "id=\"oval:1:def:1\""`
+	DEF_RES=`cat "$RESFILE" | grep "definition_id=\"oval:1:def:1\""`
+
+	if (echo $DEF_RES | grep -q "result=\"true\""); then
+	    RES="TRUE"
+	elif (echo $DEF_RES | grep -q "result=\"false\""); then
+	    RES="FALSE"
+	else
+	    RES="ERROR"
+	fi
+	
+	if (echo $DEF_DEF | grep -q "comment=\"true\""); then
+	    CMT="TRUE"
+	elif (echo $DEF_DEF | grep -q "comment=\"false\""); then
+	    CMT="FALSE"
+	else
+	    CMT="ERROR"
+	fi
+	
+	if [ ! $RES = $CMT ]; then
+	    echo "Result of oval:1:def:1 should be ${CMT}!" >&2
+	    ret_val=$[$ret_val + 1]
+	fi
+	
+	COUNT=$LINES; ID=1
 	while [ $ID -le $COUNT ]; do
 	    
 	    TEST_DEF=`cat "$DEFFILE" | grep "id=\"oval:1:tst:${ID}\""`
@@ -1453,7 +1565,10 @@ function test_probes_cleanup {
    	  /tmp/test_probes_filehash.tmp \
 	  test_probes_inetlisteningservers.out \
 	  test_probes_inetlisteningservers.xml \
-	  test_probes_inetlisteningservers.xml.results.xml 
+	  test_probes_inetlisteningservers.xml.results.xml \
+	  test_probes_interface.out \
+	  test_probes_interface.xml \
+	  test_probes_interface.xml.results.xml 
 
     return 0
 }
@@ -1553,6 +1668,11 @@ ret_val=$?
 report_result "test_probes_inetlisteningservers" $ret_val  
 result=$[$result+$?]   
 
+test_probes_interface
+ret_val=$?
+report_result "test_probes_interface" $ret_val  
+result=$[$result+$?]   
+
 test_crapi_digest
 ret_val=$?
 report_result "test_crapi_digest" $ret_val  
@@ -1572,5 +1692,3 @@ echo "--------------------------------------------------"
 echo "See ${log} (in tests dir)"
 
 exit $result
-
-

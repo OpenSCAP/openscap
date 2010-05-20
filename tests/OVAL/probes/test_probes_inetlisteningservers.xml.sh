@@ -5,7 +5,8 @@ TMP=`mktemp`
 ss -a -u -t -n -p  | \
     sed -n '2,$p' | \
     awk '{print $1 " " $5 " " $6 " " $7}' | \
-    sed 's/\([a-z]*\)\s\([a-z0-9\.:\*]*\):\([0-9\*]*\)\s\([a-z0-9\.:\*]*\):\([0-9\*]*\) users:(("\(.*\)",\([0-9]*\).*/\1 \2 \3 \4 \5 \6 \7/' > $TMP
+    sed 's/\([a-z]*\)\s\([a-z0-9\.:\*]*\):\([0-9\*]*\)\s\([a-z0-9\.:\*]*\):\([0-9\*]*\) users:(("\([a-zA-Z\.-]*\)",\([0-9]*\).*/\1 \2 \3 \4 \5 \6 \7 X/' | \
+    grep "X" > $TMP
 
 PROTOCOL=( `cat $TMP | awk '{print $1}' | tr '\n' ' '` )
 LOCAL_ADDRESS=( `cat $TMP | awk '{print $2}' | sed 's/\*/0.0.0.0/' | tr '\n' ' '` )
@@ -13,7 +14,7 @@ LOCAL_PORT=( `cat $TMP | awk '{print $3}' | sed 's/\*/0/' | tr '\n' ' '` )
 FOREIGN_ADDRESS=( `cat $TMP | awk '{print $4}' | sed 's/\*/0.0.0.0/' | tr '\n' ' '` )
 FOREIGN_PORT=( `cat $TMP | awk '{print $5}' | sed 's/\*/0/' | tr '\n' ' '` )
 PROGRAM_NAME=( `cat $TMP | awk '{print $6}' | tr '\n' ' '` )
-PID=( `cat $TMP | awk '{print $7}' | tr '\n' ' '` )
+PID=( `cat $TMP | awk '{print $7}' | sed 's/^$/0/' | tr '\n' ' '` )
 
 cat <<EOF
 <?xml version="1.0"?>
@@ -114,12 +115,12 @@ while [ $I -lt ${#PROTOCOL[@]} ]; do
       <protocol>${PROTOCOL[$I]}</protocol>
       <local_address>${LOCAL_ADDRESS[$I]}</local_address>
       <local_port>${LOCAL_PORT[$I]}</local_port>
+      <pid>${PID[$I]}</pid>
       <local_full_address>${LOCAL_ADDRESS[$I]}:${LOCAL_PORT[$I]}</local_full_address>
       <foreign_address>${FOREIGN_ADDRESS[$I]}</foreign_address>
       <foreign_port>${FOREIGN_PORT[$I]}</foreign_port>
       <foreign_full_address>${FOREIGN_ADDRESS[$I]}:${FOREIGN_PORT[$I]}</foreign_full_address>
       <program_name>${PROGRAM_NAME[$I]}</program_name>
-      <pid>${PID[$I]}</pid>
     </inetlisteningservers_state>
 EOF
     I=$[$I+1]
