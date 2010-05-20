@@ -97,7 +97,7 @@ void SEXP_pstate_free (SEXP_pstate_t *pstate)
          * Free the subparser shared pointer using functions
          * from the sp_shfree array (if != NULL)
          */
-        for(int i = 0; i < SEXP_PFUNC_COUNT; ++i) {
+        for(i = 0; i < SEXP_PFUNC_COUNT; ++i) {
                 if (pstate->sp_shptr[i] != NULL && pstate->sp_shfree[i] != NULL)
                         pstate->sp_shfree[i](pstate->sp_shptr[i]);
         }

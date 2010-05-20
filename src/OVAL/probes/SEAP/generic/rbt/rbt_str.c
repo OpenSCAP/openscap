@@ -66,7 +66,7 @@ void rbt_str_free (rbt_t *rbt)
 
 void rbt_str_free_cb (rbt_t *rbt, void (*callback)(struct rbt_str_node *))
 {
-        rbt_free(rbt, callback);
+        rbt_free(rbt, (void(*)(void *))callback);
 }
 
 int rbt_str_add(rbt_t *rbt, char *key, void *data)

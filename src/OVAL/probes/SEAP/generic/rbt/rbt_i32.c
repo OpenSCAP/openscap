@@ -59,7 +59,7 @@ void rbt_i32_free (rbt_t *rbt)
 
 void rbt_i32_free_cb (rbt_t *rbt, void (*callback)(rbt_i32_node_t *))
 {
-        rbt_free(rbt, callback);
+        rbt_free(rbt, (void(*)(void *))callback);
 }
 
 int rbt_i32_add(rbt_t *rbt, int32_t key, void *data)

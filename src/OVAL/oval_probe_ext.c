@@ -38,6 +38,11 @@ const oval_pdsc_t OSCAP_GSYM(default_pdsc)[] = {
 
 #define DEFAULT_PDSC_COUNT (sizeof OSCAP_GSYM(default_pdsc) / sizeof (oval_pdsc_t))
 
+static oval_pdtbl_t *oval_pdtbl_new(void);
+static void          oval_pdtbl_free(oval_pdtbl_t *table);
+static int           oval_pdtbl_add(oval_pdtbl_t *table, oval_subtype_t type, int sd, const char *uri);
+static oval_pd_t    *oval_pdtbl_get(oval_pdtbl_t *table, oval_subtype_t type);
+
 /*
  * oval_pext_
  */
@@ -66,6 +71,7 @@ void oval_pext_free(oval_pext_t *pext)
 {
         if (!pext->do_init) {
                 /* free structs */
+                oval_pdtbl_free(pext->pdtbl);
         }
 
         pthread_mutex_destroy(&pext->lock);
@@ -75,11 +81,6 @@ void oval_pext_free(oval_pext_t *pext)
 /*
  * oval_pdtbl_
  */
-static oval_pdtbl_t *oval_pdtbl_new(void);
-static void          oval_pdtbl_free(oval_pdtbl_t *table);
-static int           oval_pdtbl_add(oval_pdtbl_t *table, oval_subtype_t type, int sd, const char *uri);
-static oval_pd_t    *oval_pdtbl_get(oval_pdtbl_t *table, oval_subtype_t type);
-
 static oval_pdtbl_t *oval_pdtbl_new(void)
 {
 	oval_pdtbl_t *p_tbl;
@@ -94,7 +95,7 @@ static oval_pdtbl_t *oval_pdtbl_new(void)
 
 static void oval_pdtbl_free(oval_pdtbl_t *tbl)
 {
-        register int i;
+        register size_t i;
 
         for (i = 0; i < tbl->count; ++i) {
                 SEAP_close(tbl->ctx, tbl->memb[i].sd);
@@ -580,11 +581,13 @@ int oval_probe_sys_handler(oval_subtype_t type, void *ptr, int act, ...)
         switch(act) {
         case PROBE_HANDLER_ACT_EVAL:
         {
-                struct oval_object   *obj = va_arg(ap, struct oval_object *);
-                struct oval_sysinfo **inf = va_arg(ap, struct oval_sysinfo **);
-                int flags = va_arg(ap, int);
+                struct oval_object   *obj;
+                struct oval_sysinfo **inf;
+                /* int flags = va_arg(ap, int); */
 
-                pd = oval_pdtbl_get(pext->pdtbl, type);
+                obj = va_arg(ap, struct oval_object *);
+                inf = va_arg(ap, struct oval_sysinfo **);
+                pd  = oval_pdtbl_get(pext->pdtbl, type);
 
                 if (pd == NULL) {
                         if (oval_probe_sys_handler(type, ptr, PROBE_HANDLER_ACT_OPEN) != 0)
@@ -705,7 +708,7 @@ int oval_probe_ext_init(oval_pext_t *pext)
 
         pthread_mutex_lock(&pext->lock);
         if (pext->do_init) {
-                pext->pdsc     = OSCAP_GSYM(default_pdsc);
+                pext->pdsc     = (oval_pdsc_t *)OSCAP_GSYM(default_pdsc);
                 pext->pdsc_cnt = DEFAULT_PDSC_COUNT;
                 pext->pdtbl    = oval_pdtbl_new();
 

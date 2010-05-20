@@ -156,11 +156,11 @@ fail:
         return (NULL);
 }
 
-static int check_child (pid_t pid, int wait)
+static int check_child (pid_t pid, int waitf)
 {
         int status = -1;
 
-        switch (pid = waitpid (pid, &status, wait ? 0 : WNOHANG)) {
+        switch (pid = waitpid (pid, &status, waitf ? 0 : WNOHANG)) {
         case  0: return (0);
         case -1: return (-1);
         default:

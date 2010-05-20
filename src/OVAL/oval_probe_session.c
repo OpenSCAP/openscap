@@ -53,7 +53,8 @@ oval_probe_session_t *oval_probe_session_new(struct oval_syschar_model *model)
         oval_probe_handler_set(sess->ph, OVAL_INDEPENDENT_FAMILY,    oval_probe_ext_handler, sess->pext);
         oval_probe_handler_set(sess->ph, OVAL_INDEPENDENT_FILE_MD5,  oval_probe_ext_handler, sess->pext);
         oval_probe_handler_set(sess->ph, OVAL_INDEPENDENT_FILE_HASH, oval_probe_ext_handler, sess->pext);
-        oval_probe_handler_set(sess->ph, OVAL_INDEPENDENT_TEXT_FILE_CONTENT_54, oval_probe_ext_handler, sess->pext);       oval_probe_handler_set(sess->ph, OVAL_INDEPENDENT_TEXT_FILE_CONTENT, oval_probe_ext_handler, sess->pext);
+        oval_probe_handler_set(sess->ph, OVAL_INDEPENDENT_TEXT_FILE_CONTENT_54, oval_probe_ext_handler, sess->pext);
+        oval_probe_handler_set(sess->ph, OVAL_INDEPENDENT_TEXT_FILE_CONTENT, oval_probe_ext_handler, sess->pext);
         oval_probe_handler_set(sess->ph, OVAL_INDEPENDENT_XML_FILE_CONTENT,  oval_probe_ext_handler, sess->pext);
         oval_probe_handler_set(sess->ph, OVAL_LINUX_INET_LISTENING_SERVERS,  oval_probe_ext_handler, sess->pext);
         oval_probe_handler_set(sess->ph, OVAL_LINUX_DPKG_INFO, oval_probe_ext_handler, sess->pext);

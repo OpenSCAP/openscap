@@ -63,7 +63,6 @@ void rbt_free(rbt_t *rbt, void (*callback)(void *))
 {
         struct rbt_node *stack[48], *n;
         register uint8_t depth;
-        register int     r;
 
         rbt_wlock(rbt);
 
@@ -304,8 +303,10 @@ int rbt_walk_inorder(rbt_t *rbt, int (*callback)(void *), rbt_walk_t flags)
 
         if (flags & RBT_WALK_RAWNODE)
                 delta = 0;
-        else
-                delta = (uint8_t)(((struct rbt_node *)NULL)->_node);
+        else {
+                delta = sizeof(void *) * 2;
+                assume_d((sizeof(void *) * 2) == (size_t)(((struct rbt_node *)(NULL))->_node), -1);
+        }
 
         depth = 0;
         n = rbt_node_ptr(rbt->root);

@@ -55,6 +55,11 @@ OSCAP_HIDDEN_START;
 const char *oval_subtype2str(oval_subtype_t subtype);
 oval_subtype_t oval_str2subtype(const char *str);
 
+typedef struct {
+        oval_subtype_t type;
+        char          *name;
+} oval_subtypedsc_t;
+
 OSCAP_HIDDEN_END;
 
 extern encache_t *OSCAP_GSYM(encache);

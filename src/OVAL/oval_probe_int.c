@@ -4,22 +4,41 @@ static struct oval_syschar *oval_probe_envvar_handler(struct oval_object *obj)
         struct oval_entity  *ent;
         struct oval_object_content_iterator *cit;
         struct oval_object_content *con;
+        struct oval_entity_value *val;
 
-        char *var_name;
+        char *var_name, *var_value, *ent_name;
 
         cit = oval_object_get_object_contents(object);
 
 	while (oval_object_content_iterator_has_more(cit)) {
                 con = oval_object_content_iterator_next(cit);
 
-                switch(oval_object_content_get_type(con)) {
-                case OVAL_OBJECTCONTENT_ENTITY:
-                        ent = oval_object_content_get_entity(con);
-                        /* Aaarghhh! Morbo: OBJECTS DO NOT WORK THAT WAY! */
-                }
+                if (oval_object_content_get_type(con) != OVAL_OBJECTCONTENT_ENTITY)
+                        continue;
+
+                ent = oval_object_content_get_entity(con);
+                ent_name = oval_entity_get_name(ent);
+
+                if (strcmp(ent_name, "name") != 0)
+                        continue;
+
+                if (oval_entity_get_datatype(ent) != OVA_DATATYPE_STRING)
+                        continue;
+
+                val = oval_entity_get_value(ent);
+                var_name = oval_value_get_text(val);
+
+                goto found;
         }
 
-        return(NULL); /* let's return NULL for now and get more cups of coffe */
+        return(NULL);
+found:
+        var_value = getenv(var_name);
+
+        if (var_value == NULL)
+                return(NULL);
+
+        return(sys);
 }
 
 int oval_probe_envvar_handler(oval_subtype_t type, void *ptr, int act, ...)

@@ -45,6 +45,62 @@
 #include "_oval_probe_session.h"
 #include "_oval_probe_handler.h"
 
+/* Sorted by subtype (first column) */
+oval_subtypedsc_t __s2n_tbl[] = {
+        /*     2 */ {OVAL_SUBTYPE_SYSINFO,                  "system_info"         },
+	/*  7001 */ {OVAL_INDEPENDENT_FAMILY,               "family"              },
+        /*  7002 */ {OVAL_INDEPENDENT_FILE_MD5,             "filemd5"             },
+        /*  7003 */ {OVAL_INDEPENDENT_FILE_HASH,            "filehash"            },
+	/*  7006 */ {OVAL_INDEPENDENT_TEXT_FILE_CONTENT_54, "textfilecontent54"   },
+	/*  7007 */ {OVAL_INDEPENDENT_TEXT_FILE_CONTENT,    "textfilecontent"     },
+	/*  7010 */ {OVAL_INDEPENDENT_XML_FILE_CONTENT,     "xmlfilecontent"      },
+	/*  9001 */ {OVAL_LINUX_DPKG_INFO,                  "dpkginfo"            },
+	/*  9002 */ {OVAL_LINUX_INET_LISTENING_SERVERS,     "inetlisteningservers"},
+	/*  9003 */ {OVAL_LINUX_RPM_INFO,                   "rpminfo"             },
+	/* 13001 */ {OVAL_UNIX_FILE,                        "file"                },
+	/* 13003 */ {OVAL_UNIX_INTERFACE,                   "interface"           },
+	/* 13004 */ {OVAL_UNIX_PASSWORD,                    "password"            },
+	/* 13005 */ {OVAL_UNIX_PROCESS,                     "process"             },
+	/* 13006 */ {OVAL_UNIX_RUNLEVEL,                    "runlevel"            },
+	/* 13008 */ {OVAL_UNIX_SHADOW,                      "shadow"              },
+	/* 13009 */ {OVAL_UNIX_UNAME,                       "uname"               }
+};
+
+#define __s2n_tbl_count (sizeof __s2n_tbl / sizeof(oval_subtypedsc_t))
+
+static int __s2n_tbl_cmp(oval_subtype_t *type, oval_subtypedsc_t *dsc)
+{
+        return (*type - dsc->type);
+}
+
+/* Sorted by name (second column) */
+oval_subtypedsc_t __n2s_tbl[] = {
+	/*  9001 */ {OVAL_LINUX_DPKG_INFO,                  "dpkginfo"            },
+	/*  7001 */ {OVAL_INDEPENDENT_FAMILY,               "family"              },
+	/* 13001 */ {OVAL_UNIX_FILE,                        "file"                },
+        /*  7003 */ {OVAL_INDEPENDENT_FILE_HASH,            "filehash"            },
+        /*  7002 */ {OVAL_INDEPENDENT_FILE_MD5,             "filemd5"             },
+	/*  9002 */ {OVAL_LINUX_INET_LISTENING_SERVERS,     "inetlisteningservers"},
+	/* 13003 */ {OVAL_UNIX_INTERFACE,                   "interface"           },
+	/* 13004 */ {OVAL_UNIX_PASSWORD,                    "password"            },
+	/* 13005 */ {OVAL_UNIX_PROCESS,                     "process"             },
+	/*  9003 */ {OVAL_LINUX_RPM_INFO,                   "rpminfo"             },
+	/* 13006 */ {OVAL_UNIX_RUNLEVEL,                    "runlevel"            },
+	/* 13008 */ {OVAL_UNIX_SHADOW,                      "shadow"              },
+        /*     2 */ {OVAL_SUBTYPE_SYSINFO,                  "system_info"         },
+	/*  7007 */ {OVAL_INDEPENDENT_TEXT_FILE_CONTENT,    "textfilecontent"     },
+	/*  7006 */ {OVAL_INDEPENDENT_TEXT_FILE_CONTENT_54, "textfilecontent54"   },
+	/* 13009 */ {OVAL_UNIX_UNAME,                       "uname"               },
+	/*  7010 */ {OVAL_INDEPENDENT_XML_FILE_CONTENT,     "xmlfilecontent"      }
+};
+
+#define __n2s_tbl_count (sizeof __n2s_tbl / sizeof(oval_subtypedsc_t))
+
+static int __n2s_tbl_cmp(const char *name, oval_subtypedsc_t *dsc)
+{
+        return strcmp(name, dsc->name);
+}
+
 encache_t *OSCAP_GSYM(encache) = NULL;
 struct id_desc_t OSCAP_GSYM(id_desc);
 
@@ -52,12 +108,22 @@ struct id_desc_t OSCAP_GSYM(id_desc);
 
 const char *oval_subtype2str(oval_subtype_t subtype)
 {
-        return("foo");
+        oval_subtypedsc_t *d;
+
+        d = oscap_bfind(__s2n_tbl, __s2n_tbl_count, sizeof(oval_subtypedsc_t), &subtype,
+                        (int(*)(void *, void *))__s2n_tbl_cmp);
+
+        return (d == NULL ? NULL : d->name);
 }
 
 oval_subtype_t oval_str2subtype(const char *str)
 {
-        return(0);
+        oval_subtypedsc_t *d;
+
+        d = oscap_bfind(__n2s_tbl, __n2s_tbl_count, sizeof(oval_subtypedsc_t), str,
+                        (int(*)(void *, void *))__n2s_tbl_cmp);
+
+        return (d == NULL ? OVAL_SUBTYPE_UNKNOWN : d->type);
 }
 
 struct oval_syschar *oval_probe_object_eval(oval_probe_session_t *psess, struct oval_object *object, int flags)

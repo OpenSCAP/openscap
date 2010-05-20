@@ -224,7 +224,7 @@ void spb_free (spb_t *spb, spb_flags_t flags)
         }
 
         if (flags & SPB_FLAG_FREE) {
-                register int i;
+                register uint32_t i;
 
                 for (i = 0; i < spb->btotal; ++i)
                         sm_free(spb->buffer[i].base);

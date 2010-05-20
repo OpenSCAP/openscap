@@ -572,7 +572,6 @@ int main(void)
 	pthread_t thread;
 
         struct sigaction sigact;
-        sigset_t         sigset;
 
         /* Setup signal handler */
         sigemptyset(&sigact.sa_mask);

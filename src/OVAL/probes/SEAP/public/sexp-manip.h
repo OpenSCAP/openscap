@@ -477,9 +477,8 @@ void       SEXP_listit_free (SEXP_it_t *it);
 #endif /* __STDC_VERSION__ >= 199901L */
 
 /*
- * generic 
+ * generic
  */
-
 SEXP_t *SEXP_new (void);
 
 /**
