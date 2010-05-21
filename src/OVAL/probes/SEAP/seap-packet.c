@@ -251,8 +251,10 @@ static SEXP_t *SEAP_packet_msg2sexp (SEAP_msg_t *msg)
         /* Add data */
         if (msg->sexp != NULL)
                 SEXP_list_add (sexp, msg->sexp);
-        else
+        else {
                 SEXP_list_add (sexp, r0 = SEXP_list_new (NULL)); /* FIXME */
+                SEXP_free(r0);
+        }
 
 #if !defined(NDEBUG)
         fprintf (stderr,   "--- pck out ---\n");

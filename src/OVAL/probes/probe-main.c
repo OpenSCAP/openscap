@@ -657,8 +657,8 @@ int main(void)
 		}
 
 		SEXP_VALIDATE(probe_in);
-
 		oid = probe_obj_getattrval(probe_in, "id");
+                SEXP_free(probe_in);
 
 		if (oid == NULL) {
 			_D("Invalid object: %s\n", "attribute \"id\" not set\n");
@@ -667,6 +667,8 @@ int main(void)
 			SEXP_VALIDATE(oid);
 
 			probe_out = pcache_sexp_get(OSCAP_GSYM(pcache), oid);
+                        SEXP_free(oid);
+
 			if (probe_out == NULL) {
 				/* cache miss */
 
@@ -678,9 +680,6 @@ int main(void)
 				}
 
 				seap_request = NULL;
-
-				_D("New worker: id=%u, in=%p\n", thread, probe_in);
-
 				continue;
 			} else {
 				/* cache hit */
@@ -955,6 +954,10 @@ void *probe_worker(void *arg)
 			_D("An error ocured while sending error status. errno=%u, %s.\n", errno, strerror(errno));
 
 			SEAP_msg_free(seap_request);
+                        SEXP_free(probe_in);
+
+                        if (probe_out != NULL)
+                                SEXP_free(probe_out);
 
 			/* FIXME */
 			exit(ret);
@@ -966,6 +969,7 @@ void *probe_worker(void *arg)
 
 		oid = probe_obj_getattrval(probe_in, "id");
 		_A(oid != NULL);
+                SEXP_free(probe_in);
 
 		if (pcache_sexp_add(OSCAP_GSYM(pcache), oid, probe_out) != 0) {
 			/* TODO */
@@ -984,6 +988,7 @@ void *probe_worker(void *arg)
 
 			SEAP_msg_free(seap_reply);
 			SEAP_msg_free(seap_request);
+                        SEXP_free(probe_out);
 
 			exit(ret);
 		}
@@ -995,4 +1000,3 @@ void *probe_worker(void *arg)
 	SEAP_msg_free(seap_request);
 	return (NULL);
 }
-
