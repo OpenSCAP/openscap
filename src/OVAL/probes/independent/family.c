@@ -43,7 +43,7 @@ SEXP_t *probe_main(SEXP_t *probe_in, int *err, void *arg)
 	SEXP_t *list, *item, *v_fm;
 
         (void)arg;
-        
+
 	const char *family =
 #if defined(_WIN32)
         "windows";
@@ -56,7 +56,7 @@ SEXP_t *probe_main(SEXP_t *probe_in, int *err, void *arg)
 #else
         "error";
 #endif
-        
+
 	if (probe_in == NULL) {
 		*err = PROBE_EINVAL;
 		return NULL;
@@ -66,12 +66,12 @@ SEXP_t *probe_main(SEXP_t *probe_in, int *err, void *arg)
                                   /* entities */
                                   "family", NULL, v_fm = SEXP_string_new (family, strlen (family)),
                                   NULL);
-        
+
 	list = SEXP_list_new (item, NULL);
-        
+
         SEXP_free (item);
         SEXP_free (v_fm);
-        
+
 	*err = 0;
 	return (list);
 }

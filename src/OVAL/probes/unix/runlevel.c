@@ -1,4 +1,3 @@
-
 /*
  * Copyright 2009 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
@@ -75,37 +74,37 @@ static int get_runlevel_redhat (struct runlevel_req *req, struct runlevel_rep *r
 {
         char pathbuf[PATH_MAX];
         unsigned long runlevel;
-        
+
         DIR *rcdir;
         struct dirent *dp;
         struct stat st, rc_st;
-        
+
         _A(req != NULL);
         _A(rep != NULL);
-        
+
         rep->service_name = req->service_name;
         rep->runlevel     = req->runlevel;
         rep->start        = false;
         rep->kill         = false;
-        
+
         snprintf (pathbuf, PATH_MAX, "/etc/init.d/%s", req->service_name);
-        
+
         if (stat (pathbuf, &st) != 0)
                 return (0);
-        
+
         /* TODO: check mode/owner? */
-        
+
         runlevel = strtoul (req->runlevel, NULL, 10);
-        
+
         switch (errno) {
         case EINVAL:
         case ERANGE:
                 _D("Can't convert req.runlevel to a number\n");
                 return (-1);
         }
-        
+
         snprintf (pathbuf, PATH_MAX, "/etc/rc%lu.d", runlevel);
-        
+
         if (runlevel > 6)
                 return (0);
 
@@ -115,21 +114,21 @@ static int get_runlevel_redhat (struct runlevel_req *req, struct runlevel_rep *r
                    pathbuf, errno, strerror (errno));
                 return (-1);
         }
-        
+
         if (fchdir (dirfd (rcdir)) != 0) {
                 _D("Can't chdir to \"%s\": errno=%d, %s.\n",
                    pathbuf, errno, strerror (errno));
                 closedir (rcdir);
                 return (-1);
         }
-        
+
         while ((dp = readdir (rcdir)) != NULL) {
                 if (stat (dp->d_name, &rc_st) != 0) {
                         _D("Can't stat file %s/%s: errno=%d, %s.\n",
                            pathbuf, dp->d_name, errno, strerror (errno));
                         continue;
                 }
-                
+
                 if (rc_st.st_ino == st.st_ino) {
                         switch(dp->d_name[0]) {
                         case 'S':
@@ -146,7 +145,7 @@ static int get_runlevel_redhat (struct runlevel_req *req, struct runlevel_rep *r
         }
 out:
         closedir (rcdir);
-        
+
         return (1);
 }
 
@@ -258,16 +257,16 @@ const distro_tbl_t distro_tbl[] = {
 static int get_runlevel_generic (struct runlevel_req *req, struct runlevel_rep *rep)
 {
         uint16_t i;
-        
+
         _A(req != NULL);
         _A(rep != NULL);
-        
+
         for (i = 0; i < DISTRO_TBL_SIZE; ++i)
                 if (distro_tbl[i].distrop ())
                         return distro_tbl[i].get_runlevel (req, rep);
-        
+
         abort ();
-        
+
         /* NOTREACHED */
         return (-1);
 }
@@ -296,12 +295,12 @@ static int get_runlevel (struct runlevel_req *req, struct runlevel_rep *rep)
 SEXP_t *probe_main (SEXP_t *object, int *err, void *arg)
 {
         SEXP_t *probe_out, *val, *item_sexp = NULL;
-        
+
         struct runlevel_req request_st = RUNLEVEL_REQ_INITIALIZER;
         struct runlevel_rep reply_st   = RUNLEVEL_REP_INITIALIZER;
-        
+
         val = probe_obj_getentval (object, "service_name", 1);
-        
+
         if (val == NULL) {
                 _D("%s: no value\n", "service_name");
                 *err = PROBE_ENOVAL;
@@ -322,23 +321,23 @@ SEXP_t *probe_main (SEXP_t *object, int *err, void *arg)
                         *err = PROBE_ENOELM;
                         break;
                 }
-                
+
                 return (NULL);
         }
-                
+
         val = probe_obj_getentval (object, "runlevel", 1);
 
         if (val == NULL) {
                 _D("%s: no value\n", "runlevel");
                 *err = PROBE_ENOVAL;
                 oscap_free (request_st.service_name);
-                
+
                 return (NULL);
         }
 
         request_st.runlevel = SEXP_string_cstr (val);
-        SEXP_free (val);        
-        
+        SEXP_free (val);
+
         if (request_st.runlevel == NULL) {
                 switch (errno) {
                 case EINVAL:
@@ -350,13 +349,13 @@ SEXP_t *probe_main (SEXP_t *object, int *err, void *arg)
                         *err = PROBE_ENOELM;
                         break;
                 }
-                
+
                 oscap_free (request_st.service_name);
                 return (NULL);
         }
-        
+
         probe_out = SEXP_list_new (NULL);
-        
+
         /*
          * == Implementation note #1 ==
          *
@@ -371,7 +370,7 @@ SEXP_t *probe_main (SEXP_t *object, int *err, void *arg)
 
                 _D("get_runlevel: [0]=\"%s\", [1]=\"%s\", [2]=\"%d\", [3]=\"%d\"\n",
                    reply_st.service_name, reply_st.runlevel, reply_st.start, reply_st.kill);
-                
+
                 item_sexp = probe_item_creat ("runlevel_item", NULL,
                                              /* entities */
                                              "service_name", NULL,
@@ -392,17 +391,17 @@ SEXP_t *probe_main (SEXP_t *object, int *err, void *arg)
                 item_sexp = probe_item_creat ("runlevel_item", NULL, NULL);
                 probe_obj_setstatus (item_sexp, OVAL_STATUS_DOESNOTEXIST);
 		*/
-                
+
                 break;
         case -1:
                 _D("get_runlevel failed\n");
-        
+
                 item_sexp = probe_item_creat ("runlevel_item", NULL, NULL);
                 probe_obj_setstatus (item_sexp, OVAL_STATUS_ERROR);
 
                 break;
         }
-        
+
         /* See implementation note #1 */
         oscap_free (request_st.service_name);
         oscap_free (request_st.runlevel);
@@ -413,6 +412,6 @@ SEXP_t *probe_main (SEXP_t *object, int *err, void *arg)
 	}
 
         *err = 0;
-        
+
         return (probe_out);
 }

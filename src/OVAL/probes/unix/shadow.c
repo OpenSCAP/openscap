@@ -48,12 +48,12 @@
 SEXP_t *probe_main(SEXP_t *object, int *err, void *arg)
 {
         SEXP_t *item_sexp, *probe_out;
-        
+
 	item_sexp = probe_item_creat ("shadow_item", NULL, NULL);
         probe_item_setstatus (item_sexp, OVAL_STATUS_NOTCOLLECTED);
         probe_out = SEXP_list_new (item_sexp, NULL);
         SEXP_free (item_sexp);
-        
+
         return (probe_out);
 }
 #else
@@ -76,7 +76,7 @@ struct result_info {
 static void report_finding(struct result_info *res, SEXP_t *probe_out)
 {
 	SEXP_t *r0, *r1, *r2, *r3, *r4, *r5, *r6, *r7, *r8, *item_sexp;
-		
+
 	item_sexp = probe_item_creat("shadow_item", NULL,
 		/* entities */
 		"username", NULL, r0 = SEXP_string_newf("%s", res->username),

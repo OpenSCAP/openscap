@@ -118,7 +118,7 @@ static int get_ifs(SEXP_t *item)
                         rc = 1;
                         goto leave2;
                 }
-        
+
 	        attrs = probe_attr_creat("name",
                                  r0 = SEXP_string_newf("%s", ifa->ifa_name),
                                  "ip_address",
@@ -143,7 +143,7 @@ int get_ifs(SEXP_t *item)
         /* TODO */
 
         SEXP_t *attrs, *r0, *r1, *r2;
-        
+
         attrs = probe_attr_creat("name",
                                  r0 = SEXP_string_newf("dummy0"),
                                  "ip_address",
@@ -151,10 +151,10 @@ int get_ifs(SEXP_t *item)
                                  "mac_address",
                                  r2 = SEXP_string_newf("aa:bb:cc:dd:ee:ff"),
                                  NULL);
-        
+
         probe_item_ent_add(item, "interface", attrs, NULL);
         SEXP_vfree (attrs, r0, r1, r2, NULL);
-        
+
         return 0;
 }
 #endif
@@ -165,7 +165,7 @@ SEXP_t *probe_main(SEXP_t *probe_in, int *err, void *arg)
         SEXP_t *r0, *r1, *r2, *r3;
         char *os_name, *os_version, *architecture, *hname;
         struct utsname sname;
-        
+
         (void)arg;
 
 	if (probe_in == NULL) {

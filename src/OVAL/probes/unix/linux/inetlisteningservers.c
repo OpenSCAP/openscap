@@ -149,7 +149,7 @@ static void list_clear(llist* l)
 static lnode *list_find_inode(llist *l, unsigned long i)
 {
         register lnode* cur;
-                                                                                
+
        	cur = l->head;	/* start at the beginning */
 	while (cur) {
 		if (cur->inode == i) {
@@ -167,7 +167,7 @@ static int collect_process_info(llist *l)
 	struct dirent *ent;
 
 	d = opendir("/proc");
-	if (d == NULL) 
+	if (d == NULL)
 		return 1;
 
 	while (( ent = readdir(d) )) {
@@ -322,7 +322,7 @@ static void report_finding(struct result_info *res, llist *l, SEXP_t *probe_out)
 {
 	SEXP_t *r0, *r1, *r2, *r3, *r4, *r5, *r6, *r7, *r8, *r9, *item_sexp;
 	lnode *n = list_get_cur(l);
-		
+
 	item_sexp = probe_item_creat("inetlisteningservers_item", NULL,
 		/* entities */
 		"protocol", NULL, r0 = SEXP_string_newf("%s", res->proto),
@@ -368,7 +368,7 @@ static int read_tcp(const char *proc, const char *type, llist *l,
 	FILE *f;
 	char buf[256];
 	unsigned long rxq, txq, time_len, retr, inode;
-	unsigned local_port, rem_port, uid; 
+	unsigned local_port, rem_port, uid;
 	int d, state, timer_run, timeout;
 	char rem_addr[128], local_addr[128], more[512];
 
@@ -576,7 +576,7 @@ SEXP_t *probe_main(SEXP_t *object, int *err, void *arg)
 	read_raw("/proc/net/raw6", "udp", &ll, probe_out);
 
 	list_clear(&ll);
-	
+
 	*err = 0;
  cleanup:
 	SEXP_vfree(req.protocol_ent, req.local_address_ent, req.local_port_ent, NULL);

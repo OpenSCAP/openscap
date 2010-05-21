@@ -104,14 +104,14 @@ static void pkgh2rep (Header h, struct rpminfo_rep *r)
         errmsg_t rpmerr;
         char *str, *sid;
         size_t len;
-        
+
         assume_d (h != NULL, /* void */);
         assume_d (r != NULL, /* void */);
-        
+
         r->name = headerFormat (h, "%{NAME}", &rpmerr);
         r->arch = headerFormat (h, "%{ARCH}", &rpmerr);
         str     = headerFormat (h, "%{EPOCH}", &rpmerr);
-        
+
         if (strcmp (str, "(none)") == 0) {
                 str    = oscap_realloc (str, sizeof (char) * 2);
                 str[0] = '0';
@@ -121,19 +121,19 @@ static void pkgh2rep (Header h, struct rpminfo_rep *r)
         r->epoch   = str;
         r->release = headerFormat (h, "%{RELEASE}", &rpmerr);
         r->version = headerFormat (h, "%{VERSION}", &rpmerr);
-                        
+
         len = (strlen (r->epoch)   +
                strlen (r->release) +
                strlen (r->version) + 2);
-                        
+
         str = oscap_alloc (sizeof (char) * (len + 1));
         snprintf (str, len + 1, "%s:%s-%s",
                   r->epoch,
                   r->version,
                   r->release);
-        
+
         r->evr = str;
-                        
+
         str = headerFormat (h, "%{SIGGPG:pgpsig}", &rpmerr);
         sid = strrchr (str, ' ');
         r->signature_keyid = (sid != NULL ? strdup (sid+1) : strdup ("0"));
@@ -145,16 +145,16 @@ static void pkgh2rep (Header h, struct rpminfo_rep *r)
  * rep - Pointer to rpminfo_rep structure pointer. An
  *       array of rpminfo_rep structures will be allocated
  *       here.
- * 
+ *
  * The return value on error is -1. Otherwise the number of
  * rpminfo_rep structures allocated in *rep is returned.
  */
 static int get_rpminfo (struct rpminfo_req *req, struct rpminfo_rep **rep)
-{	
+{
 	rpmdbMatchIterator match;
 	Header pkgh;
 	int ret = 0, i;
-        
+
         pthread_mutex_lock (&(g_rpm.mutex));
 
         ret = -1;
@@ -162,37 +162,37 @@ static int get_rpminfo (struct rpminfo_req *req, struct rpminfo_rep **rep)
         switch (req->op) {
         case OVAL_OPERATION_EQUALS:
                 match = rpmdbInitIterator (g_rpm.rpmdb, RPMTAG_NAME, (const void *)req->name, 0);
-                
+
                 if (match == NULL) {
                         ret = 0;
                         goto ret;
                 }
-                
+
                 ret = rpmdbGetIteratorCount (match);
-                
+
                 break;
         case OVAL_OPERATION_PATTERN_MATCH:
                 match = rpmdbInitIterator (g_rpm.rpmdb, RPMDBI_PACKAGES, NULL, 0);
-                
+
                 if (match == NULL) {
                         ret = 0;
                         goto ret;
                 }
-                
+
                 if (rpmdbSetIteratorRE (match, RPMTAG_NAME, RPMMIRE_REGEX,
                                         (const char *)req->name) != 0)
                 {
                         ret = -1;
                         goto ret;
                 }
-                
+
                 break;
         default:
                 /* not supported */
                 ret = -1;
                 goto ret;
         }
-        
+
         if (ret != -1) {
                 /*
                  * We can allocate all memory needed now because we know the number
@@ -202,24 +202,24 @@ static int get_rpminfo (struct rpminfo_req *req, struct rpminfo_rep **rep)
 
                 for (i = 0; i < ret; ++i) {
                         pkgh = rpmdbNextIterator (match);
-                        
+
                         if (pkgh != NULL)
                                 pkgh2rep (pkgh, (*rep) + i);
                         else {
                                 /* XXX: emit warning */
                                 break;
-                        }       
+                        }
                 }
         } else {
                 ret = 0;
-                
+
                 while ((pkgh = rpmdbNextIterator (match)) != NULL) {
                         (*rep) = oscap_realloc (*rep, sizeof (struct rpminfo_rep) * ++ret);
                         assume_r (*rep != NULL, -1);
                         pkgh2rep (pkgh, (*rep) + (ret - 1));
                 }
         }
-        
+
 	match = rpmdbFreeIterator (match);
 ret:
         pthread_mutex_unlock (&(g_rpm.mutex));
@@ -232,23 +232,23 @@ void *probe_init (void)
                 _D("rpmReadConfigFiles failed: %u, %s.\n", errno, strerror (errno));
                 return (NULL);
         }
-        
+
         /* XXX: check retval */
         rpmdbOpen (NULL, &g_rpm.rpmdb, O_RDONLY, 0644);
-        
+
         pthread_mutex_init (&(g_rpm.mutex), NULL);
-        
+
         return ((void *)&g_rpm);
 }
 
 void probe_fini (void *ptr)
 {
         struct rpminfo_global *r = (struct rpminfo_global *)ptr;
-        
+
         rpmdbClose (r->rpmdb);
 	rpmFreeCrypto();
         pthread_mutex_destroy (&(r->mutex));
-        
+
         return;
 }
 
@@ -256,7 +256,7 @@ SEXP_t *probe_main (SEXP_t *object, int *err, void *arg)
 {
         SEXP_t *probe_out, *val, *item_sexp, *r0, *r1, *ent;
 	int rpmret, i;
-        
+
         struct rpminfo_req request_st;
         struct rpminfo_rep *reply_st;
 
@@ -266,21 +266,21 @@ SEXP_t *probe_main (SEXP_t *object, int *err, void *arg)
                 *err = PROBE_ENOENT;
                 return (NULL);
         }
-        
+
         val = probe_ent_getval (ent);
-        
+
         if (val == NULL) {
                 _D("%s: no value\n", "name");
                 *err = PROBE_ENOVAL;
                 SEXP_free (ent);
                 return (NULL);
         }
-        
+
         request_st.name = SEXP_string_cstr (val);
         SEXP_free (val);
 
         val = probe_ent_getattrval (ent, "operation");
-        
+
         if (val == NULL) {
                 request_st.op = OVAL_OPERATION_EQUALS;
         } else {
@@ -297,10 +297,10 @@ SEXP_t *probe_main (SEXP_t *object, int *err, void *arg)
                         oscap_free (request_st.name);
                         return (NULL);
                 }
-                
+
                 SEXP_free (val);
         }
-        
+
         if (request_st.name == NULL) {
                 switch (errno) {
                 case EINVAL:
@@ -312,41 +312,41 @@ SEXP_t *probe_main (SEXP_t *object, int *err, void *arg)
                         *err = PROBE_ENOELM;
                         break;
                 }
-                
+
                 return (NULL);
         }
-                
+
         probe_out = SEXP_list_new (NULL);
         reply_st  = NULL;
-        
+
         /* get info from RPM db */
         switch (rpmret = get_rpminfo (&request_st, &reply_st)) {
         case 0: /* Not found */
                 _D("Package \"%s\" not found.\n", request_st.name);
 
-		/*        
+		/*
                 item_sexp = probe_item_creat ("rpminfo_item", NULL,
                                               "name", NULL,
                                               r0 = SEXP_string_newf(request_st.name),
                                               NULL);
-                                
+
                 probe_item_setstatus (item_sexp, OVAL_STATUS_DOESNOTEXIST);
                 probe_itement_setstatus (item_sexp, "name", 1, OVAL_STATUS_DOESNOTEXIST);
-                
+
                 SEXP_list_add (probe_out, item_sexp);
                 SEXP_free (item_sexp);
                 SEXP_free (r0);
 		*/
-                
+
                 break;
         case -1: /* Error */
                 _D("get_rpminfo failed\n");
-                
+
                 item_sexp = probe_item_creat ("rpminfo_item", NULL,
                                               "name", NULL,
                                               r0 = SEXP_string_newf(request_st.name),
                                               NULL);
-                
+
                 probe_item_setstatus (item_sexp, OVAL_STATUS_ERROR);
 
                 SEXP_list_add (probe_out, item_sexp);
@@ -384,10 +384,10 @@ SEXP_t *probe_main (SEXP_t *object, int *err, void *arg)
 					NULL);
                                 SEXP_list_add (probe_out, item_sexp);
 				SEXP_vfree(item_sexp, r0, r1, r2, r3, r4, r5, r6, NULL);
-                                
-                                __rpminfo_rep_free (&(reply_st[i]));        
+
+                                __rpminfo_rep_free (&(reply_st[i]));
                         }
-                        
+
                         oscap_free (reply_st);
                 }
         }
