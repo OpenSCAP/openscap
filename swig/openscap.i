@@ -181,8 +181,10 @@
 %module openscap
 %{
  #include "../src/XCCDF/public/xccdf.h"
+ #include "../src/XCCDF_POLICY/public/xccdf_policy.h"
 %}
 %include "../src/XCCDF/public/xccdf.h"
+%include "../src/XCCDF_POLICY/public/xccdf_policy.h"
 #endif
 
 /*%typemap(in) value[ANY] {

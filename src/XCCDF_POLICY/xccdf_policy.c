@@ -1030,6 +1030,20 @@ void xccdf_policy_import_results(struct xccdf_policy *policy, char *import_names
 void xccdf_policy_export_results(struct xccdf_policy *policy, char *scoring_model_namespace, struct oscap_export_target *target) {
 }
 
+
+bool xccdf_value_binding_add_refine_rule(struct xccdf_value_binding *binding, struct xccdf_refine_rule *rule) {
+	//TODO
+}
+
+bool xccdf_value_binding_add_refine_value(struct xccdf_value_binding *binding, struct xccdf_refine_value *value) {
+	//TODO
+}
+
+bool xccdf_value_binding_add_setvalue(struct xccdf_value_binding *binding, struct xccdf_setvalue *value) {
+	//TODO
+}
+
+
 void xccdf_policy_model_free(struct xccdf_policy_model * model) {
 
         xccdf_benchmark_free(model->benchmark);
