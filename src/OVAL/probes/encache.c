@@ -1,4 +1,3 @@
-
 /*
  * Copyright 2009 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.

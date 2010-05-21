@@ -1,4 +1,3 @@
-
 /*
  * Copyright 2009-2010 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
@@ -19,8 +18,8 @@
  *
  * Authors:
  *      "Daniel Kopecek" <dkopecek@redhat.com>
+ *      "Lukas Kuklinek" <lkuklinek@redhat.com>
  */
-
 #include <inttypes.h>
 #include <stdlib.h>
 #include <string.h>
