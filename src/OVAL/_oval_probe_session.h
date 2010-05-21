@@ -22,18 +22,23 @@
 #ifndef _OVAL_PROBE_SESSION
 #define _OVAL_PROBE_SESSION
 
+#include <config.h>
 #include "public/oval_probe_session.h"
 #include "_oval_probe_handler.h"
-#include "oval_probe_ext.h"
+#if defined(ENABLE_PROBES)
+# include "oval_probe_ext.h"
+#endif
 
 struct oval_probe_session {
         /*
          * probe handlers
          */
         oval_phtbl_t *ph;
-
+#if defined(ENABLE_PROBES)
         oval_pext_t  *pext;
-
+#else
+        void         *pext;
+#endif
         /*
          * system characteristics model
          */

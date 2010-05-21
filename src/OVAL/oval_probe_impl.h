@@ -52,17 +52,18 @@ OSCAP_HIDDEN_START;
 
 #define OVAL_PROBE_MAXRETRY 3
 
-const char *oval_subtype2str(oval_subtype_t subtype);
-oval_subtype_t oval_str2subtype(const char *str);
+OSCAP_HIDDEN_END;
+
+extern encache_t *OSCAP_GSYM(encache);
+
+#endif /* ENABLE_PROBES */
 
 typedef struct {
         oval_subtype_t type;
         char          *name;
 } oval_subtypedsc_t;
 
-OSCAP_HIDDEN_END;
+const char *oval_subtype2str(oval_subtype_t subtype);
+oval_subtype_t oval_str2subtype(const char *str);
 
-extern encache_t *OSCAP_GSYM(encache);
-
-#endif /* ENABLE_PROBES */
 #endif /* OVAL_PROBE_IMPL_H */

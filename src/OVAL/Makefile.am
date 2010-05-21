@@ -33,6 +33,7 @@ common_oval_sources = \
 	oval_objectContent.c \
 	oval_parser.c \
 	oval_parser_impl.h \
+	oval_probe.c	\
 	oval_reference.c \
 	oval_resultCriteriaNode.c \
 	oval_resultDirectives.c \
@@ -58,11 +59,15 @@ common_oval_sources = \
 	oval_variable.c \
 	oval_variableBinding.c \
 	ovalsys_parser.c \
-	oval_varModel.c
+	oval_varModel.c \
+	oval_probe_session.c	\
+	_oval_probe_session.h	\
+	oval_probe_handler.c	\
+	_oval_probe_handler.h
 
 # -I options go to CPPFLAGS, not CFLAGS
 # lets build one common for both normal and probe sources (does it mind?)
-AM_CPPFLAGS = $(libxml_cflags) $(pthread_cflags) -I$(srcdir)/public -I$(top_srcdir)/src/common/public
+AM_CPPFLAGS = $(libxml_cflags) $(pthread_cflags) -I$(srcdir)/public -I$(top_srcdir)/src/common/public -I$(top_srcdir)/src
 if WANT_PROBES
 AM_CPPFLAGS += -I$(top_srcdir)/src -I$(top_srcdir)/src/common -I$(srcdir)/probes -I$(srcdir)/probes/public -I$(srcdir)/probes/SEAP/public -DSEAP_MSGID_BITS=32 -DSEAP_THREAD_SAFE
 endif
@@ -81,8 +86,6 @@ pkginclude_HEADERS  =	public/oval_agent_api.h \
 			public/oval_probe_session.h \
 			public/oval_probe_handler.h
 
-liboval_la_SOURCES += oval_probe.c
-
 if WANT_PROBES
 common_oval_sources += probes/probe-api.c 	\
 		       probes/_probe-api.h	\
@@ -99,17 +102,13 @@ common_oval_sources += probes/probe-api.c 	\
 		       probes/probe-cache.h	\
 		       oval_sexp.c 		\
 		       oval_sexp.h 		\
-		       oval_probe_session.c	\
-		       _oval_probe_session.h	\
-		       oval_probe_handler.c	\
-		       _oval_probe_handler.h	\
-		       oval_probe_ext.c		\
 		       oval_probe_ext.h		\
 		       oval_probe_int.c		\
 		       oval_probe_int.h		\
 		       oval_probe_impl.h
 
-nodist_liboval_testing_la_SOURCES = oval_testing_probe.c
+liboval_la_SOURCES += oval_probe_ext.c
+nodist_liboval_testing_la_SOURCES = oval_testing_ext_probe.c
 
 SUBDIRS = probes/SEAP
 liboval_la_LIBADD  += probes/SEAP/libseap.la
@@ -118,7 +117,6 @@ endif
 
 CLEANFILES = $(nodist_liboval_testing_la_SOURCES)
 
-oval_testing_probe.c: Makefile
+oval_testing_ext_probe.c: Makefile
 	(echo '#define OVAL_PROBEDIR_ENV 1'; \
-	 echo '#include <oval_probe.c>' ) >$@
-
+	 echo '#include <oval_probe_ext.c>' ) >$@

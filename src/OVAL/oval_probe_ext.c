@@ -76,8 +76,11 @@ oval_pext_t *oval_pext_new(void)
         pext->do_init = true;
         pthread_mutex_init(&pext->lock, NULL);
 
+#if defined(OVAL_PROBEDIR_ENV)
         pext->probe_dir = getenv("OVAL_PROBE_DIR");
-
+#else
+        pext->probe_dir = NULL;
+#endif
         if (pext->probe_dir == NULL)
                 pext->probe_dir = OVAL_PROBE_DIR;
 

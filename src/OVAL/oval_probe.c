@@ -33,11 +33,8 @@
 #include "common/_error.h"
 #include "common/assume.h"
 
-#include "seap.h"
-#include "oval_sexp.h"
 #include "oval_probe_impl.h"
 #include "oval_system_characteristics_impl.h"
-#include "probes/public/probe-api.h"
 #include "common/util.h"
 #include "common/bfind.h"
 #include "common/debug_priv.h"
@@ -105,8 +102,10 @@ static int __n2s_tbl_cmp(const char *name, oval_subtypedsc_t *dsc)
         return strcmp(name, dsc->name);
 }
 
+#if defined(ENABLE_PROBES)
 encache_t *OSCAP_GSYM(encache) = NULL;
 struct id_desc_t OSCAP_GSYM(id_desc);
+#endif
 
 #define __ERRBUF_SIZE 128
 
@@ -151,113 +150,6 @@ struct oval_syschar *oval_probe_object_eval(oval_probe_session_t *psess, struct 
         }
 
         return(o_sys);
-#if 0
-	const oval_pdsc_t *pdsc;
-	oval_pd_t *pd;
-
-	SEXP_t *s_obj, *s_sysc;
-	struct oval_syschar *o_sysc;
-
-	assume_d (ctx != NULL, NULL);
-	assume_d (object != NULL, NULL);
-	assume_d (ctx->pdsc_table != NULL, NULL);
-
-	/* XXX: lock ctx? */
-
-	oscap_clearerr();
-
-	if (ctx->model == NULL) {
-                oscap_seterr (OSCAP_EFAMILY_OVAL, OVAL_EPROBECONTEXT, "Invalid probe context; model not set");
-                return (NULL);
-	}
-
-	pdsc = oval_pdsc_lookup(oval_object_get_subtype(object));
-
-	if (pdsc == NULL) {
-		return (NULL);
-	}
-
-	pd = oval_pdtbl_get(ctx->pd_table, oval_object_get_subtype(object));
-
-	if (pd == NULL) {
-		char   probe_uri[PATH_MAX + 1];
-		size_t probe_urilen;
-		char  *probe_dir;
-
-		probe_dir    = ctx->p_dir;
-		probe_urilen = snprintf(probe_uri, sizeof probe_uri,
-					"%s://%s/%s", OVAL_PROBE_SCHEME, probe_dir, pdsc->filename);
-
-		_D("URI: %s\n", probe_uri);
-
-		if (oval_pdtbl_add(ctx->pd_table, oval_object_get_subtype(object), -1, probe_uri) != 0) {
-                        char errmsg[__ERRBUF_SIZE];
-
-                        snprintf (errmsg, sizeof errmsg, "%s probe not supported", pdsc->subtype_name);
-                        oscap_seterr (OSCAP_EFAMILY_OVAL, OVAL_EPROBENOTSUPP, errmsg);
-
-			return (NULL);
-		} else
-			pd = oval_pdtbl_get(ctx->pd_table, oval_object_get_subtype(object));
-	}
-
-	s_obj = oval_object2sexp(pdsc->subtype_name, object, ctx->model);
-
-	if (s_obj == NULL) {
-		_D("Can't translate OVAL object to S-exp\n");
-                oscap_seterr (OSCAP_EFAMILY_OVAL, OVAL_EPROBEOBJINVAL, "Can't translate OVAL object to S-exp");
-		return (NULL);
-	}
-
-	s_sysc = oval_probe_comm(ctx->pd_table->ctx, pd, s_obj, ctx->p_flags & OVAL_PCTX_FLAG_NOREPLY);
-
-	if (s_sysc == NULL) {
-                SEXP_free(s_obj);
-
-                if (ctx->p_flags & OVAL_PCTX_FLAG_NOREPLY) {
-                        /*
-                         * NULL is ok here because the no-reply flag is set and we don't expect
-                         * any data to be returned.
-                         */
-                        return (NULL);
-                } else {
-                        if (!oscap_err ()) {
-                                /*
-                                 * oval_probe_comm didn't set an error so we have to do it here.
-                                 */
-                                oscap_dprintf ("oval_probe_comm failed but didn't set an error!\n");
-                                oscap_seterr (OSCAP_EFAMILY_OVAL, OVAL_EPROBENODATA, "No data received");
-                        }
-
-                        return (NULL);
-                }
-	} else {
-		if (ctx->p_flags & OVAL_PCTX_FLAG_NOREPLY) {
-                        /*
-                         * The no-reply flag is set and oval_probe_comm returned some
-                         * data. This considered as a non-fatal error.
-                         */
-                        oscap_dprintf ("obtrusive data from probe!\n");
-
-                        SEXP_free(s_sysc);
-			SEXP_free(s_obj);
-
-			return (NULL);
-		}
-	}
-
-	/*
-	 * Convert the received S-exp to OVAL system characteristic.
-	 */
-
-	struct oval_syschar_model *model = ctx->model;
-	o_sysc = oval_sexp2sysch(s_sysc, model, object);
-
-	SEXP_free(s_sysc);
-	SEXP_free(s_obj);
-
-	return (o_sysc);
-#endif
 }
 
 struct oval_sysinfo *oval_probe_sysinf_eval(oval_probe_session_t *sess)

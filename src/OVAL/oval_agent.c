@@ -536,6 +536,7 @@ int oval_syschar_model_probe_objects(struct oval_syschar_model *syschar_model)
 	return 0;
 #else
 	oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_ENOTIMPL, "This feature is not implemented, compiled without probes support.");
+        return -1;
 #endif
 }
 
@@ -559,6 +560,7 @@ int oval_syschar_model_probe_sysinfo(struct oval_syschar_model *syschar_model) {
 	return 0;
 #else
 	oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_ENOTIMPL, "This feature is not implemented, compiled without probes support.");
+        return -1;
 #endif
 }
 

@@ -20,7 +20,6 @@
  *      "Daniel Kopecek" <dkopecek@redhat.com>
  */
 #include <config.h>
-#include <seap.h>
 #include <errno.h>
 #include <string.h>
 #include "common/_error.h"
@@ -29,10 +28,11 @@
 #include "public/oval_definitions.h"
 #include "_oval_probe_session.h"
 #include "_oval_probe_handler.h"
-#include "oval_probe_ext.h"
-#include "oval_probe_int.h"
+#if defined(ENABLE_PROBES)
+# include "oval_probe_ext.h"
+# include "oval_probe_int.h"
+#endif
 #include "oval_probe_impl.h"
-#include "oval_sexp.h"
 
 /*
  * oval_probe_session_
@@ -42,11 +42,12 @@ oval_probe_session_t *oval_probe_session_new(struct oval_syschar_model *model)
         oval_probe_session_t *sess;
 
         sess = oscap_talloc(oval_probe_session_t);
-        sess->ph   = oval_phtbl_new();
-        sess->pext = oval_pext_new();
+        sess->ph = oval_phtbl_new();
         sess->sys_model = model;
         sess->flg = 0;
 
+#if defined(ENABLE_PROBES)
+        sess->pext = oval_pext_new();
         sess->pext->model    = &sess->sys_model;
         sess->pext->sess_ptr = sess;
 
@@ -70,15 +71,16 @@ oval_probe_session_t *oval_probe_session_new(struct oval_syschar_model *model)
 
         oval_probe_handler_set(sess->ph, OVAL_INDEPENDENT_ENVIRONMENT_VARIABLE,  oval_probe_envvar_handler, sess->sys_model);
         oval_probe_handler_set(sess->ph, OVAL_INDEPENDENT_VARIABLE,              oval_probe_var_handler,    sess->sys_model);
-
+#endif
         return(sess);
 }
-
 
 void oval_probe_session_destroy(oval_probe_session_t *sess)
 {
         oval_phtbl_free(sess->ph);
+#if defined(ENABLE_PROBES)
         oval_pext_free(sess->pext);
+#endif
         oscap_free(sess);
 }
 
