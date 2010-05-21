@@ -38,6 +38,8 @@ OSCAP_HIDDEN_START;
 #define XCCDF_XHTML_NAMESPACE	BAD_CAST "http://www.w3.org/1999/xhtml"
 #define XCCDF_XSI_NAMESPACE	BAD_CAST "http://www.w3.org/2001/XMLSchema-instance"
 
+#define XCCDF_SCHEMA_LOCATION   BAD_CAST "http://checklists.nist.gov/xccdf/1.1 xccdf-1.1.4.xsd"
+
 xmlNode *xccdf_benchmark_to_dom(struct xccdf_benchmark *benchmark, xmlDocPtr doc,
 				xmlNode *parent, void *user_args);
 xmlNode *xccdf_item_to_dom(struct xccdf_item *item, xmlDoc *doc, xmlNode *parent);

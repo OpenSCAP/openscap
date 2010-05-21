@@ -52,6 +52,7 @@ typedef struct oval_definition_model {
 	struct oval_string_map *state_map;
 	struct oval_string_map *variable_map;
 	bool is_locked;
+        char *schema;
 } oval_definition_model_t;
 
 typedef struct oval_syschar_model {
@@ -61,12 +62,14 @@ typedef struct oval_syschar_model {
 	struct oval_string_map *sysdata_map;
 	struct oval_string_map *variable_binding_map;
 	bool is_locked;
+        char *schema;
 } oval_syschar_model_t;
 
 struct oval_results_model {
 	struct oval_definition_model *definition_model;
 	struct oval_collection *systems;
 	bool is_locked;
+        char *schema;
 };
 
 typedef struct oval_results_model oval_results_model_t;
@@ -87,9 +90,49 @@ static void _oval_agent_scan_entity_for_references(struct oval_entity *entity,
 static void _oval_agent_scan_set_for_references(struct oval_setobject *set,
 						struct oval_string_map *objmap,
 						struct oval_string_map *sttmap, struct oval_string_map *varmap);
+
+/*static char * _oval_generate_schema_location(const char * version);*/
 /* End of static functions definitions
  * */
 /***************************************************************************/
+
+
+/* TODO: Use this to generate links
+static char * _oval_generate_schema_location(const char * version)
+{
+
+        char * schema = oscap_alloc(sizeof(char)*(strlen(OVAL_DEF_SCHEMA_LOCATION_DEF_PX)+strlen(version)+strlen(OVAL_DEF_SCHEMA_LOCATION_DEF_SX)+2));
+        strncat(schema, OVAL_DEF_SCHEMA_LOCATION_DEF_PX, strlen(OVAL_DEF_SCHEMA_LOCATION_DEF_PX));
+        strncat(schema, version, strlen(version));
+        strncat(schema, OVAL_DEF_SCHEMA_LOCATION_DEF_SX, strlen(OVAL_DEF_SCHEMA_LOCATION_DEF_SX));
+        strncat(schema, " ", 1);
+
+        oscap_realloc(schema, sizeof(char)*(strlen(schema)+strlen(OVAL_DEF_SCHEMA_LOCATION_IND_PX)+strlen(version)+strlen(OVAL_DEF_SCHEMA_LOCATION_IND_SX)+1));
+        strncat(schema, OVAL_DEF_SCHEMA_LOCATION_IND_PX, strlen(OVAL_DEF_SCHEMA_LOCATION_IND_PX));
+        strncat(schema, version, strlen(version));
+        strncat(schema, OVAL_DEF_SCHEMA_LOCATION_IND_SX, strlen(OVAL_DEF_SCHEMA_LOCATION_IND_SX));
+        strncat(schema, " ", 1);
+
+        oscap_realloc(schema, sizeof(char)*(strlen(schema)+strlen(OVAL_DEF_SCHEMA_LOCATION_UNX_PX)+strlen(version)+strlen(OVAL_DEF_SCHEMA_LOCATION_UNX_SX)+1));
+        strncat(schema, OVAL_DEF_SCHEMA_LOCATION_UNX_PX, strlen(OVAL_DEF_SCHEMA_LOCATION_UNX_PX));
+        strncat(schema, version, strlen(version));
+        strncat(schema, OVAL_DEF_SCHEMA_LOCATION_UNX_SX, strlen(OVAL_DEF_SCHEMA_LOCATION_UNX_SX));
+        strncat(schema, " ", 1);
+
+        oscap_realloc(schema, sizeof(char)*(strlen(schema)+strlen(OVAL_DEF_SCHEMA_LOCATION_LNX_PX)+strlen(version)+strlen(OVAL_DEF_SCHEMA_LOCATION_LNX_SX)+1));
+        strncat(schema, OVAL_DEF_SCHEMA_LOCATION_LNX_PX, strlen(OVAL_DEF_SCHEMA_LOCATION_LNX_PX));
+        strncat(schema, version, strlen(version));
+        strncat(schema, OVAL_DEF_SCHEMA_LOCATION_LNX_SX, strlen(OVAL_DEF_SCHEMA_LOCATION_LNX_SX));
+        strncat(schema, " ", 1);
+
+        oscap_realloc(schema, sizeof(char)*(strlen(schema)+strlen(OVAL_DEF_SCHEMA_LOCATION_CMN_PX)+strlen(version)+strlen(OVAL_DEF_SCHEMA_LOCATION_CMN_SX)+1));
+        strncat(schema, OVAL_DEF_SCHEMA_LOCATION_CMN_PX, strlen(OVAL_DEF_SCHEMA_LOCATION_CMN_PX));
+        strncat(schema, version, strlen(version));
+        strncat(schema, OVAL_DEF_SCHEMA_LOCATION_CMN_SX, strlen(OVAL_DEF_SCHEMA_LOCATION_CMN_SX));
+
+
+        return schema;
+}*/
 
 /* failed   - NULL 
  * success  - oval_definition_model 
@@ -106,6 +149,7 @@ struct oval_definition_model *oval_definition_model_new()
 	newmodel->test_map = oval_string_map_new();
 	newmodel->variable_map = oval_string_map_new();
 	newmodel->is_locked = false;
+        newmodel->schema = strdup(OVAL_DEF_SCHEMA_LOCATION);
 	return newmodel;
 }
 
@@ -229,6 +273,7 @@ struct oval_definition_model *oval_definition_model_clone(struct oval_definition
 	_oval_definition_model_clone(oldmodel->test_map, newmodel, (_oval_result_system_clone_func) oval_test_clone);
 	_oval_definition_model_clone
 	    (oldmodel->variable_map, newmodel, (_oval_result_system_clone_func) oval_variable_clone);
+        newmodel->schema = oscap_strdup(oldmodel->schema);
 	return newmodel;
 }
 
@@ -242,11 +287,15 @@ void oval_definition_model_free(struct oval_definition_model *model)
 	oval_string_map_free(model->test_map, (oscap_destruct_func) oval_test_free);
 	oval_string_map_free(model->variable_map, (oscap_destruct_func) oval_variable_free);
 
+        if (model->schema != NULL)
+            oscap_free(model->schema);
+
 	model->definition_map = NULL;
 	model->object_map = NULL;
 	model->state_map = NULL;
 	model->test_map = NULL;
 	model->variable_map = NULL;
+        model->schema = NULL;
 
 	oscap_free(model);
 }
@@ -266,6 +315,7 @@ struct oval_syschar_model *oval_syschar_model_new(struct oval_definition_model *
 	newmodel->sysdata_map = oval_string_map_new();
 	newmodel->variable_binding_map = oval_string_map_new();
 	newmodel->is_locked = false;
+        newmodel->schema = oscap_strdup(OVAL_SYS_SCHEMA_LOCATION);
 
 	/* check possible allocation problems */
 	if ((newmodel->syschar_map == NULL) ||
@@ -372,6 +422,7 @@ struct oval_syschar_model *oval_syschar_model_clone(struct oval_syschar_model *o
 	struct oval_sysinfo *old_sysinfo = oval_syschar_model_get_sysinfo(old_model);
 	struct oval_sysinfo *new_sysinfo = oval_sysinfo_clone(new_model, old_sysinfo);
 	oval_syschar_model_set_sysinfo(new_model, new_sysinfo);
+        new_model->schema = oscap_strdup(old_model->schema);
 
 	return new_model;
 }
@@ -388,12 +439,15 @@ void oval_syschar_model_free(struct oval_syschar_model *model)
 		oval_string_map_free(model->sysdata_map, (oscap_destruct_func) oval_sysdata_free);
 	if (model->variable_binding_map)
 		oval_string_map_free(model->variable_binding_map, (oscap_destruct_func) oval_variable_binding_free);
+        if (model->schema)
+                oscap_free(model->schema);
 
 	model->sysinfo = NULL;
 	model->definition_model = NULL;
 	model->syschar_map = NULL;
 	model->sysdata_map = NULL;
 	model->variable_binding_map = NULL;
+        model->schema = NULL;
 	oscap_free(model);
 }
 
@@ -403,6 +457,13 @@ struct oval_definition_model *oval_syschar_model_get_definition_model(struct ova
 
 	return model->definition_model;
 }
+
+const char * oval_definition_model_get_schema(struct oval_definition_model * model)
+{
+        __attribute__nonnull__(model);
+
+        return model->schema;
+}    
 
 struct oval_syschar_iterator *oval_syschar_model_get_syschars(struct oval_syschar_model *model)
 {
@@ -420,10 +481,25 @@ struct oval_sysinfo *oval_syschar_model_get_sysinfo(struct oval_syschar_model *m
 	return model->sysinfo;
 }
 
+const char * oval_syschar_model_get_schema(struct oval_syschar_model * model)
+{
+        __attribute__nonnull__(model);
+
+        return model->schema;
+}    
+
 void oval_syschar_model_set_sysinfo(struct oval_syschar_model *model, struct oval_sysinfo *sysinfo)
 {
 	if (model && !oval_syschar_model_is_locked(model)) {
 		model->sysinfo = oval_sysinfo_clone(model, sysinfo);
+	} else
+		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+}
+
+void oval_syschar_model_set_schema(struct oval_syschar_model *model, const char * schema)
+{
+	if (model && !oval_syschar_model_is_locked(model)) {
+		model->schema = oscap_strdup(schema);
 	} else
 		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
@@ -433,6 +509,14 @@ void oval_definition_model_add_definition(struct oval_definition_model *model, s
 	if (model && !oval_definition_model_is_locked(model)) {
 		char *key = oval_definition_get_id(definition);
 		oval_string_map_put(model->definition_map, key, (void *)definition);
+	} else
+		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+}
+
+void oval_definition_model_set_schema(struct oval_definition_model *model, const char *version)
+{
+	if (model && !oval_definition_model_is_locked(model)) {
+                model->schema = oscap_strdup(version);
 	} else
 		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
@@ -864,6 +948,7 @@ struct oval_results_model *oval_results_model_new(struct oval_definition_model *
 	model->systems = oval_collection_new();
 	model->definition_model = definition_model;
 	model->is_locked = false;
+        model->schema = oscap_strdup(OVAL_RES_SCHEMA_LOCATION);
 	if (syschar_models) {
 		struct oval_syschar_model *syschar_model;
 		for (syschar_model = *syschar_models; syschar_model; syschar_model = *(++syschar_models)) {
@@ -934,8 +1019,9 @@ struct oval_results_model *oval_results_model_clone(struct oval_results_model *o
 
 		oval_results_model_add_system(new_resmodel, new_system);
 	}
-
 	oval_result_system_iterator_free(old_systems);
+        new_resmodel->schema = strdup(old_resmodel->schema);
+
 	return new_resmodel;
 }
 
@@ -943,9 +1029,12 @@ void oval_results_model_free(struct oval_results_model *model)
 {
 	__attribute__nonnull__(model);
 
+        if (model->schema)
+                oscap_free(model->schema);
 	oval_collection_free_items(model->systems, (oscap_destruct_func) oval_result_system_free);
 	model->definition_model = NULL;
 	model->systems = NULL;
+        model->schema = NULL;
 	oscap_free(model);
 }
 
@@ -1187,10 +1276,14 @@ xmlNode *oval_definitions_to_dom(struct oval_definition_model *definition_model,
 		root_node = xmlNewNode(NULL, BAD_CAST "oval_definitions");
 		xmlDocSetRootElement(doc, root_node);
 	}
+	xmlNewProp(root_node, BAD_CAST "xsi:schemaLocation", BAD_CAST definition_model->schema);
+
 	xmlNs *ns_common = xmlNewNs(root_node, OVAL_COMMON_NAMESPACE, BAD_CAST "oval");
+	xmlNs *ns_xsi = xmlNewNs(root_node, OVAL_XMLNS_XSI, BAD_CAST "xsi");
 	xmlNs *ns_defntns = xmlNewNs(root_node, OVAL_DEFINITIONS_NAMESPACE, NULL);
 
 	xmlSetNs(root_node, ns_common);
+	xmlSetNs(root_node, ns_xsi);
 	xmlSetNs(root_node, ns_defntns);
 
 	xmlNode *tag_generator = xmlNewChild(root_node, ns_defntns, BAD_CAST "generator", NULL);
@@ -1336,10 +1429,14 @@ xmlNode *oval_syschar_model_to_dom(struct oval_syschar_model * syschar_model,
 		root_node = xmlNewNode(NULL, BAD_CAST "oval_system_characteristics");
 		xmlDocSetRootElement(doc, root_node);
 	}
+	xmlNewProp(root_node, BAD_CAST "xsi:schemaLocation", BAD_CAST syschar_model->schema);
+
 	xmlNs *ns_common = xmlNewNs(root_node, OVAL_COMMON_NAMESPACE, BAD_CAST "oval");
+	xmlNs *ns_xsi = xmlNewNs(root_node, OVAL_XMLNS_XSI, BAD_CAST "xsi");
 	xmlNs *ns_syschar = xmlNewNs(root_node, OVAL_SYSCHAR_NAMESPACE, NULL);
 
 	xmlSetNs(root_node, ns_common);
+	xmlSetNs(root_node, ns_xsi);
 	xmlSetNs(root_node, ns_syschar);
 
 	xmlNode *tag_generator = xmlNewChild(root_node, ns_syschar, BAD_CAST "generator", NULL);
@@ -1487,10 +1584,14 @@ static xmlNode *oval_results_to_dom(struct oval_results_model *results_model,
 		root_node = xmlNewNode(NULL, BAD_CAST "oval_results");
 		xmlDocSetRootElement(doc, root_node);
 	}
+	xmlNewProp(root_node, BAD_CAST "xsi:schemaLocation", BAD_CAST results_model->schema);
+
 	xmlNs *ns_common = xmlNewNs(root_node, OVAL_COMMON_NAMESPACE, BAD_CAST "oval");
+	xmlNs *ns_xsi = xmlNewNs(root_node, OVAL_XMLNS_XSI, BAD_CAST "xsi");
 	xmlNs *ns_results = xmlNewNs(root_node, OVAL_RESULTS_NAMESPACE, NULL);
 
 	xmlSetNs(root_node, ns_common);
+	xmlSetNs(root_node, ns_xsi);
 	xmlSetNs(root_node, ns_results);
 
 	xmlNode *tag_generator = xmlNewChild(root_node, ns_results, BAD_CAST "generator", NULL);

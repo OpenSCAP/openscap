@@ -181,8 +181,12 @@ xmlNode *xccdf_benchmark_to_dom(struct xccdf_benchmark *benchmark, xmlDocPtr doc
 		root_node = xccdf_item_to_dom(XITEM(benchmark), doc, parent);
 		xmlDocSetRootElement(doc, root_node);
 	}
-	xmlNs *ns_xccdf = xmlNewNs(root_node, XCCDF_BASE_NAMESPACE, NULL);
+	xmlNewProp(root_node, BAD_CAST "xsi:schemaLocation", BAD_CAST XCCDF_SCHEMA_LOCATION);
 
+	xmlNs *ns_xccdf = xmlNewNs(root_node, XCCDF_BASE_NAMESPACE, NULL);
+	xmlNs *ns_xsi = xmlNewNs(root_node, XCCDF_XSI_NAMESPACE, BAD_CAST "xsi");
+
+	xmlSetNs(root_node, ns_xsi);
 	xmlSetNs(root_node, ns_xccdf);
 
 	/* Handle attributes */

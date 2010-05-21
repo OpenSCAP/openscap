@@ -464,17 +464,19 @@ int main(int argc, char **argv)
 
             /* Get the first policy, just for prototype */
             policy_it = xccdf_policy_model_get_policies(policy_model);
-            if (xccdf_policy_iterator_has_more(policy_it))
+            if (xccdf_policy_iterator_has_more(policy_it)) {
                     policy = xccdf_policy_iterator_next(policy_it);
+
+                    /* Get Variable model from XCCDF and add it to OVAL */
+                    var_model = xccdf_policy_get_variables(policy, def_model);
+
+                    /* Add model to definition model */
+                    oval_definition_model_bind_variable_model(def_model, var_model);
+            }
+
             xccdf_policy_iterator_free(policy_it);
-
-            /* Get Variable model from XCCDF and add it to OVAL */
-            var_model = xccdf_policy_get_variables(policy, def_model);
-            
-            /* Add model to definition model */
-            oval_definition_model_bind_variable_model(def_model, var_model);
-
             oscap_import_source_free(ben_in);
+
         }
 #endif
 
@@ -674,7 +676,7 @@ int main(int argc, char **argv)
 		if (verbose >= 2)
 			printf("Register callback: %d\n", reg);
 
-		xccdf_policy_evaluate(policy);
+		if (policy != NULL) xccdf_policy_evaluate(policy);
 		/* xccdf_benchmark_free(benchmark); << You can't free benchmark here cause it's still bound to policy model */
 		/* oscap_text_free(title); << You can't free title here cause it's bound to result model that is freed by policy model */
 		xccdf_policy_model_free(policy_model);
