@@ -37,33 +37,33 @@
 # define _A(x) assert(x)
 #endif
 
-static SEXP_t *oval_value_to_sexp(struct oval_value *val, oval_datatype_t dtype)
+SEXP_t *oval_value_to_sexp(struct oval_value *val, oval_datatype_t dtype)
 {
 	SEXP_t *val_sexp = NULL;
         char   *val_rptr = NULL;
-        
+
 	switch (dtype) {
 	case OVAL_DATATYPE_VERSION:
                 val_rptr = oval_value_get_text (val);
-                
+
                 if (val_rptr != NULL) {
                         val_sexp = SEXP_string_newf("%s", val_rptr);
                         SEXP_datatype_set(val_sexp, "version");
                 }
-                
+
 		break;
         case OVAL_DATATYPE_EVR_STRING:
                 val_rptr = oval_value_get_text (val);
-                
+
                 if (val_rptr != NULL) {
                         val_sexp = SEXP_string_newf("%s", val_rptr);
                         SEXP_datatype_set(val_sexp, "evr_str");
                 }
-                
+
 		break;
 	case OVAL_DATATYPE_STRING:
                 val_rptr = oval_value_get_text (val);
-                
+
                 if (val_rptr != NULL) {
                         val_sexp = SEXP_string_newf("%s", val_rptr);
                 }
