@@ -73,9 +73,25 @@ typedef struct oval_variable_model {
 	struct oval_string_map *varmap;
 	bool is_locked;
 } oval_variable_model_t;
+
 bool oval_variable_model_is_valid(struct oval_variable_model *variable_model)
 {
-	return true;		//TODO
+
+	struct oval_string_iterator *varids = oval_variable_model_get_variable_ids(variable_model);
+	while (oval_string_iterator_has_more(varids)) {
+		char *varid = oval_string_iterator_next(varids);
+		oval_datatype_t datatype = oval_variable_model_get_datatype(variable_model, varid);
+		if ((oval_variable_model_get_comment(variable_model, varid) == NULL) || 
+                    (oval_string_map_get_value(variable_model->varmap, varid) == NULL) ||
+                    (varid == NULL)) {
+                    oval_string_iterator_free(varids);
+                    return false;
+                }
+
+	}
+        oval_string_iterator_free(varids);
+
+        return true;
 }
 
 bool oval_variable_model_is_locked(struct oval_variable_model * variable_model)
@@ -88,7 +104,9 @@ void oval_variable_model_lock(struct oval_variable_model *variable_model)
 {
 	__attribute__nonnull__(variable_model);
 	variable_model->is_locked = true;
-} static void _oval_variable_model_frame_free(_oval_variable_model_frame_t * frame)
+} 
+
+static void _oval_variable_model_frame_free(_oval_variable_model_frame_t * frame)
 {
 	if (frame) {
 		if (frame->id)
@@ -366,7 +384,6 @@ static xmlNode *oval_variable_model_to_dom(struct oval_variable_model * variable
 	struct oval_string_iterator *varids = oval_variable_model_get_variable_ids(variable_model);
 	while (oval_string_iterator_has_more(varids)) {
 		char *varid = oval_string_iterator_next(varids);
-                printf("VARIABLE: %s\n", varid);
 		oval_datatype_t datatype = oval_variable_model_get_datatype(variable_model, varid);
 		const char *comm = oval_variable_model_get_comment(variable_model, varid);
 
