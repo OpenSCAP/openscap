@@ -51,8 +51,10 @@ oval_subtypedsc_t __s2n_tbl[] = {
 	/*  7001 */ {OVAL_INDEPENDENT_FAMILY,               "family"              },
         /*  7002 */ {OVAL_INDEPENDENT_FILE_MD5,             "filemd5"             },
         /*  7003 */ {OVAL_INDEPENDENT_FILE_HASH,            "filehash"            },
+        /*  7004 */ {OVAL_INDEPENDENT_ENVIRONMENT_VARIABLE, "environmentvariable" },
 	/*  7006 */ {OVAL_INDEPENDENT_TEXT_FILE_CONTENT_54, "textfilecontent54"   },
 	/*  7007 */ {OVAL_INDEPENDENT_TEXT_FILE_CONTENT,    "textfilecontent"     },
+        /*  7009 */ {OVAL_INDEPENDENT_VARIABLE,             "variable"            },
 	/*  7010 */ {OVAL_INDEPENDENT_XML_FILE_CONTENT,     "xmlfilecontent"      },
 	/*  9001 */ {OVAL_LINUX_DPKG_INFO,                  "dpkginfo"            },
 	/*  9002 */ {OVAL_LINUX_INET_LISTENING_SERVERS,     "inetlisteningservers"},
@@ -76,6 +78,7 @@ static int __s2n_tbl_cmp(oval_subtype_t *type, oval_subtypedsc_t *dsc)
 /* Sorted by name (second column) */
 oval_subtypedsc_t __n2s_tbl[] = {
 	/*  9001 */ {OVAL_LINUX_DPKG_INFO,                  "dpkginfo"            },
+        /*  7004 */ {OVAL_INDEPENDENT_ENVIRONMENT_VARIABLE, "environmentvariable" },
 	/*  7001 */ {OVAL_INDEPENDENT_FAMILY,               "family"              },
 	/* 13001 */ {OVAL_UNIX_FILE,                        "file"                },
         /*  7003 */ {OVAL_INDEPENDENT_FILE_HASH,            "filehash"            },
@@ -91,6 +94,7 @@ oval_subtypedsc_t __n2s_tbl[] = {
 	/*  7007 */ {OVAL_INDEPENDENT_TEXT_FILE_CONTENT,    "textfilecontent"     },
 	/*  7006 */ {OVAL_INDEPENDENT_TEXT_FILE_CONTENT_54, "textfilecontent54"   },
 	/* 13009 */ {OVAL_UNIX_UNAME,                       "uname"               },
+        /*  7009 */ {OVAL_INDEPENDENT_VARIABLE,             "variable"            },
 	/*  7010 */ {OVAL_INDEPENDENT_XML_FILE_CONTENT,     "xmlfilecontent"      }
 };
 

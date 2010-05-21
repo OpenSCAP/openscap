@@ -105,6 +105,8 @@ common_oval_sources += probes/probe-api.c 	\
 		       _oval_probe_handler.h	\
 		       oval_probe_ext.c		\
 		       oval_probe_ext.h		\
+		       oval_probe_int.c		\
+		       oval_probe_int.h		\
 		       oval_probe_impl.h
 
 nodist_liboval_testing_la_SOURCES = oval_testing_probe.c
