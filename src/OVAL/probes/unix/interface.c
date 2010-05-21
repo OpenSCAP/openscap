@@ -122,7 +122,7 @@ static int get_ifs(SEXP_t *name_ent, SEXP_t *item_list)
 			rc = 1;
 			goto leave2;
 		}
-		if (ifa->ifa_flags & IFF_BROADCAST) {
+		if (family == AF_INET && ifa->ifa_flags & IFF_BROADCAST) {
 			rc = getnameinfo(ifa->ifa_broadaddr, (family == AF_INET) ?
 					 sizeof(struct sockaddr_in) :
 					 sizeof(struct sockaddr_in6), broad, NI_MAXHOST,
