@@ -360,13 +360,14 @@ SEXP_t *probe_obj_new(const char *name, SEXP_t * attrs)
 	ns  = encache_ref (OSCAP_GSYM(encache), name);
 
 	if (attrs != NULL) {
-		SEXP_t *nl;
+		SEXP_t *nl, *nj;
 
 		nl = SEXP_list_new(ns, NULL);
-		nl = SEXP_list_join(nl, attrs);
+		nj = SEXP_list_join(nl, attrs);
 
-		SEXP_list_add(obj, nl);
+		SEXP_list_add(obj, nj);
 		SEXP_free(nl);
+                SEXP_free(nj);
 	} else
 		SEXP_list_add(obj, ns);
 

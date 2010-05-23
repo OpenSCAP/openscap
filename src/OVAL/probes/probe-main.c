@@ -693,6 +693,10 @@ int main(void)
 				   errno, strerror(errno));
 
 				SEAP_msg_free(seap_request);
+
+                                if (probe_out != NULL)
+                                        SEXP_free(probe_out);
+
 				break;
 			}
 		} else {
@@ -700,6 +704,7 @@ int main(void)
 
 			seap_reply = SEAP_msg_new();
 			SEAP_msg_set(seap_reply, probe_out);
+                        SEXP_free(probe_out);
 
 			if (SEAP_reply(OSCAP_GSYM(ctx), OSCAP_GSYM(sd), seap_reply, seap_request) == -1) {
 				ret = errno;
