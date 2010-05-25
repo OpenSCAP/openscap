@@ -33,6 +33,15 @@
 
 #if defined(SWIGPYTHON)
 /* Definitions for PYTHON */
+
+%typemap (in) void*
+{
+    if (PyCObject_Check($input))
+    {
+        $1 = PyCObject_AsVoidPtr($input);
+    }
+}
+
 %typemap(in) struct cpe_name ** {
 
     int i; 
