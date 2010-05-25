@@ -1,7 +1,16 @@
 #!/usr/bin/env bash
 
-ENV_VAR=( `env | sed 's/\([A-Za-z_1-9]*\)=.*/\1/'` )
-VAR_VAL=( `env | sed 's/\([A-Za-z_1-9]*\)=\(.*\)/\2/'` )
+i=0;
+IFS=$'\n'
+for line in `env`; do
+        VAR=`echo $line | sed 's/\([A-Za-z_1-9]*\)=.*$/\1/'`
+        if [ "x$VAR" == "x_" ] || [ "x$VAR" == "xSHLVL" ]; then
+                continue;
+        fi
+        ENV_VAR[$i]="$VAR";
+        VAR_VAL[$i]=`echo $line | sed 's/\([A-Za-z_1-9]*\)=\(.*\)$/\2/'`
+        i=$[$i+1];
+done
 
 cat <<EOF
 <?xml version="1.0"?>
