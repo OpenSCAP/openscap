@@ -1377,13 +1377,101 @@ function test_probes_interface {
     local DEFFILE="test_probes_interface.xml"
     local RESFILE="test_probes_interface.xml.results.xml"
 
-    eval "which ifconfig  > /dev/null 2>&1"    
     if [ ! -x ${EXECDIR}/test_interface ]; then		
 	echo -e "Testing binary not found!\n" >&2
 	return 255; # Test is not applicable.
     fi
 
     bash "${srcdir}/OVAL/probes/test_probes_interface.xml.sh ${EXECDIR}/test_interface" > "$DEFFILE"
+    LINES=$?
+
+    eval "\"${EXECDIR}/test_probes\" \"$DEFFILE\" \"$RESFILE\"" >> "$LOGFILE"
+    
+    if [ $? -eq 0 ] && [ -e $RESFILE ]; then
+
+	DEF_DEF=`cat "$DEFFILE" | grep "id=\"oval:1:def:1\""`
+	DEF_RES=`cat "$RESFILE" | grep "definition_id=\"oval:1:def:1\""`
+
+	if (echo $DEF_RES | grep -q "result=\"true\""); then
+	    RES="TRUE"
+	elif (echo $DEF_RES | grep -q "result=\"false\""); then
+	    RES="FALSE"
+	else
+	    RES="ERROR"
+	fi
+	
+	if (echo $DEF_DEF | grep -q "comment=\"true\""); then
+	    CMT="TRUE"
+	elif (echo $DEF_DEF | grep -q "comment=\"false\""); then
+	    CMT="FALSE"
+	else
+	    CMT="ERROR"
+	fi
+	
+	if [ ! $RES = $CMT ]; then
+	    echo "Result of oval:1:def:1 should be ${CMT}!" >&2
+	    ret_val=$[$ret_val + 1]
+	fi
+	
+	COUNT=$LINES; ID=1
+	while [ $ID -le $COUNT ]; do
+	    
+	    TEST_DEF=`cat "$DEFFILE" | grep "id=\"oval:1:tst:${ID}\""`
+	    TEST_RES=`cat "$RESFILE" | grep "test_id=\"oval:1:tst:${ID}\""`
+
+	    if (echo $TEST_RES | grep -q "result=\"true\""); then
+		RES="TRUE"
+	    elif (echo $TEST_RES | grep -q "result=\"false\""); then
+		RES="FALSE"
+	    else
+		RES="ERROR"
+	    fi
+
+	    if (echo $TEST_DEF | grep -q "comment=\"true\""); then
+		CMT="TRUE"
+	    elif (echo $TEST_DEF | grep -q "comment=\"false\""); then
+		CMT="FALSE"
+	    else
+		CMT="ERROR"
+	    fi
+
+	    if [ ! $RES = $CMT ]; then
+		echo "Result of oval:1:tst:${ID} should be ${CMT}!" >&2
+		ret_val=$[$ret_val + 1]
+	    fi
+
+	    ID=$[$ID+1]
+	done
+
+	if [ ! $ret_val -eq 0 ]; then
+	    echo "" >&2
+	    cat "$RESFILE" >&2
+	    echo "" >&2
+	    ret_val=2
+	fi
+
+    else 
+	ret_val=1
+    fi
+
+    return $ret_val
+}
+
+function test_probes_environmentvariable {
+
+    local ret_val=0;
+    local LOGFILE="test_probes_environmentvariable.out"
+    local EXECDIR="$(pwd)"
+    local DEFFILE="test_probes_environmentvariable.xml"
+    local RESFILE="test_probes_environmentvariable.xml.results.xml"
+
+    eval "which env  > /dev/null 2>&1"    
+    if [ ! $? -eq 0 ]; then		
+	echo -e "No env found in $PATH!\n" >&2
+	return 255; # Test is not applicable.
+    fi
+
+    bash "${srcdir}/OVAL/probes/test_probes_environmentvariable.xml.sh" > "$DEFFILE"
     LINES=$?
 
     eval "\"${EXECDIR}/test_probes\" \"$DEFFILE\" \"$RESFILE\"" >> "$LOGFILE"
@@ -1568,7 +1656,10 @@ function test_probes_cleanup {
 	  test_probes_inetlisteningservers.xml.results.xml \
 	  test_probes_interface.out \
 	  test_probes_interface.xml \
-	  test_probes_interface.xml.results.xml 
+	  test_probes_interface.xml.results.xml \
+          test_probes_environmentvariable.out \
+          test_probes_environmentvariable.xml \
+          test_probes_environmentvariable.xml.results.xml
 
     return 0
 }
@@ -1616,6 +1707,11 @@ result=$[$result+$?]
 test_probes_filehash
 ret_val=$?
 report_result "test_probes_filehash" $ret_val  
+result=$[$result+$?]   
+
+test_probes_environmentvariable
+ret_val=$?
+report_result "test_probes_environmentvariable" $ret_val  
 result=$[$result+$?]   
 
 test_probes_uname
