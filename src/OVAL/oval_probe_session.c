@@ -22,17 +22,47 @@
 #include <config.h>
 #include <errno.h>
 #include <string.h>
+#include <stdlib.h>
 #include "common/_error.h"
 #include "common/assume.h"
 #include "common/bfind.h"
 #include "public/oval_definitions.h"
 #include "_oval_probe_session.h"
 #include "_oval_probe_handler.h"
+#include "oval_probe_impl.h"
 #if defined(ENABLE_PROBES)
 # include "oval_probe_ext.h"
 # include "oval_probe_int.h"
+
+#if defined(OSCAP_THREAD_SAFE)
+# include <pthread.h>
+static pthread_once_t __encache_once = PTHREAD_ONCE_INIT;
 #endif
-#include "oval_probe_impl.h"
+
+static void encache_libfree(void)
+{
+        encache_free(OSCAP_GSYM(encache));
+}
+
+static void encache_libinit(void)
+{
+        if (OSCAP_GSYM(encache) == NULL) {
+                OSCAP_GSYM(encache) = encache_new();
+                atexit(encache_libfree);
+        }
+}
+
+static void encache_once(void)
+{
+#if defined(OSCAP_THREAD_SAFE)
+        if (pthread_once(&__encache_once, &encache_libinit) != 0)
+                abort();
+#else
+        encache_libinit();
+#endif
+        return;
+}
+#endif /* ENABLE_PROBES */
 
 /*
  * oval_probe_session_
@@ -50,6 +80,8 @@ oval_probe_session_t *oval_probe_session_new(struct oval_syschar_model *model)
         sess->pext = oval_pext_new();
         sess->pext->model    = &sess->sys_model;
         sess->pext->sess_ptr = sess;
+
+        encache_once();
 
         oval_probe_handler_set(sess->ph, OVAL_SUBTYPE_SYSINFO,       oval_probe_sys_handler, sess->pext);
         oval_probe_handler_set(sess->ph, OVAL_INDEPENDENT_FAMILY,    oval_probe_ext_handler, sess->pext);

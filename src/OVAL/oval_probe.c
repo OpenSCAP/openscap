@@ -103,6 +103,12 @@ static int __n2s_tbl_cmp(const char *name, oval_subtypedsc_t *dsc)
 }
 
 #if defined(ENABLE_PROBES)
+/*
+ * Library side entity name cache. Initialization needs to be
+ * thread-safe and is done by oval_probe_session_new. Freeing
+ * of memory used by this cache is done at exit using a hook
+ * registered with atexit().
+ */
 encache_t *OSCAP_GSYM(encache) = NULL;
 struct id_desc_t OSCAP_GSYM(id_desc);
 #endif
@@ -123,7 +129,7 @@ oval_subtype_t oval_str2subtype(const char *str)
 {
         oval_subtypedsc_t *d;
 
-        d = oscap_bfind(__n2s_tbl, __n2s_tbl_count, sizeof(oval_subtypedsc_t), str,
+        d = oscap_bfind(__n2s_tbl, __n2s_tbl_count, sizeof(oval_subtypedsc_t), (void *)str,
                         (int(*)(void *, void *))__n2s_tbl_cmp);
 
         return (d == NULL ? OVAL_SUBTYPE_UNKNOWN : d->type);

@@ -30,12 +30,11 @@ AC_PROG_LIBTOOL
 AC_PROG_SWIG([1.3.29])
 
 # Compiler flags
-CFLAGS="$CFLAGS -std=c99 -W -Wall -Wnonnull -Wshadow -Wformat -Wundef -Wno-unused-parameter -Wmissing-prototypes -Wno-unknown-pragmas -D_GNU_SOURCE"
+CFLAGS="$CFLAGS -std=c99 -W -Wall -Wnonnull -Wshadow -Wformat -Wundef -Wno-unused-parameter -Wmissing-prototypes -Wno-unknown-pragmas -D_GNU_SOURCE -DOSCAP_THREAD_SAFE"
 
 CFLAGS_OPTIMIZED="-O2 -finline-functions"
-CFLAGS_DEBUGGING="-fno-inline-functions -O0 -g"
+CFLAGS_DEBUGGING="-fno-inline-functions -O0 -g3"
 CFLAGS_NODEBUG="-DNDEBUG"
-
 
 #
 # xml2-config
