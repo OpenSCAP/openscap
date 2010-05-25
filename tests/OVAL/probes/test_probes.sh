@@ -1378,12 +1378,12 @@ function test_probes_interface {
     local RESFILE="test_probes_interface.xml.results.xml"
 
     eval "which ifconfig  > /dev/null 2>&1"    
-    if [ ! $? -eq 0 ]; then		
-	echo -e "No ifconfig found in $PATH!\n" >&2
+    if [ ! -x ${EXECDIR}/test_interface ]; then		
+	echo -e "Testing binary not found!\n" >&2
 	return 255; # Test is not applicable.
     fi
 
-    bash "${srcdir}/OVAL/probes/test_probes_interface.xml.sh" > "$DEFFILE"
+    bash "${srcdir}/OVAL/probes/test_probes_interface.xml.sh ${EXECDIR}/test_interface" > "$DEFFILE"
     LINES=$?
 
     eval "\"${EXECDIR}/test_probes\" \"$DEFFILE\" \"$RESFILE\"" >> "$LOGFILE"

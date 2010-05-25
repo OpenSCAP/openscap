@@ -48,6 +48,7 @@ check_PROGRAMS +=	sexp_parser \
 			sexp_number \
 			sexp_list \
 			test_probes \
+			test_interface \
 			test_sysinfo \
 			test_spb_api \
 			sexp_concurency \
@@ -70,6 +71,8 @@ test_probes_SOURCES =	OVAL/probes/test_probes.c
 test_probes_CFLAGS =	-I$(top_srcdir)/src/OVAL @libxml_cflags@
 test_sysinfo_SOURCES =	OVAL/probes/test_sysinfo.c
 test_sysinfo_CFLAGS =	-I$(top_srcdir)/src/OVAL @libxml_cflags@
+test_interface_SOURCES = OVAL/probes/test_interface.c
+test_interface_CFLAGS =	
 
 test_crapi_digest_SOURCES= OVAL/probes/crapi/test_crapi_digest.c
 test_crapi_digest_CFLAGS= -I$(top_srcdir)/src/OVAL/probes/
@@ -97,7 +100,7 @@ EXTRA_DIST += OVAL/SEAP/test_seap.sh 	                    \
               OVAL/probes/test_probes_filemd5.xml.sh        \
               OVAL/probes/test_probes_filehash.xml.sh       \
               OVAL/probes/test_probes_interface.xml.sh       \
-              OVAL/probes/test_probes_inetlisteningservers.xml.sh       \
+              OVAL/probes/test_probes_inetlisteningservers.xml.sh \
               OVAL/probes/test_probes_uname.xml.sh
 
 endif # WANT_PROBES 

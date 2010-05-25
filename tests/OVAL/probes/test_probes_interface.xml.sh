@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 
-IFCS=( `ifconfig | grep "^[a-zA-z].*" | awk '{print $1'} | tr '\n' ' '` )
+BIN=$1
 
-function getField {
-    echo "`ifconfig $1 | sed 's/     //g' | sed 's/  /\n/g' | grep $2 | sed \"s/$2\( addr\)\?[ ]\?:\?//g\" | head -1`"    
-}
+NAME=( `${BIN} | awk '{print $1}' | tr '\n' ' '` )
+HOST=( `${BIN} | awk '{print $2}' | tr '\n' ' '` )
+MASK=( `${BIN} | awk '{print $3}' | tr '\n' ' '` )
+BRDC=( `${BIN} | awk '{print $4}' | tr '\n' ' '` )
 
 cat <<EOF
 <?xml version="1.0"?>
@@ -21,7 +22,7 @@ cat <<EOF
         <criteria operator="AND">
 EOF
 I=0
-while [ $I -lt ${#IFCS[@]} ]; do
+while [ $I -lt ${#NAME[@]} ]; do
     echo "<criterion test_ref=\"oval:1:tst:$[$I+1]\"/>"
     I=$[$I+1]
 done
@@ -41,9 +42,9 @@ cat <<EOF
 EOF
 
 I=0
-while [ $I -lt ${#IFCS[@]} ]; do
+while [ $I -lt ${#NAME[@]} ]; do
     cat <<EOF
-    <interface_test version="1" id="oval:1:tst:$[$I+1]" check="all" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+    <interface_test version="1" id="oval:1:tst:$[$I+1]" check="at least one" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
       <object object_ref="oval:1:obj:$[$I+1]"/>
       <state state_ref="oval:1:ste:$[$I+1]"/>
     </interface_test>
@@ -61,10 +62,10 @@ done
 EOF
 
 I=0
-while [ $I -lt ${#IFCS[@]} ]; do
+while [ $I -lt ${#NAME[@]} ]; do
     cat <<EOF
     <interface_object version="1" id="oval:1:obj:$[$I+1]" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-      <name>${IFCS[$I]}</name>
+      <name>${NAME[$I]}</name>
     </interface_object>
 
 EOF
@@ -80,14 +81,13 @@ done
 EOF
 
 I=0
-while [ $I -lt ${#IFCS[@]} ]; do
+while [ $I -lt ${#NAME[@]} ]; do
     cat <<EOF
   <interface_state version="1" id="oval:1:ste:$[$I+1]" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-    <name>${IFCS[$I]}</name>
-    <hardware_addr>`getField ${IFCS[$I]} HWaddr`</hardware_addr>
-    <inet_addr>`getField ${IFCS[$I]} inet`</inet_addr>
-    <broadcast_addr>`getField ${IFCS[$I]} Bcast`</broadcast_addr>
-    <netmask>`getField ${IFCS[$I]} Mask`</netmask>
+    <name>${NAME[$I]}</name>
+    <inet_addr>${HOST[$I]}</inet_addr>
+    <broadcast_addr>`echo ${BRDC[$I]} | sed 's/X//'`</broadcast_addr>
+    <netmask>${MASK[$I]}</netmask>
   </interface_state>
 
 EOF
@@ -101,4 +101,4 @@ done
 </oval_definitions>
 EOF
 
-exit ${#IFCS[@]}
+exit ${#NAME[@]}
