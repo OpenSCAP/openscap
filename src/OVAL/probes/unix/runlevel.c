@@ -45,6 +45,7 @@
 
 #include <seap.h>
 #include <probe-api.h>
+#include <probe-entcmp.h>
 #include <alloc.h>
 
 #ifndef _A
@@ -52,134 +53,167 @@
 #endif
 
 struct runlevel_req {
-        char *service_name;
-        char *runlevel;
+        SEXP_t *service_name_ent;
+        SEXP_t *runlevel_ent;
 };
-
-#define RUNLEVEL_REQ_INITIALIZER { NULL, NULL }
 
 struct runlevel_rep {
-        char *service_name;
-        char *runlevel;
-        bool  start;
-        bool  kill;
+	char *service_name;
+	char *runlevel;
+	bool start;
+	bool kill;
+	struct runlevel_rep *next;
 };
 
-#define RUNLEVEL_REP_INITIALIZER { NULL, NULL, 0, 0 }
-
-static int get_runlevel (struct runlevel_req *req, struct runlevel_rep *rep);
+static int get_runlevel (struct runlevel_req *req, struct runlevel_rep **rep);
 
 #if defined(__linux__)
-static int get_runlevel_redhat (struct runlevel_req *req, struct runlevel_rep *rep)
+static int get_runlevel_redhat (struct runlevel_req *req, struct runlevel_rep **rep)
 {
+	const char runlevel_list[] = {'0', '1', '2', '3', '4', '5', '6'};
+	const char *init_path = "/etc/rc.d/init.d";
+	const char *rc_path = "/etc/rc%c.d";
         char pathbuf[PATH_MAX];
-        unsigned long runlevel;
-
-        DIR *rcdir;
-        struct dirent *dp;
-        struct stat st, rc_st;
+        DIR *init_dir, *rc_dir;
+        struct dirent *init_dp, *rc_dp;
+	struct stat init_st, rc_st;
+	struct runlevel_rep *rep_lst = NULL;
 
         _A(req != NULL);
         _A(rep != NULL);
 
-        rep->service_name = req->service_name;
-        rep->runlevel     = req->runlevel;
-        rep->start        = false;
-        rep->kill         = false;
-
-        snprintf (pathbuf, PATH_MAX, "/etc/init.d/%s", req->service_name);
-
-        if (stat (pathbuf, &st) != 0)
-                return (0);
-
-        /* TODO: check mode/owner? */
-
-        runlevel = strtoul (req->runlevel, NULL, 10);
-
-        switch (errno) {
-        case EINVAL:
-        case ERANGE:
-                _D("Can't convert req.runlevel to a number\n");
-                return (-1);
-        }
-
-        snprintf (pathbuf, PATH_MAX, "/etc/rc%lu.d", runlevel);
-
-        if (runlevel > 6)
-                return (0);
-
-        rcdir = opendir (pathbuf);
-        if (rcdir == NULL) {
+        init_dir = opendir(init_path);
+        if (init_dir == NULL) {
                 _D("Can't open directory \"%s\": errno=%d, %s.\n",
-                   pathbuf, errno, strerror (errno));
+                   init_path, errno, strerror (errno));
+                return (-1);
+        }
+        if (fchdir(dirfd(init_dir)) != 0) {
+                _D("Can't fchdir to \"%s\": errno=%d, %s.\n",
+                   init_path, errno, strerror (errno));
+                closedir(init_dir);
                 return (-1);
         }
 
-        if (fchdir (dirfd (rcdir)) != 0) {
-                _D("Can't chdir to \"%s\": errno=%d, %s.\n",
-                   pathbuf, errno, strerror (errno));
-                closedir (rcdir);
-                return (-1);
-        }
+        while ((init_dp = readdir(init_dir)) != NULL) {
+		char *service_name;
+		int i;
+		SEXP_t *r0;
 
-        while ((dp = readdir (rcdir)) != NULL) {
-                if (stat (dp->d_name, &rc_st) != 0) {
+                if (stat(init_dp->d_name, &init_st) != 0) {
                         _D("Can't stat file %s/%s: errno=%d, %s.\n",
-                           pathbuf, dp->d_name, errno, strerror (errno));
+                           init_path, init_dp->d_name, errno, strerror(errno));
                         continue;
                 }
 
-                if (rc_st.st_ino == st.st_ino) {
-                        switch(dp->d_name[0]) {
-                        case 'S':
-                                rep->start = true;
-                                goto out;
-                        case 'K':
-                                rep->kill  = true;
-                                goto out;
-                        default:
-                                _D("Unexpected character in filename: %c, %s/%s.\n",
-                                   dp->d_name[0], pathbuf, dp->d_name);
-                        }
-                }
+		r0 = SEXP_string_newf("%s", init_dp->d_name);
+		if (probe_entobj_cmp(req->service_name_ent, r0) != OVAL_RESULT_TRUE) {
+			SEXP_free(r0);
+			continue;
+		}
+		SEXP_free(r0);
+		service_name = init_dp->d_name;
+
+		for (i = 0; i < (sizeof (runlevel_list) / sizeof (runlevel_list[0])); ++i) {
+			char runlevel[2] = {'\0', '\0'};
+			bool start, kill;
+
+			r0 = SEXP_string_newf("%c", runlevel_list[i]);
+			if (probe_entobj_cmp(req->runlevel_ent, r0) != OVAL_RESULT_TRUE) {
+				SEXP_free(r0);
+				continue;
+			}
+			SEXP_free(r0);
+			runlevel[0] = runlevel_list[i];
+
+			snprintf(pathbuf, sizeof (pathbuf), rc_path, runlevel_list[i]);
+			rc_dir = opendir(pathbuf);
+			if (rc_dir == NULL) {
+				_D("Can't open directory \"%s\": errno=%d, %s.\n",
+				   rc_path, errno, strerror (errno));
+				continue;
+			}
+			if (fchdir(dirfd(rc_dir)) != 0) {
+				_D("Can't fchdir to \"%s\": errno=%d, %s.\n",
+				   rc_path, errno, strerror (errno));
+				closedir(rc_dir);
+				continue;
+			}
+
+			start = kill = false;
+
+			while ((rc_dp = readdir(rc_dir)) != NULL) {
+				if (stat(rc_dp->d_name, &rc_st) != 0) {
+					_D("Can't stat file %s/%s: errno=%d, %s.\n",
+					   rc_path, rc_dp->d_name, errno, strerror(errno));
+					continue;
+				}
+
+				if (init_st.st_ino == rc_st.st_ino) {
+					if (rc_dp->d_name[0] == 'S') {
+						start = true;
+						break;
+					} else if (rc_dp->d_name[0] == 'K') {
+						kill = true;
+						break;
+					} else {
+						_D("Unexpected character in filename: %c, %s/%s.\n",
+						   rc_dp->d_name[0], pathbuf, rc_dp->d_name);
+					}
+				}
+			}
+			closedir(rc_dir);
+
+			if (rep_lst == NULL) {
+				rep_lst = *rep = oscap_alloc(sizeof (struct runlevel_rep));
+			} else {
+				rep_lst->next = oscap_alloc(sizeof (struct runlevel_rep));
+				rep_lst = rep_lst->next;
+			}
+
+			rep_lst->service_name = strdup(service_name);
+			rep_lst->runlevel = strdup(runlevel);
+			rep_lst->start = start;
+			rep_lst->kill = kill;
+			rep_lst->next = NULL;
+		}
         }
-out:
-        closedir (rcdir);
+	closedir(init_dir);
 
         return (1);
 }
 
-static int get_runlevel_debian (struct runlevel_req *req, struct runlevel_rep *rep)
+static int get_runlevel_debian (struct runlevel_req *req, struct runlevel_rep **rep)
 {
         return (-1);
 }
 
-static int get_runlevel_slack (struct runlevel_req *req, struct runlevel_rep *rep)
+static int get_runlevel_slack (struct runlevel_req *req, struct runlevel_rep **rep)
 {
         return (-1);
 }
 
-static int get_runlevel_gentoo (struct runlevel_req *req, struct runlevel_rep *rep)
+static int get_runlevel_gentoo (struct runlevel_req *req, struct runlevel_rep **rep)
 {
         return (-1);
 }
 
-static int get_runlevel_arch (struct runlevel_req *req, struct runlevel_rep *rep)
+static int get_runlevel_arch (struct runlevel_req *req, struct runlevel_rep **rep)
 {
         return (-1);
 }
 
-static int get_runlevel_mandriva (struct runlevel_req *req, struct runlevel_rep *rep)
+static int get_runlevel_mandriva (struct runlevel_req *req, struct runlevel_rep **rep)
 {
         return (-1);
 }
 
-static int get_runlevel_suse (struct runlevel_req *req, struct runlevel_rep *rep)
+static int get_runlevel_suse (struct runlevel_req *req, struct runlevel_rep **rep)
 {
         return (-1);
 }
 
-static int get_runlevel_common (struct runlevel_req *req, struct runlevel_rep *rep)
+static int get_runlevel_common (struct runlevel_req *req, struct runlevel_rep **rep)
 {
         return (-1);
 }
@@ -238,7 +272,7 @@ static int is_common (void)
 
 typedef struct {
         int (*distrop)(void);
-        int (*get_runlevel)(struct runlevel_req *, struct runlevel_rep *);
+        int (*get_runlevel)(struct runlevel_req *, struct runlevel_rep **);
 } distro_tbl_t;
 
 const distro_tbl_t distro_tbl[] = {
@@ -254,7 +288,7 @@ const distro_tbl_t distro_tbl[] = {
 
 #define DISTRO_TBL_SIZE ((sizeof distro_tbl)/sizeof (distro_tbl_t))
 
-static int get_runlevel_generic (struct runlevel_req *req, struct runlevel_rep *rep)
+static int get_runlevel_generic (struct runlevel_req *req, struct runlevel_rep **rep)
 {
         uint16_t i;
 
@@ -275,14 +309,14 @@ static int get_runlevel_generic (struct runlevel_req *req, struct runlevel_rep *
 #define CONCAT(a, b) a ## b
 #define GET_RUNLEVEL(d, q, p) CONCAT(get_runlevel_, d) (q, p)
 
-static int get_runlevel (struct runlevel_req *req, struct runlevel_rep *rep)
+static int get_runlevel (struct runlevel_req *req, struct runlevel_rep **rep)
 {
         _A(req != NULL);
         _A(rep != NULL);
         return GET_RUNLEVEL(LINUX_DISTRO, req, rep);
 }
 #elif defined(__FreeBSD__)
-static int get_runlevel (struct runlevel_req *req, struct runlevel_rep *rep)
+static int get_runlevel (struct runlevel_req *req, struct runlevel_rep **rep)
 {
         _A(req != NULL);
         _A(rep != NULL);
@@ -294,122 +328,70 @@ static int get_runlevel (struct runlevel_req *req, struct runlevel_rep *rep)
 
 SEXP_t *probe_main (SEXP_t *object, int *err, void *arg)
 {
-        SEXP_t *probe_out, *val, *item_sexp = NULL;
+        SEXP_t *probe_out;
 
-        struct runlevel_req request_st = RUNLEVEL_REQ_INITIALIZER;
-        struct runlevel_rep reply_st   = RUNLEVEL_REP_INITIALIZER;
+        struct runlevel_req request_st;
+        struct runlevel_rep *reply_st = NULL;
 
-        val = probe_obj_getentval (object, "service_name", 1);
+	request_st.service_name_ent = probe_obj_getent(object, "service_name", 1);
+	if (request_st.service_name_ent == NULL) {
+		_D("%s: element not found\n", "service_name");
+		*err = PROBE_ENOELM;
 
-        if (val == NULL) {
-                _D("%s: no value\n", "service_name");
-                *err = PROBE_ENOVAL;
-                return (NULL);
-        }
+		return NULL;
+	}
 
-        request_st.service_name = SEXP_string_cstr (val);
-        SEXP_free (val);
+	request_st.runlevel_ent = probe_obj_getent(object, "runlevel", 1);
+	if (request_st.runlevel_ent == NULL) {
+		SEXP_free(request_st.service_name_ent);
+		_D("%s: element not found\n", "runlevel");
+		*err = PROBE_ENOELM;
 
-        if (request_st.service_name == NULL) {
-                switch (errno) {
-                case EINVAL:
-                        _D("%s: invalid value type\n", "service_name");
-                        *err = PROBE_EINVAL;
-                        break;
-                case EFAULT:
-                        _D("%s: element not found\n", "service_name");
-                        *err = PROBE_ENOELM;
-                        break;
-                }
+		return NULL;
+	}
 
-                return (NULL);
-        }
+	if (get_runlevel(&request_st, &reply_st) == -1) {
+		SEXP_t *item_sexp;
 
-        val = probe_obj_getentval (object, "runlevel", 1);
-
-        if (val == NULL) {
-                _D("%s: no value\n", "runlevel");
-                *err = PROBE_ENOVAL;
-                oscap_free (request_st.service_name);
-
-                return (NULL);
-        }
-
-        request_st.runlevel = SEXP_string_cstr (val);
-        SEXP_free (val);
-
-        if (request_st.runlevel == NULL) {
-                switch (errno) {
-                case EINVAL:
-                        _D("%s: invalid value type\n", "runlevel");
-                        *err = PROBE_EINVAL;
-                        break;
-                case EFAULT:
-                        _D("%s: element not found\n", "service_name");
-                        *err = PROBE_ENOELM;
-                        break;
-                }
-
-                oscap_free (request_st.service_name);
-                return (NULL);
-        }
-
-        probe_out = SEXP_list_new (NULL);
-
-        /*
-         * == Implementation note #1 ==
-         *
-         * get_runlevel doesn't create copies of service_name and runlevel strings.
-         * Freeing service_name and runlevel in both request_st and reply_st will
-         * result in a double-free!
-         */
-        switch (get_runlevel (&request_st, &reply_st)) {
-        case  1:
-        {
-                SEXP_t *r0, *r1, *r2, *r3;
-
-                _D("get_runlevel: [0]=\"%s\", [1]=\"%s\", [2]=\"%d\", [3]=\"%d\"\n",
-                   reply_st.service_name, reply_st.runlevel, reply_st.start, reply_st.kill);
-
-                item_sexp = probe_item_creat ("runlevel_item", NULL,
-                                             /* entities */
-                                             "service_name", NULL,
-                                             r0 = SEXP_string_newf("%s", reply_st.service_name),
-                                             "runlevel", NULL,
-                                             r1 = SEXP_string_newf("%s", reply_st.runlevel),
-                                             "start", NULL,
-                                             r2 = SEXP_number_newb(reply_st.start),
-                                             "kill", NULL,
-                                             r3 = SEXP_number_newb(reply_st.kill),
-                                             NULL);
-
-                SEXP_vfree (r0, r1, r2, r3, NULL);
-                break;
-        }
-        case  0:
-		/*
-                item_sexp = probe_item_creat ("runlevel_item", NULL, NULL);
-                probe_obj_setstatus (item_sexp, OVAL_STATUS_DOESNOTEXIST);
-		*/
-
-                break;
-        case -1:
                 _D("get_runlevel failed\n");
 
-                item_sexp = probe_item_creat ("runlevel_item", NULL, NULL);
-                probe_obj_setstatus (item_sexp, OVAL_STATUS_ERROR);
+                item_sexp = probe_item_creat("runlevel_item", NULL, NULL);
+                probe_obj_setstatus(item_sexp, OVAL_STATUS_ERROR);
+		probe_out = SEXP_list_new(item_sexp, NULL);
+		SEXP_free(item_sexp);
+	} else {
+		struct runlevel_rep *next_rep;
+		SEXP_t *item_sexp;
 
-                break;
+		probe_out = SEXP_list_new(NULL);
+
+		while (reply_st != NULL) {
+			SEXP_t *r0, *r1, *r2, *r3;
+
+			_D("get_runlevel: [0]=\"%s\", [1]=\"%s\", [2]=\"%d\", [3]=\"%d\"\n",
+			   reply_st->service_name, reply_st->runlevel, reply_st->start, reply_st->kill);
+
+			item_sexp = probe_item_creat("runlevel_item", NULL,
+						     /* entities */
+						     "service_name", NULL,
+						     r0 = SEXP_string_newf("%s", reply_st->service_name),
+						     "runlevel", NULL,
+						     r1 = SEXP_string_newf("%s", reply_st->runlevel),
+						     "start", NULL,
+						     r2 = SEXP_number_newb(reply_st->start),
+						     "kill", NULL,
+						     r3 = SEXP_number_newb(reply_st->kill),
+						     NULL);
+			SEXP_list_add(probe_out, item_sexp);
+			SEXP_vfree(r0, r1, r2, r3, item_sexp, NULL);
+
+			next_rep = reply_st->next;
+			oscap_free(reply_st->service_name);
+			oscap_free(reply_st->runlevel);
+			oscap_free(reply_st);
+			reply_st = next_rep;
+		}
         }
-
-        /* See implementation note #1 */
-        oscap_free (request_st.service_name);
-        oscap_free (request_st.runlevel);
-
-	if (item_sexp) {
-		SEXP_list_add (probe_out, item_sexp);
-		SEXP_free (item_sexp);
-	}
 
         *err = 0;
 
