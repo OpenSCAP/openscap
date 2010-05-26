@@ -180,7 +180,7 @@ static int read_process(SEXP_t *cmd_ent, SEXP_t *probe_out)
 	// Scan the directories
 	while (( ent = readdir(d) )) {
 		int fd, len;
-		char buf[100];
+		char buf[256];
 		char *tmp, cmd[16], state;
 		int pid, ppid, pgrp, session, tty_nr, tpgid;
 		unsigned flags, sched_policy;
