@@ -78,6 +78,27 @@ create OVAL Results.
 
 Supported version: 5.5
 
+OVAL Definition supported schemas: 
+
+- Core - http://oval.mitre.org/XMLSchema/oval-definitions-5
+- Common - http://oval.mitre.org/XMLSchema/oval-common-5
+- Independent - http://oval.mitre.org/XMLSchema/oval-definitions-5#independent
+- Linux - http://oval.mitre.org/XMLSchema/oval-definitions-5#linux
+- Unix - http://oval.mitre.org/XMLSchema/oval-definitions-5#unix
+
+OVAL System Characteristics supported schemas: 
+
+- Core - http://oval.mitre.org/XMLSchema/oval-system-characteristics-5
+- Common - http://oval.mitre.org/XMLSchema/oval-common-5
+- Independent - http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#independent
+- Linux - http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#linux
+- Unix - http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#unix
+
+OVAL Results supported schemas:
+
+- Core - http://oval.mitre.org/XMLSchema/oval-results-5
+- Common - http://oval.mitre.org/XMLSchema/oval-common-5
+
 @defgroup XCCDF
 
 Extensible Configuration Checklist Description Format.
