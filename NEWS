@@ -1,3 +1,13 @@
+openscap-0.5.11							26-05-2010
+* leak fixes on side of probes
+* variables support almost in all probes
+* new probes: environment variable, variable
+* semantic validation of variable model
+* library selftests for new probes
+* xccdf export and clone functions
+* xccdf_policy python/perl wrappers
+* bugfixes
+
 openscap-0.5.10							07-05-2010
 - fixing many many leaks
 - variables support in: findfiles and process, password probes
