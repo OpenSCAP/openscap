@@ -1382,7 +1382,7 @@ function test_probes_interface {
 	return 255; # Test is not applicable.
     fi
 
-    bash "${srcdir}/OVAL/probes/test_probes_interface.xml.sh ${EXECDIR}/test_interface" > "$DEFFILE"
+    bash ${srcdir}/OVAL/probes/test_probes_interface.xml.sh ${EXECDIR}/test_interface > "$DEFFILE"
     LINES=$?
 
     eval "\"${EXECDIR}/test_probes\" \"$DEFFILE\" \"$RESFILE\"" >> "$LOGFILE"
