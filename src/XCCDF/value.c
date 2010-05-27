@@ -375,11 +375,12 @@ bool xccdf_value_get_defval_boolean(const struct xccdf_value * value)
 	return false;
 }
 
+/*
 char *  xccdf_value_get_selected_value(const struct xccdf_value * value)
 {
         const char * selector = xccdf_value_get_selector(value);
         char * selected = NULL;
-        if (selector == NULL) /* default value */
+        if (selector == NULL) // default value
                 selector = "";
         struct xccdf_value_val *val = oscap_htable_get(XITEM(value)->sub.value.values, selector);
         if (val == NULL)
@@ -390,7 +391,7 @@ char *  xccdf_value_get_selected_value(const struct xccdf_value * value)
                     sprintf(selected, "%b", val->value.b);
                     break;
             case XCCDF_TYPE_NUMBER:
-                    /* TODO: compatibility issue: what precision should be here ? */
+                    // TODO: compatibility issue: what precision should be here ?
                     selected = malloc(5*sizeof(char));
                     sprintf(selected, "%.5f", val->value.n);
                     break;
@@ -401,6 +402,7 @@ char *  xccdf_value_get_selected_value(const struct xccdf_value * value)
         
         return selected;
 }
+*/
 
 const char *xccdf_value_get_value_string(const struct xccdf_value *value)
 {

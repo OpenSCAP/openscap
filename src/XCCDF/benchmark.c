@@ -445,23 +445,29 @@ const char * xccdf_benchmark_supported(void)
     return XCCDF_SUPPORTED;
 }
 
-struct xccdf_group *xccdf_benchmark_append_new_group(const struct xccdf_benchmark *benchmark, const char *id)
+struct xccdf_group *xccdf_benchmark_append_new_group(struct xccdf_benchmark *benchmark, const char *id)
 {
-    //TODO: not implemented
-    oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_ENOTIMPL, "This feature is not implemented");
-    return NULL;
+	if (benchmark == NULL) return NULL;
+	struct xccdf_group *group = xccdf_group_new();
+	xccdf_group_set_id(group, id);
+	xccdf_benchmark_add_group(benchmark, group);
+    return group;
 }
-struct xccdf_value *xccdf_benchmark_append_new_value(const struct xccdf_benchmark *benchmark, const char *id, xccdf_value_type_t type)
+struct xccdf_value *xccdf_benchmark_append_new_value(struct xccdf_benchmark *benchmark, const char *id, xccdf_value_type_t type)
 {
-    //TODO: not implemented
-    oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_ENOTIMPL, "This feature is not implemented");
-    return NULL;
+	if (benchmark == NULL) return NULL;
+	struct xccdf_value *value = xccdf_value_new(type);
+	xccdf_value_set_id(value, id);
+	xccdf_benchmark_add_value(benchmark, value);
+    return value;
 }
-struct xccdf_rule *xccdf_benchmark_append_new_rule(const struct xccdf_benchmark *benchmark, const char *id)
+struct xccdf_rule *xccdf_benchmark_append_new_rule(struct xccdf_benchmark *benchmark, const char *id)
 {
-    //TODO: not implemented
-    oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_ENOTIMPL, "This feature is not implemented");
-    return NULL;
+	if (benchmark == NULL) return NULL;
+	struct xccdf_rule *rule = xccdf_rule_new();
+	xccdf_rule_set_id(rule, id);
+	xccdf_benchmark_add_rule(benchmark, rule);
+    return rule;
 }
 
 static const size_t XCCDF_ID_SIZE = 32;

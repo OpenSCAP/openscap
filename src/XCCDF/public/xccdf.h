@@ -832,21 +832,21 @@ void xccdf_cleanup(void);
  * @param id - the identifier of the appended value.
  * @return the handle of the new group.
  */
-struct xccdf_group *xccdf_benchmark_append_new_group(const struct xccdf_benchmark *, const char *id);
+struct xccdf_group *xccdf_benchmark_append_new_group(struct xccdf_benchmark *, const char *id);
 
 /**
  * Create a value and append it to the benchmark.
  * @param id - the identifier of the appended value.
  * @return the handle of the new value.
  */
-struct xccdf_value *xccdf_benchmark_append_new_value(const struct xccdf_benchmark *, const char *id, xccdf_value_type_t type);
+struct xccdf_value *xccdf_benchmark_append_new_value(struct xccdf_benchmark *, const char *id, xccdf_value_type_t type);
 
 /**
  * Create a rule and append it to the benchmark.
  * @param id - the identifier of the appended rule.
  * @return the handle of the new rule.
  */
-struct xccdf_rule *xccdf_benchmark_append_new_rule(const struct xccdf_benchmark *, const char *id);
+struct xccdf_rule *xccdf_benchmark_append_new_rule(struct xccdf_benchmark *, const char *id);
 
 /// @memberof xccdf_plain_text
 struct xccdf_plain_text *xccdf_plain_text_new(void);
@@ -2124,9 +2124,6 @@ struct oscap_string_iterator *xccdf_value_get_sources(const struct xccdf_value *
 /// @memberof xccdf_value
 const char *xccdf_value_get_cluster_id(const struct xccdf_value *value);
 
-/// @memberof xccdf_value
-char *  xccdf_value_get_selected_value(const struct xccdf_value * value);
-
 /// @memberof xccdf_item
 struct oscap_text_iterator *xccdf_item_get_question(const struct xccdf_item *item);
 /// @memberof xccdf_item
@@ -2339,8 +2336,6 @@ const char *xccdf_instance_get_context(const struct xccdf_instance *item);
 const char *xccdf_instance_get_parent_context(const struct xccdf_instance *item);
 /// @memberof xccdf_instance
 const char *xccdf_instance_get_content(const struct xccdf_instance *item);
-/// @memberof xccdf_value
-char *  xccdf_value_get_selected_value(const struct xccdf_value * value);
 
 
 /************************************************************
