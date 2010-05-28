@@ -33,13 +33,14 @@
 OSCAP_HIDDEN_START;
 
 struct xccdf_flags {
-	unsigned selected:1;
-	unsigned hidden:1;
-	unsigned resolved:1;
-	unsigned abstract:1;
-	unsigned prohibit_changes:1;
-	unsigned interactive:1;
-	unsigned multiple:1;
+	bool selected:1;
+	bool hidden:1;
+	bool resolved:1;
+	bool abstract:1;
+	bool prohibit_changes:1;
+	bool interactive:1;
+	bool multiple:1;
+	bool weight:1;
 };
 
 struct xccdf_item;
@@ -54,7 +55,7 @@ struct xccdf_item_base {
 	struct oscap_list *description;
 	struct oscap_list *question;
 	struct oscap_list *rationale;
-        struct oscap_list *warnings;
+	struct oscap_list *warnings;
 
 	char *version;
 	char *version_update;
@@ -66,6 +67,7 @@ struct xccdf_item_base {
 	struct oscap_list *references;
 	struct oscap_list *platforms;
 	struct xccdf_flags flags;
+	struct xccdf_flags defined_flags;
 };
 
 struct xccdf_rule_item {

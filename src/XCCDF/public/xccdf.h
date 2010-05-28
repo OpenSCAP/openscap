@@ -669,6 +669,14 @@ struct xccdf_benchmark* xccdf_benchmark_import(struct oscap_import_source *sourc
  */
 int xccdf_benchmark_export(struct xccdf_benchmark *benchmark, struct oscap_export_target *target);
 
+/**
+ * Resolve an benchmark.
+ * @returns whether the resolving process has been successful
+ * @retval true on success
+ * @retval false on dependency loop
+ */
+bool xccdf_benchmark_resolve(struct xccdf_benchmark *benchmark);
+
 /// @memberof xccdf_benchmark
 struct xccdf_benchmark *xccdf_benchmark_new(void);
 /// @memberof xccdf_benchmark
@@ -1847,7 +1855,10 @@ struct xccdf_item *xccdf_group_get_parent(const struct xccdf_group *group);
  * @see xccdf_group
  * @see xccdf_item
  */
-struct xccdf_item_iterator *xccdf_group_get_content(const struct xccdf_group *benchmark);
+struct xccdf_item_iterator *xccdf_group_get_content(const struct xccdf_group *group);
+
+/// @memberof xccdf_group
+struct xccdf_value_iterator *xccdf_group_get_values(const struct xccdf_group *group);
 
 /// @memberof xccdf_group
 const char *xccdf_group_get_id(const struct xccdf_group *group);

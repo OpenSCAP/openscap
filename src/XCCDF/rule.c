@@ -965,6 +965,7 @@ void xccdf_group_to_dom(struct xccdf_group *group, xmlNode *group_node, xmlDoc *
 XCCDF_STATUS_CURRENT(rule)
 XCCDF_STATUS_CURRENT(group)
 XCCDF_GROUP_IGETTER(item, content)
+XCCDF_GROUP_IGETTER(value, values)
 
 XCCDF_ITEM_ADDER_REG(group, rule, content)
 XCCDF_ITEM_ADDER_REG(group, group, content)

@@ -161,6 +161,7 @@ struct xccdf_item_base *xccdf_item_base_clone(const struct xccdf_item_base *old_
 	new_base->platforms = oscap_list_clone(old_base->platforms, (oscap_clone_func) oscap_strdup);
 
 	/* Handling flags */
+	/*
 	new_base->flags.selected = old_base->flags.selected;
 	new_base->flags.hidden = old_base->flags.hidden;
 	new_base->flags.resolved = old_base->flags.resolved;
@@ -168,6 +169,9 @@ struct xccdf_item_base *xccdf_item_base_clone(const struct xccdf_item_base *old_
 	new_base->flags.prohibit_changes = old_base->flags.prohibit_changes;
 	new_base->flags.interactive = old_base->flags.interactive;
 	new_base->flags.multiple = old_base->flags.multiple;
+	*/
+	new_base->flags = old_base->flags;
+	new_base->defined_flags = old_base->defined_flags;
 
 	return new_base;
 }
@@ -621,8 +625,9 @@ xmlNode *xccdf_check_to_dom(struct xccdf_check *check, xmlDoc *doc, xmlNode *par
 }
 
 #define XCCDF_ITEM_PROCESS_FLAG(reader,flag,attr) \
-	if (xccdf_attribute_has((reader), (attr))) \
-		item->item.flags.flag = xccdf_attribute_get_bool((reader), (attr));
+	if (xccdf_attribute_has((reader), (attr))) { \
+		item->item.flags.flag = xccdf_attribute_get_bool((reader), (attr)); \
+		item->item.defined_flags.flag = true; }
 
 bool xccdf_item_process_attributes(struct xccdf_item *item, xmlTextReaderPtr reader)
 {
@@ -636,8 +641,10 @@ bool xccdf_item_process_attributes(struct xccdf_item *item, xmlTextReaderPtr rea
 	XCCDF_ITEM_PROCESS_FLAG(reader, abstract, XCCDFA_ABSTRACT);
 	XCCDF_ITEM_PROCESS_FLAG(reader, interactive, XCCDFA_INTERACTIVE);
 
-	if (xccdf_attribute_has(reader, XCCDFA_WEIGHT))
+	if (xccdf_attribute_has(reader, XCCDFA_WEIGHT)) {
 		item->item.weight = xccdf_attribute_get_float(reader, XCCDFA_WEIGHT);
+		item->item.defined_flags.weight = true;
+	}
 	if (xccdf_attribute_has(reader, XCCDFA_EXTENDS))
 		item->item.extends = xccdf_attribute_copy(reader, XCCDFA_EXTENDS);
 	item->item.cluster_id = xccdf_attribute_copy(reader, XCCDFA_CLUSTER_ID);

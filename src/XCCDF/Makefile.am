@@ -6,6 +6,7 @@ libxccdf_la_SOURCES = \
 	item.c \
 	profile.c \
 	value.c \
+	resolve.c \
 	result.c \
 	rule.c \
 	item.h \

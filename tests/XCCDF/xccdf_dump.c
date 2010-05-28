@@ -50,6 +50,8 @@ bool dump_benchmark(const char* fname)
 	oscap_import_source_free(ben_in);
 	if (benchmark == NULL) return false;
 	printf("\n");
+	xccdf_benchmark_resolve(benchmark);
+	printf("\n");
 	manipulate(benchmark);
 	xccdf_benchmark_dump(benchmark);
 	printf("\n\n");
