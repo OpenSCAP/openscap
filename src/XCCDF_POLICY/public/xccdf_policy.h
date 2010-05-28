@@ -81,17 +81,11 @@ struct xccdf_policy_model *xccdf_policy_model_new(struct xccdf_benchmark *benchm
 struct xccdf_policy * xccdf_policy_new(struct xccdf_policy_model * model, struct xccdf_profile * profile);
 
 /**
- * Constructor for Value binding
- * @memberof xccdf_value_binding
- */
-struct xccdf_value_binding * xccdf_value_binding_new(void);
-
-/**
  * Constructor of structure with profile bindings - refine_rules, refine_values and set_values
  * @memberof xccdf_value_binding
  * @return new structure of xccdf_value_binding
  */
-struct xccdf_value_binding * xccdf_value_binding_new();
+struct xccdf_value_binding * xccdf_value_binding_new(void);
 
 /** 
  * Destructor of Policy Model structure

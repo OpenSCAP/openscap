@@ -1033,14 +1033,17 @@ void xccdf_policy_export_results(struct xccdf_policy *policy, char *scoring_mode
 
 bool xccdf_value_binding_add_refine_rule(struct xccdf_value_binding *binding, struct xccdf_refine_rule *rule) {
 	//TODO
+        return false;
 }
 
 bool xccdf_value_binding_add_refine_value(struct xccdf_value_binding *binding, struct xccdf_refine_value *value) {
 	//TODO
+        return false;
 }
 
 bool xccdf_value_binding_add_setvalue(struct xccdf_value_binding *binding, struct xccdf_setvalue *value) {
 	//TODO
+        return false;
 }
 
 
