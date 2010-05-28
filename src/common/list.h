@@ -36,7 +36,10 @@
 
 OSCAP_HIDDEN_START;
 
+// list item dump function type
 typedef void (*oscap_dump_func) ();
+// generic comparison function type
+typedef bool (*oscap_cmp_func) (void *, void *);
 
 /*
  * Linear linked list.
@@ -56,11 +59,15 @@ struct oscap_list {
 struct oscap_list *oscap_list_new(void);
 void oscap_create_lists(struct oscap_list **first, ...);
 bool oscap_list_add(struct oscap_list *list, void *value);
+bool oscap_list_push(struct oscap_list *list, void *value);
+bool oscap_list_pop(struct oscap_list *list, oscap_destruct_func destructor);
 struct oscap_list *oscap_list_clone(const struct oscap_list * list, oscap_clone_func cloner);
 void oscap_list_free(struct oscap_list *list, oscap_destruct_func destructor);
 void oscap_list_free0(struct oscap_list *list);
 void oscap_list_dump(struct oscap_list *list, oscap_dump_func dumper, int depth);
 int oscap_list_get_itemcount(struct oscap_list *list);
+bool oscap_list_contains(struct oscap_list *list, void *what, oscap_cmp_func compare);
+
 
 /* Linked List iterator. */
 
@@ -80,6 +87,8 @@ size_t oscap_iterator_get_itemcount(const struct oscap_iterator *it);
 bool oscap_iterator_has_more(struct oscap_iterator *it);
 void *oscap_iterator_detach(struct oscap_iterator *it);
 void oscap_iterator_free(struct oscap_iterator *it);
+
+struct oscap_iterator* oscap_list_find(struct oscap_list *list, void *what, oscap_cmp_func compare);
 
 /*
  * Hash table

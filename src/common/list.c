@@ -61,6 +61,31 @@ bool oscap_list_add(struct oscap_list * list, void *value)
 	return true;
 }
 
+bool oscap_list_push(struct oscap_list *list, void *value)
+{
+	return oscap_list_add(list,value);
+}
+
+bool oscap_list_pop(struct oscap_list *list, oscap_destruct_func destructor)
+{
+	if (list == NULL || list->first == NULL) return false;
+	struct oscap_list_item *cur = list->first, *prev = NULL;
+
+	while (cur != list->last) {
+		prev = cur;
+		cur = cur->next;
+	}
+
+	if (destructor) destructor(cur->data);
+	oscap_free(cur);
+
+	list->last = prev;
+	if (prev) prev->next = NULL;
+	else list->first = NULL;
+
+	return true;
+}
+
 struct oscap_list * oscap_list_clone(const struct oscap_list * list, oscap_clone_func cloner)
 {
         if (list == NULL) 
@@ -107,6 +132,34 @@ void oscap_list_free0(struct oscap_list *list)
 	oscap_list_free(list, NULL);
 }
 
+bool oscap_ptr_cmp(void *node1, void *node2)
+{
+	return node1 == node2;
+}
+
+struct oscap_iterator* oscap_list_find(struct oscap_list *list, void *what, oscap_cmp_func compare)
+{
+	if (list == NULL) return false;
+	if (compare == NULL) compare = oscap_ptr_cmp;
+
+	struct oscap_iterator *it = oscap_iterator_new(list);
+
+	while (oscap_iterator_has_more(it)) {
+		if (compare(oscap_iterator_next(it), what))
+			return it;
+	}
+
+	oscap_iterator_free(it);
+	return NULL;
+}
+
+bool oscap_list_contains(struct oscap_list *list, void *what, oscap_cmp_func compare)
+{
+	struct oscap_iterator *it = oscap_list_find(list, what, compare);
+	oscap_iterator_free(it);
+	return it != NULL;
+}
+
 void oscap_list_dump(struct oscap_list *list, oscap_dump_func dumper, int depth)
 {
 	if (list == NULL) {
@@ -134,10 +187,6 @@ static inline void oscap_iterator_find_nearest(struct oscap_iterator *it)
 	do {
 		it->cur = (it->cur ? it->cur->next : it->list->first);
 	} while (!it->filter(it->cur->data, it->user_data) && oscap_iterator_has_more(it));
-	/*
-	   while (it->cur && !it->filter(it->cur->data, it->user_data))
-	   it->cur = it->cur->next;
-	 */
 }
 
 void *oscap_iterator_new(struct oscap_list *list)
@@ -218,7 +267,7 @@ void *oscap_iterator_next(struct oscap_iterator *it)
 
 bool oscap_iterator_has_more(struct oscap_iterator *it)
 {
-	__attribute__nonnull__(it);
+	if (!it) return false;
 	return (!it->cur && it->list->first) || (it->cur && it->cur->next);
 }
 
@@ -276,14 +325,12 @@ struct oscap_htable * oscap_htable_clone(const struct oscap_htable * table, osca
 	if (t == NULL)
 		return NULL;
 
-	int i;
-	for (i = 0; i < table->hsize; ++i) {
+	for (size_t i = 0; i < table->hsize; ++i) {
 		struct oscap_htable_item *item = table->table[i];
 		while (item != NULL) {
 			oscap_htable_add(t, item->key, (void *) cloner(item->value));
 			item = item->next;
 		}
-		
 	}
 	
 	return t;

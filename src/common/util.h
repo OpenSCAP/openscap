@@ -358,6 +358,9 @@ char *oscap_vsprintf(const char *fmt, va_list ap);
 /// Print to a newly allocated string using varialbe arguments.
 char *oscap_sprintf(const char *fmt, ...);
 
+// check pointer equality
+bool oscap_ptr_cmp(void *node1, void *node2);
+
 #ifndef OSCAP_CONCAT
 # define OSCAP_CONCAT1(a,b) a ## b
 # define OSCAP_CONCAT(a,b) OSCAP_CONCAT1(a,b)
