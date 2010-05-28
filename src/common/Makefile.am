@@ -1,6 +1,6 @@
 noinst_LTLIBRARIES = liboscapcommon.la
 
-liboscapcommon_la_SOURCES = oscap.c alloc.c text.c \
+liboscapcommon_la_SOURCES = oscap.c alloc.c text.c tsort.c \
 			    util.h util.c list.h list.c bfind.c bfind.h elements.h elements.c debug.c \
 			    error.c _error.h assume.h text_priv.h reporter_priv.h reporter.c debug_priv.h
 
