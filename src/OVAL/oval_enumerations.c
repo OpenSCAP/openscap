@@ -49,15 +49,10 @@ static int oval_enumeration_attr(xmlTextReaderPtr reader, char *attname, const s
 	return ret == OVAL_ENUMERATION_INVALID ? defval : ret;
 }
 
-static const char *oval_enumeration_get_text(const struct oscap_string_map *map, int idx)
+static const char *oval_enumeration_get_text(const struct oscap_string_map *map, int val)
 {
+	return oscap_enum_to_string(map, val);
 
-	if (idx) {
-		return map[idx - 1].string;
-	} else {
-		oscap_dprintf("WARNING: ZERO ENUMERATION INDEX (%s:%d)\n", __FILE__, __LINE__);
-		return _invalid;
-	}
 }
 
 static const struct oscap_string_map OVAL_SYSCHAR_FLAG_MAP[] = {
@@ -348,8 +343,7 @@ oval_family_t oval_family_parse(xmlTextReaderPtr reader)
 
 const char *oval_family_get_text(oval_family_t family)
 {
-	int family_idx = family / 1000;
-	return oval_enumeration_get_text(OVAL_FAMILY_MAP, family_idx);
+	return oval_enumeration_get_text(OVAL_FAMILY_MAP, family);
 }
 
 static const struct oscap_string_map OVAL_SUBTYPE_AIX_MAP[] = {
@@ -623,8 +617,7 @@ const char *oval_subtype_get_text(oval_subtype_t subtype)
 	}
 
 	if (map) {
-		int subidx = subtype % 1000;
-		return oval_enumeration_get_text(map, subidx);
+		return oval_enumeration_get_text(map, subtype);
 	} else {
 		fprintf(stderr, "WARNING: ZERO FAMILY INDEX\n    %s(%d)\n", __FILE__, __LINE__);
 		return _invalid;
@@ -715,19 +708,3 @@ static _textfunc textfuncs[] = {
 	NULL
 };
 
-/*void oval_enumerations_test_driver(){
-
-	int i;
-        for(i=0; maps[i]; i++){
-		oscap_dprintf("Testing enumeration #%d", i);
-		const struct oscap_string_map *map = maps[i];
-		_textfunc textfunc = textfuncs[i];
-		oscap_dprintf("    INVALID INDEX: %s", (*textfunc)(0));
-		int j;
-                for(j=0;map[j].string;j++){
-			int value = map[j].value;
-			const char *text = (*textfunc)(value);
-			oscap_dprintf("    [%d]: %s", value, text);
-		}
-	}
-}*/
