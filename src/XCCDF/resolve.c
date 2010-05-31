@@ -79,6 +79,7 @@ static void xccdf_resolve_textlist(struct oscap_list *child_list, struct oscap_l
 static void xccdf_resolve_appendlist(struct oscap_list **child_list, struct oscap_list *parent_list, oscap_cmp_func item_compare, oscap_clone_func cloner);
 static void xccdf_resolve_profile(struct xccdf_item *child, struct xccdf_item *parent);
 static void xccdf_resolve_group(struct xccdf_item *child, struct xccdf_item *parent);
+static void xccdf_resolve_rule(struct xccdf_item *child, struct xccdf_item *parent);
 
 #define XCCDF_RESOLVE_FLAG(ITEM,PARENT,FLAGNAME) do { \
 	if (!ITEM->item.defined_flags.FLAGNAME) ITEM->item.flags.FLAGNAME = PARENT->item.flags.FLAGNAME; \
@@ -87,6 +88,9 @@ static void xccdf_resolve_group(struct xccdf_item *child, struct xccdf_item *par
 static void xccdf_resolve_item(struct xccdf_item *item)
 {
 	assert(item != NULL);
+
+	if (xccdf_item_get_type(item) == XCCDF_BENCHMARK)
+		xccdf_benchmark_set_resolved(xccdf_item_to_benchmark(item), true);
 
 	struct xccdf_item *parent = xccdf_benchmark_get_item(xccdf_item_get_benchmark(item), xccdf_item_get_extends(item));
 	if (parent == NULL) return;
@@ -122,10 +126,9 @@ static void xccdf_resolve_item(struct xccdf_item *item)
 
 	// resolve properties specific to particular item type
 	switch (xccdf_item_get_type(item)) {
-		case XCCDF_BENCHMARK: xccdf_benchmark_set_resolved(xccdf_item_to_benchmark(item), true); break;
 		case XCCDF_PROFILE:   xccdf_resolve_profile(item, parent); break;
 		case XCCDF_GROUP:     xccdf_resolve_group(item, parent);   break;
-		case XCCDF_RULE:      break;
+		case XCCDF_RULE:      xccdf_resolve_rule(item, parent);    break;
 		case XCCDF_VALUE:     break;
 		default: assert(false);
 	}
@@ -216,12 +219,12 @@ static struct xccdf_item *xccdf_resolve_copy_item(struct xccdf_item *src)
 }
 
 static bool xccdf_incomparable(void *i1, void *i2) { return false; }
-static void *xccdf_strlist_clone(void *l) { return oscap_list_clone(l, (oscap_clone_func)oscap_strdup); }
+//static void *xccdf_strlist_clone(void *l) { return oscap_list_clone(l, (oscap_clone_func)oscap_strdup); }
 
 static void xccdf_resolve_group(struct xccdf_item *child, struct xccdf_item *parent)
 {
 	// TODO: resolve requires properly (how?)
-	xccdf_resolve_appendlist(&child->sub.group.requires, parent->sub.group.requires, xccdf_incomparable, xccdf_strlist_clone);
+	//xccdf_resolve_appendlist(&child->sub.group.requires, parent->sub.group.requires, xccdf_incomparable, xccdf_strlist_clone);
 	xccdf_resolve_appendlist(&child->sub.group.conflicts, parent->sub.group.conflicts, (oscap_cmp_func)oscap_strcmp, (oscap_clone_func)oscap_strdup);
 	
 	OSCAP_FOR(xccdf_item, item, xccdf_group_get_content(XGROUP(parent)))
@@ -230,4 +233,26 @@ static void xccdf_resolve_group(struct xccdf_item *child, struct xccdf_item *par
 		xccdf_group_add_value(XGROUP(child), xccdf_item_to_value(xccdf_resolve_copy_item(XITEM(val))));
 }
 
+static bool xccdf_ident_idcmp(void *s1, void *s2) {
+	return oscap_streq(((struct xccdf_ident*)s1)->id, ((struct xccdf_ident*)s2)->id);
+}
+
+static void xccdf_resolve_rule(struct xccdf_item *child, struct xccdf_item *parent)
+{
+	// TODO: resolve requires properly (how?)
+	//xccdf_resolve_appendlist(&child->sub.rule.requires, parent->sub.rule.requires, xccdf_incomparable, xccdf_strlist_clone);
+	xccdf_resolve_appendlist(&child->sub.rule.conflicts, parent->sub.rule.conflicts, (oscap_cmp_func)oscap_strcmp, (oscap_clone_func)oscap_strdup);
+	xccdf_resolve_appendlist(&child->sub.rule.idents, parent->sub.rule.idents, (oscap_cmp_func)xccdf_ident_idcmp, (oscap_clone_func)xccdf_ident_clone);
+	xccdf_resolve_appendlist(&child->sub.rule.fixes, parent->sub.rule.fixes, (oscap_cmp_func)xccdf_incomparable, (oscap_clone_func)xccdf_fix_clone);
+
+	if (oscap_list_get_itemcount(child->sub.rule.checks) == 0 && oscap_list_get_itemcount(parent->sub.rule.checks) > 0) {
+		oscap_list_free(child->sub.rule.checks, NULL);
+		child->sub.rule.checks = oscap_list_clone(parent->sub.rule.checks, (oscap_clone_func)xccdf_check_clone);
+	}
+
+	if (!child->item.defined_flags.role) child->sub.rule.role = parent->sub.rule.role;
+	if (!child->item.defined_flags.severity) child->sub.rule.severity = parent->sub.rule.severity;
+
+	// TODO: resolve profile_note, fixtext
+}
 
