@@ -67,6 +67,7 @@ void oscap_list_free0(struct oscap_list *list);
 void oscap_list_dump(struct oscap_list *list, oscap_dump_func dumper, int depth);
 int oscap_list_get_itemcount(struct oscap_list *list);
 bool oscap_list_contains(struct oscap_list *list, void *what, oscap_cmp_func compare);
+struct oscap_list *oscap_list_destructive_join(struct oscap_list *list1, struct oscap_list *list2);
 
 
 /* Linked List iterator. */

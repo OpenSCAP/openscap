@@ -83,6 +83,8 @@ bool oscap_list_pop(struct oscap_list *list, oscap_destruct_func destructor)
 	if (prev) prev->next = NULL;
 	else list->first = NULL;
 
+	--list->itemcount;
+
 	return true;
 }
 
@@ -98,11 +100,22 @@ struct oscap_list * oscap_list_clone(const struct oscap_list * list, oscap_clone
         while (item != NULL) {
                 if (cloner)
                     oscap_list_add(copy, cloner(item->data));
-                else oscap_list_add(copy, NULL);
+                else oscap_list_add(copy, item->data);
                 item = item->next;
         }
 
         return copy;
+}
+
+struct oscap_list *oscap_list_destructive_join(struct oscap_list *list1, struct oscap_list *list2)
+{
+	if (list1->first == NULL)
+		list1->first = list2->first;
+	else list1->last->next = list2->first;
+	if (list2->last != NULL) list1->last = list2->last;
+	list1->itemcount += list2->itemcount;
+	oscap_free(list2);
+	return list1;
 }
 
 int oscap_list_get_itemcount(struct oscap_list *list)
