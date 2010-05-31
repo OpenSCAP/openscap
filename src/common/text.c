@@ -98,7 +98,7 @@ struct oscap_text *oscap_text_new_parse(struct oscap_text_traits traits, xmlText
 
     // extract 'overrides' attribute
     if (text->traits.can_override) {
-        xmlTextReaderMoveToAttribute(reader, BAD_CAST "overrides");
+        xmlTextReaderMoveToAttribute(reader, BAD_CAST "override");
         text->traits.overrides = oscap_string_to_enum(OSCAP_BOOL_MAP, (const char *) xmlTextReaderConstValue(reader));
     }
 

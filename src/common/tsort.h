@@ -54,6 +54,7 @@ typedef struct oscap_list* (*oscap_tsort_edge_func)(void *node, void *userdata);
  * @param input set of nodes to sort
  * @param output this pointer will be set to the result of the algorithm
  * @param edge_func function to return target nodes of outgoing edges from the current one
+ * @param cmp_func node compasrison function
  * @param userdata arbitrary data pointer to be forwarded to the edge_func
  * @returns whether the algorithm managed to topologically sort the graph
  * @retval true input was sorted, result is in the *output pointer
