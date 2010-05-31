@@ -297,11 +297,15 @@ struct xccdf_item *xccdf_rule_parse(xmlTextReaderPtr reader, struct xccdf_item *
 		xccdf_rule_free(rule);
 		return NULL;
 	}
-	if (xccdf_attribute_has(reader, XCCDFA_ROLE))
+	if (xccdf_attribute_has(reader, XCCDFA_ROLE)) {
 		rule->sub.rule.role = oscap_string_to_enum(XCCDF_ROLE_MAP, xccdf_attribute_get(reader, XCCDFA_ROLE));
-	if (xccdf_attribute_has(reader, XCCDFA_SEVERITY))
+		rule->item.defined_flags.role = true;
+	}
+	if (xccdf_attribute_has(reader, XCCDFA_SEVERITY)) {
 		rule->sub.rule.severity =
 		    oscap_string_to_enum(XCCDF_LEVEL_MAP, xccdf_attribute_get(reader, XCCDFA_SEVERITY));
+		rule->item.defined_flags.severity = true;
+	}
 
 	int depth = oscap_element_depth(reader) + 1;
 
@@ -325,8 +329,6 @@ struct xccdf_item *xccdf_rule_parse(xmlTextReaderPtr reader, struct xccdf_item *
 				struct xccdf_check *check = xccdf_check_parse(reader);
 				if (check == NULL)
 					break;
-				if (check->selector == NULL || strcmp(check->selector, "") == 0)
-					rule->sub.rule.check = check;
 				oscap_list_add(rule->sub.rule.checks, check);
 				break;
 			}
@@ -985,8 +987,6 @@ bool xccdf_group_add_content(struct xccdf_group *rule, struct xccdf_item *item)
 XCCDF_ACCESSOR_STRING(rule, impact_metric)
 XCCDF_ACCESSOR_SIMPLE(rule, xccdf_role_t, role)
 XCCDF_ACCESSOR_SIMPLE(rule, xccdf_level_t, severity)
-XCCDF_RULE_GETTER(struct xccdf_check *, check)
-XCCDF_SETTER_GENERIC(rule, check, struct xccdf_check *, xccdf_check_free,)
 XCCDF_LISTMANIP(rule, ident, idents)
 XCCDF_LISTMANIP(rule, check, checks)
 XCCDF_LISTMANIP(rule, profile_note, profile_notes)

@@ -40,7 +40,19 @@ struct xccdf_flags {
 	bool prohibit_changes:1;
 	bool interactive:1;
 	bool multiple:1;
+};
+
+struct xccdf_defflags {
+	bool selected:1;
+	bool hidden:1;
+	bool resolved:1;
+	bool abstract:1;
+	bool prohibit_changes:1;
+	bool interactive:1;
+	bool multiple:1;
 	bool weight:1;
+	bool role:1;
+	bool severity:1;
 };
 
 struct xccdf_item;
@@ -67,14 +79,13 @@ struct xccdf_item_base {
 	struct oscap_list *references;
 	struct oscap_list *platforms;
 	struct xccdf_flags flags;
-	struct xccdf_flags defined_flags;
+	struct xccdf_defflags defined_flags;
 };
 
 struct xccdf_rule_item {
 	char *impact_metric;
 	xccdf_role_t role;
 	xccdf_level_t severity;
-	struct xccdf_check *check;
 
 	struct oscap_list *requires;
 	struct oscap_list *conflicts;

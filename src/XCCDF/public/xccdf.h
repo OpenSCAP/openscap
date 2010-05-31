@@ -1751,10 +1751,6 @@ const char *xccdf_rule_get_cluster_id(const struct xccdf_rule *rule);
 /**
  * @memberof xccdf_rule
  */
-struct xccdf_check *xccdf_rule_get_check(const struct xccdf_rule *rule);
-/**
- * @memberof xccdf_rule
- */
 float xccdf_rule_get_weight(const struct xccdf_rule *rule);
 /**
  * @memberof xccdf_rule
@@ -2452,8 +2448,6 @@ bool xccdf_rule_set_impact_metric(struct xccdf_rule *item, const char *newval);
 bool xccdf_rule_set_role(struct xccdf_rule *item, xccdf_role_t newval);
 /// @memberof xccdf_rule
 bool xccdf_rule_set_severity(struct xccdf_rule *item, xccdf_level_t newval);
-/// @memberof xccdf_rule
-bool xccdf_rule_set_check(struct xccdf_rule *item, struct xccdf_check *newval);
 
 /// @memberof xccdf_group
 bool xccdf_group_set_id(struct xccdf_group *item, const char *newval);
