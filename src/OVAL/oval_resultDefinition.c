@@ -145,7 +145,7 @@ void oval_result_definition_free(struct oval_result_definition *definition)
 	definition->definition = NULL;
 	definition->messages = NULL;
 	definition->result = OVAL_RESULT_INVALID;
-	definition->instance = 0;
+	definition->instance = 1;
 	oscap_free(definition);
 }
 

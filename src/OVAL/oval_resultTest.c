@@ -195,7 +195,7 @@ struct oval_result_test *oval_result_test_new(struct oval_result_system *sys, ch
 	test->test = oval_test_get_new(definition_model, tstid);
 	test->message = NULL;
 	test->result = OVAL_RESULT_INVALID;
-	test->instance = 0;
+	test->instance = 1;
 	test->items = oval_collection_new();
 	test->bindings = oval_collection_new();
 	test->bindings_initialized = false;

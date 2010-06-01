@@ -285,13 +285,13 @@ struct oval_result_criteria_node *make_result_criteria_node_from_oval_criteria_n
 		case OVAL_NODETYPE_CRITERION:{
 				struct oval_test *oval_test = oval_criteria_node_get_test(oval_node);
 				struct oval_result_test *rslt_test = get_oval_result_test_new(sys, oval_test);
-				rslt_node = oval_result_criteria_node_new(sys, type, negate, rslt_test, 0);
+				rslt_node = oval_result_criteria_node_new(sys, type, negate, rslt_test, 1);
 			} break;
 		case OVAL_NODETYPE_EXTENDDEF:{
 				struct oval_definition *oval_definition = oval_criteria_node_get_definition(oval_node);
 				struct oval_result_definition *rslt_definition
 				    = oval_result_system_get_new_definition(sys, oval_definition);
-				rslt_node = oval_result_criteria_node_new(sys, type, negate, rslt_definition, 0);
+				rslt_node = oval_result_criteria_node_new(sys, type, negate, rslt_definition, 1);
 			} break;
 		default:
 			rslt_node = NULL;
@@ -610,6 +610,13 @@ static xmlNode *_oval_result_CRITERION_to_dom(struct oval_result_criteria_node *
 	snprintf(version, sizeof(version), "%d", oval_test_get_version(oval_test));
 	xmlNewProp(node_root, BAD_CAST "version", BAD_CAST version);
 
+        int instance = ((struct oval_result_criteria_node_CRITERION *) node)->variable_instance;
+        if (instance != 1) {
+                char instance_att[10] = "";
+                snprintf(instance_att, sizeof (instance_att), "%d", instance);
+                xmlNewProp(node_root, BAD_CAST "variable_instance", BAD_CAST instance_att);
+        }
+
 	return node_root;
 
 }
@@ -622,6 +629,13 @@ static xmlNode *_oval_result_EXTENDDEF_to_dom(struct oval_result_criteria_node *
 	struct oval_definition *oval_definition = oval_result_definition_get_definition(rslt_definition);
 	char *definition_ref = oval_definition_get_id(oval_definition);
 	xmlNewProp(node_root, BAD_CAST "definition_ref", BAD_CAST definition_ref);
+
+        int instance = ((struct oval_result_criteria_node_EXTENDDEF *) node)->variable_instance;
+        if (instance != 1) {
+                char instance_att[10] = "";
+                snprintf(instance_att, sizeof (instance_att), "%d", instance);
+                xmlNewProp(node_root, BAD_CAST "variable_instance", BAD_CAST instance_att);
+        }
 
 	return node_root;
 
