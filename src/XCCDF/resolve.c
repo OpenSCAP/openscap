@@ -79,10 +79,11 @@ bool xccdf_benchmark_resolve(struct xccdf_benchmark *benchmark)
 
 // prototypes
 static void xccdf_resolve_textlist(struct oscap_list *child_list, struct oscap_list *parent_list, xccdf_textresolve_func more);
-static void xccdf_resolve_appendlist(struct oscap_list **child_list, struct oscap_list *parent_list, oscap_cmp_func item_compare, oscap_clone_func cloner);
+static void xccdf_resolve_appendlist(struct oscap_list **child_list, struct oscap_list *parent_list, oscap_cmp_func item_compare, oscap_clone_func cloner, bool prepend);
 static void xccdf_resolve_profile(struct xccdf_item *child, struct xccdf_item *parent);
 static void xccdf_resolve_group(struct xccdf_item *child, struct xccdf_item *parent);
 static void xccdf_resolve_rule(struct xccdf_item *child, struct xccdf_item *parent);
+static void xccdf_resolve_value(struct xccdf_item *child, struct xccdf_item *parent);
 
 static void xccdf_resolve_warning(void *w1, void *w2) {
 	if (xccdf_warning_get_category(w1) == 0)
@@ -142,7 +143,7 @@ static void xccdf_resolve_item(struct xccdf_item *item)
 		case XCCDF_PROFILE:   xccdf_resolve_profile(item, parent); break;
 		case XCCDF_GROUP:     xccdf_resolve_group(item, parent);   break;
 		case XCCDF_RULE:      xccdf_resolve_rule(item, parent);    break;
-		case XCCDF_VALUE:     break;
+		case XCCDF_VALUE:     xccdf_resolve_value(item, parent);   break;
 		default: assert(false);
 	}
 
@@ -170,7 +171,7 @@ static void xccdf_resolve_textlist(struct oscap_list *child_list, struct oscap_l
 }
 
 static void xccdf_resolve_appendlist(struct oscap_list **child_list, struct oscap_list *parent_list,
-                                                   oscap_cmp_func item_compare, oscap_clone_func cloner)
+                                                   oscap_cmp_func item_compare, oscap_clone_func cloner, bool prepend)
 {
 	struct oscap_iterator *parent_iter = oscap_iterator_new(parent_list);
 	struct oscap_list *to_add = oscap_list_new();
@@ -185,7 +186,7 @@ static void xccdf_resolve_appendlist(struct oscap_list **child_list, struct osca
 		oscap_iterator_free(child_iter);
 	}
 	oscap_iterator_free(parent_iter);
-	*child_list = oscap_list_destructive_join(to_add, *child_list);
+	*child_list = (prepend ? oscap_list_destructive_join(*child_list, to_add) : oscap_list_destructive_join(to_add, *child_list));
 }
 
 static bool xccdf_select_idcmp(void *s1, void *s2) {
@@ -209,10 +210,10 @@ static void xccdf_resolve_profile(struct xccdf_item *child, struct xccdf_item *p
 		oscap_free(note_tag);
 	}
 
-	xccdf_resolve_appendlist(&child->sub.profile.selects,       parent->sub.profile.selects,       xccdf_select_idcmp,       (oscap_clone_func)xccdf_select_clone);
-	xccdf_resolve_appendlist(&child->sub.profile.setvalues,     parent->sub.profile.setvalues,     xccdf_setvalue_idcmp,     (oscap_clone_func)xccdf_setvalue_clone);
-	xccdf_resolve_appendlist(&child->sub.profile.refine_rules,  parent->sub.profile.refine_rules,  xccdf_refine_rule_idcmp,  (oscap_clone_func)xccdf_refine_rule_clone);
-	xccdf_resolve_appendlist(&child->sub.profile.refine_values, parent->sub.profile.refine_values, xccdf_refine_value_idcmp, (oscap_clone_func)xccdf_refine_value_clone);
+	xccdf_resolve_appendlist(&child->sub.profile.selects,       parent->sub.profile.selects,       xccdf_select_idcmp,       (oscap_clone_func)xccdf_select_clone, false);
+	xccdf_resolve_appendlist(&child->sub.profile.setvalues,     parent->sub.profile.setvalues,     xccdf_setvalue_idcmp,     (oscap_clone_func)xccdf_setvalue_clone, false);
+	xccdf_resolve_appendlist(&child->sub.profile.refine_rules,  parent->sub.profile.refine_rules,  xccdf_refine_rule_idcmp,  (oscap_clone_func)xccdf_refine_rule_clone, false);
+	xccdf_resolve_appendlist(&child->sub.profile.refine_values, parent->sub.profile.refine_values, xccdf_refine_value_idcmp, (oscap_clone_func)xccdf_refine_value_clone, false);
 }
 
 static struct xccdf_item *xccdf_resolve_copy_item(struct xccdf_item *src)
@@ -238,8 +239,8 @@ static bool xccdf_incomparable(void *i1, void *i2) { return false; }
 static void xccdf_resolve_group(struct xccdf_item *child, struct xccdf_item *parent)
 {
 	// TODO: resolve requires properly (how?)
-	//xccdf_resolve_appendlist(&child->sub.group.requires, parent->sub.group.requires, xccdf_incomparable, xccdf_strlist_clone);
-	xccdf_resolve_appendlist(&child->sub.group.conflicts, parent->sub.group.conflicts, (oscap_cmp_func)oscap_strcmp, (oscap_clone_func)oscap_strdup);
+	//xccdf_resolve_appendlist(&child->sub.group.requires, parent->sub.group.requires, xccdf_incomparable, xccdf_strlist_clone, false);
+	xccdf_resolve_appendlist(&child->sub.group.conflicts, parent->sub.group.conflicts, (oscap_cmp_func)oscap_strcmp, (oscap_clone_func)oscap_strdup, false);
 	
 	OSCAP_FOR(xccdf_item, item, xccdf_group_get_content(XGROUP(parent)))
 		xccdf_group_add_content(XGROUP(child), xccdf_resolve_copy_item(item));
@@ -267,9 +268,9 @@ static void xccdf_resolve_rule(struct xccdf_item *child, struct xccdf_item *pare
 {
 	// TODO: resolve requires properly (how?)
 	//xccdf_resolve_appendlist(&child->sub.rule.requires, parent->sub.rule.requires, xccdf_incomparable, xccdf_strlist_clone);
-	xccdf_resolve_appendlist(&child->sub.rule.conflicts, parent->sub.rule.conflicts, (oscap_cmp_func)oscap_strcmp, (oscap_clone_func)oscap_strdup);
-	xccdf_resolve_appendlist(&child->sub.rule.idents, parent->sub.rule.idents, (oscap_cmp_func)xccdf_ident_idcmp, (oscap_clone_func)xccdf_ident_clone);
-	xccdf_resolve_appendlist(&child->sub.rule.fixes, parent->sub.rule.fixes, (oscap_cmp_func)xccdf_incomparable, (oscap_clone_func)xccdf_fix_clone);
+	xccdf_resolve_appendlist(&child->sub.rule.conflicts, parent->sub.rule.conflicts, (oscap_cmp_func)oscap_strcmp, (oscap_clone_func)oscap_strdup, false);
+	xccdf_resolve_appendlist(&child->sub.rule.idents, parent->sub.rule.idents, (oscap_cmp_func)xccdf_ident_idcmp, (oscap_clone_func)xccdf_ident_clone, false);
+	xccdf_resolve_appendlist(&child->sub.rule.fixes, parent->sub.rule.fixes, (oscap_cmp_func)xccdf_incomparable, (oscap_clone_func)xccdf_fix_clone, false);
 
 	if (oscap_list_get_itemcount(child->sub.rule.checks) == 0 && oscap_list_get_itemcount(parent->sub.rule.checks) > 0) {
 		oscap_list_free(child->sub.rule.checks, NULL);
@@ -281,5 +282,14 @@ static void xccdf_resolve_rule(struct xccdf_item *child, struct xccdf_item *pare
 
 	xccdf_resolve_textlist(child->sub.rule.profile_notes, parent->sub.rule.profile_notes, xccdf_resolve_profile_note);
 	xccdf_resolve_textlist(child->sub.rule.fixtexts, parent->sub.rule.fixtexts, (xccdf_textresolve_func)xccdf_resolve_fixtext);
+}
+
+static void xccdf_resolve_value(struct xccdf_item *child, struct xccdf_item *parent)
+{
+	if (xccdf_value_get_interface_hint(XVALUE(child)) == 0)
+		child->sub.value.interface_hint = xccdf_value_get_interface_hint(XVALUE(parent));
+	if (xccdf_value_get_oper(XVALUE(child)) == 0)
+		xccdf_value_set_oper(child, xccdf_value_get_oper(XVALUE(parent)));
+	
 }
 
