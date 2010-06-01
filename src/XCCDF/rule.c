@@ -737,7 +737,7 @@ struct xccdf_fixtext * xccdf_fixtext_clone(const struct xccdf_fixtext * fixtext)
 	clone->disruption = fixtext->disruption;
 	clone->complexity = fixtext->complexity;
 	clone->fixref = oscap_strdup(fixtext->fixref);
-	clone->content = oscap_strdup(fixtext->content);
+	clone->text = oscap_text_clone(fixtext->text);
 	return clone;	
 }
 
@@ -745,14 +745,14 @@ struct xccdf_fixtext *xccdf_fixtext_parse(xmlTextReaderPtr reader)
 {
 	struct xccdf_fixtext *fix = xccdf_fixtext_new();
 	fix->fixref = xccdf_attribute_copy(reader, XCCDFA_FIXREF);
-	XCCDF_FIXCOMMON_PARSE(reader, fix);
+	fix->text = oscap_text_new_parse(XCCDF_TEXT_HTMLSUB, reader);
 	return fix;
 }
 
 void xccdf_fixtext_free(struct xccdf_fixtext *item)
 {
 	if (item) {
-		oscap_free(item->content);
+		oscap_text_free(item->text);
 		oscap_free(item->fixref);
 		oscap_free(item);
 	}
@@ -1015,7 +1015,7 @@ OSCAP_ACCESSOR_SIMPLE(xccdf_strategy_t, xccdf_fixtext, strategy)
 OSCAP_ACCESSOR_SIMPLE(xccdf_level_t, xccdf_fixtext, disruption)
 OSCAP_ACCESSOR_SIMPLE(xccdf_level_t, xccdf_fixtext, complexity)
 OSCAP_ACCESSOR_SIMPLE(bool, xccdf_fixtext, reboot)
-OSCAP_ACCESSOR_STRING(xccdf_fixtext, content)
+OSCAP_ACCESSOR_TEXT(xccdf_fixtext, text)
 OSCAP_ACCESSOR_STRING(xccdf_fixtext, fixref) XCCDF_ITERATOR_GEN_S(fixtext)
 
 OSCAP_ACCESSOR_SIMPLE(xccdf_strategy_t, xccdf_fix, strategy)

@@ -182,10 +182,11 @@ struct xccdf_item_base *xccdf_item_base_clone(const struct xccdf_item_base *old_
 struct xccdf_reference *xccdf_reference_clone(const struct xccdf_reference *old_reference)
 {
 	struct xccdf_reference *new_reference = oscap_calloc(1, sizeof(struct xccdf_reference));
-	new_reference->override = old_reference->override;
+	//new_reference->override = old_reference->override;
 	new_reference->href = oscap_strdup(old_reference->href);
-	new_reference->content = oscap_strdup(old_reference->content);
-	new_reference->lang = oscap_strdup(old_reference->lang);
+	new_reference->text = oscap_text_clone(old_reference->text);
+	//new_reference->content = oscap_strdup(old_reference->content);
+	//new_reference->lang = oscap_strdup(old_reference->lang);
 	return new_reference;
 }
 
@@ -420,9 +421,9 @@ xmlNode *xccdf_item_to_dom(struct xccdf_item *item, xmlDoc *doc, xmlNode *parent
 xmlNode *xccdf_reference_to_dom(struct xccdf_reference *ref, xmlDoc *doc, xmlNode *parent)
 {
 	xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent, XCCDF_BASE_NAMESPACE);
-	xmlNode *reference_node = xmlNewChild(parent, ns_xccdf, BAD_CAST "reference", BAD_CAST xccdf_reference_get_content(ref));
+	xmlNode *reference_node = xmlNewChild(parent, ns_xccdf, BAD_CAST "reference", BAD_CAST "");
 
-	const char *lang = xccdf_reference_get_lang(ref);
+	const char *lang = oscap_text_get_lang(xccdf_reference_get_text(ref));
 	if (lang != NULL) xmlNewProp(reference_node, BAD_CAST "xml:lang", BAD_CAST lang);
 
 	const char *href = xccdf_reference_get_href(ref);
@@ -497,8 +498,8 @@ xmlNode *xccdf_fixtext_to_dom(struct xccdf_fixtext *fixtext, xmlDoc *doc, xmlNod
         if (strategy != 0)
 	        xmlNewProp(fixtext_node, BAD_CAST "strategy", BAD_CAST XCCDF_STRATEGY_MAP[strategy].string);
 
-	const char *content = fixtext->content;
-	xmlNewChild(fixtext_node, ns_xccdf, BAD_CAST "sub", BAD_CAST content);
+	//const char *content = fixtext->content;
+	//xmlNewChild(fixtext_node, ns_xccdf, BAD_CAST "sub", BAD_CAST content);
 
 	return fixtext_node;
 }
@@ -928,8 +929,8 @@ struct xccdf_warning *xccdf_warning_new(void)
 struct xccdf_warning *xccdf_warning_new_parse(xmlTextReaderPtr reader)
 {
     struct xccdf_warning *w = xccdf_warning_new();
-    w->text = oscap_text_new_parse(XCCDF_TEXT_HTMLSUB, reader);
     w->category = oscap_string_to_enum(XCCDF_WARNING_MAP, xccdf_attribute_get(reader, XCCDFA_CATEGORY));
+    w->text = oscap_text_new_parse(XCCDF_TEXT_HTMLSUB, reader);
     return w;
 }
 
@@ -953,10 +954,11 @@ struct xccdf_reference *xccdf_reference_new(void)
 struct xccdf_reference *xccdf_reference_new_parse(xmlTextReaderPtr reader)
 {
     struct xccdf_reference *ref = xccdf_reference_new();
-    if (xccdf_attribute_has(reader, XCCDFA_OVERRIDE))
-            ref->override = oscap_string_to_enum(OSCAP_BOOL_MAP, xccdf_attribute_get(reader, XCCDFA_OVERRIDE));
+    //if (xccdf_attribute_has(reader, XCCDFA_OVERRIDE))
+    //        ref->override = oscap_string_to_enum(OSCAP_BOOL_MAP, xccdf_attribute_get(reader, XCCDFA_OVERRIDE));
     ref->href = xccdf_attribute_copy(reader, XCCDFA_HREF);
-    ref->content = oscap_element_string_copy(reader);
+	ref->text = oscap_text_new_parse(OSCAP_TEXT_TRAITS_HTML, reader);
+    //ref->content = oscap_element_string_copy(reader);
     // TODO Dublin Core
     return ref;
 }
@@ -964,9 +966,10 @@ struct xccdf_reference *xccdf_reference_new_parse(xmlTextReaderPtr reader)
 void xccdf_reference_free(struct xccdf_reference *ref)
 {
     if (ref != NULL) {
-        oscap_free(ref->lang);
+        //oscap_free(ref->lang);
         oscap_free(ref->href);
-        oscap_free(ref->content);
+		oscap_text_free(ref->text);
+        //oscap_free(ref->content);
         oscap_free(ref);
     }
 }
@@ -1249,10 +1252,11 @@ void xccdf_reparent_item(struct xccdf_item * item, struct xccdf_item * parent)
 	}
 }
 
-OSCAP_ACCESSOR_STRING(xccdf_reference, lang)
+//OSCAP_ACCESSOR_STRING(xccdf_reference, lang)
 OSCAP_ACCESSOR_STRING(xccdf_reference, href)
-OSCAP_ACCESSOR_STRING(xccdf_reference, content)
-OSCAP_ACCESSOR_SIMPLE(bool,        xccdf_reference, override)
+OSCAP_ACCESSOR_TEXT(xccdf_reference, text)
+//OSCAP_ACCESSOR_STRING(xccdf_reference, content)
+//OSCAP_ACCESSOR_SIMPLE(bool,        xccdf_reference, override)
 
 const struct oscap_text_traits XCCDF_TEXT_PLAIN    = { .can_override = true };
 const struct oscap_text_traits XCCDF_TEXT_HTML     = { .html = true, .can_override = true };

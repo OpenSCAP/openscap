@@ -25,6 +25,9 @@
 #include "helpers.h"
 #include "../common/tsort.h"
 
+
+typedef void (*xccdf_textresolve_func)(void *child, void *parent);
+
 static void xccdf_resolve_item(struct xccdf_item *item);
 
 static struct oscap_list *xccdf_benchmark_resolve_dependencies(void *itemptr, void *userdata)
@@ -75,11 +78,20 @@ bool xccdf_benchmark_resolve(struct xccdf_benchmark *benchmark)
 }
 
 // prototypes
-static void xccdf_resolve_textlist(struct oscap_list *child_list, struct oscap_list *parent_list);
+static void xccdf_resolve_textlist(struct oscap_list *child_list, struct oscap_list *parent_list, xccdf_textresolve_func more);
 static void xccdf_resolve_appendlist(struct oscap_list **child_list, struct oscap_list *parent_list, oscap_cmp_func item_compare, oscap_clone_func cloner);
 static void xccdf_resolve_profile(struct xccdf_item *child, struct xccdf_item *parent);
 static void xccdf_resolve_group(struct xccdf_item *child, struct xccdf_item *parent);
 static void xccdf_resolve_rule(struct xccdf_item *child, struct xccdf_item *parent);
+
+static void xccdf_resolve_warning(void *w1, void *w2) {
+	if (xccdf_warning_get_category(w1) == 0)
+		xccdf_warning_set_category(w1, xccdf_warning_get_category(w2));
+}
+static void xccdf_resolve_reference(void *r1, void *r2) {
+	if (xccdf_reference_get_href(r1) == NULL)
+		xccdf_reference_set_href(r1, xccdf_reference_get_href(r2));
+}
 
 #define XCCDF_RESOLVE_FLAG(ITEM,PARENT,FLAGNAME) do { \
 	if (!ITEM->item.defined_flags.FLAGNAME) ITEM->item.flags.FLAGNAME = PARENT->item.flags.FLAGNAME; \
@@ -114,11 +126,12 @@ static void xccdf_resolve_item(struct xccdf_item *item)
 	}
 
 	// resolve textual elements
-	xccdf_resolve_textlist(item->item.title,       parent->item.title);
-	xccdf_resolve_textlist(item->item.description, parent->item.description);
-	xccdf_resolve_textlist(item->item.question,    parent->item.question);
-	xccdf_resolve_textlist(item->item.rationale,   parent->item.rationale);
-	// TODO: resolve warnings (o), references(o)
+	xccdf_resolve_textlist(item->item.title,       parent->item.title,       NULL);
+	xccdf_resolve_textlist(item->item.description, parent->item.description, NULL);
+	xccdf_resolve_textlist(item->item.question,    parent->item.question,    NULL);
+	xccdf_resolve_textlist(item->item.rationale,   parent->item.rationale,   NULL);
+	xccdf_resolve_textlist(item->item.warnings,    parent->item.warnings,    xccdf_resolve_warning);
+	xccdf_resolve_textlist(item->item.references,  parent->item.references,  xccdf_resolve_reference);
 
 	// resolve platforms
 	OSCAP_FOR_STR(platform, xccdf_item_get_platforms(parent))
@@ -138,7 +151,7 @@ static void xccdf_resolve_item(struct xccdf_item *item)
 }
 
 // resolve textlists
-static void xccdf_resolve_textlist(struct oscap_list *child_list, struct oscap_list *parent_list)
+static void xccdf_resolve_textlist(struct oscap_list *child_list, struct oscap_list *parent_list, xccdf_textresolve_func more)
 {
 	OSCAP_FOR(oscap_text, child, oscap_iterator_new(child_list)) {
 		if (oscap_text_get_overrides(child)) continue;
@@ -148,6 +161,7 @@ static void xccdf_resolve_textlist(struct oscap_list *child_list, struct oscap_l
 				char *text = oscap_sprintf("%s%s", oscap_text_get_text(parent), oscap_text_get_text(child));
 				oscap_text_set_text(child, text);
 				oscap_free(text);
+				if (more) more(child, parent);
 				break;
 			}
 		}
@@ -236,6 +250,18 @@ static void xccdf_resolve_group(struct xccdf_item *child, struct xccdf_item *par
 static bool xccdf_ident_idcmp(void *s1, void *s2) {
 	return oscap_streq(((struct xccdf_ident*)s1)->id, ((struct xccdf_ident*)s2)->id);
 }
+static void xccdf_resolve_profile_note(void *p1, void *p2) {
+	if (xccdf_profile_note_get_reftag(p1) == NULL)
+		xccdf_profile_note_set_reftag(p1, xccdf_profile_note_get_reftag(p2));
+}
+static void xccdf_resolve_fixtext(struct xccdf_fixtext *t1, struct xccdf_fixtext *t2) {
+	if (xccdf_fixtext_get_fixref(t1) == NULL)
+		xccdf_fixtext_set_fixref(t1, xccdf_fixtext_get_fixref(t2));
+	if (xccdf_fixtext_get_disruption(t1) == 0)
+		xccdf_fixtext_set_disruption(t1, xccdf_fixtext_get_disruption(t2));
+	if (xccdf_fixtext_get_complexity(t1) == 0)
+		xccdf_fixtext_set_complexity(t1, xccdf_fixtext_get_complexity(t2));
+}
 
 static void xccdf_resolve_rule(struct xccdf_item *child, struct xccdf_item *parent)
 {
@@ -253,6 +279,7 @@ static void xccdf_resolve_rule(struct xccdf_item *child, struct xccdf_item *pare
 	if (!child->item.defined_flags.role) child->sub.rule.role = parent->sub.rule.role;
 	if (!child->item.defined_flags.severity) child->sub.rule.severity = parent->sub.rule.severity;
 
-	// TODO: resolve profile_note, fixtext
+	xccdf_resolve_textlist(child->sub.rule.profile_notes, parent->sub.rule.profile_notes, xccdf_resolve_profile_note);
+	xccdf_resolve_textlist(child->sub.rule.fixtexts, parent->sub.rule.fixtexts, (xccdf_textresolve_func)xccdf_resolve_fixtext);
 }
 

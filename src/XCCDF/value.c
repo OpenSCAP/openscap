@@ -375,7 +375,6 @@ bool xccdf_value_get_defval_boolean(const struct xccdf_value * value)
 	return false;
 }
 
-/*
 char *  xccdf_value_get_selected_value(const struct xccdf_value * value)
 {
         const char * selector = xccdf_value_get_selector(value);
@@ -402,7 +401,6 @@ char *  xccdf_value_get_selected_value(const struct xccdf_value * value)
         
         return selected;
 }
-*/
 
 const char *xccdf_value_get_value_string(const struct xccdf_value *value)
 {

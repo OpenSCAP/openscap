@@ -1929,6 +1929,8 @@ xccdf_interface_hint_t xccdf_value_get_interface_hint(const struct xccdf_value *
 xccdf_operator_t xccdf_value_get_oper(const struct xccdf_value *value);
 /// @memberof xccdf_value
 const char *xccdf_value_get_selector(const struct xccdf_value *value);
+/// @memberof xccdf_value
+char *  xccdf_value_get_selected_value(const struct xccdf_value * value);
 
 /**
  * Return value's parent in the grouping hierarchy.
@@ -2114,6 +2116,8 @@ xccdf_level_t xccdf_fixtext_get_complexity(const struct xccdf_fixtext *fixtext);
 xccdf_level_t xccdf_fixtext_get_disruption(const struct xccdf_fixtext *fixtext);
 /// @memberof xccdf_fixtext
 const char *xccdf_fixtext_get_fixref(const struct xccdf_fixtext *fixtext);
+/// @memberof xccdf_fixtext
+struct oscap_text *xccdf_fixtext_get_text(const struct xccdf_fixtext *fixtext);
 /// @memberof xccdf_value
 const char *xccdf_value_get_version(const struct xccdf_value *value);
 /// @memberof xccdf_value
@@ -2184,8 +2188,6 @@ struct xccdf_check_import_iterator *xccdf_check_get_imports(const struct xccdf_c
 struct xccdf_check_export_iterator *xccdf_check_get_exports(const struct xccdf_check *check);
 /// @memberof xccdf_check
 struct xccdf_check_content_ref_iterator *xccdf_check_get_content_refs(const struct xccdf_check *check);
-/// @memberof xccdf_check
-const char *xccdf_fixtext_get_content(const struct xccdf_fixtext *fixtext);
 
 /// @memberof xccdf_reference
 struct xccdf_reference *xccdf_reference_new(void);
@@ -2193,14 +2195,16 @@ struct xccdf_reference *xccdf_reference_new(void);
 struct xccdf_reference *xccdf_reference_clone(const struct xccdf_reference *old_reference);
 /// @memberof xccdf_reference
 void xccdf_reference_free(struct xccdf_reference * ref);
-/// @memberof xccdf_reference
-bool xccdf_reference_get_override(const struct xccdf_reference *reference);
+// @memberof xccdf_reference
+//bool xccdf_reference_get_override(const struct xccdf_reference *reference);
 /// @memberof xccdf_reference
 const char *xccdf_reference_get_href(const struct xccdf_reference *reference);
+// @memberof xccdf_reference
+//const char *xccdf_reference_get_content(const struct xccdf_reference *reference);
+// @memberof xccdf_reference
+//const char *xccdf_reference_get_lang(const struct xccdf_reference *reference);
 /// @memberof xccdf_reference
-const char *xccdf_reference_get_content(const struct xccdf_reference *reference);
-/// @memberof xccdf_reference
-const char *xccdf_reference_get_lang(const struct xccdf_reference *reference);
+struct oscap_text *xccdf_reference_get_text(const struct xccdf_reference *reference);
 
 /// @memberof xccdf_select
 bool xccdf_select_get_selected(const struct xccdf_select *select);
@@ -2563,7 +2567,7 @@ bool xccdf_fixtext_set_complexity(struct xccdf_fixtext *obj, xccdf_level_t newva
 /// @memberof xccdf_fixtext
 bool xccdf_fixtext_set_reboot(struct xccdf_fixtext *obj, bool newval);
 /// @memberof xccdf_fixtext
-bool xccdf_fixtext_set_content(struct xccdf_fixtext *obj, const char *newval);
+bool xccdf_fixtext_set_text(struct xccdf_fixtext *obj, struct oscap_text *newval);
 /// @memberof xccdf_fixtext
 bool xccdf_fixtext_set_fixref(struct xccdf_fixtext *obj, const char *newval);
 
@@ -2573,13 +2577,15 @@ bool xccdf_select_set_item(struct xccdf_select *obj, const char *newval);
 bool xccdf_select_set_selected(struct xccdf_select *obj, bool newval);
 
 /// @memberof xccdf_reference
-bool xccdf_reference_set_lang(struct xccdf_reference *obj, const char *newval);
+//bool xccdf_reference_set_lang(struct xccdf_reference *obj, const char *newval);
 /// @memberof xccdf_reference
 bool xccdf_reference_set_href(struct xccdf_reference *obj, const char *newval);
 /// @memberof xccdf_reference
-bool xccdf_reference_set_content(struct xccdf_reference *obj, const char *newval);
+bool xccdf_reference_set_text(struct xccdf_reference *obj, struct oscap_text *newval);
 /// @memberof xccdf_reference
-bool xccdf_reference_set_override(struct xccdf_reference *obj, bool newval);
+//bool xccdf_reference_set_content(struct xccdf_reference *obj, const char *newval);
+/// @memberof xccdf_reference
+//bool xccdf_reference_set_override(struct xccdf_reference *obj, bool newval);
 
 /// @memberof xccdf_warning
 bool xccdf_warning_set_category(struct xccdf_warning *obj, xccdf_warning_category_t newval);

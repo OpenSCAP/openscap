@@ -279,8 +279,8 @@ struct xccdf_check_export {
 };
 
 struct xccdf_profile_note {
-	char *reftag;
 	struct oscap_text *text;
+	char *reftag;
 };
 
 struct xccdf_fix {
@@ -295,19 +295,17 @@ struct xccdf_fix {
 };
 
 struct xccdf_fixtext {
+	struct oscap_text *text;
 	bool reboot;
 	xccdf_strategy_t strategy;
 	xccdf_level_t disruption;
 	xccdf_level_t complexity;
 	char *fixref;
-	char *content;
 };
 
 struct xccdf_reference {
-    bool override;
+	struct oscap_text *text;
     char *href;
-    char *content;
-    char *lang;
 };
 
 struct xccdf_rule_result {
