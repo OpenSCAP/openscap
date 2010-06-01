@@ -1365,8 +1365,8 @@ int oval_result_test_parse_tag
 
 	oval_result_t result = oval_result_parse(reader, "result", 0);
 	oval_result_test_set_result(test, result);
-	int veriable_instance = oval_parser_int_attribute(reader, "veriable_instance", 1);
-	oval_result_test_set_instance(test, veriable_instance);
+	int variable_instance = oval_parser_int_attribute(reader, "variable_instance", 1);
+	oval_result_test_set_instance(test, variable_instance);
 
 	struct oval_test *ovaltst = oval_result_test_get_test(test);
 
