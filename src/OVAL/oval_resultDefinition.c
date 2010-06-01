@@ -45,9 +45,6 @@ typedef struct oval_result_definition {
 	int instance;
 } oval_result_definition_t;
 
-static char *_oval_result_definition_results[] = {
-	NULL, "true", "false", "unknown", "error", "not evaluated", "not applicable"
-};
 
 bool oval_result_definition_iterator_has_more(struct oval_result_definition_iterator *definitions) {
 	return oval_collection_iterator_has_more((struct oval_iterator *)definitions);
@@ -147,7 +144,7 @@ void oval_result_definition_free(struct oval_result_definition *definition)
 	definition->criteria = NULL;
 	definition->definition = NULL;
 	definition->messages = NULL;
-	definition->result = 0;
+	definition->result = OVAL_RESULT_INVALID;
 	definition->instance = 0;
 	oscap_free(definition);
 }
@@ -288,7 +285,9 @@ int oval_result_definition_parse
 	xmlChar *definition_id = xmlTextReaderGetAttribute(reader, BAD_CAST "definition_id");
 	xmlChar *definition_version = xmlTextReaderGetAttribute(reader, BAD_CAST "version");
 	int resvsn = atoi((char *)definition_version);
-	xmlChar *definition_result = xmlTextReaderGetAttribute(reader, BAD_CAST "result");
+
+	oval_result_t result = oval_result_parse(reader, "result", OVAL_RESULT_INVALID);
+
 	int instance = oval_parser_int_attribute(reader, "variable_instance", 1);
 
 	struct oval_result_definition *definition = oval_result_definition_new(sys, (char *)definition_id);
@@ -303,28 +302,25 @@ int oval_result_definition_parse
 	}
 	oval_definition_set_version(definition->definition, resvsn);
 	oval_result_definition_set_instance(definition, instance);
-	oval_result_t result = 0;
-	int i;
-	for (i = 1; i < 7 && result == 0; i++) {
-		result = strcmp(_oval_result_definition_results[i], (const char *)definition_result) == 0 ? i : 0;
-	}
-	if (result) {
+	
+
+	if (result != OVAL_RESULT_INVALID) {
 		oval_result_definition_set_result(definition, result);
 	} else {
 		oscap_dprintf("WARNING: oval_result_definition_parse: can't resolve result attribute\n"
-			      "    definition id = %s\n" "    result attribute = %s", definition_id, definition_result);
+			      "    definition id = %s\n", definition_id);
 	}
 
 	//Process tag contents
 	oscap_dprintf("DEBUG: oval_result_definition_parse: processing <definition> contents\n"
 		      "    definition id = %s vsn = %d\n"
-		      "    definition result = %s(%d)", definition_id, defvsn, definition_result, result);
+		      "    definition result = (%d)", definition_id, defvsn, result);
+
 	return_code = oval_parser_parse_tag
 	    (reader, context, (oval_xml_tag_parser) _oval_result_definition_parse, definition);
 
 	oscap_free(definition_id);
 	oscap_free(definition_version);
-	oscap_free(definition_result);
 
 	(*consumer) (definition, client);
 	oscap_dprintf("DEBUG: oval_result_definition_parse: END");

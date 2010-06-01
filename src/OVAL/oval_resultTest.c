@@ -194,7 +194,7 @@ struct oval_result_test *oval_result_test_new(struct oval_result_system *sys, ch
 	test->system = sys;
 	test->test = oval_test_get_new(definition_model, tstid);
 	test->message = NULL;
-	test->result = 0;
+	test->result = OVAL_RESULT_INVALID;
 	test->instance = 0;
 	test->items = oval_collection_new();
 	test->bindings = oval_collection_new();
@@ -301,7 +301,7 @@ void oval_result_test_free(struct oval_result_test *test)
 	test->system = NULL;
 	test->test = NULL;
 	test->message = NULL;
-	test->result = 0;
+	test->result = OVAL_RESULT_INVALID;
 	test->items = NULL;
 	test->bindings = NULL;
 	test->instance = 1;
@@ -540,11 +540,7 @@ static oval_result_t evaluate(char *sys_data, char *state_data, oval_datatype_t 
         return OVAL_RESULT_INVALID;
 }
 
-struct oresults {
-	int true_cnt, false_cnt, unknown_cnt, error_cnt, noteval_cnt, notappl_cnt;
-};
-
-static int ores_add_res(struct oresults *ores, oval_result_t res)
+int ores_add_res(struct oresults *ores, oval_result_t res)
 {
 		switch (res) {
 		case OVAL_RESULT_TRUE:
@@ -574,13 +570,12 @@ static int ores_add_res(struct oresults *ores, oval_result_t res)
 		return 0;
 }
 
-static void ores_clear(struct oresults *ores)
+void ores_clear(struct oresults *ores)
 {
 	memset(ores, 0, sizeof (*ores));
 }
 
-// todo: already implemented elsewhere; consolidate
-static oval_result_t ores_get_result_bychk(struct oresults *ores, oval_check_t check)
+oval_result_t ores_get_result_bychk(struct oresults *ores, oval_check_t check)
 {
 	oval_result_t result = OVAL_RESULT_INVALID;
 
@@ -666,8 +661,7 @@ static oval_result_t ores_get_result_bychk(struct oresults *ores, oval_check_t c
 	return result;
 }
 
-// todo: already implemented elsewhere; consolidate
-static oval_result_t ores_get_result_byopr(struct oresults *ores, oval_operator_t operator)
+oval_result_t ores_get_result_byopr(struct oresults *ores, oval_operator_t op)
 {
 	oval_result_t result = OVAL_RESULT_INVALID;
 
@@ -684,7 +678,7 @@ static oval_result_t ores_get_result_byopr(struct oresults *ores, oval_operator_
 	    ores->false_cnt == 0 && ores->error_cnt == 0 && ores->unknown_cnt == 0 && ores->true_cnt == 0)
 		return OVAL_RESULT_NOT_APPLICABLE;
 
-	switch (operator) {
+	switch (op) {
 	case OVAL_OPERATOR_AND:
 		if (ores->true_cnt > 0 &&
 		    ores->false_cnt == 0 && ores->error_cnt == 0 && ores->unknown_cnt == 0 && ores->noteval_cnt == 0) {

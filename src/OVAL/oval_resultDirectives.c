@@ -3,6 +3,7 @@
  * \brief Open Vulnerability and Assessment Language
  *
  * See more details at http://oval.mitre.org/
+ * @cond
  */
 
 /*
@@ -37,12 +38,13 @@
 #include "common/util.h"
 #include "common/debug_priv.h"
 
+
+#define NUMBER_OF_RESULTS 7
+
 struct _oval_result_directive {
 	bool reported;
 	oval_result_directive_content_t content;
 };
-
-#define NUMBER_OF_RESULTS 7
 
 typedef struct oval_result_directives {
 	struct oval_results_model *model;
@@ -85,47 +87,69 @@ void oval_result_directives_free(struct oval_result_directives *directives)
 bool oval_result_directives_get_reported(struct oval_result_directives *directives, oval_result_t type) {
 	__attribute__nonnull__(directives);
 
-	return directives->directive[type].reported;
+	int i=-1;
+	while (type) {
+		i = i + 1;
+		type = type >> 1;
+	}
+	return directives->directive[i].reported;
 }
 
 oval_result_directive_content_t oval_result_directives_get_content
     (struct oval_result_directives * directives, oval_result_t type) {
 	__attribute__nonnull__(directives);
 
-	return directives->directive[type].content;
+	int i=-1;
+	while (type) {
+		i = i + 1;
+		type = type >> 1;
+	}
+	return directives->directive[i].content;
 }
 
-void oval_result_directives_set_reported(struct oval_result_directives *directives, oval_result_t type, bool reported) {
+void oval_result_directives_set_reported(struct oval_result_directives *directives, int flag, bool val) {
 	if (directives && !oval_result_directives_is_locked(directives)) {
-		directives->directive[type].reported = reported;
+		int i=0;
+		while (flag>>i) {
+			if( flag & (1 << i) )
+				directives->directive[i].reported = val;
+			i = i + 1;
+		}
 	} else
 		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
 void oval_result_directives_set_content
-    (struct oval_result_directives *directives, oval_result_t type, oval_result_directive_content_t content) {
+    (struct oval_result_directives *directives, int flag, oval_result_directive_content_t content) {
 	if (directives && !oval_result_directives_is_locked(directives)) {
-		directives->directive[type].content = content;
+		int i=0;
+		while (flag>>i) {
+			if( flag & (1 << i) )
+				directives->directive[i].content = content;
+			i = i + 1;
+		}
 	} else
 		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
-/*typedef int (*oval_xml_tag_parser) (xmlTextReaderPtr, struct oval_parser_context *, void *);*/
+static const struct oscap_string_map OVAL_DIRECTIVE_MAP[] = {
+	{OVAL_RESULT_TRUE, "definition_true"},
+	{OVAL_RESULT_FALSE, "definition_false"},
+	{OVAL_RESULT_UNKNOWN, "definition_unknown"},
+	{OVAL_RESULT_ERROR, "definition_error"},
+	{OVAL_RESULT_NOT_EVALUATED, "definition_not_evaluated"},
+	{OVAL_RESULT_NOT_APPLICABLE, "definition_not_applicable"},
+	{OVAL_RESULT_INVALID, NULL}
+};
+
 static int _oval_result_directives_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *context, void *client) {
 	struct oval_result_directives *directives = (struct oval_result_directives *)client;
-	oval_result_directive_content_t type = OVAL_DIRECTIVE_CONTENT_UNKNOWN;
-	char *tag_names[NUMBER_OF_RESULTS] = {
-		NULL, "definition_true", "definition_false", "definition_unknown", "definition_error",
-		    "definition_not_evaluated", "definition_not_applicable"
-	};
-	int i, retcode = 1;
+	int retcode = 1;
+
 	xmlChar *name = xmlTextReaderLocalName(reader);
-	for (i = 1; i < NUMBER_OF_RESULTS && type == OVAL_DIRECTIVE_CONTENT_UNKNOWN; i++) {
-		if (strcmp(tag_names[i], (const char *)name) == 0) {
-			type = i;
-		}
-	}
-	if (type) {
+	oval_result_t type = oscap_string_to_enum(OVAL_DIRECTIVE_MAP, (const char *)name);
+
+	if (type != OVAL_RESULT_INVALID) {
 		{		/*reported */
 			xmlChar *boolstr = xmlTextReaderGetAttribute(reader, BAD_CAST "reported");
 			bool reported = strcmp((const char *)boolstr, "1") == 0
@@ -137,13 +161,12 @@ static int _oval_result_directives_parse_tag(xmlTextReaderPtr reader, struct ova
 			xmlChar *contentstr = xmlTextReaderGetAttribute(reader, BAD_CAST "content");
 			oval_result_directive_content_t content = OVAL_DIRECTIVE_CONTENT_UNKNOWN;
 			if (contentstr) {
-				char *content_names[3] = { NULL, "thin", "full" };
-				for (i = 1; i < 3 && content == OVAL_DIRECTIVE_CONTENT_UNKNOWN; i++) {
-					if (strcmp(content_names[i], (const char *)contentstr) == 0) {
-						content = i;
-					}
-				}
-				if (content) {
+				if (strcmp("thin", (const char *)contentstr) == 0)
+					content = OVAL_DIRECTIVE_CONTENT_THIN;
+				else if (strcmp("full", (const char *)contentstr) == 0)
+					content = OVAL_DIRECTIVE_CONTENT_FULL;
+
+				if (content != OVAL_DIRECTIVE_CONTENT_UNKNOWN) {
 					oval_result_directives_set_content(directives, type, content);
 				} else {
 					oscap_dprintf
@@ -169,15 +192,6 @@ int oval_result_directives_parse_tag
 	return oval_parser_parse_tag(reader, context, &_oval_result_directives_parse_tag, directives);
 }
 
-static const struct oscap_string_map _OVAL_DIRECTIVE_MAP[] = {
-	{OVAL_RESULT_TRUE, "definition_true"},
-	{OVAL_RESULT_FALSE, "definition_false"},
-	{OVAL_RESULT_UNKNOWN, "definition_unknown"},
-	{OVAL_RESULT_ERROR, "definition_error"},
-	{OVAL_RESULT_NOT_EVALUATED, "definition_not_evaluated"},
-	{OVAL_RESULT_NOT_APPLICABLE, "definition_not_applicable"},
-	{OVAL_RESULT_INVALID, NULL}
-};
 
 int oval_result_directives_to_dom(struct oval_result_directives *directives, xmlDoc * doc, xmlNode * parent) {
 	int retcode = 1;
@@ -185,7 +199,7 @@ int oval_result_directives_to_dom(struct oval_result_directives *directives, xml
 	xmlNode *directives_node = xmlNewChild(parent, ns_results, BAD_CAST "directives", NULL);
 
 	const struct oscap_string_map *map;
-	for (map = _OVAL_DIRECTIVE_MAP; map->string; map++) {
+	for (map = OVAL_DIRECTIVE_MAP; map->string; map++) {
 		oval_result_t directive = (oval_result_t)
 		    map->value;
 		bool reported = oval_result_directives_get_reported(directives, directive);
@@ -199,3 +213,7 @@ int oval_result_directives_to_dom(struct oval_result_directives *directives, xml
 	}
 	return retcode;
 }
+
+/**
+ * @endcond
+ */

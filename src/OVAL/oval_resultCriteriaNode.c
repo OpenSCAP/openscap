@@ -339,70 +339,6 @@ static oval_result_t _oval_result_negate(bool negate, oval_result_t result)
 	    (negate && result == OVAL_RESULT_FALSE) ? OVAL_RESULT_TRUE : result;
 }
 
-#define INVALID   (counts[0])
-#define _CT  (counts[1])
-#define _CF  (counts[2])
-#define _CU  (counts[3])
-#define _CE  (counts[4])
-#define _CNE (counts[5])
-#define _CNA (counts[6])
-
-// todo: already implemented elsewhere; consolidate
-static oval_result_t _oval_result_binary_op(oval_operator_t operator, int *counts) {
-	oval_result_t result = OVAL_RESULT_INVALID;
-	if (INVALID == 0) {
-		switch (operator) {
-		case OVAL_OPERATOR_AND:{
-				result =
-				    (_CT > 0 && _CF == 0 && _CU == 0 && _CE == 0 && _CNE == 0) ? OVAL_RESULT_TRUE :
-				    (_CF > 0) ? OVAL_RESULT_FALSE :
-				    (_CF == 0 && _CE > 0) ? OVAL_RESULT_ERROR :
-				    (_CF == 0 && _CE == 0 && _CU > 0) ? OVAL_RESULT_UNKNOWN :
-				    (_CF == 0 && _CE == 0 && _CU == 0 && _CNE > 0) ? OVAL_RESULT_NOT_EVALUATED :
-				    (_CT == 0 && _CF == 0 && _CE == 0 && _CU == 0 && _CNE == 0
-				     && _CNA > 0) ? OVAL_RESULT_NOT_APPLICABLE : OVAL_RESULT_INVALID;
-			};
-			break;
-		case OVAL_OPERATOR_ONE:{
-				result =
-				    (_CT == 1 && _CE == 0 && _CU == 0 && _CNE == 0) ? OVAL_RESULT_TRUE :
-				    (_CT > 1) ? OVAL_RESULT_FALSE :
-				    (_CT == 0 && _CF > 0 && _CE == 0 && _CU == 0 && _CNE == 0) ? OVAL_RESULT_FALSE :
-				    (_CT < 2 && _CE > 0) ? OVAL_RESULT_ERROR :
-				    (_CT < 2 && _CE == 0 && _CU > 0) ? OVAL_RESULT_UNKNOWN :
-				    (_CT < 2 && _CE == 0 && _CU == 0 && _CNE > 0) ? OVAL_RESULT_NOT_EVALUATED :
-				    (_CT == 0 && _CF == 0 && _CE == 0 && _CU == 0 && _CNE == 0
-				     && _CNA > 0) ? OVAL_RESULT_NOT_APPLICABLE : OVAL_RESULT_INVALID;
-			};
-			break;
-		case OVAL_OPERATOR_OR:{
-				result =
-				    (_CT > 0) ? OVAL_RESULT_TRUE :
-				    (_CT == 0 && _CF > 0 && _CE == 0 && _CU == 0 && _CNE == 0) ? OVAL_RESULT_FALSE :
-				    (_CT == 0 && _CE > 0) ? OVAL_RESULT_ERROR :
-				    (_CT == 0 && _CE == 0 && _CU > 0) ? OVAL_RESULT_UNKNOWN :
-				    (_CT == 0 && _CE == 0 && _CU == 0 && _CNE > 0) ? OVAL_RESULT_NOT_EVALUATED :
-				    (_CT == 0 && _CF == 0 && _CE == 0 && _CU == 0 && _CNE == 0
-				     && _CNA > 0) ? OVAL_RESULT_NOT_APPLICABLE : OVAL_RESULT_INVALID;
-			};
-			break;
-		case OVAL_OPERATOR_XOR:{
-				result =
-				    (_CT % 2 == 1 && _CE == 0 && _CU == 0 && _CNE == 0) ? OVAL_RESULT_TRUE :
-				    (_CT % 2 == 0 && _CE == 0 && _CU == 0 && _CNE == 0) ? OVAL_RESULT_FALSE :
-				    (_CE > 0) ? OVAL_RESULT_ERROR :
-				    (_CE == 0 && _CU > 0) ? OVAL_RESULT_UNKNOWN :
-				    (_CE == 0 && _CU == 0 && _CNE > 0) ? OVAL_RESULT_NOT_EVALUATED :
-				    (_CT == 0 && _CF == 0 && _CE == 0 && _CU == 0 && _CNE == 0
-				     && _CNA > 0) ? OVAL_RESULT_NOT_APPLICABLE : OVAL_RESULT_INVALID;
-			};
-			break;
-		default:
-			break;
-		}
-	}
-	return result;
-}
 
 static oval_result_t _oval_result_criteria_node_result(struct oval_result_criteria_node *node) {
 	__attribute__nonnull__(node);
@@ -413,15 +349,17 @@ static oval_result_t _oval_result_criteria_node_result(struct oval_result_criter
 			struct oval_result_criteria_node_iterator *subnodes
 			    = oval_result_criteria_node_get_subnodes(node);
 			oval_operator_t operator = oval_result_criteria_node_get_operator(node);
-			int counts[] = { 0, 0, 0, 0, 0, 0, 0 };	//result counts
+			struct oresults node_res;
+			ores_clear(&node_res);
 			while (oval_result_criteria_node_iterator_has_more(subnodes)) {
 				struct oval_result_criteria_node *subnode
 				    = oval_result_criteria_node_iterator_next(subnodes);
 				oval_result_t subres = oval_result_criteria_node_eval(subnode);
-				counts[subres]++;
+				ores_add_res(&node_res, subres);
 			}
 			oval_result_criteria_node_iterator_free(subnodes);
-			result = _oval_result_binary_op(operator, counts);
+			result = ores_get_result_byopr(&node_res, operator);
+
 		} break;
 	case OVAL_NODETYPE_CRITERION:{
 			struct oval_result_test *test = oval_result_criteria_node_get_test(node);
