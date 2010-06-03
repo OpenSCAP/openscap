@@ -457,8 +457,9 @@ xmlNode *xccdf_status_to_dom(struct xccdf_status *status, xmlDoc *doc, xmlNode *
 	xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent, XCCDF_BASE_NAMESPACE);
 
 	xccdf_level_t level = xccdf_status_get_status(status);
-	xmlNode *status_node = xmlNewChild(parent, ns_xccdf, BAD_CAST "status",
-					   BAD_CAST XCCDF_STATUS_MAP[level - 1].string);
+	if (level != XCCDF_STATUS_NOT_SPECIFIED)
+		xmlNode *status_node = xmlNewChild(parent, ns_xccdf, BAD_CAST "status",
+						   BAD_CAST XCCDF_STATUS_MAP[level - 1].string);
 
 	time_t date_time = xccdf_status_get_date(status);
 	struct tm *date = localtime(&date_time);
@@ -520,9 +521,8 @@ xmlNode *xccdf_fix_to_dom(struct xccdf_fix *fix, xmlDoc *doc, xmlNode *parent)
 		xmlNewProp(fix_node, BAD_CAST "reboot", BAD_CAST "True");
 
 	xccdf_level_t complexity = xccdf_fix_get_complexity(fix);
-        if (complexity != 0) {
+        if (complexity != 0)
 	    xmlNewProp(fix_node, BAD_CAST "complexity", BAD_CAST XCCDF_LEVEL_MAP[complexity-1].string);
-        }
 
 	xccdf_level_t disruption = xccdf_fix_get_disruption(fix);
         if (disruption != 0)

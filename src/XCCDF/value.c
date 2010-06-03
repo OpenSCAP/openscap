@@ -177,16 +177,19 @@ void xccdf_value_to_dom(struct xccdf_value *value, xmlNode *value_node, xmlDoc *
 		xmlNewProp(value_node, BAD_CAST "extends", BAD_CAST extends);
 
 	xccdf_operator_t operator = xccdf_value_get_oper(value);
-	xmlNewProp(value_node, BAD_CAST "operator", BAD_CAST XCCDF_OPERATOR_MAP[operator - 1].string);
+	if (operator != 0)
+		xmlNewProp(value_node, BAD_CAST "operator", BAD_CAST XCCDF_OPERATOR_MAP[operator - 1].string);
 
 	xccdf_value_type_t type = xccdf_value_get_type(value);
-	xmlNewProp(value_node, BAD_CAST "type", BAD_CAST XCCDF_VALUE_TYPE_MAP[type - 1].string);
+	if (type != 0)
+		xmlNewProp(value_node, BAD_CAST "type", BAD_CAST XCCDF_VALUE_TYPE_MAP[type - 1].string);
 
 	if (xccdf_value_get_interactive(value))
 		xmlNewProp(value_node, BAD_CAST "interactive", BAD_CAST "True");
 
 	xccdf_interface_hint_t hint = xccdf_value_get_interface_hint(value);
-	xmlNewProp(value_node, BAD_CAST "interfaceHint", BAD_CAST XCCDF_IFACE_HINT_MAP[hint - 1].string);
+	if (hint != XCCDF_IFACE_HINT_NONE)
+		xmlNewProp(value_node, BAD_CAST "interfaceHint", BAD_CAST XCCDF_IFACE_HINT_MAP[hint - 1].string);
 
 	/* Handle Child Nodes */
 	const char *val_str = xccdf_value_get_value_string(value);

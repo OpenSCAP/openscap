@@ -754,10 +754,12 @@ xmlNode *xccdf_override_to_dom(struct xccdf_override *override, xmlDoc *doc, xml
 		xmlNewProp(override_node, BAD_CAST "authority", BAD_CAST authority);
 
 	xccdf_test_result_type_t old = xccdf_override_get_old_result(override);
-	xmlNewProp(override_node, BAD_CAST "old-result", BAD_CAST XCCDF_RESULT_MAP[old - 1].string);
+	if (old != 0)
+		xmlNewProp(override_node, BAD_CAST "old-result", BAD_CAST XCCDF_RESULT_MAP[old - 1].string);
 
 	xccdf_test_result_type_t new = xccdf_override_get_new_result(override);
-	xmlNewProp(override_node, BAD_CAST "new-result", BAD_CAST XCCDF_RESULT_MAP[new - 1].string);
+	if (new != 0)
+		xmlNewProp(override_node, BAD_CAST "new-result", BAD_CAST XCCDF_RESULT_MAP[new - 1].string);
 
 	struct oscap_text *remark = xccdf_override_get_remark(override);
 	if (remark)

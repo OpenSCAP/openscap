@@ -346,7 +346,8 @@ void xccdf_profile_to_dom(struct xccdf_profile *profile, xmlNode *profile_node, 
 			xmlNewProp(refval_node, BAD_CAST "idref", BAD_CAST idref);
 
 		xccdf_operator_t operator = xccdf_refine_value_get_oper(refine_value);
-		xmlNewProp(refval_node, BAD_CAST "operator", BAD_CAST XCCDF_OPERATOR_MAP[operator - 1].string);
+		if (operator != 0)
+			xmlNewProp(refval_node, BAD_CAST "operator", BAD_CAST XCCDF_OPERATOR_MAP[operator - 1].string);
 
 		const char *selector = xccdf_refine_value_get_selector(refine_value);
 		if (selector)
@@ -371,14 +372,16 @@ void xccdf_profile_to_dom(struct xccdf_profile *profile, xmlNode *profile_node, 
 			xmlNewProp(refrule_node, BAD_CAST "idref", BAD_CAST idref);
 
 		xccdf_role_t role = xccdf_refine_rule_get_role(refine_rule);
-		xmlNewProp(refrule_node, BAD_CAST "role", BAD_CAST XCCDF_ROLE_MAP[role - 1].string);
+		if (role != 0)
+			xmlNewProp(refrule_node, BAD_CAST "role", BAD_CAST XCCDF_ROLE_MAP[role - 1].string);
 
 		const char *selector = xccdf_refine_rule_get_selector(refine_rule);
 		if (selector)
 			xmlNewProp(refrule_node, BAD_CAST "selector", BAD_CAST selector);
 
 		xccdf_level_t severity = xccdf_refine_rule_get_severity(refine_rule);
-		xmlNewProp(refrule_node, BAD_CAST "severity", BAD_CAST XCCDF_LEVEL_MAP[severity].string);
+		if (severity != 0)
+			xmlNewProp(refrule_node, BAD_CAST "severity", BAD_CAST XCCDF_LEVEL_MAP[severity].string);
 
 		float weight = xccdf_refine_rule_get_weight(refine_rule);
 		char weight_str[10];
