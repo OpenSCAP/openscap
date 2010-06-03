@@ -396,6 +396,7 @@ xmlNode *xccdf_item_to_dom(struct xccdf_item *item, xmlDoc *doc, xmlNode *parent
 			break;
 		case XCCDF_RESULT:
 			xmlNodeSetName(item_node,BAD_CAST "Result");
+			xccdf_result_to_dom(XRESULT(item), item_node, doc, parent);
 			break;
 		case XCCDF_GROUP:
 			xmlNodeSetName(item_node,BAD_CAST "Group");
@@ -456,10 +457,11 @@ xmlNode *xccdf_status_to_dom(struct xccdf_status *status, xmlDoc *doc, xmlNode *
 {
 	xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent, XCCDF_BASE_NAMESPACE);
 
-	xccdf_level_t level = xccdf_status_get_status(status);
-	if (level != XCCDF_STATUS_NOT_SPECIFIED)
-		xmlNode *status_node = xmlNewChild(parent, ns_xccdf, BAD_CAST "status",
-						   BAD_CAST XCCDF_STATUS_MAP[level - 1].string);
+	xmlNode *status_node = NULL;
+	xccdf_status_type_t type = xccdf_status_get_status(status);
+	if (type != XCCDF_STATUS_NOT_SPECIFIED)
+		status_node = xmlNewChild(parent, ns_xccdf, BAD_CAST "status",
+							BAD_CAST XCCDF_STATUS_MAP[type - 1].string);
 
 	time_t date_time = xccdf_status_get_date(status);
 	struct tm *date = localtime(&date_time);
