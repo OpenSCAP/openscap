@@ -670,6 +670,14 @@ struct xccdf_benchmark* xccdf_benchmark_import(struct oscap_import_source *sourc
 int xccdf_benchmark_export(struct xccdf_benchmark *benchmark, struct oscap_export_target *target);
 
 /**
+ * Export a TestResult to an XML stream
+ * @memberof xccdf_result
+ * @return Integer
+ * @retval -1 if error occurred
+ */
+int xccdf_result_export(struct xccdf_result *result, struct oscap_export_target *target);
+
+/**
  * Resolve an benchmark.
  * @returns whether the resolving process has been successful
  * @retval true on success

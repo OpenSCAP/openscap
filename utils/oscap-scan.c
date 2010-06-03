@@ -58,6 +58,36 @@
 #include <xccdf.h>
 #include <xccdf_policy.h>
 
+#ifdef ENABLE_XCCDF
+struct oval_result_to_xccdf_spec {
+        oval_result_t oval;
+        xccdf_test_result_type_t xccdf;
+};
+
+static const struct oval_result_to_xccdf_spec XCCDF_OVAL_RESULTS_MAP[] = {
+	{OVAL_RESULT_INVALID, XCCDF_RESULT_NOT_APPLICABLE},
+	{OVAL_RESULT_TRUE, XCCDF_RESULT_PASS},
+	{OVAL_RESULT_FALSE, XCCDF_RESULT_FAIL},
+	{OVAL_RESULT_UNKNOWN, XCCDF_RESULT_UNKNOWN},
+	{OVAL_RESULT_ERROR, XCCDF_RESULT_ERROR},
+	{OVAL_RESULT_NOT_EVALUATED, XCCDF_RESULT_NOT_CHECKED},
+	{OVAL_RESULT_NOT_APPLICABLE, XCCDF_RESULT_NOT_APPLICABLE},
+	{0, 0}
+};
+
+static xccdf_test_result_type_t xccdf_get_result_from_oval(oval_result_t id)
+{
+
+	const struct oval_result_to_xccdf_spec *mapptr;
+
+	for (mapptr = XCCDF_OVAL_RESULTS_MAP; mapptr->oval != 0; ++mapptr) {
+		if (id == mapptr->oval) return mapptr->xccdf;
+	}
+
+	return XCCDF_RESULT_UNKNOWN;
+}
+#endif
+
 void print_usage(const char *pname, FILE * out);
 int app_evaluate_test(struct oval_test *test, oval_probe_session_t *sess,
 		      struct oval_definition_model *def_model, struct oval_syschar_model *sys_model, int verbose);
@@ -261,7 +291,7 @@ char *app_curl_download(char *url)
 }
 
 #ifdef ENABLE_XCCDF
-static bool callback(struct xccdf_policy_model *model, const char *href, const char *id, void *usr)
+static bool callback(struct xccdf_policy_model *model, const char *rule_id, const char *id, void *usr)
 {
 	oval_result_t result;
 	struct oval_result_definition *def = oval_result_system_get_definition(((struct usr_s *)usr)->rsystem, (char *)id);
@@ -281,9 +311,9 @@ static bool callback(struct xccdf_policy_model *model, const char *href, const c
 		/* Should be here an error ? */
 	} else {
 		struct xccdf_rule_result *rule_ritem = xccdf_rule_result_new();
-		xccdf_rule_result_set_result(rule_ritem, result);
+		xccdf_rule_result_set_result(rule_ritem, xccdf_get_result_from_oval(result));
+		xccdf_rule_result_set_idref(rule_ritem, rule_id);
 		xccdf_result_add_rule_result(ritem, rule_ritem);
-		xccdf_result_set_id(ritem, id);
 	}
 
 	return true;
@@ -679,8 +709,36 @@ int main(int argc, char **argv)
 		if (policy != NULL) xccdf_policy_evaluate(policy);
 		/* xccdf_benchmark_free(benchmark); << You can't free benchmark here cause it's still bound to policy model */
 		/* oscap_text_free(title); << You can't free title here cause it's bound to result model that is freed by policy model */
-		xccdf_policy_model_free(policy_model);
 		free(usr);
+
+                struct oval_sysinfo * sysinfo = oval_syschar_model_get_sysinfo(sys_model);
+                xccdf_result_set_test_system(ritem, oval_sysinfo_get_primary_host_name(sysinfo));
+                if (policy != NULL) {
+                        struct xccdf_profile * profile = xccdf_policy_get_profile(policy);
+                        if (xccdf_profile_get_id(profile) != NULL)
+                                xccdf_result_set_profile(ritem, xccdf_profile_get_id(profile));
+                }
+
+                struct xccdf_target_fact * fact = NULL;
+                struct oval_sysint *sysint = NULL;
+
+                struct oval_sysint_iterator * sysint_it = oval_sysinfo_get_interfaces(sysinfo);
+                while (oval_sysint_iterator_has_more(sysint_it)) {
+                        sysint = oval_sysint_iterator_next(sysint_it);
+                        xccdf_result_add_target_address(ritem, oval_sysint_get_ip_address(sysint));
+
+                        if (oval_sysint_get_mac_address(sysint) != NULL) {
+                            fact = xccdf_target_fact_new();
+                            xccdf_target_fact_set_name(fact, "urn:xccdf:fact:ethernet:MAC");
+                            xccdf_target_fact_set_string(fact, oval_sysint_get_mac_address(sysint));
+                            xccdf_result_add_target_fact(ritem, fact);
+                        }
+                }
+                oval_sysint_iterator_free(sysint_it);
+                /* TODO: Here will come score system export to result */
+		/*struct oscap_export_target *target = oscap_export_target_new_file("xccdf_result.xml", "UTF-8");
+                xccdf_result_export(ritem, target);
+		oscap_export_target_free(target);*/
 	}
 #endif
 	if (f_Results != NULL) {
@@ -706,12 +764,18 @@ int main(int argc, char **argv)
 		oval_result_directives_free(res_direct);
 	}
 
+#ifdef ENABLE_XCCDF
+	if (f_XCCDF != NULL) {
+
+                /* -- */
+                oval_variable_model_free(var_model);
+	        xccdf_policy_model_free(policy_model);
+        }
+#endif
+
 	oval_definition_model_free(def_model);
 	oval_syschar_model_free(sys_model);
 	oval_results_model_free(res_model);
-#ifdef ENABLE_XCCDF
-	if (f_XCCDF != NULL) oval_variable_model_free(var_model);
-#endif
 	if (url_XCCDF != NULL)
 		free(url_XCCDF);
 	if (url_OVAL != NULL)

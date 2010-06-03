@@ -459,7 +459,7 @@ static bool xccdf_policy_evaluate_cb(struct xccdf_policy * policy, const char * 
  * Evaluate the XCCDF check. 
  * Name collision with xccdf_check -> changed to xccdf_policy_check 
  */
-static bool xccdf_policy_check_evaluate(struct xccdf_policy * policy, struct xccdf_check * check)
+static bool xccdf_policy_check_evaluate(struct xccdf_policy * policy, struct xccdf_check * check, char * rule_id)
 {
     struct xccdf_check_iterator             * child_it;
     struct xccdf_check                      * child;
@@ -476,7 +476,7 @@ static bool xccdf_policy_check_evaluate(struct xccdf_policy * policy, struct xcc
             child_it = xccdf_check_get_children(check);
             while (xccdf_check_iterator_has_more(child_it)) {
                 child = xccdf_check_iterator_next(child_it);
-                ret = xccdf_policy_check_evaluate(policy, child);
+                ret = xccdf_policy_check_evaluate(policy, child, rule_id);
                 if (ret == false) break;
             }
             xccdf_check_iterator_free(child_it);
@@ -487,9 +487,9 @@ static bool xccdf_policy_check_evaluate(struct xccdf_policy * policy, struct xcc
             while (xccdf_check_content_ref_iterator_has_more(content_it)) {
                 content = xccdf_check_content_ref_iterator_next(content_it);
                 content_name = xccdf_check_content_ref_get_name(content);
-                href = xccdf_check_content_ref_get_href(content);
+                /*href = xccdf_check_content_ref_get_href(content);*/
                 /* Check if this is OVAL ? Never mind. Added to TODO */
-                ret = xccdf_policy_evaluate_cb(policy, system_name, href, content_name);
+                ret = xccdf_policy_evaluate_cb(policy, system_name, rule_id, content_name);
             }
             xccdf_check_content_ref_iterator_free(content_it);
     }
@@ -509,6 +509,7 @@ static bool xccdf_policy_item_evaluate(struct xccdf_policy * policy, struct xccd
     struct xccdf_item_iterator      * child_it;
     struct xccdf_item               * child;
     bool                              ret       = false;
+    char                            * rule_id;
 
     xccdf_type_t itype = xccdf_item_get_type(item);
 
@@ -516,10 +517,12 @@ static bool xccdf_policy_item_evaluate(struct xccdf_policy * policy, struct xccd
         case XCCDF_RULE:{
                     /* Get all checks of rule */
                     check_it = xccdf_rule_get_checks((const struct xccdf_rule *)item);
+                    rule_id = xccdf_rule_get_id((const struct xccdf_rule *)item);
                     /* we need to evaluate all checks in rule, iteration begin */
                     while(xccdf_check_iterator_has_more(check_it)) {
                             check = xccdf_check_iterator_next(check_it);
-                            ret = xccdf_policy_check_evaluate(policy, check);
+
+                            ret = xccdf_policy_check_evaluate(policy, check, rule_id);
 
                             if (ret == false) /* we got item that can't be processed */
                                 break;
