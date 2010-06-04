@@ -150,7 +150,7 @@ bool oscap_ptr_cmp(void *node1, void *node2)
 	return node1 == node2;
 }
 
-struct oscap_iterator* oscap_list_find(struct oscap_list *list, void *what, oscap_cmp_func compare)
+void* oscap_list_find(struct oscap_list *list, void *what, oscap_cmp_func compare)
 {
 	if (list == NULL) return false;
 	if (compare == NULL) compare = oscap_ptr_cmp;
@@ -158,8 +158,9 @@ struct oscap_iterator* oscap_list_find(struct oscap_list *list, void *what, osca
 	struct oscap_iterator *it = oscap_iterator_new(list);
 
 	while (oscap_iterator_has_more(it)) {
-		if (compare(oscap_iterator_next(it), what))
-			return it;
+		void *item = oscap_iterator_next(it);
+		if (compare(item, what))
+			return item;
 	}
 
 	oscap_iterator_free(it);

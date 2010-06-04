@@ -89,7 +89,7 @@ bool oscap_iterator_has_more(struct oscap_iterator *it);
 void *oscap_iterator_detach(struct oscap_iterator *it);
 void oscap_iterator_free(struct oscap_iterator *it);
 
-struct oscap_iterator* oscap_list_find(struct oscap_list *list, void *what, oscap_cmp_func compare);
+void *oscap_list_find(struct oscap_list *list, void *what, oscap_cmp_func compare);
 
 /*
  * Hash table
