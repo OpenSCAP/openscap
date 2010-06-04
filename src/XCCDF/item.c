@@ -395,7 +395,7 @@ xmlNode *xccdf_item_to_dom(struct xccdf_item *item, xmlDoc *doc, xmlNode *parent
 			xccdf_profile_to_dom(XPROFILE(item), item_node, doc, parent);
 			break;
 		case XCCDF_RESULT:
-			xmlNodeSetName(item_node,BAD_CAST "Result");
+			xmlNodeSetName(item_node,BAD_CAST "TestResult");
 			xccdf_result_to_dom(XRESULT(item), item_node, doc, parent);
 			break;
 		case XCCDF_GROUP:
