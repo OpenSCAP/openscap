@@ -58,7 +58,7 @@ typedef struct oscap_list* (*oscap_tsort_edge_func)(void *node, void *userdata);
  * @param userdata arbitrary data pointer to be forwarded to the edge_func
  * @returns whether the algorithm managed to topologically sort the graph
  * @retval true input was sorted, result is in the *output pointer
- * &retval false a loop was detected, *output points to the encountered loop
+ * @retval false a loop was detected, *output points to the encountered loop
  */
 bool oscap_tsort(struct oscap_list *input, struct oscap_list **output, oscap_tsort_edge_func edge_func, oscap_cmp_func cmp_func, void *userdata);
 

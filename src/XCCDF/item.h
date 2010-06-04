@@ -112,7 +112,7 @@ union xccdf_value_unit {
 };
 
 /* This structure is used for multiple-count attributes for Item (0-n) */
-struct xccdf_value_val { 
+struct xccdf_value_instance {
 	union xccdf_value_unit value;               /* Value::value   */
 	union xccdf_value_unit defval;              /* Value::default */
 	struct oscap_list *choices;                 /* Value::choices */
@@ -134,9 +134,7 @@ struct xccdf_value_item {
 	xccdf_operator_t oper;                      /* Value::operator */
 	char *selector;
 
-	struct xccdf_value_val *value;
-	struct oscap_htable *values; // TODO: to list
-
+	struct oscap_list *values; // TODO: to list
 	struct oscap_list *sources;                 /* Value::source */
 };
 
@@ -458,10 +456,10 @@ struct xccdf_group_item * xccdf_group_item_clone(const struct xccdf_group_item *
 union xccdf_value_unit xccdf_value_unit_clone_str(const union xccdf_value_unit unit);
 union xccdf_value_unit xccdf_value_unit_clone_numeric(const union xccdf_value_unit unit);
 union xccdf_value_unit xccdf_value_unit_clone_bool(const union xccdf_value_unit unit);
-struct xccdf_value_val * xccdf_value_val_clone_str(const struct xccdf_value_val * val);
-struct xccdf_value_val * xccdf_value_val_clone_numeric(const struct xccdf_value_val * val);
-struct xccdf_value_val * xccdf_value_val_clone_bool(const struct xccdf_value_val * val);
-struct xccdf_value_val * xccdf_value_val_clone(const struct xccdf_value_val * val, xccdf_value_type_t type);
+struct xccdf_value_instance * xccdf_value_instance_clone_str(const struct xccdf_value_instance * val);
+struct xccdf_value_instance * xccdf_value_instance_clone_numeric(const struct xccdf_value_instance * val);
+struct xccdf_value_instance * xccdf_value_instance_clone_bool(const struct xccdf_value_instance * val);
+struct xccdf_value_instance * xccdf_value_instance_clone(const struct xccdf_value_instance * val, xccdf_value_type_t type);
 struct xccdf_value_item * xccdf_value_item_clone(const struct xccdf_value_item * item);
 struct xccdf_result_item * xccdf_result_item_clone(const struct xccdf_result_item * item);
 struct xccdf_ident * xccdf_ident_clone(const struct xccdf_ident * ident);

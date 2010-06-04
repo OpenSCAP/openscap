@@ -28,15 +28,15 @@
 #include <math.h>
 #include <string.h>
 
-static oscap_destruct_func xccdf_value_val_get_destructor(xccdf_value_type_t type);
-static struct xccdf_value_val *xccdf_value_val_new(xccdf_value_type_t type);
+static oscap_destruct_func xccdf_value_instance_get_destructor(xccdf_value_type_t type);
+static struct xccdf_value_instance *xccdf_value_instance_new(xccdf_value_type_t type);
 
 struct xccdf_item *xccdf_value_new_internal(struct xccdf_item *parent, xccdf_value_type_t type)
 {
 	struct xccdf_item *val = xccdf_item_new(XCCDF_VALUE, parent);
 	val->sub.value.type = type;
 	val->sub.value.values = oscap_htable_new();
-	oscap_htable_add(val->sub.value.values, "", xccdf_value_val_new(type));
+	oscap_htable_add(val->sub.value.values, "", xccdf_value_instance_new(type));
 	val->sub.value.value = oscap_htable_get(val->sub.value.values, "");
 	val->sub.value.sources = oscap_list_new();
 	return val;
@@ -119,9 +119,9 @@ struct xccdf_item *xccdf_value_parse(xmlTextReaderPtr reader, struct xccdf_item 
 		const char *selector = xccdf_attribute_get(reader, XCCDFA_SELECTOR);
 		if (selector == NULL)
 			selector = "";
-		struct xccdf_value_val *val = oscap_htable_get(value->sub.value.values, selector);
+		struct xccdf_value_instance *val = oscap_htable_get(value->sub.value.values, selector);
 		if (val == NULL) {
-			val = xccdf_value_val_new(type);
+			val = xccdf_value_instance_new(type);
 			assert(val != NULL);
 			oscap_htable_add(value->sub.value.values, selector, val);
 		}
@@ -241,14 +241,14 @@ void xccdf_value_to_dom(struct xccdf_value *value, xmlNode *value_node, xmlDoc *
 
 void xccdf_value_free(struct xccdf_item *val)
 {
-	oscap_htable_free(val->sub.value.values, xccdf_value_val_get_destructor(val->sub.value.type));
+	oscap_htable_free(val->sub.value.values, xccdf_value_instance_get_destructor(val->sub.value.type));
 	oscap_list_free(val->sub.value.sources, oscap_free);
 	xccdf_item_release(val);
 }
 
-static struct xccdf_value_val *xccdf_value_val_new(xccdf_value_type_t type)
+static struct xccdf_value_instance *xccdf_value_instance_new(xccdf_value_type_t type)
 {
-	struct xccdf_value_val *v = oscap_calloc(1, sizeof(struct xccdf_value_val));
+	struct xccdf_value_instance *v = oscap_calloc(1, sizeof(struct xccdf_value_instance));
 
 	switch (type) {
 	case XCCDF_TYPE_NUMBER:
@@ -287,7 +287,7 @@ static oscap_destruct_func xccdf_value_unit_destructor(xccdf_value_type_t type)
 	return NULL;
 }
 
-static void xccdf_value_val_free_0(struct xccdf_value_val *v, xccdf_value_type_t type)
+static void xccdf_value_instance_free_0(struct xccdf_value_instance *v, xccdf_value_type_t type)
 {
 	oscap_list_free(v->choices, xccdf_value_unit_destructor(type));
 	switch (type) {
@@ -302,30 +302,30 @@ static void xccdf_value_val_free_0(struct xccdf_value_val *v, xccdf_value_type_t
 	oscap_free(v);
 }
 
-static void xccdf_value_val_free_b(struct xccdf_value_val *v)
+static void xccdf_value_instance_free_b(struct xccdf_value_instance *v)
 {
-	xccdf_value_val_free_0(v, XCCDF_TYPE_BOOLEAN);
+	xccdf_value_instance_free_0(v, XCCDF_TYPE_BOOLEAN);
 }
 
-static void xccdf_value_val_free_n(struct xccdf_value_val *v)
+static void xccdf_value_instance_free_n(struct xccdf_value_instance *v)
 {
-	xccdf_value_val_free_0(v, XCCDF_TYPE_NUMBER);
+	xccdf_value_instance_free_0(v, XCCDF_TYPE_NUMBER);
 }
 
-static void xccdf_value_val_free_s(struct xccdf_value_val *v)
+static void xccdf_value_instance_free_s(struct xccdf_value_instance *v)
 {
-	xccdf_value_val_free_0(v, XCCDF_TYPE_STRING);
+	xccdf_value_instance_free_0(v, XCCDF_TYPE_STRING);
 }
 
-static oscap_destruct_func xccdf_value_val_get_destructor(xccdf_value_type_t type)
+static oscap_destruct_func xccdf_value_instance_get_destructor(xccdf_value_type_t type)
 {
 	switch (type) {
 	case XCCDF_TYPE_NUMBER:
-		return (oscap_destruct_func) xccdf_value_val_free_n;
+		return (oscap_destruct_func) xccdf_value_instance_free_n;
 	case XCCDF_TYPE_BOOLEAN:
-		return (oscap_destruct_func) xccdf_value_val_free_b;
+		return (oscap_destruct_func) xccdf_value_instance_free_b;
 	case XCCDF_TYPE_STRING:
-		return (oscap_destruct_func) xccdf_value_val_free_s;
+		return (oscap_destruct_func) xccdf_value_instance_free_s;
 	}
 	return NULL;
 }
@@ -384,7 +384,7 @@ char *  xccdf_value_get_selected_value(const struct xccdf_value * value)
         char * selected = NULL;
         if (selector == NULL) // default value
                 selector = "";
-        struct xccdf_value_val *val = oscap_htable_get(XITEM(value)->sub.value.values, selector);
+        struct xccdf_value_instance *val = oscap_htable_get(XITEM(value)->sub.value.values, selector);
         if (val == NULL)
             return NULL;
         switch (XITEM(value)->sub.value.type) {
@@ -462,20 +462,20 @@ bool xccdf_value_get_must_match(const struct xccdf_value * value)
 	return XITEM(value)->sub.value.value->must_match;
 }
 
-static void xccdf_value_val_n_dump(struct xccdf_value_val *val, int depth)
+static void xccdf_value_instance_n_dump(struct xccdf_value_instance *val, int depth)
 {
 	xccdf_print_depth(depth);
 	printf("%f (default %f, from %f to %f)\n", val->value.n, val->defval.n, val->limits.n.lower_bound,
 	       val->limits.n.upper_bound);
 }
 
-static void xccdf_value_val_s_dump(struct xccdf_value_val *val, int depth)
+static void xccdf_value_instance_s_dump(struct xccdf_value_instance *val, int depth)
 {
 	xccdf_print_depth(depth);
 	printf("'%s' (default '%s', match '%s')\n", val->value.s, val->defval.s, val->limits.s.match);
 }
 
-static void xccdf_value_val_b_dump(struct xccdf_value_val *val, int depth)
+static void xccdf_value_instance_b_dump(struct xccdf_value_instance *val, int depth)
 {
 	xccdf_print_depth(depth);
 	printf("%d (default %d)\n", val->value.b, val->defval.b);
@@ -494,21 +494,21 @@ void xccdf_value_dump(struct xccdf_item *value, int depth)
 	if (!value)
 		return;
 	xccdf_item_print(value, depth);
-	void (*valdump) (struct xccdf_value_val * val, int depth) = NULL;
+	void (*valdump) (struct xccdf_value_instance * val, int depth) = NULL;
 	xccdf_print_depth(depth);
 	printf("type: ");
 	switch (value->sub.value.type) {
 	case XCCDF_TYPE_NUMBER:
 		printf("number\n");
-		valdump = xccdf_value_val_n_dump;
+		valdump = xccdf_value_instance_n_dump;
 		break;
 	case XCCDF_TYPE_STRING:
 		printf("string\n");
-		valdump = xccdf_value_val_s_dump;
+		valdump = xccdf_value_instance_s_dump;
 		break;
 	case XCCDF_TYPE_BOOLEAN:
 		printf("boolean\n");
-		valdump = xccdf_value_val_b_dump;
+		valdump = xccdf_value_instance_b_dump;
 		break;
 	default:
 		assert(false);
