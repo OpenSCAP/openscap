@@ -2868,7 +2868,7 @@ bool xccdf_rule_result_add_ident(struct xccdf_rule_result *obj, struct xccdf_ide
 /// @memberof xccdf_rule_result
 bool xccdf_rule_result_add_fix(struct xccdf_rule_result *obj, struct xccdf_fix *item);
 /// @memberof xccdf_rule_result
-//bool xccdf_rule_result_add_check(struct xccdf_rule_result *obj, struct xccdf_check *item);
+bool xccdf_rule_result_add_check(struct xccdf_rule_result *obj, struct xccdf_check *item);
 /// @memberof xccdf_rule_result
 bool xccdf_rule_result_add_override(struct xccdf_rule_result *obj, struct xccdf_override *item);
 /// @memberof xccdf_rule_result
