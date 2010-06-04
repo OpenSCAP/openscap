@@ -489,7 +489,7 @@ static bool xccdf_policy_check_evaluate(struct xccdf_policy * policy, struct xcc
                 content_name = xccdf_check_content_ref_get_name(content);
                 /*href = xccdf_check_content_ref_get_href(content);*/
                 /* Check if this is OVAL ? Never mind. Added to TODO */
-                ret = xccdf_policy_evaluate_cb(policy, system_name, rule_id, content_name);
+                ret = xccdf_policy_evaluate_cb(policy, system_name, content_name, rule_id);
             }
             xccdf_check_content_ref_iterator_free(content_it);
     }
