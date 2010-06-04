@@ -626,7 +626,7 @@ xmlNode *xccdf_rule_result_to_dom(struct xccdf_rule_result *result, xmlDoc *doc,
 	char timestamp[] = "yyyy-mm-ddThh:mm:ss";
 	snprintf(timestamp, sizeof(timestamp), "%4d-%02d-%02dT%02d:%02d:%02d",
 		 1900 + lt->tm_year, 1 + lt->tm_mon, lt->tm_mday, lt->tm_hour, lt->tm_min, lt->tm_sec);
-	xmlNewProp(result_node, BAD_CAST "date", BAD_CAST timestamp);
+	xmlNewProp(result_node, BAD_CAST "time", BAD_CAST timestamp);
 
 	xccdf_level_t severity = xccdf_rule_result_get_severity(result);
 	if (severity != 0)
