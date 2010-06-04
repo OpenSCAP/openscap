@@ -414,7 +414,7 @@ void xccdf_result_to_dom(struct xccdf_result *result, xmlNode *result_node, xmlD
 	if (parent) {
 	        ns_xccdf = xmlSearchNsByHref(doc, parent, XCCDF_BASE_NAMESPACE);
 	} else {
-		if (!result_node) result_node = xccdf_item_to_dom(XITEM(result), doc, parent);
+		if (!result_node) result_node = xccdf_item_to_dom(XITEM(result), doc, NULL);
                 ns_xccdf = xmlNewNs(result_node, XCCDF_BASE_NAMESPACE, NULL);
 		xmlDocSetRootElement(doc, result_node);
 	}
