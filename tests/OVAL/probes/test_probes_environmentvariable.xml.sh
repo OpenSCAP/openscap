@@ -1,15 +1,23 @@
 #!/usr/bin/env bash
 
-i=0;
-IFS=$'\n'
-for line in `env`; do
-        VAR=`echo $line | sed 's/\([A-Za-z_1-9]*\)=.*$/\1/'`
-        if [ "x$VAR" == "x_" ] || [ "x$VAR" == "xSHLVL" ]; then
-                continue;
-        fi
-        ENV_VAR[$i]="$VAR";
-        VAR_VAL[$i]=`echo $line | sed 's/\([A-Za-z_1-9]*\)=\(.*\)$/\2/'`
-        i=$[$i+1];
+# i=0;
+# IFS=$'\n'
+# for line in `env`; do
+#         VAR=`echo $line | sed 's/\([A-Za-z_1-9]*\)=.*$/\1/'`
+#         if [ "x$VAR" == "x_" ] || [ "x$VAR" == "xSHLVL" ]; then
+#                 continue;
+#         fi
+#         ENV_VAR[$i]="$VAR";
+#         VAR_VAL[$i]=`echo $line | sed 's/\([A-Za-z_1-9]*\)=\(.*\)$/\2/'`
+#         i=$[$i+1];
+# done
+
+ENV_VAR=( "PATH" "PWD" "HOME" "DISPLAY" "LANG" "EDITOR" )
+
+I=0
+while [ $I -lt ${#ENV_VAR[@]} ]; do    
+    VAR_VAL[$I]="`env | grep -e "^${ENV_VAR[$I]}" | awk -F '=' '{print $2}'`"
+    I=$[$I+1]
 done
 
 cat <<EOF
