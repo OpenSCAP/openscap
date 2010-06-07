@@ -115,6 +115,49 @@ OSCAP_GETTER(struct xccdf_value *, xccdf_value_binding, rule_value)
  */
 
 /**
+ * Specification of mapping OVAL results to XCCDF results.
+ * See XCCDF_OVAL_RESULTS_MAP
+ */
+struct oval_result_to_xccdf_spec {
+        oval_result_t oval;
+        xccdf_test_result_type_t xccdf;
+};
+
+/**
+ * Map OVAL results to XCCDF results. There should be all possible OVAL results
+ * that could be returned mapped to XCCDF results that will be shown in TestResults.
+ * See xccdf_get_result_from_oval function.
+ */
+static const struct oval_result_to_xccdf_spec XCCDF_OVAL_RESULTS_MAP[] = {
+	{OVAL_RESULT_INVALID, XCCDF_RESULT_NOT_APPLICABLE},
+	{OVAL_RESULT_TRUE, XCCDF_RESULT_PASS},
+	{OVAL_RESULT_FALSE, XCCDF_RESULT_FAIL},
+	{OVAL_RESULT_UNKNOWN, XCCDF_RESULT_UNKNOWN},
+	{OVAL_RESULT_ERROR, XCCDF_RESULT_ERROR},
+	{OVAL_RESULT_NOT_EVALUATED, XCCDF_RESULT_NOT_CHECKED},
+	{OVAL_RESULT_NOT_APPLICABLE, XCCDF_RESULT_NOT_APPLICABLE},
+	{0, 0}
+};
+
+/**
+ * Get XCCDF result from mapping
+ * @param id OVAL Result type
+ */
+static xccdf_test_result_type_t xccdf_get_result_from_oval(oval_result_t id)
+{
+
+	const struct oval_result_to_xccdf_spec *mapptr;
+
+	for (mapptr = XCCDF_OVAL_RESULTS_MAP; mapptr->oval != 0; ++mapptr) {
+		if (id == mapptr->oval) return mapptr->xccdf;
+	}
+
+        /* Not sure what to return when OVAL returns something else then result */
+        // TODO: oscap_seterr();
+	return XCCDF_RESULT_UNKNOWN;
+}
+
+/**
  * Get callback from callback structure when system is selected 
  * Parameter policy handle callback structure and sysname the name of system specified in XCCDF file
  */
@@ -125,7 +168,14 @@ static callback * xccdf_policy_get_callback(struct xccdf_policy * policy, const 
         struct oscap_iterator * callback_it = oscap_iterator_new(cbs);
         while (oscap_iterator_has_more(callback_it)) {
             callback * cb = oscap_iterator_next(callback_it);
-            if (!strcmp(cb->system, sysname)) {
+
+            if ((cb->system == NULL) && (sysname == NULL)) {
+                oscap_iterator_free(callback_it);
+                return cb;
+            }
+            else if ((cb->system == NULL) || (sysname == NULL)) continue;
+
+            else if (!strcmp(cb->system, sysname)) {
                 oscap_iterator_free(callback_it);
                 return cb;
             }
@@ -438,6 +488,41 @@ static void xccdf_value_binding_proccess(struct xccdf_policy * policy, struct xc
 
 }
 
+static bool xccdf_policy_evaluate_oval_cb(struct xccdf_policy * policy, struct oval_result_system * rsystem, const char * href, const char * id)
+{
+
+    oval_result_t result;
+    struct oval_result_definition *def = oval_result_system_get_definition(rsystem, (char *) href);
+    if (def == NULL)
+            return false;
+
+    result = oval_result_definition_eval(def);
+    /*printf("Definition \"%s\" result: %s\n", href, oval_result_get_text(result));*/
+
+    /* Add result to Policy Model */
+    struct xccdf_result *ritem;
+    const char *rid = xccdf_profile_get_id(xccdf_policy_get_profile(policy));
+
+    /* Is the Result already existing ? */
+    ritem = xccdf_policy_model_get_result_by_id(xccdf_policy_get_model(policy), rid);
+    if (ritem == NULL) {
+            ritem = xccdf_result_new();
+            xccdf_result_set_id(ritem, rid);
+            /* Fill the structure */
+            struct oscap_text *title = oscap_text_new();
+            oscap_text_set_text(title, "OSCAP Scan Result");
+            xccdf_result_add_title(ritem, title);
+            xccdf_policy_model_add_result(xccdf_policy_get_model(policy), ritem);
+    }
+    struct xccdf_rule_result *rule_ritem = xccdf_rule_result_new();
+    xccdf_rule_result_set_result(rule_ritem, xccdf_get_result_from_oval(result));
+    xccdf_rule_result_set_idref(rule_ritem, id);
+    xccdf_result_add_rule_result(ritem, rule_ritem);
+
+    return true;
+
+}
+
 /**
  * Evaluate the policy check with given checking system
  */
@@ -445,9 +530,14 @@ static bool xccdf_policy_evaluate_cb(struct xccdf_policy * policy, const char * 
 {
     callback * cb = xccdf_policy_get_callback(policy, sysname);
     if (cb == NULL) { /* No callback found - checking system not registered */
-        oscap_seterr(OSCAP_EFAMILY_XCCDF, XCCDF_EUNKNOWNCB, 
-                "Unknown callback for given checking system. Set callback first");
-        return false;
+        cb = xccdf_policy_get_callback(policy, NULL);
+        if (cb == NULL) { /* No callback found - checking system not registered */
+            oscap_seterr(OSCAP_EFAMILY_XCCDF, XCCDF_EUNKNOWNCB, 
+                    "Unknown callback for given checking system. Set callback first");
+            return false;
+        }
+        /* Call OVAL system callback when not user callback registered */
+        return xccdf_policy_evaluate_oval_cb(policy, (struct oval_result_system *) cb->usr, href, id);
     }
 
     /* Each callback has format: "bool callback(struct xccdf_policy_model * model, const char * href, const char *id)" */
@@ -974,6 +1064,15 @@ bool xccdf_policy_resolve(struct xccdf_policy * policy)
     xccdf_value_binding_iterator_free(binding_it);
 
     return true;
+}
+
+/**
+ * Evaluate XCCDF Policy without using callback, but with OVAL content
+ */
+bool xccdf_policy_evaluate_oval(struct xccdf_policy * policy, struct oval_result_system * rsystem)
+{
+    (void) xccdf_policy_model_register_callback(xccdf_policy_get_model(policy), NULL, NULL, (void *) rsystem);
+    return xccdf_policy_evaluate(policy);
 }
 
 /**

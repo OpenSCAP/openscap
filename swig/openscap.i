@@ -34,6 +34,9 @@
 #if defined(SWIGPYTHON)
 /* Definitions for PYTHON */
 
+%ignore xccdf_policy_evaluate;
+%ignore xccdf_policy_model_register_callback;
+
 %typemap(in) time_t
 {
     if (PyLong_Check($input))
