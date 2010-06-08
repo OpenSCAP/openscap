@@ -606,16 +606,16 @@ void cve_configuration_iterator_remove(struct cve_configuration_iterator *it);
  * @param cve CVE model
  * @param target OSCAP export target
  */
-void cve_model_export(struct cve_model *cve, const struct oscap_export_target *target);
+void cve_model_export(struct cve_model *cve, const char *file);
 
 /**
  * Parses the specified XML file and creates a list of CVE data structures.
  * The returned list can be freed with cveDelAll().
  * @memberof cve_model
- * @param source oscap_import_source defining importing file
+ * @param file filename
  * @return non-negative value indicates the number of CVEs in the list, negative value indicates an error
  */
-struct cve_model *cve_model_import(const struct oscap_import_source *source);
+struct cve_model *cve_model_import(const char *file);
 
 /*@}*/
 

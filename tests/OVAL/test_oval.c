@@ -28,11 +28,11 @@ static int _test_error(void)
 
 int main(int argc, char **argv)
 {
-	struct oval_definition_model *model = oval_definition_model_new();
+	struct oval_definition_model *model;
 
-	struct oscap_import_source *is = oscap_import_source_new_file(argv[1], NULL);
-	if (oval_definition_model_import(model, is) < 1)
-            _test_error();
+	model = oval_definition_model_import(argv[1]);
+	if (model == NULL) 
+		_test_error();
 
 	struct oval_definition_iterator *definitions =
 	    oval_definition_model_get_definitions(model);

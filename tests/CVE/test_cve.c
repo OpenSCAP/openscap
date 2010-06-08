@@ -35,8 +35,6 @@ int main(int argc, char **argv)
     // iterators
     struct cve_entry_iterator * entry_it;
 
-    struct oscap_import_source *import_source;
-    struct oscap_export_target *export_target;
     int ret_val;
 
     // Wrong argument count or --help
@@ -47,12 +45,8 @@ int main(int argc, char **argv)
     
     else if (argc == 6 && !strcmp(argv[1], "--test-export-all")) {
 
-        notNULL (import_source = oscap_import_source_new_file(argv[2], argv[3]), "import")
-        notNULL (model = cve_model_import(import_source), "model")
-        notNULL (export_target = oscap_export_target_new_file(argv[4], argv[5]), "export")
-
-        cve_model_export(model, export_target);
-        oscap_export_target_free(export_target);    
+        notNULL (model = cve_model_import(argv[2]), "model")
+        cve_model_export(model, argv[4]);
         cve_model_free(model);
         return 0;
     }
@@ -60,7 +54,6 @@ int main(int argc, char **argv)
     else if (argc > 4 && !strcmp(argv[1], "--add-entries")) {
     
         notNULL (model = cve_model_new(), "new model");
-        notNULL (export_target = oscap_export_target_new_file(argv[2], argv[3]), "export")
 
         int i;
         for (i=4; i<argc; i++) {
@@ -69,15 +62,14 @@ int main(int argc, char **argv)
             cve_model_add_entry(model, entry);
         }
 
-        cve_model_export(model, export_target);
+        cve_model_export(model, argv[2]);
         cve_model_free(model);
         return 0;
     }
 
     else if (argc == 4 && !strcmp(argv[1], "--test-cvss")) {
 
-        notNULL (import_source = oscap_import_source_new_file(argv[2], argv[3]), "import")
-        notNULL (model = cve_model_import(import_source), "model")
+        notNULL (model = cve_model_import(argv[2]), "model")
 
         entry_it = cve_model_get_entries(model);
         entry = cve_entry_iterator_next(entry_it);

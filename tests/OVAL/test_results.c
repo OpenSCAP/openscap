@@ -34,27 +34,22 @@ int main(int argc, char **argv)
 {
 	printf("START\n");
 	if(argc>1){
-		struct oval_definition_model *model = oval_definition_model_new();
+		struct oval_definition_model *model;
+
 		printf("LOAD OVAL DEFINITIONS\n");
-		struct oscap_import_source *source = oscap_import_source_new_file(argv[1], NULL);
-		if (oval_definition_model_import(model, source) < 1)
+		if ( (model=oval_definition_model_import(argv[1])) == NULL)
                         _test_error();
-		oscap_import_source_free(source);
 		printf("OVAL DEFINITIONS LOADED\n");
 		if(argc>2){
 			printf("LOAD OVAL RESULTS\n");
-			source = oscap_import_source_new_file(argv[2], NULL);
 			struct oval_results_model *results_model = oval_results_model_new(model,NULL);
-			if (oval_results_model_import(results_model, source) == NULL)
+			if (oval_results_model_import(results_model, argv[2]) == NULL)
                                 _test_error();
-			oscap_import_source_free(source);
 			printf("OVAL RESULTS LOADED\n");
 			if (argc>3) {
 				printf("WRITE OVAL RESULTS\n");
 				struct oval_result_directives *directives = oval_result_directives_new(results_model);
-				struct oscap_export_target* target = oscap_export_target_new_file(argv[3], "UTF-8");
-				oval_results_model_export(results_model, directives, target);
-				oscap_export_target_free(target);
+				oval_results_model_export(results_model, directives, argv[3]);
 				oval_result_directives_free(directives);
 				printf("OVAL RESULTS WRITTEN\n");
 			}

@@ -79,7 +79,15 @@ struct oval_result_test *oval_result_system_get_test(struct oval_result_system *
 
 
 
-struct oresults { int true_cnt, false_cnt, unknown_cnt, error_cnt, noteval_cnt, notappl_cnt} ;
+struct oresults { 
+	int true_cnt; 
+	int false_cnt;
+	int unknown_cnt;
+	int error_cnt;
+	int noteval_cnt;
+	int notappl_cnt;
+};
+
 int ores_add_res(struct oresults *ores, oval_result_t res);
 void ores_clear(struct oresults *ores);
 oval_result_t ores_get_result_bychk(struct oresults *ores, oval_check_t check);

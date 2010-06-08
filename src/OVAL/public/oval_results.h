@@ -154,15 +154,6 @@ struct oval_result_directives;
 
 
 
-
-/**
- * Import the content from a specified XML stream into a oval_result_model, return -1 if an error occurred.
- * If the input_source specifies a model entity that is already registered within the model its content is overwritten.
- * @param model the oval_results_model
- * @param source the input source (XML)
- * @memberof oval_results_model
- */
-struct oval_result_directives *oval_results_model_import(struct oval_results_model *, struct oscap_import_source *);
 /**
  * Create new oval_results_model.
  * The new model is bound to a specified oval_definition_model and variable bindings.
@@ -172,6 +163,15 @@ struct oval_result_directives *oval_results_model_import(struct oval_results_mod
  */
 struct oval_results_model *oval_results_model_new(struct oval_definition_model *definition_model,
 						  struct oval_syschar_model **);
+/**
+ * Import the content from the file into an oval_result_model.
+ * If imported content specifies a model entity that is already registered within the model its content is overwritten.
+ * @param model the oval_results_model
+ * @param file filename
+ * @return -1 if an error occurred
+ * @memberof oval_results_model
+ */
+struct oval_result_directives *oval_results_model_import(struct oval_results_model *model, const char *file);
 /**
  * Copy an oval_results_model.
  * @return A copy of the specified @ref oval_results_model.
@@ -185,13 +185,12 @@ struct oval_results_model *oval_results_model_clone(struct oval_results_model *)
  */
 void oval_results_model_free(struct oval_results_model *model);
 /**
- * Export oval results to XML file.
+ * Export oval results into file.
  * @param model the oval_results_model
- * @param target the export target stream (XML)
+ * @param file filename
  * @memberof oval_results_model
  */
-int oval_results_model_export(struct oval_results_model *, struct oval_result_directives *,
-			      struct oscap_export_target *);
+int oval_results_model_export(struct oval_results_model *, struct oval_result_directives *, const char *file);
 
 /**
  * @name Setters

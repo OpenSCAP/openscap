@@ -45,9 +45,7 @@ void manipulate(struct xccdf_benchmark* bench)
 
 bool dump_benchmark(const char* fname)
 {
-	struct oscap_import_source *ben_in = oscap_import_source_new_file(fname, NULL);
-	struct xccdf_benchmark* benchmark = xccdf_benchmark_import(ben_in);
-	oscap_import_source_free(ben_in);
+	struct xccdf_benchmark* benchmark = xccdf_benchmark_import(fname);
 	if (benchmark == NULL) return false;
 	printf("\n");
 	xccdf_benchmark_resolve(benchmark);

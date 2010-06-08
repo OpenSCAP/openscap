@@ -36,31 +36,31 @@
 
 #define CPE_DICT_SUPPORTED "2.2"
 
-struct cpe_dict_model *cpe_dict_model_import(const struct oscap_import_source *source)
+struct cpe_dict_model *cpe_dict_model_import(const char *file)
 {
 
-	__attribute__nonnull__(source);
+	__attribute__nonnull__(file);
 
-	if (oscap_import_source_get_name(source) == NULL)
+	if (file == NULL)
 		return NULL;
 
 	struct cpe_dict_model *dict;
 
-	dict = cpe_dict_model_parse_xml(source);
+	dict = cpe_dict_model_parse_xml(file);
 
 	return dict;
 }
 
-void cpe_dict_model_export(const struct cpe_dict_model *dict, const struct oscap_export_target *target)
+void cpe_dict_model_export(const struct cpe_dict_model *dict, const char *file)
 {
 
 	__attribute__nonnull__(dict);
-	__attribute__nonnull__(target);
+	__attribute__nonnull__(file);
 
-	if (oscap_export_target_get_name(target) == NULL)
+	if (file == NULL)
 		return;
 
-	cpe_dict_model_export_xml(dict, target);
+	cpe_dict_model_export_xml(dict, file);
 
 }
 

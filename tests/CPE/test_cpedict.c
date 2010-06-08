@@ -37,8 +37,6 @@ int main (int argc, char **argv)
   struct cpe_language_iterator *languages_it;
   struct oscap_title *title;
   struct oscap_title_iterator *titles_it;
-  struct oscap_import_source *import_source = NULL;
-  struct oscap_export_target *export_target = NULL;
   
   struct cpe_name *name = NULL;
   int ret_val = 0, ret_val_1 = 0, ret_val_2 = 0;
@@ -48,27 +46,21 @@ int main (int argc, char **argv)
   
   else if (argc == 4 && !strcmp(argv[1], "--list-cpe-names")) {
 
-    if ((import_source = oscap_import_source_new_file(argv[2], argv[3])) == NULL)
-      return 1;
     
-    if ((dict_model = cpe_dict_model_import(import_source)) == NULL)
+    if ((dict_model = cpe_dict_model_import(argv[2])) == NULL)
       return 2;
     
 	OSCAP_FOREACH (cpe_item, local_item, cpe_dict_model_get_items(dict_model),
 		cpe_name_write(cpe_item_get_name(local_item), stdout); putchar('\n');
 	)
 
-    oscap_import_source_free(import_source);
     cpe_dict_model_free(dict_model);
   }
 
   // List all dictionary.
   else if (argc == 4 && !strcmp(argv[1], "--list")) {
     
-    if ((import_source = oscap_import_source_new_file(argv[2], argv[3])) == NULL)
-      return 1;
-    
-    if ((dict_model = cpe_dict_model_import(import_source)) == NULL)
+    if ((dict_model = cpe_dict_model_import(argv[2])) == NULL)
       return 2;
 
     // Generator.
@@ -138,16 +130,12 @@ int main (int argc, char **argv)
       putchar(')');
       putchar('\n');
     }      
-    oscap_import_source_free(import_source);
     cpe_dict_model_free(dict_model);
   }
 
   else if (argc == 5 && !strcmp(argv[1], "--match")) {
     
-    if ((import_source = oscap_import_source_new_file(argv[2], argv[3])) == NULL)
-      return 1;
-    
-    if ((dict_model = cpe_dict_model_import(import_source)) == NULL)
+    if ((dict_model = cpe_dict_model_import(argv[2])) == NULL)
       return 2;
     
     name = cpe_name_new(argv[4]);
@@ -162,16 +150,12 @@ int main (int argc, char **argv)
       ret_val = !ret_val_1;
 
     cpe_name_free(name);
-    oscap_import_source_free(import_source);
     cpe_dict_model_free(dict_model);
   }
 
   else if (argc == 5 && !strcmp(argv[1], "--remove")) {
     
-    if ((import_source = oscap_import_source_new_file(argv[2], argv[3])) == NULL)
-      return 1;
-    
-    if ((dict_model = cpe_dict_model_import(import_source)) == NULL)
+    if ((dict_model = cpe_dict_model_import(argv[2])) == NULL)
       return 2;
     
     name = cpe_name_new(argv[4]);
@@ -188,24 +172,15 @@ int main (int argc, char **argv)
 	)
 
     cpe_name_free(name);
-    oscap_import_source_free(import_source);
     cpe_dict_model_free(dict_model);
   }
 
   else if (argc == 6 && !strcmp(argv[1], "--export")) {
-    if ((import_source = oscap_import_source_new_file(argv[2], argv[3])) == NULL)
-      return 1;
-    
-    if ((dict_model = cpe_dict_model_import(import_source)) == NULL)
+    if ((dict_model = cpe_dict_model_import(argv[2])) == NULL)
       return 2;
+ 
+    cpe_dict_model_export(dict_model, argv[4]);
 
-    if ((export_target = oscap_export_target_new_file(argv[4], argv[5])) == NULL)
-      return 1;
-    
-    cpe_dict_model_export(dict_model, export_target);
-
-    oscap_import_source_free(import_source);
-    oscap_export_target_free(export_target);
     cpe_dict_model_free(dict_model);
   }
   

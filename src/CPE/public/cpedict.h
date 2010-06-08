@@ -859,16 +859,16 @@ bool cpe_name_match_dict_str(const char *cpe, struct cpe_dict_model *dict);
  * @param dict CPE Dict model
  * @memberof cpe_dict_model
  */
-void cpe_dict_model_export(const struct cpe_dict_model *dict, const struct oscap_export_target *target);
+void cpe_dict_model_export(const struct cpe_dict_model *dict, const char *file);
 
 /** 
  * Load new CPE dictionary from file
  * @memberof cpe_dict_model
- * @param fname file name of dictionary to import
+ * @param file filename
  * @return new dictionary
  * @retval NULL on failure
  */
-struct cpe_dict_model *cpe_dict_model_import(const struct oscap_import_source *source);
+struct cpe_dict_model *cpe_dict_model_import(const char *file);
 
 /** @} */
 

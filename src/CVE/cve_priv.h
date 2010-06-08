@@ -86,7 +86,7 @@ struct cve_reference;
  * @param source OSCAP import source
  * @return new CVE model
  */
-struct cve_model *cve_model_parse_xml(const struct oscap_import_source *source);
+struct cve_model *cve_model_parse_xml(const char *file);
 
 /**
  * Parse CVE model
@@ -114,7 +114,7 @@ void cve_export(const struct cve_model *cve, xmlTextWriterPtr writer);
  * @param cve CVE model
  * @param target OSCAP export target
  */
-void cve_model_export_xml(struct cve_model *cve, const struct oscap_export_target *target);
+void cve_model_export_xml(struct cve_model *cve, const char *file);
 
 /**
  * Export CVE reference to XML file

@@ -1021,16 +1021,16 @@ bool xccdf_policy_evaluate(struct xccdf_policy * policy)
     return ret;
 }
 
-void xccdf_policy_export_variables(struct xccdf_policy *policy, char *export_namespace, struct oscap_export_target *target) {
+void xccdf_policy_export_variables(struct xccdf_policy *policy, char *export_namespace, const char *file) {
 }
 
-void xccdf_policy_export_controls (struct xccdf_policy *policy, char *export_namespace, struct oscap_export_target *target) {
+void xccdf_policy_export_controls (struct xccdf_policy *policy, char *export_namespace, const char *file) {
 }
 
-void xccdf_policy_import_results(struct xccdf_policy *policy, char *import_namespace, struct oscap_import_source *source) {
+void xccdf_policy_import_results(struct xccdf_policy *policy, char *import_namespace, const char *file) {
 }
 
-void xccdf_policy_export_results(struct xccdf_policy *policy, char *scoring_model_namespace, struct oscap_export_target *target) {
+void xccdf_policy_export_results(struct xccdf_policy *policy, char *scoring_model_namespace, const char *file) {
 }
 
 

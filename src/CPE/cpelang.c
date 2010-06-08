@@ -39,31 +39,31 @@
 
 #define CPE_LANG_SUPPORTED "2.2"
 
-struct cpe_lang_model *cpe_lang_model_import(const struct oscap_import_source *source)
+struct cpe_lang_model *cpe_lang_model_import(const char *file)
 {
 
-	__attribute__nonnull__(source);
+	__attribute__nonnull__(file);
 
-	if (oscap_import_source_get_name(source) == NULL)
+	if (file == NULL)
 		return NULL;
 
 	struct cpe_lang_model *lang;
 
-	lang = cpe_lang_model_parse_xml(source);
+	lang = cpe_lang_model_parse_xml(file);
 
 	return lang;
 }
 
-void cpe_lang_model_export(const struct cpe_lang_model *spec, struct oscap_export_target *target)
+void cpe_lang_model_export(const struct cpe_lang_model *spec, const char *file)
 {
 
 	__attribute__nonnull__(spec);
-	__attribute__nonnull__(target);
+	__attribute__nonnull__(file);
 
-	if (oscap_export_target_get_name(target) == NULL)
+	if (file == NULL)
 		return;
 
-	cpe_lang_model_export_xml(spec, target);
+	cpe_lang_model_export_xml(spec, file);
 }
 
 /*

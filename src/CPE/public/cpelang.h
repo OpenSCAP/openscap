@@ -351,7 +351,7 @@ bool cpe_platform_match_cpe(struct cpe_name **cpe, size_t n, const struct cpe_pl
  * Load CPE language model from a XML document.
  * @memberof cpe_lang_model
  */
-struct cpe_lang_model *cpe_lang_model_import(const struct oscap_import_source *source);
+struct cpe_lang_model *cpe_lang_model_import(const char *file);
 
 /**
  * Write the lang_model to a file.
@@ -359,7 +359,7 @@ struct cpe_lang_model *cpe_lang_model_import(const struct oscap_import_source *s
  * @param spec CPE lang model
  * @param target target structure with filename, endcoding and indent information
  */
-void cpe_lang_model_export(const struct cpe_lang_model *spec, struct oscap_export_target *target);
+void cpe_lang_model_export(const struct cpe_lang_model *spec, const char *file);
 
 /*@}*/
 

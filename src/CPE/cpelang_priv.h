@@ -74,7 +74,7 @@ struct cpe_platform;
  * Function for parsing XML CPE language file
  * @param source structure of import source with filename and encoding
  */
-struct cpe_lang_model *cpe_lang_model_parse_xml(const struct oscap_import_source *source);
+struct cpe_lang_model *cpe_lang_model_parse_xml(const char *file);
 
 /**
  * Parse function for CPE Lang model
@@ -101,7 +101,7 @@ struct cpe_testexpr *cpe_testexpr_parse(xmlTextReaderPtr reader);
  * @param target structure with exporting information such filename and encoding
  * @param spec CPE language model structure
  */
-void cpe_lang_model_export_xml(const struct cpe_lang_model *spec, struct oscap_export_target *target);
+void cpe_lang_model_export_xml(const struct cpe_lang_model *spec, const char *file);
 
 /**
  * Function for export CPE language top element

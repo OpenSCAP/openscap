@@ -464,18 +464,14 @@ int main(int argc, char **argv)
 
 	/* Get definition model from XML file */
 	/* Set import source for OVAL definition file */
-	struct oscap_import_source *def_in = oscap_import_source_new_file(f_OVAL, NULL);
-	struct oval_definition_model *def_model = oval_definition_model_new();
+	struct oval_definition_model *def_model = oval_definition_model_import(f_OVAL);
 	free(f_OVAL);
-	oval_definition_model_import(def_model, def_in);
 	/* Import problems ? Do not continue then ! */
 	if (oscap_err()) {
 		if (verbose >= 0)
 			fprintf(stderr, "Error: (%d) %s\n", oscap_err_code(), oscap_err_desc());
-		oscap_import_source_free(def_in);
 		return 1;
 	}
-	oscap_import_source_free(def_in);
 
 #ifdef ENABLE_XCCDF
 
@@ -488,8 +484,7 @@ int main(int argc, char **argv)
 	/* ========== XCCDF Variables ========== */
         if (f_XCCDF != NULL) {
 
-            struct oscap_import_source *ben_in = oscap_import_source_new_file(f_XCCDF, NULL);
-            benchmark = xccdf_benchmark_import(ben_in);
+            benchmark = xccdf_benchmark_import(f_XCCDF);
             policy_model = xccdf_policy_model_new(benchmark);
 
             /* Get the first policy, just for prototype */
@@ -505,7 +500,6 @@ int main(int argc, char **argv)
             }
 
             xccdf_policy_iterator_free(policy_it);
-            oscap_import_source_free(ben_in);
 
         }
 #endif
@@ -612,10 +606,8 @@ int main(int argc, char **argv)
 
 	if (f_Syschar != NULL) {
 		/* Export syschar model to XML */
-		struct oscap_export_target *syschar_out = oscap_export_target_new_file(f_Syschar, "UTF-8");
-		oval_syschar_model_export(sys_model, syschar_out);
+		oval_syschar_model_export(sys_model, f_Syschar);
 		free(f_Syschar);
-		oscap_export_target_free(syschar_out);
 	}
 
 	/* Output all results */
@@ -756,10 +748,8 @@ int main(int argc, char **argv)
 		oval_result_directives_set_content(res_direct, OVAL_RESULT_TRUE, OVAL_DIRECTIVE_CONTENT_FULL);
 
 		/* Export result model to XML */
-		struct oscap_export_target *result_out = oscap_export_target_new_file(f_Results, "UTF-8");
-		oval_results_model_export(res_model, res_direct, result_out);
+		oval_results_model_export(res_model, res_direct, f_Results);
 		free(f_Results);
-		oscap_export_target_free(result_out);
 
 		oval_result_directives_free(res_direct);
 	}

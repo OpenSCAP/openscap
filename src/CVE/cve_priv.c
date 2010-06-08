@@ -431,18 +431,18 @@ static bool cve_validate_xml(const char *filename)
  * More info in representive header file.
  * returns the type of <structure>
  */
-struct cve_model *cve_model_parse_xml(const struct oscap_import_source *source)
+struct cve_model *cve_model_parse_xml(const char *file)
 {
 
-	__attribute__nonnull__(source);
+	__attribute__nonnull__(file);
 
 	xmlTextReaderPtr reader;
 	struct cve_model *ret = NULL;
 
-	if (!cve_validate_xml(oscap_import_source_get_name(source)))
+	if (!cve_validate_xml(file))
 		return NULL;
 
-	reader = xmlReaderForFile(oscap_import_source_get_name(source), NULL, 0);
+	reader = xmlReaderForFile(file, NULL, 0);
 	if (reader != NULL) {
 		xmlTextReaderNextNode(reader);
 		ret = cve_model_parse(reader);
@@ -645,26 +645,26 @@ struct cve_entry *cve_entry_parse(xmlTextReaderPtr reader)
  * More info in representive header file.
  * returns the type of <structure>
  */
-void cve_model_export_xml(struct cve_model *cve, const struct oscap_export_target *target)
+void cve_model_export_xml(struct cve_model *cve, const char *file)
 {
 
 	__attribute__nonnull__(cve);
-	__attribute__nonnull__(target);
+	__attribute__nonnull__(file);
 
 	/* TODO: ad macro to check return value from xmlTextWriter* functions */
 	xmlTextWriterPtr writer;
 
-	writer = xmlNewTextWriterFilename(oscap_export_target_get_name(target), 0);
+	writer = xmlNewTextWriterFilename(file, 0);
 	if (writer == NULL) {
 		oscap_setxmlerr(xmlGetLastError());
 		return;
 	}
 
 	/* Set properties of writer TODO: make public function to edit this ?? */
-	xmlTextWriterSetIndent(writer, oscap_export_target_get_indent(target));
-	xmlTextWriterSetIndentString(writer, BAD_CAST oscap_export_target_get_indent_string(target));
+	xmlTextWriterSetIndent(writer, 1);
+	xmlTextWriterSetIndentString(writer, BAD_CAST "    ");
 
-	xmlTextWriterStartDocument(writer, NULL, oscap_export_target_get_encoding(target), NULL);
+	xmlTextWriterStartDocument(writer, NULL, "UTF-8", NULL);
 
 	cve_export(cve, writer);
 	xmlTextWriterEndDocument(writer);

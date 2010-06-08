@@ -39,19 +39,17 @@
 #include "oval_types.h"
 
 /**
- * Load the specified oval_variable_model from an XML stream.
- * The stream document element must be a valid instance of <http://oval.mitre.org/XMLSchema/oval-variables-5:oval_variables>.
- * If the oval_variable model is not empty, the loaded content will be appended to the existing content.
- * @param variable_model the specified oval_variable_model.
- * @param import_source the oscap_import_source that resolves the XML stream.
- * @memberof oval_variable_model
- */ 
-int oval_variable_model_import (struct oval_variable_model *, struct oscap_import_source *);
-/**
- * Create a new OVAL variable model
+ * Create a new empty OVAL variable model
  * @memberof oval_variable_model
  */ 
 struct oval_variable_model *oval_variable_model_new(void);
+/**
+ * Import the content from the file into a new oval_variable_model.
+ * @param file filename
+ * @return new oval_variable_model, or NULL if an error occurred
+ * @memberof oval_variable_model
+ */ 
+struct oval_variable_model * oval_variable_model_import(const char *file);
 /**
  * Clone an OVAL variable model
  * @return A copy of the specified @ref oval_variable_model.
@@ -65,13 +63,10 @@ struct oval_variable_model *oval_variable_model_clone(struct oval_variable_model
  */ 
 void oval_variable_model_free(struct oval_variable_model *);
 /**
- * Export the specified oval_variable_model to an XML stream.
- * The exported document element is a valid instance of <http://oval.mitre.org/XMLSchema/oval-variables-5:oval_variables>.
- * @param variable_model the specified oval_variable_model.
- * @param export_target the oscap_export_target that resolves the output XML stream.
+ * Export the specified oval_variable_model into file
  * @memberof oval_variable_model
  */ 
-int oval_variable_model_export (struct oval_variable_model *, struct oscap_export_target *);
+int oval_variable_model_export (struct oval_variable_model *, const char *file);
 
 
 /**

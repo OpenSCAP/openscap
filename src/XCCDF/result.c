@@ -383,9 +383,9 @@ fail:
 	return NULL;
 }
 
-int xccdf_result_export(struct xccdf_result *result, struct oscap_export_target *target)
+int xccdf_result_export(struct xccdf_result *result, const char *file)
 {
-	__attribute__nonnull__(target);
+	__attribute__nonnull__(file);
 
 	int retcode = 0;
 
@@ -399,7 +399,7 @@ int xccdf_result_export(struct xccdf_result *result, struct oscap_export_target 
 
 	xccdf_result_to_dom(result, NULL, doc, NULL);
 
-	retcode = xmlSaveFormatFileEnc(oscap_export_target_get_name(target), doc, oscap_export_target_get_encoding(target), 1);
+	retcode = xmlSaveFormatFileEnc(file, doc, "UTF-8", 1);
 	if (retcode < 1)
 		oscap_setxmlerr(xmlGetLastError());
 

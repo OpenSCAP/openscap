@@ -655,11 +655,11 @@ struct xccdf_result* xccdf_item_to_result(struct xccdf_item* item);
 /**
  * Import the content from a specified XML stream into a benchmark.
  * @memberof xccdf_benchmark
- * @param source oscap import structure.
+ * @param file filename.
  * @return Pointer to the new benchmark.
  * @retval NULL on failure
  */
-struct xccdf_benchmark* xccdf_benchmark_import(struct oscap_import_source *source);
+struct xccdf_benchmark* xccdf_benchmark_import(const char *file);
 
 /**
  * Export a benchmark to an XML stream
@@ -667,7 +667,7 @@ struct xccdf_benchmark* xccdf_benchmark_import(struct oscap_import_source *sourc
  * @return Integer
  * @retval -1 if error occurred
  */
-int xccdf_benchmark_export(struct xccdf_benchmark *benchmark, struct oscap_export_target *target);
+int xccdf_benchmark_export(struct xccdf_benchmark *benchmark, const char *file);
 
 /**
  * Export a TestResult to an XML stream
@@ -675,7 +675,7 @@ int xccdf_benchmark_export(struct xccdf_benchmark *benchmark, struct oscap_expor
  * @return Integer
  * @retval -1 if error occurred
  */
-int xccdf_result_export(struct xccdf_result *result, struct oscap_export_target *target);
+int xccdf_result_export(struct xccdf_result *result, const char *file);
 
 /**
  * Resolve an benchmark.

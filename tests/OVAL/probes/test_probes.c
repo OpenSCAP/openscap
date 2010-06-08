@@ -16,17 +16,10 @@
 int main(int argc, char **argv) {
   
   /* definition model populate */
-  struct oscap_import_source *def_in = oscap_import_source_new_file(argv[1], NULL);
-  assume(def_in != NULL);
-  
-  struct oval_definition_model *def_model = oval_definition_model_new();
+  struct oval_definition_model *def_model=NULL;
+  def_model = oval_definition_model_import(argv[1]);
   assume(def_model != NULL);
-
-  int ret = oval_definition_model_import(def_model, def_in);
-  assume(ret != -1);
   
-  oscap_import_source_free(def_in);
-
   assume(oval_definition_model_is_valid(def_model));
 
   /* create syschar model */
@@ -67,13 +60,8 @@ int main(int argc, char **argv) {
   oval_result_directives_set_content(res_direct,OVAL_RESULT_NOT_APPLICABLE, OVAL_DIRECTIVE_CONTENT_FULL);
   
   /* report results */
-  struct oscap_export_target *result_out  = oscap_export_target_new_file(argv[2], "UTF-8");
-  assume(result_out != NULL);
+  oval_results_model_export(res_model, res_direct, argv[2]);
 
-  oval_results_model_export(res_model, res_direct, result_out);
-
-  oscap_export_target_free(result_out);
-  
   oval_definition_model_free(def_model);
 
   oval_syschar_model_free(sys_model);

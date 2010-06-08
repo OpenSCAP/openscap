@@ -43,17 +43,17 @@
  * Public function to import CVE model from OSCAP import source.
  * Function returns CVE model, need to free source after calling this function
  */
-struct cve_model *cve_model_import(const struct oscap_import_source *source)
+struct cve_model *cve_model_import(const char *file)
 {
 
-	__attribute__nonnull__(source);
+	__attribute__nonnull__(file);
 
-	if (oscap_import_source_get_name(source) == NULL)
+	if (file == NULL)
 		return NULL;
 
 	struct cve_model *cve;
 
-	cve = cve_model_parse_xml(source);
+	cve = cve_model_parse_xml(file);
 
 	return cve;
 }
@@ -63,15 +63,15 @@ struct cve_model *cve_model_import(const struct oscap_import_source *source)
  * Function fill the structure _target_ with model that is represented by structure
  * _cve_.
  */
-void cve_model_export(struct cve_model *cve, const struct oscap_export_target *target)
+void cve_model_export(struct cve_model *cve, const char *file)
 {
 
-	__attribute__nonnull__(target);
+	__attribute__nonnull__(file);
 
-	if (oscap_export_target_get_name(target) == NULL)
+	if (file == NULL)
 		return;
 
-	cve_model_export_xml(cve, target);
+	cve_model_export_xml(cve, file);
 
 }
 

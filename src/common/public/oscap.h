@@ -261,14 +261,6 @@ void oscap_cleanup(void);
  */
 
 /**
- * @struct oscap_export_target
- */
-struct oscap_export_target;
-/**
- * @struct oscap_import_source
- */
-struct oscap_import_source;
-/**
  * @struct oscap_nsinfo
  * Information on namespaces for given document.
  */
@@ -286,118 +278,6 @@ struct oscap_nsinfo_entry;
  * @see oscap_nsinfo
  */
 struct oscap_nsinfo_entry_iterator;
-
-/**
- * Stream type
- */
-typedef enum {
-	OSCAP_STREAM_UNKNOWN = 0,
-	OSCAP_STREAM_FILE = 1,
-	OSCAP_STREAM_URL = 2,
-} oscap_stream_type_t;
-
-
-/**
- * Function returns new export target structure, or NULL if an error occurred.
- * @memberof oscap_export_target
- */
-struct oscap_export_target *oscap_export_target_new_file(const char *filename, const char *encoding);
-
-/**
- * Function returns new export target structure, or NULL if an error occurred.
- * @memberof oscap_export_target
- */
-struct oscap_export_target *oscap_export_target_new_URL(const char *url, const char *encoding);
-
-/**
- * Destroy this export target structure.
- * @memberof oscap_export_target
- */
-void oscap_export_target_free(struct oscap_export_target *target);
-
-
-/************************************************************/
-/**
- * @name Getters
- * If return value is a pointer to structure's member, do not free it unless you null the pointer in the structure.
- * @{
- * */
-
-/**
- * Get type of this export target.
- * @memberof oscap_export_target
- */
-oscap_stream_type_t oscap_export_target_get_type(const struct oscap_export_target *item);
-
-/**
- * Get name of this export target.
- * @memberof oscap_export_target
- */
-const char *oscap_export_target_get_name(const struct oscap_export_target *item);
-
-/**
- * Get encoding for this export target.
- * @memberof oscap_export_target
- */
-const char *oscap_export_target_get_encoding(const struct oscap_export_target *item);
-
-/**
- * Get indentation for this export target.
- * @memberof oscap_export_target
- */
-int oscap_export_target_get_indent(const struct oscap_export_target *item);
-
-/**
- * Get indentation string for this export target.
- * @memberof oscap_export_target
- */
-const char *oscap_export_target_get_indent_string(const struct oscap_export_target *item);
-
-/************************************************************/
-/** @} End of Getters group */
-
-
-/**
- * Function returns new import source structure, or NULL if an error occurred.
- * @memberof oscap_import_source
- */
-struct oscap_import_source *oscap_import_source_new_file(const char *filename, const char *encoding);
-
-/**
- * Function returns new import source structure, or NULL if an error occurred.
- * @memberof oscap_import_source
- */
-struct oscap_import_source *oscap_import_source_new_URL(const char *url, const char *encoding);
-
-/**
- * Destroy this import source structure.
- * @memberof oscap_import_source
- */
-void oscap_import_source_free(struct oscap_import_source *target);
-
-
-/************************************************************/
-/**
- * @name Getters
- * If return value is a pointer to structure's member, do not free it unless you null the pointer in the structure.
- * @{
- * */
-
-/**
- * Get type of this import source.
- * @memberof oscap_import_source
- */
-oscap_stream_type_t oscap_import_source_get_type(const struct oscap_import_source *item);
-
-/**
- * Get name of this import source.
- * @memberof oscap_import_source
- */
-const char *oscap_import_source_get_name(const struct oscap_import_source *item);
-
-/************************************************************/
-/** @} End of Getters group */
-
 
 /// @memberof oscap_nsinfo
 struct oscap_nsinfo *oscap_nsinfo_new(void);

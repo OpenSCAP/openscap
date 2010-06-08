@@ -116,7 +116,7 @@ struct cpe_language;
  * Function to parse XML to CPE dictionary model
  * @param source Structure of name and encoding of importing XML file
  */
-struct cpe_dict_model *cpe_dict_model_parse_xml(const struct oscap_import_source *source);
+struct cpe_dict_model *cpe_dict_model_parse_xml(const char *file);
 
 /**
  * Parse generator part of CPE dictionary XML file
@@ -153,7 +153,7 @@ struct cpe_dict_model *cpe_dict_model_parse(xmlTextReaderPtr reader);
  * @param dict CPE dictionary structure
  * @param target OSCAP exporting target
  */
-void cpe_dict_model_export_xml(const struct cpe_dict_model *dict, const struct oscap_export_target *target);
+void cpe_dict_model_export_xml(const struct cpe_dict_model *dict, const char *file);
 
 /**
  * Internal export function for CPE dictionary model

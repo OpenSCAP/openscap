@@ -660,12 +660,23 @@ void oval_syschar_model_add_sysdata(struct oval_syschar_model *model, struct ova
 		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
-int oval_definition_model_import(struct oval_definition_model *model,
-				 struct oscap_import_source *source)
+struct oval_definition_model * oval_definition_model_import(const char *file)
 {
-	__attribute__nonnull__(source);
+        struct oval_definition_model *model = oval_definition_model_new();
+        int ret = oval_definition_model_merge(model,file);
+        if (ret == -1) {
+                oval_definition_model_free(model);
+                model = NULL;
+        }
 
-	xmlTextReader *reader = xmlNewTextReaderFilename(oscap_import_source_get_name(source));
+        return model;
+}
+
+int oval_definition_model_merge(struct oval_definition_model *model, const char *file)
+{
+	__attribute__nonnull__(model);
+
+	xmlTextReader *reader = xmlNewTextReaderFilename(file);
 
 	int retcode = 0;
 	if (reader) {
@@ -681,19 +692,19 @@ int oval_definition_model_import(struct oval_definition_model *model,
 	return retcode;
 }
 
-int oval_syschar_model_import(struct oval_syschar_model *model, struct oscap_import_source *source)
+int oval_syschar_model_import(struct oval_syschar_model *model, const char *file)
 {
-	__attribute__nonnull__(source);
+	__attribute__nonnull__(model);
 
 	int ret;
 
-	xmlDoc *doc = xmlParseFile(oscap_import_source_get_name(source));
+	xmlDoc *doc = xmlParseFile(file);
 	if (doc == NULL) {
 		oscap_setxmlerr(xmlGetLastError());
 		return -1;
 	}
 
-	xmlTextReader *reader = xmlNewTextReaderFilename(oscap_import_source_get_name(source));
+	xmlTextReader *reader = xmlNewTextReaderFilename(file);
 	if (reader == NULL) {
 		oscap_setxmlerr(xmlGetLastError());
 		return -1;
@@ -1061,18 +1072,17 @@ void oval_results_model_add_system(struct oval_results_model *model, struct oval
 		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
-struct oval_result_directives *oval_results_model_import(struct oval_results_model *model,
-							 struct oscap_import_source *source)
+struct oval_result_directives *oval_results_model_import(struct oval_results_model *model, const char *file)
 {
-	__attribute__nonnull__(source);
+	__attribute__nonnull__(model);
 
-	xmlDoc *doc = xmlParseFile(oscap_import_source_get_name(source));
+	xmlDoc *doc = xmlParseFile(file);
 	if (doc == NULL) {
 		oscap_setxmlerr(xmlGetLastError());
 		return NULL;
 	}
 
-	xmlTextReader *reader = xmlNewTextReaderFilename(oscap_import_source_get_name(source));
+	xmlTextReader *reader = xmlNewTextReaderFilename(file);
 	if (reader == NULL) {
 		oscap_setxmlerr(xmlGetLastError());
 		return NULL;
@@ -1387,10 +1397,10 @@ xmlNode *oval_definitions_to_dom(struct oval_definition_model *definition_model,
 	return root_node;
 }
 
-int oval_definition_model_export(struct oval_definition_model *model, struct oscap_export_target *target)
+int oval_definition_model_export(struct oval_definition_model *model, const char *file)
 {
 
-	__attribute__nonnull__(target);
+	__attribute__nonnull__(model);
 
 	int retcode = 0;
 
@@ -1406,9 +1416,8 @@ int oval_definition_model_export(struct oval_definition_model *model, struct osc
 	/*
 	 * Dumping document to stdio or file
 	 */
-	retcode =
-	    xmlSaveFormatFileEnc(oscap_export_target_get_name(target), doc, oscap_export_target_get_encoding(target),
-				 1);
+	retcode = xmlSaveFormatFileEnc(file, doc, "UTF-8", 1);
+
 	if (retcode < 1)
 		oscap_setxmlerr(xmlGetLastError());
 
@@ -1492,10 +1501,10 @@ xmlNode *oval_syschar_model_to_dom(struct oval_syschar_model * syschar_model,
 	return root_node;
 }
 
-int oval_syschar_model_export(struct oval_syschar_model *model, struct oscap_export_target *target)
+int oval_syschar_model_export(struct oval_syschar_model *model, const char *file)
 {
 
-	__attribute__nonnull__(target);
+	__attribute__nonnull__(model);
 
 	int retcode = 0;
 
@@ -1511,9 +1520,8 @@ int oval_syschar_model_export(struct oval_syschar_model *model, struct oscap_exp
 	/*
 	 * Dumping document to stdio or file
 	 */
-	retcode =
-	    xmlSaveFormatFileEnc(oscap_export_target_get_name(target), doc, oscap_export_target_get_encoding(target),
-				 1);
+	retcode = xmlSaveFormatFileEnc(file, doc, "UTF-8", 1);
+
 	if (retcode < 1)
 		oscap_setxmlerr(xmlGetLastError());
 
@@ -1621,10 +1629,10 @@ static xmlNode *oval_results_to_dom(struct oval_results_model *results_model,
 	return root_node;
 }
 
-int oval_results_model_export(struct oval_results_model *results_model,
-			      struct oval_result_directives *directives, struct oscap_export_target *target)
+int oval_results_model_export(struct oval_results_model *results_model,  struct oval_result_directives *directives, 
+                              const char *file)
 {
-	__attribute__nonnull__(target);
+	__attribute__nonnull__(results_model);
 
 	int xmlCode = 0;
 
@@ -1637,8 +1645,7 @@ int oval_results_model_export(struct oval_results_model *results_model,
 	}
 
 	oval_results_to_dom(results_model, directives, doc, NULL);
-	xmlCode = xmlSaveFormatFileEnc
-	    (oscap_export_target_get_name(target), doc, oscap_export_target_get_encoding(target), 1);
+	xmlCode = xmlSaveFormatFileEnc(file, doc, "UTF-8", 1);
 	if (xmlCode <= 0) {
 		oscap_setxmlerr(xmlGetLastError());
 		oscap_dprintf("WARNING: No bytes exported: xmlCode = %d", xmlCode);

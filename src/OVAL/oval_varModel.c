@@ -320,24 +320,33 @@ static int _oval_variable_model_parse(struct oval_variable_model *model, xmlText
 	return return_code;
 }
 
-int oval_variable_model_import(struct oval_variable_model *model, struct oscap_import_source *source)
+struct oval_variable_model * oval_variable_model_import(const char *file)
 {
 	int return_code;
-	xmlDoc *doc = xmlParseFile(oscap_import_source_get_name(source));
+	struct oval_variable_model * model;
+	xmlDoc *doc = xmlParseFile(file);
 	if (doc == NULL) {
 		oscap_setxmlerr(xmlGetLastError());
-		return -1;
+		return NULL;
 	}
-	xmlTextReader *reader = xmlNewTextReaderFilename(oscap_import_source_get_name(source));
+	xmlTextReader *reader = xmlNewTextReaderFilename(file);
 	if (reader == NULL) {
 		oscap_setxmlerr(xmlGetLastError());
-		return -1;
+		return NULL;
 	}
 	xmlTextReaderRead(reader);
+
+	model = oval_variable_model_new();
 	return_code = _oval_variable_model_parse(model, reader, NULL);
+	if (return_code != 1) {
+		oval_variable_model_free(model);
+		model = NULL;
+	}
+		
 	xmlFreeTextReader(reader);
 	xmlFreeDoc(doc);
-	return return_code;
+
+	return model;
 }
 static int _generator_to_dom(xmlDocPtr doc, xmlNode * tag_generator)
 {
@@ -404,10 +413,10 @@ static xmlNode *oval_variable_model_to_dom(struct oval_variable_model * variable
 	return root_node;
 }
 
-int oval_variable_model_export(struct oval_variable_model *model, struct oscap_export_target *target)
+int oval_variable_model_export(struct oval_variable_model *model, const char *file)
 {
 
-	__attribute__nonnull__(target);
+	__attribute__nonnull__(model);
 
 	int retcode = 0;
 
@@ -423,9 +432,8 @@ int oval_variable_model_export(struct oval_variable_model *model, struct oscap_e
 	/*
 	 * Dumping document to stdio or file
 	 */
-	retcode =
-	    xmlSaveFormatFileEnc(oscap_export_target_get_name(target), doc, oscap_export_target_get_encoding(target),
-				 1);
+	retcode = xmlSaveFormatFileEnc(file, doc, "UTF-8", 1);
+
 	if (retcode < 1)
 		oscap_setxmlerr(xmlGetLastError());
 

@@ -189,18 +189,22 @@ struct oval_variable_binding_iterator;
 
 
 /**
- * Import the content from a specified XML stream into a oval_syschar_model, return -1 if an error occurred.
- * If the input_source specifies a model entity that is already registered within the model its content is overwritten.
- * @memberof oval_syschar_model
- */
-int oval_syschar_model_import(struct oval_syschar_model *model, struct oscap_import_source *source);
-/**
  * Create new oval_syschar_model.
  * The new model is bound to a specified oval_definition_model and variable bindings.
  * @param definition_model the specified oval_definition_model.
  * @memberof oval_syschar_model
  */
 struct oval_syschar_model *oval_syschar_model_new(struct oval_definition_model *definition_model);
+
+/**
+ * Import the content from the file into an oval_syschar_model.
+ * If imported content specifies a model entity that is already registered within the model its content is overwritten.
+ * @param model the merge target model
+ * @param file filename
+ * @return -1 if an error occurred
+ * @memberof oval_syschar_model
+ */
+int oval_syschar_model_import(struct oval_syschar_model *model, const char *file);
 /**
  * Copy an oval_syschar_model.
  * @return A copy of the specified @ref oval_syschar_model.
@@ -208,12 +212,12 @@ struct oval_syschar_model *oval_syschar_model_new(struct oval_definition_model *
  */
 struct oval_syschar_model *oval_syschar_model_clone(struct oval_syschar_model *);
 /**
- * Export system characteristics as a XML file.
+ * Export system characteristics into file.
  * @memberof oval_syschar_model
  */
-int oval_syschar_model_export(struct oval_syschar_model *, struct oscap_export_target *);
+int oval_syschar_model_export(struct oval_syschar_model *, const char *file);
 /**
- * free memory allocated to a specified syschar model.
+ * Free memory allocated to a specified syschar model.
  * @param model the specified syschar model
  * @memberof oval_syschar_model
  */

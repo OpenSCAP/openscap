@@ -110,25 +110,25 @@ void xccdf_value_binding_free(struct xccdf_value_binding *);
  * Not yet implemented
  * @memberof xccdf_policy
  */
-void xccdf_policy_export_variables(struct xccdf_policy *, char *export_namespace, struct oscap_export_target *);
+void xccdf_policy_export_variables(struct xccdf_policy *, char *export_namespace, const char *file);
 /**
  * Import/Export function
  * Not yet implemented 
  * @memberof xccdf_policy
  */
-void xccdf_policy_export_controls (struct xccdf_policy *, char *export_namespace, struct oscap_export_target *);
+void xccdf_policy_export_controls (struct xccdf_policy *, char *export_namespace, const char *file);
 /**
  * Import/Export function
  * Not yet implemented
  * @memberof xccdf_policy
  */
-void xccdf_policy_import_results(struct xccdf_policy *, char *import_namespace, struct oscap_import_source *);
+void xccdf_policy_import_results(struct xccdf_policy *, char *import_namespace, const char *file);
 /**
  * Import/Export function
  * Not yet implemented
  * @memberof xccdf_policy
  */
-void xccdf_policy_export_results(struct xccdf_policy *, char *scoring_model_namespace, struct oscap_export_target *);
+void xccdf_policy_export_results(struct xccdf_policy *, char *scoring_model_namespace, const char *file);
 
 /**
  * Function to register callback for checking system

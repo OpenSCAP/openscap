@@ -543,18 +543,28 @@ struct oval_component_iterator;
 struct oval_string_iterator;
 
 /**
- * Import the content from a specified XML stream into a oval_definition_model, return -1 if an error occurred.
- * If the input_source specifies a model entity that is already registered within the model its content is overwritten.
- * @param model the merge target model.
- * @param source an OVAL stream.
- * @memberof oval_definition_model
- */
-int oval_definition_model_import(struct oval_definition_model *model, struct oscap_import_source *source);
-/**
  * Create an empty oval_definition_model.
  * @memberof oval_definition_model
  */
 struct oval_definition_model *oval_definition_model_new(void);
+/**
+ * Import the content from the file into an oval_definition_model.
+ * @param file filename
+ * @return new oval_definition_model, or NULL if an error occurred
+ * @memberof oval_definition_model
+ */
+struct oval_definition_model * oval_definition_model_import(const char *file);
+
+/**
+ * Merge the content from the file with specified oval_definition_model.
+ * If imported content specifies a model entity that is already registered within the model its content is overwritten.
+ * @param model the merge target model
+ * @param file filename 
+ * @return -1 if an error occurred
+ * @memberof oval_definition_model
+ */
+int oval_definition_model_merge(struct oval_definition_model *model, const char *file);
+
 /**
  * Copy an oval_definition_model.
  * @return A copy of the specified @ref oval_definition_model.
@@ -562,9 +572,11 @@ struct oval_definition_model *oval_definition_model_new(void);
  */
 struct oval_definition_model *oval_definition_model_clone(struct oval_definition_model *);
 /**
+ * Export an oval_definition_model into file.
  * @memberof oval_definition_model 
+ *
  */
-int oval_definition_model_export(struct oval_definition_model *, struct oscap_export_target *);
+int oval_definition_model_export(struct oval_definition_model *, const char *file);
 /**
  * Free OVAL object model.
  * @memberof oval_definition_model

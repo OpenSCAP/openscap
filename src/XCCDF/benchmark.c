@@ -35,9 +35,9 @@ struct xccdf_backref {
 	char *id;		// id
 };
 
-struct xccdf_benchmark *xccdf_benchmark_import(struct oscap_import_source *source)
+struct xccdf_benchmark *xccdf_benchmark_import(const char *file)
 {
-	xmlTextReaderPtr reader = xmlReaderForFile(oscap_import_source_get_name(source), NULL, 0);
+	xmlTextReaderPtr reader = xmlReaderForFile(file, NULL, 0);
 	if (!reader)
 		return NULL;
 	while (xmlTextReaderRead(reader) == 1 && xmlTextReaderNodeType(reader) != 1) ;
@@ -145,9 +145,9 @@ bool xccdf_benchmark_parse(struct xccdf_item * benchmark, xmlTextReaderPtr reade
 	return true;
 }
 
-int xccdf_benchmark_export(struct xccdf_benchmark *benchmark, struct oscap_export_target *target)
+int xccdf_benchmark_export(struct xccdf_benchmark *benchmark, const char *file)
 {
-	__attribute__nonnull__(target);
+	__attribute__nonnull__(file);
 
 	int retcode = 0;
 
@@ -161,7 +161,7 @@ int xccdf_benchmark_export(struct xccdf_benchmark *benchmark, struct oscap_expor
 
 	xccdf_benchmark_to_dom(benchmark, doc, NULL, NULL);
 
-	retcode = xmlSaveFormatFileEnc(oscap_export_target_get_name(target), doc, oscap_export_target_get_encoding(target), 1);
+	retcode = xmlSaveFormatFileEnc(file, doc, "UTF-8", 1);
 	if (retcode < 1)
 		oscap_setxmlerr(xmlGetLastError());
 
