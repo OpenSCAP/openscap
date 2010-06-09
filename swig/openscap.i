@@ -189,6 +189,8 @@
  #include "../src/OVAL/public/oval_types.h"
  #include "../src/OVAL/public/oval_variables.h"
  #include "../src/OVAL/public/oval_probe.h"
+ #include "../src/OVAL/public/oval_probe_handler.h"
+ #include "../src/OVAL/public/oval_probe_session.h"
 %}
 %include "../src/OVAL/public/oval_agent_api.h"
 %include "../src/OVAL/public/oval_definitions.h"
@@ -197,6 +199,8 @@
 %include "../src/OVAL/public/oval_types.h"
 %include "../src/OVAL/public/oval_variables.h"
 %include "../src/OVAL/public/oval_probe.h"
+%include "../src/OVAL/public/oval_probe_handler.h"
+%include "../src/OVAL/public/oval_probe_session.h"
 #endif
 
 
