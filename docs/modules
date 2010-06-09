@@ -14,6 +14,7 @@
  *
  * @addtogroup OVAL
  * @{
+ *   @defgroup OVALAGENT OVAL Agent
  *   @defgroup OVALDEF OVAL Definitions
  *   @defgroup OVALSYS OVAL System Characteristics
  *   @defgroup OVALRES OVAL Results

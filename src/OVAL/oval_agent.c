@@ -72,6 +72,14 @@ struct oval_results_model {
         char *schema;
 };
 
+struct oval_agent_session {
+	char *filename;
+	struct oval_definition_model * def_model;
+	struct oval_syschar_model    * sys_model;
+	struct oval_result_model     * res_model;
+	struct oval_probe_session_t  * psess;
+};
+
 typedef struct oval_results_model oval_results_model_t;
 typedef void (*_oval_result_system_clone_func) (void *, struct oval_definition_model *);
 typedef void (*_oval_syschar_model_clone_func) (void *, struct oval_syschar_model *);
@@ -1587,4 +1595,25 @@ int oval_results_model_export(struct oval_results_model *results_model,  struct 
 
 	return ((xmlCode >= 1) ? 1 : -1);
 }
+
+oval_agent_session_t * oval_agent_new_session(const char *file) {
+	/* ToDo */
+}
+
+oval_result_t oval_agent_eval_definition(oval_agent_session_t * asess, const char *id) {
+	/* ToDo */
+}
+
+int oval_agent_eval_system(oval_agent_session_t * asess, oval_agent_cb_t * cb) {
+	/* ToDo */
+}
+
+struct oval_results_model * oval_agent_get_results_model(oval_agent_session_t * asess) {
+	/* ToDo */
+}
+
+void oval_agent_destroy_session(oval_agent_session_t * asess) {
+	/* ToDo */
+}
+
 
