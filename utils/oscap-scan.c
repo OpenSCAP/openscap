@@ -509,11 +509,11 @@ int main(int argc, char **argv)
 	/* create syschar model */
 	struct oval_syschar_model *sys_model = oval_syschar_model_new(def_model);
 
+	/* create probe session */
 	sess = oval_probe_session_new(sys_model);
+
 	/* probe sysinfo */
-	struct oval_sysinfo *sysinfo;
-	sysinfo = oval_probe_sysinf_eval(sess);
-	if (sysinfo == NULL) {
+	if (oval_psess_probe_sysinfo(sess) == -1) {
 		if (verbose >= 1)
 			fprintf(stdout, "Warning: sysinfo not available\n");
 		if (oscap_err()) {
@@ -522,8 +522,6 @@ int main(int argc, char **argv)
 			return 1;
 		}
 	}
-	oval_syschar_model_set_sysinfo(sys_model, sysinfo);
-	oval_sysinfo_free(sysinfo);
 
 	/* create result model */
 	struct oval_syschar_model *sys_models[] = { sys_model, NULL };
@@ -534,7 +532,7 @@ int main(int argc, char **argv)
 	int ret = 0;
 	if (method == 1) {
 		/* First method - evaluate objects only */
-		oval_syschar_model_probe_objects(sys_model);
+		oval_psess_probe_objects(sess);
 		/* Evaluate gathered system characteristics */
 		oval_results_model_eval(res_model);
 	} else {

@@ -30,6 +30,7 @@
 
 #include "config.h"
 #include "oval_probe.h"
+#include "oval_system_characteristics.h"
 #include "common/_error.h"
 #include "common/assume.h"
 
@@ -178,3 +179,56 @@ struct oval_sysinfo *oval_probe_sysinf_eval(oval_probe_session_t *sess)
 
         return(sysinf);
 }
+
+int oval_psess_probe_sysinfo(oval_probe_session_t *sess) {
+        struct oval_syschar_model *syschar_model;
+	struct oval_sysinfo *sysinfo;
+
+        sysinfo = oval_probe_sysinf_eval(sess);
+        if (sysinfo == NULL) {
+		/* Report error in this case */
+		return -1;
+	}
+
+        syschar_model = sess->sys_model;
+        oval_syschar_model_set_sysinfo(syschar_model, sysinfo);
+        oval_sysinfo_free(sysinfo);
+	return 0;
+}
+
+int oval_psess_probe_objects(oval_probe_session_t *sess)
+{
+	struct oval_syschar_model * syschar_model;
+	struct oval_definition_model *definition_model;
+
+	syschar_model = sess->sys_model;
+	definition_model = oval_syschar_model_get_definition_model(syschar_model);
+
+	if (definition_model) {
+		struct oval_object_iterator *objects = oval_definition_model_get_objects(definition_model);
+		while (oval_object_iterator_has_more(objects)) {
+			struct oval_object *object = oval_object_iterator_next(objects);
+			char *objid = oval_object_get_id(object);
+			struct oval_syschar *syschar = oval_syschar_model_get_syschar(syschar_model, objid);
+			if (syschar == NULL) {
+				syschar = oval_probe_object_eval(sess, object, 0);
+				if (syschar == NULL) {
+					if(  oscap_err() ) {
+	                                        /* does it make sense to continue? !!!
+						 * return -1 */
+					}
+                                	syschar = oval_syschar_new(syschar_model, object);
+	                                oval_syschar_set_flag(syschar, SYSCHAR_FLAG_NOT_COLLECTED);
+				}
+				oval_syschar_model_add_syschar(syschar_model, syschar);
+			}
+		}
+		oval_object_iterator_free(objects);
+	}
+	return 0;
+}
+
+int oval_psess_probe_definition(oval_probe_session_t *sess, const char *id) {
+	return 0; /* ToDo */
+}
+

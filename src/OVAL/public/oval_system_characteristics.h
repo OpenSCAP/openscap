@@ -315,19 +315,6 @@ bool oval_syschar_model_is_locked(struct oval_syschar_model *syschar_model);
  * @{
  */
 /**
- * Probe all oval_objects from oval_definition model that was bound to specific oval_syschar_model. Sucessfull 
- * finish of this functions result in oval_syschar_model filled out by system characteristic to each object.
- * @memberof oval_syschar_model
- * return 0 on sucess and -1 on fail. Use \ref ERRORS mechanism to examine the error.
- */
-int oval_syschar_model_probe_objects(struct oval_syschar_model *);
-/**
- * Gather system information and add it to oval_syschar_model.
- * @memberof oval_syschar_model
- * @return 0 on sucess and -1 on fail. Use \ref ERRORS mechanism to examine the error.
- */
-int oval_syschar_model_probe_sysinfo(struct oval_syschar_model *);
-/**
  * Return <b>true</b> if the syschar_model instance is valid
  * An oval_syschar_model is valid if all the following are true
  * 	- The sysinfo attribute is valid

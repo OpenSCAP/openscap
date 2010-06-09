@@ -25,12 +25,15 @@ int main(int argc, char **argv) {
   /* create syschar model */
   struct oval_syschar_model *sys_model = oval_syschar_model_new(def_model);
   assume(sys_model != NULL);
-      
+  
+  /* create probe session */
+  oval_probe_session_t *sess = oval_probe_session_new(sys_model);
+    
   /* probe sysinfo */
-  oval_syschar_model_probe_sysinfo(sys_model);
+  assume(oval_psess_probe_sysinfo(sess) == 0);
 
   /* call probes */
-  assume(oval_syschar_model_probe_objects(sys_model) == 0);
+  assume(oval_psess_probe_objects(sess) == 0);
   
   /* create result model */
   struct oval_syschar_model *sys_models[] = {sys_model, NULL};
@@ -62,10 +65,10 @@ int main(int argc, char **argv) {
   /* report results */
   oval_results_model_export(res_model, res_direct, argv[2]);
 
+  /* free */
+  oval_probe_session_destroy(sess);
   oval_definition_model_free(def_model);
-
   oval_syschar_model_free(sys_model);
-
   oval_results_model_free(res_model);
   
   return 0;

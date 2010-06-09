@@ -74,4 +74,28 @@ struct oval_sysinfo *oval_probe_sysinf_eval(oval_probe_session_t *sess) __attrib
  */
 struct oval_syschar *oval_probe_object_eval(oval_probe_session_t *sess, struct oval_object *object, int flags) __attribute__ ((nonnull(1, 2)));
 
+
+/**
+ * Probe system info and update system characteristic model in the session
+ * @param sess probe session
+ * @return 0 on success
+ */
+int oval_psess_probe_sysinfo(oval_probe_session_t *sess) __attribute__ ((nonnull(1)));
+
+/**
+ * Probe all objects and update system characteristic model in the session
+ * @param sess probe session
+ * @return 0 on success
+ */
+int oval_psess_probe_objects(oval_probe_session_t *sess) __attribute__ ((nonnull(1)));
+
+/**
+ * Probe objects required for evalatuation specified definition and update system characteristic model in the session
+ * @param sess probe session
+ * @param id definition id
+ * @return 0 on success
+ */
+int oval_psess_probe_definition(oval_probe_session_t *sess, const char *id) __attribute__ ((nonnull(1, 2)));
+
 #endif				/* OVAL_PROBE_H */
+
