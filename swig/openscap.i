@@ -34,9 +34,6 @@
 #if defined(SWIGPYTHON)
 /* Definitions for PYTHON */
 
-%ignore xccdf_policy_evaluate;
-%ignore xccdf_policy_model_register_callback;
-
 %typemap(in) time_t
 {
     if (PyLong_Check($input))
@@ -241,3 +238,60 @@
 }
 
 */
+
+#if defined(SWIGPYTHON)
+%{
+struct internal_usr {
+    PyObject *func;
+    PyObject *usr;
+};
+
+static bool xccdf_policy_model_callback_wrapper(struct xccdf_policy_model *model, char *href, char *id, void *usr)
+{
+    PyGILState_STATE state;
+    PyObject *arglist;
+    PyObject *pymodel;
+    PyObject *func, *usrdata;
+    struct internal_usr *data;
+    PyObject *result;
+    double    dres = 0;
+
+    pymodel = SWIG_NewPointerObj(model, SWIGTYPE_p_xccdf_policy_model, 1);
+    data = (struct internal_usr *)usr;
+    func = data->func;
+    state = PyGILState_Ensure();
+    usrdata = data->usr;
+    arglist = Py_BuildValue("OssO", pymodel, href, id, usrdata);
+    if (!PyCallable_Check(func)) {
+      PyGILState_Release(state);
+      return false;
+    }
+    result = PyEval_CallObject(func,arglist);
+    Py_DECREF(arglist);
+    if (PyObject_IsTrue(result)) {
+        dres = true;
+    } else {
+        dres = false;
+    }
+    Py_XDECREF(result);
+    PyGILState_Release(state);
+    return dres;
+}
+%}
+
+%inline %{
+bool xccdf_policy_model_register_callback_py(struct xccdf_policy_model *model, char *sys, PyObject *func, PyObject *usr) {
+    struct internal_usr *new_usrdata;
+    PyEval_InitThreads();
+    Py_INCREF(func);
+    Py_INCREF(usr);
+    new_usrdata = oscap_alloc(sizeof(struct internal_usr));
+    if (new_usrdata == NULL) return false;
+
+    new_usrdata->func = func;
+    new_usrdata->usr = usr;
+  
+    return xccdf_policy_model_register_callback(model,sys,xccdf_policy_model_callback_wrapper,(void *)new_usrdata);
+}
+%}
+#endif
