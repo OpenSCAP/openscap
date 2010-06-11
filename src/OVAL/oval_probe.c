@@ -180,6 +180,9 @@ struct oval_sysinfo *oval_probe_sysinf_eval(oval_probe_session_t *sess)
         return(sysinf);
 }
 
+static int oval_psess_probe_criteria(oval_probe_session_t *sess, struct oval_criteria_node *cnode);
+static int oval_psess_probe_object(oval_probe_session_t *sess, struct oval_object *object);
+
 int oval_psess_probe_sysinfo(oval_probe_session_t *sess) {
         struct oval_syschar_model *syschar_model;
 	struct oval_sysinfo *sysinfo;
@@ -200,6 +203,7 @@ int oval_psess_probe_objects(oval_probe_session_t *sess)
 {
 	struct oval_syschar_model * syschar_model;
 	struct oval_definition_model *definition_model;
+	int ret;
 
 	syschar_model = sess->sys_model;
 	definition_model = oval_syschar_model_get_definition_model(syschar_model);
@@ -208,19 +212,10 @@ int oval_psess_probe_objects(oval_probe_session_t *sess)
 		struct oval_object_iterator *objects = oval_definition_model_get_objects(definition_model);
 		while (oval_object_iterator_has_more(objects)) {
 			struct oval_object *object = oval_object_iterator_next(objects);
-			char *objid = oval_object_get_id(object);
-			struct oval_syschar *syschar = oval_syschar_model_get_syschar(syschar_model, objid);
-			if (syschar == NULL) {
-				syschar = oval_probe_object_eval(sess, object, 0);
-				if (syschar == NULL) {
-					if(  oscap_err() ) {
-	                                        /* does it make sense to continue? !!!
-						 * return -1 */
-					}
-                                	syschar = oval_syschar_new(syschar_model, object);
-	                                oval_syschar_set_flag(syschar, SYSCHAR_FLAG_NOT_COLLECTED);
-				}
-				oval_syschar_model_add_syschar(syschar_model, syschar);
+			ret = oval_psess_probe_object(sess, object);
+			if( ret != 0 ) {
+				oval_object_iterator_free(objects);
+				return -1;	
 			}
 		}
 		oval_object_iterator_free(objects);
@@ -228,7 +223,103 @@ int oval_psess_probe_objects(oval_probe_session_t *sess)
 	return 0;
 }
 
+
 int oval_psess_probe_definition(oval_probe_session_t *sess, const char *id) {
-	return 0; /* ToDo */
+
+	struct oval_syschar_model * syschar_model;
+        struct oval_definition_model *definition_model;
+	struct oval_definition *definition;
+	int ret;
+
+	syschar_model = sess->sys_model;
+        definition_model = oval_syschar_model_get_definition_model(syschar_model);
+	definition = oval_definition_model_get_definition(definition_model, id);
+
+	struct oval_criteria_node * cnode = oval_definition_get_criteria(definition);
+	if (cnode == NULL)
+		return 0;
+
+	ret = oval_psess_probe_criteria(sess, cnode);
+
+	return ret;
+}
+
+/**
+ * @returns 0 on success
+ */
+static int oval_psess_probe_criteria(oval_probe_session_t *sess, struct oval_criteria_node *cnode) {
+        switch (oval_criteria_node_get_type(cnode)) {
+                /* Criterion node is final node that has reference to test */
+        case OVAL_NODETYPE_CRITERION:{
+                        /* There should be a test .. */
+                        struct oval_test *test = oval_criteria_node_get_test(cnode);
+                        if (test == NULL)
+                                return 0;
+			struct oval_object *object = oval_test_get_object(test);
+			if (object == NULL)
+				return 0;
+                        /* .. probe object and return */
+                        return oval_psess_probe_object(sess, object);
+
+                }
+                break;
+                /* Criteria node is type of set that contains more criterias. Criteria node
+                 * child can be also type of criteria, criterion or extended definition */
+        case OVAL_NODETYPE_CRITERIA:{
+                        int ret;
+                        /* group of criterion nodes, get subnodes, continue recursive */
+                        struct oval_criteria_node_iterator *cnode_it = oval_criteria_node_get_subnodes(cnode);
+                        if (cnode_it == NULL)
+                                return 0;
+                        /* we have subnotes */
+                        struct oval_criteria_node *node;
+                        while (oval_criteria_node_iterator_has_more(cnode_it)) {
+                                node = oval_criteria_node_iterator_next(cnode_it);
+                                ret = oval_psess_probe_criteria(sess, node);
+                                if (ret != 0) {
+                                        oval_criteria_node_iterator_free(cnode_it);
+                                        return -1;
+                                }
+                        }
+                        oval_criteria_node_iterator_free(cnode_it);
+			return 0;
+                }
+                break;
+                /* Extended definition contains reference to definition, we need criteria of this
+                 * definition to be evaluated completely */
+        case OVAL_NODETYPE_EXTENDDEF:{
+                        struct oval_definition *oval_def = oval_criteria_node_get_definition(cnode);
+			struct oval_criteria_node *node =  oval_definition_get_criteria(oval_def);
+                        return oval_psess_probe_criteria(sess, node);
+                }
+                break;
+        }
+	
+	/* we shouldn't get here */
+        return -1;
+}
+
+/**
+ * @returns 0 on success
+ */
+static int oval_psess_probe_object(oval_probe_session_t *sess, struct oval_object *object) {
+	
+	char *objid = oval_object_get_id(object);
+	struct oval_syschar_model *sys_model = sess->sys_model;
+	struct oval_syschar *syschar = oval_syschar_model_get_syschar(sys_model, objid);
+
+	if (syschar == NULL) {
+		syschar = oval_probe_object_eval(sess, object, 0);
+		if (syschar == NULL) {
+			if(  oscap_err() ) {
+		        	/* does it make sense to continue? */
+				 return -1;
+			}
+                       	syschar = oval_syschar_new(sys_model, object);
+	                oval_syschar_set_flag(syschar, SYSCHAR_FLAG_NOT_COLLECTED);
+		}
+		oval_syschar_model_add_syschar(sys_model, syschar);
+	}
+	return 0;
 }
 

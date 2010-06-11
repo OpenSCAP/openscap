@@ -360,7 +360,7 @@ int oval_result_system_eval(struct oval_result_system *sys);
  * @return OVAL_RESULT_INVALID if there was a problem in evaluation. Use \ref ERRORS mechanism to examine the error. Otherwise one of valid
  * values for the evaluation of an OVAL Definitions is returned.
  */
-oval_result_t oval_result_system_eval_definition(struct oval_result_system *sys, char *id);
+oval_result_t oval_result_system_eval_definition(struct oval_result_system *sys, const char *id);
 /**
  * Return <b>true</b> if the result_system instance is valid
  * An oval_result_system is valid if all the following are true

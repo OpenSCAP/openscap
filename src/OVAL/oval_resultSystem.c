@@ -565,7 +565,7 @@ int oval_result_system_eval(struct oval_result_system *sys)
 	return 0;
 }
 
-oval_result_t oval_result_system_eval_definition(struct oval_result_system *sys, char *id)
+oval_result_t oval_result_system_eval_definition(struct oval_result_system *sys, const char *id)
 {
         struct oval_results_model *res_model;
         struct oval_definition_model *definition_model;

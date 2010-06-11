@@ -60,9 +60,9 @@ typedef struct oval_agent_session oval_agent_session_t;
 typedef int (oval_agent_cb_t) (const char *id, oval_result_t result, void *arg);
 
 /**
- * Create new session for OVAL agent from OVAL Definition content
+ * Create new session for OVAL agent from OVAL definition model
  */
-oval_agent_session_t * oval_agent_new_session(const char *file);
+oval_agent_session_t * oval_agent_new_session(struct oval_definition_model * model);
 
 /**
  * Probe the system and evaluate specified definition
@@ -72,7 +72,7 @@ oval_result_t oval_agent_eval_definition(oval_agent_session_t * asess, const cha
 /**
  * Probe and evaluate all definitions from the content, call the callback functions upon single evaluation
  */
-int oval_agent_eval_system(oval_agent_session_t * asess, oval_agent_cb_t * cb);
+int oval_agent_eval_system(oval_agent_session_t * asess, oval_agent_cb_t * cb, void *arg);
 
 /**
  * Get a result model from agent session

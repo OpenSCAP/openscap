@@ -76,8 +76,9 @@ struct oval_agent_session {
 	char *filename;
 	struct oval_definition_model * def_model;
 	struct oval_syschar_model    * sys_model;
-	struct oval_result_model     * res_model;
-	struct oval_probe_session_t  * psess;
+	struct oval_syschar_model    * sys_models[2];
+	struct oval_results_model    * res_model;
+	oval_probe_session_t  * psess;
 };
 
 typedef struct oval_results_model oval_results_model_t;
@@ -1596,24 +1597,78 @@ int oval_results_model_export(struct oval_results_model *results_model,  struct 
 	return ((xmlCode >= 1) ? 1 : -1);
 }
 
-oval_agent_session_t * oval_agent_new_session(const char *file) {
-	/* ToDo */
+oval_agent_session_t * oval_agent_new_session(struct oval_definition_model *model) {
+
+	oval_agent_session_t *asess;
+	int ret;
+	
+	asess = oscap_talloc(oval_agent_session_t);
+	asess->def_model = model;
+	asess->sys_model = oval_syschar_model_new(model);
+	asess->psess     = oval_probe_session_new(asess->sys_model);
+	/* probe sysinfo */
+	ret = oval_psess_probe_sysinfo(asess->psess);
+	if (ret != 0) {
+		oval_probe_session_destroy(asess->psess);
+		oval_syschar_model_free(asess->sys_model);
+		oscap_free(asess);
+		return NULL;
+	}
+	/* one system only */
+	asess->sys_models[0] = asess->sys_model;
+	asess->sys_models[1] = NULL;
+	asess->res_model = oval_results_model_new(model, asess->sys_models);
+	return asess;
 }
 
 oval_result_t oval_agent_eval_definition(oval_agent_session_t * asess, const char *id) {
-	/* ToDo */
+	int ret;
+	struct oval_result_system_iterator *rsystem_it;
+	struct oval_result_system *rsystem;
+
+	/* probe */
+	ret = oval_psess_probe_definition(asess->psess, id);
+	if (ret!=0) 
+		return OVAL_RESULT_INVALID;
+
+	/* take the first system */ 
+	rsystem_it = oval_results_model_get_systems(asess->res_model);
+	rsystem = oval_result_system_iterator_next(rsystem_it);	
+	/* eval */
+	return oval_result_system_eval_definition(rsystem, id);
 }
 
-int oval_agent_eval_system(oval_agent_session_t * asess, oval_agent_cb_t * cb) {
-	/* ToDo */
+int oval_agent_eval_system(oval_agent_session_t * asess, oval_agent_cb_t * cb, void *arg) {
+	struct oval_definition *oval_def;
+	struct oval_definition_iterator *oval_def_it;
+	char   *id;
+	int ret;
+	oval_result_t result;
+	
+	oval_def_it = oval_definition_model_get_definitions(asess->def_model);
+	while (oval_definition_iterator_has_more(oval_def_it)) {
+		oval_def = oval_definition_iterator_next(oval_def_it);
+		id = oval_definition_get_id(oval_def);
+		/* probe and eval */
+		result = oval_agent_eval_definition(asess, id);
+		/* callback */
+		ret = (*cb) (id, result, arg);
+		if ( ret!=0 )
+			return 0;	
+	}
+	oval_definition_iterator_free(oval_def_it);
+	return 0;
 }
 
 struct oval_results_model * oval_agent_get_results_model(oval_agent_session_t * asess) {
-	/* ToDo */
+	return asess->res_model;
 }
 
 void oval_agent_destroy_session(oval_agent_session_t * asess) {
-	/* ToDo */
+	oval_probe_session_destroy(asess->psess);
+	oval_syschar_model_free(asess->sys_model);
+	oval_results_model_free(asess->res_model);
+	oscap_free(asess);
+	asess=NULL;	
 }
-
 
