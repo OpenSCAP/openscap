@@ -354,22 +354,11 @@ bool xccdf_value_binding_add_check_export(struct xccdf_value_binding *, struct x
 
 /**
  * Call the checking engine for each selected rule in given policy structure
- * This function is not present in Python API
  * @param policy given Policy to evaluate
  * @memberof xccdf_policy
  * @return true if evaluation pass or false in case of error
  */
 bool xccdf_policy_evaluate(struct xccdf_policy * policy);
-
-/**
- * Call the checking engine for each selected rule in given policy structure and evaluate
- * rules through given OVAL result system
- * @param policy given Policy to evaluate
- * @param rsystem OVAL Result System
- * @memberof xccdf_policy
- * @return true if evaluation pass or false in case of error
- */
-bool xccdf_policy_evaluate_oval(struct xccdf_policy * policy, struct oval_result_system * rsystem);
 
 /**
  * Resolve benchmark by applying all refine_rules and refine_values to rules / values
