@@ -551,6 +551,7 @@ int SEAP_close (SEAP_CTX_t *ctx, int sd)
         }
 
         dsc = SEAP_desc_get (ctx->sd_table, sd);
+        if (dsc == NULL) return (-1);
         ret = SCH_CLOSE(dsc->scheme, dsc, 0); /* TODO: Are flags usable here? */
 
         protect_errno {
