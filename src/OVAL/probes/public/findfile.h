@@ -44,7 +44,16 @@
 #include "fsdev.h"
 
 #define MTAB_PATH "/etc/mtab"
-#define LOCAL_FILESYSTEMS {"ext2", "ext3", "reiserfs", "xfs", NULL}
+#define LOCAL_FILESYSTEMS { "btrfs",            \
+                        "ext2", "ext3", "ext4", \
+                        "ffs",                  \
+                        "gfs",                  \
+                        "hpfs",                 \
+                        "jfs",                  \
+                        "reiser4", "reiserfs",  \
+                        "ufs",                  \
+                        "xfs",                  \
+                        "zfs", NULL}
 
 /**
  * Search the filesystem according to the specified path, filename and behaviors.
