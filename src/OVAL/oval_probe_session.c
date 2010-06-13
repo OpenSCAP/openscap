@@ -128,7 +128,7 @@ int oval_probe_session_reset(oval_probe_session_t *sess)
         return(-1);
 }
 
-int oval_probe_session_sethandler(oval_probe_session_t *sess, oval_subtype_t *type, oval_probe_handler_t handler, void *ptr)
+int oval_probe_session_sethandler(oval_probe_session_t *sess, oval_subtype_t type, oval_probe_handler_t handler, void *ptr)
 {
         return(-1);
 }

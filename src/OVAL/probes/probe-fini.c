@@ -1,3 +1,8 @@
+/**
+ * @file   probe-fini.c
+ * @brief  file containg the dummy probe_fini function
+ * @author "Daniel Kopecek" <dkopecek@redhat.com>
+ */
 
 /*
  * Copyright 2009 Red Hat Inc., Durham, North Carolina.
@@ -23,6 +28,9 @@
 
 #include "_probe-api.h"
 
+/**
+ * Dummy probe_fini function.
+ */
 void probe_fini(void *arg)
 {
 	(void)arg;

@@ -1,3 +1,12 @@
+/**
+ * @file   inetlisteningserver.c
+ * @brief  inetlisteningserver probe
+ * @author "Steve Grubb" <sgrubb@redhat.com>
+ *
+ * 2010/06/13 dkopecek@redhat.com
+ *  This probe is able to process an inetlisteningserver_object as defined in OVAL 5.4 and 5.5.
+ *
+ */
 
 /*
  * Copyright 2009-2010 Red Hat Inc., Durham, North Carolina.

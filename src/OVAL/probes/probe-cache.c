@@ -1,3 +1,9 @@
+/**
+ * @file   probe-cache.c
+ * @brief  probe cache API implementation
+ * @author "Daniel Kopecek" <dkopecek@redhat.com>
+ */
+
 /*
  * Copyright 2009 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.

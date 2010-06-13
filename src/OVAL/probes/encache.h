@@ -1,3 +1,9 @@
+/**
+ * @file   encache.h
+ * @brief  element name cache API header file
+ * @author "Daniel Kopecek" <dkopecek@redhat.com>
+ */
+
 /*
  * Copyright 2009 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
@@ -30,15 +36,20 @@
 #define ENCACHE_INIT_SIZE 24
 #define ENCACHE_ADD_SIZE  8
 
+/**
+ * Element name cache structure. This structure contains an array
+ * of cached string S-exps representing the names of elements.
+ */
 typedef struct {
-        pthread_rwlock_t lock;
-        SEXP_t **name; /* array of S-exp refs */
-        size_t   real; /* number of cached names */
-        size_t   size; /* pre-allocated size */
+        pthread_rwlock_t lock; /**< pthread read-write lock */
+        SEXP_t **name; /**< array of S-exp refs */
+        size_t   real; /**< number of cached names */
+        size_t   size; /**< pre-allocated size */
 } encache_t;
 
 /**
  * Create new element name cache
+ * @return an empty element name cache
  */
 encache_t *encache_new (void);
 
@@ -57,8 +68,9 @@ void encache_free (encache_t *cache);
  * object and return a reference to it. Reference count
  * of such object will be 2 because the cache hold it's
  * own reference to the object.
- * @param cache
- * @param name
+ * @param cache element name cache
+ * @param name name string
+ * @return S-exp reference to the name string
  */
 SEXP_t *encache_add (encache_t *cache, const char *name);
 
@@ -66,8 +78,9 @@ SEXP_t *encache_add (encache_t *cache, const char *name);
  * Get a reference to an already cached S-exp object. If the
  * object is not found in the cache, it won't be created and
  * NULL will be returned to the caller.
- * @param cache
- * @param name
+ * @param cache element name cache
+ * @param name name string
+ * @return S-exp reference to the name string or NULL if not found
  */
 SEXP_t *encache_get (encache_t *cache, const char *name);
 
@@ -75,8 +88,9 @@ SEXP_t *encache_get (encache_t *cache, const char *name);
  * Get a reference to a cached S-exp object. If the object is
  * not found in the cache, it will be created and the reference
  * this newly created object will be returned to the caller.
- * @param cache
- * @param name
+ * @param cache element name cache
+ * @param name name string
+ * @return S-exp reference to the name string
  */
 SEXP_t *encache_ref (encache_t *cache, const char *name);
 

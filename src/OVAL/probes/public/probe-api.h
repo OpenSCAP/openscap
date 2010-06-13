@@ -386,21 +386,21 @@ size_t probe_ent_getname_r(const SEXP_t * ent, char *buffer, size_t buflen);
  */
 void probe_free(SEXP_t * obj);
 
-#define PROBE_EINVAL     1	/* Invalid type/value/format */
-#define PROBE_ENOELM     2	/* Missing element OBSOLETE: use ENOENT */
-#define PROBE_ENOVAL     3	/* Missing value */
-#define PROBE_ENOATTR    4	/* Missing attribute */
-#define PROBE_EINIT      5	/* Initialization failed */
-#define PROBE_ENOMEM     6	/* No memory */
-#define PROBE_EOPNOTSUPP 7	/* Not supported */
-#define PROBE_ERANGE     8	/* Out of range */
-#define PROBE_EDOM       9	/* Out of domain */
-#define PROBE_EFAULT    10	/* Memory fault/NULL value */
-#define PROBE_EACCES    11	/* Operation not perimitted */
-#define PROBE_ESETEVAL  12	/* Set evaluation failed */
-#define PROBE_ENOENT    13      /* Missing entity */
-#define PROBE_EFATAL   254	/* Unrecoverable error */
-#define PROBE_EUNKNOWN 255	/* Unknown/Unexpected error */
+#define PROBE_EINVAL     1	/**< Invalid type/value/format */
+#define PROBE_ENOELM     2	/**< Missing element OBSOLETE: use ENOENT */
+#define PROBE_ENOVAL     3	/**< Missing value */
+#define PROBE_ENOATTR    4	/**< Missing attribute */
+#define PROBE_EINIT      5	/**< Initialization failed */
+#define PROBE_ENOMEM     6	/**< No memory */
+#define PROBE_EOPNOTSUPP 7	/**< Not supported */
+#define PROBE_ERANGE     8	/**< Out of range */
+#define PROBE_EDOM       9	/**< Out of domain */
+#define PROBE_EFAULT    10	/**< Memory fault/NULL value */
+#define PROBE_EACCES    11	/**< Operation not perimitted */
+#define PROBE_ESETEVAL  12	/**< Set evaluation failed */
+#define PROBE_ENOENT    13      /**< Missing entity */
+#define PROBE_EFATAL   254	/**< Unrecoverable error */
+#define PROBE_EUNKNOWN 255	/**< Unknown/Unexpected error */
 
 #define OVAL_STATUS_UNKNOWN      SYSCHAR_STATUS_UNKNOWN
 #define OVAL_STATUS_ERROR        SYSCHAR_STATUS_ERROR
@@ -408,8 +408,8 @@ void probe_free(SEXP_t * obj);
 #define OVAL_STATUS_DOESNOTEXIST SYSCHAR_STATUS_DOES_NOT_EXIST
 #define OVAL_STATUS_NOTCOLLECTED SYSCHAR_STATUS_NOT_COLLECTED
 
-#define PROBECMD_STE_FETCH 1
-#define PROBECMD_OBJ_EVAL  2
+#define PROBECMD_STE_FETCH 1 /**< State fetch command code */
+#define PROBECMD_OBJ_EVAL  2 /**< Object eval command code */
 
 void *probe_init(void) __attribute__ ((unused));
 void probe_fini(void *) __attribute__ ((unused));

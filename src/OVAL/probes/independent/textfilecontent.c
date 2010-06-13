@@ -1,3 +1,13 @@
+/**
+ * @file   textfilecontent.c
+ * @brief  textfilecontent probe
+ * @author "Tomas Heinrich" <theinric@redhat.com>
+ *
+ * 2010/06/13 dkopecek@redhat.com
+ *  This probe is able to process a textfilecontent_object as defined in OVAL 5.4 and 5.5.
+ *
+ */
+
 /*
  * Copyright 2010 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.

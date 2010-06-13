@@ -29,22 +29,21 @@
 # include "oval_probe_ext.h"
 #endif
 
+/** OVAL probe session structure.
+ * This structure holds all the library side state information associated with
+ * a probe session. A probe session is bound to a system characteristics model
+ * during the initialization and all evaluations are done relative to this model.
+ */
 struct oval_probe_session {
-        /*
-         * probe handlers
-         */
-        oval_phtbl_t *ph;
+        oval_phtbl_t *ph;   /**< probe handler table */
 #if defined(ENABLE_PROBES)
-        oval_pext_t  *pext;
+        oval_pext_t  *pext; /**< state information associated with external probes */
 #else
-        void         *pext;
+        void         *pext; /**< dummy pointer */
 #endif
-        /*
-         * system characteristics model
-         */
-        struct oval_syschar_model *sys_model;
-        char         *dir; /* probe session directory */
-        uint32_t      flg; /* probe session flags */
+        struct oval_syschar_model *sys_model; /**< system characteristics model */
+        char         *dir;  /**< probe session directory */
+        uint32_t      flg;  /**< probe session flags */
 };
 
 #endif /* _OVAL_PROBE_SESSION */

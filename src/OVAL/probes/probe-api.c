@@ -1,6 +1,35 @@
 /**
- * @file
+ * @file   probe-api.c
+ * @brief  Implementation of the probe API
  * @author "Daniel Kopecek" <dkopecek@redhat.com>
+ * @author "Tomas Heinrich" <theinric@redhat.com>
+ *
+ * This file contains functions for manipulating with the S-exp representation
+ * of OVAL objects and items. Currently object and items have the same structure
+ * and the API distinction is just formal. However, the structure can diverge in
+ * the future and the API functions for manipulating with items should be used
+ * only with items and vice versa. The most recent description of the object and
+ * item structure can be found in this file and should be used as the main source
+ * of information for implementing new API functions. In the following text, the
+ * term `element' referers to the general structure which is used to represent
+ * the various components of an OVAL document, particularly the OVAL objects,
+ * items and entities.
+ *
+ * Element structure
+ * -----------------
+ * The basic structure of an element looks like this:
+ *
+ * (foo_object bar)
+ *
+ * `foo_object' is the element name and `bar' is the value of the element. There
+ * can be 0 to n values. In case the element has some attributes set the structure
+ * changes to:
+ *
+ * ((foo_object :attr1 val1) bar)
+ *
+ * where `attr1' is the name of the attribute and `val1' is the attribute's value.
+ * The colon in the attribute name signals that the attribute has a value.
+ *
  */
 
 /*
@@ -23,6 +52,7 @@
  *
  * Authors:
  *      Daniel Kopecek <dkopecek@redhat.com>
+ *      Tomas Heinrich <theinric@redhat.com>
  */
 
 #include <stdarg.h>
@@ -31,58 +61,8 @@
 #include "_probe-api.h"
 
 /*
-This file contains functions for manipulating with the S-exp representation of OVAL objects and items.
-Currently object and items have the same structure and the API distinction is just formal. However, the
-structure can diverge in the future and the API functions for manipulating with items should be used
-only with items and vice versa. The most recent description of the object and item structure can be found
-in this file and should be used as the main source of information for implementing new API functions.
-
-Object structure
-----------------
-
-The basic structure of an object is
-
-   (foo_object bar)
-
-where foo_object is the object's name and bar is the value of this object. The value is optional.
-In the case the object has some attributes the structure is
-
-   ((foo_object :attr1 val1) bar)
-
-where attr1 is the name of the attribute and val1 is the attribute's value. The colon in the
-attribute name signals that this attribute has a value. 
-
-*/
-
-#if 0				/* experimental */
-/*
- * Initialization
- */
-
-int probe_api_init(void)
-{
-	/* initialize name cache */
-	return (0);
-}
-
-int probe_api_deinit(void)
-{
-	/* destroy name cache */
-	return (0);
-}
-#endif
-
-/*
  * items
  */
-
-SEXP_t *probe_item_build(const char *fmt, ...)
-{
-	_LOGCALL_;
-	/* TBI */
-	return (NULL);
-}
-
 SEXP_t *probe_item_creat(const char *name, SEXP_t * attrs, ...)
 {
 	va_list ap;
@@ -226,15 +206,15 @@ int probe_itement_setstatus(SEXP_t *obj, const char *name, uint32_t n, oval_sysc
 {
         SEXP_t *ent_h, *ent_s;
 	_LOGCALL_;
-	
+
         ent_h = probe_item_getent (obj, name, n);
         ent_s = SEXP_unref (ent_h);
-        
+
         _A(ent_s != NULL);
-        
+
         probe_ent_attr_add (ent_s, "status", SEXP_number_newi_32 ((int) status));
         SEXP_free (ent_s);
-        
+
         return (0);
 }
 
@@ -298,13 +278,6 @@ SEXP_t *probe_attr_creat(const char *name, const SEXP_t * val, ...)
 /*
  * objects
  */
-
-SEXP_t *probe_obj_build(const char *fmt, ...)
-{
-	_LOGCALL_;
-	/* TBI */
-	return (NULL);
-}
 
 SEXP_t *probe_obj_creat(const char *name, SEXP_t * attrs, ...)
 {
@@ -794,7 +767,6 @@ oval_syschar_collection_flag_t _probe_cobj_combine_flags(oval_syschar_collection
 /*
  * entities
  */
-
 SEXP_t *probe_ent_creat(const char *name, SEXP_t * attrs, SEXP_t * val, ...)
 {
 	va_list ap;
@@ -1068,7 +1040,7 @@ bool probe_ent_getmask(const SEXP_t * ent)
 int probe_ent_setstatus(SEXP_t * ent, oval_syschar_status_t status)
 {
 	_LOGCALL_;
-        
+
         probe_item_attr_add (ent, "status", SEXP_number_newi_32(status));
 	return (0);
 }
@@ -1077,18 +1049,18 @@ oval_syschar_status_t probe_ent_getstatus(const SEXP_t * ent)
 {
         SEXP_t *val;
         oval_syschar_status_t sta;
-        
+
 	_LOGCALL_;
-	
+
         val = probe_ent_getattrval (ent, "status");
-        
+
         if (val != NULL) {
                 sta = (oval_syschar_status_t) SEXP_number_geti_32 (val);
                 SEXP_free (val);
         } else {
                 sta = OVAL_STATUS_EXISTS;
         }
-        
+
 	return (sta);
 }
 

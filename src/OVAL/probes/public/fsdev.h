@@ -1,3 +1,17 @@
+/**
+ * @addtogroup OVAL
+ * @{
+ * @addtogroup PROBES
+ * Probes and S-expression handling for probe writes.
+ * @{
+ * @addtogroup FINDFILE Find Files
+ *  Auxiliary find_files() function
+ * @{
+ * @{
+ * @file   fsdev.h
+ * @brief  fsdev API public header file
+ * @author "Daniel Kopecek" <dkopecek@redhat.com>
+ */
 
 /*
  * Copyright 2009 Red Hat Inc., Durham, North Carolina.
@@ -29,17 +43,56 @@
 #include <stdint.h>
 #include <sys/stat.h>
 
+/**
+ * Filesystem device structure.
+ */
 typedef struct {
-	dev_t *ids;
-	uint16_t cnt;
+	dev_t *ids;   /**< Sorted array of device ids   */
+	uint16_t cnt; /**< Number of items in the array */
 } fsdev_t;
 
+/**
+ * Initialize the fsdev_t structure from an array of filesystem
+ * names.
+ */
 fsdev_t *fsdev_init(const char **fs, size_t fs_cnt);
+
+/**
+ * Initialize the fsdev_t structure from a string containing filesystem
+ * names.
+ */
 fsdev_t *fsdev_strinit(const char *fs_names);
+
+/**
+ * Free the fsdev_t structure.
+ */
 void fsdev_free(fsdev_t * lfs);
 
+/**
+ * Search an id in the fsdev_t structure.
+ */
 int fsdev_search(fsdev_t * lfs, void *id);
+
+/**
+ * Check whether a path points points to a place on any of the devices
+ * in the fsdev_t structure.
+ * @param lfs pointer to the fsdev_t structure
+ * @param path path
+ * @retval 1 if found
+ * @retval 0 otherwise
+ * @retval -1 error
+ */
 int fsdev_path(fsdev_t * lfs, const char *path);
+
+/**
+ * Check whether a file descriptor is associated with a file that resides
+ * on any of the devices in the fsdev_t structure.
+ * @param lfs pointer to the fsdev_t structure
+ * @param fd file descriptor
+ * @retval 1 if found
+ * @retval 0 otherwise
+ * @retval -1 error
+ */
 int fsdev_fd(fsdev_t * lfs, int fd);
 
 #endif				/* FSDEV_H */

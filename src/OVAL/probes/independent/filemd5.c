@@ -1,3 +1,13 @@
+/**
+ * @file   filemd5.c
+ * @brief  filemd5 probe
+ * @author "Daniel Kopecek" <dkopecek@redhat.com>
+ *
+ * 2010/06/13 dkopecek@redhat.com
+ *  This probe is able to process a filemd5_object as defined in OVAL 5.4 and 5.5.
+ *
+ */
+
 /*
  * Copyright 2009 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.

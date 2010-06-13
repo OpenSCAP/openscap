@@ -1,3 +1,8 @@
+/**
+ * @file   fsdev.c
+ * @brief  fsdev API implementation
+ * @author "Daniel Kopecek" <dkopecek@redhat.com>
+ */
 
 /*
  * Copyright 2009 Red Hat Inc., Durham, North Carolina.
@@ -43,16 +48,30 @@
 
 #include "fsdev.h"
 
+/**
+ * Compare two dev_t variables.
+ */
 static int fsdev_cmp(const void *a, const void *b)
 {
 	return memcmp(a, b, sizeof(dev_t));
 }
 
+/**
+ * Compare two strings.
+ */
 static int fsname_cmp(const void *a, const void *b)
 {
 	return strcmp(a, b);
 }
 
+/**
+ * Search for a filesystem name in a sorted array using binary search.
+ * @param fsname name
+ * @param fs_arr sorted array of filesystem names
+ * @param fs_cnt number of names in the array
+ * @retval 1 if found
+ * @retval 0 otherwise
+ */
 static int match_fs(const char *fsname, const char **fs_arr, size_t fs_cnt)
 {
 	size_t w, s;

@@ -1,3 +1,12 @@
+/**
+ * @file   file.c
+ * @brief  file probe
+ * @author "Daniel Kopecek" <dkopecek@redhat.com>
+ *
+ * 2010/06/13 dkopecek@redhat.com
+ *  This probe is able to process a file_object as defined in OVAL 5.4 and 5.5.
+ *
+ */
 
 /*
  * Copyright 2009 Red Hat Inc., Durham, North Carolina.
@@ -20,7 +29,6 @@
  * Authors:
  *      "Daniel Kopecek" <dkopecek@redhat.com>
  */
-
 #include <seap.h>
 #include <probe-api.h>
 #include <stdlib.h>
@@ -28,6 +36,7 @@
 #include <sys/stat.h>
 #include <pthread.h>
 #include <errno.h>
+#include <limits.h>
 #include "findfile.h"
 
 #ifndef _A
@@ -82,25 +91,6 @@ static SEXP_t *strfiletype (mode_t mode)
         return (NULL);
 }
 
-static int report_missing(SEXP_t *ent)
-{
-	oval_operation_t op;
-        SEXP_t *r0;
-
-        r0 = probe_ent_getattrval(ent, "operation");
-
-        if (r0 == NULL)
-                return (1);
-
-	op = SEXP_number_geti_32 (r0);
-        SEXP_free (r0);
-
-        if (op == OVAL_OPERATION_EQUALS)
-		return (1);
-	else
-		return (0);
-}
-
 struct cbargs {
         SEXP_t *filename_ent;
         SEXP_t *items;
@@ -116,33 +106,12 @@ static int file_cb (const char *p, const char *f, void *ptr)
 
         res = args->items;
 
-        if (f == NULL) {
-		/*
-                if (report_missing (args->filename_ent)) {
-                        SEXP_t *r0;
-
-                        item = probe_obj_creat ("file_item", NULL,
-                                                "path",     NULL, r0 = SEXP_string_newf ("%s", p),
-                                                "filename", NULL, NULL,
-                                                NULL);
-
-                        probe_item_setstatus(item, OVAL_STATUS_DOESNOTEXIST);
-                        probe_itement_setstatus(item, "filename", 1, OVAL_STATUS_DOESNOTEXIST);
-
-                        SEXP_list_add (res, item);
-                        SEXP_free (item);
-
-                        return (0);
-                }
-
-                st_path = p;
-		*/
+        if (f == NULL)
 		return (0);
-        } else {
-                _D("p = \"%s\"; f = \"%s\"\n", p, f);
-                snprintf (path_buffer, sizeof path_buffer, "%s/%s", p, f);
-                st_path = path_buffer;
-        }
+
+        _D("p = \"%s\"; f = \"%s\"\n", p, f);
+        snprintf (path_buffer, sizeof path_buffer, "%s/%s", p, f);
+        st_path = path_buffer;
 
         if (stat (st_path, &st) == -1) {
                 _D("FAIL: errno=%u, %s.\n", errno, strerror (errno));
@@ -274,13 +243,22 @@ void *probe_init (void)
          * Initialize file type string references.
          * (Used by strfiletype())
          */
-        gr_t_reg  = SEXP_string_new ("regular", strlen ("regular"));
-        gr_t_dir  = SEXP_string_new ("directory", strlen ("directory"));
-        gr_t_lnk  = SEXP_string_new ("symbolic link", strlen ("symbolic link"));
-        gr_t_blk  = SEXP_string_new ("block special", strlen ("block special"));
-        gr_t_fifo = SEXP_string_new ("fifo", strlen ("fifo"));
-        gr_t_sock = SEXP_string_new ("socket", strlen ("socket"));
-        gr_t_char = SEXP_string_new ("character special", strlen ("character special"));
+#define STR_REGULAR   "regular"
+#define STR_DIRECTORY "directory"
+#define STR_SYMLINK   "symbolic link"
+#define STR_BLKSPEC   "block special"
+#define STR_FIFO      "fifo"
+#define STR_SOCKET    "socket"
+#define STR_CHARSPEC  "character special"
+#define STRLEN_PAIR(str) (str), strlen(str)
+
+        gr_t_reg  = SEXP_string_new (STRLEN_PAIR(STR_REGULAR));
+        gr_t_dir  = SEXP_string_new (STRLEN_PAIR(STR_DIRECTORY));
+        gr_t_lnk  = SEXP_string_new (STRLEN_PAIR(STR_SYMLINK));
+        gr_t_blk  = SEXP_string_new (STRLEN_PAIR(STR_BLKSPEC));
+        gr_t_fifo = SEXP_string_new (STRLEN_PAIR(STR_FIFO));
+        gr_t_sock = SEXP_string_new (STRLEN_PAIR(STR_SOCKET));
+        gr_t_char = SEXP_string_new (STRLEN_PAIR(STR_CHARSPEC));
 
         /*
          * Initialize mutex.
@@ -422,21 +400,6 @@ SEXP_t *probe_main (SEXP_t *probe_in, int *err, void *mutex)
                 SEXP_list_add (items, r0);
                 SEXP_free (r0);
 
-        } else if (filecnt == 0) {
-                /* not found */
-		/*
-                if (report_missing (filename)) {
-                        r0   = probe_obj_creat ("file_item", NULL,
-                                                "path",     NULL, path,
-                                                NULL);
-
-                        probe_item_setstatus(r0, OVAL_STATUS_DOESNOTEXIST);
-                        probe_itement_setstatus(r0, "path", 1, OVAL_STATUS_DOESNOTEXIST);
-
-                        SEXP_list_add (items, r0);
-                        SEXP_free (r0);
-                }
-		*/
         }
 
         SEXP_free (behaviors);

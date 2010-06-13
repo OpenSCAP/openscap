@@ -1,3 +1,8 @@
+/**
+ * @file   system_info.c
+ * @brief  system_info probe
+ * @author "Tomas Heinrich" <theinric@redhat.com>
+ */
 
 /*
  * Copyright 2009 Red Hat Inc., Durham, North Carolina.

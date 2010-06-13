@@ -1,3 +1,14 @@
+/**
+ * @file   runlevel.c
+ * @brief  runlevel probe
+ * @author "Daniel Kopecek" <dkopecek@redhat.com>
+ * @author "Tomas Heinrich" <theinric@redhat.com>
+ *
+ * 2010/06/13 dkopecek@redhat.com
+ *  This probe is able to process a runlevel_object as defined in OVAL 5.4 and 5.5.
+ *
+ */
+
 /*
  * Copyright 2009 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
@@ -18,6 +29,7 @@
  *
  * Authors:
  *      "Daniel Kopecek" <dkopecek@redhat.com>
+ *      "Tomas Heinrich" <theinric@redhat.com>
  */
 
 /*

@@ -1,3 +1,10 @@
+/**
+ * @file _probe-api.h
+ * @brief probe API private header file
+ * @author "Daniel Kopecek" <dkopecek@redhat.com>
+ * @author "Tomas Heinrich" <theinric@redhat.com>
+ */
+
 /*
  * Copyright 2009 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.

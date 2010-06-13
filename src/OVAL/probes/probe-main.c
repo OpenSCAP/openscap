@@ -1,3 +1,9 @@
+/**
+ * @file   probe-main.c
+ * @brief  common probe entry point
+ * @author "Daniel Kopecek" <dkopecek@redhat.com>
+ * @author "Tomas Heinrich" <theinric@redhat.com>
+ */
 
 /*
  * Copyright 2009 Red Hat Inc., Durham, North Carolina.
@@ -39,19 +45,31 @@
 #define PROBE_SIGEXIT_CLEAN   1
 #define PROBE_SIGEXIT_UNCLEAN 2
 
-volatile int OSCAP_GSYM(sigexit)   = 0;
-SEAP_CTX_t  *OSCAP_GSYM(ctx)       = NULL;
-int          OSCAP_GSYM(sd)        = -1;
-pcache_t    *OSCAP_GSYM(pcache)    = NULL;
-void        *OSCAP_GSYM(probe_arg) = NULL;
-encache_t   *OSCAP_GSYM(encache)   = NULL;
+volatile int OSCAP_GSYM(sigexit)   = 0;    /**< signal exit flag */
+SEAP_CTX_t  *OSCAP_GSYM(ctx)       = NULL; /**< SEAP context */
+int          OSCAP_GSYM(sd)        = -1;   /**< SEAP descriptor */
+pcache_t    *OSCAP_GSYM(pcache)    = NULL; /**< probe item cache */
+void        *OSCAP_GSYM(probe_arg) = NULL; /**< pointer for probe_main, provided by probe_init */
+encache_t   *OSCAP_GSYM(encache)   = NULL; /**< element name cache */
 
 struct id_desc_t OSCAP_GSYM(id_desc);
 
 void *probe_worker(void *arg);
 
-#define MAX_EVAL_DEPTH 8
+#define MAX_EVAL_DEPTH 8 /**< maximum recursion depth for set evaluation */
 
+/**
+ * Fetch states from the library. This function performs the state fetch operation
+ * that is used by the set evaluation function to fetch states that aren't available
+ * in the probe cache. The operation is implemented using a remote synchronous SEAP
+ * command. The fetched states are added to the probe cache by this function.
+ *
+ * @param id_list list of requested state ids
+ * @retval list list of fetched states, the possition in the list corresponds to the
+ *              possition in the id_list
+ * @retval NULL on failure or when some of the ids do not refer to existing states in
+ *              the associated OVAL document
+ */
 static SEXP_t *probe_ste_fetch(SEXP_t * id_list)
 {
 	SEXP_t *res, *ste, *id;
@@ -96,6 +114,15 @@ static SEXP_t *probe_ste_fetch(SEXP_t * id_list)
 	return (res);
 }
 
+/**
+ * Evaluate an OVAL object identified by its id. Using a remote synchronous SEAP command, this function
+ * executes evaluation of an OVAL object which resulst wasn't found in the probe cache. This indirectly
+ * spawns a new thread in the probe process which evaluates the object and stores the result in the probe
+ * cache. That result is not send to the library because it doesn't know how to handle it. Instead, the
+ * result is fetched by this function from the cache and returned to the caller.
+ * @param id the id of the OVAL object to be evaluated
+ * @return the result of the evaluation of the object or NULL on failure
+ */
 static SEXP_t *probe_obj_eval(SEXP_t * id)
 {
 	SEXP_t *res;
@@ -109,6 +136,13 @@ static SEXP_t *probe_obj_eval(SEXP_t * id)
 	return pcache_sexp_get(OSCAP_GSYM(pcache), id);
 }
 
+/**
+ * Combine two collections of items using an operation.
+ * @param cobj1 item collection
+ * @param cobj2 item collection
+ * @param op operation
+ * @return the result of the operation
+ */
 static SEXP_t *probe_set_combine(SEXP_t *cobj1, SEXP_t *cobj2, oval_setobject_operation_t op)
 {
 	char append;
@@ -210,6 +244,12 @@ static SEXP_t *probe_set_combine(SEXP_t *cobj1, SEXP_t *cobj2, oval_setobject_op
 	return res_cobj;
 }
 
+/**
+ * Apply a set of filter on collection of items.
+ * @param cobj item collection
+ * @param filter set (list) of filters
+ * @return collection of items without items that match any of the filters in the input set
+ */
 static SEXP_t *probe_set_apply_filters(SEXP_t *cobj, SEXP_t *filters)
 {
 	int filtered, i;
@@ -310,6 +350,14 @@ static SEXP_t *probe_set_apply_filters(SEXP_t *cobj, SEXP_t *filters)
 	return cobj;
 }
 
+/**
+ * Evaluate a set. This function takes care of evaluating a set of either two other sets
+ * or an object and 0..n filters. Objects are evaluated using the probe_obj_eval function
+ * and filters are fetched using the probe_ste_fetch function.
+ * @param set the set to be evaluated
+ * @param depth maximum recursion depth
+ * @return the result of the evaluation or NULL on failure
+ */
 static SEXP_t *probe_set_eval(SEXP_t * set, size_t depth)
 {
 	SEXP_t *filters_u, *filters_a;
@@ -533,6 +581,11 @@ static SEXP_t *probe_set_eval(SEXP_t * set, size_t depth)
 	return (NULL);
 }
 
+/**
+ * Cleanup function. This function is registered as a exit
+ * hook using the atexit(3) function so as to properly free
+ * all resources used by the probe.
+ */
 static void probe_cleanup(void)
 {
 	probe_fini(OSCAP_GSYM(probe_arg));
@@ -542,6 +595,14 @@ static void probe_cleanup(void)
 	SEAP_CTX_free(OSCAP_GSYM(ctx));
 }
 
+/**
+ * Signal hook. This function is registered as a signal handler
+ * for various signals and its only function is to set a global
+ * flag. This flag is watched by the main loop in the probe and
+ * in case it is set, the probe starts the process of a clean
+ * shutdown or immediately exits in case the flag was set to
+ * PROBE_SIGEXIT_UNCLEAN signaling a fatal error.
+ */
 static void probe_sigexit(int signum)
 {
         switch(signum) {
@@ -558,6 +619,16 @@ static void probe_sigexit(int signum)
         }
 }
 
+/**
+ * Common probe entry point. This is the common main function of all
+ * probe processes that initializes all the stuff needed at probe
+ * runtime. This function also contains the main loop which listens
+ * for new request and in case the result was already evaluated (it is
+ * stored in the item cache) it replies to the request immediately.
+ * In the other case a new thread is spawned which takes care of the
+ * evaluation and reply.
+ * @return 0 on success, error code otherwise
+ */
 int main(void)
 {
 	int ret = EXIT_SUCCESS;
@@ -878,6 +949,10 @@ static int probe_varref_iterate_ctx(struct probe_varref_ctx *ctx)
 	return 1;
 }
 
+/**
+ * Worker thread function. This functions handles the evalution of objects and sets.
+ * @param arg SEAP message with the request which contains the object to be evaluated
+ */
 void *probe_worker(void *arg)
 {
 	int probe_ret;

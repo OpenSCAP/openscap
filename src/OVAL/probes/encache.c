@@ -1,3 +1,9 @@
+/**
+ * @file   encache.c
+ * @brief  element name cache API implementation
+ * @author "Daniel Kopecek" <dkopecek@redhat.com>
+ */
+
 /*
  * Copyright 2009 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
@@ -28,24 +34,46 @@
 #include "common/bfind.h"
 #include "common/assume.h"
 
+/**
+ * Lock cache for reading.
+ * @param c element name cache
+ * @param r return value on failure
+ */
 #define ENCACHE_RLOCK(c,r)                                      \
         do {                                                    \
                 if (pthread_rwlock_rdlock (&(c)->lock) != 0)    \
                         return (r);                             \
         } while (0)
 
+/**
+ * Unlock cache which was previously locked for reading.
+ * @param c element name cache
+ * @return this function calls abort(3) if it is unable to
+ *         unlock the cache so as to prevent a deadlock.
+ */
 #define ENCACHE_RUNLOCK(c)                                      \
         do {                                                    \
                 if (pthread_rwlock_unlock (&(c)->lock) != 0)    \
                         abort ();                               \
         } while (0)
 
+/**
+ * Lock cache for writing.
+ * @param c element name cache
+ * @param r return value on failure
+ */
 #define ENCACHE_WLOCK(c,r)                                      \
         do {                                                    \
                 if (pthread_rwlock_wrlock (&(c)->lock) != 0)    \
                         return (r);                             \
         } while (0)
 
+/**
+ * Unlock cache which was previously locked for writing.
+ * @param c element name cache
+ * @return this function calls abort(3) if it is unable to
+ *         unlock the cache so as to prevent a deadlock.
+ */
 #define ENCACHE_WUNLOCK(c) ENCACHE_RUNLOCK(c)
 
 encache_t *encache_new (void)
@@ -57,11 +85,11 @@ encache_t *encache_new (void)
                 oscap_free (cache);
                 return (NULL);
         }
-        
+
         cache->name = oscap_calloc (ENCACHE_INIT_SIZE, sizeof (SEXP_t *));
         cache->size = ENCACHE_INIT_SIZE;
         cache->real = 0;
-        
+
         return (cache);
 }
 
@@ -70,11 +98,11 @@ void encache_free (encache_t *cache)
         size_t i;
 
         assume_d (cache != NULL, /* void */);
-        
+
         for (i = 0; i < cache->real; ++i)
                 if (cache->name[i] != NULL)
                         SEXP_free (cache->name[i]);
-        
+
         oscap_free (cache->name);
         pthread_rwlock_destroy (&cache->lock);
         oscap_free (cache);
@@ -95,17 +123,17 @@ static int encache_cmp2 (const SEXP_t **a, const SEXP_t **b)
 SEXP_t *encache_add (encache_t *cache, const char *name)
 {
         SEXP_t *ref;
-        
+
         assume_d (cache != NULL, NULL);
         assume_d (name  != NULL, NULL);
-        
+
         ref = SEXP_string_new (name, strlen (name));
-        
+
         if (ref == NULL)
                 return (NULL);
-        
+
         ENCACHE_WLOCK(cache, NULL);
-        
+
         if (cache->size <= cache->real) {
                 cache->size += ENCACHE_ADD_SIZE;
                 cache->name  = oscap_realloc (cache->name, sizeof (SEXP_t *) * cache->size);
@@ -113,35 +141,35 @@ SEXP_t *encache_add (encache_t *cache, const char *name)
 
         assume_d (cache->name != NULL, NULL);
         assume_d (cache->size > cache->real, NULL);
-        
+
         cache->name[cache->real] = ref;
         ++cache->real;
-        
+
         ref = SEXP_ref (ref);
         qsort (cache->name, cache->real, sizeof (SEXP_t *), (int (*)(const void *, const void *)) &encache_cmp2);
-        
+
         ENCACHE_WUNLOCK(cache);
-        
+
         return (ref);
 }
 
 SEXP_t *encache_get (encache_t *cache, const char *name)
 {
         SEXP_t **ref = NULL;
-        
+
         assume_d (cache != NULL, NULL);
         assume_d (name  != NULL, NULL);
-        
+
         ENCACHE_RLOCK(cache, NULL);
-        
+
         if (cache->real > 0) {
                 ref = (SEXP_t **)oscap_bfind (cache->name, cache->real, sizeof (SEXP_t *),
                                               (void *)name, (int (*)(void *, void *))&encache_cmp1);
-                
+
                 if (ref != NULL)
                         ref = (SEXP_t **)SEXP_ref (*ref);
         }
-        
+
         ENCACHE_RUNLOCK(cache);
 
         return ((SEXP_t *)(ref));
@@ -150,14 +178,14 @@ SEXP_t *encache_get (encache_t *cache, const char *name)
 SEXP_t *encache_ref (encache_t *cache, const char *name)
 {
         SEXP_t *ref;
-        
+
         assume_d (cache != NULL, NULL);
         assume_d (name  != NULL, NULL);
 
         ref = encache_get (cache, name);
-        
+
         if (ref == NULL)
                 ref = encache_add (cache, name);
-        
+
         return (ref);
 }

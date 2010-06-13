@@ -1,3 +1,8 @@
+/**
+ * @file   dpkginfo.c
+ * @brief  dpkginfo probe
+ * @author "Pierre Chifflier" <chifflier@edenwall.com>
+ */
 
 /*
  * Copyright 2009 Red Hat Inc., Durham, North Carolina.
