@@ -16,11 +16,11 @@
   </definitions>    
   <tests>
     <file_test version="1" id="oval:1:tst:1" check_exitence="all_exists" check="all" comment="" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-      <object object_ref="oval:gov.irc.rhel5:obj:1"/>
+      <object object_ref="oval:gov.irs.rhel5:obj:1"/>
     </file_test>
 
     <file_test version="1" id="oval:1:tst:2" check_exitence="all_exists" check="all" comment="" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-      <object object_ref="oval:gov.irc.rhel5:obj:2"/>
+      <object object_ref="oval:gov.irs.rhel5:obj:2"/>
     </file_test>
 
   </tests>
