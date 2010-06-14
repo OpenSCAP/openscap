@@ -76,7 +76,6 @@ SEXP_t *oval_value_to_sexp(struct oval_value *val, oval_datatype_t dtype)
 		break;
 	case OVAL_DATATYPE_BOOLEAN:
 		val_sexp = SEXP_number_newb(oval_value_get_boolean(val));
-		SEXP_datatype_set(val_sexp, "bool");
 		break;
 	default:
 		val_sexp = NULL;

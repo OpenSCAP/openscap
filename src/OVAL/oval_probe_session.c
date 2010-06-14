@@ -37,13 +37,23 @@
 #if defined(OSCAP_THREAD_SAFE)
 # include <pthread.h>
 static pthread_once_t __encache_once = PTHREAD_ONCE_INIT;
+#else
+static volatile int __encache_once = 0;
 #endif
 
+/**
+ * Entity name cache exit hook. This hook is registered using
+ * atexit(3) during initialization and ensures that the element
+ * name cache is freed before exit.
+ */
 static void encache_libfree(void)
 {
         encache_free(OSCAP_GSYM(encache));
 }
 
+/**
+ * Initialize element name cache and register an exit hook.
+ */
 static void encache_libinit(void)
 {
         if (OSCAP_GSYM(encache) == NULL) {
@@ -52,21 +62,28 @@ static void encache_libinit(void)
         }
 }
 
+/**
+ * Initialize the element name cache. This function can be called repeatedly
+ * from various probe system entry points to ensure that the cache is initialized.
+ * If OSCAP_THREAD_SAFE is defined at compilation time, the pthread_once call
+ * is used to ensure that the initialization is done just once. Otherwise a
+ * volatile integer flag is used.
+ */
 static void encache_once(void)
 {
 #if defined(OSCAP_THREAD_SAFE)
         if (pthread_once(&__encache_once, &encache_libinit) != 0)
                 abort();
 #else
-        encache_libinit();
+        if (__encache_once == 0) {
+                encache_libinit();
+                __encache_once = 1;
+        }
 #endif
         return;
 }
 #endif /* ENABLE_PROBES */
 
-/*
- * oval_probe_session_
- */
 oval_probe_session_t *oval_probe_session_new(struct oval_syschar_model *model)
 {
         oval_probe_session_t *sess;

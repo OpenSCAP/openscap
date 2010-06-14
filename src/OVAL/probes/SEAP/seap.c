@@ -125,7 +125,11 @@ int SEAP_connect (SEAP_CTX_t *ctx, const char *uri, uint32_t flags)
         }
 
         dsc = SEAP_desc_get (ctx->sd_table, sd);
-        _A(dsc != NULL);
+
+        if (dsc == NULL) {
+                errno = ESRCH;
+                return(-1);
+        }
 
         if (SCH_CONNECT(scheme, dsc, uri + schstr_len + 1, flags) != 0) {
                 _D("FAIL: errno=%u, %s.\n", errno, strerror (errno));
@@ -166,7 +170,11 @@ int SEAP_openfd2 (SEAP_CTX_t *ctx, int ifd, int ofd, uint32_t flags)
         }
 
         dsc = SEAP_desc_get (ctx->sd_table, sd);
-        _A(dsc != NULL);
+
+        if (dsc == NULL) {
+                errno = ESRCH;
+                return(-1);
+        }
 
         if (SCH_OPENFD2(SCH_GENERIC, dsc, ifd, ofd, flags) != 0) {
                 _D("FAIL: errno=%u, %s.\n", errno, strerror (errno));
@@ -202,10 +210,6 @@ static int __SEAP_cmdexec_reply (SEAP_CTX_t *ctx, int sd, SEAP_cmd_t *cmd)
 
         _LOGCALL_;
 
-        res = SEAP_cmd_exec (ctx, sd, SEAP_EXEC_LOCAL,
-                             cmd->code, cmd->args,
-                             SEAP_CMDCLASS_USR, NULL, NULL);
-
         dsc = SEAP_desc_get (ctx->sd_table, sd);
 
         if (dsc == NULL) {
@@ -214,6 +218,10 @@ static int __SEAP_cmdexec_reply (SEAP_CTX_t *ctx, int sd, SEAP_cmd_t *cmd)
                 }
                 return (-1);
         }
+
+        res = SEAP_cmd_exec (ctx, sd, SEAP_EXEC_LOCAL,
+                             cmd->code, cmd->args,
+                             SEAP_CMDCLASS_USR, NULL, NULL);
 
         packet = SEAP_packet_new ();
         cmdrep = SEAP_packet_settype (packet, SEAP_PACKET_CMD);
@@ -540,7 +548,7 @@ int SEAP_write (SEAP_CTX_t *ctx, int sd, SEXP_t *sexp)
 int SEAP_close (SEAP_CTX_t *ctx, int sd)
 {
         SEAP_desc_t *dsc;
-        int ret = 0;
+        int ret;
 
         _A(ctx != NULL);
         _LOGCALL_;
@@ -551,17 +559,21 @@ int SEAP_close (SEAP_CTX_t *ctx, int sd)
         }
 
         dsc = SEAP_desc_get (ctx->sd_table, sd);
-        if (dsc == NULL) return (-1);
+
+        if (dsc == NULL) {
+                errno = EBADF;
+                return (-1);
+        }
+
         ret = SCH_CLOSE(dsc->scheme, dsc, 0); /* TODO: Are flags usable here? */
 
         protect_errno {
                 if (SEAP_desc_del (ctx->sd_table, sd) != 0) {
                         /* something very bad happened */
                         _D("SEAP_desc_del failed\n");
-                        if (ret > 0)
-                                ret = -1;
+                        return(-1);
                 }
         }
 
-        return (ret);
+        return(ret);
 }

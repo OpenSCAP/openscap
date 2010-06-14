@@ -216,7 +216,7 @@ int sch_pipe_connect (SEAP_desc_t *desc, const char *uri, uint32_t flags)
                         _exit (errno);
                 if (dup2 (pfd[1], STDOUT_FILENO) != STDOUT_FILENO)
                         _exit (errno);
-#ifndef NDEBUG
+#ifdef NDEBUG
                 pfd[0] = open ("/dev/null", O_WRONLY);
 
                 if (pfd[0] < 0)
