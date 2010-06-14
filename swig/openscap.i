@@ -48,6 +48,11 @@
     }
 }
 
+%typemap(out) time_t
+{
+    $result = PyLong_FromLong((long)$1);
+}
+
 %typemap (in) void*
 {
     if (PyCObject_Check($input))

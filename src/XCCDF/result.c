@@ -84,6 +84,26 @@ static inline void xccdf_result_free_impl(struct xccdf_item *result)
 		xccdf_item_release(result);
 	}
 }
+
+time_t xccdf_result_get_start_time(const struct xccdf_result* result)
+{
+	return ((struct xccdf_item *)result)->sub.result.start_time;
+}
+
+time_t xccdf_result_get_end_time(const struct xccdf_result* result)
+{
+	return ((struct xccdf_item *)result)->sub.result.end_time;
+}
+
+_Bool xccdf_result_set_start_time(struct xccdf_result* result, time_t start)
+{
+	return (((struct xccdf_item *)result)->sub.result.start_time = start);
+}
+
+_Bool xccdf_result_set_end_time(struct xccdf_result* result, time_t end)
+{
+	return (((struct xccdf_item *)result)->sub.result.end_time = end);
+}
 XCCDF_FREE_GEN(result)
 
 XCCDF_ACCESSOR_STRING(result, test_system)
@@ -325,7 +345,7 @@ struct xccdf_result *xccdf_result_new_parse(xmlTextReaderPtr reader)
 	if (!xccdf_item_process_attributes(res, reader)) goto fail;
 
 	if (xccdf_attribute_has(reader, XCCDFA_END_TIME))
-		res->sub.result.start_time = oscap_get_datetime(xccdf_attribute_get(reader, XCCDFA_END_TIME));
+		res->sub.result.end_time = oscap_get_datetime(xccdf_attribute_get(reader, XCCDFA_END_TIME));
 	else goto fail;
 	res->sub.result.start_time = oscap_get_datetime(xccdf_attribute_get(reader, XCCDFA_START_TIME));
 	res->item.version = xccdf_attribute_copy(reader, XCCDFA_VERSION);
@@ -420,7 +440,23 @@ void xccdf_result_to_dom(struct xccdf_result *result, xmlNode *result_node, xmlD
 	}
 
 	/* Handle attributes */
-	/* start-time and end-time do not appear to be implemented in OpenSCAP */
+	time_t start = xccdf_result_get_start_time(result);
+	if (start) {
+		struct tm *lt = localtime(&start);
+		char timestamp[] = "yyyy-mm-ddThh:mm:ss";
+		snprintf(timestamp, sizeof(timestamp), "%4d-%02d-%02dT%02d:%02d:%02d",
+			 1900 + lt->tm_year, 1 + lt->tm_mon, lt->tm_mday, lt->tm_hour, lt->tm_min, lt->tm_sec);
+		xmlNewProp(result_node, BAD_CAST "start-time", BAD_CAST timestamp);
+	}
+
+	time_t end = xccdf_result_get_end_time(result);
+	if (end) {
+		struct tm *lt = localtime(&end);
+		char timestamp[] = "yyyy-mm-ddThh:mm:ss";
+		snprintf(timestamp, sizeof(timestamp), "%4d-%02d-%02dT%02d:%02d:%02d",
+			 1900 + lt->tm_year, 1 + lt->tm_mon, lt->tm_mday, lt->tm_hour, lt->tm_min, lt->tm_sec);
+		xmlNewProp(result_node, BAD_CAST "end-time", BAD_CAST timestamp);
+	}
 
 	/* Handle children */
 	struct oscap_text_iterator *remarks = xccdf_result_get_remarks(result);
@@ -622,11 +658,13 @@ xmlNode *xccdf_rule_result_to_dom(struct xccdf_rule_result *result, xmlDoc *doc,
             xmlNewProp(result_node, BAD_CAST "role", BAD_CAST XCCDF_ROLE_MAP[role - 1].string);
 
 	time_t date = xccdf_rule_result_get_time(result);
-	struct tm *lt = localtime(&date);
-	char timestamp[] = "yyyy-mm-ddThh:mm:ss";
-	snprintf(timestamp, sizeof(timestamp), "%4d-%02d-%02dT%02d:%02d:%02d",
-		 1900 + lt->tm_year, 1 + lt->tm_mon, lt->tm_mday, lt->tm_hour, lt->tm_min, lt->tm_sec);
-	xmlNewProp(result_node, BAD_CAST "time", BAD_CAST timestamp);
+	if (date) {
+		struct tm *lt = localtime(&date);
+		char timestamp[] = "yyyy-mm-ddThh:mm:ss";
+		snprintf(timestamp, sizeof(timestamp), "%4d-%02d-%02dT%02d:%02d:%02d",
+			 1900 + lt->tm_year, 1 + lt->tm_mon, lt->tm_mday, lt->tm_hour, lt->tm_min, lt->tm_sec);
+		xmlNewProp(result_node, BAD_CAST "time", BAD_CAST timestamp);
+	}
 
 	xccdf_level_t severity = xccdf_rule_result_get_severity(result);
 	if (severity != 0)
