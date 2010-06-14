@@ -288,6 +288,11 @@ SEXP_t *SEAP_cmd_exec (SEAP_CTX_t    *ctx,
 
                 _D("func@%p(res)=%p\n", func, res);
 
+                /* delete command from the wait queue */
+                if (flags & SEAP_EXEC_WQUEUE) {
+                        SEAP_cmdtbl_del(tbl[i], rec);
+                }
+
                 return (res);
         } else {
                 SEAP_cmd_t    *cmdptr;
@@ -357,7 +362,6 @@ SEXP_t *SEAP_cmd_exec (SEAP_CTX_t    *ctx,
                         if (pthread_cond_wait (&h.cond, &h.mtx) != 0) {
                                 abort ();
                         } else {
-
                                 _D("cond return: h.args=%p\n", h.args);
 
                                 if (h.args == NULL)
@@ -367,9 +371,9 @@ SEXP_t *SEAP_cmd_exec (SEAP_CTX_t    *ctx,
                                 else
                                         res = h.args;
 
-                                SEAP_cmdtbl_del(dsc->cmd_w_table, rec);
-                                SEAP_cmdrec_free(rec);
-
+                                /*
+                                 * SEAP_cmdtbl_del(dsc->cmd_w_table, rec);
+                                 */
                                 pthread_mutex_unlock (&(h.mtx));
                                 pthread_cond_destroy (&(h.cond));
                                 pthread_mutex_destroy (&(h.mtx));
