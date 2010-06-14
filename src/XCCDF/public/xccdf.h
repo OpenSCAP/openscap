@@ -337,6 +337,14 @@ struct xccdf_fixtext;
  */
 struct xccdf_reference;
 
+/**
+ * &struct xccdf_value_instance
+ * XCCDF value instance.
+ *
+ * Represents single value (i.e. value properties tied to given selector)
+ * @see xccdf_value
+ */
+struct xccdf_value_instance;
 
 /**
  * @struct xccdf_identity
@@ -1939,6 +1947,64 @@ xccdf_operator_t xccdf_value_get_oper(const struct xccdf_value *value);
 const char *xccdf_value_get_selector(const struct xccdf_value *value);
 /// @memberof xccdf_value
 char *  xccdf_value_get_selected_value(const struct xccdf_value * value);
+/// @memberof xccdf_value
+struct xccdf_value_instance *xccdf_value_get_instance_by_selector(const struct xccdf_value *value, const char *selector);
+/// @memberof xccdf_value
+bool xccdf_value_add_instance(struct xccdf_value *value, struct xccdf_value_instance *instance);
+/// @memberof xccdf_value
+struct xccdf_value_instance_iterator *xccdf_value_get_instances(const struct xccdf_value *item);
+
+
+/// @memberof xccdf_value_instance
+void xccdf_value_instance_free(struct xccdf_value_instance *inst);
+/// @memberof xccdf_value
+struct xccdf_value_instance *xccdf_value_new_instance(struct xccdf_value *val);
+/// @memberof xccdf_value_instance
+const char *xccdf_value_instance_get_selector(const struct xccdf_value_instance *item);
+/// @memberof xccdf_value_instance
+bool xccdf_value_instance_set_selector(struct xccdf_value_instance *obj, const char *newval);
+/// @memberof xccdf_value_instance
+xccdf_value_type_t xccdf_value_instance_get_type(const struct xccdf_value_instance *item);
+/// @memberof xccdf_value_instance
+bool xccdf_value_instance_get_must_match(const struct xccdf_value_instance *item);
+/// @memberof xccdf_value_instance
+bool xccdf_value_instance_set_must_match(struct xccdf_value_instance *obj, bool newval);
+/// @memberof xccdf_value_instance
+bool xccdf_value_instance_get_value_boolean(const struct xccdf_value_instance *inst);
+/// @memberof xccdf_value_instance
+bool xccdf_value_instance_set_value_boolean(struct xccdf_value_instance *inst, bool newval);
+/// @memberof xccdf_value_instance
+xccdf_numeric xccdf_value_instance_get_value_number(const struct xccdf_value_instance *inst);
+/// @memberof xccdf_value_instance
+bool xccdf_value_instance_set_value_number(struct xccdf_value_instance *inst, xccdf_numeric newval);
+/// @memberof xccdf_value_instance
+const char *xccdf_value_instance_get_value_string(const struct xccdf_value_instance *inst);
+/// @memberof xccdf_value_instance
+bool xccdf_value_instance_set_value_string(struct xccdf_value_instance *inst, const char *newval);
+/// @memberof xccdf_value_instance
+bool xccdf_value_instance_get_defval_boolean(const struct xccdf_value_instance *inst);
+/// @memberof xccdf_value_instance
+bool xccdf_value_instance_set_defval_boolean(struct xccdf_value_instance *inst, bool newval);
+/// @memberof xccdf_value_instance
+xccdf_numeric xccdf_value_instance_get_defval_number(const struct xccdf_value_instance *inst);
+/// @memberof xccdf_value_instance
+bool xccdf_value_instance_set_defval_number(struct xccdf_value_instance *inst, xccdf_numeric newval);
+/// @memberof xccdf_value_instance
+const char *xccdf_value_instance_get_defval_string(const struct xccdf_value_instance *inst);
+/// @memberof xccdf_value_instance
+bool xccdf_value_instance_set_defval_string(struct xccdf_value_instance *inst, const char *newval);
+/// @memberof xccdf_value_instance
+xccdf_numeric xccdf_value_instance_get_lower_bound(const struct xccdf_value_instance *inst);
+/// @memberof xccdf_value_instance
+bool xccdf_value_instance_set_lower_bound(struct xccdf_value_instance *inst, xccdf_numeric newval);
+/// @memberof xccdf_value_instance
+xccdf_numeric xccdf_value_instance_get_upper_bound(const struct xccdf_value_instance *inst);
+/// @memberof xccdf_value_instance
+bool xccdf_value_instance_set_upper_bound(struct xccdf_value_instance *inst, xccdf_numeric newval);
+/// @memberof xccdf_value_instance
+const char *xccdf_value_instance_get_match(const struct xccdf_value_instance *inst);
+/// @memberof xccdf_value_instance
+bool xccdf_value_instance_set_match(struct xccdf_value_instance *inst, const char *newval);
 
 /**
  * Return value's parent in the grouping hierarchy.
@@ -1947,92 +2013,6 @@ char *  xccdf_value_get_selected_value(const struct xccdf_value * value);
  */
 struct xccdf_item *xccdf_value_get_parent(const struct xccdf_value *value);
 
-/**
- * Apply a selector on the value.
- * @memberof xccdf_value
- * @param The selector character string.
- * @return whether setting the new selector was successful
- */
-bool xccdf_value_get_set_selector(struct xccdf_item *value, const char *selector);
-
-/**
- * Return the item's value as a string.
- * @memberof xccdf_value
- * @return string value
- * @retval NULL if value is not a string or is not set
- */
-const char *xccdf_value_get_value_string(const struct xccdf_value *value);
-
-/**
- * Return the item's value as a number.
- * @memberof xccdf_value
- * @return numeric value
- * @retval NAN if value is not a number or is not set.
- */
-xccdf_numeric xccdf_value_get_value_number(const struct xccdf_value *value);
-
-/**
- * Return the item's value as a boolean value.
- * Implicit conversion is performed on non-boolean types:
- * value is true for nonempty strings and nonzero numbers.
- * @memberof xccdf_value
- * @return boolean value
- */
-bool xccdf_value_get_value_boolean(const struct xccdf_value *value);
-
-/**
- * Return the item's default value as a string.
- * @memberof xccdf_value
- * @return string value
- * @retval NULL if value is not a string or is not set
- */
-const char *xccdf_value_get_defval_string(const struct xccdf_value *value);
-
-/**
- * Return the item's default value as a number.
- * @memberof xccdf_value
- * @return numeric value
- * @retval NAN if value is not a number or is not set.
- */
-xccdf_numeric xccdf_value_get_defval_number(const struct xccdf_value *value);
-
-/**
- * Return the item's default value as a boolean value.
- * Implicit conversion is performed on non-boolean types:
- * value is true for nonempty strings and nonzero numbers.
- * @memberof xccdf_value
- * @return boolean value
- */
-bool xccdf_value_get_defval_boolean(const struct xccdf_value *value);
-
-/**
- * Return upper limit for the numeric value.
- * @memberof xccdf_value
- * @retval NAN if value is not a number or lower limit is not set.
- */
-xccdf_numeric xccdf_value_get_lower_bound(const struct xccdf_value *value);
-
-/**
- * Return lower limit for the numeric value.
- * @memberof xccdf_value
- * @retval NAN if value is not a number or upper limit is not set.
- */
-xccdf_numeric xccdf_value_get_upper_bound(const struct xccdf_value *value);
-
-/**
- * Regex the values should match.
- * @memberof xccdf_value
- * @retval NULL if regex was not set or the value is not a string.
- */
-const char *xccdf_value_get_match(const struct xccdf_value *value);
-
-/**
- * Return mustMatch property.
- * Returns whether value must match conditions given by choices,
- * or these are just hints.
- * @memberof xccdf_value
- */
-bool xccdf_value_get_must_match(const struct xccdf_value *value);
 
 /// @memberof xccdf_status
 time_t xccdf_status_get_date(const struct xccdf_status *status);

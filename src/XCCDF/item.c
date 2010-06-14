@@ -1107,7 +1107,7 @@ struct xccdf_value_instance * xccdf_value_instance_clone(const struct xccdf_valu
 		assert(false);
 	}
 	
-	clone->must_match = val->must_match;
+	clone->flags.must_match = val->flags.must_match;
 	return clone;
 }
 
@@ -1120,20 +1120,20 @@ struct xccdf_value_item * xccdf_value_item_clone(const struct xccdf_value_item *
 	clone->oper = item->oper;
 	
 	//the rest need deep copy
-	clone->selector = oscap_strdup(item->selector);
-	clone->value = xccdf_value_instance_clone(item->value, item->type);
+	//clone->selector = oscap_strdup(item->selector);
+	//clone->value = xccdf_value_instance_clone(item->value, item->type);
 	//this assumes the values list is a list of xccdf_value_instance objects of each type and that the
 	//lists do not have mixed types.
 	switch(clone->type)
 	{
 		case XCCDF_TYPE_STRING:
-			clone->values = oscap_htable_clone(item->values, (oscap_clone_func) xccdf_value_instance_clone_str);
+			clone->instances = oscap_list_clone(item->instances, (oscap_clone_func) xccdf_value_instance_clone_str);
 			break;
 		case XCCDF_TYPE_NUMBER:
-			clone->values = oscap_htable_clone(item->values, (oscap_clone_func) xccdf_value_instance_clone_numeric);
+			clone->instances = oscap_list_clone(item->instances, (oscap_clone_func) xccdf_value_instance_clone_numeric);
 			break;
 		case XCCDF_TYPE_BOOLEAN:
-			clone->values = oscap_htable_clone(item->values, (oscap_clone_func) xccdf_value_instance_clone_bool);
+			clone->instances = oscap_list_clone(item->instances, (oscap_clone_func) xccdf_value_instance_clone_bool);
 			break;
 	}
 	clone->sources = oscap_list_clone(item->sources, (oscap_clone_func) oscap_strdup);

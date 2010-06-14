@@ -113,10 +113,11 @@ union xccdf_value_unit {
 
 /* This structure is used for multiple-count attributes for Item (0-n) */
 struct xccdf_value_instance {
+	char *selector;
+	xccdf_value_type_t type;                    /* Value::type */
 	union xccdf_value_unit value;               /* Value::value   */
 	union xccdf_value_unit defval;              /* Value::default */
 	struct oscap_list *choices;                 /* Value::choices */
-	bool must_match;                            /* */
 	union {
 		struct {
 			xccdf_numeric lower_bound;
@@ -126,15 +127,20 @@ struct xccdf_value_instance {
 			char *match;
 		} s;
 	} limits;
+	struct {
+		bool value_given : 1;
+		bool defval_given : 1;
+		bool must_match_given : 1;
+		bool must_match : 1;
+	} flags;
 };
 
 struct xccdf_value_item {
 	xccdf_value_type_t type;                    /* Value::type */
 	xccdf_interface_hint_t interface_hint;      /* Value::interfaceHint */
 	xccdf_operator_t oper;                      /* Value::operator */
-	char *selector;
 
-	struct oscap_list *values; // TODO: to list
+	struct oscap_list *instances;
 	struct oscap_list *sources;                 /* Value::source */
 };
 
