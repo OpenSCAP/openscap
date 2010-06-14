@@ -7,39 +7,61 @@
         <description></description>
       </metadata>
       <criteria>
-        <criteria operator="ONE">
+        <criteria operator="AND">
           <criterion test_ref="oval:1:tst:1"/>
+          <criterion test_ref="oval:1:tst:2"/>
         </criteria>
       </criteria>
     </definition>
   </definitions>    
   <tests>
-    <file_test version="1" id="oval:1:tst:1" check_exitence="all_exists" check="all" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+    <file_test version="1" id="oval:1:tst:1" check_exitence="all_exists" check="all" comment="" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <object object_ref="oval:gov.irc.rhel5:obj:1"/>
+    </file_test>
+
+    <file_test version="1" id="oval:1:tst:2" check_exitence="all_exists" check="all" comment="" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
       <object object_ref="oval:gov.irc.rhel5:obj:2"/>
     </file_test>
+
   </tests>
   <objects>
     <file_object version="1" id="oval:gov.irs.rhel5:obj:1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
       <set set_operator="UNION" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-        <object_reference>oval:gov.irs.rhel5:obj:2</object_reference>
+        <object_reference>oval:gov.irs.rhel5:obj:3</object_reference>
         <filter>oval:gov.irs.rhel5:ste:1</filter>
+        <filter>oval:gov.irs.rhel5:ste:2</filter>
+      </set>
+    </file_object>    
+
+    <file_object version="1" id="oval:gov.irs.rhel5:obj:2" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <set set_operator="UNION" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+        <object_reference>oval:gov.irs.rhel5:obj:4</object_reference>
         <filter>oval:gov.irs.rhel5:ste:2</filter>
         <filter>oval:gov.irs.rhel5:ste:3</filter>
       </set>
     </file_object>    
-    <file_object comment="/tmp" version="1" id="oval:gov.irs.rhel5:obj:2" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+
+    <file_object comment="/var/run" version="1" id="oval:gov.irs.rhel5:obj:3" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
       <behaviors resurse="symlinks and directories" recurse_direction="down"/>
-      <path>/etc</path>
+      <path>/var/run</path>
       <filename operation="pattern match">.*</filename>
     </file_object>    
+
+    <file_object comment="/etc/default" version="1" id="oval:gov.irs.rhel5:obj:4" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <behaviors resurse="symlinks and directories" recurse_direction="down"/>
+      <path>/etc/default</path>
+      <filename operation="pattern match">.*</filename>
+    </file_object>
   </objects>
   <states>
     <file_state version="1" id="oval:gov.irs.rhel5:ste:1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
       <group_id>1234</group_id>
     </file_state>
+
     <file_state version="1" id="oval:gov.irs.rhel5:ste:2" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
       <user_id>1234</user_id>
     </file_state>
+
     <file_state version="1" id="oval:gov.irs.rhel5:ste:3" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
       <sgid datatype="boolean">true</sgid>
     </file_state>
