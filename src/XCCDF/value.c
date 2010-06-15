@@ -103,7 +103,7 @@ char *  xccdf_value_instance_get_value(const struct xccdf_value_instance * val)
         switch (val->type) {
             case XCCDF_TYPE_BOOLEAN:
                     selected = malloc(sizeof(char));
-                    sprintf(selected, "%b", val->value.b);
+                    sprintf(selected, "%d", val->value.b);
                     break;
             case XCCDF_TYPE_NUMBER:
                     // TODO: compatibility issue: what precision should be here ?
@@ -191,6 +191,23 @@ struct xccdf_item *xccdf_value_parse(xmlTextReaderPtr reader, struct xccdf_item 
 	return value;
 }
 
+static void xccdf_unit_node(struct oscap_list *list, xccdf_value_type_t type, union xccdf_value_unit u, bool given,
+						xmlNs *ns, const char *elname, const char *selector)
+{
+	if (!given) return;
+	xmlNode *node = xmlNewNode(ns, BAD_CAST elname);
+	if (selector) xmlNewProp(node, BAD_CAST "selector", BAD_CAST selector);
+
+	switch (type) {
+	case XCCDF_TYPE_STRING: xmlNodeSetContent(node, BAD_CAST u.s); break;
+	case XCCDF_TYPE_NUMBER: /* TODO */ break;
+	case XCCDF_TYPE_BOOLEAN: /* TODO */ break;
+	default: assert(false);
+	}
+
+	oscap_list_add(list, node);
+}
+
 void xccdf_value_to_dom(struct xccdf_value *value, xmlNode *value_node, xmlDoc *doc, xmlNode *parent)
 {
 	xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent, XCCDF_BASE_NAMESPACE);
@@ -209,52 +226,39 @@ void xccdf_value_to_dom(struct xccdf_value *value, xmlNode *value_node, xmlDoc *
 		xmlNewProp(value_node, BAD_CAST "type", BAD_CAST XCCDF_VALUE_TYPE_MAP[type - 1].string);
 
 	if (xccdf_value_get_interactive(value))
-		xmlNewProp(value_node, BAD_CAST "interactive", BAD_CAST "True");
+		xmlNewProp(value_node, BAD_CAST "interactive", BAD_CAST "true");
 
 	xccdf_interface_hint_t hint = xccdf_value_get_interface_hint(value);
 	if (hint != XCCDF_IFACE_HINT_NONE)
 		xmlNewProp(value_node, BAD_CAST "interfaceHint", BAD_CAST XCCDF_IFACE_HINT_MAP[hint - 1].string);
 
-	/* Handle Child Nodes */
-	/*
-	const char *val_str = xccdf_value_get_value_string(value);
-	xmlNode *val_node = xmlNewChild(parent, ns_xccdf, BAD_CAST "value", BAD_CAST val_str);
-	const char *selector = xccdf_value_get_selector(value);
-	if (selector)
-		xmlNewProp(val_node, BAD_CAST "Selector", BAD_CAST selector);
+	struct oscap_list *value_nodes       = oscap_list_new();
+	struct oscap_list *defval_nodes      = oscap_list_new();
+	struct oscap_list *choices_nodes     = oscap_list_new();
+	struct oscap_list *lower_bound_nodes = oscap_list_new();
+	struct oscap_list *upper_bound_nodes = oscap_list_new();
+	struct oscap_list *match_nodes       = oscap_list_new();
 
-	const char *defval_str = xccdf_value_get_defval_string(value);
-	xmlNode *defval_node = xmlNewChild(parent, ns_xccdf, BAD_CAST "default", BAD_CAST defval_str);
-	const char *defval_selector = xccdf_value_get_selector(value);
-	if (defval_selector)
-		xmlNewProp(defval_node, BAD_CAST "Selector", BAD_CAST defval_selector);
+	OSCAP_FOR(xccdf_value_instance, inst, xccdf_value_get_instances(value)) {
+		xccdf_unit_node(value_nodes, inst->type, inst->value, inst->flags.value_given, ns_xccdf, "value", inst->selector);
+		xccdf_unit_node(defval_nodes, inst->type, inst->defval, inst->flags.defval_given, ns_xccdf, "default", inst->selector);
+		xccdf_unit_node(lower_bound_nodes, inst->type, (union xccdf_value_unit) inst->limits.n.lower_bound,
+			inst->type == XCCDF_TYPE_NUMBER && inst->limits.n.lower_bound != NAN, ns_xccdf, "lower_bound", inst->selector);
+		xccdf_unit_node(upper_bound_nodes, inst->type, (union xccdf_value_unit) inst->limits.n.upper_bound,
+			inst->type == XCCDF_TYPE_NUMBER && inst->limits.n.upper_bound != NAN, ns_xccdf, "upper_bound", inst->selector);
+		xccdf_unit_node(match_nodes, inst->type, (union xccdf_value_unit) inst->limits.s.match,
+			inst->type == XCCDF_TYPE_STRING && inst->limits.s.match != NULL, ns_xccdf, "match", inst->selector);
+		// TODO choices
+	}
 
-	const char *match = xccdf_value_get_match(value);
-	xmlNode *match_node = xmlNewChild(parent, ns_xccdf, BAD_CAST "match", BAD_CAST match);
-	const char *match_selector = xccdf_value_get_selector(value);
-	if (match_selector)
-		xmlNewProp(match_node, BAD_CAST "Selector", BAD_CAST match_selector);
+	struct oscap_list *all_nodes = oscap_list_destructive_join(oscap_list_destructive_join(value_nodes, defval_nodes),
+			oscap_list_destructive_join(oscap_list_destructive_join(match_nodes, lower_bound_nodes),
+			                            oscap_list_destructive_join(upper_bound_nodes, choices_nodes)));
 
-	xccdf_numeric lower_val = xccdf_value_get_lower_bound(value);
-	char lower_str[10];
-	*lower_str = '\0';
-	snprintf(lower_str, sizeof(lower_str), "%f", lower_val);
-	xmlNode *lower_node = xmlNewChild(parent, ns_xccdf, BAD_CAST "lower-bound", BAD_CAST lower_str);
-	const char *lower_selector = xccdf_value_get_selector(value);
-	if (lower_selector)
-		xmlNewProp(lower_node, BAD_CAST "Selector", BAD_CAST lower_selector);
-
-	xccdf_numeric upper_val = xccdf_value_get_upper_bound(value);
-	char upper_str[10];
-	*upper_str = '\0';
-	snprintf(upper_str, sizeof(upper_str), "%f", upper_val);
-	xmlNode *upper_node = xmlNewChild(parent, ns_xccdf, BAD_CAST "upper-bound", BAD_CAST upper_str);
-	const char *upper_selector = xccdf_value_get_selector(value);
-	if (upper_selector)
-		xmlNewProp(upper_node, BAD_CAST "Selector", BAD_CAST upper_selector);
-	*/
-
-	// No support for choices in OpenSCAP
+	struct oscap_iterator *it = oscap_iterator_new(all_nodes);
+	while (oscap_iterator_has_more(it)) xmlAddChild(value_node, oscap_iterator_next(it));
+	oscap_iterator_free(it);
+	oscap_list_free(all_nodes, NULL);
 	
 	struct oscap_string_iterator *sources = xccdf_value_get_sources(value);
 	while (oscap_string_iterator_has_more(sources)) {
@@ -429,6 +433,7 @@ XCCDF_VALUE_GETTER(xccdf_operator_t, oper)
 XCCDF_VALUE_IGETTER(value_instance, instances)
 XCCDF_SIGETTER(value, sources)
 XCCDF_ITERATOR_GEN_S(value)
+OSCAP_ITERATOR_GEN(xccdf_value_instance)
 
 
 struct xccdf_value_instance *xccdf_value_instance_new(xccdf_value_type_t type)
@@ -438,8 +443,8 @@ struct xccdf_value_instance *xccdf_value_instance_new(xccdf_value_type_t type)
 	switch (type) {
 	case XCCDF_TYPE_NUMBER:
 		inst->value.n = inst->defval.n = NAN;	//TODO: REPLACE WITH ANSI
-		inst->limits.n.lower_bound = -INFINITY;	//TODO: REPLACE WITH ANSI
-		inst->limits.n.upper_bound = INFINITY;	//TODO: REPLACE WITH ANSI
+		inst->limits.n.lower_bound = NAN;	//TODO: REPLACE WITH ANSI
+		inst->limits.n.upper_bound = NAN;	//TODO: REPLACE WITH ANSI
 		break;
 	case XCCDF_TYPE_STRING:
 	case XCCDF_TYPE_BOOLEAN:

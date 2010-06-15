@@ -24,7 +24,7 @@
 #include "item.h"
 #include "helpers.h"
 #include "../common/tsort.h"
-
+#include <math.h>
 
 typedef void (*xccdf_textresolve_func)(void *child, void *parent);
 
@@ -80,6 +80,7 @@ bool xccdf_benchmark_resolve(struct xccdf_benchmark *benchmark)
 // prototypes
 static void xccdf_resolve_textlist(struct oscap_list *child_list, struct oscap_list *parent_list, xccdf_textresolve_func more);
 static void xccdf_resolve_appendlist(struct oscap_list **child_list, struct oscap_list *parent_list, oscap_cmp_func item_compare, oscap_clone_func cloner, bool prepend);
+static void xccdf_resolve_value_instance(struct xccdf_value_instance *child, struct xccdf_value_instance *parent);
 static void xccdf_resolve_profile(struct xccdf_item *child, struct xccdf_item *parent);
 static void xccdf_resolve_group(struct xccdf_item *child, struct xccdf_item *parent);
 static void xccdf_resolve_rule(struct xccdf_item *child, struct xccdf_item *parent);
@@ -284,6 +285,7 @@ static void xccdf_resolve_rule(struct xccdf_item *child, struct xccdf_item *pare
 	xccdf_resolve_textlist(child->sub.rule.fixtexts, parent->sub.rule.fixtexts, (xccdf_textresolve_func)xccdf_resolve_fixtext);
 }
 
+
 static void xccdf_resolve_value(struct xccdf_item *child, struct xccdf_item *parent)
 {
 	if (xccdf_value_get_interface_hint(XVALUE(child)) == 0)
@@ -291,5 +293,52 @@ static void xccdf_resolve_value(struct xccdf_item *child, struct xccdf_item *par
 	if (xccdf_value_get_oper(XVALUE(child)) == 0)
 		xccdf_value_set_oper(child, xccdf_value_get_oper(XVALUE(parent)));
 	
+	struct xccdf_value_instance *inst_child;
+	OSCAP_FOR(xccdf_value_instance, inst_parent, xccdf_value_get_instances(XVALUE(parent))) {
+		inst_child = xccdf_value_get_instance_by_selector(XVALUE(child), xccdf_value_instance_get_selector(inst_parent));
+		if (inst_child == NULL) xccdf_value_add_instance(XVALUE(child), xccdf_value_instance_clone(inst_parent));
+		else xccdf_resolve_value_instance(inst_child, inst_parent);
+	}
 }
 
+static inline void xccdf_transfer_value_unit(union xccdf_value_unit *tgt, union xccdf_value_unit src, xccdf_value_type_t type)
+{
+	assert(tgt != NULL);
+
+	switch (type) {
+	case XCCDF_TYPE_STRING: oscap_free(tgt->s); tgt->s = oscap_strdup(src.s); break;
+	case XCCDF_TYPE_NUMBER: tgt->n = src.n; break;
+	case XCCDF_TYPE_BOOLEAN: tgt->b = src.b; break;
+	default: assert(false);
+	}
+}
+
+static void xccdf_resolve_value_instance(struct xccdf_value_instance *child, struct xccdf_value_instance *parent)
+{
+	assert(child != NULL);
+	assert(parent != NULL);
+	assert(oscap_streq(child->selector, parent->selector));
+	if (parent->type != child->type) return;
+	
+	if (!child->flags.value_given)
+		xccdf_transfer_value_unit(&child->value, parent->value, child->type);
+	if (!child->flags.defval_given)
+		xccdf_transfer_value_unit(&child->defval, parent->defval, child->type);
+	if (child->type == XCCDF_TYPE_STRING && child->limits.s.match == NULL)
+		xccdf_value_instance_set_match(child, xccdf_value_instance_get_match(parent));
+	if (child->type == XCCDF_TYPE_NUMBER) {
+		if (child->limits.n.lower_bound == NAN)
+			child->limits.n.lower_bound = parent->limits.n.lower_bound;
+		if (child->limits.n.upper_bound == NAN)
+			child->limits.n.upper_bound = parent->limits.n.upper_bound;
+	}
+
+	struct oscap_iterator *it = oscap_iterator_new(parent->choices);
+	while (oscap_iterator_has_more(it)) {
+		union xccdf_value_unit *unit = oscap_iterator_next(it);
+		void *unitclone = oscap_alloc(sizeof(union xccdf_value_unit));
+		xccdf_transfer_value_unit(unitclone, *unit, child->type);
+		oscap_list_add(child->choices, unitclone);
+	}
+	oscap_iterator_free(it);
+}

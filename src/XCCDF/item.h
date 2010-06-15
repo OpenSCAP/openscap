@@ -462,10 +462,7 @@ struct xccdf_group_item * xccdf_group_item_clone(const struct xccdf_group_item *
 union xccdf_value_unit xccdf_value_unit_clone_str(const union xccdf_value_unit unit);
 union xccdf_value_unit xccdf_value_unit_clone_numeric(const union xccdf_value_unit unit);
 union xccdf_value_unit xccdf_value_unit_clone_bool(const union xccdf_value_unit unit);
-struct xccdf_value_instance * xccdf_value_instance_clone_str(const struct xccdf_value_instance * val);
-struct xccdf_value_instance * xccdf_value_instance_clone_numeric(const struct xccdf_value_instance * val);
-struct xccdf_value_instance * xccdf_value_instance_clone_bool(const struct xccdf_value_instance * val);
-struct xccdf_value_instance * xccdf_value_instance_clone(const struct xccdf_value_instance * val, xccdf_value_type_t type);
+struct xccdf_value_instance * xccdf_value_instance_clone(const struct xccdf_value_instance * val);
 struct xccdf_value_item * xccdf_value_item_clone(const struct xccdf_value_item * item);
 struct xccdf_result_item * xccdf_result_item_clone(const struct xccdf_result_item * item);
 struct xccdf_ident * xccdf_ident_clone(const struct xccdf_ident * ident);

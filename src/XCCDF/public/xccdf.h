@@ -584,6 +584,13 @@ struct xccdf_override_iterator;
 struct xccdf_rule_result_iterator;
 
 /**
+ * @struct xccdf_value_instance_iterator
+ * Value instance iterator.
+ * @see oscap_iterator
+ */
+struct xccdf_value_instance_iterator;
+
+/**
  * @struct xccdf_score_iterator
  * Override iterator.
  * @see oscap_iterator
@@ -1383,6 +1390,23 @@ bool xccdf_rule_result_iterator_has_more(struct xccdf_rule_result_iterator *it);
  * @memberof xccdf_rule_result_iterator
  */
 void xccdf_rule_result_iterator_free(struct xccdf_rule_result_iterator *it);
+
+
+/**
+ * Return the next xccdf_value_instance structure from the list and increment the iterator
+ * @memberof xccdf_value_instance_iterator
+ */
+struct xccdf_value_instance *xccdf_value_instance_iterator_next(struct xccdf_value_instance_iterator *it);
+/**
+ * Return true if the list is not empty, false otherwise
+ * @memberof xccdf_value_instance_iterator
+ */
+bool xccdf_value_instance_iterator_has_more(struct xccdf_value_instance_iterator *it);
+/**
+ * Free the iterator structure (it makes no changes to the list structure)
+ * @memberof xccdf_value_instance_iterator
+ */
+void xccdf_value_instance_iterator_free(struct xccdf_value_instance_iterator *it);
 
 
 /**

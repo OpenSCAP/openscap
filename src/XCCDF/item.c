@@ -1065,6 +1065,7 @@ union xccdf_value_unit xccdf_value_unit_clone_bool(const union xccdf_value_unit 
 	return val;
 }
 
+/*
 struct xccdf_value_instance * xccdf_value_instance_clone_str(const struct xccdf_value_instance * val)
 {
 	return xccdf_value_instance_clone(val, XCCDF_TYPE_STRING);
@@ -1079,12 +1080,13 @@ struct xccdf_value_instance * xccdf_value_instance_clone_bool(const struct xccdf
 {
 	return xccdf_value_instance_clone(val, XCCDF_TYPE_BOOLEAN);
 }
+*/
 
-struct xccdf_value_instance * xccdf_value_instance_clone(const struct xccdf_value_instance * val, xccdf_value_type_t type)
+struct xccdf_value_instance * xccdf_value_instance_clone(const struct xccdf_value_instance * val)
 {
 	struct xccdf_value_instance * clone = oscap_calloc(1, sizeof(struct xccdf_value_instance));
 	
-	switch (type) {
+	switch (val->type) {
 	case XCCDF_TYPE_STRING:
 		clone->value.s = oscap_strdup(val->value.s);
 		clone->defval.s = oscap_strdup(val->defval.s);
@@ -1107,7 +1109,7 @@ struct xccdf_value_instance * xccdf_value_instance_clone(const struct xccdf_valu
 		assert(false);
 	}
 	
-	clone->flags.must_match = val->flags.must_match;
+	clone->flags = val->flags;
 	return clone;
 }
 
@@ -1122,20 +1124,7 @@ struct xccdf_value_item * xccdf_value_item_clone(const struct xccdf_value_item *
 	//the rest need deep copy
 	//clone->selector = oscap_strdup(item->selector);
 	//clone->value = xccdf_value_instance_clone(item->value, item->type);
-	//this assumes the values list is a list of xccdf_value_instance objects of each type and that the
-	//lists do not have mixed types.
-	switch(clone->type)
-	{
-		case XCCDF_TYPE_STRING:
-			clone->instances = oscap_list_clone(item->instances, (oscap_clone_func) xccdf_value_instance_clone_str);
-			break;
-		case XCCDF_TYPE_NUMBER:
-			clone->instances = oscap_list_clone(item->instances, (oscap_clone_func) xccdf_value_instance_clone_numeric);
-			break;
-		case XCCDF_TYPE_BOOLEAN:
-			clone->instances = oscap_list_clone(item->instances, (oscap_clone_func) xccdf_value_instance_clone_bool);
-			break;
-	}
+	oscap_list_clone(item->instances, (oscap_clone_func) xccdf_value_instance_clone);
 	clone->sources = oscap_list_clone(item->sources, (oscap_clone_func) oscap_strdup);
 	return clone;
 }
