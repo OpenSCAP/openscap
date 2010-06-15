@@ -31,7 +31,7 @@ TMPDIR=$(mktemp -d)
 PREFIX="$$-$(date +%H%M)"
 echo "=== ID: $PREFIX === CMD: $COMM ==="
 
-SEAP_DEBUGLOG_DISABLE=1 SEXP_VALIDATE_DISABLE=1 $VG $VGOPT --log-file="$TMPDIR/output.%p" -- $COMM
+SEAP_DEBUGLOG_DISABLE=1 SEXP_VALIDATE_DISABLE=1 $VG $VGOPT --log-file="$TMPDIR/output.%p" -- $COMM > /dev/null 2>&1
 
 c=0
 LOG=()
