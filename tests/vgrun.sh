@@ -33,6 +33,10 @@ echo "=== ID: $PREFIX === CMD: $COMM ==="
 
 SEAP_DEBUGLOG_DISABLE=1 SEXP_VALIDATE_DISABLE=1 $VG $VGOPT --log-file="$TMPDIR/output.%p" -- $COMM > /dev/null 2>&1
 
+if (( $? == 134 )); then
+    exit 134
+fi
+
 c=0
 LOG=()
 
@@ -77,14 +81,15 @@ for log in "$TMPDIR"/output.*; do
 done
 
 for ((i=0; i < ${#LOG[@]}; i++)); do
-    num_le="$(grep -c "lost in loss record"      "${LOG[$i]}")"
-    num_ir="$(grep -c "invalid read of size"     "${LOG[$i]}")"
-    num_iw="$(grep -c "invalid write of size"    "${LOG[$i]}")"
-    num_ij="$(grep -c "conditional jump depends" "${LOG[$i]}")"
+    num_le="$(egrep -ci "(lost in loss record|still reachable in loss record)"      "${LOG[$i]}")"
+    num_ir="$(grep -ci "invalid read of size"     "${LOG[$i]}")"
+    num_iw="$(grep -ci "invalid write of size"    "${LOG[$i]}")"
+    num_ij="$(grep -ci "conditional jump or move depends" "${LOG[$i]}")"
+    num_iv="$(grep -ci "use of uninitialized value" "${LOG[$i]}")"
 
-    sum=$(($num_le + $num_ir + $num_iw + $num_ij))
+    sum=$(($num_le + $num_ir + $num_iw + $num_ij + $num_iv))
 
-    printf '[ %28s ] leaks=%3d, inv.r/w=%3d/%3d, inv.jumps=%3d ...... E= %d\n' "${CMD[i]}" $num_le $num_ir $num_iw $num_ij $sum
+    printf '[ %28s ] leaks=%3d, inv.r/w=%3d/%3d, inv.jumps=%3d, inv.vals=%3d .... E= %d\n' "${CMD[i]}" $num_le $num_ir $num_iw $num_ij $num_iv $sum
 
     if (( $sum == 0 )); then
         rm "${LOG[$i]}"

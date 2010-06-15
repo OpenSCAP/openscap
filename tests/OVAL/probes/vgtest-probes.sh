@@ -1,12 +1,25 @@
-#!/bin/sh
+#!/usr/bin/env bash
+
+VGTEST_TMPDIR="/tmp/vgtest"
+
+if [[ ! -d "$VGTEST_TMPDIR" ]]; then
+    mkdir -p "$VGTEST_TMPDIR" || exit 1
+fi
+
+for xmlgen in OVAL/probes/test_probes_*.xml.sh; do
+    bash "$xmlgen" > "$VGTEST_TMPDIR/$(basename "$xmlgen" | sed 's|.sh$||')" 2> /dev/null
+done
+
+for xml in OVAL/probes/*.xml; do
+    cp "$xml" "$VGTEST_TMPDIR"
+done
 
 export OVAL_PROBE_DIR="`pwd`/../src/OVAL/probes/"
 echo ""
 echo "---------------- Valgrind checks -----------------"
-./vgrun.sh "./test_probes OVAL/probes/file-set2.xml /dev/null"
-./vgrun.sh "./test_probes OVAL/probes/test_probes_file.xml /dev/null"
-./vgrun.sh "./test_probes OVAL/probes/test_probes_textfilecontent54.xml /dev/null"
-./vgrun.sh "./test_probes OVAL/probes/test_probes_family.xml /dev/null"
+for xml in "$VGTEST_TMPDIR"/*.xml; do
+    ./vgrun.sh "./test_probes $xml /dev/null"
+done
 echo "--------------------------------------------------"
 
 exit 0
