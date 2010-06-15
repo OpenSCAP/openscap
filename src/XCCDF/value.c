@@ -95,6 +95,29 @@ static union xccdf_value_unit xccdf_value_get(const char *str, xccdf_value_type_
 	return val;
 }
 
+char *  xccdf_value_instance_get_value(const struct xccdf_value_instance * val)
+{
+        char * selected = NULL;
+        if (val == NULL)
+            return NULL;
+        switch (val->type) {
+            case XCCDF_TYPE_BOOLEAN:
+                    selected = malloc(sizeof(char));
+                    sprintf(selected, "%b", val->value.b);
+                    break;
+            case XCCDF_TYPE_NUMBER:
+                    // TODO: compatibility issue: what precision should be here ?
+                    selected = malloc(5*sizeof(char));
+                    sprintf(selected, "%.5f", val->value.n);
+                    break;
+            case XCCDF_TYPE_STRING:
+                    selected = oscap_strdup(val->value.s);
+                    break;
+        }
+
+        return selected;
+}
+
 struct xccdf_item *xccdf_value_parse(xmlTextReaderPtr reader, struct xccdf_item *parent)
 {
 	if (xccdf_element_get(reader) != XCCDFE_VALUE)

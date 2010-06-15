@@ -2005,6 +2005,8 @@ bool xccdf_value_instance_set_upper_bound(struct xccdf_value_instance *inst, xcc
 const char *xccdf_value_instance_get_match(const struct xccdf_value_instance *inst);
 /// @memberof xccdf_value_instance
 bool xccdf_value_instance_set_match(struct xccdf_value_instance *inst, const char *newval);
+/// @memberof xccdf_value_instance
+char *  xccdf_value_instance_get_value(const struct xccdf_value_instance * val);
 
 /**
  * Return value's parent in the grouping hierarchy.

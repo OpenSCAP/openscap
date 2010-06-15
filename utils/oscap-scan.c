@@ -97,8 +97,10 @@ char *app_curl_download(char *url);
 
 struct usr_s {
 
+        int verbose;
 	struct oval_result_system *rsystem;
 	char *result_id;
+        struct oval_agent_session *asess;
 };
 
 /**
@@ -291,15 +293,47 @@ char *app_curl_download(char *url)
 }
 
 #ifdef ENABLE_XCCDF
-static bool callback(struct xccdf_policy_model *model, const char *rule_id, const char *id, void *usr)
+static bool callback(struct xccdf_policy_model *model, const char *rule_id, const char *id, struct xccdf_value_binding_iterator * it, void *usr)
 {
-	oval_result_t result;
-	struct oval_result_definition *def = oval_result_system_get_definition(((struct usr_s *)usr)->rsystem, (char *)id);
-	if (def == NULL)
-		return false;
 
-	result = oval_result_definition_eval(def);
-	printf("Definition \"%s\" result: %s\n", id, oval_result_get_text(result));
+        int verbose = ((struct usr_s *) usr)->verbose;
+        struct oval_agent_session * session = ((struct usr_s *) usr)->asess;
+
+        /* Get the definition model from OVAL agent session */
+        struct oval_definition_model * def_model = oval_results_model_get_definition_model(oval_agent_get_results_model(session));
+
+        while(xccdf_value_binding_iterator_has_more(it)) {
+
+            struct xccdf_value_binding * binding = xccdf_value_binding_iterator_next(it);
+            char * name = xccdf_value_binding_get_name(binding);
+            char * value = xccdf_value_binding_get_value(binding);
+            struct oval_variable * variable = oval_definition_model_get_variable(def_model, name);
+
+            if (variable != NULL) {
+
+                struct oval_value_iterator * value_it = oval_variable_get_values(variable);
+                if (oval_value_iterator_has_more(value_it)) { /* We have conflict here */
+                    if (verbose >= 2) printf("CONFLICT FOUND !!\n");
+                    /* TODO: conflict */
+                    /*oval_agent_destroy_session(session);
+                    ((struct usr_s *) usr)->asess = oval_agent_new_session(def_model);*/
+                } else {
+                    struct oval_variable_model * var_model = oval_variable_model_new();
+                    oval_datatype_t o_type = oval_variable_get_datatype(variable);
+                    oval_variable_model_add(var_model,
+                                            name,
+                                            "Unknown", o_type, value);
+                    oval_definition_model_bind_variable_model(def_model, var_model);
+                }
+
+            } else if (verbose >= 0) fprintf(stderr, "VARIABLE %s DOES NOT EXIST\n", name);
+        }
+
+        
+	oval_result_t result;
+	result = oval_agent_eval_definition(session, id);
+
+	if (verbose > 0) printf("Definition \"%s::%s\" result: %s\n", rule_id, id, oval_result_get_text(result));
 
 	/* Add result to Policy Model */
 	struct xccdf_result *ritem;
@@ -493,10 +527,10 @@ int main(int argc, char **argv)
                     policy = xccdf_policy_iterator_next(policy_it);
 
                     /* Get Variable model from XCCDF and add it to OVAL */
-                    var_model = xccdf_policy_get_variables(policy, def_model);
+                    //var_model = xccdf_policy_get_variables(policy, def_model);
 
                     /* Add model to definition model */
-                    oval_definition_model_bind_variable_model(def_model, var_model);
+                    //oval_definition_model_bind_variable_model(def_model, var_model);
             }
 
             xccdf_policy_iterator_free(policy_it);
@@ -675,9 +709,11 @@ int main(int argc, char **argv)
 	/* ========== XCCDF ========== */
 	if (f_XCCDF != NULL) {	/* We have XCCDF specified */
 
-		struct usr_s *usr = malloc(sizeof(struct usr_s *));
+		struct usr_s *usr = malloc(sizeof(struct usr_s));
 		usr->rsystem = rsystem;
 		usr->result_id = "oscap_scan-test";	/* ID of TestResult in XCCDF model */
+                usr->asess = oval_agent_new_session(def_model);
+                usr->verbose = verbose;
 
 		/* New TestResult structure */
 		struct xccdf_result *ritem = xccdf_result_new();
@@ -699,6 +735,7 @@ int main(int argc, char **argv)
 		if (policy != NULL) xccdf_policy_evaluate(policy);
 		/* xccdf_benchmark_free(benchmark); << You can't free benchmark here cause it's still bound to policy model */
 		/* oscap_text_free(title); << You can't free title here cause it's bound to result model that is freed by policy model */
+                oval_agent_destroy_session(usr->asess);
 		free(usr);
 
                 struct oval_sysinfo * sysinfo = oval_syschar_model_get_sysinfo(sys_model);
@@ -726,9 +763,7 @@ int main(int argc, char **argv)
                 }
                 oval_sysint_iterator_free(sysint_it);
                 /* TODO: Here will come score system export to result */
-		/*struct oscap_export_target *target = oscap_export_target_new_file("xccdf_result.xml", "UTF-8");
-                xccdf_result_export(ritem, target);
-		oscap_export_target_free(target);*/
+                //xccdf_result_export(ritem, "xccdf_result.xml");
 	}
 #endif
 	if (f_Results != NULL) {

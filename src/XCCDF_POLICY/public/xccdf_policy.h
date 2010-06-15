@@ -35,8 +35,6 @@
 #include <time.h>
 #include <oscap.h>
 #include <xccdf.h>
-#include <oval_definitions.h>
-#include <oval_results.h>
  
 /**
  * @struct xccdf_policy_model
@@ -55,6 +53,8 @@ struct xccdf_policy;
  * Value bindings of policy
  */
 struct xccdf_value_binding;
+
+struct xccdf_value_binding_iterator;
 
 /**
  * @struct xccdf_policy_iterator
@@ -133,6 +133,7 @@ void xccdf_policy_export_results(struct xccdf_policy *, char *scoring_model_name
 
 /**
  * Function to register callback for checking system
+ * For Python use xccdf_policy_model_register_callback_py
  * @param model XCCDF Policy Model
  * @param sys String representing given checking system
  * @param func Callback - pointer to function called by XCCDF Policy system when rule parsed
@@ -203,32 +204,39 @@ struct xccdf_profile * xccdf_policy_get_profile(const struct xccdf_policy *);
 struct xccdf_select_iterator * xccdf_policy_get_rules(const struct xccdf_policy *);
 
 /**
- * Get refine value from value bindings
+ * Get variable name from value bindings
  * @memberof xccdf_value_binding
- * @return xccdf_refine_value
+ * @return String
  */
-struct xccdf_refine_value * xccdf_value_binding_get_refine_value(const struct xccdf_value_binding *);
+char * xccdf_value_binding_get_name(const struct xccdf_value_binding *);
 
 /**
- * Get set value from value bindings
+ * Get value from value bindings
  * @memberof xccdf_value_binding
- * @return xccdf_setvalue
+ * @return String
  */
-struct xccdf_setvalue * xccdf_value_binding_get_set_value(const struct xccdf_value_binding *);
+char * xccdf_value_binding_get_value(const struct xccdf_value_binding *);
 
 /**
- * get value (element value) from value bindings
+ * get variable type from value bindings
  * @memberof xccdf_value_binding
- * @return xccdf_value
+ * @return xccdf_value_type_t
  */
-struct xccdf_value * xccdf_value_binding_get_rule_value(const struct xccdf_value_binding *);
+xccdf_value_type_t xccdf_value_binding_get_type(const struct xccdf_value_binding *);
 
 /**
- * get check export elements from value bindings
+ * get Value operator from value bindings
  * @memberof xccdf_value_binding
- * @return xccdf_check_export_iterator
+ * @return xccdf_operator_t
  */
-struct xccdf_check_export_iterator * xccdf_value_binding_get_check_exports(const struct xccdf_value_binding *);
+xccdf_operator_t xccdf_value_binding_get_operator(const struct xccdf_value_binding *);
+
+/**
+ * get Set Value from value bindings
+ * @memberof xccdf_value_binding
+ * @return String
+ */
+char * xccdf_value_binding_get_setvalue(const struct xccdf_value_binding *);
 
 /**
  * Get results of all XCCDF Policy results
@@ -268,7 +276,7 @@ struct xccdf_policy * xccdf_policy_model_get_policy_by_id(struct xccdf_policy_mo
  * @see oval_variable_model
  * @memberof xccdf_policy
  */
-struct oval_variable_model * xccdf_policy_get_variables(struct xccdf_policy * policy, struct oval_definition_model * def_model);
+//struct oval_variable_model * xccdf_policy_get_variables(struct xccdf_policy * policy, struct oval_definition_model * def_model);
 
 /************************************************************/
 /** @} End of Getters group */
@@ -300,21 +308,21 @@ bool xccdf_policy_add_rule(struct xccdf_policy *, struct xccdf_select *);
  * @memberof xccdf_value_binding
  * @return true if rule has been added succesfully
  */
-bool xccdf_value_binding_add_refine_rule(struct xccdf_value_binding *, struct xccdf_refine_rule *);
+//bool xccdf_value_binding_add_refine_rule(struct xccdf_value_binding *, struct xccdf_refine_rule *);
 
 /**
  * Add refine value to the Value Binding structure
  * @memberof xccdf_value_binding
  * @return true if rule has been added succesfully
  */
-bool xccdf_value_binding_add_refine_value(struct xccdf_value_binding *, struct xccdf_refine_value *);
+//bool xccdf_value_binding_add_refine_value(struct xccdf_value_binding *, struct xccdf_refine_value *);
 
 /**
  * Add value to the Value Binding structure
  * @memberof xccdf_value_binding
  * @return true if rule has been added succesfully
  */
-bool xccdf_value_binding_add_setvalue(struct xccdf_value_binding *, struct xccdf_setvalue *);
+//bool xccdf_value_binding_add_setvalue(struct xccdf_value_binding *, struct xccdf_setvalue *);
 
 /**
  * Set a new selector to the Policy structure
@@ -341,7 +349,7 @@ bool xccdf_policy_add_value(struct xccdf_policy *, struct xccdf_value_binding *)
  * @memberof xccdf_value_binding
  * @return true if rule has been added succesfully
  */
-bool xccdf_value_binding_add_check_export(struct xccdf_value_binding *, struct xccdf_check_export *);
+//bool xccdf_value_binding_add_check_export(struct xccdf_value_binding *, struct xccdf_check_export *);
 
 /************************************************************/
 /** @} End of Setters group */
