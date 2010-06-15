@@ -62,6 +62,7 @@ struct oval_sysinfo *oval_sysinfo_new(struct oval_syschar_model *model)
 
 bool oval_sysinfo_is_valid(struct oval_sysinfo * sysinfo)
 {
+        oscap_dprintf("WARNING: NOOP.\n");
 	return true;		//TODO
 }
 

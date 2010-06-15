@@ -54,11 +54,13 @@ struct oval_message *oval_message_new()
 
 bool oval_message_is_valid(struct oval_message * message)
 {
+        oscap_dprintf("WARNING: NOOP.\n");
 	return true;		//TODO
 }
 
 bool oval_message_is_locked(struct oval_message * message)
 {
+        oscap_dprintf("WARNING: NOOP.\n");
 	return false;		//TODO
 }
 

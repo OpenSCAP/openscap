@@ -209,8 +209,10 @@ bool oval_result_test_is_valid(struct oval_result_test * result_test)
 	struct oval_test *test;
 	struct oval_result_item_iterator *rslt_items_itr;
 
-	if (result_test == NULL)
+	if (result_test == NULL) {
+                oscap_dprintf("WARNING: argument is not valid: NULL.\n");
 		return false;
+        }
 
 	/* validate test */
 	test = oval_result_test_get_test(result_test);

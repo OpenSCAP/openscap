@@ -100,6 +100,7 @@ struct oval_reference *oval_reference_new(struct oval_definition_model *model)
 
 bool oval_reference_is_valid(struct oval_reference * ref)
 {
+        oscap_dprintf("WARNING: NOOP.\n");
 	return true;		//TODO
 }
 

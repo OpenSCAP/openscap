@@ -123,6 +123,7 @@ struct oval_sysint *oval_sysint_new(struct oval_syschar_model *model)
 
 bool oval_sysint_is_valid(struct oval_sysint * sysint)
 {
+        oscap_dprintf("WARNING: NOOP.\n");
 	return true;		//TODO
 }
 

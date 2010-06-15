@@ -167,8 +167,10 @@ bool oval_syschar_is_valid(struct oval_syschar * syschar)
 	struct oval_object *object;
 	struct oval_sysdata_iterator *sysdatas_itr;
 
-	if (syschar == NULL)
+	if (syschar == NULL) {
+                oscap_dprintf("WARNING: argument is not valid: NULL.\n");
 		return false;
+        }
 
 	/* validate object */
 	object = oval_syschar_get_object(syschar);

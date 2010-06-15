@@ -34,6 +34,7 @@
 #include "oval_collection_impl.h"
 #include "oval_agent_api_impl.h"
 #include "../common/util.h"
+#include "common/debug_priv.h"
 #include "../common/public/debug.h"
 
 typedef struct oval_state {
@@ -159,8 +160,10 @@ bool oval_state_is_valid(struct oval_state * state)
 	struct oval_state_content_iterator *contents_itr;
 	*/
 
-	if (state == NULL)
+	if (state == NULL) {
+                oscap_dprintf("WARNING: argument is not valid: NULL.\n");
 		return false;
+        }
 	/*
 	contents_itr = oval_state_get_contents(state);
 	while (oval_state_content_iterator_has_more(contents_itr)) {

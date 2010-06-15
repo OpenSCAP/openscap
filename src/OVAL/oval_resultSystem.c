@@ -70,8 +70,10 @@ bool oval_result_system_is_valid(struct oval_result_system * result_system)
 	struct oval_result_test_iterator *rslt_tests_itr;
 	struct oval_syschar_model *syschar_model;
 
-	if (result_system == NULL)
+	if (result_system == NULL) {
+                oscap_dprintf("WARNING: argument is not valid: NULL.\n");
 		return false;
+        }
 
 	/* validate syschar_model */
 	syschar_model = oval_result_system_get_syschar_model(result_system);

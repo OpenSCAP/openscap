@@ -62,8 +62,15 @@ struct oval_sysitem *oval_sysitem_new(struct oval_syschar_model *model)
 
 bool oval_sysitem_is_valid(struct oval_sysitem * sysitem)
 {
-	if (sysitem == NULL)
+	if (sysitem == NULL) {
+                oscap_dprintf("WARNING: argument is not valid: NULL.\n");
 		return false;
+        }
+
+        if (oval_sysitem_get_datatype(sysitem) == OVAL_DATATYPE_UNKNOWN) {
+                oscap_dprintf("WARNING: argument is not valid: datatype == OVAL_DATATYPE_UNKNOWN.\n");
+                return false;
+        }
 
 	return true;
 }

@@ -68,8 +68,15 @@ bool oval_sysdata_is_valid(struct oval_sysdata * sysdata)
 	bool is_valid = true;
 	struct oval_sysitem_iterator *sysitems_itr;
 
-	if (sysdata == NULL)
+	if (sysdata == NULL) {
+                oscap_dprintf("WARNING: argument is not valid: NULL.\n");
 		return false;
+        }
+
+        if (oval_sysdata_get_subtype(sysdata) == OVAL_SUBTYPE_UNKNOWN) {
+                oscap_dprintf("WARNING: argument is not valid: subtype == OVAL_SUBTYPE_UNKNOWN.\n");
+                return false;
+        }
 
 	/* validate sysitems */
 	sysitems_itr = oval_sysdata_get_items(sysdata);

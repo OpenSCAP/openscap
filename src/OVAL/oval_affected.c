@@ -122,6 +122,7 @@ struct oval_affected *oval_affected_new(struct oval_definition_model *model)
 
 bool oval_affected_is_valid(struct oval_affected * affected)
 {
+        oscap_dprintf("WARNING: NOOP.\n");
 	return true;		//TODO
 }
 

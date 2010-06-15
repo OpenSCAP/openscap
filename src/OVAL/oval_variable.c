@@ -243,7 +243,40 @@ struct oval_variable *oval_variable_new(struct oval_definition_model *model, cha
 
 bool oval_variable_is_valid(struct oval_variable * variable)
 {
-	return true;		//TODO
+        oval_variable_type_t type;
+
+        if (variable == NULL) {
+                oscap_dprintf("WARNING: argument is not valid: NULL.\n");
+                return false;
+        }
+
+        if (oval_variable_get_datatype(variable) == OVAL_DATATYPE_UNKNOWN) {
+                oscap_dprintf("WARNING: argument is not valid: datatype == OVAL_DATATYPE_UNKNOWN.\n");
+                return false;
+        }
+
+        type = oval_variable_get_type(variable);
+        switch (type) {
+        case OVAL_VARIABLE_EXTERNAL:
+                break;
+        case OVAL_VARIABLE_CONSTANT:
+                break;
+        case OVAL_VARIABLE_LOCAL:
+                {
+                        oval_variable_LOCAL_t *var = (oval_variable_LOCAL_t *) variable;
+
+                        if (var->component == NULL) {
+                                oscap_dprintf("WARNING: argument is not valid: component == NULL.\n");
+                                return false;
+                        }
+                }
+                break;
+        default:
+                oscap_dprintf("WARNING: argument is not valid: wrong variable type: %d.\n", type);
+                return false;
+        }
+
+	return true;
 }
 
 bool oval_variable_is_locked(struct oval_variable * variable)

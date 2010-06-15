@@ -171,8 +171,10 @@ bool oval_object_content_is_valid(struct oval_object_content * object_content)
 {
 	oval_object_content_type_t type;
 
-	if (object_content == NULL)
+	if (object_content == NULL) {
+                oscap_dprintf("WARNING: argument is not valid: NULL.\n");
 		return false;
+        }
 
 	type = oval_object_content_get_type(object_content);
 	switch (type) {
@@ -195,6 +197,7 @@ bool oval_object_content_is_valid(struct oval_object_content * object_content)
 		}
 		break;
 	default:
+                oscap_dprintf("WARNING: argument is not valid: wrong object content type: %d.\n", type);
 		return false;
 	}
 

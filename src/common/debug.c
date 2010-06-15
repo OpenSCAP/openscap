@@ -83,7 +83,7 @@ void __oscap_dprintf(const char *file, const char *fn, size_t line, const char *
 		ut = time(NULL);
 		st = ctime(&ut);
 
-		fprintf(__debuglog_fp, "=============== LOG: %.24s ===============\n", st);
+		fprintf(__debuglog_fp, "\n=============== LOG: %.24s ===============\n", st);
                 atexit(&__oscap_debuglog_close);
 	}
 

@@ -63,8 +63,10 @@ bool oval_result_item_is_valid(struct oval_result_item * result_item)
 {
 	struct oval_sysdata *sysdata;
 
-	if (result_item == NULL)
+	if (result_item == NULL) {
+                oscap_dprintf("WARNING: argument is not valid: NULL.\n");
 		return false;
+        }
 
 	sysdata = oval_result_item_get_sysdata(result_item);
 	if (oval_sysdata_is_valid(sysdata) != true)

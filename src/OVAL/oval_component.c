@@ -668,6 +668,7 @@ struct oval_component *oval_component_new(struct oval_definition_model *model, o
 
 bool oval_component_is_valid(struct oval_component * component)
 {
+        oscap_dprintf("WARNING: NOOP.\n");
 	return true;		//TODO
 }
 

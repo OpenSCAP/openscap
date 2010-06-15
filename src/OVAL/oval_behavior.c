@@ -107,8 +107,10 @@ struct oval_behavior *oval_behavior_clone(struct oval_definition_model *new_mode
 
 bool oval_behavior_is_valid(struct oval_behavior * behavior)
 {
-	if (behavior == NULL)
+	if (behavior == NULL) {
+                oscap_dprintf("WARNING: argument is not valid: NULL");
 		return false;
+        }
 
 	return true;
 }

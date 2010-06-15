@@ -156,7 +156,26 @@ struct oval_entity *oval_entity_new(struct oval_definition_model *model)
 
 bool oval_entity_is_valid(struct oval_entity * entity)
 {
-	return true;		//TODO
+        if (entity == NULL) {
+                oscap_dprintf("WARNING: argument is not valid: NULL.\n");
+                return false;
+        }
+        /* todo: currently the entity type is not parsed
+        if (oval_entity_get_type(entity) == OVAL_ENTITY_TYPE_UNKNOWN) {
+                oscap_dprintf("WARNING: argument is not valid: type == OVAL_ENTITY_TYPE_UNKNOWN.\n");
+                return false;
+        }
+        */
+        if (oval_entity_get_datatype(entity) == OVAL_DATATYPE_UNKNOWN) {
+                oscap_dprintf("WARNING: argument is not valid: datatype == OVAL_DATATYPE_UNKNOWN.\n");
+                return false;
+        }
+        if (oval_entity_get_operation(entity) == OVAL_OPERATION_UNKNOWN) {
+                oscap_dprintf("WARNING: argument is not valid: operation == OVAL_OPERATION_UNKNOWN.\n");
+                return false;
+        }
+
+	return true;
 }
 
 bool oval_entity_is_locked(struct oval_entity * entity)

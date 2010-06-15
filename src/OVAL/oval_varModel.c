@@ -45,6 +45,11 @@ typedef struct _oval_variable_model_frame {
 	oval_datatype_t datatype;
 } _oval_variable_model_frame_t;
 
+typedef struct oval_variable_model {
+	struct oval_string_map *varmap;
+	bool is_locked;
+} oval_variable_model_t;
+
 static _oval_variable_model_frame_t *_oval_variable_model_frame_new(char *id, const char *comm, oval_datatype_t datatype);
 static int _oval_variable_model_parse_tag(xmlTextReader * reader, struct oval_parser_context *context,
 					  struct oval_variable_model *model);
@@ -57,6 +62,7 @@ static int _oval_variable_model_parse_variables(xmlTextReader * reader, struct o
 						struct oval_variable_model *model);
 static int _oval_variable_model_parse(struct oval_variable_model *model, xmlTextReader * reader, void *user_param);
 static int _oval_generator_parse_tag(xmlTextReader * reader, struct oval_parser_context *context, char *label);
+
 static _oval_variable_model_frame_t *_oval_variable_model_frame_new(char *id, const char *comm, oval_datatype_t datatype)
 {
 	_oval_variable_model_frame_t *frame = (_oval_variable_model_frame_t *) oscap_alloc(sizeof(_oval_variable_model_frame_t));
@@ -69,29 +75,34 @@ static _oval_variable_model_frame_t *_oval_variable_model_frame_new(char *id, co
 	return frame;
 }
 
-typedef struct oval_variable_model {
-	struct oval_string_map *varmap;
-	bool is_locked;
-} oval_variable_model_t;
-
 bool oval_variable_model_is_valid(struct oval_variable_model *variable_model)
 {
+        bool is_valid = true;
+	struct oval_string_iterator *varids_itr;
 
-	struct oval_string_iterator *varids = oval_variable_model_get_variable_ids(variable_model);
-	while (oval_string_iterator_has_more(varids)) {
-		char *varid = oval_string_iterator_next(varids);
-		oval_datatype_t datatype = oval_variable_model_get_datatype(variable_model, varid);
-		if ((oval_variable_model_get_comment(variable_model, varid) == NULL) || 
-                    (oval_string_map_get_value(variable_model->varmap, varid) == NULL) ||
-                    (varid == NULL)) {
-                    oval_string_iterator_free(varids);
-                    return false;
+	if (variable_model == NULL) {
+                oscap_dprintf("WARNING: argument is not valid: NULL.\n");
+		return false;
+        }
+
+        varids_itr = oval_variable_model_get_variable_ids(variable_model);
+	while (oval_string_iterator_has_more(varids_itr)) {
+		char *varid = oval_string_iterator_next(varids_itr);
+
+                if (oval_variable_model_get_datatype(variable_model, varid) == OVAL_DATATYPE_UNKNOWN) {
+                        oscap_dprintf("WARNING: argument is not valid: variable (%s) datatype == OVAL_DATATYPE_UNKNOWN.\n", varid);
+                        is_valid = false;
+                        break;
                 }
-
+		if (oval_variable_model_get_comment(variable_model, varid) == NULL) {
+                        oscap_dprintf("WARNING: argument is not valid: variable (%s) comment == NULL.\n", varid);
+                        is_valid = false;
+                        break;
+                }
 	}
-        oval_string_iterator_free(varids);
+        oval_string_iterator_free(varids_itr);
 
-        return true;
+        return is_valid;
 }
 
 bool oval_variable_model_is_locked(struct oval_variable_model * variable_model)

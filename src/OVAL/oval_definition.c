@@ -171,8 +171,15 @@ bool oval_definition_is_valid(struct oval_definition * definition)
 {
 	struct oval_criteria_node *criteria_node;
 
-	if (definition == NULL)
+	if (definition == NULL) {
+                oscap_dprintf("WARNING: argument is not valid: NULL.\n");
 		return false;
+        }
+
+        if (oval_definition_get_class(definition) == OVAL_CLASS_UNKNOWN) {
+                oscap_dprintf("WARNING: argument is not valid: class == OVAL_CLASS_UNKNOWN.\n");
+                return false;
+        }
 
 	criteria_node = oval_definition_get_criteria(definition);
 	if (oval_criteria_node_is_valid(criteria_node) != true)

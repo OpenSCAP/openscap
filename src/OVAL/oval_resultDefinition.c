@@ -81,11 +81,15 @@ bool oval_result_definition_is_valid(struct oval_result_definition * result_defi
 	struct oval_definition *definition;
 	struct oval_result_criteria_node *rslt_criteria_node;
 
-	if (result_definition == NULL)
+	if (result_definition == NULL) {
+                oscap_dprintf("WARNING: argument is not valid: NULL.\n");
 		return false;
+        }
 
-	if (oval_result_definition_get_system(result_definition) == NULL)
+	if (oval_result_definition_get_system(result_definition) == NULL) {
+                oscap_dprintf("WARNING: argument is not valid: system == NULL.\n");
 		return false;
+        }
 
 	/* validate definition */
 	definition = oval_result_definition_get_definition(result_definition);

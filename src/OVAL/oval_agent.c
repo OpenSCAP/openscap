@@ -185,8 +185,10 @@ bool oval_definition_model_is_valid(struct oval_definition_model * definition_mo
 	struct oval_object_iterator *objects_itr;
 	struct oval_state_iterator *states_itr;
 
-	if (definition_model == NULL)
+	if (definition_model == NULL) {
+                oscap_dprintf("WARNING: argument is not valid: NULL.\n");
 		return false;
+        }
 
 	/* validate definitions */
 	definitions_itr = oval_definition_model_get_definitions(definition_model);
@@ -358,8 +360,10 @@ bool oval_syschar_model_is_valid(struct oval_syschar_model * syschar_model)
 	struct oval_sysinfo *sysinfo;
 	struct oval_definition_model *definition_model;
 
-	if (syschar_model == NULL)
+	if (syschar_model == NULL) {
+                oscap_dprintf("WARNING: argument is not valid: NULL.\n");
 		return false;
+        }
 
 	/* validate sysinfo */
 	sysinfo = oval_syschar_model_get_sysinfo(syschar_model);
@@ -932,8 +936,10 @@ bool oval_results_model_is_valid(struct oval_results_model * results_model)
 	struct oval_result_system_iterator *systems_itr;
 	struct oval_definition_model *definition_model;
 
-	if (results_model == NULL)
+	if (results_model == NULL) {
+                oscap_dprintf("WARNING: argument is not valid: NULL.\n");
 		return false;
+        }
 
 	/* validate definition_model */
 	definition_model = oval_results_model_get_definition_model(results_model);

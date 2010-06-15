@@ -129,8 +129,10 @@ bool oval_result_criteria_node_is_valid(struct oval_result_criteria_node * resul
 	bool is_valid = true;
 	oval_criteria_node_type_t type;
 
-	if (result_criteria_node == NULL)
+	if (result_criteria_node == NULL) {
+                oscap_dprintf("WARNING: argument is not valid: NULL.\n");
 		return false;
+        }
 
 	type = oval_result_criteria_node_get_type(result_criteria_node);
 	switch (type) {
@@ -175,6 +177,7 @@ bool oval_result_criteria_node_is_valid(struct oval_result_criteria_node * resul
 		}
 		break;
 	default:
+                oscap_dprintf("WARNING: argument is not valid: wrong node type: %d.\n", type);
 		return false;
 	}
 

@@ -208,8 +208,10 @@ bool oval_criteria_node_is_valid(struct oval_criteria_node * criteria_node)
 	bool is_valid = true;
 	oval_criteria_node_type_t type;
 
-	if (criteria_node == NULL)
+	if (criteria_node == NULL) {
+                oscap_dprintf("WARNING: argument is not valid: NULL.\n");
 		return false;
+        }
 
 	type = oval_criteria_node_get_type(criteria_node);
 	switch (type) {
@@ -217,7 +219,16 @@ bool oval_criteria_node_is_valid(struct oval_criteria_node * criteria_node)
 		{
 			struct oval_criteria_node_iterator *subnodes_itr;
 
+                        if (oval_criteria_node_get_operator(criteria_node) == OVAL_OPERATOR_UNKNOWN) {
+                                oscap_dprintf("WARNING: argument is not valid: operator == OVAL_OPERATOR_UNKNOWN.\n");
+                                return false;
+                        }
+
 			subnodes_itr = oval_criteria_node_get_subnodes(criteria_node);
+                        if (oval_criteria_node_iterator_has_more(subnodes_itr) == false) {
+                                oscap_dprintf("WARNING: argument is not valid: there are no subnodes.\n");
+                                return false;
+                        }
 			while (oval_criteria_node_iterator_has_more(subnodes_itr)) {
 				struct oval_criteria_node *subnode;
 
@@ -251,6 +262,7 @@ bool oval_criteria_node_is_valid(struct oval_criteria_node * criteria_node)
 		}
 		break;
 	default:
+                oscap_dprintf("WARNING: argument is not valid: wrong node type: %d.\n", type);
 		return false;
 	}
 

@@ -142,8 +142,10 @@ bool oval_setobject_is_valid(struct oval_setobject * set_object)
 	bool is_valid = true;
 	oval_setobject_type_t type;
 
-	if (set_object == NULL)
+	if (set_object == NULL) {
+                oscap_dprintf("WARNING: argument is not valid: NULL.\n");
 		return false;
+        }
 
 	type = oval_setobject_get_type(set_object);
 	switch (type) {
@@ -201,6 +203,7 @@ bool oval_setobject_is_valid(struct oval_setobject * set_object)
 		}
 		break;
 	default:
+                oscap_dprintf("WARNING: argument is not valid: wrong setobject type: %d.\n", type);
 		return false;
 	}
 

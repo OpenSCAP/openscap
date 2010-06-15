@@ -166,22 +166,51 @@ struct oval_test *oval_test_new(struct oval_definition_model *model, char *id)
 
 bool oval_test_is_valid(struct oval_test * test)
 {
+        oval_subtype_t subtype;
 	struct oval_object *object;
 	struct oval_state *state;
 
-	if (test == NULL)
+	if (test == NULL) {
+                oscap_dprintf("WARNING: argument is not valid: NULL.\n");
 		return false;
+        }
 
-	if (oval_test_get_subtype(test) == OVAL_INDEPENDENT_UNKNOWN)
+        subtype = oval_test_get_subtype(test);
+	if (subtype == OVAL_INDEPENDENT_UNKNOWN)
 		return true;
 
+        if (subtype == OVAL_SUBTYPE_UNKNOWN) {
+                oscap_dprintf("WARNING: argument is not valid: subtype == OVAL_SUBTYPE_UNKNOWN.\n");
+                return false;
+        }
+        if (oval_test_get_check(test) == OVAL_CHECK_UNKNOWN) {
+                oscap_dprintf("WARNING: argument is not valid: check == OVAL_CHECK_UNKNOWN.\n");
+                return false;
+        }
+        if (oval_test_get_existence(test) == OVAL_EXISTENCE_UNKNOWN) {
+                oscap_dprintf("WARNING: argument is not valid: existence == OVAL_EXISTENCE_UNKNOWN.\n");
+                return false;
+        }
+
 	object = oval_test_get_object(test);
-	if (oval_object_is_valid(object) != true)
+        if (oval_object_get_subtype(object) != subtype) {
+                oscap_dprintf("WARNING: argument is not valid: subtypes of the test (%d) and the object (%d) differ.\n",
+                              subtype, oval_object_get_subtype(object));
+		return false;
+        }
+        if (oval_object_is_valid(object) != true)
 		return false;
 
 	state = oval_test_get_state(test);
-	if (state != NULL && oval_state_is_valid(state) != true)
-		return false;
+	if (state != NULL) {
+                if (oval_state_get_subtype(state) != subtype) {
+                        oscap_dprintf("WARNING: argument is not valid: subtypes of the test (%d) and the state (%d) differ.\n",
+                                      subtype, oval_state_get_subtype(state));
+                        return false;
+                }
+                if (oval_state_is_valid(state) != true)
+                        return false;
+        }
 
 	return true;
 }

@@ -165,8 +165,15 @@ bool oval_object_is_valid(struct oval_object * object)
 	struct oval_object_content_iterator *contents_itr;
 	struct oval_behavior_iterator *behaviors_itr;
 
-	if (object == NULL)
+	if (object == NULL) {
+                oscap_dprintf("WARNING: argument is not valid: NULL.\n");
 		return false;
+        }
+
+        if (oval_object_get_subtype(object) == OVAL_SUBTYPE_UNKNOWN) {
+                oscap_dprintf("WARNING: argument is not valid: subtype == OVAL_SUBTYPE_UNKNOWN.\n");
+                return false;
+        }
 
 	/* validate object contents */
 	contents_itr = oval_object_get_object_contents(object);
