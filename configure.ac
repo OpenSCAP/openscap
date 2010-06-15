@@ -72,6 +72,15 @@ if test "x${HAVE_CURL_CONFIG}" != "xyes"; then
   AC_MSG_FAILURE([curl-config not found in PATH])
 fi
 
+#
+# Valgrind
+#
+AC_CHECK_PROG(
+  [HAVE_VALGRIND],
+  [valgrind],
+  [yes],,,
+)
+
 # Checks for libraries.
 
 #
@@ -481,6 +490,7 @@ AM_CONDITIONAL([ENABLE_PROBE_RPMINFO], test "$have_librpm" = yes)
 AM_CONDITIONAL([ENABLE_PROBE_RPMINFO44], test "$have_librpm44" = yes)
 AM_CONDITIONAL([ENABLE_PROBE_DPKGINFO], test "$have_libapt_pkg" = yes)
 AM_CONDITIONAL([WANT_BINDINGS], test "$bindings" = yes)
+AM_CONDITIONAL([ENABLE_VALGRIND_TESTS], test "$HAVE_VALGRIND" = yes)
 
 AC_CONFIG_FILES([Makefile
                  src/Makefile

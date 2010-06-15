@@ -41,7 +41,11 @@ EXTRA_DIST += OVAL/test_oval.sh \
 
 if WANT_PROBES
 TESTS += OVAL/SEAP/test_seap.sh \
-	 OVAL/probes/test_probes.sh 
+	 OVAL/probes/test_probes.sh
+
+if ENABLE_VALGRIND_TESTS
+TESTS += OVAL/probes/vgtest-probes.sh
+endif
 
 check_PROGRAMS +=	sexp_parser \
 			sexp_string \
@@ -102,7 +106,12 @@ EXTRA_DIST += OVAL/SEAP/test_seap.sh 	                    \
               OVAL/probes/test_probes_interface.xml.sh       \
               OVAL/probes/test_probes_inetlisteningservers.xml.sh \
               OVAL/probes/test_probes_uname.xml.sh \
-              OVAL/probes/test_probes_environmentvariable.xml.sh
+              OVAL/probes/test_probes_environmentvariable.xml.sh \
+	      OVAL/probes/vgtest-probes.sh
+
+if ENABLE_VALGRIND_TESTS
+EXTRA_DIST += vgrun.sh
+endif
 
 endif # WANT_PROBES 
 endif # WANT_OVAL
