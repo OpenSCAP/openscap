@@ -159,8 +159,10 @@ void* oscap_list_find(struct oscap_list *list, void *what, oscap_cmp_func compar
 
 	while (oscap_iterator_has_more(it)) {
 		void *item = oscap_iterator_next(it);
-		if (compare(item, what))
+		if (compare(item, what)) {
+			oscap_iterator_free(it);
 			return item;
+		}
 	}
 
 	oscap_iterator_free(it);
