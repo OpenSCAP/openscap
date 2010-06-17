@@ -268,16 +268,6 @@ const char * xccdf_policy_get_id(struct xccdf_policy * policy);
  */
 struct xccdf_policy * xccdf_policy_model_get_policy_by_id(struct xccdf_policy_model * policy_model, const char * id);
 
-/**
- * Get external variables from XCCDF for given Policy and export them to OVAL Variable model
- * @param policy XCCDF Policy
- * @param def_model OVAL definition model
- * @return OVAL Variable model
- * @see oval_variable_model
- * @memberof xccdf_policy
- */
-//struct oval_variable_model * xccdf_policy_get_variables(struct xccdf_policy * policy, struct oval_definition_model * def_model);
-
 /************************************************************/
 /** @} End of Getters group */
 
@@ -302,27 +292,6 @@ bool xccdf_policy_model_add_policy(struct xccdf_policy_model *, struct xccdf_pol
  * @return true if rule has been added succesfully
  */
 bool xccdf_policy_add_rule(struct xccdf_policy *, struct xccdf_select *);
-
-/**
- * Add refine rule to the Value Binding structure
- * @memberof xccdf_value_binding
- * @return true if rule has been added succesfully
- */
-//bool xccdf_value_binding_add_refine_rule(struct xccdf_value_binding *, struct xccdf_refine_rule *);
-
-/**
- * Add refine value to the Value Binding structure
- * @memberof xccdf_value_binding
- * @return true if rule has been added succesfully
- */
-//bool xccdf_value_binding_add_refine_value(struct xccdf_value_binding *, struct xccdf_refine_value *);
-
-/**
- * Add value to the Value Binding structure
- * @memberof xccdf_value_binding
- * @return true if rule has been added succesfully
- */
-//bool xccdf_value_binding_add_setvalue(struct xccdf_value_binding *, struct xccdf_setvalue *);
 
 /**
  * Set a new selector to the Policy structure

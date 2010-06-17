@@ -43,6 +43,7 @@
 #include "oval_variables.h"
 #include "oval_probe.h"
 
+struct oval_agent_session;
 
 /**
  * @var oval_agent_session_t
