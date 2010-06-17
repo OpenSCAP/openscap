@@ -366,9 +366,8 @@ int oval_object_content_parse_tag(xmlTextReaderPtr reader,
 	}
 	(*consumer) (content, user);
 	if (return_code != 1) {
-		int line = xmlTextReaderGetParserLineNumber(reader);
 		oscap_dprintf("NOTICE: oval_object_content_parse_tag::parse of <%s> terminated on error line %d",
-			      tagname, line);
+			      tagname, xmlTextReaderGetParserLineNumber(reader));
 	}
 	oscap_free(namespace);
 	return return_code;

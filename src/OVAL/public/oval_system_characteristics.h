@@ -286,7 +286,7 @@ struct oval_sysinfo *oval_syschar_model_get_sysinfo(struct oval_syschar_model *m
  * @param object_id the specified object_id.
  * @memberof oval_syschar_model
  */
-struct oval_syschar *oval_syschar_model_get_syschar(struct oval_syschar_model *model, char *object_id);
+struct oval_syschar *oval_syschar_model_get_syschar(struct oval_syschar_model *model, const char *object_id);
 /**
  * Get the collection flag associated with a specified oval_variable
  * @memberof oval_syschar_model
@@ -301,7 +301,7 @@ struct oval_value_iterator *oval_syschar_model_get_variable_values(struct oval_s
 /**
  * @memberof oval_syschar_model
  */
-struct oval_sysdata *oval_syschar_model_get_sysdata(struct oval_syschar_model *, char *);
+struct oval_sysdata *oval_syschar_model_get_sysdata(struct oval_syschar_model *, const char *);
 /**
  * Return <b>true</b> if the syschar_model instance is locked.
  * The state of a locked instance cannot be changed.
@@ -663,7 +663,7 @@ bool oval_sysint_is_valid(struct oval_sysint *sysint);
 /**
  * @memberof oval_sysdata
  */
-struct oval_sysdata *oval_sysdata_new(struct oval_syschar_model *, char *id);
+struct oval_sysdata *oval_sysdata_new(struct oval_syschar_model *, const char *id);
 /**
  * @return A copy of the specified @ref oval_sysdata.
  * @memberof oval_sysdata

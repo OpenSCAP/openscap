@@ -519,12 +519,14 @@ int probe_obj_setstatus(SEXP_t * obj, oval_syschar_status_t status)
 	return (-1);
 }
 
+#if 0
 static int probe_obj_setentstatus(SEXP_t * obj, const char *name, uint32_t n, oval_syschar_status_t status)
 {
 	_LOGCALL_;
 	/* TBI */
 	return (-1);
 }
+#endif
 
 char *probe_obj_getname(const SEXP_t * obj)
 {

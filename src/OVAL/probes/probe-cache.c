@@ -43,7 +43,7 @@ pcache_t *pcache_new(void)
 	return (cache);
 }
 
-void pcache_free_node(struct rbt_str_node *n)
+static void pcache_free_node(struct rbt_str_node *n)
 {
         oscap_free(n->key);
         SEXP_free(n->data);
@@ -97,7 +97,7 @@ SEXP_t *pcache_sexp_get(pcache_t *cache, const SEXP_t * id)
         char    b[128], *k = b;
         SEXP_t *r = NULL;
 
-        if (SEXP_string_cstr_r(id, k, sizeof b) < 0)
+        if (SEXP_string_cstr_r(id, k, sizeof b) == ((size_t)-1))
                 k = SEXP_string_cstr(id);
 
         if (k == NULL)

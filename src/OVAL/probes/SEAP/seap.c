@@ -212,12 +212,8 @@ static int __SEAP_cmdexec_reply (SEAP_CTX_t *ctx, int sd, SEAP_cmd_t *cmd)
 
         dsc = SEAP_desc_get (ctx->sd_table, sd);
 
-        if (dsc == NULL) {
-                protect_errno {
-                        SEXP_free (res);
-                }
+        if (dsc == NULL)
                 return (-1);
-        }
 
         res = SEAP_cmd_exec (ctx, sd, SEAP_EXEC_LOCAL,
                              cmd->code, cmd->args,

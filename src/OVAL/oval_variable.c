@@ -181,7 +181,7 @@ struct oval_component *oval_variable_get_component(struct oval_variable *variabl
 /* failed   - NULL 
  * success  - oval_variable
  * */
-struct oval_variable *oval_variable_new(struct oval_definition_model *model, char *id, oval_variable_type_t type)
+struct oval_variable *oval_variable_new(struct oval_definition_model *model, const char *id, oval_variable_type_t type)
 {
 	oval_variable_t *variable;
 	switch (type) {
@@ -445,10 +445,9 @@ static int _oval_variable_parse_local_tag(xmlTextReaderPtr reader, struct oval_p
 	int return_code = oval_component_parse_tag(reader, context, &_oval_variable_parse_local_tag_component_consumer,
 						   variable);
 	if (return_code != 1) {
-		int line = xmlTextReaderGetParserLineNumber(reader);
 		oscap_dprintf
 		    ("NOTICE: oval_variable_parse_local_tag::parse of %s terminated on error at <%s> line %d",
-		     variable->id, tagname, line);
+		     variable->id, tagname, xmlTextReaderGetParserLineNumber(reader));
 	}
 	oscap_free(tagname);
 	oscap_free(namespace);
@@ -473,10 +472,9 @@ static int _oval_variable_parse_constant_tag(xmlTextReaderPtr reader,
 	if (strcmp("value", (char *)tagname) == 0 && strcmp(DEFINITION_NAMESPACE, (char *)namespace) == 0) {
 		oval_parser_text_value(reader, context, (oval_xml_value_consumer) _oval_variable_parse_value, variable);
 	} else {
-		int line = xmlTextReaderGetParserLineNumber(reader);
 		oscap_dprintf("NOTICE: Invalid element <%s:%s> in constant variable"
 			      "    <constant_variable id = %s> at line %d"
-			      "    %s(%d)", namespace, tagname, variable->id, line, __FILE__, __LINE__);
+			      "    %s(%d)", namespace, tagname, variable->id, xmlTextReaderGetParserLineNumber(reader), __FILE__, __LINE__);
 	}
 	oscap_free(tagname);
 	oscap_free(namespace);
@@ -496,9 +494,8 @@ int oval_variable_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context 
 		type = OVAL_VARIABLE_LOCAL;
 	else {
 		type = OVAL_VARIABLE_UNKNOWN;
-		int line = xmlTextReaderGetParserLineNumber(reader);
 		oscap_dprintf("NOTICE::oval_variable_parse_tag: <%s> unhandled variable type::line = %d",
-			      tagname, line);
+			      tagname, xmlTextReaderGetParserLineNumber(reader));
 	}
 	char *id = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "id");
 	struct oval_variable *variable = oval_variable_get_new(model, id, type);

@@ -231,12 +231,13 @@ static int _oval_affected_parse_tag(xmlTextReaderPtr reader, struct oval_parser_
 			oscap_free(product);
 		}
 	} else {
-		int linno = xmlTextReaderGetParserLineNumber(reader);
 		int depth = xmlTextReaderDepth(reader);
+
 		if (depth == -1)
 			oscap_setxmlerr(xmlGetLastError());
 
-		oscap_dprintf("NOTICE::(oval_affected)skipping <%s> depth = %d line = %d\n", tagname, depth, linno);
+		oscap_dprintf("NOTICE::(oval_affected)skipping <%s> depth = %d line = %d\n", tagname, depth,
+                              xmlTextReaderGetParserLineNumber(reader));
 		return_code = oval_parser_skip_tag(reader, context);
 	}
 	oscap_free(tagname);

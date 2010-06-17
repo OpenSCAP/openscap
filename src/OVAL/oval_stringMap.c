@@ -146,7 +146,7 @@ struct oval_iterator *oval_string_map_values(struct oval_string_map *map)
 	return iterator;
 }
 
-void *oval_string_map_get_value(struct oval_string_map *map, char *key)
+void *oval_string_map_get_value(struct oval_string_map *map, const char *key)
 {
 	__attribute__nonnull__(map);
 

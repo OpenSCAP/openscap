@@ -70,6 +70,20 @@ static void SEAP_template_once(void)
 
 static __PARSE_RT SEXP_template_pfunc(__PARSE_PT(dsc))
 {
+        register uin32_t i;
+
+        /*
+         * Check whether % prefixed strings should be interpreted
+         * as template items.
+         */
+
+        /*
+         * Get the whole format string
+         */
+
+        /*
+         * If the format string is valid, allocate a new value slot
+         */
         return (SEXP_PRET_EUNDEF);
 }
 

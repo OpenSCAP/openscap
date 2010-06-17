@@ -141,7 +141,7 @@ struct oval_behavior_iterator *oval_object_get_behaviors(struct oval_object *obj
 	    oval_collection_iterator(object->behaviors);
 }
 
-struct oval_object *oval_object_new(struct oval_definition_model *model, char *id)
+struct oval_object *oval_object_new(struct oval_definition_model *model, const char *id)
 {
 	oval_object_t *object = (oval_object_t *) oscap_alloc(sizeof(oval_object_t));
 	if (object == NULL)
@@ -367,9 +367,8 @@ static int _oval_object_parse_tag(xmlTextReaderPtr reader, struct oval_parser_co
 		return_code = oval_object_content_parse_tag(reader, context, &oval_content_consume, object);
 	}
 	if (return_code != 1) {
-		int line = xmlTextReaderGetParserLineNumber(reader);
 		oscap_dprintf("NOTICE: oval_object_parse_tag::parse of %s terminated on error at <%s> line %d\n",
-			      object->id, tagname, line);
+			      object->id, tagname, xmlTextReaderGetParserLineNumber(reader));
 	}
 	oscap_free(tagname);
 	oscap_free(namespace);

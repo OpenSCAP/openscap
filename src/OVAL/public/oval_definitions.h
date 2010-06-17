@@ -632,7 +632,7 @@ void oval_definition_model_lock(struct oval_definition_model *definition_model);
  * @param id the definition id.
  * @memberof oval_definition_model
  */
-struct oval_definition *oval_definition_model_get_definition(struct oval_definition_model *, char *id);
+struct oval_definition *oval_definition_model_get_definition(struct oval_definition_model *, const char *id);
 /**
  * Get oval test by ID.
  * Return a designated oval_test from the specified oval_definition_model.
@@ -641,7 +641,7 @@ struct oval_definition *oval_definition_model_get_definition(struct oval_definit
  * @param id the test id.
  * @memberof oval_definition_model
  */
-struct oval_test *oval_definition_model_get_test(struct oval_definition_model *model, char *id);
+struct oval_test *oval_definition_model_get_test(struct oval_definition_model *model, const char *id);
 /**
  * Get OVAL object by ID.
  * Return a designated oval_object from the specified oval_definition_model.
@@ -650,7 +650,7 @@ struct oval_test *oval_definition_model_get_test(struct oval_definition_model *m
  * @param id the object id.
  * @memberof oval_definition_model
  */
-struct oval_object *oval_definition_model_get_object(struct oval_definition_model *model, char *id);
+struct oval_object *oval_definition_model_get_object(struct oval_definition_model *model, const char *id);
 /**
  * Get OVAL state by ID.
  * Return a designated oval_state from the specified oval_definition_model.
@@ -659,7 +659,7 @@ struct oval_object *oval_definition_model_get_object(struct oval_definition_mode
  * @param id the state id.
  * @memberof oval_definition_model
  */
-struct oval_state *oval_definition_model_get_state(struct oval_definition_model *model, char *id);
+struct oval_state *oval_definition_model_get_state(struct oval_definition_model *model, const char *id);
 /**
  * Get OVAL variable by ID.
  * Return a designated oval_variable from the specified oval_definition_model.
@@ -668,7 +668,7 @@ struct oval_state *oval_definition_model_get_state(struct oval_definition_model 
  * @param id the variable id.
  * @memberof oval_definition_model
  */
-struct oval_variable *oval_definition_model_get_variable(struct oval_definition_model *model, char *id);
+struct oval_variable *oval_definition_model_get_variable(struct oval_definition_model *model, const char *id);
 /**
  * Returns all appended @ref oval_definition instances.
  * @memberof oval_definition_model
@@ -750,7 +750,7 @@ bool oval_definition_model_is_valid(struct oval_definition_model *definition_mod
  * @param id - (non-NULL) A copy of this string is bound to the id attribute of the created instance.
  * @memberof oval_definition
  */
-struct oval_definition *oval_definition_new(struct oval_definition_model *, char *id);
+struct oval_definition *oval_definition_new(struct oval_definition_model *, const char *id);
 
 /**
  * Clone instance of @ref oval_definition and add it to the specified @ref oval_definition_model.
@@ -984,7 +984,7 @@ void oval_definition_iterator_free(struct oval_definition_iterator *);
  * @param id - (Not NULL) the text of the required test id.
  * @memberof oval_test
  */
-struct oval_test *oval_test_new(struct oval_definition_model *, char *id);
+struct oval_test *oval_test_new(struct oval_definition_model *, const char *id);
 /**
  * Clone instance of @ref oval_test and add it to the specified @ref oval_definition_model.
  * @return A copy of the specified @ref oval_test.
@@ -1205,7 +1205,7 @@ void oval_test_iterator_free(struct oval_test_iterator *);
  * @param id - (Not NULL) the text of the required object id.
  * @memberof oval_object
  */
-struct oval_object *oval_object_new(struct oval_definition_model *, char *id);
+struct oval_object *oval_object_new(struct oval_definition_model *, const char *id);
 /**
  * Clone instance of @ref oval_object and add it to the specified @ref oval_definition_model.
  * @return A copy of the specified @ref oval_object.
@@ -1413,7 +1413,7 @@ void oval_object_iterator_free(struct oval_object_iterator *);
  * @param id - (Not NULL) the text of the required state id.
  * @memberof oval_state
  */
-struct oval_state *oval_state_new(struct oval_definition_model *, char *id);
+struct oval_state *oval_state_new(struct oval_definition_model *, const char *id);
 /**
  * Clone instance of @ref oval_state and add it to the specified @ref oval_definition_model.
  * @return A copy of the specified @ref oval_state.
@@ -1613,7 +1613,7 @@ bool oval_state_is_valid(struct oval_state *state);
  * @param type - (Not @ref OVAL_VARIABLE_UNKNOWN) the required type.
  * @memberof oval_variable
  */
-struct oval_variable *oval_variable_new(struct oval_definition_model *model, char *id, oval_variable_type_t type);
+struct oval_variable *oval_variable_new(struct oval_definition_model *model, const char *id, oval_variable_type_t type);
 /**
  * Clone instance of @ref oval_variable and add it to the specified @ref oval_definition_model.
  * @return A copy of the specified @ref oval_variable.

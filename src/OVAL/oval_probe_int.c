@@ -107,8 +107,8 @@ int oval_probe_envvar_handler(oval_subtype_t type, void *ptr, int act, ...)
         {
                 struct oval_object   *obj = va_arg(ap, struct oval_object *);
                 struct oval_syschar **sys = va_arg(ap, struct oval_syschar **);
-                int flags = va_arg(ap, int);
 
+                va_arg(ap, int);
                 *sys = oval_probe_envvar_eval(obj, model);
                 ret  = (*sys == NULL ? -1 : 0);
                 break;
@@ -155,7 +155,7 @@ static struct oval_syschar *oval_probe_variable_eval(struct oval_object *obj, st
         if (vit != NULL)
                 sys = oval_syschar_new(sys_model, obj);
         else {
-                SEXP_t *items, *r0, *r1, *item, *cobj, *vrent, *val_sexp;
+                SEXP_t *items, *r0, *item, *cobj, *vrent, *val_sexp;
 
                 items = SEXP_list_new(NULL);
 
@@ -205,8 +205,8 @@ int oval_probe_var_handler(oval_subtype_t type, void *ptr, int act, ...)
         {
                 struct oval_object   *obj = va_arg(ap, struct oval_object *);
                 struct oval_syschar **sys = va_arg(ap, struct oval_syschar **);
-                int flags = va_arg(ap, int);
 
+                va_arg(ap, int);
                 *sys = oval_probe_variable_eval(obj, model);
                 ret  = (*sys == NULL ? -1 : 0);
                 break;

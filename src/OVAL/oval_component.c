@@ -1068,16 +1068,15 @@ int oval_component_parse_tag(xmlTextReaderPtr reader,
 		component = oval_component_new(model, OVAL_FUNCTION_REGEX_CAPTURE);
 		return_code = _oval_component_parse_REGEX_CAPTURE_tag(reader, context, component);
 	} else {
-		int line = xmlTextReaderGetParserLineNumber(reader);
-		oscap_dprintf("NOTICE::oval_component_parse_tag::<%s> not handled (line = %d)", tagname, line);
+		oscap_dprintf("NOTICE::oval_component_parse_tag::<%s> not handled (line = %d)", tagname,
+                              xmlTextReaderGetParserLineNumber(reader));
 		return_code = oval_parser_skip_tag(reader, context);
 	}
 	if (component != NULL)
 		(*consumer) (component, user);
 	if (return_code != 1) {
-		int line = xmlTextReaderGetParserLineNumber(reader);
-		oscap_dprintf
-		    ("NOTICE: oval_component_parse_tag::parse of <%s> terminated on error at line %d", tagname, line);
+		oscap_dprintf("NOTICE: oval_component_parse_tag::parse of <%s> terminated on error at line %d", tagname,
+                            xmlTextReaderGetParserLineNumber(reader));
 	}
 	oscap_free(tagname);
 	return return_code;

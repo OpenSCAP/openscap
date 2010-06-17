@@ -109,7 +109,7 @@ static int get_runlevel_redhat (struct runlevel_req *req, struct runlevel_rep **
 
         while ((init_dp = readdir(init_dir)) != NULL) {
 		char *service_name;
-		int i;
+		unsigned int i;
 		SEXP_t *r0;
 
                 if (stat(init_dp->d_name, &init_st) != 0) {

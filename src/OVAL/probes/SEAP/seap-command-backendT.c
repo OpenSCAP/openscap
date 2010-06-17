@@ -99,9 +99,11 @@ void SEAP_cmdtbl_backendT_free (SEAP_cmdtbl_t *t)
 
 int SEAP_cmdtbl_backendT_apply (SEAP_cmdtbl_t *t, int (*func) (SEAP_cmdrec_t *r, void *), void *arg)
 {
-        size_t i, l;
+        /*
+          size_t i, l;
+          int ret;
+        */
         Ttable_t *St;
-        int ret;
 
         St = (Ttable_t *)(t->table);
 

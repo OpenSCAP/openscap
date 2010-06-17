@@ -406,14 +406,14 @@ static int _oval_set_parse_tag(xmlTextReaderPtr reader, struct oval_parser_conte
 		} else if (strcmp(tagname, "filter") == 0) {
 			return_code = oval_parser_text_value(reader, context, &oval_consume_state_ref, &ctx);
 		} else {
-			int line = xmlTextReaderGetParserLineNumber(reader);
-			oscap_dprintf("NOTICE: oval_set_parse_tag::unhandled component <%s> %d", tagname, line);
+			oscap_dprintf("NOTICE: oval_set_parse_tag::unhandled component <%s> %d", tagname,
+                                      xmlTextReaderGetParserLineNumber(reader));
 			return_code = oval_parser_skip_tag(reader, context);
 		}
 	}
 	if (return_code != 1) {
-		int line = xmlTextReaderGetParserLineNumber(reader);
-		oscap_dprintf("NOTICE: oval_set_parse_tag::parse of <%s> terminated on error line %d", tagname, line);
+		oscap_dprintf("NOTICE: oval_set_parse_tag::parse of <%s> terminated on error line %d", tagname,
+                              xmlTextReaderGetParserLineNumber(reader));
 	}
 	oscap_free(tagname);
 	oscap_free(namespace);

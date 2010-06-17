@@ -135,7 +135,7 @@ int oval_state_get_operator(struct oval_state *state)
 	return state->operator;
 }
 
-struct oval_state *oval_state_new(struct oval_definition_model *model, char *id)
+struct oval_state *oval_state_new(struct oval_definition_model *model, const char *id)
 {
 	oval_state_t *state = (oval_state_t *) oscap_alloc(sizeof(oval_state_t));
 	if (state == NULL)

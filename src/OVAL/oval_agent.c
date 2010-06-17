@@ -476,7 +476,7 @@ const char * oval_definition_model_get_schema(struct oval_definition_model * mod
         __attribute__nonnull__(model);
 
         return model->schema;
-}    
+}
 
 struct oval_syschar_iterator *oval_syschar_model_get_syschars(struct oval_syschar_model *model)
 {
@@ -663,35 +663,35 @@ int oval_syschar_model_import(struct oval_syschar_model *model, const char *file
 	return ret;
 }
 
-struct oval_definition *oval_definition_model_get_definition(struct oval_definition_model *model, char *key)
+struct oval_definition *oval_definition_model_get_definition(struct oval_definition_model *model, const char *key)
 {
 	__attribute__nonnull__(model);
 
 	return (struct oval_definition *)oval_string_map_get_value(model->definition_map, key);
 }
 
-struct oval_test *oval_definition_model_get_test(struct oval_definition_model *model, char *key)
+struct oval_test *oval_definition_model_get_test(struct oval_definition_model *model, const char *key)
 {
 	__attribute__nonnull__(model);
 
 	return (struct oval_test *)oval_string_map_get_value(model->test_map, key);
 }
 
-struct oval_object *oval_definition_model_get_object(struct oval_definition_model *model, char *key)
+struct oval_object *oval_definition_model_get_object(struct oval_definition_model *model, const char *key)
 {
 	__attribute__nonnull__(model);
 
 	return (struct oval_object *)oval_string_map_get_value(model->object_map, key);
 }
 
-struct oval_state *oval_definition_model_get_state(struct oval_definition_model *model, char *key)
+struct oval_state *oval_definition_model_get_state(struct oval_definition_model *model, const char *key)
 {
 	__attribute__nonnull__(model);
 
 	return (struct oval_state *)oval_string_map_get_value(model->state_map, key);
 }
 
-struct oval_variable *oval_definition_model_get_variable(struct oval_definition_model *model, char *key)
+struct oval_variable *oval_definition_model_get_variable(struct oval_definition_model *model, const char *key)
 {
 	__attribute__nonnull__(model);
 
@@ -741,14 +741,14 @@ void oval_syschar_model_bind_variable_model(struct oval_syschar_model *sysmodel,
 	oval_definition_model_bind_variable_model(sysmodel->definition_model, varmodel);
 }
 
-struct oval_syschar *oval_syschar_model_get_syschar(struct oval_syschar_model *model, char *object_id)
+struct oval_syschar *oval_syschar_model_get_syschar(struct oval_syschar_model *model, const char *object_id)
 {
 	__attribute__nonnull__(model);
 
 	return (struct oval_syschar *)oval_string_map_get_value(model->syschar_map, object_id);
 }
 
-struct oval_sysdata *oval_syschar_model_get_sysdata(struct oval_syschar_model *model, char *id)
+struct oval_sysdata *oval_syschar_model_get_sysdata(struct oval_syschar_model *model, const char *id)
 {
 	__attribute__nonnull__(model);
 
@@ -816,7 +816,7 @@ struct oval_syschar *oval_syschar_get_new(struct oval_syschar_model *model, stru
 	return syschar;
 }
 
-struct oval_sysdata *oval_sysdata_get_new(struct oval_syschar_model *model, char *id)
+struct oval_sysdata *oval_sysdata_get_new(struct oval_syschar_model *model, const char *id)
 {
 	struct oval_sysdata *sysdata = oval_syschar_model_get_sysdata(model, id);
 	if (sysdata == NULL) {
@@ -826,7 +826,7 @@ struct oval_sysdata *oval_sysdata_get_new(struct oval_syschar_model *model, char
 	return sysdata;
 }
 
-struct oval_definition *oval_definition_get_new(struct oval_definition_model *model, char *id)
+struct oval_definition *oval_definition_get_new(struct oval_definition_model *model, const char *id)
 {
 	struct oval_definition *definition = oval_definition_model_get_definition(model, id);
 	if (definition == NULL) {
@@ -836,7 +836,7 @@ struct oval_definition *oval_definition_get_new(struct oval_definition_model *mo
 	return definition;
 }
 
-struct oval_variable *oval_variable_get_new(struct oval_definition_model *model, char *id, oval_variable_type_t type)
+struct oval_variable *oval_variable_get_new(struct oval_definition_model *model, const char *id, oval_variable_type_t type)
 {
 	struct oval_variable *variable = oval_definition_model_get_variable(model, id);
 	if (variable == NULL) {
@@ -848,7 +848,7 @@ struct oval_variable *oval_variable_get_new(struct oval_definition_model *model,
 	return variable;
 }
 
-struct oval_state *oval_state_get_new(struct oval_definition_model *model, char *id)
+struct oval_state *oval_state_get_new(struct oval_definition_model *model, const char *id)
 {
 	struct oval_state *state = oval_definition_model_get_state(model, id);
 	if (state == NULL) {
@@ -858,7 +858,7 @@ struct oval_state *oval_state_get_new(struct oval_definition_model *model, char 
 	return state;
 }
 
-struct oval_object *oval_object_get_new(struct oval_definition_model *model, char *id)
+struct oval_object *oval_object_get_new(struct oval_definition_model *model, const char *id)
 {
 	struct oval_object *object = oval_definition_model_get_object(model, id);
 	if (object == NULL) {
@@ -868,7 +868,7 @@ struct oval_object *oval_object_get_new(struct oval_definition_model *model, cha
 	return object;
 }
 
-struct oval_test *oval_test_get_new(struct oval_definition_model *model, char *id)
+struct oval_test *oval_test_get_new(struct oval_definition_model *model, const char *id)
 {
 	struct oval_test *test = oval_definition_model_get_test(model, id);
 	if (test == NULL) {

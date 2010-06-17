@@ -1,3 +1,9 @@
+/**
+ * @file oval_probe_session.h
+ * @brief OVAL probe handler API public header
+ * @author "Daniel Kopecek" <dkopecek@redhat.com>
+ */
+
 /*
  * Copyright 2010 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
@@ -27,6 +33,12 @@
 typedef struct oval_phtbl oval_phtbl_t;
 typedef struct oval_ph    oval_ph_t;
 
+/**
+ * Type of the handler function. This function takes care of handling
+ * all the actions defined bellow, that is: initialization, freeing,
+ * opening, evaluating, reseting and closing (whatever that means in
+ * your particular case).
+ */
 typedef int (oval_probe_handler_t)(oval_subtype_t, void *, int, ...);
 
 #define PROBE_HANDLER_ACT_INIT  0

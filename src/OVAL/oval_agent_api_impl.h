@@ -68,7 +68,7 @@ OSCAP_HIDDEN_START;
 const char * oval_definition_model_get_schema(struct oval_definition_model * model);
 void oval_definition_model_set_schema(struct oval_definition_model *model, const char *version);
 
-struct oval_definition *oval_definition_get_new(struct oval_definition_model *, char *);
+struct oval_definition *oval_definition_get_new(struct oval_definition_model *, const char *);
 
 typedef bool oval_definitions_resolver(struct oval_definition *, void *);
 
@@ -76,14 +76,14 @@ xmlNode *oval_definitions_to_dom
     (struct oval_definition_model *definition_model, xmlDocPtr doc, xmlNode * parent,
      oval_definitions_resolver resolver, void *user_arg);
 
-struct oval_test *oval_test_get_new(struct oval_definition_model *, char *);
-struct oval_object *oval_object_get_new(struct oval_definition_model *, char *);
-struct oval_state *oval_state_get_new(struct oval_definition_model *, char *);
-struct oval_variable *oval_variable_get_new(struct oval_definition_model *, char *, oval_variable_type_t type);
+struct oval_test *oval_test_get_new(struct oval_definition_model *, const char *);
+struct oval_object *oval_object_get_new(struct oval_definition_model *, const char *);
+struct oval_state *oval_state_get_new(struct oval_definition_model *, const char *);
+struct oval_variable *oval_variable_get_new(struct oval_definition_model *, const char *, oval_variable_type_t type);
 
 struct oval_syschar *oval_syschar_get_new(struct oval_syschar_model *, struct oval_object *);
-struct oval_syschar_item *oval_syschar_item_get_new(struct oval_syschar_model *, char *);
-struct oval_sysdata *oval_sysdata_get_new(struct oval_syschar_model *model, char *id);
+struct oval_syschar_item *oval_syschar_item_get_new(struct oval_syschar_model *, const char *);
+struct oval_sysdata *oval_sysdata_get_new(struct oval_syschar_model *model, const char *id);
 
 typedef bool oval_syschar_resolver(struct oval_syschar *, void *);
 

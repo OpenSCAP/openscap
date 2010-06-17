@@ -221,7 +221,7 @@ struct oval_result_test_iterator *oval_result_system_get_tests(struct oval_resul
 	return iterator;
 }
 
-struct oval_result_definition *oval_result_system_get_definition(struct oval_result_system *sys, char *id) {
+struct oval_result_definition *oval_result_system_get_definition(struct oval_result_system *sys, const char *id) {
 	__attribute__nonnull__(sys);
 
 	if (!sys->definitions_initialized) {
@@ -582,7 +582,7 @@ oval_result_t oval_result_system_eval_definition(struct oval_result_system *sys,
 		oscap_seterr(OSCAP_EFAMILY_OSCAP, OVAL_EOVALINT, "No definition with such an ID in definition model.");
 		return OVAL_RESULT_INVALID;
 	}
- 
+
         rslt_definition = oval_result_system_get_definition(sys, id);
         if (rslt_definition == NULL) {
         	rslt_definition = make_result_definition_from_oval_definition(sys, oval_definition);

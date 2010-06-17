@@ -19,6 +19,7 @@ librbt_la_CFLAGS=	-DRBT_IMPLICIT_LOCKING @pthread_cflags@ \
 			-I$(top_srcdir)/src			\
 			-I$(top_srcdir)/src/common		\
 			-I$(top_srcdir)/src/OVAL/probes/SEAP	\
-			-I$(top_srcdir)/src/OVAL/probes/SEAP/public
+			-I$(top_srcdir)/src/OVAL/probes/SEAP/public \
+			-Wno-strict-aliasing
 
 librbt_la_LDFLAGS= @pthread_ldflags@

@@ -215,7 +215,7 @@ int oval_psess_probe_objects(oval_probe_session_t *sess)
 			ret = oval_psess_probe_object(sess, object);
 			if( ret != 0 ) {
 				oval_object_iterator_free(objects);
-				return -1;	
+				return -1;
 			}
 		}
 		oval_object_iterator_free(objects);
@@ -293,8 +293,10 @@ static int oval_psess_probe_criteria(oval_probe_session_t *sess, struct oval_cri
                         return oval_psess_probe_criteria(sess, node);
                 }
                 break;
+        case OVAL_NODETYPE_UNKNOWN:
+                break;
         }
-	
+
 	/* we shouldn't get here */
         return -1;
 }
@@ -303,7 +305,7 @@ static int oval_psess_probe_criteria(oval_probe_session_t *sess, struct oval_cri
  * @returns 0 on success
  */
 static int oval_psess_probe_object(oval_probe_session_t *sess, struct oval_object *object) {
-	
+
 	char *objid = oval_object_get_id(object);
 	struct oval_syschar_model *sys_model = sess->sys_model;
 	struct oval_syschar *syschar = oval_syschar_model_get_syschar(sys_model, objid);

@@ -85,7 +85,6 @@ void SEXP_datatypeGlobalTbl_free(void)
 
 SEXP_datatypePtr_t *SEXP_datatype_get (SEXP_datatypeTbl_t *t, const char *k)
 {
-        void *r;
         struct rbt_str_node *n = NULL;
         SEXP_datatype_t *d;
 

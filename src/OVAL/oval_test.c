@@ -144,7 +144,7 @@ struct oval_state *oval_test_get_state(struct oval_test *test)
 	return test->state;
 }
 
-struct oval_test *oval_test_new(struct oval_definition_model *model, char *id)
+struct oval_test *oval_test_new(struct oval_definition_model *model, const char *id)
 {
 	oval_test_t *test = (oval_test_t *) oscap_alloc(sizeof(oval_test_t));
 	if (test == NULL)
@@ -387,9 +387,8 @@ static int _oval_test_parse_tag(xmlTextReaderPtr reader, struct oval_parser_cont
 			state_ref = NULL;
 		}
 	} else {
-		int linno = xmlTextReaderGetParserLineNumber(reader);
 		oscap_dprintf("NOTICE::(oval_test)skipping <%s> depth = %d line = %d",
-			      tagname, xmlTextReaderDepth(reader), linno);
+			      tagname, xmlTextReaderDepth(reader), xmlTextReaderGetParserLineNumber(reader));
 		return_code = oval_parser_skip_tag(reader, context);
 	}
 

@@ -147,7 +147,7 @@ struct oval_criteria_node *oval_definition_get_criteria(struct oval_definition
 	return ((struct oval_definition *)definition)->criteria;
 }
 
-struct oval_definition *oval_definition_new(struct oval_definition_model *model, char *id)
+struct oval_definition *oval_definition_new(struct oval_definition_model *model, const char *id)
 {
 	struct oval_definition *definition = (struct oval_definition *)oscap_alloc(sizeof(oval_definition_t));
 	if (definition == NULL)
@@ -449,12 +449,11 @@ static int _oval_definition_parse_metadata(xmlTextReaderPtr reader, struct oval_
 	} else if (strcmp(tagname, "reference") == 0) {
 		return_code = oval_reference_parse_tag(reader, context, &oval_reference_consume, definition);
 	} else {
-		int linno = xmlTextReaderGetParserLineNumber(reader);
 		int depth = xmlTextReaderDepth(reader);
 		if (depth == -1)
 			oscap_setxmlerr(xmlGetLastError());
 		oscap_dprintf("NOTICE::(oval_definition_parse_metadata)skipping <%s> depth = %d line = %d",
-			      tagname, depth, linno);
+			      tagname, depth, xmlTextReaderGetParserLineNumber(reader));
 		return_code = oval_parser_skip_tag(reader, context);
 	}
 	oscap_free(tagname);
@@ -479,11 +478,11 @@ static int _oval_definition_parse_tag(xmlTextReaderPtr reader, struct oval_parse
 	} else if ((strcmp(tagname, "criteria") == 0)) {
 		return_code = oval_criteria_parse_tag(reader, context, &_oval_definition_criteria_consumer, definition);
 	} else {
-		int linno = xmlTextReaderGetParserLineNumber(reader);
 		int depth = xmlTextReaderDepth(reader);
 		if (depth == -1)
 			oscap_setxmlerr(xmlGetLastError());
-		oscap_dprintf("NOTICE::(oval_definition)skipping <%s> depth = %d line = %d", tagname, depth, linno);
+		oscap_dprintf("NOTICE::(oval_definition)skipping <%s> depth = %d line = %d", tagname, depth,
+                              xmlTextReaderGetParserLineNumber(reader));
 		return_code = oval_parser_skip_tag(reader, context);
 	}
 	oscap_free(tagname);

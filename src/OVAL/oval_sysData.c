@@ -47,7 +47,7 @@ typedef struct oval_sysdata {
 	oval_syschar_status_t status;
 } oval_sysdata_t;
 
-struct oval_sysdata *oval_sysdata_new(struct oval_syschar_model *model, char *id)
+struct oval_sysdata *oval_sysdata_new(struct oval_syschar_model *model, const char *id)
 {
 	oval_sysdata_t *sysdata = (oval_sysdata_t *) oscap_alloc(sizeof(oval_sysdata_t));
 	if (sysdata == NULL)

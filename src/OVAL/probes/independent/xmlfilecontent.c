@@ -69,7 +69,7 @@ struct pfdata {
 	SEXP_t *item_list;
 };
 
-void dummy_err_func(void * ctx, const char * msg, ...)
+static void dummy_err_func(void * ctx, const char * msg, ...)
 {
 }
 

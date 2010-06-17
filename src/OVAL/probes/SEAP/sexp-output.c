@@ -39,6 +39,7 @@
 
 #define SEXP_SBPRINTF_BUFSZ 1024
 
+#if 0
 static int SEXP_sbprintf_t_cb (SEXP_t *s_exp, strbuf_t *sb)
 {
         if (SEXP_sbprintf_t (s_exp, sb) != 0)
@@ -48,6 +49,7 @@ static int SEXP_sbprintf_t_cb (SEXP_t *s_exp, strbuf_t *sb)
         else
                 return (0);
 }
+#endif
 
 int SEXP_sbprintf_t (SEXP_t *s_exp, strbuf_t *sb)
 {
