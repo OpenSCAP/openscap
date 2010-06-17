@@ -6,11 +6,11 @@ if [[ ! -d "$VGTEST_TMPDIR" ]]; then
     mkdir -p "$VGTEST_TMPDIR" || exit 1
 fi
 
-for xmlgen in OVAL/probes/test_probes_*.xml.sh; do
+for xmlgen in "${srcdir}"/OVAL/probes/test_probes_*.xml.sh; do
     bash "$xmlgen" > "$VGTEST_TMPDIR/$(basename "$xmlgen" | sed 's|.sh$||')" 2> /dev/null
 done
 
-for xml in OVAL/probes/*.xml; do
+for xml in "${srcdir}"/OVAL/probes/*.xml; do
     cp "$xml" "$VGTEST_TMPDIR"
 done
 
@@ -21,7 +21,7 @@ export SEXP_VALIDATE_DISABLE=1
 echo ""
 echo "---------------- Valgrind checks -----------------"
 for xml in "$VGTEST_TMPDIR"/*.xml; do
-    ./vgrun.sh "./test_probes $xml /dev/null"
+    "${srcdir}"/vgrun.sh "./test_probes $xml /dev/null"
 done
 echo "--------------------------------------------------"
 
