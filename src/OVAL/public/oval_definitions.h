@@ -592,6 +592,8 @@ void oval_definition_model_free(struct oval_definition_model *model);
  * @memberof oval_definition_model
  */
 void oval_definition_model_bind_variable_model(struct oval_definition_model *, struct oval_variable_model *);
+
+void oval_definition_model_clear_external_variables(struct oval_definition_model *);
 /**
  * @memberof oval_definition_model
  */
@@ -1674,6 +1676,8 @@ void oval_variable_set_datatype(struct oval_variable *, oval_datatype_t);
  * @memberof oval_variable
  */
 void oval_variable_add_value(struct oval_variable *, struct oval_value *);	//type==OVAL_VARIABLE_CONSTANT
+
+void oval_variable_clear_values(struct oval_variable *);
 /**
  * Bind an instance of @ref Oval_component to the attribute @ref Oval_local->component.
  * If attribute type <> @ref OVAL_VARIABLE_LOCAL, the component attribute <> NULL or the component parameter is NULL the state of the oval_variable shall not be changed by this

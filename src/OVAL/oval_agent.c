@@ -734,6 +734,23 @@ void oval_definition_model_bind_variable_model(struct oval_definition_model *def
 	oval_variable_iterator_free(variables);
 }
 
+void oval_definition_model_clear_external_variables(struct oval_definition_model *model)
+{
+	struct oval_variable_iterator *vars_itr;
+
+	vars_itr = oval_definition_model_get_variables(model);
+	while (oval_variable_iterator_has_more(vars_itr)) {
+		struct oval_variable *var;
+
+		var = oval_variable_iterator_next(vars_itr);
+		if (oval_variable_get_type(var) != OVAL_VARIABLE_EXTERNAL)
+			continue;
+
+		oval_variable_clear_values(var);
+	}
+	oval_variable_iterator_free(vars_itr);
+}
+
 void oval_syschar_model_bind_variable_model(struct oval_syschar_model *sysmodel, struct oval_variable_model *varmodel)
 {
 	__attribute__nonnull__(sysmodel);

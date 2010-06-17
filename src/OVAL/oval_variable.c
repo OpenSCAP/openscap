@@ -421,6 +421,25 @@ void oval_variable_add_value(struct oval_variable *variable, struct oval_value *
 		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
 }
 
+void oval_variable_clear_values(struct oval_variable *variable)
+{
+	oval_variable_CONEXT_t *conext_var;
+
+	if (oval_variable_is_locked(variable)) {
+		oscap_dprintf("WARNING: attempt to update locked content.\n");
+		return;
+	}
+	if (variable->type != OVAL_VARIABLE_CONSTANT && variable->type != OVAL_VARIABLE_EXTERNAL) {
+		oscap_dprintf("WARNING: wrong variable type for this operation: %d.\n", variable->type);
+		return;
+        }
+
+	conext_var = (oval_variable_CONEXT_t *) variable;
+	oval_collection_free_items(conext_var->values, (oscap_destruct_func) oval_value_free);
+	conext_var->values = oval_collection_new();
+	variable->flag = SYSCHAR_FLAG_NOT_COLLECTED;
+}
+
 void oval_variable_set_component(struct oval_variable *variable, struct oval_component *component)
 {
 	if (variable && !oval_variable_is_locked(variable)) {
