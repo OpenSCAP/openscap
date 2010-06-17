@@ -15,6 +15,9 @@ for xml in OVAL/probes/*.xml; do
 done
 
 export OVAL_PROBE_DIR="`pwd`/../src/OVAL/probes/"
+export SEAP_DEBUGLOG_DISABLE=1
+export SEXP_VALIDATE_DISABLE=1
+
 echo ""
 echo "---------------- Valgrind checks -----------------"
 for xml in "$VGTEST_TMPDIR"/*.xml; do

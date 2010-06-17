@@ -1,37 +1,109 @@
 #!/usr/bin/env bash
+#############################################################################################
 
 VG=$(which valgrind)
 VGOPT="--trace-children=yes --leak-check=full --show-reachable=yes"
-COMM="$1"
-REGEX="$2"
+VERBOSE=0
+DEFAULT_REGEX='^.*(oscap-scan|test_probes|probe_).*$'
+
+#############################################################################################
+function imsg {
+    if (( $VERBOSE == 1 )); then
+        echo -n '[i] '
+        echo $*
+    fi
+}
+
+function wmsg {
+    echo -n '[w] '
+    echo $*
+}
+
+function emsg {
+    echo -n '[e] '
+    echo $*
+}
 
 function cpy {
     local src=$1
     local dst=$2
-
-#    echo "$src ==> $dst"
-    cp "$src" "$dst"
+    
+    imsg "$src ==> $dst"
+    cp   "$src"   "$dst"
 }
+#############################################################################################
 
-if [[ -z "$VG" ]]; then
-    echo "[e] Please intall valgrind first or correct your \$PATH."
+prog="$(basename "$0")"
+asdf=$(getopt -o r:vh --long regex,verbose,help -n vgrun.sh -- "$@")
+
+if (( $? != 0 )); then
     exit 1
 fi
 
+eval set -- "$asdf"
+
+while true; do
+    case "$1" in
+        -r|--regex)
+            REGEX="$2"
+            shift 2
+            ;;
+        -v|--verbose)
+            VERBOSE=1
+            shift
+            ;;
+        -h|--help)
+            echo "Usage: $prog [-hr] <command>"
+            echo "       -r, --regex    Filename regex (extended)"
+            echo "       -v, --verbose  Be verbose"
+            echo "       -h, --help     This help"
+            echo ""
+            exit 0
+            ;;
+        --)
+            shift; break;;
+        *)
+            emsg "wtf?"
+            exit 1
+            ;;
+    esac
+done
+
+COMM="$1"
+
+if [[ -z "$VG" ]]; then
+    emsg "Please intall valgrind first or correct your \$PATH."
+    exit 1
+else
+    VER="$($VG --version)"
+    case "$VER" in
+        valgrind-3.[345].*)
+            ;;
+        *)
+            wmsg "The version of Valgrind ($VG) you are using wasn't tested with this script. Don't trust the output of this script."
+            ;;
+    esac
+fi
+
 if [[ -z "$COMM" ]]; then
-    echo "[e] Executing rm -rf / ... this may take a while"
+    emsg "Executing rm -rf / ... this may take a while"
     exit 2
+fi
+
+if [[ -z "$REGEX" ]]; then
+    REGEX="$DEFAULT_REGEX"
+    imsg "Using default filename regex: $REGEX"
 fi
 
 TMPDIR=$(mktemp -d)
 
-#echo "[i]  outdir: $TMPDIR"
-#echo "[i] command: $VG $VGOPT --log-file=\"$TMPDIR/output.%p\" -- $COMM"
+imsg " outdir: $TMPDIR"
+imsg "command: $VG $VGOPT --log-file=\"$TMPDIR/output.%p\" -- $COMM"
 
 PREFIX="$$-$(date +%H%M)"
 echo "=== ID: $PREFIX === CMD: $COMM ==="
 
-SEAP_DEBUGLOG_DISABLE=1 SEXP_VALIDATE_DISABLE=1 $VG $VGOPT --log-file="$TMPDIR/output.%p" -- $COMM > /dev/null 2>&1
+$VG $VGOPT --log-file="$TMPDIR/output.%p" -- $COMM > /dev/null 2>&1
 
 if (( $? == 134 )); then
     exit 134
@@ -48,7 +120,7 @@ for log in "$TMPDIR"/output.*; do
     	log_cmd0="$(grep -A 1 '^.*My PID = [0-9]*, parent PID = [0-9]*\.[[:space:]]*Prog and args are:.*$' "$log")"
 
     	if [[ -z "$log_cmd0" ]]; then
-    		echo "[e] Don't know how to parse valgrind output :["
+    	    emsg "Don't know how to parse valgrind output :["
     		# TODO: xml output parsing?
     		exit 3
     	fi
@@ -58,34 +130,21 @@ for log in "$TMPDIR"/output.*; do
     
     log_cmd1="$(basename "$(echo "$log_cmd0" | sed -n 's|^\([^[:space:]]*\).*$|\1|p')")"
 
-    case "$log_cmd1" in
-        *oscap-scan*)
-            cpy "$log" $PREFIX-$c.oscap_scan
-            LOG[$c]="$PREFIX-$c.oscap_scan"
-            CMD[$c]="$log_cmd1"
-            c=$(($c + 1))
-            ;;
-        *test_probes*)
-            cpy "$log" $PREFIX-$c.test_probes
-            LOG[$c]="$PREFIX-$c.test_probes"
-            CMD[$c]="$log_cmd1"
-            c=$(($c + 1))
-            ;;
-        *probe_*)
-            cpy "$log" $PREFIX-$c.$log_cmd1
-            LOG[$c]="$PREFIX-$c.$log_cmd1"
-            CMD[$c]="$log_cmd1"
-            c=$(($c + 1))
-            ;;
-    esac
+    if echo "$log_cmd1" | egrep -q "$REGEX"; then
+        outfile="$PREFIX-$c.$log_cmd1"
+        cpy "$log" "$outfile"
+        LOG[$c]="$outfile"
+        CMD[$c]="$log_cmd1"
+        c=$(($c + 1))        
+    fi
 done
 
 for ((i=0; i < ${#LOG[@]}; i++)); do
-    num_le="$(egrep -ci "(lost in loss record|still reachable in loss record)"      "${LOG[$i]}")"
-    num_ir="$(grep -ci "invalid read of size"     "${LOG[$i]}")"
-    num_iw="$(grep -ci "invalid write of size"    "${LOG[$i]}")"
-    num_ij="$(grep -ci "conditional jump or move depends" "${LOG[$i]}")"
-    num_iv="$(grep -ci "use of uninitialized value" "${LOG[$i]}")"
+    num_le="$(egrep -ci "(lost in loss record|still reachable in loss record)" "${LOG[$i]}")"
+    num_ir="$(grep -ci  "invalid read of size"                                 "${LOG[$i]}")"
+    num_iw="$(grep -ci  "invalid write of size"                                "${LOG[$i]}")"
+    num_ij="$(grep -ci  "conditional jump or move depends"                     "${LOG[$i]}")"
+    num_iv="$(grep -ci  "use of uninitialized value"                           "${LOG[$i]}")"
 
     sum=$(($num_le + $num_ir + $num_iw + $num_ij + $num_iv))
 
