@@ -276,6 +276,15 @@ static bool xccdf_policy_model_callback_wrapper(struct xccdf_policy_model *model
       return false;
     }
     result = PyEval_CallObject(func,arglist);
+    if (result == NULL) {
+        if (PyErr_Occurred() != NULL)
+            PyErr_PrintEx(0);
+        PyErr_Print();
+        Py_DECREF(arglist);
+        Py_XDECREF(result);
+        PyGILState_Release(state);
+        return false;
+    }
     Py_DECREF(arglist);
     if (PyObject_IsTrue(result)) {
         dres = true;
@@ -303,14 +312,23 @@ static int oval_agent_callback_wrapper(const char *id, oval_result_t oresult, vo
     arglist = Py_BuildValue("siO", id, oresult, usrdata);
     if (!PyCallable_Check(func)) {
       PyGILState_Release(state);
-      return false;
+      return 1;
     }
     result = PyEval_CallObject(func,arglist);
+    if (result == NULL) {
+        if (PyErr_Occurred() != NULL)
+            PyErr_PrintEx(0);
+        PyErr_Print();
+        Py_DECREF(arglist);
+        Py_XDECREF(result);
+        PyGILState_Release(state);
+        return -1;
+    }
     Py_DECREF(arglist);
     if (PyObject_IsTrue(result)) {
-        dres = true;
+        dres = 0;
     } else {
-        dres = false;
+        dres = 1;
     }
     Py_XDECREF(result);
     PyGILState_Release(state);
