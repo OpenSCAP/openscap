@@ -69,10 +69,10 @@ struct xccdf_benchmark *xccdf_benchmark_clone(const struct xccdf_benchmark *old_
 {
 	struct xccdf_item *new_benchmark = oscap_calloc(1, sizeof(struct xccdf_item) + sizeof(struct xccdf_benchmark_item));
 	struct xccdf_item *old = XITEM(old_benchmark);
-	new_benchmark->item = *(xccdf_item_base_clone(&(old->item)));
+    xccdf_item_base_clone(&new_benchmark->item, &old->item);
 	new_benchmark->type = old->type;
 	//second argument is a pointer to the benchmark being created which will be the parent of all of its sub elements.
-	new_benchmark->sub.benchmark = *(xccdf_benchmark_item_clone(&(old->sub.benchmark), new_benchmark));
+    xccdf_benchmark_item_clone(&new_benchmark->sub.benchmark, old_benchmark);
 	return XBENCHMARK(new_benchmark);
 }
 
@@ -513,13 +513,12 @@ bool xccdf_add_item(struct oscap_list *list, struct xccdf_item *parent, struct x
 
 bool xccdf_benchmark_register_item(struct xccdf_benchmark *benchmark, struct xccdf_item *item)
 {
-	assert(benchmark != NULL);
-
-	if (item == NULL || xccdf_item_get_id(item) == NULL)
+	if (benchmark == NULL || item == NULL || xccdf_item_get_id(item) == NULL)
 		return false;
 
-	if (xccdf_item_get_benchmark(item) != NULL)
-		return xccdf_item_get_benchmark(item) == benchmark; // already registered
+	const char *id = xccdf_item_get_id(item);
+	struct xccdf_item *found = xccdf_benchmark_get_item(benchmark, id);
+	if (found != NULL) return found == item; // already registered
 
 	return oscap_htable_add(XITEM(benchmark)->sub.benchmark.dict, xccdf_item_get_id(item), item);
 }

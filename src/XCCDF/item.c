@@ -106,27 +106,29 @@ struct xccdf_item *xccdf_item_clone(const struct xccdf_item *old_item)
 {
 	struct xccdf_item *new_item = oscap_calloc(1, sizeof(struct xccdf_item));
 
-	new_item->item = *(xccdf_item_base_clone(&(old_item->item)));
+	//new_item->item = *(xccdf_item_base_clone(&(old_item->item)));
+    xccdf_item_base_clone(&new_item->item, &(old_item->item));
 	new_item->type = old_item->type;
 
 	switch (new_item->type) {
 	case XCCDF_BENCHMARK:
-		 new_item->sub.benchmark = *(xccdf_benchmark_item_clone(&(old_item->sub.benchmark), new_item));
+		 //new_item->sub.benchmark = *(xccdf_benchmark_item_clone(&(old_item->sub.benchmark), new_item));
+        xccdf_benchmark_item_clone(&new_item->sub.benchmark, XBENCHMARK(old_item));
 		break;
 	case XCCDF_RULE:
-		new_item->sub.rule = *(xccdf_rule_item_clone(&(old_item->sub.rule)));
+	    xccdf_rule_item_clone(&new_item->sub.rule, &old_item->sub.rule);
 		break;
 	case XCCDF_GROUP:
-		new_item->sub.group = *(xccdf_group_item_clone(&(old_item->sub.group), new_item));
+	    xccdf_group_item_clone(new_item, &old_item->sub.group);
 		break;
 	case XCCDF_VALUE:
-		new_item->sub.value = *(xccdf_value_item_clone(&(old_item->sub.value)));
+	    xccdf_value_item_clone(&new_item->sub.value, &old_item->sub.value);
 		break;
 	case XCCDF_RESULT:
-		new_item->sub.result = *(xccdf_result_item_clone(&(old_item->sub.result)));
+	    xccdf_result_item_clone(&new_item->sub.result, &old_item->sub.result);
 		break;
 	case XCCDF_PROFILE:
-		new_item->sub.profile = *(xccdf_profile_item_clone(&(old_item->sub.profile)));
+	    xccdf_profile_item_clone(&new_item->sub.profile, &old_item->sub.profile);
 		break;
 	default:
 		//dont initialize the sub item.
@@ -137,9 +139,8 @@ struct xccdf_item *xccdf_item_clone(const struct xccdf_item *old_item)
 }
 
 /* Performs a deep copy of xccdf_item_base and returns a pointer to that copy */
-struct xccdf_item_base *xccdf_item_base_clone(const struct xccdf_item_base *old_base)
+void xccdf_item_base_clone(struct xccdf_item_base *new_base, const struct xccdf_item_base *old_base)
 {
-	struct xccdf_item_base *new_base = oscap_calloc(1, sizeof(struct xccdf_item_base));
 	new_base->id = oscap_strdup(old_base->id);
 	new_base->cluster_id = oscap_strdup(old_base->cluster_id);
 	new_base->version = oscap_strdup(old_base->version);
@@ -161,19 +162,8 @@ struct xccdf_item_base *xccdf_item_base_clone(const struct xccdf_item_base *old_
 	new_base->platforms = oscap_list_clone(old_base->platforms, (oscap_clone_func) oscap_strdup);
 
 	/* Handling flags */
-	/*
-	new_base->flags.selected = old_base->flags.selected;
-	new_base->flags.hidden = old_base->flags.hidden;
-	new_base->flags.resolved = old_base->flags.resolved;
-	new_base->flags.abstract = old_base->flags.abstract;
-	new_base->flags.prohibit_changes = old_base->flags.prohibit_changes;
-	new_base->flags.interactive = old_base->flags.interactive;
-	new_base->flags.multiple = old_base->flags.multiple;
-	*/
 	new_base->flags = old_base->flags;
 	new_base->defined_flags = old_base->defined_flags;
-
-	return new_base;
 }
 
 
@@ -856,7 +846,7 @@ struct xccdf_model *xccdf_model_clone(const struct xccdf_model *old_model)
 
 	//params maps char * to char * so we will need to oscap_strdup the items.
 	new_model->params = oscap_htable_clone(old_model->params, (oscap_clone_func) oscap_strdup);
-	new_model->params = NULL;
+	//new_model->params = NULL;
 	return new_model;
 }
 
@@ -977,21 +967,21 @@ void xccdf_reference_free(struct xccdf_reference *ref)
 }
 
 //clones the specific types of items
-struct xccdf_profile_item * xccdf_profile_item_clone(const struct xccdf_profile_item * item)
+void xccdf_profile_item_clone(struct xccdf_profile_item *clone, const struct xccdf_profile_item * item)
 {
-	struct xccdf_profile_item * clone = oscap_calloc(1, sizeof(struct xccdf_profile_item));
 	clone->note_tag = oscap_strdup(item->note_tag);
 	clone->selects = 	oscap_list_clone(item->selects, (oscap_clone_func) xccdf_select_clone);
 	clone->setvalues = oscap_list_clone(item->setvalues, (oscap_clone_func) xccdf_setvalue_clone);
 	clone->refine_values = oscap_list_clone(item->refine_values, (oscap_clone_func) xccdf_refine_value_clone);
 	clone->refine_rules = oscap_list_clone(item->refine_rules, (oscap_clone_func) xccdf_refine_rule_clone);
-	return clone;
 }
 
-struct xccdf_benchmark_item * xccdf_benchmark_item_clone(const struct xccdf_benchmark_item * item, struct xccdf_item *parent)
+struct xccdf_benchmark_item * xccdf_benchmark_item_clone(struct xccdf_benchmark_item *clone, const struct xccdf_benchmark * bench)
 {
-	struct xccdf_benchmark_item * clone = oscap_calloc(1, sizeof(struct xccdf_benchmark_item));
-	clone->dict = oscap_htable_clone(item->dict, (oscap_clone_func) xccdf_item_clone);	
+    struct xccdf_benchmark_item *item = &XITEM(bench)->sub.benchmark;
+    struct xccdf_item *parent = XITEM(bench);
+
+	clone->dict = oscap_htable_new();
 	clone->notices = oscap_list_clone(item->notices, (oscap_clone_func) xccdf_notice_clone);
 	clone->plain_texts = oscap_list_clone(item->plain_texts, (oscap_clone_func) xccdf_plain_text_clone);
 	
@@ -1013,78 +1003,59 @@ struct xccdf_benchmark_item * xccdf_benchmark_item_clone(const struct xccdf_benc
 	return clone;
 }
 
-struct xccdf_rule_item * xccdf_rule_item_clone(const struct xccdf_rule_item * item)
+void xccdf_rule_item_clone(struct xccdf_rule_item *clone, const struct xccdf_rule_item * item)
 {
-	struct xccdf_rule_item * clone = oscap_calloc(1, sizeof(struct xccdf_rule_item));
 	clone->role = item->role;
 	clone->severity = item->severity;
 	clone->idents = oscap_list_clone(item->idents, (oscap_clone_func) xccdf_ident_clone );
 	clone->checks = oscap_list_clone(item->checks, (oscap_clone_func) xccdf_check_clone );
-	//requires is an oscap_list of char * so we should be able to use oscap_strdup for cloning
-	clone->requires = oscap_list_clone(item->requires, (oscap_clone_func) oscap_strdup);
-	//conflicts is also an oscap_list of char *
+	//requires is an oscap_list of oscap_lists of char *
+	clone->requires = oscap_list_clone(item->requires, (oscap_clone_func) oscap_stringlist_clone);
+	//conflicts is an oscap_list of char *
 	clone->conflicts = oscap_list_clone(item->conflicts, (oscap_clone_func) oscap_strdup);
 	clone->profile_notes = oscap_list_clone(item->profile_notes, (oscap_clone_func) xccdf_profile_note_clone);
 	clone->fixes = oscap_list_clone(item->fixes, (oscap_clone_func) xccdf_fix_clone);
 	clone->fixtexts = oscap_list_clone(item->fixtexts, (oscap_clone_func) xccdf_fixtext_clone);
-	return clone;
 }
 
-struct xccdf_group_item * xccdf_group_item_clone(const struct xccdf_group_item * item, struct xccdf_item *parent)
+void xccdf_group_item_clone(struct xccdf_item *parent, const struct xccdf_group_item * item)
 {
-	struct xccdf_group_item * clone = oscap_calloc(1, sizeof(struct xccdf_group_item));;
-	//requires is an oscap_list of char * so we should be able to use oscap_strdup for cloning
-	clone->requires = oscap_list_clone(item->requires, (oscap_clone_func) oscap_strdup);
-	//conflicts is also an oscap_list of char *
+    struct xccdf_group_item *clone = &parent->sub.group;
+	//requires is an oscap_list of oscap_lists of char *
+	clone->requires = oscap_list_clone(item->requires, (oscap_clone_func) oscap_stringlist_clone);
+	//conflicts is an oscap_list of char *
 	clone->conflicts = oscap_list_clone(item->conflicts, (oscap_clone_func) oscap_strdup);
 	clone->values = oscap_list_clone(item->values, (oscap_clone_func) xccdf_value_clone);
 	xccdf_reparent_list(clone->values, parent);
 	clone->content = oscap_list_clone(item->content, (oscap_clone_func) xccdf_item_clone);
 	xccdf_reparent_list(clone->content, parent);
-	return clone;
 }
 
-union xccdf_value_unit xccdf_value_unit_clone_str(const union xccdf_value_unit unit)
+union xccdf_value_unit *xccdf_value_unit_clone_str(const union xccdf_value_unit *unit)
 {
-	union xccdf_value_unit val;
-	val.s = oscap_strdup(unit.s);
+	union xccdf_value_unit *val = oscap_calloc(1, sizeof(union xccdf_value_unit));
+	val->s = oscap_strdup(unit->s);
 	return val;
 }
 
-union xccdf_value_unit xccdf_value_unit_clone_numeric(const union xccdf_value_unit unit)
+union xccdf_value_unit *xccdf_value_unit_clone_numeric(const union xccdf_value_unit *unit)
 {
-	union xccdf_value_unit val;
-	val.n = unit.n;
+	union xccdf_value_unit *val = oscap_calloc(1, sizeof(union xccdf_value_unit));
+	val->n = unit->n;
 	return val;
 }
 
-union xccdf_value_unit xccdf_value_unit_clone_bool(const union xccdf_value_unit unit)
+union xccdf_value_unit *xccdf_value_unit_clone_bool(const union xccdf_value_unit *unit)
 {
-	union xccdf_value_unit val;
-	val.b = unit.b;
+	union xccdf_value_unit *val = oscap_calloc(1, sizeof(union xccdf_value_unit));
+	val->b = unit->b;
 	return val;
 }
-
-/*
-struct xccdf_value_instance * xccdf_value_instance_clone_str(const struct xccdf_value_instance * val)
-{
-	return xccdf_value_instance_clone(val, XCCDF_TYPE_STRING);
-}
-
-struct xccdf_value_instance * xccdf_value_instance_clone_numeric(const struct xccdf_value_instance * val)
-{
-	return xccdf_value_instance_clone(val, XCCDF_TYPE_NUMBER);
-}
-
-struct xccdf_value_instance * xccdf_value_instance_clone_bool(const struct xccdf_value_instance * val)
-{
-	return xccdf_value_instance_clone(val, XCCDF_TYPE_BOOLEAN);
-}
-*/
 
 struct xccdf_value_instance * xccdf_value_instance_clone(const struct xccdf_value_instance * val)
 {
 	struct xccdf_value_instance * clone = oscap_calloc(1, sizeof(struct xccdf_value_instance));
+    clone->type = val->type;
 	
 	switch (val->type) {
 	case XCCDF_TYPE_STRING:
@@ -1110,23 +1081,22 @@ struct xccdf_value_instance * xccdf_value_instance_clone(const struct xccdf_valu
 	}
 	
 	clone->flags = val->flags;
+	xccdf_value_instance_set_selector(clone, xccdf_value_instance_get_selector(val));
 	return clone;
 }
 
-struct xccdf_value_item * xccdf_value_item_clone(const struct xccdf_value_item * item)
+void xccdf_value_item_clone(struct xccdf_value_item *clone, const struct xccdf_value_item * item)
 {
-	struct xccdf_value_item * clone = oscap_calloc(1, sizeof(struct xccdf_value_item));
+	//struct xccdf_value_item * clone = oscap_calloc(1, sizeof(struct xccdf_value_item));
+
 	//these three are values which can be directly assigned.
 	clone->type = item->type;
 	clone->interface_hint = item->interface_hint;
 	clone->oper = item->oper;
 	
 	//the rest need deep copy
-	//clone->selector = oscap_strdup(item->selector);
-	//clone->value = xccdf_value_instance_clone(item->value, item->type);
-	oscap_list_clone(item->instances, (oscap_clone_func) xccdf_value_instance_clone);
+	clone->instances = oscap_list_clone(item->instances, (oscap_clone_func) xccdf_value_instance_clone);
 	clone->sources = oscap_list_clone(item->sources, (oscap_clone_func) oscap_strdup);
-	return clone;
 }
 
 struct xccdf_identity * xccdf_identity_clone(const struct xccdf_identity * identity)
@@ -1171,7 +1141,7 @@ struct xccdf_instance * xccdf_instance_clone(const struct xccdf_instance * insta
     struct xccdf_instance * clone = oscap_calloc(1, sizeof(struct xccdf_instance));
     clone->context = oscap_strdup(instance->context);
     clone->parent_context = oscap_strdup(instance->parent_context);
-    clone->context = oscap_strdup(instance->content);
+    clone->content = oscap_strdup(instance->content);
     return clone;
 }
 
@@ -1203,9 +1173,8 @@ struct xccdf_score * xccdf_score_clone(const struct xccdf_score * score)
 	return clone;
 }
 
-struct xccdf_result_item * xccdf_result_item_clone(const struct xccdf_result_item * item)
+void xccdf_result_item_clone(struct xccdf_result_item *clone, const struct xccdf_result_item * item)
 {
-	struct xccdf_result_item * clone = oscap_calloc(1, sizeof(struct xccdf_result_item));
 	clone->start_time = item->start_time;
 	clone->end_time = item->end_time;
 	clone->test_system = oscap_strdup(item->test_system);
@@ -1217,12 +1186,10 @@ struct xccdf_result_item * xccdf_result_item_clone(const struct xccdf_result_ite
 	clone->organizations = oscap_list_clone(item->organizations, (oscap_clone_func) oscap_strdup);
 	clone->remarks = oscap_list_clone(item->remarks, (oscap_clone_func) oscap_text_clone);
 	clone->target_addresses = oscap_list_clone(item->target_addresses, (oscap_clone_func) oscap_strdup);
-	clone->target_facts = oscap_list_clone(item->identities, (oscap_clone_func) xccdf_target_fact_clone);
-	clone->setvalues = oscap_list_clone(item->identities, (oscap_clone_func) xccdf_setvalue_clone);
-	clone->rule_results = oscap_list_clone(item->identities, (oscap_clone_func) xccdf_rule_result_clone);
-	clone->scores = oscap_list_clone(item->identities, (oscap_clone_func) xccdf_score_clone);
-	
-	return clone;
+	clone->target_facts = oscap_list_clone(item->target_facts, (oscap_clone_func) xccdf_target_fact_clone);
+	clone->setvalues = oscap_list_clone(item->setvalues, (oscap_clone_func) xccdf_setvalue_clone);
+	clone->rule_results = oscap_list_clone(item->rule_results, (oscap_clone_func) xccdf_rule_result_clone);
+	clone->scores = oscap_list_clone(item->scores, (oscap_clone_func) xccdf_score_clone);
 }
 
 void xccdf_reparent_list(struct oscap_list * item_list, struct xccdf_item * parent)
@@ -1233,6 +1200,7 @@ void xccdf_reparent_list(struct oscap_list * item_list, struct xccdf_item * pare
 		struct xccdf_item * item = oscap_iterator_next(it);
 		xccdf_reparent_item(item, parent);
 	}
+    oscap_iterator_free(it);
 }
 
 void xccdf_reparent_item(struct xccdf_item * item, struct xccdf_item * parent)
@@ -1240,14 +1208,12 @@ void xccdf_reparent_item(struct xccdf_item * item, struct xccdf_item * parent)
 	if(item != NULL)
 	{
 		item->item.parent = parent;
+		xccdf_benchmark_register_item(xccdf_item_get_benchmark(item), item);
 	}
 }
 
-//OSCAP_ACCESSOR_STRING(xccdf_reference, lang)
 OSCAP_ACCESSOR_STRING(xccdf_reference, href)
 OSCAP_ACCESSOR_TEXT(xccdf_reference, text)
-//OSCAP_ACCESSOR_STRING(xccdf_reference, content)
-//OSCAP_ACCESSOR_SIMPLE(bool,        xccdf_reference, override)
 
 const struct oscap_text_traits XCCDF_TEXT_PLAIN    = { .can_override = true };
 const struct oscap_text_traits XCCDF_TEXT_HTML     = { .html = true, .can_override = true };

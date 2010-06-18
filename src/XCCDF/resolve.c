@@ -220,7 +220,7 @@ static void xccdf_resolve_profile(struct xccdf_item *child, struct xccdf_item *p
 static struct xccdf_item *xccdf_resolve_copy_item(struct xccdf_item *src)
 {
 	struct xccdf_benchmark *bench = xccdf_item_get_benchmark(src);
-	const char *prefix;
+	const char *prefix = NULL;
 	switch (xccdf_item_get_type(src)) {
 		case XCCDF_RULE:  prefix = "inherited-rule-";  break;
 		case XCCDF_GROUP: prefix = "inherited-group-"; break;

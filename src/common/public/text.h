@@ -113,6 +113,8 @@ const char *oscap_title_get_content(const struct oscap_title *title);
 
 /// @memberof oscap_stringlist
 struct oscap_string_iterator *oscap_stringlist_get_strings(const struct oscap_stringlist* list);
+/// @memberof oscap_stringlist
+struct oscap_stringlist *oscap_stringlist_clone(struct oscap_stringlist *list);
 
 /**
  * Get oscap title language.

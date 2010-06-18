@@ -185,9 +185,9 @@ struct xccdf_group * xccdf_group_clone(const struct xccdf_group * group)
 {
 	struct xccdf_item *new_group = oscap_calloc(1, sizeof(struct xccdf_item) + sizeof(struct xccdf_group_item));
 	struct xccdf_item *old = XITEM(group);
-	new_group->item = *(xccdf_item_base_clone(&(old->item)));
+    xccdf_item_base_clone(&new_group->item, &(old->item));
 	new_group->type = old->type;
-	new_group->sub.group = *(xccdf_group_item_clone(&(old->sub.group), new_group));
+    xccdf_group_item_clone(new_group, &(old->sub.group));
 	return XGROUP(new_group);
 }
 
@@ -281,9 +281,9 @@ struct xccdf_rule *xccdf_rule_clone(const struct xccdf_rule * rule)
 {
 	struct xccdf_item *new_rule = oscap_calloc(1, sizeof(struct xccdf_item) + sizeof(struct xccdf_rule_item));
 	struct xccdf_item *old = XITEM(rule);
-	new_rule->item = *(xccdf_item_base_clone(&(old->item)));
+    xccdf_item_base_clone(&new_rule->item, &(old->item));
 	new_rule->type = old->type;
-	new_rule->sub.rule = *(xccdf_rule_item_clone(&(old->sub.rule)));
+    xccdf_rule_item_clone(&new_rule->sub.rule, &old->sub.rule);
 	return XRULE(new_rule);
 }
 

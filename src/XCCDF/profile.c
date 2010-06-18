@@ -191,9 +191,9 @@ struct xccdf_profile *xccdf_profile_clone (const struct xccdf_profile *old_profi
 {
 	struct xccdf_item *new_profile = oscap_calloc(1, sizeof(struct xccdf_item) + sizeof(struct xccdf_profile_item));
 	struct xccdf_item *old = XITEM(old_profile);
-	new_profile->item = *(xccdf_item_base_clone(&(old->item)));
+    xccdf_item_base_clone(&new_profile->item, &(old->item));
 	new_profile->type = old->type;
-	new_profile->sub.profile = *(xccdf_profile_item_clone(&(old->sub.profile)));
+    xccdf_profile_item_clone(&new_profile->sub.profile, &old->sub.profile);
 	return XPROFILE(new_profile);
 }
 

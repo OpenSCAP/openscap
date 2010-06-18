@@ -46,6 +46,8 @@ void manipulate(struct xccdf_benchmark* bench)
 bool dump_benchmark(const char* fname)
 {
 	struct xccdf_benchmark* benchmark = xccdf_benchmark_import(fname);
+    struct xccdf_benchmark* clone = xccdf_benchmark_clone(benchmark);
+    xccdf_benchmark_free(clone);
 	if (benchmark == NULL) return false;
 	printf("\n");
 	xccdf_benchmark_resolve(benchmark);

@@ -28,7 +28,6 @@
 #include <math.h>
 #include <string.h>
 
-static oscap_destruct_func xccdf_value_instance_get_destructor(xccdf_value_type_t type);
 static struct xccdf_value_instance *xccdf_value_instance_new(xccdf_value_type_t type);
 
 struct xccdf_item *xccdf_value_new_internal(struct xccdf_item *parent, xccdf_value_type_t type)
@@ -49,9 +48,9 @@ struct xccdf_value * xccdf_value_clone(const struct xccdf_value * value)
 {
 	struct xccdf_item *new_value = oscap_calloc(1, sizeof(struct xccdf_item) + sizeof(struct xccdf_value_item));
 	struct xccdf_item *old = XITEM(value);
-	new_value->item = *(xccdf_item_base_clone(&(old->item)));
+    xccdf_item_base_clone(&new_value->item, &old->item);
 	new_value->type = old->type;
-	new_value->sub.value = *(xccdf_value_item_clone(&(old->sub.value)));
+    xccdf_value_item_clone(&new_value->sub.value, &XITEM(value)->sub.value);
 	return XVALUE(new_value);
 }
 
@@ -271,9 +270,11 @@ void xccdf_value_to_dom(struct xccdf_value *value, xmlNode *value_node, xmlDoc *
 
 void xccdf_value_free(struct xccdf_item *val)
 {
-	oscap_list_free(val->sub.value.instances, xccdf_value_instance_get_destructor(val->sub.value.type));
-	oscap_list_free(val->sub.value.sources, oscap_free);
-	xccdf_item_release(val);
+    if (val) {
+        oscap_list_free(val->sub.value.instances, (oscap_destruct_func)xccdf_value_instance_free);
+        oscap_list_free(val->sub.value.sources, oscap_free);
+        xccdf_item_release(val);
+    }
 }
 
 static void xccdf_value_unit_s_free(union xccdf_value_unit *u)
@@ -290,49 +291,6 @@ static oscap_destruct_func xccdf_value_unit_destructor(xccdf_value_type_t type)
 	case XCCDF_TYPE_NUMBER:
 	case XCCDF_TYPE_BOOLEAN:
 		return free;
-	}
-	return NULL;
-}
-
-static void xccdf_value_instance_free_0(struct xccdf_value_instance *v, xccdf_value_type_t type)
-{
-	oscap_list_free(v->choices, xccdf_value_unit_destructor(type));
-	switch (type) {
-	case XCCDF_TYPE_STRING:
-		oscap_free(v->limits.s.match);
-		oscap_free(v->defval.s);
-		oscap_free(v->value.s);
-		break;
-	default:
-		break;
-	}
-	oscap_free(v);
-}
-
-static void xccdf_value_instance_free_b(struct xccdf_value_instance *v)
-{
-	xccdf_value_instance_free_0(v, XCCDF_TYPE_BOOLEAN);
-}
-
-static void xccdf_value_instance_free_n(struct xccdf_value_instance *v)
-{
-	xccdf_value_instance_free_0(v, XCCDF_TYPE_NUMBER);
-}
-
-static void xccdf_value_instance_free_s(struct xccdf_value_instance *v)
-{
-	xccdf_value_instance_free_0(v, XCCDF_TYPE_STRING);
-}
-
-static oscap_destruct_func xccdf_value_instance_get_destructor(xccdf_value_type_t type)
-{
-	switch (type) {
-	case XCCDF_TYPE_NUMBER:
-		return (oscap_destruct_func) xccdf_value_instance_free_n;
-	case XCCDF_TYPE_BOOLEAN:
-		return (oscap_destruct_func) xccdf_value_instance_free_b;
-	case XCCDF_TYPE_STRING:
-		return (oscap_destruct_func) xccdf_value_instance_free_s;
 	}
 	return NULL;
 }

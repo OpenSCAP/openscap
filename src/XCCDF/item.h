@@ -452,19 +452,19 @@ struct xccdf_reference *xccdf_reference_new_parse(xmlTextReaderPtr reader);
 
 //private methods for cloning items
 //Will clone the item member of a xccdf_item object
-struct xccdf_item_base * xccdf_item_base_clone(const struct xccdf_item_base * item);
+void xccdf_item_base_clone(struct xccdf_item_base *new_base, const struct xccdf_item_base *old_base);
 
 //clones the specific types of items
-struct xccdf_profile_item * xccdf_profile_item_clone(const struct xccdf_profile_item * item);
-struct xccdf_benchmark_item * xccdf_benchmark_item_clone(const struct xccdf_benchmark_item * item, struct xccdf_item * parent);
-struct xccdf_rule_item * xccdf_rule_item_clone(const struct xccdf_rule_item * item);
-struct xccdf_group_item * xccdf_group_item_clone(const struct xccdf_group_item * item, struct xccdf_item * parent);
-union xccdf_value_unit xccdf_value_unit_clone_str(const union xccdf_value_unit unit);
-union xccdf_value_unit xccdf_value_unit_clone_numeric(const union xccdf_value_unit unit);
-union xccdf_value_unit xccdf_value_unit_clone_bool(const union xccdf_value_unit unit);
+void xccdf_profile_item_clone(struct xccdf_profile_item *clone, const struct xccdf_profile_item * item);
+struct xccdf_benchmark_item * xccdf_benchmark_item_clone(struct xccdf_benchmark_item *clone, const struct xccdf_benchmark * bench);
+void xccdf_rule_item_clone(struct xccdf_rule_item *clone, const struct xccdf_rule_item * item);
+void xccdf_group_item_clone(struct xccdf_item *parent, const struct xccdf_group_item * item);
+void xccdf_value_item_clone(struct xccdf_value_item *clone, const struct xccdf_value_item * item);
+union xccdf_value_unit *xccdf_value_unit_clone_str(const union xccdf_value_unit *unit);
+union xccdf_value_unit *xccdf_value_unit_clone_numeric(const union xccdf_value_unit *unit);
+union xccdf_value_unit *xccdf_value_unit_clone_bool(const union xccdf_value_unit *unit);
 struct xccdf_value_instance * xccdf_value_instance_clone(const struct xccdf_value_instance * val);
-struct xccdf_value_item * xccdf_value_item_clone(const struct xccdf_value_item * item);
-struct xccdf_result_item * xccdf_result_item_clone(const struct xccdf_result_item * item);
+void xccdf_result_item_clone(struct xccdf_result_item *clone, const struct xccdf_result_item * item);
 struct xccdf_ident * xccdf_ident_clone(const struct xccdf_ident * ident);
 struct xccdf_profile_note * xccdf_profile_note_clone(const struct xccdf_profile_note * note);
 void xccdf_reparent_list(struct oscap_list * item_list, struct xccdf_item * parent);

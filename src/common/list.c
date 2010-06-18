@@ -171,9 +171,7 @@ void* oscap_list_find(struct oscap_list *list, void *what, oscap_cmp_func compar
 
 bool oscap_list_contains(struct oscap_list *list, void *what, oscap_cmp_func compare)
 {
-	struct oscap_iterator *it = oscap_list_find(list, what, compare);
-	oscap_iterator_free(it);
-	return it != NULL;
+	return oscap_list_find(list, what, compare) != NULL;
 }
 
 void oscap_list_dump(struct oscap_list *list, oscap_dump_func dumper, int depth)
@@ -285,6 +283,14 @@ bool oscap_iterator_has_more(struct oscap_iterator *it)
 {
 	if (!it) return false;
 	return (!it->cur && it->list->first) || (it->cur && it->cur->next);
+}
+
+struct oscap_stringlist *oscap_stringlist_clone(struct oscap_stringlist *list)
+{
+    void *clone = oscap_list_new(); // oscap_stringlist (or oscap_list)
+    OSCAP_FOR_STR(str, oscap_stringlist_get_strings(list))
+        oscap_list_add(clone, oscap_strdup(str));
+    return clone;
 }
 
 struct oscap_string_iterator *oscap_stringlist_get_strings(const struct oscap_stringlist* list)
