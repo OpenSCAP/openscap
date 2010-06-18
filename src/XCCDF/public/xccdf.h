@@ -1968,10 +1968,6 @@ xccdf_interface_hint_t xccdf_value_get_interface_hint(const struct xccdf_value *
 /// @memberof xccdf_value
 xccdf_operator_t xccdf_value_get_oper(const struct xccdf_value *value);
 /// @memberof xccdf_value
-const char *xccdf_value_get_selector(const struct xccdf_value *value);
-/// @memberof xccdf_value
-char *  xccdf_value_get_selected_value(const struct xccdf_value * value);
-/// @memberof xccdf_value
 struct xccdf_value_instance *xccdf_value_get_instance_by_selector(const struct xccdf_value *value, const char *selector);
 /// @memberof xccdf_value
 bool xccdf_value_add_instance(struct xccdf_value *value, struct xccdf_value_instance *instance);
