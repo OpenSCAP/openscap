@@ -101,6 +101,8 @@ imsg " outdir: $TMPDIR"
 imsg "command: $VG $VGOPT --log-file=\"$TMPDIR/output.%p\" -- $COMM"
 
 PREFIX="$$-$(date +%H%M)"
+SUFFIX=".vglog"
+
 echo "=== ID: $PREFIX === CMD: $COMM ==="
 
 $VG $VGOPT --log-file="$TMPDIR/output.%p" -- $COMM > /dev/null 2>&1
@@ -131,7 +133,7 @@ for log in "$TMPDIR"/output.*; do
     log_cmd1="$(basename "$(echo "$log_cmd0" | sed -n 's|^\([^[:space:]]*\).*$|\1|p')")"
 
     if echo "$log_cmd1" | egrep -q "$REGEX"; then
-        outfile="$PREFIX-$c.$log_cmd1"
+        outfile="$PREFIX-$c.$log_cmd1$SUFFIX"
         cpy "$log" "$outfile"
         LOG[$c]="$outfile"
         CMD[$c]="$log_cmd1"

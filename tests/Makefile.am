@@ -45,6 +45,7 @@ TESTS += OVAL/SEAP/test_seap.sh \
 
 if ENABLE_VALGRIND_TESTS
 TESTS += OVAL/probes/vgtest-probes.sh
+DISTCLEANFILES += *.vglog
 endif
 
 check_PROGRAMS +=	sexp_parser \
