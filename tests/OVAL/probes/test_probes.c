@@ -70,6 +70,7 @@ int main(int argc, char **argv) {
   oval_definition_model_free(def_model);
   oval_syschar_model_free(sys_model);
   oval_results_model_free(res_model);
+  oscap_cleanup();
 
   return 0;
 }
