@@ -56,6 +56,8 @@ static struct oval_value *oval_object_getentval(struct oval_object *obj, const c
                 break;
         }
 
+        oval_object_content_iterator_free(cit);
+
         return(val);
 }
 

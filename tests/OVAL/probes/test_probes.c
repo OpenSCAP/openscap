@@ -12,6 +12,7 @@
 #include <string.h>
 #include <oval_agent_api.h>
 #include <assume.h>
+#include <error.h>
 
 int main(int argc, char **argv) {
 
@@ -70,7 +71,9 @@ int main(int argc, char **argv) {
   oval_definition_model_free(def_model);
   oval_syschar_model_free(sys_model);
   oval_results_model_free(res_model);
+  oval_result_directives_free(res_direct);
   oscap_cleanup();
+  oscap_clearerr();
 
   return 0;
 }
