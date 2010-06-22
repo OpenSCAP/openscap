@@ -1,19 +1,15 @@
 /**
+ * @file   sexp-manip.h
+ * @brief  S-expression object manipulation functions - public header
+ * @author "Daniel Kopecek" <dkopecek@redhat.com>
+ *
  * @addtogroup OVAL
  * @{
  * @addtogroup PROBES
- * Probes and S-expression handling for probe writes.
  * @{
- * @addtogroup SEXPMANIP S-expression manipulation.
- * S-expression manipulation functions.
+ * @addtogroup SEXPRESSIONS
  * @{
- * @{
- *
- * @file
- *
- * @author "Daniel Kopecek" <dkopecek@redhat.com>
  */
-
 /*
  * Copyright 2009 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
@@ -575,3 +571,4 @@ void __SEXP_VALIDATE(const SEXP_t *s_exp, const char *file, uint32_t line, const
 #endif
 
 #endif /* SEXP_MANIP_H */
+/* @}@}@} */

@@ -1,3 +1,11 @@
+/**
+ * @file oval_probe_session.c
+ * @brief OVAL probe session API implementation
+ * @author "Daniel Kopecek" <dkopecek@redhat.com>
+ *
+ * @addtogroup PROBESESSION
+ * @{
+ */
 /*
  * Copyright 2010 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.

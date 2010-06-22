@@ -1,3 +1,11 @@
+/**
+ * @file oval_probe_impl.h
+ * @brief OVAL probe interface private header
+ * @author "Daniel Kopecek" <dkopecek@redhat.com>
+ *
+ * @addtogroup PROBEINTERFACE
+ * @{
+ */
 /*
  * Copyright 2009-2010 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.

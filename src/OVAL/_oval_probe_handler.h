@@ -1,3 +1,11 @@
+/**
+ * @file   _oval_probe_handler.h
+ * @brief  OVAL probe handler private header
+ * @author "Daniel Kopecek" <dkopecek@redhat.com>
+ *
+ * @addtogroup PROBEHANDLERS
+ * @{
+ */
 /*
  * Copyright 2010 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.

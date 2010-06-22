@@ -1,5 +1,4 @@
 /**
- *
  * @defgroup COMMON
  * @{
  *   @defgroup IMPORTEXPORT Import & export
@@ -12,16 +11,21 @@
  *   @defgroup Memory
  * @}
  *
- * @addtogroup OVAL
+ * @defgroup OVAL
  * @{
  *   @defgroup OVALAGENT OVAL Agent
  *   @defgroup OVALDEF OVAL Definitions
  *   @defgroup OVALSYS OVAL System Characteristics
  *   @defgroup OVALRES OVAL Results
  *   @defgroup OVALVAR OVAL External Variable Binding
- *   @defgroup PROBESCONTEXT System checking mechanism
- *   @defgroup PROBES Probes and S-expression (PRIVATE)
+ *   @defgroup PROBES System checking mechanism - probes
+ *   @{
+ *      @defgroup PROBEINTERFACE Library-side probe interface
+ *      @defgroup PROBEHANDLERS Probe handler API
+ *      @defgroup PROBESESSION Probe session API
+ *      @defgroup PROBEAPI Common probe API - object, entity, item manipulation
+ *      @defgroup PROBEAUXAPI Auxilirary functions for probes
+ *      @defgroup SEXPRESSIONS SEAP and S-expression API
+ *   @}
  * @}
  */
-
-

@@ -1322,7 +1322,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_OBJECTREF(struct 
 		struct oval_syschar *syschar;
 
 		sess = oval_probe_session_new(sysmod);
-		syschar = oval_probe_object_eval(sess, object, 0);
+		syschar = oval_probe_object_query(sess, object, 0);
 		oval_probe_session_destroy(sess);
 
 		if (syschar) {

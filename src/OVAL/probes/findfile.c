@@ -1,10 +1,10 @@
 /**
- * @file
- * Auxiliary find_files() function used in different probes
+ * @file   findfile.h
+ * @author "Peter Vrabec" <pvrabec@redhat.com>
  *
- * @author Peter Vrabec <pvrabec@redhat.com>
+ * @addtogroup PROBEAUXAPI
+ * @{
  */
-
 /*
  * Copyright 2009 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
@@ -79,7 +79,7 @@ static void rglobfree(rglob_t * result);
  *  @cb Callback that is called for each hit
  */
 int find_files(SEXP_t * spath, SEXP_t * sfilename, SEXP_t * behaviors,
-	       int (*cb) (const char *pathname, const char *filename, void *arg), void *arg)
+	       int (*cb) (const char *, const char *, void *), void *arg)
 {
 	char *path = NULL, *tmp = NULL;
 	setting_t *setting = NULL;

@@ -1,4 +1,13 @@
-
+/**
+ * @file   oval_sexp.h
+ * @brief  OVAL to/from S-exp conversion functions - header file
+ * @author "Daniel Kopecek" <dkopecek@redhat.com>
+ * @author "Lukas Kuklinek" <lkukline@redhat.com>
+ * @author "Tomas Heinrich" <theinric@redhat.com>
+ *
+ * @addtogroup PROBEOVALSEXP
+ * @{
+ */
 /*
  * Copyright 2009-2010 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.

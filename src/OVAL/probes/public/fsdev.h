@@ -1,18 +1,11 @@
 /**
- * @addtogroup OVAL
- * @{
- * @addtogroup PROBES
- * Probes and S-expression handling for probe writes.
- * @{
- * @addtogroup FINDFILE Find Files
- *  Auxiliary find_files() function
- * @{
- * @{
  * @file   fsdev.h
  * @brief  fsdev API public header file
  * @author "Daniel Kopecek" <dkopecek@redhat.com>
+ *
+ * @addtogroup PROBEAUXAPI
+ * @{
  */
-
 /*
  * Copyright 2009 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.

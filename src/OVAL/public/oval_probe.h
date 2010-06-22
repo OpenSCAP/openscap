@@ -1,15 +1,11 @@
 /**
- * @addtogroup OVAL
- * @{
- * @addtogroup PROBESCONTEXT
- * Interface to OpenSCAP system checking mechanism.
- * @{
- *
- * @file
- *
+ * @file   oval_probe_h
+ * @brief  OVAL probe interface API public header
  * @author "Daniel Kopecek" <dkopecek@redhat.com>
+ *
+ * @addtogroup PROBEINTERFACE
+ * @{
  */
-
 /*
  * Copyright 2009-2010 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
@@ -44,10 +40,10 @@
 /*
  * probe context flags
  */
-#define OVAL_PDFLAG_NOREPLY  0x0001	/* don't send probe result to library - just an ack */
-#define OVAL_PDFLAG_NORECONN 0x0002	/* don't try to reconnect on fatal errors */
-#define OVAL_PDGLAG_RUNALL   0x0004	/* execute all probes when executing the first */
-#define OVAL_PDFLAG_RUNNOW   0x0008	/* execute all probes immediately */
+#define OVAL_PDFLAG_NOREPLY  0x0001	/** don't send probe result to library - just an ack */
+#define OVAL_PDFLAG_NORECONN 0x0002	/** don't try to reconnect on fatal errors */
+#define OVAL_PDGLAG_RUNALL   0x0004	/** execute all probes when executing the first */
+#define OVAL_PDFLAG_RUNNOW   0x0008	/** execute all probes immediately */
 
 #define OVAL_PDFLAG_MASK (0x0001|0x0002|0x0004|0x0008)
 
@@ -65,29 +61,28 @@
  * Evaluate system info probe
  * @param pctx probe context
  */
-struct oval_sysinfo *oval_probe_sysinf_eval(oval_probe_session_t *sess) __attribute__ ((nonnull(1)));
+struct oval_sysinfo *oval_probe_sysinfo_query(oval_probe_session_t *sess) __attribute__ ((nonnull(1)));
 
 /**
  * Evaluate an object
  * @param pctx probe context
  * @param object the object to evaluate
  */
-struct oval_syschar *oval_probe_object_eval(oval_probe_session_t *sess, struct oval_object *object, int flags) __attribute__ ((nonnull(1, 2)));
-
+struct oval_syschar *oval_probe_object_query(oval_probe_session_t *sess, struct oval_object *object, int flags) __attribute__ ((nonnull(1, 2)));
 
 /**
  * Probe system info and update system characteristic model in the session
  * @param sess probe session
  * @return 0 on success
  */
-int oval_psess_probe_sysinfo(oval_probe_session_t *sess) __attribute__ ((nonnull(1)));
+int oval_probe_session_query_sysinfo(oval_probe_session_t *sess) __attribute__ ((nonnull(1)));
 
 /**
  * Probe all objects and update system characteristic model in the session
  * @param sess probe session
  * @return 0 on success
  */
-int oval_psess_probe_objects(oval_probe_session_t *sess) __attribute__ ((nonnull(1)));
+int oval_probe_session_query_objects(oval_probe_session_t *sess) __attribute__ ((nonnull(1)));
 
 /**
  * Probe objects required for evalatuation specified definition and update system characteristic model in the session
@@ -95,7 +90,6 @@ int oval_psess_probe_objects(oval_probe_session_t *sess) __attribute__ ((nonnull
  * @param id definition id
  * @return 0 on success
  */
-int oval_psess_probe_definition(oval_probe_session_t *sess, const char *id) __attribute__ ((nonnull(1, 2)));
+int oval_probe_session_query_definition(oval_probe_session_t *sess, const char *id) __attribute__ ((nonnull(1, 2)));
 
 #endif				/* OVAL_PROBE_H */
-

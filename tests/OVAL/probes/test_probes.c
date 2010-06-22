@@ -14,27 +14,27 @@
 #include <assume.h>
 
 int main(int argc, char **argv) {
-  
+
   /* definition model populate */
   struct oval_definition_model *def_model=NULL;
   def_model = oval_definition_model_import(argv[1]);
   assume(def_model != NULL);
-  
+
   assume(oval_definition_model_is_valid(def_model));
 
   /* create syschar model */
   struct oval_syschar_model *sys_model = oval_syschar_model_new(def_model);
   assume(sys_model != NULL);
-  
+
   /* create probe session */
   oval_probe_session_t *sess = oval_probe_session_new(sys_model);
-    
+
   /* probe sysinfo */
-  assume(oval_psess_probe_sysinfo(sess) == 0);
+  assume(oval_probe_session_query_sysinfo(sess) == 0);
 
   /* call probes */
-  assume(oval_psess_probe_objects(sess) == 0);
-  
+  assume(oval_probe_session_query_objects(sess) == 0);
+
   /* create result model */
   struct oval_syschar_model *sys_models[] = {sys_model, NULL};
   struct oval_results_model* res_model = oval_results_model_new( def_model, sys_models );
@@ -46,7 +46,7 @@ int main(int argc, char **argv) {
   /* set up directives */
   struct oval_result_directives * res_direct = oval_result_directives_new(res_model);
   assume(res_direct != NULL);
-  
+
   oval_result_directives_set_reported(res_direct, OVAL_RESULT_INVALID, true);
   oval_result_directives_set_reported(res_direct, OVAL_RESULT_TRUE, true);
   oval_result_directives_set_reported(res_direct, OVAL_RESULT_FALSE, true);
@@ -61,7 +61,7 @@ int main(int argc, char **argv) {
   oval_result_directives_set_content(res_direct,OVAL_RESULT_ERROR, OVAL_DIRECTIVE_CONTENT_FULL);
   oval_result_directives_set_content(res_direct,OVAL_RESULT_NOT_EVALUATED, OVAL_DIRECTIVE_CONTENT_FULL);
   oval_result_directives_set_content(res_direct,OVAL_RESULT_NOT_APPLICABLE, OVAL_DIRECTIVE_CONTENT_FULL);
-  
+
   /* report results */
   oval_results_model_export(res_model, res_direct, argv[2]);
 
@@ -70,7 +70,7 @@ int main(int argc, char **argv) {
   oval_definition_model_free(def_model);
   oval_syschar_model_free(sys_model);
   oval_results_model_free(res_model);
-  
+
   return 0;
 }
 
@@ -101,7 +101,7 @@ int main(int argc, char **argv) {
 /*                         c = oscap_err_code (), */
 /*                         d = oscap_err_desc ()); */
 /*         } */
-                
+
 /* 	return 0; */
 /* } */
 

@@ -1,19 +1,10 @@
 /**
- * @addtogroup OVAL
- * @{
- * @addtogroup PROBES
- * Probes and S-expression handling for probe writes.
- * @{
- * @addtogroup PROBESCMP Entity comparison
- * Comparison operations on entities in probes
- * @{
- * @{
- *
- * @file
- *
+ * @file   probe-entcmp.c
  * @author "Tomas Heinrich" <theinric@redhat.com>
+ *
+ * @addtogroup PROBEAPI
+ * @{
  */
-
 /*
  * Copyright 2009 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.

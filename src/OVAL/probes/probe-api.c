@@ -1,6 +1,6 @@
 /**
  * @file   probe-api.c
- * @brief  Implementation of the probe API
+ * @brief  Probe API implmentation
  * @author "Daniel Kopecek" <dkopecek@redhat.com>
  * @author "Tomas Heinrich" <theinric@redhat.com>
  *
@@ -30,6 +30,8 @@
  * where `attr1' is the name of the attribute and `val1' is the attribute's value.
  * The colon in the attribute name signals that the attribute has a value.
  *
+ * @addtogroup PROBEAPI
+ * @{
  */
 
 /*

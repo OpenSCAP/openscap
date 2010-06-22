@@ -1,20 +1,12 @@
 /**
- * @addtogroup OVAL
- * @{
- * @addtogroup PROBES
- * Probes and S-expression handling for probe writes.
- * @{
- * @addtogroup PROBESAPI Main probe API
- * Most of the operations that need to be done in a probe, processing input object, 
- * manipulating entities, creating output items.
- * @{
- * @{
- *
- * @file
- *
+ * @file   probe-api.h
+ * @brief  Probe API public header
  * @author "Daniel Kopecek" <dkopecek@redhat.com>
+ * @author "Tomas Heinrich" <theinric@redhat.com>
+ *
+ * @addtogroup PROBEAPI
+ * @{
  */
-
 /*
  * Copyright 2009 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.

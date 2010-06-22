@@ -1,8 +1,11 @@
 /**
- * @file
+ * @file   sexp-manip.c
+ * @brief  S-expression object manipulation functions - implementation
  * @author "Daniel Kopecek" <dkopecek@redhat.com>
+ *
+ * @addtogroup SEXPRESSIONS
+ * @{
  */
-
 /*
  * Copyright 2009 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
@@ -2196,3 +2199,4 @@ void __SEXP_VALIDATE(const SEXP_t *s_exp, const char *file, uint32_t line, const
         return;
 }
 #endif /* !NDEBUG || VALIDATE_SEXP */
+/* @} */

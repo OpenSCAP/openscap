@@ -225,7 +225,7 @@ static SEXP_t *oval_probe_cmd_obj_eval(SEXP_t *sexp, void *arg)
 	}
 
 	oscap_clearerr();
-	oval_probe_object_eval(pext->sess_ptr, obj, OVAL_PDFLAG_NOREPLY); /* DO NOT PUT THIS INSIDE ASSERT! */
+	oval_probe_object_query(pext->sess_ptr, obj, OVAL_PDFLAG_NOREPLY); /* DO NOT PUT THIS INSIDE ASSERT! */
 
 	if (oscap_err()) {
 		oscap_dprintf("FAIL: obj eval failed: id=%s, err: %d, %d, %s\n",

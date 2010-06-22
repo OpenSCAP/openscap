@@ -2,8 +2,10 @@
  * @file   fsdev.c
  * @brief  fsdev API implementation
  * @author "Daniel Kopecek" <dkopecek@redhat.com>
+ *
+ * @addtogroup PROBEAUXAPI
+ * @{
  */
-
 /*
  * Copyright 2009 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
