@@ -241,11 +241,8 @@ xmlNode *xccdf_benchmark_to_dom(struct xccdf_benchmark *benchmark, xmlDocPtr doc
 	struct oscap_text_iterator *rears = xccdf_benchmark_get_rear_matter(benchmark);
 	while (oscap_text_iterator_has_more(rears)) {
 		struct oscap_text *rear = oscap_text_iterator_next(rears);
-		xmlNode *rear_node = xmlNewChild(root_node, ns_xccdf, BAD_CAST "rear-matter", BAD_CAST oscap_text_get_text(rear));
-
-		const char *lang = oscap_text_get_lang(rear);
-		if (lang)
-			xmlNewProp(rear_node, BAD_CAST "xml:lang", BAD_CAST lang);
+		//xmlNode *rear_node = xmlNewChild(root_node, ns_xccdf, BAD_CAST "rear-matter", BAD_CAST oscap_text_get_text(rear));
+		oscap_text_to_dom(rear, root_node, "rear-matter");
 
 		/* TODO: Dublin Core */
 	}
@@ -265,6 +262,11 @@ xmlNode *xccdf_benchmark_to_dom(struct xccdf_benchmark *benchmark, xmlDocPtr doc
 	if (metadata) {
 		xmlNode *metadata_node = xmlNewChild(root_node, ns_xccdf, BAD_CAST "metadata", NULL);
 		xmlNewChild(metadata_node, ns_xccdf, NULL, BAD_CAST metadata);
+	}
+
+	OSCAP_FOR(xccdf_model, model, xccdf_benchmark_get_models(benchmark)) {
+		xmlNode *model_node = xmlNewChild(root_node, ns_xccdf, BAD_CAST "model", NULL);
+		xmlNewProp(model_node, BAD_CAST "system", BAD_CAST xccdf_model_get_system(model));
 	}
 
 	struct xccdf_profile_iterator *profiles = xccdf_benchmark_get_profiles(benchmark);

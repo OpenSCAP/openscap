@@ -428,17 +428,9 @@ xmlNode *xccdf_reference_to_dom(struct xccdf_reference *ref, xmlDoc *doc, xmlNod
 xmlNode *xccdf_profile_note_to_dom(struct xccdf_profile_note *note, xmlDoc *doc, xmlNode *parent)
 {
 	xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent, XCCDF_BASE_NAMESPACE);
-	xmlNode *note_node = xmlNewChild(parent, ns_xccdf, BAD_CAST "profile-note", NULL);
-
-	// This is in the XCCDF Spec, but not implemented in OpenSCAP
-	//const char *lang = xccdf_profile_note_get_lang(note);
-	//xmlNewProp(note_node, BAD_CAST "xml:lang", BAD_CAST lang);
-
 	struct oscap_text *text = xccdf_profile_note_get_text(note);
-	xmlNewChild(note_node, ns_xccdf, BAD_CAST "sub", BAD_CAST oscap_text_get_text(text));
-
-	const char *reftag = xccdf_profile_note_get_reftag(note);
-	xmlNewChild(note_node, ns_xccdf, BAD_CAST "tag", BAD_CAST reftag);
+	xmlNode *note_node = xmlNewChild(parent, ns_xccdf, BAD_CAST "profile-note", BAD_CAST oscap_text_get_text(text));
+	xmlNewProp(note_node, BAD_CAST "tag", BAD_CAST xccdf_profile_note_get_reftag(note));
 
 	return note_node;
 }
@@ -456,7 +448,7 @@ xmlNode *xccdf_status_to_dom(struct xccdf_status *status, xmlDoc *doc, xmlNode *
 	time_t date_time = xccdf_status_get_date(status);
 	struct tm *date = localtime(&date_time);
 	char date_str[] = "YYYY-DD-MM";
-	snprintf(date_str, sizeof(date_str), "%d-%d-%d", date->tm_year + 1900, date->tm_mon + 1, date->tm_mday);
+	snprintf(date_str, sizeof(date_str), "%04d-%02d-%02d", date->tm_year + 1900, date->tm_mon + 1, date->tm_mday);
 	xmlNewProp(status_node, BAD_CAST "date", BAD_CAST date_str);
 
 	return status_node;

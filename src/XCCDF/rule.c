@@ -260,8 +260,8 @@ void xccdf_group_free(struct xccdf_item *group)
 struct xccdf_item *xccdf_rule_new_internal(struct xccdf_item *parent)
 {
 	struct xccdf_item *rule = xccdf_item_new(XCCDF_RULE, parent);
-	rule->sub.rule.role = XCCDF_ROLE_FULL;
-	rule->sub.rule.severity = XCCDF_UNKNOWN;
+	//rule->sub.rule.role = XCCDF_ROLE_FULL;
+	//rule->sub.rule.severity = XCCDF_UNKNOWN;
 	rule->sub.rule.idents = oscap_list_new();
 	rule->sub.rule.checks = oscap_list_new();
 	rule->sub.rule.requires = oscap_list_new();
@@ -811,17 +811,18 @@ void xccdf_rule_to_dom(struct xccdf_rule *rule, xmlNode *rule_node, xmlDoc *doc,
 		xmlNewProp(rule_node, BAD_CAST "extends", BAD_CAST extends);
 
 	if (xccdf_rule_get_multiple(rule))
-		xmlNewProp(rule_node, BAD_CAST "multiple", BAD_CAST "True");
+		xmlNewProp(rule_node, BAD_CAST "multiple", BAD_CAST "true");
 
 	if (xccdf_rule_get_selected(rule))
-		xmlNewProp(rule_node, BAD_CAST "selected", BAD_CAST "True");
+		xmlNewProp(rule_node, BAD_CAST "selected", BAD_CAST "true");
 	else
-		xmlNewProp(rule_node, BAD_CAST "selected", BAD_CAST "False");
+		xmlNewProp(rule_node, BAD_CAST "selected", BAD_CAST "false");
 
-	float weight = xccdf_rule_get_weight(rule);
-	char weight_str[10];
-	sprintf(weight_str, "%f", weight);
-	xmlNewProp(rule_node, BAD_CAST "weight", BAD_CAST weight_str);
+	if (XITEM(rule)->item.defined_flags.weight) {
+		char *weight_str = oscap_sprintf("%f", xccdf_rule_get_weight(rule));
+		xmlNewProp(rule_node, BAD_CAST "weight", BAD_CAST weight_str);
+		oscap_free(weight_str);
+	}
 
 	xccdf_role_t role = xccdf_rule_get_role(rule);
 	if (role != 0)
@@ -911,15 +912,21 @@ void xccdf_group_to_dom(struct xccdf_group *group, xmlNode *group_node, xmlDoc *
 	if (extends)
 		xmlNewProp(group_node, BAD_CAST "extends", BAD_CAST extends);
 
-	if (xccdf_group_get_selected(group))
-		xmlNewProp(group_node, BAD_CAST "selected", BAD_CAST "True");
-	else
-		xmlNewProp(group_node, BAD_CAST "selected", BAD_CAST "False");
+	if (XITEM(group)->item.defined_flags.selected) {
+		if (xccdf_group_get_selected(group))
+			xmlNewProp(group_node, BAD_CAST "selected", BAD_CAST "True");
+		else
+			xmlNewProp(group_node, BAD_CAST "selected", BAD_CAST "False");
+	}
 
-	float weight = xccdf_group_get_weight(group);
-	char weight_str[10];
-	sprintf(weight_str, "%f", weight);
-	xmlNewProp(group_node, BAD_CAST "weight", BAD_CAST weight_str);
+	xmlNewProp(group_node, BAD_CAST "hidden", BAD_CAST (xccdf_group_get_hidden(group) ? "true" : "false"));
+
+	if (XITEM(group)->item.defined_flags.weight) {
+		float weight = xccdf_group_get_weight(group);
+		char weight_str[10];
+		sprintf(weight_str, "%f", weight);
+		xmlNewProp(group_node, BAD_CAST "weight", BAD_CAST weight_str);
+	}
 
 	/* Handle Child Nodes */
 	struct oscap_text_iterator *rationales = xccdf_group_get_rationale(group);
