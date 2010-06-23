@@ -37,6 +37,7 @@ OSCAP_HIDDEN_START;
  * @see oscap_text
  */
 struct oscap_text_traits {
+	bool override_given : 1; ///< override attribute given
 	bool html           : 1; ///< XHTML-formatted text
 	bool can_override   : 1; ///< can override parent's value
 	bool can_substitute : 1; ///< can proces the sub element and such
@@ -67,6 +68,7 @@ struct oscap_text *oscap_text_new_full(struct oscap_text_traits traits, const ch
  */
 struct oscap_text *oscap_text_new_parse(struct oscap_text_traits traits, xmlTextReaderPtr reader);
 
+xmlNode *oscap_text_to_dom(struct oscap_text *text, xmlNode *parent, const char *elname);
 
 OSCAP_HIDDEN_END;
 

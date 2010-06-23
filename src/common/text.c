@@ -96,8 +96,9 @@ struct oscap_text *oscap_text_new_parse(struct oscap_text_traits traits, xmlText
     // new text
     struct oscap_text *text = oscap_text_new_full(traits, NULL, NULL);
 
-    // extract 'overrides' attribute
+    // extract 'override' attribute
     if (text->traits.can_override) {
+		text->traits.override_given = true;
         xmlTextReaderMoveToAttribute(reader, BAD_CAST "override");
         text->traits.overrides = oscap_string_to_enum(OSCAP_BOOL_MAP, (const char *) xmlTextReaderConstValue(reader));
     }
@@ -116,4 +117,31 @@ struct oscap_text *oscap_text_new_parse(struct oscap_text_traits traits, xmlText
     return text;
 }
 
+xmlNode *oscap_text_to_dom(struct oscap_text *text, xmlNode *parent, const char *elname)
+{
+	if (!text) return NULL;
+
+	xmlNode *text_node = NULL;
+
+	if (text->traits.html) {
+		char *str = oscap_sprintf("<x>%s</x>", text->text);
+		xmlDoc *doc = xmlReadMemory(str, strlen(str), NULL, NULL, XML_PARSE_RECOVER | XML_PARSE_NOERROR | XML_PARSE_NOWARNING | XML_PARSE_NONET);
+		text_node = xmlCopyNode(xmlDocGetRootElement(doc), 1);
+		xmlNodeSetName(text_node, BAD_CAST elname);
+		xmlAddChild(parent, text_node);
+		xmlFreeDoc(doc);
+		oscap_free(str);
+	}
+	else text_node = xmlNewChild(parent, NULL, BAD_CAST elname, BAD_CAST text->text);
+
+	if (text_node == NULL) return NULL;
+
+	if (text->lang)
+		xmlNodeSetLang(text_node, BAD_CAST text->lang);
+	if (text->traits.can_override && text->traits.override_given && text->traits.overrides)
+		xmlNewProp(text_node, BAD_CAST "override", BAD_CAST (text->traits.overrides ? "true" : "false"));
+
+
+	return text_node;
+}
 
