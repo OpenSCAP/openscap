@@ -175,8 +175,9 @@ endif
 
 if WANT_XCCDF
 TESTS += XCCDF/test_xccdf.sh
-check_PROGRAMS += xccdf_dump
+check_PROGRAMS += xccdf_dump test_xccdf
 xccdf_dump_SOURCES = XCCDF/xccdf_dump.c
+test_xccdf_SOURCES = XCCDF/test_xccdf.c
 EXTRA_DIST +=	XCCDF/test_xccdf.sh \
 		XCCDF/scap-rhel5-xccdf.xml
 endif

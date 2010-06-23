@@ -28,6 +28,13 @@ function test_xccdf_import {
     return $ret_val
 }
 
+function test_xccdf_export {
+	./test_xccdf --export "${srcdir}/XCCDF/scap-rhel5-xccdf.xml" "scap-rhel5-xccdf.out.xml" > test_xccdf_export.out 2>&1 || return 1
+	local IGNORE_ATTRS="weight|schemaLocation|lang"
+	xml_cmp "${srcdir}/XCCDF/scap-rhel5-xccdf.xml" "scap-rhel5-xccdf.out.xml" 2>&1 | egrep -v "[aA]ttribute '($IGNORE_ATTRS)'" >&2
+	[ $? == 0 ] && return 1 || return 0
+}
+
 # Cleanup.
 function test_xccdf_cleanup {
     local ret_val=0
@@ -47,20 +54,10 @@ log=test_xccdf.log
 
 exec 2>$log
 
-test_xccdf_setup
-ret_val=$? 
-report_result "test_xccdf_setup" $ret_val
-result=$[$result+$ret_val]
-
-test_xccdf_import
-ret_val=$? 
-report_result "test_xccdf_import" $ret_val
-result=$[$result+$ret_val]
-
-test_xccdf_cleanup
-ret_val=$? 
-report_result "test_xccdf_cleanup" $ret_val
-result=$[$result+$ret_val]
+execute_test xccdf_setup
+execute_test xccdf_import
+execute_test xccdf_export
+execute_test xccdf_cleanup
 
 echo "--------------------------------------------------"
 echo "See ${log} (in tests dir)"

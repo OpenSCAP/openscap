@@ -37,3 +37,10 @@ function xml_cmp {
     return $ret_val
 }
 
+function execute_test {
+	"test_$1"
+	ret_val=$? 
+	report_result "test_$1" $ret_val
+	result=$[$result+$ret_val]
+}
+
