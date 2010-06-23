@@ -368,7 +368,12 @@ void xccdf_value_dump(struct xccdf_item *value, int depth)
 
 static bool xccdf_value_has_selector(void *inst, void *sel)
 {
-	return inst != NULL && oscap_streq(((struct xccdf_value_instance *)inst)->selector, sel);
+        if (inst == NULL)
+                return false;
+
+        if (sel != NULL)
+                return oscap_streq(((struct xccdf_value_instance *)inst)->selector, sel);
+        else    return oscap_streq(((struct xccdf_value_instance *)inst)->selector, "");
 }
 
 struct xccdf_value_instance *xccdf_value_get_instance_by_selector(const struct xccdf_value *value, const char *selector)
