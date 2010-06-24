@@ -71,6 +71,10 @@ AM_CPPFLAGS = $(libxml_cflags) $(pthread_cflags) -I$(srcdir)/public -I$(top_srcd
 if WANT_PROBES
 AM_CPPFLAGS += -I$(top_srcdir)/src -I$(top_srcdir)/src/common -I$(srcdir)/probes -I$(srcdir)/probes/public -I$(srcdir)/probes/SEAP/public -DSEAP_MSGID_BITS=32 -DSEAP_THREAD_SAFE
 endif
+if WANT_XCCDF
+AM_CPPFLAGS += -I$(top_srcdir)/src/XCCDF_POLICY/public -I$(top_srcdir)/src/XCCDF/public -DENABLE_XCCDF
+endif
+
 
 # -l or -L options go to LIBADD (or LDADD), not to LDFLAGS
 liboval_la_LIBADD = $(libxml_libs) $(pthread_ldflags)

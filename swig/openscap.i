@@ -255,22 +255,24 @@ struct internal_usr {
     PyObject *usr;
 };
 
-static bool xccdf_policy_model_callback_wrapper(struct xccdf_policy_model *model, char *href, char *id, void *usr)
+static bool xccdf_policy_model_callback_wrapper(struct xccdf_policy *policy, char *href, char *id, struct xccdf_value_binding_iterator *it, void *usr)
 {
     PyGILState_STATE state;
     PyObject *arglist;
-    PyObject *pymodel;
+    PyObject *py_policy;
+    PyObject *py_bindings;
     PyObject *func, *usrdata;
     struct internal_usr *data;
     PyObject *result;
     double    dres = 0;
 
-    pymodel = SWIG_NewPointerObj(model, SWIGTYPE_p_xccdf_policy_model, 1);
+    py_policy = SWIG_NewPointerObj(policy, SWIGTYPE_p_xccdf_policy, 1);
+    py_bindings = SWIG_NewPointerObj(it, SWIGTYPE_p_xccdf_value_binding_iterator, 1);
     data = (struct internal_usr *)usr;
     func = data->func;
     state = PyGILState_Ensure();
     usrdata = data->usr;
-    arglist = Py_BuildValue("OssO", pymodel, href, id, usrdata);
+    arglist = Py_BuildValue("OssOO", py_policy, href, id, py_bindings, usrdata);
     if (!PyCallable_Check(func)) {
       PyGILState_Release(state);
       return false;
@@ -296,7 +298,7 @@ static bool xccdf_policy_model_callback_wrapper(struct xccdf_policy_model *model
     return dres;
 }
 
-static int oval_agent_callback_wrapper(const char *id, oval_result_t oresult, void *arg)
+static int oval_agent_callback_wrapper(const char *id, int oresult, void *arg)
 {
     PyGILState_STATE state;
     PyObject *arglist;
@@ -326,9 +328,9 @@ static int oval_agent_callback_wrapper(const char *id, oval_result_t oresult, vo
     }
     Py_DECREF(arglist);
     if (PyObject_IsTrue(result)) {
-        dres = 0;
-    } else {
         dres = 1;
+    } else {
+        dres = 0;
     }
     Py_XDECREF(result);
     PyGILState_Release(state);

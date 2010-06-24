@@ -285,6 +285,11 @@ bool oscap_iterator_has_more(struct oscap_iterator *it)
 	return (!it->cur && it->list->first) || (it->cur && it->cur->next);
 }
 
+void oscap_iterator_reset(struct oscap_iterator * it)
+{
+    it->cur = NULL;
+}
+
 struct oscap_stringlist *oscap_stringlist_clone(struct oscap_stringlist *list)
 {
     void *clone = oscap_list_new(); // oscap_stringlist (or oscap_list)

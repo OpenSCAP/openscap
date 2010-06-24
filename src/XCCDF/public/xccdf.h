@@ -1555,6 +1555,10 @@ bool xccdf_item_get_interactive(const struct xccdf_item *item);
  * @memberof xccdf_item
  */
 struct xccdf_item_iterator *xccdf_item_get_content(const struct xccdf_item *item);
+/**
+ * @memberof xccdf_test_result
+ */
+const char * xccdf_test_result_type_get_text(xccdf_test_result_type_t id);
 
 /**
  * Return item's parent in the grouping hierarchy.

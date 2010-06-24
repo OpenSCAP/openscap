@@ -126,6 +126,7 @@ typedef void (*oscap_consumer_func) (void *, void *);
 #define OSCAP_ITERATOR_HAS_MORE(n) bool n##_iterator_has_more(OSCAP_ITERATOR(n) it) { return oscap_iterator_has_more(ITERATOR_CAST(it)); }
 #define OSCAP_ITERATOR_NEXT(t,n) t n##_iterator_next(OSCAP_ITERATOR(n) it) { return oscap_iterator_next(ITERATOR_CAST(it)); }
 #define OSCAP_ITERATOR_FREE(n) void n##_iterator_free(OSCAP_ITERATOR(n) it) { oscap_iterator_free(ITERATOR_CAST(it)); }
+#define OSCAP_ITERATOR_RESET(n) void n##_iterator_reset(OSCAP_ITERATOR(n) it) { oscap_iterator_reset(ITERATOR_CAST(it)); }
 #define OSCAP_ITERATOR_DETACH(t,n) t n##_iterator_detach(OSCAP_ITERATOR(n) it) { return oscap_iterator_detach(ITERATOR_CAST(it)); }
 #define OSCAP_ITERATOR_GEN_T(t,n) OSCAP_ITERATOR_FWD(n) OSCAP_ITERATOR_HAS_MORE(n) OSCAP_ITERATOR_NEXT(t,n) OSCAP_ITERATOR_FREE(n)
 #define OSCAP_ITERATOR_GEN(n) OSCAP_ITERATOR_GEN_T(struct n*,n)

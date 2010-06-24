@@ -86,6 +86,7 @@ void *oscap_iterator_new_filter(struct oscap_list *list, oscap_filter_func filte
 void *oscap_iterator_next(struct oscap_iterator *it);
 size_t oscap_iterator_get_itemcount(const struct oscap_iterator *it);
 bool oscap_iterator_has_more(struct oscap_iterator *it);
+void oscap_iterator_reset(struct oscap_iterator *it);
 void *oscap_iterator_detach(struct oscap_iterator *it);
 void oscap_iterator_free(struct oscap_iterator *it);
 

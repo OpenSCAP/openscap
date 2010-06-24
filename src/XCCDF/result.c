@@ -840,6 +840,13 @@ static struct xccdf_instance *xccdf_instance_new_parse(xmlTextReaderPtr reader)
 	return inst;
 }
 
+const char * xccdf_test_result_type_get_text(xccdf_test_result_type_t id)
+{
+    if (id == 0) return NULL;
+
+    return XCCDF_RESULT_MAP[id - 1].string;
+}
+
 /* --------  DUMP ---------- */
 
 static void xccdf_rule_result_dump(struct xccdf_rule_result *res, int depth)

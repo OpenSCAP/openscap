@@ -60,49 +60,6 @@
 #include <xccdf.h>
 #include <xccdf_policy.h>
 
-#ifdef ENABLE_XCCDF
-/**
- * Specification of structure for transformation of OVAL Result type
- * to XCCDF result type.
- */
-struct oval_result_to_xccdf_spec {
-	oval_result_t oval;
-	xccdf_test_result_type_t xccdf;
-};
-
-/**
- * Array of transformation rules from OVAL Result type to XCCDF result type
- */
-static const struct oval_result_to_xccdf_spec XCCDF_OVAL_RESULTS_MAP[] = {
-	{OVAL_RESULT_INVALID, XCCDF_RESULT_NOT_APPLICABLE},
-	{OVAL_RESULT_TRUE, XCCDF_RESULT_PASS},
-	{OVAL_RESULT_FALSE, XCCDF_RESULT_FAIL},
-	{OVAL_RESULT_UNKNOWN, XCCDF_RESULT_UNKNOWN},
-	{OVAL_RESULT_ERROR, XCCDF_RESULT_ERROR},
-	{OVAL_RESULT_NOT_EVALUATED, XCCDF_RESULT_NOT_CHECKED},
-	{OVAL_RESULT_NOT_APPLICABLE, XCCDF_RESULT_NOT_APPLICABLE},
-	{0, 0}
-};
-
-/**
- * Function for OVAL Result type -> XCCDF result type transformation
- * @param id OVAL_RESULT_* type
- * @return xccdf_test_result_type_t
- */
-static xccdf_test_result_type_t xccdf_get_result_from_oval(oval_result_t id)
-{
-
-	const struct oval_result_to_xccdf_spec *mapptr;
-
-	for (mapptr = XCCDF_OVAL_RESULTS_MAP; mapptr->oval != 0; ++mapptr) {
-		if (id == mapptr->oval)
-			return mapptr->xccdf;
-	}
-
-	return XCCDF_RESULT_UNKNOWN;
-}
-#endif
-
 /**
  * User defined structure that is passed to XCCDF evaluation and is returned 
  * in callback calls.
@@ -204,61 +161,10 @@ char *app_curl_download(char *url)
 }
 
 #ifdef ENABLE_XCCDF
-static bool app_xccdf_callback(struct xccdf_policy_model *model, const char *rule_id, const char *id,
-			       struct xccdf_value_binding_iterator *it, void *usr)
+static int callback(const char *id, int result, void *arg)
 {
-	int verbose = ((struct xccdf_usr *)usr)->verbose;
-	struct oval_agent_session *session = ((struct xccdf_usr *)usr)->asess;
-
-	/* Get the definition model from OVAL agent session */
-	struct oval_definition_model *def_model =
-	    oval_results_model_get_definition_model(oval_agent_get_results_model(session));
-
-	while (xccdf_value_binding_iterator_has_more(it)) {
-
-		struct xccdf_value_binding *binding = xccdf_value_binding_iterator_next(it);
-		char *name = xccdf_value_binding_get_name(binding);
-		char *value = xccdf_value_binding_get_value(binding);
-		struct oval_variable *variable = oval_definition_model_get_variable(def_model, name);
-		if (variable != NULL) {
-
-			struct oval_value_iterator *value_it = oval_variable_get_values(variable);
-			if (oval_value_iterator_has_more(value_it)) {	/* We have conflict here */
-				oval_definition_model_clear_external_variables(def_model);
-				oval_agent_destroy_session(session);
-				((struct xccdf_usr *)usr)->asess = oval_agent_new_session(def_model);
-			}
-			struct oval_variable_model *var_model = oval_variable_model_new();
-			oval_datatype_t o_type = oval_variable_get_datatype(variable);
-			oval_variable_model_add(var_model, name, "Unknown", o_type, value);
-			oval_definition_model_bind_variable_model(def_model, var_model);
-
-		} else if (verbose >= 0)
-			fprintf(stderr, "VARIABLE %s DOES NOT EXIST\n", name);
-	}
-
-	oval_result_t result;
-	result = oval_agent_eval_definition(session, id);
-
-	if (verbose > 0)
-		printf("Definition \"%s::%s\" result: %s\n", rule_id, id, oval_result_get_text(result));
-
-	/* Add result to Policy Model */
-	struct xccdf_result *ritem;
-	char *rid = ((struct xccdf_usr *)usr)->result_id;
-
-	/* Is the Result already existing ? */
-	ritem = xccdf_policy_model_get_result_by_id(model, rid);
-	if (ritem == NULL) {
-		/* Should be here an error ? */
-	} else {
-		struct xccdf_rule_result *rule_ritem = xccdf_rule_result_new();
-		xccdf_rule_result_set_result(rule_ritem, xccdf_get_result_from_oval(result));
-		xccdf_rule_result_set_idref(rule_ritem, rule_id);
-		xccdf_result_add_rule_result(ritem, rule_ritem);
-	}
-
-	return true;
+    printf("Rule \"%s\" result: %s\n", id, xccdf_test_result_type_get_text(result));
+    return 0;
 }
 
 /**
@@ -299,31 +205,28 @@ static int app_evaluate_xccdf(const char *f_XCCDF, const char *f_Results, const 
 		return -1;
 	}
 
-	struct xccdf_usr *usr = malloc(sizeof(struct xccdf_usr));
-	usr->result_id = "oscap_scan-test";	/* ID of TestResult in XCCDF model */
-	usr->asess = sess;
-	usr->verbose = verbose;
-
-	/* New TestResult structure */
-	struct xccdf_result *ritem = xccdf_result_new();
-	xccdf_result_set_id(ritem, usr->result_id);
-	/* Fill the structure */
-	xccdf_result_set_benchmark_uri(ritem, url_XCCDF);
-	struct oscap_text *title = oscap_text_new();
-	oscap_text_set_text(title, "OSCAP Scan Result");
-	xccdf_result_add_title(ritem, title);
-	xccdf_policy_model_add_result(policy_model, ritem);
+        /* Initialize OVAL Agent data */
+        struct oval_agent_cb_data *usr = oval_agent_cb_data_new();
+        oval_agent_cb_data_set_session(usr, sess);
+        oval_agent_cb_data_set_callback(usr, callback);
+        oval_agent_cb_data_set_usr(usr, (void *) policy_model);
 
 	/* Register callback */
 	xccdf_policy_model_register_callback(policy_model,
 					     "http://oval.mitre.org/XMLSchema/oval-definitions-5",
-					     app_xccdf_callback, (void *)usr);
+					     oval_agent_eval_rule, (void *) usr);
 	/* Perform evaluation */
-	xccdf_policy_evaluate(policy);
+	struct xccdf_result * ritem = xccdf_policy_evaluate(policy);
+
+	xccdf_result_set_benchmark_uri(ritem, url_XCCDF);
+	struct oscap_text *title = oscap_text_new();
+	oscap_text_set_text(title, "OSCAP Scan Result");
+	xccdf_result_add_title(ritem, title);
+
 	/* Clear after eval */
 	/* ================== RESULTS ========================== */
 	/* Somehow we need Syschar model */
-	res_model = oval_agent_get_results_model(usr->asess);
+	res_model = oval_agent_get_results_model(sess);
 	def_model = oval_results_model_get_definition_model(res_model);
 	re_system = oval_result_system_iterator_next(oval_results_model_get_systems(res_model));	/* Get the very first system */
 	sys_model = oval_result_system_get_syschar_model(re_system);
@@ -357,19 +260,19 @@ static int app_evaluate_xccdf(const char *f_XCCDF, const char *f_Results, const 
 		xccdf_result_export(ritem, f_Results);
 
 	/* -- */
-	oval_agent_destroy_session(usr->asess);
-	free(usr);
+	oval_agent_destroy_session(sess);
+        oval_agent_cb_data_free(usr);
 	xccdf_policy_model_free(policy_model);
 	return 0;
 }
 #endif
 
-static int app_oval_callback(const char *id, oval_result_t result, void *usr)
+static int app_oval_callback(const char *id, int result, void *usr)
 {
 
 	if (((struct oval_usr *)usr)->verbose > 0)
 		printf("Evalutated definition %s: %s\n", id, oval_result_get_text(result));
-	switch (result) {
+	switch ((oval_result_t) result) {
 	case OVAL_RESULT_TRUE:
 		((struct oval_usr *)usr)->result_true++;
 		break;
@@ -398,7 +301,7 @@ static int app_oval_callback(const char *id, oval_result_t result, void *usr)
 /**
  * Function that evaluate OVAL content (without XCCDF).
  */
-static int app_evaluate_oval(const char *f_OVAL, const char *f_Results, oval_agent_session_t * sess, int verbose)
+static int app_evaluate_oval(const char *f_Results, oval_agent_session_t * sess, int verbose)
 {
 	struct oval_results_model *res_model = NULL;
 	struct oval_usr *usr = NULL;
@@ -610,10 +513,10 @@ int main(int argc, char **argv)
 	if (f_XCCDF != NULL) {
 		retval = app_evaluate_xccdf(f_XCCDF, f_Results, url_XCCDF, sess, verbose, s_Profile);
 	} else if (f_OVAL != NULL)
-		retval = app_evaluate_oval(f_OVAL, f_Results, sess, verbose);
+		retval = app_evaluate_oval(f_Results, sess, verbose);
 #else
 	if (f_OVAL != NULL) {
-		retval = app_evaluate_oval(f_OVAL, f_Results, sess, verbose);
+		retval = app_evaluate_oval(f_Results, sess, verbose);
 	} else
 		printf("Missing OVAL file !\n");
 #endif

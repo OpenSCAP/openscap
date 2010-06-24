@@ -242,14 +242,14 @@ char * xccdf_value_binding_get_setvalue(const struct xccdf_value_binding *);
  * Get results of all XCCDF Policy results
  * @memberof xccdf_policy_model
  */
-struct xccdf_result_iterator * xccdf_policy_model_get_results(const struct xccdf_policy_model * model);
+struct xccdf_result_iterator * xccdf_policy_get_results(const struct xccdf_policy * policy);
 
 /**
  * Get XCCDF Result structure by it's idetificator if there is one
  * @memberof xccdf_policy_model
  * @return structure xccdf_result if found, NULL otherwise
  */
-struct xccdf_result * xccdf_policy_model_get_result_by_id(struct xccdf_policy_model * model, const char * id);
+struct xccdf_result * xccdf_policy_get_result_by_id(struct xccdf_policy * policy, const char * id);
 
 /**
  * Get ID of XCCDF Profile that is implemented by XCCDF Policy
@@ -304,7 +304,7 @@ bool xccdf_policy_set_selected(struct xccdf_policy * policy, char * idref);
  * Add result to XCCDF Policy Model
  * @memberof xccdf_policy_model
  */
-bool xccdf_policy_model_add_result(struct xccdf_policy_model * model, struct xccdf_result * item);
+bool xccdf_policy_add_result(struct xccdf_policy * policy, struct xccdf_result * item);
 
 /**
  * Add value binding to the Policy structure
@@ -335,7 +335,7 @@ bool xccdf_policy_add_value(struct xccdf_policy *, struct xccdf_value_binding *)
  * @memberof xccdf_policy
  * @return true if evaluation pass or false in case of error
  */
-bool xccdf_policy_evaluate(struct xccdf_policy * policy);
+struct xccdf_result *  xccdf_policy_evaluate(struct xccdf_policy * policy);
 
 /**
  * Resolve benchmark by applying all refine_rules and refine_values to rules / values
@@ -391,6 +391,12 @@ struct xccdf_value_binding * xccdf_value_binding_iterator_next(struct xccdf_valu
  * @memberof xccdf_value_binding_iterator
  */
 void xccdf_value_binding_iterator_free(struct xccdf_value_binding_iterator *it);
+
+/**
+ * Reset the iterator structure (it will point to the first item in the list)
+ * @memberof xccdf_value_binding_iterator
+ */
+void xccdf_value_binding_iterator_reset(struct xccdf_value_binding_iterator *it);
 
 /************************************************************/
 /** @} End of Iterators group */

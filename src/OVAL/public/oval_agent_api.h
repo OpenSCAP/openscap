@@ -43,6 +43,13 @@
 #include "oval_variables.h"
 #include "oval_probe.h"
 
+#ifdef ENABLE_XCCDF
+#include "xccdf_policy.h"
+
+struct oval_agent_cb_data;
+
+#endif
+
 struct oval_agent_session;
 
 /**
@@ -53,12 +60,12 @@ struct oval_agent_session;
 typedef struct oval_agent_session oval_agent_session_t;
 
 /**
- * @var oval_agent_cb_t
+ * @var oval_agent_result_cb_t
  * This callback is called after evaluation of each definition.
  * @param id definition id that was evaluated
  * @param result definition result
  */
-typedef int (oval_agent_cb_t) (const char *id, oval_result_t result, void *arg);
+typedef int (oval_agent_result_cb_t) (const char *id, int result, void *arg);
 
 /**
  * Create new session for OVAL agent from OVAL definition model
@@ -73,7 +80,7 @@ oval_result_t oval_agent_eval_definition(oval_agent_session_t * asess, const cha
 /**
  * Probe and evaluate all definitions from the content, call the callback functions upon single evaluation
  */
-int oval_agent_eval_system(oval_agent_session_t * asess, oval_agent_cb_t * cb, void *arg);
+int oval_agent_eval_system(oval_agent_session_t * asess, oval_agent_result_cb_t * cb, void *arg);
 
 /**
  * Get a result model from agent session
@@ -84,6 +91,23 @@ struct oval_results_model * oval_agent_get_results_model(oval_agent_session_t * 
  * Finish OVAL agent session
  */
 void oval_agent_destroy_session(oval_agent_session_t * asess);
+
+#ifdef ENABLE_XCCDF
+typedef xccdf_test_result_type_t (xccdf_policy_eval_rule_cb_t) (struct xccdf_policy * policy, const char * rule_id,
+        const char * id, struct xccdf_value_binding_iterator * it, void * usr);
+
+xccdf_policy_eval_rule_cb_t oval_agent_eval_rule;
+
+struct oval_agent_session * oval_agent_cb_data_get_session(const struct oval_agent_cb_data *);
+oval_agent_result_cb_t * oval_agent_cb_data_get_callback(const struct oval_agent_cb_data *);
+void * oval_agent_cb_data_get_usr(const struct oval_agent_cb_data *);
+bool oval_agent_cb_data_set_session(struct oval_agent_cb_data *, struct oval_agent_session *);
+bool oval_agent_cb_data_set_callback(struct oval_agent_cb_data *, oval_agent_result_cb_t *);
+bool oval_agent_cb_data_set_usr(struct oval_agent_cb_data *, void *);
+struct oval_agent_cb_data * oval_agent_cb_data_new();
+void oval_agent_cb_data_free(struct oval_agent_cb_data * data);
+void oval_agent_resolve_variables(struct oval_agent_session * session, struct xccdf_value_binding_iterator *it);
+#endif
 
 /**
  * @) END OVALDEF
