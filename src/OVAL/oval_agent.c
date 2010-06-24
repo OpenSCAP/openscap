@@ -89,6 +89,7 @@ struct oval_agent_cb_data {
         oval_agent_result_cb_t      * callback;
         void                        * usr;
 };
+
 /* Macros to generate iterators, getters and setters */
 OSCAP_ACCESSOR_SIMPLE(struct oval_agent_session *, oval_agent_cb_data, session)
 OSCAP_ACCESSOR_SIMPLE(oval_agent_result_cb_t *, oval_agent_cb_data, callback)
@@ -1680,59 +1681,83 @@ int oval_results_model_export(struct oval_results_model *results_model,  struct 
 
 oval_agent_session_t * oval_agent_new_session(struct oval_definition_model *model) {
 
-	oval_agent_session_t *asess;
+	oval_agent_session_t *ag_sess;
 	int ret;
 
-	asess = oscap_talloc(oval_agent_session_t);
-	asess->def_model = model;
-	asess->sys_model = oval_syschar_model_new(model);
-	asess->psess     = oval_probe_session_new(asess->sys_model);
+	ag_sess = oscap_talloc(oval_agent_session_t);
+	ag_sess->def_model = model;
+	ag_sess->sys_model = oval_syschar_model_new(model);
+	ag_sess->psess     = oval_probe_session_new(ag_sess->sys_model);
 	/* probe sysinfo */
-	ret = oval_probe_session_query_sysinfo(asess->psess);
+	ret = oval_probe_session_query_sysinfo(ag_sess->psess);
 	if (ret != 0) {
-		oval_probe_session_destroy(asess->psess);
-		oval_syschar_model_free(asess->sys_model);
-		oscap_free(asess);
+		oval_probe_session_destroy(ag_sess->psess);
+		oval_syschar_model_free(ag_sess->sys_model);
+		oscap_free(ag_sess);
 		return NULL;
 	}
 	/* one system only */
-	asess->sys_models[0] = asess->sys_model;
-	asess->sys_models[1] = NULL;
-	asess->res_model = oval_results_model_new(model, asess->sys_models);
-	return asess;
+	ag_sess->sys_models[0] = ag_sess->sys_model;
+	ag_sess->sys_models[1] = NULL;
+	ag_sess->res_model = oval_results_model_new(model, ag_sess->sys_models);
+	return ag_sess;
 }
 
-oval_result_t oval_agent_eval_definition(oval_agent_session_t * asess, const char *id) {
+oval_result_t oval_agent_eval_definition(oval_agent_session_t * ag_sess, const char *id) {
 	int ret;
 	struct oval_result_system_iterator *rsystem_it;
 	struct oval_result_system *rsystem;
 
 	/* probe */
-	ret = oval_probe_session_query_definition(asess->psess, id);
+	ret = oval_probe_session_query_definition(ag_sess->psess, id);
 	if (ret!=0)
 		return OVAL_RESULT_INVALID;
 
 	/* take the first system */
-	rsystem_it = oval_results_model_get_systems(asess->res_model);
+	rsystem_it = oval_results_model_get_systems(ag_sess->res_model);
 	rsystem = oval_result_system_iterator_next(rsystem_it);
         oval_result_system_iterator_free(rsystem_it);
 	/* eval */
 	return oval_result_system_eval_definition(rsystem, id);
 }
 
-int oval_agent_eval_system(oval_agent_session_t * asess, oval_agent_result_cb_t * cb, void *arg) {
+int oval_agent_reset_session(oval_agent_session_t * ag_sess) {
+	int ret;
+
+	/* Clean up syschar model */
+        if (ag_sess->sys_model->syschar_map)
+                oval_string_map_free(ag_sess->sys_model->syschar_map, (oscap_destruct_func) oval_syschar_free);
+        if (ag_sess->sys_model->sysdata_map)
+                oval_string_map_free(ag_sess->sys_model->sysdata_map, (oscap_destruct_func) oval_sysdata_free);
+        if (ag_sess->sys_model->variable_binding_map)
+                oval_string_map_free(ag_sess->sys_model->variable_binding_map, (oscap_destruct_func) oval_variable_binding_free);
+	ag_sess->sys_model->syschar_map = oval_string_map_new();
+	ag_sess->sys_model->sysdata_map = oval_string_map_new();
+	ag_sess->sys_model->variable_binding_map = oval_string_map_new();
+
+	/* Replace result model */
+	oval_results_model_free(ag_sess->res_model);
+	ag_sess->res_model = oval_results_model_new(ag_sess->def_model, ag_sess->sys_models);
+
+	/* Clean up probe cache */	
+	ret = oval_probe_session_reset(ag_sess->psess, ag_sess->sys_model);
+	return ret;
+}
+
+
+int oval_agent_eval_system(oval_agent_session_t * ag_sess, oval_agent_result_cb_t * cb, void *arg) {
 	struct oval_definition *oval_def;
 	struct oval_definition_iterator *oval_def_it;
 	char   *id;
 	int ret;
 	oval_result_t result;
 
-	oval_def_it = oval_definition_model_get_definitions(asess->def_model);
+	oval_def_it = oval_definition_model_get_definitions(ag_sess->def_model);
 	while (oval_definition_iterator_has_more(oval_def_it)) {
 		oval_def = oval_definition_iterator_next(oval_def_it);
 		id = oval_definition_get_id(oval_def);
 		/* probe and eval */
-		result = oval_agent_eval_definition(asess, id);
+		result = oval_agent_eval_definition(ag_sess, id);
 		/* callback */
 		ret = (*cb) (id, result, arg);
 		if ( ret!=0 )
@@ -1742,16 +1767,16 @@ int oval_agent_eval_system(oval_agent_session_t * asess, oval_agent_result_cb_t 
 	return 0;
 }
 
-struct oval_results_model * oval_agent_get_results_model(oval_agent_session_t * asess) {
-	return asess->res_model;
+struct oval_results_model * oval_agent_get_results_model(oval_agent_session_t * ag_sess) {
+	return ag_sess->res_model;
 }
 
-void oval_agent_destroy_session(oval_agent_session_t * asess) {
-	oval_probe_session_destroy(asess->psess);
-	oval_syschar_model_free(asess->sys_model);
-	oval_results_model_free(asess->res_model);
-	oscap_free(asess);
-	asess=NULL;
+void oval_agent_destroy_session(oval_agent_session_t * ag_sess) {
+	oval_probe_session_destroy(ag_sess->psess);
+	oval_syschar_model_free(ag_sess->sys_model);
+	oval_results_model_free(ag_sess->res_model);
+	oscap_free(ag_sess);
+	ag_sess=NULL;
 }
 
 

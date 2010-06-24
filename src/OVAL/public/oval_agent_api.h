@@ -75,22 +75,28 @@ oval_agent_session_t * oval_agent_new_session(struct oval_definition_model * mod
 /**
  * Probe the system and evaluate specified definition
  */
-oval_result_t oval_agent_eval_definition(oval_agent_session_t * asess, const char *id);
+oval_result_t oval_agent_eval_definition(oval_agent_session_t * ag_sess, const char *id);
+
+/**
+ * Clean the system characteristics of objects, probe cashe and results
+ */
+int oval_agent_reset_session(oval_agent_session_t * ag_sess);
 
 /**
  * Probe and evaluate all definitions from the content, call the callback functions upon single evaluation
  */
-int oval_agent_eval_system(oval_agent_session_t * asess, oval_agent_result_cb_t * cb, void *arg);
+int oval_agent_eval_system(oval_agent_session_t * ag_sess, oval_agent_result_cb_t * cb, void *arg);
 
 /**
  * Get a result model from agent session
  */
-struct oval_results_model * oval_agent_get_results_model(oval_agent_session_t * asess);
+struct oval_results_model * oval_agent_get_results_model(oval_agent_session_t * ag_sess);
 
 /**
  * Finish OVAL agent session
  */
-void oval_agent_destroy_session(oval_agent_session_t * asess);
+void oval_agent_destroy_session(oval_agent_session_t * ag_sess);
+
 
 #ifdef ENABLE_XCCDF
 typedef xccdf_test_result_type_t (xccdf_policy_eval_rule_cb_t) (struct xccdf_policy * policy, const char * rule_id,
