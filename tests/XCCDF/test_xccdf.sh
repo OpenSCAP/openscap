@@ -39,7 +39,7 @@ function test_xccdf_export {
 function test_xccdf_cleanup {
     local ret_val=0
 
-    rm test_xccdf.out
+    rm -f test_xccdf.out test_xccdf_export.out xccdf-export.xml
     ret_val=$?
     return $ret_val
 }
