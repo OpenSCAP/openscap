@@ -68,6 +68,9 @@ OSCAP_HIDDEN_START;
 const char * oval_definition_model_get_schema(struct oval_definition_model * model);
 void oval_definition_model_set_schema(struct oval_definition_model *model, const char *version);
 
+void oval_syschar_model_set_schema(struct oval_syschar_model *model, const char * schema);
+const char * oval_syschar_model_get_schema(struct oval_syschar_model * model);
+
 struct oval_definition *oval_definition_get_new(struct oval_definition_model *, const char *);
 
 typedef bool oval_definitions_resolver(struct oval_definition *, void *);

@@ -95,7 +95,7 @@ OSCAP_ACCESSOR_SIMPLE(struct oval_agent_session *, oval_agent_cb_data, session)
 OSCAP_ACCESSOR_SIMPLE(oval_agent_result_cb_t *, oval_agent_cb_data, callback)
 OSCAP_ACCESSOR_SIMPLE(void *, oval_agent_cb_data, usr)
 
-struct oval_agent_cb_data * oval_agent_cb_data_new()
+struct oval_agent_cb_data * oval_agent_cb_data_new(void)
 {
     struct oval_agent_cb_data * data = oscap_alloc(sizeof(struct oval_agent_cb_data));
 

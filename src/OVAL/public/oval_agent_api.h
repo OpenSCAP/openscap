@@ -110,7 +110,7 @@ void * oval_agent_cb_data_get_usr(const struct oval_agent_cb_data *);
 bool oval_agent_cb_data_set_session(struct oval_agent_cb_data *, struct oval_agent_session *);
 bool oval_agent_cb_data_set_callback(struct oval_agent_cb_data *, oval_agent_result_cb_t *);
 bool oval_agent_cb_data_set_usr(struct oval_agent_cb_data *, void *);
-struct oval_agent_cb_data * oval_agent_cb_data_new();
+struct oval_agent_cb_data * oval_agent_cb_data_new(void);
 void oval_agent_cb_data_free(struct oval_agent_cb_data * data);
 void oval_agent_resolve_variables(struct oval_agent_session * session, struct xccdf_value_binding_iterator *it);
 void oval_agent_export_sysinfo_to_xccdf_result(struct oval_agent_session * sess, struct xccdf_result * ritem);
