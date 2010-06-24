@@ -143,7 +143,7 @@ static SEXP_t *oval_entity_to_sexp(struct oval_entity *ent)
 	return (elm);
 }
 
-static SEXP_t *oval_varref_to_sexp(struct oval_entity *entity, struct oval_syschar_model *syschar_model)
+static SEXP_t *oval_varref_to_sexp(struct oval_entity *entity, struct oval_syschar_model *syschar_model, void *sess)
 {
 	unsigned int val_cnt = 0;
 	SEXP_t *val_lst, *val_sexp, *varref, *id_sexp, *val_cnt_sexp;
@@ -302,7 +302,7 @@ static SEXP_t *oval_behaviors_to_sexp(struct oval_behavior_iterator *bit)
 	return (r0);
 }
 
-SEXP_t *oval_object2sexp(const char *typestr, struct oval_object * object, struct oval_syschar_model * syschar_model)
+SEXP_t *oval_object2sexp(const char *typestr, struct oval_object *object, struct oval_syschar_model *syschar_model, void *sess)
 {
 	unsigned int ent_cnt, varref_cnt;
 	SEXP_t *obj_sexp, *obj_name, *elm, *varrefs, *ent_lst, *lst, *stmp;
@@ -359,7 +359,7 @@ SEXP_t *oval_object2sexp(const char *typestr, struct oval_object * object, struc
 			}
 
 			if (oval_entity_get_varref_type(entity) == OVAL_ENTITY_VARREF_ATTRIBUTE) {
-				stmp = oval_varref_to_sexp(entity, syschar_model);
+				stmp = oval_varref_to_sexp(entity, syschar_model, sess);
 
 				if (stmp == NULL) {
 					SEXP_free(elm);

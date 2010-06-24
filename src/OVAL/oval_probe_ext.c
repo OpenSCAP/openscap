@@ -704,7 +704,7 @@ int oval_probe_ext_handler(oval_subtype_t type, void *ptr, int act, ...)
                                 pd = oval_pdtbl_get(pext->pdtbl, oval_object_get_subtype(obj));
                 }
 
-                *sys = oval_probe_ext_eval(pext->pdtbl->ctx, pd, *(pext->model), obj, flags);
+                *sys = oval_probe_ext_eval(pext->pdtbl->ctx, pd, pext, obj, flags);
                 ret  = (*sys == NULL ? -1 : 0);
                 break;
         }
@@ -746,12 +746,13 @@ int oval_probe_ext_init(oval_pext_t *pext)
         return(ret);
 }
 
-struct oval_syschar *oval_probe_ext_eval(SEAP_CTX_t *ctx, oval_pd_t *pd, struct oval_syschar_model *model, struct oval_object *object, int flags)
+struct oval_syschar *oval_probe_ext_eval(SEAP_CTX_t *ctx, oval_pd_t *pd, oval_pext_t *pext, struct oval_object *object, int flags)
 {
         SEXP_t *s_obj, *s_sys;
         struct oval_syschar *o_sys;
+        struct oval_syschar_model *model = *(pext->model);
 
-        s_obj = oval_object2sexp(oval_subtype2str(oval_object_get_subtype(object)), object, model);
+        s_obj = oval_object2sexp(oval_subtype2str(oval_object_get_subtype(object)), object, model, pext->sess_ptr);
 
         if (s_obj == NULL) {
                 oscap_dprintf("Can't translate OVAL object to S-exp\n");

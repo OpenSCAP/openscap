@@ -46,7 +46,7 @@ OSCAP_HIDDEN_START;
  */
 SEXP_t *oval_value_to_sexp(struct oval_value *val, oval_datatype_t dtype);
 
-SEXP_t *oval_object2sexp(const char *typestr, struct oval_object *object, struct oval_syschar_model *syschar_mode);
+SEXP_t *oval_object2sexp(const char *typestr, struct oval_object *object, struct oval_syschar_model *syschar_mode, void *);
 SEXP_t *oval_state2sexp(struct oval_state *state);
 
 /*
