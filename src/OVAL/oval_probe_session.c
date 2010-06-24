@@ -125,6 +125,7 @@ oval_probe_session_t *oval_probe_session_new(struct oval_syschar_model *model)
         oval_probe_handler_set(sess->ph, OVAL_UNIX_RUNLEVEL,   oval_probe_ext_handler, sess->pext);
         oval_probe_handler_set(sess->ph, OVAL_UNIX_SHADOW,     oval_probe_ext_handler, sess->pext);
         oval_probe_handler_set(sess->ph, OVAL_UNIX_UNAME,      oval_probe_ext_handler, sess->pext);
+        oval_probe_handler_set(sess->ph, OVAL_SUBTYPE_ALL,     oval_probe_ext_handler, sess->pext); /* special case for reset */
 
         oval_probe_handler_set(sess->ph, OVAL_INDEPENDENT_ENVIRONMENT_VARIABLE,  oval_probe_envvar_handler, sess->sys_model);
         oval_probe_handler_set(sess->ph, OVAL_INDEPENDENT_VARIABLE,              oval_probe_var_handler,    sess->sys_model);
@@ -147,13 +148,29 @@ int oval_probe_session_close(oval_probe_session_t *sess)
         return(-1);
 }
 
-int oval_probe_session_reset(oval_probe_session_t *sess)
+int oval_probe_session_reset(oval_probe_session_t *sess, struct oval_syschar_model *sysch)
 {
-        /* send reset to all probes */
-        return(-1);
+#if defined(ENABLE_PROBES)
+        oval_ph_t *ph;
+
+        ph = oval_probe_handler_get(sess->ph, OVAL_SUBTYPE_ALL);
+
+        if (ph->func(OVAL_SUBTYPE_ALL, ph->uptr, PROBE_HANDLER_ACT_RESET) != 0) {
+                return(-1);
+        }
+#endif
+        if (sysch != NULL)
+                sess->sys_model = sysch;
+
+        return(0);
 }
 
 int oval_probe_session_sethandler(oval_probe_session_t *sess, oval_subtype_t type, oval_probe_handler_t handler, void *ptr)
 {
         return(-1);
+}
+
+struct oval_syschar_model *oval_probe_session_getmodel(oval_probe_session_t *sess)
+{
+        return (sess->sys_model);
 }

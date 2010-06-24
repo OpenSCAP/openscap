@@ -31,6 +31,7 @@
 #include "common/util.h"
 #include "common/bfind.h"
 #include "common/debug_priv.h"
+#include "probes/public/probe-api.h"
 #include "oval_probe_ext.h"
 #include "oval_sexp.h"
 
@@ -713,8 +714,38 @@ int oval_probe_ext_handler(oval_subtype_t type, void *ptr, int act, ...)
         case PROBE_HANDLER_ACT_INIT:
                 ret = oval_probe_ext_init(pext);
                 break;
-        case PROBE_HANDLER_ACT_FREE:
         case PROBE_HANDLER_ACT_RESET:
+        {
+                size_t i;
+
+                if (type == OVAL_SUBTYPE_ALL) {
+                        /*
+                         * Iterate trhu probe descriptor table and execute the reset operation
+                         * for each probe descriptor.
+                         */
+                        for (i = 0; i < pext->pdtbl->count; ++i) {
+                                pd  = pext->pdtbl->memb + i;
+                                ret = oval_probe_ext_reset(pext->pdtbl->ctx, pd, pext);
+
+                                if (ret != 0)
+                                        return(ret);
+                        }
+
+                        return(0);
+                } else {
+                        /*
+                         * Reset only the probe of specified subtype.
+                         */
+                        pd = oval_pdtbl_get(pext->pdtbl, type);
+
+                        if (pd == NULL)
+                                return(0);
+
+                        return oval_probe_ext_reset(pext->pdtbl->ctx, pd, pext);
+                }
+                break;
+        }
+        case PROBE_HANDLER_ACT_FREE:
         case PROBE_HANDLER_ACT_CLOSE:
         default:
                 va_end(ap);
@@ -807,4 +838,13 @@ struct oval_syschar *oval_probe_ext_eval(SEAP_CTX_t *ctx, oval_pd_t *pd, oval_pe
 	SEXP_free(s_obj);
 
 	return (o_sys);
+}
+
+int oval_probe_ext_reset(SEAP_CTX_t *ctx, oval_pd_t *pd, oval_pext_t *pext)
+{
+        void *res, *chk = (void *)(0xC0FFEE);
+
+        res = SEAP_cmd_exec(ctx, pd->sd, 0, PROBECMD_RESET, chk, SEAP_CMDTYPE_SYNC, NULL, NULL);
+
+        return (res == chk ? 0 : -1);
 }

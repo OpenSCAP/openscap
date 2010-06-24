@@ -427,6 +427,7 @@ void probe_free(SEXP_t * obj);
 
 #define PROBECMD_STE_FETCH 1 /**< State fetch command code */
 #define PROBECMD_OBJ_EVAL  2 /**< Object eval command code */
+#define PROBECMD_RESET     3 /**< Reset command code */
 
 void *probe_init(void) __attribute__ ((unused));
 void probe_fini(void *) __attribute__ ((unused));

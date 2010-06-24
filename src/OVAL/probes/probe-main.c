@@ -619,6 +619,22 @@ static void probe_sigexit(int signum)
         }
 }
 
+static SEXP_t *probe_reset(SEXP_t *arg0, void *arg1)
+{
+        /*
+         * FIXME: implement main loop locking & worker waiting
+         */
+	pcache_free(OSCAP_GSYM(pcache));
+        encache_free(OSCAP_GSYM(encache));
+
+        OSCAP_GSYM(pcache) = pcache_new();
+        OSCAP_GSYM(encache)= encache_new();
+
+	probe_item_resetidctr(&(OSCAP_GSYM(id_desc)));
+
+        return(NULL);
+}
+
 /**
  * Common probe entry point. This is the common main function of all
  * probe processes that initializes all the stuff needed at probe
@@ -703,6 +719,12 @@ int main(void)
 
         /* Register cleanup function */
         atexit(&probe_cleanup);
+
+        /* Register SEAP commands */
+        if (SEAP_cmd_register(OSCAP_GSYM(ctx), PROBECMD_RESET, 0, &probe_reset) != 0) {
+                _D("Can't register SEAP command: %s: %u, %s.\n", "reset", errno, strerror (errno));
+                exit(errno);
+        }
 
 	/* Main loop */
 	while(OSCAP_GSYM(sigexit) == 0) {

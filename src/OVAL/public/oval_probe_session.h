@@ -60,8 +60,9 @@ int oval_probe_session_close(oval_probe_session_t *sess);
  * Reset the session. All state information created during the lifetime of the
  * session is freed and reset to its initial state. All cached results are lost.
  * @param sess pointer to the probe session structure
+ * @param sysch pointer to a new syschar model or NULL
  */
-int oval_probe_session_reset(oval_probe_session_t *sess);
+int oval_probe_session_reset(oval_probe_session_t *sess, struct oval_syschar_model *sysch);
 
 /**
  * Set a new handler for an object of the specified type.
@@ -71,5 +72,11 @@ int oval_probe_session_reset(oval_probe_session_t *sess);
  * @param ptr user pointer that will be passed to the handler on each invocation of the handler
  */
 int oval_probe_session_sethandler(oval_probe_session_t *sess, oval_subtype_t type, oval_probe_handler_t handler, void *ptr);
+
+/**
+ * Get system characteristics model from probe session.
+ * @param sess pointer to the probe session structure
+ */
+struct oval_syschar_model *oval_probe_session_getmodel(oval_probe_session_t *sess);
 
 #endif /* OVAL_PROBE_SESSION */
