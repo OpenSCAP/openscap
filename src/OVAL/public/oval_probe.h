@@ -38,34 +38,24 @@
 #include "oval_probe_session.h"
 
 /*
- * probe context flags
+ * probe session flags
  */
-#define OVAL_PDFLAG_NOREPLY  0x0001	/** don't send probe result to library - just an ack */
-#define OVAL_PDFLAG_NORECONN 0x0002	/** don't try to reconnect on fatal errors */
-#define OVAL_PDGLAG_RUNALL   0x0004	/** execute all probes when executing the first */
-#define OVAL_PDFLAG_RUNNOW   0x0008	/** execute all probes immediately */
+#define OVAL_PDFLAG_NOREPLY  0x0001	/**< don't send probe result to library - just an ack */
+#define OVAL_PDFLAG_NORECONN 0x0002	/**< don't try to reconnect on fatal errors */
+#define OVAL_PDGLAG_RUNALL   0x0004	/**< execute all probes when executing the first */
+#define OVAL_PDFLAG_RUNNOW   0x0008	/**< execute all probes immediately */
 
 #define OVAL_PDFLAG_MASK (0x0001|0x0002|0x0004|0x0008)
 
-/*
- * probe context attributes
- */
-#define OVAL_PCTX_ATTR_RETRY       0x0001	/* set maximum retry count (send, connect) */
-#define OVAL_PCTX_ATTR_RECVTIMEOUT 0x0002	/* set receive timeout - in miliseconds */
-#define OVAL_PCTX_ATTR_SENDTIMEOUT 0x0003	/* set send timeout - in miliseconds */
-#define OVAL_PCTX_ATTR_SCHEME      0x0004	/* set communication scheme */
-#define OVAL_PCTX_ATTR_DIR         0x0005	/* set directory where the probes are located */
-#define OVAL_PCTX_ATTR_MODEL       0x0006	/* set definition model - update registered commands is necessary */
-
 /**
  * Evaluate system info probe
- * @param pctx probe context
+ * @param sess probe session
  */
 struct oval_sysinfo *oval_probe_sysinfo_query(oval_probe_session_t *sess) __attribute__ ((nonnull(1)));
 
 /**
  * Evaluate an object
- * @param pctx probe context
+ * @param sess probe session
  * @param object the object to evaluate
  */
 struct oval_syschar *oval_probe_object_query(oval_probe_session_t *sess, struct oval_object *object, int flags) __attribute__ ((nonnull(1, 2)));

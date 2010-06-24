@@ -1,39 +1,11 @@
 /**
+ * @addtogroup PROBEAPI
+ * @{
  * @file   probe-api.c
  * @brief  Probe API implmentation
  * @author "Daniel Kopecek" <dkopecek@redhat.com>
  * @author "Tomas Heinrich" <theinric@redhat.com>
- *
- * This file contains functions for manipulating with the S-exp representation
- * of OVAL objects and items. Currently object and items have the same structure
- * and the API distinction is just formal. However, the structure can diverge in
- * the future and the API functions for manipulating with items should be used
- * only with items and vice versa. The most recent description of the object and
- * item structure can be found in this file and should be used as the main source
- * of information for implementing new API functions. In the following text, the
- * term `element' referers to the general structure which is used to represent
- * the various components of an OVAL document, particularly the OVAL objects,
- * items and entities.
- *
- * Element structure
- * -----------------
- * The basic structure of an element looks like this:
- *
- * (foo_object bar)
- *
- * `foo_object' is the element name and `bar' is the value of the element. There
- * can be 0 to n values. In case the element has some attributes set the structure
- * changes to:
- *
- * ((foo_object :attr1 val1) bar)
- *
- * where `attr1' is the name of the attribute and `val1' is the attribute's value.
- * The colon in the attribute name signals that the attribute has a value.
- *
- * @addtogroup PROBEAPI
- * @{
  */
-
 /*
  * Copyright 2009 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.

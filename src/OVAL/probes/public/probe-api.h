@@ -5,6 +5,31 @@
  * @author "Tomas Heinrich" <theinric@redhat.com>
  *
  * @addtogroup PROBEAPI
+ * This file contains functions for manipulating with the S-exp representation
+ * of OVAL objects and items. Currently object and items have the same structure
+ * and the API distinction is just formal. However, the structure can diverge in
+ * the future and the API functions for manipulating with items should be used
+ * only with items and vice versa. The most recent description of the object and
+ * item structure can be found in this file and should be used as the main source
+ * of information for implementing new API functions. In the following text, the
+ * term `element' referers to the general structure which is used to represent
+ * the various components of an OVAL document, particularly the OVAL objects,
+ * items and entities.
+ *
+ * \paragraph Element structure
+ * The basic structure of an element looks like this:\n
+ * \n
+ * (foo_object bar)\n
+ * \n
+ * \em foo_object is the element name and \em bar is the value of the element. There
+ * can be 0 to n values. In case the element has some attributes set the structure
+ * changes to:\n
+ * \n
+ * ((foo_object :attr1 val1) bar)\n
+ * \n
+ * where \em attr1 is the name of the attribute and \em val1 is the attribute's value.
+ * The colon in the attribute name signals that the attribute has a value.
+ *
  * @{
  */
 /*
