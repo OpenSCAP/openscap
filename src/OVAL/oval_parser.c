@@ -116,7 +116,7 @@ int ovaldef_parse_node(xmlTextReaderPtr reader, struct oval_parser_context *cont
 	int depth = xmlTextReaderDepth(reader);	/*tree_depth */
 	oscap_dprintf("DEBUG: oval_parser: START PARSE (depth = %d)", depth);
 	oscap_dprintf("DEBUG: oval_parser: ENCLOSING TAG <%s:%s>",
-		      xmlTextReaderNamespaceUri(reader), xmlTextReaderLocalName(reader));
+		      xmlTextReaderConstNamespaceUri(reader), xmlTextReaderConstLocalName(reader));
 	int return_code = xmlTextReaderRead(reader);
 	while (return_code == 1) {
 		if (xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {

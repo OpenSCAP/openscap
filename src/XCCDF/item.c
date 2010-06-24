@@ -370,6 +370,7 @@ xmlNode *xccdf_item_to_dom(struct xccdf_item *item, xmlDoc *doc, xmlNode *parent
 		struct xccdf_reference *ref = xccdf_reference_iterator_next(references);
 		xccdf_reference_to_dom(ref, doc, item_node);
 	}
+        xccdf_reference_iterator_free(references);
 
 	/* Handle type specific attributes and children */
 	switch (xccdf_item_get_type(item)) {

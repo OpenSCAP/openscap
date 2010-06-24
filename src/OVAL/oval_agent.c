@@ -109,9 +109,10 @@ void oval_agent_cb_data_free(struct oval_agent_cb_data * data)
 {
     if (data == NULL) return;
 
-    if (data->session != NULL) oval_agent_destroy_session(data->session);
-    oscap_free(data->callback);
-    oscap_free(data->usr);
+    //if (data->session != NULL) oval_agent_destroy_session(data->session);
+    // We don't want to free usr data, user has to free it by himself
+    data->callback = NULL;
+    oscap_free(data);
 }
 /**
  * Specification of structure for transformation of OVAL Result type
@@ -1714,6 +1715,7 @@ oval_result_t oval_agent_eval_definition(oval_agent_session_t * asess, const cha
 	/* take the first system */
 	rsystem_it = oval_results_model_get_systems(asess->res_model);
 	rsystem = oval_result_system_iterator_next(rsystem_it);
+        oval_result_system_iterator_free(rsystem_it);
 	/* eval */
 	return oval_result_system_eval_definition(rsystem, id);
 }
@@ -1853,11 +1855,16 @@ void oval_agent_export_sysinfo_to_xccdf_result(struct oval_agent_session * sess,
 	struct oval_definition_model *def_model = NULL;
 	struct oval_results_model *res_model = NULL;
 	struct oval_result_system *re_system = NULL;
+	struct oval_result_system_iterator *re_system_it = NULL;
 	struct oval_sysinfo *sysinfo = NULL;
 
 	res_model = oval_agent_get_results_model(sess);
 	def_model = oval_results_model_get_definition_model(res_model);
-	re_system = oval_result_system_iterator_next(oval_results_model_get_systems(res_model));	/* Get the very first system */
+        /* Get the very first system */
+        re_system_it = oval_results_model_get_systems(res_model);
+	re_system = oval_result_system_iterator_next(re_system_it);
+        oval_result_system_iterator_free(re_system_it);
+
 	sys_model = oval_result_system_get_syschar_model(re_system);
 	sysinfo = oval_syschar_model_get_sysinfo(sys_model);
 

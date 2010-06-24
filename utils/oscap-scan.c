@@ -210,7 +210,6 @@ static int app_evaluate_xccdf(const char *f_XCCDF, const char *f_Results, const 
 		xccdf_result_export(ritem, f_Results);
 
 	/* -- */
-	oval_agent_destroy_session(sess);
         oval_agent_cb_data_free(usr);
 	xccdf_policy_model_free(policy_model);
 	return 0;
@@ -460,7 +459,14 @@ int main(int argc, char **argv)
 		free(f_XCCDF);
 	if (f_OVAL != NULL)
 		free(f_OVAL);
-	return retval;
+	if (s_Profile != NULL)
+		free(s_Profile);
+	if (f_Results != NULL)
+		free(f_Results);
 
+        oval_agent_destroy_session(sess);
+        oval_definition_model_free(def_model);
 	oscap_cleanup();
+
+        return retval;
 }
