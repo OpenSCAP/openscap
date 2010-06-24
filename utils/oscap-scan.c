@@ -60,16 +60,7 @@
 #include <xccdf.h>
 #include <xccdf_policy.h>
 
-/**
- * User defined structure that is passed to XCCDF evaluation and is returned 
- * in callback calls.
- */
-struct xccdf_usr {
-
-	int verbose;
-	char *result_id;
-	oval_agent_session_t *asess;
-};
+int VERBOSE = 1;
 
 struct oval_usr {
 
@@ -79,22 +70,14 @@ struct oval_usr {
 	int result_unknown;
 	int result_neval;
 	int result_napp;
-	int verbose;
 };
-
-void print_usage(const char *pname, FILE * out);
-int app_evaluate_test(struct oval_test *test, oval_probe_session_t * sess,
-		      struct oval_definition_model *def_model, struct oval_syschar_model *sys_model, int verbose);
-int app_evaluate_criteria(struct oval_criteria_node *cnode, oval_probe_session_t * sess,
-			  struct oval_definition_model *def_model, struct oval_syschar_model *sys_model, int verbose);
-char *app_curl_download(char *url);
 
 /**
  * Function print usage of this program to specified output
  * @param pname name of program, standard usage argv[0]
  * @param out output stream for fprintf function, standard usage stdout or stderr
  */
-void print_usage(const char *pname, FILE * out)
+static void print_usage(const char *pname, FILE * out)
 {
 
 	fprintf(out,
@@ -106,7 +89,6 @@ void print_usage(const char *pname, FILE * out)
 		"\n"
 		"Options:\n"
 		"   -h --help\r\t\t\t\t - show this help\n"
-		"   -v --verbose <integer>\r\t\t\t\t - run in verbose mode (0,1).\n"
 		"   -q --quiet\r\t\t\t\t - Quiet mode. Suppress all warning and messages.\n"
 		" \n\r\t\t\t\t   and verbosity\n"
 		"   --xccdf <file>\r\t\t\t\t - The name of XCCDF file (required XCCDF support).\n"
@@ -124,7 +106,7 @@ void print_usage(const char *pname, FILE * out)
  * @param url URL or PATH to file
  * @return path to local file
  */
-char *app_curl_download(char *url)
+static char *app_curl_download(char *url)
 {
 
 	struct stat buf;
@@ -171,19 +153,13 @@ static int callback(const char *id, int result, void *arg)
  * XCCDF Preprocessing 
  */
 static int app_evaluate_xccdf(const char *f_XCCDF, const char *f_Results, const char *url_XCCDF,
-			      oval_agent_session_t * sess, int verbose, const char *s_Profile)
+			      oval_agent_session_t * sess, const char *s_Profile)
 {
 
 	struct xccdf_policy_iterator *policy_it = NULL;
 	struct xccdf_policy *policy = NULL;
 	struct xccdf_benchmark *benchmark = NULL;
 	struct xccdf_policy_model *policy_model = NULL;
-
-	struct oval_syschar_model *sys_model = NULL;
-	struct oval_definition_model *def_model = NULL;
-	struct oval_results_model *res_model = NULL;
-	struct oval_result_system *re_system = NULL;
-	struct oval_sysinfo *sysinfo = NULL;
 
 	benchmark = xccdf_benchmark_import(f_XCCDF);
 	policy_model = xccdf_policy_model_new(benchmark);
@@ -222,39 +198,13 @@ static int app_evaluate_xccdf(const char *f_XCCDF, const char *f_Results, const 
 	struct oscap_text *title = oscap_text_new();
 	oscap_text_set_text(title, "OSCAP Scan Result");
 	xccdf_result_add_title(ritem, title);
-
-	/* Clear after eval */
-	/* ================== RESULTS ========================== */
-	/* Somehow we need Syschar model */
-	res_model = oval_agent_get_results_model(sess);
-	def_model = oval_results_model_get_definition_model(res_model);
-	re_system = oval_result_system_iterator_next(oval_results_model_get_systems(res_model));	/* Get the very first system */
-	sys_model = oval_result_system_get_syschar_model(re_system);
-	sysinfo = oval_syschar_model_get_sysinfo(sys_model);
-
-	xccdf_result_set_test_system(ritem, oval_sysinfo_get_primary_host_name(sysinfo));
 	if (policy != NULL) {
-		struct xccdf_profile *profile = xccdf_policy_get_profile(policy);
-		if (xccdf_profile_get_id(profile) != NULL)
-			xccdf_result_set_profile(ritem, xccdf_profile_get_id(profile));
+		const char * id = xccdf_profile_get_id(xccdf_policy_get_profile(policy));
+		if (id != NULL)
+			xccdf_result_set_profile(ritem, id);
 	}
+        oval_agent_export_sysinfo_to_xccdf_result(sess, ritem);
 
-	struct xccdf_target_fact *fact = NULL;
-	struct oval_sysint *sysint = NULL;
-
-	struct oval_sysint_iterator *sysint_it = oval_sysinfo_get_interfaces(sysinfo);
-	while (oval_sysint_iterator_has_more(sysint_it)) {
-		sysint = oval_sysint_iterator_next(sysint_it);
-		xccdf_result_add_target_address(ritem, oval_sysint_get_ip_address(sysint));
-
-		if (oval_sysint_get_mac_address(sysint) != NULL) {
-			fact = xccdf_target_fact_new();
-			xccdf_target_fact_set_name(fact, "urn:xccdf:fact:ethernet:MAC");
-			xccdf_target_fact_set_string(fact, oval_sysint_get_mac_address(sysint));
-			xccdf_result_add_target_fact(ritem, fact);
-		}
-	}
-	oval_sysint_iterator_free(sysint_it);
 	/* TODO: Here will come score system export to result */
 	if (f_Results != NULL)
 		xccdf_result_export(ritem, f_Results);
@@ -270,7 +220,7 @@ static int app_evaluate_xccdf(const char *f_XCCDF, const char *f_Results, const 
 static int app_oval_callback(const char *id, int result, void *usr)
 {
 
-	if (((struct oval_usr *)usr)->verbose > 0)
+	if (VERBOSE > 0)
 		printf("Evalutated definition %s: %s\n", id, oval_result_get_text(result));
 	switch ((oval_result_t) result) {
 	case OVAL_RESULT_TRUE:
@@ -301,7 +251,7 @@ static int app_oval_callback(const char *id, int result, void *usr)
 /**
  * Function that evaluate OVAL content (without XCCDF).
  */
-static int app_evaluate_oval(const char *f_Results, oval_agent_session_t * sess, int verbose)
+static int app_evaluate_oval(const char *f_Results, oval_agent_session_t * sess)
 {
 	struct oval_results_model *res_model = NULL;
 	struct oval_usr *usr = NULL;
@@ -311,7 +261,6 @@ static int app_evaluate_oval(const char *f_Results, oval_agent_session_t * sess,
 
 	/* Init usr structure */
 	usr = malloc(sizeof(struct oval_usr));
-	usr->verbose = verbose;
 	usr->result_false = 0;
 	usr->result_true = 0;
 	usr->result_invalid = 0;
@@ -321,16 +270,16 @@ static int app_evaluate_oval(const char *f_Results, oval_agent_session_t * sess,
 
 	ret = oval_agent_eval_system(sess, app_oval_callback, usr);
 
-	if (verbose >= 0)
+	if (VERBOSE >= 0)
 		printf("Evaluation: All done.\n");
 
 	if (ret == -1) {
-		if ((oscap_err()) && (verbose >= 0))
-			if (verbose >= 0)
+		if ((oscap_err()) && (VERBOSE >= 0))
+			if (VERBOSE >= 0)
 				fprintf(stderr, "Error: (%d) %s\n", oscap_err_code(), oscap_err_desc());
 		return 1;
 	}
-	if (verbose >= 2) {
+	if (VERBOSE >= 0) {
 		fprintf(stdout, "====== RESULTS ======\n");
 		fprintf(stdout, "TRUE:          \r\t\t %d\n", usr->result_true);
 		fprintf(stdout, "FALSE:         \r\t\t %d\n", usr->result_false);
@@ -380,7 +329,6 @@ static int app_evaluate_oval(const char *f_Results, oval_agent_session_t * sess,
  */
 int main(int argc, char **argv)
 {
-	int verbose = 0;	    /**< Verbosity level variable */
 	char *url_OVAL = NULL;	    /**< URL of OVAL definition file */
 	char *url_XCCDF = NULL;	    /**< URL of OVAL definition file */
 	oval_agent_session_t *sess = NULL;   /**< */
@@ -401,8 +349,7 @@ int main(int argc, char **argv)
 			{"help", 0, 0, 'h'},
 			{"result-file", 1, 0, 0},
 			{"xccdf-profile", 1, 0, 1},
-			{"verbose", 1, 0, 2},
-			{"xccdf", 1, 0, 3},
+			{"xccdf", 1, 0, 2},
 			{0, 0, 0, 0}
 		};
 
@@ -417,23 +364,11 @@ int main(int argc, char **argv)
 		case 1:	/* Syschars */
 			s_Profile = strdup(optarg);
 			break;
-		case 2:	/* Verbose */
-			if (verbose != -1)
-				verbose = atoi(optarg);
-			if (verbose >= 1)
-				verbose = 2;
-			break;
-		case 3:	/* XCCDF */
+		case 2:	/* XCCDF */
 			url_XCCDF = strdup(optarg);
 			break;
-		case 'v':	/* quiet is higher priority then verbose */
-			if (verbose != -1)
-				verbose += 1;
-			if (verbose >= 1)
-				verbose = 2;
-			break;
 		case 'q':
-			verbose = -1;
+			VERBOSE = -1;
 			break;
 		case 'h':	/* Help */
 			print_usage(argv[0], stderr);
@@ -465,22 +400,22 @@ int main(int argc, char **argv)
 
 		f_XCCDF = app_curl_download(url_XCCDF);
 		if (!f_XCCDF) {
-			if (verbose >= 0)
+			if (VERBOSE >= 0)
 				fprintf(stderr, "Error: (%d) %s\n", oscap_err_code(), oscap_err_desc());
 			return 1;
 		}
 	}
 	f_OVAL = app_curl_download(url_OVAL);
 	if (!f_OVAL) {
-		if (verbose >= 0)
+		if (VERBOSE >= 0)
 			fprintf(stderr, "Error: (%d) %s\n", oscap_err_code(), oscap_err_desc());
 		return 1;
 	}
 
 	/* Print options */
-	if (verbose >= 2) {
+	if (VERBOSE >= 2) {
 		printf("Running options:\n");
-		printf("\tOption Verbose:\r\t\t\t %d\n", verbose);
+		printf("\tOption Verbose:\r\t\t\t %d\n", VERBOSE);
 		printf("\tOption OVAL:\r\t\t\t %s\n", url_OVAL);
 		printf("\tOption Results:\r\t\t\t %s\n", f_Results);
 		printf("\tOption XCCDF:\r\t\t\t %s\n", url_XCCDF);
@@ -496,7 +431,7 @@ int main(int argc, char **argv)
 	/* Import OVAL definition file */
 	struct oval_definition_model *def_model = oval_definition_model_import(f_OVAL);
 	if (oscap_err()) {
-		if (verbose >= 0)
+		if (VERBOSE >= 0)
 			fprintf(stderr, "Error: (%d) %s\n", oscap_err_code(), oscap_err_desc());
 		return 1;
 
@@ -511,12 +446,12 @@ int main(int argc, char **argv)
 
 #ifdef ENABLE_XCCDF
 	if (f_XCCDF != NULL) {
-		retval = app_evaluate_xccdf(f_XCCDF, f_Results, url_XCCDF, sess, verbose, s_Profile);
+		retval = app_evaluate_xccdf(f_XCCDF, f_Results, url_XCCDF, sess, s_Profile);
 	} else if (f_OVAL != NULL)
-		retval = app_evaluate_oval(f_Results, sess, verbose);
+		retval = app_evaluate_oval(f_Results, sess);
 #else
 	if (f_OVAL != NULL) {
-		retval = app_evaluate_oval(f_Results, sess, verbose);
+		retval = app_evaluate_oval(f_Results, sess);
 	} else
 		printf("Missing OVAL file !\n");
 #endif

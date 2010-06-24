@@ -540,6 +540,9 @@ struct xccdf_policy_model * xccdf_policy_model_new(struct xccdf_benchmark * benc
 	model->policies  = oscap_list_new();
         model->callbacks = oscap_list_new();
 
+        /* Resolve document */
+        xccdf_benchmark_resolve(benchmark);
+
         /* Create policies from benchmark model */
         profile_it = xccdf_benchmark_get_profiles(benchmark);
         /* Iterate through profiles and create policies */
