@@ -248,25 +248,51 @@ int oval_probe_session_query_definition(oval_probe_session_t *sess, const char *
  * @returns 0 on success
  */
 static int oval_probe_session_query_criteria(oval_probe_session_t *sess, struct oval_criteria_node *cnode) {
-        switch (oval_criteria_node_get_type(cnode)) {
-                /* Criterion node is final node that has reference to test */
-        case OVAL_NODETYPE_CRITERION:{
-                        /* There should be a test .. */
-                        struct oval_test *test = oval_criteria_node_get_test(cnode);
-                        if (test == NULL)
-                                return 0;
-			struct oval_object *object = oval_test_get_object(test);
-			if (object == NULL)
-				return 0;
-                        /* .. probe object and return */
-                        return oval_probe_session_query_object(sess, object);
+	int ret;
 
-                }
-                break;
+	switch (oval_criteria_node_get_type(cnode)) {
+	/* Criterion node is the final node that has a reference to a test */
+	case OVAL_NODETYPE_CRITERION:{
+		/* There should be a test .. */
+		struct oval_test *test;
+		struct oval_object *object;
+		struct oval_state *state;
+
+		test = oval_criteria_node_get_test(cnode);
+		if (test == NULL)
+			return 0;
+		object = oval_test_get_object(test);
+		if (object == NULL)
+			return 0;
+		/* probe object */
+		ret = oval_probe_session_query_object(sess, object);
+		if (ret != 0)
+			return ret;
+		/* probe objects referenced like this: test->state->variable->object */
+		state = oval_test_get_state(test);
+		if (state != NULL) {
+			struct oval_state_content_iterator *contents = oval_state_get_contents(state);
+			while (oval_state_content_iterator_has_more(contents)) {
+				struct oval_state_content *content = oval_state_content_iterator_next(contents);
+				struct oval_entity * entity = oval_state_content_get_entity(content);
+				if (oval_entity_get_varref_type(entity) == OVAL_ENTITY_VARREF_ATTRIBUTE) {
+					struct oval_variable *var = oval_entity_get_variable(entity);
+					ret = oval_probe_session_query_variable(sess, var); 
+					if (ret != 0) {
+						oval_state_content_iterator_free(contents);
+						return ret;
+					}
+				}
+			}
+			oval_state_content_iterator_free(contents);
+		}
+		return ret;
+
+		}
+		break;
                 /* Criteria node is type of set that contains more criterias. Criteria node
                  * child can be also type of criteria, criterion or extended definition */
         case OVAL_NODETYPE_CRITERIA:{
-                        int ret;
                         /* group of criterion nodes, get subnodes, continue recursive */
                         struct oval_criteria_node_iterator *cnode_it = oval_criteria_node_get_subnodes(cnode);
                         if (cnode_it == NULL)
