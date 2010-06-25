@@ -156,11 +156,11 @@ static SEXP_t *oval_varref_to_sexp(struct oval_entity *entity, struct oval_sysch
 	dt = oval_entity_get_datatype(entity);
 
 	var = oval_entity_get_variable(entity);
-	vit = oval_syschar_model_get_variable_values(syschar_model, var);
-	if (vit == NULL) {
+	if (oval_probe_session_query_variable(sess, var) != 0) {
 		SEXP_free(val_lst);
 		return NULL;
 	}
+	vit = oval_variable_get_values(var);
 
 	while (oval_value_iterator_has_more(vit)) {
 		val = oval_value_iterator_next(vit);

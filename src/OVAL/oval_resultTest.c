@@ -849,7 +849,7 @@ static oval_result_t eval_item(struct oval_syschar_model *syschar_model, struct 
 
 			item_entity = oval_sysitem_iterator_next(item_entities_itr);
 			if (item_entity == NULL) {
-				oscap_dprintf("%s:%d found NULL sysitem", __FILE__, __LINE__);
+				oscap_dprintf("found NULL sysitem.\n");
 				oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT,
 					     "OVAL internal error: found NULL sysitem");
 				oval_sysitem_iterator_free(item_entities_itr);
@@ -866,7 +866,11 @@ static oval_result_t eval_item(struct oval_syschar_model *syschar_model, struct 
 
 				ores_clear(&var_ores);
 
-				val_itr = oval_syschar_model_get_variable_values(syschar_model, state_entity_var);
+				if (0 != oval_syschar_model_compute_variable(syschar_model, state_entity_var)) {
+					oval_sysitem_iterator_free(item_entities_itr);
+					goto fail;
+				}
+				val_itr = oval_variable_get_values(state_entity_var);
 				while (oval_value_iterator_has_more(val_itr)) {
 					struct oval_value *var_val;
 					oval_result_t var_val_res;

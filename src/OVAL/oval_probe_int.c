@@ -152,7 +152,8 @@ static struct oval_syschar *oval_probe_variable_eval(struct oval_object *obj, st
 
         def_model = oval_syschar_model_get_definition_model(sys_model);
         var = oval_definition_model_get_variable(def_model, var_ref);
-        vit = oval_syschar_model_get_variable_values(sys_model, var);
+        // todo:
+        //vit = oval_syschar_model_get_variable_values(sys_model, var);
 
         if (vit != NULL)
                 sys = oval_syschar_new(sys_model, obj);

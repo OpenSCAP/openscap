@@ -79,4 +79,6 @@ int oval_probe_session_sethandler(oval_probe_session_t *sess, oval_subtype_t typ
  */
 struct oval_syschar_model *oval_probe_session_getmodel(oval_probe_session_t *sess);
 
+int oval_probe_session_query_variable(oval_probe_session_t *sess, struct oval_variable *variable);
+
 #endif /* OVAL_PROBE_SESSION */

@@ -127,8 +127,11 @@ int oval_value_parse_tag(xmlTextReaderPtr, struct oval_parser_context *, oval_va
 void oval_value_to_print(struct oval_value *value, char *indent, int idx);
 xmlNode *oval_value_to_dom(struct oval_value *, xmlDoc *, xmlNode *);
 
-oval_syschar_collection_flag_t oval_component_evaluate
-    (struct oval_syschar_model *sysmod, struct oval_component *component, struct oval_collection *value_collection);
+oval_syschar_collection_flag_t oval_component_compute(struct oval_syschar_model *sysmod, struct oval_component *component,
+						      struct oval_collection *value_collection);
+oval_syschar_collection_flag_t oval_component_query(oval_probe_session_t *sess, struct oval_component *component,
+						    struct oval_collection *value_collection);
+int oval_probe_session_query_object(oval_probe_session_t *sess, struct oval_object *object);
 typedef void (*oval_component_consumer) (struct oval_component *, void *);
 int oval_component_parse_tag(xmlTextReaderPtr, struct oval_parser_context *, oval_component_consumer, void *);
 void oval_component_to_print(struct oval_component *, char *indent, int index);

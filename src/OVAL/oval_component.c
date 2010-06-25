@@ -37,6 +37,7 @@
 #include "oval_string_map_impl.h"
 #include "oval_agent_api_impl.h"
 #include "oval_parser_impl.h"
+#include "oval_probe_session.h"
 #include "common/util.h"
 #include "common/debug_priv.h"
 #include "common/_error.h"
@@ -85,6 +86,17 @@ static oval_syschar_collection_flag_t _flag_agg_map[7][7] = {
 #define _AGG_FLAG(f1, f2) _flag_agg_map[f2][f1]
 #define _COMP_TYPE(comp) oval_component_type_get_text(oval_component_get_type(comp))
 #define _FLAG_TYPE(flag) oval_syschar_collection_flag_get_text(flag)
+
+typedef struct {
+	enum {
+		OVAL_MODE_COMPUTE,
+		OVAL_MODE_QUERY
+	} mode;
+	union {
+		struct oval_syschar_model *sysmod;
+		oval_probe_session_t *sess;
+	} u;
+} oval_argu_t;
 
 typedef struct oval_component {
 	struct oval_definition_model *model;
@@ -1296,7 +1308,11 @@ xmlNode *oval_component_to_dom(struct oval_component *component, xmlDoc * doc, x
 	return component_node;
 }
 
-static oval_syschar_collection_flag_t _oval_component_evaluate_LITERAL(struct oval_syschar_model *sysmod,
+static oval_syschar_collection_flag_t oval_component_eval_common(oval_argu_t *argu,
+								 struct oval_component *component,
+								 struct oval_collection *value_collection);
+
+static oval_syschar_collection_flag_t _oval_component_evaluate_LITERAL(oval_argu_t *argu,
 								       struct oval_component *component,
 								       struct oval_collection *value_collection)
 {
@@ -1307,7 +1323,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_LITERAL(struct ov
 	return SYSCHAR_FLAG_COMPLETE;
 }
 
-static oval_syschar_collection_flag_t _oval_component_evaluate_OBJECTREF(struct oval_syschar_model *sysmod,
+static oval_syschar_collection_flag_t _oval_component_evaluate_OBJECTREF(oval_argu_t *argu,
 									 struct oval_component *component,
 									 struct oval_collection *value_collection)
 {
@@ -1315,38 +1331,45 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_OBJECTREF(struct 
 	__attribute__nonnull__(component);
 
 	oval_syschar_collection_flag_t flag = SYSCHAR_FLAG_ERROR;
+
 	struct oval_component_OBJECTREF *objref = (struct oval_component_OBJECTREF *)component;
 	struct oval_object *object = objref->object;
-	if (object) {
-		oval_probe_session_t *sess;
-		struct oval_syschar *syschar;
+	char *obj_id;
+	struct oval_syschar_model *sysmod;
+	struct oval_syschar *syschar;
 
-		sess = oval_probe_session_new(sysmod);
-		syschar = oval_probe_object_query(sess, object, 0);
-		oval_probe_session_destroy(sess);
+	if (!object)
+		return flag;
 
-		if (syschar) {
-			flag = oval_syschar_get_flag(syschar);
-			char *field_name = objref->object_field;
-			struct oval_sysdata_iterator *sysdatas = oval_syschar_get_sysdata(syschar);
-			while (oval_sysdata_iterator_has_more(sysdatas)) {
-				struct oval_sysdata *sysdata = oval_sysdata_iterator_next(sysdatas);
-				struct oval_sysitem_iterator *items = oval_sysdata_get_items(sysdata);
-				while (oval_sysitem_iterator_has_more(items)) {
-					struct oval_sysitem *item = oval_sysitem_iterator_next(items);
-					char *item_name = oval_sysitem_get_name(item);
-					if (strcmp(field_name, item_name) == 0) {
-						char *text = oval_sysitem_get_value(item);
-						oval_datatype_t datatype = oval_sysitem_get_datatype(item);
-						struct oval_value *value = oval_value_new(datatype, text);
-						oval_collection_add(value_collection, value);
-					}
+	if (oval_probe_session_query_object(argu->u.sess, object) != 0)
+		return flag;
+
+	obj_id = oval_object_get_id(object);
+	sysmod = oval_probe_session_getmodel(argu->u.sess);
+	syschar = oval_syschar_model_get_syschar(sysmod, obj_id);
+
+	if (syschar) {
+		flag = oval_syschar_get_flag(syschar);
+		char *field_name = objref->object_field;
+		struct oval_sysdata_iterator *sysdatas = oval_syschar_get_sysdata(syschar);
+		while (oval_sysdata_iterator_has_more(sysdatas)) {
+			struct oval_sysdata *sysdata = oval_sysdata_iterator_next(sysdatas);
+			struct oval_sysitem_iterator *items = oval_sysdata_get_items(sysdata);
+			while (oval_sysitem_iterator_has_more(items)) {
+				struct oval_sysitem *item = oval_sysitem_iterator_next(items);
+				char *item_name = oval_sysitem_get_name(item);
+				if (strcmp(field_name, item_name) == 0) {
+					char *text = oval_sysitem_get_value(item);
+					oval_datatype_t datatype = oval_sysitem_get_datatype(item);
+					struct oval_value *value = oval_value_new(datatype, text);
+					oval_collection_add(value_collection, value);
 				}
-				oval_sysitem_iterator_free(items);
 			}
-			oval_sysdata_iterator_free(sysdatas);
+			oval_sysitem_iterator_free(items);
 		}
+		oval_sysdata_iterator_free(sysdatas);
 	}
+
 	return flag;
 #else
 	oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_ENOTIMPL, "This feature is not implemented, compiled without probes support.");	
@@ -1356,7 +1379,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_OBJECTREF(struct 
 }
 
 #define _HAS_VALUES(flag) (flag==SYSCHAR_FLAG_COMPLETE || flag==SYSCHAR_FLAG_INCOMPLETE)
-static oval_syschar_collection_flag_t _oval_component_evaluate_VARREF(struct oval_syschar_model *sysmod,
+static oval_syschar_collection_flag_t _oval_component_evaluate_VARREF(oval_argu_t *argu,
 								      struct oval_component *component,
 								      struct oval_collection *value_collection)
 {
@@ -1365,24 +1388,35 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_VARREF(struct ova
 	oval_syschar_collection_flag_t flag = SYSCHAR_FLAG_ERROR;
 	struct oval_component_VARREF *varref = (struct oval_component_VARREF *)component;
 	struct oval_variable *variable = varref->variable;
-	if (variable) {
-		flag = oval_syschar_model_get_variable_collection_flag(sysmod, variable);
-		if (_HAS_VALUES(flag)) {
-			struct oval_value_iterator *values = oval_syschar_model_get_variable_values(sysmod, variable);
-			while (oval_value_iterator_has_more(values)) {
-				struct oval_value *value = oval_value_iterator_next(values);
-				oval_collection_add(value_collection, oval_value_clone(value));
-			}
-			oval_value_iterator_free(values);
-		}
-	} else {
-		oscap_dprintf("ERROR: No variable bound to VARREF Component");
+
+	if (!variable) {
+		oscap_dprintf("ERROR: No variable bound to VARREF Component.\n");
 		oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "No variable bound to VARREF componenet");
+		return flag;
 	}
+
+	if (argu->mode == OVAL_MODE_QUERY) {
+		if (oval_probe_session_query_variable(argu->u.sess, variable) != 0)
+			return flag;
+	} else {
+		if (oval_syschar_model_compute_variable(argu->u.sysmod, variable) != 0)
+			return flag;
+	}
+
+	flag = oval_variable_get_collection_flag(variable);
+	if (_HAS_VALUES(flag)) {
+		struct oval_value_iterator *values = oval_variable_get_values(variable);
+		while (oval_value_iterator_has_more(values)) {
+			struct oval_value *value = oval_value_iterator_next(values);
+			oval_collection_add(value_collection, oval_value_clone(value));
+		}
+		oval_value_iterator_free(values);
+	}
+
 	return flag;
 }
 
-static oval_syschar_collection_flag_t _oval_component_evaluate_BEGIN(struct oval_syschar_model *sysmod,
+static oval_syschar_collection_flag_t _oval_component_evaluate_BEGIN(oval_argu_t *argu,
 								     struct oval_component *component,
 								     struct oval_collection *value_collection)
 {
@@ -1394,7 +1428,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_BEGIN(struct oval
 		if (oval_component_iterator_has_more(subcomps)) {	/*only the first component is processed */
 			struct oval_collection *subcoll = oval_collection_new();
 			struct oval_component *subcomp = oval_component_iterator_next(subcomps);
-			flag = oval_component_evaluate(sysmod, subcomp, subcoll);
+			flag = oval_component_eval_common(argu, subcomp, subcoll);
 			struct oval_value_iterator *values =
 			    (struct oval_value_iterator *)oval_collection_iterator(subcoll);
 			while (oval_value_iterator_has_more(values)) {
@@ -1419,8 +1453,9 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_BEGIN(struct oval
 	return flag;
 }
 
-static oval_syschar_collection_flag_t _oval_component_evaluate_END
-    (struct oval_syschar_model *sysmod, struct oval_component *component, struct oval_collection *value_collection) {
+static oval_syschar_collection_flag_t _oval_component_evaluate_END(oval_argu_t *argu,
+								   struct oval_component *component,
+								   struct oval_collection *value_collection) {
 	oval_syschar_collection_flag_t flag = SYSCHAR_FLAG_ERROR;
 	char *suffix = oval_component_get_suffix(component);
 	if (suffix) {
@@ -1429,7 +1464,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_END
 		if (oval_component_iterator_has_more(subcomps)) {	/*only the first component is processed */
 			struct oval_collection *subcoll = oval_collection_new();
 			struct oval_component *subcomp = oval_component_iterator_next(subcomps);
-			flag = oval_component_evaluate(sysmod, subcomp, subcoll);
+			flag = oval_component_eval_common(argu, subcomp, subcoll);
 			struct oval_value_iterator *values =
 			    (struct oval_value_iterator *)oval_collection_iterator(subcoll);
 			while (oval_value_iterator_has_more(values)) {
@@ -1455,7 +1490,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_END
 	return flag;
 }
 
-static oval_syschar_collection_flag_t _oval_component_evaluate_CONCAT(struct oval_syschar_model *sysmod,
+static oval_syschar_collection_flag_t _oval_component_evaluate_CONCAT(oval_argu_t *argu,
 								      struct oval_component *component,
 								      struct oval_collection *value_collection)
 {
@@ -1469,7 +1504,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_CONCAT(struct ova
 	for (idx0 = 0; oval_component_iterator_has_more(subcomps); idx0++) {
 		struct oval_collection *subcoll = oval_collection_new();
 		struct oval_component *subcomp = oval_component_iterator_next(subcomps);
-		oval_syschar_collection_flag_t subflag = oval_component_evaluate(sysmod, subcomp, subcoll);
+		oval_syschar_collection_flag_t subflag = oval_component_eval_common(argu, subcomp, subcoll);
 		flag = _AGG_FLAG(flag, subflag);
 		component_colls[idx0] = subcoll;
 	}
@@ -1542,7 +1577,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_CONCAT(struct ova
 	return flag;
 }
 
-static oval_syschar_collection_flag_t _oval_component_evaluate_SPLIT(struct oval_syschar_model *sysmod,
+static oval_syschar_collection_flag_t _oval_component_evaluate_SPLIT(oval_argu_t *argu,
 								     struct oval_component *component,
 								     struct oval_collection *value_collection)
 {
@@ -1554,7 +1589,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_SPLIT(struct oval
 	if (oval_component_iterator_has_more(subcomps)) {	/* Only first component is considered */
 		struct oval_component *subcomp = oval_component_iterator_next(subcomps);
 		struct oval_collection *subcoll = oval_collection_new();
-		flag = oval_component_evaluate(sysmod, subcomp, subcoll);
+		flag = oval_component_eval_common(argu, subcomp, subcoll);
 		struct oval_value_iterator *values = (struct oval_value_iterator *)oval_collection_iterator(subcoll);
 		struct oval_value *value;
 		while (oval_value_iterator_has_more(values)) {
@@ -1590,7 +1625,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_SPLIT(struct oval
 	return flag;
 };
 
-static oval_syschar_collection_flag_t _oval_component_evaluate_SUBSTRING(struct oval_syschar_model *sysmod,
+static oval_syschar_collection_flag_t _oval_component_evaluate_SUBSTRING(oval_argu_t *argu,
 									 struct oval_component *component,
 									 struct oval_collection *value_collection)
 {
@@ -1602,7 +1637,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_SUBSTRING(struct 
 	if (oval_component_iterator_has_more(subcomps)) {	/*Only first component is considered */
 		struct oval_component *subcomp = oval_component_iterator_next(subcomps);
 		struct oval_collection *subcoll = oval_collection_new();
-		flag = oval_component_evaluate(sysmod, subcomp, subcoll);
+		flag = oval_component_eval_common(argu, subcomp, subcoll);
 		struct oval_value_iterator *values = (struct oval_value_iterator *)oval_collection_iterator(subcoll);
 		struct oval_value *value;
 		while (oval_value_iterator_has_more(values)) {
@@ -1619,7 +1654,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_SUBSTRING(struct 
 	return flag;
 }
 
-static oval_syschar_collection_flag_t _oval_component_evaluate_TIMEDIF(struct oval_syschar_model *sysmod,
+static oval_syschar_collection_flag_t _oval_component_evaluate_TIMEDIF(oval_argu_t *argu,
 								       struct oval_component *component,
 								       struct oval_collection *value_collection)
 {
@@ -1631,7 +1666,7 @@ static bool _isEscape(char chr)
 	return false;		/*TODO: implement this function */
 }
 
-static oval_syschar_collection_flag_t _oval_component_evaluate_ESCAPE_REGEX(struct oval_syschar_model *sysmod,
+static oval_syschar_collection_flag_t _oval_component_evaluate_ESCAPE_REGEX(oval_argu_t *argu,
 									    struct oval_component *component,
 									    struct oval_collection *value_collection)
 {
@@ -1643,7 +1678,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_ESCAPE_REGEX(stru
 	if (oval_component_iterator_has_more(subcomps)) {	//Only first component is considered
 		struct oval_component *subcomp = oval_component_iterator_next(subcomps);
 		struct oval_collection *subcoll = oval_collection_new();
-		flag = oval_component_evaluate(sysmod, subcomp, subcoll);
+		flag = oval_component_eval_common(argu, subcomp, subcoll);
 		struct oval_value_iterator *values = (struct oval_value_iterator *)oval_collection_iterator(subcoll);
 		struct oval_value *value;
 		while (oval_value_iterator_has_more(values)) {
@@ -1668,13 +1703,15 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_ESCAPE_REGEX(stru
 	return flag;
 }
 
-static oval_syschar_collection_flag_t _oval_component_evaluate_REGEX_CAPTURE
-    (struct oval_syschar_model *sysmod, struct oval_component *component, struct oval_collection *value_collection) {
+static oval_syschar_collection_flag_t _oval_component_evaluate_REGEX_CAPTURE(oval_argu_t *argu,
+									     struct oval_component *component,
+									     struct oval_collection *value_collection)
+{
 	return SYSCHAR_FLAG_UNKNOWN;
 	//TODO: Missing implementation   
 }
 
-static oval_syschar_collection_flag_t _oval_component_evaluate_ARITHMETIC(struct oval_syschar_model *sysmod,
+static oval_syschar_collection_flag_t _oval_component_evaluate_ARITHMETIC(oval_argu_t *argu,
 									  struct oval_component *component,
 									  struct oval_collection *value_collection)
 {
@@ -1683,7 +1720,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_ARITHMETIC(struct
 }
 
 typedef oval_syschar_collection_flag_t(_oval_component_evaluator)
- (struct oval_syschar_model *, struct oval_component *, struct oval_collection *);
+ (oval_argu_t *, struct oval_component *, struct oval_collection *);
 
 static _oval_component_evaluator *_component_evaluators[15] = {
 	NULL,
@@ -1703,9 +1740,9 @@ static _oval_component_evaluator *_component_evaluators[15] = {
 	NULL
 };
 
-oval_syschar_collection_flag_t oval_component_evaluate(struct oval_syschar_model *sysmod,
-						       struct oval_component *component,
-						       struct oval_collection *value_collection)
+static oval_syschar_collection_flag_t oval_component_eval_common(oval_argu_t *argu,
+								 struct oval_component *component,
+								 struct oval_collection *value_collection)
 {
 	__attribute__nonnull__(component);
 
@@ -1715,9 +1752,34 @@ oval_syschar_collection_flag_t oval_component_evaluate(struct oval_syschar_model
 	    ? _component_evaluators[evidx] : NULL;
 	oval_syschar_collection_flag_t flag = SYSCHAR_FLAG_ERROR;
 	if (evaluator) {
-		flag = (*evaluator) (sysmod, component, value_collection);
-	} else
-		oscap_dprintf("ERROR component type %d not supported (%s:%d)", __FILE__, __LINE__);
-	oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "Component type not supported");
+		flag = (*evaluator) (argu, component, value_collection);
+	} else {
+		oscap_dprintf("ERROR component type %d not supported.\n", type);
+		oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "Component type not supported");
+	}
 	return flag;
+}
+
+oval_syschar_collection_flag_t oval_component_compute(struct oval_syschar_model *sysmod,
+						      struct oval_component *component,
+						      struct oval_collection *value_collection)
+{
+	oval_argu_t argu;
+
+	argu.mode = OVAL_MODE_COMPUTE;
+	argu.u.sysmod = sysmod;
+
+	return oval_component_eval_common(&argu, component, value_collection);
+}
+
+oval_syschar_collection_flag_t oval_component_query(oval_probe_session_t *sess,
+						    struct oval_component *component,
+						    struct oval_collection *value_collection)
+{
+	oval_argu_t argu;
+
+	argu.mode = OVAL_MODE_QUERY;
+	argu.u.sess = sess;
+
+	return oval_component_eval_common(&argu, component, value_collection);
 }

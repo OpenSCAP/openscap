@@ -135,34 +135,52 @@ struct oval_value_iterator *oval_variable_get_values(struct oval_variable *varia
 	return (value_collection) ? (struct oval_value_iterator *)oval_collection_iterator(variable->values) : NULL;
 }
 
-oval_syschar_collection_flag_t oval_syschar_model_get_variable_collection_flag
-    (struct oval_syschar_model *sysmod, struct oval_variable *variable) {
+oval_syschar_collection_flag_t oval_variable_get_collection_flag(struct oval_variable *variable) {
 	__attribute__nonnull__(variable);
 
-	if (variable->flag == SYSCHAR_FLAG_UNKNOWN) {
-		oval_syschar_model_get_variable_values(sysmod, variable);
-	}
 	return variable->flag;
 }
 
-struct oval_value_iterator *oval_syschar_model_get_variable_values
-    (struct oval_syschar_model *sysmod, struct oval_variable *variable) {
+int oval_syschar_model_compute_variable(struct oval_syschar_model *sysmod, struct oval_variable *variable) {
 	__attribute__nonnull__(variable);
 
-	if (variable->flag == SYSCHAR_FLAG_UNKNOWN) {
-		variable->values = oval_collection_new();
-		struct oval_component *component = oval_variable_get_component(variable);
-		if (component) {
-			variable->flag = oval_component_evaluate(sysmod, component, variable->values);
-		} else
-			oscap_dprintf("WARNING: NULL component bound to variable\n"
-				      "    variable type = %s\n"
-				      "    variable id   = %s\n"
-				      "    codeloc = %s(%d)\n",
-				      oval_variable_type_get_text(variable->type), oval_variable_get_id(variable),
-				      __FILE__, __LINE__);
-	}
-	return (variable->values) ? (struct oval_value_iterator *)oval_collection_iterator(variable->values) : NULL;
+	if (oval_variable_get_collection_flag(variable) != SYSCHAR_FLAG_UNKNOWN)
+                return 0;
+
+        variable->values = oval_collection_new();
+        struct oval_component *component = oval_variable_get_component(variable);
+        if (component) {
+                variable->flag = oval_component_compute(sysmod, component, variable->values);
+        } else {
+                oscap_dprintf("WARNING: NULL component bound to variable\n"
+                              "    variable type = %s\n"
+                              "    variable id   = %s\n",
+                              oval_variable_type_get_text(variable->type), oval_variable_get_id(variable));
+                return -1;
+        }
+
+        return 0;
+}
+
+int oval_probe_session_query_variable(oval_probe_session_t *sess, struct oval_variable *variable) {
+	__attribute__nonnull__(variable);
+
+	if (variable->flag != SYSCHAR_FLAG_UNKNOWN)
+		return 0;
+
+        variable->values = oval_collection_new();
+        struct oval_component *component = oval_variable_get_component(variable);
+        if (component) {
+		variable->flag = oval_component_query(sess, component, variable->values);
+	} else {
+                oscap_dprintf("WARNING: NULL component bound to variable\n"
+                              "    variable type = %s\n"
+                              "    variable id   = %s\n",
+                              oval_variable_type_get_text(variable->type), oval_variable_get_id(variable));
+		return -1;
+        }
+
+	return 0;
 }
 
 struct oval_component *oval_variable_get_component(struct oval_variable *variable)

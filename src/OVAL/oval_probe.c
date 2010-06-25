@@ -181,7 +181,7 @@ struct oval_sysinfo *oval_probe_sysinfo_query(oval_probe_session_t *sess)
 }
 
 static int oval_probe_session_query_criteria(oval_probe_session_t *sess, struct oval_criteria_node *cnode);
-static int oval_probe_session_query_object(oval_probe_session_t *sess, struct oval_object *object);
+int oval_probe_session_query_object(oval_probe_session_t *sess, struct oval_object *object);
 
 int oval_probe_session_query_sysinfo(oval_probe_session_t *sess) {
         struct oval_syschar_model *syschar_model;
@@ -304,7 +304,7 @@ static int oval_probe_session_query_criteria(oval_probe_session_t *sess, struct 
 /**
  * @returns 0 on success
  */
-static int oval_probe_session_query_object(oval_probe_session_t *sess, struct oval_object *object) {
+int oval_probe_session_query_object(oval_probe_session_t *sess, struct oval_object *object) {
 
 	char *objid = oval_object_get_id(object);
 	struct oval_syschar_model *sys_model = sess->sys_model;
@@ -324,4 +324,3 @@ static int oval_probe_session_query_object(oval_probe_session_t *sess, struct ov
 	}
 	return 0;
 }
-

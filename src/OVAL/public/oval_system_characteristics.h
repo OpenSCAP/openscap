@@ -288,16 +288,11 @@ struct oval_sysinfo *oval_syschar_model_get_sysinfo(struct oval_syschar_model *m
  */
 struct oval_syschar *oval_syschar_model_get_syschar(struct oval_syschar_model *model, const char *object_id);
 /**
- * Get the collection flag associated with a specified oval_variable
- * @memberof oval_syschar_model
- */
-oval_syschar_collection_flag_t oval_syschar_model_get_variable_collection_flag(struct oval_syschar_model *,
-									       struct oval_variable *);
-/**
  * Get the oval_values bound to a specified variable.
  * @memberof oval_syschar_model
  */
-struct oval_value_iterator *oval_syschar_model_get_variable_values(struct oval_syschar_model *, struct oval_variable *);
+int oval_syschar_model_compute_variable(struct oval_syschar_model *, struct oval_variable *);
+oval_syschar_collection_flag_t oval_variable_get_collection_flag(struct oval_variable *);
 /**
  * @memberof oval_syschar_model
  */
