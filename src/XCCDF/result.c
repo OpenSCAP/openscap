@@ -828,6 +828,22 @@ const char * xccdf_test_result_type_get_text(xccdf_test_result_type_t id)
     return XCCDF_RESULT_MAP[id - 1].string;
 }
 
+struct xccdf_rule_result * xccdf_result_get_rule_result_by_id(struct xccdf_result * result, const char * id)
+{
+        struct xccdf_rule_result * rule_result = NULL;
+    
+        struct xccdf_rule_result_iterator * rr_it = xccdf_result_get_rule_results(result);
+        while (xccdf_rule_result_iterator_has_more(rr_it)) {
+            rule_result = xccdf_rule_result_iterator_next(rr_it);
+            if (!strcmp(xccdf_rule_result_get_idref(rule_result), id))
+                break;
+            else rule_result = NULL;
+        }
+        xccdf_rule_result_iterator_free(rr_it);
+
+        return rule_result;
+}
+
 /* --------  DUMP ---------- */
 
 static void xccdf_rule_result_dump(struct xccdf_rule_result *res, int depth)

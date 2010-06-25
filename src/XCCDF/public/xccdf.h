@@ -1559,6 +1559,10 @@ struct xccdf_item_iterator *xccdf_item_get_content(const struct xccdf_item *item
  * @memberof xccdf_test_result
  */
 const char * xccdf_test_result_type_get_text(xccdf_test_result_type_t id);
+/**
+ * @memberof xccdf_result
+ */
+struct xccdf_rule_result * xccdf_result_get_rule_result_by_id(struct xccdf_result * result, const char * id);
 
 /**
  * Return item's parent in the grouping hierarchy.

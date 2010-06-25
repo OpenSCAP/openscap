@@ -223,6 +223,14 @@ static int app_evaluate_xccdf(const char *f_XCCDF, const char *f_Results, const 
 			xccdf_result_set_profile(ritem, id);
 	}
         oval_agent_export_sysinfo_to_xccdf_result(sess, ritem);
+        
+        struct xccdf_model_iterator * model_it = xccdf_benchmark_get_models(benchmark);
+        while (xccdf_model_iterator_has_more(model_it)) {
+            struct xccdf_model * model = xccdf_model_iterator_next(model_it);
+            struct xccdf_score * score = xccdf_policy_get_score(policy, ritem, xccdf_model_get_system(model));
+            xccdf_result_add_score(ritem, score);
+        }
+        xccdf_model_iterator_free(model_it);
 
 	/* Export results */
 	if (f_Results != NULL)
@@ -238,6 +246,7 @@ static int app_evaluate_xccdf(const char *f_XCCDF, const char *f_Results, const 
                     retval = 2;
         }
         xccdf_rule_result_iterator_free(res_it);
+
 
 	/* Clear & End */
         oval_agent_cb_data_free(usr);

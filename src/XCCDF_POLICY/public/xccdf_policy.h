@@ -398,6 +398,15 @@ void xccdf_value_binding_iterator_free(struct xccdf_value_binding_iterator *it);
  */
 void xccdf_value_binding_iterator_reset(struct xccdf_value_binding_iterator *it);
 
+/**
+ * Get score of the XCCDF Benchmark
+ * @param policy XCCDF Policy
+ * @param test_result Test Result model
+ * @param system Score system
+ * @return XCCDF Score
+ */
+struct xccdf_score * xccdf_policy_get_score(struct xccdf_policy * policy, struct xccdf_result * test_result, const char * system);
+
 /************************************************************/
 /** @} End of Iterators group */
 
