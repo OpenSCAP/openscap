@@ -59,6 +59,7 @@ struct SEAP_synchelper {
         SEXP_t         *args;
         pthread_cond_t  cond;
         pthread_mutex_t mtx;
+        int signaled;
 };
 
 #define SEAP_CMDTBL_LARGE 0x01
@@ -97,12 +98,6 @@ int SEAP_cmdtbl_cmp (SEAP_cmdrec_t *a, SEAP_cmdrec_t *b);
 
 SEAP_cmdrec_t *SEAP_cmdrec_new (void);
 void SEAP_cmdrec_free (SEAP_cmdrec_t *r);
-
-#define SEAP_EXEC_LOCAL  0x01
-#define SEAP_EXEC_LONLY  0x02
-#define SEAP_EXEC_GFIRST 0x04
-#define SEAP_EXEC_THREAD 0x08
-#define SEAP_EXEC_WQUEUE 0x10
 
 typedef uint8_t SEAP_cflags_t;
 

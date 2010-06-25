@@ -725,6 +725,9 @@ int oval_probe_ext_handler(oval_subtype_t type, void *ptr, int act, ...)
                          */
                         for (i = 0; i < pext->pdtbl->count; ++i) {
                                 pd  = pext->pdtbl->memb + i;
+
+                                //fprintf(stderr, "Sending reset to %p(%s)...\n", pd, oval_subtype2str(pd->subtype));
+
                                 ret = oval_probe_ext_reset(pext->pdtbl->ctx, pd, pext);
 
                                 if (ret != 0)
@@ -842,9 +845,9 @@ struct oval_syschar *oval_probe_ext_eval(SEAP_CTX_t *ctx, oval_pd_t *pd, oval_pe
 
 int oval_probe_ext_reset(SEAP_CTX_t *ctx, oval_pd_t *pd, oval_pext_t *pext)
 {
-        void *res, *chk = (void *)(0xC0FFEE);
+        void *res;
 
-        res = SEAP_cmd_exec(ctx, pd->sd, 0, PROBECMD_RESET, chk, SEAP_CMDTYPE_SYNC, NULL, NULL);
+        res = SEAP_cmd_exec(ctx, pd->sd, SEAP_EXEC_RECV, PROBECMD_RESET, NULL, SEAP_CMDTYPE_SYNC, NULL, NULL);
 
-        return (res == chk ? 0 : -1);
+        return (0);
 }

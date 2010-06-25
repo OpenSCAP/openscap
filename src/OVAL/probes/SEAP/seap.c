@@ -38,6 +38,7 @@
 #include "_seap-command.h"
 #include "_seap-error.h"
 #include "_seap-packet.h"
+#include "_seap.h"
 
 static void SEAP_CTX_initdefault (SEAP_CTX_t *ctx)
 {
@@ -261,7 +262,7 @@ static void *__SEAP_cmdexec_worker (void *arg)
         return (NULL);
 }
 
-static int __SEAP_recvmsg_process_cmd (SEAP_CTX_t *ctx, int sd, SEAP_cmd_t *cmd)
+int __SEAP_recvmsg_process_cmd (SEAP_CTX_t *ctx, int sd, SEAP_cmd_t *cmd)
 {
         _A(ctx != NULL);
         _A(cmd != NULL);

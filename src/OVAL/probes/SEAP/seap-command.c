@@ -36,6 +36,7 @@
 #include "generic/redblack.h"
 #include "_seap-command.h"
 #include "_seap-packet.h"
+#include "_seap.h"
 
 int SEAP_cmd_register (SEAP_CTX_t *ctx, SEAP_cmdcode_t code, uint32_t flags, SEAP_cmdfn_t func, ...) /* sd, arg */
 {
@@ -206,6 +207,7 @@ static SEXP_t *__SEAP_cmd_sync_handler (SEXP_t *res, void *arg)
 
         h->args = res;
         (void) pthread_mutex_lock (&h->mtx);
+        h->signaled = 1;
         (void) pthread_cond_signal (&h->cond);
         (void) pthread_mutex_unlock (&h->mtx);
 
@@ -321,6 +323,7 @@ SEXP_t *SEAP_cmd_exec (SEAP_CTX_t    *ctx,
                                 abort ();
 
                         h.args = NULL;
+                        h.signaled = 0;
 
                         if (pthread_mutex_lock (&(h.mtx)) != 0)
                                 abort ();
@@ -359,26 +362,81 @@ SEXP_t *SEAP_cmd_exec (SEAP_CTX_t    *ctx,
                                 return (NULL);
                         }
 
-                        if (pthread_cond_wait (&h.cond, &h.mtx) != 0) {
-                                abort ();
-                        } else {
-                                _D("cond return: h.args=%p\n", h.args);
-
-                                if (h.args == NULL)
-                                        res = NULL;
-                                else if (func != NULL)
-                                        res = func (h.args, funcarg);
-                                else
-                                        res = h.args;
-
+                        if (flags & SEAP_EXEC_RECV) {
+                                struct timespec timeout;
+                                SEAP_packet_t  *packet_rcv;
                                 /*
-                                 * SEAP_cmdtbl_del(dsc->cmd_w_table, rec);
+                                 * We have to do own receiving of events. We'll queue
+                                 * all events (errors, messages) that we are not interested
+                                 * in. After a command (reply) is received, we'll try to
+                                 * check whether the condition we are waiting for was signaled.
                                  */
-                                pthread_mutex_unlock (&(h.mtx));
-                                pthread_cond_destroy (&(h.cond));
-                                pthread_mutex_destroy (&(h.mtx));
+
+                                packet_rcv = NULL;
+                                timeout.tv_sec  = 0;
+                                timeout.tv_nsec = 0;
+
+                                for (;;) {
+                                        pthread_mutex_unlock(&h.mtx);
+
+                                        if (SEAP_packet_recv(ctx, sd, &packet_rcv) != 0) {
+                                                _D("FAIL: ctx=%p, sd=%d, errno=%u, %s.\n", ctx, sd, errno, strerror(errno));
+                                                return(NULL);
+                                        }
+
+                                        switch(SEAP_packet_gettype(packet_rcv)) {
+                                        case SEAP_PACKET_CMD:
+                                                switch (__SEAP_recvmsg_process_cmd (ctx, sd, SEAP_packet_cmd(packet_rcv))) {
+                                                case  0:
+                                                        SEAP_packet_free(packet_rcv);
+                                                        break;
+                                                default:
+                                                        errno = EDOOFUS;
+                                                        return(NULL);
+                                                }
+                                        case SEAP_PACKET_MSG:
+                                                /* FIXME */
+                                                break;
+                                        case SEAP_PACKET_ERR:
+                                                /* FIXME */
+                                                break;
+                                        default:
+                                                abort();
+                                        }
+
+                                        /* Morbo: THIS IS NOT HOW SYCHNRONIZATION WORKS! */
+                                        if (h.signaled)
+                                                break;
+                                }
+                        } else {
+                                /*
+                                 * Someone else does receiving of events for us.
+                                 * Just wait for the condition to be signaled.
+                                 */
+                                if (pthread_cond_wait(&h.cond, &h.mtx) != 0) {
+                                        /*
+                                         * Fatal error - don't know how to handle
+                                         * this so let's just call abort()...
+                                         */
+                                        abort();
+                                }
                         }
 
+                        _D("cond return: h.args=%p\n", h.args);
+
+                        if (h.args == NULL)
+                                res = NULL;
+                        else if (func != NULL)
+                                res = func (h.args, funcarg);
+                        else
+                                res = h.args;
+
+                        /*
+                         * SEAP_cmdtbl_del(dsc->cmd_w_table, rec);
+                         */
+                        pthread_mutex_unlock (&(h.mtx));
+                        pthread_cond_destroy (&(h.cond));
+                        pthread_mutex_destroy (&(h.mtx));
                         SEAP_packet_free (packet);
 
                         return (res);

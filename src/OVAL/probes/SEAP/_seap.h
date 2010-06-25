@@ -29,6 +29,8 @@
 
 OSCAP_HIDDEN_START;
 
+int __SEAP_recvmsg_process_cmd (SEAP_CTX_t *ctx, int sd, SEAP_cmd_t *cmd);
+
 OSCAP_HIDDEN_END;
 
 #endif /* _SEAP_H */

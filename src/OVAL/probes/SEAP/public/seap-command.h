@@ -50,6 +50,13 @@ typedef uint8_t  SEAP_cmdtype_t;
 int SEAP_cmd_register   (SEAP_CTX_t *ctx, SEAP_cmdcode_t code, uint32_t flags, SEAP_cmdfn_t func, ...);
 int SEAP_cmd_unregister (SEAP_CTX_t *ctx, SEAP_cmdcode_t code);
 
+#define SEAP_EXEC_LOCAL  0x01
+#define SEAP_EXEC_LONLY  0x02
+#define SEAP_EXEC_GFIRST 0x04
+#define SEAP_EXEC_THREAD 0x08
+#define SEAP_EXEC_WQUEUE 0x10
+#define SEAP_EXEC_RECV   0x20
+
 SEXP_t *SEAP_cmd_exec (SEAP_CTX_t    *ctx,
                        int            sd,
                        uint32_t       flags,
