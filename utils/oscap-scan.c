@@ -62,6 +62,11 @@
 
 int VERBOSE = 1;
 
+/**
+ * User defined structure that is passed to OVAL callback in OVAL evaluation
+ * Each integer variable represent one statistic entry for definition results
+ * It is used to evaluate final return value of oscap-scan
+ */
 struct oval_usr {
 
 	int result_false;
@@ -143,14 +148,26 @@ static char *app_curl_download(char *url)
 }
 
 #ifdef ENABLE_XCCDF
+/**
+ * Callback for XCCDF evaluation. Callback is called after each OVAL definition evaluation
+ * right before adding results to Test result model.
+ * @param id ID of Rules that is being evaluated
+ * @param result XCCDF Result of evaluated rule
+ * @param arg User defined data structure
+ */
 static int callback(const char *id, int result, void *arg)
 {
-    printf("Rule \"%s\" result: %s\n", id, xccdf_test_result_type_get_text(result));
+    if (VERBOSE >= 0) printf("Rule \"%s\" result: %s\n", id, xccdf_test_result_type_get_text(result));
     return 0;
 }
 
 /**
- * XCCDF Preprocessing 
+ * XCCDF Processing fucntion
+ * @param f_XCCDF XCCDF XML file that is imported
+ * @param f_Results Name of the result file specified by user
+ * @param url_XCCDF Url value of XCCDF file defined by user and used in Test Result
+ * @param sess OVAL Agent Session
+ * @param s_Profile String with Profile ID that will be evaluated
  */
 static int app_evaluate_xccdf(const char *f_XCCDF, const char *f_Results, const char *url_XCCDF,
 			      oval_agent_session_t * sess, const char *s_Profile)
@@ -161,6 +178,7 @@ static int app_evaluate_xccdf(const char *f_XCCDF, const char *f_Results, const 
 	struct xccdf_benchmark *benchmark = NULL;
 	struct xccdf_policy_model *policy_model = NULL;
 
+        /* Load XCCDF model and XCCDF Policy model */
 	benchmark = xccdf_benchmark_import(f_XCCDF);
 	policy_model = xccdf_policy_model_new(benchmark);
 
@@ -194,6 +212,7 @@ static int app_evaluate_xccdf(const char *f_XCCDF, const char *f_Results, const 
 	/* Perform evaluation */
 	struct xccdf_result * ritem = xccdf_policy_evaluate(policy);
 
+        /* Write results into XCCDF Test Result model */
 	xccdf_result_set_benchmark_uri(ritem, url_XCCDF);
 	struct oscap_text *title = oscap_text_new();
 	oscap_text_set_text(title, "OSCAP Scan Result");
@@ -205,17 +224,33 @@ static int app_evaluate_xccdf(const char *f_XCCDF, const char *f_Results, const 
 	}
         oval_agent_export_sysinfo_to_xccdf_result(sess, ritem);
 
-	/* TODO: Here will come score system export to result */
+	/* Export results */
 	if (f_Results != NULL)
 		xccdf_result_export(ritem, f_Results);
 
-	/* -- */
+        /* Get the result from TestResult model and decide if end with error or with correct return code */
+        int retval = 0;
+        struct xccdf_rule_result_iterator * res_it = xccdf_result_get_rule_results(ritem);
+        while (xccdf_rule_result_iterator_has_more(res_it)) {
+            struct xccdf_rule_result * res = xccdf_rule_result_iterator_next(res_it);
+            xccdf_test_result_type_t result = xccdf_rule_result_get_result(res);
+            if ((result == XCCDF_RESULT_FAIL) || (result == XCCDF_RESULT_UNKNOWN)) 
+                    retval = 2;
+        }
+        xccdf_rule_result_iterator_free(res_it);
+
+	/* Clear & End */
         oval_agent_cb_data_free(usr);
 	xccdf_policy_model_free(policy_model);
-	return 0;
+
+	return retval;
 }
 #endif
 
+/**
+ * OVAL Callback function that is passed to OVAL evaluation proccess
+ * Function makes statistic of definition results
+ */
 static int app_oval_callback(const char *id, int result, void *usr)
 {
 
@@ -267,6 +302,7 @@ static int app_evaluate_oval(const char *f_Results, oval_agent_session_t * sess)
 	usr->result_neval = 0;
 	usr->result_napp = 0;
 
+        /* Evaluation */
 	ret = oval_agent_eval_system(sess, app_oval_callback, usr);
 
 	if (VERBOSE >= 0)
@@ -288,7 +324,7 @@ static int app_evaluate_oval(const char *f_Results, oval_agent_session_t * sess)
 		fprintf(stdout, "NOT APPLICABLE:\r\t\t %d\n", usr->result_napp);
 	}
 
-    /*=============== PRINT RESULTS =====================*/
+        /*=============== PRINT RESULTS =====================*/
 	if (f_Results != NULL) {
 		// set up directives 
 		struct oval_result_directives *res_direct = oval_result_directives_new(res_model);
@@ -320,7 +356,6 @@ static int app_evaluate_oval(const char *f_Results, oval_agent_session_t * sess)
 		}
 	} else
 		return ret;
-
 }
 
 /**
@@ -451,10 +486,10 @@ int main(int argc, char **argv)
 #else
 	if (f_OVAL != NULL) {
 		retval = app_evaluate_oval(f_Results, sess);
-	} else
-		printf("Missing OVAL file !\n");
+        }
 #endif
 
+        /* Cleanup time */
 	if (f_XCCDF != NULL)
 		free(f_XCCDF);
 	if (f_OVAL != NULL)

@@ -100,6 +100,14 @@ void oval_variable_model_add(struct oval_variable_model *model, char *varid, con
  * @memberof oval_variable_model
  */ 
 struct oval_string_iterator *oval_variable_model_get_variable_ids (struct oval_variable_model *);
+
+/**
+ * Return true if variable with ID is present in variable model, false otherwise
+ * @param model Variable model
+ * @param id ID of variable
+ * @memberof oval_variable_model
+ */
+bool oval_variable_model_has_variable(struct oval_variable_model *model, const char * id);
 /**
  * Get a specified external variable datatype.
  * If the varid does not resolve to a managed external variable, this method returns 0.

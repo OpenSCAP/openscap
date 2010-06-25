@@ -452,6 +452,20 @@ int oval_variable_model_export(struct oval_variable_model *model, const char *fi
 	return retcode;
 }
 
+bool oval_variable_model_has_variable(struct oval_variable_model *model, const char * id)
+{
+        __attribute__nonnull__(model);
+        struct oval_string_iterator * str_it = (struct oval_string_iterator *)oval_string_map_keys(model->varmap);
+        while (oval_string_iterator_has_more(str_it)) {
+            if (!strcmp(oval_string_iterator_next(str_it), id)) {
+                oval_string_iterator_free(str_it);
+                return true;
+            }
+        }
+        oval_string_iterator_free(str_it);
+        return false;
+}
+
 struct oval_string_iterator *oval_variable_model_get_variable_ids(struct oval_variable_model *model)
 {
 	__attribute__nonnull__(model);

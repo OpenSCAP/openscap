@@ -85,9 +85,9 @@ struct oval_agent_session {
 #ifdef ENABLE_XCCDF
 
 struct oval_agent_cb_data {
-        struct oval_agent_session   * session;
-        oval_agent_result_cb_t      * callback;
-        void                        * usr;
+        struct oval_agent_session   * session;  ///< OVAL Agent session
+        oval_agent_result_cb_t      * callback; ///< User callback that is called after evaluation
+        void                        * usr;      ///< User data passed to callback
 };
 
 /* Macros to generate iterators, getters and setters */
@@ -1812,7 +1812,7 @@ void oval_agent_resolve_variables(struct oval_agent_session * session, struct xc
     /* Check the conflict */
     while (xccdf_value_binding_iterator_has_more(it)) {
         struct xccdf_value_binding *binding = xccdf_value_binding_iterator_next(it);
-        struct oval_variable *variable = oval_definition_model_get_variable(def_model, xccdf_value_binding_get_value(binding));
+        struct oval_variable *variable = oval_definition_model_get_variable(def_model, xccdf_value_binding_get_name(binding));
         /* Do we have comflict ? */
         if (variable != NULL) {
             value_it = oval_variable_get_values(variable);
@@ -1826,8 +1826,7 @@ void oval_agent_resolve_variables(struct oval_agent_session * session, struct xc
     if (conflict) {
         /* We have a conflict, clear session and external variables */
         oval_definition_model_clear_external_variables(def_model);
-        oval_agent_destroy_session(session);
-        session = oval_agent_new_session(def_model);
+        oval_agent_reset_session(session);
     }
 
     struct oval_variable_model *var_model = oval_variable_model_new();
@@ -1839,15 +1838,12 @@ void oval_agent_resolve_variables(struct oval_agent_session * session, struct xc
         char *value = xccdf_value_binding_get_value(binding);
         struct oval_variable *variable = oval_definition_model_get_variable(def_model, name);
         if (variable != NULL) {
-                /* We can have more variables with same ID within Rule */
-                value_it = oval_variable_get_values(variable);
-                if (oval_value_iterator_has_more(value_it))
-                    oscap_dprintf("WARNING ! Variable %s in internal conflict !\n");
-                oval_value_iterator_free(value_it);
-
                 oval_datatype_t o_type = oval_variable_get_datatype(variable);
+                /* TODO: check of variable type ? */
+                if (oval_variable_model_has_variable(var_model, name))
+                    oscap_dprintf("ERROR! External variable %s in conflict ! Probably content failure.\n", name);
                 /* Add variable to variable model */
-                oval_variable_model_add(var_model, name, "Unknown", o_type, value); // TODO comment
+                else oval_variable_model_add(var_model, name, "Unknown", o_type, value); // TODO comment
         } else {
                 oscap_dprintf("Variable %s does not exist, skipping\n", name);
         }
@@ -1863,12 +1859,16 @@ xccdf_test_result_type_t oval_agent_eval_rule(struct xccdf_policy *policy, const
         oval_result_t result;
 	struct oval_agent_cb_data * data = (struct oval_agent_cb_data *) usr;
 
+        /* If there is no such OVAL definition, return XCCDF_RESUL_NOT_CHECKED. XDCCDF should look for alternative definition in this case. */
         if (oval_definition_model_get_definition(oval_results_model_get_definition_model(oval_agent_get_results_model(data->session)), id) == NULL)
                 return XCCDF_RESULT_NOT_CHECKED;
 
+        /* Resolve variables */
         oval_agent_resolve_variables(data->session, it);
+        /* Evaluate OVAL definition */
 	result = oval_agent_eval_definition(data->session, id);
 
+        /* Call user callback */
         (*data->callback) (rule_id, xccdf_get_result_from_oval(result), (void *) data->usr);
 
 	return xccdf_get_result_from_oval(result);
@@ -1883,6 +1883,7 @@ void oval_agent_export_sysinfo_to_xccdf_result(struct oval_agent_session * sess,
 	struct oval_result_system_iterator *re_system_it = NULL;
 	struct oval_sysinfo *sysinfo = NULL;
 
+        /* Get all models we will need */
 	res_model = oval_agent_get_results_model(sess);
 	def_model = oval_results_model_get_definition_model(res_model);
         /* Get the very first system */
@@ -1893,11 +1894,13 @@ void oval_agent_export_sysinfo_to_xccdf_result(struct oval_agent_session * sess,
 	sys_model = oval_result_system_get_syschar_model(re_system);
 	sysinfo = oval_syschar_model_get_sysinfo(sys_model);
 
+        /* Set the test system */
 	xccdf_result_set_test_system(ritem, oval_sysinfo_get_primary_host_name(sysinfo));
 
 	struct xccdf_target_fact *fact = NULL;
 	struct oval_sysint *sysint = NULL;
 
+        /* Add info for all interfaces */
 	struct oval_sysint_iterator *sysint_it = oval_sysinfo_get_interfaces(sysinfo);
 	while (oval_sysint_iterator_has_more(sysint_it)) {
 		sysint = oval_sysint_iterator_next(sysint_it);
