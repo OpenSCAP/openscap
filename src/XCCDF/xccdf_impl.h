@@ -58,7 +58,6 @@ xmlNode *xccdf_rule_result_to_dom(struct xccdf_rule_result *result, xmlDoc *doc,
 xmlNode *xccdf_ident_to_dom(struct xccdf_ident *ident, xmlDoc *doc, xmlNode *parent);
 xmlNode *xccdf_setvalue_to_dom(struct xccdf_setvalue *setvalue, xmlDoc *doc, xmlNode *parent);
 xmlNode *xccdf_override_to_dom(struct xccdf_override *override, xmlDoc *doc, xmlNode *parent);
-xmlNode *xccdf_remark_to_dom(struct oscap_text *remark, xmlDoc *doc, xmlNode *parent);
 
 OSCAP_HIDDEN_END;
 

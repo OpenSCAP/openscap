@@ -929,13 +929,7 @@ void xccdf_group_to_dom(struct xccdf_group *group, xmlNode *group_node, xmlDoc *
 	}
 
 	/* Handle Child Nodes */
-	struct oscap_text_iterator *rationales = xccdf_group_get_rationale(group);
-	while (oscap_text_iterator_has_more(rationales)) {
-		struct oscap_text *rationale = oscap_text_iterator_next(rationales);
-		xmlNode * child = xmlNewChild(group_node, ns_xccdf, BAD_CAST "rationale", BAD_CAST oscap_text_get_text(rationale));
-                if (oscap_text_get_lang(rationale) != NULL) xmlNewProp(child, BAD_CAST "xml:lang", BAD_CAST oscap_text_get_lang(rationale));
-	}
-	oscap_text_iterator_free(rationales);
+	xccdf_texts_to_dom(xccdf_group_get_rationale(group), group_node, "rationale");
 
 	struct oscap_string_iterator *platforms = xccdf_group_get_platforms(group);
 	while (oscap_string_iterator_has_more(platforms)) {

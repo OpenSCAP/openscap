@@ -98,9 +98,9 @@ struct oscap_text *oscap_text_new_parse(struct oscap_text_traits traits, xmlText
 
     // extract 'override' attribute
     if (text->traits.can_override) {
-		text->traits.override_given = true;
         xmlTextReaderMoveToAttribute(reader, BAD_CAST "override");
         text->traits.overrides = oscap_string_to_enum(OSCAP_BOOL_MAP, (const char *) xmlTextReaderConstValue(reader));
+		if (xmlTextReaderConstValue(reader) != NULL) text->traits.override_given = true;
     }
 
     // extract language
@@ -138,7 +138,7 @@ xmlNode *oscap_text_to_dom(struct oscap_text *text, xmlNode *parent, const char 
 
 	if (text->lang)
 		xmlNodeSetLang(text_node, BAD_CAST text->lang);
-	if (text->traits.can_override && text->traits.override_given && text->traits.overrides)
+	if (text->traits.can_override && text->traits.override_given)
 		xmlNewProp(text_node, BAD_CAST "override", BAD_CAST (text->traits.overrides ? "true" : "false"));
 
 

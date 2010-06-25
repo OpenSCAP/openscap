@@ -459,12 +459,7 @@ void xccdf_result_to_dom(struct xccdf_result *result, xmlNode *result_node, xmlD
 	}
 
 	/* Handle children */
-	struct oscap_text_iterator *remarks = xccdf_result_get_remarks(result);
-	while (oscap_text_iterator_has_more(remarks)) {
-		struct oscap_text *remark = oscap_text_iterator_next(remarks);
-		xccdf_remark_to_dom(remark, doc, result_node);
-	}
-	oscap_text_iterator_free(remarks);
+	xccdf_texts_to_dom(xccdf_result_get_remarks(result), result_node, "remark");
 
 	struct oscap_string_iterator *orgs = xccdf_result_get_organizations(result);
 	while (oscap_string_iterator_has_more(orgs)) {
@@ -799,23 +794,9 @@ xmlNode *xccdf_override_to_dom(struct xccdf_override *override, xmlDoc *doc, xml
 	if (new != 0)
 		xmlNewProp(override_node, BAD_CAST "new-result", BAD_CAST XCCDF_RESULT_MAP[new - 1].string);
 
-	struct oscap_text *remark = xccdf_override_get_remark(override);
-	if (remark)
-		xccdf_remark_to_dom(remark, doc, override_node);
+	oscap_text_to_dom(xccdf_override_get_remark(override), override_node, "remark");
 
 	return override_node;
-}
-
-xmlNode *xccdf_remark_to_dom(struct oscap_text *remark, xmlDoc *doc, xmlNode *parent)
-{
-	xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent, XCCDF_BASE_NAMESPACE);
-	xmlNode *remark_node = xmlNewChild(parent, ns_xccdf, BAD_CAST "remark", BAD_CAST oscap_text_get_text(remark));
-
-	const char *lang = oscap_text_get_lang(remark);
-	if (lang)
-		xmlNewProp(remark_node, BAD_CAST "xml:lang", BAD_CAST lang);
-
-	return remark_node;
 }
 
 static struct xccdf_message *xccdf_message_new_parse(xmlTextReaderPtr reader)

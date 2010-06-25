@@ -470,6 +470,8 @@ struct xccdf_profile_note * xccdf_profile_note_clone(const struct xccdf_profile_
 void xccdf_reparent_list(struct oscap_list * item_list, struct xccdf_item * parent);
 void xccdf_reparent_item(struct xccdf_item * item, struct xccdf_item * parent);
 
+void xccdf_texts_to_dom(struct oscap_text_iterator *texts, xmlNode *parent, const char *elname);
+
 #include "unused.h"
 
 OSCAP_HIDDEN_END;

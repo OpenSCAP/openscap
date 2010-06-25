@@ -303,6 +303,12 @@ void xccdf_item_print(struct xccdf_item *item, int depth)
 	}
 }
 
+void xccdf_texts_to_dom(struct oscap_text_iterator *texts, xmlNode *parent, const char *elname)
+{
+	OSCAP_FOR(oscap_text, text, texts)
+		oscap_text_to_dom(text, parent, elname);
+}
+
 xmlNode *xccdf_item_to_dom(struct xccdf_item *item, xmlDoc *doc, xmlNode *parent)
 {
 	xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent, XCCDF_BASE_NAMESPACE);
@@ -330,21 +336,8 @@ xmlNode *xccdf_item_to_dom(struct xccdf_item *item, xmlDoc *doc, xmlNode *parent
 		xmlNewProp(item_node, BAD_CAST "abstract", BAD_CAST "True");
 
 	/* Handle generic item child nodes */
-        struct oscap_text_iterator *titles = xccdf_item_get_title(item);
-        while (oscap_text_iterator_has_more(titles)) {
-                struct oscap_text *title = oscap_text_iterator_next(titles);
-                xmlNode * child = xmlNewChild(item_node, ns_xccdf, BAD_CAST "title", BAD_CAST oscap_text_get_text(title));
-                if (oscap_text_get_lang(title) != NULL) xmlNewProp(child, BAD_CAST "xml:lang", BAD_CAST oscap_text_get_lang(title));
-        }
-        oscap_text_iterator_free(titles);
-
-        struct oscap_text_iterator *descriptions = xccdf_item_get_description(item);
-        while (oscap_text_iterator_has_more(descriptions)) {
-                struct oscap_text *description = oscap_text_iterator_next(descriptions);
-                xmlNode * child = xmlNewChild(item_node, ns_xccdf, BAD_CAST "description", BAD_CAST oscap_text_get_text(description));
-                if (oscap_text_get_lang(description) != NULL) xmlNewProp(child, BAD_CAST "xml:lang", BAD_CAST oscap_text_get_lang(description));
-        }
-        oscap_text_iterator_free(descriptions);
+	xccdf_texts_to_dom(xccdf_item_get_title(item), item_node, "title");
+	xccdf_texts_to_dom(xccdf_item_get_description(item), item_node, "description");
 
 	const char *version= xccdf_item_get_version(item);
 	if (version)
@@ -357,13 +350,7 @@ xmlNode *xccdf_item_to_dom(struct xccdf_item *item, xmlDoc *doc, xmlNode *parent
 	}
 	xccdf_status_iterator_free(statuses);
 
-        struct oscap_text_iterator *questions = xccdf_item_get_question(item);
-        while (oscap_text_iterator_has_more(questions)) {
-                struct oscap_text *question = oscap_text_iterator_next(questions);
-                xmlNode * child = xmlNewChild(item_node, ns_xccdf, BAD_CAST "question", BAD_CAST oscap_text_get_text(question));
-                if (oscap_text_get_lang(question) != NULL) xmlNewProp(child, BAD_CAST "xml:lang", BAD_CAST oscap_text_get_lang(question));
-        }
-        oscap_text_iterator_free(questions);
+	xccdf_texts_to_dom(xccdf_item_get_question(item), item_node, "question");
 
 	struct xccdf_reference_iterator *references = xccdf_item_get_references(item);
 	while (xccdf_reference_iterator_has_more(references)) {
@@ -412,14 +399,8 @@ xmlNode *xccdf_item_to_dom(struct xccdf_item *item, xmlDoc *doc, xmlNode *parent
 
 xmlNode *xccdf_reference_to_dom(struct xccdf_reference *ref, xmlDoc *doc, xmlNode *parent)
 {
-	xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent, XCCDF_BASE_NAMESPACE);
-	xmlNode *reference_node = xmlNewChild(parent, ns_xccdf, BAD_CAST "reference", BAD_CAST "");
-
-	const char *lang = oscap_text_get_lang(xccdf_reference_get_text(ref));
-	if (lang != NULL) xmlNewProp(reference_node, BAD_CAST "xml:lang", BAD_CAST lang);
-
-	const char *href = xccdf_reference_get_href(ref);
-	xmlNewProp(reference_node, BAD_CAST "href", BAD_CAST href);
+	xmlNode *reference_node = oscap_text_to_dom(xccdf_reference_get_text(ref), parent, "reference");
+	xmlNewProp(reference_node, BAD_CAST "href", BAD_CAST xccdf_reference_get_href(ref));
 
         /* TODO: Dublin Core Elements /XML spec p. 69/ */
 
@@ -428,9 +409,7 @@ xmlNode *xccdf_reference_to_dom(struct xccdf_reference *ref, xmlDoc *doc, xmlNod
 
 xmlNode *xccdf_profile_note_to_dom(struct xccdf_profile_note *note, xmlDoc *doc, xmlNode *parent)
 {
-	xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent, XCCDF_BASE_NAMESPACE);
-	struct oscap_text *text = xccdf_profile_note_get_text(note);
-	xmlNode *note_node = xmlNewChild(parent, ns_xccdf, BAD_CAST "profile-note", BAD_CAST oscap_text_get_text(text));
+	xmlNode *note_node = oscap_text_to_dom(xccdf_profile_note_get_text(note), parent, "profile-note");
 	xmlNewProp(note_node, BAD_CAST "tag", BAD_CAST xccdf_profile_note_get_reftag(note));
 
 	return note_node;
@@ -457,14 +436,7 @@ xmlNode *xccdf_status_to_dom(struct xccdf_status *status, xmlDoc *doc, xmlNode *
 
 xmlNode *xccdf_fixtext_to_dom(struct xccdf_fixtext *fixtext, xmlDoc *doc, xmlNode *parent)
 {
-	xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent, XCCDF_BASE_NAMESPACE);
-	xmlNode *fixtext_node = xmlNewChild(parent, ns_xccdf, BAD_CAST "fixtext", NULL);
-
-	// This is in the XCCDF Spec, but not implemented in OpenSCAP
-	//const char *lang = xccdf_fixtext_get_lang(note);
-	//xmlNewProp(note_node, BAD_CAST "xml:lang", BAD_CAST lang);
-	//if (xccdf_fixtext_get_override(note))
-	//	xmlNewProp(fixtext_node, BAD_CAST "override", BAD_CAST "True");
+	xmlNode *fixtext_node = oscap_text_to_dom(xccdf_fixtext_get_text(fixtext), parent, "fixtext");
 	
 	if (xccdf_fixtext_get_reboot(fixtext))
 		xmlNewProp(fixtext_node, BAD_CAST "reboot", BAD_CAST "True");
@@ -483,9 +455,6 @@ xmlNode *xccdf_fixtext_to_dom(struct xccdf_fixtext *fixtext, xmlDoc *doc, xmlNod
 	xccdf_strategy_t strategy = xccdf_fixtext_get_strategy(fixtext);
         if (strategy != 0)
 	        xmlNewProp(fixtext_node, BAD_CAST "strategy", BAD_CAST XCCDF_STRATEGY_MAP[strategy].string);
-
-	//const char *content = fixtext->content;
-	//xmlNewChild(fixtext_node, ns_xccdf, BAD_CAST "sub", BAD_CAST content);
 
 	return fixtext_node;
 }
