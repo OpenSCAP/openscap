@@ -259,6 +259,76 @@ static struct xccdf_refine_value * xccdf_policy_get_refine_value(struct xccdf_po
     return NULL;
 }
 
+static xccdf_test_result_type_t _resolve_operation(int A, int B, xccdf_bool_operator_t oper)
+{
+    /* ***************************************************************
+     * AND  P  F  U  E  N    OR  P  F  U  E  N         P  F  U  E  N *
+     *   P  P  F  U  E  P     P  P  P  P  P  P    neg  F  P  U  E  N *
+     *   F  F  F  F  F  F     F  P  F  U  E  F                       *
+     *   U  U  F  U  U  U     U  P  U  U  U  U                       *
+     *   E  E  F  U  E  E     E  P  E  U  E  E                       *
+     *   N  P  F  U  E  N     N  P  F  U  E  N                       *
+     *****************************************************************/
+
+    xccdf_test_result_type_t value = 0;
+
+    xccdf_test_result_type_t RESULT_TABLE_AND[9][9] = {
+        /*  P  F  E  U  N  N  N  P */ 
+        {0, 0, 0, 0, 0, 0, 0, 0, 0},
+        {0, 1, 2, 3, 4, 1, 1, 1, 1}, /* P */
+        {0, 2, 2, 2, 2, 2, 2, 2, 2}, /* F */
+        {0, 3, 2, 3, 4, 3, 3, 3, 3}, /* E */
+        {0, 4, 2, 4, 4, 4, 4, 4, 4}, /* U */
+
+        {0, 1, 2, 3, 4, 5, 5, 5, 1}, /* N */
+        {0, 1, 2, 3, 4, 5, 5, 5, 1},
+        {0, 1, 2, 3, 4, 5, 5, 5, 1},
+
+        {0, 1, 2, 3, 4, 1, 1, 1, 1}  /* P */};
+
+    xccdf_test_result_type_t RESULT_TABLE_OR[9][9] = {
+        /*  P  F  E  U  N  N  N  P */ 
+        {0, 0, 0, 0, 0, 0, 0, 0, 0},
+        {0, 1, 1, 1, 1, 1, 1, 1, 1}, /* P */
+        {0, 1, 2, 3, 4, 2, 2, 2, 1}, /* F */
+        {0, 1, 3, 3, 4, 3, 3, 3, 1}, /* E */
+        {0, 1, 4, 4, 4, 4, 4, 4, 1}, /* U */
+
+        {0, 1, 2, 3, 4, 5, 5, 5, 1}, /* N */
+        {0, 1, 2, 3, 4, 5, 5, 5, 1},
+        {0, 1, 2, 3, 4, 5, 5, 5, 1},
+
+        {0, 1, 1, 1, 1, 1, 1, 1, 1}  /* P */};
+
+    if ((A == 0) || (B == 0)) {
+        oscap_dprintf("ERROR! Bad test results %d, %d\n", A, B);
+        return 0;
+    }
+
+    switch (oper) {
+        case XCCDF_OPERATOR_AND: /* AND */
+        case XCCDF_OPERATOR_NAND:
+            value = (xccdf_test_result_type_t) RESULT_TABLE_AND[A][B];
+            break;
+
+        case XCCDF_OPERATOR_OR: /* OR */
+        case XCCDF_OPERATOR_NOR:
+            value = (xccdf_test_result_type_t) RESULT_TABLE_OR[A][B];
+            break;
+        case XCCDF_OPERATOR_NOT:
+        case XCCDF_OPERATOR_MASK:
+            oscap_dprintf("Not supported operation !\n");
+            return 0;
+            break;
+    }
+    if ((oper == XCCDF_OPERATOR_NOR) || (oper == XCCDF_OPERATOR_NAND)) {
+        if (value == XCCDF_RESULT_PASS) value = XCCDF_RESULT_FAIL;
+        else if (value == XCCDF_RESULT_FAIL) value = XCCDF_RESULT_PASS;
+    }
+
+    return value;
+}
+
 /**
  * Resolve the xccdf item 
  */
@@ -308,7 +378,7 @@ static void xccdf_policy_resolve_rule(struct xccdf_policy * policy, struct xccdf
  * Evaluate the policy check with given checking system
  */
 static xccdf_test_result_type_t 
-xccdf_policy_evaluate_cb(struct xccdf_policy * policy, const char * sysname, const char * content, const char * rule_id, struct oscap_list * bindings, struct xccdf_result * result) 
+xccdf_policy_evaluate_cb(struct xccdf_policy * policy, const char * sysname, const char * content, const char * rule_id, struct oscap_list * bindings) 
 {
     callback * cb = xccdf_policy_get_callback(policy, sysname);
     if (cb == NULL) { /* No callback found - checking system not registered */
@@ -326,18 +396,7 @@ xccdf_policy_evaluate_cb(struct xccdf_policy * policy, const char * sysname, con
     /* Clear */
     if (binding_it != NULL) xccdf_value_binding_iterator_free(binding_it);
 
-    /* Add result to policy */
-    if (result == NULL) {
-            /* Should be here an error ? */
-            return false;
-    } else {
-            struct xccdf_rule_result *rule_ritem = xccdf_rule_result_new();
-            xccdf_rule_result_set_result(rule_ritem, retval);
-            xccdf_rule_result_set_idref(rule_ritem, rule_id);
-            xccdf_result_add_rule_result(result, rule_ritem);
-    }
-
-    return true;
+    return retval;
 }
 
 static struct oscap_list * xccdf_policy_check_get_value_bindings(struct xccdf_policy * policy, struct xccdf_check_export_iterator * check_it)
@@ -394,16 +453,17 @@ static struct oscap_list * xccdf_policy_check_get_value_bindings(struct xccdf_po
  * Evaluate the XCCDF check. 
  * Name collision with xccdf_check -> changed to xccdf_policy_check 
  */
-static bool xccdf_policy_check_evaluate(struct xccdf_policy * policy, struct xccdf_check * check, char * rule_id, struct xccdf_result * result)
+static xccdf_test_result_type_t xccdf_policy_check_evaluate(struct xccdf_policy * policy, struct xccdf_check * check, char * rule_id)
 {
     struct xccdf_check_iterator             * child_it;
     struct xccdf_check                      * child;
     struct xccdf_check_content_ref_iterator * content_it;
     struct xccdf_check_content_ref          * content;
-    bool                                      ret       = false;
     const char                              * content_name;
     const char                              * system_name;
     struct oscap_list                       * bindings;
+    xccdf_test_result_type_t                  ret = 0;
+    xccdf_test_result_type_t                  ret2 = 0;
 
     /* At least one of check-content or check-content-ref must
         * appear in each check element. */
@@ -411,8 +471,12 @@ static bool xccdf_policy_check_evaluate(struct xccdf_policy * policy, struct xcc
             child_it = xccdf_check_get_children(check);
             while (xccdf_check_iterator_has_more(child_it)) {
                 child = xccdf_check_iterator_next(child_it);
-                ret = xccdf_policy_check_evaluate(policy, child, rule_id, result);
-                if (ret == false) break;
+                ret2 = xccdf_policy_check_evaluate(policy, child, rule_id);
+                printf("RETURN: %s\n", xccdf_test_result_type_get_text(ret2));
+                if (ret == 0) ret = ret2;
+                else {
+                    ret = _resolve_operation(ret, ret2, xccdf_check_get_oper(check));
+                }
             }
             xccdf_check_iterator_free(child_it);
     } else { /* This is <check> element */
@@ -424,7 +488,7 @@ static bool xccdf_policy_check_evaluate(struct xccdf_policy * policy, struct xcc
                 content = xccdf_check_content_ref_iterator_next(content_it);
                 content_name = xccdf_check_content_ref_get_name(content);
                 /* Check if this is OVAL ? Never mind. Added to TODO */
-                ret = xccdf_policy_evaluate_cb(policy, system_name, content_name, rule_id, bindings, result);
+                ret = xccdf_policy_evaluate_cb(policy, system_name, content_name, rule_id, bindings);
                 if (ret != XCCDF_RESULT_NOT_CHECKED) break;
             }
             xccdf_check_content_ref_iterator_free(content_it);
@@ -445,8 +509,8 @@ static bool xccdf_policy_item_evaluate(struct xccdf_policy * policy, struct xccd
     struct xccdf_check              * check;
     struct xccdf_item_iterator      * child_it;
     struct xccdf_item               * child;
-    bool                              ret       = false;
     const char                      * rule_id;
+    xccdf_test_result_type_t        ret;
 
     xccdf_type_t itype = xccdf_item_get_type(item);
 
@@ -459,13 +523,24 @@ static bool xccdf_policy_item_evaluate(struct xccdf_policy * policy, struct xccd
                     while(xccdf_check_iterator_has_more(check_it)) {
                             check = xccdf_check_iterator_next(check_it);
 
-                            ret = xccdf_policy_check_evaluate(policy, check, (char *) rule_id, result);
+                            ret = xccdf_policy_check_evaluate(policy, check, (char *) rule_id);
 
                             if (ret == false) /* we got item that can't be processed */
                                 break;
                     }
                     xccdf_check_iterator_free(check_it);
                     /* iteration thorugh checks ends here */;
+
+                    /* Add result to policy */
+                    if (result == NULL) {
+                            /* Should be here an error ? */
+                            return false;
+                    } else {
+                            struct xccdf_rule_result *rule_ritem = xccdf_rule_result_new();
+                            xccdf_rule_result_set_result(rule_ritem, ret);
+                            xccdf_rule_result_set_idref(rule_ritem, rule_id);
+                            xccdf_result_add_rule_result(result, rule_ritem);
+                    }
         } break;
 
         case XCCDF_GROUP:{

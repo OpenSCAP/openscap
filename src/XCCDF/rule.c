@@ -325,6 +325,7 @@ struct xccdf_item *xccdf_rule_parse(xmlTextReaderPtr reader, struct xccdf_item *
 				oscap_list_add(rule->sub.rule.profile_notes, note);
 				break;
 			}
+                case XCCDFE_COMPLEX_CHECK:
 		case XCCDFE_CHECK:{
 				struct xccdf_check *check = xccdf_check_parse(reader);
 				if (check == NULL)
