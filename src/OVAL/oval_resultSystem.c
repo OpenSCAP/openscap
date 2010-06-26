@@ -401,12 +401,15 @@ static void _oval_result_system_scan_set_for_references
 static void _oval_result_system_scan_object_for_references
     (struct oval_syschar_model *syschar_model, struct oval_object *object,
      struct oval_string_map *objmap,
-     struct oval_string_map *sttmap, struct oval_string_map *varmap, struct oval_string_map *sysmap) {
+     struct oval_string_map *sttmap, 
+     struct oval_string_map *varmap, 
+     struct oval_string_map *sysmap) {
 	char *objid = oval_object_get_id(object);
 	struct oval_syschar *syschar = oval_syschar_model_get_syschar(syschar_model, objid);
-	if (syschar)
+	if (syschar) /* put syschar of the object into map */
 		oval_string_map_put(sysmap, objid, syschar);
 	struct oval_object_content_iterator *contents = oval_object_get_object_contents(object);
+	/* see if there are more objects referenced from this object's content */ 
 	while (oval_object_content_iterator_has_more(contents)) {
 		struct oval_object_content *content = oval_object_content_iterator_next(contents);
 		struct oval_entity *entity = oval_object_content_get_entity(content);
@@ -615,10 +618,12 @@ xmlNode *oval_result_system_to_dom
 			if (oval_result_directives_get_reported(directives, result)) {
 				oval_result_directive_content_t content
 				    = oval_result_directives_get_content(directives, result);
+				/* report definition according to directives settings */
 				oval_result_definition_to_dom(rslt_definition, content, doc, definitions_node);
 				if (content == OVAL_DIRECTIVE_CONTENT_FULL) {
 					struct oval_result_criteria_node *criteria
 					    = oval_result_definition_get_criteria(rslt_definition);
+					/* collect the tests that are referenced from reported definitions */
 					if (criteria)
 						_oval_result_system_scan_criteria_for_references(criteria, tstmap);
 				}
@@ -639,20 +644,37 @@ xmlNode *oval_result_system_to_dom
 		xmlNode *tests_node = xmlNewChild(system_node, ns_results, BAD_CAST "tests", NULL);
 		while (oval_result_test_iterator_has_more(result_tests)) {
 			struct oval_result_test *result_test = oval_result_test_iterator_next(result_tests);
+			/* report the test */
 			oval_result_test_to_dom(result_test, doc, tests_node);
 			struct oval_test *oval_test = oval_result_test_get_test(result_test);
+			/* collect the objects that are referenced from reported test */
+			/* look for objects in path: test->object ...  */
 			struct oval_object *object = oval_test_get_object(oval_test);
 			if (object) {
 				char *objid = oval_object_get_id(object);
+				/* is object already "collected" */
 				void *value = oval_string_map_get_value(objmap, objid);
 				if (value == NULL) {
+					/* is there a system characteristic for the object */
 					struct oval_syschar *syschar =
 					    oval_syschar_model_get_syschar(syschar_model, objid);
 					if (syschar) {
+						/* put object into map */
 						oval_string_map_put(objmap, objid, object);
 						_oval_result_system_scan_object_for_references
 						    (syschar_model, object, objmap, sttmap, varmap, sysmap);
 					}
+				}
+			}
+			/* look for objects in test->state->... */
+			struct oval_state *state = oval_test_get_state(oval_test);
+			if (state) {
+				char *sttid = oval_state_get_id(state);
+				void *value = oval_string_map_get_value(sttmap, sttid);
+				if (value == NULL) {
+					oval_string_map_put(sttmap, sttid, state);
+					_oval_result_system_scan_state_for_references(syschar_model, state, objmap, sttmap,
+										      varmap, sysmap);
 				}
 			}
 		}
