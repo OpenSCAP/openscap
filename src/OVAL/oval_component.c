@@ -1341,11 +1341,15 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_OBJECTREF(oval_ar
 	if (!object)
 		return flag;
 
-	if (oval_probe_session_query_object(argu->u.sess, object) != 0)
-		return flag;
+	if (argu->mode == OVAL_MODE_QUERY) {
+		if (oval_probe_session_query_object(argu->u.sess, object) != 0)
+			return flag;
+		sysmod = oval_probe_session_getmodel(argu->u.sess);
+	} else {
+		sysmod = argu->u.sysmod;
+	}
 
 	obj_id = oval_object_get_id(object);
-	sysmod = oval_probe_session_getmodel(argu->u.sess);
 	syschar = oval_syschar_model_get_syschar(sysmod, obj_id);
 
 	if (syschar) {
