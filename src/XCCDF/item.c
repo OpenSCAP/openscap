@@ -461,9 +461,7 @@ xmlNode *xccdf_fixtext_to_dom(struct xccdf_fixtext *fixtext, xmlDoc *doc, xmlNod
 
 xmlNode *xccdf_fix_to_dom(struct xccdf_fix *fix, xmlDoc *doc, xmlNode *parent)
 {
-	xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent, XCCDF_BASE_NAMESPACE);
-	const char *content = xccdf_fix_get_content(fix);
-	xmlNode *fix_node = xmlNewChild(parent, ns_xccdf, BAD_CAST "fix", BAD_CAST content);
+	xmlNode *fix_node = oscap_xmlstr_to_dom(parent, "fix", xccdf_fix_get_content(fix));
 
 	const char *id = xccdf_fix_get_id(fix);
 	if (id != NULL) xmlNewProp(fix_node, BAD_CAST "id", BAD_CAST id);

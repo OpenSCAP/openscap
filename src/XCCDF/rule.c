@@ -682,14 +682,6 @@ const struct oscap_string_map XCCDF_STRATEGY_MAP[] = {
 	{XCCDF_STRATEGY_UNKNOWN, NULL}
 };
 
-#define XCCDF_FIXCOMMON_PARSE(reader, fix) do { \
-	fix->reboot     = xccdf_attribute_get_bool(reader, XCCDFA_REBOOT); \
-	fix->strategy   = oscap_string_to_enum(XCCDF_STRATEGY_MAP, xccdf_attribute_get(reader, XCCDFA_STRATEGY)); \
-	fix->disruption = oscap_string_to_enum(XCCDF_LEVEL_MAP, xccdf_attribute_get(reader, XCCDFA_DISRUPTION)); \
-	fix->complexity = oscap_string_to_enum(XCCDF_LEVEL_MAP, xccdf_attribute_get(reader, XCCDFA_COMPLEXITY)); \
-	fix->content    = oscap_element_string_copy(reader); \
-	} while (false)
-
 struct xccdf_fix *xccdf_fix_new(void)
 {
         return oscap_calloc(1, sizeof(struct xccdf_fix));
@@ -721,7 +713,11 @@ struct xccdf_fix *xccdf_fix_parse(xmlTextReaderPtr reader)
 	fix->id = xccdf_attribute_copy(reader, XCCDFA_ID);
 	fix->system = xccdf_attribute_copy(reader, XCCDFA_SYSTEM);
 	fix->platform = xccdf_attribute_copy(reader, XCCDFA_PLATFORM);
-	XCCDF_FIXCOMMON_PARSE(reader, fix);
+	fix->reboot     = xccdf_attribute_get_bool(reader, XCCDFA_REBOOT);
+	fix->strategy   = oscap_string_to_enum(XCCDF_STRATEGY_MAP, xccdf_attribute_get(reader, XCCDFA_STRATEGY));
+	fix->disruption = oscap_string_to_enum(XCCDF_LEVEL_MAP, xccdf_attribute_get(reader, XCCDFA_DISRUPTION));
+	fix->complexity = oscap_string_to_enum(XCCDF_LEVEL_MAP, xccdf_attribute_get(reader, XCCDFA_COMPLEXITY));
+	fix->content    = oscap_get_xml(reader);
 	return fix;
 }
 

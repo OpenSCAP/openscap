@@ -109,7 +109,8 @@ struct oscap_text *oscap_text_new_parse(struct oscap_text_traits traits, xmlText
     xmlTextReaderMoveToElement(reader);
 
     // extract content
-    if (text->traits.html) text->text = oscap_get_xml(reader);
+    if (text->traits.html || text->traits.can_substitute)
+		text->text = oscap_get_xml(reader);
     else text->text = oscap_element_string_copy(reader);
 
     // TODO substitution support
@@ -123,15 +124,8 @@ xmlNode *oscap_text_to_dom(struct oscap_text *text, xmlNode *parent, const char 
 
 	xmlNode *text_node = NULL;
 
-	if (text->traits.html) {
-		char *str = oscap_sprintf("<x>%s</x>", text->text);
-		xmlDoc *doc = xmlReadMemory(str, strlen(str), NULL, NULL, XML_PARSE_RECOVER | XML_PARSE_NOERROR | XML_PARSE_NOWARNING | XML_PARSE_NONET);
-		text_node = xmlCopyNode(xmlDocGetRootElement(doc), 1);
-		xmlNodeSetName(text_node, BAD_CAST elname);
-		xmlAddChild(parent, text_node);
-		xmlFreeDoc(doc);
-		oscap_free(str);
-	}
+	if (text->traits.html || text->traits.can_substitute)
+		text_node = oscap_xmlstr_to_dom(parent, elname, text->text);
 	else text_node = xmlNewChild(parent, NULL, BAD_CAST elname, BAD_CAST text->text);
 
 	if (text_node == NULL) return NULL;

@@ -835,7 +835,7 @@ struct xccdf_rule_result * xccdf_result_get_rule_result_by_id(struct xccdf_resul
         struct xccdf_rule_result_iterator * rr_it = xccdf_result_get_rule_results(result);
         while (xccdf_rule_result_iterator_has_more(rr_it)) {
             rule_result = xccdf_rule_result_iterator_next(rr_it);
-            if (!strcmp(xccdf_rule_result_get_idref(rule_result), id))
+            if (oscap_streq(xccdf_rule_result_get_idref(rule_result), id))
                 break;
             else rule_result = NULL;
         }

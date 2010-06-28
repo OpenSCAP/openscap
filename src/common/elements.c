@@ -133,6 +133,17 @@ time_t oscap_get_datetime(const char *date)
 	return 0;
 }
 
+xmlNode *oscap_xmlstr_to_dom(xmlNode *parent, const char *elname, const char *content)
+{
+	char *str = oscap_sprintf("<x>%s</x>", content);
+	xmlDoc *doc = xmlReadMemory(str, strlen(str), NULL, NULL, XML_PARSE_RECOVER | XML_PARSE_NOERROR | XML_PARSE_NOWARNING | XML_PARSE_NONET);
+	xmlNode *text_node = xmlCopyNode(xmlDocGetRootElement(doc), 1);
+	xmlNodeSetName(text_node, BAD_CAST elname);
+	xmlAddChild(parent, text_node);
+	xmlFreeDoc(doc);
+	oscap_free(str);
+	return text_node;
+}
 
 struct xml_metadata *xml_metadata_new()
 {
