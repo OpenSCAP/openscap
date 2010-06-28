@@ -75,9 +75,7 @@ struct oval_definition *oval_definition_get_new(struct oval_definition_model *, 
 
 typedef bool oval_definitions_resolver(struct oval_definition *, void *);
 
-xmlNode *oval_definitions_to_dom
-    (struct oval_definition_model *definition_model, xmlDocPtr doc, xmlNode * parent,
-     oval_definitions_resolver resolver, void *user_arg);
+xmlNode *oval_definitions_to_dom(struct oval_definition_model *definition_model, xmlDocPtr doc, xmlNode * parent);
 
 struct oval_test *oval_test_get_new(struct oval_definition_model *, const char *);
 struct oval_object *oval_object_get_new(struct oval_definition_model *, const char *);

@@ -144,27 +144,6 @@ typedef struct oval_results_model oval_results_model_t;
 typedef void (*_oval_result_system_clone_func) (void *, struct oval_definition_model *);
 typedef void (*_oval_syschar_model_clone_func) (void *, struct oval_syschar_model *);
 
-/* End of variable definitions
- * */
-/***************************************************************************/
-/***************************************************************************/
-/* Static functions definitions
- * */
-
-static void _oval_agent_scan_entity_for_references(struct oval_entity *entity,
-						   struct oval_string_map *objmap,
-						   struct oval_string_map *sttmap, struct oval_string_map *varmap);
-
-static void _oval_agent_scan_set_for_references(struct oval_setobject *set,
-						struct oval_string_map *objmap,
-						struct oval_string_map *sttmap, struct oval_string_map *varmap);
-
-/*static char * _oval_generate_schema_location(const char * version);*/
-/* End of static functions definitions
- * */
-/***************************************************************************/
-
-
 /* TODO: Use this to generate links
 static char * _oval_generate_schema_location(const char * version)
 {
@@ -298,7 +277,6 @@ bool oval_definition_model_is_valid(struct oval_definition_model * definition_mo
 	states_itr = oval_definition_model_get_states(definition_model);
 	while (oval_state_iterator_has_more(states_itr)) {
 		struct oval_state *state;
-
 		state = oval_state_iterator_next(states_itr);
 		if (oval_state_is_valid(state) != true) {
 			is_valid = false;
@@ -312,8 +290,9 @@ bool oval_definition_model_is_valid(struct oval_definition_model * definition_mo
 	return true;
 }
 
-static void _oval_definition_model_clone(struct oval_string_map *oldmap,
-					 struct oval_definition_model *newmodel, _oval_result_system_clone_func cloner)
+static void _oval_definition_model_clone(struct oval_string_map *oldmap, 
+					 struct oval_definition_model *newmodel, 
+					 _oval_result_system_clone_func cloner)
 {
 	struct oval_string_iterator *keys = (struct oval_string_iterator *)oval_string_map_keys(oldmap);
 	while (oval_string_iterator_has_more(keys)) {
@@ -438,7 +417,6 @@ bool oval_syschar_model_is_valid(struct oval_syschar_model * syschar_model)
 	syschars_itr = oval_syschar_model_get_syschars(syschar_model);
 	while (oval_syschar_iterator_has_more(syschars_itr)) {
 		struct oval_syschar *syschar;
-
 		syschar = oval_syschar_iterator_next(syschars_itr);
 		if (oval_syschar_is_valid(syschar) != true) {
 			is_valid = false;
@@ -450,7 +428,7 @@ bool oval_syschar_model_is_valid(struct oval_syschar_model * syschar_model)
 		return false;
 
 	/* validate variable_bindings */
-	// todo
+	// ToDo
 
 	return true;
 }
@@ -1123,185 +1101,10 @@ struct oval_result_directives *oval_results_model_import(struct oval_results_mod
 	return directives;
 }
 
-static void _oval_agent_scan_for_extensions_tests(struct oval_criteria_node *node,
-						  struct oval_string_map *extmap,
-						  struct oval_string_map *tstmap,
-						  oval_definitions_resolver resolver, void *user_arg)
-{
-	oval_criteria_node_type_t type = oval_criteria_node_get_type(node);
-	switch (type) {
-	case OVAL_NODETYPE_CRITERIA:{
-			struct oval_criteria_node_iterator *subnodes = oval_criteria_node_get_subnodes(node);
-			while (oval_criteria_node_iterator_has_more(subnodes)) {
-				struct oval_criteria_node *subnode = oval_criteria_node_iterator_next(subnodes);
-				_oval_agent_scan_for_extensions_tests(subnode, extmap, tstmap, resolver, user_arg);
-			}
-			oval_criteria_node_iterator_free(subnodes);
-		};
-		break;
-	case OVAL_NODETYPE_CRITERION:{
-			struct oval_test *test = oval_criteria_node_get_test(node);
-			char *tstid = oval_test_get_id(test);
-			void *value = oval_string_map_get_value(tstmap, tstid);
-			if (value == NULL) {
-				oval_string_map_put(tstmap, tstid, test);
-			}
-		};
-		break;
-	case OVAL_NODETYPE_EXTENDDEF:{
-			struct oval_definition *extends = oval_criteria_node_get_definition(node);
-			if (resolver && !(*resolver) (extends, user_arg)) {
-				char *extid = oval_definition_get_id(extends);
-				void *value = oval_string_map_get_value(extmap, extid);
-				if (value == NULL) {
-					oval_string_map_put(extmap, extid, extends);
-				}
-			}
-		};
-		break;
-	default:
-		break;
-	}
-}
-
-static void _oval_agent_scan_object_for_references(struct oval_object *object,
-						   struct oval_string_map *objmap,
-						   struct oval_string_map *sttmap, struct oval_string_map *varmap)
-{
-	struct oval_object_content_iterator *contents = oval_object_get_object_contents(object);
-
-	while (oval_object_content_iterator_has_more(contents)) {
-		struct oval_object_content *content = oval_object_content_iterator_next(contents);
-		struct oval_entity *entity = oval_object_content_get_entity(content);
-		if (entity)
-			_oval_agent_scan_entity_for_references(entity, objmap, sttmap, varmap);
-		struct oval_setobject *set = oval_object_content_get_setobject(content);
-		if (set)
-			_oval_agent_scan_set_for_references(set, objmap, sttmap, varmap);
-	}
-	oval_object_content_iterator_free(contents);
-}
-
-static void _oval_agent_scan_state_for_references(struct oval_state *state,
-						  struct oval_string_map *objmap,
-						  struct oval_string_map *sttmap, struct oval_string_map *varmap)
-{
-	struct oval_state_content_iterator *contents = oval_state_get_contents(state);
-
-	while (oval_state_content_iterator_has_more(contents)) {
-		struct oval_state_content *content = oval_state_content_iterator_next(contents);
-		struct oval_entity *entity = oval_state_content_get_entity(content);
-		if (entity)
-			_oval_agent_scan_entity_for_references(entity, objmap, sttmap, varmap);
-	}
-	oval_state_content_iterator_free(contents);
-}
-
-static void _oval_agent_scan_component_for_references(struct oval_component *component,
-						      struct oval_string_map *objmap,
-						      struct oval_string_map *sttmap, struct oval_string_map *varmap)
-{
-	struct oval_variable *variable = oval_component_get_variable(component);
-
-	if (variable) {
-		char *varid = oval_variable_get_id(variable);
-		void *value = oval_string_map_get_value(varmap, varid);
-		if (value == NULL) {
-			oval_string_map_put(varmap, varid, variable);
-			struct oval_component *component2 = oval_variable_get_component(variable);
-			if (component2) {
-				_oval_agent_scan_component_for_references(component2, objmap, sttmap, varmap);
-			}
-		}
-	} else {
-		struct oval_component_iterator *fcomponents = oval_component_get_function_components(component);
-		if (fcomponents)
-			while (oval_component_iterator_has_more(fcomponents)) {
-				struct oval_component *fcomponent = oval_component_iterator_next(fcomponents);
-				_oval_agent_scan_component_for_references(fcomponent, objmap, sttmap, varmap);
-			}
-		oval_component_iterator_free(fcomponents);
-
-		struct oval_object *object = oval_component_get_object(component);
-		if (object) {
-			char *objid = oval_object_get_id(object);
-			void *value = oval_string_map_get_value(objmap, objid);
-			if (value == NULL) {
-				oval_string_map_put(objmap, objid, object);
-				_oval_agent_scan_object_for_references(object, objmap, sttmap, varmap);
-			}
-		}
-	}
-}
-
-static void _oval_agent_scan_entity_for_references(struct oval_entity *entity,
-						   struct oval_string_map *objmap,
-						   struct oval_string_map *sttmap, struct oval_string_map *varmap)
-{
-	struct oval_variable *variable = oval_entity_get_variable(entity);
-
-	if (variable) {
-		char *varid = oval_variable_get_id(variable);
-		void *value = oval_string_map_get_value(varmap, varid);
-		if (value == NULL) {
-			oval_string_map_put(varmap, varid, variable);
-			struct oval_component *component = oval_variable_get_component(variable);
-			if (component) {
-				_oval_agent_scan_component_for_references(component, objmap, sttmap, varmap);
-			}
-		}
-	}
-}
-
-static void _oval_agent_scan_set_for_references(struct oval_setobject *set,
-						struct oval_string_map *objmap,
-						struct oval_string_map *sttmap, struct oval_string_map *varmap)
-{
-	struct oval_object_iterator *objects = oval_setobject_get_objects(set);
-
-	if (objects) {
-		while (oval_object_iterator_has_more(objects)) {
-			struct oval_object *object = oval_object_iterator_next(objects);
-			char *objid = oval_object_get_id(object);
-			void *value = oval_string_map_get_value(objmap, objid);
-			if (value == NULL) {
-				oval_string_map_put(objmap, objid, object);
-				_oval_agent_scan_object_for_references(object, objmap, sttmap, varmap);
-			}
-		}
-	}
-
-	oval_object_iterator_free(objects);
-	struct oval_state_iterator *states = oval_setobject_get_filters(set);
-
-	if (states) {
-		while (oval_state_iterator_has_more(states)) {
-			struct oval_state *state = oval_state_iterator_next(states);
-			char *sttid = oval_state_get_id(state);
-			void *value = oval_string_map_get_value(sttmap, sttid);
-			if (value == NULL) {
-				oval_string_map_put(sttmap, sttid, state);
-				_oval_agent_scan_state_for_references(state, objmap, sttmap, varmap);
-			}
-		}
-	}
-	oval_state_iterator_free(states);
-	struct oval_setobject_iterator *subsets = oval_setobject_get_subsets(set);
-	if (subsets) {
-		while (oval_setobject_iterator_has_more(subsets)) {
-			struct oval_setobject *subset = oval_setobject_iterator_next(subsets);
-			_oval_agent_scan_set_for_references(subset, objmap, sttmap, varmap);
-		}
-	}
-	oval_setobject_iterator_free(subsets);
-}
-
-xmlNode *oval_definitions_to_dom(struct oval_definition_model *definition_model,
-				 xmlDocPtr doc, xmlNode * parent, oval_definitions_resolver resolver, void *user_arg)
+xmlNode *oval_definitions_to_dom(struct oval_definition_model *definition_model, xmlDocPtr doc, xmlNode * parent)
 {
 
 	xmlNodePtr root_node = NULL;
-	int i = 0;
 
 	if (parent) {
 		root_node = xmlNewChild(parent, NULL, BAD_CAST "oval_definitions", NULL);
@@ -1321,78 +1124,49 @@ xmlNode *oval_definitions_to_dom(struct oval_definition_model *definition_model,
 
 	xmlNode *tag_generator = xmlNewChild(root_node, ns_defntns, BAD_CAST "generator", NULL);
 
-	_generator_to_dom(doc, tag_generator);
+	/* Report generator */
+	if (!parent) {
+		_generator_to_dom(doc, tag_generator);
+	}
 
-	struct oval_string_map *tstmap = oval_string_map_new();
+	/* Report definitions */
 	struct oval_definition_iterator *definitions = oval_definition_model_get_definitions(definition_model);
 	if (oval_definition_iterator_has_more(definitions)) {
-		struct oval_string_map *extmap = oval_string_map_new();
 		xmlNode *definitions_node = NULL;
-		for (i = 0; oval_definition_iterator_has_more(definitions); i++) {
+		while(oval_definition_iterator_has_more(definitions)) {
 			struct oval_definition *definition = oval_definition_iterator_next(definitions);
-			if (resolver == NULL || (*resolver) (definition, user_arg)) {
-				if (definitions_node == NULL) {
-					definitions_node
-					    = xmlNewChild(root_node, ns_defntns, BAD_CAST "definitions", NULL);
-				}
-				oval_definition_to_dom(definition, doc, definitions_node);
-				struct oval_criteria_node *criteria = oval_definition_get_criteria(definition);
-				if (criteria)
-					_oval_agent_scan_for_extensions_tests(criteria, extmap, tstmap, resolver,
-									      user_arg);
+			if (definitions_node == NULL) {
+				definitions_node
+				    = xmlNewChild(root_node, ns_defntns, BAD_CAST "definitions", NULL);
 			}
-		}
-		oval_definition_iterator_free(definitions);
-		definitions = (struct oval_definition_iterator *)oval_string_map_values(extmap);
-		while (oval_definition_iterator_has_more(definitions)) {
-			struct oval_definition *definition = oval_definition_iterator_next(definitions);
 			oval_definition_to_dom(definition, doc, definitions_node);
 		}
-		oval_string_map_free(extmap, NULL);
 		oval_definition_iterator_free(definitions);
 	}
 
-	struct oval_string_map *objmap = oval_string_map_new();
-	struct oval_string_map *sttmap = oval_string_map_new();
-	struct oval_string_map *varmap = oval_string_map_new();
-
+	/* Report tests */
 	struct oval_test_iterator *tests = oval_definition_model_get_tests(definition_model);
 	if (oval_test_iterator_has_more(tests)) {
 		xmlNode *tests_node = xmlNewChild(root_node, ns_defntns, BAD_CAST "tests", NULL);
 		while (oval_test_iterator_has_more(tests)) {
 			struct oval_test *test = oval_test_iterator_next(tests);
 			oval_test_to_dom(test, doc, tests_node);
-			struct oval_object *object = oval_test_get_object(test);
-			if (object) {
-				char *object_id = oval_object_get_id(object);
-				void *value = oval_string_map_get_value(objmap, object_id);
-				if (value == NULL) {
-					oval_string_map_put(objmap, object_id, object);
-					_oval_agent_scan_object_for_references(object, objmap, sttmap, varmap);
-				}
-			}
-			struct oval_state *state = oval_test_get_state(test);
-			if (state) {
-				char *state_id = oval_state_get_id(state);
-				void *value = oval_string_map_get_value(sttmap, state_id);
-				if (value == NULL) {
-					oval_string_map_put(sttmap, state_id, state);
-					_oval_agent_scan_state_for_references(state, objmap, sttmap, varmap);
-				}
-			}
 		}
 	}
 	oval_test_iterator_free(tests);
 
+	/* Report objects */
 	struct oval_object_iterator *objects = oval_definition_model_get_objects(definition_model);
 	if (oval_object_iterator_has_more(objects)) {
 		xmlNode *objects_node = xmlNewChild(root_node, ns_defntns, BAD_CAST "objects", NULL);
-		for (i = 0; oval_object_iterator_has_more(objects); i++) {
+		while(oval_object_iterator_has_more(objects)) {
 			struct oval_object *object = oval_object_iterator_next(objects);
 			oval_object_to_dom(object, doc, objects_node);
 		}
 	}
 	oval_object_iterator_free(objects);
+
+	/* Report states */
 	struct oval_state_iterator *states = oval_definition_model_get_states(definition_model);
 	if (oval_state_iterator_has_more(states)) {
 		xmlNode *states_node = xmlNewChild(root_node, ns_defntns, BAD_CAST "states", NULL);
@@ -1402,6 +1176,8 @@ xmlNode *oval_definitions_to_dom(struct oval_definition_model *definition_model,
 		}
 	}
 	oval_state_iterator_free(states);
+
+	/* Report variables */
 	struct oval_variable_iterator *variables = oval_definition_model_get_variables(definition_model);
 	if (oval_variable_iterator_has_more(variables)) {
 		xmlNode *variables_node = xmlNewChild(root_node, ns_defntns, BAD_CAST "variables", NULL);
@@ -1411,11 +1187,6 @@ xmlNode *oval_definitions_to_dom(struct oval_definition_model *definition_model,
 		}
 	}
 	oval_variable_iterator_free(variables);
-
-	oval_string_map_free(objmap, NULL);
-	oval_string_map_free(sttmap, NULL);
-	oval_string_map_free(varmap, NULL);
-	oval_string_map_free(tstmap, NULL);
 
 	return root_node;
 }
@@ -1435,10 +1206,7 @@ int oval_definition_model_export(struct oval_definition_model *model, const char
 		return -1;
 	}
 
-	oval_definitions_to_dom(model, doc, NULL, NULL, NULL);
-	/*
-	 * Dumping document to stdio or file
-	 */
+	oval_definitions_to_dom(model, doc, NULL);
 	retcode = xmlSaveFormatFileEnc(file, doc, "UTF-8", 1);
 
 	if (retcode < 1)
@@ -1571,40 +1339,6 @@ int oval_results_model_eval(struct oval_results_model *res_model)
 	return 0;
 }
 
-static void _scan_for_viewable_definitions(struct oval_results_model *results_model,
-					   struct oval_result_directives *directives, struct oval_string_map *defids)
-{
-	int i;
-	struct oval_result_system_iterator *systems = oval_results_model_get_systems(results_model);
-
-	while (oval_result_system_iterator_has_more(systems)) {
-		struct oval_result_system *sys = oval_result_system_iterator_next(systems);
-		struct oval_result_definition_iterator *rslt_definitions = oval_result_system_get_definitions(sys);
-		for (i = 0; oval_result_definition_iterator_has_more(rslt_definitions); i++) {
-			struct oval_result_definition *rslt_definition =
-			    oval_result_definition_iterator_next(rslt_definitions);
-			oval_result_t result = oval_result_definition_get_result(rslt_definition);
-			if (oval_result_directives_get_reported(directives, result)) {
-				struct oval_definition *oval_definition =
-				    oval_result_definition_get_definition(rslt_definition);
-				if (oval_definition) {
-					char *defid = oval_definition_get_id(oval_definition);
-					oval_string_map_put(defids, defid, oval_definition);
-				}
-			}
-		}
-		oval_result_definition_iterator_free(rslt_definitions);
-	}
-	oval_result_system_iterator_free(systems);
-}
-
-static bool _resolve_oval_definition_from_map(struct oval_definition *oval_definition, struct oval_string_map *defids)
-{
-	char *defid = oval_definition_get_id(oval_definition);
-	bool resolved = (oval_string_map_get_value(defids, defid) != NULL);
-	return resolved;
-}
-
 static xmlNode *oval_results_to_dom(struct oval_results_model *results_model,
 				    struct oval_result_directives *directives, xmlDocPtr doc, xmlNode * parent)
 {
@@ -1627,21 +1361,15 @@ static xmlNode *oval_results_to_dom(struct oval_results_model *results_model,
 
 	xmlNode *tag_generator = xmlNewChild(root_node, ns_results, BAD_CAST "generator", NULL);
 
+	/* Report generator & directices */
 	_generator_to_dom(doc, tag_generator);
 	oval_result_directives_to_dom(directives, doc, root_node);
 
-	//Scan for viewable definitions.
-	struct oval_string_map *defids = oval_string_map_new();
-	_scan_for_viewable_definitions(results_model, directives, defids);
-
+	/* Report definitions */
 	struct oval_definition_model *definition_model = oval_results_model_get_definition_model(results_model);
-	oval_definitions_to_dom
-	    (definition_model, doc, root_node, (oval_definitions_resolver *) _resolve_oval_definition_from_map, defids);
-
-	oval_string_map_free(defids, NULL);
+	oval_definitions_to_dom(definition_model, doc, root_node);
 
 	xmlNode *results_node = xmlNewChild(root_node, ns_results, BAD_CAST "results", NULL);
-
 	struct oval_result_system_iterator *systems = oval_results_model_get_systems(results_model);
 	while (oval_result_system_iterator_has_more(systems)) {
 		struct oval_result_system *sys = oval_result_system_iterator_next(systems);
