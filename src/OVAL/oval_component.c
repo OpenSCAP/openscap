@@ -1651,6 +1651,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_SUBSTRING(oval_ar
 		oval_value_iterator_free(values);
 		oval_collection_free_items(subcoll, (oscap_destruct_func) oval_value_free);
 	}
+	oval_component_iterator_free(subcomps);
 	return flag;
 }
 
@@ -1700,6 +1701,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_ESCAPE_REGEX(oval
 		oval_value_iterator_free(values);
 		oval_collection_free_items(subcoll, (oscap_destruct_func) oval_value_free);
 	}
+	oval_component_iterator_free(subcomps);
 	return flag;
 }
 
