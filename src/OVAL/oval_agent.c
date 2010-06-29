@@ -92,7 +92,7 @@ struct oval_agent_cb_data {
 
 /* Macros to generate iterators, getters and setters */
 OSCAP_ACCESSOR_SIMPLE(struct oval_agent_session *, oval_agent_cb_data, session)
-OSCAP_ACCESSOR_SIMPLE(oval_agent_result_cb_t *, oval_agent_cb_data, callback)
+OSCAP_GETTER(oval_agent_result_cb_t *, oval_agent_cb_data, callback)
 OSCAP_ACCESSOR_SIMPLE(void *, oval_agent_cb_data, usr)
 
 struct oval_agent_cb_data * oval_agent_cb_data_new(void)
@@ -115,6 +115,16 @@ void oval_agent_cb_data_free(struct oval_agent_cb_data * data)
     data->callback = NULL;
     oscap_free(data);
 }
+
+bool oval_agent_cb_data_set_callback(struct oval_agent_cb_data * data, oval_agent_result_cb_t * callback, void * usr)
+{
+        if (data == NULL) return false;
+        data->callback = callback;
+        data->usr = usr;
+        return true;
+}
+
+
 /**
  * Specification of structure for transformation of OVAL Result type
  * to XCCDF result type.
@@ -1584,6 +1594,7 @@ void oval_agent_resolve_variables(struct oval_agent_session * session, struct xc
 xccdf_test_result_type_t oval_agent_eval_rule(struct xccdf_policy *policy, const char *rule_id, const char *id,
 			       struct xccdf_value_binding_iterator *it, void *usr)
 {
+        __attribute__nonnull__(usr);
         oval_result_t result;
 	struct oval_agent_cb_data * data = (struct oval_agent_cb_data *) usr;
 

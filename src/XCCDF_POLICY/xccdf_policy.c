@@ -54,7 +54,7 @@ typedef struct callback_t {
 } callback;
 
 /**
- * Typedef of callback structure with callback function and usr data (optional) 
+ * Typedef of callback structure with callback function and usr data (optional)
  * After evaluation action will be called the callback with user data.
  */
 typedef struct callback_out_t {
@@ -62,7 +62,7 @@ typedef struct callback_out_t {
     char * system;                              ///< Identificator of checking engine (output engine)
     int (*callback)  (const char *,                             // Rule ID
                       xccdf_test_result_type_t,                 // Result
-                      void *);                  ///< format of callback function 
+                      void *);                  ///< format of callback function
     void * usr;                                 ///< User data structure
 
 } callback_out;

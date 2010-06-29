@@ -465,7 +465,6 @@ union xccdf_value_unit *xccdf_value_unit_clone_numeric(const union xccdf_value_u
 union xccdf_value_unit *xccdf_value_unit_clone_bool(const union xccdf_value_unit *unit);
 struct xccdf_value_instance * xccdf_value_instance_clone(const struct xccdf_value_instance * val);
 void xccdf_result_item_clone(struct xccdf_result_item *clone, const struct xccdf_result_item * item);
-struct xccdf_ident * xccdf_ident_clone(const struct xccdf_ident * ident);
 struct xccdf_profile_note * xccdf_profile_note_clone(const struct xccdf_profile_note * note);
 void xccdf_reparent_list(struct oscap_list * item_list, struct xccdf_item * parent);
 void xccdf_reparent_item(struct xccdf_item * item, struct xccdf_item * parent);

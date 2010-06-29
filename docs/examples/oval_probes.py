@@ -115,7 +115,6 @@ def main():
         # Set up directives
         print "Setting up Directives..."
         res_direct = oval_result_directives_new(res_model)
-        oval_result_directives_set_reported(res_direct, OVAL_RESULT_INVALID, 1)
         oval_result_directives_set_reported(res_direct, OVAL_RESULT_TRUE, 1)
         oval_result_directives_set_reported(res_direct, OVAL_RESULT_FALSE, 1)
         oval_result_directives_set_reported(res_direct, OVAL_RESULT_UNKNOWN, 1)

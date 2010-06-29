@@ -163,7 +163,7 @@ bool oval_agent_cb_data_set_session(struct oval_agent_cb_data * data, struct ova
  * @memberof oval_agent_cb_data
  * @return Boolean
  */
-bool oval_agent_cb_data_set_callback(struct oval_agent_cb_data * data, oval_agent_result_cb_t * callback);
+bool oval_agent_cb_data_set_callback(struct oval_agent_cb_data * data, oval_agent_result_cb_t * callback, void * usr);
 
 /**
  * Set the User data to OVAL Agent callback data

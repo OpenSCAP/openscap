@@ -381,17 +381,17 @@ void xccdf_rule_free(struct xccdf_item *rule)
 	}
 }
 
-struct xccdf_ident *xccdf_ident_new(void)
-{
-    return oscap_calloc(1, sizeof(struct xccdf_ident));
-}
-
 struct xccdf_ident * xccdf_ident_clone(const struct xccdf_ident * ident)
 {
 	struct xccdf_ident * clone = xccdf_ident_new();
 	clone->id = oscap_strdup(ident->id);
 	clone->system = oscap_strdup(ident->system);
 	return clone;
+}
+
+struct xccdf_ident *xccdf_ident_new(void)
+{
+    return oscap_calloc(1, sizeof(struct xccdf_ident));
 }
 
 struct xccdf_ident *xccdf_ident_new_fill(const char *id, const char *sys)

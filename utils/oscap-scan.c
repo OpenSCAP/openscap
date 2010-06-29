@@ -202,7 +202,7 @@ static int app_evaluate_xccdf(const char *f_XCCDF, const char *f_Results, const 
         /* Initialize OVAL Agent data */
         struct oval_agent_cb_data *usr = oval_agent_cb_data_new();
         oval_agent_cb_data_set_session(usr, sess);
-        oval_agent_cb_data_set_callback(usr, NULL);
+        oval_agent_cb_data_set_callback(usr, NULL, NULL);
         oval_agent_cb_data_set_usr(usr, (void *) policy_model);
 
 	/* Register callback */

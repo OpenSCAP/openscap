@@ -183,6 +183,17 @@
 %include "../src/CVSS/public/cvss.h"
 #endif
 
+#ifdef WANT_XCCDF
+#define ENABLE_XCCDF
+%module openscap
+%{
+ #include "../src/XCCDF/public/xccdf.h"
+ #include "../src/XCCDF_POLICY/public/xccdf_policy.h"
+%}
+%include "../src/XCCDF/public/xccdf.h"
+%include "../src/XCCDF_POLICY/public/xccdf_policy.h"
+#endif
+
 
 #ifdef WANT_OVAL
 %module openscap
@@ -208,16 +219,6 @@
 %include "../src/OVAL/public/oval_probe_session.h"
 #endif
 
-
-#ifdef WANT_XCCDF
-%module openscap
-%{
- #include "../src/XCCDF/public/xccdf.h"
- #include "../src/XCCDF_POLICY/public/xccdf_policy.h"
-%}
-%include "../src/XCCDF/public/xccdf.h"
-%include "../src/XCCDF_POLICY/public/xccdf_policy.h"
-#endif
 
 /*%typemap(in) value[ANY] {
 
@@ -249,13 +250,20 @@
 */
 
 #if defined(SWIGPYTHON)
+
+%pythoncode %{
+def oval_agent_eval_rule_py(policy, rule_id, id, it, usr):
+   return oval_agent_eval_rule_wrapper(policy, rule_id, id, it, oval_agent_cb_data_get_session(usr), 
+                                       oval_agent_cb_data_get_callback(usr), oval_agent_cb_data_get_usr(usr))
+%}
+
 %{
 struct internal_usr {
     PyObject *func;
     PyObject *usr;
 };
 
-static bool xccdf_policy_model_callback_wrapper(struct xccdf_policy *policy, char *href, char *id, struct xccdf_value_binding_iterator *it, void *usr)
+static int xccdf_policy_model_callback_wrapper(struct xccdf_policy *policy, char *href, char *id, struct xccdf_value_binding_iterator *it, void *usr)
 {
     PyGILState_STATE state;
     PyObject *arglist;
@@ -288,17 +296,13 @@ static bool xccdf_policy_model_callback_wrapper(struct xccdf_policy *policy, cha
         return false;
     }
     Py_DECREF(arglist);
-    if (PyObject_IsTrue(result)) {
-        dres = true;
-    } else {
-        dres = false;
-    }
+    dres = PyInt_AsLong(result);
     Py_XDECREF(result);
     PyGILState_Release(state);
     return dres;
 }
 
-static int oval_agent_callback_wrapper(const char *id, int oresult, void *arg)
+int output_callback_wrapper(const char *id, int oresult, void *arg)
 {
     PyGILState_STATE state;
     PyObject *arglist;
@@ -327,18 +331,37 @@ static int oval_agent_callback_wrapper(const char *id, int oresult, void *arg)
         return -1;
     }
     Py_DECREF(arglist);
-    if (PyObject_IsTrue(result)) {
-        dres = 1;
-    } else {
-        dres = 0;
-    }
+    dres = PyInt_AsLong(result);
     Py_XDECREF(result);
     PyGILState_Release(state);
     return dres;
 }
+
 %}
 
 %inline %{
+
+static int oval_agent_eval_rule_wrapper(struct xccdf_policy *policy, char *href, char *id, struct xccdf_value_binding_iterator *it, 
+                                        struct oval_agent_session * sess, PyObject * cb, PyObject *arg)
+{
+    struct oval_agent_cb_data * data = oval_agent_cb_data_new();
+    oval_agent_cb_data_set_session(data, sess);
+
+    struct internal_usr *new_usrdata;
+    PyEval_InitThreads();
+    Py_INCREF(cb);
+    Py_INCREF(arg);
+    new_usrdata = oscap_alloc(sizeof(struct internal_usr));
+    if (new_usrdata == NULL) return false;
+
+    new_usrdata->func = cb;
+    new_usrdata->usr = arg;
+    oval_agent_cb_data_set_callback(data, output_callback_wrapper);
+    oval_agent_cb_data_set_usr(data, (void *) new_usrdata);
+
+    return oval_agent_eval_rule(policy, href, id, it, (void *) data);
+}
+
 bool xccdf_policy_model_register_callback_py(struct xccdf_policy_model *model, char *sys, PyObject *func, PyObject *usr) {
     struct internal_usr *new_usrdata;
     PyEval_InitThreads();
@@ -350,10 +373,24 @@ bool xccdf_policy_model_register_callback_py(struct xccdf_policy_model *model, c
     new_usrdata->func = func;
     new_usrdata->usr = usr;
   
-    return xccdf_policy_model_register_callback(model,sys,xccdf_policy_model_callback_wrapper,(void *)new_usrdata);
+    return xccdf_policy_model_register_callback(model, sys, xccdf_policy_model_callback_wrapper, (void *)new_usrdata);
 }
 
-bool oval_agent_eval_system_py(oval_agent_session_t * asess, PyObject * cb, PyObject *arg) {
+bool xccdf_policy_model_register_output_callback_py(struct xccdf_policy_model *model, PyObject *func, PyObject *usr) {
+    struct internal_usr *new_usrdata;
+    PyEval_InitThreads();
+    Py_INCREF(func);
+    Py_INCREF(usr);
+    new_usrdata = oscap_alloc(sizeof(struct internal_usr));
+    if (new_usrdata == NULL) return false;
+
+    new_usrdata->func = func;
+    new_usrdata->usr = usr;
+  
+    return xccdf_policy_model_register_output_callback(model, output_callback_wrapper, (void *)new_usrdata);
+}
+
+int oval_agent_eval_system_py(oval_agent_session_t * asess, PyObject * cb, PyObject *arg) {
     struct internal_usr *new_usrdata;
     PyEval_InitThreads();
     Py_INCREF(cb);
@@ -364,7 +401,23 @@ bool oval_agent_eval_system_py(oval_agent_session_t * asess, PyObject * cb, PyOb
     new_usrdata->func = cb;
     new_usrdata->usr = arg;
   
-    return oval_agent_eval_system(asess, oval_agent_callback_wrapper, (void *)new_usrdata);
+    return oval_agent_eval_system(asess, output_callback_wrapper, (void *) new_usrdata);
 }
+
+int oval_agent_cb_data_set_callback_py(struct oval_agent_cb_data * cb_data, PyObject * cb, PyObject *arg) {
+    struct internal_usr *new_usrdata;
+    PyEval_InitThreads();
+    Py_INCREF(cb);
+    Py_INCREF(arg);
+    new_usrdata = oscap_alloc(sizeof(struct internal_usr));
+    if (new_usrdata == NULL) return false;
+
+    new_usrdata->func = cb;
+    new_usrdata->usr = arg;
+  
+    return oval_agent_cb_data_set_callback(cb_data, output_callback_wrapper, (void *) new_usrdata);
+}
+
+
 %}
 #endif

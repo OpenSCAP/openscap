@@ -375,7 +375,7 @@ bool xccdf_policy_add_value(struct xccdf_policy *, struct xccdf_value_binding *)
  * oval_agent_cb_data_set_session(usr, sess);
  * oval_agent_cb_data_set_usr(usr, (void *) policy_model);
  * \endcode
- * Optionally you can use \code oval_agent_cb_data_set_callback(usr, callback); \endcode with callback which will be called inside the 
+ * Optionally you can use \code oval_agent_cb_data_set_callback(usr, callback); \endcode with callback which will be called inside the
  * evaluation callback (useful for debugging checking engines) and has same parameters as output callback.
  * */
 struct xccdf_result *  xccdf_policy_evaluate(struct xccdf_policy * policy);
