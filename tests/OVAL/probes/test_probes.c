@@ -48,7 +48,6 @@ int main(int argc, char **argv) {
   struct oval_result_directives * res_direct = oval_result_directives_new(res_model);
   assume(res_direct != NULL);
 
-  oval_result_directives_set_reported(res_direct, OVAL_RESULT_INVALID, true);
   oval_result_directives_set_reported(res_direct, OVAL_RESULT_TRUE, true);
   oval_result_directives_set_reported(res_direct, OVAL_RESULT_FALSE, true);
   oval_result_directives_set_reported(res_direct, OVAL_RESULT_UNKNOWN, true);
@@ -57,7 +56,6 @@ int main(int argc, char **argv) {
   oval_result_directives_set_reported(res_direct, OVAL_RESULT_NOT_APPLICABLE , true);
   oval_result_directives_set_content(res_direct,OVAL_RESULT_FALSE, OVAL_DIRECTIVE_CONTENT_FULL);
   oval_result_directives_set_content(res_direct,OVAL_RESULT_TRUE, OVAL_DIRECTIVE_CONTENT_FULL);
-  oval_result_directives_set_content(res_direct,OVAL_RESULT_INVALID, OVAL_DIRECTIVE_CONTENT_FULL);
   oval_result_directives_set_content(res_direct,OVAL_RESULT_UNKNOWN, OVAL_DIRECTIVE_CONTENT_FULL);
   oval_result_directives_set_content(res_direct,OVAL_RESULT_ERROR, OVAL_DIRECTIVE_CONTENT_FULL);
   oval_result_directives_set_content(res_direct,OVAL_RESULT_NOT_EVALUATED, OVAL_DIRECTIVE_CONTENT_FULL);

@@ -92,7 +92,6 @@ int main(int argc, char **argv)
 
 	/* set up directives */
 	struct oval_result_directives * res_direct = oval_result_directives_new(res_model);
-	oval_result_directives_set_reported(res_direct, OVAL_RESULT_INVALID, true);
 	oval_result_directives_set_reported(res_direct, OVAL_RESULT_TRUE, true);
 	oval_result_directives_set_reported(res_direct, OVAL_RESULT_FALSE, true);
 	oval_result_directives_set_reported(res_direct, OVAL_RESULT_UNKNOWN, true);
