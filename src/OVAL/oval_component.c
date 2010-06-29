@@ -1668,7 +1668,9 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_TIMEDIF(oval_argu
 
 static bool _isEscape(char chr)
 {
-	return false;		/*TODO: implement this function */
+	const char *regex_chars = "^$\\.[](){}*+?|";
+
+	return (strchr(regex_chars, chr) == NULL) ? false : true;
 }
 
 static oval_syschar_collection_flag_t _oval_component_evaluate_ESCAPE_REGEX(oval_argu_t *argu,
