@@ -130,13 +130,14 @@ int oval_probe_envvar_handler(oval_subtype_t type, void *ptr, int act, ...)
         return(ret);
 }
 
-static struct oval_syschar *oval_probe_variable_eval(struct oval_object *obj, struct oval_syschar_model *sys_model)
+static struct oval_syschar *oval_probe_variable_eval(struct oval_object *obj, oval_probe_session_t *sess)
 {
         struct oval_value    *val;
         struct oval_syschar  *sys;
         struct oval_value_iterator *vit;
         struct oval_variable *var;
         struct oval_definition_model *def_model;
+        struct oval_syschar_model    *sys_model;
         char *var_ref;
 
         val = oval_object_getentval(obj, "var_ref");
@@ -150,10 +151,14 @@ static struct oval_syschar *oval_probe_variable_eval(struct oval_object *obj, st
         var_ref = oval_value_get_text(val);
         assume_d(var_ref != NULL, -1);
 
+        sys_model = oval_probe_session_getmodel(sess);
         def_model = oval_syschar_model_get_definition_model(sys_model);
         var = oval_definition_model_get_variable(def_model, var_ref);
-        // todo:
-        //vit = oval_syschar_model_get_variable_values(sys_model, var);
+
+        if (oval_probe_session_query_variable(sess, var) != 0)
+                return oval_syschar_new(sys_model, obj);
+
+        vit = oval_variable_get_values(var);
 
         if (vit != NULL)
                 sys = oval_syschar_new(sys_model, obj);
@@ -199,7 +204,7 @@ int oval_probe_var_handler(oval_subtype_t type, void *ptr, int act, ...)
 {
         int ret = 0;
         va_list ap;
-        struct oval_syschar_model *model = (struct oval_syschar_model *)ptr;
+        oval_probe_session_t *sess = (oval_probe_session_t *)ptr;
 
         va_start(ap, act);
 
@@ -210,7 +215,7 @@ int oval_probe_var_handler(oval_subtype_t type, void *ptr, int act, ...)
                 struct oval_syschar **sys = va_arg(ap, struct oval_syschar **);
 
                 va_arg(ap, int);
-                *sys = oval_probe_variable_eval(obj, model);
+                *sys = oval_probe_variable_eval(obj, sess);
                 ret  = (*sys == NULL ? -1 : 0);
                 break;
         }
