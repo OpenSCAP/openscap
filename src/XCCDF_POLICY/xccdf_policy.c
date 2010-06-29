@@ -54,6 +54,20 @@ typedef struct callback_t {
 } callback;
 
 /**
+ * Typedef of callback structure with callback function and usr data (optional) 
+ * After evaluation action will be called the callback with user data.
+ */
+typedef struct callback_out_t {
+
+    char * system;                              ///< Identificator of checking engine (output engine)
+    int (*callback)  (const char *,                             // Rule ID
+                      xccdf_test_result_type_t,                 // Result
+                      void *);                  ///< format of callback function 
+    void * usr;                                 ///< User data structure
+
+} callback_out;
+
+/**
  * XCCDF policy model structure contains xccdf_benchmark as reference
  * to Benchmark element in XML file and list of policies that are
  * abstract structure of Profile element from benchmark file.
@@ -533,6 +547,11 @@ static bool xccdf_policy_item_evaluate(struct xccdf_policy * policy, struct xccd
                     xccdf_check_iterator_free(check_it);
                     /* iteration thorugh checks ends here */
 
+                    callback_out * cb = (callback_out *) xccdf_policy_get_callback(policy, "urn:xccdf:system:callback:output");
+                    int retval = 0;
+                    if (cb != NULL)
+                            retval = cb->callback(rule_id, ret, cb->usr);
+
                     /* Add result to policy */
                     if (result != NULL) {
                             struct xccdf_rule_result *rule_ritem = xccdf_rule_result_new();
@@ -746,6 +765,20 @@ bool xccdf_policy_model_register_callback(struct xccdf_policy_model * model, cha
         cb->usr      = usr;
 
         return oscap_list_add(model->callbacks, cb);
+}
+
+bool xccdf_policy_model_register_output_callback(struct xccdf_policy_model * model, void * func, void * usr)
+{
+
+        __attribute__nonnull__(model);
+        callback_out * cb = oscap_alloc(sizeof(callback_out));
+        if (cb == NULL) return false;
+
+        cb->system   = "urn:xccdf:system:callback:output";
+        cb->callback = func;
+        cb->usr      = usr;
+
+        return oscap_list_add(model->callbacks, (callback *) cb);
 }
 
 struct xccdf_result * xccdf_policy_get_result_by_id(struct xccdf_policy * policy, const char * id) {

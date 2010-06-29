@@ -202,10 +202,11 @@ static int app_evaluate_xccdf(const char *f_XCCDF, const char *f_Results, const 
         /* Initialize OVAL Agent data */
         struct oval_agent_cb_data *usr = oval_agent_cb_data_new();
         oval_agent_cb_data_set_session(usr, sess);
-        oval_agent_cb_data_set_callback(usr, callback);
+        oval_agent_cb_data_set_callback(usr, NULL);
         oval_agent_cb_data_set_usr(usr, (void *) policy_model);
 
 	/* Register callback */
+        xccdf_policy_model_register_output_callback(policy_model, callback, NULL);
 	xccdf_policy_model_register_callback(policy_model,
 					     "http://oval.mitre.org/XMLSchema/oval-definitions-5",
 					     oval_agent_eval_rule, (void *) usr);

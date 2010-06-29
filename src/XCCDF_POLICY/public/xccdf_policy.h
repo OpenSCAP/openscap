@@ -143,6 +143,33 @@ void xccdf_policy_export_results(struct xccdf_policy *, char *scoring_model_name
  */
 bool xccdf_policy_model_register_callback(struct xccdf_policy_model * model, char * sys, void * func, void * usr);
 
+/**
+ * Function to register output callback for checking system that will be called after each rule evaluation.
+ * For Python use xccdf_policy_model_register_rule_callback_py
+ * @param model XCCDF Policy Model
+ * @param func Callback - pointer to function called by XCCDF Policy system when rule parsed
+ * @param usr optional parameter for passing user data to callback
+ * @memberof xccdf_policy_model
+ * @return true if callback registered succesfully, false otherwise
+ * \par Example
+ * With the first function below (register output callback) user registers the callback that will be called after
+ * wach rule evalution is done. Second callback is registered as callback for evaluation itself and will be called
+ * during the evaluation.
+ * \code
+ * xccdf_policy_model_register_output_callback(policy_model, callback, NULL);
+ * xccdf_policy_model_register_callback(policy_model, "http://oval.mitre.org/XMLSchema/oval-definitions-5", oval_agent_eval_rule, (void *) usr);
+ * \endcode
+ * The example of callback:
+ * \code
+ * static int callback(const char *id, int result, void *arg)
+ * {
+ *      printf("The result of rule \"%s\" is: %s\n", id, xccdf_test_result_type_get_text(result));
+ *      return 0;
+ * }
+ * \endcode
+ */
+bool xccdf_policy_model_register_output_callback(struct xccdf_policy_model * model, void * func, void * usr);
+
 /************************************************************/
 /**
  * @name Getters
@@ -334,7 +361,23 @@ bool xccdf_policy_add_value(struct xccdf_policy *, struct xccdf_value_binding *)
  * @param policy given Policy to evaluate
  * @memberof xccdf_policy
  * @return true if evaluation pass or false in case of error
- */
+ * \par Example
+ * Before each policy evaluation user has to register callback that will be called for each check.
+ * Every checking engine must have registered callback or the particular check will be skipped.
+ * In the code below is used the predefined function \ref oval_agent_eval_rule for evaluation OVAL checks:
+ * \code
+ * xccdf_policy_model_register_callback(policy_model, "http://oval.mitre.org/XMLSchema/oval-definitions-5", oval_agent_eval_rule, (void *) usr);
+ * \endcode
+ * \par
+ * If you use this predefined OVAL callback, user data structure (last parameter of register function) \b MUST be of type \ref\a oval_agent_cb_data:
+ * \code
+ * struct oval_agent_cb_data *usr = oval_agent_cb_data_new();
+ * oval_agent_cb_data_set_session(usr, sess);
+ * oval_agent_cb_data_set_usr(usr, (void *) policy_model);
+ * \endcode
+ * Optionally you can use \code oval_agent_cb_data_set_callback(usr, callback); \endcode with callback which will be called inside the 
+ * evaluation callback (useful for debugging checking engines) and has same parameters as output callback.
+ * */
 struct xccdf_result *  xccdf_policy_evaluate(struct xccdf_policy * policy);
 
 /**
