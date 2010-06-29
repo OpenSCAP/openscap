@@ -302,6 +302,8 @@ static int read_process(SEXP_t *cmd_ent, SEXP_t *probe_out)
 		}
 		SEXP_free(cmd_sexp);
 	}
+        closedir(d);
+
 	return err;
 }
 
