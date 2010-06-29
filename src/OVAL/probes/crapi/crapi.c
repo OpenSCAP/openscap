@@ -33,7 +33,12 @@ int crapi_init (void *unused)
 #include <gcrypt.h>
 int crapi_init (void *unused)
 {
-        return (gcry_check_version(GCRYPT_VERSION) ? 0 : -1);
+        if (!gcry_check_version(GCRYPT_VERSION))
+                return(-1);
+
+        gcry_control(GCRYCTL_INITIALIZATION_FINISHED, 0);
+
+        return(0);
 }
 #else
 int crapi_init (void *unused)
