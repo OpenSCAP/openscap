@@ -169,16 +169,20 @@ SEXP_t *probe_item_ent_add(SEXP_t *item, const char *name, SEXP_t *attrs, SEXP_t
 
 int probe_item_setstatus(SEXP_t *obj, oval_syschar_status_t status)
 {
+        SEXP_t *r0;
+
 	_A(obj != NULL);
 	_LOGCALL_;
 
-	probe_item_attr_add(obj, "status", SEXP_number_newi_32((int) status));
+	probe_item_attr_add(obj, "status", r0 = SEXP_number_newi_32((int) status));
+        SEXP_free(r0);
+
 	return (0);
 }
 
 int probe_itement_setstatus(SEXP_t *obj, const char *name, uint32_t n, oval_syschar_status_t status)
 {
-        SEXP_t *ent_h, *ent_s;
+        SEXP_t *ent_h, *ent_s, *r0;
 	_LOGCALL_;
 
         ent_h = probe_item_getent (obj, name, n);
@@ -186,8 +190,9 @@ int probe_itement_setstatus(SEXP_t *obj, const char *name, uint32_t n, oval_sysc
 
         _A(ent_s != NULL);
 
-        probe_ent_attr_add (ent_s, "status", SEXP_number_newi_32 ((int) status));
+        probe_ent_attr_add (ent_s, "status", r0 = SEXP_number_newi_32 ((int) status));
         SEXP_free (ent_s);
+        SEXP_free (r0);
 
         return (0);
 }
@@ -487,9 +492,12 @@ bool probe_obj_attrexists(const SEXP_t * obj, const char *name)
 
 int probe_obj_setstatus(SEXP_t * obj, oval_syschar_status_t status)
 {
+        SEXP_t *r0;
 	_LOGCALL_;
 
-	probe_item_attr_add(obj, "status", SEXP_number_newi_32(status));
+	probe_item_attr_add(obj, "status", r0 = SEXP_number_newi_32(status));
+        SEXP_free(r0);
+
 	return (-1);
 }
 
@@ -870,10 +878,9 @@ SEXP_t *probe_ent_getattrval(const SEXP_t * ent, const char *name)
 						}
 					}
 				}
-
-				SEXP_free(attr);
 			}
 
+                        SEXP_free(attr);
 			++i;
 		}
 	}
@@ -1015,9 +1022,12 @@ bool probe_ent_getmask(const SEXP_t * ent)
 
 int probe_ent_setstatus(SEXP_t * ent, oval_syschar_status_t status)
 {
+        SEXP_t *r0;
 	_LOGCALL_;
 
-        probe_item_attr_add (ent, "status", SEXP_number_newi_32(status));
+        probe_item_attr_add (ent, "status", r0 = SEXP_number_newi_32(status));
+        SEXP_free(r0);
+
 	return (0);
 }
 

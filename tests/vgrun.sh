@@ -2,7 +2,7 @@
 #############################################################################################
 
 VG=$(which valgrind)
-VGOPT="--trace-children=yes --leak-check=full --show-reachable=yes"
+VGOPT="--trace-children=yes --leak-check=full --show-reachable=yes --leak-resolution=high"
 VERBOSE=0
 DEFAULT_REGEX='^.*(oscap-scan|test_probes|probe_).*$'
 

@@ -1141,8 +1141,8 @@ xmlNode *oval_definitions_to_dom(struct oval_definition_model *definition_model,
 			}
 			oval_definition_to_dom(definition, doc, definitions_node);
 		}
-		oval_definition_iterator_free(definitions);
 	}
+        oval_definition_iterator_free(definitions);
 
 	/* Report tests */
 	struct oval_test_iterator *tests = oval_definition_model_get_tests(definition_model);

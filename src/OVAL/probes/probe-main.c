@@ -307,6 +307,7 @@ static SEXP_t *probe_set_apply_filters(SEXP_t *cobj, SEXP_t *filters)
 					SEXP_free(stmp);
 				}
 
+                                oscap_free(elm_name);
 				stmp = probe_ent_getattrval(felm, "entity_check");
 
 				if (stmp == NULL)
@@ -319,6 +320,7 @@ static SEXP_t *probe_set_apply_filters(SEXP_t *cobj, SEXP_t *filters)
 				ores = probe_ent_result_bychk(elm_res, ochk);
 				SEXP_list_add(ste_res, stmp = SEXP_number_newi_32(ores));
 				SEXP_free(stmp);
+                                SEXP_free(elm_res);
 			}
 
 			stmp = probe_ent_getattrval(filter, "operator");
@@ -533,6 +535,7 @@ static SEXP_t *probe_set_eval(SEXP_t * set, size_t depth)
 
 		SEXP_free(filters_a);
 		SEXP_free(result);
+                SEXP_free(filters_u);
 
 		filters_a = filters_j;
 	}

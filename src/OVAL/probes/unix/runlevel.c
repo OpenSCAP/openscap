@@ -405,6 +405,8 @@ SEXP_t *probe_main (SEXP_t *object, int *err, void *arg)
 		}
         }
 
+        SEXP_free(request_st.runlevel_ent);
+        SEXP_free(request_st.service_name_ent);
         *err = 0;
 
         return (probe_out);
