@@ -1597,7 +1597,8 @@ xccdf_test_result_type_t oval_agent_eval_rule(struct xccdf_policy *policy, const
 	result = oval_agent_eval_definition(data->session, id);
 
         /* Call user callback */
-        (*data->callback) (rule_id, xccdf_get_result_from_oval(result), (void *) data->usr);
+        if (data->callback != NULL)
+                (*data->callback) (rule_id, xccdf_get_result_from_oval(result), (void *) data->usr);
 
 	return xccdf_get_result_from_oval(result);
 }

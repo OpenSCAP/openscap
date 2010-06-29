@@ -779,6 +779,8 @@ struct xccdf_ident *xccdf_ident_new(void);
 /// @memberof xccdf_ident
 struct xccdf_ident *xccdf_ident_new_fill(const char *id, const char *sys);
 /// @memberof xccdf_ident
+struct xccdf_ident * xccdf_ident_clone(const struct xccdf_ident * ident);
+/// @memberof xccdf_ident
 void xccdf_ident_free(struct xccdf_ident *ident);
 
 

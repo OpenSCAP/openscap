@@ -26,6 +26,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h> /* For NAN <- TODO */
+#include <time.h> /* For timestamps in rule results and TestResult */
 
 #include "public/xccdf_policy.h"
 #include "../XCCDF/public/xccdf.h"
@@ -273,7 +274,7 @@ static xccdf_test_result_type_t _resolve_operation(int A, int B, xccdf_bool_oper
     xccdf_test_result_type_t value = 0;
 
     xccdf_test_result_type_t RESULT_TABLE_AND[9][9] = {
-        /*  P  F  E  U  N  N  N  P */ 
+        /*  P  F  E  U  N  N  N  P */
         {0, 0, 0, 0, 0, 0, 0, 0, 0},
         {0, 1, 2, 3, 4, 1, 1, 1, 1}, /* P */
         {0, 2, 2, 2, 2, 2, 2, 2, 2}, /* F */
@@ -287,7 +288,7 @@ static xccdf_test_result_type_t _resolve_operation(int A, int B, xccdf_bool_oper
         {0, 1, 2, 3, 4, 1, 1, 1, 1}  /* P */};
 
     xccdf_test_result_type_t RESULT_TABLE_OR[9][9] = {
-        /*  P  F  E  U  N  N  N  P */ 
+        /*  P  F  E  U  N  N  N  P */
         {0, 0, 0, 0, 0, 0, 0, 0, 0},
         {0, 1, 1, 1, 1, 1, 1, 1, 1}, /* P */
         {0, 1, 2, 3, 4, 2, 2, 2, 1}, /* F */
@@ -472,7 +473,6 @@ static xccdf_test_result_type_t xccdf_policy_check_evaluate(struct xccdf_policy 
             while (xccdf_check_iterator_has_more(child_it)) {
                 child = xccdf_check_iterator_next(child_it);
                 ret2 = xccdf_policy_check_evaluate(policy, child, rule_id);
-                printf("RETURN: %s\n", xccdf_test_result_type_get_text(ret2));
                 if (ret == 0) ret = ret2;
                 else {
                     ret = _resolve_operation(ret, ret2, xccdf_check_get_oper(check));
@@ -510,7 +510,7 @@ static bool xccdf_policy_item_evaluate(struct xccdf_policy * policy, struct xccd
     struct xccdf_item_iterator      * child_it;
     struct xccdf_item               * child;
     const char                      * rule_id;
-    xccdf_test_result_type_t        ret;
+    xccdf_test_result_type_t        ret = XCCDF_RESULT_UNKNOWN;
 
     xccdf_type_t itype = xccdf_item_get_type(item);
 
@@ -523,23 +523,47 @@ static bool xccdf_policy_item_evaluate(struct xccdf_policy * policy, struct xccd
                     while(xccdf_check_iterator_has_more(check_it)) {
                             check = xccdf_check_iterator_next(check_it);
 
+                            /************** Evaluation  **************/
                             ret = xccdf_policy_check_evaluate(policy, check, (char *) rule_id);
+                            /*****************************************/
 
                             if (ret == false) /* we got item that can't be processed */
                                 break;
                     }
                     xccdf_check_iterator_free(check_it);
-                    /* iteration thorugh checks ends here */;
+                    /* iteration thorugh checks ends here */
 
                     /* Add result to policy */
-                    if (result == NULL) {
-                            /* Should be here an error ? */
-                            return false;
-                    } else {
+                    if (result != NULL) {
                             struct xccdf_rule_result *rule_ritem = xccdf_rule_result_new();
+                            /* --Set rule-- */
                             xccdf_rule_result_set_result(rule_ritem, ret);
                             xccdf_rule_result_set_idref(rule_ritem, rule_id);
+                            xccdf_rule_result_set_weight(rule_ritem, xccdf_item_get_weight(item));
+                            xccdf_rule_result_set_version(rule_ritem, xccdf_rule_get_version((struct xccdf_rule *) item));
+                            xccdf_rule_result_set_severity(rule_ritem, xccdf_rule_get_severity((struct xccdf_rule *) item));
+                            xccdf_rule_result_set_role(rule_ritem, xccdf_rule_get_role((struct xccdf_rule *) item));
+                            xccdf_rule_result_set_time(rule_ritem, time(NULL));
+                            /* --Fix --*/
+                            struct xccdf_fix_iterator * fix_it = xccdf_rule_get_fixes((struct xccdf_rule *) item);
+                            while (xccdf_fix_iterator_has_more(fix_it)){
+                                struct xccdf_fix * fix = xccdf_fix_iterator_next(fix_it);
+                                xccdf_rule_result_add_fix(rule_ritem, xccdf_fix_clone(fix));
+                            }
+                            xccdf_fix_iterator_free(fix_it);
+                            /* --Ident-- */
+                            struct xccdf_ident_iterator * ident_it = xccdf_rule_get_idents((struct xccdf_rule *) item);
+                            while (xccdf_ident_iterator_has_more(ident_it)){
+                                struct xccdf_ident * ident = xccdf_ident_iterator_next(ident_it);
+                                xccdf_rule_result_add_ident(rule_ritem, xccdf_ident_clone(ident));
+                            }
+                            xccdf_ident_iterator_free(ident_it);
+                            /* TODO: Check, override, message, instance */
+                            /* --Add rule-- */
                             xccdf_result_add_rule_result(result, rule_ritem);
+                    } else {
+                            /* Should be an error here ? */
+                            return -1;
                     }
         } break;
 
@@ -710,7 +734,8 @@ const char * xccdf_policy_get_id(struct xccdf_policy * policy)
  * Funtion to register callback for particular checking system. System is used for evaluating content
  * of rules.
  */
-bool xccdf_policy_model_register_callback(struct xccdf_policy_model * model, char * sys, void * func, void * usr) {
+bool xccdf_policy_model_register_callback(struct xccdf_policy_model * model, char * sys, void * func, void * usr)
+{
 
         __attribute__nonnull__(model);
         callback * cb = oscap_alloc(sizeof(callback));
@@ -992,6 +1017,7 @@ struct xccdf_result * xccdf_policy_evaluate(struct xccdf_policy * policy)
 
     /* Add result to policy */
     struct xccdf_result * result = xccdf_result_new();
+    xccdf_result_set_start_time(result, time(NULL));
     xccdf_result_set_id(result, "Unique ID"); // TODO
 
     /* Get all constant information */
@@ -1016,6 +1042,7 @@ struct xccdf_result * xccdf_policy_evaluate(struct xccdf_policy * policy)
     }
     xccdf_select_iterator_free(sel_it);
     xccdf_policy_add_result(policy, result);
+    xccdf_result_set_end_time(result, time(NULL));
 
     return result;
 }
