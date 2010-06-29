@@ -35,9 +35,7 @@
 #include "common/util.h"
 #include "common/debug_priv.h"
 
-#define OVAL_ENUMERATION_INVALID (-1)
-
-static const char _invalid[] = "**INVALID**";
+const char _invalid[] = "**INVALID**";
 
 static int oval_enumeration_attr(xmlTextReaderPtr reader, char *attname, const struct oscap_string_map *map, int defval)
 {
@@ -261,7 +259,7 @@ static const struct oscap_string_map OVAL_OPERATOR_MAP[] = {
 	{OVAL_OPERATOR_ONE, "ONE"},
 	{OVAL_OPERATOR_OR, "OR"},
 	{OVAL_OPERATOR_XOR, "XOR"},
-	{-1, NULL}
+	{OVAL_ENUMERATION_INVALID, NULL}
 };
 
 oval_operator_t oval_operator_parse(xmlTextReaderPtr reader, char *attname, oval_operator_t defval)

@@ -51,13 +51,12 @@
  * Result values for the evaluation of an OVAL Definition or an OVAL Test
  */
 typedef enum {
-	OVAL_RESULT_INVALID = 1, /**< Unspecified state. */
-	OVAL_RESULT_TRUE = 2,    /**< Characteristics being evaluated match the information represented in the system characteristic. */
-	OVAL_RESULT_FALSE = 4,   /**< Characteristics being evaluated do not match the information represented in the system characteristic. */
-	OVAL_RESULT_UNKNOWN = 8, /**< Characteristics being evaluated can not be found in the system characteristic. */
-	OVAL_RESULT_ERROR = 16,  /**< Characteristics being evaluated exist in the system characteristic file but there was an error either collecting information or in performing anaylsis. */
-	OVAL_RESULT_NOT_EVALUATED = 32, /**< Choice was made not to evaluate the given definition or test. */
-	OVAL_RESULT_NOT_APPLICABLE = 64 /**< Definition or test being evaluated is not valid on the given platform. */
+	OVAL_RESULT_TRUE = 1,    /**< Characteristics being evaluated match the information represented in the system characteristic. */
+	OVAL_RESULT_FALSE = 2,   /**< Characteristics being evaluated do not match the information represented in the system characteristic. */
+	OVAL_RESULT_UNKNOWN = 4, /**< Characteristics being evaluated can not be found in the system characteristic. */
+	OVAL_RESULT_ERROR = 8,  /**< Characteristics being evaluated exist in the system characteristic file but there was an error either collecting information or in performing anaylsis. */
+	OVAL_RESULT_NOT_EVALUATED = 16, /**< Choice was made not to evaluate the given definition or test. */
+	OVAL_RESULT_NOT_APPLICABLE = 32 /**< Definition or test being evaluated is not valid on the given platform. */
 } oval_result_t;
 
 /**
@@ -357,7 +356,7 @@ int oval_result_system_eval(struct oval_result_system *sys);
  * @memberof oval_result_system
  * @param sys is result_system from result_model
  * @param id of the definition from definition_model from result_model
- * @return OVAL_RESULT_INVALID if there was a problem in evaluation. Use \ref ERRORS mechanism to examine the error. Otherwise one of valid
+ * @return OVAL_RESULT_ERROR if there was a problem in evaluation. Use \ref ERRORS mechanism to examine the error. Otherwise one of valid
  * values for the evaluation of an OVAL Definitions is returned.
  */
 oval_result_t oval_result_system_eval_definition(struct oval_result_system *sys, const char *id);

@@ -272,9 +272,6 @@ static int app_oval_callback(const char *id, int result, void *usr)
 	case OVAL_RESULT_FALSE:
 		((struct oval_usr *)usr)->result_false++;
 		break;
-	case OVAL_RESULT_INVALID:
-		((struct oval_usr *)usr)->result_invalid++;
-		break;
 	case OVAL_RESULT_UNKNOWN:
 		((struct oval_usr *)usr)->result_unknown++;
 		break;
@@ -327,7 +324,6 @@ static int app_evaluate_oval(const char *f_Results, oval_agent_session_t * sess)
 		fprintf(stdout, "====== RESULTS ======\n");
 		fprintf(stdout, "TRUE:          \r\t\t %d\n", usr->result_true);
 		fprintf(stdout, "FALSE:         \r\t\t %d\n", usr->result_false);
-		fprintf(stdout, "INVALID:       \r\t\t %d\n", usr->result_invalid);
 		fprintf(stdout, "UNKNOWN:       \r\t\t %d\n", usr->result_unknown);
 		fprintf(stdout, "NOT EVALUATED: \r\t\t %d\n", usr->result_neval);
 		fprintf(stdout, "NOT APPLICABLE:\r\t\t %d\n", usr->result_napp);
@@ -337,12 +333,9 @@ static int app_evaluate_oval(const char *f_Results, oval_agent_session_t * sess)
 	if (f_Results != NULL) {
 		// set up directives 
 		struct oval_result_directives *res_direct = oval_result_directives_new(res_model);
-		oval_result_directives_set_reported(res_direct, OVAL_RESULT_INVALID |
-						    OVAL_RESULT_TRUE |
-						    OVAL_RESULT_FALSE |
-						    OVAL_RESULT_UNKNOWN |
-						    OVAL_RESULT_ERROR |
-						    OVAL_RESULT_NOT_EVALUATED | OVAL_RESULT_NOT_APPLICABLE, true);
+		oval_result_directives_set_reported(res_direct, OVAL_RESULT_TRUE	| OVAL_RESULT_FALSE |
+                						OVAL_RESULT_UNKNOWN	| OVAL_RESULT_NOT_EVALUATED |
+	                                                        OVAL_RESULT_ERROR	| OVAL_RESULT_NOT_APPLICABLE, true);
 
 		oval_result_directives_set_content(res_direct, OVAL_RESULT_FALSE, OVAL_DIRECTIVE_CONTENT_FULL);
 		oval_result_directives_set_content(res_direct, OVAL_RESULT_TRUE, OVAL_DIRECTIVE_CONTENT_FULL);

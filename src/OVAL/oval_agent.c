@@ -128,7 +128,6 @@ struct oval_result_to_xccdf_spec {
  * Array of transformation rules from OVAL Result type to XCCDF result type
  */
 static const struct oval_result_to_xccdf_spec XCCDF_OVAL_RESULTS_MAP[] = {
-	{OVAL_RESULT_INVALID, XCCDF_RESULT_NOT_APPLICABLE},
 	{OVAL_RESULT_TRUE, XCCDF_RESULT_PASS},
 	{OVAL_RESULT_FALSE, XCCDF_RESULT_FAIL},
 	{OVAL_RESULT_UNKNOWN, XCCDF_RESULT_UNKNOWN},
@@ -1122,10 +1121,9 @@ xmlNode *oval_definitions_to_dom(struct oval_definition_model *definition_model,
 	xmlSetNs(root_node, ns_xsi);
 	xmlSetNs(root_node, ns_defntns);
 
-	xmlNode *tag_generator = xmlNewChild(root_node, ns_defntns, BAD_CAST "generator", NULL);
-
 	/* Report generator */
 	if (!parent) {
+		xmlNode *tag_generator = xmlNewChild(root_node, ns_defntns, BAD_CAST "generator", NULL);
 		_generator_to_dom(doc, tag_generator);
 	}
 
@@ -1136,8 +1134,7 @@ xmlNode *oval_definitions_to_dom(struct oval_definition_model *definition_model,
 		while(oval_definition_iterator_has_more(definitions)) {
 			struct oval_definition *definition = oval_definition_iterator_next(definitions);
 			if (definitions_node == NULL) {
-				definitions_node
-				    = xmlNewChild(root_node, ns_defntns, BAD_CAST "definitions", NULL);
+				definitions_node = xmlNewChild(root_node, ns_defntns, BAD_CAST "definitions", NULL);
 			}
 			oval_definition_to_dom(definition, doc, definitions_node);
 		}
@@ -1217,8 +1214,8 @@ int oval_definition_model_export(struct oval_definition_model *model, const char
 	return retcode;
 }
 
-xmlNode *oval_syschar_model_to_dom(struct oval_syschar_model * syschar_model,
-				   xmlDocPtr doc, xmlNode * parent, oval_syschar_resolver resolver, void *user_arg)
+xmlNode *oval_syschar_model_to_dom(struct oval_syschar_model * syschar_model, xmlDocPtr doc, xmlNode * parent, 
+			           oval_syschar_resolver resolver, void *user_arg)
 {
 
 	xmlNodePtr root_node;
@@ -1239,10 +1236,13 @@ xmlNode *oval_syschar_model_to_dom(struct oval_syschar_model * syschar_model,
 	xmlSetNs(root_node, ns_xsi);
 	xmlSetNs(root_node, ns_syschar);
 
-	xmlNode *tag_generator = xmlNewChild(root_node, ns_syschar, BAD_CAST "generator", NULL);
+        /* Report generator */
+        if (!parent) {
+		xmlNode *tag_generator = xmlNewChild(root_node, ns_syschar, BAD_CAST "generator", NULL);
+                _generator_to_dom(doc, tag_generator);
+        }
 
-	_generator_to_dom(doc, tag_generator);
-
+        /* Report sysinfo */
 	oval_sysinfo_to_dom(oval_syschar_model_get_sysinfo(syschar_model), doc, root_node);
 
 	struct oval_collection *collection = NULL;
@@ -1439,7 +1439,7 @@ oval_result_t oval_agent_eval_definition(oval_agent_session_t * ag_sess, const c
 	/* probe */
 	ret = oval_probe_session_query_definition(ag_sess->psess, id);
 	if (ret!=0)
-		return OVAL_RESULT_INVALID;
+		return OVAL_RESULT_UNKNOWN;
 
 	/* take the first system */
 	rsystem_it = oval_results_model_get_systems(ag_sess->res_model);

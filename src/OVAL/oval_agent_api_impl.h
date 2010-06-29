@@ -36,6 +36,8 @@
 
 OSCAP_HIDDEN_START;
 
+#define OVAL_ENUMERATION_INVALID (-1)
+
 #define OVAL_DEFAULT_VERSION "5.5"
 
 #define OVAL_COMMON_NAMESPACE      BAD_CAST "http://oval.mitre.org/XMLSchema/oval-common-5"

@@ -82,7 +82,7 @@ oval_agent_session_t * oval_agent_new_session(struct oval_definition_model * mod
 oval_result_t oval_agent_eval_definition(oval_agent_session_t * ag_sess, const char *id);
 
 /**
- * Clean the system characteristics of objects, probe cashe and results
+ * Clean resuls that were generated in this agent session
  */
 int oval_agent_reset_session(oval_agent_session_t * ag_sess);
 

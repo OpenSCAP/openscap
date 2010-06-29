@@ -53,7 +53,7 @@ struct oval_result_item *oval_result_item_new(struct oval_result_system *sys, ch
 
 	item->sysdata = sysdata;
 	item->messages = oval_collection_new();
-	item->result = OVAL_RESULT_INVALID;
+	item->result = OVAL_RESULT_NOT_EVALUATED;
 	item->sys = sys;
 
 	return item;
@@ -108,7 +108,7 @@ void oval_result_item_free(struct oval_result_item *item)
 	oval_collection_free_items(item->messages, (oscap_destruct_func) oval_message_free);
 
 	item->messages = NULL;
-	item->result = OVAL_RESULT_INVALID;
+	item->result = OVAL_RESULT_NOT_EVALUATED;
 	item->sysdata = NULL;
 
 	oscap_free(item);

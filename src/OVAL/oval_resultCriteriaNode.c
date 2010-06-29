@@ -118,7 +118,7 @@ struct oval_result_criteria_node *oval_result_criteria_node_new
 	}
 	node->sys = sys;
 	node->negate = negate;
-	node->result = OVAL_RESULT_INVALID;
+	node->result = OVAL_RESULT_NOT_EVALUATED;
 	node->type = type;
 	va_end(ap);
 	return node;
@@ -346,7 +346,7 @@ static oval_result_t _oval_result_negate(bool negate, oval_result_t result)
 static oval_result_t _oval_result_criteria_node_result(struct oval_result_criteria_node *node) {
 	__attribute__nonnull__(node);
 
-	oval_result_t result = OVAL_RESULT_INVALID;
+	oval_result_t result;
 	switch (node->type) {
 	case OVAL_NODETYPE_CRITERIA:{
 			struct oval_result_criteria_node_iterator *subnodes
@@ -376,8 +376,7 @@ static oval_result_t _oval_result_criteria_node_result(struct oval_result_criter
 		break;
 	}
 
-	if ( result != OVAL_RESULT_INVALID ) 
-		result =  _oval_result_negate(node->negate, result);
+	result = _oval_result_negate(node->negate, result);
 
 	return result;
 }
@@ -386,7 +385,7 @@ oval_result_t oval_result_criteria_node_eval(struct oval_result_criteria_node * 
 {
 	__attribute__nonnull__(node);
 
-	if (node->result == OVAL_RESULT_INVALID) {
+	if (node->result == OVAL_RESULT_NOT_EVALUATED) {
 		node->result = _oval_result_criteria_node_result(node);
 	}
 	return node->result;

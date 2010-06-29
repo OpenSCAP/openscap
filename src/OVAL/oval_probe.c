@@ -237,7 +237,7 @@ int oval_probe_session_query_definition(oval_probe_session_t *sess, const char *
 
 	struct oval_criteria_node * cnode = oval_definition_get_criteria(definition);
 	if (cnode == NULL)
-		return 0;
+		return -1;
 
 	ret = oval_probe_session_query_criteria(sess, cnode);
 

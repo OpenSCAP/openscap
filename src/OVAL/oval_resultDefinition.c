@@ -69,7 +69,7 @@ struct oval_result_definition *oval_result_definition_new(struct oval_result_sys
 	struct oval_syschar_model *syschar_model = oval_result_system_get_syschar_model(sys);
 	struct oval_definition_model *definition_model = oval_syschar_model_get_definition_model(syschar_model);
 	definition->definition = oval_definition_get_new(definition_model, definition_id);
-	definition->result = OVAL_RESULT_INVALID;
+	definition->result = OVAL_RESULT_NOT_EVALUATED;
 	definition->criteria = NULL;
 	definition->messages = oval_collection_new();
 	definition->instance = 1;
@@ -148,7 +148,7 @@ void oval_result_definition_free(struct oval_result_definition *definition)
 	definition->criteria = NULL;
 	definition->definition = NULL;
 	definition->messages = NULL;
-	definition->result = OVAL_RESULT_INVALID;
+	definition->result = OVAL_RESULT_NOT_EVALUATED;
 	definition->instance = 1;
 	oscap_free(definition);
 }
@@ -158,12 +158,10 @@ struct oval_result_definition *make_result_definition_from_oval_definition
 	char *defid = oval_definition_get_id(oval_definition);
 	struct oval_result_definition *rslt_definition = oval_result_definition_new(sys, defid);
 	struct oval_criteria_node *oval_criteria = oval_definition_get_criteria(oval_definition);
-	struct oval_result_criteria_node *rslt_criteria
-	    = make_result_criteria_node_from_oval_criteria_node(sys, oval_criteria);
+	struct oval_result_criteria_node *rslt_criteria = 
+		make_result_criteria_node_from_oval_criteria_node(sys, oval_criteria);
 	if (rslt_criteria)
 		oval_result_definition_set_criteria(rslt_definition, rslt_criteria);
-	else
-		oval_result_definition_set_result(rslt_definition, OVAL_RESULT_NOT_EVALUATED);
 	return rslt_definition;
 }
 
@@ -189,11 +187,11 @@ oval_result_t oval_result_definition_eval(struct oval_result_definition * defini
 {
 	__attribute__nonnull__(definition);
 
-	if (definition->result == OVAL_RESULT_INVALID) {
+	if (definition->result == OVAL_RESULT_NOT_EVALUATED) {
 		struct oval_result_criteria_node *criteria = oval_result_definition_get_criteria(definition);
 
 		definition->result = (criteria == NULL)
-		    ? OVAL_RESULT_NOT_EVALUATED : oval_result_criteria_node_eval(criteria);
+		    ? OVAL_RESULT_ERROR : oval_result_criteria_node_eval(criteria);
 	}
 	return definition->result;
 }
@@ -290,7 +288,7 @@ int oval_result_definition_parse
 	xmlChar *definition_version = xmlTextReaderGetAttribute(reader, BAD_CAST "version");
 	int resvsn = atoi((char *)definition_version);
 
-	oval_result_t result = oval_result_parse(reader, "result", OVAL_RESULT_INVALID);
+	oval_result_t result = oval_result_parse(reader, "result", OVAL_ENUMERATION_INVALID);
 
 	int instance = oval_parser_int_attribute(reader, "variable_instance", 1);
 
@@ -308,11 +306,12 @@ int oval_result_definition_parse
 	oval_result_definition_set_instance(definition, instance);
 	
 
-	if (result != OVAL_RESULT_INVALID) {
+	if ((int)result != OVAL_ENUMERATION_INVALID) {
 		oval_result_definition_set_result(definition, result);
 	} else {
 		oscap_dprintf("WARNING: oval_result_definition_parse: can't resolve result attribute\n"
 			      "    definition id = %s\n", definition_id);
+		oval_result_definition_set_result(definition, OVAL_RESULT_UNKNOWN);
 	}
 
 	//Process tag contents

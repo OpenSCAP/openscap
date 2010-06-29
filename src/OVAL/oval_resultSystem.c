@@ -228,8 +228,7 @@ static void _oval_result_system_initialize(struct oval_result_system *sys) {
 	struct oval_definition_model *definition_model = oval_syschar_model_get_definition_model(sys->syschar_model);
 
 	struct oval_definition_iterator *oval_definitions = oval_definition_model_get_definitions(definition_model);
-	int i;
-	for (i = 0; oval_definition_iterator_has_more(oval_definitions); i++) {
+	while (oval_definition_iterator_has_more(oval_definitions)) {
 		struct oval_definition *oval_definition = oval_definition_iterator_next(oval_definitions);
 		oval_result_system_get_new_definition(sys, oval_definition);
 	}
@@ -418,7 +417,6 @@ int oval_result_system_eval(struct oval_result_system *sys)
 	struct oval_results_model *res_model;
 	struct oval_definition_model *definition_model;
 	struct oval_definition_iterator *definitions_itr;
-	oval_result_t result;
 
 	res_model = oval_result_system_get_results_model(sys);
 	definition_model = oval_results_model_get_definition_model(res_model);
@@ -430,11 +428,7 @@ int oval_result_system_eval(struct oval_result_system *sys)
 
 		definition = oval_definition_iterator_next(definitions_itr);
 		rslt_definition = oval_result_system_get_new_definition(sys, definition);
-		result = oval_result_definition_eval(rslt_definition);
-		if( result == OVAL_RESULT_INVALID ) {
-			oval_definition_iterator_free(definitions_itr);
-			return -1;
-		}
+		oval_result_definition_eval(rslt_definition);
 	}
 
 	oval_definition_iterator_free(definitions_itr);
@@ -454,7 +448,7 @@ oval_result_t oval_result_system_eval_definition(struct oval_result_system *sys,
 	if (oval_definition == NULL) {
 		oscap_dprintf("%s:%d No definition with ID (%s) in definition model.", __FILE__, __LINE__, id);
 		oscap_seterr(OSCAP_EFAMILY_OSCAP, OVAL_EOVALINT, "No definition with such an ID in definition model.");
-		return OVAL_RESULT_INVALID;
+		return OVAL_RESULT_ERROR;
 	}
 
         rslt_definition = oval_result_system_get_definition(sys, id);

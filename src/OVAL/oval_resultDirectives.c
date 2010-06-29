@@ -39,7 +39,7 @@
 #include "common/debug_priv.h"
 
 
-#define NUMBER_OF_RESULTS 7
+#define NUMBER_OF_RESULTS 6
 
 struct _oval_result_directive {
 	bool reported;
@@ -139,7 +139,7 @@ static const struct oscap_string_map OVAL_DIRECTIVE_MAP[] = {
 	{OVAL_RESULT_ERROR, "definition_error"},
 	{OVAL_RESULT_NOT_EVALUATED, "definition_not_evaluated"},
 	{OVAL_RESULT_NOT_APPLICABLE, "definition_not_applicable"},
-	{OVAL_RESULT_INVALID, NULL}
+	{OVAL_ENUMERATION_INVALID, NULL}
 };
 
 static int _oval_result_directives_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *context, void *client) {
@@ -149,7 +149,7 @@ static int _oval_result_directives_parse_tag(xmlTextReaderPtr reader, struct ova
 	xmlChar *name = xmlTextReaderLocalName(reader);
 	oval_result_t type = oscap_string_to_enum(OVAL_DIRECTIVE_MAP, (const char *)name);
 
-	if (type != OVAL_RESULT_INVALID) {
+	if ( (int) type != OVAL_ENUMERATION_INVALID) {
 		{		/*reported */
 			xmlChar *boolstr = xmlTextReaderGetAttribute(reader, BAD_CAST "reported");
 			bool reported = strcmp((const char *)boolstr, "1") == 0

@@ -194,7 +194,7 @@ struct oval_result_test *oval_result_test_new(struct oval_result_system *sys, ch
 	test->system = sys;
 	test->test = oval_test_get_new(definition_model, tstid);
 	test->message = NULL;
-	test->result = OVAL_RESULT_INVALID;
+	test->result = OVAL_RESULT_NOT_EVALUATED;
 	test->instance = 1;
 	test->items = oval_collection_new();
 	test->bindings = oval_collection_new();
@@ -303,7 +303,7 @@ void oval_result_test_free(struct oval_result_test *test)
 	test->system = NULL;
 	test->test = NULL;
 	test->message = NULL;
-	test->result = OVAL_RESULT_INVALID;
+	test->result = OVAL_RESULT_NOT_EVALUATED;
 	test->items = NULL;
 	test->bindings = NULL;
 	test->instance = 1;
@@ -402,7 +402,7 @@ static oval_result_t evaluate(char *sys_data, char *state_data, oval_datatype_t 
 		} else {
 			oscap_dprintf("%s:%d Invalid type of operation(%d) in string evaluation.", __FILE__, __LINE__, operation);
 			oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "Invalid type of operation in string evaluation");
-			return OVAL_RESULT_INVALID;
+			return OVAL_RESULT_ERROR;
 		}
 	} else if (state_data_type == OVAL_DATATYPE_INTEGER) {
 		int state_val, syschar_val;
@@ -423,7 +423,7 @@ static oval_result_t evaluate(char *sys_data, char *state_data, oval_datatype_t 
 		} else {
 			oscap_dprintf("%s:%d Invalid type of operation(%d) in integer evaluation.", __FILE__, __LINE__, operation);
 			oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "Invalid type of operation in integer evaluation");
-			return OVAL_RESULT_INVALID;
+			return OVAL_RESULT_ERROR;
 		}
 	} else if (state_data_type == OVAL_DATATYPE_BOOLEAN) {
 		int state_int;
@@ -437,7 +437,7 @@ static oval_result_t evaluate(char *sys_data, char *state_data, oval_datatype_t 
 		} else {
 			oscap_dprintf("%s:%d Invalid type of operation(%d) in boolean evaluation.", __FILE__, __LINE__, operation);
 			oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "Invalid type of operation in boolean evaluation");
-			return OVAL_RESULT_INVALID;
+			return OVAL_RESULT_ERROR;
 		}
 	} else if (state_data_type == OVAL_DATATYPE_BINARY) {	// I'm going to use case insensitive compare here - don't know if it's necessary
 		if (operation == OVAL_OPERATION_EQUALS) {
@@ -447,7 +447,7 @@ static oval_result_t evaluate(char *sys_data, char *state_data, oval_datatype_t 
 		} else {
 			oscap_dprintf("%s:%d Invalid type of operation(%d) in binary evaluation.", __FILE__, __LINE__, operation);
 			oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "Invalid type of operation in binary evaluation");
-			return OVAL_RESULT_INVALID;
+			return OVAL_RESULT_ERROR;
 		}
 	} else if (state_data_type == OVAL_DATATYPE_EVR_STRING) {
 		int result;
@@ -467,7 +467,7 @@ static oval_result_t evaluate(char *sys_data, char *state_data, oval_datatype_t 
 		} else {
 			oscap_dprintf("%s:%d Invalid type of operation(%d) in rpm version comparison.", __FILE__, __LINE__, operation);
 			oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "Invalid type of operation in rpm version comparison");
-			return OVAL_RESULT_INVALID;
+			return OVAL_RESULT_ERROR;
 		}
 	} else if (state_data_type == OVAL_DATATYPE_VERSION) {
 		int state_idx = 0;
@@ -501,7 +501,7 @@ static oval_result_t evaluate(char *sys_data, char *state_data, oval_datatype_t 
 			} else {
 				oscap_dprintf("%s:%d Invalid type of operation(%d) in version comparison.", __FILE__, __LINE__, operation);
 				oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "Invalid type of operation in version comparison");
-				return OVAL_RESULT_INVALID;
+				return OVAL_RESULT_ERROR;
 			}
 
 			if (state_data[state_idx])
@@ -538,8 +538,7 @@ static oval_result_t evaluate(char *sys_data, char *state_data, oval_datatype_t 
 
         oscap_dprintf("%s:%d Ivalid OVAL data type.", __FILE__, __LINE__);
         oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "Ivalid OVAL data type");
-        
-        return OVAL_RESULT_INVALID;
+        return OVAL_RESULT_ERROR;
 }
 
 int ores_add_res(struct oresults *ores, oval_result_t res)
@@ -579,7 +578,7 @@ void ores_clear(struct oresults *ores)
 
 oval_result_t ores_get_result_bychk(struct oresults *ores, oval_check_t check)
 {
-	oval_result_t result = OVAL_RESULT_INVALID;
+	oval_result_t result = OVAL_RESULT_ERROR;
 
 	if (ores->true_cnt == 0 &&
 	    ores->false_cnt == 0 &&
@@ -657,7 +656,7 @@ oval_result_t ores_get_result_bychk(struct oresults *ores, oval_check_t check)
 	default:
                 oscap_dprintf("%s:%d Invalid check value", __FILE__, __LINE__);
                 oscap_seterr(OSCAP_EFAMILY_OSCAP, OVAL_EOVALINT, "Invalid check value");
-		result = OVAL_RESULT_INVALID;
+		result = OVAL_RESULT_ERROR;
 	}
 
 	return result;
@@ -665,7 +664,7 @@ oval_result_t ores_get_result_bychk(struct oresults *ores, oval_check_t check)
 
 oval_result_t ores_get_result_byopr(struct oresults *ores, oval_operator_t op)
 {
-	oval_result_t result = OVAL_RESULT_INVALID;
+	oval_result_t result = OVAL_RESULT_ERROR;
 
 	if (ores->true_cnt == 0 &&
 	    ores->false_cnt == 0 &&
@@ -759,7 +758,7 @@ oval_result_t ores_get_result_byopr(struct oresults *ores, oval_operator_t op)
 	default:
                 oscap_dprintf("%s:%d Invalid operator value", __FILE__, __LINE__);
                 oscap_seterr(OSCAP_EFAMILY_OSCAP, OVAL_EOVALINT, "Invalid operator value");
-		result = OVAL_RESULT_INVALID;
+		result = OVAL_RESULT_ERROR;
 		break;
 	}
 
@@ -771,7 +770,7 @@ static oval_result_t eval_item(struct oval_syschar_model *syschar_model, struct 
 	struct oval_state_content_iterator *state_contents_itr;
 	struct oresults ste_ores;
 	oval_operator_t operator;
-	oval_result_t result = OVAL_RESULT_INVALID;
+	oval_result_t result = OVAL_RESULT_ERROR;
 
 	ores_clear(&ste_ores);
 
@@ -913,7 +912,7 @@ static oval_result_t eval_item(struct oval_syschar_model *syschar_model, struct 
  fail:
 	oval_state_content_iterator_free(state_contents_itr);
 
-	return OVAL_RESULT_INVALID;
+	return OVAL_RESULT_ERROR;
 }
 
 #define ITEMMAP (struct oval_string_map    *)args[2]
@@ -956,7 +955,7 @@ static oval_result_t eval_check_state(struct oval_state *state, oval_check_t che
 
 		if (ores_add_res(&ores, item_res)) {
 			oval_result_item_iterator_free(ritems_itr);
-			return OVAL_RESULT_INVALID;
+			return OVAL_RESULT_ERROR;
 		}
 	}
 	oval_result_item_iterator_free(ritems_itr);
@@ -968,7 +967,7 @@ static oval_result_t eval_check_state(struct oval_state *state, oval_check_t che
 
 static oval_result_t eval_check_existence(oval_existence_t check_existence, int exists_cnt, int error_cnt)
 {
-	oval_result_t result = OVAL_RESULT_INVALID;
+	oval_result_t result = OVAL_RESULT_ERROR;
 
 	switch (check_existence) {
 	case OVAL_ALL_EXIST:
@@ -1023,7 +1022,7 @@ static oval_result_t eval_check_existence(oval_existence_t check_existence, int 
 	default:
                 oscap_dprintf("%s:%d Invalid check_existence value", __FILE__, __LINE__);
                 oscap_seterr(OSCAP_EFAMILY_OSCAP, OVAL_EOVALINT, "Invalid check_existence value");
-                result = OVAL_RESULT_INVALID;
+                result = OVAL_RESULT_ERROR;
 		break;
 	}
 
@@ -1054,7 +1053,7 @@ _oval_result_test_evaluate_items(struct oval_syschar *syschar_object,
 			oscap_dprintf("%s:%d Iterator returned null", __FILE__, __LINE__);
 			oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "Iterator returned null");
 			oval_sysdata_iterator_free(collected_items_itr);
-			return OVAL_RESULT_INVALID;
+			return OVAL_RESULT_ERROR;
 		}
 
 		item_status = oval_sysdata_get_status(item);
@@ -1141,7 +1140,7 @@ _oval_result_test_evaluate_items(struct oval_syschar *syschar_object,
 	default:
 		oscap_dprintf("%s:%d Unknown syschar flag", __FILE__, __LINE__);
 		oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "Unknown syschar flag");
-		return OVAL_RESULT_INVALID;
+		return OVAL_RESULT_ERROR;
 	}
 
 	return result;
@@ -1153,42 +1152,24 @@ static oval_result_t _oval_result_test_result(struct oval_result_test *rtest, vo
 	__attribute__nonnull__(rtest);
 
 	// first, let's see if we already did the test
-	if (rtest->result != OVAL_RESULT_INVALID) {
+	if (rtest->result != OVAL_RESULT_NOT_EVALUATED) {
 		oscap_dprintf("%s:%d found result from previous evaluation, returning without further processing", __FILE__, __LINE__);
 		return (rtest->result);
 	}
 
 	// let's go looking for the stuff to test
 	struct oval_test *test2check = oval_result_test_get_test(rtest);
-	if (test2check == NULL) {
-		oscap_dprintf("%s:%d Invalid oval test argument", __FILE__, __LINE__);
-		oscap_seterr(OSCAP_EFAMILY_OSCAP, OVAL_EOVALINT, "Invalid oval test argument");
-		return OVAL_RESULT_INVALID;
-	}
-
-	char *test_id_string = oval_test_get_id(test2check);
-	if (test_id_string == NULL) {
-		oscap_dprintf("%s:%d Test id is null", __FILE__, __LINE__);
-		oscap_seterr(OSCAP_EFAMILY_OSCAP, OVAL_EOVALINT, "Test ID is null");
-		return OVAL_RESULT_INVALID;
-	}
-
 	oval_check_t test_check = oval_test_get_check(test2check);
 	oval_existence_t test_check_existence = oval_test_get_existence(test2check);
+
 	struct oval_object * tmp_obj = oval_test_get_object(test2check);
 	if (tmp_obj == NULL) {
 		oscap_dprintf("%s:%d Object is null", __FILE__, __LINE__);
 		oscap_seterr(OSCAP_EFAMILY_OSCAP, OVAL_EOVALINT, "Object is null");
-		return OVAL_RESULT_INVALID;
+		return OVAL_RESULT_ERROR;
 
 	}
-
 	char * definition_object_id_string = oval_object_get_id(tmp_obj);
-	if (definition_object_id_string == NULL) {
-		oscap_dprintf("%s:%d Object has null ID", __FILE__, __LINE__);
-		oscap_seterr(OSCAP_EFAMILY_OSCAP, OVAL_EOVALINT, "Object has null ID");
-		return OVAL_RESULT_INVALID;
-	}
 
 	struct oval_result_system *sys = oval_result_test_get_system(rtest);
 	struct oval_syschar_model *syschar_model = oval_result_system_get_syschar_model(sys);
@@ -1196,7 +1177,7 @@ static oval_result_t _oval_result_test_result(struct oval_result_test *rtest, vo
 	struct oval_syschar * syschar_object = oval_syschar_model_get_syschar(syschar_model, definition_object_id_string);
 	if (syschar_object == NULL) {
 		oscap_dprintf("%s:%d system characteristics object is null", __FILE__, __LINE__);
-		return OVAL_RESULT_UNKNOWN;
+		return OVAL_RESULT_ERROR;
 	}
 
 	struct oval_state *tmp_state = oval_test_get_state(test2check);
@@ -1210,7 +1191,7 @@ oval_result_t oval_result_test_eval(struct oval_result_test *rtest)
 {
 	__attribute__nonnull__(rtest);
 
-	if (rtest->result == OVAL_RESULT_INVALID) {
+	if (rtest->result == OVAL_RESULT_NOT_EVALUATED) {
 		if ( oval_test_get_subtype( oval_result_test_get_test(rtest) ) != OVAL_INDEPENDENT_UNKNOWN ) {
 			struct oval_string_map *tmp_map = oval_string_map_new();
 			void *args[] = { rtest->system, rtest, tmp_map };
@@ -1476,22 +1457,25 @@ xmlNode *oval_result_test_to_dom(struct oval_result_test *rslt_test, xmlDocPtr d
 	oval_result_t result = oval_result_test_get_result(rslt_test);
 	xmlNewProp(test_node, BAD_CAST "result", BAD_CAST oval_result_get_text(result));
 
-	struct oval_result_item_iterator *items = oval_result_test_get_items(rslt_test);
-	while (oval_result_item_iterator_has_more(items)) {
-		struct oval_result_item *item = oval_result_item_iterator_next(items);
-		oval_result_item_to_dom(item, doc, test_node);
-	}
-	oval_result_item_iterator_free(items);
+	/* does not make sense to report these when test(definition) is not evaluated */
+	if( result != OVAL_RESULT_NOT_EVALUATED) {
+		struct oval_result_item_iterator *items = oval_result_test_get_items(rslt_test);
+		while (oval_result_item_iterator_has_more(items)) {
+			struct oval_result_item *item = oval_result_item_iterator_next(items);
+			oval_result_item_to_dom(item, doc, test_node);
+		}
+		oval_result_item_iterator_free(items);
 
-	if (!rslt_test->bindings_initialized) {
-		_oval_result_test_initialize_bindings(rslt_test);
+		if (!rslt_test->bindings_initialized) {
+			_oval_result_test_initialize_bindings(rslt_test);
+		}
+		struct oval_variable_binding_iterator *bindings = oval_result_test_get_bindings(rslt_test);
+		while (oval_variable_binding_iterator_has_more(bindings)) {
+			struct oval_variable_binding *binding = oval_variable_binding_iterator_next(bindings);
+			_oval_result_binding_to_dom(binding, doc, test_node);
+		}
+		oval_variable_binding_iterator_free(bindings);
 	}
-	struct oval_variable_binding_iterator *bindings = oval_result_test_get_bindings(rslt_test);
-	while (oval_variable_binding_iterator_has_more(bindings)) {
-		struct oval_variable_binding *binding = oval_variable_binding_iterator_next(bindings);
-		_oval_result_binding_to_dom(binding, doc, test_node);
-	}
-	oval_variable_binding_iterator_free(bindings);
 
 	return test_node;
 }
