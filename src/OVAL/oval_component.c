@@ -1677,28 +1677,23 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_ESCAPE_REGEX(oval
 {
 	oval_syschar_collection_flag_t flag = SYSCHAR_FLAG_UNKNOWN;
 	struct oval_component_iterator *subcomps = oval_component_get_function_components(component);
-	int start = oval_component_get_substring_start(component) - 1;
-	/* int len = oval_component_get_substring_length(component); */
-	start = (start < 0) ? 0 : start;
+
 	if (oval_component_iterator_has_more(subcomps)) {	//Only first component is considered
 		struct oval_component *subcomp = oval_component_iterator_next(subcomps);
 		struct oval_collection *subcoll = oval_collection_new();
 		flag = oval_component_eval_common(argu, subcomp, subcoll);
 		struct oval_value_iterator *values = (struct oval_value_iterator *)oval_collection_iterator(subcoll);
-		struct oval_value *value;
 		while (oval_value_iterator_has_more(values)) {
-			char *text = oval_value_get_text(oval_value_iterator_next(values));
-			/* TODO: this len shadows the above one in comment, which one is right ? */
+			struct oval_value *value = oval_value_iterator_next(values);
+			char *text = oval_value_get_text(value);
 			int len = strlen(text);
 			char string[2 * len + 1], *insert = string;
 			while (*text) {
-				if (_isEscape(*text)) {
-					*insert = '\\';
-					insert += 1;
-				}
-				*insert = *text;
-				insert += 1;
+				if (_isEscape(*text))
+					*insert++ = '\\';
+				*insert++ = *text++;
 			}
+			*insert = '\0';
 			value = oval_value_new(OVAL_DATATYPE_STRING, string);
 			oval_collection_add(value_collection, value);
 		}
