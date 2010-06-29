@@ -56,6 +56,8 @@
 #include <rpm/rpmdb.h>
 #include <rpm/rpmlib.h>
 #include <rpm/rpmts.h>
+#include <rpm/rpmmacro.h>
+#include <rpm/rpmlog.h>
 
 /* SEAP */
 #include <seap.h>
@@ -256,6 +258,10 @@ void probe_fini (void *ptr)
 
         rpmdbClose (r->rpmdb);
 	rpmFreeCrypto();
+        rpmFreeRpmrc();
+        rpmFreeMacros(NULL);
+        rpmlogClose();
+        rpmFreeFilesystems();
         pthread_mutex_destroy (&(r->mutex));
 
         return;
