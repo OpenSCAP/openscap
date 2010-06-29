@@ -985,8 +985,8 @@ static int _oval_component_parse_SUBSTRING_tag(xmlTextReaderPtr reader,
 	__attribute__nonnull__(component);
 
 	oval_component_SUBSTRING_t *substring = (oval_component_SUBSTRING_t *) component;
-	char *start_text = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "start");
-	char *length_text = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "length");
+	char *start_text = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "substring_start");
+	char *length_text = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "substring_length");
 	int start = (start_text == NULL) ? 0 : atoi(start_text);
 	int length = (length_text == NULL) ? 0 : atoi(length_text);
 	if (start_text != NULL)
