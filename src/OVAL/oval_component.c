@@ -961,7 +961,7 @@ static int _oval_component_parse_BEGEND_tag(xmlTextReaderPtr reader,
 	__attribute__nonnull__(component);
 
 	oval_component_BEGEND_t *begend = (oval_component_BEGEND_t *) component;
-	begend->character = oscap_strdup((char *)xmlTextReaderGetAttribute(reader, BAD_CAST "character"));
+	begend->character = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "character");
 
 	return _oval_component_parse_FUNCTION_tag(reader, context, component);
 }
@@ -973,7 +973,7 @@ static int _oval_component_parse_SPLIT_tag(xmlTextReaderPtr reader,
 	__attribute__nonnull__(component);
 
 	oval_component_SPLIT_t *split = (oval_component_SPLIT_t *) component;
-	split->delimiter = oscap_strdup((char *)xmlTextReaderGetAttribute(reader, BAD_CAST "delimiter"));
+	split->delimiter = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "delimiter");
 
 	return _oval_component_parse_FUNCTION_tag(reader, context, component);
 }
@@ -1023,10 +1023,8 @@ static int _oval_component_parse_REGEX_CAPTURE_tag(xmlTextReaderPtr reader,
 	__attribute__nonnull__(component);
 
 	oval_component_REGEX_CAPTURE_t *regex = (oval_component_REGEX_CAPTURE_t *) component;
-	char *pattern = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "pattern");
-	regex->pattern = oscap_strdup(pattern);
-	if (pattern)
-		oscap_free(pattern);
+
+	regex->pattern = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "pattern");
 
 	return _oval_component_parse_FUNCTION_tag(reader, context, component);
 }
@@ -1376,7 +1374,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_OBJECTREF(oval_ar
 
 	return flag;
 #else
-	oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_ENOTIMPL, "This feature is not implemented, compiled without probes support.");	
+	oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_ENOTIMPL, "This feature is not implemented, compiled without probes support.");
 	oval_syschar_collection_flag_t flag = SYSCHAR_FLAG_ERROR;
 	return flag;
 #endif
@@ -1636,19 +1634,36 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_SUBSTRING(oval_ar
 	oval_syschar_collection_flag_t flag = SYSCHAR_FLAG_UNKNOWN;
 	struct oval_component_iterator *subcomps = oval_component_get_function_components(component);
 	int start = oval_component_get_substring_start(component) - 1;
-	int len = oval_component_get_substring_length(component);
-	start = (start < 0) ? 0 : start;
+	size_t len = (size_t)oval_component_get_substring_length(component);
+        size_t beg;
+
+	beg = (start < 0) ? 0 : (size_t)start;
+
 	if (oval_component_iterator_has_more(subcomps)) {	/*Only first component is considered */
 		struct oval_component *subcomp = oval_component_iterator_next(subcomps);
 		struct oval_collection *subcoll = oval_collection_new();
 		flag = oval_component_eval_common(argu, subcomp, subcoll);
 		struct oval_value_iterator *values = (struct oval_value_iterator *)oval_collection_iterator(subcoll);
 		struct oval_value *value;
+
 		while (oval_value_iterator_has_more(values)) {
 			char *text = oval_value_get_text(oval_value_iterator_next(values));
 			char substr[len + 1];
-			text += (start < (int)strlen(text)) ? start : (int)strlen(text);
-			strncpy(substr, text, len);
+                        size_t txtlen, sublen;
+
+                        substr[0] = '\0';
+                        txtlen    = strlen(text);
+
+                        if (beg < txtlen) {
+                                sublen = (beg + len) >= txtlen ? 0 : txtlen - (beg + len);
+
+                                if (sublen < len)
+                                        len = sublen;
+
+                                strncpy(substr, text + beg, len);
+                                substr[len] = '\0';
+                        }
+
 			value = oval_value_new(OVAL_DATATYPE_STRING, substr);
 			oval_collection_add(value_collection, value);
 		}
@@ -1711,7 +1726,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_REGEX_CAPTURE(ova
 									     struct oval_collection *value_collection)
 {
 	return SYSCHAR_FLAG_UNKNOWN;
-	//TODO: Missing implementation   
+	//TODO: Missing implementation
 }
 
 static oval_syschar_collection_flag_t _oval_component_evaluate_ARITHMETIC(oval_argu_t *argu,
@@ -1719,7 +1734,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_ARITHMETIC(oval_a
 									  struct oval_collection *value_collection)
 {
 	return SYSCHAR_FLAG_UNKNOWN;
-	//TODO: Missing implementation   
+	//TODO: Missing implementation
 }
 
 typedef oval_syschar_collection_flag_t(_oval_component_evaluator)

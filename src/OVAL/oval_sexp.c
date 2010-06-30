@@ -371,6 +371,7 @@ SEXP_t *oval_object2sexp(const char *typestr, struct oval_object *object, struct
 					varrefs = SEXP_list_new(NULL);
 				}
 				SEXP_list_add(varrefs, stmp);
+                                SEXP_free(stmp);
 				// todo: don't add duplicates
 				++varref_cnt;
 
