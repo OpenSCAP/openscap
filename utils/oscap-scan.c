@@ -62,6 +62,31 @@
 
 int VERBOSE = 1;
 
+typedef enum {
+    OSCAP_STD_UNKNOWN,
+    OSCAP_STD_XCCDF,
+    OSCAP_STD_OVAL
+} oscap_standard_t;
+
+typedef enum {
+    OSCAP_OP_UNKNOWN,
+    OSCAP_OP_COLLECT,
+    OSCAP_OP_EVAL
+    /*OSCAP_OP_VALIDATE,*/
+} oscap_operation_t;
+
+struct oscap_action {
+
+    oscap_standard_t std;
+    oscap_operation_t op;
+    char *f_xccdf;
+    char *f_oval;
+    char *f_results;
+    char *url_xccdf;
+    char *url_oval;
+    char *profile;
+};
+
 /**
  * User defined structure that is passed to OVAL callback in OVAL evaluation
  * Each integer variable represent one statistic entry for definition results
@@ -77,12 +102,42 @@ struct oval_usr {
 	int result_napp;
 };
 
+static struct oscap_action * oscap_action_new()
+{
+    struct oscap_action * action;
+    action = malloc(sizeof(struct oscap_action));
+    if (action == NULL) return NULL;
+
+    action->std = OSCAP_STD_UNKNOWN;
+    action->op  = OSCAP_OP_UNKNOWN;
+    action->f_xccdf     = NULL;
+    action->f_oval      = NULL;
+    action->f_results   = NULL;
+    action->url_xccdf   = NULL;
+    action->url_oval    = NULL;
+    action->profile     = NULL;
+
+    return action;
+}
+
+static void oscap_action_free(struct oscap_action *action)
+{
+    if (action == NULL) return;
+
+    if (action->f_xccdf) free(action->f_xccdf);
+    if (action->f_oval) free(action->f_oval);
+    action->f_results = NULL;
+    action->url_oval = NULL;
+    action->url_xccdf = NULL;
+    //free(action);
+}
+
 /**
  * Function print usage of this program to specified output
  * @param pname name of program, standard usage argv[0]
  * @param out output stream for fprintf function, standard usage stdout or stderr
  */
-static void print_usage(const char *pname, FILE * out)
+static void print_usage(const char *pname, FILE * out, char * msg)
 {
 
 	fprintf(out,
@@ -100,6 +155,50 @@ static void print_usage(const char *pname, FILE * out)
 		"   --result-file <file>\r\t\t\t\t - The name of file with OVAL results output.\n"
 		"   --xccdf-profile <name>\r\t\t\t\t - The name of Profile to be evaluated in case of evaluating XCCDF.\n",
 		pname);
+        if (msg != NULL) fprintf(out, "\n%s\n", msg);
+}
+
+static void print_xccdf_usage(const char *pname, FILE * out, char * msg)
+{
+	fprintf(out,
+		"Usage: %s [general-options] xccdf command [command-options] OVAL-DEFINITIONS-FILE XCCDF-FILE \n"
+                "(Specify the --help global option for a list of other help options)\n"
+		"\n"
+		"OVAL-DEFINITIONS-FILE is the OVAL XML file specified either by the full path to the xml file "
+		"or an URL from which to download it.\n"
+		"XCCDF-FILE is the XCCDF XML file specified either by the full path to the xml file "
+		"or an URL from which to download it.\n"
+		"\n"
+                "Commands:\n"
+                "   eval\r\t\t\t\t - Perform evaluation driven by XCCDF file and use OVAL as checking engine.\n"
+                //"   validate\r\t\t\t\t - validate XCCDF XML content. No command option required.\n"
+                "\n"
+                "Command options:\n"
+		"   -h --help\r\t\t\t\t - show this help\n"
+		"   --result-file <file>\r\t\t\t\t - Write XCCDF Results into file.\n"
+		"   --profile <name>\r\t\t\t\t - The name of Profile to be evaluated.\n"
+                , pname);
+        if (msg != NULL) fprintf(out, "\n%s\n", msg);
+}
+
+static void print_oval_usage(const char *pname, FILE * out, char * msg)
+{
+	fprintf(out,
+		"Usage: %s [general-options] oval command [command-options] OVAL-DEFINITIONS-FILE \n"
+                "(Specify the --help global option for a list of other help options)\n"
+		"\n"
+		"OVAL-DEFINITIONS-FILE is the OVAL XML file specified either by the full path to the xml file "
+		"or an URL from which to download it.\n"
+                "\n"
+                "Commands:\n"
+                "   collect\r\t\t\t\t - Probe the system and gather system characteristics for objects in OVAL Definition file.\n"
+                "   eval\r\t\t\t\t - Probe the system and evaluate all definitions from OVAL Definition file\n"
+                "\n"
+                "Command options:\n"
+		"   -h --help\r\t\t\t\t - show this help\n"
+		"   --result-file <file>\r\t\t\t\t - Write OVAL Results into file.\n"
+                , pname);
+        if (msg != NULL) fprintf(out, "\n%s\n", msg);
 }
 
 /**
@@ -117,10 +216,10 @@ static char *app_curl_download(char *url)
 	struct stat buf;
 	/* Is the file local ? */
 	if (lstat(url, &buf) == 0)
-		return url;
+		return strdup(url);
 
 	/* Remote file will be stored in this xml */
-	char *outfile = "definition_file.xml";
+	char *outfile = strdup("definition_file.xml");
 
 	CURL *curl;
 	FILE *fp;
@@ -163,29 +262,30 @@ static int callback(const char *id, int result, void *arg)
 
 /**
  * XCCDF Processing fucntion
- * @param f_XCCDF XCCDF XML file that is imported
- * @param f_Results Name of the result file specified by user
- * @param url_XCCDF Url value of XCCDF file defined by user and used in Test Result
+ * @param action OSCAP Action structure 
  * @param sess OVAL Agent Session
- * @param s_Profile String with Profile ID that will be evaluated
  */
-static int app_evaluate_xccdf(const char *f_XCCDF, const char *f_Results, const char *url_XCCDF,
-			      oval_agent_session_t * sess, const char *s_Profile)
+static int app_evaluate_xccdf(const struct oscap_action * action)
 {
 
 	struct xccdf_policy_iterator *policy_it = NULL;
 	struct xccdf_policy *policy = NULL;
 	struct xccdf_benchmark *benchmark = NULL;
 	struct xccdf_policy_model *policy_model = NULL;
+        struct oval_definition_model *def_model = NULL;
+        struct oval_agent_session * sess = NULL;
+
+        def_model = oval_definition_model_import(action->f_oval);
+        sess = oval_agent_new_session(def_model);
 
         /* Load XCCDF model and XCCDF Policy model */
-	benchmark = xccdf_benchmark_import(f_XCCDF);
+	benchmark = xccdf_benchmark_import(action->f_xccdf);
 	policy_model = xccdf_policy_model_new(benchmark);
 
 	/* Get the first policy, just for prototype - if there is no Policy 
 	 * report error and return -1 */
-	if (s_Profile != NULL) {
-		policy = xccdf_policy_model_get_policy_by_id(policy_model, s_Profile);
+	if (action->profile != NULL) {
+		policy = xccdf_policy_model_get_policy_by_id(policy_model, action->profile);
 	} else {
 		policy_it = xccdf_policy_model_get_policies(policy_model);
 		if (xccdf_policy_iterator_has_more(policy_it)) {
@@ -214,7 +314,7 @@ static int app_evaluate_xccdf(const char *f_XCCDF, const char *f_Results, const 
 	struct xccdf_result * ritem = xccdf_policy_evaluate(policy);
 
         /* Write results into XCCDF Test Result model */
-	xccdf_result_set_benchmark_uri(ritem, url_XCCDF);
+	xccdf_result_set_benchmark_uri(ritem, action->url_xccdf);
 	struct oscap_text *title = oscap_text_new();
 	oscap_text_set_text(title, "OSCAP Scan Result");
 	xccdf_result_add_title(ritem, title);
@@ -234,8 +334,8 @@ static int app_evaluate_xccdf(const char *f_XCCDF, const char *f_Results, const 
         xccdf_model_iterator_free(model_it);
 
 	/* Export results */
-	if (f_Results != NULL)
-		xccdf_result_export(ritem, f_Results);
+	if (action->f_results != NULL)
+		xccdf_result_export(ritem, action->f_results);
 
         /* Get the result from TestResult model and decide if end with error or with correct return code */
         int retval = 0;
@@ -250,6 +350,8 @@ static int app_evaluate_xccdf(const char *f_XCCDF, const char *f_Results, const 
 
 
 	/* Clear & End */
+        oval_agent_destroy_session(sess);
+        oval_definition_model_free(def_model);
         oval_agent_cb_data_free(usr);
 	xccdf_policy_model_free(policy_model);
 
@@ -289,14 +391,31 @@ static int app_oval_callback(const char *id, int result, void *usr)
 	return 0;
 }
 
+static int app_collect_oval(const struct oscap_action * action)
+{
+
+    return 0;
+}
+
 /**
  * Function that evaluate OVAL content (without XCCDF).
  */
-static int app_evaluate_oval(const char *f_Results, oval_agent_session_t * sess)
+static int app_evaluate_oval(const struct oscap_action *action)
 {
+
 	struct oval_results_model *res_model = NULL;
 	struct oval_usr *usr = NULL;
 	int ret = 0;
+
+        struct oval_definition_model *def_model = oval_definition_model_import(action->f_oval);
+        oval_agent_session_t *sess = oval_agent_new_session(def_model);
+
+	/* Import OVAL definition file */
+        if (oscap_err()) {
+                if (VERBOSE >= 0)
+                        fprintf(stderr, "Error: (%d) %s\n", oscap_err_code(), oscap_err_desc());
+                return 1;
+        }
 
 	res_model = oval_agent_get_results_model(sess);
 
@@ -331,7 +450,7 @@ static int app_evaluate_oval(const char *f_Results, oval_agent_session_t * sess)
 	}
 
         /*=============== PRINT RESULTS =====================*/
-	if (f_Results != NULL) {
+	if (action->f_results != NULL) {
 		// set up directives 
 		struct oval_result_directives *res_direct = oval_result_directives_new(res_model);
 		oval_result_directives_set_reported(res_direct, OVAL_RESULT_TRUE	| OVAL_RESULT_FALSE |
@@ -342,12 +461,12 @@ static int app_evaluate_oval(const char *f_Results, oval_agent_session_t * sess)
 		oval_result_directives_set_content(res_direct, OVAL_RESULT_TRUE, OVAL_DIRECTIVE_CONTENT_FULL);
 
 		// Export result model to XML 
-		oval_results_model_export(res_model, res_direct, f_Results);
+		oval_results_model_export(res_model, res_direct, action->f_results);
 		oval_result_directives_free(res_direct);
 	}
-
-	/* Clear and return */
-	oval_agent_destroy_session(sess);
+        /* Clear */
+        oval_agent_destroy_session(sess);
+        oval_definition_model_free(def_model);
 
 	if (usr != NULL) {
 		if ((usr->result_false == 0) && (usr->result_unknown == 0)) {
@@ -361,22 +480,155 @@ static int app_evaluate_oval(const char *f_Results, oval_agent_session_t * sess)
 		return ret;
 }
 
+static int getopt_xccdf(int argc, char **argv, struct oscap_action * action)
+{
+    /* Usage: oscap xccdf command [command-options] */
+    if (action == NULL) {
+            /* TODO: Problem ? */
+            return -1;
+    }
+
+    action->std = OSCAP_STD_XCCDF;
+
+    /* Command */
+    optind++;
+    if (optind >= argc) {
+        print_xccdf_usage("oscap", stderr, "Error: Bad number of parameters !");
+        return -1;
+    }
+    if (!strcmp(argv[optind], "eval"))
+            action->op = OSCAP_OP_EVAL;
+    /*else if (!strcmp(argv[optind], "validate"))
+            action->op = OSCAP_OP_VALIDATE;*/
+    else {
+        /* TODO: XCCDF usage */
+        /* oscap xccdf --help */
+        optind--;
+    }
+
+    /* Command-options */
+    struct option long_options[] = {
+        {"help", 0, 0, 'h'},
+        {"result-file", 1, 0, 0},
+        {"profile", 1, 0, 1},
+        {0, 0, 0, 0}
+    };
+
+    int c;
+    int getopt_index = 0; /* index is not neccesary because we know the option from "val" */
+    optind++; /* Increment global variable pointeing to argv array to get next opt */
+    while ((c = getopt_long(argc, argv, "+h012", long_options, &getopt_index)) != -1) {
+        switch (c) {
+            case 'h':       /* XCCDF HELP */
+                print_xccdf_usage("oscap", stdout, NULL);
+                return 0;
+            case 0:         /* RESULT FILE */
+                if (optarg == NULL) return -1;
+                action->f_results = optarg;
+                break;
+            case 1:         /* RESULT FILE */
+                if (optarg == NULL) return -1;
+                action->profile = optarg;
+                break;
+            default:
+                fprintf(stderr, "FOUND BAD OPTION %d :: %d :: %s\n", optind, optopt, argv[optind]);
+                break;
+        }
+    }
+    if (action->op == OSCAP_OP_UNKNOWN) {
+        print_xccdf_usage("oscap", stderr, "Error: No operation specified. Use \"oscap xccdf eval OVAL_FILE XCCDF_FILE\"");
+        return -1;
+    }
+
+    /* We should have XCCDF file here */
+    if (optind+1 >= argc) {
+        /* TODO */
+        print_xccdf_usage("oscap", stderr, "Error: Bad number of parameters. OVAL file and XCCDF file need to be scpecified !");
+        return -1;
+    }
+    action->url_oval = argv[optind];
+    action->url_xccdf = argv[optind+1];
+
+    return 0;
+}
+
+static int getopt_oval(int argc, char **argv, struct oscap_action * action)
+{
+    /* Usage: oscap oval command [command-options] */
+    if (action == NULL) {
+            /* TODO: Problem ? */
+            return -1;
+    }
+
+    action->std = OSCAP_STD_OVAL;
+
+    /* Command */
+    optind++;
+    if (optind >= argc) {
+        print_oval_usage("oscap", stderr, "Error: Bad number of parameters. Command and OVAL file required.");
+        return -1;
+    }
+    if (!strcmp(argv[optind], "eval"))
+            action->op = OSCAP_OP_EVAL;
+    else if (!strcmp(argv[optind], "collect"))
+            action->op = OSCAP_OP_COLLECT;
+    /*else if (!strcmp(argv[optind], "validate"))
+            action->op = OSCAP_OP_VALIDATE;*/
+    else {
+        /* oscap OVAL --help */
+        optind--;
+    }
+
+    /* Command-options */
+    struct option long_options[] = {
+        {"help", 0, 0, 'h'},
+        {"result-file", 1, 0, 0},
+        {0, 0, 0, 0}
+    };
+
+    int c;
+    int getopt_index = 0; /* index is not neccesary because we know the option from "val" */
+    optind++; /* Increment global variable pointeing to argv array to get next opt */
+    while ((c = getopt_long(argc, argv, "+h012", long_options, &getopt_index)) != -1) {
+        switch (c) {
+            case 'h':       /* XCCDF HELP */
+                print_xccdf_usage("oscap", stdout, NULL);
+                return 0;
+            case 0:         /* RESULT FILE */
+                if (optarg == NULL) return -1;
+                action->f_results = optarg;
+                break;
+            default:
+                fprintf(stderr, "FOUND BAD OPTION %d :: %d :: %s\n", optind, optopt, argv[optind]);
+                break;
+        }
+    }
+    if (action->op == OSCAP_OP_UNKNOWN) {
+        print_xccdf_usage("oscap", stderr, "Error: No operation specified. Use \"oscap oval eval/collect OVAL_FILE\"");
+        return -1;
+    }
+
+    /* We should have XCCDF file here */
+    if (optind >= argc) {
+        /* TODO */
+        print_xccdf_usage("oscap", stderr, "Error: Bad number of parameters. OVAL file needs to be scpecified !");
+        return -1;
+    }
+    action->url_oval = argv[optind];
+
+    return 0;
+}
+
 /**
  * Main function
  */
 int main(int argc, char **argv)
 {
-	char *url_OVAL = NULL;	    /**< URL of OVAL definition file */
-	char *url_XCCDF = NULL;	    /**< URL of OVAL definition file */
-	oval_agent_session_t *sess = NULL;   /**< */
-	char *f_OVAL = NULL;	    /**< Name of OVAL definition file*/
-	char *f_XCCDF = NULL;	    /**< Name of XCCDF benchmark file*/
-	char *f_Results = NULL;
-	char *s_Profile = NULL;
-
 	/**************** GETOPT  ***************/
 	int c;
-
+        struct oscap_action * action = oscap_action_new();
+        if (action == NULL) return 1;
+    
 	while (1) {
 
 		int option_index = 0;
@@ -384,126 +636,99 @@ int main(int argc, char **argv)
 			/* Long options. */
 			{"quiet", 0, 0, 'q'},
 			{"help", 0, 0, 'h'},
-			{"result-file", 1, 0, 0},
-			{"xccdf-profile", 1, 0, 1},
-			{"xccdf", 1, 0, 2},
-			{0, 0, 0, 0}
+			{"version", 0, 0, 'V'},
+                        {0, 0, 0, 0}
 		};
 
-		c = getopt_long(argc, argv, "qhv0123", long_options, &option_index);
+		c = getopt_long(argc, argv, "+qhv", long_options, &option_index);
 		if (c == -1)
 			break;
 
 		switch (c) {
-		case 0:	/* Results */
-			f_Results = strdup(optarg);
-			break;
-		case 1:	/* Syschars */
-			s_Profile = strdup(optarg);
-			break;
-		case 2:	/* XCCDF */
-			url_XCCDF = strdup(optarg);
-			break;
-		case 'q':
+		case 'q':   /* QUIET */
 			VERBOSE = -1;
 			break;
-		case 'h':	/* Help */
-			print_usage(argv[0], stderr);
+		case 'h':   /* HELP */
+			print_usage(argv[0], stderr, NULL);
+			return 0;
+		case 'V':   /* VERSIONS */
+                        /* TODO */
 			return 0;
 		default:
-			fprintf(stderr, "Bad usage of %s !\n\n", argv[0]);
-			print_usage(argv[0], stderr);
-			return 1;
+                        printf("FOUND OPTION: %d-%d\n", optind, optopt);
+                        break;
 		}
 	}
 
-	if (optind < argc)	/* mandatory OVAL file */
-		url_OVAL = strdup(argv[optind++]);
+        /* MODULE */
+        if (optind >= argc) {
+            print_usage(argv[0], stderr, "Error: Bad number of parameters !");
+            return 1;
+        }
 
-	if (optind < argc) {	/* No other not-optional argument */
-		fprintf(stderr, "Bad usage of %s !\n\n", argv[0]);
-		print_usage(argv[0], stderr);
-		return 1;
-	}
-	if (url_OVAL == NULL) {
-		fprintf(stderr, "Bad usage of %s !\n\n", argv[0]);
-		print_usage(argv[0], stderr);
-		return 1;
-	}
+        if ((!strcmp(argv[optind], "xccdf")) || (!strcmp(argv[optind], "XCCDF"))) {
+            if (getopt_xccdf(argc, argv, action) == -1)
+                return 1;
+        } else if ((!strcmp(argv[optind], "oval")) || (!strcmp(argv[optind], "OVAL"))) {
+            if (getopt_oval(argc, argv, action) == -1)
+                return 1;
+        }
 
 	/* Post processing of options */
 	/* fetch file from remote source */
-	if (url_XCCDF != NULL) {
+	if (action->url_xccdf != NULL) {
 
-		f_XCCDF = app_curl_download(url_XCCDF);
-		if (!f_XCCDF) {
+		action->f_xccdf = app_curl_download(action->url_xccdf);
+		if (!action->f_xccdf) {
 			if (VERBOSE >= 0)
 				fprintf(stderr, "Error: (%d) %s\n", oscap_err_code(), oscap_err_desc());
 			return 1;
 		}
 	}
-	f_OVAL = app_curl_download(url_OVAL);
-	if (!f_OVAL) {
-		if (VERBOSE >= 0)
-			fprintf(stderr, "Error: (%d) %s\n", oscap_err_code(), oscap_err_desc());
-		return 1;
-	}
+	if (action->url_oval != NULL) {
+            action->f_oval = app_curl_download(action->url_oval);
+            if (!action->f_oval) {
+                    if (VERBOSE >= 0)
+                            fprintf(stderr, "Error: (%d) %s\n", oscap_err_code(), oscap_err_desc());
+                    return 1;
+            }
+        }
 
-	/* Print options */
-	if (VERBOSE >= 2) {
-		printf("Running options:\n");
-		printf("\tOption Verbose:\r\t\t\t %d\n", VERBOSE);
-		printf("\tOption OVAL:\r\t\t\t %s\n", url_OVAL);
-		printf("\tOption Results:\r\t\t\t %s\n", f_Results);
-		printf("\tOption XCCDF:\r\t\t\t %s\n", url_XCCDF);
-		printf("\tOption XCCDF Profile:\r\t\t\t %s\n", s_Profile);
-	}
-	/**************** GETOPT ***************/
-
-	/*if (url_XCCDF != NULL)
-	   free(url_XCCDF);
-	   if (url_OVAL != NULL)
-	   free(url_OVAL); */
-
-	/* Import OVAL definition file */
-	struct oval_definition_model *def_model = oval_definition_model_import(f_OVAL);
-	if (oscap_err()) {
-		if (VERBOSE >= 0)
-			fprintf(stderr, "Error: (%d) %s\n", oscap_err_code(), oscap_err_desc());
-		return 1;
-
-	}
-
-	/* Create agent session */
-	sess = oval_agent_new_session(def_model);
-
+	/**************** GETOPT END ***************/
 	int retval = 0;
 
-	/* Call OVAL or XCCDF evaluation */
-
+        switch(action->std) {
+            case OSCAP_STD_XCCDF:
+                /* We don't need to switch operations here, only one operation !*/
+                if (action->op != OSCAP_OP_EVAL) {
+		    if (VERBOSE >= 0)
+			    fprintf(stderr, "Error: Bad command for XCCDF !\n");
+		    return 1;
+                }
 #ifdef ENABLE_XCCDF
-	if (f_XCCDF != NULL) {
-		retval = app_evaluate_xccdf(f_XCCDF, f_Results, url_XCCDF, sess, s_Profile);
-	} else if (f_OVAL != NULL)
-		retval = app_evaluate_oval(f_Results, sess);
+                retval = app_evaluate_xccdf(action);
 #else
-	if (f_OVAL != NULL) {
-		retval = app_evaluate_oval(f_Results, sess);
-        }
+                fprintf(stderr, "OSCAP is not compiled with XCCDF support ! Please configure OSCAP library with option --enable-xccdf !\n");
 #endif
+                break;
+            case OSCAP_STD_OVAL:
+                switch (action->op) {
+                    case OSCAP_OP_COLLECT:
+                        retval = app_collect_oval(action);
+                        break;
+                    case OSCAP_OP_EVAL:
+		        retval = app_evaluate_oval(action);
+                        break;
+                    default:
+                        break;
+                }
+                break;
+            default:
+                printf("Action: %d\n", action->std);
+                break;
+        }
 
-        /* Cleanup time */
-	if (f_XCCDF != NULL)
-		free(f_XCCDF);
-	if (f_OVAL != NULL)
-		free(f_OVAL);
-	if (s_Profile != NULL)
-		free(s_Profile);
-	if (f_Results != NULL)
-		free(f_Results);
-
-        oval_agent_destroy_session(sess);
-        oval_definition_model_free(def_model);
+        oscap_action_free(action);
 	oscap_cleanup();
 
         return retval;

@@ -626,7 +626,7 @@ static struct xccdf_default_score * xccdf_item_get_default_score(struct xccdf_it
                         return NULL;
                     }
 
-                    score = oscap_calloc(0, sizeof(struct xccdf_default_score));
+                    score = oscap_alloc(sizeof(struct xccdf_default_score));
                     /* If the node is a Rule, then assign a count of 1 */
                     score->count = 1;
                     /* If the test result is 'pass', assign the node a score of 100, otherwise assign a score of 0 */
@@ -639,7 +639,7 @@ static struct xccdf_default_score * xccdf_item_get_default_score(struct xccdf_it
         case XCCDF_BENCHMARK:
         case XCCDF_GROUP:{
                     /* Init */
-                    score = oscap_calloc(0, sizeof(struct xccdf_default_score));
+                    score = oscap_alloc(sizeof(struct xccdf_default_score));
                     score->count = 0; score->score = 0.0; score->accumulator = 0.0;
                     /* Recurse */
                     struct xccdf_item_iterator * child_it;
@@ -656,6 +656,7 @@ static struct xccdf_default_score * xccdf_item_get_default_score(struct xccdf_it
                                 score->count++;
                                 score->accumulator += xccdf_item_get_weight(child);
                             }
+                            oscap_free(ch_score);
                             /* Normalize */
                             if (score->accumulator != 0) /* Division by zero */
                                 score->score = score->score / score->accumulator;
@@ -694,7 +695,7 @@ static struct xccdf_flat_score * xccdf_item_get_flat_score(struct xccdf_item * i
                         return NULL;
                     }
 
-                    score = oscap_calloc(0, sizeof(struct xccdf_flat_score));
+                    score = oscap_alloc(sizeof(struct xccdf_flat_score));
                     if (unweighted) score->weight = 1.0;
                     else score->weight = xccdf_item_get_weight(item);
                     if ((xccdf_rule_result_get_result(rule_result) == XCCDF_RESULT_PASS) ||
@@ -707,7 +708,7 @@ static struct xccdf_flat_score * xccdf_item_get_flat_score(struct xccdf_item * i
         case XCCDF_BENCHMARK:
         case XCCDF_GROUP:{
                     /* Init */
-                    score = oscap_calloc(0, sizeof(struct xccdf_flat_score));
+                    score = oscap_alloc(sizeof(struct xccdf_flat_score));
                     score->score = 0; score->weight = 0.0;
                     /* Recurse */
                     struct xccdf_item_iterator * child_it;
@@ -722,6 +723,7 @@ static struct xccdf_flat_score * xccdf_item_get_flat_score(struct xccdf_item * i
                             /* If child's count value is not 0, then add the child's wighted score to this node's score */
                             score->score += ch_score->score;
                             score->weight += ch_score->weight;
+                            oscap_free(ch_score);
                     }
                     xccdf_item_iterator_free(child_it);
         } break;
@@ -1091,16 +1093,19 @@ struct xccdf_score * xccdf_policy_get_score(struct xccdf_policy * policy, struct
     if (!strcmp(scsystem, "urn:xcscoring:default")) {
         struct xccdf_default_score * item_score = xccdf_item_get_default_score((struct xccdf_item *) benchmark, test_result);
         xccdf_score_set_score(score, item_score->score);
+        oscap_free(item_score);
     }
     else if (!strcmp(scsystem, "urn:xcscoring:flat")) {
         struct xccdf_flat_score * item_score = xccdf_item_get_flat_score((struct xccdf_item *) benchmark, test_result, false);
         xccdf_score_set_maximum(score, item_score->weight);
         xccdf_score_set_score(score, item_score->score);
+        oscap_free(item_score);
     }
     else if (!strcmp(scsystem, "urn:xcscoring:flat-unweighted")) {
         struct xccdf_flat_score * item_score = xccdf_item_get_flat_score((struct xccdf_item *) benchmark, test_result, true);
         xccdf_score_set_maximum(score, item_score->weight);
         xccdf_score_set_score(score, item_score->score);
+        oscap_free(item_score);
     }
     else if (!strcmp(scsystem, "urn:xcscoring:absolute")) {
         int absolute;
@@ -1108,6 +1113,7 @@ struct xccdf_score * xccdf_policy_get_score(struct xccdf_policy * policy, struct
         xccdf_score_set_maximum(score, item_score->weight);
         absolute = (item_score->score == item_score->weight);
         xccdf_score_set_score(score, absolute);
+        oscap_free(item_score);
     } else {
         xccdf_score_free(score);
         oscap_dprintf("Scoring system \"%s\" is not supported\n", scsystem);
