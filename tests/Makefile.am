@@ -14,7 +14,7 @@ AM_CPPFLAGS =   -I$(top_srcdir)/tests/include \
 		-I$(top_srcdir)/src/OVAL/probes/SEAP/public \
 		-I$(top_srcdir)/src
 
-LDADD = $(top_builddir)/src/libopenscap_testing.la
+LDADD = $(top_builddir)/src/libopenscap_testing.la @pcre_libs@
 EXTRA_DIST = test_common.sh   \
              xmldiff.pl       \
 	     include/assume.h 

@@ -7,7 +7,7 @@ libopenscap_la_LIBADD =
 libopenscap_la_LDFLAGS = -no-undefined -version-info 0:0:0
 
 libopenscap_testing_la_SOURCES = 
-libopenscap_testing_la_LIBADD =
+libopenscap_testing_la_LIBADD = @pcre_libs@
 
 SUBDIRS += common
 libopenscap_la_LIBADD += common/liboscapcommon.la

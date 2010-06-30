@@ -41,6 +41,11 @@
 #include "common/util.h"
 #include "common/debug_priv.h"
 #include "common/_error.h"
+#if defined USE_REGEX_PCRE
+#include <pcre.h>
+#elif defined USE_REGEX_POSIX
+#include <regex.h>
+#endif
 
 /***************************************************************************/
 /* Variable definitions
@@ -1725,8 +1730,92 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_REGEX_CAPTURE(ova
 									     struct oval_component *component,
 									     struct oval_collection *value_collection)
 {
-	return SYSCHAR_FLAG_UNKNOWN;
-	//TODO: Missing implementation
+	oval_syschar_collection_flag_t flag = SYSCHAR_FLAG_UNKNOWN;
+	struct oval_component_iterator *subcomps = oval_component_get_function_components(component);
+	int rc;
+	char *pattern;
+#if defined USE_REGEX_PCRE
+	int erroffset = -1;
+	pcre *re = NULL;
+	const char *error;
+
+	pattern = oval_component_get_regex_pattern(component);
+	re = pcre_compile(pattern, PCRE_UTF8, &error, &erroffset, NULL);
+	if (re == NULL) {
+		oscap_dprintf("ERROR: pcre_compile() failed: \"%s\".\n", error);
+		return SYSCHAR_FLAG_ERROR;
+	}
+#elif defined USE_REGEX_POSIX
+	regex_t re;
+
+	pattern = oval_component_get_regex_pattern(component);
+	if ((rc = regcomp(&re, pattern, REG_EXTENDED | REG_NEWLINE)) != 0) {
+		oscap_dprintf("ERROR: regcomp() failed: %d.\n", rc);
+		return SYSCHAR_FLAG_ERROR;
+	}
+#endif
+
+	if (oval_component_iterator_has_more(subcomps)) {	//Only first component is considered
+		struct oval_component *subcomp = oval_component_iterator_next(subcomps);
+		struct oval_collection *subcoll = oval_collection_new();
+		flag = oval_component_eval_common(argu, subcomp, subcoll);
+		struct oval_value_iterator *values = (struct oval_value_iterator *)oval_collection_iterator(subcoll);
+		while (oval_value_iterator_has_more(values)) {
+			struct oval_value *value = oval_value_iterator_next(values);
+			char *text = oval_value_get_text(value);
+			char *nval;
+#if defined USE_REGEX_PCRE
+			int i, ovector[60], ovector_len = sizeof (ovector) / sizeof (ovector[0]);
+
+			for (i = 0; i < ovector_len; ++i)
+				ovector[i] = -1;
+
+			rc = pcre_exec(re, NULL, text, strlen(text), 0, 0, ovector, ovector_len);
+			if (rc < -1) {
+				oscap_dprintf("ERROR: pcre_exec() failed: %d.\n", rc);
+				flag = SYSCHAR_FLAG_ERROR;
+				break;
+			}
+
+			if (rc > 1 && ovector[2] != -1) {
+				int substr_len = ovector[3] - ovector[2];
+
+				nval = oscap_alloc(substr_len + 1);
+				memcpy(nval, text + ovector[2], substr_len);
+				nval[substr_len] = '\0';
+			} else {
+				nval = NULL;
+			}
+#elif defined USE_REGEX_POSIX
+			regmatch_t pmatch[40];
+			int pmatch_len = sizeof (pmatch) / sizeof (pmatch[0]);
+
+			rc = regexec(&re, text, pmatch_len, pmatch, 0);
+			if (rc != REG_NOMATCH && pmatch[1].rm_so != -1) {
+				int substr_len = pmatch[1].rm_eo - pmatch[1].rm_so;
+
+				nval = oscap_alloc(substr_len + 1);
+				memcpy(nval, text + pmatch[1].rm_so, substr_len);
+				nval[substr_len] = '\0';
+			} else {
+				nval = NULL;
+			}
+#endif
+			flag = SYSCHAR_FLAG_COMPLETE;
+
+			if (nval != NULL) {
+				value = oval_value_new(OVAL_DATATYPE_STRING, nval);
+				oscap_free(nval);
+			} else {
+				value = oval_value_new(OVAL_DATATYPE_STRING, "");
+			}
+			oval_collection_add(value_collection, value);
+		}
+		oval_value_iterator_free(values);
+		oval_collection_free_items(subcoll, (oscap_destruct_func) oval_value_free);
+	}
+	oval_component_iterator_free(subcomps);
+	return flag;
 }
 
 static oval_syschar_collection_flag_t _oval_component_evaluate_ARITHMETIC(oval_argu_t *argu,
