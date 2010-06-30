@@ -213,8 +213,12 @@ SEXP_t *probe_main(SEXP_t *probe_in, int *err, void *arg)
 
 	probe_out = SEXP_list_new(NULL);
 	if (get_ifs(name_ent, probe_out)) {
-		*err = PROBE_EUNKNOWN;
-		return NULL;
+                SEXP_t *eitm;
+
+                eitm = probe_item_creat ("interface_item", NULL, NULL);
+                probe_item_setstatus (eitm, OVAL_STATUS_ERROR);
+                SEXP_list_add(probe_out, eitm);
+                SEXP_free(eitm);
 	}
 
 	*err = 0;

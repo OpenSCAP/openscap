@@ -150,9 +150,12 @@ SEXP_t *probe_main(SEXP_t *object, int *err, void *arg)
 
 	// Now we check the file...
 	if (read_shadow(ent, probe_out)) {
-		*err = PROBE_EACCES;
-		SEXP_free(probe_out);
-		probe_out = NULL;
+                SEXP_t *eitm;
+
+                eitm = probe_item_creat ("shadow_item", NULL, NULL);
+                probe_item_setstatus (eitm, OVAL_STATUS_ERROR);
+                SEXP_list_add(probe_out, eitm);
+                SEXP_free(eitm);
 	}
 
 	SEXP_free(ent);
