@@ -205,7 +205,7 @@ static void print_versions()
 {
 
 	fprintf(stdout,
-		"OSCAP util (oscap) 1.0\n"
+		"OSCAP util (oscap) 0.5.12\n"
                 "Copyright 2010 Red Hat Inc., Durham, North Carolina.\n"
                 "\n"
                 "This library is free software; you can redistribute it and/or modify it under \n"

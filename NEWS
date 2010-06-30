@@ -1,3 +1,19 @@
+openscap-0.5.12                                                 30-06-2010
+- OVAL high level API
+- OVAL split system querying and evaluation
+- OVAL variables rebind functionality 
+- XCCDF_POLICY - OVAL integration
+- XCCDF_POLICY - scanner implementation
+- XCCDF - implementation resolve(),
+- XCCDF - fixes in clone()
+- XCCDF - fixes and test for export()
+- XCCDF - value handling
+- probes - documentation
+- probes - reset()
+- probes - leaks
+- bindings  - callback interface
+- transform oscap-scan to oscap toolkit
+
 openscap-0.5.11							26-05-2010
 * leak fixes on side of probes
 * variables support almost in all probes

@@ -8,7 +8,7 @@
 #		but rather runs once. The results of security audit are 
 #		stored in /var/log/oscap-scan.xml.log
 #
-# processname: /usr/bin/oscap-scan
+# processname: /usr/bin/oscap
 # config: /etc/sysconfig/oscap-scan
 #
 # Return values according to LSB for all commands but status:
@@ -22,7 +22,7 @@
 # 7 - program is not running
 
 PATH=/sbin:/bin:/usr/sbin:/usr/bin
-prog="oscap-scan"
+prog="oscap"
 
 # Source function library.
 . /etc/rc.d/init.d/functions
@@ -41,7 +41,7 @@ test -f /etc/sysconfig/oscap-scan && . /etc/sysconfig/oscap-scan
 RETVAL=0
 
 start() {
-	test -x /usr/bin/oscap-scan  || exit 5
+	test -x /usr/bin/oscap  || exit 5
 	# Now check that the sysconfig is found and has important things
 	# configured
 	test -f /etc/sysconfig/oscap-scan || exit 6
