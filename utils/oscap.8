@@ -1,0 +1,61 @@
+.TH OSCAP: "30" "Jun 2010" "Red Hat" "System Administration Utilities"
+
+.SH NAME
+oscap \- OpenSCAP command line tool
+
+.SH SYNOPSIS
+\fBoscap\fR [\fIgeneral-options\fR] \fBmodule\fR operation [\fIoperation-options-and-arguments\fR]
+
+.SH DESCRIPTION
+\fBoscap\fP is Security Content Automation Protocol (SCAP) toolkit based on OpenSCAP library. It provides various functions for 
+different SCAP specifications(modules).
+
+.SH GENERAL OPTIONS
+.TP
+\fB\-V, -\-version\fR
+SCAP specification supported by the module.
+.TP
+\fB\-q, \-\-quiet\fR
+No output for certain operations, only return code.
+.TP
+\fB\-h, \-\-help\fR
+Help screen.
+
+.SH MODULES
+.TP
+\fBoval\fR
+Open Vulnerability and Assessment Language.
+.TP
+\fBxccdf\fR
+The eXtensible Configuration Checklist Description Format.
+
+.SH OVAL OPERATIONS
+.TP
+.B collect\fR oval-definitions-file
+.RS
+Probe the system and gather system characteristics for objects in OVAL Definition file. Print output (OVAL System Characteristic) to standart output.
+.RE
+.PP
+.B eval\fR [\fIoptions\fR] oval-definitions-file
+.RS
+Probe the system and evaluate all definitions from OVAL Definition file. Print result of each definition to standard output. oscap returns 0 if all definitions pass. If there is an error during evaluation, the return code is 1. If there is at least one failed result definition, oscap-scan finishes with return code 2.
+.RE
+.TP
+\fB\-\-result-file FILE\fR
+Write OVAL Results into file.
+
+.SH XCCDF OPERATIONS
+.TP
+.B eval\fR [\fIoptions\fR] oval-definitions-file xccdf-file
+.RS
+Perform evaluation driven by XCCDF file and use OVAL as checking engine. Print result of each rule to standard output. oscap returns 0 if all rules pass. If there is an error during evaluation, the return code is 1. If there is at least one failed rule, oscap-scan finishes with return code 2.
+.RE
+.TP
+\fB\-\-profile PROFILE\fR
+Select profile from XCCDF document, otherwise the first profile is used.
+.TP
+\fB\-\-result-file FILE\fR
+Write XCCDF results into file.
+
+.SH AUTHOR
+Peter Vrabec <pvrabec@redhat.com>

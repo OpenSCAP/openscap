@@ -201,6 +201,37 @@ static void print_oval_usage(const char *pname, FILE * out, char * msg)
         if (msg != NULL) fprintf(out, "\n%s\n", msg);
 }
 
+static void print_versions()
+{
+
+	fprintf(stdout,
+		"OSCAP util (oscap) 1.0\n"
+                "Copyright 2010 Red Hat Inc., Durham, North Carolina.\n"
+                "\n"
+                "This library is free software; you can redistribute it and/or modify it under \n"
+                "the terms of the GNU Lesser General Public License as published by the Free Software \n"
+                "Foundation; either version 2.1 of the License, or (at your option) any later version.\n"
+                "\n");
+        fprintf(stdout,
+                "OVAL Version: \r\t\t%s\n"
+               , oval_definition_model_supported());
+        fprintf(stdout,
+                "XCCDF Version: \r\t\t%s\n"
+               , xccdf_benchmark_supported());
+        /*fprintf(stdout,
+                "CVSS Version: \r\t\t%s\n"
+               , cvss_model_supported());
+        fprintf(stdout,
+                "CCE Version: \r\t\t%s\n"
+               , cce_supported());
+        fprintf(stdout,
+                "CPE Version: \r\t\t%s (name) %s (dict) %s (lang)\n"
+               , cpe_name_supported(), cpe_dict_model_supported(), cpe_lang_model_supported());
+        fprintf(stdout,
+                "CVE Version: \r\t\t%d\n"
+               , cve_model_supported());*/
+}
+
 /**
  * Function with CURL support to download file from remote storage. 
  * Function takes url (which can be path to local file), test if we can stat the file. If 
@@ -393,8 +424,43 @@ static int app_oval_callback(const char *id, int result, void *usr)
 
 static int app_collect_oval(const struct oscap_action * action)
 {
+	int ret;
+        
+        /* import definitions */
+        struct oval_definition_model * def_model = oval_definition_model_import(action->f_oval);
 
-    return 0;
+        /* create empty syschar model */
+        struct oval_syschar_model *sys_model = oval_syschar_model_new(def_model);
+
+        /* create probe session */
+        struct oval_probe_session * pb_sess = oval_probe_session_new(sys_model);
+
+        /* query sysinfo */
+        ret = oval_probe_session_query_sysinfo(pb_sess);
+        if (ret != 0) { 
+                oval_probe_session_destroy(pb_sess);
+                oval_syschar_model_free(sys_model);
+                oval_definition_model_free(def_model);
+                return 1;
+        }  
+        /* query objects */
+        ret = oval_probe_session_query_objects(pb_sess);
+        if (ret != 0) { 
+                oval_probe_session_destroy(pb_sess);
+                oval_syschar_model_free(sys_model);
+                oval_definition_model_free(def_model);
+                return 1;
+        }  
+ 
+        /* report */
+        oval_syschar_model_export(sys_model, "/dev/stdout");
+
+        /* destroy */
+        oval_probe_session_destroy(pb_sess);
+        oval_syschar_model_free(sys_model);
+        oval_definition_model_free(def_model);
+
+        return 0;
 }
 
 /**
@@ -649,10 +715,10 @@ int main(int argc, char **argv)
 			VERBOSE = -1;
 			break;
 		case 'h':   /* HELP */
-			print_usage(argv[0], stderr, NULL);
+			print_usage(argv[0], stdout, NULL);
 			return 0;
 		case 'V':   /* VERSIONS */
-                        /* TODO */
+                        print_versions();
 			return 0;
 		default:
                         printf("FOUND OPTION: %d-%d\n", optind, optopt);
