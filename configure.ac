@@ -27,7 +27,7 @@ AC_PROG_MAKE_SET
 AC_PROG_LIBTOOL
 
 # swig
-AC_PROG_SWIG([1.3.29])
+AC_PROG_SWIG([])
 
 # Compiler flags
 CFLAGS="$CFLAGS -std=c99 -W -Wall -Wnonnull -Wshadow -Wformat -Wundef -Wno-unused-parameter -Wmissing-prototypes -Wno-unknown-pragmas -D_GNU_SOURCE -DOSCAP_THREAD_SAFE"
