@@ -330,17 +330,11 @@ static int app_evaluate_xccdf(const struct oscap_action * action)
 		return -1;
 	}
 
-        /* Initialize OVAL Agent data */
-        struct oval_agent_cb_data *usr = oval_agent_cb_data_new();
-        oval_agent_cb_data_set_session(usr, sess);
-        oval_agent_cb_data_set_callback(usr, NULL, NULL);
-        oval_agent_cb_data_set_usr(usr, (void *) policy_model);
-
 	/* Register callback */
         xccdf_policy_model_register_output_callback(policy_model, callback, NULL);
-	xccdf_policy_model_register_callback(policy_model,
+	xccdf_policy_model_register_engine_callback(policy_model,
 					     "http://oval.mitre.org/XMLSchema/oval-definitions-5",
-					     oval_agent_eval_rule, (void *) usr);
+					     oval_agent_eval_rule, (void *) sess);
 	/* Perform evaluation */
 	struct xccdf_result * ritem = xccdf_policy_evaluate(policy);
 
@@ -383,7 +377,6 @@ static int app_evaluate_xccdf(const struct oscap_action * action)
 	/* Clear & End */
         oval_agent_destroy_session(sess);
         oval_definition_model_free(def_model);
-        oval_agent_cb_data_free(usr);
 	xccdf_policy_model_free(policy_model);
 
 	return retval;

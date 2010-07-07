@@ -45,13 +45,6 @@
 
 #ifdef ENABLE_XCCDF
 #include "xccdf_policy.h"
-
-/**
- * @struct oval_agent_cb_data
- * Handle all callback data that are needed by xccdf_policy_eval_rule_cb_t
- */
-struct oval_agent_cb_data;
-
 #endif
 
 struct oval_agent_session;
@@ -106,79 +99,6 @@ void oval_agent_destroy_session(oval_agent_session_t * ag_sess);
 
 /************************************************************/
 /**
- * @name Getters
- * Return value is pointer to structure's member. Do not free unless you null the pointer in the structure. 
- * Use remove function otherwise.
- * @{
- * */
-
-/**
- * Get session of OVAL Agent callback data
- * @param data OVAL Agent callback data
- * @memberof oval_agent_cb_data
- * @return oval_agent_session structure
- */
-struct oval_agent_session * oval_agent_cb_data_get_session(const struct oval_agent_cb_data * data);
-
-/**
- * Get callback of OVAL Agent callback data
- * @param data OVAL Agent callback data
- * @memberof oval_agent_cb_data
- * @return oval_agent_result_cb_t callback
- */
-oval_agent_result_cb_t * oval_agent_cb_data_get_callback(const struct oval_agent_cb_data * data);
-
-/**
- * Get usr data of OVAL Agent callback data
- * @param data OVAL Agent callback data
- * @memberof oval_agent_cb_data
- * @return void pointer to user data structure
- */
-void * oval_agent_cb_data_get_usr(const struct oval_agent_cb_data * data);
-
-/************************************************************/
-/** @} End of Getters group */
-
-/************************************************************/
-/**
- * @name Setters
- * For lists use add functions. Parameters of set functions are duplicated in memory and need to 
- * be freed by caller.
- * @{
- */
-
-/**
- * Set the OVAL Agent session to OVAL Agent callback data
- * @param data Oval Agent callback data
- * @param session OVAL Agent Session
- * @memberof oval_agent_cb_data
- * @return Boolean
- */
-bool oval_agent_cb_data_set_session(struct oval_agent_cb_data * data, struct oval_agent_session * session);
-
-/**
- * Set the OVAL Agent Result callback to OVAL Agent callback data
- * @param data Oval Agent callback data
- * @param callback OVAL Agent Result callback
- * @memberof oval_agent_cb_data
- * @return Boolean
- */
-bool oval_agent_cb_data_set_callback(struct oval_agent_cb_data * data, oval_agent_result_cb_t * callback, void * usr);
-
-/**
- * Set the User data to OVAL Agent callback data
- * @param data Oval Agent callback data
- * @param usr User data
- * @memberof oval_agent_cb_data
- * @return Boolean
- */
-bool oval_agent_cb_data_set_usr(struct oval_agent_cb_data * data, void * usr);
-
-/************************************************************/
-/** @} End of Setters group */
-
-/************************************************************/
-/**
  * @name Evaluators
  * @{
  * */
@@ -201,11 +121,12 @@ typedef xccdf_test_result_type_t (xccdf_policy_eval_rule_cb_t) (struct xccdf_pol
  * Next example shows common use of this function in evaluation proccess of XCCDF file.
  * \par
  * \code
+ *  struct oval_definition_model * def_model = oval_definition_model_import(oval_file);
  *  struct xccdf_benchmark * benchmark = xccdf_benchmark_import(file);
  *  struct xccdf_policy_model * policy_model = xccdf_policy_model_new(benchmark);
- *  struct oval_agent_cb_data * usr = oval_agent_cb_data_new();
+ *  struct oval_agent_session * sess = oval_agent_new_session(def_model);
  *  ...
- *  xccdf_policy_model_register_callback(policy_model, "http://oval.mitre.org/XMLSchema/oval-definitions-5", oval_agent_eval_rule, (void *) usr);
+ *  xccdf_policy_model_register_engine_callback(policy_model, "http://oval.mitre.org/XMLSchema/oval-definitions-5", oval_agent_eval_rule, (void *) sess);
  * \endcode
  * 
  */
@@ -231,29 +152,6 @@ void oval_agent_export_sysinfo_to_xccdf_result(struct oval_agent_session * sessi
 /************************************************************/
 /** @} End of Evaluators group */
 
-/**
- * Create new OVAL Agent callback data
- * \par Structure:
- * \arg oval_agent_session
- * \arg oval_agent_result_cb_t
- * \arg usr
- * \par Example
- * \code
- *  struct oval_agent_cb_data *usr = oval_agent_cb_data_new();
- *  oval_agent_cb_data_set_session(usr, session);
- *  oval_agent_cb_data_set_callback(usr, callback);
- *  oval_agent_cb_data_set_usr(usr, (void *) usr_structure);
- * \endcode
- * @memberof oval_agent_cb_data
- */
-struct oval_agent_cb_data * oval_agent_cb_data_new(void);
-
-/**
- * Free function of OVAL Agent callback data
- * @param data OVAL Agent callback data
- * @memberof oval_agent_cb_data
- */
-void oval_agent_cb_data_free(struct oval_agent_cb_data * data);
 #endif
 
 /**

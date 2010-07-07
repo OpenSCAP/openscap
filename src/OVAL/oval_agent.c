@@ -83,48 +83,6 @@ struct oval_agent_session {
 
 
 #ifdef ENABLE_XCCDF
-
-struct oval_agent_cb_data {
-        struct oval_agent_session   * session;  ///< OVAL Agent session
-        oval_agent_result_cb_t      * callback; ///< User callback that is called after evaluation
-        void                        * usr;      ///< User data passed to callback
-};
-
-/* Macros to generate iterators, getters and setters */
-OSCAP_ACCESSOR_SIMPLE(struct oval_agent_session *, oval_agent_cb_data, session)
-OSCAP_GETTER(oval_agent_result_cb_t *, oval_agent_cb_data, callback)
-OSCAP_ACCESSOR_SIMPLE(void *, oval_agent_cb_data, usr)
-
-struct oval_agent_cb_data * oval_agent_cb_data_new(void)
-{
-    struct oval_agent_cb_data * data = oscap_alloc(sizeof(struct oval_agent_cb_data));
-
-    data->session = NULL;
-    data->callback = NULL;
-    data->usr = NULL;
-
-    return data;
-}
-
-void oval_agent_cb_data_free(struct oval_agent_cb_data * data)
-{
-    if (data == NULL) return;
-
-    //if (data->session != NULL) oval_agent_destroy_session(data->session);
-    // We don't want to free usr data, user has to free it by himself
-    data->callback = NULL;
-    oscap_free(data);
-}
-
-bool oval_agent_cb_data_set_callback(struct oval_agent_cb_data * data, oval_agent_result_cb_t * callback, void * usr)
-{
-        if (data == NULL) return false;
-        data->callback = callback;
-        data->usr = usr;
-        return true;
-}
-
-
 /**
  * Specification of structure for transformation of OVAL Result type
  * to XCCDF result type.
@@ -1596,20 +1554,16 @@ xccdf_test_result_type_t oval_agent_eval_rule(struct xccdf_policy *policy, const
 {
         __attribute__nonnull__(usr);
         oval_result_t result;
-	struct oval_agent_cb_data * data = (struct oval_agent_cb_data *) usr;
+	struct oval_agent_session * sess = (struct oval_agent_session *) usr;
 
         /* If there is no such OVAL definition, return XCCDF_RESUL_NOT_CHECKED. XDCCDF should look for alternative definition in this case. */
-        if (oval_definition_model_get_definition(oval_results_model_get_definition_model(oval_agent_get_results_model(data->session)), id) == NULL)
+        if (oval_definition_model_get_definition(oval_results_model_get_definition_model(oval_agent_get_results_model(sess)), id) == NULL)
                 return XCCDF_RESULT_NOT_CHECKED;
 
         /* Resolve variables */
-        oval_agent_resolve_variables(data->session, it);
+        oval_agent_resolve_variables(sess, it);
         /* Evaluate OVAL definition */
-	result = oval_agent_eval_definition(data->session, id);
-
-        /* Call user callback */
-        if (data->callback != NULL)
-                (*data->callback) (rule_id, xccdf_get_result_from_oval(result), (void *) data->usr);
+	result = oval_agent_eval_definition(sess, id);
 
 	return xccdf_get_result_from_oval(result);
 }

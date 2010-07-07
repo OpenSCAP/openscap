@@ -755,7 +755,7 @@ const char * xccdf_policy_get_id(struct xccdf_policy * policy)
  * Funtion to register callback for particular checking system. System is used for evaluating content
  * of rules.
  */
-bool xccdf_policy_model_register_callback(struct xccdf_policy_model * model, char * sys, void * func, void * usr)
+bool xccdf_policy_model_register_engine_callback(struct xccdf_policy_model * model, char * sys, void * func, void * usr)
 {
 
         __attribute__nonnull__(model);
