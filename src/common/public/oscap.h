@@ -370,7 +370,7 @@ void oscap_nsinfo_entry_iterator_free(struct oscap_nsinfo_entry_iterator *it);
  * @{
  */
 /// Validate a xml file against given xml schema
-bool oscap_validate_xml(const char *xmlfile, const char *schemafile, struct oscap_reporter* reporter);
+bool oscap_validate_xml(const char *xmlfile, const char *schemafile, oscap_reporter reporter, void *reporter_arg);
 /************************************************************/
 /** @} End of Evaluators group */
 

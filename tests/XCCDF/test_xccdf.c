@@ -22,7 +22,9 @@
 
 
 #include <xccdf.h>
+#include <stdio.h>
 #include <string.h>
+
 
 int main(int argc, char **argv)
 {
@@ -34,6 +36,18 @@ int main(int argc, char **argv)
 		if (bench == NULL) return 1;
 		xccdf_benchmark_export(bench, argv[3]);
 		return 0;
+	}
+	else if (strcmp(argv[1], "--validate") == 0) {
+		if (argc != 4) {
+			fprintf(stderr, "Usage: %s --validate xml_file schema_file\n", argv[0]);
+			return 1;
+		}
+
+		oscap_validate_xml(argv[2], argv[3], oscap_reporter_fd, stdout);
+
+	}
+	else {
+		fprintf(stderr, "Unknown mode: %s\n", argv[1]);
 	}
 
 	return 1;

@@ -41,6 +41,11 @@ OSCAP_HIDDEN_START;
  * @{
  */
 
+struct oscap_reporter_context {
+	oscap_reporter reporter;
+	void *arg;
+};
+
 /// Reporter cast
 #define XREPORTER(r) ((struct oscap_reporter*) r)
 
@@ -75,13 +80,13 @@ bool oscap_reporter_message_set_user3ptr(struct oscap_reporter_message *msg, voi
  * Feed a XML error to the reporter.
  * @memberof oscap_reporter
  */
-void oscap_reporter_report_xml(struct oscap_reporter *reporter, xmlErrorPtr error);
+void oscap_reporter_report_xml(struct oscap_reporter_context *rctxt, xmlErrorPtr error);
 
 /**
  * Report standard C error (errno based) to a reporter
  * @memberof oscap_reporter
  */
-void oscap_reporter_report_libc(struct oscap_reporter *reporter);
+void oscap_reporter_report_libc(oscap_reporter reporter, void *arg);
 
 /** @} */
 /** @} */

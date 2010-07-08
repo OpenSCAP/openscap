@@ -84,7 +84,7 @@ static void oscap_xml_validity_handler(void *user, xmlErrorPtr error)
     oscap_reporter_report_xml(user, error);
 }
 
-bool oscap_validate_xml(const char *xmlfile, const char *schemafile, struct oscap_reporter *reporter)
+bool oscap_validate_xml(const char *xmlfile, const char *schemafile, oscap_reporter reporter, void *arg)
 {
 	assert(xmlfile != NULL);
 	assert(schemafile != NULL); // TODO: validate even w/o schema, just for well-formness
@@ -93,6 +93,7 @@ bool oscap_validate_xml(const char *xmlfile, const char *schemafile, struct osca
 	xmlSchemaParserCtxtPtr parser_ctxt = NULL;
 	xmlSchemaPtr schema = NULL;
 	xmlSchemaValidCtxtPtr ctxt = NULL;
+	struct oscap_reporter_context reporter_ctxt = { reporter, arg };
 
 	parser_ctxt = xmlSchemaNewParserCtxt(schemafile);
 	if (parser_ctxt == NULL) {
@@ -100,7 +101,7 @@ bool oscap_validate_xml(const char *xmlfile, const char *schemafile, struct osca
 		goto cleanup;
 	}
 
-    xmlSchemaSetParserStructuredErrors(parser_ctxt, oscap_xml_validity_handler, reporter);
+    xmlSchemaSetParserStructuredErrors(parser_ctxt, oscap_xml_validity_handler, &reporter_ctxt);
 
 	schema = xmlSchemaParse(parser_ctxt);
 	if (schema == NULL) {
@@ -114,7 +115,7 @@ bool oscap_validate_xml(const char *xmlfile, const char *schemafile, struct osca
 		goto cleanup;
 	}
 
-    xmlSchemaSetValidStructuredErrors(ctxt, oscap_xml_validity_handler, reporter);
+    xmlSchemaSetValidStructuredErrors(ctxt, oscap_xml_validity_handler, &reporter_ctxt);
 
 	ret = xmlSchemaValidateFile(ctxt, xmlfile, 0);
 	switch (ret) {

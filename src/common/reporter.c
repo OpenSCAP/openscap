@@ -28,17 +28,6 @@
 #include <errno.h>
 #include <limits.h>
 
-struct oscap_reporter_type {
-	oscap_reporter_init_func    init;
-	oscap_reporter_report_func  report;
-	oscap_reporter_destroy_func destroy;
-};
-
-struct oscap_reporter {
-	const struct oscap_reporter_type *type;
-	void *userdata;
-};
-
 union oscap_reporter_userdata {
 	int   num;
 	char *str;
@@ -163,7 +152,6 @@ OSCAP_USERDATA_ACCESSOR(3)
 OSCAP_ACCESSOR_SIMPLE(oscap_reporter_family_t, oscap_reporter_message, family)
 OSCAP_ACCESSOR_SIMPLE(oscap_reporter_code_t, oscap_reporter_message, code)
 OSCAP_ACCESSOR_STRING(oscap_reporter_message, string)
-OSCAP_ACCESSOR_STRING(oscap_reporter, userdata)
 
 #define USERRELEASE(N) do { oscap_userdata_release(&msg->user##N, msg->flags.u##N##t); } while(0)
 void oscap_reporter_message_free(struct oscap_reporter_message *msg)
@@ -174,198 +162,53 @@ void oscap_reporter_message_free(struct oscap_reporter_message *msg)
 		oscap_free(msg);
 	}
 }
-#undef USERRELEASE
 
-static bool oscap_reporter_empty_init(void** user) { return true; }
-static void oscap_reporter_empty_report(const struct oscap_reporter_message *msg, void* user) {}
-static void oscap_reporter_empty_destroy(void* user) {}
-
-struct oscap_reporter_type *oscap_reporter_type_new(
-						oscap_reporter_init_func    init,
-						oscap_reporter_report_func  report,
-						oscap_reporter_destroy_func destroy)
-{
-	struct oscap_reporter_type *reptype = oscap_calloc(1, sizeof(struct oscap_reporter_type));
-	reptype->init    = (init    ? init    : oscap_reporter_empty_init   );
-	reptype->report  = (report  ? report  : oscap_reporter_empty_report );
-	reptype->destroy = (destroy ? destroy : oscap_reporter_empty_destroy);
-	return reptype;
-}
-
-void oscap_reporter_type_free(struct oscap_reporter_type *reptype)
-{
-	oscap_free(reptype);
-}
-
-
-struct oscap_reporter *oscap_reporter_new(const struct oscap_reporter_type *type, void *user)
-{
-	assert(type != NULL);
-
-	struct oscap_reporter *reporter = oscap_calloc(1, sizeof(struct oscap_reporter));
-	reporter->userdata = user;
-	reporter->type = type;
-
-	if (!reporter->type->init(&reporter->userdata)) {
-		oscap_free(reporter);
-		return NULL;
-	}
-
-	return reporter;
-}
-
-void oscap_reporter_free(struct oscap_reporter *reporter)
-{
-	if (reporter) {
-		reporter->type->destroy(reporter->userdata);
-		oscap_free(reporter);
-	}
-}
-
-void oscap_reporter_dispatch(struct oscap_reporter *reporter, const struct oscap_reporter_message *msg)
+void oscap_reporter_dispatch(oscap_reporter reporter, const struct oscap_reporter_message *msg, void *arg)
 {
 	assert(reporter != NULL);
-	reporter->type->report(msg, reporter->userdata);
+	reporter(msg, arg);
 }
 
-void oscap_reporter_report(struct oscap_reporter *reporter, struct oscap_reporter_message *msg)
+void oscap_reporter_report(oscap_reporter reporter, struct oscap_reporter_message *msg, void *arg)
 {
 	if (reporter != NULL && msg != NULL)
-		oscap_reporter_dispatch(reporter, msg);
+		oscap_reporter_dispatch(reporter, msg, arg);
 	oscap_reporter_message_free(msg);
 }
 
-void oscap_reporter_report_fmt(struct oscap_reporter *reporter, oscap_reporter_family_t family, oscap_reporter_code_t code, const char *fmt, ...)
+void oscap_reporter_report_fmt(oscap_reporter reporter, void *arg, oscap_reporter_family_t family, oscap_reporter_code_t code, const char *fmt, ...)
 {
 	if (reporter == NULL) return;
     va_list ap;
     va_start(ap, fmt);
-	oscap_reporter_report(reporter, oscap_reporter_message_new_arg(family, code, fmt, ap));
+	oscap_reporter_report(reporter, oscap_reporter_message_new_arg(family, code, fmt, ap), arg);
     va_end(ap);
 }
 
 // ================= reporting helpers ===================
 
-void oscap_reporter_report_xml(struct oscap_reporter *reporter, xmlErrorPtr error)
+void oscap_reporter_report_xml(struct oscap_reporter_context *rctxt, xmlErrorPtr error)
 {
-    if (reporter == NULL) return;
+    if (rctxt == NULL || rctxt->reporter == NULL) return;
     if (error == NULL) error = xmlGetLastError();
     if (error == NULL) return;
     struct oscap_reporter_message *msg = oscap_reporter_message_new_fill(OSCAP_REPORTER_FAMILY_XML, error->code, error->message);
     oscap_reporter_message_set_user1str(msg, error->file);
     oscap_reporter_message_set_user2num(msg, error->line);
-    oscap_reporter_report(reporter, msg);
+    oscap_reporter_report(rctxt->reporter, msg, rctxt->arg);
 }
 
-void oscap_reporter_report_libc(struct oscap_reporter *reporter)
+void oscap_reporter_report_libc(oscap_reporter reporter, void *arg)
 {
     if (reporter == NULL) return;
-    oscap_reporter_report(reporter, oscap_reporter_message_new_fill(OSCAP_EFAMILY_GLIBC, errno, strerror(errno)));
+    oscap_reporter_report(reporter, oscap_reporter_message_new_fill(OSCAP_EFAMILY_GLIBC, errno, strerror(errno)), arg);
 }
 
-// =============== stdout reporter =====================
+// ================== standard reporters =================
 
-static void oscap_reporter_stdout_report(const struct oscap_reporter_message *msg, void *user)
+void oscap_reporter_fd(const struct oscap_reporter_message *msg, void *arg)
 {
-	printf("%d.%d %s: %s\n", msg->family, msg->code, (user ? (const char *) user : ""), msg->string);
+	if (arg == NULL) return;
+	fprintf(arg, "%d.%d: %s\n", msg->family, msg->code, msg->string);
 }
 
-const struct oscap_reporter_type OSCAP_REPORTER_STDOUT = {
-	.init    = oscap_reporter_empty_init,
-	.report  = oscap_reporter_stdout_report,
-	.destroy = oscap_reporter_empty_destroy
-};
-
-// ===================== multireporter ===================
-
-static bool oscap_reporter_multi_init(void** user)
-{
-    if (*user != NULL) return false;
-    *user = oscap_list_new();
-    return true;
-}
-
-static void oscap_reporter_multi_report(const struct oscap_reporter_message *msg, void* user)
-{
-    assert(msg != NULL);
-    assert(user != NULL);
-
-    struct oscap_reporter *reporter;
-    struct oscap_iterator *it = oscap_iterator_new(user);
-
-    while (oscap_iterator_has_more(it)) {
-        reporter = oscap_iterator_next(it);
-        oscap_reporter_dispatch(reporter, msg);
-    }
-
-    oscap_iterator_free(it);
-}
-
-static void oscap_reporter_multi_destroy(void* user)
-{
-    assert(user != NULL);
-    oscap_list_free(user, (oscap_destruct_func) oscap_reporter_free);
-}
-
-void oscap_reporter_multi_add_reporter(struct oscap_reporter *multi, struct oscap_reporter *reporter)
-{
-    assert(multi != NULL);
-    if (reporter != NULL)
-        oscap_list_add(multi->userdata, reporter);
-}
-
-const struct oscap_reporter_type OSCAP_REPORTER_MULTI = {
-	.init    = oscap_reporter_multi_init,
-	.report  = oscap_reporter_multi_report,
-	.destroy = oscap_reporter_multi_destroy
-};
-
-// =============== filter reporter ===================
-
-struct oscap_reporter_filter_data {
-    struct oscap_reporter *pos_child;
-    struct oscap_reporter *neg_child;
-    oscap_reporter_family_t family;
-    oscap_reporter_code_t min_code;
-    oscap_reporter_code_t max_code;
-};
-
-#define XRFDATA(x) ((struct oscap_reporter_filter_data*) x)
-
-static void oscap_reporter_filter_report(const struct oscap_reporter_message *msg, void* user)
-{
-    assert(user != NULL);
-
-	struct oscap_reporter *reporter = NULL;
-    if (XRFDATA(user)->family == msg->family && XRFDATA(user)->min_code <= msg->code && XRFDATA(user)->max_code >= msg->code)
-        reporter = XRFDATA(user)->pos_child;
-	else reporter = XRFDATA(user)->neg_child;
-	oscap_reporter_dispatch(reporter, msg);
-}
-
-static void oscap_reporter_filter_destroy(void* user)
-{
-    assert(user != NULL);
-    oscap_reporter_free(XRFDATA(user)->pos_child);
-    oscap_reporter_free(XRFDATA(user)->neg_child);
-    oscap_free(user);
-}
-
-static const struct oscap_reporter_type OSCAP_REPORTER_FILTER = {
-	.init    = oscap_reporter_empty_init,
-	.report  = oscap_reporter_filter_report,
-	.destroy = oscap_reporter_filter_destroy
-};
-
-struct oscap_reporter *oscap_reporter_new_filter(struct oscap_reporter *pos_child, struct oscap_reporter *neg_child,
-            oscap_reporter_family_t family, oscap_reporter_code_t min_code, oscap_reporter_code_t max_code)
-{
-    OSCAP_SALLOC(oscap_reporter_filter_data, user);
-    user->pos_child = pos_child;
-    user->neg_child = neg_child;
-    user->family    = family;
-    user->min_code  = min_code;
-    user->max_code  = max_code;
-
-    return oscap_reporter_new(&OSCAP_REPORTER_FILTER, user);
-}
