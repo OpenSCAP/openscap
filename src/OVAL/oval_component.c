@@ -1818,12 +1818,108 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_REGEX_CAPTURE(ova
 	return flag;
 }
 
+struct val_col_lst_s {
+	void *val_col;
+	struct val_col_lst_s *next;
+};
+
+static void _oval_component_evaluate_ARITHMETIC_rec(struct val_col_lst_s *val_col_lst, double val,
+						    oval_datatype_t datatype, oval_arithmetic_operation_t op,
+						    struct oval_collection *res_val_col)
+{
+	struct oval_value_iterator *val_itr;
+
+	if (val_col_lst == NULL) {
+		struct oval_value *ov;
+		char sv[32];
+
+		if (datatype == OVAL_DATATYPE_INTEGER) {
+			snprintf(sv, sizeof (sv), "%ld", (long int) val);
+		} else if (datatype == OVAL_DATATYPE_FLOAT) {
+			snprintf(sv, sizeof (sv), "%f", val);
+		}
+		ov = oval_value_new(datatype, sv);
+		oval_collection_add(res_val_col, ov);
+
+		return;
+	}
+
+	val_itr = (struct oval_value_iterator *) oval_collection_iterator(val_col_lst->val_col);
+	while (oval_value_iterator_has_more(val_itr)) {
+		struct oval_value *ov;
+		double new_val;
+
+		ov = oval_value_iterator_next(val_itr);
+		datatype = oval_value_get_datatype(ov);
+		if (datatype == OVAL_DATATYPE_INTEGER) {
+			new_val = (double) oval_value_get_integer(ov);
+		} else if (datatype == OVAL_DATATYPE_FLOAT) {
+			new_val = (double) oval_value_get_float(ov);
+		}
+
+		if (op == OVAL_ARITHMETIC_ADD) {
+			new_val += val;
+		} else if (op == OVAL_ARITHMETIC_MULTIPLY) {
+			new_val *= val;
+		}
+
+		_oval_component_evaluate_ARITHMETIC_rec(val_col_lst->next, new_val, datatype, op, res_val_col);
+	}
+	oval_value_iterator_free(val_itr);
+}
+
 static oval_syschar_collection_flag_t _oval_component_evaluate_ARITHMETIC(oval_argu_t *argu,
 									  struct oval_component *component,
 									  struct oval_collection *value_collection)
 {
-	return SYSCHAR_FLAG_UNKNOWN;
-	//TODO: Missing implementation
+	oval_syschar_collection_flag_t flag = SYSCHAR_FLAG_UNKNOWN;
+	struct oval_component_iterator *subcomps;
+	struct val_col_lst_s *vcl_root, *vcl_elm;
+	oval_arithmetic_operation_t op;
+	struct oval_value_iterator *val_itr;
+
+	vcl_root = NULL;
+	subcomps = oval_component_get_function_components(component);
+	while (oval_component_iterator_has_more(subcomps)) {
+		struct oval_component *subcomp;
+		struct oval_collection *val_col;
+
+		subcomp = oval_component_iterator_next(subcomps);
+		val_col = oval_collection_new();
+		flag = oval_component_eval_common(argu, subcomp, val_col);
+		vcl_elm = oscap_alloc(sizeof (struct val_col_lst_s));
+		vcl_elm->val_col = val_col;
+		vcl_elm->next = vcl_root;
+		vcl_root = vcl_elm;
+	}
+	oval_component_iterator_free(subcomps);
+
+	op = oval_component_get_arithmetic_operation(component);
+	val_itr = (struct oval_value_iterator *) oval_collection_iterator(vcl_root->val_col);
+	while (oval_value_iterator_has_more(val_itr)) {
+		struct oval_value *ov;
+		oval_datatype_t datatype;
+		double val;
+
+		ov = oval_value_iterator_next(val_itr);
+		datatype = oval_value_get_datatype(ov);
+		if (datatype == OVAL_DATATYPE_INTEGER) {
+			val = (double) oval_value_get_integer(ov);
+		} else if (datatype == OVAL_DATATYPE_FLOAT) {
+			val = (double) oval_value_get_float(ov);
+		}
+		_oval_component_evaluate_ARITHMETIC_rec(vcl_root->next, val, datatype, op, value_collection);
+	}
+
+	oval_value_iterator_free(val_itr);
+	while (vcl_root != NULL) {
+		oval_collection_free_items(vcl_root->val_col, (oscap_destruct_func) oval_value_free);
+		vcl_elm = vcl_root;
+		vcl_root = vcl_root->next;
+		oscap_free(vcl_elm);
+	}
+
+	return flag;
 }
 
 typedef oval_syschar_collection_flag_t(_oval_component_evaluator)
