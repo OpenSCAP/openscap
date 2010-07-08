@@ -53,13 +53,13 @@
     $result = PyLong_FromLong((long)$1);
 }
 
-%typemap (in) void*
-{
-    if (PyCObject_Check($input))
-    {
-        $1 = PyCObject_AsVoidPtr($input);
+%typemap(in) void * {
+    $result = SWIG_ConvertPtr($input,%as_voidptrptr(&$1), 0, $disown);
+    if (!SWIG_IsOK($result)) {
+        %argument_fail($result, "$type", $symname, $argnum);
     }
 }
+
 
 %typemap(in) struct cpe_name ** {
 
