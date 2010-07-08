@@ -215,9 +215,11 @@ static void print_versions()
         fprintf(stdout,
                 "OVAL Version: \r\t\t%s\n"
                , oval_definition_model_supported());
+#ifdef ENABLE_XCCDF
         fprintf(stdout,
                 "XCCDF Version: \r\t\t%s\n"
                , xccdf_benchmark_supported());
+#endif
         /*fprintf(stdout,
                 "CVSS Version: \r\t\t%s\n"
                , cvss_model_supported());

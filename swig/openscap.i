@@ -251,6 +251,8 @@
 
 #if defined(SWIGPYTHON)
 
+#ifdef WANT_XCCDF
+
 %{
 struct internal_usr {
     PyObject *func;
@@ -379,4 +381,5 @@ int oval_agent_eval_system_py(oval_agent_session_t * asess, PyObject * cb, PyObj
 
 
 %}
+#endif
 #endif
