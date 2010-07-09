@@ -165,7 +165,7 @@ void oscap_reporter_message_free(struct oscap_reporter_message *msg)
 
 void oscap_reporter_dispatch(oscap_reporter reporter, const struct oscap_reporter_message *msg, void *arg)
 {
-	assert(reporter != NULL);
+	if (reporter == NULL || msg == NULL) return;
 	reporter(msg, arg);
 }
 
@@ -206,9 +206,83 @@ void oscap_reporter_report_libc(oscap_reporter reporter, void *arg)
 
 // ================== standard reporters =================
 
+// ------------- file descriptor reporter ---------------
+
 void oscap_reporter_fd(const struct oscap_reporter_message *msg, void *arg)
 {
 	if (arg == NULL) return;
 	fprintf(arg, "%d.%d: %s\n", msg->family, msg->code, msg->string);
+}
+
+// ---------------- switch reporter ---------------------
+
+struct oscap_reporter_switch_unit {
+	oscap_reporter reporter;
+	void *arg;
+	oscap_reporter_family_t family;
+	oscap_reporter_code_t min_code;
+	oscap_reporter_code_t max_code;
+	bool stop_on_match;
+};
+
+static struct oscap_reporter_switch_unit *oscap_reporter_switch_unit_new(oscap_reporter reporter, void *arg,
+                                   oscap_reporter_family_t family, oscap_reporter_code_t min_code, oscap_reporter_code_t max_code)
+{
+	struct oscap_reporter_switch_unit *unit = oscap_calloc(1, sizeof(struct oscap_reporter_switch_unit));
+	unit->reporter = reporter; unit->arg = arg; unit->family = family;
+	unit->min_code = min_code; unit->max_code = max_code;
+	return unit;
+}
+
+static void oscap_reporter_switch_unit_free(struct oscap_reporter_switch_unit *unit) { oscap_free(unit); }
+
+struct oscap_reporter_switch_ctxt {
+	struct oscap_list *units;
+};
+
+struct oscap_reporter_switch_ctxt *oscap_reporter_switch_ctxt_new(void)
+{
+	struct oscap_reporter_switch_ctxt *ctxt = oscap_calloc(1, sizeof(struct oscap_reporter_switch_ctxt));
+	ctxt->units = oscap_list_new();
+	return ctxt;
+}
+
+void oscap_reporter_switch_ctxt_add_range_reporter(struct oscap_reporter_switch_ctxt *ctxt, oscap_reporter reporter, void *arg,
+                                   oscap_reporter_family_t family, oscap_reporter_code_t min_code, oscap_reporter_code_t max_code)
+{
+	oscap_list_add(ctxt->units, oscap_reporter_switch_unit_new(reporter, arg, family, min_code, max_code));
+}
+
+void oscap_reporter_switch_ctxt_add_family_reporter(struct oscap_reporter_switch_ctxt *ctxt, oscap_reporter reporter, void *arg, oscap_reporter_family_t family)
+{
+	oscap_reporter_switch_ctxt_add_range_reporter(ctxt, reporter, arg, family, 0, OSCAP_REPORTER_CODE_MAX);
+}
+
+void oscap_reporter_switch_ctxt_add_reporter(struct oscap_reporter_switch_ctxt *ctxt, oscap_reporter reporter, void *arg)
+{
+	oscap_reporter_switch_ctxt_add_family_reporter(ctxt, reporter, arg, 0);
+}
+
+void oscap_reporter_switch_ctxt_free(struct oscap_reporter_switch_ctxt *ctxt)
+{
+	if (ctxt != NULL) {
+		oscap_list_free(ctxt->units, (oscap_destruct_func)oscap_reporter_switch_unit_free);
+		oscap_free(ctxt);
+	}
+}
+
+void oscap_reporter_switch(const struct oscap_reporter_message *msg, void *arg)
+{
+	if (msg == NULL || arg == NULL) return;
+
+	struct oscap_iterator *it = oscap_iterator_new(((struct oscap_reporter_switch_ctxt *)arg)->units);
+	while (oscap_iterator_has_more(it)) {
+		struct oscap_reporter_switch_unit *unit = oscap_iterator_next(it);
+		if (unit->family == 0 || (unit->family == msg->family && unit->min_code <= msg->code && msg->code <= unit->max_code)) {
+			oscap_reporter_dispatch(unit->reporter, msg, unit->arg);
+			if (unit->stop_on_match) break;
+		}
+	}
+	oscap_iterator_free(it);
 }
 

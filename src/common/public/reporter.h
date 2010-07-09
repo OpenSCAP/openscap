@@ -153,4 +153,26 @@ void oscap_reporter_report_fmt(oscap_reporter reporter, void *arg, oscap_reporte
 /// File descriptor reporter
 void oscap_reporter_fd(const struct oscap_reporter_message *msg, void *arg);
 
+/**
+ * @struct oscap_reporter_switch_ctxt
+ * Switch reporter context.
+ * oscap_reporter_switch expects an instance of this structure as its argument.
+ * Each received message is forwarded to other reporters if it meets criteria
+ * given by the filter (i.e. family and code range).
+ */
+struct oscap_reporter_switch_ctxt;
+/// @memberof oscap_reporter_switch_ctxt
+struct oscap_reporter_switch_ctxt *oscap_reporter_switch_ctxt_new(void);
+/// @memberof oscap_reporter_switch_ctxt
+void oscap_reporter_switch_ctxt_add_range_reporter(struct oscap_reporter_switch_ctxt *ctxt, oscap_reporter reporter, void *arg,
+                                   oscap_reporter_family_t family, oscap_reporter_code_t min_code, oscap_reporter_code_t max_code);
+/// @memberof oscap_reporter_switch_ctxt
+void oscap_reporter_switch_ctxt_add_family_reporter(struct oscap_reporter_switch_ctxt *ctxt, oscap_reporter reporter, void *arg, oscap_reporter_family_t family);
+/// @memberof oscap_reporter_switch_ctxt
+void oscap_reporter_switch_ctxt_add_reporter(struct oscap_reporter_switch_ctxt *ctxt, oscap_reporter reporter, void *arg);
+/// @memberof oscap_reporter_switch_ctxt
+void oscap_reporter_switch_ctxt_free(struct oscap_reporter_switch_ctxt *ctxt);
+/// @memberof oscap_reporter_switch_ctxt
+void oscap_reporter_switch(const struct oscap_reporter_message *msg, void *arg);
+
 #endif // OSCAP_REPORTER_H_
