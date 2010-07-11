@@ -1679,11 +1679,306 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_SUBSTRING(oval_ar
 	return flag;
 }
 
+static int _substr2i(char **s, int len)
+{
+	char buf[len + 1];
+
+	memcpy(buf, *s, len);
+	buf[len] = '\0';
+	*s += len;
+
+	return atoi(buf);
+}
+
+static int _substr2mon(char **sp)
+{
+	int m = 0;
+	size_t len;
+	char *s = *sp;
+
+	len = strcspn(s, "0123456789,");
+	if (len == 0)
+		return -1;
+
+	*sp += len;
+
+	if (!strncasecmp(s, "jan", len) || !strncasecmp(s, "january", len)) {
+		m = 1;
+	} else if (!strncasecmp(s, "feb", len) || !strncasecmp(s, "february", len)) {
+		m = 2;
+	} else if (!strncasecmp(s, "mar", len) || !strncasecmp(s, "march", len)) {
+		m = 3;
+	} else if (!strncasecmp(s, "apr", len) || !strncasecmp(s, "april", len)) {
+		m = 4;
+	} else if (!strncasecmp(s, "may", len)) {
+		m = 5;
+	} else if (!strncasecmp(s, "jun", len) || !strncasecmp(s, "june", len)) {
+		m = 6;
+	} else if (!strncasecmp(s, "jul", len) || !strncasecmp(s, "july", len)) {
+		m = 7;
+	} else if (!strncasecmp(s, "aug", len) || !strncasecmp(s, "august", len)) {
+		m = 8;
+	} else if (!strncasecmp(s, "sep", len) || !strncasecmp(s, "september", len)) {
+		m = 9;
+	} else if (!strncasecmp(s, "oct", len) || !strncasecmp(s, "october", len)) {
+		m = 10;
+	} else if (!strncasecmp(s, "nov", len) || !strncasecmp(s, "november", len)) {
+		m = 11;
+	} else if (!strncasecmp(s, "dec", len) || !strncasecmp(s, "december", len)) {
+		m = 12;
+	}
+
+	return m;
+}
+
+static long unsigned int _comp_sec(int year, int month, int day, int hour, int minute, int second)
+{
+	time_t t;
+	struct tm *ts;
+
+	t = time(NULL);
+	ts = localtime(&t);
+
+	ts->tm_year = year - 1900;
+	ts->tm_mon = month - 1;
+	ts->tm_mday = day;
+	ts->tm_hour = hour;
+	ts->tm_min = minute;
+	ts->tm_sec = second;
+	ts->tm_isdst = -1;
+	t = mktime(ts);
+	ts = localtime(&t);
+
+	if (ts->tm_isdst == 1)
+		t -= 3600;
+
+	return (long unsigned int) t;
+}
+
+/*
+year_month_day
+The year_month_day value specifies date-time strings that follow the formats:
+  'yyyymmdd', 'yyyymmddThhmmss', 'yyyy/mm/dd hh:mm:ss', 'yyyy/mm/dd', 'yyyy-mm-dd hh:mm:ss', or 'yyyy-mm-dd'
+*/
+static long unsigned int _parse_fmt_ymd(char *dt)
+{
+	int year, month, day, hour, minute, second;
+
+	year = _substr2i(&dt, 4);
+	if (*dt == '/' || *dt == '-')
+		dt++;
+	month = _substr2i(&dt, 2);
+	if (*dt == '/' || *dt == '-')
+		dt++;
+	day = _substr2i(&dt, 2);
+
+	if (*dt == '\0') {
+		hour = minute = second = 0;
+	} else if (*dt == 'T') {
+		dt++;
+		hour = _substr2i(&dt, 2);
+		minute = _substr2i(&dt, 2);
+		second = _substr2i(&dt, 2);
+	} else {
+		dt++;
+		hour = _substr2i(&dt, 2);
+		dt++;
+		minute = _substr2i(&dt, 2);
+		dt++;
+		second = _substr2i(&dt, 2);
+	}
+
+	return _comp_sec(year, month, day, hour, minute, second);
+}
+
+/*
+month_day_year
+The month_day_year value specifies date-time strings that follow the formats:
+  'mm/dd/yyyy hh:mm:ss', 'mm/dd/yyyy', 'mm-dd-yyyy hh:mm:ss', 'mm-dd-yyyy', 'NameOfMonth, dd yyyy hh:mm:ss' or
+  'NameOfMonth, dd yyyy','AbreviatedNameOfMonth, dd yyyy hh:mm:ss', or 'AbreviatedNameOfMonth, dd yyyy'
+*/
+static long unsigned int _parse_fmt_mdy(char *dt)
+{
+	int year, month, day, hour, minute, second;
+
+	if ((month = _substr2mon(&dt)) == -1) {
+		month = _substr2i(&dt, 2);
+		dt++;
+	} else {
+		dt += 2;
+	}
+
+	day = _substr2i(&dt, 2);
+	dt++;
+	year = _substr2i(&dt, 4);
+
+	if (*dt == '\0') {
+		hour = minute = second = 0;
+	} else {
+		dt++;
+		hour = _substr2i(&dt, 2);
+		dt++;
+		minute = _substr2i(&dt, 2);
+		dt++;
+		second = _substr2i(&dt, 2);
+	}
+
+	return _comp_sec(year, month, day, hour, minute, second);
+}
+
+/*
+day_month_year
+The day_month_year value specifies date-time strings that follow the formats:
+  'dd/mm/yyyy hh:mm:ss', 'dd/mm/yyyy', 'dd-mm-yyyy hh:mm:ss', or 'dd-mm-yyyy'
+*/
+static long unsigned int _parse_fmt_dmy(char *dt)
+{
+	int year, month, day, hour, minute, second;
+
+	day = _substr2i(&dt, 2);
+	dt++;
+	month = _substr2i(&dt, 2);
+	dt++;
+	year = _substr2i(&dt, 4);
+
+	if (*dt == '\0') {
+		hour = minute = second = 0;
+	} else {
+		dt++;
+		hour = _substr2i(&dt, 2);
+		dt++;
+		minute = _substr2i(&dt, 2);
+		dt++;
+		second = _substr2i(&dt, 2);
+	}
+
+	return _comp_sec(year, month, day, hour, minute, second);
+}
+
+static long unsigned int _parse_fmt_win(char *dt)
+{
+	// todo
+	return 0;
+}
+
+static long unsigned int _parse_fmt_sse(char *dt)
+{
+	time_t t;
+	struct tm *ts;
+
+	t = (time_t) atol(dt);
+	ts = localtime(&t);
+	if (ts->tm_isdst == 1)
+		t -= 3600;
+
+	return (long unsigned int) t;
+}
+
+static long unsigned int _parse_fmt(struct oval_value *val, oval_datetime_format_t fmt)
+{
+	long unsigned int v = 0;
+	char *sv;
+
+	sv = oval_value_get_text(val);
+
+	switch (fmt) {
+	case OVAL_DATETIME_YEAR_MONTH_DAY:
+		v = _parse_fmt_ymd(sv);
+		break;
+	case OVAL_DATETIME_MONTH_DAY_YEAR:
+		v = _parse_fmt_mdy(sv);
+		break;
+	case OVAL_DATETIME_DAY_MONTH_YEAR:
+		v = _parse_fmt_dmy(sv);
+		break;
+	case OVAL_DATETIME_WIN_FILETIME:
+		v = _parse_fmt_win(sv);
+		break;
+	case OVAL_DATETIME_SECONDS_SINCE_EPOCH:
+		v = _parse_fmt_sse(sv);
+		break;
+	default:
+		break;
+	}
+
+	return v;
+}
+
 static oval_syschar_collection_flag_t _oval_component_evaluate_TIMEDIF(oval_argu_t *argu,
 								       struct oval_component *component,
 								       struct oval_collection *value_collection)
 {
-	return SYSCHAR_FLAG_NOT_COLLECTED;	/*TODO: implement this function */
+	oval_syschar_collection_flag_t flag = SYSCHAR_FLAG_UNKNOWN;
+	struct oval_component_iterator *subcomps;
+	int subcomp_idx;
+	struct oval_collection *val_cols[2];
+	struct oval_value_iterator *v1_itr;
+	oval_datetime_format_t fmt1, fmt2;
+
+	subcomps = oval_component_get_function_components(component);
+	subcomp_idx = 0;
+	while (oval_component_iterator_has_more(subcomps) && subcomp_idx < 2) {
+		struct oval_component *subcomp;
+
+		subcomp = oval_component_iterator_next(subcomps);
+		val_cols[subcomp_idx] = oval_collection_new();
+		flag = oval_component_eval_common(argu, subcomp, val_cols[subcomp_idx]);
+		subcomp_idx++;
+	}
+
+	if (oval_component_iterator_has_more(subcomps)) {
+		oval_component_iterator_free(subcomps);
+		oval_collection_free_items(val_cols[0], (oscap_destruct_func) oval_value_free);
+		oval_collection_free_items(val_cols[1], (oscap_destruct_func) oval_value_free);
+		return SYSCHAR_FLAG_ERROR;
+	}
+	oval_component_iterator_free(subcomps);
+	if (subcomp_idx == 0) {
+		return SYSCHAR_FLAG_ERROR;
+	}
+
+	fmt1 = oval_component_get_timedif_format_1(component);
+	fmt2 = oval_component_get_timedif_format_2(component);
+
+	if (subcomp_idx == 1) {
+		struct oval_value *ov;
+		char ts[16];
+
+		val_cols[1] = val_cols[0];
+		val_cols[0] = oval_collection_new();
+		snprintf(ts, sizeof (ts), "%lu", (long unsigned int) time(NULL));
+		ov = oval_value_new(OVAL_DATATYPE_INTEGER, ts);
+		oval_collection_add(val_cols[0], ov);
+		fmt1 = OVAL_DATETIME_SECONDS_SINCE_EPOCH;
+	}
+
+	v1_itr = (struct oval_value_iterator *) oval_collection_iterator(val_cols[0]);
+	while (oval_value_iterator_has_more(v1_itr)) {
+		struct oval_value *ov1;
+		struct oval_value_iterator *v2_itr;
+
+		ov1 = oval_value_iterator_next(v1_itr);
+
+		v2_itr = (struct oval_value_iterator *) oval_collection_iterator(val_cols[1]);
+		while (oval_value_iterator_has_more(v2_itr)) {
+			long unsigned int v;
+			char ts[16];
+			struct oval_value *ov2, *ov;
+
+			ov2 = oval_value_iterator_next(v2_itr);
+			v = _parse_fmt(ov1, fmt1) - _parse_fmt(ov2, fmt2);
+			snprintf(ts, sizeof (ts), "%lu", v);
+			ov = oval_value_new(OVAL_DATATYPE_INTEGER, ts);
+			oval_collection_add(value_collection, ov);
+		}
+		oval_value_iterator_free(v2_itr);
+	}
+	oval_value_iterator_free(v1_itr);
+
+	oval_collection_free_items(val_cols[0], (oscap_destruct_func) oval_value_free);
+	oval_collection_free_items(val_cols[1], (oscap_destruct_func) oval_value_free);
+
+	return flag;
 }
 
 static bool _isEscape(char chr)
