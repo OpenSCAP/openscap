@@ -192,7 +192,9 @@ void oscap_reporter_report_xml(struct oscap_reporter_context *rctxt, xmlErrorPtr
     if (rctxt == NULL || rctxt->reporter == NULL) return;
     if (error == NULL) error = xmlGetLastError();
     if (error == NULL) return;
-    struct oscap_reporter_message *msg = oscap_reporter_message_new_fill(OSCAP_REPORTER_FAMILY_XML, error->code, error->message);
+	char *strmsg = oscap_sprintf("In file %s on line %d: %s", error->file, error->line, error->message);
+    struct oscap_reporter_message *msg = oscap_reporter_message_new_fill(OSCAP_REPORTER_FAMILY_XML, error->code, strmsg);
+	oscap_free(strmsg);
     oscap_reporter_message_set_user1str(msg, error->file);
     oscap_reporter_message_set_user2num(msg, error->line);
     oscap_reporter_report(rctxt->reporter, msg, rctxt->arg);
@@ -211,7 +213,7 @@ void oscap_reporter_report_libc(oscap_reporter reporter, void *arg)
 void oscap_reporter_fd(const struct oscap_reporter_message *msg, void *arg)
 {
 	if (arg == NULL) return;
-	fprintf(arg, "%d.%d: %s\n", msg->family, msg->code, msg->string);
+	fprintf(arg, "%d %d %s\n", msg->family, msg->code, msg->string);
 }
 
 // ---------------- switch reporter ---------------------

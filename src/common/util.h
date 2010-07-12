@@ -362,6 +362,14 @@ char *oscap_sprintf(const char *fmt, ...);
 // check pointer equality
 bool oscap_ptr_cmp(void *node1, void *node2);
 
+// validate given XML file
+bool oscap_validate_xml(const char *xmlfile, const char *schemafile, oscap_reporter reporter, void *arg);
+// check file existence
+bool oscap_file_exists(const char *path, int mode);
+// find file with given name and mode in given paths
+char *oscap_find_file(const char *path, const char *filename, int mode);
+
+
 #ifndef OSCAP_CONCAT
 # define OSCAP_CONCAT1(a,b) a ## b
 # define OSCAP_CONCAT(a,b) OSCAP_CONCAT1(a,b)

@@ -69,7 +69,7 @@ char *oscap_strsep(char **str, const char *delim)
 	if (str == NULL || *str == NULL)
 		return NULL;
 	char *ret = *str;
-	*str = strchr(*str, *delim);
+	*str = strstr(*str, delim);
 	if (*str) {
 		**str = '\0';
 		(*str)++;

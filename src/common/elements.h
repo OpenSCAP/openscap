@@ -51,6 +51,8 @@ char *oscap_get_xml(xmlTextReaderPtr reader);
 time_t oscap_get_date(const char *date);
 /// get datetime from a string
 time_t oscap_get_datetime(const char *date);
+/// return filename of a XML file schema obtained from schemaLocation
+char *oscap_get_schema_filename(const char *xmlfile);
 /// convert a piece of XML string to DOM
 xmlNode *oscap_xmlstr_to_dom(xmlNode *parent, const char *elname, const char *content);
 

@@ -29,6 +29,11 @@
 #include <libxml/xmlschemas.h>
 #include <string.h>
 
+#include <config.h>
+#if HAVE_UNISTD_H
+#include <unistd.h>
+#endif
+
 void oscap_cleanup(void)
 {
 	xmlCleanupParser();
@@ -42,21 +47,49 @@ const char *OSCAP_OS_PATH_DELIM  = "/";
 
 const char *OSCAP_PATH_SEPARATOR = ":";
 
+#ifndef OSCAP_DEFAULT_SCHEMA_PATH
+#define OSCAP_DEFAULT_SCHEMA_PATH "/usr/local/schemas"
+#endif
 
-
-static const char *oscap_get_xsd_dir(const char *dir)
+bool oscap_file_exists(const char *path, int mode)
 {
-#ifdef OSCAP_XSD_DIR_ENVVAR
-	if (dir == NULL) dir = getenv(OSCAP_XSD_DIR_ENVVAR);
+	if (path == NULL) return false;
+#if HAVE_UNISTD_H
+	return access(path, mode) == 0;
+#else
+	FILE *f = fopen(path, "r");
+	if (f) { fclose(f); return true; }
+	else return false;
 #endif
-#ifdef OSCAP_XSD_DIR
-	if (dir == NULL) dir = OSCAP_XSD_DIR;
-#endif
-	if (dir == NULL) dir = ".";
-	return dir;
 }
 
-static char *oscap_get_schema_filename(const char *xmlfile)
+char *oscap_find_file(const char *path, const char *filename, int mode)
+{
+	if (filename == NULL) return NULL;
+	if (strstr(filename, OSCAP_OS_PATH_DELIM) == filename)
+		return oscap_strdup(filename); // it is an absolute path
+	if (path == NULL || oscap_streq(path, "")) path = OSCAP_DEFAULT_SCHEMA_PATH;
+	char *pathdup = oscap_strdup(path);
+	char **paths = oscap_split(pathdup, OSCAP_PATH_SEPARATOR);
+	char *ret = NULL;
+
+	while (*paths) {
+		if (oscap_streq(*paths, "")) continue;
+		char *curpath = oscap_sprintf("%s%s%s", *paths, OSCAP_OS_PATH_DELIM, filename);
+		if (oscap_file_exists(curpath, mode)) {
+			ret = curpath;
+			break;
+		}
+		oscap_free(curpath);
+		++paths;
+	}
+
+	oscap_free(pathdup);
+	//oscap_free(paths);
+	return ret;
+}
+
+char *oscap_get_schema_filename(const char *xmlfile)
 {
 	if (xmlfile == NULL) return NULL;
 	char *ret = NULL;
@@ -64,19 +97,14 @@ static char *oscap_get_schema_filename(const char *xmlfile)
 	if (info && info->root_entry && info->root_entry->schema_location)
 		ret = oscap_strdup(info->root_entry->schema_location);
 	oscap_nsinfo_free(info);
-	return ret;
+	return NULL;
 }
 
-static char *oscap_get_schema_path(const char *xmlfile, const char *directory)
+static char *oscap_get_schema_path(const char *filename)
 {
-	if (xmlfile == NULL) return NULL;
-	const char *dir = oscap_get_xsd_dir(directory);
-	char *schemafile = oscap_get_schema_filename(xmlfile);
-	if (schemafile == NULL) return NULL;
-	char *schemapath = oscap_alloc(sizeof(char) * (strlen(schemafile) + strlen(OSCAP_OS_PATH_DELIM) + strlen(dir) + 1));
-	sprintf(schemapath, "%s%s%s", dir, OSCAP_OS_PATH_DELIM, schemafile);
-	oscap_free(schemafile);
-	return schemapath;
+	const char *search_path = getenv("OSCAP_SCHEMA_PATH");
+	if (search_path == NULL) search_path = OSCAP_DEFAULT_SCHEMA_PATH;
+	return oscap_find_file(search_path, filename, R_OK);
 }
 
 static void oscap_xml_validity_handler(void *user, xmlErrorPtr error)
@@ -94,8 +122,10 @@ bool oscap_validate_xml(const char *xmlfile, const char *schemafile, oscap_repor
 	xmlSchemaPtr schema = NULL;
 	xmlSchemaValidCtxtPtr ctxt = NULL;
 	struct oscap_reporter_context reporter_ctxt = { reporter, arg };
+	char *schemapath = oscap_get_schema_path(schemafile);
+	if (schemapath == NULL) goto cleanup;
 
-	parser_ctxt = xmlSchemaNewParserCtxt(schemafile);
+	parser_ctxt = xmlSchemaNewParserCtxt(schemapath);
 	if (parser_ctxt == NULL) {
 		oscap_seterr(OSCAP_EFAMILY_XML, xmlGetLastError() ? xmlGetLastError()->code : 0, "Could not create parser context for validation");
 		goto cleanup;
@@ -125,10 +155,53 @@ bool oscap_validate_xml(const char *xmlfile, const char *schemafile, oscap_repor
 	}
 
 cleanup:
+	oscap_free(schemapath);
 	if (ctxt)        xmlSchemaFreeValidCtxt(ctxt);
 	if (schema)      xmlSchemaFree(schema);
 	if (parser_ctxt) xmlSchemaFreeParserCtxt(parser_ctxt);
 
 	return result;
 }
+
+struct oscap_schema_table_entry {
+	oscap_document_type_t type;
+	const char *stdname;
+	const char *def_version;
+	const char *schema_fname;
+};
+
+// TODO do not hardcode versions... (duplicities)
+struct oscap_schema_table_entry OSCAP_SCHEMAS_TABLE[] = {
+	{ OSCAP_DOCUMENT_OVAL_DEFINITIONS, "oval",  "5.5",   "oval-definitions-schema.xsd"            },
+	{ OSCAP_DOCUMENT_OVAL_RESULTS,     "oval",  "5.5",   "oval-results-schema.xsd"                },
+	{ OSCAP_DOCUMENT_OVAL_SYSCHAR,     "oval",  "5.5",   "oval-system-characteristics-schema.xsd" },
+	{ OSCAP_DOCUMENT_XCCDF,            "xccdf", "1.1.4", "xccdf-schema.xsd"                       },
+	{ 0, NULL, NULL, NULL }
+};
+
+bool oscap_validate_document(const char *xmlfile, oscap_document_type_t doctype, const char *version, oscap_reporter reporter, void *arg)
+{
+	if (xmlfile == NULL) {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EINVARG, "No XML file given.");
+		return false;
+	}
+
+	struct oscap_schema_table_entry *entry = OSCAP_SCHEMAS_TABLE;
+	for (; entry->type != 0; ++entry) if (entry->type == doctype) break; // find entry
+
+	if (entry->type == 0) {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, 0, "OpenSCAP is not able to validate this document.");
+		return false;
+	}
+
+	if (version == NULL) version = entry->def_version;
+
+	char *schemafile = oscap_sprintf("%s%s%s%s%s", entry->stdname, OSCAP_OS_PATH_DELIM, version, OSCAP_OS_PATH_DELIM, entry->schema_fname);
+
+	bool ret = oscap_validate_xml(xmlfile, schemafile, reporter, arg);
+
+	oscap_free(schemafile);
+	return ret;
+}
+
 

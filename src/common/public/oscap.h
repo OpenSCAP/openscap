@@ -37,6 +37,16 @@
 #include "text.h"
 #include "reporter.h"
 
+typedef enum oscap_document_type {
+	OSCAP_DOCUMENT_OVAL_DEFINITIONS = 1,
+	OSCAP_DOCUMENT_OVAL_SYSCHAR,
+	OSCAP_DOCUMENT_OVAL_RESULTS,
+	OSCAP_DOCUMENT_XCCDF,
+	OSCAP_DOCUMENT_CPE_LANGUAGE,
+	OSCAP_DOCUMENT_CPE_DICTIONARY,
+} oscap_document_type_t;
+
+
 /**
  * @addtogroup ITER
  * @{
@@ -57,8 +67,8 @@
 /**
  * Iterate over an array, given an iterator.
  * Execute @a code for each array member stored in @a val.
- * It is NOT safe to use return or goto inside of the @a code
- * or iterator will not be freed properly.
+ * It is NOT safe to use return or goto inside of the @a code,
+ * the iterator would not be freed properly.
  */
 #define OSCAP_FOREACH_GENERIC(itype, vtype, val, init_val, code) \
     {                                                            \
@@ -369,8 +379,8 @@ void oscap_nsinfo_entry_iterator_free(struct oscap_nsinfo_entry_iterator *it);
  * @name Evaluators
  * @{
  */
-/// Validate a xml file against given xml schema
-bool oscap_validate_xml(const char *xmlfile, const char *schemafile, oscap_reporter reporter, void *reporter_arg);
+/// Validate given SCAP document
+bool oscap_validate_document(const char *xmlfile, oscap_document_type_t doctype, const char *version, oscap_reporter reporter, void *arg);
 /************************************************************/
 /** @} End of Evaluators group */
 
