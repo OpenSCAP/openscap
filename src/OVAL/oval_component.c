@@ -2150,12 +2150,22 @@ static void _oval_component_evaluate_ARITHMETIC_rec(struct val_col_lst_s *val_co
 			new_val = (double) oval_value_get_integer(ov);
 		} else if (datatype == OVAL_DATATYPE_FLOAT) {
 			new_val = (double) oval_value_get_float(ov);
+		} else {
+			oscap_dprintf("ERROR: Unexpected value type: %s.\n", oval_datatype_get_text(datatype));
+			oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "Unexpected value type");
+			oval_value_iterator_free(val_itr);
+			return SYSCHAR_FLAG_ERROR;
 		}
 
 		if (op == OVAL_ARITHMETIC_ADD) {
 			new_val += val;
 		} else if (op == OVAL_ARITHMETIC_MULTIPLY) {
 			new_val *= val;
+		} else {
+			oscap_dprintf("ERROR: Unexpected arithmetic operation: %s.\n", oval_arithmetic_operation_get_text(op));
+			oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "Unexpected arithmetic operation");
+			oval_value_iterator_free(val_itr);
+			return SYSCHAR_FLAG_ERROR;
 		}
 
 		_oval_component_evaluate_ARITHMETIC_rec(val_col_lst->next, new_val, datatype, op, res_val_col);
@@ -2173,6 +2183,13 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_ARITHMETIC(oval_a
 	oval_arithmetic_operation_t op;
 	struct oval_value_iterator *val_itr;
 
+	op = oval_component_get_arithmetic_operation(component);
+	if (op != OVAL_ARITHMETIC_ADD && op != OVAL_ARITHMETIC_MULTIPLY) {
+		oscap_dprintf("ERROR: Unexpected arithmetic operation: %s.\n", oval_arithmetic_operation_get_text(op));
+		oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "Unexpected arithmetic operation");
+		return SYSCHAR_FLAG_ERROR;
+	}
+
 	vcl_root = NULL;
 	subcomps = oval_component_get_function_components(component);
 	while (oval_component_iterator_has_more(subcomps)) {
@@ -2189,7 +2206,6 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_ARITHMETIC(oval_a
 	}
 	oval_component_iterator_free(subcomps);
 
-	op = oval_component_get_arithmetic_operation(component);
 	val_itr = (struct oval_value_iterator *) oval_collection_iterator(vcl_root->val_col);
 	while (oval_value_iterator_has_more(val_itr)) {
 		struct oval_value *ov;
@@ -2202,10 +2218,17 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_ARITHMETIC(oval_a
 			val = (double) oval_value_get_integer(ov);
 		} else if (datatype == OVAL_DATATYPE_FLOAT) {
 			val = (double) oval_value_get_float(ov);
+		} else {
+			oscap_dprintf("ERROR: Unexpected value type: %s.\n", oval_datatype_get_text(datatype));
+			oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "Unexpected value type");
+			flag = SYSCHAR_FLAG_ERROR;
+			goto cleanup;
 		}
+
 		_oval_component_evaluate_ARITHMETIC_rec(vcl_root->next, val, datatype, op, value_collection);
 	}
 
+ cleanup:
 	oval_value_iterator_free(val_itr);
 	while (vcl_root != NULL) {
 		oval_collection_free_items(vcl_root->val_col, (oscap_destruct_func) oval_value_free);
