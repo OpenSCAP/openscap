@@ -1,0 +1,408 @@
+<?xml version="1.0"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:oval-sc="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5" xmlns:linux-sc="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#linux" xmlns:sch="http://purl.oclc.org/dsdl/schematron" targetNamespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#linux" elementFormDefault="qualified" version="5.5">
+     <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5" schemaLocation="oval-system-characteristics-schema.xsd"/>
+     <xsd:annotation>
+          <xsd:documentation>The following is a description of the elements, types, and attributes that compose the Linux specific system characteristic items found in Open Vulnerability and Assessment Language (OVAL). Each item is an extension of the standard item element defined in the Core System Characteristic Schema. Through extension, each item inherits a set of elements and attributes that are shared amongst all OVAL Items. Each item is described in detail and should provide the information necessary to understand what each element and attribute represents. This document is intended for developers and assumes some familiarity with XML. A high level description of the interaction between the different tests and their relationship to the Core System Characteristic Schema is not outlined here.</xsd:documentation>
+          <xsd:documentation>The OVAL Schema is maintained by The Mitre Corporation and developed by the public OVAL Community. For more information, including how to get involved in the project and how to submit change requests, please visit the OVAL website at http://oval.mitre.org.</xsd:documentation>
+          <xsd:appinfo>
+               <schema>Linux System Characteristics</schema>
+               <version>5.5</version>
+               <date>9/26/2008 7:30:58 AM</date>
+                <terms_of_use>Copyright (c) 2002-2008, The MITRE Corporation. All rights reserved.  The contents of this file are subject to the terms of the OVAL License located at http://oval.mitre.org/oval/about/termsofuse.html. See the OVAL License for the specific language governing permissions and limitations for use of this schema.  When distributing copies of the OVAL Schema, this license header must be included.</terms_of_use>
+               <sch:ns prefix="oval-sc" uri="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5"/>
+               <sch:ns prefix="linux-sc" uri="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#linux"/>
+              <sch:ns prefix="xsi" uri="http://www.w3.org/2001/XMLSchema-instance"/>
+          </xsd:appinfo>
+     </xsd:annotation>
+     <!-- =============================================================================== -->
+     <!-- ==============================  DPKG INFO ITEM  =============================== -->
+     <!-- =============================================================================== -->
+     <xsd:element name="dpkginfo_item" substitutionGroup="oval-sc:item">
+          <xsd:annotation>
+               <xsd:documentation>This item stores DPKG package info.</xsd:documentation>
+          </xsd:annotation>
+          <xsd:complexType>
+               <xsd:complexContent>
+                    <xsd:extension base="oval-sc:ItemType">
+                         <xsd:sequence>
+                              <xsd:element name="name" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>This is the pakage name to check.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="dpkgitemname">
+                                                  <sch:rule context="linux-sc:dpkginfo_item/linux-sc:name">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the name entity of a dpkginfo_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="arch" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>This is the architecture for which the DPKG was built, like : i386, ppc, sparc, noarch.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="dpkgitemarch">
+                                                  <sch:rule context="linux-sc:dpkginfo_item/linux-sc:arch">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the arch entity of a dpkginfo_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="epoch" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>This is the epoch number of the DPKG. For a null epoch (or '(none)' as returned by rpm) is equivalent to '0'.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="dpkgitemepoch">
+                                                  <sch:rule context="linux-sc:dpkginfo_item/linux-sc:epoch">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the epoch entity of a dpkginfo_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="release" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>This is the release number of the build.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="dpkgitemrelease">
+                                                  <sch:rule context="linux-sc:dpkginfo_item/linux-sc:release">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the release entity of a dpkginfo_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="version" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>This is the version number of the build, changed by the vendor/builder.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="dpkgitemversion">
+                                                  <sch:rule context="linux-sc:dpkginfo_item/linux-sc:version">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the version entity of a dpkginfo_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="evr" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>This represents the epoch, version, and release fields as a single version string. It has the form "EPOCH:VERSION-RELEASE". Note that a null epoch (or '(none)' as returned by rpm) is equivalent to '0' and would hence have the form 0:VERSION-RELEASE.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="dpkgitemevr">
+                                                  <sch:rule context="linux-sc:dpkginfo_item/linux-sc:evr">
+                                                       <sch:assert test="not(@datatype) or @datatype='evr_string'">item <sch:value-of select="../@id"/> - datatype attribute for the evr entity of a dpkginfo_item should be 'evr_string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                         </xsd:sequence>
+                    </xsd:extension>
+               </xsd:complexContent>
+          </xsd:complexType>
+     </xsd:element>
+     <!-- =============================================================================== -->
+     <!-- =====================  INET LISTENING SERVERS ITEM  =========================== -->
+     <!-- =============================================================================== -->
+     <xsd:element name="inetlisteningserver_item" substitutionGroup="oval-sc:item">
+          <xsd:annotation>
+               <xsd:documentation>An inet listening server item stores the results of checking for network servers currently active on a system. It holds information pertaining to a specific protocol-address-port combination.</xsd:documentation>
+          </xsd:annotation>
+          <xsd:complexType>
+               <xsd:complexContent>
+                    <xsd:extension base="oval-sc:ItemType">
+                         <xsd:sequence>
+                              <xsd:element name="protocol" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>This is the transport-layer protocol, in lowercase: tcp or udp.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="ilsitemprotocol">
+                                                  <sch:rule context="linux-sc:inetlisteningserver_item/linux-sc:protocol">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the protocol entity of an inetlisteningserver_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="local_address" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>This is the IP address associated with the inet listening server.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="ilsitemlocal_address">
+                                                  <sch:rule context="linux-sc:inetlisteningserver_item/linux-sc:local_address">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the local_address entity of an inetlisteningserver_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="local_port" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>This is the TCP or UDP port on which the program listens.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="ilsitemlocal_port">
+                                                  <sch:rule context="linux-sc:inetlisteningserver_item/linux-sc:local_port">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the local_port entity of an inetlisteningserver_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="local_full_address" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>This is the IP address and network port on which the program listens, equivalent to local_address:local_port.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="ilsitemlocal_full_address">
+                                                  <sch:rule context="linux-sc:inetlisteningserver_item/linux-sc:local_full_address">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the local_full_address entity of an inetlisteningserver_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="program_name" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>This is the name of the communicating program.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="ilsitemprogram_name">
+                                                  <sch:rule context="linux-sc:inetlisteningserver_item/linux-sc:program_name">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the program_name entity of an inetlisteningserver_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="foreign_address" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>This is the IP address with which the program is communicating, or with which it will communicate, in the case of a listening server.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="ilsitemforeign_address">
+                                                  <sch:rule context="linux-sc:inetlisteningserver_item/linux-sc:foreign_address">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the foreign_address entity of an inetlisteningserver_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="foreign_port" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>This is the TCP or UDP port to which the program communicates. In the case of a listening program accepting new connections, this is usually a *.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="ilsitemforeign_port">
+                                                  <sch:rule context="linux-sc:inetlisteningserver_item/linux-sc:foreign_port">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the foreign_port entity of an inetlisteningserver_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="foreign_full_address" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>This is the IP address and network port to which the program is communicating or will accept communications from, equivalent to foreign_address:foreign_port.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="ilsitemforeign_full_address">
+                                                  <sch:rule context="linux-sc:inetlisteningserver_item/linux-sc:foreign_full_address">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the foreign_full_address entity of an inetlisteningserver_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="pid" type="oval-sc:EntityItemIntType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>This is the process ID of the process. The process in question is that of the program communicating on the network.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="ilsitempid">
+                                                  <sch:rule context="linux-sc:inetlisteningserver_item/linux-sc:pid">
+                                                       <sch:assert test="not(@datatype) or @datatype='int'">item <sch:value-of select="../@id"/> - datatype attribute for the pid entity of an inetlisteningserver_item should be 'int'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="user_id" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The numeric user id, or uid, is the third column of each user's entry in /etc/passwd. It represents the owner, and thus privilege level, of the specified program.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="ilsitemuser_id">
+                                                  <sch:rule context="linux-sc:inetlisteningserver_item/linux-sc:user_id">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the user_id entity of an inetlisteningserver_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                         </xsd:sequence>
+                    </xsd:extension>
+               </xsd:complexContent>
+          </xsd:complexType>
+     </xsd:element>
+     <!-- =============================================================================== -->
+     <!-- ============================  RPM INFO ITEM  ================================== -->
+     <!-- =============================================================================== -->
+     <xsd:element name="rpminfo_item" substitutionGroup="oval-sc:item">
+          <xsd:annotation>
+               <xsd:documentation>This item stores rpm info.</xsd:documentation>
+          </xsd:annotation>
+          <xsd:complexType>
+               <xsd:complexContent>
+                    <xsd:extension base="oval-sc:ItemType">
+                         <xsd:sequence>
+                              <xsd:element name="name" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>This is the pakage name to check.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="rpmitemname">
+                                                  <sch:rule context="linux-sc:rpminfo_item/linux-sc:name">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the name entity of a rpminfo_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="arch" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>This is the architecture for which the RPM was built, like : i386, ppc, sparc, noarch. In the case of an apache rpm named httpd-2.0.40-21.11.4.i686.rpm, this value would be i686.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="rpmitemarch">
+                                                  <sch:rule context="linux-sc:rpminfo_item/linux-sc:arch">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the arch entity of a rpminfo_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="epoch" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>This is the epoch number of the RPM, this is used as a kludge for version-release comparisons where the vendor has done some kind of re-numbering or version forking. For a null epoch (or '(none)' as returned by rpm) is equivalent to '0'.This number is not revealed by a normal query of the RPM's information -- you must use a formatted rpm query command to gather this data from the command line, like so. For an already-installed RPM: rpm -q --qf '%{EPOCH}\n' installed_rpm For an RPM file that has not been installed: rpm -qp --qf '%{EPOCH}\n' rpm_file</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="rpmitemepoch">
+                                                  <sch:rule context="linux-sc:rpminfo_item/linux-sc:epoch">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the epoch entity of a rpminfo_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="release" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>This is the release number of the build.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="rpmitemrelease">
+                                                  <sch:rule context="linux-sc:rpminfo_item/linux-sc:release">
+                                                       <sch:assert test="not(@datatype) or @datatype='string' or @datatype='version'">item <sch:value-of select="../@id"/> - datatype attribute for the release entity of a rpminfo_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="version" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>This is the version number of the build, changed by the vendor/builder. In the case of an apache rpm named httpd-2.0.40-21.11.4.i686.rpm, this value would be 21.11.4.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="rpmitemversion">
+                                                  <sch:rule context="linux-sc:rpminfo_item/linux-sc:version">
+                                                       <sch:assert test="not(@datatype) or @datatype='string' or @datatype='version'">item <sch:value-of select="../@id"/> - datatype attribute for the version entity of a rpminfo_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="evr" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>This represents the epoch, version, and release fields as a single version string. It has the form "EPOCH:VERSION-RELEASE". Note that a null epoch (or '(none)' as returned by rpm) is equivalent to '0' and would hence have the form 0:VERSION-RELEASE.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="rpmitemevr">
+                                                  <sch:rule context="linux-sc:rpminfo_item/linux-sc:evr">
+                                                       <sch:assert test="not(@datatype) or @datatype='evr_string'">item <sch:value-of select="../@id"/> - datatype attribute for the evr entity of a rpminfo_item should be 'evr_string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="signature_keyid" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>This field contains the PGP key ID that the RPM issuer (generally the original operating system vendor) uses to sign the key. PGP is used to verify the authenticity and integrity of the RPM being considered. Software packages and patches are signed cryptographically to allow administrators to allay concerns that the distribution mechanism has been compromised, whether that mechanism is web site, FTP server, or even a mirror controlled by a hostile party. OVAL uses this field most of all to confirm that the package installed on the system is that shipped by the vendor, since comparing package version numbers against patch announcements is only programmatically valid if the installed package is known to contain the patched code.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="rpmitemsignature_keyid">
+                                                  <sch:rule context="linux-sc:rpminfo_item/linux-sc:signature_keyid">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the signature_keyid entity of a rpminfo_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                         </xsd:sequence>
+                    </xsd:extension>
+               </xsd:complexContent>
+          </xsd:complexType>
+     </xsd:element>
+     <!-- =============================================================================== -->
+     <!-- ==========================  SLACKWARE PKG INFO ITEM  ========================== -->
+     <!-- =============================================================================== -->
+     <xsd:element name="slackwarepkginfo_item" substitutionGroup="oval-sc:item">
+          <xsd:annotation>
+               <xsd:documentation>This item discribes info related to Slackware packages. It extends the standard ItemType as defined in the oval-system-characteristics schema and one should refer to the ItemType description for more information.</xsd:documentation>
+          </xsd:annotation>
+          <xsd:complexType>
+               <xsd:complexContent>
+                    <xsd:extension base="oval-sc:ItemType">
+                         <xsd:sequence>
+                              <xsd:element name="name" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>This is the pakage name to check.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="spkginfoitemname">
+                                                  <sch:rule context="linux-sc:slackwarepkginfo_item/linux-sc:name">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the name entity of a slackwarepkginfo_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="version" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>This is the version number of the pakage.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="spkginfoitemversion">
+                                                  <sch:rule context="linux-sc:slackwarepkginfo_item/linux-sc:version">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the version entity of a slackwarepkginfo_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="architecture" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>This is the architecture the package is designed for.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="spkginfoitemarchitecture">
+                                                  <sch:rule context="linux-sc:slackwarepkginfo_item/linux-sc:architecture">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the architecture entity of a slackwarepkginfo_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="revision" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>This is the revision of the package.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="spkginfoitemrevision">
+                                                  <sch:rule context="linux-sc:slackwarepkginfo_item/linux-sc:revision">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the revision entity of a slackwarepkginfo_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                         </xsd:sequence>
+                    </xsd:extension>
+               </xsd:complexContent>
+          </xsd:complexType>
+     </xsd:element>
+     <!-- =============================================================================== -->
+     <!-- =============================================================================== -->
+     <!-- =============================================================================== -->
+</xsd:schema>

@@ -48,7 +48,7 @@ const char *OSCAP_OS_PATH_DELIM  = "/";
 const char *OSCAP_PATH_SEPARATOR = ":";
 
 #ifndef OSCAP_DEFAULT_SCHEMA_PATH
-#define OSCAP_DEFAULT_SCHEMA_PATH "/usr/local/schemas"
+#define OSCAP_DEFAULT_SCHEMA_PATH "/usr/local/share/openscap/schemas"
 #endif
 
 bool oscap_file_exists(const char *path, int mode)

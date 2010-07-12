@@ -16,6 +16,8 @@ dist_pkgdata_DATA = dist/fedora/scap-fedora12-oval.xml \
                     dist/fedora/scap-fedora13-oval.xml \
                     dist/fedora/oscap-scan.cron
 
+nobase_pkgdata_DATA = schemas/*/*/*.xsd  schemas/*/*/*.dtd
+
 EXTRA_DIST =	dist/fedora/openscap.spec \
 		dist/fedora/oscap-scan.sys \
 		dist/fedora/oscap-scan.init \
