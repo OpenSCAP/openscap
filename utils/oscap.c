@@ -72,20 +72,22 @@ typedef enum {
 typedef enum {
     OSCAP_OP_UNKNOWN,
     OSCAP_OP_COLLECT,
-    OSCAP_OP_EVAL
-    /*OSCAP_OP_VALIDATE,*/
+    OSCAP_OP_EVAL,
+    OSCAP_OP_VALIDATE_XML
 } oscap_operation_t;
 
 struct oscap_action {
 
     oscap_standard_t std;
     oscap_operation_t op;
+	oscap_document_type_t doctype;
     char *f_xccdf;
     char *f_oval;
     char *f_results;
     char *url_xccdf;
     char *url_oval;
     char *profile;
+    char *file_version;
 };
 
 /**
@@ -172,7 +174,7 @@ static void print_xccdf_usage(const char *pname, FILE * out, char * msg)
 		"\n"
                 "Commands:\n"
                 "   eval\r\t\t\t\t - Perform evaluation driven by XCCDF file and use OVAL as checking engine.\n"
-                //"   validate\r\t\t\t\t - validate XCCDF XML content. No command option required.\n"
+                "   validate-xml\r\t\t\t\t - validate XCCDF XML content.\n"
                 "\n"
                 "Command options:\n"
 		"   -h --help\r\t\t\t\t - show this help\n"
@@ -194,6 +196,7 @@ static void print_oval_usage(const char *pname, FILE * out, char * msg)
                 "Commands:\n"
                 "   collect\r\t\t\t\t - Probe the system and gather system characteristics for objects in OVAL Definition file.\n"
                 "   eval\r\t\t\t\t - Probe the system and evaluate all definitions from OVAL Definition file\n"
+                "   validate-xml\r\t\t\t\t - validate OVAL XML content.\n"
                 "\n"
                 "Command options:\n"
 		"   -h --help\r\t\t\t\t - show this help\n"
@@ -541,6 +544,22 @@ static int app_evaluate_oval(const struct oscap_action *action)
 		return ret;
 }
 
+static int app_validate_xml(const struct oscap_action * action)
+{
+	const char *xml_file = action->f_oval;
+	if (!xml_file) xml_file = action->f_xccdf;
+	if (!xml_file) return 2;
+
+	if (!oscap_validate_document(xml_file, action->doctype, action->file_version, oscap_reporter_fd, stdout)) {
+		if (oscap_err()) {
+			fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
+			return 2;
+		}
+		return 1;
+	}
+	return 0;
+}
+
 static int getopt_xccdf(int argc, char **argv, struct oscap_action * action)
 {
     /* Usage: oscap xccdf command [command-options] */
@@ -550,6 +569,7 @@ static int getopt_xccdf(int argc, char **argv, struct oscap_action * action)
     }
 
     action->std = OSCAP_STD_XCCDF;
+	action->doctype = OSCAP_DOCUMENT_XCCDF;
 
     /* Command */
     optind++;
@@ -559,8 +579,9 @@ static int getopt_xccdf(int argc, char **argv, struct oscap_action * action)
     }
     if (!strcmp(argv[optind], "eval"))
             action->op = OSCAP_OP_EVAL;
-    /*else if (!strcmp(argv[optind], "validate"))
-            action->op = OSCAP_OP_VALIDATE;*/
+    else if (!strcmp(argv[optind], "validate-xml")) {
+            action->op = OSCAP_OP_VALIDATE_XML;
+	}
     else {
         /* TODO: XCCDF usage */
         /* oscap xccdf --help */
@@ -572,6 +593,7 @@ static int getopt_xccdf(int argc, char **argv, struct oscap_action * action)
         {"help", 0, 0, 'h'},
         {"result-file", 1, 0, 0},
         {"xccdf-profile", 1, 0, 1},
+        {"file-version", 1, 0, 2},
         {0, 0, 0, 0}
     };
 
@@ -591,6 +613,10 @@ static int getopt_xccdf(int argc, char **argv, struct oscap_action * action)
                 if (optarg == NULL) return -1;
                 action->profile = optarg;
                 break;
+			case 2:
+				if (optarg == NULL) return -1;
+				action->file_version = optarg;
+				break;
             default:
                 fprintf(stderr, "FOUND BAD OPTION %d :: %d :: %s\n", optind, optopt, argv[optind]);
                 break;
@@ -601,14 +627,23 @@ static int getopt_xccdf(int argc, char **argv, struct oscap_action * action)
         return -1;
     }
 
-    /* We should have XCCDF file here */
-    if (optind+1 >= argc) {
-        /* TODO */
-        print_xccdf_usage("oscap", stderr, "Error: Bad number of parameters. OVAL file and XCCDF file need to be scpecified !");
-        return -1;
-    }
-    action->url_oval = argv[optind];
-    action->url_xccdf = argv[optind+1];
+	if (action->op == OSCAP_OP_EVAL) {
+		/* We should have XCCDF file here */
+		if (optind+1 >= argc) {
+			/* TODO */
+			print_xccdf_usage("oscap", stderr, "Error: Bad number of parameters. OVAL file and XCCDF file need to be scpecified !");
+			return -1;
+		}
+		action->url_oval = argv[optind];
+		action->url_xccdf = argv[optind+1];
+	}
+	else {
+		if (optind >= argc) {
+			print_xccdf_usage("oscap", stderr, "Error: Bad number of parameters. XCCDF file need to be scpecified !");
+			return -1;
+		}
+		action->url_xccdf = argv[optind];
+	}
 
     return 0;
 }
@@ -622,6 +657,7 @@ static int getopt_oval(int argc, char **argv, struct oscap_action * action)
     }
 
     action->std = OSCAP_STD_OVAL;
+	action->doctype = OSCAP_DOCUMENT_OVAL_DEFINITIONS;
 
     /* Command */
     optind++;
@@ -633,8 +669,8 @@ static int getopt_oval(int argc, char **argv, struct oscap_action * action)
             action->op = OSCAP_OP_EVAL;
     else if (!strcmp(argv[optind], "collect"))
             action->op = OSCAP_OP_COLLECT;
-    /*else if (!strcmp(argv[optind], "validate"))
-            action->op = OSCAP_OP_VALIDATE;*/
+    else if (!strcmp(argv[optind], "validate-xml"))
+            action->op = OSCAP_OP_VALIDATE_XML;
     else {
         /* oscap OVAL --help */
         optind--;
@@ -644,6 +680,10 @@ static int getopt_oval(int argc, char **argv, struct oscap_action * action)
     struct option long_options[] = {
         {"help", 0, 0, 'h'},
         {"result-file", 1, 0, 0},
+        {"file-version", 1, 0, 1},
+		{"definitions", 0, 0, 2},
+		{"syschar", 0, 0, 3},
+		{"results", 0, 0, 4},
         {0, 0, 0, 0}
     };
 
@@ -659,6 +699,13 @@ static int getopt_oval(int argc, char **argv, struct oscap_action * action)
                 if (optarg == NULL) return -1;
                 action->f_results = optarg;
                 break;
+			case 1:
+				if (optarg == NULL) return -1;
+				action->file_version = optarg;
+				break;
+			case 2: action->doctype = OSCAP_DOCUMENT_OVAL_DEFINITIONS; break;
+			case 3: action->doctype = OSCAP_DOCUMENT_OVAL_SYSCHAR; break;
+			case 4: action->doctype = OSCAP_DOCUMENT_OVAL_RESULTS; break;
             default:
                 fprintf(stderr, "FOUND BAD OPTION %d :: %d :: %s\n", optind, optopt, argv[optind]);
                 break;
@@ -669,7 +716,7 @@ static int getopt_oval(int argc, char **argv, struct oscap_action * action)
         return -1;
     }
 
-    /* We should have XCCDF file here */
+    /* We should have OVAL file here */
     if (optind >= argc) {
         /* TODO */
         print_xccdf_usage("oscap", stderr, "Error: Bad number of parameters. OVAL file needs to be scpecified !");
@@ -760,20 +807,27 @@ int main(int argc, char **argv)
 
         switch(action->std) {
             case OSCAP_STD_XCCDF:
-                /* We don't need to switch operations here, only one operation !*/
-                if (action->op != OSCAP_OP_EVAL) {
-		    if (VERBOSE >= 0)
-			    fprintf(stderr, "Error: Bad command for XCCDF !\n");
-		    return 1;
-                }
+				switch (action->op) {
+					case OSCAP_OP_VALIDATE_XML:
+						retval = app_validate_xml(action);
+						break;
+					case OSCAP_OP_EVAL:
 #ifdef ENABLE_XCCDF
-                retval = app_evaluate_xccdf(action);
+						retval = app_evaluate_xccdf(action);
 #else
-                fprintf(stderr, "OSCAP is not compiled with XCCDF support ! Please configure OSCAP library with option --enable-xccdf !\n");
+						fprintf(stderr, "OSCAP is not compiled with XCCDF support ! Please configure OSCAP library with option --enable-xccdf !\n");
 #endif
+						break;
+					default:
+						if (VERBOSE >= 0) fprintf(stderr, "Error: Bad command for XCCDF !\n");
+						return 1;
+				}
                 break;
             case OSCAP_STD_OVAL:
                 switch (action->op) {
+					case OSCAP_OP_VALIDATE_XML:
+						retval = app_validate_xml(action);
+						break;
                     case OSCAP_OP_COLLECT:
                         retval = app_collect_oval(action);
                         break;

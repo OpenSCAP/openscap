@@ -123,7 +123,10 @@ bool oscap_validate_xml(const char *xmlfile, const char *schemafile, oscap_repor
 	xmlSchemaValidCtxtPtr ctxt = NULL;
 	struct oscap_reporter_context reporter_ctxt = { reporter, arg };
 	char *schemapath = oscap_get_schema_path(schemafile);
-	if (schemapath == NULL) goto cleanup;
+	if (schemapath == NULL) {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, 0, "Schema file not found");
+		goto cleanup;
+	}
 
 	parser_ctxt = xmlSchemaNewParserCtxt(schemapath);
 	if (parser_ctxt == NULL) {
