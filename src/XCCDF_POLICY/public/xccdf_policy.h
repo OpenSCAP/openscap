@@ -35,6 +35,7 @@
 #include <time.h>
 #include <oscap.h>
 #include <xccdf.h>
+#include <reporter.h>
  
 /**
  * @struct xccdf_policy_model
@@ -168,7 +169,7 @@ bool xccdf_policy_model_register_engine_callback(struct xccdf_policy_model * mod
  * }
  * \endcode
  */
-bool xccdf_policy_model_register_output_callback(struct xccdf_policy_model * model, void * func, void * usr);
+bool xccdf_policy_model_register_output_callback(struct xccdf_policy_model * model, oscap_reporter func, void * usr);
 
 /************************************************************/
 /**

@@ -35,6 +35,7 @@
 #include "../_error.h"
 #include "../common/public/text.h"
 #include "../common/debug_priv.h"
+#include "../common/reporter_priv.h"
 
 /**
  * Typedef of callback structure with system identificator, callback function and usr data (optional) 
@@ -60,9 +61,7 @@ typedef struct callback_t {
 typedef struct callback_out_t {
 
     char * system;                              ///< Identificator of checking engine (output engine)
-    int (*callback)  (const char *,                             // Rule ID
-                      xccdf_test_result_type_t,                 // Result
-                      void *);                  ///< format of callback function
+    oscap_reporter callback;
     void * usr;                                 ///< User data structure
 
 } callback_out;
@@ -549,8 +548,13 @@ static bool xccdf_policy_item_evaluate(struct xccdf_policy * policy, struct xccd
 
                     callback_out * cb = (callback_out *) xccdf_policy_get_callback(policy, "urn:xccdf:system:callback:output");
                     int retval = 0;
-                    if (cb != NULL)
-                            retval = cb->callback(rule_id, ret, cb->usr);
+                    if (cb != NULL) {
+                            /*retval = cb->callback(rule_id, ret, cb->usr);*/
+                            struct oscap_reporter_message * msg = oscap_reporter_message_new();
+                            oscap_reporter_message_set_user1str(msg, rule_id);
+                            oscap_reporter_message_set_user2num(msg, ret);
+                            oscap_reporter_report(cb->callback, msg, cb->usr);
+                    }
 
                     /* Add result to policy */
                     if (result != NULL) {
@@ -769,7 +773,7 @@ bool xccdf_policy_model_register_engine_callback(struct xccdf_policy_model * mod
         return oscap_list_add(model->callbacks, cb);
 }
 
-bool xccdf_policy_model_register_output_callback(struct xccdf_policy_model * model, void * func, void * usr)
+bool xccdf_policy_model_register_output_callback(struct xccdf_policy_model * model, oscap_reporter func, void * usr)
 {
 
         __attribute__nonnull__(model);

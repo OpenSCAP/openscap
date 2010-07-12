@@ -55,6 +55,7 @@
 #include <oval_variables.h>
 #include <error.h>
 #include <text.h>
+#include <reporter.h>
 
 /* XCCDF */
 #include <xccdf.h>
@@ -287,9 +288,11 @@ static char *app_curl_download(char *url)
  * @param result XCCDF Result of evaluated rule
  * @param arg User defined data structure
  */
-static int callback(const char *id, int result, void *arg)
+static void callback(const struct oscap_reporter_message *msg, void *arg)
 {
-    if (VERBOSE >= 0) printf("Rule \"%s\" result: %s\n", id, xccdf_test_result_type_get_text(result));
+    if (VERBOSE >= 0) printf("Rule \"%s\" result: %s\n",
+            oscap_reporter_message_get_user1str(msg),
+            xccdf_test_result_type_get_text((xccdf_test_result_type_t) oscap_reporter_message_get_user2num(msg)));
     return 0;
 }
 
@@ -333,7 +336,7 @@ static int app_evaluate_xccdf(const struct oscap_action * action)
 	}
 
 	/* Register callback */
-        xccdf_policy_model_register_output_callback(policy_model, callback, NULL);
+        xccdf_policy_model_register_output_callback(policy_model, (oscap_reporter) callback, NULL);
 	xccdf_policy_model_register_engine_oval(policy_model, sess);
 
 	/* Perform evaluation */
@@ -570,7 +573,7 @@ static int getopt_xccdf(int argc, char **argv, struct oscap_action * action)
     struct option long_options[] = {
         {"help", 0, 0, 'h'},
         {"result-file", 1, 0, 0},
-        {"profile", 1, 0, 1},
+        {"xccdf-profile", 1, 0, 1},
         {0, 0, 0, 0}
     };
 
