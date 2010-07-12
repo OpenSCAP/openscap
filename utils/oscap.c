@@ -334,9 +334,8 @@ static int app_evaluate_xccdf(const struct oscap_action * action)
 
 	/* Register callback */
         xccdf_policy_model_register_output_callback(policy_model, callback, NULL);
-	xccdf_policy_model_register_engine_callback(policy_model,
-					     "http://oval.mitre.org/XMLSchema/oval-definitions-5",
-					     oval_agent_eval_rule, (void *) sess);
+	xccdf_policy_model_register_engine_oval(policy_model, sess);
+
 	/* Perform evaluation */
 	struct xccdf_result * ritem = xccdf_policy_evaluate(policy);
 

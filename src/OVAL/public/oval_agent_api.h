@@ -142,6 +142,16 @@ xccdf_test_result_type_t oval_agent_eval_rule (struct xccdf_policy * policy, con
  */
 void oval_agent_resolve_variables(struct oval_agent_session * session, struct xccdf_value_binding_iterator *it);
 
+
+/**
+ * Function to register predefined oval callback for XCCDF evaluation proccess
+ * @param model XCCDF Policy Model
+ * @param sess oval_agent_session_t parameter for passing session data to callback
+ * @memberof xccdf_policy_model
+ * @return true if callback registered succesfully, false otherwise
+ */
+bool xccdf_policy_model_register_engine_oval(struct xccdf_policy_model * model, struct oval_agent_session * sess);
+
 /**
  * Transform OVAL Sysinfo into XCCDF Test Result
  * @param session OVAL Agent session

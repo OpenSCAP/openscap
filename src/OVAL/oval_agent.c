@@ -1568,6 +1568,13 @@ xccdf_test_result_type_t oval_agent_eval_rule(struct xccdf_policy *policy, const
 	return xccdf_get_result_from_oval(result);
 }
 
+
+bool xccdf_policy_model_register_engine_oval(struct xccdf_policy_model * model, struct oval_agent_session * usr)
+{
+
+    return xccdf_policy_model_register_engine_callback(model, "http://oval.mitre.org/XMLSchema/oval-definitions-5", oval_agent_eval_rule, (void *) usr);
+}
+
 void oval_agent_export_sysinfo_to_xccdf_result(struct oval_agent_session * sess, struct xccdf_result * ritem)
 {
 	struct oval_syschar_model *sys_model = NULL;
