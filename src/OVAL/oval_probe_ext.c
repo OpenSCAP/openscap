@@ -267,7 +267,7 @@ static SEXP_t *oval_probe_cmd_ste_fetch(SEXP_t *sexp, void *arg)
 				oscap_free(id_str);
 			}
 
-			ste_sexp = oval_state2sexp(ste);
+			ste_sexp = oval_state2sexp(ste, pext->sess_ptr);
 			SEXP_list_add(ste_list, ste_sexp);
                         SEXP_free(ste_sexp);
 

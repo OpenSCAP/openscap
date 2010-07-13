@@ -829,14 +829,19 @@ SEXP_t *probe_ent_getval(const SEXP_t * ent)
 		unsigned int val_idx;
 
 		r0 = probe_ent_getattrval(ent, "val_idx");
-		val_idx = SEXP_number_getu(r0);
+		if (r0 == NULL) {
+			r0 = SEXP_list_nth(ent, 2);
+			r1 = SEXP_list_first(r0);
+		} else {
+			val_idx = SEXP_number_getu(r0);
+			SEXP_free(r0);
+
+			r0 = SEXP_list_nth(ent, 2);
+			r1 = SEXP_list_nth(r0, val_idx + 1);
+		}
 		SEXP_free(r0);
 
-		r0 = SEXP_list_nth(ent, 2);
-		r1 = SEXP_list_nth(r0, val_idx + 1);
-		SEXP_free(r0);
-
-		return (r1);
+		return r1;
 	} else {
 		return (SEXP_list_nth(ent, 2));
 	}

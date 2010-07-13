@@ -41,6 +41,8 @@
 #include "probes/public/probe-api.h"
 #include "oval_definitions_impl.h"
 #include "oval_system_characteristics_impl.h"
+#include "common/debug_priv.h"
+#include "common/_error.h"
 
 #ifndef _A
 # define _A(x) assert(x)
@@ -88,6 +90,8 @@ SEXP_t *oval_value_to_sexp(struct oval_value *val, oval_datatype_t dtype)
 		val_sexp = SEXP_number_newb(oval_value_get_boolean(val));
 		break;
 	default:
+		oscap_dprintf("ERROR: Unknown datatype: %s.\n", dtype);
+		oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "Unknown datatype");
 		val_sexp = NULL;
 		break;
 	}
@@ -434,7 +438,7 @@ SEXP_t *oval_object2sexp(const char *typestr, struct oval_object *object, struct
 	return (obj_sexp);
 }
 
-SEXP_t *oval_state2sexp(struct oval_state * state)
+SEXP_t *oval_state2sexp(struct oval_state *state, void *sess)
 {
 	SEXP_t *ste, *ste_name, *ste_ent;
 	SEXP_t *r0, *r1, *r2;
@@ -457,30 +461,17 @@ SEXP_t *oval_state2sexp(struct oval_state * state)
 				 r1 = SEXP_string_new(":id", 3),
 				 r2 = SEXP_string_newf("%s", oval_state_get_id(state)), NULL);
 
-	SEXP_free(r0);
-	SEXP_free(r1);
-	SEXP_free(r2);
-
 	ste = SEXP_list_new(ste_name, NULL);
-
-	SEXP_free(ste_name);
-
-	//entities = oval_state_entities (state);
+	SEXP_vfree(r0, r1, r2, ste_name, NULL);
 
 	contents = oval_state_get_contents(state);
-
-	/*
-	   while (oval_entity_iterator_has_more (entities)) {
-	   ste_ent = oval_entity_to_sexp (oval_entity_iterator_next (entities));
-	   SEXP_list_add (ste, ste_ent);
-	   }
-	 */
 	while (oval_state_content_iterator_has_more(contents)) {
 		oval_check_t ochk;
+		struct oval_entity *ent;
 		struct oval_state_content *content = oval_state_content_iterator_next(contents);
 
-		ste_ent = oval_entity_to_sexp(oval_state_content_get_entity(content));
-
+		ent = oval_state_content_get_entity(content);
+		ste_ent = oval_entity_to_sexp(ent);
 		if (ste_ent == NULL) {
 			SEXP_free(ste);
 			ste = NULL;
@@ -499,13 +490,56 @@ SEXP_t *oval_state2sexp(struct oval_state * state)
 			SEXP_free(r0);
 		}
 
+		if (oval_entity_get_varref_type(ent) == OVAL_ENTITY_VARREF_ATTRIBUTE) {
+			SEXP_t *val_lst;
+			struct oval_variable *var;
+			struct oval_value_iterator *val_itr;
+			oval_datatype_t dt;
+
+			var = oval_entity_get_variable(ent);
+			if (oval_probe_session_query_variable(sess, var) != 0) {
+				goto fail;
+			}
+			dt = oval_entity_get_datatype(ent);
+			val_lst = SEXP_list_new(NULL);
+
+			val_itr = oval_variable_get_values(var);
+			while (oval_value_iterator_has_more(val_itr)) {
+				struct oval_value *val;
+				SEXP_t *vs;
+
+				val = oval_value_iterator_next(val_itr);
+				vs = oval_value_to_sexp(val, dt);
+				if (vs == NULL) {
+					oscap_dprintf("ERROR: Failed to convert OVAL value to SEXP: "
+						      "datatype: %s, text: %s.\n",
+						      oval_datatype_get_text(dt),
+						      oval_value_get_text(val));
+					oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "Failed to convert OVAL value to SEXP");
+					oval_value_iterator_free(val_itr);
+					SEXP_free(val_lst);
+					goto fail;
+				}
+				SEXP_list_add(val_lst, vs);
+				SEXP_free(vs);
+			}
+			oval_value_iterator_free(val_itr);
+
+			SEXP_list_add(ste_ent, val_lst);
+			SEXP_free(val_lst);
+		}
+
 		SEXP_list_add(ste, ste_ent);
 		SEXP_free(ste_ent);
 	}
-
 	oval_state_content_iterator_free(contents);
 
 	return (ste);
+
+ fail:
+	oval_state_content_iterator_free(contents);
+	SEXP_vfree(ste_ent, ste, NULL);
+	return NULL;
 }
 
 static struct oval_sysitem *oval_sysitem_from_sexp(struct oval_syschar_model *model, SEXP_t * sexp)
