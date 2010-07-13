@@ -47,6 +47,19 @@ Probe the system and evaluate all definitions from OVAL Definition file. Print r
 \fB\-\-result-file FILE\fR
 .RS
 Write OVAL Results into file.
+.RE
+.RE
+.TP
+.B validate-xml\fR [\fIoptions\fR] oval-file
+.RS
+Validate given OVAL file against a XML schema. Every found error is printed to the standard output. Return code is 0 if validation succeeds, 1 if the OVAL document is not valid, 2 if validation could not be performed due to some error.
+.TP
+\fB\-\-version VER\fR
+Specify version of the specification the document shall conform to.
+.TP
+\fB\-\-definitions\fR, \fB\-\-syschar\fR, \fB\-\-results\fR
+Specify whether the validated document is an OVAL definitions file, OVAL system characteristics file, or OVAL results file. Default: definitions.
+.RE
 
 .SH XCCDF OPERATIONS
 .TP
@@ -63,6 +76,16 @@ Select profile from XCCDF document, otherwise the first profile is used.
 \fB\-\-result-file FILE\fR
 .RS
 Write XCCDF results into file.
+.RE
+.RE
+.TP
+.B validate-xml\fR [\fIoptions\fR] xccdf-file
+.RS
+Validate given XCCDF file against a XML schema. Every found error is printed to the standard output. Return code is 0 if validation succeeds, 1 if the XCCDF document is not valid, 2 if validation could not be performed due to some error.
+.TP
+\fB\-\-version VER\fR
+Specify version of the specification the document shall conform to.
+.RE
 
 .SH CVSS OPERATIONS
 .TP
