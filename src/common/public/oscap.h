@@ -37,15 +37,6 @@
 #include "text.h"
 #include "reporter.h"
 
-typedef enum oscap_document_type {
-	OSCAP_DOCUMENT_OVAL_DEFINITIONS = 1,
-	OSCAP_DOCUMENT_OVAL_SYSCHAR,
-	OSCAP_DOCUMENT_OVAL_RESULTS,
-	OSCAP_DOCUMENT_XCCDF,
-	OSCAP_DOCUMENT_CPE_LANGUAGE,
-	OSCAP_DOCUMENT_CPE_DICTIONARY,
-} oscap_document_type_t;
-
 
 /**
  * @addtogroup ITER
@@ -265,9 +256,8 @@ void oscap_cleanup(void);
 
 
 /**
- * @addtogroup IMPORTEXPORT
+ * @addtogroup XMLMETA
  * @{
- * Handling input and output files plus validation according to XML schema.
  */
 
 /**
@@ -374,15 +364,45 @@ struct oscap_nsinfo_entry *oscap_nsinfo_entry_iterator_next(struct oscap_nsinfo_
 void oscap_nsinfo_entry_iterator_free(struct oscap_nsinfo_entry_iterator *it);
 /************************************************************/
 /** @} End of Iterators group */
+/** @} */
 
 /**
- * @name Evaluators
+ * @addtogroup VALID
  * @{
+ * XML schema based validation of XML representations of SCAP documents.
  */
-/// Validate given SCAP document
+
+/// SCAP document type identifiers
+typedef enum oscap_document_type {
+	OSCAP_DOCUMENT_OVAL_DEFINITIONS = 1,  ///< OVAL Definitions file
+	OSCAP_DOCUMENT_OVAL_SYSCHAR,          ///< OVAL system characteristics file
+	OSCAP_DOCUMENT_OVAL_RESULTS,          ///< OVAL results file
+	OSCAP_DOCUMENT_XCCDF,                 ///< XCCDF benchmark file
+	OSCAP_DOCUMENT_CPE_LANGUAGE,          ///< CPE language file
+	OSCAP_DOCUMENT_CPE_DICTIONARY,        ///< CPE dictionary file
+} oscap_document_type_t;
+
+
+/**
+ * Validate a SCAP document file against a XML schema.
+ *
+ * Schemas are searched relative to path specified by the OSCAP_SCHEMA_PATH environment variable,
+ * which contains a list of colon-separated paths.
+ * If the variable does not exist a default path is used (usually something like $PREFIX/share/openscap/schemas).
+ *
+ * Directory structure must adhere $SCHEMA_PATH/$STANDARD/$VERSION/$SCHEMAFILE.xsd structure, where $STANDARD
+ * is oval, xccdf, etc., and $VERSION is a version of the standard.
+ *
+ * @param xmlfile File to be validated.
+ * @param doctype Document type represented by the file.
+ * @param version Version of the document, use NULL for library's default.
+ * @param reporetr A reporter to by notified of encountered issues. Can be NULL, if a binary document validates / does not validate answer is satisfactonary.
+ * @param arg Argument for the reporter.
+ * @return Success or failure.
+ */
 bool oscap_validate_document(const char *xmlfile, oscap_document_type_t doctype, const char *version, oscap_reporter reporter, void *arg);
 /************************************************************/
-/** @} End of Evaluators group */
+/** @} validation group end */
 
 /** @} */
 

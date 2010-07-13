@@ -72,8 +72,8 @@
 
 /// Reporter message family
 typedef enum oscap_reporter_family {
-	OSCAP_REPORTER_FAMILY_XML           = 1,
-        OSCAP_REPORTER_FAMILY_XCCDF         = 2,
+	OSCAP_REPORTER_FAMILY_XML           = 1,       ///< libxml codes
+        OSCAP_REPORTER_FAMILY_XCCDF         = 2,  ///< XCCDF codes
 	OSCAP_REPORTER_FAMILY_USER_START    = 1024
 } oscap_reporter_family_t;
 
@@ -147,7 +147,13 @@ int oscap_reporter_dispatch(oscap_reporter reporter, const struct oscap_reporter
  * @memberof oscap_reporter
  */
 int oscap_reporter_report(oscap_reporter reporter, struct oscap_reporter_message *msg, void *arg);
-/// @memberof oscap_reporter
+
+/**
+ * Do report.
+ * Convience function.
+ * @see oscap_reporter_report
+ * @memberof oscap_reporter
+ */
 int oscap_reporter_report_fmt(oscap_reporter reporter, void *arg, oscap_reporter_family_t family, oscap_reporter_code_t code, const char *fmt, ...);
 
 /// File descriptor reporter
