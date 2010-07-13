@@ -16,7 +16,49 @@ dist_pkgdata_DATA = dist/fedora/scap-fedora12-oval.xml \
                     dist/fedora/scap-fedora13-oval.xml \
                     dist/fedora/oscap-scan.cron
 
-nobase_pkgdata_DATA = schemas/*/*/*.xsd  schemas/*/*/*.dtd
+nobase_pkgdata_DATA =	schemas/oval/5.5/independent-system-characteristics-schema.xsd \
+			schemas/oval/5.5/windows-definitions-schema.xsd \
+			schemas/oval/5.5/windows-system-characteristics-schema.xsd \
+			schemas/oval/5.5/aix-definitions-schema.xsd \
+			schemas/oval/5.5/linux-definitions-schema.xsd \
+			schemas/oval/5.5/apache-system-characteristics-schema.xsd \
+			schemas/oval/5.5/hpux-system-characteristics-schema.xsd \
+			schemas/oval/5.5/pixos-system-characteristics-schema.xsd \
+			schemas/oval/5.5/oval-definitions-schema.xsd \
+			schemas/oval/5.5/catos-system-characteristics-schema.xsd \
+			schemas/oval/5.5/oval-common-schema.xsd \
+			schemas/oval/5.5/unix-definitions-schema.xsd \
+			schemas/oval/5.5/ios-definitions-schema.xsd \
+			schemas/oval/5.5/esx-system-characteristics-schema.xsd \
+			schemas/oval/5.5/linux-system-characteristics-schema.xsd \
+			schemas/oval/5.5/independent-definitions-schema.xsd \
+			schemas/oval/5.5/freebsd-definitions-schema.xsd \
+			schemas/oval/5.5/solaris-definitions-schema.xsd \
+			schemas/oval/5.5/macos-system-characteristics-schema.xsd \
+			schemas/oval/5.5/hpux-definitions-schema.xsd \
+			schemas/oval/5.5/unix-system-characteristics-schema.xsd \
+			schemas/oval/5.5/ios-system-characteristics-schema.xsd \
+			schemas/oval/5.5/oval-results-schema.xsd \
+			schemas/oval/5.5/catos-definitions-schema.xsd \
+			schemas/oval/5.5/pixos-definitions-schema.xsd \
+			schemas/oval/5.5/aix-system-characteristics-schema.xsd \
+			schemas/oval/5.5/macos-definitions-schema.xsd \
+			schemas/oval/5.5/oval-system-characteristics-schema.xsd \
+			schemas/oval/5.5/solaris-system-characteristics-schema.xsd \
+			schemas/oval/5.5/freebsd-system-characteristics-schema.xsd \
+			schemas/oval/5.5/xmldsig-core-schema.xsd \
+			schemas/oval/5.5/oval-variables-schema.xsd \
+			schemas/oval/5.5/esx-definitions-schema.xsd \
+			schemas/oval/5.5/apache-definitions-schema.xsd \
+			schemas/xccdf/1.1.4/xccdfp-1.1.xsd \
+			schemas/xccdf/1.1.4/cpe-1.0.xsd \
+			schemas/xccdf/1.1.4/cpe-language_2.0.xsd \
+			schemas/xccdf/1.1.4/xccdf-schema.xsd \
+			schemas/xccdf/1.1.4/simpledc20021212.xsd \
+			schemas/xccdf/1.1.4/platform-0.2.3.xsd \
+			schemas/xccdf/1.1.4/xml.xsd \
+			schemas/xccdf/1.1.4/XMLSchema.dtd \
+			schemas/xccdf/1.1.4/datatypes.dtd
 
 EXTRA_DIST =	dist/fedora/openscap.spec \
 		dist/fedora/oscap-scan.sys \
@@ -26,7 +68,50 @@ EXTRA_DIST =	dist/fedora/openscap.spec \
 		dist/fedora/scap-fedora13-oval.xml \
 		docs/Doxyfile \
 		docs/examples/oval_probes.py \
-		docs/examples/package-test.xml
+		docs/examples/package-test.xml \
+		schemas/oval/5.5/independent-system-characteristics-schema.xsd \
+		schemas/oval/5.5/windows-definitions-schema.xsd \
+		schemas/oval/5.5/windows-system-characteristics-schema.xsd \
+		schemas/oval/5.5/aix-definitions-schema.xsd \
+		schemas/oval/5.5/linux-definitions-schema.xsd \
+		schemas/oval/5.5/apache-system-characteristics-schema.xsd \
+		schemas/oval/5.5/hpux-system-characteristics-schema.xsd \
+		schemas/oval/5.5/pixos-system-characteristics-schema.xsd \
+		schemas/oval/5.5/oval-definitions-schema.xsd \
+		schemas/oval/5.5/catos-system-characteristics-schema.xsd \
+		schemas/oval/5.5/oval-common-schema.xsd \
+		schemas/oval/5.5/unix-definitions-schema.xsd \
+		schemas/oval/5.5/ios-definitions-schema.xsd \
+		schemas/oval/5.5/esx-system-characteristics-schema.xsd \
+		schemas/oval/5.5/linux-system-characteristics-schema.xsd \
+		schemas/oval/5.5/independent-definitions-schema.xsd \
+		schemas/oval/5.5/freebsd-definitions-schema.xsd \
+		schemas/oval/5.5/solaris-definitions-schema.xsd \
+		schemas/oval/5.5/macos-system-characteristics-schema.xsd \
+		schemas/oval/5.5/hpux-definitions-schema.xsd \
+		schemas/oval/5.5/unix-system-characteristics-schema.xsd \
+		schemas/oval/5.5/ios-system-characteristics-schema.xsd \
+		schemas/oval/5.5/oval-results-schema.xsd \
+		schemas/oval/5.5/catos-definitions-schema.xsd \
+		schemas/oval/5.5/pixos-definitions-schema.xsd \
+		schemas/oval/5.5/aix-system-characteristics-schema.xsd \
+		schemas/oval/5.5/macos-definitions-schema.xsd \
+		schemas/oval/5.5/oval-system-characteristics-schema.xsd \
+		schemas/oval/5.5/solaris-system-characteristics-schema.xsd \
+		schemas/oval/5.5/freebsd-system-characteristics-schema.xsd \
+		schemas/oval/5.5/xmldsig-core-schema.xsd \
+		schemas/oval/5.5/oval-variables-schema.xsd \
+		schemas/oval/5.5/esx-definitions-schema.xsd \
+		schemas/oval/5.5/apache-definitions-schema.xsd \
+		schemas/xccdf/1.1.4/xccdfp-1.1.xsd \
+		schemas/xccdf/1.1.4/cpe-1.0.xsd \
+		schemas/xccdf/1.1.4/cpe-language_2.0.xsd \
+		schemas/xccdf/1.1.4/xccdf-schema.xsd \
+		schemas/xccdf/1.1.4/simpledc20021212.xsd \
+		schemas/xccdf/1.1.4/platform-0.2.3.xsd \
+		schemas/xccdf/1.1.4/xml.xsd \
+		schemas/xccdf/1.1.4/XMLSchema.dtd \
+		schemas/xccdf/1.1.4/datatypes.dtd
 
 dist-hook: ChangeLog
 	cd $(distdir)/docs && doxygen Doxyfile
