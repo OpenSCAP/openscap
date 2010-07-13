@@ -282,10 +282,8 @@ static char *app_curl_download(char *url)
 
 #ifdef ENABLE_XCCDF
 /**
- * Callback for XCCDF evaluation. Callback is called after each OVAL definition evaluation
- * right before adding results to Test result model.
- * @param id ID of Rules that is being evaluated
- * @param result XCCDF Result of evaluated rule
+ * Callback for XCCDF evaluation. Callback is called after each XCCDF Rule evaluation
+ * @param msg OSCAP Reporter message
  * @param arg User defined data structure
  */
 static void callback(const struct oscap_reporter_message *msg, void *arg)
@@ -293,7 +291,7 @@ static void callback(const struct oscap_reporter_message *msg, void *arg)
     if (VERBOSE >= 0) printf("Rule \"%s\" result: %s\n",
             oscap_reporter_message_get_user1str(msg),
             xccdf_test_result_type_get_text((xccdf_test_result_type_t) oscap_reporter_message_get_user2num(msg)));
-    return 0;
+    //return 0;
 }
 
 /**

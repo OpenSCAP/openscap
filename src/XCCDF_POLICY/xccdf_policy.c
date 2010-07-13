@@ -550,7 +550,10 @@ static bool xccdf_policy_item_evaluate(struct xccdf_policy * policy, struct xccd
                     int retval = 0;
                     if (cb != NULL) {
                             /*retval = cb->callback(rule_id, ret, cb->usr);*/
-                            struct oscap_reporter_message * msg = oscap_reporter_message_new();
+                            struct oscap_reporter_message * msg = oscap_reporter_message_new_fmt(
+                                    OSCAP_REPORTER_FAMILY_XCCDF, /* FAMILY */
+                                    0,                           /* CODE */
+                                    "Rule \"%s\" result: %s\n", rule_id, xccdf_test_result_type_get_text(ret));
                             oscap_reporter_message_set_user1str(msg, rule_id);
                             oscap_reporter_message_set_user2num(msg, ret);
                             oscap_reporter_report(cb->callback, msg, cb->usr);
