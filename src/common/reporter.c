@@ -163,26 +163,29 @@ void oscap_reporter_message_free(struct oscap_reporter_message *msg)
 	}
 }
 
-void oscap_reporter_dispatch(oscap_reporter reporter, const struct oscap_reporter_message *msg, void *arg)
+int oscap_reporter_dispatch(oscap_reporter reporter, const struct oscap_reporter_message *msg, void *arg)
 {
-	if (reporter == NULL || msg == NULL) return;
-	reporter(msg, arg);
+	if (reporter == NULL || msg == NULL) return 0;
+	return reporter(msg, arg);
 }
 
-void oscap_reporter_report(oscap_reporter reporter, struct oscap_reporter_message *msg, void *arg)
+int oscap_reporter_report(oscap_reporter reporter, struct oscap_reporter_message *msg, void *arg)
 {
+	int ret = 0;
 	if (reporter != NULL && msg != NULL)
-		oscap_reporter_dispatch(reporter, msg, arg);
+		ret = oscap_reporter_dispatch(reporter, msg, arg);
 	oscap_reporter_message_free(msg);
+	return ret;
 }
 
-void oscap_reporter_report_fmt(oscap_reporter reporter, void *arg, oscap_reporter_family_t family, oscap_reporter_code_t code, const char *fmt, ...)
+int oscap_reporter_report_fmt(oscap_reporter reporter, void *arg, oscap_reporter_family_t family, oscap_reporter_code_t code, const char *fmt, ...)
 {
-	if (reporter == NULL) return;
+	if (reporter == NULL) return 0;
     va_list ap;
     va_start(ap, fmt);
-	oscap_reporter_report(reporter, oscap_reporter_message_new_arg(family, code, fmt, ap), arg);
+	int ret = oscap_reporter_report(reporter, oscap_reporter_message_new_arg(family, code, fmt, ap), arg);
     va_end(ap);
+	return ret;
 }
 
 // ================= reporting helpers ===================
@@ -210,10 +213,10 @@ void oscap_reporter_report_libc(oscap_reporter reporter, void *arg)
 
 // ------------- file descriptor reporter ---------------
 
-void oscap_reporter_fd(const struct oscap_reporter_message *msg, void *arg)
+int oscap_reporter_fd(const struct oscap_reporter_message *msg, void *arg)
 {
-	if (arg == NULL) return;
-	fprintf(arg, "%d %d %s\n", msg->family, msg->code, msg->string);
+	if (arg != NULL) fprintf(arg, "%d %d %s\n", msg->family, msg->code, msg->string);
+	return 0;
 }
 
 // ---------------- switch reporter ---------------------
@@ -273,18 +276,21 @@ void oscap_reporter_switch_ctxt_free(struct oscap_reporter_switch_ctxt *ctxt)
 	}
 }
 
-void oscap_reporter_switch(const struct oscap_reporter_message *msg, void *arg)
+int oscap_reporter_switch(const struct oscap_reporter_message *msg, void *arg)
 {
-	if (msg == NULL || arg == NULL) return;
+	if (msg == NULL || arg == NULL) return 0;
+	int retval = 0;
 
 	struct oscap_iterator *it = oscap_iterator_new(((struct oscap_reporter_switch_ctxt *)arg)->units);
 	while (oscap_iterator_has_more(it)) {
 		struct oscap_reporter_switch_unit *unit = oscap_iterator_next(it);
 		if (unit->family == 0 || (unit->family == msg->family && unit->min_code <= msg->code && msg->code <= unit->max_code)) {
-			oscap_reporter_dispatch(unit->reporter, msg, unit->arg);
+			retval = oscap_reporter_dispatch(unit->reporter, msg, unit->arg);
 			if (unit->stop_on_match) break;
 		}
 	}
 	oscap_iterator_free(it);
+
+	return retval;
 }
 

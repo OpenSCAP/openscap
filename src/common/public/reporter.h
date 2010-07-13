@@ -92,7 +92,7 @@ struct oscap_reporter_message;
 /**
  * Reporter prototype
  */
-typedef void (*oscap_reporter)(const struct oscap_reporter_message *msg, void *arg);
+typedef int (*oscap_reporter)(const struct oscap_reporter_message *msg, void *arg);
 
 
 /// @memberof oscap_reporter_message
@@ -137,7 +137,7 @@ void *oscap_reporter_message_get_user3ptr(const struct oscap_reporter_message *m
  * @param msg message to be sent / forwarded
  * @memberof oscap_reporter
  */
-void oscap_reporter_dispatch(oscap_reporter reporter, const struct oscap_reporter_message *msg, void *arg);
+int oscap_reporter_dispatch(oscap_reporter reporter, const struct oscap_reporter_message *msg, void *arg);
 
 /**
  * Do report.
@@ -146,12 +146,12 @@ void oscap_reporter_dispatch(oscap_reporter reporter, const struct oscap_reporte
  * @param msg Message to send. Will be freed after processing by the reporter.
  * @memberof oscap_reporter
  */
-void oscap_reporter_report(oscap_reporter reporter, struct oscap_reporter_message *msg, void *arg);
+int oscap_reporter_report(oscap_reporter reporter, struct oscap_reporter_message *msg, void *arg);
 /// @memberof oscap_reporter
-void oscap_reporter_report_fmt(oscap_reporter reporter, void *arg, oscap_reporter_family_t family, oscap_reporter_code_t code, const char *fmt, ...);
+int oscap_reporter_report_fmt(oscap_reporter reporter, void *arg, oscap_reporter_family_t family, oscap_reporter_code_t code, const char *fmt, ...);
 
 /// File descriptor reporter
-void oscap_reporter_fd(const struct oscap_reporter_message *msg, void *arg);
+int oscap_reporter_fd(const struct oscap_reporter_message *msg, void *arg);
 
 /**
  * @struct oscap_reporter_switch_ctxt
@@ -173,6 +173,6 @@ void oscap_reporter_switch_ctxt_add_reporter(struct oscap_reporter_switch_ctxt *
 /// @memberof oscap_reporter_switch_ctxt
 void oscap_reporter_switch_ctxt_free(struct oscap_reporter_switch_ctxt *ctxt);
 /// @memberof oscap_reporter_switch_ctxt
-void oscap_reporter_switch(const struct oscap_reporter_message *msg, void *arg);
+int oscap_reporter_switch(const struct oscap_reporter_message *msg, void *arg);
 
 #endif // OSCAP_REPORTER_H_
