@@ -28,6 +28,9 @@ Open Vulnerability and Assessment Language.
 .TP
 \fBxccdf\fR
 The eXtensible Configuration Checklist Description Format.
+.TP
+\fBcvss\fR
+Common Vulnerability Scoring System
 
 .SH OVAL OPERATIONS
 .TP
@@ -39,9 +42,10 @@ Probe the system and gather system characteristics for objects in OVAL Definitio
 .B eval\fR [\fIoptions\fR] oval-definitions-file
 .RS
 Probe the system and evaluate all definitions from OVAL Definition file. Print result of each definition to standard output. oscap returns 0 if all definitions pass. If there is an error during evaluation, the return code is 1. If there is at least one failed result definition, oscap-scan finishes with return code 2.
-.RE
+.PP
 .TP
 \fB\-\-result-file FILE\fR
+.RS
 Write OVAL Results into file.
 
 .SH XCCDF OPERATIONS
@@ -49,13 +53,66 @@ Write OVAL Results into file.
 .B eval\fR [\fIoptions\fR] oval-definitions-file xccdf-file
 .RS
 Perform evaluation driven by XCCDF file and use OVAL as checking engine. Print result of each rule to standard output. oscap returns 0 if all rules pass. If there is an error during evaluation, the return code is 1. If there is at least one failed rule, oscap-scan finishes with return code 2.
-.RE
+.PP
 .TP
 \fB\-\-profile PROFILE\fR
+.RS
 Select profile from XCCDF document, otherwise the first profile is used.
+.RE
 .TP
 \fB\-\-result-file FILE\fR
+.RS
 Write XCCDF results into file.
+
+.SH CVSS OPERATIONS
+.TP
+.B base\fR metrics
+.RS
+Calculate base score from Access Vector (AV), Access Complexity (AC), Authentication(AU), Confidentiality Impact(CI),  Integrity Impact(II) and Availability Impact(AI) metric.
+.RE
+.PP
+.B temporal\fR metrics
+.RS
+Calculate temporal score from Exploitability(EX), Remediation Level(RL) and Report Confidence(RC) metric.
+.RE
+.PP
+.B environmental\fR metrics
+.RS
+Calculate environmental score from Collateral Damage Potential(CD), Target Distribution(TD), Confidentiality Requirement (CR),  Integrity Requirement(IR), Availability Requirement(AR),
+Access Vector (AV), Access Complexity (AC), Authentication(AU), Confidentiality Impact(CI),  Integrity Impact(II), Availability Impact(AI), Exploitability(EX), Remediation Level(RL) and Report Confidence(RC) metric.
+.RE
+.PP
+metrics:
+.TP
+\fB\-\-AV=\fR[local|adjacent-network|network]
+.TP
+\fB\-\-AC=\fR[high|medium|low]
+.TP
+\fB\-\-AU=\fR[none|single|multiple]
+.TP
+\fB\-\-CI=\fR[none|partial|complete]
+.TP
+\fB\-\-II=\fR[none|partial|complete]
+.TP
+\fB\-\-AI=\fR[none|partial|complete]
+.TP
+\fB\-\-EX=\fR[unproven|proof-of-concept|functional|high|not-defined]
+.TP
+\fB\-\-RL=\fR[official-fix|temporary-fix|workaround|unavailable|not-defined]
+.TP
+\fB\-\-RC=\fR[unconfirmed|uncorrporated|confirmed|not-defined]
+.TP
+\fB\-\-CD=\fR[none|low|low-medium|medium-high|high|not-defined]
+.TP
+\fB\-\-TD=\fR[none|low|medium|high|not-defined]
+.TP
+\fB\-\-CR=\fR[low|medium|high|not-defined]
+.TP
+\fB\-\-IR=\fR[low|medium|high|not-defined]
+.TP
+\fB\-\-AR=\fR[low|medium|high|not-defined]
+
+
 
 .SH AUTHOR
 Peter Vrabec <pvrabec@redhat.com>
