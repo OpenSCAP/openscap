@@ -1,3 +1,13 @@
+openscap-0.6.0							14-07-2010
+- finished OVAL variables support
+- fixed swig version requirement
+- xccdf_policy API tuned up
+- simplified reporting mechanism
+- provided OVAL and XCCDF schemas in tarball
+- improved interface for validation
+- added validation and cvss support to oscap tool
+- oscap tool fixes
+
 openscap-0.5.12                                                 30-06-2010
 - OVAL high level API
 - OVAL split system querying and evaluation
