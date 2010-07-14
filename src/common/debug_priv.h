@@ -1,4 +1,7 @@
-
+/**
+ * @file debug_priv.h
+ * @brief oscap debug helpers private header
+ */
 /*
  * Copyright 2010 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
@@ -37,7 +40,21 @@ OSCAP_HIDDEN_START;
 #else
 # include <stddef.h>
 # include <stdarg.h>
-void __oscap_dprintf(const char *, const char *, size_t, const char *, ...);
+  /**
+   * printf-like function for writing debug messages into the output
+   * file (see SEAP_DEBUG_FILE and SEAP_DEBUG_FILE_ENV).
+   * @param srcfile name of the source file
+   * @param srcfn   name of the function
+   * @param srcln   line
+   * @param fmt     printf-like format string
+   */
+void __oscap_dprintf(const char *srcfile, const char *srcfn, size_t line, const char *fmt, ...);
+
+  /**
+   * Convenience macro for calling __seap_debuglog. Only the fmt & it's arguments
+   * need to be specified. The __FILE__, __PRETTY_FUNCTION__ and __LINE__ macros
+   * are used for the first three arguments.
+   */
 # define oscap_dprintf(...) __oscap_dprintf (__FILE__, __PRETTY_FUNCTION__, __LINE__, __VA_ARGS__)
 #endif                          /* NDEBUG */
 #endif                          /* oscap_dprintf */
@@ -46,14 +63,33 @@ void __oscap_dprintf(const char *, const char *, size_t, const char *, ...);
 #ifndef NDEBUG
 #include <stdlib.h>
 extern int __debuglog_level;
+
+/**
+ * Using this macro you can create a "debug block" with a verbosity level `l'.
+ * Example:
+ *  The following code inside the debug block will be executed only if the debug level
+ *  is larger that or equal to 3.
+ *
+ * debug(3) {
+ *   int foo;
+ *   foo = do_something_only_in_debug_mode();
+ *   ...
+ * }
+ * 
+ */
 # define debug(l) if ((__debuglog_level = (__debuglog_level == -1 ? atoi (getenv (OSCAP_DEBUG_LEVEL_ENV) == NULL ? "0" : getenv (OSCAP_DEBUG_LEVEL_ENV)) : __debuglog_level)) && __debuglog_level >= (l))
 #else
 # define debug(l) if (0)
 #endif
 
+/**
+ * Version of the oscap_dprintf function with support for debug level.
+ * Implemented using the debug() macro described above.
+ * @param l debug level
+ * @param ... oscap_dprintf params
+ */
 #define oscap_dlprintf(l, ...) do { debug(l) { oscap_dprintf(__VA_ARGS__); }} while(0)
 
 OSCAP_HIDDEN_END;
 
 #endif
-

@@ -40,14 +40,29 @@
 #ifndef OSCAP_DEBUG_H
 #define OSCAP_DEBUG_H
 
+/**
+ * Hardcodede output filename. This is used as the default
+ * filename if the variable specified by OSCAP_DEBUG_FILE_ENV
+ * isn't defined.
+ */
 #ifndef OSCAP_DEBUG_FILE
 # define OSCAP_DEBUG_FILE     "oscap_debug.log"
 #endif
 
+/**
+ * Name of the environment variable that can be used to change
+ * the default output filename.
+ */
 #ifndef OSCAP_DEBUG_FILE_ENV
 # define OSCAP_DEBUG_FILE_ENV "OSCAP_DEBUG_FILE"
 #endif
 
+/**
+ * Name of the environment variable that can be used to change
+ * the debug level, i.e. the number and verbosity of the debug
+ * messages.
+ * XXX: not implemented yet
+ */
 #ifndef OSCAP_DEBUG_LEVEL_ENV
 # define OSCAP_DEBUG_LEVEL_ENV "OSCAP_DEBUG_LEVEL"
 #endif

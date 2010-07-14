@@ -1,3 +1,8 @@
+/**
+ * @file   seap-debug.h
+ * @brief  SEAP debug helpers public header
+ * @author Daniel Kopecek <dkopecek@redhat.com>
+ */
 /*
  * Copyright 2009 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
@@ -40,13 +45,32 @@ extern "C" {
 #else
 # include <stddef.h>
 # include <stdarg.h>
-void __seap_debuglog (const char *, const char *, size_t , const char *, ...);
+  /**
+   * printf-like function for writing debug messages into the output
+   * file (see SEAP_DEBUG_FILE and SEAP_DEBUG_FILE_ENV).
+   * @param srcfile name of the source file
+   * @param srcfn   name of the function
+   * @param srcln   line
+   * @param fmt     printf-like format string
+   */
+void __seap_debuglog (const char *srcfile, const char *srcfn, size_t srcln, const char *fmt, ...);
+  /**
+   * Convenience macro for calling __seap_debuglog. Only the fmt & it's arguments
+   * need to be specified. The __FILE__, __PRETTY_FUNCTION__ and __LINE__ macros
+   * are used for the first three arguments.
+   */
 # define _D(...) __seap_debuglog (__FILE__, __PRETTY_FUNCTION__, __LINE__, __VA_ARGS__)
 # define _LOGCALL_ _D("called\n");
 #endif /* NDEBUG */
 #endif /* _D */
-
-#define SEAP_DEBUG_FILE     "seap_debug.log"
+  /**
+   * Hardcoded output filename.
+   */
+#define SEAP_DEBUG_FILE "seap_debug.log"
+  /**
+   * Name of the environment variable that can be used to change the
+   * default output filename.
+   */
 #define SEAP_DEBUG_FILE_ENV "SEAP_DEBUG_FILE"
 
 #ifdef __cplusplus
