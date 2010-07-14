@@ -54,7 +54,7 @@ start() {
 		logger "OpenSCAP security scan: PASS"
 	elif [ $RETVAL -eq 1 ] ; then
 		sleep 1
-		logger "OpenSCAP security scan: ERROR. Run oscap-scan from command line."
+		logger "OpenSCAP security scan: ERROR. Run oscap scan from command line."
 	else
 		sleep 1
 		logger "OpenSCAP security scan: FAILED. See results in /var/log/oscap-scan.xml.log"

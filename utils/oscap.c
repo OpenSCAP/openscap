@@ -881,7 +881,7 @@ static int getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 		if (optind + 1 >= argc) {
 			/* TODO */
 			print_xccdf_usage("oscap", stderr,
-					  "Error: Bad number of parameters. OVAL file and XCCDF file need to be scpecified !");
+					  "Error: Bad number of parameters. OVAL file and XCCDF file need to be specified !");
 			return -1;
 		}
 		action->url_oval = argv[optind];
@@ -889,7 +889,7 @@ static int getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 	} else {
 		if (optind >= argc) {
 			print_xccdf_usage("oscap", stderr,
-					  "Error: Bad number of parameters. XCCDF file need to be scpecified !");
+					  "Error: Bad number of parameters. XCCDF file need to be specified !");
 			return -1;
 		}
 		action->url_xccdf = argv[optind];
@@ -970,7 +970,7 @@ static int getopt_oval(int argc, char **argv, struct oscap_action *action)
 		}
 	}
 	if (action->op == OSCAP_OP_UNKNOWN) {
-		print_xccdf_usage("oscap", stderr,
+		print_oval_usage("oscap", stderr,
 				  "Error: No operation specified. Use \"oscap oval eval/collect OVAL_FILE\"");
 		return -1;
 	}
@@ -978,8 +978,8 @@ static int getopt_oval(int argc, char **argv, struct oscap_action *action)
 	/* We should have OVAL file here */
 	if (optind >= argc) {
 		/* TODO */
-		print_xccdf_usage("oscap", stderr,
-				  "Error: Bad number of parameters. OVAL file needs to be scpecified !");
+		print_oval_usage("oscap", stderr,
+				  "Error: Bad number of parameters. OVAL file needs to be specified !");
 		return -1;
 	}
 	action->url_oval = argv[optind];

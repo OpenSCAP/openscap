@@ -5,8 +5,8 @@
 # sent to root mail. Please configure oscap-scan options before you use it!
 ##########
 
-#OPTIONS="/usr/share/openscap/scap-fedora12-oval.xml"
-PROG="/usr/bin/oscap-scan"
+#OPTIONS="-q oval eval --result-file /var/log/oscap-scan.xml.log /usr/share/openscap/scap-fedora12-oval.xml"
+PROG="/usr/bin/oscan"
 if [ x"$OPTIONS" == "x" ]
 then
 	logger "OpenSCAP security scan: NOT CONFIGURED. (Cron job)"

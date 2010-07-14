@@ -2,7 +2,7 @@
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
 
 Name:           openscap
-Version:        0.5.12
+Version:        0.6.0
 Release:        1%{?dist}
 Summary:        Set of open source libraries enabling integration of the SCAP line of standards
 Group:          System Environment/Libraries
@@ -67,7 +67,7 @@ The %{name}-utils package contains various utilities based on %{name} library.
 %setup -q
 
 %build
-%configure --disable-debug
+%configure
 make %{?_smp_mflags}
 
 %install
@@ -105,6 +105,7 @@ fi
 %doc AUTHORS COPYING ChangeLog NEWS README
 %{_libdir}/*.so.*
 %{_libexecdir}/*
+%{_datadir}/openscap/schemas/*
 
 %files python
 %defattr(-,root,root,-)
@@ -125,12 +126,17 @@ fi
 %defattr(-,root,root,-)
 %config(noreplace) %{_sysconfdir}/sysconfig/oscap-scan
 %{_initrddir}/oscap-scan
-%{_datadir}/openscap/*
+%{_datadir}/openscap/oscap-scan.cron
+%{_datadir}/openscap/scap-fedora12-oval.xml
+%{_datadir}/openscap/scap-fedora13-oval.xml
 %{_mandir}/man8/*
 %{_bindir}/*
 
 
 %changelog
+* Wed Jul 14 2010 Peter Vrabec <pvrabec@redhat.com> 0.6.0-1
+- upgrade
+
 * Wed May 26 2010 Peter Vrabec <pvrabec@redhat.com> 0.5.11-1
 - upgrade
 
