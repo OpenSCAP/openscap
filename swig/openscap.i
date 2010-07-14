@@ -136,6 +136,7 @@
  #include "../src/common/public/debug.h"
  #include "../src/common/public/alloc.h"
  #include "../src/common/public/text.h"
+ #include "../src/common/public/reporter.h"
 %}
 
 %include "../src/common/public/oscap.h"
@@ -143,6 +144,7 @@
 %include "../src/common/public/debug.h"
 %include "../src/common/public/alloc.h"
 %include "../src/common/public/text.h"
+%include "../src/common/public/reporter.h"
 
 #ifdef WANT_CCE
 %module openscap
@@ -298,20 +300,22 @@ static int xccdf_policy_model_callback_wrapper(struct xccdf_policy *policy, char
     return dres;
 }
 
-int output_callback_wrapper(const char *id, int oresult, void *arg)
+int output_callback_wrapper(const struct oscap_reporter_message *msg, void *arg)
 {
     PyGILState_STATE state;
+    PyObject *py_msg;
     PyObject *arglist;
     PyObject *func, *usrdata;
     struct internal_usr *data;
     PyObject *result;
     double    dres = 0;
 
+    py_msg = SWIG_NewPointerObj(msg, SWIGTYPE_p_oscap_reporter_message, 1);
     data = (struct internal_usr *) arg;
     func = data->func;
     state = PyGILState_Ensure();
     usrdata = data->usr;
-    arglist = Py_BuildValue("siO", id, oresult, usrdata);
+    arglist = Py_BuildValue("OO", py_msg, usrdata);
     if (!PyCallable_Check(func)) {
       PyGILState_Release(state);
       return 1;

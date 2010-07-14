@@ -12,7 +12,7 @@ _openscap_pm_la_LDFLAGS = -module -avoid-version
 _openscap_pm_la_LIBADD  = ${top_builddir}/src/libopenscap.la
 nodist__openscap_pm_la_SOURCES = openscap_pm_wrap.c
 
-nodist_pyexec_PYTHON = openscap.py
+nodist_pyexec_PYTHON = openscap.py openscap_api.py
 pyexec_LTLIBRARIES = _openscap_py.la
 _openscap_py_la_LDFLAGS = -module -avoid-version
 _openscap_py_la_LIBADD  = ${top_builddir}/src/libopenscap.la

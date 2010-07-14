@@ -75,6 +75,8 @@ bool oscap_reporter_message_set_user3str(struct oscap_reporter_message *msg, con
 bool oscap_reporter_message_set_user3num(struct oscap_reporter_message *msg, int newval);
 /// @memberof oscap_reporter_message
 bool oscap_reporter_message_set_user3ptr(struct oscap_reporter_message *msg, void *newval);
+/// @memberof oscap_reporter_message
+struct oscap_reporter_message *oscap_reporter_message_new_arg(oscap_reporter_family_t family, oscap_reporter_code_t code, const char *fmt, va_list ap);
 
 /**
  * Feed a XML error to the reporter.
