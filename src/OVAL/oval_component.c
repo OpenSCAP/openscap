@@ -31,6 +31,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <time.h>
 #include "config.h"
 #include "oval_definitions_impl.h"
 #include "oval_collection_impl.h"
@@ -2118,7 +2119,7 @@ struct val_col_lst_s {
 	struct val_col_lst_s *next;
 };
 
-static void _oval_component_evaluate_ARITHMETIC_rec(struct val_col_lst_s *val_col_lst, double val,
+static oval_syschar_collection_flag_t _oval_component_evaluate_ARITHMETIC_rec(struct val_col_lst_s *val_col_lst, double val,
 						    oval_datatype_t datatype, oval_arithmetic_operation_t op,
 						    struct oval_collection *res_val_col)
 {
@@ -2136,7 +2137,7 @@ static void _oval_component_evaluate_ARITHMETIC_rec(struct val_col_lst_s *val_co
 		ov = oval_value_new(datatype, sv);
 		oval_collection_add(res_val_col, ov);
 
-		return;
+		return SYSCHAR_FLAG_COMPLETE;
 	}
 
 	val_itr = (struct oval_value_iterator *) oval_collection_iterator(val_col_lst->val_col);
@@ -2171,6 +2172,8 @@ static void _oval_component_evaluate_ARITHMETIC_rec(struct val_col_lst_s *val_co
 		_oval_component_evaluate_ARITHMETIC_rec(val_col_lst->next, new_val, datatype, op, res_val_col);
 	}
 	oval_value_iterator_free(val_itr);
+
+	return SYSCHAR_FLAG_COMPLETE;
 }
 
 static oval_syschar_collection_flag_t _oval_component_evaluate_ARITHMETIC(oval_argu_t *argu,
@@ -2198,6 +2201,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_ARITHMETIC(oval_a
 
 		subcomp = oval_component_iterator_next(subcomps);
 		val_col = oval_collection_new();
+		// todo: combine flags
 		flag = oval_component_eval_common(argu, subcomp, val_col);
 		vcl_elm = oscap_alloc(sizeof (struct val_col_lst_s));
 		vcl_elm->val_col = val_col;
@@ -2225,7 +2229,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_ARITHMETIC(oval_a
 			goto cleanup;
 		}
 
-		_oval_component_evaluate_ARITHMETIC_rec(vcl_root->next, val, datatype, op, value_collection);
+		flag = _oval_component_evaluate_ARITHMETIC_rec(vcl_root->next, val, datatype, op, value_collection);
 	}
 
  cleanup:
