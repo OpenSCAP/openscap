@@ -146,6 +146,7 @@ static struct oscap_action *oscap_action_new()
 	action->url_oval = NULL;
 	action->profile = NULL;
 	action->cvss_metrics = NULL;
+	action->file_version = NULL;
 
 	return action;
 }
