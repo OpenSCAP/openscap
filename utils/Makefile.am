@@ -1,4 +1,6 @@
 
+if WANT_UTIL_OSCAP
+
 if WANT_PROBES
 
 bin_PROGRAMS = oscap
@@ -22,3 +24,4 @@ EXTRA_DIST = $(man_MANS)
 
 endif
 
+endif

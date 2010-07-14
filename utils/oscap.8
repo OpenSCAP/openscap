@@ -89,17 +89,17 @@ Specify version of the specification the document shall conform to.
 
 .SH CVSS OPERATIONS
 .TP
-.B base\fR metrics
+.B base\fR \fImetrics\fR
 .RS
 Calculate base score from Access Vector (AV), Access Complexity (AC), Authentication(AU), Confidentiality Impact(CI),  Integrity Impact(II) and Availability Impact(AI) metric.
 .RE
 .PP
-.B temporal\fR metrics
+.B temporal\fR --base <num> [\fImetrics\fR]
 .RS
-Calculate temporal score from Exploitability(EX), Remediation Level(RL) and Report Confidence(RC) metric.
+Calculate temporal score from base score, Exploitability(EX), Remediation Level(RL) and Report Confidence(RC) metric.
 .RE
 .PP
-.B environmental\fR metrics
+.B environmental\fR \fImetrics\fR
 .RS
 Calculate environmental score from Collateral Damage Potential(CD), Target Distribution(TD), Confidentiality Requirement (CR),  Integrity Requirement(IR), Availability Requirement(AR),
 Access Vector (AV), Access Complexity (AC), Authentication(AU), Confidentiality Impact(CI),  Integrity Impact(II), Availability Impact(AI), Exploitability(EX), Remediation Level(RL) and Report Confidence(RC) metric.
@@ -107,34 +107,40 @@ Access Vector (AV), Access Complexity (AC), Authentication(AU), Confidentiality 
 .PP
 metrics:
 .TP
-\fB\-\-AV=\fR[local|adjacent-network|network]
+\fB\-\-AV=\fR[local|adjacent-network|network] - Access Vector (required)
 .TP
-\fB\-\-AC=\fR[high|medium|low]
+\fB\-\-AC=\fR[low|medium|high] - Access Complexity (required)
 .TP
-\fB\-\-AU=\fR[none|single|multiple]
+\fB\-\-AU=\fR[none|single|multiple] - Authentication (required)
 .TP
-\fB\-\-CI=\fR[none|partial|complete]
+\fB\-\-CI=\fR[none|partial|complete] - Confidentiality Impact (required)
 .TP
-\fB\-\-II=\fR[none|partial|complete]
+\fB\-\-II=\fR[none|partial|complete] - Integrity Impact (required)
 .TP
-\fB\-\-AI=\fR[none|partial|complete]
+\fB\-\-AI=\fR[none|partial|complete] - Availability Impact (required)
 .TP
-\fB\-\-EX=\fR[unproven|proof-of-concept|functional|high|not-defined]
+\fB\-\-EX=\fR[unproven|proof-of-concept|functional|high|not-defined] - Exploitability
 .TP
-\fB\-\-RL=\fR[official-fix|temporary-fix|workaround|unavailable|not-defined]
+\fB\-\-RL=\fR[official-fix|temporary-fix|workaround|unavailable|not-defined] - Remediation Level
 .TP
-\fB\-\-RC=\fR[unconfirmed|uncorrporated|confirmed|not-defined]
+\fB\-\-RC=\fR[unconfirmed|uncorrporated|confirmed|not-defined] - Report Confidence
 .TP
-\fB\-\-CD=\fR[none|low|low-medium|medium-high|high|not-defined]
+\fB\-\-CD=\fR[none|low|low-medium|medium-high|high|not-defined] - Collateral Damage Potential
 .TP
-\fB\-\-TD=\fR[none|low|medium|high|not-defined]
+\fB\-\-TD=\fR[none|low|medium|high|not-defined] - Target Distribution
 .TP
-\fB\-\-CR=\fR[low|medium|high|not-defined]
+\fB\-\-CR=\fR[low|medium|high|not-defined] - Confidentiality Requirement
 .TP
-\fB\-\-IR=\fR[low|medium|high|not-defined]
+\fB\-\-IR=\fR[low|medium|high|not-defined] - Integrity Requirement
 .TP
-\fB\-\-AR=\fR[low|medium|high|not-defined]
+\fB\-\-AR=\fR[low|medium|high|not-defined] - Availability Requirement
 
+
+.SH CONTENT
+.TP
+\fB National Vulnerability Database\fR - \fIhttp://web.nvd.nist.gov/view/ncp/repository\fR
+.TP
+\fB Red Hat content repository\fR - \fIhttp://www.redhat.com/security/data/oval/\fR
 
 
 .SH AUTHOR

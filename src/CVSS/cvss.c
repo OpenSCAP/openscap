@@ -233,12 +233,12 @@ int cvss_temp_score(cvss_exploitability_t    exe, cvss_remediation_level_t rle,
 
 int cvss_env_score(cvss_collateral_damage_potential_t cde, cvss_target_distribution_t   tde, 
                    cvss_conf_req_t                    cre, cvss_integ_req_t             ire, 
-                   cvss_avail_req_t                   are, double *enviromental_score,
-                   cvss_access_vector_t               ave, cvss_access_complexity_t     ace, 
-                   cvss_authentication_t              aue, cvss_conf_impact_t           cie, 
-                   cvss_integ_impact_t                iie, cvss_avail_impact_t          aie,	     
-                   cvss_exploitability_t              exe, cvss_remediation_level_t     rle, 
-                   cvss_report_confidence_t           rce)
+                   cvss_avail_req_t                   are, cvss_access_vector_t         ave, 
+		   cvss_access_complexity_t           ace, cvss_authentication_t        aue, 
+		   cvss_conf_impact_t                 cie, cvss_integ_impact_t          iie, 
+		   cvss_avail_impact_t                aie, cvss_exploitability_t        exe, 
+		   cvss_remediation_level_t           rle, cvss_report_confidence_t     rce, 
+		   double *enviromental_score)
 {
 
 	double cd, td, cr, ir, ar, ais, aes, abss, ats, envs;

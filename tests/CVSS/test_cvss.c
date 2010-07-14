@@ -198,7 +198,7 @@ int main(int argc, char *argv[])
     if (!strcmp(argv[15], "RC_CONFIRMED")) rce = RC_CONFIRMED;
     if (!strcmp(argv[15], "RC_NOT_DEFINED")) rce = RC_NOT_DEFINED;
     
-    cvss_env_score(cde, tde, cre, ire, are, &env_score_a, ave, ace, aue, cie, iie, aie, exe, rle, rce);
+    cvss_env_score(cde, tde, cre, ire, are, ave, ace, aue, cie, iie, aie, exe, rle, rce, &env_score_a);
     env_score_b = env_score(cde, tde, cre, ire, are, ave, ace, aue, cie, iie, aie, exe, rle, rce);
 
     ret_val = fabs(env_score_a - env_score_b) < EPS ? 0 : 1;

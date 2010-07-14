@@ -482,6 +482,14 @@ else
    AC_SUBST([NODEBUG], [$CFLAGS_NODEBUG]) #for swig alloc.h
 fi
 
+AC_ARG_ENABLE([util-oscap],
+     [  --enable-util-oscap         enable compilation of the oscap utility [[default=yes]]],
+     [case "${enableval}" in
+       yes) util_oscap=yes ;;
+       no)  util_oscap=no  ;;
+       *) AC_MSG_ERROR([bad value ${enableval} for --enable-util-oscap]) ;;
+     esac],[util_oscap=yes])
+
 AM_CONDITIONAL([WANT_OVAL], test "$oval" = yes)
 AM_CONDITIONAL([WANT_CVSS], test "$cvss" = yes)
 AM_CONDITIONAL([WANT_CVE],  test "$cve"  = yes)
@@ -492,6 +500,7 @@ AM_CONDITIONAL([WANT_PROBES], test "$probes" = yes)
 AM_CONDITIONAL([WANT_PROBES_INDEPENDENT], test "$probes_independent" = yes)
 AM_CONDITIONAL([WANT_PROBES_UNIX], test "$probes_unix" = yes)
 AM_CONDITIONAL([WANT_PROBES_LINUX], test "$probes_linux" = yes)
+AM_CONDITIONAL([WANT_UTIL_OSCAP], test "$util_oscap" = yes)
 AM_CONDITIONAL([ENABLE_PROBE_RPMINFO], test "$have_librpm" = yes)
 AM_CONDITIONAL([ENABLE_PROBE_RPMINFO44], test "$have_librpm44" = yes)
 AM_CONDITIONAL([ENABLE_PROBE_DPKGINFO], test "$have_libapt_pkg" = yes)
@@ -569,5 +578,6 @@ echo ""
 
 echo "XCCDF enabled:                 $xccdf"
 echo "python bindings enabled:       $bindings"
+echo "oscap tool:                    $util_oscap"
 echo "use POSIX regex:               $regex_posix"
 echo "debugging flags enabled:       $debug"
