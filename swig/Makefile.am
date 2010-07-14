@@ -67,5 +67,5 @@ openscap.pm: openscap_pm_wrap.c
 	fi
 
 CLEANFILES = openscap.py openscap_py_wrap.c openscap.pyc openscap_pm_wrap.c openscap.pm
-EXTRA_DIST = openscap.i
+EXTRA_DIST = openscap.i openscap_api.py
 
