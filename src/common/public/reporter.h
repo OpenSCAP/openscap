@@ -72,8 +72,9 @@
 
 /// Reporter message family
 typedef enum oscap_reporter_family {
-	OSCAP_REPORTER_FAMILY_XML           = 1,       ///< libxml codes
+	OSCAP_REPORTER_FAMILY_XML           = 1,  ///< libxml codes
         OSCAP_REPORTER_FAMILY_XCCDF         = 2,  ///< XCCDF codes
+        OSCAP_REPORTER_FAMILY_OVAL          = 3,  ///< OVAL codes
 	OSCAP_REPORTER_FAMILY_USER_START    = 1024
 } oscap_reporter_family_t;
 

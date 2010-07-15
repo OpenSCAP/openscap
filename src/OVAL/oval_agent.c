@@ -40,6 +40,7 @@
 #include "common/util.h"
 #include "common/debug_priv.h"
 #include "common/_error.h"
+#include "common/reporter_priv.h"
 
 /***************************************************************************/
 /* Variable definitions
@@ -1441,7 +1442,7 @@ int oval_agent_reset_session(oval_agent_session_t * ag_sess) {
 }
 
 
-int oval_agent_eval_system(oval_agent_session_t * ag_sess, oval_agent_result_cb_t * cb, void *arg) {
+int oval_agent_eval_system(oval_agent_session_t * ag_sess, oscap_reporter cb, void *arg) {
 	struct oval_definition *oval_def;
 	struct oval_definition_iterator *oval_def_it;
 	char   *id;
@@ -1455,9 +1456,19 @@ int oval_agent_eval_system(oval_agent_session_t * ag_sess, oval_agent_result_cb_
 		/* probe and eval */
 		result = oval_agent_eval_definition(ag_sess, id);
 		/* callback */
-		ret = (*cb) (id, result, arg);
-		if ( ret!=0 )
-			return 0;
+                if (cb != NULL) {
+                    struct oscap_reporter_message * msg = oscap_reporter_message_new_fmt(
+                            OSCAP_REPORTER_FAMILY_OVAL, /* FAMILY */
+                            0,                           /* CODE */
+                            "Evalutated definition %s: %s\n", id, oval_result_get_text(result));
+                    oscap_reporter_message_set_user1str(msg, id);
+                    oscap_reporter_message_set_user2num(msg, result);
+                    ret = oscap_reporter_report(cb, msg, arg);
+                    if ( ret!=0 ) {
+	                    oval_definition_iterator_free(oval_def_it);
+                            return 0;
+                    }
+                }
 	}
 	oval_definition_iterator_free(oval_def_it);
 	return 0;

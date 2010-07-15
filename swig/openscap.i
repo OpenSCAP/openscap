@@ -369,16 +369,16 @@ bool xccdf_policy_model_register_output_callback_py(struct xccdf_policy_model *m
     return xccdf_policy_model_register_output_callback(model, output_callback_wrapper, (void *)new_usrdata);
 }
 
-int oval_agent_eval_system_py(oval_agent_session_t * asess, PyObject * cb, PyObject *arg) {
+int oval_agent_eval_system_py(oval_agent_session_t * asess, PyObject * func, PyObject *usr) {
     struct internal_usr *new_usrdata;
     PyEval_InitThreads();
-    Py_INCREF(cb);
-    Py_INCREF(arg);
+    Py_INCREF(func);
+    Py_INCREF(usr);
     new_usrdata = oscap_alloc(sizeof(struct internal_usr));
     if (new_usrdata == NULL) return false;
 
-    new_usrdata->func = cb;
-    new_usrdata->usr = arg;
+    new_usrdata->func = func;
+    new_usrdata->usr = usr;
   
     return oval_agent_eval_system(asess, output_callback_wrapper, (void *) new_usrdata);
 }

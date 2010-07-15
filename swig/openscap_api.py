@@ -58,8 +58,9 @@ class OSCAP_Object(object):
     @staticmethod
     def new(retobj):
         if type(retobj).__name__ == 'SwigPyObject':
-            #print retobj.__repr__().split("'")[1]
+            # If there is "struct <name> *":
             if retobj.__repr__().split("'")[1].split()[0] == "struct": structure = retobj.__repr__().split("'")[1].split()[1]
+            # else there is "<name> ..."
             else: structure = retobj.__repr__().split("'")[1].split()[0]
             return OSCAP_Object(structure, retobj)
         else: return retobj
@@ -160,7 +161,6 @@ class OSCAP_Object(object):
         if isinstance(value, OSCAP_Object):
                     value = value.instance
         return obj(self.instance, value)
-
     """ ********* Implementation of non-trivial functions ********* """
 
     def register_output_callback(self, cb, usr):
@@ -170,7 +170,19 @@ class OSCAP_Object(object):
     def register_engine_oval(self, sess):
         if self.object != "xccdf_policy_model": raise TypeError("Wrong call of register_engine_oval function on %s" % (self.object,))
         return OSCAP.xccdf_policy_model_register_engine_oval(self.instance, sess.instance)
-    
+
+    def agent_eval_system(self, sess, cb, usr):
+        if self.object != "oval": raise TypeError("Wrong call of oval_agent_eval_system function on %s" % (self.object,))
+        return OSCAP.oval_agent_eval_system_py(sess.instance, cb, usr)
+
+    def query_sysinfo(self):
+        if self.object != "oval_probe_session_t": raise TypeError("Wrong call of oval_probe_session_query_sysinfo function on %s" % (self.object,))
+        return OSCAP.oval_probe_session_query_sysinfo(self.instance)
+
+    def query_objects(self):
+        if self.object != "oval_probe_session_t": raise TypeError("Wrong call of oval_probe_session_query_objects function on %s" % (self.object,))
+        return OSCAP.oval_probe_session_query_objects(self.instance)
+
 # ------------------------------------------------------------------------------------------------------------
 # XCCDF
 
@@ -201,7 +213,6 @@ class XCCDF_Class(OSCAP_Object):
         return _XCCDF_Benchmark_Class(path)
 
 
-
 # ------------------------------------------------------------------------------------------------------------
 # OVAL
 
@@ -214,6 +225,7 @@ class OVAL_Class(OSCAP_Object):
 
     def __repr__(self):
         return "<Oscap Object of type 'OVAL Class' at %s>" % (hex(id(self)),)
+
 
 # ------------------------------------------------------------------------------------------------------------
 # CVE

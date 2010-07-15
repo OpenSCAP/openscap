@@ -556,7 +556,8 @@ static bool xccdf_policy_item_evaluate(struct xccdf_policy * policy, struct xccd
                                     "Rule \"%s\" result: %s\n", rule_id, xccdf_test_result_type_get_text(ret));
                             oscap_reporter_message_set_user1str(msg, rule_id);
                             oscap_reporter_message_set_user2num(msg, ret);
-                            oscap_reporter_report(cb->callback, msg, cb->usr);
+                            retval = oscap_reporter_report(cb->callback, msg, cb->usr);
+                            if (retval != 0) return 0;
                     }
 
                     /* Add result to policy */

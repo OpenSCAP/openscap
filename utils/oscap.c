@@ -440,26 +440,28 @@ static int app_evaluate_xccdf(const struct oscap_action *action)
  * OVAL Callback function that is passed to OVAL evaluation proccess
  * Function makes statistic of definition results
  */
-static int app_oval_callback(const char *id, int result, void *usr)
+static int app_oval_callback(const struct oscap_reporter_message *msg, void *arg)
 {
 
 	if (VERBOSE > 0)
-		printf("Evalutated definition %s: %s\n", id, oval_result_get_text(result));
-	switch ((oval_result_t) result) {
+		printf("Evalutated definition %s: %s\n",
+		       oscap_reporter_message_get_user1str(msg),
+		       oval_result_get_text(oscap_reporter_message_get_user2num(msg)));
+	switch ((oval_result_t) oscap_reporter_message_get_user2num(msg)) {
 	case OVAL_RESULT_TRUE:
-		((struct oval_usr *)usr)->result_true++;
+		((struct oval_usr *)arg)->result_true++;
 		break;
 	case OVAL_RESULT_FALSE:
-		((struct oval_usr *)usr)->result_false++;
+		((struct oval_usr *)arg)->result_false++;
 		break;
 	case OVAL_RESULT_UNKNOWN:
-		((struct oval_usr *)usr)->result_unknown++;
+		((struct oval_usr *)arg)->result_unknown++;
 		break;
 	case OVAL_RESULT_NOT_EVALUATED:
-		((struct oval_usr *)usr)->result_neval++;
+		((struct oval_usr *)arg)->result_neval++;
 		break;
 	case OVAL_RESULT_NOT_APPLICABLE:
-		((struct oval_usr *)usr)->result_napp++;
+		((struct oval_usr *)arg)->result_napp++;
 		break;
 	default:
 		break;

@@ -42,6 +42,7 @@
 #include "oval_results.h"
 #include "oval_variables.h"
 #include "oval_probe.h"
+#include "reporter.h"
 
 #ifdef ENABLE_XCCDF
 #include "xccdf_policy.h"
@@ -55,14 +56,6 @@ struct oval_agent_session;
  * definition model, system characteristics model and results model.
  */
 typedef struct oval_agent_session oval_agent_session_t;
-
-/**
- * @var oval_agent_result_cb_t
- * This callback is called after evaluation of each definition.
- * @param id definition id that was evaluated
- * @param result definition result
- */
-typedef int (oval_agent_result_cb_t) (const char *id, int result, void *arg);
 
 /**
  * Create new session for OVAL agent from OVAL definition model
@@ -82,7 +75,7 @@ int oval_agent_reset_session(oval_agent_session_t * ag_sess);
 /**
  * Probe and evaluate all definitions from the content, call the callback functions upon single evaluation
  */
-int oval_agent_eval_system(oval_agent_session_t * ag_sess, oval_agent_result_cb_t * cb, void *arg);
+int oval_agent_eval_system(oval_agent_session_t * ag_sess, oscap_reporter cb, void *arg);
 
 /**
  * Get a result model from agent session
