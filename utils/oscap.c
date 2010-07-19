@@ -398,7 +398,7 @@ static int app_evaluate_xccdf(const struct oscap_action *action)
 	oscap_text_set_text(title, "OSCAP Scan Result");
 	xccdf_result_add_title(ritem, title);
 	if (policy != NULL) {
-		const char *id = xccdf_profile_get_id(xccdf_policy_get_profile(policy));
+		const char *id = xccdf_policy_get_id(policy);
 		if (id != NULL)
 			xccdf_result_set_profile(ritem, id);
 	}

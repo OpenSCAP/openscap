@@ -239,8 +239,10 @@ static struct xccdf_setvalue * xccdf_policy_get_setvalue(struct xccdf_policy * p
 
     struct xccdf_setvalue_iterator  * s_value_it;
     struct xccdf_setvalue           * s_value;
+    struct xccdf_profile            * profile = xccdf_policy_get_profile(policy);;
 
-    s_value_it = xccdf_profile_get_setvalues(xccdf_policy_get_profile(policy));
+    if (profile == NULL) return NULL;
+    s_value_it = xccdf_profile_get_setvalues(profile);
     while (xccdf_setvalue_iterator_has_more(s_value_it)) {
         s_value = xccdf_setvalue_iterator_next(s_value_it);
         if (!strcmp(id, xccdf_setvalue_get_item(s_value))) {
@@ -260,8 +262,10 @@ static struct xccdf_refine_value * xccdf_policy_get_refine_value(struct xccdf_po
 
     struct xccdf_refine_value_iterator  * r_value_it;
     struct xccdf_refine_value           * r_value;
+    struct xccdf_profile            * profile = xccdf_policy_get_profile(policy);;
 
-    r_value_it = xccdf_profile_get_refine_values(xccdf_policy_get_profile(policy));
+    if (profile == NULL) return NULL;
+    r_value_it = xccdf_profile_get_refine_values(profile);
     while (xccdf_refine_value_iterator_has_more(r_value_it)) {
         r_value = xccdf_refine_value_iterator_next(r_value_it);
         if (!strcmp(id, xccdf_refine_value_get_item(r_value))) {
@@ -421,13 +425,13 @@ static struct oscap_list * xccdf_policy_check_get_value_bindings(struct xccdf_po
         struct xccdf_value          * value;
         struct xccdf_benchmark      * benchmark;
         struct xccdf_value_binding  * binding;
-        struct xccdf_profile        * profile;
+        struct xccdf_policy_model   * model;
         struct xccdf_refine_value   * r_value;
         struct xccdf_setvalue       * s_value;
         struct oscap_list           * list = oscap_list_new();
 
-        profile = xccdf_policy_get_profile(policy);
-        benchmark = xccdf_profile_get_benchmark(profile);
+        model = xccdf_policy_get_model(policy);
+        benchmark = xccdf_policy_model_get_benchmark(model);
 
         while (xccdf_check_export_iterator_has_more(check_it)) {
             check = xccdf_check_export_iterator_next(check_it);
@@ -756,7 +760,9 @@ static struct xccdf_flat_score * xccdf_item_get_flat_score(struct xccdf_item * i
  */
 const char * xccdf_policy_get_id(struct xccdf_policy * policy)
 {
-    return xccdf_profile_get_id(xccdf_policy_get_profile(policy));
+    if (policy->profile != NULL)
+        return xccdf_profile_get_id(xccdf_policy_get_profile(policy));
+    else return NULL;
 }
 
 /**
@@ -840,6 +846,10 @@ struct xccdf_policy_model * xccdf_policy_model_new(struct xccdf_benchmark * benc
         /* Resolve document */
         xccdf_benchmark_resolve(benchmark);
 
+        /* Create policy without profile */
+        policy = xccdf_policy_new(model, NULL); 
+        if (policy != NULL) oscap_list_add(model->policies, policy);
+
         /* Create policies from benchmark model */
         profile_it = xccdf_benchmark_get_profiles(benchmark);
         /* Iterate through profiles and create policies */
@@ -868,11 +878,11 @@ struct xccdf_policy * xccdf_policy_new(struct xccdf_policy_model * model, struct
 	__attribute__nonnull__(profile);
 
 	struct xccdf_policy             * policy;
-        struct xccdf_select_iterator    * sel_it;
-        struct xccdf_select             * sel;
         struct xccdf_benchmark          * benchmark;
         struct xccdf_item_iterator      * item_it;
         struct xccdf_item               * item;
+        struct xccdf_select             * sel;
+        struct xccdf_select_iterator    * sel_it = NULL;
 
 	policy = oscap_alloc(sizeof(struct xccdf_policy));
 	if (policy == NULL)
@@ -887,7 +897,7 @@ struct xccdf_policy * xccdf_policy_new(struct xccdf_policy_model * model, struct
         policy->model = model;
 
         /* Create selects from benchmark model */
-        sel_it = xccdf_profile_get_selects(profile);
+        if (profile != NULL) sel_it = xccdf_profile_get_selects(profile);
         /* Iterate through selects in profile */
         while (xccdf_select_iterator_has_more(sel_it)) {
 
@@ -898,10 +908,9 @@ struct xccdf_policy * xccdf_policy_new(struct xccdf_policy_model * model, struct
         xccdf_select_iterator_free(sel_it);
 
         /* Iterate through items in benchmark and resolve rules */
-        benchmark = xccdf_profile_get_benchmark(profile);
+        benchmark = xccdf_policy_model_get_benchmark(model);
         item_it = xccdf_benchmark_get_content(benchmark);
         while (xccdf_item_iterator_has_more(item_it)) {
-            
             item = xccdf_item_iterator_next(item_it);
             xccdf_policy_resolve_rule(policy, item);
         }
@@ -971,9 +980,12 @@ struct xccdf_policy * xccdf_policy_model_get_policy_by_id(struct xccdf_policy_mo
     struct xccdf_policy_iterator * policy_it;
     struct xccdf_policy          * policy;
 
+    if (id == NULL) return NULL;
+
     policy_it = xccdf_policy_model_get_policies(policy_model);
     while (xccdf_policy_iterator_has_more(policy_it)) {
         policy = xccdf_policy_iterator_next(policy_it);
+        if (xccdf_policy_get_id(policy) == NULL) continue;
         if (!strcmp(xccdf_policy_get_id(policy), id)) {
             xccdf_policy_iterator_free(policy_it);
             return policy;
@@ -998,9 +1010,11 @@ bool xccdf_policy_resolve(struct xccdf_policy * policy)
 
     struct xccdf_policy_model           * policy_model  = xccdf_policy_get_model(policy);
     struct xccdf_benchmark              * benchmark     = xccdf_policy_model_get_benchmark(policy_model);
+    struct xccdf_profile                * profile       = xccdf_policy_get_profile(policy);
 
     /* Proccess refine rules; Changing Rules and Groups */
-    r_rule_it = xccdf_profile_get_refine_rules(xccdf_policy_get_profile(policy));
+    if (profile == NULL) return false;
+    r_rule_it = xccdf_profile_get_refine_rules(profile);
     while (xccdf_refine_rule_iterator_has_more(r_rule_it)) {
         r_rule = xccdf_refine_rule_iterator_next(r_rule_it);
         item = xccdf_benchmark_get_item(benchmark, xccdf_refine_rule_get_item(r_rule));
@@ -1064,7 +1078,7 @@ struct xccdf_result * xccdf_policy_evaluate(struct xccdf_policy * policy)
     xccdf_result_set_id(result, "Unique ID"); // TODO
 
     /* Get all constant information */
-    benchmark = xccdf_profile_get_benchmark(xccdf_policy_get_profile(policy));
+    benchmark = xccdf_policy_model_get_benchmark(xccdf_policy_get_model(policy));
 
     sel_it = xccdf_policy_get_rules(policy);
     while (xccdf_select_iterator_has_more(sel_it)) {
