@@ -34,36 +34,35 @@
 
 OSCAP_HIDDEN_START;
 
-#ifndef oscap_dprintf           
 #if defined(NDEBUG)
 # define oscap_dprintf(...) while(0)
+# define debug(l) if (0)
 #else
+# include <stdlib.h>
 # include <stddef.h>
 # include <stdarg.h>
-  /**
-   * printf-like function for writing debug messages into the output
-   * file (see SEAP_DEBUG_FILE and SEAP_DEBUG_FILE_ENV).
-   * @param srcfile name of the source file
-   * @param srcfn   name of the function
-   * @param srcln   line
-   * @param fmt     printf-like format string
-   */
-void __oscap_dprintf(const char *srcfile, const char *srcfn, size_t line, const char *fmt, ...);
 
-  /**
-   * Convenience macro for calling __seap_debuglog. Only the fmt & it's arguments
-   * need to be specified. The __FILE__, __PRETTY_FUNCTION__ and __LINE__ macros
-   * are used for the first three arguments.
-   */
-# define oscap_dprintf(...) __oscap_dprintf (__FILE__, __PRETTY_FUNCTION__, __LINE__, __VA_ARGS__)
-#endif                          /* NDEBUG */
-#endif                          /* oscap_dprintf */
+# define __dlprintf_wrapper(l, ...) __oscap_dlprintf (l, __FILE__, __PRETTY_FUNCTION__, __LINE__, __VA_ARGS__)
 
+/**
+ * printf-like function for writing debug messages into the output
+ * file (see SEAP_DEBUG_FILE and SEAP_DEBUG_FILE_ENV).
+ * @param file name of the source file
+ * @param fn   name of the function
+ * @param line current line
+ * @param fmt  printf-like format string
+ * @param ...  __oscap_dlprintf parameters
+ */
+void __oscap_dprintf(const char *file, const char *fn, size_t line, const char *fmt, ...);
 
-#ifndef NDEBUG
-#include <stdlib.h>
+/**
+ * Convenience macro for calling __oscap_dprintf. Only the fmt & it's arguments
+ * need to be specified. The __FILE__, __PRETTY_FUNCTION__ and __LINE__ macros
+ * are used for the first three arguments.
+ */
+# define oscap_dprintf(...) __dlprintf_wrapper (0, __VA_ARGS__)
+
 extern int __debuglog_level;
-
 /**
  * Using this macro you can create a "debug block" with a verbosity level `l'.
  * Example:
@@ -78,17 +77,26 @@ extern int __debuglog_level;
  * 
  */
 # define debug(l) if ((__debuglog_level = (__debuglog_level == -1 ? atoi (getenv (OSCAP_DEBUG_LEVEL_ENV) == NULL ? "0" : getenv (OSCAP_DEBUG_LEVEL_ENV)) : __debuglog_level)) && __debuglog_level >= (l))
-#else
-# define debug(l) if (0)
-#endif
 
 /**
  * Version of the oscap_dprintf function with support for debug level.
- * Implemented using the debug() macro described above.
- * @param l debug level
- * @param ... oscap_dprintf params
+ * Uses logic similar to the debug() macro described above.
+ * @param level debug level
+ * @param file  name of the source file
+ * @param fn    name of the function
+ * @param line  current line
+ * @param fmt   printf-line format string
+ * @param ...   __oscap_dlprintf parameters
  */
-#define oscap_dlprintf(l, ...) do { debug(l) { oscap_dprintf(__VA_ARGS__); }} while(0)
+void __oscap_dlprintf(int level, const char *file, const char *fn, size_t line, const char *fmt, ...);
+
+/**
+ * Convenience macro for calling __oscap_dlprintf. Only the fmt & it's arguments
+ * need to be specified. The __FILE__, __PRETTY_FUNCTION__ and __LINE__ macros
+ * are used for the first three arguments.
+ */
+# define oscap_dlprintf(l, ...) __dlprintf_wrapper (l, __VA_ARGS__)
+#endif                          /* NDEBUG */
 
 OSCAP_HIDDEN_END;
 

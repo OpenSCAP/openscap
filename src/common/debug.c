@@ -52,15 +52,20 @@ static void __oscap_debuglog_close(void)
         fclose(__debuglog_fp);
 }
 
-void __oscap_dprintf(const char *file, const char *fn, size_t line, const char *fmt, ...)
+static void __oscap_vdlprintf(int level, const char *file, const char *fn, size_t line, const char *fmt, va_list ap)
 {
-	va_list ap;
-
 	__LOCK_FP;
 
-        if (__debuglog_level == -1)
-                __debuglog_level = atoi (getenv (OSCAP_DEBUG_LEVEL_ENV) == NULL ? "0" : getenv (OSCAP_DEBUG_LEVEL_ENV));
-        
+	if (__debuglog_level == -1) {
+		char *env;
+
+		env = getenv(OSCAP_DEBUG_LEVEL_ENV);
+		if (env == NULL)
+			env = "0";
+		__debuglog_level = atoi(env);
+	} else if (__debuglog_level < level)
+		return;
+
 	if (__debuglog_fp == NULL) {
 		char *logfile;
 		char *st;
@@ -98,9 +103,7 @@ void __oscap_dprintf(const char *file, const char *fn, size_t line, const char *
 #else
 	fprintf(__debuglog_fp, "(%u) [%s: %zu: %s] ", (unsigned int)getpid(), file, line, fn);
 #endif
-	va_start(ap, fmt);
 	vfprintf(__debuglog_fp, fmt, ap);
-	va_end(ap);
 
 	if (flock(fileno(__debuglog_fp), LOCK_UN) == -1) {
 		/* __UNLOCK_FP; */
@@ -109,6 +112,24 @@ void __oscap_dprintf(const char *file, const char *fn, size_t line, const char *
 
 	__UNLOCK_FP;
 	return;
+}
+
+void __oscap_dprintf(const char *file, const char *fn, size_t line, const char *fmt, ...)
+{
+	va_list ap;
+
+	va_start(ap, fmt);
+	__oscap_vdlprintf(0, file, fn, line, fmt, ap);
+	va_end(ap);
+}
+
+void __oscap_dlprintf(int level, const char *file, const char *fn, size_t line, const char *fmt, ...)
+{
+	va_list ap;
+
+	va_start(ap, fmt);
+	__oscap_vdlprintf(level, file, fn, line, fmt, ap);
+	va_end(ap);
 }
 
 #endif
