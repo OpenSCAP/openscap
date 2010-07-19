@@ -19,6 +19,9 @@ class OSCAP_Action(object):
 
 class XCCDF_Handler(object):
 
+    HINT = {"eval" : "Eval: Iterate throught XCCDF Rules and evaluate specified XCCDF Profile upon these rules",
+            "validate-xml" : "Validate XCCDF Benchmark file" }
+
     """
     Init XCCDF Handler with specified parameters
     @param f_oval OVAL Definition file (mandatory)
@@ -44,17 +47,22 @@ class XCCDF_Handler(object):
             setattr(self, "eval", self.__evaluate)
         elif string.lower(arguments[0]) == "validate-xml":
             setattr(self, "eval", self.__validate_xml)
+        elif string.lower(arguments[0]) in ("-h", "--help"):
+            self.help()
+            sys.exit(0)
         else: raise AttributeError("Bad XCCDF operation '%s'" % (arguments[0],))
 
         try:
-            opts, args = getopt.getopt(arguments[1:], "h", ["help", "result-file=", "xccdf-profile=", "file-version="])
+            opts, args = getopt.getopt(arguments[1:], "-h", ["help", "result-file=", "xccdf-profile=", "file-version="])
         except getopt.GetoptError, err:
             # print help information and exit:
             print str(err) # will print something like "option -a not recognized"
             sys.exit(2)
         for opt, arg in opts:
             if opt in ("-h", "--help"):
-                pass
+                if XCCDF_Handler.HINT.has_key(arguments[0]): self.help(XCCDF_Handler.HINT[arguments[0]])
+                else: self.help("No help for option \"xccdf %s\"" % (arguments[0],))
+                sys.exit(0)
             elif opt == "--result-file":
                 action.f_results = arg
             elif opt == "--xccdf-profile":
@@ -121,7 +129,32 @@ class XCCDF_Handler(object):
     def __validate_xml(self):
         raise NotImplementedError
 
+    def help(self, msg=None):
+
+        print "Usage: %s [general-options] xccdf command [command-options] OVAL-DEFINITIONS-FILE XCCDF-FILE \n" \
+		"(Specify the --help global option for a list of other help options)\n" \
+		"\n" \
+		"OVAL-DEFINITIONS-FILE is the OVAL XML file specified either by the full path to the xml file " \
+		"or an URL from which to download it.\n" \
+		"XCCDF-FILE is the XCCDF XML file specified either by the full path to the xml file " \
+		"or an URL from which to download it.\n" \
+		"\n" \
+		"Commands:\n" \
+		"   eval\r\t\t\t\t - Perform evaluation driven by XCCDF file and use OVAL as checking engine.\n" \
+		"   validate-xml\r\t\t\t\t - validate XCCDF XML content.\n" \
+		"\n" \
+		"Command options:\n" \
+		"   -h --help\r\t\t\t\t - show this help\n" \
+		"   --result-file <file>\r\t\t\t\t - Write XCCDF Results into file.\n" \
+		"   --profile <name>\r\t\t\t\t - The name of Profile to be evaluated.\n" % (sys.argv[0],)
+        if msg != None:
+            print "\n%s" % (msg,)
+
+
 class OVAL_Handler(object):
+
+    HINT = {"eval" : "Eval: Evaluate OVAL Definition file and create results",
+            "validate-xml" : "Validate OVAL Definition file" }
 
     def __init__(self, args):
  
@@ -143,6 +176,9 @@ class OVAL_Handler(object):
             setattr(self, "eval", self.__collect)
         elif string.lower(arguments[0]) == "validate-xml":
             setattr(self, "eval", self.__validate_xml)
+        elif string.lower(arguments[0]) in ("-h", "--help"):
+            self.help()
+            sys.exit(0)
         else: raise AttributeError("Bad OVAL operation '%s'" % (arguments[0],))
 
         try:
@@ -153,8 +189,10 @@ class OVAL_Handler(object):
             sys.exit(2)
         for opt, arg in opts:
             if opt in ("-h", "--help"):
-                pass
-            if opt == "--result-file":
+                if OVAL_Handler.HINT.has_key(arguments[0]): self.help(OVAL_Handler.HINT[arguments[0]])
+                else: self.help("No help for option \"oval %s\"" % (arguments[0],))
+                sys.exit(0)
+            elif opt == "--result-file":
                 action.f_results = arg
             elif opt == "--file-version":
                 action.file_version = arg
@@ -202,8 +240,53 @@ class OVAL_Handler(object):
         self.res_model.export(res_direct, self.action.f_results)
         res_direct.free()
 
+    def help(self, msg=None):
+        
+        print "Usage: %s [general-options] oval command [command-options] OVAL-DEFINITIONS-FILE \n" \
+                "(Specify the --help global option for a list of other help options)\n" \
+                "\n" \
+                "OVAL-DEFINITIONS-FILE is the OVAL XML file specified either by the full path to the xml file " \
+                "or an URL from which to download it.\n" \
+                "\n" \
+                "Commands:\n" \
+                "   collect\r\t\t\t\t - Probe the system and gather system characteristics for objects in OVAL Definition file.\n" \
+                "   eval\r\t\t\t\t - Probe the system and evaluate all definitions from OVAL Definition file\n" \
+                "   validate-xml\r\t\t\t\t - validate OVAL XML content.\n" \
+                "\n" \
+                "Command options:\n" \
+                "   -h --help\r\t\t\t\t - show this help\n" \
+                "   --result-file <file>\r\t\t\t\t - Write OVAL Results into file.\n" % (sys.argv[0],)
+        if msg != None:
+            print "\n%s" % (msg,)
+
+
+class CVSS_Handler(object):
+
+    def __init__(self, args):
+        print "Sorry, CVSS module is not implemented yet. Please use compiled program utils/oscap instead."
+        sys.exit(1)
+
+
+def help():
+    print "Usage: %s [general-options] module operation [operation-options-and-arguments]\n" \
+            "\n" \
+            "General options:\n" \
+            "   -h --help\r\t\t\t\t - show this help\n" \
+            "   -q --quiet\r\t\t\t\t - quiet mode\n" \
+            "   -V --version\r\t\t\t\t - print info about supported SCAP versions\n" \
+            "\n" "Module specific help\n" " %s [oval|xccdf|cvss] --help\n" % (sys.argv[0], sys.argv[0])
+
+def versions():
+	print "OSCAP util (oscap) 0.5.12\n","Copyright 2009,2010 Red Hat Inc., Durham, North Carolina.\n"
+	print "OVAL Version: \r\t\t%s" % (oval.version)
+	print "XCCDF Version: \r\t\t%s" % (xccdf.version)
+	print "CVSS Version: \r\t\t%s" % (cvss.version)
 
 def main():
+    if len(sys.argv) < 2:
+        help()
+        sys.exit(1)
+
     arguments = sys.argv[1:]
     try:
         opts, args = getopt.getopt(arguments, "+qhV", ["quiet", "help", "version"])
@@ -212,13 +295,13 @@ def main():
         print str(err) # will print something like "option -a not recognized"
         sys.exit(2)
     for o, a in opts:
-        if o == "-V":
-            pass
+        if o in ("-V", "--version"):
+            versions()
+            sys.exit(0)
             #print version
         elif o in ("-h", "--help"):
-            pass
-            #print help
-            #sys.exit(0)
+            help()
+            sys.exit(0)
         elif o in ("-q", "--quiet"):
             VERBOSE = -1
         else:
@@ -228,6 +311,8 @@ def main():
         module = XCCDF_Handler(args[1:])
     elif string.lower(args[0]) == "oval":
         module = OVAL_Handler(args[1:])
+    elif string.lower(args[0]) == "cvss":
+        module = CVSS_Handler(args[1:])
     else: raise AttributeError("Bad module option '%s'" %(args[0],))
 
     module.eval()
