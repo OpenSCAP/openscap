@@ -243,11 +243,11 @@ void oval_agent_resolve_variables(struct oval_agent_session * session, struct xc
                 oval_datatype_t o_type = oval_variable_get_datatype(variable);
                 /* TODO: check of variable type ? */
                 if (oval_variable_model_has_variable(var_model, name))
-                    oscap_dprintf("ERROR! External variable %s in conflict ! Probably content failure.\n", name);
+			oscap_dlprintf(DBG_E, "External variable %s in conflict! Probably content failure.\n", name);
                 /* Add variable to variable model */
                 else oval_variable_model_add(var_model, name, "Unknown", o_type, value); // TODO comment
         } else {
-                oscap_dprintf("Variable %s does not exist, skipping\n", name);
+                oscap_dlprintf(DBG_W, "Variable %s does not exist, skipping.\n", name);
         }
     }
     /* Finalize - bind variable model to definition model */

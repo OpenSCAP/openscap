@@ -104,7 +104,7 @@ bool oval_syschar_model_is_valid(struct oval_syschar_model * syschar_model)
 	struct oval_definition_model *definition_model;
 
 	if (syschar_model == NULL) {
-                oscap_dprintf("WARNING: argument is not valid: NULL.\n");
+                oscap_dlprintf(DBG_W, "Argument is not valid: NULL.\n");
 		return false;
         }
 
@@ -257,7 +257,7 @@ void oval_syschar_model_set_sysinfo(struct oval_syschar_model *model, struct ova
 	if (model && !oval_syschar_model_is_locked(model)) {
 		model->sysinfo = oval_sysinfo_clone(model, sysinfo);
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 void oval_syschar_model_set_schema(struct oval_syschar_model *model, const char * schema)
@@ -265,7 +265,7 @@ void oval_syschar_model_set_schema(struct oval_syschar_model *model, const char 
 	if (model && !oval_syschar_model_is_locked(model)) {
 		model->schema = oscap_strdup(schema);
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 
@@ -278,7 +278,7 @@ void oval_syschar_model_add_syschar(struct oval_syschar_model *model, struct ova
 			oval_string_map_put(model->syschar_map, id, syschar);
 		}
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 void oval_syschar_model_add_variable_binding(struct oval_syschar_model *model, struct oval_variable_binding *binding)
@@ -288,7 +288,7 @@ void oval_syschar_model_add_variable_binding(struct oval_syschar_model *model, s
 		char *varid = oval_variable_get_id(variable);
 		oval_string_map_put(model->variable_binding_map, varid, binding);
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 
@@ -301,7 +301,7 @@ void oval_syschar_model_add_sysdata(struct oval_syschar_model *model, struct ova
 			oval_string_map_put(model->sysdata_map, id, sysdata);
 		}
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 

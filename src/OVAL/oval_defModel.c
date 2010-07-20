@@ -132,7 +132,7 @@ bool oval_definition_model_is_valid(struct oval_definition_model * definition_mo
 	struct oval_state_iterator *states_itr;
 
 	if (definition_model == NULL) {
-                oscap_dprintf("WARNING: argument is not valid: NULL.\n");
+                oscap_dlprintf(DBG_W, "Argument is not valid: NULL.\n");
 		return false;
         }
 
@@ -272,7 +272,7 @@ void oval_definition_model_add_definition(struct oval_definition_model *model, s
 		char *key = oval_definition_get_id(definition);
 		oval_string_map_put(model->definition_map, key, (void *)definition);
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 void oval_definition_model_set_schema(struct oval_definition_model *model, const char *version)
@@ -280,7 +280,7 @@ void oval_definition_model_set_schema(struct oval_definition_model *model, const
 	if (model && !oval_definition_model_is_locked(model)) {
                 model->schema = oscap_strdup(version);
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 void oval_definition_model_add_test(struct oval_definition_model *model, struct oval_test *test)
@@ -289,7 +289,7 @@ void oval_definition_model_add_test(struct oval_definition_model *model, struct 
 		char *key = oval_test_get_id(test);
 		oval_string_map_put(model->test_map, key, (void *)test);
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 void oval_definition_model_add_object(struct oval_definition_model *model, struct oval_object *object)
@@ -298,7 +298,7 @@ void oval_definition_model_add_object(struct oval_definition_model *model, struc
 		char *key = oval_object_get_id(object);
 		oval_string_map_put(model->object_map, key, (void *)object);
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 void oval_definition_model_add_state(struct oval_definition_model *model, struct oval_state *state)
@@ -307,7 +307,7 @@ void oval_definition_model_add_state(struct oval_definition_model *model, struct
 		char *key = oval_state_get_id(state);
 		oval_string_map_put(model->state_map, key, (void *)state);
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 void oval_definition_model_add_variable(struct oval_definition_model *model, struct oval_variable *variable)
@@ -316,7 +316,7 @@ void oval_definition_model_add_variable(struct oval_definition_model *model, str
 		char *key = oval_variable_get_id(variable);
 		oval_string_map_put(model->variable_map, key, (void *)variable);
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 struct oval_definition_model * oval_definition_model_import(const char *file)
@@ -408,13 +408,11 @@ void oval_definition_model_bind_variable_model(struct oval_definition_model *def
 					}
 					oval_string_iterator_free(values);
 				} else {
-					oscap_dprintf("WARNING: Unmatched variable datatypes"
-						      "                             varid = %s; "
-						      "         definition_model datatype = %s; "
-						      "           variable_model datatype = %s; ",
-						      varid,
-						      oval_datatype_get_text(def_datatype),
-						      oval_datatype_get_text(var_datatype));
+					oscap_dlprintf(DBG_E, "Unmatched variable datatypes: id: %s, "
+						       "definition model datatype: %s, "
+						       "variable model datatype: %s.\n",
+						       varid, oval_datatype_get_text(def_datatype),
+						       oval_datatype_get_text(var_datatype));
 				}
 			}
 		}

@@ -93,7 +93,7 @@ bool oval_results_model_is_valid(struct oval_results_model * results_model)
 	struct oval_definition_model *definition_model;
 
 	if (results_model == NULL) {
-                oscap_dprintf("WARNING: argument is not valid: NULL.\n");
+                oscap_dlprintf(DBG_W, "Argument is not valid: NULL.\n");
 		return false;
         }
 
@@ -172,7 +172,7 @@ void oval_results_model_add_system(struct oval_results_model *model, struct oval
 		if (sys)
 			oval_collection_add(model->systems, sys);
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 struct oval_result_directives *oval_results_model_import(struct oval_results_model *model, const char *file)
@@ -284,7 +284,7 @@ int oval_results_model_export(struct oval_results_model *results_model,  struct 
 	xmlCode = xmlSaveFormatFileEnc(file, doc, "UTF-8", 1);
 	if (xmlCode <= 0) {
 		oscap_setxmlerr(xmlGetLastError());
-		oscap_dprintf("WARNING: No bytes exported: xmlCode = %d", xmlCode);
+		oscap_dlprintf(DBG_W, "No bytes exported: xmlCode: %d.\n", xmlCode);
 	}
 
 	xmlFreeDoc(doc);
