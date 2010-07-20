@@ -36,11 +36,18 @@ OSCAP_HIDDEN_START;
 
 #if defined(NDEBUG)
 # define oscap_dprintf(...) while(0)
+# define oscap_dlprintf(...) while(0)
 # define debug(l) if (0)
 #else
 # include <stdlib.h>
 # include <stddef.h>
 # include <stdarg.h>
+
+enum {
+	DBG_E = 1,
+	DBG_W,
+	DBG_I
+};
 
 # define __dlprintf_wrapper(l, ...) __oscap_dlprintf (l, __FILE__, __PRETTY_FUNCTION__, __LINE__, __VA_ARGS__)
 

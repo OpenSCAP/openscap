@@ -64,7 +64,7 @@ bool oval_result_item_is_valid(struct oval_result_item * result_item)
 	struct oval_sysdata *sysdata;
 
 	if (result_item == NULL) {
-                oscap_dprintf("WARNING: argument is not valid: NULL.\n");
+                oscap_dlprintf(DBG_W, "Argument is not valid: NULL.\n");
 		return false;
         }
 
@@ -163,14 +163,14 @@ void oval_result_item_set_result(struct oval_result_item *item, oval_result_t re
 	if (item && !oval_result_item_is_locked(item)) {
 		item->result = result;
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 void oval_result_item_add_message(struct oval_result_item *item, struct oval_message *message) {
 	if (item && !oval_result_item_is_locked(item)) {
 		oval_collection_add(item->messages, message);
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 static void _oval_result_item_message_consumer(struct oval_message *message, struct oval_result_item *item) {
@@ -193,8 +193,8 @@ int oval_result_item_parse_tag
 	oval_result_t result = oval_result_parse(reader, "result", 0);
 	oval_result_item_set_result(item, result);
 
-	oscap_dprintf("DEBUG: oval_result_item_parse_tag: item_id = %s\n - result  = %d",
-		      oval_sysdata_get_id(oval_result_item_get_sysdata(item)), oval_result_item_get_result(item));
+	oscap_dlprintf(DBG_I, "item_id: %s, result: %d.\n",
+		       oval_sysdata_get_id(oval_result_item_get_sysdata(item)), oval_result_item_get_result(item));
 
 	return_code = oval_parser_parse_tag
 	    (reader, context, (oval_xml_tag_parser) _oval_result_item_message_parse, item);

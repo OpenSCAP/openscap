@@ -108,7 +108,7 @@ struct oval_behavior *oval_behavior_clone(struct oval_definition_model *new_mode
 bool oval_behavior_is_valid(struct oval_behavior * behavior)
 {
 	if (behavior == NULL) {
-                oscap_dprintf("WARNING: argument is not valid: NULL");
+                oscap_dlprintf(DBG_W, "Argument is not valid: NULL.\n");
 		return false;
         }
 
@@ -141,7 +141,7 @@ void oval_behavior_set_keyval(struct oval_behavior *behavior, const char *key, c
 		behavior->key = oscap_strdup(key);
 		behavior->value = oscap_strdup(value);
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 //typedef void (*oval_behavior_consumer)(struct oval_behavior_node *, void*);

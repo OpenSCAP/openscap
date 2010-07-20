@@ -172,14 +172,14 @@ bool oval_definition_is_valid(struct oval_definition * definition)
 	struct oval_criteria_node *criteria_node;
 
 	if (definition == NULL) {
-                oscap_dprintf("WARNING: argument is not valid: NULL.\n");
+		oscap_dlprintf(DBG_W, "Argument is not valid: NULL.\n");
 		return false;
-        }
+	}
 
-        if (oval_definition_get_class(definition) == OVAL_CLASS_UNKNOWN) {
-                oscap_dprintf("WARNING: argument is not valid: class == OVAL_CLASS_UNKNOWN.\n");
-                return false;
-        }
+	if (oval_definition_get_class(definition) == OVAL_CLASS_UNKNOWN) {
+		oscap_dlprintf(DBG_W, "Argument is not valid: class == OVAL_CLASS_UNKNOWN.\n");
+		return false;
+	}
 
 	criteria_node = oval_definition_get_criteria(definition);
 	if (oval_criteria_node_is_valid(criteria_node) != true)
@@ -290,7 +290,7 @@ void oval_definition_set_version(struct oval_definition *definition, int version
 	if (definition && !oval_definition_is_locked(definition)) {
 		definition->version = version;
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 void oval_definition_set_class(struct oval_definition *definition, oval_definition_class_t class)
@@ -298,7 +298,7 @@ void oval_definition_set_class(struct oval_definition *definition, oval_definiti
 	if (definition && !oval_definition_is_locked(definition)) {
 		definition->class = class;
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 void oval_definition_set_deprecated(struct oval_definition *definition, bool deprecated)
@@ -306,7 +306,7 @@ void oval_definition_set_deprecated(struct oval_definition *definition, bool dep
 	if (definition && !oval_definition_is_locked(definition)) {
 		definition->deprecated = deprecated;
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 void oval_definition_set_title(struct oval_definition *definition, char *title)
@@ -316,7 +316,7 @@ void oval_definition_set_title(struct oval_definition *definition, char *title)
 			oscap_free(definition->title);
 		definition->title = (title == NULL) ? NULL : oscap_strdup(title);
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 void oval_definition_set_description(struct oval_definition *definition, char *description)
@@ -326,7 +326,7 @@ void oval_definition_set_description(struct oval_definition *definition, char *d
 			oscap_free(definition->description);
 		definition->description = (description == NULL) ? NULL : oscap_strdup(description);
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 void oval_definition_set_criteria(struct oval_definition *definition, struct oval_criteria_node *criteria)
@@ -334,7 +334,7 @@ void oval_definition_set_criteria(struct oval_definition *definition, struct ova
 	if (definition && !oval_definition_is_locked(definition)) {
 		definition->criteria = criteria;
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 void oval_definition_add_affected(struct oval_definition *definition, struct oval_affected *affected)
@@ -342,7 +342,7 @@ void oval_definition_add_affected(struct oval_definition *definition, struct ova
 	if (definition && !oval_definition_is_locked(definition)) {
 		oval_collection_add(definition->affected, affected);
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 void oval_definition_add_reference(struct oval_definition *definition, struct oval_reference *ref)
@@ -350,14 +350,14 @@ void oval_definition_add_reference(struct oval_definition *definition, struct ov
 	if (definition && !oval_definition_is_locked(definition)) {
 		oval_collection_add(definition->reference, ref);
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 void oval_definition_add_note(struct oval_definition *definition, char *note) {
 	if (definition && !oval_definition_is_locked(definition)) {
 		oval_collection_add(definition->notes, note);
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 static oval_definition_class_t _odaclass(char *class)
@@ -452,7 +452,7 @@ static int _oval_definition_parse_metadata(xmlTextReaderPtr reader, struct oval_
 		int depth = xmlTextReaderDepth(reader);
 		if (depth == -1)
 			oscap_setxmlerr(xmlGetLastError());
-		oscap_dprintf("NOTICE::(oval_definition_parse_metadata)skipping <%s> depth = %d line = %d",
+		oscap_dlprintf(DBG_I, "Skipping tag: %s, depth: %d, line: %d.\n",
 			      tagname, depth, xmlTextReaderGetParserLineNumber(reader));
 		return_code = oval_parser_skip_tag(reader, context);
 	}
@@ -481,7 +481,7 @@ static int _oval_definition_parse_tag(xmlTextReaderPtr reader, struct oval_parse
 		int depth = xmlTextReaderDepth(reader);
 		if (depth == -1)
 			oscap_setxmlerr(xmlGetLastError());
-		oscap_dprintf("NOTICE::(oval_definition)skipping <%s> depth = %d line = %d", tagname, depth,
+		oscap_dlprintf(DBG_I, "Skipping tag: %s, depth: %d, line: %d.\n", tagname, depth,
                               xmlTextReaderGetParserLineNumber(reader));
 		return_code = oval_parser_skip_tag(reader, context);
 	}

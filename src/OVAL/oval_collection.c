@@ -117,7 +117,7 @@ struct oval_iterator *oval_collection_iterator(struct oval_collection *collectio
 
 	if ((iterator_count++) < 0) {
 		_debugStack[iterator_count - 1] = iterator;
-		oscap_dprintf("DEBUG::ITERATOR START1 AT %d  %p", iterator_count - 1, iterator);
+		oscap_dlprintf(DBG_W, "iterator_count: %d.\n", iterator_count);
 	}
 
 	iterator->item_iterator_frame = NULL;
@@ -181,10 +181,12 @@ void oval_collection_iterator_free(struct oval_iterator *iterator)
 {
 	if (iterator) {		//NOOP if iterator is NULL
 		if ((--iterator_count) < 0) {
-			oscap_dprintf("DEBUG::ITERATOR STOP   AT %d  %p", iterator_count, iterator);
+			oscap_dlprintf(DBG_W, "iterator_count: %d.\n", iterator_count);
 			if (iterator != _debugStack[iterator_count]) {
+				/*
 				oscap_dprintf("WHOOPS: stack mismatch at %d %p:%p", iterator_count,
 					      iterator, _debugStack[iterator_count]);
+				*/
 				debug = false;
 			}
 		}
@@ -210,7 +212,7 @@ struct oval_iterator *oval_collection_iterator_new()
 
 	if ((iterator_count++) < 0) {
 		_debugStack[iterator_count - 1] = iterator;
-		oscap_dprintf("DEBUG::ITERATOR START2 AT %d  %p", iterator_count - 1, iterator);
+		oscap_dlprintf(DBG_W, "iterator_count: %d.\n", iterator_count);
 	}
 	iterator->item_iterator_frame = NULL;
 	return iterator;

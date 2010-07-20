@@ -115,7 +115,7 @@ bool oval_result_system_is_valid(struct oval_result_system * result_system)
 	struct oval_syschar_model *syschar_model;
 
 	if (result_system == NULL) {
-                oscap_dprintf("WARNING: argument is not valid: NULL.\n");
+                oscap_dlprintf(DBG_W, "Argument is not valid: NULL.\n");
 		return false;
         }
 
@@ -337,7 +337,7 @@ void oval_result_system_add_definition(struct oval_result_system *sys, struct ov
 			oval_string_map_put(sys->definitions, id, definition);
 		}
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 void oval_result_system_add_test(struct oval_result_system *sys, struct oval_result_test *test) {
@@ -348,7 +348,7 @@ void oval_result_system_add_test(struct oval_result_system *sys, struct oval_res
 			oval_string_map_put(sys->tests, id, test);
 		}
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 static void _oval_result_system_test_consume(struct oval_result_test *test, struct oval_result_system *sys) {
@@ -378,7 +378,7 @@ static int _oval_result_system_parse
 	__attribute__nonnull__(sys);
 
 	xmlChar *localName = xmlTextReaderLocalName(reader);
-	oscap_dprintf("DEBUG: _oval_result_system_parse: parse <%s>", localName);
+	oscap_dlprintf(DBG_I, "Parsing <%s>.\n", localName);
 	int return_code = 0;
 	if (strcmp((const char *)localName, "definitions") == 0) {
 		return_code = oval_parser_parse_tag
@@ -391,7 +391,7 @@ static int _oval_result_system_parse
 		//return_code = oval_parser_skip_tag(reader, context);
 	} else {
 		return_code = 0;
-		oscap_dprintf("WARNING: _oval_result_system_parse: TODO: <%s> not handled", localName);
+		oscap_dlprintf(DBG_W, "Unhandled tag: <%s>.\n", localName);
 	}
 	oscap_free(localName);
 	return return_code;
@@ -446,7 +446,7 @@ oval_result_t oval_result_system_eval_definition(struct oval_result_system *sys,
 	definition_model = oval_results_model_get_definition_model(res_model);
 	oval_definition = oval_definition_model_get_definition(definition_model, id);
 	if (oval_definition == NULL) {
-		oscap_dprintf("%s:%d No definition with ID (%s) in definition model.", __FILE__, __LINE__, id);
+		oscap_dlprintf(DBG_E, "No definition with ID: %s in definition model.\n", id);
 		oscap_seterr(OSCAP_EFAMILY_OSCAP, OVAL_EOVALINT, "No definition with such an ID in definition model.");
 		return OVAL_RESULT_ERROR;
 	}

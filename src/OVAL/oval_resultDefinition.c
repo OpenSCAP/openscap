@@ -82,12 +82,12 @@ bool oval_result_definition_is_valid(struct oval_result_definition * result_defi
 	struct oval_result_criteria_node *rslt_criteria_node;
 
 	if (result_definition == NULL) {
-                oscap_dprintf("WARNING: argument is not valid: NULL.\n");
+                oscap_dlprintf(DBG_W, "Argument is not valid: NULL.\n");
 		return false;
         }
 
 	if (oval_result_definition_get_system(result_definition) == NULL) {
-                oscap_dprintf("WARNING: argument is not valid: system == NULL.\n");
+                oscap_dlprintf(DBG_W, "Argument is not valid: system == NULL.\n");
 		return false;
         }
 
@@ -220,14 +220,14 @@ void oval_result_definition_set_result(struct oval_result_definition *definition
 	if (definition && !oval_result_definition_is_locked(definition)) {
 		definition->result = result;
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 void oval_result_definition_set_instance(struct oval_result_definition *definition, int instance) {
 	if (definition && !oval_result_definition_is_locked(definition)) {
 		definition->instance = instance;
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 void oval_result_definition_set_criteria
@@ -240,7 +240,7 @@ void oval_result_definition_set_criteria
 		}
 		definition->criteria = criteria;
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 void oval_result_definition_add_message(struct oval_result_definition *definition, struct oval_message *message) {
@@ -248,7 +248,7 @@ void oval_result_definition_add_message(struct oval_result_definition *definitio
 		if (message)
 			oval_collection_add(definition->messages, message);
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 static void _oval_result_definition_consume_criteria
@@ -282,7 +282,6 @@ int oval_result_definition_parse
     (xmlTextReaderPtr reader, struct oval_parser_context *context,
      struct oval_result_system *sys, oscap_consumer_func consumer, void *client) {
 	int return_code = 1;
-	oscap_dprintf("DEBUG: oval_result_definition_parse: BEGIN");
 
 	xmlChar *definition_id = xmlTextReaderGetAttribute(reader, BAD_CAST "definition_id");
 	xmlChar *definition_version = xmlTextReaderGetAttribute(reader, BAD_CAST "version");
@@ -298,9 +297,9 @@ int oval_result_definition_parse
 
 	int defvsn = oval_definition_get_version(definition->definition);
 	if (defvsn && resvsn != defvsn) {
-		oscap_dprintf("WARNING: oval_result_definition_parse: definition versions don't match\n"
-			      "    definition id = %s\n"
-			      "    ovaldef vsn = %d resdef vsn = %d", definition_id, defvsn, resvsn);
+		oscap_dlprintf(DBG_W, "Definition versions don't match: "
+			       "definition id: %s, "
+			       "ovaldef vsn: %d, resdef vsn: %d.\n", definition_id, defvsn, resvsn);
 	}
 	oval_definition_set_version(definition->definition, resvsn);
 	oval_result_definition_set_instance(definition, instance);
@@ -309,15 +308,15 @@ int oval_result_definition_parse
 	if ((int)result != OVAL_ENUMERATION_INVALID) {
 		oval_result_definition_set_result(definition, result);
 	} else {
-		oscap_dprintf("WARNING: oval_result_definition_parse: can't resolve result attribute\n"
-			      "    definition id = %s\n", definition_id);
+		oscap_dlprintf(DBG_W, "Can't resolve result attribute, "
+			       "definition id: %s.\n", definition_id);
 		oval_result_definition_set_result(definition, OVAL_RESULT_UNKNOWN);
 	}
 
 	//Process tag contents
-	oscap_dprintf("DEBUG: oval_result_definition_parse: processing <definition> contents\n"
-		      "    definition id = %s vsn = %d\n"
-		      "    definition result = (%d)", definition_id, defvsn, result);
+	oscap_dlprintf(DBG_I, "Processing <definition> contents: "
+		       "id: %s, vsn: %d, "
+		       "result: %d.\n", definition_id, defvsn, result);
 
 	return_code = oval_parser_parse_tag
 	    (reader, context, (oval_xml_tag_parser) _oval_result_definition_parse, definition);
@@ -326,7 +325,6 @@ int oval_result_definition_parse
 	oscap_free(definition_version);
 
 	(*consumer) (definition, client);
-	oscap_dprintf("DEBUG: oval_result_definition_parse: END");
 	return return_code;
 }
 

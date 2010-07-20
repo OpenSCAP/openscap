@@ -261,7 +261,7 @@ void oval_component_set_literal_value(struct oval_component *component, struct o
 			((struct oval_component_LITERAL *)component)->value = value;
 		}
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 void oval_component_set_type(struct oval_component *component, oval_component_type_t type)
@@ -270,7 +270,7 @@ void oval_component_set_type(struct oval_component *component, oval_component_ty
 	if (component && !oval_component_is_locked(component)) {
 		component->type = type;
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 struct oval_object *oval_component_get_object(struct oval_component *component)
@@ -290,7 +290,7 @@ void oval_component_set_object(struct oval_component *component, struct oval_obj
 			((struct oval_component_OBJECTREF *)component)->object = object;
 		}
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 char *oval_component_get_object_field(struct oval_component *component) {
@@ -309,7 +309,7 @@ void oval_component_set_object_field(struct oval_component *component, char *fie
 			((struct oval_component_OBJECTREF *)component)->object_field = oscap_strdup(field);
 		}
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 struct oval_variable *oval_component_get_variable(struct oval_component *component) {
@@ -360,7 +360,7 @@ void oval_component_set_arithmetic_operation(struct oval_component *component, o
 			arithmetic->operation = operation;
 		}
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 char *oval_component_get_prefix(struct oval_component *component)
@@ -385,7 +385,7 @@ void oval_component_set_prefix(struct oval_component *component, char *character
 			begin->character = oscap_strdup(character);
 		}
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 char *oval_component_get_suffix(struct oval_component *component)
@@ -459,7 +459,7 @@ void oval_component_set_substring_start(struct oval_component *component, int st
 			substring->start = start;
 		}
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 int oval_component_get_substring_length(struct oval_component *component)
@@ -484,7 +484,7 @@ void oval_component_set_substring_length(struct oval_component *component, int l
 			substring->length = length;
 		}
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 oval_datetime_format_t oval_component_get_timedif_format_1(struct oval_component
@@ -510,7 +510,7 @@ void oval_component_set_timedif_format_1(struct oval_component *component, oval_
 			timedif->format_1 = format;
 		}
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 oval_datetime_format_t oval_component_get_timedif_format_2(struct oval_component
@@ -536,7 +536,7 @@ void oval_component_set_timedif_format_2(struct oval_component *component, oval_
 			timedif->format_2 = format;
 		}
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 char *oval_component_get_regex_pattern(struct oval_component *component) {
@@ -559,7 +559,7 @@ void oval_component_set_regex_pattern(struct oval_component *component, char *pa
 			regex->pattern = oscap_strdup(pattern);
 		}
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 struct oval_component *oval_component_new(struct oval_definition_model *model, oval_component_type_t type)
@@ -686,7 +686,7 @@ struct oval_component *oval_component_new(struct oval_definition_model *model, o
 
 bool oval_component_is_valid(struct oval_component * component)
 {
-        oscap_dprintf("WARNING: NOOP.\n");
+        oscap_dlprintf(DBG_W, "NOOP.\n");
 	return true;		//TODO
 }
 
@@ -862,7 +862,7 @@ void oval_component_add_function_component(struct oval_component *component, str
 				oval_collection_add(function->function_components, func_component);
 		}
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 void oval_component_set_variable(struct oval_component *component, struct oval_variable *variable)
@@ -874,7 +874,7 @@ void oval_component_set_variable(struct oval_component *component, struct oval_v
 			varref->variable = variable;
 		}
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 static void oval_value_consume(struct oval_value *value, void *component)
@@ -1084,14 +1084,14 @@ int oval_component_parse_tag(xmlTextReaderPtr reader,
 		component = oval_component_new(model, OVAL_FUNCTION_REGEX_CAPTURE);
 		return_code = _oval_component_parse_REGEX_CAPTURE_tag(reader, context, component);
 	} else {
-		oscap_dprintf("NOTICE::oval_component_parse_tag::<%s> not handled (line = %d)", tagname,
+		oscap_dlprintf(DBG_I, "Tag <%s> not handled, line: %d.\n", tagname,
                               xmlTextReaderGetParserLineNumber(reader));
 		return_code = oval_parser_skip_tag(reader, context);
 	}
 	if (component != NULL)
 		(*consumer) (component, user);
 	if (return_code != 1) {
-		oscap_dprintf("NOTICE: oval_component_parse_tag::parse of <%s> terminated on error at line %d", tagname,
+		oscap_dlprintf(DBG_I, "Parsing of <%s> terminated by an error at line %d.\n", tagname,
                             xmlTextReaderGetParserLineNumber(reader));
 	}
 	oscap_free(tagname);
@@ -1398,7 +1398,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_VARREF(oval_argu_
 	struct oval_variable *variable = varref->variable;
 
 	if (!variable) {
-		oscap_dprintf("ERROR: No variable bound to VARREF Component.\n");
+		oscap_dlprintf(DBG_E, "No variable bound to VARREF Component.\n");
 		oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "No variable bound to VARREF componenet");
 		return flag;
 	}
@@ -1455,7 +1455,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_BEGIN(oval_argu_t
 		}
 		oval_component_iterator_free(subcomps);
 	} else {
-		oscap_dprintf("ERROR: No prefix specified for begin function (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_E, "No prefix specified for begin function.\n");
 		oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "No prefix specified for component evaluation");
 	}
 	return flag;
@@ -1492,7 +1492,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_END(oval_argu_t *
 		}
 		oval_component_iterator_free(subcomps);
 	} else {
-		oscap_dprintf("ERROR: No suffix specified for end function  (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_E, "No suffix specified for end function.\n");
 		oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "No suffix specified for component evaluation");
 	}
 	return flag;
@@ -2038,7 +2038,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_REGEX_CAPTURE(ova
 	pattern = oval_component_get_regex_pattern(component);
 	re = pcre_compile(pattern, PCRE_UTF8, &error, &erroffset, NULL);
 	if (re == NULL) {
-		oscap_dprintf("ERROR: pcre_compile() failed: \"%s\".\n", error);
+		oscap_dlprintf(DBG_E, "pcre_compile() failed: \"%s\".\n", error);
 		return SYSCHAR_FLAG_ERROR;
 	}
 #elif defined USE_REGEX_POSIX
@@ -2046,7 +2046,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_REGEX_CAPTURE(ova
 
 	pattern = oval_component_get_regex_pattern(component);
 	if ((rc = regcomp(&re, pattern, REG_EXTENDED | REG_NEWLINE)) != 0) {
-		oscap_dprintf("ERROR: regcomp() failed: %d.\n", rc);
+		oscap_dlprintf(DBG_E, "regcomp() failed: %d.\n", rc);
 		return SYSCHAR_FLAG_ERROR;
 	}
 #endif
@@ -2068,7 +2068,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_REGEX_CAPTURE(ova
 
 			rc = pcre_exec(re, NULL, text, strlen(text), 0, 0, ovector, ovector_len);
 			if (rc < -1) {
-				oscap_dprintf("ERROR: pcre_exec() failed: %d.\n", rc);
+				oscap_dlprintf(DBG_E, "pcre_exec() failed: %d.\n", rc);
 				flag = SYSCHAR_FLAG_ERROR;
 				break;
 			}
@@ -2152,7 +2152,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_ARITHMETIC_rec(st
 		} else if (datatype == OVAL_DATATYPE_FLOAT) {
 			new_val = (double) oval_value_get_float(ov);
 		} else {
-			oscap_dprintf("ERROR: Unexpected value type: %s.\n", oval_datatype_get_text(datatype));
+			oscap_dlprintf(DBG_E, "Unexpected value type: %s.\n", oval_datatype_get_text(datatype));
 			oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "Unexpected value type");
 			oval_value_iterator_free(val_itr);
 			return SYSCHAR_FLAG_ERROR;
@@ -2163,7 +2163,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_ARITHMETIC_rec(st
 		} else if (op == OVAL_ARITHMETIC_MULTIPLY) {
 			new_val *= val;
 		} else {
-			oscap_dprintf("ERROR: Unexpected arithmetic operation: %s.\n", oval_arithmetic_operation_get_text(op));
+			oscap_dlprintf(DBG_E, "Unexpected arithmetic operation: %s.\n", oval_arithmetic_operation_get_text(op));
 			oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "Unexpected arithmetic operation");
 			oval_value_iterator_free(val_itr);
 			return SYSCHAR_FLAG_ERROR;
@@ -2188,7 +2188,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_ARITHMETIC(oval_a
 
 	op = oval_component_get_arithmetic_operation(component);
 	if (op != OVAL_ARITHMETIC_ADD && op != OVAL_ARITHMETIC_MULTIPLY) {
-		oscap_dprintf("ERROR: Unexpected arithmetic operation: %s.\n", oval_arithmetic_operation_get_text(op));
+		oscap_dlprintf(DBG_E, "Unexpected arithmetic operation: %s.\n", oval_arithmetic_operation_get_text(op));
 		oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "Unexpected arithmetic operation");
 		return SYSCHAR_FLAG_ERROR;
 	}
@@ -2223,7 +2223,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_ARITHMETIC(oval_a
 		} else if (datatype == OVAL_DATATYPE_FLOAT) {
 			val = (double) oval_value_get_float(ov);
 		} else {
-			oscap_dprintf("ERROR: Unexpected value type: %s.\n", oval_datatype_get_text(datatype));
+			oscap_dlprintf(DBG_E, "Unexpected value type: %s.\n", oval_datatype_get_text(datatype));
 			oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "Unexpected value type");
 			flag = SYSCHAR_FLAG_ERROR;
 			goto cleanup;
@@ -2279,7 +2279,7 @@ static oval_syschar_collection_flag_t oval_component_eval_common(oval_argu_t *ar
 	if (evaluator) {
 		flag = (*evaluator) (argu, component, value_collection);
 	} else {
-		oscap_dprintf("ERROR component type %d not supported.\n", type);
+		oscap_dlprintf(DBG_E, "Component type %d not supported.\n", type);
 		oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "Component type not supported");
 	}
 	return flag;

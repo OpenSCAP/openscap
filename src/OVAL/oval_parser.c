@@ -89,7 +89,7 @@ static int _oval_parser_process_tags(xmlTextReaderPtr reader,
 			break;
 		}
 		if (return_code != 1) {
-			oscap_dprintf("NOTICE:oval_parser_process_tags::%s processing terminated on error\n", tagname);
+			oscap_dlprintf(DBG_I, "Parsing of <%s> terminated by an error.\n", tagname);
 		}
 		if (return_code != 1)
 			break;
@@ -114,8 +114,8 @@ int ovaldef_parse_node(xmlTextReaderPtr reader, struct oval_parser_context *cont
 	const char *tagname_states = "states";
 	const char *tagname_variables = "variables";
 	int depth = xmlTextReaderDepth(reader);	/*tree_depth */
-	oscap_dprintf("DEBUG: oval_parser: START PARSE (depth = %d)", depth);
-	oscap_dprintf("DEBUG: oval_parser: ENCLOSING TAG <%s:%s>",
+	oscap_dlprintf(DBG_I, "oval_parser: START PARSE (depth: %d).\n", depth);
+	oscap_dlprintf(DBG_I, "oval_parser: ENCLOSING TAG <%s:%s>.\n",
 		      xmlTextReaderConstNamespaceUri(reader), xmlTextReaderConstLocalName(reader));
 	int return_code = xmlTextReaderRead(reader);
 	while (return_code == 1) {
@@ -123,7 +123,7 @@ int ovaldef_parse_node(xmlTextReaderPtr reader, struct oval_parser_context *cont
 			if (xmlTextReaderDepth(reader) > depth) {
 				char *tagname = (char *)xmlTextReaderLocalName(reader);
 				char *namespace = (char *)xmlTextReaderNamespaceUri(reader);
-				oscap_dprintf("DEBUG: oval_parser: PROCESSING TAG <%s:%s> depth = %d",
+				oscap_dlprintf(DBG_I, "oval_parser: PROCESSING TAG <%s:%s>, depth: %d.\n",
 					      namespace, tagname, xmlTextReaderDepth(reader));
 				int is_oval = strcmp(namespace, oval_namespace) == 0;
 				if (is_oval && (strcmp(tagname, tagname_definitions) == 0)) {
@@ -151,7 +151,7 @@ int ovaldef_parse_node(xmlTextReaderPtr reader, struct oval_parser_context *cont
 					return_code = oval_parser_skip_tag(reader, context);
 				} else {
 					oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EXMLELEM, "Unknown xml element");
-					oscap_dprintf("WARNING: oval_parser: UNPROCESSED TAG <%s:%s>", namespace,
+					oscap_dlprintf(DBG_W, "oval_parser: unprocessed tag: <%s:%s>.\n", namespace,
 						      tagname);
 					return_code = oval_parser_skip_tag(reader, context);
 				}
@@ -182,7 +182,7 @@ int ovaldef_parser_parse(struct oval_definition_model *model, xmlTextReader * re
 		retcode = ovaldef_parse_node(reader, &context);
 	} else {
 		oscap_setxmlerr(xmlGetLastError());
-		oscap_dprintf("ERROR: ovaldef_parser_parse: xmlTextReader is NULL (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_E, "xmlTextReader is NULL.\n");
 		return -1;
 	}
 	return retcode;

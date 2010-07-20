@@ -166,12 +166,12 @@ bool oval_object_is_valid(struct oval_object * object)
 	struct oval_behavior_iterator *behaviors_itr;
 
 	if (object == NULL) {
-                oscap_dprintf("WARNING: argument is not valid: NULL.\n");
+                oscap_dlprintf(DBG_W, "Argument is not valid: NULL.\n");
 		return false;
         }
 
         if (oval_object_get_subtype(object) == OVAL_SUBTYPE_UNKNOWN) {
-                oscap_dprintf("WARNING: argument is not valid: subtype == OVAL_SUBTYPE_UNKNOWN.\n");
+                oscap_dlprintf(DBG_W, "Argument is not valid: subtype == OVAL_SUBTYPE_UNKNOWN.\n");
                 return false;
         }
 
@@ -277,7 +277,7 @@ void oval_object_set_subtype(struct oval_object *object, oval_subtype_t subtype)
 	if (object && !oval_object_is_locked(object)) {
 		object->subtype = subtype;
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 void oval_object_add_note(struct oval_object *object, char *note)
@@ -285,7 +285,7 @@ void oval_object_add_note(struct oval_object *object, char *note)
 	if (object && !oval_object_is_locked(object)) {
 		oval_collection_add(object->notes, (void *)oscap_strdup(note));
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 void oval_object_set_comment(struct oval_object *object, char *comm)
@@ -295,7 +295,7 @@ void oval_object_set_comment(struct oval_object *object, char *comm)
 			oscap_free(object->comment);
 		object->comment = (comm == NULL) ? NULL : oscap_strdup(comm);
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 void oval_object_set_deprecated(struct oval_object *object, bool deprecated)
@@ -303,7 +303,7 @@ void oval_object_set_deprecated(struct oval_object *object, bool deprecated)
 	if (object && !oval_object_is_locked(object)) {
 		object->deprecated = deprecated;
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 void oval_object_set_version(struct oval_object *object, int version)
@@ -311,7 +311,7 @@ void oval_object_set_version(struct oval_object *object, int version)
 	if (object && !oval_object_is_locked(object)) {
 		object->version = version;
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 void oval_object_add_object_content(struct oval_object *object, struct oval_object_content *content)
@@ -319,7 +319,7 @@ void oval_object_add_object_content(struct oval_object *object, struct oval_obje
 	if (object && !oval_object_is_locked(object)) {
 		oval_collection_add(object->object_content, (void *)content);
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 void oval_object_add_behavior(struct oval_object *object, struct oval_behavior *behavior)
@@ -327,7 +327,7 @@ void oval_object_add_behavior(struct oval_object *object, struct oval_behavior *
 	if (object && !oval_object_is_locked(object)) {
 		oval_collection_add(object->behaviors, (void *)behavior);
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 static void oval_note_consume(char *text, void *object)
@@ -367,8 +367,8 @@ static int _oval_object_parse_tag(xmlTextReaderPtr reader, struct oval_parser_co
 		return_code = oval_object_content_parse_tag(reader, context, &oval_content_consume, object);
 	}
 	if (return_code != 1) {
-		oscap_dprintf("NOTICE: oval_object_parse_tag::parse of %s terminated on error at <%s> line %d\n",
-			      object->id, tagname, xmlTextReaderGetParserLineNumber(reader));
+		oscap_dlprintf(DBG_I, "Parsing of <%s> terminated by an error at line %d.\n",
+			       object->id, tagname, xmlTextReaderGetParserLineNumber(reader));
 	}
 	oscap_free(tagname);
 	oscap_free(namespace);
@@ -381,7 +381,7 @@ int oval_object_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *c
 {
 	struct oval_definition_model *model = oval_parser_context_model(context);
 	char *id = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "id");
-	oscap_dprintf("DEBUG::oval_object_parse_tag::id = %s", id);
+	oscap_dlprintf(DBG_I, "Object id: %s.\n", id);
 	struct oval_object *object = oval_object_get_new(model, id);
 	oscap_free(id);
 	id = NULL;

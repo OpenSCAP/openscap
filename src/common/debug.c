@@ -63,8 +63,10 @@ static void __oscap_vdlprintf(int level, const char *file, const char *fn, size_
 		if (env == NULL)
 			env = "0";
 		__debuglog_level = atoi(env);
-	} else if (__debuglog_level < level)
+	} else if (__debuglog_level < level) {
+		__UNLOCK_FP;
 		return;
+	}
 
 	if (__debuglog_fp == NULL) {
 		char *logfile;

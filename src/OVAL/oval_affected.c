@@ -122,7 +122,7 @@ struct oval_affected *oval_affected_new(struct oval_definition_model *model)
 
 bool oval_affected_is_valid(struct oval_affected * affected)
 {
-        oscap_dprintf("WARNING: NOOP.\n");
+        oscap_dlprintf(DBG_W, "NOOP.\n");
 	return true;		//TODO
 }
 
@@ -176,7 +176,7 @@ void oval_affected_set_family(struct oval_affected *affected, oval_affected_fami
 	if (!oval_affected_is_locked(affected)) {
 		affected->family = family;
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 void oval_affected_add_platform(struct oval_affected *affected, char *platform)
@@ -186,7 +186,7 @@ void oval_affected_add_platform(struct oval_affected *affected, char *platform)
 	if (affected && !oval_affected_is_locked(affected)) {
 		oval_collection_add(affected->platforms, (void *)oscap_strdup(platform));
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 void oval_affected_add_product(struct oval_affected *affected, char *product)
@@ -196,7 +196,7 @@ void oval_affected_add_product(struct oval_affected *affected, char *product)
 	if (affected && !oval_affected_is_locked(affected)) {
 		oval_collection_add(affected->products, (void *)oscap_strdup(product));
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 static oval_affected_family_t _odafamily(char *family)
@@ -236,7 +236,7 @@ static int _oval_affected_parse_tag(xmlTextReaderPtr reader, struct oval_parser_
 		if (depth == -1)
 			oscap_setxmlerr(xmlGetLastError());
 
-		oscap_dprintf("NOTICE::(oval_affected)skipping <%s> depth = %d line = %d\n", tagname, depth,
+		oscap_dlprintf(DBG_I, "Skipping tag: %s, depth: %d, line: %d.\n", tagname, depth,
                               xmlTextReaderGetParserLineNumber(reader));
 		return_code = oval_parser_skip_tag(reader, context);
 	}

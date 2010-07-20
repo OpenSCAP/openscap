@@ -210,7 +210,7 @@ bool oval_result_test_is_valid(struct oval_result_test * result_test)
 	struct oval_result_item_iterator *rslt_items_itr;
 
 	if (result_test == NULL) {
-                oscap_dprintf("WARNING: argument is not valid: NULL.\n");
+                oscap_dlprintf(DBG_W, "Argument is not valid: NULL.\n");
 		return false;
         }
 
@@ -367,7 +367,7 @@ static oval_result_t strregcomp(char *pattern, char *test_str)
 	oval_result_t result;
 
 	if ( (status = regcomp(&re, pattern, REG_EXTENDED)) != 0 ) {
-		oscap_dprintf("%s:%d Unable to compile regex pattern:%d", __FILE__, __LINE__, status);
+		oscap_dlprintf(DBG_E, "Unable to compile regex pattern: %d.\n", status);
 		result = OVAL_RESULT_ERROR;
 	}
 
@@ -376,7 +376,7 @@ static oval_result_t strregcomp(char *pattern, char *test_str)
 	} else if (status == REG_NOMATCH) {	// no match, no errror
 		result = OVAL_RESULT_FALSE;
 	} else {
-		oscap_dprintf("%s:%d Unable to match regex pattern:%d", __FILE__, __LINE__, status);
+		oscap_dlprintf(DBG_E, "Unable to match regex pattern: %d.\n", status);
 		result = OVAL_RESULT_ERROR;
 	}
 
@@ -400,7 +400,7 @@ static oval_result_t evaluate(char *sys_data, char *state_data, oval_datatype_t 
 		} else if (operation == OVAL_OPERATION_PATTERN_MATCH) {
 			return strregcomp(state_data, sys_data);
 		} else {
-			oscap_dprintf("%s:%d Invalid type of operation(%d) in string evaluation.", __FILE__, __LINE__, operation);
+			oscap_dlprintf(DBG_E, "Invalid type of operation in string evaluation: %d.\n", operation);
 			oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "Invalid type of operation in string evaluation");
 			return OVAL_RESULT_ERROR;
 		}
@@ -421,7 +421,7 @@ static oval_result_t evaluate(char *sys_data, char *state_data, oval_datatype_t 
 		} else if (operation == OVAL_OPERATION_LESS_THAN_OR_EQUAL) {
 			return ((syschar_val <= state_val) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
 		} else {
-			oscap_dprintf("%s:%d Invalid type of operation(%d) in integer evaluation.", __FILE__, __LINE__, operation);
+			oscap_dlprintf(DBG_E, "Invalid type of operation in integer evaluation: %d.\n", operation);
 			oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "Invalid type of operation in integer evaluation");
 			return OVAL_RESULT_ERROR;
 		}
@@ -435,7 +435,7 @@ static oval_result_t evaluate(char *sys_data, char *state_data, oval_datatype_t 
 		} else if (operation == OVAL_OPERATION_NOT_EQUAL) {
 			return ((state_int != sys_int) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
 		} else {
-			oscap_dprintf("%s:%d Invalid type of operation(%d) in boolean evaluation.", __FILE__, __LINE__, operation);
+			oscap_dlprintf(DBG_E, "Invalid type of operation in boolean evaluation: %d.\n", operation);
 			oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "Invalid type of operation in boolean evaluation");
 			return OVAL_RESULT_ERROR;
 		}
@@ -445,7 +445,7 @@ static oval_result_t evaluate(char *sys_data, char *state_data, oval_datatype_t 
 		} else if (operation == OVAL_OPERATION_NOT_EQUAL) {
 			return ((istrcmp(state_data, sys_data) != 0) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
 		} else {
-			oscap_dprintf("%s:%d Invalid type of operation(%d) in binary evaluation.", __FILE__, __LINE__, operation);
+			oscap_dlprintf(DBG_E, "Invalid type of operation in binary evaluation: %d.\n", operation);
 			oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "Invalid type of operation in binary evaluation");
 			return OVAL_RESULT_ERROR;
 		}
@@ -465,7 +465,7 @@ static oval_result_t evaluate(char *sys_data, char *state_data, oval_datatype_t 
 		} else if (operation == OVAL_OPERATION_LESS_THAN_OR_EQUAL) {
 			return ((result != 1) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
 		} else {
-			oscap_dprintf("%s:%d Invalid type of operation(%d) in rpm version comparison.", __FILE__, __LINE__, operation);
+			oscap_dlprintf(DBG_E, "Invalid type of operation in rpm version comparison: %d.\n", operation);
 			oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "Invalid type of operation in rpm version comparison");
 			return OVAL_RESULT_ERROR;
 		}
@@ -499,7 +499,7 @@ static oval_result_t evaluate(char *sys_data, char *state_data, oval_datatype_t 
 				if (tmp_sys_int > tmp_state_int)
 					return (OVAL_RESULT_FALSE);
 			} else {
-				oscap_dprintf("%s:%d Invalid type of operation(%d) in version comparison.", __FILE__, __LINE__, operation);
+				oscap_dlprintf(DBG_E, "Invalid type of operation in version comparison: %d.\n", operation);
 				oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "Invalid type of operation in version comparison");
 				return OVAL_RESULT_ERROR;
 			}
@@ -536,7 +536,7 @@ static oval_result_t evaluate(char *sys_data, char *state_data, oval_datatype_t 
 		}		// we have already filtered out the invalid ones
 	}
 
-        oscap_dprintf("%s:%d Ivalid OVAL data type.", __FILE__, __LINE__);
+        oscap_dlprintf(DBG_E, "Ivalid OVAL data type: %d.\n", state_data_type);
         oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "Ivalid OVAL data type");
         return OVAL_RESULT_ERROR;
 }
@@ -563,7 +563,7 @@ int ores_add_res(struct oresults *ores, oval_result_t res)
 			ores->notappl_cnt++;
 			break;
 		default:
-	                oscap_dprintf("%s:%d Invalid oval result type", __FILE__, __LINE__);
+	                oscap_dlprintf(DBG_E, "Invalid oval result type: %d.\n", res);
         	        oscap_seterr(OSCAP_EFAMILY_OSCAP, OVAL_EOVALINT, "Invalid oval result type");
 			return 1;
 		}
@@ -654,7 +654,7 @@ oval_result_t ores_get_result_bychk(struct oresults *ores, oval_check_t check)
 		}
 		break;
 	default:
-                oscap_dprintf("%s:%d Invalid check value", __FILE__, __LINE__);
+                oscap_dlprintf(DBG_E, "Invalid check value: %d.\n", check);
                 oscap_seterr(OSCAP_EFAMILY_OSCAP, OVAL_EOVALINT, "Invalid check value");
 		result = OVAL_RESULT_ERROR;
 	}
@@ -756,7 +756,7 @@ oval_result_t ores_get_result_byopr(struct oresults *ores, oval_operator_t op)
 		}
 		break;
 	default:
-                oscap_dprintf("%s:%d Invalid operator value", __FILE__, __LINE__);
+                oscap_dlprintf(DBG_E, "Invalid operator value: %d.\n", op);
                 oscap_seterr(OSCAP_EFAMILY_OSCAP, OVAL_EOVALINT, "Invalid operator value");
 		result = OVAL_RESULT_ERROR;
 		break;
@@ -791,19 +791,19 @@ static oval_result_t eval_item(struct oval_syschar_model *syschar_model, struct 
 		struct oresults ent_ores;
 
 		if ((content = oval_state_content_iterator_next(state_contents_itr)) == NULL) {
-			oscap_dprintf("%s:%d found NULL state content", __FILE__, __LINE__);
+			oscap_dlprintf(DBG_E, "Found NULL state content.\n");
 			oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT,
 				     "OVAL internal error: found NULL state content");
 			goto fail;
 		}
 		if ((state_entity = oval_state_content_get_entity(content)) == NULL) {
-			oscap_dprintf("%s:%d found NULL entity", __FILE__, __LINE__);
+			oscap_dlprintf(DBG_E, "Found NULL entity.\n");
 			oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT,
 				     "OVAL internal error: found NULL entity");
 			goto fail;
 		}
 		if ((state_entity_name = oval_entity_get_name(state_entity)) == NULL) {
-			oscap_dprintf("%s:%d found NULL entity name", __FILE__, __LINE__);
+			oscap_dlprintf(DBG_E, "Found NULL entity name.\n");
 			oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT,
 				     "OVAL internal error: found NULL entity name");
 			goto fail;
@@ -814,7 +814,7 @@ static oval_result_t eval_item(struct oval_syschar_model *syschar_model, struct 
 
 		if (oval_entity_get_varref_type(state_entity) == OVAL_ENTITY_VARREF_ATTRIBUTE) {
 			if ((state_entity_var = oval_entity_get_variable(state_entity)) == NULL) {
-				oscap_dprintf("%s:%d found NULL variable", __FILE__, __LINE__);
+				oscap_dlprintf(DBG_E, "Found NULL variable.\n");
 				oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT,
 					     "OVAL internal error: found NULL variable");
 				goto fail;
@@ -824,13 +824,13 @@ static oval_result_t eval_item(struct oval_syschar_model *syschar_model, struct 
 			state_entity_var = NULL;
 
 			if ((state_entity_val = oval_entity_get_value(state_entity)) == NULL) {
-				oscap_dprintf("%s:%d found NULL entity value", __FILE__, __LINE__);
+				oscap_dlprintf(DBG_E, "Found NULL entity value.\n");
 				oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT,
 					     "OVAL internal error: found NULL entity value");
 				goto fail;
 			}
 			if ((state_entity_val_text = oval_value_get_text(state_entity_val)) == NULL) {
-				oscap_dprintf("%s:%d found NULL entity value text", __FILE__, __LINE__);
+				oscap_dlprintf(DBG_E, "Found NULL entity value text.\n");
 				oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT,
 					     "OVAL internal error: found NULL entity value text");
 				goto fail;
@@ -848,7 +848,7 @@ static oval_result_t eval_item(struct oval_syschar_model *syschar_model, struct 
 
 			item_entity = oval_sysitem_iterator_next(item_entities_itr);
 			if (item_entity == NULL) {
-				oscap_dprintf("found NULL sysitem.\n");
+				oscap_dlprintf(DBG_E, "Found NULL sysitem.\n");
 				oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT,
 					     "OVAL internal error: found NULL sysitem");
 				oval_sysitem_iterator_free(item_entities_itr);
@@ -1020,7 +1020,7 @@ static oval_result_t eval_check_existence(oval_existence_t check_existence, int 
 		}
 		break;
 	default:
-                oscap_dprintf("%s:%d Invalid check_existence value", __FILE__, __LINE__);
+                oscap_dlprintf(DBG_E, "Invalid check_existence value: %d.\n", check_existence);
                 oscap_seterr(OSCAP_EFAMILY_OSCAP, OVAL_EOVALINT, "Invalid check_existence value");
                 result = OVAL_RESULT_ERROR;
 		break;
@@ -1050,7 +1050,7 @@ _oval_result_test_evaluate_items(struct oval_syschar *syschar_object,
 
 		item = oval_sysdata_iterator_next(collected_items_itr);
 		if (item == NULL) {
-			oscap_dprintf("%s:%d Iterator returned null", __FILE__, __LINE__);
+			oscap_dlprintf(DBG_E, "Iterator returned null.");
 			oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "Iterator returned null");
 			oval_sysdata_iterator_free(collected_items_itr);
 			return OVAL_RESULT_ERROR;
@@ -1138,7 +1138,7 @@ _oval_result_test_evaluate_items(struct oval_syschar *syschar_object,
 		}
 		break;
 	default:
-		oscap_dprintf("%s:%d Unknown syschar flag", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_E, "Unknown syschar flag: %d.\n", oval_syschar_get_flag(syschar_object));
 		oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "Unknown syschar flag");
 		return OVAL_RESULT_ERROR;
 	}
@@ -1153,7 +1153,8 @@ static oval_result_t _oval_result_test_result(struct oval_result_test *rtest, vo
 
 	// first, let's see if we already did the test
 	if (rtest->result != OVAL_RESULT_NOT_EVALUATED) {
-		oscap_dprintf("%s:%d found result from previous evaluation, returning without further processing", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_I, "Found result from previous evaluation: %d, returning without further processing.\n",
+			       rtest->result);
 		return (rtest->result);
 	}
 
@@ -1164,7 +1165,7 @@ static oval_result_t _oval_result_test_result(struct oval_result_test *rtest, vo
 
 	struct oval_object * tmp_obj = oval_test_get_object(test2check);
 	if (tmp_obj == NULL) {
-		oscap_dprintf("%s:%d Object is null", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_E, "Object is null.\n");
 		oscap_seterr(OSCAP_EFAMILY_OSCAP, OVAL_EOVALINT, "Object is null");
 		return OVAL_RESULT_ERROR;
 
@@ -1176,7 +1177,7 @@ static oval_result_t _oval_result_test_result(struct oval_result_test *rtest, vo
 	// OK, we have our object ID, now use that to find selected items in the syschar_model
 	struct oval_syschar * syschar_object = oval_syschar_model_get_syschar(syschar_model, definition_object_id_string);
 	if (syschar_object == NULL) {
-		oscap_dprintf("%s:%d system characteristics object is null", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_E, "System characteristics object is null.\n");
 		return OVAL_RESULT_ERROR;
 	}
 
@@ -1248,7 +1249,7 @@ void oval_result_test_set_result(struct oval_result_test *test, oval_result_t re
 	if (test && !oval_result_test_is_locked(test)) {
 		test->result = result;
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 void oval_result_test_set_instance(struct oval_result_test *test, int instance)
@@ -1256,7 +1257,7 @@ void oval_result_test_set_instance(struct oval_result_test *test, int instance)
 	if (test && !oval_result_test_is_locked(test)) {
 		test->instance = instance;
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 void oval_result_test_set_message(struct oval_result_test *test, struct oval_message *message) {
@@ -1265,21 +1266,21 @@ void oval_result_test_set_message(struct oval_result_test *test, struct oval_mes
 			oval_message_free(test->message);
 		test->message = message;
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 void oval_result_test_add_item(struct oval_result_test *test, struct oval_result_item *item) {
 	if (test && !oval_result_test_is_locked(test)) {
 		oval_collection_add(test->items, item);
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 void oval_result_test_add_binding(struct oval_result_test *test, struct oval_variable_binding *binding) {
 	if (test && !oval_result_test_is_locked(test)) {
 		oval_collection_add(test->bindings, binding);
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 //void(*oscap_consumer_func)(void*, void*);
@@ -1313,7 +1314,7 @@ static int _oval_result_test_parse(xmlTextReaderPtr reader, struct oval_parser_c
 	int return_code = 1;
 	xmlChar *localName = xmlTextReaderLocalName(reader);
 
-	oscap_dprintf("DEBUG: _oval_result_test_parse: parsing <%s>", localName);
+	oscap_dlprintf(DBG_I, "Parsing <%s>.\n", localName);
 
 	if (strcmp((const char *)localName, "message") == 0) {
 		return_code = oval_message_parse_tag
@@ -1324,7 +1325,7 @@ static int _oval_result_test_parse(xmlTextReaderPtr reader, struct oval_parser_c
 	} else if (strcmp((const char *)localName, "tested-variable") == 0) {
 		return_code = _oval_result_test_binding_parse(reader, context, args);
 	} else {
-		oscap_dprintf("WARNING: _oval_result_test_parse: TODO: <%s> not handled", localName);
+		oscap_dlprintf(DBG_W, "Unhandled tag: <%s>.\n", localName);
 		return_code = oval_parser_skip_tag(reader, context);
 	}
 
@@ -1337,7 +1338,6 @@ int oval_result_test_parse_tag
     (xmlTextReaderPtr reader, struct oval_parser_context *context,
      struct oval_result_system *sys, oscap_consumer_func consumer, void *client) {
 	int return_code = 1;
-	oscap_dprintf("DEBUG: oval_result_test_parse: BEGIN");
 
 	xmlChar *test_id = xmlTextReaderGetAttribute(reader, BAD_CAST "test_id");
 	struct oval_result_test *test = oval_result_test_new(sys, (char *)test_id);
@@ -1356,8 +1356,7 @@ int oval_result_test_parse_tag
 	if (tst_check_existence == OVAL_EXISTENCE_UNKNOWN) {
 		oval_test_set_existence(ovaltst, check_existence);
 	} else if (tst_check_existence != check_existence) {
-		oscap_dprintf("WARNING: oval_result_test_parse: @check_existence does not match\n"
-			      "    test_id = %s", test_id);
+		oscap_dlprintf(DBG_W, "@check_existence does not match, test_id: %s.\n", test_id);
 	}
 
 	oval_check_t check = oval_check_parse(reader, "check", OVAL_CHECK_UNKNOWN);
@@ -1365,7 +1364,7 @@ int oval_result_test_parse_tag
 	if (tst_check == OVAL_CHECK_UNKNOWN) {
 		oval_test_set_check(ovaltst, check);
 	} else if (tst_check != check) {
-		oscap_dprintf("WARNING: oval_result_test_parse: @check does not match\n" "    test_id = %s", test_id);
+		oscap_dlprintf(DBG_W, "@check does not match, test_id: %s.\n", test_id);
 	}
 
 	int version = oval_parser_int_attribute(reader, "version", 0);
@@ -1373,7 +1372,7 @@ int oval_result_test_parse_tag
 	if (tst_version == 0) {
 		oval_test_set_version(ovaltst, version);
 	} else if (tst_version != version) {
-		oscap_dprintf("WARNING: oval_result_test_parse: @version does not match\n" "    test_id = %s", test_id);
+		oscap_dlprintf(DBG_W, "@version does not match, test_id: %s.\n", test_id);
 	}
 
 	struct oval_string_map *itemmap = oval_string_map_new();
@@ -1383,7 +1382,6 @@ int oval_result_test_parse_tag
 	test->bindings_clearable = true;
 
 	(*consumer) (test, client);
-	oscap_dprintf("DEBUG: oval_result_test_parse: END");
 	oscap_free(test_id);
 	return return_code;
 }

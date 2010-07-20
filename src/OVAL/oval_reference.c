@@ -100,7 +100,7 @@ struct oval_reference *oval_reference_new(struct oval_definition_model *model)
 
 bool oval_reference_is_valid(struct oval_reference * ref)
 {
-        oscap_dprintf("WARNING: NOOP.\n");
+        oscap_dlprintf(DBG_W, "NOOP.\n");
 	return true;		//TODO
 }
 
@@ -146,7 +146,7 @@ void oval_reference_set_source(struct oval_reference *ref, char *source)
 			oscap_free(ref->source);
 		ref->source = (source == NULL) ? NULL : oscap_strdup(source);
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 void oval_reference_set_id(struct oval_reference *ref, char *id)
@@ -156,7 +156,7 @@ void oval_reference_set_id(struct oval_reference *ref, char *id)
 			free(ref->id);
 		ref->id = (id == NULL) ? NULL : oscap_strdup(id);
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 void oval_reference_set_url(struct oval_reference *ref, char *url)
@@ -166,7 +166,7 @@ void oval_reference_set_url(struct oval_reference *ref, char *url)
 			free(ref->url);
 		ref->url = (url == NULL) ? NULL : oscap_strdup(url);
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 /*typedef void (*oval_reference_consumer)(struct oval_reference*, void*);*/

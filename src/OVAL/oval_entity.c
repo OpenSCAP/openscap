@@ -157,7 +157,7 @@ struct oval_entity *oval_entity_new(struct oval_definition_model *model)
 bool oval_entity_is_valid(struct oval_entity * entity)
 {
         if (entity == NULL) {
-                oscap_dprintf("WARNING: argument is not valid: NULL.\n");
+                oscap_dlprintf(DBG_W, "Argument is not valid: NULL.\n");
                 return false;
         }
         /* todo: currently the entity type is not parsed
@@ -167,11 +167,11 @@ bool oval_entity_is_valid(struct oval_entity * entity)
         }
         */
         if (oval_entity_get_datatype(entity) == OVAL_DATATYPE_UNKNOWN) {
-                oscap_dprintf("WARNING: argument is not valid: datatype == OVAL_DATATYPE_UNKNOWN.\n");
+                oscap_dlprintf(DBG_W, "Argument is not valid: datatype == OVAL_DATATYPE_UNKNOWN.\n");
                 return false;
         }
         if (oval_entity_get_operation(entity) == OVAL_OPERATION_UNKNOWN) {
-                oscap_dprintf("WARNING: argument is not valid: operation == OVAL_OPERATION_UNKNOWN.\n");
+                oscap_dlprintf(DBG_W, "Argument is not valid: operation == OVAL_OPERATION_UNKNOWN.\n");
                 return false;
         }
 
@@ -230,7 +230,7 @@ void oval_entity_set_type(struct oval_entity *entity, oval_entity_type_t type)
 	if (entity && !oval_entity_is_locked(entity)) {
 		entity->type = type;
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 void oval_entity_set_datatype(struct oval_entity *entity, oval_datatype_t datatype)
@@ -238,7 +238,7 @@ void oval_entity_set_datatype(struct oval_entity *entity, oval_datatype_t dataty
 	if (entity && !oval_entity_is_locked(entity)) {
 		entity->datatype = datatype;
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 void oval_entity_set_operation(struct oval_entity *entity, oval_operation_t operation)
@@ -246,7 +246,7 @@ void oval_entity_set_operation(struct oval_entity *entity, oval_operation_t oper
 	if (entity && !oval_entity_is_locked(entity)) {
 		entity->operation = operation;
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 void oval_entity_set_mask(struct oval_entity *entity, int mask)
@@ -254,7 +254,7 @@ void oval_entity_set_mask(struct oval_entity *entity, int mask)
 	if (entity && !oval_entity_is_locked(entity)) {
 		entity->mask = mask;
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 void oval_entity_set_varref_type(struct oval_entity *entity, oval_entity_varref_type_t type)
@@ -262,7 +262,7 @@ void oval_entity_set_varref_type(struct oval_entity *entity, oval_entity_varref_
 	if (entity && !oval_entity_is_locked(entity)) {
 		entity->varref_type = type;
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 void oval_entity_set_variable(struct oval_entity *entity, struct oval_variable *variable)
@@ -270,7 +270,7 @@ void oval_entity_set_variable(struct oval_entity *entity, struct oval_variable *
 	if (entity && !oval_entity_is_locked(entity)) {
 		entity->variable = variable;
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 void oval_entity_set_value(struct oval_entity *entity, struct oval_value *value)
@@ -278,7 +278,7 @@ void oval_entity_set_value(struct oval_entity *entity, struct oval_value *value)
 	if (entity && !oval_entity_is_locked(entity)) {
 		entity->value = value;
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 void oval_entity_set_name(struct oval_entity *entity, char *name)
@@ -288,7 +288,7 @@ void oval_entity_set_name(struct oval_entity *entity, char *name)
 			oscap_free(entity->name);
 		entity->name = (name == NULL) ? NULL : oscap_strdup(name);
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 static void oval_consume_varref(char *varref, void *user)
@@ -362,8 +362,8 @@ int oval_entity_parse_tag(xmlTextReaderPtr reader,
 	oval_entity_set_value(entity, value);
 	(*consumer) (entity, user);
 	if (return_code != 1) {
-		oscap_dprintf("NOTICE: oval_entity_parse_tag::parse of <%s> terminated on error line %d", name,
-                              xmlTextReaderGetParserLineNumber(reader));
+		oscap_dlprintf(DBG_I, "Parsing of <%s> terminated by an error at line %d.\n", name,
+			       xmlTextReaderGetParserLineNumber(reader));
 	}
 	oscap_free(name);
 	return return_code;

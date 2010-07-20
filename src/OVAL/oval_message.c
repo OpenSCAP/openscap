@@ -54,13 +54,13 @@ struct oval_message *oval_message_new()
 
 bool oval_message_is_valid(struct oval_message * message)
 {
-        oscap_dprintf("WARNING: NOOP.\n");
+        oscap_dlprintf(DBG_W, "NOOP.\n");
 	return true;		//TODO
 }
 
 bool oval_message_is_locked(struct oval_message * message)
 {
-        oscap_dprintf("WARNING: NOOP.\n");
+        oscap_dlprintf(DBG_W, "NOOP.\n");
 	return false;		//TODO
 }
 
@@ -127,7 +127,7 @@ void oval_message_set_text(struct oval_message *message, char *text)
 			oscap_free(message->text);
 		message->text = (text == NULL) ? NULL : oscap_strdup(text);
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 void oval_message_set_level(struct oval_message *message, oval_message_level_t level)
@@ -135,7 +135,7 @@ void oval_message_set_level(struct oval_message *message, oval_message_level_t l
 	if (message && !oval_message_is_locked(message)) {
 		message->level = level;
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 static void oval_message_parse_tag_consumer(char *text, void *message)
@@ -155,11 +155,10 @@ int oval_message_parse_tag(xmlTextReaderPtr reader,
 		return_code = oval_parser_text_value(reader, context, &oval_message_parse_tag_consumer, message);
 	}
 	if (return_code != 1) {
-		oscap_dprintf("WARNING: oval_warning_parse_tag:: return code is not 1::(%d)", return_code);
+		oscap_dlprintf(DBG_W, "Return code is not 1: %d.\n", return_code);
 	} else {
-		oscap_dprintf("DEBUG: oval_message_parse_tag::"
-			      "\n    message->level    = %d    message->text     = %s",
-			      oval_message_get_level(message), oval_message_get_text(message));
+		oscap_dlprintf(DBG_I, "message->level: %d, message->text: %s",
+			       oval_message_get_level(message), oval_message_get_text(message));
 
 		(*consumer) (message, client);
 	}

@@ -116,7 +116,7 @@ void oval_result_directives_set_reported(struct oval_result_directives *directiv
 			i = i + 1;
 		}
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 void oval_result_directives_set_content
@@ -129,7 +129,7 @@ void oval_result_directives_set_content
 			i = i + 1;
 		}
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 static const struct oscap_string_map OVAL_DIRECTIVE_MAP[] = {
@@ -169,9 +169,7 @@ static int _oval_result_directives_parse_tag(xmlTextReaderPtr reader, struct ova
 				if (content != OVAL_DIRECTIVE_CONTENT_UNKNOWN) {
 					oval_result_directives_set_content(directives, type, content);
 				} else {
-					oscap_dprintf
-					    ("WARNING: _oval_result_directives_parse_tag: cannot resolve @content=\"%s\"",
-					     contentstr);
+					oscap_dlprintf(DBG_W, "Cannot resolve @content: \"%s\".\n", contentstr);
 					retcode = 0;
 				}
 				oscap_free(contentstr);
@@ -180,7 +178,7 @@ static int _oval_result_directives_parse_tag(xmlTextReaderPtr reader, struct ova
 			}
 		}
 	} else {
-		oscap_dprintf("WARNING: _oval_result_directives_parse_tag: cannot resolve <%s>", name);
+		oscap_dlprintf(DBG_W, "Cannot resolve <%s>.\n", name);
 		retcode = 0;
 	}
 	oscap_free(name);

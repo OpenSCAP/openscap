@@ -209,7 +209,7 @@ bool oval_criteria_node_is_valid(struct oval_criteria_node * criteria_node)
 	oval_criteria_node_type_t type;
 
 	if (criteria_node == NULL) {
-                oscap_dprintf("WARNING: argument is not valid: NULL.\n");
+                oscap_dlprintf(DBG_W, "Argument is not valid: NULL.\n");
 		return false;
         }
 
@@ -220,13 +220,13 @@ bool oval_criteria_node_is_valid(struct oval_criteria_node * criteria_node)
 			struct oval_criteria_node_iterator *subnodes_itr;
 
                         if (oval_criteria_node_get_operator(criteria_node) == OVAL_OPERATOR_UNKNOWN) {
-                                oscap_dprintf("WARNING: argument is not valid: operator == OVAL_OPERATOR_UNKNOWN.\n");
+                                oscap_dlprintf(DBG_W, "Argument is not valid: operator == OVAL_OPERATOR_UNKNOWN.\n");
                                 return false;
                         }
 
 			subnodes_itr = oval_criteria_node_get_subnodes(criteria_node);
                         if (oval_criteria_node_iterator_has_more(subnodes_itr) == false) {
-                                oscap_dprintf("WARNING: argument is not valid: there are no subnodes.\n");
+                                oscap_dlprintf(DBG_W, "Argument is not valid: there are no subnodes.\n");
                                 return false;
                         }
 			while (oval_criteria_node_iterator_has_more(subnodes_itr)) {
@@ -262,7 +262,7 @@ bool oval_criteria_node_is_valid(struct oval_criteria_node * criteria_node)
 		}
 		break;
 	default:
-                oscap_dprintf("WARNING: argument is not valid: wrong node type: %d.\n", type);
+                oscap_dlprintf(DBG_W, "Argument is not valid: wrong node type: %d.\n", type);
 		return false;
 	}
 
@@ -358,7 +358,7 @@ void oval_criteria_set_node_type(struct oval_criteria_node *node, oval_criteria_
 	if (node && !oval_criteria_node_is_locked(node)) {
 		node->type = type;
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 void oval_criteria_node_set_negate(struct oval_criteria_node *node, bool negate)
@@ -366,7 +366,7 @@ void oval_criteria_node_set_negate(struct oval_criteria_node *node, bool negate)
 	if (node && !oval_criteria_node_is_locked(node)) {
 		node->negate = negate;
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 void oval_criteria_node_set_comment(struct oval_criteria_node *node, char *comm)
@@ -376,7 +376,7 @@ void oval_criteria_node_set_comment(struct oval_criteria_node *node, char *comm)
 			oscap_free(node->comment);
 		node->comment = (comm == NULL) ? NULL : oscap_strdup(comm);
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 void oval_criteria_node_set_operator(struct oval_criteria_node *node, oval_operator_t op)
@@ -387,7 +387,7 @@ void oval_criteria_node_set_operator(struct oval_criteria_node *node, oval_opera
 			criteria->operator = op;
 		}
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 void oval_criteria_node_add_subnode(struct oval_criteria_node *node, struct oval_criteria_node *subnode)
@@ -398,7 +398,7 @@ void oval_criteria_node_add_subnode(struct oval_criteria_node *node, struct oval
 			oval_collection_add(criteria->subnodes, (void *)subnode);
 		}
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 void oval_criteria_node_set_test(struct oval_criteria_node *node, struct oval_test *test)
@@ -409,7 +409,7 @@ void oval_criteria_node_set_test(struct oval_criteria_node *node, struct oval_te
 			criterion->test = test;
 		}
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 void oval_criteria_node_set_definition(struct oval_criteria_node *node, struct oval_definition *definition)
@@ -420,7 +420,7 @@ void oval_criteria_node_set_definition(struct oval_criteria_node *node, struct o
 			extenddef->definition = definition;
 		}
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 static void _oval_criteria_subnode_consume(struct oval_criteria_node *subnode, void *criteria)
@@ -497,7 +497,7 @@ int oval_criteria_parse_tag(xmlTextReaderPtr reader,
 		(*consumer) (node, user);
 	} else {
 		return_code = 0;
-		oscap_dprintf("NOTICE::oval_criteria_parse_tag::node type unknown");
+		oscap_dlprintf(DBG_W, "Invalid node type: OVAL_NODETYPE_UNKNOWN.\n");
 		oval_parser_skip_tag(reader, context);
 	}
 	oscap_free(tagname);
