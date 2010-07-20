@@ -81,7 +81,7 @@ bool oval_variable_model_is_valid(struct oval_variable_model *variable_model)
 	struct oval_string_iterator *varids_itr;
 
 	if (variable_model == NULL) {
-                oscap_dprintf("WARNING: argument is not valid: NULL.\n");
+                oscap_dlprintf(DBG_W, "Argument is not valid: NULL.\n");
 		return false;
         }
 
@@ -90,12 +90,12 @@ bool oval_variable_model_is_valid(struct oval_variable_model *variable_model)
 		char *varid = oval_string_iterator_next(varids_itr);
 
                 if (oval_variable_model_get_datatype(variable_model, varid) == OVAL_DATATYPE_UNKNOWN) {
-                        oscap_dprintf("WARNING: argument is not valid: variable (%s) datatype == OVAL_DATATYPE_UNKNOWN.\n", varid);
+                        oscap_dlprintf(DBG_W, "Argument is not valid: variable (%s) datatype == OVAL_DATATYPE_UNKNOWN.\n", varid);
                         is_valid = false;
                         break;
                 }
 		if (oval_variable_model_get_comment(variable_model, varid) == NULL) {
-                        oscap_dprintf("WARNING: argument is not valid: variable (%s) comment == NULL.\n", varid);
+                        oscap_dlprintf(DBG_W, "Argument is not valid: variable (%s) comment == NULL.\n", varid);
                         is_valid = false;
                         break;
                 }
@@ -193,25 +193,25 @@ static int _oval_generator_parse_tag(xmlTextReader * reader, struct oval_parser_
 	if (is_common_ns && strcmp("product_name", tagname) == 0) {
 		return_code = xmlTextReaderRead(reader);
 		char *value = (char *)xmlTextReaderValue(reader);
-		oscap_dprintf("INFO: %s:    product name: %s", label, value);
+		oscap_dlprintf(DBG_I, "%s: product name: %s.\n", label, value);
 		oscap_free(value);
 	} else if (is_common_ns && strcmp("product_version", tagname) == 0) {
 		return_code = xmlTextReaderRead(reader);
 		char *value = (char *)xmlTextReaderValue(reader);
-		oscap_dprintf("INFO: %s: product version: %s", label, value);
+		oscap_dlprintf(DBG_I, "%s: product version: %s.\n", label, value);
 		oscap_free(value);
 	} else if (is_common_ns && strcmp("schema_version", tagname) == 0) {
 		return_code = xmlTextReaderRead(reader);
 		char *value = (char *)xmlTextReaderValue(reader);
-		oscap_dprintf("INFO: %s:  schema version: %s", label, value);
+		oscap_dlprintf(DBG_I, "%s: schema version: %s.\n", label, value);
 		oscap_free(value);
 	} else if (is_common_ns && strcmp("timestamp", tagname) == 0) {
 		return_code = xmlTextReaderRead(reader);
 		char *value = (char *)xmlTextReaderValue(reader);
-		oscap_dprintf("INFO: %s:      time stamp: %s", label, value);
+		oscap_dlprintf(DBG_I, "%s: time stamp: %s.\n", label, value);
 		oscap_free(value);
 	} else {
-		oscap_dprintf("WARNING: UNPROCESSED TAG <%s:%s>", namespace, tagname);
+		oscap_dlprintf(DBG_W, "Unprocessed tag: <%s:%s>.\n", namespace, tagname);
 		oval_parser_skip_tag(reader, context);
 		return_code = 0;
 	}
@@ -232,7 +232,7 @@ static int _oval_variable_model_parse_variable_values
 		oval_collection_add(frame->values, strdup(value));
 		oscap_free(value);
 	} else {
-		oscap_dprintf("WARNING: UNPROCESSED TAG <%s:%s>", namespace, tagname);
+		oscap_dlprintf(DBG_W, "Unprocessed tag: <%s:%s>.\n", namespace, tagname);
 		oval_parser_skip_tag(reader, context);
 		return_code = 0;
 	}
@@ -250,7 +250,7 @@ static int _oval_variable_model_parse_variable
 	int return_code = 1;
 	if (frame) {
 		if (frame->datatype != datatype) {
-			oscap_dprintf("WARNING: Unmatched variable datatypes %s:%s",
+			oscap_dlprintf(DBG_W, "Unmatched variable datatypes: %s:%s.\n",
 				      oval_datatype_get_text(frame->datatype), oval_datatype_get_text(datatype));
 			oval_parser_skip_tag(reader, context);
 			return_code = 0;
@@ -276,7 +276,7 @@ static int _oval_variable_model_parse_variables
 	if (is_variable_ns && strcmp("variable", tagname) == 0) {
 		return_code = _oval_variable_model_parse_variable(reader, context, model);
 	} else {
-		oscap_dprintf("WARNING: UNPROCESSED TAG <%s:%s>", namespace, tagname);
+		oscap_dlprintf(DBG_W, "Unprocessed tag: <%s:%s>.\n", namespace, tagname);
 		oval_parser_skip_tag(reader, context);
 
 		/*oscap_seterr */
@@ -300,7 +300,7 @@ static int _oval_variable_model_parse_tag
 		return_code =
 		    oval_parser_parse_tag(reader, context, (oval_xml_tag_parser) _oval_variable_model_parse_variables, model);
 	} else {
-		oscap_dprintf("WARNING: UNPROCESSED TAG <%s:%s>", namespace, tagname);
+		oscap_dlprintf(DBG_W, "Unprocessed tag: <%s:%s>.\n", namespace, tagname);
 		oval_parser_skip_tag(reader, context);
 		return_code = 0;
 	}
@@ -323,7 +323,7 @@ static int _oval_variable_model_parse(struct oval_variable_model *model, xmlText
 		return_code =
 		    oval_parser_parse_tag(reader, &context, (oval_xml_tag_parser) _oval_variable_model_parse_tag, model);
 	} else {
-		oscap_dprintf("WARNING: UNPROCESSED TAG <%s:%s>", namespace, tagname);
+		oscap_dlprintf(DBG_W, "Unprocessed tag: <%s:%s>.\n", namespace, tagname);
 		return_code = oval_parser_skip_tag(reader, &context);
 	}
 	oscap_free(tagname);

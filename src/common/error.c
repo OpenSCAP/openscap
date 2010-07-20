@@ -64,7 +64,7 @@ static struct oscap_err_t *oscap_err_new(oscap_errfamily_t family, oscap_errcode
 		family_str = "UNKNOWN";
 		break;
 	}
-	oscap_dprintf("[E (%d)]: %s::%s::%s:%d %s", code, family_str, file, func, line, desc);
+	oscap_dlprintf(DBG_E, "[E (%d)]: %s::%s::%s:%d %s", code, family_str, file, func, line, desc);
 
 	return (err);
 }

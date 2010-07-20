@@ -319,8 +319,8 @@ static xccdf_test_result_type_t _resolve_operation(int A, int B, xccdf_bool_oper
         {0, 1, 1, 1, 1, 1, 1, 1, 1}  /* P */};
 
     if ((A == 0) || (B == 0)) {
-        oscap_dprintf("ERROR! Bad test results %d, %d\n", A, B);
-        return 0;
+	oscap_dlprintf(DBG_E, "Bad test results %d, %d.\n", A, B);
+	return 0;
     }
 
     switch (oper) {
@@ -335,7 +335,7 @@ static xccdf_test_result_type_t _resolve_operation(int A, int B, xccdf_bool_oper
             break;
         case XCCDF_OPERATOR_NOT:
         case XCCDF_OPERATOR_MASK:
-            oscap_dprintf("Not supported operation !\n");
+	    oscap_dlprintf(DBG_E, "Operation not supported.\n");
             return 0;
             break;
     }
@@ -634,8 +634,8 @@ static struct xccdf_default_score * xccdf_item_get_default_score(struct xccdf_it
                     /* Rule */
                     rule_result = xccdf_result_get_rule_result_by_id(test_result, xccdf_rule_get_id((const struct xccdf_rule *) item));
                     if (rule_result == NULL) {
-                        oscap_dprintf("No result of rule %s\n", xccdf_rule_get_id((const struct xccdf_rule *) item));
-                        return NULL;
+			    oscap_dlprintf(DBG_E, "No result of rule %s.\n", xccdf_rule_get_id((const struct xccdf_rule *) item));
+			    return NULL;
                     }
 
                     score = oscap_alloc(sizeof(struct xccdf_default_score));
@@ -672,7 +672,8 @@ static struct xccdf_default_score * xccdf_item_get_default_score(struct xccdf_it
                             /* Normalize */
                             if (score->accumulator != 0) /* Division by zero */
                                 score->score = score->score / score->accumulator;
-                            else oscap_dprintf("WARNING ! Avoided division by zero - Score accumulator is 0 !\n");
+                            else
+				    oscap_dlprintf(DBG_W, "Avoided division by zero - Score accumulator is 0!\n");
                             score->weight_score = score->score * xccdf_item_get_weight(item);
                     }
                     xccdf_item_iterator_free(child_it);
@@ -703,8 +704,8 @@ static struct xccdf_flat_score * xccdf_item_get_flat_score(struct xccdf_item * i
                     /* Rule */
                     rule_result = xccdf_result_get_rule_result_by_id(test_result, xccdf_rule_get_id((const struct xccdf_rule *) item));
                     if (rule_result == NULL) {
-                        oscap_dprintf("No result of rule %s\n", xccdf_rule_get_id((const struct xccdf_rule *) item));
-                        return NULL;
+			    oscap_dlprintf(DBG_E, "No result of rule %s.\n", xccdf_rule_get_id((const struct xccdf_rule *) item));
+			    return NULL;
                     }
 
                     score = oscap_alloc(sizeof(struct xccdf_flat_score));
@@ -1139,7 +1140,7 @@ struct xccdf_score * xccdf_policy_get_score(struct xccdf_policy * policy, struct
         oscap_free(item_score);
     } else {
         xccdf_score_free(score);
-        oscap_dprintf("Scoring system \"%s\" is not supported\n", scsystem);
+        oscap_dlprintf(DBG_E, "Scoring system \"%s\" is not supported.\n", scsystem);
         return NULL;
     }
 

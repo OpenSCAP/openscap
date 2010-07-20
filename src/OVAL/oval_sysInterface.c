@@ -73,7 +73,7 @@ void oval_sysint_set_name(struct oval_sysint *sysint, char *name)
 			oscap_free(sysint->name);
 		sysint->name = oscap_strdup(name);
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 char *oval_sysint_get_ip_address(struct oval_sysint *sysint)
@@ -90,7 +90,7 @@ void oval_sysint_set_ip_address(struct oval_sysint *sysint, char *ip_address)
 			oscap_free(sysint->ipAddress);
 		sysint->ipAddress = oscap_strdup(ip_address);
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 char *oval_sysint_get_mac_address(struct oval_sysint *sysint)
@@ -105,7 +105,7 @@ void oval_sysint_set_mac_address(struct oval_sysint *sysint, char *mac_address)
 			oscap_free(sysint->macAddress);
 		sysint->macAddress = oscap_strdup(mac_address);
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 struct oval_sysint *oval_sysint_new(struct oval_syschar_model *model)
@@ -123,7 +123,7 @@ struct oval_sysint *oval_sysint_new(struct oval_syschar_model *model)
 
 bool oval_sysint_is_valid(struct oval_sysint * sysint)
 {
-        oscap_dprintf("WARNING: NOOP.\n");
+        oscap_dlprintf(DBG_W, "NOOP.\n");
 	return true;		//TODO
 }
 
@@ -200,7 +200,7 @@ static int _oval_sysint_parse_tag(xmlTextReaderPtr reader, struct oval_parser_co
 	} else if (is_ovalsys && (strcmp(tagname, "mac_address") == 0)) {
 		return_code = oval_parser_text_value(reader, context, &oval_consume_mac_address, sysint);
 	} else {
-		oscap_dprintf("WARNING: _oval_sysint_parse_tag:: skipping <%s:%s>", namespace, tagname);
+		oscap_dlprintf(DBG_W, "Skipping tag: <%s:%s>.\n", namespace, tagname);
 		return_code = oval_parser_skip_tag(reader, context);
 	}
 	oscap_free(tagname);
@@ -222,7 +222,7 @@ int oval_sysint_parse_tag(xmlTextReaderPtr reader,
 	if (is_ovalsys && (strcmp(tagname, "interface") == 0)) {
 		return_code = oval_parser_parse_tag(reader, context, &_oval_sysint_parse_tag, sysint);
 	} else {
-		oscap_dprintf("WARNING: oval_sysint_parse_tag:: expecting <interface> skipping <%s:%s>",
+		oscap_dlprintf(DBG_W, "Expected <interface>, skipping <%s:%s>.\n",
 			      namespace, tagname);
 		return_code = oval_parser_skip_tag(reader, context);
 	}

@@ -76,7 +76,7 @@ void oval_syschar_set_flag(struct oval_syschar *syschar, oval_syschar_collection
 	if (syschar && !oval_syschar_is_locked(syschar)) {
 		syschar->flag = flag;
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 void oval_syschar_set_object(struct oval_syschar *syschar, struct oval_object *object)
@@ -84,7 +84,7 @@ void oval_syschar_set_object(struct oval_syschar *syschar, struct oval_object *o
 	if (syschar && !oval_syschar_is_locked(syschar)) {
 		syschar->object = object;
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 struct oval_message_iterator *oval_syschar_get_messages(struct oval_syschar *syschar)
@@ -97,7 +97,7 @@ void oval_syschar_add_message(struct oval_syschar *syschar, struct oval_message 
 	if (syschar && !oval_syschar_is_locked(syschar)) {
 		oval_collection_add(syschar->messages, message);
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 struct oval_object *oval_syschar_get_object(struct oval_syschar *syschar)
@@ -136,14 +136,14 @@ void oval_syschar_add_sysdata(struct oval_syschar *syschar, struct oval_sysdata 
 	if (syschar && !oval_syschar_is_locked(syschar)) {
 		oval_collection_add(syschar->sysdata, sysdata);
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 void oval_syschar_add_variable_binding(struct oval_syschar *syschar, struct oval_variable_binding *binding) {
 	if (syschar && !oval_syschar_is_locked(syschar)) {
 		oval_collection_add(syschar->variable_bindings, binding);
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 struct oval_syschar *oval_syschar_new(struct oval_syschar_model *model, struct oval_object *object)
@@ -168,7 +168,7 @@ bool oval_syschar_is_valid(struct oval_syschar * syschar)
 	struct oval_sysdata_iterator *sysdatas_itr;
 
 	if (syschar == NULL) {
-                oscap_dprintf("WARNING: argument is not valid: NULL.\n");
+                oscap_dlprintf(DBG_W, "Argument is not valid: NULL.\n");
 		return false;
         }
 
@@ -318,7 +318,7 @@ static int _oval_syschar_parse_subtag(xmlTextReaderPtr reader, struct oval_parse
 	oscap_free(tagname);
 	oscap_free(namespace);
 	if (return_code != 1) {
-		oscap_dprintf("WARNING: _oval_syschar_parse_tag:: return code is not 1::(%d)", return_code);
+		oscap_dlprintf(DBG_W, "Return code is not 1: %d.\n", return_code);
 	}
 	return return_code;
 }
@@ -329,7 +329,6 @@ int oval_syschar_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *
 
 	char *tagname = (char *)xmlTextReaderLocalName(reader);
 	char *namespace = (char *)xmlTextReaderNamespaceUri(reader);
-	oscap_dprintf("DEBUG: oval_syschar_parse_tag(<%s:%s>): enter", namespace, tagname);
 	int is_ovalsys = strcmp(namespace, NAMESPACE_OVALSYS) == 0;
 	int return_code;
 	if (is_ovalsys && (strcmp(tagname, "object") == 0)) {
@@ -346,14 +345,13 @@ int oval_syschar_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *
 		oval_syschar_set_flag(syschar, flag_enum);
 		return_code = oval_parser_parse_tag(reader, context, &_oval_syschar_parse_subtag, syschar);
 	} else {
-		oscap_dprintf("WARNING: oval_syschar_parse_tag:: expecting <object> got <%s:%s>", namespace, tagname);
+		oscap_dlprintf(DBG_W, "Expected <object>, got <%s:%s>.\n", namespace, tagname);
 		return_code = oval_parser_skip_tag(reader, context);
 	}
-	oscap_dprintf("DEBUG: oval_syschar_parse_tag(<%s:%s>): exit", namespace, tagname);
 	oscap_free(tagname);
 	oscap_free(namespace);
 	if (return_code != 1) {
-		oscap_dprintf("WARNING: oval_syschar_parse_tag:: return code is not 1::(%d)", return_code);
+		oscap_dlprintf(DBG_W, "Return code is not 1: %d.\n", return_code);
 	}
 	return return_code;
 }

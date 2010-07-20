@@ -90,7 +90,7 @@ SEXP_t *oval_value_to_sexp(struct oval_value *val, oval_datatype_t dtype)
 		val_sexp = SEXP_number_newb(oval_value_get_boolean(val));
 		break;
 	default:
-		oscap_dprintf("ERROR: Unknown datatype: %s.\n", dtype);
+		oscap_dlprintf(DBG_E, "Unknown datatype: %s.\n", dtype);
 		oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "Unknown datatype");
 		val_sexp = NULL;
 		break;
@@ -511,10 +511,10 @@ SEXP_t *oval_state2sexp(struct oval_state *state, void *sess)
 				val = oval_value_iterator_next(val_itr);
 				vs = oval_value_to_sexp(val, dt);
 				if (vs == NULL) {
-					oscap_dprintf("ERROR: Failed to convert OVAL value to SEXP: "
-						      "datatype: %s, text: %s.\n",
-						      oval_datatype_get_text(dt),
-						      oval_value_get_text(val));
+					oscap_dlprintf(DBG_E, "Failed to convert OVAL value to SEXP: "
+						       "datatype: %s, text: %s.\n",
+						       oval_datatype_get_text(dt),
+						       oval_value_get_text(val));
 					oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "Failed to convert OVAL value to SEXP");
 					oval_value_iterator_free(val_itr);
 					SEXP_free(val_lst);

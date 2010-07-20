@@ -122,7 +122,7 @@ struct oval_value *oval_value_new(oval_datatype_t datatype, char *text_value)
 
 bool oval_value_is_valid(struct oval_value * value)
 {
-        oscap_dprintf("WARNING: NOOP.\n");
+        oscap_dlprintf(DBG_W, "NOOP.\n");
 	return true;		//TODO
 }
 

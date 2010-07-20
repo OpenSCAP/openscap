@@ -161,7 +161,7 @@ bool oval_state_is_valid(struct oval_state * state)
 	*/
 
 	if (state == NULL) {
-                oscap_dprintf("WARNING: argument is not valid: NULL.\n");
+                oscap_dlprintf(DBG_W, "Argument is not valid: NULL.\n");
 		return false;
         }
 	/*

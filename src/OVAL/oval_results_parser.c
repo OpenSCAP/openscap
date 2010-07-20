@@ -60,32 +60,31 @@ static int _ovalres_parser_process_node
 	int return_code = xmlTextReaderRead(reader);
 	while (return_code == 1) {
 		if (xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
-			oscap_dprintf("DEBUG: ovalres_parser: at depth %d", xmlTextReaderDepth(reader));
+			oscap_dlprintf(DBG_I, "Parser at depth: %d.\n", xmlTextReaderDepth(reader));
 			if (xmlTextReaderDepth(reader) > 0) {
 				char *tagname = (char *)xmlTextReaderLocalName(reader);
 				char *namespace = (char *)xmlTextReaderNamespaceUri(reader);
-				oscap_dprintf("DEBUG: ovalres_parser: processing <%s:%s>", namespace, tagname);
+				oscap_dlprintf(DBG_I, "Processing tag: <%s:%s>", namespace, tagname);
 				int is_ovalres = strcmp((const char *)NAMESPACE_OVALRES, namespace) == 0;
 				int is_ovaldef =
 				    (is_ovalres) ? false : (strcmp((const char *)NAMESPACE_OVALDEF, namespace) == 0);
 				if (is_ovalres && (strcmp(tagname, "generator") == 0)) {
 					/*SKIP GENERATOR CODE */
-					oscap_dprintf("DEBUG: ovalres_parser_process_node: SKIPPING <generator>");
+					oscap_dlprintf(DBG_W, "Skipping <generator>.\n");
 					return_code = oval_parser_skip_tag(reader, context);
 				} else if (is_ovalres && (strcmp(tagname, "directives") == 0)) {
 					assert(context != NULL);
 					*directives = oval_result_directives_new(context->results_model);
 					return_code = oval_result_directives_parse_tag(reader, context, *directives);
 				} else if (is_ovaldef && (strcmp(tagname, "oval_definitions") == 0)) {
-					oscap_dprintf("DEBUG: Calling oval_parser_parse_node");
 					return_code = ovaldef_parse_node(reader, context);
 				} else if (is_ovalres && (strcmp(tagname, "results") == 0)) {
 					return_code = oval_parser_parse_tag
 					    (reader, context, (oval_xml_tag_parser) _ovalres_parser_parse_system, NULL);
 				} else {
 					oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EXMLELEM, "Unknown element");
-					oscap_dprintf("WARNING: ovalres_parser_process_node: UNPROCESSED TAG <%s:%s>",
-						      namespace, tagname);
+					oscap_dlprintf(DBG_W, "Unknown tag: <%s:%s>.\n",
+						       namespace, tagname);
 					return_code = oval_parser_skip_tag(reader, context);
 				}
 				oscap_free(tagname);
@@ -121,7 +120,7 @@ struct oval_result_directives *ovalres_parser_parse
 	if (is_ovalres && (strcmp(tagname, "oval_results") == 0)) {
 		_ovalres_parser_process_node(reader, &context, directives);
 	} else {
-		oscap_dprintf("WARNING: ovalres_parser: UNPROCESSED TAG <%s:%s>", namespace, tagname);
+		oscap_dlprintf(DBG_W, "Unprocessed tag: <%s:%s>", namespace, tagname);
 		oval_parser_skip_tag(reader, &context);
 	}
 	return *directives;

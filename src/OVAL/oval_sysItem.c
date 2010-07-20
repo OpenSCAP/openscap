@@ -63,12 +63,12 @@ struct oval_sysitem *oval_sysitem_new(struct oval_syschar_model *model)
 bool oval_sysitem_is_valid(struct oval_sysitem * sysitem)
 {
 	if (sysitem == NULL) {
-                oscap_dprintf("WARNING: argument is not valid: NULL.\n");
+                oscap_dlprintf(DBG_W, "Argument is not valid: NULL.\n");
 		return false;
         }
 
         if (oval_sysitem_get_datatype(sysitem) == OVAL_DATATYPE_UNKNOWN) {
-                oscap_dprintf("WARNING: argument is not valid: datatype == OVAL_DATATYPE_UNKNOWN.\n");
+                oscap_dlprintf(DBG_W, "Argument is not valid: datatype == OVAL_DATATYPE_UNKNOWN.\n");
                 return false;
         }
 
@@ -178,7 +178,7 @@ void oval_sysitem_set_name(struct oval_sysitem *sysitem, char *name)
 			oscap_free(sysitem->name);
 		sysitem->name = oscap_strdup(name);
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 void oval_sysitem_set_status(struct oval_sysitem *sysitem, oval_syschar_status_t status)
@@ -186,7 +186,7 @@ void oval_sysitem_set_status(struct oval_sysitem *sysitem, oval_syschar_status_t
 	if (sysitem && !oval_sysitem_is_locked(sysitem)) {
 		sysitem->status = status;
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 void oval_sysitem_set_datatype(struct oval_sysitem *sysitem, oval_datatype_t datatype)
@@ -194,7 +194,7 @@ void oval_sysitem_set_datatype(struct oval_sysitem *sysitem, oval_datatype_t dat
 	if (sysitem && !oval_sysitem_is_locked(sysitem)) {
 		sysitem->datatype = datatype;
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 void oval_sysitem_set_mask(struct oval_sysitem *sysitem, int mask)
@@ -202,7 +202,7 @@ void oval_sysitem_set_mask(struct oval_sysitem *sysitem, int mask)
 	if (sysitem && !oval_sysitem_is_locked(sysitem)) {
 		sysitem->mask = mask;
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 void oval_sysitem_set_value(struct oval_sysitem *sysitem, char *value)
@@ -212,7 +212,7 @@ void oval_sysitem_set_value(struct oval_sysitem *sysitem, char *value)
 			oscap_free(sysitem->value);
 		sysitem->value = oscap_strdup(value);
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 static void oval_sysitem_value_consumer_(char *value, void *sysitem)
@@ -257,8 +257,9 @@ int oval_sysitem_parse_tag(xmlTextReaderPtr reader,
 			return_code = oval_parser_text_value(reader, context, &oval_sysitem_value_consumer_, sysitem);
 		}
 		if (return_code != 1) {
-			oscap_dprintf("WARNING: oval_sysitem_parse_tag:: return code is not 1::(%d)", return_code);
+			oscap_dlprintf(DBG_W, "Return code is not 1: %d.\n", return_code);
 		} else {
+			/*
 			int numchars = 0;
 			char message[2000];
 			message[numchars] = '\0';

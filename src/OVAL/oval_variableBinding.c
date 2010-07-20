@@ -172,11 +172,9 @@ int oval_variable_binding_parse_tag(xmlTextReaderPtr reader,
 		return_code = oval_parser_text_value(reader, context, &_oval_variable_binding_value_consumer, binding);
 	}
 	if (return_code != 1) {
-		oscap_dprintf("WARNING: oval_warning_parse_tag:: return code is not 1::(%d)", return_code);
+		oscap_dlprintf(DBG_W, "Return code is not 1: %d.\n", return_code);
 	} else {
-		oscap_dprintf("DEBUG: oval_variable_binding_parse_tag::"
-			      "\n    binding->variable = %s"
-			      "\n    binding->value    = %s",
+		oscap_dlprintf(DBG_I, "Variable binding: variable: %s, value: %s.\n",
 			      oval_variable_get_id(oval_variable_binding_get_variable(binding)),
 			      oval_variable_binding_get_value(binding));
 		(*consumer) (binding, client);

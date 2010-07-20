@@ -152,10 +152,8 @@ int oval_syschar_model_compute_variable(struct oval_syschar_model *sysmod, struc
         if (component) {
                 variable->flag = oval_component_compute(sysmod, component, variable->values);
         } else {
-                oscap_dprintf("WARNING: NULL component bound to variable\n"
-                              "    variable type = %s\n"
-                              "    variable id   = %s\n",
-                              oval_variable_type_get_text(variable->type), oval_variable_get_id(variable));
+		oscap_dlprintf(DBG_W, "NULL component bound to a variable, id: %s, type: %s.\n",
+			       oval_variable_type_get_text(variable->type), oval_variable_get_id(variable));
                 return -1;
         }
 
@@ -173,10 +171,8 @@ int oval_probe_session_query_variable(oval_probe_session_t *sess, struct oval_va
         if (component) {
 		variable->flag = oval_component_query(sess, component, variable->values);
 	} else {
-                oscap_dprintf("WARNING: NULL component bound to variable\n"
-                              "    variable type = %s\n"
-                              "    variable id   = %s\n",
-                              oval_variable_type_get_text(variable->type), oval_variable_get_id(variable));
+		oscap_dlprintf(DBG_W, "NULL component bound to a variable, id: %s, type: %s.\n",
+			       oval_variable_type_get_text(variable->type), oval_variable_get_id(variable));
 		return -1;
         }
 
@@ -246,7 +242,7 @@ struct oval_variable *oval_variable_new(struct oval_definition_model *model, con
 		};
 		break;
 	default:
-		oscap_dprintf(" oval_variable type not valid: type = %d (%s:%d)", type, __FILE__, __LINE__);
+		oscap_dlprintf(DBG_E, "Variable type is not valid: %d.\n", type);
 		oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "Invalid OVAL variable type");
 		return NULL;
 	}
@@ -264,12 +260,12 @@ bool oval_variable_is_valid(struct oval_variable * variable)
         oval_variable_type_t type;
 
         if (variable == NULL) {
-                oscap_dprintf("WARNING: argument is not valid: NULL.\n");
+                oscap_dlprintf(DBG_W, "Argument is not valid: NULL.\n");
                 return false;
         }
 
         if (oval_variable_get_datatype(variable) == OVAL_DATATYPE_UNKNOWN) {
-                oscap_dprintf("WARNING: argument is not valid: datatype == OVAL_DATATYPE_UNKNOWN.\n");
+                oscap_dlprintf(DBG_W, "Argument is not valid: datatype == OVAL_DATATYPE_UNKNOWN.\n");
                 return false;
         }
 
@@ -284,13 +280,13 @@ bool oval_variable_is_valid(struct oval_variable * variable)
                         oval_variable_LOCAL_t *var = (oval_variable_LOCAL_t *) variable;
 
                         if (var->component == NULL) {
-                                oscap_dprintf("WARNING: argument is not valid: component == NULL.\n");
+                                oscap_dlprintf(DBG_W, "Argument is not valid: component == NULL.\n");
                                 return false;
                         }
                 }
                 break;
         default:
-                oscap_dprintf("WARNING: argument is not valid: wrong variable type: %d.\n", type);
+                oscap_dlprintf(DBG_W, "Argument is not valid: wrong variable type: %d.\n", type);
                 return false;
         }
 
@@ -369,7 +365,7 @@ void oval_variable_set_datatype(struct oval_variable *variable, oval_datatype_t 
 	if (variable && !oval_variable_is_locked(variable)) {
 		variable->datatype = datatype;
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 void oval_variable_set_type(struct oval_variable *variable, oval_variable_type_t type)
@@ -393,11 +389,11 @@ void oval_variable_set_type(struct oval_variable *variable, oval_variable_type_t
 			}
 		} else if (variable->type != type) {
 			/* TODO: Should we set and propagate error here ? */
-			oscap_dprintf("ERROR: attempt to reset valid variable type    oldtype = %s    newtype = %s",
-				      oval_variable_type_get_text(variable->type), oval_variable_type_get_text(type));
+			oscap_dlprintf(DBG_E, "Attempt to reset valid variable type, oldtype: %s, newtype: %s.\n",
+				       oval_variable_type_get_text(variable->type), oval_variable_type_get_text(type));
 		}
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 void oval_variable_set_comment(struct oval_variable *variable, char *comm)
@@ -407,7 +403,7 @@ void oval_variable_set_comment(struct oval_variable *variable, char *comm)
 			oscap_free(variable->comment);
 		variable->comment = oscap_strdup(comm);
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 
 }
 
@@ -416,7 +412,7 @@ void oval_variable_set_deprecated(struct oval_variable *variable, bool deprecate
 	if (variable && !oval_variable_is_locked(variable)) {
 		variable->deprecated = deprecated;
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 void oval_variable_set_version(struct oval_variable *variable, int version)
@@ -424,7 +420,7 @@ void oval_variable_set_version(struct oval_variable *variable, int version)
 	if (variable && !oval_variable_is_locked(variable)) {
 		variable->version = version;
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 void oval_variable_add_value(struct oval_variable *variable, struct oval_value *value)
@@ -436,7 +432,7 @@ void oval_variable_add_value(struct oval_variable *variable, struct oval_value *
 			variable->flag = SYSCHAR_FLAG_COMPLETE;
 		}
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 void oval_variable_clear_values(struct oval_variable *variable)
@@ -444,11 +440,11 @@ void oval_variable_clear_values(struct oval_variable *variable)
 	oval_variable_CONEXT_t *conext_var;
 
 	if (oval_variable_is_locked(variable)) {
-		oscap_dprintf("WARNING: attempt to update locked content.\n");
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 		return;
 	}
 	if (variable->type != OVAL_VARIABLE_CONSTANT && variable->type != OVAL_VARIABLE_EXTERNAL) {
-		oscap_dprintf("WARNING: wrong variable type for this operation: %d.\n", variable->type);
+		oscap_dlprintf(DBG_W, "Wrong variable type for this operation: %d.\n", variable->type);
 		return;
         }
 
@@ -466,7 +462,7 @@ void oval_variable_set_component(struct oval_variable *variable, struct oval_com
 			local->component = component;
 		}
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 static void _oval_variable_parse_local_tag_component_consumer(struct oval_component *component, void *variable)
@@ -482,9 +478,8 @@ static int _oval_variable_parse_local_tag(xmlTextReaderPtr reader, struct oval_p
 	int return_code = oval_component_parse_tag(reader, context, &_oval_variable_parse_local_tag_component_consumer,
 						   variable);
 	if (return_code != 1) {
-		oscap_dprintf
-		    ("NOTICE: oval_variable_parse_local_tag::parse of %s terminated on error at <%s> line %d",
-		     variable->id, tagname, xmlTextReaderGetParserLineNumber(reader));
+		oscap_dlprintf(DBG_W, "Parsing of %s terminated by an error at <%s>, line %d.\n",
+			       variable->id, tagname, xmlTextReaderGetParserLineNumber(reader));
 	}
 	oscap_free(tagname);
 	oscap_free(namespace);
@@ -509,9 +504,8 @@ static int _oval_variable_parse_constant_tag(xmlTextReaderPtr reader,
 	if (strcmp("value", (char *)tagname) == 0 && strcmp(DEFINITION_NAMESPACE, (char *)namespace) == 0) {
 		oval_parser_text_value(reader, context, (oval_xml_value_consumer) _oval_variable_parse_value, variable);
 	} else {
-		oscap_dprintf("NOTICE: Invalid element <%s:%s> in constant variable"
-			      "    <constant_variable id = %s> at line %d"
-			      "    %s(%d)", namespace, tagname, variable->id, xmlTextReaderGetParserLineNumber(reader), __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Invalid element <%s:%s> in constant variable %s on line %d.\n",
+			       namespace, tagname, variable->id, xmlTextReaderGetParserLineNumber(reader));
 	}
 	oscap_free(tagname);
 	oscap_free(namespace);
@@ -531,7 +525,7 @@ int oval_variable_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context 
 		type = OVAL_VARIABLE_LOCAL;
 	else {
 		type = OVAL_VARIABLE_UNKNOWN;
-		oscap_dprintf("NOTICE::oval_variable_parse_tag: <%s> unhandled variable type::line = %d",
+		oscap_dlprintf(DBG_W, "Unhandled variable type: %s, line: %d.\n",
 			      tagname, xmlTextReaderGetParserLineNumber(reader));
 	}
 	char *id = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "id");

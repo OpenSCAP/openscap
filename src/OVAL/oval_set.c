@@ -143,7 +143,7 @@ bool oval_setobject_is_valid(struct oval_setobject * set_object)
 	oval_setobject_type_t type;
 
 	if (set_object == NULL) {
-                oscap_dprintf("WARNING: argument is not valid: NULL.\n");
+                oscap_dlprintf(DBG_W, "Argument is not valid: NULL.\n");
 		return false;
         }
 
@@ -203,7 +203,7 @@ bool oval_setobject_is_valid(struct oval_setobject * set_object)
 		}
 		break;
 	default:
-                oscap_dprintf("WARNING: argument is not valid: wrong setobject type: %d.\n", type);
+                oscap_dlprintf(DBG_W, "Argument is not valid: wrong setobject type: %d.\n", type);
 		return false;
 	}
 
@@ -308,7 +308,7 @@ void oval_setobject_set_type(struct oval_setobject *set, oval_setobject_type_t t
 			break;
 		}
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 void oval_setobject_set_operation(struct oval_setobject *set, oval_setobject_operation_t operation)
@@ -316,7 +316,7 @@ void oval_setobject_set_operation(struct oval_setobject *set, oval_setobject_ope
 	if (set && !oval_setobject_is_locked(set)) {
 		set->operation = operation;
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 void oval_setobject_add_subset(struct oval_setobject *set, struct oval_setobject *subset)
@@ -326,7 +326,7 @@ void oval_setobject_add_subset(struct oval_setobject *set, struct oval_setobject
 		assert(aggregate != NULL);
 		oval_collection_add(aggregate->subsets, (void *)subset);
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 void oval_setobject_add_object(struct oval_setobject *set, struct oval_object *object)
@@ -336,7 +336,7 @@ void oval_setobject_add_object(struct oval_setobject *set, struct oval_object *o
 		assert(collective != NULL);
 		oval_collection_add(collective->objects, (void *)object);
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 void oval_setobject_add_filter(struct oval_setobject *set, struct oval_state *filter)
@@ -346,7 +346,7 @@ void oval_setobject_add_filter(struct oval_setobject *set, struct oval_state *fi
 		assert(collective != NULL);
 		oval_collection_add(collective->filters, (void *)filter);
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 //typedef int (*oval_xml_tag_parser)(xmlTextReaderPtr, struct oval_parser_context*, void*);
@@ -406,14 +406,14 @@ static int _oval_set_parse_tag(xmlTextReaderPtr reader, struct oval_parser_conte
 		} else if (strcmp(tagname, "filter") == 0) {
 			return_code = oval_parser_text_value(reader, context, &oval_consume_state_ref, &ctx);
 		} else {
-			oscap_dprintf("NOTICE: oval_set_parse_tag::unhandled component <%s> %d", tagname,
+			oscap_dlprintf(DBG_W, "Unknown tag: <%s>, line: %d.\n", tagname,
                                       xmlTextReaderGetParserLineNumber(reader));
 			return_code = oval_parser_skip_tag(reader, context);
 		}
 	}
 	if (return_code != 1) {
-		oscap_dprintf("NOTICE: oval_set_parse_tag::parse of <%s> terminated on error line %d", tagname,
-                              xmlTextReaderGetParserLineNumber(reader));
+		oscap_dlprintf(DBG_I, "Parsing of <%s> terminated by an error at line %d.\n", tagname,
+			       xmlTextReaderGetParserLineNumber(reader));
 	}
 	oscap_free(tagname);
 	oscap_free(namespace);

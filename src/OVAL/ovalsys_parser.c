@@ -57,11 +57,9 @@ static int _ovalsys_parser_process_node(xmlTextReaderPtr reader, struct oval_par
 	int return_code = xmlTextReaderRead(reader);
 	while (return_code == 1) {
 		if (xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
-			oscap_dprintf("DEBUG: ovalsys_parser: at depth %d", xmlTextReaderDepth(reader));
 			if (xmlTextReaderDepth(reader) > 0) {
 				char *tagname = (char *)xmlTextReaderLocalName(reader);
 				char *namespace = (char *)xmlTextReaderNamespaceUri(reader);
-				oscap_dprintf("DEBUG: ovalsys_parser: processing <%s:%s>", namespace, tagname);
 				int is_ovalsys = strcmp((const char *)NAMESPACE_OVALSYS, namespace) == 0;
 				if (is_ovalsys && (strcmp(tagname, "generator") == 0)) {
 					//SKIP GENERATOR CODE
@@ -80,8 +78,8 @@ static int _ovalsys_parser_process_node(xmlTextReaderPtr reader, struct oval_par
 								  NULL);
 				} else {
 					oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EXMLELEM, "Unknown element");
-					oscap_dprintf("WARNING: ovalsys_parser: UNPROCESSED TAG <%s:%s>",
-						      namespace, tagname);
+					oscap_dlprintf(DBG_W, "Unprocessed tag: <%s:%s>.\n",
+						       namespace, tagname);
 					return_code = oval_parser_skip_tag(reader, context);
 				}
 				oscap_free(tagname);
@@ -120,7 +118,7 @@ int ovalsys_parser_parse(struct oval_syschar_model *model, xmlTextReader * reade
 	} else {
 		oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EXMLELEM,
 			     "Missing expected oval_system_characteristics element");
-		oscap_dprintf("WARNING: ovalsys_parser: UNPROCESSED TAG <%s:%s>", namespace, tagname);
+		oscap_dlprintf(DBG_E, "Unprocessed tag: <%s:%s>.\n", namespace, tagname);
 		oval_parser_skip_tag(reader, &context);
 		return_code = -1;
 	}

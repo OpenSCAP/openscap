@@ -69,12 +69,12 @@ bool oval_sysdata_is_valid(struct oval_sysdata * sysdata)
 	struct oval_sysitem_iterator *sysitems_itr;
 
 	if (sysdata == NULL) {
-                oscap_dprintf("WARNING: argument is not valid: NULL.\n");
+                oscap_dlprintf(DBG_W, "Argument is not valid: NULL.\n");
 		return false;
         }
 
         if (oval_sysdata_get_subtype(sysdata) == OVAL_SUBTYPE_UNKNOWN) {
-                oscap_dprintf("WARNING: argument is not valid: subtype == OVAL_SUBTYPE_UNKNOWN.\n");
+                oscap_dlprintf(DBG_W, "Argument is not valid: subtype == OVAL_SUBTYPE_UNKNOWN.\n");
                 return false;
         }
 
@@ -175,7 +175,7 @@ void oval_sysdata_set_subtype(struct oval_sysdata *sysdata, oval_subtype_t subty
 	if (sysdata && !oval_sysdata_is_locked(sysdata)) {
 		sysdata->subtype = subtype;
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 char *oval_sysdata_get_id(struct oval_sysdata *data)
@@ -195,7 +195,7 @@ void oval_sysdata_set_message(struct oval_sysdata *data, char *message)
 			oscap_free(data->message);
 		data->message = (message == NULL) ? NULL : oscap_strdup(message);
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 oval_message_level_t oval_sysdata_get_message_level(struct oval_sysdata *data)
@@ -210,7 +210,7 @@ void oval_sysdata_set_message_level(struct oval_sysdata *data, oval_message_leve
 	if (data && !oval_sysdata_is_locked(data)) {
 		data->message_level = level;
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 struct oval_sysitem_iterator *oval_sysdata_get_items(struct oval_sysdata *data)
@@ -223,7 +223,7 @@ void oval_sysdata_add_item(struct oval_sysdata *data, struct oval_sysitem *item)
 	if (data && !oval_sysdata_is_locked(data)) {
 		oval_collection_add(data->items, item);
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 oval_syschar_status_t oval_sysdata_get_status(struct oval_sysdata *data)
@@ -238,7 +238,7 @@ void oval_sysdata_set_status(struct oval_sysdata *data, oval_syschar_status_t st
 	if (data && !oval_sysdata_is_locked(data)) {
 		data->status = status;
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 static void _oval_sysdata_parse_subtag_consume(char *message, void *sysdata)
@@ -290,6 +290,7 @@ int oval_sysdata_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *
 		oval_sysdata_set_status(sysdata, status_enum);
 		return_code = oval_parser_parse_tag(reader, context, &_oval_sysdata_parse_subtag, sysdata);
 		/* TODO: -> oscap_dprintf */
+		/*
 		int numchars = 0;
 		char message[2000];
 		message[numchars] = '\0';
@@ -317,13 +318,13 @@ int oval_sysdata_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *
 	} else {
 		char *tagnm = (char *)xmlTextReaderLocalName(reader);
 		char *namespace = (char *)xmlTextReaderNamespaceUri(reader);
-		oscap_dprintf("WARNING: oval_sysdata_parse_tag:: expecting <item> got <%s:%s>", namespace, tagnm);
+		oscap_dlprintf(DBG_W, "Expected <item>, got <%s:%s>.\n", namespace, tagnm);
 		return_code = oval_parser_skip_tag(reader, context);
 		oscap_free(tagnm);
 		oscap_free(namespace);
 	}
 	if (return_code != 1) {
-		oscap_dprintf("WARNING: oval_sysdata_parse_tag:: return code is not 1::(%d)", return_code);
+		oscap_dlprintf(DBG_W, "Return code is not 1: %d.\n", return_code);
 	}
 	oscap_free(tagname);
 

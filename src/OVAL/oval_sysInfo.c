@@ -62,7 +62,7 @@ struct oval_sysinfo *oval_sysinfo_new(struct oval_syschar_model *model)
 
 bool oval_sysinfo_is_valid(struct oval_sysinfo * sysinfo)
 {
-        oscap_dprintf("WARNING: NOOP.\n");
+        oscap_dlprintf(DBG_W, "NOOP.\n");
 	return true;		//TODO
 }
 
@@ -156,7 +156,7 @@ void oval_sysinfo_set_os_name(struct oval_sysinfo *sysinfo, char *osName)
 			oscap_free(sysinfo->osName);
 		sysinfo->osName = oscap_strdup(osName);
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 char *oval_sysinfo_get_os_version(struct oval_sysinfo *sysinfo)
@@ -171,7 +171,7 @@ void oval_sysinfo_set_os_version(struct oval_sysinfo *sysinfo, char *osVersion)
 			oscap_free(sysinfo->osVersion);
 		sysinfo->osVersion = oscap_strdup(osVersion);
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 char *oval_sysinfo_get_os_architecture(struct oval_sysinfo *sysinfo)
@@ -186,7 +186,7 @@ void oval_sysinfo_set_os_architecture(struct oval_sysinfo *sysinfo, char *osArch
 			oscap_free(sysinfo->osArchitecture);
 		sysinfo->osArchitecture = oscap_strdup(osArchitecture);
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 char *oval_sysinfo_get_primary_host_name(struct oval_sysinfo *sysinfo)
@@ -201,7 +201,7 @@ void oval_sysinfo_set_primary_host_name(struct oval_sysinfo *sysinfo, char *prim
 			oscap_free(sysinfo->primaryHostName);
 		sysinfo->primaryHostName = oscap_strdup(primaryHostName);
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 struct oval_sysint_iterator *oval_sysinfo_get_interfaces(struct oval_sysinfo
@@ -217,7 +217,7 @@ void oval_sysinfo_add_interface(struct oval_sysinfo *sysinfo, struct oval_sysint
 	if (sysinfo && !oval_sysinfo_is_locked(sysinfo)) {
 		oval_collection_add(sysinfo->interfaces, oval_sysint_clone(sysinfo->model, interface));
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 static void _oval_sysinfo_parse_tag_consume_os_name(char *text, void *sysinfo)
@@ -274,7 +274,7 @@ static int _oval_sysinfo_parse_tag(xmlTextReaderPtr reader, struct oval_parser_c
 	} else if (is_ovalsys && (strcmp(tagname, "interfaces") == 0)) {
 		return_code = oval_parser_parse_tag(reader, context, &_oval_sysinfo_parse_tag_parse_tag, sysinfo);
 	} else {
-		oscap_dprintf("WARNING: _oval_sysinfo_parse_tag:: skipping <%s:%s>", namespace, tagname);
+		oscap_dlprintf(DBG_W, "Skipping tag: <%s:%s>.\n", namespace, tagname);
 		return_code = oval_parser_skip_tag(reader, context);
 	}
 	oscap_free(tagname);
@@ -294,14 +294,13 @@ int oval_sysinfo_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *
 	if (is_ovalsys) {
 		return_code = oval_parser_parse_tag(reader, context, &_oval_sysinfo_parse_tag, sysinfo);
 	} else {
-		oscap_dprintf("WARNING: oval_sysinfo_parse_tag:: expecting <system_info> got <%s:%s>",
-			      namespace, tagname);
+		oscap_dlprintf(DBG_W, "Expected <system_info>, got <%s:%s>", namespace, tagname);
 		return_code = oval_parser_skip_tag(reader, context);
 	}
 	oscap_free(tagname);
 	oscap_free(namespace);
 	if (return_code != 1) {
-		oscap_dprintf("WARNING: oval_sysinfo_parse_tag:: return code is not 1::(%d)", return_code);
+		oscap_dlprintf(DBG_W, "Return code is not 1: %d.\n", return_code);
 	}
 	oval_syschar_model_set_sysinfo(context->syschar_model, sysinfo);
 	oval_sysinfo_free(sysinfo);

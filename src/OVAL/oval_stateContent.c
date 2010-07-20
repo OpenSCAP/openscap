@@ -144,7 +144,7 @@ void oval_state_content_set_entity(struct oval_state_content *content, struct ov
 			oval_entity_free(content->entity);
 		content->entity = entity;
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 void oval_state_content_set_varcheck(struct oval_state_content *content, oval_check_t check)
@@ -152,7 +152,7 @@ void oval_state_content_set_varcheck(struct oval_state_content *content, oval_ch
 	if (content && !oval_state_content_is_locked(content)) {
 		content->var_check = check;
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 void oval_state_content_set_entcheck(struct oval_state_content *content, oval_check_t check)
@@ -160,7 +160,7 @@ void oval_state_content_set_entcheck(struct oval_state_content *content, oval_ch
 	if (content && !oval_state_content_is_locked(content)) {
 		content->ent_check = check;
 	} else
-		oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
 static void _oval_state_content_entity_consumer(struct oval_entity *entity, struct oval_state_content *content) {
