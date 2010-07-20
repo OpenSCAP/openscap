@@ -92,6 +92,9 @@ typedef bool oval_syschar_resolver(struct oval_syschar *, void *);
 
 xmlNode *oval_syschar_model_to_dom(struct oval_syschar_model *, xmlDocPtr, xmlNode *, oval_syschar_resolver, void *);
 
+int _generator_to_dom(xmlDocPtr doc, xmlNode * tag_generator);
+void oval_syschar_model_reset(struct oval_syschar_model *model);
+
 OSCAP_HIDDEN_END;
 
 #endif				/* OVAL_AGENT_API_IMPL_H_ */

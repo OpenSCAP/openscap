@@ -16,8 +16,11 @@ liboval_la_SOURCES = $(common_oval_sources)
 liboval_testing_la_SOURCES = $(common_oval_sources)
 
 common_oval_sources = \
-	oval_affected.c \
 	oval_agent.c \
+	oval_defModel.c \
+	oval_sysModel.c \
+	oval_resModel.c \
+	oval_affected.c \
 	oval_agent_api_impl.h \
 	oval_behavior.c \
 	oval_collection.c \

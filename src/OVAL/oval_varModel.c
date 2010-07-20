@@ -359,21 +359,6 @@ struct oval_variable_model * oval_variable_model_import(const char *file)
 
 	return model;
 }
-static int _generator_to_dom(xmlDocPtr doc, xmlNode * tag_generator)
-{
-	xmlNs *ns_common = xmlSearchNsByHref(doc, tag_generator, OVAL_COMMON_NAMESPACE);
-	xmlNewChild(tag_generator, ns_common, BAD_CAST "product_name", BAD_CAST "OPEN SCAP");
-	xmlNewChild(tag_generator, ns_common, BAD_CAST "schema_version", BAD_CAST "5.5");
-	time_t epoch_time[] = { 0 };
-	time(epoch_time);
-	struct tm *lt = localtime(epoch_time);
-	char timestamp[] = "yyyy-mm-ddThh:mm:ss";
-	snprintf(timestamp, sizeof(timestamp), "%4d-%02d-%02dT%02d:%02d:%02d",
-		 1900 + lt->tm_year, 1 + lt->tm_mon, lt->tm_mday, lt->tm_hour, lt->tm_min, lt->tm_sec);
-	xmlNewChild(tag_generator, ns_common, BAD_CAST "timestamp", BAD_CAST timestamp);
-
-	return 1;
-}
 
 
 static xmlNode *oval_variable_model_to_dom(struct oval_variable_model * variable_model,
