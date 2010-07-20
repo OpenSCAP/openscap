@@ -336,14 +336,14 @@ static char *app_curl_download(char *url)
  * @param msg OSCAP Reporter message
  * @param arg User defined data structure
  */
-static void callback(const struct oscap_reporter_message *msg, void *arg)
+static int callback(const struct oscap_reporter_message *msg, void *arg)
 {
 	if (VERBOSE >= 0)
 		printf("Rule \"%s\" result: %s\n",
 		       oscap_reporter_message_get_user1str(msg),
 		       xccdf_test_result_type_get_text((xccdf_test_result_type_t)
 						       oscap_reporter_message_get_user2num(msg)));
-	//return 0;
+	return 0;
 }
 
 /**

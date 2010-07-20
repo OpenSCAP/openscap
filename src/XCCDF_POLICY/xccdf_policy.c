@@ -520,7 +520,7 @@ static xccdf_test_result_type_t xccdf_policy_check_evaluate(struct xccdf_policy 
  * and evaluate it.
  * Name collision with xccdf_item -> changed to xccdf_policy_item 
  */
-static bool xccdf_policy_item_evaluate(struct xccdf_policy * policy, struct xccdf_item * item, struct xccdf_result * result)
+static int xccdf_policy_item_evaluate(struct xccdf_policy * policy, struct xccdf_item * item, struct xccdf_result * result)
 {
     struct xccdf_check_iterator     * check_it;
     struct xccdf_check              * check;
@@ -561,7 +561,7 @@ static bool xccdf_policy_item_evaluate(struct xccdf_policy * policy, struct xccd
                             oscap_reporter_message_set_user1str(msg, rule_id);
                             oscap_reporter_message_set_user2num(msg, ret);
                             retval = oscap_reporter_report(cb->callback, msg, cb->usr);
-                            if (retval != 0) return 0;
+                            if (retval != 0) return retval;
                     }
 
                     /* Add result to policy */
@@ -616,7 +616,7 @@ static bool xccdf_policy_item_evaluate(struct xccdf_policy * policy, struct xccd
             break;
     } 
 
-    return ret;
+    return 0;
 }
 
 static struct xccdf_default_score * xccdf_item_get_default_score(struct xccdf_item * item, struct xccdf_result * test_result)
@@ -1068,7 +1068,7 @@ struct xccdf_result * xccdf_policy_evaluate(struct xccdf_policy * policy)
     struct xccdf_select             * sel;
     struct xccdf_item               * item;
     struct xccdf_benchmark          * benchmark;
-    bool                              ret       = false;
+    int                               ret       = -1;
 
     __attribute__nonnull__(policy);
 
@@ -1096,6 +1096,7 @@ struct xccdf_result * xccdf_policy_evaluate(struct xccdf_policy * policy)
 
         if (xccdf_item_get_type(item) == XCCDF_GROUP) continue;
         ret = xccdf_policy_item_evaluate(policy, item, result);
+        if (ret != 0) break;
     }
     xccdf_select_iterator_free(sel_it);
     xccdf_policy_add_result(policy, result);
