@@ -1,3 +1,28 @@
+# OVAL simple application for evaluating OVAL definition file.
+# The output is system characteristic xml file and oval results xml file.
+# Program iterate through tests in every definition and evaluate objects
+# of these tests.
+#
+# Copyright 2010 Red Hat Inc., Durham, North Carolina.
+# All Rights Reserved.
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful, 
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the Free Software 
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
+# Authors:
+#      Maros Barabas  <mbarabas@redhat.com>
+
 from openscap_api import *
 import sys, getopt, string
 
@@ -105,7 +130,7 @@ class XCCDF_Handler(object):
         title.text = "OSCAP Python Test Result"
         result.title = title
 
-        id = self.policy.profile.id
+        id = self.policy.id
         if id != None:
             result.profile = id
 
@@ -114,7 +139,6 @@ class XCCDF_Handler(object):
         model_it = self.benchmark.models
         while model_it.has_more():
             result.score = self.policy.score(result, model_it.next().system)
-        model_it.free()
 
         return result.export(self.action.f_results)
 
@@ -238,7 +262,6 @@ class OVAL_Handler(object):
         res_direct.set_content(OSCAP.OVAL_RESULT_FALSE, OSCAP.OVAL_DIRECTIVE_CONTENT_FULL)
         res_direct.set_content(OSCAP.OVAL_RESULT_TRUE, OSCAP.OVAL_DIRECTIVE_CONTENT_FULL)
         self.res_model.export(res_direct, self.action.f_results)
-        res_direct.free()
 
     def help(self, msg=None):
         

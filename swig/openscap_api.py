@@ -9,13 +9,13 @@
 # License as published by the Free Software Foundation; either
 # version 2.1 of the License, or (at your option) any later version.
 #
-# This library is distributed in the hope that it will be useful, 
+# This library is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # Lesser General Public License for more details.
 #
 # You should have received a copy of the GNU Lesser General Public
-# License along with this library; if not, write to the Free Software 
+# License along with this library; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 # Authors:
@@ -80,19 +80,15 @@ class OSCAP_Object(object):
             try:
                 retobj = func()
             except TypeError as err:
-                if DEBUG > 0: print "__func_wrapper::()::err_handling::%s" % (err,)
                 try:
                     retobj = func(self.instance)
                 except TypeError as err:
-                    if DEBUG > 0: print "__func_wrapper::(1)::err_handling::%s" % (err,)
                     try:
                         retobj = func(*newargs)
                     except TypeError as err:
-                        if DEBUG > 0: print "__func_wrapper::(*)::err_handling::%s" % (err,)
                         try:
                             retobj = func(self.instance, *newargs)
                         except TypeError as err:
-                            if DEBUG > 0: print "__func_wrapper::(1,*)::err_handling::%s" % (err,)
                             raise TypeError("Wrong number of arguments in function %s" % (func.__name__,))
 
             if retobj == None: return None
@@ -113,18 +109,15 @@ class OSCAP_Object(object):
         func = OSCAP.__dict__.get(name)
         if func != None: return func
 
-        if DEBUG > 0: print "func::__getattr__::%s::Calling library on getter %s_%s" % (self.object, self.object, name)
         obj = OSCAP.__dict__.get(self.object+"_"+name)
         if obj != None: 
             if callable(obj):
                 return self.__func_wrapper(obj)
 
-        if DEBUG > 0: print "func::__getattr__::%s::Calling library on getter %s_get_%s" % (self.object, self.object, name)
         obj = OSCAP.__dict__.get(self.object+"_get_"+name)
         if obj != None:
             try: return self.__func_wrapper(obj)()
             except: return self.__func_wrapper(obj)
-        elif DEBUG > 0: print "func::__getattr__::%s::Object does not exist: %s" % (self.object, obj)
 
         return OSCAP_Object(self.object+"_"+name)
 
@@ -142,25 +135,31 @@ class OSCAP_Object(object):
         else: raise NameError("name '"+self.object+"' is not defined")
 
     def __setattr__(self, name, value):
-        if DEBUG > 0: print "func::__setattr__::%s::__setattr__(%s)" % (self.object, name)
         if self.__dict__.has_key(name): 
             return self.__dict__[name]
 
-        # If attribute is not in a local dictionary, look for it in a library
-        #func = OSCAP.__dict__.get(name)
-        #if func != None: return func
-
-        if DEBUG > 0: print "func::__setattr__::%s::Calling library on setter %s_set_%s" % (self.object, self.object, name)
         obj = OSCAP.__dict__.get(self.object+"_set_"+name)
         if obj == None:
-            if DEBUG > 0: print "func::__setattr__::%s::Calling library on setter %s_add_%s" % (self.object, self.object, name)
             obj = OSCAP.__dict__.get(self.object+"_add_"+name) 
         if obj == None: 
-            if DEBUG > 0: print "func::__setattr__::%s::Setter function %s not found !" % (self.object, self.object+"_(add/set)_"+name,)
             return None
         if isinstance(value, OSCAP_Object):
                     value = value.instance
         return obj(self.instance, value)
+
+    def __del__(self):
+        if self.__dict__.has_key("instance"):
+            self.free()
+
+    def free(self):
+        if self.__dict__.has_key("instance"):
+            obj = OSCAP.__dict__.get(self.object+"_free")
+            if obj != None:
+                if callable(obj):
+                    obj(self.__dict__["instance"])
+                    dict.__setattr__(self, "instance", None)
+            else: raise "Can't free %s" % (self.object,)
+
     """ ********* Implementation of non-trivial functions ********* """
 
     def register_output_callback(self, cb, usr):
