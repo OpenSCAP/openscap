@@ -6,7 +6,8 @@ if WANT_PROBES
 bin_PROGRAMS = oscap
 man_MANS = oscap.8
 
-oscap_SOURCES = oscap.c
+oscap_SOURCES = oscap.c oscap-xccdf.c oscap-tool.h oscap-cvss.c oscap-oval.c
+
 oscap_CPPFLAGS = -I$(top_srcdir)/src/OVAL/public \
 		 -I$(top_srcdir)/src/common/public \
 		 -I$(top_srcdir)/src/XCCDF/public \
