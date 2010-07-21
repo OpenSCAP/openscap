@@ -151,6 +151,8 @@ const char *cve_reference_get_type(const struct cve_reference *ref);
  * @memberof cve_reference
  */
 const char *cve_reference_get_source(const struct cve_reference *ref);
+/// @memberof cve_reference
+const char *cve_reference_get_lang(const struct cve_reference *ref);
 
 /**
  * Get value from CVE summary
@@ -254,12 +256,6 @@ bool cve_entry_add_summary(struct cve_entry *entry, struct cve_summary *new_summ
 bool cve_entry_add_configuration(struct cve_entry *entry, struct cve_configuration *new_configuration);
 
 /**
- * Add XML namespace to CVE model
- * @memberof cve_model
- */
-bool cve_model_add_xml(struct cve_model *model, struct xml_metadata *xml);
-
-/**
  * Set id of CVE entry
  * @param entry CVE entry
  * @param new_id id of CVE entry
@@ -340,6 +336,9 @@ bool cve_reference_set_type(struct cve_reference *reference, const char *new_typ
  * return true if set, false otherwise
  */
 bool cve_reference_set_source(struct cve_reference *reference, const char *new_source);
+
+/// @memberof cve_reference
+bool cve_reference_set_lang(struct cve_reference *reference, const char *new_lang);
 
 /**
  * Set id of CVE configuration
@@ -616,6 +615,15 @@ void cve_model_export(struct cve_model *cve, const char *file);
  * @return non-negative value indicates the number of CVEs in the list, negative value indicates an error
  */
 struct cve_model *cve_model_import(const char *file);
+
+/// @memberof cve_model
+const char *cve_model_get_nvd_xml_version(const struct cve_model *item);
+/// @memberof cve_model
+bool cve_model_set_nvd_xml_version(struct cve_model *obj, const char *newval);
+/// @memberof cve_model
+time_t cve_model_get_pub_date(const struct cve_model *item);
+/// @memberof cve_model
+bool cve_model_set_pub_date(struct cve_model *obj, time_t newval);
 
 /*@}*/
 

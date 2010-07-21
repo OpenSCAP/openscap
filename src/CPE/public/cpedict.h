@@ -107,9 +107,6 @@ struct cpe_edition;
  */
 struct cpe_language;
 
-// forward declaration
-struct oscap_title;
-
 /************************************************************/
 /**
  * @name Getters
@@ -172,12 +169,6 @@ const char *cpe_reference_get_href(const struct cpe_reference *item);
  */
 const char *cpe_reference_get_content(const struct cpe_reference *item);
 
-/** oscap_title functions to get variable members
- * @memberof oscap_title
- * @param item title elements
- */
-const char *oscap_title_get_content(const struct oscap_title *item);
-
 /** cpe_item functions to get variable member name
  * @memberof cpe_item
  * @param item CPE item
@@ -218,13 +209,13 @@ struct cpe_check_iterator *cpe_item_get_checks(const struct cpe_item *item);
  * @memberof cpe_item
  * @param item CPE item
  */
-struct oscap_title_iterator *cpe_item_get_titles(const struct cpe_item *item);
+struct oscap_text_iterator *cpe_item_get_titles(const struct cpe_item *item);
 
 /** cpe_item functions to get CPE notes
  * @memberof cpe_item
  * @param item CPE item
  */
-struct oscap_title_iterator *cpe_item_get_notes(const struct cpe_item *item);
+struct oscap_text_iterator *cpe_item_get_notes(const struct cpe_item *item);
 
 /** cpe_generator functions to get product name
  * @memberof cpe_generator
@@ -279,7 +270,7 @@ const char *cpe_vendor_get_value(const struct cpe_vendor *item);
  * @memberof cpe_vendor
  * @param item cpe_vendor
  */
-struct oscap_title_iterator *cpe_vendor_get_titles(const struct cpe_vendor *item);
+struct oscap_text_iterator *cpe_vendor_get_titles(const struct cpe_vendor *item);
 
 /** cpe_vendor functions to get vendor products
  * @memberof cpe_vendor
@@ -494,16 +485,16 @@ bool cpe_item_add_reference(struct cpe_item *item, struct cpe_reference *new_ref
 bool cpe_item_add_check(struct cpe_item *item, struct cpe_check *new_check);
 
 /// @memberof cpe_item
-bool cpe_item_add_title(struct cpe_item *item, struct oscap_title *new_title);
+bool cpe_item_add_title(struct cpe_item *item, struct oscap_text *new_title);
 
 /// @memberof cpe_item
-bool cpe_item_add_note(struct cpe_item *item, struct oscap_title *new_title);
+bool cpe_item_add_note(struct cpe_item *item, struct oscap_text *new_title);
 
 /// @memberof cpe_dict_model
 bool cpe_dict_model_add_vendor(struct cpe_dict_model *dict, struct cpe_vendor *new_vendor);
 
 /// @memberof cpe_vendor
-bool cpe_vendor_add_title(struct cpe_vendor *vendor, struct oscap_title *new_title);
+bool cpe_vendor_add_title(struct cpe_vendor *vendor, struct oscap_text *new_title);
 
 /// @memberof cpe_vendor
 bool cpe_vendor_add_product(struct cpe_vendor *vendor, struct cpe_product *new_product);
@@ -519,12 +510,6 @@ bool cpe_update_add_edition(struct cpe_update *update, struct cpe_edition *new_e
 
 /// @memberof cpe_edition
 bool cpe_edition_add_language(struct cpe_edition *edition, struct cpe_language *new_language);
-
-/**
- * Add XML namespace to CPE dict model
- * @memberof cpe_dict_model
- */
-bool cpe_dict_model_add_xml(struct cpe_dict_model *model, struct xml_metadata *xml);
 
 
 /************************************************************/

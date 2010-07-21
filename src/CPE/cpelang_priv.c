@@ -37,6 +37,7 @@
 
 #include "../common/util.h"
 #include "../common/list.h"
+#include "../common/text_priv.h"
 #include "../common/elements.h"
 #include "../_error.h"
 
@@ -52,21 +53,15 @@ OSCAP_ITERATOR_GEN(cpe_testexpr)
 /*
  * */
 struct cpe_lang_model {
-	struct xml_metadata xml;
-	struct oscap_list *xmlns;
-	char *ns_prefix;
 	struct oscap_list *platforms;	// list of items
 	struct oscap_htable *item;	// item by ID
 };
-OSCAP_IGETINS(xml_metadata, cpe_lang_model, xmlns, xml)
-OSCAP_ACCESSOR_STRING(cpe_lang_model, ns_prefix)
 OSCAP_IGETTER_GEN(cpe_platform, cpe_lang_model, platforms)
 OSCAP_HGETTER_STRUCT(cpe_platform, cpe_lang_model, item)
 
 /*
  * */
 struct cpe_platform {
-	struct xml_metadata xml;
 	struct oscap_list *titles;	// human-readable platform description
 	char *id;		// platform ID
 	char *remark;		// remark TODO: 0-n !!
@@ -75,7 +70,7 @@ struct cpe_platform {
 
 OSCAP_ACCESSOR_STRING(cpe_platform, id)
 OSCAP_ACCESSOR_STRING(cpe_platform, remark)
-OSCAP_IGETINS(oscap_title, cpe_platform, titles, title)
+OSCAP_IGETINS(oscap_text, cpe_platform, titles, title)
 OSCAP_GETTER(const struct cpe_testexpr*, cpe_platform, expr)
 
 /* End of variable definitions
@@ -98,6 +93,7 @@ OSCAP_GETTER(const struct cpe_testexpr*, cpe_platform, expr)
 #define VAL_OR_STR      BAD_CAST "OR"
 #define VAL_FALSE_STR   BAD_CAST "false"
 #define VAL_TRUE_STR    BAD_CAST "true"
+#define CPELANG_NS      BAD_CAST "http://cpe.mitre.org/language/2.0"
 /* End of XML string variables definitions
  * */
 /***************************************************************************/
@@ -182,10 +178,6 @@ struct cpe_testexpr *cpe_testexpr_new()
 	ret->meta.expr = NULL;
 	ret->meta.cpe = NULL;
 
-	ret->xml.lang = NULL;
-	ret->xml.nspace = NULL;
-	ret->xml.URI = NULL;
-
 	return ret;
 }
 
@@ -200,11 +192,6 @@ struct cpe_lang_model *cpe_lang_model_new()
 
 	ret->platforms = oscap_list_new();
 	ret->item = oscap_htable_new();
-	ret->xmlns = oscap_list_new();
-	ret->ns_prefix = NULL;
-	ret->xml.lang = NULL;
-	ret->xml.nspace = NULL;
-	ret->xml.URI = NULL;
 
 	return ret;
 }
@@ -220,9 +207,6 @@ struct cpe_platform *cpe_platform_new()
 
 	ret->titles = oscap_list_new();
 	ret->expr = cpe_testexpr_new();
-	ret->xml.lang = NULL;
-	ret->xml.nspace = NULL;
-	ret->xml.URI = NULL;
 	ret->id = NULL;
 	ret->remark = NULL;
 
@@ -298,7 +282,6 @@ struct cpe_lang_model *cpe_lang_model_parse(xmlTextReaderPtr reader)
 {
 
 	struct cpe_lang_model *ret = NULL;
-	struct xml_metadata *xml = NULL;
 	struct cpe_platform *platform = NULL;
 
 	__attribute__nonnull__(reader);
@@ -310,20 +293,6 @@ struct cpe_lang_model *cpe_lang_model_parse(xmlTextReaderPtr reader)
 		if (ret == NULL)
 			return NULL;
 
-		ret->ns_prefix = oscap_strdup((char *)xmlTextReaderConstPrefix(reader));
-		ret->xml.lang = oscap_strdup((char *)xmlTextReaderConstXmlLang(reader));
-		ret->xml.nspace = (char *)xmlTextReaderPrefix(reader);
-
-		/* Reading XML namespaces */
-		if (xmlTextReaderHasAttributes(reader) && xmlTextReaderMoveToFirstAttribute(reader) == 1) {
-			do {
-				xml = oscap_alloc(sizeof(struct xml_metadata));
-				xml->lang = NULL;
-				xml->nspace = oscap_strdup((char *)xmlTextReaderConstName(reader));
-				xml->URI = oscap_strdup((char *)xmlTextReaderConstValue(reader));
-				oscap_list_add(ret->xmlns, xml);
-			} while (xmlTextReaderMoveToNextAttribute(reader) == 1);
-		}
 		// skip nodes until new element
 		xmlTextReaderNextElement(reader);
 
@@ -343,7 +312,6 @@ struct cpe_platform *cpe_platform_parse(xmlTextReaderPtr reader)
 {
 
 	struct cpe_platform *ret;
-	struct oscap_title *title;
 
 	__attribute__nonnull__(reader);
 
@@ -354,8 +322,6 @@ struct cpe_platform *cpe_platform_parse(xmlTextReaderPtr reader)
 
 	// parse platform attributes here
 	ret->id = (char *)xmlTextReaderGetAttribute(reader, ATTR_ID_STR);
-	ret->xml.lang = oscap_strdup((char *)xmlTextReaderConstXmlLang(reader));
-	ret->xml.nspace = (char *)xmlTextReaderPrefix(reader);
 	if (ret->id == NULL) {
 		cpe_platform_free(ret);
 		return NULL;	// if there is no "id" in platform element, return NULL
@@ -370,9 +336,7 @@ struct cpe_platform *cpe_platform_parse(xmlTextReaderPtr reader)
 
 		if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), ATTR_TITLE_STR) &&
 		    xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
-			title = oscap_title_parse(reader, (char *)ATTR_TITLE_STR);
-			if (title)
-				oscap_list_add(ret->titles, title);
+			oscap_list_add(ret->titles, oscap_text_new_parse(OSCAP_TEXT_TRAITS_PLAIN, reader));
 		} else
 		    if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_REMARK_STR) &&
 			xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
@@ -411,8 +375,6 @@ struct cpe_testexpr *cpe_testexpr_parse(xmlTextReaderPtr reader)
 		temp = xmlTextReaderGetAttribute(reader, ATTR_NAME_STR);
 		ret->meta.cpe = cpe_name_new((char *)temp);
 		xmlFree(temp);
-		ret->xml.lang = oscap_strdup((char *)xmlTextReaderConstXmlLang(reader));
-		ret->xml.nspace = (char *)xmlTextReaderPrefix(reader);
 		return ret;
 	} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_LOGICAL_TEST_STR) &&
 		   xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
@@ -431,8 +393,6 @@ struct cpe_testexpr *cpe_testexpr_parse(xmlTextReaderPtr reader)
 		}
 		xmlFree(temp);
 
-		ret->xml.lang = oscap_strdup((char *)xmlTextReaderConstXmlLang(reader));
-		ret->xml.nspace = (char *)xmlTextReaderPrefix(reader);
 		ret->meta.expr = oscap_list_new(); // initialise a list of subexpressions
 
 		temp = xmlTextReaderGetAttribute(reader, ATTR_NEGATE_STR);
@@ -476,18 +436,12 @@ struct cpe_testexpr *cpe_testexpr_parse(xmlTextReaderPtr reader)
 			temp = xmlTextReaderGetAttribute(reader, ATTR_NAME_STR);
 			subexpr->meta.cpe = cpe_name_new((char *)temp);
 			xmlFree(temp);
-			subexpr->xml.lang = oscap_strdup((char *)xmlTextReaderConstXmlLang(reader));
-			subexpr->xml.nspace = (char *)xmlTextReaderPrefix(reader);
-			subexpr->xml.URI = NULL;
 			oscap_list_add(ret->meta.expr, subexpr);
 			/*
 			ret->meta.expr[elem_cnt - 1].oper = CPE_LANG_OPER_MATCH;
 			temp = xmlTextReaderGetAttribute(reader, ATTR_NAME_STR);
 			ret->meta.expr[elem_cnt - 1].meta.cpe = cpe_name_new((char *)temp);
 			xmlFree(temp);
-			ret->meta.expr[elem_cnt - 1].xml.lang = oscap_strdup((char *)xmlTextReaderConstXmlLang(reader));
-			ret->meta.expr[elem_cnt - 1].xml.namespace = (char *)xmlTextReaderPrefix(reader);
-			ret->meta.expr[elem_cnt - 1].xml.URI = NULL;
 			*/
 		} else if (xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
 			oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EXMLELEM, "Unknown XML element in test expression");
@@ -569,12 +523,7 @@ void cpe_lang_export(const struct cpe_lang_model *spec, xmlTextWriterPtr writer)
 	__attribute__nonnull__(spec);
 	__attribute__nonnull__(writer);
 
-	xmlTextWriterStartElementNS(writer, BAD_CAST spec->ns_prefix, TAG_PLATFORM_SPEC_STR, BAD_CAST NULL);
-
-	OSCAP_FOREACH(xml_metadata, xml, cpe_lang_model_get_xmlns(spec),
-		      if (xml->URI != NULL) xmlTextWriterWriteAttribute(writer, BAD_CAST xml->nspace,
-									BAD_CAST xml->URI);)
-
+	xmlTextWriterStartElementNS(writer, NULL, TAG_PLATFORM_SPEC_STR, CPELANG_NS);
 		OSCAP_FOREACH(cpe_platform, p, cpe_lang_model_get_platforms(spec),
 			      // dump its contents to XML tree
 			      cpe_platform_export(p, writer);)
@@ -589,13 +538,11 @@ void cpe_platform_export(const struct cpe_platform *platform, xmlTextWriterPtr w
 	__attribute__nonnull__(platform);
 	__attribute__nonnull__(writer);
 
-	xmlTextWriterStartElementNS(writer, BAD_CAST platform->xml.nspace, TAG_PLATFORM_STR, NULL);
+	xmlTextWriterStartElementNS(writer, NULL, TAG_PLATFORM_STR, NULL);
 	if (cpe_platform_get_id(platform) != NULL)
 		xmlTextWriterWriteAttribute(writer, ATTR_ID_STR, BAD_CAST cpe_platform_get_id(platform));
-	OSCAP_FOREACH(oscap_title, title, cpe_platform_get_titles(platform),
-		      // dump its contents to XML tree
-		      oscap_title_export(title, writer);)
-	    cpe_testexpr_export(platform->expr, writer);
+	oscap_textlist_export(cpe_platform_get_titles(platform), writer, "title");
+	cpe_testexpr_export(platform->expr, writer);
 	xmlTextWriterEndElement(writer);
 	if (xmlGetLastError() != NULL)
 		oscap_setxmlerr(xmlGetLastError());
@@ -609,12 +556,12 @@ void cpe_testexpr_export(const struct cpe_testexpr *expr, xmlTextWriterPtr write
 	if (expr == NULL || expr->oper == CPE_LANG_OPER_INVALID) return;
 
 	if (expr->oper == CPE_LANG_OPER_MATCH) {
-		xmlTextWriterStartElementNS(writer, BAD_CAST expr->xml.nspace, TAG_FACT_REF_STR, NULL);
+		xmlTextWriterStartElementNS(writer, NULL, TAG_FACT_REF_STR, NULL);
 		xmlTextWriterWriteAttribute(writer, ATTR_NAME_STR, BAD_CAST cpe_name_get_uri(expr->meta.cpe));
 		xmlTextWriterEndElement(writer);
 		return;
 	} else {
-		xmlTextWriterStartElementNS(writer, BAD_CAST expr->xml.nspace, TAG_LOGICAL_TEST_STR, NULL);
+		xmlTextWriterStartElementNS(writer, NULL, TAG_LOGICAL_TEST_STR, CPELANG_NS);
 	}
 
 	if (expr->oper == CPE_LANG_OPER_AND) {
@@ -660,8 +607,6 @@ void cpe_lang_model_free(struct cpe_lang_model *platformspec)
 
 	oscap_htable_free(platformspec->item, NULL);
 	oscap_list_free(platformspec->platforms, (oscap_destruct_func) cpe_platform_free);
-	oscap_list_free(platformspec->xmlns, (oscap_destruct_func) xml_metadata_free);
-	xml_metadata_free(&platformspec->xml);
 	oscap_free(platformspec);
 }
 
@@ -672,9 +617,8 @@ void cpe_platform_free(struct cpe_platform *platform)
 
 	xmlFree(platform->id);
 	xmlFree(platform->remark);
-	oscap_list_free(platform->titles, (oscap_destruct_func) oscap_title_free);
+	oscap_list_free(platform->titles, (oscap_destruct_func) oscap_text_free);
 	cpe_testexpr_free(platform->expr);
-	xml_metadata_free(&platform->xml);
 	oscap_free(platform);
 }
 
@@ -703,7 +647,6 @@ void cpe_testexpr_free(struct cpe_testexpr *expr)
 		return;
 
 	cpe_testexpr_meta_free(expr);
-	xml_metadata_free(&expr->xml);
 	expr->oper = 0;
 	oscap_free(expr);
 }

@@ -130,6 +130,8 @@ static const struct cvss_map_imp CVSS_MAP_IMP[] = {
 
 #define NS_VULN_STR BAD_CAST "vuln"
 #define NS_CVSS_STR BAD_CAST "cvss"
+#define NS_VULN_URI BAD_CAST "http://scap.nist.gov/schema/vulnerability/0.4"
+#define NS_CVSS_URI BAD_CAST "http://scap.nist.gov/schema/cvss-v2/0.2"
 /* End of XML string variables definitions
  * */
 /***************************************************************************/
@@ -330,35 +332,35 @@ void cvss_entry_export(const struct cvss_entry * entry, xmlTextWriterPtr writer)
         __attribute__nonnull__(entry);
         __attribute__nonnull__(writer);
 
-        xmlTextWriterStartElementNS(writer, NS_VULN_STR, TAG_CVSS_STR, BAD_CAST NULL);
-        xmlTextWriterStartElementNS(writer, NS_CVSS_STR, TAG_BASE_METRICS_STR, BAD_CAST NULL);
+        xmlTextWriterStartElementNS(writer, NULL, TAG_CVSS_STR, NS_VULN_URI);
+        xmlTextWriterStartElementNS(writer, NULL, TAG_BASE_METRICS_STR, NS_CVSS_URI);
 
         if ((entry->score) != NULL)
-            xmlTextWriterWriteElementNS(writer, NS_CVSS_STR, TAG_SCORE_STR, NULL, 
-                                                                    BAD_CAST entry->score);
+            xmlTextWriterWriteElementNS(writer, NULL, TAG_SCORE_STR, NULL, 
+                                                      BAD_CAST entry->score);
         if ((entry->AV) != NULL)
-            xmlTextWriterWriteElementNS(writer, NS_CVSS_STR, TAG_ACCESS_VECTOR_STR, NULL, 
-                                                                    BAD_CAST entry->AV);
+            xmlTextWriterWriteElementNS(writer, NULL, TAG_ACCESS_VECTOR_STR, NULL, 
+                                                         BAD_CAST entry->AV);
         if ((entry->AC) != NULL)
-            xmlTextWriterWriteElementNS(writer, NS_CVSS_STR, TAG_ACCESS_COMPLEXITY_STR, NULL, 
-                                                                    BAD_CAST entry->AC);
+            xmlTextWriterWriteElementNS(writer, NULL, TAG_ACCESS_COMPLEXITY_STR, NULL, 
+                                                         BAD_CAST entry->AC);
         if ((entry->authentication) != NULL)
-            xmlTextWriterWriteElementNS(writer, NS_CVSS_STR, TAG_AUTHENTICATION_STR, NULL, 
-                                                                    BAD_CAST entry->authentication);
+            xmlTextWriterWriteElementNS(writer, NULL, TAG_AUTHENTICATION_STR, NULL, 
+                                                         BAD_CAST entry->authentication);
         if ((entry->imp_confidentiality) != NULL)
-            xmlTextWriterWriteElementNS(writer, NS_CVSS_STR, TAG_CONFIDENTIALITY_IMPACT_STR, NULL, 
-                                                                    BAD_CAST entry->imp_confidentiality);
+            xmlTextWriterWriteElementNS(writer, NULL, TAG_CONFIDENTIALITY_IMPACT_STR, NULL, 
+                                                      BAD_CAST entry->imp_confidentiality);
         if ((entry->imp_integrity) != NULL)
-            xmlTextWriterWriteElementNS(writer, NS_CVSS_STR, TAG_INTEGRITY_IMPACT_STR, NULL, 
-                                                                    BAD_CAST entry->imp_integrity);
+            xmlTextWriterWriteElementNS(writer, NULL, TAG_INTEGRITY_IMPACT_STR, NULL, 
+                                                         BAD_CAST entry->imp_integrity);
         if ((entry->imp_availability) != NULL)
-            xmlTextWriterWriteElementNS(writer, NS_CVSS_STR, TAG_AVAILABILITY_IMPACT_STR, NULL, 
-                                                                    BAD_CAST entry->imp_availability);
+            xmlTextWriterWriteElementNS(writer, NULL, TAG_AVAILABILITY_IMPACT_STR, NULL, 
+                                                         BAD_CAST entry->imp_availability);
         if ((entry->source) != NULL)
-            xmlTextWriterWriteElementNS(writer, NS_CVSS_STR, TAG_SOURCE_STR, NULL, 
-                                                                    BAD_CAST entry->source);
+            xmlTextWriterWriteElementNS(writer, NULL, TAG_SOURCE_STR, NULL, 
+                                                         BAD_CAST entry->source);
         if ((entry->generated) != NULL)
-            xmlTextWriterWriteElementNS(writer, NS_CVSS_STR, TAG_GENERATED_ON_DATETIME_STR, NULL, 
+            xmlTextWriterWriteElementNS(writer, NULL, TAG_GENERATED_ON_DATETIME_STR, NULL, 
                                                                     BAD_CAST entry->generated);
 
         /*</base-metrics>*/

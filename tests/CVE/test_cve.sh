@@ -17,7 +17,7 @@ function test_cve_setup {
     
 cat > cve_export.xml <<EOF
 <?xml version="1.0" encoding="UTF-8"?>
-<nvd>
+<nvd xmlns="http://scap.nist.gov/schema/feed/vulnerability/2.0">
     <entry id="CVE-01"/>
     <entry id="CVE-02"/>
     <entry id="CVE-03"/>
@@ -79,10 +79,9 @@ function test_cve_export_all {
     local ret_val=0
 
     ./test_cve --test-export-all ${srcdir}/CVE/nvdcve-2.0-recent.xml "UTF-8" cve_export.xml.out.3 "UTF-8"
-	xml_cmp ${srcdir}/CVE/nvdcve-2.0-recent.xml cve_export.xml.out.3
-    ret_val=$?
+	xml_cmp ${srcdir}/CVE/nvdcve-2.0-recent.xml cve_export.xml.out.3 | egrep -v "[aA]ttribute 'lang'.*'references'|'schemaLocation'" >&2
 
-    return $ret_val
+	[ $? == 0 ] && return 1 || return 0
 }
 
 function test_cve_cvss {

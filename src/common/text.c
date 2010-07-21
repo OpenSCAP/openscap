@@ -139,3 +139,33 @@ xmlNode *oscap_text_to_dom(struct oscap_text *text, xmlNode *parent, const char 
 	return text_node;
 }
 
+bool oscap_text_export(struct oscap_text *text, xmlTextWriter *writer, const char *elname)
+{
+	if (text == NULL || writer == NULL) return false;
+
+	if (elname) xmlTextWriterStartElement(writer, BAD_CAST elname);
+
+	if (text->lang)
+		xmlTextWriterWriteAttribute(writer, BAD_CAST "xml:lang", BAD_CAST text->lang);
+	if (text->traits.can_override && text->traits.override_given)
+		xmlTextWriterWriteAttribute(writer, BAD_CAST "override", BAD_CAST (text->traits.overrides ? "true" : "false"));
+
+	if (text->traits.html || text->traits.can_substitute)
+		xmlTextWriterWriteRaw(writer, BAD_CAST text->text);
+	else xmlTextWriterWriteString(writer, BAD_CAST text->text);
+
+	if (elname) xmlTextWriterEndElement(writer);
+
+	return true;
+}
+
+bool oscap_textlist_export(struct oscap_text_iterator *texts, xmlTextWriter *writer, const char *elname)
+{
+	if (texts == NULL || writer == NULL || elname == NULL) return false;
+
+	OSCAP_FOR(oscap_text, text, texts)
+		oscap_text_export(text, writer, elname);
+	
+	return true;
+}
+

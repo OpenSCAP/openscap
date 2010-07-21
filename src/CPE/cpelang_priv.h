@@ -50,7 +50,6 @@ OSCAP_HIDDEN_START;
  * CPE language boolean expression
  */
 struct cpe_testexpr {
-	struct xml_metadata xml;
 	cpe_lang_oper_t oper;	///< operator
 	union {
 		struct oscap_list *expr;	///< array of subexpressions for operators

@@ -28,7 +28,7 @@
 #include "public/text.h"
 #include "elements.h"
 #include <libxml/xmlreader.h>
-#include <libxml/xmlreader.h>
+#include <libxml/xmlwriter.h>
 
 OSCAP_HIDDEN_START;
 
@@ -50,6 +50,8 @@ struct oscap_text {
     struct oscap_text_traits traits;
 };
 
+struct oscap_list;
+
 /// Basic traits for plain text
 extern const struct oscap_text_traits OSCAP_TEXT_TRAITS_PLAIN;
 /// Basic traits for HTML text
@@ -69,6 +71,8 @@ struct oscap_text *oscap_text_new_full(struct oscap_text_traits traits, const ch
 struct oscap_text *oscap_text_new_parse(struct oscap_text_traits traits, xmlTextReaderPtr reader);
 
 xmlNode *oscap_text_to_dom(struct oscap_text *text, xmlNode *parent, const char *elname);
+bool oscap_text_export(struct oscap_text *text, xmlTextWriter *writer, const char *elname);
+bool oscap_textlist_export(struct oscap_text_iterator *texts, xmlTextWriter *writer, const char *elname);
 
 OSCAP_HIDDEN_END;
 

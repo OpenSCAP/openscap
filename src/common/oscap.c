@@ -89,17 +89,6 @@ char *oscap_find_file(const char *path, const char *filename, int mode)
 	return ret;
 }
 
-char *oscap_get_schema_filename(const char *xmlfile)
-{
-	if (xmlfile == NULL) return NULL;
-	char *ret = NULL;
-	struct oscap_nsinfo *info = oscap_nsinfo_new_file(xmlfile);
-	if (info && info->root_entry && info->root_entry->schema_location)
-		ret = oscap_strdup(info->root_entry->schema_location);
-	oscap_nsinfo_free(info);
-	return NULL;
-}
-
 static char *oscap_get_schema_path(const char *filename)
 {
 	const char *search_path = getenv("OSCAP_SCHEMA_PATH");

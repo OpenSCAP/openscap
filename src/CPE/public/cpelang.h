@@ -148,12 +148,6 @@ const struct cpe_name *cpe_testexpr_get_meta_cpe(const struct cpe_testexpr *item
 const struct cpe_testexpr *cpe_testexpr_get_next(const struct cpe_testexpr *expr);
 
 /**
- * cpe_lang_model function to get namespace prefix
- * @memberof cpe_lang_model
- */
-const char *cpe_lang_model_get_ns_prefix(const struct cpe_lang_model *item);
-
-/**
  * cpe_lang_model function to get CPE platforms
  * @memberof cpe_lang_model
  */
@@ -185,7 +179,7 @@ const char *cpe_platform_get_remark(const struct cpe_platform *item);
  * cpe_platform functions to get titles
  * @memberof cpe_platform
  */
-struct oscap_title_iterator *cpe_platform_get_titles(const struct cpe_platform *item);
+struct oscap_text_iterator *cpe_platform_get_titles(const struct cpe_platform *item);
 /**
  * cpe_platform functions to get test expression
  * @memberof cpe_platform
@@ -215,15 +209,10 @@ const struct cpe_testexpr *cpe_platform_get_expr(const struct cpe_platform *item
  */
 bool cpe_lang_model_add_platform(struct cpe_lang_model *lang, struct cpe_platform *platform);
 /**
- * Add xml metadata to CPE lang model
- * @memberof cpe_lang_model
- */
-bool cpe_lang_model_add_xml(struct cpe_lang_model *lang, struct xml_metadata *xml);
-/**
  * Add title to platform
  * @memberof cpe_platform
  */
-bool cpe_platform_add_title(struct cpe_platform *platform, struct oscap_title *title);
+bool cpe_platform_add_title(struct cpe_platform *platform, struct oscap_text *title);
 
 /**
  * Add XML namespace to CPE lang model
@@ -239,11 +228,6 @@ bool cpe_platform_add_title(struct cpe_platform *platform, struct oscap_title *t
  */
 bool cpe_testexpr_add_subexpression(struct cpe_testexpr *expr, struct cpe_testexpr *sub);
 
-/**
- * Set ns_prefix to CPE lang model
- * @memberof cpe_lang_model
- */
-bool cpe_lang_model_set_ns_prefix(struct cpe_lang_model *model, const char *new_prefix);
 /**
  * Set ID of CPE platform
  * @memberof cpe_platform

@@ -31,9 +31,6 @@
 
 #define __attribute__nonnull__(x) assert((x) != NULL)
 
-struct oscap_import_source;
-struct oscap_export_target;
-
 /*
  * Start a list of declarations that should not be available from outside the
  * library.  Must be matched with OSCAP_HIDDEN_END.
@@ -358,6 +355,8 @@ char *oscap_trim(char *str);
 char *oscap_vsprintf(const char *fmt, va_list ap);
 /// Print to a newly allocated string using varialbe arguments.
 char *oscap_sprintf(const char *fmt, ...);
+/// In a list of key-value pairs (odd indicies are keys, even values), find a value for given key
+const char *oscap_strlist_find_value(char ** const kvalues, const char *key);
 
 // check pointer equality
 bool oscap_ptr_cmp(void *node1, void *node2);

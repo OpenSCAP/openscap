@@ -29,8 +29,8 @@ int main (int argc, char *argv[])
   struct cpe_platform *platform = NULL, *new_platform = NULL;
   struct cpe_testexpr *testexpr = NULL;
   struct cpe_platform_iterator *platform_it = NULL;
-  struct oscap_title_iterator *title_it = NULL;
-  struct oscap_title *title = NULL;
+  struct oscap_text_iterator *title_it = NULL;
+  struct oscap_text *title = NULL;
   int ret_val = 0, i;
   
   if (argc == 2 && !strcmp(argv[1], "--help")) {
@@ -44,17 +44,8 @@ int main (int argc, char *argv[])
     if ((lang_model = cpe_lang_model_import(argv[2])) == NULL)
       return 1;
 
-    struct xml_metadata_iterator *xml_it = cpe_lang_model_get_xmlns(lang_model);
-    struct xml_metadata *xml;
-
-    while (xml_metadata_iterator_has_more(xml_it)) {
-        xml = xml_metadata_iterator_next(xml_it);
-        if (strcmp(cpe_lang_model_get_ns_prefix(lang_model), xml_metadata_get_nspace(xml)))
-            printf("%s:", xml_metadata_get_URI(xml));
-    }
-
     //printf("%s:", cpe_lang_model_get_ns_href(lang_model));
-    printf("%s\n", cpe_lang_model_get_ns_prefix(lang_model));
+    //printf("%s\n", cpe_lang_model_get_ns_prefix(lang_model));
     platform_it = cpe_lang_model_get_platforms(lang_model);
     while (cpe_platform_iterator_has_more(platform_it)) {
       print_platform(cpe_platform_iterator_next(platform_it));
@@ -81,20 +72,6 @@ int main (int argc, char *argv[])
   else if (argc >= 6 && !strcmp(argv[1], "--set-all")) {        
     if ((lang_model = cpe_lang_model_import(argv[2])) == NULL)
       return 1;
-    
-    struct xml_metadata *xml = xml_metadata_new();
-
-    char *tmp = malloc(sizeof(char) * (strlen(argv[4])+6));
-    if (strcmp(argv[4], "-"))  {
-        sprintf(tmp, "xmlns:%s", argv[4]);
-        xml_metadata_set_nspace(xml, tmp);
-        cpe_lang_model_set_ns_prefix(lang_model, argv[4]);
-        free(tmp);
-    }
-    if (strcmp(argv[5], "-")) {
-        xml_metadata_set_URI(xml, argv[5]);
-        cpe_lang_model_add_xml(lang_model, xml);
-    }
 
     for (i = 6; i < argc; i++) {
       if ((new_platform =  cpe_platform_new()) == NULL)
@@ -121,10 +98,10 @@ int main (int argc, char *argv[])
 
     i = 6;
     title_it = cpe_platform_get_titles(platform);
-    while (i < argc && oscap_title_iterator_has_more(title_it)) {
-      title = oscap_title_iterator_next(title_it);
+    while (i < argc && oscap_text_iterator_has_more(title_it)) {
+      title = oscap_text_iterator_next(title_it);
       if (strcmp(argv[i], "-"))
-	oscap_title_set_content(title, argv[i]);
+	oscap_text_set_text(title, argv[i]);
       i++;
     } 
 
@@ -136,20 +113,6 @@ int main (int argc, char *argv[])
   else if (argc >= 6 && !strcmp(argv[1], "--set-new")) {        
     if ((lang_model = cpe_lang_model_new()) == NULL)
       return 1;
-    
-    struct xml_metadata *xml = xml_metadata_new();
-    char *tmp = malloc(sizeof(char) * (strlen(argv[4])+7));
-
-    if (strcmp(argv[4], "-"))  {
-        sprintf(tmp, "xmlns:%s", argv[4]);
-        xml_metadata_set_nspace(xml, tmp);
-        cpe_lang_model_set_ns_prefix(lang_model, argv[4]);
-        free(tmp);
-    }
-    if (strcmp(argv[5], "-"))
-        xml_metadata_set_URI(xml, argv[5]);
-
-    cpe_lang_model_add_xml(lang_model, xml);
     
     for (i = 6; i < argc; i++) {
       if ((new_platform =  cpe_platform_new()) == NULL)
@@ -288,8 +251,8 @@ int print_expr_prefix_form(const struct cpe_testexpr *expr)
 // Print platform.
 void print_platform(struct cpe_platform *platform) 
 {
-  struct oscap_title *title = NULL;
-  struct oscap_title_iterator *title_it = NULL;
+  struct oscap_text *title = NULL;
+  struct oscap_text_iterator *title_it = NULL;
   const char *remark, *id, *content, *language;
 
   id = cpe_platform_get_id(platform);
@@ -299,17 +262,17 @@ void print_platform(struct cpe_platform *platform)
   printf("%s:", remark == NULL ? "" : remark);
   
   title_it = cpe_platform_get_titles(platform);
-  while (oscap_title_iterator_has_more(title_it)) {
-    title = oscap_title_iterator_next(title_it);
+  while (oscap_text_iterator_has_more(title_it)) {
+    title = oscap_text_iterator_next(title_it);
 
-    content = oscap_title_get_content(title);
+    content = oscap_text_get_text(title);
     printf("%s.", content == NULL ? "" : content);
     
-    language = oscap_title_get_language(title);
+    language = oscap_text_get_lang(title);
     printf("%s,", language == NULL ? "" : language);
   }
   putchar(':');
-  oscap_title_iterator_free(title_it);
+  oscap_text_iterator_free(title_it);
   print_expr_prefix_form(cpe_platform_get_expr(platform));
   putchar('\n');
 } 

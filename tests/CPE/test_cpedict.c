@@ -35,8 +35,8 @@ int main (int argc, char **argv)
   struct cpe_update_iterator *updates_it;
   struct cpe_edition_iterator *editions_it;
   struct cpe_language_iterator *languages_it;
-  struct oscap_title *title;
-  struct oscap_title_iterator *titles_it;
+  struct oscap_text *title;
+  struct oscap_text_iterator *titles_it;
   
   struct cpe_name *name = NULL;
   int ret_val = 0, ret_val_1 = 0, ret_val_2 = 0;
@@ -79,11 +79,11 @@ int main (int argc, char **argv)
 
       // Titles.
       titles_it = cpe_vendor_get_titles(vendor);
-      while (oscap_title_iterator_has_more(titles_it)) {
-	title = oscap_title_iterator_next(titles_it);
-	printf("%s,", oscap_title_get_content(title));
+      while (oscap_text_iterator_has_more(titles_it)) {
+	title = oscap_text_iterator_next(titles_it);
+	printf("%s,", oscap_text_get_text(title));
       }
-      oscap_title_iterator_free(titles_it);
+      oscap_text_iterator_free(titles_it);
       putchar(')');
       putchar(':');
 

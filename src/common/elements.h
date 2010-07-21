@@ -51,41 +51,8 @@ char *oscap_get_xml(xmlTextReaderPtr reader);
 time_t oscap_get_date(const char *date);
 /// get datetime from a string
 time_t oscap_get_datetime(const char *date);
-/// return filename of a XML file schema obtained from schemaLocation
-char *oscap_get_schema_filename(const char *xmlfile);
 /// convert a piece of XML string to DOM
 xmlNode *oscap_xmlstr_to_dom(xmlNode *parent, const char *elname, const char *content);
 
-
-struct xml_metadata {
-        char *nspace;           ///< XMLNS (namespace) prefix
-        char *URI;              ///< XMLNS (namespace) URI
-        char *lang;             ///< XML lang
-};
-
-struct oscap_title {
-        struct xml_metadata xml;
-        char *content;          // human-readable name of this item
-};
-
-struct oscap_title *oscap_title_parse(xmlTextReaderPtr reader, const char *name);
-void oscap_title_export(const struct oscap_title *title, xmlTextWriterPtr writer);
-void oscap_title_free(struct oscap_title *title);
-
-const char *oscap_import_source_get_name(const struct oscap_import_source *src);
-
-struct oscap_nsinfo_entry {
-	char *nsprefix;        ///< namespace prefix
-	char *nsname;          ///< namespace name
-	char *schema_location; ///< schema location for the namespace
-};
-
-struct oscap_nsinfo {
-	struct oscap_list *entries;            ///< list of 'struct oscap_nsinfo_entry'
-	struct oscap_nsinfo_entry *root_entry; ///< namespace info entry for the root element
-};
-
-bool oscap_nsinfo_add_parse(struct oscap_nsinfo *info, xmlTextReaderPtr reader, bool set_root);
-struct oscap_nsinfo *oscap_nsinfo_new_parse(xmlTextReaderPtr reader);
 
 #endif

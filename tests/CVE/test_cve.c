@@ -73,7 +73,7 @@ int main(int argc, char **argv)
 
         entry_it = cve_model_get_entries(model);
         entry = cve_entry_iterator_next(entry_it);
-        cvss = cve_entry_get_cvss(entry);
+        cvss = (struct cvss_entry *) cve_entry_get_cvss(entry);
         const char *base_score = cvss_entry_get_score(cvss);
 
         double bs, is, es;
