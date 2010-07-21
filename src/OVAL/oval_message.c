@@ -60,7 +60,7 @@ bool oval_message_is_valid(struct oval_message * message)
 
 bool oval_message_is_locked(struct oval_message * message)
 {
-        oscap_dlprintf(DBG_W, "NOOP.\n");
+        //oscap_dlprintf(DBG_W, "NOOP.\n");
 	return false;		//TODO
 }
 
@@ -157,7 +157,7 @@ int oval_message_parse_tag(xmlTextReaderPtr reader,
 	if (return_code != 1) {
 		oscap_dlprintf(DBG_W, "Return code is not 1: %d.\n", return_code);
 	} else {
-		oscap_dlprintf(DBG_I, "message->level: %d, message->text: %s",
+		oscap_dlprintf(DBG_I, "message->level: %d, message->text: %s.\n",
 			       oval_message_get_level(message), oval_message_get_text(message));
 
 		(*consumer) (message, client);

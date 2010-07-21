@@ -54,6 +54,8 @@ static void __oscap_debuglog_close(void)
 
 static void __oscap_vdlprintf(int level, const char *file, const char *fn, size_t line, const char *fmt, va_list ap)
 {
+	char l;
+
 	__LOCK_FP;
 
 	if (__debuglog_level == -1) {
@@ -99,12 +101,27 @@ static void __oscap_vdlprintf(int level, const char *file, const char *fn, size_
 		__UNLOCK_FP;
 		return;
 	}
+
+	switch (level) {
+	case DBG_E:
+		l = 'E';
+		break;
+	case DBG_W:
+		l = 'W';
+		break;
+	case DBG_I:
+		l = 'I';
+		break;
+	default:
+		l = '0';
+	}
 #if defined(OSCAP_THREAD_SAFE)
 	/* XXX: non-portable usage of pthread_t */
-	fprintf(__debuglog_fp, "(%u:%u) [%s: %zu: %s] ", (unsigned int)getpid(), (unsigned int)pthread_self(), file,
-		line, fn);
+	fprintf(__debuglog_fp, "(%u:%u) [%c:%s:%zu:%s] ", (unsigned int) getpid(),
+		(unsigned int) pthread_self(), l, file, line, fn);
 #else
-	fprintf(__debuglog_fp, "(%u) [%s: %zu: %s] ", (unsigned int)getpid(), file, line, fn);
+	fprintf(__debuglog_fp, "(%u) [%c:%s:%zu:%s] ", (unsigned int) getpid(),
+		l, file, line, fn);
 #endif
 	vfprintf(__debuglog_fp, fmt, ap);
 
