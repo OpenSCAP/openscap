@@ -101,7 +101,6 @@ class OSCAP_Object(object):
         the attribute name.
     """
     def __getattr__(self, name):
-        if DEBUG > 0: print "func::__getattr__::%s::__getattr__(%s)" % (self.object, name)
         if self.__dict__.has_key(name): 
             return self.__dict__[name]
 
@@ -148,11 +147,15 @@ class OSCAP_Object(object):
         return obj(self.instance, value)
 
     def __del__(self):
-        if self.__dict__.has_key("instance"):
-            self.free()
+        if self.__dict__.has_key("instance") and self.__dict__["instance"] != None:
+            # In what situations we need to free objects ?
+            if self.object.find("iterator") > -1 or \
+                self.object.find("_model") > -1:
+
+                self.free()
 
     def free(self):
-        if self.__dict__.has_key("instance"):
+        if self.__dict__.has_key("instance") and self.__dict__["instance"] != None:
             obj = OSCAP.__dict__.get(self.object+"_free")
             if obj != None:
                 if callable(obj):
@@ -162,9 +165,14 @@ class OSCAP_Object(object):
 
     """ ********* Implementation of non-trivial functions ********* """
 
+    def __output_callback(self, msg, obj):
+        return obj.__dict__["__output_cb"](OSCAP_Object("oscap_reporter_message", msg), obj.__dict__["__output_usr"])
+
     def register_output_callback(self, cb, usr):
         if self.object != "xccdf_policy_model": raise TypeError("Wrong call of register_output_callback function on %s" % (self.object,))
-        return OSCAP.xccdf_policy_model_register_output_callback_py(self.instance, cb, usr)
+        dict.__setattr__(self, "__output_cb", cb)
+        dict.__setattr__(self, "__output_usr", usr)
+        return OSCAP.xccdf_policy_model_register_output_callback_py(self.instance, self.__output_callback, self)
 
     def register_engine_oval(self, sess):
         if self.object != "xccdf_policy_model": raise TypeError("Wrong call of register_engine_oval function on %s" % (self.object,))
@@ -172,7 +180,9 @@ class OSCAP_Object(object):
 
     def agent_eval_system(self, sess, cb, usr):
         if self.object != "oval": raise TypeError("Wrong call of oval_agent_eval_system function on %s" % (self.object,))
-        return OSCAP.oval_agent_eval_system_py(sess.instance, cb, usr)
+        dict.__setattr__(self, "__output_cb", cb)
+        dict.__setattr__(self, "__output_usr", usr)
+        return OSCAP.oval_agent_eval_system_py(sess.instance, self.__output_callback, self)
 
     def query_sysinfo(self):
         if self.object != "oval_probe_session_t": raise TypeError("Wrong call of oval_probe_session_query_sysinfo function on %s" % (self.object,))
@@ -289,4 +299,4 @@ cve   = CVE_Class()
 cce   = CCE_Class()
 cpe   = CPE_Class()
 cvss  = CVSS_Class()
-oscap = OSCAP_Object("oscap")
+common = OSCAP_Object("oscap")

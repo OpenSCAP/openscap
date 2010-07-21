@@ -553,13 +553,23 @@ static int xccdf_policy_item_evaluate(struct xccdf_policy * policy, struct xccdf
                     callback_out * cb = (callback_out *) xccdf_policy_get_callback(policy, "urn:xccdf:system:callback:output");
                     int retval = 0;
                     if (cb != NULL) {
+                            struct oscap_text_iterator * dsc_it = xccdf_rule_get_description((struct xccdf_rule *) item);
+                            struct oscap_text_iterator * title_it = xccdf_rule_get_title((struct xccdf_rule *) item);
+                            const char * description = NULL;
+                            const char * title = NULL;
+                            if (oscap_text_iterator_has_more(dsc_it))
+                                description = oscap_text_get_text(oscap_text_iterator_next(dsc_it));
+                            if (oscap_text_iterator_has_more(title_it))
+                                title = oscap_text_get_text(oscap_text_iterator_next(title_it));
+                            oscap_text_iterator_free(dsc_it);     
                             /*retval = cb->callback(rule_id, ret, cb->usr);*/
                             struct oscap_reporter_message * msg = oscap_reporter_message_new_fmt(
                                     OSCAP_REPORTER_FAMILY_XCCDF, /* FAMILY */
                                     0,                           /* CODE */
-                                    "Rule \"%s\" result: %s\n", rule_id, xccdf_test_result_type_get_text(ret));
+                                    description);
                             oscap_reporter_message_set_user1str(msg, rule_id);
                             oscap_reporter_message_set_user2num(msg, ret);
+                            oscap_reporter_message_set_user3str(msg, title);
                             retval = oscap_reporter_report(cb->callback, msg, cb->usr);
                             if (retval != 0) return retval;
                     }

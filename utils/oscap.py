@@ -105,8 +105,11 @@ class XCCDF_Handler(object):
         return action
 
     def __callback(self, msg, plugin):
-        result = oscap.reporter_message_get_user2num(msg)
-        print "%s" % (oscap.reporter_message_get_string(msg))
+        result = msg.user2num
+        print "Rule \"%s\"" % (msg.user1str, )
+        print "  Title:\r\t\t", msg.user3str
+        print "  Descroption:\r\t\t", msg.string
+        print "  Result:\r\t\t", xccdf.test_result_type.get_text(msg.user2num)
         return True
 
     def __set_policy(self, policy_id):
@@ -126,7 +129,7 @@ class XCCDF_Handler(object):
         assert self.action.f_results != None, "Result file not specified"
         if result == None: result = self.result
         result.benchmark_uri = self.action.url_xccdf
-        title = oscap.text()
+        title = common.text()
         title.text = "OSCAP Python Test Result"
         result.title = title
 
@@ -236,8 +239,8 @@ class OVAL_Handler(object):
         return action
 
     def __callback(self, msg, plugin):
-        result = oscap.reporter_message_get_user2num(msg)
-        print "%s" % (oscap.reporter_message_get_string(msg))
+        print "%s" % (msg.string)
+        print "Evalutated definition %s: %s" % (msg.user1str, oval.result.get_text(msg.user2num))
         return True
 
     def __evaluate(self):
