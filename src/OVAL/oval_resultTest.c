@@ -296,7 +296,7 @@ void oval_result_test_free(struct oval_result_test *test)
 	if (test->bindings_clearable)
 		oval_collection_free_items(test->bindings, (oscap_destruct_func) oval_variable_binding_free);
 	else {
-		oscap_free(test->bindings);	/* avoid leaks - remove collection but not bindings. Bindings are part of syschar model */
+		oval_collection_free(test->bindings);	/* avoid leaks - remove collection but not bindings. Bindings are part of syschar model */
 	}
 	oval_collection_free_items(test->items, (oscap_destruct_func) oval_result_item_free);
 
@@ -1322,7 +1322,7 @@ static int _oval_result_test_parse(xmlTextReaderPtr reader, struct oval_parser_c
 	} else if (strcmp((const char *)localName, "tested_item") == 0) {
 		return_code = oval_result_item_parse_tag
 		    (reader, context, SYSTEM, (oscap_consumer_func) _oval_test_item_consumer, args);
-	} else if (strcmp((const char *)localName, "tested-variable") == 0) {
+	} else if (strcmp((const char *)localName, "tested_variable") == 0) {
 		return_code = _oval_result_test_binding_parse(reader, context, args);
 	} else {
 		oscap_dlprintf(DBG_W, "Unhandled tag: <%s>.\n", localName);
