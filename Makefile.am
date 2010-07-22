@@ -16,6 +16,9 @@ dist_pkgdata_DATA = dist/fedora/scap-fedora12-oval.xml \
                     dist/fedora/scap-fedora13-oval.xml \
                     dist/fedora/oscap-scan.cron
 
+bashcompdir = $(sysconfdir)/bash_completion.d
+bashcomp_DATA = dist/bash_completion.d/oscap
+
 nobase_pkgdata_DATA =	schemas/oval/5.5/independent-system-characteristics-schema.xsd \
 			schemas/oval/5.5/windows-definitions-schema.xsd \
 			schemas/oval/5.5/windows-system-characteristics-schema.xsd \
@@ -66,6 +69,7 @@ EXTRA_DIST =	dist/fedora/openscap.spec \
 		dist/fedora/oscap-scan.cron \
 		dist/fedora/scap-fedora12-oval.xml \
 		dist/fedora/scap-fedora13-oval.xml \
+		dist/bash_completion.d/oscap \
 		docs/Doxyfile \
 		docs/examples/oval_probes.py \
 		docs/examples/package-test.xml \

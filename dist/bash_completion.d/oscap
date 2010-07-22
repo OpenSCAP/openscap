@@ -1,0 +1,91 @@
+#!/bin/bash
+
+function _oscap {
+	local std cmd i prev
+	local c=1
+	local cur="`_get_cword`"
+	local prog="${COMP_WORDS[0]}"
+	_split_longopt || prev="${COMP_WORDS[$COMP_CWORD-1]}"
+
+	# supported standards list
+	local stds="oval xccdf cvss"
+	# global switches
+	local gopts="--version --quiet --help -V -q -h"
+
+	while [ $c -lt $COMP_CWORD ]; do
+		i="${COMP_WORDS[c]}"
+		case "$i" in
+			# TODO handle generic switches
+			-*) ;;
+			*) std="$i"; break ;;
+		esac
+		c=$((++c))
+	done
+
+	[ $((c+1)) -lt $COMP_CWORD ] && cmd="${COMP_WORDS[c+1]}"
+
+	if [ -z "$std" ]; then
+		local words
+		case "$cur" in
+			-*) words="$gopts" ;;
+			*) words="$stds" ;;
+		esac
+		COMPREPLY=( $(compgen -W "${words}" -- ${cur}) )
+		return 0
+	fi
+
+	# commands for individual standards
+	local -A cmds=()
+	cmds[xccdf]="eval validate-xml resolve"
+	cmds[oval]="collect eval validate-xml"
+	cmds[cvss]="base temporal environmental"
+
+	if [ -z "$cmd" ]; then
+		COMPREPLY=( $(compgen -W "${cmds[$std]}" -- ${cur}) )
+		return 0
+	fi
+
+	local command="$std:$cmd"
+
+	# options w/o arg, KEEP SPACES around the string
+	opts[noarg]=" --definitions --syschar --results -f --force "
+
+	if [ "x${prev:0:1}" == "x-" ] && echo "${opts[noarg]}" | grep -v " $prev " >/dev/null; then
+		# an option argument
+
+		case "$prev" in
+			--AV|--AC|--AU|--CI|--II|--AI|--EX|--RL|--RC|--CD|--TD|--CR|--IR|--AR)
+				COMPREPLY=( $(compgen -W "`$prog cvss -h | sed -r -n -e "s:^\s+$prev=\[(.+)\].+$:\1:gp" | tr '|' ' '`" -- ${cur}) ) ;;
+			--result-file|-o|--output) _filedir 'xml' ;;
+		esac
+
+	elif [ "x${cur:0:1}" == "x-" ]; then
+		# an option
+
+		# switches for commands
+		local -A opts=()
+		opts[oval:validate-xml]="--version --definitions --syschar --results"
+		opts[oval:eval]="--result-file"
+		opts[xccdf:eval]="--profile --result-file"
+		opts[xccdf:validate-xml]="--version"
+		opts[xccdf:resolve]="-o --output -f --force"
+		opts[cvss:base]="--AV --AC --AU --CI --II --AI --base"
+		opts[cvss:temporal]="--EX --RL --RC --base"
+		opts[cvss:environmental]="--AV --AC --AU --CI --II --AI --EX --RL --RC --CD --TD --CR --IR --AR --base"
+
+		COMPREPLY=( $(compgen -W "${opts[$command]}" -- ${cur}) )
+
+	else
+		# a positional argument
+
+		case "$command" in
+			cvss:base|cvss:temporal|cvss:environmental) ;; # no positional args for cvss
+			*) _filedir 'xml' ;;
+		esac
+
+	fi
+
+}
+
+[ "${BASH_VERSINFO[0]}" -ge '4' ] && complete -F _oscap -o filenames oscap
+
