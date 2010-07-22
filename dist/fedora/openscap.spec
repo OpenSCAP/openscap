@@ -80,6 +80,9 @@ install -d -m 755 $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig
 install -p -m 755 dist/fedora/oscap-scan.init $RPM_BUILD_ROOT%{_initrddir}/oscap-scan
 install -p -m 644 dist/fedora/oscap-scan.sys  $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig/oscap-scan
 
+# create symlinks to default content
+ln -s  %{_datadir}/openscap/scap-fedora13-oval.xml %{buildroot}/%{_datadir}/openscap/scap-oval.xml
+
 find $RPM_BUILD_ROOT -name '*.la' -exec rm -f {} ';'
 
 %clean
@@ -129,6 +132,7 @@ fi
 %{_datadir}/openscap/oscap-scan.cron
 %{_datadir}/openscap/scap-fedora12-oval.xml
 %{_datadir}/openscap/scap-fedora13-oval.xml
+%{_datadir}/openscap/scap-oval.xml
 %{_mandir}/man8/*
 %{_bindir}/*
 
