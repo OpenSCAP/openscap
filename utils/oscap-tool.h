@@ -57,6 +57,7 @@ typedef enum {
         OSCAP_OP_VALIDATE_XML,
         OSCAP_OP_BASE,
         OSCAP_OP_TEMP,
+		OSCAP_OP_RESOLVE,
         OSCAP_OP_ENV
 } oscap_operation_t;
 
@@ -93,12 +94,14 @@ struct oscap_action {
         char *file_version;
 #ifdef ENABLE_CVSS
         struct cvss_metrics *cvss_metrics;
+	bool force;
 #endif
 };
 
 #ifdef ENABLE_XCCDF
 void print_xccdf_usage(const char *pname, FILE * out, char *msg);
 int app_evaluate_xccdf(const struct oscap_action *action);
+int app_xccdf_resolve(const struct oscap_action *action);
 int getopt_xccdf(int argc, char **argv, struct oscap_action *action);
 #endif
 

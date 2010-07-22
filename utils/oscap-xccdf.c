@@ -45,11 +45,14 @@ void print_xccdf_usage(const char *pname, FILE * out, char *msg)
 		"\n"
 		"Commands:\n"
 		"   eval\r\t\t\t\t - Perform evaluation driven by XCCDF file and use OVAL as checking engine.\n"
-		"   validate-xml\r\t\t\t\t - validate XCCDF XML content.\n"
+		"   resolve\r\t\t\t\t - Resolve an XCCDF document.\n"
+		"   validate-xml\r\t\t\t\t - Validate XCCDF XML content.\n"
 		"\n"
 		"Command options:\n"
 		"   -h --help\r\t\t\t\t - show this help\n"
 		"   --result-file <file>\r\t\t\t\t - Write XCCDF Results into file.\n"
+		"   --output <file>\r\t\t\t\t - Write output XCCDF document into file.\n"
+		"   --force\r\t\t\t\t - Force resolving XCCDF document even if it is aleready marked as resolved.\n"
 		"   --profile <name>\r\t\t\t\t - The name of Profile to be evaluated.\n", pname);
 	if (msg != NULL)
 		fprintf(out, "\n%s\n", msg);
@@ -159,6 +162,41 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	return retval;
 }
 
+int app_xccdf_resolve(const struct oscap_action *action)
+{
+	if (action->f_xccdf == NULL) {
+		fprintf(stderr, "No input document specified!\n");
+		return 2;
+	}
+	if (action->f_results == NULL) {
+		fprintf(stderr, "No output document filename specified!\n");
+		return 2;
+	}
+
+	struct xccdf_benchmark *bench = xccdf_benchmark_import(action->f_xccdf);
+	if (bench == NULL) {
+		fprintf(stderr, "Benchmark import failure!\n");
+		return 2;
+	}
+
+	int ret = 1;
+
+	if (action->force) xccdf_benchmark_set_resolved(bench, false);
+	if (xccdf_benchmark_get_resolved(bench))
+		fprintf(stderr, "Benchmark is already resolved!\n");
+	else {
+		if (xccdf_benchmark_resolve(bench)) {
+			if (xccdf_benchmark_export(bench, action->f_results))
+				ret = 0;
+			else ret = 2;
+		} else fprintf(stderr, "Benchmark resolving failure (probably a dependency loop)!\n");
+	}
+
+	xccdf_benchmark_free(bench);
+
+	return ret;
+}
+
 int getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 {
 	/* Usage: oscap xccdf command [command-options] */
@@ -180,6 +218,8 @@ int getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 		action->op = OSCAP_OP_EVAL;
 	else if (!strcmp(argv[optind], "validate-xml")) {
 		action->op = OSCAP_OP_VALIDATE_XML;
+	} else if (!strcmp(argv[optind], "resolve")) {
+		action->op = OSCAP_OP_RESOLVE;
 	} else {
 		/* oscap xccdf --help */
 		optind--;
@@ -188,6 +228,8 @@ int getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 	/* Command-options */
 	struct option long_options[] = {
 		{"help", 0, 0, 'h'},
+		{"force", 0, 0, 'f'},
+		{"output", 1, 0, 'o'},
 		{"result-file", 1, 0, 0},
 		{"xccdf-profile", 1, 0, 1},
 		{"file-version", 1, 0, 2},
@@ -197,11 +239,12 @@ int getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 	int c;
 	int getopt_index = 0;	/* index is not neccesary because we know the option from "val" */
 	optind++;		/* Increment global variable pointeing to argv array to get next opt */
-	while ((c = getopt_long(argc, argv, "+h012", long_options, &getopt_index)) != -1) {
+	while ((c = getopt_long(argc, argv, "+ho:f012", long_options, &getopt_index)) != -1) {
 		switch (c) {
 		case 'h':	/* XCCDF HELP */
 			print_xccdf_usage("oscap", stdout, NULL);
 			return 0;
+		case 'o':
 		case 0:	/* RESULT FILE */
 			if (optarg == NULL)
 				return -1;
@@ -217,6 +260,7 @@ int getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 				return -1;
 			action->file_version = optarg;
 			break;
+		case 'f': action->force = true; break;
 		default:
 			fprintf(stderr, "FOUND BAD OPTION %d :: %d :: %s\n", optind, optopt, argv[optind]);
 			break;

@@ -141,6 +141,14 @@ int main(int argc, char **argv)
 		case OSCAP_OP_EVAL:
 			retval = app_evaluate_xccdf(action);
 			break;
+		case OSCAP_OP_RESOLVE:
+#ifdef ENABLE_XCCDF
+			retval = app_xccdf_resolve(action);
+#else
+			fprintf(stderr,
+				"OSCAP is not compiled with XCCDF support ! Please configure OSCAP library with option --enable-xccdf !\n");
+#endif
+			break;
 		default:
 			break;
 		}

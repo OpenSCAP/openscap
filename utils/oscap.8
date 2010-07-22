@@ -79,6 +79,14 @@ Write XCCDF results into file.
 .RE
 .RE
 .TP
+.B resolve\fR -o output-file xccdf-file
+.RS
+Resolve an XCCDF file as described in the XCCDF specification. It will flatten inheritance hierarchy of XCCDF profiles, groups, rules, and values. Result is another XCCDF document, which will be written to \fIoutput-file\fR.
+.TP
+\fB\-\-force\fR
+Force resolving XCCDF document even if it is already marked as resolved.
+.RE
+.TP
 .B validate-xml\fR [\fIoptions\fR] xccdf-file
 .RS
 Validate given XCCDF file against a XML schema. Every found error is printed to the standard output. Return code is 0 if validation succeeds, 1 if the XCCDF document is not valid, 2 if validation could not be performed due to some error.
