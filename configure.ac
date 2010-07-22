@@ -329,8 +329,12 @@ AC_ARG_ENABLE([probes],
        *) AC_MSG_ERROR([bad value ${enableval} for --enable-probes]) ;;
      esac],[probes=yes])
 
+if test "x${oval}" = xno; then
+	probes=no
+fi
+
 if test "x${probes}" = xyes; then
-	AC_DEFINE([ENABLE_PROBES], [1], [compilation of probes is isnabled])
+	AC_DEFINE([ENABLE_PROBES], [1], [compilation of probes is enabled])
 
 	#check for atomic functions
 	case $host_cpu in

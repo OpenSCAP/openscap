@@ -33,9 +33,15 @@
 #include <text.h>
 #include <reporter.h>
 
-#include <cvss.h>
+#ifdef ENABLE_OVAL
 #include <oval_definitions.h>
+#endif
+#ifdef ENABLE_CVSS
+#include <cvss.h>
+#endif
+#ifdef ENABLE_XCCDF
 #include <xccdf.h>
+#endif
 
 typedef enum {
         OSCAP_STD_UNKNOWN,
@@ -54,6 +60,7 @@ typedef enum {
         OSCAP_OP_ENV
 } oscap_operation_t;
 
+#ifdef ENABLE_CVSS
 struct cvss_metrics {
         cvss_access_vector_t ave;
         cvss_access_complexity_t ace;
@@ -71,6 +78,7 @@ struct cvss_metrics {
         cvss_avail_req_t are;
         double base;
 };
+#endif
 
 struct oscap_action {
         oscap_standard_t std;
@@ -83,16 +91,21 @@ struct oscap_action {
         char *url_oval;
         char *profile;
         char *file_version;
+#ifdef ENABLE_CVSS
         struct cvss_metrics *cvss_metrics;
+#endif
 };
 
-
+#ifdef ENABLE_XCCDF
 void print_xccdf_usage(const char *pname, FILE * out, char *msg);
 int app_evaluate_xccdf(const struct oscap_action *action);
 int getopt_xccdf(int argc, char **argv, struct oscap_action *action);
+#endif
 
+#ifdef ENABLE_CVSS
 void print_cvss_usage(const char *pname, FILE * out, char *msg);
 int getopt_cvss(int argc, char **argv, struct oscap_action *action);
+#endif
 
 void print_oval_usage(const char *pname, FILE * out, char *msg);
 int app_collect_oval(const struct oscap_action *action);

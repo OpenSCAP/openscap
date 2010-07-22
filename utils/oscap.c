@@ -92,14 +92,20 @@ int main(int argc, char **argv)
 	}
 
 	if ((!strcmp(argv[optind], "xccdf")) || (!strcmp(argv[optind], "XCCDF"))) {
+#ifdef ENABLE_XCCDF
 		if (getopt_xccdf(argc, argv, action) == -1)
 			return 1;
+#endif
 	} else if ((!strcmp(argv[optind], "oval")) || (!strcmp(argv[optind], "OVAL"))) {
+#ifdef ENABLE_OVAL
 		if (getopt_oval(argc, argv, action) == -1)
 			return 1;
+#endif
 	} else if ((!strcmp(argv[optind], "cvss")) || (!strcmp(argv[optind], "CVSS"))) {
+#ifdef ENABLE_CVSS
 		if (getopt_cvss(argc, argv, action) == -1)
 			return 1;
+#endif
 	}
 
 	/* Post processing of options */
@@ -127,23 +133,21 @@ int main(int argc, char **argv)
 
 	switch (action->std) {
 	case OSCAP_STD_XCCDF:
+#ifdef ENABLE_XCCDF
 		switch (action->op) {
 		case OSCAP_OP_VALIDATE_XML:
 			retval = app_validate_xml(action);
 			break;
 		case OSCAP_OP_EVAL:
-#ifdef ENABLE_XCCDF
 			retval = app_evaluate_xccdf(action);
-#else
-			fprintf(stderr,
-				"OSCAP is not compiled with XCCDF support ! Please configure OSCAP library with option --enable-xccdf !\n");
-#endif
 			break;
 		default:
 			break;
 		}
+#endif
 		break;
 	case OSCAP_STD_OVAL:
+#ifdef ENABLE_OVAL
 		switch (action->op) {
 		case OSCAP_OP_VALIDATE_XML:
 			retval = app_validate_xml(action);
@@ -157,8 +161,10 @@ int main(int argc, char **argv)
 		default:
 			break;
 		}
+#endif
 		break;
 	case OSCAP_STD_CVSS:
+#ifdef ENABLE_CVSS
 		switch (action->op) {
 		case OSCAP_OP_BASE: {
 			double base_score;
@@ -198,9 +204,10 @@ int main(int argc, char **argv)
 		default:
 			break;
 		}
+#endif
 		break;
 	default:
-		printf("%s unrecognized module '%s'\n", argv[0], argv[1]);
+		printf("%s unrecognized module '%s' or module support is not compiled in.\n", argv[0], argv[1]);
 		print_usage(argv[0], stderr);
 		break;
 	}
@@ -227,9 +234,10 @@ static struct oscap_action *oscap_action_new(void)
 	action->url_xccdf = NULL;
 	action->url_oval = NULL;
 	action->profile = NULL;
-	action->cvss_metrics = NULL;
 	action->file_version = NULL;
-
+#ifdef ENABLE_CVSS
+	action->cvss_metrics = NULL;
+#endif
 	return action;
 }
 
@@ -245,10 +253,12 @@ static void oscap_action_free(struct oscap_action *action)
 	action->f_results = NULL;
 	action->url_oval = NULL;
 	action->url_xccdf = NULL;
+#ifdef ENABLE_CVSS
 	if (action->cvss_metrics != NULL) {
 		free(action->cvss_metrics);
 		action->cvss_metrics = NULL;
 	}
+#endif
 	//free(action);
 }
 
@@ -273,11 +283,15 @@ static void print_versions(void)
 {
 	fprintf(stdout,
 		"OSCAP util (oscap) 0.5.12\n" "Copyright 2009,2010 Red Hat Inc., Durham, North Carolina.\n" "\n");
+#ifdef ENABLE_XCCDF
 	fprintf(stdout, "OVAL Version: \r\t\t%s\n", oval_definition_model_supported());
+#endif
 #ifdef ENABLE_XCCDF
 	fprintf(stdout, "XCCDF Version: \r\t\t%s\n", xccdf_benchmark_supported());
 #endif
+#ifdef ENABLE_CVSS
 	fprintf(stdout, "CVSS Version: \r\t\t%s\n", cvss_model_supported());
+#endif
 }
 
 /**
