@@ -4,7 +4,6 @@
  *   @defgroup ITER Iterators & collections
  *   @defgroup STRINGS String manipulation
  *   @defgroup VALID Validation
- *   @defgroup XMLMETA Element metadata
  *   @defgroup ERRORS Errors
  *   @defgroup Reporters
  *   @defgroup Debug
