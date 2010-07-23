@@ -113,7 +113,7 @@ struct xccdf_item *xccdf_item_clone(const struct xccdf_item *old_item)
 	switch (new_item->type) {
 	case XCCDF_BENCHMARK:
 		 //new_item->sub.benchmark = *(xccdf_benchmark_item_clone(&(old_item->sub.benchmark), new_item));
-        xccdf_benchmark_item_clone(&new_item->sub.benchmark, XBENCHMARK(old_item));
+        xccdf_benchmark_item_clone(new_item, XBENCHMARK(old_item));
 		break;
 	case XCCDF_RULE:
 	    xccdf_rule_item_clone(&new_item->sub.rule, &old_item->sub.rule);
@@ -172,11 +172,8 @@ void xccdf_item_base_clone(struct xccdf_item_base *new_base, const struct xccdf_
 struct xccdf_reference *xccdf_reference_clone(const struct xccdf_reference *old_reference)
 {
 	struct xccdf_reference *new_reference = oscap_calloc(1, sizeof(struct xccdf_reference));
-	//new_reference->override = old_reference->override;
 	new_reference->href = oscap_strdup(old_reference->href);
 	new_reference->text = oscap_text_clone(old_reference->text);
-	//new_reference->content = oscap_strdup(old_reference->content);
-	//new_reference->lang = oscap_strdup(old_reference->lang);
 	return new_reference;
 }
 
@@ -211,6 +208,7 @@ void xccdf_item_release(struct xccdf_item *item)
 		oscap_list_free(item->item.question, (oscap_destruct_func) oscap_text_free);
 		oscap_list_free(item->item.warnings, (oscap_destruct_func) xccdf_warning_free);
 		oscap_list_free(item->item.references, (oscap_destruct_func) xccdf_reference_free);
+		if (item->type != XCCDF_BENCHMARK) xccdf_benchmark_unregister_item(item);
 		oscap_free(item->item.id);
 		oscap_free(item->item.cluster_id);
 		oscap_free(item->item.version_update);
@@ -936,10 +934,10 @@ void xccdf_profile_item_clone(struct xccdf_profile_item *clone, const struct xcc
 	clone->refine_rules = oscap_list_clone(item->refine_rules, (oscap_clone_func) xccdf_refine_rule_clone);
 }
 
-struct xccdf_benchmark_item * xccdf_benchmark_item_clone(struct xccdf_benchmark_item *clone, const struct xccdf_benchmark * bench)
+struct xccdf_benchmark_item * xccdf_benchmark_item_clone(struct xccdf_item *parent, const struct xccdf_benchmark * bench)
 {
     struct xccdf_benchmark_item *item = &XITEM(bench)->sub.benchmark;
-    struct xccdf_item *parent = XITEM(bench);
+    struct xccdf_benchmark_item *clone = &parent->sub.benchmark;
 
 	clone->dict = oscap_htable_new();
 	clone->notices = oscap_list_clone(item->notices, (oscap_clone_func) xccdf_notice_clone);

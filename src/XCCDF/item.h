@@ -456,7 +456,7 @@ void xccdf_item_base_clone(struct xccdf_item_base *new_base, const struct xccdf_
 
 //clones the specific types of items
 void xccdf_profile_item_clone(struct xccdf_profile_item *clone, const struct xccdf_profile_item * item);
-struct xccdf_benchmark_item * xccdf_benchmark_item_clone(struct xccdf_benchmark_item *clone, const struct xccdf_benchmark * bench);
+struct xccdf_benchmark_item * xccdf_benchmark_item_clone(struct xccdf_item *clone, const struct xccdf_benchmark * bench);
 void xccdf_rule_item_clone(struct xccdf_rule_item *clone, const struct xccdf_rule_item * item);
 void xccdf_group_item_clone(struct xccdf_item *parent, const struct xccdf_group_item * item);
 void xccdf_value_item_clone(struct xccdf_value_item *clone, const struct xccdf_value_item * item);

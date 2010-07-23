@@ -72,7 +72,7 @@ struct xccdf_benchmark *xccdf_benchmark_clone(const struct xccdf_benchmark *old_
     xccdf_item_base_clone(&new_benchmark->item, &old->item);
 	new_benchmark->type = old->type;
 	//second argument is a pointer to the benchmark being created which will be the parent of all of its sub elements.
-    xccdf_benchmark_item_clone(&new_benchmark->sub.benchmark, old_benchmark);
+    xccdf_benchmark_item_clone(new_benchmark, old_benchmark);
 	return XBENCHMARK(new_benchmark);
 }
 
@@ -312,8 +312,8 @@ void xccdf_benchmark_free(struct xccdf_benchmark *benchmark)
 		oscap_list_free(bench->sub.benchmark.values, (oscap_destruct_func) xccdf_value_free);
 		oscap_list_free(bench->sub.benchmark.results, (oscap_destruct_func) xccdf_result_free);
 		oscap_list_free(bench->sub.benchmark.plain_texts, (oscap_destruct_func) xccdf_plain_text_free);
-		oscap_htable_free(bench->sub.benchmark.dict, NULL);
 		oscap_list_free(bench->sub.benchmark.profiles, (oscap_destruct_func) xccdf_profile_free);
+		oscap_htable_free(bench->sub.benchmark.dict, NULL);
 		xccdf_item_release(bench);
 	}
 }
@@ -497,20 +497,26 @@ bool xccdf_benchmark_register_item(struct xccdf_benchmark *benchmark, struct xcc
 	struct xccdf_item *found = xccdf_benchmark_get_item(benchmark, id);
 	if (found != NULL) return found == item; // already registered
 
+    if (item->type == XCCDF_GROUP) {
+        OSCAP_FOR(xccdf_item, cnt, xccdf_group_get_content(XGROUP(item)))
+            xccdf_benchmark_register_item(benchmark, cnt);
+        OSCAP_FOR(xccdf_value, val, xccdf_group_get_values(XGROUP(item)))
+            xccdf_benchmark_register_item(benchmark, XITEM(val));
+    }
+
 	return oscap_htable_add(XITEM(benchmark)->sub.benchmark.dict, xccdf_item_get_id(item), item);
 }
 
 bool xccdf_benchmark_unregister_item(struct xccdf_item *item)
 {
-	if (item == NULL)
-		return false;
+	if (item == NULL) return false;
 
-	if (xccdf_item_get_benchmark(item) == NULL)
-		return false;
+	struct xccdf_benchmark *bench = xccdf_item_get_benchmark(item);
+	if (bench == NULL) return false;
 
-	assert(xccdf_benchmark_get_item(xccdf_item_get_benchmark(item), xccdf_item_get_id(item)) == item);
+	assert(xccdf_benchmark_get_item(bench, xccdf_item_get_id(item)) == item);
 
-	return oscap_htable_detach(XITEM(xccdf_item_get_benchmark(item))->sub.benchmark.dict, xccdf_item_get_id(item)) != NULL;
+	return oscap_htable_detach(XITEM(bench)->sub.benchmark.dict, xccdf_item_get_id(item)) != NULL;
 }
 
 bool xccdf_benchmark_rename_item(struct xccdf_item *item, const char *newid)
