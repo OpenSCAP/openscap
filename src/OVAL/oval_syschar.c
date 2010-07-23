@@ -140,10 +140,16 @@ void oval_syschar_add_sysdata(struct oval_syschar *syschar, struct oval_sysdata 
 }
 
 void oval_syschar_add_variable_binding(struct oval_syschar *syschar, struct oval_variable_binding *binding) {
-	if (syschar && !oval_syschar_is_locked(syschar)) {
-		oval_collection_add(syschar->variable_bindings, binding);
-	} else
+	__attribute__nonnull__(syschar);
+
+	if (oval_syschar_is_locked(syschar)) {
 		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+		return;
+	}
+
+	oval_collection_add(syschar->variable_bindings, binding);
+	if (syschar->model != NULL)
+		oval_syschar_model_add_variable_binding(syschar->model, binding);
 }
 
 struct oval_syschar *oval_syschar_new(struct oval_syschar_model *model, struct oval_object *object)

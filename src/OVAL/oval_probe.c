@@ -139,8 +139,37 @@ oval_subtype_t oval_str2subtype(const char *str)
 static struct oval_string_map *_obj_collect_var_refs(struct oval_object *obj)
 {
 	struct oval_string_map *vm;
+	struct oval_object_content_iterator *cont_itr;
 
 	vm = oval_string_map_new();
+
+	cont_itr = oval_object_get_object_contents(obj);
+	while (oval_object_content_iterator_has_more(cont_itr)) {
+		struct oval_object_content *cont;
+		struct oval_entity *ent;
+
+		cont = oval_object_content_iterator_next(cont_itr);
+
+		switch (oval_object_content_get_type(cont)) {
+		case OVAL_OBJECTCONTENT_ENTITY:
+			ent = oval_object_content_get_entity(cont);
+			if (oval_entity_get_varref_type(ent) == OVAL_ENTITY_VARREF_ATTRIBUTE) {
+				struct oval_variable *var;
+				char *var_id;
+
+				var = oval_entity_get_variable(ent);
+				var_id = oval_variable_get_id(var);
+				oval_string_map_put(vm, var_id, var);
+			}
+			break;
+		case OVAL_OBJECTCONTENT_SET:
+			// todo: recursion
+			break;
+		default:
+			break;
+		}
+	}
+	oval_object_content_iterator_free(cont_itr);
 
 	return vm;
 }
