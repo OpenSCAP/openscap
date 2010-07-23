@@ -83,13 +83,6 @@ struct cve_reference;
  * */
 
 /**
- * Get en iterator to XML metadatas from CVE model
- * @param cve_model CVE model
- * @memberof cve_model
- */
-struct xml_metadata_iterator *cve_model_get_xmlns(const struct cve_model *cve_model);
-
-/**
  * Get en iterator to CVE entries
  * @param cve_model CVE model
  * @memberof cve_entry

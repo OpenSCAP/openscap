@@ -160,12 +160,6 @@ struct cpe_platform_iterator *cpe_lang_model_get_platforms(const struct cpe_lang
 struct cpe_platform *cpe_lang_model_get_item(const struct cpe_lang_model *item, const char *key);
 
 /**
- * cpe_lang_model function to get xmlns attribute
- * @memberof cpe_lang_model
- */
-struct xml_metadata_iterator *cpe_lang_model_get_xmlns(const struct cpe_lang_model *item);
-
-/**
  * cpe_platform functions to get id
  * @memberof cpe_platform
  */
@@ -185,12 +179,6 @@ struct oscap_text_iterator *cpe_platform_get_titles(const struct cpe_platform *i
  * @memberof cpe_platform
  */
 const struct cpe_testexpr *cpe_platform_get_expr(const struct cpe_platform *item);
-
-/**
- * Get XML namespace from CPE lang model
- * @memberof cpe_lang_model
- */
-/*struct xml_metadata_iterator * cpe_lang_model_get_xmlns(const struct cpe_lang_model * model);*/
 
 /************************************************************/
 /** @} End of Getters group */

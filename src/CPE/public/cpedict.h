@@ -342,12 +342,6 @@ struct cpe_language_iterator *cpe_edition_get_languages(const struct cpe_edition
  */
 const char *cpe_language_get_value(const struct cpe_language *item);
 
-/**
- * Get XML namespace from CPE dict model
- * @memberof cpe_dict_model
- */
-struct xml_metadata_iterator *cpe_dict_model_get_xmlns(const struct cpe_dict_model *model);
-
 /************************************************************/
 /** @} End of Getters group */
 
