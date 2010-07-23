@@ -29,6 +29,7 @@
 typedef void (*xccdf_textresolve_func)(void *child, void *parent);
 
 static void xccdf_resolve_item(struct xccdf_item *item);
+static void xccdf_resolve_cleanup(struct xccdf_item *item);
 
 static struct oscap_list *xccdf_benchmark_resolve_dependencies(void *itemptr, void *userdata)
 {
@@ -57,6 +58,7 @@ static struct oscap_list *xccdf_benchmark_resolve_dependencies(void *itemptr, vo
 	OSCAP_FOR(xccdf_value, val, val_it)
 		oscap_list_add(ret, val);
 
+
 	return ret;
 }
 
@@ -74,6 +76,9 @@ bool xccdf_benchmark_resolve(struct xccdf_benchmark *benchmark)
 
 	oscap_list_free(root_nodes, NULL);
 	oscap_list_free(resolve_order, NULL);
+
+    xccdf_resolve_cleanup(XITEM(benchmark));
+
 	return ret;
 }
 
@@ -342,3 +347,38 @@ static void xccdf_resolve_value_instance(struct xccdf_value_instance *child, str
 	}
 	oscap_iterator_free(it);
 }
+
+static void xccdf_resolve_cleanup(struct xccdf_item *item)
+{
+    if (item == NULL) return;
+
+    switch (xccdf_item_get_type(item)) {
+        case XCCDF_BENCHMARK: case XCCDF_GROUP: break;
+        default: return;
+    }
+
+    if (xccdf_item_get_type(item) == XCCDF_BENCHMARK) {
+        OSCAP_FOR(xccdf_profile, p, xccdf_benchmark_get_profiles(xccdf_item_to_benchmark(item)))
+            if (xccdf_profile_get_abstract(p))
+                xccdf_profile_iterator_remove(p_iter);
+    }
+
+    OSCAP_FOR(xccdf_item, sub, xccdf_item_get_content(item)) {
+        xccdf_resolve_cleanup(sub);
+        if (xccdf_item_get_abstract(sub))
+            xccdf_item_iterator_remove(sub_iter);
+    }
+
+    struct xccdf_value_iterator *value_it = NULL;
+
+    switch (xccdf_item_get_type(item)) {
+        case XCCDF_BENCHMARK: value_it = xccdf_benchmark_get_values(xccdf_item_to_benchmark(item)); break;
+        case XCCDF_GROUP:     value_it = xccdf_group_get_values(xccdf_item_to_group(item)); break;
+        default: break;
+    }
+
+    OSCAP_FOR(xccdf_value, val, value_it)
+        if (xccdf_value_get_abstract(val))
+            xccdf_value_iterator_remove(val_iter);
+}
+
