@@ -69,7 +69,7 @@ function _oscap {
 		opts[xccdf:eval]="--profile --result-file"
 		opts[xccdf:validate-xml]="--version"
 		opts[xccdf:resolve]="-o --output -f --force"
-		opts[cvss:base]="--AV --AC --AU --CI --II --AI --base"
+		opts[cvss:base]="--AV --AC --AU --CI --II --AI"
 		opts[cvss:temporal]="--EX --RL --RC --base"
 		opts[cvss:environmental]="--AV --AC --AU --CI --II --AI --EX --RL --RC --CD --TD --CR --IR --AR --base"
 
