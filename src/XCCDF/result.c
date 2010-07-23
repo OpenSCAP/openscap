@@ -119,6 +119,7 @@ XCCDF_LISTMANIP(result, setvalue, setvalues)
 XCCDF_LISTMANIP(result, rule_result, rule_results)
 XCCDF_LISTMANIP(result, score, scores)
 OSCAP_ITERATOR_GEN(xccdf_result)
+OSCAP_ITERATOR_REMOVE_F(xccdf_result)
 
 
 struct xccdf_rule_result *xccdf_rule_result_new(void)
@@ -157,9 +158,13 @@ OSCAP_IGETINS(xccdf_ident, xccdf_rule_result, idents, ident)
 OSCAP_IGETINS(xccdf_fix, xccdf_rule_result, fixes, fix)
 OSCAP_IGETINS(xccdf_check, xccdf_rule_result, checks, check)
 OSCAP_IGETINS_GEN(xccdf_override, xccdf_rule_result, overrides, override)
+OSCAP_ITERATOR_REMOVE_F(xccdf_override)
 OSCAP_IGETINS_GEN(xccdf_message, xccdf_rule_result, messages, message)
+OSCAP_ITERATOR_REMOVE_F(xccdf_message)
 OSCAP_IGETINS_GEN(xccdf_instance, xccdf_rule_result, instances, instance)
+OSCAP_ITERATOR_REMOVE_F(xccdf_instance)
 OSCAP_ITERATOR_GEN(xccdf_rule_result)
+OSCAP_ITERATOR_REMOVE_F(xccdf_rule_result)
 
 
 struct xccdf_identity *xccdf_identity_new(void)
@@ -179,6 +184,7 @@ OSCAP_ACCESSOR_EXP(bool, xccdf_identity, authenticated, sub.authenticated)
 OSCAP_ACCESSOR_EXP(bool, xccdf_identity, privileged, sub.privileged)
 OSCAP_ACCESSOR_STRING(xccdf_identity, name)
 OSCAP_ITERATOR_GEN(xccdf_identity)
+OSCAP_ITERATOR_REMOVE_F(xccdf_identity)
 
 struct xccdf_score *xccdf_score_new(void)
 {
@@ -200,6 +206,7 @@ OSCAP_ACCESSOR_SIMPLE(xccdf_numeric, xccdf_score, maximum)
 OSCAP_ACCESSOR_SIMPLE(xccdf_numeric, xccdf_score, score)
 OSCAP_ACCESSOR_STRING(xccdf_score, system)
 OSCAP_ITERATOR_GEN(xccdf_score)
+OSCAP_ITERATOR_REMOVE_F(xccdf_score)
 
 struct xccdf_override *xccdf_override_new(void)
 {
@@ -281,6 +288,7 @@ OSCAP_GETTER(xccdf_value_type_t, xccdf_target_fact, type)
 OSCAP_GETTER(const char *, xccdf_target_fact, value)
 OSCAP_ACCESSOR_STRING(xccdf_target_fact, name)
 OSCAP_ITERATOR_GEN(xccdf_target_fact)
+OSCAP_ITERATOR_REMOVE_F(xccdf_target_fact)
 
 struct xccdf_instance *xccdf_instance_new(void)
 {

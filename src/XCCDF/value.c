@@ -397,6 +397,7 @@ XCCDF_VALUE_IGETTER(value_instance, instances)
 XCCDF_SIGETTER(value, sources)
 XCCDF_ITERATOR_GEN_S(value)
 OSCAP_ITERATOR_GEN(xccdf_value_instance)
+OSCAP_ITERATOR_REMOVE_F(xccdf_value_instance)
 
 
 struct xccdf_value_instance *xccdf_value_instance_new(xccdf_value_type_t type)

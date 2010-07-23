@@ -2917,6 +2917,69 @@ bool xccdf_refine_rule_add_remark(struct xccdf_refine_rule *obj, struct oscap_te
 /************************************************************
  ** @} End of Setters group */
 
+// remove operations
+
+/// @memberof xccdf_notice_iterator
+void xccdf_notice_iterator_remove(struct xccdf_notice_iterator *it);
+/// @memberof xccdf_model_iterator
+void xccdf_model_iterator_remove(struct xccdf_model_iterator *it);
+/// @memberof xccdf_profile_iterator
+void xccdf_profile_iterator_remove(struct xccdf_profile_iterator *it);
+/// @memberof xccdf_item_iterator
+void xccdf_item_iterator_remove(struct xccdf_item_iterator *it);
+/// @memberof xccdf_status_iterator
+void xccdf_status_iterator_remove(struct xccdf_status_iterator *it);
+/// @memberof xccdf_reference_iterator
+void xccdf_reference_iterator_remove(struct xccdf_reference_iterator *it);
+/// @memberof xccdf_profile_note_iterator
+void xccdf_profile_note_iterator_remove(struct xccdf_profile_note_iterator *it);
+/// @memberof xccdf_refine_value_iterator
+void xccdf_refine_value_iterator_remove(struct xccdf_refine_value_iterator *it);
+/// @memberof xccdf_refine_rule_iterator
+void xccdf_refine_rule_iterator_remove(struct xccdf_refine_rule_iterator *it);
+/// @memberof xccdf_setvalue_iterator
+void xccdf_setvalue_iterator_remove(struct xccdf_setvalue_iterator *it);
+/// @memberof xccdf_select_iterator
+void xccdf_select_iterator_remove(struct xccdf_select_iterator *it);
+/// @memberof xccdf_ident_iterator
+void xccdf_ident_iterator_remove(struct xccdf_ident_iterator *it);
+/// @memberof xccdf_check_content_ref_iterator
+void xccdf_check_content_ref_iterator_remove(struct xccdf_check_content_ref_iterator *it);
+/// @memberof xccdf_check_export_iterator
+void xccdf_check_export_iterator_remove(struct xccdf_check_export_iterator *it);
+/// @memberof xccdf_check_import_iterator
+void xccdf_check_import_iterator_remove(struct xccdf_check_import_iterator *it);
+/// @memberof xccdf_check_iterator
+void xccdf_check_iterator_remove(struct xccdf_check_iterator *it);
+/// @memberof xccdf_fixtext_iterator
+void xccdf_fixtext_iterator_remove(struct xccdf_fixtext_iterator *it);
+/// @memberof xccdf_fix_iterator
+void xccdf_fix_iterator_remove(struct xccdf_fix_iterator *it);
+/// @memberof xccdf_value_iterator
+void xccdf_value_iterator_remove(struct xccdf_value_iterator *it);
+/// @memberof xccdf_plain_text_iterator
+void xccdf_plain_text_iterator_remove(struct xccdf_plain_text_iterator *it);
+/// @memberof xccdf_warning_iterator
+void xccdf_warning_iterator_remove(struct xccdf_warning_iterator *it);
+/// @memberof xccdf_result_iterator
+void xccdf_result_iterator_remove(struct xccdf_result_iterator *it);
+/// @memberof xccdf_override_iterator
+void xccdf_override_iterator_remove(struct xccdf_override_iterator *it);
+/// @memberof xccdf_message_iterator
+void xccdf_message_iterator_remove(struct xccdf_message_iterator *it);
+/// @memberof xccdf_instance_iterator
+void xccdf_instance_iterator_remove(struct xccdf_instance_iterator *it);
+/// @memberof xccdf_rule_result_iterator
+void xccdf_rule_result_iterator_remove(struct xccdf_rule_result_iterator *it);
+/// @memberof xccdf_identity_iterator
+void xccdf_identity_iterator_remove(struct xccdf_identity_iterator *it);
+/// @memberof xccdf_score_iterator
+void xccdf_score_iterator_remove(struct xccdf_score_iterator *it);
+/// @memberof xccdf_target_fact_iterator
+void xccdf_target_fact_iterator_remove(struct xccdf_target_fact_iterator *it);
+/// @memberof xccdf_value_instance_iterator
+void xccdf_value_instance_iterator_remove(struct xccdf_value_instance_iterator *it);
+
 
 /************************************************************
  ** @} End of XCCDF group */

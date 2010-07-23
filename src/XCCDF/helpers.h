@@ -213,7 +213,7 @@
 #define XCCDF_ITERATOR_HAS_MORE(n) bool xccdf_##n##_iterator_has_more(XCCDF_ITERATOR(n) it) { return oscap_iterator_has_more(XITERATOR(it)); }
 #define XCCDF_ITERATOR_NEXT(t,n) t xccdf_##n##_iterator_next(XCCDF_ITERATOR(n) it) { return oscap_iterator_next(XITERATOR(it)); }
 #define XCCDF_ITERATOR_FREE(n) void xccdf_##n##_iterator_free(XCCDF_ITERATOR(n) it) { oscap_iterator_free(XITERATOR(it)); }
-#define XCCDF_ITERATOR_GEN_T(t,n) XCCDF_ITERATOR_FWD(n) XCCDF_ITERATOR_HAS_MORE(n) XCCDF_ITERATOR_NEXT(t,n) XCCDF_ITERATOR_FREE(n)
+#define XCCDF_ITERATOR_GEN_T(t,n) XCCDF_ITERATOR_FWD(n) XCCDF_ITERATOR_HAS_MORE(n) XCCDF_ITERATOR_NEXT(t,n) OSCAP_ITERATOR_REMOVE_F(xccdf_##n) XCCDF_ITERATOR_FREE(n)
 #define XCCDF_ITERATOR_GEN_S(n) XCCDF_ITERATOR_GEN_T(struct xccdf_##n*,n)
 #define XCCDF_ITERATOR_GEN_TEXT(n) XCCDF_ITERATOR_GEN_T(struct oscap_text *,n)
 

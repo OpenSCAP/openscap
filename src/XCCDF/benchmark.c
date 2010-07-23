@@ -336,7 +336,7 @@ XCCDF_LISTMANIP(benchmark, plain_text, plain_texts)
 XCCDF_HTABLE_GETTER(struct xccdf_item *, benchmark, item, sub.benchmark.dict)
 XCCDF_STATUS_CURRENT(benchmark)
 OSCAP_ITERATOR_GEN(xccdf_plain_text)
-
+OSCAP_ITERATOR_REMOVE_F(xccdf_plain_text)
 
 XCCDF_ITEM_ADDER_REG(benchmark, result, results)
 XCCDF_ITEM_ADDER_REG(benchmark, rule, content)
