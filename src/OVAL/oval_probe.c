@@ -136,11 +136,52 @@ oval_subtype_t oval_str2subtype(const char *str)
         return (d == NULL ? OVAL_SUBTYPE_UNKNOWN : d->type);
 }
 
+static struct oval_string_map *_obj_collect_var_refs(struct oval_object *obj)
+{
+	struct oval_string_map *vm;
+
+	vm = oval_string_map_new();
+
+	return vm;
+}
+
+static void _syschar_add_bindings(struct oval_syschar *sc, struct oval_string_map *vm)
+{
+	struct oval_iterator *var_itr;
+
+	var_itr = oval_string_map_values(vm);
+	while (oval_collection_iterator_has_more(var_itr)) {
+		struct oval_variable *var;
+		struct oval_value_iterator *val_itr;
+		struct oval_variable_binding *binding;
+
+		var = oval_collection_iterator_next(var_itr);
+		binding = oval_variable_binding_new(var, NULL);
+
+		val_itr = oval_variable_get_values(var);
+		while (oval_value_iterator_has_more(val_itr)) {
+			struct oval_value *val;
+			char *txt;
+
+			val = oval_value_iterator_next(val_itr);
+			txt = oval_value_get_text(val);
+			oval_variable_binding_add_value(binding, txt);
+		}
+		oval_value_iterator_free(val_itr);
+
+		oval_syschar_add_variable_binding(sc, binding);
+	}
+	oval_collection_iterator_free(var_itr);
+
+	oval_string_map_free(vm, NULL);
+}
+
 struct oval_syschar *oval_probe_object_query(oval_probe_session_t *psess, struct oval_object *object, int flags)
 {
         struct oval_syschar *o_sys;
         oval_subtype_t type;
         oval_ph_t *ph;
+	struct oval_string_map *vm;
 
         type = oval_object_get_subtype(object);
         ph   = oval_probe_handler_get(psess->ph, type);
@@ -150,11 +191,15 @@ struct oval_syschar *oval_probe_object_query(oval_probe_session_t *psess, struct
                 return(NULL);
         }
 
+	vm = _obj_collect_var_refs(object);
         o_sys = NULL;
 
         if (ph->func(type, ph->uptr, PROBE_HANDLER_ACT_EVAL, object, &o_sys, flags) != 0) {
+		oval_string_map_free(vm, NULL);
                 return(NULL);
         }
+
+	_syschar_add_bindings(o_sys, vm);
 
         return(o_sys);
 }
