@@ -1301,7 +1301,7 @@ static int _oval_result_test_binding_parse(xmlTextReaderPtr reader, struct oval_
 
 	xmlChar *value = xmlTextReaderValue(reader);
 
-	struct oval_variable_binding *binding = oval_variable_binding_new(variable, (char *)value);
+	struct oval_variable_binding *binding = oval_variable_binding_new(variable, oscap_strdup((char *) value));
 	oval_result_test_add_binding(TEST, binding);
 
 	xmlFree(value);
@@ -1386,16 +1386,22 @@ int oval_result_test_parse_tag
 	return return_code;
 }
 
-static xmlNode *_oval_result_binding_to_dom(struct oval_variable_binding *binding, xmlDocPtr doc, xmlNode * parent) {
-	char *value = oval_variable_binding_get_value(binding);
+static void _oval_result_binding_to_dom(struct oval_variable_binding *binding, xmlDocPtr doc, xmlNode *parent) {
 	xmlNs *ns_results = xmlSearchNsByHref(doc, parent, OVAL_RESULTS_NAMESPACE);
-	xmlNode *binding_node = xmlNewChild(parent, ns_results, BAD_CAST "tested_variable", BAD_CAST value);
-
 	struct oval_variable *oval_variable = oval_variable_binding_get_variable(binding);
 	char *variable_id = oval_variable_get_id(oval_variable);
-	xmlNewProp(binding_node, BAD_CAST "variable_id", BAD_CAST variable_id);
+	struct oval_string_iterator *str_itr;
 
-	return binding_node;
+	str_itr = oval_variable_binding_get_values(binding);
+	while (oval_string_iterator_has_more(str_itr)) {
+		char *value;
+		xmlNode *binding_node;
+
+		value = oval_string_iterator_next(str_itr);
+		binding_node = xmlNewChild(parent, ns_results, BAD_CAST "tested_variable", BAD_CAST value);
+		xmlNewProp(binding_node, BAD_CAST "variable_id", BAD_CAST variable_id);
+	}
+	oval_string_iterator_free(str_itr);
 }
 
 static void _oval_result_test_initialize_bindings(struct oval_result_test *rslt_test)

@@ -994,7 +994,7 @@ void oval_variable_binding_set_variable(struct oval_variable_binding *, struct o
 /**
  * @memberof oval_variable_binding
  */
-void oval_variable_binding_set_value(struct oval_variable_binding *, char *);
+void oval_variable_binding_add_value(struct oval_variable_binding *, char *);
 /** @} */
 
 /**
@@ -1010,7 +1010,7 @@ struct oval_variable *oval_variable_binding_get_variable(struct oval_variable_bi
  * Get value of this binding.
  * @memberof oval_variable_binding
  */
-char *oval_variable_binding_get_value(struct oval_variable_binding *);
+struct oval_string_iterator *oval_variable_binding_get_values(struct oval_variable_binding *);
 /** @} */
 
 /**
