@@ -245,8 +245,8 @@ static struct oscap_action *oscap_action_new(void)
 	action->file_version = NULL;
 #ifdef ENABLE_CVSS
 	action->cvss_metrics = NULL;
+	action->force = false;
 #endif
-    action->force = false;
 	return action;
 }
 
