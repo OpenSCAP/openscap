@@ -12,7 +12,7 @@
 #         i=$[$i+1];
 # done
 
-ENV_VAR=( "PATH" "PWD" "HOME" "DISPLAY" "LANG" "EDITOR" )
+ENV_VAR=( "PATH" "PWD" "HOME" "LANG" "EDITOR" )
 
 I=0
 while [ $I -lt ${#ENV_VAR[@]} ]; do    
