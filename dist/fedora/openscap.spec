@@ -69,6 +69,9 @@ The %{name}-utils package contains various utilities based on %{name} library.
 %build
 %configure
 make %{?_smp_mflags}
+# Remove shebang from bash-completion script
+sed -i '/^#!.*bin/,+1 d' dist/bash_completion.d/oscap
+
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -82,6 +85,9 @@ install -p -m 644 dist/fedora/oscap-scan.sys  $RPM_BUILD_ROOT%{_sysconfdir}/sysc
 
 # create symlinks to default content
 ln -s  %{_datadir}/openscap/scap-fedora13-oval.xml %{buildroot}/%{_datadir}/openscap/scap-oval.xml
+# bash-completion script
+mkdir -p %{buildroot}%{_sysconfdir}/bash_completion.d
+install -pm 644 dist/bash_completion.d/oscap $RPM_BUILD_ROOT%{_sysconfdir}/bash_completion.d/oscap
 
 find $RPM_BUILD_ROOT -name '*.la' -exec rm -f {} ';'
 
@@ -135,7 +141,7 @@ fi
 %{_datadir}/openscap/scap-oval.xml
 %{_mandir}/man8/*
 %{_bindir}/*
-
+%{_sysconfdir}/bash_completion.d
 
 %changelog
 * Wed Jul 14 2010 Peter Vrabec <pvrabec@redhat.com> 0.6.0-1
