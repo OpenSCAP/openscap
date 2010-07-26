@@ -1032,7 +1032,7 @@ bool xccdf_policy_resolve(struct xccdf_policy * policy)
         if (item != NULL) {
             /* Proccess refine rule appliement */
             /* In r_rule we have refine rule that match  - no more then one !*/
-            if (xccdf_item_get_type(item) == XCCDF_VALUE) { 
+            if (xccdf_item_get_type(item) == XCCDF_GROUP) { 
                 /* Perform check of weight attribute  - ignore other attributes */
                 if (xccdf_refine_rule_get_weight(r_rule) == NAN) {
                         oscap_seterr(OSCAP_EFAMILY_XCCDF, XCCDF_EREFGROUPATTR, 
@@ -1155,6 +1155,132 @@ struct xccdf_score * xccdf_policy_get_score(struct xccdf_policy * policy, struct
     }
 
     return score;
+}
+
+static struct xccdf_refine_rule * xccdf_policy_get_refine_rules_by_rule(struct xccdf_policy * policy, struct xccdf_item * item)
+{
+    struct xccdf_refine_rule * r_rule = NULL;
+    struct xccdf_profile * profile = xccdf_policy_get_profile(policy);
+    if (profile == NULL) return NULL;
+
+    /* Get refine-rule for this item */
+    struct xccdf_refine_rule_iterator * r_rule_it = xccdf_profile_get_refine_rules(profile);
+    while (xccdf_refine_rule_iterator_has_more(r_rule_it)) {
+        r_rule = xccdf_refine_rule_iterator_next(r_rule_it);
+        if (!strcmp(xccdf_refine_rule_get_item(r_rule), xccdf_rule_get_id((struct xccdf_rule *) item)))
+            break;
+        else r_rule = NULL;
+    }
+    xccdf_refine_rule_iterator_free(r_rule_it);
+
+    return r_rule;
+}
+
+static const char * xccdf_policy_get_value_of_item(struct xccdf_policy * policy, struct xccdf_item * item)
+{
+    struct xccdf_refine_value * r_value = NULL;
+    struct xccdf_setvalue * s_value = NULL;
+    const char * selector = NULL;
+    struct xccdf_profile * profile = xccdf_policy_get_profile(policy);
+    if (profile == NULL) return NULL;
+
+    /* Get set_value for this item */
+    struct xccdf_setvalue_iterator * s_value_it = xccdf_profile_get_setvalues(profile);
+    while (xccdf_setvalue_iterator_has_more(s_value_it)) {
+        s_value = xccdf_setvalue_iterator_next(s_value_it);
+        if (!strcmp(xccdf_setvalue_get_item(s_value), xccdf_value_get_id((struct xccdf_value *) item)))
+            break;
+        else s_value = NULL;
+    }
+    xccdf_setvalue_iterator_free(s_value_it);
+    if (s_value != NULL) return xccdf_setvalue_get_value(s_value);
+
+    /* We don't have set-value in profile, look for refine-value */
+    struct xccdf_refine_value_iterator * r_value_it = xccdf_profile_get_refine_values(profile);
+    while (xccdf_refine_value_iterator_has_more(r_value_it)) {
+        r_value = xccdf_refine_value_iterator_next(r_value_it);
+        if (!strcmp(xccdf_refine_value_get_item(r_value), xccdf_value_get_id((struct xccdf_value *) item)))
+            break;
+        else r_value = NULL;
+    }
+    xccdf_refine_value_iterator_free(r_value_it);
+    if (r_value != NULL) {
+        selector = xccdf_refine_value_get_selector(r_value);
+        struct xccdf_value_instance * instance = xccdf_value_get_instance_by_selector((struct xccdf_value *) item, selector);
+        return xccdf_value_instance_get_value(instance);
+    }
+
+    return NULL;
+}
+
+static int xccdf_policy_get_refine_value_oper(struct xccdf_policy * policy, struct xccdf_item * item)
+{
+    struct xccdf_refine_value * r_value = NULL;
+    struct xccdf_profile * profile = xccdf_policy_get_profile(policy);
+    if (profile == NULL) return -1;
+
+    /* We don't have set-value in profile, look for refine-value */
+    struct xccdf_refine_value_iterator * r_value_it = xccdf_profile_get_refine_values(profile);
+    while (xccdf_refine_value_iterator_has_more(r_value_it)) {
+        r_value = xccdf_refine_value_iterator_next(r_value_it);
+        if (!strcmp(xccdf_refine_value_get_item(r_value), xccdf_value_get_id((struct xccdf_value *) item)))
+            break;
+        else r_value = NULL;
+    }
+    xccdf_refine_value_iterator_free(r_value_it);
+    if (r_value != NULL) {
+        return xccdf_refine_value_get_oper(r_value);
+    }
+    return -1;
+}
+
+struct xccdf_item * xccdf_policy_tailor_item(struct xccdf_policy * policy, struct xccdf_item * item)
+{
+    struct xccdf_item * new_item = NULL;
+
+    xccdf_type_t type = xccdf_item_get_type(item);
+    switch (type) {
+        case XCCDF_RULE: {
+            struct xccdf_refine_rule * r_rule = xccdf_policy_get_refine_rules_by_rule(policy, item);
+            if (r_rule == NULL) return item;
+
+            new_item = (struct xccdf_item *) xccdf_rule_clone((struct xccdf_rule *) item);
+            if (xccdf_refine_rule_get_role(r_rule) != NAN)
+                xccdf_rule_set_role((struct xccdf_rule *) new_item, xccdf_refine_rule_get_role(r_rule));
+            if (xccdf_refine_rule_get_severity(r_rule) != NAN)
+                xccdf_rule_set_severity((struct xccdf_rule *) new_item, xccdf_refine_rule_get_severity(r_rule));
+            break;
+        }
+        case XCCDF_GROUP: {
+            struct xccdf_refine_rule * r_rule = xccdf_policy_get_refine_rules_by_rule(policy, item);
+            if (r_rule == NULL) return item;
+
+            new_item = (struct xccdf_item *) xccdf_group_clone((struct xccdf_group *) item);
+            if (xccdf_refine_rule_get_weight(r_rule) != NAN)
+                xccdf_group_set_weight((struct xccdf_group *) new_item, xccdf_refine_rule_get_weight(r_rule));
+            else {
+                xccdf_group_free(new_item);
+                return item;
+            }
+            break;
+        }
+        case XCCDF_VALUE: {
+            const char * value = xccdf_policy_get_value_of_item(policy, item);
+            if (value == NULL) return NULL;
+
+            new_item = (struct xccdf_item *) xccdf_value_clone((struct xccdf_value *) item);
+            struct xccdf_value_instance * instance = xccdf_value_get_instance_by_selector((struct xccdf_value *) new_item, NULL);
+            xccdf_value_instance_set_defval_string(instance, value);
+
+            int oper = xccdf_policy_get_refine_value_oper(policy, item);
+            if (oper == -1) break;
+            xccdf_value_set_oper(item, (xccdf_operator_t) oper);
+            break;
+        }
+        default:
+            return NULL;
+    }
+    return new_item;
 }
 
 

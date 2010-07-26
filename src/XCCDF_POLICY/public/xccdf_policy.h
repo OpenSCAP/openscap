@@ -387,6 +387,14 @@ struct xccdf_result *  xccdf_policy_evaluate(struct xccdf_policy * policy);
  */
 bool xccdf_policy_resolve(struct xccdf_policy * policy);
 
+/**
+ * Clone the item and tailor it against given policy (profile)
+ * @param policy Policy with profile
+ * @param item XCCDF item to be tailored
+ * @return new item that has to be freed by user
+ */
+struct xccdf_item * xccdf_policy_tailor_item(struct xccdf_policy * policy, struct xccdf_item * item);
+
 /************************************************************/
 /** @} End of Evaluators group */
 
