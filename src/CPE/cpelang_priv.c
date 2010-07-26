@@ -350,7 +350,6 @@ struct cpe_platform *cpe_platform_parse(xmlTextReaderPtr reader)
 		// get the next node
 		xmlTextReaderNextNode(reader);
 	}
-
 	return ret;
 }
 
@@ -405,28 +404,30 @@ struct cpe_testexpr *cpe_testexpr_parse(xmlTextReaderPtr reader)
 	// go to next node
 	// skip to next node
 	xmlTextReaderNextNode(reader);
-	//ret->meta.expr = cpe_testexpr_new();
-
+        int depth = xmlTextReaderDepth(reader);
+        //printf("[%d] logical-test\n", depth);
 	// while it's not 'logical-test' or it's not ended element ..
-	while (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_LOGICAL_TEST_STR) != 0 ||
-	       xmlTextReaderNodeType(reader) != XML_READER_TYPE_END_ELEMENT) {
+	//while (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_FACT_REF_STR) ||
+	//       !xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_LOGICAL_TEST_STR)) {
+        while (xmlTextReaderDepth(reader) >= depth) {
+
+                //printf("[%d:%d] logical-test::%s\n", depth, xmlTextReaderDepth(reader), xmlTextReaderConstLocalName(reader));
 
 		if (xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT) {
 			xmlTextReaderNextNode(reader);
 			continue;
 		}
 		elem_cnt++;
-		/*
-		// realloc the current structure to handle more fact-refs or logical-tests
-		ret->meta.expr =
-		    (struct cpe_testexpr *)oscap_realloc(ret->meta.expr, (elem_cnt + 1) * sizeof(struct cpe_testexpr));
-		*/
 
 		// .. and the next node is logical-test element, we need recursive call
 		if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_LOGICAL_TEST_STR) &&
 		    xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
 			// ret->meta.expr[elem_cnt - 1] = *(cpe_testexpr_parse(reader));
 			oscap_list_add(ret->meta.expr, cpe_testexpr_parse(reader));
+                        if (xmlTextReaderDepth(reader) < depth) {
+                                return ret;
+                        } else if (xmlTextReaderDepth(reader) == depth) continue;
+
 		} else		// .. or it's fact-ref only
 		if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_FACT_REF_STR) &&
 			    xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
@@ -435,14 +436,9 @@ struct cpe_testexpr *cpe_testexpr_parse(xmlTextReaderPtr reader)
 			subexpr->oper = CPE_LANG_OPER_MATCH;
 			temp = xmlTextReaderGetAttribute(reader, ATTR_NAME_STR);
 			subexpr->meta.cpe = cpe_name_new((char *)temp);
+                        //printf("FACT-REF: %s\n", temp);
 			xmlFree(temp);
 			oscap_list_add(ret->meta.expr, subexpr);
-			/*
-			ret->meta.expr[elem_cnt - 1].oper = CPE_LANG_OPER_MATCH;
-			temp = xmlTextReaderGetAttribute(reader, ATTR_NAME_STR);
-			ret->meta.expr[elem_cnt - 1].meta.cpe = cpe_name_new((char *)temp);
-			xmlFree(temp);
-			*/
 		} else if (xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
 			oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EXMLELEM, "Unknown XML element in test expression");
 		}

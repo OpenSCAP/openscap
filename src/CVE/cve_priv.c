@@ -501,6 +501,7 @@ struct cve_entry *cve_entry_parse(xmlTextReaderPtr reader)
 			conf->expr = cpe_testexpr_parse(reader);
 			if (conf)
 				oscap_list_add(ret->configurations, conf);
+                        continue;
 		} else
 		    if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_VULNERABLE_SOFTWARE_LIST_STR) &&
 			xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
