@@ -1,5 +1,6 @@
 #include <arpa/inet.h>
 #include <sys/socket.h>
+#include <netinet/in.h>
 #include <net/if.h>
 #include <netdb.h>
 #include <ifaddrs.h>
