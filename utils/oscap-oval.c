@@ -301,6 +301,6 @@ int getopt_oval(int argc, char **argv, struct oscap_action *action)
 	}
 	action->url_oval = argv[optind];
 
-	return 0;
+	return 1;
 }
 

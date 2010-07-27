@@ -291,6 +291,6 @@ int getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 		action->url_xccdf = argv[optind];
 	}
 
-	return 0;
+	return 1;
 }
 

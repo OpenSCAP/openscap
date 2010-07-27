@@ -90,16 +90,16 @@ int main(int argc, char **argv)
 		print_usage(argv[0], stderr);
 		return 1;
 	}
-
+        int ret = -1;
 	if ((!strcmp(argv[optind], "xccdf")) || (!strcmp(argv[optind], "XCCDF"))) {
 #ifdef ENABLE_XCCDF
-		if (getopt_xccdf(argc, argv, action) == -1)
-			return 1;
+		if ((ret = getopt_xccdf(argc, argv, action)) != 1)
+			return ret;
 #endif
 	} else if ((!strcmp(argv[optind], "oval")) || (!strcmp(argv[optind], "OVAL"))) {
 #ifdef ENABLE_OVAL
-		if (getopt_oval(argc, argv, action) == -1)
-			return 1;
+		if ((ret = getopt_oval(argc, argv, action)) != 1)
+			return ret;
 #endif
 	} else if ((!strcmp(argv[optind], "cvss")) || (!strcmp(argv[optind], "CVSS"))) {
 #ifdef ENABLE_CVSS
