@@ -32,8 +32,6 @@
 #include "util.h"
 #include "public/debug.h"
 
-OSCAP_HIDDEN_START;
-
 #if defined(NDEBUG)
 # define oscap_dprintf(...) while(0)
 # define oscap_dlprintf(...) while(0)
@@ -104,7 +102,5 @@ void __oscap_dlprintf(int level, const char *file, const char *fn, size_t line, 
  */
 # define oscap_dlprintf(l, ...) __dlprintf_wrapper (l, __VA_ARGS__)
 #endif                          /* NDEBUG */
-
-OSCAP_HIDDEN_END;
 
 #endif
