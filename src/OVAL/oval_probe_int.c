@@ -78,13 +78,16 @@ static struct oval_syschar *oval_probe_envvar_eval(struct oval_object *obj, stru
 
         var_name  = oval_value_get_text(val);
         var_value = getenv(var_name);
+	items     = SEXP_list_new(NULL);
 
-	items = SEXP_list_new(r0= probe_item_creat("environmentvariable_item", NULL,
-						   "name",  NULL, r1 = SEXP_string_new(var_name,  strlen(var_name)),
-						   "value", NULL, r2 = (var_value == NULL ?
-									NULL : SEXP_string_new(var_value, strlen(var_value))),
-						   NULL),
-			      NULL);
+	if (var_value != NULL) {
+		r0 = probe_item_creat("environmentvariable_item", NULL,
+				      "name",  NULL, r1 = SEXP_string_new(var_name,  strlen(var_name)),
+				      "value", NULL, r2 = SEXP_string_new(var_value, strlen(var_value)),
+				      NULL);
+		SEXP_list_add(items, r0);
+		SEXP_free (r0);
+	}
 
 	cobj = _probe_cobj_new(SYSCHAR_FLAG_UNKNOWN, items);
 	sys  = oval_sexp2sysch(cobj, model, obj);

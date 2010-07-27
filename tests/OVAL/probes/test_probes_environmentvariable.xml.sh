@@ -12,10 +12,10 @@
 #         i=$[$i+1];
 # done
 
-ENV_VAR=( "PATH" "PWD" "HOME" "LANG" "EDITOR" )
+ENV_VAR=(`env | sed -n 's|^\([A-Z]*\)=[a-zA-Z0-9/].*$|\1|p'`)
 
 I=0
-while [ $I -lt ${#ENV_VAR[@]} ]; do    
+while [ $I -lt ${#ENV_VAR[@]} ]; do
     VAR_VAL[$I]="`env | grep -e "^${ENV_VAR[$I]}" | awk -F '=' '{print $2}'`"
     I=$[$I+1]
 done
