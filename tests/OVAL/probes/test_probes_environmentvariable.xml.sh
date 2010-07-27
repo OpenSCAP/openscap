@@ -12,11 +12,12 @@
 #         i=$[$i+1];
 # done
 
-ENV_VAR=(`env | sed -n 's|^\([A-Z]*\)=[a-zA-Z0-9/].*$|\1|p'`)
+ENV_VAR=(`env | sed -n 's|^\([A-Z]*\)=[a-zA-Z0-9/]\{1,\}$|\1|p' | egrep -v SHLVL`)
 
 I=0
 while [ $I -lt ${#ENV_VAR[@]} ]; do
-    VAR_VAL[$I]="`env | grep -e "^${ENV_VAR[$I]}" | awk -F '=' '{print $2}'`"
+    eval "VAL=\$${ENV_VAR[$I]}"
+    VAR_VAL[$I]=$VAL
     I=$[$I+1]
 done
 

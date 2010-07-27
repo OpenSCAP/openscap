@@ -86,12 +86,12 @@ static struct oval_syschar *oval_probe_envvar_eval(struct oval_object *obj, stru
 				      "value", NULL, r2 = SEXP_string_new(var_value, strlen(var_value)),
 				      NULL);
 		SEXP_list_add(items, r0);
-		SEXP_free (r0);
+		SEXP_vfree (r0, r1, r2, NULL);
 	}
 
 	cobj = _probe_cobj_new(SYSCHAR_FLAG_UNKNOWN, items);
 	sys  = oval_sexp2sysch(cobj, model, obj);
-	SEXP_vfree(r0, r1, items, cobj, r2, NULL);
+	SEXP_vfree(items, cobj, NULL);
 
         return(sys);
 }
