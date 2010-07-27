@@ -1086,7 +1086,19 @@ struct xccdf_result * xccdf_policy_evaluate(struct xccdf_policy * policy)
     /* Add result to policy */
     struct xccdf_result * result = xccdf_result_new();
     xccdf_result_set_start_time(result, time(NULL));
-    xccdf_result_set_id(result, "Unique ID"); // TODO
+
+    /** Set ID of TestResult */
+    const char * id = NULL;
+    if (xccdf_policy_get_profile(policy) != NULL)
+        id = oscap_strdup(xccdf_profile_get_id(xccdf_policy_get_profile(policy)));
+    else
+        id = oscap_strdup("default-profile");
+
+    char rid[11+strlen(id)];
+    sprintf(rid, "OSCAP-Test-%s", id);
+    xccdf_result_set_id(result, rid);
+    oscap_free(id);
+    /** */
 
     /* Get all constant information */
     benchmark = xccdf_policy_model_get_benchmark(xccdf_policy_get_model(policy));
@@ -1271,6 +1283,11 @@ struct xccdf_item * xccdf_policy_tailor_item(struct xccdf_policy * policy, struc
             new_item = (struct xccdf_item *) xccdf_value_clone((struct xccdf_value *) item);
             struct xccdf_value_instance * instance = xccdf_value_get_instance_by_selector((struct xccdf_value *) new_item, NULL);
             xccdf_value_instance_set_defval_string(instance, value);
+            /*struct xccdf_value_instance_iterator * instance_it = xccdf_value_get_instances((struct xccdf_value *) new_item);
+            while (xccdf_value_instance_iterator_has_more(instance_it)) {
+                instance = xccdf_value_instance_iterator_next(instance_it);
+                xccdf_value_instance_iterator_remove(instance_it);
+            }*/
 
             int oper = xccdf_policy_get_refine_value_oper(policy, item);
             if (oper == -1) break;

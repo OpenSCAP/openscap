@@ -302,7 +302,7 @@ void oval_agent_export_sysinfo_to_xccdf_result(struct oval_agent_session * sess,
 	sysinfo = oval_syschar_model_get_sysinfo(sys_model);
 
         /* Set the test system */
-	xccdf_result_set_test_system(ritem, oval_sysinfo_get_primary_host_name(sysinfo));
+        xccdf_result_add_target(ritem, oval_sysinfo_get_primary_host_name(sysinfo));
 
 	struct xccdf_target_fact *fact = NULL;
 	struct oval_sysint *sysint = NULL;
