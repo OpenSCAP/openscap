@@ -1608,6 +1608,32 @@ function test_crapi_mdigest {
     return 0
 }
 
+function test_xinetd_parser {
+    local ret_val=0;
+
+    ./test_xinetd_parser ${srcdir}/OVAL/probes/xinetd_A.conf foo tcp
+    if [ $? -ne 3 ]; then
+	ret_val=$[$ret_val + 1]
+    fi
+
+    ./test_xinetd_parser ${srcdir}/OVAL/probes/xinetd_B.conf foo tcp
+    if [ $? -ne 0 ]; then
+	ret_val=$[$ret_val + 1]
+    fi
+
+    ./test_xinetd_parser ${srcdir}/OVAL/probes/xinetd_C.conf a tcp
+    if [ $? -ne 0 ]; then
+	ret_val=$[$ret_val + 1]
+    fi
+
+    ./test_xinetd_parser ${srcdir}/OVAL/probes/xinetd_D.conf f udp
+    if [ $? -ne 0 ]; then
+	ret_val=$[$ret_val + 1]
+    fi
+
+    return $ret_val
+}
+
 # Cleanup.
 function test_probes_cleanup {     
     local ret_val=0;    
@@ -1778,6 +1804,11 @@ test_crapi_mdigest
 ret_val=$?
 report_result "test_crapi_mdigest" $ret_val  
 result=$[$result+$ret_val]   
+
+test_xinetd_parser
+ret_val=$?
+report_result "test_xinetd_parser" $ret_val
+result=$[$result+$ret_val]
 
 test_probes_cleanup
 ret_val=$?

@@ -58,7 +58,8 @@ check_PROGRAMS +=	sexp_parser \
 			test_spb_api \
 			sexp_concurency \
 			test_crapi_digest \
-			test_crapi_mdigest
+			test_crapi_mdigest \
+			test_xinetd_parser
 #			test_probe-api \
 #			test_error \
 #			test_probes2
@@ -77,7 +78,9 @@ test_probes_CFLAGS =	-I$(top_srcdir)/src/OVAL @libxml_cflags@
 test_sysinfo_SOURCES =	OVAL/probes/test_sysinfo.c
 test_sysinfo_CFLAGS =	-I$(top_srcdir)/src/OVAL @libxml_cflags@
 test_interface_SOURCES = OVAL/probes/test_interface.c
-test_interface_CFLAGS =	
+test_interface_CFLAGS =
+test_xinetd_parser_SOURCES = OVAL/probes/test_xinetd_parser.c
+test_xinetd_parser_CFLAGS= -I$(top_srcdir) -I$(top_srcdir)/src/common -I$(top_srcdir)/src/common/public
 
 test_crapi_digest_SOURCES= OVAL/probes/crapi/test_crapi_digest.c
 test_crapi_digest_CFLAGS= -I$(top_srcdir)/src/OVAL/probes/
@@ -108,7 +111,11 @@ EXTRA_DIST += OVAL/SEAP/test_seap.sh 	                    \
               OVAL/probes/test_probes_inetlisteningservers.xml.sh \
               OVAL/probes/test_probes_uname.xml.sh \
               OVAL/probes/test_probes_environmentvariable.xml.sh \
-	      OVAL/probes/vgtest-probes.sh
+	      OVAL/probes/vgtest-probes.sh \
+	      OVAL/probes/xinetd_A.conf \
+	      OVAL/probes/xinetd_B.conf \
+	      OVAL/probes/xinetd_C.conf \
+	      OVAL/probes/xinetd_D.conf
 
 if ENABLE_VALGRIND_TESTS
 EXTRA_DIST += vgrun.sh
