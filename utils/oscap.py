@@ -146,7 +146,7 @@ class XCCDF_Handler(object):
 
     def __set_policy(self, policy_id):
         if policy_id == None: 
-            self.policy = self.policy_model.policies.next()
+            self.policy = self.policy_model.policies[0]
             return
 
         self.policy = None
