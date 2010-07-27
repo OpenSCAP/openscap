@@ -66,6 +66,7 @@ static struct oval_syschar *oval_probe_envvar_eval(struct oval_object *obj, stru
         struct oval_syschar *sys;
         struct oval_value   *val;
         char *var_name, *var_value;
+	SEXP_t *items, *r0, *r1, *r2, *cobj;
 
         val = oval_object_getentval(obj, "name");
 
@@ -78,20 +79,16 @@ static struct oval_syschar *oval_probe_envvar_eval(struct oval_object *obj, stru
         var_name  = oval_value_get_text(val);
         var_value = getenv(var_name);
 
-        if (var_value == NULL)
-                sys = oval_syschar_new(model, obj);
-        else {
-                SEXP_t *items, *r0, *r1, *r2, *cobj;
+	items = SEXP_list_new(r0= probe_item_creat("environmentvariable_item", NULL,
+						   "name",  NULL, r1 = SEXP_string_new(var_name,  strlen(var_name)),
+						   "value", NULL, r2 = (var_value == NULL ?
+									NULL : SEXP_string_new(var_value, strlen(var_value))),
+						   NULL),
+			      NULL);
 
-                items = SEXP_list_new(r0= probe_item_creat("environmentvariable_item", NULL,
-                                                           "name",  NULL, r1 = SEXP_string_new(var_name,  strlen(var_name)),
-                                                           "value", NULL, r2 = SEXP_string_new(var_value, strlen(var_value)),
-                                                           NULL),
-                                      NULL);
-                cobj = _probe_cobj_new(SYSCHAR_FLAG_UNKNOWN, items);
-                sys  = oval_sexp2sysch(cobj, model, obj);
-                SEXP_vfree(r0, r1, r2, items, cobj, NULL);
-        }
+	cobj = _probe_cobj_new(SYSCHAR_FLAG_UNKNOWN, items);
+	sys  = oval_sexp2sysch(cobj, model, obj);
+	SEXP_vfree(r0, r1, items, cobj, r2, NULL);
 
         return(sys);
 }
