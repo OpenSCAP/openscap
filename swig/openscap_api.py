@@ -47,6 +47,48 @@ else:
 
 del version_info
 
+class OSCAP_List(list):
+
+    def remove(self, item):
+
+        try:
+            self.iterator.reset()
+            while self.iterator.has_more():
+                litem = self.iterator.next()
+                if litem.instance == item.instance:
+                    self.iterator.remove()
+            self.generate(self.iterator)
+        except NameError:
+            raise Exception, "Removing %s items throught oscap list is not allowed. Please use appropriate function." \
+                        % (self.iterator.object[:self.iterator.object.find("_iterator")],)
+
+    def generate(self, iterator):
+        self.iterator = iterator
+
+        while iterator.has_more():
+            list.append(self, iterator.next())
+
+    def append(self, item, n=1):
+        raise Exception, "Append %s item throught oscap list is not allowed. Please use appropriate function." \
+                        % (self.iterator.object[:self.iterator.object.find("_iterator")],)
+
+    def extend(self, item, n=1):
+        raise Exception, "Extending %s items throught oscap list is not allowed. Please use appropriate function." \
+                        % (self.iterator.object[:self.iterator.object.find("_iterator")],)
+
+    def insert(self, item, n=1):
+        raise Exception, "Inserting %s items to oscap list is not allowed. Please use appropriate function." \
+                        % (self.iterator.object[:self.iterator.object.find("_iterator")],)
+
+    def sort(self, item, n=1):
+        raise Exception, "Sorting %s items in oscap list is not allowed." \
+                        % (self.iterator.object[:self.iterator.object.find("_iterator")],)
+
+    def reverse(self, item, n=1):
+        raise Exception, "Reversing %s items in oscap list is not allowed." \
+                        % (self.iterator.object[:self.iterator.object.find("_iterator")],)
+
+
 # Abstract class of OSCAP Object
 class OSCAP_Object(object):
 
@@ -58,10 +100,8 @@ class OSCAP_Object(object):
     @staticmethod
     def new(retobj):
         if type(retobj).__name__ == 'SwigPyObject':
-            # If there is "struct <name> *":
-            if retobj.__repr__().split("'")[1].split()[0] == "struct": structure = retobj.__repr__().split("'")[1].split()[1]
-            # else there is "<name> ..."
-            else: structure = retobj.__repr__().split("'")[1].split()[0]
+            # Extract the name of structure from "<num>_p_<name>"
+            structure = retobj.__str__()[retobj.__str__().find("_p_")+3:]
             return OSCAP_Object(structure, retobj)
         else: return retobj
 
@@ -77,21 +117,23 @@ class OSCAP_Object(object):
                     newargs += (arg.instance,)
                 else: newargs += (arg,)
 
-            try:
-                retobj = func()
+            try: retobj = func()
             except TypeError as err:
-                try:
-                    retobj = func(self.instance)
+                try: retobj = func(self.instance)
                 except TypeError as err:
-                    try:
-                        retobj = func(*newargs)
+                    try: retobj = func(*newargs)
                     except TypeError as err:
-                        try:
-                            retobj = func(self.instance, *newargs)
+                        try: retobj = func(self.instance, *newargs)
                         except TypeError as err:
                             raise TypeError("Wrong number of arguments in function %s" % (func.__name__,))
 
             if retobj == None: return None
+            if retobj.__str__().find("iterator") != -1:
+                # We have an iterator here
+                list = OSCAP_List()
+                list.generate( OSCAP_Object.new(retobj) )
+                list.object = self.object
+                return list
             return OSCAP_Object.new(retobj)
         
         return __getter_wrapper
@@ -191,6 +233,17 @@ class OSCAP_Object(object):
     def query_objects(self):
         if self.object != "oval_probe_session_t": raise TypeError("Wrong call of oval_probe_session_query_objects function on %s" % (self.object,))
         return OSCAP.oval_probe_session_query_objects(self.instance)
+
+    """ ********* Implementation of required high level functions ********* """
+
+    def get_tailor_items(self):
+        if self.object != "xccdf_polcy": raise TypeError("Wrong call of \"get_tailor_items\" function. Should be xccdf_policy (have %s)" %(self.object,))
+        benchmark = self.model.benchmark
+        profile = self.profile
+        value_list = self.model.benchmark.values
+        for value in value_list:
+            pass
+
 
 # ------------------------------------------------------------------------------------------------------------
 # XCCDF

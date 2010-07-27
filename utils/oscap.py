@@ -27,6 +27,37 @@ from openscap_api import *
 import sys, getopt, string
 
 VERBOSE = 0
+LINE_LEN = 80
+
+COLORS = {  '':'', "black":"30", "red":"31", "green":"32", "brown":"33", "blue":"34",
+        "purple":"35", "cyan":"36", "lgray":"37", "gray":"1;30", "lred":"1;31",
+        "lgreen":"1;32", "yellow":"1;33", "lblue":"1;34", "pink":"1;35",
+        "lcyan":"1;36", "white":"1;37" }
+
+XCCDF_RESULT = ["", "green", "red", "lred", "gray", "white", "white", "white", "blue", "yellow"]
+OVAL_RESULT = {0:"", 1:"green", 2:"red", 4:"gray", 8:"lred", 16:"white", 32:"white"}
+
+def _color(color, text):
+    return "\033[%sm%s\033[0m" % (COLORS[color], text)
+
+def _bold(text):
+    return "\033[1m%s\033[0;0m" % text
+
+def print_save(prefix, indent, string):
+
+    if len(string) < LINE_LEN:
+        print prefix, indent, string
+    else:
+        first = 0
+        last_word_len = len(string.split()[-1])
+        for n in range(len(string)/LINE_LEN+1):
+            last = string[first+LINE_LEN:].find(" ") + first+LINE_LEN
+            if last > (len(string)-last_word_len):
+                last = len(string)
+            s = string[first:last]
+            first = last+1
+            if len(s) > 0:
+                print indent, s
 
 class OSCAP_Action(object):
 
@@ -61,6 +92,7 @@ class XCCDF_Handler(object):
 
         self.def_model    = oval.definition_model_import(self.action.f_oval)
         self.benchmark    = xccdf.benchmark_import(self.action.f_xccdf)
+        assert self.benchmark.instance != None, "Benchmark loading failed: %s" % (self.action.f_xccdf,)
         self.sess         = oval.agent.new_session(self.def_model)
         self.policy_model = xccdf.policy_model(self.benchmark)
         self.__set_policy(self.action.profile)
@@ -106,11 +138,11 @@ class XCCDF_Handler(object):
 
     def __callback(self, msg, plugin):
         result = msg.user2num
-        print "Rule \"%s\"" % (msg.user1str, )
-        print "  Title:\r\t\t", msg.user3str
-        print "  Descroption:\r\t\t", msg.string
-        print "  Result:\r\t\t", xccdf.test_result_type.get_text(msg.user2num)
-        return True
+        print_save( "\nRule ID:", "\r\t\t", _bold(msg.user1str) )
+        print_save( "Title:", "\r\t\t", msg.user3str )
+        print_save( "Descroption:", "\r\t\t", msg.string )
+        print_save( "Result:", "\r\t\t", _bold(_color(XCCDF_RESULT[result], xccdf.test_result_type.get_text(msg.user2num))) )
+        return 0
 
     def __set_policy(self, policy_id):
         if policy_id == None: 
@@ -118,9 +150,8 @@ class XCCDF_Handler(object):
             return
 
         self.policy = None
-        policy_it = self.policy_model.policies
-        while policy_it.has_more():
-            policy = policy_it.next()
+        policy_list = self.policy_model.policies
+        for policy in policy_list:
             if policy.id == policy_id:
                 self.policy = policy
         if self.policy == None: raise AttributeError("No policy with '%s' profile id in Policy Model" % (policy_id,))
@@ -139,9 +170,9 @@ class XCCDF_Handler(object):
 
         oval.agent_export_sysinfo_to_xccdf_result(self.sess, result)
 
-        model_it = self.benchmark.models
-        while model_it.has_more():
-            result.score = self.policy.score(result, model_it.next().system)
+        model_list = self.benchmark.models
+        for model in  model_list:
+            result.score = self.policy.score(result, model.system)
 
         return result.export(self.action.f_results)
 
@@ -239,9 +270,11 @@ class OVAL_Handler(object):
         return action
 
     def __callback(self, msg, plugin):
-        print "%s" % (msg.string)
-        print "Evalutated definition %s: %s" % (msg.user1str, oval.result.get_text(msg.user2num))
-        return True
+        print "\nID: \r\t\t", _bold(msg.user1str)
+        print_save( "Title:", "\r\t\t", msg.user3str )
+        print_save( "Description:", "\r\t\t", msg.string )
+        print "Result: \r\t\t", _bold(_color(OVAL_RESULT[msg.user2num], oval.result.get_text(msg.user2num)))
+        return 0
 
     def __evaluate(self):
         self.result = oval.agent_eval_system(self.sess, self.__callback, None)
@@ -342,7 +375,7 @@ def main():
     else: raise AttributeError("Bad module option '%s'" %(args[0],))
 
     module.eval()
-    module.export()
+    if module.action.f_results != None: module.export()
     
 if __name__ == "__main__":
     main()
