@@ -423,6 +423,12 @@ struct xccdf_policy * xccdf_policy_iterator_next(struct xccdf_policy_iterator *i
 void xccdf_policy_iterator_free(struct xccdf_policy_iterator *it);
 
 /**
+ * Reset the iterator structure (it will point to the first item in the list)
+ * @memberof xccdf_policy_iterator
+ */
+void xccdf_policy_iterator_reset(struct xccdf_policy_iterator *it);
+
+/**
  * Return true if the list is not empty, false otherwise
  * @memberof xccdf_value_binding_iterator
  */

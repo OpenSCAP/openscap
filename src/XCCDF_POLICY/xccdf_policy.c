@@ -104,6 +104,7 @@ OSCAP_GETTER(struct xccdf_profile *, xccdf_policy, profile)
 OSCAP_IGETINS(xccdf_select, xccdf_policy, rules, rule)
 OSCAP_IGETINS_GEN(xccdf_value_binding, xccdf_policy, values, value)
 OSCAP_IGETINS(xccdf_result, xccdf_policy, results, result)
+OSCAP_ITERATOR_RESET(xccdf_policy)
 
 /**
  * XCCDF value binding structure is binding between Refine values, Set values, 

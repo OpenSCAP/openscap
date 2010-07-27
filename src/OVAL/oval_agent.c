@@ -155,9 +155,10 @@ int oval_agent_eval_system(oval_agent_session_t * ag_sess, oscap_reporter cb, vo
                     struct oscap_reporter_message * msg = oscap_reporter_message_new_fmt(
                             OSCAP_REPORTER_FAMILY_OVAL, /* FAMILY */
                             0,                           /* CODE */
-                            "Evalutated definition %s: %s\n", id, oval_result_get_text(result));
+                            oval_definition_get_description(oval_def));
                     oscap_reporter_message_set_user1str(msg, id);
                     oscap_reporter_message_set_user2num(msg, result);
+                    oscap_reporter_message_set_user3str(msg, oval_definition_get_title(oval_def));
                     ret = oscap_reporter_report(cb, msg, arg);
                     if ( ret!=0 ) {
 	                    oval_definition_iterator_free(oval_def_it);
