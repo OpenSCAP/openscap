@@ -49,7 +49,14 @@ typedef struct oval_sysdata {
 
 struct oval_sysdata *oval_sysdata_new(struct oval_syschar_model *model, const char *id)
 {
-	oval_sysdata_t *sysdata = (oval_sysdata_t *) oscap_alloc(sizeof(oval_sysdata_t));
+	oval_sysdata_t *sysdata;
+
+        if (model && oval_syschar_model_is_locked(model)) {
+                oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+                return NULL;
+        }
+
+	sysdata = (oval_sysdata_t *) oscap_alloc(sizeof(oval_sysdata_t));
 	if (sysdata == NULL)
 		return NULL;
 
@@ -60,6 +67,9 @@ struct oval_sysdata *oval_sysdata_new(struct oval_syschar_model *model, const ch
 	sysdata->message = NULL;
 	sysdata->items = oval_collection_new();
 	sysdata->model = model;
+
+	oval_syschar_model_add_sysdata(model, sysdata);
+
 	return sysdata;
 }
 
@@ -123,7 +133,6 @@ struct oval_sysdata *oval_sysdata_clone(struct oval_syschar_model *new_model, st
 	}
 	oval_sysitem_iterator_free(old_items);
 
-	oval_syschar_model_add_sysdata(new_model, new_data);
 	return new_data;
 }
 

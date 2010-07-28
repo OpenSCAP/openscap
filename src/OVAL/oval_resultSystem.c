@@ -95,7 +95,14 @@ static bool _oval_result_system_resolve_syschar(struct oval_syschar *syschar, st
 struct oval_result_system *oval_result_system_new(struct oval_results_model *model,
 						  struct oval_syschar_model *syschar_model)
 {
-	oval_result_system_t *sys = (oval_result_system_t *) oscap_alloc(sizeof(oval_result_system_t));
+	oval_result_system_t *sys;
+
+        if (model && oval_results_model_is_locked(model)) {
+                oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+                return NULL;
+        }
+
+	sys = (oval_result_system_t *) oscap_alloc(sizeof(oval_result_system_t));
 	if (sys == NULL)
 		return NULL;
 
@@ -104,6 +111,9 @@ struct oval_result_system *oval_result_system_new(struct oval_results_model *mod
 	sys->syschar_model = syschar_model;
 	sys->definitions_initialized = false;
 	sys->model = model;
+
+	oval_results_model_add_system(model, sys);
+
 	return sys;
 }
 

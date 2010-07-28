@@ -154,7 +154,14 @@ void oval_syschar_add_variable_binding(struct oval_syschar *syschar, struct oval
 
 struct oval_syschar *oval_syschar_new(struct oval_syschar_model *model, struct oval_object *object)
 {
-	oval_syschar_t *syschar = (oval_syschar_t *) oscap_alloc(sizeof(oval_syschar_t));
+	oval_syschar_t *syschar;
+
+        if (model && oval_syschar_model_is_locked(model)) {
+                oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+                return NULL;
+        }
+
+	syschar = (oval_syschar_t *) oscap_alloc(sizeof(oval_syschar_t));
 	if (syschar == NULL)
 		return NULL;
 
@@ -164,6 +171,9 @@ struct oval_syschar *oval_syschar_new(struct oval_syschar_model *model, struct o
 	syschar->sysdata = oval_collection_new();
 	syschar->variable_bindings = oval_collection_new();
 	syschar->model = model;
+
+	oval_syschar_model_add_syschar(model, syschar);
+
 	return syschar;
 }
 
@@ -251,8 +261,6 @@ struct oval_syschar *oval_syschar_clone(struct oval_syschar_model *new_model, st
 		oval_syschar_add_variable_binding(new_syschar, new_binding);
 	}
 	oval_variable_binding_iterator_free(old_bindings);
-
-	oval_syschar_model_add_syschar(new_model, new_syschar);
 
 	return new_syschar;
 }

@@ -149,7 +149,14 @@ struct oval_criteria_node *oval_definition_get_criteria(struct oval_definition
 
 struct oval_definition *oval_definition_new(struct oval_definition_model *model, const char *id)
 {
-	struct oval_definition *definition = (struct oval_definition *)oscap_alloc(sizeof(oval_definition_t));
+	struct oval_definition *definition;
+
+	if (model && oval_definition_model_is_locked(model)) {
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+		return NULL;
+	}
+
+	definition = (struct oval_definition *)oscap_alloc(sizeof(oval_definition_t));;
 	if (definition == NULL)
 		return NULL;
 
@@ -164,6 +171,9 @@ struct oval_definition *oval_definition_new(struct oval_definition_model *model,
 	definition->notes = oval_collection_new();
 	definition->criteria = NULL;
 	definition->model = model;
+
+	oval_definition_model_add_definition(model, definition);
+
 	return definition;
 }
 
@@ -229,8 +239,6 @@ struct oval_definition *oval_definition_clone
 
 		oval_definition_set_criteria(new_definition,
 					     oval_criteria_node_clone(new_model, old_definition->criteria));
-
-		oval_definition_model_add_definition(new_model, new_definition);
 	}
 	return new_definition;
 }

@@ -595,26 +595,6 @@ void oval_definition_model_bind_variable_model(struct oval_definition_model *, s
 
 void oval_definition_model_clear_external_variables(struct oval_definition_model *);
 /**
- * @memberof oval_definition_model
- */
-void oval_definition_model_add_definition(struct oval_definition_model *, struct oval_definition *);
-/**
- * @memberof oval_definition_model
- */
-void oval_definition_model_add_test(struct oval_definition_model *, struct oval_test *);
-/**
- * @memberof oval_definition_model
- */
-void oval_definition_model_add_object(struct oval_definition_model *, struct oval_object *);
-/**
- * @memberof oval_definition_model
- */
-void oval_definition_model_add_state(struct oval_definition_model *, struct oval_state *);
-/**
- * @memberof oval_definition_model
- */
-void oval_definition_model_add_variable(struct oval_definition_model *, struct oval_variable *);
-/**
  * Lock the definition_model instance.
  * The state of a locked instance cannot be changed.
  * This operation has no effect if the model is already locked.

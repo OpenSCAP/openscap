@@ -142,6 +142,12 @@ int oval_message_parse_tag(xmlTextReaderPtr, struct oval_parser_context *, oscap
 void oval_message_to_print(struct oval_message *message, char *indent, int index);
 void oval_message_to_dom(struct oval_message *, xmlDoc *, xmlNode *);
 
+void oval_definition_model_add_definition(struct oval_definition_model *, struct oval_definition *);
+void oval_definition_model_add_test(struct oval_definition_model *, struct oval_test *);
+void oval_definition_model_add_object(struct oval_definition_model *, struct oval_object *);
+void oval_definition_model_add_state(struct oval_definition_model *, struct oval_state *);
+void oval_definition_model_add_variable(struct oval_definition_model *, struct oval_variable *);
+
 //Synthetic object subtype for probing system info.
 #define  OVAL_INDEPENDENT_SYSCHAR_SUBTYPE 7999
 

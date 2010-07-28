@@ -492,7 +492,6 @@ struct oval_definition *oval_definition_get_new(struct oval_definition_model *mo
 	struct oval_definition *definition = oval_definition_model_get_definition(model, id);
 	if (definition == NULL) {
 		definition = oval_definition_new(model, id);
-		oval_definition_model_add_definition(model, definition);
 	}
 	return definition;
 }
@@ -502,7 +501,6 @@ struct oval_variable *oval_variable_get_new(struct oval_definition_model *model,
 	struct oval_variable *variable = oval_definition_model_get_variable(model, id);
 	if (variable == NULL) {
 		variable = oval_variable_new(model, id, type);
-		oval_definition_model_add_variable(model, variable);
 	} else {
 		oval_variable_set_type(variable, type);
 	}
@@ -514,7 +512,6 @@ struct oval_state *oval_state_get_new(struct oval_definition_model *model, const
 	struct oval_state *state = oval_definition_model_get_state(model, id);
 	if (state == NULL) {
 		state = oval_state_new(model, id);
-		oval_definition_model_add_state(model, state);
 	}
 	return state;
 }
@@ -524,7 +521,6 @@ struct oval_object *oval_object_get_new(struct oval_definition_model *model, con
 	struct oval_object *object = oval_definition_model_get_object(model, id);
 	if (object == NULL) {
 		object = oval_object_new(model, id);
-		oval_definition_model_add_object(model, object);
 	}
 	return object;
 }
@@ -534,7 +530,6 @@ struct oval_test *oval_test_get_new(struct oval_definition_model *model, const c
 	struct oval_test *test = oval_definition_model_get_test(model, id);
 	if (test == NULL) {
 		test = oval_test_new(model, id);
-		oval_definition_model_add_test(model, test);
 	}
 	return test;
 }

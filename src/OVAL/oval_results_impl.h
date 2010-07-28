@@ -77,8 +77,6 @@ struct oval_result_definition *oval_result_system_get_new_definition(struct oval
 								     struct oval_definition *);
 struct oval_result_test *oval_result_system_get_test(struct oval_result_system *, char *);
 
-
-
 struct oresults { 
 	int true_cnt; 
 	int false_cnt;
@@ -92,6 +90,8 @@ int ores_add_res(struct oresults *ores, oval_result_t res);
 void ores_clear(struct oresults *ores);
 oval_result_t ores_get_result_bychk(struct oresults *ores, oval_check_t check);
 oval_result_t ores_get_result_byopr(struct oresults *ores, oval_operator_t op);
+
+void oval_results_model_add_system(struct oval_results_model *, struct oval_result_system *);
 
 OSCAP_HIDDEN_END;
 

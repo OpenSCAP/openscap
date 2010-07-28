@@ -143,7 +143,14 @@ struct oval_behavior_iterator *oval_object_get_behaviors(struct oval_object *obj
 
 struct oval_object *oval_object_new(struct oval_definition_model *model, const char *id)
 {
-	oval_object_t *object = (oval_object_t *) oscap_alloc(sizeof(oval_object_t));
+	oval_object_t *object;
+
+	if (model && oval_definition_model_is_locked(model)) {
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+		return NULL;
+	}
+
+	object = (oval_object_t *) oscap_alloc(sizeof(oval_object_t));
 	if (object == NULL)
 		return NULL;
 
@@ -156,6 +163,9 @@ struct oval_object *oval_object_new(struct oval_definition_model *model, const c
 	object->notes = oval_collection_new();
 	object->object_content = oval_collection_new();
 	object->model = model;
+
+	oval_definition_model_add_object(model, object);
+
 	return object;
 }
 
@@ -245,8 +255,6 @@ struct oval_object *oval_object_clone(struct oval_definition_model *new_model, s
 						       oval_object_content_clone(new_model, object_content));
 		}
 		oval_object_content_iterator_free(object_contents);
-
-		oval_definition_model_add_object(new_model, new_object);
 	}
 	return new_object;
 }

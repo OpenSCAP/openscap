@@ -42,7 +42,6 @@
 #define NAMESPACE_OVALDEF "http://oval.mitre.org/XMLSchema/oval-definitions-5"
 
 static void _oval_results_parser_consume_system(struct oval_result_system *sys, struct oval_results_model *model) {
-	oval_results_model_add_system(model, sys);
 }
 
 static int _ovalres_parser_parse_system(xmlTextReaderPtr reader, struct oval_parser_context *context, void *null) {

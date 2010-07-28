@@ -196,10 +196,6 @@ int oval_results_model_export(struct oval_results_model *, struct oval_result_di
  * @{
  */
 /**
- * @memberof oval_results_model
- */
-void oval_results_model_add_system(struct oval_results_model *, struct oval_result_system *);
-/**
  * Lock the result_model instance.
  * The state of a locked instance cannot be changed.
  * This operation has no effect if the model is already locked.

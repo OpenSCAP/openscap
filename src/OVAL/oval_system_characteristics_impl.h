@@ -63,6 +63,9 @@ void oval_sysitem_to_print(struct oval_sysitem *, char *, int);
 
 struct oval_syschar_model *oval_syschar_get_model(struct oval_syschar *syschar);
 
+void oval_syschar_model_add_syschar(struct oval_syschar_model *model, struct oval_syschar *syschar);
+void oval_syschar_model_add_sysdata(struct oval_syschar_model *model, struct oval_sysdata *sysdata);
+
 OSCAP_HIDDEN_END;
 
 #endif

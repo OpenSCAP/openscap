@@ -146,7 +146,14 @@ struct oval_state *oval_test_get_state(struct oval_test *test)
 
 struct oval_test *oval_test_new(struct oval_definition_model *model, const char *id)
 {
-	oval_test_t *test = (oval_test_t *) oscap_alloc(sizeof(oval_test_t));
+	oval_test_t *test;
+
+	if (model && oval_definition_model_is_locked(model)) {
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+		return NULL;
+	}
+
+	test = (oval_test_t *) oscap_alloc(sizeof(oval_test_t));
 	if (test == NULL)
 		return NULL;
 
@@ -161,6 +168,9 @@ struct oval_test *oval_test_new(struct oval_definition_model *model, const char 
 	test->state = NULL;
 	test->notes = oval_collection_new();
 	test->model = model;
+
+	oval_definition_model_add_test(model, test);
+
 	return test;
 }
 
@@ -250,8 +260,6 @@ struct oval_test *oval_test_clone(struct oval_definition_model *new_model, struc
 			oval_test_add_note(new_test, note);
 		}
 		oval_string_iterator_free(notes);
-
-		oval_definition_model_add_test(new_model, new_test);
 	}
 	return new_test;
 }

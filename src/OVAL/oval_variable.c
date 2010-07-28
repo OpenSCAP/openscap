@@ -198,6 +198,12 @@ struct oval_component *oval_variable_get_component(struct oval_variable *variabl
 struct oval_variable *oval_variable_new(struct oval_definition_model *model, const char *id, oval_variable_type_t type)
 {
 	oval_variable_t *variable;
+
+        if (model && oval_definition_model_is_locked(model)) {
+                oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+                return NULL;
+        }
+
 	switch (type) {
 	case OVAL_VARIABLE_CONSTANT:{
 			variable = (oval_variable_t *) oscap_alloc(sizeof(oval_variable_CONEXT_t));
@@ -252,6 +258,9 @@ struct oval_variable *oval_variable_new(struct oval_definition_model *model, con
 	variable->comment = NULL;
 	variable->datatype = OVAL_DATATYPE_UNKNOWN;
 	variable->type = type;
+
+	oval_definition_model_add_variable(model, variable);
+
 	return variable;
 }
 
@@ -330,7 +339,6 @@ struct oval_variable *oval_variable_clone(struct oval_definition_model *new_mode
 			struct oval_component *component = oval_variable_get_component(old_variable);
 			oval_variable_set_component(new_variable, oval_component_clone(new_model, component));
 		}
-		oval_definition_model_add_variable(new_model, new_variable);
 	}
 	return new_variable;
 }

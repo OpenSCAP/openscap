@@ -360,7 +360,6 @@ struct oval_syschar *oval_syschar_get_new(struct oval_syschar_model *model, stru
 	struct oval_syschar *syschar = oval_syschar_model_get_syschar(model, object_id);
 	if (syschar == NULL) {
 		syschar = oval_syschar_new(model, object);
-		oval_syschar_model_add_syschar(model, syschar);
 	}
 	return syschar;
 }
@@ -370,7 +369,6 @@ struct oval_sysdata *oval_sysdata_get_new(struct oval_syschar_model *model, cons
 	struct oval_sysdata *sysdata = oval_syschar_model_get_sysdata(model, id);
 	if (sysdata == NULL) {
 		sysdata = oval_sysdata_new(model, id);
-		oval_syschar_model_add_sysdata(model, sysdata);
 	}
 	return sysdata;
 }

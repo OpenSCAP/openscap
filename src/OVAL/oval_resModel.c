@@ -64,8 +64,7 @@ struct oval_results_model *oval_results_model_new(struct oval_definition_model *
 	if (syschar_models) {
 		struct oval_syschar_model *syschar_model;
 		for (syschar_model = *syschar_models; syschar_model; syschar_model = *(++syschar_models)) {
-			struct oval_result_system *sys = oval_result_system_new(model, syschar_model);
-			oval_results_model_add_system(model, sys);
+			oval_result_system_new(model, syschar_model);
 		}
 	}
 	return model;
@@ -127,11 +126,8 @@ struct oval_results_model *oval_results_model_clone(struct oval_results_model *o
 	struct oval_result_system_iterator *old_systems = oval_results_model_get_systems(old_resmodel);
 
 	while (oval_result_system_iterator_has_more(old_systems)) {
-
 		struct oval_result_system *old_system = oval_result_system_iterator_next(old_systems);
-		struct oval_result_system *new_system = oval_result_system_clone(new_resmodel, old_system);
-
-		oval_results_model_add_system(new_resmodel, new_system);
+		oval_result_system_clone(new_resmodel, old_system);
 	}
 	oval_result_system_iterator_free(old_systems);
         new_resmodel->schema = strdup(old_resmodel->schema);

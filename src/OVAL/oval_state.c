@@ -137,7 +137,14 @@ int oval_state_get_operator(struct oval_state *state)
 
 struct oval_state *oval_state_new(struct oval_definition_model *model, const char *id)
 {
-	oval_state_t *state = (oval_state_t *) oscap_alloc(sizeof(oval_state_t));
+	oval_state_t *state;
+
+	if (model && oval_definition_model_is_locked(model)) {
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+		return NULL;
+	}
+
+	state = (oval_state_t *) oscap_alloc(sizeof(oval_state_t));
 	if (state == NULL)
 		return NULL;
 
@@ -150,6 +157,9 @@ struct oval_state *oval_state_new(struct oval_definition_model *model, const cha
 	state->notes = oval_collection_new();
 	state->contents = oval_collection_new();
 	state->model = model;
+
+	oval_definition_model_add_state(model, state);
+
 	return state;
 }
 
@@ -213,8 +223,6 @@ struct oval_state *oval_state_clone(struct oval_definition_model *new_model, str
 			oval_state_add_content(new_state, oval_state_content_clone(new_model, content));
 		}
 		oval_state_content_iterator_free(contents);
-
-		oval_definition_model_add_state(new_model, new_state);
 	}
 	return new_state;
 }

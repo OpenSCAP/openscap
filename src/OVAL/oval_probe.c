@@ -533,7 +533,6 @@ int oval_probe_session_query_object(oval_probe_session_t *sess, struct oval_obje
                        	syschar = oval_syschar_new(sys_model, object);
 	                oval_syschar_set_flag(syschar, SYSCHAR_FLAG_NOT_COLLECTED);
 		}
-		oval_syschar_model_add_syschar(sys_model, syschar);
 	}
 	return 0;
 }

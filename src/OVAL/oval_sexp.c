@@ -692,7 +692,7 @@ struct oval_syschar *oval_sexp2sysch(const SEXP_t * s_exp, struct oval_syschar_m
 	sysch = oval_syschar_new(model, object);
 
 	if (oval_sysch_apply_sexp(sysch, s_exp, object) != 0) {
-		oval_syschar_free(sysch);
+		// todo: remove syschar from model
 		return (NULL);
 	}
 
