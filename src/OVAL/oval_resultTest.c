@@ -1188,6 +1188,29 @@ static oval_result_t _oval_result_test_result(struct oval_result_test *rtest, vo
 	return result;
 }
 
+static void _oval_result_test_initialize_bindings(struct oval_result_test *rslt_test)
+{
+	__attribute__nonnull__(rslt_test);
+
+	struct oval_test *oval_test = oval_result_test_get_test(rslt_test);
+
+	struct oval_object *oval_object = oval_test_get_object(oval_test);
+	if (oval_object) {
+		char *object_id = oval_object_get_id(oval_object);
+		struct oval_result_system *sys = oval_result_test_get_system(rslt_test);
+		struct oval_syschar_model *syschar_model = oval_result_system_get_syschar_model(sys);
+		struct oval_syschar *syschar = oval_syschar_model_get_syschar(syschar_model, object_id);
+		struct oval_variable_binding_iterator *bindings = oval_syschar_get_variable_bindings(syschar);
+		while (oval_variable_binding_iterator_has_more(bindings)) {
+			struct oval_variable_binding *binding = oval_variable_binding_iterator_next(bindings);
+			oval_result_test_add_binding(rslt_test, binding);
+		}
+		oval_variable_binding_iterator_free(bindings);
+	}
+	rslt_test->bindings_initialized = true;
+	rslt_test->bindings_clearable = false;	//bindings are shared from syschar model.
+}
+
 oval_result_t oval_result_test_eval(struct oval_result_test *rtest)
 {
 	__attribute__nonnull__(rtest);
@@ -1198,6 +1221,10 @@ oval_result_t oval_result_test_eval(struct oval_result_test *rtest)
 			void *args[] = { rtest->system, rtest, tmp_map };
 			rtest->result = _oval_result_test_result(rtest, args);
 			oval_string_map_free(tmp_map, NULL);
+
+			if (!rtest->bindings_initialized) {
+				_oval_result_test_initialize_bindings(rtest);
+			}
 		}
 		else
 			rtest->result = OVAL_RESULT_TRUE; /* Do not evaluate unknown test */
@@ -1404,29 +1431,6 @@ static void _oval_result_binding_to_dom(struct oval_variable_binding *binding, x
 	oval_string_iterator_free(str_itr);
 }
 
-static void _oval_result_test_initialize_bindings(struct oval_result_test *rslt_test)
-{
-	__attribute__nonnull__(rslt_test);
-
-	struct oval_test *oval_test = oval_result_test_get_test(rslt_test);
-
-	struct oval_object *oval_object = oval_test_get_object(oval_test);
-	if (oval_object) {
-		char *object_id = oval_object_get_id(oval_object);
-		struct oval_result_system *sys = oval_result_test_get_system(rslt_test);
-		struct oval_syschar_model *syschar_model = oval_result_system_get_syschar_model(sys);
-		struct oval_syschar *syschar = oval_syschar_model_get_syschar(syschar_model, object_id);
-		struct oval_variable_binding_iterator *bindings = oval_syschar_get_variable_bindings(syschar);
-		while (oval_variable_binding_iterator_has_more(bindings)) {
-			struct oval_variable_binding *binding = oval_variable_binding_iterator_next(bindings);
-			oval_result_test_add_binding(rslt_test, binding);
-		}
-		oval_variable_binding_iterator_free(bindings);
-	}
-	rslt_test->bindings_initialized = true;
-	rslt_test->bindings_clearable = false;	//bindings are shared from syschar model.
-}
-
 xmlNode *oval_result_test_to_dom(struct oval_result_test *rslt_test, xmlDocPtr doc, xmlNode * parent) {
 	__attribute__nonnull__(rslt_test);
 
@@ -1470,9 +1474,6 @@ xmlNode *oval_result_test_to_dom(struct oval_result_test *rslt_test, xmlDocPtr d
 		}
 		oval_result_item_iterator_free(items);
 
-		if (!rslt_test->bindings_initialized) {
-			_oval_result_test_initialize_bindings(rslt_test);
-		}
 		struct oval_variable_binding_iterator *bindings = oval_result_test_get_bindings(rslt_test);
 		while (oval_variable_binding_iterator_has_more(bindings)) {
 			struct oval_variable_binding *binding = oval_variable_binding_iterator_next(bindings);
