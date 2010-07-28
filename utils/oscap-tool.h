@@ -94,8 +94,8 @@ struct oscap_action {
         char *file_version;
 #ifdef ENABLE_CVSS
         struct cvss_metrics *cvss_metrics;
-	bool force;
 #endif
+	bool force;
 };
 
 #ifdef ENABLE_XCCDF
