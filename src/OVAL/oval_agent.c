@@ -155,7 +155,8 @@ int oval_agent_eval_system(oval_agent_session_t * ag_sess, oscap_reporter cb, vo
                     struct oscap_reporter_message * msg = oscap_reporter_message_new_fmt(
                             OSCAP_REPORTER_FAMILY_OVAL, /* FAMILY */
                             0,                           /* CODE */
-                            oval_definition_get_description(oval_def));
+			    "%s",
+			    oval_definition_get_description(oval_def));
                     oscap_reporter_message_set_user1str(msg, id);
                     oscap_reporter_message_set_user2num(msg, result);
                     oscap_reporter_message_set_user3str(msg, oval_definition_get_title(oval_def));
