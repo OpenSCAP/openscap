@@ -126,8 +126,8 @@ static void __oscap_vdlprintf(int level, const char *file, const char *fn, size_
 
 		if (pstrip == NULL)
 			__debuglog_pstrip = 0;
-
-		__debuglog_pstrip = atol(pstrip);
+		else
+			__debuglog_pstrip = atol(pstrip);
 
 	}
 	if (__debuglog_pstrip != 0)
