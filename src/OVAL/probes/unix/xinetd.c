@@ -37,33 +37,51 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <stdint.h>
+#include <limits.h>
 #include <fcntl.h>
+#include <sys/types.h>
 #include <sys/stat.h>
+#include <dirent.h>
+#include <fnmatch.h>
 #include <common/assume.h>
 #include <alloc.h>
 #include <bfind.h>
 #include <common/debug_priv.h>
 #include "../SEAP/generic/rbt/rbt.h"
 
-#ifdef _D
-#undef _D
-#endif
-#define _D(...) oscap_dlprintf(DBG_I, __VA_ARGS__)
+#define dI(...) oscap_dlprintf(DBG_I, __VA_ARGS__)
+#define dW(...) oscap_dlprintf(DBG_W, __VA_ARGS__)
+#define dE(...) oscap_dlprintf(DBG_E, __VA_ARGS__)
+
+#define PATH_SEPARATOR '/'
 
 /*
  * the code bellow implements a minimal xinetd configuration parser
  */
 
 #define XICFG_PARSER_IGNORE_UNKNOWN 1
+#define XICFG_PARSER_IGNORE_INVSECT 0
 #define XICFG_PARSER_MAXFILESIZE    655360 /**< hard limit for configuration file size; 640K ought to be enough for anybody */
 
 struct xiconf_attr {
 	char    *name;   /* name of the attribute */
 	size_t   offset; /* offset of the corresponding member in the xinetd_service_t structure */
-	int (*op_assign)(void **, char *); /*  = */
-	int (*op_insert)(void **, char *); /* += */
-	int (*op_remove)(void **, char *); /* -= */
+	int (*op_assign)(void *, char *); /*  = */
+	int (*op_insert)(void *, char *); /* += */
+	int (*op_remove)(void *, char *); /* -= */
+	int      sections; /* which type of sections are valid */
+	int      pass_arg;
 };
+
+#define XIATTR_SECTION_NIL   0x01
+#define XIATTR_SECTION_DEF   0x02
+#define XIATTR_SECTION_SRV   0x04
+
+#define XIATTR_OPARG_LOCAL   0 /* local service attribute */
+#define XIATTR_OPARG_GLOBAL  1 /* xiconf_t structure */
+
+#define XICONF_SECTION_DEFAULTS XIATTR_SECTION_DEF
+#define XICONF_SECTION_SERVICE  XIATTR_SECTION_SRV
 
 #define OPRES_SUCCESS 0
 #define OPRES_ESYNTAX 1 /* Invalid syntax */
@@ -75,6 +93,7 @@ typedef struct {
 	/*
 	 * Attributes needed by the xinetd probe
 	 */
+	char    *id;
 	char    *type;
 	char    *flags;
 	char    *socket_type;
@@ -116,7 +135,6 @@ typedef struct {
 	int64_t rlimit_data;
 	int64_t rlimit_rss;
 	int64_t rlimit_stack;
-	char *id;
 	char *group;
 	char *access_times;
 	char *log_type;
@@ -154,7 +172,7 @@ typedef struct {
 #define XICONF_FILE_DEAD    0x00000004 /**< this item can be skipped/deleted/reused for a different file */
 
 typedef struct {
-	xiconf_file_t    *cfile; /**< */
+	xiconf_file_t   **cfile; /**< */
 	size_t            count; /**< */
 	rbt_t            *stree; /**< service tree */
 	xiconf_service_t *defaults; /**< parsed defaults for services */
@@ -163,22 +181,67 @@ typedef struct {
 xiconf_t *xiconf_parse(const char *path, unsigned int max_depth);
 void xiconf_free(xiconf_t *xiconf);
 int xiconf_update(xiconf_t *xiconf);
+int xiconf_parse_section(xiconf_t *xiconf, xiconf_file_t *xifile, int type, char *name);
 int xiconf_parse_service(xiconf_file_t *file, xiconf_service_t *service);
 int xiconf_parse_defaults(xiconf_file_t *file, xiconf_service_t *defaults, rbt_t *stree);
 xiconf_service_t *xiconf_getservice(xiconf_t *xiconf, char *name, char *prot);
 
-int op_assign_bool(void **var, char *val);
-int op_assign_num(void **var, char *val);
-int op_assign_str(void **var, char *val);
-int op_assign_strl(void **var, char *val);
-int op_insert_strl(void **var, char *val);
-int op_remove_strl(void **var, char *val);
+int op_assign_bool(void *var, char *val);
+int op_assign_num(void *var, char *val);
+int op_assign_str(void *var, char *val);
+int op_assign_strl(void *var, char *val);
+int op_insert_strl(void *var, char *val);
+int op_remove_strl(void *var, char *val);
 
 #ifndef STR
 # define STR(s) #s
 #endif
+
 #define XICONF_ATTR(name, op_a, op_r, op_i) \
-  { STR(name), offsetof(xiconf_service_t, name), (op_a), (op_r), (op_i) }
+	{ STR(name), offsetof(xiconf_service_t, name), (op_a), (op_r), (op_i) }
+
+/*
+ * Service only attribute.
+ *
+ * Flags set:
+ *  - service section flag
+ *
+ * Functions implementing the operators get the pointer to the
+ * corresponding xiconf_service_t structure item pointer (using
+ * offsetof) as their first argument.
+ */
+#define XICONF_SO_ATTR(name, op_a, op_r, op_i) \
+	{ STR(name), offsetof(xiconf_service_t, name), (op_a), (op_r), (op_i), XIATTR_SECTION_SRV, XIATTR_OPARG_LOCAL }
+
+/*
+ * Defaults only attribute.
+ *
+ * Flags set:
+ *  - defaults section flag
+ *
+ * Type of the first argument to be passed to the operator
+ * functions has to be specified in the last argument.
+ * Recognized types are:
+ *   XIATTR_OPTARG_LOCAL  - ptr(service + offsetof(attr_name))
+ *   XIATTR_OPTARG_GLOBAL - pointer to the xiconf_t structure
+ */
+#define XICONF_DO_ATTR(name, op_a, op_r, op_i, off, arg) \
+	{ STR(name), (off), (op_a), (op_r), (op_i), XIATTR_SECTION_DEF, (arg) }
+
+/*
+ * Service attribute which default attribute can be specified
+ * in the defaults section.
+ *
+ * Flags set:
+ *  - service section flag
+ *  - defaults section flag
+ *
+ * Functions implementing the operators get the pointer to the
+ * corresponding xiconf_service_t structure item pointer (using
+ * offsetof) as their first argument.
+ */
+#define XICONF_SD_ATTR(name, op_a, op_r, op_i) \
+	{ STR(name), offsetof(xiconf_service_t, name), (op_a), (op_r), (op_i), XIATTR_SECTION_SRV|XIATTR_SECTION_DEF, XIATTR_OPARG_LOCAL }
 
 /*
  * Service attribute table; keep this table sorted by attribute name
@@ -194,13 +257,25 @@ struct xiconf_attr xiattr_table[] = {
 	//XICONF_ATTR(bind, NULL, NULL, NULL),
 	//XICONF_ATTR(cps, NULL, NULL, NULL),
 	//XICONF_ATTR(deny_time, NULL, NULL, NULL),
-	XICONF_ATTR(disable, &op_assign_bool, NULL, NULL),
-	//XICONF_ATTR(enabled, NULL, NULL, NULL),
+
+	XICONF_SO_ATTR(disable,
+		       &op_assign_bool, NULL, NULL),
+	XICONF_DO_ATTR(disabled,
+		       NULL, NULL, NULL, 0, XIATTR_OPARG_GLOBAL),
+	XICONF_DO_ATTR(enabled,
+		       NULL, NULL, NULL, 0, XIATTR_OPARG_GLOBAL),
+
 	//XICONF_ATTR(env, NULL, NULL, NULL),
-	XICONF_ATTR(flags, NULL, NULL, NULL),
+
+	XICONF_SO_ATTR(flags,
+		       NULL, NULL, NULL),
+
 	//XICONF_ATTR(group, NULL, NULL, NULL),
 	//XICONF_ATTR(groups, NULL, NULL, NULL),
-	//XICONF_ATTR(id, NULL, NULL, NULL),
+
+	XICONF_SO_ATTR(id,
+		       &op_assign_str, NULL, NULL),
+
 	//XICONF_ATTR(instances, NULL, NULL, NULL),
 	//XICONF_ATTR(interface, NULL, NULL, NULL),
 	//XICONF_ATTR(libwrap, NULL, NULL, NULL),
@@ -210,12 +285,20 @@ struct xiconf_attr xiattr_table[] = {
 	//XICONF_ATTR(max_load, NULL, NULL, NULL),
 	//XICONF_ATTR(mdns, NULL, NULL, NULL),
 	//XICONF_ATTR(nice, NULL, NULL, NULL),
-	XICONF_ATTR(no_access, &op_assign_strl, &op_remove_strl, &op_insert_strl),
-	XICONF_ATTR(only_from, &op_assign_strl, &op_remove_strl, &op_insert_strl),
+
+	XICONF_SD_ATTR(no_access,
+		       &op_assign_strl, &op_remove_strl, &op_insert_strl),
+	XICONF_SD_ATTR(only_from,
+		       &op_assign_strl, &op_remove_strl, &op_insert_strl),
+
 	//XICONF_ATTR(passenv, NULL, NULL, NULL),
 	//XICONF_ATTR(per_source, NULL, NULL, NULL),
-	XICONF_ATTR(port, &op_assign_num, NULL, NULL),
-	XICONF_ATTR(protocol, &op_assign_str, NULL, NULL),
+
+	XICONF_SO_ATTR(port,
+		       &op_assign_num, NULL, NULL),
+	XICONF_SO_ATTR(protocol,
+		       &op_assign_str, NULL, NULL),
+
 	//XICONF_ATTR(redirect, NULL, NULL, NULL),
 	//XICONF_ATTR(rlimit_as, NULL, NULL, NULL),
 	//XICONF_ATTR(rlimit_cpu, NULL, NULL, NULL),
@@ -224,13 +307,22 @@ struct xiconf_attr xiattr_table[] = {
 	//XICONF_ATTR(rlimit_stack, NULL, NULL, NULL),
 	//XICONF_ATTR(rpc_number, NULL, NULL, NULL),
 	//XICONF_ATTR(rpc_version, NULL, NULL, NULL),
-	XICONF_ATTR(server, &op_assign_str, NULL, NULL),
-	XICONF_ATTR(server_args, NULL, NULL, NULL),
-	XICONF_ATTR(socket_type, NULL, NULL, NULL),
-	XICONF_ATTR(type, NULL, NULL, NULL),
+
+	XICONF_SO_ATTR(server,
+		       &op_assign_str, NULL, NULL),
+	XICONF_SO_ATTR(server_args,
+		       NULL, NULL, NULL),
+	XICONF_SO_ATTR(socket_type,
+		       NULL, NULL, NULL),
+	XICONF_SO_ATTR(type,
+		       NULL, NULL, NULL),
+
 	//XICONF_ATTR(umask, NULL, NULL, NULL),
-	XICONF_ATTR(user, &op_assign_str, NULL, NULL),
-	XICONF_ATTR(wait, &op_assign_bool, NULL, NULL)
+
+	XICONF_SO_ATTR(user,
+		       &op_assign_str, NULL, NULL),
+	XICONF_SO_ATTR(wait,
+		       &op_assign_bool, NULL, NULL)
 };
 
 #define XIATTR_TABLE_COUNT (sizeof xiattr_table / sizeof(struct xiconf_attr))
@@ -248,7 +340,7 @@ static xiconf_t *xiconf_new(void)
 	xiconf_t *xiconf;
 
 	xiconf = oscap_talloc(xiconf_t);
-	xiconf->cfile = NULL;
+	xiconf->cfile = oscap_alloc(sizeof(xiconf_file_t *));
 	xiconf->count = 0;
 	xiconf->stree = rbt_str_new();
 	xiconf->defaults = NULL;
@@ -262,6 +354,7 @@ static xiconf_service_t *xiconf_service_new(void)
 
 	service = oscap_talloc(xiconf_service_t);
 
+	service->id    = NULL;
 	service->type  = NULL;
 	service->flags = NULL;
 	service->socket_type = NULL;
@@ -290,7 +383,7 @@ void xiconf_free(xiconf_t *xiconf)
 	register size_t i;
 
 	for (i = 0; i < xiconf->count; ++i) {
-		oscap_free(xiconf->cfile[i].cpath);
+		oscap_free(xiconf->cfile[i]->cpath);
 		/* TODO: rbt_del(); */
 	}
 
@@ -377,7 +470,7 @@ static xiconf_file_t *xiconf_read(const char *path, int flags)
 
 #define tmpbuf_def(size) char __tmpbuf[size]
 #define tmpbuf_get(size) (((sizeof __tmpbuf)/sizeof(char))<(size)?oscap_alloc(sizeof(char)*(size)):__tmpbuf)
-#define tmpbuf_free(ptr) do { if ((ptr) != __tmpbuf) oscap_free(ptr); } while(0)
+#define tmpbuf_free(ptr) do { if ((ptr) != __tmpbuf) oscap_free(ptr); (ptr) = NULL; } while(0)
 
 xiconf_t *xiconf_parse(const char *path, unsigned int max_depth)
 {
@@ -403,7 +496,7 @@ xiconf_t *xiconf_parse(const char *path, unsigned int max_depth)
 	}
 
 	xifile->depth = 0;
-	xiconf->cfile = xifile;
+	xiconf->cfile[0] = xifile;
 	xiconf->count = 1;
 
 	for (findex = 0; findex < xiconf->count; ++findex) {
@@ -415,7 +508,7 @@ xiconf_t *xiconf_parse(const char *path, unsigned int max_depth)
 		if (xifile->depth > max_depth && xiconf->count > findex)
 			abort();
 
-		xifile = xiconf->cfile + findex;
+		xifile = xiconf->cfile[findex];
 
 		for (;xifile->inoff < xifile->inlen;) {
 			/* locate end-of-line & compute the line lenght */
@@ -447,8 +540,6 @@ xiconf_t *xiconf_parse(const char *path, unsigned int max_depth)
 			switch(buffer[bufidx]) {
 			case  's':
 				if (strcmp("ervice",  buffer + bufidx + 1) == 0) {
-					xiconf_service_t *service = NULL;
-
 					/* skip the service keyword */
 					bufidx += 8;
 
@@ -467,73 +558,15 @@ xiconf_t *xiconf_parse(const char *path, unsigned int max_depth)
 
 					*strchr(buffer + bufidx, ' ') = '\0';
 
-					/* do we already have a record for this service? */
-					rbt_str_get(xiconf->stree, buffer + bufidx, (void *)&service);
-
-					if (service == NULL) {
-						char  *keybuf;
-						size_t keylen;
-
-						service = xiconf_service_new();
-						service->name = strdup(buffer + bufidx);
-
-						if (xiconf_parse_service(xifile, service) != 0) {
-							xiconf_service_free(service);
-							tmpbuf_free(buffer);
-
-							return (NULL);
-						}
-
-						/*
-						 * Check that required fields are set:
-						 *
-						 * socket_type
-						 * user              (non-internal services only)
-						 * server            (non-internal services only)
-						 * wait
-						 * protocol          (RPC and unlisted services only)
-						 * rpc_version       (RPC services only)
-						 * rpc_number        (unlisted RPC services only)
-						 * port              (unlisted non-RPC services only)
-						 */
-
-						if (service->name == NULL) {
-						}
-						if (service->protocol == NULL) {
-						}
-						if (service->socket_type == NULL) {
-						}
-						if (service->wait == -1) {
-						}
-
-						keylen = strlen(service->name) + strlen(service->protocol) + 1;
-						keybuf = tmpbuf_get(keylen);
-
-						strcpy(keybuf, service->name);
-						strcat(keybuf, service->protocol);
-
-						if (rbt_str_add(xiconf->stree, keybuf, service) != 0) {
-							xiconf_service_free(service);
-							tmpbuf_free(buffer);
-
-							return (NULL);
-						}
-					} else {
-						if (xiconf_parse_service(xifile, service) != 0) {
-							xiconf_service_free(service);
-							tmpbuf_free(buffer);
-							return (NULL);
-						}
+					if (xiconf_parse_section (xiconf, xifile, XICONF_SECTION_SERVICE, buffer + bufidx) != 0) {
+						tmpbuf_free(buffer);
+						return (NULL);
 					}
 				}
 				break;
 			case  'd':
 				if (strcmp("efaults", buffer + bufidx + 1) == 0) {
-					xiconf->defaults = xiconf_service_new();
-
-					if (xiconf_parse_defaults(xifile, xiconf->defaults, xiconf->stree) != 0) {
-						xiconf_service_free(xiconf->defaults);
-						xiconf->defaults = NULL;
+					if (xiconf_parse_section (xiconf, xifile, XICONF_SECTION_DEFAULTS, buffer + bufidx) != 0) {
 						tmpbuf_free(buffer);
 						return (NULL);
 					}
@@ -546,7 +579,87 @@ xiconf_t *xiconf_parse(const char *path, unsigned int max_depth)
 				break;
 			case 'i':
 				if (strcmp("ncludedir", buffer + bufidx + 1) == 0) {
-					// read files from the directory and push them into the stack
+					xiconf_file_t *xifile_inc;
+					char          *incldir;
+					size_t         incllen;
+					char           pathbuf[PATH_MAX+1];
+					DIR           *dirfp;
+					struct dirent  dent, *dentp = NULL;
+
+					bufidx += strlen("includedir");
+					while(isspace(buffer[bufidx])) ++bufidx;
+					incldir = buffer + bufidx + 1;
+					buffer[l_size] = '\0';
+
+					if (*incldir == '\0') {
+						dW("Found includedir directive without an argument!\n");
+						break;
+					}
+
+					if (xifile->depth + 1 > max_depth) {
+						dE("include depth limit reached: %u\n", max_depth);
+						break;
+					}
+
+					dI("includedir open: %s\n", incldir);
+					dirfp = opendir (incldir);
+
+					if (dirfp == NULL) {
+						dW("Can't open includedir: %s; %d, %s.\n", incldir, errno, strerror (errno));
+						break;
+					}
+
+					strcpy(pathbuf, incldir);
+					incllen = strlen(incldir);
+
+					if (pathbuf[incllen - 1] != PATH_SEPARATOR) {
+						if (incllen < PATH_MAX) {
+							pathbuf[incllen++] =  '/';
+							pathbuf[incllen  ] = '\0';
+						} else {
+							dE("Length of the includedir argument is out of range: len=%zu, max=%zu\n",
+							   incllen, PATH_MAX);
+							closedir(dirfp);
+							break;
+						}
+					}
+
+					for (;;) {
+						if (readdir_r (dirfp, &dent, &dentp) != 0) {
+							dW("Can't read directory: %s; %d, %s.\n", incldir, errno, strerror (errno));
+							closedir (dirfp);
+							break;
+						}
+
+						if (dentp == NULL)
+							break;
+
+						if (fnmatch ("*~",  dent.d_name, FNM_PATHNAME) == 0 ||
+						    fnmatch ("*.*", dent.d_name, FNM_PATHNAME) == 0)
+						{
+							dI("Skipping: %s\n", dent.d_name);
+							continue;
+						}
+
+						strcpy(pathbuf + incllen, dent.d_name);
+						dI("Reading included file: %s\n", pathbuf);
+						xifile_inc = xiconf_read (pathbuf, 0);
+
+						if (xifile_inc == NULL) {
+							dW("Failed to read file: %s\n", pathbuf);
+							continue;
+						}
+
+						xifile_inc->depth = xifile->depth + 1;
+						xiconf->cfile = oscap_realloc(xiconf->cfile, sizeof(xiconf_file_t) * ++xiconf->count);
+						xiconf->cfile[xiconf->count - 1] = xifile_inc;
+
+						dI("Added new file to the cfile queue: %s; fi=%zu, ni=%zu\n",
+						   pathbuf, findex, xiconf->count - 1);
+					}
+
+					dI("includedir close: %s\n", incldir);
+					closedir(dirfp);
 				} else if (strcmp("nclude", buffer + bufidx + 1) == 0) {
 					// read the file and push into the stack
 				}
@@ -565,12 +678,24 @@ xiconf_t *xiconf_parse(const char *path, unsigned int max_depth)
 
 int xiconf_update(xiconf_t *xiconf)
 {
-	_D("Not implemented yet.\n");
+	dI("Not implemented yet.\n");
 	return (0);
 }
 
-int xiconf_parse_service(xiconf_file_t *xifile, xiconf_service_t *service)
+static int xiconf_service_merge_and_free(xiconf_service_t *dst, xiconf_service_t *src)
 {
+	oscap_free(src);
+	return (0);
+}
+
+static int xiconf_service_merge_defaults(xiconf_service_t *dst, xiconf_service_t *def)
+{
+	return (0);
+}
+
+int xiconf_parse_section(xiconf_t *xiconf, xiconf_file_t *xifile, int type, char *name)
+{
+	xiconf_service_t *snew, *scur;
 	char *buffer;
 	register size_t bufidx;
 	char  *l_pbeg;
@@ -579,18 +704,29 @@ int xiconf_parse_service(xiconf_file_t *xifile, xiconf_service_t *service)
 	size_t l_size;
 	char *key, *op, *opval;
 	void **opvar;
-	int (*opfun)(void **, char *);
+	int (*opfun)(void *, char *);
 	struct xiconf_attr *xiattr;
 	tmpbuf_def(128);
 
+	if (type == XICONF_SECTION_DEFAULTS && xiconf->defaults != NULL) {
+		dE("defaults section was already parsed!\n");
+		return (-1);
+	} else if (type == XICONF_SECTION_SERVICE && name == NULL) {
+		dE("Don't know how to handle anonymous service sections!\n");
+		return (-1);
+	}
 
+	/*
+	 * Find the left brace. Only the left brace, whitespace
+	 * characters before and after it and a newline character
+	 * at the end is allowed here.
+	 */
 	while(isspace(xifile->inmem[xifile->inoff]))
 		++xifile->inoff;
 	if (xifile->inmem[xifile->inoff] != '{')
 		return(-1);
 	else
 		++xifile->inoff;
-
 	while(xifile->inmem[xifile->inoff] != '\n' &&
 	      isspace(xifile->inmem[xifile->inoff]))
 		++xifile->inoff;
@@ -599,7 +735,17 @@ int xiconf_parse_service(xiconf_file_t *xifile, xiconf_service_t *service)
 	else
 		++xifile->inoff;
 
+	/*
+	 * Now there should be only <keyword> <op> <value> items, comments
+	 * blank lines or a right brace which signals and of the section.
+	 */
+	snew = xiconf_service_new();
+	snew->name = strdup(name);
+
 	for (;;) {
+		/*
+		 * Find out the line boundaries.
+		 */
 		l_pbeg = xifile->inmem + xifile->inoff;
 		l_pend = strchr(l_pbeg, '\n');
 
@@ -626,12 +772,22 @@ int xiconf_parse_service(xiconf_file_t *xifile, xiconf_service_t *service)
 		*l_next = '\0';
 		buffer[l_size] = '\0';
 
+		/* skip whitespaces in the line buffer */
 		while(isspace(buffer[bufidx])) ++bufidx;
 
+		/*
+		 * now there should be a attribute name, comment
+		 * or the end-of-line.
+		 */
 		key = buffer + bufidx;
 
-		if (*key == '}') {
-			/* end of service section reached */
+		switch (*key) {
+		case  '#':
+		case '\0':
+			/* skip this line */
+			break;
+		case  '}':
+			/* end of section reached */
 			++bufidx;
 
 			while(isspace(buffer[bufidx]))
@@ -639,63 +795,133 @@ int xiconf_parse_service(xiconf_file_t *xifile, xiconf_service_t *service)
 			if (buffer[bufidx] != '\0')
 				goto fail;
 
-			tmpbuf_free(buffer);
-			break;
-		}
+			goto finish_section;
+		default:
+			op  = key + strlen(key) + 1;
 
-		op  = key + strlen(key) + 1;
+			while(isspace(*op)) ++op;
 
-		while(isspace(*op)) ++op;
+			if (op == l_pend)
+				goto fail;
 
-		if (op == l_pend)
-			goto fail;
+			xiattr = oscap_bfind(xiattr_table, XIATTR_TABLE_COUNT, sizeof(struct xiconf_attr), key, &xiattr_cmp);
 
-		xiattr = oscap_bfind(xiattr_table, XIATTR_TABLE_COUNT, sizeof(struct xiconf_attr), key, &xiattr_cmp);
-
-		if (xiattr == NULL) {
+			if (xiattr == NULL) {
+				dW("Unknown keyword: %s\n", key);
 #if XICFG_PARSER_IGNORE_UNKNOWN != 1
-			goto fail;
+				goto fail;
 #else
-			tmpbuf_free(buffer);
-			continue;
+				break;
 #endif
-		}
+			}
+
+			if (!(type & xiattr->sections)) {
+				dW("Don't know how to handle attribute %s in this sections type (%d)\n",
+				   key, type);
+#if XICFG_PARSER_IGNORE_INVSECT != 1
+				goto fail;
+#else
+				break;
+#endif
+			}
 
 #define xiattr_ptr(ptr, off) ((void **)(((uint8_t *)(ptr))+(off)))
-		opvar = xiattr_ptr(service, xiattr->offset);
 
-		if (*op == '=') {
-			opfun = xiattr->op_assign;
-			opval = op + 1;
+			switch (xiattr->pass_arg) {
+			case XIATTR_OPARG_LOCAL:
+				opvar = (void *)xiattr_ptr(snew, xiattr->offset);
+				dI("local opvar\n");
+				break;
+			case XIATTR_OPARG_GLOBAL:
+				opvar = (void *)xiconf;
+				dI("global opvar\n");
+				break;
+			default:
+				abort ();
+			}
 
-			_D("assign(%p): var=%s (at %p+%zu = %p), val=%s\n",
-			   opfun, xiattr->name, service, xiattr->offset, opvar, opval);
+			if (*op == '=') {
+				opfun = xiattr->op_assign;
+				opval = op + 1;
 
-		} else if (*op == '+' && *(op+1) == '=') {
-			opfun = xiattr->op_insert;
-			opval = op + 2;
+				dI("assign(%p): var=%s (at %p+%zu = %p), val=%s\n",
+				   opfun, xiattr->name, snew, xiattr->offset, opvar, opval);
 
-			_D("insert(%p): var=%s (at %p+%zu = %p), val=%s\n",
-			   opfun, xiattr->name, service, xiattr->offset, opvar, opval);
+			} else if (*op == '+' && *(op+1) == '=') {
+				opfun = xiattr->op_insert;
+				opval = op + 2;
 
-		} else if (*op == '-' && *(op+1) == '=') {
-			opfun = xiattr->op_remove;
-			opval = op + 2;
+				dI("insert(%p): var=%s (at %p+%zu = %p), val=%s\n",
+				   opfun, xiattr->name, snew, xiattr->offset, opvar, opval);
 
-			_D("remove(%p): var=%s (at %p+%zu = %p), val=%s\n",
-			   opfun, xiattr->name, service, xiattr->offset, opvar, opval);
-		} else
-			goto fail;
+			} else if (*op == '-' && *(op+1) == '=') {
+				opfun = xiattr->op_remove;
+				opval = op + 2;
 
-		if (opfun == NULL) {
-			tmpbuf_free(buffer);
-			continue;
+				dI("remove(%p): var=%s (at %p+%zu = %p), val=%s\n",
+				   opfun, xiattr->name, snew, xiattr->offset, opvar, opval);
+			} else
+				goto fail;
+
+			if (opfun == NULL)
+				break;
+			if (opfun(opvar, opval) != 0)
+				goto fail;
 		}
 
-		if (opfun(opvar, opval) != 0)
-			goto fail;
-
 		tmpbuf_free(buffer);
+	}
+
+finish_section:
+	if (buffer != NULL) {
+		dW("Line buffer not freed; freeing now...\n");
+		tmpbuf_free(buffer);
+	}
+
+	switch (type) {
+	case XICONF_SECTION_DEFAULTS:
+		xiconf->defaults = snew;
+		break;
+	case XICONF_SECTION_SERVICE:
+		if (snew->id == NULL)
+			snew->id = snew->name;
+
+		/*
+		 * TODO: get a write lock
+		 */
+		rbt_str_get(xiconf->stree, snew->id, (void *)&scur);
+
+		if (scur == NULL) {
+			if (rbt_str_add (xiconf->stree, snew->id, snew) != 0) {
+				dE("Can't add service (%s) into the service tree (%p)\n",
+				   snew->id, xiconf->stree);
+
+				xiconf_service_free(snew);
+				return (-1);
+			}
+
+			scur = snew;
+		} else {
+			if (xiconf_service_merge_and_free(scur, snew) != 0) {
+				dE("Failed to merge service tree records %p and %p (id=%s)\n",
+				   scur, snew, snew->id);
+				xiconf_service_free(snew);
+				return (-1);
+			}
+		}
+
+		if (xiconf_service_merge_defaults(scur, xiconf->defaults) != 0) {
+			dE("Failed to merge service (%p, id=%s) with defaults (%p)\n",
+			   scur, scur->id, xiconf->defaults);
+			return (-1);
+		}
+
+		/* TODO: resolve values for all attributes */
+		/* TODO: unlock the service tree */
+
+		break;
+	default:
+		abort ();
 	}
 
 	return (0);
@@ -704,17 +930,12 @@ fail:
 	return (-1);
 }
 
-int xiconf_parse_defaults(xiconf_file_t *xifile, xiconf_service_t *defaults, rbt_t *stree)
-{
-	return (0);
-}
-
 xiconf_service_t *xiconf_getservice(xiconf_t *xiconf, char *name, char *prot)
 {
 	return (NULL);
 }
 
-int op_assign_bool(void **var, char *val)
+int op_assign_bool(void *var, char *val)
 {
 	assume_d(var != NULL, -1);
 
@@ -723,12 +944,12 @@ int op_assign_bool(void **var, char *val)
 	return ((errno == EINVAL || errno == ERANGE) ? -1 : 0);
 }
 
-int op_assign_num(void **var, char *val)
+int op_assign_num(void *var, char *val)
 {
 	return (-1);
 }
 
-int op_assign_str(void **var, char *val)
+int op_assign_str(void *var, char *val)
 {
 	assume_d(var != NULL, -1);
 
@@ -742,17 +963,17 @@ int op_assign_str(void **var, char *val)
 		return (-1);
 }
 
-int op_assign_strl(void **var, char *val)
+int op_assign_strl(void *var, char *val)
 {
 	return (-1);
 }
 
-int op_insert_strl(void **var, char *val)
+int op_insert_strl(void *var, char *val)
 {
 	return (-1);
 }
 
-int op_remove_strl(void **var, char *val)
+int op_remove_strl(void *var, char *val)
 {
 	return (-1);
 }
@@ -775,7 +996,7 @@ void *probe_init(void)
 	return xiconf_parse(XINETD_CONFPATH, XINETD_CONFDEPTH);
 }
 
-void  probe_fini(void *arg)
+void probe_fini(void *arg)
 {
 	if (arg != NULL)
 		xiconf_free(arg);
@@ -783,9 +1004,9 @@ void  probe_fini(void *arg)
 
 SEXP_t *probe_main(SEXP_t *object, int *err, void *arg)
 {
-	SEXP_t *sexp;
-	char srv_name[256];
-	char srv_prot[256];
+	SEXP_t *item_list, *eval;
+	char    srv_name[256];
+	char    srv_prot[256];
 
 	xiconf_service_t *xsrv;
 	xiconf_t         *xcfg = (xiconf_t *)arg;
@@ -795,35 +1016,35 @@ SEXP_t *probe_main(SEXP_t *object, int *err, void *arg)
 		return (NULL);
 	}
 
-	sexp = probe_obj_getentval(object, "service_name", 1);
+	eval = probe_obj_getentval(object, "service_name", 1);
 
-	if (sexp == NULL) {
+	if (eval == NULL) {
 		*err = PROBE_ENOVAL;
 		return (NULL);
 	}
 
-	if (SEXP_string_cstr_r (sexp, srv_name, sizeof srv_name) == (size_t)-1) {
+	if (SEXP_string_cstr_r (eval, srv_name, sizeof srv_name) == (size_t)-1) {
 		*err = PROBE_ERANGE;
-		SEXP_free (sexp);
+		SEXP_free (eval);
 		return (NULL);
 	}
 
-	SEXP_free (sexp);
-	sexp = probe_obj_getentval(object, "protocol", 1);
+	SEXP_free (eval);
+	eval = probe_obj_getentval(object, "protocol", 1);
 
-	if (sexp == NULL) {
+	if (eval == NULL) {
 		oscap_free(srv_name);
 		*err = PROBE_ENOVAL;
 		return (NULL);
 	}
 
-	if (SEXP_string_cstr_r (sexp, srv_prot, sizeof srv_prot) == (size_t)-1) {
+	if (SEXP_string_cstr_r (eval, srv_prot, sizeof srv_prot) == (size_t)-1) {
 		*err = PROBE_ERANGE;
-		SEXP_free (sexp);
+		SEXP_free (eval);
 		return (NULL);
 	}
 
-	SEXP_free (sexp);
+	SEXP_free (eval);
 
 	_D("Updating xinetd configuration cache");
 
@@ -835,12 +1056,42 @@ SEXP_t *probe_main(SEXP_t *object, int *err, void *arg)
 	_D("Looking for service %s/%s\n", srv_name, srv_prot);
 	xsrv = xiconf_getservice(xcfg, srv_name, srv_prot);
 
-	if (xsrv == NULL) {
-		/* not found */
-	} else {
-		/* found */
+	/* TODO: distinguish between an error and "not found" result */
+
+	item_list = SEXP_list_new(NULL);
+
+	if (xsrv != NULL) {
+		SEXP_t *item;
+		SEXP_t *r[0xC+1];
+		register int   i;
+
+#define SEXP_string_new1(str) SEXP_string_new((str), strlen(str))
+
+		item = probe_item_creat("xinetd_item", NULL,
+					"protocol",         NULL, r[0x0]= SEXP_string_new1(xsrv->protocol),
+					"service_name",     NULL, r[0x1]= SEXP_string_new1(xsrv->name),
+					"flags",            NULL, r[0x2]= SEXP_string_new1(xsrv->flags),
+					"no_access",        NULL, r[0x3]= SEXP_string_new1(xsrv->no_access),
+					"only_from",        NULL, r[0x4]= SEXP_string_new1(xsrv->only_from),
+					"port",             NULL, r[0x5]= SEXP_number_newu(xsrv->port),
+					"server",           NULL, r[0x6]= SEXP_string_new1(xsrv->server),
+					"server_arguments", NULL, r[0x7]= SEXP_string_new1(xsrv->server_args),
+					"socket_type",      NULL, r[0x8]= SEXP_string_new1(xsrv->socket_type),
+					"type",             NULL, r[0x9]= SEXP_string_new1(xsrv->type),
+					"user",             NULL, r[0xA]= SEXP_string_new1(xsrv->user),
+					"wait",             NULL, r[0xB]= SEXP_number_newb(xsrv->wait),
+					"disabled",         NULL, r[0xC]= SEXP_number_newb(xsrv->disable),
+					NULL);
+
+		SEXP_list_add(item_list, item);
+		SEXP_free(item);
+
+		/* TODO: get rid of useless S-exp refs */
+		for (i = 0; i < 0xC+1; ++i)
+			SEXP_free(r[i]);
+
 	}
 
-	return (NULL);
+	return (item_list);
 }
 #endif
