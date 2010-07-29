@@ -24,6 +24,7 @@
 #ifndef NDEBUG
 # include <stdio.h>
 # include <stdarg.h>
+# include <string.h>
 # include <stdlib.h>
 # include <sys/types.h>
 # include <sys/file.h>
@@ -32,12 +33,15 @@
 # include "public/debug.h"
 # include "debug_priv.h"
 
+#define PATH_SEPARATOR '/'
+
 #  if defined(OSCAP_THREAD_SAFE)
 #   include <pthread.h>
 static pthread_mutex_t __debuglog_mutex = PTHREAD_MUTEX_INITIALIZER;
 #  endif
 static FILE *__debuglog_fp = NULL;
-int __debuglog_level = -1;
+int __debuglog_level  = -1;
+static int __debuglog_pstrip = -1;
 
 #if defined(OSCAP_THREAD_SAFE)
 # define __LOCK_FP    do { if (pthread_mutex_lock   (&__debuglog_mutex) != 0) abort(); } while(0)
@@ -52,9 +56,28 @@ static void __oscap_debuglog_close(void)
         fclose(__debuglog_fp);
 }
 
+static char *__oscap_path_rstrip(char *path, int num)
+{
+	register size_t len;
+	register char  *res;
+
+	len = strlen(path);
+	res = path;
+
+	for (len = strlen(path); len > 0; --len) {
+		if (path[len - 1] == PATH_SEPARATOR)
+			--num;
+		if (num == 0)
+			return (path + len);
+	}
+
+	return (path);
+}
+
 static void __oscap_vdlprintf(int level, const char *file, const char *fn, size_t line, const char *fmt, va_list ap)
 {
-	char l;
+	char  l;
+	char *f;
 
 	__LOCK_FP;
 
@@ -96,6 +119,21 @@ static void __oscap_vdlprintf(int level, const char *file, const char *fn, size_
 		fprintf(__debuglog_fp, "\n=============== LOG: %.24s ===============\n", st);
                 atexit(&__oscap_debuglog_close);
 	}
+	if (__debuglog_pstrip == -1) {
+		char *pstrip;
+
+		pstrip = getenv(OSCAP_DEBUG_PATHSTRIP_ENV);
+
+		if (pstrip == NULL)
+			__debuglog_pstrip = 0;
+
+		__debuglog_pstrip = atol(pstrip);
+
+	}
+	if (__debuglog_pstrip != 0)
+		f = __oscap_path_rstrip(file, __debuglog_pstrip);
+	else
+		f = file;
 
 	if (flock(fileno(__debuglog_fp), LOCK_EX) == -1) {
 		__UNLOCK_FP;
@@ -118,10 +156,10 @@ static void __oscap_vdlprintf(int level, const char *file, const char *fn, size_
 #if defined(OSCAP_THREAD_SAFE)
 	/* XXX: non-portable usage of pthread_t */
 	fprintf(__debuglog_fp, "(%u:%u) [%c:%s:%zu:%s] ", (unsigned int) getpid(),
-		(unsigned int) pthread_self(), l, file, line, fn);
+		(unsigned int) pthread_self(), l, f, line, fn);
 #else
 	fprintf(__debuglog_fp, "(%u) [%c:%s:%zu:%s] ", (unsigned int) getpid(),
-		l, file, line, fn);
+		l, f, line, fn);
 #endif
 	vfprintf(__debuglog_fp, fmt, ap);
 

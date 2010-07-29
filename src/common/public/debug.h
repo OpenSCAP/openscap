@@ -67,4 +67,16 @@
 # define OSCAP_DEBUG_LEVEL_ENV "OSCAP_DEBUG_LEVEL"
 #endif
 
+/**
+ * Name of the environment variable that can be used to enable
+ * striping of __FILE__ paths. It's numeric value specifies how
+ * many path tokens from the end should remain after striping.
+ * Value 1 is equal to basename(__FILE__)
+ * If this environment variable isn't defined or is set to 0
+ * then no striping is done.
+ */
+#ifndef OSCAP_DEBUG_PATHSTRIP_ENV
+# define OSCAP_DEBUG_PATHSTRIP_ENV "OSCAP_DEBUG_PSTRIP"
+#endif
+
 #endif				/* OSCAP_DEBUG_H */
