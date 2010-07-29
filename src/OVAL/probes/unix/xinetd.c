@@ -62,6 +62,7 @@
 #define XICFG_PARSER_IGNORE_UNKNOWN 1
 #define XICFG_PARSER_IGNORE_INVSECT 0
 #define XICFG_PARSER_MAXFILESIZE    655360 /**< hard limit for configuration file size; 640K ought to be enough for anybody */
+#define XICFG_PARSER_MAXFILECOUNT   28    /**< a reasonable high limit for the number of configuration files to be opened at one time */
 
 struct xiconf_attr {
 	char    *name;   /* name of the attribute */
@@ -416,6 +417,12 @@ static xiconf_file_t *xiconf_read(const char *path, int flags)
 		return (NULL);
 	}
 
+	if ((st.st_mode & S_IFMT) != S_IFREG) {
+		dE("Not a regular file: %s\n", path);
+		close (fd);
+		return (NULL);
+	}
+
 	if (st.st_size > XICFG_PARSER_MAXFILESIZE) {
 		/* You're probably trying to parse a wrong file... or 640k is not enough for you. */
 		close (fd);
@@ -466,6 +473,32 @@ static xiconf_file_t *xiconf_read(const char *path, int flags)
 	file->cpath = strdup(path);
 
 	return (file);
+}
+
+static int xiconf_add_cfile(xiconf_t *xiconf, const char *path, int depth)
+{
+	xiconf_file_t *xifile;
+
+	if (xiconf->count + 1 > XICFG_PARSER_MAXFILECOUNT) {
+		dE("include count limit reached: %u\n", XICFG_PARSER_MAXFILECOUNT);
+		return (-1);
+	}
+
+	dI("Reading included file: %s\n", path);
+	xifile = xiconf_read (path, 0);
+
+	if (xifile == NULL) {
+		dW("Failed to read file: %s\n", path);
+		return (-1);
+	}
+
+	xifile->depth = depth;
+	xiconf->cfile = oscap_realloc(xiconf->cfile, sizeof(xiconf_file_t) * ++xiconf->count);
+	xiconf->cfile[xiconf->count - 1] = xifile;
+
+	dI("Added new file to the cfile queue: %s; fi=%zu\n", path, xiconf->count - 1);
+
+	return (0);
 }
 
 #define tmpbuf_def(size) char __tmpbuf[size]
@@ -578,39 +611,74 @@ xiconf_t *xiconf_parse(const char *path, unsigned int max_depth)
 				/* blank line */
 				break;
 			case 'i':
-				if (strcmp("ncludedir", buffer + bufidx + 1) == 0) {
-					xiconf_file_t *xifile_inc;
-					char          *incldir;
-					size_t         incllen;
-					char           pathbuf[PATH_MAX+1];
+			{
+#define XICONF_INCTYPE_FILE 0
+#define XICONF_INCTYPE_DIR  1
+				xiconf_file_t *xifile_inc;
+				int            inctype = -1;
+				char          *inclarg;
+				char           pathbuf[PATH_MAX+1];
+				size_t         incllen;
+
+				incllen = strlen (buffer + bufidx);
+
+				if (strncmp("nclude", buffer + bufidx + 1, 6) != 0)
+					break;
+				switch (buffer[bufidx+1+6]) {
+				case '\0':
+					inctype = XICONF_INCTYPE_FILE;
+					break;
+				case  'd':
+					if (buffer[bufidx+1+6+1] ==  'i' &&
+					    buffer[bufidx+1+6+2] ==  'r' &&
+					    buffer[bufidx+1+6+3] == '\0')
+					{
+						inctype = XICONF_INCTYPE_DIR;
+					}
+					break;
+				}
+
+				/*
+				 * Get the include(dir) argument
+				 */
+				bufidx += strlen("includedir");
+				while(isspace(buffer[bufidx])) ++bufidx;
+				inclarg = buffer + bufidx + 1;
+				buffer[l_size] = '\0';
+
+				if (*inclarg == '\0') {
+					dW("Found includedir directive without an argument!\n");
+					break;
+				}
+
+				if (xifile->depth + 1 > max_depth) {
+					dE("include depth limit reached: %u\n", max_depth);
+					break;
+				}
+
+				switch (inctype) {
+				case XICONF_INCTYPE_FILE:
+					dI("includefile: %s\n", pathbuf);
+
+					if (xiconf_add_cfile (xiconf, pathbuf, xifile->depth + 1) != 0)
+						continue;
+					else
+						break;
+				case XICONF_INCTYPE_DIR:
+				{
 					DIR           *dirfp;
 					struct dirent  dent, *dentp = NULL;
 
-					bufidx += strlen("includedir");
-					while(isspace(buffer[bufidx])) ++bufidx;
-					incldir = buffer + bufidx + 1;
-					buffer[l_size] = '\0';
-
-					if (*incldir == '\0') {
-						dW("Found includedir directive without an argument!\n");
-						break;
-					}
-
-					if (xifile->depth + 1 > max_depth) {
-						dE("include depth limit reached: %u\n", max_depth);
-						break;
-					}
-
-					dI("includedir open: %s\n", incldir);
-					dirfp = opendir (incldir);
+					dI("includedir open: %s\n", inclarg);
+					dirfp = opendir (inclarg);
 
 					if (dirfp == NULL) {
-						dW("Can't open includedir: %s; %d, %s.\n", incldir, errno, strerror (errno));
+						dW("Can't open includedir: %s; %d, %s.\n", inclarg, errno, strerror (errno));
 						break;
 					}
 
-					strcpy(pathbuf, incldir);
-					incllen = strlen(incldir);
+					strcpy (pathbuf, inclarg);
+					incllen = strlen(inclarg);
 
 					if (pathbuf[incllen - 1] != PATH_SEPARATOR) {
 						if (incllen < PATH_MAX) {
@@ -626,7 +694,7 @@ xiconf_t *xiconf_parse(const char *path, unsigned int max_depth)
 
 					for (;;) {
 						if (readdir_r (dirfp, &dent, &dentp) != 0) {
-							dW("Can't read directory: %s; %d, %s.\n", incldir, errno, strerror (errno));
+							dW("Can't read directory: %s; %d, %s.\n", inclarg, errno, strerror (errno));
 							closedir (dirfp);
 							break;
 						}
@@ -642,30 +710,21 @@ xiconf_t *xiconf_parse(const char *path, unsigned int max_depth)
 						}
 
 						strcpy(pathbuf + incllen, dent.d_name);
-						dI("Reading included file: %s\n", pathbuf);
-						xifile_inc = xiconf_read (pathbuf, 0);
 
-						if (xifile_inc == NULL) {
-							dW("Failed to read file: %s\n", pathbuf);
+						if (xiconf_add_cfile (xiconf, pathbuf, xifile->depth + 1) != 0)
 							continue;
-						}
-
-						xifile_inc->depth = xifile->depth + 1;
-						xiconf->cfile = oscap_realloc(xiconf->cfile, sizeof(xiconf_file_t) * ++xiconf->count);
-						xiconf->cfile[xiconf->count - 1] = xifile_inc;
-
-						dI("Added new file to the cfile queue: %s; fi=%zu, ni=%zu\n",
-						   pathbuf, findex, xiconf->count - 1);
 					}
 
-					dI("includedir close: %s\n", incldir);
+					dI("includedir close: %s\n", inclarg);
 					closedir(dirfp);
-				} else if (strcmp("nclude", buffer + bufidx + 1) == 0) {
-					// read the file and push into the stack
-				}
+					break;
+				}}
 				break;
+			}
 			default:
-				/* something */
+				dE("Don't know how to parse the line: %s\n", buffer);
+				tmpbuf_free(buffer);
+
 				return (NULL);
 			}
 
