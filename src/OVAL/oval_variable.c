@@ -160,7 +160,8 @@ int oval_syschar_model_compute_variable(struct oval_syschar_model *sysmod, struc
         return 0;
 }
 
-int oval_probe_session_query_variable(oval_probe_session_t *sess, struct oval_variable *variable) {
+int oval_probe_query_variable(oval_probe_session_t *sess, struct oval_variable *variable)
+{
 	__attribute__nonnull__(variable);
 
 	if (variable->flag != SYSCHAR_FLAG_UNKNOWN)

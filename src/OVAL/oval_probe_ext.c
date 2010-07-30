@@ -226,7 +226,7 @@ static SEXP_t *oval_probe_cmd_obj_eval(SEXP_t *sexp, void *arg)
 	}
 
 	oscap_clearerr();
-	oval_probe_object_query(pext->sess_ptr, obj, OVAL_PDFLAG_NOREPLY); /* DO NOT PUT THIS INSIDE ASSERT! */
+	oval_probe_query_object(pext->sess_ptr, obj, OVAL_PDFLAG_NOREPLY); /* DO NOT PUT THIS INSIDE ASSERT! */
 
 	if (oscap_err()) {
 		oscap_dlprintf(DBG_E, "Failed: id: %s, err: %d, %d, %s.\n",
@@ -707,7 +707,7 @@ int oval_probe_ext_handler(oval_subtype_t type, void *ptr, int act, ...)
                 }
 
                 *sys = oval_probe_ext_eval(pext->pdtbl->ctx, pd, pext, obj, flags);
-                ret  = (*sys == NULL ? -1 : 0);
+		ret  = ((*sys == NULL) && (!(flags & OVAL_PDFLAG_NOREPLY)) ? -1 : 0);
                 break;
         }
         case PROBE_HANDLER_ACT_OPEN:

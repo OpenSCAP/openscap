@@ -51,35 +51,36 @@
  * Evaluate system info probe
  * @param sess probe session
  */
-struct oval_sysinfo *oval_probe_sysinfo_query(oval_probe_session_t *sess) __attribute__ ((nonnull(1)));
+struct oval_sysinfo *oval_probe_query_sysinfo(oval_probe_session_t *sess) __attribute__ ((nonnull(1)));
 
 /**
  * Evaluate an object
  * @param sess probe session
  * @param object the object to evaluate
  */
-struct oval_syschar *oval_probe_object_query(oval_probe_session_t *sess, struct oval_object *object, int flags) __attribute__ ((nonnull(1, 2)));
-
-/**
- * Probe system info and update system characteristic model in the session
- * @param sess probe session
- * @return 0 on success
- */
-int oval_probe_session_query_sysinfo(oval_probe_session_t *sess) __attribute__ ((nonnull(1)));
+struct oval_syschar *oval_probe_query_object(oval_probe_session_t *sess, struct oval_object *object, int flags) __attribute__ ((nonnull(1, 2)));
 
 /**
  * Probe all objects and update system characteristic model in the session
  * @param sess probe session
  * @return 0 on success
  */
-int oval_probe_session_query_objects(oval_probe_session_t *sess) __attribute__ ((nonnull(1)));
+int oval_probe_query_objects(oval_probe_session_t *sess) __attribute__ ((nonnull(1)));
 
 /**
- * Probe objects required for evalatuation specified definition and update system characteristic model in the session
+ * Probe objects required for the evalatuation of the specified definition and update the system characteristics model associated with the session
  * @param sess probe session
  * @param id definition id
  * @return 0 on success
  */
-int oval_probe_session_query_definition(oval_probe_session_t *sess, const char *id) __attribute__ ((nonnull(1, 2)));
+int oval_probe_query_definition(oval_probe_session_t *sess, const char *id) __attribute__ ((nonnull(1, 2)));
+
+/**
+ * Query the specified variable and all its dependencies in order to compute the vector of its values
+ * @param sess probe session
+ * @param variable the variable to query
+ * @return 0 on success
+ */
+int oval_probe_query_variable(oval_probe_session_t *sess, struct oval_variable *variable);
 
 #endif				/* OVAL_PROBE_H */

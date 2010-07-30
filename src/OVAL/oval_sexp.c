@@ -160,7 +160,7 @@ static SEXP_t *oval_varref_to_sexp(struct oval_entity *entity, struct oval_sysch
 	dt = oval_entity_get_datatype(entity);
 
 	var = oval_entity_get_variable(entity);
-	if (oval_probe_session_query_variable(sess, var) != 0) {
+	if (oval_probe_query_variable(sess, var) != 0) {
 		SEXP_free(val_lst);
 		return NULL;
 	}
@@ -497,7 +497,7 @@ SEXP_t *oval_state2sexp(struct oval_state *state, void *sess)
 			oval_datatype_t dt;
 
 			var = oval_entity_get_variable(ent);
-			if (oval_probe_session_query_variable(sess, var) != 0) {
+			if (oval_probe_query_variable(sess, var) != 0) {
 				goto fail;
 			}
 			dt = oval_entity_get_datatype(ent);

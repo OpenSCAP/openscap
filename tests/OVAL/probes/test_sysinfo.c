@@ -25,7 +25,7 @@ int main (void)
   /*
    *  Call the sysinfo probe.
    */
-  struct oval_sysinfo *info = oval_probe_sysinfo_query (sess);
+  struct oval_sysinfo *info = oval_probe_query_sysinfo(sess);
   assume(info != NULL);
 
   if (info != NULL) {

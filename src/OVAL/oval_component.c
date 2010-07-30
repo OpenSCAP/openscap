@@ -1346,7 +1346,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_OBJECTREF(oval_ar
 		return flag;
 
 	if (argu->mode == OVAL_MODE_QUERY) {
-		if (oval_probe_session_query_object(argu->u.sess, object) != 0)
+		if (oval_probe_query_object(argu->u.sess, object, 0) != 0)
 			return flag;
 		sysmod = oval_probe_session_getmodel(argu->u.sess);
 	} else {
@@ -1404,7 +1404,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_VARREF(oval_argu_
 	}
 
 	if (argu->mode == OVAL_MODE_QUERY) {
-		if (oval_probe_session_query_variable(argu->u.sess, variable) != 0)
+		if (oval_probe_query_variable(argu->u.sess, variable) != 0)
 			return flag;
 	} else {
 		if (oval_syschar_model_compute_variable(argu->u.sysmod, variable) != 0)

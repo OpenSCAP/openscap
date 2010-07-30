@@ -96,6 +96,7 @@ static int app_oval_callback(const struct oscap_reporter_message *msg, void *arg
 int app_collect_oval(const struct oscap_action *action)
 {
 	int ret;
+	struct oval_sysinfo *sysinfo;
 
 	/* import definitions */
 	struct oval_definition_model *def_model = oval_definition_model_import(action->f_oval);
@@ -107,15 +108,18 @@ int app_collect_oval(const struct oscap_action *action)
 	struct oval_probe_session *pb_sess = oval_probe_session_new(sys_model);
 
 	/* query sysinfo */
-	ret = oval_probe_session_query_sysinfo(pb_sess);
-	if (ret != 0) {
+	sysinfo = oval_probe_query_sysinfo(pb_sess);
+	if (sysinfo == NULL) {
 		oval_probe_session_destroy(pb_sess);
 		oval_syschar_model_free(sys_model);
 		oval_definition_model_free(def_model);
 		return 1;
 	}
+	oval_syschar_model_set_sysinfo(sys_model, sysinfo);
+	oval_sysinfo_free(sysinfo);
+
 	/* query objects */
-	ret = oval_probe_session_query_objects(pb_sess);
+	ret = oval_probe_query_objects(pb_sess);
 	if (ret != 0) {
 		oval_probe_session_destroy(pb_sess);
 		oval_syschar_model_free(sys_model);

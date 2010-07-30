@@ -316,12 +316,21 @@ static void _syschar_add_bindings(struct oval_syschar *sc, struct oval_string_ma
 	oval_collection_iterator_free(var_itr);
 }
 
-struct oval_syschar *oval_probe_object_query(oval_probe_session_t *psess, struct oval_object *object, int flags)
+struct oval_syschar *oval_probe_query_object(oval_probe_session_t *psess, struct oval_object *object, int flags)
 {
+	char *oid;
         struct oval_syschar *o_sys;
         oval_subtype_t type;
         oval_ph_t *ph;
 	struct oval_string_map *vm;
+	struct oval_syschar_model *model;
+
+	oid = oval_object_get_id(object);
+	model = psess->sys_model;
+	o_sys = oval_syschar_model_get_syschar(model, oid);
+
+	if (o_sys != NULL)
+		return(o_sys);
 
         type = oval_object_get_subtype(object);
         ph   = oval_probe_handler_get(psess->ph, type);
@@ -331,22 +340,28 @@ struct oval_syschar *oval_probe_object_query(oval_probe_session_t *psess, struct
                 return(NULL);
         }
 
-	vm = oval_string_map_new();
-	_obj_collect_var_refs(object, vm);
         o_sys = NULL;
 
         if (ph->func(type, ph->uptr, PROBE_HANDLER_ACT_EVAL, object, &o_sys, flags) != 0) {
-		oval_string_map_free(vm, NULL);
-                return(NULL);
+		if (oscap_err())
+			return(NULL);
+
+		o_sys = oval_syschar_new(model, object);
+		oval_syschar_set_flag(o_sys, SYSCHAR_FLAG_NOT_COLLECTED);
+		return(o_sys);
         }
 
-	_syschar_add_bindings(o_sys, vm);
-	oval_string_map_free(vm, NULL);
+	if (!(flags & OVAL_PDFLAG_NOREPLY)) {
+		vm = oval_string_map_new();
+		_obj_collect_var_refs(object, vm);
+		_syschar_add_bindings(o_sys, vm);
+		oval_string_map_free(vm, NULL);
+	}
 
         return(o_sys);
 }
 
-struct oval_sysinfo *oval_probe_sysinfo_query(oval_probe_session_t *sess)
+struct oval_sysinfo *oval_probe_query_sysinfo(oval_probe_session_t *sess)
 {
 	struct oval_sysinfo *sysinf;
         oval_ph_t *ph;
@@ -367,30 +382,12 @@ struct oval_sysinfo *oval_probe_sysinfo_query(oval_probe_session_t *sess)
         return(sysinf);
 }
 
-static int oval_probe_session_query_criteria(oval_probe_session_t *sess, struct oval_criteria_node *cnode);
-int oval_probe_session_query_object(oval_probe_session_t *sess, struct oval_object *object);
+static int oval_probe_query_criteria(oval_probe_session_t *sess, struct oval_criteria_node *cnode);
 
-int oval_probe_session_query_sysinfo(oval_probe_session_t *sess) {
-        struct oval_syschar_model *syschar_model;
-	struct oval_sysinfo *sysinfo;
-
-        sysinfo = oval_probe_sysinfo_query(sess);
-        if (sysinfo == NULL) {
-		/* Report error in this case */
-		return -1;
-	}
-
-        syschar_model = sess->sys_model;
-        oval_syschar_model_set_sysinfo(syschar_model, sysinfo);
-        oval_sysinfo_free(sysinfo);
-	return 0;
-}
-
-int oval_probe_session_query_objects(oval_probe_session_t *sess)
+int oval_probe_query_objects(oval_probe_session_t *sess)
 {
 	struct oval_syschar_model * syschar_model;
 	struct oval_definition_model *definition_model;
-	int ret;
 
 	syschar_model = sess->sys_model;
 	definition_model = oval_syschar_model_get_definition_model(syschar_model);
@@ -399,8 +396,7 @@ int oval_probe_session_query_objects(oval_probe_session_t *sess)
 		struct oval_object_iterator *objects = oval_definition_model_get_objects(definition_model);
 		while (oval_object_iterator_has_more(objects)) {
 			struct oval_object *object = oval_object_iterator_next(objects);
-			ret = oval_probe_session_query_object(sess, object);
-			if( ret != 0 ) {
+			if (oval_probe_query_object(sess, object, 0) == NULL) {
 				oval_object_iterator_free(objects);
 				return -1;
 			}
@@ -410,8 +406,7 @@ int oval_probe_session_query_objects(oval_probe_session_t *sess)
 	return 0;
 }
 
-
-int oval_probe_session_query_definition(oval_probe_session_t *sess, const char *id) {
+int oval_probe_query_definition(oval_probe_session_t *sess, const char *id) {
 
 	struct oval_syschar_model * syschar_model;
         struct oval_definition_model *definition_model;
@@ -426,7 +421,7 @@ int oval_probe_session_query_definition(oval_probe_session_t *sess, const char *
 	if (cnode == NULL)
 		return -1;
 
-	ret = oval_probe_session_query_criteria(sess, cnode);
+	ret = oval_probe_query_criteria(sess, cnode);
 
 	return ret;
 }
@@ -434,7 +429,7 @@ int oval_probe_session_query_definition(oval_probe_session_t *sess, const char *
 /**
  * @returns 0 on success
  */
-static int oval_probe_session_query_criteria(oval_probe_session_t *sess, struct oval_criteria_node *cnode) {
+static int oval_probe_query_criteria(oval_probe_session_t *sess, struct oval_criteria_node *cnode) {
 	int ret;
 
 	switch (oval_criteria_node_get_type(cnode)) {
@@ -452,9 +447,8 @@ static int oval_probe_session_query_criteria(oval_probe_session_t *sess, struct 
 		if (object == NULL)
 			return 0;
 		/* probe object */
-		ret = oval_probe_session_query_object(sess, object);
-		if (ret != 0)
-			return ret;
+		if (oval_probe_query_object(sess, object, 0) == NULL)
+			return -1;
 		/* probe objects referenced like this: test->state->variable->object */
 		state = oval_test_get_state(test);
 		if (state != NULL) {
@@ -464,7 +458,7 @@ static int oval_probe_session_query_criteria(oval_probe_session_t *sess, struct 
 				struct oval_entity * entity = oval_state_content_get_entity(content);
 				if (oval_entity_get_varref_type(entity) == OVAL_ENTITY_VARREF_ATTRIBUTE) {
 					struct oval_variable *var = oval_entity_get_variable(entity);
-					ret = oval_probe_session_query_variable(sess, var); 
+					ret = oval_probe_query_variable(sess, var);
 					if (ret != 0) {
 						oval_state_content_iterator_free(contents);
 						return ret;
@@ -488,7 +482,7 @@ static int oval_probe_session_query_criteria(oval_probe_session_t *sess, struct 
                         struct oval_criteria_node *node;
                         while (oval_criteria_node_iterator_has_more(cnode_it)) {
                                 node = oval_criteria_node_iterator_next(cnode_it);
-                                ret = oval_probe_session_query_criteria(sess, node);
+                                ret = oval_probe_query_criteria(sess, node);
                                 if (ret != 0) {
                                         oval_criteria_node_iterator_free(cnode_it);
                                         return -1;
@@ -503,7 +497,7 @@ static int oval_probe_session_query_criteria(oval_probe_session_t *sess, struct 
         case OVAL_NODETYPE_EXTENDDEF:{
                         struct oval_definition *oval_def = oval_criteria_node_get_definition(cnode);
 			struct oval_criteria_node *node =  oval_definition_get_criteria(oval_def);
-                        return oval_probe_session_query_criteria(sess, node);
+                        return oval_probe_query_criteria(sess, node);
                 }
                 break;
         case OVAL_NODETYPE_UNKNOWN:
@@ -512,27 +506,4 @@ static int oval_probe_session_query_criteria(oval_probe_session_t *sess, struct 
 
 	/* we shouldn't get here */
         return -1;
-}
-
-/**
- * @returns 0 on success
- */
-int oval_probe_session_query_object(oval_probe_session_t *sess, struct oval_object *object) {
-
-	char *objid = oval_object_get_id(object);
-	struct oval_syschar_model *sys_model = sess->sys_model;
-	struct oval_syschar *syschar = oval_syschar_model_get_syschar(sys_model, objid);
-
-	if (syschar == NULL) {
-		syschar = oval_probe_object_query(sess, object, 0);
-		if (syschar == NULL) {
-			if(  oscap_err() ) {
-		        	/* does it make sense to continue? */
-				 return -1;
-			}
-                       	syschar = oval_syschar_new(sys_model, object);
-	                oval_syschar_set_flag(syschar, SYSCHAR_FLAG_NOT_COLLECTED);
-		}
-	}
-	return 0;
 }

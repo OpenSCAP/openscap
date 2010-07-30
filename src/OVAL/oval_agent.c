@@ -82,20 +82,24 @@ static const struct oval_result_to_xccdf_spec XCCDF_OVAL_RESULTS_MAP[] = {
 oval_agent_session_t * oval_agent_new_session(struct oval_definition_model *model) {
 
 	oval_agent_session_t *ag_sess;
-	int ret;
+	struct oval_sysinfo *sysinfo;
 
 	ag_sess = oscap_talloc(oval_agent_session_t);
 	ag_sess->def_model = model;
 	ag_sess->sys_model = oval_syschar_model_new(model);
 	ag_sess->psess     = oval_probe_session_new(ag_sess->sys_model);
+
 	/* probe sysinfo */
-	ret = oval_probe_session_query_sysinfo(ag_sess->psess);
-	if (ret != 0) {
+	sysinfo = oval_probe_query_sysinfo(ag_sess->psess);
+	if (sysinfo == NULL) {
 		oval_probe_session_destroy(ag_sess->psess);
 		oval_syschar_model_free(ag_sess->sys_model);
 		oscap_free(ag_sess);
 		return NULL;
 	}
+	oval_syschar_model_set_sysinfo(ag_sess->sys_model, sysinfo);
+	oval_sysinfo_free(sysinfo);
+
 	/* one system only */
 	ag_sess->sys_models[0] = ag_sess->sys_model;
 	ag_sess->sys_models[1] = NULL;
@@ -109,7 +113,7 @@ oval_result_t oval_agent_eval_definition(oval_agent_session_t * ag_sess, const c
 	struct oval_result_system *rsystem;
 
 	/* probe */
-	ret = oval_probe_session_query_definition(ag_sess->psess, id);
+	ret = oval_probe_query_definition(ag_sess->psess, id);
 	if (ret!=0)
 		return OVAL_RESULT_UNKNOWN;
 
