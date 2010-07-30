@@ -467,7 +467,7 @@ static int oval_probe_query_criteria(oval_probe_session_t *sess, struct oval_cri
 			}
 			oval_state_content_iterator_free(contents);
 		}
-		return ret;
+		return 0;
 
 		}
 		break;
