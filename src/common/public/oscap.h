@@ -176,6 +176,22 @@ typedef enum oscap_document_type {
  * @return Success or failure.
  */
 bool oscap_validate_document(const char *xmlfile, oscap_document_type_t doctype, const char *version, oscap_reporter reporter, void *arg);
+
+/**
+ * Apply a XSLT stylesheet to a XML file.
+ *
+ * Stylesheets are searched relative to path specified by the OSCAP_XSLT_PATH environment variable,
+ * which contains a list of colon-separated paths.
+ * If the variable does not exist a default path is used (usually something like $PREFIX/share/openscap/schemas).
+ *
+ * @param xmlfile File to be transformed.
+ * @param xsltfile XSLT filename
+ * @param outfile Result file shall be written here (NULL for stdout).
+ * @param params list of key-value pairs to pass to the stylesheet.
+ * @return Success or failure.
+ */
+bool oscap_apply_xslt(const char *xmlfile, const char *xsltfile, const char *outfile, const char **params);
+
 /************************************************************/
 /** @} validation group end */
 

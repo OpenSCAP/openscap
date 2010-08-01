@@ -366,7 +366,7 @@ bool oscap_validate_xml(const char *xmlfile, const char *schemafile, oscap_repor
 // check file existence
 bool oscap_file_exists(const char *path, int mode);
 // find file with given name and mode in given paths
-char *oscap_find_file(const char *path, const char *filename, int mode);
+char *oscap_find_file(const char *filename, int mode, const char *pathvar, const char *defpath);
 
 
 #ifndef OSCAP_CONCAT

@@ -49,6 +49,19 @@ if test "x${HAVE_LIBXML_CONFIG}" != "xyes"; then
 fi
 
 #
+# xslt-config
+#
+AC_CHECK_PROG(
+  [HAVE_LIBXSLT_CONFIG],
+  [xslt-config],
+  [yes],,,
+)
+if test "x${HAVE_LIBXSLT_CONFIG}" != "xyes"; then
+  AC_MSG_FAILURE([xslt-config not found in PATH])
+fi
+
+
+#
 # pcre-config
 #
 AC_CHECK_PROG(
@@ -94,6 +107,19 @@ AC_CHECK_LIB(
   ],
   [AC_MSG_FAILURE([libxml2 library is missing])],
   [`xml2-config --libs`]
+)
+
+#
+# libxslt
+#
+AC_CHECK_LIB(
+  [xslt],
+  [xsltApplyStylesheet],
+  [libxslt_cflags=`xslt-config --cflags`
+   libxslt_libs=`xslt-config --libs`
+  ],
+  [AC_MSG_FAILURE([libxslt library is missing])],
+  [`xslt-config --libs`]
 )
 
 #
@@ -266,6 +292,17 @@ AC_CHECK_HEADERS(
 CPPFLAGS="$CPPFLAGS_SAVE"
 
 #
+# xslt
+#
+CPPFLAGS_SAVE="$CPPFLAGS"
+CPPFLAGS="$libxslt_cflags $CPPFLAGS"
+AC_CHECK_HEADERS(
+  [libxslt/xslt.h],,
+  [AC_MSG_FAILURE([libxslt header files are missing])]
+)
+CPPFLAGS="$CPPFLAGS_SAVE"
+
+#
 # pcre.h
 #
 CPPFLAGS_SAVE="$CPPFLAGS"
@@ -286,6 +323,9 @@ AC_SUBST([perl_vendorarchdir], ['${prefix}'$vendorarch])
 
 AC_SUBST(libxml_cflags)
 AC_SUBST(libxml_libs)
+
+AC_SUBST(libxslt_cflags)
+AC_SUBST(libxslt_libs)
 
 AC_SUBST(pcre_cflags)
 AC_SUBST(pcre_libs)
@@ -471,6 +511,12 @@ if test "x${prefix}" = xNONE; then
 	AC_DEFINE_UNQUOTED([OSCAP_DEFAULT_SCHEMA_PATH], ["/usr/local/share/openscap/schemas"], [Path to xml schemas])
 else
 	AC_DEFINE_UNQUOTED([OSCAP_DEFAULT_SCHEMA_PATH], ["${prefix}/share/openscap/schemas"], [Path to xml schemas])
+fi
+
+if test "x${prefix}" = xNONE; then
+	AC_DEFINE_UNQUOTED([OSCAP_DEFAULT_XSLT_PATH], ["/usr/local/share/openscap/xsl"], [Path to xslt files])
+else
+	AC_DEFINE_UNQUOTED([OSCAP_DEFAULT_XSLT_PATH], ["${prefix}/share/openscap/xsl"], [Path to xslt files])
 fi
 
 if test "$regex_posix" = "yes"; then

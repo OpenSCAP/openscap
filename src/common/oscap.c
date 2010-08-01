@@ -24,9 +24,15 @@
 #include "public/oscap.h"
 #include "_error.h"
 #include "util.h"
+#include "list.h"
 #include "elements.h"
 #include "reporter_priv.h"
 #include <libxml/xmlschemas.h>
+#include <libxslt/xslt.h>
+#include <libxslt/xsltInternals.h>
+#include <libxslt/transform.h>
+#include <libxslt/xsltutils.h>
+#include <libexslt/exslt.h>
 #include <string.h>
 
 #include <config.h>
@@ -36,6 +42,7 @@
 
 void oscap_cleanup(void)
 {
+    xsltCleanupGlobals();
 	xmlCleanupParser();
 }
 
@@ -50,6 +57,9 @@ const char *OSCAP_PATH_SEPARATOR = ":";
 #ifndef OSCAP_DEFAULT_SCHEMA_PATH
 #define OSCAP_DEFAULT_SCHEMA_PATH "/usr/local/share/openscap/schemas"
 #endif
+#ifndef OSCAP_DEFAULT_XSLT_PATH
+#define OSCAP_DEFAULT_XSLT_PATH "/usr/local/share/openscap/xsl"
+#endif
 
 bool oscap_file_exists(const char *path, int mode)
 {
@@ -63,12 +73,16 @@ bool oscap_file_exists(const char *path, int mode)
 #endif
 }
 
-char *oscap_find_file(const char *path, const char *filename, int mode)
+char *oscap_find_file(const char *filename, int mode, const char *pathvar, const char *defpath)
 {
 	if (filename == NULL) return NULL;
 	if (strstr(filename, OSCAP_OS_PATH_DELIM) == filename)
 		return oscap_strdup(filename); // it is an absolute path
-	if (path == NULL || oscap_streq(path, "")) path = OSCAP_DEFAULT_SCHEMA_PATH;
+
+    const char *path = NULL;
+    if (pathvar != NULL) path = getenv(pathvar);
+	if (path == NULL || oscap_streq(path, "")) path = defpath;
+
 	char *pathdup = oscap_strdup(path);
 	char **paths = oscap_split(pathdup, OSCAP_PATH_SEPARATOR);
 	char *ret = NULL;
@@ -91,9 +105,7 @@ char *oscap_find_file(const char *path, const char *filename, int mode)
 
 static char *oscap_get_schema_path(const char *filename)
 {
-	const char *search_path = getenv("OSCAP_SCHEMA_PATH");
-	if (search_path == NULL) search_path = OSCAP_DEFAULT_SCHEMA_PATH;
-	return oscap_find_file(search_path, filename, R_OK);
+	return oscap_find_file(filename, R_OK, "OSCAP_SCHEMA_PATH", OSCAP_DEFAULT_SCHEMA_PATH);
 }
 
 static void oscap_xml_validity_handler(void *user, xmlErrorPtr error)
@@ -196,4 +208,60 @@ bool oscap_validate_document(const char *xmlfile, oscap_document_type_t doctype,
 	return ret;
 }
 
+bool oscap_apply_xslt(const char *xmlfile, const char *xsltfile, const char *outfile, const char **params)
+{
+    bool ret = false;
+    char *xsltpath = oscap_find_file(xsltfile, R_OK, "OSCAP_XSLT_PATH", OSCAP_DEFAULT_XSLT_PATH);
+    xsltStylesheetPtr cur = NULL;
+    xmlDocPtr doc = NULL, res = NULL;
+    FILE *f = NULL;
+
+    exsltRegisterAll();
+
+    if (xsltpath == NULL) {
+        oscap_seterr(OSCAP_EFAMILY_OSCAP, 0, "XSLT file to by used by the transformation was not found.");
+        goto cleanup;
+    }
+
+    cur = xsltParseStylesheetFile(BAD_CAST xsltpath);
+    if (cur == NULL) {
+        oscap_seterr(OSCAP_EFAMILY_OSCAP, 0, "Could not parse XSLT file");
+        goto cleanup;
+    }
+
+    doc = xmlParseFile(xmlfile);
+    if (doc == NULL) {
+        oscap_seterr(OSCAP_EFAMILY_OSCAP, 0, "Could not parse the XML document");
+        goto cleanup;
+    }
+
+    res = xsltApplyStylesheet(cur, doc, params);
+    if (res == NULL) {
+        oscap_seterr(OSCAP_EFAMILY_OSCAP, 0, "Could not apply XSLT to your XML file");
+        goto cleanup;
+    }
+
+    if (outfile) f = fopen(outfile, "w");
+    else f = stdout;
+
+    if (f == NULL) {
+        oscap_seterr(OSCAP_EFAMILY_OSCAP, 0, "Could not open output file");
+        goto cleanup;
+    }
+
+    if (xsltSaveResultToFile(f, res, cur) < 0) {
+        oscap_seterr(OSCAP_EFAMILY_OSCAP, 0, "Could not save result document");
+        goto cleanup;
+    }
+
+    ret = true;
+
+cleanup:
+    if (f) fclose(f);
+    if (cur) xsltFreeStylesheet(cur);
+    if (res) xmlFreeDoc(res);
+    if (doc) xmlFreeDoc(doc);
+    oscap_free(xsltpath);
+    return ret;
+}
 
