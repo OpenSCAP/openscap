@@ -47,6 +47,7 @@ void print_xccdf_usage(const char *pname, FILE * out, char *msg)
 		"   eval\r\t\t\t\t - Perform evaluation driven by XCCDF file and use OVAL as checking engine.\n"
 		"   resolve\r\t\t\t\t - Resolve an XCCDF document.\n"
 		"   validate-xml\r\t\t\t\t - Validate XCCDF XML content.\n"
+        "   gennerate-report\r\t\t\t\t - Generate results report HTML file.\n"
 		"\n"
 		"Command options:\n"
 		"   -h --help\r\t\t\t\t - show this help\n"
@@ -197,6 +198,20 @@ int app_xccdf_resolve(const struct oscap_action *action)
 	return ret;
 }
 
+int app_xccdf_gen_report(const struct oscap_action *action)
+{
+    int ret = 1;
+
+    char result_id[strlen(action->profile) + 3];
+    sprintf(result_id, "'%s'", action->profile);
+    const char *params[] = { "result-id", result_id, NULL };
+
+    if (oscap_apply_xslt(action->f_xccdf, "xccdf-results-report.xsl", action->f_results, params)) ret = 0;
+    else fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
+
+    return ret;
+}
+
 int getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 {
 	/* Usage: oscap xccdf command [command-options] */
@@ -220,6 +235,8 @@ int getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 		action->op = OSCAP_OP_VALIDATE_XML;
 	} else if (!strcmp(argv[optind], "resolve")) {
 		action->op = OSCAP_OP_RESOLVE;
+	} else if (!strcmp(argv[optind], "generate-report")) {
+		action->op = OSCAP_OP_GEN_REPORT;
 	} else {
 		/* oscap xccdf --help */
 		optind--;
@@ -230,6 +247,7 @@ int getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 		{"help", 0, 0, 'h'},
 		{"force", 0, 0, 'f'},
 		{"output", 1, 0, 'o'},
+		{"result-id", 1, 0, 'i'},
 		{"result-file", 1, 0, 0},
 		{"xccdf-profile", 1, 0, 1},
 		{"file-version", 1, 0, 2},
@@ -239,7 +257,7 @@ int getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 	int c;
 	int getopt_index = 0;	/* index is not neccesary because we know the option from "val" */
 	optind++;		/* Increment global variable pointeing to argv array to get next opt */
-	while ((c = getopt_long(argc, argv, "+ho:f012", long_options, &getopt_index)) != -1) {
+	while ((c = getopt_long(argc, argv, "+ho:i:f012", long_options, &getopt_index)) != -1) {
 		switch (c) {
 		case 'h':	/* XCCDF HELP */
 			print_xccdf_usage("oscap", stdout, NULL);
@@ -250,7 +268,7 @@ int getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 				return -1;
 			action->f_results = optarg;
 			break;
-		case 1:	/* RESULT FILE */
+		case 1: case 'i':
 			if (optarg == NULL)
 				return -1;
 			action->profile = optarg;

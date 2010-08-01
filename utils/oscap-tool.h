@@ -58,6 +58,7 @@ typedef enum {
         OSCAP_OP_BASE,
         OSCAP_OP_TEMP,
 		OSCAP_OP_RESOLVE,
+		OSCAP_OP_GEN_REPORT,
         OSCAP_OP_ENV
 } oscap_operation_t;
 
@@ -102,6 +103,7 @@ struct oscap_action {
 void print_xccdf_usage(const char *pname, FILE * out, char *msg);
 int app_evaluate_xccdf(const struct oscap_action *action);
 int app_xccdf_resolve(const struct oscap_action *action);
+int app_xccdf_gen_report(const struct oscap_action *action);
 int getopt_xccdf(int argc, char **argv, struct oscap_action *action);
 #endif
 
