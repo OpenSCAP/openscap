@@ -30,8 +30,64 @@
 
 #include "oscap-tool.h"
 
-extern int VERBOSE;
+static int app_collect_oval(const struct oscap_action *action);
+static int app_evaluate_oval(const struct oscap_action *action);
+static bool getopt_oval(int argc, char **argv, struct oscap_action *action);
 
+static struct oscap_module* OVAL_SUBMODULES[];
+
+struct oscap_module OSCAP_OVAL_MODULE = {
+    .name = "oval",
+    .parent = &OSCAP_ROOT_MODULE,
+    .summary = "Open Vulnerability and Assessment Language",
+    .submodules = OVAL_SUBMODULES
+};
+
+static struct oscap_module OVAL_VALIDATE = {
+    .name = "validate-xml",
+    .parent = &OSCAP_OVAL_MODULE,
+    .summary = "Validate OVAL XML content",
+    .usage = "[options] oval-file.xml",
+    .help =
+        "Options:\n"
+        "   --syschar\r\t\t\t\t - Valiadate OVAL system characteristics\n"
+        "   --definitions\r\t\t\t\t - Valiadate OVAL definitions\n"
+        "   --results\r\t\t\t\t - Valiadate OVAL results\n"
+        "   --file-version <version>\r\t\t\t\t - Use schema for given version of OVAL",
+    .opt_parser = getopt_oval,
+    .func = app_validate_xml
+};
+
+static struct oscap_module OVAL_EVAL = {
+    .name = "eval",
+    .parent = &OSCAP_OVAL_MODULE,
+    .summary = "Probe the system and evaluate all definitions from OVAL Definition file",
+    .usage = "--result-file results.xml oval-definitions.xml",
+    .help =
+        "Options:\n"
+        "   --result-file <file>\r\t\t\t\t - Write OVAL Results into file.",
+    .opt_parser = getopt_oval,
+    .func = app_evaluate_oval
+};
+
+static struct oscap_module OVAL_COLLECT = {
+    .name = "collect",
+    .parent = &OSCAP_OVAL_MODULE,
+    .summary = "Probe the system and gather system characteristics for objects in OVAL Definition file",
+    .usage = "oval-definitions.xml",
+    .opt_parser = getopt_oval,
+    .func = app_collect_oval
+};
+
+static struct oscap_module* OVAL_SUBMODULES[] = {
+    &OVAL_COLLECT,
+    &OVAL_EVAL,
+    &OVAL_VALIDATE,
+    NULL
+};
+
+
+int VERBOSE;
 
 struct oval_usr {
 	int result_false;
@@ -41,27 +97,6 @@ struct oval_usr {
 	int result_neval;
 	int result_napp;
 };
-
-void print_oval_usage(const char *pname, FILE * out, char *msg)
-{
-	fprintf(out,
-		"Usage: %s [general-options] oval command [command-options] OVAL-DEFINITIONS-FILE \n"
-		"(Specify the --help global option for a list of other help options)\n"
-		"\n"
-		"OVAL-DEFINITIONS-FILE is the OVAL XML file specified either by the full path to the xml file "
-		"or an URL from which to download it.\n"
-		"\n"
-		"Commands:\n"
-		"   collect\r\t\t\t\t - Probe the system and gather system characteristics for objects in OVAL Definition file.\n"
-		"   eval\r\t\t\t\t - Probe the system and evaluate all definitions from OVAL Definition file\n"
-		"   validate-xml\r\t\t\t\t - validate OVAL XML content.\n"
-		"\n"
-		"Command options:\n"
-		"   -h --help\r\t\t\t\t - show this help\n"
-		"   --result-file <file>\r\t\t\t\t - Write OVAL Results into file.\n", pname);
-	if (msg != NULL)
-		fprintf(out, "\n%s\n", msg);
-}
 
 static int app_oval_callback(const struct oscap_reporter_message *msg, void *arg)
 {
@@ -219,92 +254,44 @@ int app_evaluate_oval(const struct oscap_action *action)
 		return ret;
 }
 
-int getopt_oval(int argc, char **argv, struct oscap_action *action)
+enum oval_opt {
+    OVAL_OPT_RESULT_FILE = 1,
+    OVAL_OPT_FILE_VERSION
+};
+
+bool getopt_oval(int argc, char **argv, struct oscap_action *action)
 {
-	/* Usage: oscap oval command [command-options] */
-	if (action == NULL) {
-		/* TODO: Problem ? */
-		return -1;
-	}
+    VERBOSE = action->verbosity;
 
-	action->std = OSCAP_STD_OVAL;
 	action->doctype = OSCAP_DOCUMENT_OVAL_DEFINITIONS;
-
-	/* Command */
-	optind++;
-	if (optind >= argc) {
-		print_oval_usage("oscap", stderr, "Error: Bad number of parameters. Command and OVAL file required.");
-		return -1;
-	}
-	if (!strcmp(argv[optind], "eval"))
-		action->op = OSCAP_OP_EVAL;
-	else if (!strcmp(argv[optind], "collect"))
-		action->op = OSCAP_OP_COLLECT;
-	else if (!strcmp(argv[optind], "validate-xml"))
-		action->op = OSCAP_OP_VALIDATE_XML;
-	else {
-		/* oscap OVAL --help */
-		optind--;
-	}
 
 	/* Command-options */
 	struct option long_options[] = {
-		{"help", 0, 0, 'h'},
-		{"result-file", 1, 0, 0},
-		{"file-version", 1, 0, 1},
-		{"definitions", 0, 0, 2},
-		{"syschar", 0, 0, 3},
-		{"results", 0, 0, 4},
-		{0, 0, 0, 0}
+		{ "result-file",  1,                0, OVAL_OPT_RESULT_FILE            },
+		{ "file-version", 1,                0, OVAL_OPT_FILE_VERSION           },
+		{ "definitions",  0, &action->doctype, OSCAP_DOCUMENT_OVAL_DEFINITIONS },
+		{ "syschar",      0, &action->doctype, OSCAP_DOCUMENT_OVAL_SYSCHAR     },
+		{ "results",      0, &action->doctype, OSCAP_DOCUMENT_OVAL_RESULTS     },
+		{ 0, 0, 0, 0 }
 	};
 
 	int c;
-	int getopt_index = 0;	/* index is not neccesary because we know the option from "val" */
-	optind++;		/* Increment global variable pointeing to argv array to get next opt */
-	while ((c = getopt_long(argc, argv, "+h012", long_options, &getopt_index)) != -1) {
+	while ((c = getopt_long(argc, argv, "", long_options, NULL)) != -1) {
 		switch (c) {
-		case 'h':	/* XCCDF HELP */
-			print_oval_usage("oscap", stdout, NULL);
-			return 0;
-		case 0:	/* RESULT FILE */
-			if (optarg == NULL)
-				return -1;
-			action->f_results = optarg;
-			break;
-		case 1:
-			if (optarg == NULL)
-				return -1;
-			action->file_version = optarg;
-			break;
-		case 2:
-			action->doctype = OSCAP_DOCUMENT_OVAL_DEFINITIONS;
-			break;
-		case 3:
-			action->doctype = OSCAP_DOCUMENT_OVAL_SYSCHAR;
-			break;
-		case 4:
-			action->doctype = OSCAP_DOCUMENT_OVAL_RESULTS;
-			break;
-		default:
-			fprintf(stderr, "FOUND BAD OPTION %d :: %d :: %s\n", optind, optopt, argv[optind]);
-			break;
+		case OVAL_OPT_RESULT_FILE: action->f_results = optarg; break;
+		case OVAL_OPT_FILE_VERSION: action->file_version = optarg; break;
+        case 0: break;
+		default: return false;
 		}
-	}
-	if (action->op == OSCAP_OP_UNKNOWN) {
-		print_oval_usage("oscap", stderr,
-				  "Error: No operation specified. Use \"oscap oval eval/collect OVAL_FILE\"");
-		return -1;
 	}
 
 	/* We should have OVAL file here */
 	if (optind >= argc) {
 		/* TODO */
-		print_oval_usage("oscap", stderr,
-				  "Error: Bad number of parameters. OVAL file needs to be specified !");
-		return -1;
+        return oscap_module_usage(action->module, stderr, "Bad number of parameters. OVAL file needs to be specified!");
 	}
 	action->url_oval = argv[optind];
 
-	return 1;
+	return true;
 }
 

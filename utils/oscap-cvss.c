@@ -32,45 +32,125 @@
 
 #include "oscap-tool.h"
 
-void print_cvss_usage(const char *pname, FILE * out, char *msg)
-{
-	fprintf(out,
-		"Usage: %s [general-options] cvss [operation|--help] metrics [--base <num>]\n"
-		"\n"
-		"\n"
-		"Operation:\n"
-		"   base\r\t\t\t\t - Calculate base score from metrics.\n"
-		"   temporal \r\t\t\t\t - Calculate temporal score from metrics and base score.\n"
-		"   environmental\r\t\t\t\t - Calculate environmental score from metrics.\n"
-		"\n"
-		"Metrics:\n"
-		"   --AV=[local|adjacent-network|network]\r\t\t\t\t\t - Access Vector\n"
-		"   --AC=[low|medium|high]\r\t\t\t\t - Access Complexity\n"
-		"   --AU=[none|single|multiple]\r\t\t\t\t - Authentication\n"
-		"   --CI=[none|partial|complete]\r\t\t\t\t - Confidentiality  Impact\n"
-		"   --II=[none|partial|complete]\r\t\t\t\t - Integrity Impact\n"
-		"   --AI=[none|partial|complete]\r\t\t\t\t - Availability Impact\n"
-		"   --EX=[unproven|proof-of-concept|functional|high|not-defined]\r\t\t\t\t\t\t\t\t - Exploitability\n"
-		"   --RL=[official-fix|temporary-fix|workaround|unavailable|not-defined]\r\t\t\t\t\t\t\t\t\t - Remediation Level\n"
-		"   --RC=[unconfirmed|uncorrporated|confirmed|not-defined]\r\t\t\t\t\t\t\t\t - Report Confidence\n"
-		"   --CD=[none|low|low-medium|medium-high|high|not-defined]\r\t\t\t\t\t\t\t\t - Collateral Damage Potential\n"
-		"   --TD=[none|low|medium|high|not-defined]\r\t\t\t\t\t\t - Target Distribution\n"
-		"   --CR=[low|medium|high|not-defined]\r\t\t\t\t\t - Confidentiality Requirement\n"
-		"   --IR=[low|medium|high|not-defined]\r\t\t\t\t\t - Integrity Requirement\n"
+#define HELP_TOP "Metrics:\n"
+
+#define HELP_BASE \
+		"   --AV=[local|adjacent-network|network]\r\t\t\t\t\t - Access Vector\n" \
+		"   --AC=[low|medium|high]\r\t\t\t\t\t - Access Complexity\n" \
+		"   --AU=[none|single|multiple]\r\t\t\t\t\t - Authentication\n" \
+		"   --CI=[none|partial|complete]\r\t\t\t\t\t - Confidentiality Impact\n" \
+		"   --II=[none|partial|complete]\r\t\t\t\t\t - Integrity Impact\n" \
+		"   --AI=[none|partial|complete]\r\t\t\t\t\t - Availability Impact\n"
+
+#define HELP_BASE_OPT "   --base num\r\t\t\t\t\t\t\t\t\t - Base score\n"
+
+#define HELP_TEMP \
+		"   --EX=[unproven|proof-of-concept|functional|high|not-defined]\r\t\t\t\t\t\t\t\t\t - Exploitability\n" \
+		"   --RL=[official-fix|temporary-fix|workaround|unavailable|not-defined]\r\t\t\t\t\t\t\t\t\t - Remediation Level\n" \
+		"   --RC=[unconfirmed|uncorrporated|confirmed|not-defined]\r\t\t\t\t\t\t\t\t\t - Report Confidence\n"
+
+#define HELP_ENV HELP_BASE HELP_TEMP \
+		"   --CD=[none|low|low-medium|medium-high|high|not-defined]\r\t\t\t\t\t\t\t\t - Collateral Damage Potential\n" \
+		"   --TD=[none|low|medium|high|not-defined]\r\t\t\t\t\t\t - Target Distribution\n" \
+		"   --CR=[low|medium|high|not-defined]\r\t\t\t\t\t - Confidentiality Requirement\n" \
+		"   --IR=[low|medium|high|not-defined]\r\t\t\t\t\t - Integrity Requirement\n" \
 		"   --AR=[low|medium|high|not-defined]\r\t\t\t\t\t - Availability Requirement\n"
-		, pname);
-	if (msg != NULL)
-		fprintf(out, "\n%s\n", msg);
+
+static bool getopt_cvss(int argc, char **argv, struct oscap_action *action);
+static int app_cvss_base(const struct oscap_action *action);
+static int app_cvss_temp(const struct oscap_action *action);
+static int app_cvss_env(const struct oscap_action *action);
+
+static struct oscap_module* CVSS_SUBMODULES[];
+
+struct oscap_module OSCAP_CVSS_MODULE = {
+    .name = "cvss",
+    .parent = &OSCAP_ROOT_MODULE,
+    .summary = "Common Vulnerability Scoring System",
+    .submodules = CVSS_SUBMODULES
+};
+
+static struct oscap_module CVSS_BASE_MODULE = {
+    .name = "base",
+    .parent = &OSCAP_CVSS_MODULE,
+    .summary = "CVSS Base score",
+    .usage = "metrics",
+    .help = HELP_TOP HELP_BASE,
+    .opt_parser = getopt_cvss,
+    .func = app_cvss_base
+};
+
+static struct oscap_module CVSS_TEMP_MODULE = {
+    .name = "temporal",
+    .parent = &OSCAP_CVSS_MODULE,
+    .summary = "CVSS Temporal score",
+    .usage = "metrics",
+    .help = HELP_TOP HELP_TEMP HELP_BASE_OPT,
+    .opt_parser = getopt_cvss,
+    .func = app_cvss_temp
+};
+
+static struct oscap_module CVSS_ENV_MODULE = {
+    .name = "environmental",
+    .parent = &OSCAP_CVSS_MODULE,
+    .summary = "CVSS Environmental score",
+    .usage = "metrics",
+    .help = HELP_TOP HELP_ENV,
+    .opt_parser = getopt_cvss,
+    .func = app_cvss_env
+};
+
+static struct oscap_module* CVSS_SUBMODULES[] = {
+    &CVSS_BASE_MODULE,
+    &CVSS_TEMP_MODULE,
+    &CVSS_ENV_MODULE,
+    NULL
+};
+
+int app_cvss_base(const struct oscap_action *action)
+{
+    double base_score;
+    cvss_base_score(action->cvss_metrics->ave, 
+            action->cvss_metrics->ace, 
+            action->cvss_metrics->aue, 
+            action->cvss_metrics->cie, 
+            action->cvss_metrics->iie, 
+            action->cvss_metrics->aie, 
+            &base_score, NULL, NULL);
+    fprintf(stdout, "Base score: %f\n", base_score);
+    return 0;
 }
 
-int getopt_cvss(int argc, char **argv, struct oscap_action *action)
+int app_cvss_temp(const struct oscap_action *action)
 {
-	/* Usage: oscap cvss command metrics */
-	if (action == NULL) {
-		return -1;
-	}
+    double temp_score;
+    cvss_temp_score(action->cvss_metrics->exe, 
+            action->cvss_metrics->rle, 
+            action->cvss_metrics->rce, 
+            action->cvss_metrics->base, 
+            &temp_score);
+    fprintf(stdout, "Temporal score: %f\n", temp_score);
+    return 0;
+}
 
-	action->std = OSCAP_STD_CVSS;
+int app_cvss_env(const struct oscap_action *action)
+{
+    double temp_env;
+    cvss_env_score(	action->cvss_metrics->cde, action->cvss_metrics->tde,
+            action->cvss_metrics->cre, action->cvss_metrics->ire,
+            action->cvss_metrics->are, action->cvss_metrics->ave,
+            action->cvss_metrics->ace, action->cvss_metrics->aue,
+            action->cvss_metrics->cie, action->cvss_metrics->iie,
+            action->cvss_metrics->aie, action->cvss_metrics->exe,
+            action->cvss_metrics->rle, action->cvss_metrics->rce,
+            &temp_env);
+    fprintf(stdout, "Environmental score: %f\n", temp_env);
+    return 0;
+}
+
+bool getopt_cvss(int argc, char **argv, struct oscap_action *action)
+{
+
 	action->cvss_metrics = malloc(sizeof(struct cvss_metrics));
 	action->cvss_metrics->exe = EX_NOT_DEFINED;
 	action->cvss_metrics->rle = RL_NOT_DEFINED;
@@ -81,24 +161,8 @@ int getopt_cvss(int argc, char **argv, struct oscap_action *action)
 	action->cvss_metrics->ire = IR_NOT_DEFINED;
 	action->cvss_metrics->are = AR_NOT_DEFINED;
 
-	/* Command */
-	optind++;
-	if (optind >= argc) {
-		print_cvss_usage("oscap", stderr, "Error: Bad number of parameters !");
-		return -1;
-	}
-	if (!strcmp(argv[optind], "base"))
-		action->op = OSCAP_OP_BASE;
-	else if (!strcmp(argv[optind], "temporal"))
-		action->op = OSCAP_OP_TEMP;
-	else if (!strcmp(argv[optind], "environmental"))
-		action->op = OSCAP_OP_ENV;
-	else
-		optind--;	/* oscap xccdf --help */
-
 	/* Command-options */
 	struct option long_options[] = {
-		{"help", 0, 0, 'h'},
 		{"AV", 1, 0, 0},
 		{"AC", 1, 0, 1},
 		{"AU", 1, 0, 2},
@@ -118,56 +182,51 @@ int getopt_cvss(int argc, char **argv, struct oscap_action *action)
 	};
 
 	int c;
-	int getopt_index = 0;	/* index is not neccesary because we know the option from "val" */
 	int ave=0, ace=0, aue=0, cie=0, iie=0, aie=0, base=0;
-	optind++;		/* Increment global variable pointeing to argv array to get next opt */
-	while ((c = getopt_long(argc, argv, "+h0:1:2:3:4:5:6:7:8:9:10:11:12:13:14:", long_options, &getopt_index)) != -1) {
+
+	while ((c = getopt_long(argc, argv, "", long_options, NULL)) != -1) {
 		switch (c) {
-		case 'h':	/* CVSS HELP */
-			print_cvss_usage("oscap", stdout, NULL);
-			return 0;
-			break;
 		case 0:
 			ave++;
 			if (!strcmp(optarg, "local")) action->cvss_metrics->ave = AV_LOCAL;
 			else if (!strcmp(optarg, "adjacent-network")) action->cvss_metrics->ave = AV_ADJACENT_NETWORK;
 			else if (!strcmp(optarg, "network")) action->cvss_metrics->ave = AV_NETWORK;
-			else return -1;
+			else return false;
 			break;
 		case 1:
-		        ace++;
+            ace++;
 			if (!strcmp(optarg, "low")) action->cvss_metrics->ace = AC_LOW;
 			else if (!strcmp(optarg, "medium")) action->cvss_metrics->ace = AC_MEDIUM;
 			else if (!strcmp(optarg, "high")) action->cvss_metrics->ace = AC_HIGH;
-			else return -1;
+			else return false;
 			break;
 		case 2:
 			aue++;
 			if (!strcmp(optarg, "none")) action->cvss_metrics->aue = AU_NONE;
 			else if (!strcmp(optarg, "single")) action->cvss_metrics->aue = AU_SINGLE_INSTANCE;
 			else if (!strcmp(optarg, "multiple")) action->cvss_metrics->aue = AU_MULTIPLE_INSTANCE;
-			else return -1;
+			else return false;
 			break;
 		case 3:
 			cie++;
 			if (!strcmp(optarg, "none")) action->cvss_metrics->cie = CI_NONE;
 			else if (!strcmp(optarg, "partial")) action->cvss_metrics->cie = CI_PARTIAL;
 			else if (!strcmp(optarg, "complete")) action->cvss_metrics->cie = CI_COMPLETE;
-			else return -1;
+			else return false;
 			break;
 		case 4:
 			iie++;
 			if (!strcmp(optarg, "none")) action->cvss_metrics->iie = II_NONE;
 			else if (!strcmp(optarg, "partial")) action->cvss_metrics->iie = II_PARTIAL;
 			else if (!strcmp(optarg, "complete")) action->cvss_metrics->iie = II_COMPLETE;
-			else return -1;
+			else return false;
 			break;
 		case 5:
 			aie++;
 			if (!strcmp(optarg, "none")) action->cvss_metrics->aie = II_NONE;
 			else if (!strcmp(optarg, "partial")) action->cvss_metrics->aie = II_PARTIAL;
 			else if (!strcmp(optarg, "complete")) action->cvss_metrics->aie = II_COMPLETE;
-			else return -1;
+			else return false;
 			break;
 		case 6:
 			if (!strcmp(optarg, "unproven")) action->cvss_metrics->exe = EX_UNPROVEN;
@@ -175,7 +234,7 @@ int getopt_cvss(int argc, char **argv, struct oscap_action *action)
 			else if (!strcmp(optarg, "functional")) action->cvss_metrics->exe = EX_FUNCTIONAL;
 			else if (!strcmp(optarg, "high")) action->cvss_metrics->exe = EX_HIGH;
 			else if (!strcmp(optarg, "not-defined")) action->cvss_metrics->exe = EX_NOT_DEFINED;
-			else return -1;
+			else return false;
 			break;
 		case 7:
 			if (!strcmp(optarg, "official-fix")) action->cvss_metrics->rle = RL_OFFICIAL_FIX;
@@ -183,14 +242,14 @@ int getopt_cvss(int argc, char **argv, struct oscap_action *action)
 			else if (!strcmp(optarg, "workaround")) action->cvss_metrics->rle = RL_WORKAROUND;
 			else if (!strcmp(optarg, "unavailable")) action->cvss_metrics->rle = RL_UNAVAILABLE;
 			else if (!strcmp(optarg, "not-defined")) action->cvss_metrics->rle = RL_NOT_DEFINED;
-			else return -1;
+			else return false;
 			break;
 		case 8:
 			if (!strcmp(optarg, "unconfirmed")) action->cvss_metrics->rce = RC_UNCONFIRMED;
 			else if (!strcmp(optarg, "uncorrporated")) action->cvss_metrics->rce = RC_UNCORROBORATED;
 			else if (!strcmp(optarg, "confirmed")) action->cvss_metrics->rce = RC_CONFIRMED;
 			else if (!strcmp(optarg, "not-defined")) action->cvss_metrics->rce = RC_NOT_DEFINED;
-			else return -1;
+			else return false;
 			break;
 		case 9:
 			if (!strcmp(optarg, "none")) action->cvss_metrics->cde = CD_NONE;
@@ -199,7 +258,7 @@ int getopt_cvss(int argc, char **argv, struct oscap_action *action)
 			else if (!strcmp(optarg, "medium-high")) action->cvss_metrics->cde = CD_MEDIUM_HIGH;
 			else if (!strcmp(optarg, "high")) action->cvss_metrics->cde = CD_HIGH;
 			else if (!strcmp(optarg, "not-defined")) action->cvss_metrics->cde = CD_NOT_DEFINED;
-			else return -1;
+			else return false;
 			break;
 		case 10:
 			if (!strcmp(optarg, "none")) action->cvss_metrics->tde = TD_NONE;
@@ -207,56 +266,44 @@ int getopt_cvss(int argc, char **argv, struct oscap_action *action)
 			else if (!strcmp(optarg, "medium")) action->cvss_metrics->tde = TD_MEDIUM;
 			else if (!strcmp(optarg, "high")) action->cvss_metrics->tde = TD_HIGH;
 			else if (!strcmp(optarg, "not-defined")) action->cvss_metrics->tde = TD_NOT_DEFINED;
-			else return -1;
+			else return false;
 			break;
 		case 11:
 			if (!strcmp(optarg, "low")) action->cvss_metrics->cre = CR_LOW;
 			else if (!strcmp(optarg, "medium")) action->cvss_metrics->cre = CR_MEDIUM;
 			else if (!strcmp(optarg, "high")) action->cvss_metrics->cre = CR_HIGH;
 			else if (!strcmp(optarg, "not-defined")) action->cvss_metrics->cre = CR_NOT_DEFINED;
-			else return -1;
+			else return false;
 			break;
 		case 12:
 			if (!strcmp(optarg, "low")) action->cvss_metrics->ire = IR_LOW;
 			else if (!strcmp(optarg, "medium")) action->cvss_metrics->ire = IR_MEDIUM;
 			else if (!strcmp(optarg, "high")) action->cvss_metrics->ire = IR_HIGH;
 			else if (!strcmp(optarg, "not-defined")) action->cvss_metrics->ire = IR_NOT_DEFINED;
-			else return -1;
+			else return false;
 			break;
 		case 13:
 			if (!strcmp(optarg, "low")) action->cvss_metrics->are = AR_LOW;
 			else if (!strcmp(optarg, "medium")) action->cvss_metrics->are = AR_MEDIUM;
 			else if (!strcmp(optarg, "high")) action->cvss_metrics->are = AR_HIGH;
 			else if (!strcmp(optarg, "not-defined")) action->cvss_metrics->are = AR_NOT_DEFINED;
-			else return -1;
+			else return false;
 			break;
 		case 14:
 			base++;
 			action->cvss_metrics->base = atof(optarg);
 			break;
-		default:
-			fprintf(stderr, "FOUND BAD OPTION %d :: %d :: %s\n", optind, optopt, argv[optind]);
-			break;
+		default: return false;
 		}
 	}
 
-	/* check parametres */
-        if (action->op == OSCAP_OP_UNKNOWN) {
-                print_cvss_usage("oscap", stderr, "Error: No operation specified");
-                return -1;
-        }
+	if ((action->module == &CVSS_ENV_MODULE || action->module == &CVSS_BASE_MODULE) &&
+	     ( !ave || !ace || !aue || !cie || !iie || !aie) )
+        return oscap_module_usage(action->module, stderr, "Required metrics were not specified");
 
-	if ( (action->op == OSCAP_OP_BASE || action->op == OSCAP_OP_ENV) &&
-	     ( !ave || !ace || !aue || !cie || !iie || !aie) ) {
-	        print_cvss_usage("oscap", stderr, "Error: Required metrics were not specified");
-                return -1;
-	}
+	if ((action->module == &CVSS_TEMP_MODULE) && !base)
+        return oscap_module_usage(action->module, stderr, "Base score was not specified");
 
-	if ((action->op == OSCAP_OP_TEMP) && !base) {
-	        print_cvss_usage("oscap", stderr, "Error: Base score was not specified");
-                return -1;
-	}
-
-	return 0;
+	return true;
 }
 

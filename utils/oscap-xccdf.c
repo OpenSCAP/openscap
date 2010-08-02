@@ -28,36 +28,81 @@
 #include <xccdf.h>
 #include <xccdf_policy.h>
 
+#include <assert.h>
+
 #include "oscap-tool.h"
 
 extern int VERBOSE;
 
-void print_xccdf_usage(const char *pname, FILE * out, char *msg)
-{
-	fprintf(out,
-		"Usage: %s [general-options] xccdf command [command-options] OVAL-DEFINITIONS-FILE XCCDF-FILE \n"
-		"(Specify the --help global option for a list of other help options)\n"
-		"\n"
-		"OVAL-DEFINITIONS-FILE is the OVAL XML file specified either by the full path to the xml file "
-		"or an URL from which to download it.\n"
-		"XCCDF-FILE is the XCCDF XML file specified either by the full path to the xml file "
-		"or an URL from which to download it.\n"
-		"\n"
-		"Commands:\n"
-		"   eval\r\t\t\t\t - Perform evaluation driven by XCCDF file and use OVAL as checking engine.\n"
-		"   resolve\r\t\t\t\t - Resolve an XCCDF document.\n"
-		"   validate-xml\r\t\t\t\t - Validate XCCDF XML content.\n"
-        "   gennerate-report\r\t\t\t\t - Generate results report HTML file.\n"
-		"\n"
-		"Command options:\n"
-		"   -h --help\r\t\t\t\t - show this help\n"
-		"   --result-file <file>\r\t\t\t\t - Write XCCDF Results into file.\n"
-		"   --output <file>\r\t\t\t\t - Write output XCCDF document into file.\n"
-		"   --force\r\t\t\t\t - Force resolving XCCDF document even if it is aleready marked as resolved.\n"
-		"   --profile <name>\r\t\t\t\t - The name of Profile to be evaluated.\n", pname);
-	if (msg != NULL)
-		fprintf(out, "\n%s\n", msg);
-}
+static int app_evaluate_xccdf(const struct oscap_action *action);
+static int app_xccdf_resolve(const struct oscap_action *action);
+static int app_xccdf_gen_report(const struct oscap_action *action);
+static bool getopt_xccdf(int argc, char **argv, struct oscap_action *action);
+
+static struct oscap_module* XCCDF_SUBMODULES[];
+
+struct oscap_module OSCAP_XCCDF_MODULE = {
+    .name = "xccdf",
+    .parent = &OSCAP_ROOT_MODULE,
+    .summary = "eXtensible Configuration Checklist Description Format",
+    .usage_extra = "command [command-specific-options]",
+    .submodules = XCCDF_SUBMODULES
+};
+
+static struct oscap_module XCCDF_RESOLVE = {
+    .name = "resolve",
+    .parent = &OSCAP_XCCDF_MODULE,
+    .summary = "Resolve an XCCDF document",
+    .usage = "[options] -o output-xccdf.xml input-xccdf.xml",
+    .help =
+        "Options:\n"
+        "   --force or -f\r\t\t\t\t - Force resolving XCCDF document even if it is aleready marked as resolved.",
+    .opt_parser = getopt_xccdf,
+    .func = app_xccdf_resolve
+};
+
+static struct oscap_module XCCDF_VALIDATE = {
+    .name = "validate-xml",
+    .parent = &OSCAP_XCCDF_MODULE,
+    .summary = "Validate XCCDF XML content",
+    .usage = "xccdf-file.xml",
+    .opt_parser = getopt_xccdf,
+    .func = app_validate_xml
+};
+
+static struct oscap_module XCCDF_GEN_REPORT = {
+    .name = "generate-report",
+    .parent = &OSCAP_XCCDF_MODULE,
+    .summary = "Generate results report HTML file",
+    .usage = "[options] -i result-id xccdf-file.xml",
+    .help =
+        "Options:\n"
+        "   --result-id <id>\r\t\t\t\t - TestResult ID to be processed.\n"
+        "   --output <file>\r\t\t\t\t - Write the HTML into file.",
+    .opt_parser = getopt_xccdf,
+    .func = app_xccdf_gen_report
+};
+
+static struct oscap_module XCCDF_EVAL = {
+    .name = "eval",
+    .parent = &OSCAP_XCCDF_MODULE,
+    .summary = "Perform evaluation driven by XCCDF file and use OVAL as checking engine",
+    .usage = "[options] oval-definitions.xml xccdf-benchmark.xml",
+    .help =
+        "Options:\n"
+        "   --result-file <file>\r\t\t\t\t - Write XCCDF Results into file.\n"
+        "   --profile <name>\r\t\t\t\t - The name of Profile to be evaluated.",
+    .opt_parser = getopt_xccdf,
+    .func = app_evaluate_xccdf
+};
+
+static struct oscap_module* XCCDF_SUBMODULES[] = {
+    &XCCDF_EVAL,
+    &XCCDF_RESOLVE,
+    &XCCDF_VALIDATE,
+    &XCCDF_GEN_REPORT,
+    NULL
+};
 
 /**
  * Callback for XCCDF evaluation. Callback is called after each XCCDF Rule evaluation
@@ -202,7 +247,7 @@ int app_xccdf_gen_report(const struct oscap_action *action)
 {
     int ret = 1;
 
-    char result_id[strlen(action->profile) + 3];
+    char result_id[strlen(action->profile ? action->profile : "") + 3];
     sprintf(result_id, "'%s'", action->profile);
     const char *params[] = { "result-id", result_id, NULL };
 
@@ -212,103 +257,49 @@ int app_xccdf_gen_report(const struct oscap_action *action)
     return ret;
 }
 
-int getopt_xccdf(int argc, char **argv, struct oscap_action *action)
+bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 {
-	/* Usage: oscap xccdf command [command-options] */
-	if (action == NULL) {
-		/* TODO: Problem ? */
-		return -1;
-	}
+    assert(action != NULL);
 
-	action->std = OSCAP_STD_XCCDF;
 	action->doctype = OSCAP_DOCUMENT_XCCDF;
 
-	/* Command */
-	optind++;
-	if (optind >= argc) {
-		print_xccdf_usage("oscap", stderr, "Error: Bad number of parameters !");
-		return -1;
-	}
-	if (!strcmp(argv[optind], "eval"))
-		action->op = OSCAP_OP_EVAL;
-	else if (!strcmp(argv[optind], "validate-xml")) {
-		action->op = OSCAP_OP_VALIDATE_XML;
-	} else if (!strcmp(argv[optind], "resolve")) {
-		action->op = OSCAP_OP_RESOLVE;
-	} else if (!strcmp(argv[optind], "generate-report")) {
-		action->op = OSCAP_OP_GEN_REPORT;
-	} else {
-		/* oscap xccdf --help */
-		optind--;
-	}
-
 	/* Command-options */
-	struct option long_options[] = {
-		{"help", 0, 0, 'h'},
+	static const struct option long_options[] = {
 		{"force", 0, 0, 'f'},
 		{"output", 1, 0, 'o'},
 		{"result-id", 1, 0, 'i'},
 		{"result-file", 1, 0, 0},
+		{"profile", 1, 0, 3},
 		{"xccdf-profile", 1, 0, 1},
 		{"file-version", 1, 0, 2},
 		{0, 0, 0, 0}
 	};
 
 	int c;
-	int getopt_index = 0;	/* index is not neccesary because we know the option from "val" */
-	optind++;		/* Increment global variable pointeing to argv array to get next opt */
-	while ((c = getopt_long(argc, argv, "+ho:i:f012", long_options, &getopt_index)) != -1) {
+	while ((c = getopt_long(argc, argv, "o:i:f", long_options, NULL)) != -1) {
 		switch (c) {
-		case 'h':	/* XCCDF HELP */
-			print_xccdf_usage("oscap", stdout, NULL);
-			return 0;
-		case 'o':
-		case 0:	/* RESULT FILE */
-			if (optarg == NULL)
-				return -1;
-			action->f_results = optarg;
-			break;
-		case 1: case 'i':
-			if (optarg == NULL)
-				return -1;
-			action->profile = optarg;
-			break;
-		case 2:
-			if (optarg == NULL)
-				return -1;
-			action->file_version = optarg;
-			break;
+		case 'o': case 0: action->f_results = optarg; break;
+		case 3: case 1: case 'i': action->profile = optarg; break;
+		case 2: action->file_version = optarg; break;
 		case 'f': action->force = true; break;
-		default:
-			fprintf(stderr, "FOUND BAD OPTION %d :: %d :: %s\n", optind, optopt, argv[optind]);
-			break;
+		default: return false;
 		}
 	}
-	if (action->op == OSCAP_OP_UNKNOWN) {
-		print_xccdf_usage("oscap", stderr,
-				  "Error: No operation specified. Use \"oscap xccdf eval OVAL_FILE XCCDF_FILE\"");
-		return -1;
-	}
 
-	if (action->op == OSCAP_OP_EVAL) {
+	if (action->module == &XCCDF_EVAL) {
 		/* We should have XCCDF file here */
 		if (optind + 1 >= argc) {
 			/* TODO */
-			print_xccdf_usage("oscap", stderr,
-					  "Error: Bad number of parameters. OVAL file and XCCDF file need to be specified !");
-			return -1;
+			return oscap_module_usage(action->module, stderr, "OVAL file and XCCDF file need to be specified!");
 		}
 		action->url_oval = argv[optind];
 		action->url_xccdf = argv[optind + 1];
 	} else {
-		if (optind >= argc) {
-			print_xccdf_usage("oscap", stderr,
-					  "Error: Bad number of parameters. XCCDF file need to be specified !");
-			return -1;
-		}
+		if (optind >= argc)
+			return oscap_module_usage(action->module, stderr, "XCCDF file needs to be specified!");
 		action->url_xccdf = argv[optind];
 	}
 
-	return 1;
+	return true;
 }
 

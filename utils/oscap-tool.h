@@ -43,24 +43,24 @@
 #include <xccdf.h>
 #endif
 
-typedef enum {
-        OSCAP_STD_UNKNOWN,
-        OSCAP_STD_XCCDF,
-        OSCAP_STD_OVAL,
-        OSCAP_STD_CVSS
-} oscap_standard_t;
+struct oscap_action;
+struct oscap_module;
 
-typedef enum {
-        OSCAP_OP_UNKNOWN,
-        OSCAP_OP_COLLECT,
-        OSCAP_OP_EVAL,
-        OSCAP_OP_VALIDATE_XML,
-        OSCAP_OP_BASE,
-        OSCAP_OP_TEMP,
-		OSCAP_OP_RESOLVE,
-		OSCAP_OP_GEN_REPORT,
-        OSCAP_OP_ENV
-} oscap_operation_t;
+typedef int(*oscap_tool_func)(const struct oscap_action* action);
+typedef bool(*oscap_option_func)(int argc, char **argv, struct oscap_action* action);
+
+struct oscap_module {
+    const char *name;
+    const char *usage;
+    const char *usage_extra;
+    const char *summary;
+    const char *help;
+    bool hidden;
+    struct oscap_module *parent;
+    struct oscap_module **submodules;
+    oscap_tool_func func;
+    oscap_option_func opt_parser;
+};
 
 #ifdef ENABLE_CVSS
 struct cvss_metrics {
@@ -83,9 +83,8 @@ struct cvss_metrics {
 #endif
 
 struct oscap_action {
-        oscap_standard_t std;
-        oscap_operation_t op;
-        oscap_document_type_t doctype;
+        int doctype;
+        struct oscap_module *module;
         char *f_xccdf;
         char *f_oval;
         char *f_results;
@@ -93,27 +92,27 @@ struct oscap_action {
         char *url_oval;
         char *profile;
         char *file_version;
+        int verbosity;
 #ifdef ENABLE_CVSS
         struct cvss_metrics *cvss_metrics;
 #endif
 	bool force;
 };
 
+int app_validate_xml(const struct oscap_action *action);
+
+int oscap_module_process(struct oscap_module *module, int argc, char **argv);
+bool oscap_module_usage(struct oscap_module *module, FILE *out, const char *err);
+int oscap_module_call(struct oscap_action *action);
+
+extern struct oscap_module OSCAP_ROOT_MODULE;
 #ifdef ENABLE_XCCDF
-void print_xccdf_usage(const char *pname, FILE * out, char *msg);
-int app_evaluate_xccdf(const struct oscap_action *action);
-int app_xccdf_resolve(const struct oscap_action *action);
-int app_xccdf_gen_report(const struct oscap_action *action);
-int getopt_xccdf(int argc, char **argv, struct oscap_action *action);
+extern struct oscap_module OSCAP_XCCDF_MODULE;
 #endif
-
 #ifdef ENABLE_CVSS
-void print_cvss_usage(const char *pname, FILE * out, char *msg);
-int getopt_cvss(int argc, char **argv, struct oscap_action *action);
+extern struct oscap_module OSCAP_CVSS_MODULE;
 #endif
-
-void print_oval_usage(const char *pname, FILE * out, char *msg);
-int app_collect_oval(const struct oscap_action *action);
-int app_evaluate_oval(const struct oscap_action *action);
-int getopt_oval(int argc, char **argv, struct oscap_action *action);
+#ifdef ENABLE_OVAL
+extern struct oscap_module OSCAP_OVAL_MODULE;
+#endif
 
