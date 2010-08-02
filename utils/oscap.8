@@ -94,6 +94,17 @@ Validate given XCCDF file against a XML schema. Every found error is printed to 
 \fB\-\-version VER\fR
 Specify version of the specification the document shall conform to.
 .RE
+.TP
+.B generate-report\fR  [\fIoptions\fR] --result-id id xccdf-file
+.RS
+Generate a formatted HTML page containing results of a XCCDF Benchmark execution. Unless the --output option is specified it will be written to the standard output. ID of the TestResult element to visualise must be provided.
+.TP
+\fB\-\-result-id\fR
+ID of the XCCDF TestResult from which the report will be generated.
+.TP
+\fB\-\-output\fR
+Write the report to this file instead of standard output.
+.RE
 
 .SH CVSS OPERATIONS
 .TP
