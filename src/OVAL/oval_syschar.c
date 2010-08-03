@@ -42,7 +42,7 @@ typedef struct oval_syschar {
 	struct oval_collection *messages;
 	struct oval_object *object;
 	struct oval_collection *variable_bindings;
-	struct oval_collection *sysdata;
+	struct oval_collection *sysitem;
 } oval_syschar_t;
 
 bool oval_syschar_iterator_has_more(struct oval_syschar_iterator *oc_syschar)
@@ -124,17 +124,17 @@ struct oval_variable_binding_iterator *oval_syschar_get_variable_bindings(struct
 	    oval_collection_iterator(syschar->variable_bindings);
 }
 
-struct oval_sysdata_iterator *oval_syschar_get_sysdata(struct oval_syschar *syschar)
+struct oval_sysitem_iterator *oval_syschar_get_sysitem(struct oval_syschar *syschar)
 {
 	__attribute__nonnull__(syschar);
 
-	return (struct oval_sysdata_iterator *)
-	    oval_collection_iterator(syschar->sysdata);
+	return (struct oval_sysitem_iterator *)
+	    oval_collection_iterator(syschar->sysitem);
 }
 
-void oval_syschar_add_sysdata(struct oval_syschar *syschar, struct oval_sysdata *sysdata) {
+void oval_syschar_add_sysitem(struct oval_syschar *syschar, struct oval_sysitem *sysitem) {
 	if (syschar && !oval_syschar_is_locked(syschar)) {
-		oval_collection_add(syschar->sysdata, sysdata);
+		oval_collection_add(syschar->sysitem, sysitem);
 	} else
 		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
@@ -168,7 +168,7 @@ struct oval_syschar *oval_syschar_new(struct oval_syschar_model *model, struct o
 	syschar->flag = SYSCHAR_FLAG_UNKNOWN;
 	syschar->object = object;
 	syschar->messages = oval_collection_new();
-	syschar->sysdata = oval_collection_new();
+	syschar->sysitem = oval_collection_new();
 	syschar->variable_bindings = oval_collection_new();
 	syschar->model = model;
 
@@ -181,7 +181,7 @@ bool oval_syschar_is_valid(struct oval_syschar * syschar)
 {
 	bool is_valid = true;
 	struct oval_object *object;
-	struct oval_sysdata_iterator *sysdatas_itr;
+	struct oval_sysitem_iterator *sysitems_itr;
 
 	if (syschar == NULL) {
                 oscap_dlprintf(DBG_W, "Argument is not valid: NULL.\n");
@@ -196,18 +196,18 @@ bool oval_syschar_is_valid(struct oval_syschar * syschar)
 	/* validate variable_bindings */
 	// todo
 
-	/* validate sysdatas */
-	sysdatas_itr = oval_syschar_get_sysdata(syschar);
-	while (oval_sysdata_iterator_has_more(sysdatas_itr)) {
-		struct oval_sysdata *sysdata;
+	/* validate sysitems */
+	sysitems_itr = oval_syschar_get_sysitem(syschar);
+	while (oval_sysitem_iterator_has_more(sysitems_itr)) {
+		struct oval_sysitem *sysitem;
 
-		sysdata = oval_sysdata_iterator_next(sysdatas_itr);
-		if (oval_sysdata_is_valid(sysdata) != true) {
+		sysitem = oval_sysitem_iterator_next(sysitems_itr);
+		if (oval_sysitem_is_valid(sysitem) != true) {
 			is_valid = false;
 			break;
 		}
 	}
-	oval_sysdata_iterator_free(sysdatas_itr);
+	oval_sysitem_iterator_free(sysitems_itr);
 	if (is_valid != true)
 		return false;
 
@@ -243,16 +243,16 @@ struct oval_syschar *oval_syschar_clone(struct oval_syschar_model *new_model, st
 	}
 	oval_message_iterator_free(old_messages);
 
-	struct oval_sysdata_iterator *old_sysdatas = oval_syschar_get_sysdata(old_syschar);
-	while (oval_sysdata_iterator_has_more(old_sysdatas)) {
-		struct oval_sysdata *old_sysdata = oval_sysdata_iterator_next(old_sysdatas);
-		struct oval_sysdata *new_sysdata =
-		    oval_syschar_model_get_sysdata(new_model, oval_sysdata_get_id(old_sysdata));
-		if (new_sysdata == NULL)
-			new_sysdata = oval_sysdata_clone(new_model, old_sysdata);
-		oval_syschar_add_sysdata(new_syschar, new_sysdata);
+	struct oval_sysitem_iterator *old_sysitems = oval_syschar_get_sysitem(old_syschar);
+	while (oval_sysitem_iterator_has_more(old_sysitems)) {
+		struct oval_sysitem *old_sysitem = oval_sysitem_iterator_next(old_sysitems);
+		struct oval_sysitem *new_sysitem =
+		    oval_syschar_model_get_sysitem(new_model, oval_sysitem_get_id(old_sysitem));
+		if (new_sysitem == NULL)
+			new_sysitem = oval_sysitem_clone(new_model, old_sysitem);
+		oval_syschar_add_sysitem(new_syschar, new_sysitem);
 	}
-	oval_sysdata_iterator_free(old_sysdatas);
+	oval_sysitem_iterator_free(old_sysitems);
 
 	struct oval_variable_binding_iterator *old_bindings = oval_syschar_get_variable_bindings(old_syschar);
 	while (oval_variable_binding_iterator_has_more(old_bindings)) {
@@ -271,12 +271,12 @@ void oval_syschar_free(struct oval_syschar *syschar)
 		return;
 
 	oval_collection_free_items(syschar->messages, (oscap_destruct_func) oval_message_free);
-	oval_collection_free_items(syschar->sysdata, NULL);	//sysdata items are shared
+	oval_collection_free_items(syschar->sysitem, NULL);	//sysitem items are shared
 	oval_collection_free_items(syschar->variable_bindings, NULL);	//variable bindings are shared
 
 	syschar->messages = NULL;
 	syschar->object = NULL;
-	syschar->sysdata = NULL;
+	syschar->sysitem = NULL;
 	syschar->variable_bindings = NULL;
 	oscap_free(syschar);
 }
@@ -323,10 +323,10 @@ static int _oval_syschar_parse_subtag(xmlTextReaderPtr reader, struct oval_parse
 		    (reader, context, &_oval_syschar_parse_subtag_consume_variable_binding, &ctx);
 	} else if (strcmp("reference", tagname) == 0) {
 		char *itemid = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "item_ref");
-		struct oval_sysdata *sysdata = oval_sysdata_get_new(context->syschar_model, itemid);
+		struct oval_sysitem *sysitem = oval_sysitem_get_new(context->syschar_model, itemid);
 		oscap_free(itemid);
 		itemid = NULL;
-		oval_syschar_add_sysdata(syschar, sysdata);
+		oval_syschar_add_sysitem(syschar, sysitem);
 		return_code = 1;
 	}
 	oscap_free(tagname);
@@ -403,14 +403,14 @@ void oval_syschar_to_dom(struct oval_syschar *syschar, xmlDoc * doc, xmlNode * t
 			oval_variable_binding_iterator_free(bindings);
 		}
 		{		/*references */
-			struct oval_sysdata_iterator *sysdatas = oval_syschar_get_sysdata(syschar);
-			while (oval_sysdata_iterator_has_more(sysdatas)) {
-				struct oval_sysdata *sysdata = oval_sysdata_iterator_next(sysdatas);
+			struct oval_sysitem_iterator *sysitems = oval_syschar_get_sysitem(syschar);
+			while (oval_sysitem_iterator_has_more(sysitems)) {
+				struct oval_sysitem *sysitem = oval_sysitem_iterator_next(sysitems);
 				xmlNode *tag_reference = xmlNewChild
 				    (tag_syschar, ns_syschar, BAD_CAST "reference", NULL);
-				xmlNewProp(tag_reference, BAD_CAST "item_ref", BAD_CAST oval_sysdata_get_id(sysdata));
+				xmlNewProp(tag_reference, BAD_CAST "item_ref", BAD_CAST oval_sysitem_get_id(sysitem));
 			}
-			oval_sysdata_iterator_free(sysdatas);
+			oval_sysitem_iterator_free(sysitems);
 		}
 	}
 }

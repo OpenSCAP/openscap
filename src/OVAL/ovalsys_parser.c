@@ -49,7 +49,7 @@ static int _ovalsys_parser_process_node_consume_collected_objects(xmlTextReaderP
 static int _ovalsys_parser_process_node_consume_system_data(xmlTextReaderPtr reader,
 							    struct oval_parser_context *context, void *null)
 {
-	return oval_sysdata_parse_tag(reader, context);
+	return oval_sysitem_parse_tag(reader, context);
 }
 
 static int _ovalsys_parser_process_node(xmlTextReaderPtr reader, struct oval_parser_context *context)

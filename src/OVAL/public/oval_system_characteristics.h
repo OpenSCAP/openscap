@@ -104,7 +104,7 @@ struct oval_sysinfo_iterator;
 /**
  * @struct oval_syschar
  * Characteristics bound to an @ref Oval_object.
- * Instances of Oval_syschar provide relate an Oval_object and @ref Oval_sysdata instances.
+ * Instances of Oval_syschar provide relate an Oval_object and @ref Oval_sysitem instances.
  *
  * If an OVAL Object does not exist on the system, then an object is still provided but with the flag attribute set to 'does not exist'
  * and with no reference child elements. This shows that the object was looked for but not found on the system.
@@ -136,21 +136,8 @@ struct oval_sysint;
 struct oval_sysint_iterator;
 
 /**
- * @struct oval_sysdata
- * Data item aggregator.
- * Instances of Oval_sysdata aggregate one or more item elements. Each item defines a specific piece of data on the system.
- */
-struct oval_sysdata;
-/**
- * @struct oval_sysdata_iterator
- * @see: oval_syschar_get_sysdata
- */
-struct oval_sysdata_iterator;
-
-/**
  * @struct oval_sysitem
- * Data item aggregator.
- * Instances of Oval_sysitem holds information about a specific item on a system.
+ * Each instance of Oval_sysitem represents one item.
  * An item might be a file, a rpm, a process, etc.
  * This element is extended by the different component schemas through substitution groups.
  * Each item represents a unique instance of an object as specified by an OVAL Object.
@@ -160,9 +147,19 @@ struct oval_sysdata_iterator;
 struct oval_sysitem;
 /**
  * @struct oval_sysitem_iterator
- * @see: oval_sysdata_get_items
+ * @see: oval_syschar_get_sysitem
  */
 struct oval_sysitem_iterator;
+
+/**
+ * @struct oval_sysent
+ */
+struct oval_sysent;
+/**
+ * @struct oval_sysent_iterator
+ * @see: oval_sysitem_get_items
+ */
+struct oval_sysent_iterator;
 
 /**
  * @struct oval_message
@@ -288,7 +285,7 @@ oval_syschar_collection_flag_t oval_variable_get_collection_flag(struct oval_var
 /**
  * @memberof oval_syschar_model
  */
-struct oval_sysdata *oval_syschar_model_get_sysdata(struct oval_syschar_model *, const char *);
+struct oval_sysitem *oval_syschar_model_get_sysitem(struct oval_syschar_model *, const char *);
 /**
  * Return <b>true</b> if the syschar_model instance is locked.
  * The state of a locked instance cannot be changed.
@@ -466,7 +463,7 @@ void oval_syschar_set_object(struct oval_syschar *, struct oval_object *);
 /**
  * @memberof oval_syschar
  */
-void oval_syschar_add_sysdata(struct oval_syschar *, struct oval_sysdata *);
+void oval_syschar_add_sysitem(struct oval_syschar *, struct oval_sysitem *);
 /**
  * @memberof oval_syschar
  */
@@ -505,7 +502,7 @@ struct oval_variable_binding_iterator *oval_syschar_get_variable_bindings(struct
  * Get system characteristic data.
  * @memberof oval_syschar
  */
-struct oval_sysdata_iterator *oval_syschar_get_sysdata(struct oval_syschar *);
+struct oval_sysitem_iterator *oval_syschar_get_sysitem(struct oval_syschar *);
 /**
  * Return <b>true</b> if the syschar instance is locked.
  * The state of a locked instance cannot be changed.
@@ -541,7 +538,7 @@ void oval_syschar_iterator_free(struct oval_syschar_iterator *);
  * An oval_syschar is valid if all the following are true
  * 	- The object attribute is valid
  * 	- All included variable_bindings are valid
- * 	- All included sysdata are valid
+ * 	- All included sysitem are valid
  * @memberof oval_syschar
  */
 bool oval_syschar_is_valid(struct oval_syschar *syschar);
@@ -648,43 +645,43 @@ bool oval_sysint_is_valid(struct oval_sysint *sysint);
 
 
 /**
- * @memberof oval_sysdata
+ * @memberof oval_sysitem
  */
-struct oval_sysdata *oval_sysdata_new(struct oval_syschar_model *, const char *id);
+struct oval_sysitem *oval_sysitem_new(struct oval_syschar_model *, const char *id);
 /**
- * @return A copy of the specified @ref oval_sysdata.
- * @memberof oval_sysdata
+ * @return A copy of the specified @ref oval_sysitem.
+ * @memberof oval_sysitem
  */
-struct oval_sysdata *oval_sysdata_clone(struct oval_syschar_model *new_model, struct oval_sysdata *old_data);
+struct oval_sysitem *oval_sysitem_clone(struct oval_syschar_model *new_model, struct oval_sysitem *old_data);
 /**
- * @memberof oval_sysdata
+ * @memberof oval_sysitem
  */
-void oval_sysdata_free(struct oval_sysdata *);
+void oval_sysitem_free(struct oval_sysitem *);
 
 /**
  * @name Setters
  * @{
  */
 /**
- * @memberof oval_sysdata
+ * @memberof oval_sysitem
  */
-void oval_sysdata_set_status(struct oval_sysdata *, oval_syschar_status_t);
+void oval_sysitem_set_status(struct oval_sysitem *, oval_syschar_status_t);
 /**
- * @memberof oval_sysdata
+ * @memberof oval_sysitem
  */
-void oval_sysdata_set_subtype(struct oval_sysdata *sysdata, oval_subtype_t subtype);
+void oval_sysitem_set_subtype(struct oval_sysitem *sysitem, oval_subtype_t subtype);
 /**
- * @memberof oval_sysdata
+ * @memberof oval_sysitem
  */
-void oval_sysdata_set_message(struct oval_sysdata *data, char *message);
+void oval_sysitem_set_message(struct oval_sysitem *data, char *message);
 /**
- * @memberof oval_sysdata
+ * @memberof oval_sysitem
  */
-void oval_sysdata_set_message_level(struct oval_sysdata *data, oval_message_level_t level);
+void oval_sysitem_set_message_level(struct oval_sysitem *data, oval_message_level_t level);
 /**
- * @memberof oval_sysdata
+ * @memberof oval_sysitem
  */
-void oval_sysdata_add_item(struct oval_sysdata *, struct oval_sysitem *);
+void oval_sysitem_add_item(struct oval_sysitem *, struct oval_sysent *);
 /** @} */
 
 /**
@@ -693,150 +690,34 @@ void oval_sysdata_add_item(struct oval_sysdata *, struct oval_sysitem *);
  */
 /**
  * Get system data ID.
- * @memberof oval_sysdata
+ * @memberof oval_sysitem
  */
-char *oval_sysdata_get_id(struct oval_sysdata *);
+char *oval_sysitem_get_id(struct oval_sysitem *);
 /**
  * Get system data status.
- * @memberof oval_sysdata
- */
-oval_syschar_status_t oval_sysdata_get_status(struct oval_sysdata *);
-/**
- * Get system data individual items.
- * @memberof oval_sysdata
- */
-struct oval_sysitem_iterator *oval_sysdata_get_items(struct oval_sysdata *);
-/**
- * Get system data message.
- * @memberof oval_sysdata
- */
-char *oval_sysdata_get_message(struct oval_sysdata *);
-/**
- * Get system data message level.
- * @memberof oval_sysdata
- */
-oval_message_level_t oval_sysdata_get_message_level(struct oval_sysdata *);
-/**
- * Get system data subtype.
- * @memberof oval_sysdata
- */
-oval_subtype_t oval_sysdata_get_subtype(struct oval_sysdata *);
-/**
- * Return <b>true</b> if the sysdata instance is locked.
- * The state of a locked instance cannot be changed.
- * @memberof oval_sysdata
- */
-bool oval_sysdata_is_locked(struct oval_sysdata *sysdata);
-/** @} */
-
-/**
- * @name Iterators
- * @{
- */
-/**
- * @memberof oval_sysdata_iterator
- */
-bool oval_sysdata_iterator_has_more(struct oval_sysdata_iterator *);
-/**
- * @memberof oval_sysdata_iterator
- */
-struct oval_sysdata *oval_sysdata_iterator_next(struct oval_sysdata_iterator *);
-/**
- * @memberof oval_sysdata_iterator
- */
-void oval_sysdata_iterator_free(struct oval_sysdata_iterator *);
-/** @} */
-
-/**
- * @name Evaluators
- * @{
- */
-/**
- * Return <b>true</b> if the sysdata instance is valid
- * An oval_sysdata is valid if all the following are true
- * 	- All included sysitems are valid
- * @memberof oval_sysdata
- */
-bool oval_sysdata_is_valid(struct oval_sysdata *sysdata);
-/** @} */
-
-
-
-
-
-
-/**
- * @memberof oval_sysitem
- */
-struct oval_sysitem *oval_sysitem_new(struct oval_syschar_model *);
-/**
- * @return A copy of the specified @ref oval_sysitem.
- * @memberof oval_sysitem
- */
-struct oval_sysitem *oval_sysitem_clone(struct oval_syschar_model *new_model, struct oval_sysitem *old_item);
-/**
- * @memberof oval_sysitem
- */
-void oval_sysitem_free(struct oval_sysitem *);
-/**
- * @name Setters
- * @{
- */
-/**
- * @memberof oval_sysitem
- */
-void oval_sysitem_set_name(struct oval_sysitem *sysitem, char *name);
-/**
- * @memberof oval_sysitem
- */
-void oval_sysitem_set_value(struct oval_sysitem *sysitem, char *value);
-/**
- * @memberof oval_sysitem
- */
-void oval_sysitem_set_status(struct oval_sysitem *sysitem, oval_syschar_status_t status);
-/**
- * @memberof oval_sysitem
- */
-void oval_sysitem_set_datatype(struct oval_sysitem *sysitem, oval_datatype_t type);
-/**
- * @memberof oval_sysitem
- */
-void oval_sysitem_set_mask(struct oval_sysitem *sysitem, int mask);
-/** @} */
-
-/**
- * @name Getters
- * @{
- */
-/**
- * Get system data item name.
- * @memberof oval_sysitem
- */
-char *oval_sysitem_get_name(struct oval_sysitem *);
-
-/**
- * Get system data item value.
- * @memberof oval_sysitem
- */
-char *oval_sysitem_get_value(struct oval_sysitem *);
-
-/**
- * Get system data item status.
  * @memberof oval_sysitem
  */
 oval_syschar_status_t oval_sysitem_get_status(struct oval_sysitem *);
-
 /**
- * Get system data item data type.
+ * Get system data individual items.
  * @memberof oval_sysitem
  */
-oval_datatype_t oval_sysitem_get_datatype(struct oval_sysitem *);
-
+struct oval_sysent_iterator *oval_sysitem_get_items(struct oval_sysitem *);
 /**
- * Get system data item mask.
+ * Get system data message.
  * @memberof oval_sysitem
  */
-int oval_sysitem_get_mask(struct oval_sysitem *);
+char *oval_sysitem_get_message(struct oval_sysitem *);
+/**
+ * Get system data message level.
+ * @memberof oval_sysitem
+ */
+oval_message_level_t oval_sysitem_get_message_level(struct oval_sysitem *);
+/**
+ * Get system data subtype.
+ * @memberof oval_sysitem
+ */
+oval_subtype_t oval_sysitem_get_subtype(struct oval_sysitem *);
 /**
  * Return <b>true</b> if the sysitem instance is locked.
  * The state of a locked instance cannot be changed.
@@ -869,9 +750,125 @@ void oval_sysitem_iterator_free(struct oval_sysitem_iterator *);
  */
 /**
  * Return <b>true</b> if the sysitem instance is valid
+ * An oval_sysitem is valid if all the following are true
+ * 	- All included sysents are valid
  * @memberof oval_sysitem
  */
 bool oval_sysitem_is_valid(struct oval_sysitem *sysitem);
+/** @} */
+
+
+
+
+
+
+/**
+ * @memberof oval_sysent
+ */
+struct oval_sysent *oval_sysent_new(struct oval_syschar_model *);
+/**
+ * @return A copy of the specified @ref oval_sysent.
+ * @memberof oval_sysent
+ */
+struct oval_sysent *oval_sysent_clone(struct oval_syschar_model *new_model, struct oval_sysent *old_item);
+/**
+ * @memberof oval_sysent
+ */
+void oval_sysent_free(struct oval_sysent *);
+/**
+ * @name Setters
+ * @{
+ */
+/**
+ * @memberof oval_sysent
+ */
+void oval_sysent_set_name(struct oval_sysent *sysent, char *name);
+/**
+ * @memberof oval_sysent
+ */
+void oval_sysent_set_value(struct oval_sysent *sysent, char *value);
+/**
+ * @memberof oval_sysent
+ */
+void oval_sysent_set_status(struct oval_sysent *sysent, oval_syschar_status_t status);
+/**
+ * @memberof oval_sysent
+ */
+void oval_sysent_set_datatype(struct oval_sysent *sysent, oval_datatype_t type);
+/**
+ * @memberof oval_sysent
+ */
+void oval_sysent_set_mask(struct oval_sysent *sysent, int mask);
+/** @} */
+
+/**
+ * @name Getters
+ * @{
+ */
+/**
+ * Get system data item name.
+ * @memberof oval_sysent
+ */
+char *oval_sysent_get_name(struct oval_sysent *);
+
+/**
+ * Get system data item value.
+ * @memberof oval_sysent
+ */
+char *oval_sysent_get_value(struct oval_sysent *);
+
+/**
+ * Get system data item status.
+ * @memberof oval_sysent
+ */
+oval_syschar_status_t oval_sysent_get_status(struct oval_sysent *);
+
+/**
+ * Get system data item data type.
+ * @memberof oval_sysent
+ */
+oval_datatype_t oval_sysent_get_datatype(struct oval_sysent *);
+
+/**
+ * Get system data item mask.
+ * @memberof oval_sysent
+ */
+int oval_sysent_get_mask(struct oval_sysent *);
+/**
+ * Return <b>true</b> if the sysent instance is locked.
+ * The state of a locked instance cannot be changed.
+ * @memberof oval_sysent
+ */
+bool oval_sysent_is_locked(struct oval_sysent *sysent);
+/** @} */
+
+/**
+ * @name Iterators
+ * @{
+ */
+/**
+ * @memberof oval_sysent_iterator
+ */
+bool oval_sysent_iterator_has_more(struct oval_sysent_iterator *);
+/**
+ * @memberof oval_sysent_iterator
+ */
+struct oval_sysent *oval_sysent_iterator_next(struct oval_sysent_iterator *);
+/**
+ * @memberof oval_sysent_iterator
+ */
+void oval_sysent_iterator_free(struct oval_sysent_iterator *);
+/** @} */
+
+/**
+ * @name Evaluators
+ * @{
+ */
+/**
+ * Return <b>true</b> if the sysent instance is valid
+ * @memberof oval_sysent
+ */
+bool oval_sysent_is_valid(struct oval_sysent *sysent);
 /** @} */
 
 

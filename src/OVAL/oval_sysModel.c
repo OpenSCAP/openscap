@@ -47,7 +47,7 @@ typedef struct oval_syschar_model {
 	struct oval_sysinfo *sysinfo;
 	struct oval_definition_model *definition_model;
 	struct oval_string_map *syschar_map;
-	struct oval_string_map *sysdata_map;
+	struct oval_string_map *sysitem_map;
 	struct oval_string_map *variable_binding_map;
 	bool is_locked;
         char *schema;
@@ -66,14 +66,14 @@ struct oval_syschar_model *oval_syschar_model_new(struct oval_definition_model *
 	newmodel->sysinfo = NULL;
 	newmodel->definition_model = definition_model;
 	newmodel->syschar_map = oval_string_map_new();
-	newmodel->sysdata_map = oval_string_map_new();
+	newmodel->sysitem_map = oval_string_map_new();
 	newmodel->variable_binding_map = oval_string_map_new();
 	newmodel->is_locked = false;
         newmodel->schema = oscap_strdup(OVAL_SYS_SCHEMA_LOCATION);
 
 	/* check possible allocation problems */
 	if ((newmodel->syschar_map == NULL) ||
-	    (newmodel->sysdata_map == NULL) || (newmodel->variable_binding_map == NULL)) {
+	    (newmodel->sysitem_map == NULL) || (newmodel->variable_binding_map == NULL)) {
 		oval_syschar_model_free(newmodel);
 		return NULL;
 	}
@@ -171,8 +171,8 @@ struct oval_syschar_model *oval_syschar_model_clone(struct oval_syschar_model *o
 
 	_oval_syschar_model_clone(old_model->syschar_map, new_model,
 				  (_oval_clone_func) oval_syschar_clone);
-	_oval_syschar_model_clone(old_model->sysdata_map, new_model,
-				  (_oval_clone_func) oval_sysdata_clone);
+	_oval_syschar_model_clone(old_model->sysitem_map, new_model,
+				  (_oval_clone_func) oval_sysitem_clone);
 	_oval_syschar_model_clone(old_model->variable_binding_map, new_model,
 				  (_oval_clone_func) _oval_syschar_model_clone_variable_binding);
 
@@ -192,8 +192,8 @@ void oval_syschar_model_free(struct oval_syschar_model *model)
 		oval_sysinfo_free(model->sysinfo);
 	if (model->syschar_map)
 		oval_string_map_free(model->syschar_map, (oscap_destruct_func) oval_syschar_free);
-	if (model->sysdata_map)
-		oval_string_map_free(model->sysdata_map, (oscap_destruct_func) oval_sysdata_free);
+	if (model->sysitem_map)
+		oval_string_map_free(model->sysitem_map, (oscap_destruct_func) oval_sysitem_free);
 	if (model->variable_binding_map)
 		oval_string_map_free(model->variable_binding_map, (oscap_destruct_func) oval_variable_binding_free);
         if (model->schema)
@@ -202,7 +202,7 @@ void oval_syschar_model_free(struct oval_syschar_model *model)
 	model->sysinfo = NULL;
 	model->definition_model = NULL;
 	model->syschar_map = NULL;
-	model->sysdata_map = NULL;
+	model->sysitem_map = NULL;
 	model->variable_binding_map = NULL;
         model->schema = NULL;
 	oscap_free(model);
@@ -212,12 +212,12 @@ void oval_syschar_model_reset(struct oval_syschar_model *model)
 {
         if (model->syschar_map)
                 oval_string_map_free(model->syschar_map, (oscap_destruct_func) oval_syschar_free);
-        if (model->sysdata_map)
-                oval_string_map_free(model->sysdata_map, (oscap_destruct_func) oval_sysdata_free);
+        if (model->sysitem_map)
+                oval_string_map_free(model->sysitem_map, (oscap_destruct_func) oval_sysitem_free);
         if (model->variable_binding_map)
                 oval_string_map_free(model->variable_binding_map, (oscap_destruct_func) oval_variable_binding_free);
         model->syschar_map = oval_string_map_new();
-        model->sysdata_map = oval_string_map_new();
+        model->sysitem_map = oval_string_map_new();
         model->variable_binding_map = oval_string_map_new();
 }
 
@@ -293,12 +293,12 @@ void oval_syschar_model_add_variable_binding(struct oval_syschar_model *model, s
 
 
 
-void oval_syschar_model_add_sysdata(struct oval_syschar_model *model, struct oval_sysdata *sysdata)
+void oval_syschar_model_add_sysitem(struct oval_syschar_model *model, struct oval_sysitem *sysitem)
 {
 	if (model && !oval_syschar_model_is_locked(model)) {
-		char *id = oval_sysdata_get_id(sysdata);
+		char *id = oval_sysitem_get_id(sysitem);
 		if (id != NULL) {
-			oval_string_map_put(model->sysdata_map, id, sysdata);
+			oval_string_map_put(model->sysitem_map, id, sysitem);
 		}
 	} else
 		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
@@ -346,11 +346,11 @@ struct oval_syschar *oval_syschar_model_get_syschar(struct oval_syschar_model *m
 	return (struct oval_syschar *)oval_string_map_get_value(model->syschar_map, object_id);
 }
 
-struct oval_sysdata *oval_syschar_model_get_sysdata(struct oval_syschar_model *model, const char *id)
+struct oval_sysitem *oval_syschar_model_get_sysitem(struct oval_syschar_model *model, const char *id)
 {
 	__attribute__nonnull__(model);
 
-	return (struct oval_sysdata *)oval_string_map_get_value(model->sysdata_map, id);
+	return (struct oval_sysitem *)oval_string_map_get_value(model->sysitem_map, id);
 }
 
 
@@ -364,13 +364,13 @@ struct oval_syschar *oval_syschar_get_new(struct oval_syschar_model *model, stru
 	return syschar;
 }
 
-struct oval_sysdata *oval_sysdata_get_new(struct oval_syschar_model *model, const char *id)
+struct oval_sysitem *oval_sysitem_get_new(struct oval_syschar_model *model, const char *id)
 {
-	struct oval_sysdata *sysdata = oval_syschar_model_get_sysdata(model, id);
-	if (sysdata == NULL) {
-		sysdata = oval_sysdata_new(model, id);
+	struct oval_sysitem *sysitem = oval_syschar_model_get_sysitem(model, id);
+	if (sysitem == NULL) {
+		sysitem = oval_sysitem_new(model, id);
 	}
-	return sysdata;
+	return sysitem;
 }
 
 xmlNode *oval_syschar_model_to_dom(struct oval_syschar_model * syschar_model, xmlDocPtr doc, xmlNode * parent, 
@@ -418,35 +418,35 @@ xmlNode *oval_syschar_model_to_dom(struct oval_syschar_model * syschar_model, xm
 		syschars = (struct oval_syschar_iterator *)oval_collection_iterator(collection);
 	}
 
-	struct oval_string_map *sysdata_map = oval_string_map_new();
+	struct oval_string_map *sysitem_map = oval_string_map_new();
 	if (oval_syschar_iterator_has_more(syschars)) {
 		xmlNode *tag_objects = xmlNewChild(root_node, ns_syschar, BAD_CAST "collected_objects", NULL);
 
 		while (oval_syschar_iterator_has_more(syschars)) {
 			struct oval_syschar *syschar = oval_syschar_iterator_next(syschars);
 			oval_syschar_to_dom(syschar, doc, tag_objects);
-			struct oval_sysdata_iterator *sysdatas = oval_syschar_get_sysdata(syschar);
-			while (oval_sysdata_iterator_has_more(sysdatas)) {
-				struct oval_sysdata *sysdata = oval_sysdata_iterator_next(sysdatas);
-				oval_string_map_put(sysdata_map, oval_sysdata_get_id(sysdata), sysdata);
+			struct oval_sysitem_iterator *sysitems = oval_syschar_get_sysitem(syschar);
+			while (oval_sysitem_iterator_has_more(sysitems)) {
+				struct oval_sysitem *sysitem = oval_sysitem_iterator_next(sysitems);
+				oval_string_map_put(sysitem_map, oval_sysitem_get_id(sysitem), sysitem);
 			}
-			oval_sysdata_iterator_free(sysdatas);
+			oval_sysitem_iterator_free(sysitems);
 		}
 	}
 	oval_collection_free(collection);
 	oval_syschar_iterator_free(syschars);
 
-	struct oval_iterator *sysdatas = oval_string_map_values(sysdata_map);
-	if (oval_collection_iterator_has_more(sysdatas)) {
+	struct oval_iterator *sysitems = oval_string_map_values(sysitem_map);
+	if (oval_collection_iterator_has_more(sysitems)) {
 		xmlNode *tag_items = xmlNewChild(root_node, ns_syschar, BAD_CAST "system_data", NULL);
-		while (oval_collection_iterator_has_more(sysdatas)) {
-			struct oval_sysdata *sysdata = (struct oval_sysdata *)
-			    oval_collection_iterator_next(sysdatas);
-			oval_sysdata_to_dom(sysdata, doc, tag_items);
+		while (oval_collection_iterator_has_more(sysitems)) {
+			struct oval_sysitem *sysitem = (struct oval_sysitem *)
+			    oval_collection_iterator_next(sysitems);
+			oval_sysitem_to_dom(sysitem, doc, tag_items);
 		}
 	}
-	oval_collection_iterator_free(sysdatas);
-	oval_string_map_free(sysdata_map, NULL);
+	oval_collection_iterator_free(sysitems);
+	oval_string_map_free(sysitem_map, NULL);
 
 	return root_node;
 }

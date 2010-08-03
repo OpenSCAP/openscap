@@ -86,7 +86,7 @@ struct oval_variable *oval_variable_get_new(struct oval_definition_model *, cons
 
 struct oval_syschar *oval_syschar_get_new(struct oval_syschar_model *, struct oval_object *);
 struct oval_syschar_item *oval_syschar_item_get_new(struct oval_syschar_model *, const char *);
-struct oval_sysdata *oval_sysdata_get_new(struct oval_syschar_model *model, const char *id);
+struct oval_sysitem *oval_sysitem_get_new(struct oval_syschar_model *model, const char *id);
 
 typedef bool oval_syschar_resolver(struct oval_syschar *, void *);
 

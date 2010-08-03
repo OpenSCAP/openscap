@@ -643,7 +643,7 @@ void oval_result_item_add_message(struct oval_result_item *, struct oval_message
 /**
  * @memberof oval_result_item
  */
-struct oval_sysdata *oval_result_item_get_sysdata(struct oval_result_item *);
+struct oval_sysitem *oval_result_item_get_sysitem(struct oval_result_item *);
 /**
  * @memberof oval_result_item
  */
@@ -683,7 +683,7 @@ void oval_result_item_iterator_free(struct oval_result_item_iterator *);
 /**
  * Return <b>true</b> if the result_item instance is valid
  * An oval_result_item is valid if all the following are true
- * 	- The sysdata attribute is a valid oval_sysdata
+ * 	- The sysitem attribute is a valid oval_sysitem
  * @memberof oval_result_item
  */
 bool oval_result_item_is_valid(struct oval_result_item *result_item);

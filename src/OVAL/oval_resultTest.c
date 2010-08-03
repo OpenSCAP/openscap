@@ -474,7 +474,7 @@ static oval_result_t evaluate(char *sys_data, char *state_data, oval_datatype_t 
 		int sys_idx = 0;
 		int result = -1;
 		int is_equal = 1;
-		for (state_idx = 0, sys_idx = 0; (((state_data[state_idx]) || (sys_data[sys_idx])) && (result == -1));) {	// keep going as long as there is data in either the state or sysdata
+		for (state_idx = 0, sys_idx = 0; (((state_data[state_idx]) || (sys_data[sys_idx])) && (result == -1));) {	// keep going as long as there is data in either the state or sysitem
 			int tmp_state_int, tmp_sys_int;
 			tmp_state_int = atoi(&state_data[state_idx]);	// look at the current data field (if we're at the end, atoi should return 0)
 			tmp_sys_int = atoi(&sys_data[sys_idx]);
@@ -765,7 +765,7 @@ oval_result_t ores_get_result_byopr(struct oresults *ores, oval_operator_t op)
 	return result;
 }
 
-static oval_result_t eval_item(struct oval_syschar_model *syschar_model, struct oval_sysdata *cur_sysdata, struct oval_state *state)
+static oval_result_t eval_item(struct oval_syschar_model *syschar_model, struct oval_sysitem *cur_sysitem, struct oval_state *state)
 {
 	struct oval_state_content_iterator *state_contents_itr;
 	struct oresults ste_ores;
@@ -787,7 +787,7 @@ static oval_result_t eval_item(struct oval_syschar_model *syschar_model, struct 
 		struct oval_variable *state_entity_var;
 		oval_check_t var_check = OVAL_CHECK_UNKNOWN;
 		oval_result_t ste_ent_res;
-		struct oval_sysitem_iterator *item_entities_itr;
+		struct oval_sysent_iterator *item_entities_itr;
 		struct oresults ent_ores;
 
 		if ((content = oval_state_content_iterator_next(state_contents_itr)) == NULL) {
@@ -840,22 +840,22 @@ static oval_result_t eval_item(struct oval_syschar_model *syschar_model, struct 
 
 		ores_clear(&ent_ores);
 
-		item_entities_itr = oval_sysdata_get_items(cur_sysdata);
-		while (oval_sysitem_iterator_has_more(item_entities_itr)) {
-			struct oval_sysitem *item_entity;
+		item_entities_itr = oval_sysitem_get_items(cur_sysitem);
+		while (oval_sysent_iterator_has_more(item_entities_itr)) {
+			struct oval_sysent *item_entity;
 			oval_result_t ent_val_res;
 			char *item_entity_name;
 
-			item_entity = oval_sysitem_iterator_next(item_entities_itr);
+			item_entity = oval_sysent_iterator_next(item_entities_itr);
 			if (item_entity == NULL) {
-				oscap_dlprintf(DBG_E, "Found NULL sysitem.\n");
+				oscap_dlprintf(DBG_E, "Found NULL sysent.\n");
 				oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT,
-					     "OVAL internal error: found NULL sysitem");
-				oval_sysitem_iterator_free(item_entities_itr);
+					     "OVAL internal error: found NULL sysent");
+				oval_sysent_iterator_free(item_entities_itr);
 				goto fail;
 			}
 
-			item_entity_name = oval_sysitem_get_name(item_entity);
+			item_entity_name = oval_sysent_get_name(item_entity);
 			if (strcmp(item_entity_name, state_entity_name))
 				continue;
 
@@ -866,7 +866,7 @@ static oval_result_t eval_item(struct oval_syschar_model *syschar_model, struct 
 				ores_clear(&var_ores);
 
 				if (0 != oval_syschar_model_compute_variable(syschar_model, state_entity_var)) {
-					oval_sysitem_iterator_free(item_entities_itr);
+					oval_sysent_iterator_free(item_entities_itr);
 					goto fail;
 				}
 				val_itr = oval_variable_get_values(state_entity_var);
@@ -878,9 +878,9 @@ static oval_result_t eval_item(struct oval_syschar_model *syschar_model, struct 
 					state_entity_val_text = oval_value_get_text(var_val);
 					state_entity_val_datatype = oval_value_get_datatype(var_val);
 
-					var_val_res = evaluate(oval_sysitem_get_value(item_entity),
+					var_val_res = evaluate(oval_sysent_get_value(item_entity),
 							       state_entity_val_text,
-							       oval_sysitem_get_datatype(item_entity),
+							       oval_sysent_get_datatype(item_entity),
 							       state_entity_val_datatype,
 							       state_entity_operation);
 					ores_add_res(&var_ores, var_val_res);
@@ -889,15 +889,15 @@ static oval_result_t eval_item(struct oval_syschar_model *syschar_model, struct 
 
 				ent_val_res = ores_get_result_bychk(&var_ores, var_check);
 			} else {
-				ent_val_res = evaluate(oval_sysitem_get_value(item_entity),
+				ent_val_res = evaluate(oval_sysent_get_value(item_entity),
 						       state_entity_val_text,
-						       oval_sysitem_get_datatype(item_entity),
+						       oval_sysent_get_datatype(item_entity),
 						       state_entity_val_datatype,
 						       state_entity_operation);
 			}
 			ores_add_res(&ent_ores, ent_val_res);
 		}
-		oval_sysitem_iterator_free(item_entities_itr);
+		oval_sysent_iterator_free(item_entities_itr);
 
 		ste_ent_res = ores_get_result_bychk(&ent_ores, entity_check);
 		ores_add_res(&ste_ores, ste_ent_res);
@@ -920,8 +920,8 @@ static oval_result_t eval_item(struct oval_syschar_model *syschar_model, struct 
 #define SYSTEM  (struct oval_result_system *)args[0]
 
 static void _oval_test_item_consumer(struct oval_result_item *item, void **args) {
-	struct oval_sysdata *oval_sysdata = oval_result_item_get_sysdata(item);
-	char *item_id = oval_sysdata_get_id(oval_sysdata);
+	struct oval_sysitem *oval_sysitem = oval_result_item_get_sysitem(item);
+	char *item_id = oval_sysitem_get_id(oval_sysitem);
 	struct oval_result_item *mapped_item = oval_string_map_get_value(ITEMMAP, item_id);
 	if (mapped_item == NULL) {
 		oval_string_map_put(ITEMMAP, item_id, item);
@@ -944,11 +944,11 @@ static oval_result_t eval_check_state(struct oval_state *state, oval_check_t che
 	ritems_itr = oval_result_test_get_items(TEST);
 	while (oval_result_item_iterator_has_more(ritems_itr)) {
 		struct oval_result_item *ritem;
-		struct oval_sysdata *item;
+		struct oval_sysitem *item;
 		oval_result_t item_res;
 
 		ritem = oval_result_item_iterator_next(ritems_itr);
-		item = oval_result_item_get_sysdata(ritem);
+		item = oval_result_item_get_sysitem(ritem);
 
 		item_res = eval_item(syschar_model, item, state);
 		oval_result_item_set_result(ritem, item_res);
@@ -1036,38 +1036,38 @@ _oval_result_test_evaluate_items(struct oval_syschar *syschar_object,
 				 oval_existence_t test_check_existence,
 				 void **args)
 {
-	struct oval_sysdata_iterator *collected_items_itr;
+	struct oval_sysitem_iterator *collected_items_itr;
 	oval_result_t result;
 	int exists_cnt, error_cnt;
 
 	exists_cnt = error_cnt = 0;
-	collected_items_itr = oval_syschar_get_sysdata(syschar_object);
-	while (oval_sysdata_iterator_has_more(collected_items_itr)) {
-		struct oval_sysdata *item;
+	collected_items_itr = oval_syschar_get_sysitem(syschar_object);
+	while (oval_sysitem_iterator_has_more(collected_items_itr)) {
+		struct oval_sysitem *item;
 		char *item_id;
 		oval_syschar_status_t item_status;
 		struct oval_result_item *ritem;
 
-		item = oval_sysdata_iterator_next(collected_items_itr);
+		item = oval_sysitem_iterator_next(collected_items_itr);
 		if (item == NULL) {
 			oscap_dlprintf(DBG_E, "Iterator returned null.");
 			oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "Iterator returned null");
-			oval_sysdata_iterator_free(collected_items_itr);
+			oval_sysitem_iterator_free(collected_items_itr);
 			return OVAL_RESULT_ERROR;
 		}
 
-		item_status = oval_sysdata_get_status(item);
+		item_status = oval_sysitem_get_status(item);
 		if (item_status == SYSCHAR_STATUS_EXISTS)
 			exists_cnt++;
 		if (item_status == SYSCHAR_STATUS_ERROR)
 			error_cnt++;
 
-		item_id = oval_sysdata_get_id(item);
+		item_id = oval_sysitem_get_id(item);
 		ritem = oval_result_item_new(SYSTEM, item_id);
 		oval_result_item_set_result(ritem, OVAL_RESULT_NOT_EVALUATED);
 		_oval_test_item_consumer(ritem, args);
 	}
-	oval_sysdata_iterator_free(collected_items_itr);
+	oval_sysitem_iterator_free(collected_items_itr);
 
 	switch (oval_syschar_get_flag(syschar_object)) {
 	case SYSCHAR_FLAG_ERROR:

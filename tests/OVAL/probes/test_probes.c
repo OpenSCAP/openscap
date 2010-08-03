@@ -231,15 +231,15 @@ int main(int argc, char **argv) {
 /*                if (object) oval_object_to_print(object, nxtindent, 0); */
 /*        } */
 /*        {//sysdata */
-/*                struct oval_sysdata_iterator *sysdatas = oval_syschar_get_sysdata(syschar); */
-/*                int hasMore = oval_sysdata_iterator_has_more(sysdatas); */
+/*                struct oval_sysitem_iterator *sysdatas = oval_syschar_get_sysdata(syschar); */
+/*                int hasMore = oval_sysitem_iterator_has_more(sysdatas); */
 /*                if(hasMore){ */
-/*                        int i;for(i=1;oval_sysdata_iterator_has_more(sysdatas);i++){ */
-/*                                struct oval_sysdata *sysdata = oval_sysdata_iterator_next(sysdatas); */
-/*                                oval_sysdata_to_print(sysdata, nxtindent, i); */
+/*                        int i;for(i=1;oval_sysitem_iterator_has_more(sysdatas);i++){ */
+/*                                struct oval_sysitem *sysdata = oval_sysitem_iterator_next(sysdatas); */
+/*                                oval_sysitem_to_print(sysdata, nxtindent, i); */
 /*                       } */
 /*                } */
-/*                oval_sysdata_iterator_free(sysdatas); */
+/*                oval_sysitem_iterator_free(sysdatas); */
 /*        } */
 /* } */
 

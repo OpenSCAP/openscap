@@ -47,24 +47,24 @@ void oval_sysinfo_to_print(struct oval_sysinfo *, char *, int);
 void oval_sysinfo_to_dom(struct oval_sysinfo *, xmlDoc *, xmlNode *);
 int oval_sysinfo_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *);
 
-void oval_sysdata_to_print(struct oval_sysdata *, char *, int);
-void oval_sysdata_to_dom(struct oval_sysdata *, xmlDoc *, xmlNode *);
-int oval_sysdata_parse_tag(xmlTextReaderPtr, struct oval_parser_context *);
+void oval_sysitem_to_print(struct oval_sysitem *, char *, int);
+void oval_sysitem_to_dom(struct oval_sysitem *, xmlDoc *, xmlNode *);
+int oval_sysitem_parse_tag(xmlTextReaderPtr, struct oval_parser_context *);
 
 void oval_syschar_to_dom(struct oval_syschar *, xmlDoc *, xmlNode *);
 int oval_syschar_parse_tag(xmlTextReaderPtr, struct oval_parser_context *context);
 oval_syschar_collection_flag_t oval_syschar_flag_parse(xmlTextReaderPtr, char *, oval_syschar_collection_flag_t);
 oval_syschar_status_t oval_syschar_status_parse(xmlTextReaderPtr, char *, oval_syschar_status_t);
 
-typedef void (*oval_sysitem_consumer) (struct oval_sysitem *, void *client);
-int oval_sysitem_parse_tag(xmlTextReaderPtr, struct oval_parser_context *, oval_sysitem_consumer, void *);
-void oval_sysitem_to_dom(struct oval_sysitem *sysitem, xmlDoc * doc, xmlNode * tag_parent);
-void oval_sysitem_to_print(struct oval_sysitem *, char *, int);
+typedef void (*oval_sysent_consumer) (struct oval_sysent *, void *client);
+int oval_sysent_parse_tag(xmlTextReaderPtr, struct oval_parser_context *, oval_sysent_consumer, void *);
+void oval_sysent_to_dom(struct oval_sysent *sysent, xmlDoc * doc, xmlNode * tag_parent);
+void oval_sysent_to_print(struct oval_sysent *, char *, int);
 
 struct oval_syschar_model *oval_syschar_get_model(struct oval_syschar *syschar);
 
 void oval_syschar_model_add_syschar(struct oval_syschar_model *model, struct oval_syschar *syschar);
-void oval_syschar_model_add_sysdata(struct oval_syschar_model *model, struct oval_sysdata *sysdata);
+void oval_syschar_model_add_sysitem(struct oval_syschar_model *model, struct oval_sysitem *sysitem);
 
 OSCAP_HIDDEN_END;
 

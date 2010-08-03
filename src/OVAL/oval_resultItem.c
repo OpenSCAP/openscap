@@ -39,7 +39,7 @@ typedef struct oval_result_item {
 	struct oval_result_system *sys;
 	oval_result_t result;
 	struct oval_collection *messages;
-	struct oval_sysdata *sysdata;
+	struct oval_sysitem *sysitem;
 } oval_result_item_t;
 
 struct oval_result_item *oval_result_item_new(struct oval_result_system *sys, char *item_id) {
@@ -49,9 +49,9 @@ struct oval_result_item *oval_result_item_new(struct oval_result_system *sys, ch
 		return NULL;
 
 	struct oval_syschar_model *syschar_model = oval_result_system_get_syschar_model(sys);
-	struct oval_sysdata *sysdata = oval_sysdata_get_new(syschar_model, item_id);
+	struct oval_sysitem *sysitem = oval_sysitem_get_new(syschar_model, item_id);
 
-	item->sysdata = sysdata;
+	item->sysitem = sysitem;
 	item->messages = oval_collection_new();
 	item->result = OVAL_RESULT_NOT_EVALUATED;
 	item->sys = sys;
@@ -61,15 +61,15 @@ struct oval_result_item *oval_result_item_new(struct oval_result_system *sys, ch
 
 bool oval_result_item_is_valid(struct oval_result_item * result_item)
 {
-	struct oval_sysdata *sysdata;
+	struct oval_sysitem *sysitem;
 
 	if (result_item == NULL) {
                 oscap_dlprintf(DBG_W, "Argument is not valid: NULL.\n");
 		return false;
         }
 
-	sysdata = oval_result_item_get_sysdata(result_item);
-	if (oval_sysdata_is_valid(sysdata) != true)
+	sysitem = oval_result_item_get_sysitem(result_item);
+	if (oval_sysitem_is_valid(sysitem) != true)
 		return false;
 
 	return true;
@@ -84,8 +84,8 @@ bool oval_result_item_is_locked(struct oval_result_item * result_item)
 
 struct oval_result_item *oval_result_item_clone
     (struct oval_result_system *new_system, struct oval_result_item *old_item) {
-	struct oval_sysdata *old_sysdata = oval_result_item_get_sysdata(old_item);
-	char *datid = oval_sysdata_get_id(old_sysdata);
+	struct oval_sysitem *old_sysitem = oval_result_item_get_sysitem(old_item);
+	char *datid = oval_sysitem_get_id(old_sysitem);
 	struct oval_result_item *new_item = oval_result_item_new(new_system, datid);
 	struct oval_message_iterator *old_messages = oval_result_item_get_messages(old_item);
 	while (oval_message_iterator_has_more(old_messages)) {
@@ -109,7 +109,7 @@ void oval_result_item_free(struct oval_result_item *item)
 
 	item->messages = NULL;
 	item->result = OVAL_RESULT_NOT_EVALUATED;
-	item->sysdata = NULL;
+	item->sysitem = NULL;
 
 	oscap_free(item);
 }
@@ -137,11 +137,11 @@ void oval_result_item_iterator_free(struct
 				      oc_result_item);
 }
 
-struct oval_sysdata *oval_result_item_get_sysdata(struct oval_result_item *item)
+struct oval_sysitem *oval_result_item_get_sysitem(struct oval_result_item *item)
 {
 	__attribute__nonnull__(item);
 
-	return item->sysdata;
+	return item->sysitem;
 }
 
 oval_result_t oval_result_item_get_result(struct oval_result_item * item)
@@ -194,7 +194,7 @@ int oval_result_item_parse_tag
 	oval_result_item_set_result(item, result);
 
 	oscap_dlprintf(DBG_I, "item_id: %s, result: %d.\n",
-		       oval_sysdata_get_id(oval_result_item_get_sysdata(item)), oval_result_item_get_result(item));
+		       oval_sysitem_get_id(oval_result_item_get_sysitem(item)), oval_result_item_get_result(item));
 
 	return_code = oval_parser_parse_tag
 	    (reader, context, (oval_xml_tag_parser) _oval_result_item_message_parse, item);
@@ -209,8 +209,8 @@ xmlNode *oval_result_item_to_dom(struct oval_result_item * rslt_item, xmlDocPtr 
 	xmlNs *ns_results = xmlSearchNsByHref(doc, parent, OVAL_RESULTS_NAMESPACE);
 	xmlNode *item_node = xmlNewChild(parent, ns_results, BAD_CAST "tested_item", NULL);
 
-	struct oval_sysdata *oval_sysdata = oval_result_item_get_sysdata(rslt_item);
-	char *item_id = oval_sysdata_get_id(oval_sysdata);
+	struct oval_sysitem *oval_sysitem = oval_result_item_get_sysitem(rslt_item);
+	char *item_id = oval_sysitem_get_id(oval_sysitem);
 	xmlNewProp(item_node, BAD_CAST "item_id", BAD_CAST item_id);
 
 	oval_result_t result = oval_result_item_get_result(rslt_item);

@@ -1359,23 +1359,23 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_OBJECTREF(oval_ar
 	if (syschar) {
 		flag = oval_syschar_get_flag(syschar);
 		char *field_name = objref->object_field;
-		struct oval_sysdata_iterator *sysdatas = oval_syschar_get_sysdata(syschar);
-		while (oval_sysdata_iterator_has_more(sysdatas)) {
-			struct oval_sysdata *sysdata = oval_sysdata_iterator_next(sysdatas);
-			struct oval_sysitem_iterator *items = oval_sysdata_get_items(sysdata);
-			while (oval_sysitem_iterator_has_more(items)) {
-				struct oval_sysitem *item = oval_sysitem_iterator_next(items);
-				char *item_name = oval_sysitem_get_name(item);
+		struct oval_sysitem_iterator *sysitems = oval_syschar_get_sysitem(syschar);
+		while (oval_sysitem_iterator_has_more(sysitems)) {
+			struct oval_sysitem *sysitem = oval_sysitem_iterator_next(sysitems);
+			struct oval_sysent_iterator *items = oval_sysitem_get_items(sysitem);
+			while (oval_sysent_iterator_has_more(items)) {
+				struct oval_sysent *item = oval_sysent_iterator_next(items);
+				char *item_name = oval_sysent_get_name(item);
 				if (strcmp(field_name, item_name) == 0) {
-					char *text = oval_sysitem_get_value(item);
-					oval_datatype_t datatype = oval_sysitem_get_datatype(item);
+					char *text = oval_sysent_get_value(item);
+					oval_datatype_t datatype = oval_sysent_get_datatype(item);
 					struct oval_value *value = oval_value_new(datatype, text);
 					oval_collection_add(value_collection, value);
 				}
 			}
-			oval_sysitem_iterator_free(items);
+			oval_sysent_iterator_free(items);
 		}
-		oval_sysdata_iterator_free(sysdatas);
+		oval_sysitem_iterator_free(sysitems);
 	}
 
 	return flag;

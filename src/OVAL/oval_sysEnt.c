@@ -1,5 +1,5 @@
 /**
- * @file oval_sysItem.c
+ * @file oval_sysEnt.c
  * \brief Open Vulnerability and Assessment Language
  *
  * See more details at http://oval.mitre.org/
@@ -36,38 +36,38 @@
 #include "common/util.h"
 #include "common/debug_priv.h"
 
-typedef struct oval_sysitem {
+typedef struct oval_sysent {
 	struct oval_syschar_model *model;
 	char *name;
 	char *value;
 	int mask;
 	oval_datatype_t datatype;
 	oval_syschar_status_t status;
-} oval_sysitem_t;
+} oval_sysent_t;
 
-struct oval_sysitem *oval_sysitem_new(struct oval_syschar_model *model)
+struct oval_sysent *oval_sysent_new(struct oval_syschar_model *model)
 {
-	oval_sysitem_t *sysitem = (oval_sysitem_t *) oscap_alloc(sizeof(oval_sysitem_t));
-	if (sysitem == NULL)
+	oval_sysent_t *sysent = (oval_sysent_t *) oscap_alloc(sizeof(oval_sysent_t));
+	if (sysent == NULL)
 		return NULL;
 
-	sysitem->name = NULL;
-	sysitem->value = NULL;
-	sysitem->status = SYSCHAR_STATUS_UNKNOWN;
-	sysitem->datatype = OVAL_DATATYPE_UNKNOWN;
-	sysitem->mask = 0;
-	sysitem->model = model;
-	return sysitem;
+	sysent->name = NULL;
+	sysent->value = NULL;
+	sysent->status = SYSCHAR_STATUS_UNKNOWN;
+	sysent->datatype = OVAL_DATATYPE_UNKNOWN;
+	sysent->mask = 0;
+	sysent->model = model;
+	return sysent;
 }
 
-bool oval_sysitem_is_valid(struct oval_sysitem * sysitem)
+bool oval_sysent_is_valid(struct oval_sysent * sysent)
 {
-	if (sysitem == NULL) {
+	if (sysent == NULL) {
                 oscap_dlprintf(DBG_W, "Argument is not valid: NULL.\n");
 		return false;
         }
 
-        if (oval_sysitem_get_datatype(sysitem) == OVAL_DATATYPE_UNKNOWN) {
+        if (oval_sysent_get_datatype(sysent) == OVAL_DATATYPE_UNKNOWN) {
                 oscap_dlprintf(DBG_W, "Argument is not valid: datatype == OVAL_DATATYPE_UNKNOWN.\n");
                 return false;
         }
@@ -75,153 +75,153 @@ bool oval_sysitem_is_valid(struct oval_sysitem * sysitem)
 	return true;
 }
 
-bool oval_sysitem_is_locked(struct oval_sysitem * sysitem)
+bool oval_sysent_is_locked(struct oval_sysent * sysent)
 {
-	__attribute__nonnull__(sysitem);
+	__attribute__nonnull__(sysent);
 
-	return oval_syschar_model_is_locked(sysitem->model);
+	return oval_syschar_model_is_locked(sysent->model);
 }
 
-struct oval_sysitem *oval_sysitem_clone(struct oval_syschar_model *new_model, struct oval_sysitem *old_item)
+struct oval_sysent *oval_sysent_clone(struct oval_syschar_model *new_model, struct oval_sysent *old_item)
 {
-	struct oval_sysitem *new_item = oval_sysitem_new(new_model);
+	struct oval_sysent *new_item = oval_sysent_new(new_model);
 
-	char *old_value = oval_sysitem_get_value(old_item);
+	char *old_value = oval_sysent_get_value(old_item);
 	if (old_value) {
-		oval_sysitem_set_value(new_item, oscap_strdup(old_value));
+		oval_sysent_set_value(new_item, oscap_strdup(old_value));
 	}
 
-	char *old_name = oval_sysitem_get_name(old_item);
+	char *old_name = oval_sysent_get_name(old_item);
 	if (old_name) {
-		oval_sysitem_set_name(new_item, oscap_strdup(old_name));
+		oval_sysent_set_name(new_item, oscap_strdup(old_name));
 	}
 
-	oval_sysitem_set_datatype(new_item, oval_sysitem_get_datatype(old_item));
-	oval_sysitem_set_mask(new_item, oval_sysitem_get_mask(old_item));
-	oval_sysitem_set_status(new_item, oval_sysitem_get_status(old_item));
+	oval_sysent_set_datatype(new_item, oval_sysent_get_datatype(old_item));
+	oval_sysent_set_mask(new_item, oval_sysent_get_mask(old_item));
+	oval_sysent_set_status(new_item, oval_sysent_get_status(old_item));
 
 	return new_item;
 }
 
-void oval_sysitem_free(struct oval_sysitem *sysitem)
+void oval_sysent_free(struct oval_sysent *sysent)
 {
-	if (sysitem == NULL)
+	if (sysent == NULL)
 		return;
 
-	if (sysitem->name != NULL)
-		oscap_free(sysitem->name);
-	if (sysitem->value != NULL)
-		oscap_free(sysitem->value);
+	if (sysent->name != NULL)
+		oscap_free(sysent->name);
+	if (sysent->value != NULL)
+		oscap_free(sysent->value);
 
-	sysitem->name = NULL;
-	sysitem->value = NULL;
+	sysent->name = NULL;
+	sysent->value = NULL;
 
-	oscap_free(sysitem);
+	oscap_free(sysent);
 }
 
-bool oval_sysitem_iterator_has_more(struct oval_sysitem_iterator *oc_sysitem)
+bool oval_sysent_iterator_has_more(struct oval_sysent_iterator *oc_sysent)
 {
 	return oval_collection_iterator_has_more((struct oval_iterator *)
-						 oc_sysitem);
+						 oc_sysent);
 }
 
-struct oval_sysitem *oval_sysitem_iterator_next(struct oval_sysitem_iterator *oc_sysitem)
+struct oval_sysent *oval_sysent_iterator_next(struct oval_sysent_iterator *oc_sysent)
 {
-	return (struct oval_sysitem *)
-	    oval_collection_iterator_next((struct oval_iterator *)oc_sysitem);
+	return (struct oval_sysent *)
+	    oval_collection_iterator_next((struct oval_iterator *)oc_sysent);
 }
 
-void oval_sysitem_iterator_free(struct oval_sysitem_iterator *oc_sysitem)
+void oval_sysent_iterator_free(struct oval_sysent_iterator *oc_sysent)
 {
-	oval_collection_iterator_free((struct oval_iterator *)oc_sysitem);
+	oval_collection_iterator_free((struct oval_iterator *)oc_sysent);
 }
 
-char *oval_sysitem_get_name(struct oval_sysitem *sysitem)
+char *oval_sysent_get_name(struct oval_sysent *sysent)
 {
-	__attribute__nonnull__(sysitem);
+	__attribute__nonnull__(sysent);
 
-	return sysitem->name;
+	return sysent->name;
 }
 
-oval_syschar_status_t oval_sysitem_get_status(struct oval_sysitem * sysitem)
+oval_syschar_status_t oval_sysent_get_status(struct oval_sysent * sysent)
 {
-	__attribute__nonnull__(sysitem);
+	__attribute__nonnull__(sysent);
 
-	return sysitem->status;
+	return sysent->status;
 }
 
-char *oval_sysitem_get_value(struct oval_sysitem *sysitem)
+char *oval_sysent_get_value(struct oval_sysent *sysent)
 {
-	__attribute__nonnull__(sysitem);
+	__attribute__nonnull__(sysent);
 
-	return sysitem->value;
+	return sysent->value;
 }
 
-oval_datatype_t oval_sysitem_get_datatype(struct oval_sysitem * sysitem)
+oval_datatype_t oval_sysent_get_datatype(struct oval_sysent * sysent)
 {
-	__attribute__nonnull__(sysitem);
+	__attribute__nonnull__(sysent);
 
-	return sysitem->datatype;
+	return sysent->datatype;
 }
 
-int oval_sysitem_get_mask(struct oval_sysitem *sysitem)
+int oval_sysent_get_mask(struct oval_sysent *sysent)
 {
-	__attribute__nonnull__(sysitem);
+	__attribute__nonnull__(sysent);
 
-	return sysitem->mask;
+	return sysent->mask;
 }
 
-void oval_sysitem_set_name(struct oval_sysitem *sysitem, char *name)
+void oval_sysent_set_name(struct oval_sysent *sysent, char *name)
 {
-	if (sysitem && !oval_sysitem_is_locked(sysitem)) {
-		if (sysitem->name != NULL)
-			oscap_free(sysitem->name);
-		sysitem->name = oscap_strdup(name);
+	if (sysent && !oval_sysent_is_locked(sysent)) {
+		if (sysent->name != NULL)
+			oscap_free(sysent->name);
+		sysent->name = oscap_strdup(name);
 	} else
 		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
-void oval_sysitem_set_status(struct oval_sysitem *sysitem, oval_syschar_status_t status)
+void oval_sysent_set_status(struct oval_sysent *sysent, oval_syschar_status_t status)
 {
-	if (sysitem && !oval_sysitem_is_locked(sysitem)) {
-		sysitem->status = status;
+	if (sysent && !oval_sysent_is_locked(sysent)) {
+		sysent->status = status;
 	} else
 		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
-void oval_sysitem_set_datatype(struct oval_sysitem *sysitem, oval_datatype_t datatype)
+void oval_sysent_set_datatype(struct oval_sysent *sysent, oval_datatype_t datatype)
 {
-	if (sysitem && !oval_sysitem_is_locked(sysitem)) {
-		sysitem->datatype = datatype;
+	if (sysent && !oval_sysent_is_locked(sysent)) {
+		sysent->datatype = datatype;
 	} else
 		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
-void oval_sysitem_set_mask(struct oval_sysitem *sysitem, int mask)
+void oval_sysent_set_mask(struct oval_sysent *sysent, int mask)
 {
-	if (sysitem && !oval_sysitem_is_locked(sysitem)) {
-		sysitem->mask = mask;
+	if (sysent && !oval_sysent_is_locked(sysent)) {
+		sysent->mask = mask;
 	} else
 		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
-void oval_sysitem_set_value(struct oval_sysitem *sysitem, char *value)
+void oval_sysent_set_value(struct oval_sysent *sysent, char *value)
 {
-	if (sysitem && !oval_sysitem_is_locked(sysitem)) {
-		if (sysitem->value != NULL)
-			oscap_free(sysitem->value);
-		sysitem->value = oscap_strdup(value);
+	if (sysent && !oval_sysent_is_locked(sysent)) {
+		if (sysent->value != NULL)
+			oscap_free(sysent->value);
+		sysent->value = oscap_strdup(value);
 	} else
 		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
-static void oval_sysitem_value_consumer_(char *value, void *sysitem)
+static void oval_sysent_value_consumer_(char *value, void *sysent)
 {
-	oval_sysitem_set_value(sysitem, value);
+	oval_sysent_set_value(sysent, value);
 }
 
-int oval_sysitem_parse_tag(xmlTextReaderPtr reader,
-			   struct oval_parser_context *context, oval_sysitem_consumer consumer, void *client)
+int oval_sysent_parse_tag(xmlTextReaderPtr reader,
+			   struct oval_parser_context *context, oval_sysent_consumer consumer, void *client)
 {
 	/*
 	   char*              name;
@@ -236,25 +236,25 @@ int oval_sysitem_parse_tag(xmlTextReaderPtr reader,
 	int return_code = 1;
 	char *tagname = (char *)xmlTextReaderLocalName(reader);
 	if (strcmp("#text", tagname)) {
-		struct oval_sysitem *sysitem = oval_sysitem_new(context->syschar_model);
-		{		/*sysitem->name */
-			oval_sysitem_set_name(sysitem, tagname);
+		struct oval_sysent *sysent = oval_sysent_new(context->syschar_model);
+		{		/*sysent->name */
+			oval_sysent_set_name(sysent, tagname);
 		}
-		{		/*sysitem->mask */
+		{		/*sysent->mask */
 			int mask = oval_parser_boolean_attribute(reader, "mask", 0);
-			oval_sysitem_set_mask(sysitem, mask);
+			oval_sysent_set_mask(sysent, mask);
 		}
-		{		/*sysitem->datatype */
+		{		/*sysent->datatype */
 			oval_datatype_t datatype = oval_datatype_parse(reader, "datatype", OVAL_DATATYPE_STRING);
-			oval_sysitem_set_datatype(sysitem, datatype);
+			oval_sysent_set_datatype(sysent, datatype);
 		}
-		{		/*sysitem->status */
+		{		/*sysent->status */
 			oval_syschar_status_t status =
 			    oval_syschar_status_parse(reader, "status", SYSCHAR_STATUS_EXISTS);
-			oval_sysitem_set_status(sysitem, status);
+			oval_sysent_set_status(sysent, status);
 		}
-		{		/*sysitem->value */
-			return_code = oval_parser_text_value(reader, context, &oval_sysitem_value_consumer_, sysitem);
+		{		/*sysent->value */
+			return_code = oval_parser_text_value(reader, context, &oval_sysent_value_consumer_, sysent);
 		}
 		if (return_code != 1) {
 			oscap_dlprintf(DBG_W, "Return code is not 1: %d.\n", return_code);
@@ -263,31 +263,31 @@ int oval_sysitem_parse_tag(xmlTextReaderPtr reader,
 			int numchars = 0;
 			char message[2000];
 			message[numchars] = '\0';
-			numchars = numchars + sprintf(message + numchars, "oval_sysitem_parse_tag::");
+			numchars = numchars + sprintf(message + numchars, "oval_sysent_parse_tag::");
 			numchars =
-			    numchars + sprintf(message + numchars, "\n    sysitem->name     = %s",
-					       oval_sysitem_get_name(sysitem));
+			    numchars + sprintf(message + numchars, "\n    sysent->name     = %s",
+					       oval_sysent_get_name(sysent));
 			numchars =
-			    numchars + sprintf(message + numchars, "\n    sysitem->mask     = %d",
-					       oval_sysitem_get_mask(sysitem));
+			    numchars + sprintf(message + numchars, "\n    sysent->mask     = %d",
+					       oval_sysent_get_mask(sysent));
 			numchars =
-			    numchars + sprintf(message + numchars, "\n    sysitem->datatype = %d",
-					       oval_sysitem_get_datatype(sysitem));
+			    numchars + sprintf(message + numchars, "\n    sysent->datatype = %d",
+					       oval_sysent_get_datatype(sysent));
 			numchars =
-			    numchars + sprintf(message + numchars, "\n    sysitem->status   = %d",
-					       oval_sysitem_get_status(sysitem));
+			    numchars + sprintf(message + numchars, "\n    sysent->status   = %d",
+					       oval_sysent_get_status(sysent));
 			numchars =
-			    numchars + sprintf(message + numchars, "\n    sysitem->value    = %s",
-					       oval_sysitem_get_value(sysitem));
+			    numchars + sprintf(message + numchars, "\n    sysent->value    = %s",
+					       oval_sysent_get_value(sysent));
 			oscap_dprintf("DEBUG: %s", message);	/* TODO: Make this as string ^ */
-			(*consumer) (sysitem, client);
+			(*consumer) (sysent, client);
 		}
 	}
 	oscap_free(tagname);
 	return return_code;
 }
 
-void oval_sysitem_to_print(struct oval_sysitem *sysitem, char *indent, int idx)
+void oval_sysent_to_print(struct oval_sysent *sysent, char *indent, int idx)
 {
 	char nxtindent[100];
 
@@ -307,44 +307,44 @@ void oval_sysitem_to_print(struct oval_sysitem *sysitem, char *indent, int idx)
 	   oval_syschar_status_enum status;
 	 */
 	{			/*id */
-		oscap_dprintf("%sNAME          = %s\n", nxtindent, oval_sysitem_get_name(sysitem));
+		oscap_dprintf("%sNAME          = %s\n", nxtindent, oval_sysent_get_name(sysent));
 	}
 	{			/*id */
-		oscap_dprintf("%sVALUE         = %s\n", nxtindent, oval_sysitem_get_value(sysitem));
+		oscap_dprintf("%sVALUE         = %s\n", nxtindent, oval_sysent_get_value(sysent));
 	}
 	{			/*mask */
-		oscap_dprintf("%sMASK          = %d\n", nxtindent, oval_sysitem_get_mask(sysitem));
+		oscap_dprintf("%sMASK          = %d\n", nxtindent, oval_sysent_get_mask(sysent));
 	}
 	{			/*datatype */
-		oscap_dprintf("%sDATATYPE      = %d\n", nxtindent, oval_sysitem_get_datatype(sysitem));
+		oscap_dprintf("%sDATATYPE      = %d\n", nxtindent, oval_sysent_get_datatype(sysent));
 	}
 	{			/*status */
-		oscap_dprintf("%sSTATUS        = %d\n", nxtindent, oval_sysitem_get_status(sysitem));
+		oscap_dprintf("%sSTATUS        = %d\n", nxtindent, oval_sysent_get_status(sysent));
 	}
 }
 
-void oval_sysitem_to_dom(struct oval_sysitem *sysitem, xmlDoc * doc, xmlNode * parent)
+void oval_sysent_to_dom(struct oval_sysent *sysent, xmlDoc * doc, xmlNode * parent)
 {
 	xmlNsPtr *ns_parent = xmlGetNsList(doc, parent);
-	xmlNode *sysitem_tag =
-	    xmlNewChild(parent, ns_parent[0], BAD_CAST oval_sysitem_get_name(sysitem),
-			BAD_CAST oval_sysitem_get_value(sysitem));
+	xmlNode *sysent_tag =
+	    xmlNewChild(parent, ns_parent[0], BAD_CAST oval_sysent_get_name(sysent),
+			BAD_CAST oval_sysent_get_value(sysent));
 
 	if(ns_parent)
 		xmlFree(ns_parent);
 
-	bool mask_value = oval_sysitem_get_mask(sysitem);
+	bool mask_value = oval_sysent_get_mask(sysent);
 	if (mask_value) {
-		xmlNewProp(sysitem_tag, BAD_CAST "mask", BAD_CAST "true");
+		xmlNewProp(sysent_tag, BAD_CAST "mask", BAD_CAST "true");
 	}
 
-	oval_datatype_t datatype_index = oval_sysitem_get_datatype(sysitem);
+	oval_datatype_t datatype_index = oval_sysent_get_datatype(sysent);
 	if (datatype_index != OVAL_DATATYPE_STRING) {
-		xmlNewProp(sysitem_tag, BAD_CAST "datatype", BAD_CAST oval_datatype_get_text(datatype_index));
+		xmlNewProp(sysent_tag, BAD_CAST "datatype", BAD_CAST oval_datatype_get_text(datatype_index));
 	}
 
-	oval_syschar_status_t status_index = oval_sysitem_get_status(sysitem);
+	oval_syschar_status_t status_index = oval_sysent_get_status(sysent);
 	if (status_index != SYSCHAR_STATUS_EXISTS) {
-		xmlNewProp(sysitem_tag, BAD_CAST "status", BAD_CAST oval_syschar_status_get_text(status_index));
+		xmlNewProp(sysent_tag, BAD_CAST "status", BAD_CAST oval_syschar_status_get_text(status_index));
 	}
 }
