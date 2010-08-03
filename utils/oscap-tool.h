@@ -88,6 +88,7 @@ struct oscap_action {
         char *f_xccdf;
         char *f_oval;
         char *f_results;
+        char *f_report;
         char *url_xccdf;
         char *url_oval;
         char *profile;
