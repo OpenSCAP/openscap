@@ -10,7 +10,7 @@ License:        LGPLv2+
 URL:            http://www.open-scap.org/
 Source0:        http://www.open-scap.org/download/%{name}-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
-BuildRequires:  swig libxml2-devel
+BuildRequires:  swig libxml2-devel libxslt-devel
 BuildRequires:  rpm-devel
 BuildRequires:  libgcrypt-devel
 BuildRequires:  pcre-devel
@@ -115,6 +115,7 @@ fi
 %{_libdir}/*.so.*
 %{_libexecdir}/*
 %{_datadir}/openscap/schemas/*
+%{_datadir}/openscap/xsl/*
 
 %files python
 %defattr(-,root,root,-)
