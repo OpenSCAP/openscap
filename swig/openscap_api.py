@@ -191,8 +191,8 @@ class OSCAP_Object(object):
     def __del__(self):
         if self.__dict__.has_key("instance") and self.__dict__["instance"] != None:
             # In what situations we need to free objects ?
-            if self.object.find("iterator") > -1 or \
-                self.object.find("_model") > -1:
+            if (self.object.find("iterator") > -1 or \
+                self.object.find("_model") > -1) and self.object.find("policy_model") == -1:
 
                 self.free()
 
@@ -236,13 +236,131 @@ class OSCAP_Object(object):
 
     """ ********* Implementation of required high level functions ********* """
 
+    def get_all_values(self):
+
+        if self.object != "xccdf_item":
+            item = self.to_item()
+            if item == None: return None
+        else: item = self
+        values = []
+
+        if item.type == OSCAP.XCCDF_BENCHMARK:
+            values.extend( item.to_benchmark().values )
+        elif item.type == OSCAP.XCCDF_GROUP:
+            values.extend( item.to_group().values )
+        else: return []
+
+        for content in item.content:
+            values.extend( content.get_all_values() )
+
+        return values
+
+
     def get_tailor_items(self):
-        if self.object != "xccdf_polcy": raise TypeError("Wrong call of \"get_tailor_items\" function. Should be xccdf_policy (have %s)" %(self.object,))
-        benchmark = self.model.benchmark
-        profile = self.profile
-        value_list = self.model.benchmark.values
-        for value in value_list:
-            pass
+        if self.object != "xccdf_policy": raise TypeError("Wrong call of \"get_tailor_items\" function. Should be xccdf_policy (have %s)" %(self.object,))
+        items = []
+
+        for value in self.model.benchmark.get_all_values():
+            # get value properties
+            item = {}
+            item["id"] = value.id
+            item["titles"] = [(title.lang, title.text) for title in value.title]
+            item["descs"] = [(desc.lang, desc.text) for desc in value.description]
+            item["type"] = value.type
+            # get values
+            item["options"] = {}
+            for instance in value.instances:
+                item["options"][instance.selector] = instance.value
+
+            if self.profile != None:
+                for r_value in self.profile.refine_values:
+                    if r_value.item == value.id:
+                        item["selected"] = (r_value.selector, item["options"][r_value.selector])
+                for s_value in self.profile.setvalues:
+                    if s_value.item == value.id:
+                        item["selected"] = ('', s_value.value)
+
+            if "selected" not in item:
+                if "" in item["options"]: item["selected"] = ('', item["options"][""])
+                else: item["selected"] = ('', '')
+
+            """
+            print "ID: \r\t\t", item["id"]
+            print "Titles: \r\t\t", item["titles"]
+            print "Descriptions: \r\t\t", item["descs"]
+            print "Type: \r\t\t", ["", "Number", "String", "Boolean"][item["type"]]
+            print "Options: \r\t\t", item["options"]
+            print "Selected: \r\t\t", item["selected"]
+            print
+            """
+            items.append(item)
+
+        return items
+
+    def set_tailor_items(self, items):
+
+        if len(items) == 0: return
+
+        if self.profile == None:
+            profile = xccdf.profile()
+            profile.id = "Temporal OSCAP profile"
+            profile.abstract = False
+            self.model.benchmark.profile = profile
+
+        # items = [{id, value}]
+        for item in items:
+            selector = None
+            value = self.model.benchmark.item(item["id"]).to_value()
+            for instance in value.instances:
+                if item["value"] == instance.value:
+                    selector = instance.selector
+
+            oper = remarks = setvalue = None
+            for r_value in self.profile.refine_values:
+                if r_value.item == item["id"]:
+                    oper = r_value.oper
+                    remarks = r_value.remarks
+                    self.profile.refine_values.remove(r_value)
+            for s_value in self.profile.setvalues:
+                if s_value.item == item["id"]:
+                    setvalue = s_value.value
+                    self.profile.setvalues.remove(s_value)
+
+            if selector != None and selector != '':
+                r_value = xccdf.refine_value()
+                r_value.item = item["id"]
+                r_value.selector = selector
+                if oper != None: r_value.oper = oper
+                if remarks != None:
+                    for remark in remarks: r_value.add_remark(remark)
+                self.profile.add_refine_value(r_value)
+            elif selector == None:
+                s_value = xccdf.setvalue()
+                s_value.item = item["id"]
+                s_value.value = item["value"]
+                self.profile.add_setvalue(s_value)
+
+
+    def set_rules(self, rules):
+
+        if self.profile == None:
+            profile = xccdf.profile()
+            profile.id = "Temporal OSCAP profile"
+            profile.abstract = False
+            self.model.benchmark.profile = profile
+
+        for select in self.profile.selects:
+            if select.item not in rules:
+                select.selected = False
+            else:
+                rules.remove(select.item)
+                select.selected = True
+
+        for id in rules:
+            select = xccdf.select()
+            select.selected = True
+            select.item = id
+            self.profile.add_select(select)
 
 
 # ------------------------------------------------------------------------------------------------------------

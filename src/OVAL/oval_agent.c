@@ -243,7 +243,8 @@ void oval_agent_resolve_variables(struct oval_agent_session * session, struct xc
 
         struct xccdf_value_binding *binding = xccdf_value_binding_iterator_next(it);
         char *name = xccdf_value_binding_get_name(binding);
-        char *value = xccdf_value_binding_get_value(binding);
+        char * value = xccdf_value_binding_get_setvalue(binding);
+        if (value == NULL) value = xccdf_value_binding_get_value(binding);
         struct oval_variable *variable = oval_definition_model_get_variable(def_model, name);
         if (variable != NULL) {
                 oval_datatype_t o_type = oval_variable_get_datatype(variable);

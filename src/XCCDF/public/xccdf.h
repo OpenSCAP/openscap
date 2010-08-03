@@ -1120,6 +1120,11 @@ bool xccdf_setvalue_iterator_has_more(struct xccdf_setvalue_iterator *it);
  * @memberof xccdf_setvalue_iterator
  */
 void xccdf_setvalue_iterator_free(struct xccdf_setvalue_iterator *it);
+/**
+ * Reset the iterator structure (it will point to the first item in the list)
+ * @memberof xccdf_setvalue_iterator
+ */
+void xccdf_setvalue_iterator_reset(struct xccdf_setvalue_iterator *it);
 
 
 /**
@@ -1137,6 +1142,11 @@ bool xccdf_refine_value_iterator_has_more(struct xccdf_refine_value_iterator *it
  * @memberof xccdf_refine_value_iterator
  */
 void xccdf_refine_value_iterator_free(struct xccdf_refine_value_iterator *it);
+/**
+ * Reset the iterator structure (it will point to the first item in the list)
+ * @memberof xccdf_refine_value_iterator
+ */
+void xccdf_refine_value_iterator_reset(struct xccdf_refine_value_iterator *it);
 
 
 /**
