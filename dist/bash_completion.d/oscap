@@ -37,7 +37,7 @@ function _oscap {
 	# commands for individual standards
 	local -A cmds=()
 	cmds[xccdf]="eval validate-xml resolve generate-report"
-	cmds[oval]="collect eval validate-xml"
+	cmds[oval]="collect eval eval-id validate-xml"
 	cmds[cvss]="base temporal environmental"
 
 	if [ -z "$cmd" ]; then
@@ -66,6 +66,7 @@ function _oscap {
 		local -A opts=()
 		opts[oval:validate-xml]="--version --definitions --syschar --results"
 		opts[oval:eval]="--result-file"
+		opts[oval:eval-id]="--result-file --id"
 		opts[xccdf:eval]="--profile --result-file"
 		opts[xccdf:validate-xml]="--version"
 		opts[xccdf:resolve]="-o --output -f --force"

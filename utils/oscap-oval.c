@@ -32,6 +32,7 @@
 
 static int app_collect_oval(const struct oscap_action *action);
 static int app_evaluate_oval(const struct oscap_action *action);
+static int app_evaluate_oval_id(const struct oscap_action *action);
 static bool getopt_oval(int argc, char **argv, struct oscap_action *action);
 
 static struct oscap_module* OVAL_SUBMODULES[];
@@ -70,6 +71,19 @@ static struct oscap_module OVAL_EVAL = {
     .func = app_evaluate_oval
 };
 
+static struct oscap_module OVAL_EVAL_ID = {
+    .name = "eval-id",
+    .parent = &OSCAP_OVAL_MODULE,
+    .summary = "Probe the system and evaluate specified definition from OVAL Definition file",
+    .usage = "--id definition-id --result-file results.xml oval-definitions.xml",
+    .help =
+        "Options:\n"
+        "   --id <definition-id>\r\t\t\t\t - ID of the definition we want to evaluate"
+        "   --result-file <file>\r\t\t\t\t - Write OVAL Results into file.",
+    .opt_parser = getopt_oval,
+    .func = app_evaluate_oval_id
+};
+
 static struct oscap_module OVAL_COLLECT = {
     .name = "collect",
     .parent = &OSCAP_OVAL_MODULE,
@@ -82,6 +96,7 @@ static struct oscap_module OVAL_COLLECT = {
 static struct oscap_module* OVAL_SUBMODULES[] = {
     &OVAL_COLLECT,
     &OVAL_EVAL,
+    &OVAL_EVAL_ID,
     &OVAL_VALIDATE,
     NULL
 };
@@ -177,7 +192,6 @@ int app_collect_oval(const struct oscap_action *action)
 int app_evaluate_oval(const struct oscap_action *action)
 {
 
-	struct oval_results_model *res_model = NULL;
 	struct oval_usr *usr = NULL;
 	int ret = 0;
 
@@ -190,8 +204,6 @@ int app_evaluate_oval(const struct oscap_action *action)
 			fprintf(stderr, "Error: (%d) %s\n", oscap_err_code(), oscap_err_desc());
 		return 1;
 	}
-
-	res_model = oval_agent_get_results_model(sess);
 
 	/* Init usr structure */
 	usr = malloc(sizeof(struct oval_usr));
@@ -210,7 +222,6 @@ int app_evaluate_oval(const struct oscap_action *action)
 
 	if (ret == -1) {
 		if ((oscap_err()) && (VERBOSE >= 0))
-			if (VERBOSE >= 0)
 				fprintf(stderr, "Error: (%d) %s\n", oscap_err_code(), oscap_err_desc());
 		return 1;
 	}
@@ -223,9 +234,12 @@ int app_evaluate_oval(const struct oscap_action *action)
 		fprintf(stdout, "NOT APPLICABLE:\r\t\t %d\n", usr->result_napp);
 	}
 
-	/*=============== PRINT RESULTS =====================*/
+	/* export results to file */
 	if (action->f_results != NULL) {
-		// set up directives 
+		/* get result model */
+		struct oval_results_model *res_model = oval_agent_get_results_model(sess);
+
+		/* set up directives */
 		struct oval_result_directives *res_direct = oval_result_directives_new(res_model);
 		oval_result_directives_set_reported(res_direct, OVAL_RESULT_TRUE | OVAL_RESULT_FALSE |
 						    OVAL_RESULT_UNKNOWN | OVAL_RESULT_NOT_EVALUATED |
@@ -234,11 +248,12 @@ int app_evaluate_oval(const struct oscap_action *action)
 		oval_result_directives_set_content(res_direct, OVAL_RESULT_FALSE, OVAL_DIRECTIVE_CONTENT_FULL);
 		oval_result_directives_set_content(res_direct, OVAL_RESULT_TRUE, OVAL_DIRECTIVE_CONTENT_FULL);
 
-		// Export result model to XML 
+		
+		/* export result model to XML */
 		oval_results_model_export(res_model, res_direct, action->f_results);
 		oval_result_directives_free(res_direct);
 	}
-	/* Clear */
+	/* clean up */
 	oval_agent_destroy_session(sess);
 	oval_definition_model_free(def_model);
 
@@ -254,9 +269,72 @@ int app_evaluate_oval(const struct oscap_action *action)
 		return ret;
 }
 
+int app_evaluate_oval_id(const struct oscap_action *action) {
+	oval_result_t ret;
+
+	struct oval_definition_model *def_model = oval_definition_model_import(action->f_oval);
+	oval_agent_session_t *sess = oval_agent_new_session(def_model);
+
+	/* Import OVAL definition file */
+	if (oscap_err()) {
+		if (VERBOSE >= 0)
+			fprintf(stderr, "Error: (%d) %s\n", oscap_err_code(), oscap_err_desc());
+		return 1;
+	}
+
+	/* evaluate */
+	ret = oval_agent_eval_definition(sess, action->id);
+
+	/* check err */
+	if ((oscap_err()) && (VERBOSE >= 0)) {
+		fprintf(stderr, "Error: (%d) %s\n", oscap_err_code(), oscap_err_desc());
+		return 1;
+	}
+
+	/* print result */
+        if (VERBOSE >= 0) {
+		if (VERBOSE > 0)
+			printf("Evalutated definition %s: %s\n", action->id, oval_result_get_text(ret));
+                printf("Evaluation: All done.\n");
+	}
+
+	/* export results to file */
+	if (action->f_results != NULL) {
+		/* get result model */
+		struct oval_results_model *res_model = oval_agent_get_results_model(sess);
+
+		/* set up directives */
+		struct oval_result_directives *res_direct = oval_result_directives_new(res_model);
+		oval_result_directives_set_reported(res_direct, OVAL_RESULT_TRUE | OVAL_RESULT_FALSE |
+						    OVAL_RESULT_UNKNOWN | OVAL_RESULT_NOT_EVALUATED |
+						    OVAL_RESULT_ERROR | OVAL_RESULT_NOT_APPLICABLE, true);
+
+		oval_result_directives_set_content(res_direct, OVAL_RESULT_FALSE, OVAL_DIRECTIVE_CONTENT_FULL);
+		oval_result_directives_set_content(res_direct, OVAL_RESULT_TRUE, OVAL_DIRECTIVE_CONTENT_FULL);		
+
+		// export result model to XML 
+		oval_results_model_export(res_model, res_direct, action->f_results);
+		oval_result_directives_free(res_direct);
+	}
+
+	/* clean up*/
+	oval_agent_destroy_session(sess);
+	oval_definition_model_free(def_model);
+
+	/* return code */
+	if ((ret !=  OVAL_RESULT_FALSE) && (ret != OVAL_RESULT_UNKNOWN)) {
+			return 0; /* pass */
+	} else {
+			return 2; /* fail */
+	}
+}
+
+
+
 enum oval_opt {
     OVAL_OPT_RESULT_FILE = 1,
-    OVAL_OPT_FILE_VERSION
+    OVAL_OPT_FILE_VERSION,
+    OVAL_OPT_ID
 };
 
 bool getopt_oval(int argc, char **argv, struct oscap_action *action)
@@ -268,6 +346,7 @@ bool getopt_oval(int argc, char **argv, struct oscap_action *action)
 	/* Command-options */
 	struct option long_options[] = {
 		{ "result-file",  1,                0, OVAL_OPT_RESULT_FILE            },
+		{ "id",  	  1,                0, OVAL_OPT_ID                     },
 		{ "file-version", 1,                0, OVAL_OPT_FILE_VERSION           },
 		{ "definitions",  0, &action->doctype, OSCAP_DOCUMENT_OVAL_DEFINITIONS },
 		{ "syschar",      0, &action->doctype, OSCAP_DOCUMENT_OVAL_SYSCHAR     },
@@ -279,6 +358,7 @@ bool getopt_oval(int argc, char **argv, struct oscap_action *action)
 	while ((c = getopt_long(argc, argv, "", long_options, NULL)) != -1) {
 		switch (c) {
 		case OVAL_OPT_RESULT_FILE: action->f_results = optarg; break;
+		case OVAL_OPT_ID: action->id = optarg; break;
 		case OVAL_OPT_FILE_VERSION: action->file_version = optarg; break;
         case 0: break;
 		default: return false;
@@ -288,7 +368,7 @@ bool getopt_oval(int argc, char **argv, struct oscap_action *action)
 	/* We should have OVAL file here */
 	if (optind >= argc) {
 		/* TODO */
-        return oscap_module_usage(action->module, stderr, "Bad number of parameters. OVAL file needs to be specified!");
+        	return oscap_module_usage(action->module, stderr, "Bad number of parameters. OVAL file needs to be specified!");
 	}
 	action->url_oval = argv[optind];
 

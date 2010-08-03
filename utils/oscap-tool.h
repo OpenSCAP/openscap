@@ -92,6 +92,7 @@ struct oscap_action {
         char *url_oval;
         char *profile;
         char *file_version;
+	char *id;
         int verbosity;
 #ifdef ENABLE_CVSS
         struct cvss_metrics *cvss_metrics;
