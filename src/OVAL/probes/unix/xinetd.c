@@ -1203,7 +1203,7 @@ int op_assign_strl(void *var, char *val)
 	xiconf_strl_t **strl = (xiconf_strl_t **)var;
 	char *tok, *str;
 
-	if (strl == NULL) {
+	if (*strl == NULL) {
 		*strl = oscap_talloc(xiconf_strl_t);
 		(*strl)->str = NULL;
 		(*strl)->cnt = 0;
@@ -1242,7 +1242,7 @@ int op_insert_strl(void *var, char *val)
 	xiconf_strl_t **strl = (xiconf_strl_t **)var;
 	char *tok, *str;
 
-	if (strl == NULL) {
+	if (*strl == NULL) {
 		*strl = oscap_talloc(xiconf_strl_t);
 		(*strl)->str = NULL;
 		(*strl)->cnt = 0;
