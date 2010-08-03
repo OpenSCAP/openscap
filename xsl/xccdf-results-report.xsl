@@ -53,6 +53,10 @@
   </xsl:choose>
 </xsl:template>
 
+<xsl:template match="/cdf:TestResult">
+  <xsl:apply-templates select='.' mode='result' />
+</xsl:template>
+
 <!-- toc mode -->
 
 <xsl:template mode='toc' match="h:div[@id='toc']">
@@ -163,7 +167,16 @@
         <tr><th>Name</th><th>ID</th><th>Value</th></tr>
         <xsl:for-each select='cdf:set-value'>
           <xsl:variable name='id' select='string(@idref)' />
-          <tr><td><xsl:value-of select='//cdf:Value[@id=$id]/cdf:title[1]'/></td><td><xsl:value-of select='$id'/></td><td><xsl:value-of select='.'/></td></tr>
+          <tr>
+            <td>
+              <xsl:call-template name='ifelse'>
+                <xsl:with-param name='test' select='//cdf:Value[@id=$id]' />
+                <xsl:with-param name='true'><xsl:value-of select='//cdf:Value[@id=$id]/cdf:title[1]'/></xsl:with-param>
+              </xsl:call-template>
+            </td>
+            <td><xsl:value-of select='$id'/></td>
+            <td><xsl:value-of select='.'/></td>
+          </tr>
         </xsl:for-each>
         </table>
       </xsl:if>
@@ -199,7 +212,12 @@
         <tr><th>Rule</th><th>ID</th><th>result</th><th>more</th></tr>
         <xsl:for-each select='cdf:rule-result'>
           <tr class='result-{string(cdf:result)}'>
-            <td class='title'><xsl:value-of select='key("items",@idref)/cdf:title[1]'/></td>
+            <td class='title'>
+              <xsl:call-template name='ifelse'>
+                <xsl:with-param name='test' select='key("items",@idref)' />
+                <xsl:with-param name='true'><xsl:value-of select='key("items",@idref)/cdf:title[1]'/></xsl:with-param>
+              </xsl:call-template>
+            </td>
             <td class='id'><xsl:value-of select='@idref'/></td>
             <td class='result'><strong><xsl:value-of select='cdf:result'/></strong></td>
             <td class='link'><a href="#ruleresult-{generate-id(.)}">view</a></td>
@@ -261,13 +279,13 @@
   <xsl:variable name='rule' select="key('items',@idref)"/>
   <xsl:variable name='title'>
     <xsl:if test="key('items',@idref)"><xsl:value-of select="key('items',@idref)/cdf:title[1]"/></xsl:if>
-    <xsl:if test="not(key('items',@idref))"><xsl:value-of select='@ident'/></xsl:if>
+    <xsl:if test="not(key('items',@idref))"><xsl:value-of select='@idref'/></xsl:if>
   </xsl:variable>
 
  <div class='result-detail' id='ruleresult-{generate-id(.)}'>
   <h3>Result for <xsl:value-of select="$title"/></h3>
   <p class="result-{cdf:result}">Result: <strong><xsl:value-of select="cdf:result"/></strong></p>
-  <p>Rule ID: <strong><xsl:value-of select="$rule/@id"/></strong></p>
+  <p>Rule ID: <strong><xsl:value-of select="@idref"/></strong></p>
 
   <!-- time -->
   <xsl:apply-templates select='@time' mode='rr'/>
@@ -396,6 +414,14 @@
     </xsl:if>
 </xsl:template>
 
+<xsl:template name='ifelse'>
+    <xsl:param name='test'/>
+    <xsl:param name='true'/>
+    <xsl:param name='false'><em class='unknown'>unknown</em></xsl:param>
+    <xsl:if test='$test'><xsl:copy-of select='$false'/></xsl:if>
+    <xsl:if test='not($test)'><xsl:copy-of select='$false'/></xsl:if>
+</xsl:template>
+
 <xsl:template mode='date' match='text()|@*'>
   <abbr title='{.}' class='date'><xsl:value-of select='translate(substring(.,1,16),"T"," ")'/></abbr>
 </xsl:template>
@@ -426,7 +452,7 @@
             .score-max, .score-val { text-align:right; }
             th, td { padding-left:.5em; padding-right:.5em; }
             .result-pass strong, .result-fixed strong { color:green; }
-            .result-notselected strong, .result-notchecked strong, .result-notapplicable strong, .result-informational strong, .result-unknown strong { color:#555; }
+            em.unknown, .result-notselected strong, .result-notchecked strong, .result-notapplicable strong, .result-informational strong, .result-unknown strong { color:#555; }
             .result-error strong, .result-fail strong { color:red; }
             div#content, div#header, div#footer { margin-left:5%; margin-right:25%; }
             div#content { background-color: white; padding:2em; }
