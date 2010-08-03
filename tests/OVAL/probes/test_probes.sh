@@ -1611,22 +1611,42 @@ function test_crapi_mdigest {
 function test_xinetd_parser {
     local ret_val=0;
 
-    ./test_xinetd_parser ${srcdir}/OVAL/probes/xinetd_A.conf foo tcp
+    ./test_xinetd_parser ${srcdir}/OVAL/probes/xinetd_A.conf foo tcp >&2
     if [ $? -ne 3 ]; then
 	ret_val=$[$ret_val + 1]
     fi
 
-    ./test_xinetd_parser ${srcdir}/OVAL/probes/xinetd_B.conf foo tcp
+    ./test_xinetd_parser ${srcdir}/OVAL/probes/xinetd_B.conf foo tcp >&2
     if [ $? -ne 0 ]; then
 	ret_val=$[$ret_val + 1]
     fi
 
-    ./test_xinetd_parser ${srcdir}/OVAL/probes/xinetd_C.conf a tcp
+    ./test_xinetd_parser ${srcdir}/OVAL/probes/xinetd_C.conf a tcp >&2
     if [ $? -ne 0 ]; then
 	ret_val=$[$ret_val + 1]
     fi
 
-    ./test_xinetd_parser ${srcdir}/OVAL/probes/xinetd_D.conf f udp
+    ./test_xinetd_parser ${srcdir}/OVAL/probes/xinetd_D.conf f udp >&2
+    if [ $? -ne 0 ]; then
+	ret_val=$[$ret_val + 1]
+    fi
+
+    ./test_xinetd_parser ${srcdir}/OVAL/probes/xinetd_E.conf foo udp >&2
+    if [ $? -ne 0 ]; then
+	ret_val=$[$ret_val + 1]
+    fi
+
+    ./test_xinetd_parser ${srcdir}/OVAL/probes/xinetd_E.conf foo tcp >&2
+    if [ $? -ne 0 ]; then
+	ret_val=$[$ret_val + 1]
+    fi
+
+    ./test_xinetd_parser ${srcdir}/OVAL/probes/xinetd_F.conf foo udp >&2
+    if [ $? -ne 0 ]; then
+	ret_val=$[$ret_val + 1]
+    fi
+
+    ./test_xinetd_parser ${srcdir}/OVAL/probes/xinetd_F.conf foo tcp >&2
     if [ $? -ne 0 ]; then
 	ret_val=$[$ret_val + 1]
     fi

@@ -4,7 +4,7 @@
 int main (int argc, char *argv[])
 {
 	xiconf_t         *xcfg;
-	xiconf_service_t *xsrv;
+	xiconf_strans_t  *xres;
 
 	char *path, *serv, *prot;
 
@@ -24,44 +24,49 @@ int main (int argc, char *argv[])
 		return (2);
 	}
 
-	xsrv = xiconf_getservice (xcfg, serv, prot);
+	xres = xiconf_getservice (xcfg, serv, prot);
 
-	if (xsrv == NULL) {
+	if (xres == NULL) {
 		fprintf(stderr, "Not found.\n");
 		return (3);
 	} else {
-		fprintf(stdout,
-			"xiconf_service_t:\n"
-			"         type: %s\n"
-			"        flags: %s\n"
-			"  socket_type: %s\n"
-			"         name: %s\n"
-			"     protocol: %s\n"
-			"         user: %s\n"
-			"       server: %s\n"
-			"  server_args: %s\n"
-			"    only_from: %s\n"
-			"    no_access: %s\n"
-			"         port: %d\n"
-			"      disable: %d\n"
-			"         wait: %d\n"
-			" def_disabled: %d\n"
-			"  def_enabled: %d\n",
-			xsrv->type,
-			xsrv->flags,
-			xsrv->socket_type,
-			xsrv->name,
-			xsrv->protocol,
-			xsrv->user,
-			xsrv->server,
-			xsrv->server_args,
-			xsrv->only_from,
-			xsrv->no_access,
-			xsrv->port,
-			xsrv->disable,
-			xsrv->wait,
-			xsrv->def_disabled,
-			xsrv->def_enabled);
+		register unsigned int l;
+
+		for (l = 0; l < xres->cnt; ++l) {
+			fprintf(stdout,
+				"xiconf_service_t(%s):\n"
+				"         type: %s\n"
+				"        flags: %s\n"
+				"  socket_type: %s\n"
+				"         name: %s\n"
+				"     protocol: %s\n"
+				"         user: %s\n"
+				"       server: %s\n"
+				"  server_args: %s\n"
+				"    only_from: %s\n"
+				"    no_access: %s\n"
+				"         port: %d\n"
+				"      disable: %d\n"
+				"         wait: %d\n"
+				" def_disabled: %d\n"
+				"  def_enabled: %d\n",
+				xres->srv[l]->id,
+				xres->srv[l]->type,
+				xres->srv[l]->flags,
+				xres->srv[l]->socket_type,
+				xres->srv[l]->name,
+				xres->srv[l]->protocol,
+				xres->srv[l]->user,
+				xres->srv[l]->server,
+				xres->srv[l]->server_args,
+				xres->srv[l]->only_from,
+				xres->srv[l]->no_access,
+				xres->srv[l]->port,
+				xres->srv[l]->disable,
+				xres->srv[l]->wait,
+				xres->srv[l]->def_disabled,
+				xres->srv[l]->def_enabled);
+		}
 	}
 
 	return (0);
