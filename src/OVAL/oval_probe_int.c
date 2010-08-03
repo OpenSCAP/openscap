@@ -61,6 +61,38 @@ static struct oval_value *oval_object_getentval(struct oval_object *obj, const c
         return(val);
 }
 
+static struct oval_variable *oval_probe_variable_objgetvar(struct oval_object *obj)
+{
+        struct oval_entity  *ent;
+        struct oval_object_content *con;
+        struct oval_object_content_iterator *cit;
+	struct oval_variable *var;
+        char *ent_name;
+
+	var = NULL;
+        cit = oval_object_get_object_contents(obj);
+
+	while (oval_object_content_iterator_has_more(cit)) {
+                con = oval_object_content_iterator_next(cit);
+
+                if (oval_object_content_get_type(con) != OVAL_OBJECTCONTENT_ENTITY)
+                        continue;
+
+                ent = oval_object_content_get_entity(con);
+                ent_name = oval_entity_get_name(ent);
+
+                if (strcmp(ent_name, "var_ref") != 0)
+                        continue;
+
+                var = oval_entity_get_variable(ent);
+                break;
+        }
+
+        oval_object_content_iterator_free(cit);
+
+        return(var);
+}
+
 static struct oval_syschar *oval_probe_envvar_eval(struct oval_object *obj, struct oval_syschar_model *model)
 {
         struct oval_syschar *sys;
@@ -136,38 +168,31 @@ static struct oval_syschar *oval_probe_variable_eval(struct oval_object *obj, ov
         struct oval_syschar  *sys;
         struct oval_value_iterator *vit;
         struct oval_variable *var;
-        struct oval_definition_model *def_model;
         struct oval_syschar_model    *sys_model;
-        char *var_ref;
 
-        val = oval_object_getentval(obj, "var_ref");
+	var = oval_probe_variable_objgetvar(obj);
 
-        if (val == NULL)
-                return(NULL);
-
-        if (oval_value_get_datatype(val) != OVAL_DATATYPE_STRING)
-                return(NULL);
-
-        var_ref = oval_value_get_text(val);
-        assume_d(var_ref != NULL, -1);
+	if (var == NULL) {
+		goto fail;
+	}
 
         sys_model = oval_probe_session_getmodel(sess);
-        def_model = oval_syschar_model_get_definition_model(sys_model);
-        var = oval_definition_model_get_variable(def_model, var_ref);
 
         if (oval_probe_query_variable(sess, var) != 0)
-                return oval_syschar_new(sys_model, obj);
+		goto fail;
 
         vit = oval_variable_get_values(var);
 
         if (vit == NULL)
-                sys = oval_syschar_new(sys_model, obj);
+		goto fail;
         else {
                 SEXP_t *items, *r0, *item, *cobj, *vrent, *val_sexp;
+		char *var_ref;
 
                 items = SEXP_list_new(NULL);
 
                 /* Create shared entity */
+		var_ref = oval_variable_get_id(var);
                 vrent = probe_ent_creat1("var_ref", NULL,
                                          r0 = SEXP_string_new(var_ref, strlen(var_ref)));
                 SEXP_free(r0);
@@ -198,6 +223,8 @@ static struct oval_syschar *oval_probe_variable_eval(struct oval_object *obj, ov
         }
 
         return(sys);
+ fail:
+	return oval_syschar_new(sys_model, obj);
 }
 
 int oval_probe_var_handler(oval_subtype_t type, void *ptr, int act, ...)

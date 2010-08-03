@@ -297,7 +297,7 @@ static void oval_consume_varref(char *varref, void *user)
 	__attribute__nonnull__(user);
 
 	struct oval_consume_varref_context *ctx = user;
-	*(ctx->variable) = oval_definition_model_get_variable((struct oval_definition_model *)ctx->model, varref);
+	*(ctx->variable) = oval_variable_get_new((struct oval_definition_model *)ctx->model, varref, OVAL_VARIABLE_UNKNOWN);
 }
 
 static void oval_consume_value(struct oval_value *use_value, void *value)
