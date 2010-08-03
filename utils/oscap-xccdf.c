@@ -186,8 +186,10 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	xccdf_model_iterator_free(model_it);
 
 	/* Export results */
-	if (action->f_results != NULL)
-		xccdf_result_export(ritem, action->f_results);
+	if (action->f_results != NULL) {
+        xccdf_benchmark_add_result(benchmark, xccdf_result_clone(ritem));
+        xccdf_benchmark_export(benchmark, action->f_results);
+    }
 
 	/* Get the result from TestResult model and decide if end with error or with correct return code */
 	int retval = 0;
