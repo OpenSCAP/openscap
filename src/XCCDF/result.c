@@ -516,13 +516,13 @@ void xccdf_result_to_dom(struct xccdf_result *result, xmlNode *result_node, xmlD
 	struct oscap_string_iterator *target_addresses = xccdf_result_get_target_addresses(result);
 	while (oscap_string_iterator_has_more(target_addresses)) {
 		const char *target_address = oscap_string_iterator_next(target_addresses);
-		xmlNewChild(result_node, ns_xccdf, BAD_CAST "target_address", BAD_CAST target_address);
+		xmlNewChild(result_node, ns_xccdf, BAD_CAST "target-address", BAD_CAST target_address);
 	}
 	oscap_string_iterator_free(target_addresses);
 
 	struct xccdf_target_fact_iterator *target_facts = xccdf_result_get_target_facts(result);
         if (xccdf_target_fact_iterator_has_more(target_facts)) {
-                xmlNode *target_node = xmlNewChild(result_node, ns_xccdf, BAD_CAST "target_facts", NULL);
+                xmlNode *target_node = xmlNewChild(result_node, ns_xccdf, BAD_CAST "target-facts", NULL);
                 while (xccdf_target_fact_iterator_has_more(target_facts)) {
                         struct xccdf_target_fact *target_fact = xccdf_target_fact_iterator_next(target_facts);
                         xmlNode *fact_node = xmlNewChild(target_node, ns_xccdf, BAD_CAST "fact", BAD_CAST target_fact->value);
