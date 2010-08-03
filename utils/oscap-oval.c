@@ -116,7 +116,7 @@ struct oval_usr {
 static int app_oval_callback(const struct oscap_reporter_message *msg, void *arg)
 {
 
-	if (VERBOSE > 0)
+	if (VERBOSE >= 0)
 		printf("Evalutated definition %s: %s\n",
 		       oscap_reporter_message_get_user1str(msg),
 		       oval_result_get_text(oscap_reporter_message_get_user2num(msg)));
@@ -200,8 +200,7 @@ int app_evaluate_oval(const struct oscap_action *action)
 
 	/* Import OVAL definition file */
 	if (oscap_err()) {
-		if (VERBOSE >= 0)
-			fprintf(stderr, "Error: (%d) %s\n", oscap_err_code(), oscap_err_desc());
+		fprintf(stderr, "Error: (%d) %s\n", oscap_err_code(), oscap_err_desc());
 		return 1;
 	}
 
@@ -220,9 +219,8 @@ int app_evaluate_oval(const struct oscap_action *action)
 	if (VERBOSE >= 0)
 		printf("Evaluation: All done.\n");
 
-	if (ret == -1) {
-		if ((oscap_err()) && (VERBOSE >= 0))
-				fprintf(stderr, "Error: (%d) %s\n", oscap_err_code(), oscap_err_desc());
+	if (ret == -1 && (oscap_err())) {
+		fprintf(stderr, "Error: (%d) %s\n", oscap_err_code(), oscap_err_desc());
 		return 1;
 	}
 	if (VERBOSE >= 0) {
@@ -277,8 +275,7 @@ int app_evaluate_oval_id(const struct oscap_action *action) {
 
 	/* Import OVAL definition file */
 	if (oscap_err()) {
-		if (VERBOSE >= 0)
-			fprintf(stderr, "Error: (%d) %s\n", oscap_err_code(), oscap_err_desc());
+		fprintf(stderr, "Error: (%d) %s\n", oscap_err_code(), oscap_err_desc());
 		return 1;
 	}
 
@@ -286,15 +283,14 @@ int app_evaluate_oval_id(const struct oscap_action *action) {
 	ret = oval_agent_eval_definition(sess, action->id);
 
 	/* check err */
-	if ((oscap_err()) && (VERBOSE >= 0)) {
+	if (oscap_err())  {
 		fprintf(stderr, "Error: (%d) %s\n", oscap_err_code(), oscap_err_desc());
 		return 1;
 	}
 
 	/* print result */
         if (VERBOSE >= 0) {
-		if (VERBOSE > 0)
-			printf("Evalutated definition %s: %s\n", action->id, oval_result_get_text(ret));
+		printf("Evalutated definition %s: %s\n", action->id, oval_result_get_text(ret));
                 printf("Evaluation: All done.\n");
 	}
 
