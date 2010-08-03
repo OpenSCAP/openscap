@@ -193,7 +193,7 @@ AC_SEARCH_LIBS(
          AC_DEFINE([HAVE_LIBRPM44],[1],[Use RPM lib 4.4 compatibility])  
          AC_MSG_RESULT([yes])],
         [AC_MSG_RESULT([no])
-         AC_MSG_FAILURE([RPM missing headerFormat & headerSprintf.  RPM probes will not be enabled.  Install RPM 4.7 or 4.4 libraries to enabled RPM support.])]
+         AC_MSG_NOTICE([RPM missing headerFormat & headerSprintf.  RPM probes will not be enabled.  Install RPM 4.7 or 4.4 libraries to enabled RPM support.])]
       )
       LDFLAGS=$saved_ldflags
      ]
