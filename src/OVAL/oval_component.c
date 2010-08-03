@@ -1338,23 +1338,20 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_OBJECTREF(oval_ar
 
 	struct oval_component_OBJECTREF *objref = (struct oval_component_OBJECTREF *)component;
 	struct oval_object *object = objref->object;
-	char *obj_id;
-	struct oval_syschar_model *sysmod;
 	struct oval_syschar *syschar;
 
 	if (!object)
 		return flag;
 
 	if (argu->mode == OVAL_MODE_QUERY) {
-		if (oval_probe_query_object(argu->u.sess, object, 0) != 0)
+		if ((syschar = oval_probe_query_object(argu->u.sess, object, 0)) == NULL)
 			return flag;
-		sysmod = oval_probe_session_getmodel(argu->u.sess);
 	} else {
-		sysmod = argu->u.sysmod;
-	}
+		char *obj_id;
 
-	obj_id = oval_object_get_id(object);
-	syschar = oval_syschar_model_get_syschar(sysmod, obj_id);
+		obj_id = oval_object_get_id(object);
+		syschar = oval_syschar_model_get_syschar(argu->u.sysmod, obj_id);
+	}
 
 	if (syschar) {
 		flag = oval_syschar_get_flag(syschar);
