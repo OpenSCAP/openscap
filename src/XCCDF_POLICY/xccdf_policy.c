@@ -887,8 +887,6 @@ struct xccdf_policy_model * xccdf_policy_model_new(struct xccdf_benchmark * benc
  */
 struct xccdf_policy * xccdf_policy_new(struct xccdf_policy_model * model, struct xccdf_profile * profile) {
 
-	__attribute__nonnull__(profile);
-
 	struct xccdf_policy             * policy;
         struct xccdf_benchmark          * benchmark;
         struct xccdf_item_iterator      * item_it;
