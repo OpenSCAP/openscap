@@ -160,7 +160,7 @@ static struct oval_syschar *oval_probe_variable_eval(struct oval_object *obj, ov
 
         vit = oval_variable_get_values(var);
 
-        if (vit != NULL)
+        if (vit == NULL)
                 sys = oval_syschar_new(sys_model, obj);
         else {
                 SEXP_t *items, *r0, *item, *cobj, *vrent, *val_sexp;
