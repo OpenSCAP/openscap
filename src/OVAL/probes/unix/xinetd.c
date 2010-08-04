@@ -1229,7 +1229,7 @@ int op_assign_strl(void *var, char *val)
 		if (*tok == '\0')
 			continue;
 
-		(*strl)->str = oscap_realloc ((*strl)->str, sizeof (char *) * (*strl)->cnt);
+		(*strl)->str = oscap_realloc ((*strl)->str, sizeof (char *) * ++(*strl)->cnt);
 		(*strl)->str[(*strl)->cnt - 1] = strdup (tok);
 		(*strl)->tot += strlen(tok);
 	}
@@ -1257,7 +1257,7 @@ int op_insert_strl(void *var, char *val)
 		if (*tok == '\0')
 			continue;
 
-		(*strl)->str = oscap_realloc ((*strl)->str, sizeof (char *) * (*strl)->cnt);
+		(*strl)->str = oscap_realloc ((*strl)->str, sizeof (char *) * ++(*strl)->cnt);
 		(*strl)->str[(*strl)->cnt - 1] = strdup (tok);
 		(*strl)->tot += strlen(tok);
 	}
