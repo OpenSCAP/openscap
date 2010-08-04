@@ -354,7 +354,7 @@ canonical_wrap
 
 
 AC_ARG_ENABLE([oval],
-     [  --enable-oval           include support for OVAL [[default=yes]]],
+     [AC_HELP_STRING([--enable-oval], [include support for OVAL (default=yes)])],
      [case "${enableval}" in
        yes) oval=yes ;;
        no)  oval=no  ;;
@@ -362,7 +362,7 @@ AC_ARG_ENABLE([oval],
      esac],[oval=yes])
 
 AC_ARG_ENABLE([probes],
-     [  --enable-probes         enable compilation of probes [[default=yes]]],
+     [AC_HELP_STRING([--enable-probes], [enable compilation of probes (default=yes)])],
      [case "${enableval}" in
        yes) probes=yes ;;
        no)  probes=no  ;;
@@ -396,7 +396,7 @@ if test "x${probes}" = xyes; then
 fi
 
 AC_ARG_ENABLE([probes-independent],
-     [  --enable-probes-independent    enable compilation of probes independent of the base system [[default=yes]]],
+     [AC_HELP_STRING([--enable-probes-independent], [enable compilation of probes independent of the base system (default=yes)])],
      [case "${enableval}" in
        yes) probes_independent=yes ;;
        no)  probes_independent=no  ;;
@@ -404,7 +404,7 @@ AC_ARG_ENABLE([probes-independent],
      esac],[probes_independent=yes])
 
 AC_ARG_ENABLE([probes-unix],
-     [  --enable-probes-unix    enable compilation of probes for UNIX based systems [[default=yes]]],
+     [AC_HELP_STRING([--enable-probes-unix], [enable compilation of probes for UNIX based systems (default=yes)])],
      [case "${enableval}" in
        yes) probes_unix=yes ;;
        no)  probes_unix=no  ;;
@@ -422,7 +422,7 @@ case "${host}" in
     ;;
 esac
 AC_ARG_ENABLE([probes-linux],
-     [  --enable-probes-linux  enable compilation of probes for Linux based systems [[default=autodetect]]],
+     [AC_HELP_STRING([--enable-probes-linux], [enable compilation of probes for Linux based systems (default=autodetect)])],
      [case "${enableval}" in
        yes) probes_linux=yes ;;
        no)  probes_linux=no  ;;
@@ -430,7 +430,7 @@ AC_ARG_ENABLE([probes-linux],
      esac],)
 
 AC_ARG_ENABLE([cvss],
-     [  --enable-cvss           include support for CVSS [[default=yes]]],
+     [AC_HELP_STRING([--enable-cvss], [include support for CVSS (default=yes)])],
      [case "${enableval}" in
        yes) cvss=yes ;;
        no)  cvss=no  ;;
@@ -438,7 +438,7 @@ AC_ARG_ENABLE([cvss],
      esac],[cvss=yes])
 
 AC_ARG_ENABLE([cve],
-     [  --enable-cve            include support for CVE [[default=yes]]],
+     [AC_HELP_STRING([--enable-cve], [include support for CVE (default=yes)])],
      [case "${enableval}" in
        yes) cve=yes ;;
        no)  cve=no  ;;
@@ -446,7 +446,7 @@ AC_ARG_ENABLE([cve],
      esac],[cve=yes])
 
 AC_ARG_ENABLE([cpe],
-     [  --enable-cpe            include support for CPE [[default=yes]]],
+     [AC_HELP_STRING([--enable-cpe], [include support for CPE (default=yes)])],
      [case "${enableval}" in
        yes) cpe=yes ;;
        no)  cpe=no  ;;
@@ -454,7 +454,7 @@ AC_ARG_ENABLE([cpe],
      esac],[cpe=yes])
 
 AC_ARG_ENABLE([cce],
-     [  --enable-cce            include support for CCE [[default=yes]]],
+     [AC_HELP_STRING([--enable-cce], [include support for CCE (default=yes)])],
      [case "${enableval}" in
        yes) cce=yes ;;
        no)  cce=no  ;;
@@ -462,7 +462,7 @@ AC_ARG_ENABLE([cce],
      esac],[cce=yes])
 
 AC_ARG_ENABLE([xccdf],
-     [  --enable-xccdf            include support for XCCDF [[default=yes]]],
+     [AC_HELP_STRING([--enable-xccdf], [include support for XCCDF (default=yes)])],
      [case "${enableval}" in
        yes) xccdf=yes ;;
        no)  xccdf=no  ;;
@@ -470,7 +470,7 @@ AC_ARG_ENABLE([xccdf],
      esac],[xccdf=yes])
 
 AC_ARG_ENABLE([bindings],
-     [  --enable-bindings       enable compilation of bindings [[default=yes]]],
+     [AC_HELP_STRING([--enable-bindings], [enable compilation of bindings (default=yes)])],
      [case "${enableval}" in
        yes) bindings=yes ;;
        no)  bindings=no  ;;
@@ -478,7 +478,7 @@ AC_ARG_ENABLE([bindings],
      esac],[bindings=yes])
 
 AC_ARG_ENABLE([regex-posix],
-     [  --enable-regex-posix       compile with POSIX instead of PCRE regex [[default=yes]]],
+     [AC_HELP_STRING([--enable-regex-posix], [compile with POSIX instead of PCRE regex (default=yes)])],
      [case "${enableval}" in
        yes) regex_posix=yes ;;
        no)  regex_posix=no  ;;
@@ -486,7 +486,7 @@ AC_ARG_ENABLE([regex-posix],
      esac],[regex_posix=yes])
 
 AC_ARG_ENABLE([debug],
-     [  --enable-debug          enable debugging flags [[default=no]]],
+     [AC_HELP_STRING([--enable-debug], [enable debugging flags (default=no)])],
      [case "${enableval}" in
        yes) debug=yes ;;
        no)  debug=no ;;
@@ -494,7 +494,7 @@ AC_ARG_ENABLE([debug],
      esac], [debug=no])
 
 AC_ARG_ENABLE([valgrind],
-     [  --enable-valgrind          enable valgrind checks [[default=no]]],
+     [AC_HELP_STRING([--enable-valgrind], [enable valgrind checks (default=no)])],
      [case "${enableval}" in
        yes) vgdebug=yes ;;
        no)  vgdebug=no ;;
@@ -541,7 +541,7 @@ else
 fi
 
 AC_ARG_ENABLE([util-oscap],
-     [  --enable-util-oscap         enable compilation of the oscap utility [[default=yes]]],
+     [AC_HELP_STRING([--enable-util-oscap], [enable compilation of the oscap utility (default=yes)])],
      [case "${enableval}" in
        yes) util_oscap=yes ;;
        no)  util_oscap=no  ;;
