@@ -501,6 +501,14 @@ AC_ARG_ENABLE([valgrind],
        *) AC_MSG_ERROR([bad value ${enableval} for --enable-valgrind]) ;;
      esac], [vgdebug=no])
 
+AC_ARG_ENABLE([ssp],
+     [AC_HELP_STRING([--enable-ssp], [enable SSP (fstack-protector, default=no)])],
+     [case "${enableval}" in
+       yes) ssp=yes ;;
+       no)  ssp=no ;;
+       *) AC_MSG_ERROR([bad value ${enableval} for --enable-ssp]) ;;
+     esac], [ssp=no])
+
 AC_ARG_WITH([crypto],
      [AS_HELP_STRING([--with-crypto],
      [use different crypto backend. Available options: nss3, gcrypt [default=gcrypt]])],
@@ -531,6 +539,11 @@ if test "$regex_posix" = "yes"; then
    AC_DEFINE([USE_REGEX_POSIX], [1], [Use POSIX regular expressions])
 else
    AC_DEFINE([USE_REGEX_PCRE], [1], [Use PCRE])
+fi
+
+if test "$ssp" = "yes"; then
+   GCC_STACK_PROTECT_CC
+   GCC_STACK_PROTECT_CXX
 fi
 
 if test "$debug" = "yes"; then
@@ -650,3 +663,5 @@ echo "oscap tool:                    $util_oscap"
 echo "use POSIX regex:               $regex_posix"
 echo "debugging flags enabled:       $debug"
 echo "Valgrind checks enabled:       $vgcheck"
+echo "CFLAGS:                        $CFLAGS"
+echo "CXXFLAGS:                      $CXXFLAGS"
