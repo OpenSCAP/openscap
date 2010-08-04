@@ -115,7 +115,9 @@ EXTRA_DIST += OVAL/SEAP/test_seap.sh 	                    \
 	      OVAL/probes/xinetd_A.conf \
 	      OVAL/probes/xinetd_B.conf \
 	      OVAL/probes/xinetd_C.conf \
-	      OVAL/probes/xinetd_D.conf
+	      OVAL/probes/xinetd_D.conf \
+	      OVAL/probes/xinetd_E.conf \
+	      OVAL/probes/xinetd_F.conf
 
 if ENABLE_VALGRIND_TESTS
 EXTRA_DIST += vgrun.sh
