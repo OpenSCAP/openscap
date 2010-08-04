@@ -28,6 +28,7 @@
 <xsl:param name="dir" select="'.'"/>
 <xsl:param name="oscap-version"/>
 <xsl:param name="result-id"/>
+<xsl:param name="with-target-facts"/>
 
 <!-- variables -->
 <xsl:variable name='generator' select="'OpenSCAP stylesheet'"/>
@@ -143,7 +144,9 @@
         <xsl:with-param name='title' select='"Addresses"' />
       </xsl:call-template>
 
+    <xsl:if test="$with-target-facts">
       <xsl:apply-templates select='cdf:target-facts' mode='result' />
+    </xsl:if>
 
       <h2 id='benchmark-info'>Benchmark execution information</h2>
 
@@ -187,43 +190,49 @@
       </xsl:call-template>
 
       <h2 id='score'>Score</h2>
-      <table>
-        <tr><th>system</th><th>score</th><th>max</th><th>bar</th></tr>
-        <xsl:for-each select='cdf:score'>
-        <xsl:variable name='max'>
-          <xsl:choose>
-            <xsl:when test='@maximum'><xsl:value-of select='@maximum'/></xsl:when>
-            <xsl:otherwise>100</xsl:otherwise>
-          </xsl:choose>
-        </xsl:variable>
-        <xsl:variable name='percent' select='number(.) div number($max)'/>
-        <xsl:variable name='format' select="'#.00'"/>
-        <tr>
-          <td class='score-sys'><xsl:value-of select='@system' /></td>
-          <td class='score-val'><xsl:value-of select='format-number(string(.), $format)' /></td>
-          <td class='score-max'><xsl:value-of select='format-number($max, $format)' /></td>
-          <td class='score-bar'><div class='score-outer'><div class='score-inner' style="width:{format-number($percent, '#.00%')}"></div></div></td>
-        </tr>
-        </xsl:for-each>
-      </table>
+      <xsl:call-template name='ifelse'>
+        <xsl:with-param name='test' select='cdf:score'/>
+        <xsl:with-param name='true'>
+          <table>
+            <tr><th>system</th><th>score</th><th>max</th><th>bar</th></tr>
+            <xsl:for-each select='cdf:score'>
+            <xsl:variable name='max'>
+              <xsl:choose>
+                <xsl:when test='@maximum'><xsl:value-of select='@maximum'/></xsl:when>
+                <xsl:otherwise>100</xsl:otherwise>
+              </xsl:choose>
+            </xsl:variable>
+            <xsl:variable name='percent' select='number(.) div number($max)'/>
+            <xsl:variable name='format' select="'#.00'"/>
+            <tr>
+              <td class='score-sys'><xsl:value-of select='@system' /></td>
+              <td class='score-val'><xsl:value-of select='format-number(string(.), $format)' /></td>
+              <td class='score-max'><xsl:value-of select='format-number($max, $format)' /></td>
+              <td class='score-bar'><div class='score-outer'><div class='score-inner' style="width:{format-number($percent, '#.00%')}"></div></div></td>
+            </tr>
+            </xsl:for-each>
+          </table>
+        </xsl:with-param>
+        <xsl:with-param name='false'><p class='unknown'>No score results.</p></xsl:with-param>
+      </xsl:call-template>
 
       <h2 id='results-summary'>Rule results</h2>
-      <table>
-        <tr><th>Rule</th><th>ID</th><th>result</th><th>more</th></tr>
-        <xsl:for-each select='cdf:rule-result'>
-          <tr class='result-{string(cdf:result)}'>
-            <td class='title'>
-              <xsl:call-template name='ifelse'>
-                <xsl:with-param name='test' select='key("items",@idref)' />
-                <xsl:with-param name='true'><xsl:value-of select='key("items",@idref)/cdf:title[1]'/></xsl:with-param>
-              </xsl:call-template>
-            </td>
-            <td class='id'><xsl:value-of select='@idref'/></td>
-            <td class='result'><strong><xsl:value-of select='cdf:result'/></strong></td>
-            <td class='link'><a href="#ruleresult-{generate-id(.)}">view</a></td>
-          </tr>
-        </xsl:for-each>
-      </table>
+      <xsl:call-template name='ifelse'>
+        <xsl:with-param name='test' select='cdf:rule-result'/>
+        <xsl:with-param name='true'>
+          <table>
+            <tr><th>ID</th><th>result</th><th>more</th></tr>
+            <xsl:for-each select='cdf:rule-result'>
+              <tr class='result-{string(cdf:result)}'>
+                <td class='id'><xsl:value-of select='@idref'/></td>
+                <td class='result'><strong><xsl:value-of select='cdf:result'/></strong></td>
+                <td class='link'><a href="#ruleresult-{generate-id(.)}">view</a></td>
+              </tr>
+            </xsl:for-each>
+          </table>
+        </xsl:with-param>
+        <xsl:with-param name='false'><p class='unknown'>No rule results.</p></xsl:with-param>
+      </xsl:call-template>
       
       <xsl:apply-templates select='cdf:rule-result' mode='rr' />
 
@@ -258,7 +267,7 @@
 </xsl:template>
 
 <xsl:template match='cdf:profile' mode='result'>
-    <p>Profile: <strong><xsl:value-of select='.'/></strong></p>
+    <p>Profile: <strong><xsl:value-of select='@idref'/></strong></p>
 </xsl:template>
 
 <xsl:template match='cdf:target-facts' mode='result'>
@@ -418,7 +427,7 @@
     <xsl:param name='test'/>
     <xsl:param name='true'/>
     <xsl:param name='false'><em class='unknown'>unknown</em></xsl:param>
-    <xsl:if test='$test'><xsl:copy-of select='$false'/></xsl:if>
+    <xsl:if test='$test'><xsl:copy-of select='$true'/></xsl:if>
     <xsl:if test='not($test)'><xsl:copy-of select='$false'/></xsl:if>
 </xsl:template>
 
@@ -452,7 +461,7 @@
             .score-max, .score-val { text-align:right; }
             th, td { padding-left:.5em; padding-right:.5em; }
             .result-pass strong, .result-fixed strong { color:green; }
-            em.unknown, .result-notselected strong, .result-notchecked strong, .result-notapplicable strong, .result-informational strong, .result-unknown strong { color:#555; }
+            .unknown, .result-notselected strong, .result-notchecked strong, .result-notapplicable strong, .result-informational strong, .result-unknown strong { color:#555; }
             .result-error strong, .result-fail strong { color:red; }
             div#content, div#header, div#footer { margin-left:5%; margin-right:25%; }
             div#content { background-color: white; padding:2em; }
