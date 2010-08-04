@@ -32,7 +32,6 @@
 
 #include "oscap-tool.h"
 
-extern int VERBOSE;
 
 static int app_evaluate_xccdf(const struct oscap_action *action);
 static int app_xccdf_resolve(const struct oscap_action *action);
@@ -114,7 +113,7 @@ static struct oscap_module* XCCDF_SUBMODULES[] = {
  */
 static int callback(const struct oscap_reporter_message *msg, void *arg)
 {
-	if (VERBOSE >= 0)
+	if (((const struct oscap_action*) arg)->verbosity >= 0)
 		printf("Rule \"%s\" result: %s\n",
 		       oscap_reporter_message_get_user1str(msg),
 		       xccdf_test_result_type_get_text((xccdf_test_result_type_t)
@@ -162,7 +161,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	}
 
 	/* Register callback */
-	xccdf_policy_model_register_output_callback(policy_model, (oscap_reporter) callback, NULL);
+	xccdf_policy_model_register_output_callback(policy_model, callback, (void*) action);
 	xccdf_policy_model_register_engine_oval(policy_model, sess);
 
 	/* Perform evaluation */

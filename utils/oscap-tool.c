@@ -27,6 +27,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <stdarg.h>
 
 /* Header files for curl */
 #include <curl/curl.h>
@@ -90,28 +91,22 @@ static void oscap_action_release(struct oscap_action *action)
 #endif
 }
 
+static bool oscap_fetch(struct oscap_module *module, char **dest, char *src)
+{
+    assert(module != NULL);
+    assert(dest != NULL);
+
+    if (src == NULL) return true;
+
+    *dest = app_curl_download(src);
+    if (*dest == NULL) oscap_module_usage(module, stderr, "Could not retrive '%s'", src);
+    return *dest != NULL;
+}
+
 static bool oscap_action_postprocess(struct oscap_action *action)
 {
-	/* Post processing of options */
-	/* fetch file from remote source */
-	if (action->url_xccdf != NULL) {
-
-		action->f_xccdf = app_curl_download(action->url_xccdf);
-		if (!action->f_xccdf) {
-			if (action->verbosity >= 0)
-				fprintf(stderr, "Error: (%d) %s\n", oscap_err_code(), oscap_err_desc());
-			return false;
-		}
-	}
-	if (action->url_oval != NULL) {
-		action->f_oval = app_curl_download(action->url_oval);
-		if (!action->f_oval) {
-			if (action->verbosity >= 0)
-				fprintf(stderr, "Error: (%d) %s\n", oscap_err_code(), oscap_err_desc());
-			return false;
-		}
-	}
-    return true;
+    return oscap_fetch(action->module, &action->f_oval,  action->url_oval)
+        && oscap_fetch(action->module, &action->f_xccdf, action->url_xccdf);
 }
 
 
@@ -172,11 +167,18 @@ static int oscap_print_submodules(struct oscap_module *module, FILE *out, const 
     return 1;
 }
 
-bool oscap_module_usage(struct oscap_module *module, FILE *out, const char *err)
+bool oscap_module_usage(struct oscap_module *module, FILE *out, const char *err, ...)
 {
     assert(module != NULL);
 
-    if (err) fprintf(out, "ERROR:    %s\n", err);
+    if (err) {
+        va_list ap;
+        fprintf(out, "ERROR:    ");
+        va_start(ap, err);
+        vfprintf(out, err, ap);
+        va_end(ap);
+        fprintf(out, "\n");
+    }
     fprintf(out, "Usage:    ");
     oscap_module_print_usage(module, out, true);
     if (module->submodules) { fprintf(out, "\nCommands: "); oscap_print_submodules(module, out, " ", false); }

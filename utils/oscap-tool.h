@@ -104,7 +104,7 @@ struct oscap_action {
 int app_validate_xml(const struct oscap_action *action);
 
 int oscap_module_process(struct oscap_module *module, int argc, char **argv);
-bool oscap_module_usage(struct oscap_module *module, FILE *out, const char *err);
+bool oscap_module_usage(struct oscap_module *module, FILE *out, const char *err, ...);
 int oscap_module_call(struct oscap_action *action);
 
 extern struct oscap_module OSCAP_ROOT_MODULE;
