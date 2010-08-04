@@ -1,12 +1,16 @@
 #!/usr/bin/env bash
 
-TMP=`mktemp`
+TMP=`mktemp -t asdf.XXXX`
 
 ss -a -u -t -n -p  | \
     sed -n '2,$p' | \
     awk '{print $1 " " $5 " " $6 " " $7}' | \
     sed 's/\([a-z]*\)\s\([a-z0-9\.:\*]*\):\([0-9\*]*\)\s\([a-z0-9\.:\*]*\):\([0-9\*]*\) users:(("\([a-zA-Z\.-]*\)",\([0-9]*\).*/\1 \2 \3 \4 \5 \6 \7 X/' | \
     grep "X" > $TMP
+
+if [ ! -f "$TMP" ]; then
+    exit 2
+fi
 
 PROTOCOL=( `cat $TMP | awk '{print $1}' | tr '\n' ' '` )
 LOCAL_ADDRESS=( `cat $TMP | awk '{print $2}' | sed 's/\*/0.0.0.0/' | tr '\n' ' '` )

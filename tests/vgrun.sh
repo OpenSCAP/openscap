@@ -27,47 +27,37 @@ function emsg {
 function cpy {
     local src=$1
     local dst=$2
-    
+
     imsg "$src ==> $dst"
     cp   "$src"   "$dst"
 }
 #############################################################################################
 
 prog="$(basename "$0")"
-asdf=$(getopt -o r:vh --long regex,verbose,help -n vgrun.sh -- "$@")
 
-if (( $? != 0 )); then
-    exit 1
-fi
-
-eval set -- "$asdf"
-
-while true; do
-    case "$1" in
-        -r|--regex)
-            REGEX="$2"
-            shift 2
+while getopts "r:vh" opt; do
+    case "$opt" in
+        r)
+            REGEX="$OPTARG"
             ;;
-        -v|--verbose)
+        v)
             VERBOSE=1
-            shift
             ;;
-        -h|--help)
+        h)
             echo "Usage: $prog [-hr] <command>"
-            echo "       -r, --regex    Filename regex (extended)"
-            echo "       -v, --verbose  Be verbose"
-            echo "       -h, --help     This help"
+            echo "       -r    Filename regex (extended)"
+            echo "       -v    Be verbose"
+            echo "       -h    This help"
             echo ""
             exit 0
             ;;
-        --)
-            shift; break;;
         *)
-            emsg "wtf?"
+            emsg "wtf? $opt"
             exit 1
             ;;
     esac
 done
+shift $((OPTIND - 1))
 
 COMM="$1"
 
@@ -95,7 +85,7 @@ if [[ -z "$REGEX" ]]; then
     imsg "Using default filename regex: $REGEX"
 fi
 
-TMPDIR=$(mktemp -d)
+TMPDIR=$(mktemp -d -t vgrun.XXXX)
 
 imsg " outdir: $TMPDIR"
 imsg "command: $VG $VGOPT --log-file=\"$TMPDIR/output.%p\" -- $COMM"
@@ -129,7 +119,7 @@ for log in "$TMPDIR"/output.*; do
 
     	log_cmd0="$(echo "$log_cmd0" | tail -n 1 | sed -n 's|^==[0-9]*==[[:space:]]*\(.*\)$|\1|p')"
     fi
-    
+
     log_cmd1="$(basename "$(echo "$log_cmd0" | sed -n 's|^\([^[:space:]]*\).*$|\1|p')")"
 
     if echo "$log_cmd1" | egrep -q "$REGEX"; then
@@ -137,7 +127,7 @@ for log in "$TMPDIR"/output.*; do
         cpy "$log" "$outfile"
         LOG[$c]="$outfile"
         CMD[$c]="$log_cmd1"
-        c=$(($c + 1))        
+        c=$(($c + 1))
     fi
 done
 

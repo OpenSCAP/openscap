@@ -207,7 +207,7 @@ AC_SEARCH_LIBS(
       have_librpm=yes
       AC_DEFINE([HAVE_LIBRPM47],[1],[Use RPM lib 4.7 compatibility])],
      [AC_MSG_CHECKING([for librpm v4.4])
-      saved_ldflags=$LDFLAGS 
+      saved_ldflags=$LDFLAGS
       LDFLAGS="$LDFLAGS -lrpm -lrpmio"
       AC_LINK_IFELSE(
         [AC_LANG_PROGRAM(
@@ -216,7 +216,7 @@ AC_SEARCH_LIBS(
         [rpm_cflags="-I/usr/include/rpm"
          rpm_libs="-lrpm -lrpmio"
          have_librpm=yes
-         AC_DEFINE([HAVE_LIBRPM44],[1],[Use RPM lib 4.4 compatibility])  
+         AC_DEFINE([HAVE_LIBRPM44],[1],[Use RPM lib 4.4 compatibility])
          AC_MSG_RESULT([yes])],
         [AC_MSG_RESULT([no])
          AC_MSG_NOTICE([RPM missing headerFormat & headerSprintf.  RPM probes will not be enabled.  Install RPM 4.7 or 4.4 libraries to enabled RPM support.])]
@@ -428,7 +428,7 @@ AC_ARG_ENABLE([probes-linux],
        no)  probes_linux=no  ;;
        *) AC_MSG_ERROR([bad value ${enableval} for --enable-probes-linux]) ;;
      esac],)
-     
+
 AC_ARG_ENABLE([cvss],
      [  --enable-cvss           include support for CVSS [[default=yes]]],
      [case "${enableval}" in
@@ -484,7 +484,7 @@ AC_ARG_ENABLE([regex-posix],
        no)  regex_posix=no  ;;
        *) AC_MSG_ERROR([bad value ${enableval} for --enable-regex-posix]) ;;
      esac],[regex_posix=yes])
-     
+
 AC_ARG_ENABLE([debug],
      [  --enable-debug          enable debugging flags [[default=no]]],
      [case "${enableval}" in
@@ -492,6 +492,14 @@ AC_ARG_ENABLE([debug],
        no)  debug=no ;;
        *) AC_MSG_ERROR([bad value ${enableval} for --enable-debug]) ;;
      esac], [debug=no])
+
+AC_ARG_ENABLE([valgrind],
+     [  --enable-valgrind          enable valgrind checks [[default=no]]],
+     [case "${enableval}" in
+       yes) vgdebug=yes ;;
+       no)  vgdebug=no ;;
+       *) AC_MSG_ERROR([bad value ${enableval} for --enable-valgrind]) ;;
+     esac], [vgdebug=no])
 
 AC_ARG_WITH([crypto],
      [AS_HELP_STRING([--with-crypto],
@@ -540,6 +548,16 @@ AC_ARG_ENABLE([util-oscap],
        *) AC_MSG_ERROR([bad value ${enableval} for --enable-util-oscap]) ;;
      esac],[util_oscap=yes])
 
+if test "$vgdebug" = "yes"; then
+ if test "$HAVE_VALGRIND" = "yes"; then
+   vgcheck="yes"
+ else
+   vgcheck="valgrind not installed"
+ fi
+else
+   vgcheck="no"
+fi
+
 AM_CONDITIONAL([WANT_OVAL], test "$oval" = yes)
 AM_CONDITIONAL([WANT_CVSS], test "$cvss" = yes)
 AM_CONDITIONAL([WANT_CVE],  test "$cve"  = yes)
@@ -555,7 +573,7 @@ AM_CONDITIONAL([ENABLE_PROBE_RPMINFO], test "$have_librpm" = yes)
 AM_CONDITIONAL([ENABLE_PROBE_RPMINFO44], test "$have_librpm44" = yes)
 AM_CONDITIONAL([ENABLE_PROBE_DPKGINFO], test "$have_libapt_pkg" = yes)
 AM_CONDITIONAL([WANT_BINDINGS], test "$bindings" = yes)
-AM_CONDITIONAL([ENABLE_VALGRIND_TESTS], test "$HAVE_VALGRIND" = yes)
+AM_CONDITIONAL([ENABLE_VALGRIND_TESTS], test "$vgcheck" = yes)
 
 AC_CONFIG_FILES([Makefile
                  src/Makefile
@@ -631,3 +649,4 @@ echo "python bindings enabled:       $bindings"
 echo "oscap tool:                    $util_oscap"
 echo "use POSIX regex:               $regex_posix"
 echo "debugging flags enabled:       $debug"
+echo "Valgrind checks enabled:       $vgcheck"
