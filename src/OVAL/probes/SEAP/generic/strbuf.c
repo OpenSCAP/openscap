@@ -25,9 +25,11 @@
 #include <errno.h>
 #include <assert.h>
 #include <sys/types.h>
+#include <limits.h>
 #include <sys/uio.h>
 #include <unistd.h>
 #include "strbuf.h"
+#include "common/debug_priv.h"
 
 strbuf_t *strbuf_new  (size_t max)
 {
@@ -310,25 +312,62 @@ size_t strbuf_fwrite (FILE *fp, strbuf_t *buf)
 ssize_t strbuf_write (strbuf_t *buf, int fd)
 {
         struct strblk *cur;
-        ssize_t size;
+        ssize_t rsize, wsize;
 
         struct iovec  *iov;
-        int            ioc;
+        int            ioc; /* helper/index */
+	int            iot; /* total number of buffers */
+	int            iow; /* total number of buffer that will be passed to the next writev */
 
-        iov  = malloc (sizeof (struct iovec) * ((buf->size / buf->blkmax) + 1));
-        ioc  = 0;
-        cur  = buf->beg;
-        size = 0;
+	rsize = 0;
+	iov   = NULL;
+        cur   = buf->beg;
+	iot   = (buf->size / buf->blkmax) + 1;
 
-        while (cur != NULL) {
-                iov[ioc].iov_base = cur->data;
-                iov[ioc].iov_len  = cur->size;
-                ++ioc;
-                cur = cur->next;
-        }
+	dI("total I/O vectors = %d\n", iot);
 
-        size = writev (fd, iov, ioc);
+	while (iot > 0) {
+		/*
+		 * Prepare I/O vector
+		 */
+		if (iot > IOV_MAX) {
+			dI("iot (%d) > IOV_MAX (%d)\n", iot, IOV_MAX);
+			iow  = IOV_MAX;
+			iot -= IOV_MAX;
+		} else {
+			dI("iot (%d) < IOV_MAX (%d)\n", iot, IOV_MAX);
+			iow  = iot;
+			iot  = 0;
+		}
+
+		iov = realloc (iov, sizeof (struct iovec) * iow);
+		ioc = 0;
+
+		while (cur != NULL && ioc < iow) {
+			iov[ioc].iov_base = cur->data;
+			iov[ioc].iov_len  = cur->size;
+
+			++ioc;
+			cur = cur->next;
+		}
+
+		dI("ioc = %d\n", ioc);
+
+		/*
+		 * Write
+		 */
+		wsize = writev (fd, iov, ioc);
+
+		if (wsize < 0) {
+			dE("writev(%d, %p, %d) failed: %u, %s.\n", fd, iov, ioc, errno, strerror (errno));
+			return (-1);
+		}
+
+		rsize += wsize;
+	}
+
         free (iov);
+	dI("total bytes written: %zu\n", (size_t)rsize);
 
-        return (size);
+        return (rsize);
 }

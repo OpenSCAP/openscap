@@ -32,6 +32,8 @@
 extern "C" {
 #endif
 
+#define SEAP_STRBUF_MAX 8192
+
 struct strblk {
         struct strblk *next;
         size_t         size;
