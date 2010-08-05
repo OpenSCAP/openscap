@@ -87,7 +87,7 @@ static struct oscap_module XCCDF_EVAL = {
     .name = "eval",
     .parent = &OSCAP_XCCDF_MODULE,
     .summary = "Perform evaluation driven by XCCDF file and use OVAL as checking engine",
-    .usage = "[options] oval-definitions.xml xccdf-benchmark.xml",
+    .usage = "[options] oval-definitions.xml xccdf-benchmark.xml [oval-files]",
     .help =
         "Options:\n"
         "   --profile <name>\r\t\t\t\t - The name of Profile to be evaluated.\n"
@@ -135,9 +135,11 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	struct xccdf_policy_model *policy_model = NULL;
 	struct oval_definition_model *def_model = NULL;
 	struct oval_agent_session *sess = NULL;
+        void **def_models = NULL;
+        void **sessions = NULL;
 
 	def_model = oval_definition_model_import(action->f_oval);
-	sess = oval_agent_new_session(def_model);
+	sess = oval_agent_new_session(def_model, basename(action->f_oval));
 
 	/* Load XCCDF model and XCCDF Policy model */
 	benchmark = xccdf_benchmark_import(action->f_xccdf);
@@ -163,6 +165,22 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	/* Register callback */
 	xccdf_policy_model_register_output_callback(policy_model, callback, (void*) action);
 	xccdf_policy_model_register_engine_oval(policy_model, sess);
+
+        int models = 0;
+        if (action->urls_oval != NULL) {
+            while (action->urls_oval[models] != NULL) models++;
+            def_models = malloc(models*sizeof(struct oval_definition_model *));
+            sessions = malloc(models*sizeof(struct oval_agent_session *));
+            int i = 0;
+            while (action->urls_oval[i] != NULL) {
+                struct oval_definition_model *tmp_def_model = oval_definition_model_import(action->urls_oval[i]);
+                struct oval_agent_session *tmp_sess = oval_agent_new_session(tmp_def_model, basename(action->urls_oval[i]));
+	        xccdf_policy_model_register_engine_oval(policy_model, tmp_sess);
+                def_models[i] = tmp_def_model;
+                sessions[i] = tmp_sess;
+                i++;
+            }
+        }
 
 	/* Perform evaluation */
 	struct xccdf_result *ritem = xccdf_policy_evaluate(policy);
@@ -206,12 +224,16 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 			retval = 2;
 	}
 	xccdf_rule_result_iterator_free(res_it);
-
 	/* Clear & End */
+        for (int i=0; i<models; i++) {
+            oval_definition_model_free(def_models[i]);
+	    oval_agent_destroy_session(sessions[i]);
+        }
+        free(def_models);
+        free(sessions);
 	oval_agent_destroy_session(sess);
 	oval_definition_model_free(def_model);
 	xccdf_policy_model_free(policy_model);
-
 	return retval;
 }
 
@@ -310,6 +332,17 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
             return oscap_module_usage(action->module, stderr, "Please specify --result-file if you want to generate a HTML report.");
 		action->url_oval = argv[optind];
 		action->url_xccdf = argv[optind + 1];
+                if (argc > (optind+2)) {
+                    action->urls_oval = malloc((argc-(optind+2)+1) * sizeof(char *));
+                    int i = 2;
+                    while (argc > (optind+i)) {
+                        action->urls_oval[i-2] = argv[optind + i];
+                        i++;
+                    }
+                    action->urls_oval[i-2] = NULL;
+                } else {
+                    action->urls_oval = NULL;
+                }
 	} else {
 		if (optind >= argc)
 			return oscap_module_usage(action->module, stderr, "XCCDF file needs to be specified!");

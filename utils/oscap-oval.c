@@ -196,7 +196,7 @@ int app_evaluate_oval(const struct oscap_action *action)
 	int ret = 0;
 
 	struct oval_definition_model *def_model = oval_definition_model_import(action->f_oval);
-	oval_agent_session_t *sess = oval_agent_new_session(def_model);
+	oval_agent_session_t *sess = oval_agent_new_session(def_model, basename(action->f_oval));
 
 	/* Import OVAL definition file */
 	if (oscap_err()) {
@@ -271,7 +271,7 @@ int app_evaluate_oval_id(const struct oscap_action *action) {
 	oval_result_t ret;
 
 	struct oval_definition_model *def_model = oval_definition_model_import(action->f_oval);
-	oval_agent_session_t *sess = oval_agent_new_session(def_model);
+	oval_agent_session_t *sess = oval_agent_new_session(def_model, basename(action->f_oval));
 
 	/* Import OVAL definition file */
 	if (oscap_err()) {

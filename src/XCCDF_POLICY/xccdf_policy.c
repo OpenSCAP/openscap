@@ -48,6 +48,7 @@ typedef struct callback_t {
     int (*callback) (struct xccdf_policy *,                     // Policy model
                       const char *,                             // Rule ID
                       const char *,                             // Definition ID
+                      const char *,                             // HREF ID
                       struct xccdf_value_binding_iterator * it, // Value Bindings Iterator
                       void *);                  ///< format of callback function 
     void * usr;                                 ///< User data structure
@@ -209,6 +210,31 @@ static bool xccdf_policy_filter_rule(void *item, void *ruleid)
             return true;
         else 
             return false;
+}
+
+/**
+ * Filter function returning true if given callback is for the given checking engine,
+ * false otherwise
+ */
+static bool xccdf_policy_filter_callback(void *cb, void *sysname)
+{
+        if ((((callback *)cb)->system == NULL) && ( (const char *) sysname == NULL))
+            return true;
+        else if ((((callback *)cb)->system == NULL) || ((const char *) sysname == NULL))
+            return false;
+        else if (!strcmp(((callback *)cb)->system, (const char *) sysname))
+            return true;
+        else
+            return false;
+}
+
+/**
+ * Get callbacks that match sysname
+ */
+static struct oscap_iterator * xccdf_policy_get_callbacks_by_sysname(struct xccdf_policy * policy, const char * sysname) {
+
+    return oscap_iterator_new_filter( policy->model->callbacks, (oscap_filter_func) xccdf_policy_filter_callback,
+            (void *) sysname);
 }
 
 /**
@@ -397,23 +423,31 @@ static void xccdf_policy_resolve_rule(struct xccdf_policy * policy, struct xccdf
  * Evaluate the policy check with given checking system
  */
 static int
-xccdf_policy_evaluate_cb(struct xccdf_policy * policy, const char * sysname, const char * content, const char * rule_id, struct oscap_list * bindings) 
+xccdf_policy_evaluate_cb(struct xccdf_policy * policy, const char * sysname, const char * content, const char * href,
+        const char * rule_id, struct oscap_list * bindings) 
 {
-    callback * cb = xccdf_policy_get_callback(policy, sysname);
-    if (cb == NULL) { /* No callback found - checking system not registered */
-        oscap_seterr(OSCAP_EFAMILY_XCCDF, XCCDF_EUNKNOWNCB, 
-                "Unknown callback for given checking system. Set callback first");
-        return XCCDF_RESULT_NOT_CHECKED;
+    xccdf_test_result_type_t retval = XCCDF_RESULT_NOT_CHECKED;
+    struct oscap_iterator * cb_it = xccdf_policy_get_callbacks_by_sysname(policy, sysname);
+    oscap_iterator_reset(cb_it);
+    while (oscap_iterator_has_more(cb_it)) {
+        callback * cb = (callback *) oscap_iterator_next(cb_it);
+        if (cb == NULL) { /* No callback found - checking system not registered */
+            oscap_seterr(OSCAP_EFAMILY_XCCDF, XCCDF_EUNKNOWNCB, 
+                    "Unknown callback for given checking system. Set callback first");
+            return XCCDF_RESULT_NOT_CHECKED;
+        }
+
+        struct xccdf_value_binding_iterator * binding_it = (struct xccdf_value_binding_iterator *) oscap_iterator_new(bindings);
+
+        /* Each callback has format: "bool callback(struct xccdf_policy_model * model, const char * href, const char * id, const char *id)" */
+        /* Don't proccess results here, tool should set them to Policy Model ad hoc */
+        retval = cb->callback(policy, rule_id, content, href, binding_it, cb->usr);
+
+        /* Clear */
+        if (binding_it != NULL) xccdf_value_binding_iterator_free(binding_it);
+        if (retval != XCCDF_RESULT_NOT_CHECKED) break;
     }
-
-    struct xccdf_value_binding_iterator * binding_it = (struct xccdf_value_binding_iterator *) oscap_iterator_new(bindings);
-
-    /* Each callback has format: "bool callback(struct xccdf_policy_model * model, const char * href, const char * id, const char *id)" */
-    /* Don't proccess results here, tool should set them to Policy Model ad hoc */
-    xccdf_test_result_type_t retval = cb->callback(policy, rule_id, content, binding_it, cb->usr);
-
-    /* Clear */
-    if (binding_it != NULL) xccdf_value_binding_iterator_free(binding_it);
+    oscap_iterator_free(cb_it);
 
     return retval;
 }
@@ -484,6 +518,7 @@ static int xccdf_policy_check_evaluate(struct xccdf_policy * policy, struct xccd
     struct xccdf_check_content_ref          * content;
     const char                              * content_name;
     const char                              * system_name;
+    const char                              * href;
     struct oscap_list                       * bindings;
     int                                       ret = 0;
     int                                       ret2 = 0;
@@ -511,8 +546,9 @@ static int xccdf_policy_check_evaluate(struct xccdf_policy * policy, struct xccd
             while (xccdf_check_content_ref_iterator_has_more(content_it)) {
                 content = xccdf_check_content_ref_iterator_next(content_it);
                 content_name = xccdf_check_content_ref_get_name(content);
+                href = xccdf_check_content_ref_get_href(content);
                 /* Check if this is OVAL ? Never mind. Added to TODO */
-                ret = xccdf_policy_evaluate_cb(policy, system_name, content_name, rule_id, bindings);
+                ret = xccdf_policy_evaluate_cb(policy, system_name, content_name, href, rule_id, bindings);
                 if ((xccdf_test_result_type_t) ret != XCCDF_RESULT_NOT_CHECKED) break;
             }
             xccdf_check_content_ref_iterator_free(content_it);
@@ -567,9 +603,10 @@ static int xccdf_policy_item_evaluate(struct xccdf_policy * policy, struct xccdf
                             const char * title = NULL;
                             if (oscap_text_iterator_has_more(dsc_it))
                                 description = oscap_text_get_text(oscap_text_iterator_next(dsc_it));
+                            oscap_text_iterator_free(dsc_it);     
                             if (oscap_text_iterator_has_more(title_it))
                                 title = oscap_text_get_text(oscap_text_iterator_next(title_it));
-                            oscap_text_iterator_free(dsc_it);     
+                            oscap_text_iterator_free(title_it);     
                             /*retval = cb->callback(rule_id, ret, cb->usr);*/
                             struct oscap_reporter_message * msg = oscap_reporter_message_new_fmt(
                                     OSCAP_REPORTER_FAMILY_XCCDF, /* FAMILY */
@@ -1344,7 +1381,7 @@ void xccdf_policy_free(struct xccdf_policy * policy) {
 
 	oscap_list_free(policy->rules, (oscap_destruct_func) xccdf_select_free);
 	oscap_list_free(policy->values, (oscap_destruct_func) xccdf_value_binding_free);
-	//oscap_list_free(policy->results, (oscap_destruct_func) xccdf_result_free);
+	oscap_list_free(policy->results, (oscap_destruct_func) xccdf_result_free);
         oscap_free(policy);
 }
 

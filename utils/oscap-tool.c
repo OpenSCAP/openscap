@@ -86,6 +86,7 @@ static void oscap_action_release(struct oscap_action *action)
 	assert(action != NULL);
     free(action->f_xccdf);
     free(action->f_oval);
+    free(action->urls_oval);
 #ifdef ENABLE_CVSS
     free(action->cvss_metrics);
 #endif

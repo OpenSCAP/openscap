@@ -372,7 +372,7 @@ bool xccdf_policy_add_value(struct xccdf_policy *, struct xccdf_value_binding *)
  * \par
  * If you use this predefined OVAL callback, user data structure (last parameter of register function) \b MUST be of type \ref\a oval_agent_session_t:
  * \code
- * struct oval_agent_session * sess = oval_agent_new_session((struct oval_definition_model *) model);
+ * struct oval_agent_session * sess = oval_agent_new_session((struct oval_definition_model *) model, "name-of-file");
  * \endcode
  * */
 struct xccdf_result *  xccdf_policy_evaluate(struct xccdf_policy * policy);

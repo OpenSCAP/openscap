@@ -26,6 +26,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <getopt.h>
+#include <libgen.h>
 
 /* openscap common */
 #include <oscap.h>
@@ -91,6 +92,7 @@ struct oscap_action {
         char *f_report;
         char *url_xccdf;
         char *url_oval;
+        char **urls_oval;
         char *profile;
         char *file_version;
 	char *id;

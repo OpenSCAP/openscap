@@ -79,12 +79,13 @@ static const struct oval_result_to_xccdf_spec XCCDF_OVAL_RESULTS_MAP[] = {
 #endif
 
 
-oval_agent_session_t * oval_agent_new_session(struct oval_definition_model *model) {
+oval_agent_session_t * oval_agent_new_session(struct oval_definition_model *model, const char * name) {
 
 	oval_agent_session_t *ag_sess;
 	struct oval_sysinfo *sysinfo;
 
 	ag_sess = oscap_talloc(oval_agent_session_t);
+        ag_sess->filename = (char *) name;
 	ag_sess->def_model = model;
 	ag_sess->sys_model = oval_syschar_model_new(model);
 	ag_sess->psess     = oval_probe_session_new(ag_sess->sys_model);
@@ -267,23 +268,51 @@ int oval_agent_resolve_variables(struct oval_agent_session * session, struct xcc
     return retval;
 }
 
+static int oval_agent_allback(const struct oscap_reporter_message *msg, void *arg)
+{
+
+        /*printf("Evalutated definition %s: %s\n",
+                oscap_reporter_message_get_user1str(msg),
+                oval_result_get_text(oscap_reporter_message_get_user2num(msg)));*/
+	switch ((oval_result_t) oscap_reporter_message_get_user2num(msg)) {
+            case OVAL_RESULT_FALSE:
+            case OVAL_RESULT_UNKNOWN:
+                    (*((int *)arg))++;
+                    break;
+            default:
+                    break;
+	}
+
+	return 0;
+}
+
 xccdf_test_result_type_t oval_agent_eval_rule(struct xccdf_policy *policy, const char *rule_id, const char *id,
-			       struct xccdf_value_binding_iterator *it, void *usr)
+			       const char * href, struct xccdf_value_binding_iterator *it, void *usr)
 {
         __attribute__nonnull__(usr);
+
         oval_result_t result;
         int retval = 0;
 	struct oval_agent_session * sess = (struct oval_agent_session *) usr;
-
-        /* If there is no such OVAL definition, return XCCDF_RESUL_NOT_CHECKED. XDCCDF should look for alternative definition in this case. */
-        if (oval_definition_model_get_definition(oval_results_model_get_definition_model(oval_agent_get_results_model(sess)), id) == NULL)
-                return XCCDF_RESULT_NOT_CHECKED;
+        if (strcmp(sess->filename, href))
+            return XCCDF_RESULT_NOT_CHECKED;
 
         /* Resolve variables */
         retval = oval_agent_resolve_variables(sess, it);
         if (retval != 0) return XCCDF_RESULT_UNKNOWN;
-        /* Evaluate OVAL definition */
-	result = oval_agent_eval_definition(sess, id);
+
+        if (id != NULL) {
+            /* If there is no such OVAL definition, return XCCDF_RESUL_NOT_CHECKED. XDCCDF should look for alternative definition in this case. */
+            if (oval_definition_model_get_definition(oval_results_model_get_definition_model(oval_agent_get_results_model(sess)), id) == NULL)
+                    return XCCDF_RESULT_NOT_CHECKED;
+            /* Evaluate OVAL definition */
+            result = oval_agent_eval_definition(sess, id);
+        } else {
+            int res = 0;
+            oval_agent_eval_system(sess, oval_agent_allback, (void *) &res);
+            if (res == 0) return XCCDF_RESULT_PASS;
+            else return XCCDF_RESULT_FAIL;
+        }
 
 	return xccdf_get_result_from_oval(result);
 }
