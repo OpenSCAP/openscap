@@ -395,7 +395,12 @@ int oval_definition_model_bind_variable_model(struct oval_definition_model *defm
 		struct oval_variable *variable = oval_variable_iterator_next(variables);
 		if (oval_variable_get_type(variable) == OVAL_VARIABLE_EXTERNAL) {
 			char *varid = oval_variable_get_id(variable);
-			oval_datatype_t var_datatype = oval_variable_model_get_datatype(varmodel, varid);
+			oval_datatype_t var_datatype;
+
+			if (!oval_variable_model_has_variable(varmodel, varid))
+				continue;
+
+			var_datatype = oval_variable_model_get_datatype(varmodel, varid);
 			if (var_datatype != OVAL_DATATYPE_UNKNOWN) {	//values are bound in the variable model
 				oval_datatype_t def_datatype = oval_variable_get_datatype(variable);
 				if (def_datatype == var_datatype) {
