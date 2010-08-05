@@ -396,7 +396,7 @@ static void xccdf_policy_resolve_rule(struct xccdf_policy * policy, struct xccdf
 /**
  * Evaluate the policy check with given checking system
  */
-static xccdf_test_result_type_t 
+static int
 xccdf_policy_evaluate_cb(struct xccdf_policy * policy, const char * sysname, const char * content, const char * rule_id, struct oscap_list * bindings) 
 {
     callback * cb = xccdf_policy_get_callback(policy, sysname);
@@ -457,6 +457,10 @@ static struct oscap_list * xccdf_policy_check_get_value_bindings(struct xccdf_po
             } else binding->operator = xccdf_value_get_oper(value);
             
             const struct xccdf_value_instance * val = xccdf_value_get_instance_by_selector(value, selector);
+            if (val == NULL) {
+                oscap_seterr(OSCAP_EFAMILY_XCCDF, XCCDF_EVALUE, "Value instance does not exist");
+                return NULL;
+            }
             binding->value = xccdf_value_instance_get_value(val);
             binding->name = oscap_strdup((char *) xccdf_check_export_get_name(check));
             binding->type = xccdf_value_get_type(value);
@@ -472,7 +476,7 @@ static struct oscap_list * xccdf_policy_check_get_value_bindings(struct xccdf_po
  * Evaluate the XCCDF check. 
  * Name collision with xccdf_check -> changed to xccdf_policy_check 
  */
-static xccdf_test_result_type_t xccdf_policy_check_evaluate(struct xccdf_policy * policy, struct xccdf_check * check, char * rule_id)
+static int xccdf_policy_check_evaluate(struct xccdf_policy * policy, struct xccdf_check * check, char * rule_id)
 {
     struct xccdf_check_iterator             * child_it;
     struct xccdf_check                      * child;
@@ -481,8 +485,8 @@ static xccdf_test_result_type_t xccdf_policy_check_evaluate(struct xccdf_policy 
     const char                              * content_name;
     const char                              * system_name;
     struct oscap_list                       * bindings;
-    xccdf_test_result_type_t                  ret = 0;
-    xccdf_test_result_type_t                  ret2 = 0;
+    int                                       ret = 0;
+    int                                       ret2 = 0;
 
     /* At least one of check-content or check-content-ref must
         * appear in each check element. */
@@ -491,9 +495,10 @@ static xccdf_test_result_type_t xccdf_policy_check_evaluate(struct xccdf_policy 
             while (xccdf_check_iterator_has_more(child_it)) {
                 child = xccdf_check_iterator_next(child_it);
                 ret2 = xccdf_policy_check_evaluate(policy, child, rule_id);
+                if (ret2 == -1) return -1;
                 if (ret == 0) ret = ret2;
                 else {
-                    ret = _resolve_operation(ret, ret2, xccdf_check_get_oper(check));
+                    ret = (int) _resolve_operation((xccdf_test_result_type_t) ret, (xccdf_test_result_type_t) ret2, xccdf_check_get_oper(check));
                 }
             }
             xccdf_check_iterator_free(child_it);
@@ -502,12 +507,13 @@ static xccdf_test_result_type_t xccdf_policy_check_evaluate(struct xccdf_policy 
             content_it = xccdf_check_get_content_refs(check);
             system_name = xccdf_check_get_system(check);
             bindings = xccdf_policy_check_get_value_bindings(policy, xccdf_check_get_exports(check));
+            if (bindings == NULL) return -1;
             while (xccdf_check_content_ref_iterator_has_more(content_it)) {
                 content = xccdf_check_content_ref_iterator_next(content_it);
                 content_name = xccdf_check_content_ref_get_name(content);
                 /* Check if this is OVAL ? Never mind. Added to TODO */
                 ret = xccdf_policy_evaluate_cb(policy, system_name, content_name, rule_id, bindings);
-                if (ret != XCCDF_RESULT_NOT_CHECKED) break;
+                if ((xccdf_test_result_type_t) ret != XCCDF_RESULT_NOT_CHECKED) break;
             }
             xccdf_check_content_ref_iterator_free(content_it);
             oscap_list_free(bindings, (oscap_destruct_func) xccdf_value_binding_free);
@@ -528,7 +534,7 @@ static int xccdf_policy_item_evaluate(struct xccdf_policy * policy, struct xccdf
     struct xccdf_item_iterator      * child_it;
     struct xccdf_item               * child;
     const char                      * rule_id;
-    xccdf_test_result_type_t        ret = XCCDF_RESULT_UNKNOWN;
+    int                               ret = XCCDF_RESULT_UNKNOWN;
 
     xccdf_type_t itype = xccdf_item_get_type(item);
 
@@ -544,6 +550,7 @@ static int xccdf_policy_item_evaluate(struct xccdf_policy * policy, struct xccdf
                             /************** Evaluation  **************/
                             ret = xccdf_policy_check_evaluate(policy, check, (char *) rule_id);
                             /*****************************************/
+                            if (ret == -1) return -1;
 
                             if (ret == false) /* we got item that can't be processed */
                                 break;
@@ -569,7 +576,7 @@ static int xccdf_policy_item_evaluate(struct xccdf_policy * policy, struct xccdf
                                     0,                           /* CODE */
                                     description);
                             oscap_reporter_message_set_user1str(msg, rule_id);
-                            oscap_reporter_message_set_user2num(msg, ret);
+                            oscap_reporter_message_set_user2num(msg, (xccdf_test_result_type_t) ret);
                             oscap_reporter_message_set_user3str(msg, title);
                             retval = oscap_reporter_report(cb->callback, msg, cb->usr);
                             if (retval != 0) return retval;
@@ -579,7 +586,7 @@ static int xccdf_policy_item_evaluate(struct xccdf_policy * policy, struct xccdf
                     if (result != NULL) {
                             struct xccdf_rule_result *rule_ritem = xccdf_rule_result_new();
                             /* --Set rule-- */
-                            xccdf_rule_result_set_result(rule_ritem, ret);
+                            xccdf_rule_result_set_result(rule_ritem, (xccdf_test_result_type_t) ret);
                             xccdf_rule_result_set_idref(rule_ritem, rule_id);
                             xccdf_rule_result_set_weight(rule_ritem, xccdf_item_get_weight(item));
                             xccdf_rule_result_set_version(rule_ritem, xccdf_rule_get_version((struct xccdf_rule *) item));
@@ -614,6 +621,7 @@ static int xccdf_policy_item_evaluate(struct xccdf_policy * policy, struct xccdf
                     while (xccdf_item_iterator_has_more(child_it)) {
                             child = xccdf_item_iterator_next(child_it);
                             ret = xccdf_policy_item_evaluate(policy, child, result);
+                            if (ret == -1) return -1;
 
                             if (ret == false) /* we got item that can't be processed */
                                 break;
@@ -645,7 +653,8 @@ static struct xccdf_default_score * xccdf_item_get_default_score(struct xccdf_it
                     /* Rule */
                     rule_result = xccdf_result_get_rule_result_by_id(test_result, xccdf_rule_get_id((const struct xccdf_rule *) item));
                     if (rule_result == NULL) {
-			    oscap_dlprintf(DBG_E, "No result of rule %s.\n", xccdf_rule_get_id((const struct xccdf_rule *) item));
+			    /*oscap_dlprintf(DBG_E, "No result of rule %s.\n", xccdf_rule_get_id((const struct xccdf_rule *) item));
+                            No result for this rule, just skip */
 			    return NULL;
                     }
 
@@ -672,7 +681,11 @@ static struct xccdf_default_score * xccdf_item_get_default_score(struct xccdf_it
                             child = xccdf_item_iterator_next(child_it);
                             ch_score = xccdf_item_get_default_score(child, test_result);
                             if (ch_score == NULL) /* we got item that can't be processed */
-                                break; /* TODO */
+                                continue; /* TODO */
+                            if (ch_score->count == 0) {  /* we got item that has no selected items */
+                                oscap_free(ch_score);
+                                continue;
+                            }
                             /* If child's count value is not 0, then add the child's wighted score to this node's score */
                             if (ch_score->count != 0) { 
                                 score->score += ch_score->weight_score;
@@ -684,7 +697,7 @@ static struct xccdf_default_score * xccdf_item_get_default_score(struct xccdf_it
                             if (score->accumulator != 0) /* Division by zero */
                                 score->score = score->score / score->accumulator;
                             else
-				    oscap_dlprintf(DBG_W, "Avoided division by zero - Score accumulator is 0!\n");
+				    oscap_dlprintf(DBG_E, "Avoided division by zero - Score accumulator is 0!\n");
                             score->weight_score = score->score * xccdf_item_get_weight(item);
                     }
                     xccdf_item_iterator_free(child_it);
@@ -715,7 +728,8 @@ static struct xccdf_flat_score * xccdf_item_get_flat_score(struct xccdf_item * i
                     /* Rule */
                     rule_result = xccdf_result_get_rule_result_by_id(test_result, xccdf_rule_get_id((const struct xccdf_rule *) item));
                     if (rule_result == NULL) {
-			    oscap_dlprintf(DBG_E, "No result of rule %s.\n", xccdf_rule_get_id((const struct xccdf_rule *) item));
+			    /*oscap_dlprintf(DBG_E, "No result of rule %s.\n", xccdf_rule_get_id((const struct xccdf_rule *) item));
+                            No result for this rule, just skip  */
 			    return NULL;
                     }
 
@@ -743,7 +757,11 @@ static struct xccdf_flat_score * xccdf_item_get_flat_score(struct xccdf_item * i
 
                             ch_score = xccdf_item_get_flat_score(child, test_result, unweighted);
                             if (ch_score == NULL) /* we got item that can't be processed */
-                                break; /* TODO */
+                                continue; /* TODO */
+                            if (ch_score->weight == 0) {  /* we got item that has no selected items */
+                                oscap_free(ch_score);
+                                continue;
+                            }
                             /* If child's count value is not 0, then add the child's wighted score to this node's score */
                             score->score += ch_score->score;
                             score->weight += ch_score->weight;
@@ -1118,6 +1136,7 @@ struct xccdf_result * xccdf_policy_evaluate(struct xccdf_policy * policy)
 
         if (xccdf_item_get_type(item) == XCCDF_GROUP) continue;
         ret = xccdf_policy_item_evaluate(policy, item, result);
+        if (ret == -1) return NULL;
         if (ret != 0) break;
     }
     xccdf_select_iterator_free(sel_it);
@@ -1135,24 +1154,24 @@ struct xccdf_score * xccdf_policy_get_score(struct xccdf_policy * policy, struct
     score = xccdf_score_new();
     xccdf_score_set_system(score, scsystem);
     /* Default XCCDF score system */
-    if (!strcmp(scsystem, "urn:xcscoring:default")) {
+    if (!strcmp(scsystem, "urn:xccdf:scoring:default")) {
         struct xccdf_default_score * item_score = xccdf_item_get_default_score((struct xccdf_item *) benchmark, test_result);
         xccdf_score_set_score(score, item_score->score);
         oscap_free(item_score);
     }
-    else if (!strcmp(scsystem, "urn:xcscoring:flat")) {
+    else if (!strcmp(scsystem, "urn:xccdf:scoring:flat")) {
         struct xccdf_flat_score * item_score = xccdf_item_get_flat_score((struct xccdf_item *) benchmark, test_result, false);
         xccdf_score_set_maximum(score, item_score->weight);
         xccdf_score_set_score(score, item_score->score);
         oscap_free(item_score);
     }
-    else if (!strcmp(scsystem, "urn:xcscoring:flat-unweighted")) {
+    else if (!strcmp(scsystem, "urn:xccdf:scoring:flat-unweighted")) {
         struct xccdf_flat_score * item_score = xccdf_item_get_flat_score((struct xccdf_item *) benchmark, test_result, true);
         xccdf_score_set_maximum(score, item_score->weight);
         xccdf_score_set_score(score, item_score->score);
         oscap_free(item_score);
     }
-    else if (!strcmp(scsystem, "urn:xcscoring:absolute")) {
+    else if (!strcmp(scsystem, "urn:xccdf:scoring:absolute")) {
         int absolute;
         struct xccdf_flat_score * item_score = xccdf_item_get_flat_score((struct xccdf_item *) benchmark, test_result, false);
         xccdf_score_set_maximum(score, item_score->weight);
@@ -1325,7 +1344,7 @@ void xccdf_policy_free(struct xccdf_policy * policy) {
 
 	oscap_list_free(policy->rules, (oscap_destruct_func) xccdf_select_free);
 	oscap_list_free(policy->values, (oscap_destruct_func) xccdf_value_binding_free);
-	oscap_list_free(policy->results, (oscap_destruct_func) xccdf_result_free);
+	//oscap_list_free(policy->results, (oscap_destruct_func) xccdf_result_free);
         oscap_free(policy);
 }
 

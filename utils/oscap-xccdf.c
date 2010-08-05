@@ -157,7 +157,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 
 	if (policy == NULL) {
 		fprintf(stderr, "No Policy to evaluate. \n");
-		return -1;
+		return 1;
 	}
 
 	/* Register callback */
@@ -166,6 +166,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 
 	/* Perform evaluation */
 	struct xccdf_result *ritem = xccdf_policy_evaluate(policy);
+        if (ritem == NULL) return 1;
 
 	/* Write results into XCCDF Test Result model */
 	xccdf_result_set_benchmark_uri(ritem, action->url_xccdf);

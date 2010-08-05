@@ -99,6 +99,7 @@ typedef uint16_t oscap_errcode_t;
 #define XCCDF_EUNKNOWNTYPE    3   /**< Bad type of xccdf item */  
 #define XCCDF_EUNKNOWNCB      4   /**< Unknown callback - missing registration */
 #define XCCDF_EBADID          5   /**< Bad id in reference - item with that id does not exist */
+#define XCCDF_EVALUE          6   /**< Can't find referenced value instance */
 /** @} */
 
 

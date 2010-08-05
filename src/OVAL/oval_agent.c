@@ -207,11 +207,15 @@ static xccdf_test_result_type_t xccdf_get_result_from_oval(oval_result_t id)
 	return XCCDF_RESULT_UNKNOWN;
 }
 
-void oval_agent_resolve_variables(struct oval_agent_session * session, struct xccdf_value_binding_iterator *it)
+int oval_agent_resolve_variables(struct oval_agent_session * session, struct xccdf_value_binding_iterator *it)
 {
 
     bool conflict = false;
+    int retval = 0;
     struct oval_value_iterator * value_it;
+
+    if (!xccdf_value_binding_iterator_has_more(it))
+        return 0;
 
     /* Get the definition model from OVAL agent session */
     struct oval_definition_model *def_model =
@@ -258,8 +262,9 @@ void oval_agent_resolve_variables(struct oval_agent_session * session, struct xc
         }
     }
     /* Finalize - bind variable model to definition model */
-    oval_definition_model_bind_variable_model(def_model, var_model);
+    retval = oval_definition_model_bind_variable_model(def_model, var_model);
     oval_variable_model_free(var_model);
+    return retval;
 }
 
 xccdf_test_result_type_t oval_agent_eval_rule(struct xccdf_policy *policy, const char *rule_id, const char *id,
@@ -267,6 +272,7 @@ xccdf_test_result_type_t oval_agent_eval_rule(struct xccdf_policy *policy, const
 {
         __attribute__nonnull__(usr);
         oval_result_t result;
+        int retval = 0;
 	struct oval_agent_session * sess = (struct oval_agent_session *) usr;
 
         /* If there is no such OVAL definition, return XCCDF_RESUL_NOT_CHECKED. XDCCDF should look for alternative definition in this case. */
@@ -274,7 +280,8 @@ xccdf_test_result_type_t oval_agent_eval_rule(struct xccdf_policy *policy, const
                 return XCCDF_RESULT_NOT_CHECKED;
 
         /* Resolve variables */
-        oval_agent_resolve_variables(sess, it);
+        retval = oval_agent_resolve_variables(sess, it);
+        if (retval != 0) return XCCDF_RESULT_UNKNOWN;
         /* Evaluate OVAL definition */
 	result = oval_agent_eval_definition(sess, id);
 

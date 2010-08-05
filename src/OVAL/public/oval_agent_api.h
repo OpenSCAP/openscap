@@ -130,10 +130,11 @@ xccdf_test_result_type_t oval_agent_eval_rule (struct xccdf_policy * policy, con
  * Resolve variables from XCCDF Value Bindings and set their values to OVAL Variables
  * @param session OVAL Agent Session
  * @param it XCCDF Value Bindng iterator
+ * @return 0 if resolving pass
  * \par Example
  * Example in oval_agent.c in function oval_agent_eval_rule
  */
-void oval_agent_resolve_variables(struct oval_agent_session * session, struct xccdf_value_binding_iterator *it);
+int oval_agent_resolve_variables(struct oval_agent_session * session, struct xccdf_value_binding_iterator *it);
 
 
 /**

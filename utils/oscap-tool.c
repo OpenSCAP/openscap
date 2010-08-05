@@ -292,7 +292,7 @@ int oscap_module_process(struct oscap_module *module, int argc, char **argv)
         }
 
         if (module->func) {
-            oscap_module_call(&action);
+            ret = oscap_module_call(&action);
             goto cleanup;
         }
         else if (module->submodules) {
