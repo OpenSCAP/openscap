@@ -1406,7 +1406,7 @@ __PARSE_RT SEXP_parse_ul_string_dq (__PARSE_PT(dsc))
                 itb = dsc->p_bufoff + dsc->p_explen;
 
                 /* initialize the string buffer */
-                strbuf = strbuf_new (1024);
+                strbuf = strbuf_new (SEAP_STRBUF_MAX);
 
                 if (strbuf == NULL)
                         return (SEXP_PRET_EUNDEF);

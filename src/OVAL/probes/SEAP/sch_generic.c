@@ -99,7 +99,7 @@ ssize_t sch_generic_sendsexp (SEAP_desc_t *desc, SEXP_t *sexp, uint32_t flags)
         _LOGCALL_;
 
         ret = 0;
-        sb  = strbuf_new (1024);
+        sb  = strbuf_new (SEAP_STRBUF_MAX);
 
         if (SEXP_sbprintf_t (sexp, sb) != 0)
                 ret = -1;
