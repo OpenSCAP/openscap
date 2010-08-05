@@ -589,9 +589,10 @@ void oval_definition_model_free(struct oval_definition_model *model);
  */
 /**
  * Bind an oval_variable_model to the specified oval_definition_model.
+ * @return zero on success or non zero value if an error occurred
  * @memberof oval_definition_model
  */
-void oval_definition_model_bind_variable_model(struct oval_definition_model *, struct oval_variable_model *);
+int oval_definition_model_bind_variable_model(struct oval_definition_model *, struct oval_variable_model *);
 
 void oval_definition_model_clear_external_variables(struct oval_definition_model *);
 /**

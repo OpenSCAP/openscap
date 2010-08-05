@@ -332,11 +332,11 @@ int oval_syschar_model_import(struct oval_syschar_model *model, const char *file
 }
 
 
-void oval_syschar_model_bind_variable_model(struct oval_syschar_model *sysmodel, struct oval_variable_model *varmodel)
+int oval_syschar_model_bind_variable_model(struct oval_syschar_model *sysmodel, struct oval_variable_model *varmodel)
 {
 	__attribute__nonnull__(sysmodel);
 
-	oval_definition_model_bind_variable_model(sysmodel->definition_model, varmodel);
+	return oval_definition_model_bind_variable_model(sysmodel->definition_model, varmodel);
 }
 
 struct oval_syschar *oval_syschar_model_get_syschar(struct oval_syschar_model *model, const char *object_id)

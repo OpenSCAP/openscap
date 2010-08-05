@@ -386,7 +386,7 @@ struct oval_variable *oval_definition_model_get_variable(struct oval_definition_
 	return (struct oval_variable *)oval_string_map_get_value(model->variable_map, key);
 }
 
-void oval_definition_model_bind_variable_model(struct oval_definition_model *defmodel,
+int oval_definition_model_bind_variable_model(struct oval_definition_model *defmodel,
 					       struct oval_variable_model *varmodel)
 {
 	//Bind values to all external variables specified in the variable model.
@@ -396,7 +396,7 @@ void oval_definition_model_bind_variable_model(struct oval_definition_model *def
 		if (oval_variable_get_type(variable) == OVAL_VARIABLE_EXTERNAL) {
 			char *varid = oval_variable_get_id(variable);
 			oval_datatype_t var_datatype = oval_variable_model_get_datatype(varmodel, varid);
-			if (var_datatype) {	//values are bound in the variable model
+			if (var_datatype != OVAL_DATATYPE_UNKNOWN) {	//values are bound in the variable model
 				oval_datatype_t def_datatype = oval_variable_get_datatype(variable);
 				if (def_datatype == var_datatype) {
 					struct oval_string_iterator *values =
@@ -408,16 +408,23 @@ void oval_definition_model_bind_variable_model(struct oval_definition_model *def
 					}
 					oval_string_iterator_free(values);
 				} else {
+					oval_variable_iterator_free(variables);
 					oscap_dlprintf(DBG_E, "Unmatched variable datatypes: id: %s, "
 						       "definition model datatype: %s, "
 						       "variable model datatype: %s.\n",
 						       varid, oval_datatype_get_text(def_datatype),
 						       oval_datatype_get_text(var_datatype));
+					return -1;
 				}
+			} else {
+				oval_variable_iterator_free(variables);
+				oscap_dlprintf(DBG_E, "Unknown variable datatype: id: %s.\n", varid);
+				return -1;
 			}
 		}
 	}
 	oval_variable_iterator_free(variables);
+	return 0;
 }
 
 void oval_definition_model_clear_external_variables(struct oval_definition_model *model)

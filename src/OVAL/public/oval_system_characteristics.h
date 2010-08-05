@@ -226,9 +226,10 @@ void oval_syschar_model_free(struct oval_syschar_model *model);
  */
 /**
  * Bind a variable model to the definitions bound to the syschar model.
+ * @return zero on success or non zero value if an error occurred
  * @memberof oval_syschar_model
  */
-void oval_syschar_model_bind_variable_model(struct oval_syschar_model *, struct oval_variable_model *);
+int oval_syschar_model_bind_variable_model(struct oval_syschar_model *, struct oval_variable_model *);
 /**
  * @memberof oval_syschar_model
  */
