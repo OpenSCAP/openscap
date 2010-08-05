@@ -103,4 +103,8 @@ void __oscap_dlprintf(int level, const char *file, const char *fn, size_t line, 
 # define oscap_dlprintf(l, ...) __dlprintf_wrapper (l, __VA_ARGS__)
 #endif                          /* NDEBUG */
 
+#define dI(...) oscap_dlprintf(DBG_I, __VA_ARGS__)
+#define dW(...) oscap_dlprintf(DBG_W, __VA_ARGS__)
+#define dE(...) oscap_dlprintf(DBG_E, __VA_ARGS__)
+
 #endif
