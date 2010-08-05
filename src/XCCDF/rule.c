@@ -962,6 +962,16 @@ void xccdf_group_to_dom(struct xccdf_group *group, xmlNode *group_node, xmlDoc *
 		}
 	}
 	xccdf_item_iterator_free(items);
+
+        struct xccdf_value_iterator *values = xccdf_group_get_values(group);
+	while (xccdf_value_iterator_has_more(values)) {
+		struct xccdf_value *value = xccdf_value_iterator_next(values);
+		if (XGROUP(xccdf_value_get_parent(value)) == group) {
+			xccdf_item_to_dom((struct xccdf_item *)value, doc, group_node);
+		}
+	}
+	xccdf_value_iterator_free(values);
+
 }
 
 XCCDF_STATUS_CURRENT(rule)
