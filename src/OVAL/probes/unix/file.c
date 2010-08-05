@@ -216,9 +216,10 @@ static int file_cb (const char *p, const char *f, void *ptr)
 
                 SEXP_list_add (res, item);
 
+#if defined(FILE_PROBE_ITEMSTATS)
                 _D("item memory size = %zu bytes\n", SEXP_sizeof (item));
                 _D("list memory size = %zu bytes\n", SEXP_sizeof (res));
-
+#endif
                 SEXP_vfree (item,
                             r0, r1, r3, r4,
                             r5, r6, r7, r8, NULL);
