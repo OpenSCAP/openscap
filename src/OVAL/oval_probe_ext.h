@@ -36,8 +36,8 @@ typedef struct {
 } oval_pd_t;
 
 typedef struct {
-	oval_pd_t *memb;
-	size_t count;
+	oval_pd_t **memb;
+	size_t      count;
 	SEAP_CTX_t *ctx;
 } oval_pdtbl_t;
 

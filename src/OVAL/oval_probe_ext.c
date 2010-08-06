@@ -123,8 +123,9 @@ static void oval_pdtbl_free(oval_pdtbl_t *tbl)
         register size_t i;
 
         for (i = 0; i < tbl->count; ++i) {
-                SEAP_close(tbl->ctx, tbl->memb[i].sd);
-                oscap_free(tbl->memb[i].uri);
+                SEAP_close(tbl->ctx, tbl->memb[i]->sd);
+                oscap_free(tbl->memb[i]->uri);
+		oscap_free(tbl->memb[i]);
         }
 
         oscap_free(tbl->memb);
@@ -139,23 +140,30 @@ static int oval_pdtbl_pdcmp(const oval_pd_t *a, const oval_pd_t *b)
 	return (a->subtype - b->subtype);
 }
 
-static int oval_pdtbl_typecmp(oval_subtype_t *a, oval_pd_t *b)
+static int oval_pdtbl_typecmp(oval_subtype_t *a, oval_pd_t **b)
 {
-        return (*a - b->subtype);
+        return (*a - (*b)->subtype);
 }
 
 static int oval_pdtbl_add(oval_pdtbl_t * tbl, oval_subtype_t type, int sd, const char *uri)
 {
+	oval_pd_t *pd;
+
 	assume_d (tbl != NULL, -1);
 	assume_d (uri != NULL, -1);
 
-	tbl->memb = oscap_realloc(tbl->memb, sizeof(oval_pd_t) * (++tbl->count));
+	pd = oscap_talloc(oval_pd_t);
+	pd->subtype = type;
+	pd->sd      = sd;
+	pd->uri     = strdup(uri);
 
-	tbl->memb[tbl->count - 1].subtype = type;
-	tbl->memb[tbl->count - 1].sd      = sd;
-	tbl->memb[tbl->count - 1].uri     = strdup(uri);
+	tbl->memb = oscap_realloc(tbl->memb, sizeof(oval_pd_t *) * (++tbl->count));
 
-	qsort(tbl->memb, tbl->count, sizeof(oval_pd_t),
+	assume_d(tbl->memb != NULL, -1);
+
+	tbl->memb[tbl->count - 1] = pd;
+
+	qsort(tbl->memb, tbl->count, sizeof(oval_pd_t *),
               (int (*)(const void *, const void *))oval_pdtbl_pdcmp);
 
 	return (0);
@@ -163,8 +171,12 @@ static int oval_pdtbl_add(oval_pdtbl_t * tbl, oval_subtype_t type, int sd, const
 
 static oval_pd_t *oval_pdtbl_get(oval_pdtbl_t * tbl, oval_subtype_t type)
 {
-	return oscap_bfind(tbl->memb, tbl->count, sizeof(oval_pd_t),
-			   &type, (int (*)(void *, void *))oval_pdtbl_typecmp);
+	oval_pd_t **pdp;
+
+	pdp = oscap_bfind(tbl->memb, tbl->count, sizeof(oval_pd_t),
+			  &type, (int (*)(void *, void *))oval_pdtbl_typecmp);
+
+	return (pdp == NULL ? NULL : *pdp);
 }
 
 /*
@@ -725,7 +737,7 @@ int oval_probe_ext_handler(oval_subtype_t type, void *ptr, int act, ...)
                          * for each probe descriptor.
                          */
                         for (i = 0; i < pext->pdtbl->count; ++i) {
-                                pd  = pext->pdtbl->memb + i;
+                                pd  = pext->pdtbl->memb[i];
 
                                 //fprintf(stderr, "Sending reset to %p(%s)...\n", pd, oval_subtype2str(pd->subtype));
 
