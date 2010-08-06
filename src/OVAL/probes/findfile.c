@@ -132,6 +132,7 @@ int find_files(SEXP_t * spath, SEXP_t * sfilename, SEXP_t * behaviors,
 	setting->filename_is_nil = (SEXP_string_length(r0) == 0) ? true : false;
 	SEXP_free(r0);
 
+
 	assert(strlen(path) > 0);
 
 	/* Is there a '/' at the end of the path? */
@@ -253,9 +254,11 @@ static int find_files_recursion(const char *path, setting_t * setting, int depth
 				(setting->cb) (path, pDirent->d_name, arg);
 			}
 			SEXP_free(sf);
-		} else if (setting->filename_is_nil) { // collect directories
-			rc++;
-			(setting->cb) (path, pDirent->d_name, arg);
+		} else if (setting->filename_is_nil) { /* we are only interested in directories */
+			if (strncmp(pDirent->d_name, "..", 3) && strncmp(pDirent->d_name, ".", 2)) { /*  don't report these */
+				rc++;
+				(setting->cb) (path, pDirent->d_name, arg);
+			}
 		}
 	}
 
