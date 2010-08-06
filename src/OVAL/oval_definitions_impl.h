@@ -126,6 +126,7 @@ typedef void (*oval_value_consumer) (struct oval_value *, void *);
 int oval_value_parse_tag(xmlTextReaderPtr, struct oval_parser_context *, oval_value_consumer, void *);
 void oval_value_to_print(struct oval_value *value, char *indent, int idx);
 xmlNode *oval_value_to_dom(struct oval_value *, xmlDoc *, xmlNode *);
+int oval_value_cast(struct oval_value *value, oval_datatype_t new_dt);
 
 oval_syschar_collection_flag_t oval_component_compute(struct oval_syschar_model *sysmod, struct oval_component *component,
 						      struct oval_collection *value_collection);

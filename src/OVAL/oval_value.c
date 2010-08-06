@@ -149,6 +149,18 @@ void oval_value_free(struct oval_value *value)
 	}
 }
 
+int oval_value_cast(struct oval_value *value, oval_datatype_t new_dt)
+{
+	oval_datatype_t old_dt;
+
+	old_dt = oval_value_get_datatype(value);
+
+	// todo: attempt a proper cast here
+	value->datatype = new_dt;
+
+	return 0;
+}
+
 /*
 void oval_value_set_datatype(struct oval_value *value,
 			     oval_datatype_t datatype)

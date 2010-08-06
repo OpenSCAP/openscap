@@ -162,6 +162,9 @@ int oval_syschar_model_compute_variable(struct oval_syschar_model *sysmod, struc
 
 int oval_probe_query_variable(oval_probe_session_t *sess, struct oval_variable *variable)
 {
+	oval_datatype_t var_dt;
+	struct oval_value_iterator *val_itr;
+
 	__attribute__nonnull__(variable);
 
 	if (variable->flag != SYSCHAR_FLAG_UNKNOWN)
@@ -176,6 +179,20 @@ int oval_probe_query_variable(oval_probe_session_t *sess, struct oval_variable *
 			       oval_variable_type_get_text(variable->type), oval_variable_get_id(variable));
 		return -1;
         }
+
+	var_dt = oval_variable_get_datatype(variable);
+
+	val_itr = oval_variable_get_values(variable);
+	while (oval_value_iterator_has_more(val_itr)) {
+		struct oval_value *val;
+
+		val = oval_value_iterator_next(val_itr);
+		if (oval_value_cast(val, var_dt) != 0) {
+			oval_value_iterator_free(val_itr);
+			return -1;
+		}
+	}
+	oval_value_iterator_free(val_itr);
 
 	return 0;
 }
