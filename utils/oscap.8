@@ -70,11 +70,11 @@ Specify whether the validated document is an OVAL definitions file, OVAL system 
 
 .SH XCCDF OPERATIONS
 .TP
-.B eval\fR [\fIoptions\fR] oval-definitions-file xccdf-file [\fIoval-files\fR]
+.B eval\fR [\fIoptions\fR] xccdf-file [\fIoval-definitions-files\fR]
 .RS
 Perform evaluation driven by XCCDF file and use OVAL as checking engine. Print result of each rule to standard output. oscap returns 0 if all rules pass. If there is an error during evaluation, the return code is 1. If there is at least one failed rule, oscap-scan finishes with return code 2.
 .PP
-You can also specify aditional OVAL files after xccdf-file.
+You should specify all required OVAL Definition files as last parameters.
 .PP
 .TP
 \fB\-\-profile PROFILE\fR
