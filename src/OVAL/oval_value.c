@@ -88,10 +88,10 @@ bool oval_value_get_boolean(struct oval_value * value)
 {
 	__attribute__nonnull__(value);
 
-	if (strcmp("false", (value)->text)
-	    || strcmp("0", (value)->text))
-		return true;
-	return false;
+	if (strcmp("false", (value)->text) == 0
+	    || strcmp("0", (value)->text) == 0)
+		return false;
+	return true;
 }
 
 float oval_value_get_float(struct oval_value *value)
