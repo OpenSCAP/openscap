@@ -62,7 +62,8 @@ nobase_pkgdata_DATA =	schemas/oval/5.5/independent-system-characteristics-schema
 			schemas/xccdf/1.1.4/xml.xsd \
 			schemas/xccdf/1.1.4/XMLSchema.dtd \
 			schemas/xccdf/1.1.4/datatypes.dtd \
-			xsl/xccdf-results-report.xsl
+			xsl/xccdf-results-report.xsl \
+			xsl/oscap-common.xsl
 
 EXTRA_DIST =	dist/fedora/openscap.spec \
 		dist/fedora/oscap-scan.sys \
@@ -117,7 +118,8 @@ EXTRA_DIST =	dist/fedora/openscap.spec \
 		schemas/xccdf/1.1.4/xml.xsd \
 		schemas/xccdf/1.1.4/XMLSchema.dtd \
 		schemas/xccdf/1.1.4/datatypes.dtd \
-		xsl/xccdf-results-report.xsl
+		xsl/xccdf-results-report.xsl \
+		xsl/oscap-common.xsl
 
 dist-hook: ChangeLog
 	cd $(distdir)/docs && doxygen Doxyfile
