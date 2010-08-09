@@ -85,6 +85,7 @@ char *oscap_find_file(const char *filename, int mode, const char *pathvar, const
     const char *path = NULL;
     if (pathvar != NULL) path = getenv(pathvar);
 	if (path == NULL || oscap_streq(path, "")) path = defpath;
+    else path = oscap_sprintf("%s:%s", path, defpath);
 
 	char *pathdup = oscap_strdup(path);
 	char **paths = oscap_split(pathdup, OSCAP_PATH_SEPARATOR);
