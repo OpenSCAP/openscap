@@ -132,7 +132,6 @@ int find_files(SEXP_t * spath, SEXP_t * sfilename, SEXP_t * behaviors,
 	setting->filename_is_nil = (SEXP_string_length(r0) == 0) ? true : false;
 	SEXP_free(r0);
 
-
 	assert(strlen(path) > 0);
 
 	/* Is there a '/' at the end of the path? */
@@ -158,11 +157,6 @@ int find_files(SEXP_t * spath, SEXP_t * sfilename, SEXP_t * behaviors,
 				if (probe_entobj_cmp(spath, r0) == OVAL_RESULT_TRUE) {
 					rc = find_files_recursion(rglobbuf.pathv[i], setting, max_depth, arg);
 
-					if (rc == 0) {	/* add path, no files found */
-						(*cb) (rglobbuf.pathv[i], NULL, arg);
-						rc++;
-					}
-
 					if (rc >= 0)
 						finds += rc;
 				}
@@ -174,11 +168,6 @@ int find_files(SEXP_t * spath, SEXP_t * sfilename, SEXP_t * behaviors,
 	} else {
 		if (probe_entobj_cmp(spath, r1) == OVAL_RESULT_TRUE) {
 			rc = find_files_recursion(path, setting, max_depth, arg);
-
-			if (rc == 0) {	/* add path, no files found */
-				(*cb) (path, NULL, arg);
-				rc++;
-			}
 
 			if (rc >= 0)
 				finds += rc;
@@ -222,6 +211,11 @@ static int find_files_recursion(const char *path, setting_t * setting, int depth
 	strcpy(path_new, path);
 	path_len = strlen(path);
 
+	if (setting->filename_is_nil) { /* we are only interested in directories */
+		rc++;
+		(setting->cb) (path, "", arg);
+	}
+
 	// Make sure new_path always has a '/' at the end
 	if (path_len > 1 && path_new[path_len-1] != '/') {
 		path_new[path_len] = '/';
@@ -245,7 +239,8 @@ static int find_files_recursion(const char *path, setting_t * setting, int depth
 				rc += tmp;
 		}
 
-		if (!S_ISDIR(st.st_mode)) {
+		if (!setting->filename_is_nil
+		    && !S_ISDIR(st.st_mode)) {
 			SEXP_t *sf;
 
 			sf = SEXP_string_newf("%s", pDirent->d_name);
@@ -254,11 +249,6 @@ static int find_files_recursion(const char *path, setting_t * setting, int depth
 				(setting->cb) (path, pDirent->d_name, arg);
 			}
 			SEXP_free(sf);
-		} else if (setting->filename_is_nil) { /* we are only interested in directories */
-			if (strncmp(pDirent->d_name, "..", 3) && strncmp(pDirent->d_name, ".", 2)) { /*  don't report these */
-				rc++;
-				(setting->cb) (path, pDirent->d_name, arg);
-			}
 		}
 	}
 
