@@ -63,6 +63,20 @@ struct oscap_module {
     oscap_option_func opt_parser;
 };
 
+// standard oscap CLI exit statuses
+enum oscap_exitcode {
+    OSCAP_OK             =   0, // successful exit
+    OSCAP_ERROR          =   1, // an error occured
+    OSCAP_FAIL           =   2, // a process (e.g. scan or validation) failed
+    OSCAP_ERR_FETCH      =   1, // cold not fetch input file (same as error for now)
+    OSCAP_BADARGS        = 100, // bad commandline arguments
+    OSCAP_BADMODULE      = 101, // unrecognized module
+    OSCAP_UNIMPL_MOD     = 110, // module functionality not implemented
+    OSCAP_UNIMPL         = 111, // functionality not implemented
+    // end of list
+    OSCAP_EXITCODES_END_ = 120  // any code returned shall not be higher than this
+};
+
 #ifdef ENABLE_CVSS
 struct cvss_metrics {
         cvss_access_vector_t ave;

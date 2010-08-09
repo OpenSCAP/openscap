@@ -163,9 +163,9 @@ static int oscap_print_submodules(struct oscap_module *module, FILE *out, const 
         for (struct oscap_module** sub = module->submodules; *sub != NULL; ++(sub))
             if (all || !(*sub)->hidden)
                 fprintf(out, "%s%s", (*sub)->name, delim);
-        return 0;
+        return OSCAP_OK;
     }
-    return 1;
+    return OSCAP_BADMODULE;
 }
 
 bool oscap_module_usage(struct oscap_module *module, FILE *out, const char *err, ...)
@@ -256,9 +256,9 @@ int oscap_module_call(struct oscap_action *action)
     if (action->module->func) {
         if (oscap_action_postprocess(action))
             return action->module->func(action);
-        else return 120;
+        else return OSCAP_ERR_FETCH;
     }
-    return 123;
+    return OSCAP_UNIMPL_MOD;
 }
 
 int oscap_module_process(struct oscap_module *module, int argc, char **argv)
@@ -266,7 +266,7 @@ int oscap_module_process(struct oscap_module *module, int argc, char **argv)
     assert(module != NULL);
     assert(argv != NULL);
 
-    int ret = 0;
+    int ret = OSCAP_OK;
     struct oscap_action action;
     oscap_action_init(&action);
     optind = 0;
@@ -286,7 +286,7 @@ int oscap_module_process(struct oscap_module *module, int argc, char **argv)
 
         if (module->opt_parser) {
             if (!module->opt_parser(argc, argv, &action)) {
-                ret = 120;
+                ret = OSCAP_BADARGS;
                 goto cleanup;
             }
             module = action.module; // module might have changed
@@ -303,12 +303,12 @@ int oscap_module_process(struct oscap_module *module, int argc, char **argv)
                 if (argv[optind] != NULL)
                     fprintf(stderr, "No such module: %s\n", argv[optind]);
                 else oscap_module_usage(old_mod, stderr, NULL);
-                ret = 121;
+                ret = OSCAP_BADMODULE;
             }
         }
         else {
             fprintf(stderr, "Module %s does not do anything\n", module->name);
-            ret = 122;
+            ret = OSCAP_UNIMPL_MOD;
             goto cleanup;
         }
     }

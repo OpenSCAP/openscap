@@ -163,7 +163,7 @@ int app_collect_oval(const struct oscap_action *action)
 		oval_probe_session_destroy(pb_sess);
 		oval_syschar_model_free(sys_model);
 		oval_definition_model_free(def_model);
-		return 1;
+		return OSCAP_ERROR;
 	}
 	oval_syschar_model_set_sysinfo(sys_model, sysinfo);
 	oval_sysinfo_free(sysinfo);
@@ -174,7 +174,7 @@ int app_collect_oval(const struct oscap_action *action)
 		oval_probe_session_destroy(pb_sess);
 		oval_syschar_model_free(sys_model);
 		oval_definition_model_free(def_model);
-		return 1;
+		return OSCAP_ERROR;
 	}
 
 	/* report */
@@ -185,7 +185,7 @@ int app_collect_oval(const struct oscap_action *action)
 	oval_syschar_model_free(sys_model);
 	oval_definition_model_free(def_model);
 
-	return 0;
+	return OSCAP_OK;
 }
 
 
@@ -193,7 +193,7 @@ int app_evaluate_oval(const struct oscap_action *action)
 {
 
 	struct oval_usr *usr = NULL;
-	int ret = 0;
+	int ret = OSCAP_OK;
 
 	struct oval_definition_model *def_model = oval_definition_model_import(action->f_oval);
 	oval_agent_session_t *sess = oval_agent_new_session(def_model, basename(action->f_oval));
@@ -201,7 +201,7 @@ int app_evaluate_oval(const struct oscap_action *action)
 	/* Import OVAL definition file */
 	if (oscap_err()) {
 		fprintf(stderr, "Error: (%d) %s\n", oscap_err_code(), oscap_err_desc());
-		return 1;
+		return OSCAP_ERROR;
 	}
 
 	/* Init usr structure */
@@ -221,7 +221,7 @@ int app_evaluate_oval(const struct oscap_action *action)
 
 	if (ret == -1 && (oscap_err())) {
 		fprintf(stderr, "Error: (%d) %s\n", oscap_err_code(), oscap_err_desc());
-		return 1;
+		return OSCAP_ERROR;
 	}
 	if (VERBOSE >= 0) {
 		fprintf(stdout, "====== RESULTS ======\n");
@@ -258,10 +258,10 @@ int app_evaluate_oval(const struct oscap_action *action)
 	if (usr != NULL) {
 		if ((usr->result_false == 0) && (usr->result_unknown == 0)) {
 			free(usr);
-			return 0;
+			return OSCAP_OK;
 		} else {
 			free(usr);
-			return 2;
+			return OSCAP_FAIL;
 		}
 	} else
 		return ret;
@@ -276,7 +276,7 @@ int app_evaluate_oval_id(const struct oscap_action *action) {
 	/* Import OVAL definition file */
 	if (oscap_err()) {
 		fprintf(stderr, "Error: (%d) %s\n", oscap_err_code(), oscap_err_desc());
-		return 1;
+		return OSCAP_ERROR;
 	}
 
 	/* evaluate */
@@ -285,7 +285,7 @@ int app_evaluate_oval_id(const struct oscap_action *action) {
 	/* check err */
 	if (oscap_err())  {
 		fprintf(stderr, "Error: (%d) %s\n", oscap_err_code(), oscap_err_desc());
-		return 1;
+		return OSCAP_ERROR;
 	}
 
 	/* print result */
@@ -319,9 +319,9 @@ int app_evaluate_oval_id(const struct oscap_action *action) {
 
 	/* return code */
 	if ((ret !=  OVAL_RESULT_FALSE) && (ret != OVAL_RESULT_UNKNOWN)) {
-			return 0; /* pass */
+			return OSCAP_OK; /* pass */
 	} else {
-			return 2; /* fail */
+			return OSCAP_FAIL; /* fail */
 	}
 }
 
@@ -357,7 +357,7 @@ bool getopt_oval(int argc, char **argv, struct oscap_action *action)
 		case OVAL_OPT_ID: action->id = optarg; break;
 		case OVAL_OPT_FILE_VERSION: action->file_version = optarg; break;
         case 0: break;
-		default: return false;
+		default: return oscap_module_usage(action->module, stderr, NULL);
 		}
 	}
 

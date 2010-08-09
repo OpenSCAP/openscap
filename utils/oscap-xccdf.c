@@ -140,7 +140,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	benchmark = xccdf_benchmark_import(action->f_xccdf);
         if(benchmark==NULL && oscap_err()) {
                 fprintf(stderr, "Error: (%d) %s\n", oscap_err_code(), oscap_err_desc());
-                return 1;
+                return OSCAP_ERROR;
         }
 
 	policy_model = xccdf_policy_model_new(benchmark);
@@ -159,7 +159,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 
 	if (policy == NULL) {
 		fprintf(stderr, "No Policy to evaluate. \n");
-		return 1;
+		return OSCAP_ERROR;
 	}
 
 	/* Register callback */
@@ -175,12 +175,12 @@ int app_evaluate_xccdf(const struct oscap_action *action)
                 struct oval_definition_model *tmp_def_model = oval_definition_model_import(action->urls_oval[i]);
 		if(tmp_def_model==NULL && oscap_err()) {
 			fprintf(stderr, "Error: (%d) %s\n", oscap_err_code(), oscap_err_desc());
-			return 1;
+			return OSCAP_ERROR;
 		}
                 struct oval_agent_session *tmp_sess = oval_agent_new_session(tmp_def_model, basename(action->urls_oval[i]));
 		if(tmp_sess==NULL && oscap_err()) {
 			fprintf(stderr, "Error: (%d) %s\n", oscap_err_code(), oscap_err_desc());
-			return 1;
+			return OSCAP_ERROR;
 		}
 	        xccdf_policy_model_register_engine_oval(policy_model, tmp_sess);
                 def_models[i] = tmp_def_model;
@@ -191,7 +191,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 
 	/* Perform evaluation */
 	struct xccdf_result *ritem = xccdf_policy_evaluate(policy);
-        if (ritem == NULL) return 1;
+        if (ritem == NULL) return OSCAP_ERROR;
 
 	/* Write results into XCCDF Test Result model */
 	xccdf_result_set_benchmark_uri(ritem, action->url_xccdf);
@@ -222,13 +222,13 @@ int app_evaluate_xccdf(const struct oscap_action *action)
     }
 
 	/* Get the result from TestResult model and decide if end with error or with correct return code */
-	int retval = 0;
+	int retval = OSCAP_OK;
 	struct xccdf_rule_result_iterator *res_it = xccdf_result_get_rule_results(ritem);
 	while (xccdf_rule_result_iterator_has_more(res_it)) {
 		struct xccdf_rule_result *res = xccdf_rule_result_iterator_next(res_it);
 		xccdf_test_result_type_t result = xccdf_rule_result_get_result(res);
 		if ((result == XCCDF_RESULT_FAIL) || (result == XCCDF_RESULT_UNKNOWN))
-			retval = 2;
+			retval = OSCAP_FAIL;
 	}
 	xccdf_rule_result_iterator_free(res_it);
 	/* Clear & End */
@@ -246,20 +246,20 @@ int app_xccdf_resolve(const struct oscap_action *action)
 {
 	if (action->f_xccdf == NULL) {
 		fprintf(stderr, "No input document specified!\n");
-		return 2;
+		return OSCAP_ERROR;
 	}
 	if (action->f_results == NULL) {
 		fprintf(stderr, "No output document filename specified!\n");
-		return 2;
+		return OSCAP_ERROR;
 	}
 
 	struct xccdf_benchmark *bench = xccdf_benchmark_import(action->f_xccdf);
         if(bench==NULL && oscap_err()) {
 	        fprintf(stderr, "Error: (%d) %s\n", oscap_err_code(), oscap_err_desc());
-	        return 2;
+	        return OSCAP_ERROR;
 	}
 
-	int ret = 1;
+	int ret = OSCAP_ERROR;
 
 	if (action->force) xccdf_benchmark_set_resolved(bench, false);
 	if (xccdf_benchmark_get_resolved(bench))
@@ -267,8 +267,8 @@ int app_xccdf_resolve(const struct oscap_action *action)
 	else {
 		if (xccdf_benchmark_resolve(bench)) {
 			if (xccdf_benchmark_export(bench, action->f_results))
-				ret = 0;
-			else ret = 2;
+				ret = OSCAP_OK;
+			else ret = OSCAP_ERROR;
 		} else fprintf(stderr, "Benchmark resolving failure (probably a dependency loop)!\n");
 	}
 
@@ -279,7 +279,7 @@ int app_xccdf_resolve(const struct oscap_action *action)
 
 static int xccdf_gen_report(const char *infile, const char *id, const char *outfile)
 {
-    int ret = 1;
+    int ret = OSCAP_ERROR;
 
     char result_id[strlen(id ? id : "") + 3];
     char ver[strlen(oscap_get_version()) + 3];
@@ -287,7 +287,7 @@ static int xccdf_gen_report(const char *infile, const char *id, const char *outf
     sprintf(ver, "'%s'", oscap_get_version());
     const char *params[] = { "result-id", result_id, "oscap-version", ver, NULL };
 
-    if (oscap_apply_xslt(infile, "xccdf-results-report.xsl", outfile, params)) ret = 0;
+    if (oscap_apply_xslt(infile, "xccdf-results-report.xsl", outfile, params)) ret = OSCAP_OK;
     else fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
 
     return ret;
@@ -325,7 +325,7 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 		case 2: action->file_version = optarg; break;
         case 4: action->f_report = optarg; break;
 		case 'f': action->force = true; break;
-		default: return false;
+		default: return oscap_module_usage(action->module, stderr, NULL);
 		}
 	}
 

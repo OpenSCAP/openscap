@@ -88,7 +88,7 @@ bool getopt_root(int argc, char **argv, struct oscap_action *action)
 		switch (c) {
 		case 'q': action->verbosity = -1; break;
 		case 'V': action->module = &OSCAP_VERSION_MODULE; break;
-        case '?': return false;
+        case '?': return oscap_module_usage(action->module, stderr, NULL);
 		}
 	}
     return true;
@@ -108,7 +108,7 @@ static int print_versions(const struct oscap_action *action)
 #ifdef ENABLE_CVSS
 	fprintf(stdout, "CVSS Version: \r\t\t%s\n", cvss_model_supported());
 #endif
-    return 0;
+    return OSCAP_OK;
 }
 
 int app_validate_xml(const struct oscap_action *action)
@@ -117,16 +117,16 @@ int app_validate_xml(const struct oscap_action *action)
 	if (!xml_file)
 		xml_file = action->f_xccdf;
 	if (!xml_file)
-		return 2;
+		return OSCAP_ERROR;
 
 	if (!oscap_validate_document
 	    (xml_file, action->doctype, action->file_version, (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
 		if (oscap_err()) {
 			fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
-			return 2;
+			return OSCAP_FAIL;
 		}
-		return 1;
+		return OSCAP_ERROR;
 	}
-	return 0;
+	return OSCAP_OK;
 }
 

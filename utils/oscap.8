@@ -59,7 +59,7 @@ Probe the system and evaluate specified definition from OVAL Definition file. Pr
 .TP
 .B validate-xml\fR [\fIoptions\fR] oval-file
 .RS
-Validate given OVAL file against a XML schema. Every found error is printed to the standard output. Return code is 0 if validation succeeds, 1 if the OVAL document is not valid, 2 if validation could not be performed due to some error.
+Validate given OVAL file against a XML schema. Every found error is printed to the standard output. Return code is 0 if validation succeeds, 1 if validation could not be performed due to some error, 2 if the OVAL document is not valid.
 .TP
 \fB\-\-version VER\fR
 Specify version of the specification the document shall conform to.
@@ -102,7 +102,7 @@ Force resolving XCCDF document even if it is already marked as resolved.
 .TP
 .B validate-xml\fR [\fIoptions\fR] xccdf-file
 .RS
-Validate given XCCDF file against a XML schema. Every found error is printed to the standard output. Return code is 0 if validation succeeds, 1 if the XCCDF document is not valid, 2 if validation could not be performed due to some error.
+Validate given XCCDF file against a XML schema. Every found error is printed to the standard output. Return code is 0 if validation succeeds, 1 if validation could not be performed due to some error, 2 if the XCCDF document is not valid.
 .TP
 \fB\-\-version VER\fR
 Specify version of the specification the document shall conform to.

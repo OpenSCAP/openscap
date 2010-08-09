@@ -118,7 +118,7 @@ int app_cvss_base(const struct oscap_action *action)
             action->cvss_metrics->aie, 
             &base_score, NULL, NULL);
     fprintf(stdout, "Base score: %f\n", base_score);
-    return 0;
+    return OSCAP_OK;
 }
 
 int app_cvss_temp(const struct oscap_action *action)
@@ -130,7 +130,7 @@ int app_cvss_temp(const struct oscap_action *action)
             action->cvss_metrics->base, 
             &temp_score);
     fprintf(stdout, "Temporal score: %f\n", temp_score);
-    return 0;
+    return OSCAP_OK;
 }
 
 int app_cvss_env(const struct oscap_action *action)
@@ -145,7 +145,7 @@ int app_cvss_env(const struct oscap_action *action)
             action->cvss_metrics->rle, action->cvss_metrics->rce,
             &temp_env);
     fprintf(stdout, "Environmental score: %f\n", temp_env);
-    return 0;
+    return OSCAP_OK;
 }
 
 bool getopt_cvss(int argc, char **argv, struct oscap_action *action)
@@ -293,7 +293,7 @@ bool getopt_cvss(int argc, char **argv, struct oscap_action *action)
 			base++;
 			action->cvss_metrics->base = atof(optarg);
 			break;
-		default: return false;
+		default: return oscap_module_usage(action->module, stderr, NULL);
 		}
 	}
 
