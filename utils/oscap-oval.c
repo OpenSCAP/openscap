@@ -33,6 +33,7 @@
 static int app_collect_oval(const struct oscap_action *action);
 static int app_evaluate_oval(const struct oscap_action *action);
 static int app_evaluate_oval_id(const struct oscap_action *action);
+static int app_oval_results_report(const struct oscap_action *action);
 static bool getopt_oval(int argc, char **argv, struct oscap_action *action);
 
 static struct oscap_module* OVAL_SUBMODULES[];
@@ -93,10 +94,23 @@ static struct oscap_module OVAL_COLLECT = {
     .func = app_collect_oval
 };
 
+static struct oscap_module OVAL_REPORT = {
+    .name = "generate-report",
+    .parent = &OSCAP_OVAL_MODULE,
+    .summary = "Generate a HTML report from OVAL results file",
+    .usage = "[options] oval-file.xml",
+    .help =
+        "Options:\n"
+        "   --output <file>\r\t\t\t\t - Write the HTML into file.",
+    .opt_parser = getopt_oval,
+    .func = app_oval_results_report
+};
+
 static struct oscap_module* OVAL_SUBMODULES[] = {
     &OVAL_COLLECT,
     &OVAL_EVAL,
     &OVAL_EVAL_ID,
+    &OVAL_REPORT,
     &OVAL_VALIDATE,
     NULL
 };
@@ -325,12 +339,29 @@ int app_evaluate_oval_id(const struct oscap_action *action) {
 	}
 }
 
+static int oval_gen_report(const char *infile, const char *outfile)
+{
+    int ret = OSCAP_ERROR;
+
+    const char *params[] = { NULL };
+
+    if (oscap_apply_xslt(infile, "oval-results-report.xsl", outfile, params)) ret = OSCAP_OK;
+    else fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
+
+    return ret;
+}
+
+static int app_oval_results_report(const struct oscap_action *action)
+{
+    return oval_gen_report(action->f_oval, action->f_results);
+}
 
 
 enum oval_opt {
     OVAL_OPT_RESULT_FILE = 1,
     OVAL_OPT_FILE_VERSION,
-    OVAL_OPT_ID
+    OVAL_OPT_ID,
+    OVAL_OPT_OUTPUT = 'o'
 };
 
 bool getopt_oval(int argc, char **argv, struct oscap_action *action)
@@ -342,11 +373,12 @@ bool getopt_oval(int argc, char **argv, struct oscap_action *action)
 	/* Command-options */
 	struct option long_options[] = {
 		{ "result-file",  1,                0, OVAL_OPT_RESULT_FILE            },
-		{ "id",  	  1,                0, OVAL_OPT_ID                     },
+		{ "id",           1,                0, OVAL_OPT_ID                     },
 		{ "file-version", 1,                0, OVAL_OPT_FILE_VERSION           },
 		{ "definitions",  0, &action->doctype, OSCAP_DOCUMENT_OVAL_DEFINITIONS },
 		{ "syschar",      0, &action->doctype, OSCAP_DOCUMENT_OVAL_SYSCHAR     },
 		{ "results",      0, &action->doctype, OSCAP_DOCUMENT_OVAL_RESULTS     },
+		{ "output",       1,                0, OVAL_OPT_OUTPUT                 },
 		{ 0, 0, 0, 0 }
 	};
 
@@ -354,6 +386,7 @@ bool getopt_oval(int argc, char **argv, struct oscap_action *action)
 	while ((c = getopt_long(argc, argv, "", long_options, NULL)) != -1) {
 		switch (c) {
 		case OVAL_OPT_RESULT_FILE: action->f_results = optarg; break;
+		case OVAL_OPT_OUTPUT: action->f_results = optarg; break;
 		case OVAL_OPT_ID: action->id = optarg; break;
 		case OVAL_OPT_FILE_VERSION: action->file_version = optarg; break;
         case 0: break;

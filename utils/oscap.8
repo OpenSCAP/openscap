@@ -51,7 +51,7 @@ Write OVAL Results into file.
 .RE
 
 .TP
-.B oval-id\fR [--result-file FILE] --id definition-id oval-definitions-file
+.B eval-id\fR [--result-file FILE] --id definition-id oval-definitions-file
 .RS
 Probe the system and evaluate specified definition from OVAL Definition file. Print results of evaluation to standard output.
 .RE
@@ -66,6 +66,14 @@ Specify version of the specification the document shall conform to.
 .TP
 \fB\-\-definitions\fR, \fB\-\-syschar\fR, \fB\-\-results\fR
 Specify whether the validated document is an OVAL definitions file, OVAL system characteristics file, or OVAL results file. Default: definitions.
+
+.RE
+.B generate-report\fR  [\fIoptions\fR] oval-results-file
+.RS
+Generate a formatted HTML page containing visualisation of an OVAL results file. Unless the --output option is specified it will be written to the standard output.
+.TP
+\fB\-\-output FILE\fR
+Write the report to this file instead of standard output.
 .RE
 
 .SH XCCDF OPERATIONS
@@ -112,10 +120,10 @@ Specify version of the specification the document shall conform to.
 .RS
 Generate a formatted HTML page containing results of a XCCDF Benchmark execution. Unless the --output option is specified it will be written to the standard output. ID of the TestResult element to visualise must be provided.
 .TP
-\fB\-\-result-id\fR
+\fB\-\-result-id ID\fR
 ID of the XCCDF TestResult from which the report will be generated.
 .TP
-\fB\-\-output\fR
+\fB\-\-output FILE\fR
 Write the report to this file instead of standard output.
 .RE
 
