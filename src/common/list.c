@@ -308,7 +308,12 @@ bool oscap_stringlist_add_string(struct oscap_stringlist* list, const char *str)
 	return oscap_list_add((struct oscap_list *) list, strdup(str));
 }
 
-inline static void oscap_stringlist_free(struct oscap_stringlist *list)
+struct oscap_stringlist * oscap_stringlist_new(void)
+{
+    return (struct oscap_stringlist *) oscap_list_new();
+}
+
+void oscap_stringlist_free(struct oscap_stringlist *list)
 {
 	oscap_list_free((struct oscap_list *) list, oscap_free);
 }

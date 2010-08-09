@@ -434,16 +434,14 @@ xccdf_policy_evaluate_cb(struct xccdf_policy * policy, const char * sysname, con
         if (cb == NULL) { /* No callback found - checking system not registered */
             oscap_seterr(OSCAP_EFAMILY_XCCDF, XCCDF_EUNKNOWNCB, 
                     "Unknown callback for given checking system. Set callback first");
+            oscap_iterator_free(cb_it);
             return XCCDF_RESULT_NOT_CHECKED;
         }
 
         struct xccdf_value_binding_iterator * binding_it = (struct xccdf_value_binding_iterator *) oscap_iterator_new(bindings);
 
-        /* Each callback has format: "bool callback(struct xccdf_policy_model * model, const char * href, const char * id, const char *id)" */
-        /* Don't proccess results here, tool should set them to Policy Model ad hoc */
         retval = cb->callback(policy, rule_id, content, href, binding_it, cb->usr);
 
-        /* Clear */
         if (binding_it != NULL) xccdf_value_binding_iterator_free(binding_it);
         if (retval != XCCDF_RESULT_NOT_CHECKED) break;
     }
@@ -816,6 +814,114 @@ static struct xccdf_flat_score * xccdf_item_get_flat_score(struct xccdf_item * i
 
     return score;
 }
+
+static bool xccdf_cmp_func(const char *s1, const char *s2)
+{
+    if (!oscap_strcmp(s1, s2)) return true;
+    else return false;
+}
+
+static struct oscap_stringlist * xccdf_check_get_files(struct xccdf_check * check)
+{
+    struct xccdf_check_iterator             * child_it;
+    struct xccdf_check                      * child;
+    struct xccdf_check_content_ref_iterator * content_it;
+    struct xccdf_check_content_ref          * content;
+    char                                    * href;
+    struct oscap_stringlist                 * names;
+    struct oscap_stringlist                 * sub_names;
+
+    names = oscap_stringlist_new();
+    if (xccdf_check_get_complex(check)) {
+        child_it = xccdf_check_get_children(check);
+        while (xccdf_check_iterator_has_more(child_it)) {
+            child = xccdf_check_iterator_next(child_it);
+            sub_names = xccdf_check_get_files(child);
+
+            struct oscap_string_iterator *name_it = oscap_stringlist_get_strings(sub_names);
+            while (oscap_string_iterator_has_more(name_it)) {
+                href = (char *) oscap_string_iterator_next(name_it);
+                if (!oscap_list_contains((struct oscap_list *) names, (void *) href, (oscap_cmp_func) xccdf_cmp_func))
+                    oscap_stringlist_add_string(names, href);
+            }
+            oscap_string_iterator_free(name_it);
+        }
+        xccdf_check_iterator_free(child_it);
+    } else {
+        content_it = xccdf_check_get_content_refs(check);
+        while (xccdf_check_content_ref_iterator_has_more(content_it)) {
+            content = xccdf_check_content_ref_iterator_next(content_it);
+            href = (char *) xccdf_check_content_ref_get_href(content);
+            if (!oscap_list_contains((struct oscap_list *) names, href, (oscap_cmp_func) xccdf_cmp_func))
+                oscap_stringlist_add_string(names, href);
+        }
+        xccdf_check_content_ref_iterator_free(content_it);
+    }
+
+    return names;
+}
+
+static struct oscap_stringlist * xccdf_item_get_files(struct xccdf_item * item)
+{
+
+    struct xccdf_item_iterator  * child_it;
+    struct xccdf_item           * child;
+    struct xccdf_check_iterator * check_it;
+    struct xccdf_check          * check;
+    struct oscap_stringlist     * names;
+    struct oscap_stringlist     * sub_names;
+    char                        * href;
+
+    xccdf_type_t itype = xccdf_item_get_type(item);
+    names = oscap_stringlist_new();
+
+    switch (itype) {
+        case XCCDF_RULE:
+            check_it = xccdf_rule_get_checks((struct xccdf_rule *) item);
+            while(xccdf_check_iterator_has_more(check_it)) {
+                check = xccdf_check_iterator_next(check_it);
+                sub_names = xccdf_check_get_files(check);
+
+                struct oscap_string_iterator *name_it = oscap_stringlist_get_strings(sub_names);
+                while (oscap_string_iterator_has_more(name_it)) {
+                    href = (char *) oscap_string_iterator_next(name_it);
+                    if (!oscap_list_contains((struct oscap_list *)names, href, (oscap_cmp_func) xccdf_cmp_func))
+                        oscap_stringlist_add_string(names, href);
+                }
+                oscap_string_iterator_free(name_it);
+            }
+            xccdf_check_iterator_free(check_it);
+            break;
+
+        case XCCDF_BENCHMARK:
+        case XCCDF_GROUP:
+            if (itype == XCCDF_GROUP) child_it = xccdf_group_get_content((const struct xccdf_group *)item);
+            else child_it = xccdf_benchmark_get_content((const struct xccdf_benchmark *)item);
+            while (xccdf_item_iterator_has_more(child_it)) {
+                    child = xccdf_item_iterator_next(child_it);
+                    sub_names = xccdf_item_get_files(child);
+
+                    struct oscap_string_iterator *name_it = oscap_stringlist_get_strings(sub_names);
+                    while (oscap_string_iterator_has_more(name_it)) {
+                        href = (char *) oscap_string_iterator_next(name_it);
+                        if (!oscap_list_contains((struct oscap_list *)names, href, (oscap_cmp_func) xccdf_cmp_func))
+                            oscap_stringlist_add_string(names, href);
+                    }
+                    oscap_string_iterator_free(name_it);
+            }
+            xccdf_item_iterator_free(child_it);
+        break;
+        
+        default: 
+            oscap_stringlist_free(names);
+            names = NULL;
+            break;
+    } 
+
+    return names;
+}
+
+
 
 
 /***************************************************************************/
@@ -1354,6 +1460,12 @@ struct xccdf_item * xccdf_policy_tailor_item(struct xccdf_policy * policy, struc
     }
     return new_item;
 }
+
+struct oscap_stringlist * xccdf_policy_model_get_files(struct xccdf_policy_model * policy_model)
+{
+    return xccdf_item_get_files((struct xccdf_item *) xccdf_policy_model_get_benchmark(policy_model));
+}
+
 
 
 void xccdf_policy_export_variables(struct xccdf_policy *policy, char *export_namespace, const char *file) {

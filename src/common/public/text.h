@@ -154,6 +154,10 @@ bool oscap_text_set_lang(struct oscap_text *text, const char *string);
 
 /// @memberof oscap_stringlist
 bool oscap_stringlist_add_string(struct oscap_stringlist* list, const char *str);
+/// @memberof oscap_stringlist
+struct oscap_stringlist * oscap_stringlist_new(void);
+/// @memberof oscap_stringlist
+void oscap_stringlist_free(struct oscap_stringlist *list);
 
 
 /************************************************************/
