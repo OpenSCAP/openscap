@@ -158,17 +158,16 @@
       <xsl:if test='cdf:set-value'>
         <h3 id='values'>Values</h3>
         <table>
-        <tr><th>Name</th><th>ID</th><th>Value</th></tr>
+        <tr><th>Name</th><!--<th>ID</th>--><th>Value</th></tr>
         <xsl:for-each select='cdf:set-value'>
-          <xsl:variable name='id' select='string(@idref)' />
           <tr>
             <td>
               <xsl:call-template name='ifelse'>
-                <xsl:with-param name='test' select='//cdf:Value[@id=$id]' />
-                <xsl:with-param name='true'><xsl:value-of select='//cdf:Value[@id=$id]/cdf:title[1]'/></xsl:with-param>
+                <xsl:with-param name='test' select='key("items",@idref)/cdf:title' />
+                <xsl:with-param name='true'><abbr title='ID: {@idref}'><xsl:value-of select='key("items",@idref)/cdf:title[1]'/></abbr></xsl:with-param>
+                <xsl:with-param name='false'><xsl:value-of select='@idref'/></xsl:with-param>
               </xsl:call-template>
             </td>
-            <td><xsl:value-of select='$id'/></td>
             <td><xsl:value-of select='.'/></td>
           </tr>
         </xsl:for-each>
@@ -212,10 +211,19 @@
         <xsl:with-param name='test' select='cdf:rule-result'/>
         <xsl:with-param name='true'>
           <table>
-            <tr><th>ID</th><th>result</th><th>more</th></tr>
+            <tr><th>Title</th><th>result</th><th>more</th></tr>
             <xsl:for-each select='cdf:rule-result'>
               <tr class='result-{string(cdf:result)}'>
-                <td class='id'><xsl:value-of select='@idref'/></td>
+                <td class='id'>
+                  <xsl:choose>
+                    <xsl:when test='key("items",@idref)/cdf:title'>
+                      <abbr title='ID: {@idref}'><xsl:value-of select='key("items",@idref)/cdf:title[1]'/></abbr>
+                    </xsl:when>
+                    <xsl:otherwise>
+                      <xsl:value-of select='@idref'/>
+                    </xsl:otherwise>
+                  </xsl:choose>
+                </td>
                 <td class='result'><strong><xsl:value-of select='cdf:result'/></strong></td>
                 <td class='link'><a href="#ruleresult-{generate-id(.)}">view</a></td>
               </tr>
@@ -378,7 +386,7 @@
 <xsl:template match='cdf:status' mode='rr'><p>Rule status: <strong><xsl:value-of select='.'/></strong></p></xsl:template>
 
 <xsl:template match='cdf:override' mode='rr'>
-  <li><p>Overriden on <xsl:apply-templates mode='date' select='@time'/>
+  <li><p>Overridden on <xsl:apply-templates mode='date' select='@time'/>
         <xsl:if test='@authority'> by <strong><xsl:value-of select='@authority'/></strong></xsl:if>
         from <span class="result-{cdf:old-result}"><strong><xsl:value-of select='cdf:old-result'/></strong></span>
         to <span class="result-{cdf:new-result}"><strong><xsl:value-of select='cdf:new-result'/></strong></span>.</p>
