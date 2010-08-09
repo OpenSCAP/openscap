@@ -177,7 +177,7 @@ static oval_pd_t *oval_pdtbl_get(oval_pdtbl_t * tbl, oval_subtype_t type)
 {
 	oval_pd_t **pdp;
 
-	pdp = oscap_bfind(tbl->memb, tbl->count, sizeof(oval_pd_t),
+	pdp = oscap_bfind(tbl->memb, tbl->count, sizeof(oval_pd_t *),
 			  &type, (int (*)(void *, void *))oval_pdtbl_typecmp);
 
 	return (pdp == NULL ? NULL : *pdp);
