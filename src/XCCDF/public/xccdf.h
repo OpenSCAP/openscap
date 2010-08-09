@@ -1651,6 +1651,10 @@ struct xccdf_result_iterator* xccdf_benchmark_get_results(const struct xccdf_ben
  * @memberof xccdf_benchmark
  */
 struct xccdf_value_iterator *xccdf_benchmark_get_values(const struct xccdf_benchmark *item);
+/// @memberof xccdf_benchmark
+bool xccdf_benchmark_set_lang(struct xccdf_benchmark *item, const char *newval);
+/// @memberof xccdf_benchmark
+const char *xccdf_benchmark_get_lang(const struct xccdf_benchmark *item);
 
 /**
  * Get a plain text by ID.

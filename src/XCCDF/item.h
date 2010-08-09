@@ -179,6 +179,7 @@ struct xccdf_benchmark_item {
 	char *style;
 	char *style_href;
 	char *metadata;
+	char *lang;
 
 	struct oscap_list *front_matter;
 	struct oscap_list *rear_matter;

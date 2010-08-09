@@ -946,6 +946,7 @@ struct xccdf_benchmark_item * xccdf_benchmark_item_clone(struct xccdf_item *pare
 	
 	clone->style = oscap_strdup(item->style);
 	clone->style_href = oscap_strdup(item->style_href);
+	clone->lang = oscap_strdup(item->lang);
 	
 	clone->rear_matter  = oscap_list_clone(item->rear_matter, (oscap_clone_func) oscap_text_clone);
 	clone->front_matter = oscap_list_clone(item->front_matter, (oscap_clone_func) oscap_text_clone);

@@ -94,6 +94,7 @@ bool xccdf_benchmark_parse(struct xccdf_item * benchmark, xmlTextReaderPtr reade
 	}
 	benchmark->sub.benchmark.style = xccdf_attribute_copy(reader, XCCDFA_STYLE);
 	benchmark->sub.benchmark.style_href = xccdf_attribute_copy(reader, XCCDFA_STYLE_HREF);
+    benchmark->sub.benchmark.lang = (char *) xmlTextReaderXmlLang(reader);
 	if (xccdf_attribute_has(reader, XCCDFA_RESOLVED))
 		benchmark->item.flags.resolved = xccdf_attribute_get_bool(reader, XCCDFA_RESOLVED);
 
@@ -199,6 +200,10 @@ xmlNode *xccdf_benchmark_to_dom(struct xccdf_benchmark *benchmark, xmlDocPtr doc
 		xmlNewProp(root_node, BAD_CAST "resolved", BAD_CAST "1");
 	else
 		xmlNewProp(root_node, BAD_CAST "resolved", BAD_CAST "0");
+
+    const char *xmllang = xccdf_benchmark_get_lang(benchmark);
+	if (xmllang)
+		xmlNewProp(root_node, BAD_CAST "xml:lang", BAD_CAST xmllang);
 
 	const char *style = xccdf_benchmark_get_style(benchmark);
 	if (style)
@@ -309,6 +314,7 @@ void xccdf_benchmark_free(struct xccdf_benchmark *benchmark)
 		oscap_free(bench->sub.benchmark.style);
 		oscap_free(bench->sub.benchmark.style_href);
 		oscap_free(bench->sub.benchmark.metadata);
+		oscap_free(bench->sub.benchmark.lang);
 		oscap_list_free(bench->sub.benchmark.front_matter, (oscap_destruct_func) oscap_text_free);
 		oscap_list_free(bench->sub.benchmark.rear_matter, (oscap_destruct_func) oscap_text_free);
 		oscap_list_free(bench->sub.benchmark.notices, (oscap_destruct_func) xccdf_notice_free);
@@ -326,6 +332,7 @@ void xccdf_benchmark_free(struct xccdf_benchmark *benchmark)
 XCCDF_ACCESSOR_STRING(benchmark, metadata)
 XCCDF_ACCESSOR_STRING(benchmark, style)
 XCCDF_ACCESSOR_STRING(benchmark, style_href)
+XCCDF_ACCESSOR_STRING(benchmark, lang)
 XCCDF_LISTMANIP_TEXT(benchmark, front_matter, front_matter)
 XCCDF_LISTMANIP_TEXT(benchmark, rear_matter, rear_matter)
 XCCDF_LISTMANIP(benchmark, notice, notices)
