@@ -22,10 +22,11 @@
 
 #include <string.h>
 #include "item.h"
+#include <text.h>
 #include "helpers.h"
 #include "xccdf_impl.h"
 #include "common/_error.h"
-#include <text.h>
+#include "common/debug_priv.h"
 
 #define XCCDF_SUPPORTED "1.1.4"
 
@@ -38,8 +39,12 @@ struct xccdf_backref {
 struct xccdf_benchmark *xccdf_benchmark_import(const char *file)
 {
 	xmlTextReaderPtr reader = xmlReaderForFile(file, NULL, 0);
-	if (!reader)
+	if (!reader) {
+                if(errno)
+                        oscap_seterr(OSCAP_EFAMILY_GLIBC, errno, strerror(errno));
+                oscap_dlprintf(DBG_E, "Unable to open file.\n");
 		return NULL;
+	}
 	while (xmlTextReaderRead(reader) == 1 && xmlTextReaderNodeType(reader) != 1) ;
 	struct xccdf_item *benchmark = XITEM(xccdf_benchmark_new());
 	xccdf_benchmark_parse(benchmark, reader);

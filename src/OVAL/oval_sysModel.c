@@ -311,23 +311,18 @@ int oval_syschar_model_import(struct oval_syschar_model *model, const char *file
 
 	int ret;
 
-	xmlDoc *doc = xmlParseFile(file);
-	if (doc == NULL) {
-		oscap_setxmlerr(xmlGetLastError());
-		return -1;
-	}
-
 	xmlTextReader *reader = xmlNewTextReaderFilename(file);
 	if (reader == NULL) {
-		oscap_setxmlerr(xmlGetLastError());
-		return -1;
+                if(errno)
+                        oscap_seterr(OSCAP_EFAMILY_GLIBC, errno, strerror(errno));
+                oscap_dlprintf(DBG_E, "Unable to open file.\n");
+                return -1;
 	}
 
 	xmlTextReaderRead(reader);
 	ret = ovalsys_parser_parse(model, reader, NULL);
-
 	xmlFreeTextReader(reader);
-	xmlFreeDoc(doc);
+
 	return ret;
 }
 

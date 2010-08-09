@@ -323,7 +323,7 @@ struct oval_definition_model * oval_definition_model_import(const char *file)
 {
         struct oval_definition_model *model = oval_definition_model_new();
         int ret = oval_definition_model_merge(model,file);
-        if (ret == -1) {
+        if (ret != 0) {
                 oval_definition_model_free(model);
                 model = NULL;
         }
@@ -335,20 +335,21 @@ int oval_definition_model_merge(struct oval_definition_model *model, const char 
 {
 	__attribute__nonnull__(model);
 
-	xmlTextReader *reader = xmlNewTextReaderFilename(file);
+	int ret;
 
-	int retcode = 0;
-	if (reader) {
-		if (xmlTextReaderRead(reader) > -1) {
-			retcode = ovaldef_parser_parse(model, reader, NULL);
-		}
-		xmlFreeTextReader(reader);
-	} else {
-		oscap_setxmlerr(xmlGetLastError());
+	xmlTextReader *reader = xmlNewTextReaderFilename(file);
+	if (reader == NULL) {
+		if(errno)
+			oscap_seterr(OSCAP_EFAMILY_GLIBC, errno, strerror(errno));
+		oscap_dlprintf(DBG_E, "Unable to open file.\n");
 		return -1;
 	}
 
-	return retcode;
+	xmlTextReaderRead(reader);
+	ret = ovaldef_parser_parse(model, reader, NULL);
+	xmlFreeTextReader(reader);
+
+	return ret;
 }
 
 struct oval_definition *oval_definition_model_get_definition(struct oval_definition_model *model, const char *key)

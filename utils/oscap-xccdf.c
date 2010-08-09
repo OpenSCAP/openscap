@@ -138,6 +138,11 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 
 	/* Load XCCDF model and XCCDF Policy model */
 	benchmark = xccdf_benchmark_import(action->f_xccdf);
+        if(benchmark==NULL && oscap_err()) {
+                fprintf(stderr, "Error: (%d) %s\n", oscap_err_code(), oscap_err_desc());
+                return 1;
+        }
+
 	policy_model = xccdf_policy_model_new(benchmark);
 
 	/* Get the first policy, just for prototype - if there is no Policy 
@@ -168,7 +173,15 @@ int app_evaluate_xccdf(const struct oscap_action *action)
             int i = 0;
             while (action->urls_oval[i] != NULL) {
                 struct oval_definition_model *tmp_def_model = oval_definition_model_import(action->urls_oval[i]);
+		if(tmp_def_model==NULL && oscap_err()) {
+			fprintf(stderr, "Error: (%d) %s\n", oscap_err_code(), oscap_err_desc());
+			return 1;
+		}
                 struct oval_agent_session *tmp_sess = oval_agent_new_session(tmp_def_model, basename(action->urls_oval[i]));
+		if(tmp_sess==NULL && oscap_err()) {
+			fprintf(stderr, "Error: (%d) %s\n", oscap_err_code(), oscap_err_desc());
+			return 1;
+		}
 	        xccdf_policy_model_register_engine_oval(policy_model, tmp_sess);
                 def_models[i] = tmp_def_model;
                 sessions[i] = tmp_sess;
@@ -241,9 +254,9 @@ int app_xccdf_resolve(const struct oscap_action *action)
 	}
 
 	struct xccdf_benchmark *bench = xccdf_benchmark_import(action->f_xccdf);
-	if (bench == NULL) {
-		fprintf(stderr, "Benchmark import failure!\n");
-		return 2;
+        if(bench==NULL && oscap_err()) {
+	        fprintf(stderr, "Error: (%d) %s\n", oscap_err_code(), oscap_err_desc());
+	        return 2;
 	}
 
 	int ret = 1;

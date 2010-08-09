@@ -333,29 +333,25 @@ static int _oval_variable_model_parse(struct oval_variable_model *model, xmlText
 
 struct oval_variable_model * oval_variable_model_import(const char *file)
 {
-	int return_code;
+	int ret;
 	struct oval_variable_model * model;
-	xmlDoc *doc = xmlParseFile(file);
-	if (doc == NULL) {
-		oscap_setxmlerr(xmlGetLastError());
-		return NULL;
-	}
+
 	xmlTextReader *reader = xmlNewTextReaderFilename(file);
 	if (reader == NULL) {
-		oscap_setxmlerr(xmlGetLastError());
-		return NULL;
+                if(errno)
+                        oscap_seterr(OSCAP_EFAMILY_GLIBC, errno, strerror(errno));
+                oscap_dlprintf(DBG_E, "Unable to open file.\n");
+                return NULL;
 	}
-	xmlTextReaderRead(reader);
 
+	xmlTextReaderRead(reader);
 	model = oval_variable_model_new();
-	return_code = _oval_variable_model_parse(model, reader, NULL);
-	if (return_code != 1) {
+	ret = _oval_variable_model_parse(model, reader, NULL);
+	if (ret != 1) {
 		oval_variable_model_free(model);
 		model = NULL;
-	}
-		
+	}		
 	xmlFreeTextReader(reader);
-	xmlFreeDoc(doc);
 
 	return model;
 }

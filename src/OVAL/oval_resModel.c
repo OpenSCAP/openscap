@@ -175,26 +175,18 @@ struct oval_result_directives *oval_results_model_import(struct oval_results_mod
 {
 	__attribute__nonnull__(model);
 
-	xmlDoc *doc = xmlParseFile(file);
-	if (doc == NULL) {
-		oscap_setxmlerr(xmlGetLastError());
-		return NULL;
-	}
-
+	struct oval_result_directives *directives;
 	xmlTextReader *reader = xmlNewTextReaderFilename(file);
 	if (reader == NULL) {
-		oscap_setxmlerr(xmlGetLastError());
-		return NULL;
+                if(errno)
+                        oscap_seterr(OSCAP_EFAMILY_GLIBC, errno, strerror(errno));
+                oscap_dlprintf(DBG_E, "Unable to open file.\n");
+                return NULL;
 	}
 
-	if (xmlTextReaderRead(reader) < 1) {
-		oscap_setxmlerr(xmlGetLastError());
-		return NULL;
-	}
-	struct oval_result_directives *directives = ovalres_parser_parse(model, reader, NULL);
-
+	xmlTextReaderRead(reader);
+	directives = ovalres_parser_parse(model, reader, NULL);
 	xmlFreeTextReader(reader);
-	xmlFreeDoc(doc);
 
 	return directives;
 }
