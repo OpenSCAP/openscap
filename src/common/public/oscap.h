@@ -139,6 +139,8 @@
  */
 void oscap_cleanup(void);
 
+/// Get version of the OpenSCAP library
+const char *oscap_get_version(void);
 
 
 /**

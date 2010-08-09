@@ -282,8 +282,10 @@ static int xccdf_gen_report(const char *infile, const char *id, const char *outf
     int ret = 1;
 
     char result_id[strlen(id ? id : "") + 3];
+    char ver[strlen(oscap_get_version()) + 3];
     sprintf(result_id, "'%s'", id);
-    const char *params[] = { "result-id", result_id, NULL };
+    sprintf(ver, "'%s'", oscap_get_version());
+    const char *params[] = { "result-id", result_id, "oscap-version", ver, NULL };
 
     if (oscap_apply_xslt(infile, "xccdf-results-report.xsl", outfile, params)) ret = 0;
     else fprintf(stderr, "ERROR: %s\n", oscap_err_desc());

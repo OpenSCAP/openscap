@@ -98,7 +98,7 @@ bool getopt_root(int argc, char **argv, struct oscap_action *action)
 static int print_versions(const struct oscap_action *action)
 {
 	fprintf(stdout,
-		"OSCAP util (oscap) 0.5.12\n" "Copyright 2009,2010 Red Hat Inc., Durham, North Carolina.\n" "\n");
+		"OSCAP util (oscap) %s\n" "Copyright 2009,2010 Red Hat Inc., Durham, North Carolina.\n\n", oscap_get_version());
 #ifdef ENABLE_XCCDF
 	fprintf(stdout, "OVAL Version: \r\t\t%s\n", oval_definition_model_supported());
 #endif

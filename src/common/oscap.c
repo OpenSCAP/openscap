@@ -27,6 +27,7 @@
 #include "list.h"
 #include "elements.h"
 #include "reporter_priv.h"
+#include "config.h"
 #include <libxml/xmlschemas.h>
 #include <libxslt/xslt.h>
 #include <libxslt/xsltInternals.h>
@@ -45,6 +46,8 @@ void oscap_cleanup(void)
     xsltCleanupGlobals();
 	xmlCleanupParser();
 }
+
+const char *oscap_get_version(void) { return VERSION; }
 
 #ifdef WIN32
 const char *OSCAP_OS_PATH_DELIM  = "\\";
