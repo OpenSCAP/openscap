@@ -323,7 +323,7 @@ struct oval_definition_model * oval_definition_model_import(const char *file)
 {
         struct oval_definition_model *model = oval_definition_model_new();
         int ret = oval_definition_model_merge(model,file);
-        if (ret != 0) {
+        if (ret != 1) {
                 oval_definition_model_free(model);
                 model = NULL;
         }
