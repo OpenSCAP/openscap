@@ -38,6 +38,8 @@
 #ifndef OSCAP_TEXT_H_
 #define OSCAP_TEXT_H_
 
+#include <stdbool.h>
+
 /**
  * @name Common language codes
  * @{
