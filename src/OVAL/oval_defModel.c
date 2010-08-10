@@ -514,7 +514,7 @@ struct oval_variable *oval_variable_get_new(struct oval_definition_model *model,
 	struct oval_variable *variable = oval_definition_model_get_variable(model, id);
 	if (variable == NULL) {
 		variable = oval_variable_new(model, id, type);
-	} else {
+	} else if (type != OVAL_VARIABLE_UNKNOWN) {
 		oval_variable_set_type(variable, type);
 	}
 	return variable;
