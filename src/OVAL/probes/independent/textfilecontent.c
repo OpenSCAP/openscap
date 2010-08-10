@@ -187,7 +187,6 @@ static SEXP_t *create_item(const char *path, const char *filename, char *pattern
                                  r3 = SEXP_number_newi_32(instance),
                                  "line", NULL,
                                  r4 = SEXP_string_newf("%s", pattern),
-                                 //r4 = SEXP_string_newf("%s", "asdf"),
                                  "text", NULL,
                                  r5 = SEXP_string_newf("%s", substrs[0]),
                                  NULL);
@@ -199,20 +198,6 @@ static SEXP_t *create_item(const char *path, const char *filename, char *pattern
 	}
 
 	return item;
-}
-
-static int report_missing(SEXP_t *ent)
-{
-	oval_operation_t op;
-        SEXP_t *r0;
-
-	op = SEXP_number_geti_32 (r0 = probe_ent_getattrval(ent, "operation"));
-        SEXP_free (r0);
-
-        if (op == OVAL_OPERATION_EQUALS)
-		return 1;
-	else
-		return 0;
 }
 
 struct pfdata {

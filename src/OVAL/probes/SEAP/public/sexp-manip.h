@@ -470,6 +470,8 @@ void       SEXP_listit_free (SEXP_it_t *it);
 #define SEXP_sublist_foreach(var, list, beg, end)                       \
         for (uint32_t OSCAP_CONCAT(i,__LINE__) = (beg); OSCAP_CONCAT(i,__LINE__) <= ((size_t)(end)) && ((var) = SEXP_list_nth (list, OSCAP_CONCAT(i,__LINE__))) != NULL; ++OSCAP_CONCAT(i,__LINE__), SEXP_free (var))
 
+#define SEXP_LIST_END (UINT32_MAX - 1)
+
 #endif /* __STDC_VERSION__ >= 199901L */
 
 /*

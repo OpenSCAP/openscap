@@ -289,7 +289,7 @@ static SEXP_t *probe_set_apply_filters(SEXP_t *cobj, SEXP_t *filters)
 		SEXP_list_foreach(filter, filters) {
 			ste_res = SEXP_list_new(NULL);
 
-			SEXP_sublist_foreach(felm, filter, 2, -1) {
+			SEXP_sublist_foreach(felm, filter, 2, SEXP_LIST_END) {
 				elm_res = SEXP_list_new(NULL);
 
 				elm_name = probe_ent_getname(felm);
@@ -883,7 +883,7 @@ static int probe_varref_create_ctx(const SEXP_t * probe_in, SEXP_t * varrefs, st
 		ent_name = SEXP_list_join(r3, r0);
 		SEXP_vfree(r0, r1, r2, r3, NULL);
 
-		SEXP_sublist_foreach(varref, varrefs, 4, -1) {
+		SEXP_sublist_foreach(varref, varrefs, 4, SEXP_LIST_END) {
 			r0 = SEXP_list_first(varref);
 			if (!SEXP_string_cmp(vid, r0)) {
 				break;

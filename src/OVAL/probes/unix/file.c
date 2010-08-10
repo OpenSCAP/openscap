@@ -138,29 +138,41 @@ static int file_cb (const char *p, const char *f, void *ptr)
                                         r4 = SEXP_string_newf ("%hu", st.st_uid),
 
                                         "a_time", NULL,
-                                        r5 = SEXP_string_newf ("%u",
+                                        r5 = SEXP_string_newf (
 #if defined(OS_FREEBSD)
-                                                               st.st_atimespec.tv_sec
+# if (__STDC_VERSION__ >= 199901L)
+						               "%jd", (intmax_t) st.st_atimespec.tv_sec
+# else
+							       "%lld", (unsigned long long) st.st_atimespec.tv_sec
+# endif
 #elif defined(OS_LINUX) || defined(OS_SOLARIS)
-                                                               (unsigned int)st.st_atim.tv_sec
+                                                               "%u", (unsigned int)st.st_atim.tv_sec
 #endif
                                                 ),
 
                                         "c_time", NULL,
-                                        r6 = SEXP_string_newf ("%u",
+                                        r6 = SEXP_string_newf (
 #if defined(OS_FREEBSD)
-                                                               st.st_ctimespec.tv_sec
+# if (__STDC_VERSION__ >= 199901L)
+						               "%jd", (intmax_t) st.st_ctimespec.tv_sec
+# else
+							       "%lld", (unsigned long long) st.st_ctimespec.tv_sec
+# endif
 #elif defined(OS_LINUX) || defined(OS_SOLARIS)
-                                                               (unsigned int)st.st_ctim.tv_sec
+                                                               "%u", (unsigned int)st.st_ctim.tv_sec
 #endif
                                                 ),
 
                                         "m_time", NULL,
-                                        r7 = SEXP_string_newf ("%u",
+                                        r7 = SEXP_string_newf (
 #if defined(OS_FREEBSD)
-                                                               st.st_ctimespec.tv_sec
+# if (__STDC_VERSION__ >= 199901L)
+						               "%jd", (intmax_t) st.st_mtimespec.tv_sec
+# else
+							       "%lld", (unsigned long long) st.st_mtimespec.tv_sec
+# endif
 #elif defined(OS_LINUX) || defined(OS_SOLARIS)
-                                                               (unsigned int)st.st_ctim.tv_sec
+                                                               "%u", (unsigned int)st.st_mtim.tv_sec
 #endif
                                                 ),
 

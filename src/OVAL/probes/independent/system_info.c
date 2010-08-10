@@ -143,7 +143,7 @@ leave1:
 
 #else
 
-int get_ifs(SEXP_t *item)
+static int get_ifs(SEXP_t *item)
 {
         /* TODO */
 

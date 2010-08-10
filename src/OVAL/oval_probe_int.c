@@ -171,12 +171,11 @@ static struct oval_syschar *oval_probe_variable_eval(struct oval_object *obj, ov
         struct oval_syschar_model    *sys_model;
 
 	var = oval_probe_variable_objgetvar(obj);
+        sys_model = oval_probe_session_getmodel(sess);
 
 	if (var == NULL) {
 		goto fail;
 	}
-
-        sys_model = oval_probe_session_getmodel(sess);
 
         if (oval_probe_query_variable(sess, var) != 0)
 		goto fail;

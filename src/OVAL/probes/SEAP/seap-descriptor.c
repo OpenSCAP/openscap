@@ -102,7 +102,7 @@ int SEAP_desc_del (SEAP_desctable_t *sd_table, int sd)
         if (sd_table->tree == NULL)
                 return (-1);
 
-        if (rbt_i32_del(sd_table->tree, sd, (void **)&dsc) != 0)
+        if (rbt_i32_del(sd_table->tree, sd, (void *)&dsc) != 0)
                 return (-1);
 
         bitmap_unset(sd_table->bmap, sd);
@@ -149,7 +149,7 @@ SEAP_desc_t *SEAP_desc_get (SEAP_desctable_t *sd_table, int sd)
                 return (NULL);
         }
 
-        if (rbt_i32_get(sd_table->tree, sd, (void **)&dsc) != 0) {
+        if (rbt_i32_get(sd_table->tree, sd, (void *)&dsc) != 0) {
                 errno = EBADF;
                 return (NULL);
         }

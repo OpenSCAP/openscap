@@ -323,7 +323,7 @@ int oval_sysitem_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *
 			oval_sysent_iterator_next(items);
 		oval_sysent_iterator_free(items);
 		numchars = numchars + sprintf(message + numchars, "\n    sysitem->items.length  = %d", numItems);
-		oscap_dprintf(message);	/* TODO: make this code in one string ^ */
+		oscap_dprintf(message);	// TODO: make this code in one string ^ */
 	} else {
 		char *tagnm = (char *)xmlTextReaderLocalName(reader);
 		char *namespace = (char *)xmlTextReaderNamespaceUri(reader);

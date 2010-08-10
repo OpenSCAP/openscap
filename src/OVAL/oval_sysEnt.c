@@ -279,7 +279,7 @@ int oval_sysent_parse_tag(xmlTextReaderPtr reader,
 			numchars =
 			    numchars + sprintf(message + numchars, "\n    sysent->value    = %s",
 					       oval_sysent_get_value(sysent));
-			oscap_dprintf("DEBUG: %s", message);	/* TODO: Make this as string ^ */
+			oscap_dprintf("DEBUG: %s", message);	// TODO: Make this as string ^ */
 			(*consumer) (sysent, client);
 		}
 	}

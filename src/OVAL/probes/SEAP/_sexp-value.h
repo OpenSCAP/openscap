@@ -51,7 +51,7 @@ typedef struct {
         SEXP_valtype_t type;
 } SEXP_val_t;
 
-#define SEXP_VALP_ALIGN sizeof (void *)
+#define SEXP_VALP_ALIGN (4 > sizeof(void *) ? 4 : sizeof(void *))
 #define SEXP_VALP_MASK  (UINTPTR_MAX << 2)
 #define SEXP_VALT_MASK  3
 #define SEXP_VALP_HDR(p) ((SEXP_valhdr_t *)(((uintptr_t)(p)) & SEXP_VALP_MASK))
@@ -116,7 +116,7 @@ int       SEXP_rawval_lblk_cb   (uintptr_t lblkp, int  (*func) (SEXP_t *, void *
 void      SEXP_rawval_lblk_free (uintptr_t lblkp, void (*func) (SEXP_t *));
 void      SEXP_rawval_lblk_free1 (uintptr_t lblkp, void (*func) (SEXP_t *));
 
-#define SEXP_LBLK_ALIGN 16
+#define SEXP_LBLK_ALIGN (16 > sizeof(void *) ? 16 : sizeof(void *))
 #define SEXP_LBLKP_MASK (UINTPTR_MAX << 4)
 #define SEXP_LBLKS_MASK 0x0f
 

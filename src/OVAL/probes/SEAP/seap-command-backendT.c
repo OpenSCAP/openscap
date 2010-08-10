@@ -48,7 +48,7 @@ static SEAP_cmdrec_t *Ttable_get (Ttable_t *t, SEAP_cmdcode_t c)
 {
         SEAP_cmdrec_t *r = NULL;
 
-        rbt_i32_get(t, (int32_t)c, (void **)&r);
+        rbt_i32_get(t, (int32_t)c, (void *)&r);
 
         return (r);
 }
@@ -73,7 +73,7 @@ int  SEAP_cmdtbl_backendT_del (SEAP_cmdtbl_t *t, SEAP_cmdcode_t c)
 {
         SEAP_cmdrec_t *tr = NULL;
 
-        if (rbt_i32_del((Ttable_t*)t->table, (int32_t)c, (void **)&tr) != 0)
+        if (rbt_i32_del((Ttable_t*)t->table, (int32_t)c, (void *)&tr) != 0)
                 return (-1);
 
         SEAP_cmdrec_free(tr);
