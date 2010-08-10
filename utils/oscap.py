@@ -25,6 +25,7 @@
 
 from openscap_api import *
 import sys, getopt, string
+import os.path
 
 VERBOSE = 0
 LINE_LEN = 80
@@ -90,10 +91,17 @@ class XCCDF_Handler(object):
         self.action = self.__get_opts(args)
         if self.action == None: return
 
-        self.def_model    = oval.definition_model_import(self.action.f_oval)
+        self.models = []
+        for f_oval in self.action.f_ovals:
+            self.models.append({"name":os.path.basename(f_oval), 
+                                "def_model": oval.definition_model_import(f_oval)})
+
         self.benchmark    = xccdf.benchmark_import(self.action.f_xccdf)
         assert self.benchmark.instance != None, "Benchmark loading failed: %s" % (self.action.f_xccdf,)
-        self.sess         = oval.agent.new_session(self.def_model)
+
+        for model in self.models:
+            model["session"] = oval.agent.new_session(model["def_model"], model["name"])
+
         self.policy_model = xccdf.policy_model(self.benchmark)
         self.__set_policy(self.action.profile)
 
@@ -110,7 +118,7 @@ class XCCDF_Handler(object):
         else: raise AttributeError("Bad XCCDF operation '%s'" % (arguments[0],))
 
         try:
-            opts, args = getopt.getopt(arguments[1:], "-h", ["help", "result-file=", "xccdf-profile=", "file-version="])
+            opts, args = getopt.getopt(arguments[1:], "-h", ["help", "result-file=", "profile=", "xccdf-profile=", "file-version="])
         except getopt.GetoptError, err:
             # print help information and exit:
             print str(err) # will print something like "option -a not recognized"
@@ -122,16 +130,18 @@ class XCCDF_Handler(object):
                 sys.exit(0)
             elif opt == "--result-file":
                 action.f_results = arg
-            elif opt == "--xccdf-profile":
+            elif opt in ["--xccdf-profile", "--profile"]:
                 action.profile = arg
             elif opt == "--file-version":
                 action.file_version = arg
             else:
                 assert False, "unhandled option %s" % (opt,)
 
-        if len(args) != 2: raise AttributeError("Need exactly 2 mandatory parameters: XCCDF file and OVAL file (%s given)" %(len(args)))
-        action.f_oval = args[0]
-        action.f_xccdf = args[1]
+        if len(args) < 1: raise AttributeError("Need at least XCCDF file (%s parameters given)" %(len(args)))
+        action.f_xccdf = args[0]
+        action.f_ovals = []
+        for arg in args[1:]:
+            action.f_ovals.append(arg)
         # TODO Check files
 
         return action
@@ -168,7 +178,7 @@ class XCCDF_Handler(object):
         if id != None:
             result.profile = id
 
-        oval.agent_export_sysinfo_to_xccdf_result(self.sess, result)
+        oval.agent_export_sysinfo_to_xccdf_result(self.models[0]["session"], result)
 
         model_list = self.benchmark.models
         for model in  model_list:
@@ -179,7 +189,8 @@ class XCCDF_Handler(object):
     def __evaluate(self, policy_id=None):
         if policy_id != None: self.__set_policy(policy_id)
         self.policy_model.register_output_callback(self.__callback, None)
-        self.policy_model.register_engine_oval(self.sess)
+        for model in self.models:
+            self.policy_model.register_engine_oval(model["session"])
         self.result = self.policy.evaluate()
 
         return self.result
