@@ -53,11 +53,12 @@ probe_filemd5_SOURCES= independent/filemd5.c
 probe_filemd5_CFLAGS=
 probe_filemd5_LDFLAGS= crapi/libcrapi.la
 
+if HAVE_ODBX
 pkglibexec_PROGRAMS += probe_sql
 probe_sql_SOURCES= independent/sql.c
 probe_sql_CFLAGS= @libodbx_cflags@
 probe_sql_LDFLAGS= @libodbx_libs@
-
+endif
 endif
 
 if WANT_PROBES_UNIX

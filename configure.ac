@@ -555,12 +555,21 @@ AC_CHECK_LIB(
   [odbx_init],
   [libodbx_cflags=`pkg-config opendbx --cflags`
    libodbx_libs=`pkg-config opendbx --libs`
+   have_odbx=yes
   ],
-  [AC_MSG_FAILURE([OpenDBX library is missing])],
+  [AC_MSG_NOTICE([OpenDBX library is missing])],
   [`pkg-config opendbx --libs`]
 )
 AC_SUBST(libodbx_cflags)
 AC_SUBST(libodbx_libs)
+fi
+
+sql_probe_enabled=no
+
+if test "$probes_independent" = "yes"; then
+   if test "$have_odbx" = "yes"; then
+      sql_probe_enabled=yes
+   fi
 fi
 
 if test "$debug" = "yes"; then
@@ -604,6 +613,7 @@ AM_CONDITIONAL([ENABLE_PROBE_RPMINFO44], test "$have_librpm44" = yes)
 AM_CONDITIONAL([ENABLE_PROBE_DPKGINFO], test "$have_libapt_pkg" = yes)
 AM_CONDITIONAL([WANT_BINDINGS], test "$bindings" = yes)
 AM_CONDITIONAL([ENABLE_VALGRIND_TESTS], test "$vgcheck" = yes)
+AM_CONDITIONAL([HAVE_ODBX], test "$have_odbx" = yes)
 
 AC_CONFIG_FILES([Makefile
                  src/Makefile
@@ -644,7 +654,7 @@ echo "  filehash probe:              $probes_independent"
 echo "  filemd5 probe:               $probes_independent"
 echo "  textfilecontent probe:       $probes_independent"
 echo "  textfilecontent54 probe:     $probes_independent"
-echo "  sql probe                    $probes_independent"
+echo "  sql probe                    $sql_probe_enabled"
 echo "  xmlfilecontent probe:        $probes_independent"
 echo ""
 
