@@ -318,11 +318,14 @@ static int rglob(const char *pattern, rglob_t * result)
 	regex_t re;
 
 	/* check pattern */
-	if (!pattern || pattern[0] != '/')
+	if (!pattern)
 		return 1;
 
 	/* get no regexp portion from pattern to path */
 	tmp_ptr = tmp = strdup(pattern);
+	if (tmp[0] == '^')
+		tmp++;
+
 	for (;; tmp = NULL) {
 		token = strtok_r(tmp, "/", &saveptr);
 		if (token == NULL)
