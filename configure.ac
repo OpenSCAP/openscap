@@ -546,6 +546,23 @@ if test "$ssp" = "yes"; then
    GCC_STACK_PROTECT_CXX
 fi
 
+if test "$probes_independent" = "yes"; then
+#
+# OpenDBX
+#
+AC_CHECK_LIB(
+  [opendbx],
+  [odbx_init],
+  [libodbx_cflags=`pkg-config opendbx --cflags`
+   libodbx_libs=`pkg-config opendbx --libs`
+  ],
+  [AC_MSG_FAILURE([OpenDBX library is missing])],
+  [`pkg-config opendbx --libs`]
+)
+AC_SUBST(libodbx_cflags)
+AC_SUBST(libodbx_libs)
+fi
+
 if test "$debug" = "yes"; then
    CFLAGS="$CFLAGS $CFLAGS_DEBUGGING"
 else
@@ -627,6 +644,7 @@ echo "  filehash probe:              $probes_independent"
 echo "  filemd5 probe:               $probes_independent"
 echo "  textfilecontent probe:       $probes_independent"
 echo "  textfilecontent54 probe:     $probes_independent"
+echo "  sql probe                    $probes_independent"
 echo "  xmlfilecontent probe:        $probes_independent"
 echo ""
 
