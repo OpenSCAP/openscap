@@ -490,7 +490,8 @@ static struct oscap_list * xccdf_policy_check_get_value_bindings(struct xccdf_po
             
             const struct xccdf_value_instance * val = xccdf_value_get_instance_by_selector(value, selector);
             if (val == NULL) {
-                oscap_seterr(OSCAP_EFAMILY_XCCDF, XCCDF_EVALUE, "Value instance does not exist");
+                oscap_seterr(OSCAP_EFAMILY_XCCDF, XCCDF_EVALUE, "Value instance does not exist\n");
+                oscap_dlprintf(DBG_E, "Attempt to get non-existent selector \"%s\" from variable \"%s\"\n", selector, xccdf_value_get_id(value));
                 return NULL;
             }
             binding->value = xccdf_value_instance_get_value(val);
@@ -540,7 +541,8 @@ static int xccdf_policy_check_evaluate(struct xccdf_policy * policy, struct xccd
             content_it = xccdf_check_get_content_refs(check);
             system_name = xccdf_check_get_system(check);
             bindings = xccdf_policy_check_get_value_bindings(policy, xccdf_check_get_exports(check));
-            if (bindings == NULL) return -1;
+            if (bindings == NULL)
+                return XCCDF_RESULT_UNKNOWN;
             while (xccdf_check_content_ref_iterator_has_more(content_it)) {
                 content = xccdf_check_content_ref_iterator_next(content_it);
                 content_name = xccdf_check_content_ref_get_name(content);
