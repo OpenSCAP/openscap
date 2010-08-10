@@ -781,7 +781,7 @@ static oval_result_t eval_item(struct oval_syschar_model *syschar_model, struct 
 		char *state_entity_name;
 		struct oval_value *state_entity_val;
 		char *state_entity_val_text = NULL;
-		oval_datatype_t state_entity_val_datatype;
+		oval_datatype_t state_entity_val_datatype = OVAL_DATATYPE_UNKNOWN;
 		oval_operation_t state_entity_operation;
 		oval_check_t entity_check;
 		struct oval_variable *state_entity_var;

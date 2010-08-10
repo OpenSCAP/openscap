@@ -373,6 +373,7 @@ static oval_result_t _oval_result_criteria_node_result(struct oval_result_criter
 			result = oval_result_definition_eval(extends);
 		} break;
 	default:
+		abort ();
 		break;
 	}
 
