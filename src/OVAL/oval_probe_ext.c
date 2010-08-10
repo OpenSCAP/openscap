@@ -144,7 +144,7 @@ static int oval_pdtbl_pdcmp(const oval_pd_t **a, const oval_pd_t **b)
 
 static int oval_pdtbl_typecmp(oval_subtype_t *a, oval_pd_t **b)
 {
-	assume_d(*a != NULL, -1);
+	assume_d(a != NULL, -1);
 	assume_d(*b != NULL, -1);
         return (*a - (*b)->subtype);
 }
