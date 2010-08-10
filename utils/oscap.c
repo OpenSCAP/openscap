@@ -70,7 +70,9 @@ struct oscap_module OSCAP_VERSION_MODULE = {
 
 int main(int argc, char **argv)
 {
-    return oscap_module_process(&OSCAP_ROOT_MODULE, argc, argv);
+    int ret = oscap_module_process(&OSCAP_ROOT_MODULE, argc, argv);
+    oscap_cleanup();
+    return ret;
 }
 
 bool getopt_root(int argc, char **argv, struct oscap_action *action)
