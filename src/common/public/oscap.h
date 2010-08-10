@@ -131,6 +131,17 @@
 
 
 /**
+ * Initialize OpenSCAP library.
+ *
+ * This is currently needed only in multithreaded applications
+ * (needs to be called before any child threads are spawned)
+ * or applications using the XSLT facility w/ EXSLT extensions.
+ * However, it is a good practice to call this function
+ * always at the beginning of the program execution.
+ */
+void oscap_init(void);
+
+/**
  * Release library internal caches.
  *
  * This function should be called once you finish working with

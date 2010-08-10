@@ -41,6 +41,13 @@
 #include <unistd.h>
 #endif
 
+void oscap_init(void)
+{
+    xmlInitParser();
+    xsltInit();
+    exsltRegisterAll();
+}
+
 void oscap_cleanup(void)
 {
     xsltCleanupGlobals();
@@ -220,8 +227,6 @@ bool oscap_apply_xslt(const char *xmlfile, const char *xsltfile, const char *out
     xsltStylesheetPtr cur = NULL;
     xmlDocPtr doc = NULL, res = NULL;
     FILE *f = NULL;
-
-    exsltRegisterAll();
 
     if (xsltpath == NULL) {
         oscap_seterr(OSCAP_EFAMILY_OSCAP, 0, "XSLT file to by used by the transformation was not found.");

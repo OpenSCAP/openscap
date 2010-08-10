@@ -70,6 +70,7 @@ struct oscap_module OSCAP_VERSION_MODULE = {
 
 int main(int argc, char **argv)
 {
+    oscap_init();
     int ret = oscap_module_process(&OSCAP_ROOT_MODULE, argc, argv);
     oscap_cleanup();
     return ret;
