@@ -89,6 +89,14 @@ SEXP_t *oval_value_to_sexp(struct oval_value *val, oval_datatype_t dtype)
 	case OVAL_DATATYPE_BOOLEAN:
 		val_sexp = SEXP_number_newb(oval_value_get_boolean(val));
 		break;
+	case OVAL_DATATYPE_BINARY:
+	case OVAL_DATATYPE_FILESET_REVISION:
+	case OVAL_DATATYPE_IOS_VERSION:
+		// todo:
+		oscap_dlprintf(DBG_E, "Unsupported datatype: %s.\n", dtype);
+		oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "Unsupported datatype");
+		val_sexp = NULL;
+		break;
 	default:
 		oscap_dlprintf(DBG_E, "Unknown datatype: %s.\n", dtype);
 		oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "Unknown datatype");

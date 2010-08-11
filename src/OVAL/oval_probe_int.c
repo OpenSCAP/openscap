@@ -197,22 +197,25 @@ static struct oval_syschar *oval_probe_variable_eval(struct oval_object *obj, ov
                 SEXP_free(r0);
 
                 while (oval_value_iterator_has_more(vit)) {
+			oval_datatype_t dtype;
+
                         val = oval_value_iterator_next(vit);
 
-                        if (oval_value_get_datatype(val) == OVAL_DATATYPE_STRING) {
-                                val_sexp = oval_value_to_sexp(val, OVAL_DATATYPE_STRING);
-                                assume_d(val_sexp != NULL, -1);
+			oval_value_cast(val, OVAL_DATATYPE_STRING);
 
-                                item = probe_item_creat("variable_item", NULL,
-                                                        "value", NULL, val_sexp,
-                                                        NULL);
-                                /* Add shared entity */
-                                SEXP_list_add(item, vrent);
+			dtype = oval_value_get_datatype(val);
+			val_sexp = oval_value_to_sexp(val, dtype);
+			assume_d(val_sexp != NULL, -1);
 
-                                /* Add item to the item list */
-                                SEXP_list_add(items, item);
-                                SEXP_vfree(item, val_sexp, NULL);
-                        }
+			item = probe_item_creat("variable_item", NULL,
+						"value", NULL, val_sexp,
+						NULL);
+			/* Add shared entity */
+			SEXP_list_add(item, vrent);
+
+			/* Add item to the item list */
+			SEXP_list_add(items, item);
+			SEXP_vfree(item, val_sexp, NULL);
                 }
 
                 oval_value_iterator_free(vit);
