@@ -56,13 +56,13 @@ static void __oscap_debuglog_close(void)
         fclose(__debuglog_fp);
 }
 
-static char *__oscap_path_rstrip(char *path, int num)
+static const char *__oscap_path_rstrip(const char *path, int num)
 {
 	register size_t len;
 	register char  *res;
 
 	len = strlen(path);
-	res = path;
+	res = (char *)path;
 
 	for (len = strlen(path); len > 0; --len) {
 		if (path[len - 1] == PATH_SEPARATOR)
@@ -77,7 +77,7 @@ static char *__oscap_path_rstrip(char *path, int num)
 static void __oscap_vdlprintf(int level, const char *file, const char *fn, size_t line, const char *fmt, va_list ap)
 {
 	char  l;
-	char *f;
+	const char *f;
 
 	__LOCK_FP;
 
@@ -155,8 +155,8 @@ static void __oscap_vdlprintf(int level, const char *file, const char *fn, size_
 	}
 #if defined(OSCAP_THREAD_SAFE)
 	/* XXX: non-portable usage of pthread_t */
-	fprintf(__debuglog_fp, "(%u:%u) [%c:%s:%zu:%s] ", (unsigned int) getpid(),
-		(unsigned int) pthread_self(), l, f, line, fn);
+	fprintf(__debuglog_fp, "(%u:%llx) [%c:%s:%zu:%s] ", (unsigned int) getpid(),
+		(unsigned long long) pthread_self(), l, f, line, fn);
 #else
 	fprintf(__debuglog_fp, "(%u) [%c:%s:%zu:%s] ", (unsigned int) getpid(),
 		l, f, line, fn);

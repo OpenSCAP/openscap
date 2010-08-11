@@ -182,7 +182,7 @@ static SEXP_t *create_item(const char *path, const char *filename, char *pattern
                                  "filename", NULL,
                                  r1 = SEXP_string_newf("%s", filename),
                                  "pattern", NULL,
-                                 r2 = SEXP_string_newf(""),
+                                 r2 = SEXP_string_newf("%s", ""),
                                  "instance", NULL,
                                  r3 = SEXP_number_newi_32(instance),
                                  "line", NULL,
