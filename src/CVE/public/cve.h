@@ -35,6 +35,7 @@
 #define _CVE_H_
 
 #include <stdbool.h>
+#include <time.h>
 #include "oscap.h"
 #include "cpeuri.h"
 
