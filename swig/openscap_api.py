@@ -53,6 +53,8 @@ else:
 
 del version_info
 
+import os
+
 class OSCAP_List(list):
     """OSCAP List class is designed to store lists generated from openscap iterators. All functions that return iterators
     are preprocessed by creation of OSCAP List instance and move all objects given by oscap list iteration loop to list.
@@ -424,9 +426,11 @@ class OSCAP_Object(list):
             select.item = id
             self.profile.add_select(select)
 
-    def init(self):
+    def init(self, path, paths={}):
         """xccdf.init(path) -- Initialize openscap library
         Provides standard initialization of OPENScap library.
+        Parameter 'path' is the path to XCCDF File.
+        Parameter 'paths' is dictionary where key is file identificator and value path to the file.
         
         Initialization has next steps:
          - Parse oscap configuration file with path to XML files
@@ -435,8 +439,8 @@ class OSCAP_Object(list):
         
         Function returns dictionary with keys:
             "policy_model"   - XCCDF Policy Model loaded from XCCDF file
-            "def_models"     - List of OVAL Definitions models from OVAL files
-            "sessions"       -list of OVAL Agent sessions provided by OVAL Definitions models
+            "def_models"     - list of OVAL Definitions models from OVAL files
+            "sessions"       - list of OVAL Agent sessions provided by OVAL Definitions models
             
         All returned objects have to be freed by user. Use functions:
             retval["policy_model"].free()
@@ -446,11 +450,13 @@ class OSCAP_Object(list):
                 sess.free()
         """
 
-        paths = {"dcb-rhel5-oval.xml":"/home/barry/Work/scap/example_content/dcb-rhel5-oval.xml",
-                 "infile.xml":"/home/barry/Work/scap/example_content/infile.xml"}
+        if path == None: 
+            return None
+
+        dirname = os.path.dirname(path)
+        f_XCCDF = path
 
         oval = OVAL_Class()
-        f_XCCDF = "/home/barry/Work/scap/example_content/dcb-rhel5-xccdf.xml"
         benchmark = self.benchmark_import(f_XCCDF)
         assert benchmark.instance != None, "Benchmark loading failed: %s" % (f_XCCDF,)
         policy_model = self.policy_model(benchmark)
@@ -458,12 +464,15 @@ class OSCAP_Object(list):
         def_models = []
         sessions = []
         for file in files.strings:
-            if file in paths: 
-                def_model = oval.definition_model_import(paths[file] )
-                assert def_model.instance != None, "Cannot import definition model %s" % (paths[file],)
+            if file in paths:
+                f_OVAL = paths[file]
+            else: f_OVAL = os.path.join(dirname, file)
+            if os.path.exists(f_OVAL): 
+                def_model = oval.definition_model_import(f_OVAL)
+                assert def_model.instance != None, "Cannot import definition model %s" % (f_OVAL,)
                 def_models.append(def_model)
                 sess = oval.agent.new_session(def_model, file)
-                assert sess != None and sess.instance != None, "Cannot create agent session for %s" % (paths[file],)
+                assert sess != None and sess.instance != None, "Cannot create agent session for %s" % (f_OVAL,)
                 sessions.append(sess)
                 policy_model.register_engine_oval(sess)
         files.free()
