@@ -1701,7 +1701,8 @@ SEXP_t *SEXP_unref (SEXP_t *s_exp_o)
                         s_exp_o = NULL;
                 }
 
-                //SEXP_flag_set (s_exp_o, SEXP_FLAG_SREF);
+		s_exp_o->s_type = SEXP_rawptr_safemergeT(SEXP_datatypePtr_t, s_exp_o->s_type,
+							 1<<1, SEXP_DATATYPEPTR_MASK);
         }
 
         return (s_exp_o);
