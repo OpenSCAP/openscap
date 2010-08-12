@@ -163,6 +163,7 @@ static SEXP_t *oval_varref_to_sexp(struct oval_entity *entity, struct oval_sysch
 	struct oval_variable *var;
 	struct oval_value_iterator *vit;
 	struct oval_value *val;
+	oval_syschar_collection_flag_t flag;
 
 	val_lst = SEXP_list_new(NULL);
 	dt = oval_entity_get_datatype(entity);
@@ -172,8 +173,18 @@ static SEXP_t *oval_varref_to_sexp(struct oval_entity *entity, struct oval_sysch
 		SEXP_free(val_lst);
 		return NULL;
 	}
-	vit = oval_variable_get_values(var);
 
+	flag = oval_variable_get_collection_flag(var);
+	switch (flag) {
+	case SYSCHAR_FLAG_COMPLETE:
+	case SYSCHAR_FLAG_INCOMPLETE:
+		break;
+	default:
+		SEXP_free(val_lst);
+		return NULL;
+	}
+
+	vit = oval_variable_get_values(var);
 	while (oval_value_iterator_has_more(vit)) {
 		val = oval_value_iterator_next(vit);
 
@@ -503,11 +514,22 @@ SEXP_t *oval_state2sexp(struct oval_state *state, void *sess)
 			struct oval_variable *var;
 			struct oval_value_iterator *val_itr;
 			oval_datatype_t dt;
+			oval_syschar_collection_flag_t flag;
 
 			var = oval_entity_get_variable(ent);
 			if (oval_probe_query_variable(sess, var) != 0) {
 				goto fail;
 			}
+
+			flag = oval_variable_get_collection_flag(var);
+			switch (flag) {
+			case SYSCHAR_FLAG_COMPLETE:
+			case SYSCHAR_FLAG_INCOMPLETE:
+				break;
+			default:
+				goto fail;
+			}
+
 			dt = oval_entity_get_datatype(ent);
 			val_lst = SEXP_list_new(NULL);
 

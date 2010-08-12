@@ -281,9 +281,20 @@ static SEXP_t *oval_probe_cmd_ste_fetch(SEXP_t *sexp, void *arg)
 				oscap_dlprintf(DBG_E, "Can't find ste: id: %s.\n", id_str);
 				SEXP_list_free(ste_list);
 				oscap_free(id_str);
+
+				return (NULL);
 			}
 
 			ste_sexp = oval_state2sexp(ste, pext->sess_ptr);
+			if (ste_sexp == NULL) {
+				oscap_dlprintf(DBG_E, "Failed to convert OVAL state to SEXP, id: %s.\n",
+					       id_str);
+				SEXP_list_free(ste_list);
+				oscap_free(id_str);
+
+				return (NULL);
+			}
+
 			SEXP_list_add(ste_list, ste_sexp);
                         SEXP_free(ste_sexp);
 
@@ -807,7 +818,6 @@ struct oval_syschar *oval_probe_ext_eval(SEAP_CTX_t *ctx, oval_pd_t *pd, oval_pe
 
         if (s_obj == NULL) {
                 oscap_dlprintf(DBG_E, "Can't translate OVAL object to S-exp.\n");
-                oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EPROBEOBJINVAL, "Can't translate OVAL object to S-exp");
 
                 return(NULL);
         }

@@ -347,7 +347,7 @@ struct oval_syschar *oval_probe_query_object(oval_probe_session_t *psess, struct
 			return(NULL);
 
 		o_sys = oval_syschar_new(model, object);
-		oval_syschar_set_flag(o_sys, SYSCHAR_FLAG_NOT_COLLECTED);
+		oval_syschar_set_flag(o_sys, SYSCHAR_FLAG_ERROR);
 		return(o_sys);
         }
 
@@ -459,11 +459,23 @@ static int oval_probe_query_criteria(oval_probe_session_t *sess, struct oval_cri
 				struct oval_state_content *content = oval_state_content_iterator_next(contents);
 				struct oval_entity * entity = oval_state_content_get_entity(content);
 				if (oval_entity_get_varref_type(entity) == OVAL_ENTITY_VARREF_ATTRIBUTE) {
+					oval_syschar_collection_flag_t flag;
 					struct oval_variable *var = oval_entity_get_variable(entity);
+
 					ret = oval_probe_query_variable(sess, var);
 					if (ret != 0) {
 						oval_state_content_iterator_free(contents);
 						return ret;
+					}
+
+					flag = oval_variable_get_collection_flag(var);
+					switch (flag) {
+					case SYSCHAR_FLAG_COMPLETE:
+					case SYSCHAR_FLAG_INCOMPLETE:
+						break;
+					default:
+						oval_state_content_iterator_free(contents);
+						return 0;
 					}
 				}
 			}

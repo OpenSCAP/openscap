@@ -862,6 +862,7 @@ static oval_result_t eval_item(struct oval_syschar_model *syschar_model, struct 
 			if (state_entity_var != NULL) {
 				struct oresults var_ores;
 				struct oval_value_iterator *val_itr;
+				oval_syschar_collection_flag_t flag;
 
 				ores_clear(&var_ores);
 
@@ -869,6 +870,17 @@ static oval_result_t eval_item(struct oval_syschar_model *syschar_model, struct 
 					oval_sysent_iterator_free(item_entities_itr);
 					goto fail;
 				}
+
+				flag = oval_variable_get_collection_flag(state_entity_var);
+				switch (flag) {
+				case SYSCHAR_FLAG_COMPLETE:
+				case SYSCHAR_FLAG_INCOMPLETE:
+					break;
+				default:
+					oval_sysent_iterator_free(item_entities_itr);
+					goto fail;
+				}
+
 				val_itr = oval_variable_get_values(state_entity_var);
 				while (oval_value_iterator_has_more(val_itr)) {
 					struct oval_value *var_val;

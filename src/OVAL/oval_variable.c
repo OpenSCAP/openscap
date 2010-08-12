@@ -141,7 +141,11 @@ oval_syschar_collection_flag_t oval_variable_get_collection_flag(struct oval_var
 	return variable->flag;
 }
 
-int oval_syschar_model_compute_variable(struct oval_syschar_model *sysmod, struct oval_variable *variable) {
+int oval_syschar_model_compute_variable(struct oval_syschar_model *sysmod, struct oval_variable *variable)
+{
+	oval_syschar_collection_flag_t flag;
+	struct oval_value_iterator *val_itr;
+
 	__attribute__nonnull__(variable);
 
 	if (oval_variable_get_collection_flag(variable) != SYSCHAR_FLAG_UNKNOWN)
@@ -157,12 +161,27 @@ int oval_syschar_model_compute_variable(struct oval_syschar_model *sysmod, struc
                 return -1;
         }
 
+	flag = oval_variable_get_collection_flag(variable);
+	switch (flag) {
+	case SYSCHAR_FLAG_COMPLETE:
+	case SYSCHAR_FLAG_INCOMPLETE:
+		break;
+	default:
+		return 0;
+	}
+
+	val_itr = oval_variable_get_values(variable);
+	if (!oval_value_iterator_has_more(val_itr))
+		variable->flag = SYSCHAR_FLAG_ERROR;
+	oval_value_iterator_free(val_itr);
+
         return 0;
 }
 
 int oval_probe_query_variable(oval_probe_session_t *sess, struct oval_variable *variable)
 {
 	oval_datatype_t var_dt;
+	oval_syschar_collection_flag_t flag;
 	struct oval_value_iterator *val_itr;
 
 	__attribute__nonnull__(variable);
@@ -180,16 +199,31 @@ int oval_probe_query_variable(oval_probe_session_t *sess, struct oval_variable *
 		return -1;
         }
 
-	var_dt = oval_variable_get_datatype(variable);
+	flag = oval_variable_get_collection_flag(variable);
+	switch (flag) {
+	case SYSCHAR_FLAG_COMPLETE:
+	case SYSCHAR_FLAG_INCOMPLETE:
+		break;
+	default:
+		return 0;
+	}
 
 	val_itr = oval_variable_get_values(variable);
+	if (!oval_value_iterator_has_more(val_itr)) {
+		variable->flag = SYSCHAR_FLAG_ERROR;
+		return 0;
+	}
+
+	var_dt = oval_variable_get_datatype(variable);
+
 	while (oval_value_iterator_has_more(val_itr)) {
 		struct oval_value *val;
 
 		val = oval_value_iterator_next(val_itr);
 		if (oval_value_cast(val, var_dt) != 0) {
 			oval_value_iterator_free(val_itr);
-			return -1;
+			variable->flag = SYSCHAR_FLAG_ERROR;
+			return 0;
 		}
 	}
 	oval_value_iterator_free(val_itr);

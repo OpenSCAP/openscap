@@ -169,6 +169,7 @@ static struct oval_syschar *oval_probe_variable_eval(struct oval_object *obj, ov
         struct oval_value_iterator *vit;
         struct oval_variable *var;
         struct oval_syschar_model    *sys_model;
+	oval_syschar_collection_flag_t flag = SYSCHAR_FLAG_ERROR;
 
 	var = oval_probe_variable_objgetvar(obj);
         sys_model = oval_probe_session_getmodel(sess);
@@ -180,11 +181,21 @@ static struct oval_syschar *oval_probe_variable_eval(struct oval_object *obj, ov
         if (oval_probe_query_variable(sess, var) != 0)
 		goto fail;
 
+	flag = oval_variable_get_collection_flag(var);
+	switch (flag) {
+	case SYSCHAR_FLAG_COMPLETE:
+	case SYSCHAR_FLAG_INCOMPLETE:
+		break;
+	default:
+		goto fail;
+	}
+
         vit = oval_variable_get_values(var);
 
-        if (vit == NULL)
+	if (vit == NULL) {
+		flag = SYSCHAR_FLAG_ERROR;
 		goto fail;
-        else {
+	} else {
                 SEXP_t *items, *r0, *item, *cobj, *vrent, *val_sexp;
 		char *var_ref;
 
@@ -226,7 +237,10 @@ static struct oval_syschar *oval_probe_variable_eval(struct oval_object *obj, ov
 
         return(sys);
  fail:
-	return oval_syschar_new(sys_model, obj);
+	sys = oval_syschar_new(sys_model, obj);
+	oval_syschar_set_flag(sys, flag);
+
+	return(sys);
 }
 
 int oval_probe_var_handler(oval_subtype_t type, void *ptr, int act, ...)
