@@ -32,6 +32,7 @@
 #include "_sexp-parser.h"
 #include "_sexp-datatype.h"
 #include "_sexp-value.h"
+#include "_sexp-rawptr.h"
 #include "generic/xbase64.h"
 #include "generic/strto.h"
 #include "public/strbuf.h"
