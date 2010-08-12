@@ -79,7 +79,7 @@ struct runlevel_rep {
 
 static int get_runlevel (struct runlevel_req *req, struct runlevel_rep **rep);
 
-#if defined(__linux__)
+#if defined(__linux__) || defined(__GLIBC__)
 static int get_runlevel_redhat (struct runlevel_req *req, struct runlevel_rep **rep)
 {
 	const char runlevel_list[] = {'0', '1', '2', '3', '4', '5', '6'};

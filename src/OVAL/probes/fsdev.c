@@ -40,7 +40,7 @@
 #if defined(__linux__)
 # include <mntent.h>
 # include <unistd.h>
-#elif defined(__FreeBSD__)
+#elif defined(__FreeBSD__) || defined(__FreeBSD_kernel__)
 # include <sys/param.h>
 # include <sys/ucred.h>
 # include <sys/mount.h>
@@ -171,7 +171,7 @@ static fsdev_t *__fsdev_init(fsdev_t * lfs, const char **fs, size_t fs_cnt)
 
 	return (lfs);
 }
-#elif defined(__FreeBSD__)
+#elif defined(__FreeBSD__) || defined(__FreeBSD_kernel__)
 static fsdev_t *__fsdev_init(fsdev_t * lfs, const char **fs, size_t fs_cnt)
 {
 	struct statfs *mntbuf = NULL;

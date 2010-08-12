@@ -49,7 +49,7 @@ int main (int argc, char *argv[])
 
 #if defined(__FreeBSD__)
                         input = fgetln (stdin, &inlen);
-#elif defined(__linux__)
+#elif defined(__linux__) || defined(__GLIBC__)
                         getline (&input, &inlen, stdin);
 #else
 # error "FIXME"
