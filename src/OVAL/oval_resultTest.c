@@ -1239,7 +1239,7 @@ oval_result_t oval_result_test_eval(struct oval_result_test *rtest)
 			}
 		}
 		else
-			rtest->result = OVAL_RESULT_TRUE; /* Do not evaluate unknown test */
+			rtest->result = OVAL_RESULT_UNKNOWN;
 	}
 
 	return rtest->result;
