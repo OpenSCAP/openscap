@@ -48,31 +48,11 @@ struct SEXP {
 
         SEXP_datatypePtr_t *s_type;
         uintptr_t           s_valp;
-        uint8_t             s_flgs;
 
 #if !defined(NDEBUG) || defined(VALIDATE_SEXP)
         volatile uint16_t __magic1;
 #endif
 };
-
-#define SEXP_FLAG_SREF  0x01
-#define SEXP_FLAG_INVAL 0x02
-#define SEXP_FLAG_UNFIN 0x04
-
-static inline void SEXP_flag_set (SEXP_t *s_exp, uint8_t flag)
-{
-        s_exp->s_flgs |= flag;
-}
-
-static inline void SEXP_flag_unset (SEXP_t *s_exp, uint8_t flag)
-{
-        s_exp->s_flgs &= ~flag;
-}
-
-static inline bool SEXP_flag_isset (SEXP_t *s_exp, uint8_t flag)
-{
-        return ((s_exp->s_flgs & flag) == flag);
-}
 
 OSCAP_HIDDEN_END;
 

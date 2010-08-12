@@ -1094,10 +1094,7 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                          * lost.
                          */
                         ref_h->s_type = e_dsc.s_exp->s_type;
-                        ref_h->s_flgs = e_dsc.s_exp->s_flgs;
-
                         e_dsc.s_exp->s_type = NULL;
-                        e_dsc.s_exp->s_flgs = 0; /* XXX: default flags? */
 
                         ref_s = SEXP_softref (ref_h);
                         SEXP_list_add (ref_l, ref_h);
@@ -1798,7 +1795,7 @@ __PARSE_RT SEXP_parse_ul_datatype (__PARSE_PT(dsc))
 
         assume_d (dsc != NULL, SEXP_PRET_EUNDEF);
         assume_d (dsc->p_buffer != NULL, SEXP_PRET_EUNDEF);
-        assume_d (dsc->s_exp->s_type == NULL, SEXP_PRET_EUNDEF);
+        assume_d (SEXP_rawptr_mask(dsc->s_exp->s_type, SEXP_DATATYPEPTR_MASK) == NULL, SEXP_PRET_EUNDEF);
 
         /* count in the starting quote if this is the first invocation */
         if (dsc->p_explen == 0) {

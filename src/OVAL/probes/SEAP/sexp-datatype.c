@@ -25,6 +25,7 @@
 #include "common/assume.h"
 #include "public/sm_alloc.h"
 #include "_sexp-datatype.h"
+#include "_sexp-rawptr.h"
 
 #if defined(SEAP_THREAD_SAFE)
 # include<pthread.h>
@@ -103,7 +104,7 @@ SEXP_datatypePtr_t *SEXP_datatype_get (SEXP_datatypeTbl_t *t, const char *k)
                         struct SEXP_datatype_extptr *eptr = NULL;
 
                         /* See comment in SEXP_datatype_add */
-                        if (posix_memalign((void **)(void *)(&eptr), sizeof(void *),
+                        if (posix_memalign((void **)(void *)(&eptr), SEXP_DATATYPEPTR_ALIGN,
                                            sizeof(struct SEXP_datatype_extptr)) != 0)
                         {
                                 return(NULL);
@@ -163,7 +164,7 @@ SEXP_datatypePtr_t *SEXP_datatype_add(SEXP_datatypeTbl_t *t, char *n, SEXP_datat
                          * offset. The red-black tree implmentation allocates nodes
                          * aligned to sizeof(void *) bytes.
                          */
-                        if (posix_memalign((void **)(void *)(&eptr), sizeof(void *),
+                        if (posix_memalign((void **)(void *)(&eptr), SEXP_DATATYPEPTR_ALIGN,
                                            sizeof(struct SEXP_datatype_extptr)) != 0)
                         {
                                 return(NULL);
@@ -191,11 +192,11 @@ const char *SEXP_datatype_name(SEXP_datatypePtr_t *p)
 {
         char *name = NULL;
 
-        if ((uintptr_t)p & 1) {
-                SEXP_datatypeExtptr_t *ep = (SEXP_datatypeExtptr_t *)p;
+        if (SEXP_rawptr_bit(p, 0)) {
+                SEXP_datatypeExtptr_t *ep = SEXP_rawptr_maskT(SEXP_datatypeExtptr_t, p, SEXP_DATATYPEPTR_MASK);
                 name = ep->n->key;
         } else {
-                struct rbt_str_node *node = (struct rbt_str_node *)p;
+                struct rbt_str_node *node = SEXP_rawptr_maskT(struct rbt_str_node, p, SEXP_DATATYPEPTR_MASK);
                 name = node->key;
         }
 

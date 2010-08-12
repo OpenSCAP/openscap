@@ -81,6 +81,9 @@ int SEXP_datatype_del(SEXP_datatypeTbl_t *t, const char *name);
 #define SEXP_OP_ABORT    1 /* abort with an error status */
 #define SEXP_OP_RETURN   2 /* return success, don't execute default handler */
 
+#define SEXP_DATATYPEPTR_MASK  (UINTPTR_MAX << 2)
+#define SEXP_DATATYPEPTR_ALIGN (4 > sizeof(void *) ? 4 : sizeof (void *))
+
 OSCAP_HIDDEN_END;
 
 #endif /* _SEXP_DATATYPE */

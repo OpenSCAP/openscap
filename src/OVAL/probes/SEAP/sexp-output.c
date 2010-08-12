@@ -36,6 +36,8 @@
 #include "_sexp-types.h"
 #include "_sexp-output.h"
 #include "_sexp-value.h"
+#include "_sexp-datatype.h"
+#include "_sexp-rawptr.h"
 
 #define SEXP_SBPRINTF_BUFSZ 1024
 
@@ -56,7 +58,7 @@ int SEXP_sbprintf_t (SEXP_t *s_exp, strbuf_t *sb)
         SEXP_val_t v_dsc;
         int buflen;
 
-        if (s_exp->s_type != NULL) {
+        if (SEXP_rawptr_mask(s_exp->s_type, SEXP_DATATYPEPTR_MASK) != NULL) {
                 const char *name;
                 char  buffer[64+1];
 
@@ -236,7 +238,7 @@ size_t SEXP_fprintfa (FILE *fp, const SEXP_t *s_exp)
 {
         SEXP_val_t v_dsc;
 
-        if (s_exp->s_type != NULL)
+        if (SEXP_rawptr_mask(s_exp->s_type, SEXP_DATATYPEPTR_MASK) != NULL)
                 fprintf (fp, "[%s]", SEXP_datatype_name(s_exp->s_type));
 
         SEXP_val_dsc (&v_dsc, s_exp->s_valp);

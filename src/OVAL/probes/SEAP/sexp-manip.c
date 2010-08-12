@@ -36,6 +36,7 @@
 #include "_sexp-types.h"
 #include "_sexp-value.h"
 #include "_sexp-manip.h"
+#include "_sexp-rawptr.h"
 #include "public/sm_alloc.h"
 
 static void SEXP_free_lmemb (SEXP_t *s_exp);
@@ -1635,7 +1636,6 @@ SEXP_t *SEXP_new (void)
         s_exp = sm_talloc (SEXP_t);
         s_exp->s_type = NULL;
         s_exp->s_valp = 0;
-        s_exp->s_flgs = 0;
 
 #if !defined(NDEBUG) || defined(VALIDATE_SEXP)
         s_exp->__magic0 = SEXP_MAGIC0;
@@ -1667,7 +1667,7 @@ SEXP_t *SEXP_unref (SEXP_t *s_exp_o)
         _LOGCALL_;
         SEXP_VALIDATE(s_exp_o);
 
-        if (!SEXP_flag_isset (s_exp_o, SEXP_FLAG_SREF)) {
+        if (!SEXP_softrefp(s_exp_o)) {
                 SEXP_val_t v_dsc;
 
                 if (SEXP_rawval_decref (s_exp_o->s_valp)) {
@@ -1694,7 +1694,6 @@ SEXP_t *SEXP_unref (SEXP_t *s_exp_o)
 #if !defined(NDEBUG) || defined(VALIDATE_SEXP)
                         s_exp_o->s_valp = 0;
                         s_exp_o->s_type = NULL;
-                        s_exp_o->s_flgs = 0;
                         s_exp_o->__magic0 = SEXP_MAGIC0_INV;
                         s_exp_o->__magic1 = SEXP_MAGIC1_INV;
 #endif
@@ -1702,7 +1701,7 @@ SEXP_t *SEXP_unref (SEXP_t *s_exp_o)
                         s_exp_o = NULL;
                 }
 
-                SEXP_flag_set (s_exp_o, SEXP_FLAG_SREF);
+                //SEXP_flag_set (s_exp_o, SEXP_FLAG_SREF);
         }
 
         return (s_exp_o);
@@ -1742,11 +1741,21 @@ SEXP_t *SEXP_softref (SEXP_t *s_exp_o)
 		}
         }
 
-        SEXP_flag_set (s_exp_r, SEXP_FLAG_SREF);
-
+	s_exp_r->s_type = SEXP_rawptr_safemergeT(SEXP_datatypePtr_t, s_exp_r->s_type,
+						 1<<1, SEXP_DATATYPEPTR_MASK);
         SEXP_VALIDATE(s_exp_r);
 
         return (s_exp_r);
+}
+
+bool SEXP_softrefp(const SEXP_t *s_exp)
+{
+	if (s_exp == NULL) {
+		errno = EFAULT;
+		return (false);
+	}
+
+	return SEXP_rawptr_bit(s_exp->s_type, 1);
 }
 
 uint32_t SEXP_refs (const SEXP_t *ref)
@@ -1787,10 +1796,7 @@ static void SEXP_free_lmemb (SEXP_t *s_exp)
 
         SEXP_VALIDATE(s_exp);
 
-        if (((s_exp->s_flgs &
-              (SEXP_FLAG_SREF|SEXP_FLAG_INVAL|SEXP_FLAG_UNFIN)) == 0) &&
-            SEXP_typeof (s_exp) != SEXP_TYPE_EMPTY)
-        {
+	if (!SEXP_softrefp(s_exp) && SEXP_typeof(s_exp) != SEXP_TYPE_EMPTY) {
                 SEXP_val_t v_dsc;
 
                 SEXP_val_dsc (&v_dsc, s_exp->s_valp);
@@ -1818,7 +1824,6 @@ static void SEXP_free_lmemb (SEXP_t *s_exp)
 #if !defined(NDEBUG) || defined(VALIDATE_SEXP)
         s_exp->s_valp = 0;
         s_exp->s_type = NULL;
-        s_exp->s_flgs = 0;
         s_exp->__magic0 = SEXP_MAGIC0_INV;
         s_exp->__magic1 = SEXP_MAGIC1_INV;
 #endif
@@ -1843,10 +1848,7 @@ void __SEXP_free (SEXP_t *s_exp, const char *file, uint32_t line, const char *fu
                 return;
         }
 
-        if (((s_exp->s_flgs &
-              (SEXP_FLAG_SREF|SEXP_FLAG_INVAL|SEXP_FLAG_UNFIN)) == 0) &&
-            SEXP_typeof (s_exp) != SEXP_TYPE_EMPTY)
-        {
+	if (!SEXP_softrefp(s_exp) && SEXP_typeof(s_exp) != SEXP_TYPE_EMPTY) {
                 SEXP_val_t v_dsc;
 
                 SEXP_VALIDATE(s_exp);
@@ -1875,7 +1877,6 @@ void __SEXP_free (SEXP_t *s_exp, const char *file, uint32_t line, const char *fu
 #if !defined(NDEBUG) || defined(VALIDATE_SEXP)
         s_exp->s_valp = 0;
         s_exp->s_type = NULL;
-        s_exp->s_flgs = 0;
         s_exp->__magic0 = SEXP_MAGIC0_INV;
         s_exp->__magic1 = SEXP_MAGIC1_INV;
 #endif
@@ -1907,9 +1908,15 @@ void __SEXP_vfree (const char *file, uint32_t line, const char *func, SEXP_t *s_
 
 const char *SEXP_datatype (const SEXP_t *s_exp)
 {
+	SEXP_datatypePtr_t *p;
+
         assume_r(s_exp != NULL, NULL, errno=EFAULT;);
         SEXP_VALIDATE(s_exp);
-        return(s_exp->s_type == NULL ? NULL : SEXP_datatype_name(s_exp->s_type));
+
+	p = SEXP_rawptr_maskT(SEXP_datatypePtr_t,
+			      s_exp->s_type, SEXP_DATATYPEPTR_MASK);
+
+	return (p == NULL ? NULL : SEXP_datatype_name (s_exp->s_type));
 }
 
 int SEXP_datatype_set (SEXP_t *s_exp, const char *name)
@@ -2088,9 +2095,14 @@ int SEXP_structprint (FILE *fp, const SEXP_t *s_exp)
                  "            ... flgs: %c%c%c (%x)\n"
                  "            ...  ptr: %p\n",
                  SEXP_strtype (s_exp),
+		 SEXP_softrefp(s_exp) ? 's' : '-',
+		 '-',
+		 '-',
+/*
                  (s_exp->s_flgs & SEXP_FLAG_SREF  ? 's' : '-'),
                  (s_exp->s_flgs & SEXP_FLAG_INVAL ? 'i' : '-'),
                  (s_exp->s_flgs & SEXP_FLAG_UNFIN ? 'u' : '-'),
+*/
                  (void *)s_exp->s_valp);
 
         switch (v_dsc.type) {
@@ -2148,7 +2160,7 @@ void __SEXP_VALIDATE(const SEXP_t *s_exp, const char *file, uint32_t line, const
 
         SEXP_val_dsc (&v_dsc, s_exp->s_valp);
 
-        if (s_exp->s_flgs & (SEXP_FLAG_INVAL | SEXP_FLAG_UNFIN) || v_dsc.type == SEXP_VALTYPE_EMPTY)
+	if (SEXP_softrefp(s_exp) || v_dsc.type == SEXP_VALTYPE_EMPTY)
                 return;
         else {
                 if (v_dsc.hdr == NULL) abort ();

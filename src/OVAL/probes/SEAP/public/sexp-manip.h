@@ -494,6 +494,12 @@ SEXP_t *SEXP_unref (SEXP_t *s_exp_o);
 SEXP_t *SEXP_softref (SEXP_t *s_exp);
 
 /**
+ * Check whether an S-exp reference is a "soft" reference
+ * @param s_exp the S-exp reference
+ */
+bool SEXP_softrefp(const SEXP_t *s_exp);
+
+/**
  * Return the value of the reference counter
  * @param ref
  */
