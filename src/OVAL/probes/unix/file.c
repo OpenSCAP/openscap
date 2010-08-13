@@ -38,6 +38,7 @@
 #include <errno.h>
 #include <limits.h>
 #include "findfile.h"
+#include "SEAP/generic/rbt/rbt.h"
 
 #ifndef _A
 #define _A(x) assert(x)
@@ -96,6 +97,50 @@ struct cbargs {
         SEXP_t *items;
 };
 
+static rbt_t   *g_ID_cache     = NULL;
+static uint32_t g_ID_cache_max = 0; /* 0 = unlimited */
+
+static SEXP_t *ID_cache_get(int32_t id)
+{
+	SEXP_t *s_id = NULL, *s_id2 = NULL;
+
+	if (rbt_i32_get(g_ID_cache, id, (void *)&s_id) == 0)
+		return SEXP_ref(s_id); /* cache hit (first attempt) */
+
+	s_id = SEXP_string_newf("%u", (uint32_t)(id));
+
+	if (g_ID_cache_max == 0 || rbt_i32_size(g_ID_cache) < g_ID_cache_max) {
+		if (rbt_i32_add(g_ID_cache, id, (void *)s_id) == 0)
+			return SEXP_ref(s_id); /* insert succeeded */
+
+		if (rbt_i32_get(g_ID_cache, id, (void *)&s_id2) == 0) {
+			SEXP_free (s_id); /* cache hit (second attempt) */
+			return SEXP_ref(s_id2);
+		}
+	}
+
+	/* fallback */
+	return (s_id);
+}
+
+static void ID_cache_init(uint32_t max)
+{
+	g_ID_cache_max = max;
+	g_ID_cache     = rbt_i32_new();
+}
+
+static void ID_cache_free_cb(rbt_i32_node_t *n)
+{
+	SEXP_free(n->data);
+}
+
+static void ID_cache_free(void)
+{
+	rbt_i32_free_cb(g_ID_cache, ID_cache_free_cb);
+	g_ID_cache     = NULL;
+	g_ID_cache_max = 0;
+}
+
 static int file_cb (const char *p, const char *f, void *ptr)
 {
         char path_buffer[PATH_MAX];
@@ -109,7 +154,6 @@ static int file_cb (const char *p, const char *f, void *ptr)
         if (f == NULL)
 		return (0);
 
-        _D("p = \"%s\"; f = \"%s\"\n", p, f);
         snprintf (path_buffer, sizeof path_buffer, "%s/%s", p, f);
         st_path = path_buffer;
 
@@ -119,6 +163,9 @@ static int file_cb (const char *p, const char *f, void *ptr)
         } else {
                 SEXP_t *r0, *r1, *r3, *r4;
                 SEXP_t *r5, *r6, *r7, *r8;
+
+		r3 = ID_cache_get(st.st_uid);
+		r4 = st.st_gid != st.st_uid ? ID_cache_get(st.st_gid) : SEXP_ref(r3);
 
                 item = probe_item_creat ("file_item", NULL,
                                         /* entities */
@@ -131,11 +178,8 @@ static int file_cb (const char *p, const char *f, void *ptr)
                                         "type", NULL,
                                         strfiletype (st.st_mode),
 
-                                        "group_id", NULL,
-                                        r3 = SEXP_string_newf ("%hu", st.st_gid),
-
-                                        "user_id", NULL,
-                                        r4 = SEXP_string_newf ("%hu", st.st_uid),
+					"group_id", NULL, r3,
+					"user_id",  NULL, r4,
 
                                         "a_time", NULL,
                                         r5 = SEXP_string_newf (
@@ -273,6 +317,11 @@ void *probe_init (void)
         gr_t_sock = SEXP_string_new (STRLEN_PAIR(STR_SOCKET));
         gr_t_char = SEXP_string_new (STRLEN_PAIR(STR_CHARSPEC));
 
+	/*
+	 * Initialize ID cache
+	 */
+	ID_cache_init(10000);
+
         /*
          * Initialize mutex.
          */
@@ -297,6 +346,11 @@ void probe_fini (void *arg)
                     gr_t_dir, gr_t_lnk, gr_t_blk,
                     gr_t_fifo, gr_t_sock, gr_t_char,
                     NULL);
+
+	/*
+	 * Free ID cache
+	 */
+	ID_cache_free();
 
         /*
          * Destroy mutex.
