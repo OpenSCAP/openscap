@@ -94,7 +94,7 @@ SEXP_numtype_t SEXP_rawval_number_type (SEXP_val_t *dsc)
 size_t SEXP_rawval_list_length (struct SEXP_val_list *list)
 {
         size_t length;
-        struct SEXP_val_lblk *lblk;
+        register struct SEXP_val_lblk *lblk;
 
         length = 0;
         lblk   = SEXP_VALP_LBLK(list->b_addr);
@@ -185,12 +185,12 @@ uintptr_t SEXP_rawval_lblk_add (uintptr_t lblkp, const SEXP_t *s_exp)
 {
         uintptr_t lb_prev;
         uintptr_t lb_head;
-        struct SEXP_val_lblk *lblk;
+        register struct SEXP_val_lblk *lblk;
 
         lblk = SEXP_VALP_LBLK(lblkp);
 
         if (lblk == NULL) {
-                lb_head = SEXP_rawval_lblk_new (2);
+                lb_head = SEXP_rawval_lblk_new (1);
                 lb_prev = lb_head;
         } else {
                 lb_head = lblkp;
@@ -257,8 +257,11 @@ uintptr_t SEXP_rawval_lblk_add1 (uintptr_t lblkp, const SEXP_t *s_exp)
 
                 return (lblkp);
         } else {
-                uint8_t   new_sz = ((lblk->nxsz & SEXP_LBLKS_MASK) + 1) % 16;
+                uint8_t   new_sz;
                 uintptr_t new_lb;
+
+		new_sz = lblk->nxsz & SEXP_LBLKS_MASK;
+		new_sz = new_sz == 15 ? 6 : new_sz + 1;
 
                 new_lb     = SEXP_rawval_lblk_new (new_sz);
                 lblk->nxsz = (new_lb & SEXP_LBLKP_MASK) | (lblk->nxsz & SEXP_LBLKS_MASK);
@@ -280,8 +283,8 @@ uintptr_t SEXP_rawval_lblk_add1 (uintptr_t lblkp, const SEXP_t *s_exp)
 
 uintptr_t SEXP_rawval_lblk_last (uintptr_t lblkp)
 {
-        struct SEXP_val_lblk *lblk;
-        uintptr_t last;
+        register struct SEXP_val_lblk *lblk;
+        register uintptr_t last;
 
         last = lblkp;
         lblk = SEXP_VALP_LBLK(last);
@@ -296,7 +299,7 @@ uintptr_t SEXP_rawval_lblk_last (uintptr_t lblkp)
 
 SEXP_t *SEXP_rawval_lblk_nth (uintptr_t lblkp, uint32_t n)
 {
-        struct SEXP_val_lblk *lblk;
+        register struct SEXP_val_lblk *lblk;
 
         _LOGCALL_;
         _D("n = %u\n", n);
@@ -394,8 +397,8 @@ replace:
 
 int SEXP_rawval_lblk_cb (uintptr_t lblkp, int (*func) (SEXP_t *, void *), void *arg, uint32_t n)
 {
-        struct SEXP_val_lblk *lblk;
-        uint16_t bi;
+        register struct SEXP_val_lblk *lblk;
+        register uint16_t bi;
 
         lblk = SEXP_VALP_LBLK(lblkp);
 
