@@ -93,14 +93,18 @@ class XCCDF_Handler(object):
 
         self.models = []
         for f_oval in self.action.f_ovals:
+            model = oval.definition_model_import(f_oval)
+            assert model != None and model.instance != None, "Import definition model failed: %s" % (f_oval,)
             self.models.append({"name":os.path.basename(f_oval), 
-                                "def_model": oval.definition_model_import(f_oval)})
+                                "def_model": model})
 
         self.benchmark    = xccdf.benchmark_import(self.action.f_xccdf)
         assert self.benchmark.instance != None, "Benchmark loading failed: %s" % (self.action.f_xccdf,)
 
         for model in self.models:
-            model["session"] = oval.agent.new_session(model["def_model"], model["name"])
+            sess = oval.agent.new_session(model["def_model"], model["name"])
+            assert sess != None and sess.instance != None, "Session initialization failed: %s" % (self.action.f_xccdf,)
+            model["session"] = sess
 
         self.policy_model = xccdf.policy_model(self.benchmark)
         self.__set_policy(self.action.profile)
