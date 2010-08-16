@@ -145,7 +145,7 @@
             </definition>
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:200065" version="1">
                   <metadata>
-                        <title>Ensure that GPG Key for Red Hat Network is installed</title>
+                        <title>Ensure that GPG Key for Fedora is installed</title>
                         <affected family="unix">
                               <platform>Red Hat Enterprise Linux 5</platform>
                         </affected>
@@ -153,7 +153,6 @@
                         <description>The GPG key should be installed.</description>
                   </metadata>
                   <criteria>
-                        <extend_definition definition_ref="oval:mil.army.us.rhel5:def:10000" comment="Red Hat Enterprise Linux 5 is installed"/>
                         <criterion test_ref="oval:mil.army.us.rhel5:tst:200065" comment="check gpg signature" />
                   </criteria>
             </definition>
@@ -276,7 +275,7 @@
                         <description>>Setup cron to run AIDE periodically using cron.</description>
                   </metadata>
                   <criteria>
-                        <criterion comment="Conditions are satisfied" test_ref="oval:mil.army.us.rhel5:tst:20015"/>
+                        <criterion comment="Conditions are satisfied" test_ref="oval:mil.army.us.rhel5:tst:22"/>
                   </criteria>
             </definition>
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:200155" version="1">
@@ -5525,7 +5524,13 @@
                   <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20000" />
                   <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:20006" />
             </ind-def:textfilecontent54_test>
-            <ind-def:unknown_test id="oval:mil.army.us.rhel5:tst:200065" version="1" check="all" comment="place holder"/>
+
+
+            <lin-def:rpminfo_test check_existence="any_exist" id="oval:mil.army.us.rhel5:tst:200065" version="1" check="at least one" comment="proper gpg-pubkey version is installed">
+                  <lin-def:object object_ref="oval:mil.army.us.rhel5:obj:200065"/>
+		  <lin-def:state state_ref="oval:mil.army.us.rhel5:ste:200065"/>
+            </lin-def:rpminfo_test>
+
             <unix-def:file_test id="oval:mil.army.us.rhel5:tst:20009" version="1" check="all" comment="Existence check for path ^/etc/cron\.(hourly|daily|weekly|monthly)$ for filename yum.cron" check_existence="at_least_one_exists">
                   <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:20009" />
             </unix-def:file_test>
@@ -5545,7 +5550,6 @@
                   <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20013" />
                   <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:20013" />
             </ind-def:textfilecontent54_test>
-            <ind-def:unknown_test id="oval:mil.army.us.rhel5:tst:20015" version="1" check="all" comment="place holder"/>
             <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:20016" version="1" check="all" comment="Check options for nodev in /etc/fstab for all non-root partitions" check_existence="at_least_one_exists">
                   <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20016" />
                   <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:200161" />
@@ -6899,7 +6903,6 @@
                   <ind-def:instance datatype="int" operation="greater than or equal">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <unix-def:file_object id="oval:mil.army.us.rhel5:obj:20009" version="1" comment="Check existance of yum.cron"> 
-<!--                  <unix-def:path operation="pattern match">^/etc/cron.daily$</unix-def:path> -->
                   <unix-def:path operation="pattern match">^/etc/cron\.(hourly|daily|weekly|monthly)$</unix-def:path>
                   <unix-def:filename>0yum.cron</unix-def:filename>
             </unix-def:file_object>
@@ -6939,8 +6942,12 @@
                   <ind-def:pattern operation="pattern match">^[\s]*(#).*$|^[\s]*[\S]+[\s]+([\S]+)[\s]+([\S]+)[\s]+([\S]+)[\s]+([\S]+)[\s]+([\S]+)</ind-def:pattern>
                   <ind-def:instance datatype="int" operation="greater than or equal">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
+
             <lin-def:rpminfo_object id="oval:mil.army.us.rhel5:obj:10000" version="1">
                   <lin-def:name>redhat-release</lin-def:name>
+            </lin-def:rpminfo_object>
+            <lin-def:rpminfo_object id="oval:mil.army.us.rhel5:obj:200065" version="1">
+                  <lin-def:name>gpg-pubkey</lin-def:name>
             </lin-def:rpminfo_object>
             <ind-def:family_object id="oval:mil.army.us.rhel5:obj:10001" version="1"/>
             <unix-def:runlevel_object id="oval:mil.army.us.rhel5:obj:20007" version="1">
@@ -8812,8 +8819,13 @@
                   <ind-def:instance datatype="int">3</ind-def:instance>
                   <ind-def:subexpression datatype="string" operation="pattern match" entity_check="all">.*,nodev.*</ind-def:subexpression>
             </ind-def:textfilecontent54_state>
+
             <lin-def:rpminfo_state id="oval:mil.army.us.rhel5:ste:10000" version="1">
                   <lin-def:version operation="pattern match">^5[^\d]</lin-def:version>
+            </lin-def:rpminfo_state>
+            <lin-def:rpminfo_state id="oval:mil.army.us.rhel5:ste:200065" version="1">
+                  <lin-def:version >57bbccba</lin-def:version>
+                  <lin-def:release >4a6f97af</lin-def:release>
             </lin-def:rpminfo_state>
             <lin-def:rpminfo_state id="oval:mil.army.us.rhel5:ste:11000" version="1">
                   <lin-def:release operation="pattern match">^5\.[2-9]</lin-def:release>

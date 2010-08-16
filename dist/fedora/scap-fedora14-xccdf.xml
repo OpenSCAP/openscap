@@ -66,18 +66,18 @@
     <select idref="dcb-rhel5-rule-2.1.1.1.3.a" selected="false" />	<!-- DONE -->		<!-- Separate Partition or Logical Volume for /var/log -->
     <select idref="dcb-rhel5-rule-2.1.1.1.4.a" selected="false" />	<!-- DONE -->		<!-- Separate Partition or Logical Volume for /var/log/audit -->
     <select idref="dcb-rhel5-rule-2.1.1.1.5.a" selected="false" />	<!-- DONE -->		<!-- Separate Partition or Logical Volume for /home -->
-    <select idref="dcb-rhel5-rule-2.1.2.1.1.a" selected="false" />  <!--Unknown test -->	<!-- Ensure that GPG Key for Red Hat Network is installed -->
-    <select idref="dcb-rhel5-rule-2.1.2.2.a" selected="false" />    <!-- Not for Fedora -->	<!-- Disable the rhnsd daemon -->
-    <select idref="dcb-rhel5-rule-2.1.2.3.1.a" selected="false" />  <!-- OK -->			<!-- Ensure software is up to date -->
-    <select idref="dcb-rhel5-rule-2.1.2.3.2.a" selected="false" />  <!-- ? Fedora -->		<!-- Disable the yum-updatesd daemon -->
-    <select idref="dcb-rhel5-rule-2.1.2.3.2.b" selected="false" />   <!-- OK -->		<!-- Automatic Update Retrieval should be scheduled with Cron -->
-    <select idref="dcb-rhel5-rule-2.1.2.3.3.a" selected="false" />   <!-- OK -->		<!-- Ensure gpgcheck is Globally Activated -->
-    <select idref="dcb-rhel5-rule-2.1.2.3.4.a" selected="false" />   <!-- OK -->		<!-- Ensure Package Signature Checking is Not Disabled For Any Repos -->
-    <select idref="dcb-rhel5-rule-2.1.2.3.5.a" selected="false" />  <!-- OK -->			<!-- Ensure Repodata Signature Checking is Globally Activated -->
-    <select idref="dcb-rhel5-rule-2.1.2.3.6.a" selected="false" />  <!-- OK -->			<!-- Ensure Repodata Signature Checking is Not Disabled For Any Repos -->
-    <select idref="dcb-rhel5-rule-2.1.3.1.1.a" selected="false" />   <!-- OK -->			<!-- Install AIDE -->
-    <select idref="dcb-rhel5-rule-2.1.3.1.4.a" selected="false" />  <!--Unknown test -->	<!-- run AIDE (integrity check) periodically -->
-    <select idref="dcb-rhel5-rule-2.1.3.2.a" selected="false" />    <!--Unknown test -->	<!-- Verify Package Integrity Using RPM -->
+    <select idref="dcb-rhel5-rule-2.1.2.1.1.a" selected="true" />	<!-- DONE -->		<!-- Ensure that GPG Key for Red Hat Network is installed -->
+    <select idref="dcb-rhel5-rule-2.1.2.2.a" selected="false" />	<!-- ERASE -->		<!-- Disable the rhnsd daemon -->
+    <select idref="dcb-rhel5-rule-2.1.2.3.1.a" selected="false" /> 	<!-- ERASE -->		<!-- Ensure software is up to date -->
+    <select idref="dcb-rhel5-rule-2.1.2.3.2.a" selected="false" />	<!-- DONE  -->		<!-- Disable the yum-updatesd daemon -->
+    <select idref="dcb-rhel5-rule-2.1.2.3.2.b" selected="false" />	<!-- DONE -->		<!-- Automatic Update Retrieval should be scheduled with Cron -->
+    <select idref="dcb-rhel5-rule-2.1.2.3.3.a" selected="true" />	<!-- DONE -->		<!-- Ensure gpgcheck is Globally Activated -->
+    <select idref="dcb-rhel5-rule-2.1.2.3.4.a" selected="true" />	<!-- DONE -->		<!-- Ensure Package Signature Checking is Not Disabled For Any Repos -->
+    <select idref="dcb-rhel5-rule-2.1.2.3.5.a" selected="false" />	<!-- DONE -->		<!-- Ensure Repodata Signature Checking is Globally Activated -->
+    <select idref="dcb-rhel5-rule-2.1.2.3.6.a" selected="false" />	<!-- DONE -->		<!-- Ensure Repodata Signature Checking is Not Disabled For Any Repos -->
+    <select idref="dcb-rhel5-rule-2.1.3.1.1.a" selected="false" />	<!-- DONE -->		<!-- Install AIDE -->
+    <select idref="dcb-rhel5-rule-2.1.3.1.4.a" selected="false" />	<!-- DONE -->		<!-- run AIDE (integrity check) periodically -->
+    <select idref="dcb-rhel5-rule-2.1.3.2.a" selected="false" />	<!-- DONE -->		<!-- Verify Package Integrity Using RPM -->
     <select idref="dcb-rhel5-rule-2.2.1.1.a" selected="false" />    <!-- Not OVAL 5.5 -->	<!-- Add nodev Option to Non-Root Local Partitions --> 
     <select idref="dcb-rhel5-rule-2.2.1.2.a" selected="false" />    <!--Unknown test -->	<!-- Add nodev Option to Removable Media Partitions -->
     <select idref="dcb-rhel5-rule-2.2.1.2.b" selected="false" />    <!--Unknown test -->	<!-- Add noexec Option to Removable Media Partitions -->
@@ -1012,19 +1012,18 @@
             graphical front-ends pirut and pup can be configured to handle this situation.
           </description>
           <Group id="dcb-rhel5-group-2.1.2.1.1" hidden="false">
-            <title xml:lang="en">Ensure Red Hat GPG Key is Installed</title>
+            <title xml:lang="en">Ensure Fedora GPG Key is Installed</title>
             <description xml:lang="en">
-              To ensure that the system can cryptographically verify update packages (and also connect to the Red Hat
-              Network to receive them if desired) run the following command to ensure that the system has the Red Hat
-              GPG properly installed:<xhtml:br/>
+              To ensure that the system can cryptographically verify update packages run the following command to verify 
+              that the system has the Fedora GPG properly installed:<xhtml:br/>
               <xhtml:br/>
               <xhtml:code>$ rpm -q --queryformat "%{SUMMARY}\n" gpg-pubkey</xhtml:code><xhtml:br/>
               <xhtml:br/>
               The command should return the string:<xhtml:br/>
               <xhtml:br/>
-              gpg(Red Hat, Inc. (release key &lt;security@redhat.com&gt;)</description>
+              gpg(Fedora (12) &lt;fedora@fedoraproject.org&gt;)</description>
             <Rule id="dcb-rhel5-rule-2.1.2.1.1.a" selected="false" weight="10">
-              <title xml:lang="en">Ensure Red Hat GPG Key is Installed</title>
+              <title xml:lang="en">Ensure Fedora GPG Key is Installed</title>
               <description>The GPG key should be installed.</description>
               <ident system="http://cce.mitre.org">TBD</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
