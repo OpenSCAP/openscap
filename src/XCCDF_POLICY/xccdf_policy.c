@@ -1441,16 +1441,31 @@ struct xccdf_item * xccdf_policy_tailor_item(struct xccdf_policy * policy, struc
         }
         case XCCDF_VALUE: {
             const char * value = xccdf_policy_get_value_of_item(policy, item);
-            if (value == NULL) return NULL;
+            if (value == NULL) 
+                return NULL;
 
+            const char * selector = NULL;
+            struct xccdf_value_instance * instance = NULL;
             new_item = (struct xccdf_item *) xccdf_value_clone((struct xccdf_value *) item);
-            struct xccdf_value_instance * instance = xccdf_value_get_instance_by_selector((struct xccdf_value *) new_item, NULL);
-            xccdf_value_instance_set_defval_string(instance, value);
-            /*struct xccdf_value_instance_iterator * instance_it = xccdf_value_get_instances((struct xccdf_value *) new_item);
+
+            struct xccdf_value_instance_iterator * instance_it = xccdf_value_get_instances((struct xccdf_value *) new_item);
             while (xccdf_value_instance_iterator_has_more(instance_it)) {
                 instance = xccdf_value_instance_iterator_next(instance_it);
-                xccdf_value_instance_iterator_remove(instance_it);
-            }*/
+                if (!strcmp(xccdf_value_instance_get_value(instance), value))
+                    selector = xccdf_value_instance_get_selector(instance);
+            }
+            xccdf_value_instance_iterator_free(instance_it);
+            instance_it = xccdf_value_get_instances((struct xccdf_value *) new_item);
+            while (xccdf_value_instance_iterator_has_more(instance_it)) {
+                instance = xccdf_value_instance_iterator_next(instance_it);
+                if (strcmp(xccdf_value_instance_get_selector(instance), selector))
+                    xccdf_value_instance_iterator_remove(instance_it);
+            }
+            xccdf_value_instance_iterator_free(instance_it);
+            if (selector == NULL) {
+                instance = xccdf_value_get_instance_by_selector((struct xccdf_value *) new_item, NULL);
+                xccdf_value_instance_set_defval_string(instance, value);
+            }
 
             int oper = xccdf_policy_get_refine_value_oper(policy, item);
             if (oper == -1) break;
