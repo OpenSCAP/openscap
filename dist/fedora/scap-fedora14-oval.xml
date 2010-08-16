@@ -7045,33 +7045,33 @@
 
 
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20053" version="1">
-                  <ind-def:path>/etc/sysconfig</ind-def:path>
-                  <ind-def:filename>init</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">umask[\s]+(.*)</ind-def:pattern>
+                  <ind-def:path>/etc/init.d</ind-def:path>
+                  <ind-def:filename operation="pattern match">.*</ind-def:filename>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*umask[[:space:]]+([[:digit:]]+).*</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20055" version="1">
                   <ind-def:path>/etc/security</ind-def:path>
                   <ind-def:filename>limits.conf</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[\s]*\*[\s]+hard[\s]+core[\s]+([\d]+)</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*\*[[:space:]]+hard[[:space:]]+core[[:space:]]+([[:digit:]]+)</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20056" version="1">
                   <ind-def:path>/etc</ind-def:path>
                   <ind-def:filename>sysctl.conf</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[\s]*fs\.suid_dumpable[\s]*=[\s]*([\d]+)</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*fs\.suid_dumpable[[:space:]]*=[[:space:]]*([[:digit:]]+)</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20058" version="1">
                   <ind-def:path>/etc</ind-def:path>
                   <ind-def:filename>sysctl.conf</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[\s]*kernel\.randomize_va_space[\s]*=[\s]*([\d]+)</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*kernel\.randomize_va_space[[:space:]]*=[[:space:]]*([[:digit:]]+)</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20057" version="1">
                   <ind-def:path>/etc</ind-def:path>
                   <ind-def:filename>sysctl.conf</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[\s]*kernel\.exec-shield[\s]*=[\s]*([\d]+)</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*kernel\.exec-shield[[:space:]]*=[[:space:]]*([[:digit:]]+)</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <lin-def:rpminfo_object id="oval:mil.army.us.rhel5:obj:20059" version="1">
@@ -7163,20 +7163,20 @@
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20075" version="1">
                   <ind-def:path>/etc</ind-def:path>
-                  <ind-def:filename>shadow</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^+:</ind-def:pattern>
+                  <ind-def:filename>passwd</ind-def:filename>
+                  <ind-def:pattern operation="pattern match">^\+:</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20076" version="1">
                   <ind-def:path>/etc</ind-def:path>
                   <ind-def:filename>group</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^+:</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^\+:</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20077" version="1">
                   <ind-def:path>/etc</ind-def:path>
                   <ind-def:filename>passwd</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^+:</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^\+:</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20078" version="1">
@@ -7271,25 +7271,25 @@
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20087" version="1">
                   <ind-def:path>/etc</ind-def:path>
                   <ind-def:filename>bashrc</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[\s]*umask[\s]+([^#]*)</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*umask[[:space:]]+([^#]*)</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20088" version="1">
                   <ind-def:path>/etc</ind-def:path>
                   <ind-def:filename>csh.cshrc</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[\s]*umask[\s]+([^#]*)</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*umask[[:space:]]+([^#]*)</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20089" version="1">
                   <ind-def:path>/etc</ind-def:path>
                   <ind-def:filename>login.defs</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[\s]*umask[\s]+([^#]*)</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*UMASK[[:space:]]+([^#]*)</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20090" version="1">
                   <ind-def:path>/etc</ind-def:path>
                   <ind-def:filename>profile</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[\s]*umask[\s]+([^#]*)</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*umask[[:space:]]+([^#]*)</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <unix-def:file_object id="oval:mil.army.us.rhel5:obj:20092" version="1" comment="/etc/grub.conf">
@@ -8956,7 +8956,7 @@
                   <unix-def:owrite datatype="boolean">1</unix-def:owrite>
             </unix-def:file_state>
             <ind-def:textfilecontent54_state id="oval:mil.army.us.rhel5:ste:20053" version="1">
-                  <ind-def:subexpression var_check="all" operation="equals" var_ref="oval:mil.army.us.rhel5:var:20053"/>
+                  <ind-def:subexpression var_check="all" operation="greater than or equal" var_ref="oval:mil.army.us.rhel5:var:20053"/>
             </ind-def:textfilecontent54_state>
             <ind-def:textfilecontent54_state id="oval:mil.army.us.rhel5:ste:20055" version="1">
                   <ind-def:subexpression operation="equals">0</ind-def:subexpression>
@@ -9540,7 +9540,7 @@
             <external_variable id="oval:mil.army.us.rhel5:var:20043" version="1" datatype="string" comment="External variable for definition 20043"/>
             <external_variable id="oval:mil.army.us.rhel5:var:20044" version="1" datatype="string" comment="External variable for definition 20044"/>
             <external_variable id="oval:mil.army.us.rhel5:var:20045" version="1" datatype="string" comment="External variable for definition 20045"/>
-            <external_variable id="oval:mil.army.us.rhel5:var:20053" version="1" datatype="string" comment="External variable for definition 20053"/>
+            <external_variable id="oval:mil.army.us.rhel5:var:20053" version="1" datatype="int" comment="External variable for definition 20053"/>
             <external_variable id="oval:mil.army.us.rhel5:var:20071" version="1" datatype="string" comment="External variable for definition 20071"/>
             <external_variable id="oval:mil.army.us.rhel5:var:20072" version="1" datatype="string" comment="External variable for definition 20072"/>
             <external_variable id="oval:mil.army.us.rhel5:var:20073" version="1" datatype="string" comment="External variable for definition 20073"/>

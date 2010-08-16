@@ -115,11 +115,11 @@
     <select idref="dcb-rhel5-rule-2.2.3.5.a" selected="false" />    <!-- ?OK -->		<!-- Find files unowned by a user -->
     <select idref="dcb-rhel5-rule-2.2.3.5.b" selected="false" />    <!-- ?OK -->		<!-- Find files unowned by a group -->
     <select idref="dcb-rhel5-rule-2.2.3.6.a" selected="false" />    <!-- OK -->			<!-- Find world writable directories not owned by a system account--> 
-    <select idref="dcb-rhel5-rule-2.2.4.1.a" selected="false" />    <!-- ? Fedora -->		<!-- Set Daemon umask -->
-    <select idref="dcb-rhel5-rule-2.2.4.2.a" selected="false" />    <!-- ? Fedora -->		<!-- Disable Core Dumps for all users -->
-    <select idref="dcb-rhel5-rule-2.2.4.2.b" selected="false" />    <!-- ? Fedora -->		<!-- Disable Core Dumps for SUID programs -->
-    <select idref="dcb-rhel5-rule-2.2.4.3.a" selected="false" />    <!-- ? Fedora -->		<!-- Enable ExecShield -->
-    <select idref="dcb-rhel5-rule-2.2.4.3.b" selected="false" />    <!-- ? Fedora -->		<!-- Enable ExecShield randomized placement of virtual memory regions -->
+    <select idref="dcb-rhel5-rule-2.2.4.1.a" selected="false" />    <!-- DONE-->		        <!-- Set Daemon umask -->
+    <select idref="dcb-rhel5-rule-2.2.4.2.a" selected="false" />    <!-- DONE -->		<!-- Disable Core Dumps for all users -->
+    <select idref="dcb-rhel5-rule-2.2.4.2.b" selected="false" />    <!-- DONE -->		<!-- Disable Core Dumps for SUID programs -->
+    <select idref="dcb-rhel5-rule-2.2.4.3.a" selected="false" />    <!-- DONE -->		<!-- Enable ExecShield -->
+    <select idref="dcb-rhel5-rule-2.2.4.3.b" selected="false" />    <!-- DONE -->		<!-- Enable ExecShield randomized placement of virtual memory regions -->
     <select idref="dcb-rhel5-rule-2.2.4.4.2.a" selected="false" />  <!-- ? Fedora -->		<!-- Install New Kernel on Supported x86 Systems -->
     <select idref="dcb-rhel5-rule-2.2.4.4.3.a" selected="false" />  <!--Unknown test -->	<!-- Enable NX or XD Support in the BIOS -->
     <select idref="dcb-rhel5-rule-2.3.1.1.a" selected="false" />    <!-- OK -->			<!-- Restrict Root Logins to System Console -->
@@ -137,9 +137,9 @@
     <select idref="dcb-rhel5-rule-2.3.1.7.b" selected="false" />    <!-- OK -->			<!-- Set minimum password age -->
     <select idref="dcb-rhel5-rule-2.3.1.7.c" selected="false" />    <!-- OK -->			<!-- Set maximum password age -->
     <select idref="dcb-rhel5-rule-2.3.1.7.d" selected="false" />    <!-- OK -->			<!-- Set password warn age -->
-    <select idref="dcb-rhel5-rule-2.3.1.8.a" selected="false" />    <!-- ? Fedora -->		<!-- Remove Legacy + Entries from /etc/shadow -->
-    <select idref="dcb-rhel5-rule-2.3.1.8.b" selected="false" />    <!-- ? Fedora -->		<!-- Remove Legacy + Entries from /etc/group -->
-`   <select idref="dcb-rhel5-rule-2.3.1.8.c" selected="false" />    <!-- ? Fedora -->		<!-- Remove Legacy + Entries from /etc/passwd -->
+    <select idref="dcb-rhel5-rule-2.3.1.8.a" selected="false" />    <!-- DONE -->		<!-- Remove Legacy + Entries from /etc/shadow -->
+    <select idref="dcb-rhel5-rule-2.3.1.8.b" selected="false" />    <!-- DONE -->		<!-- Remove Legacy + Entries from /etc/group -->
+`   <select idref="dcb-rhel5-rule-2.3.1.8.c" selected="false" />    <!-- DONE -->		<!-- Remove Legacy + Entries from /etc/passwd -->
     <select idref="dcb-rhel5-rule-2.3.3.1.1.a" selected="false" />  <!-- Not OVAL 5.5 -->	<!-- Set Password Quality Requirements using pam_cracklib -->
     <select idref="dcb-rhel5-rule-2.3.3.1.2.a" selected="false" />  <!--Unknown test -->	<!-- Set Password Quality Requirements using pam_passwdqc -->
     <select idref="dcb-rhel5-rule-2.3.3.2.a" selected="false" />    <!-- Not OVAL 5.5 -->	<!-- Set Lockouts for Failed Password Attempts -->
@@ -152,10 +152,11 @@
     <select idref="dcb-rhel5-rule-2.3.4.1.2.a" selected="false" />  <!-- OK -->    		<!-- Write permissions are disabled for group and other in all directories in Root's Path -->
 
     <select idref="dcb-rhel5-rule-2.3.4.2.a" selected="false" />    <!-- OK -->			<!-- Ensure that User Home Directories are not Group-Writable or World-Readable -->
-    <select idref="dcb-rhel5-rule-2.3.4.4.a" selected="false" />    <!-- ? Fedora -->		<!-- Ensure that Users Have Sensible Umask Values in /etc/bashrc -->
-    <select idref="dcb-rhel5-rule-2.3.4.4.b" selected="false" />    <!-- ? Fedora -->		<!-- Ensure that Users Have Sensible Umask Values in /etc/cshrc -->
-    <select idref="dcb-rhel5-rule-2.3.4.4.c" selected="false" />    <!-- ? Fedora -->		<!-- Ensure that Users Have Sensible Umask Values in /etc/login.defs -->
-    <select idref="dcb-rhel5-rule-2.3.4.4.d" selected="false" />    <!-- ? Fedora -->		<!-- Ensure that Users Have Sensible Umask Values in /etc/profile -->
+    <select idref="dcb-rhel5-rule-2.3.4.4.a" selected="true" />    <!-- DONE -->		<!-- Ensure that Users Have Sensible Umask Values in /etc/bashrc -->
+    <select idref="dcb-rhel5-rule-2.3.4.4.b" selected="true" />    <!-- DONE -->		<!-- Ensure that Users Have Sensible Umask Values in /etc/cshrc -->
+    <select idref="dcb-rhel5-rule-2.3.4.4.c" selected="true" />    <!-- DONE -->		<!-- Ensure that Users Have Sensible Umask Values in /etc/login.defs -->
+    <select idref="dcb-rhel5-rule-2.3.4.4.d" selected="true" />    <!-- DONE -->		<!-- Ensure that Users Have Sensible Umask Values in /etc/profile -->
+
     <select idref="dcb-rhel5-rule-2.3.4.5.a" selected="false" />    <!--Unknown -->	<!-- Check for existance of .netrc file -->
     <select idref="dcb-rhel5-rule-2.3.5.2.a" selected="false" />    <!-- OK -->			<!-- Set Boot Loader user owner -->
     <select idref="dcb-rhel5-rule-2.3.5.2.b" selected="false" />    <!-- OK -->			<!-- Set Boot Loader group owner -->
@@ -467,7 +468,7 @@
     <refine-value idref="dcb-rhel5-var-2.2.3.1.j" selector="644" />              <!-- Permissions for group -->
     <refine-value idref="dcb-rhel5-var-2.2.3.1.k" selector="400" />              <!-- Permissions for gshadow -->
     <refine-value idref="dcb-rhel5-var-2.2.3.1.l" selector="644" />              <!-- Permissions for passwd -->
-    <refine-value idref="dcb-rhel5-var-2.2.4.1.a" selector="027" />              <!-- daemon umask -->
+    <refine-value idref="dcb-rhel5-var-2.2.4.1.a" selector="022" />              <!-- daemon umask -->
     <refine-value idref="dcb-rhel5-var-2.3.1.7.a" selector="6" />               <!-- password minimum length -->
     <refine-value idref="dcb-rhel5-var-2.3.1.7.b" selector="0_days" />            <!-- minimum password age (days) -->
     <refine-value idref="dcb-rhel5-var-2.3.1.7.c" selector="60_days" />          <!-- maximum password age -->
@@ -2409,8 +2410,8 @@
         <Group id="dcb-rhel5-group-2.2.4.1" hidden="false">
           <title xml:lang="en">Set Daemon umask</title>
           <description xml:lang="en">
-            The settings file /etc/sysconfig/init contains settings which
-            apply to all processes started at boot time. The system umask must be set to at least
+            The init files in /etc/init.d contain settings which
+            apply to processes started at boot time. The system umask must be set to at least
             022, or daemon processes may create world-writable files. The more restrictive setting
             027 protects files, including temporary files and log files, from unauthorized reading
             by unprivileged users on the system. <xhtml:br/>
@@ -2421,7 +2422,7 @@
           </description>
           <Value id="dcb-rhel5-var-2.2.4.1.a" type="string" operator="equals">
             <title>daemon umask</title>
-      			<description>Enter umask for daemons</description>
+            <description>Enter umask for daemons</description>
             <value>027</value>
             <value selector="022">022</value>
             <value selector="027">027</value>
