@@ -360,6 +360,7 @@
   <!-- fixtext (rule, 0-1) -->
   <xsl:if test='$rule and $rule/cdf:fixtext'>
     <h4>Fix instructions</h4>
+    <p><xsl:value-of select='$rule/cdf:fixtext[1]'/></p>
   </xsl:if>
 
   <!-- fix script (result or rule, 0-1) -->
