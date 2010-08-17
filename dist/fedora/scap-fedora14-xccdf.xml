@@ -78,17 +78,17 @@
     <select idref="dcb-rhel5-rule-2.1.3.1.1.a" selected="false" />	<!-- DONE -->		<!-- Install AIDE -->
     <select idref="dcb-rhel5-rule-2.1.3.1.4.a" selected="false" />	<!-- DONE -->		<!-- run AIDE (integrity check) periodically -->
     <select idref="dcb-rhel5-rule-2.1.3.2.a" selected="false" />	<!-- DONE -->		<!-- Verify Package Integrity Using RPM -->
-    <select idref="dcb-rhel5-rule-2.2.1.1.a" selected="false" />    <!-- Not OVAL 5.5 -->	<!-- Add nodev Option to Non-Root Local Partitions --> 
-    <select idref="dcb-rhel5-rule-2.2.1.2.a" selected="false" />    <!--Unknown test -->	<!-- Add nodev Option to Removable Media Partitions -->
-    <select idref="dcb-rhel5-rule-2.2.1.2.b" selected="false" />    <!--Unknown test -->	<!-- Add noexec Option to Removable Media Partitions -->
-    <select idref="dcb-rhel5-rule-2.2.1.2.c" selected="false" />    <!--Unknown test -->	<!-- Add nosuid Option to Removable Media Partitions -->
-    <select idref="dcb-rhel5-rule-2.2.2.1.a" selected="false" />    <!-- ? Fedora -->		<!-- Restrict Console Device Access -->
-    <select idref="dcb-rhel5-rule-2.2.2.2.1.a" selected="false" />  <!-- ? Fedora -->		<!-- Disable Modprobe Loading of USB Storage Driver -->
-    <select idref="dcb-rhel5-rule-2.2.2.2.2.a" selected="false" />  <!-- ? Fedora -->		<!-- Remove USB Storage Driver -->
-    <select idref="dcb-rhel5-rule-2.2.2.2.3.a" selected="false" />  <!-- ? Fedora -->		<!-- Disable Kernel Support for USB via Bootloader Configuration (will disable all USB devices including keyboards, mice, etc) -->
-    <select idref="dcb-rhel5-rule-2.2.2.2.4.a" selected="false" />  <!--Unknown test -->	<!-- Disable Booting from USB Devices, firmware and BIOS checks cannot be automated at this time -->
-    <select idref="dcb-rhel5-rule-2.2.2.3.a" selected="false" />    <!-- ? Fedora -->		<!-- Disable the Automounter if Possible -->
-    <select idref="dcb-rhel5-rule-2.2.2.4.a" selected="false" />    <!-- ? Fedora -->     	<!-- Disable GNOME Automounting if Possible -->
+    <select idref="dcb-rhel5-rule-2.2.1.1.a" selected="false" />	<!-- DONE -->		<!-- Add nodev Option to Non-Root Local Partitions --> 
+    <select idref="dcb-rhel5-rule-2.2.1.2.a" selected="false" />	<!-- DONE -->		<!-- Add nodev Option to Removable Media Partitions -->
+    <select idref="dcb-rhel5-rule-2.2.1.2.b" selected="false" />	<!-- DONE -->		<!-- Add noexec Option to Removable Media Partitions -->
+    <select idref="dcb-rhel5-rule-2.2.1.2.c" selected="false" />	<!-- DONE -->		<!-- Add nosuid Option to Removable Media Partitions -->
+    <select idref="dcb-rhel5-rule-2.2.2.1.a" selected="false" />	<!-- ERASE -->		<!-- Restrict Console Device Access -->
+    <select idref="dcb-rhel5-rule-2.2.2.2.1.a" selected="false" />	<!-- DONE -->		<!-- Disable Modprobe Loading of USB Storage Driver -->
+    <select idref="dcb-rhel5-rule-2.2.2.2.2.a" selected="false" />	<!-- DONE -->		<!-- Remove USB Storage Driver -->
+    <select idref="dcb-rhel5-rule-2.2.2.2.3.a" selected="false" />	<!-- DONE -->		<!-- Disable Kernel Support for USB via Bootloader Configuration (will disable all USB devices including keyboards, mice, etc) -->
+    <select idref="dcb-rhel5-rule-2.2.2.2.4.a" selected="false" /> 	<!-- DONE  -->		<!-- Disable Booting from USB Devices, firmware and BIOS checks cannot be automated at this time -->
+    <select idref="dcb-rhel5-rule-2.2.2.3.a" selected="true" />		<!-- DONE  -->		<!-- Disable the Automounter if Possible -->
+    <select idref="dcb-rhel5-rule-2.2.2.4.a" selected="false" />	<!-- BUG? -->     	<!-- Disable GNOME Automounting if Possible -->
     <select idref="dcb-rhel5-rule-2.2.2.5.a" selected="false" />    <!-- ? Fedora -->		<!-- Disable Mounting of cramfs -->
     <select idref="dcb-rhel5-rule-2.2.2.5.b" selected="false" />    <!-- ? Fedora -->		<!-- Disable Mounting of freevxfs -->
     <select idref="dcb-rhel5-rule-2.2.2.5.c" selected="false" />    <!-- ? Fedora -->		<!-- Disable Mounting of jffs2 -->
@@ -1643,7 +1643,7 @@
               <description>The USB device support module should not be loaded</description>
               <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN008460 GEN008480</reference>
               <ident system="http://cce.mitre.org">CCE-4187-1</ident>
-              <fix>echo -e "\ninstall usb-storage" &gt;&gt; /etc/modprobe.conf</fix>
+              <fix>echo -e "\nblacklist usb_storage" &gt;&gt; /etc/modprobe.d/blacklist.conf</fix>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                 <check-content-ref href="scap-fedora14-oval.xml" name="oval:mil.army.us.rhel5:def:20021" />
               </check>

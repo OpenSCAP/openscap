@@ -304,7 +304,7 @@
                   </metadata>
                   <criteria>
                         <criterion test_ref="oval:mil.army.us.rhel5:tst:20016" comment="Check options for nodev in /etc/fstab for all non-root partitions" />
-                        <criterion test_ref="oval:mil.army.us.rhel5:tst:200162" comment="Check options for nodev in /etc/mtab for all non-root partitions" />
+                        <criterion test_ref="oval:mil.army.us.rhel5:tst:200162" comment="Check options for nodev in /etc/mtab for all non-root partitions" /> 
                   </criteria>
             </definition>
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:20017" version="1">
@@ -5553,14 +5553,10 @@
             <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:20016" version="1" check="all" comment="Check options for nodev in /etc/fstab for all non-root partitions" check_existence="at_least_one_exists">
                   <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20016" />
                   <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:200161" />
-<!--- TODO OVAL 5.5                   <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:200162" />
-                  <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:200163" /> -->
             </ind-def:textfilecontent54_test>
             <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:200162" version="1" check="all" comment="Check options for nodev in /etc/mtab for all non-root partitions" check_existence="at_least_one_exists">
                   <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:200162" />
                   <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:200161" />
-<!-- TODO OVAL 5.5                  <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:200162" />
-                  <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:200163" /> -->
             </ind-def:textfilecontent54_test>
             <lin-def:rpminfo_test check_existence="at_least_one_exists" id="oval:mil.army.us.rhel5:tst:10000" version="1" check="at least one" comment="redhat-release is version 5">
                   <lin-def:object object_ref="oval:mil.army.us.rhel5:obj:10000"/>
@@ -5587,13 +5583,13 @@
             <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:20020" version="1" check="all" comment="Check /etc/security/console.perms.d/50-default.perms for lines starting with &lt;console&gt; or &lt;xconsole&gt;" check_existence="none_exist">
                   <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20020" />
             </ind-def:textfilecontent54_test>
-            <ind-def:textfilecontent54_test check_existence="none_exist" id="oval:mil.army.us.rhel5:tst:20021" version="1" check="all" comment="Tests the value of the &lt;:begin:&gt;install[\s]+usb-storage[\s]+:&lt;:end:&gt; setting in the /etc/modprobe.conf file">
+            <ind-def:textfilecontent54_test check_existence="at_least_one_exists" id="oval:mil.army.us.rhel5:tst:20021" version="1" check="all" comment="Test whether usb_storage is blacklisted in /etc/modprobe.d/blacklist.conf">
                   <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20021"/>
             </ind-def:textfilecontent54_test>
             <unix-def:file_test check_existence="none_exist" id="oval:mil.army.us.rhel5:tst:20022" version="1" check="all" comment="Actual file existence test">
                   <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:20022"/>
             </unix-def:file_test>
-            <ind-def:textfilecontent54_test check_existence="none_exist" id="oval:mil.army.us.rhel5:tst:20023" version="1" check="all" comment="Tests the value of the &lt;:begin:&gt;kernel&lt;:nocomment:&gt;nousb setting in the /etc/grub.conf file">
+            <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:mil.army.us.rhel5:tst:20023" version="1" check="all" comment="Tests the value of the &lt;:begin:&gt;kernel&lt;:nocomment:&gt;nousb setting in the /etc/grub.conf file">
                   <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20023"/>
             </ind-def:textfilecontent54_test>
             <unix-def:runlevel_test check_existence="none_exist" id="oval:mil.army.us.rhel5:tst:20025" version="1" check="all" comment="Runlevel test">
@@ -5603,31 +5599,31 @@
                   <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20026"/>
                   <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:20026"/>
             </ind-def:xmlfilecontent_test>
-            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:20027" version="1" check="all" comment="Check /etc/modprobe.conf for line install cramfs /bin/true">
+            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:20027" version="1" check="at least one" comment="Check /etc/modprobe.conf for line install cramfs /bin/true">
                   <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20027" />
                   <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:20027" />
             </ind-def:textfilecontent54_test>
-            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:20028" version="1" check="all" comment="Check /etc/modprobe.conf for line install freevxfs /bin/true">
+            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:20028" version="1" check="at least one" comment="Check /etc/modprobe.conf for line install freevxfs /bin/true">
                   <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20027" />
                   <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:20028" />
             </ind-def:textfilecontent54_test>
-            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:20029" version="1" check="all" comment="Check /etc/modprobe.conf for line install jffs2 /bin/true">
+            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:20029" version="1" check="at least one" comment="Check /etc/modprobe.conf for line install jffs2 /bin/true">
                   <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20027" />
                   <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:20029" />
             </ind-def:textfilecontent54_test>
-            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:20030" version="1" check="all" comment="Check /etc/modprobe.conf for line install hfs /bin/true">
+            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:20030" version="1" check="at least one" comment="Check /etc/modprobe.conf for line install hfs /bin/true">
                   <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20027" />
                   <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:20030" />
             </ind-def:textfilecontent54_test>
-            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:20031" version="1" check="all" comment="Check /etc/modprobe.conf for line install hfsplus /bin/true">
+            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:20031" version="1" check="at least one" comment="Check /etc/modprobe.conf for line install hfsplus /bin/true">
                   <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20027" />
                   <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:20031" />
             </ind-def:textfilecontent54_test>
-            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:20032" version="1" check="all" comment="Check /etc/modprobe.conf for line install squashfs /bin/true">
+            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:20032" version="1" check="at least one" comment="Check /etc/modprobe.conf for line install squashfs /bin/true">
                   <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20027" />
                   <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:20032" />
             </ind-def:textfilecontent54_test>
-            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:20033" version="1" check="all" comment="Check /etc/modprobe.conf for line install udf /bin/true">
+            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:20033" version="1" check="at least one" comment="Check /etc/modprobe.conf for line install udf /bin/true">
                   <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20027" />
                   <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:20033" />
             </ind-def:textfilecontent54_test>
@@ -6933,13 +6929,13 @@
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20016" version="1" comment="file systems defined in /etc/fstab">
                   <ind-def:path>/etc</ind-def:path>
                   <ind-def:filename>fstab</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[\s]*(#).*$|^[\s]*[\S]+[\s]+([\S]+)[\s]+([\S]+)[\s]+([\S]+)[\s]+([\S]+)[\s]+([\S]+)</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^[^#]*\/.+*ext[234]([^#]*)</ind-def:pattern>
                   <ind-def:instance datatype="int" operation="greater than or equal">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:200162" version="1" comment="file systems defined in /etc/mtab">
                   <ind-def:path>/etc</ind-def:path>
                   <ind-def:filename>mtab</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[\s]*(#).*$|^[\s]*[\S]+[\s]+([\S]+)[\s]+([\S]+)[\s]+([\S]+)[\s]+([\S]+)[\s]+([\S]+)</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^[^#]*\/[^[:space:]]*ext[23]([^#])?</ind-def:pattern>
                   <ind-def:instance datatype="int" operation="greater than or equal">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
 
@@ -6968,19 +6964,19 @@
                   <ind-def:instance datatype="int" operation="greater than or equal">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20021" version="1">
-                  <ind-def:path>/etc</ind-def:path>
-                  <ind-def:filename>modprobe.conf</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[\s]*install[\s]+usb\-storage[\s]+:([[\s]#].*)?$</ind-def:pattern>
+                  <ind-def:path>/etc/modprobe.d</ind-def:path>
+                  <ind-def:filename>blacklist.conf</ind-def:filename>
+                  <ind-def:pattern operation="pattern match">^[^#]*blacklist[[:space:]]+usb_storage.*$</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <unix-def:file_object id="oval:mil.army.us.rhel5:obj:20022" version="1" comment="/lib/modules/*/kernel/drivers/usb/storage/usb-storage.ko">
-                  <unix-def:path operation="pattern match">^/lib/modules/*/kernel/drivers/usb/storage$</unix-def:path>
+                  <unix-def:path operation="pattern match">/lib/modules/.*/kernel/drivers/usb/storage</unix-def:path>
                   <unix-def:filename>usb-storage.ko</unix-def:filename>
             </unix-def:file_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20023" version="1">
                   <ind-def:path>/etc</ind-def:path>
                   <ind-def:filename>grub.conf</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[\s]*kernel[^#]nousb</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*kernel[^#]nousb</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <unix-def:runlevel_object id="oval:mil.army.us.rhel5:obj:20025" version="1">
@@ -6993,9 +6989,9 @@
                   <ind-def:xpath>/desktop/gnome/volume_manager/automount_(media)|(drives)</ind-def:xpath>
             </ind-def:xmlfilecontent_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20027" version="1" comment="Check in /etc/modprobe.conf for modules being loaded">
-                  <ind-def:path>/etc</ind-def:path>
-                  <ind-def:filename>modprobe.conf</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[\s]*install[\s]+([\S]+)[\s]+/bin/true</ind-def:pattern>
+                  <ind-def:path>/etc/modprobe.d</ind-def:path>
+                  <ind-def:filename>blacklist.conf</ind-def:filename>
+                  <ind-def:pattern operation="pattern match">^[^#]*blacklist[[:space:]]+([^#]*)$</ind-def:pattern>
                   <ind-def:instance datatype="int" operation="greater than or equal">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <unix-def:file_object id="oval:mil.army.us.rhel5:obj:20034" version="1" comment="/etc/shadow">
@@ -8808,18 +8804,8 @@
                   <ind-def:subexpression datatype="int" operation="equals" entity_check="all">0</ind-def:subexpression>
             </ind-def:textfilecontent54_state>
             <ind-def:textfilecontent54_state id="oval:mil.army.us.rhel5:ste:200161" version="1" comment="ext2 and ext3 filing systems">
-                  <ind-def:instance datatype="int">1</ind-def:instance>
-                  <ind-def:subexpression datatype="string" operation="pattern match" entity_check="all">ext[2-3]</ind-def:subexpression>
-            </ind-def:textfilecontent54_state>
-            <ind-def:textfilecontent54_state id="oval:mil.army.us.rhel5:ste:200162" version="1" comment="All mount points other than /">
-                  <ind-def:instance datatype="int">2</ind-def:instance>
-                  <ind-def:subexpression datatype="string" operation="pattern match" entity_check="all">[^/]</ind-def:subexpression>
-            </ind-def:textfilecontent54_state>
-            <ind-def:textfilecontent54_state id="oval:mil.army.us.rhel5:ste:200163" version="1" comment="Check for the nodev option">
-                  <ind-def:instance datatype="int">3</ind-def:instance>
                   <ind-def:subexpression datatype="string" operation="pattern match" entity_check="all">.*,nodev.*</ind-def:subexpression>
             </ind-def:textfilecontent54_state>
-
             <lin-def:rpminfo_state id="oval:mil.army.us.rhel5:ste:10000" version="1">
                   <lin-def:version operation="pattern match">^5[^\d]</lin-def:version>
             </lin-def:rpminfo_state>
