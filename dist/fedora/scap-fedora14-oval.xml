@@ -2270,7 +2270,8 @@
                         <criterion comment="Conditions are satisfied" test_ref="oval:mil.army.us.rhel5:tst:20148"/>
                   </criteria>
             </definition>
-<!--            <definition class="compliance" id="oval:mil.army.us.rhel5:def:20149" version="1">
+<!--
+            <definition class="compliance" id="oval:mil.army.us.rhel5:def:20149" version="1">
                   <metadata>
                         <title>Confirm Existence and Permissions of System Log Files </title>
                         <affected family="unix">
@@ -2308,7 +2309,8 @@
                   <criteria>
                         <criterion comment="check permissions of all syslog log files" test_ref="oval:mil.army.us.rhel5:tst:20151"/>
                   </criteria>
-            </definition> -->
+            </definition>
+-->
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:20152" version="1">
                   <metadata>
                         <title>Send Logs to a Remote Loghost </title>
@@ -5944,7 +5946,7 @@
                   <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20096"/>
                   <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:20097"/>
             </ind-def:textfilecontent54_test>
-            <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:mil.army.us.rhel5:tst:20098" version="1" check="all" comment="Tests the value of the ^[\s]*set[\s]+-r[\s]+autologout[\s]+([^#]*) expression in the /etc/profile.d/autoogout.csh file">
+            <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:mil.army.us.rhel5:tst:20098" version="1" check="all" comment="Tests the value of the ^[\s]*set[\s]+-r[\s]+autologout[\s]+([^#]*) expression in the /etc/profile.d/autologout.csh file">
                   <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20098"/>
                   <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:20098"/>
             </ind-def:textfilecontent54_test>
@@ -5961,7 +5963,7 @@
                   <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:201006"/>
                   <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:201006"/>
             </ind-def:xmlfilecontent_test>
-            <ind-def:xmlfilecontent_test id="oval:mil.army.us.rhel5:tst:201007" version="1" check="all" comment="/gconf/dir[@name='schemas']/dir[@name='apps']/dir[@name='gnome-screensaver']/entry[@name='mode']/local_schema[1]/default[1]/@value">
+            <ind-def:xmlfilecontent_test id="oval:mil.army.us.rhel5:tst:201007" version="1" check="all" comment="/gconf/dir[@name='schemas']/dir[@name='apps']/dir[@name='gnome-screensaver']/entry[@name='mode']/local_schema[1]/default[1]/stringvalue[1]">
                   <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:201007"/>
                   <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:201007"/>
             </ind-def:xmlfilecontent_test>
@@ -6150,7 +6152,7 @@
             <unix-def:runlevel_test check_existence="any_exist" id="oval:mil.army.us.rhel5:tst:20148" version="1" check="all" comment="Runlevel test">
                   <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:20148"/>
             </unix-def:runlevel_test>
-<!--            <unix-def:file_test check_existence="all_exist" id="oval:mil.army.us.rhel5:tst:20149" version="1" check="all" comment="root owns log files">
+            <unix-def:file_test check_existence="all_exist" id="oval:mil.army.us.rhel5:tst:20149" version="1" check="all" comment="root owns log files">
                   <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:201491"/>
                   <unix-def:state state_ref="oval:mil.army.us.rhel5:ste:20149"/>
             </unix-def:file_test>
@@ -6161,7 +6163,7 @@
             <unix-def:file_test check_existence="all_exist" id="oval:mil.army.us.rhel5:tst:20151" version="1" check="all" comment="log files have correct permissions">
                   <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:201491"/>
                   <unix-def:state state_ref="oval:mil.army.us.rhel5:ste:20151"/>
-            </unix-def:file_test> -->
+            </unix-def:file_test>
             <ind-def:textfilecontent54_test check_existence="at_least_one_exists" id="oval:mil.army.us.rhel5:tst:20152" version="1" check="all" comment="Tests the value of the \*\.\*[\s]+@ setting in the /etc/syslog.conf file">
                   <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20152"/>
             </ind-def:textfilecontent54_test>
@@ -7320,7 +7322,7 @@
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20098" version="1">
                   <ind-def:path>/etc/profile.d</ind-def:path>
-                  <ind-def:filename>autoogout.csh</ind-def:filename>
+                  <ind-def:filename>autologout.csh</ind-def:filename>
                   <ind-def:pattern operation="pattern match">^[\s]*set[\s]+-r[\s]+autologout[\s]+([^#]*)</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
@@ -7361,25 +7363,25 @@
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20104" version="1">
                   <ind-def:path>/etc</ind-def:path>
                   <ind-def:filename>grub.conf</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[\s]*enforcing[\s]*=[\s]*([^#]*)</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">[[:space:]]\+enforcing=([^[:space:]]*)</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20105" version="1">
                   <ind-def:path>/etc</ind-def:path>
                   <ind-def:filename>grub.conf</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[\s]*selinux[\s]*=[\s]*([^#]*)</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">[[:space:]]\+selinux=([^[:space:]]*)</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20106" version="1">
                   <ind-def:path>/etc/selinux</ind-def:path>
                   <ind-def:filename>config</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[\s]*selinux[\s]*=[\s]*([^#]*)</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*SELINUX[[:space:]]*=[[:space:]]*([^#]*)</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20107" version="1">
                   <ind-def:path>/etc/selinux</ind-def:path>
                   <ind-def:filename>config</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[\s]*SELINUXTYPE[\s]*=[\s]*([^#]*)</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*SELINUXTYPE[[:space:]]*=[[:space:]]*([^#]*)</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <unix-def:runlevel_object id="oval:mil.army.us.rhel5:obj:20109" version="1">
@@ -7635,9 +7637,9 @@
                   <ind-def:pattern operation="pattern match">^[^\#][[:space:]]*[^[:space:]]+\.[^[:space:]]+[[:space:]]+[\-]?([^[:space:]]+)</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
-<!--            <unix-def:file_object id="oval:mil.army.us.rhel5:obj:201491" version="1" comment="paths in /etc/syslog.conf">
+            <unix-def:file_object id="oval:mil.army.us.rhel5:obj:201491" version="1" comment="paths in /etc/syslog.conf">
                   <unix-def:filepath var_ref="oval:mil.army.us.rhel5:var:201490"/> 
-            </unix-def:file_object> -->
+            </unix-def:file_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20152" version="1">
                   <ind-def:path>/etc</ind-def:path>
                   <ind-def:filename>rsyslog.conf</ind-def:filename>
@@ -7669,260 +7671,260 @@
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:2015750" version="1">
                   <ind-def:path>/etc/audit</ind-def:path>
                   <ind-def:filename>audit.rules</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^\-a\salways,exit\s\-F\sarch=b32\s\-S\sadjtimex\s\-S\ssettimeofday\s\-S\sstime\s\-k\stime\-change$</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^\-a[[:space:]]always,exit[[:space:]]\-F[[:space:]]arch=b32[[:space:]]\-S[[:space:]]adjtimex[[:space:]]\-S[[:space:]]settimeofday[[:space:]]\-S[[:space:]]stime[[:space:]]\-k[[:space:]]time\-change$</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:2015751" version="1">
                   <ind-def:path>/etc/audit</ind-def:path>
                   <ind-def:filename>audit.rules</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^\-a\salways,exit\s\-F\sarch=b32\s\-S\sclock_settime\s\-k\stime\-change$</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^\-a[[:space:]]always,exit[[:space:]]\-F[[:space:]]arch=b32[[:space:]]\-S[[:space:]]clock_settime[[:space:]]\-k[[:space:]]time\-change$</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:2015752" version="1">
                   <ind-def:path>/etc/audit</ind-def:path>
                   <ind-def:filename>audit.rules</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^\-a\salways,exit\s\-F\sarch=b64\s\-S\sadjtimex\s\-S\ssettimeofday\s\-S\sstime\s\-k\stime\-change$</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^\-a[[:space:]]always,exit[[:space:]]\-F[[:space:]]arch=b64[[:space:]]\-S[[:space:]]adjtimex[[:space:]]\-S[[:space:]]settimeofday[[:space:]]\-S[[:space:]]stime[[:space:]]\-k[[:space:]]time\-change$</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:2015753" version="1">
                   <ind-def:path>/etc/audit</ind-def:path>
                   <ind-def:filename>audit.rules</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^\-a\salways,exit\s\-F\sarch=b64\s\-S\sclock_settime\s\-k\stime\-change$</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^\-a[[:space:]]always,exit[[:space:]]\-F[[:space:]]arch=b64[[:space:]]\-S[[:space:]]clock_settime[[:space:]]\-k[[:space:]]time\-change$</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:2015754" version="1">
                   <ind-def:path>/etc/audit</ind-def:path>
                   <ind-def:filename>audit.rules</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^\-w\s/etc/localtime\s\-p\swa\s\-k\stime\-change$</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^\-w[[:space:]]/etc/localtime[[:space:]]\-p[[:space:]]wa[[:space:]]\-k[[:space:]]time\-change$</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201580" version="1">
                   <ind-def:path>/etc/audit</ind-def:path>
                   <ind-def:filename>audit.rules</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^\-w\s/etc/group\s\-p\swa\s\-k\sidentity$</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^\-w[[:space:]]/etc/group[[:space:]]\-p[[:space:]]wa[[:space:]]\-k[[:space:]]identity$</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201581" version="1">
                   <ind-def:path>/etc/audit</ind-def:path>
                   <ind-def:filename>audit.rules</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^\-w\s/etc/passwd\s\-p\swa\s\-k\sidentity$</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^\-w[[:space:]]/etc/passwd[[:space:]]\-p[[:space:]]wa[[:space:]]\-k[[:space:]]identity$</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201582" version="1">
                   <ind-def:path>/etc/audit</ind-def:path>
                   <ind-def:filename>audit.rules</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^\-w\s/etc/gshadow\s\-p\swa\s\-k\sidentity$</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^\-w[[:space:]]/etc/gshadow[[:space:]]\-p[[:space:]]wa[[:space:]]\-k[[:space:]]identity$</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201583" version="1">
                   <ind-def:path>/etc/audit</ind-def:path>
                   <ind-def:filename>audit.rules</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^\-w\s/etc/shadow\s\-p\swa\s\-k\sidentity$</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^\-w[[:space:]]/etc/shadow[[:space:]]\-p[[:space:]]wa[[:space:]]\-k[[:space:]]identity$</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201584" version="1">
                   <ind-def:path>/etc/audit</ind-def:path>
                   <ind-def:filename>audit.rules</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^\-w\s/etc/security/opasswd\s\-p\swa\s\-k\sidentity$</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^\-w[[:space:]]/etc/security/opasswd[[:space:]]\-p[[:space:]]wa[[:space:]]\-k[[:space:]]identity$</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201590" version="1">
                   <ind-def:path>/etc/audit</ind-def:path>
                   <ind-def:filename>audit.rules</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^\-a\sexit,always\s\-F\sarch=b32\s\-S\ssethostname\s\-S\ssetdomainname\s\-k\ssystem\-locale$</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^\-a[[:space:]]exit,always[[:space:]]\-F[[:space:]]arch=b32[[:space:]]\-S[[:space:]]sethostname[[:space:]]\-S[[:space:]]setdomainname[[:space:]]\-k[[:space:]]system\-locale$</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201591" version="1">
                   <ind-def:path>/etc/audit</ind-def:path>
                   <ind-def:filename>audit.rules</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^\-a\sexit,always\s\-F\sarch=b64\s\-S\ssethostname\s\-S\ssetdomainname\s\-k\ssystem\-locale$</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^\-a[[:space:]]exit,always[[:space:]]\-F[[:space:]]arch=b64[[:space:]]\-S[[:space:]]sethostname[[:space:]]\-S[[:space:]]setdomainname[[:space:]]\-k[[:space:]]system\-locale$</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201592" version="1">
                   <ind-def:path>/etc/audit</ind-def:path>
                   <ind-def:filename>audit.rules</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^\-w\s/etc/issue\s\-p\swa\s\-k\ssystem\-locale$</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^\-w[[:space:]]/etc/issue[[:space:]]\-p[[:space:]]wa[[:space:]]\-k[[:space:]]system\-locale$</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201593" version="1">
                   <ind-def:path>/etc/audit</ind-def:path>
                   <ind-def:filename>audit.rules</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^\-w\s/etc/issue\.net\s\-p\swa\s\-k\ssystem\-locale$</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^\-w[[:space:]]/etc/issue\.net[[:space:]]\-p[[:space:]]wa[[:space:]]\-k[[:space:]]system\-locale$</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201594" version="1">
                   <ind-def:path>/etc/audit</ind-def:path>
                   <ind-def:filename>audit.rules</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^\-w\s/etc/hosts\s\-p\swa\s\-k\ssystem\-locale$</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^\-w[[:space:]]/etc/hosts[[:space:]]\-p[[:space:]]wa[[:space:]]\-k[[:space:]]system\-locale$</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201595" version="1">
                   <ind-def:path>/etc/audit</ind-def:path>
                   <ind-def:filename>audit.rules</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^\-w\s/etc/sysconfig/network\s\-p\swa\s\-k\ssystem\-locale$</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^\-w[[:space:]]/etc/sysconfig/network[[:space:]]\-p[[:space:]]wa[[:space:]]\-k[[:space:]]system\-locale$</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20160" version="1">
                   <ind-def:path>/etc/audit</ind-def:path>
                   <ind-def:filename>audit.rules</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^\-w\s/etc/selinux/\s\-p\swa\s\-k\sMAC\-policy$</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^\-w[[:space:]]/etc/selinux/[[:space:]]\-p[[:space:]]wa[[:space:]]\-k[[:space:]]MAC\-policy$</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201610" version="1">
                   <ind-def:path>/etc/audit</ind-def:path>
                   <ind-def:filename>audit.rules</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^\-w\s/var/log/faillog\s\-p\swa\s\-k\slogins$</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^\-w[[:space:]]/var/log/faillog[[:space:]]\-p[[:space:]]wa[[:space:]]\-k[[:space:]]logins$</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201611" version="1">
                   <ind-def:path>/etc/audit</ind-def:path>
                   <ind-def:filename>audit.rules</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^\-w\s/var/log/lastlog\s\-p\swa\s\-k\slogins$</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^\-w[[:space:]]/var/log/lastlog[[:space:]]\-p[[:space:]]wa[[:space:]]\-k[[:space:]]logins$</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201620" version="1">
                   <ind-def:path>/etc/audit</ind-def:path>
                   <ind-def:filename>audit.rules</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^\-w\s/var/run/utmp\s\-p\swa\s\-k\ssession$</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^\-w[[:space:]]/var/run/utmp[[:space:]]\-p[[:space:]]wa[[:space:]]\-k[[:space:]]session$</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201621" version="1">
                   <ind-def:path>/etc/audit</ind-def:path>
                   <ind-def:filename>audit.rules</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^\-w\s/var/log/btmp\s\-p\swa\s\-k\ssession$</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^\-w[[:space:]]/var/log/btmp[[:space:]]\-p[[:space:]]wa[[:space:]]\-k[[:space:]]session$</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201622" version="1">
                   <ind-def:path>/etc/audit</ind-def:path>
                   <ind-def:filename>audit.rules</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^\-w\s/var/log/wtmp\s\-p\swa\s\-k\ssession$</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^\-w[[:space:]]/var/log/wtmp[[:space:]]\-p[[:space:]]wa[[:space:]]\-k[[:space:]]session$</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201630" version="1">
                   <ind-def:path>/etc/audit</ind-def:path>
                   <ind-def:filename>audit.rules</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^\-a\salways,exit\s\-F\sarch=b32\s\-S\schmod\s\-S\sfchmod\s\-S\sfchmodat\s\-F\sauid>=500\s\-F\sauid!=4294967295\s\-k\sperm_mod$</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^\-a[[:space:]]always,exit[[:space:]]\-F[[:space:]]arch=b32[[:space:]]\-S[[:space:]]chmod[[:space:]]\-S[[:space:]]fchmod[[:space:]]\-S[[:space:]]fchmodat[[:space:]]\-F[[:space:]]auid>=500[[:space:]]\-F[[:space:]]auid!=4294967295[[:space:]]\-k[[:space:]]perm_mod$</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201631" version="1">
                   <ind-def:path>/etc/audit</ind-def:path>
                   <ind-def:filename>audit.rules</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^\-a\salways,exit\s\-F\sarch=b32\s\-S\schown\s\-S\sfchown\s\-S\sfchownat\s\-S\slchown\s\-F\sauid>=500\s\-F\sauid!=4294967295\s\-k\sperm_mod$</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^\-a[[:space:]]always,exit[[:space:]]\-F[[:space:]]arch=b32[[:space:]]\-S[[:space:]]chown[[:space:]]\-S[[:space:]]fchown[[:space:]]\-S[[:space:]]fchownat[[:space:]]\-S[[:space:]]lchown[[:space:]]\-F[[:space:]]auid>=500[[:space:]]\-F[[:space:]]auid!=4294967295[[:space:]]\-k[[:space:]]perm_mod$</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201632" version="1">
                   <ind-def:path>/etc/audit</ind-def:path>
                   <ind-def:filename>audit.rules</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^\-a\salways,exit\s\-F\sarch=b32\s\-S\ssetxattr\s\-S\slsetxattr\s\-S\sfsetxattr\s\-S\sremovexattr\s\-S\slremovexattr\s\-S\sfremovexattr\s\-F\sauid>=500\s\-F\sauid!=4294967295\s\-k\sperm_mod$</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^\-a[[:space:]]always,exit[[:space:]]\-F[[:space:]]arch=b32[[:space:]]\-S[[:space:]]setxattr[[:space:]]\-S[[:space:]]lsetxattr[[:space:]]\-S[[:space:]]fsetxattr[[:space:]]\-S[[:space:]]removexattr[[:space:]]\-S[[:space:]]lremovexattr[[:space:]]\-S[[:space:]]fremovexattr[[:space:]]\-F[[:space:]]auid>=500[[:space:]]\-F[[:space:]]auid!=4294967295[[:space:]]\-k[[:space:]]perm_mod$</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201633" version="1">
                   <ind-def:path>/etc/audit</ind-def:path>
                   <ind-def:filename>audit.rules</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^\-a\salways,exit\s\-F\sarch=b64\s\-S\schmod\s\-S\sfchmod\s\-S\sfchmodat\s\-F\sauid>=500\s\-F\sauid!=4294967295\s\-k\sperm_mod$</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^\-a[[:space:]]always,exit[[:space:]]\-F[[:space:]]arch=b64[[:space:]]\-S[[:space:]]chmod[[:space:]]\-S[[:space:]]fchmod[[:space:]]\-S[[:space:]]fchmodat[[:space:]]\-F[[:space:]]auid>=500[[:space:]]\-F[[:space:]]auid!=4294967295[[:space:]]\-k[[:space:]]perm_mod$</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201634" version="1">
                   <ind-def:path>/etc/audit</ind-def:path>
                   <ind-def:filename>audit.rules</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^\-a\salways,exit\s\-F\sarch=b64\s\-S\schown\s\-S\sfchown\s\-S\sfchownat\s\-S\slchown\s\-F\sauid>=500\s\-F\sauid!=4294967295\s\-k\sperm_mod$</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^\-a[[:space:]]always,exit[[:space:]]\-F[[:space:]]arch=b64[[:space:]]\-S[[:space:]]chown[[:space:]]\-S[[:space:]]fchown[[:space:]]\-S[[:space:]]fchownat[[:space:]]\-S[[:space:]]lchown[[:space:]]\-F[[:space:]]auid>=500[[:space:]]\-F[[:space:]]auid!=4294967295[[:space:]]\-k[[:space:]]perm_mod$</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201635" version="1">
                   <ind-def:path>/etc/audit</ind-def:path>
                   <ind-def:filename>audit.rules</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^\-a\salways,exit\s\-F\sarch=b64\s\-S\ssetxattr\s\-S\slsetxattr\s\-S\sfsetxattr\s\-S\sremovexattr\s\-S\slremovexattr\s\-S\sfremovexattr\s\-F\sauid>=500\s\-F\sauid!=4294967295\s\-k\sperm_mod$</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^\-a[[:space:]]always,exit[[:space:]]\-F[[:space:]]arch=b64[[:space:]]\-S[[:space:]]setxattr[[:space:]]\-S[[:space:]]lsetxattr[[:space:]]\-S[[:space:]]fsetxattr[[:space:]]\-S[[:space:]]removexattr[[:space:]]\-S[[:space:]]lremovexattr[[:space:]]\-S[[:space:]]fremovexattr[[:space:]]\-F[[:space:]]auid>=500[[:space:]]\-F[[:space:]]auid!=4294967295[[:space:]]\-k[[:space:]]perm_mod$</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201640" version="1">
                   <ind-def:path>/etc/audit</ind-def:path>
                   <ind-def:filename>audit.rules</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^\-a\salways,exit\s\-F\sarch=b32\s\-S\screat\s\-S\sopen\s\-S\sopenat\s\-S\struncate\s\-S\sftruncate\s\-F\sexit=\-EACCES\s\-F\sauid>=500\s\-F\sauid!=4294967295\s\-k\saccess$</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^\-a[[:space:]]always,exit[[:space:]]\-F[[:space:]]arch=b32[[:space:]]\-S[[:space:]]creat[[:space:]]\-S[[:space:]]open[[:space:]]\-S[[:space:]]openat[[:space:]]\-S[[:space:]]truncate[[:space:]]\-S[[:space:]]ftruncate[[:space:]]\-F[[:space:]]exit=\-EACCES[[:space:]]\-F[[:space:]]auid>=500[[:space:]]\-F[[:space:]]auid!=4294967295[[:space:]]\-k[[:space:]]access$</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201641" version="1">
                   <ind-def:path>/etc/audit</ind-def:path>
                   <ind-def:filename>audit.rules</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^\-a\salways,exit\s\-F\sarch=b32\s\-S\screat\s\-S\sopen\s\-S\sopenat\s\-S\struncate\s\-S\sftruncate\s\-F\sexit=\-EPERM\s\-F\sauid>=500\s\-F\sauid!=4294967295\s\-k\saccess$</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^\-a[[:space:]]always,exit[[:space:]]\-F[[:space:]]arch=b32[[:space:]]\-S[[:space:]]creat[[:space:]]\-S[[:space:]]open[[:space:]]\-S[[:space:]]openat[[:space:]]\-S[[:space:]]truncate[[:space:]]\-S[[:space:]]ftruncate[[:space:]]\-F[[:space:]]exit=\-EPERM[[:space:]]\-F[[:space:]]auid>=500[[:space:]]\-F[[:space:]]auid!=4294967295[[:space:]]\-k[[:space:]]access$</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201642" version="1">
                   <ind-def:path>/etc/audit</ind-def:path>
                   <ind-def:filename>audit.rules</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^\-a\salways,exit\s\-F\sarch=b64\s\-S\screat\s\-S\sopen\s\-S\sopenat\s\-S\struncate\s\-S\sftruncate\s\-F\sexit=\-EACCES\s\-F\sauid>=500\s\-F\sauid!=4294967295\s\-k\saccess$</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^\-a[[:space:]]always,exit[[:space:]]\-F[[:space:]]arch=b64[[:space:]]\-S[[:space:]]creat[[:space:]]\-S[[:space:]]open[[:space:]]\-S[[:space:]]openat[[:space:]]\-S[[:space:]]truncate[[:space:]]\-S[[:space:]]ftruncate[[:space:]]\-F[[:space:]]exit=\-EACCES[[:space:]]\-F[[:space:]]auid>=500[[:space:]]\-F[[:space:]]auid!=4294967295[[:space:]]\-k[[:space:]]access$</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201643" version="1">
                   <ind-def:path>/etc/audit</ind-def:path>
                   <ind-def:filename>audit.rules</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^\-a\salways,exit\s\-F\sarch=b64\s\-S\screat\s\-S\sopen\s\-S\sopenat\s\-S\struncate\s\-S\sftruncate\s\-F\sexit=\-EPERM\s\-F\sauid>=500\s\-F\sauid!=4294967295\s\-k\saccess$</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^\-a[[:space:]]always,exit[[:space:]]\-F[[:space:]]arch=b64[[:space:]]\-S[[:space:]]creat[[:space:]]\-S[[:space:]]open[[:space:]]\-S[[:space:]]openat[[:space:]]\-S[[:space:]]truncate[[:space:]]\-S[[:space:]]ftruncate[[:space:]]\-F[[:space:]]exit=\-EPERM[[:space:]]\-F[[:space:]]auid>=500[[:space:]]\-F[[:space:]]auid!=4294967295[[:space:]]\-k[[:space:]]access$</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20165" version="1">
                   <ind-def:path>/etc/audit</ind-def:path>
                   <ind-def:filename>audit.rules</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^\-a\salways,exit\s-F\spath=/bin/ping\s-F perm=x\s\-F\sauid>=500\s\-F\sauid!=4294967295\s\-k\sprivileged</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^\-a[[:space:]]always,exit[[:space:]]-F[[:space:]]path=/bin/ping[[:space:]]-F perm=x[[:space:]]\-F[[:space:]]auid>=500[[:space:]]\-F[[:space:]]auid!=4294967295[[:space:]]\-k[[:space:]]privileged</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201660" version="1">
                   <ind-def:path>/etc/audit</ind-def:path>
                   <ind-def:filename>audit.rules</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^\-a\salways,exit\s\-F\sarch=b32\s\-S\smount\s\-F\sauid>=500\s\-F\sauid!=4294967295\s\-k\sexport$</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^\-a[[:space:]]always,exit[[:space:]]\-F[[:space:]]arch=b32[[:space:]]\-S[[:space:]]mount[[:space:]]\-F[[:space:]]auid>=500[[:space:]]\-F[[:space:]]auid!=4294967295[[:space:]]\-k[[:space:]]export$</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201661" version="1">
                   <ind-def:path>/etc/audit</ind-def:path>
                   <ind-def:filename>audit.rules</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^\-a\salways,exit\s\-F\sarch=b64\s\-S\smount\s\-F\sauid>=500\s\-F\sauid!=4294967295\s\-k\sexport$</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^\-a[[:space:]]always,exit[[:space:]]\-F[[:space:]]arch=b64[[:space:]]\-S[[:space:]]mount[[:space:]]\-F[[:space:]]auid>=500[[:space:]]\-F[[:space:]]auid!=4294967295[[:space:]]\-k[[:space:]]export$</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <unix-def:uname_object id="oval:mil.army.us.rhel5:obj:201670" version="1"/>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201671" version="1">
                   <ind-def:path>/etc/audit</ind-def:path>
                   <ind-def:filename>audit.rules</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^\-a\salways,exit\s\-F\sarch=b32\s\-S\sunlink\s\-S\sunlinkat\s\-S\srename\s\-S\srenameat\s\-F\sauid>=500\s\-F\sauid!=4294967295\s\-k\sdelete$</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^\-a[[:space:]]always,exit[[:space:]]\-F[[:space:]]arch=b32[[:space:]]\-S[[:space:]]unlink[[:space:]]\-S[[:space:]]unlinkat[[:space:]]\-S[[:space:]]rename[[:space:]]\-S[[:space:]]renameat[[:space:]]\-F[[:space:]]auid>=500[[:space:]]\-F[[:space:]]auid!=4294967295[[:space:]]\-k[[:space:]]delete$</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201673" version="1">
                   <ind-def:path>/etc/audit</ind-def:path>
                   <ind-def:filename>audit.rules</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^\-a\salways,exit\s\-F\sarch=b64\s\-S\sunlink\s\-S\sunlinkat\s\-S\srename\s\-S\srenameat\s\-F\sauid>=500\s\-F\sauid!=4294967295\s\-k\sdelete$</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^\-a[[:space:]]always,exit[[:space:]]\-F[[:space:]]arch=b64[[:space:]]\-S[[:space:]]unlink[[:space:]]\-S[[:space:]]unlinkat[[:space:]]\-S[[:space:]]rename[[:space:]]\-S[[:space:]]renameat[[:space:]]\-F[[:space:]]auid>=500[[:space:]]\-F[[:space:]]auid!=4294967295[[:space:]]\-k[[:space:]]delete$</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20168" version="1">
                   <ind-def:path>/etc/audit</ind-def:path>
                   <ind-def:filename>audit.rules</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^\-w\s/etc/sudoers\s\-p\swa\s\-k\sactions</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^\-w[[:space:]]/etc/sudoers[[:space:]]\-p[[:space:]]wa[[:space:]]\-k[[:space:]]actions</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:2016851" version="1">
                   <ind-def:path>/etc/audit</ind-def:path>
                   <ind-def:filename>audit.rules</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^\-w\s/sbin/insmod\s\-p\sx\s\-k\smodules</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^\-w[[:space:]]/sbin/insmod[[:space:]]\-p[[:space:]]x[[:space:]]\-k[[:space:]]modules</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:2016852" version="1">
                   <ind-def:path>/etc/audit</ind-def:path>
                   <ind-def:filename>audit.rules</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^\-w\s/sbin/rmmod\s\-p\sx\s\-k\smodules</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^\-w[[:space:]]/sbin/rmmod[[:space:]]\-p[[:space:]]x[[:space:]]\-k[[:space:]]modules</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:2016853" version="1">
                   <ind-def:path>/etc/audit</ind-def:path>
                   <ind-def:filename>audit.rules</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^\-w\s/sbin/modprobe\s\-p\sx\s\-k\smodules</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^\-w[[:space:]]/sbin/modprobe[[:space:]]\-p[[:space:]]x[[:space:]]\-k[[:space:]]modules</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:2016854" version="1">
                   <ind-def:path>/etc/audit</ind-def:path>
                   <ind-def:filename>audit.rules</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^\-a\salways,exit\s\-S\sinit_module\s\-S\sdelete_module\s\-k\smodules</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^\-a[[:space:]]always,exit[[:space:]]\-S[[:space:]]init_module[[:space:]]\-S[[:space:]]delete_module[[:space:]]\-k[[:space:]]modules</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20169" version="1">
                   <ind-def:path>/etc/audit</ind-def:path>
                   <ind-def:filename>audit.rules</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^\-e\s2</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^\-e[[:space:]]2</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <unix-def:runlevel_object id="oval:mil.army.us.rhel5:obj:20170" version="1">

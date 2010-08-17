@@ -158,32 +158,32 @@
     <select idref="dcb-rhel5-rule-2.3.4.4.d" selected="true" />    <!-- DONE -->		<!-- Ensure that Users Have Sensible Umask Values in /etc/profile -->
 
     <select idref="dcb-rhel5-rule-2.3.4.5.a" selected="false" />    <!--Unknown -->	<!-- Check for existance of .netrc file -->
-    <select idref="dcb-rhel5-rule-2.3.5.2.a" selected="false" />    <!-- OK -->			<!-- Set Boot Loader user owner -->
-    <select idref="dcb-rhel5-rule-2.3.5.2.b" selected="false" />    <!-- OK -->			<!-- Set Boot Loader group owner -->
-    <select idref="dcb-rhel5-rule-2.3.5.2.c" selected="false" />    <!-- OK -->			<!-- Set permission on /etc/grub.conf -->
-    <select idref="dcb-rhel5-rule-2.3.5.2.d" selected="false" />    <!-- OK -->			<!-- Set Boot Loader Password -->
-    <select idref="dcb-rhel5-rule-2.3.5.3.a" selected="false" />    <!-- F14 test needed-->     <!-- Require Authentication for Single-User Mode -->
-    <select idref="dcb-rhel5-rule-2.3.5.4.a" selected="false" />    <!-- OK -->			<!-- Disable Interactive Boot -->
-    <select idref="dcb-rhel5-rule-2.3.5.5.a" selected="false" />    <!-- OK -->			<!-- Implement Inactivity Time-out for csh Shell -->
-    <select idref="dcb-rhel5-rule-2.3.5.5.b" selected="false" />    <!--Unknown -->		<!-- Implement Inactivity Time-out for bash Shell -->
+    <select idref="dcb-rhel5-rule-2.3.5.2.a" selected="true" />    <!-- DONE+ -->			<!-- Set Boot Loader user owner -->
+    <select idref="dcb-rhel5-rule-2.3.5.2.b" selected="true" />    <!-- DONE+ -->			<!-- Set Boot Loader group owner -->
+    <select idref="dcb-rhel5-rule-2.3.5.2.c" selected="true" />    <!-- DONE+ -->			<!-- Set permission on /etc/grub.conf -->
+    <select idref="dcb-rhel5-rule-2.3.5.2.d" selected="false" />    <!-- DONE- -->			<!-- Set Boot Loader Password -->
+    <select idref="dcb-rhel5-rule-2.3.5.3.a" selected="false" />    <!-- F14 test needed -->     <!-- Require Authentication for Single-User Mode -->
+    <select idref="dcb-rhel5-rule-2.3.5.4.a" selected="false" />    <!-- DONE- -->			<!-- Disable Interactive Boot -->
+    <select idref="dcb-rhel5-rule-2.3.5.5.a" selected="false" />    <!-- DONE- -->			<!-- Implement Inactivity Time-out for csh Shell -->
+    <select idref="dcb-rhel5-rule-2.3.5.5.b" selected="false" />    <!-- Unknown -->		<!-- Implement Inactivity Time-out for bash Shell -->
 
-    <select idref="dcb-rhel5-rule-2.3.5.6.1.a" selected="false" />  <!-- F14 test needed-->     <!-- Implement Inactivity Time-out for Login Shells -->
-    <select idref="dcb-rhel5-rule-2.3.5.6.1.b" selected="false" />  <!-- F14 test needed-->     <!-- Implement idle activation of screen saver -->
-    <select idref="dcb-rhel5-rule-2.3.5.6.1.c" selected="false" />  <!-- F14 test needed-->     <!-- Implement idle activation of screen lock -->
-    <select idref="dcb-rhel5-rule-2.3.5.6.1.d" selected="false" />  <!-- F14 test needed-->     <!-- Implement blank screen saver -->
+    <select idref="dcb-rhel5-rule-2.3.5.6.1.a" selected="false" />  <!-- DONE- -->     <!-- Implement Inactivity Time-out for Login Shells -->
+    <select idref="dcb-rhel5-rule-2.3.5.6.1.b" selected="false" />  <!-- DONE- -->     <!-- Implement idle activation of screen saver -->
+    <select idref="dcb-rhel5-rule-2.3.5.6.1.c" selected="false" />  <!-- DONE- -->     <!-- Implement idle activation of screen lock -->
+    <select idref="dcb-rhel5-rule-2.3.5.6.1.d" selected="false" />  <!-- Unknown -->     <!-- Implement blank screen saver -->
 
-    <select idref="dcb-rhel5-rule-2.3.5.6.2.a" selected="false" />  <!-- OK --> 		<!-- Configure console screen locking -->
-    <select idref="dcb-rhel5-rule-2.3.7.1.a" selected="false" />    <!-- OK -->			<!-- Modify the System Login Banner -->
-    <select idref="dcb-rhel5-rule-2.3.7.2.a" selected="false" />    <!-- F14 test needed-->	<!-- Implement a GUI Warning Banner -->
-    <select idref="dcb-rhel5-rule-2.4.2.a" selected="false" />      <!-- OK -->       <!-- Enable SELinux in /etc/grub.conf -->
-    <select idref="dcb-rhel5-rule-2.4.2.b" selected="false" />      <!-- OK -->       <!-- Enable SELinux enforcement in /etc/grub.conf -->
-    <select idref="dcb-rhel5-rule-2.4.2.c" selected="false" />      <!-- OK -->      <!-- Set the SELinux state -->
-    <select idref="dcb-rhel5-rule-2.4.2.d" selected="false" />      <!-- OK -->       <!-- Set the SELinux policy -->
-    <select idref="dcb-rhel5-rule-2.4.2.1.a" selected="false" />    <!--Unknown -->      <!-- Ensure SELinux is Properly Enabled -->
-    <select idref="dcb-rhel5-rule-2.4.3.2.a" selected="false" />    <!-- OK -->      <!-- Disable MCS Translation Service (mcstrans) if Possible -->
-    <select idref="dcb-rhel5-rule-2.4.3.3.a" selected="false" />    <!-- OK -->    <!-- Restorecon Service (restorecond) -->
-    <select idref="dcb-rhel5-rule-2.4.5.a" selected="false" />      <!--Unknown -->      <!-- Check for Unconfined Daemons -->
-    <select idref="dcb-rhel5-rule-2.5.1.1.a" selected="false" />    <!-- OK -->      <!-- Disable net.ipv4.conf.default.send_redirects for Hosts Only -->
+    <select idref="dcb-rhel5-rule-2.3.5.6.2.a" selected="false" />    <!-- DONE- --> 		<!-- Configure console screen locking -->
+    <select idref="dcb-rhel5-rule-2.3.7.1.a"   selected="false" />    <!-- DONE- -->			<!-- Modify the System Login Banner -->
+    <select idref="dcb-rhel5-rule-2.3.7.2.a"   selected="false" />    <!-- F14 test needed -->	<!-- Implement a GUI Warning Banner -->
+    <select idref="dcb-rhel5-rule-2.4.2.a"     selected="false" />    <!-- ??? -->       <!-- Enable SELinux in /etc/grub.conf -->
+    <select idref="dcb-rhel5-rule-2.4.2.b"     selected="false" />    <!-- ??? -->       <!-- Enable SELinux enforcement in /etc/grub.conf -->
+    <select idref="dcb-rhel5-rule-2.4.2.c"     selected="true" />    <!-- DONE+ -->      <!-- Set the SELinux state -->
+    <select idref="dcb-rhel5-rule-2.4.2.d"     selected="true" />    <!-- DONE+ -->       <!-- Set the SELinux policy -->
+    <select idref="dcb-rhel5-rule-2.4.2.1.a"   selected="false" />    <!--Unknown -->      <!-- Ensure SELinux is Properly Enabled -->
+    <select idref="dcb-rhel5-rule-2.4.3.2.a"   selected="false" />    <!-- TODO fix state -->      <!-- Disable MCS Translation Service (mcstrans) if Possible -->
+    <select idref="dcb-rhel5-rule-2.4.3.3.a"   selected="false" />    <!-- TODO fix state -->    <!-- Restorecon Service (restorecond) -->
+    <select idref="dcb-rhel5-rule-2.4.5.a"     selected="false" />    <!--Unknown -->      <!-- Check for Unconfined Daemons -->
+    <select idref="dcb-rhel5-rule-2.5.1.1.a"   selected="false" />    <!-- OK -->      <!-- Disable net.ipv4.conf.default.send_redirects for Hosts Only -->
     <select idref="dcb-rhel5-rule-2.5.1.1.b" selected="false" />    <!-- OK -->      <!-- Disable net.ipv4.conf.all.send_redirects for Hosts Only -->
     <select idref="dcb-rhel5-rule-2.5.1.1.c" selected="false" />    <!-- OK -->      <!-- Disable net.ipv4.ip forward for Hosts Only -->
     <select idref="dcb-rhel5-rule-2.5.1.2.a" selected="false" />    <!-- OK -->      <!-- Set net.ipv4.conf.all.accept_source_route for Hosts and Routers -->
@@ -235,22 +235,22 @@
     <select idref="dcb-rhel5-rule-2.6.1.4.a" selected="false" />    <!-- F14 test needed-->      <!-- Disable syslogd from Accepting Remote Messages on Loghosts Only -->
     <select idref="dcb-rhel5-rule-2.6.1.5.a" selected="false" />    <!-- OK -->      <!-- Ensure All Logs are Rotated by logrotate -->
     <select idref="dcb-rhel5-rule-2.6.1.6.a" selected="false" />    <!--Unknown -->     <!-- Monitor Suspicious Log Messages using Logwatch -->
-    <select idref="dcb-rhel5-rule-2.6.2.1.a" selected="false" />    <!-- OK -->      <!-- Enable the auditd Service -->
-    <select idref="dcb-rhel5-rule-2.6.2.3.a" selected="false" />    <!-- OK -->      <!-- Enable Auditing for Processes Which Start Prior to the Audit Daemon -->
-    <select idref="dcb-rhel5-rule-2.6.2.4.1.a" selected="false" />        <!-- Records Events that Modify Date and Time Information -->
-    <select idref="dcb-rhel5-rule-2.6.2.4.2.a" selected="false" />        <!-- Record Events that Modify User/Group Information -->
-    <select idref="dcb-rhel5-rule-2.6.2.4.3.a" selected="false" />        <!-- Record Events that Modify the System’s Network Environment -->
-    <select idref="dcb-rhel5-rule-2.6.2.4.4.a" selected="false" />        <!-- Record Events that Modify the System’s Mandatory Access Controls -->
-    <select idref="dcb-rhel5-rule-2.6.2.4.5.a" selected="false" />        <!-- Ensure auditd Collects Logon and Logout Events -->
-    <select idref="dcb-rhel5-rule-2.6.2.4.6.a" selected="false" />        <!-- Ensure auditd Collects Process and Session Initiation Information -->
-    <select idref="dcb-rhel5-rule-2.6.2.4.7.a" selected="false" />        <!-- Ensure auditd Collects Discretionary Access Control Permission Modiﬁcation Events -->
-    <select idref="dcb-rhel5-rule-2.6.2.4.8.a" selected="false" />        <!-- Ensure auditd Collects Unauthorized Access Attempts to Files (unsuccessful -->
-    <select idref="dcb-rhel5-rule-2.6.2.4.9.a" selected="false" />        <!-- Ensure auditd Collects Information on the Use of Privileged Commands -->
-    <select idref="dcb-rhel5-rule-2.6.2.4.10.a" selected="false" />       <!-- Ensure auditd Collects Information on Exporting to Media (successful) -->
-    <select idref="dcb-rhel5-rule-2.6.2.4.11.a" selected="false" />       <!-- Ensure auditd Collects Files Deletion Events by User (successful and unsuccessful) -->
-    <select idref="dcb-rhel5-rule-2.6.2.4.12.a" selected="false" />       <!-- Ensure auditd Collects System Administrator Actions -->
-    <select idref="dcb-rhel5-rule-2.6.2.4.13.a" selected="false" />       <!-- Ensure auditd Collects Information on Kernel Module Loading and Unloading -->
-    <select idref="dcb-rhel5-rule-2.6.2.4.14.a" selected="false" />       <!-- Make the auditd Conﬁguration Immutable -->
+    <select idref="dcb-rhel5-rule-2.6.2.1.a" selected="false" />    <!-- DONE- -->      <!-- Enable the auditd Service -->
+    <select idref="dcb-rhel5-rule-2.6.2.3.a" selected="false" />    <!-- DONE- -->      <!-- Enable Auditing for Processes Which Start Prior to the Audit Daemon -->
+    <select idref="dcb-rhel5-rule-2.6.2.4.1.a"  selected="false" />  <!-- DONE- -->    <!-- Records Events that Modify Date and Time Information -->
+    <select idref="dcb-rhel5-rule-2.6.2.4.2.a"  selected="false" />  <!-- DONE- -->    <!-- Record Events that Modify User/Group Information -->
+    <select idref="dcb-rhel5-rule-2.6.2.4.3.a"  selected="false" />  <!-- DONE- -->    <!-- Record Events that Modify the System’s Network Environment -->
+    <select idref="dcb-rhel5-rule-2.6.2.4.4.a"  selected="false" />  <!-- DONE- -->    <!-- Record Events that Modify the System’s Mandatory Access Controls -->
+    <select idref="dcb-rhel5-rule-2.6.2.4.5.a"  selected="false" />  <!-- DONE- -->    <!-- Ensure auditd Collects Logon and Logout Events -->
+    <select idref="dcb-rhel5-rule-2.6.2.4.6.a"  selected="false" />  <!-- DONE- -->    <!-- Ensure auditd Collects Process and Session Initiation Information -->
+    <select idref="dcb-rhel5-rule-2.6.2.4.7.a"  selected="false" />  <!-- DONE- -->    <!-- Ensure auditd Collects Discretionary Access Control Permission Modiﬁcation Events -->
+    <select idref="dcb-rhel5-rule-2.6.2.4.8.a"  selected="false" />  <!-- DONE- -->    <!-- Ensure auditd Collects Unauthorized Access Attempts to Files (unsuccessful -->
+    <select idref="dcb-rhel5-rule-2.6.2.4.9.a"  selected="false" />  <!-- DONE- -->    <!-- Ensure auditd Collects Information on the Use of Privileged Commands -->
+    <select idref="dcb-rhel5-rule-2.6.2.4.10.a" selected="false" />  <!-- DONE- -->   <!-- Ensure auditd Collects Information on Exporting to Media (successful) -->
+    <select idref="dcb-rhel5-rule-2.6.2.4.11.a" selected="false" />  <!-- DONE- -->   <!-- Ensure auditd Collects Files Deletion Events by User (successful and unsuccessful) -->
+    <select idref="dcb-rhel5-rule-2.6.2.4.12.a" selected="false" />  <!-- DONE- -->   <!-- Ensure auditd Collects System Administrator Actions -->
+    <select idref="dcb-rhel5-rule-2.6.2.4.13.a" selected="false" />  <!-- DONE- -->   <!-- Ensure auditd Collects Information on Kernel Module Loading and Unloading -->
+    <select idref="dcb-rhel5-rule-2.6.2.4.14.a" selected="false" />  <!-- DONE- -->   <!-- Make the auditd Conﬁguration Immutable -->
 
 
 
@@ -492,7 +492,7 @@
     <refine-value idref="dcb-rhel5-var-2.3.5.2.b" selector="root" />             <!-- Group that owns /etc/grub.conf -->
     <refine-value idref="dcb-rhel5-var-2.3.5.2.c" selector="600" />              <!-- permissions on /etc/hrub.conf -->
     <refine-value idref="dcb-rhel5-var-2.3.5.5" selector="15_minutes" />         <!-- Inactivity timout -->
-    <refine-value idref="dcb-rhel5-var-2.3.7" selector="DOD_text" />             <!-- login banner verbiage -->
+    <refine-value idref="dcb-rhel5-var-2.3.7" selector="Empty_text" /> <!-- TODO: modify -->     <!-- login banner verbiage -->
     <refine-value idref="dcb-rhel5-var-2.4.2.c" selector="enforcing" />          <!-- SELinux state -->
     <refine-value idref="dcb-rhel5-var-2.4.2.d" selector="targeted" />           <!-- SELinux policy -->
     <refine-value idref="dcb-rhel5-var-2.5.1.2.a" selector="disabled" />         <!-- net.ipv4.conf.all.accept_source_route -->
@@ -4444,6 +4444,7 @@
           <title>login banner verbiage</title>
           <description xml:lang="en">Enter an appropriate login banner for your organization</description>
           <reference href="http://iase.disa.mil/policy-guidance/dod-banner-9may2008-ocr.pdf">DoD Policy on Use of DoD Information Systems - Standard Consent Banner and User Agreement</reference>
+          <value selector="Empty_text"></value>
           <value selector="Army_text">You are accessing a U.S. Government (USG) Information System (IS) that is provided for USG-authorized use only.
 
 By using this IS (which includes any device attached to this IS), you consent to the following conditions:
@@ -7398,7 +7399,7 @@ By using this IS (which includes any device attached to this IS), you consent to
               <description>Audit rules about time</description>
               <ident system="http://cce.mitre.org">TBD</ident>
               <fixtext>(1) via /etc/audit/audit.rules</fixtext>
-              <fix>cp /usr/share/doc/audit-version/stig.rules /etc/audit/audit.rules</fix>
+              <!--<fix>cp /usr/share/doc/audit-version/stig.rules /etc/audit/audit.rules</fix>-->
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                 <check-content-ref href="scap-fedora14-oval.xml" name="oval:mil.army.us.rhel5:def:201575" />
               </check>
@@ -7487,7 +7488,7 @@ By using this IS (which includes any device attached to this IS), you consent to
               <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN001060 GEN002800</reference>
               <ident system="http://cce.mitre.org">TBD</ident>
               <fixtext>(1) via /etc/audit/audit.rules</fixtext>
-              <fix>cp /usr/share/doc/audit-version/stig.rules /etc/audit/audit.rules</fix>
+              <!--<fix>cp /usr/share/doc/audit-version/stig.rules /etc/audit/audit.rules</fix>-->
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                 <check-content-ref href="scap-fedora14-oval.xml" name="oval:mil.army.us.rhel5:def:20161" />
               </check>
@@ -7511,7 +7512,7 @@ By using this IS (which includes any device attached to this IS), you consent to
               <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN002800</reference>
               <ident system="http://cce.mitre.org">TBD</ident>
               <fixtext>(1) via /etc/audit/audit.rules</fixtext>
-              <fix>cp /usr/share/doc/audit-version/stig.rules /etc/audit/audit.rules</fix>
+              <!--<fix>cp /usr/share/doc/audit-version/stig.rules /etc/audit/audit.rules</fix>-->
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                 <check-content-ref href="scap-fedora14-oval.xml" name="oval:mil.army.us.rhel5:def:20162" />
               </check>
@@ -7672,7 +7673,7 @@ By using this IS (which includes any device attached to this IS), you consent to
               <description>Audit rules about the Information on Kernel Module Loading and Unloading</description>
               <ident system="http://cce.mitre.org">TBD</ident>
               <fixtext>(1) via /etc/audit/audit.rules</fixtext>
-              <fix>cp /usr/share/doc/audit-version/stig.rules /etc/audit/audit.rules</fix>
+              <!--<fix>cp /usr/share/doc/audit-version/stig.rules /etc/audit/audit.rules</fix>-->
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                 <check-content-ref href="scap-fedora14-oval.xml" name="oval:mil.army.us.rhel5:def:201685" />
               </check>
