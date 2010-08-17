@@ -111,8 +111,8 @@ char **oscap_split(char *str, const char *delim)
 
 int oscap_strcmp(const char *s1, const char *s2)
 {
-	if (s1 == NULL) return INT_MIN;
-	if (s2 == NULL) return INT_MAX;
+	if (s1 == NULL) s1 = "";
+	if (s2 == NULL) s2 = "";
 	return strcmp(s1, s2);
 }
 

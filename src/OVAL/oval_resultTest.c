@@ -390,11 +390,11 @@ static oval_result_t evaluate(char *sys_data, char *state_data, oval_datatype_t 
 {
 	if (state_data_type == OVAL_DATATYPE_STRING) {
 		if (operation == OVAL_OPERATION_EQUALS) {
-			return ((strcmp(state_data, sys_data)) ? OVAL_RESULT_FALSE : OVAL_RESULT_TRUE);
+			return ((oscap_strcmp(state_data, sys_data)) ? OVAL_RESULT_FALSE : OVAL_RESULT_TRUE);
 		} else if (operation == OVAL_OPERATION_CASE_INSENSITIVE_EQUALS) {
 			return ((istrcmp(state_data, sys_data)) ? OVAL_RESULT_FALSE : OVAL_RESULT_TRUE);
 		} else if (operation == OVAL_OPERATION_NOT_EQUAL) {
-			return ((strcmp(state_data, sys_data)) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
+			return ((oscap_strcmp(state_data, sys_data)) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
 		} else if (operation == OVAL_OPERATION_CASE_INSENSITIVE_NOT_EQUAL) {
 			return ((istrcmp(state_data, sys_data)) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
 		} else if (operation == OVAL_OPERATION_PATTERN_MATCH) {
