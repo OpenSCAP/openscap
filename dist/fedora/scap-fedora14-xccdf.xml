@@ -170,7 +170,7 @@
     <select idref="dcb-rhel5-rule-2.3.5.6.1.a" selected="false" />  <!-- DONE- -->     <!-- Implement Inactivity Time-out for Login Shells -->
     <select idref="dcb-rhel5-rule-2.3.5.6.1.b" selected="false" />  <!-- DONE- -->     <!-- Implement idle activation of screen saver -->
     <select idref="dcb-rhel5-rule-2.3.5.6.1.c" selected="false" />  <!-- DONE- -->     <!-- Implement idle activation of screen lock -->
-    <select idref="dcb-rhel5-rule-2.3.5.6.1.d" selected="false" />  <!-- Unknown -->     <!-- Implement blank screen saver -->
+    <select idref="dcb-rhel5-rule-2.3.5.6.1.d" selected="false" />  <!-- DONE- -->     <!-- Implement blank screen saver -->
 
     <select idref="dcb-rhel5-rule-2.3.5.6.2.a" selected="false" />    <!-- DONE- --> 		<!-- Configure console screen locking -->
     <select idref="dcb-rhel5-rule-2.3.7.1.a"   selected="false" />    <!-- DONE- -->			<!-- Modify the System Login Banner -->
@@ -180,8 +180,8 @@
     <select idref="dcb-rhel5-rule-2.4.2.c"     selected="true" />    <!-- DONE+ -->      <!-- Set the SELinux state -->
     <select idref="dcb-rhel5-rule-2.4.2.d"     selected="true" />    <!-- DONE+ -->       <!-- Set the SELinux policy -->
     <select idref="dcb-rhel5-rule-2.4.2.1.a"   selected="false" />    <!--Unknown -->      <!-- Ensure SELinux is Properly Enabled -->
-    <select idref="dcb-rhel5-rule-2.4.3.2.a"   selected="false" />    <!-- TODO fix state -->      <!-- Disable MCS Translation Service (mcstrans) if Possible -->
-    <select idref="dcb-rhel5-rule-2.4.3.3.a"   selected="false" />    <!-- TODO fix state -->    <!-- Restorecon Service (restorecond) -->
+    <select idref="dcb-rhel5-rule-2.4.3.2.a"   selected="false" />    <!-- DONE- -->      <!-- Disable MCS Translation Service (mcstrans) if Possible -->
+    <select idref="dcb-rhel5-rule-2.4.3.3.a"   selected="false" />    <!-- DONE- -->    <!-- Restorecon Service (restorecond) -->
     <select idref="dcb-rhel5-rule-2.4.5.a"     selected="false" />    <!--Unknown -->      <!-- Check for Unconfined Daemons -->
     <select idref="dcb-rhel5-rule-2.5.1.1.a"   selected="false" />    <!-- OK -->      <!-- Disable net.ipv4.conf.default.send_redirects for Hosts Only -->
     <select idref="dcb-rhel5-rule-2.5.1.1.b" selected="false" />    <!-- OK -->      <!-- Disable net.ipv4.conf.all.send_redirects for Hosts Only -->

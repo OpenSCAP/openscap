@@ -6000,11 +6000,13 @@
             <unix-def:runlevel_test check_existence="none_exist" id="oval:mil.army.us.rhel5:tst:20109" version="1" check="all" comment="Runlevel test">
                   <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:20109"/>
             </unix-def:runlevel_test>
-            <unix-def:runlevel_test check_existence="none_exist" id="oval:mil.army.us.rhel5:tst:20110" version="1" check="all" comment="Runlevel test">
+            <unix-def:runlevel_test check_existence="any_exist" id="oval:mil.army.us.rhel5:tst:20110" version="1" check="all" comment="Runlevel test">
                   <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:20110"/>
+                  <unix-def:state state_ref="oval:mil.army.us.rhel5:ste:20111"/>
             </unix-def:runlevel_test>
-            <unix-def:runlevel_test check_existence="none_exist" id="oval:mil.army.us.rhel5:tst:20111" version="1" check="all" comment="Runlevel test">
+            <unix-def:runlevel_test check_existence="any_exist" id="oval:mil.army.us.rhel5:tst:20111" version="1" check="all" comment="Runlevel test">
                   <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:20111"/>
+                  <unix-def:state state_ref="oval:mil.army.us.rhel5:ste:20111"/>
             </unix-def:runlevel_test>
             <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:mil.army.us.rhel5:tst:20112" version="1" check="all" comment="Tests the value of the ^[\s]*net\.ipv4\.conf\.default\.send_redirects[\s]*=([\s]*) expression in the /etc/sysctl.conf file">
                   <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20112"/>
@@ -6173,8 +6175,9 @@
             <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:mil.army.us.rhel5:tst:20154" version="1" check="all" comment="Find each file in /etc/syslog.conf in /etc/logrotate.d/syslog">
                   <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20154"/>
             </ind-def:textfilecontent54_test>
-            <unix-def:runlevel_test check_existence="any_exist" id="oval:mil.army.us.rhel5:tst:20156" version="1" check="all" comment="Runlevel test">
+            <unix-def:runlevel_test check_existence="all_exist" id="oval:mil.army.us.rhel5:tst:20156" version="1" check="at least one" comment="Runlevel test">
                   <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:20156"/>
+                  <unix-def:state state_ref="oval:mil.army.us.rhel5:ste:20156"/>
             </unix-def:runlevel_test>
             <ind-def:textfilecontent54_test check_existence="at_least_one_exists" id="oval:mil.army.us.rhel5:tst:20157" version="1" check="all" comment="check for audit=1 in /etc/grub.conf">
                   <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20157"/>
@@ -7344,7 +7347,7 @@
             <ind-def:xmlfilecontent_object id="oval:mil.army.us.rhel5:obj:201007" version="1">
                   <ind-def:path>/etc/gconf/gconf.xml.defaults</ind-def:path>
                   <ind-def:filename>%gconf-tree.xml</ind-def:filename>
-                  <ind-def:xpath>/gconf/dir[@name='schemas']/dir[@name='apps']/dir[@name='gnome-screensaver']/entry[@name='mode']/local_schema[1]/default[1]/stringvalue[1]</ind-def:xpath>
+                  <ind-def:xpath>/gconf/dir[@name='schemas']/dir[@name='apps']/dir[@name='gnome-screensaver']/entry[@name='mode']/local_schema[1]/default[1]/stringvalue[1]/text()</ind-def:xpath>
             </ind-def:xmlfilecontent_object>
             <lin-def:rpminfo_object id="oval:mil.army.us.rhel5:obj:20101" version="1">
                   <lin-def:name>vlock</lin-def:name>
@@ -9131,6 +9134,10 @@
             <ind-def:textfilecontent54_state id="oval:mil.army.us.rhel5:ste:20107" version="1">
                   <ind-def:subexpression var_check="all" operation="equals" var_ref="oval:mil.army.us.rhel5:var:20107"/>
             </ind-def:textfilecontent54_state>
+            <unix-def:runlevel_state id="oval:mil.army.us.rhel5:ste:20111" version="1">
+                  <unix-def:start datatype="boolean">false</unix-def:start>
+                  <unix-def:kill datatype="boolean">true</unix-def:kill>
+            </unix-def:runlevel_state>
             <ind-def:textfilecontent54_state id="oval:mil.army.us.rhel5:ste:20112" version="1">
                   <ind-def:subexpression datatype="int" operation="equals">0</ind-def:subexpression>
             </ind-def:textfilecontent54_state>
@@ -9226,6 +9233,10 @@
                   <unix-def:owrite var_check="all" datatype="boolean" var_ref="oval:mil.army.us.rhel5:var:201517"/>
                   <unix-def:oexec var_check="all" datatype="boolean" var_ref="oval:mil.army.us.rhel5:var:201518"/>
             </unix-def:file_state>
+            <unix-def:runlevel_state id="oval:mil.army.us.rhel5:ste:20156" version="1">
+                  <unix-def:start datatype="boolean">true</unix-def:start>
+                  <unix-def:kill datatype="boolean">false</unix-def:kill>
+            </unix-def:runlevel_state>
             <unix-def:uname_state id="oval:mil.army.us.rhel5:ste:201670" version="1">
 			<unix-def:processor_type operation="pattern match">^i386$|^i686$</unix-def:processor_type>
             </unix-def:uname_state>
