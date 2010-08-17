@@ -306,44 +306,29 @@ static void xccdf_resolve_value(struct xccdf_item *child, struct xccdf_item *par
 	}
 }
 
-static inline void xccdf_transfer_value_unit(union xccdf_value_unit *tgt, union xccdf_value_unit src, xccdf_value_type_t type)
-{
-	assert(tgt != NULL);
-
-	switch (type) {
-	case XCCDF_TYPE_STRING: oscap_free(tgt->s); tgt->s = oscap_strdup(src.s); break;
-	case XCCDF_TYPE_NUMBER: tgt->n = src.n; break;
-	case XCCDF_TYPE_BOOLEAN: tgt->b = src.b; break;
-	default: assert(false);
-	}
-}
-
 static void xccdf_resolve_value_instance(struct xccdf_value_instance *child, struct xccdf_value_instance *parent)
 {
 	assert(child != NULL);
 	assert(parent != NULL);
 	assert(oscap_streq(child->selector, parent->selector));
-	if (parent->type != child->type) return;
 	
 	if (!child->flags.value_given)
-		xccdf_transfer_value_unit(&child->value, parent->value, child->type);
+        child->value = oscap_strdup(parent->value);
 	if (!child->flags.defval_given)
-		xccdf_transfer_value_unit(&child->defval, parent->defval, child->type);
-	if (child->type == XCCDF_TYPE_STRING && child->limits.s.match == NULL)
+        child->defval = oscap_strdup(parent->defval);
+	if (child->type == XCCDF_TYPE_STRING && child->match == NULL)
 		xccdf_value_instance_set_match(child, xccdf_value_instance_get_match(parent));
 	if (child->type == XCCDF_TYPE_NUMBER) {
-		if (child->limits.n.lower_bound == NAN)
-			child->limits.n.lower_bound = parent->limits.n.lower_bound;
-		if (child->limits.n.upper_bound == NAN)
-			child->limits.n.upper_bound = parent->limits.n.upper_bound;
+		if (child->lower_bound == NAN)
+			child->lower_bound = parent->lower_bound;
+		if (child->upper_bound == NAN)
+			child->upper_bound = parent->upper_bound;
 	}
 
 	struct oscap_iterator *it = oscap_iterator_new(parent->choices);
 	while (oscap_iterator_has_more(it)) {
-		union xccdf_value_unit *unit = oscap_iterator_next(it);
-		void *unitclone = oscap_alloc(sizeof(union xccdf_value_unit));
-		xccdf_transfer_value_unit(unitclone, *unit, child->type);
-		oscap_list_add(child->choices, unitclone);
+	    const char *unit = oscap_iterator_next(it);
+		oscap_list_add(child->choices, oscap_strdup(unit));
 	}
 	oscap_iterator_free(it);
 }

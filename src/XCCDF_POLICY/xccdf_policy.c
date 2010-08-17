@@ -494,7 +494,7 @@ static struct oscap_list * xccdf_policy_check_get_value_bindings(struct xccdf_po
                 oscap_dlprintf(DBG_E, "Attempt to get non-existent selector \"%s\" from variable \"%s\"\n", selector, xccdf_value_get_id(value));
                 return NULL;
             }
-            binding->value = xccdf_value_instance_get_value(val);
+            binding->value = oscap_strdup(xccdf_value_instance_get_value(val));
             binding->name = oscap_strdup((char *) xccdf_check_export_get_name(check));
             binding->type = xccdf_value_get_type(value);
             oscap_list_add(list, binding);

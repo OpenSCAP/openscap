@@ -991,55 +991,18 @@ void xccdf_group_item_clone(struct xccdf_item *parent, const struct xccdf_group_
 	xccdf_reparent_list(clone->content, parent);
 }
 
-union xccdf_value_unit *xccdf_value_unit_clone_str(const union xccdf_value_unit *unit)
-{
-	union xccdf_value_unit *val = oscap_calloc(1, sizeof(union xccdf_value_unit));
-	val->s = oscap_strdup(unit->s);
-	return val;
-}
-
-union xccdf_value_unit *xccdf_value_unit_clone_numeric(const union xccdf_value_unit *unit)
-{
-	union xccdf_value_unit *val = oscap_calloc(1, sizeof(union xccdf_value_unit));
-	val->n = unit->n;
-	return val;
-}
-
-union xccdf_value_unit *xccdf_value_unit_clone_bool(const union xccdf_value_unit *unit)
-{
-	union xccdf_value_unit *val = oscap_calloc(1, sizeof(union xccdf_value_unit));
-	val->b = unit->b;
-	return val;
-}
-
 struct xccdf_value_instance * xccdf_value_instance_clone(const struct xccdf_value_instance * val)
 {
 	struct xccdf_value_instance * clone = oscap_calloc(1, sizeof(struct xccdf_value_instance));
     clone->type = val->type;
 	
-	switch (val->type) {
-	case XCCDF_TYPE_STRING:
-		clone->value.s = oscap_strdup(val->value.s);
-		clone->defval.s = oscap_strdup(val->defval.s);
-		clone->choices = oscap_list_clone(val->choices, (oscap_clone_func) xccdf_value_unit_clone_str);
-		clone->limits.s.match = oscap_strdup(val->limits.s.match);
-		break;
-	case XCCDF_TYPE_NUMBER:
-		clone->value.n = val->value.n;
-		clone->defval.n = val->defval.n;
-		clone->choices = oscap_list_clone(val->choices, (oscap_clone_func) xccdf_value_unit_clone_numeric);
-		clone->limits.n.lower_bound = val->limits.n.lower_bound;
-		clone->limits.n.upper_bound = val->limits.n.upper_bound;
-		break;
-	case XCCDF_TYPE_BOOLEAN:
-		clone->value.b = val->value.b;
-		clone->defval.b = val->defval.b;
-		clone->choices = oscap_list_clone(val->choices, (oscap_clone_func) xccdf_value_unit_clone_bool);
-		break;
-	default:
-		assert(false);
-	}
-	
+    clone->value = oscap_strdup(val->value);
+    clone->defval = oscap_strdup(val->defval);
+    clone->choices = oscap_list_clone(val->choices, (oscap_clone_func) oscap_strdup);
+    clone->match = oscap_strdup(val->match);
+    clone->lower_bound = val->lower_bound;
+    clone->upper_bound = val->upper_bound;
+
 	clone->flags = val->flags;
 	xccdf_value_instance_set_selector(clone, xccdf_value_instance_get_selector(val));
 	return clone;

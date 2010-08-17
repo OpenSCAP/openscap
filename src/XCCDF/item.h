@@ -105,28 +105,16 @@ struct xccdf_group_item {
 	struct oscap_list *content;
 };
 
-union xccdf_value_unit {
-	xccdf_numeric n;
-	char *s;
-	bool b;
-};
-
 /* This structure is used for multiple-count attributes for Item (0-n) */
 struct xccdf_value_instance {
 	char *selector;
 	xccdf_value_type_t type;                    /* Value::type */
-	union xccdf_value_unit value;               /* Value::value   */
-	union xccdf_value_unit defval;              /* Value::default */
+	char *value;               /* Value::value   */
+	char *defval;              /* Value::default */
 	struct oscap_list *choices;                 /* Value::choices */
-	union {
-		struct {
-			xccdf_numeric lower_bound;
-			xccdf_numeric upper_bound;
-		} n;
-		struct {
-			char *match;
-		} s;
-	} limits;
+    xccdf_numeric lower_bound;
+    xccdf_numeric upper_bound;
+    char *match;
 	struct {
 		bool value_given : 1;
 		bool defval_given : 1;
@@ -461,9 +449,6 @@ struct xccdf_benchmark_item * xccdf_benchmark_item_clone(struct xccdf_item *clon
 void xccdf_rule_item_clone(struct xccdf_rule_item *clone, const struct xccdf_rule_item * item);
 void xccdf_group_item_clone(struct xccdf_item *parent, const struct xccdf_group_item * item);
 void xccdf_value_item_clone(struct xccdf_value_item *clone, const struct xccdf_value_item * item);
-union xccdf_value_unit *xccdf_value_unit_clone_str(const union xccdf_value_unit *unit);
-union xccdf_value_unit *xccdf_value_unit_clone_numeric(const union xccdf_value_unit *unit);
-union xccdf_value_unit *xccdf_value_unit_clone_bool(const union xccdf_value_unit *unit);
 struct xccdf_value_instance * xccdf_value_instance_clone(const struct xccdf_value_instance * val);
 void xccdf_result_item_clone(struct xccdf_result_item *clone, const struct xccdf_result_item * item);
 struct xccdf_profile_note * xccdf_profile_note_clone(const struct xccdf_profile_note * note);
