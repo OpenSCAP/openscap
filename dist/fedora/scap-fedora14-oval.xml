@@ -6168,11 +6168,11 @@
                   <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20103"/>
                   <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:20103"/>
             </ind-def:xmlfilecontent_test>
-            <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:mil.army.us.rhel5:tst:20104" version="1" check="all" comment="Tests the value of the ^[\s]*enforcing[\s]*=[\s]*([^#]*) expression in the /etc/grub.conf file">
+            <ind-def:textfilecontent54_test check_existence="any_exist" id="oval:mil.army.us.rhel5:tst:20104" version="1" check="all" comment="Tests the value of the [\s]selinux=([^\s]*) expression in the /etc/grub.conf file">
                   <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20104"/>
                   <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:20104"/>
             </ind-def:textfilecontent54_test>
-            <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:mil.army.us.rhel5:tst:20105" version="1" check="all" comment="Tests the value of the ^[\s]*selinux[\s]*=[\s]*([^#]*) expression in the /etc/grub.conf file">
+            <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:mil.army.us.rhel5:tst:20105" version="1" check="all" comment="Tests the value of the [\s]enforcing=([^\s]*) expression in the /etc/grub.conf file">
                   <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20105"/>
                   <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:20105"/>
             </ind-def:textfilecontent54_test>
@@ -7830,13 +7830,13 @@
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20104" version="1">
                   <ind-def:path>/etc</ind-def:path>
                   <ind-def:filename>grub.conf</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">[[:space:]]\+enforcing=([^[:space:]]*)</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">[[:space:]]selinux=([^[:space:]]*)</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20105" version="1">
                   <ind-def:path>/etc</ind-def:path>
                   <ind-def:filename>grub.conf</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">[[:space:]]\+selinux=([^[:space:]]*)</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">[[:space:]]enforcing=([^[:space:]]*)</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20106" version="1">
