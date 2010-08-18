@@ -86,36 +86,37 @@
     <select idref="dcb-rhel5-rule-2.2.2.2.1.a" selected="false" />	<!-- DONE -->		<!-- Disable Modprobe Loading of USB Storage Driver -->
     <select idref="dcb-rhel5-rule-2.2.2.2.2.a" selected="false" />	<!-- DONE -->		<!-- Remove USB Storage Driver -->
     <select idref="dcb-rhel5-rule-2.2.2.2.3.a" selected="false" />	<!-- DONE -->		<!-- Disable Kernel Support for USB via Bootloader Configuration (will disable all USB devices including keyboards, mice, etc) -->
-    <select idref="dcb-rhel5-rule-2.2.2.2.4.a" selected="false" /> 	<!-- DONE  -->		<!-- Disable Booting from USB Devices, firmware and BIOS checks cannot be automated at this time -->
-    <select idref="dcb-rhel5-rule-2.2.2.3.a" selected="true" />		<!-- DONE  -->		<!-- Disable the Automounter if Possible -->
+    <select idref="dcb-rhel5-rule-2.2.2.2.4.a" selected="false" /> 	<!-- DONE -->		<!-- Disable Booting from USB Devices -->
+    <select idref="dcb-rhel5-rule-2.2.2.3.a" selected="true" />		<!-- DONE -->		<!-- Disable the Automounter if Possible -->
     <select idref="dcb-rhel5-rule-2.2.2.4.a" selected="false" />	<!-- BUG? -->     	<!-- Disable GNOME Automounting if Possible -->
-    <select idref="dcb-rhel5-rule-2.2.2.5.a" selected="false" />    <!-- ? Fedora -->		<!-- Disable Mounting of cramfs -->
-    <select idref="dcb-rhel5-rule-2.2.2.5.b" selected="false" />    <!-- ? Fedora -->		<!-- Disable Mounting of freevxfs -->
-    <select idref="dcb-rhel5-rule-2.2.2.5.c" selected="false" />    <!-- ? Fedora -->		<!-- Disable Mounting of jffs2 -->
-    <select idref="dcb-rhel5-rule-2.2.2.5.d" selected="false" />    <!-- ? Fedora -->		<!-- Disable Mounting of hfs -->
-    <select idref="dcb-rhel5-rule-2.2.2.5.e" selected="false" />    <!-- ? Fedora -->		<!-- Disable Mounting of hfsplus -->
-    <select idref="dcb-rhel5-rule-2.2.2.5.f" selected="false" />    <!-- ? Fedora -->		<!-- Disable Mounting of squashfs -->
-    <select idref="dcb-rhel5-rule-2.2.2.5.g" selected="false" />    <!-- ? Fedora -->		<!-- Disable Mounting of udf -->
-    <select idref="dcb-rhel5-rule-2.2.3.1.a" selected="false" />    <!-- OK -->			<!-- Verify user who owns '/etc/shadow' file -->
-    <select idref="dcb-rhel5-rule-2.2.3.1.b" selected="false" />    <!-- OK -->			<!-- Verify group who owns '/etc/shadow' file -->
-    <select idref="dcb-rhel5-rule-2.2.3.1.c" selected="false" />    <!-- OK -->			<!-- Verify user who owns '/etc/group' file -->
-    <select idref="dcb-rhel5-rule-2.2.3.1.d" selected="false" />    <!-- OK -->			<!-- Verify group who owns '/etc/group' file -->
-    <select idref="dcb-rhel5-rule-2.2.3.1.e" selected="false" />    <!-- OK -->			<!-- Verify user who owns '/etc/gshadow' file -->
-    <select idref="dcb-rhel5-rule-2.2.3.1.f" selected="false" />    <!-- OK -->			<!-- Verify group who owns '/etc/gshadow' file -->
-    <select idref="dcb-rhel5-rule-2.2.3.1.g" selected="false" />    <!-- OK -->			<!-- Verify user who owns '/etc/passwd' file -->
-    <select idref="dcb-rhel5-rule-2.2.3.1.h" selected="false" />    <!-- OK -->			<!-- Verify group who owns '/etc/passwd' file -->
-    <select idref="dcb-rhel5-rule-2.2.3.1.i" selected="false" />    <!-- OK -->     		<!-- Verify permissions on '/etc/shadow' file -->
-    <select idref="dcb-rhel5-rule-2.2.3.1.j" selected="false" />    <!-- OK -->  		<!-- Verify permissions on '/etc/group' file -->
-    <select idref="dcb-rhel5-rule-2.2.3.1.k" selected="false" />    <!-- OK -->			<!-- Verify permissions on '/etc/gshadow' file -->
-    <select idref="dcb-rhel5-rule-2.2.3.1.l" selected="false" />    <!-- OK --> 	 	<!-- Verify permissions on '/etc/passwd' file -->
-    <select idref="dcb-rhel5-rule-2.2.3.2.a" selected="false" />    <!-- OK -->			<!-- Verify that All World-Writable Directories Have Sticky Bits Set -->
-    <select idref="dcb-rhel5-rule-2.2.3.3.a" selected="false" />    <!-- ?OK-->			<!-- Find Unauthorized World-Writable Files -->
+    <select idref="dcb-rhel5-rule-2.2.2.5.a" selected="false" />	<!-- DONE -->		<!-- Disable Mounting of cramfs -->
+    <select idref="dcb-rhel5-rule-2.2.2.5.b" selected="false" />	<!-- DONE -->		<!-- Disable Mounting of freevxfs -->
+    <select idref="dcb-rhel5-rule-2.2.2.5.c" selected="false" />	<!-- DONE -->		<!-- Disable Mounting of jffs2 -->
+    <select idref="dcb-rhel5-rule-2.2.2.5.d" selected="false" />	<!-- DONE -->		<!-- Disable Mounting of hfs -->
+    <select idref="dcb-rhel5-rule-2.2.2.5.e" selected="false" />	<!-- DONE -->		<!-- Disable Mounting of hfsplus -->
+    <select idref="dcb-rhel5-rule-2.2.2.5.f" selected="false" />	<!-- DONE -->		<!-- Disable Mounting of squashfs -->
+    <select idref="dcb-rhel5-rule-2.2.2.5.g" selected="false" />	<!-- DONE -->		<!-- Disable Mounting of udf -->
+    <select idref="dcb-rhel5-rule-2.2.3.1.a" selected="true" />		<!-- DONE -->		<!-- Verify user who owns '/etc/shadow' file -->
+    <select idref="dcb-rhel5-rule-2.2.3.1.b" selected="true" />		<!-- DONE -->		<!-- Verify group who owns '/etc/shadow' file -->
+    <select idref="dcb-rhel5-rule-2.2.3.1.c" selected="true" />		<!-- DONE -->		<!-- Verify user who owns '/etc/group' file -->
+    <select idref="dcb-rhel5-rule-2.2.3.1.d" selected="true" />		<!-- DONE -->		<!-- Verify group who owns '/etc/group' file -->
+    <select idref="dcb-rhel5-rule-2.2.3.1.e" selected="true" />		<!-- DONE -->		<!-- Verify user who owns '/etc/gshadow' file -->
+    <select idref="dcb-rhel5-rule-2.2.3.1.f" selected="true" />		<!-- DONE -->		<!-- Verify group who owns '/etc/gshadow' file -->
+    <select idref="dcb-rhel5-rule-2.2.3.1.g" selected="true" />		<!-- DONE -->		<!-- Verify user who owns '/etc/passwd' file -->
+    <select idref="dcb-rhel5-rule-2.2.3.1.h" selected="true" />		<!-- DONE -->		<!-- Verify group who owns '/etc/passwd' file -->
+    <select idref="dcb-rhel5-rule-2.2.3.1.i" selected="true" />		<!-- DONE -->  		<!-- Verify permissions on '/etc/shadow' file -->
+    <select idref="dcb-rhel5-rule-2.2.3.1.j" selected="true" />		<!-- DONE -->  		<!-- Verify permissions on '/etc/group' file -->
+    <select idref="dcb-rhel5-rule-2.2.3.1.k" selected="true" />		<!-- DONE -->		<!-- Verify permissions on '/etc/gshadow' file -->
+    <select idref="dcb-rhel5-rule-2.2.3.1.l" selected="true" />		<!-- DONE --> 	 	<!-- Verify permissions on '/etc/passwd' file -->
+    <select idref="dcb-rhel5-rule-2.2.3.2.a" selected="false" />	<!-- DONE -->		<!-- Verify that All World-Writable Directories Have Sticky Bits Set -->
+    <select idref="dcb-rhel5-rule-2.2.3.3.a" selected="false" />    	<!-- DONE -->		<!-- Find Unauthorized World-Writable Files -->
     <select idref="dcb-rhel5-rule-2.2.3.4.a" selected="false" />    <!-- ?OK -->		<!-- Find Unauthorized SGID System Executables -->
     <select idref="dcb-rhel5-rule-2.2.3.4.b" selected="false" />    <!-- ?OK --> 		<!-- Find Unauthorized SUID System Executables -->
     <select idref="dcb-rhel5-rule-2.2.3.5.a" selected="false" />    <!-- ?OK -->		<!-- Find files unowned by a user -->
     <select idref="dcb-rhel5-rule-2.2.3.5.b" selected="false" />    <!-- ?OK -->		<!-- Find files unowned by a group -->
     <select idref="dcb-rhel5-rule-2.2.3.6.a" selected="false" />    <!-- OK -->			<!-- Find world writable directories not owned by a system account--> 
-    <select idref="dcb-rhel5-rule-2.2.4.1.a" selected="false" />    <!-- DONE-->		        <!-- Set Daemon umask -->
+
+    <select idref="dcb-rhel5-rule-2.2.4.1.a" selected="false" />    <!-- DONE-->	        <!-- Set Daemon umask -->
     <select idref="dcb-rhel5-rule-2.2.4.2.a" selected="false" />    <!-- DONE -->		<!-- Disable Core Dumps for all users -->
     <select idref="dcb-rhel5-rule-2.2.4.2.b" selected="false" />    <!-- DONE -->		<!-- Disable Core Dumps for SUID programs -->
     <select idref="dcb-rhel5-rule-2.2.4.3.a" selected="false" />    <!-- DONE -->		<!-- Enable ExecShield -->
@@ -466,7 +467,7 @@
     
     <refine-value idref="dcb-rhel5-var-2.2.3.1.i" selector="000" />              <!-- Permissions for shadow -->
     <refine-value idref="dcb-rhel5-var-2.2.3.1.j" selector="644" />              <!-- Permissions for group -->
-    <refine-value idref="dcb-rhel5-var-2.2.3.1.k" selector="400" />              <!-- Permissions for gshadow -->
+    <refine-value idref="dcb-rhel5-var-2.2.3.1.k" selector="000" />              <!-- Permissions for gshadow -->
     <refine-value idref="dcb-rhel5-var-2.2.3.1.l" selector="644" />              <!-- Permissions for passwd -->
     <refine-value idref="dcb-rhel5-var-2.2.4.1.a" selector="022" />              <!-- daemon umask -->
     <refine-value idref="dcb-rhel5-var-2.3.1.7.a" selector="6" />               <!-- password minimum length -->
@@ -1951,6 +1952,7 @@
             <title>Permissions for gshadow</title>
 	      		<description>File permissions for /etc/gshadow</description>
             <value>110100100</value>
+            <value selector="000">000000000</value>
             <value selector="400">100000000</value>
             <value selector="644">110100100</value>
             <value selector="700">111000000</value>

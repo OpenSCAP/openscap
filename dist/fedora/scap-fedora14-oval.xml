@@ -5585,8 +5585,9 @@
             <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:20020" version="1" check="all" comment="Check /etc/security/console.perms.d/50-default.perms for lines starting with &lt;console&gt; or &lt;xconsole&gt;" check_existence="none_exist">
                   <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20020" />
             </ind-def:textfilecontent54_test>
-            <ind-def:textfilecontent54_test check_existence="at_least_one_exists" id="oval:mil.army.us.rhel5:tst:20021" version="1" check="all" comment="Test whether usb_storage is blacklisted in /etc/modprobe.d/blacklist.conf">
-                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20021"/>
+            <ind-def:textfilecontent54_test check="at least one" id="oval:mil.army.us.rhel5:tst:20021" version="1" comment="Check /etc/modprobe.d/blacklist.conf for usb_storage">
+                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20027"/>
+                  <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:20021" />
             </ind-def:textfilecontent54_test>
             <unix-def:file_test check_existence="none_exist" id="oval:mil.army.us.rhel5:tst:20022" version="1" check="all" comment="Actual file existence test">
                   <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:20022"/>
@@ -5601,31 +5602,31 @@
                   <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20026"/>
                   <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:20026"/>
             </ind-def:xmlfilecontent_test>
-            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:20027" version="1" check="at least one" comment="Check /etc/modprobe.conf for line install cramfs /bin/true">
+            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:20027" version="1" check="at least one" comment="Check /etc/modprobe.d/blacklist.conf for cramfs">
                   <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20027" />
                   <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:20027" />
             </ind-def:textfilecontent54_test>
-            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:20028" version="1" check="at least one" comment="Check /etc/modprobe.conf for line install freevxfs /bin/true">
+            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:20028" version="1" check="at least one" comment="Check /etc/modprobe.d/blacklist.conf for freevxfs">
                   <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20027" />
                   <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:20028" />
             </ind-def:textfilecontent54_test>
-            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:20029" version="1" check="at least one" comment="Check /etc/modprobe.conf for line install jffs2 /bin/true">
+            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:20029" version="1" check="at least one" comment="Check /etc/modprobe.d/blacklist.conf for jffs2">
                   <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20027" />
                   <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:20029" />
             </ind-def:textfilecontent54_test>
-            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:20030" version="1" check="at least one" comment="Check /etc/modprobe.conf for line install hfs /bin/true">
+            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:20030" version="1" check="at least one" comment="Check /etc/modprobe.d/blacklist.conf for hfs">
                   <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20027" />
                   <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:20030" />
             </ind-def:textfilecontent54_test>
-            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:20031" version="1" check="at least one" comment="Check /etc/modprobe.conf for line install hfsplus /bin/true">
+            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:20031" version="1" check="at least one" comment="Check /etc/modprobe.d/blacklist.conf for hfsplus">
                   <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20027" />
                   <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:20031" />
             </ind-def:textfilecontent54_test>
-            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:20032" version="1" check="at least one" comment="Check /etc/modprobe.conf for line install squashfs /bin/true">
+            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:20032" version="1" check="at least one" comment="Check /etc/modprobe.d/blacklist.conf for squashfs">
                   <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20027" />
                   <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:20032" />
             </ind-def:textfilecontent54_test>
-            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:20033" version="1" check="at least one" comment="Check /etc/modprobe.conf for line install udf /bin/true">
+            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:20033" version="1" check="at least one" comment="Check /etc/modprobe.d/blacklist.conf for udf">
                   <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20027" />
                   <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:20033" />
             </ind-def:textfilecontent54_test>
@@ -5680,7 +5681,7 @@
 
            <unix-def:file_test check_existence="all_exist" id="oval:mil.army.us.rhel5:tst:20046" version="1" check="all" comment="sticky bit on all world writable directories" >
                   <notes>
-                        <note>This will enumerate all directories on local partitions</note>
+                        <note>This will enumerate all world writable directories on local partitions</note>
                   </notes>
                   <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:200461"/>
                   <unix-def:state state_ref="oval:mil.army.us.rhel5:ste:20046"/>
@@ -5688,10 +5689,9 @@
 
             <unix-def:file_test id="oval:mil.army.us.rhel5:tst:20047" version="1" check="all" comment="world writable files">
                   <notes>
-                        <note>This will enumerate all files on local partitions</note>
+                        <note>This will enumerate all world writable files on local partitions</note>
                   </notes>
                   <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:200471"/>
-<!--                  <unix-def:state state_ref="oval:mil.army.us.rhel5:ste:20047"/> -->
             </unix-def:file_test>
 
             <unix-def:file_test id="oval:mil.army.us.rhel5:tst:20048" version="1" check="all" comment="executable files with sgid set">
@@ -6969,12 +6969,6 @@
                   <ind-def:pattern operation="pattern match">^[\s]*(&lt;console&gt;|&lt;xconsole&gt;)</ind-def:pattern>
                   <ind-def:instance datatype="int" operation="greater than or equal">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
-            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20021" version="1">
-                  <ind-def:path>/etc/modprobe.d</ind-def:path>
-                  <ind-def:filename>blacklist.conf</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[^#]*blacklist[[:space:]]+usb_storage.*$</ind-def:pattern>
-                  <ind-def:instance datatype="int">1</ind-def:instance>
-            </ind-def:textfilecontent54_object>
             <unix-def:file_object id="oval:mil.army.us.rhel5:obj:20022" version="1" comment="/lib/modules/*/kernel/drivers/usb/storage/usb-storage.ko">
                   <unix-def:path operation="pattern match">/lib/modules/.*/kernel/drivers/usb/storage</unix-def:path>
                   <unix-def:filename>usb-storage.ko</unix-def:filename>
@@ -7017,9 +7011,6 @@
                   <unix-def:filename>passwd</unix-def:filename>
             </unix-def:file_object>
 
-
-
-
             <unix-def:file_object id="oval:mil.army.us.rhel5:obj:200461" version="1" comment="all local files">
             	  <set set_operator="union" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5">
             	  	<object_reference>oval:mil.army.us.rhel5:obj:20046</object_reference>
@@ -7032,11 +7023,11 @@
                   <unix-def:filename xsi:nil="true"/>
             </unix-def:file_object>
 
-
             <unix-def:file_object id="oval:mil.army.us.rhel5:obj:200471" version="1" comment="all local files">
             	  <set set_operator="union" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5">
             	  	<object_reference>oval:mil.army.us.rhel5:obj:20047</object_reference>
-            	  	<filter>oval:mil.army.us.rhel5:ste:20047</filter>
+            	  	<filter>oval:mil.army.us.rhel5:ste:200471</filter>
+            	  	<filter>oval:mil.army.us.rhel5:ste:200472</filter> 
             	  </set>
             </unix-def:file_object>
             <unix-def:file_object id="oval:mil.army.us.rhel5:obj:20047" version="1" comment="all local files">
@@ -7379,13 +7370,13 @@
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20106" version="1">
                   <ind-def:path>/etc/selinux</ind-def:path>
                   <ind-def:filename>config</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[[:space:]]*SELINUX[[:space:]]*=[[:space:]]*([^#]*)</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*SELINUX[[:space:]]*=[[:space:]]*([^#^\ ]*)</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20107" version="1">
                   <ind-def:path>/etc/selinux</ind-def:path>
                   <ind-def:filename>config</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[[:space:]]*SELINUXTYPE[[:space:]]*=[[:space:]]*([^#]*)</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*SELINUXTYPE[[:space:]]*=[[:space:]]*([^#^\ ]*)</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <unix-def:runlevel_object id="oval:mil.army.us.rhel5:obj:20109" version="1">
@@ -8828,7 +8819,11 @@
             <ind-def:xmlfilecontent_state id="oval:mil.army.us.rhel5:ste:20026" version="1">
                   <ind-def:value_of operation="equals">false</ind-def:value_of>
             </ind-def:xmlfilecontent_state>
-            <ind-def:textfilecontent54_state id="oval:mil.army.us.rhel5:ste:20027" version="1" comment="Check for the cramfs file system">
+
+            <ind-def:textfilecontent54_state id="oval:mil.army.us.rhel5:ste:20021" version="1" comment="Check for the usb_storage module">
+                  <ind-def:subexpression datatype="string" entity_check="all" >usb_storage</ind-def:subexpression>
+            </ind-def:textfilecontent54_state>
+<ind-def:textfilecontent54_state id="oval:mil.army.us.rhel5:ste:20027" version="1" comment="Check for the cramfs file system">
                   <ind-def:subexpression datatype="string" entity_check="all" >cramfs</ind-def:subexpression>
             </ind-def:textfilecontent54_state>
             <ind-def:textfilecontent54_state id="oval:mil.army.us.rhel5:ste:20028" version="1" comment="Check for the freevxfs file system">
@@ -8921,13 +8916,14 @@
             <unix-def:file_state id="oval:mil.army.us.rhel5:ste:20046" version="1">
                   <unix-def:sticky datatype="boolean">1</unix-def:sticky>
             </unix-def:file_state>
-
             <unix-def:file_state id="oval:mil.army.us.rhel5:ste:200462" version="1">
                   <unix-def:owrite datatype="boolean">0</unix-def:owrite>
             </unix-def:file_state>
-
-            <unix-def:file_state id="oval:mil.army.us.rhel5:ste:20047" version="1">
+            <unix-def:file_state id="oval:mil.army.us.rhel5:ste:200471" version="1">
                   <unix-def:owrite datatype="boolean">0</unix-def:owrite>
+            </unix-def:file_state>
+            <unix-def:file_state id="oval:mil.army.us.rhel5:ste:200472" version="1">
+                  <unix-def:type datatype="string" operation="not equal">regular</unix-def:type>
             </unix-def:file_state>
             <unix-def:file_state id="oval:mil.army.us.rhel5:ste:20048" version="1">
                   <unix-def:sgid datatype="boolean">1</unix-def:sgid>
@@ -9641,10 +9637,10 @@
             </local_variable>
 
 <!--
-            <constant_variable id="oval:mil.army.us.rhel5:var:20084" version="1" datatype="int" comment="foo">
-            	  <value>0</value>
-            </constant_variable> -->
-
+            <constant_variable id="oval:mil.army.us.rhel5:var:20107" version="1" datatype="string" comment="foo">
+            	  <value>targeted</value>
+            </constant_variable>
+-->
             <local_variable id="oval:mil.army.us.rhel5:var:1" version="1" datatype="boolean" comment="Bit for a permission type">
                   <substring substring_length="1" substring_start="1">
                         <variable_component var_ref="oval:mil.army.us.rhel5:var:20042"/>
