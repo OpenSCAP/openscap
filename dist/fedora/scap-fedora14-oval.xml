@@ -5786,8 +5786,9 @@
                   <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:200695"/>
                   <unix-def:state state_ref="oval:mil.army.us.rhel5:ste:200695"/>
             </unix-def:password_test>
-            <ind-def:textfilecontent54_test check_existence="none_exist" id="oval:mil.army.us.rhel5:tst:20070" version="1" check="all" comment="Tests the value of the ^[^r][^o][^o][^t].*:.*:0: setting in the /etc/passwd file">
+            <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:mil.army.us.rhel5:tst:20070" version="1" check="all" comment="Check if there is only root account with UID 0">
                   <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20070"/>
+                  <unix-def:state state_ref="oval:mil.army.us.rhel5:ste:20070"/>
             </ind-def:textfilecontent54_test>
             <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:mil.army.us.rhel5:tst:20071" version="1" check="all" comment="Tests the value of the PASS_MIN_LEN[\s]*=[\s]*(.*) expression in the /etc/login.defs file">
                   <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20071"/>
@@ -7135,8 +7136,8 @@
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20070" version="1">
                   <ind-def:path>/etc</ind-def:path>
                   <ind-def:filename>passwd</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[^r][^o][^o][^t]:[^:]:0:</ind-def:pattern>
-                  <ind-def:instance datatype="int">1</ind-def:instance>
+                  <ind-def:pattern operation="pattern match">^([^:]+):[^:]*:0:.*</ind-def:pattern>
+                  <ind-def:instance datatype="int" operation="greater than or equal">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20071" version="1">
                   <ind-def:path>/etc</ind-def:path>
@@ -8969,7 +8970,7 @@
                   <unix-def:password>x</unix-def:password>
             </unix-def:password_state>
             <ind-def:textfilecontent54_state id="oval:mil.army.us.rhel5:ste:20071" version="1">
-                  <ind-def:subexpression var_check="all" operation="equals" var_ref="oval:mil.army.us.rhel5:var:20071"/>
+                  <ind-def:subexpression var_check="all" operation="greater than or equal" var_ref="oval:mil.army.us.rhel5:var:20071"/>
             </ind-def:textfilecontent54_state>
             <ind-def:textfilecontent54_state id="oval:mil.army.us.rhel5:ste:20072" version="1">
                   <ind-def:subexpression var_check="all" operation="equals" var_ref="oval:mil.army.us.rhel5:var:20072"/>
@@ -9027,6 +9028,7 @@
                   <unix-def:group_id>root</unix-def:group_id>
             </unix-def:file_state>
             <unix-def:file_state id="oval:mil.army.us.rhel5:ste:20082" version="1">
+                  <unix-def:suid var_check="all" datatype="boolean" var_ref="oval:mil.army.us.rhel5:var:200820"/>
                   <unix-def:uread var_check="all" datatype="boolean" var_ref="oval:mil.army.us.rhel5:var:200821"/>
                   <unix-def:uwrite var_check="all" datatype="boolean" var_ref="oval:mil.army.us.rhel5:var:200822"/>
                   <unix-def:uexec var_check="all" datatype="boolean" var_ref="oval:mil.army.us.rhel5:var:200823"/>
@@ -9533,6 +9535,9 @@
             <ind-def:textfilecontent54_state id="oval:mil.army.us.rhel5:ste:20352" version="1">
                   <ind-def:subexpression var_check="all" operation="equals" var_ref="oval:mil.army.us.rhel5:var:20352"/>
             </ind-def:textfilecontent54_state>
+            <ind-def:textfilecontent54_state id="oval:mil.army.us.rhel5:ste:20070" version="1">
+                  <ind-def:subexpression operation="equal">root</ind-def:subexpression>
+            </ind-def:textfilecontent54_state>
       </states>
       <variables>
             <external_variable id="oval:mil.army.us.rhel5:var:20042" version="1" datatype="string" comment="External variable for definition 20042"/> 
@@ -9540,7 +9545,8 @@
             <external_variable id="oval:mil.army.us.rhel5:var:20044" version="1" datatype="string" comment="External variable for definition 20044"/>
             <external_variable id="oval:mil.army.us.rhel5:var:20045" version="1" datatype="string" comment="External variable for definition 20045"/>
             <external_variable id="oval:mil.army.us.rhel5:var:20053" version="1" datatype="int" comment="External variable for definition 20053"/>
-            <external_variable id="oval:mil.army.us.rhel5:var:20071" version="1" datatype="string" comment="External variable for definition 20071"/>
+            <external_variable id="oval:mil.army.us.rhel5:var:20071" version="1" datatype="int" comment="External variable for definition 20071"/>
+            val:mil.army.us.rhel5:def:20071
             <external_variable id="oval:mil.army.us.rhel5:var:20072" version="1" datatype="string" comment="External variable for definition 20072"/>
             <external_variable id="oval:mil.army.us.rhel5:var:20073" version="1" datatype="string" comment="External variable for definition 20073"/>
             <external_variable id="oval:mil.army.us.rhel5:var:20074" version="1" datatype="string" comment="External variable for definition 20074"/>
@@ -9819,48 +9825,53 @@
                         <variable_component var_ref="oval:mil.army.us.rhel5:var:20045"/>
                   </substring>
             </local_variable>
-            <local_variable id="oval:mil.army.us.rhel5:var:200821" version="1" datatype="boolean" comment="Bit for a permission type">
+            <local_variable id="oval:mil.army.us.rhel5:var:200820" version="1" datatype="boolean" comment="Bit for a permission type">
                   <substring substring_length="1" substring_start="1">
                         <variable_component var_ref="oval:mil.army.us.rhel5:var:20082"/>
                   </substring>
             </local_variable>
-            <local_variable id="oval:mil.army.us.rhel5:var:200822" version="1" datatype="boolean" comment="Bit for a permission type">
-                  <substring substring_length="1" substring_start="2">
-                        <variable_component var_ref="oval:mil.army.us.rhel5:var:20082"/>
-                  </substring>
-            </local_variable>
-            <local_variable id="oval:mil.army.us.rhel5:var:200823" version="1" datatype="boolean" comment="Bit for a permission type">
-                  <substring substring_length="1" substring_start="3">
-                        <variable_component var_ref="oval:mil.army.us.rhel5:var:20082"/>
-                  </substring>
-            </local_variable>
-            <local_variable id="oval:mil.army.us.rhel5:var:200824" version="1" datatype="boolean" comment="Bit for a permission type">
+            <local_variable id="oval:mil.army.us.rhel5:var:200821" version="1" datatype="boolean" comment="Bit for a permission type">
                   <substring substring_length="1" substring_start="4">
                         <variable_component var_ref="oval:mil.army.us.rhel5:var:20082"/>
                   </substring>
             </local_variable>
-            <local_variable id="oval:mil.army.us.rhel5:var:200825" version="1" datatype="boolean" comment="Bit for a permission type">
+            <local_variable id="oval:mil.army.us.rhel5:var:200822" version="1" datatype="boolean" comment="Bit for a permission type">
                   <substring substring_length="1" substring_start="5">
                         <variable_component var_ref="oval:mil.army.us.rhel5:var:20082"/>
                   </substring>
             </local_variable>
-            <local_variable id="oval:mil.army.us.rhel5:var:200826" version="1" datatype="boolean" comment="Bit for a permission type">
+            <local_variable id="oval:mil.army.us.rhel5:var:200823" version="1" datatype="boolean" comment="Bit for a permission type">
                   <substring substring_length="1" substring_start="6">
                         <variable_component var_ref="oval:mil.army.us.rhel5:var:20082"/>
                   </substring>
             </local_variable>
-            <local_variable id="oval:mil.army.us.rhel5:var:200827" version="1" datatype="boolean" comment="Bit for a permission type">
+            <local_variable id="oval:mil.army.us.rhel5:var:200824" version="1" datatype="boolean" comment="Bit for a permission type">
                   <substring substring_length="1" substring_start="7">
                         <variable_component var_ref="oval:mil.army.us.rhel5:var:20082"/>
                   </substring>
             </local_variable>
-            <local_variable id="oval:mil.army.us.rhel5:var:200828" version="1" datatype="boolean" comment="Bit for a permission type">
+            <local_variable id="oval:mil.army.us.rhel5:var:200825" version="1" datatype="boolean" comment="Bit for a permission type">
                   <substring substring_length="1" substring_start="8">
                         <variable_component var_ref="oval:mil.army.us.rhel5:var:20082"/>
                   </substring>
             </local_variable>
-            <local_variable id="oval:mil.army.us.rhel5:var:200829" version="1" datatype="boolean" comment="Bit for a permission type">
+            <local_variable id="oval:mil.army.us.rhel5:var:200826" version="1" datatype="boolean" comment="Bit for a permission type">
                   <substring substring_length="1" substring_start="9">
+                        <variable_component var_ref="oval:mil.army.us.rhel5:var:20082"/>
+                  </substring>
+            </local_variable>
+            <local_variable id="oval:mil.army.us.rhel5:var:200827" version="1" datatype="boolean" comment="Bit for a permission type">
+                  <substring substring_length="1" substring_start="10">
+                        <variable_component var_ref="oval:mil.army.us.rhel5:var:20082"/>
+                  </substring>
+            </local_variable>
+            <local_variable id="oval:mil.army.us.rhel5:var:200828" version="1" datatype="boolean" comment="Bit for a permission type">
+                  <substring substring_length="1" substring_start="11">
+                        <variable_component var_ref="oval:mil.army.us.rhel5:var:20082"/>
+                  </substring>
+            </local_variable>
+            <local_variable id="oval:mil.army.us.rhel5:var:200829" version="1" datatype="boolean" comment="Bit for a permission type">
+                  <substring substring_length="1" substring_start="12">
                         <variable_component var_ref="oval:mil.army.us.rhel5:var:20082"/>
                   </substring>
             </local_variable>

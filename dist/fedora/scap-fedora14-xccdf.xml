@@ -66,13 +66,13 @@
     <select idref="dcb-rhel5-rule-2.1.1.1.3.a" selected="false" />	<!-- DONE -->		<!-- Separate Partition or Logical Volume for /var/log -->
     <select idref="dcb-rhel5-rule-2.1.1.1.4.a" selected="false" />	<!-- DONE -->		<!-- Separate Partition or Logical Volume for /var/log/audit -->
     <select idref="dcb-rhel5-rule-2.1.1.1.5.a" selected="false" />	<!-- DONE -->		<!-- Separate Partition or Logical Volume for /home -->
-    <select idref="dcb-rhel5-rule-2.1.2.1.1.a" selected="true" />	<!-- DONE -->		<!-- Ensure that GPG Key for Red Hat Network is installed -->
+    <select idref="dcb-rhel5-rule-2.1.2.1.1.a" selected="false" />	<!-- DONE -->		<!-- Ensure that GPG Key for Red Hat Network is installed -->
     <select idref="dcb-rhel5-rule-2.1.2.2.a" selected="false" />	<!-- ERASE -->		<!-- Disable the rhnsd daemon -->
     <select idref="dcb-rhel5-rule-2.1.2.3.1.a" selected="false" /> 	<!-- ERASE -->		<!-- Ensure software is up to date -->
     <select idref="dcb-rhel5-rule-2.1.2.3.2.a" selected="false" />	<!-- DONE  -->		<!-- Disable the yum-updatesd daemon -->
     <select idref="dcb-rhel5-rule-2.1.2.3.2.b" selected="false" />	<!-- DONE -->		<!-- Automatic Update Retrieval should be scheduled with Cron -->
-    <select idref="dcb-rhel5-rule-2.1.2.3.3.a" selected="true" />	<!-- DONE -->		<!-- Ensure gpgcheck is Globally Activated -->
-    <select idref="dcb-rhel5-rule-2.1.2.3.4.a" selected="true" />	<!-- DONE -->		<!-- Ensure Package Signature Checking is Not Disabled For Any Repos -->
+    <select idref="dcb-rhel5-rule-2.1.2.3.3.a" selected="false" />	<!-- DONE -->		<!-- Ensure gpgcheck is Globally Activated -->
+    <select idref="dcb-rhel5-rule-2.1.2.3.4.a" selected="false" />	<!-- DONE -->		<!-- Ensure Package Signature Checking is Not Disabled For Any Repos -->
     <select idref="dcb-rhel5-rule-2.1.2.3.5.a" selected="false" />	<!-- DONE -->		<!-- Ensure Repodata Signature Checking is Globally Activated -->
     <select idref="dcb-rhel5-rule-2.1.2.3.6.a" selected="false" />	<!-- DONE -->		<!-- Ensure Repodata Signature Checking is Not Disabled For Any Repos -->
     <select idref="dcb-rhel5-rule-2.1.3.1.1.a" selected="false" />	<!-- DONE -->		<!-- Install AIDE -->
@@ -122,21 +122,21 @@
     <select idref="dcb-rhel5-rule-2.2.4.3.b" selected="false" />    <!-- DONE -->		<!-- Enable ExecShield randomized placement of virtual memory regions -->
     <select idref="dcb-rhel5-rule-2.2.4.4.2.a" selected="false" />  <!-- ? Fedora -->		<!-- Install New Kernel on Supported x86 Systems -->
     <select idref="dcb-rhel5-rule-2.2.4.4.3.a" selected="false" />  <!--Unknown test -->	<!-- Enable NX or XD Support in the BIOS -->
-    <select idref="dcb-rhel5-rule-2.3.1.1.a" selected="false" />    <!-- OK -->			<!-- Restrict Root Logins to System Console -->
-    <select idref="dcb-rhel5-rule-2.3.1.1.b" selected="false" />    <!-- OK -->			<!-- Restrict virtual console Root Logins -->
-    <select idref="dcb-rhel5-rule-2.3.1.1.c" selected="false" />    <!-- OK -->			<!-- Restrict deprecated virtual console Root Logins -->
-    <select idref="dcb-rhel5-rule-2.3.1.1.d" selected="false" />    <!-- OK -->			<!-- Restrict serial port Root Logins -->
-    <select idref="dcb-rhel5-rule-2.3.1.2.a" selected="false" />    <!-- OK -->			<!-- Limit su Access to the Root Account -->
-    <select idref="dcb-rhel5-rule-2.3.1.2.b" selected="false" />    <!-- OK -->			<!-- Limit su Access to the wheel group -->
-    <select idref="dcb-rhel5-rule-2.3.1.3.a" selected="false" />    <!-- OK -->			<!-- Configure sudo to Improve Auditing of Root Access -->
-    <select idref="dcb-rhel5-rule-2.3.1.4.a" selected="false" />    <!-- OK -->			<!-- Block Shell and Login Access for Non-Root System Accounts -->
-    <select idref="dcb-rhel5-rule-2.3.1.5.1.a" selected="false" />  <!-- OK -->			<!-- Verify that No Accounts Have Empty Password Fields -->
-    <select idref="dcb-rhel5-rule-2.3.1.5.2.a" selected="false" />  <!-- OK -->			<!-- Verify that all Account Password Hashes are Shadowed -->
-    <select idref="dcb-rhel5-rule-2.3.1.6.a" selected="false" />    <!-- OK -->			<!-- Verify that No Non-Root Accounts Have UID 0 -->
-    <select idref="dcb-rhel5-rule-2.3.1.7.a" selected="false" />    <!-- OK -->			<!-- Set password minimum length -->
-    <select idref="dcb-rhel5-rule-2.3.1.7.b" selected="false" />    <!-- OK -->			<!-- Set minimum password age -->
-    <select idref="dcb-rhel5-rule-2.3.1.7.c" selected="false" />    <!-- OK -->			<!-- Set maximum password age -->
-    <select idref="dcb-rhel5-rule-2.3.1.7.d" selected="false" />    <!-- OK -->			<!-- Set password warn age -->
+    <select idref="dcb-rhel5-rule-2.3.1.1.a" selected="false" />    <!-- DONE -->			<!-- Restrict Root Logins to System Console -->
+    <select idref="dcb-rhel5-rule-2.3.1.1.b" selected="false" />    <!-- DONE -->			<!-- Restrict virtual console Root Logins -->
+    <select idref="dcb-rhel5-rule-2.3.1.1.c" selected="false" />    <!-- DONE -->			<!-- Restrict deprecated virtual console Root Logins -->
+    <select idref="dcb-rhel5-rule-2.3.1.1.d" selected="false" />    <!-- DONE -->			<!-- Restrict serial port Root Logins -->
+    <select idref="dcb-rhel5-rule-2.3.1.2.a" selected="false" />    <!-- DONE -->			<!-- Limit su Access to the Root Account -->
+    <select idref="dcb-rhel5-rule-2.3.1.2.b" selected="false" />    <!-- DONE -->			<!-- Limit su Access to the wheel group -->
+    <select idref="dcb-rhel5-rule-2.3.1.3.a" selected="false" />    <!-- DONE -->			<!-- Configure sudo to Improve Auditing of Root Access -->
+    <select idref="dcb-rhel5-rule-2.3.1.4.a" selected="false" />    <!-- DONE -->			<!-- Block Shell and Login Access for Non-Root System Accounts -->
+    <select idref="dcb-rhel5-rule-2.3.1.5.1.a" selected="false" />  <!-- DONE -->			<!-- Verify that No Accounts Have Empty Password Fields -->
+    <select idref="dcb-rhel5-rule-2.3.1.5.2.a" selected="false" />  <!-- DONE -->			<!-- Verify that all Account Password Hashes are Shadowed -->
+    <select idref="dcb-rhel5-rule-2.3.1.6.a" selected="false" />    <!-- DONE -->			<!-- Verify that No Non-Root Accounts Have UID 0 -->
+    <select idref="dcb-rhel5-rule-2.3.1.7.a" selected="false" />    <!-- DONE -->			<!-- Set password minimum length -->
+    <select idref="dcb-rhel5-rule-2.3.1.7.b" selected="false" />    <!-- DONE -->			<!-- Set minimum password age -->
+    <select idref="dcb-rhel5-rule-2.3.1.7.c" selected="false" />    <!-- DONE -->			<!-- Set maximum password age -->
+    <select idref="dcb-rhel5-rule-2.3.1.7.d" selected="false" />    <!-- DONE -->			<!-- Set password warn age -->
     <select idref="dcb-rhel5-rule-2.3.1.8.a" selected="false" />    <!-- DONE -->		<!-- Remove Legacy + Entries from /etc/shadow -->
     <select idref="dcb-rhel5-rule-2.3.1.8.b" selected="false" />    <!-- DONE -->		<!-- Remove Legacy + Entries from /etc/group -->
 `   <select idref="dcb-rhel5-rule-2.3.1.8.c" selected="false" />    <!-- DONE -->		<!-- Remove Legacy + Entries from /etc/passwd -->
@@ -144,18 +144,18 @@
     <select idref="dcb-rhel5-rule-2.3.3.1.2.a" selected="false" />  <!--Unknown test -->	<!-- Set Password Quality Requirements using pam_passwdqc -->
     <select idref="dcb-rhel5-rule-2.3.3.2.a" selected="false" />    <!-- Not OVAL 5.5 -->	<!-- Set Lockouts for Failed Password Attempts -->
     <select idref="dcb-rhel5-rule-2.3.3.2.b" selected="false" />    <!--Unknown test -->	<!-- Do not leak information on authorization failure -->
-    <select idref="dcb-rhel5-rule-2.3.3.4.a" selected="false" />    <!-- OK -->			<!-- Restrict Execution of userhelper to Console Users -->
-    <select idref="dcb-rhel5-rule-2.3.3.4.b" selected="false" />    <!-- OK -->			<!-- Restrict Execution of userhelper to Console Users -->
-    <select idref="dcb-rhel5-rule-2.3.3.5.a" selected="false" />    <!-- OK -->			<!-- Set Password hashing algorithm -->
-    <select idref="dcb-rhel5-rule-2.3.3.6.a" selected="false" />    <!-- OK -->			<!-- Limit password reuse -->
-    <select idref="dcb-rhel5-rule-2.3.4.1.1.a" selected="false" />  <!-- OK -->			<!-- Ensure that No Dangerous Directories Exist in Root's Path -->
-    <select idref="dcb-rhel5-rule-2.3.4.1.2.a" selected="false" />  <!-- OK -->    		<!-- Write permissions are disabled for group and other in all directories in Root's Path -->
+    <select idref="dcb-rhel5-rule-2.3.3.4.a" selected="false" />    <!-- TODO -->			<!-- Restrict Execution of userhelper to Console Users -->
+    <select idref="dcb-rhel5-rule-2.3.3.4.b" selected="false" />    <!-- DONE -->			<!-- Restrict Execution of userhelper to Console Users -->
+    <select idref="dcb-rhel5-rule-2.3.3.5.a" selected="false" />    <!-- DONE -->			<!-- Set Password hashing algorithm -->
+    <select idref="dcb-rhel5-rule-2.3.3.6.a" selected="false" />    <!-- DONE -->			<!-- Limit password reuse -->
+    <select idref="dcb-rhel5-rule-2.3.4.1.1.a" selected="false" />  <!-- DONE -->			<!-- Ensure that No Dangerous Directories Exist in Root's Path -->
+    <select idref="dcb-rhel5-rule-2.3.4.1.2.a" selected="false" />  <!-- TODO -->    		<!-- Write permissions are disabled for group and other in all directories in Root's Path -->
 
-    <select idref="dcb-rhel5-rule-2.3.4.2.a" selected="false" />    <!-- OK -->			<!-- Ensure that User Home Directories are not Group-Writable or World-Readable -->
-    <select idref="dcb-rhel5-rule-2.3.4.4.a" selected="true" />    <!-- DONE -->		<!-- Ensure that Users Have Sensible Umask Values in /etc/bashrc -->
-    <select idref="dcb-rhel5-rule-2.3.4.4.b" selected="true" />    <!-- DONE -->		<!-- Ensure that Users Have Sensible Umask Values in /etc/cshrc -->
-    <select idref="dcb-rhel5-rule-2.3.4.4.c" selected="true" />    <!-- DONE -->		<!-- Ensure that Users Have Sensible Umask Values in /etc/login.defs -->
-    <select idref="dcb-rhel5-rule-2.3.4.4.d" selected="true" />    <!-- DONE -->		<!-- Ensure that Users Have Sensible Umask Values in /etc/profile -->
+    <select idref="dcb-rhel5-rule-2.3.4.2.a" selected="false" />    <!-- DONE -->			<!-- Ensure that User Home Directories are not Group-Writable or World-Readable -->
+    <select idref="dcb-rhel5-rule-2.3.4.4.a" selected="false" />    <!-- DONE -->		<!-- Ensure that Users Have Sensible Umask Values in /etc/bashrc -->
+    <select idref="dcb-rhel5-rule-2.3.4.4.b" selected="false" />    <!-- DONE -->		<!-- Ensure that Users Have Sensible Umask Values in /etc/cshrc -->
+    <select idref="dcb-rhel5-rule-2.3.4.4.c" selected="false" />    <!-- DONE -->		<!-- Ensure that Users Have Sensible Umask Values in /etc/login.defs -->
+    <select idref="dcb-rhel5-rule-2.3.4.4.d" selected="false" />    <!-- DONE -->		<!-- Ensure that Users Have Sensible Umask Values in /etc/profile -->
 
     <select idref="dcb-rhel5-rule-2.3.4.5.a" selected="false" />    <!--Unknown -->	<!-- Check for existance of .netrc file -->
     <select idref="dcb-rhel5-rule-2.3.5.2.a" selected="true" />    <!-- DONE+ -->			<!-- Set Boot Loader user owner -->
