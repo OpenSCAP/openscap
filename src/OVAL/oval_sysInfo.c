@@ -354,18 +354,18 @@ void oval_sysinfo_to_dom(struct oval_sysinfo *sysinfo, xmlDoc * doc, xmlNode * t
 {
 	if (sysinfo) {
 		xmlNs *ns_syschar = xmlSearchNsByHref(doc, tag_parent, OVAL_SYSCHAR_NAMESPACE);
-		xmlNode *tag_sysinfo = xmlNewChild(tag_parent, ns_syschar, BAD_CAST "system_info", NULL);
-		xmlNewChild(tag_sysinfo, ns_syschar, BAD_CAST "os_name", BAD_CAST oval_sysinfo_get_os_name(sysinfo));
-		xmlNewChild
+		xmlNode *tag_sysinfo = xmlNewTextChild(tag_parent, ns_syschar, BAD_CAST "system_info", NULL);
+		xmlNewTextChild(tag_sysinfo, ns_syschar, BAD_CAST "os_name", BAD_CAST oval_sysinfo_get_os_name(sysinfo));
+		xmlNewTextChild
 		    (tag_sysinfo, ns_syschar, BAD_CAST "os_version", BAD_CAST oval_sysinfo_get_os_version(sysinfo));
-		xmlNewChild
+		xmlNewTextChild
 		    (tag_sysinfo, ns_syschar, BAD_CAST "architecture",
 		     BAD_CAST oval_sysinfo_get_os_architecture(sysinfo));
-		xmlNewChild
+		xmlNewTextChild
 		    (tag_sysinfo, ns_syschar, BAD_CAST "primary_host_name",
 		     BAD_CAST oval_sysinfo_get_primary_host_name(sysinfo));
 
-		xmlNode *tag_interfaces = xmlNewChild(tag_sysinfo, ns_syschar, BAD_CAST "interfaces", NULL);
+		xmlNode *tag_interfaces = xmlNewTextChild(tag_sysinfo, ns_syschar, BAD_CAST "interfaces", NULL);
 		struct oval_sysint_iterator *intrfcs = oval_sysinfo_get_interfaces(sysinfo);
 		int i;
 		for (i = 1; oval_sysint_iterator_has_more(intrfcs); i++) {

@@ -553,7 +553,7 @@ xmlNode *oval_definitions_to_dom(struct oval_definition_model *definition_model,
 	xmlNodePtr root_node = NULL;
 
 	if (parent) {
-		root_node = xmlNewChild(parent, NULL, BAD_CAST "oval_definitions", NULL);
+		root_node = xmlNewTextChild(parent, NULL, BAD_CAST "oval_definitions", NULL);
 	} else {
 		root_node = xmlNewNode(NULL, BAD_CAST "oval_definitions");
 		xmlDocSetRootElement(doc, root_node);
@@ -570,7 +570,7 @@ xmlNode *oval_definitions_to_dom(struct oval_definition_model *definition_model,
 
 	/* Report generator */
 	if (!parent) {
-		xmlNode *tag_generator = xmlNewChild(root_node, ns_defntns, BAD_CAST "generator", NULL);
+		xmlNode *tag_generator = xmlNewTextChild(root_node, ns_defntns, BAD_CAST "generator", NULL);
 		_generator_to_dom(doc, tag_generator);
 	}
 
@@ -581,7 +581,7 @@ xmlNode *oval_definitions_to_dom(struct oval_definition_model *definition_model,
 		while(oval_definition_iterator_has_more(definitions)) {
 			struct oval_definition *definition = oval_definition_iterator_next(definitions);
 			if (definitions_node == NULL) {
-				definitions_node = xmlNewChild(root_node, ns_defntns, BAD_CAST "definitions", NULL);
+				definitions_node = xmlNewTextChild(root_node, ns_defntns, BAD_CAST "definitions", NULL);
 			}
 			oval_definition_to_dom(definition, doc, definitions_node);
 		}
@@ -591,7 +591,7 @@ xmlNode *oval_definitions_to_dom(struct oval_definition_model *definition_model,
 	/* Report tests */
 	struct oval_test_iterator *tests = oval_definition_model_get_tests(definition_model);
 	if (oval_test_iterator_has_more(tests)) {
-		xmlNode *tests_node = xmlNewChild(root_node, ns_defntns, BAD_CAST "tests", NULL);
+		xmlNode *tests_node = xmlNewTextChild(root_node, ns_defntns, BAD_CAST "tests", NULL);
 		while (oval_test_iterator_has_more(tests)) {
 			struct oval_test *test = oval_test_iterator_next(tests);
 			oval_test_to_dom(test, doc, tests_node);
@@ -602,7 +602,7 @@ xmlNode *oval_definitions_to_dom(struct oval_definition_model *definition_model,
 	/* Report objects */
 	struct oval_object_iterator *objects = oval_definition_model_get_objects(definition_model);
 	if (oval_object_iterator_has_more(objects)) {
-		xmlNode *objects_node = xmlNewChild(root_node, ns_defntns, BAD_CAST "objects", NULL);
+		xmlNode *objects_node = xmlNewTextChild(root_node, ns_defntns, BAD_CAST "objects", NULL);
 		while(oval_object_iterator_has_more(objects)) {
 			struct oval_object *object = oval_object_iterator_next(objects);
 			oval_object_to_dom(object, doc, objects_node);
@@ -613,7 +613,7 @@ xmlNode *oval_definitions_to_dom(struct oval_definition_model *definition_model,
 	/* Report states */
 	struct oval_state_iterator *states = oval_definition_model_get_states(definition_model);
 	if (oval_state_iterator_has_more(states)) {
-		xmlNode *states_node = xmlNewChild(root_node, ns_defntns, BAD_CAST "states", NULL);
+		xmlNode *states_node = xmlNewTextChild(root_node, ns_defntns, BAD_CAST "states", NULL);
 		while (oval_state_iterator_has_more(states)) {
 			struct oval_state *state = oval_state_iterator_next(states);
 			oval_state_to_dom(state, doc, states_node);
@@ -624,7 +624,7 @@ xmlNode *oval_definitions_to_dom(struct oval_definition_model *definition_model,
 	/* Report variables */
 	struct oval_variable_iterator *variables = oval_definition_model_get_variables(definition_model);
 	if (oval_variable_iterator_has_more(variables)) {
-		xmlNode *variables_node = xmlNewChild(root_node, ns_defntns, BAD_CAST "variables", NULL);
+		xmlNode *variables_node = xmlNewTextChild(root_node, ns_defntns, BAD_CAST "variables", NULL);
 		while (oval_variable_iterator_has_more(variables)) {
 			struct oval_variable *variable = oval_variable_iterator_next(variables);
 			oval_variable_to_dom(variable, doc, variables_node);
@@ -664,15 +664,15 @@ int oval_definition_model_export(struct oval_definition_model *model, const char
 int _generator_to_dom(xmlDocPtr doc, xmlNode * tag_generator)
 {
 	xmlNs *ns_common = xmlSearchNsByHref(doc, tag_generator, OVAL_COMMON_NAMESPACE);
-	xmlNewChild(tag_generator, ns_common, BAD_CAST "product_name", BAD_CAST "OPEN SCAP");
-	xmlNewChild(tag_generator, ns_common, BAD_CAST "schema_version", BAD_CAST "5.5");
+	xmlNewTextChild(tag_generator, ns_common, BAD_CAST "product_name", BAD_CAST "OPEN SCAP");
+	xmlNewTextChild(tag_generator, ns_common, BAD_CAST "schema_version", BAD_CAST "5.5");
 	time_t epoch_time[] = { 0 };
 	time(epoch_time);
 	struct tm *lt = localtime(epoch_time);
 	char timestamp[] = "yyyy-mm-ddThh:mm:ss";
 	snprintf(timestamp, sizeof(timestamp), "%4d-%02d-%02dT%02d:%02d:%02d",
 		 1900 + lt->tm_year, 1 + lt->tm_mon, lt->tm_mday, lt->tm_hour, lt->tm_min, lt->tm_sec);
-	xmlNewChild(tag_generator, ns_common, BAD_CAST "timestamp", BAD_CAST timestamp);
+	xmlNewTextChild(tag_generator, ns_common, BAD_CAST "timestamp", BAD_CAST timestamp);
 
 	return 1;
 }

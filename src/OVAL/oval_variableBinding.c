@@ -201,7 +201,7 @@ void oval_variable_binding_to_dom(struct oval_variable_binding *binding, xmlDoc 
 		struct oval_variable *var;
 
 		val = oval_string_iterator_next(val_itr);
-		binding_tag = xmlNewChild(parent_tag, ns_syschar, BAD_CAST "variable_value", BAD_CAST val);
+		binding_tag = xmlNewTextChild(parent_tag, ns_syschar, BAD_CAST "variable_value", BAD_CAST val);
 		var = oval_variable_binding_get_variable(binding);
 		xmlNewProp(binding_tag, BAD_CAST "variable_id", BAD_CAST oval_variable_get_id(var));
 	}

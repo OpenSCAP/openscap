@@ -683,13 +683,13 @@ void oval_variable_to_print(struct oval_variable *variable, char *indent, int id
 
 static xmlNode *_oval_VARIABLE_CONSTANT_to_dom(struct oval_variable *variable, xmlDoc * doc, xmlNode * parent) {
 	xmlNs *ns_definitions = xmlSearchNsByHref(doc, parent, OVAL_DEFINITIONS_NAMESPACE);
-	xmlNode *variable_node = xmlNewChild(parent, ns_definitions, BAD_CAST "constant_variable", NULL);
+	xmlNode *variable_node = xmlNewTextChild(parent, ns_definitions, BAD_CAST "constant_variable", NULL);
 
 	struct oval_value_iterator *values = oval_variable_get_values(variable);
 	while (oval_value_iterator_has_more(values)) {
 		struct oval_value *value = oval_value_iterator_next(values);
 		char *text = oval_value_get_text(value);
-		xmlNewChild(variable_node, ns_definitions, BAD_CAST "value", BAD_CAST text);
+		xmlNewTextChild(variable_node, ns_definitions, BAD_CAST "value", BAD_CAST text);
 	}
 	oval_value_iterator_free(values);
 
@@ -698,14 +698,14 @@ static xmlNode *_oval_VARIABLE_CONSTANT_to_dom(struct oval_variable *variable, x
 
 static xmlNode *_oval_VARIABLE_EXTERNAL_to_dom(struct oval_variable *variable, xmlDoc * doc, xmlNode * parent) {
 	xmlNs *ns_definitions = xmlSearchNsByHref(doc, parent, OVAL_DEFINITIONS_NAMESPACE);
-	xmlNode *variable_node = xmlNewChild(parent, ns_definitions, BAD_CAST "external_variable", NULL);
+	xmlNode *variable_node = xmlNewTextChild(parent, ns_definitions, BAD_CAST "external_variable", NULL);
 
 	return variable_node;
 }
 
 static xmlNode *_oval_VARIABLE_LOCAL_to_dom(struct oval_variable *variable, xmlDoc * doc, xmlNode * parent) {
 	xmlNs *ns_definitions = xmlSearchNsByHref(doc, parent, OVAL_DEFINITIONS_NAMESPACE);
-	xmlNode *variable_node = xmlNewChild(parent, ns_definitions, BAD_CAST "local_variable", NULL);
+	xmlNode *variable_node = xmlNewTextChild(parent, ns_definitions, BAD_CAST "local_variable", NULL);
 
 	struct oval_component *component = oval_variable_get_component(variable);
 	oval_component_to_dom(component, doc, variable_node);

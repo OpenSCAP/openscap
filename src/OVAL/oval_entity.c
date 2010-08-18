@@ -420,7 +420,7 @@ xmlNode *oval_entity_to_dom(struct oval_entity *entity, xmlDoc * doc, xmlNode * 
 		content = oval_value_get_text(value);
 	}
 
-	xmlNode *entity_node = xmlNewChild(parent, ns_family[0], BAD_CAST tagname, BAD_CAST content);
+	xmlNode *entity_node = xmlNewTextChild(parent, ns_family[0], BAD_CAST tagname, BAD_CAST content);
 
 	if(ns_family)
 		xmlFree(ns_family);

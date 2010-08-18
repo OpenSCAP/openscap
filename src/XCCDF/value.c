@@ -208,7 +208,7 @@ void xccdf_value_to_dom(struct xccdf_value *value, xmlNode *value_node, xmlDoc *
 	struct oscap_string_iterator *sources = xccdf_value_get_sources(value);
 	while (oscap_string_iterator_has_more(sources)) {
 		const char *source = oscap_string_iterator_next(sources);
-		xmlNewChild(value_node, ns_xccdf, BAD_CAST "source", BAD_CAST source);
+		xmlNewTextChild(value_node, ns_xccdf, BAD_CAST "source", BAD_CAST source);
 	}
 	oscap_string_iterator_free(sources);
 }

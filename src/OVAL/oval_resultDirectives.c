@@ -194,7 +194,7 @@ int oval_result_directives_parse_tag
 int oval_result_directives_to_dom(struct oval_result_directives *directives, xmlDoc * doc, xmlNode * parent) {
 	int retcode = 1;
 	xmlNs *ns_results = xmlSearchNsByHref(doc, parent, OVAL_RESULTS_NAMESPACE);
-	xmlNode *directives_node = xmlNewChild(parent, ns_results, BAD_CAST "directives", NULL);
+	xmlNode *directives_node = xmlNewTextChild(parent, ns_results, BAD_CAST "directives", NULL);
 
 	const struct oscap_string_map *map;
 	for (map = OVAL_DIRECTIVE_MAP; map->string; map++) {
@@ -202,7 +202,7 @@ int oval_result_directives_to_dom(struct oval_result_directives *directives, xml
 		    map->value;
 		bool reported = oval_result_directives_get_reported(directives, directive);
 		oval_result_directive_content_t content = oval_result_directives_get_content(directives, directive);
-		xmlNode *directive_node = xmlNewChild(directives_node, ns_results, BAD_CAST(map->string), NULL);
+		xmlNode *directive_node = xmlNewTextChild(directives_node, ns_results, BAD_CAST(map->string), NULL);
 		char *val_reported = (reported) ? "true" : "false";
 		char *val_content = (content == OVAL_DIRECTIVE_CONTENT_FULL)
 		    ? "full" : "thin";

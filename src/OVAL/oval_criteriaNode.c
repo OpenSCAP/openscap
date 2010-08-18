@@ -571,7 +571,7 @@ void oval_criteria_node_to_print(struct oval_criteria_node *node, char *indent, 
 
 static xmlNode *_oval_CRITERIA_to_dom(struct oval_criteria_node *cnode, xmlDoc * doc, xmlNode * parent) {
 	xmlNs *ns_definitions = xmlSearchNsByHref(doc, parent, OVAL_DEFINITIONS_NAMESPACE);
-	xmlNode *criteria_node = xmlNewChild(parent, ns_definitions, BAD_CAST "criteria", NULL);
+	xmlNode *criteria_node = xmlNewTextChild(parent, ns_definitions, BAD_CAST "criteria", NULL);
 
 	oval_operator_t operator = oval_criteria_node_get_operator(cnode);
 	if (operator!= OVAL_OPERATOR_AND)
@@ -589,7 +589,7 @@ static xmlNode *_oval_CRITERIA_to_dom(struct oval_criteria_node *cnode, xmlDoc *
 
 static xmlNode *_oval_CRITERION_to_dom(struct oval_criteria_node *cnode, xmlDoc * doc, xmlNode * parent) {
 	xmlNs *ns_definitions = xmlSearchNsByHref(doc, parent, OVAL_DEFINITIONS_NAMESPACE);
-	xmlNode *criterion_node = xmlNewChild(parent, ns_definitions, BAD_CAST "criterion", NULL);
+	xmlNode *criterion_node = xmlNewTextChild(parent, ns_definitions, BAD_CAST "criterion", NULL);
 
 	struct oval_test *test = oval_criteria_node_get_test(cnode);
 	char *test_ref = oval_test_get_id(test);
@@ -600,7 +600,7 @@ static xmlNode *_oval_CRITERION_to_dom(struct oval_criteria_node *cnode, xmlDoc 
 
 static xmlNode *_oval_EXTENDDEF_to_dom(struct oval_criteria_node *cnode, xmlDoc * doc, xmlNode * parent) {
 	xmlNs *ns_definitions = xmlSearchNsByHref(doc, parent, OVAL_DEFINITIONS_NAMESPACE);
-	xmlNode *extenddef_node = xmlNewChild(parent, ns_definitions, BAD_CAST "extend_definition", NULL);
+	xmlNode *extenddef_node = xmlNewTextChild(parent, ns_definitions, BAD_CAST "extend_definition", NULL);
 
 	struct oval_definition *definition = oval_criteria_node_get_definition(cnode);
 	char *definition_ref = oval_definition_get_id(definition);

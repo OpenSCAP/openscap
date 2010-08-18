@@ -375,7 +375,7 @@ void oval_syschar_to_dom(struct oval_syschar *syschar, xmlDoc * doc, xmlNode * t
 
 	if (syschar) {
 		xmlNs *ns_syschar = xmlSearchNsByHref(doc, tag_parent, OVAL_SYSCHAR_NAMESPACE);
-		xmlNode *tag_syschar = xmlNewChild(tag_parent, ns_syschar, BAD_CAST "object", NULL);
+		xmlNode *tag_syschar = xmlNewTextChild(tag_parent, ns_syschar, BAD_CAST "object", NULL);
 
 		{		/*attributes */
 			struct oval_object *object = oval_syschar_get_object(syschar);
@@ -406,7 +406,7 @@ void oval_syschar_to_dom(struct oval_syschar *syschar, xmlDoc * doc, xmlNode * t
 			struct oval_sysitem_iterator *sysitems = oval_syschar_get_sysitem(syschar);
 			while (oval_sysitem_iterator_has_more(sysitems)) {
 				struct oval_sysitem *sysitem = oval_sysitem_iterator_next(sysitems);
-				xmlNode *tag_reference = xmlNewChild
+				xmlNode *tag_reference = xmlNewTextChild
 				    (tag_syschar, ns_syschar, BAD_CAST "reference", NULL);
 				xmlNewProp(tag_reference, BAD_CAST "item_ref", BAD_CAST oval_sysitem_get_id(sysitem));
 			}

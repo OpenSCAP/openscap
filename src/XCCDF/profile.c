@@ -51,7 +51,7 @@ struct xccdf_setvalue *xccdf_setvalue_new_parse(xmlTextReaderPtr reader)
 xmlNode *xccdf_setvalue_to_dom(struct xccdf_setvalue *setvalue, xmlDoc *doc, xmlNode *parent)
 {
 	xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent, XCCDF_BASE_NAMESPACE);
-	xmlNode *setvalue_node = xmlNewChild(parent, ns_xccdf, BAD_CAST "set-value",  BAD_CAST setvalue->value);
+	xmlNode *setvalue_node = xmlNewTextChild(parent, ns_xccdf, BAD_CAST "set-value",  BAD_CAST setvalue->value);
 
 	if (setvalue->item)
 		xmlNewProp(setvalue_node, BAD_CAST "idref", BAD_CAST setvalue->item);
@@ -302,14 +302,14 @@ void xccdf_profile_to_dom(struct xccdf_profile *profile, xmlNode *profile_node, 
         struct oscap_string_iterator *platforms = xccdf_profile_get_platforms(profile);
         while (oscap_string_iterator_has_more(platforms)) {
                 const char *platform = oscap_string_iterator_next(platforms);
-                xmlNewChild(profile_node, ns_xccdf, BAD_CAST "platform", BAD_CAST platform);
+                xmlNewTextChild(profile_node, ns_xccdf, BAD_CAST "platform", BAD_CAST platform);
         }   
         oscap_string_iterator_free(platforms);
 
 	struct xccdf_select_iterator *selects = xccdf_profile_get_selects(profile);
 	while (xccdf_select_iterator_has_more(selects)) {
 		struct xccdf_select *sel = xccdf_select_iterator_next(selects);
-		xmlNode *select_node = xmlNewChild(profile_node, ns_xccdf, BAD_CAST "select", NULL);
+		xmlNode *select_node = xmlNewTextChild(profile_node, ns_xccdf, BAD_CAST "select", NULL);
 		
 		const char *idref = xccdf_select_get_item(sel);
 		if (idref)
@@ -334,7 +334,7 @@ void xccdf_profile_to_dom(struct xccdf_profile *profile, xmlNode *profile_node, 
 	struct xccdf_refine_value_iterator *refine_values = xccdf_profile_get_refine_values(profile);
 	while (xccdf_refine_value_iterator_has_more(refine_values)) {
 		struct xccdf_refine_value *refine_value = xccdf_refine_value_iterator_next(refine_values);
-		xmlNode *refval_node = xmlNewChild(profile_node, ns_xccdf, BAD_CAST "refine-value", NULL);
+		xmlNode *refval_node = xmlNewTextChild(profile_node, ns_xccdf, BAD_CAST "refine-value", NULL);
 
 		const char *idref = xccdf_refine_value_get_item(refine_value);
 		if (idref)
@@ -355,7 +355,7 @@ void xccdf_profile_to_dom(struct xccdf_profile *profile, xmlNode *profile_node, 
 	struct xccdf_refine_rule_iterator *refine_rules = xccdf_profile_get_refine_rules(profile);
 	while (xccdf_refine_rule_iterator_has_more(refine_rules)) {
 		struct xccdf_refine_rule *refine_rule = xccdf_refine_rule_iterator_next(refine_rules);
-		xmlNode *refrule_node = xmlNewChild(profile_node, ns_xccdf, BAD_CAST "refine-value", NULL);
+		xmlNode *refrule_node = xmlNewTextChild(profile_node, ns_xccdf, BAD_CAST "refine-value", NULL);
 
 		const char *idref = xccdf_refine_rule_get_item(refine_rule);
 		if (idref)

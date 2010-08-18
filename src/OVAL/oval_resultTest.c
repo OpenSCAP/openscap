@@ -1437,7 +1437,7 @@ static void _oval_result_binding_to_dom(struct oval_variable_binding *binding, x
 		xmlNode *binding_node;
 
 		value = oval_string_iterator_next(str_itr);
-		binding_node = xmlNewChild(parent, ns_results, BAD_CAST "tested_variable", BAD_CAST value);
+		binding_node = xmlNewTextChild(parent, ns_results, BAD_CAST "tested_variable", BAD_CAST value);
 		xmlNewProp(binding_node, BAD_CAST "variable_id", BAD_CAST variable_id);
 	}
 	oval_string_iterator_free(str_itr);
@@ -1447,7 +1447,7 @@ xmlNode *oval_result_test_to_dom(struct oval_result_test *rslt_test, xmlDocPtr d
 	__attribute__nonnull__(rslt_test);
 
 	xmlNs *ns_results = xmlSearchNsByHref(doc, parent, OVAL_RESULTS_NAMESPACE);
-	xmlNode *test_node = xmlNewChild(parent, ns_results, BAD_CAST "test", NULL);
+	xmlNode *test_node = xmlNewTextChild(parent, ns_results, BAD_CAST "test", NULL);
 
 	struct oval_test *oval_test = oval_result_test_get_test(rslt_test);
 	char *test_id = oval_test_get_id(oval_test);

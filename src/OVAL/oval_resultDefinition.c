@@ -332,7 +332,7 @@ xmlNode *oval_result_definition_to_dom
     (struct oval_result_definition * definition, oval_result_directive_content_t content,
      xmlDocPtr doc, xmlNode * parent) {
 	xmlNs *ns_results = xmlSearchNsByHref(doc, parent, OVAL_RESULTS_NAMESPACE);
-	xmlNode *definition_node = xmlNewChild(parent, ns_results, BAD_CAST "definition", NULL);
+	xmlNode *definition_node = xmlNewTextChild(parent, ns_results, BAD_CAST "definition", NULL);
 
 	struct oval_definition *oval_definition = oval_result_definition_get_definition(definition);
 	char *definition_id = oval_definition_get_id(oval_definition);

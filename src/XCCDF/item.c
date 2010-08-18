@@ -314,7 +314,7 @@ xmlNode *xccdf_item_to_dom(struct xccdf_item *item, xmlDoc *doc, xmlNode *parent
 	if (parent == NULL)
 		item_node = xmlNewNode(NULL, BAD_CAST "Item");
 	else
-		item_node = xmlNewChild(parent, ns_xccdf, BAD_CAST "Item", NULL);
+		item_node = xmlNewTextChild(parent, ns_xccdf, BAD_CAST "Item", NULL);
 
 	/* Handle generic item attributes */
 	const char *id = xccdf_item_get_id(item);
@@ -339,7 +339,7 @@ xmlNode *xccdf_item_to_dom(struct xccdf_item *item, xmlDoc *doc, xmlNode *parent
 
 	const char *version= xccdf_item_get_version(item);
 	if (version)
-		xmlNewChild(item_node, ns_xccdf, BAD_CAST "version", BAD_CAST version);
+		xmlNewTextChild(item_node, ns_xccdf, BAD_CAST "version", BAD_CAST version);
 
 	struct xccdf_status_iterator *statuses = xccdf_item_get_statuses(item);
 	while (xccdf_status_iterator_has_more(statuses)) {
@@ -420,7 +420,7 @@ xmlNode *xccdf_status_to_dom(struct xccdf_status *status, xmlDoc *doc, xmlNode *
 	xmlNode *status_node = NULL;
 	xccdf_status_type_t type = xccdf_status_get_status(status);
 	if (type != XCCDF_STATUS_NOT_SPECIFIED)
-		status_node = xmlNewChild(parent, ns_xccdf, BAD_CAST "status",
+		status_node = xmlNewTextChild(parent, ns_xccdf, BAD_CAST "status",
 							BAD_CAST XCCDF_STATUS_MAP[type - 1].string);
 
 	time_t date_time = xccdf_status_get_date(status);
@@ -483,11 +483,11 @@ xmlNode *xccdf_fix_to_dom(struct xccdf_fix *fix, xmlDoc *doc, xmlNode *parent)
 	        xmlNewProp(fix_node, BAD_CAST "strategy", BAD_CAST XCCDF_STRATEGY_MAP[strategy-1].string);
 
         // Sub element is used to store XCCDF value substitutions, not a content
-	//xmlNewChild(fix_node, ns_xccdf, BAD_CAST "sub", BAD_CAST content);
+	//xmlNewTextChild(fix_node, ns_xccdf, BAD_CAST "sub", BAD_CAST content);
 
 	// This is in the XCCDF Spec, but not implemented in OpenSCAP
 	//const char *instance = xccdf_fix_get_instance(fix);
-	//xmlNewChild(fix_node, ns_xccdf, BAD_CAST "instance", BAD_CAST instance);
+	//xmlNewTextChild(fix_node, ns_xccdf, BAD_CAST "instance", BAD_CAST instance);
 	
 	return fix_node;
 }
@@ -496,7 +496,7 @@ xmlNode *xccdf_ident_to_dom(struct xccdf_ident *ident, xmlDoc *doc, xmlNode *par
 {
 	xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent, XCCDF_BASE_NAMESPACE);
 	const char *id = xccdf_ident_get_id(ident);
-	xmlNode *ident_node = xmlNewChild(parent, ns_xccdf, BAD_CAST "ident", BAD_CAST id);
+	xmlNode *ident_node = xmlNewTextChild(parent, ns_xccdf, BAD_CAST "ident", BAD_CAST id);
 
 	const char *sys = xccdf_ident_get_system(ident);
 	xmlNewProp(ident_node, BAD_CAST "system", BAD_CAST sys);
@@ -509,9 +509,9 @@ xmlNode *xccdf_check_to_dom(struct xccdf_check *check, xmlDoc *doc, xmlNode *par
 	xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent, XCCDF_BASE_NAMESPACE);
 	xmlNode *check_node = NULL;
 	if (xccdf_check_get_complex(check))
-		check_node = xmlNewChild(parent, ns_xccdf, BAD_CAST "complex-check", NULL);
+		check_node = xmlNewTextChild(parent, ns_xccdf, BAD_CAST "complex-check", NULL);
 	else
-		check_node = xmlNewChild(parent, ns_xccdf, BAD_CAST "check", NULL);
+		check_node = xmlNewTextChild(parent, ns_xccdf, BAD_CAST "check", NULL);
 
 	const char *id = xccdf_check_get_id(check);
 	if (id)
@@ -537,7 +537,7 @@ xmlNode *xccdf_check_to_dom(struct xccdf_check *check, xmlDoc *doc, xmlNode *par
 		struct xccdf_check_import *import = xccdf_check_import_iterator_next(imports);
 		const char *name = xccdf_check_import_get_name(import);
 		const char *content = xccdf_check_import_get_content(import);
-		xmlNode *import_node = xmlNewChild(check_node, ns_xccdf, BAD_CAST "check-import", BAD_CAST content);
+		xmlNode *import_node = xmlNewTextChild(check_node, ns_xccdf, BAD_CAST "check-import", BAD_CAST content);
 		xmlNewProp(import_node, BAD_CAST "import-name", BAD_CAST name);
 	}
 	xccdf_check_import_iterator_free(imports);
@@ -549,7 +549,7 @@ xmlNode *xccdf_check_to_dom(struct xccdf_check *check, xmlDoc *doc, xmlNode *par
 		//const char *name = xccdf_check_export_get_name(export);
 		const char *name = export->name;
 		const char *value= xccdf_check_export_get_value(export);
-		xmlNode *export_node = xmlNewChild(check_node, ns_xccdf, BAD_CAST "check-export", NULL);
+		xmlNode *export_node = xmlNewTextChild(check_node, ns_xccdf, BAD_CAST "check-export", NULL);
 		xmlNewProp(export_node, BAD_CAST "export-name", BAD_CAST name);
 		xmlNewProp(export_node, BAD_CAST "value-id", BAD_CAST value);
 	}
@@ -557,12 +557,12 @@ xmlNode *xccdf_check_to_dom(struct xccdf_check *check, xmlDoc *doc, xmlNode *par
 
 	const char *content = xccdf_check_get_content(check);
 	if (content)
-		xmlNewChild(check_node, ns_xccdf, BAD_CAST "check-content", BAD_CAST content);
+		xmlNewTextChild(check_node, ns_xccdf, BAD_CAST "check-content", BAD_CAST content);
 
 	struct xccdf_check_content_ref_iterator *refs = xccdf_check_get_content_refs(check);
 	while (xccdf_check_content_ref_iterator_has_more(refs)) {
 		struct xccdf_check_content_ref *ref = xccdf_check_content_ref_iterator_next(refs);
-		xmlNode *ref_node = xmlNewChild(check_node, ns_xccdf, BAD_CAST "check-content-ref", NULL);
+		xmlNode *ref_node = xmlNewTextChild(check_node, ns_xccdf, BAD_CAST "check-content-ref", NULL);
 
 		const char *name = xccdf_check_content_ref_get_name(ref);
 		xmlNewProp(ref_node, BAD_CAST "name", BAD_CAST name);

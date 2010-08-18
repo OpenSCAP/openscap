@@ -403,7 +403,7 @@ xmlNode *oval_state_to_dom(struct oval_state *state, xmlDoc * doc, xmlNode * par
 	char state_name[strlen(subtype_text) + 7];
 	*state_name = '\0';
 	strcat(strcat(state_name, subtype_text), "_state");
-	xmlNode *state_node = xmlNewChild(parent, NULL, BAD_CAST state_name, NULL);
+	xmlNode *state_node = xmlNewTextChild(parent, NULL, BAD_CAST state_name, NULL);
 
 	oval_family_t family = oval_state_get_family(state);
 	const char *family_text = oval_family_get_text(family);
@@ -438,10 +438,10 @@ xmlNode *oval_state_to_dom(struct oval_state *state, xmlDoc * doc, xmlNode * par
 	struct oval_string_iterator *notes = oval_state_get_notes(state);
 	if (oval_string_iterator_has_more(notes)) {
 		xmlNs *ns_definitions = xmlSearchNsByHref(doc, parent, OVAL_DEFINITIONS_NAMESPACE);
-		xmlNode *notes_node = xmlNewChild(state_node, ns_definitions, BAD_CAST "notes", NULL);
+		xmlNode *notes_node = xmlNewTextChild(state_node, ns_definitions, BAD_CAST "notes", NULL);
 		while (oval_string_iterator_has_more(notes)) {
 			char *note = oval_string_iterator_next(notes);
-			xmlNewChild(notes_node, ns_definitions, BAD_CAST "note", BAD_CAST note);
+			xmlNewTextChild(notes_node, ns_definitions, BAD_CAST "note", BAD_CAST note);
 		}
 	}
 	oval_string_iterator_free(notes);

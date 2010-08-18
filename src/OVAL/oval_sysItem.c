@@ -404,7 +404,7 @@ void oval_sysitem_to_dom(struct oval_sysitem *sysitem, xmlDoc * doc, xmlNode * t
 			*tagname = '\0';
 			sprintf(tagname, "%s_item", subtype_text);
 
-			xmlNode *tag_sysitem = xmlNewChild(tag_parent, NULL, BAD_CAST tagname, NULL);
+			xmlNode *tag_sysitem = xmlNewTextChild(tag_parent, NULL, BAD_CAST tagname, NULL);
 			xmlNs *ns_family = xmlNewNs(tag_sysitem, BAD_CAST family_namespace, NULL);
 			xmlSetNs(tag_sysitem, ns_family);
 
@@ -417,7 +417,7 @@ void oval_sysitem_to_dom(struct oval_sysitem *sysitem, xmlDoc * doc, xmlNode * t
 			{	//message
 				char *message = oval_sysitem_get_message(sysitem);
 				if (message != NULL) {
-					xmlNode *tag_message = xmlNewChild
+					xmlNode *tag_message = xmlNewTextChild
 					    (tag_sysitem, ns_syschar, BAD_CAST "message", BAD_CAST message);
 					oval_message_level_t idx = oval_sysitem_get_message_level(sysitem);
 					const char *level = oval_message_level_text(idx);

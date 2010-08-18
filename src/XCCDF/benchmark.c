@@ -235,7 +235,7 @@ xmlNode *xccdf_benchmark_to_dom(struct xccdf_benchmark *benchmark, xmlDocPtr doc
 
 	struct oscap_string_iterator *platforms = xccdf_benchmark_get_platforms(benchmark);
 	while (oscap_string_iterator_has_more(platforms)) {
-		xmlNode *platform_node = xmlNewChild(root_node, ns_xccdf, BAD_CAST "platform", NULL);
+		xmlNode *platform_node = xmlNewTextChild(root_node, ns_xccdf, BAD_CAST "platform", NULL);
 
 		const char *idref = oscap_string_iterator_next(platforms);
 		if (idref)
@@ -245,12 +245,12 @@ xmlNode *xccdf_benchmark_to_dom(struct xccdf_benchmark *benchmark, xmlDocPtr doc
 
 	const char *metadata = xccdf_benchmark_get_metadata(benchmark);
 	if (metadata) {
-		xmlNode *metadata_node = xmlNewChild(root_node, ns_xccdf, BAD_CAST "metadata", NULL);
-		xmlNewChild(metadata_node, ns_xccdf, NULL, BAD_CAST metadata);
+		xmlNode *metadata_node = xmlNewTextChild(root_node, ns_xccdf, BAD_CAST "metadata", NULL);
+		xmlNewTextChild(metadata_node, ns_xccdf, NULL, BAD_CAST metadata);
 	}
 
 	OSCAP_FOR(xccdf_model, model, xccdf_benchmark_get_models(benchmark)) {
-		xmlNode *model_node = xmlNewChild(root_node, ns_xccdf, BAD_CAST "model", NULL);
+		xmlNode *model_node = xmlNewTextChild(root_node, ns_xccdf, BAD_CAST "model", NULL);
 		xmlNewProp(model_node, BAD_CAST "system", BAD_CAST xccdf_model_get_system(model));
 	}
 

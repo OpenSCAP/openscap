@@ -217,7 +217,7 @@ static xmlNode *oval_results_to_dom(struct oval_results_model *results_model,
 {
 	xmlNode *root_node;
 	if (parent) {
-		root_node = xmlNewChild(parent, NULL, BAD_CAST "oval_results", NULL);
+		root_node = xmlNewTextChild(parent, NULL, BAD_CAST "oval_results", NULL);
 	} else {
 		root_node = xmlNewNode(NULL, BAD_CAST "oval_results");
 		xmlDocSetRootElement(doc, root_node);
@@ -232,7 +232,7 @@ static xmlNode *oval_results_to_dom(struct oval_results_model *results_model,
 	xmlSetNs(root_node, ns_xsi);
 	xmlSetNs(root_node, ns_results);
 
-	xmlNode *tag_generator = xmlNewChild(root_node, ns_results, BAD_CAST "generator", NULL);
+	xmlNode *tag_generator = xmlNewTextChild(root_node, ns_results, BAD_CAST "generator", NULL);
 
 	/* Report generator & directices */
 	_generator_to_dom(doc, tag_generator);
@@ -242,7 +242,7 @@ static xmlNode *oval_results_to_dom(struct oval_results_model *results_model,
 	struct oval_definition_model *definition_model = oval_results_model_get_definition_model(results_model);
 	oval_definitions_to_dom(definition_model, doc, root_node);
 
-	xmlNode *results_node = xmlNewChild(root_node, ns_results, BAD_CAST "results", NULL);
+	xmlNode *results_node = xmlNewTextChild(root_node, ns_results, BAD_CAST "results", NULL);
 	struct oval_result_system_iterator *systems = oval_results_model_get_systems(results_model);
 	while (oval_result_system_iterator_has_more(systems)) {
 		struct oval_result_system *sys = oval_result_system_iterator_next(systems);

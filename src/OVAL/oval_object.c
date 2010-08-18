@@ -457,7 +457,7 @@ xmlNode *oval_object_to_dom(struct oval_object *object, xmlDoc * doc, xmlNode * 
 	char object_name[strlen(subtype_text) + 8];
 	*object_name = '\0';
 	strcat(strcat(object_name, subtype_text), "_object");
-	xmlNode *object_node = xmlNewChild(parent, NULL, BAD_CAST object_name, NULL);
+	xmlNode *object_node = xmlNewTextChild(parent, NULL, BAD_CAST object_name, NULL);
 
 	oval_family_t family = oval_object_get_family(object);
 	const char *family_text = oval_family_get_text(family);
@@ -487,17 +487,17 @@ xmlNode *oval_object_to_dom(struct oval_object *object, xmlDoc * doc, xmlNode * 
 	struct oval_string_iterator *notes = oval_object_get_notes(object);
 	if (oval_string_iterator_has_more(notes)) {
 		xmlNs *ns_definitions = xmlSearchNsByHref(doc, parent, OVAL_DEFINITIONS_NAMESPACE);
-		xmlNode *notes_node = xmlNewChild(object_node, ns_definitions, BAD_CAST "notes", NULL);
+		xmlNode *notes_node = xmlNewTextChild(object_node, ns_definitions, BAD_CAST "notes", NULL);
 		while (oval_string_iterator_has_more(notes)) {
 			char *note = oval_string_iterator_next(notes);
-			xmlNewChild(notes_node, ns_definitions, BAD_CAST "note", BAD_CAST note);
+			xmlNewTextChild(notes_node, ns_definitions, BAD_CAST "note", BAD_CAST note);
 		}
 	}
 	oval_string_iterator_free(notes);
 
 	struct oval_behavior_iterator *behaviors = oval_object_get_behaviors(object);
 	if (oval_behavior_iterator_has_more(behaviors)) {
-		xmlNode *behaviors_node = xmlNewChild(object_node, ns_family, BAD_CAST "behaviors", NULL);
+		xmlNode *behaviors_node = xmlNewTextChild(object_node, ns_family, BAD_CAST "behaviors", NULL);
 		while (oval_behavior_iterator_has_more(behaviors)) {
 			struct oval_behavior *behavior = oval_behavior_iterator_next(behaviors);
 			char *key = oval_behavior_get_key(behavior);

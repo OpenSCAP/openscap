@@ -190,7 +190,7 @@ void oval_message_to_dom(struct oval_message *message, xmlDoc * doc, xmlNode * t
 
 	if (message) {
 		xmlNs *ns_syschar = xmlSearchNsByHref(doc, tag_parent, OVAL_SYSCHAR_NAMESPACE);
-		xmlNode *tag_message = xmlNewChild
+		xmlNode *tag_message = xmlNewTextChild
 		    (tag_parent, ns_syschar, BAD_CAST "message", BAD_CAST oval_message_get_text(message));
 		xmlNewProp(tag_message, BAD_CAST "level",
 			   BAD_CAST oval_message_level_text(oval_message_get_level(message)));

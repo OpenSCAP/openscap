@@ -561,7 +561,7 @@ void oval_definition_to_print(struct oval_definition *definition, char *indent, 
 xmlNode *oval_definition_to_dom(struct oval_definition *definition, xmlDoc * doc, xmlNode * parent)
 {
 	xmlNs *ns_definitions = xmlSearchNsByHref(doc, parent, OVAL_DEFINITIONS_NAMESPACE);
-	xmlNode *definition_node = xmlNewChild(parent, ns_definitions, BAD_CAST "definition", NULL);
+	xmlNode *definition_node = xmlNewTextChild(parent, ns_definitions, BAD_CAST "definition", NULL);
 
 	char *id = oval_definition_get_id(definition);
 	xmlNewProp(definition_node, BAD_CAST "id", BAD_CAST id);
@@ -578,27 +578,27 @@ xmlNode *oval_definition_to_dom(struct oval_definition *definition, xmlDoc * doc
 	if (deprecated)
 		xmlNewProp(definition_node, BAD_CAST "deprecated", BAD_CAST "true");
 
-	xmlNode *metadata_node = xmlNewChild(definition_node, ns_definitions, BAD_CAST "metadata", NULL);
+	xmlNode *metadata_node = xmlNewTextChild(definition_node, ns_definitions, BAD_CAST "metadata", NULL);
 
 	char *title = oval_definition_get_title(definition);
-	xmlNewChild(metadata_node, ns_definitions, BAD_CAST "title", BAD_CAST title);
+	xmlNewTextChild(metadata_node, ns_definitions, BAD_CAST "title", BAD_CAST title);
 
 	struct oval_affected_iterator *affecteds = oval_definition_get_affected(definition);
 	while (oval_affected_iterator_has_more(affecteds)) {
-		xmlNode *affected_node = xmlNewChild(metadata_node, ns_definitions, BAD_CAST "affected", NULL);
+		xmlNode *affected_node = xmlNewTextChild(metadata_node, ns_definitions, BAD_CAST "affected", NULL);
 		struct oval_affected *affected = oval_affected_iterator_next(affecteds);
 		oval_affected_family_t family = oval_affected_get_family(affected);
 		xmlNewProp(affected_node, BAD_CAST "family", BAD_CAST oval_affected_family_get_text(family));
 		struct oval_string_iterator *platforms = oval_affected_get_platforms(affected);
 		while (oval_string_iterator_has_more(platforms)) {
 			char *platform = oval_string_iterator_next(platforms);
-			xmlNewChild(affected_node, ns_definitions, BAD_CAST "platform", BAD_CAST platform);
+			xmlNewTextChild(affected_node, ns_definitions, BAD_CAST "platform", BAD_CAST platform);
 		}
 		oval_string_iterator_free(platforms);
 		struct oval_string_iterator *products = oval_affected_get_products(affected);
 		while (oval_string_iterator_has_more(products)) {
 			char *product = oval_string_iterator_next(products);
-			xmlNewChild(affected_node, ns_definitions, BAD_CAST "product", BAD_CAST product);
+			xmlNewTextChild(affected_node, ns_definitions, BAD_CAST "product", BAD_CAST product);
 		}
 		oval_string_iterator_free(products);
 	}
@@ -607,7 +607,7 @@ xmlNode *oval_definition_to_dom(struct oval_definition *definition, xmlDoc * doc
 	struct oval_reference_iterator *references = oval_definition_get_references(definition);
 	while (oval_reference_iterator_has_more(references)) {
 		struct oval_reference *ref = oval_reference_iterator_next(references);
-		xmlNode *referenceNode = xmlNewChild(metadata_node, ns_definitions, BAD_CAST "reference", NULL);
+		xmlNode *referenceNode = xmlNewTextChild(metadata_node, ns_definitions, BAD_CAST "reference", NULL);
 		char *source = oval_reference_get_source(ref);
 		char *ref_id = oval_reference_get_id(ref);
 		char *ref_url = oval_reference_get_url(ref);
@@ -619,14 +619,14 @@ xmlNode *oval_definition_to_dom(struct oval_definition *definition, xmlDoc * doc
 	oval_reference_iterator_free(references);
 
 	char *description = oval_definition_get_description(definition);
-	xmlNewChild(metadata_node, ns_definitions, BAD_CAST "description", BAD_CAST description);
+	xmlNewTextChild(metadata_node, ns_definitions, BAD_CAST "description", BAD_CAST description);
 
 	struct oval_string_iterator *notes = oval_definition_get_notes(definition);
 	if (oval_string_iterator_has_more(notes)) {
-		xmlNode *notes_node = xmlNewChild(definition_node, ns_definitions, BAD_CAST "notes", NULL);
+		xmlNode *notes_node = xmlNewTextChild(definition_node, ns_definitions, BAD_CAST "notes", NULL);
 		while (oval_string_iterator_has_more(notes)) {
 			char *note = oval_string_iterator_next(notes);
-			xmlNewChild(notes_node, ns_definitions, BAD_CAST "note", BAD_CAST note);
+			xmlNewTextChild(notes_node, ns_definitions, BAD_CAST "note", BAD_CAST note);
 		}
 	}
 	oval_string_iterator_free(notes);

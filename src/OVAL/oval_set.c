@@ -490,7 +490,7 @@ void oval_set_to_print(struct oval_setobject *set, char *indent, int idx)
 
 xmlNode *oval_set_to_dom(struct oval_setobject *set, xmlDoc * doc, xmlNode * parent) {
 	xmlNs *ns_definitions = xmlSearchNsByHref(doc, parent, OVAL_DEFINITIONS_NAMESPACE);
-	xmlNode *set_node = xmlNewChild(parent, ns_definitions, BAD_CAST "set", NULL);
+	xmlNode *set_node = xmlNewTextChild(parent, ns_definitions, BAD_CAST "set", NULL);
 	if (ns_definitions == NULL) {
 		ns_definitions = xmlNewNs(set_node, OVAL_DEFINITIONS_NAMESPACE, NULL);
 		xmlSetNs(set_node, ns_definitions);
@@ -514,14 +514,14 @@ xmlNode *oval_set_to_dom(struct oval_setobject *set, xmlDoc * doc, xmlNode * par
 			while (oval_object_iterator_has_more(objects)) {
 				struct oval_object *object = oval_object_iterator_next(objects);
 				char *id = oval_object_get_id(object);
-				xmlNewChild(set_node, ns_definitions, BAD_CAST "object_reference", BAD_CAST id);
+				xmlNewTextChild(set_node, ns_definitions, BAD_CAST "object_reference", BAD_CAST id);
 			}
 			oval_object_iterator_free(objects);
 			struct oval_state_iterator *filters = oval_setobject_get_filters(set);
 			while (oval_state_iterator_has_more(filters)) {
 				struct oval_state *filter = oval_state_iterator_next(filters);
 				char *id = oval_state_get_id(filter);
-				xmlNewChild(set_node, ns_definitions, BAD_CAST "filter", BAD_CAST id);
+				xmlNewTextChild(set_node, ns_definitions, BAD_CAST "filter", BAD_CAST id);
 			}
 			oval_state_iterator_free(filters);
 		} break;

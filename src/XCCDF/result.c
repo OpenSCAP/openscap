@@ -472,14 +472,14 @@ void xccdf_result_to_dom(struct xccdf_result *result, xmlNode *result_node, xmlD
 	struct oscap_string_iterator *orgs = xccdf_result_get_organizations(result);
 	while (oscap_string_iterator_has_more(orgs)) {
 		const char *org = oscap_string_iterator_next(orgs);
-		xmlNewChild(result_node, ns_xccdf, BAD_CAST "organization", BAD_CAST org);
+		xmlNewTextChild(result_node, ns_xccdf, BAD_CAST "organization", BAD_CAST org);
 	}
 	oscap_string_iterator_free(orgs);
 
 	struct xccdf_identity_iterator *identities = xccdf_result_get_identities(result);
 	while (xccdf_identity_iterator_has_more(identities)) {
 		struct xccdf_identity *identity = xccdf_identity_iterator_next(identities);
-		xmlNode *identity_node = xmlNewChild(result_node, ns_xccdf, BAD_CAST "identity", BAD_CAST xccdf_identity_get_name(identity));
+		xmlNode *identity_node = xmlNewTextChild(result_node, ns_xccdf, BAD_CAST "identity", BAD_CAST xccdf_identity_get_name(identity));
 		
 		if (xccdf_identity_get_authenticated(identity))
 			xmlNewProp(identity_node, BAD_CAST "authenticated", BAD_CAST "True");
@@ -495,7 +495,7 @@ void xccdf_result_to_dom(struct xccdf_result *result, xmlNode *result_node, xmlD
 
 	const char *profile = xccdf_result_get_profile(result);
 	if (profile) {
-		xmlNode *prof_node = xmlNewChild(result_node, ns_xccdf, BAD_CAST "profile", NULL);
+		xmlNode *prof_node = xmlNewTextChild(result_node, ns_xccdf, BAD_CAST "profile", NULL);
 		xmlNewProp(prof_node, BAD_CAST "idref", BAD_CAST profile);
 	}
 
@@ -509,23 +509,23 @@ void xccdf_result_to_dom(struct xccdf_result *result, xmlNode *result_node, xmlD
 	struct oscap_string_iterator *targets = xccdf_result_get_targets(result);
 	while (oscap_string_iterator_has_more(targets)) {
 		const char *target = oscap_string_iterator_next(targets);
-		xmlNewChild(result_node, ns_xccdf, BAD_CAST "target", BAD_CAST target);
+		xmlNewTextChild(result_node, ns_xccdf, BAD_CAST "target", BAD_CAST target);
 	}
 	oscap_string_iterator_free(targets);
 
 	struct oscap_string_iterator *target_addresses = xccdf_result_get_target_addresses(result);
 	while (oscap_string_iterator_has_more(target_addresses)) {
 		const char *target_address = oscap_string_iterator_next(target_addresses);
-		xmlNewChild(result_node, ns_xccdf, BAD_CAST "target-address", BAD_CAST target_address);
+		xmlNewTextChild(result_node, ns_xccdf, BAD_CAST "target-address", BAD_CAST target_address);
 	}
 	oscap_string_iterator_free(target_addresses);
 
 	struct xccdf_target_fact_iterator *target_facts = xccdf_result_get_target_facts(result);
         if (xccdf_target_fact_iterator_has_more(target_facts)) {
-                xmlNode *target_node = xmlNewChild(result_node, ns_xccdf, BAD_CAST "target-facts", NULL);
+                xmlNode *target_node = xmlNewTextChild(result_node, ns_xccdf, BAD_CAST "target-facts", NULL);
                 while (xccdf_target_fact_iterator_has_more(target_facts)) {
                         struct xccdf_target_fact *target_fact = xccdf_target_fact_iterator_next(target_facts);
-                        xmlNode *fact_node = xmlNewChild(target_node, ns_xccdf, BAD_CAST "fact", BAD_CAST target_fact->value);
+                        xmlNode *fact_node = xmlNewTextChild(target_node, ns_xccdf, BAD_CAST "fact", BAD_CAST target_fact->value);
 
                         const char *name = xccdf_target_fact_get_name(target_fact);
                         if (name)
@@ -551,7 +551,7 @@ void xccdf_result_to_dom(struct xccdf_result *result, xmlNode *result_node, xmlD
                 float value = xccdf_score_get_score(score);
                 char value_str[10];
                 sprintf(value_str, "%f", value);
-                xmlNode *score_node = xmlNewChild(result_node, ns_xccdf, BAD_CAST "score", BAD_CAST value_str);
+                xmlNode *score_node = xmlNewTextChild(result_node, ns_xccdf, BAD_CAST "score", BAD_CAST value_str);
 
 		const char *sys = xccdf_score_get_system(score);
 		if (sys)
@@ -649,7 +649,7 @@ static struct xccdf_rule_result *xccdf_rule_result_new_parse(xmlTextReaderPtr re
 xmlNode *xccdf_rule_result_to_dom(struct xccdf_rule_result *result, xmlDoc *doc, xmlNode *parent)
 {
 	xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent, XCCDF_BASE_NAMESPACE);
-	xmlNode *result_node = xmlNewChild(parent, ns_xccdf, BAD_CAST "rule-result", NULL);
+	xmlNode *result_node = xmlNewTextChild(parent, ns_xccdf, BAD_CAST "rule-result", NULL);
 
 	/* Handle attributes */
 	const char *idref = xccdf_rule_result_get_idref(result);
@@ -685,7 +685,7 @@ xmlNode *xccdf_rule_result_to_dom(struct xccdf_rule_result *result, xmlDoc *doc,
 	/* Handle children */
 	xccdf_test_result_type_t test_res = xccdf_rule_result_get_result(result);
 	if (test_res != 0)
-            xmlNewChild(result_node, ns_xccdf, BAD_CAST "result", BAD_CAST XCCDF_RESULT_MAP[test_res - 1].string);
+            xmlNewTextChild(result_node, ns_xccdf, BAD_CAST "result", BAD_CAST XCCDF_RESULT_MAP[test_res - 1].string);
 
 	struct xccdf_override_iterator *overrides = xccdf_rule_result_get_overrides(result);
 	while (xccdf_override_iterator_has_more(overrides)) {
@@ -705,7 +705,7 @@ xmlNode *xccdf_rule_result_to_dom(struct xccdf_rule_result *result, xmlDoc *doc,
 	while (xccdf_message_iterator_has_more(messages)) {
 		struct xccdf_message *message = xccdf_message_iterator_next(messages);
 		const char *content = xccdf_message_get_content(message);
-		xmlNode *message_node = xmlNewChild(result_node, ns_xccdf, BAD_CAST "message", BAD_CAST content);
+		xmlNode *message_node = xmlNewTextChild(result_node, ns_xccdf, BAD_CAST "message", BAD_CAST content);
 
                 xccdf_level_t message_severity = xccdf_message_get_severity(message);
 		if (message_severity != 0)
@@ -717,7 +717,7 @@ xmlNode *xccdf_rule_result_to_dom(struct xccdf_rule_result *result, xmlDoc *doc,
 	while (xccdf_instance_iterator_has_more(instances)) {
 		struct xccdf_instance *instance = xccdf_instance_iterator_next(instances);
 		const char *content = xccdf_instance_get_content(instance);
-		xmlNode *instance_node = xmlNewChild(result_node, ns_xccdf, BAD_CAST "instance", BAD_CAST content);
+		xmlNode *instance_node = xmlNewTextChild(result_node, ns_xccdf, BAD_CAST "instance", BAD_CAST content);
 		
 		const char *context = xccdf_instance_get_context(instance);
 		if (context)
@@ -780,7 +780,7 @@ static struct xccdf_override *xccdf_override_new_parse(xmlTextReaderPtr reader)
 xmlNode *xccdf_override_to_dom(struct xccdf_override *override, xmlDoc *doc, xmlNode *parent)
 {
 	xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent, XCCDF_BASE_NAMESPACE);
-	xmlNode *override_node = xmlNewChild(parent, ns_xccdf, BAD_CAST "override", NULL);
+	xmlNode *override_node = xmlNewTextChild(parent, ns_xccdf, BAD_CAST "override", NULL);
 
 	/* Handle attributes */
 	time_t date = xccdf_override_get_time(override);

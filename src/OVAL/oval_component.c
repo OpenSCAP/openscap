@@ -1219,7 +1219,7 @@ xmlNode *oval_component_to_dom(struct oval_component *component, xmlDoc * doc, x
 	}
 
 	xmlNs *ns_definitions = xmlSearchNsByHref(doc, parent, OVAL_DEFINITIONS_NAMESPACE);
-	xmlNode *component_node = xmlNewChild(parent, ns_definitions,
+	xmlNode *component_node = xmlNewTextChild(parent, ns_definitions,
 					      BAD_CAST local_name,
 					      BAD_CAST content);
 

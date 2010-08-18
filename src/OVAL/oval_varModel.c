@@ -364,7 +364,7 @@ static xmlNode *oval_variable_model_to_dom(struct oval_variable_model * variable
 	xmlNodePtr root_node;
 
 	if (parent) {
-		root_node = xmlNewChild(parent, NULL, BAD_CAST "oval_variables", NULL);
+		root_node = xmlNewTextChild(parent, NULL, BAD_CAST "oval_variables", NULL);
 	} else {
 		root_node = xmlNewNode(NULL, BAD_CAST "oval_variables");
 		xmlDocSetRootElement(doc, root_node);
@@ -375,11 +375,11 @@ static xmlNode *oval_variable_model_to_dom(struct oval_variable_model * variable
 	xmlSetNs(root_node, ns_common);
 	xmlSetNs(root_node, ns_variables);
 
-	xmlNode *tag_generator = xmlNewChild(root_node, ns_variables, BAD_CAST "generator", NULL);
+	xmlNode *tag_generator = xmlNewTextChild(root_node, ns_variables, BAD_CAST "generator", NULL);
 
 	_generator_to_dom(doc, tag_generator);
 
-	xmlNode *variables = xmlNewChild(root_node, ns_variables, BAD_CAST "variables", NULL);
+	xmlNode *variables = xmlNewTextChild(root_node, ns_variables, BAD_CAST "variables", NULL);
 
 
 	struct oval_string_iterator *varids = oval_variable_model_get_variable_ids(variable_model);
@@ -388,7 +388,7 @@ static xmlNode *oval_variable_model_to_dom(struct oval_variable_model * variable
 		oval_datatype_t datatype = oval_variable_model_get_datatype(variable_model, varid);
 		const char *comm = oval_variable_model_get_comment(variable_model, varid);
 
-                xmlNode *variable = xmlNewChild(variables, ns_variables, BAD_CAST "variable", NULL);
+                xmlNode *variable = xmlNewTextChild(variables, ns_variables, BAD_CAST "variable", NULL);
                 xmlNewProp(variable, BAD_CAST "id", BAD_CAST varid);
                 xmlNewProp(variable, BAD_CAST "datatype", BAD_CAST oval_datatype_get_text(datatype));
                 xmlNewProp(variable, BAD_CAST "comment", BAD_CAST comm);
@@ -396,7 +396,7 @@ static xmlNode *oval_variable_model_to_dom(struct oval_variable_model * variable
 		struct oval_string_iterator *values = oval_variable_model_get_values(variable_model, varid);
 		while (oval_string_iterator_has_more(values)) {
 			char *value = oval_string_iterator_next(values);
-                        xmlNewChild(variable, ns_variables, BAD_CAST "value", BAD_CAST value);
+                        xmlNewTextChild(variable, ns_variables, BAD_CAST "value", BAD_CAST value);
 		}
                 oval_string_iterator_free(values);
 	}

@@ -375,7 +375,7 @@ xmlNode *oval_syschar_model_to_dom(struct oval_syschar_model * syschar_model, xm
 	xmlNodePtr root_node;
 
 	if (parent) {
-		root_node = xmlNewChild(parent, NULL, BAD_CAST "oval_system_characteristics", NULL);
+		root_node = xmlNewTextChild(parent, NULL, BAD_CAST "oval_system_characteristics", NULL);
 	} else {
 		root_node = xmlNewNode(NULL, BAD_CAST "oval_system_characteristics");
 		xmlDocSetRootElement(doc, root_node);
@@ -392,7 +392,7 @@ xmlNode *oval_syschar_model_to_dom(struct oval_syschar_model * syschar_model, xm
 
         /* Report generator */
         if (!parent) {
-		xmlNode *tag_generator = xmlNewChild(root_node, ns_syschar, BAD_CAST "generator", NULL);
+		xmlNode *tag_generator = xmlNewTextChild(root_node, ns_syschar, BAD_CAST "generator", NULL);
                 _generator_to_dom(doc, tag_generator);
         }
 
@@ -415,7 +415,7 @@ xmlNode *oval_syschar_model_to_dom(struct oval_syschar_model * syschar_model, xm
 
 	struct oval_string_map *sysitem_map = oval_string_map_new();
 	if (oval_syschar_iterator_has_more(syschars)) {
-		xmlNode *tag_objects = xmlNewChild(root_node, ns_syschar, BAD_CAST "collected_objects", NULL);
+		xmlNode *tag_objects = xmlNewTextChild(root_node, ns_syschar, BAD_CAST "collected_objects", NULL);
 
 		while (oval_syschar_iterator_has_more(syschars)) {
 			struct oval_syschar *syschar = oval_syschar_iterator_next(syschars);
@@ -433,7 +433,7 @@ xmlNode *oval_syschar_model_to_dom(struct oval_syschar_model * syschar_model, xm
 
 	struct oval_iterator *sysitems = oval_string_map_values(sysitem_map);
 	if (oval_collection_iterator_has_more(sysitems)) {
-		xmlNode *tag_items = xmlNewChild(root_node, ns_syschar, BAD_CAST "system_data", NULL);
+		xmlNode *tag_items = xmlNewTextChild(root_node, ns_syschar, BAD_CAST "system_data", NULL);
 		while (oval_collection_iterator_has_more(sysitems)) {
 			struct oval_sysitem *sysitem = (struct oval_sysitem *)
 			    oval_collection_iterator_next(sysitems);

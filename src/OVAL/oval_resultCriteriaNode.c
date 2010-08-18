@@ -584,7 +584,7 @@ int oval_result_criteria_node_parse
 
 static xmlNode *_oval_result_CRITERIA_to_dom(struct oval_result_criteria_node *node, xmlDocPtr doc, xmlNode * parent) {
 	xmlNs *ns_results = xmlSearchNsByHref(doc, parent, OVAL_RESULTS_NAMESPACE);
-	xmlNode *node_root = xmlNewChild(parent, ns_results, BAD_CAST "criteria", NULL);
+	xmlNode *node_root = xmlNewTextChild(parent, ns_results, BAD_CAST "criteria", NULL);
 
 	oval_operator_t operator = oval_result_criteria_node_get_operator(node);
 	const char *operator_att = oval_operator_get_text(operator);
@@ -601,7 +601,7 @@ static xmlNode *_oval_result_CRITERIA_to_dom(struct oval_result_criteria_node *n
 
 static xmlNode *_oval_result_CRITERION_to_dom(struct oval_result_criteria_node *node, xmlDocPtr doc, xmlNode * parent) {
 	xmlNs *ns_results = xmlSearchNsByHref(doc, parent, OVAL_RESULTS_NAMESPACE);
-	xmlNode *node_root = xmlNewChild(parent, ns_results, BAD_CAST "criterion", NULL);
+	xmlNode *node_root = xmlNewTextChild(parent, ns_results, BAD_CAST "criterion", NULL);
 
 	struct oval_result_test *rslt_test = oval_result_criteria_node_get_test(node);
 	struct oval_test *oval_test = oval_result_test_get_test(rslt_test);
@@ -626,7 +626,7 @@ static xmlNode *_oval_result_CRITERION_to_dom(struct oval_result_criteria_node *
 
 static xmlNode *_oval_result_EXTENDDEF_to_dom(struct oval_result_criteria_node *node, xmlDocPtr doc, xmlNode * parent) {
 	xmlNs *ns_results = xmlSearchNsByHref(doc, parent, OVAL_RESULTS_NAMESPACE);
-	xmlNode *node_root = xmlNewChild(parent, ns_results, BAD_CAST "extend_definition", NULL);
+	xmlNode *node_root = xmlNewTextChild(parent, ns_results, BAD_CAST "extend_definition", NULL);
 
 	struct oval_result_definition *rslt_definition = oval_result_criteria_node_get_extends(node);
 	struct oval_definition *oval_definition = oval_result_definition_get_definition(rslt_definition);

@@ -126,7 +126,7 @@ xmlNode *oscap_text_to_dom(struct oscap_text *text, xmlNode *parent, const char 
 
 	if (text->traits.html || text->traits.can_substitute)
 		text_node = oscap_xmlstr_to_dom(parent, elname, text->text);
-	else text_node = xmlNewChild(parent, NULL, BAD_CAST elname, BAD_CAST text->text);
+	else text_node = xmlNewTextChild(parent, NULL, BAD_CAST elname, BAD_CAST text->text);
 
 	if (text_node == NULL) return NULL;
 

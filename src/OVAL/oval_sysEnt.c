@@ -327,7 +327,7 @@ void oval_sysent_to_dom(struct oval_sysent *sysent, xmlDoc * doc, xmlNode * pare
 {
 	xmlNsPtr *ns_parent = xmlGetNsList(doc, parent);
 	xmlNode *sysent_tag =
-	    xmlNewChild(parent, ns_parent[0], BAD_CAST oval_sysent_get_name(sysent),
+	    xmlNewTextChild(parent, ns_parent[0], BAD_CAST oval_sysent_get_name(sysent),
 			BAD_CAST oval_sysent_get_value(sysent));
 
 	if(ns_parent)

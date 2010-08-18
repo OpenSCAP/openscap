@@ -476,11 +476,11 @@ xmlNode *oval_result_system_to_dom
      struct oval_results_model * results_model,
      struct oval_result_directives * directives, xmlDocPtr doc, xmlNode * parent) {
 	xmlNs *ns_results = xmlSearchNsByHref(doc, parent, OVAL_RESULTS_NAMESPACE);
-	xmlNode *system_node = xmlNewChild(parent, ns_results, BAD_CAST "system", NULL);
+	xmlNode *system_node = xmlNewTextChild(parent, ns_results, BAD_CAST "system", NULL);
 
 	struct oval_string_map *tstmap = oval_string_map_new();
 
-	xmlNode *definitions_node = xmlNewChild(system_node, ns_results, BAD_CAST "definitions", NULL);
+	xmlNode *definitions_node = xmlNewTextChild(system_node, ns_results, BAD_CAST "definitions", NULL);
 	struct oval_definition_model *definition_model = oval_results_model_get_definition_model(results_model);
 	struct oval_definition_iterator *oval_definitions = oval_definition_model_get_definitions(definition_model);
 	while(oval_definition_iterator_has_more(oval_definitions)) {
@@ -514,7 +514,7 @@ xmlNode *oval_result_system_to_dom
 
 	struct oval_result_test_iterator *result_tests = (struct oval_result_test_iterator *)  oval_string_map_values(tstmap);
 	if (oval_result_test_iterator_has_more(result_tests)) {
-		xmlNode *tests_node = xmlNewChild(system_node, ns_results, BAD_CAST "tests", NULL);
+		xmlNode *tests_node = xmlNewTextChild(system_node, ns_results, BAD_CAST "tests", NULL);
 		while (oval_result_test_iterator_has_more(result_tests)) {
 			struct oval_result_test *result_test = oval_result_test_iterator_next(result_tests);
 			/* report the test */

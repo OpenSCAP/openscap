@@ -207,7 +207,7 @@ int oval_result_item_parse_tag
 
 xmlNode *oval_result_item_to_dom(struct oval_result_item * rslt_item, xmlDocPtr doc, xmlNode * parent) {
 	xmlNs *ns_results = xmlSearchNsByHref(doc, parent, OVAL_RESULTS_NAMESPACE);
-	xmlNode *item_node = xmlNewChild(parent, ns_results, BAD_CAST "tested_item", NULL);
+	xmlNode *item_node = xmlNewTextChild(parent, ns_results, BAD_CAST "tested_item", NULL);
 
 	struct oval_sysitem *oval_sysitem = oval_result_item_get_sysitem(rslt_item);
 	char *item_id = oval_sysitem_get_id(oval_sysitem);

@@ -265,10 +265,10 @@ void oval_sysint_to_dom(struct oval_sysint *sysint, xmlDoc * doc, xmlNode * tag_
 {
 	if (sysint) {
 		xmlNs *ns_syschar = xmlSearchNsByHref(doc, tag_parent, OVAL_SYSCHAR_NAMESPACE);
-		xmlNode *tag_sysint = xmlNewChild(tag_parent, ns_syschar, BAD_CAST "interface", NULL);
-		xmlNewChild(tag_sysint, ns_syschar, BAD_CAST "interface_name", BAD_CAST oval_sysint_get_name(sysint));
-		xmlNewChild(tag_sysint, ns_syschar, BAD_CAST "ip_address", BAD_CAST oval_sysint_get_ip_address(sysint));
-		xmlNewChild
+		xmlNode *tag_sysint = xmlNewTextChild(tag_parent, ns_syschar, BAD_CAST "interface", NULL);
+		xmlNewTextChild(tag_sysint, ns_syschar, BAD_CAST "interface_name", BAD_CAST oval_sysint_get_name(sysint));
+		xmlNewTextChild(tag_sysint, ns_syschar, BAD_CAST "ip_address", BAD_CAST oval_sysint_get_ip_address(sysint));
+		xmlNewTextChild
 		    (tag_sysint, ns_syschar, BAD_CAST "mac_address", BAD_CAST oval_sysint_get_mac_address(sysint));
 	}
 }
