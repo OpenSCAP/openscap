@@ -1677,6 +1677,9 @@
                         <criterion comment="Conditions are satisfied" test_ref="oval:mil.army.us.rhel5:tst:20111"/>
                   </criteria>
             </definition>
+
+	    <!-- BEGIN -->
+
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:20112" version="1">
                   <metadata>
                         <title>Network Parameters for Hosts Only</title>
@@ -1685,11 +1688,19 @@
                         </affected>
                         <reference ref_id="CCE-4151-7" source="CCE"/>
                         <description>The default setting for sending ICMP redirects should be disabled for network interfaces.</description>
+			<tested_by name="dkopecek" time="1282130094"/>
                   </metadata>
-                  <criteria>
-                        <criterion test_ref="oval:mil.army.us.rhel5:tst:20112"/>
+                  <criteria operator="AND">
+		    <criterion test_ref="oval:mil.army.us.rhel5:tst:201120"/>
+		    <criteria operator="OR">
+                        <criterion test_ref="oval:mil.army.us.rhel5:tst:201121" negate="true"/>
+			<criterion test_ref="oval:mil.army.us.rhel5:tst:201122"/>
+		    </criteria>
                   </criteria>
             </definition>
+
+	    <!-- ^^^ ok ^^^ -->
+
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:20113" version="1">
                   <metadata>
                         <title>Network Parameters for Hosts Only</title>
@@ -1698,11 +1709,17 @@
                         </affected>
                         <reference ref_id="CCE-4155-8" source="CCE"/>
                         <description>Sending ICMP redirects should be disabled for all interfaces.</description>
+			<tested_by name="dkopecek" time="1282130094"/>
                   </metadata>
-                  <criteria>
-                        <criterion test_ref="oval:mil.army.us.rhel5:tst:20113"/>
+                  <criteria operator="AND">
+		    <criterion test_ref="oval:mil.army.us.rhel5:tst:201130"/>
+		    <criteria operator="OR">
+		      <criterion test_ref="oval:mil.army.us.rhel5:tst:201131" negate="true"/>
+		      <criterion test_ref="oval:mil.army.us.rhel5:tst:201132"/>
+		    </criteria>
                   </criteria>
             </definition>
+
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:20114" version="1">
                   <metadata>
                         <title>Network Parameters for Hosts Only</title>
@@ -1711,11 +1728,17 @@
                         </affected>
                         <reference ref_id="CCE-3561-8" source="CCE"/>
                         <description>IP forwarding should be disabled.</description>
+			<tested_by name="dkopecek" time="1282130094"/>
                   </metadata>
-                  <criteria>
-                        <criterion test_ref="oval:mil.army.us.rhel5:tst:20114"/>
+                  <criteria operator="AND">
+		    <criterion test_ref="oval:mil.army.us.rhel5:tst:201140"/>
+		    <criteria operator="OR">
+		      <criterion test_ref="oval:mil.army.us.rhel5:tst:201141" negate="true"/>
+		      <criterion test_ref="oval:mil.army.us.rhel5:tst:201142"/>
+		    </criteria>
                   </criteria>
             </definition>
+
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:20115" version="1">
                   <metadata>
                         <title>Network Parameters for Hosts and Routers</title>
@@ -1725,10 +1748,15 @@
                         <reference ref_id="CCE-4236-6" source="CCE"/>
                         <description>Accepting source routed packets should be enabled or disabled for all interfaces as appropriate.</description>
                   </metadata>
-                  <criteria>
-                        <criterion test_ref="oval:mil.army.us.rhel5:tst:20115"/>
+                  <criteria operator="AND">
+		    <criterion test_ref="oval:mil.army.us.rhel5:tst:201150"/>
+		    <criteria operator="OR">
+		      <criterion test_ref="oval:mil.army.us.rhel5:tst:201151" negate="true"/>
+		      <criterion test_ref="oval:mil.army.us.rhel5:tst:201152"/>
+		    </criteria>
                   </criteria>
             </definition>
+
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:20116" version="1">
                   <metadata>
                         <title>Network Parameters for Hosts and Routers</title>
@@ -1738,10 +1766,15 @@
                         <reference ref_id="CCE-4217-6" source="CCE"/>
                         <description>Accepting ICMP redirects should be enabled or disabled for all interfaces as appropriate.</description>
                   </metadata>
-                  <criteria>
-                        <criterion test_ref="oval:mil.army.us.rhel5:tst:20116"/>
+                  <criteria operator="AND">
+		    <criterion test_ref="oval:mil.army.us.rhel5:tst:201160"/>
+		    <criteria operator="OR">
+		      <criterion test_ref="oval:mil.army.us.rhel5:tst:201161" negate="true"/>
+		      <criterion test_ref="oval:mil.army.us.rhel5:tst:201162"/>
+		    </criteria>
                   </criteria>
             </definition>
+
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:20117" version="1">
                   <metadata>
                         <title>Network Parameters for Hosts and Routers</title>
@@ -1751,10 +1784,15 @@
                         <reference ref_id="CCE-3472-8" source="CCE"/>
                         <description>Accepting "secure" ICMP redirects (those from gateways listed in the default gateways list) should be enabled or disabled for all interfaces as appropriate.</description>
                   </metadata>
-                  <criteria>
-                        <criterion test_ref="oval:mil.army.us.rhel5:tst:20117"/>
+                  <criteria operator="AND">
+		    <criterion test_ref="oval:mil.army.us.rhel5:tst:201170"/>
+		    <criteria operator="OR">
+		      <criterion test_ref="oval:mil.army.us.rhel5:tst:201171" negate="true"/>
+		      <criterion test_ref="oval:mil.army.us.rhel5:tst:201172"/>
+		    </criteria>
                   </criteria>
             </definition>
+
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:20118" version="1">
                   <metadata>
                         <title>Network Parameters for Hosts and Routers</title>
@@ -1764,10 +1802,15 @@
                         <reference ref_id="CCE-4320-8" source="CCE"/>
                         <description>Logging of "martian" packets (those with impossible addresses) should be enabled or disabled for all interfaces as appropriate.</description>
                   </metadata>
-                  <criteria>
-                        <criterion test_ref="oval:mil.army.us.rhel5:tst:20118"/>
+                  <criteria operator="AND">
+		    <criterion test_ref="oval:mil.army.us.rhel5:tst:201180"/>
+		    <criteria operator="OR">
+		      <criterion test_ref="oval:mil.army.us.rhel5:tst:201181" negate="true"/>
+		      <criterion test_ref="oval:mil.army.us.rhel5:tst:201182"/>
+		    </criteria>
                   </criteria>
             </definition>
+
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:20119" version="1">
                   <metadata>
                         <title>Network Parameters for Hosts and Routers</title>
@@ -1777,10 +1820,15 @@
                         <reference ref_id="CCE-4091-5" source="CCE"/>
                         <description>The default setting for accepting source routed packets should be enabled or disabled for network interfaces as appropriate.</description>
                   </metadata>
-                  <criteria>
-                        <criterion test_ref="oval:mil.army.us.rhel5:tst:20119"/>
+                  <criteria operator="AND">
+		    <criterion test_ref="oval:mil.army.us.rhel5:tst:201190"/>
+		    <criteria operator="OR">
+		      <criterion test_ref="oval:mil.army.us.rhel5:tst:201191" negate="true"/>
+		      <criterion test_ref="oval:mil.army.us.rhel5:tst:201192"/>
+		    </criteria>
                   </criteria>
             </definition>
+
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:20120" version="1">
                   <metadata>
                         <title>Network Parameters for Hosts and Routers</title>
@@ -1790,10 +1838,15 @@
                         <reference ref_id="CCE-4186-3" source="CCE"/>
                         <description>The default setting for accepting ICMP redirects should be enabled or disabled for network interfaces as appropriate.</description>
                   </metadata>
-                  <criteria>
-                        <criterion test_ref="oval:mil.army.us.rhel5:tst:20120"/>
+                  <criteria operator="AND">
+		    <criterion test_ref="oval:mil.army.us.rhel5:tst:201200"/>
+		    <criteria operator="OR">
+		      <criterion test_ref="oval:mil.army.us.rhel5:tst:201201" negate="true"/>
+		      <criterion test_ref="oval:mil.army.us.rhel5:tst:201202"/>
+		    </criteria>
                   </criteria>
             </definition>
+
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:20121" version="1">
                   <metadata>
                         <title>Network Parameters for Hosts and Routers</title>
@@ -1803,10 +1856,15 @@
                         <reference ref_id="CCE-3339-9" source="CCE"/>
                         <description>The default setting for accepting "secure" ICMP redirects (those from gateways listed in the default gateways list) should be enabled or disabled for network interfaces as appropriate.</description>
                   </metadata>
-                  <criteria>
-                        <criterion test_ref="oval:mil.army.us.rhel5:tst:20121"/>
+                  <criteria operator="AND">
+		    <criterion test_ref="oval:mil.army.us.rhel5:tst:201210"/>
+		    <criteria operator="OR">
+		      <criterion test_ref="oval:mil.army.us.rhel5:tst:201211" negate="true"/>
+		      <criterion test_ref="oval:mil.army.us.rhel5:tst:201212"/>
+		    </criteria>
                   </criteria>
             </definition>
+
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:20122" version="1">
                   <metadata>
                         <title>Network Parameters for Hosts and Routers</title>
@@ -1816,10 +1874,15 @@
                         <reference ref_id="CCE-3644-2" source="CCE"/>
                         <description>Ignoring ICMP echo requests (pings) sent to broadcast / multicast addresses should be enabled or disabled as appropriate.</description>
                   </metadata>
-                  <criteria>
-                        <criterion test_ref="oval:mil.army.us.rhel5:tst:20122"/>
+                  <criteria operator="AND">
+		    <criterion test_ref="oval:mil.army.us.rhel5:tst:201220"/>
+		    <criteria operator="OR">
+		      <criterion test_ref="oval:mil.army.us.rhel5:tst:201221" negate="true"/>
+		      <criterion test_ref="oval:mil.army.us.rhel5:tst:201222"/>
+		    </criteria>
                   </criteria>
             </definition>
+
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:20123" version="1">
                   <metadata>
                         <title>Network Parameters for Hosts and Routers</title>
@@ -1829,10 +1892,15 @@
                         <reference ref_id="CCE-4133-5" source="CCE"/>
                         <description>Ignoring bogus ICMP responses to broadcasts should be enabled or disabled as appropriate.</description>
                   </metadata>
-                  <criteria>
-                        <criterion test_ref="oval:mil.army.us.rhel5:tst:20123"/>
+                  <criteria operator="AND">
+		    <criterion test_ref="oval:mil.army.us.rhel5:tst:201230"/>
+		    <criteria operator="OR">
+		      <criterion test_ref="oval:mil.army.us.rhel5:tst:201231" negate="true"/>
+		      <criterion test_ref="oval:mil.army.us.rhel5:tst:201232"/>
+		    </criteria>
                   </criteria>
             </definition>
+
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:20124" version="1">
                   <metadata>
                         <title>Network Parameters for Hosts and Routers</title>
@@ -1842,10 +1910,15 @@
                         <reference ref_id="CCE-4265-5" source="CCE"/>
                         <description>Sending TCP syncookies should be enabled or disabled as appropriate.</description>
                   </metadata>
-                  <criteria>
-                        <criterion test_ref="oval:mil.army.us.rhel5:tst:20124"/>
+                  <criteria operator="AND">
+		    <criterion test_ref="oval:mil.army.us.rhel5:tst:201240"/>
+		    <criteria operator="OR">
+		      <criterion test_ref="oval:mil.army.us.rhel5:tst:201241" negate="true"/>
+		      <criterion test_ref="oval:mil.army.us.rhel5:tst:201242"/>
+		    </criteria>
                   </criteria>
             </definition>
+
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:20125" version="1">
                   <metadata>
                         <title>Network Parameters for Hosts and Routers</title>
@@ -1855,10 +1928,15 @@
                         <reference ref_id="CCE-4080-8" source="CCE"/>
                         <description>Performing source validation by reverse path should be enabled or disabled for all interfaces as appropriate.</description>
                   </metadata>
-                  <criteria>
-                        <criterion test_ref="oval:mil.army.us.rhel5:tst:20125"/>
+                  <criteria operator="AND">
+		    <criterion test_ref="oval:mil.army.us.rhel5:tst:201250"/>
+		    <criteria operator="OR">
+		      <criterion test_ref="oval:mil.army.us.rhel5:tst:201251" negate="true"/>
+		      <criterion test_ref="oval:mil.army.us.rhel5:tst:201252"/>
+		    </criteria>
                   </criteria>
             </definition>
+
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:20126" version="1">
                   <metadata>
                         <title>Network Parameters for Hosts and Routers</title>
@@ -1868,10 +1946,17 @@
                         <reference ref_id="CCE-3840-6" source="CCE"/>
                         <description>The default setting for performing source validation by reverse path should be enabled or disabled for network interfaces as appropriate.</description>
                   </metadata>
-                  <criteria>
-                        <criterion test_ref="oval:mil.army.us.rhel5:tst:20126"/>
+                  <criteria operator="AND">
+		    <criterion test_ref="oval:mil.army.us.rhel5:tst:201260"/>
+		    <criteria operator="OR">
+		      <criterion test_ref="oval:mil.army.us.rhel5:tst:201261" negate="true"/>
+		      <criterion test_ref="oval:mil.army.us.rhel5:tst:201262"/>
+		    </criteria>
                   </criteria>
             </definition>
+	    <!-- ^^^ ok ^^^ -->
+
+	    <!-- not applicable
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:20127" version="1">
                   <metadata>
                         <title>Disable Wireless in BIOS</title>
@@ -1885,6 +1970,8 @@
                         <criterion comment="Unknown test stub" test_ref="oval:mil.army.us.rhel5:tst:22"/>
                   </criteria>
             </definition>
+	    -->
+	    <!-- no match
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:20128" version="1">
                   <metadata>
                         <title>Deactivate Wireless Interfaces</title>
@@ -1898,6 +1985,9 @@
                         <criterion comment="Find wireless interfaces" test_ref="oval:mil.army.us.rhel5:tst:20128"/>
                   </criteria>
             </definition>
+	    -->
+
+	    <!-- no match
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:20129" version="1">
                   <metadata>
                         <title>Disable Wireless Drivers</title>
@@ -1911,6 +2001,10 @@
                         <criterion comment="Conditions are satisfied" test_ref="oval:mil.army.us.rhel5:tst:20129"/>
                   </criteria>
             </definition>
+	    -->
+
+	    <!-- ipv6 -->
+
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:20130" version="1">
                   <metadata>
                         <title>Disable Automatic Loading of IPv6 Kernel Module</title>
@@ -1924,6 +2018,7 @@
                         <criterion comment="Conditions are satisfied" test_ref="oval:mil.army.us.rhel5:tst:20130"/>
                   </criteria>
             </definition>
+
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:20131" version="1">
                   <metadata>
                         <title>Disable Interface Usage of IPv6</title>
@@ -1938,6 +2033,7 @@
                         <criterion test_ref="oval:mil.army.us.rhel5:tst:20131"/>
                   </criteria>
             </definition>
+
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:20132" version="1">
                   <metadata>
                         <title>Disable Interface Usage of IPv6</title>
@@ -1951,6 +2047,7 @@
                         <extend_definition definition_ref="oval:mil.army.us.rhel5:def:20130" comment="Automatic loading of the IPv6 kernel module should be disabled"/>
                         <criterion test_ref="oval:mil.army.us.rhel5:tst:20132"/>
                   </criteria>
+
             </definition>
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:20133" version="1">
                   <metadata>
@@ -1966,6 +2063,7 @@
                         <criterion test_ref="oval:mil.army.us.rhel5:tst:20133"/>
                   </criteria>
             </definition>
+
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:20134" version="1">
                   <metadata>
                         <title>Disable Automatic Configuration</title>
@@ -1980,6 +2078,7 @@
                         <criterion test_ref="oval:mil.army.us.rhel5:tst:20134"/>
                   </criteria>
             </definition>
+
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:20135" version="1">
                   <metadata>
                         <title>Disable Automatic Configuration</title>
@@ -1994,6 +2093,7 @@
                         <criterion comment="Unknown test stub" test_ref="oval:mil.army.us.rhel5:tst:22"/>
                   </criteria>
             </definition>
+
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:20136" version="1">
                   <metadata>
                         <title>Disable Automatic Configuration</title>
@@ -2008,6 +2108,7 @@
                         <criterion comment="Unknown test stub" test_ref="oval:mil.army.us.rhel5:tst:22"/>
                   </criteria>
             </definition>
+
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:20137" version="1">
                   <metadata>
                         <title>Disable Automatic Configuration</title>
@@ -2022,6 +2123,7 @@
                         <criterion comment="Unknown test stub" test_ref="oval:mil.army.us.rhel5:tst:22"/>
                   </criteria>
             </definition>
+
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:20138" version="1">
                   <metadata>
                         <title>Use Privacy Extensions for Address if Necessary</title>
@@ -2036,6 +2138,9 @@
                         <criterion comment="Unknown test stub" test_ref="oval:mil.army.us.rhel5:tst:22"/>
                   </criteria>
             </definition>
+
+	    <!-- sysctl -->
+
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:20139" version="1">
                   <metadata>
                         <title>Limit Network-Transmitted Configuration</title>
@@ -2049,9 +2154,19 @@
                         <extend_definition definition_ref="oval:mil.army.us.rhel5:def:20131" comment="The default setting for IPv6 configuration should be disabled for network interfaces"/>
                         <extend_definition definition_ref="oval:mil.army.us.rhel5:def:20132" comment="Global IPv6 initialization should be disabled"/>
                         <extend_definition definition_ref="oval:mil.army.us.rhel5:def:20133" comment="IPv6 configuration should be disabled for all interfaces"/>
-                        <criterion test_ref="oval:mil.army.us.rhel5:tst:20139"/>
+
+			<criteria operator="AND">
+			  <criterion test_ref="oval:mil.army.us.rhel5:tst:201390"/>
+			  <criteria operator="OR">
+			    <criterion test_ref="oval:mil.army.us.rhel5:tst:201391" negate="true"/>
+			    <criterion test_ref="oval:mil.army.us.rhel5:tst:201392"/>
+			  </criteria>
+			</criteria>
+
                   </criteria>
             </definition>
+
+
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:20140" version="1">
                   <metadata>
                         <title>Limit Network-Transmitted Configuration</title>
@@ -2065,9 +2180,18 @@
                         <extend_definition definition_ref="oval:mil.army.us.rhel5:def:20131" comment="The default setting for IPv6 configuration should be disabled for network interfaces"/>
                         <extend_definition definition_ref="oval:mil.army.us.rhel5:def:20132" comment="Global IPv6 initialization should be disabled"/>
                         <extend_definition definition_ref="oval:mil.army.us.rhel5:def:20133" comment="IPv6 configuration should be disabled for all interfaces"/>
-                        <criterion test_ref="oval:mil.army.us.rhel5:tst:20140"/>
+
+			<criteria operator="AND">
+			  <criterion test_ref="oval:mil.army.us.rhel5:tst:201400"/>
+			  <criteria operator="OR">
+			    <criterion test_ref="oval:mil.army.us.rhel5:tst:201401" negate="true"/>
+			    <criterion test_ref="oval:mil.army.us.rhel5:tst:201402"/>
+			  </criteria>
+			</criteria>
+
                   </criteria>
             </definition>
+
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:20141" version="1">
                   <metadata>
                         <title>Limit Network-Transmitted Configuration</title>
@@ -2081,9 +2205,18 @@
                         <extend_definition definition_ref="oval:mil.army.us.rhel5:def:20131" comment="The default setting for IPv6 configuration should be disabled for network interfaces"/>
                         <extend_definition definition_ref="oval:mil.army.us.rhel5:def:20132" comment="Global IPv6 initialization should be disabled"/>
                         <extend_definition definition_ref="oval:mil.army.us.rhel5:def:20133" comment="IPv6 configuration should be disabled for all interfaces"/>
-                        <criterion test_ref="oval:mil.army.us.rhel5:tst:20141"/>
+
+			<criteria operator="AND">
+			  <criterion test_ref="oval:mil.army.us.rhel5:tst:201410"/>
+			  <criteria operator="OR">
+			    <criterion test_ref="oval:mil.army.us.rhel5:tst:201411" negate="true"/>
+			    <criterion test_ref="oval:mil.army.us.rhel5:tst:201412"/>
+			  </criteria>
+			</criteria>
+
                   </criteria>
             </definition>
+
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:20142" version="1">
                   <metadata>
                         <title>Limit Network-Transmitted Configuration</title>
@@ -2097,9 +2230,18 @@
                         <extend_definition definition_ref="oval:mil.army.us.rhel5:def:20131" comment="The default setting for IPv6 configuration should be disabled for network interfaces"/>
                         <extend_definition definition_ref="oval:mil.army.us.rhel5:def:20132" comment="Global IPv6 initialization should be disabled"/>
                         <extend_definition definition_ref="oval:mil.army.us.rhel5:def:20133" comment="IPv6 configuration should be disabled for all interfaces"/>
-                        <criterion test_ref="oval:mil.army.us.rhel5:tst:20142"/>
+
+			<criteria operator="AND">
+			  <criterion test_ref="oval:mil.army.us.rhel5:tst:201420"/>
+			  <criteria operator="OR">
+			    <criterion test_ref="oval:mil.army.us.rhel5:tst:201421" negate="true"/>
+			    <criterion test_ref="oval:mil.army.us.rhel5:tst:201422"/>
+			  </criteria>
+			</criteria>
+
                   </criteria>
             </definition>
+
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:20143" version="1">
                   <metadata>
                         <title>Limit Network-Transmitted Configuration</title>
@@ -2113,9 +2255,18 @@
                         <extend_definition definition_ref="oval:mil.army.us.rhel5:def:20131" comment="The default setting for IPv6 configuration should be disabled for network interfaces"/>
                         <extend_definition definition_ref="oval:mil.army.us.rhel5:def:20132" comment="Global IPv6 initialization should be disabled"/>
                         <extend_definition definition_ref="oval:mil.army.us.rhel5:def:20133" comment="IPv6 configuration should be disabled for all interfaces"/>
-                        <criterion test_ref="oval:mil.army.us.rhel5:tst:20143"/>
+
+			<criteria operator="AND">
+			  <criterion test_ref="oval:mil.army.us.rhel5:tst:201430"/>
+			  <criteria operator="OR">
+			    <criterion test_ref="oval:mil.army.us.rhel5:tst:201431" negate="true"/>
+			    <criterion test_ref="oval:mil.army.us.rhel5:tst:201432"/>
+			  </criteria>
+			</criteria>
+
                   </criteria>
             </definition>
+
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:20144" version="1">
                   <metadata>
                         <title>Limit Network-Transmitted Configuration</title>
@@ -2129,9 +2280,18 @@
                         <extend_definition definition_ref="oval:mil.army.us.rhel5:def:20131" comment="The default setting for IPv6 configuration should be disabled for network interfaces"/>
                         <extend_definition definition_ref="oval:mil.army.us.rhel5:def:20132" comment="Global IPv6 initialization should be disabled"/>
                         <extend_definition definition_ref="oval:mil.army.us.rhel5:def:20133" comment="IPv6 configuration should be disabled for all interfaces"/>
-                        <criterion test_ref="oval:mil.army.us.rhel5:tst:20144"/>
+
+			<criteria operator="AND">
+			  <criterion test_ref="oval:mil.army.us.rhel5:tst:201440"/>
+			  <criteria operator="OR">
+			    <criterion test_ref="oval:mil.army.us.rhel5:tst:201441" negate="true"/>
+			    <criterion test_ref="oval:mil.army.us.rhel5:tst:201442"/>
+			  </criteria>
+			</criteria>
+
                   </criteria>
             </definition>
+
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:20145" version="1">
                   <metadata>
                         <title>Limit Network-Transmitted Configuration</title>
@@ -2145,9 +2305,18 @@
                         <extend_definition definition_ref="oval:mil.army.us.rhel5:def:20131" comment="The default setting for IPv6 configuration should be disabled for network interfaces"/>
                         <extend_definition definition_ref="oval:mil.army.us.rhel5:def:20132" comment="Global IPv6 initialization should be disabled"/>
                         <extend_definition definition_ref="oval:mil.army.us.rhel5:def:20133" comment="IPv6 configuration should be disabled for all interfaces"/>
-                        <criterion test_ref="oval:mil.army.us.rhel5:tst:20145"/>
+
+			<criteria operator="AND">
+			  <criterion test_ref="oval:mil.army.us.rhel5:tst:201450"/>
+			  <criteria operator="OR">
+			    <criterion test_ref="oval:mil.army.us.rhel5:tst:201451" negate="true"/>
+			    <criterion test_ref="oval:mil.army.us.rhel5:tst:201452"/>
+			  </criteria>
+			</criteria>
+
                   </criteria>
             </definition>
+
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:20146" version="1">
                   <metadata>
                         <title>Verify ip6tables is enabled</title>
@@ -2164,6 +2333,9 @@
                         <criterion comment="Conditions are satisfied" test_ref="oval:mil.army.us.rhel5:tst:20146"/>
                   </criteria>
             </definition>
+
+	    <!-- non sysctl -->
+
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:20147" version="1">
                   <metadata>
                         <title>Inspect and Activate Default Rules </title>
@@ -2177,6 +2349,7 @@
                         <criterion comment="Conditions are satisfied" test_ref="oval:mil.army.us.rhel5:tst:20147"/>
                   </criteria>
             </definition>
+
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:201474" version="1">
                   <metadata>
                         <title>Change the default policy to DROP (from ACCEPT) for the INPUT built-in chain</title>
@@ -2191,6 +2364,7 @@
                         <criterion comment=":INPUT ACCEPT [0:0]" test_ref="oval:mil.army.us.rhel5:tst:2014742" negate="true"/>
                   </criteria>
             </definition>
+
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:201475" version="1">
                   <metadata>
                         <title>Change the default policy to DROP (from ACCEPT) for the FORWARD built-in chain</title>
@@ -2205,6 +2379,8 @@
                         <criterion comment=":FORWARD ACCEPT [0:0]" test_ref="oval:mil.army.us.rhel5:tst:2014752" negate="true"/>
                   </criteria>
             </definition>
+
+	    <!--
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:201476" version="1">
                   <metadata>
                         <title>Disable Support for DCCP</title>
@@ -2218,6 +2394,7 @@
                         <criterion comment="check for DCCP in /etc/modprobe.conf" test_ref="oval:mil.army.us.rhel5:tst:201476"/>
                   </criteria>
             </definition>
+
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:201477" version="1">
                   <metadata>
                         <title>Disable Support for SCTP</title>
@@ -2231,6 +2408,7 @@
                         <criterion comment="check for SCTP in /etc/modprobe.conf" test_ref="oval:mil.army.us.rhel5:tst:201477"/>
                   </criteria>
             </definition>
+
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:201478" version="1">
                   <metadata>
                         <title>Disable Support for RDS</title>
@@ -2244,6 +2422,7 @@
                         <criterion comment="check for RDS in /etc/modprobe.conf" test_ref="oval:mil.army.us.rhel5:tst:201478"/>
                   </criteria>
             </definition>
+
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:201479" version="1">
                   <metadata>
                         <title>Disable Support for TIPC</title>
@@ -2257,6 +2436,8 @@
                         <criterion comment="check for TIPC in /etc/modprobe.conf" test_ref="oval:mil.army.us.rhel5:tst:201479"/>
                   </criteria>
             </definition>
+	    -->
+
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:20148" version="1">
                   <metadata>
                         <title>Configure Syslog</title>
@@ -2324,6 +2505,7 @@
                         <criterion comment="Conditions are satisfied" test_ref="oval:mil.army.us.rhel5:tst:20152"/>
                   </criteria>
             </definition>
+
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:20153" version="1">
                   <metadata>
                         <title>Disable syslogd from Accepting Remote Messages on Loghosts Only</title>
@@ -2337,6 +2519,7 @@
                         <criterion comment="Conditions are satisfied" test_ref="oval:mil.army.us.rhel5:tst:20153"/>
                   </criteria>
             </definition>
+
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:20154" version="1">
                   <metadata>
                         <title>Ensure All Logs are Rotated by logrotate</title>
@@ -2350,6 +2533,7 @@
                         <criterion comment="Find each file in /etc/syslog.conf in /etc/logrotate.d/syslog" test_ref="oval:mil.army.us.rhel5:tst:20154"/>
                   </criteria>
             </definition>
+
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:20155" version="1">
                   <metadata>
                         <title>Monitor Suspicious Log Messages using Logwatch</title>
@@ -2363,6 +2547,9 @@
                         <criterion comment="Unknown test stub" test_ref="oval:mil.army.us.rhel5:tst:22"/>
                   </criteria>
             </definition>
+
+	    <!-- END -->
+
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:20156" version="1">
                   <metadata>
                         <title>Enable the auditd Service</title>
@@ -2376,6 +2563,7 @@
                         <criterion comment="Conditions are satisfied" test_ref="oval:mil.army.us.rhel5:tst:20156"/>
                   </criteria>
             </definition>
+
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:20157" version="1">
                   <metadata>
                         <title>Enable Auditing for Processes Which Start Prior to the Audit Daemon</title>
@@ -2389,6 +2577,7 @@
                         <criterion comment="check for audit=1 in /etc/grub.conf" test_ref="oval:mil.army.us.rhel5:tst:20157"/>
                   </criteria>
             </definition>
+
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:201575" version="1">
                   <metadata>
                         <title>Records Events that Modify Date and Time Information</title>
@@ -6009,137 +6198,414 @@
                   <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:20111"/>
                   <unix-def:state state_ref="oval:mil.army.us.rhel5:ste:20111"/>
             </unix-def:runlevel_test>
-            <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:mil.army.us.rhel5:tst:20112" version="1" check="all" comment="Tests the value of the ^[\s]*net\.ipv4\.conf\.default\.send_redirects[\s]*=([\s]*) expression in the /etc/sysctl.conf file">
-                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20112"/>
-                  <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:20112"/>
+
+	    <!-- BEGIN -->
+	    <!-- def:20112 -->
+	    <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:201120" version="1" check_existence="all_exist" check="all"
+					    comment="Tests the value of the /proc/sys/net/ipv4/conf/default/send_redirects file">
+	      <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:201120"/>
+	      <ind-def:state   state_ref="oval:mil.army.us.rhel5:ste:201120"/>
+	    </ind-def:textfilecontent54_test>
+            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:201121" version="1" check_existence="all_exist" check="all"
+					    comment="Tests the presence of the ^[\s]*net\.ipv4\.conf\.default\.send_redirects[\s]*=([\s]*) expression in the /etc/sysctl.conf file">
+                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:201121"/>
             </ind-def:textfilecontent54_test>
-            <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:mil.army.us.rhel5:tst:20113" version="1" check="all" comment="Tests the value of the ^[\s]*net\.ipv4\.conf\.all\.send_redirects[\s]*=([\s]*) expression in the /etc/sysctl.conf file">
-                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20113"/>
-                  <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:20113"/>
+            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:201122" version="1" check_existence="all_exist" check="all"
+					    comment="Tests the value of the ^[\s]*net\.ipv4\.conf\.default\.send_redirects[\s]*=([\s]*) expression in the /etc/sysctl.conf file">
+                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:201121"/>
+                  <ind-def:state   state_ref="oval:mil.army.us.rhel5:ste:201120"/>
             </ind-def:textfilecontent54_test>
-            <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:mil.army.us.rhel5:tst:20114" version="1" check="all" comment="Tests the value of the ^[\s]*net\.ipv4\.ip_forward[\s]*=([\s]*) expression in the /etc/sysctl.conf file">
-                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20114"/>
-                  <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:20114"/>
+
+	    <!-- def:20113 -->
+	    <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:201130" version="1" check_existence="all_exist" check="all"
+					    comment="Tests the value of the /proc/sys/net/ipv4/conf/all/send_redirects file">
+	      <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:201130"/>
+	      <ind-def:state   state_ref="oval:mil.army.us.rhel5:ste:201120"/>
+	    </ind-def:textfilecontent54_test>
+            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:201131" version="1" check_existence="all_exist" check="all"
+					    comment="Tests the presence of the ^[\s]*net\.ipv4\.conf\.all\.send_redirects[\s]*=([\s]*) expression in the /etc/sysctl.conf file">
+                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:201131"/>
             </ind-def:textfilecontent54_test>
-            <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:mil.army.us.rhel5:tst:20115" version="1" check="all" comment="Tests the value of the ^[\s]*net\.ipv4\.conf\.all\.accept_source_route[\s]*=([\s]*) expression in the /etc/sysctl.conf file">
-                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20115"/>
-                  <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:20115"/>
+            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:201132" version="1" check_existence="all_exist" check="all"
+					    comment="Tests the value of the ^[\s]*net\.ipv4\.conf\.all\.send_redirects[\s]*=([\s]*) expression in the /etc/sysctl.conf file">
+                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:201131"/>
+                  <ind-def:state   state_ref="oval:mil.army.us.rhel5:ste:201120"/>
             </ind-def:textfilecontent54_test>
-            <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:mil.army.us.rhel5:tst:20116" version="1" check="all" comment="Tests the value of the ^[\s]*net\.ipv4\.conf\.all\.accept_redirects[\s]*=([\s]*) expression in the /etc/sysctl.conf file">
-                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20116"/>
-                  <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:20116"/>
+
+	    <!-- def:20114 -->
+	    <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:201140" version="1" check_existence="all_exist" check="all"
+					    comment="Tests the value of the /proc/sys/net/ipv4/ip_forward file">
+	      <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:201140"/>
+	      <ind-def:state   state_ref="oval:mil.army.us.rhel5:ste:201120"/>
+	    </ind-def:textfilecontent54_test>
+            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:201141" version="1" check_existence="all_exist" check="all"
+					    comment="Tests the presence of the ^[\s]*net\.ipv4\.ip_forward[\s]*=([\s]*) expression in the /etc/sysctl.conf file">
+                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:201141"/>
             </ind-def:textfilecontent54_test>
-            <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:mil.army.us.rhel5:tst:20117" version="1" check="all" comment="Tests the value of the ^[\s]*net\.ipv4\.conf\.all\.secure_redirects[\s]*=([\s]*) expression in the /etc/sysctl.conf file">
-                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20117"/>
-                  <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:20117"/>
+            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:201142" version="1" check_existence="all_exist" check="all"
+					    comment="Tests the value of the ^[\s]*net\.ipv4\.ip_forward[\s]*=([\s]*) expression in the /etc/sysctl.conf file">
+                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:201141"/>
+                  <ind-def:state   state_ref="oval:mil.army.us.rhel5:ste:201120"/>
             </ind-def:textfilecontent54_test>
-            <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:mil.army.us.rhel5:tst:20118" version="1" check="all" comment="Tests the value of the ^[\s]*net\.ipv4\.conf\.all\.log_martians[\s]*=([\s]*) expression in the /etc/sysctl.conf file">
-                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20118"/>
-                  <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:20118"/>
+
+	    <!-- def:20115 -->
+	    <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:201150" version="1" check_existence="all_exist" check="all"
+					    comment="Tests the value of the /proc/sys/net/ipv4/conf/all/accept_source_route file">
+	      <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:201150"/>
+	      <ind-def:state   state_ref="oval:mil.army.us.rhel5:ste:201120"/>
+	    </ind-def:textfilecontent54_test>
+            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:201151" version="1" check_existence="all_exist" check="all"
+					    comment="Tests the presence of the ^[\s]*net\.ipv4\.conf\.all\.accept_source_route[\s]*=([\s]*) expression in the /etc/sysctl.conf file">
+                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:201151"/>
             </ind-def:textfilecontent54_test>
-            <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:mil.army.us.rhel5:tst:20119" version="1" check="all" comment="Tests the value of the ^[\s]*net\.ipv4\.conf\.default\.accept_source_route[\s]*=([\s]*) expression in the /etc/sysctl.conf file">
-                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20119"/>
-                  <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:20119"/>
+            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:201152" version="1" check_existence="all_exist" check="all"
+					    comment="Tests the value of the ^[\s]*net\.ipv4\.conf\.all\.accept_source_route[\s]*=([\s]*) expression in the /etc/sysctl.conf file">
+                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:201151"/>
+                  <ind-def:state   state_ref="oval:mil.army.us.rhel5:ste:201120"/>
             </ind-def:textfilecontent54_test>
-            <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:mil.army.us.rhel5:tst:20120" version="1" check="all" comment="Tests the value of the ^[\s]*net\.ipv4\.conf\.default\.accept_redirects[\s]*=([\s]*) expression in the /etc/sysctl.conf file">
-                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20120"/>
-                  <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:20120"/>
+
+	    <!-- def:20116 -->
+	    <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:201160" version="1" check_existence="all_exist" check="all"
+					    comment="Tests the value of the /proc/sys/net/ipv4/conf/all/accept_redirects file">
+	      <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:201160"/>
+	      <ind-def:state   state_ref="oval:mil.army.us.rhel5:ste:201120"/>
+	    </ind-def:textfilecontent54_test>
+            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:201161" version="1" check_existence="all_exist" check="all"
+					    comment="Tests the presence of the ^[\s]*net\.ipv4\.conf\.all\.accept_redirects[\s]*=([\s]*) expression in the /etc/sysctl.conf file">
+                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:201161"/>
             </ind-def:textfilecontent54_test>
-            <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:mil.army.us.rhel5:tst:20121" version="1" check="all" comment="Tests the value of the ^[\s]*net\.ipv4\.conf\.default\.secure_redirects[\s]*=([\s]*) expression in the /etc/sysctl.conf file">
-                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20121"/>
-                  <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:20121"/>
+            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:201162" version="1" check_existence="all_exist" check="all"
+					    comment="Tests the value of the ^[\s]*net\.ipv4\.conf\.all\.accept_redirects[\s]*=([\s]*) expression in the /etc/sysctl.conf file">
+                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:201161"/>
+                  <ind-def:state   state_ref="oval:mil.army.us.rhel5:ste:201120"/>
             </ind-def:textfilecontent54_test>
-            <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:mil.army.us.rhel5:tst:20122" version="1" check="all" comment="Tests the value of the ^[\s]*net\.ipv4\.icmp_echo_ignore_broadcasts[\s]*=([\s]*) expression in the /etc/sysctl.conf file">
-                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20122"/>
-                  <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:20122"/>
+
+	    <!-- def:20117 -->
+	    <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:201170" version="1" check_existence="all_exist" check="all"
+					    comment="Tests the value of the /proc/sys/net/ipv4/conf/all/secure_redirects file">
+	      <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:201170"/>
+	      <ind-def:state   state_ref="oval:mil.army.us.rhel5:ste:201121"/>
+	    </ind-def:textfilecontent54_test>
+            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:201171" version="1" check_existence="all_exist" check="all"
+					    comment="Tests the presence of the ^[\s]*net\.ipv4\.conf\.all\.secure_redirects[\s]*=([\s]*) expression in the /etc/sysctl.conf file">
+                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:201171"/>
             </ind-def:textfilecontent54_test>
-            <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:mil.army.us.rhel5:tst:20123" version="1" check="all" comment="Tests the value of the ^[\s]*net\.ipv4\.icmp_ignore_bogus_error_messages[\s]*=([\s]*) expression in the /etc/sysctl.conf file">
-                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20123"/>
-                  <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:20123"/>
+            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:201172" version="1" check_existence="all_exist" check="all"
+					    comment="Tests the value of the ^[\s]*net\.ipv4\.conf\.all\.secure_redirects[\s]*=([\s]*) expression in the /etc/sysctl.conf file">
+                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:201171"/>
+                  <ind-def:state   state_ref="oval:mil.army.us.rhel5:ste:201121"/>
             </ind-def:textfilecontent54_test>
-            <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:mil.army.us.rhel5:tst:20124" version="1" check="all" comment="Tests the value of the ^[\s]*net\.ipv4\.tcp_syncookies[\s]*=([\s]*) expression in the /etc/sysctl.conf file">
-                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20124"/>
-                  <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:20124"/>
+
+	    <!-- def:20118 -->
+	    <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:201180" version="1" check_existence="all_exist" check="all"
+					    comment="Tests the value of the /proc/sys/net/ipv4/conf/all/log_martians file">
+	      <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:201180"/>
+	      <ind-def:state   state_ref="oval:mil.army.us.rhel5:ste:201121"/>
+	    </ind-def:textfilecontent54_test>
+            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:201181" version="1" check_existence="all_exist" check="all"
+					    comment="Tests the presence of the ^[\s]*net\.ipv4\.conf\.all\.log_martians[\s]*=([\s]*) expression in the /etc/sysctl.conf file">
+                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:201181"/>
             </ind-def:textfilecontent54_test>
-            <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:mil.army.us.rhel5:tst:20125" version="1" check="all" comment="Tests the value of the ^[\s]*net\.ipv4\.conf\.all\.rp_filter[\s]*=([\s]*) expression in the /etc/sysctl.conf file">
-                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20125"/>
-                  <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:20125"/>
+            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:201182" version="1" check_existence="all_exist" check="all"
+					    comment="Tests the value of the ^[\s]*net\.ipv4\.conf\.all\.log_martians[\s]*=([\s]*) expression in the /etc/sysctl.conf file">
+                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:201181"/>
+                  <ind-def:state   state_ref="oval:mil.army.us.rhel5:ste:201121"/>
             </ind-def:textfilecontent54_test>
-            <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:mil.army.us.rhel5:tst:20126" version="1" check="all" comment="Tests the value of the ^[\s]*net\.ipv4\.conf\.default\.rp_filter[\s]*=([\s]*) expression in the /etc/sysctl.conf file">
-                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20126"/>
-                  <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:20126"/>
+
+	    <!-- def:20119 -->
+	    <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:201190" version="1" check_existence="all_exist" check="all"
+					    comment="Tests the value of the /proc/sys/net/ipv4/conf/default/accept_source_route file">
+	      <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:201190"/>
+	      <ind-def:state   state_ref="oval:mil.army.us.rhel5:ste:201120"/>
+	    </ind-def:textfilecontent54_test>
+            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:201191" version="1" check_existence="all_exist" check="all"
+					    comment="Tests the presence of the ^[\s]*net\.ipv4\.conf\.default\.accept_source_route[\s]*=([\s]*) expression in the /etc/sysctl.conf file">
+                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:201191"/>
             </ind-def:textfilecontent54_test>
-            <ind-def:textfilecontent54_test check_existence="none_exist" id="oval:mil.army.us.rhel5:tst:20128" version="1" check="all" comment="Look in /proc/net/wireless">
-                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20128"/>
+            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:201192" version="1" check_existence="all_exist" check="all"
+					    comment="Tests the value of the ^[\s]*net\.ipv4\.conf\.default\.accept_source_route[\s]*=([\s]*) expression in the /etc/sysctl.conf file">
+                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:201191"/>
+                  <ind-def:state   state_ref="oval:mil.army.us.rhel5:ste:201120"/>
             </ind-def:textfilecontent54_test>
-            <unix-def:file_test check_existence="none_exist" id="oval:mil.army.us.rhel5:tst:20129" version="1" check="all" comment="Actual file existence test">
-                  <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:20129"/>
-            </unix-def:file_test>
-            <ind-def:textfilecontent54_test check_existence="none_exist" id="oval:mil.army.us.rhel5:tst:20130" version="1" check="all" comment="Tests the value of the &lt;:begin:&gt;alias[\s]+net-pf-10[\s]+off&lt;:end:&gt; setting in the /etc/modprobe.conf file">
+
+	    <!-- def:20120 -->
+	    <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:201200" version="1" check_existence="all_exist" check="all"
+					    comment="Tests the value of the /proc/sys/net/ipv4/conf/default/accept_redirects file">
+	      <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:201200"/>
+	      <ind-def:state   state_ref="oval:mil.army.us.rhel5:ste:201120"/>
+	    </ind-def:textfilecontent54_test>
+            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:201201" version="1" check_existence="all_exist" check="all"
+					    comment="Tests the presence of the ^[\s]*net\.ipv4\.conf\.default\.accept_redirects[\s]*=([\s]*) expression in the /etc/sysctl.conf file">
+                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:201201"/>
+            </ind-def:textfilecontent54_test>
+            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:201202" version="1" check_existence="all_exist" check="all"
+					    comment="Tests the value of the ^[\s]*net\.ipv4\.conf\.default\.accept_redirects[\s]*=([\s]*) expression in the /etc/sysctl.conf file">
+                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:201201"/>
+                  <ind-def:state   state_ref="oval:mil.army.us.rhel5:ste:201120"/>
+            </ind-def:textfilecontent54_test>
+
+	    <!-- def:20121 -->
+	    <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:201210" version="1" check_existence="all_exist" check="all"
+					    comment="Tests the value of the /proc/sys/net/ipv4/conf/default/secure_redirects file">
+	      <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:201210"/>
+	      <ind-def:state   state_ref="oval:mil.army.us.rhel5:ste:201121"/>
+	    </ind-def:textfilecontent54_test>
+            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:201211" version="1" check_existence="all_exist" check="all"
+					    comment="Tests the presence of the ^[\s]*net\.ipv4\.conf\.default\.secure_redirects[\s]*=([\s]*) expression in the /etc/sysctl.conf file">
+                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:201211"/>
+            </ind-def:textfilecontent54_test>
+            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:201212" version="1" check_existence="all_exist" check="all"
+					    comment="Tests the value of the ^[\s]*net\.ipv4\.conf\.default\.secure_redirects[\s]*=([\s]*) expression in the /etc/sysctl.conf file">
+                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:201211"/>
+                  <ind-def:state   state_ref="oval:mil.army.us.rhel5:ste:201121"/>
+            </ind-def:textfilecontent54_test>
+
+	    <!-- def:20122 -->
+	    <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:201220" version="1" check_existence="all_exist" check="all"
+					    comment="Tests the value of the /proc/sys/net/ipv4/icmp_echo_ignore_broadcasts file">
+	      <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:201220"/>
+	      <ind-def:state   state_ref="oval:mil.army.us.rhel5:ste:201121"/>
+	    </ind-def:textfilecontent54_test>
+            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:201221" version="1" check_existence="all_exist" check="all"
+					    comment="Tests the presence of the ^[\s]*net\.ipv4\.icmp_echo_ignore_broadcasts[\s]*=([\s]*) expression in the /etc/sysctl.conf file">
+                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:201221"/>
+            </ind-def:textfilecontent54_test>
+            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:201222" version="1" check_existence="all_exist" check="all"
+					    comment="Tests the value of the ^[\s]*net\.ipv4\.icmp_echo_ignore_broadcasts[\s]*=([\s]*) expression in the /etc/sysctl.conf file">
+                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:201221"/>
+                  <ind-def:state   state_ref="oval:mil.army.us.rhel5:ste:201121"/>
+            </ind-def:textfilecontent54_test>
+
+	    <!-- def:20123 -->
+	    <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:201230" version="1" check_existence="all_exist" check="all"
+					    comment="Tests the value of the /proc/sys/net/ipv4/icmp_ignore_bogus_error_responses file">
+	      <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:201230"/>
+	      <ind-def:state   state_ref="oval:mil.army.us.rhel5:ste:201121"/>
+	    </ind-def:textfilecontent54_test>
+            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:201231" version="1" check_existence="all_exist" check="all"
+					    comment="Tests the presence of the ^[\s]*net\.ipv4\.icmp_ignore_bogus_error_responses[\s]*=([\s]*) expression in the /etc/sysctl.conf file">
+                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:201231"/>
+            </ind-def:textfilecontent54_test>
+            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:201232" version="1" check_existence="all_exist" check="all"
+					    comment="Tests the value of the ^[\s]*net\.ipv4\.icmp_ignore_bogus_error_responses[\s]*=([\s]*) expression in the /etc/sysctl.conf file">
+                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:201231"/>
+                  <ind-def:state   state_ref="oval:mil.army.us.rhel5:ste:201121"/>
+            </ind-def:textfilecontent54_test>
+
+	    <!-- def:20124 -->
+	    <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:201240" version="1" check_existence="all_exist" check="all"
+					    comment="Tests the value of the /proc/sys/net/ipv4/tcp_syncookies file">
+	      <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:201240"/>
+	      <ind-def:state   state_ref="oval:mil.army.us.rhel5:ste:201121"/>
+	    </ind-def:textfilecontent54_test>
+            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:201241" version="1" check_existence="all_exist" check="all"
+					    comment="Tests the presence of the ^[\s]*net\.ipv4\.tcp_syncookies[\s]*=([\s]*) expression in the /etc/sysctl.conf file">
+                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:201241"/>
+            </ind-def:textfilecontent54_test>
+            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:201242" version="1" check_existence="all_exist" check="all"
+					    comment="Tests the value of the ^[\s]*net\.ipv4\.tcp_syncookies[\s]*=([\s]*) expression in the /etc/sysctl.conf file">
+                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:201241"/>
+                  <ind-def:state   state_ref="oval:mil.army.us.rhel5:ste:201121"/>
+            </ind-def:textfilecontent54_test>
+
+	    <!-- def:20125 -->
+	    <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:201250" version="1" check_existence="all_exist" check="all"
+					    comment="Tests the value of the /proc/sys/net/ipv4/conf/all/rp_filter file">
+	      <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:201250"/>
+	      <ind-def:state   state_ref="oval:mil.army.us.rhel5:ste:201120"/>
+	    </ind-def:textfilecontent54_test>
+            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:201251" version="1" check_existence="all_exist" check="all"
+					    comment="Tests the presence of the ^[\s]*net\.ipv4\.conf\.all\.rp_filter[\s]*=([\s]*) expression in the /etc/sysctl.conf file">
+                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:201251"/>
+            </ind-def:textfilecontent54_test>
+            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:201252" version="1" check_existence="all_exist" check="all"
+					    comment="Tests the value of the ^[\s]*net\.ipv4\.conf\.all\.rp_filter[\s]*=([\s]*) expression in the /etc/sysctl.conf file">
+                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:201251"/>
+                  <ind-def:state   state_ref="oval:mil.army.us.rhel5:ste:201120"/>
+            </ind-def:textfilecontent54_test>
+
+	    <!-- def:20126 -->
+	    <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:201260" version="1" check_existence="all_exist" check="all"
+					    comment="Tests the value of the /proc/sys/net/ipv4/conf/default/rp_filter file">
+	      <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:201260"/>
+	      <ind-def:state   state_ref="oval:mil.army.us.rhel5:ste:201121"/>
+	    </ind-def:textfilecontent54_test>
+            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:201261" version="1" check_existence="all_exist" check="all"
+					    comment="Tests the presence of the ^[\s]*net\.ipv4\.conf\.default\.rp_filter[\s]*=([\s]*) expression in the /etc/sysctl.conf file">
+                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:201261"/>
+            </ind-def:textfilecontent54_test>
+            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:201262" version="1" check_existence="all_exist" check="all"
+					    comment="Tests the value of the ^[\s]*net\.ipv4\.conf\.default\.rp_filter[\s]*=([\s]*) expression in the /etc/sysctl.conf file">
+                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:201261"/>
+                  <ind-def:state   state_ref="oval:mil.army.us.rhel5:ste:201121"/>
+            </ind-def:textfilecontent54_test>
+
+	    <!-- ^^^ ok ^^^ -->
+
+            <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:mil.army.us.rhel5:tst:20130" version="1" check="all" comment="Tests the value of the &lt;:begin:&gt;alias[\s]+net-pf-10[\s]+off&lt;:end:&gt; setting in the /etc/modprobe.d/dist.conf file">
                   <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20130"/>
             </ind-def:textfilecontent54_test>
-            <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:mil.army.us.rhel5:tst:20131" version="1" check="all" comment="Tests the value of the ^[\s]*IPV6INIT[\s]*=[\s]*([^#]*) expression in the /etc/sysconfig/network file">
+
+	    <!-- assuming the default is "no" i.e. if IPV6INIT is not present -->
+            <ind-def:textfilecontent54_test check_existence="any_exist" id="oval:mil.army.us.rhel5:tst:20131" version="1" check="all" comment="Tests the value of the ^[\s]*IPV6INIT[\s]*=[\s]*([^#]*) expression in the /etc/sysconfig/network file">
                   <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20131"/>
-                  <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:20131"/>
+                  <ind-def:state   state_ref="oval:mil.army.us.rhel5:ste:20131"/>
             </ind-def:textfilecontent54_test>
-            <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:mil.army.us.rhel5:tst:20132" version="1" check="all" comment="Tests the value of the ^[\s]*NETWORKING_IPV6[\s]*=[\s]*([^#]*) expression in the /etc/sysconfig/network file">
+
+            <ind-def:textfilecontent54_test check_existence="any_exist" id="oval:mil.army.us.rhel5:tst:20132" version="1" check="all" comment="Tests the value of the ^[\s]*NETWORKING_IPV6[\s]*=[\s]*([^#]*) expression in the /etc/sysconfig/network file">
                   <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20132"/>
-                  <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:20132"/>
+                  <ind-def:state   state_ref="oval:mil.army.us.rhel5:ste:20132"/>
             </ind-def:textfilecontent54_test>
-            <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:mil.army.us.rhel5:tst:20133" version="1" check="all" comment="Tests the value of the ^[\s]*NETWORKING_IPV6[\s]*=[\s]*([^#]*) expression in the /etc/sysconfig/network-scripts/ifcfg-.* file">
+
+            <ind-def:textfilecontent54_test check_existence="any_exist" id="oval:mil.army.us.rhel5:tst:20133" version="1" check="all" comment="Tests the value of the ^[\s]*NETWORKING_IPV6[\s]*=[\s]*([^#]*) expression in the /etc/sysconfig/network-scripts/ifcfg-.* file">
                   <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20133"/>
-                  <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:20133"/>
+                  <ind-def:state   state_ref="oval:mil.army.us.rhel5:ste:20133"/>
             </ind-def:textfilecontent54_test>
-            <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:mil.army.us.rhel5:tst:20134" version="1" check="all" comment="Tests the value of the ^[\s]*IPV6INIT[\s]*=[\s]*([^#]*) expression in the /etc/sysconfig/network file">
+
+            <ind-def:textfilecontent54_test check_existence="any_exist" id="oval:mil.army.us.rhel5:tst:20134" version="1" check="all" comment="Tests the value of the ^[\s]*IPV6INIT[\s]*=[\s]*([^#]*) expression in the /etc/sysconfig/network file">
                   <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20134"/>
-                  <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:20134"/>
+                  <ind-def:state   state_ref="oval:mil.army.us.rhel5:ste:20134"/>
             </ind-def:textfilecontent54_test>
-            <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:mil.army.us.rhel5:tst:20139" version="1" check="all" comment="Tests the value of the ^[\s]*net\.ipv6\.conf\.default\.router_solicitations[\s]*=([\s]*) expression in the /etc/sysctl.conf file">
-                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20139"/>
-                  <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:20139"/>
+
+	    <!-- sysctl (ip6) -->
+            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:201390" version="1" check_existence="all_exist" check="all"
+					    comment="Tests the value of the /proc/sys/net/ipv6/conf/default/router_solicitations file">
+                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:201390"/>
+                  <ind-def:state   state_ref="oval:mil.army.us.rhel5:ste:20139"/>
             </ind-def:textfilecontent54_test>
-            <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:mil.army.us.rhel5:tst:20140" version="1" check="all" comment="Tests the value of the ^[\s]*net\.ipv6\.conf\.default\.accept_ra_rtr_pref[\s]*=([\s]*) expression in the /etc/sysctl.conf file">
-                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20140"/>
-                  <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:20140"/>
+            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:201391" version="1" check_existence="all_exist" check="all"
+					    comment="Tests the presence of the ^[[:space:]]*net\.ipv6\.conf\.default\.router_solicitations[[:space:]]*=[[:space:]]*([01])[[:space:]]*$ expression in the /etc/sysctl.conf file">
+                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:201391"/>
             </ind-def:textfilecontent54_test>
-            <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:mil.army.us.rhel5:tst:20141" version="1" check="all" comment="Tests the value of the ^[\s]*net\.ipv6\.conf\.default\.accept_ra_pinfo[\s]*=([\s]*) expression in the /etc/sysctl.conf file">
-                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20141"/>
-                  <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:20141"/>
+            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:201392" version="1" check_existence="all_exist" check="all"
+					    comment="Tests the value of the ^[[:space:]]*net\.ipv6\.conf\.default\.router_solicitations[[:space:]]*=[[:space:]]*([01])[[:space:]]*$ expression in the /etc/sysctl.conf file">
+                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:201391"/>
+                  <ind-def:state   state_ref="oval:mil.army.us.rhel5:ste:20139"/>
             </ind-def:textfilecontent54_test>
-            <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:mil.army.us.rhel5:tst:20142" version="1" check="all" comment="Tests the value of the ^[\s]*net\.ipv6\.conf\.default\.accept_ra_defrtr[\s]*=([\s]*) expression in the /etc/sysctl.conf file">
-                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20142"/>
-                  <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:20142"/>
+
+
+            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:201400" version="1" check_existence="all_exist" check="all"
+					    comment="Tests the value of the /proc/sys/net/ipv6/conf/default/accept_ra_rtr_pref file">
+                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:201400"/>
+                  <ind-def:state   state_ref="oval:mil.army.us.rhel5:ste:201120"/>
             </ind-def:textfilecontent54_test>
-            <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:mil.army.us.rhel5:tst:20143" version="1" check="all" comment="Tests the value of the ^[\s]*net\.ipv6\.conf\.default\.autoconf[\s]*=([\s]*) expression in the /etc/sysctl.conf file">
-                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20143"/>
-                  <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:20143"/>
+            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:201401" version="1" check_existence="all_exist" check="all"
+					    comment="Tests the presence of the ^[[:space:]]*net\.ipv6\.conf\.default\.accept_ra_rtr_pref[[:space:]]*=[[:space:]]*([01])[[:space:]]*$ expression in the /etc/sysctl.conf file">
+                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:201401"/>
             </ind-def:textfilecontent54_test>
-            <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:mil.army.us.rhel5:tst:20144" version="1" check="all" comment="Tests the value of the ^[\s]*net\.ipv6\.conf\.default\.dad_transmits[\s]*=([\s]*) expression in the /etc/sysctl.conf file">
-                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20144"/>
-                  <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:20144"/>
+            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:201402" version="1" check_existence="all_exist" check="all"
+					    comment="Tests the value of the ^[[:space:]]*net\.ipv6\.conf\.default\.accept_ra_rtr_pref[[:space:]]*=[[:space:]]*([01])[[:space:]]*$ expression in the /etc/sysctl.conf file">
+                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:201401"/>
+                  <ind-def:state   state_ref="oval:mil.army.us.rhel5:ste:201120"/>
             </ind-def:textfilecontent54_test>
-            <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:mil.army.us.rhel5:tst:20145" version="1" check="all" comment="Tests the value of the ^[\s]*net\.ipv6\.conf\.default\.max_addresses[\s]*=([\s]*) expression in the /etc/sysctl.conf file">
-                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20145"/>
-                  <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:20145"/>
+
+
+            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:201410" version="1" check_existence="all_exist" check="all"
+					    comment="Tests the value of the /proc/sys/net/ipv6/conf/default/accept_ra_pinfo file">
+                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:201410"/>
+                  <ind-def:state   state_ref="oval:mil.army.us.rhel5:ste:201120"/>
             </ind-def:textfilecontent54_test>
+            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:201411" version="1" check_existence="all_exist" check="all"
+					    comment="Tests the presence of the ^[[:space:]]*net\.ipv6\.conf\.default\.accept_ra_pinfo[[:space:]]*=[[:space:]]*([01])[[:space:]]*$ expression in the /etc/sysctl.conf file">
+                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:201411"/>
+            </ind-def:textfilecontent54_test>
+            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:201412" version="1" check_existence="all_exist" check="all"
+					    comment="Tests the value of the ^[[:space:]]*net\.ipv6\.conf\.default\.accept_ra_pinfo[[:space:]]*=[[:space:]]*([01])[[:space:]]*$ expression in the /etc/sysctl.conf file">
+                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:201411"/>
+                  <ind-def:state   state_ref="oval:mil.army.us.rhel5:ste:201120"/>
+            </ind-def:textfilecontent54_test>
+
+
+            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:201420" version="1" check_existence="all_exist" check="all"
+					    comment="Tests the value of the /proc/sys/net/ipv6/conf/default/accept_ra_defrtr file">
+                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:201420"/>
+                  <ind-def:state   state_ref="oval:mil.army.us.rhel5:ste:201120"/>
+            </ind-def:textfilecontent54_test>
+            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:201421" version="1" check_existence="all_exist" check="all"
+					    comment="Tests the presence of the ^[[:space:]]*net\.ipv6\.conf\.default\.accept_ra_defrtr[[:space:]]*=[[:space:]]*([01])[[:space:]]*$ expression in the /etc/sysctl.conf file">
+                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:201421"/>
+            </ind-def:textfilecontent54_test>
+            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:201422" version="1" check_existence="all_exist" check="all"
+					    comment="Tests the value of the ^[[:space:]]*net\.ipv6\.conf\.default\.accept_ra_defrtr[[:space:]]*=[[:space:]]*([01])[[:space:]]*$ expression in the /etc/sysctl.conf file">
+                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:201421"/>
+                  <ind-def:state   state_ref="oval:mil.army.us.rhel5:ste:201120"/>
+            </ind-def:textfilecontent54_test>
+
+
+            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:201430" version="1" check_existence="all_exist" check="all"
+					    comment="Tests the value of the /proc/sys/net/ipv6/conf/default/autoconf file">
+                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:201430"/>
+                  <ind-def:state   state_ref="oval:mil.army.us.rhel5:ste:201120"/>
+            </ind-def:textfilecontent54_test>
+            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:201431" version="1" check_existence="all_exist" check="all"
+					    comment="Tests the presence of the ^[[:space:]]*net\.ipv6\.conf\.default\.autoconf[[:space:]]*=[[:space:]]*([01])[[:space:]]*$ expression in the /etc/sysctl.conf file">
+                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:201431"/>
+            </ind-def:textfilecontent54_test>
+            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:201432" version="1" check_existence="all_exist" check="all"
+					    comment="Tests the value of the ^[[:space:]]*net\.ipv6\.conf\.default\.autoconf[[:space:]]*=[[:space:]]*([01])[[:space:]]*$ expression in the /etc/sysctl.conf file">
+                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:201431"/>
+                  <ind-def:state   state_ref="oval:mil.army.us.rhel5:ste:201120"/>
+            </ind-def:textfilecontent54_test>
+
+
+            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:201440" version="1" check_existence="all_exist" check="all"
+					    comment="Tests the value of the /proc/sys/net/ipv6/conf/default/dad_transmits file">
+                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:201440"/>
+                  <ind-def:state   state_ref="oval:mil.army.us.rhel5:ste:20144"/>
+            </ind-def:textfilecontent54_test>
+            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:201441" version="1" check_existence="all_exist" check="all"
+					    comment="Tests the presence of the ^[[:space:]]*net\.ipv6\.conf\.default\.dad_transmits[[:space:]]*=[[:space:]]*([01])[[:space:]]*$ expression in the /etc/sysctl.conf file">
+                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:201441"/>
+            </ind-def:textfilecontent54_test>
+            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:201442" version="1" check_existence="all_exist" check="all"
+					    comment="Tests the value of the ^[[:space:]]*net\.ipv6\.conf\.default\.dad_transmits[[:space:]]*=[[:space:]]*([01])[[:space:]]*$ expression in the /etc/sysctl.conf file">
+                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:201441"/>
+                  <ind-def:state   state_ref="oval:mil.army.us.rhel5:ste:20144"/>
+            </ind-def:textfilecontent54_test>
+
+
+            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:201450" version="1" check_existence="all_exist" check="all"
+					    comment="Tests the value of the /proc/sys/net/ipv6/conf/default/max_addresses file">
+                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:201450"/>
+                  <ind-def:state   state_ref="oval:mil.army.us.rhel5:ste:20145"/>
+            </ind-def:textfilecontent54_test>
+            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:201451" version="1" check_existence="all_exist" check="all"
+					    comment="Tests the presence of the ^[[:space:]]*net\.ipv6\.conf\.default\.max_addresses[[:space:]]*=[[:space:]]*([01])[[:space:]]*$ expression in the /etc/sysctl.conf file">
+                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:201451"/>
+            </ind-def:textfilecontent54_test>
+            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:201452" version="1" check_existence="all_exist" check="all"
+					    comment="Tests the value of the ^[[:space:]]*net\.ipv6\.conf\.default\.max_addresses[[:space:]]*=[[:space:]]*([01])[[:space:]]*$ expression in the /etc/sysctl.conf file">
+                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:201451"/>
+                  <ind-def:state   state_ref="oval:mil.army.us.rhel5:ste:20145"/>
+            </ind-def:textfilecontent54_test>
+
+	    <!--- New end -->
+
             <unix-def:runlevel_test check_existence="any_exist" id="oval:mil.army.us.rhel5:tst:20146" version="1" check="all" comment="Runlevel test">
                   <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:20146"/>
             </unix-def:runlevel_test>
+
             <unix-def:runlevel_test check_existence="any_exist" id="oval:mil.army.us.rhel5:tst:20147" version="1" check="all" comment="Runlevel test">
                   <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:20147"/>
             </unix-def:runlevel_test>
+
             <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:2014741" check_existence="at_least_one_exists" version="1" check="all" comment="Check /etc/sysconfig/iptables for line :INPUT DROP [0:0]">
                   <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:2014741" />
             </ind-def:textfilecontent54_test>
+
             <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:2014742" check_existence="at_least_one_exists" version="1" check="all" comment="Check /etc/sysconfig/iptables for line :INPUT ACCEPT [0:0]">
                   <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:2014742" />
             </ind-def:textfilecontent54_test>
+
             <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:2014751" check_existence="at_least_one_exists" version="1" check="all" comment="Check /etc/sysconfig/iptables for line :FORWARD DROP [0:0]">
                   <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:2014751" />
             </ind-def:textfilecontent54_test>
+
             <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:2014752" check_existence="at_least_one_exists" version="1" check="all" comment="Check /etc/sysconfig/iptables for line :FORWARD ACCEPT [0:0]">
                   <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:2014752" />
             </ind-def:textfilecontent54_test>
+
+	    <!--
             <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:201476" check_existence="at_least_one_exists" version="1" check="all" comment="Check /etc/modprobe.conf for line install DCCP /bin/true">
                   <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:201476" />
             </ind-def:textfilecontent54_test>
@@ -6152,9 +6618,12 @@
             <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:201479" check_existence="at_least_one_exists" version="1" check="all" comment="Check /etc/modprobe.conf for line install TIPC /bin/true">
                   <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:201479" />
             </ind-def:textfilecontent54_test>
+	    -->
+
             <unix-def:runlevel_test check_existence="any_exist" id="oval:mil.army.us.rhel5:tst:20148" version="1" check="all" comment="Runlevel test">
                   <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:20148"/>
             </unix-def:runlevel_test>
+<!--
             <unix-def:file_test check_existence="all_exist" id="oval:mil.army.us.rhel5:tst:20149" version="1" check="all" comment="root owns log files">
                   <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:201491"/>
                   <unix-def:state state_ref="oval:mil.army.us.rhel5:ste:20149"/>
@@ -6167,12 +6636,15 @@
                   <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:201491"/>
                   <unix-def:state state_ref="oval:mil.army.us.rhel5:ste:20151"/>
             </unix-def:file_test>
-            <ind-def:textfilecontent54_test check_existence="at_least_one_exists" id="oval:mil.army.us.rhel5:tst:20152" version="1" check="all" comment="Tests the value of the \*\.\*[\s]+@ setting in the /etc/syslog.conf file">
+-->
+            <ind-def:textfilecontent54_test check_existence="at_least_one_exists" id="oval:mil.army.us.rhel5:tst:20152" version="1" check="all" comment="Tests the value of the \*\.\*[\s]+@ setting in the /etc/rsyslog.conf file">
                   <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20152"/>
             </ind-def:textfilecontent54_test>
-            <ind-def:textfilecontent54_test check_existence="none_exist" id="oval:mil.army.us.rhel5:tst:20153" version="1" check="all" comment="Tests the value of the SYSLOGD_OPTIONS[\s]*=[\s]*&#xD3;.*-r.*&#xD3; setting in the /etc/sysconfig/syslog file">
+
+            <ind-def:textfilecontent54_test check_existence="none_exist" id="oval:mil.army.us.rhel5:tst:20153" version="1" check="all" comment="Tests the value of the SYSLOGD_OPTIONS[\s]*=[\s]*.*-r.* setting in the /etc/sysconfig/rsyslog file">
                   <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20153"/>
             </ind-def:textfilecontent54_test>
+
             <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:mil.army.us.rhel5:tst:20154" version="1" check="all" comment="Find each file in /etc/syslog.conf in /etc/logrotate.d/syslog">
                   <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20154"/>
             </ind-def:textfilecontent54_test>
@@ -7012,7 +7484,7 @@
             </unix-def:file_object>
 
             <unix-def:file_object id="oval:mil.army.us.rhel5:obj:200461" version="1" comment="all local files">
-            	  <set set_operator="union" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+            	  <set set_operator="UNION" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5">
             	  	<object_reference>oval:mil.army.us.rhel5:obj:20046</object_reference>
             	  	<filter>oval:mil.army.us.rhel5:ste:200462</filter>
             	  </set>
@@ -7024,7 +7496,7 @@
             </unix-def:file_object>
 
             <unix-def:file_object id="oval:mil.army.us.rhel5:obj:200471" version="1" comment="all local files">
-            	  <set set_operator="union" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+            	  <set set_operator="UNION" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5">
             	  	<object_reference>oval:mil.army.us.rhel5:obj:20047</object_reference>
             	  	<filter>oval:mil.army.us.rhel5:ste:200471</filter>
             	  	<filter>oval:mil.army.us.rhel5:ste:200472</filter> 
@@ -7242,9 +7714,9 @@
 
             <ind-def:environmentvariable_object id="oval:mil.army.us.rhel5:obj:20085" version="1">
                   <ind-def:name>PATH</ind-def:name>
-            </ind-def:environmentvariable_object> 
+            </ind-def:environmentvariable_object>
             <unix-def:file_object id="oval:mil.army.us.rhel5:obj:2008551" version="1" comment="root's PATH filtered">
-            	  <set set_operator="union" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+            	  <set set_operator="UNION" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5">
             	  	<object_reference>oval:mil.army.us.rhel5:obj:200855</object_reference>
             	  	<filter>oval:mil.army.us.rhel5:ste:2008551</filter>
             	  	<filter>oval:mil.army.us.rhel5:ste:2008552</filter>
@@ -7394,265 +7866,477 @@
                   <unix-def:service_name>restorecond</unix-def:service_name>
                   <unix-def:runlevel operation="pattern match">.*</unix-def:runlevel>
             </unix-def:runlevel_object>
-            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20112" version="1">
-                  <ind-def:path>/etc</ind-def:path>
-                  <ind-def:filename>sysctl.conf</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[\s]*net\.ipv4\.conf\.default\.send_redirects[\s]*=([\s]*)</ind-def:pattern>
+
+	    <!-- EDIT -->
+            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201120" version="1">
+                  <ind-def:path>/proc/sys/net/ipv4/conf/default</ind-def:path>
+                  <ind-def:filename>send_redirects</ind-def:filename>
+                  <ind-def:pattern operation="pattern match">^([01])$</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
-            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20113" version="1">
+            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201121" version="1">
                   <ind-def:path>/etc</ind-def:path>
                   <ind-def:filename>sysctl.conf</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[\s]*net\.ipv4\.conf\.all\.send_redirects[\s]*=([\s]*)</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*net\.ipv4\.conf\.default\.send_redirects[[:space:]]*=[[:space:]]*([01])[[:space:]]*$</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
-            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20114" version="1">
+
+
+            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201130" version="1">
+                  <ind-def:path>/proc/sys/net/ipv4/conf/all</ind-def:path>
+                  <ind-def:filename>send_redirects</ind-def:filename>
+                  <ind-def:pattern operation="pattern match">^([01])$</ind-def:pattern>
+                  <ind-def:instance datatype="int">1</ind-def:instance>
+            </ind-def:textfilecontent54_object>
+            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201131" version="1">
                   <ind-def:path>/etc</ind-def:path>
                   <ind-def:filename>sysctl.conf</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[\s]*net\.ipv4\.ip_forward[\s]*=([\s]*)</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*net\.ipv4\.conf\.all\.send_redirects[[:space:]]*=[[:space:]]*([01])[[:space:]]*$</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
-            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20115" version="1">
+	    <!-- ^^^ ok ^^^ -->
+
+
+            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201140" version="1">
+                  <ind-def:path>/proc/sys/net/ipv4</ind-def:path>
+                  <ind-def:filename>ip_forward</ind-def:filename>
+                  <ind-def:pattern operation="pattern match">^([01])$</ind-def:pattern>
+                  <ind-def:instance datatype="int">1</ind-def:instance>
+            </ind-def:textfilecontent54_object>
+            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201141" version="1">
                   <ind-def:path>/etc</ind-def:path>
                   <ind-def:filename>sysctl.conf</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[\s]*net\.ipv4\.conf\.all\.accept_source_route[\s]*=([\s]*)</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*net\.ipv4\.ip_forward[[:space:]]*=[[:space:]]*([01])[[:space:]]*$</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
-            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20116" version="1">
+
+
+            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201150" version="1">
+                  <ind-def:path>/proc/sys/net/ipv4/conf/all</ind-def:path>
+                  <ind-def:filename>accept_source_route</ind-def:filename>
+                  <ind-def:pattern operation="pattern match">^([01])$</ind-def:pattern>
+                  <ind-def:instance datatype="int">1</ind-def:instance>
+            </ind-def:textfilecontent54_object>
+            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201151" version="1">
                   <ind-def:path>/etc</ind-def:path>
                   <ind-def:filename>sysctl.conf</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[\s]*net\.ipv4\.conf\.all\.accept_redirects[\s]*=([\s]*)</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*net\.ipv4\.conf\.all\.accept_source_route[[:space:]]*=[[:space:]]*([01])[[:space:]]*$</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
-            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20117" version="1">
+
+
+            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201160" version="1">
+                  <ind-def:path>/proc/sys/net/ipv4/conf/all</ind-def:path>
+                  <ind-def:filename>accept_redirects</ind-def:filename>
+                  <ind-def:pattern operation="pattern match">^([01])$</ind-def:pattern>
+                  <ind-def:instance datatype="int">1</ind-def:instance>
+            </ind-def:textfilecontent54_object>
+            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201161" version="1">
                   <ind-def:path>/etc</ind-def:path>
                   <ind-def:filename>sysctl.conf</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[\s]*net\.ipv4\.conf\.all\.secure_redirects[\s]*=([\s]*)</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*net\.ipv4\.conf\.all\.accept_redirects[[:space:]]*=[[:space:]]*([01])[[:space:]]*$</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
-            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20118" version="1">
+
+
+            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201170" version="1">
+                  <ind-def:path>/proc/sys/net/ipv4/conf/all</ind-def:path>
+                  <ind-def:filename>secure_redirects</ind-def:filename>
+                  <ind-def:pattern operation="pattern match">^([01])$</ind-def:pattern>
+                  <ind-def:instance datatype="int">1</ind-def:instance>
+            </ind-def:textfilecontent54_object>
+            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201171" version="1">
                   <ind-def:path>/etc</ind-def:path>
                   <ind-def:filename>sysctl.conf</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[\s]*net\.ipv4\.conf\.all\.log_martians[\s]*=([\s]*)</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*net\.ipv4\.conf\.all\.secure_redirects[[:space:]]*=[[:space:]]*([01])[[:space:]]*$</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
-            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20119" version="1">
+
+
+            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201180" version="1">
+                  <ind-def:path>/proc/sys/net/ipv4/conf/all</ind-def:path>
+                  <ind-def:filename>log_martians</ind-def:filename>
+                  <ind-def:pattern operation="pattern match">^([01])$</ind-def:pattern>
+                  <ind-def:instance datatype="int">1</ind-def:instance>
+            </ind-def:textfilecontent54_object>
+            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201181" version="1">
                   <ind-def:path>/etc</ind-def:path>
                   <ind-def:filename>sysctl.conf</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[\s]*net\.ipv4\.conf\.default\.accept_source_route[\s]*=([\s]*)</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*net\.ipv4\.conf\.all\.log_martians[[:space:]]*=[[:space:]]*([01])[[:space:]]*$</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
-            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20120" version="1">
+
+
+            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201190" version="1">
+                  <ind-def:path>/proc/sys/net/ipv4/conf/default</ind-def:path>
+                  <ind-def:filename>accept_source_route</ind-def:filename>
+                  <ind-def:pattern operation="pattern match">^([01])$</ind-def:pattern>
+                  <ind-def:instance datatype="int">1</ind-def:instance>
+            </ind-def:textfilecontent54_object>
+            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201191" version="1">
                   <ind-def:path>/etc</ind-def:path>
                   <ind-def:filename>sysctl.conf</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[\s]*net\.ipv4\.conf\.default\.accept_redirects[\s]*=([\s]*)</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*net\.ipv4\.conf\.default\.accept_source_route[[:space:]]*=[[:space:]]*([01])[[:space:]]*$</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
-            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20121" version="1">
+
+
+            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201200" version="1">
+                  <ind-def:path>/proc/sys/net/ipv4/conf/default</ind-def:path>
+                  <ind-def:filename>accept_redirects</ind-def:filename>
+                  <ind-def:pattern operation="pattern match">^([01])$</ind-def:pattern>
+                  <ind-def:instance datatype="int">1</ind-def:instance>
+            </ind-def:textfilecontent54_object>
+            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201201" version="1">
                   <ind-def:path>/etc</ind-def:path>
                   <ind-def:filename>sysctl.conf</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[\s]*net\.ipv4\.conf\.default\.secure_redirects[\s]*=([\s]*)</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*net\.ipv4\.conf\.default\.accept_redirects[[:space:]]*=[[:space:]]*([01])[[:space:]]*$</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
-            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20122" version="1">
+
+
+            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201210" version="1">
+                  <ind-def:path>/proc/sys/net/ipv4/conf/default</ind-def:path>
+                  <ind-def:filename>secure_redirects</ind-def:filename>
+                  <ind-def:pattern operation="pattern match">^([01])$</ind-def:pattern>
+                  <ind-def:instance datatype="int">1</ind-def:instance>
+            </ind-def:textfilecontent54_object>
+            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201211" version="1">
                   <ind-def:path>/etc</ind-def:path>
                   <ind-def:filename>sysctl.conf</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[\s]*net\.ipv4\.icmp_echo_ignore_broadcasts[\s]*=([\s]*)</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*net\.ipv4\.conf\.default\.secure_redirects[[:space:]]*=[[:space:]]*([01])[[:space:]]*$</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
-            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20123" version="1">
+
+
+            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201220" version="1">
+                  <ind-def:path>/proc/sys/net/ipv4</ind-def:path>
+                  <ind-def:filename>icmp_echo_ignore_broadcasts</ind-def:filename>
+                  <ind-def:pattern operation="pattern match">^([01])$</ind-def:pattern>
+                  <ind-def:instance datatype="int">1</ind-def:instance>
+            </ind-def:textfilecontent54_object>
+            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201221" version="1">
                   <ind-def:path>/etc</ind-def:path>
                   <ind-def:filename>sysctl.conf</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[\s]*net\.ipv4\.icmp_ignore_bogus_error_messages[\s]*=([\s]*)</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*net\.ipv4\.icmp_echo_ignore_broadcasts[[:space:]]*=[[:space:]]*([01])[[:space:]]*$</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
-            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20124" version="1">
+
+
+            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201230" version="1">
+                  <ind-def:path>/proc/sys/net/ipv4</ind-def:path>
+                  <ind-def:filename>icmp_ignore_bogus_error_responses</ind-def:filename>
+                  <ind-def:pattern operation="pattern match">^([01])$</ind-def:pattern>
+                  <ind-def:instance datatype="int">1</ind-def:instance>
+            </ind-def:textfilecontent54_object>
+            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201231" version="1">
                   <ind-def:path>/etc</ind-def:path>
                   <ind-def:filename>sysctl.conf</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[\s]*net\.ipv4\.tcp_syncookies[\s]*=([\s]*)</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*net\.ipv4\.icmp_ignore_bogus_error_responses[[:space:]]*=[[:space:]]*([01])[[:space:]]*$</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
-            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20125" version="1">
+
+
+            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201240" version="1">
+                  <ind-def:path>/proc/sys/net/ipv4</ind-def:path>
+                  <ind-def:filename>tcp_syncookies</ind-def:filename>
+                  <ind-def:pattern operation="pattern match">^([01])$</ind-def:pattern>
+                  <ind-def:instance datatype="int">1</ind-def:instance>
+            </ind-def:textfilecontent54_object>
+            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201241" version="1">
                   <ind-def:path>/etc</ind-def:path>
                   <ind-def:filename>sysctl.conf</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[\s]*net\.ipv4\.conf\.all\.rp_filter[\s]*=([\s]*)</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*net\.ipv4\.tcp_syncookies[[:space:]]*=[[:space:]]*([01])[[:space:]]*$</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
-            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20126" version="1">
+
+
+            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201250" version="1">
+                  <ind-def:path>/proc/sys/net/ipv4/conf/all</ind-def:path>
+                  <ind-def:filename>rp_filter</ind-def:filename>
+                  <ind-def:pattern operation="pattern match">^([01])$</ind-def:pattern>
+                  <ind-def:instance datatype="int">1</ind-def:instance>
+            </ind-def:textfilecontent54_object>
+            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201251" version="1">
                   <ind-def:path>/etc</ind-def:path>
                   <ind-def:filename>sysctl.conf</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[\s]*net\.ipv4\.conf\.default\.rp_filter[\s]*=([\s]*)</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*net\.ipv4\.conf\.all\.rp_filter[[:space:]]*=[[:space:]]*([01])[[:space:]]*$</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
+
+
+            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201260" version="1">
+                  <ind-def:path>/proc/sys/net/ipv4/conf/default</ind-def:path>
+                  <ind-def:filename>rp_filter</ind-def:filename>
+                  <ind-def:pattern operation="pattern match">^([01])$</ind-def:pattern>
+                  <ind-def:instance datatype="int">1</ind-def:instance>
+            </ind-def:textfilecontent54_object>
+            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201261" version="1">
+                  <ind-def:path>/etc</ind-def:path>
+                  <ind-def:filename>sysctl.conf</ind-def:filename>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*net\.ipv4\.conf\.default\.rp_filter[[:space:]]*=[[:space:]]*([01])[[:space:]]*$</ind-def:pattern>
+                  <ind-def:instance datatype="int">1</ind-def:instance>
+            </ind-def:textfilecontent54_object>
+
+	    <!-- ^^^ ok ^^^ -->
+
+	    <!-- !Fedora
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20128" version="1">
                   <ind-def:path>/proc/net</ind-def:path>
                   <ind-def:filename>wireless</ind-def:filename>
                   <ind-def:pattern operation="pattern match">^[[:space:]]*([^[:space:]]+[[:digit:]]+):</ind-def:pattern>
                   <ind-def:instance operation="greater than or equal" datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
+
             <unix-def:file_object id="oval:mil.army.us.rhel5:obj:20129" version="1" comment="/lib/modules/*/kernel/drivers/net/wireless">
                   <unix-def:path operation="pattern match">/lib/modules/*/kernel/drivers/net</unix-def:path>
                   <unix-def:filename>wireless</unix-def:filename>
             </unix-def:file_object>
+	    -->
+
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20130" version="1">
-                  <ind-def:path>/etc</ind-def:path>
-                  <ind-def:filename>modprobe.conf</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[\s]*alias[\s]+net-pf-10[\s]+off([[\s]#].*)?$</ind-def:pattern>
+                  <ind-def:path>/etc/modprobe.d</ind-def:path>
+                  <ind-def:filename>dist.conf</ind-def:filename>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*alias[[:space:]]+net-pf-10[[:space:]]+off[[:space:]]*(#.*)?$</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
+
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20132" version="1">
                   <ind-def:path>/etc/sysconfig</ind-def:path>
                   <ind-def:filename>network</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[\s]*NETWORKING_IPV6[\s]*=[\s]*([^#]*)</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*NETWORKING_IPV6[[:space:]]*=[[:space:]]*([^#]*).*$</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
+
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20133" version="1">
                   <ind-def:path>/etc/sysconfig/network-scripts</ind-def:path>
                   <ind-def:filename operation="pattern match">ifcfg-.*</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[\s]*NETWORKING_IPV6[\s]*=[\s]*([^#]*)</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*NETWORKING_IPV6[[:space:]]*=[[:space:]]*([^#]*).*$</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
+
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20131" version="1">
                   <ind-def:path>/etc/sysconfig</ind-def:path>
                   <ind-def:filename>network</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[\s]*IPV6INIT[\s]*=[\s]*([^#]*)</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*IPV6INIT[[:space:]]*=[[:space:]]*([^#]*).*$</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
+
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20134" version="1">
                   <ind-def:path>/etc/sysconfig</ind-def:path>
                   <ind-def:filename>network</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[\s]*IPV6INIT[\s]*=[\s]*([^#]*)</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*IPV6INIT[[:space:]]*=[[:space:]]*([^#]*).*$</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
-            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20140" version="1">
+
+	    <!-- sysctl -->
+
+            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201400" version="1">
+                  <ind-def:path>/proc/sys/net/ipv6/conf/default</ind-def:path>
+                  <ind-def:filename>accept_ra_rtr_pref</ind-def:filename>
+                  <ind-def:pattern operation="pattern match">^([01])$</ind-def:pattern>
+                  <ind-def:instance datatype="int">1</ind-def:instance>
+            </ind-def:textfilecontent54_object>
+            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201401" version="1">
                   <ind-def:path>/etc</ind-def:path>
                   <ind-def:filename>sysctl.conf</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[\s]*net\.ipv6\.conf\.default\.accept_ra_rtr_pref[\s]*=([\s]*)</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*net\.ipv6\.conf\.default\.accept_ra_rtr_pref[[:space:]]*=[[:space:]]*([01])[[:space:]]*$</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
-            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20145" version="1">
+
+
+            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201450" version="1">
+                  <ind-def:path>/proc/sys/net/ipv6/conf/default</ind-def:path>
+                  <ind-def:filename>max_addresses</ind-def:filename>
+                  <ind-def:pattern operation="pattern match">^([0-9]+)$</ind-def:pattern>
+                  <ind-def:instance datatype="int">1</ind-def:instance>
+            </ind-def:textfilecontent54_object>
+            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201451" version="1">
                   <ind-def:path>/etc</ind-def:path>
                   <ind-def:filename>sysctl.conf</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[\s]*net\.ipv6\.conf\.default\.max_addresses[\s]*=([\s]*)</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*net\.ipv6\.conf\.default\.max_addresses[[:space:]]*=[[:space:]]*([0-9]+)[[:space:]]*$</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
-            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20139" version="1">
+
+
+            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201390" version="1">
+                  <ind-def:path>/proc/sys/net/ipv6/conf/default</ind-def:path>
+                  <ind-def:filename>router_solicitations</ind-def:filename>
+                  <ind-def:pattern operation="pattern match">^([0-9]+)$</ind-def:pattern>
+                  <ind-def:instance datatype="int">1</ind-def:instance>
+            </ind-def:textfilecontent54_object>
+            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201391" version="1">
                   <ind-def:path>/etc</ind-def:path>
                   <ind-def:filename>sysctl.conf</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[\s]*net\.ipv6\.conf\.default\.router_solicitations[\s]*=([\s]*)</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*net\.ipv6\.conf\.default\.router_solicitations[[:space:]]*=[[:space:]]*([0-9]+)[[:space:]]*$</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
-            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20144" version="1">
+
+
+            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201440" version="1">
+                  <ind-def:path>/proc/sys/net/ipv6/conf/default</ind-def:path>
+                  <ind-def:filename>dad_transmits</ind-def:filename>
+                  <ind-def:pattern operation="pattern match">^([0-9]+)$</ind-def:pattern>
+                  <ind-def:instance datatype="int">1</ind-def:instance>
+            </ind-def:textfilecontent54_object>
+            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201441" version="1">
                   <ind-def:path>/etc</ind-def:path>
                   <ind-def:filename>sysctl.conf</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[\s]*net\.ipv6\.conf\.default\.dad_transmits[\s]*=([\s]*)</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*net\.ipv6\.conf\.default\.dad_transmits[[:space:]]*=[[:space:]]*([0-9]+)[[:space:]]*$</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
-            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20143" version="1">
+
+
+            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201430" version="1">
+                  <ind-def:path>/proc/sys/net/ipv6/conf/default</ind-def:path>
+                  <ind-def:filename>autoconf</ind-def:filename>
+                  <ind-def:pattern operation="pattern match">^([01])$</ind-def:pattern>
+                  <ind-def:instance datatype="int">1</ind-def:instance>
+            </ind-def:textfilecontent54_object>
+            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201431" version="1">
                   <ind-def:path>/etc</ind-def:path>
                   <ind-def:filename>sysctl.conf</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[\s]*net\.ipv6\.conf\.default\.autoconf[\s]*=([\s]*)</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*net\.ipv6\.conf\.default\.autoconf[[:space:]]*=[[:space:]]*([01])[[:space:]]*$</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
-            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20141" version="1">
+
+
+            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201410" version="1">
+                  <ind-def:path>/proc/sys/net/ipv6/conf/default</ind-def:path>
+                  <ind-def:filename>accept_ra_pinfo</ind-def:filename>
+                  <ind-def:pattern operation="pattern match">^([01])$</ind-def:pattern>
+                  <ind-def:instance datatype="int">1</ind-def:instance>
+            </ind-def:textfilecontent54_object>
+            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201411" version="1">
                   <ind-def:path>/etc</ind-def:path>
                   <ind-def:filename>sysctl.conf</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[\s]*net\.ipv6\.conf\.default\.accept_ra_pinfo[\s]*=([\s]*)</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*net\.ipv6\.conf\.default\.accept_ra_pinfo[[:space:]]*=[[:space:]]*([01])[[:space:]]*$</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
-            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20142" version="1">
+
+
+            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201420" version="1">
+                  <ind-def:path>/proc/sys/net/ipv6/conf/default</ind-def:path>
+                  <ind-def:filename>accept_ra_defrtr</ind-def:filename>
+                  <ind-def:pattern operation="pattern match">^([01])$</ind-def:pattern>
+                  <ind-def:instance datatype="int">1</ind-def:instance>
+            </ind-def:textfilecontent54_object>
+            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201421" version="1">
                   <ind-def:path>/etc</ind-def:path>
                   <ind-def:filename>sysctl.conf</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[\s]*net\.ipv6\.conf\.default\.accept_ra_defrtr[\s]*=([\s]*)</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*net\.ipv6\.conf\.default\.accept_ra_defrtr[[:space:]]*=[[:space:]]*([01])[[:space:]]*$</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
+
+	    <!-- non-sysctl -->
+
             <unix-def:runlevel_object id="oval:mil.army.us.rhel5:obj:20146" version="1">
                   <unix-def:service_name>ip6tables</unix-def:service_name>
                   <unix-def:runlevel operation="pattern match">.*</unix-def:runlevel>
             </unix-def:runlevel_object>
+
             <unix-def:runlevel_object id="oval:mil.army.us.rhel5:obj:20147" version="1">
                   <unix-def:service_name>iptables</unix-def:service_name>
                   <unix-def:runlevel operation="pattern match">.*</unix-def:runlevel>
             </unix-def:runlevel_object>
+
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:2014741" version="1">
                   <ind-def:path>/etc/sysconfig</ind-def:path>
                   <ind-def:filename>iptables</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[\s]*:INPUT\sDROP\s\[0:0\]</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*:INPUT[:space:]DROP[:space:]\[0:0\]</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
+
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:2014742" version="1">
                   <ind-def:path>/etc/sysconfig</ind-def:path>
                   <ind-def:filename>iptables</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[\s]*:INPUT\ACCEPT\s\[0:0\]</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*:INPUT[:space:]ACCEPT[:space:]\[0:0\]</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
+
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:2014751" version="1">
                   <ind-def:path>/etc/sysconfig</ind-def:path>
                   <ind-def:filename>iptables</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[\s]*:FORWARD\sDROP\s\[0:0\]</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*:FORWARD[:space:]DROP[:space:]\[0:0\]</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
+
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:2014752" version="1">
                   <ind-def:path>/etc/sysconfig</ind-def:path>
                   <ind-def:filename>iptables</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[\s]*:FORWARD\ACCEPT\s\[0:0\]</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*:FORWARD[:space:]ACCEPT[:space:]\[0:0\]</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
+
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201476" version="1">
-                  <ind-def:path>/etc</ind-def:path>
-                  <ind-def:filename>modprobe.conf</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[\s]*install[\s]+DCCP[\s]+/bin/true</ind-def:pattern>
+                  <ind-def:path>/etc/modprobe.d</ind-def:path>
+                  <ind-def:filename>dist.conf</ind-def:filename>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*install[[:space:]]+DCCP[[:space:]]+/bin/true</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
+
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201477" version="1">
-                  <ind-def:path>/etc</ind-def:path>
-                  <ind-def:filename>modprobe.conf</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[\s]*install[\s]+SCTP[\s]+/bin/true</ind-def:pattern>
+                  <ind-def:path>/etc/modprobe.d</ind-def:path>
+                  <ind-def:filename>dist.conf</ind-def:filename>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*install[[:space:]]+SCTP[[:space:]]+/bin/true</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
+
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201478" version="1">
-                  <ind-def:path>/etc</ind-def:path>
-                  <ind-def:filename>modprobe.conf</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[\s]*install[\s]+RDS[\s]+/bin/true</ind-def:pattern>
+                  <ind-def:path>/etc/modprobe.d</ind-def:path>
+                  <ind-def:filename>dist.conf</ind-def:filename>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*install[[:space:]]+RDS[[:space:]]+/bin/true</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
+
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201479" version="1">
-                  <ind-def:path>/etc</ind-def:path>
-                  <ind-def:filename>modprobe.conf</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[\s]*install[\s]+TIPC[\s]+/bin/true</ind-def:pattern>
+                  <ind-def:path>/etc/modprobe.d</ind-def:path>
+                  <ind-def:filename>dist.conf</ind-def:filename>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*install[[:space:]]+TIPC[[:space:]]+/bin/true</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
+
             <unix-def:runlevel_object id="oval:mil.army.us.rhel5:obj:20148" version="1">
                   <unix-def:service_name>rsyslog</unix-def:service_name>
                   <unix-def:runlevel operation="pattern match">.*</unix-def:runlevel>
             </unix-def:runlevel_object>
+
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201490" version="1" comment="paths in /etc/syslog.conf">
                   <ind-def:path>/etc</ind-def:path>
                   <ind-def:filename>rsyslog.conf</ind-def:filename>
                   <ind-def:pattern operation="pattern match">^[^\#][[:space:]]*[^[:space:]]+\.[^[:space:]]+[[:space:]]+[\-]?([^[:space:]]+)</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
+
+<!--
             <unix-def:file_object id="oval:mil.army.us.rhel5:obj:201491" version="1" comment="paths in /etc/syslog.conf">
-                  <unix-def:filepath var_ref="oval:mil.army.us.rhel5:var:201490"/> 
+                  <unix-def:filepath var_ref="oval:mil.army.us.rhel5:var:201490"/>
             </unix-def:file_object>
+-->
+
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20152" version="1">
                   <ind-def:path>/etc</ind-def:path>
                   <ind-def:filename>rsyslog.conf</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[^#]*\*\.\*[\s]+@</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^[^#]*\*\.\*[[:space:]]+@</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
+
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20153" version="1">
                   <ind-def:path>/etc/sysconfig</ind-def:path>
-                  <ind-def:filename>syslog</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">SYSLOGD_OPTIONS[\s]*=[\s]*&#xD3;.*-r.*&#xD3;</ind-def:pattern>
+                  <ind-def:filename>rsyslog</ind-def:filename>
+                  <ind-def:pattern operation="pattern match">SYSLOGD_OPTIONS[[:space:]]*=[[:space:]]*.*-r.*</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
-            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20154" version="1" comment="paths in /etc/syslog.conf should be in /etc/logrotate.d/syslog">
+
+            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20154" version="1" comment="paths in /etc/rsyslog.conf should be in /etc/logrotate.d/syslog">
                   <ind-def:path>/etc/logrotate.d</ind-def:path>
                   <ind-def:filename>syslog</ind-def:filename>
                   <ind-def:pattern operation="pattern match" var_check="at least one" var_ref="oval:mil.army.us.rhel5:var:201490"></ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
+
+	    <!-- END -->
+
             <unix-def:runlevel_object id="oval:mil.army.us.rhel5:obj:20156" version="1">
                   <unix-def:service_name>auditd</unix-def:service_name>
                   <unix-def:runlevel operation="pattern match">.*</unix-def:runlevel>
@@ -9136,9 +9820,15 @@
                   <unix-def:start datatype="boolean">false</unix-def:start>
                   <unix-def:kill datatype="boolean">true</unix-def:kill>
             </unix-def:runlevel_state>
-            <ind-def:textfilecontent54_state id="oval:mil.army.us.rhel5:ste:20112" version="1">
+	    <!-- shared states: subexpression == {0, 1} -->
+            <ind-def:textfilecontent54_state id="oval:mil.army.us.rhel5:ste:201120" version="1">
                   <ind-def:subexpression datatype="int" operation="equals">0</ind-def:subexpression>
             </ind-def:textfilecontent54_state>
+            <ind-def:textfilecontent54_state id="oval:mil.army.us.rhel5:ste:201121" version="1">
+                  <ind-def:subexpression datatype="int" operation="equals">1</ind-def:subexpression>
+            </ind-def:textfilecontent54_state>
+	    <!-- ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ -->
+
             <ind-def:textfilecontent54_state id="oval:mil.army.us.rhel5:ste:20113" version="1">
                   <ind-def:subexpression datatype="int" operation="equals">0</ind-def:subexpression>
             </ind-def:textfilecontent54_state>
@@ -9200,7 +9890,7 @@
                   <ind-def:subexpression var_check="all" operation="equals" var_ref="oval:mil.army.us.rhel5:var:20145"/>
             </ind-def:textfilecontent54_state>
             <ind-def:textfilecontent54_state id="oval:mil.army.us.rhel5:ste:20139" version="1">
-                  <ind-def:subexpression var_check="all" operation="equals" var_ref="oval:mil.army.us.rhel5:var:20139"/>
+                  <ind-def:subexpression var_check="at_least_one" operation="equals" var_ref="oval:mil.army.us.rhel5:var:20139"/>
             </ind-def:textfilecontent54_state>
             <ind-def:textfilecontent54_state id="oval:mil.army.us.rhel5:ste:20144" version="1">
                   <ind-def:subexpression var_check="all" operation="equals" var_ref="oval:mil.army.us.rhel5:var:20144"/>
