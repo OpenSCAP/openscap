@@ -5977,7 +5977,7 @@
             </unix-def:password_test>
             <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:mil.army.us.rhel5:tst:20070" version="1" check="all" comment="Check if there is only root account with UID 0">
                   <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20070"/>
-                  <unix-def:state state_ref="oval:mil.army.us.rhel5:ste:20070"/>
+                  <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:20070"/>
             </ind-def:textfilecontent54_test>
             <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:mil.army.us.rhel5:tst:20071" version="1" check="all" comment="Tests the value of the PASS_MIN_LEN[\s]*=[\s]*(.*) expression in the /etc/login.defs file">
                   <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20071"/>
@@ -9491,8 +9491,8 @@
                   <lin-def:version operation="pattern match">^5[^\d]</lin-def:version>
             </lin-def:rpminfo_state>
             <lin-def:rpminfo_state id="oval:mil.army.us.rhel5:ste:200065" version="1">
-                  <lin-def:version >57bbccba</lin-def:version>
-                  <lin-def:release >4a6f97af</lin-def:release>
+                  <lin-def:release>4a6f97af</lin-def:release>
+                  <lin-def:version>57bbccba</lin-def:version>
             </lin-def:rpminfo_state>
             <lin-def:rpminfo_state id="oval:mil.army.us.rhel5:ste:11000" version="1">
                   <lin-def:release operation="pattern match">^5\.[2-9]</lin-def:release>
@@ -9890,7 +9890,7 @@
                   <ind-def:subexpression var_check="all" operation="equals" var_ref="oval:mil.army.us.rhel5:var:20145"/>
             </ind-def:textfilecontent54_state>
             <ind-def:textfilecontent54_state id="oval:mil.army.us.rhel5:ste:20139" version="1">
-                  <ind-def:subexpression var_check="at_least_one" operation="equals" var_ref="oval:mil.army.us.rhel5:var:20139"/>
+                  <ind-def:subexpression var_check="at least one" operation="equals" var_ref="oval:mil.army.us.rhel5:var:20139"/>
             </ind-def:textfilecontent54_state>
             <ind-def:textfilecontent54_state id="oval:mil.army.us.rhel5:ste:20144" version="1">
                   <ind-def:subexpression var_check="all" operation="equals" var_ref="oval:mil.army.us.rhel5:var:20144"/>
@@ -10222,7 +10222,7 @@
                   <ind-def:subexpression var_check="all" operation="equals" var_ref="oval:mil.army.us.rhel5:var:20352"/>
             </ind-def:textfilecontent54_state>
             <ind-def:textfilecontent54_state id="oval:mil.army.us.rhel5:ste:20070" version="1">
-                  <ind-def:subexpression operation="equal">root</ind-def:subexpression>
+                  <ind-def:subexpression operation="equals">root</ind-def:subexpression>
             </ind-def:textfilecontent54_state>
       </states>
       <variables>
@@ -10232,7 +10232,7 @@
             <external_variable id="oval:mil.army.us.rhel5:var:20045" version="1" datatype="string" comment="External variable for definition 20045"/>
             <external_variable id="oval:mil.army.us.rhel5:var:20053" version="1" datatype="int" comment="External variable for definition 20053"/>
             <external_variable id="oval:mil.army.us.rhel5:var:20071" version="1" datatype="int" comment="External variable for definition 20071"/>
-            val:mil.army.us.rhel5:def:20071
+            <!-- val:mil.army.us.rhel5:def:20071 -->
             <external_variable id="oval:mil.army.us.rhel5:var:20072" version="1" datatype="string" comment="External variable for definition 20072"/>
             <external_variable id="oval:mil.army.us.rhel5:var:20073" version="1" datatype="string" comment="External variable for definition 20073"/>
             <external_variable id="oval:mil.army.us.rhel5:var:20074" version="1" datatype="string" comment="External variable for definition 20074"/>
