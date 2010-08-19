@@ -2464,7 +2464,7 @@
                         <criterion comment="Conditions are satisfied" test_ref="oval:mil.army.us.rhel5:tst:20148"/>
                   </criteria>
             </definition>
-<!--
+
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:20149" version="1">
                   <metadata>
                         <title>Confirm Existence and Permissions of System Log Files </title>
@@ -2472,12 +2472,14 @@
                               <platform>Red Hat Enterprise Linux 5</platform>
                         </affected>
                         <reference ref_id="CCE-4366-1" source="CCE"/>
-                        <description>All syslog log files should be owned by root user.</description>
+                        <description>All mandatory log files should be owned by root user.</description>
                   </metadata>
                   <criteria>
-                        <criterion comment="check if user root owns all syslog log files" test_ref="oval:mil.army.us.rhel5:tst:20149"/>
+                        <criterion comment="check if user root owns all mandatory log files" test_ref="oval:mil.army.us.rhel5:tst:20149"/>
                   </criteria>
             </definition>
+
+<!--
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:20150" version="1">
                   <metadata>
                         <title>Confirm Existence and Permissions of System Log Files</title>
@@ -2533,6 +2535,7 @@
                   </criteria>
             </definition>
 
+	    <!--
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:20154" version="1">
                   <metadata>
                         <title>Ensure All Logs are Rotated by logrotate</title>
@@ -2546,6 +2549,7 @@
                         <criterion comment="Find each file in /etc/syslog.conf in /etc/logrotate.d/syslog" test_ref="oval:mil.army.us.rhel5:tst:20154"/>
                   </criteria>
             </definition>
+	    -->
 
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:20155" version="1">
                   <metadata>
@@ -6609,15 +6613,17 @@
                   <ind-def:state   state_ref="oval:mil.army.us.rhel5:ste:20145"/>
             </ind-def:textfilecontent54_test>
 
-	    <!--- New end -->
-
-            <unix-def:runlevel_test check_existence="any_exist" id="oval:mil.army.us.rhel5:tst:20146" version="1" check="all" comment="Runlevel test">
+            <unix-def:runlevel_test check_existence="at_least_one_exists" id="oval:mil.army.us.rhel5:tst:20146" version="1" check="at least one" comment="Check whether the ip6tables service is enabled">
                   <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:20146"/>
+		  <unix-def:state   state_ref="oval:mil.army.us.rhel5:ste:20146"/>
             </unix-def:runlevel_test>
 
-            <unix-def:runlevel_test check_existence="any_exist" id="oval:mil.army.us.rhel5:tst:20147" version="1" check="all" comment="Runlevel test">
+            <unix-def:runlevel_test check_existence="at_least_one_exists" id="oval:mil.army.us.rhel5:tst:20147" version="1" check="at least one" comment="Check whether the iptables service is enabled">
                   <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:20147"/>
+		  <unix-def:state   state_ref="oval:mil.army.us.rhel5:ste:20146"/>
             </unix-def:runlevel_test>
+
+	    <!--- New end -->
 
             <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:2014741" check_existence="at_least_one_exists" version="1" check="all" comment="Check /etc/sysconfig/iptables for line :INPUT DROP [0:0]">
                   <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:2014741" />
@@ -6650,18 +6656,24 @@
             </ind-def:textfilecontent54_test>
 	    -->
 
-            <unix-def:runlevel_test check_existence="any_exist" id="oval:mil.army.us.rhel5:tst:20148" version="1" check="all" comment="Runlevel test">
+            <unix-def:runlevel_test check_existence="at_least_one_exists" id="oval:mil.army.us.rhel5:tst:20148" version="1" check="at least one" comment="Check whether rsyslogd is enabled">
                   <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:20148"/>
+		  <unix-def:state   state_ref="oval:mil.army.us.rhel5:ste:20148"/>
             </unix-def:runlevel_test>
-<!--
-            <unix-def:file_test check_existence="all_exist" id="oval:mil.army.us.rhel5:tst:20149" version="1" check="all" comment="root owns log files">
+
+            <unix-def:file_test check_existence="any_exist" id="oval:mil.army.us.rhel5:tst:20149" version="1" check="all" comment="If any of the mandatory log files exist, their owner must be set to root">
                   <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:201491"/>
-                  <unix-def:state state_ref="oval:mil.army.us.rhel5:ste:20149"/>
+                  <unix-def:state   state_ref="oval:mil.army.us.rhel5:ste:20149"/>
             </unix-def:file_test>
+
+<!--
             <unix-def:file_test check_existence="all_exist" id="oval:mil.army.us.rhel5:tst:20150" version="1" check="all" comment="root group owns log files">
                   <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:201491"/>
                   <unix-def:state state_ref="oval:mil.army.us.rhel5:ste:20150"/>
             </unix-def:file_test>
+-->
+
+<!--
             <unix-def:file_test check_existence="all_exist" id="oval:mil.army.us.rhel5:tst:20151" version="1" check="all" comment="log files have correct permissions">
                   <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:201491"/>
                   <unix-def:state state_ref="oval:mil.army.us.rhel5:ste:20151"/>
@@ -6675,9 +6687,11 @@
                   <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20153"/>
             </ind-def:textfilecontent54_test>
 
+<!--
             <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:mil.army.us.rhel5:tst:20154" version="1" check="all" comment="Find each file in /etc/syslog.conf in /etc/logrotate.d/syslog">
                   <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20154"/>
             </ind-def:textfilecontent54_test>
+-->
             <unix-def:runlevel_test check_existence="all_exist" id="oval:mil.army.us.rhel5:tst:20156" version="1" check="at least one" comment="Runlevel test">
                   <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:20156"/>
                   <unix-def:state state_ref="oval:mil.army.us.rhel5:ste:20156"/>
@@ -8392,11 +8406,11 @@
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
 
-<!--
-            <unix-def:file_object id="oval:mil.army.us.rhel5:obj:201491" version="1" comment="paths in /etc/syslog.conf">
-                  <unix-def:filepath var_ref="oval:mil.army.us.rhel5:var:201490"/>
+            <unix-def:file_object id="oval:mil.army.us.rhel5:obj:201491" version="1" comment="Mandatory log files">
+	      <unix-def:behaviors recurse_direction="down" recurse="directories" max_depth="4"/>
+	      <unix-def:path>/var/log</unix-def:path>
+	      <unix-def:filename var_ref="oval:mil.army.us.rhel5:var:201490" var_check="at least one"/>
             </unix-def:file_object>
--->
 
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20152" version="1">
                   <ind-def:path>/etc</ind-def:path>
@@ -8412,13 +8426,14 @@
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
 
+	    <!--
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20154" version="1" comment="paths in /etc/rsyslog.conf should be in /etc/logrotate.d/syslog">
                   <ind-def:path>/etc/logrotate.d</ind-def:path>
                   <ind-def:filename>syslog</ind-def:filename>
                   <ind-def:pattern operation="pattern match" var_check="at least one" var_ref="oval:mil.army.us.rhel5:var:201490"></ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
-
+-->
 	    <!-- END -->
 
             <unix-def:runlevel_object id="oval:mil.army.us.rhel5:obj:20156" version="1">
@@ -9994,15 +10009,29 @@
             <ind-def:textfilecontent54_state id="oval:mil.army.us.rhel5:ste:20142" version="1">
                   <ind-def:subexpression var_check="all" operation="equals" var_ref="oval:mil.army.us.rhel5:var:20142"/>
             </ind-def:textfilecontent54_state>
+
             <ind-def:textfilecontent54_state id="oval:mil.army.us.rhel5:ste:201745" version="1">
                   <ind-def:subexpression operation="equals">yes</ind-def:subexpression>
             </ind-def:textfilecontent54_state>
+
+	    <unix-def:runlevel_state id="oval:mil.army.us.rhel5:ste:20146" version="1" comment="Starts at runlevel 3 or 5 (with network)">
+	      <unix-def:runlevel operation="pattern match">^[35]$</unix-def:runlevel>
+	      <unix-def:start    operation="equals">true</unix-def:start>
+	    </unix-def:runlevel_state>
+
+	    <unix-def:runlevel_state id="oval:mil.army.us.rhel5:ste:20148" version="1" comment="Starts at runlevel 2, 3, 4 or 5">
+	      <unix-def:runlevel operation="pattern match">^[2345]$</unix-def:runlevel>
+	      <unix-def:start    operation="equals">true</unix-def:start>
+	    </unix-def:runlevel_state>
+
             <unix-def:file_state id="oval:mil.army.us.rhel5:ste:20149" version="1">
                   <unix-def:user_id>0</unix-def:user_id>
             </unix-def:file_state>
+
             <unix-def:file_state id="oval:mil.army.us.rhel5:ste:20150" version="1">
                   <unix-def:group_id>0</unix-def:group_id>
             </unix-def:file_state>
+
             <unix-def:file_state id="oval:mil.army.us.rhel5:ste:20151" version="1">
                   <unix-def:uread var_check="all" datatype="boolean" var_ref="oval:mil.army.us.rhel5:var:201510"/>
                   <unix-def:uwrite var_check="all" datatype="boolean" var_ref="oval:mil.army.us.rhel5:var:201511"/>
@@ -10415,15 +10444,30 @@
             <external_variable id="oval:mil.army.us.rhel5:var:20353" version="1" datatype="string" comment="External variable for definition 20353"/>
             <external_variable id="oval:mil.army.us.rhel5:var:20354" version="1" datatype="string" comment="External variable for definition 20354"/>
 
+	    <!--
             <local_variable id="oval:mil.army.us.rhel5:var:201490" version="1" datatype="string" comment="list of paths in /etc/syslog.conf" >
                   <object_component item_field="subexpression" object_ref="oval:mil.army.us.rhel5:obj:201490"/> 
             </local_variable>
-
+	    -->
 <!--
             <constant_variable id="oval:mil.army.us.rhel5:var:20107" version="1" datatype="string" comment="foo">
             	  <value>targeted</value>
             </constant_variable>
 -->
+            <constant_variable id="oval:mil.army.us.rhel5:var:201490" version="1" datatype="string" comment="Filenames of mandatory log files">
+	      <value>boot.log</value>
+	      <value>cron</value>
+<!--
+	      <value>dmesg</value>
+	      <value>faillog</value>
+	      <value>lastlog</value>
+	      <value>maillog</value>
+	      <value>messages</value>
+	      <value>secure</value>
+	      <value>audit.log</value>
+-->
+        </constant_variable>
+
             <local_variable id="oval:mil.army.us.rhel5:var:1" version="1" datatype="boolean" comment="Bit for a permission type">
                   <substring substring_length="1" substring_start="1">
                         <variable_component var_ref="oval:mil.army.us.rhel5:var:20042"/>
