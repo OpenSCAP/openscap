@@ -73,8 +73,8 @@
     <select idref="dcb-rhel5-rule-2.1.2.3.2.b" selected="false" />	<!-- DONE -->		<!-- Automatic Update Retrieval should be scheduled with Cron -->
     <select idref="dcb-rhel5-rule-2.1.2.3.3.a" selected="false" />	<!-- DONE -->		<!-- Ensure gpgcheck is Globally Activated -->
     <select idref="dcb-rhel5-rule-2.1.2.3.4.a" selected="false" />	<!-- DONE -->		<!-- Ensure Package Signature Checking is Not Disabled For Any Repos -->
-    <select idref="dcb-rhel5-rule-2.1.2.3.5.a" selected="false" />	<!-- DONE -->		<!-- Ensure Repodata Signature Checking is Globally Activated -->
-    <select idref="dcb-rhel5-rule-2.1.2.3.6.a" selected="false" />	<!-- DONE -->		<!-- Ensure Repodata Signature Checking is Not Disabled For Any Repos -->
+    <select idref="dcb-rhel5-rule-2.1.2.3.5.a" selected="true" />	<!-- DONE -->		<!-- Ensure Repodata Signature Checking is Globally Activated -->
+    <select idref="dcb-rhel5-rule-2.1.2.3.6.a" selected="true" />	<!-- DONE -->		<!-- Ensure Repodata Signature Checking is Not Disabled For Any Repos -->
     <select idref="dcb-rhel5-rule-2.1.3.1.1.a" selected="false" />	<!-- DONE -->		<!-- Install AIDE -->
     <select idref="dcb-rhel5-rule-2.1.3.1.4.a" selected="false" />	<!-- DONE -->		<!-- run AIDE (integrity check) periodically -->
     <select idref="dcb-rhel5-rule-2.1.3.2.a" selected="false" />	<!-- DONE -->		<!-- Verify Package Integrity Using RPM -->
@@ -256,34 +256,34 @@
 
 
     <select idref="dcb-rhel5-rule-3.2.1.a" selected="false" />  <!-- DONE -->  <!-- Disable Inetd -->
-    <select idref="dcb-rhel5-rule-3.2.1.b" selected="false" />  <!-- DONE -->  <!-- Disable Xinetd -->
-    <select idref="dcb-rhel5-rule-3.2.1.c" selected="false" />  <!-- DONE -->  <!-- Uninstall Inetd -->
-    <select idref="dcb-rhel5-rule-3.2.1.d" selected="false" />  <!-- DONE -->  <!-- Uninstall Xinetd -->
-    <select idref="dcb-rhel5-rule-3.2.2.a" selected="false" />  <!-- DONE -->  <!-- Telnet server package is uninstalled -->
+    <select idref="dcb-rhel5-rule-3.2.1.b" selected="false" />  <!-- DONE -->   <!-- Disable Xinetd -->
+    <select idref="dcb-rhel5-rule-3.2.1.c" selected="false" />  <!-- DONE -->   <!-- Uninstall Inetd -->
+    <select idref="dcb-rhel5-rule-3.2.1.d" selected="false" />  <!-- DONE -->   <!-- Uninstall Xinetd -->
+    <select idref="dcb-rhel5-rule-3.2.2.a" selected="false" />  <!-- DONE -->   <!-- Telnet server package is uninstalled -->
     <select idref="dcb-rhel5-rule-3.2.2.b" selected="false" />  <!-- DONE -->   <!-- Disable telnet service -->
-    <select idref="dcb-rhel5-rule-3.2.2.1.a" selected="false" /> <!-- DONE -->  <!-- Remove the telnet client command from the System -->
-    <select idref="dcb-rhel5-rule-3.2.2.1.b" selected="false" />         <!-- Remove the kerberos telnet client from the System -->
-    <select idref="dcb-rhel5-rule-3.2.3.1.a" selected="false" />          <!-- Remove the Rsh Server Commands from the System -->
-    <select idref="dcb-rhel5-rule-3.2.3.1.b" selected="false" />          <!-- disable rcp -->
-    <select idref="dcb-rhel5-rule-3.2.3.1.c" selected="false" />          <!-- disable rsh -->
-    <select idref="dcb-rhel5-rule-3.2.3.1.d" selected="false" />          <!-- disable rlogin -->
-    <select idref="dcb-rhel5-rule-3.2.3.2.a" selected="false" />         <!-- Remove .rhosts Support from PAM Configuration Files -->
-    <select idref="dcb-rhel5-rule-3.2.3.3.a" selected="false" />         <!-- Remove the Rsh Client Commands from the System -->
-    <select idref="dcb-rhel5-rule-3.2.4.a" selected="false" />            <!-- Uninstall NIS -->
-    <select idref="dcb-rhel5-rule-3.2.4.b" selected="false" />            <!-- Disable NIS -->
-    <select idref="dcb-rhel5-rule-3.2.5.a" selected="false" />            <!-- Uninstall TFTP Server -->
-    <select idref="dcb-rhel5-rule-3.2.5.b" selected="false" />            <!-- disable TFTP Server -->
-    <select idref="dcb-rhel5-rule-3.3.1.a" selected="false" />           <!-- Installation Helper Service (firstboot) -->
-    <select idref="dcb-rhel5-rule-3.3.2.a" selected="false" />           <!-- Console Mouse Service (gpm) -->
-    <select idref="dcb-rhel5-rule-3.3.3.a" selected="false" />           <!-- Interrupt Distribution on Multiprocessor Systems (irqbalance) -->
-    <select idref="dcb-rhel5-rule-3.3.4.a" selected="false" />            <!-- ISDN Support (isdn) -->
-    <select idref="dcb-rhel5-rule-3.3.5.a" selected="false" />            <!-- Kdump Kernel Crash Analyzer (kdump) -->
-    <select idref="dcb-rhel5-rule-3.3.6.a" selected="false" />           <!-- Kudzu Hardware Probing Utility (kudzu) -->
-    <select idref="dcb-rhel5-rule-3.3.7.a" selected="false" />           <!-- Software RAID Monitor (mdmonitor) -->
-    <select idref="dcb-rhel5-rule-3.3.8.a" selected="false" />           <!-- A32 Microcode Utility(microcodectl) -->
-    <select idref="dcb-rhel5-rule-3.3.9.1.a" selected="false" />         <!-- Disable All Networking if Not Needed) -->
-    <select idref="dcb-rhel5-rule-3.3.9.2.a" selected="false" />         <!-- Disable All External Network Interfaces if Not Needed -->
-    <select idref="dcb-rhel5-rule-3.3.9.3.a" selected="false" />          <!-- Disable Zeroconf Networking -->
+    <select idref="dcb-rhel5-rule-3.2.2.1.a" selected="false" /> <!-- DONE -->   <!-- Remove the telnet client command from the System -->
+    <select idref="dcb-rhel5-rule-3.2.2.1.b" selected="false" /> <!-- DONE -->   <!-- Remove the kerberos telnet client from the System -->
+    <select idref="dcb-rhel5-rule-3.2.3.1.a" selected="false" /> <!-- DONE -->   <!-- Remove the Rsh Server Commands from the System -->
+    <select idref="dcb-rhel5-rule-3.2.3.1.b" selected="false" /> <!-- ERASE -->   <!-- disable rcp -->
+    <select idref="dcb-rhel5-rule-3.2.3.1.c" selected="false" /> <!-- DONE -->  <!-- disable rsh -->
+    <select idref="dcb-rhel5-rule-3.2.3.1.d" selected="false" /> <!-- DONE -->  <!-- disable rlogin -->
+    <select idref="dcb-rhel5-rule-3.2.3.2.a" selected="false" /> <!-- DONE -->  <!-- Remove .rhosts Support from PAM Configuration Files -->
+    <select idref="dcb-rhel5-rule-3.2.3.3.a" selected="false" /> <!-- DONE -->  <!-- Remove the Rsh Client Commands from the System -->
+    <select idref="dcb-rhel5-rule-3.2.4.a" selected="false" />   <!-- DONE -->  <!-- Uninstall NIS -->
+    <select idref="dcb-rhel5-rule-3.2.4.b" selected="false" />   <!-- DONE -->  <!-- Disable NIS -->
+    <select idref="dcb-rhel5-rule-3.2.5.a" selected="false" />   <!-- DONE -->  <!-- Uninstall TFTP Server -->
+    <select idref="dcb-rhel5-rule-3.2.5.b" selected="false" />   <!-- DONE -->  <!-- disable TFTP Server -->
+    <select idref="dcb-rhel5-rule-3.3.1.a" selected="false" />   <!-- DONE -->  <!-- Installation Helper Service (firstboot) -->
+    <select idref="dcb-rhel5-rule-3.3.2.a" selected="false" />   <!-- DONE -->  <!-- Console Mouse Service (gpm) -->
+    <select idref="dcb-rhel5-rule-3.3.3.a" selected="false" />   <!-- DONE -->  <!-- Interrupt Distribution on Multiprocessor Systems (irqbalance) -->
+    <select idref="dcb-rhel5-rule-3.3.4.a" selected="false" />   <!-- DONE -->  <!-- ISDN Support (isdn) -->
+    <select idref="dcb-rhel5-rule-3.3.5.a" selected="false" />   <!-- DONE -->  <!-- Kdump Kernel Crash Analyzer (kdump) -->
+    <select idref="dcb-rhel5-rule-3.3.6.a" selected="false" />   <!-- DONE -->  <!-- Kudzu Hardware Probing Utility (kudzu) -->
+    <select idref="dcb-rhel5-rule-3.3.7.a" selected="false" />   <!-- DONE -->  <!-- Software RAID Monitor (mdmonitor) -->
+    <select idref="dcb-rhel5-rule-3.3.8.a" selected="false" />   <!-- DONE -->  <!-- A32 Microcode Utility(microcodectl) -->
+    <select idref="dcb-rhel5-rule-3.3.9.1.a" selected="false" />    <!-- DONE -->   <!-- Disable All Networking if Not Needed) -->
+    <select idref="dcb-rhel5-rule-3.3.9.2.a" selected="false" />    <!-- DONE -->   <!-- Disable All External Network Interfaces if Not Needed -->
+    <select idref="dcb-rhel5-rule-3.3.9.3.a" selected="false" />    <!-- DONE -->   <!-- Disable Zeroconf Networking -->
     <select idref="dcb-rhel5-rule-3.3.10.a" selected="false" />          <!-- Smart Card Support (pcscd) -->
     <select idref="dcb-rhel5-rule-3.3.11.a" selected="false" />          <!-- SMART Disk Monitoring Support (smartd) -->
     <select idref="dcb-rhel5-rule-3.3.12.a" selected="false" />           <!-- Boot Caching (readahead early/readahead later) -->

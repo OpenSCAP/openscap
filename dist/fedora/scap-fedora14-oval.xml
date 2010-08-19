@@ -2976,7 +2976,7 @@
                         <description>The rcp service should be disabled.</description>
                   </metadata>
                   <criteria operator="OR" comment="telnet-server is not installed or conditions are met">
-                        <extend_definition definition_ref="oval:mil.army.us.rhel5:def:20177" comment="telnet-server is not installed"/>
+                        <extend_definition definition_ref="oval:mil.army.us.rhel5:def:20177" comment="rsh-server is not installed"/>
                         <criterion comment="Unknown test stub" test_ref="oval:mil.army.us.rhel5:tst:22"/>
                   </criteria>
             </definition>
@@ -2990,8 +2990,8 @@
                         <description>The rsh service should be disabled.</description>
                   </metadata>
                   <criteria operator="OR" comment="telnet-server is not installed or conditions are met">
-                        <extend_definition definition_ref="oval:mil.army.us.rhel5:def:20177" comment="telnet-server is not installed"/>
-                        <criterion comment="Unknown test stub" test_ref="oval:mil.army.us.rhel5:tst:22"/>
+                        <extend_definition definition_ref="oval:mil.army.us.rhel5:def:20177" comment="rsh-server is not installed"/>
+                        <criterion comment="Conditions are satisfied" test_ref="oval:mil.army.us.rhel5:tst:201775"/>
                   </criteria>
             </definition>
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:201776" version="1">
@@ -3004,8 +3004,8 @@
                         <description>The rlogin service should be disabled.</description>
                   </metadata>
                   <criteria operator="OR" comment="telnet-server is not installed or conditions are met">
-                        <extend_definition definition_ref="oval:mil.army.us.rhel5:def:20177" comment="telnet-server is not installed"/>
-                        <criterion comment="Unknown test stub" test_ref="oval:mil.army.us.rhel5:tst:22"/>
+                        <extend_definition definition_ref="oval:mil.army.us.rhel5:def:20177" comment="rsh-server is not installed"/>
+                        <criterion comment="Conditions are satisfied" test_ref="oval:mil.army.us.rhel5:tst:201776"/>
                   </criteria>
             </definition>
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:20178" version="1">
@@ -3018,7 +3018,7 @@
                         <description>Check that pam rhosts authentication is not used by any PAM services.</description>
                   </metadata>
                   <criteria>
-                        <criterion comment="Unknown test stub" test_ref="oval:mil.army.us.rhel5:tst:22"/>
+                        <criterion comment="Conditions are satisfied" test_ref="oval:mil.army.us.rhel5:tst:20178"/>
                   </criteria>
             </definition>
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:20179" version="1">
@@ -3031,7 +3031,7 @@
                         <description>The rsh package, which contains client programs for many of r-commands should be uninstalled.</description>
                   </metadata>
                   <criteria>
-                        <criterion comment="Unknown test stub" test_ref="oval:mil.army.us.rhel5:tst:22"/>
+                        <criterion comment="Conditions are satisfied" test_ref="oval:mil.army.us.rhel5:tst:20179"/>
                   </criteria>
             </definition>
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:20180" version="1">
@@ -3085,7 +3085,7 @@
                   </metadata>
                   <criteria operator="OR" comment="tftp-server is not installed or conditions are met">
                         <extend_definition definition_ref="oval:mil.army.us.rhel5:def:20182" comment="tftp-server is not installed"/>
-                        <criterion comment="Unknown test stub" test_ref="oval:mil.army.us.rhel5:tst:22"/>
+                        <criterion comment="Conditions are satisfied" test_ref="oval:mil.army.us.rhel5:tst:201825"/>
                   </criteria>
             </definition>
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:20183" version="1">
@@ -3216,7 +3216,7 @@
                               for ifcfg-lo in /etc/sysconfig/network-scripts should be removed</description>
                   </metadata>
                   <criteria>
-                        <criterion comment="Unknown test stub" test_ref="oval:mil.army.us.rhel5:tst:22"/>
+                        <criterion comment="Conditions are satisfied" test_ref="oval:mil.army.us.rhel5:tst:20192"/>
                   </criteria>
             </definition>
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:20193" version="1">
@@ -6844,10 +6844,32 @@
                   <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:20171"/>
                   <unix-def:state state_ref="oval:mil.army.us.rhel5:ste:20171"/>
             </unix-def:runlevel_test>
-            <unix-def:runlevel_test check_existence="all_exist" id="oval:mil.army.us.rhel5:tst:201745" version="1" check="all" comment="Runlevel test">
+            <unix-def:runlevel_test check_existence="all_exist" id="oval:mil.army.us.rhel5:tst:201745" version="1" check="all" comment="Xinetd runlevel test">
                   <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:201745"/>
                   <unix-def:state state_ref="oval:mil.army.us.rhel5:ste:201745"/>
             </unix-def:runlevel_test>
+            <unix-def:runlevel_test check_existence="all_exist" id="oval:mil.army.us.rhel5:tst:201774" version="1" check="all" comment="Xinetd runlevel test">
+                  <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:201774"/>
+                  <unix-def:state state_ref="oval:mil.army.us.rhel5:ste:201745"/>
+            </unix-def:runlevel_test>
+            <unix-def:runlevel_test check_existence="all_exist" id="oval:mil.army.us.rhel5:tst:201775" version="1" check="all" comment="Xinetd runlevel test">
+                  <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:201775"/>
+                  <unix-def:state state_ref="oval:mil.army.us.rhel5:ste:201745"/>
+            </unix-def:runlevel_test>
+            <unix-def:runlevel_test check_existence="all_exist" id="oval:mil.army.us.rhel5:tst:201776" version="1" check="all" comment="Xinetd runlevel test">
+                  <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:201776"/>
+                  <unix-def:state state_ref="oval:mil.army.us.rhel5:ste:201745"/>
+            </unix-def:runlevel_test>
+            <unix-def:runlevel_test check_existence="none_exist" id="oval:mil.army.us.rhel5:tst:20178" version="1" check="all" comment="Xinetd services test">
+                  <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:20178"/>
+            </unix-def:runlevel_test>
+            <unix-def:runlevel_test check_existence="all_exist" id="oval:mil.army.us.rhel5:tst:201825" version="1" check="all" comment="Xinetd runlevel test">
+                  <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:201825"/>
+                  <unix-def:state state_ref="oval:mil.army.us.rhel5:ste:201745"/>
+            </unix-def:runlevel_test>
+            <lin-def:rpminfo_test check_existence="none_exist" id="oval:mil.army.us.rhel5:tst:20179" version="1" check="all" comment="The inetd package should be installed or not as appropriate">
+                  <lin-def:object object_ref="oval:mil.army.us.rhel5:obj:20179"/>
+            </lin-def:rpminfo_test>
             <lin-def:rpminfo_test check_existence="none_exist" id="oval:mil.army.us.rhel5:tst:20172" version="1" check="all" comment="The inetd package should be installed or not as appropriate">
                   <lin-def:object object_ref="oval:mil.army.us.rhel5:obj:20172"/>
             </lin-def:rpminfo_test>
@@ -6869,39 +6891,52 @@
             <lin-def:rpminfo_test check_existence="none_exist" id="oval:mil.army.us.rhel5:tst:20180" version="1" check="all" comment="The ypserv package should be installed or not as appropriate">
                   <lin-def:object object_ref="oval:mil.army.us.rhel5:obj:20180"/>
             </lin-def:rpminfo_test>
-            <unix-def:runlevel_test check_existence="none_exist" id="oval:mil.army.us.rhel5:tst:20181" version="1" check="all" comment="Runlevel test">
+            <unix-def:runlevel_test check_existence="any_exist" id="oval:mil.army.us.rhel5:tst:20181" version="1" check="all" comment="Runlevel test">
                   <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:20181"/>
+                  <unix-def:state state_ref="oval:mil.army.us.rhel5:ste:20171"/>
             </unix-def:runlevel_test>
             <lin-def:rpminfo_test check_existence="none_exist" id="oval:mil.army.us.rhel5:tst:20182" version="1" check="all" comment="The tftp-server package should be installed or not as appropriate">
                   <lin-def:object object_ref="oval:mil.army.us.rhel5:obj:20182"/>
             </lin-def:rpminfo_test>
-            <unix-def:runlevel_test check_existence="none_exist" id="oval:mil.army.us.rhel5:tst:20183" version="1" check="all" comment="Runlevel test">
+            <unix-def:runlevel_test check_existence="any_exist" id="oval:mil.army.us.rhel5:tst:20183" version="1" check="all" comment="Runlevel test">
                   <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:20183"/>
+                  <unix-def:state state_ref="oval:mil.army.us.rhel5:ste:20171"/>
             </unix-def:runlevel_test>
-            <unix-def:runlevel_test check_existence="none_exist" id="oval:mil.army.us.rhel5:tst:20184" version="1" check="all" comment="Runlevel test">
+            <unix-def:runlevel_test check_existence="any_exist" id="oval:mil.army.us.rhel5:tst:20184" version="1" check="all" comment="Runlevel test">
                   <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:20184"/>
+                  <unix-def:state state_ref="oval:mil.army.us.rhel5:ste:20171"/>
             </unix-def:runlevel_test>
-            <unix-def:runlevel_test check_existence="none_exist" id="oval:mil.army.us.rhel5:tst:20185" version="1" check="all" comment="Runlevel test">
+            <unix-def:runlevel_test check_existence="any_exist" id="oval:mil.army.us.rhel5:tst:20185" version="1" check="all" comment="Runlevel test">
                   <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:20185"/>
+                  <unix-def:state state_ref="oval:mil.army.us.rhel5:ste:20171"/>
             </unix-def:runlevel_test>
-            <unix-def:runlevel_test check_existence="none_exist" id="oval:mil.army.us.rhel5:tst:20186" version="1" check="all" comment="Runlevel test">
+            <unix-def:runlevel_test check_existence="any_exist" id="oval:mil.army.us.rhel5:tst:20186" version="1" check="all" comment="Runlevel test">
                   <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:20186"/>
+                  <unix-def:state state_ref="oval:mil.army.us.rhel5:ste:20171"/>
             </unix-def:runlevel_test>
-            <unix-def:runlevel_test check_existence="none_exist" id="oval:mil.army.us.rhel5:tst:20187" version="1" check="all" comment="Runlevel test">
+            <unix-def:runlevel_test check_existence="any_exist" id="oval:mil.army.us.rhel5:tst:20187" version="1" check="all" comment="Runlevel test">
                   <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:20187"/>
+                  <unix-def:state state_ref="oval:mil.army.us.rhel5:ste:20171"/>
             </unix-def:runlevel_test>
-            <unix-def:runlevel_test check_existence="none_exist" id="oval:mil.army.us.rhel5:tst:20188" version="1" check="all" comment="Runlevel test">
+            <unix-def:runlevel_test check_existence="any_exist" id="oval:mil.army.us.rhel5:tst:20188" version="1" check="all" comment="Runlevel test">
                   <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:20188"/>
+                  <unix-def:state state_ref="oval:mil.army.us.rhel5:ste:20171"/>
             </unix-def:runlevel_test>
-            <unix-def:runlevel_test check_existence="none_exist" id="oval:mil.army.us.rhel5:tst:20189" version="1" check="all" comment="Runlevel test">
+            <unix-def:runlevel_test check_existence="any_exist" id="oval:mil.army.us.rhel5:tst:20189" version="1" check="all" comment="Runlevel test">
                   <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:20189"/>
+                  <unix-def:state state_ref="oval:mil.army.us.rhel5:ste:20171"/>
             </unix-def:runlevel_test>
-            <unix-def:runlevel_test check_existence="none_exist" id="oval:mil.army.us.rhel5:tst:20190" version="1" check="all" comment="Runlevel test">
+            <unix-def:runlevel_test check_existence="any_exist" id="oval:mil.army.us.rhel5:tst:20190" version="1" check="all" comment="Runlevel test">
                   <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:20190"/>
+                  <unix-def:state state_ref="oval:mil.army.us.rhel5:ste:20171"/>
             </unix-def:runlevel_test>
-            <unix-def:runlevel_test check_existence="none_exist" id="oval:mil.army.us.rhel5:tst:20191" version="1" check="all" comment="Runlevel test">
+            <unix-def:runlevel_test check_existence="any_exist" id="oval:mil.army.us.rhel5:tst:20191" version="1" check="all" comment="Runlevel test">
                   <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:20191"/>
+                  <unix-def:state state_ref="oval:mil.army.us.rhel5:ste:20171"/>
             </unix-def:runlevel_test>
+            <ind-def:textfilecontent54_test check_existence="none_exist" id="oval:mil.army.us.rhel5:tst:20192" version="1" check="all" comment="check for ifcfg-interface in /etc/sysconfig/network-scripts">
+                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20192"/>
+            </ind-def:textfilecontent54_test>
             <ind-def:textfilecontent54_test check_existence="at_least_one_exists" id="oval:mil.army.us.rhel5:tst:20193" version="1" check="all" comment="check NOZEROCONF=yes in /etc/sysconfig/network">
                   <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20193"/>
             </ind-def:textfilecontent54_test>
@@ -8702,7 +8737,37 @@
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201745" version="1">
                   <ind-def:path>/etc/xinetd.d</ind-def:path>
                   <ind-def:filename>telnet</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[[:space:]]+disable[[:space:]]*=[[:space:]]*(yes|no)</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match" var_ref="oval:mil.army.us.rhel5:var:2017"/>
+                  <ind-def:instance datatype="int">1</ind-def:instance>
+            </ind-def:textfilecontent54_object>
+            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201774" version="1">
+                  <ind-def:path>/etc/xinetd.d</ind-def:path>
+                  <ind-def:filename>rcp</ind-def:filename>
+                  <ind-def:pattern operation="pattern match" var_ref="oval:mil.army.us.rhel5:var:2017"/>
+                  <ind-def:instance datatype="int">1</ind-def:instance>
+            </ind-def:textfilecontent54_object>
+            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201775" version="1">
+                  <ind-def:path>/etc/xinetd.d</ind-def:path>
+                  <ind-def:filename>rsh</ind-def:filename>
+                  <ind-def:pattern operation="pattern match" var_ref="oval:mil.army.us.rhel5:var:2017"/>
+                  <ind-def:instance datatype="int">1</ind-def:instance>
+            </ind-def:textfilecontent54_object>
+            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201776" version="1">
+                  <ind-def:path>/etc/xinetd.d</ind-def:path>
+                  <ind-def:filename>rlogin</ind-def:filename>
+                  <ind-def:pattern operation="pattern match" var_ref="oval:mil.army.us.rhel5:var:2017"/>
+                  <ind-def:instance datatype="int">1</ind-def:instance>
+            </ind-def:textfilecontent54_object>
+            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201825" version="1">
+                  <ind-def:path>/etc/xinetd.d</ind-def:path>
+                  <ind-def:filename>tftp</ind-def:filename>
+                  <ind-def:pattern operation="pattern match" var_ref="oval:mil.army.us.rhel5:var:2017"/>
+                  <ind-def:instance datatype="int">1</ind-def:instance>
+            </ind-def:textfilecontent54_object>
+            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20178" version="1">
+                  <ind-def:path>/etc/pam.d</ind-def:path>
+                  <ind-def:filename operation="pattern match">.*</ind-def:filename>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*.*pam_rhosts</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20169" version="1">
@@ -8719,6 +8784,9 @@
                   <unix-def:service_name>xinetd</unix-def:service_name>
                   <unix-def:runlevel operation="pattern match">.*</unix-def:runlevel>
             </unix-def:runlevel_object>
+            <lin-def:rpminfo_object id="oval:mil.army.us.rhel5:obj:20179" version="1">
+                  <lin-def:name>rsh</lin-def:name>
+            </lin-def:rpminfo_object>
             <lin-def:rpminfo_object id="oval:mil.army.us.rhel5:obj:20172" version="1">
                   <lin-def:name>inetd</lin-def:name>
             </lin-def:rpminfo_object>
@@ -8783,10 +8851,14 @@
                   <unix-def:service_name>network</unix-def:service_name>
                   <unix-def:runlevel operation="pattern match">.*</unix-def:runlevel>
             </unix-def:runlevel_object>
+            <unix-def:file_object id="oval:mil.army.us.rhel5:obj:20192" version="1" comment="Check existance of yum.cron"> 
+                  <ind-def:path>/etc/sysconfig/network-scripts</ind-def:path>
+                  <unix-def:filename operation="pattern match">ifcfg-[^l][^o].*</unix-def:filename>
+            </unix-def:file_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20193" version="1">
                   <ind-def:path>/etc/sysconfig</ind-def:path>
                   <ind-def:filename>network</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^\s*NOZEROCONF=yes</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^[:space:]*NOZEROCONF=yes</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <unix-def:runlevel_object id="oval:mil.army.us.rhel5:obj:20194" version="1">
@@ -10454,6 +10526,7 @@
             	  <value>targeted</value>
             </constant_variable>
 -->
+
             <constant_variable id="oval:mil.army.us.rhel5:var:201490" version="1" datatype="string" comment="Filenames of mandatory log files">
 	      <value>boot.log</value>
 	      <value>cron</value>
@@ -10466,7 +10539,11 @@
 	      <value>secure</value>
 	      <value>audit.log</value>
 -->
-        </constant_variable>
+	    </constant_variable>
+
+            <constant_variable id="oval:mil.army.us.rhel5:var:2017" version="1" datatype="string" comment="Regexp pattern for xinetd services">
+            	  <value>^[[:space:]]+disable[[:space:]]*=[[:space:]]*(yes|no)</value>
+            </constant_variable>
 
             <local_variable id="oval:mil.army.us.rhel5:var:1" version="1" datatype="boolean" comment="Bit for a permission type">
                   <substring substring_length="1" substring_start="1">
