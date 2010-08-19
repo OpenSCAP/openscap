@@ -140,7 +140,7 @@
     <select idref="dcb-rhel5-rule-2.3.1.7.d" selected="false" />    <!-- DONE -->			<!-- Set password warn age -->
     <select idref="dcb-rhel5-rule-2.3.1.8.a" selected="false" />    <!-- DONE -->		<!-- Remove Legacy + Entries from /etc/shadow -->
     <select idref="dcb-rhel5-rule-2.3.1.8.b" selected="false" />    <!-- DONE -->		<!-- Remove Legacy + Entries from /etc/group -->
-`   <select idref="dcb-rhel5-rule-2.3.1.8.c" selected="false" />    <!-- DONE -->		<!-- Remove Legacy + Entries from /etc/passwd -->
+    <select idref="dcb-rhel5-rule-2.3.1.8.c" selected="false" />    <!-- DONE -->		<!-- Remove Legacy + Entries from /etc/passwd -->
     <select idref="dcb-rhel5-rule-2.3.3.1.1.a" selected="false" />  <!-- DONE -->	<!-- Set Password Quality Requirements using pam_cracklib -->
     <select idref="dcb-rhel5-rule-2.3.3.1.2.a" selected="false" />  <!-- DONE -->	<!-- Set Password Quality Requirements using pam_passwdqc -->
     <select idref="dcb-rhel5-rule-2.3.3.2.a" selected="false" />    <!-- DONE -->	<!-- Set Lockouts for Failed Password Attempts -->
@@ -389,13 +389,12 @@
     <select idref="dcb-rhel5-rule-3.13.1.1.b" selected="false" />         <!-- Disable rpcgssd -->
     <select idref="dcb-rhel5-rule-3.13.1.1.c" selected="false" />         <!-- Disable rpcidmapd -->
     <select idref="dcb-rhel5-rule-3.13.1.2.a" selected="false" />         <!-- Disable netfs if Possible -->
-    eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
-eeeeeselect idref="dcb-rhel5-rule-3.13.2.3.a" selected="false" />        <!-- Configure lockd to Use Fixed Ports for TCP -->
+    <select idref="dcb-rhel5-rule-3.13.2.3.a" selected="false" />        <!-- Configure lockd to Use Fixed Ports for TCP -->
     <select idref="dcb-rhel5-rule-3.13.2.3.b" selected="false" />        <!-- Configure statd to Use a outgoing static port-->
     <select idref="dcb-rhel5-rule-3.13.2.3.c" selected="false" />        <!-- Configure statd to Use a static port -->
     <select idref="dcb-rhel5-rule-3.13.2.3.d" selected="false" />        <!-- Configure lockd to Use a static port for UDP -->
     <select idref="dcb-rhel5-rule-3.13.2.3.e" selected="false" />        <!-- Configure mountd to Use a static port -->
-    hselect idref="dcb-rhel5-rule-3.13.2.3.f" selected="false" />        <!-- Configure rquotad to Use Fixed Ports -->
+    <select idref="dcb-rhel5-rule-3.13.2.3.f" selected="false" />        <!-- Configure rquotad to Use Fixed Ports -->
     <select idref="dcb-rhel5-rule-3.13.3.1.a" selected="false" />         <!-- Disable nfs service -->
     <select idref="dcb-rhel5-rule-3.13.3.1.b" selected="false" />         <!-- Disable rpcsvcgssd service -->
     <select idref="dcb-rhel5-rule-3.13.3.2.a" selected="false" />  <!-- INCOMPLETE OVAL -->       <!-- Mount Remote Filesystems with nodev -->
