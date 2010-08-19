@@ -1109,8 +1109,14 @@
                         <reference ref_id="CCE-3762-2" source="CCE"/>
                         <description>The password strength should meet minimum requirements using pam_cracklib</description>
                   </metadata>
-                  <criteria>
-                        <criterion comment="Conditions for retry, minlen, dcredit, ucredit, ocredit, lcredit and difok are satisfied" test_ref="oval:mil.army.us.rhel5:tst:20078"/>
+                  <criteria operator="AND" comment="Conditions for retry, minlen, dcredit, ucredit, ocredit, lcredit and difok are satisfied">
+                        <criterion comment="Test retry" test_ref="oval:mil.army.us.rhel5:tst:200781"/>
+                        <criterion comment="Test minlen" test_ref="oval:mil.army.us.rhel5:tst:200782"/>
+                        <criterion comment="Test dcredit" test_ref="oval:mil.army.us.rhel5:tst:200783"/>
+                        <criterion comment="Test ucredit" test_ref="oval:mil.army.us.rhel5:tst:200784"/>
+                        <criterion comment="Test ocredit" test_ref="oval:mil.army.us.rhel5:tst:200785"/>
+                        <criterion comment="Test lcredit" test_ref="oval:mil.army.us.rhel5:tst:200786"/>
+                        <criterion comment="Test difok" test_ref="oval:mil.army.us.rhel5:tst:200787"/>
                   </criteria>
             </definition>
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:20079" version="1">
@@ -1137,14 +1143,21 @@
                   </metadata>
                   <criteria>
                         <criteria comment="check that pam_tally2 authorization module is configured correctly" operator="OR">
-                              <criteria comment="unlock_time is not present">
-                                    <criterion comment="check unlock_time is 0" test_ref="oval:mil.army.us.rhel5:tst:200800"/>
-                                    <criterion comment="check system-auth pam_tally2 excluding unlock_time" test_ref="oval:mil.army.us.rhel5:tst:200801"/>
-                              </criteria>
-                              <criteria comment="unlock_time is present">
-                                    <criterion comment="check unlock_time is not 0 (by checking for zero and negating)" test_ref="oval:mil.army.us.rhel5:tst:200800" negate="true"/>
-                                    <criterion comment="check system-auth pam_tally2 including unlock_time" test_ref="oval:mil.army.us.rhel5:tst:200802"/>
-                              </criteria>
+                            <criteria comment="unlock_time is not present">
+                                <criterion comment="check unlock_time is 0" test_ref="oval:mil.army.us.rhel5:tst:200800"/>
+                                <criteria comment="check that pam_tally2 authorization module is configured correctly" operator="OR">
+                                    <criterion comment="check system-auth pam_tally2 excluding unlock_time" test_ref="oval:mil.army.us.rhel5:tst:2008011"/>
+                                    <criterion comment="check system-auth pam_tally2 excluding unlock_time" test_ref="oval:mil.army.us.rhel5:tst:2008012"/>
+                                </criteria>
+                            </criteria>
+                            <criteria comment="unlock_time is present">
+                                <criterion comment="check unlock_time is not 0 (by checking for zero and negating)" test_ref="oval:mil.army.us.rhel5:tst:200800" negate="true"/>
+                                <criteria comment="check that pam_tally2 authorization module is configured correctly" operator="OR">
+                                    <criterion comment="check system-auth pam_tally2 including unlock_time" test_ref="oval:mil.army.us.rhel5:tst:2008011"/>
+                                    <criterion comment="check system-auth pam_tally2 including unlock_time" test_ref="oval:mil.army.us.rhel5:tst:2008012"/>
+                                    <criterion comment="check system-auth pam_tally2 including unlock_time" test_ref="oval:mil.army.us.rhel5:tst:2008013"/>
+                                </criteria>
+                            </criteria>
                         </criteria>
                         <criterion comment="check that pam_tally2 account module is configured correctly" test_ref="oval:mil.army.us.rhel5:tst:200803"/>
                   </criteria>
@@ -2907,7 +2920,7 @@
                   </metadata>
                   <criteria operator="OR" comment="telnet is not installed or conditions are met">
                         <extend_definition definition_ref="oval:mil.army.us.rhel5:def:20174" comment="telnet is not installed"/>
-                        <criterion comment="Unknown test stub" test_ref="oval:mil.army.us.rhel5:tst:22"/>
+                        <criterion comment="Conditions are satisfied" test_ref="oval:mil.army.us.rhel5:tst:201745"/>
                   </criteria>
             </definition>
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:20175" version="1">
@@ -2920,7 +2933,7 @@
                         <description>The telnet package should be uninstalled.</description>
                   </metadata>
                   <criteria>
-                        <criterion comment="Unknown test stub" test_ref="oval:mil.army.us.rhel5:tst:22"/>
+                        <criterion comment="Conditions are satisfied" test_ref="oval:mil.army.us.rhel5:tst:20175"/>
                   </criteria>
             </definition>
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:20176" version="1">
@@ -2933,7 +2946,7 @@
                         <description>The krb5-workstation package should be uninstalled.</description>
                   </metadata>
                   <criteria>
-                        <criterion comment="Unknown test stub" test_ref="oval:mil.army.us.rhel5:tst:22"/>
+                        <criterion comment="Conditions are satisfied" test_ref="oval:mil.army.us.rhel5:tst:20176"/>
                   </criteria>
             </definition>
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:20177" version="1">
@@ -6004,33 +6017,50 @@
             <ind-def:textfilecontent54_test check_existence="none_exist" id="oval:mil.army.us.rhel5:tst:20077" version="1" check="all" comment="Tests the value of the ^+: setting in the /etc/passwd file">
                   <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20077"/>
             </ind-def:textfilecontent54_test>
-            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:20078" version="1" check="all" comment="check the configuration of /etc/pam.d/system-auth">
-                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20078"/>
+            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:200781" version="1" check="all" comment="check the configuration of /etc/pam.d/system-auth">
+                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:200781"/>
                   <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:200781"/>
-<!-- TODO                 <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:200782"/>
-                  <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:200783"/>
-                  <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:200784"/>
-                  <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:200785"/>
-                  <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:200786"/>
-                  <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:200787"/> -->
             </ind-def:textfilecontent54_test>
+            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:200782" version="1" check="all" comment="check the configuration of /etc/pam.d/system-auth">
+                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:200782"/>
+                  <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:200782"/>
+            </ind-def:textfilecontent54_test>
+            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:200783" version="1" check="all" comment="check the configuration of /etc/pam.d/system-auth">
+                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:200783"/>
+                   <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:200783"/>
+            </ind-def:textfilecontent54_test>
+            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:200784" version="1" check="all" comment="check the configuration of /etc/pam.d/system-auth">
+                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:200784"/>
+                   <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:200784"/>
+            </ind-def:textfilecontent54_test>
+            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:200785" version="1" check="all" comment="check the configuration of /etc/pam.d/system-auth">
+                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:200785"/>
+                   <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:200785"/>
+            </ind-def:textfilecontent54_test>
+            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:200786" version="1" check="all" comment="check the configuration of /etc/pam.d/system-auth">
+                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:200786"/>
+                   <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:200786"/>
+            </ind-def:textfilecontent54_test>
+            <ind-def:textfilecontent54_test id="oval:mil.army.us.rhel5:tst:200787" version="1" check="all" comment="check the configuration of /etc/pam.d/system-auth">
+                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:200787"/>
+                  <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:200787"/>
+             </ind-def:textfilecontent54_test>
             <ind-def:unknown_test id="oval:mil.army.us.rhel5:tst:20079" version="1" check="all" comment="pam_passwdqc is not implemented" />
             <ind-def:variable_test id="oval:mil.army.us.rhel5:tst:200800" version="1" check="all" comment="check value of unlock_time">
                   <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:200800"/>
                   <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:200800"/>
             </ind-def:variable_test>
-<!-- TODO           <ind-def:textfilecontent54_test check_existence="only_one_exists" id="oval:mil.army.us.rhel5:tst:200801" version="1" check="all" comment="check system-auth pam_tally2 excluding unlock_time" state_operator="OR"> -->
-            <ind-def:textfilecontent54_test check_existence="only_one_exists" id="oval:mil.army.us.rhel5:tst:200801" version="1" check="all" comment="check system-auth pam_tally2 excluding unlock_time">
-	          <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:200801"/>
-                  <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:200801"/>
-<!-- TODO                 <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:200802"/> -->
+            <ind-def:textfilecontent54_test check_existence="only_one_exists" id="oval:mil.army.us.rhel5:tst:2008011" version="1" check="all" comment="check system-auth pam_tally2 excluding unlock_time">
+                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:2008011"/>
+                  <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:2008011"/>
             </ind-def:textfilecontent54_test>
-<!--TODO            <ind-def:textfilecontent54_test check_existence="only_one_exists" id="oval:mil.army.us.rhel5:tst:200802" version="1" check="all" comment="check system-auth pam_tally2 including unlock_time" state_operator="OR"> -->
-             <ind-def:textfilecontent54_test check_existence="only_one_exists" id="oval:mil.army.us.rhel5:tst:200802" version="1" check="all" comment="check system-auth pam_tally2 including unlock_time" >
-                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:200802"/>
-                  <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:200801"/>
-<!-- TODO                 <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:200802"/>
-                  <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:200803"/> -->
+            <ind-def:textfilecontent54_test check_existence="only_one_exists" id="oval:mil.army.us.rhel5:tst:2008012" version="1" check="all" comment="check system-auth pam_tally2 excluding unlock_time">
+                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:2008012"/>
+                  <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:2008012"/> 
+            </ind-def:textfilecontent54_test>
+            <ind-def:textfilecontent54_test check_existence="only_one_exists" id="oval:mil.army.us.rhel5:tst:2008013" version="1" check="all" comment="check system-auth pam_tally2 including unlock_time" >
+                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:2008013"/>
+                  <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:2008013"/> 
             </ind-def:textfilecontent54_test>
 <!-- TODO           <ind-def:textfilecontent54_test check_existence="only_one_exists" id="oval:mil.army.us.rhel5:tst:200803" version="1" check="all" comment="check system-auth pam_tally2 account is configured correctly" state_operator="OR"> -->
             <ind-def:textfilecontent54_test check_existence="only_one_exists" id="oval:mil.army.us.rhel5:tst:200803" version="1" check="all" comment="check system-auth pam_tally2 account is configured correctly">
@@ -6792,11 +6822,17 @@
             <ind-def:textfilecontent54_test check_existence="at_least_one_exists" id="oval:mil.army.us.rhel5:tst:20169" version="1" check="all" comment="look in /etc/audit/audit.rules for -e 2">
                   <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20169"/>
             </ind-def:textfilecontent54_test>
-            <unix-def:runlevel_test check_existence="none_exist" id="oval:mil.army.us.rhel5:tst:20170" version="1" check="all" comment="Runlevel test">
+            <unix-def:runlevel_test check_existence="any_exist" id="oval:mil.army.us.rhel5:tst:20170" version="1" check="all" comment="Runlevel test">
                   <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:20170"/>
+                  <unix-def:state state_ref="oval:mil.army.us.rhel5:ste:20171"/>
             </unix-def:runlevel_test>
-            <unix-def:runlevel_test check_existence="none_exist" id="oval:mil.army.us.rhel5:tst:20171" version="1" check="all" comment="Runlevel test">
+            <unix-def:runlevel_test check_existence="any_exist" id="oval:mil.army.us.rhel5:tst:20171" version="1" check="all" comment="Runlevel test">
                   <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:20171"/>
+                  <unix-def:state state_ref="oval:mil.army.us.rhel5:ste:20171"/>
+            </unix-def:runlevel_test>
+            <unix-def:runlevel_test check_existence="all_exist" id="oval:mil.army.us.rhel5:tst:201745" version="1" check="all" comment="Runlevel test">
+                  <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:201745"/>
+                  <unix-def:state state_ref="oval:mil.army.us.rhel5:ste:201745"/>
             </unix-def:runlevel_test>
             <lin-def:rpminfo_test check_existence="none_exist" id="oval:mil.army.us.rhel5:tst:20172" version="1" check="all" comment="The inetd package should be installed or not as appropriate">
                   <lin-def:object object_ref="oval:mil.army.us.rhel5:obj:20172"/>
@@ -6806,6 +6842,12 @@
             </lin-def:rpminfo_test>
             <lin-def:rpminfo_test check_existence="none_exist" id="oval:mil.army.us.rhel5:tst:20174" version="1" check="all" comment="The telnet-server package should be installed or not as appropriate">
                   <lin-def:object object_ref="oval:mil.army.us.rhel5:obj:20174"/>
+            </lin-def:rpminfo_test>
+            <lin-def:rpminfo_test check_existence="none_exist" id="oval:mil.army.us.rhel5:tst:20175" version="1" check="all" comment="The telnet-server package should be installed or not as appropriate">
+                  <lin-def:object object_ref="oval:mil.army.us.rhel5:obj:20175"/>
+            </lin-def:rpminfo_test>
+            <lin-def:rpminfo_test check_existence="none_exist" id="oval:mil.army.us.rhel5:tst:20176" version="1" check="all" comment="The telnet-server package should be installed or not as appropriate">
+                  <lin-def:object object_ref="oval:mil.army.us.rhel5:obj:20176"/>
             </lin-def:rpminfo_test>
             <lin-def:rpminfo_test check_existence="none_exist" id="oval:mil.army.us.rhel5:tst:20177" version="1" check="all" comment="The rsh-server package should be installed or not as appropriate">
                   <lin-def:object object_ref="oval:mil.army.us.rhel5:obj:20177"/>
@@ -7644,31 +7686,73 @@
                   <ind-def:pattern operation="pattern match">^\+:</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
-            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20078" version="1">
+            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:200781" version="1">
                   <ind-def:path>/etc/pam.d</ind-def:path>
                   <ind-def:filename>system-auth</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[\s]*password[\s]+required[\s]+pam_cracklib\.so[\s]+try_first_pass[\s]+retry=([\d]+)[\s]+minlen=([1-9][\d]*)[\s]+dcredit=([-]?[\d]+)[\s]+ucredit=([-]?[\d]+)[\s]+ocredit=([-]?[\d]+)[\s]+lcredit=([-]?[\d]+)[\s]+difok=([\d]+)</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*password[[:space:]]+required[[:space:]]+pam_cracklib\.so[[:space:]]+try_first_pass[[:space:]]+.*retry=([[:digit:]]+)</ind-def:pattern>
+                  <ind-def:instance operation="greater than or equal" datatype="int">1</ind-def:instance>
+            </ind-def:textfilecontent54_object>
+            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:200782" version="1">
+                  <ind-def:path>/etc/pam.d</ind-def:path>
+                  <ind-def:filename>system-auth</ind-def:filename>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*password[[:space:]]+required[[:space:]]+pam_cracklib\.so[[:space:]]+try_first_pass[[:space:]]+.*minlen=([1-9][[:digit:]]*)</ind-def:pattern>
+                  <ind-def:instance operation="greater than or equal" datatype="int">1</ind-def:instance>
+            </ind-def:textfilecontent54_object>
+            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:200783" version="1">
+                  <ind-def:path>/etc/pam.d</ind-def:path>
+                  <ind-def:filename>system-auth</ind-def:filename>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*password[[:space:]]+required[[:space:]]+pam_cracklib\.so[[:space:]]+try_first_pass[[:space:]]+.*dcredit=([-]?[[:digit:]]+)</ind-def:pattern>
+                  <ind-def:instance operation="greater than or equal" datatype="int">1</ind-def:instance>
+            </ind-def:textfilecontent54_object>
+            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:200784" version="1">
+                  <ind-def:path>/etc/pam.d</ind-def:path>
+                  <ind-def:filename>system-auth</ind-def:filename>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*password[[:space:]]+required[[:space:]]+pam_cracklib\.so[[:space:]]+try_first_pass[[:space:]]+.*ucredit=([-]?[[:digit:]]+)</ind-def:pattern>
+                  <ind-def:instance operation="greater than or equal" datatype="int">1</ind-def:instance>
+            </ind-def:textfilecontent54_object>
+            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:200785" version="1">
+                  <ind-def:path>/etc/pam.d</ind-def:path>
+                  <ind-def:filename>system-auth</ind-def:filename>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*password[[:space:]]+required[[:space:]]+pam_cracklib\.so[[:space:]]+try_first_pass[[:space:]]+.*ocredit=([-]?[[:digit:]]+)</ind-def:pattern>
+                  <ind-def:instance operation="greater than or equal" datatype="int">1</ind-def:instance>
+            </ind-def:textfilecontent54_object>
+            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:200786" version="1">
+                  <ind-def:path>/etc/pam.d</ind-def:path>
+                  <ind-def:filename>system-auth</ind-def:filename>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*password[[:space:]]+required[[:space:]]+pam_cracklib\.so[[:space:]]+try_first_pass[[:space:]]+.*lcredit=([-]?[[:digit:]]+)</ind-def:pattern>
+                  <ind-def:instance operation="greater than or equal" datatype="int">1</ind-def:instance>
+            </ind-def:textfilecontent54_object>
+            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:200787" version="1">
+                  <ind-def:path>/etc/pam.d</ind-def:path>
+                  <ind-def:filename>system-auth</ind-def:filename>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*password[[:space:]]+required[[:space:]]+pam_cracklib\.so[[:space:]]+try_first_pass[[:space:]]+.*difok=([[:digit:]]+)</ind-def:pattern>
                   <ind-def:instance operation="greater than or equal" datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:variable_object id="oval:mil.army.us.rhel5:obj:200800" version="1">
                   <ind-def:var_ref>oval:mil.army.us.rhel5:var:200803</ind-def:var_ref>
             </ind-def:variable_object>
-            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:200801" version="1">
+            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:2008011" version="1">
                   <ind-def:path>/etc/pam.d</ind-def:path>
                   <ind-def:filename>system-auth</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[\s]*auth[\s]+required[\s]+pam_tally2\.so[\s]+onerr\=fail[\s]+deny=(\d+)[\s]+lock_time=(\d+)$</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*auth[[:space:]]+required[[:space:]]+pam_tally2\.so[[:space:]]+onerr\=fail[[:space:]]+.*deny=([[:digit:]]+)</ind-def:pattern>
                   <ind-def:instance operation="greater than or equal" datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
-            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:200802" version="1">
+            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:2008012" version="1">
                   <ind-def:path>/etc/pam.d</ind-def:path>
                   <ind-def:filename>system-auth</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[\s]*auth[\s]+required[\s]+pam_tally2\.so[\s]+onerr\=fail[\s]+deny=(\d+)[\s]+lock_time=(\d+)[\s]+unlock_time=([\d]+)$</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*auth[[:space:]]+required[[:space:]]+pam_tally2\.so[[:space:]]+onerr\=fail[[:space:]]+.*[^u][^n]lock_time=([[:digit:]]+)</ind-def:pattern>
+                  <ind-def:instance operation="greater than or equal" datatype="int">1</ind-def:instance>
+            </ind-def:textfilecontent54_object>
+            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:2008013" version="1">
+                  <ind-def:path>/etc/pam.d</ind-def:path>
+                  <ind-def:filename>system-auth</ind-def:filename>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*auth[[:space:]]+required[[:space:]]+pam_tally2\.so[[:space:]]+onerr\=fail[[:space:]]+.*unlock_time=([[:digit:]]+)</ind-def:pattern>
                   <ind-def:instance operation="greater than or equal" datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:200803" version="1">
                   <ind-def:path>/etc/pam.d</ind-def:path>
                   <ind-def:filename>system-auth</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[\s]*account[\s]+required[\s]+pam_tally2\.so$</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*account[[:space:]]+required[[:space:]]+pam_tally2\.so$</ind-def:pattern>
                   <ind-def:instance operation="equals" datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <unix-def:file_object id="oval:mil.army.us.rhel5:obj:20081" version="1" comment="/usr/sbin/userhelper">
@@ -8600,6 +8684,12 @@
                   <ind-def:pattern operation="pattern match">^\-a[[:space:]]always,exit[[:space:]]\-S[[:space:]]init_module[[:space:]]\-S[[:space:]]delete_module[[:space:]]\-k[[:space:]]modules</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
+            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201745" version="1">
+                  <ind-def:path>/etc/xinetd.d</ind-def:path>
+                  <ind-def:filename>telnet</ind-def:filename>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]+disable[[:space:]]*=[[:space:]]*(yes|no)</ind-def:pattern>
+                  <ind-def:instance datatype="int">1</ind-def:instance>
+            </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20169" version="1">
                   <ind-def:path>/etc/audit</ind-def:path>
                   <ind-def:filename>audit.rules</ind-def:filename>
@@ -8622,6 +8712,12 @@
             </lin-def:rpminfo_object>
             <lin-def:rpminfo_object id="oval:mil.army.us.rhel5:obj:20174" version="1">
                   <lin-def:name>telnet-server</lin-def:name>
+            </lin-def:rpminfo_object>
+            <lin-def:rpminfo_object id="oval:mil.army.us.rhel5:obj:20175" version="1">
+                  <lin-def:name>telnet</lin-def:name>
+            </lin-def:rpminfo_object>
+            <lin-def:rpminfo_object id="oval:mil.army.us.rhel5:obj:20176" version="1">
+                  <lin-def:name>krb5-workstation</lin-def:name>
             </lin-def:rpminfo_object>
             <lin-def:rpminfo_object id="oval:mil.army.us.rhel5:obj:20177" version="1">
                   <lin-def:name>rsh-server</lin-def:name>
@@ -9662,46 +9758,36 @@
                   <ind-def:subexpression var_check="all" operation="equals" var_ref="oval:mil.army.us.rhel5:var:20074"/>
             </ind-def:textfilecontent54_state>
             <ind-def:textfilecontent54_state id="oval:mil.army.us.rhel5:ste:200781" version="1" comment="retry">
-                  <ind-def:instance datatype="int">1</ind-def:instance>
                   <ind-def:subexpression var_check="all" datatype="int" operation="equals" var_ref="oval:mil.army.us.rhel5:var:200781"/>
             </ind-def:textfilecontent54_state>
             <ind-def:textfilecontent54_state id="oval:mil.army.us.rhel5:ste:200782" version="1" comment="minlen">
-                  <ind-def:instance datatype="int">2</ind-def:instance>
                   <ind-def:subexpression datatype="int" operation="equals" var_check="all" var_ref="oval:mil.army.us.rhel5:var:200782"/>
             </ind-def:textfilecontent54_state>
             <ind-def:textfilecontent54_state id="oval:mil.army.us.rhel5:ste:200783" version="1" comment="dcredit">
-                  <ind-def:instance datatype="int">3</ind-def:instance>
                   <ind-def:subexpression datatype="int" operation="equals" var_check="all" var_ref="oval:mil.army.us.rhel5:var:200783"/>
             </ind-def:textfilecontent54_state>
             <ind-def:textfilecontent54_state id="oval:mil.army.us.rhel5:ste:200784" version="1" comment="ucredit">
-                  <ind-def:instance datatype="int">4</ind-def:instance>
                   <ind-def:subexpression datatype="int" var_check="all" operation="equals" var_ref="oval:mil.army.us.rhel5:var:200784"/>
             </ind-def:textfilecontent54_state>
             <ind-def:textfilecontent54_state id="oval:mil.army.us.rhel5:ste:200785" version="1" comment="ocredit">
-                  <ind-def:instance datatype="int">5</ind-def:instance>
                   <ind-def:subexpression datatype="int" var_check="all" operation="equals" var_ref="oval:mil.army.us.rhel5:var:200785"/>
             </ind-def:textfilecontent54_state>
             <ind-def:textfilecontent54_state id="oval:mil.army.us.rhel5:ste:200786" version="1" comment="lcredit">
-                  <ind-def:instance datatype="int">6</ind-def:instance>
                   <ind-def:subexpression datatype="int" var_check="all" operation="equals" var_ref="oval:mil.army.us.rhel5:var:200786"/>
             </ind-def:textfilecontent54_state>
             <ind-def:textfilecontent54_state id="oval:mil.army.us.rhel5:ste:200787" version="1" comment="difok">
-                  <ind-def:instance datatype="int">7</ind-def:instance>
                   <ind-def:subexpression datatype="int" var_check="all" operation="equals" var_ref="oval:mil.army.us.rhel5:var:200787"/>
             </ind-def:textfilecontent54_state>
             <ind-def:variable_state id="oval:mil.army.us.rhel5:ste:200800" version="1" comment="expected value of unlock_time">
                   <ind-def:value>0</ind-def:value>
             </ind-def:variable_state>
-            <ind-def:textfilecontent54_state id="oval:mil.army.us.rhel5:ste:200801" version="1" comment="deny">
-                  <ind-def:instance datatype="int">1</ind-def:instance>
+            <ind-def:textfilecontent54_state id="oval:mil.army.us.rhel5:ste:2008011" version="1" comment="deny">
                   <ind-def:subexpression datatype="int" var_check="all" var_ref="oval:mil.army.us.rhel5:var:200801"/>
             </ind-def:textfilecontent54_state>
-            <ind-def:textfilecontent54_state id="oval:mil.army.us.rhel5:ste:200802" version="1" comment="lock_time">
-                  <ind-def:instance datatype="int">2</ind-def:instance>
+            <ind-def:textfilecontent54_state id="oval:mil.army.us.rhel5:ste:2008012" version="1" comment="lock_time">
                   <ind-def:subexpression datatype="int" var_check="all" var_ref="oval:mil.army.us.rhel5:var:200802"/>
             </ind-def:textfilecontent54_state>
-            <ind-def:textfilecontent54_state id="oval:mil.army.us.rhel5:ste:200803" version="1" comment="unlock_time">
-                  <ind-def:instance datatype="int">3</ind-def:instance>
+            <ind-def:textfilecontent54_state id="oval:mil.army.us.rhel5:ste:2008013" version="1" comment="unlock_time">
                   <ind-def:subexpression datatype="int" var_check="all" var_ref="oval:mil.army.us.rhel5:var:200803"/>
             </ind-def:textfilecontent54_state>
             <unix-def:file_state id="oval:mil.army.us.rhel5:ste:20081" version="1">
@@ -9820,6 +9906,10 @@
                   <unix-def:start datatype="boolean">false</unix-def:start>
                   <unix-def:kill datatype="boolean">true</unix-def:kill>
             </unix-def:runlevel_state>
+            <unix-def:runlevel_state id="oval:mil.army.us.rhel5:ste:20171" version="1">
+                  <unix-def:start datatype="boolean">false</unix-def:start>
+                  <unix-def:kill datatype="boolean">true</unix-def:kill>
+            </unix-def:runlevel_state>
 	    <!-- shared states: subexpression == {0, 1} -->
             <ind-def:textfilecontent54_state id="oval:mil.army.us.rhel5:ste:201120" version="1">
                   <ind-def:subexpression datatype="int" operation="equals">0</ind-def:subexpression>
@@ -9903,6 +9993,9 @@
             </ind-def:textfilecontent54_state>
             <ind-def:textfilecontent54_state id="oval:mil.army.us.rhel5:ste:20142" version="1">
                   <ind-def:subexpression var_check="all" operation="equals" var_ref="oval:mil.army.us.rhel5:var:20142"/>
+            </ind-def:textfilecontent54_state>
+            <ind-def:textfilecontent54_state id="oval:mil.army.us.rhel5:ste:201745" version="1">
+                  <ind-def:subexpression operation="equals">yes</ind-def:subexpression>
             </ind-def:textfilecontent54_state>
             <unix-def:file_state id="oval:mil.army.us.rhel5:ste:20149" version="1">
                   <unix-def:user_id>0</unix-def:user_id>
@@ -10236,13 +10329,13 @@
             <external_variable id="oval:mil.army.us.rhel5:var:20072" version="1" datatype="string" comment="External variable for definition 20072"/>
             <external_variable id="oval:mil.army.us.rhel5:var:20073" version="1" datatype="string" comment="External variable for definition 20073"/>
             <external_variable id="oval:mil.army.us.rhel5:var:20074" version="1" datatype="string" comment="External variable for definition 20074"/>
-            <external_variable id="oval:mil.army.us.rhel5:var:200781" version="1" datatype="int" comment="External variable for definition 20078"/>
-            <external_variable id="oval:mil.army.us.rhel5:var:200782" version="1" datatype="int" comment="External variable for definition 20078"/>
-            <external_variable id="oval:mil.army.us.rhel5:var:200783" version="1" datatype="int" comment="External variable for definition 20078"/>
-            <external_variable id="oval:mil.army.us.rhel5:var:200784" version="1" datatype="int" comment="External variable for definition 20078"/>
-            <external_variable id="oval:mil.army.us.rhel5:var:200785" version="1" datatype="int" comment="External variable for definition 20078"/>
-            <external_variable id="oval:mil.army.us.rhel5:var:200786" version="1" datatype="int" comment="External variable for definition 20078"/>
-            <external_variable id="oval:mil.army.us.rhel5:var:200787" version="1" datatype="int" comment="External variable for definition 20078"/>
+            <external_variable id="oval:mil.army.us.rhel5:var:200781" version="1" datatype="int" comment="External variable for definition 200781"/>
+            <external_variable id="oval:mil.army.us.rhel5:var:200782" version="1" datatype="int" comment="External variable for definition 200782"/>
+            <external_variable id="oval:mil.army.us.rhel5:var:200783" version="1" datatype="int" comment="External variable for definition 200783"/>
+            <external_variable id="oval:mil.army.us.rhel5:var:200784" version="1" datatype="int" comment="External variable for definition 200784"/>
+            <external_variable id="oval:mil.army.us.rhel5:var:200785" version="1" datatype="int" comment="External variable for definition 200785"/>
+            <external_variable id="oval:mil.army.us.rhel5:var:200786" version="1" datatype="int" comment="External variable for definition 200786"/>
+            <external_variable id="oval:mil.army.us.rhel5:var:200787" version="1" datatype="int" comment="External variable for definition 200787"/>
             <external_variable id="oval:mil.army.us.rhel5:var:200801" version="1" datatype="int" comment="External variable for definition 20080 deny"/>
             <external_variable id="oval:mil.army.us.rhel5:var:200802" version="1" datatype="int" comment="External variable for definition 20080 lock_time"/>
             <external_variable id="oval:mil.army.us.rhel5:var:200803" version="1" datatype="int" comment="External variable for definition 20080 unlock_time"/>

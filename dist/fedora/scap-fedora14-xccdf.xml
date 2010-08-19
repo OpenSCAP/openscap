@@ -87,7 +87,7 @@
     <select idref="dcb-rhel5-rule-2.2.2.2.2.a" selected="false" />	<!-- DONE -->		<!-- Remove USB Storage Driver -->
     <select idref="dcb-rhel5-rule-2.2.2.2.3.a" selected="false" />	<!-- DONE -->		<!-- Disable Kernel Support for USB via Bootloader Configuration (will disable all USB devices including keyboards, mice, etc) -->
     <select idref="dcb-rhel5-rule-2.2.2.2.4.a" selected="false" /> 	<!-- DONE -->		<!-- Disable Booting from USB Devices -->
-    <select idref="dcb-rhel5-rule-2.2.2.3.a" selected="true" />		<!-- DONE -->		<!-- Disable the Automounter if Possible -->
+    <select idref="dcb-rhel5-rule-2.2.2.3.a" selected="false" />	<!-- DONE -->		<!-- Disable the Automounter if Possible -->
     <select idref="dcb-rhel5-rule-2.2.2.4.a" selected="false" />	<!-- BUG? -->     	<!-- Disable GNOME Automounting if Possible -->
     <select idref="dcb-rhel5-rule-2.2.2.5.a" selected="false" />	<!-- DONE -->		<!-- Disable Mounting of cramfs -->
     <select idref="dcb-rhel5-rule-2.2.2.5.b" selected="false" />	<!-- DONE -->		<!-- Disable Mounting of freevxfs -->
@@ -96,18 +96,18 @@
     <select idref="dcb-rhel5-rule-2.2.2.5.e" selected="false" />	<!-- DONE -->		<!-- Disable Mounting of hfsplus -->
     <select idref="dcb-rhel5-rule-2.2.2.5.f" selected="false" />	<!-- DONE -->		<!-- Disable Mounting of squashfs -->
     <select idref="dcb-rhel5-rule-2.2.2.5.g" selected="false" />	<!-- DONE -->		<!-- Disable Mounting of udf -->
-    <select idref="dcb-rhel5-rule-2.2.3.1.a" selected="true" />		<!-- DONE -->		<!-- Verify user who owns '/etc/shadow' file -->
-    <select idref="dcb-rhel5-rule-2.2.3.1.b" selected="true" />		<!-- DONE -->		<!-- Verify group who owns '/etc/shadow' file -->
-    <select idref="dcb-rhel5-rule-2.2.3.1.c" selected="true" />		<!-- DONE -->		<!-- Verify user who owns '/etc/group' file -->
-    <select idref="dcb-rhel5-rule-2.2.3.1.d" selected="true" />		<!-- DONE -->		<!-- Verify group who owns '/etc/group' file -->
-    <select idref="dcb-rhel5-rule-2.2.3.1.e" selected="true" />		<!-- DONE -->		<!-- Verify user who owns '/etc/gshadow' file -->
-    <select idref="dcb-rhel5-rule-2.2.3.1.f" selected="true" />		<!-- DONE -->		<!-- Verify group who owns '/etc/gshadow' file -->
-    <select idref="dcb-rhel5-rule-2.2.3.1.g" selected="true" />		<!-- DONE -->		<!-- Verify user who owns '/etc/passwd' file -->
-    <select idref="dcb-rhel5-rule-2.2.3.1.h" selected="true" />		<!-- DONE -->		<!-- Verify group who owns '/etc/passwd' file -->
-    <select idref="dcb-rhel5-rule-2.2.3.1.i" selected="true" />		<!-- DONE -->  		<!-- Verify permissions on '/etc/shadow' file -->
-    <select idref="dcb-rhel5-rule-2.2.3.1.j" selected="true" />		<!-- DONE -->  		<!-- Verify permissions on '/etc/group' file -->
-    <select idref="dcb-rhel5-rule-2.2.3.1.k" selected="true" />		<!-- DONE -->		<!-- Verify permissions on '/etc/gshadow' file -->
-    <select idref="dcb-rhel5-rule-2.2.3.1.l" selected="true" />		<!-- DONE --> 	 	<!-- Verify permissions on '/etc/passwd' file -->
+    <select idref="dcb-rhel5-rule-2.2.3.1.a" selected="false" />		<!-- DONE -->		<!-- Verify user who owns '/etc/shadow' file -->
+    <select idref="dcb-rhel5-rule-2.2.3.1.b" selected="false" />		<!-- DONE -->		<!-- Verify group who owns '/etc/shadow' file -->
+    <select idref="dcb-rhel5-rule-2.2.3.1.c" selected="false" />		<!-- DONE -->		<!-- Verify user who owns '/etc/group' file -->
+    <select idref="dcb-rhel5-rule-2.2.3.1.d" selected="false" />		<!-- DONE -->		<!-- Verify group who owns '/etc/group' file -->
+    <select idref="dcb-rhel5-rule-2.2.3.1.e" selected="false" />		<!-- DONE -->		<!-- Verify user who owns '/etc/gshadow' file -->
+    <select idref="dcb-rhel5-rule-2.2.3.1.f" selected="false" />		<!-- DONE -->		<!-- Verify group who owns '/etc/gshadow' file -->
+    <select idref="dcb-rhel5-rule-2.2.3.1.g" selected="false" />		<!-- DONE -->		<!-- Verify user who owns '/etc/passwd' file -->
+    <select idref="dcb-rhel5-rule-2.2.3.1.h" selected="false" />		<!-- DONE -->		<!-- Verify group who owns '/etc/passwd' file -->
+    <select idref="dcb-rhel5-rule-2.2.3.1.i" selected="false" />		<!-- DONE -->  		<!-- Verify permissions on '/etc/shadow' file -->
+    <select idref="dcb-rhel5-rule-2.2.3.1.j" selected="false" />		<!-- DONE -->  		<!-- Verify permissions on '/etc/group' file -->
+    <select idref="dcb-rhel5-rule-2.2.3.1.k" selected="false" />		<!-- DONE -->		<!-- Verify permissions on '/etc/gshadow' file -->
+    <select idref="dcb-rhel5-rule-2.2.3.1.l" selected="false" />		<!-- DONE --> 	 	<!-- Verify permissions on '/etc/passwd' file -->
     <select idref="dcb-rhel5-rule-2.2.3.2.a" selected="false" />	<!-- DONE -->		<!-- Verify that All World-Writable Directories Have Sticky Bits Set -->
     <select idref="dcb-rhel5-rule-2.2.3.3.a" selected="false" />    	<!-- DONE -->		<!-- Find Unauthorized World-Writable Files -->
     <select idref="dcb-rhel5-rule-2.2.3.4.a" selected="false" />    <!-- ?OK -->		<!-- Find Unauthorized SGID System Executables -->
@@ -121,8 +121,8 @@
     <select idref="dcb-rhel5-rule-2.2.4.2.b" selected="false" />    <!-- DONE -->		<!-- Disable Core Dumps for SUID programs -->
     <select idref="dcb-rhel5-rule-2.2.4.3.a" selected="false" />    <!-- DONE -->		<!-- Enable ExecShield -->
     <select idref="dcb-rhel5-rule-2.2.4.3.b" selected="false" />    <!-- DONE -->		<!-- Enable ExecShield randomized placement of virtual memory regions -->
-    <select idref="dcb-rhel5-rule-2.2.4.4.2.a" selected="false" />  <!-- ? Fedora -->		<!-- Install New Kernel on Supported x86 Systems -->
-    <select idref="dcb-rhel5-rule-2.2.4.4.3.a" selected="false" />  <!--Unknown test -->	<!-- Enable NX or XD Support in the BIOS -->
+    <select idref="dcb-rhel5-rule-2.2.4.4.2.a" selected="false" />  <!-- TODO -->		<!-- Install New Kernel on Supported x86 Systems -->
+    <select idref="dcb-rhel5-rule-2.2.4.4.3.a" selected="false" />  <!-- DONE -->	<!-- Enable NX or XD Support in the BIOS -->
     <select idref="dcb-rhel5-rule-2.3.1.1.a" selected="false" />    <!-- DONE -->			<!-- Restrict Root Logins to System Console -->
     <select idref="dcb-rhel5-rule-2.3.1.1.b" selected="false" />    <!-- DONE -->			<!-- Restrict virtual console Root Logins -->
     <select idref="dcb-rhel5-rule-2.3.1.1.c" selected="false" />    <!-- DONE -->			<!-- Restrict deprecated virtual console Root Logins -->
@@ -141,10 +141,10 @@
     <select idref="dcb-rhel5-rule-2.3.1.8.a" selected="false" />    <!-- DONE -->		<!-- Remove Legacy + Entries from /etc/shadow -->
     <select idref="dcb-rhel5-rule-2.3.1.8.b" selected="false" />    <!-- DONE -->		<!-- Remove Legacy + Entries from /etc/group -->
 `   <select idref="dcb-rhel5-rule-2.3.1.8.c" selected="false" />    <!-- DONE -->		<!-- Remove Legacy + Entries from /etc/passwd -->
-    <select idref="dcb-rhel5-rule-2.3.3.1.1.a" selected="false" />  <!-- Not OVAL 5.5 -->	<!-- Set Password Quality Requirements using pam_cracklib -->
-    <select idref="dcb-rhel5-rule-2.3.3.1.2.a" selected="false" />  <!--Unknown test -->	<!-- Set Password Quality Requirements using pam_passwdqc -->
-    <select idref="dcb-rhel5-rule-2.3.3.2.a" selected="false" />    <!-- Not OVAL 5.5 -->	<!-- Set Lockouts for Failed Password Attempts -->
-    <select idref="dcb-rhel5-rule-2.3.3.2.b" selected="false" />    <!--Unknown test -->	<!-- Do not leak information on authorization failure -->
+    <select idref="dcb-rhel5-rule-2.3.3.1.1.a" selected="false" />  <!-- DONE -->	<!-- Set Password Quality Requirements using pam_cracklib -->
+    <select idref="dcb-rhel5-rule-2.3.3.1.2.a" selected="false" />  <!-- DONE -->	<!-- Set Password Quality Requirements using pam_passwdqc -->
+    <select idref="dcb-rhel5-rule-2.3.3.2.a" selected="false" />    <!-- DONE -->	<!-- Set Lockouts for Failed Password Attempts -->
+    <select idref="dcb-rhel5-rule-2.3.3.2.b" selected="false" />    <!-- DONE -->	<!-- Do not leak information on authorization failure -->
     <select idref="dcb-rhel5-rule-2.3.3.4.a" selected="false" />    <!-- TODO -->			<!-- Restrict Execution of userhelper to Console Users -->
     <select idref="dcb-rhel5-rule-2.3.3.4.b" selected="false" />    <!-- DONE -->			<!-- Restrict Execution of userhelper to Console Users -->
     <select idref="dcb-rhel5-rule-2.3.3.5.a" selected="false" />    <!-- DONE -->			<!-- Set Password hashing algorithm -->
@@ -159,9 +159,9 @@
     <select idref="dcb-rhel5-rule-2.3.4.4.d" selected="false" />    <!-- DONE -->		<!-- Ensure that Users Have Sensible Umask Values in /etc/profile -->
 
     <select idref="dcb-rhel5-rule-2.3.4.5.a" selected="false" />    <!--Unknown -->	<!-- Check for existance of .netrc file -->
-    <select idref="dcb-rhel5-rule-2.3.5.2.a" selected="true" />    <!-- DONE+ -->			<!-- Set Boot Loader user owner -->
-    <select idref="dcb-rhel5-rule-2.3.5.2.b" selected="true" />    <!-- DONE+ -->			<!-- Set Boot Loader group owner -->
-    <select idref="dcb-rhel5-rule-2.3.5.2.c" selected="true" />    <!-- DONE+ -->			<!-- Set permission on /etc/grub.conf -->
+    <select idref="dcb-rhel5-rule-2.3.5.2.a" selected="false" />    <!-- DONE+ -->			<!-- Set Boot Loader user owner -->
+    <select idref="dcb-rhel5-rule-2.3.5.2.b" selected="false" />    <!-- DONE+ -->			<!-- Set Boot Loader group owner -->
+    <select idref="dcb-rhel5-rule-2.3.5.2.c" selected="false" />    <!-- DONE+ -->			<!-- Set permission on /etc/grub.conf -->
     <select idref="dcb-rhel5-rule-2.3.5.2.d" selected="false" />    <!-- DONE- -->			<!-- Set Boot Loader Password -->
     <select idref="dcb-rhel5-rule-2.3.5.3.a" selected="false" />    <!-- F14 test needed -->     <!-- Require Authentication for Single-User Mode -->
     <select idref="dcb-rhel5-rule-2.3.5.4.a" selected="false" />    <!-- DONE- -->			<!-- Disable Interactive Boot -->
@@ -255,13 +255,13 @@
 
 
 
-    <select idref="dcb-rhel5-rule-3.2.1.a" selected="false" />            <!-- Disable Inetd -->
-    <select idref="dcb-rhel5-rule-3.2.1.b" selected="false" />            <!-- Disable Xinetd -->
-    <select idref="dcb-rhel5-rule-3.2.1.c" selected="false" />            <!-- Uninstall Inetd -->
-    <select idref="dcb-rhel5-rule-3.2.1.d" selected="false" />            <!-- Uninstall Xinetd -->
-    <select idref="dcb-rhel5-rule-3.2.2.a" selected="false" />            <!-- Telnet server package is uninstalled -->
-    <select idref="dcb-rhel5-rule-3.2.2.b" selected="false" />            <!-- Disable telnet service -->
-    <select idref="dcb-rhel5-rule-3.2.2.1.a" selected="false" />         <!-- Remove the telnet client command from the System -->
+    <select idref="dcb-rhel5-rule-3.2.1.a" selected="false" />  <!-- DONE -->  <!-- Disable Inetd -->
+    <select idref="dcb-rhel5-rule-3.2.1.b" selected="false" />  <!-- DONE -->  <!-- Disable Xinetd -->
+    <select idref="dcb-rhel5-rule-3.2.1.c" selected="false" />  <!-- DONE -->  <!-- Uninstall Inetd -->
+    <select idref="dcb-rhel5-rule-3.2.1.d" selected="false" />  <!-- DONE -->  <!-- Uninstall Xinetd -->
+    <select idref="dcb-rhel5-rule-3.2.2.a" selected="false" />  <!-- DONE -->  <!-- Telnet server package is uninstalled -->
+    <select idref="dcb-rhel5-rule-3.2.2.b" selected="false" />  <!-- DONE -->   <!-- Disable telnet service -->
+    <select idref="dcb-rhel5-rule-3.2.2.1.a" selected="false" /> <!-- DONE -->  <!-- Remove the telnet client command from the System -->
     <select idref="dcb-rhel5-rule-3.2.2.1.b" selected="false" />         <!-- Remove the kerberos telnet client from the System -->
     <select idref="dcb-rhel5-rule-3.2.3.1.a" selected="false" />          <!-- Remove the Rsh Server Commands from the System -->
     <select idref="dcb-rhel5-rule-3.2.3.1.b" selected="false" />          <!-- disable rcp -->
@@ -389,13 +389,13 @@
     <select idref="dcb-rhel5-rule-3.13.1.1.b" selected="false" />         <!-- Disable rpcgssd -->
     <select idref="dcb-rhel5-rule-3.13.1.1.c" selected="false" />         <!-- Disable rpcidmapd -->
     <select idref="dcb-rhel5-rule-3.13.1.2.a" selected="false" />         <!-- Disable netfs if Possible -->
-    <select idref="dcb-rhel5-rule-3.13.1.3.a" selected="false" />         <!-- Disable RPC Portmapper if Possible -->
-    <select idref="dcb-rhel5-rule-3.13.2.3.a" selected="false" />        <!-- Configure lockd to Use Fixed Ports for TCP -->
+    eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+eeeeeselect idref="dcb-rhel5-rule-3.13.2.3.a" selected="false" />        <!-- Configure lockd to Use Fixed Ports for TCP -->
     <select idref="dcb-rhel5-rule-3.13.2.3.b" selected="false" />        <!-- Configure statd to Use a outgoing static port-->
     <select idref="dcb-rhel5-rule-3.13.2.3.c" selected="false" />        <!-- Configure statd to Use a static port -->
     <select idref="dcb-rhel5-rule-3.13.2.3.d" selected="false" />        <!-- Configure lockd to Use a static port for UDP -->
     <select idref="dcb-rhel5-rule-3.13.2.3.e" selected="false" />        <!-- Configure mountd to Use a static port -->
-    <select idref="dcb-rhel5-rule-3.13.2.3.f" selected="false" />        <!-- Configure rquotad to Use Fixed Ports -->
+    hselect idref="dcb-rhel5-rule-3.13.2.3.f" selected="false" />        <!-- Configure rquotad to Use Fixed Ports -->
     <select idref="dcb-rhel5-rule-3.13.3.1.a" selected="false" />         <!-- Disable nfs service -->
     <select idref="dcb-rhel5-rule-3.13.3.1.b" selected="false" />         <!-- Disable rpcsvcgssd service -->
     <select idref="dcb-rhel5-rule-3.13.3.2.a" selected="false" />  <!-- INCOMPLETE OVAL -->       <!-- Mount Remote Filesystems with nodev -->
@@ -3552,7 +3552,7 @@
               he exceeded his maximum allowed attempts. Otherwise the account is locked until the 
               lock is removed by a manual intervention of the system administrator.</description>
             <value>0</value>
-            <value selector="none">0</value>
+            <value selector="none">1</value>
             <value selector="15_minutes">900</value>
             <value selector="30_minutes">1800</value>
             <value selector="1_hour">3600</value>
