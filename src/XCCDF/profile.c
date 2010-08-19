@@ -316,9 +316,9 @@ void xccdf_profile_to_dom(struct xccdf_profile *profile, xmlNode *profile_node, 
 			xmlNewProp(select_node, BAD_CAST "idref", BAD_CAST idref);
 
 		if (xccdf_select_get_selected(sel))
-			xmlNewProp(select_node, BAD_CAST "selected", BAD_CAST "1");
+			xmlNewProp(select_node, BAD_CAST "selected", BAD_CAST "true");
 		else
-			xmlNewProp(select_node, BAD_CAST "selected", BAD_CAST "0");
+			xmlNewProp(select_node, BAD_CAST "selected", BAD_CAST "false");
 
 		xccdf_texts_to_dom(xccdf_select_get_remarks(sel), select_node, "remark");
 	}
