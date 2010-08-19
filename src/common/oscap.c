@@ -50,7 +50,8 @@ void oscap_init(void)
 
 void oscap_cleanup(void)
 {
-    xsltCleanupGlobals();
+	oscap_clearerr();
+	xsltCleanupGlobals();
 	xmlCleanupParser();
 }
 
@@ -97,6 +98,7 @@ char *oscap_find_file(const char *filename, int mode, const char *pathvar, const
 
 	if (!pathdup) pathdup = oscap_strdup(path);
 	char **paths = oscap_split(pathdup, OSCAP_PATH_SEPARATOR);
+	char **paths_bck = paths;
 	char *ret = NULL;
 
 	while (*paths) {
@@ -111,7 +113,7 @@ char *oscap_find_file(const char *filename, int mode, const char *pathvar, const
 	}
 
 	oscap_free(pathdup);
-	oscap_free(paths);
+	oscap_free(paths_bck);
 	return ret;
 }
 
