@@ -141,13 +141,15 @@ class OSCAP_Object(list):
 
             try: retobj = func()
             except TypeError as err:
-                try: retobj = func(self.instance)
+                try: retobj = func(*newargs)
                 except TypeError as err:
-                    try: retobj = func(*newargs)
-                    except TypeError as err:
-                        try: retobj = func(self.instance, *newargs)
+                    if self.instance:
+                        try: retobj = func(self.instance)
                         except TypeError as err:
-                            raise TypeError("Wrong number of arguments in function %s" % (func.__name__,))
+                            try: retobj = func(self.instance, *newargs)
+                            except TypeError as err:
+                                raise TypeError("Wrong number of arguments in function %s" % (func.__name__,))
+                    else: raise TypeError("Wrong number of arguments in function %s" % (func.__name__,))
 
             if retobj == None: 
                 return None
@@ -485,7 +487,6 @@ class OSCAP_Object(list):
 class _XCCDF_Benchmark_Class(OSCAP_Object):
 
     def __init__(self, path):
-        #dict.__setattr__(self, "__name", "xccdf_benchmark")
         dict.__setattr__(self, "object", "xccdf_benchmark")
         dict.__setattr__(self, "instance", OSCAP.xccdf_benchmark_import(path))
 
