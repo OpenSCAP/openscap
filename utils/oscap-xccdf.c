@@ -28,7 +28,12 @@
 #include <xccdf.h>
 #include <xccdf_policy.h>
 
+#include <sys/types.h>
+#include <sys/stat.h>
 #include <assert.h>
+#include <limits.h>
+#include <limits.h>
+#include <unistd.h>
 
 #include "oscap-tool.h"
 
@@ -135,6 +140,17 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	struct xccdf_policy_model *policy_model = NULL;
         void **def_models = NULL;
         void **sessions = NULL;
+	
+	/* Validate documents */
+        if (!oscap_validate_document(action->f_xccdf, OSCAP_DOCUMENT_XCCDF, NULL, 
+				     (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
+                if (oscap_err()) {
+                        fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
+                        return OSCAP_FAIL;
+                }
+                return OSCAP_ERROR;
+        }
+
 
 	/* Load XCCDF model and XCCDF Policy model */
 	benchmark = xccdf_benchmark_import(action->f_xccdf);
@@ -165,19 +181,64 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	/* Register callback */
 	xccdf_policy_model_register_output_callback(policy_model, callback, (void*) action);
 
-        int models = 0;
-        if (action->urls_oval != NULL) {
-            while (action->urls_oval[models] != NULL) models++;
+	/* NO OVAL files? get ones from policy model */
+	char ** oval_files = NULL;
+	if (action->urls_oval == NULL) {
+		struct stat sb;
+		int idx=0;
+		int files_cnt = 3;
+		oval_files = malloc(files_cnt * sizeof(char *));
+
+		char * path = dirname( strdup(action->f_xccdf));
+
+		struct oscap_stringlist * files = xccdf_policy_model_get_files(policy_model);
+		struct oscap_string_iterator *files_it = oscap_stringlist_get_strings(files);
+		while (oscap_string_iterator_has_more(files_it)) {
+			if ( idx + 1 == files_cnt) {
+				files_cnt = files_cnt * 2;
+				oval_files = realloc(oval_files, files_cnt * sizeof(char *));
+			}
+			oval_files[idx] = malloc(PATH_MAX * sizeof(char));
+			sprintf(oval_files[idx], "%s/%s", path, oscap_string_iterator_next(files_it));
+			if (stat(oval_files[idx], &sb)) {
+				fprintf(stderr, "WARNING: Skipping %s file which is referenced from XCCDF content\n", oval_files[idx]);
+				free(oval_files[idx]);
+			}
+			else idx++; 
+		}
+		oscap_string_iterator_free(files_it);
+		oscap_stringlist_free(files);
+		free(path);
+		oval_files[idx] = NULL;
+	} else
+		oval_files = action->urls_oval;
+
+	
+	/* register oval sessions */
+	int models = 0;
+        if (oval_files != NULL) {
+            while (oval_files[models] != NULL) {
+		/* Validate documents */
+		if (!oscap_validate_document(oval_files[models], OSCAP_DOCUMENT_OVAL_DEFINITIONS, NULL, 
+					     (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
+			if (oscap_err()) {
+				fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
+				return OSCAP_FAIL;
+			}
+			return OSCAP_ERROR;
+		}
+	        models++;
+	    }
             def_models = malloc(models*sizeof(struct oval_definition_model *));
             sessions = malloc(models*sizeof(struct oval_agent_session *));
             int i = 0;
-            while (action->urls_oval[i] != NULL) {
-                struct oval_definition_model *tmp_def_model = oval_definition_model_import(action->urls_oval[i]);
+            while (oval_files[i] != NULL) {
+                struct oval_definition_model *tmp_def_model = oval_definition_model_import(oval_files[i]);
 		if(tmp_def_model==NULL && oscap_err()) {
 			fprintf(stderr, "Error: (%d) %s\n", oscap_err_code(), oscap_err_desc());
 			return OSCAP_ERROR;
 		}
-                struct oval_agent_session *tmp_sess = oval_agent_new_session(tmp_def_model, basename(action->urls_oval[i]));
+                struct oval_agent_session *tmp_sess = oval_agent_new_session(tmp_def_model, basename(oval_files[i]));
 		if(tmp_sess==NULL && oscap_err()) {
 			fprintf(stderr, "Error: (%d) %s\n", oscap_err_code(), oscap_err_desc());
 			return OSCAP_ERROR;
@@ -187,8 +248,9 @@ int app_evaluate_xccdf(const struct oscap_action *action)
                 sessions[i] = tmp_sess;
                 i++;
             }
-        }
-
+        } 
+	
+	
 	/* Perform evaluation */
 	struct xccdf_result *ritem = xccdf_policy_evaluate(policy);
         if (ritem == NULL) return OSCAP_ERROR;
@@ -215,11 +277,11 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 
 	/* Export results */
 	if (action->f_results != NULL) {
-        xccdf_benchmark_add_result(benchmark, xccdf_result_clone(ritem));
-        xccdf_benchmark_export(benchmark, action->f_results);
-        if (action->f_report != NULL)
-            xccdf_gen_report(action->f_results, xccdf_result_get_id(ritem), action->f_report);
-    }
+	        xccdf_benchmark_add_result(benchmark, xccdf_result_clone(ritem));
+       		xccdf_benchmark_export(benchmark, action->f_results);
+        	if (action->f_report != NULL)
+        		xccdf_gen_report(action->f_results, xccdf_result_get_id(ritem), action->f_report);
+        }
 
 	/* Get the result from TestResult model and decide if end with error or with correct return code */
 	int retval = OSCAP_OK;
@@ -236,6 +298,14 @@ int app_evaluate_xccdf(const struct oscap_action *action)
             if (def_models[i] != NULL) oval_definition_model_free(def_models[i]);
 	    if (sessions[i] != NULL) oval_agent_destroy_session(sessions[i]);
         }
+	if (oval_files != action->urls_oval) {
+		int i=0;
+		while(oval_files[i]) {
+			free(oval_files[i]);
+			i++;
+		}
+		free(oval_files);
+	}
         free(def_models);
         free(sessions);
 	xccdf_policy_model_free(policy_model);
@@ -331,9 +401,9 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 
 	if (action->module == &XCCDF_EVAL) {
 		/* We should have XCCDF file here */
-		if (optind + 1 >= argc) {
+		if (optind >= argc) {
 			/* TODO */
-			return oscap_module_usage(action->module, stderr, "OVAL file and XCCDF file need to be specified!");
+			return oscap_module_usage(action->module, stderr, "XCCDF file need to be specified!");
 		}
                 if (action->f_report && !action->f_results)
                     return oscap_module_usage(action->module, stderr, "Please specify --result-file if you want to generate a HTML report.");

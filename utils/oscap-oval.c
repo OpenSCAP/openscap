@@ -211,6 +211,16 @@ int app_evaluate_oval(const struct oscap_action *action)
 	struct oval_usr *usr = NULL;
 	int ret = OSCAP_OK;
 
+	/* validate */
+	if (!oscap_validate_document(action->f_oval, OSCAP_DOCUMENT_OVAL_DEFINITIONS, NULL, 
+	    (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
+		if (oscap_err()) {
+			fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
+			return OSCAP_FAIL;
+		}
+		return OSCAP_ERROR;
+	}
+
 	struct oval_definition_model *def_model = oval_definition_model_import(action->f_oval);
 	oval_agent_session_t *sess = oval_agent_new_session(def_model, basename(action->f_oval));
 
@@ -294,6 +304,16 @@ int app_evaluate_oval(const struct oscap_action *action)
 
 int app_evaluate_oval_id(const struct oscap_action *action) {
 	oval_result_t ret;
+
+	/* validate */
+	if (!oscap_validate_document(action->f_oval, OSCAP_DOCUMENT_OVAL_DEFINITIONS, NULL, 
+	    (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
+		if (oscap_err()) {
+			fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
+			return OSCAP_FAIL;
+		}
+		return OSCAP_ERROR;
+	}
 
 	struct oval_definition_model *def_model = oval_definition_model_import(action->f_oval);
 	oval_agent_session_t *sess = oval_agent_new_session(def_model, basename(action->f_oval));

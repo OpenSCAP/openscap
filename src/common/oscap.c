@@ -149,7 +149,7 @@ bool oscap_validate_xml(const char *xmlfile, const char *schemafile, oscap_repor
 		goto cleanup;
 	}
 
-    xmlSchemaSetParserStructuredErrors(parser_ctxt, oscap_xml_validity_handler, &reporter_ctxt);
+	xmlSchemaSetParserStructuredErrors(parser_ctxt, oscap_xml_validity_handler, &reporter_ctxt);
 
 	schema = xmlSchemaParse(parser_ctxt);
 	if (schema == NULL) {
@@ -163,7 +163,7 @@ bool oscap_validate_xml(const char *xmlfile, const char *schemafile, oscap_repor
 		goto cleanup;
 	}
 
-    xmlSchemaSetValidStructuredErrors(ctxt, oscap_xml_validity_handler, &reporter_ctxt);
+	xmlSchemaSetValidStructuredErrors(ctxt, oscap_xml_validity_handler, &reporter_ctxt);
 
 	ret = xmlSchemaValidateFile(ctxt, xmlfile, 0);
 	switch (ret) {
