@@ -229,8 +229,16 @@ int oval_agent_resolve_variables(struct oval_agent_session * session, struct xcc
         /* Do we have comflict ? */
         if (variable != NULL) {
             value_it = oval_variable_get_values(variable);
-            if (oval_value_iterator_has_more(value_it))
-                conflict = true;
+            char * value = xccdf_value_binding_get_setvalue(binding);
+            if (value == NULL) value = xccdf_value_binding_get_value(binding);
+            if (oval_value_iterator_has_more(value_it)) {
+                struct oval_value * o_value = oval_value_iterator_next(value_it);
+                if (strcmp(oval_value_get_text(o_value), value)) {
+                    conflict = true;
+                    oscap_dlprintf(DBG_W, "Variable conflict: %s has different values %s != %s\n", xccdf_value_binding_get_name(binding), oval_value_get_text(o_value), value);
+                }
+                else oscap_dlprintf(DBG_W, "Variable %s has the same value, skipping\n", xccdf_value_binding_get_name(binding));
+            }
             oval_value_iterator_free(value_it);
         }
     }
@@ -257,7 +265,9 @@ int oval_agent_resolve_variables(struct oval_agent_session * session, struct xcc
                 if (oval_variable_model_has_variable(var_model, name))
 			oscap_dlprintf(DBG_E, "External variable %s in conflict! Probably content failure.\n", name);
                 /* Add variable to variable model */
-                else oval_variable_model_add(var_model, name, "Unknown", o_type, value); // TODO comment
+                if (!oval_value_iterator_has_more(oval_variable_get_values(variable)))
+                    oval_variable_model_add(var_model, name, "Unknown", o_type, value); // TODO comment
+                else oscap_dlprintf(DBG_W, "External variable %s in conflict but with same value.\n", name);
         } else {
                 oscap_dlprintf(DBG_W, "Variable %s does not exist, skipping.\n", name);
         }
