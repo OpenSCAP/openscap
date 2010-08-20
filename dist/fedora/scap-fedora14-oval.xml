@@ -6940,29 +6940,37 @@
             <ind-def:textfilecontent54_test check_existence="at_least_one_exists" id="oval:mil.army.us.rhel5:tst:20193" version="1" check="all" comment="check NOZEROCONF=yes in /etc/sysconfig/network">
                   <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20193"/>
             </ind-def:textfilecontent54_test>
-            <unix-def:runlevel_test check_existence="none_exist" id="oval:mil.army.us.rhel5:tst:20194" version="1" check="all" comment="Runlevel test">
+            <unix-def:runlevel_test check_existence="any_exist" id="oval:mil.army.us.rhel5:tst:20194" version="1" check="all" comment="Runlevel test">
                   <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:20194"/>
+                  <unix-def:state state_ref="oval:mil.army.us.rhel5:ste:20171"/>
             </unix-def:runlevel_test>
-            <unix-def:runlevel_test check_existence="none_exist" id="oval:mil.army.us.rhel5:tst:20195" version="1" check="all" comment="Runlevel test">
+            <unix-def:runlevel_test check_existence="any_exist" id="oval:mil.army.us.rhel5:tst:20195" version="1" check="all" comment="Runlevel test">
                   <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:20195"/>
+                  <unix-def:state state_ref="oval:mil.army.us.rhel5:ste:20171"/>
             </unix-def:runlevel_test>
-            <unix-def:runlevel_test check_existence="none_exist" id="oval:mil.army.us.rhel5:tst:20196" version="1" check="all" comment="Runlevel test">
+            <unix-def:runlevel_test check_existence="any_exist" id="oval:mil.army.us.rhel5:tst:20196" version="1" check="all" comment="Runlevel test">
                   <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:20196"/>
+                  <unix-def:state state_ref="oval:mil.army.us.rhel5:ste:20171"/>
             </unix-def:runlevel_test>
-            <unix-def:runlevel_test check_existence="none_exist" id="oval:mil.army.us.rhel5:tst:20197" version="1" check="all" comment="Runlevel test">
+            <unix-def:runlevel_test check_existence="any_exist" id="oval:mil.army.us.rhel5:tst:20197" version="1" check="all" comment="Runlevel test">
                   <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:20197"/>
+                  <unix-def:state state_ref="oval:mil.army.us.rhel5:ste:20171"/>
             </unix-def:runlevel_test>
-            <unix-def:runlevel_test check_existence="none_exist" id="oval:mil.army.us.rhel5:tst:20198" version="1" check="all" comment="Runlevel test">
+            <unix-def:runlevel_test check_existence="any_exist" id="oval:mil.army.us.rhel5:tst:20198" version="1" check="all" comment="Runlevel test">
                   <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:20198"/>
+                  <unix-def:state state_ref="oval:mil.army.us.rhel5:ste:20171"/>
             </unix-def:runlevel_test>
-            <unix-def:runlevel_test check_existence="none_exist" id="oval:mil.army.us.rhel5:tst:20199" version="1" check="all" comment="Runlevel test">
+            <unix-def:runlevel_test check_existence="any_exist" id="oval:mil.army.us.rhel5:tst:20199" version="1" check="all" comment="Runlevel test">
                   <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:20199"/>
+                  <unix-def:state state_ref="oval:mil.army.us.rhel5:ste:20171"/>
             </unix-def:runlevel_test>
-            <unix-def:runlevel_test check_existence="none_exist" id="oval:mil.army.us.rhel5:tst:20200" version="1" check="all" comment="Runlevel test">
+            <unix-def:runlevel_test check_existence="any_exist" id="oval:mil.army.us.rhel5:tst:20200" version="1" check="all" comment="Runlevel test">
                   <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:20200"/>
+                  <unix-def:state state_ref="oval:mil.army.us.rhel5:ste:20171"/>
             </unix-def:runlevel_test>
-            <unix-def:runlevel_test check_existence="none_exist" id="oval:mil.army.us.rhel5:tst:20201" version="1" check="all" comment="Runlevel test">
+            <unix-def:runlevel_test check_existence="any_exist" id="oval:mil.army.us.rhel5:tst:20201" version="1" check="all" comment="Runlevel test">
                   <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:20201"/>
+                  <unix-def:state state_ref="oval:mil.army.us.rhel5:ste:20171"/>
             </unix-def:runlevel_test>
             <ind-def:textfilecontent54_test check_existence="at_least_one_exists" id="oval:mil.army.us.rhel5:tst:2020151" version="1" check="all" comment="net-pf-31 is off in /etc/modprobe.conf">
                   <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:2020151"/>
@@ -6970,17 +6978,21 @@
             <ind-def:textfilecontent54_test check_existence="at_least_one_exists" id="oval:mil.army.us.rhel5:tst:2020152" version="1" check="all" comment="bluetooth is off in /etc/modprobe.conf">
                   <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:2020152"/>
             </ind-def:textfilecontent54_test>
-            <unix-def:runlevel_test check_existence="none_exist" id="oval:mil.army.us.rhel5:tst:20202" version="1" check="all" comment="Runlevel test">
+            <unix-def:runlevel_test check_existence="any_exist" id="oval:mil.army.us.rhel5:tst:20202" version="1" check="all" comment="Runlevel test">
                   <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:20202"/>
+                  <unix-def:state state_ref="oval:mil.army.us.rhel5:ste:20171"/>
             </unix-def:runlevel_test>
-            <unix-def:runlevel_test check_existence="none_exist" id="oval:mil.army.us.rhel5:tst:20203" version="1" check="all" comment="Runlevel test">
+            <unix-def:runlevel_test check_existence="any_exist" id="oval:mil.army.us.rhel5:tst:20203" version="1" check="all" comment="Runlevel test">
                   <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:20203"/>
+                  <unix-def:state state_ref="oval:mil.army.us.rhel5:ste:20171"/>
             </unix-def:runlevel_test>
-            <unix-def:runlevel_test check_existence="none_exist" id="oval:mil.army.us.rhel5:tst:20204" version="1" check="all" comment="Runlevel test">
+            <unix-def:runlevel_test check_existence="any_exist" id="oval:mil.army.us.rhel5:tst:20204" version="1" check="all" comment="Runlevel test">
                   <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:20204"/>
+                  <unix-def:state state_ref="oval:mil.army.us.rhel5:ste:20171"/>
             </unix-def:runlevel_test>
-            <unix-def:runlevel_test check_existence="any_exist" id="oval:mil.army.us.rhel5:tst:20205" version="1" check="all" comment="Runlevel test">
+            <unix-def:runlevel_test check_existence="at_least_one_exists" id="oval:mil.army.us.rhel5:tst:20205" version="1" check="at least one" comment="Runlevel test">
                   <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:20205"/>
+                  <unix-def:state state_ref="oval:mil.army.us.rhel5:ste:20172"/>
             </unix-def:runlevel_test>
             <unix-def:runlevel_test check_existence="none_exist" id="oval:mil.army.us.rhel5:tst:202052" version="1" check="all" comment="Runlevel test">
                   <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:202052"/>
@@ -6988,8 +7000,9 @@
             <lin-def:rpminfo_test check_existence="none_exist" id="oval:mil.army.us.rhel5:tst:202053" version="1" check="all" comment="Is the at package installed?">
                   <lin-def:object object_ref="oval:mil.army.us.rhel5:obj:20269"/>
             </lin-def:rpminfo_test>
-            <unix-def:runlevel_test check_existence="none_exist" id="oval:mil.army.us.rhel5:tst:20206" version="1" check="all" comment="Runlevel test">
+            <unix-def:runlevel_test check_existence="any_exist" id="oval:mil.army.us.rhel5:tst:20206" version="1" check="all" comment="Runlevel test">
                   <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:20206"/>
+                  <unix-def:state state_ref="oval:mil.army.us.rhel5:ste:20171"/>
             </unix-def:runlevel_test>
             <lin-def:rpminfo_test check_existence="none_exist" id="oval:mil.army.us.rhel5:tst:20207" version="1" check="all" comment="The anacron package should be installed or not as appropriate">
                   <lin-def:object object_ref="oval:mil.army.us.rhel5:obj:20207"/>
@@ -8852,7 +8865,7 @@
                   <unix-def:runlevel operation="pattern match">.*</unix-def:runlevel>
             </unix-def:runlevel_object>
             <unix-def:file_object id="oval:mil.army.us.rhel5:obj:20192" version="1" comment="Check existance of yum.cron"> 
-                  <ind-def:path>/etc/sysconfig/network-scripts</ind-def:path>
+                  <unix-def:path>/etc/sysconfig/network-scripts</unix-def:path>
                   <unix-def:filename operation="pattern match">ifcfg-[^l][^o].*</unix-def:filename>
             </unix-def:file_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20193" version="1">
@@ -8894,15 +8907,15 @@
                   <unix-def:runlevel operation="pattern match">.*</unix-def:runlevel>
             </unix-def:runlevel_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:2020151" version="1">
-                  <ind-def:path>/etc</ind-def:path>
-                  <ind-def:filename>modprobe.conf</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">alias\snet\-pf\-31\soff</ind-def:pattern>
+                  <ind-def:path>/etc/modprobe.d</ind-def:path>
+                  <ind-def:filename operation="pattern match">.*\.conf</ind-def:filename>
+                  <ind-def:pattern operation="pattern match">alias[:space:]net\-pf\-31[:space:]off</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:2020152" version="1">
-                  <ind-def:path>/etc</ind-def:path>
-                  <ind-def:filename>modprobe.conf</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">alias\sbluetooth\soff</ind-def:pattern>
+                  <ind-def:path>/etc/modprobe.d</ind-def:path>
+                  <ind-def:filename operation="pattern match">.*\.conf</ind-def:filename>
+                  <ind-def:pattern operation="pattern match">alias[:space:]bluetooth[:space:]off</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <unix-def:runlevel_object id="oval:mil.army.us.rhel5:obj:20202" version="1">
@@ -8933,35 +8946,41 @@
                   <unix-def:runlevel operation="pattern match">.*</unix-def:runlevel>
             </unix-def:runlevel_object>
             <lin-def:rpminfo_object id="oval:mil.army.us.rhel5:obj:20207" version="1">
-                  <lin-def:name>anacron</lin-def:name>
+                  <lin-def:name>cronie-anacron</lin-def:name>
             </lin-def:rpminfo_object>
             <unix-def:file_object id="oval:mil.army.us.rhel5:obj:20217" version="1" comment="/etc/cron.monthly">
-                  <unix-def:path>/etc</unix-def:path>
-                  <unix-def:filename>cron.monthly</unix-def:filename>
+                  <unix-def:path>/etc/cron.monthly</unix-def:path>
+                  <unix-def:filename xsi:nil="true"/>
             </unix-def:file_object>
             <unix-def:file_object id="oval:mil.army.us.rhel5:obj:20225" version="1" comment="/etc/cron.daily">
                   <unix-def:path>/etc</unix-def:path>
                   <unix-def:filename>cron.daily</unix-def:filename>
             </unix-def:file_object>
             <unix-def:file_object id="oval:mil.army.us.rhel5:obj:20216" version="1" comment="/etc/cron.weekly">
-                  <unix-def:path>/etc</unix-def:path>
-                  <unix-def:filename>cron.weekly</unix-def:filename>
+                  <unix-def:path>/etc/cron.weekly</unix-def:path>
+                  <unix-def:filename xsi:nil="true"/>
             </unix-def:file_object>
             <unix-def:file_object id="oval:mil.army.us.rhel5:obj:20209" version="1" comment="/etc/crontab">
                   <unix-def:path>/etc</unix-def:path>
                   <unix-def:filename>crontab</unix-def:filename>
             </unix-def:file_object>
+            <unix-def:password_object id="oval:mil.army.us.rhel5:obj:202091" version="1">
+                  <unix-def:username operation="equals" var_ref="oval:mil.army.us.rhel5:var:20209"/>
+            </unix-def:password_object>
             <unix-def:file_object id="oval:mil.army.us.rhel5:obj:20212" version="1" comment="/etc/anacrontab">
                   <unix-def:path>/etc</unix-def:path>
                   <unix-def:filename>anacrontab</unix-def:filename>
             </unix-def:file_object>
+            <unix-def:password_object id="oval:mil.army.us.rhel5:obj:202121" version="1">
+                  <unix-def:username operation="equals" var_ref="oval:mil.army.us.rhel5:var:20212"/>
+            </unix-def:password_object>
             <unix-def:file_object id="oval:mil.army.us.rhel5:obj:20210" version="1" comment="/etc/crontab">
                   <unix-def:path>/etc</unix-def:path>
                   <unix-def:filename>crontab</unix-def:filename>
             </unix-def:file_object>
             <unix-def:file_object id="oval:mil.army.us.rhel5:obj:20214" version="1" comment="/etc/cron.hourly">
-                  <unix-def:path>/etc</unix-def:path>
-                  <unix-def:filename>cron.hourly</unix-def:filename>
+                  <unix-def:path>/etc/cron.hourly</unix-def:path>
+                  <unix-def:filename xsi:nil="true"/>
             </unix-def:file_object>
             <unix-def:file_object id="oval:mil.army.us.rhel5:obj:20222" version="1" comment="/etc/cron.monthly">
                   <unix-def:path>/etc</unix-def:path>
@@ -9014,8 +9033,8 @@
                   <unix-def:filename>cron.monthly</unix-def:filename>
             </unix-def:file_object>
             <unix-def:file_object id="oval:mil.army.us.rhel5:obj:20215" version="1" comment="/etc/cron.daily">
-                  <unix-def:path>/etc</unix-def:path>
-                  <unix-def:filename>cron.daily</unix-def:filename>
+                  <unix-def:path>/etc/cron.daily</unix-def:path>
+                  <unix-def:filename xsi:nil="true"/>
             </unix-def:file_object>
             <unix-def:file_object id="oval:mil.army.us.rhel5:obj:20228" version="1" comment="/etc/cron.d">
                   <unix-def:behaviors recurse="symlinks and directories"/>
@@ -9637,6 +9656,24 @@
             <lin-def:rpminfo_object id="oval:mil.army.us.rhel5:obj:20366" version="1">
                   <lin-def:name>net-snmp</lin-def:name>
             </lin-def:rpminfo_object>
+            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:202081" version="1" comment="Get group ID">
+                  <ind-def:path>/etc</ind-def:path>
+                  <ind-def:filename>group</ind-def:filename>
+                  <ind-def:pattern operation="pattern match" var_ref="oval:mil.army.us.rhel5:var:202081"/>
+                  <ind-def:instance datatype="int">1</ind-def:instance>
+            </ind-def:textfilecontent54_object>
+            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:202111" version="1" comment="Get group ID">
+                  <ind-def:path>/etc</ind-def:path>
+                  <ind-def:filename>group</ind-def:filename>
+                  <ind-def:pattern operation="pattern match" var_ref="oval:mil.army.us.rhel5:var:202111"/>
+                  <ind-def:instance datatype="int">1</ind-def:instance>
+            </ind-def:textfilecontent54_object>
+            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:202141" version="1" comment="Get group ID">
+                  <ind-def:path>/etc</ind-def:path>
+                  <ind-def:filename>group</ind-def:filename>
+                  <ind-def:pattern operation="pattern match" var_ref="oval:mil.army.us.rhel5:var:202141"/>
+                  <ind-def:instance datatype="int">1</ind-def:instance>
+            </ind-def:textfilecontent54_object>
       </objects>
       <states>
             <ind-def:textfilecontent54_state id="oval:mil.army.us.rhel5:ste:20000" version="1" comment="/tmp mount point is defined">
@@ -9993,9 +10030,13 @@
                   <unix-def:start datatype="boolean">false</unix-def:start>
                   <unix-def:kill datatype="boolean">true</unix-def:kill>
             </unix-def:runlevel_state>
-            <unix-def:runlevel_state id="oval:mil.army.us.rhel5:ste:20171" version="1">
+            <unix-def:runlevel_state id="oval:mil.army.us.rhel5:ste:20171" version="1" comment="Define state of disableed service">
                   <unix-def:start datatype="boolean">false</unix-def:start>
                   <unix-def:kill datatype="boolean">true</unix-def:kill>
+            </unix-def:runlevel_state>
+            <unix-def:runlevel_state id="oval:mil.army.us.rhel5:ste:20172" version="1" comment="Define state of enabled service">
+	          <unix-def:runlevel operation="pattern match">^[2345]$</unix-def:runlevel>
+                  <unix-def:start datatype="boolean">true</unix-def:start>
             </unix-def:runlevel_state>
 	    <!-- shared states: subexpression == {0, 1} -->
             <ind-def:textfilecontent54_state id="oval:mil.army.us.rhel5:ste:201120" version="1">
@@ -10126,7 +10167,7 @@
 			<unix-def:processor_type operation="pattern match">^x86_64$|^ia64$|</unix-def:processor_type>
             </unix-def:uname_state>
             <unix-def:file_state id="oval:mil.army.us.rhel5:ste:20217" version="1">
-                  <unix-def:group_id>root</unix-def:group_id>
+                  <unix-def:group_id var_ref="oval:mil.army.us.rhel5:var:202142"/>
             </unix-def:file_state>
             <unix-def:file_state id="oval:mil.army.us.rhel5:ste:20225" version="1">
                   <unix-def:uread var_check="all" datatype="boolean" var_ref="oval:mil.army.us.rhel5:var:46"/>
@@ -10140,13 +10181,13 @@
                   <unix-def:oexec var_check="all" datatype="boolean" var_ref="oval:mil.army.us.rhel5:var:54"/>
             </unix-def:file_state>
             <unix-def:file_state id="oval:mil.army.us.rhel5:ste:20216" version="1">
-                  <unix-def:group_id>root</unix-def:group_id>
+                  <unix-def:group_id var_ref="oval:mil.army.us.rhel5:var:202142"/>
             </unix-def:file_state>
             <unix-def:file_state id="oval:mil.army.us.rhel5:ste:20209" version="1">
-                  <unix-def:user_id>root</unix-def:user_id>
+                  <unix-def:user_id var_ref="oval:mil.army.us.rhel5:var:202091"/>
             </unix-def:file_state>
             <unix-def:file_state id="oval:mil.army.us.rhel5:ste:20212" version="1">
-                  <unix-def:user_id>root</unix-def:user_id>
+                  <unix-def:user_id var_ref="oval:mil.army.us.rhel5:var:202121"/>
             </unix-def:file_state>
             <unix-def:file_state id="oval:mil.army.us.rhel5:ste:20210" version="1">
                   <unix-def:uread var_check="all" datatype="boolean" var_ref="oval:mil.army.us.rhel5:var:55"/>
@@ -10160,13 +10201,13 @@
                   <unix-def:oexec var_check="all" datatype="boolean" var_ref="oval:mil.army.us.rhel5:var:63"/>
             </unix-def:file_state>
             <unix-def:file_state id="oval:mil.army.us.rhel5:ste:20214" version="1">
-                  <unix-def:group_id>root</unix-def:group_id>
+                  <unix-def:group_id var_ref="oval:mil.army.us.rhel5:var:202142"/>
             </unix-def:file_state>
             <unix-def:file_state id="oval:mil.army.us.rhel5:ste:20222" version="1">
                   <unix-def:user_id>root</unix-def:user_id>
             </unix-def:file_state>
             <unix-def:file_state id="oval:mil.army.us.rhel5:ste:20218" version="1">
-                  <unix-def:group_id>root</unix-def:group_id>
+                  <unix-def:group_id var_ref="oval:mil.army.us.rhel5:var:202142"/>
             </unix-def:file_state>
             <unix-def:file_state id="oval:mil.army.us.rhel5:ste:20223" version="1">
                   <unix-def:user_id>root</unix-def:user_id>
@@ -10175,7 +10216,7 @@
                   <unix-def:user_id>root</unix-def:user_id>
             </unix-def:file_state>
             <unix-def:file_state id="oval:mil.army.us.rhel5:ste:20211" version="1">
-                  <unix-def:group_id>root</unix-def:group_id>
+                  <unix-def:group_id var_ref="oval:mil.army.us.rhel5:var:202112"/>
             </unix-def:file_state>
             <unix-def:file_state id="oval:mil.army.us.rhel5:ste:20224" version="1">
                   <unix-def:uread var_check="all" datatype="boolean" var_ref="oval:mil.army.us.rhel5:var:64"/>
@@ -10192,7 +10233,7 @@
                   <unix-def:user_id>root</unix-def:user_id>
             </unix-def:file_state>
             <unix-def:file_state id="oval:mil.army.us.rhel5:ste:20208" version="1">
-                  <unix-def:group_id>root</unix-def:group_id>
+                  <unix-def:group_id var_check="all" var_ref="oval:mil.army.us.rhel5:var:202082"/>
             </unix-def:file_state>
             <unix-def:file_state id="oval:mil.army.us.rhel5:ste:20220" version="1">
                   <unix-def:user_id>root</unix-def:user_id>
@@ -10231,7 +10272,7 @@
                   <unix-def:oexec var_check="all" datatype="boolean" var_ref="oval:mil.army.us.rhel5:var:99"/>
             </unix-def:file_state>
             <unix-def:file_state id="oval:mil.army.us.rhel5:ste:20215" version="1">
-                  <unix-def:group_id>root</unix-def:group_id>
+                  <unix-def:group_id var_ref="oval:mil.army.us.rhel5:var:202142"/>
             </unix-def:file_state>
             <unix-def:file_state id="oval:mil.army.us.rhel5:ste:20228" version="1">
                   <unix-def:uread var_check="all" datatype="boolean" var_ref="oval:mil.army.us.rhel5:var:100"/>
@@ -11409,6 +11450,43 @@
                   <split delimiter=":">
                         <object_component item_field="value" object_ref="oval:mil.army.us.rhel5:obj:20085"/>
                   </split>
+            </local_variable>
+            <local_variable comment="Regular expression for /etc/group: Get the group ID of given group name" version="1" id="oval:mil.army.us.rhel5:var:202081" datatype="string">
+                  <concat>
+                        <literal_component>^</literal_component>
+                        <variable_component var_ref="oval:mil.army.us.rhel5:var:20208"/>
+                        <literal_component>:[^:]*:([[:digit:]]+)</literal_component>
+                  </concat>
+            </local_variable>
+            <local_variable comment="Object to Variable" version="1" id="oval:mil.army.us.rhel5:var:202082" datatype="string">
+                        <object_component object_ref="oval:mil.army.us.rhel5:obj:202081" item_field="subexpression"/>
+            </local_variable>
+            <local_variable comment="Object to Variable" version="1" id="oval:mil.army.us.rhel5:var:202091" datatype="string">
+                        <object_component object_ref="oval:mil.army.us.rhel5:obj:202091" item_field="user_id"/>
+            </local_variable>
+            <local_variable comment="Regular expression for /etc/group: Get the group ID of given group name" version="1" id="oval:mil.army.us.rhel5:var:202111" datatype="string">
+                  <concat>
+                        <literal_component>^</literal_component>
+                        <variable_component var_ref="oval:mil.army.us.rhel5:var:20211"/>
+                        <literal_component>:[^:]*:([[:digit:]]+)</literal_component>
+                  </concat>
+            </local_variable>
+            <local_variable comment="Object to Variable" version="1" id="oval:mil.army.us.rhel5:var:202112" datatype="string">
+                        <object_component object_ref="oval:mil.army.us.rhel5:obj:202111" item_field="subexpression"/>
+            </local_variable>
+            <local_variable comment="Object to Variable" version="1" id="oval:mil.army.us.rhel5:var:202121" datatype="string">
+                        <object_component object_ref="oval:mil.army.us.rhel5:obj:202121" item_field="user_id"/>
+            </local_variable>
+
+            <local_variable comment="Regular expression for /etc/group: Get the group ID of given group name" version="1" id="oval:mil.army.us.rhel5:var:202141" datatype="string">
+                  <concat>
+                        <literal_component>^</literal_component>
+                        <variable_component var_ref="oval:mil.army.us.rhel5:var:20214"/>
+                        <literal_component>:[^:]*:([[:digit:]]+)</literal_component>
+                  </concat>
+            </local_variable>
+            <local_variable comment="Object to Variable" version="1" id="oval:mil.army.us.rhel5:var:202142" datatype="string">
+                        <object_component object_ref="oval:mil.army.us.rhel5:obj:202141" item_field="subexpression"/>
             </local_variable>
       </variables>
 </oval_definitions>
