@@ -331,10 +331,10 @@ void *probe_init (void)
         default:
                 _D("Can't initialize mutex: errno=%u, %s.\n", errno, strerror (errno));
         }
-
+#if 0
 	probe_setoption(PROBE_VARREF_HANDLING, false, "path");
 	probe_setoption(PROBE_VARREF_HANDLING, false, "filename");
-
+#endif
         return (NULL);
 }
 
