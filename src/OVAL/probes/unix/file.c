@@ -178,8 +178,8 @@ static int file_cb (const char *p, const char *f, void *ptr)
                                         "type", NULL,
                                         strfiletype (st.st_mode),
 
-					"group_id", NULL, r3,
-					"user_id",  NULL, r4,
+					"group_id", NULL, r4,
+					"user_id",  NULL, r3,
 
                                         "a_time", NULL,
                                         r5 = SEXP_string_newf (
@@ -331,6 +331,9 @@ void *probe_init (void)
         default:
                 _D("Can't initialize mutex: errno=%u, %s.\n", errno, strerror (errno));
         }
+
+	probe_setoption(PROBE_VARREF_HANDLING, false, "path");
+	probe_setoption(PROBE_VARREF_HANDLING, false, "filename");
 
         return (NULL);
 }
