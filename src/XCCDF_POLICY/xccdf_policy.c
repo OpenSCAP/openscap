@@ -847,6 +847,7 @@ static struct oscap_stringlist * xccdf_check_get_files(struct xccdf_check * chec
                     oscap_stringlist_add_string(names, href);
             }
             oscap_string_iterator_free(name_it);
+            oscap_stringlist_free(sub_names);
         }
         xccdf_check_iterator_free(child_it);
     } else {
@@ -891,6 +892,7 @@ static struct oscap_stringlist * xccdf_item_get_files(struct xccdf_item * item)
                         oscap_stringlist_add_string(names, href);
                 }
                 oscap_string_iterator_free(name_it);
+                oscap_stringlist_free(sub_names);
             }
             xccdf_check_iterator_free(check_it);
             break;
@@ -910,6 +912,7 @@ static struct oscap_stringlist * xccdf_item_get_files(struct xccdf_item * item)
                             oscap_stringlist_add_string(names, href);
                     }
                     oscap_string_iterator_free(name_it);
+                    oscap_stringlist_free(sub_names);
             }
             xccdf_item_iterator_free(child_it);
         break;
