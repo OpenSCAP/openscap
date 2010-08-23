@@ -149,7 +149,7 @@ class OSCAP_Object(list):
                             try: retobj = func(self.instance, *newargs)
                             except TypeError as err:
                                 raise TypeError("Wrong number of arguments in function %s" % (func.__name__,))
-                    else: raise TypeError("No instance of %s" % (self.object,))
+                    else: raise TypeError("%s: No instance or wrong number of parameters" % (func.__name__))
 
             if retobj == None: 
                 return None

@@ -235,9 +235,11 @@ class OVAL_Handler(object):
         if self.action == None: return
         
         self.def_model = oval.definition_model_import(self.action.f_oval)
+        assert self.def_model != None and self.def_model.instance != None, "Import definition model failed: %s" % (f_oval,)
         self.sys_model = oval.syschar_model(self.def_model)
         self.pb_sess   = oval.probe_session(self.sys_model)
-        self.sess      = oval.agent.new_session(self.def_model)
+        self.sess      = oval.agent.new_session(self.def_model, os.path.basename(self.action.f_oval))
+        assert self.sess != None and self.sess.instance != None, "Session initialization failed: %s" % (self.action.f_xccdf,)
         self.res_model = oval.agent.results_model(self.sess)
 
     def __get_opts(self, arguments):
