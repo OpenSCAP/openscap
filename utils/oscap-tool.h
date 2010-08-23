@@ -115,6 +115,7 @@ struct oscap_action {
         struct cvss_metrics *cvss_metrics;
 #endif
 	bool force;
+	bool oval_results;
 };
 
 int app_validate_xml(const struct oscap_action *action);

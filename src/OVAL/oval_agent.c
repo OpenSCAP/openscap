@@ -180,6 +180,10 @@ struct oval_results_model * oval_agent_get_results_model(oval_agent_session_t * 
 	return ag_sess->res_model;
 }
 
+const char * oval_agent_get_filename(oval_agent_session_t * ag_sess) {
+	return ag_sess->filename;
+}
+
 void oval_agent_destroy_session(oval_agent_session_t * ag_sess) {
 	oval_probe_session_destroy(ag_sess->psess);
 	oval_syschar_model_free(ag_sess->sys_model);

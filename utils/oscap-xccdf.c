@@ -227,11 +227,11 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 
 	
 	/* register oval sessions */
-	int models = 0;
         if (oval_files != NULL) {
-            while (oval_files[models] != NULL) {
-		/* Validate documents */
-		if (!oscap_validate_document(oval_files[models], OSCAP_DOCUMENT_OVAL_DEFINITIONS, NULL, 
+	    int i;
+	    /* Validate documents */
+            for (i=0; oval_files[i]; i++) {
+		if (!oscap_validate_document(oval_files[i], OSCAP_DOCUMENT_OVAL_DEFINITIONS, NULL, 
 					     (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
 			if (oscap_err()) {
 				fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
@@ -239,12 +239,11 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 			}
 			return OSCAP_ERROR;
 		}
-	        models++;
 	    }
-            def_models = malloc(models*sizeof(struct oval_definition_model *));
-            sessions = malloc(models*sizeof(struct oval_agent_session *));
-            int i = 0;
-            while (oval_files[i] != NULL) {
+	    /* create sessions */
+            def_models = malloc(i+1 * sizeof(struct oval_definition_model *));
+            sessions = malloc(i+1 * sizeof(struct oval_agent_session *));
+            for (i=0; oval_files[i]; i++) {
                 struct oval_definition_model *tmp_def_model = oval_definition_model_import(oval_files[i]);
 		if(tmp_def_model==NULL && oscap_err()) {
 			fprintf(stderr, "Error: (%d) %s\n", oscap_err_code(), oscap_err_desc());
@@ -258,8 +257,9 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	        xccdf_policy_model_register_engine_oval(policy_model, tmp_sess);
                 def_models[i] = tmp_def_model;
                 sessions[i] = tmp_sess;
-                i++;
             }
+	    def_models[i] = NULL;
+	    sessions[i] = NULL;
         } 
 	
 	
@@ -294,6 +294,36 @@ int app_evaluate_xccdf(const struct oscap_action *action)
         	if (action->f_report != NULL)
         		xccdf_gen_report(action->f_results, xccdf_result_get_id(ritem), action->f_report);
         }
+	/* Export OVAL results */
+	if (action->oval_results == true) {
+        	for (int i=0; sessions[i]; i++) {
+			/* get result model and session name*/
+			struct oval_results_model *res_model = oval_agent_get_results_model(sessions[i]);
+			char * name =  malloc(PATH_MAX * sizeof(char));
+			sprintf(name, "%s.result.xml", oval_agent_get_filename(sessions[i]));
+
+			/* set up directives */
+			struct oval_result_directives *res_direct = oval_result_directives_new(res_model);
+			oval_result_directives_set_reported(res_direct, OVAL_RESULT_TRUE | OVAL_RESULT_FALSE |
+							    OVAL_RESULT_UNKNOWN | OVAL_RESULT_NOT_EVALUATED |
+							    OVAL_RESULT_ERROR | OVAL_RESULT_NOT_APPLICABLE, true);
+
+			oval_result_directives_set_content(res_direct,
+							   OVAL_RESULT_TRUE |
+							   OVAL_RESULT_FALSE |
+							   OVAL_RESULT_UNKNOWN |
+							   OVAL_RESULT_NOT_EVALUATED |
+							   OVAL_RESULT_NOT_APPLICABLE |
+							   OVAL_RESULT_ERROR,
+							   OVAL_DIRECTIVE_CONTENT_FULL);
+
+			
+			/* export result model to XML */
+			oval_results_model_export(res_model, res_direct, name);
+			oval_result_directives_free(res_direct);
+			free(name);
+		}
+	}
 
 	/* Get the result from TestResult model and decide if end with error or with correct return code */
 	int retval = OSCAP_OK;
@@ -306,21 +336,19 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	}
 	xccdf_rule_result_iterator_free(res_it);
 	/* Clear & End */
-        for (int i=0; i<models; i++) {
-            if (def_models[i] != NULL) oval_definition_model_free(def_models[i]);
-	    if (sessions[i] != NULL) oval_agent_destroy_session(sessions[i]);
+        for (int i=0; def_models[i]; i++) {
+            oval_definition_model_free(def_models[i]);
+	    oval_agent_destroy_session(sessions[i]);
         }
+	free(def_models);
+        free(sessions);
 	if (oval_files != action->urls_oval) {
-		int i=0;
-		while(oval_files[i]) {
+		for(int i=0; oval_files[i]; i++) {
 			free(oval_files[i]);
-			i++;
 		}
 		free(oval_files);
 	}
-        free(def_models);
-        free(sessions);
-	xccdf_policy_model_free(policy_model);
+       	xccdf_policy_model_free(policy_model);
 	return retval;
 }
 
@@ -396,6 +424,7 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 		{"file-version", 1, 0, 2},
 		{"profile", 1, 0, 3},
 		{"report-file", 1, 0, 4},
+		{"oval-results", 0, 0, 5},
 		{0, 0, 0, 0}
 	};
 
@@ -405,8 +434,9 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 		case 'o': case 0: action->f_results = optarg; break;
 		case 3: case 1: case 'i': action->profile = optarg; break;
 		case 2: action->file_version = optarg; break;
-        case 4: action->f_report = optarg; break;
+     		case 4: action->f_report = optarg; break;
 		case 'f': action->force = true; break;
+		case 5: action->oval_results = true; break;
 		default: return oscap_module_usage(action->module, stderr, NULL);
 		}
 	}

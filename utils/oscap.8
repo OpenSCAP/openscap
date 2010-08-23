@@ -84,7 +84,7 @@ Write the report to this file instead of standard output.
 .RS
 Perform evaluation driven by XCCDF file and use OVAL as checking engine. Print result of each rule to standard output. oscap returns 0 if all rules pass. If there is an error during evaluation, the return code is 1. If there is at least one failed rule, oscap-scan finishes with return code 2.
 .PP
-You should specify all required OVAL Definition files as last parameters.
+You may specify all required OVAL Definition files as last parameters. If you don't do that, oscap tool will try to load all OVAL Definition files referenced from XCCDF automaticaly(search in the same path as XCCDF).
 .PP
 .TP
 \fB\-\-profile PROFILE\fR
@@ -98,7 +98,12 @@ Write XCCDF results into file.
 .RE
 .TP
 \fB\-\-report-file FILE\fR
+.RS
 Write HTML report into file. You also have to specify --result-file for this feature to work.
+.RE
+.TP
+\fB\-\-oval-results\fR
+Generate OVAL Result file for each OVAL session used for evaluation.
 .RE
 .RE
 .TP

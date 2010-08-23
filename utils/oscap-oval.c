@@ -283,8 +283,8 @@ int app_evaluate_oval(const struct oscap_action *action)
 		oval_results_model_export(res_model, res_direct, action->f_results);
 		oval_result_directives_free(res_direct);
 
-        if (action->f_report != NULL)
-            oval_gen_report(action->f_results, action->f_report);
+	        if (action->f_report != NULL)
+        		oval_gen_report(action->f_results, action->f_report);
 	}
 	/* clean up */
 	oval_agent_destroy_session(sess);

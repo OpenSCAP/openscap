@@ -83,6 +83,10 @@ int oval_agent_eval_system(oval_agent_session_t * ag_sess, oscap_reporter cb, vo
  * Get a result model from agent session
  */
 struct oval_results_model * oval_agent_get_results_model(oval_agent_session_t * ag_sess);
+/**
+ * Get a filename under which was created
+ */
+const char * oval_agent_get_filename(oval_agent_session_t * ag_sess);
 
 /**
  * Finish OVAL agent session
