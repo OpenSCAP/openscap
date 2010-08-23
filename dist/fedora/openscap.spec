@@ -2,7 +2,7 @@
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
 
 Name:           openscap
-Version:        0.6.0
+Version:        0.6.1
 Release:        1%{?dist}
 Summary:        Set of open source libraries enabling integration of the SCAP line of standards
 Group:          System Environment/Libraries
@@ -84,7 +84,9 @@ install -p -m 755 dist/fedora/oscap-scan.init $RPM_BUILD_ROOT%{_initrddir}/oscap
 install -p -m 644 dist/fedora/oscap-scan.sys  $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig/oscap-scan
 
 # create symlinks to default content
-ln -s  %{_datadir}/openscap/scap-fedora13-oval.xml %{buildroot}/%{_datadir}/openscap/scap-oval.xml
+ln -s  %{_datadir}/openscap/scap-fedora14-oval.xml %{buildroot}/%{_datadir}/openscap/scap-oval.xml
+ln -s  %{_datadir}/openscap/scap-fedora14-xccdf.xml %{buildroot}/%{_datadir}/openscap/scap-xccdf.xml
+
 # bash-completion script
 mkdir -p %{buildroot}%{_sysconfdir}/bash_completion.d
 install -pm 644 dist/bash_completion.d/oscap $RPM_BUILD_ROOT%{_sysconfdir}/bash_completion.d/oscap
@@ -137,14 +139,20 @@ fi
 %config(noreplace) %{_sysconfdir}/sysconfig/oscap-scan
 %{_initrddir}/oscap-scan
 %{_datadir}/openscap/oscap-scan.cron
+%{_datadir}/openscap/scap-oval.xml
 %{_datadir}/openscap/scap-fedora12-oval.xml
 %{_datadir}/openscap/scap-fedora13-oval.xml
-%{_datadir}/openscap/scap-oval.xml
+%{_datadir}/openscap/scap-fedora14-oval.xml
+%{_datadir}/openscap/scap-xccdf.xml
+%{_datadir}/openscap/scap-fedora14-xccdf.xml
 %{_mandir}/man8/*
 %{_bindir}/*
 %{_sysconfdir}/bash_completion.d
 
 %changelog
+* Mon Aug 23 2010 Peter Vrabec <pvrabec@redhat.com> 0.6.1-1
+- upgrade
+
 * Wed Jul 14 2010 Peter Vrabec <pvrabec@redhat.com> 0.6.0-1
 - upgrade
 

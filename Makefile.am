@@ -14,6 +14,8 @@ SUBDIRS += utils tests
 
 dist_pkgdata_DATA = dist/fedora/scap-fedora12-oval.xml \
                     dist/fedora/scap-fedora13-oval.xml \
+                    dist/fedora/scap-fedora14-oval.xml \
+                    dist/fedora/scap-fedora14-xccdf.xml \
                     dist/fedora/oscap-scan.cron
 
 bashcompdir = $(sysconfdir)/bash_completion.d
@@ -72,6 +74,8 @@ EXTRA_DIST =	dist/fedora/openscap.spec \
 		dist/fedora/oscap-scan.cron \
 		dist/fedora/scap-fedora12-oval.xml \
 		dist/fedora/scap-fedora13-oval.xml \
+		dist/fedora/scap-fedora14-oval.xml \
+		dist/fedora/scap-fedora14-xccdf.xml \
 		dist/bash_completion.d/oscap \
 		docs/Doxyfile \
 		docs/examples/oval_probes.py \
