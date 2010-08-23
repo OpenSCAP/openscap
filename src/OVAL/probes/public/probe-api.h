@@ -433,4 +433,9 @@ void *probe_init(void) __attribute__ ((unused));
 void probe_fini(void *) __attribute__ ((unused));
 SEXP_t *probe_main(SEXP_t *, int *, void *) __attribute__ ((nonnull(1, 2)));
 
+#define PROBE_VARREF_HANDLING 0
+#define PROBE_RESULT_CACHING  1
+
+int probe_setoption(int option, ...);
+
 #endif				/* PROBE_API_H */

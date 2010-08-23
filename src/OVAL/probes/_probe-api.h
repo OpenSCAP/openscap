@@ -31,6 +31,7 @@
 #ifndef _PROBE_API_H
 #define _PROBE_API_H
 
+#include <stdarg.h>
 #include "public/probe-api.h"
 #include "probe-cache.h"
 #include "encache.h"
@@ -46,6 +47,11 @@ struct id_desc_t {
 #endif
 	int item_id_ctr;	///< id counter
 };
+
+typedef struct {
+	int option;
+	int (*handler)(int, va_list);
+} probe_option_t;
 
 extern SEAP_CTX_t *OSCAP_GSYM(ctx);
 extern int         OSCAP_GSYM(sd);

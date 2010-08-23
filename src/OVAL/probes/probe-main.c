@@ -34,6 +34,7 @@
 #include <errno.h>
 #include <config.h>
 #include <alloc.h>
+#include <bfind.h>
 #include "_probe-api.h"
 #include "probe-entcmp.h"
 #include "encache.h"
@@ -45,14 +46,29 @@
 #define PROBE_SIGEXIT_CLEAN   1
 #define PROBE_SIGEXIT_UNCLEAN 2
 
+static int probe_opthandler_varref(int, va_list);
+static int probe_opthandler_rcache(int, va_list);
+
+probe_option_t OSCAP_GSYM(options)[] = {
+	{ PROBE_VARREF_HANDLING, &probe_opthandler_varref },
+	{ PROBE_RESULT_CACHING,  &probe_opthandler_rcache }
+};
+
+#define OPTIONS_COUNT (sizeof OSCAP_GSYM(options)/sizeof(probe_option_t))
+
+bool probe_handle_varref(const char *ent_name);
+
 volatile int OSCAP_GSYM(sigexit)   = 0;    /**< signal exit flag */
 SEAP_CTX_t  *OSCAP_GSYM(ctx)       = NULL; /**< SEAP context */
 int          OSCAP_GSYM(sd)        = -1;   /**< SEAP descriptor */
 pcache_t    *OSCAP_GSYM(pcache)    = NULL; /**< probe item cache */
 void        *OSCAP_GSYM(probe_arg) = NULL; /**< pointer for probe_main, provided by probe_init */
 encache_t   *OSCAP_GSYM(encache)   = NULL; /**< element name cache */
-
 struct id_desc_t OSCAP_GSYM(id_desc);
+
+bool   OSCAP_GSYM(varref_handling) = true;
+char **OSCAP_GSYM(no_varref_ents) = NULL;
+size_t OSCAP_GSYM(no_varref_ents_cnt) = 0;
 
 void *probe_worker(void *arg);
 
@@ -600,11 +616,11 @@ static void probe_cleanup(void)
 
 /**
  * Signal hook. This function is registered as a signal handler
- * for various signals and its only function is to set a global
+ * for various signals and its only purpose is to set a global
  * flag. This flag is watched by the main loop in the probe and
  * in case it is set, the probe starts the process of a clean
  * shutdown or immediately exits in case the flag was set to
- * PROBE_SIGEXIT_UNCLEAN signaling a fatal error.
+ * PROBE_SIGEXIT_UNCLEAN -- signaling a fatal error.
  */
 static void probe_sigexit(int signum)
 {
@@ -1002,7 +1018,7 @@ void *probe_worker(void *arg)
 		/* simple object */
 		varrefs = probe_obj_getent(probe_in, "varrefs", 1);
 
-		if (varrefs == NULL) {
+		if (varrefs == NULL || !OSCAP_GSYM(varref_handling)) {
 			SEXP_t *r0;
 
 			_D("probe_main1\n");
@@ -1104,4 +1120,94 @@ void *probe_worker(void *arg)
 
 	SEAP_msg_free(seap_request);
 	return (NULL);
+}
+
+static int probe_optkcmp(int *a, probe_option_t *b)
+{
+	if (*a > b->option)
+		return  1;
+	if (*a < b->option)
+		return -1;
+	else
+		return  0;
+}
+
+int probe_setoption(int option, ...)
+{
+	va_list ap;
+	probe_option_t *optrec;
+	int ret;
+
+	optrec = oscap_bfind (OSCAP_GSYM(options), OPTIONS_COUNT, sizeof(probe_option_t), &option, &probe_optkcmp);
+
+	if (optrec == NULL) {
+		errno = EINVAL;
+		return (-1);
+	}
+
+	if (optrec->handler == NULL)
+		return 0;
+
+	va_start(ap, option);
+	ret = optrec->handler(option, ap);
+	va_end(ap);
+
+	return (ret);
+}
+
+static int probe_optekcmp(const char *a, char **b)
+{
+	return strcmp(a, *b);
+}
+
+static int probe_optecmp(char **a, char **b)
+{
+	return strcmp(*a, *b);
+}
+
+static int probe_opthandler_varref(int option, va_list args)
+{
+	bool  o_switch;
+	char *o_name;
+	char *o_temp;
+
+	o_switch = va_arg(args, int);
+	o_name   = va_arg(args, const char *);
+
+	if (o_name == NULL) {
+		/* switch varref handling on/off globally */
+		OSCAP_GSYM(varref_handling) = o_switch;
+		return (0);
+	}
+
+	o_temp = oscap_bfind (OSCAP_GSYM(no_varref_ents), OSCAP_GSYM(no_varref_ents_cnt),
+			      sizeof(char *), o_name, &probe_optecmp);
+
+	if (o_temp != NULL)
+		return (0);
+
+	OSCAP_GSYM(no_varref_ents) = oscap_realloc(OSCAP_GSYM(no_varref_ents),
+						   sizeof (char *) * ++OSCAP_GSYM(no_varref_ents_cnt));
+	OSCAP_GSYM(no_varref_ents)[OSCAP_GSYM(no_varref_ents_cnt) - 1] = strdup(o_name);
+
+	qsort(OSCAP_GSYM(no_varref_ents), OSCAP_GSYM(no_varref_ents_cnt), sizeof (char *), &probe_optecmp);
+
+	return (0);
+}
+
+static int probe_opthandler_rcache(int option, va_list args)
+{
+	return (0);
+}
+
+bool probe_handle_varref(const char *ent_name)
+{
+	if (ent_name == NULL)
+		return OSCAP_GSYM(varref_handling);
+
+	if (OSCAP_GSYM(no_varref_ents_cnt) == 0)
+		return true;
+
+	return (oscap_bfind (OSCAP_GSYM(no_varref_ents), OSCAP_GSYM(no_varref_ents_cnt),
+			     sizeof(char *), ent_name, &probe_optekcmp) == NULL ? true : false);
 }
