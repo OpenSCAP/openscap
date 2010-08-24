@@ -814,14 +814,13 @@
     <xsl:value-of select="//cdf:Value[@id = $subid]/cdf:value/text()"/>
   </a></i>
 </xsl:template>
-<xsl:template match="cdf:*" mode="text"></xsl:template>
-<xsl:template match="*" mode="text">
-  <xsl:copy>
+<xsl:template match="htm:*" mode="text">
+  <xsl:element name="{local-name()}">
     <xsl:for-each select="./@*">
         <xsl:copy-of select="."/>
     </xsl:for-each>
     <xsl:apply-templates select="./text() | ./*" mode="text"/>
-  </xsl:copy>
+  </xsl:element>
 </xsl:template>
 
 </xsl:stylesheet>
