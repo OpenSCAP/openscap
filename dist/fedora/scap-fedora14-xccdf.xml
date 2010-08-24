@@ -437,8 +437,8 @@
     <select idref="dcb-rhel5-rule-3.18.2.3.a" selected="false" />        <!-- Disable Guest Access and Local Login Support -->
     <select idref="dcb-rhel5-rule-3.18.2.10.a" selected="false" />        <!-- Require Client SMB Packet Signing, if using smbclient -->
     <select idref="dcb-rhel5-rule-3.18.2.11.a" selected="false" />   <!-- NO OVAL 5.5 test -->     <!-- Require Client SMB Packet Signing, if using mount.cifs -->
-    <select idref="dcb-rhel5-rule-3.19.1.a" selected="false" />           <!-- Disable squid if Possible -->
-    <select idref="dcb-rhel5-rule-3.19.1.b" selected="false" />           <!-- Uninstall squid if Possible -->
+    <select idref="dcb-rhel5-rule-3.19.1.a" selected="false" />  <!-- DONE -->  <!-- Disable squid if Possible -->
+    <select idref="dcb-rhel5-rule-3.19.1.b" selected="false" />  <!-- DONE -->  <!-- Uninstall squid if Possible -->
     <select idref="dcb-rhel5-rule-3.19.2.2.a" selected="false" />        <!-- Verify ftp_passive setting -->
     <select idref="dcb-rhel5-rule-3.19.2.2.b" selected="false" />        <!-- Verify ftp_sanitycheck setting -->
     <select idref="dcb-rhel5-rule-3.19.2.2.c" selected="false" />        <!-- Verify check_hostnames stting -->
@@ -460,9 +460,9 @@
     <select idref="dcb-rhel5-rule-3.19.2.5.g" selected="false" />        <!-- Restrict gopher traffic -->
     <select idref="dcb-rhel5-rule-3.19.2.5.h" selected="false" />        <!-- Restrict filemaker traffic -->
     <select idref="dcb-rhel5-rule-3.19.2.5.i" selected="false" />        <!-- Restrict proxy access to localhost -->
-    <select idref="dcb-rhel5-rule-3.19.2.5.j" selected="false" />        <!-- Restrict http-mgmt traffic -->
-    <select idref="dcb-rhel5-rule-3.20.1.a" selected="false" />           <!-- Disable snmpd if Possible -->
-    <select idref="dcb-rhel5-rule-3.20.1.b" selected="false" />           <!-- Uninstall net-snmp if Possible -->
+    <select idref="dcb-rhel5-rule-3.19.2.5.j" selected="false" />  <!-- DONE -->  <!-- Restrict http-mgmt traffic -->
+    <select idref="dcb-rhel5-rule-3.20.1.a" selected="false" />  <!-- DONE -->  <!-- Disable snmpd if Possible -->
+    <select idref="dcb-rhel5-rule-3.20.1.b" selected="false" />  <!-- DONE -->  <!-- Uninstall net-snmp if Possible -->
     
     <refine-value idref="dcb-rhel5-var-2.2.3.1.i" selector="000" />              <!-- Permissions for shadow -->
     <refine-value idref="dcb-rhel5-var-2.2.3.1.j" selector="644" />              <!-- Permissions for group -->
