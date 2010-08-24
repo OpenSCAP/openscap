@@ -123,6 +123,14 @@ Validate given XCCDF file against a XML schema. Every found error is printed to 
 Specify version of the specification the document shall conform to.
 .RE
 .TP
+.B generate-guide\fR  [\fIoptions\fR] xccdf-file
+.RS
+Generate a formatted HTML page containing a security guide from a XCCDF Benchmark. Unless the --output option is specified it will be written to the standard output.
+.TP
+\fB\-\-output FILE\fR
+Write the guide to this file instead of standard output.
+.RE
+.TP
 .B generate-report\fR  [\fIoptions\fR] --result-id id xccdf-file
 .RS
 Generate a formatted HTML page containing results of a XCCDF Benchmark execution. Unless the --output option is specified it will be written to the standard output. ID of the TestResult element to visualise must be provided.
