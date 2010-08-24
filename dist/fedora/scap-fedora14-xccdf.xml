@@ -184,49 +184,49 @@
     <select idref="dcb-rhel5-rule-2.4.3.2.a"   selected="false" />    <!-- DONE- -->      <!-- Disable MCS Translation Service (mcstrans) if Possible -->
     <select idref="dcb-rhel5-rule-2.4.3.3.a"   selected="false" />    <!-- DONE- -->    <!-- Restorecon Service (restorecond) -->
     <select idref="dcb-rhel5-rule-2.4.5.a"     selected="false" />    <!-- DONE- (Unknown) -->      <!-- Check for Unconfined Daemons -->
-    <select idref="dcb-rhel5-rule-2.5.1.1.a"   selected="false" />    <!-- OK -->      <!-- Disable net.ipv4.conf.default.send_redirects for Hosts Only -->
-    <select idref="dcb-rhel5-rule-2.5.1.1.b" selected="false" />    <!-- OK -->      <!-- Disable net.ipv4.conf.all.send_redirects for Hosts Only -->
-    <select idref="dcb-rhel5-rule-2.5.1.1.c" selected="false" />    <!-- OK -->      <!-- Disable net.ipv4.ip forward for Hosts Only -->
-    <select idref="dcb-rhel5-rule-2.5.1.2.a" selected="false" />    <!-- OK -->      <!-- Set net.ipv4.conf.all.accept_source_route for Hosts and Routers -->
-    <select idref="dcb-rhel5-rule-2.5.1.2.b" selected="false" />    <!-- OK -->     <!-- Set net.ipv4.conf.all.accept_redirects for Hosts and Routers -->
-    <select idref="dcb-rhel5-rule-2.5.1.2.c" selected="false" />    <!-- OK -->      <!-- Set net.ipv4.conf.all.secure_redirects for Hosts and Routers -->
-    <select idref="dcb-rhel5-rule-2.5.1.2.d" selected="false" />    <!-- OK -->     <!-- Set net.ipv4.conf.all.log_martians for Hosts and Routers -->
-    <select idref="dcb-rhel5-rule-2.5.1.2.e" selected="false" />    <!-- OK -->     <!-- Set net.ipv4.conf.default.accept_source_route for Hosts and Routers -->
-    <select idref="dcb-rhel5-rule-2.5.1.2.f" selected="false" />    <!-- OK -->     <!-- Set net.ipv4.conf.default.accept_redirects for Hosts and Routers -->
-    <select idref="dcb-rhel5-rule-2.5.1.2.g" selected="false" />    <!-- OK -->      <!-- Set net.ipv4.conf.default.secure_redirects for Hosts and Routers -->
-    <select idref="dcb-rhel5-rule-2.5.1.2.h" selected="false" />    <!-- OK -->     <!-- Set net.ipv4.icmp_echo_ignore_broadcasts for Hosts and Routers -->
-    <select idref="dcb-rhel5-rule-2.5.1.2.i" selected="false" />    <!-- OK -->      <!-- Set net.ipv4.icmp_ignore_bogus_error_messages for Hosts and Routers -->
-    <select idref="dcb-rhel5-rule-2.5.1.2.j" selected="false" />    <!-- OK -->      <!-- Set net.ipv4.tcp_syncookies for Hosts and Routers -->
-    <select idref="dcb-rhel5-rule-2.5.1.2.k" selected="false" />    <!-- OK -->     <!-- Set net.ipv4.conf.all.rp_filter for Hosts and Routers -->
-    <select idref="dcb-rhel5-rule-2.5.1.2.l" selected="false" />    <!-- OK -->     <!-- Set net.ipv4.conf.default.rp_filter for Hosts and Routers -->
+    <select idref="dcb-rhel5-rule-2.5.1.1.a"   selected="false" />    <!-- DONE -->      <!-- Disable net.ipv4.conf.default.send_redirects for Hosts Only -->
+    <select idref="dcb-rhel5-rule-2.5.1.1.b" selected="false" />    <!-- DONE -->      <!-- Disable net.ipv4.conf.all.send_redirects for Hosts Only -->
+    <select idref="dcb-rhel5-rule-2.5.1.1.c" selected="false" />    <!-- DONE -->      <!-- Disable net.ipv4.ip forward for Hosts Only -->
+    <select idref="dcb-rhel5-rule-2.5.1.2.a" selected="false" />    <!-- DONE -->      <!-- Set net.ipv4.conf.all.accept_source_route for Hosts and Routers -->
+    <select idref="dcb-rhel5-rule-2.5.1.2.b" selected="false" />    <!-- DONE -->     <!-- Set net.ipv4.conf.all.accept_redirects for Hosts and Routers -->
+    <select idref="dcb-rhel5-rule-2.5.1.2.c" selected="false" />    <!-- DONE -->      <!-- Set net.ipv4.conf.all.secure_redirects for Hosts and Routers -->
+    <select idref="dcb-rhel5-rule-2.5.1.2.d" selected="false" />    <!-- DONE -->     <!-- Set net.ipv4.conf.all.log_martians for Hosts and Routers -->
+    <select idref="dcb-rhel5-rule-2.5.1.2.e" selected="false" />    <!-- DONE -->     <!-- Set net.ipv4.conf.default.accept_source_route for Hosts and Routers -->
+    <select idref="dcb-rhel5-rule-2.5.1.2.f" selected="false" />    <!-- DONE -->     <!-- Set net.ipv4.conf.default.accept_redirects for Hosts and Routers -->
+    <select idref="dcb-rhel5-rule-2.5.1.2.g" selected="false" />    <!-- DONE -->      <!-- Set net.ipv4.conf.default.secure_redirects for Hosts and Routers -->
+    <select idref="dcb-rhel5-rule-2.5.1.2.h" selected="false" />    <!-- DONE -->     <!-- Set net.ipv4.icmp_echo_ignore_broadcasts for Hosts and Routers -->
+    <select idref="dcb-rhel5-rule-2.5.1.2.i" selected="false" />    <!-- DONE -->      <!-- Set net.ipv4.icmp_ignore_bogus_error_messages for Hosts and Routers -->
+    <select idref="dcb-rhel5-rule-2.5.1.2.j" selected="false" />    <!-- DONE -->      <!-- Set net.ipv4.tcp_syncookies for Hosts and Routers -->
+    <select idref="dcb-rhel5-rule-2.5.1.2.k" selected="false" />    <!-- DONE -->     <!-- Set net.ipv4.conf.all.rp_filter for Hosts and Routers -->
+    <select idref="dcb-rhel5-rule-2.5.1.2.l" selected="false" />    <!-- DONE -->     <!-- Set net.ipv4.conf.default.rp_filter for Hosts and Routers -->
 
-    <select idref="dcb-rhel5-rule-2.5.2.2.1.a" selected="false" />   <!--Unknown -->  <!-- Disable Wireless in BIOS -->
-    <select idref="dcb-rhel5-rule-2.5.2.2.2.a" selected="false" />   <!-- OK -->	   <!-- Deactivate Wireless Interfaces -->
-    <select idref="dcb-rhel5-rule-2.5.2.2.3.a" selected="false" />   <!-- ? Fedora -->     <!-- Disable Wireless Drivers -->
-    <select idref="dcb-rhel5-rule-2.5.3.1.1.a" selected="false" />   <!-- F14 test needed-->     <!-- Disable Automatic Loading of IPv6 Kernel Module -->
-    <select idref="dcb-rhel5-rule-2.5.3.1.2.a" selected="false" />   <!-- OK -->    <!-- Disable NETWORKING_IPV6 in /etc/sysconfig/network -->
-    <select idref="dcb-rhel5-rule-2.5.3.1.2.b" selected="false" />   <!-- OK -->    <!-- Disable IPV6INIT in /etc/sysconfig/network -->
-    <select idref="dcb-rhel5-rule-2.5.3.1.2.c" selected="false" />   <!-- OK -->    <!-- Disable IPV6INIT in /etc/sysconfig/network-scripts/ifcfg-* -->
-    <select idref="dcb-rhel5-rule-2.5.3.2.1.a" selected="false" />   <!-- OK -->    <!-- Disable IPV6_AUTOCONF in /etc/sysconfig/network -->
-    <select idref="dcb-rhel5-rule-2.5.3.2.1.b" selected="false" />   <!--Unknown -->    <!-- Disable accepting IPv6 router advertisements (net.ipv6.conf.default.accept_ra) -->
-    <select idref="dcb-rhel5-rule-2.5.3.2.1.c" selected="false" />   <!--Unknown -->     <!-- Disable accepting redirects from IPv6 routers (net.ipv6.conf.default.accept_redirects) -->
-    <select idref="dcb-rhel5-rule-2.5.3.2.1.d" selected="false" />   <!--Unknown -->    <!-- Disable accepting redirects from IPv6 routers (net.ipv6.conf.all.accept_redirects) -->
-    <select idref="dcb-rhel5-rule-2.5.3.2.3.a" selected="false" />   <!--Unknown -->    <!-- Use Privacy Extensions for Address if Necessary -->
-    <select idref="dcb-rhel5-rule-2.5.3.2.5.a" selected="false" />   <!-- OK -->    <!-- Limit Network-Transmitted Configuration via net.ipv6.conf.default.router_solicitations -->
-    <select idref="dcb-rhel5-rule-2.5.3.2.5.b" selected="false" />   <!-- OK -->    <!-- Limit Network-Transmitted Configuration via net.ipv6.conf.default.accept_ra_rtr_pref -->
-    <select idref="dcb-rhel5-rule-2.5.3.2.5.c" selected="false" />   <!-- OK -->    <!-- Limit Network-Transmitted Configuration via net.ipv6.conf.default.accept_ra_pinfo -->
-    <select idref="dcb-rhel5-rule-2.5.3.2.5.d" selected="false" />   <!-- OK -->    <!-- Limit Network-Transmitted Configuration via net.ipv6.conf.default.accept_ra_defrtr -->
-    <select idref="dcb-rhel5-rule-2.5.3.2.5.e" selected="false" />   <!-- OK -->    <!-- Limit Network-Transmitted Configuration via net.ipv6.conf.default.autoconf -->
-    <select idref="dcb-rhel5-rule-2.5.3.2.5.f" selected="false" />   <!-- OK -->    <!-- Limit Network-Transmitted Configuration via net.ipv6.conf.default.dad_transmits -->
-    <select idref="dcb-rhel5-rule-2.5.3.2.5.g" selected="false" />   <!-- OK -->    <!-- Limit Network-Transmitted Configuration via net.ipv6.conf.default.max_addresses -->
-    <select idref="dcb-rhel5-rule-2.5.5.1.a" selected="false" />     <!-- OK -->    <!-- Verify ip6tables is enabled -->
-    <select idref="dcb-rhel5-rule-2.5.5.1.b" selected="false" />     <!-- OK -->    <!-- Verify iptables is enabled -->
-    <select idref="dcb-rhel5-rule-2.5.5.3.1.a" selected="false" />   <!-- ? Fedora -->    <!-- Change the default policy to DROP (from ACCEPT) for the INPUT built-in chain -->
-    <select idref="dcb-rhel5-rule-2.5.5.3.1.b" selected="false" />   <!-- ? Fedora -->     <!-- Change the default policy to DROP (from ACCEPT) for the FORWARD built-in chain -->
-    <select idref="dcb-rhel5-rule-2.5.7.1.a" selected="false" />    <!-- ? Fedora -->      <!-- Disable Support for DCCP -->
-    <select idref="dcb-rhel5-rule-2.5.7.2.a" selected="false" />    <!-- ? Fedora -->      <!-- Disable Support for SCTP -->
-    <select idref="dcb-rhel5-rule-2.5.7.3.a" selected="false" />    <!-- ? Fedora -->      <!-- Disable Support for RDS -->
-    <select idref="dcb-rhel5-rule-2.5.7.4.a" selected="false" />    <!-- ? Fedora -->      <!-- Disable Support for TIPC -->
+    <select idref="dcb-rhel5-rule-2.5.2.2.1.a" selected="false" />   <!-- ERASE -->  <!-- Disable Wireless in BIOS -->
+    <select idref="dcb-rhel5-rule-2.5.2.2.2.a" selected="false" />   <!-- ERASE -->	   <!-- Deactivate Wireless Interfaces -->
+    <select idref="dcb-rhel5-rule-2.5.2.2.3.a" selected="false" />   <!-- ERASE -->     <!-- Disable Wireless Drivers -->
+    <select idref="dcb-rhel5-rule-2.5.3.1.1.a" selected="false" />   <!-- DONE -->     <!-- Disable Automatic Loading of IPv6 Kernel Module -->
+    <select idref="dcb-rhel5-rule-2.5.3.1.2.a" selected="false" />   <!-- DONE -->    <!-- Disable NETWORKING_IPV6 in /etc/sysconfig/network -->
+    <select idref="dcb-rhel5-rule-2.5.3.1.2.b" selected="false" />   <!-- DONE -->    <!-- Disable IPV6INIT in /etc/sysconfig/network -->
+    <select idref="dcb-rhel5-rule-2.5.3.1.2.c" selected="false" />   <!-- DONE -->    <!-- Disable IPV6INIT in /etc/sysconfig/network-scripts/ifcfg-* -->
+    <select idref="dcb-rhel5-rule-2.5.3.2.1.a" selected="false" />   <!-- DONE -->    <!-- Disable IPV6_AUTOCONF in /etc/sysconfig/network -->
+    <select idref="dcb-rhel5-rule-2.5.3.2.1.b" selected="false" />   <!-- DONE -->    <!-- Disable accepting IPv6 router advertisements (net.ipv6.conf.default.accept_ra) -->
+    <select idref="dcb-rhel5-rule-2.5.3.2.1.c" selected="false" />   <!-- DONE -->     <!-- Disable accepting redirects from IPv6 routers (net.ipv6.conf.default.accept_redirects) -->
+    <select idref="dcb-rhel5-rule-2.5.3.2.1.d" selected="false" />   <!-- DONE -->    <!-- Disable accepting redirects from IPv6 routers (net.ipv6.conf.all.accept_redirects) -->
+    <select idref="dcb-rhel5-rule-2.5.3.2.3.a" selected="false" />   <!-- DONE -->    <!-- Use Privacy Extensions for Address if Necessary -->
+    <select idref="dcb-rhel5-rule-2.5.3.2.5.a" selected="false" />   <!-- DONE -->    <!-- Limit Network-Transmitted Configuration via net.ipv6.conf.default.router_solicitations -->
+    <select idref="dcb-rhel5-rule-2.5.3.2.5.b" selected="false" />   <!-- DONE -->    <!-- Limit Network-Transmitted Configuration via net.ipv6.conf.default.accept_ra_rtr_pref -->
+    <select idref="dcb-rhel5-rule-2.5.3.2.5.c" selected="false" />   <!-- DONE -->    <!-- Limit Network-Transmitted Configuration via net.ipv6.conf.default.accept_ra_pinfo -->
+    <select idref="dcb-rhel5-rule-2.5.3.2.5.d" selected="false" />   <!-- DONE -->    <!-- Limit Network-Transmitted Configuration via net.ipv6.conf.default.accept_ra_defrtr -->
+    <select idref="dcb-rhel5-rule-2.5.3.2.5.e" selected="false" />   <!-- DONE -->    <!-- Limit Network-Transmitted Configuration via net.ipv6.conf.default.autoconf -->
+    <select idref="dcb-rhel5-rule-2.5.3.2.5.f" selected="false" />   <!-- DONE -->    <!-- Limit Network-Transmitted Configuration via net.ipv6.conf.default.dad_transmits -->
+    <select idref="dcb-rhel5-rule-2.5.3.2.5.g" selected="false" />   <!-- DONE -->    <!-- Limit Network-Transmitted Configuration via net.ipv6.conf.default.max_addresses -->
+    <select idref="dcb-rhel5-rule-2.5.5.1.a" selected="false" />     <!-- DONE -->    <!-- Verify ip6tables is enabled -->
+    <select idref="dcb-rhel5-rule-2.5.5.1.b" selected="false" />     <!-- DONE -->    <!-- Verify iptables is enabled -->
+    <select idref="dcb-rhel5-rule-2.5.5.3.1.a" selected="false" />   <!-- DONE -->    <!-- Change the default policy to DROP (from ACCEPT) for the INPUT built-in chain -->
+    <select idref="dcb-rhel5-rule-2.5.5.3.1.b" selected="false" />   <!-- DONE -->     <!-- Change the default policy to DROP (from ACCEPT) for the FORWARD built-in chain -->
+    <select idref="dcb-rhel5-rule-2.5.7.1.a" selected="false" />    <!-- ERASE -->      <!-- Disable Support for DCCP -->
+    <select idref="dcb-rhel5-rule-2.5.7.2.a" selected="false" />    <!-- ERASE -->      <!-- Disable Support for SCTP -->
+    <select idref="dcb-rhel5-rule-2.5.7.3.a" selected="false" />    <!-- ERASE -->      <!-- Disable Support for RDS -->
+    <select idref="dcb-rhel5-rule-2.5.7.4.a" selected="false" />    <!-- ERASE -->      <!-- Disable Support for TIPC -->
     <select idref="dcb-rhel5-rule-2.6.1.a" selected="false" />      <!-- OK -->     <!-- Configure Syslog -->
 
     <select idref="dcb-rhel5-rule-2.6.1.2.a" selected="false" />    <!-- NO OVAL 5.5 -->       <!-- Confirm user that owns System Log Files -->
