@@ -64,6 +64,7 @@ nobase_pkgdata_DATA =	schemas/oval/5.5/independent-system-characteristics-schema
 			schemas/xccdf/1.1.4/xml.xsd \
 			schemas/xccdf/1.1.4/XMLSchema.dtd \
 			schemas/xccdf/1.1.4/datatypes.dtd \
+			xsl/xccdf-guide.xsl \
 			xsl/xccdf-results-report.xsl \
 			xsl/oval-results-report.xsl \
 			xsl/oscap-common.xsl
@@ -123,6 +124,7 @@ EXTRA_DIST =	dist/fedora/openscap.spec \
 		schemas/xccdf/1.1.4/xml.xsd \
 		schemas/xccdf/1.1.4/XMLSchema.dtd \
 		schemas/xccdf/1.1.4/datatypes.dtd \
+		xsl/xccdf-guide.xsl \
 		xsl/xccdf-results-report.xsl \
 		xsl/oval-results-report.xsl \
 		xsl/oscap-common.xsl

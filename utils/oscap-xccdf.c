@@ -43,6 +43,7 @@ static int app_xccdf_resolve(const struct oscap_action *action);
 static int app_xccdf_gen_report(const struct oscap_action *action);
 static bool getopt_xccdf(int argc, char **argv, struct oscap_action *action);
 static int xccdf_gen_report(const char *infile, const char *id, const char *outfile);
+static int app_xccdf_gen_guide(const struct oscap_action *action);
 
 static struct oscap_module* XCCDF_SUBMODULES[];
 
@@ -88,6 +89,18 @@ static struct oscap_module XCCDF_GEN_REPORT = {
     .func = app_xccdf_gen_report
 };
 
+static struct oscap_module XCCDF_GEN_GUIDE = {
+    .name = "generate-guide",
+    .parent = &OSCAP_XCCDF_MODULE,
+    .summary = "Generate security guide HTML file",
+    .usage = "[options] xccdf-file.xml",
+    .help =
+        "Options:\n"
+        "   --output <file>\r\t\t\t\t - Write the HTML into file.",
+    .opt_parser = getopt_xccdf,
+    .func = app_xccdf_gen_guide
+};
+
 static struct oscap_module XCCDF_EVAL = {
     .name = "eval",
     .parent = &OSCAP_XCCDF_MODULE,
@@ -108,6 +121,7 @@ static struct oscap_module* XCCDF_SUBMODULES[] = {
     &XCCDF_RESOLVE,
     &XCCDF_VALIDATE,
     &XCCDF_GEN_REPORT,
+    &XCCDF_GEN_GUIDE,
     NULL
 };
 
@@ -406,6 +420,13 @@ static int xccdf_gen_report(const char *infile, const char *id, const char *outf
 int app_xccdf_gen_report(const struct oscap_action *action)
 {
     return xccdf_gen_report(action->f_xccdf, action->profile, action->f_results);
+}
+
+int app_xccdf_gen_guide(const struct oscap_action *action)
+{
+    if (oscap_apply_xslt(action->f_xccdf, "xccdf-guide.xsl", action->f_results, NULL)) return OSCAP_OK;
+    else fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
+    return OSCAP_ERROR;
 }
 
 bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
