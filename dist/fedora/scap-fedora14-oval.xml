@@ -9580,19 +9580,19 @@
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20343" version="1">
                   <ind-def:path>/etc/squid</ind-def:path>
                   <ind-def:filename>squid.conf</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">ftp_passive[\s]+([^#]*)</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*ftp_passive[[:space:]]+([^#]*)</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20346" version="1">
                   <ind-def:path>/etc/squid</ind-def:path>
                   <ind-def:filename>squid.conf</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">request_header_max_size[\s]+([^#]*)</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*request_header_max_size[[:space:]]+([^#]*)</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20345" version="1">
                   <ind-def:path>/etc/squid</ind-def:path>
                   <ind-def:filename>squid.conf</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">check_hostnames[\s]+([^#]*)</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*check_hostnames[[:space:]]+([^#]*)</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20350" version="1">
@@ -9616,7 +9616,7 @@
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20344" version="1">
                   <ind-def:path>/etc/squid</ind-def:path>
                   <ind-def:filename>squid.conf</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">ftp_sanitycheck[\s]+([^#]*)</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*ftp_sanitycheck[[:space:]]+([^#]*)</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20349" version="1">
