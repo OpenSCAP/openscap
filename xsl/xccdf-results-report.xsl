@@ -33,12 +33,8 @@
 
 <!-- parameters -->
 <xsl:param name="dir" select="'.'"/>
-<xsl:param name="oscap-version"/>
 <xsl:param name="result-id"/>
 <xsl:param name="with-target-facts"/>
-
-<!-- variables -->
-<xsl:variable name='generator' select="'OpenSCAP stylesheet'"/>
 
 <!-- keys -->
 <xsl:key name="items" match="cdf:Group|cdf:Rule|cdf:Value" use="@id"/>
