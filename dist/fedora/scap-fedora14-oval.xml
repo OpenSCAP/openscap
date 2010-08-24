@@ -3738,7 +3738,7 @@
                         <description>The /var/spool/cron file should be owned by the appropriate group.</description>
                   </metadata>
                   <criteria>
-                        <criterion comment="Unknown test stub" test_ref="oval:mil.army.us.rhel5:tst:22"/>
+                        <criterion test_ref="oval:mil.army.us.rhel5:tst:20229"/>
                   </criteria>
             </definition>
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:20230" version="1">
@@ -3751,7 +3751,7 @@
                         <description>The /var/spool/cron file should be owned by the appropriate user.</description>
                   </metadata>
                   <criteria>
-                        <criterion comment="Unknown test stub" test_ref="oval:mil.army.us.rhel5:tst:22"/>
+                        <criterion test_ref="oval:mil.army.us.rhel5:tst:20230"/>
                   </criteria>
             </definition>
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:20231" version="1">
@@ -3764,7 +3764,7 @@
                         <description>File permissions for /var/spool/cron should be set correctly.</description>
                   </metadata>
                   <criteria>
-                        <criterion comment="Unknown test stub" test_ref="oval:mil.army.us.rhel5:tst:22"/>
+                        <criterion test_ref="oval:mil.army.us.rhel5:tst:20231"/>
                   </criteria>
             </definition>
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:20232" version="1">
@@ -7091,6 +7091,18 @@
                   <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:20228"/>
                   <unix-def:state state_ref="oval:mil.army.us.rhel5:ste:20228"/>
             </unix-def:file_test>
+            <unix-def:file_test check_existence="all_exist" id="oval:mil.army.us.rhel5:tst:20229" version="1" check="all" comment="Testing group ownership">
+                  <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:20229"/>
+                  <unix-def:state state_ref="oval:mil.army.us.rhel5:ste:20229"/>
+            </unix-def:file_test>
+            <unix-def:file_test check_existence="all_exist" id="oval:mil.army.us.rhel5:tst:20230" version="1" check="all" comment="Testing user ownership">
+                  <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:20229"/>
+                  <unix-def:state state_ref="oval:mil.army.us.rhel5:ste:20230"/>
+            </unix-def:file_test>
+            <unix-def:file_test check_existence="all_exist" id="oval:mil.army.us.rhel5:tst:20231" version="1" check="all" comment="Testing file permissions">
+                  <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:20229"/>
+                  <unix-def:state state_ref="oval:mil.army.us.rhel5:ste:20231"/>
+            </unix-def:file_test>
             <unix-def:file_test check_existence="none_exist" id="oval:mil.army.us.rhel5:tst:20233" version="1" check="all" comment="existence check of /etc/at/deny">
                   <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:20233"/>
             </unix-def:file_test>
@@ -8953,8 +8965,8 @@
                   <unix-def:filename xsi:nil="true"/>
             </unix-def:file_object>
             <unix-def:file_object id="oval:mil.army.us.rhel5:obj:20225" version="1" comment="/etc/cron.daily">
-                  <unix-def:path>/etc</unix-def:path>
-                  <unix-def:filename>cron.daily</unix-def:filename>
+                  <unix-def:path>/etc/cron.daily</unix-def:path>
+                  <unix-def:filename xsi:nil="true"/>
             </unix-def:file_object>
             <unix-def:file_object id="oval:mil.army.us.rhel5:obj:20216" version="1" comment="/etc/cron.weekly">
                   <unix-def:path>/etc/cron.weekly</unix-def:path>
@@ -8983,8 +8995,8 @@
                   <unix-def:filename xsi:nil="true"/>
             </unix-def:file_object>
             <unix-def:file_object id="oval:mil.army.us.rhel5:obj:20222" version="1" comment="/etc/cron.monthly">
-                  <unix-def:path>/etc</unix-def:path>
-                  <unix-def:filename>cron.monthly</unix-def:filename>
+                  <unix-def:path>/etc/cron.monthly</unix-def:path>
+                  <unix-def:filename xsi:nil="true"/>
             </unix-def:file_object>
             <unix-def:file_object id="oval:mil.army.us.rhel5:obj:20218" version="1" comment="/etc/cron.d">
                   <unix-def:behaviors recurse="symlinks and directories"/>
@@ -8997,40 +9009,43 @@
                   <unix-def:filename xsi:nil="true"/>
             </unix-def:file_object>
             <unix-def:file_object id="oval:mil.army.us.rhel5:obj:20221" version="1" comment="/etc/cron.weekly">
-                  <unix-def:path>/etc</unix-def:path>
-                  <unix-def:filename>cron.weekly</unix-def:filename>
+                  <unix-def:path>/etc/cron.weekly</unix-def:path>
+                  <unix-def:filename xsi:nil="true"/>
             </unix-def:file_object>
             <unix-def:file_object id="oval:mil.army.us.rhel5:obj:20211" version="1" comment="/etc/anacrontab">
                   <unix-def:path>/etc</unix-def:path>
                   <unix-def:filename>anacrontab</unix-def:filename>
             </unix-def:file_object>
             <unix-def:file_object id="oval:mil.army.us.rhel5:obj:20224" version="1" comment="/etc/cron.hourly">
-                  <unix-def:path>/etc</unix-def:path>
-                  <unix-def:filename>cron.hourly</unix-def:filename>
+                  <unix-def:path>/etc/cron.hourly</unix-def:path>
+                  <unix-def:filename xsi:nil="true"/>
             </unix-def:file_object>
             <unix-def:file_object id="oval:mil.army.us.rhel5:obj:20219" version="1" comment="/etc/cron.hourly">
-                  <unix-def:path>/etc</unix-def:path>
-                  <unix-def:filename>cron.hourly</unix-def:filename>
+                  <unix-def:path>/etc/cron.hourly</unix-def:path>
+                  <unix-def:filename xsi:nil="true"/>
             </unix-def:file_object>
+            <unix-def:password_object id="oval:mil.army.us.rhel5:obj:202191" version="1">
+                  <unix-def:username operation="equals" var_ref="oval:mil.army.us.rhel5:var:20219"/>
+            </unix-def:password_object>
             <unix-def:file_object id="oval:mil.army.us.rhel5:obj:20208" version="1" comment="/etc/crontab">
                   <unix-def:path>/etc</unix-def:path>
                   <unix-def:filename>crontab</unix-def:filename>
             </unix-def:file_object>
             <unix-def:file_object id="oval:mil.army.us.rhel5:obj:20220" version="1" comment="/etc/cron.daily">
-                  <unix-def:path>/etc</unix-def:path>
-                  <unix-def:filename>cron.daily</unix-def:filename>
+                  <unix-def:path>/etc/cron.daily</unix-def:path>
+                  <unix-def:filename xsi:nil="true"/>
             </unix-def:file_object>
             <unix-def:file_object id="oval:mil.army.us.rhel5:obj:20213" version="1" comment="/etc/anacrontab">
                   <unix-def:path>/etc</unix-def:path>
                   <unix-def:filename>anacrontab</unix-def:filename>
             </unix-def:file_object>
             <unix-def:file_object id="oval:mil.army.us.rhel5:obj:20226" version="1" comment="/etc/cron.weekly">
-                  <unix-def:path>/etc</unix-def:path>
-                  <unix-def:filename>cron.weekly</unix-def:filename>
+                  <unix-def:path>/etc/cron.weekly</unix-def:path>
+                  <unix-def:filename xsi:nil="true"/>
             </unix-def:file_object>
             <unix-def:file_object id="oval:mil.army.us.rhel5:obj:20227" version="1" comment="/etc/cron.monthly">
-                  <unix-def:path>/etc</unix-def:path>
-                  <unix-def:filename>cron.monthly</unix-def:filename>
+                  <unix-def:path>/etc/cron.monthly</unix-def:path>
+                  <unix-def:filename xsi:nil="true"/>
             </unix-def:file_object>
             <unix-def:file_object id="oval:mil.army.us.rhel5:obj:20215" version="1" comment="/etc/cron.daily">
                   <unix-def:path>/etc/cron.daily</unix-def:path>
@@ -9039,6 +9054,10 @@
             <unix-def:file_object id="oval:mil.army.us.rhel5:obj:20228" version="1" comment="/etc/cron.d">
                   <unix-def:behaviors recurse="symlinks and directories"/>
                   <unix-def:path>/etc/cron.d</unix-def:path>
+                  <unix-def:filename xsi:nil="true"/>
+            </unix-def:file_object>
+            <unix-def:file_object id="oval:mil.army.us.rhel5:obj:20229" version="1" comment="/var/spool/cron">
+                  <unix-def:path>/var/spool/cron</unix-def:path>
                   <unix-def:filename xsi:nil="true"/>
             </unix-def:file_object>
             <unix-def:file_object id="oval:mil.army.us.rhel5:obj:20233" version="1" comment="/etc/at.deny">
@@ -9674,6 +9693,18 @@
                   <ind-def:pattern operation="pattern match" var_ref="oval:mil.army.us.rhel5:var:202141"/>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
+            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:202291" version="1" comment="Get group ID">
+                  <ind-def:path>/etc</ind-def:path>
+                  <ind-def:filename>group</ind-def:filename>
+                  <ind-def:pattern operation="pattern match" var_ref="oval:mil.army.us.rhel5:var:202291"/>
+                  <ind-def:instance datatype="int">1</ind-def:instance>
+            </ind-def:textfilecontent54_object>
+            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:202301" version="1" comment="Get group ID">
+                  <ind-def:path>/etc</ind-def:path>
+                  <ind-def:filename>group</ind-def:filename>
+                  <ind-def:pattern operation="pattern match" var_ref="oval:mil.army.us.rhel5:var:202301"/>
+                  <ind-def:instance datatype="int">1</ind-def:instance>
+            </ind-def:textfilecontent54_object>
       </objects>
       <states>
             <ind-def:textfilecontent54_state id="oval:mil.army.us.rhel5:ste:20000" version="1" comment="/tmp mount point is defined">
@@ -10204,16 +10235,16 @@
                   <unix-def:group_id var_ref="oval:mil.army.us.rhel5:var:202142"/>
             </unix-def:file_state>
             <unix-def:file_state id="oval:mil.army.us.rhel5:ste:20222" version="1">
-                  <unix-def:user_id>root</unix-def:user_id>
+                  <unix-def:user_id var_ref="oval:mil.army.us.rhel5:var:202191"/>
             </unix-def:file_state>
             <unix-def:file_state id="oval:mil.army.us.rhel5:ste:20218" version="1">
                   <unix-def:group_id var_ref="oval:mil.army.us.rhel5:var:202142"/>
             </unix-def:file_state>
             <unix-def:file_state id="oval:mil.army.us.rhel5:ste:20223" version="1">
-                  <unix-def:user_id>root</unix-def:user_id>
+                  <unix-def:user_id var_ref="oval:mil.army.us.rhel5:var:202191"/>
             </unix-def:file_state>
             <unix-def:file_state id="oval:mil.army.us.rhel5:ste:20221" version="1">
-                  <unix-def:user_id>root</unix-def:user_id>
+                  <unix-def:user_id var_ref="oval:mil.army.us.rhel5:var:202191"/>
             </unix-def:file_state>
             <unix-def:file_state id="oval:mil.army.us.rhel5:ste:20211" version="1">
                   <unix-def:group_id var_ref="oval:mil.army.us.rhel5:var:202112"/>
@@ -10230,13 +10261,13 @@
                   <unix-def:oexec var_check="all" datatype="boolean" var_ref="oval:mil.army.us.rhel5:var:72"/>
             </unix-def:file_state>
             <unix-def:file_state id="oval:mil.army.us.rhel5:ste:20219" version="1">
-                  <unix-def:user_id>root</unix-def:user_id>
+                  <unix-def:user_id var_ref="oval:mil.army.us.rhel5:var:202191"/>
             </unix-def:file_state>
             <unix-def:file_state id="oval:mil.army.us.rhel5:ste:20208" version="1">
                   <unix-def:group_id var_check="all" var_ref="oval:mil.army.us.rhel5:var:202082"/>
             </unix-def:file_state>
             <unix-def:file_state id="oval:mil.army.us.rhel5:ste:20220" version="1">
-                  <unix-def:user_id>root</unix-def:user_id>
+                  <unix-def:user_id var_ref="oval:mil.army.us.rhel5:var:202191"/>
             </unix-def:file_state>
             <unix-def:file_state id="oval:mil.army.us.rhel5:ste:20213" version="1">
                   <unix-def:uread var_check="all" datatype="boolean" var_ref="oval:mil.army.us.rhel5:var:73"/>
@@ -10284,6 +10315,23 @@
                   <unix-def:oread var_check="all" datatype="boolean" var_ref="oval:mil.army.us.rhel5:var:106"/>
                   <unix-def:owrite var_check="all" datatype="boolean" var_ref="oval:mil.army.us.rhel5:var:107"/>
                   <unix-def:oexec var_check="all" datatype="boolean" var_ref="oval:mil.army.us.rhel5:var:108"/>
+            </unix-def:file_state>
+            <unix-def:file_state id="oval:mil.army.us.rhel5:ste:20229" version="1">
+                  <unix-def:group_id var_ref="oval:mil.army.us.rhel5:var:202292"/>
+            </unix-def:file_state>
+            <unix-def:file_state id="oval:mil.army.us.rhel5:ste:20230" version="1">
+                  <unix-def:group_id var_ref="oval:mil.army.us.rhel5:var:202302"/>
+            </unix-def:file_state>
+            <unix-def:file_state id="oval:mil.army.us.rhel5:ste:20231" version="1">
+                  <unix-def:uread var_check="all" datatype="boolean" var_ref="oval:mil.army.us.rhel5:var:160"/>
+                  <unix-def:uwrite var_check="all" datatype="boolean" var_ref="oval:mil.army.us.rhel5:var:161"/>
+                  <unix-def:uexec var_check="all" datatype="boolean" var_ref="oval:mil.army.us.rhel5:var:162"/>
+                  <unix-def:gread var_check="all" datatype="boolean" var_ref="oval:mil.army.us.rhel5:var:163"/>
+                  <unix-def:gwrite var_check="all" datatype="boolean" var_ref="oval:mil.army.us.rhel5:var:164"/>
+                  <unix-def:gexec var_check="all" datatype="boolean" var_ref="oval:mil.army.us.rhel5:var:165"/>
+                  <unix-def:oread var_check="all" datatype="boolean" var_ref="oval:mil.army.us.rhel5:var:166"/>
+                  <unix-def:owrite var_check="all" datatype="boolean" var_ref="oval:mil.army.us.rhel5:var:167"/>
+                  <unix-def:oexec var_check="all" datatype="boolean" var_ref="oval:mil.army.us.rhel5:var:168"/>
             </unix-def:file_state>
             <ind-def:textfilecontent54_state id="oval:mil.army.us.rhel5:ste:86" version="1">
                   <ind-def:subexpression var_check="all" operation="pattern match" var_ref="oval:mil.army.us.rhel5:var:20239"/>
@@ -10530,6 +10578,9 @@
             <external_variable id="oval:mil.army.us.rhel5:var:20214" version="1" datatype="string" comment="External variable for definition 20214 20216 20217 20218"/>
             <external_variable id="oval:mil.army.us.rhel5:var:20219" version="1" datatype="string" comment="External variable for definition 20219 20220 20221 20222 20223"/>
             <external_variable id="oval:mil.army.us.rhel5:var:20224" version="1" datatype="string" comment="External variable for definition 20224 20225 20226 20227 20228"/>
+            <external_variable id="oval:mil.army.us.rhel5:var:20229" version="1" datatype="string" comment="External variable for definition 20229"/>
+            <external_variable id="oval:mil.army.us.rhel5:var:20230" version="1" datatype="string" comment="External variable for definition 20230"/>
+            <external_variable id="oval:mil.army.us.rhel5:var:20231" version="1" datatype="string" comment="External variable for definition 20231"/>
             <external_variable id="oval:mil.army.us.rhel5:var:20239" version="1" datatype="int" comment="External variable for ClientActiveinterval in definition 20239"/>
             <external_variable id="oval:mil.army.us.rhel5:var:20246" version="1" datatype="string" comment="External variable for definition 20246"/>
             <external_variable id="oval:mil.army.us.rhel5:var:20262" version="1" datatype="string" comment="External variable for definition 20262"/>
@@ -11445,6 +11496,53 @@
                         <variable_component var_ref="oval:mil.army.us.rhel5:var:20330"/>
                   </substring>
             </local_variable>
+
+            <local_variable id="oval:mil.army.us.rhel5:var:160" version="1" datatype="boolean" comment="Bit for a permission type">
+                  <substring substring_length="1" substring_start="1">
+                        <variable_component var_ref="oval:mil.army.us.rhel5:var:20231"/>
+                  </substring>
+            </local_variable>
+            <local_variable id="oval:mil.army.us.rhel5:var:161" version="1" datatype="boolean" comment="Bit for a permission type">
+                  <substring substring_length="1" substring_start="2">
+                        <variable_component var_ref="oval:mil.army.us.rhel5:var:20231"/>
+                  </substring>
+            </local_variable>
+            <local_variable id="oval:mil.army.us.rhel5:var:162" version="1" datatype="boolean" comment="Bit for a permission type">
+                  <substring substring_length="1" substring_start="3">
+                        <variable_component var_ref="oval:mil.army.us.rhel5:var:20231"/>
+                  </substring>
+            </local_variable>
+            <local_variable id="oval:mil.army.us.rhel5:var:163" version="1" datatype="boolean" comment="Bit for a permission type">
+                  <substring substring_length="1" substring_start="4">
+                        <variable_component var_ref="oval:mil.army.us.rhel5:var:20231"/>
+                  </substring>
+            </local_variable>
+            <local_variable id="oval:mil.army.us.rhel5:var:164" version="1" datatype="boolean" comment="Bit for a permission type">
+                  <substring substring_length="1" substring_start="5">
+                        <variable_component var_ref="oval:mil.army.us.rhel5:var:20231"/>
+                  </substring>
+            </local_variable>
+            <local_variable id="oval:mil.army.us.rhel5:var:165" version="1" datatype="boolean" comment="Bit for a permission type">
+                  <substring substring_length="1" substring_start="6">
+                        <variable_component var_ref="oval:mil.army.us.rhel5:var:20231"/>
+                  </substring>
+            </local_variable>
+            <local_variable id="oval:mil.army.us.rhel5:var:166" version="1" datatype="boolean" comment="Bit for a permission type">
+                  <substring substring_length="1" substring_start="7">
+                        <variable_component var_ref="oval:mil.army.us.rhel5:var:20231"/>
+                  </substring>
+            </local_variable>
+            <local_variable id="oval:mil.army.us.rhel5:var:167" version="1" datatype="boolean" comment="Bit for a permission type">
+                  <substring substring_length="1" substring_start="8">
+                        <variable_component var_ref="oval:mil.army.us.rhel5:var:20231"/>
+                  </substring>
+            </local_variable>
+            <local_variable id="oval:mil.army.us.rhel5:var:168" version="1" datatype="boolean" comment="Bit for a permission type">
+                  <substring substring_length="1" substring_start="9">
+                        <variable_component var_ref="oval:mil.army.us.rhel5:var:20231"/>
+                  </substring>
+            </local_variable>
+
             <local_variable id="oval:mil.army.us.rhel5:var:200855" version="1" datatype="string" comment="Split the PATH on the : delimiter">
                   <split delimiter=":">
                         <object_component item_field="value" object_ref="oval:mil.army.us.rhel5:obj:20085"/>
@@ -11486,6 +11584,29 @@
             </local_variable>
             <local_variable comment="Object to Variable" version="1" id="oval:mil.army.us.rhel5:var:202142" datatype="string">
                         <object_component object_ref="oval:mil.army.us.rhel5:obj:202141" item_field="subexpression"/>
+            </local_variable>
+            <local_variable comment="Object to Variable" version="1" id="oval:mil.army.us.rhel5:var:202191" datatype="string">
+                        <object_component object_ref="oval:mil.army.us.rhel5:obj:202191" item_field="user_id"/>
+            </local_variable>
+            <local_variable comment="Regular expression for /etc/group: Get the group ID of given group name" version="1" id="oval:mil.army.us.rhel5:var:202291" datatype="string">
+                  <concat>
+                        <literal_component>^</literal_component>
+                        <variable_component var_ref="oval:mil.army.us.rhel5:var:20229"/>
+                        <literal_component>:[^:]*:([[:digit:]]+)</literal_component>
+                  </concat>
+            </local_variable>
+            <local_variable comment="Object to Variable" version="1" id="oval:mil.army.us.rhel5:var:202292" datatype="string">
+                        <object_component object_ref="oval:mil.army.us.rhel5:obj:202291" item_field="subexpression"/>
+            </local_variable>
+            <local_variable comment="Regular expression for /etc/group: Get the group ID of given group name" version="1" id="oval:mil.army.us.rhel5:var:202301" datatype="string">
+                  <concat>
+                        <literal_component>^</literal_component>
+                        <variable_component var_ref="oval:mil.army.us.rhel5:var:20230"/>
+                        <literal_component>:[^:]*:([[:digit:]]+)</literal_component>
+                  </concat>
+            </local_variable>
+            <local_variable comment="Object to Variable" version="1" id="oval:mil.army.us.rhel5:var:202302" datatype="string">
+                        <object_component object_ref="oval:mil.army.us.rhel5:obj:202301" item_field="subexpression"/>
             </local_variable>
       </variables>
 </oval_definitions>
