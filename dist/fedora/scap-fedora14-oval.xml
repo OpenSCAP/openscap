@@ -9598,19 +9598,19 @@
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20350" version="1">
                   <ind-def:path>/etc/squid</ind-def:path>
                   <ind-def:filename>squid.conf</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">ignore_unknown_nameservers[\s][\s]([^#]*)</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*ignore_unknown_nameservers[[:space:]]+([^#]*)</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20347" version="1">
                   <ind-def:path>/etc/squid</ind-def:path>
                   <ind-def:filename>squid.conf</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">reply_header_max_size[\s]+([^#]*)</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*reply_header_max_size[[:space:]]+([^#]*)</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20348" version="1">
                   <ind-def:path>/etc/squid</ind-def:path>
                   <ind-def:filename>squid.conf</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">cache_effective_user[\s]+([^#]*)</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*cache_effective_user[[:space:]]+([^#]*)</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20344" version="1">
@@ -9622,31 +9622,31 @@
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20349" version="1">
                   <ind-def:path>/etc/squid</ind-def:path>
                   <ind-def:filename>squid.conf</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">cache_effective_group[\s]+([^#]*)</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*cache_effective_group[[:space:]]+([^#]*)</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20353" version="1">
                   <ind-def:path>/etc/squid</ind-def:path>
                   <ind-def:filename>squid.conf</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">forwarded_for[\s]+([^#]*)</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*forwarded_for[[:space:]]+([^#]*)</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20354" version="1">
                   <ind-def:path>/etc/squid</ind-def:path>
                   <ind-def:filename>squid.conf</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">log_mime_hdrs[\s]+([^#]*)</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*log_mime_hdrs[[:space:]]+([^#]*)</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20351" version="1">
                   <ind-def:path>/etc/squid</ind-def:path>
                   <ind-def:filename>squid.conf</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">allow_underscore[\s]+([^#]*)</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*allow_underscore[[:space:]]+([^#]*)</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20352" version="1">
                   <ind-def:path>/etc/squid</ind-def:path>
                   <ind-def:filename>squid.conf</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">http_suppress_version_string[\s]+([^#]*)</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*httpd_suppress_version_string[[:space:]]+([^#]*)</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <unix-def:runlevel_object id="oval:mil.army.us.rhel5:obj:20365" version="1">
@@ -10430,7 +10430,7 @@
                   <ind-def:subexpression operation="equals">on</ind-def:subexpression>
             </ind-def:textfilecontent54_state>
             <ind-def:textfilecontent54_state id="oval:mil.army.us.rhel5:ste:20350" version="1">
-                  <ind-def:subexpression var_check="all" operation="equals" var_ref="oval:mil.army.us.rhel5:var:20350"/>
+                  <ind-def:subexpression operation="equals">on</ind-def:subexpression>
             </ind-def:textfilecontent54_state>
             <ind-def:textfilecontent54_state id="oval:mil.army.us.rhel5:ste:20347" version="1">
                   <ind-def:subexpression var_check="all" operation="equals" var_ref="oval:mil.army.us.rhel5:var:20347"/>
@@ -10551,7 +10551,6 @@
             <external_variable id="oval:mil.army.us.rhel5:var:20347" version="1" datatype="string" comment="External variable for definition 20347"/>
             <external_variable id="oval:mil.army.us.rhel5:var:20348" version="1" datatype="string" comment="External variable for definition 20348"/>
             <external_variable id="oval:mil.army.us.rhel5:var:20349" version="1" datatype="string" comment="External variable for definition 20349"/>
-            <external_variable id="oval:mil.army.us.rhel5:var:20350" version="1" datatype="string" comment="External variable for definition 20350"/>
             <external_variable id="oval:mil.army.us.rhel5:var:20351" version="1" datatype="string" comment="External variable for definition 20351"/>
             <external_variable id="oval:mil.army.us.rhel5:var:20352" version="1" datatype="string" comment="External variable for definition 20352"/>
             <external_variable id="oval:mil.army.us.rhel5:var:20353" version="1" datatype="string" comment="External variable for definition 20353"/>

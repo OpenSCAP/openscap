@@ -443,23 +443,23 @@
     <select idref="dcb-rhel5-rule-3.19.2.2.b" selected="false" />  <!-- DONE -->  <!-- Verify ftp_sanitycheck setting -->
     <select idref="dcb-rhel5-rule-3.19.2.2.c" selected="false" />  <!-- DONE -->  <!-- Verify check_hostnames stting -->
     <select idref="dcb-rhel5-rule-3.19.2.2.d" selected="false" />  <!-- DONE -->  <!-- Verify request_header_max_size setting -->
-    <select idref="dcb-rhel5-rule-3.19.2.2.e" selected="false" />        <!-- Verify reply_header_max_size setting -->
-    <select idref="dcb-rhel5-rule-3.19.2.2.f" selected="false" />        <!-- Verify cache_effective_user setting -->
-    <select idref="dcb-rhel5-rule-3.19.2.2.g" selected="false" />        <!-- Verify cache_effective_group setting -->
-    <select idref="dcb-rhel5-rule-3.19.2.2.h" selected="false" />        <!-- Verify ignore_unknown_nameservers setting -->
-    <select idref="dcb-rhel5-rule-3.19.2.3.a" selected="false" />        <!-- Check allow_underscore setting -->
-    <select idref="dcb-rhel5-rule-3.19.2.3.b" selected="false" />        <!-- Check httpd_suppress_version setting -->
-    <select idref="dcb-rhel5-rule-3.19.2.3.c" selected="false" />        <!-- Check forwarded_for setting -->
-    <select idref="dcb-rhel5-rule-3.19.2.3.d" selected="false" />        <!-- Check log_mime_hdrs setting -->
-    <select idref="dcb-rhel5-rule-3.19.2.5.a" selected="false" />        <!-- Restrict gss-http traffic -->
-    <select idref="dcb-rhel5-rule-3.19.2.5.b" selected="false" />        <!-- Restrict https traffic -->
-    <select idref="dcb-rhel5-rule-3.19.2.5.c" selected="false" />        <!-- Restrict wais traffic -->
-    <select idref="dcb-rhel5-rule-3.19.2.5.d" selected="false" />        <!-- Restrict multiling http traffic -->
-    <select idref="dcb-rhel5-rule-3.19.2.5.e" selected="false" />        <!-- Restrict http traffic -->
-    <select idref="dcb-rhel5-rule-3.19.2.5.f" selected="false" />        <!-- Restrict ftp traffic -->
-    <select idref="dcb-rhel5-rule-3.19.2.5.g" selected="false" />        <!-- Restrict gopher traffic -->
-    <select idref="dcb-rhel5-rule-3.19.2.5.h" selected="false" />        <!-- Restrict filemaker traffic -->
-    <select idref="dcb-rhel5-rule-3.19.2.5.i" selected="false" />        <!-- Restrict proxy access to localhost -->
+    <select idref="dcb-rhel5-rule-3.19.2.2.e" selected="false" />  <!-- DONE -->  <!-- Verify reply_header_max_size setting -->
+    <select idref="dcb-rhel5-rule-3.19.2.2.f" selected="false" />  <!-- DONE -->  <!-- Verify cache_effective_user setting -->
+    <select idref="dcb-rhel5-rule-3.19.2.2.g" selected="false" />  <!-- DONE -->  <!-- Verify cache_effective_group setting -->
+    <select idref="dcb-rhel5-rule-3.19.2.2.h" selected="false" />  <!-- DONE -->  <!-- Verify ignore_unknown_nameservers setting -->
+    <select idref="dcb-rhel5-rule-3.19.2.3.a" selected="false" />  <!-- DONE -->  <!-- Check allow_underscore setting -->
+    <select idref="dcb-rhel5-rule-3.19.2.3.b" selected="false" />  <!-- DONE -->  <!-- Check httpd_suppress_version setting -->
+    <select idref="dcb-rhel5-rule-3.19.2.3.c" selected="false" />  <!-- DONE -->  <!-- Check forwarded_for setting -->
+    <select idref="dcb-rhel5-rule-3.19.2.3.d" selected="false" />  <!-- DONE -->  <!-- Check log_mime_hdrs setting -->
+    <select idref="dcb-rhel5-rule-3.19.2.5.a" selected="false" />  <!-- DONE -->  <!-- Restrict gss-http traffic -->
+    <select idref="dcb-rhel5-rule-3.19.2.5.b" selected="false" />  <!-- DONE -->  <!-- Restrict https traffic -->
+    <select idref="dcb-rhel5-rule-3.19.2.5.c" selected="false" />  <!-- DONE -->  <!-- Restrict wais traffic -->
+    <select idref="dcb-rhel5-rule-3.19.2.5.d" selected="false" />  <!-- DONE -->  <!-- Restrict multiling http traffic -->
+    <select idref="dcb-rhel5-rule-3.19.2.5.e" selected="false" />  <!-- DONE -->  <!-- Restrict http traffic -->
+    <select idref="dcb-rhel5-rule-3.19.2.5.f" selected="false" />  <!-- DONE -->  <!-- Restrict ftp traffic -->
+    <select idref="dcb-rhel5-rule-3.19.2.5.g" selected="false" />  <!-- DONE -->  <!-- Restrict gopher traffic -->
+    <select idref="dcb-rhel5-rule-3.19.2.5.h" selected="false" />  <!-- DONE -->  <!-- Restrict filemaker traffic -->
+    <select idref="dcb-rhel5-rule-3.19.2.5.i" selected="false" />  <!-- DONE -->  <!-- Restrict proxy access to localhost -->
     <select idref="dcb-rhel5-rule-3.19.2.5.j" selected="false" />  <!-- DONE -->  <!-- Restrict http-mgmt traffic -->
     <select idref="dcb-rhel5-rule-3.20.1.a" selected="false" />  <!-- DONE -->  <!-- Disable snmpd if Possible -->
     <select idref="dcb-rhel5-rule-3.20.1.b" selected="false" />  <!-- DONE -->  <!-- Uninstall net-snmp if Possible -->
@@ -15474,16 +15474,19 @@ By using this IS (which includes any device attached to this IS), you consent to
           <Value id="dcb-rhel5-var-3.19.2.2.e" type="string" operator="equals">
             <title>reply_header_max_size</title>
       			<description xml:lang="en">Place an upper limit on HTTP reply header length, precautions against denial-of-service and buffer overflow vulnerabilities.</description>
+            <value>20kb</value>
             <value selector="20kb">20kb</value>
           </Value>
           <Value id="dcb-rhel5-var-3.19.2.2.f" type="string" operator="equals">
             <title>cache_effective_user</title>
       			<description xml:lang="en">Designate the EUID of Squid following initialization (it is essential that the EUID be set to an unprivileged sandbox account)..</description>
+            <value>squid</value>
             <value selector="squid">squid</value>
           </Value>
           <Value id="dcb-rhel5-var-3.19.2.2.g" type="string" operator="equals">
             <title>cache_effective_group</title>
       			<description xml:lang="en">Designate the EGID of Squid following initialization (it is essential that the EGID be set to an unprivileged sandbox account)..</description>
+            <value>squid</value>
             <value selector="squid">squid</value>
           </Value>
           <Rule id="dcb-rhel5-rule-3.19.2.2.a" selected="false" weight="10.0">
