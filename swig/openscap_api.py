@@ -71,7 +71,7 @@ class OSCAP_List(list):
                 litem = self.iterator.next()
                 if litem.instance == item.instance:
                     self.iterator.remove()
-            self.generate(self.iterator)
+                    list.remove(self, item)
         except NameError:
             raise Exception, "Removing %s items throught oscap list is not allowed. Please use appropriate function." \
                         % (self.iterator.object[:self.iterator.object.find("_iterator")],)
@@ -111,7 +111,7 @@ class OSCAP_List(list):
 
 
 # Abstract class of OSCAP Object
-class OSCAP_Object(list):
+class OSCAP_Object(object):
     """OSCAP_Object"""
 
     def __init__(self, object, instance=None):
@@ -127,12 +127,16 @@ class OSCAP_Object(list):
             return OSCAP_Object(structure, retobj)
         else: return retobj
 
+    def __eq__(self, other):
+        return str.__eq__(self.__repr__(), other.__repr__())
+
     def __repr__(self):
-        return "<Oscap Object of type '%s' at %s with instance '%s'>" % (self.object, hex(id(self)), self.instance)
+        return "<Oscap Object of type '%s' with instance '%s'>" % (self.object, self.instance)
 
     def __func_wrapper(self, func, value=None):
 
         def __getter_wrapper(*args, **kwargs):
+
             newargs = ()
             for arg in args:
                 if isinstance(arg, OSCAP_Object):
@@ -231,13 +235,14 @@ class OSCAP_Object(list):
                 self.free()
 
     def free(self):
+        if self.object == "oval_agent_session": return OSCAP.oval_agent_destroy_session(self.instance)
         if self.__dict__.has_key("instance") and self.__dict__["instance"] != None:
             obj = OSCAP.__dict__.get(self.object+"_free")
             if obj != None:
                 if callable(obj):
                     obj(self.__dict__["instance"])
                     dict.__setattr__(self, "instance", None)
-            else: raise "Can't free %s" % (self.object,)
+            else: raise Exception, "Can't free %s" % (self.object,)
 
     """ ********* Implementation of non-trivial functions ********* """
 
@@ -301,6 +306,7 @@ class OSCAP_Object(list):
             "descs"     - list of tuples (language, discription)
             "type"      - type of value represented by integer: {0:"", 1:"Number", 2:"String", 3:"Boolean"}
             "options"   - dictionary of options where key is selector and value is Value instance value
+            "matches"   - dictionary of matches where key is selector and value is Regexp that input must match
             "selected"  - tuple (selector, value) of default or choosen value instance"""
 
         if self.object != "xccdf_policy": raise TypeError("Wrong call of \"get_tailor_items\" function. Should be xccdf_policy (have %s)" %(self.object,))
@@ -310,13 +316,22 @@ class OSCAP_Object(list):
             # get value properties
             item = {}
             item["id"] = value.id
-            item["titles"] = [(title.lang, title.text) for title in value.title]
+            if len(value.question):
+                item["titles"] = [(question.lang, question.text) for question in value.question]
+            else: 
+                item["titles"] = [(title.lang, title.text) for title in value.title]
             item["descs"] = [(desc.lang, desc.text) for desc in value.description]
             item["type"] = value.type
             # get values
             item["options"] = {}
+            item["matches"] = {}
             for instance in value.instances:
                 item["options"][instance.selector] = instance.value
+                if instance.match: item["matches"][instance.selector] = instance.match
+
+            #TODO: Choices
+            if not len(item["matches"]):
+                item["matches"][''] = ["", "^[\\b]+$", "^.*$", "^[01]$"][value.type]
 
             if self.profile != None:
                 for r_value in self.profile.refine_values:
@@ -336,6 +351,7 @@ class OSCAP_Object(list):
             print "Descriptions: \r\t\t", item["descs"]
             print "Type: \r\t\t", ["", "Number", "String", "Boolean"][item["type"]]
             print "Options: \r\t\t", item["options"]
+            print "Matches: \r\t\t", item["matches"]
             print "Selected: \r\t\t", item["selected"]
             print
             """
@@ -373,12 +389,12 @@ class OSCAP_Object(list):
                     selector = instance.selector
 
             oper = remarks = setvalue = None
-            for r_value in self.profile.refine_values:
+            for r_value in self.profile.refine_values[:]:
                 if r_value.item == item["id"]:
                     oper = r_value.oper
                     remarks = r_value.remarks
                     self.profile.refine_values.remove(r_value)
-            for s_value in self.profile.setvalues:
+            for s_value in self.profile.setvalues[:]:
                 if s_value.item == item["id"]:
                     setvalue = s_value.value
                     self.profile.setvalues.remove(s_value)
@@ -477,8 +493,15 @@ class OSCAP_Object(list):
                 assert sess != None and sess.instance != None, "Cannot create agent session for %s" % (f_OVAL,)
                 sessions.append(sess)
                 policy_model.register_engine_oval(sess)
+            else: print "WARNING: Skipping %s file which is referenced from XCCDF content" % (f_OVAL,)
         files.free()
         return {"def_models":def_models, "sessions":sessions, "policy_model":policy_model}
+
+    
+    def destroy(self, dir):
+
+        for model in dir["def_models"]+dir["sessions"]+[dir["policy_model"]]:
+            model.free()
 
 
 # ------------------------------------------------------------------------------------------------------------
