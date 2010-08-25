@@ -215,7 +215,8 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 		int files_cnt = 3;
 		oval_files = malloc(files_cnt * sizeof(char *));
 
-		char * path = dirname( strdup(action->f_xccdf));
+		char * pathcopy =  strdup(action->f_xccdf);
+		char * path = dirname(pathcopy);
 
 		struct oscap_stringlist * files = xccdf_policy_model_get_files(policy_model);
 		struct oscap_string_iterator *files_it = oscap_stringlist_get_strings(files);
@@ -234,7 +235,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 		}
 		oscap_string_iterator_free(files_it);
 		oscap_stringlist_free(files);
-		free(path);
+		free(pathcopy);
 		oval_files[idx] = NULL;
 	} else
 		oval_files = action->urls_oval;
@@ -255,8 +256,8 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 		}
 	    }
 	    /* create sessions */
-            def_models = malloc(i+1 * sizeof(struct oval_definition_model *));
-            sessions = malloc(i+1 * sizeof(struct oval_agent_session *));
+            def_models = malloc((i+1) * sizeof(struct oval_definition_model *));
+            sessions = malloc((i+1) * sizeof(struct oval_agent_session *));
             for (i=0; oval_files[i]; i++) {
                 struct oval_definition_model *tmp_def_model = oval_definition_model_import(oval_files[i]);
 		if(tmp_def_model==NULL && oscap_err()) {
