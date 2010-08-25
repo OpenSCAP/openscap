@@ -750,7 +750,7 @@
                         <description>All files should be owned by a user</description>
                   </metadata>
                   <criteria>
-                        <criterion comment="Check all files and make sure they are owned by a user" test_ref="oval:mil.army.us.rhel5:tst:20050" negate="true"/>
+                        <criterion comment="Check all files and make sure they are owned by a user" test_ref="oval:mil.army.us.rhel5:tst:20050"/>
                   </criteria>
             </definition>
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:20051" version="1">
@@ -763,7 +763,7 @@
                         <description>All files should be owned by a group</description>
                   </metadata>
                   <criteria>
-                        <criterion comment="Check all files and make sure they are owned by a group" test_ref="oval:mil.army.us.rhel5:tst:20051" negate="true"/>
+                        <criterion comment="Check all files and make sure they are owned by a group" test_ref="oval:mil.army.us.rhel5:tst:20051"/>
                   </criteria>
             </definition>
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:20052" version="1">
@@ -5912,19 +5912,17 @@
                   </notes>
                   <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:20049"/>
             </unix-def:file_test>
-            <unix-def:file_test id="oval:mil.army.us.rhel5:tst:20050" version="1" check="all" comment="files with no user owner">
+            <unix-def:file_test id="oval:mil.army.us.rhel5:tst:20050" version="1" check_existence="none_exist" check="all" comment="files with no user owner">
                   <notes>
                         <note>This will enumerate all files on local partitions</note>
                   </notes>
-                  <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:20047"/>
-                  <unix-def:state state_ref="oval:mil.army.us.rhel5:ste:20050"/>
+                  <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:20050"/>
             </unix-def:file_test>
-            <unix-def:file_test id="oval:mil.army.us.rhel5:tst:20051" version="1" check="all" comment="files with no group owner">
+            <unix-def:file_test id="oval:mil.army.us.rhel5:tst:20051" version="1" check_existence="none_exist" check="all" comment="files with no group owner">
                   <notes>
                         <note>This will enumerate all files on local partitions</note>
                   </notes>
-                  <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:20047"/>
-                  <unix-def:state state_ref="oval:mil.army.us.rhel5:ste:20051"/>
+                  <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:20051"/>
             </unix-def:file_test>
 <!-- TODO           <unix-def:file_test id="oval:mil.army.us.rhel5:tst:20052" version="1" check="all" comment="world writable directories have a uid greater than or equal to 500" state_operator="OR"> -->
             <unix-def:file_test id="oval:mil.army.us.rhel5:tst:20052" version="1" check="all" comment="world writable directories have a uid greater than or equal to 500" >
@@ -7665,6 +7663,30 @@
                         <filter>oval:mil.army.us.rhel5:ste:2004916</filter>
                   </set>
             </unix-def:file_object>
+            <unix-def:file_object id="oval:mil.army.us.rhel5:obj:20050" version="1" comment="all local files without a valid user assigned">
+                  <set set_operator="UNION" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+                        <object_reference>oval:mil.army.us.rhel5:obj:20047</object_reference>
+                        <filter>oval:mil.army.us.rhel5:ste:20050</filter>
+                  </set>
+            </unix-def:file_object>
+            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:200501" version="1">
+                  <ind-def:path>/etc</ind-def:path>
+                  <ind-def:filename>passwd</ind-def:filename>
+                  <ind-def:pattern operation="pattern match">^[^:]+:[^:]+:([[:digit:]]+):[[:digit:]]+:[^:]*:[^:]+:[^:]*</ind-def:pattern>
+                  <ind-def:instance operation="greater than or equal" datatype="int">1</ind-def:instance>
+            </ind-def:textfilecontent54_object>
+            <unix-def:file_object id="oval:mil.army.us.rhel5:obj:20051" version="1" comment="all local files without a valid group assigned">
+                  <set set_operator="UNION" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+                        <object_reference>oval:mil.army.us.rhel5:obj:20047</object_reference>
+                        <filter>oval:mil.army.us.rhel5:ste:20051</filter>
+                  </set>
+            </unix-def:file_object>
+            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:200511" version="1">
+                  <ind-def:path>/etc</ind-def:path>
+                  <ind-def:filename>group</ind-def:filename>
+                  <ind-def:pattern operation="pattern match">^[^:]+:[^:]*:([[:digit:]]+):[^:]*</ind-def:pattern>
+                  <ind-def:instance operation="greater than or equal" datatype="int">1</ind-def:instance>
+            </ind-def:textfilecontent54_object>
 
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20053" version="1">
                   <ind-def:path>/etc/init.d</ind-def:path>
@@ -10016,11 +10038,11 @@
                   <unix-def:filename>BackupPC_Admin</unix-def:filename>
             </unix-def:file_state>
 
-            <unix-def:file_state id="oval:mil.army.us.rhel5:ste:20050" version="1" comment="Executables with suid set">
-                  <unix-def:user_id></unix-def:user_id>
+            <unix-def:file_state id="oval:mil.army.us.rhel5:ste:20050" version="1" comment="Files with a valid user id assigned">
+                  <unix-def:user_id var_check="at least one" var_ref="oval:mil.army.us.rhel5:var:20050"/>
             </unix-def:file_state>
-            <unix-def:file_state id="oval:mil.army.us.rhel5:ste:20051" version="1" comment="Executables with suid set">
-                  <unix-def:group_id></unix-def:group_id>
+            <unix-def:file_state id="oval:mil.army.us.rhel5:ste:20051" version="1" comment="Files with a valid group id assigned">
+                  <unix-def:group_id var_check="at least one" var_ref="oval:mil.army.us.rhel5:var:20051"/>
             </unix-def:file_state>
             <unix-def:file_state id="oval:mil.army.us.rhel5:ste:20052" version="1" comment="uid not less than 500">
                   <unix-def:group_id datatype="int" operation="greater than or equal">500</unix-def:group_id>
@@ -11027,6 +11049,12 @@
                   <substring substring_length="1" substring_start="9">
                         <variable_component var_ref="oval:mil.army.us.rhel5:var:20045"/>
                   </substring>
+            </local_variable>
+            <local_variable id="oval:mil.army.us.rhel5:var:20050" version="1" datatype="string" comment="List of user ids">
+                        <object_component item_field="subexpression" object_ref="oval:mil.army.us.rhel5:obj:200501"/>
+            </local_variable>
+            <local_variable id="oval:mil.army.us.rhel5:var:20051" version="1" datatype="string" comment="List of group ids">
+                        <object_component item_field="subexpression" object_ref="oval:mil.army.us.rhel5:obj:200511"/>
             </local_variable>
             <local_variable id="oval:mil.army.us.rhel5:var:200820" version="1" datatype="boolean" comment="Bit for a permission type">
                   <substring substring_length="1" substring_start="1">
