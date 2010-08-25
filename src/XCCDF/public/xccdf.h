@@ -959,9 +959,10 @@ void xccdf_instance_free(struct xccdf_instance *inst);
  * Get an iterator to the XCCDF value's source URIs.
  * @memberof xccdf_value
  */
-/* struct oscap_string_iterator* xccdf_value_sources(const struct xccdf_value* value); TODO */
+/* struct oscap_string_iterator* xccdf_value_get_sources(const struct xccdf_value* value); TODO */
 
-
+/// @memberof xccdf_value_instance
+struct oscap_string_iterator *xccdf_value_instance_get_choices(const struct xccdf_value_instance *item);
 
 /************************************************************/
 /**
