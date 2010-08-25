@@ -193,7 +193,14 @@ void xccdf_value_to_dom(struct xccdf_value *value, xmlNode *value_node, xmlDoc *
 			inst->type == XCCDF_TYPE_NUMBER && inst->upper_bound != NAN, ns_xccdf, "upper_bound", inst->selector);
 		xccdf_unit_node(match_nodes, inst->type, inst->match,
 			inst->type == XCCDF_TYPE_STRING && inst->match != NULL, ns_xccdf, "match", inst->selector);
-		// TODO choices
+        if (inst->choices->first) {
+            xmlNode *choices = xmlNewNode(ns_xccdf, BAD_CAST "choices");
+            if (inst->flags.must_match_given)
+                xmlNewProp(choices, BAD_CAST "mustMatch", BAD_CAST oscap_enum_to_string(OSCAP_BOOL_MAP, inst->flags.must_match));
+            if (inst->selector) xmlNewProp(choices, BAD_CAST "selector", BAD_CAST inst->selector);
+            OSCAP_FOR_STR(ch, xccdf_value_instance_get_choices(inst))
+                xmlNewTextChild(choices, ns_xccdf, BAD_CAST "choice", BAD_CAST ch);
+        }
 	}
 
 	struct oscap_list *all_nodes = oscap_list_destructive_join(oscap_list_destructive_join(value_nodes, defval_nodes),
