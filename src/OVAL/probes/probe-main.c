@@ -160,27 +160,33 @@ static SEXP_t *probe_obj_eval(SEXP_t * id)
 	SEXP_vfree(res, rid, ret, NULL);
 
 	if (res_flag != SYSCHAR_FLAG_COMPLETE) {
-		SEXP_t *item, *cobj, *item_list, *r0, *attr;
-		char   *o_id;
+		res = pcache_sexp_get(OSCAP_GSYM(pcache), id);
 
-		attr = probe_attr_creat("message", r0 = SEXP_string_newf("This item was generated because evaluation of"
-									 " object %s resulted in an error (flag = %u)",
-									 o_id = SEXP_string_cstr(id), res_flag), NULL);
-		item = probe_item_creat("error_item", attr, NULL);
+		if (res == NULL) {
+			SEXP_t *item, *cobj, *item_list, *r0, *attr;
+			char   *o_id;
 
-		oscap_free(o_id);
-		probe_item_setstatus(item, OVAL_STATUS_ERROR);
-		cobj = _probe_cobj_new(res_flag, item_list = SEXP_list_new(item, NULL));
-		SEXP_vfree (item_list, item, attr, r0, NULL);
+			attr = probe_attr_creat("message", r0 = SEXP_string_newf("This item was generated because evaluation of"
+										 " object %s resulted in an error (flag = %u)",
+										 o_id = SEXP_string_cstr(id), res_flag), NULL);
+			item = probe_item_creat("error_item", attr, NULL);
 
-		if (pcache_sexp_add(OSCAP_GSYM(pcache), id, cobj) != 0) {
-			SEXP_free (cobj);
-			SEXP_free (item);
+			oscap_free(o_id);
+			probe_item_setstatus(item, OVAL_STATUS_ERROR);
+			cobj = _probe_cobj_new(res_flag, item_list = SEXP_list_new(item, NULL));
+			SEXP_vfree (item_list, item, attr, r0, NULL);
 
-			return (NULL);
+			if (pcache_sexp_add(OSCAP_GSYM(pcache), id, cobj) != 0) {
+				SEXP_free (cobj);
+				SEXP_free (item);
+
+				return (NULL);
+			}
+
+			return cobj;
 		}
 
-		return cobj;
+		return res;
 	} else
 		return pcache_sexp_get(OSCAP_GSYM(pcache), id);
 }
