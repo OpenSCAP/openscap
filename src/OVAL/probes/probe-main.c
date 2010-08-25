@@ -157,7 +157,7 @@ static SEXP_t *probe_obj_eval(SEXP_t * id)
 
 	res_flag = (oval_syschar_collection_flag_t)SEXP_number_getu(ret);
 
-	SEXP_vfree(res, rid, ret);
+	SEXP_vfree(res, rid, ret, NULL);
 
 	if (res_flag != SYSCHAR_FLAG_COMPLETE) {
 		SEXP_t *item, *cobj, *item_list, *r0, *attr;
