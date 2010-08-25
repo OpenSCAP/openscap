@@ -238,6 +238,9 @@ static int file_cb (const char *p, const char *f, void *ptr)
                                         "suid", NULL,
                                         (st.st_mode & S_ISUID ? gr_true : gr_false),
 
+                                        "sgid", NULL,
+                                        (st.st_mode & S_ISGID ? gr_true : gr_false),
+
                                         "sticky", NULL,
                                         (st.st_mode & S_ISVTX ? gr_true : gr_false),
 
