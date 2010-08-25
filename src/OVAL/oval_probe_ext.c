@@ -77,11 +77,11 @@ oval_pext_t *oval_pext_new(void)
         pext->do_init = true;
         pthread_mutex_init(&pext->lock, NULL);
 
-#if defined(OVAL_PROBEDIR_ENV)
+//#if defined(OVAL_PROBEDIR_ENV)
         pext->probe_dir = getenv("OVAL_PROBE_DIR");
-#else
-        pext->probe_dir = NULL;
-#endif
+//#else
+//        pext->probe_dir = NULL;
+//#endif
         if (pext->probe_dir == NULL)
                 pext->probe_dir = OVAL_PROBE_DIR;
 
@@ -217,8 +217,10 @@ static SEXP_t *oval_probe_cmd_obj_eval(SEXP_t *sexp, void *arg)
 {
 	char *id_str;
 	struct oval_definition_model *defs;
-	struct oval_object *obj;
+	struct oval_object  *obj;
+	struct oval_syschar *res;
 	oval_pext_t *pext = (oval_pext_t *) arg;
+	SEXP_t *ret, *ret_code;
 
         assume_d (sexp != NULL, NULL);
         assume_d (arg  != NULL, NULL);
@@ -231,6 +233,7 @@ static SEXP_t *oval_probe_cmd_obj_eval(SEXP_t *sexp, void *arg)
 	id_str = SEXP_string_cstr(sexp);
 	defs   = oval_syschar_model_get_definition_model(*(pext->model));
 	obj    = oval_definition_model_get_object(defs, id_str);
+	ret    = SEXP_list_new (sexp, NULL);
 
 	oscap_dlprintf(DBG_I, "Get_object: %s.\n", id_str);
 
@@ -242,7 +245,15 @@ static SEXP_t *oval_probe_cmd_obj_eval(SEXP_t *sexp, void *arg)
 	}
 
 	oscap_clearerr();
-	oval_probe_query_object(pext->sess_ptr, obj, OVAL_PDFLAG_NOREPLY); /* DO NOT PUT THIS INSIDE ASSERT! */
+	res = oval_probe_query_object(pext->sess_ptr, obj, OVAL_PDFLAG_NOREPLY);
+
+	if (res != NULL)
+		ret_code = SEXP_number_newu((unsigned int)oval_syschar_get_flag (res));
+	else
+		ret_code = SEXP_number_newu((unsigned int)SYSCHAR_FLAG_COMPLETE);
+
+	SEXP_list_add(ret, ret_code);
+	SEXP_free(ret_code);
 
 	if (oscap_err()) {
 		oscap_dlprintf(DBG_E, "Failed: id: %s, err: %d, %d, %s.\n",
@@ -255,7 +266,7 @@ static SEXP_t *oval_probe_cmd_obj_eval(SEXP_t *sexp, void *arg)
 
 	oscap_free(id_str);
 
-	return SEXP_ref(sexp);
+	return (ret);
 }
 
 static SEXP_t *oval_probe_cmd_ste_fetch(SEXP_t *sexp, void *arg)
@@ -733,8 +744,7 @@ int oval_probe_ext_handler(oval_subtype_t type, void *ptr, int act, ...)
                                 pd = oval_pdtbl_get(pext->pdtbl, oval_object_get_subtype(obj));
                 }
 
-                *sys = oval_probe_ext_eval(pext->pdtbl->ctx, pd, pext, obj, flags);
-		ret  = ((*sys == NULL) && (!(flags & OVAL_PDFLAG_NOREPLY)) ? -1 : 0);
+                return oval_probe_ext_eval(pext->pdtbl->ctx, pd, pext, obj, sys, flags);
                 break;
         }
         case PROBE_HANDLER_ACT_OPEN:
@@ -808,18 +818,22 @@ int oval_probe_ext_init(oval_pext_t *pext)
         return(ret);
 }
 
-struct oval_syschar *oval_probe_ext_eval(SEAP_CTX_t *ctx, oval_pd_t *pd, oval_pext_t *pext, struct oval_object *object, int flags)
+int oval_probe_ext_eval(SEAP_CTX_t *ctx, oval_pd_t *pd, oval_pext_t *pext, struct oval_object *object, struct oval_syschar **syschar, int flags)
 {
         SEXP_t *s_obj, *s_sys;
         struct oval_syschar *o_sys;
         struct oval_syschar_model *model = *(pext->model);
 
+	if (syschar == NULL) {
+		oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EPROBEINVAL, "Internal error: syschar == NULL");
+		return (-1);
+	}
+
         s_obj = oval_object2sexp(oval_subtype2str(oval_object_get_subtype(object)), object, model, pext->sess_ptr);
 
         if (s_obj == NULL) {
                 oscap_dlprintf(DBG_E, "Can't translate OVAL object to S-exp.\n");
-
-                return(NULL);
+                return(1);
         }
 
         s_sys = oval_probe_comm(ctx, pd, s_obj, flags & OVAL_PDFLAG_NOREPLY);
@@ -832,7 +846,7 @@ struct oval_syschar *oval_probe_ext_eval(SEAP_CTX_t *ctx, oval_pd_t *pd, oval_pe
                          * NULL is ok here because the no-reply flag is set and we don't expect
                          * any data to be returned.
                          */
-                        return(NULL);
+                        return(0);
                 } else {
                         if (!oscap_err()) {
                                 /*
@@ -842,7 +856,7 @@ struct oval_syschar *oval_probe_ext_eval(SEAP_CTX_t *ctx, oval_pd_t *pd, oval_pe
                                 oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EPROBENODATA, "No data received");
                         }
 
-                        return(NULL);
+                        return(-1);
                 }
         } else {
                 if (flags & OVAL_PDFLAG_NOREPLY) {
@@ -855,19 +869,19 @@ struct oval_syschar *oval_probe_ext_eval(SEAP_CTX_t *ctx, oval_pd_t *pd, oval_pe
                         SEXP_free(s_sys);
 			SEXP_free(s_obj);
 
-			return (NULL);
+			return (0);
                 }
         }
 
         /*
 	 * Convert the received S-exp to OVAL system characteristic.
 	 */
-	o_sys = oval_sexp2sysch(s_sys, model, object);
+	*syschar = oval_sexp2sysch(s_sys, model, object);
 
 	SEXP_free(s_sys);
 	SEXP_free(s_obj);
 
-	return (o_sys);
+	return (0);
 }
 
 int oval_probe_ext_reset(SEAP_CTX_t *ctx, oval_pd_t *pd, oval_pext_t *pext)

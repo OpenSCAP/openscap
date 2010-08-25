@@ -34,6 +34,7 @@
 #include <errno.h>
 #include <config.h>
 #include <alloc.h>
+#include <assume.h>
 #include <bfind.h>
 #include "_probe-api.h"
 #include "probe-entcmp.h"
@@ -141,15 +142,47 @@ static SEXP_t *probe_ste_fetch(SEXP_t * id_list)
  */
 static SEXP_t *probe_obj_eval(SEXP_t * id)
 {
-	SEXP_t *res;
+	SEXP_t *res, *rid, *ret;
+	oval_syschar_collection_flag_t res_flag;
 
 	_LOGCALL_;
 
 	res = SEAP_cmd_exec(OSCAP_GSYM(ctx), OSCAP_GSYM(sd), 0, PROBECMD_OBJ_EVAL, id, SEAP_CMDTYPE_SYNC, NULL, NULL);
 
-	SEXP_free(res);
+	rid = SEXP_list_first(res);
+	ret = SEXP_list_last(res);
 
-	return pcache_sexp_get(OSCAP_GSYM(pcache), id);
+	assume_r(SEXP_string_cmp(id, rid) == 0, NULL);
+	assume_r(SEXP_numberp(ret), NULL);
+
+	res_flag = (oval_syschar_collection_flag_t)SEXP_number_getu(ret);
+
+	SEXP_vfree(res, rid, ret);
+
+	if (res_flag != SYSCHAR_FLAG_COMPLETE) {
+		SEXP_t *item, *cobj, *item_list, *r0;
+		char   *o_id;
+
+		attr = probe_attr_creat("message", r0 = SEXP_string_newf("This item was generated because evaluation of"
+									 " object %s resulted in an error (flag = %u)",
+									 o_id = SEXP_string_cstr(id), res_flag), NULL);
+		item = probe_item_creat("error_item", attr, NULL);
+
+		oscap_free(o_id);
+		probe_item_setstatus(item, OVAL_STATUS_ERROR);
+		cobj = _probe_cobj_new(res_flag, item_list = SEXP_list_new(item, NULL));
+		SEXP_vfree (item_list, item, attr, r0, NULL);
+
+		if (pcache_sexp_add(OSCAP_GSYM(pcache), id, cobj) != 0) {
+			SEXP_free (cobj);
+			SEXP_free (item);
+
+			return (NULL);
+		}
+
+		return cobj;
+	} else
+		return pcache_sexp_get(OSCAP_GSYM(pcache), id);
 }
 
 /**
@@ -291,6 +324,7 @@ static SEXP_t *probe_set_apply_filters(SEXP_t *cobj, SEXP_t *filters)
 		case OVAL_STATUS_DOESNOTEXIST:
 			continue;
 		case OVAL_STATUS_ERROR:
+			break;
 		case OVAL_STATUS_NOTCOLLECTED:
 			_D("Supplied item has an invalid status: %d\n", item_status);
 			SEXP_vfree(items, result_items, NULL);
@@ -968,6 +1002,7 @@ static int probe_varref_iterate_ctx(struct probe_varref_ctx *ctx)
 	val_cnt = ent->val_cnt;
 	next_val_idx = &ent->next_val_idx;
 	ent_name_sref = ent->ent_name_sref;
+
 	r0 = SEXP_number_newu(0);
 
 	while (++(*next_val_idx) >= val_cnt) {
@@ -1160,6 +1195,11 @@ static int probe_optekcmp(const char *a, char **b)
 	return strcmp(a, *b);
 }
 
+static int probe_optekcmp_sexp(const SEXP_t *a, char **b)
+{
+	return SEXP_strcmp(a, *b);
+}
+
 static int probe_optecmp(char **a, char **b)
 {
 	return strcmp(*a, *b);
@@ -1200,7 +1240,7 @@ static int probe_opthandler_rcache(int option, va_list args)
 	return (0);
 }
 
-bool probe_handle_varref(const char *ent_name)
+bool probe_handle_varref_cstr (const char *ent_name)
 {
 	if (ent_name == NULL)
 		return OSCAP_GSYM(varref_handling);
@@ -1210,4 +1250,16 @@ bool probe_handle_varref(const char *ent_name)
 
 	return (oscap_bfind (OSCAP_GSYM(no_varref_ents), OSCAP_GSYM(no_varref_ents_cnt),
 			     sizeof(char *), ent_name, &probe_optekcmp) == NULL ? true : false);
+}
+
+bool probe_handle_varref_sexp (const SEXP_t *ent_name)
+{
+	if (ent_name == NULL)
+		return OSCAP_GSYM(varref_handling);
+
+	if (OSCAP_GSYM(no_varref_ents_cnt) == 0)
+		return true;
+
+	return (oscap_bfind (OSCAP_GSYM(no_varref_ents), OSCAP_GSYM(no_varref_ents_cnt),
+			     sizeof(char *), ent_name, &probe_optekcmp_sexp) == NULL ? true : false);
 }
