@@ -302,11 +302,12 @@ class OSCAP_Object(object):
 
         Function will return list of items where item is dictionary with key representation:
             "id"        - id of value
+            "lang"      - default language of document
             "titles"    - list of tuples (language, title)
-            "descs"     - list of tuples (language, discription)
+            "descs"     - list of tuples (language, description)
             "type"      - type of value represented by integer: {0:"", 1:"Number", 2:"String", 3:"Boolean"}
             "options"   - dictionary of options where key is selector and value is Value instance value
-            "matches"   - dictionary of matches where key is selector and value is Regexp that input must match
+            "match"   - Regexp that input must match
             "selected"  - tuple (selector, value) of default or choosen value instance"""
 
         if self.object != "xccdf_policy": raise TypeError("Wrong call of \"get_tailor_items\" function. Should be xccdf_policy (have %s)" %(self.object,))
@@ -316,22 +317,33 @@ class OSCAP_Object(object):
             # get value properties
             item = {}
             item["id"] = value.id
+            item["lang"] = self.model.benchmark.lang
+            item["titles"] = {}
+            item["descs"] = {}
+            # Titles / Questions
             if len(value.question):
-                item["titles"] = [(question.lang, question.text) for question in value.question]
+                for question in value.question: item["titles"][question.lang] = question.text
             else: 
-                item["titles"] = [(title.lang, title.text) for title in value.title]
-            item["descs"] = [(desc.lang, desc.text) for desc in value.description]
+                for title in value.title: item["titles"][title.lang] = title.text
+            if item["lang"] not in item["titles"]: item["titles"][item["lang"]] = ""
+            # Descriptions
+            for desc in value.description: item["descs"][desc.lang] = desc.text
+            if item["lang"] not in item["descs"]: item["descs"][item["lang"]] = ""
+            # Type
             item["type"] = value.type
-            # get values
+            # Values
             item["options"] = {}
-            item["matches"] = {}
             for instance in value.instances:
                 item["options"][instance.selector] = instance.value
-                if instance.match: item["matches"][instance.selector] = instance.match
 
-            #TODO: Choices
-            if not len(item["matches"]):
-                item["matches"][''] = ["", "^[\\b]+$", "^.*$", "^[01]$"][value.type]
+            # Get regexp match from match elements
+            item["match"] = "|".join([i.match for i in value.instances if i.match])
+
+            #TODO: Get regexp match from match of elements
+
+            # Get regexp match from type of value
+            if not len(item["match"]):
+                item["match"] = ["", "^[\\b]+$", "^.*$", "^[01]$"][value.type]
 
             if self.profile != None:
                 for r_value in self.profile.refine_values:
@@ -347,11 +359,12 @@ class OSCAP_Object(object):
 
             """
             print "ID: \r\t\t", item["id"]
+            print "Language: \r\t\t", item["lang"]
             print "Titles: \r\t\t", item["titles"]
             print "Descriptions: \r\t\t", item["descs"]
             print "Type: \r\t\t", ["", "Number", "String", "Boolean"][item["type"]]
             print "Options: \r\t\t", item["options"]
-            print "Matches: \r\t\t", item["matches"]
+            print "Match: \r\t\t", item["match"]
             print "Selected: \r\t\t", item["selected"]
             print
             """
