@@ -32,6 +32,7 @@
 #include <stdarg.h>
 #include <string.h>
 #include <errno.h>
+#include "debug_priv.h"
 #include "_probe-api.h"
 
 /*
@@ -582,10 +583,16 @@ oval_syschar_collection_flag_t _probe_cobj_get_flag(const SEXP_t *cobj)
 	oval_syschar_collection_flag_t flag;
 
 	sflag = SEXP_list_first(cobj);
-	flag = SEXP_number_geti(sflag);
-	SEXP_free(sflag);
 
-	return flag;
+	if (sflag != NULL) {
+		flag = SEXP_number_geti(sflag);
+		SEXP_free(sflag);
+		return flag;
+	}
+
+	dE("sflag == NULL: not a collected object?\n");
+
+	return SYSCHAR_FLAG_UNKNOWN;
 }
 
 oval_syschar_collection_flag_t _probe_cobj_combine_flags(oval_syschar_collection_flag_t f1,
