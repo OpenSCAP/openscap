@@ -776,7 +776,7 @@
                         <description>All world writable directories should be owned by a system user</description>
                   </metadata>
                   <criteria>
-                        <criterion comment="Check all directories are not world writable or owned by a user with uid less than 500" test_ref="oval:mil.army.us.rhel5:tst:20052" negate="true"/>
+                        <criterion comment="Check all directories are not world writable or owned by a user with uid less than 500" test_ref="oval:mil.army.us.rhel5:tst:20052"/>
                   </criteria>
             </definition>
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:20053" version="1">
@@ -5925,12 +5925,11 @@
                   <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:20051"/>
             </unix-def:file_test>
 <!-- TODO           <unix-def:file_test id="oval:mil.army.us.rhel5:tst:20052" version="1" check="all" comment="world writable directories have a uid greater than or equal to 500" state_operator="OR"> -->
-            <unix-def:file_test id="oval:mil.army.us.rhel5:tst:20052" version="1" check="all" comment="world writable directories have a uid greater than or equal to 500" >
+            <unix-def:file_test id="oval:mil.army.us.rhel5:tst:20052" version="1" check_existence="none_exist" check="all" comment="world writable directories have a uid greater than or equal to 500" >
                   <notes>
                         <note>This will enumerate all directories on local partitions</note>
                   </notes>
-                  <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:20046"/>
-                  <unix-def:state state_ref="oval:mil.army.us.rhel5:ste:20052"/>
+                  <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:20052"/>
             </unix-def:file_test>
             <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:mil.army.us.rhel5:tst:20053" version="1" check="all" comment="Tests the value of the umask[\s]+(.*) expression in the /etc/sysconfig/init file">
                   <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20053"/>
@@ -7690,6 +7689,12 @@
                   <ind-def:pattern operation="pattern match">^[^:]+:[^:]*:([[:digit:]]+):[^:]*</ind-def:pattern>
                   <ind-def:instance operation="greater than or equal" datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
+            <unix-def:file_object id="oval:mil.army.us.rhel5:obj:20052" version="1" comment="world writable directories with uid not less than 500">
+                  <set set_operator="UNION" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+                        <object_reference>oval:mil.army.us.rhel5:obj:20047</object_reference>
+                        <filter>oval:mil.army.us.rhel5:ste:20052</filter>
+                  </set>
+            </unix-def:file_object>
 
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20053" version="1">
                   <ind-def:path>/etc/init.d</ind-def:path>
@@ -10061,9 +10066,9 @@
             <unix-def:file_state id="oval:mil.army.us.rhel5:ste:20051" version="1" comment="Files with a valid group id assigned">
                   <unix-def:group_id var_check="at least one" var_ref="oval:mil.army.us.rhel5:var:20051"/>
             </unix-def:file_state>
-            <unix-def:file_state id="oval:mil.army.us.rhel5:ste:20052" version="1" comment="uid not less than 500">
-                  <unix-def:group_id datatype="int" operation="greater than or equal">500</unix-def:group_id>
-                  <unix-def:owrite datatype="boolean">1</unix-def:owrite>
+            <unix-def:file_state id="oval:mil.army.us.rhel5:ste:20052" version="1" operator="OR">
+                  <unix-def:group_id datatype="int" operation="less than">500</unix-def:group_id>
+                  <unix-def:owrite datatype="boolean">0</unix-def:owrite>
             </unix-def:file_state>
             <ind-def:textfilecontent54_state id="oval:mil.army.us.rhel5:ste:20053" version="1">
                   <ind-def:subexpression var_check="all" operation="greater than or equal" var_ref="oval:mil.army.us.rhel5:var:20053"/>

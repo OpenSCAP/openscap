@@ -81,11 +81,11 @@
     <select idref="dcb-rhel5-rule-2.2.3.1.l" selected="false" />		<!-- DONE --> 	 	<!-- Verify permissions on '/etc/passwd' file -->
     <select idref="dcb-rhel5-rule-2.2.3.2.a" selected="false" />	<!-- DONE -->		<!-- Verify that All World-Writable Directories Have Sticky Bits Set -->
     <select idref="dcb-rhel5-rule-2.2.3.3.a" selected="false" />    	<!-- DONE -->		<!-- Find Unauthorized World-Writable Files -->
-    <select idref="dcb-rhel5-rule-2.2.3.4.a" selected="false" />    <!-- ?OK -->		<!-- Find Unauthorized SGID System Executables -->
-    <select idref="dcb-rhel5-rule-2.2.3.4.b" selected="false" />    <!-- ?OK --> 		<!-- Find Unauthorized SUID System Executables -->
-    <select idref="dcb-rhel5-rule-2.2.3.5.a" selected="false" />    <!-- ?OK -->		<!-- Find files unowned by a user -->
-    <select idref="dcb-rhel5-rule-2.2.3.5.b" selected="false" />    <!-- ?OK -->		<!-- Find files unowned by a group -->
-    <select idref="dcb-rhel5-rule-2.2.3.6.a" selected="false" />    <!-- OK -->			<!-- Find world writable directories not owned by a system account--> 
+    <select idref="dcb-rhel5-rule-2.2.3.4.a" selected="false" />    <!-- DONE -->		<!-- Find Unauthorized SGID System Executables -->
+    <select idref="dcb-rhel5-rule-2.2.3.4.b" selected="false" />    <!-- DONE --> 		<!-- Find Unauthorized SUID System Executables -->
+    <select idref="dcb-rhel5-rule-2.2.3.5.a" selected="false" />    <!-- DONE -->		<!-- Find files unowned by a user -->
+    <select idref="dcb-rhel5-rule-2.2.3.5.b" selected="false" />    <!-- DONE -->		<!-- Find files unowned by a group -->
+    <select idref="dcb-rhel5-rule-2.2.3.6.a" selected="false" />    <!-- DONE -->			<!-- Find world writable directories not owned by a system account--> 
 
     <select idref="dcb-rhel5-rule-2.2.4.1.a" selected="false" />    <!-- DONE-->	        <!-- Set Daemon umask -->
     <select idref="dcb-rhel5-rule-2.2.4.2.a" selected="false" />    <!-- DONE -->		<!-- Disable Core Dumps for all users -->
