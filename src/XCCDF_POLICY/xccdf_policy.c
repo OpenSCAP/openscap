@@ -459,8 +459,8 @@ xccdf_policy_evaluate_cb(struct xccdf_policy * policy, const char * sysname, con
         const char * rule_id, struct oscap_list * bindings) 
 {
     xccdf_test_result_type_t retval = XCCDF_RESULT_NOT_CHECKED;
-    struct oscap_iterator * cb_it = xccdf_policy_get_callbacks_by_sysname(policy, sysname);
-    oscap_iterator_reset(cb_it);
+    //struct oscap_iterator * cb_it = xccdf_policy_get_callbacks_by_sysname(policy, sysname); TODO: review
+    struct oscap_iterator * cb_it = oscap_iterator_new(policy->model->callbacks);
     while (oscap_iterator_has_more(cb_it)) {
         callback * cb = (callback *) oscap_iterator_next(cb_it);
         if (cb == NULL) { /* No callback found - checking system not registered */
@@ -469,6 +469,8 @@ xccdf_policy_evaluate_cb(struct xccdf_policy * policy, const char * sysname, con
             oscap_iterator_free(cb_it);
             return XCCDF_RESULT_NOT_CHECKED;
         }
+        if (strcmp(cb->system, sysname))
+            continue;
 
         struct xccdf_value_binding_iterator * binding_it = (struct xccdf_value_binding_iterator *) oscap_iterator_new(bindings);
 

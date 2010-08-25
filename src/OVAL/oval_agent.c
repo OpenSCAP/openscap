@@ -85,7 +85,7 @@ oval_agent_session_t * oval_agent_new_session(struct oval_definition_model *mode
 	struct oval_sysinfo *sysinfo;
 
 	ag_sess = oscap_talloc(oval_agent_session_t);
-        ag_sess->filename = (char *) name;
+        ag_sess->filename = oscap_strdup(name);
 	ag_sess->def_model = model;
 	ag_sess->sys_model = oval_syschar_model_new(model);
 	ag_sess->psess     = oval_probe_session_new(ag_sess->sys_model);
@@ -188,6 +188,7 @@ void oval_agent_destroy_session(oval_agent_session_t * ag_sess) {
 	oval_probe_session_destroy(ag_sess->psess);
 	oval_syschar_model_free(ag_sess->sys_model);
 	oval_results_model_free(ag_sess->res_model);
+        oscap_free(ag_sess->filename);
 	oscap_free(ag_sess);
 	ag_sess=NULL;
 }
