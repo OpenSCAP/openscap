@@ -160,7 +160,7 @@ static SEXP_t *probe_obj_eval(SEXP_t * id)
 	SEXP_vfree(res, rid, ret);
 
 	if (res_flag != SYSCHAR_FLAG_COMPLETE) {
-		SEXP_t *item, *cobj, *item_list, *r0;
+		SEXP_t *item, *cobj, *item_list, *r0, *attr;
 		char   *o_id;
 
 		attr = probe_attr_creat("message", r0 = SEXP_string_newf("This item was generated because evaluation of"
