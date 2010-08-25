@@ -44,6 +44,7 @@ OSCAP_HIDDEN_START;
 struct oscap_reporter_context {
 	oscap_reporter reporter;
 	void *arg;
+    void *user;
 };
 
 /// Reporter cast

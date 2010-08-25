@@ -136,7 +136,7 @@ bool oscap_validate_xml(const char *xmlfile, const char *schemafile, oscap_repor
 	xmlSchemaParserCtxtPtr parser_ctxt = NULL;
 	xmlSchemaPtr schema = NULL;
 	xmlSchemaValidCtxtPtr ctxt = NULL;
-	struct oscap_reporter_context reporter_ctxt = { reporter, arg };
+	struct oscap_reporter_context reporter_ctxt = { reporter, arg, (void*) xmlfile };
 	char *schemapath = oscap_get_schema_path(schemafile);
 	if (schemapath == NULL) {
 		oscap_seterr(OSCAP_EFAMILY_OSCAP, 0, "Schema file not found");
