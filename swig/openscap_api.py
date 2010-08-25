@@ -426,6 +426,13 @@ class OSCAP_Object(object):
                 s_value.value = item["value"]
                 self.profile.add_setvalue(s_value)
 
+    def get_all_rules(self):
+        """xccdf_policy.get_all_rules() -- Get all rules/selectors and titles from benchmark
+        """
+
+        if self.object != "xccdf_policy": raise TypeError("Wrong call of \"get_all_rules\" function. Should be xccdf_policy (have %s)" %(self.object,))
+        pass #TODO
+
 
     def set_rules(self, rules):
         """xccdf_policy.set_rules(rules) -- Set which rules are selected by given XCCDF Profile
@@ -444,7 +451,7 @@ class OSCAP_Object(object):
             profile.abstract = False
             self.model.benchmark.profile = profile
 
-        for select in self.profile.selects:
+        for select in self.rules:
             if select.item not in rules:
                 select.selected = False
             else:
@@ -455,7 +462,7 @@ class OSCAP_Object(object):
             select = xccdf.select()
             select.selected = True
             select.item = id
-            self.profile.add_select(select)
+            self.add_rule(select)
 
     def init(self, path, paths={}):
         """xccdf.init(path) -- Initialize openscap library
@@ -487,7 +494,6 @@ class OSCAP_Object(object):
         dirname = os.path.dirname(path)
         f_XCCDF = path
 
-        oval = OVAL_Class()
         benchmark = self.benchmark_import(f_XCCDF)
         assert benchmark.instance != None, "Benchmark loading failed: %s" % (f_XCCDF,)
         policy_model = self.policy_model(benchmark)
@@ -502,7 +508,7 @@ class OSCAP_Object(object):
                 def_model = oval.definition_model_import(f_OVAL)
                 assert def_model.instance != None, "Cannot import definition model %s" % (f_OVAL,)
                 def_models.append(def_model)
-                sess = oval.agent.new_session(def_model, file)
+                sess = oval.agent_new_session(def_model, file)
                 assert sess != None and sess.instance != None, "Cannot create agent session for %s" % (f_OVAL,)
                 sessions.append(sess)
                 policy_model.register_engine_oval(sess)

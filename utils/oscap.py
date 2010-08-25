@@ -91,22 +91,13 @@ class XCCDF_Handler(object):
         self.action = self.__get_opts(args)
         if self.action == None: return
 
-        self.models = []
-        for f_oval in self.action.f_ovals:
-            model = oval.definition_model_import(f_oval)
-            assert model != None and model.instance != None, "Import definition model failed: %s" % (f_oval,)
-            self.models.append({"name":os.path.basename(f_oval), 
-                                "def_model": model})
+        self.objs = xccdf.init(self.action.f_xccdf)
 
-        self.benchmark    = xccdf.benchmark_import(self.action.f_xccdf)
-        assert self.benchmark.instance != None, "Benchmark loading failed: %s" % (self.action.f_xccdf,)
+        self.policy_model = self.objs["policy_model"]
+        self.sessions = self.objs["sessions"]
+        self.def_models = self.objs["def_models"]
+        self.benchmark = self.policy_model.benchmark
 
-        for model in self.models:
-            sess = oval.agent.new_session(model["def_model"], model["name"])
-            assert sess != None and sess.instance != None, "Session initialization failed: %s" % (self.action.f_xccdf,)
-            model["session"] = sess
-
-        self.policy_model = xccdf.policy_model(self.benchmark)
         self.__set_policy(self.action.profile)
 
     def __get_opts(self, arguments):
@@ -182,7 +173,7 @@ class XCCDF_Handler(object):
         if id != None:
             result.profile = id
 
-        oval.agent_export_sysinfo_to_xccdf_result(self.models[0]["session"], result)
+        oval.agent_export_sysinfo_to_xccdf_result(self.sessions[0], result)
 
         model_list = self.benchmark.models
         for model in  model_list:
@@ -193,11 +184,12 @@ class XCCDF_Handler(object):
     def __evaluate(self, policy_id=None):
         if policy_id != None: self.__set_policy(policy_id)
         self.policy_model.register_output_callback(self.__callback, None)
-        for model in self.models:
-            self.policy_model.register_engine_oval(model["session"])
         self.result = self.policy.evaluate()
 
         return self.result
+
+    def destroy(self):
+        xccdf.destroy(self.objs)
 
     def __validate_xml(self):
         raise NotImplementedError
