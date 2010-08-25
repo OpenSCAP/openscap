@@ -1198,8 +1198,9 @@
                         <reference ref_id="CCE-4185-5" source="CCE"/>
                         <description>The /usr/sbin/userhelper file should be owned by the appropriate group.</description>
                   </metadata>
-                  <criteria>
+                  <criteria operator="AND">
                         <criterion comment="test group owner of /usr/sbin/userhelper file" test_ref="oval:mil.army.us.rhel5:tst:20081"/>
+                        <criterion comment="test group existence" test_ref="oval:mil.army.us.rhel5:tst:200811"/>
                   </criteria>
             </definition>
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:20082" version="1">
@@ -1282,7 +1283,7 @@
                         <description>Check each directory in root's path and make use it does not grant write permission to group and other</description>
                   </metadata>
                   <criteria>
-                        <criterion comment="Check that write permission to group and other in root's path is denied" test_ref="oval:mil.army.us.rhel5:tst:200855" negate="true"/>
+                        <criterion comment="Check that write permission to group and other in root's path is denied" test_ref="oval:mil.army.us.rhel5:tst:200855"/>
                   </criteria>
             </definition>
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:20086" version="1">
@@ -2474,12 +2475,11 @@
                         <reference ref_id="CCE-4366-1" source="CCE"/>
                         <description>All mandatory log files should be owned by root user.</description>
                   </metadata>
-                  <criteria>
-                        <criterion comment="check if user root owns all mandatory log files" test_ref="oval:mil.army.us.rhel5:tst:20149"/>
+                  <criteria operator="AND">
+                        <criterion comment="check if user owns all mandatory log files" test_ref="oval:mil.army.us.rhel5:tst:20149"/>
+                        <criterion comment="check if user exists" test_ref="oval:mil.army.us.rhel5:tst:201491"/>
                   </criteria>
             </definition>
-
-<!--
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:20150" version="1">
                   <metadata>
                         <title>Confirm Existence and Permissions of System Log Files</title>
@@ -2489,8 +2489,9 @@
                         <reference ref_id="CCE-3701-0" source="CCE"/>
                         <description>All syslog log files should be owned by the appropriate group.</description>
                   </metadata>
-                  <criteria>
+                  <criteria operator="AND">
                         <criterion comment="check if group root owns all syslog log files" test_ref="oval:mil.army.us.rhel5:tst:20150"/>
+                        <criterion comment="check if group exists" test_ref="oval:mil.army.us.rhel5:tst:201501"/>
                   </criteria>
             </definition>
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:20151" version="1">
@@ -2506,7 +2507,6 @@
                         <criterion comment="check permissions of all syslog log files" test_ref="oval:mil.army.us.rhel5:tst:20151"/>
                   </criteria>
             </definition>
--->
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:20152" version="1">
                   <metadata>
                         <title>Send Logs to a Remote Loghost </title>
@@ -6073,6 +6073,9 @@
                   <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:20081"/>
                   <unix-def:state state_ref="oval:mil.army.us.rhel5:ste:20081"/>
             </unix-def:file_test>
+            <ind-def:textfilecontent54_test check_existence="at_least_one_exists" id="oval:mil.army.us.rhel5:tst:200811" version="1" check="all" comment="Group existance">
+                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:200811"/>
+            </ind-def:textfilecontent54_test>
             <unix-def:file_test check_existence="all_exist" id="oval:mil.army.us.rhel5:tst:20082" version="1" check="all" comment="Testing file permissions">
                   <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:20081"/>
                   <unix-def:state state_ref="oval:mil.army.us.rhel5:ste:20082"/>
@@ -6117,7 +6120,7 @@
                   <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20085" />
                   <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:200853"/>
             </ind-def:environmentvariable_test>
-            <unix-def:file_test id="oval:mil.army.us.rhel5:tst:200855" check_existence="at_least_one_exists" version="1" check="all" comment="Check that write permission to group and other in root's path is denied">
+            <unix-def:file_test id="oval:mil.army.us.rhel5:tst:200855" check_existence="none_exist" version="1" check="all" comment="Check that write permission to group and other in root's path is denied">
                   <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:2008551"/>
             </unix-def:file_test>
             <unix-def:file_test id="oval:mil.army.us.rhel5:tst:200861" version="1" check="none satisfy" comment="home directories are group writeable">
@@ -6661,20 +6664,20 @@
                   <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:201491"/>
                   <unix-def:state   state_ref="oval:mil.army.us.rhel5:ste:20149"/>
             </unix-def:file_test>
-
-<!--
             <unix-def:file_test check_existence="all_exist" id="oval:mil.army.us.rhel5:tst:20150" version="1" check="all" comment="root group owns log files">
                   <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:201491"/>
                   <unix-def:state state_ref="oval:mil.army.us.rhel5:ste:20150"/>
             </unix-def:file_test>
--->
-
-<!--
             <unix-def:file_test check_existence="all_exist" id="oval:mil.army.us.rhel5:tst:20151" version="1" check="all" comment="log files have correct permissions">
                   <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:201491"/>
                   <unix-def:state state_ref="oval:mil.army.us.rhel5:ste:20151"/>
             </unix-def:file_test>
--->
+            <unix-def:file_test check_existence="at_least_one_exists" id="oval:mil.army.us.rhel5:tst:201491" version="1" check="all" comment="Check if user exists">
+                  <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:2014911"/>
+            </unix-def:file_test>
+            <unix-def:file_test check_existence="at_least_one_exists" id="oval:mil.army.us.rhel5:tst:201501" version="1" check="all" comment="Check if group exists">
+                  <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:201501"/>
+            </unix-def:file_test>
             <ind-def:textfilecontent54_test check_existence="at_least_one_exists" id="oval:mil.army.us.rhel5:tst:20152" version="1" check="all" comment="Tests the value of the \*\.\*[\s]+@ setting in the /etc/rsyslog.conf file">
                   <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20152"/>
             </ind-def:textfilecontent54_test>
@@ -7940,7 +7943,6 @@
             	  <set set_operator="UNION" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5">
             	  	<object_reference>oval:mil.army.us.rhel5:obj:200855</object_reference>
             	  	<filter>oval:mil.army.us.rhel5:ste:2008551</filter>
-            	  	<filter>oval:mil.army.us.rhel5:ste:2008552</filter>
             	  </set>
             </unix-def:file_object>
             <unix-def:file_object id="oval:mil.army.us.rhel5:obj:200855" version="1" comment="root's PATH">
@@ -9090,6 +9092,9 @@
             <unix-def:password_object id="oval:mil.army.us.rhel5:obj:202191" version="1">
                   <unix-def:username operation="equals" var_ref="oval:mil.army.us.rhel5:var:20219"/>
             </unix-def:password_object>
+            <unix-def:password_object id="oval:mil.army.us.rhel5:obj:2014911" version="1">
+                  <unix-def:username operation="equals" var_ref="oval:mil.army.us.rhel5:var:20149"/>
+            </unix-def:password_object>
             <unix-def:file_object id="oval:mil.army.us.rhel5:obj:20208" version="1" comment="/etc/crontab">
                   <unix-def:path>/etc</unix-def:path>
                   <unix-def:filename>crontab</unix-def:filename>
@@ -9784,6 +9789,18 @@
                   <ind-def:pattern operation="pattern match" var_ref="oval:mil.army.us.rhel5:var:202301"/>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
+            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:200811" version="1" comment="Get group ID">
+                  <ind-def:path>/etc</ind-def:path>
+                  <ind-def:filename>group</ind-def:filename>
+                  <ind-def:pattern operation="pattern match" var_ref="oval:mil.army.us.rhel5:var:200811"/>
+                  <ind-def:instance datatype="int">1</ind-def:instance>
+            </ind-def:textfilecontent54_object>
+            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:201501" version="1" comment="Get group ID">
+                  <ind-def:path>/etc</ind-def:path>
+                  <ind-def:filename>group</ind-def:filename>
+                  <ind-def:pattern operation="pattern match" var_ref="oval:mil.army.us.rhel5:var:201501"/>
+                  <ind-def:instance datatype="int">1</ind-def:instance>
+            </ind-def:textfilecontent54_object>
       </objects>
       <states>
             <ind-def:textfilecontent54_state id="oval:mil.army.us.rhel5:ste:20000" version="1" comment="/tmp mount point is defined">
@@ -10116,7 +10133,7 @@
                   <ind-def:subexpression datatype="int" var_check="all" var_ref="oval:mil.army.us.rhel5:var:200803"/>
             </ind-def:textfilecontent54_state>
             <unix-def:file_state id="oval:mil.army.us.rhel5:ste:20081" version="1">
-                  <unix-def:group_id>root</unix-def:group_id>
+                  <unix-def:group_id var_ref="oval:mil.army.us.rhel5:var:200812"/>
             </unix-def:file_state>
             <unix-def:file_state id="oval:mil.army.us.rhel5:ste:20082" version="1">
                   <unix-def:suid var_check="all" datatype="boolean" var_ref="oval:mil.army.us.rhel5:var:200820"/>
@@ -10157,8 +10174,6 @@
 
             <unix-def:file_state id="oval:mil.army.us.rhel5:ste:2008551" version="1" comment="Group has NO write privilege">
                   <unix-def:gwrite datatype="boolean">0</unix-def:gwrite>
-            </unix-def:file_state>
-            <unix-def:file_state id="oval:mil.army.us.rhel5:ste:2008552" version="1" comment="Other has NO write privilege">
                   <unix-def:owrite datatype="boolean">0</unix-def:owrite>
             </unix-def:file_state>
 
@@ -10339,11 +10354,11 @@
 	    </unix-def:runlevel_state>
 
             <unix-def:file_state id="oval:mil.army.us.rhel5:ste:20149" version="1">
-                  <unix-def:user_id>0</unix-def:user_id>
+                  <unix-def:user_id var_ref="oval:mil.army.us.rhel5:var:201491"/>
             </unix-def:file_state>
 
             <unix-def:file_state id="oval:mil.army.us.rhel5:ste:20150" version="1">
-                  <unix-def:group_id>0</unix-def:group_id>
+                  <unix-def:group_id var_ref="oval:mil.army.us.rhel5:var:201502"/>
             </unix-def:file_state>
 
             <unix-def:file_state id="oval:mil.army.us.rhel5:ste:20151" version="1">
@@ -10778,11 +10793,11 @@
             <external_variable id="oval:mil.army.us.rhel5:var:20353" version="1" datatype="string" comment="External variable for definition 20353"/>
             <external_variable id="oval:mil.army.us.rhel5:var:20354" version="1" datatype="string" comment="External variable for definition 20354"/>
 
-	    <!--
+<!--
             <local_variable id="oval:mil.army.us.rhel5:var:201490" version="1" datatype="string" comment="list of paths in /etc/syslog.conf" >
                   <object_component item_field="subexpression" object_ref="oval:mil.army.us.rhel5:obj:201490"/> 
             </local_variable>
-	    -->
+-->
 <!--
             <constant_variable id="oval:mil.army.us.rhel5:var:20107" version="1" datatype="string" comment="foo">
             	  <value>targeted</value>
@@ -10792,14 +10807,14 @@
             <constant_variable id="oval:mil.army.us.rhel5:var:201490" version="1" datatype="string" comment="Filenames of mandatory log files">
 	      <value>boot.log</value>
 	      <value>cron</value>
-<!--
+	      <value>messages</value>
+	      <value>secure</value>
+	      <value>audit</value>
 	      <value>dmesg</value>
+<!--
 	      <value>faillog</value>
 	      <value>lastlog</value>
 	      <value>maillog</value>
-	      <value>messages</value>
-	      <value>secure</value>
-	      <value>audit.log</value>
 -->
 	    </constant_variable>
 
@@ -11847,6 +11862,29 @@
             </local_variable>
             <local_variable comment="Object to Variable" version="1" id="oval:mil.army.us.rhel5:var:202302" datatype="string">
                         <object_component object_ref="oval:mil.army.us.rhel5:obj:202301" item_field="subexpression"/>
+            </local_variable>
+            <local_variable comment="Regular expression for /etc/group: Get the group ID of given group name" version="1" id="oval:mil.army.us.rhel5:var:200811" datatype="string">
+                  <concat>
+                        <literal_component>^</literal_component>
+                        <variable_component var_ref="oval:mil.army.us.rhel5:var:20081"/>
+                        <literal_component>:[^:]*:([[:digit:]]+)</literal_component>
+                  </concat>
+            </local_variable>
+            <local_variable comment="Object to Variable" version="1" id="oval:mil.army.us.rhel5:var:200812" datatype="string">
+                        <object_component object_ref="oval:mil.army.us.rhel5:obj:200811" item_field="subexpression"/>
+            </local_variable>
+            <local_variable comment="Object to Variable" version="1" id="oval:mil.army.us.rhel5:var:201491" datatype="string">
+                        <object_component object_ref="oval:mil.army.us.rhel5:obj:2014911" item_field="user_id"/>
+            </local_variable>
+            <local_variable comment="Regular expression for /etc/group: Get the group ID of given group name" version="1" id="oval:mil.army.us.rhel5:var:201501" datatype="string">
+                  <concat>
+                        <literal_component>^</literal_component>
+                        <variable_component var_ref="oval:mil.army.us.rhel5:var:20150"/>
+                        <literal_component>:[^:]*:([[:digit:]]+)</literal_component>
+                  </concat>
+            </local_variable>
+            <local_variable comment="Object to Variable" version="1" id="oval:mil.army.us.rhel5:var:201502" datatype="string">
+                        <object_component object_ref="oval:mil.army.us.rhel5:obj:201501" item_field="subexpression"/>
             </local_variable>
       </variables>
 </oval_definitions>

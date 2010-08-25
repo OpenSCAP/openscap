@@ -92,7 +92,7 @@
     <select idref="dcb-rhel5-rule-2.2.4.2.b" selected="false" />    <!-- DONE -->		<!-- Disable Core Dumps for SUID programs -->
     <select idref="dcb-rhel5-rule-2.2.4.3.a" selected="false" />    <!-- DONE -->		<!-- Enable ExecShield -->
     <select idref="dcb-rhel5-rule-2.2.4.3.b" selected="false" />    <!-- DONE -->		<!-- Enable ExecShield randomized placement of virtual memory regions -->
-    <select idref="dcb-rhel5-rule-2.2.4.4.2.a" selected="false" />  <!-- TODO -->		<!-- Install New Kernel on Supported x86 Systems -->
+    <select idref="dcb-rhel5-rule-2.2.4.4.2.a" selected="false" />  <!-- ERASE -->		<!-- Install New Kernel on Supported x86 Systems -->
     <select idref="dcb-rhel5-rule-2.2.4.4.3.a" selected="false" />  <!-- DONE -->	<!-- Enable NX or XD Support in the BIOS -->
     <select idref="dcb-rhel5-rule-2.3.1.1.a" selected="false" />    <!-- DONE -->			<!-- Restrict Root Logins to System Console -->
     <select idref="dcb-rhel5-rule-2.3.1.1.b" selected="false" />    <!-- DONE -->			<!-- Restrict virtual console Root Logins -->
@@ -116,12 +116,12 @@
     <select idref="dcb-rhel5-rule-2.3.3.1.2.a" selected="false" />  <!-- DONE -->	<!-- Set Password Quality Requirements using pam_passwdqc -->
     <select idref="dcb-rhel5-rule-2.3.3.2.a" selected="false" />    <!-- DONE -->	<!-- Set Lockouts for Failed Password Attempts -->
     <select idref="dcb-rhel5-rule-2.3.3.2.b" selected="false" />    <!-- DONE -->	<!-- Do not leak information on authorization failure -->
-    <select idref="dcb-rhel5-rule-2.3.3.4.a" selected="false" />    <!-- TODO -->			<!-- Restrict Execution of userhelper to Console Users -->
+    <select idref="dcb-rhel5-rule-2.3.3.4.a" selected="false" />    <!-- DONE -->			<!-- Restrict Execution of userhelper to Console Users -->
     <select idref="dcb-rhel5-rule-2.3.3.4.b" selected="false" />    <!-- DONE -->			<!-- Restrict Execution of userhelper to Console Users -->
     <select idref="dcb-rhel5-rule-2.3.3.5.a" selected="false" />    <!-- DONE -->			<!-- Set Password hashing algorithm -->
     <select idref="dcb-rhel5-rule-2.3.3.6.a" selected="false" />    <!-- DONE -->			<!-- Limit password reuse -->
     <select idref="dcb-rhel5-rule-2.3.4.1.1.a" selected="false" />  <!-- DONE -->			<!-- Ensure that No Dangerous Directories Exist in Root's Path -->
-    <select idref="dcb-rhel5-rule-2.3.4.1.2.a" selected="false" />  <!-- TODO -->    		<!-- Write permissions are disabled for group and other in all directories in Root's Path -->
+    <select idref="dcb-rhel5-rule-2.3.4.1.2.a" selected="false" />  <!-- DONE+ -->    		<!-- Write permissions are disabled for group and other in all directories in Root's Path -->
 
     <select idref="dcb-rhel5-rule-2.3.4.2.a" selected="false" />    <!-- DONE -->			<!-- Ensure that User Home Directories are not Group-Writable or World-Readable -->
     <select idref="dcb-rhel5-rule-2.3.4.4.a" selected="false" />    <!-- DONE -->		<!-- Ensure that Users Have Sensible Umask Values in /etc/bashrc -->
@@ -200,9 +200,9 @@
     <select idref="dcb-rhel5-rule-2.5.7.4.a" selected="false" />    <!-- ERASE -->      <!-- Disable Support for TIPC -->
     <select idref="dcb-rhel5-rule-2.6.1.a" selected="false" />      <!-- OK -->     <!-- Configure Syslog -->
 
-    <select idref="dcb-rhel5-rule-2.6.1.2.a" selected="false" />    <!-- NO OVAL 5.5 -->       <!-- Confirm user that owns System Log Files -->
-    <select idref="dcb-rhel5-rule-2.6.1.2.b" selected="false" />    <!-- NO OVAL 5.5 -->       <!-- Confirm group that owns System Log Files -->
-    <select idref="dcb-rhel5-rule-2.6.1.2.c" selected="false" />    <!-- NO OVAL 5.5 -->      <!-- Confirm Permissions of System Log Files -->
+    <select idref="dcb-rhel5-rule-2.6.1.2.a" selected="false" />    <!-- DONE+ -->       <!-- Confirm user that owns System Log Files -->
+    <select idref="dcb-rhel5-rule-2.6.1.2.b" selected="false" />    <!-- DONE+ -->       <!-- Confirm group that owns System Log Files -->
+    <select idref="dcb-rhel5-rule-2.6.1.2.c" selected="false" />    <!-- DONE+ -->      <!-- Confirm Permissions of System Log Files -->
     <select idref="dcb-rhel5-rule-2.6.1.3.a" selected="false" />    <!-- OK -->     		 <!-- Send Logs to a Remote Loghost -->
     <select idref="dcb-rhel5-rule-2.6.1.4.a" selected="false" />    <!-- F14 test needed-->      <!-- Disable syslogd from Accepting Remote Messages on Loghosts Only -->
     <select idref="dcb-rhel5-rule-2.6.1.5.a" selected="false" />    <!-- OK -->      <!-- Ensure All Logs are Rotated by logrotate -->
