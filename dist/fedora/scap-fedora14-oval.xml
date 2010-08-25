@@ -7117,13 +7117,13 @@
             <lin-def:rpminfo_test check_existence="none_exist" id="oval:mil.army.us.rhel5:tst:20235" version="1" check="all" comment="The openssh-server package should be installed or not as appropriate">
                   <lin-def:object object_ref="oval:mil.army.us.rhel5:obj:20235"/>
             </lin-def:rpminfo_test>
-            <lin-def:textfilecontent54_test check_existence="none_exist" id="oval:mil.army.us.rhel5:tst:20236" version="1" check="all" comment="Inbound connections to the ssh port should be denied">
-                  <lin-def:object object_ref="oval:mil.army.us.rhel5:obj:20236"/>
-            </lin-def:textfilecontent54_test>
-            <lin-def:textfilecontent54_test check_existence="none_exist" id="oval:mil.army.us.rhel5:tst:20237" version="1" check="all" comment="Inbound connections to the ssh port should be denied">
-                  <lin-def:object object_ref="oval:mil.army.us.rhel5:obj:20237"/>
-            </lin-def:textfilecontent54_test>
-            <ind-def:textfilecontent54_test check_existence="all_exists" id="oval:mil.army.us.rhel5:tst:20238" version="1" check="all" comment="Tests the value of the Protocol[\s]&lt;:nocomment:&gt;1 setting in the /etc/ssh/sshd_config file">
+            <ind-def:textfilecontent54_test check_existence="none_exist" id="oval:mil.army.us.rhel5:tst:20236" version="1" check="all" comment="Inbound connections to the ssh port should be denied">
+                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20236"/>
+            </ind-def:textfilecontent54_test>
+            <ind-def:textfilecontent54_test check_existence="none_exist" id="oval:mil.army.us.rhel5:tst:20237" version="1" check="all" comment="Inbound connections to the ssh port should be denied">
+                  <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20237"/>
+            </ind-def:textfilecontent54_test>
+            <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:mil.army.us.rhel5:tst:20238" version="1" check="all" comment="Tests the value of the Protocol[\s]&lt;:nocomment:&gt;1 setting in the /etc/ssh/sshd_config file">
                   <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20238"/>
             </ind-def:textfilecontent54_test>
             <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:mil.army.us.rhel5:tst:20239" version="1" check="all" comment="Tests the value of the ClientAliveInterval setting in the /etc/ssh/sshd_config file">
