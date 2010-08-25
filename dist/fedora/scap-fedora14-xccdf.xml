@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- $Id: dcb-rhel5-xccdf.xml 1061 2010-04-20 16:55:01Z vgiszpenc $ -->
 <Benchmark xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
  xmlns="http://checklists.nist.gov/xccdf/1.1"
  xmlns:dc="http://purl.org/dc/elements/1.1/"
@@ -10,42 +9,14 @@
  xmlns:cdf="http://checklists.nist.gov/xccdf/1.1"
  xsi:schemaLocation="http://checklists.nist.gov/xccdf/1.1 http://nvd.nist.gov/schema/xccdf-1.1.4.xsd http://cpe.mitre.org/dictionary/2.0 http://cpe.mitre.org/files/cpe-dictionary_2.1.xsd" 
  resolved="0"
- id="dcb-rhel5-xccdf"
+ id="scap-fedora14-xccdf.xml"
  xml:lang="en">
-  <status date="2010-05-31">draft</status>
-  <title>Guide to the Secure Configuration of Red Hat Enterprise Linux 5</title>
-  <description>This guide has been created to assist IT professionals, in effectively securing systems with Red Hat Enterprise Linux 5.</description>
-  <notice id="terms_of_use" xml:lang="en">
-    Do not attempt to implement any of the settings in this
-    guide without first testing them in a non-operational environment. U.S. Army CERDEC assumes no
-    responsibility whatsoever for its use by other parties, and makes no guarantees, expressed or
-    implied, about its quality, reliability, or any other characteristic.</notice>
-  <front-matter xml:lang="en">
-    <xhtml:strong>Warnings</xhtml:strong><xhtml:br/>
-    <xhtml:br/>
-    Do not attempt to implement any of the recommendations in this guide without first
-    testing in a nonproduction environment.<xhtml:br/>
-    <xhtml:br/>
-    This document is only a guide containing recommended security settings. It is not
-    meant to replace well-structured policy or sound judgment. Furthermore this guide does not
-    address site-specific configuration concerns. Care must be taken when implementing this guide to
-    address local operational and policy concerns.<xhtml:br/>
-    <xhtml:br/>
-    The security changes described in this document apply only to Red Hat Enterprise Linux 5. 
-    They may or may not translate gracefully to other operating systems.
-  </front-matter>
-  <rear-matter xml:lang="en">
-    <xhtml:strong>Trademark Information</xhtml:strong><xhtml:br/>
-    <xhtml:br/>
-    Red Hat and Red Hat Enterprise Linux are either registered trademarks or trademarks
-    of Red Hat, Inc. in the United States and other countries.<xhtml:br/>
-    <xhtml:br/>
-    All other names are registered trademarks or trademarks of their respective companies.
-  </rear-matter>
+  <status date="2010-08-25">draft</status>
+  <title>Guide to the Secure Configuration of Fedora Linux</title>
+  <description>This guide has been created to assist IT professionals, in effectively securing systems with Fedora Linux.</description>
   <reference href="http://www.dtic.mil/whs/directives/corres/pdf/850002p.pdf">VIVM-1</reference>
   <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN000100</reference>
-  <platform idref="cpe:/o:redhat:enterprise_linux:5" />
-  <version>Revision DRAFT 4 April 8, 2010</version>
+  <version>0.6.1</version>
   <model system="urn:xccdf:scoring:default" />
   <model system="urn:xccdf:scoring:flat" />
   <!-- ==================================================================================================== -->
@@ -56,9 +27,9 @@
   <!-- Each defines the set of XCCDF rules that are applicable for that guidance as well as specific values -->
   <!-- to be used when determining complinace.                                                              -->
   <!--                                                                                                      -->
-  <Profile id="DCB_Desktop" abstract="false">
-    <title xml:lang="en">DOD Configuration Baseline Desktop settings</title>
-    <description xml:lang="en">This profile selects all the security controls that are recommended by DISA and NSA for RHEL5 Desktop information systems.</description>
+  <Profile id="Desktop" abstract="false">
+    <title xml:lang="en">Desktop settings</title>
+    <description xml:lang="en">This profile selects security controls that conform to default Fedora configuration.</description>
     <select idref="dcb-rhel5-rule-2.1.1.1.1.a" selected="false" />	<!-- DONE -->		<!-- Separate Partition or Logical Volume for /tmp -->
     <select idref="dcb-rhel5-rule-2.1.1.1.1.b" selected="false"/>	<!-- DONE -->		<!-- Minimum size of /tmp -->
     <select idref="dcb-rhel5-rule-2.1.1.1.2.a" selected="false" />	<!-- DONE -->		<!-- Separate Partition or Logical Volume for /var -->
