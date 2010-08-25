@@ -3831,7 +3831,7 @@
                   </metadata>
                   <criteria operator="OR" comment="SSH is not being used or conditions are met">
                         <extend_definition definition_ref="oval:mil.army.us.rhel5:def:20234" comment="sshd service is disabled"/>
-                        <criterion comment="Unknown test stub" test_ref="oval:mil.army.us.rhel5:tst:22"/>
+                        <criterion comment="Remove IPv4 inbound connections" test_ref="oval:mil.army.us.rhel5:tst:20236"/>
                   </criteria>
             </definition>
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:20237" version="1">
@@ -3845,7 +3845,7 @@
                   </metadata>
                   <criteria operator="OR" comment="SSH is not being used or conditions are met">
                         <extend_definition definition_ref="oval:mil.army.us.rhel5:def:20234" comment="sshd service is disabled"/>
-                        <criterion comment="Unknown test stub" test_ref="oval:mil.army.us.rhel5:tst:22"/>
+                        <criterion comment="Remove IPv6 inbound connections" test_ref="oval:mil.army.us.rhel5:tst:20237"/>
                   </criteria>
             </definition>
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:20238" version="1">
@@ -7110,13 +7110,20 @@
             <unix-def:file_test check_existence="none_exist" id="oval:mil.army.us.rhel5:tst:20233" version="1" check="all" comment="Existence check of /etc/at.deny">
                   <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:20233"/>
             </unix-def:file_test>
-            <unix-def:runlevel_test check_existence="none_exist" id="oval:mil.army.us.rhel5:tst:20234" version="1" check="all" comment="Runlevel test">
+            <unix-def:runlevel_test check_existence="any_exist" id="oval:mil.army.us.rhel5:tst:20234" version="1" check="all" comment="Runlevel test">
                   <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:20234"/>
+                  <unix-def:state state_ref="oval:mil.army.us.rhel5:ste:20171"/>
             </unix-def:runlevel_test>
             <lin-def:rpminfo_test check_existence="none_exist" id="oval:mil.army.us.rhel5:tst:20235" version="1" check="all" comment="The openssh-server package should be installed or not as appropriate">
                   <lin-def:object object_ref="oval:mil.army.us.rhel5:obj:20235"/>
             </lin-def:rpminfo_test>
-            <ind-def:textfilecontent54_test check_existence="none_exist" id="oval:mil.army.us.rhel5:tst:20238" version="1" check="all" comment="Tests the value of the Protocol[\s]&lt;:nocomment:&gt;1 setting in the /etc/ssh/sshd_config file">
+            <lin-def:textfilecontent54_test check_existence="none_exist" id="oval:mil.army.us.rhel5:tst:20236" version="1" check="all" comment="Inbound connections to the ssh port should be denied">
+                  <lin-def:object object_ref="oval:mil.army.us.rhel5:obj:20236"/>
+            </lin-def:textfilecontent54_test>
+            <lin-def:textfilecontent54_test check_existence="none_exist" id="oval:mil.army.us.rhel5:tst:20237" version="1" check="all" comment="Inbound connections to the ssh port should be denied">
+                  <lin-def:object object_ref="oval:mil.army.us.rhel5:obj:20237"/>
+            </lin-def:textfilecontent54_test>
+            <ind-def:textfilecontent54_test check_existence="all_exists" id="oval:mil.army.us.rhel5:tst:20238" version="1" check="all" comment="Tests the value of the Protocol[\s]&lt;:nocomment:&gt;1 setting in the /etc/ssh/sshd_config file">
                   <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20238"/>
             </ind-def:textfilecontent54_test>
             <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:mil.army.us.rhel5:tst:20239" version="1" check="all" comment="Tests the value of the ClientAliveInterval setting in the /etc/ssh/sshd_config file">
@@ -7127,16 +7134,16 @@
                   <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20240"/>
                   <ind-def:state state_ref="oval:mil.army.us.rhel5:ste:20240"/>
             </ind-def:textfilecontent54_test>
-            <ind-def:textfilecontent54_test check_existence="none_exist" id="oval:mil.army.us.rhel5:tst:20241" version="1" check="all" comment="Tests the value of the IgnoreRhosts[\s]*(&lt;:nocomment:&gt;*) setting in the /etc/ssh/sshd_config file">
+            <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:mil.army.us.rhel5:tst:20241" version="1" check="all" comment="Tests the value of the IgnoreRhosts[\s]*(&lt;:nocomment:&gt;*) setting in the /etc/ssh/sshd_config file">
                   <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20241"/>
             </ind-def:textfilecontent54_test>
-            <ind-def:textfilecontent54_test check_existence="none_exist" id="oval:mil.army.us.rhel5:tst:20242" version="1" check="all" comment="Tests the value of the HostbasedAuthentication[\s]*(&lt;:nocomment:&gt;*) setting in the /etc/ssh/sshd_config file">
+            <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:mil.army.us.rhel5:tst:20242" version="1" check="all" comment="Tests the value of the HostbasedAuthentication[\s]*(&lt;:nocomment:&gt;*) setting in the /etc/ssh/sshd_config file">
                   <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20242"/>
             </ind-def:textfilecontent54_test>
-            <ind-def:textfilecontent54_test check_existence="none_exist" id="oval:mil.army.us.rhel5:tst:20243" version="1" check="all" comment="Tests the value of the PermitRootLogin[\s]*(&lt;:nocomment:&gt;*) setting in the /etc/ssh/sshd_config file">
+            <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:mil.army.us.rhel5:tst:20243" version="1" check="all" comment="Tests the value of the PermitRootLogin[\s]*(&lt;:nocomment:&gt;*) setting in the /etc/ssh/sshd_config file">
                   <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20243"/>
             </ind-def:textfilecontent54_test>
-            <ind-def:textfilecontent54_test check_existence="none_exist" id="oval:mil.army.us.rhel5:tst:20244" version="1" check="all" comment="Tests the value of the PermitEmptyPasswords[\s]*(&lt;:nocomment:&gt;*) setting in the /etc/ssh/sshd_config file">
+            <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:mil.army.us.rhel5:tst:20244" version="1" check="all" comment="Tests the value of the PermitEmptyPasswords[\s]*(&lt;:nocomment:&gt;*) setting in the /etc/ssh/sshd_config file">
                   <ind-def:object object_ref="oval:mil.army.us.rhel5:obj:20244"/>
             </ind-def:textfilecontent54_test>
             <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:mil.army.us.rhel5:tst:20245" version="1" check="all" comment="Tests the value of the Banner[\s]+/etc/issue setting in the /etc/ssh/sshd_config file">
@@ -9079,64 +9086,76 @@
             <lin-def:rpminfo_object id="oval:mil.army.us.rhel5:obj:20235" version="1">
                   <lin-def:name>openssh-server</lin-def:name>
             </lin-def:rpminfo_object>
+            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20236" version="1">
+                  <ind-def:path>/etc/sysconfig</ind-def:path>
+                  <ind-def:filename>iptables</ind-def:filename>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*-A[[:space:]]+.*INPUT[[:space:]]+-m[[:space:]]+state[[:space:]]+--state[[:space:]]+NEW[[:space:]]+-m[[:space:]]+tcp[[:space:]]+-p[[:space:]]+tcp[[:space:]]+--dport[[:space:]]+22[[:space:]]+-j[[:space:]]+ACCEPT[[:space:]]*$</ind-def:pattern>
+                  <ind-def:instance datatype="int">1</ind-def:instance>
+            </ind-def:textfilecontent54_object>
+            <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20237" version="1">
+                  <ind-def:path>/etc/sysconfig</ind-def:path>
+                  <ind-def:filename>ip6tables</ind-def:filename>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*-A[[:space:]]+.*INPUT[[:space:]]+-m[[:space:]]+state[[:space:]]+--state[[:space:]]+NEW[[:space:]]+-m[[:space:]]+tcp[[:space:]]+-p[[:space:]]+tcp[[:space:]]+--dport[[:space:]]+22[[:space:]]+-j[[:space:]]+ACCEPT[[:space:]]*$</ind-def:pattern>
+                  <ind-def:instance datatype="int">1</ind-def:instance>
+            </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20238" version="1">
                   <ind-def:path>/etc/ssh</ind-def:path>
                   <ind-def:filename>sshd_config</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[\s]*Protocol[\s][^#]1</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*Protocol[[:space:]](2)</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20239" version="1">
                   <ind-def:path>/etc/ssh</ind-def:path>
                   <ind-def:filename>sshd_config</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[\s]*ClientAliveInterval[\s]*([\d]+)</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*ClientAliveInterval[[:space:]]*([[:digit:]]+)</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20240" version="1">
                   <ind-def:path>/etc/ssh</ind-def:path>
                   <ind-def:filename>sshd_config</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[\s]*ClientAliveCountMax[\s]*([\d]+)</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*ClientAliveCountMax[[:space:]]*([[:digit:]]+)</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20241" version="1">
                   <ind-def:path>/etc/ssh</ind-def:path>
                   <ind-def:filename>sshd_config</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[\s]*IgnoreRhosts[\s]*([^#]*)</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*IgnoreRhosts[[:space:]]*yes</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20242" version="1">
                   <ind-def:path>/etc/ssh</ind-def:path>
                   <ind-def:filename>sshd_config</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[\s]*HostbasedAuthentication[\s]*([^#]*)</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*HostbasedAuthentication[[:space:]]*no</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20243" version="1">
                   <ind-def:path>/etc/ssh</ind-def:path>
                   <ind-def:filename>sshd_config</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[\s]*PermitRootLogin[\s]*([^#]*)</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*PermitRootLogin[[:space:]]*no</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20244" version="1">
                   <ind-def:path>/etc/ssh</ind-def:path>
                   <ind-def:filename>sshd_config</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[\s]*PermitEmptyPasswords[\s]*([^#]*)</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*PermitEmptyPasswords[[:space:]]*no</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20245" version="1">
                   <ind-def:path>/etc/ssh</ind-def:path>
                   <ind-def:filename>sshd_config</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[\s]*Banner[\s]+/etc/issue$</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*Banner[[:space:]]+/etc/issue$</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:202455" version="1">
                   <ind-def:path>/etc/ssh</ind-def:path>
                   <ind-def:filename>sshd_config</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[\s]*PermitUserEnvironment[\s]+no</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*PermitUserEnvironment[[:space:]]+no</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:202456" version="1">
                   <ind-def:path>/etc/ssh</ind-def:path>
                   <ind-def:filename>sshd_config</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[\s]*Ciphers[\s]+([\S]+)</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*Ciphers[[:space:]]+([^ \t\r\n\v\f]+)</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20246" version="1">
@@ -10351,7 +10370,7 @@
                   <ind-def:subexpression datatype="int" operation="equals" var_check="all" var_ref="oval:mil.army.us.rhel5:var:20239"/>
             </ind-def:textfilecontent54_state>
             <ind-def:textfilecontent54_state id="oval:mil.army.us.rhel5:ste:20240" version="1">
-                  <ind-def:subexpression datatype="int" operation="equals">0</ind-def:subexpression>
+                  <ind-def:subexpression datatype="int" operation="equals" var_check="all" var_ref="oval:mil.army.us.rhel5:var:20240"/>
             </ind-def:textfilecontent54_state>
             <ind-def:textfilecontent54_state id="oval:mil.army.us.rhel5:ste:202456" version="1">
                   <ind-def:subexpression operation="equals">aes128-ctr,aes192-ctr,aes256-ctr</ind-def:subexpression>
@@ -10590,6 +10609,7 @@
             <external_variable id="oval:mil.army.us.rhel5:var:20230" version="1" datatype="string" comment="External variable for definition 20230"/>
             <external_variable id="oval:mil.army.us.rhel5:var:20231" version="1" datatype="string" comment="External variable for definition 20231"/>
             <external_variable id="oval:mil.army.us.rhel5:var:20239" version="1" datatype="int" comment="External variable for ClientActiveinterval in definition 20239"/>
+            <external_variable id="oval:mil.army.us.rhel5:var:20240" version="1" datatype="int" comment="External variable for ClientAliveCountMax in definition 20240"/>
             <external_variable id="oval:mil.army.us.rhel5:var:20246" version="1" datatype="string" comment="External variable for definition 20246"/>
             <external_variable id="oval:mil.army.us.rhel5:var:20262" version="1" datatype="string" comment="External variable for definition 20262"/>
             <external_variable id="oval:mil.army.us.rhel5:var:20264" version="1" datatype="string" comment="External variable for definition 20264"/>
