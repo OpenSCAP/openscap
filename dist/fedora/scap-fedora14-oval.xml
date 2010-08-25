@@ -3412,7 +3412,7 @@
                         <description>The atd service should be disabled.</description>
                   </metadata>
                   <criteria operator="OR" comment="at is not installed or conditions are met">
-                        <extend_definition definition_ref="oval:mil.army.us.rhel5:def:20180" comment="at is not installed"/>
+                        <extend_definition definition_ref="oval:mil.army.us.rhel5:def:202053" comment="at is not installed"/>
                         <criterion comment="Conditions are satisfied" test_ref="oval:mil.army.us.rhel5:tst:202052"/>
                   </criteria>
             </definition>
@@ -3777,7 +3777,7 @@
                         <description>/etc/cron.deny file should not exist.</description>
                   </metadata>
                   <criteria>
-                        <criterion comment="Unknown test stub" test_ref="oval:mil.army.us.rhel5:tst:22"/>
+                        <criterion comment="Check existence of file /etc/cron.deny" test_ref="oval:mil.army.us.rhel5:tst:20232"/>
                   </criteria>
             </definition>
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:20233" version="1">
@@ -3790,7 +3790,7 @@
                         <description>/etc/at.deny file should not exist.</description>
                   </metadata>
                   <criteria>
-                        <criterion comment="check existence of file /etc/at.deny" test_ref="oval:mil.army.us.rhel5:tst:20233"/>
+                        <criterion comment="Check existence of file /etc/at.deny" test_ref="oval:mil.army.us.rhel5:tst:20233"/>
                   </criteria>
             </definition>
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:20234" version="1">
@@ -6994,11 +6994,12 @@
                   <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:20205"/>
                   <unix-def:state state_ref="oval:mil.army.us.rhel5:ste:20172"/>
             </unix-def:runlevel_test>
-            <unix-def:runlevel_test check_existence="none_exist" id="oval:mil.army.us.rhel5:tst:202052" version="1" check="all" comment="Runlevel test">
+            <unix-def:runlevel_test check_existence="any_exist" id="oval:mil.army.us.rhel5:tst:202052" version="1" check="all" comment="Runlevel test">
                   <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:202052"/>
+                  <unix-def:state state_ref="oval:mil.army.us.rhel5:ste:20171"/>
             </unix-def:runlevel_test>
             <lin-def:rpminfo_test check_existence="none_exist" id="oval:mil.army.us.rhel5:tst:202053" version="1" check="all" comment="Is the at package installed?">
-                  <lin-def:object object_ref="oval:mil.army.us.rhel5:obj:20269"/>
+                  <lin-def:object object_ref="oval:mil.army.us.rhel5:obj:202053"/>
             </lin-def:rpminfo_test>
             <unix-def:runlevel_test check_existence="any_exist" id="oval:mil.army.us.rhel5:tst:20206" version="1" check="all" comment="Runlevel test">
                   <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:20206"/>
@@ -7103,7 +7104,10 @@
                   <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:20229"/>
                   <unix-def:state state_ref="oval:mil.army.us.rhel5:ste:20231"/>
             </unix-def:file_test>
-            <unix-def:file_test check_existence="none_exist" id="oval:mil.army.us.rhel5:tst:20233" version="1" check="all" comment="existence check of /etc/at/deny">
+            <unix-def:file_test check_existence="none_exist" id="oval:mil.army.us.rhel5:tst:20232" version="1" check="all" comment="Existence check of /etc/cron.deny">
+                  <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:20232"/>
+            </unix-def:file_test>
+            <unix-def:file_test check_existence="none_exist" id="oval:mil.army.us.rhel5:tst:20233" version="1" check="all" comment="Existence check of /etc/at.deny">
                   <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:20233"/>
             </unix-def:file_test>
             <unix-def:runlevel_test check_existence="none_exist" id="oval:mil.army.us.rhel5:tst:20234" version="1" check="all" comment="Runlevel test">
@@ -9059,6 +9063,10 @@
             <unix-def:file_object id="oval:mil.army.us.rhel5:obj:20229" version="1" comment="/var/spool/cron">
                   <unix-def:path>/var/spool/cron</unix-def:path>
                   <unix-def:filename xsi:nil="true"/>
+            </unix-def:file_object>
+            <unix-def:file_object id="oval:mil.army.us.rhel5:obj:20232" version="1" comment="/var/spool/cron">
+                  <unix-def:path>/etc/</unix-def:path>
+                  <unix-def:filename>cron.deny</unix-def:filename>
             </unix-def:file_object>
             <unix-def:file_object id="oval:mil.army.us.rhel5:obj:20233" version="1" comment="/etc/at.deny">
                   <unix-def:path>/etc</unix-def:path>

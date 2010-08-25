@@ -291,13 +291,13 @@
     <select idref="dcb-rhel5-rule-3.4.2.3.m" selected="false" />  <!-- DONE -->  <!-- Set permissions on /etc/cron.weekly -->
     <select idref="dcb-rhel5-rule-3.4.2.3.n" selected="false" />  <!-- DONE -->  <!-- Set permissions on /etc/cron.monthly -->
     <select idref="dcb-rhel5-rule-3.4.2.3.o" selected="false" />  <!-- DONE -->  <!-- Set permissions on /etc/cron.d -->
-    <select idref="dcb-rhel5-rule-3.4.2.4.a" selected="false" />         <!-- Restrict group owner on /var/spool/cron file -->
-    <select idref="dcb-rhel5-rule-3.4.2.4.b" selected="false" />         <!-- Restrict user owner on /var/spool/cron file -->
-    <select idref="dcb-rhel5-rule-3.4.2.4.c" selected="false" />         <!-- Restrict Permissions  on /var/spool/cron file -->
-    <select idref="dcb-rhel5-rule-3.4.3.a" selected="false" />            <!-- Disable at Daemon if possible -->
-    <select idref="dcb-rhel5-rule-3.4.3.b" selected="false" />           <!-- uninstall at Daemon -->
-    <select idref="dcb-rhel5-rule-3.4.4.a" selected="false" />           <!-- Remove /etc/cron.deny -->
-    <select idref="dcb-rhel5-rule-3.4.4.b" selected="false" />           <!-- Remove /etc/at.deny -->
+    <select idref="dcb-rhel5-rule-3.4.2.4.a" selected="false" />  <!-- DONE -->  <!-- Restrict group owner on /var/spool/cron file -->
+    <select idref="dcb-rhel5-rule-3.4.2.4.b" selected="false" />  <!-- DONE -->  <!-- Restrict user owner on /var/spool/cron file -->
+    <select idref="dcb-rhel5-rule-3.4.2.4.c" selected="false" />  <!-- DONE -->  <!-- Restrict Permissions  on /var/spool/cron file -->
+    <select idref="dcb-rhel5-rule-3.4.3.a" selected="false" />  <!-- DONE -->  <!-- Disable at Daemon if possible -->
+    <select idref="dcb-rhel5-rule-3.4.3.b" selected="false" />  <!-- DONE -->  <!-- uninstall at Daemon -->
+    <select idref="dcb-rhel5-rule-3.4.4.a" selected="false" />  <!-- DONE -->  <!-- Remove /etc/cron.deny -->
+    <select idref="dcb-rhel5-rule-3.4.4.b" selected="false" />  <!-- DONE -->  <!-- Remove /etc/at.deny -->
     <select idref="dcb-rhel5-rule-3.5.1.1.a" selected="false" />         <!-- Disable OpenSSH Software -->
     <select idref="dcb-rhel5-rule-3.5.1.1.b" selected="false" />         <!-- Remove OpenSSH Software -->
     <select idref="dcb-rhel5-rule-3.5.1.2.a" selected="false" />         <!-- Remove SSH Server iptables Firewall Exception -->
@@ -3674,12 +3674,14 @@
           <Value id="dcb-rhel5-var-2.3.3.4.a" type="string" operator="equals">
             <title>Name of group containing human users</title>
             <description xml:lang="en">Enter group to aggregate human users</description>
+            <value>usergroup</value>
             <value selector="usergroup">usergroup</value>
           </Value>
           <Value id="dcb-rhel5-var-2.3.3.4.b" type="string" operator="equals">
             <title>userhelper file permissions</title>
             <description xml:lang="en">Enter file permissions for /usr/sbin/userhelper</description>
             <question xml:lang="en">Enter file permission for /usr/bin/userhelper</question>
+            <value>100111001000</value>
             <value selector="4710">100111001000</value>
             <match>^[10]+$</match>
           </Value>
@@ -4095,16 +4097,19 @@
           <Value id="dcb-rhel5-var-2.3.5.2.a" type="string" operator="equals">
             <title>User that owns /etc/grub.conf</title>
             <description xml:lang="en">Choose user that should own /etc/grub.conf</description>
+            <value>root</value>
             <value selector="root">root</value>
           </Value>
           <Value id="dcb-rhel5-var-2.3.5.2.b" type="string" operator="equals">
             <title>Group that owns /etc/grub.conf</title>
             <description xml:lang="en">Choose group that should own /etc/grub.conf</description>
+            <value>root</value>
             <value selector="root">root</value>
           </Value>
           <Value id="dcb-rhel5-var-2.3.5.2.c" type="string" operator="equals">
             <title>permissions on /etc/grub.conf</title>
             <description xml:lang="en">Choose file permissions on /etc/grub.conf</description>
+            <value>110000000</value>
             <value selector="600">110000000</value>
             <match>^[01]+$</match>
           </Value>
@@ -4497,6 +4502,7 @@
           <description xml:lang="en">Enter an appropriate login banner for your organization</description>
           <question xml:lang="en">Enter an appropriate login banner for your organization</question>
           <reference href="http://iase.disa.mil/policy-guidance/dod-banner-9may2008-ocr.pdf">DoD Policy on Use of DoD Information Systems - Standard Consent Banner and User Agreement</reference>
+          <value></value>
           <value selector="Empty_text"></value>
           <value selector="Army_text">You are accessing a U.S. Government (USG) Information System (IS) that is provided for USG-authorized use only.
 
@@ -7044,12 +7050,14 @@ By using this IS (which includes any device attached to this IS), you consent to
             <title>User who owns log files</title>
             <description xml:lang="en">Specify user owner of all logfiles specified in /etc/syslog.conf.</description>
             <question xml:lang="en">Specify user owner of all logfiles specified in /etc/syslog.conf</question>
+            <value>root</value>
             <value selector="root">root</value>
           </Value>
           <Value id="dcb-rhel5-var-2.6.1.2.b" type="string" operator="equals">
             <title>group who owns log files</title>
             <description xml:lang="en">Specify group owner of all logfiles specified in /etc/syslog.conf.</description>
             <question xml:lang="en">Specify group owner of all logfiles specified in /etc/syslog.conf</question>
+            <value>root</value>
             <value selector="root">root</value>
           </Value>
           <Value id="dcb-rhel5-var-2.6.1.2.c" type="string" operator="equals">
@@ -9029,12 +9037,14 @@ By using this IS (which includes any device attached to this IS), you consent to
           <title>group owner of /etc/crontab</title>
           <description xml:lang="en">Specify group owner of /etc/crontab.</description>
           <question xml:lang="en">Specify group owner of /etc/crontab</question>
+          <value>root</value>
           <value selector="root">root</value>
         </Value>
         <Value id="dcb-rhel5-var-3.4.2.system.crontab.primary.user" type="string" operator="equals">
           <title>user owner of /etc/crontab</title>
           <description xml:lang="en">Specify user owner of /etc/crontab.</description>
           <question xml:lang="en">Specify user owner of /etc/crontab</question>
+          <value>root</value>
           <value selector="root">root</value>
         </Value>
         <Value id="dcb-rhel5-var-3.4.2.system.crontab.primary.permissions" type="string" operator="equals">
@@ -9050,12 +9060,14 @@ By using this IS (which includes any device attached to this IS), you consent to
           <title>group owner of /etc/anacrontab</title>
           <description xml:lang="en">Specify group owner of /etc/ancrontab.</description>
           <question xml:lang="en">Specify group owner of /etc/anacrontab</question>
+          <value>root</value>
           <value selector="root">root</value>
         </Value>
         <Value id="dcb-rhel5-var-3.4.2.system.anacrontab.user" type="string" operator="equals">
           <title>user owner of /etc/anacrontab</title>
           <description xml:lang="en">Specify user owner of /etc/anacrontab.</description>
           <question xml:lang="en">Specify user owner of /etc/anacrontab</question>
+          <value>root</value>
           <value selector="root">root</value>
         </Value>
         <Value id="dcb-rhel5-var-3.4.2.system.anacrontab.permissions" type="string" operator="equals">
@@ -9071,12 +9083,14 @@ By using this IS (which includes any device attached to this IS), you consent to
           <title>group owner of cron.hourly cron.daily cron.weekly cron.monthly cron.d</title>
           <description xml:lang="en">Specify group owner of /etc/cron.* files and directories.</description>
           <question xml:lang="en">Specify group owner of /etc/cron.* files and directories</question>
+          <value>root</value>
           <value selector="root">root</value>
         </Value>
         <Value id="dcb-rhel5-var-3.4.2.system.crontab.directories.user" type="string" operator="equals">
           <title>user owner of cron.hourly cron.daily cron.weekly cron.monthly cron.d</title>
           <description xml:lang="en">Specify user owner of /etc/cron.* files and directories.</description>
           <question xml:lang="en">Specify user owner of /etc/cron.* files and directories</question>
+          <value>root</value>
           <value selector="root">root</value>
         </Value>
         <Value id="dcb-rhel5-var-3.4.2.system.crontab.directories.permissions" type="string" operator="equals">
@@ -9092,11 +9106,13 @@ By using this IS (which includes any device attached to this IS), you consent to
           <title>group owner of /var/spool/cron</title>
           <description xml:lang="en">Specify group owner of /var/spool/cron.</description>
           <question xml:lang="en">Specify group owner of /var/spool/cron</question>
+          <value>root</value>
           <value selector="root">root</value>
         </Value>
         <Value id="dcb-rhel5-var-3.4.2.spool.directory.user" type="string" operator="equals">
           <title>user owner of /var/spool/cron</title>
           <description xml:lang="en">Specify user owner of /var/spool/cron.</description>
+          <value>root</value>
           <value selector="root">root</value>
         </Value>
         <Value id="dcb-rhel5-var-3.4.2.spool.directory.permissions" type="string" operator="equals">
@@ -12559,12 +12575,14 @@ By using this IS (which includes any device attached to this IS), you consent to
             <title>group owner of ldap files</title>
 	    <description xml:lang="en">Specify group owner of /var/lib/ldap/*.</description>
             <question xml:lang="en">Specify group owner of  /var/lib/ldap/*</question>
+            <value>root</value>
             <value selector="root">root</value>
           </Value>
           <Value id="dcb-rhel5-var-3.12.3.7.b" type="string" operator="equals">
             <title>user owner of ldap files</title>
     	    <description xml:lang="en">Specify user owner of /var/lib/ldap/*.</description>
             <question xml:lang="en">Specify user owner of  /var/lib/ldap/*</question>
+            <value>ldap</value>
             <value selector="ldap">ldap</value>
           </Value>
           <Rule id="dcb-rhel5-rule-3.12.3.7.a" selected="false" weight="10.0">
@@ -13253,12 +13271,14 @@ By using this IS (which includes any device attached to this IS), you consent to
             <title>group owner of jail</title>
             <description xml:lang="en">Specify group owner of /var/named/chroot/etc/named.conf</description>
             <question xml:lang="en">Specify group owner of /var/named/chroot/etc/named.conf</question>
+            <value>root</value>
             <value selector="root">root</value>
           </Value>
           <Value id="dcb-rhel5-var-3.14.3.2.b" type="string" operator="equals">
             <title>user owner of jail</title>
             <description xml:lang="en">Specify user owner of /var/named/chroot/etc/named.conf</description>
             <question xml:lang="en">Specify user owner of /var/named/chroot/etc/named.conf</question>
+            <value>root</value>
             <value selector="root">root</value>
           </Value>
           <Value id="dcb-rhel5-var-3.14.3.2.c" type="string" operator="equals">
@@ -13924,12 +13944,14 @@ By using this IS (which includes any device attached to this IS), you consent to
             <title>value of ServerTokens</title>
       	    <description xml:lang="en">Tells apache to only return Apache in the Server header, returned on every page request.</description>
             <question xml:lang="en">Specify restrictions of of provided information in page headers for web server</question>
+            <value>Prod</value>
             <value selector="prod">Prod</value>
           </Value>
           <Value id="dcb-rhel5-var-3.16.3.1.b" type="string" operator="equals">
             <title>value of ServerSignature</title>
             <description xml:lang="en">Tells apache not to display the server version on error pages, or other pages it generates.</description>
             <question xml:lang="en">Enable/Disable Apache displaying the server version on error pages</question>
+            <value>Off</value>
             <value selector="off">Off</value>
           </Value>
           <Rule id="dcb-rhel5-rule-3.16.3.1.a" selected="false" weight="10.0">
@@ -14694,6 +14716,7 @@ By using this IS (which includes any device attached to this IS), you consent to
             <title>Directory permissions on /etc/httpd/conf</title>
       	    <description xml:lang="en">Specify directory permissions on /etc/httpd/conf</description>
             <question xml:lang="en">Specify directory permissions of /etc/httpd/conf</question>
+            <value>111101000</value>
             <value selector="750">111101000</value>
             <match>^[01]+$</match>
           </Value>
@@ -14701,6 +14724,7 @@ By using this IS (which includes any device attached to this IS), you consent to
             <title>File permissions on /etc/httpd/conf/*</title>
       	    <description xml:lang="en">Specify file permissions on /etc/httpd/conf/*</description>
             <question xml:lang="en">Specify file permissions of /etc/httpd/conf/*</question>
+            <value>110100000</value>
             <value selector="640">110100000</value>
             <match>^[01]+$</match>
           </Value>
@@ -14708,6 +14732,7 @@ By using this IS (which includes any device attached to this IS), you consent to
             <title>File permissions on /usr/sbin/httpd</title>
       	    <description xml:lang="en">Specify file permissions on /usr/sbin/httpd</description>
             <question xml:lang="en">Specify file permissions of /etc/sbin/httpd</question>
+            <value>101001001</value>
             <value selector="511">101001001</value>
             <match>^[01]+$</match>
           </Value>
@@ -14715,6 +14740,7 @@ By using this IS (which includes any device attached to this IS), you consent to
             <title>group owner of /etc/httpd/conf/*</title>
       	    <description xml:lang="en">Specify group owner of /etc/httpd/conf/*</description>
       	    <question xml:lang="en">Specify group owner of /etc/httpd/conf/*</question>
+            <value>apache</value>
             <value selector="apache">apache</value>
             <match>^[01]+$</match>
           </Value>
@@ -14722,6 +14748,7 @@ By using this IS (which includes any device attached to this IS), you consent to
             <title>File permissions on /var/log/httpd/</title>
       	    <description xml:lang="en">Specify file permissions on /var/log/httpd/</description>
       	    <question xml:lang="en">Specify file permissions of /var/log/httpd/</question>
+            <value>111101000</value>
             <value selector="750">111101000</value>
             <match>^[01]+$</match>
           </Value>
@@ -15607,24 +15634,28 @@ By using this IS (which includes any device attached to this IS), you consent to
             <title>request_header_max_size</title>
       	    <description xml:lang="en">Place an upper limit on HTTP request header length, precautions against denial-of-service and buffer overflow vulnerabilities.</description>
             <question xml:lang="en">Specify an upper limit on HTTP request header length</question>
+            <value>20kb</value>
             <value selector="20kb">20kb</value>
           </Value>
           <Value id="dcb-rhel5-var-3.19.2.2.e" type="string" operator="equals">
             <title>reply_header_max_size</title>
       	    <description xml:lang="en">Place an upper limit on HTTP reply header length, precautions against denial-of-service and buffer overflow vulnerabilities.</description>
             <question xml:lang="en">Specify an upper limit on HTTP reply header length</question>
+            <value>20kb</value>
             <value selector="20kb">20kb</value>
           </Value>
           <Value id="dcb-rhel5-var-3.19.2.2.f" type="string" operator="equals">
             <title>cache_effective_user</title>
       	    <description xml:lang="en">Designate the EUID of Squid following initialization (it is essential that the EUID be set to an unprivileged sandbox account)..</description>
             <question xml:lang="en">Designate the EUID of Squid following initialization</question>
+            <value>squid</value>
             <value selector="squid">squid</value>
           </Value>
           <Value id="dcb-rhel5-var-3.19.2.2.g" type="string" operator="equals">
             <title>cache_effective_group</title>
             <description xml:lang="en">Designate the EGID of Squid following initialization (it is essential that the EGID be set to an unprivileged sandbox account)..</description>
             <question xml:lang="en">Designate the EGID of Squid following initialization</question>
+            <value>squid</value>
             <value selector="squid">squid</value>
           </Value>
           <Rule id="dcb-rhel5-rule-3.19.2.2.a" selected="false" weight="10.0">
