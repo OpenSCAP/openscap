@@ -460,7 +460,7 @@ SEXP_t *oval_object2sexp(const char *typestr, struct oval_object *object, struct
 SEXP_t *oval_state2sexp(struct oval_state *state, void *sess)
 {
 	SEXP_t *ste, *ste_name, *ste_ent;
-	SEXP_t *r0, *r1, *r2;
+	SEXP_t *r0, *r1, *r2, *r3, *r4;
 	char buffer[128];
 	size_t buflen;
 	const char *subtype_name;
@@ -478,10 +478,13 @@ SEXP_t *oval_state2sexp(struct oval_state *state, void *sess)
 
 	ste_name = SEXP_list_new(r0 = SEXP_string_new(buffer, buflen),
 				 r1 = SEXP_string_new(":id", 3),
-				 r2 = SEXP_string_newf("%s", oval_state_get_id(state)), NULL);
+				 r2 = SEXP_string_newf("%s", oval_state_get_id(state)),
+				 r3 = SEXP_string_new(":operator", 9),
+				 r4 = SEXP_number_newu(oval_state_get_operator(state)),
+				 NULL);
 
 	ste = SEXP_list_new(ste_name, NULL);
-	SEXP_vfree(r0, r1, r2, ste_name, NULL);
+	SEXP_vfree(r0, r1, r2, r3, r4, ste_name, NULL);
 
 	contents = oval_state_get_contents(state);
 	while (oval_state_content_iterator_has_more(contents)) {
