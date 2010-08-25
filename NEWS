@@ -1,3 +1,14 @@
+openscap-0.6.1                                                  25-08-2010
+- provide draft of fedora14 XCCDF and OVAL content
+- XSL transformations for generating report and guidance
+- memory optimalizations for  file probe
+- add probes: sql and xinetd
+- new modular design of oscap tool
+- OVAL API refactor and clean up
+- debug mechanism clean up
+- improved python bindings
+- many many fixes
+
 openscap-0.6.0							14-07-2010
 - finished OVAL variables support
 - fixed swig version requirement
