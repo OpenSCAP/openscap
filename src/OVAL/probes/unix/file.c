@@ -157,7 +157,7 @@ static int file_cb (const char *p, const char *f, void *ptr)
         snprintf (path_buffer, sizeof path_buffer, "%s/%s", p, f);
         st_path = path_buffer;
 
-        if (stat (st_path, &st) == -1) {
+        if (lstat (st_path, &st) == -1) {
                 _D("FAIL: errno=%u, %s.\n", errno, strerror (errno));
                 return (-1);
         } else {
