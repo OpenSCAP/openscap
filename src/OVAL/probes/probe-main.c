@@ -57,7 +57,8 @@ probe_option_t OSCAP_GSYM(options)[] = {
 
 #define OPTIONS_COUNT (sizeof OSCAP_GSYM(options)/sizeof(probe_option_t))
 
-bool probe_handle_varref(const char *ent_name);
+bool probe_handle_varref_cstr(const char *ent_name);
+bool probe_handle_varref_sexp(const SEXP_t *ent_name);
 
 volatile int OSCAP_GSYM(sigexit)   = 0;    /**< signal exit flag */
 SEAP_CTX_t  *OSCAP_GSYM(ctx)       = NULL; /**< SEAP context */
@@ -1179,7 +1180,7 @@ int probe_setoption(int option, ...)
 	probe_option_t *optrec;
 	int ret;
 
-	optrec = oscap_bfind (OSCAP_GSYM(options), OPTIONS_COUNT, sizeof(probe_option_t), &option, &probe_optkcmp);
+	optrec = oscap_bfind (OSCAP_GSYM(options), OPTIONS_COUNT, sizeof(probe_option_t), &option, (int(*)(void *, void *))&probe_optkcmp);
 
 	if (optrec == NULL) {
 		errno = EINVAL;
@@ -1218,7 +1219,7 @@ static int probe_opthandler_varref(int option, va_list args)
 	char *o_temp;
 
 	o_switch = va_arg(args, int);
-	o_name   = va_arg(args, const char *);
+	o_name   = va_arg(args, char *);
 
 	if (o_name == NULL) {
 		/* switch varref handling on/off globally */
@@ -1227,7 +1228,7 @@ static int probe_opthandler_varref(int option, va_list args)
 	}
 
 	o_temp = oscap_bfind (OSCAP_GSYM(no_varref_ents), OSCAP_GSYM(no_varref_ents_cnt),
-			      sizeof(char *), o_name, &probe_optecmp);
+			      sizeof(char *), o_name, (int(*)(void *, void *)) &probe_optecmp);
 
 	if (o_temp != NULL)
 		return (0);
@@ -1236,7 +1237,7 @@ static int probe_opthandler_varref(int option, va_list args)
 						   sizeof (char *) * ++OSCAP_GSYM(no_varref_ents_cnt));
 	OSCAP_GSYM(no_varref_ents)[OSCAP_GSYM(no_varref_ents_cnt) - 1] = strdup(o_name);
 
-	qsort(OSCAP_GSYM(no_varref_ents), OSCAP_GSYM(no_varref_ents_cnt), sizeof (char *), &probe_optecmp);
+	qsort(OSCAP_GSYM(no_varref_ents), OSCAP_GSYM(no_varref_ents_cnt), sizeof (char *), (int(*)(const void *, const void *))&probe_optecmp);
 
 	return (0);
 }
@@ -1255,7 +1256,7 @@ bool probe_handle_varref_cstr (const char *ent_name)
 		return true;
 
 	return (oscap_bfind (OSCAP_GSYM(no_varref_ents), OSCAP_GSYM(no_varref_ents_cnt),
-			     sizeof(char *), ent_name, &probe_optekcmp) == NULL ? true : false);
+			     sizeof(char *), (void *)ent_name, (int(*)(void *, void *))&probe_optekcmp) == NULL ? true : false);
 }
 
 bool probe_handle_varref_sexp (const SEXP_t *ent_name)
@@ -1267,5 +1268,5 @@ bool probe_handle_varref_sexp (const SEXP_t *ent_name)
 		return true;
 
 	return (oscap_bfind (OSCAP_GSYM(no_varref_ents), OSCAP_GSYM(no_varref_ents_cnt),
-			     sizeof(char *), ent_name, &probe_optekcmp_sexp) == NULL ? true : false);
+			     sizeof(char *), (void *)ent_name, (int(*)(void *, void *))&probe_optekcmp_sexp) == NULL ? true : false);
 }
