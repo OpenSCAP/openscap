@@ -724,7 +724,7 @@
                         <description>The sgid bit should be not set for all executable files.</description>
                   </metadata>
                   <criteria>
-                        <criterion comment="Check all files and make sure they do not have sgid set" test_ref="oval:mil.army.us.rhel5:tst:20048" negate="true"/>
+                        <criterion comment="Check that there are no unexpected files with sgid bit set" test_ref="oval:mil.army.us.rhel5:tst:20048"/>
                   </criteria>
             </definition>
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:20049" version="1">
@@ -737,7 +737,7 @@
                         <description>The suid bit should be not set for all files.</description>
                   </metadata>
                   <criteria>
-                        <criterion comment="Check all files and make sure they do not have suid set" test_ref="oval:mil.army.us.rhel5:tst:20049" negate="true"/>
+                        <criterion comment="Check that there are no unexpected files with suid bit set" test_ref="oval:mil.army.us.rhel5:tst:20049"/>
                   </criteria>
             </definition>
             <definition class="compliance" id="oval:mil.army.us.rhel5:def:20050" version="1">
@@ -5900,19 +5900,17 @@
                   <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:200471"/>
             </unix-def:file_test>
 
-            <unix-def:file_test id="oval:mil.army.us.rhel5:tst:20048" version="1" check="all" comment="executable files with sgid set">
+            <unix-def:file_test id="oval:mil.army.us.rhel5:tst:20048" version="1" check_existence="none_exist" check="all" comment="executable files with sgid set">
                   <notes>
                         <note>This will enumerate all files on local partitions</note>
                   </notes>
-                  <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:20047"/>
-                  <unix-def:state state_ref="oval:mil.army.us.rhel5:ste:20048"/>
+                  <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:20048"/>
             </unix-def:file_test>
-            <unix-def:file_test id="oval:mil.army.us.rhel5:tst:20049" version="1" check="all" comment="executable files with suid set">
+            <unix-def:file_test id="oval:mil.army.us.rhel5:tst:20049" version="1" check_existence="none_exist" check="all" comment="executable files with suid set">
                   <notes>
                         <note>This will enumerate all files on local partitions</note>
                   </notes>
-                  <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:20047"/>
-                  <unix-def:state state_ref="oval:mil.army.us.rhel5:ste:20049"/>
+                  <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:20049"/>
             </unix-def:file_test>
             <unix-def:file_test id="oval:mil.army.us.rhel5:tst:20050" version="1" check="all" comment="files with no user owner">
                   <notes>
@@ -7634,7 +7632,39 @@
                   <unix-def:path>/</unix-def:path>
                   <unix-def:filename operation="pattern match">.*</unix-def:filename>
             </unix-def:file_object>
-
+            <unix-def:file_object id="oval:mil.army.us.rhel5:obj:20048" version="1" comment="all local files with sgid bit set">
+                  <set set_operator="UNION" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+                        <object_reference>oval:mil.army.us.rhel5:obj:20047</object_reference>
+                        <filter>oval:mil.army.us.rhel5:ste:200481</filter>
+                        <filter>oval:mil.army.us.rhel5:ste:200482</filter>
+                        <filter>oval:mil.army.us.rhel5:ste:200483</filter>
+                        <filter>oval:mil.army.us.rhel5:ste:200484</filter>
+                        <filter>oval:mil.army.us.rhel5:ste:200485</filter>
+                        <filter>oval:mil.army.us.rhel5:ste:200486</filter>
+                        <filter>oval:mil.army.us.rhel5:ste:200487</filter>
+                  </set>
+            </unix-def:file_object>
+            <unix-def:file_object id="oval:mil.army.us.rhel5:obj:20049" version="1" comment="all local files with suid bit set">
+                  <set set_operator="UNION" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+                        <object_reference>oval:mil.army.us.rhel5:obj:20047</object_reference>
+                        <filter>oval:mil.army.us.rhel5:ste:2004901</filter>
+                        <filter>oval:mil.army.us.rhel5:ste:2004902</filter>
+                        <filter>oval:mil.army.us.rhel5:ste:2004903</filter>
+                        <filter>oval:mil.army.us.rhel5:ste:2004904</filter>
+                        <filter>oval:mil.army.us.rhel5:ste:2004905</filter>
+                        <filter>oval:mil.army.us.rhel5:ste:2004906</filter>
+                        <filter>oval:mil.army.us.rhel5:ste:2004907</filter>
+                        <filter>oval:mil.army.us.rhel5:ste:2004908</filter>
+                        <filter>oval:mil.army.us.rhel5:ste:2004909</filter>
+                        <filter>oval:mil.army.us.rhel5:ste:2004910</filter>
+                        <filter>oval:mil.army.us.rhel5:ste:2004911</filter>
+                        <filter>oval:mil.army.us.rhel5:ste:2004912</filter>
+                        <filter>oval:mil.army.us.rhel5:ste:2004913</filter>
+                        <filter>oval:mil.army.us.rhel5:ste:2004914</filter>
+                        <filter>oval:mil.army.us.rhel5:ste:2004915</filter>
+                        <filter>oval:mil.army.us.rhel5:ste:2004916</filter>
+                  </set>
+            </unix-def:file_object>
 
             <ind-def:textfilecontent54_object id="oval:mil.army.us.rhel5:obj:20053" version="1">
                   <ind-def:path>/etc/init.d</ind-def:path>
@@ -9887,14 +9917,105 @@
             <unix-def:file_state id="oval:mil.army.us.rhel5:ste:200472" version="1">
                   <unix-def:type datatype="string" operation="not equal">regular</unix-def:type>
             </unix-def:file_state>
-            <unix-def:file_state id="oval:mil.army.us.rhel5:ste:20048" version="1">
-                  <unix-def:sgid datatype="boolean">1</unix-def:sgid>
-                  <unix-def:uexec datatype="boolean">1</unix-def:uexec>
+
+            <unix-def:file_state id="oval:mil.army.us.rhel5:ste:200481" version="1" operator="OR">
+                  <unix-def:type operation="not equal">regular</unix-def:type>
+                  <unix-def:sgid datatype="boolean">0</unix-def:sgid>
             </unix-def:file_state>
-            <unix-def:file_state id="oval:mil.army.us.rhel5:ste:20049" version="1" comment="Executables with suid set">
-                  <unix-def:suid datatype="boolean">1</unix-def:suid>
-                  <unix-def:uexec datatype="boolean">1</unix-def:uexec>
+            <unix-def:file_state id="oval:mil.army.us.rhel5:ste:200482" version="1">
+                  <unix-def:path>/sbin</unix-def:path>
+                  <unix-def:filename>netreport</unix-def:filename>
             </unix-def:file_state>
+            <unix-def:file_state id="oval:mil.army.us.rhel5:ste:200483" version="1">
+                  <unix-def:path>/var/cache/jwhois</unix-def:path>
+                  <unix-def:filename>jwhois.db</unix-def:filename>
+            </unix-def:file_state>
+            <unix-def:file_state id="oval:mil.army.us.rhel5:ste:200484" version="1">
+                  <unix-def:path>/usr/sbin</unix-def:path>
+                  <unix-def:filename var_check="at least one" var_ref="oval:mil.army.us.rhel5:var:200484"/>
+            </unix-def:file_state>
+            <unix-def:file_state id="oval:mil.army.us.rhel5:ste:200485" version="1">
+                  <unix-def:path>/usr/bin</unix-def:path>
+                  <unix-def:filename var_check="at least one" var_ref="oval:mil.army.us.rhel5:var:200485"/>
+            </unix-def:file_state>
+            <unix-def:file_state id="oval:mil.army.us.rhel5:ste:200486" version="1">
+                  <unix-def:path>/usr/libexec/utempter</unix-def:path>
+                  <unix-def:filename>utempter</unix-def:filename>
+            </unix-def:file_state>
+            <unix-def:file_state id="oval:mil.army.us.rhel5:ste:200487" version="1">
+                  <unix-def:path>/usr/lib/vte</unix-def:path>
+                  <unix-def:filename>gnome-pty-helper</unix-def:filename>
+            </unix-def:file_state>
+            <unix-def:file_state id="oval:mil.army.us.rhel5:ste:200488" version="1">
+                  <unix-def:path>/usr/lib64/vte</unix-def:path>
+                  <unix-def:filename>gnome-pty-helper</unix-def:filename>
+            </unix-def:file_state>
+
+            <unix-def:file_state id="oval:mil.army.us.rhel5:ste:2004901" version="1" operator="OR">
+                  <unix-def:type operation="not equal">regular</unix-def:type>
+                  <unix-def:suid datatype="boolean">0</unix-def:suid>
+            </unix-def:file_state>
+            <unix-def:file_state id="oval:mil.army.us.rhel5:ste:2004902" version="1">
+                  <unix-def:path>/bin</unix-def:path>
+                  <unix-def:filename var_check="at least one" var_ref="oval:mil.army.us.rhel5:var:2004902"/>
+            </unix-def:file_state>
+            <unix-def:file_state id="oval:mil.army.us.rhel5:ste:2004903" version="1">
+                  <unix-def:path>/lib/dbus-1</unix-def:path>
+                  <unix-def:filename>dbus-daemon-launch-helper</unix-def:filename>
+            </unix-def:file_state>
+            <unix-def:file_state id="oval:mil.army.us.rhel5:ste:2004904" version="1">
+                  <unix-def:path>/lib64/dbus-1</unix-def:path>
+                  <unix-def:filename>dbus-daemon-launch-helper</unix-def:filename>
+            </unix-def:file_state>
+            <unix-def:file_state id="oval:mil.army.us.rhel5:ste:2004905" version="1">
+                  <unix-def:path>/sbin</unix-def:path>
+                  <unix-def:filename var_check="at least one" var_ref="oval:mil.army.us.rhel5:var:2004905"/>
+            </unix-def:file_state>
+            <unix-def:file_state id="oval:mil.army.us.rhel5:ste:2004906" version="1">
+                  <unix-def:path>/usr/bin</unix-def:path>
+                  <unix-def:filename var_check="at least one" var_ref="oval:mil.army.us.rhel5:var:2004906"/>
+            </unix-def:file_state>
+            <unix-def:file_state id="oval:mil.army.us.rhel5:ste:2004907" version="1">
+                  <unix-def:path>/usr/lib/nspluginwrapper</unix-def:path>
+                  <unix-def:filename>plugin-config</unix-def:filename>
+            </unix-def:file_state>
+            <unix-def:file_state id="oval:mil.army.us.rhel5:ste:2004908" version="1">
+                  <unix-def:path>/usr/lib64/nspluginwrapper</unix-def:path>
+                  <unix-def:filename>plugin-config</unix-def:filename>
+            </unix-def:file_state>
+            <unix-def:file_state id="oval:mil.army.us.rhel5:ste:2004909" version="1">
+                  <unix-def:path>/usr/libexec/kde4</unix-def:path>
+                  <unix-def:filename>kpac_dhcp_helper</unix-def:filename>
+            </unix-def:file_state>
+            <unix-def:file_state id="oval:mil.army.us.rhel5:ste:2004910" version="1">
+                  <unix-def:path>/usr/libexec/news</unix-def:path>
+                  <unix-def:filename var_check="at least one" var_ref="oval:mil.army.us.rhel5:var:2004910"/>
+            </unix-def:file_state>
+            <unix-def:file_state id="oval:mil.army.us.rhel5:ste:2004911" version="1">
+                  <unix-def:path>/usr/libexec/openssh</unix-def:path>
+                  <unix-def:filename>ssh-keysign</unix-def:filename>
+            </unix-def:file_state>
+            <unix-def:file_state id="oval:mil.army.us.rhel5:ste:2004912" version="1">
+                  <unix-def:path>/usr/libexec/polkit-1</unix-def:path>
+                  <unix-def:filename>polkit-agent-helper-1</unix-def:filename>
+            </unix-def:file_state>
+            <unix-def:file_state id="oval:mil.army.us.rhel5:ste:2004913" version="1">
+                  <unix-def:path>/usr/libexec</unix-def:path>
+                  <unix-def:filename>pt_chown</unix-def:filename>
+            </unix-def:file_state>
+            <unix-def:file_state id="oval:mil.army.us.rhel5:ste:2004914" version="1">
+                  <unix-def:path>/usr/libexec/pulse</unix-def:path>
+                  <unix-def:filename>proximity-helper</unix-def:filename>
+            </unix-def:file_state>
+            <unix-def:file_state id="oval:mil.army.us.rhel5:ste:2004915" version="1">
+                  <unix-def:path>/usr/sbin</unix-def:path>
+                  <unix-def:filename var_check="at least one" var_ref="oval:mil.army.us.rhel5:var:2004915"/>
+            </unix-def:file_state>
+            <unix-def:file_state id="oval:mil.army.us.rhel5:ste:2004916" version="1">
+                  <unix-def:path>/usr/share/BackupPC/sbin/</unix-def:path>
+                  <unix-def:filename>BackupPC_Admin</unix-def:filename>
+            </unix-def:file_state>
+
             <unix-def:file_state id="oval:mil.army.us.rhel5:ste:20050" version="1" comment="Executables with suid set">
                   <unix-def:user_id></unix-def:user_id>
             </unix-def:file_state>
@@ -10659,6 +10780,69 @@
 	      <value>audit.log</value>
 -->
 	    </constant_variable>
+
+            <constant_variable id="oval:mil.army.us.rhel5:var:200484" version="1" datatype="string" comment="List of files known to have the sgid bit set">
+                  <value>lockdev</value>
+                  <value>sendmail.sendmail</value>
+            </constant_variable>
+            <constant_variable id="oval:mil.army.us.rhel5:var:200485" version="1" datatype="string" comment="List of files known to have the sgid bit set">
+                  <value>write</value>
+                  <value>locate</value>
+                  <value>ssh-agent</value>
+                  <value>wall</value>
+                  <value>screen</value>
+                  <value>lockfile</value>
+                  <value>gnomine</value>
+                  <value>jwhois</value>
+                  <value>iagno</value>
+                  <value>crontab</value>
+            </constant_variable>
+
+            <constant_variable id="oval:mil.army.us.rhel5:var:2004902" version="1" datatype="string" comment="List of files known to have the suid bit set">
+                  <value>cgexec</value>
+                  <value>fusermount</value>
+                  <value>mount</value>
+                  <value>ping</value>
+                  <value>ping6</value>
+                  <value>su</value>
+                  <value>umount</value>
+            </constant_variable>
+            <constant_variable id="oval:mil.army.us.rhel5:var:2004905" version="1" datatype="string" comment="List of files known to have the suid bit set">
+                  <value>mount.nfs</value>
+                  <value>pam_timestamp_check</value>
+                  <value>unix_chkpwd</value>
+            </constant_variable>
+            <constant_variable id="oval:mil.army.us.rhel5:var:2004906" version="1" datatype="string" comment="List of files known to have the suid bit set">
+                  <value>Xorg</value>
+                  <value>at</value>
+                  <value>chage</value>
+                  <value>chfn</value>
+                  <value>chsh</value>
+                  <value>crontab</value>
+                  <value>gpasswd</value>
+                  <value>ksu</value>
+                  <value>newgrp</value>
+                  <value>passwd</value>
+                  <value>pkexec</value>
+                  <value>rcp</value>
+                  <value>rlogin</value>
+                  <value>rsh</value>
+                  <value>staprun</value>
+                  <value>sudo</value>
+                  <value>sudoedit</value>
+            </constant_variable>
+            <constant_variable id="oval:mil.army.us.rhel5:var:2004910" version="1" datatype="string" comment="List of files known to have the suid bit set">
+                  <value>innbind</value>
+                  <value>rnews</value>
+            </constant_variable>
+            <constant_variable id="oval:mil.army.us.rhel5:var:2004915" version="1" datatype="string" comment="List of files known to have the suid bit set">
+                  <value>ccreds_chkpwd</value>
+                  <value>mtr</value>
+                  <value>seunshare</value>
+                  <value>suexec</value>
+                  <value>userhelper</value>
+                  <value>usernetctl</value>
+            </constant_variable>
 
             <constant_variable id="oval:mil.army.us.rhel5:var:2017" version="1" datatype="string" comment="Regexp pattern for xinetd services">
             	  <value>^[[:space:]]+disable[[:space:]]*=[[:space:]]*(yes|no)</value>
