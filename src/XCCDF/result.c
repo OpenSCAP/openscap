@@ -558,7 +558,7 @@ void xccdf_result_to_dom(struct xccdf_result *result, xmlNode *result_node, xmlD
 			xmlNewProp(score_node, BAD_CAST "system", BAD_CAST sys);
 
 		float max = xccdf_score_get_maximum(score);
-		char *max_str = oscap_sprintf(max_str, "%f", max);
+		char *max_str = oscap_sprintf("%f", max);
 		xmlNewProp(score_node, BAD_CAST "maximum", BAD_CAST max_str);
         oscap_free(max_str);
 	}
