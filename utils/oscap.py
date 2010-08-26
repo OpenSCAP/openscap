@@ -143,6 +143,7 @@ class XCCDF_Handler(object):
 
     def __callback(self, msg, plugin):
         result = msg.user2num
+        if result == OSCAP.XCCDF_RESULT_NOT_SELECTED: return 0
         print_save( "\nRule ID:", "\r\t\t", _bold(msg.user1str) )
         print_save( "Title:", "\r\t\t", msg.user3str )
         print_save( "Descroption:", "\r\t\t", msg.string )

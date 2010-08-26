@@ -141,6 +141,7 @@ static int callback(const struct oscap_reporter_message *msg, void *arg)
 {
 	if (((const struct oscap_action*) arg)->verbosity >= 0) {
             xccdf_test_result_type_t result = oscap_reporter_message_get_user2num(msg);
+            if (result == XCCDF_RESULT_NOT_SELECTED) return 0;
 
             printf("\n");
             printf("Rule ID:\r\t\t\033[1m%s\033[0;0m\n", oscap_reporter_message_get_user1str(msg));
