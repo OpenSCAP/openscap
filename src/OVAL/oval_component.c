@@ -1658,8 +1658,11 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_SUBSTRING(oval_ar
                         txtlen    = strlen(text);
 
                         if (beg < txtlen) {
-                                sublen = (beg + len) >= txtlen ? 0 : txtlen - (beg + len);
-
+                                /* Check if we are still inside the string
+                                 * beg: position of start of next substring (from 0! last position is txtlen-1)
+                                 * len: length of susbstring
+                                 * txtlen: length of whole string */
+                                sublen = (beg + len) > txtlen ? 0 : txtlen - (beg + len) + 1;
                                 if (sublen < len)
                                         len = sublen;
 
