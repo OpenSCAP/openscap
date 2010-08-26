@@ -83,10 +83,8 @@
 
 <!-- CSS stylesheet -->
 <xsl:template name='css'>
-  <style type='text/css'>
-  <![CDATA[
+  <style type='text/css' media='all'>
     html, body { background-color: black; font-family:sans-serif; margin:0; padding:0; }
-    a, a:visited { color:blue; text-decoration:underline; }
     div.score-outer { height: .8em; width:100%; min-width:100px; background-color: red; }
     div.score-inner { height: 100%; background-color: green; }
     .score-max, .score-val { text-align:right; }
@@ -94,24 +92,12 @@
     .result-pass strong, .result-fixed strong { color:green; }
     .unknown, .result-notselected strong, .result-notchecked strong, .result-notapplicable strong, .result-informational strong, .result-unknown strong { color:#555; }
     .result-error strong, .result-fail strong { color:red; }
-    div#content, div#header, div#footer { margin-left:5%; margin-right:25%; }
-    div#content { background-color: white; padding:2em; }
-    div#footer, div#header { color:white; text-align:center; }
-    div#footer, p.remark, .link { font-size:.8em; }
     table { border-collapse: collapse; border: 1px black solid; width:100%; }
     table th { background-color:black; color:white; }
     table td { border-right: 1px black solid; }
     table td.result, table td.link { text-align:center; }
     div#content p { text-align:justify; }
     div.result-detail { border: 1px solid black; margin: 2em 0; padding: 0 1em; }
-    div#content p.link { text-align:right; font-size:.8em; }
-    div#toc { position:absolute; left:80%; top:6.5em; width:15%; background-color:white; padding:0; }
-    div#toc[id="toc"] { position:fixed; } /* IE6 hack (won't be interpreted by IE6) */
-    div#toc ul, div#toc ul li { margin:0; padding:0; list-style-type:none; font-size:.9em; }
-    div#toc h2 { display:none; }
-    div#toc a { display:block; text-align:center; padding:.3em 1em; text-decoration:none; }
-    div#toc a:hover { background-color: #ccc; }
-    div#footer a { color:white; }
     div#content h2 { border-bottom:2px dashed; margin-top:2em; margin-bottom:1.5em; text-align:center; }
     div#content h2#summary { margin-top:1em; }
     h1 { margin:1em 0; }
@@ -122,7 +108,35 @@
     pre.code { background: #ccc; }
     ul.toc-struct li { list-style-type: none; }
     div.group-rules { margin-left: 10%; }
-  ]]>
+    div#footer, p.remark, .link { font-size:.8em; }
+  </style>
+  <style type='text/css' media='screen'>
+    div#content, div#header, div#footer { margin-left:5%; margin-right:25%; }
+    div#content { background-color: white; padding:2em; }
+    div#footer, div#header { color:white; text-align:center; }
+    a, a:visited { color:blue; text-decoration:underline; }
+    div#content p.link { text-align:right; font-size:.8em; }
+    div#toc { position:absolute; left:80%; top:6.5em; width:15%; background-color:white; padding:0; }
+    div#toc[id="toc"] { position:fixed; } /* IE6 hack (won't be interpreted by IE6) */
+    div#toc ul, div#toc ul li { margin:0; padding:0; list-style-type:none; font-size:.9em; }
+    div#toc h2 { display:none; }
+    div#toc a { display:block; text-align:center; padding:.3em 1em; text-decoration:none; }
+    div#toc a:hover { background-color: #ccc; }
+    div#footer a { color:white; }
+  </style>
+  <style type='text/css' media='print'>
+    @page { margin:3cm; }
+    html, body { background-color:white; font-family:serif; }
+    .link, div#toc { display:none; }
+    a, a:visited { color:black; text-decoration:none; }
+    div#header, div#footer { text-align:center; }
+    div#header { padding-top:36%; }
+    h1 { vertical-align:center; }
+    h2 { page-break-before:always; }
+    h3, h4, h5  { page-break-after:avoid; }
+    pre.code { background: #ccc; }
+    div#footer { margin-top:auto; }
+    .toc-struct { page-break-after:always; }
   </style>
 </xsl:template>
 
