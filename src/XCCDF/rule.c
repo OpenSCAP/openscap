@@ -920,9 +920,9 @@ void xccdf_group_to_dom(struct xccdf_group *group, xmlNode *group_node, xmlDoc *
 
 	if (XITEM(group)->item.defined_flags.weight) {
 		float weight = xccdf_group_get_weight(group);
-		char weight_str[10];
-		sprintf(weight_str, "%f", weight);
+		char *weight_str = oscap_sprintf("%f", weight);
 		xmlNewProp(group_node, BAD_CAST "weight", BAD_CAST weight_str);
+        oscap_free(weight_str);
 	}
 
 	/* Handle Child Nodes */

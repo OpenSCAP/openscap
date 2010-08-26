@@ -549,18 +549,18 @@ void xccdf_result_to_dom(struct xccdf_result *result, xmlNode *result_node, xmlD
 		struct xccdf_score *score = xccdf_score_iterator_next(scores);
 
                 float value = xccdf_score_get_score(score);
-                char value_str[10];
-                sprintf(value_str, "%f", value);
+                char *value_str = oscap_sprintf("%f", value);
                 xmlNode *score_node = xmlNewTextChild(result_node, ns_xccdf, BAD_CAST "score", BAD_CAST value_str);
+                oscap_free(value_str);
 
 		const char *sys = xccdf_score_get_system(score);
 		if (sys)
 			xmlNewProp(score_node, BAD_CAST "system", BAD_CAST sys);
 
 		float max = xccdf_score_get_maximum(score);
-		char max_str[10];
-		sprintf(max_str, "%f", max);
+		char *max_str = oscap_sprintf(max_str, "%f", max);
 		xmlNewProp(score_node, BAD_CAST "maximum", BAD_CAST max_str);
+        oscap_free(max_str);
 	}
 	xccdf_score_iterator_free(scores);
 }
@@ -678,9 +678,9 @@ xmlNode *xccdf_rule_result_to_dom(struct xccdf_rule_result *result, xmlDoc *doc,
 		xmlNewProp(result_node, BAD_CAST "version", BAD_CAST version);
 
 	float weight = xccdf_rule_result_get_weight(result);
-	char weight_str[10];
-	sprintf(weight_str, "%f", weight);
+	char *weight_str = oscap_sprintf("%f", weight);
 	xmlNewProp(result_node, BAD_CAST "weight", BAD_CAST weight_str);
+    oscap_free(weight_str);
 
 	/* Handle children */
 	xccdf_test_result_type_t test_res = xccdf_rule_result_get_result(result);
