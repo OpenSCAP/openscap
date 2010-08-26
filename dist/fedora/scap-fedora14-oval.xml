@@ -5924,7 +5924,6 @@
                   </notes>
                   <unix-def:object object_ref="oval:mil.army.us.rhel5:obj:20051"/>
             </unix-def:file_test>
-<!-- TODO           <unix-def:file_test id="oval:mil.army.us.rhel5:tst:20052" version="1" check="all" comment="world writable directories have a uid greater than or equal to 500" state_operator="OR"> -->
             <unix-def:file_test id="oval:mil.army.us.rhel5:tst:20052" version="1" check_existence="none_exist" check="all" comment="world writable directories have a uid greater than or equal to 500" >
                   <notes>
                         <note>This will enumerate all directories on local partitions</note>
@@ -7642,6 +7641,7 @@
                         <filter>oval:mil.army.us.rhel5:ste:200485</filter>
                         <filter>oval:mil.army.us.rhel5:ste:200486</filter>
                         <filter>oval:mil.army.us.rhel5:ste:200487</filter>
+                        <filter>oval:mil.army.us.rhel5:ste:200488</filter>
                   </set>
             </unix-def:file_object>
             <unix-def:file_object id="oval:mil.army.us.rhel5:obj:20049" version="1" comment="all local files with suid bit set">
@@ -7691,7 +7691,7 @@
             </ind-def:textfilecontent54_object>
             <unix-def:file_object id="oval:mil.army.us.rhel5:obj:20052" version="1" comment="world writable directories with uid not less than 500">
                   <set set_operator="UNION" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                        <object_reference>oval:mil.army.us.rhel5:obj:20047</object_reference>
+                        <object_reference>oval:mil.army.us.rhel5:obj:20046</object_reference>
                         <filter>oval:mil.army.us.rhel5:ste:20052</filter>
                   </set>
             </unix-def:file_object>
@@ -10056,7 +10056,7 @@
                   <unix-def:filename var_check="at least one" var_ref="oval:mil.army.us.rhel5:var:2004915"/>
             </unix-def:file_state>
             <unix-def:file_state id="oval:mil.army.us.rhel5:ste:2004916" version="1">
-                  <unix-def:path>/usr/share/BackupPC/sbin/</unix-def:path>
+                  <unix-def:path>/usr/share/BackupPC/sbin</unix-def:path>
                   <unix-def:filename>BackupPC_Admin</unix-def:filename>
             </unix-def:file_state>
 
@@ -10067,7 +10067,7 @@
                   <unix-def:group_id var_check="at least one" var_ref="oval:mil.army.us.rhel5:var:20051"/>
             </unix-def:file_state>
             <unix-def:file_state id="oval:mil.army.us.rhel5:ste:20052" version="1" operator="OR">
-                  <unix-def:group_id datatype="int" operation="less than">500</unix-def:group_id>
+                  <unix-def:group_id datatype="string" operation="equals">0</unix-def:group_id>
                   <unix-def:owrite datatype="boolean">0</unix-def:owrite>
             </unix-def:file_state>
             <ind-def:textfilecontent54_state id="oval:mil.army.us.rhel5:ste:20053" version="1">
