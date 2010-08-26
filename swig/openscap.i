@@ -34,6 +34,12 @@
 #if defined(SWIGPYTHON)
 /* Definitions for PYTHON */
 
+%exception xccdf_policy_evaluate {
+    Py_BEGIN_ALLOW_THREADS
+    $action
+    Py_END_ALLOW_THREADS
+}
+
 %typemap(in) time_t
 {
     if (PyLong_Check($input))
