@@ -10067,7 +10067,7 @@
                   <unix-def:group_id var_check="at least one" var_ref="oval:mil.army.us.rhel5:var:20051"/>
             </unix-def:file_state>
             <unix-def:file_state id="oval:mil.army.us.rhel5:ste:20052" version="1" operator="OR">
-                  <unix-def:group_id datatype="string" operation="equals">0</unix-def:group_id>
+                  <unix-def:group_id datatype="string" operation="pattern match">^([1-4][0-9]|[1-9])?[0-9]$</unix-def:group_id>
                   <unix-def:owrite datatype="boolean">0</unix-def:owrite>
             </unix-def:file_state>
             <ind-def:textfilecontent54_state id="oval:mil.army.us.rhel5:ste:20053" version="1">
