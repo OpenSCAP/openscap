@@ -10810,16 +10810,16 @@
 -->
 
             <constant_variable id="oval:mil.army.us.rhel5:var:201490" version="1" datatype="string" comment="Filenames of mandatory log files">
-	      <value>boot.log</value>
 	      <value>cron</value>
 	      <value>messages</value>
 	      <value>secure</value>
-	      <value>audit</value>
-	      <value>dmesg</value>
-<!--
-	      <value>faillog</value>
-	      <value>lastlog</value>
 	      <value>maillog</value>
+<!--
+	      <value>boot.log</value>
+	      <value>faillog</value>
+	      <value>dmesg</value>
+	      <value>audit</value>
+	      <value>lastlog</value>
 -->
 	    </constant_variable>
 
