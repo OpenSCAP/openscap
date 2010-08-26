@@ -58,6 +58,11 @@ static char *app_curl_download(char *url)
 		return NULL;
 
 	fp = fopen(outfile, "wb");
+    if (!fp) {
+        curl_easy_cleanup(curl);
+        return NULL;
+    }
+
 	/* Set options for download file to *fp* from *url* */
 	curl_easy_setopt(curl, CURLOPT_URL, url);
 	curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
