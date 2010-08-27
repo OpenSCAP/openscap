@@ -32,6 +32,7 @@
 #define __attribute__(x)
 
 #if defined(SWIGPYTHON)
+
 /* Definitions for PYTHON */
 
 %exception xccdf_policy_evaluate {
@@ -278,11 +279,11 @@ static int xccdf_policy_model_callback_wrapper(struct xccdf_policy *policy, char
     PyObject *result;
     double    dres = 0;
 
+    state = PyGILState_Ensure();
     py_policy = SWIG_NewPointerObj(policy, SWIGTYPE_p_xccdf_policy, 1);
     py_bindings = SWIG_NewPointerObj(it, SWIGTYPE_p_xccdf_value_binding_iterator, 1);
     data = (struct internal_usr *)usr;
     func = data->func;
-    state = PyGILState_Ensure();
     usrdata = data->usr;
     arglist = Py_BuildValue("OssOO", py_policy, href, id, py_bindings, usrdata);
     if (!PyCallable_Check(func)) {
@@ -316,10 +317,10 @@ int output_callback_wrapper(const struct oscap_reporter_message *msg, void *arg)
     PyObject *result;
     double    dres = 0;
 
+    state = PyGILState_Ensure();
     py_msg = SWIG_NewPointerObj(msg, SWIGTYPE_p_oscap_reporter_message, 1);
     data = (struct internal_usr *) arg;
     func = data->func;
-    state = PyGILState_Ensure();
     usrdata = data->usr;
     arglist = Py_BuildValue("OO", py_msg, usrdata);
     if (!PyCallable_Check(func)) {
