@@ -631,7 +631,8 @@ AC_CONFIG_FILES([Makefile
                  src/XCCDF_POLICY/Makefile
                  src/common/Makefile
                  tests/Makefile
-                 utils/Makefile])
+                 utils/Makefile
+                 xsl/Makefile])
 
 AC_OUTPUT
 

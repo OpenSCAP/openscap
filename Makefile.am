@@ -10,7 +10,7 @@ if WANT_BINDINGS
 SUBDIRS += swig
 endif
 
-SUBDIRS += utils tests
+SUBDIRS += utils tests xsl
 
 dist_pkgdata_DATA = dist/fedora/scap-fedora12-oval.xml \
                     dist/fedora/scap-fedora13-oval.xml \
@@ -63,11 +63,7 @@ nobase_pkgdata_DATA =	schemas/oval/5.5/independent-system-characteristics-schema
 			schemas/xccdf/1.1.4/platform-0.2.3.xsd \
 			schemas/xccdf/1.1.4/xml.xsd \
 			schemas/xccdf/1.1.4/XMLSchema.dtd \
-			schemas/xccdf/1.1.4/datatypes.dtd \
-			xsl/xccdf-guide.xsl \
-			xsl/xccdf-results-report.xsl \
-			xsl/oval-results-report.xsl \
-			xsl/oscap-common.xsl
+			schemas/xccdf/1.1.4/datatypes.dtd
 
 EXTRA_DIST =	dist/fedora/openscap.spec \
 		dist/fedora/oscap-scan.sys \
@@ -123,11 +119,7 @@ EXTRA_DIST =	dist/fedora/openscap.spec \
 		schemas/xccdf/1.1.4/platform-0.2.3.xsd \
 		schemas/xccdf/1.1.4/xml.xsd \
 		schemas/xccdf/1.1.4/XMLSchema.dtd \
-		schemas/xccdf/1.1.4/datatypes.dtd \
-		xsl/xccdf-guide.xsl \
-		xsl/xccdf-results-report.xsl \
-		xsl/oval-results-report.xsl \
-		xsl/oscap-common.xsl
+		schemas/xccdf/1.1.4/datatypes.dtd
 
 dist-hook: ChangeLog
 	cd $(distdir)/docs && doxygen Doxyfile

@@ -70,14 +70,7 @@
 	xmlns:cdf="http://checklists.nist.gov/xccdf/1.1"
 	>
 
-<xsl:include href="oscap-common.xsl" />
-
-<!-- Define variables about this stylesheet -->
-<xsl:variable name="stylesheet-name" select="'XCCDF2XHTML Stylesheet'"/>
-<xsl:variable name="stylesheet-author" select="'Neal Ziring'"/>
-<xsl:variable name="stylesheet-author-contact" select="'nziring@thecouch.ncsc.mil'"/>
-<xsl:variable name="stylesheet-version" select="'0.12.4'"/>
-<xsl:variable name="stylesheet-version-date" select="'2004-11-13'"/>
+<xsl:include href="xccdf-common.xsl" />
 
 <!-- Set output style: XHTML using xml output method. -->
 <xsl:output method="xml" encoding="UTF-8" indent="yes"/>
@@ -95,9 +88,6 @@
 <!-- Set up an id key to match on all Profiles -->
 <xsl:key name="profiles" match="cdf:Profile" 
          use="@id"/>
-
-<!-- TODO: Set desired output language as an XSLT global variable -->
-
 
 <!-- Additional template for cdf:platform element; 
   -  this has changed to accomodate the CIS platform 
@@ -800,27 +790,6 @@
           </xsl:if>
     </xsl:with-param>
   </xsl:call-template>
-</xsl:template>
-
-<!-- templates in mode "text", for processing text with 
-     markup and substitutions.
- -->
-<xsl:template match="text()" mode="text">
-  <xsl:value-of select="."/>
-</xsl:template>
-<xsl:template match="cdf:sub[@idref]" mode="text">
-  <xsl:variable name="subid" select="./@idref"/><i>
-  <a href="#{@idref}">
-    <xsl:value-of select="//cdf:Value[@id = $subid]/cdf:value/text()"/>
-  </a></i>
-</xsl:template>
-<xsl:template match="htm:*" mode="text">
-  <xsl:element name="{local-name()}">
-    <xsl:for-each select="./@*">
-        <xsl:copy-of select="."/>
-    </xsl:for-each>
-    <xsl:apply-templates select="./text() | ./*" mode="text"/>
-  </xsl:element>
 </xsl:template>
 
 </xsl:stylesheet>
