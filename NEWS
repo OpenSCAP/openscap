@@ -1,4 +1,4 @@
-openscap-0.6.1                                                  25-08-2010
+openscap-0.6.2                                                  25-08-2010
 - provide draft of fedora14 XCCDF and OVAL content
 - XSL transformations for generating report and guidance
 - memory optimalizations for  file probe
