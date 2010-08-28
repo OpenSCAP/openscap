@@ -434,10 +434,9 @@
   <xsl:param name="section-num" select="position()"/>
 
   <xsl:comment>Group id = <xsl:value-of select="./@id"/></xsl:comment>
-  <div>
-  <h3 id="{@id}">
-     <xsl:value-of select="$section-prefix"/>
-     <xsl:value-of select="$section-num"/>
+  <div class='section' id="{@id}">
+  <h3>
+     <xsl:value-of select="$section-prefix"/><xsl:value-of select="$section-num"/>
      <xsl:text>. </xsl:text><xsl:value-of select="./cdf:title/text()"/>
   </h3>
 

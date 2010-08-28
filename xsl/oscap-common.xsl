@@ -121,8 +121,11 @@
     div#toc ul, div#toc ul li { margin:0; padding:0; list-style-type:none; font-size:.9em; }
     div#toc h2 { display:none; }
     div#toc a { display:block; text-align:center; padding:.3em 1em; text-decoration:none; }
-    div#toc a:hover { background-color: #ccc; }
+    div#toc a:hover { background: #ccc; }
     div#footer a { color:white; }
+    div.section { border-left: 3px solid white; padding-left:.5em; }
+    div.section:target { border-left-color:#ccc; }
+    .toc-struct li:target { background:#ddd; }
   </style>
   <style type='text/css' media='print'>
     @page { margin:3cm; }
