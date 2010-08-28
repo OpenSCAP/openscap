@@ -131,9 +131,9 @@ Generate a formatted HTML page containing a security guide from a XCCDF Benchmar
 Write the guide to this file instead of standard output.
 .RE
 .TP
-.B generate-report\fR  [\fIoptions\fR] --result-id id xccdf-file
+.B generate-report\fR  [\fIoptions\fR] xccdf-file
 .RS
-Generate a formatted HTML page containing results of a XCCDF Benchmark execution. Unless the --output option is specified it will be written to the standard output. ID of the TestResult element to visualise must be provided.
+Generate a formatted HTML page containing results of a XCCDF Benchmark execution. Unless the --output option is specified it will be written to the standard output. ID of the TestResult element to visualise defaults to the most recent result (according to the end-time attribute).
 .TP
 \fB\-\-result-id ID\fR
 ID of the XCCDF TestResult from which the report will be generated.

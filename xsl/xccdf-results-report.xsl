@@ -25,15 +25,22 @@
      - check 'hidden' attribute
 -->
 
-<xsl:output
-    method="xml"
-    encoding="UTF-8"
-    indent="yes"
-/>
+<xsl:output method="xml" encoding="UTF-8" indent="yes"/>
+
+<xsl:variable name='end-times'>
+  <s:times>
+  <xsl:for-each select='/cdf:Benchmark/cdf:TestResult/@end-time'>
+    <xsl:sort order='descending'/>
+    <s:t t='{.}'/>
+  </xsl:for-each>
+  </s:times>
+</xsl:variable>
+
+<xsl:variable name='last-test-time' select='exsl:node-set($end-times)/s:times/s:t[1]/@t'/>
 
 <!-- parameters -->
 <xsl:param name="dir" select="'.'"/>
-<xsl:param name="result-id"/>
+<xsl:param name="result-id" select='/cdf:Benchmark/cdf:TestResult[@end-time=$last-test-time][last()]/@id'/>
 <xsl:param name="with-target-facts"/>
 
 <!-- keys -->
@@ -44,7 +51,11 @@
 <!-- top-level template -->
 <xsl:template match="/cdf:Benchmark">
   <xsl:choose>
+    <xsl:when test='count(cdf:TestResult) = 0'>
+      <xsl:message terminate='yes'>This benchmark does not contain any test results.</xsl:message>
+    </xsl:when>
     <xsl:when test='$result-id and cdf:TestResult[@id=$result-id]'>
+      <xsl:message>TestResult ID: <xsl:value-of select='$result-id'/></xsl:message>
       <xsl:apply-templates select='cdf:TestResult[@id=$result-id]' mode='result' />
     </xsl:when>
     <xsl:when test='$result-id'>

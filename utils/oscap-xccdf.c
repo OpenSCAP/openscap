@@ -80,10 +80,10 @@ static struct oscap_module XCCDF_GEN_REPORT = {
     .name = "generate-report",
     .parent = &OSCAP_XCCDF_MODULE,
     .summary = "Generate results report HTML file",
-    .usage = "[options] -i result-id xccdf-file.xml",
+    .usage = "[options] xccdf-file.xml",
     .help =
         "Options:\n"
-        "   --result-id <id>\r\t\t\t\t - TestResult ID to be processed.\n"
+        "   --result-id <id>\r\t\t\t\t - TestResult ID to be processed. Default is the most recent one.\n"
         "   --output <file>\r\t\t\t\t - Write the HTML into file.",
     .opt_parser = getopt_xccdf,
     .func = app_xccdf_gen_report
@@ -411,7 +411,7 @@ static int xccdf_gen_report(const char *infile, const char *id, const char *outf
     char ver[strlen(oscap_get_version()) + 3];
     sprintf(result_id, "'%s'", id);
     sprintf(ver, "'%s'", oscap_get_version());
-    const char *params[] = { "result-id", result_id, "oscap-version", ver, NULL };
+    const char *params[] = { "result-id", (id ? result_id : NULL), "oscap-version", ver, NULL };
 
     if (oscap_apply_xslt(infile, "xccdf-results-report.xsl", outfile, params)) ret = OSCAP_OK;
     else fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
