@@ -695,12 +695,7 @@
   <xsl:variable name="refSecNum" 
                 select="2 + number(count(./cdf:Rule[not(number(@hidden)+number(@abstract))] | ./cdf:Group[not(number(@hidden)+number(@abstract))])!=0) + number(count(//cdf:Value[not(number(@hidden)+number(@abstract))])!=0) + number(count(./cdf:Profile)!=0) + number(count(./cdf:rear-matter)!=0)"/>
 
-  <xsl:if test="not(@resolved)">
-     <xsl:message>
-        Warning: benchmark <xsl:value-of select="@id"/> not resolved, formatted 
-        output will be incomplete or corrupted.
-     </xsl:message>
-  </xsl:if>
+  <xsl:call-template name='warn-unresolved'/>
 
   <xsl:call-template name='skelet'>
     <xsl:with-param name='title' select='string(cdf:title[1])'/>

@@ -50,6 +50,7 @@
 
 <!-- top-level template -->
 <xsl:template match="/cdf:Benchmark">
+  <xsl:call-template name='warn-unresolved'/>
   <xsl:choose>
     <xsl:when test='count(cdf:TestResult) = 0'>
       <xsl:message terminate='yes'>This benchmark does not contain any test results.</xsl:message>

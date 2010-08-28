@@ -22,10 +22,19 @@
 <xsl:template match="htm:*" mode="text">
   <xsl:element name="{local-name()}">
     <xsl:for-each select="./@*">
-        <xsl:copy-of select="."/>
+      <xsl:copy-of select="."/>
     </xsl:for-each>
     <xsl:apply-templates select="./text() | ./*" mode="text"/>
   </xsl:element>
+</xsl:template>
+
+<!-- Print warning when processing an unresolved XCCDF, usage:
+  <xsl:call-template name='warn-unresolved'/>
+-->
+<xsl:template name='warn-unresolved'>
+  <xsl:if test='ancestor::cdf:Benchmark[not(number(@resolved)=1)]'>
+    <xsl:message>WARNING: Processing an unresolved XCCDF document. This may have unexpected results.</xsl:message>
+  </xsl:if>
 </xsl:template>
 
 </xsl:stylesheet>
