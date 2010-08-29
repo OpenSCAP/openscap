@@ -86,7 +86,7 @@
 <!-- top-level template -->
 <xsl:template match='/cdf:Benchmark'>
   <xsl:apply-templates select='.' mode='profile'>
-    <xsl:with-param name='p' select='//cdf:Profile[@id=$profile]'/>
+    <xsl:with-param name='p' select='cdf:Profile[@id=$profile]'/>
   </xsl:apply-templates>
 </xsl:template>
 

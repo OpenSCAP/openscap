@@ -10,7 +10,7 @@
     xmlns:s="http://open-scap.org/"
     xmlns:edate="http://exslt.org/dates-and-times">
 
-<xsl:include href="oscap-common.xsl" />
+<xsl:include href="xccdf-common.xsl" />
 
 <!--
      TODO:
@@ -39,9 +39,9 @@
 <xsl:variable name='last-test-time' select='exsl:node-set($end-times)/s:times/s:t[1]/@t'/>
 
 <!-- parameters -->
-<xsl:param name="dir" select="'.'"/>
 <xsl:param name="result-id" select='/cdf:Benchmark/cdf:TestResult[@end-time=$last-test-time][last()]/@id'/>
 <xsl:param name="with-target-facts"/>
+<xsl:variable name='result' select='/cdf:Benchmark/cdf:TestResult[@id=$result-id][1]'/>
 
 <!-- keys -->
 <xsl:key name="items" match="cdf:Group|cdf:Rule|cdf:Value" use="@id"/>
@@ -55,9 +55,9 @@
     <xsl:when test='count(cdf:TestResult) = 0'>
       <xsl:message terminate='yes'>This benchmark does not contain any test results.</xsl:message>
     </xsl:when>
-    <xsl:when test='$result-id and cdf:TestResult[@id=$result-id]'>
+    <xsl:when test='$result-id and $result'>
       <xsl:message>TestResult ID: <xsl:value-of select='$result-id'/></xsl:message>
-      <xsl:apply-templates select='cdf:TestResult[@id=$result-id]' mode='result' />
+      <xsl:apply-templates select='$result' mode='result' />
     </xsl:when>
     <xsl:when test='$result-id'>
       <xsl:message terminate='yes'>No such result exists.</xsl:message>
@@ -324,22 +324,19 @@
   <!-- rule desc (rule) -->
   <xsl:if test='$rule and $rule/cdf:description'>
     <h4>Rule description</h4>
-    <!-- TODO preserve HTML formatting -->
-    <p><xsl:value-of select='$rule/cdf:description[1]'/></p>
+    <p><xsl:apply-templates mode='text' select='$rule/cdf:description[1]'/></p>
   </xsl:if>
 
   <!-- rationale -->
   <xsl:if test='$rule and $rule/cdf:rationale'>
     <h4>Rationale</h4>
-    <!-- TODO preserve HTML formatting -->
-    <p><xsl:value-of select='$rule/cdf:rationale[1]'/></p>
+    <p><xsl:apply-templates mode='text' select='$rule/cdf:rationale[1]'/></p>
   </xsl:if>
 
   <!-- warning -->
   <xsl:if test='$rule and $rule/cdf:warning'>
     <h4>Warning</h4>
-    <!-- TODO preserve HTML formatting -->
-    <p class='warning'><xsl:value-of select='$rule/cdf:warning[1]'/></p>
+    <p class='warning'><xsl:apply-templates mode='text' select='$rule/cdf:warning[1]'/></p>
   </xsl:if>
 
   <!-- ident (n) -->
@@ -368,13 +365,13 @@
   <!-- fixtext (rule, 0-1) -->
   <xsl:if test='$rule and $rule/cdf:fixtext'>
     <h4>Fix instructions</h4>
-    <p><xsl:value-of select='$rule/cdf:fixtext[1]'/></p>
+    <p><xsl:apply-templates mode='text' select='$rule/cdf:fixtext[1]'/></p>
   </xsl:if>
 
   <!-- fix script (result or rule, 0-1) -->
   <xsl:if test='cdf:fix'>
     <h4>Fix script</h4>
-    <pre class='code'><code><xsl:value-of select='cdf:fix[1]'/></code></pre>
+    <pre class='code'><code><xsl:apply-templates mode='text' select='cdf:fix[1]'/></code></pre>
   </xsl:if>
 
   <!-- TODO checks (n) -->
