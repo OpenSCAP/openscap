@@ -14,10 +14,8 @@
   <xsl:value-of select="."/>
 </xsl:template>
 <xsl:template match="cdf:sub[@idref]" mode="text">
-  <xsl:variable name="subid" select="./@idref"/><i>
-  <a href="#{@idref}">
-    <xsl:value-of select="//cdf:Value[@id = $subid]/cdf:value/text()"/>
-  </a></i>
+  <xsl:variable name="subid" select="./@idref"/>
+  <xsl:value-of select="//cdf:Value[@id = $subid]/cdf:value/text()"/>
 </xsl:template>
 <xsl:template match="htm:*" mode="text">
   <xsl:element name="{local-name()}">
@@ -32,7 +30,7 @@
   <xsl:call-template name='warn-unresolved'/>
 -->
 <xsl:template name='warn-unresolved'>
-  <xsl:if test='ancestor::cdf:Benchmark[not(number(@resolved)=1)]'>
+  <xsl:if test='ancestor-or-self::cdf:Benchmark[not(number(@resolved)=1)]'>
     <xsl:message>WARNING: Processing an unresolved XCCDF document. This may have unexpected results.</xsl:message>
   </xsl:if>
 </xsl:template>
