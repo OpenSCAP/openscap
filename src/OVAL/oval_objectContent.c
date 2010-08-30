@@ -57,6 +57,13 @@ typedef struct oval_object_content_SET {
 	struct oval_setobject *set;	/*type == OVAL_OBJECTCONTENT_SET */
 } oval_object_content_SET_t;
 
+typedef struct oval_object_content_FILTER {
+	struct oval_definition_model *model;
+	char *fieldName;
+	oval_object_content_type_t type;
+	struct oval_filter *filter;	/*type == OVAL_OBJECTCONTENT_FILTER */
+} oval_object_content_FILTER_t;
+
 bool oval_object_content_iterator_has_more(struct oval_object_content_iterator
 					   *oc_object_content)
 {
@@ -132,6 +139,18 @@ struct oval_setobject *oval_object_content_get_setobject(struct oval_object_cont
 	return set;
 }
 
+struct oval_filter *oval_object_content_get_filter(struct oval_object_content *content)
+{
+	__attribute__nonnull__(content);
+
+	/* type == OVAL_OBJECTCONTENT_FILTER */
+	struct oval_filter *filter = NULL;
+	if (oval_object_content_get_type(content) == OVAL_OBJECTCONTENT_FILTER) {
+		filter = ((struct oval_object_content_FILTER *)content)->filter;
+	}
+	return filter;
+}
+
 struct oval_object_content
 *oval_object_content_new(struct oval_definition_model *model, oval_object_content_type_t type)
 {
@@ -156,6 +175,16 @@ struct oval_object_content
 
 			set->set = NULL;
 			content = (oval_object_content_t *) set;
+		}
+		break;
+	case OVAL_OBJECTCONTENT_FILTER:{
+			struct oval_object_content_FILTER *filter =
+			    (oval_object_content_FILTER_t *) oscap_alloc(sizeof(oval_object_content_FILTER_t));
+			if (filter == NULL)
+				return NULL;
+
+			filter->filter = NULL;
+			content = (oval_object_content_t *) filter;
 		}
 		break;
 	case OVAL_OBJECTCONTENT_UNKNOWN:
@@ -196,6 +225,15 @@ bool oval_object_content_is_valid(struct oval_object_content * object_content)
 				return false;
 		}
 		break;
+	case OVAL_OBJECTCONTENT_FILTER:
+		{
+			struct oval_filter *filter;
+
+			filter = oval_object_content_get_filter(object_content);
+			if (oval_filter_is_valid(filter) != true)
+				return false;
+		}
+		break;
 	default:
                 oscap_dlprintf(DBG_W, "Argument is not valid: wrong object content type: %d.\n", type);
 		return false;
@@ -226,7 +264,11 @@ struct oval_object_content *oval_object_content_clone
 	case OVAL_OBJECTCONTENT_SET:{
 			struct oval_setobject *set = oval_object_content_get_setobject(old_content);
 			oval_object_content_set_setobject(new_content, oval_setobject_clone(new_model, set));
-		}
+		} break;
+	case OVAL_OBJECTCONTENT_FILTER:{
+			struct oval_filter *filter = oval_object_content_get_filter(old_content);
+			oval_object_content_set_filter(new_content, oval_filter_clone(new_model, filter));
+		} break;
 	default:
 		/*NOOP*/;
 	}
@@ -253,6 +295,13 @@ void oval_object_content_free(struct oval_object_content *content)
 			if (set->set != NULL)
 				oval_setobject_free(set->set);
 			set->set = NULL;
+		}
+		break;
+	case OVAL_OBJECTCONTENT_FILTER:{
+			struct oval_object_content_FILTER *filter = (oval_object_content_FILTER_t *) content;
+			if (filter->filter != NULL)
+				oval_filter_free(filter->filter);
+			filter->filter = NULL;
 		}
 		break;
 	case OVAL_OBJECTCONTENT_UNKNOWN:
@@ -312,10 +361,20 @@ void oval_object_content_set_setobject(struct oval_object_content *content, stru
 		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
+void oval_object_content_set_filter(struct oval_object_content *content, struct oval_filter *filter)
+{				/*type == OVAL_OBJECTCONTENT_FILTER */
+	if (content && !oval_object_content_is_locked(content)) {
+		if (content->type == OVAL_OBJECTCONTENT_FILTER) {
+			oval_object_content_FILTER_t *content_FILTER = (oval_object_content_FILTER_t *) content;
+			content_FILTER->filter = filter;
+		}
+	} else
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+}
+
 /*typedef void (*oval_object_content_consumer)(struct oval_object_content*,void*);*/
 static void oval_consume_entity(struct oval_entity *entity, void *content_entity)
 {
-
 	__attribute__nonnull__(entity);
 
 	((struct oval_object_content_ENTITY *)content_entity)->entity = entity;
@@ -323,10 +382,16 @@ static void oval_consume_entity(struct oval_entity *entity, void *content_entity
 
 static void oval_consume_set(struct oval_setobject *set, void *content_set)
 {
-
 	__attribute__nonnull__(content_set);
 
 	((struct oval_object_content_SET *)content_set)->set = set;
+}
+
+static void oval_consume_filter(struct oval_filter *filter, void *content_filter)
+{
+	__attribute__nonnull__(content_filter);
+
+	((struct oval_object_content_FILTER *)content_filter)->filter = filter;
 }
 
 int oval_object_content_parse_tag(xmlTextReaderPtr reader,
@@ -337,15 +402,23 @@ int oval_object_content_parse_tag(xmlTextReaderPtr reader,
 
 	char *tagname = (char *)xmlTextReaderLocalName(reader);
 	xmlChar *namespace = xmlTextReaderNamespaceUri(reader);
+	oval_object_content_type_t type = OVAL_OBJECTCONTENT_UNKNOWN;
+	struct oval_object_content *content;
+	int return_code = 0;
 
-	oval_object_content_type_t type =
-	    (strcmp(tagname, "set") == 0) ? OVAL_OBJECTCONTENT_SET : OVAL_OBJECTCONTENT_ENTITY;
-	struct oval_object_content *content = oval_object_content_new(context->definition_model, type);
+	if (!strcmp(tagname, "set")) {
+		type = OVAL_OBJECTCONTENT_SET;
+	} else if (!strcmp(tagname, "filter")) {
+		type = OVAL_OBJECTCONTENT_FILTER;
+	} else {
+		type = OVAL_OBJECTCONTENT_ENTITY;
+	}
+
+	content = oval_object_content_new(context->definition_model, type);
 	if (content == NULL)
 		return -1;
 
 	content->fieldName = tagname;
-	int return_code = 0;
 	switch (type) {
 	case OVAL_OBJECTCONTENT_ENTITY:{
 			struct oval_object_content_ENTITY *content_entity =
@@ -359,6 +432,12 @@ int oval_object_content_parse_tag(xmlTextReaderPtr reader,
 	case OVAL_OBJECTCONTENT_SET:{
 			struct oval_object_content_SET *content_set = (struct oval_object_content_SET *)content;
 			return_code = oval_set_parse_tag(reader, context, &oval_consume_set, content_set);
+		};
+		break;
+	case OVAL_OBJECTCONTENT_FILTER:{
+			struct oval_object_content_FILTER *content_filter =
+			    (struct oval_object_content_FILTER *) content;
+			return_code = oval_filter_parse_tag(reader, context, &oval_consume_filter, content_filter);
 		};
 		break;
 	case OVAL_OBJECTCONTENT_UNKNOWN:
@@ -401,6 +480,7 @@ void oval_object_content_to_print(struct oval_object_content *content, char *ind
 			struct oval_setobject *set = oval_object_content_get_setobject(content);
 			oval_set_to_print(set, nxtindent, 0);
 		} break;
+	case OVAL_OBJECTCONTENT_FILTER:
 	case OVAL_OBJECTCONTENT_UNKNOWN:
 		break;
 	}
@@ -426,4 +506,91 @@ xmlNode *oval_object_content_to_dom(struct oval_object_content *content, xmlDoc 
 	}
 
 	return content_node;
+}
+
+
+struct oval_filter {
+	struct oval_definition_model *model;
+	struct oval_state *state;
+	oval_filter_action_t action;
+};
+
+struct oval_filter *oval_filter_new(struct oval_definition_model *model)
+{
+	struct oval_filter *filter;
+
+	filter = (struct oval_filter *) oscap_alloc(sizeof (struct oval_filter));
+	if (filter == NULL)
+		return NULL;
+
+	filter->model = model;
+	filter->state = NULL;
+	filter->action = OVAL_FILTER_ACTION_UNKNOWN;
+	return filter;
+}
+
+void oval_filter_free(struct oval_filter *filter)
+{
+	__attribute__nonnull__(filter);
+
+	filter->model = NULL;
+	filter->state = NULL;
+	oscap_free(filter);
+}
+
+struct oval_filter *oval_filter_clone(struct oval_definition_model *new_model,
+				      struct oval_filter *old_filter)
+{
+	// todo
+	return NULL;
+}
+
+struct oval_state *oval_filter_get_state(struct oval_filter *filter)
+{
+	__attribute__nonnull__(filter);
+
+	return filter->state;
+}
+
+oval_filter_action_t oval_filter_get_filter_action(struct oval_filter *filter)
+{
+	__attribute__nonnull__(filter);
+
+	return filter->action;
+}
+
+bool oval_filter_is_locked(struct oval_filter *filter)
+{
+	__attribute__nonnull__(filter);
+
+	return oval_definition_model_is_locked(filter->model);
+}
+
+bool oval_filter_is_valid(struct oval_filter *filter)
+{
+	// todo
+	return true;
+}
+
+void oval_filter_set_state(struct oval_filter *filter, struct oval_state *state)
+{
+	if (filter && !oval_filter_is_locked(filter))
+		filter->state = state;
+	else
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+}
+
+void oval_filter_set_filter_action(struct oval_filter *filter, oval_filter_action_t action)
+{
+	if (filter && !oval_filter_is_locked(filter))
+		filter->action = action;
+	else
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+}
+
+int oval_filter_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *context,
+			  oval_filter_consumer consumer, void *user)
+{
+	// todo
+	return 1;
 }

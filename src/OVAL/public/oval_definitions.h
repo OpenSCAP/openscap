@@ -126,7 +126,8 @@ typedef enum {
 typedef enum {
 	OVAL_OBJECTCONTENT_UNKNOWN = 0,
 	OVAL_OBJECTCONTENT_ENTITY = 1,
-	OVAL_OBJECTCONTENT_SET = 2
+	OVAL_OBJECTCONTENT_SET = 2,
+	OVAL_OBJECTCONTENT_FILTER = 3
 } oval_object_content_type_t;
 
 /// Type of OVAL entity
@@ -139,6 +140,13 @@ typedef enum {
 	OVAL_ENTITY_TYPE_INTEGER,
 	OVAL_ENTITY_TYPE_STRING,
 } oval_entity_type_t;
+
+/// Type of filter action
+typedef enum {
+	OVAL_FILTER_ACTION_UNKNOWN = 0,
+	OVAL_FILTER_ACTION_EXCLUDE,
+	OVAL_FILTER_ACTION_INCLUDE
+} oval_filter_action_t;
 
 /// Datatypes
 typedef enum {

@@ -6,7 +6,7 @@
  */
 
 /*
- * Copyright 2009 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2009-2010 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -192,6 +192,130 @@ static SEXP_t *probe_obj_eval(SEXP_t * id)
 		return pcache_sexp_get(OSCAP_GSYM(pcache), id);
 }
 
+SEXP_t *probe_prepare_filters(SEXP_t *obj)
+{
+	SEXP_t *filters;
+	int i;
+
+	filters = SEXP_list_new(NULL);
+
+	for (i = 1; ; ++i) {
+		SEXP_t *of, *f, *ste, *ste_id, *act;
+
+		of = probe_obj_getent(obj, "filter", i);
+		if (of == NULL)
+			break;
+
+		act = probe_ent_getattrval(of, "action");
+		ste_id = probe_ent_getval(of);
+		ste = pcache_sexp_get(OSCAP_GSYM(pcache), ste_id);
+		if (ste == NULL) {
+			SEXP_t *r0, *r1;
+
+			r0 = SEXP_list_new(ste_id, NULL);
+			r1 = probe_ste_fetch(r0);
+			ste = SEXP_list_first(r1);
+			SEXP_vfree(r0, r1, NULL);
+		}
+		SEXP_vfree(of, ste_id, NULL);
+
+		if (act) {
+			f = SEXP_list_new(ste, act, NULL);
+			SEXP_free(ste);
+		} else {
+			f = ste;
+		}
+
+		SEXP_list_add(filters, f);
+		SEXP_vfree(act, f, NULL);
+	}
+
+	return filters;
+}
+
+bool probe_item_filtered(SEXP_t *item, SEXP_t *filters)
+{
+	bool filtered;
+	SEXP_t *filter, *filter_tmp;
+
+	SEXP_list_foreach(filter, filters) {
+		SEXP_t *felm, *ste_res, *r0;
+		oval_result_t ores;
+		oval_operator_t oopr;
+		oval_filter_action_t ofact;
+
+		if (SEXP_listp(filter)) {
+			filter_tmp = filter;
+			filter = SEXP_list_first(filter_tmp);
+			r0 = SEXP_list_nth(filter_tmp, 2);
+			ofact = SEXP_number_getu(r0);
+			SEXP_free(r0);
+		} else {
+			filter_tmp = NULL;
+			ofact = OVAL_FILTER_ACTION_EXCLUDE;
+		}
+
+		ste_res = SEXP_list_new(NULL);
+
+		SEXP_sublist_foreach(felm, filter, 2, SEXP_LIST_END) {
+			SEXP_t *ielm, *elm_res;
+			char *elm_name;
+			oval_check_t ochk;
+			int i;
+
+			elm_res = SEXP_list_new(NULL);
+			elm_name = probe_ent_getname(felm);
+
+			for (i = 1;; ++i) {
+				ielm = probe_obj_getent(item, elm_name, i);
+
+				if (ielm == NULL)
+					break;
+
+				ores = probe_entste_cmp(felm, ielm);
+				SEXP_list_add(elm_res, r0 = SEXP_number_newi_32(ores));
+
+				SEXP_free(ielm);
+				SEXP_free(r0);
+			}
+
+			oscap_free(elm_name);
+			r0 = probe_ent_getattrval(felm, "entity_check");
+
+			if (r0 == NULL)
+				ochk = OVAL_CHECK_ALL;
+			else
+				ochk = SEXP_number_geti_32(r0);
+
+			SEXP_free(r0);
+
+			ores = probe_ent_result_bychk(elm_res, ochk);
+			SEXP_list_add(ste_res, r0 = SEXP_number_newi_32(ores));
+			SEXP_free(r0);
+			SEXP_free(elm_res);
+		}
+
+		r0 = probe_ent_getattrval(filter, "operator");
+		if (r0 == NULL)
+			oopr = OVAL_OPERATOR_AND;
+		else
+			oopr = SEXP_number_geti_32(r0);
+		ores = probe_ent_result_byopr(ste_res, oopr);
+		SEXP_vfree(r0, ste_res, NULL);
+		if (filter_tmp)
+			SEXP_free(filter_tmp);
+
+		if ((ores == OVAL_RESULT_TRUE && ofact == OVAL_FILTER_ACTION_EXCLUDE)
+		    || (ores = OVAL_RESULT_FALSE && ofact == OVAL_FILTER_ACTION_INCLUDE)) {
+			filtered = true;
+			SEXP_free(filter);
+			break;
+		}
+	}
+
+	return filtered;
+}
+
 /**
  * Combine two collections of items using an operation.
  * @param cobj1 item collection
@@ -308,14 +432,8 @@ static SEXP_t *probe_set_combine(SEXP_t *cobj1, SEXP_t *cobj2, oval_setobject_op
  */
 static SEXP_t *probe_set_apply_filters(SEXP_t *cobj, SEXP_t *filters)
 {
-	int filtered, i;
-	SEXP_t *result_items, *items, *item, *filter, *felm, *ielm;
-	SEXP_t *ste_res, *elm_res, *stmp;
-	char *elm_name;
+	SEXP_t *result_items, *items, *item;
 	oval_syschar_status_t item_status;
-	oval_result_t ores;
-	oval_check_t ochk;
-	oval_operator_t oopr;
 	oval_syschar_collection_flag_t flag;
 
 	_LOGCALL_;
@@ -341,64 +459,7 @@ static SEXP_t *probe_set_apply_filters(SEXP_t *cobj, SEXP_t *filters)
 			break;
 		}
 
-		filtered = 0;
-
-		SEXP_list_foreach(filter, filters) {
-			ste_res = SEXP_list_new(NULL);
-
-			SEXP_sublist_foreach(felm, filter, 2, SEXP_LIST_END) {
-				elm_res = SEXP_list_new(NULL);
-
-				elm_name = probe_ent_getname(felm);
-
-				for (i = 1;; ++i) {
-					ielm = probe_obj_getent(item, elm_name, i);
-
-					if (ielm == NULL)
-						break;
-
-					ores = probe_entste_cmp(felm, ielm);
-					SEXP_list_add(elm_res, stmp = SEXP_number_newi_32(ores));
-
-					SEXP_free(ielm);
-					SEXP_free(stmp);
-				}
-
-                                oscap_free(elm_name);
-				stmp = probe_ent_getattrval(felm, "entity_check");
-
-				if (stmp == NULL)
-					ochk = OVAL_CHECK_ALL;
-				else
-					ochk = SEXP_number_geti_32(stmp);
-
-				SEXP_free(stmp);
-
-				ores = probe_ent_result_bychk(elm_res, ochk);
-				SEXP_list_add(ste_res, stmp = SEXP_number_newi_32(ores));
-				SEXP_free(stmp);
-                                SEXP_free(elm_res);
-			}
-
-			stmp = probe_ent_getattrval(filter, "operator");
-
-			if (stmp == NULL)
-				oopr = OVAL_OPERATOR_AND;
-			else
-				oopr = SEXP_number_geti_32(stmp);
-
-			SEXP_free(stmp);
-			ores = probe_ent_result_byopr(ste_res, oopr);
-			SEXP_free(ste_res);
-
-			if (ores == OVAL_RESULT_TRUE) {
-				filtered = 1;
-				SEXP_free(filter);
-				break;
-			}
-		}
-
-		if (!filtered) {
+		if (!probe_item_filtered(item, filters)) {
 			SEXP_list_add(result_items, item);
 		}
 	}
@@ -540,6 +601,7 @@ static SEXP_t *probe_set_eval(SEXP_t * set, size_t depth)
 			break;
 
 			CASE('f', "ilter") {
+				// todo: process 'action' attribute
 				SEXP_t *id, *res;
 
 				id = probe_ent_getval(member);

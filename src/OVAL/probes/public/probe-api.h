@@ -438,4 +438,7 @@ SEXP_t *probe_main(SEXP_t *, int *, void *) __attribute__ ((nonnull(1, 2)));
 
 int probe_setoption(int option, ...);
 
+SEXP_t *probe_prepare_filters(SEXP_t *obj);
+bool probe_item_filtered(SEXP_t *item, SEXP_t *filters);
+
 #endif				/* PROBE_API_H */

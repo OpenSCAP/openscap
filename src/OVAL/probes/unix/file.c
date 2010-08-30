@@ -95,6 +95,7 @@ static SEXP_t *strfiletype (mode_t mode)
 struct cbargs {
         SEXP_t *filename_ent;
         SEXP_t *items;
+	SEXP_t *filters;
 };
 
 static rbt_t   *g_ID_cache     = NULL;
@@ -144,12 +145,13 @@ static void ID_cache_free(void)
 static int file_cb (const char *p, const char *f, void *ptr)
 {
         char path_buffer[PATH_MAX];
-        SEXP_t *res, *item;
+        SEXP_t *res, *item, *filters;
         struct cbargs *args = (struct cbargs *) ptr;
         struct stat st;
         const char *st_path;
 
         res = args->items;
+	filters = args->filters;
 
         if (f == NULL)
 		return (0);
@@ -273,7 +275,8 @@ static int file_cb (const char *p, const char *f, void *ptr)
 
                                         NULL);
 
-                SEXP_list_add (res, item);
+		if (!probe_item_filtered(item, filters))
+			SEXP_list_add (res, item);
 
 #if defined(FILE_PROBE_ITEMSTATS)
                 _D("item memory size = %zu bytes\n", SEXP_sizeof (item));
@@ -456,28 +459,24 @@ SEXP_t *probe_main (SEXP_t *probe_in, int *err, void *mutex)
 
         cbargs.items = items;
         cbargs.filename_ent = filename;
+	cbargs.filters = probe_prepare_filters(probe_in);
 
         filecnt = find_files (path, filename, behaviors, &file_cb, &cbargs);
         *err    = 0;
 
         if (filecnt < 0) {
                 /* error */
-                SEXP_free (items);
+		SEXP_free (items);
                 r0    = probe_item_creat ("file_item", NULL,
                                         /* entities */
                                         "path",     NULL, path,
                                          NULL);
-
                 probe_item_setstatus(r0, OVAL_STATUS_ERROR);
-
-                SEXP_list_add (items, r0);
+		items = SEXP_list_new (r0, NULL);
                 SEXP_free (r0);
-
         }
 
-        SEXP_free (behaviors);
-        SEXP_free (path);
-        SEXP_free (filename);
+	SEXP_vfree(behaviors, path, filename, cbargs.filters, NULL);
 
         switch (pthread_mutex_unlock (&__file_probe_mutex)) {
         case 0:

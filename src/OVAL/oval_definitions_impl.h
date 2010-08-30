@@ -52,6 +52,7 @@ oval_datatype_t oval_datatype_parse(xmlTextReaderPtr, char *, oval_datatype_t);
 oval_entity_varref_type_t oval_entity_varref_type_parse(xmlTextReaderPtr);
 oval_setobject_type_t oval_set_type_parse(xmlTextReaderPtr);
 oval_setobject_operation_t oval_set_operation_parse(xmlTextReaderPtr, char *, oval_setobject_operation_t);
+oval_filter_action_t oval_filter_action_parse(xmlTextReaderPtr, char *, oval_filter_action_t);
 oval_variable_type_t oval_variable_type_parse(xmlTextReaderPtr);
 oval_component_type_t oval_component_type_parse(xmlTextReaderPtr);
 oval_arithmetic_operation_t oval_arithmetic_operation_parse(xmlTextReaderPtr, char *, oval_arithmetic_operation_t);
@@ -99,11 +100,27 @@ int oval_variable_binding_parse_tag
     (xmlTextReaderPtr, struct oval_parser_context *, oval_variable_binding_consumer, void *);
 
 const char *oval_variable_type_get_text(oval_variable_type_t);
+const char *oval_filter_action_get_text(oval_filter_action_t);
+
+struct oval_filter;
+struct oval_filter *oval_filter_new(struct oval_definition_model *);
+void oval_filter_free(struct oval_filter *);
+struct oval_filter *oval_filter_clone(struct oval_definition_model *, struct oval_filter *);
+struct oval_state *oval_filter_get_state(struct oval_filter *);
+oval_filter_action_t oval_filter_get_filter_action(struct oval_filter *);
+bool oval_filter_is_locked(struct oval_filter *);
+bool oval_filter_is_valid(struct oval_filter *);
+void oval_filter_set_state(struct oval_filter *, struct oval_state *);
+void oval_filter_set_filter_action(struct oval_filter *, oval_filter_action_t );
+typedef void (*oval_filter_consumer) (struct oval_filter *, void *);
+int oval_filter_parse_tag(xmlTextReaderPtr, struct oval_parser_context *, oval_filter_consumer, void *);
 
 typedef void (*oval_object_content_consumer) (struct oval_object_content *, void *);
 xmlNode *oval_object_content_to_dom(struct oval_object_content *, xmlDoc *, xmlNode *);
 int oval_object_content_parse_tag(xmlTextReaderPtr, struct oval_parser_context *, oval_object_content_consumer, void *);
 void oval_object_content_to_print(struct oval_object_content *, char *indent, int index);
+struct oval_filter *oval_object_content_get_filter(struct oval_object_content *);
+void oval_object_content_set_filter(struct oval_object_content *, struct oval_filter *);
 
 int oval_state_content_parse_tag(xmlTextReaderPtr, struct oval_parser_context *, oscap_consumer_func, void *);
 xmlNode *oval_state_content_to_dom(struct oval_state_content *, xmlDoc *, xmlNode *);

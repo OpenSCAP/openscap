@@ -168,6 +168,23 @@ const char *oval_set_operation_get_text(oval_setobject_operation_t operation)
 	return oval_enumeration_get_text(OVAL_SET_OPERATION_MAP, operation);
 }
 
+static const struct oscap_string_map OVAL_FILTER_ACTION_MAP[] = {
+	{OVAL_FILTER_ACTION_EXCLUDE, "exclude"},
+	{OVAL_FILTER_ACTION_INCLUDE, "include"},
+	{OVAL_ENUMERATION_INVALID, NULL}
+};
+
+oval_filter_action_t oval_filter_action_parse(xmlTextReaderPtr reader, char *attname,
+					      oval_filter_action_t defval)
+{
+	return oval_enumeration_attr(reader, attname, OVAL_FILTER_ACTION_MAP, defval);
+}
+
+const char *oval_filter_action_get_text(oval_filter_action_t action)
+{
+	return oval_enumeration_get_text(OVAL_FILTER_ACTION_MAP, action);
+}
+
 static const struct oscap_string_map OVAL_OPERATION_MAP[] = {
 	{OVAL_OPERATION_EQUALS, "equals"},
 	{OVAL_OPERATION_NOT_EQUAL, "not equal"},

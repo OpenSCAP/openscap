@@ -294,6 +294,25 @@ static SEXP_t *oval_set_to_sexp(struct oval_setobject *set)
 	return (elm);
 }
 
+static SEXP_t *oval_filter_to_sexp(struct oval_filter *filter)
+{
+	SEXP_t *elm, *attr, *r0, *r1;
+	oval_filter_action_t act;
+	struct oval_state *ste;
+	char *ste_id;
+
+	act = oval_filter_get_filter_action(filter);
+	ste = oval_filter_get_state(filter);
+	ste_id = oval_state_get_id(ste);
+	attr = probe_attr_creat("action", r0 = SEXP_number_newu(act));
+	elm = probe_ent_creat1("filter",
+			       attr,
+			       r1 = SEXP_string_newf("%s", ste_id));
+	SEXP_vfree(attr, r0, r1, NULL);
+
+	return (elm);
+}
+
 static SEXP_t *oval_behaviors_to_sexp(struct oval_behavior_iterator *bit)
 {
 	char *attr_name, *attr_val;
@@ -405,6 +424,10 @@ SEXP_t *oval_object2sexp(const char *typestr, struct oval_object *object, struct
 
 		case OVAL_OBJECTCONTENT_SET:
 			elm = oval_set_to_sexp(oval_object_content_get_setobject(content));
+			break;
+
+		case OVAL_OBJECTCONTENT_FILTER:
+			elm = oval_filter_to_sexp(oval_object_content_get_filter(content));
 			break;
 
 		case OVAL_OBJECTCONTENT_UNKNOWN:
