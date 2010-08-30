@@ -336,8 +336,11 @@ struct oval_syschar *oval_probe_query_object(oval_probe_session_t *psess, struct
         ph   = oval_probe_handler_get(psess->ph, type);
 
         if (ph == NULL) {
-                oscap_seterr (OSCAP_EFAMILY_OVAL, OVAL_EPROBENOTSUPP, "OVAL object not supported");
-                return(NULL);
+                dW("OVAL object not supported.\n");
+
+		o_sys = oval_syschar_new(model, object);
+		oval_syschar_set_flag(o_sys, SYSCHAR_FLAG_NOT_COLLECTED);
+		return(o_sys);
         }
 
         o_sys = NULL;
