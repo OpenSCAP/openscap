@@ -244,16 +244,18 @@ bool probe_item_filtered(SEXP_t *item, SEXP_t *filters)
 		oval_operator_t oopr;
 		oval_filter_action_t ofact;
 
-		if (SEXP_listp(filter)) {
-			filter_tmp = filter;
-			filter = SEXP_list_first(filter_tmp);
-			r0 = SEXP_list_nth(filter_tmp, 2);
-			ofact = SEXP_number_getu(r0);
-			SEXP_free(r0);
-		} else {
+		r0 = SEXP_list_nth(filter, 2);
+		if (SEXP_listp(r0)) {
 			filter_tmp = NULL;
 			ofact = OVAL_FILTER_ACTION_EXCLUDE;
+		} else {
+			filter_tmp = filter;
+			filter = SEXP_list_first(filter_tmp);
+			SEXP_free(r0);
+			r0 = SEXP_list_nth(filter_tmp, 2);
+			ofact = SEXP_number_getu(r0);
 		}
+		SEXP_free(r0);
 
 		ste_res = SEXP_list_new(NULL);
 
