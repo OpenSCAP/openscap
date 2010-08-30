@@ -235,7 +235,7 @@ SEXP_t *probe_prepare_filters(SEXP_t *obj)
 
 bool probe_item_filtered(SEXP_t *item, SEXP_t *filters)
 {
-	bool filtered;
+	bool filtered = false;
 	SEXP_t *filter, *filter_tmp;
 
 	SEXP_list_foreach(filter, filters) {
