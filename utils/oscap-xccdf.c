@@ -42,7 +42,7 @@ static int app_evaluate_xccdf(const struct oscap_action *action);
 static int app_xccdf_resolve(const struct oscap_action *action);
 static int app_xccdf_gen_report(const struct oscap_action *action);
 static bool getopt_xccdf(int argc, char **argv, struct oscap_action *action);
-static int xccdf_gen_report(const char *infile, const char *id, const char *outfile);
+static int xccdf_gen_report(const char *infile, const char *id, const char *outfile, const char *show);
 static int app_xccdf_gen_guide(const struct oscap_action *action);
 
 static struct oscap_module* XCCDF_SUBMODULES[];
@@ -84,6 +84,7 @@ static struct oscap_module XCCDF_GEN_REPORT = {
     .help =
         "Options:\n"
         "   --result-id <id>\r\t\t\t\t - TestResult ID to be processed. Default is the most recent one.\n"
+        "   --show <result-type*>\r\t\t\t\t - Rule results to show. Defaults to everything but notselected and notapplicable\n"
         "   --output <file>\r\t\t\t\t - Write the HTML into file.",
     .opt_parser = getopt_xccdf,
     .func = app_xccdf_gen_report
@@ -308,7 +309,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	        xccdf_benchmark_add_result(benchmark, xccdf_result_clone(ritem));
        		xccdf_benchmark_export(benchmark, action->f_results);
         	if (action->f_report != NULL)
-        		xccdf_gen_report(action->f_results, xccdf_result_get_id(ritem), action->f_report);
+        		xccdf_gen_report(action->f_results, xccdf_result_get_id(ritem), action->f_report, "");
         }
 	/* Export OVAL results */
 	if (action->oval_results == true) {
@@ -403,15 +404,17 @@ int app_xccdf_resolve(const struct oscap_action *action)
 	return ret;
 }
 
-static int xccdf_gen_report(const char *infile, const char *id, const char *outfile)
+static int xccdf_gen_report(const char *infile, const char *id, const char *outfile, const char *show)
 {
     int ret = OSCAP_ERROR;
 
     char result_id[strlen(id ? id : "") + 3];
     char ver[strlen(oscap_get_version()) + 3];
+    char shstr[strlen(show ? show : "") + 3];
     sprintf(result_id, "'%s'", id);
+    sprintf(shstr, "'%s'", (show ? show : ""));
     sprintf(ver, "'%s'", oscap_get_version());
-    const char *params[] = { "result-id", (id ? result_id : NULL), "oscap-version", ver, NULL };
+    const char *params[] = { "result-id", (id ? result_id : NULL), "oscap-version", ver, "show", shstr, NULL };
 
     if (oscap_apply_xslt(infile, "xccdf-results-report.xsl", outfile, params)) ret = OSCAP_OK;
     else fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
@@ -421,7 +424,7 @@ static int xccdf_gen_report(const char *infile, const char *id, const char *outf
 
 int app_xccdf_gen_report(const struct oscap_action *action)
 {
-    return xccdf_gen_report(action->f_xccdf, action->profile, action->f_results);
+    return xccdf_gen_report(action->f_xccdf, action->profile, action->f_results, action->show);
 }
 
 int app_xccdf_gen_guide(const struct oscap_action *action)
@@ -448,6 +451,7 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 		{"profile", 1, 0, 3},
 		{"report-file", 1, 0, 4},
 		{"oval-results", 0, 0, 5},
+		{"show", 1, 0, 6},
 		{0, 0, 0, 0}
 	};
 
@@ -460,6 +464,7 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
      		case 4: action->f_report = optarg; break;
 		case 'f': action->force = true; break;
 		case 5: action->oval_results = true; break;
+		case 6: action->show = optarg; break;
 		default: return oscap_module_usage(action->module, stderr, NULL);
 		}
 	}

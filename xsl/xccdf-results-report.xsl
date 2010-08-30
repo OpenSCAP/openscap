@@ -41,7 +41,15 @@
 <!-- parameters -->
 <xsl:param name="result-id" select='/cdf:Benchmark/cdf:TestResult[@end-time=$last-test-time][last()]/@id'/>
 <xsl:param name="with-target-facts"/>
+<xsl:param name="show"/>
+
 <xsl:variable name='result' select='/cdf:Benchmark/cdf:TestResult[@id=$result-id][1]'/>
+<xsl:variable name='toshow'>
+  <xsl:choose>
+    <xsl:when test='substring($show, 1, 1) = "="'>,<xsl:value-of select='substring($show, 2)'/>,</xsl:when>
+    <xsl:otherwise>,pass,fixed,notchecked,informational,unknown,error,fail,<xsl:value-of select='$show'/>,</xsl:otherwise>
+  </xsl:choose>
+</xsl:variable>
 
 <!-- keys -->
 <xsl:key name="items" match="cdf:Group|cdf:Rule|cdf:Value" use="@id"/>
@@ -97,6 +105,7 @@
 <!-- result mode -->
 
 <xsl:template match='cdf:TestResult' mode='result'>
+  <xsl:variable name='results' select='cdf:rule-result[contains($toshow, concat(",",cdf:result,",")) and not(contains($toshow, concat(",-",cdf:result,",")))]'/>
   <xsl:call-template name='skelet'>
     <xsl:with-param name='file' select="concat('result-', @id, '.html')" />
     <xsl:with-param name='title' select='string(cdf:title[1])'/>
@@ -220,7 +229,7 @@
         <xsl:with-param name='true'>
           <table>
             <tr><th>Title</th><th>result</th><th>more</th></tr>
-            <xsl:for-each select='cdf:rule-result'>
+            <xsl:for-each select='$results'>
               <tr class='result-{string(cdf:result)}'>
                 <td class='id'>
                   <xsl:choose>
@@ -241,7 +250,7 @@
         <xsl:with-param name='false'><p class='unknown'>No rule results.</p></xsl:with-param>
       </xsl:call-template>
       
-      <xsl:apply-templates select='cdf:rule-result' mode='rr' />
+      <xsl:apply-templates select='$results' mode='rr'/>
 
 
     </xsl:with-param>
@@ -298,93 +307,93 @@
     <xsl:if test="not(key('items',@idref)/cdf:title)"><xsl:value-of select='@idref'/></xsl:if>
   </xsl:variable>
 
- <div class='result-detail' id='ruleresult-{generate-id(.)}'>
-  <h3>Result for <xsl:value-of select="$title"/></h3>
-  <p class="result-{cdf:result}">Result: <strong><xsl:value-of select="cdf:result"/></strong></p>
-  <p>Rule ID: <strong><xsl:value-of select="@idref"/></strong></p>
-
-  <!-- time -->
-  <xsl:apply-templates select='@time' mode='rr'/>
-
-  <!-- version (result or rule) -->
-  <xsl:apply-templates select='cdf:version' mode='result'/>
-
-  <!-- severity (result or rule) -->
-  <xsl:apply-templates select='@severity' mode='rr'/>
-
-  <!-- rule status -->
-  <xsl:apply-templates select='$rule/status[last()]' mode='rr'/>
-
-  <!-- instances (n) -->
-  <xsl:if test='cdf:instance'>
-    <h4>Instance</h4>
-    <ul><xsl:apply-templates select='cdf:instance' mode='rr'/></ul>
-  </xsl:if>
-
-  <!-- rule desc (rule) -->
-  <xsl:if test='$rule and $rule/cdf:description'>
-    <h4>Rule description</h4>
-    <p><xsl:apply-templates mode='text' select='$rule/cdf:description[1]'/></p>
-  </xsl:if>
-
-  <!-- rationale -->
-  <xsl:if test='$rule and $rule/cdf:rationale'>
-    <h4>Rationale</h4>
-    <p><xsl:apply-templates mode='text' select='$rule/cdf:rationale[1]'/></p>
-  </xsl:if>
-
-  <!-- warning -->
-  <xsl:if test='$rule and $rule/cdf:warning'>
-    <h4>Warning</h4>
-    <p class='warning'><xsl:apply-templates mode='text' select='$rule/cdf:warning[1]'/></p>
-  </xsl:if>
-
-  <!-- ident (n) -->
-  <xsl:if test='cdf:ident'>
-    <h4>Related identifiers</h4>
-    <ul>
-      <xsl:for-each select='cdf:ident'>
-        <li><strong><xsl:value-of select='.'/></strong> (<xsl:value-of select='@system'/>)</li>
-      </xsl:for-each>
-    </ul>
-  </xsl:if>
-
-  <!-- overrides (n) -->
-  <xsl:if test='cdf:override'>
-    <h4>Result overrides</h4>
-    <ul><xsl:apply-templates select='cdf:override' mode='rr'/></ul>
-  </xsl:if>
-
-  <!-- messages (n) -->
-  <xsl:call-template name='list'>
-    <xsl:with-param name='nodes' select='cdf:message' />
-    <xsl:with-param name='el' select='"ol"' />
-    <xsl:with-param name='title' select='"Messages from the checking engine"' />
-  </xsl:call-template>
-
-  <!-- fixtext (rule, 0-1) -->
-  <xsl:if test='$rule and $rule/cdf:fixtext'>
-    <h4>Fix instructions</h4>
-    <p><xsl:apply-templates mode='text' select='$rule/cdf:fixtext[1]'/></p>
-  </xsl:if>
-
-  <!-- fix script (result or rule, 0-1) -->
-  <xsl:if test='cdf:fix'>
-    <h4>Fix script</h4>
-    <pre class='code'><code><xsl:apply-templates mode='text' select='cdf:fix[1]'/></code></pre>
-  </xsl:if>
-
-  <!-- TODO checks (n) -->
-
-  <!-- references -->
-  <xsl:if test='$rule and $rule/cdf:reference[@href]'>
-    <h4>References</h4>
-    <ol><xsl:apply-templates select='$rule/cdf:reference[@href]' mode='rr'/></ol>
-  </xsl:if>
-
-  <p class='link'><a href='#results-summary'>results summary</a></p>
-
- </div>
+    <div class='result-detail' id='ruleresult-{generate-id(.)}'>
+     <h3>Result for <xsl:value-of select="$title"/></h3>
+     <p class="result-{cdf:result}">Result: <strong><xsl:value-of select="cdf:result"/></strong></p>
+     <p>Rule ID: <strong><xsl:value-of select="@idref"/></strong></p>
+    
+     <!-- time -->
+     <xsl:apply-templates select='@time' mode='rr'/>
+    
+     <!-- version (result or rule) -->
+     <xsl:apply-templates select='cdf:version' mode='result'/>
+    
+     <!-- severity (result or rule) -->
+     <xsl:apply-templates select='@severity' mode='rr'/>
+    
+     <!-- rule status -->
+     <xsl:apply-templates select='$rule/status[last()]' mode='rr'/>
+    
+     <!-- instances (n) -->
+     <xsl:if test='cdf:instance'>
+       <h4>Instance</h4>
+       <ul><xsl:apply-templates select='cdf:instance' mode='rr'/></ul>
+     </xsl:if>
+    
+     <!-- rule desc (rule) -->
+     <xsl:if test='$rule and $rule/cdf:description'>
+       <h4>Rule description</h4>
+       <p><xsl:apply-templates mode='text' select='$rule/cdf:description[1]'/></p>
+     </xsl:if>
+    
+     <!-- rationale -->
+     <xsl:if test='$rule and $rule/cdf:rationale'>
+       <h4>Rationale</h4>
+       <p><xsl:apply-templates mode='text' select='$rule/cdf:rationale[1]'/></p>
+     </xsl:if>
+    
+     <!-- warning -->
+     <xsl:if test='$rule and $rule/cdf:warning'>
+       <h4>Warning</h4>
+       <p class='warning'><xsl:apply-templates mode='text' select='$rule/cdf:warning[1]'/></p>
+     </xsl:if>
+    
+     <!-- ident (n) -->
+     <xsl:if test='cdf:ident'>
+       <h4>Related identifiers</h4>
+       <ul>
+         <xsl:for-each select='cdf:ident'>
+           <li><strong><xsl:value-of select='.'/></strong> (<xsl:value-of select='@system'/>)</li>
+         </xsl:for-each>
+       </ul>
+     </xsl:if>
+    
+     <!-- overrides (n) -->
+     <xsl:if test='cdf:override'>
+       <h4>Result overrides</h4>
+       <ul><xsl:apply-templates select='cdf:override' mode='rr'/></ul>
+     </xsl:if>
+    
+     <!-- messages (n) -->
+     <xsl:call-template name='list'>
+       <xsl:with-param name='nodes' select='cdf:message' />
+       <xsl:with-param name='el' select='"ol"' />
+       <xsl:with-param name='title' select='"Messages from the checking engine"' />
+     </xsl:call-template>
+    
+     <!-- fixtext (rule, 0-1) -->
+     <xsl:if test='$rule and $rule/cdf:fixtext'>
+       <h4>Fix instructions</h4>
+       <p><xsl:apply-templates mode='text' select='$rule/cdf:fixtext[1]'/></p>
+     </xsl:if>
+    
+     <!-- fix script (result or rule, 0-1) -->
+     <xsl:if test='cdf:fix'>
+       <h4>Fix script</h4>
+       <pre class='code'><code><xsl:apply-templates mode='text' select='cdf:fix[1]'/></code></pre>
+     </xsl:if>
+    
+     <!-- TODO checks (n) -->
+    
+     <!-- references -->
+     <xsl:if test='$rule and $rule/cdf:reference[@href]'>
+       <h4>References</h4>
+       <ol><xsl:apply-templates select='$rule/cdf:reference[@href]' mode='rr'/></ol>
+     </xsl:if>
+    
+     <p class='link'><a href='#results-summary'>results summary</a></p>
+    
+    </div>
 </xsl:template>
 
 <xsl:template match='@time' mode='rr'><p>Time: <strong><xsl:apply-templates mode='date' select='.'/></strong></p></xsl:template>

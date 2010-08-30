@@ -109,6 +109,7 @@ struct oscap_action {
         char **urls_oval;
         char *profile;
         char *file_version;
+        char *show;
 	char *id;
         int verbosity;
 #ifdef ENABLE_CVSS

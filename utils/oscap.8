@@ -140,6 +140,9 @@ ID of the XCCDF TestResult from which the report will be generated.
 .TP
 \fB\-\-output FILE\fR
 Write the report to this file instead of standard output.
+.TP
+\fB\-\-show \fIwhat\fR
+Specify what result types shall be displayed in the result report. The default is to show everything except for rules with results notselected and notapplicable. The \fIwhat\fR part is a comma-separated list of result types to display in addition to the default. If result type is prefixed by a dash '-', it will be excluded from the results. If \fIwhat\fR is prefixed by an equality sign '=', a following list specifies exactly what rule types to include in the report. Result types are: pass, fixed, notchecked, notapplicable, notselected, informational, unknown, error, fail.
 .RE
 
 .SH CVSS OPERATIONS
