@@ -110,6 +110,12 @@ struct oscap_stringlist *oscap_stringlist_clone(struct oscap_stringlist *list);
 const char *oscap_text_get_text(const struct oscap_text *text);
 /// @memberof oscap_text
 const char *oscap_text_get_lang(const struct oscap_text *text);
+/**
+ * Get plaintext representation of the text.
+ * Caller is responsible for freeing returned string.
+ * @memberof oscap_text
+ */
+char *oscap_text_get_plaintext(const struct oscap_text *text);
 
 /**
  * Does this text posses a HTML content?

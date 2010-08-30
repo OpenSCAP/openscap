@@ -85,7 +85,7 @@ struct oscap_text * oscap_text_clone(const struct oscap_text * text)
 
 struct oscap_text *oscap_text_new_html(void)
 {
-    assert(false); // TODO implement
+    //assert(false); // TODO implement
     return oscap_text_new_full(OSCAP_TEXT_TRAITS_HTML, NULL, NULL);
 }
 
@@ -157,6 +157,27 @@ bool oscap_text_export(struct oscap_text *text, xmlTextWriter *writer, const cha
 	if (elname) xmlTextWriterEndElement(writer);
 
 	return true;
+}
+
+char *oscap_text_get_plaintext(const struct oscap_text *text)
+{
+    if (text == NULL) return NULL;
+
+    if (!text->traits.html) return oscap_strdup(text->text);
+
+    char *out = NULL;
+    char *str = oscap_sprintf("<x xmlns='http://www.w3.org/1999/xhtml'>%s</x>", text->text);
+    xmlDoc *doc = xmlParseMemory(str, strlen(str));
+    if (doc == NULL) goto cleanup;
+    xmlNode *root = xmlDocGetRootElement(doc);
+    if (root == NULL) goto cleanup;
+
+    // TODO: better HTML -> plaintext conversion
+    out = (char*) xmlNodeGetContent(root);
+
+cleanup:
+    oscap_free(str);
+    return out;
 }
 
 bool oscap_textlist_export(struct oscap_text_iterator *texts, xmlTextWriter *writer, const char *elname)
