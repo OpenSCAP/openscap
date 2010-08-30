@@ -210,6 +210,8 @@ int app_evaluate_oval(const struct oscap_action *action)
 
 	struct oval_usr *usr = NULL;
 	int ret = OSCAP_OK;
+	struct oval_definition_model *def_model;
+	oval_agent_session_t *sess;
 
 	/* validate */
 	if (!oscap_validate_document(action->f_oval, OSCAP_DOCUMENT_OVAL_DEFINITIONS, NULL, 
@@ -221,8 +223,13 @@ int app_evaluate_oval(const struct oscap_action *action)
 		return OSCAP_ERROR;
 	}
 
-	struct oval_definition_model *def_model = oval_definition_model_import(action->f_oval);
-	oval_agent_session_t *sess = oval_agent_new_session(def_model, basename(action->f_oval));
+	def_model = oval_definition_model_import(action->f_oval);
+	if (def_model == NULL) {
+		fprintf(stderr, "Failed to import the definition model (%s).\n", action->f_oval);
+		return OSCAP_ERROR;
+	}
+
+	sess = oval_agent_new_session(def_model, basename(action->f_oval));
 
 	/* Import OVAL definition file */
 	if (oscap_err()) {

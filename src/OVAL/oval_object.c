@@ -376,7 +376,7 @@ static int _oval_object_parse_tag(xmlTextReaderPtr reader, struct oval_parser_co
 	}
 	if (return_code != 1) {
 		oscap_dlprintf(DBG_I, "Parsing of <%s> terminated by an error at line %d.\n",
-			       object->id, tagname, xmlTextReaderGetParserLineNumber(reader));
+			       tagname, xmlTextReaderGetParserLineNumber(reader));
 	}
 	oscap_free(tagname);
 	oscap_free(namespace);
