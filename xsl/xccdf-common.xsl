@@ -12,10 +12,12 @@
      markup and substitutions.
  -->
 
+<!-- text nodes -->
 <xsl:template match="text()" mode="text">
   <xsl:value-of select="."/>
 </xsl:template>
 
+<!-- substitute cdf:instance -->
 <xsl:template match="cdf:instance" mode="text">
   <xsl:variable name='ctx' select='@context'/>
   <xsl:choose>
@@ -26,16 +28,51 @@
   </xsl:choose>
 </xsl:template>
 
+<!-- substitute cdf:sub -->
 <xsl:template match="cdf:sub[@idref]" mode="text">
   <xsl:variable name="subid" select="./@idref"/>
-  <xsl:variable name="plain" select="/cdf:Benchmark/cdf:plain-text[@id=$subid]"/>
-  <xsl:variable name="val" select="//cdf:Value[@id=$subid]"/>
+  <xsl:variable name="plain" select="ancestor::cdf:Benchmark/cdf:plain-text[@id=$subid]"/>
+  <xsl:variable name="val" select="ancestor::cdf:Benchmark//cdf:Value[@id=$subid]"/>
   <xsl:choose>
     <xsl:when test='$plain'><abbr title="text: {$subid}"><xsl:value-of select="$plain"/></abbr></xsl:when>
     <xsl:otherwise><abbr title="value: {$subid} ({$val/cdf:title})"><xsl:value-of select="$val/cdf:value/text()"/></abbr></xsl:otherwise>
   </xsl:choose>
 </xsl:template>
 
+<!-- substitute htm:object with #xccdf:value -->
+<xsl:template match='htm:object[starts-with(@data, "#xccdf:value:")]' mode='text'>
+  <xsl:variable name='id' value='substring(@data, 13)'/>
+  <xsl:variable name='sub' select='ancestor::cdf:TestResult/cdf:target-facts/cdffact[@name=$id]/text()|ancestor::cdf:Benchmark//cdf:Value[@id=$id]/cdf:value[1]/text()|ancestor::cdf:Benchmark/cdf:plain-text[@id=$id][1]/text()'/>
+  <xsl:choose>
+    <xsl:when test='$sub'><xsl:value-of select='$sub[1]'/></xsl:when>
+    <xsl:otherwise><xsl:value-of select='.'/></xsl:otherwise>
+  </xsl:choose>
+</xsl:template>
+
+<!-- substitute htm:object with #xccdf:title -->
+<xsl:template match='htm:object[starts-with(@data, "#xccdf:title:")]' mode='text'>
+  <xsl:variable name='id' value='substring(@data, 13)'/>
+  <xsl:variable name='sub' select='ancestor::cdf:Benchmark//cdf:Group/cdf:title|ancestor::cdf:Benchmark//cdf:Rule/cdf:title|ancestor::cdf:Benchmark//cdf:Value/cdf:title'/>
+  <xsl:choose>
+    <xsl:when test='$sub'><xsl:value-of select='$sub[1]'/></xsl:when>
+    <xsl:otherwise><xsl:value-of select='.'/></xsl:otherwise>
+  </xsl:choose>
+</xsl:template>
+
+<!-- substitute htm:a with #xccdf:link -->
+<xsl:template match='htm:a[starts-with(@data, "#xccdf:link:")]' mode='text'>
+  <xsl:variable name='id' value='substring(@data, 12)'/>
+  <xsl:copy>
+    <xsl:copy-of select='@*'/>
+    <xsl:attribute name='href'><xsl:apply-templates select='@href' mode='text'><xsl:with-param name='id' select='$id'/></xsl:apply-templates></xsl:attribute>
+    <xsl:apply-templates select="node()" mode="text"/>
+  </xsl:copy>
+</xsl:template>
+
+<!-- default link-generating code -->
+<xsl:template match='@href' mode='text'><xsl:param name='id'/>#item-<xsl:value-of select='$id'/></xsl:template>
+
+<!-- identity transform for the rest of HTML -->
 <xsl:template match="htm:*" mode="text">
   <xsl:element name="{local-name()}">
     <xsl:copy-of select="@*"/>

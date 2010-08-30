@@ -110,7 +110,7 @@
      <xsl:value-of select="$section-prefix"/>
      <xsl:value-of select="$section-num"/>
      <xsl:text>. </xsl:text>
-     <a class="toc" href="#{@id}"><xsl:value-of select="./cdf:title/text()"/></a>
+     <a class="toc" href="#item-{@id}"><xsl:value-of select="./cdf:title/text()"/></a>
   </p>
 </xsl:template>
 
@@ -120,7 +120,7 @@
 
   <xsl:comment>Value id = <xsl:value-of select="./@id"/></xsl:comment>
   <div>
-  <h3 id="{@id}">
+  <h3 id="item-{@id}">
      <xsl:value-of select="$section-prefix"/>
      <xsl:value-of select="$section-num"/>
      <xsl:text>. Value: </xsl:text>
@@ -271,7 +271,7 @@
      <xsl:value-of select="$section-prefix"/>
      <xsl:value-of select="$section-num"/>
      <xsl:text>. </xsl:text>
-     <a class="toc" href="#{@id}"><xsl:value-of select="./cdf:title/text()"/></a>
+     <a class="toc" href="#item-{@id}"><xsl:value-of select="./cdf:title/text()"/></a>
   </li>
   <xsl:if test="./cdf:Group">
   <ul>
@@ -392,14 +392,14 @@
        <xsl:if test="number(./@selected)">Included: </xsl:if>
        <xsl:if test="not(number(./@selected))">Excluded: </xsl:if>
        <xsl:if test="count(key('items',@idref))">
-            <a href="#{@idref}">
+            <a href="#item-{@idref}">
                 <xsl:value-of select="key('items', @idref)/cdf:title/text()"/>
             </a>
        </xsl:if>
        <xsl:if test="not(count(key('items',@idref)))">
             (cluster) 
             <xsl:for-each select="key('clusters-rg',@idref)">
-              <a href="#{./@id}">
+              <a href="#item-{./@id}">
                 <xsl:value-of select="./cdf:title/text()"/>
               </a> 
             </xsl:for-each>
@@ -409,13 +409,13 @@
 
 <xsl:template match="cdf:set-value" mode="set-list">
    <li>
-     <a href="#{@idref}"><xsl:value-of select="key('items', @idref)/cdf:title/text()"/></a><br/><xsl:text> set to value: </xsl:text><b><xsl:value-of select="./text()"/></b>
+     <a href="#item-{@idref}"><xsl:value-of select="key('items', @idref)/cdf:title/text()"/></a><br/><xsl:text> set to value: </xsl:text><b><xsl:value-of select="./text()"/></b>
    </li>
 </xsl:template>
 
 <xsl:template match="cdf:refine-value" mode="set-list">
    <li>
-     <a href="#{@idref}"><xsl:value-of select="key('items', @idref)/cdf:title/text()"/></a><br/><xsl:text> refinement selector: </xsl:text><b><xsl:value-of select="./@selector"/></b>
+     <a href="#item-{@idref}"><xsl:value-of select="key('items', @idref)/cdf:title/text()"/></a><br/><xsl:text> refinement selector: </xsl:text><b><xsl:value-of select="./@selector"/></b>
    </li>
 </xsl:template>
 
@@ -434,7 +434,7 @@
   <xsl:param name="section-num" select="position()"/>
 
   <xsl:comment>Group id = <xsl:value-of select="./@id"/></xsl:comment>
-  <div class='section' id="{@id}">
+  <div class='section' id="item-{@id}">
   <h3>
      <xsl:value-of select="$section-prefix"/><xsl:value-of select="$section-num"/>
      <xsl:text>. </xsl:text><xsl:value-of select="./cdf:title/text()"/>
@@ -502,7 +502,7 @@
      <xsl:for-each select="./cdf:conflicts">
           <xsl:variable name="thisid" select="@idref"/>
           <li><xsl:text>Conflicts with: </xsl:text>
-	     <a href="#{@idref}">
+	     <a href="#item-{@idref}">
 	       <xsl:value-of select="key('items', @idref)/cdf:title/text()"/>
 	     </a>
 	  </li>
@@ -549,16 +549,16 @@
       <xsl:if test="self::cdf:Group|parent::cdf:Benchmark">
         <a href="#toc-{@id}" title="Move to position of this item in table of contents.">table of contents</a> |
         <xsl:choose>
-          <xsl:when test="preceding-sibling::cdf:Group"><a href="#{preceding-sibling::cdf:Group[1]/@id}" title="{preceding-sibling::cdf:Group[1]/cdf:title[1]}"><xsl:value-of select='$prev'/></a></xsl:when>
+          <xsl:when test="preceding-sibling::cdf:Group"><a href="#item-{preceding-sibling::cdf:Group[1]/@id}" title="{preceding-sibling::cdf:Group[1]/cdf:title[1]}"><xsl:value-of select='$prev'/></a></xsl:when>
           <xsl:otherwise><span class='unknown'><xsl:value-of select='$prev'/></span></xsl:otherwise>
         </xsl:choose> |
         <xsl:choose>
-          <xsl:when test="following-sibling::cdf:Group"><a href="#{following-sibling::cdf:Group[1]/@id}" title="{following-sibling::cdf:Group[1]/cdf:title[1]}"><xsl:value-of select='$next'/></a></xsl:when>
+          <xsl:when test="following-sibling::cdf:Group"><a href="#item-{following-sibling::cdf:Group[1]/@id}" title="{following-sibling::cdf:Group[1]/cdf:title[1]}"><xsl:value-of select='$next'/></a></xsl:when>
           <xsl:otherwise><span class='unknown'><xsl:value-of select='$next'/></span></xsl:otherwise>
         </xsl:choose> |
       </xsl:if>
       <xsl:choose>
-        <xsl:when test="parent::cdf:Group"><a href="#{parent::cdf:Group/@id}" title="{parent::cdf:Group/cdf:title[1]}"><xsl:value-of select='$up'/></a></xsl:when>
+        <xsl:when test="parent::cdf:Group"><a href="#item-{parent::cdf:Group/@id}" title="{parent::cdf:Group/cdf:title[1]}"><xsl:value-of select='$up'/></a></xsl:when>
         <xsl:otherwise><span class='unknown'><xsl:value-of select='$up'/></span></xsl:otherwise>
       </xsl:choose>
       <!--| <a href="#section-rules">home</a>-->
@@ -574,7 +574,7 @@
 
   <xsl:comment>Rule id = <xsl:value-of select="./@id"/></xsl:comment>
   <div>
-  <h3 id="{@id}">
+  <h3 id="item-{@id}">
      <xsl:value-of select="$section-prefix"/>
      <xsl:value-of select="$section-num"/>
      <xsl:text>. </xsl:text><xsl:value-of select="./cdf:title/text()"/>
@@ -656,7 +656,7 @@
      <xsl:for-each select="./cdf:conflicts">
           <xsl:variable name="thisid" select="@idref"/>
           <li><xsl:text>Conflicts with: </xsl:text>
-	     <a href="#{@idref}">
+	     <a href="#item-{@idref}">
 	       <xsl:value-of select="key('items', @idref)/cdf:title/text()"/>
 	     </a>
 	  </li>
