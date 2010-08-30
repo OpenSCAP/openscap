@@ -406,20 +406,8 @@ int app_xccdf_resolve(const struct oscap_action *action)
 
 static int xccdf_gen_report(const char *infile, const char *id, const char *outfile, const char *show)
 {
-    int ret = OSCAP_ERROR;
-
-    char result_id[strlen(id ? id : "") + 3];
-    char ver[strlen(oscap_get_version()) + 3];
-    char shstr[strlen(show ? show : "") + 3];
-    sprintf(result_id, "'%s'", id);
-    sprintf(shstr, "'%s'", (show ? show : ""));
-    sprintf(ver, "'%s'", oscap_get_version());
-    const char *params[] = { "result-id", (id ? result_id : NULL), "oscap-version", ver, "show", shstr, NULL };
-
-    if (oscap_apply_xslt(infile, "xccdf-results-report.xsl", outfile, params)) ret = OSCAP_OK;
-    else fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
-
-    return ret;
+    const char *params[] = { "result-id", id, "show", show, NULL };
+    return app_xslt(infile, "xccdf-results-report.xsl", outfile, params);
 }
 
 int app_xccdf_gen_report(const struct oscap_action *action)
@@ -429,9 +417,7 @@ int app_xccdf_gen_report(const struct oscap_action *action)
 
 int app_xccdf_gen_guide(const struct oscap_action *action)
 {
-    if (oscap_apply_xslt(action->f_xccdf, "xccdf-guide.xsl", action->f_results, NULL)) return OSCAP_OK;
-    else fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
-    return OSCAP_ERROR;
+    return app_xslt(action->f_xccdf, "xccdf-guide.xsl", action->f_results, NULL);
 }
 
 bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)

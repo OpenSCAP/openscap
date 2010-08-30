@@ -229,6 +229,8 @@ bool oscap_apply_xslt(const char *xmlfile, const char *xsltfile, const char *out
     xsltStylesheetPtr cur = NULL;
     xmlDocPtr doc = NULL, res = NULL;
     FILE *f = NULL;
+    size_t argc = 0; while(params[argc]) argc += 2;
+    char *args[argc+1]; memset(args, 0, sizeof(char*) * (argc + 1));
 
     if (xsltpath == NULL) {
         oscap_seterr(OSCAP_EFAMILY_OSCAP, 0, "XSLT file to by used by the transformation was not found.");
@@ -247,7 +249,12 @@ bool oscap_apply_xslt(const char *xmlfile, const char *xsltfile, const char *out
         goto cleanup;
     }
 
-    res = xsltApplyStylesheet(cur, doc, params);
+    for (size_t i = 0; i < argc; i += 2) {
+        args[i] = (char*) params[i];
+        if (params[i+1]) args[i+1] = oscap_sprintf("'%s'", params[i+1]);
+    }
+
+    res = xsltApplyStylesheet(cur, doc, (const char **) args);
     if (res == NULL) {
         oscap_seterr(OSCAP_EFAMILY_OSCAP, 0, "Could not apply XSLT to your XML file");
         goto cleanup;
@@ -269,6 +276,7 @@ bool oscap_apply_xslt(const char *xmlfile, const char *xsltfile, const char *out
     ret = true;
 
 cleanup:
+    for (size_t i = 0; args[i]; i += 2) oscap_free(args[i+1]);
     if (f) fclose(f);
     if (cur) xsltFreeStylesheet(cur);
     if (res) xmlFreeDoc(res);

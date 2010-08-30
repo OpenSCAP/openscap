@@ -115,6 +115,29 @@ static bool oscap_action_postprocess(struct oscap_action *action)
         && oscap_fetch(action->module, &action->f_xccdf, action->url_xccdf);
 }
 
+static size_t paramlist_size(const char **p) { size_t s = 0; if (!p) return s; while (p[s]) s += 2; return s; }
+
+static size_t paramlist_cpy(const char **to, const char **p) {
+    size_t s = 0;
+    if (!p) return s;
+    for (;p && p[s]; s += 2) to[s] = p[s], to[s+1] = p[s+1];
+    to[s] = p[s];
+    return s;
+}
+
+int app_xslt(const char *infile, const char *xsltfile, const char *outfile, const char **params)
+{
+    const char *stdparams[] = { "oscap-version", oscap_get_version(), NULL };
+    const char *par[paramlist_size(params) + paramlist_size(stdparams) + 1];
+    size_t s  = paramlist_cpy(par    , params);
+           s += paramlist_cpy(par + s, stdparams);
+
+    int ret = OSCAP_ERROR;
+    if (oscap_apply_xslt(infile, xsltfile, outfile, par)) ret = OSCAP_OK;
+    else fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
+    return ret;
+}
+
 
 static void check_module(struct oscap_module *module)
 {

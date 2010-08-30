@@ -379,14 +379,7 @@ int app_evaluate_oval_id(const struct oscap_action *action) {
 
 static int oval_gen_report(const char *infile, const char *outfile)
 {
-    int ret = OSCAP_ERROR;
-
-    const char *params[] = { NULL };
-
-    if (oscap_apply_xslt(infile, "oval-results-report.xsl", outfile, params)) ret = OSCAP_OK;
-    else fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
-
-    return ret;
+    return app_xslt(infile, "oval-results-report.xsl", outfile, NULL);
 }
 
 static int app_oval_results_report(const struct oscap_action *action)

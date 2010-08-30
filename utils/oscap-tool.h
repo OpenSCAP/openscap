@@ -120,6 +120,7 @@ struct oscap_action {
 };
 
 int app_validate_xml(const struct oscap_action *action);
+int app_xslt(const char *infile, const char *xsltfile, const char *outfile, const char **params);
 
 int oscap_module_process(struct oscap_module *module, int argc, char **argv);
 bool oscap_module_usage(struct oscap_module *module, FILE *out, const char *err, ...);
