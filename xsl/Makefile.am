@@ -1,5 +1,5 @@
 
-xsldir = $(datadir)/xsl
+xsldir = $(pkgdatadir)/xsl
 
 xsl_DATA =   xccdf-guide.xsl \
              xccdf-results-report.xsl \
