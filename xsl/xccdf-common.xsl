@@ -24,7 +24,7 @@
     <xsl:when test='ancestor::cdf:rule-result'>
       <abbr title='context: {$ctx}'><xsl:value-of select='ancestor::cdf:rule-result/cdf:instance[@context=$ctx]'/></abbr>
     </xsl:when>
-    <xsl:otherwise><abbr title='replace with actual {$ctx} context'><em><xsl:value-of select='$ctx'/></em></abbr></xsl:otherwise>
+    <xsl:otherwise><abbr title='replace with actual {$ctx} context'><em class='instance'>&lt;<xsl:value-of select='$ctx'/>&gt;</em></abbr></xsl:otherwise>
   </xsl:choose>
 </xsl:template>
 
