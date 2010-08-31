@@ -10,7 +10,8 @@
     xmlns:s="http://open-scap.org/"
     xmlns:edate="http://exslt.org/dates-and-times">
 
-<xsl:include href="xccdf-common.xsl" />
+<!--<xsl:include href="xccdf-common.xsl" />-->
+<xsl:import href="xccdf-apply-profile.xsl" />
 
 <!--
      TODO:
@@ -42,8 +43,19 @@
 <xsl:param name="result-id" select='/cdf:Benchmark/cdf:TestResult[@end-time=$last-test-time][last()]/@id'/>
 <xsl:param name="with-target-facts"/>
 <xsl:param name="show"/>
+<xsl:param name='profile' select='/cdf:Benchmark/cdf:TestResult[@id=$result-id][1]/cdf:profile/@idref'/>
 
-<xsl:variable name='result' select='/cdf:Benchmark/cdf:TestResult[@id=$result-id][1]'/>
+<xsl:variable name='benchmark'>
+  <xsl:apply-templates select='/cdf:Benchmark' mode='profile'>
+    <xsl:with-param name='p' select='/cdf:Benchmark/cdf:Profile[@id=$profile]'/>
+  </xsl:apply-templates>
+</xsl:variable>
+
+<xsl:variable name='root' select='exsl:node-set($benchmark)/cdf:Benchmark'/>
+
+<xsl:variable name='result' select='$root/cdf:TestResult[@id=$result-id][1]'/>
+<!--<xsl:variable name='result' select='/cdf:Benchmark/cdf:TestResult[@id=$result-id][1]'/>-->
+
 <xsl:variable name='toshow'>
   <xsl:choose>
     <xsl:when test='substring($show, 1, 1) = "="'>,<xsl:value-of select='substring($show, 2)'/>,</xsl:when>
@@ -65,6 +77,7 @@
     </xsl:when>
     <xsl:when test='$result-id and $result'>
       <xsl:message>TestResult ID: <xsl:value-of select='$result-id'/></xsl:message>
+      <xsl:message>Profile: <xsl:value-of select='$profile'/></xsl:message>
       <xsl:apply-templates select='$result' mode='result' />
     </xsl:when>
     <xsl:when test='$result-id'>
@@ -301,7 +314,8 @@
 <!-- rule result mode -->
 
 <xsl:template match='cdf:rule-result' mode='rr'>
-  <xsl:variable name='rule' select="key('items',@idref)"/>
+  <xsl:variable name='rid'  select='@idref'/>
+  <xsl:variable name='rule' select="key('items',@idref)"/>-->
   <xsl:variable name='title'>
     <xsl:if test="key('items',@idref)/cdf:title"><xsl:value-of select="key('items',@idref)/cdf:title[1]"/></xsl:if>
     <xsl:if test="not(key('items',@idref)/cdf:title)"><xsl:value-of select='@idref'/></xsl:if>
@@ -378,12 +392,10 @@
      </xsl:if>
     
      <!-- fix script (result or rule, 0-1) -->
-     <xsl:if test='cdf:fix'>
+     <xsl:for-each select='(cdf:fix|$rule/cdf:fix)[last()]'>
        <h4>Fix script</h4>
-       <pre class='code'><code><xsl:apply-templates mode='text' select='cdf:fix[1]'/></code></pre>
-     </xsl:if>
-    
-     <!-- TODO checks (n) -->
+       <pre class='code'><code><xsl:apply-templates mode='text' select='.'/></code></pre>
+     </xsl:for-each>
     
      <!-- references -->
      <xsl:if test='$rule and $rule/cdf:reference[@href]'>

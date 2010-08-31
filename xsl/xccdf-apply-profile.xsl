@@ -42,11 +42,12 @@
 <!-- apply refine-rule selectors -->
 <xsl:template mode='profile' match='cdf:check'>
   <xsl:param name='p'/>
+  <xsl:variable name='name' select='name()'/>
   <xsl:variable name='rule' select='ancestor::cdf:Rule[1]'/>
   <xsl:variable name='rr' select='$p/cdf:refine-rule[@idref=$rule/@id or @idref=$rule/@cluster-id][1]'/>
-  <xsl:if test='@selector=$rr/@selector'>
+  <xsl:for-each select='self::*[@selector=$rr/@selector or (not(@selector) and count($rule/*[name()=$name][@selector=$rr/@selector])=0)]'>
     <xsl:copy><xsl:apply-templates mode='profile' select="node()|@*"><xsl:with-param name='p' select='$p'/></xsl:apply-templates></xsl:copy>
-  </xsl:if>
+  </xsl:for-each>
 </xsl:template>
 
 <!-- implement refine-value -->
@@ -66,7 +67,7 @@
       <xsl:when test='$sv'><cdf:value><xsl:value-of select='$sv'/></cdf:value></xsl:when>
       <xsl:otherwise><xsl:apply-templates mode='profile' select="cdf:value"><xsl:with-param name='p' select='$p'/></xsl:apply-templates></xsl:otherwise>
     </xsl:choose>
-    <xsl:apply-templates mode='profile' select="cdf:value|cdf:default|cdf:match|cdf:lower-bound|cdf:upper-bound|cdf:choices|cdf:source">
+    <xsl:apply-templates mode='profile' select="cdf:default|cdf:match|cdf:lower-bound|cdf:upper-bound|cdf:choices|cdf:source">
       <xsl:with-param name='p' select='$p'/>
     </xsl:apply-templates>
   </xsl:copy>
@@ -75,11 +76,12 @@
 <!-- refine-value selector -->
 <xsl:template mode='profile' match='cdf:value|cdf:default|cdf:match|cdf:lower-bound|cdf:upper-bound|cdf:choices'>
   <xsl:param name='p'/>
-  <xsl:variable name='val' select='ancestor::cdf:Value[1]'/>
-  <xsl:variable name='rv' select='$p/cdf:refine-value[@idref=$val/@id]'/>
-  <xsl:if test='@selector=$rv/@selector'>
+  <xsl:variable name='val' select='ancestor::cdf:Value'/>
+  <xsl:variable name='name' select='name()'/>
+  <xsl:variable name='rv' select='$p/cdf:refine-value[@idref=$val/@id or @idref=$val/@cluster-id][1]'/>
+  <xsl:for-each select='self::*[@selector=$rv/@selector or (not(@selector) and count($val/*[name()=$name][@selector=$rv/@selector])=0)]'>
     <xsl:copy><xsl:apply-templates mode='profile' select="node()|@*"><xsl:with-param name='p' select='$p'/></xsl:apply-templates></xsl:copy>
-  </xsl:if>
+  </xsl:for-each>
 </xsl:template>
 
 <!-- erase @selector -->
