@@ -66,14 +66,17 @@
 <xsl:stylesheet version="1.0" 
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 	xmlns:htm="http://www.w3.org/1999/xhtml"
+    xmlns:exsl="http://exslt.org/common"
 	xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:cdf="http://checklists.nist.gov/xccdf/1.1"
 	>
 
-<xsl:include href="xccdf-common.xsl" />
+<xsl:import href="xccdf-apply-profile.xsl" />
 
 <!-- Set output style: XHTML using xml output method. -->
 <xsl:output method="xml" encoding="UTF-8" indent="yes"/>
+
+<xsl:param name='profile'/>
 
 <!-- Set up an id key to match on against all Items -->
 <xsl:key name="items" match="cdf:Group | cdf:Rule | cdf:Value" 
@@ -89,6 +92,15 @@
 <xsl:key name="profiles" match="cdf:Profile" 
          use="@id"/>
 
+<xsl:template match='/cdf:Benchmark'>
+  <xsl:variable name='prof' select='/cdf:Benchmark/cdf:Profile[@id=$profile][1]'/>
+  <xsl:variable name='input'>
+    <xsl:apply-templates select='.' mode='apply-profile'/>
+  </xsl:variable>
+  <xsl:variable name='root' select='exsl:node-set($input)/cdf:Benchmark[1]'/>
+  <xsl:apply-templates mode='top' select='$root'/>
+</xsl:template>
+
 <!-- Additional template for cdf:platform element; 
   -  this has changed to accomodate the CIS platform 
   -  schema 0.2.2.
@@ -97,170 +109,6 @@
   <li><xsl:value-of select="@idref"/></li>
 </xsl:template>
 
-<!-- Additional templates for a Value element;
-  -  For TOC, we present a line with number, for body
-  -  we present a numbered section with title, and then
-  -  the fields of the Value with a dl list.
-  -->
-<xsl:template match="cdf:Value" mode="toc">
-  <xsl:param name="section-prefix"/>
-  <xsl:param name="section-num" select="position()"/>
-
-  <p class="toc2">
-     <xsl:value-of select="$section-prefix"/>
-     <xsl:value-of select="$section-num"/>
-     <xsl:text>. </xsl:text>
-     <a class="toc" href="#item-{@id}"><xsl:value-of select="./cdf:title/text()"/></a>
-  </p>
-</xsl:template>
-
-<xsl:template match="cdf:Value" mode="body">
-  <xsl:param name="section-prefix"/>
-  <xsl:param name="section-num" select="position()"/>
-
-  <xsl:comment>Value id = <xsl:value-of select="./@id"/></xsl:comment>
-  <div>
-  <h3 id="item-{@id}">
-     <xsl:value-of select="$section-prefix"/>
-     <xsl:value-of select="$section-num"/>
-     <xsl:text>. Value: </xsl:text>
-     <i><xsl:value-of select="./cdf:title/text()"/></i>
-  </h3>
-
-  <div class="simpleText">
-    <xsl:if test="./cdf:status">
-      <p>Status: <xsl:value-of select="./cdf:status/text()"/>
-        <xsl:if test="./cdf:status/@date">
-	   (as of <xsl:value-of select="./cdf:status/@date"/>)
-	</xsl:if>
-      </p>
-    </xsl:if>
-    <xsl:if test="./cdf:platform">
-      <p>Applies only to:</p><ul>
-        <xsl:apply-templates select="./cdf:platform" mode="idlist"/>
-      </ul>
-    </xsl:if>
-    <p><xsl:text>Type: </xsl:text><xsl:value-of select="@type"/></p>
-    <xsl:if test="@operator">
-      <p><xsl:text>Operator: </xsl:text><xsl:value-of select="@operator"/></p>
-    </xsl:if>
-
-
-    <xsl:if test="/cdf:Benchmark/cdf:Profile">
-        <p>Value and value contraints:</p>
-          <table class="propertyTable" border="1" cellpadding="1" cellspacing="1">
-            <tr>
-               <th class="propertyTableHead">Property</th>
-               <th class="propertyTableHead">Selector</th>
-               <th class="propertyTableHead">Value</th>
-            </tr>
-            <xsl:for-each select="./cdf:value | ./cdf:default | ./cdf:match | ./cdf:lower-bound | ./cdf:upper-bound">
-	        <tr>
-                   <td style="width: 27%;"><b><xsl:value-of select="local-name()"/></b></td>
-		   <td style="width: 22%; text-align: center;"><xsl:choose>
-                        <xsl:when test="not(string-length(./@selector) = 0)"><xsl:value-of select="./@selector"/></xsl:when>
-	 	        <xsl:otherwise>*</xsl:otherwise>
-	           </xsl:choose></td>
-		   <td><xsl:value-of select="./text()"/></td>
-		</tr>
-	    </xsl:for-each>
-            <xsl:for-each select="./cdf:choices">
-	        <tr>
-                   <td style="width: 27%;"><b><xsl:value-of select="local-name()"/></b>
-		   </td>
-		   <td style="width: 22%; text-align: center;"><xsl:choose>
-                        <xsl:when test="./@selector"><xsl:value-of select="not(string-length(./@selector) = 0)"/></xsl:when>
-	 	        <xsl:otherwise>*</xsl:otherwise>
-	           </xsl:choose></td>
-		   <td>
-		      <xsl:if test="boolean(number(./@mustMatch))">
-			<i>Exclusive values:</i>
- 		      </xsl:if>
-		      <xsl:if test="not(number(./@mustMatch))">
-			<i>Suggested values:</i>
- 		      </xsl:if>
-                       <ul class="smallList">
-			<xsl:for-each select="./cdf:choice">
-			   <li><xsl:value-of select="./text()"/></li>
-			</xsl:for-each>
-		       </ul>
-                   </td>
-		</tr>
-	    </xsl:for-each>
-          </table>
-    </xsl:if>
-
-    <xsl:if test="not(/cdf:Benchmark/cdf:Profile)">
-	<p><xsl:text>Value: </xsl:text>
-             <b><xsl:value-of select="./cdf:value/text()"/></b>
-        </p>
-	<xsl:if test="./cdf:default">
-	  <p><xsl:text>Default value: </xsl:text>
-              <xsl:value-of select="./cdf:default/text()"/>
-          </p>
-	</xsl:if>
-	<xsl:if test="./@type = 'number'">
-	  <xsl:if test="./cdf:lower-bound">
-	    <p><xsl:text>Lower bound: </xsl:text><xsl:value-of select="./cdf:lower-bound/text()"/></p>
-	  </xsl:if>
-	  <xsl:if test="./cdf:upper-bound">
-	    <p><xsl:text>Upper bound: </xsl:text><xsl:value-of select="./cdf:upper-bound/text()"/></p>
-	  </xsl:if>
-	</xsl:if>
-        <xsl:if test="./@type = 'string'">
-	  <xsl:if test="./cdf:match">
-	    <p><xsl:text>Value pattern: </xsl:text><xsl:value-of select="./cdf:match/text()"/></p>
-	  </xsl:if>
-	</xsl:if>
-
-	<xsl:if test="./cdf:choices">
-	  <p><xsl:text>Choices: </xsl:text>
-	    <xsl:if test="./cdf:choices/@mustMatch">
-	       <xsl:text> (exclusive)</xsl:text>
-	    </xsl:if>
-	    <ul>
-	       <xsl:for-each select="./cdf:choices/cdf:choice">
-		  <li><xsl:value-of select="./text()"/></li>
-	       </xsl:for-each>
-	    </ul>
-	  </p>
-	</xsl:if>
-    </xsl:if>
-
-  </div>
-
-  <xsl:if test="./cdf:description">
-     <h4>Description</h4>
-     <xsl:for-each select="./cdf:description">
-       <div class="propertyText">
-          <xsl:apply-templates select="./text() | ./*" mode="text"/>
-       </div>
-     </xsl:for-each>
-  </xsl:if>
-
-  <xsl:if test="./cdf:warning">
-     <h4>Warning</h4>
-     <xsl:for-each select="./cdf:warning">
-       <div class="propertyText">
-          <xsl:apply-templates select="./text() | ./*" mode="text"/>
-       </div>
-     </xsl:for-each>
-  </xsl:if>
-
-  <xsl:if test="./cdf:reference">
-      <h4>References</h4>
-      <ol>
-	<xsl:for-each select="./cdf:reference">
-	  <li><xsl:value-of select="text()"/>
-	    <xsl:if test="@href">
-	      [<a href="{@href}">link</a>]
-           </xsl:if>
-	  </li>
-	</xsl:for-each>
-     </ol>
-  </xsl:if>
-  </div>
-</xsl:template>
 
 <!-- Template for toc entries for both rules and groups -->
 <xsl:template match="cdf:Group | cdf:Rule" mode="toc">
@@ -281,146 +129,6 @@
 	</xsl:apply-templates>
   </ul>
   </xsl:if>
-</xsl:template>
-
-
-<!-- Template for toc entries for Profiles -->
-<xsl:template match="cdf:Profile" mode="toc">
-  <xsl:param name="section-prefix"/>
-  <xsl:param name="section-num" select="position()"/>
-
-  <p class="toc2">
-     <xsl:value-of select="$section-prefix"/>
-     <xsl:value-of select="$section-num"/>
-     <xsl:text>. </xsl:text>
-     <a class="toc" href="#profile-{@id}"><xsl:value-of select="./cdf:title/text()"/></a>
-  </p>
-
-</xsl:template>
-
-<!-- template for body elements for Profiles -->
-<xsl:template match="cdf:Profile" mode="body">
-  <xsl:param name="section-prefix"/>
-  <xsl:param name="section-num" select="position()"/>
-
-  <xsl:comment>Profile id = <xsl:value-of select="./@id"/></xsl:comment>
-  <div>
-  <h3 id="profile-{@id}">
-     <xsl:value-of select="$section-prefix"/>
-     <xsl:value-of select="$section-num"/>
-     <xsl:text>. Profile: </xsl:text>
-     <i><xsl:value-of select="./cdf:title/text()"/></i>
-  </h3>
-
-<xsl:if test="@extends|./cdf:status|./cdf:platform">
-  <div class="simpleText">
-    <xsl:if test="@extends">
-      <p>Extends: 
-          <xsl:apply-templates select="key('profiles',@extends)" mode="prof-ref"/>
-      </p>
-    </xsl:if>
-    <xsl:if test="./cdf:status">
-      <p>Status: <xsl:value-of select="./cdf:status/text()"/>
-        <xsl:if test="./cdf:status/@date">
-	   (as of <xsl:value-of select="./cdf:status/@date"/>)
-	</xsl:if>
-      </p>
-    </xsl:if>
-    <xsl:if test="./cdf:platform">
-      <p>Applies only to:</p><ul>
-        <xsl:apply-templates select="./cdf:platform" mode="idlist"/>
-      </ul>
-    </xsl:if>
-  </div>
-</xsl:if>
-
-  <xsl:if test="./cdf:description">
-     <h4>Description</h4>
-     <xsl:for-each select="./cdf:description">
-       <p class="propertyText">
-          <xsl:apply-templates select="./text() | ./*" mode="text"/>
-       </p>
-     </xsl:for-each>
-  </xsl:if>
-
-  <xsl:if test="./cdf:select">
-   <h4>Item Selections</h4>
-   <div class="propertyText">
-    <p>Rules and Groups explicitly selected and deselected for this profile.</p>
-       <ul>
-         <xsl:apply-templates select="." mode="sel-list"/>
-       </ul>
-   </div>
-  </xsl:if>
-
-  <xsl:if test="./cdf:set-value | ./cdf:refine-value">
-   <h4>Value Settings</h4>
-   <div class="propertyText">
-    <p>Tailoring value adjustments explicitly set for this profile:</p>
-       <ul>
-         <xsl:apply-templates select="." mode="set-list"/>
-       </ul>
-   </div>
-  </xsl:if>
-
-  <xsl:if test="./cdf:reference">
-      <h4>References</h4>
-      <ol>
-	<xsl:for-each select="./cdf:reference">
-	  <li><xsl:value-of select="text()"/>
-	    <xsl:if test="@href">
-	      [<a href="{@href}">link</a>]
-           </xsl:if>
-	  </li>
-	</xsl:for-each>
-     </ol>
-  </xsl:if>
-  </div>
-</xsl:template>
-
-<xsl:template match="cdf:Profile" mode="sel-list">
-   <xsl:apply-templates select="./cdf:select" mode="sel-list"/>
-</xsl:template>
-
-<xsl:template match="cdf:Profile" mode="set-list">
-   <xsl:apply-templates select="./cdf:set-value" mode="set-list"/>
-   <xsl:apply-templates select="./cdf:refine-value" mode="set-list"/>
-</xsl:template>
-
-<xsl:template match="cdf:select" mode="sel-list">
-   <li>
-       <xsl:if test="number(./@selected)">Included: </xsl:if>
-       <xsl:if test="not(number(./@selected))">Excluded: </xsl:if>
-       <xsl:if test="count(key('items',@idref))">
-            <a href="#item-{@idref}">
-                <xsl:value-of select="key('items', @idref)/cdf:title/text()"/>
-            </a>
-       </xsl:if>
-       <xsl:if test="not(count(key('items',@idref)))">
-            (cluster) 
-            <xsl:for-each select="key('clusters-rg',@idref)">
-              <a href="#item-{./@id}">
-                <xsl:value-of select="./cdf:title/text()"/>
-              </a> 
-            </xsl:for-each>
-       </xsl:if>
-   </li>
-</xsl:template>
-
-<xsl:template match="cdf:set-value" mode="set-list">
-   <li>
-     <a href="#item-{@idref}"><xsl:value-of select="key('items', @idref)/cdf:title/text()"/></a><br/><xsl:text> set to value: </xsl:text><b><xsl:value-of select="./text()"/></b>
-   </li>
-</xsl:template>
-
-<xsl:template match="cdf:refine-value" mode="set-list">
-   <li>
-     <a href="#item-{@idref}"><xsl:value-of select="key('items', @idref)/cdf:title/text()"/></a><br/><xsl:text> refinement selector: </xsl:text><b><xsl:value-of select="./@selector"/></b>
-   </li>
-</xsl:template>
-
-<xsl:template match="cdf:Profile" mode="prof-ref">
-   <a href="#profile-{@id}"><xsl:value-of select="./cdf:title/text()"/></a>
 </xsl:template>
 
 
@@ -682,7 +390,7 @@
 
 </xsl:template>
 
-<xsl:template match='/cdf:Benchmark'>
+<xsl:template match='/cdf:Benchmark' mode='top'>
   <xsl:variable name="introSecNum" select="1"/>
   <xsl:variable name="valSecNum" select="2"/>
   <xsl:variable name="ruleSecNum"
@@ -693,8 +401,6 @@
                 select="2 + number(count(./cdf:Rule[not(number(@hidden)+number(@abstract))] | ./cdf:Group[not(number(@hidden)+number(@abstract))])!=0) + number(count(//cdf:Value[not(number(@hidden)+number(@abstract))])!=0) + number(count(./cdf:Profile)!=0)"/>
   <xsl:variable name="refSecNum" 
                 select="2 + number(count(./cdf:Rule[not(number(@hidden)+number(@abstract))] | ./cdf:Group[not(number(@hidden)+number(@abstract))])!=0) + number(count(//cdf:Value[not(number(@hidden)+number(@abstract))])!=0) + number(count(./cdf:Profile)!=0) + number(count(./cdf:rear-matter)!=0)"/>
-
-  <xsl:call-template name='warn-unresolved'/>
 
   <xsl:call-template name='skelet'>
     <xsl:with-param name='title' select='string(cdf:title[1])'/>
@@ -741,21 +447,6 @@
              <xsl:apply-templates select="./cdf:Group[not(number(@hidden)+number(@abstract))] | ./cdf:Rule[not(number(@hidden)+number(@abstract))]" mode="body"/>
           </xsl:if>
 
-          <xsl:if test="./cdf:Profile">
-             <h2 id="section-profiles"><!--<xsl:value-of select="$profSecNum"/>. -->Profiles</h2>
-             <xsl:apply-templates select=".//cdf:Profile" mode="body">
-            <xsl:sort select="./cdf:title/text()" data-type="text" order="ascending"/>
-             </xsl:apply-templates>
-          </xsl:if>
-
-          <xsl:if test=".//cdf:Value[not(number(@hidden)+number(@abstract))]">
-             <h2 id="section-values">
-                   <!--<xsl:value-of select="$valSecNum"/>. -->Tailoring Values
-             </h2>
-             <xsl:apply-templates select=".//cdf:Value[not(number(@hidden)+number(@abstract))]" mode="body">
-            <xsl:sort select="./cdf:title/text()" data-type="text" order="ascending"/>
-             </xsl:apply-templates>
-          </xsl:if>
 
           <xsl:if test="./cdf:rear-matter">
              <h2 id="section-conc">
