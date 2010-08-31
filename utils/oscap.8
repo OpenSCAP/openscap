@@ -123,7 +123,16 @@ Validate given XCCDF file against a XML schema. Every found error is printed to 
 Specify version of the specification the document shall conform to.
 .RE
 .TP
-.B generate-guide\fR  [\fIoptions\fR] xccdf-file
+.B \fBgenerate\fR [\fIoptions\fR] <submodule> [submodule-specific-options]
+.RS
+Generate another document form an XCCDF file such as security guide or result report.
+.TP
+\fB\-\-profile ID\fR
+Apply profile with given ID to the Benchmark before further processing takes place.
+.TP
+Available submodules:
+.TP
+.B \fBguide\fR  [\fIoptions\fR] xccdf-file
 .RS
 Generate a formatted HTML page containing a security guide from a XCCDF Benchmark. Unless the --output option is specified it will be written to the standard output.
 .TP
@@ -131,15 +140,15 @@ Generate a formatted HTML page containing a security guide from a XCCDF Benchmar
 Write the guide to this file instead of standard output.
 .RE
 .TP
-.B generate-report\fR  [\fIoptions\fR] xccdf-file
+.B \fBreport\fR  [\fIoptions\fR] xccdf-file
 .RS
 Generate a formatted HTML page containing results of a XCCDF Benchmark execution. Unless the --output option is specified it will be written to the standard output. ID of the TestResult element to visualise defaults to the most recent result (according to the end-time attribute).
 .TP
-\fB\-\-result-id ID\fR
-ID of the XCCDF TestResult from which the report will be generated.
-.TP
 \fB\-\-output FILE\fR
 Write the report to this file instead of standard output.
+.TP
+\fB\-\-result-id ID\fR
+ID of the XCCDF TestResult from which the report will be generated.
 .TP
 \fB\-\-show \fIwhat\fR
 Specify what result types shall be displayed in the result report. The default is to show everything except for rules with results notselected and notapplicable. The \fIwhat\fR part is a comma-separated list of result types to display in addition to the default. If result type is prefixed by a dash '-', it will be excluded from the results. If \fIwhat\fR is prefixed by an equality sign '=', a following list specifies exactly what rule types to include in the report. Result types are: pass, fixed, notchecked, notapplicable, notselected, informational, unknown, error, fail.
