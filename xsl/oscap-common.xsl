@@ -85,6 +85,7 @@
 <xsl:template name='css'>
   <style type='text/css' media='all'>
     html, body { background-color: black; font-family:sans-serif; margin:0; padding:0; }
+    abbr { text-transform:none; border:none; font-variant:normal; }
     div.score-outer { height: .8em; width:100%; min-width:100px; background-color: red; }
     div.score-inner { height: 100%; background-color: green; }
     .score-max, .score-val { text-align:right; }
@@ -104,7 +105,6 @@
     table.raw, table.raw td { border:none; width:auto; padding:0; }
     table.raw { margin-left: 2em; }
     table.raw td { padding: .1em .7em; }
-    abbr.date { text-decoration:none; border:none; }
     pre.code { background: #ccc; }
     ul.toc-struct li { list-style-type: none; }
     div.group-rules { margin-left: 10%; }
@@ -126,6 +126,8 @@
     div.section { border-left: 3px solid white; padding-left:.5em; }
     div.section:target { border-left-color:#ccc; }
     .toc-struct li:target { background:#ddd; }
+    abbr { border-bottom: 1px black dotted; }
+    abbr.date { border-bottom:none; }
   </style>
   <style type='text/css' media='print'>
     @page { margin:3cm; }
