@@ -14,7 +14,8 @@ function _oscap {
 	# commands for individual modules
     local -A cmds=()
     cmds[oscap]="oval xccdf cvss"
-    cmds[oscap:oval]="collect eval eval-id validate-xml generate-report"
+    cmds[oscap:oval]="collect eval eval-id validate-xml generate"
+    cmds[oscap:oval:generate]="report"
     cmds[oscap:cvss]="base temporal environmental"
     cmds[oscap:xccdf]="eval validate-xml resolve generate"
     cmds[oscap:xccdf:generate]="report guide"
@@ -25,7 +26,7 @@ function _oscap {
     opts[oscap:oval:validate-xml]="--version --definitions --syschar --results"
     opts[oscap:oval:eval]="--result-file"
     opts[oscap:oval:eval-id]="--result-file --id"
-    opts[oscap:oval:generate-report]="-o --output"
+    opts[oscap:oval:generate:report]="-o --output"
     opts[oscap:xccdf:eval]="--profile --result-file --report-file"
     opts[oscap:xccdf:validate-xml]="--version"
     opts[oscap:xccdf:resolve]="-o --output -f --force"

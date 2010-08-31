@@ -68,9 +68,15 @@ Specify version of the specification the document shall conform to.
 .TP
 \fB\-\-definitions\fR, \fB\-\-syschar\fR, \fB\-\-results\fR
 Specify whether the validated document is an OVAL definitions file, OVAL system characteristics file, or OVAL results file. Default: definitions.
-
 .RE
-.B generate-report\fR  [\fIoptions\fR] oval-results-file
+.TP
+.B \fBgenerate\fR <submodule> [submodule-specific-options]
+.RS
+Generate another document form an OVAL file.
+.TP
+Available submodules:
+.TP
+.B \fBreport\fR  [\fIoptions\fR] oval-results-file
 .RS
 Generate a formatted HTML page containing visualisation of an OVAL results file. Unless the --output option is specified it will be written to the standard output.
 .TP
@@ -80,7 +86,7 @@ Write the report to this file instead of standard output.
 
 .SH XCCDF OPERATIONS
 .TP
-.B eval\fR [\fIoptions\fR] xccdf-file [\fIoval-definitions-files\fR]
+.B \fBeval\fR [\fIoptions\fR] xccdf-file [\fIoval-definitions-files\fR]
 .RS
 Perform evaluation driven by XCCDF file and use OVAL as checking engine. Print result of each rule to standard output. oscap returns 0 if all rules pass. If there is an error during evaluation, the return code is 1. If there is at least one failed rule, oscap-scan finishes with return code 2.
 .PP

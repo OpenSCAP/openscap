@@ -27,17 +27,18 @@
 #include <oval_variables.h>
 #include <error.h>
 #include <text.h>
+#include <assert.h>
 
 #include "oscap-tool.h"
 
 static int app_collect_oval(const struct oscap_action *action);
 static int app_evaluate_oval(const struct oscap_action *action);
 static int app_evaluate_oval_id(const struct oscap_action *action);
-static int app_oval_results_report(const struct oscap_action *action);
+static int app_oval_xslt(const struct oscap_action *action);
 static bool getopt_oval(int argc, char **argv, struct oscap_action *action);
-static int oval_gen_report(const char *infile, const char *outfile);
 
 static struct oscap_module* OVAL_SUBMODULES[];
+static struct oscap_module* OVAL_GEN_SUBMODULES[];
 
 struct oscap_module OSCAP_OVAL_MODULE = {
     .name = "oval",
@@ -96,24 +97,37 @@ static struct oscap_module OVAL_COLLECT = {
     .func = app_collect_oval
 };
 
-static struct oscap_module OVAL_REPORT = {
-    .name = "generate-report",
+static struct oscap_module OVAL_GENERATE = {
+    .name = "generate",
     .parent = &OSCAP_OVAL_MODULE,
+    .summary = "Convert an OVAL file to other formats",
+    .usage_extra = "<subcommand> [sub-options] oval-file.xml",
+    .submodules = OVAL_GEN_SUBMODULES
+};
+
+static struct oscap_module OVAL_REPORT = {
+    .name = "report",
+    .parent = &OVAL_GENERATE,
     .summary = "Generate a HTML report from OVAL results file",
     .usage = "[options] oval-file.xml",
     .help =
         "Options:\n"
         "   --output <file>\r\t\t\t\t - Write the HTML into file.",
     .opt_parser = getopt_oval,
-    .func = app_oval_results_report
+    .user = "oval-results-report.xsl",
+    .func = app_oval_xslt
 };
 
+static struct oscap_module* OVAL_GEN_SUBMODULES[] = {
+    &OVAL_REPORT,
+    NULL
+};
 static struct oscap_module* OVAL_SUBMODULES[] = {
     &OVAL_COLLECT,
     &OVAL_EVAL,
     &OVAL_EVAL_ID,
-    &OVAL_REPORT,
     &OVAL_VALIDATE,
+    &OVAL_GENERATE,
     NULL
 };
 
@@ -128,6 +142,11 @@ struct oval_usr {
 	int result_neval;
 	int result_napp;
 };
+
+static int oval_gen_report(const char *infile, const char *outfile)
+{
+    return app_xslt(infile, "oval-results-report.xsl", outfile, NULL);
+}
 
 static int app_oval_callback(const struct oscap_reporter_message *msg, void *arg)
 {
@@ -377,14 +396,10 @@ int app_evaluate_oval_id(const struct oscap_action *action) {
 	}
 }
 
-static int oval_gen_report(const char *infile, const char *outfile)
+static int app_oval_xslt(const struct oscap_action *action)
 {
-    return app_xslt(infile, "oval-results-report.xsl", outfile, NULL);
-}
-
-static int app_oval_results_report(const struct oscap_action *action)
-{
-    return oval_gen_report(action->f_oval, action->f_results);
+    assert(action->module->user);
+    return app_xslt(action->f_oval, action->module->user, action->f_results, NULL);
 }
 
 
