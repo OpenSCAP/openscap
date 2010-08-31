@@ -40,12 +40,13 @@
 
 static int app_evaluate_xccdf(const struct oscap_action *action);
 static int app_xccdf_resolve(const struct oscap_action *action);
-static int app_xccdf_gen_report(const struct oscap_action *action);
 static bool getopt_xccdf(int argc, char **argv, struct oscap_action *action);
+static bool getopt_generate(int argc, char **argv, struct oscap_action *action);
 static int xccdf_gen_report(const char *infile, const char *id, const char *outfile, const char *show);
-static int app_xccdf_gen_guide(const struct oscap_action *action);
+static int app_xccdf_xslt(const struct oscap_action *action);
 
 static struct oscap_module* XCCDF_SUBMODULES[];
+static struct oscap_module* XCCDF_GEN_SUBMODULES[];
 
 struct oscap_module OSCAP_XCCDF_MODULE = {
     .name = "xccdf",
@@ -76,32 +77,6 @@ static struct oscap_module XCCDF_VALIDATE = {
     .func = app_validate_xml
 };
 
-static struct oscap_module XCCDF_GEN_REPORT = {
-    .name = "generate-report",
-    .parent = &OSCAP_XCCDF_MODULE,
-    .summary = "Generate results report HTML file",
-    .usage = "[options] xccdf-file.xml",
-    .help =
-        "Options:\n"
-        "   --result-id <id>\r\t\t\t\t - TestResult ID to be processed. Default is the most recent one.\n"
-        "   --show <result-type*>\r\t\t\t\t - Rule results to show. Defaults to everything but notselected and notapplicable\n"
-        "   --output <file>\r\t\t\t\t - Write the HTML into file.",
-    .opt_parser = getopt_xccdf,
-    .func = app_xccdf_gen_report
-};
-
-static struct oscap_module XCCDF_GEN_GUIDE = {
-    .name = "generate-guide",
-    .parent = &OSCAP_XCCDF_MODULE,
-    .summary = "Generate security guide HTML file",
-    .usage = "[options] xccdf-file.xml",
-    .help =
-        "Options:\n"
-        "   --output <file>\r\t\t\t\t - Write the HTML into file.",
-    .opt_parser = getopt_xccdf,
-    .func = app_xccdf_gen_guide
-};
-
 static struct oscap_module XCCDF_EVAL = {
     .name = "eval",
     .parent = &OSCAP_XCCDF_MODULE,
@@ -117,12 +92,60 @@ static struct oscap_module XCCDF_EVAL = {
     .func = app_evaluate_xccdf
 };
 
+#define GEN_OPTS \
+        "Generate options:\n" \
+        "   --profile <profile-id>\r\t\t\t\t - Tailor XCCDF file with respect to a profile.\n"
+
+static struct oscap_module XCCDF_GENERATE = {
+    .name = "generate",
+    .parent = &OSCAP_XCCDF_MODULE,
+    .summary = "Convert XCCDF Benchmark to other formats",
+    .usage = "[gen-options]",
+    .usage_extra = "<subcommand> [sub-options] benchmark-file.xml",
+    .help = GEN_OPTS,
+    .opt_parser = getopt_generate,
+    .submodules = XCCDF_GEN_SUBMODULES
+};
+
+static struct oscap_module XCCDF_GEN_REPORT = {
+    .name = "report",
+    .parent = &XCCDF_GENERATE,
+    .summary = "Generate results report HTML file",
+    .usage = "[options] xccdf-file.xml",
+    .help = GEN_OPTS
+        "\nOptions:\n"
+        "   --result-id <id>\r\t\t\t\t - TestResult ID to be processed. Default is the most recent one.\n"
+        "   --show <result-type*>\r\t\t\t\t - Rule results to show. Defaults to everything but notselected and notapplicable.\n"
+        "   --output <file>\r\t\t\t\t - Write the HTML into file.",
+    .opt_parser = getopt_xccdf,
+    .user = "xccdf-results-report.xsl",
+    .func = app_xccdf_xslt
+};
+
+static struct oscap_module XCCDF_GEN_GUIDE = {
+    .name = "guide",
+    .parent = &XCCDF_GENERATE,
+    .summary = "Generate security guide HTML file",
+    .usage = "[options] xccdf-file.xml",
+    .help = GEN_OPTS
+        "\nOptions:\n"
+        "   --output <file>\r\t\t\t\t - Write the HTML into file.",
+    .opt_parser = getopt_xccdf,
+    .user = "xccdf-guide.xsl",
+    .func = app_xccdf_xslt
+};
+
+static struct oscap_module* XCCDF_GEN_SUBMODULES[] = {
+    &XCCDF_GEN_REPORT,
+    &XCCDF_GEN_GUIDE,
+    NULL
+};
+
 static struct oscap_module* XCCDF_SUBMODULES[] = {
     &XCCDF_EVAL,
     &XCCDF_RESOLVE,
     &XCCDF_VALIDATE,
-    &XCCDF_GEN_REPORT,
-    &XCCDF_GEN_GUIDE,
+    &XCCDF_GENERATE,
     NULL
 };
 
@@ -410,14 +433,28 @@ static int xccdf_gen_report(const char *infile, const char *id, const char *outf
     return app_xslt(infile, "xccdf-results-report.xsl", outfile, params);
 }
 
-int app_xccdf_gen_report(const struct oscap_action *action)
+int app_xccdf_xslt(const struct oscap_action *action)
 {
-    return xccdf_gen_report(action->f_xccdf, action->profile, action->f_results, action->show);
+    assert(action->module->user);
+    const char *params[] = { "result-id", action->id, "show", action->show, "profile", action->profile, NULL };
+    return app_xslt(action->f_xccdf, action->module->user, action->f_results, params);
 }
 
-int app_xccdf_gen_guide(const struct oscap_action *action)
+bool getopt_generate(int argc, char **argv, struct oscap_action *action)
 {
-    return app_xslt(action->f_xccdf, "xccdf-guide.xsl", action->f_results, NULL);
+	static const struct option long_options[] = {
+		{"profile", 1, 0, 3},
+		{0, 0, 0, 0}
+	};
+
+	int c;
+	while ((c = getopt_long(argc, argv, "+", long_options, NULL)) != -1) {
+		switch (c) {
+		case 3: action->profile = optarg; break;
+		default: return oscap_module_usage(action->module, stderr, NULL);
+		}
+	}
+    return true;
 }
 
 bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)

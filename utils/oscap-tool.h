@@ -61,6 +61,7 @@ struct oscap_module {
     struct oscap_module **submodules;
     oscap_tool_func func;
     oscap_option_func opt_parser;
+    void *user;
 };
 
 // standard oscap CLI exit statuses
