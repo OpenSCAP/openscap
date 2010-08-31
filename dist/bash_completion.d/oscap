@@ -1,57 +1,65 @@
-#!/bin/bash
+
+# check for non-parametric options
+# returns number of params
+function _oscap_noarg {
+    case "$1" in
+      --definitions|--syschar|--results|-f|--force|-q|--quiet) return 0 ;;
+      --version|--help|-V|-h) return 256 ;; # stop cmdline processing
+      *) return 1 ;;
+    esac
+}
 
 function _oscap {
+
+	# commands for individual modules
+    local -A cmds=()
+    cmds[oscap]="oval xccdf cvss"
+    cmds[oscap:oval]="collect eval eval-id validate-xml generate-report"
+    cmds[oscap:cvss]="base temporal environmental"
+    cmds[oscap:xccdf]="eval validate-xml resolve generate"
+    cmds[oscap:xccdf:generate]="report guide"
+
+    # command options
+    local -A opts=()
+	opts[oscap]="--version --quiet --help -V -q -h"
+    opts[oscap:oval:validate-xml]="--version --definitions --syschar --results"
+    opts[oscap:oval:eval]="--result-file"
+    opts[oscap:oval:eval-id]="--result-file --id"
+    opts[oscap:oval:generate-report]="-o --output"
+    opts[oscap:xccdf:eval]="--profile --result-file --report-file"
+    opts[oscap:xccdf:validate-xml]="--version"
+    opts[oscap:xccdf:resolve]="-o --output -f --force"
+    opts[oscap:xccdf:generate]="--profile"
+    opts[oscap:xccdf:generate:report]="-o --output -i --result-id --show"
+    opts[oscap:xccdf:generate:guide]="-o --output"
+    opts[oscap:cvss:base]="--AV --AC --AU --CI --II --AI"
+    opts[oscap:cvss:temporal]="--EX --RL --RC --base"
+    opts[oscap:cvss:environmental]="--AV --AC --AU --CI --II --AI --EX --RL --RC --CD --TD --CR --IR --AR --base"
+
+
+    # local variables
 	local std cmd i prev
 	local c=1
 	local cur="`_get_cword`"
 	local prog="${COMP_WORDS[0]}"
+    local modpath='oscap'
 	_split_longopt || prev="${COMP_WORDS[$COMP_CWORD-1]}"
 
-	# supported standards list
-	local stds="oval xccdf cvss"
-	# global switches
-	local gopts="--version --quiet --help -V -q -h"
-
+    # get module path
 	while [ $c -lt $COMP_CWORD ]; do
 		i="${COMP_WORDS[c]}"
 		case "$i" in
 			# TODO handle generic switches
-			-*) ;;
-			*) std="$i"; break ;;
+			-*) _oscap_noarg "$i"; c=$((c + $?)) ;;
+			*) modpath="$modpath:$i" ;;
 		esac
-		c=$((++c))
+		c=$((c + 1))
 	done
 
-	[ $((c+1)) -lt $COMP_CWORD ] && cmd="${COMP_WORDS[c+1]}"
-
-	if [ -z "$std" ]; then
-		local words
-		case "$cur" in
-			-*) words="$gopts" ;;
-			*) words="$stds" ;;
-		esac
-		COMPREPLY=( $(compgen -W "${words}" -- ${cur}) )
-		return 0
-	fi
-
-	# commands for individual standards
-	local -A cmds=()
-	cmds[xccdf]="eval validate-xml resolve generate-report generate-guide"
-	cmds[oval]="collect eval eval-id validate-xml generate-report"
-	cmds[cvss]="base temporal environmental"
-
-	if [ -z "$cmd" ]; then
-		COMPREPLY=( $(compgen -W "${cmds[$std]}" -- ${cur}) )
-		return 0
-	fi
-
-	local command="$std:$cmd"
-
-	# options w/o arg, KEEP SPACES around the string
-	opts[noarg]=" --definitions --syschar --results -f --force "
-
-	if [ "x${prev:0:1}" == "x-" ] && echo "${opts[noarg]}" | grep -v " $prev " >/dev/null; then
+	if [ "x${prev:0:1}" == "x-" ] && ! _oscap_noarg "$prev"; then
 		# an option argument
+
+        local cmd=${modpath##*:}
 
 		case "$prev" in
 			--AV|--AC|--AU|--CI|--II|--AI|--EX|--RL|--RC|--CD|--TD|--CR|--IR|--AR)
@@ -60,31 +68,17 @@ function _oscap {
             --report-file) _filedir 'html' ;;
 		esac
 
-	elif [ "x${cur:0:1}" == "x-" ]; then
+	elif [ "x${cur:0:1}" == "x-" ] || [ "${modpath:0:11}" == 'oscap:cvss:' ]; then
 		# an option
-
-		# switches for commands
-		local -A opts=()
-		opts[oval:validate-xml]="--version --definitions --syschar --results"
-		opts[oval:eval]="--result-file"
-		opts[oval:eval-id]="--result-file --id"
-		opts[oval:generate-report]="-o --output"
-		opts[xccdf:eval]="--profile --result-file --report-file"
-		opts[xccdf:validate-xml]="--version"
-		opts[xccdf:resolve]="-o --output -f --force"
-		opts[xccdf:generate-report]="-o --output -i --result-id --show"
-		opts[xccdf:generate-guide]="-o --output"
-		opts[cvss:base]="--AV --AC --AU --CI --II --AI"
-		opts[cvss:temporal]="--EX --RL --RC --base"
-		opts[cvss:environmental]="--AV --AC --AU --CI --II --AI --EX --RL --RC --CD --TD --CR --IR --AR --base"
-
-		COMPREPLY=( $(compgen -W "${opts[$command]}" -- ${cur}) )
-
+		COMPREPLY=( $(compgen -W "${opts[$modpath]}" -- ${cur}) )
+    elif [ "x${cmds[$modpath]}" != 'x' ]; then
+        # a submodule
+		COMPREPLY=( $(compgen -W "${cmds[$modpath]}" -- ${cur}) )
 	else
 		# a positional argument
 
-		case "$command" in
-			cvss:base|cvss:temporal|cvss:environmental) ;; # no positional args for cvss
+		case "$modpath" in
+			oscap:cvss:*) ;; # no positional args for cvss
 			*) _filedir 'xml' ;;
 		esac
 
