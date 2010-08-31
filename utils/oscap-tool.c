@@ -241,6 +241,18 @@ static void oscap_module_print_help(struct oscap_module *module, FILE *out)
     }
 }
 
+static void oscap_module_tree(struct oscap_module *module, FILE* out, int indent)
+{
+    assert(module);
+    if (module->hidden) return;
+    for (int i = 0; i < indent; ++i) fprintf(out, "    ");
+    fprintf(out, "%s - %s\n", module->name, module->summary);
+    if (module->submodules) {
+        for (struct oscap_module** sub = module->submodules; *sub != NULL; ++(sub))
+            oscap_module_tree(*sub, out, indent + 1);
+    }
+}
+
 static struct oscap_module *oscap_module_find(struct oscap_module **list, const char *name)
 {
     if (name == NULL) return NULL;
@@ -253,6 +265,7 @@ enum oscap_common_opts {
     OPT_NONE,
     OPT_LISTMODS,
     OPT_LISTALLMODS,
+    OPT_MODTREE,
     OPT_HELP = 'h'
 };
 
@@ -262,6 +275,7 @@ static enum oscap_common_opts oscap_parse_common_opts(int argc, char **argv)
         { "help",                0, 0, OPT_HELP        },
         { "list-submodules",     0, 0, OPT_LISTMODS    },
         { "list-all-submodules", 0, 0, OPT_LISTALLMODS },
+        { "module-tree",         0, 0, OPT_MODTREE     },
         { 0, 0, 0, 0 }
     };
 
@@ -309,6 +323,7 @@ int oscap_module_process(struct oscap_module *module, int argc, char **argv)
             case OPT_HELP: oscap_module_print_help(module, stdout); goto cleanup;
             case OPT_LISTMODS: oscap_print_submodules(module, stdout, "\n", false); goto cleanup;
             case OPT_LISTALLMODS: oscap_print_submodules(module, stdout, "\n", true); goto cleanup;
+            case OPT_MODTREE: oscap_module_tree(module, stdout, 0); goto cleanup;
             default: break;
         }
 
