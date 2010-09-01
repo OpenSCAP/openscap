@@ -84,55 +84,53 @@
     <select idref="rule-2.2.3.5.b" selected="true" />		<!-- DONE+ -->		<!-- Find files unowned by a group -->
     <select idref="rule-2.2.3.6.a" selected="true" />		<!-- DONE+ -->		<!-- Find world writable directories not owned by a system account--> 
 
-    <select idref="rule-2.2.4.1.a" selected="true" />		<!-- DONE+ -->	        <!-- Set Daemon umask -->
+    <select idref="rule-2.2.4.1.a" selected="true" />		<!-- READY+ -->	        <!-- Set Daemon umask -->
     <select idref="rule-2.2.4.2.a" selected="false" />		<!-- DONE -->		<!-- Disable Core Dumps for all users -->
     <select idref="rule-2.2.4.2.b" selected="false" />		<!-- DONE -->		<!-- Disable Core Dumps for SUID programs -->
-    <select idref="rule-2.2.4.3.a" selected="false" />		<!-- DONE -->		<!-- Enable ExecShield -->
-    <select idref="rule-2.2.4.3.b" selected="false" />		<!-- DONE -->		<!-- Enable ExecShield randomized placement of virtual memory regions -->
+    <select idref="rule-2.2.4.3.a" selected="false" />		<!-- ToDo -->		<!-- Enable ExecShield -->
+    <select idref="rule-2.2.4.3.b" selected="true" />		<!-- READY+ -->		<!-- Enable ExecShield randomized placement of virtual memory regions -->
     <select idref="rule-2.2.4.4.3.a" selected="false" />	<!-- DONE (unknown) -->	<!-- Enable NX or XD Support in the BIOS -->
     <select idref="rule-2.3.1.1.a" selected="false" />		<!-- DONE -->		<!-- Restrict Root Logins to System Console -->
     <select idref="rule-2.3.1.1.b" selected="false" />		<!-- DONE -->		<!-- Restrict virtual console Root Logins -->
     <select idref="rule-2.3.1.1.c" selected="false" />		<!-- DONE -->		<!-- Restrict deprecated virtual console Root Logins -->
-    <select idref="rule-2.3.1.1.d" selected="true" />		<!-- DONE+ -->		<!-- Restrict serial port Root Logins -->
-    <select idref="rule-2.3.1.2.a" selected="true" />		<!-- DONE+ -->		<!-- Limit su Access to the Root Account -->
+    <select idref="rule-2.3.1.1.d" selected="true" />		<!-- READY+ -->		<!-- Restrict serial port Root Logins -->
+    <select idref="rule-2.3.1.2.a" selected="false" />		<!-- DONE -->		<!-- Limit su Access to the Root Account -->
     <select idref="rule-2.3.1.2.b" selected="false" />		<!-- DONE -->		<!-- Limit su Access to the wheel group -->
     <select idref="rule-2.3.1.3.a" selected="false" />		<!-- DONE -->		<!-- Configure sudo to Improve Auditing of Root Access -->
     <select idref="rule-2.3.1.4.a" selected="false" />		<!-- DONE -->		<!-- Block Shell and Login Access for Non-Root System Accounts -->
-    <select idref="rule-2.3.1.5.1.a" selected="true" />		<!-- DONE+ -->		<!-- Verify that No Accounts Have Empty Password Fields -->
-    <select idref="rule-2.3.1.5.2.a" selected="true" />		<!-- DONE+ -->		<!-- Verify that all Account Password Hashes are Shadowed -->
-    <select idref="rule-2.3.1.6.a" selected="true" />		<!-- DONE+ -->		<!-- Verify that No Non-Root Accounts Have UID 0 -->
-    <select idref="rule-2.3.1.7.a" selected="true" />		<!-- DONE+ -->		<!-- Set password minimum length -->
-    <select idref="rule-2.3.1.7.b" selected="true" />		<!-- DONE+ -->		<!-- Set minimum password age -->
+    <select idref="rule-2.3.1.5.1.a" selected="true" />		<!-- READY+ -->		<!-- Verify that No Accounts Have Empty Password Fields -->
+    <select idref="rule-2.3.1.5.2.a" selected="true" />		<!-- READY+ -->		<!-- Verify that all Account Password Hashes are Shadowed -->
+    <select idref="rule-2.3.1.6.a" selected="true" />		<!-- READY+ -->		<!-- Verify that No Non-Root Accounts Have UID 0 -->
+    <select idref="rule-2.3.1.7.a" selected="true" />		<!-- READY+ -->		<!-- Set password minimum length -->
+    <select idref="rule-2.3.1.7.b" selected="false" />		<!-- DONE -->		<!-- Set minimum password age -->
     <select idref="rule-2.3.1.7.c" selected="false" />		<!-- DONE -->		<!-- Set maximum password age -->
-    <select idref="rule-2.3.1.7.d" selected="true" />		<!-- DONE+ -->		<!-- Set password warn age -->
-    <select idref="rule-2.3.1.8.a" selected="true" />		<!-- DONE+ -->		<!-- Remove Legacy + Entries from /etc/shadow -->
-    <select idref="rule-2.3.1.8.b" selected="true" />		<!-- DONE+ -->		<!-- Remove Legacy + Entries from /etc/group -->
-    <select idref="rule-2.3.1.8.c" selected="true" />		<!-- DONE+ -->		<!-- Remove Legacy + Entries from /etc/passwd -->
+    <select idref="rule-2.3.1.7.d" selected="true" />		<!-- READY+ -->		<!-- Set password warn age -->
+    <select idref="rule-2.3.1.8.a" selected="false" />		<!-- DONE -->		<!-- Remove Legacy + Entries from /etc/shadow -->
+    <select idref="rule-2.3.1.8.b" selected="false" />		<!-- DONE -->		<!-- Remove Legacy + Entries from /etc/group -->
+    <select idref="rule-2.3.1.8.c" selected="false" />		<!-- DONE -->		<!-- Remove Legacy + Entries from /etc/passwd -->
     <select idref="rule-2.3.3.1.1.a" selected="false" />	<!-- DONE -->		<!-- Set Password Quality Requirements using pam_cracklib -->
     <select idref="rule-2.3.3.1.2.a" selected="false" />	<!-- DONE -->		<!-- Set Password Quality Requirements using pam_passwdqc -->
     <select idref="rule-2.3.3.2.a" selected="false" />		<!-- DONE -->		<!-- Set Lockouts for Failed Password Attempts -->
-    <select idref="rule-2.3.3.2.b" selected="false" />		<!-- DONE -->		<!-- Do not leak information on authorization failure -->
+    <select idref="rule-2.3.3.2.b" selected="false" />		<!-- DONE (unknown) -->	<!-- Do not leak information on authorization failure -->
     <select idref="rule-2.3.3.4.a" selected="false" />		<!-- DONE -->		<!-- Restrict Execution of userhelper to Console Users -->
     <select idref="rule-2.3.3.4.b" selected="false" />		<!-- DONE -->		<!-- Restrict Execution of userhelper to Console Users -->
-    <select idref="rule-2.3.3.5.a" selected="false" />		<!-- DONE -->		<!-- Set Password hashing algorithm -->
+    <select idref="rule-2.3.3.5.a" selected="true" />		<!-- READY+ -->		<!-- Set Password hashing algorithm -->
     <select idref="rule-2.3.3.6.a" selected="false" />		<!-- DONE -->		<!-- Limit password reuse -->
-    <select idref="rule-2.3.4.1.1.a" selected="true" />		<!-- DONE+ -->		<!-- Ensure that No Dangerous Directories Exist in Root's Path -->
-    <select idref="rule-2.3.4.1.2.a" selected="true" />		<!-- DONE+ --> 		<!-- Write permissions are disabled for group and other in all directories in Root's Path -->
-    <select idref="rule-2.3.4.2.a" selected="true" />		<!-- DONE+ -->		<!-- Ensure that User Home Directories are not Group-Writable or World-Readable -->
-    <select idref="rule-2.3.4.4.a" selected="false" />		<!-- DONE -->		<!-- Ensure that Users Have Sensible Umask Values in /etc/bashrc -->
-    <select idref="rule-2.3.4.4.b" selected="false" />		<!-- DONE -->		<!-- Ensure that Users Have Sensible Umask Values in /etc/cshrc -->
-    <select idref="rule-2.3.4.4.c" selected="true" />		<!-- DONE+ -->		<!-- Ensure that Users Have Sensible Umask Values in /etc/login.defs -->
-    <select idref="rule-2.3.4.4.d" selected="false" />		<!-- DONE -->		<!-- Ensure that Users Have Sensible Umask Values in /etc/profile -->
+    <select idref="rule-2.3.4.1.1.a" selected="true" />		<!-- READY+ -->		<!-- Ensure that No Dangerous Directories Exist in Root's Path -->
+    <select idref="rule-2.3.4.1.2.a" selected="true" />		<!-- READY+ -->		<!-- Write permissions are disabled for group and other in all directories in Root's Path -->
+    <select idref="rule-2.3.4.2.a" selected="true" />		<!-- READY+ -->		<!-- Ensure that User Home Directories are not Group-Writable or World-Readable -->
+    <select idref="rule-2.3.4.4.a" selected="true" />		<!-- READY+ -->		<!-- Ensure that Users Have Sensible Umask Values in /etc/bashrc -->
+    <select idref="rule-2.3.4.4.b" selected="true" />		<!-- READY+ -->		<!-- Ensure that Users Have Sensible Umask Values in /etc/cshrc -->
 
     <select idref="rule-2.3.4.5.a" selected="false" />		<!-- DONE (Unknown) -->	<!-- Check for existance of .netrc file -->
-    <select idref="rule-2.3.5.2.a" selected="true" />		<!-- DONE+ -->		<!-- Set Boot Loader user owner -->
-    <select idref="rule-2.3.5.2.b" selected="true" />		<!-- DONE+ -->		<!-- Set Boot Loader group owner -->
-    <select idref="rule-2.3.5.2.c" selected="false" />		<!-- BUG -->		<!-- Set permission on /etc/grub.conf -->
+    <select idref="rule-2.3.5.2.a" selected="true" />		<!-- READY+ -->		<!-- Set Boot Loader user owner -->
+    <select idref="rule-2.3.5.2.b" selected="true" />		<!-- READY+ -->		<!-- Set Boot Loader group owner -->
+    <select idref="rule-2.3.5.2.c" selected="true" />		<!-- READY+ -->		<!-- Set permission on /etc/grub.conf -->
     <select idref="rule-2.3.5.2.d" selected="false" />		<!-- DONE -->		<!-- Set Boot Loader Password -->
-    <select idref="rule-2.3.5.3.a" selected="false" />		<!-- F14 test need -->	<!-- Require Authentication for Single-User Mode -->
+    <select idref="rule-2.3.5.3.a" selected="false" />		<!-- ToDo -->		<!-- Require Authentication for Single-User Mode -->
     <select idref="rule-2.3.5.4.a" selected="false" />		<!-- DONE -->		<!-- Disable Interactive Boot -->
     <select idref="rule-2.3.5.5.a" selected="false" />		<!-- DONE -->		<!-- Implement Inactivity Time-out for csh Shell -->
-    <select idref="rule-2.3.5.5.b" selected="false" />		<!-- DONE (Unknown) -->	<!-- Implement Inactivity Time-out for bash Shell -->
+    <select idref="rule-2.3.5.5.b" selected="false" />		<!-- DONE (unknown) -->	<!-- Implement Inactivity Time-out for bash Shell -->
     <select idref="rule-2.3.5.6.1.a" selected="false" />	<!-- DONE -->		<!-- Implement Inactivity Time-out for Login Shells -->
     <select idref="rule-2.3.5.6.1.b" selected="false" />	<!-- DONE -->		<!-- Implement idle activation of screen saver -->
     <select idref="rule-2.3.5.6.1.c" selected="false" />	<!-- DONE -->		<!-- Implement idle activation of screen lock -->
@@ -432,7 +430,7 @@
     <refine-value idref="var-2.2.3.1.l" selector="644" />              <!-- Permissions for passwd -->
     <refine-value idref="var-2.2.4.1.a" selector="022" />              <!-- daemon umask -->
     <refine-value idref="var-2.3.1.7.a" selector="5" />               <!-- password minimum length -->
-    <refine-value idref="var-2.3.1.7.b" selector="0_days" />            <!-- minimum password age (days) -->
+    <refine-value idref="var-2.3.1.7.b" selector="1_day" />            <!-- minimum password age (days) -->
     <refine-value idref="var-2.3.1.7.c" selector="60_days" />          <!-- maximum password age -->
     <refine-value idref="var-2.3.1.7.d" selector="7_days" />          <!-- password warn age -->
     <refine-value idref="var-2.3.3.1.1.a.retry" selector="3" />        <!-- Number of retry attempts before erroring out -->
@@ -449,7 +447,7 @@
     <refine-value idref="var-2.3.3.4.b" selector="4710" />             <!-- userhelper file permissions -->
     <refine-value idref="var-2.3.3.5.a" selector="SHA-512" />          <!-- Password hashing algorithm -->
     <refine-value idref="var-2.3.3.6.a" selector="0" />                <!-- Passwords to remember -->
-    <refine-value idref="var-2.3.4.4" selector="077" />                <!-- Sensible umask -->
+    <refine-value idref="var-2.3.4.4" selector="022" />                <!-- Sensible umask -->
     <refine-value idref="var-2.3.5.2.a" selector="root" />             <!-- User that owns /etc/grub.conf -->
     <refine-value idref="var-2.3.5.2.b" selector="root" />             <!-- Group that owns /etc/grub.conf -->
     <refine-value idref="var-2.3.5.2.c" selector="600" />              <!-- permissions on /etc/hrub.conf -->
@@ -2302,9 +2300,8 @@
         <Group id="group-2.2.4.1" hidden="false">
           <title xml:lang="en">Set Daemon umask</title>
           <description xml:lang="en">
-            The init files in /etc/init.d contain settings which
-            apply to processes started at boot time. The system umask must be set to at least
-            022, or daemon processes may create world-writable files. The more restrictive setting
+            The system umask for scripts in /etc/init.d must be set to at least 022, or daemon 
+            processes may create world-writable files. The more restrictive setting
             027 protects files, including temporary files and log files, from unauthorized reading
             by unprivileged users on the system. <xhtml:br/>
             <xhtml:br/>
@@ -2316,14 +2313,14 @@
             <title>daemon umask</title>
             <description>Enter umask for daemons</description>
             <question xml:lang="en">Enter umask which will be used for new files created by daemons</question>
-            <value>027</value>
+            <value>022</value>
             <value selector="022">022</value>
             <value selector="027">027</value>
             <match>^0?[0-7][0-7][0-7]?$</match>
           </Value>
           <Rule id="rule-2.2.4.1.a" selected="false" weight="10.0" severity="medium">
             <title>Set Daemon umask</title>
-            <description>The daemon umask should be set to [profile value]</description>
+            <description>The daemon umask should be set to profile value</description>
             <reference href="http://www.dtic.mil/whs/directives/corres/pdf/850002p.pdf">ECCD-1 ECCD-2</reference>
             <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">3.13</reference>
             <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN002560</reference>
@@ -2467,7 +2464,7 @@
             <fixtext>(1) via sysctl - kernel.randomize_va_space</fixtext>
             <fix>To ensure ExecShield (including random placement of virtual memory regions) is
               activated at boot, add or correct the following settings in /etc/sysctl.conf:
-              kernel.randomize_va_space = 1</fix>
+              kernel.randomize_va_space = 2</fix>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20058" />
             </check>
@@ -2484,7 +2481,7 @@
             ensure that this protection is enabled, particularly on 32-bit x86 systems. Other
             processors, such as Itanium and POWER, have included such support since inception and
             the standard kernel for those platforms supports the feature.</description>
-	    	  <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">3.11</reference>
+	  <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">3.11</reference>
           <Group id="group-2.2.4.4.1" hidden="false">
             <title xml:lang="en">Check for Processor Support on x86 Systems</title>
             <description xml:lang="en">
@@ -2877,7 +2874,6 @@
             <description xml:lang="en">Enter minimum duration before allowing a password change</description>
             <question xml:lang="en">Select minimum duration (in days) before allowing a password change</question>
             <value>1</value>
-            <value selector="0_days">0</value>
             <value selector="1_day">1</value>
             <value selector="7_days">7</value>
             <match>^[\d]+$</match>
@@ -3474,7 +3470,6 @@
           <Rule id="rule-2.3.3.2.b" selected="false" weight="10.0">
             <title>Do not leak information on authorization failure</title>
             <description>Authorization failures should not alert attackers as to what went wrong.</description>
-            <ident system="http://cce.mitre.org">TBD</ident>
             <fixtext>(1) via /etc/pam.d/system-auth</fixtext>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:200805" /> <!-- TBD -->
@@ -3576,25 +3571,13 @@
           </Rule>
         </Group>
         <Group id="group-2.3.3.5" hidden="false">
-          <title xml:lang="en">Upgrade Password Hashing Algorithm to SHA-512</title>
+          <title xml:lang="en">Password Hashing Algorithm</title>
           <description xml:lang="en">
-            The default algorithm for storing password hashes in 
-            /etc/shadow is MD5. In release 5.2 (and for those systems fully updated since 
-            its release), the algorithms SHA-256 and SHA-512 are available.<xhtml:br/>
-            <xhtml:br/>
+            The default algorithm for storing password hashes should be SHA-512. 
             In order to conﬁgure the system to use the SHA-512 algorithm, issue the command:
             <xhtml:br/><xhtml:br/>
             <xhtml:code># /usr/sbin/authconfig --passalgo=sha512 --update<xhtml:br/></xhtml:code>
             <xhtml:br/>
-            When users changes their passwords, hashes for the new passwords will be 
-            generated using the SHA-512 algorithm.<xhtml:br/>
-            <xhtml:br/>
-            The release notes available at http://www.redhat.com/docs/en-US/Red_Hat_ 
-            Enterprise_Linux/5.2/html/Release_Notes/singles/relnotesU2-x86.html document 
-            this change. As noted there, only kickstart-installed systems can be conﬁgured 
-            to begin operation with this algorithm. Other systems will need to have this 
-            command issued and then all accounts will need to perform a password change in 
-            order to upgrade the stored hashes to the stronger algorithm.
           </description>
           <reference href="http://www.redhat.com/docs/en-US/Red_Hat_Enterprise_Linux/5.2/html/Release_Notes/singles/relnotesU2-x86.html#id2826367">Feature Updates</reference>
           <Value id="var-2.3.3.5.a" type="string" operator="equals">
@@ -3612,13 +3595,12 @@
             </choices>
           </Value>
           <Rule id="rule-2.3.3.5.a" selected="false" weight="10.0" severity="medium">
-            <title>Set Password hashing algorithm</title>
+            <title>Password hashing algorithm</title>
             <description>The password hashing algorithm should be set to SHA-512</description>
-            <ident system="http://cce.mitre.org">TBD</ident>
             <fix>/usr/sbin/authconfig --passalgo=sha512 --update</fix>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-export value-id="var-2.3.3.5.a" export-name="oval:org.fedoraproject.f14:var:20083" />
-              <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20083" /> <!-- TBD -->
+              <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20083" />
             </check>
           </Rule>
         </Group>
@@ -3721,7 +3703,6 @@
             <description>Check each directory in root's path and make use it does not grant write permission to group and other</description>
             <reference href="http://www.dtic.mil/whs/directives/corres/pdf/850002p.pdf">ECCD-1 ECCD-2</reference>
             <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN000960</reference>
-            <ident system="http://cce.mitre.org">TBD</ident>
             <fixtext>Via chmod</fixtext>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:200855" />
@@ -3785,14 +3766,10 @@
           <title xml:lang="en">Ensure that Users Have Sensible Umask Values</title>
           <description xml:lang="en">
             <xhtml:ol>
-              <xhtml:li>Edit the global configuration files /etc/profile,
-                /etc/bashrc, and /etc/csh.cshrc. Add or correct the line: <xhtml:br/>
+              <xhtml:li>Edit the global configuration files /etc/bashrc and /etc/csh.cshrc. 
+              Add or correct the line: <xhtml:br/>
                 <xhtml:br/>
                 umask 077</xhtml:li>
-              <xhtml:li>Edit the user definitions file /etc/login.defs. Add or correct the 
-                line:<xhtml:br/>
-                <xhtml:br/>
-                UMASK 077 </xhtml:li>
               <xhtml:li>View the additional configuration files /etc/csh.login and /etc/profile.d/*, 
                 and ensure that none of these files redefine the umask to a more permissive value 
                 unless there is a good reason for it.</xhtml:li>
@@ -3821,7 +3798,7 @@
             <title>Sensible umask</title>
             <description xml:lang="en">Enter default user umask</description>
             <question xml:lang="en">Enter default user umask</question>
-            <value>027</value>
+            <value>022</value>
             <value selector="007">007</value>
             <value selector="022">022</value>
             <value selector="027">027</value>
@@ -3852,29 +3829,6 @@
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20088" />
             </check>
           </Rule>
-          <Rule id="rule-2.3.4.4.c" selected="false" weight="10.0" severity="medium">
-            <title>Ensure that Users Have Sensible Umask Values in /etc/login.defs</title>
-            <description>The default umask for all users should be set to: <sub idref="var-2.3.4.4"/></description>
-            <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN002560</reference>
-            <ident system="http://cce.mitre.org">TBD</ident>
-            <fixtext>(1) via /etc/login.defs</fixtext>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export value-id="var-2.3.4.4" export-name="oval:org.fedoraproject.f14:var:20087" />
-              <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20089" />
-            </check>
-          </Rule>
-          <Rule id="rule-2.3.4.4.d" selected="false" weight="10.0" severity="medium">
-            <title>Ensure that Users Have Sensible Umask Values in /etc/profile</title>
-            <description>The default umask for all users should be set to: 
-              <sub idref="var-2.3.4.4"/></description>
-            <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN002560</reference>
-            <ident system="http://cce.mitre.org">CCE-3870-3</ident>
-            <fixtext>(1) via /etc/profile</fixtext>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export value-id="var-2.3.4.4" export-name="oval:org.fedoraproject.f14:var:20087" />
-              <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20090" />
-            </check>
-          </Rule>
         </Group>
         <Group id="group-2.3.4.5" hidden="false">
           <title xml:lang="en">Ensure that Users do not Have .netrc Files</title>
@@ -3896,7 +3850,6 @@
             <reference href="http://www.dtic.mil/whs/directives/corres/pdf/850002p.pdf">IAIA-1, IAIA-2</reference>
             <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">3.9</reference>
             <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN002000</reference>
-            <ident system="http://cce.mitre.org">TBD</ident>
             <fix>rm .netrc</fix>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20091" />
@@ -3943,7 +3896,7 @@
             from modifying the boot parameters and endangering security, the boot loader
             configuration should be protected with a password. <xhtml:br/>
             <xhtml:br/>
-            The default RHEL boot loader for x86 systems is called GRUB. To protect its 
+            The default Fedora boot loader for x86 systems is called GRUB. To protect its 
             configuration: <xhtml:br/>
             <xhtml:ol>
               <xhtml:li>Select a password and then generate a hash from it by running: <xhtml:br/>
@@ -3956,37 +3909,37 @@
               <xhtml:li>Verify the permissions on /etc/grub.conf (which is a symlink to ../boot/grub/grub.conf): 
                 <xhtml:br/>
                 <xhtml:br/>
-                <xhtml:code># chown root:root /etc/grub.conf <xhtml:br/>
-                # chmod 600 /etc/grub.conf</xhtml:code></xhtml:li>
+                <xhtml:code># chown root:root /boot/grub/grub.conf <xhtml:br/>
+                # chmod 600 /boot/grub/grub.conf</xhtml:code></xhtml:li>
             </xhtml:ol>
               Boot loaders for other platforms should offer a similar password protection feature.</description>
 	      	<reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">12.4.1</reference>
           <Value id="var-2.3.5.2.a" type="string" operator="equals">
-            <title>User that owns /etc/grub.conf</title>
-            <description xml:lang="en">Choose user that should own /etc/grub.conf</description>
+            <title>User that owns /boot/grub/grub.conf</title>
+            <description xml:lang="en">Choose user that should own /boot/grub/grub.conf</description>
             <value>root</value>
             <value selector="root">root</value>
           </Value>
           <Value id="var-2.3.5.2.b" type="string" operator="equals">
-            <title>Group that owns /etc/grub.conf</title>
-            <description xml:lang="en">Choose group that should own /etc/grub.conf</description>
+            <title>Group that owns /boot/grub/grub.conf</title>
+            <description xml:lang="en">Choose group that should own /boot/grub/grub.conf</description>
             <value>root</value>
             <value selector="root">root</value>
           </Value>
           <Value id="var-2.3.5.2.c" type="string" operator="equals">
-            <title>permissions on /etc/grub.conf</title>
-            <description xml:lang="en">Choose file permissions on /etc/grub.conf</description>
+            <title>permissions on /boot/grub/grub.conf</title>
+            <description xml:lang="en">Choose file permissions on /boot/grub/grub.conf</description>
             <value>110000000</value>
             <value selector="600">110000000</value>
             <match>^[01]+$</match>
           </Value>
           <Rule id="rule-2.3.5.2.a" selected="false" weight="10.0" severity="medium">
             <title>Set Boot Loader user owner</title>
-            <description>The /etc/grub.conf file should be owned by root.</description>
+            <description>The /boot/grub/grub.conf file should be owned by root.</description>
             <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">12.4.1.1</reference>
             <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN008760</reference>
             <ident system="http://cce.mitre.org">CCE-4144-2</ident>
-            <fix>chown root /etc/grub.conf</fix>
+            <fix>chown root /boot/grub/grub.conf</fix>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-export value-id="var-2.3.5.2.a" export-name="oval:org.fedoraproject.f14:var:20092" />
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20092" />
@@ -3994,24 +3947,24 @@
           </Rule>
           <Rule id="rule-2.3.5.2.b" selected="false" weight="10.0" severity="medium">
             <title>Set Boot Loader group owner</title>
-            <description>The /etc/grub.conf file should be owned by group root.</description>
+            <description>The /boot/grub/grub.conf file should be owned by group root.</description>
             <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">12.4.1.1</reference>
             <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN008780</reference>
             <ident system="http://cce.mitre.org">CCE-4197-0</ident>
-            <fix>chown :root /etc/grub.conf</fix>
+            <fix>chown :root /boot/grub/grub.conf</fix>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-export value-id="var-2.3.5.2.b" export-name="oval:org.fedoraproject.f14:var:20093" />
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20093" />
             </check>
           </Rule>
           <Rule id="rule-2.3.5.2.c" selected="false" weight="10.0" severity="medium">
-            <title>Set permission on /etc/grub.conf</title>
-            <description>File permissions for /etc/grub.conf should be set correctly.</description>
+            <title>Set permission on /boot/grub/grub.conf</title>
+            <description>File permissions for /boot/grub/grub.conf should be set correctly.</description>
             <reference href="http://www.dtic.mil/whs/directives/corres/pdf/850002p.pdf">ECLP-1 ECCD-1 ECCD-2</reference>
             <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">12.4.1.1</reference>
             <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI LNX00160</reference>
             <ident system="http://cce.mitre.org">CCE-3923-0</ident>
-            <fix>chmod 600 /etc/grub.conf</fix>
+            <fix>chmod 600 /boot/grub/grub.conf</fix>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-export value-id="var-2.3.5.2.c" export-name="oval:org.fedoraproject.f14:var:20094" />
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20094" />
@@ -4024,7 +3977,7 @@
             <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">12.4.1.1</reference>
             <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI LNX00140</reference>
             <ident system="http://cce.mitre.org">CCE-3818-2</ident>
-            <fixtext>(1) via /etc/grub.conf</fixtext>
+            <fixtext>(1) via /boot/grub/grub.conf</fixtext>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20095" />
             </check>

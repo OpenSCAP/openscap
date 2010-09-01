@@ -624,16 +624,6 @@
                         <criterion comment="check ExecShield randomized placement of virtual memory regions" test_ref="oval:org.fedoraproject.f14:tst:20058"/>
                   </criteria>
             </definition>
-            <definition class="compliance" id="oval:org.fedoraproject.f14:def:20059" version="1">
-                  <metadata>
-                        <title>Install New Kernel on Supported x86 Systems</title>
-                        <reference ref_id="CCE-4172-3" source="CCE"/>
-                        <description>Kernel support for the XD/NX processor feature should be enabled</description>
-                  </metadata>
-                  <criteria>
-                        <criterion comment="Conditions are satisfied" test_ref="oval:org.fedoraproject.f14:tst:20059"/>
-                  </criteria>
-            </definition>
             <definition class="compliance" id="oval:org.fedoraproject.f14:def:20060" version="1">
                   <metadata>
                         <title>Enable XD/NX processor support in the BIOS</title>
@@ -1002,26 +992,6 @@
                   </metadata>
                   <criteria>
                         <criterion test_ref="oval:org.fedoraproject.f14:tst:20088"/>
-                  </criteria>
-            </definition>
-            <definition class="compliance" id="oval:org.fedoraproject.f14:def:20089" version="1">
-                  <metadata>
-                        <title>Ensure that Users Have Sensible Umask Values in /etc/login.defs</title>
-                        <reference ref_id="TBD" source="CCE"/>
-                        <description>The default umask for all users should be set correctly</description>
-                  </metadata>
-                  <criteria>
-                        <criterion test_ref="oval:org.fedoraproject.f14:tst:20089"/>
-                  </criteria>
-            </definition>
-            <definition class="compliance" id="oval:org.fedoraproject.f14:def:20090" version="1">
-                  <metadata>
-                        <title>Ensure that Users Have Sensible Umask Values in /etc/profile</title>
-                        <reference ref_id="CCE-3870-3" source="CCE"/>
-                        <description>The default umask for all users should be set correctly</description>
-                  </metadata>
-                  <criteria>
-                        <criterion test_ref="oval:org.fedoraproject.f14:tst:20090"/>
                   </criteria>
             </definition>
             <definition class="compliance" id="oval:org.fedoraproject.f14:def:20091" version="1">
@@ -4687,7 +4657,7 @@
                   </notes>
                   <unix-def:object object_ref="oval:org.fedoraproject.f14:obj:20052"/>
             </unix-def:file_test>
-            <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:org.fedoraproject.f14:tst:20053" version="1" check="all" comment="Tests the value of the umask[\s]+(.*) expression in the /etc/sysconfig/init file">
+            <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:org.fedoraproject.f14:tst:20053" version="1" check="all" comment="Tests the value of the umask[\s]+(.*) expression in the /etc/rc.d/init.d/functions file">
                   <ind-def:object object_ref="oval:org.fedoraproject.f14:obj:20053"/>
                   <ind-def:state state_ref="oval:org.fedoraproject.f14:ste:20053"/>
             </ind-def:textfilecontent54_test>
@@ -4703,13 +4673,10 @@
                   <ind-def:object object_ref="oval:org.fedoraproject.f14:obj:20057"/>
                   <ind-def:state state_ref="oval:org.fedoraproject.f14:ste:20057"/>
             </ind-def:textfilecontent54_test>
-            <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:org.fedoraproject.f14:tst:20058" version="1" check="all" comment="Tests the value of the ^[\s]*kernel\.randomize_va_space[\s]*=([\s]*) expression in the /etc/sysctl.conf file">
+            <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:org.fedoraproject.f14:tst:20058" version="1" check="all" comment="Tests the value of the /proc/sys/kernel/randomize_va_space">
                   <ind-def:object object_ref="oval:org.fedoraproject.f14:obj:20058"/>
                   <ind-def:state state_ref="oval:org.fedoraproject.f14:ste:20058"/>
             </ind-def:textfilecontent54_test>
-            <lin-def:rpminfo_test check_existence="all_exist" id="oval:org.fedoraproject.f14:tst:20059" version="1" check="all" comment="The kernel-PAE package should be installed or not as appropriate">
-                  <lin-def:object object_ref="oval:org.fedoraproject.f14:obj:20059"/>
-            </lin-def:rpminfo_test>
             <ind-def:unknown_test id="oval:org.fedoraproject.f14:tst:20060" version="1" check="all" comment="BIOS test cannot be automated" />
             <ind-def:textfilecontent54_test check_existence="none_exist" id="oval:org.fedoraproject.f14:tst:20061" version="1" check="all" comment="Tests the value of the &lt;:begin:&gt;tty[0-9]+&lt;:end:&gt; setting in the /etc//securetty file">
                   <ind-def:object object_ref="oval:org.fedoraproject.f14:obj:20061"/>
@@ -4892,14 +4859,6 @@
             </ind-def:textfilecontent54_test>
             <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:org.fedoraproject.f14:tst:20088" version="1" check="all" comment="Tests the value of the ^[\s]*umask[\s]+([^#]*) expression in the /etc/csh.cshrc file">
                   <ind-def:object object_ref="oval:org.fedoraproject.f14:obj:20088"/>
-                  <ind-def:state state_ref="oval:org.fedoraproject.f14:ste:20087"/>
-            </ind-def:textfilecontent54_test>
-            <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:org.fedoraproject.f14:tst:20089" version="1" check="all" comment="Tests the value of the ^[\s]*umask[\s]+([^#]*) expression in the /etc/login.defs file">
-                  <ind-def:object object_ref="oval:org.fedoraproject.f14:obj:20089"/>
-                  <ind-def:state state_ref="oval:org.fedoraproject.f14:ste:20087"/>
-            </ind-def:textfilecontent54_test>
-            <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:org.fedoraproject.f14:tst:20090" version="1" check="all" comment="Tests the value of the ^[\s]*umask[\s]+([^#]*) expression in the /etc/profile file">
-                  <ind-def:object object_ref="oval:org.fedoraproject.f14:obj:20090"/>
                   <ind-def:state state_ref="oval:org.fedoraproject.f14:ste:20087"/>
             </ind-def:textfilecontent54_test>
             <unix-def:file_test check_existence="all_exist" id="oval:org.fedoraproject.f14:tst:20092" version="1" check="all" comment="Testing user ownership">
@@ -6450,8 +6409,8 @@
             </unix-def:file_object>
 
             <ind-def:textfilecontent54_object id="oval:org.fedoraproject.f14:obj:20053" version="1">
-                  <ind-def:path>/etc/init.d</ind-def:path>
-                  <ind-def:filename operation="pattern match">.*</ind-def:filename>
+                  <ind-def:path>/etc/rc.d/init.d</ind-def:path>
+                  <ind-def:filename>functions</ind-def:filename>
                   <ind-def:pattern operation="pattern match">^[[:space:]]*umask[[:space:]]+([[:digit:]]+).*</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
@@ -6468,9 +6427,9 @@
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:org.fedoraproject.f14:obj:20058" version="1">
-                  <ind-def:path>/etc</ind-def:path>
-                  <ind-def:filename>sysctl.conf</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[[:space:]]*kernel\.randomize_va_space[[:space:]]*=[[:space:]]*([[:digit:]]+)</ind-def:pattern>
+                  <ind-def:path>/proc/sys/kernel</ind-def:path>
+                  <ind-def:filename>randomize_va_space</ind-def:filename>
+                  <ind-def:pattern operation="pattern match">^(.*)$</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:org.fedoraproject.f14:obj:20057" version="1">
@@ -6479,9 +6438,6 @@
                   <ind-def:pattern operation="pattern match">^[[:space:]]*kernel\.exec-shield[[:space:]]*=[[:space:]]*([[:digit:]]+)</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
-            <lin-def:rpminfo_object id="oval:org.fedoraproject.f14:obj:20059" version="1">
-                  <lin-def:name>kernel-PAE</lin-def:name>
-            </lin-def:rpminfo_object>
             <ind-def:textfilecontent54_object id="oval:org.fedoraproject.f14:obj:20061" version="1">
                   <ind-def:path>/etc</ind-def:path>
                   <ind-def:filename>securetty</ind-def:filename>
@@ -6718,36 +6674,24 @@
                   <ind-def:path>/etc</ind-def:path>
                   <ind-def:filename>bashrc</ind-def:filename>
                   <ind-def:pattern operation="pattern match">^[[:space:]]*umask[[:space:]]+([^#]*)</ind-def:pattern>
-                  <ind-def:instance datatype="int">1</ind-def:instance>
+                  <ind-def:instance datatype="int">2</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:org.fedoraproject.f14:obj:20088" version="1">
                   <ind-def:path>/etc</ind-def:path>
                   <ind-def:filename>csh.cshrc</ind-def:filename>
                   <ind-def:pattern operation="pattern match">^[[:space:]]*umask[[:space:]]+([^#]*)</ind-def:pattern>
-                  <ind-def:instance datatype="int">1</ind-def:instance>
+                  <ind-def:instance datatype="int">2</ind-def:instance>
             </ind-def:textfilecontent54_object>
-            <ind-def:textfilecontent54_object id="oval:org.fedoraproject.f14:obj:20089" version="1">
-                  <ind-def:path>/etc</ind-def:path>
-                  <ind-def:filename>login.defs</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[[:space:]]*UMASK[[:space:]]+([^#]*)</ind-def:pattern>
-                  <ind-def:instance datatype="int">1</ind-def:instance>
-            </ind-def:textfilecontent54_object>
-            <ind-def:textfilecontent54_object id="oval:org.fedoraproject.f14:obj:20090" version="1">
-                  <ind-def:path>/etc</ind-def:path>
-                  <ind-def:filename>profile</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[[:space:]]*umask[[:space:]]+([^#]*)</ind-def:pattern>
-                  <ind-def:instance datatype="int">1</ind-def:instance>
-            </ind-def:textfilecontent54_object>
-            <unix-def:file_object id="oval:org.fedoraproject.f14:obj:20092" version="1" comment="/etc/grub.conf">
-                  <unix-def:path>/etc</unix-def:path>
+            <unix-def:file_object id="oval:org.fedoraproject.f14:obj:20092" version="1" comment="/boot/grub/grub.conf">
+                  <unix-def:path>/boot/grub/</unix-def:path>
                   <unix-def:filename>grub.conf</unix-def:filename>
             </unix-def:file_object>
-            <unix-def:file_object id="oval:org.fedoraproject.f14:obj:20094" version="1" comment="/etc/grub.conf">
-                  <unix-def:path>/etc</unix-def:path>
+            <unix-def:file_object id="oval:org.fedoraproject.f14:obj:20094" version="1" comment="/boot/grub/grub.conf">
+                  <unix-def:path>/boot/grub/</unix-def:path>
                   <unix-def:filename>grub.conf</unix-def:filename>
             </unix-def:file_object>
             <ind-def:textfilecontent54_object id="oval:org.fedoraproject.f14:obj:20095" version="1">
-                  <ind-def:path>/etc</ind-def:path>
+                  <ind-def:path>/boot/grub/</ind-def:path>
                   <ind-def:filename>grub.conf</ind-def:filename>
                   <ind-def:pattern operation="pattern match">password[[:space:]]+--md5[[:space:]]+.*</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
@@ -8824,7 +8768,7 @@
                   <unix-def:owrite datatype="boolean">0</unix-def:owrite>
             </unix-def:file_state>
             <ind-def:textfilecontent54_state id="oval:org.fedoraproject.f14:ste:20053" version="1">
-                  <ind-def:subexpression var_check="all" operation="greater than or equal" var_ref="oval:org.fedoraproject.f14:var:20053"/>
+                  <ind-def:subexpression var_check="all" operation="equals" var_ref="oval:org.fedoraproject.f14:var:20053"/>
             </ind-def:textfilecontent54_state>
             <ind-def:textfilecontent54_state id="oval:org.fedoraproject.f14:ste:20055" version="1">
                   <ind-def:subexpression operation="equals">0</ind-def:subexpression>
@@ -8833,7 +8777,7 @@
                   <ind-def:subexpression operation="equals">0</ind-def:subexpression>
             </ind-def:textfilecontent54_state>
             <ind-def:textfilecontent54_state id="oval:org.fedoraproject.f14:ste:20058" version="1">
-                  <ind-def:subexpression operation="equals">1</ind-def:subexpression>
+                  <ind-def:subexpression datatype="int" operation="greater than or equal">1</ind-def:subexpression>
             </ind-def:textfilecontent54_state>
             <ind-def:textfilecontent54_state id="oval:org.fedoraproject.f14:ste:20057" version="1">
                   <ind-def:subexpression operation="equals">1</ind-def:subexpression>
