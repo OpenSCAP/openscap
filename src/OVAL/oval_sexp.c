@@ -304,7 +304,7 @@ static SEXP_t *oval_filter_to_sexp(struct oval_filter *filter)
 	act = oval_filter_get_filter_action(filter);
 	ste = oval_filter_get_state(filter);
 	ste_id = oval_state_get_id(ste);
-	attr = probe_attr_creat("action", r0 = SEXP_number_newu(act));
+	attr = probe_attr_creat("action", r0 = SEXP_number_newu(act), NULL);
 	elm = probe_ent_creat1("filter",
 			       attr,
 			       r1 = SEXP_string_newf("%s", ste_id));
