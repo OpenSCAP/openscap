@@ -387,12 +387,6 @@ class OSCAP_Object(object):
         if self.object != "xccdf_policy": raise TypeError("Wrong call of \"set_tailor_items\" function. Should be xccdf_policy (have %s)" %(self.object,))
         if len(items) == 0: return
 
-        if self.profile == None:
-            profile = xccdf.profile()
-            profile.id = "Temporal OSCAP profile"
-            profile.abstract = False
-            self.model.benchmark.profile = profile
-
         # items = [{id, value}]
         for item in items:
             selector = None
@@ -445,13 +439,8 @@ class OSCAP_Object(object):
           xccdf_policy.set_rules(["id-rule-1", "id-group-2"])"""
 
         if self.object != "xccdf_policy": raise TypeError("Wrong call of \"set_rules\" function. Should be xccdf_policy (have %s)" %(self.object,))
-        if self.profile == None:
-            profile = xccdf.profile()
-            profile.id = "Temporal OSCAP profile"
-            profile.abstract = False
-            self.model.benchmark.profile = profile
 
-        for select in self.rules:
+        for select in self.selects:
             if select.item not in rules:
                 select.selected = False
             else:
@@ -462,7 +451,7 @@ class OSCAP_Object(object):
             select = xccdf.select()
             select.selected = True
             select.item = id
-            self.add_rule(select)
+            self.add_select(select)
 
     def init(self, path, paths={}):
         """xccdf.init(path) -- Initialize openscap library

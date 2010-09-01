@@ -283,7 +283,7 @@ int oval_agent_resolve_variables(struct oval_agent_session * session, struct xcc
     return retval;
 }
 
-static int oval_agent_allback(const struct oscap_reporter_message *msg, void *arg)
+static int oval_agent_callback(const struct oscap_reporter_message *msg, void *arg)
 {
 
         /*printf("Evalutated definition %s: %s\n",
@@ -324,7 +324,7 @@ xccdf_test_result_type_t oval_agent_eval_rule(struct xccdf_policy *policy, const
             result = oval_agent_eval_definition(sess, id);
         } else {
             int res = 0;
-            oval_agent_eval_system(sess, oval_agent_allback, (void *) &res);
+            oval_agent_eval_system(sess, oval_agent_callback, (void *) &res);
             if (res == 0) return XCCDF_RESULT_PASS;
             else return XCCDF_RESULT_FAIL;
         }

@@ -229,7 +229,7 @@ struct xccdf_profile * xccdf_policy_get_profile(const struct xccdf_policy *);
  * @memberof xccdf_policy
  * @return xccdf_select_iterator
  */
-struct xccdf_select_iterator * xccdf_policy_get_rules(const struct xccdf_policy *);
+struct xccdf_select_iterator * xccdf_policy_get_selects(const struct xccdf_policy *);
 
 /**
  * Get variable name from value bindings
@@ -319,7 +319,7 @@ bool xccdf_policy_model_add_policy(struct xccdf_policy_model *, struct xccdf_pol
  * @memberof xccdf_policy
  * @return true if rule has been added succesfully
  */
-bool xccdf_policy_add_rule(struct xccdf_policy *, struct xccdf_select *);
+bool xccdf_policy_add_select(struct xccdf_policy *, struct xccdf_select *);
 
 /**
  * Set a new selector to the Policy structure
