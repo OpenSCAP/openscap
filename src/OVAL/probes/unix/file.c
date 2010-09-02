@@ -96,6 +96,7 @@ struct cbargs {
         SEXP_t *filename_ent;
         SEXP_t *items;
 	SEXP_t *filters;
+	int     error;
 };
 
 static rbt_t   *g_ID_cache     = NULL;
@@ -275,16 +276,20 @@ static int file_cb (const char *p, const char *f, void *ptr)
 
                                         NULL);
 
-		if (!probe_item_filtered(item, filters))
-			SEXP_list_add (res, item);
+		SEXP_vfree(r0, r1, r3, r4, r5, r6, r7, r8, NULL);
 
-#if defined(FILE_PROBE_ITEMSTATS)
-                _D("item memory size = %zu bytes\n", SEXP_sizeof (item));
-                _D("list memory size = %zu bytes\n", SEXP_sizeof (res));
-#endif
-                SEXP_vfree (item,
-                            r0, r1, r3, r4,
-                            r5, r6, r7, r8, NULL);
+		if (!probe_item_filtered(item, filters)) {
+			if (probe_result_additem(res, item) != 0) {
+				SEXP_free(item);
+
+				if (errno == ENOMEM)
+					args->error = PROBE_ENOMEM;
+
+				return (-1);
+			}
+			/* the item is freed by the additem function */
+		} else
+			SEXP_free(item);
         }
 
         return (0);
@@ -460,20 +465,25 @@ SEXP_t *probe_main (SEXP_t *probe_in, int *err, void *mutex)
         cbargs.items = items;
         cbargs.filename_ent = filename;
 	cbargs.filters = probe_prepare_filters(probe_in);
+	cbargs.error = 0;
 
         filecnt = find_files (path, filename, behaviors, &file_cb, &cbargs);
         *err    = 0;
 
         if (filecnt < 0) {
                 /* error */
-		SEXP_free (items);
-                r0    = probe_item_creat ("file_item", NULL,
-                                        /* entities */
-                                        "path",     NULL, path,
-                                         NULL);
-                probe_item_setstatus(r0, OVAL_STATUS_ERROR);
-		items = SEXP_list_new (r0, NULL);
-                SEXP_free (r0);
+		if (cbargs.error != PROBE_ENOMEM) {
+			SEXP_free (items);
+			r0    = probe_item_creat ("file_item", NULL,
+						  /* entities */
+						  "path",     NULL, path,
+						  NULL);
+			probe_item_setstatus(r0, OVAL_STATUS_ERROR);
+			items = SEXP_list_new (r0, NULL);
+			SEXP_free (r0);
+		}
+
+		*err = cbargs.error;
         }
 
 	SEXP_vfree(behaviors, path, filename, cbargs.filters, NULL);

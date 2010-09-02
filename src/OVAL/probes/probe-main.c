@@ -1131,7 +1131,9 @@ void *probe_worker(void *arg)
 			probe_ret = -1;
 			probe_out = r0 = probe_main(probe_in, &probe_ret, OSCAP_GSYM(probe_arg));
 			if (r0 != NULL) {
-				probe_out = _probe_cobj_new(SYSCHAR_FLAG_UNKNOWN, r0);
+				probe_out = _probe_cobj_new(probe_ret != PROBE_ENOMEM ?
+							    SYSCHAR_FLAG_UNKNOWN : SYSCHAR_FLAG_INCOMPLETE, r0);
+				probe_ret = 0;
 				SEXP_free(r0);
 			}
 			_A(probe_ret != -1);
@@ -1154,13 +1156,16 @@ void *probe_worker(void *arg)
 				probe_out = probe_main(ctx->pi2, &probe_ret, OSCAP_GSYM(probe_arg));
 				_A(probe_ret != -1);
 
-				if (probe_out == NULL || probe_ret != 0) {
+				if (probe_out == NULL || (probe_ret != 0 && probe_ret != PROBE_ENOMEM)) {
 					SEXP_free(cobj);
 					cobj = NULL;
 					break;
 				}
 
-				r0 = _probe_cobj_new(SYSCHAR_FLAG_UNKNOWN, probe_out);
+				r0 = _probe_cobj_new(probe_ret != PROBE_ENOMEM ?
+						     SYSCHAR_FLAG_UNKNOWN : SYSCHAR_FLAG_INCOMPLETE, probe_out);
+				probe_ret = 0;
+
 				r1 = cobj;
 				cobj = probe_set_combine (r0, r1, OVAL_SET_OPERATION_UNION);
 
