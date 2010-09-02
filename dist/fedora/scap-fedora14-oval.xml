@@ -9581,6 +9581,7 @@
                   <value>suexec</value>
                   <value>userhelper</value>
                   <value>usernetctl</value>
+                  <value>userisdnctl</value>
             </constant_variable>
 
             <constant_variable id="oval:org.fedoraproject.f14:var:2017" version="1" datatype="string" comment="Regexp pattern for xinetd services">

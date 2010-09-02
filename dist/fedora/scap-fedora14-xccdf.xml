@@ -38,7 +38,7 @@
     <select idref="rule-2.1.1.1.4.a" selected="false" />	<!-- DONE -->		<!-- Separate Partition or Logical Volume for /var/log/audit -->
     <select idref="rule-2.1.1.1.5.a" selected="false" />	<!-- DONE -->		<!-- Separate Partition or Logical Volume for /home -->
     <select idref="rule-2.1.2.1.1.a" selected="true" />		<!-- READY+ -->		<!-- Ensure that GPG Key for Fedora is installed -->
-    <select idref="rule-2.1.2.3.2.a" selected="false" />	<!-- DONE  -->		<!-- Disable the yum-updatesd daemon -->
+    <select idref="rule-2.1.2.3.2.a" selected="false" />	<!-- DONE -->		<!-- Disable the yum-updatesd daemon -->
     <select idref="rule-2.1.2.3.2.b" selected="false" />	<!-- DONE -->		<!-- Automatic Update Retrieval should be scheduled with Cron -->
     <select idref="rule-2.1.2.3.3.a" selected="true" />		<!-- READY+ -->		<!-- Ensure gpgcheck is Globally Activated -->
     <select idref="rule-2.1.2.3.4.a" selected="true" />		<!-- READY+ -->		<!-- Ensure Package Signature Checking is Not Disabled For Any Repos -->
@@ -75,14 +75,14 @@
     <select idref="rule-2.2.3.1.i" selected="true" />		<!-- READY+ -->  	<!-- Verify permissions on '/etc/shadow' file -->
     <select idref="rule-2.2.3.1.j" selected="true" />		<!-- READY+ -->  	<!-- Verify permissions on '/etc/group' file -->
     <select idref="rule-2.2.3.1.k" selected="true" />		<!-- READY+ -->		<!-- Verify permissions on '/etc/gshadow' file -->
-    <select idref="rule-2.2.3.1.l" selected="true" />		<!-- READY+ --> 	 	<!-- Verify permissions on '/etc/passwd' file -->
-    <select idref="rule-2.2.3.2.a" selected="true" />		<!-- DONE+ -->		<!-- Verify that All World-Writable Directories Have Sticky Bits Set -->
-    <select idref="rule-2.2.3.3.a" selected="true" />    	<!-- DONE+ -->		<!-- Find Unauthorized World-Writable Files -->
-    <select idref="rule-2.2.3.4.a" selected="true" />		<!-- DONE+ -->		<!-- Find Unauthorized SGID System Executables -->
-    <select idref="rule-2.2.3.4.b" selected="true" />   	<!-- DONE+ --> 		<!-- Find Unauthorized SUID System Executables -->
-    <select idref="rule-2.2.3.5.a" selected="true" />    	<!-- DONE+ -->		<!-- Find files unowned by a user -->
-    <select idref="rule-2.2.3.5.b" selected="true" />		<!-- DONE+ -->		<!-- Find files unowned by a group -->
-    <select idref="rule-2.2.3.6.a" selected="true" />		<!-- DONE+ -->		<!-- Find world writable directories not owned by a system account--> 
+    <select idref="rule-2.2.3.1.l" selected="true" />		<!-- READY+ --> 	<!-- Verify permissions on '/etc/passwd' file -->
+    <select idref="rule-2.2.3.2.a" selected="true" />		<!-- READY+ -->		<!-- Verify that All World-Writable Directories Have Sticky Bits Set -->
+    <select idref="rule-2.2.3.3.a" selected="true" />    	<!-- READY+ -->		<!-- Find Unauthorized World-Writable Files -->
+    <select idref="rule-2.2.3.4.a" selected="true" />		<!-- READY+ -->		<!-- Find Unauthorized SGID System Executables -->
+    <select idref="rule-2.2.3.4.b" selected="true" />   	<!-- READY+ --> 	<!-- Find Unauthorized SUID System Executables -->
+    <select idref="rule-2.2.3.5.a" selected="true" />    	<!-- READY+ -->		<!-- Find files unowned by a user -->
+    <select idref="rule-2.2.3.5.b" selected="true" />		<!-- READY+ -->		<!-- Find files unowned by a group -->
+    <select idref="rule-2.2.3.6.a" selected="true" />		<!-- READY+ -->		<!-- Find world writable directories not owned by a system account--> 
 
     <select idref="rule-2.2.4.1.a" selected="true" />		<!-- READY+ -->	        <!-- Set Daemon umask -->
     <select idref="rule-2.2.4.2.a" selected="false" />		<!-- DONE -->		<!-- Disable Core Dumps for all users -->
@@ -122,7 +122,7 @@
     <select idref="rule-2.3.4.4.a" selected="true" />		<!-- READY+ -->		<!-- Ensure that Users Have Sensible Umask Values in /etc/bashrc -->
     <select idref="rule-2.3.4.4.b" selected="true" />		<!-- READY+ -->		<!-- Ensure that Users Have Sensible Umask Values in /etc/cshrc -->
 
-    <select idref="rule-2.3.4.5.a" selected="false" />		<!-- DONE (Unknown) -->	<!-- Check for existance of .netrc file -->
+    <select idref="rule-2.3.4.5.a" selected="false" />		<!-- DONE (unknown) -->	<!-- Check for existance of .netrc file -->
     <select idref="rule-2.3.5.2.a" selected="true" />		<!-- READY+ -->		<!-- Set Boot Loader user owner -->
     <select idref="rule-2.3.5.2.b" selected="true" />		<!-- READY+ -->		<!-- Set Boot Loader group owner -->
     <select idref="rule-2.3.5.2.c" selected="true" />		<!-- READY+ -->		<!-- Set permission on /etc/grub.conf -->
@@ -138,10 +138,10 @@
     <select idref="rule-2.3.5.6.2.a" selected="false" />	<!-- DONE -->		<!-- Configure console screen locking -->
     <select idref="rule-2.3.7.1.a"   selected="false" />	<!-- DONE -->		<!-- Modify the System Login Banner -->
     <select idref="rule-2.3.7.2.a"   selected="false" />	<!-- BUG  -->		<!-- Implement a GUI Warning Banner -->
-    <select idref="rule-2.4.2.a"     selected="true" />		<!-- DONE+ -->		<!-- Enable SELinux in /etc/grub.conf -->
+    <select idref="rule-2.4.2.a"     selected="true" />		<!-- READY+ -->		<!-- Enable SELinux in /etc/grub.conf -->
     <select idref="rule-2.4.2.b"     selected="false" />	<!-- DONE --> 		<!-- Enable SELinux enforcement in /etc/grub.conf -->
-    <select idref="rule-2.4.2.c"     selected="true" />		<!-- DONE+ -->		<!-- Set the SELinux state -->
-    <select idref="rule-2.4.2.d"     selected="true" />		<!-- DONE+ -->		<!-- Set the SELinux policy -->
+    <select idref="rule-2.4.2.c"     selected="true" />		<!-- READY+ -->		<!-- Set the SELinux state -->
+    <select idref="rule-2.4.2.d"     selected="true" />		<!-- READY+ -->		<!-- Set the SELinux policy -->
     <select idref="rule-2.4.2.1.a"   selected="false" />	<!-- DONE (unknown) --> <!-- Ensure SELinux is Properly Enabled -->
     <select idref="rule-2.4.3.2.a"   selected="false" />	<!-- DONE -->		<!-- Disable MCS Translation Service (mcstrans) if Possible -->
     <select idref="rule-2.4.3.3.a"   selected="false" />	<!-- DONE -->		<!-- Restorecon Service (restorecond) -->
@@ -149,18 +149,18 @@
     <select idref="rule-2.5.1.1.a"   selected="false" />	<!-- DONE -->		<!-- Disable net.ipv4.conf.default.send_redirects for Hosts Only -->
     <select idref="rule-2.5.1.1.b" selected="false" />		<!-- DONE -->		<!-- Disable net.ipv4.conf.all.send_redirects for Hosts Only -->
     <select idref="rule-2.5.1.1.c" selected="false" />		<!-- DONE -->		<!-- Disable net.ipv4.ip forward for Hosts Only -->
-    <select idref="rule-2.5.1.2.a" selected="true" />		<!-- DONE -->		<!-- Set net.ipv4.conf.all.accept_source_route for Hosts and Routers -->
-    <select idref="rule-2.5.1.2.b" selected="true" />		<!-- DONE -->		<!-- Set net.ipv4.conf.all.accept_redirects for Hosts and Routers -->
-    <select idref="rule-2.5.1.2.c" selected="true" />		<!-- DONE -->		<!-- Set net.ipv4.conf.all.secure_redirects for Hosts and Routers -->
+    <select idref="rule-2.5.1.2.a" selected="false" />		<!-- DONE -->		<!-- Set net.ipv4.conf.all.accept_source_route for Hosts and Routers -->
+    <select idref="rule-2.5.1.2.b" selected="false" />		<!-- DONE -->		<!-- Set net.ipv4.conf.all.accept_redirects for Hosts and Routers -->
+    <select idref="rule-2.5.1.2.c" selected="false" />		<!-- DONE -->		<!-- Set net.ipv4.conf.all.secure_redirects for Hosts and Routers -->
     <select idref="rule-2.5.1.2.d" selected="false" />		<!-- DONE -->		<!-- Set net.ipv4.conf.all.log_martians for Hosts and Routers -->
-    <select idref="rule-2.5.1.2.e" selected="true" />		<!-- DONE -->		<!-- Set net.ipv4.conf.default.accept_source_route for Hosts and Routers -->
+    <select idref="rule-2.5.1.2.e" selected="false" />		<!-- DONE -->		<!-- Set net.ipv4.conf.default.accept_source_route for Hosts and Routers -->
     <select idref="rule-2.5.1.2.f" selected="false" />		<!-- DONE -->		<!-- Set net.ipv4.conf.default.accept_redirects for Hosts and Routers -->
-    <select idref="rule-2.5.1.2.g" selected="true" />		<!-- DONE -->		<!-- Set net.ipv4.conf.default.secure_redirects for Hosts and Routers -->
-    <select idref="rule-2.5.1.2.h" selected="true" />		<!-- DONE -->		<!-- Set net.ipv4.icmp_echo_ignore_broadcasts for Hosts and Routers -->
-    <select idref="rule-2.5.1.2.i" selected="true" />		<!-- DONE -->		<!-- Set net.ipv4.icmp_ignore_bogus_error_messages for Hosts and Routers -->
-    <select idref="rule-2.5.1.2.j" selected="true" />		<!-- DONE -->		<!-- Set net.ipv4.tcp_syncookies for Hosts and Routers -->
-    <select idref="rule-2.5.1.2.k" selected="true" />		<!-- DONE -->		<!-- Set net.ipv4.conf.all.rp_filter for Hosts and Routers -->
-    <select idref="rule-2.5.1.2.l" selected="true" />		<!-- DONE -->		<!-- Set net.ipv4.conf.default.rp_filter for Hosts and Routers -->
+    <select idref="rule-2.5.1.2.g" selected="false" />		<!-- DONE -->		<!-- Set net.ipv4.conf.default.secure_redirects for Hosts and Routers -->
+    <select idref="rule-2.5.1.2.h" selected="false" />		<!-- DONE -->		<!-- Set net.ipv4.icmp_echo_ignore_broadcasts for Hosts and Routers -->
+    <select idref="rule-2.5.1.2.i" selected="false" />		<!-- DONE -->		<!-- Set net.ipv4.icmp_ignore_bogus_error_messages for Hosts and Routers -->
+    <select idref="rule-2.5.1.2.j" selected="false" />		<!-- DONE -->		<!-- Set net.ipv4.tcp_syncookies for Hosts and Routers -->
+    <select idref="rule-2.5.1.2.k" selected="false" />		<!-- DONE -->		<!-- Set net.ipv4.conf.all.rp_filter for Hosts and Routers -->
+    <select idref="rule-2.5.1.2.l" selected="false" />		<!-- DONE -->		<!-- Set net.ipv4.conf.default.rp_filter for Hosts and Routers -->
     <select idref="rule-2.5.2.2.1.a" selected="false" />	<!-- ERASE -->		<!-- Disable Wireless in BIOS -->
     <select idref="rule-2.5.2.2.2.a" selected="false" />	<!-- ERASE -->		<!-- Deactivate Wireless Interfaces -->
     <select idref="rule-2.5.2.2.3.a" selected="false" />	<!-- ERASE -->		<!-- Disable Wireless Drivers -->
@@ -1998,9 +1998,14 @@
             <ident system="http://cce.mitre.org">CCE-3399-3</ident>
             <fixtext>Locate any directories in local partitions which are world-writable and do not have
               their sticky bits set. The following command will discover and print these. Run it
-              once for each local partition PART: <xhtml:code># find PART -xdev -type d \( -perm -0002 -a !
-              -perm -1000 \) -print </xhtml:code>If this command produces any output, fix each reported directory
-              /dir using the command: <xhtml:code># chmod +t /dir</xhtml:code></fixtext>
+              once for each local partition PART: <xhtml:br/>
+              <xhtml:br/> <xhtml:code># find PART -xdev -type d \( -perm -0002 -a !
+              -perm -1000 \) -print </xhtml:code><xhtml:br/>
+              <xhtml:br/>
+	      If this command produces any output, fix each reported directory
+              /dir using the command: <xhtml:br/> 
+              <xhtml:br/>
+              <xhtml:code># chmod +t /dir</xhtml:code></fixtext>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20046" />
             </check>
@@ -2040,12 +2045,14 @@
             The following command discovers and prints any setuid or setgid
             files on local partitions. Run it once for each local partition : <xhtml:br/>
             <xhtml:br/>
-            for PART in `mount -t ext2,ext3 | awk '{print $3}'`; do find $PART  -xdev \( -perm -4000 -o -perm -2000 \) -type f -print; done
+            <xhtml:code> # for PART in `mount -t ext2,ext3,ext4 | awk '{print $3}'`; 
+            do find $PART  -xdev \( -perm -4000 -o -perm -2000 \) -type f -print; 
+            done </xhtml:code> <xhtml:br/>
             <xhtml:br/>
             If the file does not require a setuid or
             setgid bit as discussed below, then these bits can be removed with the command: <xhtml:br/>
             <xhtml:br/>
-            chmod -s file <xhtml:br/>
+            <xhtml:code> # chmod -s file </xhtml:code> <xhtml:br/> 
             <xhtml:br/>
             The following table contains all setuid and setgid files which are expected to
             be on a stock system. The setuid or setgid bit on these files may be disabled to reduce
@@ -2064,143 +2071,191 @@
             <xhtml:br/>
             <xhtml:table>
               <xhtml:tr>
-                <xhtml:td>File</xhtml:td><xhtml:td>Set-ID</xhtml:td><xhtml:td>Subsystem/Ref</xhtml:td><xhtml:td>Disable?</xhtml:td>
+                <xhtml:td>File</xhtml:td><xhtml:td>Set-ID</xhtml:td><xhtml:td>Package</xhtml:td>
               </xhtml:tr>
               <xhtml:tr>
-                <xhtml:td>/bin/mount</xhtml:td><xhtml:td>uid root</xhtml:td><xhtml:td>filesystems</xhtml:td><xhtml:td>no</xhtml:td>
+                <xhtml:td>/bin/mount</xhtml:td><xhtml:td>uid root</xhtml:td><xhtml:td>util-linux-ng</xhtml:td>
               </xhtml:tr>
               <xhtml:tr>
-                <xhtml:td>/bin/ping</xhtml:td><xhtml:td>uid root</xhtml:td><xhtml:td>net (3.3.9)</xhtml:td><xhtml:td>no</xhtml:td>
+                <xhtml:td>/bin/ping</xhtml:td><xhtml:td>uid root</xhtml:td><xhtml:td>iputils</xhtml:td>
               </xhtml:tr>
               <xhtml:tr>
-                <xhtml:td>/bin/ping6</xhtml:td><xhtml:td>uid root</xhtml:td><xhtml:td>net (3.3.9),IPv6 (2.5.3)</xhtml:td><xhtml:td>unless IPv6 is used</xhtml:td>
+                <xhtml:td>/bin/ping6</xhtml:td><xhtml:td>uid root</xhtml:td><xhtml:td>iputils</xhtml:td>
               </xhtml:tr>
               <xhtml:tr>
-                <xhtml:td>/bin/su</xhtml:td><xhtml:td>uid root</xhtml:td><xhtml:td>filesystems</xhtml:td><xhtml:td>no</xhtml:td>
+                <xhtml:td>/bin/su</xhtml:td><xhtml:td>uid root</xhtml:td><xhtml:td>coreutils</xhtml:td>
               </xhtml:tr>
               <xhtml:tr>
-                <xhtml:td>/bin/umount</xhtml:td><xhtml:td>uid root</xhtml:td><xhtml:td>filesystems</xhtml:td><xhtml:td>no</xhtml:td>
+                <xhtml:td>/bin/umount</xhtml:td><xhtml:td>uid root</xhtml:td><xhtml:td>util-linux-ng</xhtml:td>
               </xhtml:tr>
               <xhtml:tr>
-                <xhtml:td>/bin/mount.nfs</xhtml:td><xhtml:td>uid root</xhtml:td><xhtml:td>NFS (3.13)</xhtml:td><xhtml:td>unless NFS is used</xhtml:td>
+                <xhtml:td>/bin/fusermount</xhtml:td><xhtml:td>uid root</xhtml:td><xhtml:td>fuse</xhtml:td>
               </xhtml:tr>
               <xhtml:tr>
-                <xhtml:td>/bin/mount.nfs4</xhtml:td><xhtml:td>uid root</xhtml:td><xhtml:td>NFS (3.13)</xhtml:td><xhtml:td>unless NFSv4 is used</xhtml:td>
+                <xhtml:td>/bin/cgexec</xhtml:td><xhtml:td>uid root</xhtml:td><xhtml:td>libcgroup</xhtml:td>
               </xhtml:tr>
               <xhtml:tr>
-                <xhtml:td>/sbin/netreport</xhtml:td><xhtml:td>uid root</xhtml:td><xhtml:td>net (3.3.9)</xhtml:td><xhtml:td>unless users must modify interfaces </xhtml:td>
+                <xhtml:td>/sbin/mount.nfs</xhtml:td><xhtml:td>uid root</xhtml:td><xhtml:td>nfs-utils</xhtml:td>
               </xhtml:tr>
               <xhtml:tr>
-                <xhtml:td>/sbin/pam_timestamp_check</xhtml:td><xhtml:td>uid root</xhtml:td><xhtml:td>PAM auth (2.3.3)</xhtml:td><xhtml:td>no</xhtml:td>
+                <xhtml:td>/sbin/umount.nfs</xhtml:td><xhtml:td>uid root</xhtml:td><xhtml:td>nfs-utils</xhtml:td>
               </xhtml:tr>
               <xhtml:tr>
-                <xhtml:td>/sbin/umount.nfs</xhtml:td><xhtml:td>uid root</xhtml:td><xhtml:td>NFS (3.13)</xhtml:td><xhtml:td>unless NFS is used</xhtml:td>
+                <xhtml:td>/sbin/netreport</xhtml:td><xhtml:td>uid root</xhtml:td><xhtml:td>initscripts</xhtml:td>
               </xhtml:tr>
               <xhtml:tr>
-                <xhtml:td>/sbin/mount.nfs4</xhtml:td><xhtml:td>uid root</xhtml:td><xhtml:td>NFS (3.13)</xhtml:td><xhtml:td>unless NFSv4 is used</xhtml:td>
+                <xhtml:td>/sbin/pam_timestamp_check</xhtml:td><xhtml:td>uid root</xhtml:td><xhtml:td>pam</xhtml:td>
               </xhtml:tr>
               <xhtml:tr>
-                <xhtml:td>/sbin/unix_chkpwd</xhtml:td><xhtml:td>uid root</xhtml:td><xhtml:td>PAM auth (2.3.3)</xhtml:td><xhtml:td>no</xhtml:td>
+                <xhtml:td>/sbin/unix_chkpwd</xhtml:td><xhtml:td>uid root</xhtml:td><xhtml:td>pam</xhtml:td>
               </xhtml:tr>
               <xhtml:tr>
-                <xhtml:td>/usr/bin/at</xhtml:td><xhtml:td>uid root</xhtml:td><xhtml:td>cron/at (3.4)</xhtml:td><xhtml:td>no</xhtml:td>
+                <xhtml:td>/usr/bin/at</xhtml:td><xhtml:td>uid root</xhtml:td><xhtml:td>at</xhtml:td>
               </xhtml:tr>
               <xhtml:tr>
-                <xhtml:td>/usr/bin/chage</xhtml:td><xhtml:td>uid root</xhtml:td><xhtml:td>passwd expiry (2.3.1.7)</xhtml:td><xhtml:td>unless users must view expiry info</xhtml:td>
+                <xhtml:td>/usr/bin/chage</xhtml:td><xhtml:td>uid root</xhtml:td><xhtml:td>shadow-utils</xhtml:td>
               </xhtml:tr>
               <xhtml:tr>
-                <xhtml:td>/usr/bin/chfn</xhtml:td><xhtml:td>uid root</xhtml:td><xhtml:td>user info</xhtml:td><xhtml:td>unless users must change finger info</xhtml:td>
+                <xhtml:td>/usr/bin/chfn</xhtml:td><xhtml:td>uid root</xhtml:td><xhtml:td>util-linux-ng</xhtml:td>
               </xhtml:tr>
               <xhtml:tr>
-                <xhtml:td>/usr/bin/chsh</xhtml:td><xhtml:td>uid root</xhtml:td><xhtml:td>user info</xhtml:td><xhtml:td>unless users must change shells</xhtml:td>
+                <xhtml:td>/usr/bin/chsh</xhtml:td><xhtml:td>uid root</xhtml:td><xhtml:td>util-linux-ng</xhtml:td>
               </xhtml:tr>
               <xhtml:tr>
-                <xhtml:td>/usr/bin/crontab</xhtml:td><xhtml:td>uid/gid root</xhtml:td><xhtml:td>cron/at (3.4)</xhtml:td><xhtml:td>unless users use cron</xhtml:td>
+                <xhtml:td>/usr/bin/crontab</xhtml:td><xhtml:td>uid/gid root</xhtml:td><xhtml:td>cronie</xhtml:td>
               </xhtml:tr>
               <xhtml:tr>
-                <xhtml:td>/usr/bin/gpasswd</xhtml:td><xhtml:td>uid root</xhtml:td><xhtml:td>group auth</xhtml:td><xhtml:td>no</xhtml:td>
+                <xhtml:td>/usr/bin/gpasswd</xhtml:td><xhtml:td>uid root</xhtml:td><xhtml:td>shadow-utils</xhtml:td>
               </xhtml:tr>
               <xhtml:tr>
-                <xhtml:td>/usr/bin/locate</xhtml:td><xhtml:td>gid slocate</xhtml:td><xhtml:td>locate</xhtml:td><xhtml:td>no</xhtml:td>
+                <xhtml:td>/usr/bin/locate</xhtml:td><xhtml:td>gid slocate</xhtml:td><xhtml:td>mlocate</xhtml:td>
               </xhtml:tr>
               <xhtml:tr>
-                <xhtml:td>/usr/bin/lockfile</xhtml:td><xhtml:td>gid mail</xhtml:td><xhtml:td>procmail</xhtml:td><xhtml:td>unless procmail is used</xhtml:td>
+                <xhtml:td>/usr/bin/lockfile</xhtml:td><xhtml:td>gid mail</xhtml:td><xhtml:td>procmail</xhtml:td>
               </xhtml:tr>
               <xhtml:tr>
-                <xhtml:td>/usr/bin/newgrp</xhtml:td><xhtml:td>uid root</xhtml:td><xhtml:td>group auth</xhtml:td><xhtml:td>no</xhtml:td>
+                <xhtml:td>/usr/bin/gnomine</xhtml:td><xhtml:td>gid games</xhtml:td><xhtml:td>gnome-games</xhtml:td>
               </xhtml:tr>
               <xhtml:tr>
-                <xhtml:td>/usr/bin/passwd</xhtml:td><xhtml:td>uid root</xhtml:td><xhtml:td>passwd auth</xhtml:td><xhtml:td>no</xhtml:td>
+                <xhtml:td>/usr/bin/iagno</xhtml:td><xhtml:td>gid games</xhtml:td><xhtml:td>gnome-games</xhtml:td>
               </xhtml:tr>
               <xhtml:tr>
-                <xhtml:td>/usr/bin/rcp</xhtml:td><xhtml:td>uid root</xhtml:td><xhtml:td>rsh (3.2.3)</xhtml:td><xhtml:td>yes (rsh is obsolete)</xhtml:td>
+                <xhtml:td>/usr/bin/newgrp</xhtml:td><xhtml:td>uid root</xhtml:td><xhtml:td>shadow-utils</xhtml:td>
               </xhtml:tr>
               <xhtml:tr>
-                <xhtml:td>/usr/bin/rlogin</xhtml:td><xhtml:td>uid root</xhtml:td><xhtml:td>rsh (3.2.3)</xhtml:td><xhtml:td>yes (rsh is obsolete)</xhtml:td>
+                <xhtml:td>/usr/bin/passwd</xhtml:td><xhtml:td>uid root</xhtml:td><xhtml:td>passwd</xhtml:td>
               </xhtml:tr>
               <xhtml:tr>
-                <xhtml:td>/usr/bin/rsh</xhtml:td><xhtml:td>uid root</xhtml:td><xhtml:td>rsh (3.2.3)</xhtml:td><xhtml:td>yes (rsh is obsolete)</xhtml:td>
+                <xhtml:td>/usr/bin/pkexec</xhtml:td><xhtml:td>uid root</xhtml:td><xhtml:td>polkit</xhtml:td>
               </xhtml:tr>
               <xhtml:tr>
-                <xhtml:td>/usr/bin/ssh-agent</xhtml:td><xhtml:td>gid nobody</xhtml:td><xhtml:td>SSH (3.5)</xhtml:td><xhtml:td>no</xhtml:td>
+                <xhtml:td>/usr/bin/rcp</xhtml:td><xhtml:td>uid root</xhtml:td><xhtml:td>rsh</xhtml:td>
               </xhtml:tr>
               <xhtml:tr>
-                <xhtml:td>/usr/bin/sudo</xhtml:td><xhtml:td>uid root</xhtml:td><xhtml:td>sudo (2.3.1.3)</xhtml:td><xhtml:td>no</xhtml:td>
+                <xhtml:td>/usr/bin/rlogin</xhtml:td><xhtml:td>uid root</xhtml:td><xhtml:td>rsh</xhtml:td>
               </xhtml:tr>
               <xhtml:tr>
-                <xhtml:td>/usr/bin/sudoedit</xhtml:td><xhtml:td>uid root</xhtml:td><xhtml:td>sudo (2.3.1.3)</xhtml:td><xhtml:td>no</xhtml:td>
+                <xhtml:td>/usr/bin/rsh</xhtml:td><xhtml:td>uid root</xhtml:td><xhtml:td>rsh</xhtml:td>
               </xhtml:tr>
               <xhtml:tr>
-                <xhtml:td>/usr/bin/wall</xhtml:td><xhtml:td>gid tty</xhtml:td><xhtml:td>console messaging</xhtml:td><xhtml:td>unless console messaging is used</xhtml:td>
+                <xhtml:td>/usr/bin/staprun</xhtml:td><xhtml:td>uid root</xhtml:td><xhtml:td>systemtap-runtime</xhtml:td>
               </xhtml:tr>
               <xhtml:tr>
-                <xhtml:td>/usr/bin/write</xhtml:td><xhtml:td>gid tty</xhtml:td><xhtml:td>console messaging</xhtml:td><xhtml:td>unless console messaging is used</xhtml:td>
+                <xhtml:td>/usr/bin/ssh-agent</xhtml:td><xhtml:td>gid nobody</xhtml:td><xhtml:td>openssh-clients</xhtml:td>
               </xhtml:tr>
               <xhtml:tr>
-                <xhtml:td>/usr/bin/Xorg</xhtml:td><xhtml:td>uid root</xhtml:td><xhtml:td>X11 (3.6)</xhtml:td><xhtml:td>unless X11 is used</xhtml:td>
+                <xhtml:td>/usr/bin/sudo</xhtml:td><xhtml:td>uid root</xhtml:td><xhtml:td>sudo</xhtml:td>
               </xhtml:tr>
               <xhtml:tr>
-                <xhtml:td>/usr/kerberos/bin/ksu</xhtml:td><xhtml:td>uid root</xhtml:td><xhtml:td>Kerberos auth (2.3.6)</xhtml:td><xhtml:td>unless Kerberos is used</xhtml:td>
+                <xhtml:td>/usr/bin/sudoedit</xhtml:td><xhtml:td>uid root</xhtml:td><xhtml:td>sudo</xhtml:td>
               </xhtml:tr>
               <xhtml:tr>
-                <xhtml:td>/usr/libexec/openssh/ssh-keysign</xhtml:td><xhtml:td>uid root</xhtml:td><xhtml:td>SSH (3.5)</xhtml:td><xhtml:td>unless sshd uses hostbased auth</xhtml:td>
+                <xhtml:td>/usr/bin/wall</xhtml:td><xhtml:td>gid tty</xhtml:td><xhtml:td>sysvinit-tools</xhtml:td>
               </xhtml:tr>
               <xhtml:tr>
-                <xhtml:td>/usr/libexec/utempter/utempter</xhtml:td><xhtml:td>gid utmp</xhtml:td><xhtml:td>terminal support</xhtml:td><xhtml:td>no</xhtml:td>
+                <xhtml:td>/usr/bin/write</xhtml:td><xhtml:td>gid tty</xhtml:td><xhtml:td>util-linux-ng</xhtml:td>
               </xhtml:tr>
               <xhtml:tr>
-                <xhtml:td>/usr/lib/squid/pam_auth</xhtml:td><xhtml:td>uid root</xhtml:td><xhtml:td>squid (3.19)</xhtml:td><xhtml:td>unless squid is used</xhtml:td>
+                <xhtml:td>/usr/bin/screen</xhtml:td><xhtml:td>gid screen</xhtml:td><xhtml:td>screen</xhtml:td>
               </xhtml:tr>
               <xhtml:tr>
-                <xhtml:td>/usr/lib/squid/ncsa_auth</xhtml:td><xhtml:td>uid root</xhtml:td><xhtml:td>squid (3.19)</xhtml:td><xhtml:td>unless squid is used</xhtml:td>
+                <xhtml:td>/usr/bin/jwhois</xhtml:td><xhtml:td>gid jwhois</xhtml:td><xhtml:td>jwhois</xhtml:td>
               </xhtml:tr>
               <xhtml:tr>
-                <xhtml:td>/usr/lib/vte/gnome-pty-helper</xhtml:td><xhtml:td>gid utmp</xhtml:td><xhtml:td>X11, Gnome (3.6)</xhtml:td><xhtml:td>unless X11 is used</xhtml:td>
+                <xhtml:td>/usr/bin/Xorg</xhtml:td><xhtml:td>uid root</xhtml:td><xhtml:td>xorg-x11-server-Xorg</xhtml:td>
               </xhtml:tr>
               <xhtml:tr>
-                <xhtml:td>/usr/sbin/ccreds_validate</xhtml:td><xhtml:td>uid root</xhtml:td><xhtml:td>PAM auth (2.3.3)</xhtml:td><xhtml:td>unless PAM auth caching is used</xhtml:td>
+                <xhtml:td>/usr/bin/ksu</xhtml:td><xhtml:td>uid root</xhtml:td><xhtml:td>krb5-workstation</xhtml:td>
               </xhtml:tr>
               <xhtml:tr>
-                <xhtml:td>/usr/sbin/lockdev</xhtml:td><xhtml:td>gid lock</xhtml:td><xhtml:td>filesystems</xhtml:td><xhtml:td>no</xhtml:td>
+                <xhtml:td>/usr/sbin/lockdev</xhtml:td><xhtml:td>gid lock</xhtml:td><xhtml:td>lockdev</xhtml:td>
               </xhtml:tr>
               <xhtml:tr>
-                <xhtml:td>/usr/sbin/sendmail.sendmail</xhtml:td><xhtml:td>gid smmsp</xhtml:td><xhtml:td>sendmail client (3.11.2)</xhtml:td><xhtml:td>no</xhtml:td>
+                <xhtml:td>/usr/sbin/sendmail.sendmail</xhtml:td><xhtml:td>gid smmsp</xhtml:td><xhtml:td>sendmail</xhtml:td>
               </xhtml:tr>
               <xhtml:tr>
-                <xhtml:td>/usr/sbin/suexec</xhtml:td><xhtml:td>uid root</xhtml:td><xhtml:td>apache (3.16)</xhtml:td><xhtml:td>unless apache is used</xhtml:td>
+                <xhtml:td>/usr/sbin/suexec</xhtml:td><xhtml:td>uid root</xhtml:td><xhtml:td>httpd</xhtml:td>
               </xhtml:tr>
               <xhtml:tr>
-                <xhtml:td>/usr/sbin/userhelper</xhtml:td><xhtml:td>uid root</xhtml:td><xhtml:td>PAM auth (2.3.3.4)</xhtml:td><xhtml:td>restrict (see section)</xhtml:td>
+                <xhtml:td>/usr/sbin/seunshare</xhtml:td><xhtml:td>uid root</xhtml:td><xhtml:td>policycoreutils</xhtml:td>
               </xhtml:tr>
               <xhtml:tr>
-                <xhtml:td>/usr/sbin/userisdnctl</xhtml:td><xhtml:td>uid root</xhtml:td><xhtml:td>ISDN</xhtml:td><xhtml:td>unless ISDN is used</xhtml:td>
+                <xhtml:td>/usr/sbin/userhelper</xhtml:td><xhtml:td>uid root</xhtml:td><xhtml:td>usermode</xhtml:td>
               </xhtml:tr>
               <xhtml:tr>
-                <xhtml:td>/usr/sbin/usernetctl</xhtml:td><xhtml:td>uid root</xhtml:td><xhtml:td>user network control</xhtml:td><xhtml:td>unless users must modify interfaces</xhtml:td>
+                <xhtml:td>/usr/sbin/userisdnctl</xhtml:td><xhtml:td>uid root</xhtml:td><xhtml:td>isdn4k-utils</xhtml:td>
+              </xhtml:tr>
+              <xhtml:tr>
+                <xhtml:td>/usr/sbin/mtr</xhtml:td><xhtml:td>uid root</xhtml:td><xhtml:td>mtr</xhtml:td>
+              </xhtml:tr>
+              <xhtml:tr>
+                <xhtml:td>/usr/sbin/usernetctl</xhtml:td><xhtml:td>uid root</xhtml:td><xhtml:td>initscripts</xhtml:td>
+              </xhtml:tr>
+              <xhtml:tr>
+                <xhtml:td>/usr/sbin/ccreds_chkpwd</xhtml:td><xhtml:td>uid root</xhtml:td><xhtml:td>pam_ccreds</xhtml:td>
+              </xhtml:tr>
+              <xhtml:tr>
+                <xhtml:td>/usr/libexec/openssh/ssh-keysign</xhtml:td><xhtml:td>uid root</xhtml:td><xhtml:td>ssh</xhtml:td>
+              </xhtml:tr>
+              <xhtml:tr>
+                <xhtml:td>/usr/libexec/kde4/kpac_dhcp_helper</xhtml:td><xhtml:td>uid root</xhtml:td><xhtml:td>kdelibs</xhtml:td>
+              </xhtml:tr>
+              <xhtml:tr>
+                <xhtml:td>/usr/libexec/polkit-1/polkit-agent-helper-1</xhtml:td><xhtml:td>uid root</xhtml:td><xhtml:td>polkit</xhtml:td>
+              </xhtml:tr>
+              <xhtml:tr>
+                <xhtml:td>/usr/libexec/pt_chown</xhtml:td><xhtml:td>uid root</xhtml:td><xhtml:td>glibc-common</xhtml:td>
+              </xhtml:tr>
+              <xhtml:tr>
+                <xhtml:td>/usr/libexec/pulse/proximity-helper</xhtml:td><xhtml:td>uid root</xhtml:td><xhtml:td>pulseaudio-module-bluetooth</xhtml:td>
+              </xhtml:tr>
+              <xhtml:tr>
+                <xhtml:td>/usr/libexec/news/innbind</xhtml:td><xhtml:td>uid root</xhtml:td><xhtml:td>inn</xhtml:td>
+              </xhtml:tr>
+              <xhtml:tr>
+                <xhtml:td>/usr/libexec/news/rnews</xhtml:td><xhtml:td>uid uucp</xhtml:td><xhtml:td>inn</xhtml:td>
+              </xhtml:tr>
+              <xhtml:tr>
+                <xhtml:td>/usr/libexec/utempter/utempter</xhtml:td><xhtml:td>gid utmp</xhtml:td><xhtml:td>libutempter</xhtml:td>
+              </xhtml:tr>
+              <xhtml:tr>
+                <xhtml:td>/usr/lib/nspluginwrapper/plugin-config</xhtml:td><xhtml:td>uid root</xhtml:td><xhtml:td>nspluginwrapper</xhtml:td>
+              </xhtml:tr>
+              <xhtml:tr>
+                <xhtml:td>/usr/lib/vte/gnome-pty-helper</xhtml:td><xhtml:td>gid utmp</xhtml:td><xhtml:td>vte</xhtml:td>
+              </xhtml:tr>
+              <xhtml:tr>
+                <xhtml:td>/usr/share/BackupPC/sbin/BackupPC_Admin</xhtml:td><xhtml:td>uid backuppc</xhtml:td><xhtml:td>BackupPC</xhtml:td>
+              </xhtml:tr>
+              <xhtml:tr>
+                <xhtml:td>/var/cache/jwhois/jwhois.db</xhtml:td><xhtml:td>gid jwhois</xhtml:td><xhtml:td>jwhois</xhtml:td>
+              </xhtml:tr>
+              <xhtml:tr>
+                <xhtml:td>/lib/dbus-1/dbus-daemon-launch-helper</xhtml:td><xhtml:td>uid root</xhtml:td><xhtml:td>dbus</xhtml:td>
               </xhtml:tr>
             </xhtml:table>
           </description>
-          <Rule id="rule-2.2.3.4.a" selected="false" weight="10.0" severity="medium">
+          <Rule id="rule-2.2.3.4.a" selected="true" weight="10.0" severity="medium">
             <title>Find Unauthorized SGID System Executables</title>
             <description>The sgid bit should not be set for all files.</description>
             <reference href="http://www.dtic.mil/whs/directives/corres/pdf/850002p.pdf">ECLP-1</reference>
@@ -2229,8 +2284,11 @@
           <description xml:lang="en">
             The following command will discover and print any files on
             local partitions which do not belong to a valid user and a valid group. Run it once for
-            each local partition PART: <xhtml:code># find PART -xdev \( -nouser -o -nogroup \) -print </xhtml:code>If this
-            command prints any results, investigate each reported file and either assign it to an
+            each local partition PART: <xhtml:br/> 
+            <xhtml:br/>
+            <xhtml:code># find PART -xdev \( -nouser -o -nogroup \) -print </xhtml:code> <xhtml:br/>
+            <xhtml:br/>
+            If this command prints any results, investigate each reported file and either assign it to an
             appropriate user and group or remove it. Unowned files are not directly exploitable, but
             they are generally a sign that something is wrong with some system process. They may be
             caused by an intruder, by incorrect software installation or incomplete software
