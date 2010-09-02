@@ -213,7 +213,11 @@ static int find_files_recursion(const char *path, setting_t * setting, int depth
 
 	if (setting->filename_is_nil) { /* we are only interested in directories */
 		rc++;
-		(setting->cb) (path, "", arg);
+
+		if (setting->cb (path, "", arg) != 0) {
+			closedir(pDir);
+			return (-1);
+		}
 	}
 
 	// Make sure new_path always has a '/' at the end
@@ -246,7 +250,12 @@ static int find_files_recursion(const char *path, setting_t * setting, int depth
 			sf = SEXP_string_newf("%s", pDirent->d_name);
 			if (probe_entobj_cmp(setting->sfilename, sf) == OVAL_RESULT_TRUE) {
 				rc++;
-				(setting->cb) (path, pDirent->d_name, arg);
+
+				if (setting->cb (path, pDirent->d_name, arg) != 0) {
+					closedir(pDir);
+					SEXP_free(sf);
+					return (-1);
+				}
 			}
 			SEXP_free(sf);
 		}
