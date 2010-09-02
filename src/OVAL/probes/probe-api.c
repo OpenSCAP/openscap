@@ -34,6 +34,9 @@
 #include <errno.h>
 #include "debug_priv.h"
 #include "_probe-api.h"
+#include "assume.h"
+#include "memusage.h"
+#include "sysinfo.h"
 
 /*
  * items
@@ -1159,3 +1162,55 @@ void probe_free(SEXP_t * obj)
 	SEXP_free(obj);
 }
 
+/**
+ * Add and _free_ an item to result list.
+ */
+int probe_result_additem(SEXP_t *result, SEXP_t *item)
+{
+	assume_d(result != NULL, -1);
+	assume_d(item   != NULL, -1);
+
+	if (!SEXP_listp (result)) {
+		errno = EINVAL;
+		return (-1);
+	}
+
+#define PROBE_RESULT_MEMCHECK_CTRESHOLD  65535  /* item count */
+#define PROBE_RESULT_MEMCHECK_MINFREEMEM 128    /* MiB */
+#define PROBE_RESULT_MEMCHECK_MAXRATIO   0.80   /* max. memory usage ratio - used/total */
+
+	if (SEXP_list_length (result) > PROBE_RESULT_MEMCHECK_CTRESHOLD) {
+		struct memusage mu;
+		struct sysinfo  si;
+		float  c_ratio;
+
+		if (memusage (&mu) != 0)
+			return (-1);
+
+		if (sysinfo (&si) != 0)
+			return (-1);
+
+		c_ratio = (float)mu.mu_data/(float)((si.totalram * si.mem_unit) / 1024);
+
+		if (c_ratio > PROBE_RESULT_MEMCHECK_MAXRATIO) {
+			dW("Memory usage ratio limit reached! limit=%f, current=%f\n",
+			   PROBE_RESULT_MEMCHECK_MAXRATIO, c_ratio);
+			errno = ENOMEM;
+			return (-1);
+		}
+
+		if (((si.freeram * si.mem_unit) / 1048576) < PROBE_RESULT_MEMCHECK_MINFREEMEM) {
+			dW("Minimum memory limit reached! limit=%zu, current=%zu\n",
+			   PROBE_RESULT_MEMCHECK_MINFREEMEM, (si.freeram * si.mem_unit) / 1048576);
+			errno = ENOMEM;
+			return (-1);
+		}
+	}
+
+	/* TODO: optimize */
+
+	SEXP_list_add (result, item);
+	SEXP_free(item);
+
+	return (0);
+}

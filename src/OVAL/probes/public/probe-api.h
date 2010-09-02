@@ -441,4 +441,6 @@ int probe_setoption(int option, ...);
 SEXP_t *probe_prepare_filters(SEXP_t *obj);
 bool probe_item_filtered(SEXP_t *item, SEXP_t *filters);
 
+int probe_result_additem(SEXP_t *result, SEXP_t *item);
+
 #endif				/* PROBE_API_H */
