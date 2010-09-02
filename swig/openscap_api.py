@@ -296,6 +296,108 @@ class OSCAP_Object(object):
         return values
 
 
+    def get_values_by_rule_id(self, id, check=None):
+        """get_values_by_rule_id -- Get all Value elements that are referenced by rule with specified ID
+        If check is not None, then it is (very ugly) recursive call
+        """
+
+        if self.object != "xccdf_policy": raise TypeError("Wrong call of \"get_values_by_rule_id\" function. Should be xccdf_policy (have %s)" %(self.object,))
+        items = []
+        values = []
+
+        # Case 1: check is not None -- we have recursive call
+        if check != None:
+            if check.complex:
+                # This check is complext so there is more checks within
+                for child in check.children: 
+                    self.get_values_by_rule_id(id, check=child)
+            else:
+                for export in check.exports:
+                    values.append(export.value)
+            return values
+
+        # Case 2: check is None -- this is regular call of function
+        item = self.model.benchmark.get_item(id)
+        if item.type != OSCAP.XCCDF_RULE: raise TypeError("Wrong type of item with id \"%s\". Expected XCCDF_RULE, got " % (id, item.type))
+        rule = item.to_rule()
+        for check in rule.checks:
+            if check.complex:
+                # This check is complext so there is more checks within
+                for child in check.children: 
+                    values.extend(self.get_values_by_rule_id(id, check=child))
+            else:
+                for export in check.exports:
+                    values.append(export.value)
+
+        for value in self.model.benchmark.get_all_values():
+            if value.id in values:
+                items.append(self.__parse_value(value))
+            
+        return items
+
+    def __parse_value(self, value):
+
+        # get value properties
+        item = {}
+        item["id"] = value.id
+        item["lang"] = self.model.benchmark.lang
+        item["titles"] = {}
+        item["descs"] = {}
+        # Titles / Questions
+        if len(value.question):
+            for question in value.question: item["titles"][question.lang] = question.text
+        else: 
+            for title in value.title: item["titles"][title.lang] = title.text
+        if item["lang"] not in item["titles"]: item["titles"][item["lang"]] = ""
+        # Descriptions
+        for desc in value.description: item["descs"][desc.lang] = desc.text
+        if item["lang"] not in item["descs"]: item["descs"][item["lang"]] = ""
+        # Type
+        item["type"] = value.type
+        # Values
+        item["options"] = {}
+        item["choices"] = {}
+        for instance in value.instances:
+            item["options"][instance.selector] = instance.value
+            if len(instance.choices): item["choices"][instance.selector] = instance.choices
+
+        #Get regexp match from match of elements
+
+        # Get regexp match from match elements
+        item["match"] = "|".join([i.match for i in value.instances if i.match])
+
+        # Get regexp match from type of value
+        if not len(item["match"]):
+            item["match"] = ["", "^[\\b]+$", "^.*$", "^[01]$"][value.type]
+
+        if self.profile != None:
+            for r_value in self.profile.refine_values:
+                if r_value.item == value.id:
+                    item["selected"] = (r_value.selector, item["options"][r_value.selector])
+            for s_value in self.profile.setvalues:
+                if s_value.item == value.id:
+                    item["selected"] = ('', s_value.value)
+
+        if "selected" not in item:
+            if "" in item["options"]: item["selected"] = ('', item["options"][""])
+            else: item["selected"] = ('', '')
+
+        """
+        print "ID: \r\t\t", item["id"]
+        print "Language: \r\t\t", item["lang"]
+        print "Titles: \r\t\t", item["titles"]
+        print "Descriptions: \r\t\t", item["descs"]
+        print "Type: \r\t\t", ["", "Number", "String", "Boolean"][item["type"]]
+        print "Options: \r\t\t", item["options"]
+        print "Choices: \r\t\t", item["choices"]
+        print "Match: \r\t\t", item["match"]
+        print "Selected: \r\t\t", item["selected"]
+        print
+        """
+
+        return item
+
+
     def get_tailor_items(self):
         """xccdf_policy.get_tailor_items() -- Get all items that can be tailored by tool.
         Function will return all values that can be tailored by specified XCCDF Policy's Profile
@@ -314,61 +416,7 @@ class OSCAP_Object(object):
         items = []
 
         for value in self.model.benchmark.get_all_values():
-            # get value properties
-            item = {}
-            item["id"] = value.id
-            item["lang"] = self.model.benchmark.lang
-            item["titles"] = {}
-            item["descs"] = {}
-            # Titles / Questions
-            if len(value.question):
-                for question in value.question: item["titles"][question.lang] = question.text
-            else: 
-                for title in value.title: item["titles"][title.lang] = title.text
-            if item["lang"] not in item["titles"]: item["titles"][item["lang"]] = ""
-            # Descriptions
-            for desc in value.description: item["descs"][desc.lang] = desc.text
-            if item["lang"] not in item["descs"]: item["descs"][item["lang"]] = ""
-            # Type
-            item["type"] = value.type
-            # Values
-            item["options"] = {}
-            for instance in value.instances:
-                item["options"][instance.selector] = instance.value
-
-            # Get regexp match from match elements
-            item["match"] = "|".join([i.match for i in value.instances if i.match])
-
-            #TODO: Get regexp match from match of elements
-
-            # Get regexp match from type of value
-            if not len(item["match"]):
-                item["match"] = ["", "^[\\b]+$", "^.*$", "^[01]$"][value.type]
-
-            if self.profile != None:
-                for r_value in self.profile.refine_values:
-                    if r_value.item == value.id:
-                        item["selected"] = (r_value.selector, item["options"][r_value.selector])
-                for s_value in self.profile.setvalues:
-                    if s_value.item == value.id:
-                        item["selected"] = ('', s_value.value)
-
-            if "selected" not in item:
-                if "" in item["options"]: item["selected"] = ('', item["options"][""])
-                else: item["selected"] = ('', '')
-
-            """
-            print "ID: \r\t\t", item["id"]
-            print "Language: \r\t\t", item["lang"]
-            print "Titles: \r\t\t", item["titles"]
-            print "Descriptions: \r\t\t", item["descs"]
-            print "Type: \r\t\t", ["", "Number", "String", "Boolean"][item["type"]]
-            print "Options: \r\t\t", item["options"]
-            print "Match: \r\t\t", item["match"]
-            print "Selected: \r\t\t", item["selected"]
-            print
-            """
-            items.append(item)
+            items.append(self.__parse_value(value))
 
         return items
 
