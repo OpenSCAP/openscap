@@ -280,11 +280,10 @@ static int file_cb (const char *p, const char *f, void *ptr)
 
 		if (!probe_item_filtered(item, filters)) {
 			if (probe_result_additem(res, item) != 0) {
-				SEXP_free(item);
-
 				if (errno == ENOMEM)
 					args->error = PROBE_ENOMEM;
 
+				SEXP_free(item);
 				return (-1);
 			}
 			/* the item is freed by the additem function */

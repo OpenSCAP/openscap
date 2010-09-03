@@ -159,6 +159,12 @@ int find_files(SEXP_t * spath, SEXP_t * sfilename, SEXP_t * behaviors,
 
 					if (rc >= 0)
 						finds += rc;
+					else {
+						SEXP_free(r0);
+						rglobfree(&rglobbuf);
+						finds = rc;
+						goto error;
+					}
 				}
 				SEXP_free(r0);
 			}
@@ -171,6 +177,10 @@ int find_files(SEXP_t * spath, SEXP_t * sfilename, SEXP_t * behaviors,
 
 			if (rc >= 0)
 				finds += rc;
+			else {
+				finds = rc;
+				goto error;
+			}
 		}
 	}
 
@@ -204,8 +214,10 @@ static int find_files_recursion(const char *path, setting_t * setting, int depth
 	size_t path_len;
 
 	pDir = opendir(path);
-	if (pDir == NULL)
-		return -1;
+	if (pDir == NULL) {
+		/* FIXME */
+		return 0;
+	}
 
 	rc = 0;
 	strcpy(path_new, path);
@@ -241,6 +253,10 @@ static int find_files_recursion(const char *path, setting_t * setting, int depth
 			tmp = find_files_recursion(path_new, setting, depth == -1 ? -1 : depth - 1, arg);
 			if (tmp >= 0)
 				rc += tmp;
+			else {
+				rc = tmp;
+				break;
+			}
 		}
 
 		if (!setting->filename_is_nil
