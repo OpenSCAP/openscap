@@ -1487,9 +1487,7 @@
 		    </criteria>
                   </criteria>
             </definition>
-	    <!-- ^^^ ok ^^^ -->
 
-	    <!-- not applicable
             <definition class="compliance" id="oval:org.fedoraproject.f14:def:20127" version="1">
                   <metadata>
                         <title>Disable Wireless in BIOS</title>
@@ -1500,8 +1498,7 @@
                         <criterion comment="Unknown test stub" test_ref="oval:org.fedoraproject.f14:tst:22"/>
                   </criteria>
             </definition>
-	    -->
-	    <!-- no match
+
             <definition class="compliance" id="oval:org.fedoraproject.f14:def:20128" version="1">
                   <metadata>
                         <title>Deactivate Wireless Interfaces</title>
@@ -1512,9 +1509,7 @@
                         <criterion comment="Find wireless interfaces" test_ref="oval:org.fedoraproject.f14:tst:20128"/>
                   </criteria>
             </definition>
-	    -->
 
-	    <!-- no match
             <definition class="compliance" id="oval:org.fedoraproject.f14:def:20129" version="1">
                   <metadata>
                         <title>Disable Wireless Drivers</title>
@@ -1525,7 +1520,6 @@
                         <criterion comment="Conditions are satisfied" test_ref="oval:org.fedoraproject.f14:tst:20129"/>
                   </criteria>
             </definition>
-	    -->
 
 	    <!-- ipv6 -->
 
@@ -5188,7 +5182,14 @@
             </ind-def:textfilecontent54_test>
 
 	    <!-- ^^^ ok ^^^ -->
+            <ind-def:textfilecontent54_test check_existence="none_exist" id="oval:org.fedoraproject.f14:tst:20128" version="1" check="all" comment="Look in /proc/net/wireless">
+                  <ind-def:object object_ref="oval:org.fedoraproject.f14:obj:20128"/>
+            </ind-def:textfilecontent54_test>
 
+            <unix-def:file_test check_existence="none_exist" id="oval:org.fedoraproject.f14:tst:20129" version="1" check="all" comment="Actual file existence test">
+                  <unix-def:object object_ref="oval:org.fedoraproject.f14:obj:20129"/>
+            </unix-def:file_test>
+	
             <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:org.fedoraproject.f14:tst:20130" version="1" check="all" comment="Tests the value of the &lt;:begin:&gt;alias[\s]+net-pf-10[\s]+off&lt;:end:&gt; setting in the /etc/modprobe.d/dist.conf file">
                   <ind-def:object object_ref="oval:org.fedoraproject.f14:obj:20130"/>
             </ind-def:textfilecontent54_test>
@@ -7005,19 +7006,19 @@
 
 	    <!-- ^^^ ok ^^^ -->
 
-	    <!-- !Fedora
+
+
             <ind-def:textfilecontent54_object id="oval:org.fedoraproject.f14:obj:20128" version="1">
                   <ind-def:path>/proc/net</ind-def:path>
                   <ind-def:filename>wireless</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[[:space:]]*([^[:space:]]+[[:digit:]]+):</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*([^[:space:]]*):.*</ind-def:pattern>
                   <ind-def:instance operation="greater than or equal" datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
 
             <unix-def:file_object id="oval:org.fedoraproject.f14:obj:20129" version="1" comment="/lib/modules/*/kernel/drivers/net/wireless">
-                  <unix-def:path operation="pattern match">/lib/modules/*/kernel/drivers/net</unix-def:path>
-                  <unix-def:filename>wireless</unix-def:filename>
+                  <unix-def:path operation="pattern match">/lib/modules/.*/kernel/drivers/net/wireless$</unix-def:path>
+		  <unix-def:filename xsi:nil="true"/>
             </unix-def:file_object>
-	    -->
 
             <ind-def:textfilecontent54_object id="oval:org.fedoraproject.f14:obj:20130" version="1">
                   <ind-def:path>/etc/modprobe.d</ind-def:path>

@@ -161,9 +161,9 @@
     <select idref="rule-2.5.1.2.j" selected="false" />		<!-- DONE -->		<!-- Set net.ipv4.tcp_syncookies for Hosts and Routers -->
     <select idref="rule-2.5.1.2.k" selected="false" />		<!-- DONE -->		<!-- Set net.ipv4.conf.all.rp_filter for Hosts and Routers -->
     <select idref="rule-2.5.1.2.l" selected="false" />		<!-- DONE -->		<!-- Set net.ipv4.conf.default.rp_filter for Hosts and Routers -->
-    <select idref="rule-2.5.2.2.1.a" selected="false" />	<!-- ERASE -->		<!-- Disable Wireless in BIOS -->
-    <select idref="rule-2.5.2.2.2.a" selected="false" />	<!-- ERASE -->		<!-- Deactivate Wireless Interfaces -->
-    <select idref="rule-2.5.2.2.3.a" selected="false" />	<!-- ERASE -->		<!-- Disable Wireless Drivers -->
+    <select idref="rule-2.5.2.2.1.a" selected="false" />	<!-- DONE -->		<!-- Disable Wireless in BIOS -->
+    <select idref="rule-2.5.2.2.2.a" selected="false" />	<!-- DONE -->		<!-- Deactivate Wireless Interfaces -->
+    <select idref="rule-2.5.2.2.3.a" selected="false" />	<!-- DONE -->		<!-- Disable Wireless Drivers -->
     <select idref="rule-2.5.3.1.1.a" selected="false" />	<!-- DONE -->		<!-- Disable Automatic Loading of IPv6 Kernel Module -->
     <select idref="rule-2.5.3.1.2.a" selected="false" />	<!-- DONE -->		<!-- Disable NETWORKING_IPV6 in /etc/sysconfig/network -->
     <select idref="rule-2.5.3.1.2.b" selected="false" />	<!-- DONE -->		<!-- Disable IPV6INIT in /etc/sysconfig/network -->
@@ -2255,7 +2255,7 @@
               </xhtml:tr>
             </xhtml:table>
           </description>
-          <Rule id="rule-2.2.3.4.a" selected="true" weight="10.0" severity="medium">
+          <Rule id="rule-2.2.3.4.a" selected="false" weight="10.0" severity="medium">
             <title>Find Unauthorized SGID System Executables</title>
             <description>The sgid bit should not be set for all files.</description>
             <reference href="http://www.dtic.mil/whs/directives/corres/pdf/850002p.pdf">ECLP-1</reference>
