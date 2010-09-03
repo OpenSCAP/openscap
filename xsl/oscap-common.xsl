@@ -112,9 +112,9 @@ Authors:
     div.score-inner { height: 100%; background-color: green; }
     .score-max, .score-val { text-align:right; }
     th, td { padding-left:.5em; padding-right:.5em; }
-    .result-pass strong, .result-fixed strong { color:green; }
-    .unknown, .result-notselected strong, .result-notchecked strong, .result-notapplicable strong, .result-informational strong, .result-unknown strong { color:#555; }
-    .result-error strong, .result-fail strong { color:red; }
+    .rule-selected, .result-pass strong, .result-fixed strong { color:green; }
+    .rule-inactive, .unknown, .result-notselected strong, .result-notchecked strong, .result-notapplicable strong, .result-informational strong, .result-unknown strong { color:#555; }
+    .rule-notselected, .result-error strong, .result-fail strong { color:red; }
     table { border-collapse: collapse; border: 1px black solid; width:100%; }
     table th { background-color:black; color:white; }
     table td { border-right: 1px black solid; }

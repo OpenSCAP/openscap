@@ -129,7 +129,8 @@ static struct oscap_module XCCDF_GEN_GUIDE = {
     .usage = "[options] xccdf-file.xml",
     .help = GEN_OPTS
         "\nOptions:\n"
-        "   --output <file>\r\t\t\t\t - Write the HTML into file.",
+        "   --output <file>\r\t\t\t\t - Write the HTML into file.\n"
+        "   --hide-profile-info\r\t\t\t\t - Do not output additional information about selected profile.\n",
     .opt_parser = getopt_xccdf,
     .user = "xccdf-guide.xsl",
     .func = app_xccdf_xslt
@@ -439,7 +440,12 @@ static int xccdf_gen_report(const char *infile, const char *id, const char *outf
 int app_xccdf_xslt(const struct oscap_action *action)
 {
     assert(action->module->user);
-    const char *params[] = { "result-id", action->id, "show", action->show, "profile", action->profile, NULL };
+    const char *params[] = {
+        "result-id",         action->id,
+        "show",              action->show,
+        "profile",           action->profile,
+        "hide-profile-info", action->hide_profile_info ? "yes" : NULL,
+        NULL };
     return app_xslt(action->f_xccdf, action->module->user, action->f_results, params);
 }
 
@@ -467,7 +473,7 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 	action->doctype = OSCAP_DOCUMENT_XCCDF;
 
 	/* Command-options */
-	static const struct option long_options[] = {
+	const struct option long_options[] = {
 		{"force", 0, 0, 'f'},
 		{"output", 1, 0, 'o'},
 		{"result-id", 1, 0, 'i'},
@@ -478,6 +484,7 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 		{"report-file", 1, 0, 4},
 		{"oval-results", 0, 0, 5},
 		{"show", 1, 0, 6},
+		{"hide-profile-info", 0, &action->hide_profile_info, 1},
 		{0, 0, 0, 0}
 	};
 

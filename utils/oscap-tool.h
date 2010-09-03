@@ -113,6 +113,7 @@ struct oscap_action {
         char *show;
 	char *id;
         int verbosity;
+        int hide_profile_info;
 #ifdef ENABLE_CVSS
         struct cvss_metrics *cvss_metrics;
 #endif

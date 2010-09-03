@@ -77,6 +77,9 @@
 <xsl:output method="xml" encoding="UTF-8" indent="yes"/>
 
 <xsl:param name='profile'/>
+<xsl:param name='hide-profile-info'/>
+
+<xsl:variable name='prof' select='/cdf:Benchmark/cdf:Profile[@id=$profile][1]'/>
 
 <!-- Set up an id key to match on against all Items -->
 <xsl:key name="items" match="cdf:Group | cdf:Rule | cdf:Value" 
@@ -93,7 +96,6 @@
          use="@id"/>
 
 <xsl:template match='/cdf:Benchmark'>
-  <xsl:variable name='prof' select='/cdf:Benchmark/cdf:Profile[@id=$profile][1]'/>
   <xsl:variable name='input'>
     <xsl:apply-templates select='.' mode='apply-profile'/>
   </xsl:variable>
@@ -447,11 +449,27 @@
              <xsl:apply-templates select="./cdf:Group[not(number(@hidden)+number(@abstract))] | ./cdf:Rule[not(number(@hidden)+number(@abstract))]" mode="body"/>
           </xsl:if>
 
+          <xsl:if test='not($hide-profile-info)'>
+            <h2 id='rulesel'>Rule selection</h2>
+            <p>Based on profile: <strong><xsl:value-of select='$prof/cdf:title[1]'/></strong> (<xsl:value-of select='@id'/>)</p>
+            <p><xsl:apply-templates mode='text' select='$prof/cdf:description[1]/node()'/></p>
+            <table>
+              <tr><th>Rule</th><th>selection</th></tr>
+              <xsl:for-each select='.//cdf:Rule[not(@hidden) or @hidden!="1" and @hidden!="true"]'>
+                <tr>
+                  <td><a href='#item-{@id}' title='{@id}'><xsl:value-of select='cdf:title'/></a></td>
+                  <xsl:choose>
+                    <xsl:when test='@selected!="1" and @selected!="true"'><td class='rule-notselected'>not&#160;selected</td></xsl:when>
+                    <xsl:when test='ancestor::cdf:Group[@selected="0" or @selected="false"]'><td class='rule-inactive'><abbr title='selected but disabled by an ancestor group'>inactive</abbr></td></xsl:when>
+                    <xsl:otherwise><td class='rule-selected'>selected</td></xsl:otherwise>
+                  </xsl:choose>
+                </tr>
+              </xsl:for-each>
+            </table>
+          </xsl:if>
 
           <xsl:if test="./cdf:rear-matter">
-             <h2 id="section-conc">
-                 <!--<xsl:value-of select="$concSecNum"/>. -->Conclusions
-             </h2>
+             <h2 id="section-conc">Conclusions</h2>
              <xsl:for-each select="./cdf:rear-matter">
                <div class="propertyText">
                   <xsl:apply-templates select="./text() | ./*" mode="text"/>
@@ -460,9 +478,7 @@
           </xsl:if>
 
           <xsl:if test="./cdf:reference">
-             <h2 id="section-references">
-                <!--<xsl:value-of select="$refSecNum"/>. -->References
-             </h2>
+             <h2 id="section-references">References</h2>
              <ol class="propertyText">
             <xsl:for-each select="./cdf:reference[normalize-space(text())]">
               <li><xsl:value-of select="text()"/>
