@@ -141,7 +141,7 @@
   -->
 <xsl:template match="cdf:Group" mode="body">
   <xsl:param name="section-prefix"/>
-  <xsl:param name="section-num" select="position()"/>
+  <xsl:param name="section-num"><xsl:number level="single"/></xsl:param>
 
   <xsl:comment>Group id = <xsl:value-of select="./@id"/></xsl:comment>
   <div class='section' id="item-{@id}">
@@ -280,7 +280,7 @@
   -->
 <xsl:template match="cdf:Rule" mode="body">
   <xsl:param name="section-prefix"/>
-  <xsl:param name="section-num" select="position()"/>
+  <xsl:param name="section-num"><xsl:number level="single" format="a"/></xsl:param>
 
   <xsl:comment>Rule id = <xsl:value-of select="./@id"/></xsl:comment>
   <div>
