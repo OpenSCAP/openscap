@@ -85,6 +85,9 @@ xmlNode *oval_definition_to_dom(struct oval_definition *, xmlDoc *, xmlNode *);
 int oval_object_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *context);
 void oval_object_to_print(struct oval_object *object, char *indent, int idx);
 xmlNode *oval_object_to_dom(struct oval_object *, xmlDoc *, xmlNode *);
+struct oval_object *oval_object_clone2(struct oval_definition_model *, struct oval_object *, char *);
+struct oval_object *oval_object_create_internal(struct oval_object *, char *);
+struct oval_object *oval_object_get_base_obj(struct oval_object *);
 
 int oval_state_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *context);
 void oval_state_to_print(struct oval_state *, char *indent, int index);
@@ -138,6 +141,7 @@ typedef void (*oval_set_consumer) (struct oval_setobject *, void *);
 int oval_set_parse_tag(xmlTextReaderPtr, struct oval_parser_context *, oval_set_consumer, void *);
 void oval_set_to_print(struct oval_setobject *, char *indent, int index);
 xmlNode *oval_set_to_dom(struct oval_setobject *, xmlDoc *, xmlNode *);
+void oval_set_propagate_filters(struct oval_definition_model *, struct oval_setobject *, char *);
 
 typedef void (*oval_value_consumer) (struct oval_value *, void *);
 int oval_value_parse_tag(xmlTextReaderPtr, struct oval_parser_context *, oval_value_consumer, void *);

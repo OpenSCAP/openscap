@@ -38,6 +38,7 @@
 typedef struct oval_object {
 	struct oval_definition_model *model;
 	oval_subtype_t subtype;
+	struct oval_object *base_obj_ref;
 	struct oval_collection *notes;
 	char *comment;
 	char *id;
@@ -157,6 +158,7 @@ struct oval_object *oval_object_new(struct oval_definition_model *model, const c
 	object->comment = NULL;
 	object->id = oscap_strdup(id);
 	object->subtype = OVAL_SUBTYPE_UNKNOWN;
+	object->base_obj_ref = NULL;
 	object->deprecated = 0;
 	object->version = 0;
 	object->behaviors = oval_collection_new();
@@ -225,12 +227,18 @@ bool oval_object_is_locked(struct oval_object * object)
 	return oval_definition_model_is_locked(object->model);
 }
 
-struct oval_object *oval_object_clone(struct oval_definition_model *new_model, struct oval_object *old_object) {
+struct oval_object *oval_object_clone2(struct oval_definition_model *new_model, struct oval_object *old_object, char *new_id)
+{
 	__attribute__nonnull__(old_object);
 
-	struct oval_object *new_object = oval_definition_model_get_object(new_model, old_object->id);
+	struct oval_object *new_object;
+
+	if (new_id == NULL)
+		new_id = old_object->id;
+
+	new_object = oval_definition_model_get_object(new_model, new_id);
 	if (new_object == NULL) {
-		new_object = oval_object_new(new_model, old_object->id);
+		new_object = oval_object_new(new_model, new_id);
 		oval_object_set_comment(new_object, old_object->comment);
 		oval_object_set_subtype(new_object, old_object->subtype);
 		oval_object_set_deprecated(new_object, old_object->deprecated);
@@ -257,6 +265,11 @@ struct oval_object *oval_object_clone(struct oval_definition_model *new_model, s
 		oval_object_content_iterator_free(object_contents);
 	}
 	return new_object;
+}
+
+struct oval_object *oval_object_clone(struct oval_definition_model *new_model, struct oval_object *old_object)
+{
+	return oval_object_clone2(new_model, old_object, NULL);
 }
 
 void oval_object_free(struct oval_object *object)
@@ -516,4 +529,30 @@ xmlNode *oval_object_to_dom(struct oval_object *object, xmlDoc * doc, xmlNode * 
 	oval_object_content_iterator_free(contents);
 
 	return object_node;
+}
+
+struct oval_object *oval_object_create_internal(struct oval_object *obj, char *set_id)
+{
+	struct oval_object *new_obj;
+	size_t oid_len, sid_len;
+	char *new_obj_id;
+
+	oid_len = strlen(obj->id);
+	set_id = strrchr(set_id, ':') + 1;
+	sid_len = strlen(set_id);
+	new_obj_id = malloc(oid_len + sid_len + 2);
+	memcpy(new_obj_id, obj->id, oid_len);
+	new_obj_id[oid_len] = 'i';
+	memcpy(new_obj_id + oid_len + 1, set_id, sid_len);
+	new_obj_id[oid_len + sid_len + 1] = '\0';
+	new_obj = oval_object_clone2(obj->model, obj, new_obj_id);
+	new_obj->base_obj_ref = obj;
+	oscap_free(new_obj_id);
+
+	return new_obj;
+}
+
+struct oval_object *oval_object_get_base_obj(struct oval_object *obj)
+{
+	return obj->base_obj_ref;
 }

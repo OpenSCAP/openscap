@@ -513,6 +513,9 @@ xmlNode *oval_set_to_dom(struct oval_setobject *set, xmlDoc * doc, xmlNode * par
 			struct oval_object_iterator *objects = oval_setobject_get_objects(set);
 			while (oval_object_iterator_has_more(objects)) {
 				struct oval_object *object = oval_object_iterator_next(objects);
+				if (oval_object_get_base_obj(object))
+					/* Skip internal objects */
+					object = oval_object_get_base_obj(object);
 				char *id = oval_object_get_id(object);
 				xmlNewTextChild(set_node, ns_definitions, BAD_CAST "object_reference", BAD_CAST id);
 			}
@@ -530,4 +533,61 @@ xmlNode *oval_set_to_dom(struct oval_setobject *set, xmlDoc * doc, xmlNode * par
 	}
 
 	return set_node;
+}
+
+void oval_set_propagate_filters(struct oval_definition_model *model, struct oval_setobject *set, char *set_id)
+{
+	struct oval_object_iterator *obj_itr;
+	struct oval_collection *new_objects;
+	struct oval_set_COLLECTIVE *ext_col;
+
+	new_objects = oval_collection_new();
+
+	obj_itr = oval_setobject_get_objects(set);
+	while (oval_object_iterator_has_more(obj_itr)) {
+		struct oval_object *obj, *new_obj;
+		struct oval_object_content_iterator *cont_itr;
+		struct oval_object_content *cont;
+		struct oval_state_iterator *filter_itr;
+
+		obj = oval_object_iterator_next(obj_itr);
+		cont_itr = oval_object_get_object_contents(obj);
+		if (!oval_object_content_iterator_has_more(cont_itr)) {
+			oval_object_content_iterator_free(cont_itr);
+			oval_collection_add(new_objects, obj);
+			continue;
+		}
+
+		cont = oval_object_content_iterator_next(cont_itr);
+		oval_object_content_iterator_free(cont_itr);
+		if (oval_object_content_get_type(cont) == OVAL_OBJECTCONTENT_SET) {
+			oval_collection_add(new_objects, obj);
+			continue;
+		}
+
+		new_obj = oval_object_create_internal(obj, set_id);
+
+		filter_itr = oval_setobject_get_filters(set);
+		while (oval_state_iterator_has_more(filter_itr)) {
+			struct oval_state *state;
+			struct oval_filter *filter;
+			struct oval_object_content *content;
+
+			state = oval_state_iterator_next(filter_itr);
+			filter = oval_filter_new(model);
+			oval_filter_set_state(filter, state);
+			oval_filter_set_filter_action(filter, OVAL_FILTER_ACTION_EXCLUDE);
+			content = oval_object_content_new(model, OVAL_OBJECTCONTENT_FILTER);
+			oval_object_content_set_filter(content, filter);
+			oval_object_add_object_content(new_obj, content);
+		}
+		oval_state_iterator_free(filter_itr);
+
+		oval_collection_add(new_objects, new_obj);
+	}
+	oval_object_iterator_free(obj_itr);
+
+	ext_col = (struct oval_set_COLLECTIVE *) set->extension;
+	oval_collection_free_items(ext_col->objects, NULL);
+	ext_col->objects = new_objects;
 }

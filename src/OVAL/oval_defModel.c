@@ -606,6 +606,9 @@ xmlNode *oval_definitions_to_dom(struct oval_definition_model *definition_model,
 		xmlNode *objects_node = xmlNewTextChild(root_node, ns_defntns, BAD_CAST "objects", NULL);
 		while(oval_object_iterator_has_more(objects)) {
 			struct oval_object *object = oval_object_iterator_next(objects);
+			if (oval_object_get_base_obj(object))
+				/* Skip internal objects */
+				continue;
 			oval_object_to_dom(object, doc, objects_node);
 		}
 	}
@@ -678,3 +681,73 @@ int _generator_to_dom(xmlDocPtr doc, xmlNode * tag_generator)
 	return 1;
 }
 
+static void _fp_set_recurse(struct oval_definition_model *model, struct oval_setobject *set, char *set_id)
+{
+	struct oval_setobject_iterator *subset_itr;
+
+	subset_itr = oval_setobject_get_subsets(set);
+	while (oval_setobject_iterator_has_more(subset_itr)) {
+		struct oval_setobject *subset;
+
+		subset = oval_setobject_iterator_next(subset_itr);
+		if (oval_setobject_get_type(subset) == OVAL_SET_COLLECTIVE)
+			oval_set_propagate_filters(model, subset, set_id);
+		else
+			_fp_set_recurse(model, subset, set_id);
+	}
+	oval_setobject_iterator_free(subset_itr);
+}
+
+void oval_definition_model_optimize_by_filter_propagation(struct oval_definition_model *model)
+{
+	struct oval_object_iterator *obj_itr;
+	struct oval_string_map *processed_obj_map;
+
+	processed_obj_map = oval_string_map_new();
+
+	obj_itr = oval_definition_model_get_objects(model);
+	while (oval_object_iterator_has_more(obj_itr)) {
+		struct oval_object *obj;
+		char *obj_id;
+		struct oval_object_content_iterator *cont_itr;
+		struct oval_object_content *cont;
+		struct oval_setobject *set;
+		struct oval_state_iterator *filter_itr;
+
+		obj = oval_object_iterator_next(obj_itr);
+		obj_id = oval_object_get_id(obj);
+		if (oval_string_map_get_value(processed_obj_map, obj_id) != NULL)
+			continue;
+
+		oval_string_map_put(processed_obj_map, obj_id, obj);
+
+		cont_itr = oval_object_get_object_contents(obj);
+		if (!oval_object_content_iterator_has_more(cont_itr)) {
+			oval_object_content_iterator_free(cont_itr);
+			continue;
+		}
+
+		cont = oval_object_content_iterator_next(cont_itr);
+		oval_object_content_iterator_free(cont_itr);
+		if (oval_object_content_get_type(cont) != OVAL_OBJECTCONTENT_SET)
+			continue;
+
+		set = oval_object_content_get_setobject(cont);
+		if (oval_setobject_get_type(set) == OVAL_SET_AGGREGATE) {
+			_fp_set_recurse(model, set, obj_id);
+			continue;
+		}
+
+		filter_itr = oval_setobject_get_filters(set);
+		if (!oval_state_iterator_has_more(filter_itr)) {
+			oval_state_iterator_free(filter_itr);
+			continue;
+		}
+		oval_state_iterator_free(filter_itr);
+
+		oval_set_propagate_filters(model, set, obj_id);
+	}
+	oval_object_iterator_free(obj_itr);
+
+	oval_string_map_free(processed_obj_map, NULL);
+}

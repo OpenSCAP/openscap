@@ -289,6 +289,9 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 			fprintf(stderr, "Error: (%d) %s\n", oscap_err_code(), oscap_err_desc());
 			return OSCAP_ERROR;
 		}
+
+		oval_definition_model_optimize_by_filter_propagation(tmp_def_model);
+
                 struct oval_agent_session *tmp_sess = oval_agent_new_session(tmp_def_model, basename(oval_files[i]));
 		if(tmp_sess==NULL && oscap_err()) {
 			fprintf(stderr, "Error: (%d) %s\n", oscap_err_code(), oscap_err_desc());

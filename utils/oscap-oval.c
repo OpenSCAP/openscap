@@ -248,6 +248,8 @@ int app_evaluate_oval(const struct oscap_action *action)
 		return OSCAP_ERROR;
 	}
 
+	oval_definition_model_optimize_by_filter_propagation(def_model);
+
 	sess = oval_agent_new_session(def_model, basename(action->f_oval));
 
 	/* Import OVAL definition file */
