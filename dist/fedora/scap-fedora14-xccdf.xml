@@ -861,16 +861,19 @@
             Unless use of DHCP is absolutely necessary, click
             the "Edit" button and:
             <xhtml:ul>
-              <xhtml:li />
+              <xhtml:li>
               Uncheck "Use Dynamic IP configuration
               (DHCP)".Uncheck "Enable IPv4 Support" if the system does not require IPv4. (This is
               uncommon.)
-              <xhtml:li />
+              </xhtml:li>
+              <xhtml:li>
               Uncheck "Enable IPv6 Support" if the system does not require
               IPv6.
-              <xhtml:li />
+              </xhtml:li>
+              <xhtml:li>
               Enter appropriate IPv4 and IPv6 addresses and prefixes as
               required.
+              </xhtml:li>
             </xhtml:ul>
             With the DHCP setting disabled, the hostname, gateway, and DNS
             servers should then be assigned on the main screen.<xhtml:br/>
@@ -913,28 +916,33 @@
               recommendations:<xhtml:br/>
             <xhtml:br/>
             <xhtml:ul>
-              <xhtml:li />
+              <xhtml:li>
               Firewall - Leave set to
               'Enabled.' Only check the 'Trusted Services' that this system needs to serve. Uncheck
               the default selection of SSH if the system does not need to serve
               SSH.
-              <xhtml:li />
+              </xhtml:li>
+              <xhtml:li>
               SELinux - Leave SELinux set to 'Enforcing' mode.
-              <xhtml:li />
+              </xhtml:li>
+              <xhtml:li>
               Kdump -
               Leave Kdump off unless the feature is required, such as for kernel development and
               testing.
-              <xhtml:li />
+              </xhtml:li>
+              <xhtml:li>
               Set Up Software Updates - If the system is connected to the
               Internet now, click 'Yes, I'd like to register now.' This will require a connection to
               either the Red Hat Network servers or their proxies or satellites. This can also be
               configured later as described in Section 2.1.2.1.
-              <xhtml:li />
+              </xhtml:li>
+              <xhtml:li>
               Create User - If the
               system will require a local user account, it can be created here. Even if the system
               will be using a network-wide authentication system as described in Section 2.3.6, do
               not click on the 'Use Network Login...' button. Manually applying configuration later
               is preferable.
+              </xhtml:li>
             </xhtml:ul>
           </description>
         </Group>
@@ -1405,8 +1413,8 @@
             this section are column 2 (mount point), column 3 (ﬁlesystem type), and column 4 (mount 
             options). For any line which satisﬁes all of the conditions:
             <xhtml:ul>
-              <xhtml:il>The ﬁlesystem type is ext2 or ext3</xhtml:il>
-              <xhtml:il>The mount point is not /</xhtml:il>
+              <xhtml:li>The ﬁlesystem type is ext2 or ext3</xhtml:li>
+              <xhtml:li>The mount point is not /</xhtml:li>
             </xhtml:ul>
             add the text “,nodev” to the list of mount options in column 4. <xhtml:br/>
             <xhtml:br/>
