@@ -85,6 +85,7 @@ static struct oscap_module XCCDF_EVAL = {
     .help =
         "Options:\n"
         "   --profile <name>\r\t\t\t\t - The name of Profile to be evaluated.\n"
+        "   --oval-results\r\t\t\t\t - Save OVAL results as well.\n"
         "   --result-file <file>\r\t\t\t\t - Write XCCDF Results into file.\n"
         "   --report-file <file>\r\t\t\t\t - Write HTML report into file.\n"
                                  "\t\t\t\t   (--result-file must be also specified for this to work)\n",
@@ -144,6 +145,7 @@ static struct oscap_module XCCDF_GEN_FIX = {
     .help = GEN_OPTS
         "\nOptions:\n"
         "   --output <file>\r\t\t\t\t - Write the script into file.\n"
+        "   --result-id <id>\r\t\t\t\t - Fixes will be generated for failed rule-results of the specified TestResult.\n"
         "   --template <id|filename>\r\t\t\t\t - Fix template. (default: bash)\n",
     .opt_parser = getopt_xccdf,
     .user = "fix.xsl",
@@ -509,7 +511,8 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 	while ((c = getopt_long(argc, argv, "o:i:f", long_options, NULL)) != -1) {
 		switch (c) {
 		case 'o': case 0: action->f_results = optarg; break;
-		case 3: case 1: case 'i': action->profile = optarg; break;
+		case 3: case 1: action->profile = optarg; break;
+        case 'i': action->id = optarg; break;
 		case 2: action->file_version = optarg; break;
      		case 4: action->f_report = optarg; break;
 		case 'f': action->force = true; break;

@@ -162,6 +162,20 @@ ID of the XCCDF TestResult from which the report will be generated.
 \fB\-\-show \fIwhat\fR
 Specify what result types shall be displayed in the result report. The default is to show everything except for rules with results notselected and notapplicable. The \fIwhat\fR part is a comma-separated list of result types to display in addition to the default. If result type is prefixed by a dash '-', it will be excluded from the results. If \fIwhat\fR is prefixed by an equality sign '=', a following list specifies exactly what rule types to include in the report. Result types are: pass, fixed, notchecked, notapplicable, notselected, informational, unknown, error, fail.
 .RE
+.TP
+.B \fBfix\fR  [\fIoptions\fR] xccdf-file
+.RS
+Generate a script that shall bring the system to a state of compliance with given XCCDF Benchmark.
+.TP
+\fB\-\-output FILE\fR
+Write the report to this file instead of standard output.
+.TP
+\fB\-\-result-id \fIID\fR\fR
+With this option the script generating engine will pick rules that failed for given test and generate fixes only for them.
+.TP
+\fB\-\-template \fIID|FILE\fR\fR
+Template to be used to generate the script. If it contains a dot '.' it is interpreted as a location of a file with the template definition. Otherwise it identifies a template from standard set which currently includes: \fIbash\fR (default if no --template switch present). Brief explanation of the process of writing your own templates is in the XSL file \fIxsl/fix.xsl\fR in the openscap data directory. You can also take a look at the default template \fIxsl/fixtpl-bash.xml\fR.
+.RE
 
 .SH CVSS OPERATIONS
 .TP
