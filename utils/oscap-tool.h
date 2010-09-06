@@ -111,7 +111,8 @@ struct oscap_action {
         char *profile;
         char *file_version;
         char *show;
-	char *id;
+        const char *tmpl;
+        char *id;
         int verbosity;
         int hide_profile_info;
 #ifdef ENABLE_CVSS

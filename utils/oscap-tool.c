@@ -28,6 +28,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <stdarg.h>
+#include <errno.h>
 
 /* Header files for curl */
 #include <curl/curl.h>
@@ -127,7 +128,7 @@ static size_t paramlist_cpy(const char **to, const char **p) {
 
 int app_xslt(const char *infile, const char *xsltfile, const char *outfile, const char **params)
 {
-    const char *stdparams[] = { "oscap-version", oscap_get_version(), NULL };
+    const char *stdparams[] = { "oscap-version", oscap_get_version(), "pwd", getenv("PWD"), NULL };
     const char *par[paramlist_size(params) + paramlist_size(stdparams) + 1];
     size_t s  = paramlist_cpy(par    , params);
            s += paramlist_cpy(par + s, stdparams);

@@ -136,9 +136,24 @@ static struct oscap_module XCCDF_GEN_GUIDE = {
     .func = app_xccdf_xslt
 };
 
+static struct oscap_module XCCDF_GEN_FIX = {
+    .name = "fix",
+    .parent = &XCCDF_GENERATE,
+    .summary = "Generate a fix script from an XCCDF file",
+    .usage = "[options] xccdf-file.xml",
+    .help = GEN_OPTS
+        "\nOptions:\n"
+        "   --output <file>\r\t\t\t\t - Write the script into file.\n"
+        "   --template <id|filename>\r\t\t\t\t - Fix template. (default: bash)\n",
+    .opt_parser = getopt_xccdf,
+    .user = "fix.xsl",
+    .func = app_xccdf_xslt
+};
+
 static struct oscap_module* XCCDF_GEN_SUBMODULES[] = {
     &XCCDF_GEN_REPORT,
     &XCCDF_GEN_GUIDE,
+    &XCCDF_GEN_FIX,
     NULL
 };
 
@@ -444,6 +459,7 @@ int app_xccdf_xslt(const struct oscap_action *action)
         "result-id",         action->id,
         "show",              action->show,
         "profile",           action->profile,
+        "template",          action->tmpl,
         "hide-profile-info", action->hide_profile_info ? "yes" : NULL,
         NULL };
     return app_xslt(action->f_xccdf, action->module->user, action->f_results, params);
@@ -484,6 +500,7 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 		{"report-file", 1, 0, 4},
 		{"oval-results", 0, 0, 5},
 		{"show", 1, 0, 6},
+		{"template", 1, 0, 7},
 		{"hide-profile-info", 0, &action->hide_profile_info, 1},
 		{0, 0, 0, 0}
 	};
@@ -498,6 +515,7 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 		case 'f': action->force = true; break;
 		case 5: action->oval_results = true; break;
 		case 6: action->show = optarg; break;
+		case 7: action->tmpl = optarg; break;
 		default: return oscap_module_usage(action->module, stderr, NULL);
 		}
 	}
