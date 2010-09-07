@@ -6675,13 +6675,13 @@
                   <ind-def:path>/etc</ind-def:path>
                   <ind-def:filename>bashrc</ind-def:filename>
                   <ind-def:pattern operation="pattern match">^[[:space:]]*umask[[:space:]]+([^#]*)</ind-def:pattern>
-                  <ind-def:instance datatype="int">2</ind-def:instance>
+                  <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:org.fedoraproject.f14:obj:20088" version="1">
                   <ind-def:path>/etc</ind-def:path>
                   <ind-def:filename>csh.cshrc</ind-def:filename>
                   <ind-def:pattern operation="pattern match">^[[:space:]]*umask[[:space:]]+([^#]*)</ind-def:pattern>
-                  <ind-def:instance datatype="int">2</ind-def:instance>
+                  <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <unix-def:file_object id="oval:org.fedoraproject.f14:obj:20092" version="1" comment="/boot/grub/grub.conf">
                   <unix-def:path>/boot/grub/</unix-def:path>

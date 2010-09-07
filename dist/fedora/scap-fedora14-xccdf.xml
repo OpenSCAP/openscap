@@ -116,8 +116,8 @@
     <select idref="rule-2.3.3.4.b" selected="false" />		<!-- DONE -->		<!-- Restrict Execution of userhelper to Console Users -->
     <select idref="rule-2.3.3.5.a" selected="true" />		<!-- READY+ -->		<!-- Set Password hashing algorithm -->
     <select idref="rule-2.3.3.6.a" selected="false" />		<!-- DONE -->		<!-- Limit password reuse -->
-    <select idref="rule-2.3.4.1.1.a" selected="true" />		<!-- READY+ -->		<!-- Ensure that No Dangerous Directories Exist in Root's Path -->
-    <select idref="rule-2.3.4.1.2.a" selected="true" />		<!-- READY+ -->		<!-- Write permissions are disabled for group and other in all directories in Root's Path -->
+    <select idref="rule-2.3.4.1.a" selected="true" />		<!-- READY+ -->		<!-- Ensure that No Dangerous Directories Exist in Root's Path -->
+    <select idref="rule-2.3.4.1.b" selected="true" />		<!-- READY+ -->		<!-- Write permissions are disabled for group and other in all directories in Root's Path -->
     <select idref="rule-2.3.4.2.a" selected="true" />		<!-- READY+ -->		<!-- Ensure that User Home Directories are not Group-Writable or World-Readable -->
     <select idref="rule-2.3.4.4.a" selected="true" />		<!-- READY+ -->		<!-- Ensure that Users Have Sensible Umask Values in /etc/bashrc -->
     <select idref="rule-2.3.4.4.b" selected="true" />		<!-- READY+ -->		<!-- Ensure that Users Have Sensible Umask Values in /etc/cshrc -->
@@ -447,7 +447,7 @@
     <refine-value idref="var-2.3.3.4.b" selector="4710" />             <!-- userhelper file permissions -->
     <refine-value idref="var-2.3.3.5.a" selector="SHA-512" />          <!-- Password hashing algorithm -->
     <refine-value idref="var-2.3.3.6.a" selector="0" />                <!-- Passwords to remember -->
-    <refine-value idref="var-2.3.4.4" selector="022" />                <!-- Sensible umask -->
+    <refine-value idref="var-2.3.4.4" selector="002" />                <!-- Sensible umask -->
     <refine-value idref="var-2.3.5.2.a" selector="root" />             <!-- User that owns /etc/grub.conf -->
     <refine-value idref="var-2.3.5.2.b" selector="root" />             <!-- Group that owns /etc/grub.conf -->
     <refine-value idref="var-2.3.5.2.c" selector="600" />              <!-- permissions on /etc/hrub.conf -->
@@ -1866,7 +1866,6 @@
             <description>The /etc/shadow file should be owned by root.</description>
             <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN001400</reference>
             <ident system="http://cce.mitre.org">CCE-3918-0</ident>
-            <fix>via chown</fix>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20034" />
             </check>
@@ -1876,7 +1875,6 @@
             <description>The /etc/shadow file should be owned by root.</description>
             <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN001400 GEN001410</reference>
             <ident system="http://cce.mitre.org">CCE-3988-3</ident>
-            <fix>via chown</fix>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20035" />
             </check>
@@ -1886,7 +1884,6 @@
             <description>The /etc/group file should be owned by root.</description>
             <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN001391</reference>
             <ident system="http://cce.mitre.org">CCE-3276-3</ident>
-            <fix>via chown</fix>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20036" />
             </check>
@@ -1896,7 +1893,6 @@
             <description>The /etc/group file should be owned by root.</description>
             <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN001392</reference>
             <ident system="http://cce.mitre.org">CCE-3883-6</ident>
-            <fix>via chown</fix>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20037" />
             </check>
@@ -1906,7 +1902,6 @@
             <description>The /etc/gshadow file should be owned by root.</description>
             <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN001400 GEN001431</reference>
             <ident system="http://cce.mitre.org">CCE-4210-1</ident>
-            <fix>via chown</fix>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20038" />
             </check>
@@ -1916,7 +1911,6 @@
             <description>The /etc/gshadow file should be owned by root.</description>
             <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN001400 GEN001432</reference>
             <ident system="http://cce.mitre.org">CCE-4064-2</ident>
-            <fix>via chown</fix>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20039" />
             </check>
@@ -1926,7 +1920,6 @@
             <description>The /etc/passwd file should be owned by root.</description>
             <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN001378 GEN001400</reference>
             <ident system="http://cce.mitre.org">CCE-3958-6</ident>
-            <fix>via chown</fix>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20040" />
             </check>
@@ -1936,7 +1929,6 @@
             <description>The /etc/passwd file should be owned by root.</description>
             <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN001379 GEN001400</reference>
             <ident system="http://cce.mitre.org">CCE-3495-9</ident>
-            <fix>via chown</fix>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20041" />
             </check>
@@ -1946,7 +1938,6 @@
             <description>File permissions for /etc/shadow should be set correctly.</description>
             <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN001420</reference>
             <ident system="http://cce.mitre.org">CCE-4130-1</ident>
-            <fix>via chmod</fix>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-export value-id="var-2.2.3.1.i" export-name="oval:org.fedoraproject.f14:var:20042" />
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20042" />
@@ -1957,7 +1948,6 @@
             <description>File permissions for /etc/group should be set correctly.</description>
             <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN001393</reference>
             <ident system="http://cce.mitre.org">CCE-3967-7</ident>
-            <fix>via chmod</fix>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-export value-id="var-2.2.3.1.j" export-name="oval:org.fedoraproject.f14:var:20043" />
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20043" />
@@ -1968,7 +1958,6 @@
             <description>File permissions for /etc/gshadow should be set correctly.</description>
             <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN001420 GEN001433</reference>
             <ident system="http://cce.mitre.org">CCE-3932-1</ident>
-            <fix>via chmod</fix>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-export value-id="var-2.2.3.1.k" export-name="oval:org.fedoraproject.f14:var:20044" />
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20044" />
@@ -1979,7 +1968,6 @@
             <description>File permissions for /etc/passwd should be set correctly.</description>
             <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN001380</reference>
             <ident system="http://cce.mitre.org">CCE-3566-7</ident>
-            <fix>via chmod</fix>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-export value-id="var-2.2.3.1.l" export-name="oval:org.fedoraproject.f14:var:20045" />
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20045" />
@@ -2040,8 +2028,9 @@
             <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN002480</reference>
             <ident system="http://cce.mitre.org">CCE-3795-2</ident>
             <fixtext>The following command discovers and prints any world-writable files in local
-              partitions. Run it once for each local partition PART:</fixtext>
-            <fix>find PART -xdev -type f -perm -0002 -print | xargs chmod o-w</fix>
+              partitions. Run it once for each local partition PART: <xhtml:br/>
+            <xhtml:br/>
+            <xhtml:code>find PART -xdev -type f -perm -0002 -print | xargs chmod o-w</xhtml:code></fixtext>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20047" />
             </check>
@@ -2281,7 +2270,6 @@
             <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">3.10 3.12.1</reference>
             <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN002160 GEN002400</reference>
             <ident system="http://cce.mitre.org">CCE-3324-1</ident>
-            <fixtext>(1) via chmod</fixtext>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20049" />
             </check>
@@ -2309,7 +2297,6 @@
             <title>Find files unowned by a user</title>
             <description>All files should be owned by a user</description>
             <ident system="http://cce.mitre.org">CCE-4223-4</ident>
-            <fixtext>(1) via chown</fixtext>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20050" />
             </check>
@@ -2318,7 +2305,6 @@
             <title>Find files unowned by a group</title>
             <description>All files should be owned by a group</description>
             <ident system="http://cce.mitre.org">CCE-3573-3</ident>
-            <fixtext>(1) via chgrp</fixtext>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20051" />
             </check>
@@ -2346,8 +2332,6 @@
             <reference href="http://www.dtic.mil/whs/directives/corres/pdf/850002p.pdf">ECLP-1</reference>
             <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">3.12.3</reference>
             <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN001220 GEN002520</reference>
-            <ident system="http://cce.mitre.org">TBD</ident>
-            <fixtext>(1) via chown</fixtext>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20052" />
             </check>
@@ -2391,9 +2375,8 @@
             <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">3.13</reference>
             <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN002560</reference>
             <ident system="http://cce.mitre.org">CCE-4220-0</ident>
-            <fixtext>(1) via /etc/sysconfig/init</fixtext>
-            <fix>Edit the file /etc/sysconfig/init, and add or correct the following line: umask
-              027</fix>
+            <fixtext>Edit the file /etc/rc.d/init.d/functions, and add or correct the following line: umask
+              <sub idref="var-2.2.4.1.a"/></fixtext>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-export value-id="var-2.2.4.1.a" export-name="oval:org.fedoraproject.f14:var:20053" />
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20053" />
@@ -2411,7 +2394,7 @@
             <xhtml:br/>
             By default, the system sets a soft limit to stop the
             creation of core dump files for all users. This is accomplished in /etc/profile with the
-            line: ulimit -S -c 0 &gt; /dev/null 2$gt;&amp;1 However, compliance with this
+            line: ulimit -S -c 0 &gt; /dev/null 2&gt;&amp;1 However, compliance with this
             limit is voluntary; it is a default intended only to protect users from the annoyance of
             generating unwanted core files. Users can increase the allowed core file size up to the
             hard limit, which is unlimited by default. <xhtml:br/>
@@ -2448,9 +2431,8 @@
             <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">3.20.1</reference>
             <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN003500</reference>
             <ident system="http://cce.mitre.org">CCE-4225-9</ident>
-            <fixtext>(1) via /etc/security/limits.conf</fixtext>
-            <fix>To disable core dumps for all users, add or correct the following line in
-              /etc/security/limits.conf: * hard core 0</fix>
+            <fixtext>To disable core dumps for all users, add or correct the following line in
+              /etc/security/limits.conf: * hard core 0</fixtext>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20055" />
             </check>
@@ -2462,9 +2444,8 @@
             <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">3.20.1</reference>
             <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN003500</reference>
             <ident system="http://cce.mitre.org">CCE-4247-3</ident>
-            <fixtext>(1) via sysctl - fs.suid_dumpable</fixtext>
-            <fix>To ensure that core dumps can never be made by setuid programs, edit
-              /etc/sysctl.conf and add or correct the line: fs.suid_dumpable = 0</fix>
+            <fixtext>To ensure that core dumps can never be made by setuid programs, edit
+              /etc/sysctl.conf and add or correct the line: fs.suid_dumpable = 0</fixtext>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20056" />
             </check>
@@ -2513,10 +2494,9 @@
             <reference href="http://www.dtic.mil/whs/directives/corres/pdf/850002p.pdf">ECSC-1</reference>
             <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN008420</reference>
             <ident system="http://cce.mitre.org">CCE-4168-1</ident>
-            <fixtext>(1) via sysctl - kernel.exec-shield</fixtext>
-            <fix>To ensure ExecShield (including random placement of virtual memory regions) is
+            <fixtext>To ensure ExecShield (including random placement of virtual memory regions) is
               activated at boot, add or correct the following settings in /etc/sysctl.conf:
-              kernel.exec-shield = 1</fix>
+              kernel.exec-shield = 1</fixtext>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20057" />
             </check>
@@ -2527,10 +2507,9 @@
             <reference href="http://www.dtic.mil/whs/directives/corres/pdf/850002p.pdf">ECSC-1</reference>
             <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN008420</reference>
             <ident system="http://cce.mitre.org">CCE-4146-7</ident>
-            <fixtext>(1) via sysctl - kernel.randomize_va_space</fixtext>
-            <fix>To ensure ExecShield (including random placement of virtual memory regions) is
+            <fixtext>To ensure ExecShield (including random placement of virtual memory regions) is
               activated at boot, add or correct the following settings in /etc/sysctl.conf:
-              kernel.randomize_va_space = 2</fix>
+              kernel.randomize_va_space = 2</fixtext>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20058" />
             </check>
@@ -2633,7 +2612,7 @@
             /dev/vc/*. These are likely to be deprecated in most environments, but may be retained
             for compatibility. Root should also be prohibited from connecting via network protocols.
             See Section 3.5 for instructions on preventing root from logging in via SSH.</description>
-    		  <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">3.3</reference>
+    	  <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">3.3</reference>
           <reference href="http://www.dtic.mil/whs/directives/corres/pdf/850002p.pdf">IAIA-1 IAIA-2 ECSC-1</reference>
           <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN000980 GEN001000</reference>
           <Rule id="rule-2.3.1.1.a" selected="false" weight="10.0" severity="medium">
@@ -2641,17 +2620,16 @@
             <description>Logins through the specified virtual console interface should be disabled
             </description>
             <ident system="http://cce.mitre.org">CCE-3820-8</ident>
-            <fixtext>(1) via /etc/securetty</fixtext>
+            <fixtext>Edit /etc/securetty</fixtext>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20061" />
             </check>
           </Rule>
           <Rule id="rule-2.3.1.1.b" selected="false" weight="10.0" severity="medium">
             <title>Restrict Root Logins to System Console</title>
-            <description>root Logins through the specified virtual console device should be disabled</description>
-            <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN000980 GEN001000</reference>
+            <description>Logins through the specified virtual console device should be disabled</description>
             <ident system="http://cce.mitre.org">CCE-3485-0</ident>
-            <fixtext>(1) via /etc/securetty</fixtext>
+            <fixtext> Edit /etc/securetty</fixtext>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20062" />
             </check>
@@ -2659,9 +2637,8 @@
           <Rule id="rule-2.3.1.1.c" selected="false" weight="10.0" severity="medium">
             <title>Restrict virtual console Root Logins</title>
             <description>Logins through the virtual console devices should be disabled</description>
-            <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN000980 GEN001000</reference>
             <ident system="http://cce.mitre.org">CCE-4111-1</ident>
-            <fixtext>(1) via /etc/securetty</fixtext>
+            <fixtext> Edit /etc/securetty</fixtext>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20063" />
             </check>
@@ -2669,9 +2646,8 @@
           <Rule id="rule-2.3.1.1.d" selected="false" weight="10.0" severity="medium">
             <title>Restrict serial port Root Logins</title>
             <description>Login prompts on serial ports should be disabled.</description>
-            <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN000980 GEN001000</reference>
             <ident system="http://cce.mitre.org">CCE-4256-4</ident>
-            <fixtext>(1) via /etc/securetty</fixtext>
+            <fixtext>Edit /etc/securetty</fixtext>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20064" />
             </check>
@@ -2828,7 +2804,6 @@
               <description>Login access to accounts without passwords should be disabled</description>
               <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN000580</reference>
               <ident system="http://cce.mitre.org">CCE-4238-2</ident>
-              <fixtext>(1) via /etc/shadow</fixtext>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                 <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20069" />
               </check>
@@ -2847,8 +2822,6 @@
             <Rule id="rule-2.3.1.5.2.a" selected="false" weight="10.0" severity="medium">
               <title>Verify that All Account Password Hashes are Shadowed</title>
               <description>Check that passwords are shadowed</description>
-              <ident system="http://cce.mitre.org">TBD</ident>
-              <fixtext>(1) via /etc/password</fixtext>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                 <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:200695" />
               </check>
@@ -2872,8 +2845,8 @@
             in almost all cases. Some sites choose to have more than one account with UID 0 in order 
             to differentiate between administrators, but this practice may have unexpected side
             effects, and is therefore not recommended.</description>
-      		<reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">3.1.1</reference>
-      		<reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN000320</reference>
+      	  <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">3.1.1</reference>
+      	  <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN000320</reference>
           <Rule id="rule-2.3.1.6.a" selected="false" weight="10.0" severity="medium">
             <title>Verify that No Non-Root Accounts Have UID 0</title>
             <description>Anonymous root logins should be disabled</description>
@@ -2881,7 +2854,6 @@
             <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">3.3</reference>
             <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN000880</reference>
             <ident system="http://cce.mitre.org">CCE-4009-7</ident>
-            <fixtext>(1) via /etc/passwd</fixtext>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20070" />
             </check>
@@ -2978,7 +2950,6 @@
               <sub idref="var-2.3.1.7.a"/></description>
             <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN000580</reference>
             <ident system="http://cce.mitre.org">CCE-4154-1</ident>
-            <fixtext>(1) via /etc/login.defs</fixtext>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-export value-id="var-2.3.1.7.a" export-name="oval:org.fedoraproject.f14:var:20071" />
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20071" />
@@ -2990,7 +2961,6 @@
               <sub idref="var-2.3.1.7.b"/></description>
             <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN000540</reference>
             <ident system="http://cce.mitre.org">CCE-4180-6</ident>
-            <fixtext>(1) via /etc/login.defs</fixtext>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-export value-id="var-2.3.1.7.b" export-name="oval:org.fedoraproject.f14:var:20072" />
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20072" />
@@ -3002,7 +2972,6 @@
               <sub idref="var-2.3.1.7.c"/></description>
             <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN000700</reference>
             <ident system="http://cce.mitre.org">CCE-4092-3</ident>
-            <fixtext>(1) via /etc/login.defs</fixtext>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-export value-id="var-2.3.1.7.c" export-name="oval:org.fedoraproject.f14:var:20073" />
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20073" />
@@ -3014,7 +2983,6 @@
               <sub idref="var-2.3.1.7.d"/></description>
             <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN000820</reference>
             <ident system="http://cce.mitre.org">CCE-4097-2</ident>
-            <fixtext>(1) via /etc/login.defs</fixtext>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-export value-id="var-2.3.1.7.d" export-name="oval:org.fedoraproject.f14:var:20074" />
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20074" />
@@ -3753,7 +3721,7 @@
             It is a good practice for administrators to always execute privileged
             commands by typing the full path to the command.</description>
           <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN001840 GEN001900 GEN000940</reference>
-          <Rule id="rule-2.3.4.1.1.a" selected="false" weight="10.0" severity="medium">
+          <Rule id="rule-2.3.4.1.a" selected="false" weight="10.0" severity="medium">
             <title>Ensure that No Dangerous Directories Exist in Root's Path</title>
             <description>The PATH variable should be set correctly for user root</description>
             <reference href="http://www.dtic.mil/whs/directives/corres/pdf/850002p.pdf">DCCS-1 DCCS-2</reference>
@@ -3764,12 +3732,11 @@
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20085" />
             </check>
           </Rule>
-          <Rule id="rule-2.3.4.1.2.a" selected="false" weight="10.0" severity="medium">
+          <Rule id="rule-2.3.4.1.b" selected="false" weight="10.0" severity="medium">
             <title>Write permissions are disabled for group and other in all directories in Root's Path</title>
             <description>Check each directory in root's path and make use it does not grant write permission to group and other</description>
             <reference href="http://www.dtic.mil/whs/directives/corres/pdf/850002p.pdf">ECCD-1 ECCD-2</reference>
             <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN000960</reference>
-            <fixtext>Via chmod</fixtext>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:200855" />
             </check>
@@ -3833,16 +3800,10 @@
           <description xml:lang="en">
             <xhtml:ol>
               <xhtml:li>Edit the global configuration files /etc/bashrc and /etc/csh.cshrc. 
-              Add or correct the line: <xhtml:br/>
-                <xhtml:br/>
-                umask 077</xhtml:li>
+              Add or correct the line: umask <sub idref="var-2.3.4.4"/></xhtml:li>
               <xhtml:li>View the additional configuration files /etc/csh.login and /etc/profile.d/*, 
                 and ensure that none of these files redefine the umask to a more permissive value 
                 unless there is a good reason for it.</xhtml:li>
-              <xhtml:li>Edit the root shell configuration files /root/.bashrc, /root/.bash
-                profile, /root/.cshrc, and /root/.tcshrc. Add or correct the line: <xhtml:br/>
-                <xhtml:br/>
-                umask 077 </xhtml:li>
             </xhtml:ol>  
             With a default umask setting of 077, files and directories created by users will not be
             readable by any other user on the system. Users who wish to make specific files group-
@@ -3860,11 +3821,13 @@
             and preventing files from being inadvertently shared.</description>
           <reference href="http://www.dtic.mil/whs/directives/corres/pdf/850002p.pdf">ECCD-1 ECCD-2</reference>
           <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">3.13</reference>
+          <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN002560</reference>
           <Value id="var-2.3.4.4" type="string" operator="equals">
             <title>Sensible umask</title>
             <description xml:lang="en">Enter default user umask</description>
             <question xml:lang="en">Enter default user umask</question>
-            <value>022</value>
+            <value>002</value>
+            <value selector="002">002</value>
             <value selector="007">007</value>
             <value selector="022">022</value>
             <value selector="027">027</value>
@@ -3875,9 +3838,7 @@
             <title>Ensure that Users Have Sensible Umask Values in /etc/bashrc</title>
             <description>The default umask for all users for the bash shell should be set to: 
                 <sub idref="var-2.3.4.4"/></description>
-            <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN002560</reference>
             <ident system="http://cce.mitre.org">CCE-3844-8</ident>
-            <fixtext>(1) via /etc/bashrc</fixtext>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-export value-id="var-2.3.4.4" export-name="oval:org.fedoraproject.f14:var:20087" />
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20087" />
@@ -3887,9 +3848,7 @@
             <title>Ensure that Users Have Sensible Umask Values in /etc/csh.cshrc</title>
             <description>The default umask for all users for the csh shell should be set to: 
               <sub idref="var-2.3.4.4"/></description>
-            <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN002560</reference>
             <ident system="http://cce.mitre.org">CCE-4227-5</ident>
-            <fixtext>(1) via /etc/csh.cshrc</fixtext>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-export value-id="var-2.3.4.4" export-name="oval:org.fedoraproject.f14:var:20087" />
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20088" />
@@ -3967,11 +3926,11 @@
             <xhtml:ol>
               <xhtml:li>Select a password and then generate a hash from it by running: <xhtml:br/>
                 <xhtml:br/>
-                <xhtml:code># grub-md5-crypt </xhtml:code></xhtml:li>
+                <xhtml:code># grub-md5-crypt </xhtml:code> <xhtml:br/> <xhtml:br/> </xhtml:li>
               <xhtml:li>Insert the following line into /etc/grub.conf immediately after the header 
                 comments. (Use the output from grub-md5-crypt as the value of password-hash ): <xhtml:br/>
                 <xhtml:br/>
-                <xhtml:code>password --md5 password-hash </xhtml:code></xhtml:li>
+                <xhtml:code>password --md5 password-hash </xhtml:code> <xhtml:br/> <xhtml:br/> </xhtml:li>
               <xhtml:li>Verify the permissions on /etc/grub.conf (which is a symlink to ../boot/grub/grub.conf): 
                 <xhtml:br/>
                 <xhtml:br/>
@@ -4043,7 +4002,7 @@
             <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">12.4.1.1</reference>
             <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI LNX00140</reference>
             <ident system="http://cce.mitre.org">CCE-3818-2</ident>
-            <fixtext>(1) via /boot/grub/grub.conf</fixtext>
+            <fixtext>Edit /boot/grub/grub.conf</fixtext>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20095" />
             </check>
