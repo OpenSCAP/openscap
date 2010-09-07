@@ -674,11 +674,7 @@ void oval_sysitem_set_subtype(struct oval_sysitem *sysitem, oval_subtype_t subty
 /**
  * @memberof oval_sysitem
  */
-void oval_sysitem_set_message(struct oval_sysitem *data, char *message);
-/**
- * @memberof oval_sysitem
- */
-void oval_sysitem_set_message_level(struct oval_sysitem *data, oval_message_level_t level);
+void oval_sysitem_add_message(struct oval_sysitem *, struct oval_message *);
 /**
  * @memberof oval_sysitem
  */
@@ -708,12 +704,7 @@ struct oval_sysent_iterator *oval_sysitem_get_items(struct oval_sysitem *);
  * Get system data message.
  * @memberof oval_sysitem
  */
-char *oval_sysitem_get_message(struct oval_sysitem *);
-/**
- * Get system data message level.
- * @memberof oval_sysitem
- */
-oval_message_level_t oval_sysitem_get_message_level(struct oval_sysitem *);
+struct oval_message_iterator *oval_sysitem_get_messages(struct oval_sysitem *);
 /**
  * Get system data subtype.
  * @memberof oval_sysitem

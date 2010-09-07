@@ -515,7 +515,7 @@ void oval_result_test_set_instance(struct oval_result_test *test, int instance);
 /**
  * @memberof oval_result_test
  */
-void oval_result_test_set_message(struct oval_result_test *, struct oval_message *);
+void oval_result_test_add_message(struct oval_result_test *, struct oval_message *);
 /**
  * @memberof oval_result_test
  */
@@ -553,7 +553,7 @@ int oval_result_test_get_instance(struct oval_result_test *);
 /**
  * @memberof oval_result_test
  */
-struct oval_message *oval_result_test_get_message(struct oval_result_test *);
+struct oval_message_iterator *oval_result_test_get_messages(struct oval_result_test *);
 /**
  * @memberof oval_result_test
  */

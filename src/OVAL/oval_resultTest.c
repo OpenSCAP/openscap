@@ -174,7 +174,7 @@ typedef struct oval_result_test {
 	struct oval_result_system *system;
 	struct oval_test *test;
 	oval_result_t result;
-	struct oval_message *message;
+	struct oval_collection *messages;
 	struct oval_collection *items;
 	struct oval_collection *bindings;
 	int instance;
@@ -193,7 +193,7 @@ struct oval_result_test *oval_result_test_new(struct oval_result_system *sys, ch
 	struct oval_definition_model *definition_model = oval_syschar_model_get_definition_model(syschar_model);
 	test->system = sys;
 	test->test = oval_test_get_new(definition_model, tstid);
-	test->message = NULL;
+	test->messages = oval_collection_new();
 	test->result = OVAL_RESULT_NOT_EVALUATED;
 	test->instance = 1;
 	test->items = oval_collection_new();
@@ -270,11 +270,13 @@ struct oval_result_test *oval_result_test_clone
 	}
 	oval_variable_binding_iterator_free(old_bindings);
 
-	struct oval_message *old_message = oval_result_test_get_message(old_test);
-	if (old_message) {
+	struct oval_message_iterator *old_messages = oval_result_test_get_messages(old_test);
+	while (oval_message_iterator_has_more(old_messages)) {
+		struct oval_message *old_message = oval_message_iterator_next(old_messages);
 		struct oval_message *new_message = oval_message_clone(old_message);
-		oval_result_test_set_message(new_test, new_message);
+		oval_result_test_add_message(new_test, new_message);
 	}
+	oval_message_iterator_free(old_messages);
 
 	oval_result_test_set_instance(new_test, oval_result_test_get_instance(old_test));
 	oval_result_test_set_result(new_test, old_test->result);
@@ -291,18 +293,17 @@ void oval_result_test_free(struct oval_result_test *test)
 {
 	__attribute__nonnull__(test);
 
-	if (test->message)
-		oscap_free(test->message);
+	oval_collection_free_items(test->messages, (oscap_destruct_func) oval_message_free);
+	oval_collection_free_items(test->items, (oscap_destruct_func) oval_result_item_free);
 	if (test->bindings_clearable)
 		oval_collection_free_items(test->bindings, (oscap_destruct_func) oval_variable_binding_free);
 	else {
 		oval_collection_free(test->bindings);	/* avoid leaks - remove collection but not bindings. Bindings are part of syschar model */
 	}
-	oval_collection_free_items(test->items, (oscap_destruct_func) oval_result_item_free);
 
 	test->system = NULL;
 	test->test = NULL;
-	test->message = NULL;
+	test->messages = NULL;
 	test->result = OVAL_RESULT_NOT_EVALUATED;
 	test->items = NULL;
 	test->bindings = NULL;
@@ -1259,11 +1260,11 @@ int oval_result_test_get_instance(struct oval_result_test *rtest)
 	return rtest->instance;
 }
 
-struct oval_message *oval_result_test_get_message(struct oval_result_test *rtest)
+struct oval_message_iterator *oval_result_test_get_messages(struct oval_result_test *rtest)
 {
 	__attribute__nonnull__(rtest);
 
-	return ((struct oval_result_test *)rtest)->message;
+	return (struct oval_message_iterator *) oval_collection_iterator(rtest->messages);
 }
 
 struct oval_result_item_iterator *oval_result_test_get_items(struct oval_result_test *rtest)
@@ -1299,11 +1300,9 @@ void oval_result_test_set_instance(struct oval_result_test *test, int instance)
 		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
-void oval_result_test_set_message(struct oval_result_test *test, struct oval_message *message) {
+void oval_result_test_add_message(struct oval_result_test *test, struct oval_message *message) {
 	if (test && !oval_result_test_is_locked(test)) {
-		if (test->message)
-			oval_message_free(test->message);
-		test->message = message;
+		oval_collection_add(test->messages, message);
 	} else
 		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
@@ -1324,7 +1323,7 @@ void oval_result_test_add_binding(struct oval_result_test *test, struct oval_var
 
 //void(*oscap_consumer_func)(void*, void*);
 static void _oval_test_message_consumer(struct oval_message *message, struct oval_result_test *test) {
-	oval_result_test_set_message(test, message);
+	oval_result_test_add_message(test, message);
 }
 
 static int _oval_result_test_binding_parse(xmlTextReaderPtr reader, struct oval_parser_context *context, void **args) {
