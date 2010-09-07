@@ -39,10 +39,14 @@ XCCDF_RESULT = ["", "green", "red", "lred", "gray", "white", "white", "white", "
 OVAL_RESULT = {0:"", 1:"green", 2:"red", 4:"gray", 8:"lred", 16:"white", 32:"white"}
 
 def _color(color, text):
-    return "\033[%sm%s\033[0m" % (COLORS[color], text)
+    if sys.stdout.isatty():
+        return "\033[%sm%s\033[0m" % (COLORS[color], text)
+    else: return text
 
 def _bold(text):
-    return "\033[1m%s\033[0;0m" % text
+    if sys.stdout.isatty():
+        return "\033[1m%s\033[0;0m" % text
+    else: return text
 
 def print_save(prefix, indent, string):
 
@@ -141,13 +145,24 @@ class XCCDF_Handler(object):
 
         return action
 
-    def __callback(self, msg, plugin):
+    def __callback_start(self, msg, plugin):
         result = msg.user2num
-        if result == OSCAP.XCCDF_RESULT_NOT_SELECTED: return 0
+        if result == OSCAP.XCCDF_RESULT_NOT_SELECTED: 
+            return 0
+
         print_save( "\nRule ID:", "\r\t\t", _bold(msg.user1str) )
         print_save( "Title:", "\r\t\t", msg.user3str )
         print_save( "Descroption:", "\r\t\t", msg.string )
-        print_save( "Result:", "\r\t\t", _bold(_color(XCCDF_RESULT[result], xccdf.test_result_type.get_text(msg.user2num))) )
+        print "Result:", "\r\t\t",
+        sys.stdout.flush()
+        return 0
+
+    def __callback_end(self, msg, plugin):
+        result = msg.user2num
+        if result == OSCAP.XCCDF_RESULT_NOT_SELECTED: 
+            return 0
+
+        print _bold(_color(XCCDF_RESULT[result], xccdf.test_result_type.get_text(msg.user2num)))
         return 0
 
     def __set_policy(self, policy_id):
@@ -184,7 +199,8 @@ class XCCDF_Handler(object):
 
     def __evaluate(self, policy_id=None):
         if policy_id != None: self.__set_policy(policy_id)
-        self.policy_model.register_output_callback(self.__callback, None)
+        self.policy_model.register_start_callback(self.__callback_start, None)
+        self.policy_model.register_output_callback(self.__callback_end, None)
         self.result = self.policy.evaluate()
 
         return self.result

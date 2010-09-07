@@ -376,6 +376,20 @@ bool xccdf_policy_model_register_output_callback_py(struct xccdf_policy_model *m
     return xccdf_policy_model_register_output_callback(model, output_callback_wrapper, (void *)new_usrdata);
 }
 
+bool xccdf_policy_model_register_start_callback_py(struct xccdf_policy_model *model, PyObject *func, PyObject *usr) {
+    struct internal_usr *new_usrdata;
+    PyEval_InitThreads();
+    Py_INCREF(func);
+    Py_INCREF(usr);
+    new_usrdata = oscap_alloc(sizeof(struct internal_usr));
+    if (new_usrdata == NULL) return false;
+
+    new_usrdata->func = func;
+    new_usrdata->usr = usr;
+  
+    return xccdf_policy_model_register_start_callback(model, output_callback_wrapper, (void *)new_usrdata);
+}
+
 int oval_agent_eval_system_py(oval_agent_session_t * asess, PyObject * func, PyObject *usr) {
     struct internal_usr *new_usrdata;
     PyEval_InitThreads();

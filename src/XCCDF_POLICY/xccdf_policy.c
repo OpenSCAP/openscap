@@ -563,6 +563,41 @@ xccdf_policy_evaluate_cb(struct xccdf_policy * policy, const char * sysname, con
     return retval;
 }
 
+static int xccdf_policy_report_cb(struct xccdf_policy * policy, const char * sysname, const char * rule_id, 
+        const char * description, const char * title, int ret)
+{
+    int retval = 0;
+    struct oscap_iterator * cb_it = oscap_iterator_new(policy->model->callbacks);
+    while (oscap_iterator_has_more(cb_it)) {
+        callback_out * cb = (callback_out *) oscap_iterator_next(cb_it);
+
+        /* Check if the callback match sysname, 
+         * continue otherwise
+         */
+        if (strcmp(cb->system, sysname))
+            continue;
+
+        /* Report by oscap_reporter_message
+         */
+        struct oscap_reporter_message * msg = oscap_reporter_message_new_fmt(
+                OSCAP_REPORTER_FAMILY_XCCDF, /* FAMILY */
+                0,                           /* CODE */
+                description);
+        oscap_reporter_message_set_user1str(msg, rule_id);
+        oscap_reporter_message_set_user2num(msg, (xccdf_test_result_type_t) ret); // Result
+        oscap_reporter_message_set_user3str(msg, title);
+        retval = oscap_reporter_report(cb->callback, msg, cb->usr);
+
+        /* We still want to stop evaluation if user cancel it
+         * TODO: We should have a way to stop evaluation of current item
+         */
+        if (retval != 0) break;
+    }
+    oscap_iterator_free(cb_it);
+
+    return retval;
+}
+
 static struct oscap_list * xccdf_policy_check_get_value_bindings(struct xccdf_policy * policy, struct xccdf_check_export_iterator * check_it)
 {
         __attribute__nonnull__(check_it);
@@ -697,6 +732,29 @@ static int xccdf_policy_item_evaluate(struct xccdf_policy * policy, struct xccdf
             /* Get all checks of rule */
             rule_id = xccdf_rule_get_id((struct xccdf_rule *)item);
             struct xccdf_select * sel = xccdf_policy_get_select_by_id(policy, rule_id);
+
+            /* Get all information for callbacks
+             */
+            struct oscap_text_iterator * dsc_it = xccdf_rule_get_description((struct xccdf_rule *) item);
+            struct oscap_text_iterator * title_it = xccdf_rule_get_title((struct xccdf_rule *) item);
+            const char * description = NULL;
+            const char * title = NULL;
+            if (oscap_text_iterator_has_more(dsc_it))
+                description = oscap_text_get_plaintext(oscap_text_iterator_next(dsc_it));
+            oscap_text_iterator_free(dsc_it);    
+            if (oscap_text_iterator_has_more(title_it))
+                title = oscap_text_get_text(oscap_text_iterator_next(title_it));
+            oscap_text_iterator_free(title_it);     
+            int retval = 0;
+
+            /* Report evaluating
+             */
+            retval = xccdf_policy_report_cb(policy, "urn:xccdf:system:callback:start", rule_id, description, title, 
+                    (xccdf_select_get_selected(sel) ? 0 : XCCDF_RESULT_NOT_SELECTED ));
+            if (retval != 0) return retval;
+
+            /* Evaluation of callback
+             */
             if (xccdf_select_get_selected(sel)) {
                 check_it = xccdf_rule_get_checks((struct xccdf_rule *)item);
                 /* we need to evaluate all checks in rule, iteration begin */
@@ -716,9 +774,6 @@ static int xccdf_policy_item_evaluate(struct xccdf_policy * policy, struct xccdf
             } else {
                 ret = XCCDF_RESULT_NOT_SELECTED;
             }
-
-            callback_out * cb = (callback_out *) xccdf_policy_get_callback(policy, "urn:xccdf:system:callback:output");
-            int retval = 0;
 
             /* Add result to policy */
             if (result != NULL) {
@@ -750,27 +805,10 @@ static int xccdf_policy_item_evaluate(struct xccdf_policy * policy, struct xccdf
                     xccdf_result_add_rule_result(result, rule_ritem);
             }
 
-            if (cb != NULL) {
-                    struct oscap_text_iterator * dsc_it = xccdf_rule_get_description((struct xccdf_rule *) item);
-                    struct oscap_text_iterator * title_it = xccdf_rule_get_title((struct xccdf_rule *) item);
-                    const char * description = NULL;
-                    const char * title = NULL;
-                    if (oscap_text_iterator_has_more(dsc_it))
-                        description = oscap_text_get_plaintext(oscap_text_iterator_next(dsc_it));
-                    oscap_text_iterator_free(dsc_it);     
-                    if (oscap_text_iterator_has_more(title_it))
-                        title = oscap_text_get_text(oscap_text_iterator_next(title_it));
-                    oscap_text_iterator_free(title_it);     
-                    struct oscap_reporter_message * msg = oscap_reporter_message_new_fmt(
-                            OSCAP_REPORTER_FAMILY_XCCDF, /* FAMILY */
-                            0,                           /* CODE */
-                            description);
-                    oscap_reporter_message_set_user1str(msg, rule_id);
-                    oscap_reporter_message_set_user2num(msg, (xccdf_test_result_type_t) ret);
-                    oscap_reporter_message_set_user3str(msg, title);
-                    retval = oscap_reporter_report(cb->callback, msg, cb->usr);
-                    if (retval != 0) return retval;
-            }
+            /* Report result
+             */
+            retval = xccdf_policy_report_cb(policy, "urn:xccdf:system:callback:output", rule_id, description, title, ret);
+            if (retval != 0) return retval;
 
         } break;
 
@@ -1088,6 +1126,20 @@ bool xccdf_policy_model_register_engine_callback(struct xccdf_policy_model * mod
         cb->usr      = usr;
 
         return oscap_list_add(model->callbacks, cb);
+}
+
+bool xccdf_policy_model_register_start_callback(struct xccdf_policy_model * model, oscap_reporter func, void * usr)
+{
+
+        __attribute__nonnull__(model);
+        callback_out * cb = oscap_alloc(sizeof(callback_out));
+        if (cb == NULL) return false;
+
+        cb->system   = "urn:xccdf:system:callback:start";
+        cb->callback = func;
+        cb->usr      = usr;
+
+        return oscap_list_add(model->callbacks, (callback *) cb);
 }
 
 bool xccdf_policy_model_register_output_callback(struct xccdf_policy_model * model, oscap_reporter func, void * usr)

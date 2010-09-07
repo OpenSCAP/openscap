@@ -247,13 +247,15 @@ class OSCAP_Object(object):
     """ ********* Implementation of non-trivial functions ********* """
 
     def __output_callback(self, msg, obj):
-        return obj.__dict__["__output_cb"](OSCAP_Object("oscap_reporter_message", msg), obj.__dict__["__output_usr"])
+        return obj[0](OSCAP_Object("oscap_reporter_message", msg), obj[1])
+
+    def register_start_callback(self, cb, usr):
+        if self.object != "xccdf_policy_model": raise TypeError("Wrong call of register_start_callback function on %s" % (self.object,))
+        return OSCAP.xccdf_policy_model_register_start_callback_py(self.instance, self.__output_callback, (cb, usr))
 
     def register_output_callback(self, cb, usr):
         if self.object != "xccdf_policy_model": raise TypeError("Wrong call of register_output_callback function on %s" % (self.object,))
-        dict.__setattr__(self, "__output_cb", cb)
-        dict.__setattr__(self, "__output_usr", usr)
-        return OSCAP.xccdf_policy_model_register_output_callback_py(self.instance, self.__output_callback, self)
+        return OSCAP.xccdf_policy_model_register_output_callback_py(self.instance, self.__output_callback, (cb, usr))
 
     def register_engine_oval(self, sess):
         if self.object != "xccdf_policy_model": raise TypeError("Wrong call of register_engine_oval function on %s" % (self.object,))

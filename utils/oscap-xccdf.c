@@ -175,6 +175,29 @@ static struct oscap_module* XCCDF_SUBMODULES[] = {
 static const char * RESULT_COLORS[] = {"", "32", "31", "1;31", "1;30", "1;37", "1;37", "1;37", "34", "1;33" };
 
 /**
+ * Callback for XCCDF evaluation. Callback is called before each XCCDF Rule evaluation
+ * @param msg OSCAP Reporter message
+ * @param arg User defined data structure
+ */
+static int scallback(const struct oscap_reporter_message *msg, void *arg)
+{
+	if (((const struct oscap_action*) arg)->verbosity >= 0) {
+            xccdf_test_result_type_t result = oscap_reporter_message_get_user2num(msg);
+            if (result == XCCDF_RESULT_NOT_SELECTED) return 0;
+
+            printf("\n");
+            if (isatty(1)) 
+                printf("Rule ID:\r\t\t\033[1m%s\033[0;0m\n", oscap_reporter_message_get_user1str(msg));
+            else printf("Rule ID:\r\t\t%s\n", oscap_reporter_message_get_user1str(msg));
+            printf("Title:\r\t\t%s\n", oscap_reporter_message_get_user3str(msg));
+            /*printf("Description:\r\t\t%s\n", oscap_reporter_message_get_string(msg));*/
+            printf("Result:\r\t\t");
+            fflush(stdout);
+        }
+
+	return 0;
+}
+/**
  * Callback for XCCDF evaluation. Callback is called after each XCCDF Rule evaluation
  * @param msg OSCAP Reporter message
  * @param arg User defined data structure
@@ -185,11 +208,9 @@ static int callback(const struct oscap_reporter_message *msg, void *arg)
             xccdf_test_result_type_t result = oscap_reporter_message_get_user2num(msg);
             if (result == XCCDF_RESULT_NOT_SELECTED) return 0;
 
-            printf("\n");
-            printf("Rule ID:\r\t\t\033[1m%s\033[0;0m\n", oscap_reporter_message_get_user1str(msg));
-            printf("Title:\r\t\t%s\n", oscap_reporter_message_get_user3str(msg));
-            /*printf("Description:\r\t\t%s\n", oscap_reporter_message_get_string(msg));*/
-            printf("Result:\r\t\t\033[%sm%s\033[0m\n", RESULT_COLORS[result], xccdf_test_result_type_get_text((xccdf_test_result_type_t) result));
+            if (isatty(1)) 
+                printf("\033[%sm%s\033[0m\n", RESULT_COLORS[result], xccdf_test_result_type_get_text((xccdf_test_result_type_t) result));
+            else printf("%s\n", xccdf_test_result_type_get_text((xccdf_test_result_type_t) result));
         }
 
 	return 0;
@@ -248,6 +269,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	}
 
 	/* Register callback */
+	xccdf_policy_model_register_start_callback(policy_model, scallback, (void*) action);
 	xccdf_policy_model_register_output_callback(policy_model, callback, (void*) action);
 
 	/* NO OVAL files? get ones from policy model */
