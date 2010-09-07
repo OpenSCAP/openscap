@@ -180,22 +180,8 @@ class XCCDF_Handler(object):
     def export(self, result=None):
         assert self.action.f_results != None, "Result file not specified"
         if result == None: result = self.result
-        result.benchmark_uri = self.action.url_xccdf
-        title = common.text()
-        title.text = "OSCAP Python Test Result"
-        result.title = title
 
-        id = self.policy.id
-        if id != None:
-            result.profile = id
-
-        oval.agent_export_sysinfo_to_xccdf_result(self.sessions[0], result)
-
-        model_list = self.benchmark.models
-        for model in  model_list:
-            result.score = self.policy.score(result, model.system)
-
-        return result.export(self.action.f_results)
+        return self.policy.export(result, self.objs, "OSCAP Test Result", self.action.f_results)
 
     def __evaluate(self, policy_id=None):
         if policy_id != None: self.__set_policy(policy_id)

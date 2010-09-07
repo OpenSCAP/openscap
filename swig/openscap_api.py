@@ -553,8 +553,25 @@ class OSCAP_Object(object):
                 policy_model.register_engine_oval(sess)
             else: print "WARNING: Skipping %s file which is referenced from XCCDF content" % (f_OVAL,)
         files.free()
-        return {"def_models":def_models, "sessions":sessions, "policy_model":policy_model}
+        return {"def_models":def_models, "sessions":sessions, "policy_model":policy_model, "xccdf_path":f_XCCDF}
 
+    def export(self, result=None, dir=None, title=None, file=None):
+
+        if self.object != "xccdf_policy": raise TypeError("Wrong call of \"export\" function. Should be xccdf_policy (have %s)" %(self.object,))
+
+        result.benchmark_uri = dir["xccdf_path"]
+        o_title = common.text()
+        o_title.text = title
+        result.title = o_title
+
+        oval.agent_export_sysinfo_to_xccdf_result(dir["sessions"][0], result)
+
+        for model in self.model.benchmark.models:
+            result.score = self.score(result, model.system)
+
+        self.model.benchmark.result = result.clone()
+
+        return OSCAP.xccdf_benchmark_export(self.model.benchmark.instance, file)
     
     def destroy(self, dir):
 
