@@ -374,10 +374,10 @@
      </ul></div>
   </xsl:if>    
 
-  <xsl:if test="./cdf:reference">
+  <xsl:if test="./cdf:reference | ./cdf:ident">
      <h4>References</h4>
      <ol>
-	 <xsl:for-each select="./cdf:reference[text()]">
+	 <xsl:for-each select="./cdf:reference[text()] | ./cdf:ident">
 	   <li><xsl:value-of select="text()"/>
 	     <xsl:if test="@href">
 	       [<a href="{@href}">link</a>]
