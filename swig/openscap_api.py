@@ -230,7 +230,9 @@ class OSCAP_Object(object):
         if self.__dict__.has_key("instance") and self.__dict__["instance"] != None:
             # In what situations we need to free objects ?
             if (self.object.find("iterator") > -1 or \
-                self.object.find("_model") > -1) and self.object.find("policy_model") == -1:
+                (self.object.find("_model") > -1) and \
+                self.object.find("policy_model") == -1 and \
+                self.object.find("xccdf_model") == -1):
 
                 self.free()
 

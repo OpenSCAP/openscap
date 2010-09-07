@@ -388,6 +388,7 @@ def main():
 
     module.eval()
     if module.action.f_results != None: module.export()
+    module.destroy()
     
 if __name__ == "__main__":
     main()
