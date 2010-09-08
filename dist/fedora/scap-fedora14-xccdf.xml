@@ -28,7 +28,7 @@
   <!-- to be used when determining complinace.                                                              -->
   <!--                                                                                                      -->
   <Profile id="F14-Desktop" abstract="false">
-    <title xml:lang="en">Desktop settings</title>
+    <title xml:lang="en">Fedora 14 desktop settings</title>
     <description xml:lang="en">This profile selects security controls that conform to default Fedora 14 configuration.</description>
     <select idref="rule-2.1.1.1.1.a" selected="false" />	<!-- DONE -->		<!-- Separate Partition or Logical Volume for /tmp -->
     <select idref="rule-2.1.1.1.1.b" selected="false"/>		<!-- DONE -->		<!-- Minimum size of /tmp -->
@@ -54,16 +54,16 @@
     <select idref="rule-2.2.2.2.1.a" selected="false" />	<!-- DONE -->		<!-- Disable Modprobe Loading of USB Storage Driver -->
     <select idref="rule-2.2.2.2.2.a" selected="false" />	<!-- DONE -->		<!-- Remove USB Storage Driver -->
     <select idref="rule-2.2.2.2.3.a" selected="false" />	<!-- DONE -->		<!-- Disable Kernel Support for USB via Bootloader Configuration (will disable all USB devices including keyboards, mice, etc) -->
-    <select idref="rule-2.2.2.2.4.a" selected="false" /> 	<!-- DONE -->		<!-- Disable Booting from USB Devices -->
+    <select idref="rule-2.2.2.2.4.a" selected="false" /> 	<!-- READY (unknown)-->	<!-- Disable Booting from USB Devices -->
     <select idref="rule-2.2.2.3.a" selected="false" />		<!-- DONE -->		<!-- Disable the Automounter if Possible -->
     <select idref="rule-2.2.2.4.a" selected="false" />		<!-- BUG? -->     	<!-- Disable GNOME Automounting if Possible -->
-    <select idref="rule-2.2.2.5.a" selected="false" />		<!-- DONE -->		<!-- Disable Mounting of cramfs -->
-    <select idref="rule-2.2.2.5.b" selected="false" />		<!-- DONE -->		<!-- Disable Mounting of freevxfs -->
-    <select idref="rule-2.2.2.5.c" selected="false" />		<!-- DONE -->		<!-- Disable Mounting of jffs2 -->
-    <select idref="rule-2.2.2.5.d" selected="false" />		<!-- DONE -->		<!-- Disable Mounting of hfs -->
-    <select idref="rule-2.2.2.5.e" selected="false" />		<!-- DONE -->		<!-- Disable Mounting of hfsplus -->
-    <select idref="rule-2.2.2.5.f" selected="false" />		<!-- DONE -->		<!-- Disable Mounting of squashfs -->
-    <select idref="rule-2.2.2.5.g" selected="false" />		<!-- DONE -->		<!-- Disable Mounting of udf -->
+    <select idref="rule-2.2.2.5.a" selected="false" />		<!-- READY -->		<!-- Disable Mounting of cramfs -->
+    <select idref="rule-2.2.2.5.b" selected="false" />		<!-- READY -->		<!-- Disable Mounting of freevxfs -->
+    <select idref="rule-2.2.2.5.c" selected="false" />		<!-- READY -->		<!-- Disable Mounting of jffs2 -->
+    <select idref="rule-2.2.2.5.d" selected="false" />		<!-- READY -->		<!-- Disable Mounting of hfs -->
+    <select idref="rule-2.2.2.5.e" selected="false" />		<!-- READY -->		<!-- Disable Mounting of hfsplus -->
+    <select idref="rule-2.2.2.5.f" selected="false" />		<!-- READY -->		<!-- Disable Mounting of squashfs -->
+    <select idref="rule-2.2.2.5.g" selected="false" />		<!-- READY -->		<!-- Disable Mounting of udf -->
     <select idref="rule-2.2.3.1.a" selected="true" />		<!-- READY+ -->		<!-- Verify user who owns '/etc/shadow' file -->
     <select idref="rule-2.2.3.1.b" selected="true" />		<!-- READY+ -->		<!-- Verify group who owns '/etc/shadow' file -->
     <select idref="rule-2.2.3.1.c" selected="true" />		<!-- READY+ -->		<!-- Verify user who owns '/etc/group' file -->
@@ -714,7 +714,6 @@
             <Rule id="rule-2.1.1.1.1.a" selected="false" weight="10.0">
               <title xml:lang="en">Ensure that /tmp has its own partition or logical volume</title>
               <description xml:lang="en">The /tmp directory is a world-writable directory used for temporary ﬁle storage.  Ensure that it has its own partition or logical volume.</description>
-              <ident system="http://cce.mitre.org">TBD</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                 <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20000" />
               </check>
@@ -722,7 +721,6 @@
             <Rule id="rule-2.1.1.1.1.b" selected="false" weight="2.0">
               <title xml:lang="en">Ensure that /tmp is of adequate size</title>
               <description xml:lang="en">Because software may need to use /tmp to temporarily store large ﬁles, ensure that it is of adequate size.</description>
-              <ident system="http://cce.mitre.org">TBD</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                 <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20001"/>
               </check>
@@ -759,7 +757,6 @@
               <reference href="http://www.dtic.mil/whs/directives/corres/pdf/850002p.pdf">DCCS-1 DCCS-2</reference>
               <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">3.21</reference>
               <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN003620</reference>
-              <ident system="http://cce.mitre.org">TBD</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                 <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20002" />
               </check>
@@ -767,7 +764,6 @@
             <Rule id="rule-2.1.1.1.2.b" selected="false" weight="10.0">
               <title xml:lang="en">Ensure that /var is of adequate size</title>
               <description xml:lang="en">Because the yum package manager and other software uses /var to temporarily store large ﬁles, ensure that it is of adequate size. For a modern, general-purpose system, 10GB should be adequate.</description>
-              <ident system="http://cce.mitre.org">TBD</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                 <check-export value-id="var-2.1.1.1.2.b" export-name="oval:org.fedoraproject.f14:var:20003" /><!-- TBD -->
                 <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20003" />
@@ -786,7 +782,6 @@
               <description xml:lang="en">
                 System logs are stored in the /var/log directory.  
                 Ensure that it has its own partition or logical volume.</description>
-              <ident system="http://cce.mitre.org">TBD</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                 <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20004" />
               </check>
@@ -808,7 +803,6 @@
                 Ensure that it has its own partition or logical volume.  
                 Make absolutely certain that it is large enough to store 
                 all audit logs that will be created by the auditing daemon.</description>
-              <ident system="http://cce.mitre.org">TBD</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                 <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20005" />
               </check>
@@ -831,7 +825,6 @@
               <reference href="http://www.dtic.mil/whs/directives/corres/pdf/850002p.pdf">DCCS-1 DCCS-2</reference>
               <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">3.21</reference>
               <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN003620</reference>
-              <ident system="http://cce.mitre.org">TBD</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                 <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20006" />
               </check>
@@ -1069,7 +1062,6 @@
               <reference href="http://www.dtic.mil/whs/directives/corres/pdf/850002p.pdf">DCSL-1, VIVM-1</reference>
               <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">2.5.2.1</reference>
               <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN000120 GEN008820</reference>
-              <ident system="http://cce.mitre.org">TBD</ident>
               <fix>echo -e "/usr/bin/yum -R 120 -e 0 -d 0 -y update yum\n/usr/bin/yum -R 10 -e 0 -d 0 -y update" &gt; /etc/cron.weekly/yum.cron</fix>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                 <check-export value-id="var-2.1.2.3.2.b" export-name="oval:org.fedoraproject.f14.dcb:var:20009" /> <!-- TBD -->
@@ -1291,7 +1283,6 @@
               <reference href="http://www.dtic.mil/whs/directives/corres/pdf/850002p.pdf">DCSW-1 DCSL-1 VIVM-1</reference>
               <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">3.11 3.12.1</reference>
               <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN000140 GEN000220 GEN002260 GEN002400 GEN006560</reference>
-              <ident system="http://cce.mitre.org">TBD</ident>
               <!-- note that anything periodic will pass including monthly -->
               <fix>echo -e "/usr/sbin/aide --check" &gt; /etc/cron.daily/aide.cron</fix>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
@@ -1356,7 +1347,6 @@
               <title>Verify Package Integrity Using RPM</title>
               <description>Verify the integrity of installed packages by comparing the installed ﬁles with information about the ﬁles taken from the package metadata stored in the RPM database.</description>
               <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN006565</reference>
-              <ident system="http://cce.mitre.org">TBD</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                 <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:200155" />
               </check>
@@ -1608,7 +1598,7 @@
               <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">12.2</reference>
               <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN008460 LNX00040</reference>
               <ident system="http://cce.mitre.org">CCE-3944-6</ident>
-              <fixtext>(1) via BIOS</fixtext>
+              <fixtext>BIOS settings</fixtext>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                 <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20024" />
               </check>
@@ -1694,110 +1684,54 @@
         <Group id="group-2.2.2.5" hidden="false">
           <title xml:lang="en">Disable Mounting of Uncommon Filesystem Types</title>
           <description xml:lang="en">
-            Using the install command inside /etc/modprobe.conf instructs 
-            the kernel module loading system to run the command speciﬁed (here, /bin/true) instead 
-            of inserting the module in the kernel as normal. This eﬀectively
-            prevents usage of these uncommon ﬁlesystems.</description>
+            Specifying kernel module in /etc/modprobe.d/blacklist.conf will prevent
+            kernel module loading system from inserting the modele into the kernel. 
+            This mechanism effectively prevents usage of these uncommon ﬁlesystems.</description>
           <Rule id="rule-2.2.2.5.a" selected="false" weight="10.0">
             <title>Disable Mounting of cramfs</title>
-            <description>
-              Using the install command inside /etc/modprobe.conf instructs the kernel module loading system to run 
-              the command speciﬁed (here, /bin/true) instead of inserting the module in the kernel as normal. 
-              This effectively prevents usage of these uncommon ﬁlesystems.</description>
-            <ident system="http://cce.mitre.org">TBD</ident>
-            <fixtext>Append the following line to /etc/modprobe.conf in order to prevent the usage 
-              of uncommon ﬁlesystem types:</fixtext>
-            <fix>echo "install cramfs /bin/true" &gt;&gt; /etc/modprobe.conf</fix>
+            <fix>echo "blacklist cramfs" &gt;&gt; /etc/modprobe.d/blacklist.conf</fix>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20027" />
             </check>
           </Rule>
           <Rule id="rule-2.2.2.5.b" selected="false" weight="10.0">
             <title>Disable Mounting of freevxfs</title>
-            <description>
-              Using the install command inside /etc/modprobe.conf instructs the kernel 
-              module loading system to run the command speciﬁed (here, /bin/true) instead of 
-              inserting the module in the kernel as normal. This effectively prevents usage of 
-              these uncommon ﬁlesystems.</description>
-            <ident system="http://cce.mitre.org">TBD</ident>
-            <fixtext>Append the following line to /etc/modprobe.conf in order to prevent the usage 
-              of uncommon ﬁlesystem types:</fixtext>
-            <fix>echo "install freevxfs /bin/true" &gt;&gt; /etc/modprobe.conf</fix>
+            <fix>echo "blacklist freevxfs" &gt;&gt; /etc/modprobe.d/blacklist.conf</fix>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20028" />
             </check>
           </Rule>
           <Rule id="rule-2.2.2.5.c" selected="false" weight="10.0">
             <title>Disable Mounting of jffs2</title>
-            <description>
-              Using the install command inside /etc/modprobe.conf instructs the kernel 
-              module loading system to run the command speciﬁed (here, /bin/true) instead of 
-              inserting the module in the kernel as normal. This effectively prevents usage of 
-              these uncommon ﬁlesystems.</description>
-            <ident system="http://cce.mitre.org">TBD</ident>
-            <fixtext>Append the following line to /etc/modprobe.conf in order to prevent the usage 
-              of uncommon ﬁlesystem types:</fixtext>
-            <fix>echo "install jffs2 /bin/true" &gt;&gt; /etc/modprobe.conf</fix>
+            <fix>echo "blacklist jffs2" &gt;&gt; /etc/modprobe.d/blacklist.conf</fix>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20029" />
             </check>
           </Rule>
           <Rule id="rule-2.2.2.5.d" selected="false" weight="10.0">
             <title>Disable Mounting of hfs</title>
-            <description>
-              Using the install command inside /etc/modprobe.conf instructs the kernel 
-              module loading system to run the command speciﬁed (here, /bin/true) instead of 
-              inserting the module in the kernel as normal. This effectively prevents usage of 
-              these uncommon ﬁlesystems.</description>
-            <ident system="http://cce.mitre.org">TBD</ident>
-            <fixtext>Append the following line to /etc/modprobe.conf in order to prevent the usage 
-              of uncommon ﬁlesystem types:</fixtext>
-            <fix>echo "install hfs /bin/true" &gt;&gt; /etc/modprobe.conf</fix>
+            <fix>echo "blacklist hfs" &gt;&gt; /etc/modprobe.d/blacklist.conf</fix>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20030" />
             </check>
           </Rule>
           <Rule id="rule-2.2.2.5.e" selected="false" weight="10.0">
             <title>Disable Mounting of hfsplus</title>
-            <description>
-              Using the install command inside /etc/modprobe.conf instructs the kernel 
-              module loading system to run the command speciﬁed (here, /bin/true) instead of 
-              inserting the module in the kernel as normal. This effectively prevents usage of 
-              these uncommon ﬁlesystems.</description>
-            <ident system="http://cce.mitre.org">TBD</ident>
-            <fixtext>Append the following line to /etc/modprobe.conf in order to prevent the usage 
-              of uncommon ﬁlesystem types:</fixtext>
-            <fix>echo "install hfsplus /bin/true" &gt;&gt; /etc/modprobe.conf</fix>
+            <fix>echo "blacklist hfsplus" &gt;&gt; /etc/modprobe.d/blacklist.conf</fix>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20031" />
             </check>
           </Rule>
           <Rule id="rule-2.2.2.5.f" selected="false" weight="10.0">
             <title>Disable Mounting of squashfs</title>
-            <description>
-              Using the install command inside /etc/modprobe.conf instructs the kernel 
-              module loading system to run the command speciﬁed (here, /bin/true) instead of 
-              inserting the module in the kernel as normal. This effectively prevents usage of 
-              these uncommon ﬁlesystems.</description>
-            <ident system="http://cce.mitre.org">TBD</ident>
-            <fixtext>Append the following line to /etc/modprobe.conf in order to prevent the usage 
-              of uncommon ﬁlesystem types:</fixtext>
-            <fix>echo "install squashfs /bin/true" &gt;&gt; /etc/modprobe.conf</fix>
+            <fix>echo "blacklist squashfs" &gt;&gt; /etc/modprobe.d/blacklist.conf</fix>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20032" />
             </check>
           </Rule>
           <Rule id="rule-2.2.2.5.g" selected="false" weight="10.0">
             <title>Disable Mounting of udf</title>
-            <description>
-              Using the install command inside /etc/modprobe.conf instructs the kernel 
-              module loading system to run the command speciﬁed (here, /bin/true) instead of 
-              inserting the module in the kernel as normal. This effectively prevents usage of 
-              these uncommon ﬁlesystems.</description>
-            <ident system="http://cce.mitre.org">TBD</ident>
-            <fixtext>Append the following line to /etc/modprobe.conf in order to prevent the usage 
-              of uncommon ﬁlesystem types:</fixtext>
-            <fix>echo "install udf /bin/true" &gt;&gt; /etc/modprobe.conf</fix>
+            <fix>echo "blacklist udf" &gt;&gt; /etc/modprobe.d/blacklist.conf</fix>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20033" />
             </check>
@@ -1808,12 +1742,13 @@
         <title xml:lang="en">Verify Permissions on Important Files and Directories</title>
         <description xml:lang="en">
           Permissions for many files on a system should be set to conform
-          to system policy. This section discusses important permission restrictions gshadow which
-          should be checked on a regular basis to ensure that no harmful discrepancies have arisen.</description>
-    		<reference href="http://csrc.nist.gov/publications/nistpubs/800-53-Rev3/sp800-53-rev3-final-errata.pdf">AC-3 AC-6 CM-2 CM-3 (1.d) CM-5 CM-6 CM-7</reference>
-    		<reference>ISO/IEC 27002-2005 10.1.2 11.6.1 12.4.1</reference>
-    		<reference href="http://www.dtic.mil/whs/directives/corres/pdf/850002p.pdf">ECCD-1 ECCD-2 ECLP-1</reference>
-    		<reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">3.4</reference>
+          to system policy. This section discusses important permission restrictions which
+          should be checked on a regular basis to ensure that no harmful discrepancies have arisen.
+        </description>
+    	<reference href="http://csrc.nist.gov/publications/nistpubs/800-53-Rev3/sp800-53-rev3-final-errata.pdf">AC-3 AC-6 CM-2 CM-3 (1.d) CM-5 CM-6 CM-7</reference>
+    	<reference>ISO/IEC 27002-2005 10.1.2 11.6.1 12.4.1</reference>
+    	<reference href="http://www.dtic.mil/whs/directives/corres/pdf/850002p.pdf">ECCD-1 ECCD-2 ECLP-1</reference>
+    	<reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">3.4</reference>
         <Group id="group-2.2.3.1" hidden="false">
           <title xml:lang="en">Verify Permissions on passwd, shadow, group and gshadow Files</title>
           <description xml:lang="en">
@@ -3515,7 +3450,6 @@
             <reference href="http://www.dtic.mil/whs/directives/corres/pdf/850002p.pdf">ECAN-1 ECAT-1 ECAT-2</reference>
             <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">6.6</reference>
             <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN006600</reference>
-            <ident system="http://cce.mitre.org">TBD</ident>
             <fixtext>(1) via /etc/pam.d/system-auth</fixtext>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:200806" /> <!-- TBD -->
@@ -3670,7 +3604,6 @@
             <title>Limit password reuse</title>
             <description>The passwords to remember should be set to: <sub idref="var-2.3.3.6.a"/></description>
             <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN000800</reference>
-            <ident system="http://cce.mitre.org">TBD</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-export value-id="var-2.3.3.6.a" export-name="oval:org.fedoraproject.f14:var:20084" />
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20084" /> <!-- TBD -->
@@ -4210,7 +4143,6 @@
               <description>Idle activation of the screen saver should be enabled</description>
               <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">3.1.4</reference>
               <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN000500</reference>
-              <ident system="http://cce.mitre.org">TBD</ident>
               <fixtext>(1) via gconftool-2</fixtext>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                 <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:201005" />
@@ -4221,7 +4153,6 @@
               <description>Idle activation of the screen lock should be enabled</description>
               <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">3.1.4</reference>
               <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN000500</reference>
-              <ident system="http://cce.mitre.org">TBD</ident>
               <fixtext>(1) via gconftool-2</fixtext>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                 <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:201006" />
@@ -4232,7 +4163,6 @@
               <description>The screen saver should be blank</description>
               <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">3.1.4</reference>
               <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN000500</reference>
-              <ident system="http://cce.mitre.org">TBD</ident>
               <fixtext>(1) via gconftool-2</fixtext>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                 <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:201007" />
@@ -4613,7 +4543,6 @@ By using this IS (which includes any device attached to this IS), you consent to
             <description>Check output of /usr/sbin/sestatus</description>
             <reference href="http://www.dtic.mil/whs/directives/corres/pdf/850002p.pdf">ECSC-1</reference>
             <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN008560</reference>
-            <ident system="http://cce.mitre.org">TBD</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:201035" />
             </check>
@@ -4635,7 +4564,6 @@ By using this IS (which includes any device attached to this IS), you consent to
           <description>SELinux enforcement should NOT be disabled in /etc/grub.conf.  Check that enforcing=0 is not found.</description>
           <reference href="http://www.dtic.mil/whs/directives/corres/pdf/850002p.pdf">ECSC-1</reference>
           <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN008560</reference>
-          <ident system="http://cce.mitre.org">TBD</ident>
           <fixtext>remove offending line from /etc/grub.conf</fixtext>
           <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
             <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20105" />
@@ -4646,7 +4574,6 @@ By using this IS (which includes any device attached to this IS), you consent to
           <description>The SELinux state should be: <sub idref="var-2.4.2.c"/></description>
           <reference href="http://www.dtic.mil/whs/directives/corres/pdf/850002p.pdf">ECSC-1</reference>
           <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN008560</reference>
-          <ident system="http://cce.mitre.org">TBD</ident>
           <fixtext>(1) via /etc/selinux/config</fixtext>
           <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
             <check-export value-id="var-2.4.2.c" export-name="oval:org.fedoraproject.f14:var:20106" />
@@ -4806,7 +4733,6 @@ By using this IS (which includes any device attached to this IS), you consent to
         <Rule id="rule-2.4.5.a" selected="false" weight="10.0" severity="medium">
           <title>Check for Unconfined Daemons</title>
           <description>Check for device ﬁle that is not labeled.</description>
-          <ident system="http://cce.mitre.org">TBD</ident>
           <fixtext>(1) via chkconfig</fixtext>
           <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
             <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:201115" />
@@ -6303,7 +6229,6 @@ By using this IS (which includes any device attached to this IS), you consent to
               <title>Change the default policy to DROP (from ACCEPT) for the INPUT built-in chain</title>
               <description>Change the default policy to DROP (from ACCEPT) for the INPUT built-in chain.</description>
               <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN008540</reference>
-              <ident system="http://cce.mitre.org">TBD</ident>
               <fixtext>(1) via chkconfig</fixtext>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                 <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:201474" />
@@ -6313,7 +6238,6 @@ By using this IS (which includes any device attached to this IS), you consent to
               <title>Change the default policy to DROP (from ACCEPT) for the FORWARD built-in chain</title>
               <description>Change the default policy to DROP (from ACCEPT) for the FORWARD built-in chain.</description>
               <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN008540</reference>
-              <ident system="http://cce.mitre.org">TBD</ident>
               <fixtext>(1) via chkconfig</fixtext>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                 <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:201475" />
@@ -6708,7 +6632,6 @@ By using this IS (which includes any device attached to this IS), you consent to
           <Rule id="rule-2.5.7.1.a" selected="false" weight="10.0" severity="medium">
             <title>Disable Support for DCCP</title>
             <description>Support for DCCP should be disabled.</description>
-            <ident system="http://cce.mitre.org">TBD</ident>
             <fixtext>(1) via /etc/modprobe.conf</fixtext>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:201476" />
@@ -6727,7 +6650,6 @@ By using this IS (which includes any device attached to this IS), you consent to
           <Rule id="rule-2.5.7.2.a" selected="false" weight="10.0" severity="medium">
             <title>Disable Support for SCTP</title>
             <description>Support for SCTP should be disabled.</description>
-            <ident system="http://cce.mitre.org">TBD</ident>
             <fixtext>(1) via /etc/modprobe.conf</fixtext>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:201477" />
@@ -6746,7 +6668,6 @@ By using this IS (which includes any device attached to this IS), you consent to
           <Rule id="rule-2.5.7.3.a" selected="false" weight="10.0" severity="medium">
             <title>Disable Support for RDS</title>
             <description>Support for RDS should be disabled.</description>
-            <ident system="http://cce.mitre.org">TBD</ident>
             <fixtext>(1) via /etc/modprobe.conf</fixtext>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:201478" />
@@ -6765,7 +6686,6 @@ By using this IS (which includes any device attached to this IS), you consent to
           <Rule id="rule-2.5.7.4.a" selected="false" weight="10.0" severity="medium">
             <title>Disable Support for TIPC</title>
             <description>Support for TIPC should be disabled.</description>
-            <ident system="http://cce.mitre.org">TBD</ident>
             <fixtext>(1) via /etc/modprobe.conf</fixtext>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:201479" />
@@ -7295,7 +7215,6 @@ By using this IS (which includes any device attached to this IS), you consent to
               to the kernel line in /etc/grub.conf, in the manner below:<xhtml:br/>
               <xhtml:br/>kernel /vmlinuz-version ro vga=ext root=/dev/VolGroup00/LogVol00 rhgb quiet audit=1</description>
             <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN002940</reference>
-            <ident system="http://cce.mitre.org">TBD</ident>
             <fixtext>(1) via /etc/grub.conf add audit=1 to kernel line</fixtext>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20157" />
@@ -7347,7 +7266,6 @@ By using this IS (which includes any device attached to this IS), you consent to
             <Rule id="rule-2.6.2.4.1.a" selected="false" weight="10.0" severity="medium">
               <title>Records Events that Modify Date and Time Information</title>
               <description>Audit rules about time</description>
-              <ident system="http://cce.mitre.org">TBD</ident>
               <fixtext>(1) via /etc/audit/audit.rules</fixtext>
               <!--<fix>cp /usr/share/doc/audit-version/stig.rules /etc/audit/audit.rules</fix>-->
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
@@ -7369,7 +7287,6 @@ By using this IS (which includes any device attached to this IS), you consent to
             <Rule id="rule-2.6.2.4.2.a" selected="false" weight="10.0" severity="medium">
               <title>Record Events that Modify User/Group Information</title>
               <description>Audit rules about User/Group Information</description>
-              <ident system="http://cce.mitre.org">TBD</ident>
               <fixtext>(1) via /etc/audit/audit.rules</fixtext>
               <fix>cp /usr/share/doc/audit-version/stig.rules /etc/audit/audit.rules</fix>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
@@ -7392,7 +7309,6 @@ By using this IS (which includes any device attached to this IS), you consent to
             <Rule id="rule-2.6.2.4.3.a" selected="false" weight="10.0" severity="medium">
               <title>Record Events that Modify the System’s Network Environment</title>
               <description>Audit rules about the System’s Network Environment</description>
-              <ident system="http://cce.mitre.org">TBD</ident>
               <fixtext>(1) via /etc/audit/audit.rules</fixtext>
               <fix>cp /usr/share/doc/audit-version/stig.rules /etc/audit/audit.rules</fix>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
@@ -7413,7 +7329,6 @@ By using this IS (which includes any device attached to this IS), you consent to
               <reference href="http://www.dtic.mil/whs/directives/corres/pdf/850002p.pdf">ECTP-1</reference>
               <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">3.16</reference>
               <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN002820</reference>
-              <ident system="http://cce.mitre.org">TBD</ident>
               <fixtext>(1) via /etc/audit/audit.rules</fixtext>
               <fix>cp /usr/share/doc/audit-version/stig.rules /etc/audit/audit.rules</fix>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
@@ -7436,7 +7351,6 @@ By using this IS (which includes any device attached to this IS), you consent to
               <reference href="http://www.dtic.mil/whs/directives/corres/pdf/850002p.pdf">ECAR-1 ECAR-2 ECAR-3</reference>
               <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">3.3</reference>
               <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN001060 GEN002800</reference>
-              <ident system="http://cce.mitre.org">TBD</ident>
               <fixtext>(1) via /etc/audit/audit.rules</fixtext>
               <!--<fix>cp /usr/share/doc/audit-version/stig.rules /etc/audit/audit.rules</fix>-->
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
@@ -7460,7 +7374,6 @@ By using this IS (which includes any device attached to this IS), you consent to
               <reference href="http://www.dtic.mil/whs/directives/corres/pdf/850002p.pdf">ECAR-2</reference>
               <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">3.16</reference>
               <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN002800</reference>
-              <ident system="http://cce.mitre.org">TBD</ident>
               <fixtext>(1) via /etc/audit/audit.rules</fixtext>
               <!--<fix>cp /usr/share/doc/audit-version/stig.rules /etc/audit/audit.rules</fix>-->
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
@@ -7487,7 +7400,6 @@ By using this IS (which includes any device attached to this IS), you consent to
               <reference href="http://www.dtic.mil/whs/directives/corres/pdf/850002p.pdf">ECTP-1</reference>
               <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">3.16</reference>
               <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN002820</reference>
-              <ident system="http://cce.mitre.org">TBD</ident>
               <fixtext>(1) via /etc/audit/audit.rules</fixtext>
               <fix>cp /usr/share/doc/audit-version/stig.rules /etc/audit/audit.rules</fix>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
@@ -7512,7 +7424,6 @@ By using this IS (which includes any device attached to this IS), you consent to
               <reference href="http://www.dtic.mil/whs/directives/corres/pdf/850002p.pdf">ECAN-1 ECAT-1 ECAT-2 ECAR-2</reference>
               <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">3.16 6.6</reference>
               <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN002720 GEN006600</reference>
-              <ident system="http://cce.mitre.org">TBD</ident>
               <fixtext>(1) via /etc/audit/audit.rules</fixtext>
               <fix>cp /usr/share/doc/audit-version/stig.rules /etc/audit/audit.rules</fix>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
@@ -7535,7 +7446,6 @@ By using this IS (which includes any device attached to this IS), you consent to
               <reference href="http://www.dtic.mil/whs/directives/corres/pdf/850002p.pdf">ECAR-2</reference>
               <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">3.16</reference>
               <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN002760</reference>
-              <ident system="http://cce.mitre.org">TBD</ident>
               <fixtext>(1) via /etc/audit/audit.rules</fixtext>
               <fix>cp /usr/share/doc/audit-version/stig.rules /etc/audit/audit.rules</fix>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
@@ -7555,7 +7465,6 @@ By using this IS (which includes any device attached to this IS), you consent to
               <title>Ensure auditd Collects Information on Exporting to Media (successful)</title>
               <description>Audit rules about the Information on Exporting to Media (successful)</description>
               <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN002720-GEN002840</reference>
-              <ident system="http://cce.mitre.org">TBD</ident>
               <fixtext>(1) via /etc/audit/audit.rules</fixtext>
               <fix>cp /usr/share/doc/audit-version/stig.rules /etc/audit/audit.rules</fix>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
@@ -7578,7 +7487,6 @@ By using this IS (which includes any device attached to this IS), you consent to
               <reference href="http://www.dtic.mil/whs/directives/corres/pdf/850002p.pdf">ECAR-2</reference>
               <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">3.16</reference>
               <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN002740</reference>
-              <ident system="http://cce.mitre.org">TBD</ident>
               <fixtext>(1) via /etc/audit/audit.rules</fixtext>
               <fix>cp /usr/share/doc/audit-version/stig.rules /etc/audit/audit.rules</fix>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
@@ -7599,7 +7507,6 @@ By using this IS (which includes any device attached to this IS), you consent to
               <reference href="http://www.dtic.mil/whs/directives/corres/pdf/850002p.pdf">ECAR-2</reference>
               <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">3.16</reference>
               <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN002760</reference>
-              <ident system="http://cce.mitre.org">TBD</ident>
               <fixtext>(1) via /etc/audit/audit.rules</fixtext>
               <fix>cp /usr/share/doc/audit-version/stig.rules /etc/audit/audit.rules</fix>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
@@ -7621,7 +7528,6 @@ By using this IS (which includes any device attached to this IS), you consent to
             <Rule id="rule-2.6.2.4.13.a" selected="false" weight="10.0" severity="medium">
               <title>Ensure auditd Collects Information on Kernel Module Loading and Unloading</title>
               <description>Audit rules about the Information on Kernel Module Loading and Unloading</description>
-              <ident system="http://cce.mitre.org">TBD</ident>
               <fixtext>(1) via /etc/audit/audit.rules</fixtext>
               <!--<fix>cp /usr/share/doc/audit-version/stig.rules /etc/audit/audit.rules</fix>-->
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
@@ -7641,7 +7547,6 @@ By using this IS (which includes any device attached to this IS), you consent to
             <Rule id="rule-2.6.2.4.14.a" selected="false" weight="10.0" severity="medium">
               <title>Make the auditd Conﬁguration Immutable</title>
               <description>Force a reboot to change audit rules</description>
-              <ident system="http://cce.mitre.org">TBD</ident>
               <fixtext>(1) via /etc/audit/audit.rules</fixtext>
               <fix>cp /usr/share/doc/audit-version/stig.rules /etc/audit/audit.rules</fix>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
@@ -7936,7 +7841,6 @@ By using this IS (which includes any device attached to this IS), you consent to
             <description>The telnet package should be uninstalled.</description>
             <reference href="http://www.dtic.mil/whs/directives/corres/pdf/850002p.pdf">DCCS-1 DCCS-2</reference>
             <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN004720 GEN004760</reference>
-            <ident system="http://cce.mitre.org">TBD</ident>
             <fixtext>(1) via yum</fixtext>
             <fix># yum erase telnet</fix>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
@@ -7946,7 +7850,6 @@ By using this IS (which includes any device attached to this IS), you consent to
           <Rule id="rule-3.2.2.1.b" selected="false" weight="10.0">
             <title>Remove the kerberos telnet client from the System</title>
             <description>The krb5-workstation package should be uninstalled.</description>
-            <ident system="http://cce.mitre.org">TBD</ident>
             <fixtext>(1) via yum</fixtext>
             <fix># yum erase rsh-server</fix>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
@@ -8062,7 +7965,6 @@ By using this IS (which includes any device attached to this IS), you consent to
             <reference href="http://www.dtic.mil/whs/directives/corres/pdf/850002p.pdf">DCCS-1, DCCS-2</reference>
             <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">3.9</reference>
             <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN002100</reference>
-            <ident system="http://cce.mitre.org">TBD</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20178" />
             </check>
@@ -8084,7 +7986,6 @@ By using this IS (which includes any device attached to this IS), you consent to
         <Rule id="rule-3.2.3.3.a" selected="false" weight="10.0" severity="high">
           <title>Remove the Rsh Client Commands from the System</title>
           <description>The rsh package, which contains client programs for many of r-commands should be uninstalled.</description>
-          <ident system="http://cce.mitre.org">TBD</ident>
           <fixtext>(1) via yum</fixtext>
           <fix># yum erase rsh</fix>
           <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
@@ -8414,7 +8315,6 @@ By using this IS (which includes any device attached to this IS), you consent to
           <Rule id="rule-3.3.9.2.a" selected="false" weight="10.0" severity="medium">
             <title>Disable All External Network Interfaces if Not Needed</title>
             <description>All files of the form ifcfg-interface except for ifcfg-lo in /etc/sysconfig/network-scripts should be removed</description>
-            <ident system="http://cce.mitre.org">TBD</ident>
             <fixtext>via /etc/sysconfig/network-scripts</fixtext>
             <fix># rm /etc/sysconfig/network-scripts/ifcfg-interface</fix>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
@@ -8715,7 +8615,6 @@ By using this IS (which includes any device attached to this IS), you consent to
             <title>Disable Bluetooth Kernel Modules</title>
             <description>Prevent loading of the Bluetooth module.</description>
             <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN003680 GEN007640 GEN007660</reference>
-            <ident system="http://cce.mitre.org">TBD</ident>
             <fixtext>(1) via /etc/modprobe.conf</fixtext>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:202015" />
@@ -9233,7 +9132,6 @@ By using this IS (which includes any device attached to this IS), you consent to
           <reference href="http://www.dtic.mil/whs/directives/corres/pdf/850002p.pdf">ECLP-1</reference>
           <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">3.17.3</reference>
           <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN003140</reference>
-          <ident system="http://cce.mitre.org">TBD</ident>
           <fixtext>(1) via chown</fixtext>
           <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
             <check-export value-id="var-3.4.2.spool.directory.group" export-name="oval:org.fedoraproject.f14:var:20229" />
@@ -9246,7 +9144,6 @@ By using this IS (which includes any device attached to this IS), you consent to
           <reference href="http://www.dtic.mil/whs/directives/corres/pdf/850002p.pdf">ECLP-1</reference>
           <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">3.17.3</reference>
           <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN003120</reference>
-          <ident system="http://cce.mitre.org">TBD</ident>
           <fixtext>(1) via chown</fixtext>
           <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
             <check-export value-id="var-3.4.2.spool.directory.user" export-name="oval:org.fedoraproject.f14:var:20230" />
@@ -9256,7 +9153,6 @@ By using this IS (which includes any device attached to this IS), you consent to
         <Rule id="rule-3.4.2.4.c" selected="false" weight="10.0" severity="medium">
           <title>Restrict Permissions on /var/spool/cron directory</title>
           <description>Directory permissions for /var/spool/cron should be set correctly.</description>
-          <ident system="http://cce.mitre.org">TBD</ident>
           <fixtext>(1) via chmod</fixtext>
           <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
             <check-export value-id="var-3.4.2.spool.directory.permissions" export-name="oval:org.fedoraproject.f14:var:20231" />
@@ -9277,7 +9173,6 @@ By using this IS (which includes any device attached to this IS), you consent to
           <title>Disable at Daemon</title>
           <description>The atd service should be disabled.</description>
           <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN003680</reference>
-          <ident system="http://cce.mitre.org">TBD</ident>
           <fixtext>(1) via chkconfig</fixtext>
           <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
             <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:202052" />
@@ -9286,7 +9181,6 @@ By using this IS (which includes any device attached to this IS), you consent to
         <Rule id="rule-3.4.3.b" selected="false" weight="10.0">
           <title>uninstall at Daemon</title>
           <description>The at package should be removed.</description>
-          <ident system="http://cce.mitre.org">TBD</ident>
           <fixtext>(1) via chkconfig</fixtext>
           <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
             <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:202053" />
@@ -9325,7 +9219,6 @@ By using this IS (which includes any device attached to this IS), you consent to
         <Rule id="rule-3.4.4.a" selected="false" weight="10.0" severity="medium">
           <title>Remove /etc/cron.deny</title>
           <description>/etc/cron.deny file should not exist.</description>
-          <ident system="http://cce.mitre.org">TBD</ident>
           <fix>rm /etc/cron.deny</fix>
           <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
             <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20232" />
@@ -9337,7 +9230,6 @@ By using this IS (which includes any device attached to this IS), you consent to
           <reference href="http://www.dtic.mil/whs/directives/corres/pdf/850002p.pdf">ECPA-1</reference>
           <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">3.18.3</reference>
           <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN003300</reference>
-          <ident system="http://cce.mitre.org">TBD</ident>
           <fix>rm /etc/at.deny</fix>
           <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
             <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20233" />
@@ -9420,7 +9312,6 @@ By using this IS (which includes any device attached to this IS), you consent to
           <Rule id="rule-3.5.1.2.b" selected="false" weight="10.0" severity="high">
             <title>Remove SSH Server ip6tables Firewall Exception</title>
             <description>Inbound connections to the ssh port should be denied</description>
-            <ident system="http://cce.mitre.org">TBD</ident>
             <fixtext>(1) /etc/sysconfig/ip6tables</fixtext>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20237" />
@@ -9528,7 +9419,6 @@ By using this IS (which includes any device attached to this IS), you consent to
           <Rule id="rule-3.5.2.3.b" selected="false" weight="10.0">
             <title>Set ClientAliveCountMax for User Logins</title>
             <description>The ClientAliveCountMax should be set to an appropriate value</description>
-            <ident system="http://cce.mitre.org">TBD</ident>
             <fixtext>(1) via /etc/ssh/sshd_config</fixtext>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-export value-id="var-3.5.2.3.b" export-name="oval:org.fedoraproject.f14:var:20240" />
@@ -9674,7 +9564,6 @@ By using this IS (which includes any device attached to this IS), you consent to
           <Rule id="rule-3.5.2.9.a" selected="false" weight="10">
             <title xml:lang="en">Do Not Allow Users to Set Environment Options</title>
             <description>PermitUserEnvironment should be disabled</description>
-            <ident system="http://cce.mitre.org">TBD</ident>
             <fixtext>(1) via /etc/ssh/sshd_config</fixtext>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:202455" />
@@ -9693,7 +9582,6 @@ By using this IS (which includes any device attached to this IS), you consent to
           <Rule id="rule-3.5.2.10.a" selected="false" weight="10">
             <title xml:lang="en">Use Only Approved Ciphers</title>
             <description>Use only FIPS approved ciphers not in CBC mode</description>
-            <ident system="http://cce.mitre.org">TBD</ident>
             <fixtext>(1) via /etc/ssh/sshd_config</fixtext>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:202456" />
@@ -10227,7 +10115,6 @@ By using this IS (which includes any device attached to this IS), you consent to
         <Rule id="rule-3.8.2.b" selected="false" weight="10.0" severity="high">
           <title>Disable Firewall Access to Printing Service over IPv6 if Possible</title>
           <description>Firewall access to printing service should be disabled</description>
-          <ident system="http://cce.mitre.org">TBD</ident>
           <fixtext>(1) via /etc/sysconfig/ip6tables</fixtext>
           <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
             <check-export value-id="var-3.8.2.b" export-name="oval:org.fedoraproject.f14:var:20263" />
@@ -11982,7 +11869,6 @@ By using this IS (which includes any device attached to this IS), you consent to
           <Rule id="rule-3.12.2.2.a" selected="false" weight="10.0">
             <title>Configure LDAP to Use TLS for All Transactions</title>
             <description>Clients require LDAP servers to provide valid certificates for SSL communications.</description>
-            <ident system="http://cce.mitre.org">TBD</ident>
             <fixtext>(1) via /etc/ldap.conf</fixtext>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:202885" />
@@ -15126,7 +15012,6 @@ By using this IS (which includes any device attached to this IS), you consent to
             <title>Disable Guest Access and Local Login Support</title>
             <description>Do not allow guest users to access local file or printer shares. In global or in each share, set the parameter guest ok to no.</description>
             <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN006235</reference>
-            <ident system="http://cce.mitre.org">TBD</ident>
             <fixtext>(1) via /etc/samba/smb.conf in [share] guest ok = no </fixtext>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:203403" />
