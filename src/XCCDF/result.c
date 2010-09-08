@@ -794,13 +794,14 @@ xmlNode *xccdf_override_to_dom(struct xccdf_override *override, xmlDoc *doc, xml
 	if (authority)
 		xmlNewProp(override_node, BAD_CAST "authority", BAD_CAST authority);
 
+	/* Handle children */
 	xccdf_test_result_type_t old = xccdf_override_get_old_result(override);
 	if (old != 0)
-		xmlNewProp(override_node, BAD_CAST "old-result", BAD_CAST XCCDF_RESULT_MAP[old - 1].string);
+		xmlNewTextChild(override_node, ns_xccdf, BAD_CAST "old-result", BAD_CAST XCCDF_RESULT_MAP[old - 1].string);
 
 	xccdf_test_result_type_t new = xccdf_override_get_new_result(override);
 	if (new != 0)
-		xmlNewProp(override_node, BAD_CAST "new-result", BAD_CAST XCCDF_RESULT_MAP[new - 1].string);
+		xmlNewTextChild(override_node, ns_xccdf, BAD_CAST "new-result", BAD_CAST XCCDF_RESULT_MAP[new - 1].string);
 
 	oscap_text_to_dom(xccdf_override_get_remark(override), override_node, "remark");
 
