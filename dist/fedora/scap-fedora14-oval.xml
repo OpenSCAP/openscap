@@ -4663,11 +4663,11 @@
                   <ind-def:object object_ref="oval:org.fedoraproject.f14:obj:20056"/>
                   <ind-def:state state_ref="oval:org.fedoraproject.f14:ste:20056"/>
             </ind-def:textfilecontent54_test>
-            <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:org.fedoraproject.f14:tst:20057" version="1" check="all" comment="Tests the value of the ^[\s]*kernel\.exec-shield[\s]*=([\s]*) expression in the /etc/sysctl.conf file">
+            <ind-def:textfilecontent54_test check_existence="any_exist" id="oval:org.fedoraproject.f14:tst:20057" version="1" check="all" comment="Tests the value of the /proc/sys/kernel/exec-shield">
                   <ind-def:object object_ref="oval:org.fedoraproject.f14:obj:20057"/>
                   <ind-def:state state_ref="oval:org.fedoraproject.f14:ste:20057"/>
             </ind-def:textfilecontent54_test>
-            <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:org.fedoraproject.f14:tst:20058" version="1" check="all" comment="Tests the value of the /proc/sys/kernel/randomize_va_space">
+            <ind-def:textfilecontent54_test check_existence="any_exist" id="oval:org.fedoraproject.f14:tst:20058" version="1" check="all" comment="Tests the value of the /proc/sys/kernel/randomize_va_space">
                   <ind-def:object object_ref="oval:org.fedoraproject.f14:obj:20058"/>
                   <ind-def:state state_ref="oval:org.fedoraproject.f14:ste:20058"/>
             </ind-def:textfilecontent54_test>
@@ -6434,9 +6434,9 @@
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:org.fedoraproject.f14:obj:20057" version="1">
-                  <ind-def:path>/etc</ind-def:path>
-                  <ind-def:filename>sysctl.conf</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[[:space:]]*kernel\.exec-shield[[:space:]]*=[[:space:]]*([[:digit:]]+)</ind-def:pattern>
+                  <ind-def:path>/proc/sys/kernel</ind-def:path>
+                  <ind-def:filename>exec-shield</ind-def:filename>
+                  <ind-def:pattern operation="pattern match">^(.*)$</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:org.fedoraproject.f14:obj:20061" version="1">
@@ -8781,7 +8781,7 @@
                   <ind-def:subexpression datatype="int" operation="greater than or equal">1</ind-def:subexpression>
             </ind-def:textfilecontent54_state>
             <ind-def:textfilecontent54_state id="oval:org.fedoraproject.f14:ste:20057" version="1">
-                  <ind-def:subexpression operation="equals">1</ind-def:subexpression>
+                  <ind-def:subexpression datatype="int" operation="greater than or equal">1</ind-def:subexpression>
             </ind-def:textfilecontent54_state>
             <unix-def:password_state id="oval:org.fedoraproject.f14:ste:20068" version="1">
                   <unix-def:user_id operation="less than" datatype="int">500</unix-def:user_id>

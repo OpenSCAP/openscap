@@ -87,7 +87,7 @@
     <select idref="rule-2.2.4.1.a" selected="true" />		<!-- READY+ -->	        <!-- Set Daemon umask -->
     <select idref="rule-2.2.4.2.a" selected="false" />		<!-- DONE -->		<!-- Disable Core Dumps for all users -->
     <select idref="rule-2.2.4.2.b" selected="false" />		<!-- DONE -->		<!-- Disable Core Dumps for SUID programs -->
-    <select idref="rule-2.2.4.3.a" selected="false" />		<!-- ToDo -->		<!-- Enable ExecShield -->
+    <select idref="rule-2.2.4.3.a" selected="true" />		<!-- READY+ -->		<!-- Enable ExecShield -->
     <select idref="rule-2.2.4.3.b" selected="true" />		<!-- READY+ -->		<!-- Enable ExecShield randomized placement of virtual memory regions -->
     <select idref="rule-2.2.4.4.3.a" selected="false" />	<!-- DONE (unknown) -->	<!-- Enable NX or XD Support in the BIOS -->
     <select idref="rule-2.3.1.1.a" selected="false" />		<!-- DONE -->		<!-- Restrict Root Logins to System Console -->
@@ -2412,25 +2412,8 @@
             regions in which execution should not occur, so follow guidance in Section 2.2.4.4 to
             further protect the system.
           </description>
-      		<reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">3.11</reference>
-          <Group id="group-2.2.4.3.1" hidden="false">
-            <title xml:lang="en">Ensure ExecShield is Enabled</title>
-            <description xml:lang="en">
-              Exec-shield protection is enabled by default, but the 
-              sysctl variables kernel.exec-shield and kernel.randomize_va_space should be checked 
-              to ensure that it has not been disabled at any time during system operation. To 
-              check that ExecShield (including random placement of virtual memory regions) is
-              currently running, issue the following commands:<xhtml:br/>
-              <xhtml:br/>
-              <xhtml:code># sysctl kernel.exec-shield<xhtml:br/>
-              # sysctl kernel.randomize_va_space<xhtml:br/></xhtml:code>
-              <xhtml:br/>
-              The output of both commands should be indicate that the setting is 1. (Use of 
-              the -n option causes output to consist of only the value, which may make automated 
-              checking easier.)
-            </description>
-          </Group>
-          <Rule id="rule-2.2.4.3.a" selected="false" weight="10.0">
+      	  <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">3.11</reference>
+          <Rule id="rule-2.2.4.3.a" selected="true" weight="10.0">
             <title>Enable ExecShield</title>
             <description>ExecShield should be enabled</description>
             <reference href="http://www.dtic.mil/whs/directives/corres/pdf/850002p.pdf">ECSC-1</reference>
@@ -2443,7 +2426,7 @@
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20057" />
             </check>
           </Rule>
-          <Rule id="rule-2.2.4.3.b" selected="false" weight="10.0">
+          <Rule id="rule-2.2.4.3.b" selected="true" weight="10.0">
             <title>Enable ExecShield randomized placement of virtual memory regions</title>
             <description>ExecShield randomized placement of virtual memory regions should be enabled</description>
             <reference href="http://www.dtic.mil/whs/directives/corres/pdf/850002p.pdf">ECSC-1</reference>
