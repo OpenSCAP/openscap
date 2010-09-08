@@ -1689,6 +1689,7 @@
             This mechanism effectively prevents usage of these uncommon ﬁlesystems.</description>
           <Rule id="rule-2.2.2.5.a" selected="false" weight="10.0">
             <title>Disable Mounting of cramfs</title>
+            <description>cramfs is uncommon ﬁlesystems</description>
             <fix>echo "blacklist cramfs" &gt;&gt; /etc/modprobe.d/blacklist.conf</fix>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20027" />
@@ -1696,6 +1697,7 @@
           </Rule>
           <Rule id="rule-2.2.2.5.b" selected="false" weight="10.0">
             <title>Disable Mounting of freevxfs</title>
+            <description>freevxfs is uncommon ﬁlesystems</description>
             <fix>echo "blacklist freevxfs" &gt;&gt; /etc/modprobe.d/blacklist.conf</fix>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20028" />
@@ -1703,6 +1705,7 @@
           </Rule>
           <Rule id="rule-2.2.2.5.c" selected="false" weight="10.0">
             <title>Disable Mounting of jffs2</title>
+            <description>jffs2 is uncommon ﬁlesystems</description>
             <fix>echo "blacklist jffs2" &gt;&gt; /etc/modprobe.d/blacklist.conf</fix>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20029" />
@@ -1710,6 +1713,7 @@
           </Rule>
           <Rule id="rule-2.2.2.5.d" selected="false" weight="10.0">
             <title>Disable Mounting of hfs</title>
+            <description>hfs is uncommon ﬁlesystems</description>
             <fix>echo "blacklist hfs" &gt;&gt; /etc/modprobe.d/blacklist.conf</fix>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20030" />
@@ -1717,6 +1721,7 @@
           </Rule>
           <Rule id="rule-2.2.2.5.e" selected="false" weight="10.0">
             <title>Disable Mounting of hfsplus</title>
+            <description>hfsplus is uncommon ﬁlesystems</description>
             <fix>echo "blacklist hfsplus" &gt;&gt; /etc/modprobe.d/blacklist.conf</fix>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20031" />
@@ -1724,6 +1729,7 @@
           </Rule>
           <Rule id="rule-2.2.2.5.f" selected="false" weight="10.0">
             <title>Disable Mounting of squashfs</title>
+            <description>squashfs is uncommon ﬁlesystems</description>
             <fix>echo "blacklist squashfs" &gt;&gt; /etc/modprobe.d/blacklist.conf</fix>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20032" />
@@ -1731,6 +1737,7 @@
           </Rule>
           <Rule id="rule-2.2.2.5.g" selected="false" weight="10.0">
             <title>Disable Mounting of udf</title>
+            <description>udf is uncommon ﬁlesystems</description>
             <fix>echo "blacklist udf" &gt;&gt; /etc/modprobe.d/blacklist.conf</fix>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20033" />
