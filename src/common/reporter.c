@@ -77,9 +77,9 @@ struct oscap_reporter_message *oscap_reporter_message_new_fill(oscap_reporter_fa
 struct oscap_reporter_message *oscap_reporter_message_new_arg(oscap_reporter_family_t family, oscap_reporter_code_t code, const char *fmt, va_list ap)
 {
     char *string = oscap_vsprintf(fmt, ap);
-    if (string == NULL) return NULL;
     struct oscap_reporter_message *msg = oscap_reporter_message_new_fill(family, code, string);
-    oscap_free(string);
+    if (string != NULL)
+        oscap_free(string);
     return msg;
 }
 
