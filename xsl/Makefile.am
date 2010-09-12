@@ -5,6 +5,7 @@ xsl_DATA =   xccdf-guide.xsl \
              xccdf-results-report.xsl \
              oval-results-report.xsl \
              oscap-common.xsl \
+             dc2docbook.xsl \
              fix.xsl \
              fixtpl-bash.xml \
              xccdf-apply-profile.xsl \
@@ -13,6 +14,7 @@ xsl_DATA =   xccdf-guide.xsl \
 EXTRA_DIST = xccdf-guide.xsl \
              xccdf-results-report.xsl \
              oval-results-report.xsl \
+             dc2docbook.xsl \
              fix.xsl \
              fixtpl-bash.xml \
              oscap-common.xsl \
