@@ -9,7 +9,7 @@ xsl_DATA =   xccdf-guide.xsl \
              html2docbook.xsl \
              fix.xsl \
              fixtpl-bash.xml \
-             xccdf-apply-profile.xsl \
+             xccdf-tailor.xsl \
              xccdf-common.xsl
 
 EXTRA_DIST = xccdf-guide.xsl \
@@ -20,6 +20,6 @@ EXTRA_DIST = xccdf-guide.xsl \
              fix.xsl \
              fixtpl-bash.xml \
              oscap-common.xsl \
-             xccdf-apply-profile.xsl \
+             xccdf-tailor.xsl \
              xccdf-common.xsl
 

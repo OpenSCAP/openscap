@@ -28,10 +28,8 @@ Authors:
 	xmlns:cdf="http://checklists.nist.gov/xccdf/1.1"
 	>
 
-<xsl:include href="xccdf-common.xsl" />
-
-<xsl:param name='keep-profiles'/>
 <xsl:param name='profile'/>
+<xsl:param name='keep-profiles'/>
 
 <!-- identity transform -->
 <xsl:template mode='profile' match='node()|@*'>
