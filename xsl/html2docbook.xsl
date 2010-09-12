@@ -25,7 +25,7 @@
   <xsl:variable name='rest' select='exsl:node-set($rest.r)'/>
 
   <xsl:apply-templates mode='h2db.para' select='$delims'/>
-  <xsl:if test='$rest'><para><xsl:apply-templates mode='h2db' select='$rest'/></para></xsl:if>
+  <xsl:if test='normalize-space($rest)'><para><xsl:apply-templates mode='h2db' select='$rest'/></para></xsl:if>
 </xsl:template>
 
 <xsl:template mode='h2db.para' match='html:*'>
@@ -124,8 +124,8 @@
 <xsl:template mode='h2db' match='html:em|html:i'><emphasis><xsl:apply-templates mode='h2db'/></emphasis></xsl:template>
 <xsl:template mode='h2db' match='html:strong|html:b'><emphasis role='strong'><xsl:apply-templates mode='h2db'/></emphasis></xsl:template>
 <xsl:template mode='h2db' match='text()'><xsl:value-of select='.'/></xsl:template>
-<!-- TODO transform abbr/@title somehow -->
-<xsl:template mode='h2db' match='html:abbr'><abbrev role='{@class}'><alt><xsl:value-of select='@title'/></alt><xsl:apply-templates mode='h2db'/></abbrev></xsl:template>
+<xsl:template mode='h2db' match='html:abbr'><abbrev><alt><xsl:value-of select='@title'/></alt><xsl:apply-templates mode='h2db'/></abbrev></xsl:template>
+<xsl:template mode='h2db' match='html:abbr[@class="replace"]'><replaceable><alt><xsl:value-of select='@title'/></alt><xsl:apply-templates mode='h2db'/></replaceable></xsl:template>
 
 <!-- Hyperlinks -->
 <xsl:template mode='h2db' match="html:a[contains(@href,'http://')]" priority="1.5">

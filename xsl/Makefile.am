@@ -10,7 +10,8 @@ xsl_DATA =   xccdf-guide.xsl \
              fix.xsl \
              fixtpl-bash.xml \
              xccdf-tailor.xsl \
-             xccdf-common.xsl
+             xccdf-substitute.xsl \
+             xccdf-share.xsl
 
 EXTRA_DIST = xccdf-guide.xsl \
              xccdf-results-report.xsl \
@@ -21,5 +22,6 @@ EXTRA_DIST = xccdf-guide.xsl \
              fixtpl-bash.xml \
              oscap-common.xsl \
              xccdf-tailor.xsl \
-             xccdf-common.xsl
+             xccdf-substitute.xsl \
+             xccdf-share.xsl
 
