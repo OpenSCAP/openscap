@@ -4659,7 +4659,7 @@
                   <ind-def:object object_ref="oval:org.fedoraproject.f14:obj:20055"/>
                   <ind-def:state state_ref="oval:org.fedoraproject.f14:ste:20055"/>
             </ind-def:textfilecontent54_test>
-            <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:org.fedoraproject.f14:tst:20056" version="1" check="all" comment="Tests the value of the ^[\s]*fs\.suid_dumpable[\s]*=([\s]*) expression in the /etc/sysctl.conf file">
+            <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:org.fedoraproject.f14:tst:20056" version="1" check="all" comment="Tests the value of the /proc/sys/fs/suid_dumpable">
                   <ind-def:object object_ref="oval:org.fedoraproject.f14:obj:20056"/>
                   <ind-def:state state_ref="oval:org.fedoraproject.f14:ste:20056"/>
             </ind-def:textfilecontent54_test>
@@ -6422,9 +6422,9 @@
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:org.fedoraproject.f14:obj:20056" version="1">
-                  <ind-def:path>/etc</ind-def:path>
-                  <ind-def:filename>sysctl.conf</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[[:space:]]*fs\.suid_dumpable[[:space:]]*=[[:space:]]*([[:digit:]]+)</ind-def:pattern>
+                  <ind-def:path>/proc/sys/fs</ind-def:path>
+                  <ind-def:filename>suid_dumpable</ind-def:filename>
+                  <ind-def:pattern operation="pattern match">^(.*)$</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:org.fedoraproject.f14:obj:20058" version="1">
@@ -8775,7 +8775,7 @@
                   <ind-def:subexpression operation="equals">0</ind-def:subexpression>
             </ind-def:textfilecontent54_state>
             <ind-def:textfilecontent54_state id="oval:org.fedoraproject.f14:ste:20056" version="1">
-                  <ind-def:subexpression operation="equals">0</ind-def:subexpression>
+                  <ind-def:subexpression datatype="int" operation="equals">0</ind-def:subexpression>
             </ind-def:textfilecontent54_state>
             <ind-def:textfilecontent54_state id="oval:org.fedoraproject.f14:ste:20058" version="1">
                   <ind-def:subexpression datatype="int" operation="greater than or equal">1</ind-def:subexpression>

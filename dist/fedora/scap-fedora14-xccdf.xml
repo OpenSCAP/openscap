@@ -86,7 +86,7 @@
 
     <select idref="rule-2.2.4.1.a" selected="true" />		<!-- READY+ -->	        <!-- Set Daemon umask -->
     <select idref="rule-2.2.4.2.a" selected="false" />		<!-- DONE -->		<!-- Disable Core Dumps for all users -->
-    <select idref="rule-2.2.4.2.b" selected="false" />		<!-- DONE -->		<!-- Disable Core Dumps for SUID programs -->
+    <select idref="rule-2.2.4.2.b" selected="true" />		<!-- READY+ -->		<!-- Disable Core Dumps for SUID programs -->
     <select idref="rule-2.2.4.3.a" selected="true" />		<!-- READY+ -->		<!-- Enable ExecShield -->
     <select idref="rule-2.2.4.3.b" selected="true" />		<!-- READY+ -->		<!-- Enable ExecShield randomized placement of virtual memory regions -->
     <select idref="rule-2.2.4.4.3.a" selected="false" />	<!-- DONE (unknown) -->	<!-- Enable NX or XD Support in the BIOS -->
@@ -2351,21 +2351,8 @@
             protected. The sysctl variable fs.suid_dumpable controls whether the kernel allows core
             dumps from these programs at all. The default value of 0 is recommended.
           </description>
-    		  <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">3.20.1</reference>
-    		  <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN003500</reference>
-          <Group id="group-2.2.4.2.1" hidden="false">
-            <title xml:lang="en">Ensure SUID Core Dumps are Disabled</title>
-            <description xml:lang="en">
-              The sysctl variable fs.suid_dumpable should be checked to 
-              ensure that it has not been enabled at any time during system operation. To check 
-              this, issue the command:<xhtml:br/>
-              <xhtml:br/>
-              <xhtml:code># sysctl fs.suid_dumpable<xhtml:br/></xhtml:code>
-              <xhtml:br/>
-              The output should indicate that the setting is 0. (Use of the -n option causes output 
-              to consist of only the value, which may make automated checking easier.)
-            </description>
-          </Group>
+	  <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">3.20.1</reference>
+	  <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN003500</reference>
           <Rule id="rule-2.2.4.2.a" selected="false" weight="10.0" severity="low">
             <title>Disable Core Dumps for all users</title>
             <description>Core dumps for all users should be disabled</description>
@@ -2413,7 +2400,7 @@
             further protect the system.
           </description>
       	  <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">3.11</reference>
-          <Rule id="rule-2.2.4.3.a" selected="true" weight="10.0">
+          <Rule id="rule-2.2.4.3.a" selected="false" weight="10.0">
             <title>Enable ExecShield</title>
             <description>ExecShield should be enabled</description>
             <reference href="http://www.dtic.mil/whs/directives/corres/pdf/850002p.pdf">ECSC-1</reference>
@@ -2426,7 +2413,7 @@
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20057" />
             </check>
           </Rule>
-          <Rule id="rule-2.2.4.3.b" selected="true" weight="10.0">
+          <Rule id="rule-2.2.4.3.b" selected="false" weight="10.0">
             <title>Enable ExecShield randomized placement of virtual memory regions</title>
             <description>ExecShield randomized placement of virtual memory regions should be enabled</description>
             <reference href="http://www.dtic.mil/whs/directives/corres/pdf/850002p.pdf">ECSC-1</reference>
