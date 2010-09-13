@@ -181,7 +181,8 @@ class XCCDF_Handler(object):
         assert self.action.f_results != None, "Result file not specified"
         if result == None: result = self.result
 
-        return self.policy.export(result, self.objs, "OSCAP Test Result", self.action.f_results)
+        files = self.policy.export(result, self.objs, "OSCAP Test Result", self.action.f_results, self.action.f_results)
+        return
 
     def __evaluate(self, policy_id=None):
         if policy_id != None: self.__set_policy(policy_id)

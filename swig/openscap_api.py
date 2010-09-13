@@ -75,6 +75,11 @@ class OSCAP_List(list):
         except NameError:
             raise Exception, "Removing %s items throught oscap list is not allowed. Please use appropriate function." \
                         % (self.iterator.object[:self.iterator.object.find("_iterator")],)
+    
+    def __del__(self):
+        """Free the list structure"""
+        self.iterator.free()
+
 
     def generate(self, iterator):
         """Generate all object from oscap list throught iterators and store them in list object.
@@ -181,6 +186,9 @@ class OSCAP_Object(object):
         """ Called when an attribute lookup has not found the attribute in the usual places (i.e. 
         it is not an instance attribute nor is it found in the class tree for self). name is 
         the attribute name."""
+
+        if name == "export" and self.object == "xccdf_policy": return self.policy_export
+
         if self.__dict__.has_key(name): 
             return self.__dict__[name]
 
@@ -226,18 +234,19 @@ class OSCAP_Object(object):
                     value = value.instance
         return obj(self.instance, value)
 
+    """
     def __del__(self):
+        #print "Free ", self.object
         if self.__dict__.has_key("instance") and self.__dict__["instance"] != None:
             # In what situations we need to free objects ?
-            if (self.object.find("iterator") > -1 or \
-                (self.object.find("_model") > -1) and \
-                self.object.find("policy_model") == -1 and \
-                self.object.find("xccdf_model") == -1):
+            if self.object.find("iterator") > -1:
 
                 self.free()
+    """
 
     def free(self):
         if self.object == "oval_agent_session": return OSCAP.oval_agent_destroy_session(self.instance)
+        #print "Free on demand ", self.object
         if self.__dict__.has_key("instance") and self.__dict__["instance"] != None:
             obj = OSCAP.__dict__.get(self.object+"_free")
             if obj != None:
@@ -548,6 +557,7 @@ class OSCAP_Object(object):
             if os.path.exists(f_OVAL): 
                 def_model = oval.definition_model_import(f_OVAL)
                 assert def_model.instance != None, "Cannot import definition model %s" % (f_OVAL,)
+                def_model.optimize_by_filter_propagation()
                 def_models.append(def_model)
                 sess = oval.agent_new_session(def_model, file)
                 assert sess != None and sess.instance != None, "Cannot create agent session for %s" % (f_OVAL,)
@@ -557,7 +567,9 @@ class OSCAP_Object(object):
         files.free()
         return {"def_models":def_models, "sessions":sessions, "policy_model":policy_model, "xccdf_path":f_XCCDF}
 
-    def export(self, result=None, dir=None, title=None, file=None):
+    def policy_export(self, result=None, dir=None, title=None, file=None, prefix=None):
+        """Export all files for given policy.
+        """
 
         if self.object != "xccdf_policy": raise TypeError("Wrong call of \"export\" function. Should be xccdf_policy (have %s)" %(self.object,))
 
@@ -565,15 +577,37 @@ class OSCAP_Object(object):
         o_title = common.text()
         o_title.text = title
         result.title = o_title
-
-        oval.agent_export_sysinfo_to_xccdf_result(dir["sessions"][0], result)
+        files = [file]
 
         for model in self.model.benchmark.models:
             result.score = self.score(result, model.system)
 
         self.model.benchmark.result = result.clone()
 
-        return OSCAP.xccdf_benchmark_export(self.model.benchmark.instance, file)
+        OSCAP.xccdf_benchmark_export(self.model.benchmark.instance, file)
+
+        for i, sess in enumerate(dir["sessions"]):
+            rmodel = oval.agent_get_results_model(sess)
+            rd = oval.result_directives(rmodel)
+            rd.set_reported(OSCAP.OVAL_RESULT_TRUE |
+                            OSCAP.OVAL_RESULT_FALSE |
+                            OSCAP.OVAL_RESULT_UNKNOWN |
+                            OSCAP.OVAL_RESULT_NOT_EVALUATED |
+                            OSCAP.OVAL_RESULT_ERROR |
+                            OSCAP.OVAL_RESULT_NOT_APPLICABLE, True)
+            rd.set_content( OSCAP.OVAL_RESULT_TRUE |
+                            OSCAP.OVAL_RESULT_FALSE |
+                            OSCAP.OVAL_RESULT_UNKNOWN |
+                            OSCAP.OVAL_RESULT_NOT_EVALUATED |
+                            OSCAP.OVAL_RESULT_NOT_APPLICABLE |
+                            OSCAP.OVAL_RESULT_ERROR,
+                            OSCAP.OVAL_DIRECTIVE_CONTENT_FULL )
+            pfile = prefix+`i`+".xml"
+            OSCAP.oval_results_model_export(rmodel.instance, rd.instance, pfile)
+            files.append(pfile)
+            rd.free()
+
+        return files
     
     def destroy(self, dir):
 
