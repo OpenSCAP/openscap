@@ -38,6 +38,7 @@ Authors:
 	>
 
 <xsl:import href='xccdf-share.xsl'/>
+<xsl:import href='docbook-share.xsl'/>
 
 <xsl:param name='clean-profile-notes' select='1'/>
 <xsl:param name='no-profile-info'/>

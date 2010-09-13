@@ -21,6 +21,7 @@ Authors:
      Lukas Kuklinek <lkuklinek@redhat.com>
 -->
 
+
 <xsl:stylesheet version="1.1"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 	xmlns:db="http://docbook.org/ns/docbook"
@@ -34,37 +35,40 @@ Authors:
     xmlns:dc="http://purl.org/dc/elements/1.1/"
     xmlns:edate="http://exslt.org/dates-and-times">
 
-<xsl:import href='oscap-share.xsl'/>
-<xsl:import href='xccdf-substitute.xsl'/>
-<xsl:import href='xccdf-tailor.xsl'/>
+<xsl:import href='html2docbook.xsl'/>
+<xsl:import href='dc2docbook.xsl'/>
+<xsl:import href='dbout-html.xsl'/>
 
-<xsl:param name='profile'/>
-<xsl:param name='substitute' select='1'/>
+<xsl:param name='format' select='"html"'/>
 
-<xsl:variable name='warn-unresolved' select='1'/>
-
-<!-- stage1: apply profile -->
-<xsl:variable name='benchmark.s1'>
-  <xsl:call-template name='warn-unresolved'/>
-  <xsl:apply-templates select='/cdf:Benchmark' mode='profile'>
-    <xsl:with-param name='p' select='/cdf:Benchmark/cdf:Profile[@id=$profile]'/>
-  </xsl:apply-templates>
-</xsl:variable>
-<!-- stage2: text substitutions -->
-<xsl:variable name='benchmark.s2'>
+<!-- call default template on the processed root element -->
+<xsl:template match='/'>
+  <xsl:variable name='db.out'>
+    <xsl:apply-templates select='$root'/>
+  </xsl:variable>
   <xsl:choose>
-    <xsl:when test='$substitute'><xsl:apply-templates select='exsl:node-set($benchmark.s1)/cdf:Benchmark' mode='sub'/></xsl:when>
-    <xsl:otherwise><xsl:copy-of select='$benchmark.s1'/></xsl:otherwise>
+    <xsl:when test='$format="db" or $format="docbook"'><xsl:copy-of select='$db.out'/></xsl:when>
+    <xsl:when test='$format="html" or $format="xhtml"'><xsl:apply-templates mode='dbout.html' select='exsl:node-set($db.out)'/></xsl:when>
+    <xsl:otherwise><xsl:message terminate='yes'>Unrecognized format '<xsl:value-of select='$format'/>'. Aborting.</xsl:message></xsl:otherwise>
   </xsl:choose>
-</xsl:variable>
-<!-- create root element from the last stage -->
-<xsl:variable name='root' select='exsl:node-set($benchmark.s2)/cdf:Benchmark'/>
-
-<xsl:template name='warn-unresolved'>
-  <xsl:if test='$warn-unresolved and cdf:Benchmark[not(number(@resolved)=1)]'>
-    <xsl:message>WARNING: Processing an unresolved XCCDF document. This may have unexpected results.</xsl:message>
-  </xsl:if>
 </xsl:template>
 
+<!-- call the html to docbook transform -->
+<xsl:template mode='db' match='cdf:*'>
+  <xsl:call-template name='h2db.para'><xsl:with-param name='in' select='.'/></xsl:call-template>
+</xsl:template>
+<!-- call the dublin-core to docbook transform -->
+<xsl:template mode='db' match='cdf:reference|cdf:metadata'>
+  <xsl:variable name='dc.input'>
+    <xsl:choose>
+      <xsl:when test='dc:*'><xsl:copy-of select='.'/></xsl:when>
+      <xsl:otherwise>
+        <dc:title><xsl:value-of select='.'/></dc:title>
+        <xsl:if test='@href'><dc:identifier><xsl:value-of select='@href'/></dc:identifier></xsl:if>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:variable>
+  <xsl:apply-templates mode='dc2db' select='exsl:node-set($dc.input)'/>
+</xsl:template>
 
 </xsl:stylesheet>

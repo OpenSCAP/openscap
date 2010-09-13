@@ -42,7 +42,7 @@ Authors:
   <xsl:variable name='ctx' select='@context'/>
   <xsl:choose>
     <xsl:when test='ancestor::cdf:rule-result'>
-      <abbr class='cdf-sub-context-replace' title='context: {$ctx}'><xsl:value-of select='ancestor::cdf:rule-result/cdf:instance[@context=$ctx]'/></abbr>
+      <abbr class='replace' title='context: {$ctx}'><xsl:value-of select='ancestor::cdf:rule-result/cdf:instance[@context=$ctx]'/></abbr>
     </xsl:when>
     <xsl:otherwise><abbr class='cdf-sub-context' title='replace with actual {$ctx} context'><xsl:value-of select='$ctx'/></abbr></xsl:otherwise>
   </xsl:choose>
@@ -54,7 +54,7 @@ Authors:
   <xsl:variable name="plain" select="ancestor::cdf:Benchmark/cdf:plain-text[@id=$subid]"/>
   <xsl:variable name="val" select="ancestor::cdf:Benchmark//cdf:Value[@id=$subid]"/>
   <xsl:choose>
-    <xsl:when test='$plain'><abbr class='replace' title="text: {$subid}"><xsl:value-of select="$plain"/></abbr></xsl:when>
+    <xsl:when test='$plain'><abbr class='xccdf-plain-text' title="text: {$subid}"><xsl:value-of select="$plain"/></abbr></xsl:when>
     <xsl:otherwise><abbr class='cdf-sub-value' title="value: {$subid} ({$val/cdf:title})"><xsl:value-of select="$val/cdf:value"/></abbr></xsl:otherwise>
   </xsl:choose>
 </xsl:template>

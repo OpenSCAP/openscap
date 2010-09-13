@@ -342,7 +342,7 @@
  </listitem>
 </xsl:template>
         
-<xsl:template mode='h2db' match="*">
+<xsl:template mode='h2db' match="html:*">
  <xsl:message>No template for <xsl:value-of select="name()"/>(<xsl:value-of select='namespace-uri()'/>)<xsl:for-each select='ancestor::*'>&lt;=<xsl:value-of select="name()"/>[<xsl:value-of select="position()"/>]</xsl:for-each>
  </xsl:message>
  <xsl:apply-templates mode='h2db'/>
