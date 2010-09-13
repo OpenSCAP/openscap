@@ -8,7 +8,7 @@
  xmlns:dsig="http://w3.org/2000/09/xmldsig#"
  xmlns:cdf="http://checklists.nist.gov/xccdf/1.1"
  xsi:schemaLocation="http://checklists.nist.gov/xccdf/1.1 http://nvd.nist.gov/schema/xccdf-1.1.4.xsd http://cpe.mitre.org/dictionary/2.0 http://cpe.mitre.org/files/cpe-dictionary_2.1.xsd" 
- resolved="0"
+ resolved="1"
  id="scap-fedora14-xccdf.xml"
  xml:lang="en">
   <status date="2010-09-11">draft</status>
@@ -51,19 +51,19 @@
     <select idref="rule-2.2.1.2.a" selected="false" />		<!-- DONE (unknown)-->	<!-- Add nodev Option to Removable Media Partitions -->
     <select idref="rule-2.2.1.2.b" selected="false" />		<!-- DONE (unknown)-->	<!-- Add noexec Option to Removable Media Partitions -->
     <select idref="rule-2.2.1.2.c" selected="false" />		<!-- DONE (unknown)-->	<!-- Add nosuid Option to Removable Media Partitions -->
-    <select idref="rule-2.2.2.2.1.a" selected="false" />	<!-- DONE -->		<!-- Disable Modprobe Loading of USB Storage Driver -->
-    <select idref="rule-2.2.2.2.2.a" selected="false" />	<!-- DONE -->		<!-- Remove USB Storage Driver -->
-    <select idref="rule-2.2.2.2.3.a" selected="false" />	<!-- DONE -->		<!-- Disable Kernel Support for USB via Bootloader Configuration (will disable all USB devices including keyboards, mice, etc) -->
-    <select idref="rule-2.2.2.2.4.a" selected="false" /> 	<!-- READY (unknown)-->	<!-- Disable Booting from USB Devices -->
-    <select idref="rule-2.2.2.3.a" selected="false" />		<!-- DONE -->		<!-- Disable the Automounter if Possible -->
-    <select idref="rule-2.2.2.4.a" selected="false" />		<!-- BUG? -->     	<!-- Disable GNOME Automounting if Possible -->
-    <select idref="rule-2.2.2.5.a" selected="false" />		<!-- READY -->		<!-- Disable Mounting of cramfs -->
-    <select idref="rule-2.2.2.5.b" selected="false" />		<!-- READY -->		<!-- Disable Mounting of freevxfs -->
-    <select idref="rule-2.2.2.5.c" selected="false" />		<!-- READY -->		<!-- Disable Mounting of jffs2 -->
-    <select idref="rule-2.2.2.5.d" selected="false" />		<!-- READY -->		<!-- Disable Mounting of hfs -->
-    <select idref="rule-2.2.2.5.e" selected="false" />		<!-- READY -->		<!-- Disable Mounting of hfsplus -->
-    <select idref="rule-2.2.2.5.f" selected="false" />		<!-- READY -->		<!-- Disable Mounting of squashfs -->
-    <select idref="rule-2.2.2.5.g" selected="false" />		<!-- READY -->		<!-- Disable Mounting of udf -->
+    <select idref="rule-2.2.2.1.1.a" selected="false" />	<!-- DONE -->		<!-- Disable Modprobe Loading of USB Storage Driver -->
+    <select idref="rule-2.2.2.1.2.a" selected="false" />	<!-- DONE -->		<!-- Remove USB Storage Driver -->
+    <select idref="rule-2.2.2.1.3.a" selected="false" />	<!-- DONE -->		<!-- Disable Kernel Support for USB via Bootloader Configuration (will disable all USB devices including keyboards, mice, etc) -->
+    <select idref="rule-2.2.2.1.4.a" selected="false" /> 	<!-- READY (unknown)-->	<!-- Disable Booting from USB Devices -->
+    <select idref="rule-2.2.2.2.a" selected="false" />		<!-- DONE -->		<!-- Disable the Automounter if Possible -->
+    <select idref="rule-2.2.2.3.a" selected="false" />		<!-- BUG? -->     	<!-- Disable GNOME Automounting if Possible -->
+    <select idref="rule-2.2.2.4.a" selected="false" />		<!-- READY -->		<!-- Disable Mounting of cramfs -->
+    <select idref="rule-2.2.2.4.b" selected="false" />		<!-- READY -->		<!-- Disable Mounting of freevxfs -->
+    <select idref="rule-2.2.2.4.c" selected="false" />		<!-- READY -->		<!-- Disable Mounting of jffs2 -->
+    <select idref="rule-2.2.2.4.d" selected="false" />		<!-- READY -->		<!-- Disable Mounting of hfs -->
+    <select idref="rule-2.2.2.4.e" selected="false" />		<!-- READY -->		<!-- Disable Mounting of hfsplus -->
+    <select idref="rule-2.2.2.4.f" selected="false" />		<!-- READY -->		<!-- Disable Mounting of squashfs -->
+    <select idref="rule-2.2.2.4.g" selected="false" />		<!-- READY -->		<!-- Disable Mounting of udf -->
     <select idref="rule-2.2.3.1.a" selected="true" />		<!-- READY+ -->		<!-- Verify user who owns '/etc/shadow' file -->
     <select idref="rule-2.2.3.1.b" selected="true" />		<!-- READY+ -->		<!-- Verify group who owns '/etc/shadow' file -->
     <select idref="rule-2.2.3.1.c" selected="true" />		<!-- READY+ -->		<!-- Verify user who owns '/etc/group' file -->
@@ -531,7 +531,7 @@
           susceptible to passive monitoring. Whenever practical solutions for encrypting such data
           exist, they should be applied. Even if data is expected to be transmitted only over a
           local network, it should still be encrypted. Encrypting authentication data, such as
-          passwords, is particularly important. Networks of RHEL5 machines can and should be
+          passwords, is particularly important. Networks of machines can and should be
           configured so that no unencrypted authentication data is ever transmitted between
           machines.</description>
 		  <reference href="http://csrc.nist.gov/publications/nistpubs/800-53-Rev3/sp800-53-rev3-final-errata.pdf">AC-4, AC-17, MP-5, SC-8, SC-9</reference>
@@ -541,16 +541,15 @@
         <title xml:lang="en">Minimize Software to Minimize Vulnerability</title>
         <description xml:lang="en">
           The simplest way to avoid vulnerabilities in software is to avoid
-          installing that software. On RHEL, the RPM Package Manager (originally Red Hat Package
-          Manager, abbreviated RPM) allows for careful management of the set of software packages
-          installed on a system. Installed software contributes to system vulnerability in several
-          ways. Packages that include setuid programs may provide local attackers a potential path
-          to privilege escalation. Packages that include network services may give this opportunity
-          to network-based attackers. Packages that include programs which are predictably executed
-          by local users (e.g. after graphical login) may provide opportunities for trojan horses or
-          other attack code to be run undetected. The number of software packages installed on a
-          system can almost always be significantly pruned to include only the software for which
-          there is an environmental or operational need.</description>
+          installing that software. The RPM Package Manager allows for careful management of the 
+          set of software packages installed on a system. Installed software contributes to system 
+          vulnerability in several ways. Packages that include setuid programs may provide local 
+          attackers a potential path to privilege escalation. Packages that include network services 
+          may give this opportunity to network-based attackers. Packages that include programs 
+          which are predictably executed by local users (e.g. after graphical login) may provide 
+          opportunities for trojan horses or other attack code to be run undetected. The number of 
+          software packages installed on a system can almost always be significantly pruned to include only 
+          the software for which there is an environmental or operational need.</description>
   		  <reference href="http://csrc.nist.gov/publications/nistpubs/800-53-Rev3/sp800-53-rev3-final-errata.pdf">CM-2 (4) CM-6 (a) CM-7 SA-7</reference>
   		  <reference>ISO/IEC 27002-2005 11.6.1 12.4.1</reference>
       </Group>
@@ -939,44 +938,30 @@
         </Group>
       </Group>
       <Group id="group-2.1.2" hidden="false">
-        <title xml:lang="en">Updating Software</title>
+        <title xml:lang="en">Security Updates</title>
         <description xml:lang="en">
-          The yum command line tool is used to install and update software
-          packages. Yum replaces the up2date utility used in previous system releases. The system
-          also provides two graphical package managers, pirut and pup. The pirut tool is a graphical
-          front-end for yum that allows users to install and update packages while pup is a simple
-          update tool for packages that are already installed. In the <xhtml:b>Applications</xhtml:b> menu, pirut is
-          labeled <xhtml:b>Add/Remove Software</xhtml:b> and pup is labeled <xhtml:b>Software Updater</xhtml:b>.<xhtml:br/>
-          <xhtml:br/>
-          It
-          is recommended that these tools be used to keep systems up to date with the latest
-          security patches.
+          As security vulnerabilities are discovered, the affected software must be updated in order 
+          to limit any potential security risks. If the software is part of a package within a Fedora 
+          distribution that is currently supported, Fedora is committed to releasing updated packages 
+          that fix the vulnerability as soon as is possible. Often, announcements about a given 
+          security exploit are accompanied with a patch (or source code that fixes the problem). 
+          This patch is then applied to the Fedora package and tested and released as an errata update. 
+          However, if an announcement does not include a patch, a developer first works with the maintainer 
+          of the software to fix the problem. Once the problem is fixed, the package is tested 
+          and released as an errata update.
         </description>
-    		<reference href="http://csrc.nist.gov/publications/nistpubs/800-53-Rev3/sp800-53-rev3-final-errata.pdf">CM-2 CM-5 (3) CM-6 CM-7 SA-7</reference>
-    		<reference>ISO/IEC 27002-2005 11.6.1 12.4.1</reference>
-    		<reference href="http://www.dtic.mil/whs/directives/corres/pdf/850002p.pdf">DCSD-1, DCPP-1</reference>
-    		<reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">4</reference>
+	<reference href="http://docs.fedoraproject.org/en-US/Fedora/13/html/Security_Guide/sect-Security_Guide-Security_Updates.html">1.5</reference>
         <Group id="group-2.1.2.1" hidden="false">
-          <title xml:lang="en">Configure Connection to the RHN RPM Repositories</title>
-          <description xml:lang="en"><xhtml:p class="block">
-            The first step in configuring a system for updates is to
-            register with the Red Hat Network (RHN). For most systems, this is done during the
-            initial installation. Successfully registered systems will appear on the RHN web site.
-            If the system is not listed, run the Red Hat Network Registration tool, which can be
-            found in the <xhtml:b>Applications</xhtml:b> menu under <xhtml:b>System Tools</xhtml:b> or on the command
-            line:<xhtml:br/>
+          <title xml:lang="en">Updating Software</title>
+          <description xml:lang="en">
+            The yum command line tool is used to install and update software
+            packages. The system also provides package management service called PackageKit
+            that allows the session users to manage packages in a secure way. There are several
+            graphical utilities designed for installing, updating and removing packages on your 
+            system that use PackageKit API. <xhtml:br/>
             <xhtml:br/>
-            <xhtml:code># rhn register</xhtml:code><xhtml:br/>
-            <xhtml:br/>
-            Follow the prompts on the
-            screen. If successful, the system will appear on the RHN web site and be subscribed to
-            one or more software update channels. Additionally, a new daemon, rhnsd, will be
-            enabled.<xhtml:br/></xhtml:p>
-            <xhtml:br/>
-            If the system will not have access to the Internet, it
-            will not be able to directly subscribe to the RHN update repository. Updates will have
-            to be downloaded from the RHN web site manually. The command line tool yum and the
-            graphical front-ends pirut and pup can be configured to handle this situation.
+            It is recommended to use these mechanisms to keep systems up to date with the latest
+            security patches.
           </description>
           <Group id="group-2.1.2.1.1" hidden="false">
             <title xml:lang="en">Ensure Fedora GPG Key is Installed</title>
@@ -1004,7 +989,6 @@
             The yum update utility can be run by hand from the command
             line, called through one of the provided front-end tools, or configured to run
             automatically at specified intervals.</description>
-          <reference href="http://www.dtic.mil/whs/directives/corres/pdf/850002p.pdf">VIVM-1</reference>
           <Group id="group-2.1.2.3.2" hidden="false">
             <title xml:lang="en">Configure Automatic Update Retrieval and Installation with Cron</title>
             <description xml:lang="en">
@@ -1048,7 +1032,6 @@
               <description>The yum-updatesd service should be disabled</description>
               <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN003680</reference>
               <ident system="http://cce.mitre.org">CCE-4218-4</ident>
-              <fixtext>(1) via chkconfig</fixtext>
               <fix># chkconfig yum-updatesd off</fix>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                 <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20008" />
@@ -1327,7 +1310,7 @@
               attacking the AIDE database as described above), this check can still reveal 
               modiﬁcation of important ﬁles.<xhtml:br/>
               <xhtml:br/>
-              To determine which ﬁles on the system diﬀer from what is expected by the RPM 
+              To determine which ﬁles on the system differ from what is expected by the RPM 
               database:<xhtml:br/>
               <xhtml:br/>
               <xhtml:code># rpm -qVa<xhtml:br/></xhtml:code>
@@ -1369,7 +1352,7 @@
         <xhtml:br/>
         Note: Several of the commands in this section search
         filesystems for files or directories with certain characteristics, and are intended to be
-        run on every local ext2 or ext3 partition on a given machine. When the variable
+        run on every local ext2, ext3 and ext4 partition on a given machine. When the variable
         <xhtml:em>PART</xhtml:em>
         appears in one of the commands below, it means that the command
         is intended to be run repeatedly, with the name of each local partition substituted for
@@ -1377,11 +1360,11 @@
         in turn.<xhtml:br/>
         <xhtml:br/>
         The following command prints a
-        list of ext2 and ext3 partitions on a given machine:<xhtml:br/>
+        list of ext2, ext3 and ext4 partitions on a given machine:<xhtml:br/>
         <xhtml:br/>
-        <xhtml:code>$ mount -t ext2,ext3 | awk '{print $3}'<xhtml:br/></xhtml:code>
+        <xhtml:code>$ mount -t ext2,ext3,ext4 | awk '{print $3}'<xhtml:br/></xhtml:code>
         <xhtml:br/>
-        If your site uses a local filesystem type other than ext2 or ext3, you will need to modify 
+        If your site uses a local filesystem type other than ext{234}, you will need to modify 
         this command.
       </description>
       <Group id="group-2.2.1" hidden="false">
@@ -1390,22 +1373,13 @@
           System partitions can be mounted with certain options which limit
           what files on those partitions can do. These options are set in the file /etc/fstab, and
           can be used to make certain types of malicious behavior more difficult.</description>
-    		<reference href="http://csrc.nist.gov/publications/nistpubs/800-53-Rev3/sp800-53-rev3-final-errata.pdf">AC-6 CM-2 CM-3 (1.d) CM-5 CM-6 CM-7</reference>
-    		<reference>ISO/IEC 27002-2005 10.1.2 11.2.2 11.6.1 12.4.1</reference>
-    		<reference href="http://www.dtic.mil/whs/directives/corres/pdf/850002p.pdf">ECLP-1</reference>
-    		<reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">2.5.1.1</reference>
+    	<reference href="http://csrc.nist.gov/publications/nistpubs/800-53-Rev3/sp800-53-rev3-final-errata.pdf">AC-6 CM-2 CM-3 (1.d) CM-5 CM-6 CM-7</reference>
+    	<reference>ISO/IEC 27002-2005 10.1.2 11.2.2 11.6.1 12.4.1</reference>
+    	<reference href="http://www.dtic.mil/whs/directives/corres/pdf/850002p.pdf">ECLP-1</reference>
+    	<reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">2.5.1.1</reference>
         <Group id="group-2.2.1.1" hidden="false" weight="1.0">
           <title xml:lang="en">Add nodev Option to Non-Root Local Partitions</title>
           <description xml:lang="en">
-            Edit the ﬁle /etc/fstab. The important columns for purposes of 
-            this section are column 2 (mount point), column 3 (ﬁlesystem type), and column 4 (mount 
-            options). For any line which satisﬁes all of the conditions:
-            <xhtml:ul>
-              <xhtml:li>The ﬁlesystem type is ext2 or ext3</xhtml:li>
-              <xhtml:li>The mount point is not /</xhtml:li>
-            </xhtml:ul>
-            add the text “,nodev” to the list of mount options in column 4. <xhtml:br/>
-            <xhtml:br/>
             The nodev option prevents users from mounting unauthorized
             devices on any partition which is known not to contain any authorized devices. The root
             partition typically contains the /dev partition, which is the primary location for
@@ -1421,11 +1395,16 @@
             <reference href="http://www.dtic.mil/whs/directives/corres/pdf/850002p.pdf">ECSC-1</reference>
             <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN002430</reference>
             <ident system="http://cce.mitre.org">CCE-4249-9</ident>
-            <fix>Edit the file /etc/fstab. The important columns for purposes of this section are
-              column 2 (mount point), column 3 (filesystem type), and column 4 (mount options). For
-              any line which satisfies all of the conditions -- the filesystem type is ext2 or ext3,
-              and the mount point is not / -- add the text ',nodev' to the list of mount options in
-              column 4.</fix>
+            <fixtext> 
+              Edit the ﬁle /etc/fstab. The important columns for purposes of 
+              this section are column 2 (mount point), column 3 (ﬁlesystem type), and column 4 (mount 
+              options). For any line which satisﬁes all of the conditions:
+              <xhtml:ul>
+                <xhtml:li>The ﬁlesystem type is ext2, ext3 or ext4</xhtml:li>
+                <xhtml:li>The mount point is not /</xhtml:li>
+              </xhtml:ul>
+              add the text “,nodev” to the list of mount options in column 4. <xhtml:br/>
+            </fixtext>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20016" />
             </check>
@@ -1445,11 +1424,10 @@
             <reference href="http://www.dtic.mil/whs/directives/corres/pdf/850002p.pdf">ECSC-1</reference>
             <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN002430</reference>
             <ident system="http://cce.mitre.org">CCE-3522-0</ident>
-            <fixtext>(1) via /etc/fstab</fixtext>
-            <fix>Edit the file /etc/fstab. Filesystems which represent removable media can be
+            <fixtext>Edit the file /etc/fstab. Filesystems which represent removable media can be
               located by finding lines whose mount points contain strings like floppy or cdrom, or
               whose types are iso9660, vfat, or msdos. For each line representing a removable media
-              mountpoint, add the text ',nodev' to the list of mount options in column 4.</fix>
+              mountpoint, add the text ',nodev' to the list of mount options in column 4.</fixtext>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20017" />
             </check>
@@ -1458,11 +1436,10 @@
             <title>Add noexec Option to Removable Media Partitions</title>
             <description>The noexec option should be disabled for all removable media.</description>
             <ident system="http://cce.mitre.org">CCE-4275-4</ident>
-            <fixtext>(1) via /etc/fstab</fixtext>
-            <fix>Edit the file /etc/fstab. Filesystems which represent removable media can be
+            <fixtext>Edit the file /etc/fstab. Filesystems which represent removable media can be
               located by finding lines whose mount points contain strings like floppy or cdrom, or
               whose types are iso9660, vfat, or msdos. For each line representing a removable media
-              mountpoint, add the text ',noexec' to the list of mount options in column 4.</fix>
+              mountpoint, add the text ',noexec' to the list of mount options in column 4.</fixtext>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20018" />
             </check>
@@ -1474,11 +1451,10 @@
             <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">3.12.1</reference>
             <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN002420</reference>
             <ident system="http://cce.mitre.org">CCE-4042-8</ident>
-            <fixtext>(1) via /etc/fstab</fixtext>
-            <fix>Edit the file /etc/fstab. Filesystems which represent removable media can be
+            <fixtext>Edit the file /etc/fstab. Filesystems which represent removable media can be
               located by finding lines whose mount points contain strings like floppy or cdrom, or
               whose types are iso9660, vfat, or msdos. For each line representing a removable media
-              mountpoint, add the text ',nosuid' to the list of mount options in column 4.</fix>
+              mountpoint, add the text ',nosuid' to the list of mount options in column 4.</fixtext>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20019" />
             </check>
@@ -1499,14 +1475,14 @@
           whether better configuration management or user education might solve the same problem
           with less risk.
         </description>
-    		<reference href="http://csrc.nist.gov/publications/nistpubs/800-53-Rev3/sp800-53-rev3-final-errata.pdf">AC-6 CM-2 CM-3 (1.d) CM-5 CM-6 CM-7</reference>
-    		<reference>ISO/IEC 27002-2005 10.1.2 11.6.1 12.4.1</reference>
-    		<reference href="http://www.dtic.mil/whs/directives/corres/pdf/850002p.pdf">ECLP-1</reference>
-    		<reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">3</reference>
-        <Group id="group-2.2.2.2" hidden="false">
+	<reference href="http://csrc.nist.gov/publications/nistpubs/800-53-Rev3/sp800-53-rev3-final-errata.pdf">AC-6 CM-2 CM-3 (1.d) CM-5 CM-6 CM-7</reference>
+	<reference>ISO/IEC 27002-2005 10.1.2 11.6.1 12.4.1</reference>
+	<reference href="http://www.dtic.mil/whs/directives/corres/pdf/850002p.pdf">ECLP-1</reference>
+	<reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">3</reference>
+        <Group id="group-2.2.2.1" hidden="false">
           <title xml:lang="en">Disable USB Device Support</title>
           <description xml:lang="en">USB flash or hard drives allow an attacker with physical access to a system to quickly copy an enormous amount of data from it.</description>
-          <Group id="group-2.2.2.2.1" hidden="false">
+          <Group id="group-2.2.2.1.1" hidden="false">
             <title xml:lang="en">Disable Modprobe Loading of USB Storage Driver</title>
             <description xml:lang="en">
               If USB storage devices should not be used, the modprobe
@@ -1517,7 +1493,7 @@
               not prevent an administrator (or another program) from using the insmod program to 
               load the module manually.
             </description>
-            <Rule id="rule-2.2.2.2.1.a" selected="false" weight="10.0">
+            <Rule id="rule-2.2.2.1.1.a" selected="false" weight="10.0">
               <title>Disable Modprobe Loading of USB Storage Driver</title>
               <description>The USB device support module should not be loaded</description>
               <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN008460 GEN008480</reference>
@@ -1528,34 +1504,34 @@
               </check>
             </Rule>
           </Group>
-          <Group id="group-2.2.2.2.2" hidden="false">
+          <Group id="group-2.2.2.1.2" hidden="false">
             <title xml:lang="en">Remove USB Storage Driver</title>
             <description xml:lang="en">
               If your system never requires the use of USB storage devices,
               then the supporting driver can be removed. Though more effective (as USB storage
               certainly cannot be used if the driver is not available at all), this is less elegant
-              than the method described in Section 2.2.2.2.1. <xhtml:br/>
+              than the method described in Section 2.2.2.1.1. <xhtml:br/>
               <xhtml:br/>
               Note that this guidance will not prevent USB storage devices from being mounted if a 
               custom kernel (i.e., not the one supplied with the system) with built-in USB support 
               is used.
             </description>
-            <Rule id="rule-2.2.2.2.2.a" selected="false" weight="10.0">
+            <Rule id="rule-2.2.2.1.2.a" selected="false" weight="10.0">
               <title>Remove USB Storage Driver</title>
               <description>
                 The USB device support module should not be installed.  The command in 
                 the FIX will need to be repeated every time the kernel is updated. This command 
                 will also cause the command rpm -q --verify kernel to fail, which may be an 
-                undesirable side eﬀect.</description>
+                undesirable side effect.</description>
               <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN008460 GEN008480</reference>
               <ident system="http://cce.mitre.org">CCE-4006-3</ident>
-              <fix>rm /lib/modules/2.6.*.el5/kernel/drivers/usb/storage/usb-storage.ko</fix>
+              <fix>rm /lib/modules/2.6.*/kernel/drivers/usb/storage/usb-storage.ko</fix>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                 <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20022" />
               </check>
             </Rule>
           </Group>
-          <Group id="group-2.2.2.2.3" hidden="false">
+          <Group id="group-2.2.2.1.3" hidden="false">
             <title xml:lang="en">Disable Kernel Support for USB via Bootloader Configuration</title>
             <description xml:lang="en">
               Another means of disabling USB storage is to disable all USB
@@ -1567,20 +1543,20 @@
               keyboards, mice, or printers. This guidance is inappropriate for systems which require
               USB connectivity.
             </description>
-            <Rule id="rule-2.2.2.2.3.a" selected="false" weight="10.0">
+            <Rule id="rule-2.2.2.1.3.a" selected="false" weight="10.0">
               <title>Disable Kernel Support for USB via Bootloader Configuration</title>
               <description>USB kernel support should be disabled.</description>
               <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN008460 GEN008480</reference>
               <ident system="http://cce.mitre.org">CCE-4173-1</ident>
-              <fix>To disable kernel support for USB, append 'nousb' to the kernel line in
+              <fixtext>To disable kernel support for USB, append 'nousb' to the kernel line in
                 /etc/grub.conf as follows: kernel /vmlinuz-version ro vga=ext
-                root=/dev/VolGroup00/LogVol00 rhgb quiet nousb</fix>
+                root=/dev/VolGroup00/LogVol00 rhgb quiet nousb</fixtext>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                 <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20023" />
               </check>
             </Rule>
           </Group>
-          <Group id="group-2.2.2.2.4" hidden="false">
+          <Group id="group-2.2.2.1.4" hidden="false">
             <title xml:lang="en">Disable Booting from USB Devices</title>
             <description xml:lang="en">
               An attacker with physical access could try to boot the system
@@ -1589,7 +1565,7 @@
               configure the BIOS to disallow booting from USB drives. Also configure the BIOS or
               firmware password as described in Section 2.3.5.1 to prevent unauthorized
               configuration changes.</description>
-            <Rule id="rule-2.2.2.2.4.a" selected="false" weight="10.0" severity="high">
+            <Rule id="rule-2.2.2.1.4.a" selected="false" weight="10.0" severity="high">
               <title>Disable Booting from USB Devices in the BIOS</title>
               <description>The ability to boot from USB devices should be disabled</description>
               <reference href="http://www.dtic.mil/whs/directives/corres/pdf/850002p.pdf">ECSC-1</reference>
@@ -1603,7 +1579,7 @@
             </Rule>
           </Group>
         </Group>
-        <Group id="group-2.2.2.3" hidden="false">
+        <Group id="group-2.2.2.2" hidden="false">
           <title xml:lang="en">Disable the Automounter if Possible</title>
           <description xml:lang="en">
             If the autofs service is not needed to dynamically mount NFS
@@ -1619,19 +1595,18 @@
             possible to configure filesystem mounts statically by editing /etc/fstab rather than
             relying on the automounter.
           </description>
-          <Rule id="rule-2.2.2.3.a" selected="false" weight="10.0" severity="medium">
+          <Rule id="rule-2.2.2.2.a" selected="false" weight="10.0" severity="medium">
             <title>Disable the Automounter if Possible</title>
             <description>The autofs service should be disabled.</description>
             <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN003680 GEN008440</reference>
             <ident system="http://cce.mitre.org">CCE-4072-5</ident>
-            <fixtext>(1) via chkconfig</fixtext>
-            <fix># chkconfig autofs off</fix>
+            <fix>chkconfig autofs off</fix>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20025" />
             </check>
           </Rule>
         </Group>
-        <Group id="group-2.2.2.4" hidden="false">
+        <Group id="group-2.2.2.3" hidden="false">
           <title xml:lang="en">Disable GNOME Automounting if Possible</title>
           <description xml:lang="en">
             The system's default desktop environment, GNOME, runs the
@@ -1650,7 +1625,7 @@
             same name, can be used to explore other settings available in the GNOME environment.
           </description>
           <reference href="http://www.redhat.com/docs/en-US/Red_Hat_Enterprise_Linux/5.4/html/Deployment_Guide/index.html">Deployment Guide</reference>
-          <Rule id="rule-2.2.2.4.a" selected="false" weight="10.0" severity="medium">
+          <Rule id="rule-2.2.2.3.a" selected="false" weight="10.0" severity="medium">
             <title>Disable GNOME Automounting if Possible</title>
             <description>The GNOME automounter (gnome-volume-manager) should be disabled if possible</description>
             <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN003680 GEN008440</reference>
@@ -1658,14 +1633,15 @@
             <fixtext>Execute the following commands to prevent gnome-volume-manager from automatically
               mounting devices and media: <xhtml:br/>
               <xhtml:br/>
-              <xhtml:pre><xhtml:code>
-              # gconftool-2 --direct --config-source xml:readwrite:/etc/gconf/gconf.xml.mandatory \ 
+              <xhtml:code>
+              # gconftool-2 --direct --config-source xml:readwrite:/etc/gconf/gconf.xml.mandatory
                             --type bool --set /desktop/gnome/volume_manager/automount_media false 
-              # gconftool-2 --direct \
-                            --config-source xml:readwrite:/etc/gconf/gconf.xml.mandatory \ 
-                            --type bool \ 
+              <xhtml:br/> <xhtml:br/>
+              # gconftool-2 --direct
+                            --config-source xml:readwrite:/etc/gconf/gconf.xml.mandatory
+                            --type bool
                             --set /desktop/gnome/volume_manager/automount_drives false
-              </xhtml:code></xhtml:pre>
+              </xhtml:code> <xhtml:br/>
               <xhtml:br/>
               Verify the changes by executing
               the following command, which should return a list of settings: <xhtml:br/>
@@ -1679,13 +1655,13 @@
             </check>
           </Rule>
         </Group>
-        <Group id="group-2.2.2.5" hidden="false">
+        <Group id="group-2.2.2.4" hidden="false">
           <title xml:lang="en">Disable Mounting of Uncommon Filesystem Types</title>
           <description xml:lang="en">
             Specifying kernel module in /etc/modprobe.d/blacklist.conf will prevent
             kernel module loading system from inserting the modele into the kernel. 
             This mechanism effectively prevents usage of these uncommon ﬁlesystems.</description>
-          <Rule id="rule-2.2.2.5.a" selected="false" weight="10.0">
+          <Rule id="rule-2.2.2.4.a" selected="false" weight="10.0">
             <title>Disable Mounting of cramfs</title>
             <description>cramfs is uncommon ﬁlesystems</description>
             <fix>echo "blacklist cramfs" &gt;&gt; /etc/modprobe.d/blacklist.conf</fix>
@@ -1693,7 +1669,7 @@
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20027" />
             </check>
           </Rule>
-          <Rule id="rule-2.2.2.5.b" selected="false" weight="10.0">
+          <Rule id="rule-2.2.2.4.b" selected="false" weight="10.0">
             <title>Disable Mounting of freevxfs</title>
             <description>freevxfs is uncommon ﬁlesystems</description>
             <fix>echo "blacklist freevxfs" &gt;&gt; /etc/modprobe.d/blacklist.conf</fix>
@@ -1701,7 +1677,7 @@
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20028" />
             </check>
           </Rule>
-          <Rule id="rule-2.2.2.5.c" selected="false" weight="10.0">
+          <Rule id="rule-2.2.2.4.c" selected="false" weight="10.0">
             <title>Disable Mounting of jffs2</title>
             <description>jffs2 is uncommon ﬁlesystems</description>
             <fix>echo "blacklist jffs2" &gt;&gt; /etc/modprobe.d/blacklist.conf</fix>
@@ -1709,7 +1685,7 @@
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20029" />
             </check>
           </Rule>
-          <Rule id="rule-2.2.2.5.d" selected="false" weight="10.0">
+          <Rule id="rule-2.2.2.4.d" selected="false" weight="10.0">
             <title>Disable Mounting of hfs</title>
             <description>hfs is uncommon ﬁlesystems</description>
             <fix>echo "blacklist hfs" &gt;&gt; /etc/modprobe.d/blacklist.conf</fix>
@@ -1717,7 +1693,7 @@
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20030" />
             </check>
           </Rule>
-          <Rule id="rule-2.2.2.5.e" selected="false" weight="10.0">
+          <Rule id="rule-2.2.2.4.e" selected="false" weight="10.0">
             <title>Disable Mounting of hfsplus</title>
             <description>hfsplus is uncommon ﬁlesystems</description>
             <fix>echo "blacklist hfsplus" &gt;&gt; /etc/modprobe.d/blacklist.conf</fix>
@@ -1725,7 +1701,7 @@
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20031" />
             </check>
           </Rule>
-          <Rule id="rule-2.2.2.5.f" selected="false" weight="10.0">
+          <Rule id="rule-2.2.2.4.f" selected="false" weight="10.0">
             <title>Disable Mounting of squashfs</title>
             <description>squashfs is uncommon ﬁlesystems</description>
             <fix>echo "blacklist squashfs" &gt;&gt; /etc/modprobe.d/blacklist.conf</fix>
@@ -1733,7 +1709,7 @@
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20032" />
             </check>
           </Rule>
-          <Rule id="rule-2.2.2.5.g" selected="false" weight="10.0">
+          <Rule id="rule-2.2.2.4.g" selected="false" weight="10.0">
             <title>Disable Mounting of udf</title>
             <description>udf is uncommon ﬁlesystems</description>
             <fix>echo "blacklist udf" &gt;&gt; /etc/modprobe.d/blacklist.conf</fix>

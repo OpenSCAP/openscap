@@ -6254,7 +6254,7 @@
             <ind-def:textfilecontent54_object id="oval:org.fedoraproject.f14:obj:200162" version="1" comment="file systems defined in /etc/mtab">
                   <ind-def:path>/etc</ind-def:path>
                   <ind-def:filename>mtab</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[^#]*\/[^[:space:]]*ext[23]([^#])?</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^[^#]*\/[^[:space:]]*ext[234]([^#])?</ind-def:pattern>
                   <ind-def:instance datatype="int" operation="greater than or equal">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
 
