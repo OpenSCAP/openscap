@@ -174,6 +174,7 @@ char *oscap_text_get_plaintext(const struct oscap_text *text)
 
     // TODO: better HTML -> plaintext conversion
     out = (char*) xmlNodeGetContent(root);
+    xmlFreeDoc(doc);
 
 cleanup:
     oscap_free(str);

@@ -737,11 +737,11 @@ static int xccdf_policy_item_evaluate(struct xccdf_policy * policy, struct xccdf
              */
             struct oscap_text_iterator * dsc_it = xccdf_rule_get_description((struct xccdf_rule *) item);
             struct oscap_text_iterator * title_it = xccdf_rule_get_title((struct xccdf_rule *) item);
-            const char * description = NULL;
+            char * description = NULL;
             const char * title = NULL;
             if (oscap_text_iterator_has_more(dsc_it))
                 description = oscap_text_get_plaintext(oscap_text_iterator_next(dsc_it));
-            oscap_text_iterator_free(dsc_it);    
+            oscap_text_iterator_free(dsc_it);
             if (oscap_text_iterator_has_more(title_it))
                 title = oscap_text_get_text(oscap_text_iterator_next(title_it));
             oscap_text_iterator_free(title_it);     
@@ -751,7 +751,10 @@ static int xccdf_policy_item_evaluate(struct xccdf_policy * policy, struct xccdf
              */
             retval = xccdf_policy_report_cb(policy, "urn:xccdf:system:callback:start", rule_id, description, title, 
                     (xccdf_select_get_selected(sel) ? 0 : XCCDF_RESULT_NOT_SELECTED ));
-            if (retval != 0) return retval;
+            if (retval != 0) {
+                oscap_free(description);
+                return retval;
+            }
 
             /* Evaluation of callback
              */
@@ -764,7 +767,10 @@ static int xccdf_policy_item_evaluate(struct xccdf_policy * policy, struct xccdf
                         /************** Evaluation  **************/
                         ret = xccdf_policy_check_evaluate(policy, check, (char *) rule_id);
                         /*****************************************/
-                        if (ret == -1) return -1;
+                        if (ret == -1) {
+                            oscap_free(description);
+                            return -1;
+                        }
 
                         if (ret == false) /* we got item that can't be processed */
                             break;
@@ -808,6 +814,7 @@ static int xccdf_policy_item_evaluate(struct xccdf_policy * policy, struct xccdf
             /* Report result
              */
             retval = xccdf_policy_report_cb(policy, "urn:xccdf:system:callback:output", rule_id, description, title, ret);
+            oscap_free(description);
             if (retval != 0) return retval;
 
         } break;
